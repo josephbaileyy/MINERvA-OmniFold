@@ -1,0 +1,22 @@
+{
+ "schema": "s5c-contract-amendment/1",
+ "amends": "docs/orchestration/state/s5c/contract.json (frozen at c29dde25); fills its not_in_this_contract.systematic_construction entry and changes nothing else",
+ "status": "FROZEN at the commit that first adds this file, before any F2 assembly is run. Executor choices under the plan's delegation.",
+ "design_choice": "The F2 candidate's uncertainty construction is the ADOPTED design's construction with the estimator replaced: same arms, same universes, same per-block formulas, same assembly algebra and gates. Rationale: the plan's candidate families change the estimator (plan section 6), and holding the construction fixed makes the F2-versus-trunk difference attributable to the estimator alone; no new systematic model is introduced.",
+ "formula": "C_F2 = D (sum_V C_b) D + sum_R C_b + sum_A L_b + C_stat + C_ML, via z_assembly.assemble; D = diag(g), g from z_assembly.derive_variant_diagonals / compute_g for centring variant 'cv' on the F2 unified-throw product",
+ "blocks": {
+  "V (13 bands, z_contract.VERT_BANDS)": "uq_math.mat_covariance of each band's universes on the support rows (universe-mean centred, 1/N), from the F2 vertical sweep (c-sweep-tasks.tsv, bkgaware bank)",
+  "R (27 bands, z_contract.check_declared_residual)": "the same formula for the 22 non-vertical sweep bands and the 4 weight-only detector bands (c-det-tasks.tsv, driver, closure-slack 5000); __Normalization_flat = outer(0.014 x_cv)",
+  "A (5 bands, z_contract.LATERAL_BANDS)": "uq_math.mat_covariance of the two selection-complete endpoints (c-lat-tasks.tsv, driver on active_universe_5d/standard/merged, run_p4_unfold_std.sh arguments)",
+  "C_stat": "replica-mean centred, 1/(N-1), 100 Poisson data+MC bootstrap replicas (c-boot-tasks.tsv)",
+  "C_ML": "replica-mean centred, 1/(N-1), 24 train-fraction-0.8 split replicas (c-split-tasks.tsv)",
+  "g operands": "F2 unified throws 0-159 (c-throw-tasks.tsv, draw seed 1000) and block-sum units (c-block-tasks.tsv, knobs split 4/4/4) combined with the null repeat (c-comb-tasks.tsv)"
+ },
+ "central_value": "the F2 driver unfold on the CV omnifile (c-central-tasks.tsv), mirroring the adopted central product's producer; its positive cells define the support, which the throw product's own support must equal exactly",
+ "estimator_everywhere": "every arm runs unmodified production code under nd-unfolding/s5c_with_estimator.py --config deterministic; each task's interception evidence file must show all intercepted estimators carrying the F2 parameters, or that arm's product is not used",
+ "overlap_statement": "C_stat and C_ML are both retained, as in the adopted design; F2 has no training seed, so no seed-randomized ensemble is added. The known overlap between the bootstrap (which resamples training data) and the train-fraction split is inherited from the adopted design and is disclosed, not newly introduced.",
+ "gates": ["z_contract band partition and declared residual", "z_assembly.gate_closure_identity", "z_assembly.gate_g_domain", "z_assembly.gate_symmetry_psd on the assembled object", "support equality between the central value and the throw product", "complete populations: 169 sweep, 8 detector, 10 lateral, 100 bootstrap, 24 split products present"],
+ "implementation": "nd-unfolding/s5c_assemble.py",
+ "product_keys": "the adopted product's keys (hCov_combined5d_total_uthrow, hXSecND_flat, hRowIndex5D, hSupportMask, hPinnedMask, hInflation_g, metadata_json with variant 'cv'), so project_cov_nd.py consumes it unchanged",
+ "what_it_cannot_establish": "coverage of total intervals (Tier T, not attempted); seed stability beyond the contract's G-seed/G-perm evidence; any adoption, which requires plan section 9 conditions 1-3 and 5 including an independent reproduction from operands"
+}
