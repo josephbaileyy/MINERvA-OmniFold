@@ -40,6 +40,10 @@ class MeterHarness(unittest.TestCase):
         self.write_budget(_budget())
         self._fake("sacct", f'cat "{self.sacct_out}"\n')
         self._fake("sbatch", 'echo "12345;perlmutter"\n')
+        self.tres = self.tmp / "tres.txt"
+        self.tres.write_text("JobId=12345 JobName=s5c-t TRES=cpu=64,mem=100G,node=1,billing=128 Foo=bar\n")
+        self._fake("scontrol", f'cat "{self.tres}"\n')
+        self._fake("scancel", f'echo "$@" >> "{self.tmp}/scancelled"\n')
 
     def _fake(self, name: str, body: str) -> None:
         path = self.bin / name
@@ -94,13 +98,14 @@ class AdmissionTests(MeterHarness):
 
     def test_gpu_concurrency_refuses_and_throttle_admits(self):
         self.write_budget(_budget(gpu_cap=50.0, gpu_stages={"pilot": 50.0}))
+        self.tres.write_text("JobId=12345 TRES=cpu=32,mem=57G,node=1,billing=32,gres/gpu=1\n")
         wide = self.submit("--gpus-per-task", "1", "--", "g.sh", pool="gpu", qos="gpu_shared", ntasks="8", billing="32")
         self.assertEqual(wide.returncode, 4, wide.stdout)
         narrow = self.submit("--gpus-per-task", "1", "--throttle", "4", "--", "g.sh", pool="gpu", qos="gpu_shared", ntasks="8", billing="32")
         self.assertEqual(narrow.returncode, 0, narrow.stdout + narrow.stderr)
 
     def test_priced_flag_override_is_refused(self):
-        for flag in ("--time=600", "--requeue", "-J", "--account=m3246_g", "--array=0-99"):
+        for flag in ("--time=600", "--requeue", "-J", "--account=m3246_g", "--array=0-99", "--parsable"):
             proc = self.submit("--", flag, "job.sh")
             self.assertEqual(proc.returncode, 2, flag)
 
@@ -116,6 +121,27 @@ class AdmissionTests(MeterHarness):
         self._fake("sbatch", 'echo "12347;perlmutter"\n')
         again = self.submit("--throttle", "4", "--", "job.sh", ntasks="8", billing="128")  # full 4.0 available again
         self.assertEqual(again.returncode, 0, again.stdout)
+
+
+class SchedulerPriceTests(MeterHarness):
+    def test_underpriced_job_is_cancelled_and_refused(self):
+        self.tres.write_text("JobId=12345 TRES=cpu=100,mem=180G,node=1,billing=100\n")
+        proc = self.submit("--", "-c", "32", "--mem=180G", "job.sh", billing="64")
+        self.assertEqual(proc.returncode, 8, proc.stdout + proc.stderr)
+        self.assertEqual((self.tmp / "scancelled").read_text().split(), ["12345"])
+        self.assertIn("job", [r["kind"] for r in self.ledger_records()])
+
+    def test_matching_price_is_kept(self):
+        self.tres.write_text("JobId=12345 TRES=cpu=64,mem=100G,node=1,billing=64\n")
+        proc = self.submit("--", "-c", "64", "job.sh", billing="64")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertFalse((self.tmp / "scancelled").exists())
+
+    def test_extra_gpus_are_refused(self):
+        self.write_budget(_budget(gpu_cap=50.0, gpu_stages={"pilot": 50.0}))
+        self.tres.write_text("JobId=12345 TRES=cpu=64,mem=100G,node=1,billing=64,gres/gpu=2\n")
+        proc = self.submit("--gpus-per-task", "1", "--", "-G", "2", "g.sh", pool="gpu", qos="gpu_shared", billing="64")
+        self.assertEqual(proc.returncode, 8, proc.stdout + proc.stderr)
 
 
 class AccountingTests(MeterHarness):

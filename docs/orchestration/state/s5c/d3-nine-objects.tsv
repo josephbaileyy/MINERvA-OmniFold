@@ -1,0 +1,11 @@
+# D3 (AUTHORIZATION-20260924-scalar5d-campaign-activation.md S8): the nine UNPRESERVED objects of state/RECOVERY-MANIFEST-20260924-trunk-external-artifacts.json, in its order
+# sha256	size_bytes	path
+61b7a4939bd40459452e232d4a5cec3c0b19ad7a21715452f7bb3bc9e0c72dd2	890383062	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-mean.npz
+361090f94446260f8fd78ad46214118ad2c9d43a3fbcef295b499c2bdbf7e214	887254200	/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-cv.npz
+6e2b8b32439b99796aa0ed101038db4acadbb3c1d44e28ad13691997de9d21f3	887371441	/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-mean.npz
+7e4636a33e490f482842d32775900da2a59587db5644cd9d661a58561a0e0190	887228520	/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-cv.npz
+dbda36078c234655dbae290bf2e725ff0d3c557943c645e5d41b021d18b3dbc9	887324826	/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-mean.npz
+950f8cb15c5a0bd785d65e7f85f4cb40fa86e27383973f82ef15c7ef525c1263	42326607877	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/candidate/std_final5_candidate.root
+27b2e456f80e15d8a5c4da1bcd3b01a201b80385341af68614c85b6b7f8f5374	892078834	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_cov_mlsplit_5d.root
+6580016fa7136e6f98867707f4d48557350b26a91773d0c300be20113c2c6934	891732011	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_cov_stat_5d.root
+09a029ed2a7de0ffd144b1ad0ad8d3e0bf8e8b9788797b0af58693c753795560	2668265910	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_precursor_20260914/unified_throw_cov_5d.root

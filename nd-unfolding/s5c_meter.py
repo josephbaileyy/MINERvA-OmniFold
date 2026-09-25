@@ -32,9 +32,17 @@ never admitted (``measure`` refuses, because an unregistered job is unmetered sp
 a submission whose sbatch arguments try to override the job name, requeue policy,
 account, QOS, time limit or array throttle the meter priced.
 
+THE PRICE IS CHECKED AGAINST THE SCHEDULER, NOT TRUSTED.  Slurm's billing depends on
+memory as well as CPUs (``--mem=90G`` with 32 CPUs bills 50), so the caller declares
+``--billing`` and, immediately after ``sbatch``, the meter reads the job's own ``TRES``
+from ``scontrol show job``.  A billing or GPU count above the declared one cancels the
+job at once and refuses (exit 8); the ledger keeps the job id, so ``sacct`` still
+accounts for anything it spent.
+
 Exit codes: 0 admitted/ok, 3 refused by a cap, 4 refused by concurrency, 5 ledger or
 budget integrity failure, 6 unregistered campaign job found, 7 sbatch failed (the
-reservation is released), 2 usage error.
+reservation is released), 8 scheduler billing exceeded the declared price (job
+cancelled), 2 usage error.
 """
 
 from __future__ import annotations
@@ -97,18 +105,11 @@ PRICED_FLAGS = (
     "--time",
     "-a",
     "--array",
-    "-N",
-    "--nodes",
-    "-G",
-    "--gpus",
-    "-c",
-    "--cpus-per-task",
-    "-C",
-    "--constraint",
+    "--parsable",
 )
 
 EXIT_OK, EXIT_USAGE, EXIT_CAP, EXIT_CONCURRENCY = 0, 2, 3, 4
-EXIT_INTEGRITY, EXIT_UNREGISTERED, EXIT_SBATCH = 5, 6, 7
+EXIT_INTEGRITY, EXIT_UNREGISTERED, EXIT_SBATCH, EXIT_UNDERPRICED = 5, 6, 7, 8
 
 
 class MeterError(RuntimeError):
@@ -195,7 +196,7 @@ def admissions(records: Iterable[dict]) -> dict[str, dict]:
                 folded[token]["job_id"] = rec["job_id"]
             else:
                 folded[token]["released"] = True
-        elif kind != "budget":
+        elif kind not in ("budget", "note"):
             raise MeterError(f"unknown ledger record kind {kind!r}", EXIT_INTEGRITY)
     return folded
 
@@ -413,6 +414,25 @@ class Ledger:
             os.fsync(fh.fileno())
 
 
+def scheduler_tres(job: str) -> dict[str, float]:
+    """``billing`` and ``gres/gpu`` from ``scontrol show job -o <job>``'s ``TRES=`` field."""
+    proc = subprocess.run(["scontrol", "show", "job", "-o", job], capture_output=True, text=True)
+    if proc.returncode != 0:
+        raise MeterError(f"scontrol failed for {job}: {proc.stderr.strip()}", EXIT_INTEGRITY)
+    first = proc.stdout.strip().splitlines()[0] if proc.stdout.strip() else ""
+    match = re.search(r"(?:^|\s)TRES=(\S+)", first)
+    if not match:
+        raise MeterError(f"no TRES field for job {job}", EXIT_INTEGRITY)
+    out = {"billing": 0.0, "gpus": 0.0}
+    for item in match.group(1).split(","):
+        key, _, value = item.partition("=")
+        if key == "billing":
+            out["billing"] = float(value)
+        elif key == "gres/gpu":
+            out["gpus"] = float(value)
+    return out
+
+
 def run_sacct(job_ids: Sequence[str]) -> str:
     """Two queries: every admitted job id (no window: ``-j`` defaults to epoch), and the
     last 14 days of the user's jobs for the unregistered-``s5c-`` scan (sacct refuses
@@ -503,7 +523,15 @@ def cmd_submit(args: argparse.Namespace) -> int:
             print(f"sbatch failed rc={proc.returncode}: {proc.stderr.strip()}", file=sys.stderr)
             return EXIT_SBATCH
         ledger.append({"kind": "job", "token": token, "utc": utc_now(), "job_id": job})
-        print(f"JOB {job}")
+        tres = scheduler_tres(job)
+        if tres["billing"] > req.billing or (req.pool == "gpu" and tres["gpus"] > req.gpus_per_task):
+            subprocess.run(["scancel", job], capture_output=True, text=True)
+            ledger.append(
+                {"kind": "note", "token": token, "utc": utc_now(), "note": f"cancelled: scheduler TRES {tres} exceeds the priced request"}
+            )
+            print(f"JOB {job} CANCELLED: scheduler TRES {tres} exceeds declared billing {req.billing}", file=sys.stderr)
+            return EXIT_UNDERPRICED
+        print(f"JOB {job} (scheduler billing {tres['billing']:g}, gpus {tres['gpus']:g})")
         return EXIT_OK
 
 
