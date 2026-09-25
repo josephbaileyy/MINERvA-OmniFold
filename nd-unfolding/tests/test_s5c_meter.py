@@ -165,6 +165,10 @@ class PredictedPriceTests(MeterHarness):
         self.assertEqual(s5c_meter.predicted_billing(whole, ["-N", "1"]), 256)
         gpu = s5c_meter.Request("pilot", "gpu", "gpu_shared", 1, 1, 1.0, 32, 1, "t")
         self.assertEqual(s5c_meter.predicted_billing(gpu, ["-G", "1"]), 32)
+        gpu_via_shared = s5c_meter.Request("pilot", "gpu", "shared", 1, 1, 1.0, 32, 1, "t")
+        self.assertEqual(s5c_meter.predicted_billing(gpu_via_shared, ["--gpus-per-task=1"]), 32)
+        gpu_regular = s5c_meter.Request("pilot", "gpu", "regular", 1, 1, 1.0, 128, 4, "t")
+        self.assertEqual(s5c_meter.predicted_billing(gpu_regular, ["-N", "1"]), 128)
 
     def test_measured_attempt_above_declaration_is_flagged(self):
         self.assertEqual(self.submit("--", "job.sh", billing="128").returncode, 0)

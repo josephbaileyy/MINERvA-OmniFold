@@ -453,7 +453,7 @@ def predicted_billing(req: "Request", sbatch_args: Sequence[str]) -> float:
         mem = _flag_value(sbatch_args, ("--mem",))
         need = max(cpus, math.ceil(_mem_mb(mem) / SHARED_MB_PER_CPU) if mem else 0)
         return float(2 * math.ceil(need / 2))
-    if req.qos != "gpu_shared":
+    if req.qos not in ("gpu_shared", "shared"):  # `-q shared -C gpu` is how Perlmutter reaches gpu_shared
         return 128.0 * nodes
     return 32.0 * max(req.gpus_per_task, 1)
 
