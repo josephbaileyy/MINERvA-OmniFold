@@ -210,7 +210,7 @@ docs/orchestration/OUTCOME-20260921-L2-probe-blocked-at-stage-4.md	tracked	ARCHI
 docs/orchestration/OUTCOME-20260922-3d-covariance-projected-from-the-adopted-trunk.md	tracked	LIVE	document		20260922	open		route-only		no	5	156	13956
 docs/orchestration/OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md	tracked	LIVE	document		20260922	open		route-only	docs/orchestration/state/check-withdrawal-completeness-20260910.py	no	8	225	18102
 docs/orchestration/OUTCOME-20260922-ten-adopted-receipts-superseded-by-code-drift.md	tracked	LIVE	document		20260922	open		route-only		no	7	144	9049
-docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md	tracked	LIVE	document		20260925	open		route-only		no	3	60	4566
+docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md	tracked	LIVE	document		20260925	open		route-only		no	4	102	8620
 docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	tracked	LIVE	document		20260822	open		route-only		no	4	160	8870
 docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	tracked	LIVE	document		20260823	open		route-only		no	4	149	8296
 docs/orchestration/PACKET-20260823-round5-f2a-f17a-repair.md	tracked	LIVE	document		20260823	open		route-only		no	10	259	16441
@@ -942,24 +942,24 @@ docs/orchestration/state/s5c/c-comb-tasks.tsv	tracked	MACHINE	state-artifact	s5c
 docs/orchestration/state/s5c/c-det-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	2	10	6139
 docs/orchestration/state/s5c/c-lat-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	2	11	6029
 docs/orchestration/state/s5c/c-split-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	2	25	10001
-docs/orchestration/state/s5c/c-stab-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	3	7	3191
+docs/orchestration/state/s5c/c-stab-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	2	7	3191
 docs/orchestration/state/s5c/c-sweep-part1-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	41	16481
 docs/orchestration/state/s5c/c-sweep-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	2	170	69164
 docs/orchestration/state/s5c/c-throw-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	1	41	18624
 docs/orchestration/state/s5c/c1-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	2	442
 docs/orchestration/state/s5c/c1/f1_member_check.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	4	661	12090
-docs/orchestration/state/s5c/campaign-state.json	tracked	MACHINE	state-artifact	s5c		open		exact-path-only		no	4	125	5028
+docs/orchestration/state/s5c/campaign-state.json	tracked	MACHINE	state-artifact	s5c		open		exact-path-only		no	4	161	7280
 docs/orchestration/state/s5c/contract-amendment-1-construction.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	1	22	3794
 docs/orchestration/state/s5c/contract-amendment-2-review-corrections.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	3	25	5223
 docs/orchestration/state/s5c/contract-amendment-3-f2-revision-1.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	2	20	3181
-docs/orchestration/state/s5c/contract-amendment-4-f2-revision-2.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	21	4767
+docs/orchestration/state/s5c/contract-amendment-4-f2-revision-2.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	3	21	4767
 docs/orchestration/state/s5c/contract.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only	docs/orchestration/test_campaignctl.py;docs/orchestration/verify_hash_bindings.py;nd-unfolding/s5c_dump_bkg.py;nd-unfolding/s5c_futility_watch.sh;nd-unfolding/s5c_pseudo.py;nd-unfolding/s5c_valid_launch.sh;nd-unfolding/tests/test_s5c_queue.py	yes	35	306	11212
 docs/orchestration/state/s5c/d1-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	15	5952
 docs/orchestration/state/s5c/d1/bias_allowance.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only	nd-unfolding/s5c_coverage.py	yes	2	319	5803
 docs/orchestration/state/s5c/d1/bias_correction.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only	nd-unfolding/s5c_coverage.py;nd-unfolding/s5c_futility_watch.sh	yes	3	476	9699
-docs/orchestration/state/s5c/d1/d1_summary.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	5	1329	32375
+docs/orchestration/state/s5c/d1/d1_summary.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	6	1329	32375
 docs/orchestration/state/s5c/d2-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	5	1911
-docs/orchestration/state/s5c/d2/d2_summary.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	1329	32409
+docs/orchestration/state/s5c/d2/d2_summary.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	1	550	12218
 docs/orchestration/state/s5c/d3-nine-objects.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	3	11	1593
 docs/orchestration/state/s5c/d3/SHA256SUMS	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	5	24	2069
 docs/orchestration/state/s5c/d3/get-std_final5_candidate.root.log	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	2	1	360
@@ -987,7 +987,7 @@ docs/orchestration/state/s5c/d3/restore.tsv	tracked	MACHINE	state-artifact	s5c		
 docs/orchestration/state/s5c/d3/source-check.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only	nd-unfolding/s5c_hpss_backup.sh	yes	3	9	1522
 docs/orchestration/state/s5c/d3/steps.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only	nd-unfolding/s5c_hpss_backup.sh	yes	2	33	3380
 docs/orchestration/state/s5c/deliv/R21-fix-plan.md	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	437	30560
-docs/orchestration/state/s5c/gperm/gperm.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only	nd-unfolding/s5c_valid_launch.sh	yes	1	21	568
+docs/orchestration/state/s5c/gperm/gperm.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only	nd-unfolding/s5c_valid_launch.sh	yes	2	21	568
 docs/orchestration/state/s5c/p1-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only	nd-unfolding/s5c_analyze_p1.py	yes	1	19	4438
 docs/orchestration/state/s5c/p1/PRODUCTS.SHA256SUMS	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	1	21	1914
 docs/orchestration/state/s5c/p1/p1_summary.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	2	173	3547
@@ -1016,9 +1016,9 @@ docs/orchestration/state/s5c/p3/products/p3_nominal_s1.npz	tracked	MACHINE	state
 docs/orchestration/state/s5c/p3/products/p3_tilt20_s2.npz	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	1	639	182459
 docs/orchestration/state/s5c/p3/products/p4_null_standin_s3.npz	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	1	647	182480
 docs/orchestration/state/s5c/pilot-contract.json	tracked	MACHINE	state-artifact	s5c		open		exact-path-only	nd-unfolding/s5c_dump_bkg.py;nd-unfolding/s5c_pseudo.py	no	7	38	5054
-docs/orchestration/state/s5c/queues/cpu-construct.q	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	3	568
-docs/orchestration/state/s5c/queues/cpu-valid.q	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	13	1187
-docs/orchestration/state/s5c/queues/gpu.q	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	11	1607
+docs/orchestration/state/s5c/queues/cpu-construct.q	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	1	3	568
+docs/orchestration/state/s5c/queues/cpu-valid.q	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	1	13	1187
+docs/orchestration/state/s5c/queues/gpu.q	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	1	11	1607
 docs/orchestration/state/s5c/s-sigma-tail-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	5	1905
 docs/orchestration/state/s5c/s-sigma-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	9	3595
 docs/orchestration/state/s5c/s-valid-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only	nd-unfolding/s5c_valid_launch.sh	yes	2	1201	521007
