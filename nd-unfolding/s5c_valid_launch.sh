@@ -30,9 +30,10 @@ out=$(timeout 1000 $M submit --allocate --allocate-wait-s 900 --stage measuremen
       --measures "Tier-S validation experiments, s-valid-tasks.tsv lines ${FIRST}-${LAST}" \
       --cannot-authorize "a coverage verdict by itself (only the complete declared population is evaluated)" \
       "${ARGS[@]}" 2>&1)
+rc=$?
 echo "$out"
 JOB=$(echo "$out" | sed -n 's/^JOB \([0-9]*\).*/\1/p')
-[ -n "$JOB" ] || exit 7
+[ -n "$JOB" ] || exit $((rc ? rc : 7))   # the meter's code: 4 concurrency (s5c_queue.sh retries)
 mkdir -p "$NS/runs/s_valid"
 cd "$NS" || exit 2
 nohup bash "$DEPLOY/nd-unfolding/s5c_steps.sh" "$JOB" "$DEPLOY" "$PIN" 32 48G \
