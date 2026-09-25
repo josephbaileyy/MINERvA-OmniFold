@@ -1,0 +1,20 @@
+{
+ "schema": "s5c-contract-amendment/1",
+ "amends": ["docs/orchestration/state/s5c/contract.json (frozen c29dde25)", "contract-amendment-2-review-corrections.json"],
+ "status": "FROZEN at the commit that first adds this file, BEFORE any validation experiment (runs/s_valid holds 0 products). This is F2 DEVELOPMENT REVISION 1 of the at most two the plan permits per family (plan section 6), prompted by development evidence only (studies D1, D2 and the subtraction check; development seeds 1-99999), with fresh validation seeds.",
+ "development_evidence": {
+  "record": "docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md",
+  "D1": "docs/orchestration/state/s5c/d1/d1_summary.json: at nominal truth the highest-W column of the (E_avail,W) projection is low by 3.5%-4.1% (+-0.1%; 8-12 Tier-S sigma) in split, no-split and production-estimator experiments alike",
+  "D2": "the same no-split experiments with signal-only pseudo-data (no background, no subtraction): largest mean residual 0.22% (0.6 sigma); 79% within 1 sigma, 97% within 1.96 sigma"
+ },
+ "revision": {
+  "interval_construction": "68%: f_hat +- (b_rel_f * |f_hat| + sigma_f); 95%: f_hat +- (b_rel_f * |f_hat| + 1.96 sigma_f). sigma_f is unchanged (Tier-S bootstrap). b_rel_f is a LINEAR closure-bias allowance, not a correction: the estimate is not shifted.",
+  "b_rel": "docs/orchestration/state/s5c/d1/bias_allowance.json: |mean relative nominal-truth residual| + 2 standard errors over the nine split F2 development experiments (max 4.33%, median 0.22%, 16 functionals above 1%)",
+  "why_linear": "a known deterministic bias added in quadrature undercovers exactly where it is realised (for |b| >> sigma, coverage of +-sqrt(sigma^2+b^2) tends to 50%); a linear allowance is conservative at nominal truth",
+  "independence_statement": "b is estimated ONLY at nominal truth; the E_avail-tilt and q3-conditional grid points test whether a nominal-derived allowance suffices under truth departures. At the nominal grid point the validation is an independent re-measurement of the allowance with fresh seeds, not an independent test of its adequacy there; this is stated with any result.",
+  "evaluator": "nd-unfolding/s5c_coverage.py --bias-allowance docs/orchestration/state/s5c/d1/bias_allowance.json"
+ },
+ "futility_rule": "after the first 400 declared validation seeds of EVERY grid point exist, the evaluator runs with --interim 400: if for any (functional, grid point) the one-sided Clopper-Pearson UPPER bound at 0.05/(153*3) on 68% (95%) coverage is below 0.66 (0.94), the verdict is FAIL (futility) and the remaining validation experiments are not run. The rule can only end validation with a FAIL; a PASS still requires the complete declared population of 4,000 per grid point.",
+ "unchanged": "functionals, grid, seeds, n = 4,000 per point, the gate thresholds and their Bonferroni correction, sigma, and every amendment-2 correction",
+ "what_revision_1_cannot_establish": "that the analysis's purity background method is unbiased (it is not, per D1/D2); coverage of the reported full-MC intervals without the transfer argument; total (statistical + systematic) coverage (Tier T)"
+}

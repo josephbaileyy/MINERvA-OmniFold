@@ -60,6 +60,25 @@ class Coverage(unittest.TestCase):
         self.assertEqual((rc, res["verdict"]), (4, "INCOMPLETE"))
         self.assertEqual(res["grid"][0]["missing"], [1100])
 
+    def test_interim_futility_fires_on_gross_undercoverage_and_not_on_good(self):
+        tmp, c = self.build(400, inflate=3.0)   # true 68% coverage ~0.26
+        rc = sc.main(["--contract", str(c), "--experiments", str(tmp / "exp"), "--bootstrap", str(tmp / "boot"),
+                      "--interim", "400", "--out", str(tmp / "i.json")])
+        self.assertEqual(json.loads((tmp / "i.json").read_text())["verdict"], "FUTILITY-FAIL")
+        tmp, c = self.build(400, inflate=0.8)
+        sc.main(["--contract", str(c), "--experiments", str(tmp / "exp"), "--bootstrap", str(tmp / "boot"),
+                 "--interim", "400", "--out", str(tmp / "i.json")])
+        self.assertEqual(json.loads((tmp / "i.json").read_text())["verdict"], "CONTINUE")
+
+    def test_bias_allowance_widens_intervals(self):
+        tmp, c = self.build(300, inflate=1.3)
+        U, names = sc.reported_functionals({"measurement": {"partition_J": J}})
+        ba = tmp / "ba.json"
+        ba.write_text(json.dumps({"functional_names": names, "b_rel": [0.05] * len(names)}))
+        rc = sc.main(["--contract", str(c), "--experiments", str(tmp / "exp"), "--bootstrap", str(tmp / "boot"),
+                      "--bias-allowance", str(ba), "--out", str(tmp / "o.json")])
+        self.assertEqual(json.loads((tmp / "o.json").read_text())["verdict"], "PASS")
+
     def test_functional_count(self):
         U, names = sc.reported_functionals({"measurement": {"partition_J": J}})
         self.assertEqual(U.shape[0], 43 + 3 + 1)
