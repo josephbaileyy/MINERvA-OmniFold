@@ -145,7 +145,7 @@ def main(argv=None) -> int:
         with np.load(run_dir / "iterations" / f"iter{int(k):02d}.npz") as it:
             target = np.asarray(it["pull"], np.float64)
         source = {"kind": "pull", "run": str(run_dir), "iteration_file": f"iter{int(k):02d}.npz",
-                  "sha256": rr.sha256_file(run_dir / "iterations" / f"iter{int(k):02d}.npz")}
+                  "sha256": ri.sha256_file(run_dir / "iterations" / f"iter{int(k):02d}.npz")}
     else:
         raise SystemExit(f"[step2-fixed] unknown target {args.target!r}")
 
