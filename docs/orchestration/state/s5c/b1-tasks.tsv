@@ -1,2 +1,2 @@
 # Phase B: development-MC support/resolution scan of the coarse joint-5D partition hierarchy (reads MC arrays only)
-partition_scan	s5c_partition.py	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--out	/pscratch/sd/j/josephrb/s5c-20260924/runs/b1/partition_scan.json
+partition_scan	s5c_partition.py	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--out	/pscratch/sd/j/josephrb/s5c-20260924/runs/b1/partition_scan_2.json

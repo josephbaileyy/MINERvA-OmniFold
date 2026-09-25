@@ -14,6 +14,8 @@ Hierarchy (coarse to fine; each level splits every coordinate):
 Split points are the existing fine-grid edges nearest to the weighted MC-truth quantiles
 (medians / tertiles) of the signal sample, so cells keep physical bin widths.
 
+Per coordinate it reports the marginal purity and stability of each coarse bin along that
+coordinate (the resolution question "does the detector permit subdividing this coordinate").
 Per cell it reports the expected reco-level signal count at data POT (sum of w_reco over
 reco-passing events whose reco coordinates fall in the cell), the truth count, joint purity
 (fraction of reco-in-cell weight whose truth is in the same cell) and joint stability (fraction of
@@ -88,7 +90,22 @@ def main(argv=None) -> int:
         with np.errstate(invalid="ignore", divide="ignore"):
             purity = np.where(reco_w > 0, diag / reco_w, 0.0)
             stability = np.where(truth_reco > 0, diag / truth_reco, 0.0)
+        axis_res = {}
+        for k, ax in enumerate(AXES):
+            e = edges[k]
+            nb = len(e) - 1
+            bt = np.clip(np.searchsorted(e, gen[:, k], side="right") - 1, 0, nb - 1)
+            br = np.clip(np.searchsorted(e, reco[:, k], side="right") - 1, 0, nb - 1)
+            sel = pr & (ct >= 0) & (cr >= 0)
+            same_ax = sel & (bt == br)
+            rw = np.bincount(br[sel], weights=wr[sel], minlength=nb)
+            tw = np.bincount(bt[sel], weights=wr[sel], minlength=nb)
+            dw = np.bincount(br[same_ax], weights=wr[same_ax], minlength=nb)
+            with np.errstate(invalid="ignore", divide="ignore"):
+                axis_res[ax] = {"purity": np.where(rw > 0, dw / rw, 0.0).tolist(),
+                                "stability": np.where(tw > 0, dw / tw, 0.0).tolist()}
         res["levels"][name] = {
+            "axis_resolution": axis_res,
             "parts": parts,
             "edges": {ax: e.tolist() for ax, e in zip(AXES, edges)},
             "n_cells": n_cells,
