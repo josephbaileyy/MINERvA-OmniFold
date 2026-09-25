@@ -188,7 +188,12 @@ def admissions(records: Iterable[dict]) -> dict[str, dict]:
         if kind == "open":
             if token in folded:
                 raise MeterError(f"token {token} opened twice", EXIT_INTEGRITY)
-            folded[token] = dict(rec, job_id=None, released=False)
+            folded[token] = dict(rec, job_id=None, released=False, raw_ids={})
+        elif kind == "link":
+            owner = [t for t, a in folded.items() if str(a.get("job_id")) == str(rec["job_id"])]
+            if len(owner) != 1:
+                raise MeterError(f"link for job {rec['job_id']} matches {len(owner)} admissions", EXIT_INTEGRITY)
+            folded[owner[0]]["raw_ids"].update({str(k): str(v) for k, v in rec["raw_ids"].items()})
         elif kind in ("job", "release"):
             if token not in folded:
                 raise MeterError(f"{kind} for unknown token {token}", EXIT_INTEGRITY)
@@ -285,7 +290,13 @@ def charges(folded: dict[str, dict], sacct_tasks: dict[str, dict]) -> dict[str, 
             out[token] = {"measured": 0.0, "closed": True, "charged": 0.0, "tasks_seen": 0, "underpriced": False}
             continue
         job = adm.get("job_id")
-        mine = {tid: e for tid, e in sacct_tasks.items() if job and base_job(tid) == str(job)}
+        raw = {v: f"{job}_{k}" for k, v in adm.get("raw_ids", {}).items()}
+        mine = {}
+        for tid, e in sacct_tasks.items():
+            if job and base_job(tid) == str(job):
+                mine[tid] = e
+            elif tid in raw:  # an array task sacct records under its own raw job id
+                mine.setdefault(raw[tid], e)
         measured = sum(task_node_hours(e, adm["qos"], adm["pool"]) for e in mine.values())
         terminal = all(
             e["states"] and all(s in TERMINAL_STATES for s in e["states"]) for e in mine.values()
@@ -305,6 +316,7 @@ def charges(folded: dict[str, dict], sacct_tasks: dict[str, dict]) -> dict[str, 
 
 def unregistered(folded: dict[str, dict], sacct_tasks: dict[str, dict]) -> list[str]:
     known = {str(a["job_id"]) for a in folded.values() if a.get("job_id")}
+    known |= {raw for a in folded.values() for raw in a.get("raw_ids", {}).values()}
     return sorted(
         tid
         for tid, e in sacct_tasks.items()
@@ -536,6 +548,7 @@ def state_of(budget_path: Path, ledger_path: Path, sacct_text: str | None) -> tu
     check_budget_binding(records, sha256_file(budget_path))
     folded = admissions(records)
     ids = [str(a["job_id"]) for a in folded.values() if a.get("job_id")]
+    ids += [raw for a in folded.values() for raw in a.get("raw_ids", {}).values()]
     text = sacct_text if sacct_text is not None else run_sacct(ids)
     tasks = parse_sacct(text)
     orphans = unregistered(folded, tasks)
@@ -656,6 +669,32 @@ def cmd_measure(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def parse_scontrol_links(text: str, job: str) -> dict[str, str]:
+    """``ArrayTaskId -> JobId`` for the array tasks of ``job`` that carry their own job id."""
+    links = {}
+    for jid, ajid, task in re.findall(r"JobId=(\d+) ArrayJobId=(\d+) ArrayTaskId=(\d+)", text):
+        if ajid == str(job) and jid != str(job) and int(task) < 4294967294:
+            links[task] = jid
+    return links
+
+
+def cmd_link(args: argparse.Namespace) -> int:
+    """Record, from the scheduler's own ``scontrol`` view (or a saved copy of it), which raw job
+    ids belong to an admitted array -- sacct can record a task under its raw id alone."""
+    text = args.from_file.read_text() if args.from_file else subprocess.run(
+        ["scontrol", "show", "job", "-o", str(args.job)], capture_output=True, text=True).stdout
+    links = parse_scontrol_links(text, str(args.job))
+    if not links:
+        print("no raw-id array tasks found", file=sys.stderr)
+        return EXIT_USAGE
+    with Ledger(args.ledger) as ledger:
+        admissions(read_ledger(args.ledger) + [{"kind": "link", "job_id": str(args.job), "raw_ids": links}])
+        ledger.append({"kind": "link", "utc": utc_now(), "job_id": str(args.job), "raw_ids": links,
+                       "evidence": str(args.from_file) if args.from_file else "scontrol show job -o"})
+    print(json.dumps(links))
+    return EXIT_OK
+
+
 def cmd_rebind(args: argparse.Namespace) -> int:
     load_budget(args.budget)
     with Ledger(args.ledger) as ledger:
@@ -695,6 +734,9 @@ def build_parser() -> argparse.ArgumentParser:
     m = sub.add_parser("measure", help="reconcile the ledger against sacct")
     m.add_argument("--sacct-file", type=Path)
     m.add_argument("--out", type=Path)
+    k = sub.add_parser("link", help="record array tasks that sacct keeps under their own raw job id")
+    k.add_argument("--job", required=True)
+    k.add_argument("--from-file", type=Path)
     r = sub.add_parser("rebind", help="bind the ledger to a (new) committed budget")
     r.add_argument("--reason", required=True)
     return parser
@@ -705,7 +747,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     if getattr(args, "sbatch_args", None) and args.sbatch_args[:1] == ["--"]:
         args.sbatch_args = args.sbatch_args[1:]
     try:
-        return {"submit": cmd_submit, "measure": cmd_measure, "rebind": cmd_rebind}[args.cmd](args)
+        return {"submit": cmd_submit, "measure": cmd_measure, "rebind": cmd_rebind, "link": cmd_link}[args.cmd](args)
     except MeterError as exc:
         print(f"s5c_meter: {exc}", file=sys.stderr)
         return exc.code

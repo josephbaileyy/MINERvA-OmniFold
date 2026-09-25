@@ -239,6 +239,28 @@ class AccountingTests(MeterHarness):
         self.assertTrue(adm["closed"])
         self.assertAlmostEqual(adm["charged"], 0.05)
 
+    def test_raw_id_tasks_close_the_array_once_linked(self):
+        self.assertEqual(self.submit("--", "job.sh", ntasks="3", billing="128").returncode, 0)
+        self.sacct_out.write_text(
+            "12345_[2-2%1]|s5c-t|CANCELLED by 1|0||None\n"
+            "90001|allocation|CANCELLED by 1|0||2026-09-25T01:00:00\n"
+            "90002|allocation|CANCELLED by 1|0||2026-09-25T01:00:00\n"
+        )
+        adm = next(iter(json.loads(self.run_meter("measure").stdout)["admissions"].values()))
+        self.assertFalse(adm["closed"])  # two tasks unaccounted: reservation kept
+        links = self.tmp / "links.txt"
+        links.write_text("JobId=12345 ArrayJobId=12345 ArrayTaskId=4294967294\n"
+                         "JobId=90002 ArrayJobId=12345 ArrayTaskId=1\nJobId=90001 ArrayJobId=12345 ArrayTaskId=0\n")
+        self.assertEqual(self.run_meter("link", "--job", "12345", "--from-file", str(links)).returncode, 0)
+        adm = next(iter(json.loads(self.run_meter("measure").stdout)["admissions"].values()))
+        self.assertTrue(adm["closed"])
+        self.assertAlmostEqual(adm["charged"], 0.0)
+
+    def test_link_to_unknown_job_is_refused(self):
+        links = self.tmp / "links.txt"
+        links.write_text("JobId=90001 ArrayJobId=55555 ArrayTaskId=0\n")
+        self.assertEqual(self.run_meter("link", "--job", "55555", "--from-file", str(links)).returncode, 5)
+
     def test_pending_bracket_keeps_reservation(self):
         self.assertEqual(self.submit("--", "job.sh", ntasks="3", billing="128").returncode, 0)
         self.sacct_out.write_text("12345_[0-2%1]|s5c-t|PENDING|0||Unknown\n")
