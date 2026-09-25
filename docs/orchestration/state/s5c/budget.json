@@ -2,8 +2,8 @@
  "schema": "s5c-budget/1",
  "campaign_key": "s5c-20260924",
  "authority": "docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md section 3 rows S1-S2 (D2); plan blob 8b0617b6 section 3",
- "revision": 2,
- "revision_reason": "feasibility receipt FEASIBILITY-20260925-s5c-scalar5d-measurement-and-inference.md: measurement Tier S coverage and the F2 systematic construction allocated as separate stages; inference receives no allocation because no inference scope is feasible within the envelope; the 20% verification/repair reserve is unchanged; caps unchanged (fixed at activation)",
+ "revision": 3,
+ "revision_reason": "Tier S runs on whole interactive nodes (queue depth measured 2026-09-25: ~1,000 pending CPU-shared jobs, no start estimate), which bill idle slots at the end of each allocation; measurement_tier_s raised from 130 to 150 CPU node-h and 40 to 44 GPU node-h out of the unallocated contingency. Caps, reserves and every other stage unchanged.",
  "measured_utc": "2026-09-25T06:07:48Z",
  "evidence": "docs/orchestration/state/s5c/allocation-measurement-20260925.txt (iris, squeue -A m3246,m3246_g all users, showquota, hpssquota, sacctmgr qos)",
  "billing_rule": {
@@ -46,7 +46,7 @@
     "pilot": 17.263,
     "cleanup": 34.527,
     "preservation": 0.5,
-    "measurement_tier_s": 130.0,
+    "measurement_tier_s": 150.0,
     "measurement_construction": 30.0
    }
   },
@@ -61,7 +61,7 @@
     "verification_repair": 25.0,
     "pilot": 6.25,
     "cleanup": 12.5,
-    "measurement_tier_s": 40.0,
+    "measurement_tier_s": 44.0,
     "measurement_construction": 15.0
    }
   }
@@ -71,7 +71,7 @@
   "pilot": "at most 5% of each pool on initial cost/variance pilots",
   "cleanup": "at most 10% of each pool on targeted cleanup",
   "preservation": "D3's HPSS transfer/restore job(s); billed as xfer QOS (billing=2 per task observed)",
-  "unallocated": "cpu 63.926 node-h and gpu 26.25 node-h remain unassigned (contingency; Tier T if its dependency resolves)",
+  "unallocated": "cpu 43.926 node-h and gpu 22.25 node-h remain unassigned (contingency; Tier T if its dependency resolves)",
   "measurement_tier_s": "contract.json coverage (Tier S): the 200-replica sigma bootstrap and the 12,000 validation experiments; CPU and GPU pools both usable (the work is CPU LightGBM either way)",
   "measurement_construction": "the F2 central value and systematic construction (vertical universes, detector and lateral bands) under a contract amendment",
   "inference": "no allocation: every inference scope is infeasible within the envelope (feasibility receipt section 4)"
@@ -100,6 +100,10 @@
    "revision": 1,
    "measured_utc": "2026-09-25T06:07:48Z",
    "note": "activation budget"
+  },
+  {
+   "revision": 2,
+   "note": "feasibility receipt: measurement stages; no inference allocation"
   }
  ]
 }
