@@ -1,0 +1,3 @@
+# name	config	config_hash	selection	distortion	reference_run	extra_driver_args	runner
+pet2smoke-P2pre-F0	../../final_design/configs/pet2smoke/pet2smoke-P2pre-F0.json	079beb28dfdb89bb183a6119ca19b7622255c89882b505abefb7c903aa395ebd	F:0	dev	-	--step2-miss-mode efficiency_corrected	final_design/pet2/run_pet2_replicate.py
+pet2smoke-P2scr-F0	../../final_design/configs/pet2smoke/pet2smoke-P2scr-F0.json	364a1ad458805c6ee30aa0fa6cbe00bff801b8e727ab4f98a9ea8221f8a63a0a	F:0	dev	-	--step2-miss-mode efficiency_corrected	final_design/pet2/run_pet2_replicate.py
