@@ -1,0 +1,22 @@
+{
+ "schema": "s5c-gperm/1",
+ "threshold": 0.05,
+ "n_functionals": 153,
+ "sigma_over_value": {
+  "min": 0.000737019015233436,
+  "median": 0.0015805852503470252,
+  "max": 0.004879203909290506
+ },
+ "perms": {
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p1/f2_s42_perm1.npz": {
+   "max_shift_over_sigma": 1.3363773976418054e-09,
+   "argmax": "J214"
+  },
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p1/f2_s42_perm2.npz": {
+   "max_shift_over_sigma": 1.3596119768038665e-09,
+   "argmax": "J214"
+  }
+ },
+ "max_shift_over_sigma": 1.3596119768038665e-09,
+ "verdict": "PASS"
+}
