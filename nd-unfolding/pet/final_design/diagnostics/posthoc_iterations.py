@@ -112,7 +112,7 @@ def analyze_run(run: Path, rf: dict[str, np.ndarray]) -> dict:
     rc_Eb = np.digitize(rc_E, q)
 
     def truth_block(mask: np.ndarray, w: np.ndarray) -> dict:
-        ww, pw, ow = (w * mask), (w0 * mask), (w0 * orc * mask)
+        ww, pw, ow = (w0 * w * mask), (w0 * mask), (w0 * orc * mask)
         out = {"eavail": recovery(hist(eb, ww, nb), hist(eb, pw, nb), hist(eb, ow, nb))}
         for k, t in SPECIES_CLASSES.items():
             out[f"class_{k}"] = recovery(hist(cls[k], ww, t + 1), hist(cls[k], pw, t + 1),
@@ -130,13 +130,27 @@ def analyze_run(run: Path, rf: dict[str, np.ndarray]) -> dict:
                 "reco_nclusters": recovery(hist(rc_nb, ww, 13), hist(rc_nb, pw, 13), hist(rc_nb, ow, 13)),
                 "reco_Esum_decile": recovery(hist(rc_Eb, ww, 10), hist(rc_Eb, pw, 10), hist(rc_Eb, ow, 10))}
 
+    # scorer cross-check: E_avail against the replicate's own pseudodata truth, as the predecessor's
+    # score_replicate.py computes it; must reproduce the committed scores.json to 1e-9
+    ka = A["pseudo_pass_truth"].astype(bool) & np.isfinite(A["pseudo_truth"][:, 2])
+    kb = tru & np.isfinite(eav)
+    tgt = hist(eavail_bin(A["pseudo_truth"][ka, 2]), (A["pseudo_w_truth"] * A["pseudo_distortion"])[ka], nb)
+    committed = {}
+    if (run / "scores.json").exists():
+        committed = {it["k"]: it["push"]["aggregate"]["recovery"]
+                     for it in json.loads((run / "scores.json").read_text())["iterations"]}
     its = []
     for f in sorted(glob.glob(str(run / "iterations" / "iter[0-9][0-9].npz"))):
         k = int(Path(f).stem[4:]) + 1
         I = np.load(f)
         pull = I["pull"].astype(np.float64)
         push = I["push"].astype(np.float64)
-        rec = {"k": k,
+        vs_pseudo = recovery(hist(eb[kb], (w0 * push)[kb], nb), hist(eb[kb], w0[kb], nb), tgt)
+        if k in committed and vs_pseudo["recovery"] is not None and \
+                abs(min(vs_pseudo["recovery"], 1.0) - committed[k]) > 1e-9:
+            raise AssertionError(f"{run.name} k={k}: E_avail recovery {vs_pseudo['recovery']} "
+                                 f"!= committed {committed[k]}")
+        rec = {"k": k, "eavail_vs_pseudodata": vs_pseudo,
                "step1_detector": reco_block(pull),
                "pull_selected": truth_block(sel, pull),
                "push_selected": truth_block(sel, push),
@@ -159,11 +173,15 @@ def analyze_run(run: Path, rf: dict[str, np.ndarray]) -> dict:
                          if (m & (cls["n"] == c)).any() else None for c in range(4)]
                    for pop, m in (("selected", sel), ("missed", miss))}}
         its.append(rec)
+    oracle_self = truth_block(tru, orc)
+    for key, r in oracle_self.items():  # the oracle scored against itself must recover exactly
+        if "residual_l1" in r and r["residual_l1"] > 1e-9:
+            raise AssertionError(f"{run.name}: oracle self-check failed on {key}: {r['residual_l1']}")
     meta = json.loads((run / "run_identity.json").read_text()) if (run / "run_identity.json").exists() else {}
     return {"run": run.name, "identity": meta,
             "n": {"prior": int(rows.size), "truth": int(tru.sum()), "selected": int(sel.sum()),
                   "missed": int(miss.sum())},
-            "oracle_block": truth_block(tru, orc), "iterations": its}
+            "oracle_block": truth_block(tru, np.ones_like(orc)), "iterations": its}
 
 
 def main(argv=None) -> int:
