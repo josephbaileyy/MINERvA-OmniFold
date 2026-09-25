@@ -7,7 +7,7 @@
 # that prints "LAUNCHED job=<id>" is followed until the job leaves the queue, then the next line
 # runs; exit 0 without a launch just completes the line. Exit 4 (meter: refused by concurrency) is retried every 5 minutes; exit 7 (not granted) up
 # to 12 times; any other outcome stops the queue. A validation line (one invoking
-# s5c_valid_launch.sh) is SKIPPED while <stop_file> exists (the futility gate writes it); other lines
+# s5c_valid_launch.sh or s5c_valid_next.sh) is SKIPPED while <stop_file> exists (the futility gate writes it); other lines
 # still run. With <after_pid>, the queue first waits for that process (a previous queue) to exit.
 # Admission, pricing and every guard stay in the meter and the launchers; this adds no spend path.
 
@@ -33,7 +33,7 @@ n=0
 while IFS= read -r line || [ -n "$line" ]; do
     n=$((n + 1))
     case "$line" in ''|'#'*) continue ;; esac
-    if [[ "$line" == *s5c_valid_launch.sh* && -e "$STOP" ]]; then
+    if [[ "$line" == *s5c_valid_* && -e "$STOP" ]]; then
         log "line $n SKIPPED (stop file present): $line"
         continue
     fi

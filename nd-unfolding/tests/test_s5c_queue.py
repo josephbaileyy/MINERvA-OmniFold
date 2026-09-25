@@ -15,6 +15,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ND = HERE.parent
 QUEUE, LAUNCH, WATCH = ND / "s5c_queue.sh", ND / "s5c_launch.sh", ND / "s5c_futility_watch.sh"
+NEXT = ND / "s5c_valid_next.sh"
 
 
 def _exe(path: Path, body: str) -> None:
@@ -89,9 +90,11 @@ class QueueTests(Harness):
         self.assertEqual(len(c.read_text().split()), 13)
 
     def test_stop_file_skips_validation_lines_only(self) -> None:
-        r = self.queue([self.mark("valid") + " # s5c_valid_launch.sh", self.mark("construct")], stop=True)
+        r = self.queue([self.mark("valid") + " # s5c_valid_launch.sh", self.mark("next") + " # s5c_valid_next.sh",
+                        self.mark("construct")], stop=True)
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         self.assertFalse((self.tmp / "valid").exists())
+        self.assertFalse((self.tmp / "next").exists())
         self.assertTrue((self.tmp / "construct").exists())
 
     def test_without_stop_file_validation_lines_run(self) -> None:
@@ -126,6 +129,84 @@ class QueueDeployTests(Harness):
         r = self.repo_queue(dirty=True)
         self.assertEqual(r.returncode, 2)
         self.assertFalse((self.tmp / "seen").exists())
+
+
+class ValidNextTests(Harness):
+    """40 table lines of 10 seeds; a stub s5c_valid_launch.sh launches job 5<first> (exit 4 if refuse exists)."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.deploy = self.tmp / "deploy"
+        t = self.deploy / "docs/orchestration/state/s5c"
+        t.mkdir(parents=True)
+        (self.deploy / "nd-unfolding").mkdir()
+        (t / "s-valid-tasks.tsv").write_text("# header\n" + "".join(
+            f"valid_{i}\ts5c_pseudo.py\t--truth\tnominal\t--amplitude\t0\t--pseudo-seeds\t{10*i}:{10*i+9}\n"
+            for i in range(40)))
+        _exe(self.deploy / "nd-unfolding" / "s5c_valid_launch.sh", f"""echo "$@" >> {self.tmp}/launch.log
+[ -e {self.tmp}/refuse ] && {{ echo "cpu concurrency would reach 3"; exit 4; }}
+echo "LAUNCHED job=5$4 lines=$4..$5"
+""")
+        self.claims = self.tmp / "ns" / "runs" / "s_valid" / "claims"
+        self.sv = self.tmp / "ns" / "runs" / "s_valid"
+
+    def next(self, pool: str) -> subprocess.CompletedProcess:
+        return subprocess.run(["bash", str(NEXT), str(self.deploy), "sha", pool], env=self.env,
+                              capture_output=True, text=True, timeout=60)
+
+    def held(self) -> dict:
+        return {f.name: f.read_text().strip() for f in self.claims.iterdir() if not f.name.startswith(".")}
+
+    def test_lanes_claim_disjoint_ranges_in_table_order(self) -> None:
+        self.claims.mkdir(parents=True)
+        (self.claims / "0-3").write_text("58861566")
+        (self.tmp / "squeue.seq").write_text("58861566\n58861566\\n54\n58861566\\n54\\n536\n")
+        self.assertIn("NEW lines 4..35 pool=cpu", self.next("cpu").stdout)
+        self.assertIn("NEW lines 36..39 pool=gpu", self.next("gpu").stdout)
+        r = self.next("cpu")
+        self.assertEqual((r.returncode, r.stdout.strip()), (0, "NOTHING-TO-DO"))
+        self.assertEqual(self.held(), {"0-3": "58861566", "4-35": "54", "36-39": "536"})
+
+    def test_a_refused_launch_releases_its_claim_and_returns_the_code(self) -> None:
+        (self.tmp / "refuse").write_text("")
+        r = self.next("cpu")
+        self.assertEqual(r.returncode, 4)
+        self.assertEqual(self.held(), {})
+
+    def test_a_finished_block_with_missing_seeds_is_relaunched_on_the_same_lines(self) -> None:
+        self.claims.mkdir(parents=True)
+        (self.claims / "0-31").write_text("111")
+        (self.claims / "32-39").write_text("222")
+        for i in range(32, 40):
+            for s in range(10 * i, 10 * i + 10):
+                (self.sv / f"nominal_a0_s{s}.npz").write_text("")
+        r = self.next("gpu")                       # squeue lists nothing: both jobs have left
+        self.assertIn("RETRY lines 0..31", r.stdout)
+        self.assertIn("previous holder 111", r.stdout)
+        self.assertEqual(self.held()["0-31"], "50")
+
+    def test_a_finished_complete_block_and_a_live_block_are_left_alone(self) -> None:
+        self.claims.mkdir(parents=True)
+        (self.claims / "0-31").write_text("111")
+        (self.claims / "32-39").write_text("222")
+        for i in range(0, 32):
+            for s in range(10 * i, 10 * i + 10):
+                (self.sv / f"nominal_a0_s{s}.npz").write_text("")
+        (self.tmp / "squeue.seq").write_text("222\n")
+        r = self.next("cpu")
+        self.assertEqual(r.stdout.strip(), "NOTHING-TO-DO")
+
+    def test_a_dead_pending_launcher_counts_as_finished(self) -> None:
+        self.claims.mkdir(parents=True)
+        (self.claims / "0-39").write_text("pending:999999")
+        self.assertIn("RETRY lines 0..39", self.next("cpu").stdout)
+
+    def test_a_failed_retry_restores_the_previous_holder(self) -> None:
+        self.claims.mkdir(parents=True)
+        (self.claims / "0-39").write_text("111")
+        (self.tmp / "refuse").write_text("")
+        self.assertEqual(self.next("cpu").returncode, 4)
+        self.assertEqual(self.held(), {"0-39": "111"})
 
 
 class LaunchTests(Harness):
