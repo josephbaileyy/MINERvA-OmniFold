@@ -1,0 +1,28 @@
+{
+ "schema": "s5c-state/1",
+ "campaign_key": "s5c-20260924",
+ "tracker": "OI-190",
+ "authority": {"record": "docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md", "commit": "81c62d15f7b8027c498126c42f087424f0f926d9"},
+ "approved_plan": {"path": "docs/orchestration/PLAN-scalar5d-reportable-uncertainties-and-inference.md", "blob": "8b0617b6e044a55a9b5870b46e5d90a15a6ced7a", "commit": "bf34a12cff9a2f06f0a3f1c516628085565eef60"},
+ "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-campaign-scalar5d",
+ "branch": "campaign/scalar5d-20260924",
+ "cluster_namespace": "/pscratch/sd/j/josephrb/s5c-20260924/",
+ "phase": "A",
+ "phase_detail": "preparation: meter and budget committed with this file; D3 backup and deploy tree next",
+ "pinned": {
+  "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
+  "adopted_projection_sha256": "835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e",
+  "contract": null,
+  "deploy_commit": null
+ },
+ "budget": {"path": "docs/orchestration/state/s5c/budget.json", "revision": 1},
+ "jobs": [],
+ "receipts": [],
+ "dependencies": {
+  "D1": "closed", "D2": "closed-for-campaign", "D3": "open-in-progress", "D4": "retained",
+  "D5": "displaced-S7", "D6": "open-avoided", "D7": "retained", "D8": "open-not-ours",
+  "D9": "open", "D10": "open", "D11": "open"
+ },
+ "verification": "none yet",
+ "next_action": "deploy a clean tree of this commit to the cluster namespace, bind the meter ledger to budget revision 1, and submit the D3 HPSS backup job through the meter"
+}

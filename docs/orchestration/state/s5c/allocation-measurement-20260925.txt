@@ -1,0 +1,71 @@
+# measured 2026-09-25T06:07:48Z on login10
+## iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               1705.1            10000.0     16547.3      20000.0
+m3246_g              428.1            90000.0    121081.7     180000.0
+## squeue -A m3246,m3246_g (all users) %i|%u|%a|%q|%T|%D|%C|%b|%l|%M|%L
+58838272|gregork|m3246_g|cron|PENDING|1|1|N/A|1-00:00:00|0:00|1-00:00:00
+58838271|gregork|m3246_g|cron|RUNNING|1|2|N/A|1-00:00:00|6:47:39|17:12:21
+58855477|josephrb|m3246_g|gpu_debug|PENDING|1|1|N/A|30:00|0:00|30:00
+58855476|josephrb|m3246_g|gpu_debug|PENDING|1|1|N/A|30:00|0:00|30:00
+58816009|josephrb|m3246_g|gpu_preempt|PENDING|1|1|N/A|6:00:00|0:00|6:00:00
+58816008|josephrb|m3246_g|gpu_regular|PENDING|1|1|N/A|6:00:00|0:00|6:00:00
+58835102_[0-4]|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00
+58743554_[0-4]|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00
+58794737_[0-4]|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00
+58793726_[0-4]|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00
+58743549_[4]|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00
+58854554|josephrb|m3246_g|gpu_debug|RUNNING|1|128|N/A|30:00|9:54|20:06
+58854649|josephrb|m3246_g|gpu_debug|RUNNING|1|128|N/A|30:00|9:54|20:06
+58815985|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58815986|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58816007|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58816006|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58816005|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58816004|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58816003|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58816002|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58816001|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58816000|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58815999|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58815998|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58815997|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58815996|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58815995|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58815994|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58815993|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58815992|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58815991|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|4:30:00|0:00|4:30:00
+58855463|gregork|m3246_g|gpu_interactive|RUNNING|1|128|gres/gpu:4|4:00:00|8:48|3:51:12
+58855203|ranit|m3246_g|gpu_interactive|RUNNING|1|128|gres/gpu:4|4:00:00|22:53|3:37:07
+58853535|twamorka|m3246_g|gpu_interactive|RUNNING|4|512|gres/gpu:4|4:00:00|1:28:35|2:31:25
+58852101|twamorka|m3246_g|gpu_interactive|RUNNING|4|512|gres/gpu:4|4:00:00|2:10:41|1:49:19
+58850867|gregork|m3246_g|gpu_interactive|RUNNING|1|128|gres/gpu:4|4:00:00|2:46:55|1:13:05
+58850271|alexmay|m3246_g|gpu_interactive|RUNNING|4|512|gres/gpu:4|4:00:00|3:05:06|54:54
+rc=0
+## showquota
++-------------+------------+-------------+----------------+------------+-------------+----------------+
+| File system | Space used | Space quota | Space used (%) | Inode used | Inode quota | Inode used (%) |
++-------------+------------+-------------+----------------+------------+-------------+----------------+
+|        home |   21.38GiB |    40.00GiB |          53.5% |    232.00K |       1.00M |          23.2% |
+|    pscratch |   16.37TiB |    20.00TiB |          81.8% |    609.87K |      10.00M |           6.1% |
++-------------+------------+-------------+----------------+------------+-------------+----------------+
+## hpssquota
+|                                pscratch |   16.37TiB |    20.00TiB |          81.8% |    609.87K |      10.00M |           6.1% |
+| josephrb usage on HPSS charged to m3246 |  300.20GiB |   512.00GiB |          58.6% |          - |           - |              - |
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+## sacctmgr qos
+gpu_interactive|1.000000
+gpu_regular|1.000000
+gpu_debug|1.000000
+preempt|1.000000
+gpu_preempt|1.000000
+interactive|1.000000
+shared|1.000000
+debug|1.000000
+xfer|1.000000
+overrun|1.000000
+gpu_shared|1.000000
+shared_interactive|1.000000
+premium|1.000000

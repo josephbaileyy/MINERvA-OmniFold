@@ -441,3 +441,6 @@ docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	LIVE	open
 docs/orchestration/CATALOG-ARCHIVE-scalar5d.md	LIVE	open	
 docs/orchestration/HANDOFF-20260924-preparation-for-scalar5d-campaign.md	LIVE	open	
 docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md	LIVE	open	
+docs/orchestration/CAMPAIGN-s5c-20260924-index.md	LIVE	open	
+docs/orchestration/state/s5c/campaign-state.json	MACHINE	open	
+docs/orchestration/state/s5c/budget.json	MACHINE	open	
