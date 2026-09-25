@@ -72,7 +72,10 @@ def main(argv=None) -> int:
     cmd = [sys.executable, str(HERE / "project_cov_nd.py"), "--src-cov", str(a.src),
            "--src-hist", "hCov_combined5d_total_uthrow", "--src-cv", str(a.src),
            "--src-axes", "pt,pz,eavail,q3,W", "--keep-axes", "eavail,W",
-           "--run-class", "diagnostic", "--expect-variant", "cv", "--out", str(fresh)]
+           "--run-class", "diagnostic", "--expect-variant", "cv",
+           "--acceptance-question", ("s5c Phase-A exit: do the stored operand z-cv.npz 3d7465f6 and "
+                                     "today's projector reproduce the adopted (E_avail,W) product 835828bf?"),
+           "--out", str(fresh)]
     proc = subprocess.run(cmd, capture_output=True, text=True)
     result["projector_rc"] = proc.returncode
     result["projector_stdout_tail"] = proc.stdout[-2000:]
