@@ -118,7 +118,13 @@ score_row() {
     T=$(target_path "${selection%%:*}" "$distortion"); [[ -s "$T" ]] && ARGS+=(--population-target "$T")
   fi
   [[ "$ref" != "-" ]] && ARGS+=(--reference-run "$ref")
-  python "$GUARD" --expect-root "$MINE" --inventory "$RUN/guard-score-$SLURM_JOB_ID.json" \
-    --label "V1-score-$name" -- "$V/score_replicate.py" --run "$RUN" "${ARGS[@]}" \
-    >> "$RUN/score-$SLURM_JOB_ID.log" 2>&1 || echo "$name score exit $?" >> "$OUT/exit-codes.txt"
+  # one scorer per run (review round 2): two chains can both see "complete, unscored"; the scorer
+  # writes through a fixed scores.json.tmp, so scoring is serialized and the check repeated inside
+  (
+    flock -n 9 || exit 0
+    [[ -s "$RUN/scores.json" ]] && exit 0
+    python "$GUARD" --expect-root "$MINE" --inventory "$RUN/guard-score-$SLURM_JOB_ID.json" \
+      --label "V1-score-$name" -- "$V/score_replicate.py" --run "$RUN" "${ARGS[@]}" \
+      >> "$RUN/score-$SLURM_JOB_ID.log" 2>&1 || echo "$name score exit $?" >> "$OUT/exit-codes.txt"
+  ) 9> "$RUN/.score.lock"
 }

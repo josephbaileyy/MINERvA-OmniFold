@@ -224,21 +224,42 @@ def stress_table(stress: dict[str, dict]) -> dict[str, Any]:
     return out
 
 
-def final_gate(final: dict[str, dict], manifest: Path, audit: Path | None) -> dict[str, Any]:
-    """Complete = every row of the frozen FINAL manifest scored at k = 3 and K*, none quarantined
-    or flagged by the lock audit."""
-    rows = [ln.split("\t")[0] for ln in manifest.read_text().splitlines()
-            if ln.strip() and not ln.startswith("#")] if manifest.exists() else []
-    suspect = set()
+def final_gate(final: dict[str, dict], manifest: Path, audit: Path | None,
+               receipts: Path | None = None) -> dict[str, Any]:
+    """Complete = every row of the frozen FINAL manifest scored at k = 3 and K*, its committed receipt
+    complete with the manifest's configuration hash, and every row present in the lock audit with
+    verdict CLEAN. Fail-closed (review round 2): no audit, a row the audit does not cover, a row it
+    could not verify, or a receipt that is absent/incomplete/mismatched each leaves FINAL incomplete."""
+    rows: dict[str, str] = {}
+    if manifest.exists():
+        for ln in manifest.read_text().splitlines():
+            if ln.strip() and not ln.startswith("#"):
+                f = ln.split("\t")
+                rows[f[0]] = f[2]
+    runs = {}
     if audit is not None and audit.exists():
-        suspect = {k.split("/", 1)[1] for k, v in json.loads(audit.read_text())["runs"].items()
-                   if v["suspect"] and k.startswith("final/")}
+        runs = {k.split("/", 1)[1]: v for k, v in json.loads(audit.read_text())["runs"].items()
+                if k.startswith("final/")}
     missing = [r for r in rows if r not in final or final[r]["k3"] is None
                or final[r][f"k{KSTAR}"] is None]
-    bad = sorted(set(rows) & suspect)
+    unaudited = sorted(r for r in rows if r not in runs)
+    not_clean = sorted(r for r in rows if r in runs and runs[r].get("verdict") != "clean")
+    receipt_problems = []
+    for r, want in rows.items():
+        path = (receipts / f"{r}.receipt.json") if receipts is not None else None
+        if path is None or not path.exists():
+            receipt_problems.append(f"{r}: no receipt")
+            continue
+        rc = json.loads(path.read_text())
+        if rc.get("complete") is not True:
+            receipt_problems.append(f"{r}: receipt not complete")
+        if rc.get("config_hash") != want:
+            receipt_problems.append(f"{r}: config_hash {rc.get('config_hash')} != manifest {want}")
     return {"manifest_rows": len(rows), "scored_complete": len(rows) - len(missing),
-            "missing": missing, "suspect_by_audit": bad,
-            "complete": bool(rows) and not missing and not bad}
+            "missing": missing, "audit": str(audit) if audit is not None else None,
+            "unaudited": unaudited, "not_clean_by_audit": not_clean,
+            "receipt_problems": receipt_problems,
+            "complete": bool(rows) and not (missing or unaudited or not_clean or receipt_problems)}
 
 
 def fmt(x: Any, nd: int = 3) -> str:
@@ -286,8 +307,9 @@ def markdown(res: dict[str, Any]) -> str:
         lines += [f"### FINAL (INTERIM, descriptive only): {fp['scored_complete']} of "
                   f"{fp['manifest_rows']} frozen runs scored; no inferential statistic is computed "
                   "until the complete, provenance-clean manifest is in (fixed-n design)"
-                  + (f"; quarantined/suspect: {', '.join(fp['suspect_by_audit'])}"
-                     if fp["suspect_by_audit"] else ""), ""]
+                  + "".join(f"; {label}: {', '.join(fp[key])}" for key, label in (
+                      ("unaudited", "not in the audit"), ("not_clean_by_audit", "audit not CLEAN"),
+                      ("receipt_problems", "receipt problems")) if fp[key]), ""]
     if res.get("final"):
         d = res["final"]["decisions"]
         lines += ["### FINAL (pool F): decision inequalities vs CTL (k=3), Holm across A, B, C", ""]
@@ -321,7 +343,9 @@ def main() -> None:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--results", type=Path, default=HERE / "results")
     ap.add_argument("--manifest", type=Path, default=HERE / "runs" / "final.tsv")
-    ap.add_argument("--audit", type=Path, default=HERE / "results" / "audit_locks.json")
+    ap.add_argument("--audit", type=Path, default=None,
+                    help="lock audit (audit_locks.py output) covering every FINAL row; required for "
+                         "FINAL decisions (no default: the audit must be named)")
     args = ap.parse_args()
     floors = historical_floors()
     res: dict[str, Any] = {"floors": floors}
@@ -337,7 +361,7 @@ def main() -> None:
     if stress:
         res["stress"] = stress_table(stress)
     final = load_stage(args.results / "final") if (args.results / "final").is_dir() else {}
-    gate = final_gate(final, args.manifest, args.audit)
+    gate = final_gate(final, args.manifest, args.audit, args.results / "final")
     if final and gate["complete"]:
         res["final"] = {"runs": final, "gate": gate, "decisions": decisions(final, floors)}
     elif final:

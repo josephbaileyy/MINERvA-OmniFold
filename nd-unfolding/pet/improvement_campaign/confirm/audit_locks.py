@@ -10,7 +10,9 @@ worked on one run directory at once. For every run directory of the given stages
   executing job accounted for;
 * `fits.jsonl`: each (iteration, step) fitted exactly once.
 
-A run with any overlap, duplicate fit, or segment inconsistency is SUSPECT. Standard library only;
+A run with any overlap, duplicate fit, missing/unexpected fit, or segment inconsistency is SUSPECT;
+one whose evidence is incomplete (a job without a scheduler interval or a segment, no readable
+state) is UNVERIFIABLE; otherwise CLEAN (`verdict`). Only CLEAN admits a run to FINAL. Standard library only;
 run on Perlmutter (needs `sacct`):  `python3 audit_locks.py <stage dir> ... --output audit.json`.
 """
 from __future__ import annotations
@@ -87,12 +89,52 @@ def audit_run(run: Path, iv: dict) -> dict:
                 r = json.loads(line)
                 fits[(r.get("iteration"), r.get("step"))] += 1
     dup = sorted(f"{k[0]}/{k[1]}x{v}" for k, v in fits.items() if v > 1)
-    suspect = bool(overlaps or dup or seg_problems)
-    return {"run": run.name, "status": (run / "status.txt").read_text().strip()
-            if (run / "status.txt").exists() else None,
-            "executing_jobs": jobs, "overlaps": overlaps, "job_level_overlaps": job_overlaps, "segments": len(segs),
+    status = (run / "status.txt").read_text().strip() if (run / "status.txt").exists() else None
+    # Completeness (review round 2): a COMPLETE run must carry exactly the expected fits and a
+    # terminal segment; an unfinished run must carry both steps of every completed iteration.
+    n_iter = None   # the planned iteration count lives in the receipt's config, not in state.json
+    if (run / "receipt.json").exists():
+        try:
+            n_iter = (json.loads((run / "receipt.json").read_text()).get("config") or {}).get("iterations")
+        except json.JSONDecodeError:
+            pass
+    done = state.get("completed_iteration")
+    fit_problems = []
+    if isinstance(n_iter, int) and isinstance(done, int):
+        want = {(i, s) for i in range(done + 1) for s in (1, 2)}
+        allowed = want | {(done + 1, 1), (done + 1, 2)}   # the iteration a live driver is fitting
+        missing = sorted(want - set(fits))
+        extra = sorted(set(fits) - allowed)
+        if missing:
+            fit_problems.append(f"missing fits {missing}")
+        if extra:
+            fit_problems.append(f"unexpected fits {extra}")
+        if status == "COMPLETE":
+            if done != n_iter - 1:
+                fit_problems.append(f"COMPLETE with completed_iteration {done} of {n_iter}")
+            if set(fits) != {(i, s) for i in range(n_iter) for s in (1, 2)}:
+                fit_problems.append("COMPLETE without exactly the expected fits")
+            if not segs or segs[-1].get("last_iteration") != n_iter - 1:
+                seg_problems.append(f"COMPLETE but the last segment ends at "
+                                    f"{segs[-1].get('last_iteration') if segs else None}, not {n_iter - 1}")
+    unverifiable = []
+    if "_unreadable" in state or not state:
+        unverifiable.append("no readable state/receipt")
+    elif not (isinstance(n_iter, int) and isinstance(done, int)):
+        unverifiable.append("state lacks config.iterations / completed_iteration")
+    no_interval = [j for j in jobs if j not in iv or iv[j][0] == float("inf")]
+    if no_interval:
+        unverifiable.append(f"no scheduler interval for jobs {no_interval}")
+    if unaccounted:
+        unverifiable.append(f"executing jobs without a segment {unaccounted}")
+    suspect = bool(overlaps or dup or seg_problems or fit_problems)
+    verdict = "suspect" if suspect else ("unverifiable" if unverifiable else "clean")
+    return {"run": run.name, "status": status,
+            "executing_jobs": jobs, "driver_intervals": {j: list(v) for j, v in drv.items()},
+            "overlaps": overlaps, "job_level_overlaps": job_overlaps, "segments": len(segs),
             "segment_problems": seg_problems, "jobs_without_segment": unaccounted,
-            "duplicate_fits": dup, "suspect": suspect}
+            "duplicate_fits": dup, "fit_problems": fit_problems, "unverifiable": unverifiable,
+            "suspect": suspect, "verdict": verdict}
 
 
 def main() -> None:
@@ -110,6 +152,8 @@ def main() -> None:
         result["runs"][f"{r.parent.name}/{r.name}"] = audit_run(r, iv)
     sus = [k for k, v in result["runs"].items() if v["suspect"]]
     result["summary"] = {"runs_audited": len(runs), "jobs": len(jobs), "suspect": sus,
+                         "unverifiable": [k for k, v in result["runs"].items()
+                                          if v["verdict"] == "unverifiable"],
                          "runs_with_jobs_without_segment": [
                              k for k, v in result["runs"].items() if v["jobs_without_segment"]]}
     args.output.write_text(json.dumps(result, indent=1) + "\n")
