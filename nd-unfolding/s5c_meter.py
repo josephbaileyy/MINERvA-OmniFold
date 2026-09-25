@@ -8,7 +8,7 @@ this meter; ``r5_meter.py`` itself and every guard that calls it are untouched.
 UNITS ARE NATIVE BILLED UNITS, NOT TASK-HOURS.
 
 * CPU pool (account ``m3246``): billed CPU node-hours
-  ``= ElapsedRaw/3600 * billing/256 * qos_factor`` per execution attempt.
+  ``= ElapsedRaw/3600 * billing/256 * qos_factor`` per execution attempt (256, not 128).
 * GPU pool (account ``m3246_g``): billed GPU node-hours
   ``= ElapsedRaw/3600 * billing/128 * qos_factor``; the campaign ceiling is stated in
   A100-equivalent GPU-hours ``= 4 * GPU node-hours``.
@@ -107,6 +107,11 @@ PRICED_FLAGS = (
     "--array",
     "--parsable",
 )
+
+MODELED_FLAGS = ("--mem", "--nodes", "--cpus-per-task", "--ntasks", "--gpus-per-task", "--gpus",
+                 "--constraint", "--output", "--error", "--dependency", "--wrap")
+UNPRICED_RESOURCE_FLAGS = ("--mem-per-cpu", "--mem-per-gpu", "--exclusive", "--ntasks-per-node",
+                           "--cpus-per-gpu", "--gres")
 
 EXIT_OK, EXIT_USAGE, EXIT_CAP, EXIT_CONCURRENCY = 0, 2, 3, 4
 EXIT_INTEGRITY, EXIT_UNREGISTERED, EXIT_SBATCH, EXIT_UNDERPRICED = 5, 6, 7, 8
@@ -386,9 +391,20 @@ def validate_request(req: Request, sbatch_args: Sequence[str]) -> None:
     if not re.fullmatch(r"[a-z0-9][a-z0-9_.]{0,40}", req.label):
         raise MeterError("label must be [a-z0-9_.], <= 41 chars", EXIT_USAGE)
     for arg in sbatch_args:
-        flag = arg.split("=", 1)[0]
-        if flag in PRICED_FLAGS:
-            raise MeterError(f"sbatch argument {flag} is set by the meter, not the caller", EXIT_USAGE)
+        if arg.startswith("--"):
+            name = arg.split("=", 1)[0]
+            # sbatch accepts any unambiguous abbreviation of a long option (--tim=, --qo=, --arr=)
+            hit = [f for f in PRICED_FLAGS if f.startswith("--") and len(name) >= 3 and f.startswith(name)]
+            if hit:
+                raise MeterError(f"sbatch argument {name} (abbreviates {hit[0]}) is set by the meter", EXIT_USAGE)
+            if name not in MODELED_FLAGS and any(u.startswith(name) and len(name) >= 4 for u in UNPRICED_RESOURCE_FLAGS):
+                raise MeterError(f"sbatch argument {name} changes the price in a way the meter does not model", EXIT_USAGE)
+        elif arg.startswith("-") and len(arg) >= 2 and arg[:2] in PRICED_FLAGS:
+            # -t600, -qpremium, -a0-999: an attached value is still the flag
+            raise MeterError(f"sbatch argument {arg[:2]} is set by the meter, not the caller", EXIT_USAGE)
+    ntasks = _flag_value(sbatch_args, ("-n", "--ntasks"))
+    if ntasks is not None and int(ntasks) > 1:
+        raise MeterError("--ntasks > 1 per array element is not priced by this meter", EXIT_USAGE)
 
 
 def salloc_argv(req: Request, extra_args: Sequence[str]) -> list[str]:
@@ -464,7 +480,15 @@ SHARED_MB_PER_CPU = 1843.2  # 90G->50, 64G->36, 80000M->44 billed CPUs on shared
 
 
 def _flag_value(args: Sequence[str], names: Sequence[str]) -> str | None:
+    longs = [n for n in names if n.startswith("--")]
     for i, arg in enumerate(args):
+        if arg.startswith("--") and len(arg.split("=", 1)[0]) >= 4:
+            head = arg.split("=", 1)[0]
+            full = [n for n in longs if n.startswith(head)]
+            if full and head not in names:  # an abbreviation: read it as the full option
+                arg = full[0] + arg[len(head):]
+                if "=" not in arg and i + 1 < len(args):
+                    return args[i + 1]
         for name in names:
             if arg == name and i + 1 < len(args):
                 return args[i + 1]
@@ -510,7 +534,10 @@ def scheduler_tres(job: str) -> dict[str, float]:
         raise MeterError(f"scontrol failed for {job}: {proc.stderr.strip()}", EXIT_INTEGRITY)
     first = proc.stdout.strip().splitlines()[0] if proc.stdout.strip() else ""
     fields = dict(re.findall(r"(?:^|\s)(AllocTRES|ReqTRES|TRES)=(\S*)", first))
-    tres = fields.get("AllocTRES") or fields.get("ReqTRES") or fields.get("TRES")
+    def real(v):  # a pending job prints the literal AllocTRES=(null) (measured 2026-09-25)
+        return v if v and v != "(null)" else None
+
+    tres = real(fields.get("AllocTRES")) or real(fields.get("ReqTRES")) or real(fields.get("TRES"))
     if not tres:
         raise MeterError(f"no TRES field for job {job}", EXIT_INTEGRITY)
     out = {"billing": 0.0, "gpus": 0.0}

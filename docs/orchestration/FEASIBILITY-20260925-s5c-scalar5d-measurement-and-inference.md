@@ -29,6 +29,15 @@ for the whole interactive allocation; actual charge reconciled from `sacct` at i
 
 ## 2. Exact sample sizes (Clopper–Pearson, Bonferroni lower bound on assurance)
 
+⚠ **CORRECTED 2026-09-25 (independent review, finding 2): the coverage rows below were first quoted
+from the m = 129 rows of `samplesize-assurance80.json` while stating m = 459.** At the contract's
+m = 459 ([`state/s5c/samplesize-m459.json`](state/s5c/samplesize-m459.json), exact CP, forward scan):
+68% gate — **21,152** per grid point if coverage is exactly nominal, **6,716** if 0.70, **2,935** if
+0.72; 95% gate — **11,711** / **5,828** (0.96) / **3,530** (0.965). At n = 4,000: assurance lower
+bounds **0.9985** (0.72) and **0.9589** (0.965), **0** at exactly nominal. The exactly-nominal
+increment in §5 is therefore ≈ 63,500 experiments ≈ 660 CPU node-h, not 51,000 / 530. The superseded
+figures are left visible below; the size and p-value rows were confirmed by the review.
+
 From [`state/s5c/samplesize-assurance80.json`](state/s5c/samplesize-assurance80.json) and the
 contract's scope (F = 153 functionals, G = 3 grid points, m = 459 comparisons per family):
 
@@ -67,6 +76,13 @@ empirical size or coverage check is replaced.
 | **F3** (seed-averaged) | **INFEASIBLE** | ≥ 10 independent groups × M seeds × a complete construction: with M = 4, ≈ 10 × 4 × 28 node-h ≈ 1,100 node-h |
 | **Joint-5D inference I-J** (four generators) | **INFEASIBLE WITHIN THE ENVELOPE** and **UNRESOLVED DEPENDENCY** | the precision rule alone needs ≥ 38,720 null experiments per comparison at p ≈ 0.5 (62,720 with four simultaneous comparisons), i.e. ≥ 400 CPU node-h per comparison, more than the envelope's total; the shallower tiers keep the same rule for p ≥ 0.05; no 5D generator truth prediction exists (only `(E_avail,W)` and 3D ones; the GENIE/NuWro/GiBUU event samples survive) |
 | **Projection inference I-EW** and **fixed contrasts I-C** | **INFEASIBLE WITHIN THE ENVELOPE** | the same precision rule and null-ensemble size |
+
+⚠ **CORRECTED 2026-09-25 (review finding 6):** "more than the envelope's total" is true of the CPU
+pool alone (38,720 × 0.0104 = 403 > 345.27 CPU node-h); with the GPU pool the envelope could hold
+≈ 39,000 experiments before Tier S and the reserve — still short of one comparison's null ensemble
+plus its size validation. The plan's insufficient-precision exit would report a Monte Carlo interval
+with a precision limitation, which does not qualify a comparison under §9 condition 4. The
+dispositions stand.
 
 **Assessed before abandoning joint inference (plan §5):** the permitted shallower tiers (smallest
 reportable p of 0.01 or 0.05) do not change the p ≥ 0.05 precision requirement, which dominates the

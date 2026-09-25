@@ -54,7 +54,7 @@ by `du -sb`, including directories) were deleted from the campaign namespace aft
 | each is resident on tape at its full size | **measured** after `migrate -R -P`: level-1 `(tape)` bytes = size for 9/9 (`residency.tsv`; e.g. PV `AH106800` in `lsV-last.txt`) |
 | a restore from HPSS reproduces the manifest SHA-256 | **measured**, 9/9 |
 | that restore read **tape** rather than HPSS disk cache | **NOT established.** `purge -R` returned rc 0 after migration, but the 42.3 GB object restored at 509,877 KB/s (`get-std_final5_candidate.root.log`), faster than a typical single tape drive; a digest match cannot distinguish the two sources |
-| HPSS quota after the backup | `hpssquota` read **300.20 GiB** both before and after (accounting lags writes); the +47.70 GiB is not yet visible in that instrument — re-read before any further HPSS write |
+| HPSS quota after the backup | `hpssquota` read **300.20 GiB** both before and after the job (accounting lags writes). **Re-read 2026-09-25T08:04Z by the independent reviewer: 347.90 GiB = 300.20 + 47.70**, so the backup is now reflected in the quota instrument |
 
 Two small evidence gaps, stated: the per-object `put-*.log`/`get-*.log` files are named by
 basename, so the three `z-mean.npz` and two `z-cv.npz` logs overwrote one another (their rc and

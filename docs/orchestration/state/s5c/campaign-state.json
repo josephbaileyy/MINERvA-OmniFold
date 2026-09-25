@@ -108,11 +108,19 @@
   "D11": "open"
  },
  "verification": "none yet",
- "next_action": "when the sigma bootstrap completes: evaluate G-perm, commit, submit Tier-S validation arrays (CPU 416 x 25, GPU 64 x 25) through the meter after budget revision 3",
+ "next_action": "commit review repairs; on sigma completion evaluate G-perm; run G-stab-F2 probes once their references exist; launch Tier-S validation only after G-perm PASS (G-stab-F2 must PASS before any adoption)",
  "development_gates": {
-  "G-repro": "PASS (P1: f2_s42 == f2_s42_rep bitwise)",
-  "G-seed": "PASS (P1: f2_s42 == f2_s43 bitwise)",
-  "G-perm": "PENDING the Tier-S sigma; P1 permutation movement max 1.57e-12 relative on the 43 M1 functionals",
-  "G-seed-5pct": "PASS by G-seed over the tested ensemble {42, 43}"
- }
+  "G-repro": "PASS",
+  "G-seed": "PASS (reproducibility only; per amendment 2 it is NOT a stability pass)",
+  "G-perm": "PENDING the Tier-S sigma (central unfold only)",
+  "G-seed-5pct": "WITHDRAWN by amendment 2: NOT APPLICABLE to a seedless estimator; never reported as passed",
+  "G-stab-F2": "PENDING: permuted re-runs of one unfold per arm type (c-stab-tasks.tsv) vs the construction products, <= 1e-6"
+ },
+ "reviews": [
+  {
+   "round": 1,
+   "worktree_head": "d16a1198",
+   "findings": "1 HIGH, 4 MEDIUM, 4 LOW -- all accepted; repairs in contract-amendment-2-review-corrections.json, s5c_meter.py, the feasibility receipt, budget history, D3 receipt, recovery-manifest pointer"
+  }
+ ]
 }

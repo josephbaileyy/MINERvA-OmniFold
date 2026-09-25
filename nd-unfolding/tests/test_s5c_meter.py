@@ -201,6 +201,30 @@ class AllocationTests(MeterHarness):
         self.assertEqual([r["kind"] for r in self.ledger_records()], ["open", "release"])
 
 
+class ReviewFindingTests(MeterHarness):
+    """Independent review 2026-09-25, findings 4 and 5."""
+
+    def test_pending_null_alloctres_falls_back_to_reqtres(self):
+        self.tres.write_text("JobId=12345 ReqTRES=cpu=100,mem=180G,node=1,billing=100 AllocTRES=(null)\n")
+        proc = self.submit("--", "-c", "32", "job.sh", billing="64")
+        self.assertEqual(proc.returncode, 8, proc.stdout + proc.stderr)
+
+    def test_attached_short_and_abbreviated_long_overrides_are_refused(self):
+        for bad in ("-t600", "-qpremium", "-a0-999", "--tim=600", "--qo=premium", "--arr=0-9", "--no-req",
+                    "--mem-per-cpu=4G", "--exclusive", "--ntasks=4"):
+            proc = self.submit("--", bad, "job.sh")
+            self.assertEqual(proc.returncode, 2, bad)
+
+    def test_innocent_flags_still_pass(self):
+        self.tres.write_text("JobId=12345 AllocTRES=cpu=32,mem=40G,node=1,billing=32\n")
+        proc = self.submit("--", "-c", "32", "--mem=40G", "-C", "cpu", "-o", "log.out", "job.sh", billing="64")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+
+    def test_abbreviated_nodes_is_priced(self):
+        req = s5c_meter.Request("pilot", "cpu", "regular", 1, 1, 1.0, 256, 0, "t")
+        self.assertEqual(s5c_meter.predicted_billing(req, ["--nod=4"]), 1024)
+
+
 class AccountingTests(MeterHarness):
     def test_unregistered_campaign_job_fails_closed_and_foreign_job_does_not(self):
         self.sacct_out.write_text("999|other-lane|COMPLETED|3600|billing=128|2026-09-25T01:00:00\n")

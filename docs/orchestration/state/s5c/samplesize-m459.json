@@ -1,0 +1,22 @@
+{
+ "schema": "s5c-samplesize-m459/1",
+ "m": 459,
+ "assurance_target": 0.8,
+ "method": "exact CP, Bonferroni assurance lower bound, forward scan in steps of 50 then unit refinement (the assurance is not monotone in n)",
+ "first_n": {
+  "0.66@0.6827": 21152,
+  "0.66@0.7": 6716,
+  "0.66@0.72": 2935,
+  "0.94@0.9545": 11711,
+  "0.94@0.96": 5828,
+  "0.94@0.965": 3530
+ },
+ "assurance_at_n4000": {
+  "0.66@0.72": 0.998529180204311,
+  "0.94@0.965": 0.9588660678865695,
+  "0.66@0.6827": 0.0,
+  "0.94@0.9545": 0.0,
+  "0.66@0.7": 0.0,
+  "0.94@0.96": 0.0
+ }
+}

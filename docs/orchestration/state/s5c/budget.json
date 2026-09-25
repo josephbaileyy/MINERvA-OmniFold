@@ -104,6 +104,10 @@
   {
    "revision": 2,
    "note": "feasibility receipt: measurement stages; no inference allocation"
+  },
+  {
+   "revision": 3,
+   "note": "Tier S raised to 150 CPU / 44 GPU node-h for whole-node interactive packing, from contingency"
   }
  ]
 }

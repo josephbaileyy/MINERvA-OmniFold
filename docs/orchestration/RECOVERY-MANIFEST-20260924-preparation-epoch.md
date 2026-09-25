@@ -98,6 +98,11 @@ copy-versus-original comparison for all 46 is in the epoch's `trunk-baseline-ver
 | `z-mean.npz` `61b7a493…` (not adopted) | 890,383,062 | the mean-centered comparison AGENTS.md quotes (`√tr` 7.13% below) | same |
 | graded pair `member_k000000/z-cv.npz` `361090f9…`, `member_k001200/z-cv.npz` `7e4636a3…` and both `z-mean.npz` | 3,549,178,987 | the bytes behind M1's `s_proj = 6.145%` | same |
 
+> **Forward pointer, added 2026-09-25 by the s5c campaign:** these nine objects now have an HPSS copy,
+> tape-resident and restore-verified by SHA-256 —
+> [`RECEIPT-20260925-d3-hpss-backup-of-nine-sole-copy-objects.md`](RECEIPT-20260925-d3-hpss-backup-of-nine-sole-copy-objects.md).
+> The table below is kept as measured on 2026-09-25T02:44–03:00Z.
+
 Total unpreserved: **51,218,246,681 B (47.7 GiB)**. **Full preservation is NOT certified.** The adopted
 bytes and every reporting product can be recovered without them; **a rebuild of the trunk from its
 manifest cannot**, and neither can an independent recomputation of M1 from the graded bytes.
