@@ -113,6 +113,16 @@ class BuildPseudo(unittest.TestCase):
         self.assertFalse(np.array_equal(e1["obs_counts"], e3["obs_counts"][: e1["obs_counts"].size])
                          and e1["obs_counts"].size == e3["obs_counts"].size)
 
+    def test_prior_matches_truth_reweights_only_the_unfolding_half(self):
+        ratio = {"eavail_edges": EDGES[2].tolist(), "shape_ratio": [1.3, 0.9, 0.8]}
+        e0, x0, _ = s5n_pseudo.build_pseudo(self.inp, self.bkg, "eavail_shape", 1.0, 77, 5, ratio)
+        e1, x1, _ = s5n_pseudo.build_pseudo(self.inp, self.bkg, "eavail_shape", 1.0, 77, 5, ratio, prior_matches_truth=True)
+        np.testing.assert_array_equal(x0, x1)
+        np.testing.assert_array_equal(e0["obs_counts"], e1["obs_counts"])
+        r = s5n_pseudo.truth_weight("eavail_shape", self.inp, 1.0, ratio)
+        is_b = s5c_pseudo.half_mask(self.inp["MCgen"].shape[0], 77)
+        np.testing.assert_allclose(e1["w_truth"], e0["w_truth"] * r[~is_b])
+
     def test_no_background_reference_has_no_template_and_no_background_events(self):
         exp, _, info = s5n_pseudo.build_pseudo(self.inp, self.bkg, "nominal", 0.0, 77, 5, no_background=True)
         self.assertEqual(exp["tmpl"].shape[0], 0)

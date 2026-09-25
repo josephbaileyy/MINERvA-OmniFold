@@ -115,9 +115,14 @@ def bkg_split_key(split_key: int) -> int:
 
 
 def build_pseudo(inputs: dict, bkg: dict, truth: str, amplitude: float, split_key: int, pseudo_seed: int,
-                 ratio: dict | None = None, no_background: bool = False) -> tuple[dict, np.ndarray, dict]:
+                 ratio: dict | None = None, no_background: bool = False,
+                 prior_matches_truth: bool = False) -> tuple[dict, np.ndarray, dict]:
     """One negweight-refined repeated experiment before refinement: the observed rows with their counts,
-    the template rows with their weights, the unfolding MC (half A), and the true cross section."""
+    the template rows with their weights, the unfolding MC (half A), and the true cross section.
+
+    ``prior_matches_truth`` (DEVELOPMENT DIAGNOSTIC): half A's w_truth and w_reco also carry r, so the
+    unfolding prior IS the truth model. A correct pipeline then closes up to statistical noise; a
+    departure residual that survives it is a construction defect, one that vanishes is prior dependence."""
     edges = inputs["edges"]
     n = inputs["MCgen"].shape[0]
     is_b = s5c_pseudo.half_mask(n, split_key)
@@ -139,10 +144,11 @@ def build_pseudo(inputs: dict, bkg: dict, truth: str, amplitude: float, split_ke
     if no_background:
         tkeep[:] = False
     a = ~is_b
+    ra = r[a] if prior_matches_truth else 1.0
     exp = {
         "MCgen": inputs["MCgen"][a], "MCreco": inputs["MCreco"][a],
         "pass_reco": inputs["pass_reco"][a], "pass_truth": inputs["pass_truth"][a],
-        "w_truth": 2.0 * inputs["w_truth"][a], "w_reco": 2.0 * inputs["w_reco"][a],
+        "w_truth": 2.0 * inputs["w_truth"][a] * ra, "w_reco": 2.0 * inputs["w_reco"][a] * ra,
         "obs": obs[keep], "obs_counts": counts[keep], "tmpl": tmpl[tkeep], "tmpl_w": tmpl_w[tkeep],
         "denom_nd": inputs["denom_nd"], "flux": inputs["flux"], "data_pot": inputs["data_pot"],
         "n_nucleons": inputs["n_nucleons"], "edges": edges,
@@ -367,6 +373,8 @@ def main(argv=None) -> int:
     ap.add_argument("--bootstrap-seeds", default=None, help="first:last replicas of ONE experiment or of --data")
     ap.add_argument("--no-background", action="store_true", help="DEVELOPMENT REFERENCE (C8) only")
     ap.add_argument("--permute-seed", type=int, default=None, help="row-order probe (C2c)")
+    ap.add_argument("--prior-matches-truth", action="store_true",
+                    help="DEVELOPMENT DIAGNOSTIC: the unfolding MC carries the truth reweight (defect vs prior dependence)")
     ap.add_argument("--threads", type=int, default=int(os.environ.get("SLURM_CPUS_PER_TASK", "32")))
     ap.add_argument("--iters", type=int, default=5)
     ap.add_argument("--out", type=Path, required=True)
@@ -428,9 +436,11 @@ def main(argv=None) -> int:
     def experiment(seed, split_key):
         if a.bkg_mode == "purity":
             return s5c_pseudo.build_experiment(inputs, bkg, a.truth, a.amplitude, split_key, seed)
-        return build_pseudo(inputs, bkg, a.truth, a.amplitude, split_key, seed, ratio, a.no_background)
+        return build_pseudo(inputs, bkg, a.truth, a.amplitude, split_key, seed, ratio, a.no_background,
+                            a.prior_matches_truth)
 
     truth_meta = {"truth": a.truth, "amplitude": a.amplitude, "no_background": a.no_background,
+                  "prior_matches_truth": a.prior_matches_truth,
                   "permute_seed": a.permute_seed}
     if a.data:
         if a.bkg_mode == "purity":
