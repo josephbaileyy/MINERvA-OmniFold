@@ -32,6 +32,7 @@ re-measure anything volatile. Each record states its own scope and what it super
 
 | subject | governing record |
 |---|---|
+| **start here** — preparation state, preserved identities, inherited dependencies, next action | [`HANDOFF-20260924-preparation-for-scalar5d-campaign.md`](HANDOFF-20260924-preparation-for-scalar5d-campaign.md) |
 | the proposed next campaign — **PROPOSED, NOT ACTIVATED** | [`PLAN-scalar5d-reportable-uncertainties-and-inference.md`](PLAN-scalar5d-reportable-uncertainties-and-inference.md), blob `8b0617b6e044a55a9b5870b46e5d90a15a6ced7a`; it activates only if Joseph sends the estimator prompt in [`DRAFT-preservation-and-stabilization-session-prompts.md`](DRAFT-preservation-and-stabilization-session-prompts.md) |
 | the 2026-09-24 preparation pass | [`AUTHORIZATION-20260924-preservation-and-simplification-pass.md`](AUTHORIZATION-20260924-preservation-and-simplification-pass.md); [`RECOVERY-MANIFEST-20260924-preparation-epoch.md`](RECOVERY-MANIFEST-20260924-preparation-epoch.md) |
 | the adopted covariance `3d7465f6…`, its exception, and the four measurements that travel with it | [`DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md`](DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md) §4 |
