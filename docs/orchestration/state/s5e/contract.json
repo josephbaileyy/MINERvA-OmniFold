@@ -1,0 +1,104 @@
+{
+ "schema": "s5e-contract/1",
+ "campaign_key": "s5e-20260925",
+ "tracker": "OI-192",
+ "status": "FROZEN at the commit that first adds this file, before any campaign code change, compute, or observed campaign statistic. Executor choices under the delegation of docs/orchestration/AUTHORIZATION-20260925-oi192-estimator-diagnosis.md, not owner quotations. Amendments are new files beside this one that cite it; this file is never edited. A candidate is frozen (definition, cost, development seeds) by an amendment committed BEFORE its first run; the assessment construction (withheld deformations, fresh seeds, sample size, acceptance and useful-width criteria) is frozen by an amendment committed BEFORE any assessment seed is run; nothing in either may be chosen using an assessment seed.",
+ "authority": "docs/orchestration/AUTHORIZATION-20260925-oi192-estimator-diagnosis.md",
+ "identities": {
+  "goal_blob": "23ed4e1205024029cc6646e8c0396bd585ca6feb",
+  "prior_plan_blob_unchanged": "8b0617b6e044a55a9b5870b46e5d90a15a6ced7a",
+  "predecessor_contract_not_modified": "docs/orchestration/state/s5n/contract.json",
+  "starting_origin_main": "35f8757b231f524e52c060e4db93af87420af4d9",
+  "inputs_rehashed_at_use": {
+   "input_npz": {"path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz", "sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f"},
+   "cv_omnifile": {"path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root", "sha256": "b6d2651cfdbc52790cc7ed6032f2062a3e0ea50c12d63725beba29098dd5175a"},
+   "background_dump": {"path": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz", "sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955"}
+  },
+  "adopted_trunk_not_modified": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
+  "historical_products_read_only": "every s5c and s5n product and receipt; s5n development products may be READ as reference operands (diagnosis D0 re-derives the ones it relies on)"
+ },
+ "baseline_estimator": {
+  "name": "B0",
+  "definition": "exactly the s5n family N: the s5c F2 deterministic LightGBM OmniFold (omnifold_nn_core.omnifold_loop through s5c_unfold.unfold, config 'deterministic': n_estimators 100, num_leaves 8, learning_rate 0.1, bin_construct_sample_cnt all rows, deterministic, force_row_wise, num_threads 32, random_state = estimator_seed for all three estimators), 5 iterations, missed-event weights from the LGBMRegressor fill, background treatment negweight-refined with the driver's refine_stay_positive (F2 parameters, random_state estimator_seed + 3), pseudo-experiments and resampling exactly s5n_pseudo.build_pseudo / bootstrap_replica"
+ },
+ "functionals": "the 153 reported functionals of docs/orchestration/state/s5c/contract.json through s5c_coverage.reported_functionals (42 (E_avail,W) cells EW0-EW41, EW_all_ones, the joint cells and totals). Decisive departure metric: over the 42 EW cells, the median and the maximum of |mean relative residual| (f_hat - f_true)/f_true; secondary: the same over all 153",
+ "seed_roles": {
+  "estimator_seed": "as s5n (42 by default; +3 for the refinement classifier)",
+  "pseudo_seed": "one repeated experiment (s5n_pseudo.build_pseudo; split keys from the seed)",
+  "bootstrap_seed": "one replica of the s5n repaired statistical bootstrap (per-event Poisson(k) on observed rows, Poisson(1) on unfolding-MC and template rows, refinement refit)",
+  "row_permutation_seed": "the deterministic estimator's sensitivity probe (s5c amendment 2 R1)",
+  "ranges": {
+   "diagnosis": "REUSES the s5n development seeds (nominal 300000-300059, E_avail shape 301000-301059, q3 302000-302059): diagnosis is development evidence and never enters an assessment",
+   "candidate_development": {"candidate_1": [700000, 709999], "candidate_2": [710000, 719999]},
+   "assessment_fresh": {"candidate_1": [800000, 819999], "candidate_2": [820000, 839999]},
+   "rule": "never reused across roles or candidates; disjoint from every s5c (1-99999, 200000-211999) and s5n (300000-349999, 400000-649999 reserved) range; a development revision draws NEW development seeds from the unused remainder of its candidate's development range"
+  }
+ },
+ "stage_D_diagnosis": {
+  "budget": "at most 10.0 billed CPU node-h, stage 'diagnosis' of state/s5e/budget.json (initial cap of the authorization; raised only by a budget revision that records why)",
+  "principle": "separate pipeline differences (path, precision, seeds, masks, normalization, refinement) from scientific effects (convergence, capacity, missed-event extrapolation, observability after detector response, background-related bias) by interventions that change ONE factor, on paired or noise-free constructions",
+  "constructions": {
+   "pseudo": "s5n_pseudo.build_pseudo exactly (split MC; Poisson pseudo-data; background source/template split; refinement)",
+   "signal_only": "the same with --no-background (C8 construction), paired seed by seed: the signal Poisson draws are identical to the background-inclusive experiment of the same seed",
+   "asimov_same": "NOISE-FREE: the full MC is both the unfolding MC and the pseudo-data source; pseudo-data = every reco-passing MC row at weight w_reco * r (no Poisson, no background); truth = the full MC truth reweighted by r through the same extraction. Isolates the estimator's systematic response from statistical noise and from MC-half differences. The driver's own --closure mode is this construction",
+   "traced": "any of the above run through s5e instrumentation that wraps the three production estimators (never re-implementing the loop) and records, at EVERY iteration k: w_pull_k, new_w (step-1 output and regressor fill) and w_push_k reduced to histograms; the run refuses to write unless the unfold it returns equals, bitwise, the unfold recomputed from its own final w_push"
+  },
+  "items": {
+   "D0_reproduction": "traced runs at s5n seeds 300000, 301000, 302000 (background-inclusive) and the s5n signal-only diagnostic seeds 301000, 302000: the iteration-5 unfold must equal the committed-namespace s5n product bitwise (xsec_flat and xtrue_flat). A failure means the instrumentation or the deploy does not reproduce the evidence it diagnoses, and D1-D7 are not read until it is repaired",
+   "D1_matched_driver_and_npz_paths": "the UNMODIFIED driver unfold_nd_omnifold_unbinned.py in --closure mode (asimov_same, signal-only, --use-weights, --axes eavail,q3,W, --iters 5, --seed 42, F2 configuration applied by the s5c_with_estimator.py mechanism) with the declared truth deformation injected on the pseudo-data weights by a wrapper around the driver's OmniFold backend that verifies row alignment (measured == MCreco[pass_reco & pass_truth] exactly) and records the deformed truth; nominal, E_avail shape (GiBUU/GENIE, a = 1) and repaired q3 (a = 0.3). The npz counterpart is asimov_same through the npz loop at iteration 5. Reported: per-functional residuals on each path and the driver-minus-npz difference",
+   "D2_pipeline_reconciliation": "one factor at a time on the npz path, against the driver: (a) per-estimator random_state 42/43/44 (the driver's convention) versus 42/42/42; (b) coordinate precision: float64 coordinates perturbed uniformly within +-1/2 float32 ulp (the estimator's sensitivity to rounding-scale input changes; ROOT float64 versus npz float32 is a difference of this scale); (c) masks, weights and normalization: the driver's arrays (captured by the backend wrapper) against the npz arrays row-set by row-set (counts, weight sums, per-axis maxima of |float64 - float32|), and the driver's truth and completeness histograms against the npz ones; (d) refinement: the driver's refined sample on the real data against the npz refined sample (s5n c7 products and evidence, re-read). Applied to the asimov_same E_avail departure and to the real data (KNOWN_ISSUES 79: up to 1.29%). A pipeline factor is named only if switching it alone moves the driver-npz difference by more than the probe (b) scale",
+   "D3_iteration_trace": "traced pseudo runs, K_max = 20, at nominal, E_avail shape (a = 1) and q3 (a = 0.3), background-inclusive AND signal-only, 4 seeds per point (the first four of each s5n range). Per iteration: truth functionals from w_push_k (unfolded) and from w_pull_k (step-1-only truth); reco-level forward folds on the 5D reco grid and its (E_avail,W) projection: D (the measured side after refinement), F_pull_k = sum_{pass_reco} w_reco w_pull_k (step-1 response), F_push_k = sum_{pass_reco} w_reco w_push_k (forward fold of the unfolded result), F_true (the truth model folded through the unfolding MC), F_prior; step-2 response: per truth cell, sum w_truth w_push_k against sum w_truth w_pull_k; missed-event regression: per truth (E_avail,W) cell, the mean new_w of reco-failing events (regressor fill) against that of reco-passing events and against the mean truth reweight r of the cell",
+   "D4_noise_free_scan": "traced asimov_same runs, K_max = 30, B0 classifiers: nominal, E_avail shape (a = 1), q3 (a = 0.3). The departure residual and the forward-fold agreement as functions of iteration without statistical noise",
+   "D5_capacity_and_missed_event_probes": "traced asimov_same runs, K_max = 30, at the E_avail shape and q3 departures, each changing ONE declared factor (diagnostic probes, not a search): (i) capacity: n_estimators 400, num_leaves 31 on all three estimators, other F2 settings unchanged; (ii) missed-event treatment: the reco-failing events keep new_w = 1 (no regressor; the original OmniFold rule). Compared with D4 at equal iteration",
+   "D6_observability": "(i) input geometry, on the npz: how well reco q3 and reco W are predicted by reco (pT, pz, E_avail) and truth q3, W by truth (pT, pz, E_avail) (fraction of variance explained by a fixed LightGBM regressor on a fixed 2M-row subsample, 50/50 train/test), and the correlation of reco E_avail with truth E_avail and with truth q0-like combinations available (truth W, q3); (ii) departure visibility: S_dep = chi2 of F_true(departure) against F_true(nominal) on the declared reco binning with the analysis-exposure Poisson variance; (iii) residual visibility: chi2 of F_push_k against F_true, same variance, with the explained fraction 1 - chi2(F_push_k, F_true) / S_dep, from D3/D4/D5",
+   "D7_nominal_background_bias": "paired at nominal on 12 s5n seeds (300000-300011): background-inclusive (the s5n products, D0-reproduced on seed 300000) minus signal-only (new) per functional (mean, SE, t); the same pairing for two one-factor variants of the background-inclusive experiment: (i) refinement capacity: the refinement classifier with n_estimators 400, num_leaves 31, other F2 settings unchanged; (ii) expectation template: the template is the background SOURCE rows at their expected weight 2 w_bkg (no source/template kinematic or statistical mismatch); plus the reco-level subtraction residual map (refined measured side minus the signal-only measured side of the same seed, per reco cell, averaged over the seeds) and its relation to the truth-level paired difference"
+  },
+  "cause_attribution_rule": "A cause may be NAMED only if an intervention that changes that factor alone moves the relevant metric by more than its measured noise (paired |t| > 3 over seeds, or, on a noise-free construction, by more than the D2(b) rounding-probe scale and by >= 10% relative of the metric), in the direction the hypothesis predicts, with the rest held fixed. An association without such an intervention is reported as an association. A factor whose intervention moves nothing is reported as EXCLUDED at the measured resolution. If no tested factor accounts for the effect, the diagnosis is recorded as INCONCLUSIVE for it.",
+  "interpretation_rules": {
+   "under_converged": "on asimov_same with B0 classifiers, the median |EW residual| of a departure falls by >= 30% relative between k = 5 and the best k <= 30 while the forward-fold chi2 also falls: an iteration/stopping candidate is SUPPORTED for that departure",
+   "capacity_limited": "the D5(i) probe at the same k lowers the median |EW residual| by >= 30% relative to D4: a capacity candidate is SUPPORTED",
+   "missed_event_limited": "the regressor fill deviates from the mean reco-passing new_w or from the truth reweight of the same truth cell in a way whose removal (D5(ii)) or correction lowers the residual by >= 30% relative at equal forward-fold agreement: a missed-event candidate is SUPPORTED",
+   "observability_limited": "at the best tested estimator (k <= 30, B0 or D5(i)) on asimov_same, the explained fraction of the reco-level departure is >= 0.95 while the median |EW residual| stays >= 50% of its k = 5 value: the remaining residual lies in directions the reco data barely constrain; no authorized estimator change is supported for it and it is a model-dependence (unfolding-model) quantity",
+   "note": "thresholds are predeclared screening values for choosing candidates, not physics claims; results are reported numerically whatever the classification"
+  },
+  "exit": "a committed diagnosis receipt (every item's numbers, which interpretation rules fired and which did not), an independent read-only operand-level review of it, and a candidate decision record: zero, one or two candidates, each SUPPORTED by a rule above, or a recorded stop"
+ },
+ "stage_C_candidates": {
+  "limit": "at most TWO candidates; each is a change to B0 in one or more authorized dimensions (iterations/stopping rule; classifier capacity or regularization; missed-event regression; targeted refinement/resampling repair), frozen with its cost forecast by an amendment before its first run; ONE development revision each, prompted by a recorded unmet development requirement and frozen before its re-run; background treatment remains negweight-refined",
+  "not_allowed": ["another classifier family or architecture", "a search over hyperparameter grids (a candidate is ONE declared setting; its revision is ONE declared setting)", "PET", "choosing seeds, functionals or deformations after seeing their result", "inflating the statistical sigma or adding an allowance to the statistical interval", "weakening a declared gate without an amendment that states the change before the data it is applied to"],
+  "development_checks": {
+   "K1_nominal_closure": "background-inclusive, >= 20 development experiments at nominal truth; the s5n C3 criterion unchanged (no reported functional with |t| > 3.6; none with |mean pull| > 0.5 and |t| > 3)",
+   "K2_eavail_anchor": "the GiBUU/GENIE E_avail shape departure (a = 1), >= 20 development experiments; the decisive departure metric and per-cell residuals against B0's",
+   "K3_q3": "the repaired q3 departure (a = 0.3), >= 20 development experiments; same",
+   "K4_seed_stability": "estimator seed +1 and two row-permutation seeds on one declared development experiment: movement of every reported functional over its statistical sigma, and the plan section 6 5% projected-sigma stability quantity",
+   "K5_width_calibration": "sigma from >= 100 replicas of the repaired bootstrap of one declared nominal development experiment; per-functional pull SD over the K1 experiments with its sampling uncertainty, and a correlated check on the 42 EW cells (Mahalanobis statistic with the Hartlap factor for the replica count)"
+  },
+  "development_exit": "a candidate proceeds to assessment only if K1 passes and K2 and K3 improve on B0's decisive metric; otherwise its one revision may be used or it stops"
+ },
+ "stage_A_assessment": {
+  "freeze": "an amendment committed before any assessment seed fixes: the withheld physical deformations (below) with their files and digests, built without looking at any unfold output; fresh seeds from assessment_fresh; n experiments per truth point; the exact estimator and interval construction intended for the data; the acceptance and useful-width criteria",
+  "withheld_physical_deformations": {
+   "W1": "NuWro / GENIE v2 E_avail shape ratio, the committed docs/orchestration/state/s5n/eavail-ratio-nuwro-over-genie.json (never run by s5n or by this campaign's diagnosis or development), amplitude 1, in-grid total preserved",
+   "W2": "GENIE MEC / GENIE CV (E_avail, W) shape ratio from /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mec_xsec_eavailW.root over /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec_eavailW.root (histogram hXSec_eavailW in both), amplitude 1, in-grid total preserved",
+   "W3": "NuWro / GENIE v2 (pT, p_parallel, E_avail) shape ratio from /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/nuwro_cv_xsec3d.root over /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec3d.root (histogram hXSec3D in both), amplitude 1, in-grid total preserved, with a declared positivity floor for empty generator cells",
+   "rule": "W1-W3 are not used by diagnosis or candidate development; if a file cannot be built on the analysis binning the amendment records why and replaces it only with another fixed-generator ratio declared before any assessment seed"
+  },
+  "also_assessed_on_fresh_seeds": ["nominal background-inclusive closure", "the GiBUU/GENIE E_avail shape departure (a = 1)", "the repaired q3 departure (a = 0.3)"],
+  "scale": "development scale (no large coverage campaign): large enough to reject a failing candidate and to bound its bias, not a coverage validation; the next validation design is costed separately with sample-size and assurance calculations",
+  "same_estimator_for_data": "the assessed configuration is also run on the real data (npz path) with its repaired bootstrap sigma (declared background fluctuations: per-event observed Poisson, template Poisson(1), MC Poisson(1), refinement refit; correlations from the replica covariance), reported as a pipeline validation and as method sensitivity against B0, never as a corrected central value",
+  "model_dependence": "the residual under physical deformations is reported as a model-dependence (unfolding-model) quantity, separately from the statistical sigma; it is never folded into, or used to widen, the statistical interval"
+ },
+ "terminal_branches": {
+  "D_INCONCLUSIVE": "the diagnosis cannot attribute the departure failure to a tested factor: report the measurements, the excluded factors and the costed next step; no candidate",
+  "NO_CANDIDATE": "the diagnosis attributes the failure to factors outside the authorized dimensions (e.g. observability after detector response): report and stop; the unfolding-model uncertainty component is the costed next step",
+  "C_DEV_FAIL": "a candidate fails K1 or does not improve K2/K3 after its one revision: stop it",
+  "A_FAIL": "a candidate fails a frozen acceptance criterion on fresh seeds or withheld deformations: no qualification; nothing adopted",
+  "A_PASS_DEVELOPMENT_SCALE": "a candidate meets every frozen criterion at development scale: recorded as a candidate for a costed coverage-grade validation; nothing adopted, no covariance produced",
+  "INCOMPLETE": "resource- or evidence-limited: report measured costs and what is missing"
+ },
+ "resources": {
+  "admission": "nd-unfolding/s5c_meter.py bound to docs/orchestration/state/s5e/budget.json and /pscratch/sd/j/josephrb/s5e-20260925/ledger/admissions.jsonl; job prefix s5e-; CPU pool only (m3246); at most 2 CPU nodes",
+  "namespace": "/pscratch/sd/j/josephrb/s5e-20260925/ (fresh outputs only; <= 20 GiB); every s5c/s5n/historical product is read, never written",
+  "deploy": "clean clones at pinned commits under the namespace's deploy/ (s5c_array.sh refuses any other tree)"
+ }
+}

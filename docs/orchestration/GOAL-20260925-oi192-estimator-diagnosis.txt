@@ -1,0 +1,62 @@
+Complete OI-192 diagnosis and bounded estimator development. The objective is a
+verified diagnosis and candidate assessment, not a guaranteed working estimator.
+Failure or inconclusive diagnosis is a valid terminal disposition.
+
+Read AGENTS.md and routed instructions, then docs/orchestration/:
+- OUTCOME-20260925-s5n-stage1-development-fail.md
+- CAMPAIGN-s5n-20260925-index.md and its contract
+- AUTHORIZATION-20260925-negweight-refined-successor.md
+- PLAN-scalar5d-reportable-uncertainties-and-inference.md (historical; unchanged).
+Read OI-192, VL151-VL152, KNOWN_ISSUES 75, 77-79 and routed independent reviews.
+Refresh heads, worktrees, scheduler and resources. Preserve concurrent work.
+
+I authorize the diagnostics below, necessary code repairs, a bounded scan and
+candidate changes to iterations/stopping, classifier capacity or
+regularization, and missed-event regression. This supersedes the previous
+prohibition on those changes FOR THIS CAMPAIGN ONLY. Keep negweight-refined as
+the candidate background treatment; permit targeted refinement/resampling repairs.
+No PET, architecture search, historical regrading or general cleanup.
+
+Commit this actual authorization, date/blob, contract, state and budget before
+implementation. Use an isolated worktree
+from current origin/main and fresh outputs. Preserve historical evidence and
+reuse valid recovery checks and diagnostics.
+
+Budget: at most 60 additional billed CPU node-hours including verification; no GPU
+allocation or bulk storage expansion. Also limit spending to the prior cumulative
+CPU envelope's unspent balance and 10% of current uncommitted CPU allocation after
+reservations. Carry prior charges forward. Reserve 20% for verification. Continue the
+campaign-specific replacement of R5 task-hour/calendar ceilings for this scope;
+verify admission without globally bypassing guards. At most two CPU nodes.
+
+1. Diagnose first, initially capped at 10 CPU node-hours. Reproduce the decisive
+E_avail and repaired q3 departures on matched driver and NPZ paths. Reconcile
+coordinates, precision, weights, masks, normalization, seeds and refinement.
+Separate pipeline differences from scientific effects. Measure forward-fold
+agreement, step-1 and step-2 response, missed-event regression and a small fixed
+iteration scan. Check departure observability after detector response. Isolate
+the nominal background-related joint-cell bias. Do not name a cause without evidence.
+
+2. Choose at most TWO supported candidates and ONE development revision each.
+Freeze and cost them first; stop if none is justified. Check background-
+inclusive nominal closure, generator-anchored E_avail departures, repaired q3
+departures, seed stability and statistical-width calibration. Use additional
+withheld physical deformations and genuinely fresh seeds for final assessment;
+development examples alone cannot qualify a candidate. Freeze useful-width and
+acceptance criteria before assessment. Validate the same estimator and intervals
+intended for data, including declared background fluctuations and correlations.
+Do not repair failure by inflating errors, choosing favorable seeds, or silently
+weakening a gate. Keep model dependence distinct from statistical uncertainty.
+
+3. Obtain independent read-only operand-level review and reverify repairs. Commit
+and push code, tests and evidence. Update affected deliverables, build/synchronize
+note, primer and paper in both repositories and verify heads. No full covariance
+production, large coverage campaign, adoption,
+joint inference, release tagging, deposits or submission in this goal.
+
+Checkpoint, monitor owned jobs and avoid duplicates. Deliver diagnosis, candidate
+results/limits, verification, spend, heads and a costed next validation design
+with sample-size/assurance calculations. Report the four status fields separately.
+Mark this goal complete
+when its bounded assessment and delivery are finished, even if all candidates
+fail; do not claim the larger publication objective is met.

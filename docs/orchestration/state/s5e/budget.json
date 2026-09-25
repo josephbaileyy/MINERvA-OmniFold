@@ -1,0 +1,78 @@
+{
+ "schema": "s5e-budget/1",
+ "campaign_key": "s5e-20260925",
+ "authority": "docs/orchestration/AUTHORIZATION-20260925-oi192-estimator-diagnosis.md sections 3 (E4, E5) and 4",
+ "revision": 1,
+ "revision_reason": "activation budget: CPU cap = min(60 explicit, unspent prior cumulative envelope 320.583, 10% of uncommitted after reservations 342.816) = 60; diagnosis <= 10.0 (initial cap), verification/repair >= 12.0 (20%); the remaining 38.0 unallocated until a candidate amendment and budget revision; no GPU pool",
+ "measured_utc": "2026-09-25T22:30:34Z",
+ "evidence": {
+  "allocation": "docs/orchestration/state/s5e/allocation-measurement-20260925T2230Z.txt (iris, squeue -h -r -A m3246,m3246_g all users, showquota, hpssquota, sacctmgr qos)",
+  "prior_charges": {
+   "s5c": "docs/orchestration/state/s5e/prior-ledger-s5c-20260925T2230Z.json (ledger sha256 4f89112e5b8f1b9938a2745edeff32bb8e796700168c50e3f6ce8086f9eb8449, no admission open)",
+   "s5n": "docs/orchestration/state/s5e/prior-ledger-s5n-20260925T2230Z.json (ledger sha256 5e3fa4298209d2a9f10c51f85c69aefd79b51360600b0c6eebeeb5a93f7e2bc2, no admission open)"
+  }
+ },
+ "billing_rule": "as docs/orchestration/state/s5c/budget.json billing_rule (unchanged): CPU node-h = ElapsedRaw/3600 * billing/256 * qos_factor; every admitted QOS has UsageFactor 1.0 (sacctmgr, 2026-09-25T22:30Z); premium and overrun refused",
+ "allocation_measured": {
+  "cpu": {
+   "account": "m3246",
+   "project_allocated": 20000.0,
+   "project_charged": 16571.7,
+   "queued_or_running_reservations_node_hours": 0.140625,
+   "reservations": "58880449 (another lane's pending shared job, 18 CPUs x 1 h = 18/128 node-h)",
+   "uncommitted_remaining_node_hours": 3428.159375,
+   "ten_percent_node_hours": 342.815937
+  },
+  "reservation_method": "every pending/running row of squeue -r on m3246, all users: remaining limit (running) or full limit (pending) x node fraction (whole nodes for non-shared QOS; cpus/128 for shared) -- the s5c/s5n method"
+ },
+ "pools": {
+  "cpu": {
+   "campaign_cap_node_hours": 60.0,
+   "carried_forward": {
+    "envelope_node_hours": 345.27,
+    "prior_charged_node_hours": 24.687022569444444,
+    "prior_charged_by_campaign": {
+     "s5c-20260924": 20.085911458333335,
+     "s5n-20260925": 4.601111111111111
+    },
+    "unspent_node_hours": 320.58297743055556
+   },
+   "binding": "the authorization's explicit 60 CPU node-h (unspent 320.583 and 10% of uncommitted 342.816 do not bind)",
+   "concurrency_nodes": 2,
+   "stages": {
+    "diagnosis": 10.0,
+    "verification_repair": 12.0
+   }
+  },
+  "gpu": {
+   "campaign_cap_node_hours": 0.0,
+   "binding": "no GPU allocation (authorization section 1)",
+   "concurrency_gpus": 0,
+   "stages": {}
+  }
+ },
+ "stage_rules": {
+  "diagnosis": "contract stage_D_diagnosis: at most 10.0 CPU node-h (authorization section 1, item 1)",
+  "verification_repair": "20% floor of the 60 CPU node-h (independent review compute, reverification of repairs)",
+  "unallocated": "38.0 CPU node-h, allocated only by a candidate/assessment amendment plus a budget revision and a ledger rebind"
+ },
+ "storage": {
+  "pscratch": {
+   "measured_used_tib": 16.38,
+   "quota_tib": 20.0,
+   "campaign_cap_gib": 20.0,
+   "namespace": "/pscratch/sd/j/josephrb/s5e-20260925/",
+   "rule": "no bulk storage expansion"
+  }
+ },
+ "concurrency": "2 CPU nodes over every open admission (authorization section 1; plan section 3, retained)",
+ "retries": "as the s5c/s5n budgets (retained): at most two retries per task for a diagnosed infrastructure failure; at most one corrective resubmission per stage after a diagnosed code defect, verified repair and fresh admission; the stricter applies; scientific failure never triggers an identical retry; --no-requeue enforced by the meter",
+ "ledger": "/pscratch/sd/j/josephrb/s5e-20260925/ledger/admissions.jsonl",
+ "revision_history": [
+  {
+   "revision": 1,
+   "measured_utc": "2026-09-25T22:30:34Z",
+   "note": "activation budget"
+  }
+ ]
+}
