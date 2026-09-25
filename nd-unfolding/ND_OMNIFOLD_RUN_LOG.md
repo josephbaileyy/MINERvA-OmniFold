@@ -362,3 +362,24 @@ Nothing here is a verified-for-quotation number: `scientific_acceptance` is NON-
 entry and the receipts are the route; a ledger row would read as validation. **Nothing here is
 quotable, promoted, adopted or projected. `B`, `S` and `ε` remain open. Successful construction
 authorizes no grading, adoption or publication use.**
+
+### 2026-09-25 — s5c campaign (OI-190): pilots, F1 screen, frozen contract, construction and Tier-S launch
+
+Authority `docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md`; index
+`docs/orchestration/CAMPAIGN-s5c-20260924-index.md`; all jobs admitted and priced by
+`nd-unfolding/s5c_meter.py` (ledger `/pscratch/sd/j/josephrb/s5c-20260924/ledger/admissions.jsonl`).
+
+- `58855902` (xfer): D3 HPSS backup of the nine sole-copy objects, restore SHA-256 9/9 —
+  `docs/orchestration/RECEIPT-20260925-d3-hpss-backup-of-nine-sole-copy-objects.md`.
+- `58856439` (interactive, 0.789 CPU node-h): pilots P1 (18 unfolds), P2 (background dump, exact
+  reproduction of the npz purity weights), P3/P4 (three end-to-end pseudo-experiments), the
+  projection reproduction and the development-MC partition scans. `58856170`, `58856255`,
+  `58856256` were batch submissions cancelled while pending (queue depth), zero spend.
+- F1 two-member screen and P1: `VALIDATION_LEDGER.md` `VL146`–`VL148`.
+- Contract frozen at `c29dde25`; feasibility receipt
+  `docs/orchestration/FEASIBILITY-20260925-s5c-scalar5d-measurement-and-inference.md`.
+- `58857016` (interactive): Tier-S σ bootstrap, 200 replicas. `58857523` (interactive): F2
+  construction, real-data bootstrap and first 40 vertical universes. `58857600` (cancelled 15 min
+  in: detector arm without `--closure-slack 5000`), `58857791` (interactive GPU node): F2 detector
+  weight-only bands and matched CV.
+

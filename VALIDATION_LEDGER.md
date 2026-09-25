@@ -1,5 +1,17 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-09-25 s5c campaign (OI-190): estimator-seed channel, F1 screen, projection reproduction
+
+Campaign under [`AUTHORIZATION-20260924-scalar5d-campaign-activation.md`](docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md);
+contract `docs/orchestration/state/s5c/contract.json` (frozen at `c29dde25`). **None of these rows
+grades, adopts or changes the adopted trunk `3d7465f6…`, and none is a generator comparison.**
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL146 | projected-σ movement of the **existing estimator (F1)** between the two graded members `361090f9…` (k=0) and `7e4636a3…` (k=1200), which differ only in estimator seed, on the 43 M1 functionals (control) and on four coarse joint-5D partitions from a development-MC scan | control **0.061454** on functional 2 (reproduces the graded `s_proj = 0.06145`); H2 (29 cells) **0.0598**, H3a (60) **0.0630**, H3b (51) **0.0625**, H3 (134) **0.0947**; medians 0.8%–1.4%; the members' CVs are identical, so CV shift 0 | **F1 FAILS the plan's 5% gate on every tested functional set.** Two seeds suffice for failure (a maximum over more pairs can only grow); they could not have established a pass. Receipt `docs/orchestration/state/s5c/c1/f1_member_check.json`; script `nd-unfolding/s5c_f1_member_check.py`. |
+| VL147 | single-unfold behaviour of the production estimator and of candidate **F2** (full-sample LightGBM binning, `deterministic`, `force_row_wise`, 32 threads) on `of_inputs_5d.npz` (`07fccc1a…`), pilot P1, 18 unfolds | production seeds 42–51: per-bin relative std median **0.53%**, p90 1.5%, max **5.2%**; per-functional (43) median 0.15%, max 0.39%; total 0.009%; same-seed repeat ≤ 5e-12. `full_binning` seeds 42 vs 43: ≤ **5e-12** per bin. F2 seeds 42, 43 and a repeat: **bitwise identical**; two row permutations ≤ 1e-11 per bin, ≤ 1.6e-12 per functional. F2 vs production: bins up to 11.6% (median 0.55%), functionals up to 0.9% | **The production estimator's seed reaches the unfold through LightGBM's random 200,000-row bin-construction sample**: removing it removes the seed effect to float noise. F2 passes contract gates G-repro and G-seed; G-perm awaits the Tier-S σ. F2 is a material estimator change, not a reproduction of the trunk. Summary `docs/orchestration/state/s5c/p1/p1_summary.json`, products and `PRODUCTS.SHA256SUMS` beside it. |
+| VL148 | reproduction of the adopted `(E_avail,W)` projection `835828bf…` by re-running the production projector (diagnostic run class, fresh path) on the adopted source `3d7465f6…` | covariance max\|Δ\|/max **6.1e-20** (not bitwise), `hCV_marginal` and `hRowIndex` bitwise equal, `M_content_sha256 64fec490…` and read-back row-index digest `9eb9d216…` equal, 42 cells, 0 dropped | **REPRODUCED from stored operands** (plan Phase-A exit). Adds nothing to `VL143`–`VL145` beyond reproducibility. Receipt `docs/orchestration/state/s5c/a1/projection_check_2.json`. |
+
 ## 2026-09-23 truth-cloud projection re-run after the ISSUE-30 fix: census reproduces, projected values move
 
 **PET diagnostic, not a publication product.** This re-runs `nd-unfolding/pet/pointcloud_projection.py`
