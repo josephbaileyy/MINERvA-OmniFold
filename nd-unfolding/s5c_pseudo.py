@@ -161,6 +161,11 @@ def main(argv=None) -> int:
     ap.add_argument("--pseudo-seeds", default=None,
                     help="first:last inclusive; one process runs each seed, writing <out>/<truth>_s<seed>.npz, "
                          "skipping seeds whose product exists; the split key is derived from each seed")
+    ap.add_argument("--bootstrap-seeds", default=None,
+                    help="first:last: statistical bootstrap of ONE experiment (--pseudo-seed/--split-key "
+                         "fixed): each replica multiplies the pseudo-data event weights and the unfolding-"
+                         "half MC weights by independent Poisson(1) draws, as bootstrap_nd.py does for data "
+                         "and MC; writes <out>/boot_b<seed>.npz")
     ap.add_argument("--threads", type=int, default=int(os.environ.get("SLURM_CPUS_PER_TASK", "32")))
     ap.add_argument("--iters", type=int, default=5)
     ap.add_argument("--expect-npz-sha256", default=None)
@@ -173,7 +178,7 @@ def main(argv=None) -> int:
     if not batch and a.split_key is None:
         print("single-experiment mode needs --split-key", file=sys.stderr)
         return 2
-    if not batch and a.out.exists():
+    if not batch and a.bootstrap_seeds is None and a.out.exists():
         print(f"refusing to overwrite {a.out}", file=sys.stderr)
         return 3
     t0 = time.time()
@@ -189,6 +194,11 @@ def main(argv=None) -> int:
         print("refusing: background dump was made against a different npz", file=sys.stderr)
         return 4
     bkg_sha = s5c_unfold.sha256_path(a.bkg)
+    if a.bootstrap_seeds is not None:
+        if batch:
+            print("bootstrap mode takes one experiment (--pseudo-seed and --split-key)", file=sys.stderr)
+            return 2
+        return run_bootstrap(a, inputs, bkg, npz_sha, bkg_sha)
     if batch:
         first, last = (int(v) for v in a.pseudo_seeds.split(":"))
         a.out.mkdir(parents=True, exist_ok=True)
@@ -200,6 +210,40 @@ def main(argv=None) -> int:
             status |= run_one(a, inputs, bkg, npz_sha, bkg_sha, seed, split_key_for(seed), target)
         return status
     return run_one(a, inputs, bkg, npz_sha, bkg_sha, a.pseudo_seed, a.split_key, a.out, t0)
+
+
+def run_bootstrap(a, inputs, bkg, npz_sha, bkg_sha) -> int:
+    exp_inputs, x_true, info = build_experiment(inputs, bkg, a.truth, a.amplitude, a.split_key, a.pseudo_seed)
+    first, last = (int(v) for v in a.bootstrap_seeds.split(":"))
+    a.out.mkdir(parents=True, exist_ok=True)
+    status = 0
+    for b in range(first, last + 1):
+        target = a.out / f"boot_b{b}.npz"
+        if target.exists():
+            continue
+        rng_d = np.random.default_rng(b)
+        rng_m = np.random.default_rng(b + 10_000_000)  # bootstrap_nd.py's data/MC stream separation
+        rep = dict(exp_inputs)
+        rep["measured_weights"] = exp_inputs["measured_weights"] * rng_d.poisson(1.0, exp_inputs["measured_weights"].shape[0])
+        pm = rng_m.poisson(1.0, exp_inputs["w_truth"].shape[0]).astype(float)
+        rep["w_truth"] = exp_inputs["w_truth"] * pm
+        rep["w_reco"] = exp_inputs["w_reco"] * pm
+        t1 = time.time()
+        xs, _ = s5c_unfold.unfold(rep, a.config, a.estimator_seed, a.threads, a.iters)
+        meta = {"schema": "s5c-pseudo-boot/1", "config": a.config, "truth": a.truth, "amplitude": a.amplitude,
+                "split_key": a.split_key, "pseudo_seed": a.pseudo_seed, "bootstrap_seed": b,
+                "input_npz_sha256": npz_sha, "bkg_dump_sha256": bkg_sha, "experiment": info,
+                "code_sha256": {"s5c_pseudo.py": s5c_unfold.sha256_path(Path(__file__).resolve())},
+                "seconds_unfold": round(time.time() - t1, 3)}
+        tmp = target.with_name(target.name + f".partial-{os.getpid()}.npz")
+        np.savez_compressed(tmp, xsec_flat=xs.ravel(order="C"), meta=json.dumps(meta, default=str))
+        if target.exists():
+            tmp.unlink()
+            status |= 3
+            continue
+        os.replace(tmp, target)
+        print(json.dumps({"bootstrap_seed": b, "seconds_unfold": meta["seconds_unfold"]}))
+    return status
 
 
 def split_key_for(seed: int) -> int:

@@ -317,8 +317,16 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: Reconstructing the inventory with 20260813 at its pre-retirement bytes and 20260923 absent
 #: reproduces 121 / 298eceb4 exactly. Power-tested: flipping the last hex of the successor's engine
 #: pin makes this file report MISMATCH omnifold_nn/omnifold/omnifold.py, rc 1; then restored.
-RECEIPT_BINDING_COUNT = 121
-RECEIPT_BINDING_SHA256 = "f447426da3f6001d3a9d4301603b52cada36555151c101633536ce0f3c7d6f95"
+#: 121 -> 122, digest f447426d -> f5fc1a9e (2026-09-25, OI-190, the s5c campaign). One binding was
+#: ADDED, by the campaign's frozen contract state/s5c/contract.json (identities.partition_scan):
+#:   ADDED   docs/orchestration/state/s5c/b1/partition_scan_2.json
+#:           7b49b52daec6d40171a9d82d6cfbb10f34130b96e2df43393555f5f5262a39c2
+#: It pins the development-MC scan from which the contract's joint partition J was chosen. The delta
+#: was enumerated before the constant moved: deleting that one entry reproduces 121 / f447426d
+#: exactly (rc 0). Power-tested: flipping the pin's last hex digit makes this file report
+#: `MISMATCH docs/orchestration/state/s5c/b1/partition_scan_2.json`, rc 1; then restored.
+RECEIPT_BINDING_COUNT = 122
+RECEIPT_BINDING_SHA256 = "f5fc1a9edc14d083ad95072c33eb7bae73e189c525a073be58f38ac26ede26b4"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

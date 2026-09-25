@@ -14,17 +14,17 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-campaign-scalar5d",
  "branch": "campaign/scalar5d-20260924",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5c-20260924/",
- "phase": "A->B",
- "phase_detail": "Phase A: D3 closed; adopted projection reproduced from stored operands; meter, deploy and monitoring working. Phase B: pilot contract frozen; pilots P1-P4 running on held allocation 58856439.",
+ "phase": "B->C/D",
+ "phase_detail": "Contract frozen (state/s5c/contract.json) with the feasibility receipt; F1 failed its stability requirement (two-member screen); candidate F2 selected, its development gates pending P1 (f2 tasks) and the Tier-S bootstrap; Tier S validation not started.",
  "pinned": {
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
   "adopted_projection_sha256": "835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e",
-  "contract": null,
+  "contract": "docs/orchestration/state/s5c/contract.json (frozen at the commit that adds it)",
   "deploy_commit": "per job: deploy/<sha8> clean clones; see ledger argv"
  },
  "budget": {
   "path": "docs/orchestration/state/s5c/budget.json",
-  "revision": 1
+  "revision": 2
  },
  "jobs": [
   {
@@ -70,6 +70,18 @@
   {
    "path": "docs/orchestration/state/s5c/samplesize-assurance80.json",
    "what": "exact sample sizes for the feasibility receipt"
+  },
+  {
+   "path": "docs/orchestration/FEASIBILITY-20260925-s5c-scalar5d-measurement-and-inference.md",
+   "what": "feasibility receipt: Tier S feasible to attempt; Tier T unresolved dependency; F1 failed; F3 infeasible; all inference infeasible within envelope"
+  },
+  {
+   "path": "docs/orchestration/state/s5c/c1/f1_member_check.json",
+   "what": "F1 two-member screen: control 0.06145 reproduced; H2 0.0598, H3a 0.0630, H3b 0.0625, H3 0.0947"
+  },
+  {
+   "path": "docs/orchestration/state/s5c/b1/partition_scan_2.json",
+   "what": "development-MC partition scan with per-axis resolution"
   }
  ],
  "dependencies": {
@@ -86,5 +98,5 @@
   "D11": "open"
  },
  "verification": "none yet",
- "next_action": "read P1-P4 products when the step runner finishes; reconcile meter; write the feasibility receipt"
+ "next_action": "confirm F2 development gates G-repro/G-seed from P1; run the 200-replica Tier-S bootstrap; evaluate G-perm; then launch Tier-S validation (seeds 200000-211999) through the meter"
 }

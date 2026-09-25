@@ -2,8 +2,8 @@
  "schema": "s5c-budget/1",
  "campaign_key": "s5c-20260924",
  "authority": "docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md section 3 rows S1-S2 (D2); plan blob 8b0617b6 section 3",
- "revision": 1,
- "revision_reason": "activation budget; measurement and inference stages are allocated only after the feasibility receipt, by a new revision and a ledger rebind",
+ "revision": 2,
+ "revision_reason": "feasibility receipt FEASIBILITY-20260925-s5c-scalar5d-measurement-and-inference.md: measurement Tier S coverage and the F2 systematic construction allocated as separate stages; inference receives no allocation because no inference scope is feasible within the envelope; the 20% verification/repair reserve is unchanged; caps unchanged (fixed at activation)",
  "measured_utc": "2026-09-25T06:07:48Z",
  "evidence": "docs/orchestration/state/s5c/allocation-measurement-20260925.txt (iris, squeue -A m3246,m3246_g all users, showquota, hpssquota, sacctmgr qos)",
  "billing_rule": {
@@ -14,8 +14,24 @@
   "caveat": "iris charges are the site's authority; reconcile campaign totals against iris deltas at each checkpoint."
  },
  "allocation_measured": {
-  "cpu": {"account": "m3246", "project_allocated": 20000.0, "project_charged": 16547.3, "user_allocated": 10000.0, "user_charged": 1705.1, "queued_or_running_reservations_node_hours": 0.0, "uncommitted_remaining_node_hours": 3452.7},
-  "gpu": {"account": "m3246_g", "project_allocated": 180000.0, "project_charged": 121081.7, "user_allocated": 90000.0, "user_charged": 428.1, "queued_or_running_reservations_node_hours": 254.23, "uncommitted_remaining_node_hours": 58664.07},
+  "cpu": {
+   "account": "m3246",
+   "project_allocated": 20000.0,
+   "project_charged": 16547.3,
+   "user_allocated": 10000.0,
+   "user_charged": 1705.1,
+   "queued_or_running_reservations_node_hours": 0.0,
+   "uncommitted_remaining_node_hours": 3452.7
+  },
+  "gpu": {
+   "account": "m3246_g",
+   "project_allocated": 180000.0,
+   "project_charged": 121081.7,
+   "user_allocated": 90000.0,
+   "user_charged": 428.1,
+   "queued_or_running_reservations_node_hours": 254.23,
+   "uncommitted_remaining_node_hours": 58664.07
+  },
   "reservation_method": "every pending/running job on either account, all users: remaining time limit (running) or full limit (pending) x array task count x node fraction (whole nodes for non-shared QOS; cpus/128 for shared and cron)"
  },
  "pools": {
@@ -29,7 +45,9 @@
     "verification_repair": 69.054,
     "pilot": 17.263,
     "cleanup": 34.527,
-    "preservation": 0.5
+    "preservation": 0.5,
+    "measurement_tier_s": 130.0,
+    "measurement_construction": 30.0
    }
   },
   "gpu": {
@@ -42,7 +60,9 @@
    "stages": {
     "verification_repair": 25.0,
     "pilot": 6.25,
-    "cleanup": 12.5
+    "cleanup": 12.5,
+    "measurement_tier_s": 40.0,
+    "measurement_construction": 15.0
    }
   }
  },
@@ -51,11 +71,35 @@
   "pilot": "at most 5% of each pool on initial cost/variance pilots",
   "cleanup": "at most 10% of each pool on targeted cleanup",
   "preservation": "D3's HPSS transfer/restore job(s); billed as xfer QOS (billing=2 per task observed)",
-  "unallocated": "cpu 224.426 node-h and gpu 81.25 node-h (325 A100-h) remain unassigned until the feasibility receipt allocates measurement and inference stages separately"
+  "unallocated": "cpu 63.926 node-h and gpu 26.25 node-h remain unassigned (contingency; Tier T if its dependency resolves)",
+  "measurement_tier_s": "contract.json coverage (Tier S): the 200-replica sigma bootstrap and the 12,000 validation experiments; CPU and GPU pools both usable (the work is CPU LightGBM either way)",
+  "measurement_construction": "the F2 central value and systematic construction (vertical universes, detector and lateral bands) under a contract amendment",
+  "inference": "no allocation: every inference scope is infeasible within the envelope (feasibility receipt section 4)"
  },
  "storage": {
-  "pscratch": {"measured_used_tib": 16.37, "quota_tib": 20.0, "free_tib": 3.63, "ten_percent_of_free_gib": 371.7, "absolute_ceiling_tib": 2.0, "campaign_cap_gib": 371.7, "namespace": "/pscratch/sd/j/josephrb/s5c-20260924/"},
-  "hpss": {"measured_used_gib": 300.2, "quota_gib": 512.0, "free_gib": 211.8, "d3_authorized_additional_gib": 64.0, "d3_required_gib": 47.70}
+  "pscratch": {
+   "measured_used_tib": 16.37,
+   "quota_tib": 20.0,
+   "free_tib": 3.63,
+   "ten_percent_of_free_gib": 371.7,
+   "absolute_ceiling_tib": 2.0,
+   "campaign_cap_gib": 371.7,
+   "namespace": "/pscratch/sd/j/josephrb/s5c-20260924/"
+  },
+  "hpss": {
+   "measured_used_gib": 300.2,
+   "quota_gib": 512.0,
+   "free_gib": 211.8,
+   "d3_authorized_additional_gib": 64.0,
+   "d3_required_gib": 47.7
+  }
  },
- "retries": "at most two retries per task for a diagnosed infrastructure failure (plan section 3); at most one corrective resubmission per stage after a diagnosed code defect, verified repair and fresh admission (AUTHORIZATION-20260918 section 1, retained); the stricter applies; scientific failure never triggers an identical retry; automatic requeue disabled (--no-requeue enforced by the meter)"
+ "retries": "at most two retries per task for a diagnosed infrastructure failure (plan section 3); at most one corrective resubmission per stage after a diagnosed code defect, verified repair and fresh admission (AUTHORIZATION-20260918 section 1, retained); the stricter applies; scientific failure never triggers an identical retry; automatic requeue disabled (--no-requeue enforced by the meter)",
+ "revision_history": [
+  {
+   "revision": 1,
+   "measured_utc": "2026-09-25T06:07:48Z",
+   "note": "activation budget"
+  }
+ ]
 }

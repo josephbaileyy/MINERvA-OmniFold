@@ -1,0 +1,11 @@
+[s5c] task=0 name=bkg_dump job=58856439 host=nid004142 start=2026-09-25T06:51:05Z
+{"vectorized_purity_max_abs_diff": 0.0, "float32_coordinates_purity_max_abs_diff": 0.13725014839262872, "float32_coordinates_events_with_changed_weight": 25357, "measured_coordinates_identical": true, "measured_weights_max_abs_diff": 0.0, "n_data": 4091707, "n_bkg": 621547, "sum_bkg_w": 119132.3688136796, "data_pot": 1.057394261158926e+21, "mc_pot": 4.978198462880827e+21}
+{"omnifile_sha256": "b6d2651cfdbc52790cc7ed6032f2062a3e0ea50c12d63725beba29098dd5175a", "npz_sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f", "seconds": 29.9}
+[oi136] inventory: checked=209 repo_origin_count=7 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/inventory/bkg_dump.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 8   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/s5c-20260924/deploy/fc8d1ee8  (8) __main__, flux_universe, omnifold_nn_core, s5c_pseudo, s5c_unfold, unfold_2d_omnifold_unbinned, unfold_nd_omnifold_unbinned, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+[s5c] task=0 name=bkg_dump rc=0 end=2026-09-25T06:51:47Z

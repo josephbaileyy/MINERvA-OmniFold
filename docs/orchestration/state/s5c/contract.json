@@ -1,0 +1,307 @@
+{
+ "schema": "s5c-contract/1",
+ "campaign_key": "s5c-20260924",
+ "status": "FROZEN at the commit that first adds this file, before any validation-seed experiment is run and before any new observed statistic is evaluated. Executor choices under the plan's delegation (plan blob 8b0617b6 section 2), not owner quotations. Amendments are new files that cite this one; this file is never edited.",
+ "authority": "docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md",
+ "identities": {
+  "plan_blob": "8b0617b6e044a55a9b5870b46e5d90a15a6ced7a",
+  "input_npz": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+   "sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+   "note": "the npz the boot5dG/ssplit5d arms read; P2 proved its measured events and purity weights are reproduced exactly by the CV omnifile below"
+  },
+  "cv_omnifile": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root",
+   "sha256": "b6d2651cfdbc52790cc7ed6032f2062a3e0ea50c12d63725beba29098dd5175a"
+  },
+  "background_dump": {
+   "path": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+   "sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955"
+  },
+  "partition_scan": {
+   "path": "docs/orchestration/state/s5c/b1/partition_scan_2.json",
+   "sha256": "7b49b52daec6d40171a9d82d6cfbb10f34130b96e2df43393555f5f5262a39c2"
+  },
+  "adopted_trunk_not_modified": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5"
+ },
+ "data_informed_choices_inventory": [
+  "The observed data and the high-E_avail/high-W localization were examined by earlier campaigns; nothing here is blind.",
+  "Partition J was chosen from a development-MC scan (no observed data) viewed before the rule below was written; every level of the hierarchy passes any per-axis threshold up to 0.628, so the threshold did not select among levels.",
+  "Grid amplitudes: the E_avail tilt is anchored to spreads between fixed (untuned) generator predictions (VL35-VL38 integrated cross sections 2.22e-38 to 2.48e-38, about 11%); the q3-conditional deformation is an admissible stress amplitude, not a physics anchor.",
+  "No generator comparison with observed data is computed under this contract."
+ ],
+ "candidate": {
+  "family_history": [
+   {
+    "family": "F1",
+    "estimator": "production (omnifold_nn_core.make_estimators, random_state=seed)",
+    "outcome": "FAILED the 5% projected-sigma gate on every tested functional set with two seeds (k=0 vs k=1200 members 361090f9/7e4636a3): 43 M1 functionals 0.06145 (control, equals GRADE-20260920), H2 0.0598, H3a 0.0630, H3b 0.0625, H3 0.0947; two seeds suffice for failure because the maximum over more pairs can only grow",
+    "evidence": "docs/orchestration/state/s5c/c1/f1_member_check.json",
+    "recorded_unmet_requirement": "seed stability (plan section 6)"
+   }
+  ],
+  "selected_family": "F2",
+  "estimator": {
+   "implementation": "omnifold_nn_core.omnifold_loop via nd-unfolding/s5c_unfold.py (npz arms) and nd-unfolding/s5c_with_estimator.py (unmodified production arms), LightGBM 4.6.0",
+   "lightgbm_params": {
+    "n_estimators": 100,
+    "num_leaves": 8,
+    "learning_rate": 0.1,
+    "bin_construct_sample_cnt": 2147483647,
+    "deterministic": true,
+    "force_row_wise": true,
+    "num_threads": 32,
+    "random_state": 42
+   },
+   "iterations": 5,
+   "what_each_seed_changes": {
+    "random_state": "hypothesis to be confirmed by P1: nothing (no bagging, no feature subsampling, bin edges from every row); if confirmed it establishes reproducibility only",
+    "row_order_permutation": "an irrelevant choice used as the estimator-sensitivity probe for a deterministic estimator",
+    "pseudo_data_seed": "the data Poisson draw and the MC half split of one repeated experiment",
+    "bootstrap_seed": "the Poisson(1) resampling of pseudo-data event weights and unfolding-half MC weights"
+   }
+  },
+  "development_gates_before_validation": {
+   "G-repro": "P1: f2_s42 and f2_s42_rep bitwise equal",
+   "G-seed": "P1: f2_s42 and f2_s43 bitwise equal",
+   "G-perm": "P1: for both row permutations, max over reported functionals of |f_perm - f| / sigma_f <= 0.05, with sigma_f the Tier-S statistical sigma below (so a permutation moves no functional by more than 5% of its sigma, and cannot move any projected sigma by more than that)",
+   "G-seed-5pct": "the plan-section-6 5% projected-sigma gate over the tested complete seed ensemble {42, 43}: by G-seed every arm's output is identical under either seed, so the movement is 0 over that finite ensemble; scope stated as exactly that ensemble"
+  }
+ },
+ "measurement": {
+  "reported_functionals": "43 M1 functionals (project_cov_nd.build_projection (E_avail,W) rows over the full 65,856-cell grid, plus the all-ones row) + one integrated cross section per supported cell of partition J + the total integrated cross section; F = 43 + 109 + 1 = 153. Definition in code: nd-unfolding/s5c_coverage.py reported_functionals().",
+  "partition_J": {
+   "hierarchy_level": "H3",
+   "rule": "finest level of the s5c_partition.py hierarchy whose every coarse bin, on every coordinate, has marginal purity >= 0.5 and stability >= 0.5 (development MC); a cell is reported iff its expected reco-level signal and truth weight at data POT are both >= 1000; unsupported cells (25 with any signal, 0.47% of expected reco signal) are not reported individually and remain in the total",
+   "edges": {
+    "pt": [
+     0.0,
+     0.55,
+     0.85,
+     4.5
+    ],
+    "pz": [
+     1.5,
+     3.5,
+     6.0,
+     60.0
+    ],
+    "eavail": [
+     0.0,
+     0.4,
+     1.5,
+     100.0
+    ],
+    "q3": [
+     0.0,
+     1.2,
+     2.0,
+     100.0
+    ],
+    "W": [
+     0.0,
+     1.4,
+     2.2,
+     100.0
+    ]
+   },
+   "supported_cells": [
+    0,
+    1,
+    4,
+    7,
+    8,
+    9,
+    10,
+    13,
+    16,
+    17,
+    25,
+    26,
+    27,
+    28,
+    31,
+    34,
+    35,
+    36,
+    37,
+    40,
+    43,
+    44,
+    52,
+    53,
+    54,
+    55,
+    58,
+    63,
+    64,
+    67,
+    70,
+    71,
+    80,
+    81,
+    85,
+    88,
+    89,
+    90,
+    91,
+    93,
+    94,
+    97,
+    98,
+    106,
+    107,
+    108,
+    109,
+    111,
+    112,
+    115,
+    116,
+    117,
+    118,
+    120,
+    121,
+    124,
+    125,
+    133,
+    134,
+    135,
+    136,
+    139,
+    142,
+    143,
+    144,
+    145,
+    147,
+    148,
+    151,
+    152,
+    160,
+    161,
+    162,
+    165,
+    174,
+    175,
+    178,
+    179,
+    187,
+    188,
+    189,
+    192,
+    193,
+    195,
+    196,
+    197,
+    198,
+    201,
+    202,
+    204,
+    205,
+    206,
+    214,
+    215,
+    216,
+    219,
+    220,
+    222,
+    223,
+    224,
+    225,
+    228,
+    229,
+    231,
+    232,
+    233,
+    240,
+    241,
+    242
+   ],
+   "scope_statement": "joint-5D reporting at this coarse resolution; not a validation of any fine bin"
+  },
+  "interval_construction": {
+   "68": "[f_hat - sigma_f, f_hat + sigma_f]",
+   "95": "[f_hat - 1.96 sigma_f, f_hat + 1.96 sigma_f]",
+   "centering": "the estimate itself; no bias correction; no boundary truncation",
+   "sigma_tier_S": "sqrt(u_f' C_stat u_f) with C_stat the ddof=1 sample covariance of the declared bootstrap replicas; a statistical-uncertainty object (data and MC sampling), NOT a total uncertainty and not an interval prescription by itself"
+  }
+ },
+ "coverage": {
+  "tier": "S -- statistical interval coverage at fixed nominal nuisance settings over a truth grid",
+  "sampling_model": {
+   "regenerated": [
+    "pseudo-data signal counts Poisson(2 w_reco r) per reco-passing MC-half-B row",
+    "background counts Poisson(w_bkg) per background MC row",
+    "the MC half split (one keyed split per experiment)",
+    "purity weights rebuilt from the pseudo-data histogram",
+    "the unfold on MC half A (weights x2)"
+   ],
+   "fixed_conditional": [
+    "the full MC sample and its finite-sample fluctuation relative to the true population",
+    "the background MC sample and prediction",
+    "the detector model and every systematic nuisance at nominal",
+    "sigma_f (not re-estimated per experiment: fixed widths from one declared bootstrap)"
+   ],
+   "truth": "each experiment's own MC-half-B reweighted truth through the analysis's extraction (s5c_pseudo.build_experiment)"
+  },
+  "sigma": {
+   "configuration": "one development experiment: truth nominal, pseudo_seed 1, split_key 20260924, candidate F2",
+   "bootstrap_seeds": [
+    1,
+    200
+   ],
+   "replicas": 200
+  },
+  "grid": [
+   {
+    "truth": "nominal",
+    "amplitude": 0.0,
+    "validation_seeds": [
+     200000,
+     203999
+    ]
+   },
+   {
+    "truth": "eavail_tilt",
+    "amplitude": 0.2,
+    "validation_seeds": [
+     204000,
+     207999
+    ]
+   },
+   {
+    "truth": "q3_given_eavail_w",
+    "amplitude": 0.3,
+    "validation_seeds": [
+     208000,
+     211999
+    ]
+   }
+  ],
+  "gate": {
+   "lcb68_threshold": 0.66,
+   "lcb95_threshold": 0.94,
+   "bound": "one-sided Clopper-Pearson at level 0.05/(F*G) per (functional, grid point); two families (68%, 95%), each simultaneous at 95%",
+   "population": "exactly the declared seeds; an absent experiment makes the verdict INCOMPLETE, never a smaller n",
+   "evaluator": "nd-unfolding/s5c_coverage.py"
+  },
+  "sample_size_and_assurance": {
+   "n_per_grid_point": 4000,
+   "note": "exact CP with Bonferroni over m = 153 x 3 = 459: 80% assurance needs about 3,550 per point if true coverage is 0.72 / 0.965, about 6,800 if 0.70 / 0.96, and about 17,000 if exactly nominal (0.6827 / 0.9545); at n = 4000 the probability of passing is near zero if coverage is exactly nominal. Source: docs/orchestration/state/s5c/samplesize-assurance80.json and the feasibility receipt."
+  },
+  "independence": "validation seeds 200000-211999 are disjoint from development (1-99999) and bootstrap (1-200 on development experiment 1); no validation result is used to revise the estimator, sigma, functionals or gates; a permitted development revision needs fresh validation seeds"
+ },
+ "not_in_this_contract": {
+  "tier_T": "coverage of total (statistical plus systematic) intervals at shifted nuisance settings -- a costed next increment (feasibility receipt)",
+  "systematic_construction": "the F2 systematic covariance (vertical universes, detector and lateral bands) is built under a later contract amendment; it is not coverage-validated by Tier S",
+  "inference": "no calibrated comparison is attempted: the feasibility receipt finds every inference scope infeasible within the envelope at the plan's p-value precision rule"
+ },
+ "terminal_branches": {
+  "S_PASS": "the F2 statistical intervals are coverage-validated for exactly this grid and nominal nuisance; a measurement checkpoint may be assembled only with the systematic construction and independent verification; total-uncertainty coverage remains unvalidated",
+  "S_FAIL": "undercoverage recorded at the named functionals and grid points; no adoption; F3 or a changed construction is a costed next increment",
+  "S_INCOMPLETE": "resource- or evidence-limited; report measured costs and the missing experiments"
+ },
+ "resources": {
+  "admission": "nd-unfolding/s5c_meter.py",
+  "budget": "docs/orchestration/state/s5c/budget.json revision 2"
+ }
+}
