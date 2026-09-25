@@ -1,0 +1,947 @@
+{
+ "schema": "recovery-manifest-trunk-external-artifacts/1",
+ "measured_utc": "2026-09-25T02:44Z..02:48Z (digests), 02:57Z..03:00Z (copies, restores)",
+ "measured_by": "preservation pass, session a39de97a-6efc-483c-b6fa-b78a121bcfe9; login-node reads only, no allocation",
+ "trunk_manifest": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-manifest.json",
+  "sha256": "44ab73bae181ef222ef8b6aca9450780982b3dfc5feed2967102e694f3b4c080",
+  "producing_revision": "fb9ec3560fd6d62295dffc81b5694c9e26667d5b",
+  "inputs": {
+   "active": "MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/candidate/std_final5_candidate.root",
+   "central": "MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root",
+   "ml": "MINERvA-OmniFold/nd-unfolding/uq_cov_mlsplit_5d.root",
+   "null": "MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-null-source.npz",
+   "parent": "MINERvA-OmniFold/nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root",
+   "stat": "MINERvA-OmniFold/nd-unfolding/uq_cov_stat_5d.root",
+   "support": "MINERvA-OmniFold/nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
+   "throw": "MINERvA-OmniFold/nd-unfolding/uq_5d/z_precursor_20260914/unified_throw_cov_5d.root"
+  }
+ },
+ "verification_semantics": {
+  "checksum": "sha256 recomputed on the original and on each copy",
+  "restore": "a copy read back to a new path and re-hashed",
+  "scientific": "NONE \u2014 no object here is independently re-verified scientifically by this pass"
+ },
+ "not_inventoried": [
+  "/pscratch/sd/j/josephrb/z2m-products/member_k001200_L2laterals/ (L2 probe product 48713676\u2026, OUTCOME-20260922-L2)",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/unfolds/ (the ten endpoint unfolds upstream of `active`)",
+  "event-loop inputs upstream of `central`/`support`/`active` (runEventLoopOmniFold_5D_* bkg-aware arm)"
+ ],
+ "objects": [
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/bridge.json",
+   "role": "adopted trunk's own record",
+   "size": 3277,
+   "mtime_utc": "2026-09-17T07:22:54Z",
+   "sha256": "e242b8629e5dc837a55973ed308049035f9751439084e4529719d8ef9cc5fbd7",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/bridge.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-cv.npz",
+   "role": "adopted covariance and paired central value (3d7465f6)",
+   "size": 890500272,
+   "mtime_utc": "2026-09-17T07:34:23Z",
+   "sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-cv.npz",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": "NERSC-home copy -> /pscratch temp, sha256 re-measured equal, 2026-09-25T02:57Z",
+   "status": "PRESERVED \u2014 restore tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-manifest.json",
+   "role": "adopted trunk's own record",
+   "size": 2490,
+   "mtime_utc": "2026-09-17T07:24:38Z",
+   "sha256": "44ab73bae181ef222ef8b6aca9450780982b3dfc5feed2967102e694f3b4c080",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-manifest.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-mean.npz",
+   "role": "mean-centered sibling, NOT adopted (cited comparison)",
+   "size": 890383062,
+   "mtime_utc": "2026-09-17T07:34:52Z",
+   "sha256": "61b7a4939bd40459452e232d4a5cec3c0b19ad7a21715452f7bb3bc9e0c72dd2",
+   "md5": null,
+   "durable_copies": [],
+   "restore_test": null,
+   "status": "UNPRESERVED \u2014 sole copy on purgeable /pscratch"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-null-source.npz",
+   "role": "trunk manifest input `null`",
+   "size": 189794,
+   "mtime_utc": "2026-09-17T07:22:52Z",
+   "sha256": "2ac9d087ad307e097f57269ee0f9780f3b7a49e5bdb3402592ea5a353681b570",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-null-source.npz",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-null.npz",
+   "role": "adopted trunk's own record",
+   "size": 190817,
+   "mtime_utc": "2026-09-17T07:36:25Z",
+   "sha256": "cb82fc3285c981b91625530d48c14ff5554db5154db298a3144a57520633d77e",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-null.npz",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-pilot-receipt.json",
+   "role": "adopted trunk's own record",
+   "size": 16312,
+   "mtime_utc": "2026-09-17T07:39:09Z",
+   "sha256": "75bcf9efbb5d36ba97236fad923f59868c32409e2eeb766cf822ec95d40d2728",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-pilot-receipt.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-primary.json",
+   "role": "adopted trunk's own record",
+   "size": 2081,
+   "mtime_utc": "2026-09-18T22:19:55Z",
+   "sha256": "35919cfc6ed2ade32041ffc0a5e57017bf82a72fab4397173ee95eaa7648830f",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-primary.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-provenance.json",
+   "role": "adopted trunk's own record",
+   "size": 5577,
+   "mtime_utc": "2026-09-17T07:25:15Z",
+   "sha256": "d96926fd4ddd31c3d1a50cfedad71c8db940f70e5e467c738c2a1faf5149a465",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-provenance.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-receipt-cv.json",
+   "role": "adopted trunk's own record",
+   "size": 37568,
+   "mtime_utc": "2026-09-17T07:38:01Z",
+   "sha256": "9f8f91d9be69d76755e9e89828e2d4631250afb08ce2892ce7378b936336c531",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-receipt-cv.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-receipt-mean.json",
+   "role": "adopted trunk's own record",
+   "size": 37542,
+   "mtime_utc": "2026-09-17T07:38:01Z",
+   "sha256": "5bdc9a1830dc183a8e36aa250d09fd981167f962be17e89d33ba49a6cfa05bd7",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-receipt-mean.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ/BINDING.json",
+   "role": "(E_avail,W) publication projection or its record",
+   "size": 886,
+   "mtime_utc": "2026-09-20T23:25:58Z",
+   "sha256": "86df954f0a7d0090200835d5193c8bb3a00de97703c218c375897e05b3fdffb6",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ/BINDING.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ/COMPARE-20260922-publication-vs-diagnostic.json",
+   "role": "(E_avail,W) publication projection or its record",
+   "size": 2316,
+   "mtime_utc": "2026-09-22T05:25:44Z",
+   "sha256": "859b2656c7c11bc72681c918faf0cbc723877197e03d843dbc4669647456484c",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ/COMPARE-20260922-publication-vs-diagnostic.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ/CUTOFF-SCAN-20260922-publication-42x42.json",
+   "role": "(E_avail,W) publication projection or its record",
+   "size": 4440,
+   "mtime_utc": "2026-09-22T05:24:47Z",
+   "sha256": "9b5380279733cec16639515310a9e3796c46286dd632c1eeb5388a7be9045327",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ/CUTOFF-SCAN-20260922-publication-42x42.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ/bind_58656806.err",
+   "role": "(E_avail,W) publication projection or its record",
+   "size": 1831,
+   "mtime_utc": "2026-09-20T23:19:37Z",
+   "sha256": "0f4c3658d65335b3b029a38a60770230fc52a916d06a5f7b7db700b2efd8ed2a",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ/bind_58656806.err",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ/bind_58656806.out",
+   "role": "(E_avail,W) publication projection or its record",
+   "size": 58,
+   "mtime_utc": "2026-09-20T23:19:37Z",
+   "sha256": "116249065ab32bca5fbae530facb3ad8701fcf4fdb88b44289e674e2305f45c2",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ/bind_58656806.out",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ/bind_58657221.err",
+   "role": "(E_avail,W) publication projection or its record",
+   "size": 1164,
+   "mtime_utc": "2026-09-20T23:25:56Z",
+   "sha256": "c0b89ac88c4dea667785089e08266eecf07a0040aa7f8e80ebfb85caba2c12c7",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ/bind_58657221.err",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ/bind_58657221.out",
+   "role": "(E_avail,W) publication projection or its record",
+   "size": 257,
+   "mtime_utc": "2026-09-20T23:25:58Z",
+   "sha256": "c61ab71fcc0af2bdfd5f1b7ff3fc65ccf0b9a33e25d4bec17c63d415161a1466",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ/bind_58657221.out",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ/cov_5d_to_eavailW_publication.root",
+   "role": "(E_avail,W) publication projection or its record",
+   "size": 17101,
+   "mtime_utc": "2026-09-20T23:10:51Z",
+   "sha256": "835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ/cov_5d_to_eavailW_publication.root",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": "NERSC-home copy -> /pscratch temp, sha256 re-measured equal, 2026-09-25T02:57Z",
+   "status": "PRESERVED \u2014 restore tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ/cov_5d_to_eavailW_publication.root.receipt.json",
+   "role": "(E_avail,W) publication projection or its record",
+   "size": 4939,
+   "mtime_utc": "2026-09-20T23:10:53Z",
+   "sha256": "d3e9ca08e8c3bb6fd32d2c1e3e929cca98e438dec7ab28865ffab13282632f5f",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ/cov_5d_to_eavailW_publication.root.receipt.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root",
+   "role": "(pt,pz,E_avail) projection from the trunk (constructed, not adopted) or its record",
+   "size": 15937290,
+   "mtime_utc": "2026-09-22T05:58:17Z",
+   "sha256": "20c16e16a35a837b09d7fe39bcf6bb8ee5828d5283fc5c2f756e3a5371e1f69e",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root.receipt.json",
+   "role": "(pt,pz,E_avail) projection from the trunk (constructed, not adopted) or its record",
+   "size": 4986,
+   "mtime_utc": "2026-09-22T05:58:19Z",
+   "sha256": "78e87c82fe9c7241c6d38be73434905329ae38eb40a5d17ae9602792d2d2eddc",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root.receipt.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ3D/proj3d_58736632.err",
+   "role": "(pt,pz,E_avail) projection from the trunk (constructed, not adopted) or its record",
+   "size": 2213,
+   "mtime_utc": "2026-09-22T05:56:33Z",
+   "sha256": "3563700cfd2a578dcfa5430a2bee714477faa12604cc528d09adb0b8fa97f8ae",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ3D/proj3d_58736632.err",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ3D/proj3d_58736632.out",
+   "role": "(pt,pz,E_avail) projection from the trunk (constructed, not adopted) or its record",
+   "size": 455,
+   "mtime_utc": "2026-09-22T05:56:33Z",
+   "sha256": "41a078c07fdfd0cda72765340196a7352ff6c4ad2e4facd08e599f043df55e2a",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ3D/proj3d_58736632.out",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ3D/proj3d_58736728.err",
+   "role": "(pt,pz,E_avail) projection from the trunk (constructed, not adopted) or its record",
+   "size": 941,
+   "mtime_utc": "2026-09-22T05:58:20Z",
+   "sha256": "f2fce5ae31bcbfcf4d23456133ab1ef8a6105312d0e3934d1255c458ee024e0d",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ3D/proj3d_58736728.err",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/PROJ3D/proj3d_58736728.out",
+   "role": "(pt,pz,E_avail) projection from the trunk (constructed, not adopted) or its record",
+   "size": 1726,
+   "mtime_utc": "2026-09-22T05:58:20Z",
+   "sha256": "f40367dbc3ac65f3382053ea39e5af4ad93423c987554689b2b0a160d3365193",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/PROJ3D/proj3d_58736728.out",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/RELEASE-PACKAGE-20260922/_build_report.json",
+   "role": "Appendix F release-package draft arrays (not shipped)",
+   "size": 2526,
+   "mtime_utc": "2026-09-22T05:58:37Z",
+   "sha256": "7b9a98f1d0c409e92025deb37fc31d209e5ed0fdf63a17b8197bce734cbe1db1",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/RELEASE-PACKAGE-20260922/_build_report.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/RELEASE-PACKAGE-20260922/central_values_5d.npz",
+   "role": "Appendix F release-package draft arrays (not shipped)",
+   "size": 109836,
+   "mtime_utc": "2026-09-22T05:58:36Z",
+   "sha256": "6773530647f66103f5788e70a60c02e2bc4d3402d48423d607e4a1233c45e702",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/RELEASE-PACKAGE-20260922/central_values_5d.npz",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/RELEASE-PACKAGE-20260922/covariance_eavailW.npz",
+   "role": "Appendix F release-package draft arrays (not shipped)",
+   "size": 10079,
+   "mtime_utc": "2026-09-22T05:58:36Z",
+   "sha256": "94679d6dcdf1ff25af739354a12b69b95f8bf110bda1eb0c60ffffde983009e8",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/RELEASE-PACKAGE-20260922/covariance_eavailW.npz",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/RELEASE-PACKAGE-20260922/masks_5d.npz",
+   "role": "Appendix F release-package draft arrays (not shipped)",
+   "size": 22372,
+   "mtime_utc": "2026-09-22T05:58:36Z",
+   "sha256": "2c02f47f13448a613843efc443a4d45227e17346f60963fa710475393ae97c55",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/RELEASE-PACKAGE-20260922/masks_5d.npz",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/RELEASE-PACKAGE-20260922/projection_matrix_M_eavailW.npz",
+   "role": "Appendix F release-package draft arrays (not shipped)",
+   "size": 21306,
+   "mtime_utc": "2026-09-22T05:58:36Z",
+   "sha256": "3b81f42bdc75613f790f28a286e2e0336a0436d3b8abcf9a38c83ea2e0eb4b3b",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/RELEASE-PACKAGE-20260922/projection_matrix_M_eavailW.npz",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/bridge.json",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 2507,
+   "mtime_utc": "2026-09-20T00:24:38Z",
+   "sha256": "28e959634fcfa0e178f61aff9786d75eecb8c016b3bf7b69c0aa3566f3737fcf",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/member_k000000/bridge.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-cv.npz",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 887254200,
+   "mtime_utc": "2026-09-20T06:39:57Z",
+   "sha256": "361090f94446260f8fd78ad46214118ad2c9d43a3fbcef295b499c2bdbf7e214",
+   "md5": null,
+   "durable_copies": [],
+   "restore_test": null,
+   "status": "UNPRESERVED \u2014 sole copy on purgeable /pscratch"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-manifest.json",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 2517,
+   "mtime_utc": "2026-09-20T06:31:11Z",
+   "sha256": "a5b87a28ade8e841db8a67db41e956a708702219fb76166f86c0b4501b2fb0ba",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/member_k000000/z-manifest.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-mean.npz",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 887371441,
+   "mtime_utc": "2026-09-20T06:40:27Z",
+   "sha256": "6e2b8b32439b99796aa0ed101038db4acadbb3c1d44e28ad13691997de9d21f3",
+   "md5": null,
+   "durable_copies": [],
+   "restore_test": null,
+   "status": "UNPRESERVED \u2014 sole copy on purgeable /pscratch"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-null-source.npz",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 189977,
+   "mtime_utc": "2026-09-20T00:24:36Z",
+   "sha256": "2313e525ca46ea13efc662e9fcb7b84963f1fd79b361006afb694518e77f1fec",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/member_k000000/z-null-source.npz",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-null.npz",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 190333,
+   "mtime_utc": "2026-09-20T06:42:02Z",
+   "sha256": "ff0d8ec06850abb94cb840eb29aa3be096624eaf0a4e99de73446ec5028bc9e3",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/member_k000000/z-null.npz",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-receipt-cv.json",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 37827,
+   "mtime_utc": "2026-09-20T06:43:26Z",
+   "sha256": "7e5dab87a7cbe9cb16d43ab15b7f1ec3b5f216504073ff581b036f413a9c009e",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/member_k000000/z-receipt-cv.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-receipt-mean.json",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 37803,
+   "mtime_utc": "2026-09-20T06:43:26Z",
+   "sha256": "3904bf308a3ce320ab4cb14ae08c977a8c557355ceacd6402ff29ee5e8e58d38",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/member_k000000/z-receipt-mean.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/bridge.json",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 2506,
+   "mtime_utc": "2026-09-20T11:50:36Z",
+   "sha256": "f9c49f87192a0ff3cd76d227125f1322096b95911abd61ef32695a0e23d59473",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/member_k001200/bridge.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-cv.npz",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 887228520,
+   "mtime_utc": "2026-09-20T12:03:19Z",
+   "sha256": "7e4636a33e490f482842d32775900da2a59587db5644cd9d661a58561a0e0190",
+   "md5": null,
+   "durable_copies": [],
+   "restore_test": null,
+   "status": "UNPRESERVED \u2014 sole copy on purgeable /pscratch"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-manifest.json",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 2517,
+   "mtime_utc": "2026-09-20T11:52:04Z",
+   "sha256": "05ae4e5fb8050b7b228930702b788d7dc3d3243b2f6a75e309031f2f56630db3",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/member_k001200/z-manifest.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-mean.npz",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 887324826,
+   "mtime_utc": "2026-09-20T12:03:49Z",
+   "sha256": "dbda36078c234655dbae290bf2e725ff0d3c557943c645e5d41b021d18b3dbc9",
+   "md5": null,
+   "durable_copies": [],
+   "restore_test": null,
+   "status": "UNPRESERVED \u2014 sole copy on purgeable /pscratch"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-null-source.npz",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 190010,
+   "mtime_utc": "2026-09-20T11:50:33Z",
+   "sha256": "2b3d79483c7b3a91893de6dd2d96972fcd6918b296683cba7f4362d8fc5961be",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/member_k001200/z-null-source.npz",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-null.npz",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 190376,
+   "mtime_utc": "2026-09-20T12:06:07Z",
+   "sha256": "74444bb0056f33ea5bdf2ea2010fcfa55c9c808957880c8a81949903390f06c2",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/member_k001200/z-null.npz",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-receipt-cv.json",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 37828,
+   "mtime_utc": "2026-09-20T12:07:28Z",
+   "sha256": "f07d6d0048149d38e602279ef63e9dbf3d66acf676cb653817b9353da2b9524e",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/member_k001200/z-receipt-cv.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-receipt-mean.json",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 37804,
+   "mtime_utc": "2026-09-20T12:07:28Z",
+   "sha256": "b1bddd1b463e919ce4d2ee8a4f6b2433b289070e3d722c0259bdf0389b4d82e7",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/member_k001200/z-receipt-mean.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/GRADE.json",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 30330,
+   "mtime_utc": "2026-09-20T12:20:01Z",
+   "sha256": "f272a7729006c6ec9dff74df8961161a78ac79f564e9c7b3bd37f5aae8769387",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/GRADE.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/r5-asm.json",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 30057,
+   "mtime_utc": "2026-09-20T11:47:38Z",
+   "sha256": "e2bd1f4818e1ab2bcbf2dbd73e6b7c223dd93670be0637d3699db544b3a76826",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/r5-asm.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/z2m-products/r5-grade.json",
+   "role": "cause-3 two-member grade evidence behind M1",
+   "size": 30095,
+   "mtime_utc": "2026-09-20T12:08:40Z",
+   "sha256": "d259cb1b00ff09c525d635f518341529b3ca6e85c8119ac53bd05a8ae6c82ece",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/z2m-products/r5-grade.json",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/candidate/std_final5_candidate.root",
+   "role": "trunk manifest input `active`",
+   "size": 42326607877,
+   "mtime_utc": "2026-08-16T23:10:24Z",
+   "sha256": "950f8cb15c5a0bd785d65e7f85f4cb40fa86e27383973f82ef15c7ef525c1263",
+   "md5": null,
+   "durable_copies": [],
+   "restore_test": null,
+   "status": "UNPRESERVED \u2014 sole copy on purgeable /pscratch"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root",
+   "role": "trunk manifest input `central`",
+   "size": 479553,
+   "mtime_utc": "2026-06-07T05:48:03Z",
+   "sha256": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8",
+   "md5": null,
+   "durable_copies": [
+    {
+     "location": "/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/trunk-baseline/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root",
+     "kind": "NERSC global home epoch copy (2026-09-24)",
+     "verification": "sha256 equal to original"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_cov_mlsplit_5d.root",
+   "role": "trunk manifest input `ml`",
+   "size": 892078834,
+   "mtime_utc": "2026-07-14T01:05:11Z",
+   "sha256": "27b2e456f80e15d8a5c4da1bcd3b01a201b80385341af68614c85b6b7f8f5374",
+   "md5": null,
+   "durable_copies": [],
+   "restore_test": null,
+   "status": "UNPRESERVED \u2014 sole copy on purgeable /pscratch"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root",
+   "role": "trunk manifest input `parent`",
+   "size": 892170881,
+   "mtime_utc": "2026-08-12T05:43:34Z",
+   "sha256": "4f168e83eaeb4bc7191a4e13e219c7ff06556e5ad30b9df4fcc249e6720c7ec2",
+   "md5": "557b91313168799363cf366f582bd003",
+   "durable_copies": [
+    {
+     "location": "HPSS:/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d/readopt_20260811_footing/stamped_bkgaware_meancentered_20260812.root",
+     "kind": "HPSS archive mnv-quoted-products-20260812",
+     "verification": "md5 of original equals HPSS stored md5"
+    }
+   ],
+   "restore_test": "HPSS (tape-resident, PV AB014700) -> /pscratch temp via hsi get, sha256 re-measured equal to the trunk manifest, 2026-09-25T02:57Z",
+   "status": "PRESERVED \u2014 restore tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_cov_stat_5d.root",
+   "role": "trunk manifest input `stat`",
+   "size": 891732011,
+   "mtime_utc": "2026-07-14T01:04:01Z",
+   "sha256": "6580016fa7136e6f98867707f4d48557350b26a91773d0c300be20113c2c6934",
+   "md5": null,
+   "durable_copies": [],
+   "restore_test": null,
+   "status": "UNPRESERVED \u2014 sole copy on purgeable /pscratch"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
+   "role": "trunk manifest input `support`",
+   "size": 41436632945,
+   "mtime_utc": "2026-07-14T20:59:17Z",
+   "sha256": "9f7b2f55d7581bb687e214e7f5a38235fd07b6d9522c2223fa3a3395c803c92a",
+   "md5": "12ccb510e362ba9d19bcaaf9b24f10f1",
+   "durable_copies": [
+    {
+     "location": "HPSS:/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d/universe_stage2_5d_bkgaware/uq_universe_5d_covariance_combined_bkgaware.root",
+     "kind": "HPSS archive mnv-quoted-products-20260812",
+     "verification": "md5 of original equals HPSS stored md5"
+    }
+   ],
+   "restore_test": null,
+   "status": "PRESERVED \u2014 checksum-verified copy, restore not tested"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_precursor_20260914/unified_throw_cov_5d.root",
+   "role": "trunk manifest input `throw`",
+   "size": 2668265910,
+   "mtime_utc": "2026-09-14T22:53:06Z",
+   "sha256": "09a029ed2a7de0ffd144b1ad0ad8d3e0bf8e8b9788797b0af58693c753795560",
+   "md5": null,
+   "durable_copies": [],
+   "restore_test": null,
+   "status": "UNPRESERVED \u2014 sole copy on purgeable /pscratch"
+  }
+ ]
+}

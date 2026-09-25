@@ -41,6 +41,11 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
   - Draft prompts for the two-session sequence. Preserved byte-identical to the copy received on
   2026-09-24 (blob `cf3c2e858d4526ad356e604af9bc6100e6cc7e9f`). Its *preservation* section was sent
   by Joseph on 2026-09-24; its *estimator* section was not.
+- [`AUTHORIZATION-20260924-preservation-and-simplification-pass.md`](AUTHORIZATION-20260924-preservation-and-simplification-pass.md)
+  - Joseph's actual 2026-09-24 activation of the preservation section, verbatim, and what it does not activate.
+- [`RECOVERY-MANIFEST-20260924-preparation-epoch.md`](RECOVERY-MANIFEST-20260924-preparation-epoch.md)
+  - The 2026-09-24 evidence tags, bundles and recovery tests; which scalar-5D trunk objects have a
+  durable copy and which **nine are sole-copy on `/pscratch`**; the frozen simplification family list.
 
 ### THE SCALAR-5D REQUIRED DELIVERABLE PATH — standing authorization; **BLOCKED on five Joseph decisions** (2026-09-18)
 
