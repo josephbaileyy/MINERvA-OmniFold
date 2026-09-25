@@ -1,4 +1,35 @@
-"""One confirmatory-stage PET run: a frozen RunConfig on one (pool, replicate, distortion).
+"""One PET final-design study run: a RunConfig on one (bank draw | predecessor pool replicate).
+
+PROVENANCE. A copy of `nd-unfolding/pet/improvement_campaign/confirm/run_replicate.py` (git blob
+`5ced494dbcd76b89264d0f6c6fbf636af38e76f2`, study branch commit `e5a1e004`), modified minimally for
+PROTOCOL-20260925; modifications are marked `[pfd]`. The training loop, resume, deadline, outputs
+(`iterations/iterNN.npz`, `halves.npz`, `replicate_arrays.npz`, receipts) and the scorer contract
+are the predecessor's (imported: `phase_b/pet/b2_driver`, `run_unfold`, `closure_data`). Added:
+
+* `--bank-draw STAGE:REPLICATE --pseudo-bank {DEV,FB,RB}` (protocol section 3; `design_inputs`
+  `bank_selection`): FB/RB refused unless the study protocol carries the release amendment;
+  `--pool R` always refused; `--pool X --replicate r` limited to predecessor-drawn replicates and
+  byte-identical to the predecessor's selection;
+* `--distortion null`;
+* `--bootstrap-member B --bootstrap-seed S` (protocol section 9): Poisson(1) event weights on the
+  pseudodata and the prior before the engine normalizes, member estimator seeds from (config
+  seeds, B); the scorer target stays the unresampled pseudodata truth;
+* the step-2 miss rule from the config when it carries one (`step2_miss_mode`), else the CLI;
+* the truth arm `pdg_onehot_counts` (`design_arms.py`, extending the B2 registry);
+* receipts record the bank manifest digest and the draw digests.
+
+    run_design.py --config C.json --config-hash <sha256> --repo <checkout> --out <dir>
+        --inputs-npz ... --identity-sidecar ... --populations <B1 populations.npz>
+        (--bank-draw S1:0 --pseudo-bank DEV --banks-npz .../banks.npz
+         | --pool T --replicate 0 --pools-npz ... --manifest ... | --historical-halves)
+        [--distortion dev|null|<phase_e id>] [--step2-miss-mode carry|efficiency_corrected]
+        [--bootstrap-member B --bootstrap-seed S] [--deadline-unix T] [--inputs-only]
+
+The original module docstring follows.
+
+---
+
+One confirmatory-stage PET run: a frozen RunConfig on one (pool, replicate, distortion).
 
 The training loop is B2's (`phase_b/pet/b2_driver.B2MultiFold`: the A1 recipe driver plus
 per-iteration pull/push and model state, bit-exact resume, a deadline, the B2 input arms, the
@@ -37,18 +68,21 @@ from pathlib import Path
 from typing import Any, Sequence
 
 HERE = Path(__file__).resolve().parent
-CAMPAIGN = HERE.parent
+STUDY = HERE.parent                                   # [pfd]
+CAMPAIGN = STUDY.parent / "improvement_campaign"      # [pfd] the predecessor's campaign
 B2DIR = CAMPAIGN / "phase_b" / "pet"
-for _p in (CAMPAIGN, B2DIR, HERE):
+CONFIRM = CAMPAIGN / "confirm"                        # [pfd] freeze_runs
+for _p in (CAMPAIGN, B2DIR, CONFIRM, HERE):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
 import authorization_scope as scope  # noqa: E402
-import replicate_inputs as ri  # noqa: E402
+import design_inputs as ri  # noqa: E402              # [pfd] the study's copy
 from recipe import RunConfig  # noqa: E402
 
-SCHEMA = "pet-improvement-confirm-run-receipt/1"
+SCHEMA = "pet-final-design-run-receipt/1"             # [pfd]
 STEP2_MISS_MODES = ("carry", "efficiency_corrected")
+DEFAULT_MISS_MODE = "carry"                           # [pfd] the predecessor's CLI default
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -72,6 +106,15 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     sel.add_argument("--historical-halves", action="store_true",
                      help="positive control: the historical development halves in place of a "
                           "replicate draw")
+    sel.add_argument("--bank-draw", metavar="STAGE:REPLICATE", default=None,     # [pfd]
+                     help="a study draw: pseudodata from --pseudo-bank, prior from DEV")
+    p.add_argument("--pseudo-bank", choices=sorted(ri.BANK_CODES), default=None)  # [pfd]
+    p.add_argument("--banks-npz", type=Path, default=None,                          # [pfd]
+                   help="banks.npz of build_banks.py (required with --bank-draw; with --pool "
+                        "it adds a check that every selected row is in DEV)")
+    p.add_argument("--bank-manifest", type=Path, default=ri.BANK_MANIFEST)          # [pfd]
+    p.add_argument("--bootstrap-member", type=int, default=None)                   # [pfd]
+    p.add_argument("--bootstrap-seed", type=int, default=None)                     # [pfd]
     p.add_argument("--replicate", type=int, default=None)
     p.add_argument("--family", default=ri.FAMILY)
     p.add_argument("--n-prior", type=int, default=ri.N_PRIOR)
@@ -79,7 +122,9 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     p.add_argument("--pools-npz", type=Path, default=None)
     p.add_argument("--manifest", type=Path, default=None)
     p.add_argument("--distortion", default=ri.DEV)
-    p.add_argument("--step2-miss-mode", choices=STEP2_MISS_MODES, default="carry")
+    p.add_argument("--step2-miss-mode", choices=STEP2_MISS_MODES, default=None,   # [pfd]
+                   help=f"used when the config carries no step2_miss_mode (default "
+                        f"{DEFAULT_MISS_MODE}); refused if it contradicts the config")
     p.add_argument("--crosscheck-closure-data", action="store_true")
     p.add_argument("--probe-rows", type=int, default=50_000)
     p.add_argument("--deadline-unix", type=float, default=None)
@@ -99,7 +144,42 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         p.error("--crosscheck-closure-data compares against the historical halves only")
     if args.historical_halves and args.distortion != ri.DEV:
         p.error("the historical halves carry the development distortion only")
+    # [pfd] bank draws and bootstrap members
+    if args.bank_draw is not None:
+        stage, _, rep = args.bank_draw.rpartition(":")
+        if not stage or not rep.isdigit():
+            p.error("--bank-draw takes STAGE:REPLICATE (replicate a non-negative integer)")
+        if args.pseudo_bank is None or args.banks_npz is None:
+            p.error("--bank-draw needs --pseudo-bank and --banks-npz")
+        if args.replicate is not None:
+            p.error("--bank-draw carries its own replicate id; no --replicate")
+        args.bank_stage, args.bank_replicate = stage, int(rep)
+    elif args.pseudo_bank is not None:
+        p.error("--pseudo-bank goes with --bank-draw")
+    if (args.bootstrap_member is None) != (args.bootstrap_seed is None):
+        p.error("--bootstrap-member and --bootstrap-seed go together")
+    if args.bootstrap_member is not None and args.bootstrap_member < 0:
+        p.error("--bootstrap-member must be >= 0")
+    if args.bootstrap_member is not None and args.historical_halves:
+        p.error("bootstrap members are defined for pool and bank draws")
     return args
+
+
+def resolve_miss_mode(config: RunConfig, cli: str | None) -> tuple[str, str]:
+    """[pfd] The step-2 miss rule: the config's `step2_miss_mode` if the RunConfig carries that
+    field, else the CLI flag, else the predecessor's default. A CLI value contradicting the config
+    is refused."""
+    from_config = getattr(config, "step2_miss_mode", None)
+    if from_config is not None:
+        if from_config not in STEP2_MISS_MODES:
+            raise SystemExit(f"[design] config step2_miss_mode {from_config!r} is unknown")
+        if cli is not None and cli != from_config:
+            raise SystemExit(f"[design] --step2-miss-mode {cli} contradicts the config's "
+                             f"{from_config}")
+        return from_config, "config"
+    if cli is not None:
+        return cli, "cli"
+    return DEFAULT_MISS_MODE, "default"
 
 
 def write_json_atomic(path: Path, payload: Any) -> None:
@@ -127,22 +207,85 @@ def preflight(args: argparse.Namespace) -> tuple[Path, RunConfig, Any]:
         args.frozen_record = freeze_runs.verify_generated(config, args.frozen_config,
                                                           args.frozen_sha256)
     if args.pool is not None:
-        ri.refuse_sealed_pool(args.pool)
+        ri.refuse_pool(args.pool, args.replicate, args.family, args.n_prior, args.n_pseudo)  # [pfd]
+    if args.bank_draw is not None:                    # [pfd] before any data is read
+        ri.refuse_bank(args.pseudo_bank)
+        ri.bank_draw_salts(args.bank_stage, args.bank_replicate)
+    args.miss_mode, args.miss_mode_source = resolve_miss_mode(config, args.step2_miss_mode)
     distortion = ri.get_distortion(args.distortion, config.endpoint.amplitude,
                                    config.endpoint.clip)
     return out, config, distortion
 
 
 def run_identity(config: RunConfig, arm: Any, miss_mode: str, selection: Any,
-                 distortion: Any) -> dict[str, Any]:
+                 distortion: Any, bootstrap: dict[str, Any] | None = None) -> dict[str, Any]:
     ident = {"config_hash": config.content_hash(), "b2_arm": arm.name,
              "b2_arm_hash": arm.content_hash(), "step2_miss_mode": miss_mode,
              "selection_mode": selection.mode,
              "prior_rows_sha256": selection.record["prior_rows_sha256"],
              "pseudo_rows_sha256": selection.record["pseudo_rows_sha256"],
              "distortion": distortion.name, "distortion_hash": distortion.content_hash()}
+    if bootstrap is not None:                         # [pfd] absent otherwise (predecessor form)
+        ident["bootstrap"] = {"member": bootstrap["member"], "seed": bootstrap["seed"],
+                              "member_config_hash": bootstrap["member_config_hash"]}
     ident["run_identity"] = hashlib.sha256(json.dumps(ident, sort_keys=True).encode()).hexdigest()
     return ident
+
+
+def select_rows(args: argparse.Namespace, config: RunConfig, mods: Any) -> tuple[Any, Any]:
+    """[pfd] The selection (historical halves, predecessor pool replicate, or bank draw) and,
+    for pool selections with --banks-npz, the DEV-membership check."""
+    bank_check = None
+    if args.historical_halves:
+        selection = ri.historical_selection(mods, config.events, args.inputs_npz,
+                                            args.identity_sidecar)
+    elif args.bank_draw is not None:
+        selection = ri.bank_selection(
+            args.bank_stage, args.bank_replicate, args.pseudo_bank, banks_npz=args.banks_npz,
+            identity_sidecar=args.identity_sidecar, bank_manifest=args.bank_manifest,
+            n_prior=args.n_prior, n_pseudo=args.n_pseudo)
+    else:
+        selection = ri.replicate_selection(
+            args.pool, args.replicate, pools_npz=args.pools_npz, manifest=args.manifest,
+            identity_sidecar=args.identity_sidecar, n_prior=args.n_prior,
+            n_pseudo=args.n_pseudo, family=args.family)
+        if args.banks_npz is not None:
+            bank_check = ri.rows_in_bank(selection.load_rows, args.banks_npz, args.bank_manifest)
+    return selection, bank_check
+
+
+def build_inputs(args: argparse.Namespace, config: RunConfig, distortion: Any, selection: Any,
+                 mods: Any, ClosureInputs: type) -> tuple[Any, dict, Any, Any]:
+    """[pfd] The predecessor's input assembly (load, closure, regions), factored out of main so
+    tests can run it without TensorFlow; plus the bootstrap member's weights. Returns (inputs,
+    arrays, r1, bootstrap record)."""
+    ffd = mods["ffd"]
+    r1 = (None if distortion.reco_energy_scale is None
+          else (selection.pseudo_rows, distortion.reco_energy_scale))
+    loaded = ri.load_signal_rows(ffd, mods["DataLoader"], args.inputs_npz, selection.load_rows,
+                                 reco_energy_scale=r1)
+    inputs, arrays = ri.assemble_closure(ffd, loaded, selection, distortion, ClosureInputs)
+    del loaded
+    boot = None
+    if args.bootstrap_member is not None:
+        boot = ri.apply_bootstrap(
+            inputs, arrays, ri.identity_of_rows(args.identity_sidecar, arrays["pseudo_rows"]),
+            ri.identity_of_rows(args.identity_sidecar, arrays["prior_rows"]),
+            args.bootstrap_seed, args.bootstrap_member)
+    cr = ri.historical_cr()
+    arrays["pseudo_region"] = ri.region_codes(cr, arrays["pseudo_truth"][:, 0],
+                                              arrays["pseudo_truth"][:, 1], args.populations)
+    arrays["prior_region"] = ri.region_codes(cr, arrays["prior_truth"][:, 0],
+                                             arrays["prior_truth"][:, 1], args.populations)
+    return inputs, arrays, r1, boot
+
+
+def bank_manifest_record(path: Path) -> dict[str, Any] | None:
+    """[pfd] The committed bank manifest's digest (recorded in every receipt when present)."""
+    path = Path(path)
+    if not path.exists():
+        return None
+    return {"path": str(path), "sha256": ri.sha256_file(path)}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -151,10 +294,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     out.mkdir(parents=True, exist_ok=True)
     started = time.perf_counter()
 
-    import b2_arms
     import b2_driver as b2d
+    import design_arms                                # [pfd] B2 registry + study arms
     import run_unfold as ru
-    arm = b2_arms.get(config.feature_arm)
+    arm = design_arms.get(config.feature_arm)
     probe_record = ru._load_numpy_probe()
     import numpy as np
     import closure_data as cd
@@ -173,15 +316,13 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     # ---- rows, loader, closure ------------------------------------------------------------
     t_load = time.perf_counter()
-    if args.historical_halves:
-        selection = ri.historical_selection(mods, config.events, args.inputs_npz,
-                                            args.identity_sidecar)
-    else:
-        selection = ri.replicate_selection(
-            args.pool, args.replicate, pools_npz=args.pools_npz, manifest=args.manifest,
-            identity_sidecar=args.identity_sidecar, n_prior=args.n_prior,
-            n_pseudo=args.n_pseudo, family=args.family)
-    ident = run_identity(config, arm, args.step2_miss_mode, selection, distortion)
+    selection, bank_check = select_rows(args, config, mods)      # [pfd]
+    # [pfd] a bootstrap member trains with its own estimator seeds
+    run_config, boot_config = config, None
+    if args.bootstrap_member is not None:
+        run_config, boot_config = ri.bootstrap_config(config, args.bootstrap_member)
+        boot_config["seed"] = int(args.bootstrap_seed)
+    ident = run_identity(config, arm, args.miss_mode, selection, distortion, boot_config)
     ident_path = out / "run_identity.json"
     if ident_path.exists():
         before = json.loads(ident_path.read_text())
@@ -189,12 +330,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise SystemExit(f"[confirm] {out} belongs to another run: {before} vs {ident}")
     else:
         write_json_atomic(ident_path, ident)
-    r1 = (None if distortion.reco_energy_scale is None
-          else (selection.pseudo_rows, distortion.reco_energy_scale))
-    loaded = ri.load_signal_rows(ffd, mods["DataLoader"], args.inputs_npz, selection.load_rows,
-                                 reco_energy_scale=r1)
-    inputs, arrays = ri.assemble_closure(ffd, loaded, selection, distortion, cd.ClosureInputs)
-    del loaded
+    inputs, arrays, r1, bootstrap = build_inputs(args, config, distortion, selection, mods,
+                                                 cd.ClosureInputs)            # [pfd]
     crosscheck = None
     if args.crosscheck_closure_data:
         reference = cd.build_closure_inputs(
@@ -210,11 +347,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         write_json_atomic(out / "crosscheck_closure_data.json", crosscheck)
         if not crosscheck["all_equal"]:
             raise SystemExit(f"[confirm] inputs differ from closure_data's: {crosscheck}")
-    cr = ri.historical_cr()
-    arrays["pseudo_region"] = ri.region_codes(cr, arrays["pseudo_truth"][:, 0],
-                                              arrays["pseudo_truth"][:, 1], args.populations)
-    arrays["prior_region"] = ri.region_codes(cr, arrays["prior_truth"][:, 0],
-                                             arrays["prior_truth"][:, 1], args.populations)
     arrays_digest = {k: ri.sha256_bytes(v) for k, v in sorted(arrays.items())}
     arrays_path = out / "replicate_arrays.npz"
     if arrays_path.exists():
@@ -225,6 +357,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         np.savez(out / "replicate_arrays.tmp.npz", **arrays)
         os.replace(out / "replicate_arrays.tmp.npz", arrays_path)
     digests_before_arm = inputs.digests(np)
+    study = {                                          # [pfd]
+        "bank_manifest": bank_manifest_record(args.bank_manifest),
+        "draw_digests": {"prior_rows_sha256": selection.record["prior_rows_sha256"],
+                         "pseudo_rows_sha256": selection.record["pseudo_rows_sha256"],
+                         "prior_identity_sha256": selection.record.get("prior_identity_sha256"),
+                         "pseudo_identity_sha256": selection.record.get("pseudo_identity_sha256")},
+        "bank_membership_check": bank_check, "bootstrap": bootstrap,
+        "bootstrap_config": boot_config, "run_config_hash": run_config.content_hash(),
+        "step2_miss_mode_source": args.miss_mode_source, "distortion_name": distortion.name,
+        "study_protocol_sha256": ri.sha256_file(ri.STUDY_PROTOCOL)}
     if args.inputs_only:
         write_json_atomic(out / "inputs_receipt.json", {
             "schema": SCHEMA + "/inputs-only", "config_hash": config.content_hash(),
@@ -234,6 +376,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 if k not in ("dump_rows_a", "dump_rows_b", "tilt_a", "pass_gen_a", "mc_indices")},
             "input_digests_before_arm": digests_before_arm, "frozen_config": args.frozen_record,
             "replicate_arrays_digests": arrays_digest, "crosscheck_closure_data": crosscheck,
+            "study": study, "b2_arm": arm.name, "step2_miss_mode": args.miss_mode,
             "counts": {"pdata_rows": int(len(inputs.pdata["rows"])),
                        "prior_rows": int(len(inputs.mc["rows"])),
                        "prior_pass_reco": int(np.sum(inputs.mc["pass_reco"])),
@@ -246,20 +389,20 @@ def main(argv: Sequence[str] | None = None) -> int:
                           "load_seconds": time.perf_counter() - t_load}))
         return 0
     read = ri.scaled_reader(np, b2d.scalar_reader(np, ffd, args.inputs_npz), r1)
-    arm_record = b2d.apply_arm(np, arm, inputs, read, None)
+    arm_record = design_arms.apply_arm(np, arm, inputs, read, None, b2d)   # [pfd]
     pdata, mcb = cd.make_loaders(mods, np, inputs)
-    factories, _check = ru.model_factories(config, mods, inputs)
+    factories, _check = ru.model_factories(run_config, mods, inputs)
     load_seconds = time.perf_counter() - t_load
 
     # ---- the unfolding (B2's loop) -------------------------------------------------------
     B2 = b2d.make_b2_multifold(mods["omnifold"].MultiFold, tf, np)
-    unfolder = B2(config.name, config=config, factories=factories, data=pdata, mc=mcb,
+    unfolder = B2(run_config.name, config=run_config, factories=factories, data=pdata, mc=mcb,
                   out_dir=out, pretrained_check=None, training_recipe=training_recipe,
                   torch_adamw=torch_adamw, probe_rows=args.probe_rows,
                   deadline_unix=args.deadline_unix,
                   first_iteration_estimate_s=args.first_iteration_estimate_s,
                   stop_after_iteration=args.stop_after_iteration,
-                  step2_miss_mode=args.step2_miss_mode)
+                  step2_miss_mode=args.miss_mode)
     complete = unfolder.Unfold()
     np.savez_compressed(out / "halves.npz", dump_rows_a=inputs.meta["dump_rows_a"],
                         dump_rows_b=inputs.meta["dump_rows_b"], tilt_a=inputs.meta["tilt_a"],
@@ -271,7 +414,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     receipt = {
         "schema": SCHEMA, "config": config.to_dict(), "config_hash": config.content_hash(),
         "frozen_config": args.frozen_record, "run_identity": ident, "b2_arm": arm.name, "b2_arm_hash": arm.content_hash(),
-        "b2_arm_record": arm_record, "step2_miss_mode": args.step2_miss_mode,
+        "b2_arm_record": arm_record, "step2_miss_mode": args.miss_mode, "study": study,
         "selection": selection.record, "distortion": distortion.record,
         "code_commit": subprocess.run(["git", "-C", str(args.repo), "rev-parse", "HEAD"],
                                       capture_output=True, text=True).stdout.strip(),

@@ -1,4 +1,28 @@
-"""PET driver inputs for a replicate draw from an event pool, built as `closure_data.py` builds them.
+"""PET final-design study: driver inputs for a replicate or BANK draw, built as the predecessor builds them.
+
+PROVENANCE. A copy of `nd-unfolding/pet/improvement_campaign/confirm/replicate_inputs.py` (git blob
+`32fcc47c5963cfabc0eac107acbd0e0278a08f27`, study branch commit `e5a1e004`), modified minimally for
+PROTOCOL-20260925. Every modification is marked `[pfd]`; everything unmarked is the predecessor's
+code, unchanged (a test compares those functions' source with the predecessor's module):
+
+* paths: the module lives in `final_design/runner/`; `CAMPAIGN` still names the predecessor's
+  campaign directory (its protocol, records and Phase E modules);
+* `refuse_pool`: pool R is always refused, and a predecessor pool selection is limited to the
+  replicates the predecessor already drew (`DRAWN`), so it cannot touch a bank-FB/RB row;
+* `refuse_bank` / `bank_selection` (protocol section 3): pseudodata = a uniformly random subset,
+  without replacement, of the pseudodata bank (DEV, FB or RB); prior = a random subset of DEV
+  disjoint from the pseudodata; both by identity hashes salted with
+  `pet-final-design-20260925/<stage>/<replicate>/{pseudo|prior}`. FB and RB are refused unless the
+  study protocol carries an `### Amendment ... FB release` / `... RB release` heading;
+* the `null` distortion (no truth distortion; target = the undistorted pseudodata truth);
+* bootstrap members (protocol section 9): Poisson(1) event weights keyed by (seed, member, side,
+  event identity), and per-member estimator seeds.
+
+The original module docstring follows.
+
+---
+
+PET driver inputs for a replicate draw from an event pool, built as `closure_data.py` builds them.
 
 A confirmatory run (PROTOCOL-20260922 section 5) unfolds a fresh PRIOR sample and a fresh, distorted
 PSEUDODATA sample drawn from a pool (section 3), not the historical halves. This module does three
@@ -44,7 +68,8 @@ from typing import Any, Callable, Mapping
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-CAMPAIGN = HERE.parent
+STUDY = HERE.parent                                   # [pfd] final_design/
+CAMPAIGN = STUDY.parent / "improvement_campaign"      # [pfd] the predecessor's campaign
 PHASE_E = CAMPAIGN / "phase_e"
 for _p in (CAMPAIGN, PHASE_E):
     if str(_p) not in sys.path:
@@ -54,7 +79,7 @@ import authorization_scope as scope  # noqa: E402
 import distortions as dist  # noqa: E402
 import replicates as rp  # noqa: E402
 
-SCHEMA = "pet-improvement-confirm-inputs/1"
+SCHEMA = "pet-final-design-inputs/1"                  # [pfd]
 PROTOCOL = CAMPAIGN / "PROTOCOL-20260922.md"
 POPULATIONS_JSON = CAMPAIGN / "phase_b" / "scalar" / "results" / "populations.json"
 DEV = "dev"
@@ -66,6 +91,17 @@ FAMILY = "confirm-historical-size-v1"
 N_PRIOR, N_PSEUDO = 600_130, 600_111
 SEALED_POOLS = ("P", "F")
 AMENDMENT_2 = re.compile(r"^#{2,4} Amendment 2\b", re.MULTILINE)
+# [pfd] PROTOCOL-20260925 section 3: banks, access rules and draw salts.
+STUDY_PROTOCOL = STUDY / "PROTOCOL-20260925.md"
+BANK_MANIFEST = STUDY / "banks" / "BANK_MANIFEST.json"
+STUDY_SALT = "pet-final-design-20260925"
+BANK_CODES = {"DEV": 0, "FB": 1, "RB": 2}
+BANK_RELEASE = {"FB": re.compile(r"^### Amendment .* FB release", re.MULTILINE),
+                "RB": re.compile(r"^### Amendment .* RB release", re.MULTILINE)}
+REFUSED_POOLS = ("R",)                                # the reserve bank RB, never via --pool
+# The predecessor's scored draws of FAMILY (historical sizes): the only pool selections allowed.
+DRAWN = {"P": range(3), "F": range(12), "S": range(1), "T": range(2)}
+NULL = "null"
 SIGNAL_MEMBERS = ("edges_0", "edges_1", "petSchemaVersion", "pass_reco", "pass_truth",
                   "part_reco", "reco_view", "reco_time", "part_gen", "reco_scalars",
                   "truth_scalars", "reco_muon", "reco_vertex", "w_truth", "w_reco",
@@ -99,6 +135,65 @@ def refuse_sealed_pool(pool: str, protocol: Path = PROTOCOL) -> dict[str, Any]:
             "no 'Amendment 2' heading")
     return {"pool": pool, "sealed": True, "protocol": str(protocol),
             "protocol_sha256": sha256_file(protocol), "amendment_2_present": True}
+
+
+def refuse_pool(pool: str, replicate: int, family: str = FAMILY, n_prior: int = N_PRIOR,
+                n_pseudo: int = N_PSEUDO, protocol: Path = PROTOCOL) -> dict[str, Any]:
+    """[pfd] A predecessor pool selection is allowed only for a draw the predecessor already
+    made and scored (family FAMILY at the historical sizes, replicates `DRAWN`): any other draw
+    could read a never-drawn row (bank FB). Pool R (bank RB) is always refused. Then the
+    predecessor's own sealed-pool guard (P/F need its Amendment 2, which it carries)."""
+    if pool in REFUSED_POOLS:
+        raise scope.ScopeViolation(f"pool {pool} is the study's reserve bank RB; it is never "
+                                   "opened through --pool (use --bank-draw ... --pseudo-bank RB "
+                                   "after an RB-release amendment)")
+    if (family, int(n_prior), int(n_pseudo)) != (FAMILY, N_PRIOR, N_PSEUDO) \
+            or int(replicate) not in DRAWN.get(pool, ()):
+        raise scope.ScopeViolation(
+            f"pool {pool} replicate {replicate} (family {family}, {n_prior}+{n_pseudo}) is not a "
+            f"predecessor-drawn selection {dict((k, list(v)) for k, v in DRAWN.items())}; it could "
+            "read final-bank rows (PROTOCOL-20260925 section 3)")
+    return refuse_sealed_pool(pool, protocol)
+
+
+def _protocol_is_committed(protocol: Path) -> dict[str, Any]:
+    """[pfd] The release must be COMMITTED (section 3): if the protocol lies in a git work tree,
+    refuse uncommitted or untracked changes to it."""
+    import subprocess
+    d = str(Path(protocol).resolve().parent)
+    inside = subprocess.run(["git", "-C", d, "rev-parse", "--is-inside-work-tree"],
+                            capture_output=True, text=True)
+    if inside.returncode != 0 or inside.stdout.strip() != "true":
+        return {"git": "not in a git work tree"}
+    tracked = subprocess.run(["git", "-C", d, "ls-files", "--error-unmatch",
+                              str(Path(protocol).resolve())], capture_output=True, text=True)
+    status = subprocess.run(["git", "-C", d, "status", "--porcelain", "--",
+                             str(Path(protocol).resolve())], capture_output=True, text=True)
+    if tracked.returncode != 0 or status.stdout.strip():
+        raise scope.ScopeViolation(f"{protocol} has uncommitted changes or is untracked; a bank "
+                                   "release counts only once committed")
+    head = subprocess.run(["git", "-C", d, "rev-parse", "HEAD"], capture_output=True, text=True)
+    return {"git": "committed", "head": head.stdout.strip()}
+
+
+def refuse_bank(bank: str, protocol: Path = STUDY_PROTOCOL) -> dict[str, Any]:
+    """[pfd] DEV is open. FB is refused until the study protocol carries a heading
+    `### Amendment ... FB release` (committed after the final set is frozen, section 8); RB until
+    one `### Amendment ... RB release` (section 11 or a predeclared check). The check reads the
+    protocol of THIS checkout, so a pinned checkout without the amendment cannot open the bank."""
+    if bank not in BANK_CODES:
+        raise SystemExit(f"[design] unknown bank {bank!r}; known {sorted(BANK_CODES)}")
+    if bank == "DEV":
+        return {"bank": bank, "sealed": False}
+    text = Path(protocol).read_text()
+    hit = BANK_RELEASE[bank].search(text)
+    if hit is None:
+        raise scope.ScopeViolation(
+            f"bank {bank} is sealed: {protocol} carries no '### Amendment ... {bank} release' "
+            "heading (PROTOCOL-20260925 section 3)")
+    git = _protocol_is_committed(protocol)
+    return {"bank": bank, "sealed": True, "released_by": hit.group(0),
+            "protocol": str(protocol), "protocol_sha256": sha256_file(protocol), "git": git}
 
 
 # ------------------------------------------------------------------------------------------- #
@@ -189,6 +284,11 @@ def get_distortion(name: str, endpoint_amplitude: float | None = None,
             raise SystemExit(f"[confirm] the RunConfig endpoint ({endpoint_amplitude}, "
                              f"{endpoint_clip}) is not the historical tilt")
         return DistortionSpec(DEV, spec, lambda t: development_tilt_raw(t["eavail"], spec))
+    if name == NULL:                                  # [pfd] no truth distortion
+        return DistortionSpec(NULL, {"name": NULL, "form": "no truth distortion: weight 1 on "
+                                     "every pseudodata row; target = the undistorted "
+                                     "pseudodata truth"},
+                              lambda t: np.ones(len(t["eavail"]), dtype=np.float64))
     registry = dist.registry()
     if "+" in name or (name in registry and registry[name].family == "R1"):
         return _r1_distortion(name, registry)
@@ -257,7 +357,7 @@ def _sorted_unique(rows: np.ndarray, label: str) -> np.ndarray:
 def replicate_selection(pool: str, replicate: int, *, pools_npz: Path, manifest: Path,
                         identity_sidecar: Path, n_prior: int = N_PRIOR, n_pseudo: int = N_PSEUDO,
                         family: str = FAMILY, protocol: Path = PROTOCOL) -> Selection:
-    guard = refuse_sealed_pool(pool, protocol)
+    guard = refuse_pool(pool, replicate, family, n_prior, n_pseudo, protocol)   # [pfd]
     codes, pool_record = rp.load_pool_codes(pools_npz, manifest)
     manifest_doc = json.loads(Path(manifest).read_text())
     sidecar_sha = sha256_file(identity_sidecar)
@@ -283,6 +383,123 @@ def replicate_selection(pool: str, replicate: int, *, pools_npz: Path, manifest:
               "prior_identity_sha256": sha256_bytes(identity_all[prior]),
               "pseudo_identity_sha256": sha256_bytes(identity_all[pseudo])}
     return Selection("replicate", np.union1d(prior, pseudo), prior, pseudo, record)
+
+
+def load_bank_codes(banks_npz: Path, manifest: Path = BANK_MANIFEST
+                    ) -> tuple[np.ndarray, dict[str, Any]]:
+    """[pfd] The per-inventory-row bank codes, after checking `banks.npz` against the committed
+    `BANK_MANIFEST.json` (file sha256, bank-code sha256, per-bank counts and sorted-row digests)."""
+    doc = json.loads(Path(manifest).read_text())
+    got = sha256_file(banks_npz)
+    if got != doc["output"]["banks_npz_sha256"]:
+        raise SystemExit(f"[design] banks npz sha256 {got} != manifest "
+                         f"{doc['output']['banks_npz_sha256']}")
+    with np.load(banks_npz, allow_pickle=False) as blob:
+        codes = np.asarray(blob["bank_code"], dtype=np.int8)
+    if hashlib.sha256(codes.tobytes()).hexdigest() != doc["output"]["bank_code_sha256"]:
+        raise SystemExit("[design] bank_code digest differs from the manifest")
+    for name, info in doc["banks"].items():
+        if int(info["code"]) != BANK_CODES[name]:
+            raise SystemExit(f"[design] bank {name} has code {info['code']} in the manifest")
+        rows = np.flatnonzero(codes == BANK_CODES[name])
+        if rows.size != int(info["count"]) or rp.rows_digest(rows) != info["sorted_rows_sha256"]:
+            raise SystemExit(f"[design] bank {name} rows differ from the manifest")
+    record = {"banks_npz": str(banks_npz), "banks_npz_sha256": got,
+              "bank_manifest": str(manifest), "bank_manifest_sha256": sha256_file(manifest),
+              "bank_manifest_code_commit": doc.get("code", {}).get("commit"),
+              "counts": {k: int(v["count"]) for k, v in doc["banks"].items()},
+              "identity_sidecar_sha256": doc["inputs"]["identity_sidecar_sha256"]}
+    return codes, record
+
+
+def _salt_order(identity: np.ndarray, rows: np.ndarray, salt: str) -> np.ndarray:
+    """[pfd] Positions of `rows` sorted by (identity hash under `salt`, row)."""
+    return rp._order(rp.uniform_hash(identity, rp.seed_from_salt(salt)), rows)
+
+
+def bank_draw_salts(stage: str, replicate: int) -> dict[str, str]:
+    """[pfd] The two salts of a bank draw (protocol section 3)."""
+    if not stage or "/" in stage or ":" in stage or stage != stage.strip():
+        raise SystemExit(f"[design] stage name {stage!r} must be non-empty, without '/' or ':'")
+    if int(replicate) < 0:
+        raise SystemExit("[design] replicate ids must be >= 0")
+    base = f"{STUDY_SALT}/{stage}/{int(replicate)}"
+    return {"pseudo": f"{base}/pseudo", "prior": f"{base}/prior"}
+
+
+def draw_from_banks(codes: np.ndarray, identity_all: np.ndarray, stage: str, replicate: int,
+                    pseudo_bank: str, n_prior: int = N_PRIOR, n_pseudo: int = N_PSEUDO
+                    ) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
+    """[pfd] (prior rows, pseudodata rows), both sorted, and the draw record. Pseudodata: the
+    `n_pseudo` lowest-hash rows of the pseudodata bank; prior: the `n_prior` lowest-hash rows of DEV
+    minus the pseudodata (a different salt), so the two are disjoint and each is a uniformly random
+    subset without replacement. Identity-keyed: independent of row order and of other draws."""
+    salts = bank_draw_salts(stage, replicate)
+    codes = np.asarray(codes, dtype=np.int8)
+    bank_rows = np.flatnonzero(codes == BANK_CODES[pseudo_bank]).astype(np.int64)
+    if bank_rows.size < n_pseudo:
+        raise SystemExit(f"[design] bank {pseudo_bank} holds {bank_rows.size} rows < {n_pseudo}")
+    pos = _salt_order(identity_all[bank_rows], bank_rows, salts["pseudo"])[:int(n_pseudo)]
+    pseudo = np.sort(bank_rows[pos])
+    dev = np.flatnonzero(codes == BANK_CODES["DEV"]).astype(np.int64)
+    keep = np.ones(dev.size, dtype=bool)
+    if pseudo_bank == "DEV":
+        keep[np.searchsorted(dev, pseudo)] = False
+    candidates = dev[keep]
+    if candidates.size < n_prior:
+        raise SystemExit(f"[design] DEV minus the pseudodata holds {candidates.size} < {n_prior}")
+    pos = _salt_order(identity_all[candidates], candidates, salts["prior"])[:int(n_prior)]
+    prior = np.sort(candidates[pos])
+    if np.intersect1d(prior, pseudo).size:
+        raise AssertionError("prior and pseudodata share rows")
+    if not (np.all(codes[pseudo] == BANK_CODES[pseudo_bank])
+            and np.all(codes[prior] == BANK_CODES["DEV"])):
+        raise AssertionError("a drawn row is outside its bank")
+    record = {"stage": stage, "replicate": int(replicate), "pseudo_bank": pseudo_bank,
+              "prior_bank": "DEV", "salts": salts,
+              "seeds": {k: rp.seed_from_salt(v) for k, v in salts.items()},
+              "n_pseudo_bank_rows": int(bank_rows.size), "n_prior_candidates": int(candidates.size),
+              "n_prior": int(prior.size), "n_pseudo": int(pseudo.size),
+              "pseudo_sampling_fraction": float(pseudo.size / bank_rows.size)}
+    return prior, pseudo, record
+
+
+def bank_selection(stage: str, replicate: int, pseudo_bank: str, *, banks_npz: Path,
+                   identity_sidecar: Path, bank_manifest: Path = BANK_MANIFEST,
+                   n_prior: int = N_PRIOR, n_pseudo: int = N_PSEUDO,
+                   protocol: Path = STUDY_PROTOCOL) -> Selection:
+    """[pfd] A study draw (protocol section 3): see `draw_from_banks`. The bank guard runs before
+    any file is read."""
+    guard = refuse_bank(pseudo_bank, protocol)
+    codes, bank_record = load_bank_codes(banks_npz, bank_manifest)
+    sidecar_sha = sha256_file(identity_sidecar)
+    if sidecar_sha != bank_record["identity_sidecar_sha256"]:
+        raise SystemExit("[design] identity sidecar sha256 differs from the bank manifest")
+    with np.load(identity_sidecar, mmap_mode="r") as blob:
+        identity_all = np.asarray(blob["sig_event_id"]).astype(np.int64)
+    if identity_all.shape[0] != codes.size:
+        raise SystemExit("[design] identity sidecar and bank codes disagree in length")
+    prior, pseudo, draw = draw_from_banks(codes, identity_all, stage, replicate, pseudo_bank,
+                                          n_prior, n_pseudo)
+    record = {"mode": "bank", "bank_guard": guard, "banks": bank_record,
+              "identity_sidecar": str(identity_sidecar), "identity_sidecar_sha256": sidecar_sha,
+              "draw": draw,
+              "prior_rows_sha256": rp.rows_digest(prior),
+              "pseudo_rows_sha256": rp.rows_digest(pseudo),
+              "prior_identity_sha256": sha256_bytes(identity_all[prior]),
+              "pseudo_identity_sha256": sha256_bytes(identity_all[pseudo])}
+    return Selection("bank", np.union1d(prior, pseudo), prior, pseudo, record)
+
+
+def rows_in_bank(rows: np.ndarray, banks_npz: Path, bank_manifest: Path = BANK_MANIFEST,
+                 bank: str = "DEV") -> dict[str, Any]:
+    """[pfd] Refuse unless every row lies in `bank` (used on predecessor pool selections)."""
+    codes, record = load_bank_codes(banks_npz, bank_manifest)
+    rows = np.asarray(rows, dtype=np.int64)
+    outside = int((codes[rows] != BANK_CODES[bank]).sum())
+    if outside:
+        raise scope.ScopeViolation(f"{outside} selected rows lie outside bank {bank}")
+    return {"bank": bank, "n_rows": int(rows.size), "outside": 0, "banks": record}
 
 
 def historical_selection(mods: Mapping[str, Any], events: Any, inputs_npz: Path,
@@ -581,3 +798,112 @@ def scaled_reader(np_: Any, read: Callable, r1: tuple[np.ndarray, float] | None)
         return vals
 
     return wrapped
+
+
+# ------------------------------------------------------------------------------------------- #
+# [pfd] Bootstrap members (PROTOCOL-20260925 section 9)
+# ------------------------------------------------------------------------------------------- #
+BOOTSTRAP_SALT = f"{STUDY_SALT}/bootstrap"
+MEMBER_SEED_SALT = f"{STUDY_SALT}/bootstrap-estimator-seed"
+_POISSON_KMAX = 40
+
+
+def poisson1_quantile(u: np.ndarray) -> np.ndarray:
+    """Poisson(1) by inversion of a uniform in [0, 1): the smallest k with CDF(k) > u."""
+    k = np.arange(_POISSON_KMAX + 1)
+    pmf = np.exp(-1.0) / np.cumprod(np.concatenate([[1.0], k[1:].astype(np.float64)]))
+    cdf = np.cumsum(pmf)
+    cdf[-1] = np.inf           # u < 1 always lands (the tail beyond k=40 is < 1e-48)
+    return np.searchsorted(cdf, np.asarray(u, np.float64), side="right").astype(np.float64)
+
+
+def bootstrap_counts(identity: np.ndarray, seed: int, member: int, side: str) -> np.ndarray:
+    """Poisson(1) weight per event, a function of (seed, member, side, event identity) only: a
+    member is reproducible, independent of row order, and prior/pseudodata draws are independent
+    (different salts)."""
+    if side not in ("prior", "pseudo"):
+        raise ValueError(f"side {side!r}")
+    salt = f"{BOOTSTRAP_SALT}/{int(seed)}/{int(member)}/{side}"
+    return poisson1_quantile(rp.uniform_hash(identity, rp.seed_from_salt(salt)))
+
+
+def member_seed(seed: int, member: int, field_name: str) -> int:
+    """An estimator seed of bootstrap member `member`: sha256(salt/field/seed/member) ->
+    [1, 2^31 - 1], so each step's training and validation-split seeds stay decoupled."""
+    h = hashlib.sha256(f"{MEMBER_SEED_SALT}/{field_name}/{int(seed)}/{int(member)}".encode())
+    return int.from_bytes(h.digest()[:4], "big") % (2 ** 31 - 1) + 1
+
+
+def bootstrap_config(config: Any, member: int) -> tuple[Any, dict[str, Any]]:
+    """The RunConfig of a member: the four estimator seeds replaced by `member_seed` of each."""
+    import dataclasses
+    seeds: dict[str, Any] = {}
+
+    def step(s: Any, label: str) -> Any:
+        new, new_val = member_seed(s.seed, member, f"{label}.seed"), \
+            member_seed(s.validation.seed, member, f"{label}.validation.seed")
+        seeds[label] = {"seed": [int(s.seed), new],
+                        "validation.seed": [int(s.validation.seed), new_val]}
+        return dataclasses.replace(s, seed=new,
+                                   validation=dataclasses.replace(s.validation, seed=new_val))
+    out = config.replace(step1=step(config.step1, "step1"), step2=step(config.step2, "step2"))
+    return out, {"member": int(member), "seeds_config_to_member": seeds,
+                 "config_hash": config.content_hash(), "member_config_hash": out.content_hash()}
+
+
+def identity_of_rows(identity_sidecar: Path, rows: np.ndarray) -> np.ndarray:
+    with np.load(identity_sidecar, mmap_mode="r") as blob:
+        return np.asarray(blob["sig_event_id"]).astype(np.int64)[np.asarray(rows, np.int64)]
+
+
+def apply_bootstrap(inputs: Any, arrays: dict[str, np.ndarray], identity_pseudo: np.ndarray,
+                    identity_prior: np.ndarray, seed: int, member: int) -> dict[str, Any]:
+    """Multiply the engine's event weights by Poisson(1) counts BEFORE the DataLoaders normalize
+    them: the pseudodata weights (`inputs.pdata['weight']`, its reco&truth-passing rows) and both
+    prior weight legs (`inputs.mc['weight']`, `['weight_reco']`). `identity_*` are aligned with
+    `arrays['pseudo_rows']` / `arrays['prior_rows']`.
+
+    Scoring arrays: the pseudodata arrays stay UNRESAMPLED (the score target is the replicate's
+    own undistorted-or-distorted pseudodata truth); the prior's `prior_w_truth`/`prior_w_reco`
+    carry the member's resampled weights (the member's unfolded histogram is prior weight x count x
+    push), with the unresampled legs kept beside them. The counts are stored too."""
+    ks_pseudo = bootstrap_counts(identity_pseudo, seed, member, "pseudo")
+    ks_prior = bootstrap_counts(identity_prior, seed, member, "prior")
+    rows_a, rows_b = arrays["pseudo_rows"], arrays["prior_rows"]
+    if not (np.array_equal(inputs.meta["dump_rows_a"], rows_a)
+            and np.array_equal(inputs.mc["rows"], rows_b)):
+        raise SystemExit("[design] bootstrap: row order differs between inputs and arrays")
+    pos = np.searchsorted(rows_a, inputs.pdata["rows"])
+    if not np.array_equal(rows_a[pos], inputs.pdata["rows"]):
+        raise SystemExit("[design] bootstrap: pseudodata rows are not in the draw")
+    before = {"pdata.weight": sha256_bytes(inputs.pdata["weight"]),
+              "mc.weight": sha256_bytes(inputs.mc["weight"]),
+              "mc.weight_reco": sha256_bytes(inputs.mc["weight_reco"])}
+    inputs.pdata["weight"] = (np.asarray(inputs.pdata["weight"], np.float64)
+                              * ks_pseudo[pos]).astype(np.float32)
+    inputs.mc["weight"] = (np.asarray(inputs.mc["weight"], np.float64) * ks_prior
+                           ).astype(np.float32)
+    inputs.mc["weight_reco"] = (np.asarray(inputs.mc["weight_reco"], np.float64) * ks_prior
+                                ).astype(np.float32)
+    arrays["prior_w_truth_unresampled"] = arrays["prior_w_truth"]
+    arrays["prior_w_reco_unresampled"] = arrays["prior_w_reco"]
+    arrays["prior_w_truth"] = arrays["prior_w_truth"] * ks_prior
+    arrays["prior_w_reco"] = arrays["prior_w_reco"] * ks_prior
+    arrays["prior_bootstrap_count"] = ks_prior
+    arrays["pseudo_bootstrap_count"] = ks_pseudo
+    after = {"pdata.weight": sha256_bytes(inputs.pdata["weight"]),
+             "mc.weight": sha256_bytes(inputs.mc["weight"]),
+             "mc.weight_reco": sha256_bytes(inputs.mc["weight_reco"])}
+
+    def stats(k: np.ndarray) -> dict[str, Any]:
+        return {"n": int(k.size), "mean": float(k.mean()), "var": float(k.var()),
+                "n_zero": int((k == 0).sum()), "max": int(k.max()),
+                "sha256": sha256_bytes(k)}
+    return {"member": int(member), "seed": int(seed), "salt": BOOTSTRAP_SALT,
+            "applied": "Poisson(1) x pdata.weight, mc.weight, mc.weight_reco before the "
+                       "DataLoaders normalize",
+            "counts_pseudo": stats(ks_pseudo), "counts_prior": stats(ks_prior),
+            "weight_digests_before": before, "weight_digests_after": after,
+            "scorer": {"target": "UNRESAMPLED pseudodata truth x distortion",
+                       "prior_w_truth/prior_w_reco": "resampled (x prior count); unresampled "
+                                                     "legs in *_unresampled"}}
