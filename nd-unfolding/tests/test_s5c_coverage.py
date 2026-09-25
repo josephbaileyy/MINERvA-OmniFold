@@ -79,6 +79,48 @@ class Coverage(unittest.TestCase):
                       "--bias-allowance", str(ba), "--out", str(tmp / "o.json")])
         self.assertEqual(json.loads((tmp / "o.json").read_text())["verdict"], "PASS")
 
+    def build_biased(self, n_exp, rel_bias):
+        """Conservative-width experiments (true 68% coverage ~0.79 unbiased) with every cell scaled
+        by (1 + rel_bias): a known multiplicative bias."""
+        tmp, c = self.build(n_exp, inflate=0.8)
+        for f in (tmp / "exp").glob("*.npz"):
+            z = dict(np.load(f))
+            np.savez(f, xsec_flat=z["xsec_flat"] * (1 + rel_bias), xtrue_flat=z["xtrue_flat"])
+        return tmp, c
+
+    def correct(self, tmp, c, beta, se):
+        U, names = sc.reported_functionals({"measurement": {"partition_J": J}})
+        bc = tmp / "bc.json"
+        bc.write_text(json.dumps({"functional_names": names, "beta": [beta] * len(names), "se": [se] * len(names)}))
+        sc.main(["--contract", str(c), "--experiments", str(tmp / "exp"), "--bootstrap", str(tmp / "boot"),
+                 "--bias-correction", str(bc), "--out", str(tmp / "o.json")])
+        return json.loads((tmp / "o.json").read_text())
+
+    def test_bias_correction_repairs_a_known_bias_and_keeps_widths(self):
+        tmp, c = self.build_biased(600, 0.04)
+        rc, res = self.score(tmp, c)
+        self.assertEqual(res["verdict"], "FAIL")             # uncorrected: the bias undercovers
+        res = self.correct(tmp, c, 0.04, 0.0)
+        self.assertEqual(res["verdict"], "PASS")
+        self.assertAlmostEqual(res["grid"][0]["median_halfwidth68_over_sigma"], 1.0, places=6)
+
+    def test_a_wrong_bias_correction_still_fails(self):
+        tmp, c = self.build_biased(600, 0.04)
+        self.assertEqual(self.correct(tmp, c, -0.04, 0.0)["verdict"], "FAIL")
+
+    def test_zero_correction_reproduces_the_frozen_construction(self):
+        tmp, c = self.build(300, inflate=1.0)
+        rc, frozen = self.score(tmp, c)
+        res = self.correct(tmp, c, 0.0, 0.0)
+        self.assertEqual(res["grid"][0]["hits68"], frozen["grid"][0]["hits68"])
+        self.assertEqual(res["grid"][0]["hits95"], frozen["grid"][0]["hits95"])
+
+    def test_allowance_and_correction_are_exclusive(self):
+        tmp, c = self.build(10, inflate=1.0)
+        with self.assertRaises(SystemExit):
+            sc.main(["--contract", str(c), "--experiments", str(tmp / "exp"), "--bootstrap", str(tmp / "boot"),
+                     "--bias-allowance", "a", "--bias-correction", "b", "--out", str(tmp / "o.json")])
+
     def test_functional_count(self):
         U, names = sc.reported_functionals({"measurement": {"partition_J": J}})
         self.assertEqual(U.shape[0], 43 + 3 + 1)

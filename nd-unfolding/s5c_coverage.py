@@ -73,11 +73,16 @@ def stat_covariance(U: np.ndarray, boot_dir: Path, first: int, last: int) -> np.
     return np.cov(R, rowvar=False, ddof=1)
 
 
-def evaluate(U, sigma, exp_dir: Path, truth_tag: str, first: int, last: int, b_rel=None) -> dict:
-    """b_rel (contract amendment 3, F2 revision 1): per-functional relative closure-bias allowance,
-    added LINEARLY to each half-width as b_rel * |f_hat|; None reproduces the frozen construction."""
+def evaluate(U, sigma, exp_dir: Path, truth_tag: str, first: int, last: int, b_rel=None, corr=None) -> dict:
+    """b_rel (contract amendment 3, F2 revision 1, SUPERSEDED by amendment 4): per-functional relative
+    closure-bias allowance added LINEARLY to each half-width as b_rel * |f_hat|.
+    corr (contract amendment 4, F2 revision 2) = (beta, se): the estimate is corrected for the
+    nominal-truth relative closure bias, f = f_hat / (1 + beta), and each half-width is
+    z * sqrt(sigma^2 + (se * f)^2), propagating the correction's own standard error.
+    Neither reproduces the frozen construction."""
     hits68 = np.zeros(U.shape[0], int)
     hits95 = np.zeros(U.shape[0], int)
+    width = np.zeros(U.shape[0])
     missing = []
     for s in range(first, last + 1):
         f = exp_dir / f"{truth_tag}_s{s}.npz"
@@ -86,12 +91,20 @@ def evaluate(U, sigma, exp_dir: Path, truth_tag: str, first: int, last: int, b_r
             continue
         z = np.load(f, allow_pickle=False)
         fh = U @ z["xsec_flat"]
+        allow, sig = 0.0, sigma
+        if corr is not None:
+            fh = fh / (1.0 + corr[0])
+            sig = np.sqrt(sigma ** 2 + (corr[1] * fh) ** 2)
+        elif b_rel is not None:
+            allow = b_rel * np.abs(fh)
         d = np.abs(fh - U @ z["xtrue_flat"])
-        allow = 0.0 if b_rel is None else b_rel * np.abs(fh)
-        hits68 += d <= allow + sigma
-        hits95 += d <= allow + 1.96 * sigma
-    return {"n_declared": last - first + 1, "n_present": last - first + 1 - len(missing),
-            "missing": missing[:50], "hits68": hits68.tolist(), "hits95": hits95.tolist()}
+        hits68 += d <= allow + sig
+        hits95 += d <= allow + 1.96 * sig
+        width += (allow + sig) / sigma
+    n = last - first + 1 - len(missing)
+    return {"n_declared": last - first + 1, "n_present": n, "missing": missing[:50],
+            "hits68": hits68.tolist(), "hits95": hits95.tolist(),
+            "median_halfwidth68_over_sigma": float(np.median(width / n)) if n else None}
 
 
 def main(argv=None) -> int:
@@ -101,6 +114,8 @@ def main(argv=None) -> int:
     ap.add_argument("--bootstrap", type=Path, required=True, help="directory of the declared replicas")
     ap.add_argument("--bias-allowance", type=Path, default=None,
                     help="contract amendment 3: state/s5c/d1/bias_allowance.json (F2 revision 1)")
+    ap.add_argument("--bias-correction", type=Path, default=None,
+                    help="contract amendment 4: state/s5c/d1/bias_correction.json (F2 revision 2)")
     ap.add_argument("--interim", type=int, default=None,
                     help="contract amendment 3 futility look: evaluate only the first N declared seeds of "
                          "each grid point; verdict FUTILITY-FAIL if any one-sided CP UPPER bound at "
@@ -113,7 +128,14 @@ def main(argv=None) -> int:
     b0, b1 = cov["sigma"]["bootstrap_seeds"]
     C = stat_covariance(U, a.bootstrap, b0, b1)
     sigma = np.sqrt(np.diag(C))
-    b_rel = None
+    b_rel = corr = None
+    if a.bias_allowance is not None and a.bias_correction is not None:
+        raise SystemExit("--bias-allowance (amendment 3) and --bias-correction (amendment 4) are exclusive")
+    if a.bias_correction is not None:
+        bc = json.loads(a.bias_correction.read_text())
+        if bc["functional_names"] != names:
+            raise SystemExit("bias correction functional order differs from the contract's")
+        corr = (np.asarray(bc["beta"], float), np.asarray(bc["se"], float))
     if a.bias_allowance is not None:
         ba = json.loads(a.bias_allowance.read_text())
         if ba["functional_names"] != names:
@@ -124,6 +146,7 @@ def main(argv=None) -> int:
     alpha = 0.05 / m
     out = {"schema": "s5c-coverage/1", "n_functionals": int(U.shape[0]), "grid_points": G,
            "bias_allowance": None if a.bias_allowance is None else str(a.bias_allowance),
+           "bias_correction": None if a.bias_correction is None else str(a.bias_correction),
            "per_comparison_alpha": alpha, "functional_names": names, "sigma": sigma.tolist(), "grid": []}
     complete, passed = True, True
     for g in cov["grid"]:
@@ -131,7 +154,7 @@ def main(argv=None) -> int:
         if a.interim is not None:
             s1 = min(s1, s0 + a.interim - 1)
         tag = f"{g['truth']}_a{g['amplitude']:g}"
-        res = evaluate(U, sigma, a.experiments, tag, s0, s1, b_rel)
+        res = evaluate(U, sigma, a.experiments, tag, s0, s1, b_rel, corr)
         n = res["n_present"]
         complete &= n == res["n_declared"]
         lcb68 = [ss.cp_lower(int(k), n, alpha) if n else 0.0 for k in res["hits68"]]
@@ -146,7 +169,8 @@ def main(argv=None) -> int:
                             "argmin95": names[int(np.argmin(lcb95))],
                             "coverage68_min": min(h / n for h in res["hits68"]) if n else None,
                             "coverage95_min": min(h / n for h in res["hits95"]) if n else None, "pass": ok,
-                            "min_ucb68": min(ucb68), "min_ucb95": min(ucb95), "futile": futile})
+                            "min_ucb68": min(ucb68), "min_ucb95": min(ucb95), "futile": futile,
+                            "ucb68": ucb68, "ucb95": ucb95})
     out["complete"] = complete
     if a.interim is not None:
         out["interim_n"] = a.interim
