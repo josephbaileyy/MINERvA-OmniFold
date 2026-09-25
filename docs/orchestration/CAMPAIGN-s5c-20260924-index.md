@@ -54,3 +54,50 @@ From [`HANDOFF-20260924-preparation-for-scalar5d-campaign.md`](HANDOFF-20260924-
 A (preparation) → B (contract, feasibility receipt) → C (reportable scope) → D (calibration and
 coverage; measurement checkpoint) → E (frozen comparisons) → F (verification, delivery, release
 preparation). Each committed receipt is listed in the state file's `receipts` array with its digest.
+
+## Closeout (2026-09-25) — final disposition
+
+Evidence: [`OUTCOME-20260925-s5c-tier-s-futility-fail.md`](OUTCOME-20260925-s5c-tier-s-futility-fail.md) (`VL150`,
+independently reproduced), [`OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md`](OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md)
+(`VL149`, `KNOWN_ISSUES.md` 75), [`state/s5c/review-3-disposition.json`](state/s5c/review-3-disposition.json),
+[`FEASIBILITY-20260925-s5c-scalar5d-measurement-and-inference.md`](FEASIBILITY-20260925-s5c-scalar5d-measurement-and-inference.md).
+
+| field | value |
+|---|---|
+| `campaign_disposition` | **CONCLUDED — objective NOT MET.** Measurement: the existing estimator F1 fails the 5% seed gate on every coarse partition (`VL146`). Candidate F2 FAILED Tier-S coverage (futility) after both permitted development revisions (`VL150`). F3 is infeasible, and it cannot remove the estimator-independent causes (see below). Inference: not performed. |
+| `reportable_uncertainty_scope` | **Unchanged in kind; one new caveat travels.** The 2D standalone covariance (validated). The `(E_avail,W)` 42-cell `C_EW` `835828bf…`, published under exception with M1–M4 travelling, **and now with the purity-background closure bias** (0.36–1.07 of its quoted σ in the highest-W column, not in the covariance; `KNOWN_ISSUES.md` 75). **No frequentist coverage is claimed for any 5D interval.** No new measurement checkpoint qualified. No reportable 3D, 4D or 1D-projection uncertainty. |
+| `joint_5d_inference_status` | **NOT PERFORMED.** Infeasible within the envelope: the precision rule needs ≥ 38,720 null experiments per comparison (≈ 440 CPU node-h for one generator, ≈ 2,600 for four). The 5D generator predictions do not exist. There is no qualified measurement covariance to calibrate against. |
+| `publication_readiness` | **NOT READY.** |
+
+**Failed or missing requirements.**
+1. Tier-S statistical coverage (plan §7). FAILED for F2's bias-corrected intervals at the nominal and E_avail-tilt truths. The uncorrected reported intervals were not validated.
+2. A measurement uncertainty checkpoint (plan §§7, 9): none qualifies.
+3. Background-inclusive closure: the purity method is biased up to 4% at nominal truth in the highest-W cells.
+4. A statistical σ that includes background-sampling variance (the Tier-S bootstrap does not redraw background).
+5. Transfer of a nominal-truth correction under truth departures: fails at the tilt point.
+6. The F2 systematic construction: held and not assembled; boot 100/100, sweep lines 0-39 and detector lines 0-4 exist, unadopted.
+7. G-stab-F2: not run (its probes were held with construction).
+8. Tier T: unresolved dependency (feasibility §4).
+9. Joint-5D and projection inference: not performed (above).
+10. Release package, per-object provenance, and generator-prediction digests: still OPEN (paper-wide table R20).
+11. The outward-facing acts held by D7 remain Joseph's.
+
+**Three causes, each sufficient to fail Tier S, none of them estimator-seed behaviour:**
+1. the purity background method's closure bias (estimator-independent, D1);
+2. σ omitting background sampling;
+3. non-transfer of a nominal correction.
+
+This is why no third family was started (plan §6: advance only for a requirement a later family can meet).
+
+**Costed next increments** (native billed units, from committed measurements; remaining envelope: 325.2 CPU node-h, 115.2 GPU node-h):
+
+| # | increment | what it buys | forecast |
+|---|---|---|---|
+| 1 | 5D purity-versus-`negweight-refined` comparison on data (`OI-191`, part 1) | the real-data size of the background-method bias | ≈ one construction: ≈ 12 CPU + 13 GPU node-h |
+| 2 | a background-method family: `negweight-refined` background in the unfold, a Tier-S σ that redraws background, fresh validation seeds, the same frozen gate (`OI-191`, part 2) | a chance at a qualified measurement checkpoint | development ≈ 20 + construction ≈ 25 + Tier S ≈ 127 → **≈ 170–200 CPU node-h**, inside the remaining envelope |
+| 3 | a q3-deformation study with the repaired truth (`KNOWN_ISSUES.md` 76), at a = 0.1 and 0.3 | whether the estimator can follow within-cell q3 changes (the lead in the Tier-S outcome §3) | ≈ 40 pseudo-experiments ≈ 5 CPU node-h |
+| 4 | Tier T after 2 | total-interval coverage at two nuisance settings | ≈ 67 CPU + 81 GPU node-h (feasibility §5) |
+| 5 | joint-5D inference, one generator | a calibrated p at the plan's precision | ≈ 440 CPU node-h plus the 5D prediction construction: exceeds the remaining envelope with 2 |
+| 6 | four generator comparisons | the paper's generator set | ≈ 2,600 CPU node-h: a separately authorized campaign |
+
+**Spend:** 20.09 CPU + 9.79 GPU node-h (39.2 A100-h), measured at 17:49Z (`state/s5c/tier_s/meter-measure-20260925T1749Z.json`). No campaign job remains. **Deliverables:** note, primer and paper corrected and built; standalone `MINERvA-OmniFold-Analysis-Note` at **`7739089b`**, pushed and verified.

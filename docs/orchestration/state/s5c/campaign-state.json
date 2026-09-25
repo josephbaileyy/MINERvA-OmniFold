@@ -14,8 +14,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-campaign-scalar5d",
  "branch": "campaign/scalar5d-20260924",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5c-20260924/",
- "phase": "C/D",
- "phase_detail": "F2 construction and Tier-S validation running under unattended lanes (state/s5c/queues/, nd-unfolding/s5c_queue.sh). Development finding: the purity background method biases nominal-truth closure (OUTCOME-20260925, KNOWN_ISSUES 75). Interval construction: contract amendment 4 (F2 revision 2, the last permitted), a nominal-truth bias correction; amendment 3's allowance is superseded. Futility look automated at 400 seeds per grid point (s5c_futility_watch.sh). Review round 3 (review-3-disposition.json): amendment 4 is correctly implemented, but a pass would cover only the CORRECTED construction, and development data predict failure at the tilt point; F2 has no revision left. Construction beyond running allocations is HELD until the futility look; all freed slots run validation lines 0-119.",
+ "phase": "CLOSED",
+ "phase_detail": "Final disposition 2026-09-25: Tier-S FAIL (futility) for F2, independently reproduced (VL150); no checkpoint qualifies; inference not performed; NOT publication-ready. See CAMPAIGN-s5c-20260924-index.md#closeout-2026-09-25--final-disposition.",
  "pinned": {
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
   "adopted_projection_sha256": "835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e",
@@ -127,13 +127,13 @@
   "D11": "open"
  },
  "verification": "none yet",
- "next_action": "read runs/futility/interim_400.json when lines 0-119 complete; FUTILITY-FAIL -> Tier-S FAIL (F2 revisions exhausted), record disposition, costed next increments, deliverables; CONTINUE -> resume held construction queues and continue validation. Renew-dependent: the cluster certificate lapses 2026-09-26T06:07Z",
+ "next_action": "none within this campaign; OI-191 awaits Joseph",
  "development_gates": {
   "G-repro": "PASS",
   "G-seed": "PASS (reproducibility only; per amendment 2 it is NOT a stability pass)",
   "G-perm": "PASS (state/s5c/gperm/gperm.json: max shift 1.36e-9 sigma)",
   "G-seed-5pct": "WITHDRAWN by amendment 2: NOT APPLICABLE to a seedless estimator; never reported as passed",
-  "G-stab-F2": "PENDING: c-stab lines 0-3 queued in cpu-construct.q, 4-5 in gpu.q; compared by s5c_stab.py once the construction references exist"
+  "G-stab-F2": "NOT RUN: probes held with construction (review-3-disposition.json); moot after the Tier-S FAIL"
  },
  "reviews": [
   {
@@ -162,6 +162,21 @@
    "held": "queues/cpu-construct.q, cpu-construct-2.q, gpu.q -- construction, resumed only on a futility CONTINUE"
   },
   "futility": "s5c_futility_watch.sh <deploy> 400 runs/futility/STOP-validation -> runs/futility/watch.log, runs/futility/interim_400.json",
-  "not_yet_queued": "c-throw (40), c-block (23), c-split lines 12-23, c-comb; to be sized from the stab_throw_0 timing"
+  "not_yet_queued": "c-throw (40), c-block (23), c-split lines 12-23, c-comb; to be sized from the stab_throw_0 timing",
+  "state": "all queues done 17:41Z; no runner or job remains"
+ },
+ "final": {
+  "campaign_disposition": "CONCLUDED - objective NOT MET",
+  "reportable_uncertainty_scope": "unchanged in kind (2D validated; C_EW 835828bf under exception with M1-M4) plus the purity-background bias caveat (KNOWN_ISSUES 75); no coverage claimed for any 5D interval",
+  "joint_5d_inference_status": "NOT PERFORMED (infeasible within envelope; no 5D predictions; no qualified covariance)",
+  "publication_readiness": "NOT READY",
+  "spend": {
+   "cpu_node_h": 20.09,
+   "gpu_node_h": 9.79,
+   "a100_h": 39.2,
+   "measured": "state/s5c/tier_s/meter-measure-20260925T1749Z.json"
+  },
+  "analysis_note_remote_head": "7739089b418ff92ae691febaeeaf195070ec2c41",
+  "next_increment": "OI-191 (decision reserved to Joseph)"
  }
 }

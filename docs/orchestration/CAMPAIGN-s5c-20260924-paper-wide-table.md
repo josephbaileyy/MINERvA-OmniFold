@@ -60,6 +60,14 @@ every retained figure/table to link to operands, checksums and a tested reproduc
 - `joint_5d_inference_status`: **NOT PERFORMED.**
 - `publication_readiness`: **OPEN** (rows R1–R21 other than R18a/R18b).
 
+**Closeout reconciliation 2026-09-25 (campaign).** Rows whose state changed; all others are unchanged:
+- **R9:** the injected-W closure stands. It is signal-only, and the background-inclusive closure is biased (≤ 4%, highest-W; `VL149`). The paper and note now say so. It stays OPEN.
+- **R12/R13:** the purity-background bias (0.36–1.07 of `C_EW`'s quoted σ) is recorded against them (`KNOWN_ISSUES.md` 75), and no coverage is claimed. Both stay OPEN.
+- **R16/R17:** joint-5D and projection inference NOT PERFORMED, infeasible within the envelope (feasibility §4). They stay OPEN, and the costed increments are in the index closeout.
+- **R21:** tracked sources equal the standalone repository at `7739089b`, and all three documents build. The Overleaf `output` is not verified. It stays OPEN.
+
+**Final four fields:** see [`CAMPAIGN-s5c-20260924-index.md`](CAMPAIGN-s5c-20260924-index.md) §Closeout: CONCLUDED, objective NOT MET / scope unchanged in kind plus the bias caveat / joint-5D NOT PERFORMED / **NOT READY**.
+
 ---
 
 ## 1. Rows
