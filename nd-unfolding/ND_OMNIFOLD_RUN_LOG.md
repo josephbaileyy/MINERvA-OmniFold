@@ -1,5 +1,30 @@
 # N-D OmniFold run log
 
+## 2026-09-25 — PET improvement campaign: confirmatory stage complete (FINAL, STRESS; coverage not run)
+
+Same campaign and authorization as the entry below. Simulation only; PET stays diagnostic; the historical thresholds
+and `NEITHER_ELIGIBLE / NO_SELECTION` verdict are unchanged; nothing is adopted.
+
+- **FINAL** (fresh pool F, 12 independent replicates × CTL/A, B, C = 36 A100 runs, debug-queue chains
+  58808974 … 58839336; `improvement_campaign/confirm/CONFIRM_RESULTS.md`): mean recovery CTL 0.316, A (k = 10) 0.505,
+  B (C2 inputs, k = 10) 0.569, **C (efficiency-corrected step 2, k = 10) 0.786** (lower 95 % 0.763). All three
+  superior to CTL, non-inferior and past the +0.04 switching margin after Holm (largest p 1.8e-9). Adequate by the
+  protocol's mean rule: B@10, C@10, C@3; only C@10's lower bound clears the 0.556 floor.
+- **STRESS** (pool T, 6 cases × 2 replicates × 3 runs = 36): C@10 moves away from the target under proton
+  multiplicity ×1.3 on both replicates (R −0.19) and under neutron multiplicity ×1.3 on one; B@10 under neutron
+  multiplicity on both (−1.59, −0.90). All six cases are reco-identifiable (E1).
+- **Coverage: not run** — amendment 2's condition (adequate at K* and no moves-away on an identifiable case) is met
+  by no candidate.
+- **Provenance:** 81 run directories strict-audited CLEAN (`confirm/results/audit_locks-20260925T1244Z.json`); two
+  concurrently scored FINAL runs re-scored identically (CPU job 58843833). Independent review round 2 (codex-school
+  lane, approved by Joseph): FINAL part 3 MAJOR + 1 MINOR, all dispositioned without changing a number
+  (`improvement_campaign/REVIEW_DISPOSITION-ROUND2-20260925.md`).
+- **Resources:** campaign total 268.3 GPU-h and 9,221 CPU-core-h on m3246 / m3246_g
+  (`improvement_campaign/RESOURCE_LEDGER.tsv`).
+- **Conclusion** (report §12): the historical shortfall is recoverable within the closure, but the large gain rests
+  on an acceptance-extrapolation assumption that fails under identifiable hadron-content changes; no configuration
+  tested is both adequate and robust.
+
 ## 2026-09-24 — PET improvement campaign: diagnosis complete, confirmatory stage running
 
 Campaign `nd-unfolding/pet/improvement_campaign/` on branch `pet-improvement-20260922` (Joseph's 2026-09-22
