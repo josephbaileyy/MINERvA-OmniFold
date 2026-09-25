@@ -5161,7 +5161,10 @@
    "manifest_rows": 36,
    "scored_complete": 36,
    "missing": [],
-   "suspect_by_audit": [],
+   "audit": "results/audit_locks-20260925T0019Z.json",
+   "unaudited": [],
+   "not_clean_by_audit": [],
+   "receipt_problems": [],
    "complete": true
   },
   "decisions": {

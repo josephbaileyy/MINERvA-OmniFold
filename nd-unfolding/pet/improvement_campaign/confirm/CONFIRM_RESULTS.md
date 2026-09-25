@@ -22,7 +22,12 @@ historical closure's orientation (a 19-event swap; amendment 3).
 - Coverage: decided only after STRESS (amendment 2: adequate at K* on FINAL **and** no "moves away" on
   an identifiable stress case). On FINAL, B@10 and C@10 meet the first clause; A does not.
 
-Reproduce: `bash harvest.sh final && python3 analyze_confirm.py --audit results/audit_locks-20260924T2320Z.json`.
+- Review round 2 (2026-09-25): the gate now requires every FINAL row CLEAN in a named audit and a complete,
+  hash-matching receipt; the stricter re-audit `results/audit_locks-20260925T0019Z.json` (verdicts CLEAN / SUSPECT /
+  UNVERIFIABLE, completeness checked) finds PILOT 9, FINAL 36, STRESS 8 all CLEAN; decisions unchanged. Dispositions:
+  `../REVIEW_DISPOSITION-ROUND2-20260925.md`.
+
+Reproduce: `bash harvest.sh final && python3 analyze_confirm.py --audit results/audit_locks-20260925T0019Z.json`.
 
 ### PILOT (pool P; reported separately, never enters FINAL)
 
