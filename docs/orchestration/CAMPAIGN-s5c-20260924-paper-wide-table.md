@@ -381,3 +381,17 @@ Active 2D/3D/4D sections); `KNOWN_ISSUES.md` rows 16, 19, 26, 36; `docs/OPEN_ITE
 OI-126, OI-129, OI-130, OI-187; `docs/CURRENT_WORK.md`; `docs/analysis-note/README.md`;
 `release-package-20260922/README.md`. A predecessor readiness view exists at
 `docs/orchestration/PUBLICATION-READINESS-20260822.md`; this draft has not been reconciled against it.
+
+## Reconciliation after the s5n successor (`OI-191`, 2026-09-25)
+
+The successor ([`OUTCOME-20260925-s5n-stage1-development-fail.md`](OUTCOME-20260925-s5n-stage1-development-fail.md))
+changes no readiness value. Every row above keeps its state and **no row becomes READY**. It adds
+dependencies to these rows:
+
+| row | new dependency | governing record |
+|---|---|---|
+| R9, R12, R13 | the estimator's regularization bias under a GiBUU/GENIE-anchored E_avail shape change (several percent in the largest (E_avail,W) cells, up to 74% at high W) is in no covariance. The residual background-method nominal bias is ≈ 4% under purity, and ≤ ≈ 1% under `negweight-refined` (not adopted) | `KNOWN_ISSUES.md` 75, 77; `VL151`–`VL152`; `OI-192` |
+| R12, R13 | no successor measurement uncertainty checkpoint qualified; the adopted-under-exception state stands with M1–M4 | s5n outcome §7 |
+| R16, R17 | not attempted (excluded by the successor's authorization) | s5n authorization §3 (S3 not carried) |
+| R20 | no new product qualified, so the release package is unchanged | — |
+| R21 | the three deliverables state the s5n findings (canonical `84f284ef`, standalone `a1027e64`); built fresh, containment PASS, 0 unresolved references; clean-tree paper build (`-jobname=output`) OK | s5n index closeout |

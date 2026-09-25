@@ -79,3 +79,12 @@ digests (paper-wide table R20): OPEN, unchanged. (7) Outward acts (D7) remain Jo
 **Spend:** 4.601 CPU + 0.309 GPU node-h (all Stage-1 development); envelope totals with s5c 24.687 / 345.27
 CPU node-h and 10.095 / 125 GPU node-h. Remaining unspent: 320.58 CPU and 114.90 GPU node-h (459.6 A100-h) — balances, not
 grants. **Costed next increments:** outcome §8, tracked as `OI-192` (Joseph's decision).
+
+**Deliverables and heads (verified by `git ls-remote` 2026-09-25).** Note, primer and paper state the
+findings (`84f284ef`). Standalone `MINERvA-OmniFold-Analysis-Note` `main` = **`a1027e64`**; `build_all.sh`
+passes in both repositories, and a clean-tree `-jobname=output` paper build succeeds. Canonical
+`origin/main` is the commit that adds this line (see the state file's `remote_heads`). **Measurement
+package:** unchanged, because no new product qualified. The paper-wide table reconciliation is in
+[`CAMPAIGN-s5c-20260924-paper-wide-table.md`](CAMPAIGN-s5c-20260924-paper-wide-table.md) §
+"Reconciliation after the s5n successor".
+

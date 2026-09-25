@@ -105,5 +105,11 @@
    "utc": "2026-09-25T19:29:19Z",
    "what": "single-product outputs (runs/c0,c2,c7,c8,truth) had no parent directory and s5n_pseudo.write_product did not create one; created by hand 2 min 20 s after the steps started, before any task reached its write; code fixed for later pins (write_product mkdir)"
   }
- ]
+ ],
+ "remote_heads": {
+  "analysis_note_main": "a1027e6449f60db55f83d8f6806995f633131479",
+  "canonical_main_deliverables_commit": "84f284ef5dc85c5dcac4c39032226440542bf291",
+  "canonical_main": "the commit that records this field (verify with git ls-remote)"
+ },
+ "deliverables": "note/primer/paper updated at 84f284ef; standalone synced a1027e64; build_all.sh PASS in both; overleaf-style clean paper build OK; release package unchanged (nothing qualified)"
 }
