@@ -49,6 +49,7 @@ case "$(python3 -V 2>&1)" in
 esac
 export PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 
+cd "$DEPLOY" || exit 2   # repo-relative task arguments resolve against the pinned tree
 echo "[s5c] task=$TASK name=$name job=${SLURM_JOB_ID} host=$(hostname) start=$(date -u +%FT%TZ)"
 # shellcheck disable=SC2086
 python3 "$DEPLOY/nd-unfolding/mnv_guarded_run.py" --expect-root "$DEPLOY" \
