@@ -94,6 +94,10 @@ DELIVERY = {
     "report_residue": _ORCH / "REPORT-20260922-review-residue.md",
     "verdict_0922": _ORCH / "VERDICT-20260922-third-party-review-site9-issue60-s4c.md",
     "corrected_uq": _ROOT / "nd-unfolding/CORRECTED_UQ_PRODUCTION_STATUS.md",
+    # Registered 2026-09-24: CATALOG.md's scalar-5D sections moved VERBATIM into this declared
+    # continuation (RECOVERY-MANIFEST-20260924 section 3, family F1). Their pinned occurrences moved
+    # with them, so each pin below moves from `catalog` to here with its reason unchanged.
+    "catalog_scalar5d": _ORCH / "CATALOG-ARCHIVE-scalar5d.md",
 }
 
 # FLOOR, NOT EXACT, for another live lane's running ledger. `REPORT-20260922-review-residue.md` is
@@ -163,8 +167,9 @@ WITHDRAWN = [
         # too-generic wording gives false POSITIVES. Same underlying error: the string is not the claim.
         "paraphrases": ["it needs no tolerance", "NEEDS NO TOLERANCE", "leg needs no tolerance",
                         "This leg needs no tolerance"],
-        "approved": {"recommendation": 0, "probe": 0, "catalog": 1, **_late(recheck_0918=1)},
-        "reason": "catalog: 1, inside the sentence that records the earlier revision said it and "
+        "approved": {"recommendation": 0, "probe": 0, "catalog": 0,
+                     **_late(recheck_0918=1, catalog_scalar5d=1)},
+        "reason": "catalog_scalar5d: 1 (was catalog: 1 until the 2026-09-24 verbatim move), inside the sentence that records the earlier revision said it and "
                   "that it was FALSE. recheck_0918: 1, a FALSE POSITIVE of the generic wording -- "
                   "'there is an exact test and it needs no tolerance' is about display "
                   "invariance of a rendered string, not the declaration-stability leg.",
@@ -230,13 +235,13 @@ WITHDRAWN = [
             "flat in `N`, so a property of the estimator",
             "so it is the estimator, not resolution",
         ],
-        "approved": {"recommendation": 0, "probe": 0, "catalog": 4, **_late(
-            agents=1, release_readme=1, values_tex=1, seed_correction=17, seed_evidence=4,
+        "approved": {"recommendation": 0, "probe": 0, "catalog": 0, **_late(
+            catalog_scalar5d=4, agents=1, release_readme=1, values_tex=1, seed_correction=17, seed_evidence=4,
             handoff_0921=1, handoff_0922=2, outcome_l2=1, report_0920=1, report_residue=1,
             verdict_0922=3, corrected_uq=1)},
         "reason": "Classified 2026-09-23 by reading each occurrence; every one is a quotation "
                   "under a WITHDRAWN / CORRECTED marker or a by-design survivor. "
-                  "catalog 4: the correction's route entry quotes 'no ensemble size' and 'would "
+                  "catalog_scalar5d 4 (was catalog 4 until the 2026-09-24 verbatim move): the correction's route entry quotes 'no ensemble size' and 'would "
                   "not reduce it' as WITHDRAWN; site 10's entry carries 'would not change it' "
                   "under its WITHDRAWN 2026-09-21 marker; the ISSUE-60/site-10 entry quotes it. "
                   "seed_correction 17: the record itself (title, quotations, site table). "
