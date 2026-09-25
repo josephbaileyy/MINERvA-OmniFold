@@ -379,6 +379,38 @@ def validate_request(req: Request, sbatch_args: Sequence[str]) -> None:
             raise MeterError(f"sbatch argument {flag} is set by the meter, not the caller", EXIT_USAGE)
 
 
+def salloc_argv(req: Request, extra_args: Sequence[str]) -> list[str]:
+    """A held allocation (``salloc --no-shell``) for QOS that refuse batch jobs (``interactive``)."""
+    if req.ntasks != 1:
+        raise MeterError("an allocation is one scheduler job; use --ntasks 1", EXIT_USAGE)
+    minutes = int(math.ceil(req.timelimit_h * 60))
+    return ["salloc", "--no-shell", f"--job-name={JOB_PREFIX}{req.label}",
+            f"--account={POOL_ACCOUNT[req.pool]}", f"--qos={req.qos}", f"--time={minutes}",
+            *extra_args]
+
+
+def run_salloc(argv: list[str], ledger: "Ledger", token: str, wait_s: float) -> tuple[str | None, str]:
+    """Start salloc, record the job id the moment it is printed (so a pending request is never
+    unregistered), and wait for the grant. Returns (job_id, stderr text)."""
+    proc = subprocess.Popen(argv, stderr=subprocess.PIPE, stdout=subprocess.DEVNULL, text=True)
+    job, lines, t0 = None, [], time.time()
+    assert proc.stderr is not None
+    for line in proc.stderr:
+        lines.append(line)
+        match = re.search(r"job allocation (\d+)", line)
+        if match and job is None:
+            job = match.group(1)
+            ledger.append({"kind": "job", "token": token, "utc": utc_now(), "job_id": job})
+        if "Granted job allocation" in line or time.time() - t0 > wait_s:
+            break
+    granted = any("Granted job allocation" in x for x in lines)
+    if not granted and job is not None:
+        subprocess.run(["scancel", job], capture_output=True, text=True)
+        lines.append(f"not granted within {wait_s:.0f} s; cancelled {job}\n")
+    proc.wait(timeout=60)
+    return (job if granted else None), "".join(lines)
+
+
 def sbatch_argv(req: Request, sbatch_args: Sequence[str]) -> list[str]:
     minutes = int(math.ceil(req.timelimit_h * 60))
     argv = [
@@ -538,7 +570,7 @@ def cmd_submit(args: argparse.Namespace) -> int:
         if code != EXIT_OK:
             return code
         token = f"{utc_now()}-{os.getpid()}-{req.label}"
-        argv = sbatch_argv(req, args.sbatch_args)
+        argv = salloc_argv(req, args.sbatch_args) if args.allocate else sbatch_argv(req, args.sbatch_args)
         ledger.append(
             {
                 "kind": "open",
@@ -564,7 +596,16 @@ def cmd_submit(args: argparse.Namespace) -> int:
             ledger.append({"kind": "release", "token": token, "utc": utc_now(), "reason": "dry-run"})
             print("DRY-RUN", " ".join(argv))
             return EXIT_OK
-        proc = subprocess.run(argv, capture_output=True, text=True)
+        if args.allocate:
+            job, text = run_salloc(argv, ledger, token, args.allocate_wait_s)
+            if job is None:
+                if not any(r.get("token") == token and r.get("kind") == "job" for r in read_ledger(args.ledger)):
+                    ledger.append({"kind": "release", "token": token, "utc": utc_now(), "reason": text[-500:]})
+                print(f"salloc failed: {text.strip()}", file=sys.stderr)
+                return EXIT_SBATCH
+            proc = subprocess.CompletedProcess(argv, 0, stdout=job, stderr=text)
+        else:
+            proc = subprocess.run(argv, capture_output=True, text=True)
         job = proc.stdout.strip().split(";")[0]
         if proc.returncode != 0 or not job.isdigit():
             ledger.append(
@@ -572,7 +613,8 @@ def cmd_submit(args: argparse.Namespace) -> int:
             )
             print(f"sbatch failed rc={proc.returncode}: {proc.stderr.strip()}", file=sys.stderr)
             return EXIT_SBATCH
-        ledger.append({"kind": "job", "token": token, "utc": utc_now(), "job_id": job})
+        if not args.allocate:  # run_salloc recorded it when salloc first printed it
+            ledger.append({"kind": "job", "token": token, "utc": utc_now(), "job_id": job})
         tres = scheduler_tres(job)
         if tres["billing"] > req.billing or (req.pool == "gpu" and tres["gpus"] > req.gpus_per_task):
             subprocess.run(["scancel", job], capture_output=True, text=True)
@@ -646,6 +688,9 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--measures", required=True, help="the quantity this job measures")
     s.add_argument("--cannot-authorize", required=True, help="what its terminal result cannot authorize")
     s.add_argument("--dry-run", action="store_true")
+    s.add_argument("--allocate", action="store_true",
+                   help="hold an allocation with salloc --no-shell instead of sbatch (QOS interactive)")
+    s.add_argument("--allocate-wait-s", type=float, default=900.0)
     s.add_argument("sbatch_args", nargs=argparse.REMAINDER)
     m = sub.add_parser("measure", help="reconcile the ledger against sacct")
     m.add_argument("--sacct-file", type=Path)

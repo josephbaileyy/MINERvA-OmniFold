@@ -178,6 +178,29 @@ class PredictedPriceTests(MeterHarness):
         self.assertAlmostEqual(adm["charged"], 200 / 256)
 
 
+class AllocationTests(MeterHarness):
+    def test_granted_allocation_is_recorded_once_and_price_checked(self):
+        self._fake("salloc", 'echo "salloc: Pending job allocation 777" >&2; echo "salloc: Granted job allocation 777" >&2\n')
+        self.tres.write_text("JobId=777 AllocTRES=cpu=256,mem=500G,node=1,billing=256\n")
+        self.write_budget(_budget(cpu_cap=10.0, cpu_stages={"pilot": 4.0}))
+        proc = self.submit("--allocate", "--", "-C", "cpu", "-N", "1", qos="interactive", billing="256", timelimit="2")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        kinds = [(r["kind"], r.get("job_id")) for r in self.ledger_records()]
+        self.assertEqual(kinds, [("open", None), ("job", "777")])
+        self.assertAlmostEqual(self.ledger_records()[0]["reservation_node_hours"], 2.0)
+
+    def test_whole_node_interactive_underdeclared_is_refused(self):
+        proc = self.submit("--allocate", "--", "-C", "cpu", "-N", "1", qos="interactive", billing="32")
+        self.assertEqual(proc.returncode, 2)
+
+    def test_failed_allocation_releases(self):
+        self._fake("salloc", 'echo "salloc: error: Job submit/allocate failed" >&2; exit 1\n')
+        self.write_budget(_budget(cpu_cap=10.0, cpu_stages={"pilot": 4.0}))
+        proc = self.submit("--allocate", "--", "-C", "cpu", "-N", "1", qos="interactive", billing="256")
+        self.assertEqual(proc.returncode, 7)
+        self.assertEqual([r["kind"] for r in self.ledger_records()], ["open", "release"])
+
+
 class AccountingTests(MeterHarness):
     def test_unregistered_campaign_job_fails_closed_and_foreign_job_does_not(self):
         self.sacct_out.write_text("999|other-lane|COMPLETED|3600|billing=128|2026-09-25T01:00:00\n")
