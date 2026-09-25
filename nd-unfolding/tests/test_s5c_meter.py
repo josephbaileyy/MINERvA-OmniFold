@@ -41,7 +41,7 @@ class MeterHarness(unittest.TestCase):
         self._fake("sacct", f'cat "{self.sacct_out}"\n')
         self._fake("sbatch", 'echo "12345;perlmutter"\n')
         self.tres = self.tmp / "tres.txt"
-        self.tres.write_text("JobId=12345 JobName=s5c-t TRES=cpu=64,mem=100G,node=1,billing=128 Foo=bar\n")
+        self.tres.write_text("JobId=12345 JobName=s5c-t AllocTRES=cpu=64,mem=100G,node=1,billing=128 Foo=bar\n")
         self._fake("scontrol", f'cat "{self.tres}"\n')
         self._fake("scancel", f'echo "$@" >> "{self.tmp}/scancelled"\n')
 
@@ -98,7 +98,7 @@ class AdmissionTests(MeterHarness):
 
     def test_gpu_concurrency_refuses_and_throttle_admits(self):
         self.write_budget(_budget(gpu_cap=50.0, gpu_stages={"pilot": 50.0}))
-        self.tres.write_text("JobId=12345 TRES=cpu=32,mem=57G,node=1,billing=32,gres/gpu=1\n")
+        self.tres.write_text("JobId=12345 AllocTRES=cpu=32,mem=57G,node=1,billing=32,gres/gpu=1\n")
         wide = self.submit("--gpus-per-task", "1", "--", "g.sh", pool="gpu", qos="gpu_shared", ntasks="8", billing="32")
         self.assertEqual(wide.returncode, 4, wide.stdout)
         narrow = self.submit("--gpus-per-task", "1", "--throttle", "4", "--", "g.sh", pool="gpu", qos="gpu_shared", ntasks="8", billing="32")
@@ -125,23 +125,53 @@ class AdmissionTests(MeterHarness):
 
 class SchedulerPriceTests(MeterHarness):
     def test_underpriced_job_is_cancelled_and_refused(self):
-        self.tres.write_text("JobId=12345 TRES=cpu=100,mem=180G,node=1,billing=100\n")
-        proc = self.submit("--", "-c", "32", "--mem=180G", "job.sh", billing="64")
+        # nothing in the arguments predicts it (e.g. a site default), but the scheduler bills 100
+        self.tres.write_text("JobId=12345 AllocTRES=cpu=100,mem=180G,node=1,billing=100\n")
+        proc = self.submit("--", "-c", "32", "job.sh", billing="64")
         self.assertEqual(proc.returncode, 8, proc.stdout + proc.stderr)
         self.assertEqual((self.tmp / "scancelled").read_text().split(), ["12345"])
         self.assertIn("job", [r["kind"] for r in self.ledger_records()])
 
     def test_matching_price_is_kept(self):
-        self.tres.write_text("JobId=12345 TRES=cpu=64,mem=100G,node=1,billing=64\n")
+        self.tres.write_text("JobId=12345 AllocTRES=cpu=64,mem=100G,node=1,billing=64\n")
         proc = self.submit("--", "-c", "64", "job.sh", billing="64")
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertFalse((self.tmp / "scancelled").exists())
 
     def test_extra_gpus_are_refused(self):
         self.write_budget(_budget(gpu_cap=50.0, gpu_stages={"pilot": 50.0}))
-        self.tres.write_text("JobId=12345 TRES=cpu=64,mem=100G,node=1,billing=64,gres/gpu=2\n")
+        self.tres.write_text("JobId=12345 AllocTRES=cpu=64,mem=100G,node=1,billing=64,gres/gpu=2\n")
         proc = self.submit("--gpus-per-task", "1", "--", "-G", "2", "g.sh", pool="gpu", qos="gpu_shared", billing="64")
         self.assertEqual(proc.returncode, 8, proc.stdout + proc.stderr)
+
+
+class PredictedPriceTests(MeterHarness):
+    def test_underdeclared_shared_memory_price_is_refused_before_sbatch(self):
+        proc = self.submit("--", "-c", "32", "--mem=90G", "job.sh", billing="32")
+        self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
+        self.assertFalse(self.ledger.exists() and self.ledger.read_text().strip())
+
+    def test_declared_at_prediction_is_admitted(self):
+        self.tres.write_text("JobId=12345 ReqTRES=cpu=32,mem=90G,node=1,billing=32 AllocTRES=\n")
+        proc = self.submit("--", "-c", "32", "--mem=90G", "job.sh", billing="50")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+
+    def test_prediction_values(self):
+        req = s5c_meter.Request("pilot", "cpu", "shared", 1, 1, 1.0, 50, 0, "t")
+        self.assertEqual(s5c_meter.predicted_billing(req, ["-c", "32", "--mem=64G"]), 36)
+        self.assertEqual(s5c_meter.predicted_billing(req, ["-c", "32", "--mem", "80000M"]), 44)
+        self.assertEqual(s5c_meter.predicted_billing(req, ["-c", "32", "--mem=90G"]), 50)
+        whole = s5c_meter.Request("pilot", "cpu", "regular", 1, 1, 1.0, 256, 0, "t")
+        self.assertEqual(s5c_meter.predicted_billing(whole, ["-N", "1"]), 256)
+        gpu = s5c_meter.Request("pilot", "gpu", "gpu_shared", 1, 1, 1.0, 32, 1, "t")
+        self.assertEqual(s5c_meter.predicted_billing(gpu, ["-G", "1"]), 32)
+
+    def test_measured_attempt_above_declaration_is_flagged(self):
+        self.assertEqual(self.submit("--", "job.sh", billing="128").returncode, 0)
+        self.sacct_out.write_text("12345|s5c-t|COMPLETED|3600|billing=200|2026-09-25T01:00:00\n")
+        adm = next(iter(json.loads(self.run_meter("measure").stdout)["admissions"].values()))
+        self.assertTrue(adm["underpriced"])
+        self.assertAlmostEqual(adm["charged"], 200 / 256)
 
 
 class AccountingTests(MeterHarness):

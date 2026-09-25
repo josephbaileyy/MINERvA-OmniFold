@@ -1,0 +1,38 @@
+{
+ "schema": "s5c-pilot-contract/1",
+ "campaign_key": "s5c-20260924",
+ "authority": "docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md; plan blob 8b0617b6 section 5 'Feasibility decision before candidate production'",
+ "status": "FROZEN before any pilot submission; executor choices, not owner quotations",
+ "purpose": "Measure the costs, variance inputs and mechanics the feasibility receipt needs. No pilot evaluates an observed generator test statistic, freezes a gate, grades a candidate or adopts anything.",
+ "data_examined_disclosure": "The observed data and the high-E_avail/high-W localization have been examined by earlier campaigns. Pilots use the observed data only as the nominal unfold input (as every earlier campaign did). No generator comparison on observed data is computed in any pilot.",
+ "proposed_scopes": {
+  "measurement": [
+   {"id": "M-EW43", "functionals": "the 42 (E_avail,W) destination rows of project_cov_nd.build_projection plus the all-ones row (the 43 functionals of z_grade.m1_functionals)", "role": "reporting product and first lower-dimensional fallback"},
+   {"id": "M-J", "functionals": "cells of a coarse joint (p_T, p_par, E_avail, q3, W) partition J chosen from a hierarchy frozen from development simulations only (subdivision in every coordinate where support and resolution permit)", "role": "joint-5D measurement scope and the representation of the primary statistic"}
+  ],
+  "inference": [
+   {"id": "I-J", "statistic": "quadratic residual statistic on partition J with simulation-calibrated weight matrix; joint-5D at J's resolution"},
+   {"id": "I-EW", "statistic": "same form on the 42 (E_avail,W) cells; projection fallback, never a substitute for I-J"},
+   {"id": "I-C", "statistic": "fixed contrasts (total rate; declared shape contrasts); last fallback"}
+  ]
+ },
+ "candidate_families": [
+  {"id": "F1", "estimator": "production omnifold_nn_core.make_estimators (random_state=seed)", "seed_changes": "LightGBM random_state; with no bagging/feature subsampling its main reach is the random bin_construct_sample_cnt (200,000-row) sample that sets histogram bin edges"},
+  {"id": "F2", "estimator": "production + bin_construct_sample_cnt=2^31-1 (all rows) + deterministic=True + force_row_wise=True + num_threads fixed at the allocation's CPU count", "seed_changes": "hypothesis to be measured in P1: nothing (reproducibility only); estimator sensitivity is probed with row-order permutations instead"},
+  {"id": "F3", "estimator": "seed-averaged F1 over M seeds, averaging the unfolded result of every unfold (nominal, nuisance variations, repeated experiments)", "seed_changes": "the M seeds of each group; costed only in the pilot"}
+ ],
+ "pilots": [
+  {"id": "P1", "measures": "single-unfold seed channel, repeat-run reproducibility and cost: F1 seeds 42..51 and a repeat of 42; full_binning seeds 42, 43; F2 seeds 42, 43, a repeat of 42, and seed 42 under row permutations 1 and 2", "tasks": 18, "input": "nd-unfolding/of_inputs_5d.npz (the npz the boot5dG/ssplit5d arms read)", "cannot_authorize": "any candidate grade, stability pass, or adoption; single-unfold spreads are not covariance stability"},
+  {"id": "P2", "measures": "one-time dump of the reco-level background MC (coordinates and POT-scaled weights) and the binned background prediction used by build_measured_training_nd, for pseudo-experiments", "tasks": 1},
+  {"id": "P3", "measures": "one complete measurement-coverage experiment end to end (pseudo-data at event level from MC half B with background, Poisson draws, recomputed background subtraction, unfold on MC half A with the candidate estimator, functionals and interval check) at the nominal truth and at one departure truth; cost per experiment", "tasks": 2},
+  {"id": "P4", "measures": "one complete null experiment for I-J under a generator-truth hypothesis; cost per experiment", "tasks": 1},
+  {"id": "P5", "measures": "complete candidate-construction cost, from the measured sacct billing of the 2026-09-19 k=1200 member arms (58598277-58598283) and P1's per-unfold cost times each component's unfold count", "tasks": 0}
+ ],
+ "sample_splits": {
+  "mc_halves": "MC signal rows split into A (unfolding MC, weights x2) and B (pseudo-data source, weights x2) by the parity of a keyed hash of the row index; fixed for the campaign and recorded in every experiment",
+  "pseudo_data_seed_ranges": {"development": [1, 99999], "calibration": [100000, 199999], "validation": [200000, 299999], "power": [300000, 399999]},
+  "estimator_seed_ranges": {"development": [42, 1041], "validation": [5000, 5999]}
+ },
+ "targets_to_be_frozen_in_the_contract": "plan section 7 defaults: simultaneous one-sided 95% binomial LCB > 0.66 (68%) and > 0.94 (95%) on every reported functional over the declared grid; false-positive UCB <= 0.06 at alpha=0.05; p-value precision as plan section 7; power targets per section 5",
+ "resource_stage": {"pilot_cpu_node_hours_max": 17.263, "pilot_gpu_node_hours_max": 6.25, "admission": "nd-unfolding/s5c_meter.py --stage pilot"}
+}

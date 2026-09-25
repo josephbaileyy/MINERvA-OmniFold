@@ -282,7 +282,7 @@ def charges(folded: dict[str, dict], sacct_tasks: dict[str, dict]) -> dict[str, 
     out = {}
     for token, adm in folded.items():
         if adm["released"] and not adm["job_id"]:
-            out[token] = {"measured": 0.0, "closed": True, "charged": 0.0, "tasks_seen": 0}
+            out[token] = {"measured": 0.0, "closed": True, "charged": 0.0, "tasks_seen": 0, "underpriced": False}
             continue
         job = adm.get("job_id")
         mine = {tid: e for tid, e in sacct_tasks.items() if job and base_job(tid) == str(job)}
@@ -292,11 +292,13 @@ def charges(folded: dict[str, dict], sacct_tasks: dict[str, dict]) -> dict[str, 
         )
         closed = bool(mine) and len(mine) >= adm["ntasks"] and terminal
         charged = measured if closed else max(measured, adm["reservation_node_hours"])
+        billed = [b for e in mine.values() for (_, b, _) in e["attempts"].values()]
         out[token] = {
             "measured": measured,
             "closed": closed,
             "charged": charged,
             "tasks_seen": len(mine),
+            "underpriced": bool(billed) and max(billed) > adm["billing"],
         }
     return out
 
@@ -414,17 +416,61 @@ class Ledger:
             os.fsync(fh.fileno())
 
 
+SHARED_MB_PER_CPU = 1843.2  # 90G->50, 64G->36, 80000M->44 billed CPUs on shared CPU jobs
+
+
+def _flag_value(args: Sequence[str], names: Sequence[str]) -> str | None:
+    for i, arg in enumerate(args):
+        for name in names:
+            if arg == name and i + 1 < len(args):
+                return args[i + 1]
+            if name.startswith("--") and arg.startswith(name + "="):
+                return arg.split("=", 1)[1]
+            if not name.startswith("--") and arg.startswith(name) and len(arg) > len(name):
+                return arg[len(name):]
+    return None
+
+
+def _mem_mb(text: str) -> float:
+    match = re.fullmatch(r"(\d+(?:\.\d+)?)([KMGT]?)B?", text.strip().upper())
+    if not match:
+        raise MeterError(f"cannot parse --mem {text!r}", EXIT_USAGE)
+    scale = {"K": 1 / 1024, "": 1, "M": 1, "G": 1024, "T": 1024 * 1024}[match.group(2)]
+    return float(match.group(1)) * scale
+
+
+def predicted_billing(req: "Request", sbatch_args: Sequence[str]) -> float:
+    """A conservative per-task billing from the sbatch arguments, never below the truth
+    as measured on this site (shared CPU jobs bill max(cpus, mem/1843.2 MB) rounded up to
+    a whole core; non-shared QOS bill whole nodes; one shared GPU bills 32)."""
+    nodes = float(_flag_value(sbatch_args, ("-N", "--nodes")) or 1)
+    if req.qos == "xfer":
+        return 2.0
+    if req.pool == "cpu":
+        if req.qos != "shared":
+            return 256.0 * nodes
+        cpus = float(_flag_value(sbatch_args, ("-c", "--cpus-per-task")) or 1)
+        mem = _flag_value(sbatch_args, ("--mem",))
+        need = max(cpus, math.ceil(_mem_mb(mem) / SHARED_MB_PER_CPU) if mem else 0)
+        return float(2 * math.ceil(need / 2))
+    if req.qos != "gpu_shared":
+        return 128.0 * nodes
+    return 32.0 * max(req.gpus_per_task, 1)
+
+
 def scheduler_tres(job: str) -> dict[str, float]:
-    """``billing`` and ``gres/gpu`` from ``scontrol show job -o <job>``'s ``TRES=`` field."""
+    """``billing`` and ``gres/gpu`` from ``scontrol show job -o <job>``: ``AllocTRES`` once the
+    job has resources, else ``ReqTRES`` (which can understate a shared job's billing)."""
     proc = subprocess.run(["scontrol", "show", "job", "-o", job], capture_output=True, text=True)
     if proc.returncode != 0:
         raise MeterError(f"scontrol failed for {job}: {proc.stderr.strip()}", EXIT_INTEGRITY)
     first = proc.stdout.strip().splitlines()[0] if proc.stdout.strip() else ""
-    match = re.search(r"(?:^|\s)TRES=(\S+)", first)
-    if not match:
+    fields = dict(re.findall(r"(?:^|\s)(AllocTRES|ReqTRES|TRES)=(\S*)", first))
+    tres = fields.get("AllocTRES") or fields.get("ReqTRES") or fields.get("TRES")
+    if not tres:
         raise MeterError(f"no TRES field for job {job}", EXIT_INTEGRITY)
     out = {"billing": 0.0, "gpus": 0.0}
-    for item in match.group(1).split(","):
+    for item in tres.split(","):
         key, _, value = item.partition("=")
         if key == "billing":
             out["billing"] = float(value)
@@ -480,6 +526,10 @@ def cmd_submit(args: argparse.Namespace) -> int:
         label=args.label,
     )
     validate_request(req, args.sbatch_args)
+    floor = predicted_billing(req, args.sbatch_args)
+    if req.billing < floor:
+        print(f"declared billing {req.billing:g} is below the predicted {floor:g} for these sbatch arguments", file=sys.stderr)
+        return EXIT_USAGE
     ledger = Ledger(args.ledger)
     with ledger:
         budget, folded, charged, summary = state_of(args.budget, args.ledger, None)
