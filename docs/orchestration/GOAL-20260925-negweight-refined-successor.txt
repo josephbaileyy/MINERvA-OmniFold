@@ -1,0 +1,58 @@
+Execute OI-191 as one bounded scalar-5D successor campaign using
+--bkg-mode negweight-refined. Read the attached
+HANDOFF-20260925-negweight-refined-successor.md and its canonical evidence routes.
+
+I authorize this new background-method family, corrected statistical resampling,
+fresh validation, necessary matched central/systematic rebuilds, independent
+review, commits, merges and pushes to both repositories without routine approval.
+The objective is a defensible measurement. Joint-5D inference remains required
+for publication readiness, but is not run or fulfilled by fallback here.
+
+Before implementation, commit this actual authorization with its date, the
+handoff/goal blob identities, a separate successor contract and scoped
+supersession mapping. Do not edit the previous approved plan. For this successor
+only, supersede OI-191's funding hold and the prior campaign's exhausted family
+and revision limits: allow ONE family and TWO development revisions, each with
+fresh validation. Retain prior scientific gates and protections. No architecture
+search, retroactive regrading, inherited exception or favorable-seed selection.
+Keep historical products and receipts immutable.
+
+Carry forward, do not reset, prior budget consumption. Cap this work at the
+unspent portion of the prior measured 345.27 CPU node-h and 500 A100-h envelopes,
+also limited to 10% of currently measured uncommitted allocation after existing
+reservations. Reconcile prior charges; remaining balances are not new grants. Retain storage,
+concurrency, retry and 20% verification/repair rules. Carry forward S1-S2's
+campaign-specific replacement of R5 task-hour/calendar limits for this successor;
+do not bypass guards globally. Verify native-unit admission/accounting first.
+
+Stage 1: inspect current state, reuse preservation and work in isolated checkouts
+and fresh output namespaces. Reproduce relevant baseline controls, verify the
+negative-background/refinement path throughout, and repair statistical resampling
+to include the declared background fluctuations without double counting template
+or nuisance uncertainty. Recompute refinement after applicable variations.
+Run small background-inclusive known-truth controls, meaningful E_avail departures
+and repaired q3 departures. Compare methods on real data as method sensitivity,
+not measured bias. Log normalization, clipping, effective weights and seed roles.
+Use at most 10% of each successor resource pool on this development stage.
+
+Before expansion, independently review the construction and cost the COMPLETE
+remaining measurement, validation and verification. Recompute sample-size and
+assurance calculations; do not assume the previous 170-200 CPU node-h forecast
+guarantees a pass. Validate the exact estimator and intervals intended for data.
+Freeze truthful coverage labels, useful-width criteria, physical alternatives,
+seed/stability gates and futility rules before fresh independent validation.
+
+Stage 2 requires passing controls and affordability. Complete Tier S,
+matched systematic construction, seed stability and Tier T as required for each
+claimed uncertainty scope. If total coverage is infeasible, report only qualified
+statistical scope. Do not tune on validation or use signal-only closure as proof
+of background-inclusive closure. Stop failed branches and complete independent work.
+
+Delegate adoption only under every applicable prior-plan section 9 gate, with
+independent operand reproduction and exact new digests; statistical-only approval
+cannot promote total covariance. No new exceptions. Build/synchronize note,
+primer and paper, prepare the supported measurement package, push and verify both
+remote heads. Checkpoint and monitor through disposition without duplicate jobs.
+Report all four status fields, failed requirements, spend and costed next steps.
+No PET, general cleanup, public deposits, release tags or submissions. Do not
+declare publication-ready while joint-5D inference or other required claims remain open.

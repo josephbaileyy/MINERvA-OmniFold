@@ -1,0 +1,100 @@
+{
+ "schema": "s5n-contract/1",
+ "campaign_key": "s5n-20260925",
+ "tracker": "OI-191",
+ "status": "FROZEN at the commit that first adds this file, before any successor code change, compute, development experiment or observed statistic. Executor choices under the delegation of docs/orchestration/AUTHORIZATION-20260925-negweight-refined-successor.md, not owner quotations. Amendments are new files that cite this one; this file is never edited. The Stage-2 validation construction (interval construction, sigma object, grid, functionals, sample size, futility rule, useful-width and stability criteria) is frozen by a later amendment committed BEFORE any validation seed is run; nothing in that amendment may be selected using a validation seed.",
+ "authority": "docs/orchestration/AUTHORIZATION-20260925-negweight-refined-successor.md",
+ "identities": {
+  "prior_plan_blob_unchanged": "8b0617b6e044a55a9b5870b46e5d90a15a6ced7a",
+  "handoff_blob": "6eb224146ba56dd7cb1c5e493ef72c113e1fbf89",
+  "goal_blob": "2748dc36bd4b0d750a640ddbc28fc1668e6122e9",
+  "prior_contract_not_modified": "docs/orchestration/state/s5c/contract.json and amendments 1-4",
+  "inputs_rehashed_at_use": {
+   "input_npz": {"path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz", "sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f"},
+   "cv_omnifile": {"path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root", "sha256": "b6d2651cfdbc52790cc7ed6032f2062a3e0ea50c12d63725beba29098dd5175a"},
+   "background_dump": {"path": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz", "sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955", "note": "read only; its purity-reproduction check binds its background rows to the npz's data and weights"}
+  },
+  "adopted_trunk_not_modified": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5"
+ },
+ "family": {
+  "name": "N",
+  "only_family": true,
+  "definition": "the s5c F2 deterministic LightGBM OmniFold estimator (5 iterations; n_estimators 100, num_leaves 8, learning_rate 0.1, bin_construct_sample_cnt all rows, deterministic, force_row_wise, num_threads 32, random_state 42) with the background treatment of unfold_nd_omnifold_unbinned.py --bkg-mode negweight-refined: the measured side is the signed sample {observed events in the analysis window on every axis at +weight} U {background-template events in the window at -weight}; a Stay-Positive classifier (arXiv:2505.03724) separates positive from negative weights with |w| as sample weight, and every event's refined weight is |w| max(0, 2g-1); the refined non-negative sample is step 1's target. The refinement classifier is an LGBMClassifier with the SAME F2 parameters (n_estimators 100, num_leaves 8, learning_rate 0.1, full-sample binning, deterministic, force_row_wise, num_threads 32) and random_state = estimator_seed + 3, as the driver sets it.",
+  "revisions_allowed": 2,
+  "revision_rule": "A development revision is a recorded change to the frozen construction (background treatment, sampling model, sigma object or interval construction), prompted by a recorded unmet requirement on DEVELOPMENT evidence and committed as an amendment before any fresh validation seed it will be judged on is run. It may not choose among alternatives by validation performance, and it may not change the classifier architecture or hyperparameters by search. Each revision gets a fresh validation seed range (validation_seed_ranges). A validation failure never licenses re-testing on the same seeds.",
+  "not_allowed": ["another estimator family", "architecture or hyperparameter search", "favorable-seed selection", "re-grading of any s5c or Z result", "any inherited exception"]
+ },
+ "seed_roles": {
+  "estimator_seed": "random_state of the three OmniFold estimators (42, 43, 44 via the driver's +0/+1/+2) and of the refinement classifier (+3). Expected to change nothing for the deterministic configuration (s5c P1 showed this for the OmniFold estimators); Stage-1 control C2 tests it for the refinement too. If confirmed it establishes reproducibility only.",
+  "row_permutation_seed": "an irrelevant choice used as the estimator-sensitivity probe of a deterministic estimator (s5c amendment 2 R1); it permutes the MC rows and the whole signed measured sample consistently",
+  "pseudo_seed": "one repeated experiment: the Poisson draws of pseudo-data signal and background and the two keyed MC splits (signal and background) derived from it",
+  "bootstrap_seed": "one replica of the statistical bootstrap: independent Poisson draws on observed events, on unfolding-MC rows and on background-template rows (sampling_model.statistical_sigma), after which the refinement is REFIT"
+ },
+ "sampling_model": {
+  "status": "the DEVELOPMENT design for Stage 1; the Stage-2 amendment freezes the validation version (it may keep this one unchanged)",
+  "pseudo_experiment": {
+   "signal": "MC signal rows split by a keyed 64-bit hash into A (unfolding MC, weights x2) and B (pseudo-data source); pseudo-data signal counts n_i ~ Poisson(2 w_reco_i r_i) per reco-passing B row (s5c_pseudo.build_experiment's construction); truth = B's reweighted truth through the analysis's own extraction",
+   "background": "background-MC rows split by an independent keyed hash into C (pseudo-data source) and D (template, weights x2); pseudo-data background counts m_j ~ Poisson(2 w_bkg_j) per C row; the template is D at -2 w_bkg_j. This regenerates the template's finite-MC fluctuation in every experiment, as the signal split does for the unfolding MC (s5c used one background sample as both source and template, so its template was exact by construction)",
+   "measured_side": "signed sample {pseudo-data rows at +count} U {template rows at -weight}, restricted to the analysis window on every axis, then the family's refinement and the unfold on A",
+   "fixed_conditional": ["the full signal and background MC samples and their finite-sample fluctuation relative to the true populations", "the detector model and every systematic nuisance at its nominal setting"]
+  },
+  "statistical_sigma": {
+   "object": "the ddof=1 sample covariance of bootstrap replicas of ONE declared experiment (development) or of the real data (reported), a statistical-uncertainty object, not a total uncertainty and not by itself an interval prescription",
+   "per_replica": {
+    "observed_mixture": "every observed event is resampled individually: a pseudo-data row of count k gets weight Poisson(k) (k Poisson(1) events), a real-data event Poisson(1). s5c multiplied a count-k row by one Poisson(1) draw, whose variance k^2 exceeds the k of k independent events; with the measured mean count 0.35 per reco-passing row that over-disperses the data-statistical variance by about 1.4 (sum lam(1+lam) / sum lam = 1.415 on the input npz of identities.inputs_rehashed_at_use, measured 2026-09-25). This is the resampling repair §1 authorizes.",
+    "signal_mc": "Poisson(1) per unfolding-MC row on w_truth and w_reco (bootstrap_nd.py's MC stream)",
+    "background_template": "Poisson(1) per template row on its weight: the template's finite-MC uncertainty, carried ONLY here",
+    "refinement": "refit on every replica's signed sample (never reused from the nominal fit)"
+   },
+   "no_double_counting": "the background's physics-model uncertainty is carried only by systematic universes that reweight the template (per-universe w_bkg), never by this bootstrap; the template's MC statistics are carried only by this bootstrap, never by a universe or a separate band; the observed mixture's Poisson fluctuation (signal and background together) is carried only by the observed-event resampling. No truth label unavailable on data enters the reported construction: the data bootstrap cannot and does not separate signal from background events."
+  }
+ },
+ "stage_1_development": {
+  "budget": "at most 10% of each successor pool (32.518 CPU node-h; 11.521 GPU node-h = 46.09 A100-h), stage 'development' in state/s5n/budget.json",
+  "seeds": "development pseudo seeds 300000-349999; bootstrap seeds 1-1000 applied to declared development experiments only; row-permutation seeds 1-99. Disjoint from s5c development (1-99999) and s5c validation (200000-211999).",
+  "controls": {
+   "C0_baseline_reproduction": "the successor pseudo-experiment code in --bkg-mode purity with the s5c sampling reproduces an existing s5c development product (d1_split_s4) exactly (max |diff| = 0 over the 65,856 cells); failure means the successor code does not reproduce the baseline it compares against",
+   "C1_branch_executes": "every successor product (pseudo-experiment, bootstrap replica, real-data central value, systematic arm) carries machine-recorded evidence that the refinement ran on it: the signed sample's size, positive and negative sums, the refined sum, the clipped fraction, the refined sample's effective size (sum w)^2/sum w^2, the classifier's parameters and its seed; a product without it is not a successor product",
+   "C2_refinement_equivalence_and_reproducibility": "(a) the ROOT-free successor refinement equals unfold_2d_omnifold_unbinned.refine_stay_positive given the same signed sample and parameters (max |diff| <= 1e-12 relative); (b) two runs, and two estimator seeds, give bitwise-equal refined weights; (c) a row permutation moves no refined-sample unfold functional by more than 0.05 of its development sigma",
+   "C3_nominal_background_inclusive_closure": ">= 10 development experiments at nominal truth, background included. PASS iff no reported functional has |mean residual| / SE(mean) > 3.6 (two-sided 0.05/153 Bonferroni) AND no reported functional has |mean residual| > 0.5 of the development sigma with |t| > 3. Compared, for description only, with the s5c purity D1 result on the same functionals",
+   "C4_eavail_shape_departure": "a normalization-preserving E_avail shape reweight of the truth (not the s5c tilt, which review round 3 H3 measured as ~10% normalization with <= 1% shape), amplitude anchored to the spread between fixed generator E_avail shapes and recorded with its source, support and positivity; its shape amplitude and preserved total are verified from operands. >= 10 development experiments; same closure statistics as C3, reported as regularization bias under a truth departure",
+   "C5_q3_conditional_departure": "the repaired q3_given_eavail_w deformation (KNOWN_ISSUES 76) at a = 0.3; the (E_avail, W) marginal preservation of the truth is verified numerically in-grid (every M1 row within 1e-6 relative) and the in-cell q3 amplitude is reported; >= 10 development experiments; same statistics",
+   "C6_sigma_calibration": "a >= 200-replica bootstrap of one declared nominal development experiment under statistical_sigma; the ensemble spread of the C3 experiments over that sigma, per functional and pooled, with its sampling uncertainty",
+   "C7_real_data_method_sensitivity": "the F2 estimator on the real data under purity and under negweight-refined (same inputs, same estimator), reported as METHOD SENSITIVITY of the reported functionals, never as a measured bias; with normalization, clipped fraction and effective weights",
+   "C8_signal_only_reference": "signal-only pseudo-data (no background, no subtraction) for description only; it is not evidence of background-inclusive closure"
+  },
+  "exit": "Stage 1 ends with a committed development receipt of C0-C8, an independent review of the construction (isolated read-only worktree, operands recomputed), and a feasibility receipt that costs the COMPLETE remaining measurement, validation and verification from successor measurements, with sample-size and assurance calculations recomputed at the development coverage estimates."
+ },
+ "stage_2_preconditions": {
+  "controls": "C0, C1, C2 and C3 pass; C4-C8 are complete",
+  "affordability": "the feasibility receipt's forecast for every claimed scope (Tier S, the matched systematic construction, seed/stability probes, Tier T if total coverage is claimed, independent reproduction) plus the 20% verification/repair floor fits the successor caps; and the forecast probability of passing the Tier-S gate at the development point estimates of coverage is >= 0.5. A scope whose forecast fails either condition is not attempted; a smaller scope is attempted only if it is on the plan's predeclared fallback hierarchy (coarser joint partition, then the (E_avail,W) projection)",
+  "freeze": "a contract amendment freezing, before any validation seed: the exact estimator and interval construction for the data (centering, any bias treatment, the sigma object), the 68%/95% labels and what they claim, useful-width criteria, the truth grid with its physical anchors, functionals, n per grid point, the futility rule, the seed-stability probes and their tolerances"
+ },
+ "retained_gates": {
+  "tier_S": "simultaneous one-sided 95% Clopper-Pearson lower bounds (Bonferroni over functionals x grid points) > 0.66 (68%) and > 0.94 (95%) over exactly the declared validation seeds; an absent experiment makes the verdict INCOMPLETE",
+  "stability": "plan section 6: 5% maximum relative movement of projected standard deviations over the frozen functionals and the tested complete seed ensemble, with central-value shifts on the same functionals; for a deterministic estimator the row-permutation probes of every arm replace an inert seed ensemble (s5c amendment 2 R1)",
+  "tier_T": "coverage of total (statistical + systematic) intervals at shifted nuisance settings; required before any total covariance is called coverage-validated",
+  "adoption": "plan section 9 conditions 1-3 and 5 for any measurement scope; statistical-only qualification cannot promote a total covariance"
+ },
+ "validation_seed_ranges": {
+  "construction_0": [400000, 449999],
+  "revision_1": [500000, 549999],
+  "revision_2": [600000, 649999],
+  "rule": "never reused across constructions; disjoint from every development and s5c range"
+ },
+ "not_in_this_contract": {
+  "inference": "no generator comparison (joint-5D, projection or contrast) is computed; the authorization excludes it",
+  "PET": "excluded"
+ },
+ "terminal_branches": {
+  "STAGE1_FAIL": "a required control fails: record it, stop the failed branch, report the costed next increment; no Stage 2",
+  "UNAFFORDABLE": "the controls pass but no claimed scope fits the caps with the required assurance: report the development measurements, the costs and the priced increment; no Stage 2",
+  "S_FAIL": "undercoverage at named functionals and grid points; no adoption; a remaining development revision may be used on development evidence only, with fresh validation",
+  "S_PASS": "the frozen statistical intervals meet the gate on the declared grid at nominal nuisance; a statistical-scope checkpoint may be assembled with independent verification; total coverage stays unvalidated unless Tier T passes",
+  "INCOMPLETE": "resource- or evidence-limited; report measured costs and the missing experiments"
+ },
+ "resources": {
+  "admission": "nd-unfolding/s5c_meter.py bound to docs/orchestration/state/s5n/budget.json and the successor ledger; job prefix s5n-",
+  "namespace": "/pscratch/sd/j/josephrb/s5n-20260925/ (fresh outputs only; s5c products and every historical product are read, never written)"
+ }
+}
