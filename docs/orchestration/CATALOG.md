@@ -39,29 +39,15 @@ re-measure anything volatile. Each record states its own scope and what it super
 | quotable numbers | [`VALIDATION_LEDGER.md`](../../VALIDATION_LEDGER.md) `VL142`–`VL145` |
 | withdrawn readings of those measurements | [`CORRECTION-20260920-lower-bound-inference-withdrawn.md`](CORRECTION-20260920-lower-bound-inference-withdrawn.md); [`CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md`](CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md) |
 | clause (c) | [`DECISION-20260920-joseph-rules-clause-c-disposition.md`](DECISION-20260920-joseph-rules-clause-c-disposition.md) |
-| earlier scalar-5D rulings and amendments, newest first | [`DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md`](DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md); [`DECISION-20260919-joseph-R6-reverses-the-k1-decline.md`](DECISION-20260919-joseph-R6-reverses-the-k1-decline.md); [`AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md`](AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md); [`DECISION-20260906-joseph-authorizes-z-specification-only.md`](DECISION-20260906-joseph-authorizes-z-specification-only.md); [`DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md`](DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md) |
+| earlier scalar-5D rulings and amendments, newest first (not exhaustive: older ones are in the continuation) | [`DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md`](DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md); [`DECISION-20260919-joseph-R6-reverses-the-k1-decline.md`](DECISION-20260919-joseph-R6-reverses-the-k1-decline.md); [`AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md`](AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md); [`DECISION-20260910-joseph-b-deferred-and-finite-ensemble-disclosure.md`](DECISION-20260910-joseph-b-deferred-and-finite-ensemble-disclosure.md); [`DECISION-20260910-joseph-accepts-outcome-2-and-opens-replacement-packet.md`](DECISION-20260910-joseph-accepts-outcome-2-and-opens-replacement-packet.md); [`DECISION-20260906-joseph-authorizes-z-specification-only.md`](DECISION-20260906-joseph-authorizes-z-specification-only.md); [`DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md`](DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md) |
 | the frozen successor specification | [`SPEC-20260906-complete-scalar5d-successor-Z.md`](SPEC-20260906-complete-scalar5d-successor-Z.md) |
 | boundaries, the `s_proj` functional set, cause dispositions, reserved acts | [`OPERATIVE-SHEET-scalar5d.md`](OPERATIVE-SHEET-scalar5d.md) |
 | the cause-3 grade behind `M1` | [`OUTCOME-20260920-cause3-two-member-assessable-FAIL.md`](OUTCOME-20260920-cause3-two-member-assessable-FAIL.md); [`state/GRADE-20260920-cause3-two-member.json`](state/GRADE-20260920-cause3-two-member.json) |
 | results recorded after the adoption | [`OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md`](OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md); [`OUTCOME-20260922-3d-covariance-projected-from-the-adopted-trunk.md`](OUTCOME-20260922-3d-covariance-projected-from-the-adopted-trunk.md); [`OUTCOME-20260922-ten-adopted-receipts-superseded-by-code-drift.md`](OUTCOME-20260922-ten-adopted-receipts-superseded-by-code-drift.md) |
 | rebuilding the trunk | [`REPRODUCTION-20260918-scalar5d-trunk-path.md`](REPRODUCTION-20260918-scalar5d-trunk-path.md) |
 | where the trunk's bytes are, and which have no durable copy | [`RECOVERY-MANIFEST-20260924-preparation-epoch.md`](RECOVERY-MANIFEST-20260924-preparation-epoch.md) §2 |
-| what is authorized to happen next | [`docs/CURRENT_WORK.md`](../CURRENT_WORK.md), then the cited row of [`docs/OPEN_ITEMS.md`](../OPEN_ITEMS.md); code defects in [`KNOWN_ISSUES.md`](../../KNOWN_ISSUES.md) |
+| what is authorized to happen next on the scalar-5D path | [`HANDOFF-20260924-preparation-for-scalar5d-campaign.md`](HANDOFF-20260924-preparation-for-scalar5d-campaign.md) D1–D11; the standing compute posture in [`AUTHORIZATION-20260918-d-resource-required-deliverable-path.md`](AUTHORIZATION-20260918-d-resource-required-deliverable-path.md); execution order and reserved acts in [`OPERATIVE-SHEET-scalar5d.md`](OPERATIVE-SHEET-scalar5d.md) §5–§6. [`docs/CURRENT_WORK.md`](../CURRENT_WORK.md) → [`docs/OPEN_ITEMS.md`](../OPEN_ITEMS.md) route the non-scalar queue; code defects are in [`KNOWN_ISSUES.md`](../../KNOWN_ISSUES.md) |
 | every scalar-5D pointer row that stood here before 2026-09-24 | [`CATALOG-ARCHIVE-scalar5d.md`](CATALOG-ARCHIVE-scalar5d.md), verbatim; the pre-move router is `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/CATALOG.md` |
-
-- [`PLAN-scalar5d-reportable-uncertainties-and-inference.md`](PLAN-scalar5d-reportable-uncertainties-and-inference.md)
-  - The proposed next scalar-5D campaign plan. **Not activated**: only Joseph's actual sending of
-  the estimator goal prompt activates it, recorded with this file's Git blob and commit. Preserved
-  here byte-identical to the copy received on 2026-09-24 (blob `8b0617b6e044a55a9b5870b46e5d90a15a6ced7a`).
-- [`DRAFT-preservation-and-stabilization-session-prompts.md`](DRAFT-preservation-and-stabilization-session-prompts.md)
-  - Draft prompts for the two-session sequence. Preserved byte-identical to the copy received on
-  2026-09-24 (blob `cf3c2e858d4526ad356e604af9bc6100e6cc7e9f`). Its *preservation* section was sent
-  by Joseph on 2026-09-24; its *estimator* section was not.
-- [`AUTHORIZATION-20260924-preservation-and-simplification-pass.md`](AUTHORIZATION-20260924-preservation-and-simplification-pass.md)
-  - Joseph's actual 2026-09-24 activation of the preservation section, verbatim, and what it does not activate.
-- [`RECOVERY-MANIFEST-20260924-preparation-epoch.md`](RECOVERY-MANIFEST-20260924-preparation-epoch.md)
-  - The 2026-09-24 evidence tags, bundles and recovery tests; which scalar-5D trunk objects have a
-  durable copy and which **nine are sole-copy on `/pscratch`**; the frozen simplification family list.
 
 ### OI-136 fail-open repair — AUTHORIZED 2026-09-03 (36 of 45; 9 excluded with measured reasons)
 

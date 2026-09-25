@@ -18,13 +18,13 @@ Machine-readable inventory: [`state/RECOVERY-MANIFEST-20260924-trunk-external-ar
 | commit | `bf34a12cff9a2f06f0a3f1c516628085565eef60` | `a11b70556cea4e23b4db7881a8033c8dd2632563` |
 | remote target | verified with `git ls-remote` after push, 2026-09-25T02:37Z | same |
 | tracked paths at tag | 2,399 | 99 |
-| all-ref bundle | `repository-all.bundle`, 236,355,061 B, sha256 `31aba79ca6a345f82bb1f9cf55c15871fbc2ea66a9b0bd0eabcca9b77f743d5b` | `analysis-note-all.bundle`, sha256 `36e294ae458929ce078372d3bff44f4acd12be0c69fbe74a26e92a28c21cc5e1` |
+| all-ref bundle | `repository-all.bundle`, 236,358,640 B, sha256 `31aba79ca6a345f82bb1f9cf55c15871fbc2ea66a9b0bd0eabcca9b77f743d5b` | `analysis-note-all.bundle`, sha256 `36e294ae458929ce078372d3bff44f4acd12be0c69fbe74a26e92a28c21cc5e1` |
 
 The monorepo commit is the draft-preservation commit, so the epoch contains both preserved drafts.
 The older epoch `evidence/prepublication-2026-08-20-0b329e8a` is untouched.
 
-**Storage.** Two copies of the epoch directory, each sealed by the same `SHA256SUMS` (28 files, itself
-sha256 `d0749a7b90403bdd917a1ee431661873a071504eac7a7586920442d0f022b38d`):
+**Storage.** Two copies of the epoch directory, each sealed by the same `SHA256SUMS` (29 files, itself
+sha256 `7431f87f1159aee688340fec5a687aecc988de6fd982c46fa8f6eb8343814c23`, resealed after the review added `trunk-baseline-verify.txt`):
 
 - local: `/Users/josephbailey/local-research/evidence-epochs/preparation-2026-09-24-bf34a12c/`
 - NERSC global home: `/global/homes/j/josephrb/evidence/repository-epochs/preparation-2026-09-24-bf34a12c/`
@@ -82,8 +82,10 @@ recomputed on the original. **All 8 inputs named by the trunk manifest** (`z-man
 | input `support` `9f7b2f55…`, 41,436,632,945 B | 1 | PRESERVED — HPSS copy, md5 equal to the original's; **restore not tested** (41 GB) |
 | **the nine below** | 9 | **UNPRESERVED — sole copy on purgeable `/pscratch`** |
 
-The copies are under `…/preparation-2026-09-24-bf34a12c/trunk-baseline/`, 46 files, 908,634,732 B,
+The copies are under `…/preparation-2026-09-24-bf34a12c/trunk-baseline/`, 46 files, 908,624,492 B of file content,
 mirroring the `/pscratch/sd/j/josephrb/` relative paths; `trunk-baseline.SHA256SUMS` verifies them.
+The copy was made in three steps (23 files by `copy_and_restore.sh`, then 19 and 4 small files); the
+copy-versus-original comparison for all 46 is in the epoch's `trunk-baseline-verify.txt`.
 
 ### The gaps
 
@@ -111,7 +113,8 @@ projection and `parent`. *Scientific*: none; nothing here is independently re-ve
 ## 3. The frozen simplification family list
 
 Frozen before any change, after the inventory. **No file is removed from `main` by this pass.** Every
-candidate removal was scanned for consumers and each had a code, test or probe reader, so each stays:
+candidate removal was scanned for consumers and each had a surviving reader — code, a test, a probe
+or routed prose — so each stays:
 
 | candidate | consumer that retains it |
 |---|---|
@@ -123,7 +126,7 @@ candidate removal was scanned for consumers and each had a code, test or probe r
 | `REPORT-20260922-review-residue.md` | `.githooks/pre-commit` advisory, three `probes/probe-20260922-*` |
 | `NAVIGATION-20260917-z-pilot-outcome-route.md` | `nd-unfolding/tests/test_run_m1_projection_refusals.py` |
 
-**F1 — the scalar-5D discovery route in `CATALOG.md`.** Six sections move **verbatim** into a new
+**F1 — the scalar-5D discovery route in `CATALOG.md`.** Nine sections, in the six line ranges below, move **verbatim** into a new
 declared continuation, `CATALOG-ARCHIVE-scalar5d.md` (the phase-2 split `CATALOG.md` § *Regenerate*
 already specifies), and one compact current entry route replaces them. Headings and line ranges at
 `bf34a12c`:
@@ -157,3 +160,16 @@ Historical lookup for anything moved or reclassified:
 git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/CATALOG.md
 git grep '<identifier>' evidence/preparation-2026-09-24-bf34a12c -- docs/orchestration/
 ```
+
+### Execution record (added 2026-09-25)
+
+- **F1 executed** at `8cffde7b`, **except one frozen gate clause**: the render probe does not stay
+  green. `probe-20260922-render-checks.py` reports 61 inline-marker leaks in the continuation; the
+  identical 61 texts parse as leaks in the full pre-move router and the new router has 0, so they are
+  pre-existing and surfaced only because the probe scopes by lines added since `177af61b`. The move was
+  kept verbatim rather than reformatted. `probe-20260922-seven-gates.sh` is therefore red on `main`;
+  `probe-20260922-render-checks.py --since 8cffde7b` exits 0. Every other F1 gate held.
+- **F2 not executed**: its precondition failed. A read-only sweep of both handoffs found five open
+  items tracked nowhere else; they are routed in
+  [`HANDOFF-20260924-preparation-for-scalar5d-campaign.md`](HANDOFF-20260924-preparation-for-scalar5d-campaign.md)
+  D10–D11, and the three documents stay `LIVE`.
