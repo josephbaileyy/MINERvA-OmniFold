@@ -44,20 +44,13 @@ Blank lines and lines beginning `#` are ignored. The check refuses (exit 1), lis
     form of one (`\u00f8`, `\u01dd`, `\u014b`, small capitals, Greek omicron, rho, epsilon, eta, nu, sigma), else as itself
     (`\u00df`, `\u03c7`, `\u0394`). A symbol or other letter shaped like one (`\u25cbpen`, `\ua74fpen`) is NOT seen (⚠ this
     once said a lone combining mark is refused; review #44b);
-  * a row whose line, parsed by markdown-it itself, has a code span, link (text or target), image, autolink or HTML
-    tag that STARTS in the status cell and holds a `|`: the table split at that pipe and cut the status short. The
-    test is that the status cell, parsed alone, leaves a backtick, `[` or `<` as plain text, and the parse from its
-    start on finds a pipe-holding span (for `[` and `<`, more than from its end), with the index's reference
-    definitions (⚠ this said "unclosed", and a `<` in prose once refused a row whose LATER cell held a link; #48a) (⚠ a count of spans once passed any cut
-    whose later cell held a backtick; review #47b). Against #47a's code-span oracle (6,720 short rows) it misses
-    no cut and fails closed on 201; against #48b's position-exact oracle (781,612 rows over links, images, HTML,
-    autolinks and code spans, with later cells) it misses none and FAILS CLOSED on 10,050, every one a status leaving
-    a backtick as plain text
-    (reviews #42b-#46b; three hand-written scans each missed a case). A pipe escaped inside a link counts too, and so
-    does a lone backtick in the status (`don`t`) that the parser pairs with one in a LATER cell: a correct row, but
-    one the parser reads as cut, so it FAILS CLOSED and must be reworded (self-found, 2026-09-24). A `|`
-    in plain prose or math, such as `P(a|b)`, in a row ALSO missing a cell is not detected: nothing is left open
-    (review #45b);
+  * a row whose line holds, from its status cell on, a `|` inside a code span (an escaped `\\|` there is kept), link
+    (text, target or title), image, autolink or HTML tag, as markdown-it parses it with the index's reference
+    definitions, or a raw `|` inside `[...]`: FAILS CLOSED, since such a pipe may have cut the status and cannot be
+    told apart from one that did. So a correct row holding such a span in a later cell, a search URL with `%7C`, or
+    a lone backtick that pairs across cells is refused too, and must be rewritten (reviews #42b-#49b; four cleverer
+    rules each missed a cut or refused a row in a new way). A `|` in plain prose or math, such as `P(a|b)`, in a row
+    ALSO missing a cell is not detected: nothing is left open (review #45b);
   * an index id that is not plain letters and digits, or used by more than one row;
   * an index row whose severity is not one the index uses (CRITICAL, BLOCKER, HIGH, MEDIUM, LOW, TRAP; bold or
     any case, but no qualifier such as `HIGH (was MEDIUM)`), whose `updated` cell is empty (a row missing a cell
@@ -228,29 +221,26 @@ def pipe_spans(s, env=None):
     return n
 
 
-def leftover_openers(cell, env=None):
-    """The openers -- backtick, `[`, `<` -- that the cell, parsed ALONE as the table parses it, leaves as plain text
-    (⚠ first called "unclosed"; a closed `[VL12]` that is no link is plain text too; review #48a)."""
-    return {c for tk in MD.parseInline(cell, env or {})[0].children or [] if tk.type == "text"
-            for c in "`[<" if c in tk.content}
-
-
 def status_cut(src, env=None):
-    """True if the status cell of row line `src` was cut by a `|`, read with the index's reference definitions:
-      * a backtick left as plain text in the status, and any pipe span from the status on. Against an exact code-span
-        oracle this misses no cut and FAILS CLOSED when a later cell holds a pipe span of its own (review #47b);
-      * a `[` or `<` left as plain text, and MORE pipe spans from the status's start than from its end. Brackets do
-        not pair across the cell the way backticks do, so `x < 1` or `[VL12]` with a link in a LATER cell is not
-        refused (⚠ it once was; review #48a)."""
+    """True if row line `src` holds, from its status cell on, a pipe inside a span: a code span (an escaped `\\|` there
+    is kept), link (text, target or title), image, autolink or HTML tag, as markdown-it itself parses it with the
+    index's reference definitions, or a raw `|` inside `[...]`. Such a pipe either split the status cell or cannot be
+    told apart from one that did, so the row FAILS CLOSED and must be rewritten. Four cleverer rules -- a hand-written
+    backtick scan, a span count from the cell's start against its end, a leftover opener, and both -- each missed cuts
+    or refused correct rows in a new way (reviews #44b-#49b); across all 255 distinct row lines in the index's history
+    this blunt rule refuses only two, row 69's 10-cell versions, which the extra-cells rule refuses anyway. Against
+    the three oracles reviews #47a, #48b and #49a built (6,720, 781,612 and 1,412,346 constructed rows) it misses no
+    cut, and fails closed on 684, 219,504 and 378,843 of them, the price of refusing every pipe-holding span."""
     pipes = [m.start() for m in re.finditer(r"(?<!\\)\|", src)]
     k = 2 if src.startswith("|") else 1
     if len(pipes) <= k:
         return False
-    start, end = pipes[k] + 1, (pipes[k + 1] if len(pipes) > k + 1 else len(src))
-    left = leftover_openers(src[start:end])        # WITHOUT the definitions: a defined [r] once hid a cut link (#48b)
-    if "`" in left and pipe_spans(src[start:], env) > 0:
-        return True
-    return bool(left & {"[", "<"}) and pipe_spans(src[start:], env) > pipe_spans(src[end:], env)
+    rest = src[pipes[k] + 1:]
+    cell = src[pipes[k] + 1:pipes[k + 1] if len(pipes) > k + 1 else len(src)]
+    # and a status cell ending inside a link target `](...` it never closes: a defined `[a]` once let the parser read
+    # `[a](|[a](` as plain text around the pipe (review #49a's oracle); a code span holding `](` fails closed with it
+    return (pipe_spans(rest, env) > 0 or bool(re.search(r"\[[^\[\]]*(?<!\\)\|[^\[\]]*\]", rest))
+            or bool(re.search(r"\]\([^)]*$", cell.strip())))
 
 
 def fstring_backslashes(src):
@@ -342,8 +332,8 @@ def index_rows(text):
                     st = cur[1][2].content if len(cur[1]) > 2 else ""
                     # markdown-it itself decides (see pipe_spans); the hand-written scan and link regex are gone (#46b)
                     if cells <= len(HEADER) and status_cut(src, env):
-                        problems.append(f"line {cur[0]}: the status cell {st.strip()[:30]!r} opens a code span, link or "
-                                        "HTML tag that a `|` cut short")
+                        problems.append(f"line {cur[0]}: from the status cell {st.strip()[:30]!r} on, a `|` sits inside a "
+                                        "code span, link, image or HTML tag: it may have cut the status; rewrite it")
                     c = cur[1] + [None] * (6 - len(cur[1]))     # never shorter here; a mutant reads other tables
                     rows.append((c[0].content, c[2].content, cur[0], c[2],
                                  _rendered(c[1]) if c[1] else "", _rendered(c[5]) if c[5] else ""))
@@ -664,12 +654,12 @@ def self_test():
                        ("a span after an autolink", "<https://x.org/`> `a|b`"), ("a link target with parentheses", "[w](https://e.org/U_(s)|x)"),
                        ("an angle-bracket link target", "[a](<f)g|h>)"), ("link text", "[a|b](x)"))],
         ("a status cut by a pipe inside an HTML tag is refused", '| 1 | LOW | FIXED <span title="a|b">x</span> still open | d | 2026 |\n', "", 1),
-        ("a pipe span starting in a LATER cell leaves the status whole", "| 1 | LOW | FIXED | x `a|b` y | u |\n", "", 0),
+        ("a pipe span in a LATER cell fails closed", "| 1 | LOW | FIXED | x `a|b` y | u |\n", "", 1),
         ("a lone backtick in the status pairing with a later cell's fails closed", "| 1 | LOW | FIXED; don`t | x | see `y` | u |\n", "", 1),
         # --- review #47b: a LATER cell's backtick must not hide a cut; percent-encoded targets; reference links; images
         *[(f"a cut status with {k} in a later cell is refused", f"| 1 | LOW | FIXED at `a|b` still open | {c} | 2026 |\n", "", 1)
           for k, c in (("a code span", "see `x`"), ("a lone backtick", "don`t"), ("two spans", "`x` and `y`"))],
-        ("an already-encoded link target is fine", "| 1 | LOW | FIXED, see [q](https://e.org/?q=a%7Cb) | x | d | u |\n", "", 0),
+        ("an encoded pipe in a status link target fails closed", "| 1 | LOW | FIXED, see [q](https://e.org/?q=a%7Cb) | x | d | u |\n", "", 1),
         ("a cut image alt is refused", "| 1 | LOW | FIXED ![a|b](x.png) still open | d | 2026 |\n", "", 1),
         ("a cut image target is refused", "| 1 | LOW | FIXED ![a](x|y.png) still open | d | 2026 |\n", "", 1),
         ("a cut status in a row without a leading pipe is refused", "1 | LOW | FIXED at `a|b` still open | d | 2026\n", "", 1),
@@ -679,15 +669,23 @@ def self_test():
         ("a cut link title is refused", '| 1 | LOW | FIXED, see [n](docs/n.md "s 2 | 3") still open | d | 2026 |\n', "", 1),
         ("a cut image title is refused", '| 1 | LOW | FIXED ![n](x.png "s 2 | 3") still open | d | 2026 |\n', "", 1),
         ("an escaped pipe in a later code span is fine", "| 1 | LOW | FIXED x < 1 | f | `a \\| b` | u |\n", "", 0),
-        ("a closed link before a less-than sign is fine", "| 1 | LOW | FIXED [a](b) x < 1 | f | see [q](x%7Cy) | u |\n", "", 0),
-        ("a less-than sign inside a code span is not a leftover", "| 1 | LOW | FIXED at `x<y` | f | [q](x%7Cy) | u |\n", "", 0),
+        ("a closed link before a less-than sign, with a later %7C link, fails closed", "| 1 | LOW | FIXED [a](b) x < 1 | f | see [q](x%7Cy) | u |\n", "", 1),
+        ("a later %7C link fails closed whatever the status", "| 1 | LOW | FIXED at `x<y` | f | [q](x%7Cy) | u |\n", "", 1),
         # --- review #48a: a `<` or `[` in prose with a link in a LATER cell is not a cut
-        *[(f"a status with {k} and a later link holding %7C is fine", f"| 1 | LOW | FIXED; {s} | x | see [q](https://e.org/?q=a%7Cb) | u |\n", "", 0)
+        *[(f"a status with {k} and a later link holding %7C fails closed", f"| 1 | LOW | FIXED; {s} | x | see [q](https://e.org/?q=a%7Cb) | u |\n", "", 1)
           for k, s in (("a less-than sign", "residual < 1%"), ("a bracketed tag", "[VL12]"), ("an interval", "in [0, 1.5)"))],
-        ("a status with a less-than sign and a later autolink holding %7C is fine", "| 1 | LOW | FIXED; residual < 1% | x | <https://e.org/?q=a%7Cb> | u |\n", "", 0),
+        ("a status with a less-than sign and a later autolink holding %7C fails closed", "| 1 | LOW | FIXED; residual < 1% | x | <https://e.org/?q=a%7Cb> | u |\n", "", 1),
+        # --- review #49b: the count-tie cuts, a pipe in a reference label, a definition holding a pipe
+        ("a cut through a link target holding a span is refused", "| 1 | LOW | FIXED [a](x|`y) still open | d `| 2026 |\n", "", 1),
+        *[(f"a cut through {k} is refused", f"| 1 | LOW | FIXED {s} still open | 2026 |\n", "", 1)
+          for k, s in (("an HTML attribute holding a span", '<span title="a | `b|c` d">x</span>'),
+                       ("a link title holding a span", '[n](x "a | `b|c`")'), ("an image alt holding a span", "![a | `b|c` d](x.png)"))],
+        ("a pipe in a reference label is refused", "| 1 | LOW | FIXED [a][r|s] still open | d | 2026 |\n\n[r|s]: http://x\n", "", 1),
+        ("a status citing a definition that holds a pipe fails closed", '| 1 | LOW | FIXED, see [VL12] | x | d | u |\n\n[VL12]: V.md "VL12 | 2D"\n', "", 1),
         ("a cut reference link is refused", "| 1 | LOW | FIXED [a|b][r] still open | d | 2026 |\n\n[r]: http://x\n", "", 1),
         ("a two-cell row is refused, not a crash", "| 1 | LOW\n", "", 2),
-        ("a code span holding `](` is fine", "| 1 | LOW | FIXED; the parser splits on `](` now | x | d | u |\n", "", 0),
+        ("a code span holding `](` fails closed", "| 1 | LOW | FIXED; the parser splits on `](` now | x | d | u |\n", "", 1),
+        ("a cut link target under a defined reference is refused", "| 1 | LOW | FIXED [a](|[a]( | x | u |\n\n[a]: http://x\n", "", 1),
         ("a closed span after an escaped backslash is fine", "| 1 | LOW | FIXED; path ends C:\\\\`x` fine | x | d | u |\n", "", 0),
         ("n after an apostrophe still says open", "| 1 | LOW | FIXED; still ope\u0149 | x | d | u |\n", "", 1),
         ("a ten-item list line holding a lone row is refused", "| 1 | LOW | FIXED | x | d | u |\n\n10. | 2 | LOW | OPEN | x | d | u |\n", "", 1),
@@ -786,8 +784,8 @@ def self_test():
     # the span helpers themselves, where a row-level shape cannot reach them (review #48b)
     for got, want, name in ((pipe_spans("`a \\| b`"), 0, "an escaped pipe in a code span is not a pipe span"),
                             (pipe_spans("[a](b) and `c`"), 0, "a closed link and a code span without pipes are none"),
-                            (leftover_openers("FIXED at `x<y`"), set(), "a less-than sign inside a code span is no leftover"),
-                            (leftover_openers("FIXED x < 1 and [0, 1.5)"), {"<", "["}, "prose leaves < and [ as plain text")):
+                            (status_cut("| 1 | LOW | FIXED x < 1 and [0, 1.5) | f | d | u |"), False, "prose < and [ are no span"),
+                            (status_cut("| 1 | LOW | FIXED [a][r|s] still open | d | 2026 |"), True, "a pipe in a reference label is refused")):
         if got != want:
             wrong.append(f"{name}: wanted {want!r}, got {got!r}")
     # lone CRs: the cut-off OPEN row must be reported AS a cut-off row. Unnormalised, the CR-joined line also trips the
@@ -798,6 +796,16 @@ def self_test():
     # a quoted index table is read, not refused for its `>` (review #41b); a CRLF index through check() (review #41b)
     # no backslash inside an f-string's braces: Python before 3.12 cannot parse it, and the probe once exited 1 there (#42a)
     OWNED = "1\tOWNER\ta\n"
+    # the whole file compiles with warnings as ERRORS: an invalid `\\|` escape in two docstrings once warned, and a later
+    # Python makes that an error (self-found, 2026-09-24)
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        try:
+            with open(__file__, encoding="utf-8") as f:
+                compile(f.read(), __file__, "exec")
+        except SyntaxError as e:
+            wrong.append(f"line {e.lineno}: the probe does not compile with warnings as errors: {e.msg}")
     # the whole file, by Python's own tokenizer (reviews #43a, #44b)
     with open(__file__, encoding="utf-8") as f:
         for n in fstring_backslashes(f.read()):
@@ -976,20 +984,18 @@ def main():
 # (label, text in this file, replacement). Each must make the self-test fail. `--mutations` refuses (exit 2) if a
 # text is not found exactly once, so a mutation cannot silently stop applying when the code moves.
 MUTATIONS = [
-    ('the leftovers read with the definitions', '    left = leftover_openers(src[start:end])        # WITHOUT', '    left = leftover_openers(src[start:end], env)        # WITHOUT'),
+    ('reference definitions not passed', '    return (pipe_spans(rest, env) > 0 or', '    return (pipe_spans(rest) > 0 or'),
+    ('an invalid escape in a docstring', 'code span (an escaped `\\\\|` there is kept), link', 'code span (an escaped `\\|` there is kept), link'),
+    # ("spans read from the whole line", "an image target pipe not counted") are RETIRED as equivalent under the blunt
+    # rule: no span holds a pipe before the status, and a cut image target is caught as an unclosed `](` (#49)
+    ('an unclosed link target at the cell end accepted', '            or bool(re.search(r"\\]\\([^)]*$", cell.strip())))', '            or False)'),
+    # ("an image alt pipe not counted", "a pipe in link text not counted", "escaped pipes split cells in status_cut") are RETIRED
+    # as equivalent under the blunt rule: the raw [...] check and any pipe span from the status on catch the same rows (#49)
+    ('the raw bracket pipe not checked', ' or bool(re.search(r"\\[[^\\[\\]]*(?<!\\\\)\\|[^\\[\\]]*\\]", rest))', ''),
     ('link titles not read', ' + (tk.attrs or {}).get("title", "")   # title too', '   # title too'),
     ('escaped pipes in code spans counted', '            n += bool(re.search(r"(?<!\\\\)\\|", tk.content))', '            n += "|" in tk.content'),
     ('the link depth never closes', '        elif tk.type == "link_close":\n            depth -= 1', '        elif tk.type == "link_close":\n            pass'),
-    ('leftovers read from every token', '    return {c for tk in MD.parseInline(cell, env or {})[0].children or [] if tk.type == "text"', '    return {c for tk in MD.parseInline(cell, env or {})[0].children or [] if True'),
-    ('a backtick cut read from the leftover alone', '    if "`" in left and pipe_spans(src[start:], env) > 0:', '    if "`" in left:'),
-    ('a backtick cut read from the spans alone', '    if "`" in left and pipe_spans(src[start:], env) > 0:', '    if pipe_spans(src[start:], env) > 0:'),
-    ('reference definitions not passed', 'pipe_spans(src[start:], env) > pipe_spans(src[end:], env)', 'pipe_spans(src[start:]) > pipe_spans(src[end:])'),
-    ('bracket cuts refused whatever the later cells', 'pipe_spans(src[start:], env) > pipe_spans(src[end:], env)', 'pipe_spans(src[start:], env) > 0'),
-    ('bracket cuts not checked', '    return bool(left & {"[", "<"}) and', '    return False and'),
-    ('an image alt pipe not counted', 'n += "|" in href or "%7C" in href.upper() or "|" in tk.content', 'n += "|" in href or "%7C" in href.upper()'),
-    ('an image target pipe not counted', '        elif tk.type == "image":\n            n += "|" in href or "%7C" in href.upper() or', '        elif tk.type == "image":\n            n += '),
     ('a row without a leading pipe read as having one', '    k = 2 if src.startswith("|") else 1', '    k = 2'),
-    ('escaped pipes split cells in status_cut', 'pipes = [m.start() for m in re.finditer(r"(?<!\\\\)\\|", src)]\n    k = 2', 'pipes = [m.start() for m in re.finditer(r"\\|", src)]\n    k = 2'),
     ('the short-row guard off by one', '    if len(pipes) <= k:\n        return False', '    if len(pipes) < k:\n        return False'),
     ('the fold without NFKD', 'for c in (a,) if a else unicodedata.normalize("NFKD", ch):', 'for c in (a,) if a else (ch,):'),
     ('marks kept by the fold', '            if unicodedata.category(c) in ("Mn", "Me") or INVISIBLE.match(c):\n                continue\n', ''),
@@ -997,7 +1003,6 @@ MUTATIONS = [
     ('a pipe in a code span not counted', '            n += bool(re.search(r"(?<!\\\\)\\|", tk.content))', '            n += 0'),
     ('a pipe in an HTML tag not counted', '            n += "|" in tk.content\n        elif tk.type == "link_open":', '            n += 0\n        elif tk.type == "link_open":'),
     ('a pipe in a link target not counted', '            depth += 1\n            n += "|" in href or "%7C" in href.upper()', '            depth += 1'),
-    ('a pipe in link text not counted', '        elif depth and "|" in tk.content:\n            n += 1', '        elif False:\n            n += 1'),
     ('the status cut not checked', 'if cells <= len(HEADER) and status_cut(src, env):', 'if False and status_cut(src, env):'),
     ('a letter decomposed before it is read', '        for c in (a,) if a else unicodedata.normalize("NFKD", ch):', '        for c in unicodedata.normalize("NFKD", ch):'),
     ('more list-number digits refused', '\\d{1,9}[.)](?=\\s)', '\\d[.)](?=\\s)'),
