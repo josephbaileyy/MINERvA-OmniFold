@@ -45,6 +45,10 @@ From [`HANDOFF-20260924-preparation-for-scalar5d-campaign.md`](HANDOFF-20260924-
 | D10 | **OPEN** | archiving the two 0921/0922 handoffs | unchanged by this campaign |
 | D11 | **OPEN** | describing any cause-3 criterion as never computed in production | the successor contract defines its own gates and does not quote the census |
 
+## Paper-wide completion table
+
+[`CAMPAIGN-s5c-20260924-paper-wide-table.md`](CAMPAIGN-s5c-20260924-paper-wide-table.md) — initialized in Phase A, reconciled before closeout.
+
 ## Phases (plan §§4–10) — current state lives in the state file
 
 A (preparation) → B (contract, feasibility receipt) → C (reportable scope) → D (calibration and
