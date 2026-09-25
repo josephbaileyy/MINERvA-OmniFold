@@ -1,0 +1,2 @@
+# F2 central value: the driver on the CV omnifile (the adopted central product 630306e2 came from the driver), under F2
+central	s5c_with_estimator.py	--config	deterministic	--threads	32	--evidence	/pscratch/sd/j/josephrb/s5c-20260924/runs/construction/ev_central.json	--	nd-unfolding/unfold_nd_omnifold_unbinned.py	--omnifile	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root	--axes	eavail,q3,W	--iters	5	--use-weights	--estimator	lgbm	--seed	42	--out	/pscratch/sd/j/josephrb/s5c-20260924/runs/construction/xsec_5d_MEFHC_5iter_lgbm_F2.root
