@@ -1,0 +1,1 @@
+get  '/pscratch/sd/j/josephrb/s5c-20260924/hpss/d3-run1/restore/z2m-products/member_k001200/z-mean.npz' : '/home/j/josephrb/mnv-scalar5d-solecopy-20260925/z2m-products/member_k001200/z-mean.npz' (2026/09/24 23:21:18 887324826 bytes, 518741.1 KBS )

@@ -1,0 +1,44 @@
+
+mnv-scalar5d-solecopy-20260925:
+drwxr-s---    3 josephrb  josephrb         512 Sep 24 23:21 MINERvA-OmniFold
+drwxr-s---    4 josephrb  josephrb         512 Sep 24 23:21 z2m-products
+
+mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold:
+drwxr-s---    4 josephrb  josephrb         512 Sep 24 23:23 nd-unfolding
+
+mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding:
+drwxr-s---    3 josephrb  josephrb         512 Sep 24 23:21 active_universe_5d
+drwxr-s---    4 josephrb  josephrb         512 Sep 24 23:23 uq_5d
+-rw-r-----    1 josephrb  josephrb   892078834 Sep 24 23:23 uq_cov_mlsplit_5d.root
+-rw-r-----    1 josephrb  josephrb   891732011 Sep 24 23:23 uq_cov_stat_5d.root
+
+mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/active_universe_5d:
+drwxr-s---    3 josephrb  josephrb         512 Sep 24 23:21 standard
+
+mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard:
+drwxr-s---    2 josephrb  josephrb         512 Sep 24 23:21 candidate
+
+mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/candidate:
+-rw-r-----    1 josephrb  josephrb 42326607877 Sep 24 23:23 std_final5_candidate.root
+
+mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_5d:
+drwxr-s---    2 josephrb  josephrb         512 Sep 24 23:21 z_pilot_20260916_a5
+drwxr-s---    2 josephrb  josephrb         512 Sep 24 23:23 z_precursor_20260914
+
+mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5:
+-rw-------    1 josephrb  josephrb   890383062 Sep 24 23:21 z-mean.npz
+
+mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_5d/z_precursor_20260914:
+-rw-r-----    1 josephrb  josephrb  2668265910 Sep 24 23:23 unified_throw_cov_5d.root
+
+mnv-scalar5d-solecopy-20260925/z2m-products:
+drwxr-s---    2 josephrb  josephrb         512 Sep 24 23:21 member_k000000
+drwxr-s---    2 josephrb  josephrb         512 Sep 24 23:21 member_k001200
+
+mnv-scalar5d-solecopy-20260925/z2m-products/member_k000000:
+-rw-------    1 josephrb  josephrb   887254200 Sep 24 23:21 z-cv.npz
+-rw-------    1 josephrb  josephrb   887371441 Sep 24 23:21 z-mean.npz
+
+mnv-scalar5d-solecopy-20260925/z2m-products/member_k001200:
+-rw-------    1 josephrb  josephrb   887228520 Sep 24 23:21 z-cv.npz
+-rw-------    1 josephrb  josephrb   887324826 Sep 24 23:21 z-mean.npz

@@ -1,0 +1,9 @@
+mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_5d/z_precursor_20260914:
+-rw-r-----    1 josephrb  josephrb      5       112498 TAPE    2668265910 Sep 24 23:23 unified_throw_cov_5d.root
+Storage   VV   Stripe  
+ Level   Count  Width  Bytes at Level
+----------------------------------------------------------------------------
+ 1 (tape)   1       1  2668265910
+  VV[ 0]:   Object ID: 00000001-04-00000001-01f193c4ec8a8346-0000
+  Pos:   5613+0   PV List: AH106800   
+

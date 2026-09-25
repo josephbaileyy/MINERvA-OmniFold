@@ -1,0 +1,33 @@
+2026-09-25T06:17:28Z	START job=58855902 host=login16 list=/pscratch/sd/j/josephrb/s5c-20260924/deploy/44a23a40/docs/orchestration/state/s5c/d3-nine-objects.tsv arch=mnv-scalar5d-solecopy-20260925
+2026-09-25T06:17:28Z	TOTAL_BYTES 51218246681 cap 68719476736
+2026-09-25T06:17:32Z	SOURCE yes /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-mean.npz
+2026-09-25T06:17:36Z	SOURCE yes /pscratch/sd/j/josephrb/z2m-products/member_k000000/z-cv.npz
+2026-09-25T06:17:40Z	SOURCE yes /pscratch/sd/j/josephrb/z2m-products/member_k000000/z-mean.npz
+2026-09-25T06:17:44Z	SOURCE yes /pscratch/sd/j/josephrb/z2m-products/member_k001200/z-cv.npz
+2026-09-25T06:17:48Z	SOURCE yes /pscratch/sd/j/josephrb/z2m-products/member_k001200/z-mean.npz
+2026-09-25T06:20:49Z	SOURCE yes /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/candidate/std_final5_candidate.root
+2026-09-25T06:20:53Z	SOURCE yes /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_cov_mlsplit_5d.root
+2026-09-25T06:20:57Z	SOURCE yes /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_cov_stat_5d.root
+2026-09-25T06:21:08Z	SOURCE yes /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_precursor_20260914/unified_throw_cov_5d.root
+2026-09-25T06:21:10Z	PUT rc=0 mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-mean.npz
+2026-09-25T06:21:13Z	PUT rc=0 mnv-scalar5d-solecopy-20260925/z2m-products/member_k000000/z-cv.npz
+2026-09-25T06:21:15Z	PUT rc=0 mnv-scalar5d-solecopy-20260925/z2m-products/member_k000000/z-mean.npz
+2026-09-25T06:21:17Z	PUT rc=0 mnv-scalar5d-solecopy-20260925/z2m-products/member_k001200/z-cv.npz
+2026-09-25T06:21:18Z	PUT rc=0 mnv-scalar5d-solecopy-20260925/z2m-products/member_k001200/z-mean.npz
+2026-09-25T06:23:31Z	PUT rc=0 mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/candidate/std_final5_candidate.root
+2026-09-25T06:23:33Z	PUT rc=0 mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_cov_mlsplit_5d.root
+2026-09-25T06:23:36Z	PUT rc=0 mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_cov_stat_5d.root
+2026-09-25T06:23:45Z	PUT rc=0 mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_5d/z_precursor_20260914/unified_throw_cov_5d.root
+2026-09-25T06:30:22Z	MIGRATE rc=0
+2026-09-25T06:30:24Z	RESIDENT 9/9 on tape
+2026-09-25T06:30:24Z	PURGE rc=0
+2026-09-25T06:30:33Z	RESTORE yes rc=0 MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-mean.npz
+2026-09-25T06:30:49Z	RESTORE yes rc=0 z2m-products/member_k000000/z-cv.npz
+2026-09-25T06:31:00Z	RESTORE yes rc=0 z2m-products/member_k000000/z-mean.npz
+2026-09-25T06:31:18Z	RESTORE yes rc=0 z2m-products/member_k001200/z-cv.npz
+2026-09-25T06:31:26Z	RESTORE yes rc=0 z2m-products/member_k001200/z-mean.npz
+2026-09-25T06:38:42Z	RESTORE yes rc=0 MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/candidate/std_final5_candidate.root
+2026-09-25T06:40:54Z	RESTORE yes rc=0 MINERvA-OmniFold/nd-unfolding/uq_cov_mlsplit_5d.root
+2026-09-25T06:41:02Z	RESTORE yes rc=0 MINERvA-OmniFold/nd-unfolding/uq_cov_stat_5d.root
+2026-09-25T06:41:28Z	RESTORE yes rc=0 MINERvA-OmniFold/nd-unfolding/uq_5d/z_precursor_20260914/unified_throw_cov_5d.root
+2026-09-25T06:41:29Z	DONE all 9 restored and SHA-256-equal; removed 51218295833 restored bytes from the campaign namespace

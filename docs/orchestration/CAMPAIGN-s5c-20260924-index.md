@@ -35,7 +35,7 @@ From [`HANDOFF-20260924-preparation-for-scalar5d-campaign.md`](HANDOFF-20260924-
 |---|---|---|---|
 | D1 | **CLOSED** by the activation record | — | `81c62d15` |
 | D2 | **CLOSED for this campaign** by mapping rows S1–S2 and the campaign meter | any campaign submission before the meter and budget are committed | this index's commit |
-| D3 | **OPEN — in progress** under D3 | a rebuild from, or recomputation over, any of the nine sole-copy objects (`active`, `throw`, `stat`, `ml`, `z-mean.npz`, the graded pair and their `z-mean.npz`); in particular any new assembly that reads `active` | the committed HPSS recovery receipt with all nine restored and SHA-256-equal |
+| D3 | **CLOSED** 2026-09-25 — [`RECEIPT-20260925-d3-hpss-backup-of-nine-sole-copy-objects.md`](RECEIPT-20260925-d3-hpss-backup-of-nine-sole-copy-objects.md) (tape residency 9/9; restore SHA-256 9/9; tape-read not proven) | a rebuild from, or recomputation over, any of the nine sole-copy objects (`active`, `throw`, `stat`, `ml`, `z-mean.npz`, the graded pair and their `z-mean.npz`); in particular any new assembly that reads `active` | the committed HPSS recovery receipt with all nine restored and SHA-256-equal |
 | D4 | **RETAINED** (not displaced) | baseline `run_p4_unfold_std.sh` re-production in the protected namespace | none sought; lateral propagation uses fresh endpoints in the campaign namespace |
 | D5 | **DISPLACED** by S7 | — | a fresh paired rebuild at one revision, if the contract needs one |
 | D6 | **OPEN, avoided** | moving or redeploying the shared cluster checkout `32e403b8` | not needed: the campaign deploys its own tree |

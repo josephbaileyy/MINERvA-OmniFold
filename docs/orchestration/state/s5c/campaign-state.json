@@ -2,27 +2,89 @@
  "schema": "s5c-state/1",
  "campaign_key": "s5c-20260924",
  "tracker": "OI-190",
- "authority": {"record": "docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md", "commit": "81c62d15f7b8027c498126c42f087424f0f926d9"},
- "approved_plan": {"path": "docs/orchestration/PLAN-scalar5d-reportable-uncertainties-and-inference.md", "blob": "8b0617b6e044a55a9b5870b46e5d90a15a6ced7a", "commit": "bf34a12cff9a2f06f0a3f1c516628085565eef60"},
+ "authority": {
+  "record": "docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md",
+  "commit": "81c62d15f7b8027c498126c42f087424f0f926d9"
+ },
+ "approved_plan": {
+  "path": "docs/orchestration/PLAN-scalar5d-reportable-uncertainties-and-inference.md",
+  "blob": "8b0617b6e044a55a9b5870b46e5d90a15a6ced7a",
+  "commit": "bf34a12cff9a2f06f0a3f1c516628085565eef60"
+ },
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-campaign-scalar5d",
  "branch": "campaign/scalar5d-20260924",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5c-20260924/",
- "phase": "A",
- "phase_detail": "preparation: meter and budget committed with this file; D3 backup and deploy tree next",
+ "phase": "A->B",
+ "phase_detail": "Phase A: D3 closed; adopted projection reproduced from stored operands; meter, deploy and monitoring working. Phase B: pilot contract frozen; pilots P1-P4 running on held allocation 58856439.",
  "pinned": {
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
   "adopted_projection_sha256": "835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e",
   "contract": null,
-  "deploy_commit": null
+  "deploy_commit": "per job: deploy/<sha8> clean clones; see ledger argv"
  },
- "budget": {"path": "docs/orchestration/state/s5c/budget.json", "revision": 1},
- "jobs": [],
- "receipts": [],
+ "budget": {
+  "path": "docs/orchestration/state/s5c/budget.json",
+  "revision": 1
+ },
+ "jobs": [
+  {
+   "job": "58855902",
+   "label": "d3_hpss_backup",
+   "stage": "preservation",
+   "state": "COMPLETED"
+  },
+  {
+   "job": "58856170",
+   "label": "p1_seed_channel (batch)",
+   "stage": "pilot",
+   "state": "CANCELLED while pending (queue depth); 0 spend; raw-id tasks 58856172/3 linked"
+  },
+  {
+   "job": "58856255",
+   "label": "p2_bkg_dump (batch)",
+   "stage": "pilot",
+   "state": "CANCELLED while pending; 0 spend"
+  },
+  {
+   "job": "58856256",
+   "label": "p3_pseudo_experiment (batch)",
+   "stage": "pilot",
+   "state": "CANCELLED while pending; 0 spend"
+  },
+  {
+   "job": "58856439",
+   "label": "pilots_interactive (salloc, 1 CPU node, 4 h)",
+   "stage": "pilot",
+   "state": "RUNNING steps: P1 (18), P2 then P3/P4 (3), projection check"
+  }
+ ],
+ "receipts": [
+  {
+   "path": "docs/orchestration/RECEIPT-20260925-d3-hpss-backup-of-nine-sole-copy-objects.md",
+   "what": "D3 closed"
+  },
+  {
+   "path": "docs/orchestration/state/s5c/a1/projection_check_2.json",
+   "what": "Phase-A exit: adopted (E_avail,W) projection 835828bf reproduced from the adopted source 3d7465f6, cov max rel diff 6.1e-20, M and row-index digests equal"
+  },
+  {
+   "path": "docs/orchestration/state/s5c/samplesize-assurance80.json",
+   "what": "exact sample sizes for the feasibility receipt"
+  }
+ ],
  "dependencies": {
-  "D1": "closed", "D2": "closed-for-campaign", "D3": "open-in-progress", "D4": "retained",
-  "D5": "displaced-S7", "D6": "open-avoided", "D7": "retained", "D8": "open-not-ours",
-  "D9": "open", "D10": "open", "D11": "open"
+  "D1": "closed",
+  "D2": "closed-for-campaign",
+  "D3": "closed: RECEIPT-20260925-d3-hpss-backup-of-nine-sole-copy-objects.md",
+  "D4": "retained",
+  "D5": "displaced-S7",
+  "D6": "open-avoided",
+  "D7": "retained",
+  "D8": "open-not-ours",
+  "D9": "open",
+  "D10": "open",
+  "D11": "open"
  },
  "verification": "none yet",
- "next_action": "deploy a clean tree of this commit to the cluster namespace, bind the meter ledger to budget revision 1, and submit the D3 HPSS backup job through the meter"
+ "next_action": "read P1-P4 products when the step runner finishes; reconcile meter; write the feasibility receipt"
 }
