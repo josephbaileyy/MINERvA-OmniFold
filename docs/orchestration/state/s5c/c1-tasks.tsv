@@ -1,0 +1,2 @@
+# Phase C screen of family F1 on coarse partitions, from the two graded members (control: reproduce s_proj 0.06145)
+f1_member_check	s5c_f1_member_check.py	--k0	/pscratch/sd/j/josephrb/z2m-products/member_k000000/z-cv.npz	--k1200	/pscratch/sd/j/josephrb/z2m-products/member_k001200/z-cv.npz	--partitions	/pscratch/sd/j/josephrb/s5c-20260924/runs/b1/partition_scan_2.json	--out	/pscratch/sd/j/josephrb/s5c-20260924/runs/c1/f1_member_check.json
