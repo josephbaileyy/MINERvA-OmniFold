@@ -409,6 +409,21 @@ same limit applies to the estimator caveat: raw negative weights destabilise the
 \texttt{lgbm}, so neither footing risks that pathology here --- a reason the choice is
 safe, not evidence that it is immaterial.
 
+\paragraph{End-to-end evidence against the safety argument (2026-09-25).}
+Five-dimensional pseudo-experiments that inject background-simulation events and rebuild
+the per-bin purity weights as the measurement does are biased at nominal truth: the
+highest-$W$ column of the $(\Eavail,W)$ projection comes back \SIrange{3.5}{4.1}{\percent}
+low and the highest-$\Eavail$, highest-$W$ cell \SI{1.7}{\percent} high, 8--12 statistical
+standard deviations, while signal-only experiments close. The subtraction is exact per
+reconstructed bin; the widest bin ($W\ge\SI{3}{GeV}$, background \SI{13}{\percent} of
+signal) carries a within-bin background shape that the unbinned classifier resolves and the
+bin-uniform purity weight does not. This is the within-bin shape term of
+\S\ref{app:negweight} realised at a measurable size, and it is direct evidence for the
+obligation above to revisit the footing before submission. A five-dimensional
+purity-versus-\texttt{negweight-refined} comparison on data is the cheapest estimate of its
+size on data.
+% Source: docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md; KNOWN_ISSUES 75.
+
 \paragraph{The footing question is settled; the adoption gate is a different one.}
 \textbf{Nothing here adopts any five-dimensional covariance.} The
 selection-complete active-lateral component is built --- five bands, ten endpoint
