@@ -15,7 +15,7 @@
  "branch": "campaign/scalar5d-20260924",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5c-20260924/",
  "phase": "C/D",
- "phase_detail": "F2 construction and Tier-S validation running under unattended lanes (state/s5c/queues/, nd-unfolding/s5c_queue.sh). Development finding: the purity background method biases nominal-truth closure (OUTCOME-20260925, KNOWN_ISSUES 75). Interval construction: contract amendment 4 (F2 revision 2, the last permitted), a nominal-truth bias correction; amendment 3's allowance is superseded. Futility look automated at 400 seeds per grid point (s5c_futility_watch.sh).",
+ "phase_detail": "F2 construction and Tier-S validation running under unattended lanes (state/s5c/queues/, nd-unfolding/s5c_queue.sh). Development finding: the purity background method biases nominal-truth closure (OUTCOME-20260925, KNOWN_ISSUES 75). Interval construction: contract amendment 4 (F2 revision 2, the last permitted), a nominal-truth bias correction; amendment 3's allowance is superseded. Futility look automated at 400 seeds per grid point (s5c_futility_watch.sh). Review round 3 (review-3-disposition.json): amendment 4 is correctly implemented, but a pass would cover only the CORRECTED construction, and development data predict failure at the tilt point; F2 has no revision left. Construction beyond running allocations is HELD until the futility look; all freed slots run validation lines 0-119.",
  "pinned": {
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
   "adopted_projection_sha256": "835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e",
@@ -80,7 +80,7 @@
    "job": "58861566",
    "label": "tier_s_valid_cpu_0 (salloc, 1 CPU node, 4 h)",
    "stage": "measurement_tier_s",
-   "state": "RUNNING: s-valid lines 0-31 (deploy 4bdfa75e)"
+   "state": "RUNNING: s-valid lines 0-31 (deploy 4bdfa75e); started 10:35:32Z (sacct), 32 s after the amendment-3 commit"
   }
  ],
  "receipts": [
@@ -127,7 +127,7 @@
   "D11": "open"
  },
  "verification": "none yet",
- "next_action": "queue the remaining construction (throw, block, split 12-23, combine) once stab_throw_0 gives the throw cost; then G-stab-F2 (s5c_stab.py) and assembly (s5c_assemble.py); read runs/futility/interim_400.json when written; extend cpu-valid.q/gpu.q before the cluster certificate lapses (2026-09-26T06:07Z)",
+ "next_action": "read runs/futility/interim_400.json when lines 0-119 complete; FUTILITY-FAIL -> Tier-S FAIL (F2 revisions exhausted), record disposition, costed next increments, deliverables; CONTINUE -> resume held construction queues and continue validation. Renew-dependent: the cluster certificate lapses 2026-09-26T06:07Z",
  "development_gates": {
   "G-repro": "PASS",
   "G-seed": "PASS (reproducibility only; per amendment 2 it is NOT a stability pass)",
@@ -145,15 +145,21 @@
    "round": 2,
    "worktree_head": "4bdfa75e",
    "findings": "2 HIGH (amendment-3 allowance inflates every interval; EW41 +1.66% omitted from the highest-W column and the paper's headline region), 4 MEDIUM, 3 LOW -- all accepted: amendment 4, OUTCOME \u00a74 corrections, d2_summary relabel, KNOWN_ISSUES 75"
+  },
+  {
+   "round": 3,
+   "worktree_head": "f511dcd6",
+   "findings": "3 HIGH (validated != reported intervals; tilt non-transfer predicted by p3_tilt20_s2; tilt is a normalization, not a shape departure), 4 MEDIUM, 3 LOW -- dispositions in state/s5c/review-3-disposition.json; M4 and two LOW fixed in code"
   }
  ],
  "lanes": {
-  "deploy": "/pscratch/sd/j/josephrb/s5c-20260924/deploy/b57ba022 (pin b57ba022ab1ec44480792b1612e8d32897c31173)",
+  "deploy": "see runs/queues/*.log per runner; validation-only lanes from the review-3 commit",
   "started_utc": "2026-09-25T10:55:27Z on login10",
   "queues": {
-   "gpu": "queues/gpu.q -> runs/queues/gpu.log",
-   "cpu-construct": "queues/cpu-construct.q -> runs/queues/cpu-construct.log",
-   "cpu-valid": "queues/cpu-valid.q -> runs/queues/cpu-valid.log"
+   "cpu-valid": "queues/cpu-valid.q (claims after 58861566)",
+   "cpu-valid-2": "queues/cpu-valid-2.q (claims)",
+   "gpu-valid": "queues/gpu-valid.q (claims)",
+   "held": "queues/cpu-construct.q, cpu-construct-2.q, gpu.q -- construction, resumed only on a futility CONTINUE"
   },
   "futility": "s5c_futility_watch.sh <deploy> 400 runs/futility/STOP-validation -> runs/futility/watch.log, runs/futility/interim_400.json",
   "not_yet_queued": "c-throw (40), c-block (23), c-split lines 12-23, c-comb; to be sized from the stab_throw_0 timing"

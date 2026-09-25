@@ -104,7 +104,8 @@ def evaluate(U, sigma, exp_dir: Path, truth_tag: str, first: int, last: int, b_r
     n = last - first + 1 - len(missing)
     return {"n_declared": last - first + 1, "n_present": n, "missing": missing[:50],
             "hits68": hits68.tolist(), "hits95": hits95.tolist(),
-            "median_halfwidth68_over_sigma": float(np.median(width / n)) if n else None}
+            "median_halfwidth68_over_sigma": float(np.median(width / n)) if n else None,
+            "halfwidth68_over_sigma": (width / n).tolist() if n else None}
 
 
 def main(argv=None) -> int:

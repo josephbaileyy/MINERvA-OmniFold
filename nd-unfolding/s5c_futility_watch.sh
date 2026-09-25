@@ -1,5 +1,5 @@
 #!/bin/bash
-# Contract amendment 3 futility look, run unattended: wait until the first <n> declared validation
+# Contract amendment 3 futility rule (evaluated under amendment 4), run unattended: wait until the first <n> declared validation
 # seeds of EVERY grid point exist, run the frozen evaluator with --interim <n> and the amendment-4
 # bias correction, and on FUTILITY-FAIL write <stop_file> (s5c_queue.sh then skips validation
 # launches) and cancel running validation allocations, so no further validation experiment runs.
@@ -30,14 +30,17 @@ EOF
 }
 t0=$(date +%s)
 while :; do
+    have=; need=
     read -r have need < <(count)
-    echo "[futility] $(stamp) present $have of $need"
-    [ "$have" = "$need" ] && break
+    echo "[futility] $(stamp) present ${have:-?} of ${need:-?}"
+    # fail closed: an empty or failed count never reads as complete
+    [[ "$have" =~ ^[0-9]+$ && "$need" =~ ^[1-9][0-9]*$ && "$have" -eq "$need" ]] && break
     [ $(( $(date +%s) - t0 )) -lt 345600 ] || { echo "[futility] $(stamp) gave up waiting"; exit 4; }
     sleep "${S5C_WATCH_POLL:-600}"
 done
 mkdir -p "$NS/runs/futility"
 OUT="$NS/runs/futility/interim_$N.json"
+rm -f "$OUT"   # a stale result must never be read as this look's
 cd "$DEPLOY/nd-unfolding" || exit 2
 $PY s5c_coverage.py --contract "$C/contract.json" --experiments "$NS/runs/s_valid" \
     --bootstrap "$NS/runs/s_sigma" --bias-correction "$C/d1/bias_correction.json" --interim "$N" --out "$OUT"

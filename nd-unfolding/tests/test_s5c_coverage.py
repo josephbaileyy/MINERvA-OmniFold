@@ -115,6 +115,37 @@ class Coverage(unittest.TestCase):
         self.assertEqual(res["grid"][0]["hits68"], frozen["grid"][0]["hits68"])
         self.assertEqual(res["grid"][0]["hits95"], frozen["grid"][0]["hits95"])
 
+    def test_the_correction_standard_error_widens_by_se_times_the_corrected_value(self):
+        """Kills the mutants that drop se, or add it unscaled: widths must follow sqrt(sigma^2+(se*f)^2)."""
+        tmp, c = self.build(50, inflate=1.0)
+        U, names = sc.reported_functionals({"measurement": {"partition_J": J}})
+        rc, frozen = self.score(tmp, c)
+        sigma = np.asarray(frozen["sigma"])
+        se, beta = 0.01, 0.02
+        res = self.correct(tmp, c, beta, se)
+        f = np.zeros(U.shape[0])
+        for p in sorted((tmp / "exp").glob("*.npz")):
+            f += (U @ np.load(p)["xsec_flat"]) / (1 + beta)
+        f /= 50
+        # mean over experiments of sqrt(sigma^2 + (se f_i)^2)/sigma, to first order at the mean f
+        want = np.sqrt(sigma ** 2 + (se * f) ** 2) / sigma
+        got = np.asarray(res["grid"][0]["halfwidth68_over_sigma"])
+        np.testing.assert_allclose(got, want, rtol=1e-3)
+        self.assertGreater(float(np.min(got)), 1.5)   # se*f dominates sigma here: the term is live
+
+    def test_the_interim_futility_look_applies_the_correction(self):
+        """Kills the mutant that ignores --bias-correction in --interim mode."""
+        tmp, c = self.build_biased(400, 0.04)
+        U, names = sc.reported_functionals({"measurement": {"partition_J": J}})
+        bc = tmp / "bc.json"
+        bc.write_text(json.dumps({"functional_names": names, "beta": [0.04] * len(names), "se": [0.0] * len(names)}))
+        base = ["--contract", str(c), "--experiments", str(tmp / "exp"), "--bootstrap", str(tmp / "boot"),
+                "--interim", "400"]
+        sc.main(base + ["--out", str(tmp / "raw.json")])
+        self.assertEqual(json.loads((tmp / "raw.json").read_text())["verdict"], "FUTILITY-FAIL")
+        sc.main(base + ["--bias-correction", str(bc), "--out", str(tmp / "cor.json")])
+        self.assertEqual(json.loads((tmp / "cor.json").read_text())["verdict"], "CONTINUE")
+
     def test_allowance_and_correction_are_exclusive(self):
         tmp, c = self.build(10, inflate=1.0)
         with self.assertRaises(SystemExit):
