@@ -256,6 +256,18 @@ class AccountingTests(MeterHarness):
         self.assertTrue(adm["closed"])
         self.assertAlmostEqual(adm["charged"], 0.0)
 
+    def test_linked_raw_ids_are_queried_in_their_own_sacct_call(self):
+        # a fake sacct that, like the real one, drops raw ids listed beside their array id
+        self._fake("sacct", 'case "$*" in *"-j 90001,90002"*) echo "90001|allocation|CANCELLED by 1|0||x"; '
+                            'echo "90002|allocation|CANCELLED by 1|0||x";; *"-j 12345"*) '
+                            'echo "12345_[2-2%1]|s5c-t|CANCELLED by 1|0||None";; esac\n')
+        self.assertEqual(self.submit("--", "job.sh", ntasks="3", billing="128").returncode, 0)
+        links = self.tmp / "links.txt"
+        links.write_text("JobId=90002 ArrayJobId=12345 ArrayTaskId=1\nJobId=90001 ArrayJobId=12345 ArrayTaskId=0\n")
+        self.assertEqual(self.run_meter("link", "--job", "12345", "--from-file", str(links)).returncode, 0)
+        adm = next(iter(json.loads(self.run_meter("measure").stdout)["admissions"].values()))
+        self.assertTrue(adm["closed"], adm)
+
     def test_link_to_unknown_job_is_refused(self):
         links = self.tmp / "links.txt"
         links.write_text("JobId=90001 ArrayJobId=55555 ArrayTaskId=0\n")

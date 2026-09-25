@@ -523,15 +523,18 @@ def scheduler_tres(job: str) -> dict[str, float]:
     return out
 
 
-def run_sacct(job_ids: Sequence[str]) -> str:
-    """Two queries: every admitted job id (no window: ``-j`` defaults to epoch), and the
-    last 14 days of the user's jobs for the unregistered-``s5c-`` scan (sacct refuses
-    much wider windows)."""
+def run_sacct(job_ids: Sequence[str], raw_ids: Sequence[str] = ()) -> str:
+    """Three queries: every admitted job id (no window: ``-j`` defaults to epoch); linked raw
+    task ids ALONE (measured 2026-09-25: ``sacct -j 58856170,58856172`` omits 58856172, which
+    ``sacct -j 58856172`` returns); and the last 14 days of the user's jobs for the
+    unregistered-``s5c-`` scan (sacct refuses much wider windows)."""
     fields = "JobID,JobName,State,ElapsedRaw,AllocTRES,Start"
     user = os.environ.get("USER", "josephrb")
     queries = [["-S", "now-14days", "-E", "now"]]
     if job_ids:
         queries.append(["-j", ",".join(sorted(set(job_ids)))])
+    if raw_ids:
+        queries.append(["-j", ",".join(sorted(set(raw_ids)))])
     out = []
     for extra in queries:
         argv = ["sacct", "-P", "-n", "--duplicates", "-u", user, "-o", fields, *extra]
@@ -548,8 +551,8 @@ def state_of(budget_path: Path, ledger_path: Path, sacct_text: str | None) -> tu
     check_budget_binding(records, sha256_file(budget_path))
     folded = admissions(records)
     ids = [str(a["job_id"]) for a in folded.values() if a.get("job_id")]
-    ids += [raw for a in folded.values() for raw in a.get("raw_ids", {}).values()]
-    text = sacct_text if sacct_text is not None else run_sacct(ids)
+    raws = [raw for a in folded.values() for raw in a.get("raw_ids", {}).values()]
+    text = sacct_text if sacct_text is not None else run_sacct(ids, raws)
     tasks = parse_sacct(text)
     orphans = unregistered(folded, tasks)
     if orphans:
