@@ -101,7 +101,7 @@ def purity_weights(coords: np.ndarray, counts: np.ndarray, bkg_nd: np.ndarray, e
 
 
 def build_experiment(inputs: dict, bkg: dict, truth: str, amplitude: float, split_key: int | None,
-                     pseudo_seed: int) -> tuple[dict, np.ndarray, dict]:
+                     pseudo_seed: int, no_background: bool = False) -> tuple[dict, np.ndarray, dict]:
     """split_key None = development diagnostic 'no split': the whole MC sample is both the
     pseudo-data source and the unfolding MC (weights x1), conditional on that sample."""
     edges = inputs["edges"]
@@ -116,10 +116,13 @@ def build_experiment(inputs: dict, bkg: dict, truth: str, amplitude: float, spli
     lam = wscale * inputs["w_reco"][b_reco] * r[b_reco]
     n_sig = rng.poisson(lam).astype(float)
     m_bkg = rng.poisson(bkg["bkg_w"]).astype(float)
+    if no_background:  # development diagnostic: signal-only pseudo-data, nothing to subtract
+        m_bkg = np.zeros_like(m_bkg)
     sig_keep, bkg_keep = n_sig > 0, m_bkg > 0
     coords = np.concatenate([inputs["MCreco"][b_reco][sig_keep], bkg["bkg_reco"][bkg_keep]]).astype(np.float32)
     counts = np.concatenate([n_sig[sig_keep], m_bkg[bkg_keep]])
-    mw = purity_weights(coords.astype(float), counts, bkg["bkg_nd"], edges)
+    mw = purity_weights(coords.astype(float), counts,
+                        np.zeros_like(bkg["bkg_nd"]) if no_background else bkg["bkg_nd"], edges)
 
     a = is_b if no_split else ~is_b
     exp_inputs = {
@@ -161,6 +164,8 @@ def main(argv=None) -> int:
     ap.add_argument("--amplitude", type=float, default=0.0)
     ap.add_argument("--split-key", type=int, default=None,
                     help="fixed MC split (single-experiment mode); batch mode derives one per seed")
+    ap.add_argument("--no-background", action="store_true",
+                    help="DEVELOPMENT DIAGNOSTIC ONLY: signal-only pseudo-data with no background subtraction")
     ap.add_argument("--no-split", action="store_true",
                     help="DEVELOPMENT DIAGNOSTIC ONLY: whole MC as pseudo-data source and unfolding MC")
     ap.add_argument("--pseudo-seed", type=int, default=None, help="one experiment")
@@ -183,6 +188,9 @@ def main(argv=None) -> int:
         return 2
     if not batch and a.split_key is None and not a.no_split:
         print("single-experiment mode needs --split-key or --no-split", file=sys.stderr)
+        return 2
+    if a.no_background and (batch or a.bootstrap_seeds):
+        print("--no-background is a single-experiment development diagnostic", file=sys.stderr)
         return 2
     if a.no_split and (batch or a.split_key is not None or a.bootstrap_seeds):
         print("--no-split is a single-experiment development diagnostic", file=sys.stderr)
@@ -263,13 +271,15 @@ def split_key_for(seed: int) -> int:
 
 def run_one(a, inputs, bkg, npz_sha, bkg_sha, seed, split_key, out, t0=None) -> int:
     t0 = time.time() if t0 is None else t0
-    exp_inputs, x_true, info = build_experiment(inputs, bkg, a.truth, a.amplitude, split_key, seed)
+    exp_inputs, x_true, info = build_experiment(inputs, bkg, a.truth, a.amplitude, split_key, seed,
+                                                no_background=getattr(a, "no_background", False))
     t1 = time.time()
     xs, params = s5c_unfold.unfold(exp_inputs, a.config, a.estimator_seed, a.threads, a.iters)
     t2 = time.time()
     meta = {
         "schema": "s5c-pseudo/1", "config": a.config, "estimator_seed": a.estimator_seed,
         "truth": a.truth, "amplitude": a.amplitude, "split_key": split_key, "pseudo_seed": seed,
+        "no_background": bool(getattr(a, "no_background", False)),
         "threads": a.threads, "iters": a.iters, "input_npz_sha256": npz_sha,
         "bkg_dump_sha256": bkg_sha,
         "code_sha256": {"s5c_pseudo.py": s5c_unfold.sha256_path(Path(__file__).resolve()),
