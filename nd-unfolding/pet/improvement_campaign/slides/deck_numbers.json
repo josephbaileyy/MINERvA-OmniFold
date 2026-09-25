@@ -10,7 +10,7 @@
  "main_slides": 17,
  "sources": {
   "../configuration_comparison/campaign_report.json": "96955a10222b6c95c13a5db0e48c9af96717371045398a837b996ba3d17625c2",
-  "confirm/results/confirm_results.json": "4c71c9fef482f3d7ab1da8d58c44839a471deb118ade171db61a0b00269c2c0f",
+  "confirm/results/confirm_results.json": "df70d8a2dd7aaaf3544df5c30342cf8907874b86370946fa2f77711e1a35b97c",
   "phase_a/receipts/historical_receipts.json": "938b97521cc77e8278c69e32634ccf9c85ddadb0aaf6f6314c8fa3187734f495",
   "phase_a/receipts/runtime_audit_theirs.json": "8dadb3f32d3fec72e9ee282dc8e7509299e8cac41e9994cf6b8a69163e50531b",
   "phase_b/pet/results/b2e3-H-K10-s1.scores.json": "c181d5fcdc18f215b75207b411bc56fcfeabcec28805c862eaa59c2104c938e9",
