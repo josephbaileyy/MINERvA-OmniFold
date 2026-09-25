@@ -235,6 +235,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     probe_record = ru._load_numpy_probe()
     import numpy as np
     import closure_data as cd
+    # `theirs_rows` appended configuration_comparison LAST; drop it so `import_historical` puts
+    # it at sys.path[0] exactly as in the predecessor's run (same module resolution order).
+    sys.path[:] = [p for p in sys.path if Path(p).resolve() != tr.COMP.resolve()]
     mods = cd.import_historical(args.repo)
     import tensorflow as tf
     import training_recipe

@@ -511,3 +511,121 @@ def test_verifier_on_real_pet2_small():
     assert s["ok"] and s["compared"] == 176 and s["differ"] >= 171, s["equal_names"]
     assert not hd.InitVerifier(state, PINNED, "pretrained", inv).check(scratch)["ok"]
     assert not hd.InitVerifier(state, PINNED, "scratch", inv).check(loaded)["ok"]
+
+
+# ------------------------------------------------------------------------------------------- #
+# Optional: the whole hybrid loop on CPU with tiny synthetic inputs (real PET2-small at step 1,
+# the vendored PET at step 2), both variants, and a stop/resume against a continuous run
+# ------------------------------------------------------------------------------------------- #
+def _tiny_inputs(rng: np.random.Generator, n_mc: int = 1500, n_pd: int = 900):
+    def theirs_block(n: int, shift: float) -> tuple[np.ndarray, np.ndarray]:
+        packed = np.zeros((n, 33, 10), np.float32)
+        ntok = rng.integers(1, 20, n)
+        real = np.arange(33)[None, :] < ntok[:, None]
+        packed[..., 0:3] = rng.normal(size=(n, 33, 3)) + shift
+        packed[..., 3] = np.abs(rng.normal(size=(n, 33))) + 0.5 + shift
+        packed[..., 4] = rng.integers(0, 8, (n, 33))
+        packed[..., 5:10] = rng.normal(size=(n, 33, 5)) * 0.1
+        packed[~real] = 0.0
+        return packed, rng.normal(size=(n, 16)).astype(np.float32) + shift
+
+    gen = np.zeros((n_mc, 12, 8), np.float32)
+    ntok = rng.integers(1, 12, n_mc)
+    real = np.arange(12)[None, :] < ntok[:, None]
+    gen[..., 0] = np.abs(rng.normal(size=(n_mc, 12))) + 0.1
+    gen[..., 1:] = rng.normal(size=(n_mc, 12, 7))
+    gen[~real] = 0.0
+    reco_mc, evt_mc = theirs_block(n_mc, 0.0)
+    reco_pd, evt_pd = theirs_block(n_pd, 0.2)
+    pass_reco = rng.random(n_mc) < 0.7
+    reco_mc[~pass_reco], evt_mc[~pass_reco] = 0.0, 0.0
+    return SimpleNamespace(
+        pdata={"reco": reco_pd, "reco_evt": evt_pd, "weight": np.ones(n_pd, np.float32),
+               "rows": np.arange(n_pd)},
+        mc={"reco": reco_mc, "reco_evt": evt_mc, "gen": gen,
+            "gen_evt": rng.normal(size=(n_mc, 2)).astype(np.float32), "pass_reco": pass_reco,
+            "pass_gen": rng.random(n_mc) < 0.9, "weight": np.ones(n_mc, np.float32),
+            "weight_reco": np.ones(n_mc, np.float32), "rows": np.arange(n_mc)},
+        meta={"coord_gen": (5, 6), "coord_reco": None})
+
+
+@pytest.mark.skipif(not os.environ.get("PFD_PRETRAINED_STATE"),
+                    reason="set PFD_PRETRAINED_STATE / PFD_PRETRAINED_MANIFEST to local copies")
+@pytest.mark.parametrize("variant", ["pretrained", "scratch"])
+def test_hybrid_loop_on_cpu_with_resume(pet2, tmp_path, variant, monkeypatch):
+    import dataclasses
+    import random
+    tf = pytest.importorskip("tensorflow")
+    repo = PET.parents[1]
+    for p in (str(repo / "omnifold_nn"), str(COMP)):
+        if p not in sys.path:
+            sys.path.append(p)
+    import omnifold.dataloader as odl
+    import omnifold.net as onet
+    import omnifold.omnifold as oof
+    import recorder as rec
+    import run_unfold as ru
+    import torch_adamw
+    import training_recipe
+    import pet2_keras_port as port
+
+    def set_seed(seed: int) -> None:     # tf_keras 2.16's version breaks on Python 3.12 (randint)
+        random.seed(seed)
+        np.random.seed(seed)
+        tf.random.set_seed(seed)
+    monkeypatch.setattr(tf.keras.utils, "set_random_seed", set_seed)
+    rec.install_counters(tf, next(k for k in tf.keras.optimizers.Adam.__mro__
+                                  if "_clip_gradients" in vars(k)))
+    mpc, k = pet2
+    state = Path(os.environ["PFD_PRETRAINED_STATE"])
+    k = dict(k, state=str(state), manifest=os.environ["PFD_PRETRAINED_MANIFEST"])
+    config = mpc.pet2_config(_c(), variant, k, iterations=2, step1_epochs=1, step2_epochs=1)
+    small = lambda s, b: dataclasses.replace(s, batch_size=b, predict_batch_size=512)  # noqa
+    config = config.replace(step1=small(config.step1, 256), step2=small(config.step2, 256))
+    mods = {"net": onet}
+    inv = lambda m: port.parameter_inventory(m.backbone)   # noqa: E731
+
+    def run(out: Path, stop: int | None) -> tuple[bool, Any]:
+        inputs = _tiny_inputs(np.random.default_rng(0))
+        p, m = inputs.pdata, inputs.mc
+        pdata = odl.DataLoader(reco=p["reco"], weight=p["weight"], normalize=True,
+                               reco_evt=p["reco_evt"])
+        mcb = odl.DataLoader(reco=m["reco"], gen=m["gen"], pass_reco=m["pass_reco"],
+                             pass_gen=m["pass_gen"], weight=m["weight"],
+                             weight_reco=m["weight_reco"], normalize=True,
+                             normalization_factor=1e6, reco_evt=m["reco_evt"],
+                             gen_evt=m["gen_evt"])
+        factories, check = ru.model_factories(config, mods, inputs)
+        Hybrid = hd.make_hybrid_multifold(oof.MultiFold, tf, np)
+        u = Hybrid(config.name, config=config, factories=factories, data=pdata, mc=mcb,
+                   out_dir=out, pretrained_check=check, training_recipe=training_recipe,
+                   torch_adamw=torch_adamw, probe_rows=100, deadline_unix=None,
+                   first_iteration_estimate_s=1.0, stop_after_iteration=stop,
+                   step2_miss_mode="efficiency_corrected",
+                   init_verifier=hd.InitVerifier(state, PINNED, variant, inv))
+        return u.Unfold(), u
+
+    done, u = run(tmp_path / "cont", None)
+    assert done and len(u.init_records) == 1 and u.init_records[0]["ok"]
+    assert u.init_records[0]["expect"] == variant and u.init_records[0]["compared"] == 176
+    assert u.init_records[0]["optimizer_iterations"] == 0
+    assert (u.init_records[0]["equal"] == 176) == (variant == "pretrained")
+    audit = hd.recipe_audit(ru, config, u.fit_records)
+    assert audit["all_as_declared"], audit
+    s1 = [f for f in u.fit_records if f["step"] == 1]
+    assert s1[0]["executed_optimizer"]["class"] == "ClippedTorchAdamW"
+    assert s1[0]["step1_throughput"][0]["examples"] == s1[0]["train_rows"]
+    assert (variant == "pretrained") == ("pretrained_at_first_step" in s1[0]["recorder"])
+    res = [json.loads(x) for x in (tmp_path / "cont" / "resources.jsonl").read_text()
+           .splitlines()]
+    assert [(r["iteration"], r["step"]) for r in res] == [(0, 1), (0, 2), (1, 1), (1, 2)]
+    # stop after iteration 0, resume: iteration 1 is byte-identical to the continuous run's
+    done0, u0 = run(tmp_path / "split", 0)
+    assert done0 is False
+    done1, u1 = run(tmp_path / "split", None)
+    assert done1 is True and len(u1.init_records) == 1      # no re-check of a restored model
+    for name in ("iter00.npz", "iter01.npz"):
+        with np.load(tmp_path / "cont" / "iterations" / name) as a, \
+                np.load(tmp_path / "split" / "iterations" / name) as b:
+            assert a["push"].tobytes() == b["push"].tobytes(), name
+            assert a["pull"].tobytes() == b["pull"].tobytes(), name
