@@ -10,12 +10,17 @@ target runs (``runpy.run_path`` with its own ``sys.argv``), this process:
   the configuration's parameters (the npz/bank arms: bootstrap, seed-split, sweep, throws); and
 * wraps ``omnifold.OmniFold_helper_functions.omnifold`` (``unbinned_unfolding/python``, the driver's backend) so its three
   LightGBM parameter dicts are merged with the same parameters (the driver arms: detector, lateral,
-  central).
+  central); and
+* when the target runs ``--bkg-mode negweight-refined`` (the s5n successor), wraps
+  ``unfold_2d_omnifold_unbinned.refine_stay_positive`` so the Stay-Positive refinement classifier
+  carries the same parameters (the driver passes it only ``random_state = seed + 3``), recording each
+  refinement's parameters as built and its normalization, clipping and effective-size evidence.
 
 EVIDENCE, NOT TRUST: every factory call and driver call is recorded with the estimators' final
 parameters and written to ``--evidence``; the run exits 7 (after the target finishes) if no call
-was intercepted or any intercepted estimator lacks a configuration parameter -- a configuration
-that silently did not reach the arm must not produce a product that claims it.
+was intercepted, any intercepted estimator lacks a configuration parameter, or a
+``negweight-refined`` target never ran its refinement -- a configuration or background mode that
+silently did not reach the arm must not produce a product that claims it.
 ``production`` is accepted for symmetry and patches nothing (it still records the calls).
 """
 from __future__ import annotations
@@ -72,8 +77,60 @@ def permuted(fn, seed: int, record: list, site: str):
     return wrapped
 
 
-def install(extra: dict, record: list, permute_seed: int | None = None) -> None:
+def wants_refinement(target: list[str]) -> bool:
+    """True when the target's argv selects --bkg-mode negweight-refined (either spelling)."""
+    for i, arg in enumerate(target):
+        if arg == "--bkg-mode" and i + 1 < len(target) and target[i + 1] == "negweight-refined":
+            return True
+        if arg == "--bkg-mode=negweight-refined":
+            return True
+    return False
+
+
+def install_refinement(extra: dict, record: list, u2d=None) -> None:
+    """Merge the configuration into every refinement classifier and record what it built and did."""
+    import numpy as np
+
+    if u2d is None:
+        two_d = str(_ND.parent / "2d-unfolding")
+        if two_d not in sys.path:
+            sys.path.insert(1, two_d)
+        import unfold_2d_omnifold_unbinned as u2d  # the module object the driver will import
+    import s5n_pseudo
+
+    original_refine = u2d.refine_stay_positive
+    original_factory = u2d._make_bkg_classifier
+    built: list = []
+
+    def factory(estimator, params, device):
+        clf = original_factory(estimator, params, device)
+        built.append(clf.get_params() if hasattr(clf, "get_params") else None)
+        return clf
+
+    def refine(feat, signed_w, estimator="exact", device="cpu", params=None, verbose=False):
+        merged = {**(params or {}), **(extra if estimator == "lgbm" else {})}
+        start = len(built)
+        u2d._make_bkg_classifier = factory
+        try:
+            w_ref, g, frac = original_refine(feat, signed_w, estimator=estimator, device=device,
+                                             params=merged, verbose=verbose)
+        finally:
+            u2d._make_bkg_classifier = original_factory
+        entry = {"site": "unfold_2d_omnifold_unbinned.refine_stay_positive", "kind": estimator,
+                 "params": built[start:]}
+        entry["evidence"] = s5n_pseudo.refinement_evidence(np.asarray(signed_w, float), w_ref, g, frac,
+                                                          (built[start:] or [{}])[0], 0.0)
+        record.append(entry)
+        return w_ref, g, frac
+
+    u2d.refine_stay_positive = refine
+
+
+def install(extra: dict, record: list, permute_seed: int | None = None, target: list[str] | None = None) -> None:
     import omnifold_nn_core as onc
+
+    if target is not None and wants_refinement(target):
+        install_refinement(extra, record)
 
     if permute_seed is not None:
         onc.omnifold_loop = permuted(onc.omnifold_loop, permute_seed, record, "omnifold_nn_core.omnifold_loop")
@@ -113,10 +170,13 @@ def install(extra: dict, record: list, permute_seed: int | None = None) -> None:
         wrapped, permute_seed, record, "omnifold.OmniFold_helper_functions.omnifold")
 
 
-def verify(extra: dict, record: list) -> list[str]:
+def verify(extra: dict, record: list, target: list[str] | None = None) -> list[str]:
     problems = []
     if not record:
         problems.append("no estimator construction was intercepted")
+    if target is not None and wants_refinement(target) and not any(
+            c.get("site", "").endswith("refine_stay_positive") for c in record):
+        problems.append("--bkg-mode negweight-refined but no refinement ran")
     for call in record:
         if call["kind"] == "permutation":
             continue
@@ -148,14 +208,14 @@ def main() -> int:
         return 2
     extra = s5c_unfold.config_params(a.config, a.threads)
     record: list = []
-    install(extra, record, a.permute_seed)
+    install(extra, record, a.permute_seed, target)
     sys.argv = target
     exit_code = 0
     try:
         runpy.run_path(target[0], run_name="__main__")
     except SystemExit as exc:
         exit_code = exc.code if isinstance(exc.code, int) else (0 if exc.code is None else 1)
-    problems = verify(extra, record)
+    problems = verify(extra, record, target)
     if a.permute_seed is not None and not any(c.get("kind") == "permutation" for c in record):
         problems.append("--permute-seed given but no loop call was permuted")
     a.evidence.write_text(json.dumps({"schema": "s5c-estimator-evidence/1", "config": a.config,

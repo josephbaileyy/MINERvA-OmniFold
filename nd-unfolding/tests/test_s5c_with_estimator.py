@@ -46,5 +46,57 @@ class Permutation(unittest.TestCase):
         self.assertFalse(np.allclose(raw[0], ref[0]))
 
 
+class Refinement(unittest.TestCase):
+    """The s5n successor: the refinement classifier must carry the configuration, and a
+    negweight-refined target that never refines must fail verification."""
+
+    class FakeClf:
+        def __init__(self, **params):
+            self.params = params
+
+        def get_params(self):
+            return dict(self.params)
+
+    def fake_u2d(self):
+        import types
+
+        mod = types.SimpleNamespace()
+
+        def make(estimator, params, device):
+            return self.FakeClf(n_estimators=100, num_leaves=8, learning_rate=0.1, verbose=-1, **(params or {}))
+
+        def refine(feat, signed_w, estimator="exact", device="cpu", params=None, verbose=False):
+            mod._make_bkg_classifier(estimator, params, device)
+            g = np.where(np.asarray(signed_w) > 0, 0.8, 0.4)
+            return np.abs(signed_w) * np.clip(2 * g - 1, 0, None), g, 0.0
+
+        mod._make_bkg_classifier = make
+        mod.refine_stay_positive = refine
+        return mod
+
+    def test_configuration_reaches_the_refinement_classifier(self):
+        extra = {"deterministic": True, "num_threads": 4}
+        record, mod = [], self.fake_u2d()
+        swe.install_refinement(extra, record, u2d=mod)
+        mod.refine_stay_positive(np.zeros((3, 2)), np.array([1.0, 1.0, -0.5]), estimator="lgbm",
+                                 params={"random_state": 45})
+        self.assertEqual(record[0]["params"][0]["deterministic"], True)
+        self.assertEqual(record[0]["params"][0]["random_state"], 45)
+        self.assertEqual(swe.verify(extra, record, ["drv.py", "--bkg-mode", "negweight-refined"]), [])
+        self.assertAlmostEqual(record[0]["evidence"]["signed_sum"], 1.5)
+
+    def test_negweight_target_without_a_refinement_fails_and_purity_target_does_not(self):
+        extra = {"deterministic": True}
+        loop_call = [{"site": "omnifold.omnifold", "kind": "lgbm", "params": [dict(extra)] * 3}]
+        self.assertTrue(swe.verify(extra, loop_call, ["drv.py", "--bkg-mode=negweight-refined"]))
+        self.assertEqual(swe.verify(extra, loop_call, ["drv.py", "--bkg-mode", "purity"]), [])
+
+    def test_a_classifier_missing_the_configuration_is_caught(self):
+        extra = {"deterministic": True}
+        record = [{"site": "unfold_2d_omnifold_unbinned.refine_stay_positive", "kind": "lgbm",
+                   "params": [{"random_state": 45}]}]
+        self.assertTrue(swe.verify(extra, record, ["drv.py", "--bkg-mode", "negweight-refined"]))
+
+
 if __name__ == "__main__":
     unittest.main()

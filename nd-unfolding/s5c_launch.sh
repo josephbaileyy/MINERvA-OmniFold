@@ -11,13 +11,21 @@
 # inherits the job's 4 GPUs excludes every other step, as on allocation 58857791).
 # Exit: 0 and "LAUNCHED job=<id>" when admitted and started; otherwise the meter's exit code
 # (4 = refused by concurrency, 7 = not granted), so s5c_queue.sh can tell retryable refusals apart.
+# S5C_CAMPAIGN selects the campaign (default s5c; s5n = the OI-191 successor): its committed state
+# directory docs/orchestration/state/<campaign>/ (task tables and budget.json) and, unless S5C_NS is
+# set, its namespace; the meter then prices against that campaign's budget and ledger only.
 
 DEPLOY=${1:?deploy}; PIN=${2:?sha}; POOL=${3:?cpu|gpu}; STAGE=${4:?stage}; HOURS=${5:?hours}
 LABEL=${6:?label}; MEM=${7:?mem}; MEASURES=${8:?measures}
 shift 8
 [ "$#" -ge 1 ] || { echo "no tracks" >&2; exit 2; }
-NS=${S5C_NS:-/pscratch/sd/j/josephrb/s5c-20260924}
-T="$DEPLOY/docs/orchestration/state/s5c"
+CAMP=${S5C_CAMPAIGN:-s5c}
+case "$CAMP" in
+    s5c) NS=${S5C_NS:-/pscratch/sd/j/josephrb/s5c-20260924} ;;
+    s5n) NS=${S5C_NS:-/pscratch/sd/j/josephrb/s5n-20260925} ;;
+    *) echo "unknown campaign $CAMP" >&2; exit 2 ;;
+esac
+T="$DEPLOY/docs/orchestration/state/$CAMP"
 
 tracks=()
 for track in "$@"; do
@@ -33,7 +41,7 @@ done
 
 if [ -n "${S5C_LAUNCH_DRYRUN:-}" ]; then printf 'track %s\n' "${tracks[@]}"; exit 0; fi
 cd "$DEPLOY" || exit 2
-M="/usr/bin/python3.11 nd-unfolding/s5c_meter.py --budget docs/orchestration/state/s5c/budget.json --ledger $NS/ledger/admissions.jsonl"
+M="/usr/bin/python3.11 nd-unfolding/s5c_meter.py --budget docs/orchestration/state/$CAMP/budget.json --ledger $NS/ledger/admissions.jsonl"
 if [ "$POOL" = cpu ]; then
     ARGS=(--pool cpu --billing 256 -- -C cpu -N 1)
 else
