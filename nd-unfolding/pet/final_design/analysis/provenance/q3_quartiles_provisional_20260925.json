@@ -1,0 +1,41 @@
+{
+ "schema": "pet-final-design/q3-quartiles/1",
+ "inventory": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+ "inventory_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+ "population": "truth-passing rows with finite true q3 (ALL inventory rows: provisional, not yet the DEV bank)",
+ "n_rows_inventory": 49152885,
+ "n_truth_passing": 49150928,
+ "n_truth_passing_nonfinite_q3": 1330,
+ "n_excluded_truth_passing": 0,
+ "n_used": 49149598,
+ "probabilities": [
+  0.25,
+  0.5,
+  0.75
+ ],
+ "quartile_edges_gev": [
+  1.2509283125400543,
+  2.596855401992798,
+  4.490886569023132
+ ],
+ "quartile_edges_repr": [
+  "1.2509283125400543",
+  "2.596855401992798",
+  "4.490886569023132"
+ ],
+ "weighting": "unweighted rows",
+ "quantile_method": "numpy.quantile linear",
+ "check_runs": {
+  "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/final/final-C-F0": {
+   "rows": 600130,
+   "equal": true,
+   "n_unequal": 0
+  },
+  "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/stress/stress-C-T0-D4c_p_up": {
+   "rows": 600130,
+   "equal": true,
+   "n_unequal": 0
+  }
+ },
+ "seconds": 14.4
+}
