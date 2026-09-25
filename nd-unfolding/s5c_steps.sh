@@ -12,6 +12,9 @@
 # concurrently; the stages of one track run in order (a later stage may consume an earlier one's
 # products); the tasks of a stage run up to <max_parallel> at a time. Each step executes
 # s5c_array.sh for one table line, exactly as an sbatch array task would.
+# S5C_STEP_GRES (optional, e.g. "none") is passed to every step as --gres: without it a step on a GPU
+# allocation inherits all of the job's GPUs, so CPU-only steps serialize (allocation 58857791 ran
+# its 4-way det stage one step at a time; a --gres=none probe step started at once and saw no GPU).
 
 JOB=${1:?jobid}; DEPLOY=${2:?deploy}; PIN=${3:?sha}; CPUS=${4:?cpus}; MEM=${5:?mem}
 shift 5
@@ -29,7 +32,7 @@ run_stage() {
     for ((i = first; i <= last; i++)); do
         while [ "$(jobs -rp | wc -l)" -ge "$par" ]; do sleep 10; done
         SLURM_ARRAY_TASK_ID=$i srun --jobid="$JOB" --ntasks=1 --cpus-per-task="$CPUS" --mem="$MEM" \
-            --exact --output="$out/logs-step-$i.out" \
+            --exact ${S5C_STEP_GRES:+--gres="$S5C_STEP_GRES"} --output="$out/logs-step-$i.out" \
             bash "$DEPLOY/nd-unfolding/s5c_array.sh" "$DEPLOY" "$PIN" "$table" "$out" &
         pids+=($!)
     done
@@ -48,7 +51,7 @@ run_track() {
     return $status
 }
 
-echo "[steps] $(stamp) job=$JOB deploy=$DEPLOY pin=$PIN tracks=$#"
+echo "[steps] $(stamp) job=$JOB deploy=$DEPLOY pin=$PIN tracks=$# step_gres=${S5C_STEP_GRES:-inherit}"
 tpids=()
 for track in "$@"; do
     run_track "$track" &

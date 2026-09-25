@@ -23,6 +23,7 @@ if [ "$POOL" = cpu ]; then
     ARGS=(--pool cpu --billing 256 -- -C cpu -N 1); PAR=8
 else
     ARGS=(--pool gpu --gpus-per-task 4 --billing 128 -- -C gpu -N 1 --gpus-per-node=4); PAR=4
+    export S5C_STEP_GRES=none   # CPU-only steps; otherwise each claims all 4 GPUs and they serialize
 fi
 out=$(timeout 1000 $M submit --allocate --allocate-wait-s 900 --stage measurement_tier_s --qos interactive \
       --ntasks 1 --timelimit-h "$HOURS" --label "tier_s_valid_${POOL}_${FIRST}" \
