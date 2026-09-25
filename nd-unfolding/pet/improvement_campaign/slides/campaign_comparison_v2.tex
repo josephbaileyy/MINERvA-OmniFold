@@ -440,6 +440,29 @@ C (eff.-corr.), $k=3$ & 0.570 & 0.544 & 0.280 & 0.530 & 0.753 & yes \\
 \end{center}\vspace{-8pt}\par{\tiny ``adequate'' = the protocol's rule on the mean; lower 95\,\% bound below the floor for B@10, C@3.}
 \end{frame}
 
+\gdef\evidencetext{\texttt{confirm/results/confirm\_results.json}}
+\begin{frame}{The confirmatory result (STRESS, pool T)}
+{\small PET stress set on fresh pool-T events (protocol amendment 2): mean recovery over replicates;
+$^\dagger$ = the estimator ends farther from the target than the untouched prior on some replicate
+(``moves away'' --- reported as \textbf{not robust} where the distortion is identifiable; all six cases are).}
+\begin{center}
+{\scriptsize
+\begin{tabular}{lrrrrrr}
+\toprule
+case & CTL $k=3$ & A $k=10$ & B $k=3$ & B $k=10$ & C $k=3$ & C $k=10$ \\
+\midrule
+\texttt{D1\_m0.350} & 0.241 & 0.391 & 0.419 & 0.501 & 0.407 & 0.673 \\
+\texttt{D2\_bump\_c0.3} & 0.171 & 0.247 & 0.321 & 0.399 & 0.252 & 0.304 \\
+\texttt{D4c\_p\_up} & 0.341 & 0.183 & 0.432 & 0.453 & 0.131 & \ensuremath{-}0.190$^\dagger$ \\
+\texttt{D4d\_n\_up} & 0.003$^\dagger$ & \ensuremath{-}0.061$^\dagger$ & \ensuremath{-}0.496$^\dagger$ & \ensuremath{-}1.244$^\dagger$ & 0.017 & \ensuremath{-}0.086$^\dagger$ \\
+\texttt{D5\_nuwro} & 0.358 & 0.387 & 0.444 & 0.451 & 0.238 & 0.320 \\
+\texttt{R1\_x1.05\_D1\_p0.350} & 0.405 & 0.626 & 0.516 & 0.583 & 0.842 & 0.956 \\
+\bottomrule
+\end{tabular}}
+\end{center}
+{\footnotesize \textbf{Coverage (amendment 2): not run --- no candidate qualifies.} A $k=10$: not adequate on FINAL; B $k=10$: moves away on \texttt{D4d\_n\_up}; C $k=10$: moves away on \texttt{D4c\_p\_up}, \texttt{D4d\_n\_up}.}
+\end{frame}
+
 \gdef\evidencetext{\texttt{PROTOCOL-20260922.md \S 1}; \texttt{../configuration\_comparison/campaign\_report.json}}
 \begin{frame}{What a terminal result cannot authorize}
 \begin{alertblock}{A terminal result of this campaign cannot authorize}
@@ -467,14 +490,12 @@ reported as unresolved, not as nulls.
 \item Recovery statements are conditional on the simulated detector response (R1 moves them by more than the
 margins) and cannot see hidden variables (D4d).
 \item Efficiency correction needs a stopping rule and a variance statement, not only a mean recovery.
-\item Coverage has not been run: protocol \S 7 reserves it for a candidate adequate or best-in-class on FINAL.
+\item Coverage was not run: no candidate is both adequate on FINAL and free of moves-away on the identifiable stress cases (STRESS slide).
 \end{itemize}
 \textbf{Next choice}
 \begin{itemize}\footnotesize
-\item Confirmatory status: the FINAL decisions are on the previous slide; coverage runs only for a candidate adequate at $K^*$ that does not move away on any identifiable stress case.
-\item The miss rule is a model-dependence choice (carry-misses: slower, does not move away; efficiency
-correction: faster, fails when the event mix inside a truth bin changes). Whichever is recommended must be
-stated as that choice.
+\item Confirmatory status: FINAL and STRESS are complete (their two slides); no candidate is both adequate and robust.
+\item The miss rule is a model-dependence choice. Efficiency correction is faster but moves away when the hadron content changes at fixed true $E_{\rm avail}$ (D4c, D4d); carry-misses is slower, and the carry-misses feature arm B moves away under D4d too. Whichever is recommended must be stated as that choice and tested against hadron-content variations.
 \item A reference computed for the estimator's own miss rule and normalization, on the scored spectrum, is a
 prospective recommendation to be checked on a known-function toy before use.
 \end{itemize}
@@ -595,7 +616,7 @@ behind each, and \texttt{slides/CLAIM\_INDEX-deck.md} maps every claim to them. 
 file & sha256 \\
 \midrule
 \texttt{../configuration\_comparison/campaign\_report.json} & \texttt{96955a10222b6c95} \\
-\texttt{confirm/results/confirm\_results.json} & \texttt{df70d8a2dd7aaaf3} \\
+\texttt{confirm/results/confirm\_results.json} & \texttt{a6b03f09bb726b80} \\
 \texttt{phase\_a/receipts/historical\_receipts.json} & \texttt{938b97521cc77e82} \\
 \texttt{phase\_a/receipts/runtime\_audit\_theirs.json} & \texttt{8dadb3f32d3fec72} \\
 \texttt{phase\_b/pet/results/summary.json} & \texttt{ed81c51f67e9df24} \\

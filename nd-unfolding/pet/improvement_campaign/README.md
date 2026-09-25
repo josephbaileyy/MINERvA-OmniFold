@@ -15,9 +15,9 @@ an uncertainty product, a central-value change, or a Gate-6 action.
 |---|---|---|---|
 | A | Do the suspected optimizer / shared-step-2 recipe discrepancies exist in the executed path? | done: both CONFIRMED at runtime (A1); repaired per-step driver built and checked (A1); historical headline, data path, feature inventory and resources recovered (A2) | `phase_a/INTENDED_VS_EXECUTED-20260922.md`, `phase_a/receipts/` |
 | B | Where is recovery lost? | done: in step 2 under the carry-misses rule and in stopping at k = 3; neither PET representation is the bottleneck (B1 scalar, B2 PET) | `phase_b/scalar/SCALAR_REFERENCES-20260922.md`, `phase_b/pet/PET_DIAGNOSTICS-20260922.md` |
-| C | Which feature/model changes improve recovery? | DEV done: efficiency-corrected step 2 +0.31, reco energy summaries +0.11 (k=3); candidates frozen (amendment 2); PILOT/STRESS/FINAL running (V1) | `phase_b/pet/`, `confirm/` |
+| C | Which feature/model changes improve recovery? | done: DEV levers confirmed on FINAL (n = 12): A +0.19, B +0.25, C +0.47 vs CTL at K* = 10; C 0.786 is the only estimator above the floor at its lower bound | `confirm/CONFIRM_RESULTS.md`, `REPORT-20260922.md` §11 |
 | D | Do more events help? | development-stage scalar study done (prior size pays in carry mode, pseudodata size does not) | `phase_d/SCALAR_SCALING-20260922.md` |
-| E | Physics robustness, reference calibration, coverage | scalar stress tests, identifiability and reference assessment done (E1); PET stress set running (V1); coverage conditional (amendment 2) | `phase_e/PHASE_E_SCALAR-20260922.md`, `confirm/` |
+| E | Physics robustness, reference calibration, coverage | done: PET stress set — C moves away under proton-multiplicity (both replicates) and neutron-multiplicity changes, B under neutron multiplicity; **coverage not run** (no candidate qualifies, amendment 2) | `phase_e/PHASE_E_SCALAR-20260922.md`, `confirm/CONFIRM_RESULTS.md`, report §11.3–11.4 |
 | F | Conditional alternative methods | AUSSIE benchmarked at scalar level: gain is miss handling, not the non-iterative form; PET evaluation not justified on this evidence | `phase_f/AUSSIE_SCALAR_BENCHMARK-20260922.md` |
 
 Cumulative resource use: `RESOURCE_LEDGER.tsv`, rebuilt from every `resources-*.tsv` by `aggregate_resources.py`

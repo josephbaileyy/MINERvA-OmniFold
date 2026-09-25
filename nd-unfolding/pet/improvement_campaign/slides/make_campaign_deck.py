@@ -1171,6 +1171,8 @@ conditional on the simulated response.}}"""
 
 # --------------------------------------------------------------------------- confirmatory
 LABELS = ("CTL", "A", "B@3", f"B@{KSTAR}", "C@3", f"C@{KSTAR}")
+SHORT = {"CTL": "CTL $k=3$", "A": f"A $k={KSTAR}$", "B@3": "B $k=3$", f"B@{KSTAR}": f"B $k={KSTAR}$",
+         "C@3": "C $k=3$", f"C@{KSTAR}": f"C $k={KSTAR}$"}
 LABEL_TEXT = {"CTL": "CTL (hist. recipe, $k=3$)", "A": f"A (same run, $K^*={KSTAR}$)",
               "B@3": "B (C2 inputs), $k=3$", f"B@{KSTAR}": f"B (C2 inputs), $K^*={KSTAR}$",
               "C@3": "C (eff.-corr.), $k=3$", f"C@{KSTAR}": f"C (eff.-corr.), $K^*={KSTAR}$"}
@@ -1315,13 +1317,27 @@ def slide_stress(d: Deck, n: Numbers) -> None:
             ids += [f"st.{case}.{lab}", f"st.{case}.{lab}.away"]
             row.append(m + ("$^\\dagger$" if n.v(f"st.{case}.{lab}.away") else ""))
         rows.append(row)
+    # amendment 2's coverage rule: adequate at K* on FINAL AND no moves-away on any identifiable case
+    # (all six stress cases are reco-identifiable, E1); computed here, not typed
+    adq = (n.src.get(CONFIRM, ["final"]) or {}).get("decisions", {}).get("adequacy", {})
+    verdicts = []
+    for lab in ("A", f"B@{KSTAR}", f"C@{KSTAR}"):
+        away = [c for c in sorted(st) if st[c].get(lab) and n.v(f"st.{c}.{lab}.away")]
+        ok = bool(adq.get(lab, {}).get("adequate"))
+        why = ("not adequate on FINAL" if not ok else
+               ("moves away on " + ", ".join(_tt(c) for c in away)) if away else "qualifies")
+        verdicts.append(f"{SHORT[lab]}: {why}")
+    qualifies = any(v.endswith("qualifies") for v in verdicts)
+    cov = (r"\textbf{Coverage (amendment 2): " + ("run for the qualifying candidate" if qualifies else
+           "not run --- no candidate qualifies") + r".} " + "; ".join(verdicts) + ".")
     body = rf"""
 {{\small PET stress set on fresh pool-T events (protocol amendment 2): mean recovery over replicates;
 $^\dagger$ = the estimator ends farther from the target than the untouched prior on some replicate
-(``moves away'' --- reported as \textbf{{not robust}} where the distortion is identifiable).}}
+(``moves away'' --- reported as \textbf{{not robust}} where the distortion is identifiable; all six cases are).}}
 \begin{{center}}
-{table(["case"] + [LABEL_TEXT[l] for l in LABELS], rows, "l" + "r" * len(LABELS), r"\tiny")}
-\end{{center}}"""
+{table(["case"] + [SHORT[l] for l in LABELS], rows, "l" + "r" * len(LABELS), r"\scriptsize")}
+\end{{center}}
+{{\footnotesize {cov}}}"""
     d.claim("PET stress set: mean recovery and moves-away flags per case and estimator", ids)
     d.frame("The confirmatory result (STRESS, pool T)", body, [CONFIRM])
 
@@ -1346,15 +1362,29 @@ injected truth.\par\vspace{{6pt}}
     d.frame("What a terminal result cannot authorize", body, ["PROTOCOL-20260922.md \\S 1", HIST])
 
 
-def slide_limits(d: Deck, n: Numbers, has_final: bool) -> None:
+def slide_limits(d: Deck, n: Numbers, has_final: bool, has_stress: bool = False) -> None:
     n.f("lim.h4_sd", B2, ["recovery_by_k", "b2e1-H-K3", "3", "sd"], "2")
     n.f("lim.h4_n", B2, ["recovery_by_k", "b2e1-H-K3", "3", "n"], "int")
     n.f("lim.h4_mean", B2, ["recovery_by_k", "b2e1-H-K3", "3", "mean"], "3")
-    conf = ("the FINAL decisions are on the previous slide; coverage runs only for a candidate adequate at "
+    conf = ("FINAL and STRESS are complete (their two slides); no candidate is both adequate and robust"
+            if has_stress else
+            "the FINAL decisions are on the previous slide; coverage runs only for a candidate adequate at "
             "$K^*$ that does not move away on any identifiable stress case"
             if has_final else
             "the FINAL comparison and the PET stress set are pending; until they land, every candidate statement "
             "above is development-stage evidence on the DEV halves")
+    coverage_item = (
+        "Coverage was not run: no candidate is both adequate on FINAL and free of moves-away on the "
+        "identifiable stress cases (STRESS slide)." if has_stress else
+        "Coverage has not been run: protocol \\S 7 reserves it for a candidate adequate or best-in-class on FINAL.")
+    miss_item = (
+        "The miss rule is a model-dependence choice. Efficiency correction is faster but moves away when the "
+        "hadron content changes at fixed true $E_{\\rm avail}$ (D4c, D4d); carry-misses is slower, and the "
+        "carry-misses feature arm B moves away under D4d too. Whichever is recommended must be stated as that "
+        "choice and tested against hadron-content variations." if has_stress else
+        "The miss rule is a model-dependence choice (carry-misses: slower, did not move away at scalar level; "
+        "efficiency correction: faster, fails when the event mix inside a truth bin changes). Whichever is "
+        "recommended must be stated as that choice.")
     body = rf"""
 \textbf{{Limitations}}
 \begin{{itemize}}\footnotesize
@@ -1364,14 +1394,12 @@ reported as unresolved, not as nulls.
 \item Recovery statements are conditional on the simulated detector response (R1 moves them by more than the
 margins) and cannot see hidden variables (D4d).
 \item Efficiency correction needs a stopping rule and a variance statement, not only a mean recovery.
-\item Coverage has not been run: protocol \S 7 reserves it for a candidate adequate or best-in-class on FINAL.
+\item {coverage_item}
 \end{{itemize}}
 \textbf{{Next choice}}
 \begin{{itemize}}\footnotesize
 \item Confirmatory status: {conf}.
-\item The miss rule is a model-dependence choice (carry-misses: slower, does not move away; efficiency
-correction: faster, fails when the event mix inside a truth bin changes). Whichever is recommended must be
-stated as that choice.
+\item {miss_item}
 \item A reference computed for the estimator's own miss rule and normalization, on the scored spectrum, is a
 prospective recommendation to be checked on a known-function toy before use.
 \end{{itemize}}
@@ -1536,7 +1564,7 @@ def build(out: Path, confirm_override: Path | None, make_pdf: bool) -> dict[str,
     if has_stress:
         slide_stress(d, n)
     slide_cannot(d, n)
-    slide_limits(d, n, has_final)
+    slide_limits(d, n, has_final, has_stress)
     main_slides = d.main_count
     d.appendix()
     appx_audit_more(d, n)
