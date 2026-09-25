@@ -454,3 +454,6 @@ docs/orchestration/HANDOFF-20260925-negweight-refined-successor.md	LIVE	open
 docs/orchestration/GOAL-20260925-negweight-refined-successor.txt	LIVE	open	
 docs/orchestration/AUTHORIZATION-20260925-negweight-refined-successor.md	LIVE	open	
 docs/orchestration/state/s5n/contract.json	MACHINE	open	
+docs/orchestration/CAMPAIGN-s5n-20260925-index.md	LIVE	open	
+docs/orchestration/state/s5n/campaign-state.json	MACHINE	open	
+docs/orchestration/state/s5n/budget.json	MACHINE	open	

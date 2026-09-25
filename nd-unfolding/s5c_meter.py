@@ -1,9 +1,19 @@
 #!/usr/bin/env python3
-"""Admission and accounting for the scalar-5D campaign activated 2026-09-24 ("s5c").
+"""Admission and accounting for the scalar-5D campaigns: s5c (activated 2026-09-24) and its
+successor s5n (``OI-191``, activated 2026-09-25).
 
 Authority: ``docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md``
-§3 rows S1-S2 (Joseph's D2).  For this campaign only, ``r5_meter.py`` is displaced by
-this meter; ``r5_meter.py`` itself and every guard that calls it are untouched.
+§3 rows S1-S2 (Joseph's D2), carried forward to the successor by
+``docs/orchestration/AUTHORIZATION-20260925-negweight-refined-successor.md`` §3 row N4.  For
+these campaigns only, ``r5_meter.py`` is displaced by this meter; ``r5_meter.py`` itself and
+every guard that calls it are untouched.
+
+ONE METER, ONE LEDGER PER CAMPAIGN.  The budget's ``campaign_key`` selects the campaign and
+its job-name prefix (``CAMPAIGNS``); each campaign has its own budget and ledger, and the
+unregistered-job scan sees only its own prefix.  A successor's budget may declare a
+``carried_forward`` block per pool (the prior envelope and the prior campaign's reconciled
+charge): the meter then refuses a cap above the unspent portion, so a remaining balance can
+never be re-read as a new grant.
 
 UNITS ARE NATIVE BILLED UNITS, NOT TASK-HOURS.
 
@@ -62,8 +72,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, Sequence
 
+CAMPAIGNS = {"s5c-20260924": "s5c-", "s5n-20260925": "s5n-"}  # campaign key -> job-name prefix
 CAMPAIGN_KEY = "s5c-20260924"
-JOB_PREFIX = "s5c-"
+JOB_PREFIX = CAMPAIGNS[CAMPAIGN_KEY]
 WHOLE_NODE_BILLING = {"cpu": 256.0, "gpu": 128.0}
 A100_PER_GPU_NODE = 4.0
 POOL_ACCOUNT = {"cpu": "m3246", "gpu": "m3246_g"}
@@ -160,15 +171,27 @@ def sha256_file(path: Path) -> str:
 
 def load_budget(path: Path) -> dict:
     budget = json.loads(path.read_text())
-    if budget.get("campaign_key") != CAMPAIGN_KEY:
-        raise MeterError(f"budget {path} is not for {CAMPAIGN_KEY}", EXIT_INTEGRITY)
+    if budget.get("campaign_key") not in CAMPAIGNS:
+        raise MeterError(f"budget {path} names no known campaign ({sorted(CAMPAIGNS)})", EXIT_INTEGRITY)
     for pool in ("cpu", "gpu"):
         section = budget["pools"][pool]
         total = float(section["campaign_cap_node_hours"])
         stages = section["stages"]
         if sum(float(v) for v in stages.values()) > total + 1e-9:
             raise MeterError(f"{pool} stage allocations exceed the campaign cap", EXIT_INTEGRITY)
+        carried = section.get("carried_forward")
+        if carried is not None:
+            unspent = float(carried["envelope_node_hours"]) - float(carried["prior_charged_node_hours"])
+            if total > unspent + 1e-9:
+                raise MeterError(
+                    f"{pool} cap {total:.4f} exceeds the unspent carried-forward envelope {unspent:.4f}",
+                    EXIT_INTEGRITY,
+                )
     return budget
+
+
+def job_prefix(budget: dict) -> str:
+    return CAMPAIGNS[budget["campaign_key"]]
 
 
 def read_ledger(path: Path) -> list[dict]:
@@ -319,13 +342,13 @@ def charges(folded: dict[str, dict], sacct_tasks: dict[str, dict]) -> dict[str, 
     return out
 
 
-def unregistered(folded: dict[str, dict], sacct_tasks: dict[str, dict]) -> list[str]:
+def unregistered(folded: dict[str, dict], sacct_tasks: dict[str, dict], prefix: str = JOB_PREFIX) -> list[str]:
     known = {str(a["job_id"]) for a in folded.values() if a.get("job_id")}
     known |= {raw for a in folded.values() for raw in a.get("raw_ids", {}).values()}
     return sorted(
         tid
         for tid, e in sacct_tasks.items()
-        if e["name"].startswith(JOB_PREFIX) and base_job(tid) not in known
+        if e["name"].startswith(prefix) and base_job(tid) not in known
     )
 
 
@@ -354,6 +377,14 @@ def summarize(budget: dict, folded: dict[str, dict], charged: dict[str, dict]) -
         }
         if pool == "gpu":
             summary[pool]["charged_a100_hours"] = A100_PER_GPU_NODE * summary[pool]["charged_node_hours"]
+        carried = section.get("carried_forward")
+        if carried is not None:
+            prior = float(carried["prior_charged_node_hours"])
+            summary[pool]["carried_forward"] = {
+                "envelope_node_hours": float(carried["envelope_node_hours"]),
+                "prior_charged_node_hours": prior,
+                "envelope_charged_node_hours": prior + summary[pool]["charged_node_hours"],
+            }
     return summary
 
 
@@ -407,12 +438,12 @@ def validate_request(req: Request, sbatch_args: Sequence[str]) -> None:
         raise MeterError("--ntasks > 1 per array element is not priced by this meter", EXIT_USAGE)
 
 
-def salloc_argv(req: Request, extra_args: Sequence[str]) -> list[str]:
+def salloc_argv(req: Request, extra_args: Sequence[str], prefix: str = JOB_PREFIX) -> list[str]:
     """A held allocation (``salloc --no-shell``) for QOS that refuse batch jobs (``interactive``)."""
     if req.ntasks != 1:
         raise MeterError("an allocation is one scheduler job; use --ntasks 1", EXIT_USAGE)
     minutes = int(math.ceil(req.timelimit_h * 60))
-    return ["salloc", "--no-shell", f"--job-name={JOB_PREFIX}{req.label}",
+    return ["salloc", "--no-shell", f"--job-name={prefix}{req.label}",
             f"--account={POOL_ACCOUNT[req.pool]}", f"--qos={req.qos}", f"--time={minutes}",
             *extra_args]
 
@@ -439,12 +470,12 @@ def run_salloc(argv: list[str], ledger: "Ledger", token: str, wait_s: float) -> 
     return (job if granted else None), "".join(lines)
 
 
-def sbatch_argv(req: Request, sbatch_args: Sequence[str]) -> list[str]:
+def sbatch_argv(req: Request, sbatch_args: Sequence[str], prefix: str = JOB_PREFIX) -> list[str]:
     minutes = int(math.ceil(req.timelimit_h * 60))
     argv = [
         "sbatch",
         "--parsable",
-        f"--job-name={JOB_PREFIX}{req.label}",
+        f"--job-name={prefix}{req.label}",
         "--no-requeue",
         f"--account={POOL_ACCOUNT[req.pool]}",
         f"--qos={req.qos}",
@@ -580,7 +611,7 @@ def state_of(budget_path: Path, ledger_path: Path, sacct_text: str | None) -> tu
     raws = [raw for a in folded.values() for raw in a.get("raw_ids", {}).values()]
     text = sacct_text if sacct_text is not None else run_sacct(ids, raws)
     tasks = parse_sacct(text)
-    orphans = unregistered(folded, tasks)
+    orphans = unregistered(folded, tasks, job_prefix(budget))
     if orphans:
         raise MeterError(f"unregistered campaign jobs in sacct: {orphans}", EXIT_UNREGISTERED)
     charged = charges(folded, tasks)
@@ -612,7 +643,8 @@ def cmd_submit(args: argparse.Namespace) -> int:
         if code != EXIT_OK:
             return code
         token = f"{utc_now()}-{os.getpid()}-{req.label}"
-        argv = salloc_argv(req, args.sbatch_args) if args.allocate else sbatch_argv(req, args.sbatch_args)
+        prefix = job_prefix(budget)
+        argv = salloc_argv(req, args.sbatch_args, prefix) if args.allocate else sbatch_argv(req, args.sbatch_args, prefix)
         ledger.append(
             {
                 "kind": "open",
@@ -673,7 +705,7 @@ def cmd_measure(args: argparse.Namespace) -> int:
     sacct_text = args.sacct_file.read_text() if args.sacct_file else None
     budget, folded, charged, summary = state_of(args.budget, args.ledger, sacct_text)
     receipt = {
-        "campaign_key": CAMPAIGN_KEY,
+        "campaign_key": budget["campaign_key"],
         "measured_utc": utc_now(),
         "budget_sha256": sha256_file(args.budget),
         "ledger_sha256": sha256_file(args.ledger) if args.ledger.exists() else None,

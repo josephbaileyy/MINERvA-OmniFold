@@ -1,0 +1,26 @@
+{
+ "schema": "s5n-state/1",
+ "campaign_key": "s5n-20260925",
+ "tracker": "OI-191",
+ "authority": {
+  "record": "docs/orchestration/AUTHORIZATION-20260925-negweight-refined-successor.md",
+  "commit": "75bd22c0d3a14b03098a176df642ed56b83f5d03"
+ },
+ "prior_plan": {"path": "docs/orchestration/PLAN-scalar5d-reportable-uncertainties-and-inference.md", "blob": "8b0617b6e044a55a9b5870b46e5d90a15a6ced7a", "edited": false},
+ "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5n",
+ "branch": "campaign/s5n-negweight-refined-20260925",
+ "cluster_namespace": "/pscratch/sd/j/josephrb/s5n-20260925/",
+ "phase": "STAGE-1-SETUP",
+ "phase_detail": "authorization, contract and meter committed; Stage-1 code (successor pseudo-experiment, refinement and resampling) next; no successor job has been submitted",
+ "pinned": {
+  "contract": "docs/orchestration/state/s5n/contract.json (frozen at 75bd22c0)",
+  "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
+  "adopted_projection_sha256": "835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e"
+ },
+ "budget": {"path": "docs/orchestration/state/s5n/budget.json", "revision": 1},
+ "jobs": [],
+ "receipts": [],
+ "family": {"name": "N", "revisions_used": 0, "revisions_allowed": 2, "validation_looks": 0},
+ "verification": "none yet",
+ "next_action": "implement and unit-test the successor pseudo-experiment (negweight-refined measured side, background source/template split, per-event resampling, refit-per-replica bootstrap, refinement evidence), deploy a clean clone at the pinned commit, verify the meter against the scheduler with one small admitted allocation, then run Stage-1 controls C0-C2"
+}

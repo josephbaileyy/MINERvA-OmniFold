@@ -1,0 +1,316 @@
+{
+ "admissions": {
+  "2026-09-25T06:16:51Z-820561-d3_hpss_backup": {
+   "charged": 0.0,
+   "closed": true,
+   "job_id": null,
+   "measured": 0.0,
+   "pool": "cpu",
+   "released": true,
+   "reservation_node_hours": 0.09375,
+   "stage": "preservation",
+   "tasks_seen": 0,
+   "underpriced": false
+  },
+  "2026-09-25T06:16:52Z-820863-d3_hpss_backup": {
+   "charged": 0.0,
+   "closed": true,
+   "job_id": null,
+   "measured": 0.0,
+   "pool": "cpu",
+   "released": true,
+   "reservation_node_hours": 0.09375,
+   "stage": "preservation",
+   "tasks_seen": 0,
+   "underpriced": false
+  },
+  "2026-09-25T06:17:18Z-826432-d3_hpss_backup": {
+   "charged": 0.0031336805555555554,
+   "closed": true,
+   "job_id": "58855902",
+   "measured": 0.0031336805555555554,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 0.09375,
+   "stage": "preservation",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T06:32:35Z-1038863-p1_seed_channel": {
+   "charged": 0.0,
+   "closed": true,
+   "job_id": "58856170",
+   "measured": 0.0,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 3.5859375,
+   "stage": "pilot",
+   "tasks_seen": 18,
+   "underpriced": false
+  },
+  "2026-09-25T06:35:49Z-1082576-p2_bkg_dump": {
+   "charged": 0.0,
+   "closed": true,
+   "job_id": null,
+   "measured": 0.0,
+   "pool": "gpu",
+   "released": true,
+   "reservation_node_hours": 0.5,
+   "stage": "pilot",
+   "tasks_seen": 0,
+   "underpriced": false
+  },
+  "2026-09-25T06:36:50Z-1093946-p2_bkg_dump": {
+   "charged": 0.0,
+   "closed": true,
+   "job_id": null,
+   "measured": 0.0,
+   "pool": "gpu",
+   "released": true,
+   "reservation_node_hours": 0.5,
+   "stage": "pilot",
+   "tasks_seen": 0,
+   "underpriced": false
+  },
+  "2026-09-25T06:37:01Z-1097493-p2_bkg_dump": {
+   "charged": 0.0,
+   "closed": true,
+   "job_id": "58856255",
+   "measured": 0.0,
+   "pool": "gpu",
+   "released": false,
+   "reservation_node_hours": 0.5,
+   "stage": "pilot",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T06:37:03Z-1097903-p3_pseudo_experiment": {
+   "charged": 0.0,
+   "closed": true,
+   "job_id": "58856256",
+   "measured": 0.0,
+   "pool": "gpu",
+   "released": false,
+   "reservation_node_hours": 1.125,
+   "stage": "pilot",
+   "tasks_seen": 3,
+   "underpriced": false
+  },
+  "2026-09-25T06:48:29Z-1259291-pilots_interactive": {
+   "charged": 0.7894444444444444,
+   "closed": true,
+   "job_id": "58856439",
+   "measured": 0.7894444444444444,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "pilot",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T07:17:20Z-1707501-tier_s_sigma": {
+   "charged": 2.5997222222222223,
+   "closed": true,
+   "job_id": "58857016",
+   "measured": 2.5997222222222223,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 3.0,
+   "stage": "measurement_tier_s",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T07:39:42Z-2018441-f2_construction_1": {
+   "charged": 3.9408333333333334,
+   "closed": true,
+   "job_id": "58857523",
+   "measured": 3.9408333333333334,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "measurement_construction",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T07:43:20Z-2070048-f2_construction_det": {
+   "charged": 0.14583333333333334,
+   "closed": true,
+   "job_id": "58857600",
+   "measured": 0.14583333333333334,
+   "pool": "gpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "measurement_construction",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T07:52:52Z-2215398-f2_construction_det2": {
+   "charged": 3.637777777777778,
+   "closed": true,
+   "job_id": "58857791",
+   "measured": 3.637777777777778,
+   "pool": "gpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "measurement_construction",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T09:59:50Z-933434-tier_s_dev_d1": {
+   "charged": 0.25027777777777777,
+   "closed": true,
+   "job_id": "58860907",
+   "measured": 0.25027777777777777,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 1.0,
+   "stage": "measurement_tier_s",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T10:17:39Z-1019290-tier_s_dev_d2": {
+   "charged": 0.17444444444444446,
+   "closed": true,
+   "job_id": "58861350",
+   "measured": 0.17444444444444446,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 1.0,
+   "stage": "measurement_tier_s",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T10:35:31Z-1100330-tier_s_valid_cpu_0": {
+   "charged": 3.526666666666667,
+   "closed": true,
+   "job_id": "58861566",
+   "measured": 3.526666666666667,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "measurement_tier_s",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T11:35:48Z-1370619-tier_s_valid_gpu_32": {
+   "charged": 3.5830555555555557,
+   "closed": true,
+   "job_id": "58862360",
+   "measured": 3.5830555555555557,
+   "pool": "gpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "measurement_tier_s",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T12:24:09Z-1651206-tier_s_valid_cpu_48": {
+   "charged": 3.516388888888889,
+   "closed": true,
+   "job_id": "58863216",
+   "measured": 3.516388888888889,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "measurement_tier_s",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T14:08:05Z-2186337-tier_s_valid_cpu_80": {
+   "charged": 3.5230555555555556,
+   "closed": true,
+   "job_id": "58865811",
+   "measured": 3.5230555555555556,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "measurement_tier_s",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T15:15:44Z-199717-tier_s_valid_gpu_112": {
+   "charged": 2.4194444444444443,
+   "closed": true,
+   "job_id": "58868867",
+   "measured": 2.4194444444444443,
+   "pool": "gpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "measurement_tier_s",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T15:56:25Z-397199-tier_s_valid_cpu_128": {
+   "charged": 1.7413888888888889,
+   "closed": true,
+   "job_id": "58870274",
+   "measured": 1.7413888888888889,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "measurement_tier_s",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T17:39:41Z-1093383-tier_s_valid_cpu_160": {
+   "charged": 0.020555555555555556,
+   "closed": true,
+   "job_id": "58872289",
+   "measured": 0.020555555555555556,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "measurement_tier_s",
+   "tasks_seen": 1,
+   "underpriced": false
+  }
+ },
+ "budget_sha256": "936750df6910af250cf51492b7e074dc2a0b3412b3d953bd01e36ffe2f388822",
+ "campaign_key": "s5c-20260924",
+ "ledger_sha256": "4f89112e5b8f1b9938a2745edeff32bb8e796700168c50e3f6ce8086f9eb8449",
+ "measured_utc": "2026-09-25T19:00:52Z",
+ "summary": {
+  "cpu": {
+   "cap_node_hours": 345.27,
+   "charged_by_stage": {
+    "cleanup": 0.0,
+    "measurement_construction": 3.9408333333333334,
+    "measurement_tier_s": 15.352500000000001,
+    "pilot": 0.7894444444444444,
+    "preservation": 0.0031336805555555554,
+    "verification_repair": 0.0
+   },
+   "charged_node_hours": 20.085911458333335,
+   "open_concurrency": 0.0,
+   "stage_allocations": {
+    "cleanup": 34.527,
+    "measurement_construction": 30.0,
+    "measurement_tier_s": 150.0,
+    "pilot": 17.263,
+    "preservation": 0.5,
+    "verification_repair": 69.054
+   }
+  },
+  "gpu": {
+   "cap_node_hours": 125.0,
+   "charged_a100_hours": 39.144444444444446,
+   "charged_by_stage": {
+    "cleanup": 0.0,
+    "measurement_construction": 3.7836111111111115,
+    "measurement_tier_s": 6.0024999999999995,
+    "pilot": 0.0,
+    "verification_repair": 0.0
+   },
+   "charged_node_hours": 9.786111111111111,
+   "open_concurrency": 0.0,
+   "stage_allocations": {
+    "cleanup": 12.5,
+    "measurement_construction": 15.0,
+    "measurement_tier_s": 44.0,
+    "pilot": 6.25,
+    "verification_repair": 25.0
+   }
+  }
+ },
+ "unit": "billed node-hours = ElapsedRaw/3600 * billing/(256 CPU | 128 GPU) * qos_factor; GPU A100-h = 4 x GPU node-h"
+}

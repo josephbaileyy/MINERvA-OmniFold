@@ -1,0 +1,90 @@
+{
+ "schema": "s5n-budget/1",
+ "campaign_key": "s5n-20260925",
+ "authority": "docs/orchestration/AUTHORIZATION-20260925-negweight-refined-successor.md sections 3 (N3, N4) and 4",
+ "revision": 1,
+ "revision_reason": "activation budget: caps are the unspent portions of the s5c envelopes, each also <= 10% of the measured uncommitted allocation after reservations; Stage-1 development <= 10% and verification/repair >= 20% of each pool; everything else unallocated until the pre-expansion feasibility receipt",
+ "measured_utc": "2026-09-25T19:01:02Z",
+ "evidence": {
+  "allocation": "docs/orchestration/state/s5n/allocation-measurement-20260925T1901Z.txt (iris, squeue -A m3246,m3246_g all users -r, showquota, hpssquota, sacctmgr qos)",
+  "prior_charges": "docs/orchestration/state/s5n/s5c-ledger-reconciliation-20260925T1900Z.json (s5c_meter.py measure on the s5c ledger, ledger sha256 4f89112e5b8f1b9938a2745edeff32bb8e796700168c50e3f6ce8086f9eb8449, no admission open)"
+ },
+ "billing_rule": "as docs/orchestration/state/s5c/budget.json billing_rule (unchanged): CPU node-h = ElapsedRaw/3600 * billing/256 * qos_factor; GPU node-h = ElapsedRaw/3600 * billing/128 * qos_factor; A100-h = 4 x GPU node-h; every admitted QOS has UsageFactor 1.0 (sacctmgr, 2026-09-25T19:01Z); premium and overrun refused",
+ "allocation_measured": {
+  "cpu": {
+   "account": "m3246",
+   "project_allocated": 20000.0,
+   "project_charged": 16567.4,
+   "queued_or_running_reservations_node_hours": 0.0,
+   "uncommitted_remaining_node_hours": 3432.6,
+   "ten_percent_node_hours": 343.26
+  },
+  "gpu": {
+   "account": "m3246_g",
+   "project_allocated": 180000.0,
+   "project_charged": 121262.1,
+   "queued_or_running_reservations_node_hours": 228.9705,
+   "uncommitted_remaining_node_hours": 58508.9295,
+   "ten_percent_a100_hours": 23403.57
+  },
+  "reservation_method": "every pending/running row of squeue -r on either account, all users: remaining limit (running) or full limit (pending) x node fraction (whole nodes %D for non-shared QOS; cpus/128 for gpu_shared, shared and cron) -- the s5c method"
+ },
+ "pools": {
+  "cpu": {
+   "campaign_cap_node_hours": 325.184,
+   "carried_forward": {
+    "envelope_node_hours": 345.27,
+    "prior_charged_node_hours": 20.085911458333335,
+    "unspent_node_hours": 325.18408854166665
+   },
+   "binding": "unspent portion of the s5c envelope (10% of uncommitted = 343.26 does not bind)",
+   "concurrency_nodes": 2,
+   "stages": {
+    "verification_repair": 65.0368,
+    "development": 32.5184
+   }
+  },
+  "gpu": {
+   "campaign_cap_node_hours": 115.2138,
+   "campaign_cap_a100_hours": 460.8552,
+   "carried_forward": {
+    "envelope_node_hours": 125.0,
+    "envelope_a100_hours": 500.0,
+    "prior_charged_node_hours": 9.786111111111111,
+    "unspent_node_hours": 115.21388888888889
+   },
+   "binding": "unspent portion of the s5c envelope (10% of uncommitted = 23,403.6 A100-h does not bind)",
+   "concurrency_gpus": 4,
+   "stages": {
+    "verification_repair": 23.0427,
+    "development": 11.5213
+   }
+  }
+ },
+ "stage_rules": {
+  "development": "Stage 1 of the successor contract (controls C0-C8): at most 10% of each pool (authorization section 1)",
+  "verification_repair": "20% floor of each pool (plan section 3, retained); the full priced validation cost is reserved in addition if larger, at the feasibility receipt",
+  "unallocated": "everything else; allocated only by the pre-expansion feasibility receipt (a budget revision plus a ledger rebind)"
+ },
+ "storage": {
+  "pscratch": {
+   "measured_used_tib": 16.38,
+   "quota_tib": 20.0,
+   "free_tib": 3.62,
+   "ten_percent_of_free_gib": 370.688,
+   "absolute_ceiling_tib": 2.0,
+   "campaign_cap_gib": 370.6,
+   "namespace": "/pscratch/sd/j/josephrb/s5n-20260925/"
+  }
+ },
+ "concurrency": "2 CPU nodes and 4 GPUs over every open admission (plan section 3, retained)",
+ "retries": "as the s5c budget (retained): at most two retries per task for a diagnosed infrastructure failure; at most one corrective resubmission per stage after a diagnosed code defect, verified repair and fresh admission; the stricter applies; scientific failure never triggers an identical retry; --no-requeue enforced by the meter",
+ "ledger": "/pscratch/sd/j/josephrb/s5n-20260925/ledger/admissions.jsonl",
+ "revision_history": [
+  {
+   "revision": 1,
+   "measured_utc": "2026-09-25T19:01:02Z",
+   "note": "activation budget"
+  }
+ ]
+}

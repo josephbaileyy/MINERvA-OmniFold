@@ -322,6 +322,51 @@ class AccountingTests(MeterHarness):
         self.assertEqual(self.run_meter("measure").returncode, 5)
 
 
+class SuccessorTests(MeterHarness):
+    """The s5n successor (OI-191): its own prefix, its own scan, and a cap that cannot exceed the
+    unspent carried-forward envelope."""
+
+    def s5n_budget(self, cpu_cap=10.0, envelope=30.0, prior=20.0) -> dict:
+        budget = _budget(cpu_cap=cpu_cap)
+        budget["campaign_key"] = "s5n-20260925"
+        budget["pools"]["cpu"]["carried_forward"] = {"envelope_node_hours": envelope,
+                                                     "prior_charged_node_hours": prior}
+        return budget
+
+    def test_successor_job_carries_its_own_prefix(self):
+        self.write_budget(self.s5n_budget())
+        self.assertEqual(self.submit("--dry-run", "--", "job.sh").returncode, 0)
+        argv = self.ledger_records()[0]["argv"]
+        self.assertIn("--job-name=s5n-t", argv)
+        self.assertNotIn("--job-name=s5c-t", argv)
+
+    def test_successor_scan_sees_only_its_own_prefix(self):
+        self.write_budget(self.s5n_budget())
+        self.sacct_out.write_text("998|s5c-closed-campaign|COMPLETED|60|billing=32|2026-09-25T01:00:00\n")
+        self.assertEqual(self.run_meter("measure").returncode, 0)
+        self.sacct_out.write_text("997|s5n-rogue|RUNNING|60|billing=32|2026-09-25T01:00:00\n")
+        self.assertEqual(self.run_meter("measure").returncode, 6)
+
+    def test_unknown_campaign_key_is_refused(self):
+        budget = _budget()
+        budget["campaign_key"] = "s5x-20260925"
+        self.write_budget(budget)
+        self.assertEqual(self.run_meter("measure").returncode, 5)
+
+    def test_cap_above_unspent_envelope_is_refused_and_at_unspent_admitted(self):
+        self.write_budget(self.s5n_budget(cpu_cap=10.5, envelope=30.0, prior=20.0))
+        self.assertEqual(self.run_meter("measure").returncode, 5)
+        self.write_budget(self.s5n_budget(cpu_cap=10.0, envelope=30.0, prior=20.0))
+        self.assertEqual(self.run_meter("measure").returncode, 0)
+
+    def test_measure_reconciles_the_envelope(self):
+        self.write_budget(self.s5n_budget())
+        self.assertEqual(self.submit("--", "job.sh", billing="128").returncode, 0)
+        self.sacct_out.write_text("12345|s5n-t|COMPLETED|3600|billing=128|2026-09-25T01:00:00\n")
+        cf = json.loads(self.run_meter("measure").stdout)["summary"]["cpu"]["carried_forward"]
+        self.assertAlmostEqual(cf["envelope_charged_node_hours"], 20.5)
+
+
 class UnitTests(unittest.TestCase):
     def test_bracket_expansion(self):
         self.assertEqual(s5c_meter._expand_bracket("7_[0-2,5%2]"), ["7_0", "7_1", "7_2", "7_5"])
@@ -331,6 +376,18 @@ class UnitTests(unittest.TestCase):
         budget = s5c_meter.load_budget(repo / "docs/orchestration/state/s5c/budget.json")
         self.assertAlmostEqual(budget["pools"]["gpu"]["campaign_cap_node_hours"] * 4, 500.0)
         self.assertLessEqual(budget["pools"]["cpu"]["campaign_cap_node_hours"], 500.0)
+
+    def test_committed_successor_budget_carries_the_reconciled_prior_charge(self):
+        repo = HERE.parent.parent
+        budget = s5c_meter.load_budget(repo / "docs/orchestration/state/s5n/budget.json")
+        prior = json.loads((repo / "docs/orchestration/state/s5n/s5c-ledger-reconciliation-20260925T1900Z.json").read_text())
+        for pool, envelope in (("cpu", 345.27), ("gpu", 125.0)):
+            section = budget["pools"][pool]
+            self.assertAlmostEqual(section["carried_forward"]["prior_charged_node_hours"],
+                                   prior["summary"][pool]["charged_node_hours"], places=9)
+            self.assertAlmostEqual(section["carried_forward"]["envelope_node_hours"], envelope)
+            self.assertLessEqual(section["campaign_cap_node_hours"],
+                                 envelope - prior["summary"][pool]["charged_node_hours"])
 
 
 if __name__ == "__main__":
