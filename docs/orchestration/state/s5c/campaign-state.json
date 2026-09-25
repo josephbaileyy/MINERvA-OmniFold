@@ -56,6 +56,12 @@
    "label": "pilots_interactive (salloc, 1 CPU node, 4 h)",
    "stage": "pilot",
    "state": "RUNNING steps: P1 (18), P2 then P3/P4 (3), projection check"
+  },
+  {
+   "job": "58857016",
+   "label": "tier_s_sigma (salloc, 1 CPU node, 3 h)",
+   "stage": "measurement_tier_s",
+   "state": "RUNNING: 200 bootstrap replicas"
   }
  ],
  "receipts": [
@@ -82,6 +88,10 @@
   {
    "path": "docs/orchestration/state/s5c/b1/partition_scan_2.json",
    "what": "development-MC partition scan with per-axis resolution"
+  },
+  {
+   "path": "docs/orchestration/state/s5c/p1/p1_summary.json",
+   "what": "P1: F1 10-seed spread (bin median 0.53%, max 5.2%; functional max 0.39%); full binning removes the seed effect (5e-12); F2 bitwise seed- and repeat-invariant; permutations 1e-11"
   }
  ],
  "dependencies": {
@@ -98,5 +108,11 @@
   "D11": "open"
  },
  "verification": "none yet",
- "next_action": "confirm F2 development gates G-repro/G-seed from P1; run the 200-replica Tier-S bootstrap; evaluate G-perm; then launch Tier-S validation (seeds 200000-211999) through the meter"
+ "next_action": "when the sigma bootstrap completes: evaluate G-perm, commit, submit Tier-S validation arrays (CPU 416 x 25, GPU 64 x 25) through the meter after budget revision 3",
+ "development_gates": {
+  "G-repro": "PASS (P1: f2_s42 == f2_s42_rep bitwise)",
+  "G-seed": "PASS (P1: f2_s42 == f2_s43 bitwise)",
+  "G-perm": "PENDING the Tier-S sigma; P1 permutation movement max 1.57e-12 relative on the 43 M1 functionals",
+  "G-seed-5pct": "PASS by G-seed over the tested ensemble {42, 43}"
+ }
 }
