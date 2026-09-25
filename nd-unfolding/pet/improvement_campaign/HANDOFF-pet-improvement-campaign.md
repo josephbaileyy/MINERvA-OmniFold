@@ -33,6 +33,13 @@ Read this, then `README.md` (state table), then `PROTOCOL-20260922.md` (design +
 
 ## Where things stand (update this block)
 
+- **2026-09-25 00:30Z** — Review round 2 (FINAL) done and dispositioned (`REVIEW_DISPOSITION-ROUND2-20260925.md`):
+  fail-closed FINAL gate, audit verdicts CLEAN/SUSPECT/UNVERIFIABLE (re-audit all CLEAN), scoring lock for new
+  submissions, two concurrently scored FINAL runs re-scored IDENTICAL, §11 attribution scoped. FINAL decisions
+  unchanged. Resource ledger now includes every confirmatory job (`confirm/ledger_from_sacct.py`). STRESS 29/360
+  iterations; expected complete ~2026-09-25 15:00-19:00Z. When it lands: harvest, **re-score any STRESS run with
+  more than one `score-<job>.log`** (`confirm/jobs/sbatch_rescore.sh`; the running chains predate the scoring lock),
+  re-audit, analyze, decide coverage, review round 2 on STRESS (the codex-school lane approval covers it).
 - **2026-09-24 23:45Z** — Orchestration moved to a claude-school session (the personal session `b160e1e8` hit its
   weekly limit; V1's delegate ended with it — the orchestrator now runs V1's harvest/analysis itself). **FINAL
   complete 36/36**, gate clean (re-audit `confirm/results/audit_locks-20260924T2320Z.json`, 0 suspect; receipts
