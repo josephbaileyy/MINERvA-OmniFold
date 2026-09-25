@@ -178,7 +178,7 @@ docs/orchestration/HANDOFF-20260819-lane-e-data-only-cstat-smoke-57266000.md	tra
 docs/orchestration/HANDOFF-20260820-2154Z-publication-closeout.md	tracked	ARCHIVAL	document		20260820	terminal		exact-path-only		yes	7	312	20870
 docs/orchestration/HANDOFF-20260921-gbdt-remaining.md	tracked	LIVE	document		20260921	open		route-only	docs/orchestration/state/check-withdrawal-completeness-20260910.py	no	7	380	23143
 docs/orchestration/HANDOFF-20260922-gbdt-cold-start.md	tracked	LIVE	document		20260922	open		route-only	docs/orchestration/state/check-withdrawal-completeness-20260910.py	no	8	462	31652
-docs/orchestration/HANDOFF-20260924-preparation-for-scalar5d-campaign.md	tracked	LIVE	document		20260924	open		route-only		no	3	133	15685
+docs/orchestration/HANDOFF-20260924-preparation-for-scalar5d-campaign.md	tracked	LIVE	document		20260924	open		route-only		no	3	134	15837
 docs/orchestration/HOLD-20260821-clause-c-verification.md	tracked	ARCHIVAL	document		20260821	terminal		exact-path-only		yes	7	66	4401
 docs/orchestration/INDEX-20260920-retained-branches-not-on-main.md	tracked	LIVE	index	z-campaign	20260920	open		route-only		no	3	101	9262
 docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index			open		route-only	docs/open-items/verify_open_items_restructure.py;docs/orchestration/findings_row_lint.py;nd-unfolding/pet/check_canonical_designation.py	no	26	196	37643
