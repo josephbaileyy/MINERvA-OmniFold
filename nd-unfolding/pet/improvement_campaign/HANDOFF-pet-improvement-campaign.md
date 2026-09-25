@@ -33,6 +33,16 @@ Read this, then `README.md` (state table), then `PROTOCOL-20260922.md` (design +
 
 ## Where things stand (update this block)
 
+- **2026-09-25 14:30Z — CAMPAIGN COMPLETE (diagnosis with measured limits; no adoption).** FINAL and STRESS done,
+  both reviewed (round 2 parts 1–2, `REVIEW_DISPOSITION-ROUND2-20260925.md`), coverage **not run** (no frozen
+  candidate at K* qualifies, amendment 2). Report §11–12, `confirm/CONFIRM_RESULTS.md`, deck
+  `slides/campaign_comparison_v2.pdf` (18 main slides), claim index, RUN_LOG + STATUS entries, resource ledger
+  final (**268.3 GPU-h, 9,221 CPU-core-h**; phases D and F ran locally and charged nothing), draft PR #3 updated. No
+  Perlmutter job of this campaign is queued or running. **Nothing further runs without a new decision by Joseph.**
+  Open, prospective only (each needs a new predeclared amendment and Joseph's go): coverage for C at k = 3 (the one
+  configuration observed adequate by the mean and free of moves-away; lower bound below the floor; 2 stress
+  replicates per case); isolating the PET-path mechanism of the D4c/D4d failures; an unscaled D1 +0.35 control for
+  the R1 case; E1 identifiability of the PET-path R1 + D1 case.
 - **2026-09-25 00:30Z** — Review round 2 (FINAL) done and dispositioned (`REVIEW_DISPOSITION-ROUND2-20260925.md`):
   fail-closed FINAL gate, audit verdicts CLEAN/SUSPECT/UNVERIFIABLE (re-audit all CLEAN), scoring lock for new
   submissions, two concurrently scored FINAL runs re-scored IDENTICAL, §11 attribution scoped. FINAL decisions
@@ -65,7 +75,7 @@ Read this, then `README.md` (state table), then `PROTOCOL-20260922.md` (design +
 3. Queue facts: `gpu_debug` starts in minutes (30-min cap, 2 jobs/user, one iteration per round at ~750 s/iteration);
    `gpu_shared` waits 1.5–6 h; `gpu_regular`/`gpu_preempt` rarely start. Runs self-chain in `gpu_debug` with bit-exact
    resume; do not change a frozen config.
-4. When FINAL is complete: run the analyzer, write the confirmatory section of the report, regenerate the deck
+4. (Done 2026-09-25.) When FINAL is complete: run the analyzer, write the confirmatory section of the report, regenerate the deck
    (`cd slides && python make_campaign_deck.py`, then `pytest test_deck_numbers.py`), run review round 2 on the
    FINAL/STRESS results, then the required records, the resource ledger (`python aggregate_resources.py`), the draft
    PR, and update this handoff. Resources: re-run `confirm/ledger_from_sacct.py` (command in its docstring), then
