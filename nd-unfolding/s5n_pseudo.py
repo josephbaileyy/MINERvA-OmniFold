@@ -339,6 +339,7 @@ def code_digests() -> dict:
 
 
 def write_product(out: Path, arrays: dict, meta: dict) -> int:
+    out.parent.mkdir(parents=True, exist_ok=True)
     tmp = out.with_name(out.name + f".partial-{os.getpid()}.npz")
     np.savez_compressed(tmp, **arrays, meta=json.dumps(meta, default=str))
     if out.exists():  # another process finished first: keep the first product

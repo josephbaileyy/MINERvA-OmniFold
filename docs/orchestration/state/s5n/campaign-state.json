@@ -6,21 +6,60 @@
   "record": "docs/orchestration/AUTHORIZATION-20260925-negweight-refined-successor.md",
   "commit": "75bd22c0d3a14b03098a176df642ed56b83f5d03"
  },
- "prior_plan": {"path": "docs/orchestration/PLAN-scalar5d-reportable-uncertainties-and-inference.md", "blob": "8b0617b6e044a55a9b5870b46e5d90a15a6ced7a", "edited": false},
+ "prior_plan": {
+  "path": "docs/orchestration/PLAN-scalar5d-reportable-uncertainties-and-inference.md",
+  "blob": "8b0617b6e044a55a9b5870b46e5d90a15a6ced7a",
+  "edited": false
+ },
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5n",
  "branch": "campaign/s5n-negweight-refined-20260925",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5n-20260925/",
- "phase": "STAGE-1-SETUP",
- "phase_detail": "authorization, contract and meter committed; Stage-1 code (successor pseudo-experiment, refinement and resampling) next; no successor job has been submitted",
+ "phase": "STAGE-1-RUNNING",
+ "phase_detail": "Stage-1 development allocations running at deploy bd0faf0b (meter verified: dry-run admitted, over-cap refused, carried-forward envelope reported)",
  "pinned": {
   "contract": "docs/orchestration/state/s5n/contract.json (frozen at 75bd22c0)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
   "adopted_projection_sha256": "835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e"
  },
- "budget": {"path": "docs/orchestration/state/s5n/budget.json", "revision": 1},
- "jobs": [],
+ "budget": {
+  "path": "docs/orchestration/state/s5n/budget.json",
+  "revision": 1
+ },
+ "jobs": [
+  {
+   "job": "58874450",
+   "label": "s5n_dev_1 (salloc interactive, 1 CPU node, 4 h)",
+   "stage": "development",
+   "queue": "state/s5n/queues/dev-1.q",
+   "state": "RUNNING: controls C0/C2/C7/C8, truth check, grid lines 0-35",
+   "started_utc": "2026-09-25T19:26:53Z"
+  },
+  {
+   "job": "58874451",
+   "label": "s5n_dev_2 (salloc interactive, 1 CPU node, 3.5 h)",
+   "stage": "development",
+   "queue": "state/s5n/queues/dev-2.q",
+   "state": "RUNNING: C6 sigma bootstrap 200 replicas",
+   "started_utc": "2026-09-25T19:26:56Z"
+  }
+ ],
  "receipts": [],
- "family": {"name": "N", "revisions_used": 0, "revisions_allowed": 2, "validation_looks": 0},
+ "family": {
+  "name": "N",
+  "revisions_used": 0,
+  "revisions_allowed": 2,
+  "validation_looks": 0
+ },
  "verification": "none yet",
- "next_action": "implement and unit-test the successor pseudo-experiment (negweight-refined measured side, background source/template split, per-event resampling, refit-per-replica bootstrap, refinement evidence), deploy a clean clone at the pinned commit, verify the meter against the scheduler with one small admitted allocation, then run Stage-1 controls C0-C2"
+ "next_action": "on completion of both allocations: reconcile the ledger (meter measure), run s5n_analyze_dev.py on the products, commit the development receipt; then independent review and the feasibility receipt",
+ "deploy": {
+  "tree": "/pscratch/sd/j/josephrb/s5n-20260925/deploy/bd0faf0b",
+  "pin": "bd0faf0b9941188bd5b0464d1beea1736e7a12a7"
+ },
+ "incidents": [
+  {
+   "utc": "2026-09-25T19:29:19Z",
+   "what": "single-product outputs (runs/c0,c2,c7,c8,truth) had no parent directory and s5n_pseudo.write_product did not create one; created by hand 2 min 20 s after the steps started, before any task reached its write; code fixed for later pins (write_product mkdir)"
+  }
+ ]
 }

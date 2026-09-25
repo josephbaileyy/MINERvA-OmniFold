@@ -107,6 +107,7 @@ def main(argv=None) -> int:
             rec["M1_xsec_preserved_1e-6"] = bool(rec["M1_ratio_max_abs_dev"] <= 1e-6)
         out["departures"][name] = rec
         print(json.dumps({k: v for k, v in rec.items() if not isinstance(v, list)}))
+    a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(out, indent=1) + "\n")
     return 0
 
