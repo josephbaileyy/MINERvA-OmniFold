@@ -71,10 +71,17 @@ def main(argv=None) -> int:
     weight_maxdiff = float(np.max(np.abs(meas_w - d["measured_weights"]))) if coords_equal else None
     import s5c_pseudo  # the pseudo-experiments' vectorized purity must equal the production loop
 
-    vec = s5c_pseudo.purity_weights(measured.astype(float), np.ones(measured.shape[0]), bkg_nd, edges)
+    # Same float64 columns production used (the npz stores them as float32; rounding moves events
+    # that sit within float32 resolution of a bin edge, which is a property of the inputs, not of
+    # the function -- measured 2026-09-25 as a 0.137 max difference, recorded below).
+    vec = s5c_pseudo.purity_weights(np.column_stack(meas_cols), np.ones(measured.shape[0]), bkg_nd, edges)
     vec_maxdiff = float(np.max(np.abs(vec - d["measured_weights"])))
+    vec32 = s5c_pseudo.purity_weights(measured.astype(float), np.ones(measured.shape[0]), bkg_nd, edges)
+    moved = np.abs(vec32 - d["measured_weights"]) > 1e-12
     check = {
         "vectorized_purity_max_abs_diff": vec_maxdiff,
+        "float32_coordinates_purity_max_abs_diff": float(np.max(np.abs(vec32 - d["measured_weights"]))),
+        "float32_coordinates_events_with_changed_weight": int(moved.sum()),
         "measured_coordinates_identical": coords_equal,
         "measured_weights_max_abs_diff": weight_maxdiff,
         "n_data": int(meas_pt.size),
