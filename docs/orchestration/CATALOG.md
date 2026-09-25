@@ -31,6 +31,17 @@ This is a pointer-only active-tree router. It contains no scientific evidence or
 
 ## Current work
 
+### Scalar-5D reportable uncertainties and calibrated inference — PROPOSED, NOT ACTIVATED (drafted 2026-09-24)
+
+- [`PLAN-scalar5d-reportable-uncertainties-and-inference.md`](PLAN-scalar5d-reportable-uncertainties-and-inference.md)
+  - The proposed next scalar-5D campaign plan. **Not activated**: only Joseph's actual sending of
+  the estimator goal prompt activates it, recorded with this file's Git blob and commit. Preserved
+  here byte-identical to the copy received on 2026-09-24 (blob `8b0617b6e044a55a9b5870b46e5d90a15a6ced7a`).
+- [`DRAFT-preservation-and-stabilization-session-prompts.md`](DRAFT-preservation-and-stabilization-session-prompts.md)
+  - Draft prompts for the two-session sequence. Preserved byte-identical to the copy received on
+  2026-09-24 (blob `cf3c2e858d4526ad356e604af9bc6100e6cc7e9f`). Its *preservation* section was sent
+  by Joseph on 2026-09-24; its *estimator* section was not.
+
 ### THE SCALAR-5D REQUIRED DELIVERABLE PATH — standing authorization; **BLOCKED on five Joseph decisions** (2026-09-18)
 
 - [`AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md`](AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md)
