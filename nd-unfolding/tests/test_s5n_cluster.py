@@ -40,7 +40,13 @@ class Refinement(unittest.TestCase):
         self.assertEqual(p["n_estimators"], 100)
         self.assertEqual(p["num_leaves"], 8)
         self.assertTrue(np.all(w_ref >= 0))
-        self.assertLess(abs(ev["refined_over_signed"] - 1.0), 0.02)
+        # Calibration, not normalization: before clipping, sum |w|(2g-1) equals the signed sum; the clip
+        # (where the template locally exceeds the data, as in this sample's background tail) adds the
+        # removed negative mass back, which is what refined_over_signed > 1 records.
+        before_clip = ev["refined_sum"] + ev["clipped_signed_mass"]
+        self.assertLess(abs(before_clip / ev["signed_sum"] - 1.0), 0.01)
+        self.assertGreater(ev["n_clipped"], 0)
+        self.assertAlmostEqual(ev["refined_sum"] - before_clip, -ev["clipped_signed_mass"])
         direct, _, _ = u2d.refine_stay_positive(self.feat, self.w, estimator="lgbm", device="cpu",
                                                 params=self.s5n.refine_params(42, 4))
         np.testing.assert_array_equal(w_ref, direct)

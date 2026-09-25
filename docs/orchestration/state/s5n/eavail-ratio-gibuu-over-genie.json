@@ -1,0 +1,51 @@
+{
+ "schema": "s5n-eavail-ratio/1",
+ "label": "GiBUU over GENIE v2 (DefaultPlusValenciaMEC, untuned) E_avail shape",
+ "definition": "shape_ratio[k] = frac_numerator[k] / frac_denominator[k], frac = hXSec_eavail content x width, normalized over the bins",
+ "eavail_edges": [
+  0.0,
+  0.1,
+  0.2,
+  0.4,
+  0.8,
+  1.5,
+  3.0,
+  100.0
+ ],
+ "shape_ratio": [
+  1.2238990297494738,
+  1.3250215795765092,
+  1.1065973369501185,
+  0.8749147669892612,
+  0.72579613244731,
+  0.9435184885261848,
+  1.3878629959845838
+ ],
+ "frac_numerator": [
+  0.10064502739418646,
+  0.08169366480770612,
+  0.14068971533730504,
+  0.17131774472131095,
+  0.15160524882067955,
+  0.20387076243449662,
+  0.15017783648431526
+ ],
+ "frac_denominator": [
+  0.08223311314724059,
+  0.061654591945450636,
+  0.1271372256552311,
+  0.19581078201576832,
+  0.20888131259322398,
+  0.21607500532708293,
+  0.10820796931600259
+ ],
+ "numerator": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/gibuu_cv_xsec3d.root",
+  "sha256": "e6b9d02f87113a41fdd96221ad09964863ff111263e1e2fda64ca3d8032bc8d6"
+ },
+ "denominator": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec3d.root",
+  "sha256": "13249535e95581ef16462617b776652356d09ae4042f651958b3d644f3fbdfbe"
+ },
+ "code_sha256": "4a17a9e079e3ca20b29fb0c6e8e93c023e464a253f1a8793ea7a483f5d7c9dd2"
+}
