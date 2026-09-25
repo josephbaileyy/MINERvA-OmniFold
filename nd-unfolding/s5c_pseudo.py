@@ -100,16 +100,20 @@ def purity_weights(coords: np.ndarray, counts: np.ndarray, bkg_nd: np.ndarray, e
     return counts * w
 
 
-def build_experiment(inputs: dict, bkg: dict, truth: str, amplitude: float, split_key: int,
+def build_experiment(inputs: dict, bkg: dict, truth: str, amplitude: float, split_key: int | None,
                      pseudo_seed: int) -> tuple[dict, np.ndarray, dict]:
+    """split_key None = development diagnostic 'no split': the whole MC sample is both the
+    pseudo-data source and the unfolding MC (weights x1), conditional on that sample."""
     edges = inputs["edges"]
     n = inputs["MCgen"].shape[0]
-    is_b = half_mask(n, split_key)
+    no_split = split_key is None
+    is_b = np.ones(n, bool) if no_split else half_mask(n, split_key)
+    wscale = 1.0 if no_split else 2.0
     rng = np.random.default_rng(pseudo_seed)
     r = truth_weight(truth, inputs["MCgen"], edges, amplitude, w_truth=inputs["w_truth"])
 
     b_reco = is_b & inputs["pass_reco"]
-    lam = 2.0 * inputs["w_reco"][b_reco] * r[b_reco]
+    lam = wscale * inputs["w_reco"][b_reco] * r[b_reco]
     n_sig = rng.poisson(lam).astype(float)
     m_bkg = rng.poisson(bkg["bkg_w"]).astype(float)
     sig_keep, bkg_keep = n_sig > 0, m_bkg > 0
@@ -117,18 +121,18 @@ def build_experiment(inputs: dict, bkg: dict, truth: str, amplitude: float, spli
     counts = np.concatenate([n_sig[sig_keep], m_bkg[bkg_keep]])
     mw = purity_weights(coords.astype(float), counts, bkg["bkg_nd"], edges)
 
-    a = ~is_b
+    a = is_b if no_split else ~is_b
     exp_inputs = {
         "MCgen": inputs["MCgen"][a], "MCreco": inputs["MCreco"][a],
         "pass_reco": inputs["pass_reco"][a], "pass_truth": inputs["pass_truth"][a],
-        "w_truth": 2.0 * inputs["w_truth"][a], "w_reco": 2.0 * inputs["w_reco"][a],
+        "w_truth": wscale * inputs["w_truth"][a], "w_reco": wscale * inputs["w_reco"][a],
         "measured": coords, "measured_weights": mw,
         "denom_nd": inputs["denom_nd"], "flux": inputs["flux"], "data_pot": inputs["data_pot"],
         "n_nucleons": inputs["n_nucleons"], "edges": edges,
     }
     # Truth of this pseudo-data: B's reweighted truth through the analysis's own extraction.
     gen_b = inputs["MCgen"][is_b & inputs["pass_truth"]]
-    wt_b = 2.0 * inputs["w_truth"][is_b & inputs["pass_truth"]]
+    wt_b = wscale * inputs["w_truth"][is_b & inputs["pass_truth"]]
     rw_b = r[is_b & inputs["pass_truth"]]
     unf_b, _ = np.histogramdd(gen_b, bins=edges, weights=wt_b * rw_b)
     ofin_b, _ = np.histogramdd(gen_b, bins=edges, weights=wt_b)
@@ -157,6 +161,8 @@ def main(argv=None) -> int:
     ap.add_argument("--amplitude", type=float, default=0.0)
     ap.add_argument("--split-key", type=int, default=None,
                     help="fixed MC split (single-experiment mode); batch mode derives one per seed")
+    ap.add_argument("--no-split", action="store_true",
+                    help="DEVELOPMENT DIAGNOSTIC ONLY: whole MC as pseudo-data source and unfolding MC")
     ap.add_argument("--pseudo-seed", type=int, default=None, help="one experiment")
     ap.add_argument("--pseudo-seeds", default=None,
                     help="first:last inclusive; one process runs each seed, writing <out>/<truth>_s<seed>.npz, "
@@ -175,8 +181,11 @@ def main(argv=None) -> int:
     if batch == (a.pseudo_seed is not None):
         print("give exactly one of --pseudo-seed and --pseudo-seeds", file=sys.stderr)
         return 2
-    if not batch and a.split_key is None:
-        print("single-experiment mode needs --split-key", file=sys.stderr)
+    if not batch and a.split_key is None and not a.no_split:
+        print("single-experiment mode needs --split-key or --no-split", file=sys.stderr)
+        return 2
+    if a.no_split and (batch or a.split_key is not None or a.bootstrap_seeds):
+        print("--no-split is a single-experiment development diagnostic", file=sys.stderr)
         return 2
     if not batch and a.bootstrap_seeds is None and a.out.exists():
         print(f"refusing to overwrite {a.out}", file=sys.stderr)
@@ -209,7 +218,7 @@ def main(argv=None) -> int:
                 continue
             status |= run_one(a, inputs, bkg, npz_sha, bkg_sha, seed, split_key_for(seed), target)
         return status
-    return run_one(a, inputs, bkg, npz_sha, bkg_sha, a.pseudo_seed, a.split_key, a.out, t0)
+    return run_one(a, inputs, bkg, npz_sha, bkg_sha, a.pseudo_seed, None if a.no_split else a.split_key, a.out, t0)
 
 
 def run_bootstrap(a, inputs, bkg, npz_sha, bkg_sha) -> int:

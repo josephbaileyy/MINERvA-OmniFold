@@ -40,7 +40,7 @@ def main(argv=None) -> int:
     for p in a.perm:
         f = U @ np.load(p, allow_pickle=False)["xsec_flat"]
         r = np.abs(f - ref) / sigma
-        res["perms"][p.name] = {"max_shift_over_sigma": float(r.max()), "argmax": names[int(r.argmax())]}
+        res["perms"][str(p)] = {"max_shift_over_sigma": float(r.max()), "argmax": names[int(r.argmax())]}
         worst = max(worst, float(r.max()))
     res["max_shift_over_sigma"] = worst
     res["verdict"] = "PASS" if worst <= 0.05 else "FAIL"

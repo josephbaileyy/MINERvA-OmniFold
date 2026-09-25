@@ -6,6 +6,8 @@
 # Refuses unless the committed G-perm receipt reads PASS (the contract's development gates must all
 # pass before any validation experiment runs). A CPU node takes 8 concurrent 10-seed tasks, a GPU
 # node 4 (its 128 threads, CPU work only); four waves of about 52 minutes fit the default 4 hours.
+# Steps request 48G: measured peaks are 10-16 GB, and an interactive CPU node grants 487,802 MB, so
+# eight 60G steps cannot coexist (the eighth waits, as observed on allocation 58857016).
 
 DEPLOY=${1:?deploy}; PIN=${2:?sha}; POOL=${3:?cpu|gpu}; FIRST=${4:?first}; LAST=${5:?last}; HOURS=${6:-4}
 NS=/pscratch/sd/j/josephrb/s5c-20260924
@@ -32,7 +34,7 @@ JOB=$(echo "$out" | sed -n 's/^JOB \([0-9]*\).*/\1/p')
 [ -n "$JOB" ] || exit 7
 mkdir -p "$NS/runs/s_valid"
 cd "$NS" || exit 2
-nohup bash "$DEPLOY/nd-unfolding/s5c_steps.sh" "$JOB" "$DEPLOY" "$PIN" 32 60G \
+nohup bash "$DEPLOY/nd-unfolding/s5c_steps.sh" "$JOB" "$DEPLOY" "$PIN" 32 48G \
     "$DEPLOY/docs/orchestration/state/s5c/s-valid-tasks.tsv:$NS/runs/s_valid/steps_${POOL}_${FIRST}:$PAR:$FIRST:$LAST" \
     > "$NS/runs/steps-$JOB.log" 2>&1 < /dev/null &
 disown
