@@ -524,20 +524,19 @@ def scheduler_tres(job: str) -> dict[str, float]:
 
 
 def run_sacct(job_ids: Sequence[str], raw_ids: Sequence[str] = ()) -> str:
-    """Three queries: every admitted job id (no window: ``-j`` defaults to epoch); linked raw
-    task ids ALONE (measured 2026-09-25: ``sacct -j 58856170,58856172`` omits 58856172, which
-    ``sacct -j 58856172`` returns); and the last 14 days of the user's jobs for the
-    unregistered-``s5c-`` scan (sacct refuses much wider windows)."""
+    """Queries: every admitted job id and every linked raw task id, WITHOUT a user filter (no
+    window: ``-j`` defaults to epoch; measured 2026-09-25: ``-u josephrb -j 58856172`` returns
+    nothing for a raw-id array task that plain ``-j 58856172`` returns); and the last 14 days of
+    the user's jobs for the unregistered-``s5c-`` scan (sacct refuses much wider windows)."""
     fields = "JobID,JobName,State,ElapsedRaw,AllocTRES,Start"
     user = os.environ.get("USER", "josephrb")
-    queries = [["-S", "now-14days", "-E", "now"]]
-    if job_ids:
-        queries.append(["-j", ",".join(sorted(set(job_ids)))])
-    if raw_ids:
-        queries.append(["-j", ",".join(sorted(set(raw_ids)))])
+    queries = [["-u", user, "-S", "now-14days", "-E", "now"]]
+    ids = sorted(set(job_ids) | set(raw_ids))
+    if ids:
+        queries.append(["-j", ",".join(ids)])
     out = []
     for extra in queries:
-        argv = ["sacct", "-P", "-n", "--duplicates", "-u", user, "-o", fields, *extra]
+        argv = ["sacct", "-P", "-n", "--duplicates", "-o", fields, *extra]
         proc = subprocess.run(argv, capture_output=True, text=True)
         if proc.returncode != 0:
             raise MeterError(f"sacct failed rc={proc.returncode}: {proc.stderr.strip()}", EXIT_INTEGRITY)
