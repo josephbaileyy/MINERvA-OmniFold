@@ -112,7 +112,7 @@ low-recoil measurement~\cite{MINERvA:2022incl}.
 
 The fifth observable, $W$, separates the remaining discrepancy from the
 low-mass enhancement.  Figure~\ref{fig:joint} shows the joint
-$(\Eavail,W)$ projection relative to GENIE.  The positive central-value
+$(\Eavail,W)$ projection relative to the MINERvA Tune~v1, the tuned GENIE~2.12.6 simulation from which the unfolding starts.  The positive central-value
 difference is concentrated where both $\Eavail$ and $W$ are large, rather than
 being distributed uniformly across either one-dimensional projection.  Neither
 one-dimensional projection resolves this structure.
@@ -125,14 +125,14 @@ one-dimensional projection resolves this structure.
   $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ and $W$ edges
   $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$; axes are cell indices counting from
   zero, so index~6 in $\Eavail$ and index~5 in $W$ are wide catch bins.  Left:
-  the unfolded-to-GENIE ratio per cell, dimensionless, on a $0.5$--$1.5$
-  scale.  Right: the unfolded-minus-GENIE difference as a
+  the unfolded-to-Tune~v1 ratio per cell, dimensionless, on a $0.5$--$1.5$
+  scale.  Right: the unfolded-minus-Tune~v1 difference as a
   \emph{cell-integrated} cross section in \si{cm^2/nucleon}, i.e.\ the
   density difference multiplied by that cell's
   $\Delta\Eavail\,\Delta W$; the catch-bin cells therefore carry their large
   widths and appear larger here than the ratio panel alone would suggest.  Read
   together, the panels put the remaining positive difference in the
-  high-$\Eavail$, high-$W$ corner.  No significance is assigned.}
+  high-$\Eavail$, high-$W$ corner.  No significance is assigned.  The comparator is the MINERvA Tune~v1 (GENIE~2.12.6 with the analysis tune weights), not the untuned GENIE central value of Fig.~\ref{fig:generator-context}.}
   \label{fig:joint}
 \end{figure}
 
@@ -154,8 +154,8 @@ independent confirmation of this localized difference.
   \centering
   \includegraphics[width=0.84\textwidth]{paper_eavailW_generators}
   \caption{Generator context for the unfolded $\Eavail$ (left) and $W$ (right)
-  central-value projections.  GENIE-CV, GENIE with the Valencia two-particle--
-  two-hole contribution, NuWro, and GiBUU all remain below the unfolded result
+  central-value projections.  GENIE-CV (untuned GENIE~2.12.10 on CH, with no two-particle--two-hole events), the same GENIE with the Valencia two-particle--
+  two-hole contribution, NuWro~21.09, and GiBUU~2019 (both on carbon) all remain below the unfolded result
   at high $W$.  No significance is assigned.}
   \label{fig:generator-context}
 \end{figure*}
@@ -169,7 +169,7 @@ central value.  A scalar five-dimensional covariance is adopted under a
 digest-bound exception, and its \zprojCells-cell $(\Eavail,W)$ projection is
 built; no superseded or historical covariance is used here.  We nevertheless
 quote no publication-level significance, and the reason is measured rather
-than precautionary.  Varying the estimator seed moves the projected
+than precautionary.  In a dedicated campaign of two companion covariances built at two estimator-seed settings for this test (products distinct from the adopted bytes), varying the seed moves the projected
 uncertainty by \SI{\sprojMeasured}{\percent}, against a
 \SI{\sprojBound}{\percent} movement limit fixed before production.  That
 movement did not fall with ensemble size over the range tested:

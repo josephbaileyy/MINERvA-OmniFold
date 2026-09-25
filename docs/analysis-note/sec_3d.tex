@@ -193,8 +193,11 @@ the MINERvA Tune~v1 prediction was extracted from the analysis MC truth with
 its full tune weight; none of the spectra were digitized or externally supplied.
 \begin{itemize}
   \item \textbf{GENIE 2.12.10 central value} --- generated with \texttt{gevgen}
-        on a CH target with the MINERvA ME~FHC flux and the
-        DefaultPlusValenciaMEC configuration~\cite{Andreopoulos:2009rq}.
+        on a CH target with the MINERvA ME~FHC flux, using the
+        DefaultPlusValenciaMEC cross-section splines~\cite{Andreopoulos:2009rq}
+        but gevgen's default event-generator list, which excludes MEC, so the
+        sample contains no 2p2h events (\S\ref{sec:3d-2p2h}); no MINERvA
+        reweights are applied.
   \item \textbf{MINERvA Tune v1} --- the analysis tune (base GENIE $+$ RPA,
         low-recoil 2p2h, and non-resonant-pion reweights), extracted directly
         from the event-loop MC truth (the \texttt{w\_truth} weights), which
@@ -458,8 +461,7 @@ excess concentrates at low $\Eavail$ (all $q_{3}$) and toward high $q_{3}$. This
 is precisely the correlation not resolved by the muon-only or fixed-$q_{3}$
 projections considered here, and it is the natural input for the bin-compatible
 Ascencio comparison.
-We show it here at central-value level (the base GENIE event-generator list
-contains no 2p2h, as in \S\ref{sec:3d-2p2h}); no per-cell significances are
+We show it here at central-value level (the comparator is the MINERvA Tune~v1 prior, \texttt{w\_truth}, \texttt{nd-unfolding/q3\_excess\_projection.py}, not the untuned GENIE sample of \S\ref{sec:3d-2p2h}); no per-cell significances are
 reported without a corrected 4D covariance.
 
 \paragraph{Bin-identical comparison to the published low-recoil measurement.}
@@ -504,8 +506,7 @@ future work.
   $q_{3}$ (center) and $\Eavail$ (right) marginals. The $\Eavail$ marginal
   reproduces the 3D low-recoil excess; the joint plane shows the data\,$-$\,MC
   discrepancy to carry genuine $q_{3}$ structure (the ratio rising with $q_{3}$
-  across the quasielastic--$\Delta$ dip). GENIE central value, no 2p2h in the base
-  event-generator list.}
+  across the quasielastic--$\Delta$ dip). Comparator: the MINERvA Tune~v1 prior (\texttt{w\_truth}).}
   \label{fig:q3excess}
 \end{figure}
 

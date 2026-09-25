@@ -10,7 +10,7 @@ numbers, records the identities that are already fixed, and states plainly
 which parts do not exist yet.
 
 \paragraph{Status, measured.} \textbf{No release tag and no release manifest
-exist.} Measured in this checkout on 2026-09-21: 35 git tags, of which 30 are
+exist.} Measured on 2026-09-21 in a local checkout of the canonical analysis repository (a dated census, to be re-measured against the remote when a release is cut): 35 git tags, of which 30 are
 \texttt{evidence/*} preservation anchors, one is a \texttt{freeze/*} anchor and
 four are deployment tags; none is a publication-results release. The adopted
 covariance and the five-axis central values are not in the repository at all
@@ -70,9 +70,13 @@ their identity or value already fixed and are listed in
         MINERvA~Tune~v1 ancillary model, as arrays on the release binning
         rather than as figure curves, each with its generator version,
         configuration, target and flux.
-  \item \textbf{Provenance} $\checkmark$: for each object, the producing
+  \item \textbf{Provenance}: for each object, the producing
         revision, the producing job, and the digest of the bytes as read back
-        out of the closed file.
+        out of the closed file. This is fixed only in part: the assembling
+        revision and job of $C_{Z}$, the job of $C_{EW}$ and the read-back
+        digest of the row index (\S\ref{app:release-identities}). No producing
+        revision or job is recorded for the other objects, and the assembled
+        package carries none.
   \item \textbf{One minimal worked example}: \S\ref{app:release-example}.
   \item \textbf{The four measurements} that travel with the adopted covariance
         (\S\ref{sec:eavailw-adopted}), carried \emph{in} the package and not
@@ -106,8 +110,8 @@ Mean-centered sibling &
 $(\Eavail,W)$ projection $C_{EW}$ &
   \texttt{sha256} \zprojDigest\ldots &
   \num{17101} bytes; \zprojCells\ cells; no source cell dropped;
-  $\max|C-C^{\top}|=0$; $\lambda_{\min}=+4.359104\times10^{-92}$ (positive;
-  $n_{\mathrm{negative}}=0$) against $\lambda_{\max}=1.488215\times10^{-77}$,
+  $\max|C-C^{\top}|=0$; $\lambda_{\min}=+4.359104\times10^{-92}$ on the build host (its sign sits at the floating-point noise floor and carries no information, \S\ref{sec:eavailw-construction};
+  $n_{\mathrm{negative}}=0$ describes this computation only) against $\lambda_{\max}=1.488215\times10^{-77}$,
   condition number $\approx3.4\times10^{14}$; \textbf{no bare rank} --- the
   retained count runs 26 to 42 over defensible cutoffs;
   $\sqrt{\Tr C}=\SI{4.4552e-39}{}$; job \texttt{58655509}. \\
@@ -180,9 +184,11 @@ released correctly.
         default, 42 at none --- and a reader following a ``rank should be 36''
         instruction with NumPy defaults would get 41 and wrongly conclude the
         package is corrupt. Check instead that
-        $\lambda_{\min}/\lambda_{\max}\approx2.9\times10^{-15}$ and that
-        $\lambda_{\min}$ is positive, and treat the object as ill-conditioned
-        rather than as having a definite rank.
+        $|\lambda_{\min}|/\lambda_{\max}$ is of order $10^{-15}$, the edge of
+        double precision, and treat the object as ill-conditioned rather than
+        as having a definite rank. Do not check the sign of $\lambda_{\min}$:
+        it sits at the noise floor, carries no information, and a second host
+        reproduces $\lambda_{\min}$ to only five significant digits.
   \item Read the per-cell relative uncertainty as
         $\sqrt{(C_{EW})_{rr}}/y_{r}$. Because $M$ carries the dropped axes'
         widths, $\mathbf{y}$ and $C_{EW}$ are on the \emph{density} scale:

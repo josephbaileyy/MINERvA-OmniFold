@@ -38,7 +38,7 @@ $d\sigma/dW$ spectrum is finite and non-negative across all six bins.
 \subsection{Where the excess lives in the $(\Eavail,W)$ plane}
 \label{sec:eavailw-map}
 Projecting the unfolded five-axis result onto $(\Eavail,W)$ and subtracting
-the GENIE central value localizes the excess
+the MINERvA Tune~v1 prediction (the analysis simulation's truth weighted by its full tune weight \texttt{w\_truth}, i.e.\ the OmniFold prior; \emph{not} the untuned GENIE~CV of \S\ref{sec:eavailw-band}) localizes the excess
 (Fig.~\ref{fig:eavailWexcess}): it is \emph{predominantly deep-inelastic}.
 The two highest-$\Eavail$ bands carry \SI{57}{\percent} of the positive
 excess; of all positive excess, high-$\Eavail$ ($\ge\SI{0.8}{GeV}$) holds
@@ -49,8 +49,8 @@ low-$W$ (below \SI{1.1}{GeV}, QE-like) excess and a small $\Delta$-region
 ($W\simeq1.4$--$\SI{1.8}{GeV}$) deficit are also present.
 This localization is a central-value statement under the nominal detector
 response. The shares above are central-value quantities read off the projected
-five-axis result, and that result is not seed-independent: on these
-\zprojCells\ destinations the estimator seed moves the central value by at most
+five-axis result, and that result is not seed-independent: on the 43 projection functionals of the estimator-seed campaign (these
+\zprojCells\ destinations plus the total rate), the estimator seed moves the central value by at most
 \SI{\cvMoveProjMax}{\percent}, which is at most
 \SI{\cvMoveOverSigmaMax}{\percent} of the quoted uncertainty (median
 \SI{\cvMoveOverSigmaMed}{\percent}); see \S\ref{sec:eavailw-adopted}. That
@@ -64,7 +64,7 @@ has not yet produced a result.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\textwidth]{excess_eavail_W}
-  \caption{Unfolded data versus the GENIE-CV prediction across the
+  \caption{Unfolded data versus the MINERvA Tune~v1 prediction (GENIE~2.12.6 with the analysis tune weights \texttt{w\_truth}, the OmniFold prior; labelled ``GENIE CV'' and ``CV'' inside the figure) across the
   $(\Eavail,W)$ plane. \emph{Left:} $d\sigma/d\Eavail$ for both, integrated over
   $W$. \emph{Center:} the per-cell ratio data/CV, dimensionless, on a
   $0.5$--$1.5$ colour scale. \emph{Right:} the per-cell difference
@@ -93,7 +93,7 @@ has not yet produced a result.
 \label{sec:eavailw-band}
 We confirm this against independent spline-normalized $(\Eavail,W)$
 predictions from GENIE~CV, GENIE$+$Valencia~2p2h/MEC, NuWro, and GiBUU
-(Fig.~\ref{fig:eavailWband}).
+(Fig.~\ref{fig:eavailWband}). These are separate productions from the 3D samples of \S\ref{sec:3d-models}; this GENIE~CV's in-phase-space total, \SI{2.44e-38}{cm^2/nucleon}, is \SI{3}{\percent} below the \SI{2.52e-38}{} quoted there, and that difference has not been reconciled.
 % --- PROVENANCE / REDUCTION for the corner ratios (J27.3, recorded 2026-08-02) ---
 % The ratios below are CORNER-INTEGRATED cross-section ratios -- not per-bin means,
 % not a weighted mean, not the worst bin. Reduction, from
@@ -138,8 +138,11 @@ predictions from GENIE~CV, GENIE$+$Valencia~2p2h/MEC, NuWro, and GiBUU
 % BEN-086, agreement at printed precision is not identity; do not re-quote these at
 % more digits from the 2026-06-08 lineage.
 % Controls that reproduce EXACTLY and are why the set is trustworthy: GiBUU integrated
-% 2.2227e-38 and data 3.0699e-38 (this paragraph's own 2.22 / 3.07), and sec_3d:151's
-% ordering GiBUU 2.2227e-38 < NuWro 2.3444e-38 < GENIE CV 2.4446e-38.
+% 2.2227e-38 and data 3.0699e-38 (this paragraph's own 2.22 / 3.07). The ORDERING
+% GiBUU < NuWro < GENIE CV matches sec_3d.tex:215-217, but the GENIE value does not:
+% this band's GENIE-CV 2.4446e-38 (work_seed* gevgen, gen_to_xsec_eavailW.py) is a
+% different object from sec_3d's 2.52e-38 (Stage-A work_p* gevgen, genie_to_xsec3d.py);
+% the 2.95% difference is not reconciled. (The ledger's VL35 prose repeats the old claim.)
 %
 % NORMALIZATION INCONSISTENCY, FOUND WHILE CLOSING THIS AND DELIBERATELY LEFT ALONE.
 % This paragraph states two deficits, two sentences apart, in TWO DIFFERENT
@@ -430,7 +433,7 @@ number from a committed receipt, and each bounds what may be claimed.
   a set of functionals, not a sum of nonnegative component contributions, so
   releasing a component that was held fixed can move the total either way.
 \item \textbf{The seed also moves the central values, by a small fraction of
-  their own uncertainty.} On these \zprojCells\ destinations the central value
+  their own uncertainty.} On the 43 projection functionals of the grade (these \zprojCells\ destinations plus the all-ones total rate), the central value
   moves by at most $\cvMoveProjMax\,\%$, against relative uncertainties of order
   ten percent: \textbf{at most $\cvMoveOverSigmaMax\,\%$ of the quoted
   uncertainty, median $\cvMoveOverSigmaMed\,\%$}. The largest movement falls on
@@ -444,7 +447,7 @@ number from a committed receipt, and each bounds what may be claimed.
 sensitivity --- \emph{cause~3}'s $M(\mathrm{ii})$ in the internal
 dependency register --- remains \emph{predeclared and not computed} for this
 object: the 2026-09-20 campaign computed it for two \emph{other} products,
-built for that purpose, and grading them does not regrade these bytes. The
+built for that purpose, and grading them does not regrade these bytes. The first, second and fourth measurements above were all made on those two products; only the third is a property of these bytes. The
 exact record identifiers are in App.~\ref{app:provenance}.
 
 The complementary cross-check against MINERvA's published

@@ -73,6 +73,7 @@ stating plainly, because it is something we measured rather than a precaution.
 Our method has a random component: the learner is started from a random seed.
 Change that seed, leaving everything else alone, and the \emph{uncertainty} we
 report on the projected result shifts by about \SI{\sprojMeasured}{\percent}
+(measured on two test versions of it built for exactly this comparison, not on the adopted version itself)
 --- more than the \SI{\sprojBound}{\percent} we had decided in advance we
 would tolerate. The natural hope is that this is just statistical noise from
 having a finite number of simulated variations, which would shrink if we ran
@@ -154,8 +155,8 @@ with it at central-value level on the maximal common grid.
   \centering
   \includegraphics[width=0.99\textwidth]{eavailW_band}
   \caption{The unfolded central values (black points) compared to four tested
-  simulation predictions --- GENIE's own central configuration, the same GENIE
-  with the two-nucleon process added, NuWro and GiBUU. \emph{Left:} available
+  simulation predictions --- GENIE's own untuned central configuration (version 2.12.10), the same GENIE
+  with the two-nucleon process added, NuWro (21.09) and GiBUU (2019). \emph{Left:} available
   energy; all four fall below the data at low available energy, the known
   ``low-recoil'' shortfall, here rediscovered by a different unfolding method.
   \emph{Right:} hadronic mass; all four sit below the data at high hadronic
@@ -186,7 +187,7 @@ visible because the unbinned method let us slice the data this finely.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{paper_joint_localization}
-  \caption{The unfolded data compared to the GENIE central simulation across
+  \caption{The unfolded data compared to the MINERvA-tuned GENIE simulation (MINERvA Tune~v1, the simulation the unfolding starts from, not the untuned ``central configuration'' of Fig.~\ref{fig:primergen}) across
   the available-energy / hadronic-mass plane \emph{jointly}. Both panels are
   measured on the same seven-by-six grid of cells, with available-energy
   boundaries $0$, $0.1$, $0.2$, $0.4$, $0.8$, $1.5$, $3$ and $100$~GeV and
