@@ -97,6 +97,13 @@ each checked), and confirmed the D2 control. Corrections made here:
    `d2_nosplit_F2_no_background`.
 6. **Pooling.** The `split_F2` group pools `p3_nominal_s1` (code `2f4432d6`) with eight D1 products (code
    `52f2740f`); the diff makes no physics difference at nominal truth.
+8. **Size against the adopted quoted uncertainty** (added after the review; receipt
+   [`state/s5c/d1/bias_vs_adopted.json`](state/s5c/d1/bias_vs_adopted.json), `nd-unfolding/s5c_bias_vs_adopted.py`
+   run on the adopted projection bytes `835828bf…`). The adopted total σ in the highest-W column is 9.75,
+   8.94, 8.74, 9.67, 6.70, 3.74% (EW5…EW35) and 4.09% in EW41, so |bias|/σ_adopted is 0.36, 0.45, 0.45,
+   0.42, 0.61, **1.07** and 0.41. In EW35 the development bias equals about one full quoted σ. The median
+   over the 42 cells is 0.02. This compares a development bias at nominal truth with the real-data
+   covariance, so it sizes the risk; it does not measure a real-data bias.
 7. **Adequacy of the grid for a nominal-derived correction.** `q3_given_eavail_w` preserves the
    (E_avail, W) marginal by construction, so for the M1 (E_avail, W) functionals its truth equals nominal;
    the E_avail tilt is ±10%. Stated in amendment 4 and to be stated with any Tier-S result.

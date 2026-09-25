@@ -192,7 +192,7 @@ docs/orchestration/LEDGER-20260920-deleted-branch-names-to-sha.md	tracked	LIVE	d
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	66	70	8866
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	6	161	8117
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data	20260919-cause3-two-member-campaign		generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/whose_row.py;nd-unfolding/tests/test_draft_adoption_record.py;nd-unfolding/tests/test_object_identity_checks.py	no	38	451	37330
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/merge_guard.sh;nd-unfolding/tests/test_object_identity_checks.py	no	66	1104	209490
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/merge_guard.sh;nd-unfolding/tests/test_object_identity_checks.py	no	66	1105	209623
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	9	214	16307
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	18	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	7	239	14244
@@ -210,7 +210,7 @@ docs/orchestration/OUTCOME-20260921-L2-probe-blocked-at-stage-4.md	tracked	ARCHI
 docs/orchestration/OUTCOME-20260922-3d-covariance-projected-from-the-adopted-trunk.md	tracked	LIVE	document		20260922	open		route-only		no	5	156	13956
 docs/orchestration/OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md	tracked	LIVE	document		20260922	open		route-only	docs/orchestration/state/check-withdrawal-completeness-20260910.py	no	8	225	18102
 docs/orchestration/OUTCOME-20260922-ten-adopted-receipts-superseded-by-code-drift.md	tracked	LIVE	document		20260922	open		route-only		no	7	144	9049
-docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md	tracked	LIVE	document		20260925	open		route-only		no	5	102	8620
+docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md	tracked	LIVE	document		20260925	open		route-only		no	5	109	9316
 docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	tracked	LIVE	document		20260822	open		route-only		no	4	160	8870
 docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	tracked	LIVE	document		20260823	open		route-only		no	4	149	8296
 docs/orchestration/PACKET-20260823-round5-f2a-f17a-repair.md	tracked	LIVE	document		20260823	open		route-only		no	10	259	16441
@@ -957,7 +957,8 @@ docs/orchestration/state/s5c/contract.json	tracked	MACHINE	state-artifact	s5c		g
 docs/orchestration/state/s5c/d1-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	15	5952
 docs/orchestration/state/s5c/d1/bias_allowance.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only	nd-unfolding/s5c_coverage.py	yes	2	319	5803
 docs/orchestration/state/s5c/d1/bias_correction.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only	nd-unfolding/s5c_coverage.py;nd-unfolding/s5c_futility_watch.sh	yes	3	476	9699
-docs/orchestration/state/s5c/d1/d1_summary.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	7	1329	32375
+docs/orchestration/state/s5c/d1/bias_vs_adopted.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	2	393	10121
+docs/orchestration/state/s5c/d1/d1_summary.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	8	1329	32375
 docs/orchestration/state/s5c/d2-tasks.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	0	5	1911
 docs/orchestration/state/s5c/d2/d2_summary.json	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	2	550	12218
 docs/orchestration/state/s5c/d3-nine-objects.tsv	tracked	MACHINE	state-artifact	s5c		generated		exact-path-only		yes	3	11	1593
