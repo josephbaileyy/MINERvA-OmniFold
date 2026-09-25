@@ -1,0 +1,2 @@
+# s5e diagnosis allocation B (CPU pool, stage diagnosis): D5 | D4 + D2 asimov, then D1 + D6 + D2 data, 8 steps of 32 CPUs. Run by nd-unfolding/s5c_queue.sh with S5C_NS set to the s5e namespace.
+S5C_CAMPAIGN=s5e bash "$S5C_DEPLOY/nd-unfolding/s5c_launch.sh" "$S5C_DEPLOY" "$S5C_PIN" cpu diagnosis 4 s5e_diag_B 56G "s5e diagnosis D5 capacity and missed-event probes, D4 noise-free scan, D2 asimov and data probes, D1 driver departures, D6 geometry" diag-asimov-tasks.tsv:diag/asimov:4:0:3 diag-asimov-tasks.tsv:diag/asimov:4:4:9,diag-driver-tasks.tsv:diag/drv:4

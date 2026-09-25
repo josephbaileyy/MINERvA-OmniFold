@@ -367,6 +367,50 @@ class SuccessorTests(MeterHarness):
         self.assertAlmostEqual(cf["envelope_charged_node_hours"], 20.5)
 
 
+class DiagnosisCampaignTests(MeterHarness):
+    """The OI-192 diagnosis campaign s5e: its own prefix and scan, a CPU-only budget (no GPU stage can
+    be admitted), the two-node concurrency, and its stage cap."""
+
+    def s5e_budget(self) -> dict:
+        budget = _budget(cpu_cap=60.0, cpu_stages={"diagnosis": 10.0, "verification_repair": 12.0},
+                         gpu_cap=0.0, gpu_stages={})
+        budget["campaign_key"] = "s5e-20260925"
+        budget["pools"]["gpu"]["stages"] = {}
+        budget["pools"]["cpu"]["carried_forward"] = {"envelope_node_hours": 345.27,
+                                                     "prior_charged_node_hours": 24.687}
+        return budget
+
+    def test_job_carries_the_s5e_prefix_and_scan_sees_only_it(self):
+        self.write_budget(self.s5e_budget())
+        self.assertEqual(self.submit("--dry-run", "--", "job.sh", stage="diagnosis").returncode, 0)
+        self.assertIn("--job-name=s5e-t", self.ledger_records()[0]["argv"])
+        self.sacct_out.write_text("998|s5n-closed-campaign|COMPLETED|60|billing=32|2026-09-25T01:00:00\n")
+        self.assertEqual(self.run_meter("measure").returncode, 0)
+        self.sacct_out.write_text("997|s5e-rogue|RUNNING|60|billing=32|2026-09-25T01:00:00\n")
+        self.assertEqual(self.run_meter("measure").returncode, 6)
+
+    def test_no_gpu_admission(self):
+        self.write_budget(self.s5e_budget())
+        r = self.submit("--gpus-per-task", "1", "--", "job.sh", stage="diagnosis", pool="gpu",
+                        qos="gpu_shared", billing="32", timelimit="0.5")
+        self.assertEqual(r.returncode, 3)
+
+    def test_two_whole_nodes_admitted_third_refused_by_concurrency(self):
+        self.write_budget(self.s5e_budget())
+        for _ in range(2):
+            self.assertEqual(self.submit("--", "job.sh", stage="diagnosis", billing="256", qos="regular",
+                                         timelimit="3").returncode, 0)
+        self.assertEqual(self.submit("--", "job.sh", stage="diagnosis", billing="256", qos="regular",
+                                     timelimit="1").returncode, 4)
+
+    def test_diagnosis_stage_cap_refuses(self):
+        self.write_budget(self.s5e_budget())
+        self.assertEqual(self.submit("--", "job.sh", stage="diagnosis", billing="256", qos="regular",
+                                     timelimit="10.5").returncode, 3)
+        self.assertEqual(self.submit("--", "job.sh", stage="diagnosis", billing="256", qos="regular",
+                                     timelimit="10").returncode, 0)
+
+
 class UnitTests(unittest.TestCase):
     def test_bracket_expansion(self):
         self.assertEqual(s5c_meter._expand_bracket("7_[0-2,5%2]"), ["7_0", "7_1", "7_2", "7_5"])
@@ -388,6 +432,21 @@ class UnitTests(unittest.TestCase):
             self.assertAlmostEqual(section["carried_forward"]["envelope_node_hours"], envelope)
             self.assertLessEqual(section["campaign_cap_node_hours"],
                                  envelope - prior["summary"][pool]["charged_node_hours"])
+
+
+    def test_committed_s5e_budget_carries_both_prior_campaigns(self):
+        repo = HERE.parent.parent
+        state = repo / "docs/orchestration/state/s5e"
+        budget = s5c_meter.load_budget(state / "budget.json")
+        prior = sum(json.loads((state / f"prior-ledger-{c}-20260925T2230Z.json").read_text())["summary"]["cpu"]["charged_node_hours"]
+                    for c in ("s5c", "s5n"))
+        cpu = budget["pools"]["cpu"]
+        self.assertAlmostEqual(cpu["carried_forward"]["prior_charged_node_hours"], prior, places=9)
+        self.assertEqual(cpu["campaign_cap_node_hours"], 60.0)
+        self.assertAlmostEqual(cpu["stages"]["verification_repair"], 0.2 * 60.0)
+        self.assertLessEqual(cpu["stages"]["diagnosis"], 10.0)
+        self.assertEqual(budget["pools"]["gpu"]["campaign_cap_node_hours"], 0.0)
+        self.assertEqual(s5c_meter.job_prefix(budget), "s5e-")
 
 
 if __name__ == "__main__":

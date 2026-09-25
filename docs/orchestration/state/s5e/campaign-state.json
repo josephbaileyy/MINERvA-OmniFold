@@ -4,7 +4,7 @@
  "tracker": "OI-192",
  "authority": {
   "record": "docs/orchestration/AUTHORIZATION-20260925-oi192-estimator-diagnosis.md",
-  "commit": "the commit that first adds this file"
+  "commit": "4ec167d335628fdde09e00a771f0c6170497fc44"
  },
  "prior_plan": {
   "path": "docs/orchestration/PLAN-scalar5d-reportable-uncertainties-and-inference.md",
@@ -14,8 +14,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-oi192",
  "branch": "campaign/oi192-diagnosis-20260925",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5e-20260925/",
- "phase": "AUTHORIZED",
- "phase_detail": "authorization, contract, budget and state committed before implementation; next: register the campaign in the meter and launcher, implement the diagnosis instrumentation with tests, commit task tables, deploy, rebind the ledger, verify admission in native units, launch diagnosis",
+ "phase": "DIAGNOSIS READY",
+ "phase_detail": "meter/launcher registration of s5e, diagnosis instrumentation (s5e_trace.py, s5e_driver_departure.py, s5e_geometry.py) with local tests (stub estimators; mutation-checked) and cluster tests, contract amendment 1, and the D-series task tables and queues committed; no campaign compute yet",
  "pinned": {
   "contract": "docs/orchestration/state/s5e/contract.json (frozen at the commit that first adds it)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -33,10 +33,13 @@
  "jobs": [],
  "receipts": [],
  "candidates": [],
- "next_action": "implementation commit: meter/launcher registration of s5e, s5e diagnosis code and tests, D-series task tables",
+ "next_action": "deploy a clean clone at this commit under the namespace, run tests/test_s5e_cluster.py in the analysis environment, rebind the ledger to budget revision 1, verify admission by a meter dry run, then launch queues diag-A.q and diag-B.q",
  "concurrent_work_at_start": "jobs 58880337/58880338/58880339 and further josephrb GPU jobs and CPU job 58880449 belong to other lanes (not touched); shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "35f8757b231f524e52c060e4db93af87420af4d9",
   "analysis_note_main": "a1027e6449f60db55f83d8f6806995f633131479 (s5n closeout record; re-verified at the deliverables step)"
- }
+ },
+ "amendments": [
+  "docs/orchestration/state/s5e/contract-amendment-1-diagnosis-execution.json"
+ ]
 }

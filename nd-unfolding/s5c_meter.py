@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Admission and accounting for the scalar-5D campaigns: s5c (activated 2026-09-24) and its
-successor s5n (``OI-191``, activated 2026-09-25).
+"""Admission and accounting for the scalar-5D campaigns: s5c (activated 2026-09-24), its
+successor s5n (``OI-191``, activated 2026-09-25) and the ``OI-192`` diagnosis s5e (authorized
+2026-09-25; ``AUTHORIZATION-20260925-oi192-estimator-diagnosis.md`` §3 row E5 carries S1-S2 forward).
 
 Authority: ``docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md``
 §3 rows S1-S2 (Joseph's D2), carried forward to the successor by
@@ -72,7 +73,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, Sequence
 
-CAMPAIGNS = {"s5c-20260924": "s5c-", "s5n-20260925": "s5n-"}  # campaign key -> job-name prefix
+CAMPAIGNS = {"s5c-20260924": "s5c-", "s5n-20260925": "s5n-", "s5e-20260925": "s5e-"}  # campaign key -> job-name prefix
 CAMPAIGN_KEY = "s5c-20260924"
 JOB_PREFIX = CAMPAIGNS[CAMPAIGN_KEY]
 WHOLE_NODE_BILLING = {"cpu": 256.0, "gpu": 128.0}

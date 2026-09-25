@@ -1,0 +1,30 @@
+{
+ "schema": "s5e-contract-amendment/1",
+ "amends": "docs/orchestration/state/s5e/contract.json",
+ "number": 1,
+ "status": "FROZEN at the commit that first adds this file: with the diagnosis code and task tables, before ANY campaign compute (no s5e job has been admitted when it is committed)",
+ "changes": {
+  "D5_capacity_K_max": {
+   "was": "D5 (i) capacity probe on asimov_same with K_max = 30",
+   "now": "D5 (i) capacity probe (n_estimators 400, num_leaves 31) with K_max = 15; compared with D4 at every equal k <= 15. D5 (ii) (missed-event unity) keeps K_max = 30",
+   "why": "cost and wall time: the probe's per-iteration cost is ~4x the F2 cost on the full-MC asimov construction (~2.6 min per F2 iteration at 32 threads, estimated from the s5n timing of 0.0136 node-h per 5-iteration half-sample experiment at 8 steps per node), so 30 iterations would take ~5 h of wall per departure; 15 iterations keep the probe inside the diagnosis allocation. Declared before any D-series result exists"
+  },
+  "D2_upcast_control": {
+   "now": "D2 (b) adds the upcast-only control: float64 coordinates equal to the float32 values (no jitter). It must reproduce the float32 result bitwise; if it does not, the precision probe is confounded by dtype handling and is reported as such"
+  },
+  "D2_data_rows": {
+   "now": "on the real data (npz path, negweight-refined, 5 iterations): B0 traced (must equal the s5n c7 npz product docs-routed as runs/c7/data_negweight.npz bitwise), per-estimator seeds 42/43/44, upcast-only, float32-ulp jitter (seed 1)"
+  },
+  "D7_B0_rows": {
+   "now": "the background-inclusive B0 experiment is re-run traced at seeds 300004-300011 (300000-300003 come from D3's iteration-5 state), so all 12 paired seeds carry the measured-side histogram and every one is compared bitwise with its s5n product (an extension of D0)"
+  },
+  "D6_geometry_output": {
+   "now": "D6 (i) writes its JSON receipt to runs/diag/geometry.json"
+  }
+ },
+ "execution_plan": {
+  "allocations": "two interactive CPU allocations through nd-unfolding/s5c_launch.sh with S5C_CAMPAIGN=s5e, stage diagnosis: A = 3.5 h (D3 trace; D1 driver, D6 geometry and D2 data rows; then D7), B = 4.0 h (D5; D4 and D2 asimov rows); steps of 32 CPUs at 56G, 8 per node; reservation 7.5 of the 10.0 diagnosis node-h",
+  "forecast_node_h": "about 4.5 (A ~1.8, B ~2.7) including whole-node idle tails; the meter reserves the full 7.5 until reconciliation",
+  "cannot_authorize": "any cause without the contract's attribution rule; any candidate without a later amendment"
+ }
+}
