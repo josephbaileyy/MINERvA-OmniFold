@@ -383,3 +383,25 @@ Authority `docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activatio
   in: detector arm without `--closure-slack 5000`), `58857791` (interactive GPU node): F2 detector
   weight-only bands and matched CV.
 
+### 2026-09-25 (later) — s5c campaign (OI-190): Tier-S futility FAIL, final disposition
+
+- Reviews: round 2 (`4bdfa75e`) confirmed the purity-background bias and found amendment 3's
+  allowance inflating every interval → amendment 4 (bias correction, `95d0e87c`, frozen with 22
+  unread validation products on disk). Round 3 (`f511dcd6`): the evaluator is correct, but a pass
+  would cover only the corrected construction and development data predict failure →
+  `docs/orchestration/state/s5c/review-3-disposition.json`; construction beyond running
+  allocations HELD, all slots to validation lines 0-119.
+- Unattended lanes: `nd-unfolding/s5c_queue.sh`, `s5c_launch.sh`, `s5c_valid_next.sh` (claims),
+  `s5c_futility_watch.sh`; queues under `docs/orchestration/state/s5c/queues/`. Two defects found
+  and fixed in flight: GPU-node steps inherited all 4 GPUs (serialized, `3683a4af`); the claim
+  lock was inherited by the launched steps runner (CPU lane blocked 46 min, `83b16c16`).
+- Validation allocations: `58861566`, `58862360`, `58863216`, `58865811`, then `58868867`,
+  `58870274`, `58872289` (cancelled by the futility watcher at 17:40:55Z). Construction:
+  `58857523` (bootstrap 100/100, sweep lines 0-39), `58857791` (detector lines 0-4).
+- **Futility look 17:40:55Z: FAIL** — `VALIDATION_LEDGER.md` `VL150`,
+  `docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md`; independently reproduced
+  (review round 4, `83b16c16`), which also found the q3-truth sentinel defect (fixed in
+  `s5c_pseudo.py`, `KNOWN_ISSUES.md` 76).
+- Spend (meter, 17:49Z): 20.09 CPU + 9.79 GPU node-h (39.2 A100-h) of the 500/500 envelope;
+  `docs/orchestration/state/s5c/tier_s/meter-measure-20260925T1749Z.json`. No s5c job remains.
+

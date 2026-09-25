@@ -128,12 +128,14 @@ replacement is implied for 4D/FPS or dependent significances. See
 
 ## Remediation in flight
 
-- **2026-09-25, s5c campaign (`OI-190`, in progress).** Candidate F2 (deterministic LightGBM with
-  full-sample binning) replaces the existing estimator in a successor construction; the existing
-  estimator fails the 5% seed gate on every coarse partition (`VL146`). Tier-S statistical coverage
-  (12,000 end-to-end pseudo-experiments) and the F2 construction are running. **Nothing here
-  changes a quotable result; the adopted trunk `3d7465f6…` stands.** Route:
-  `docs/orchestration/CAMPAIGN-s5c-20260924-index.md`.
+- **2026-09-25, s5c campaign (`OI-190`) — FINAL DISPOSITION: Tier-S FAIL (futility), no checkpoint
+  qualifies.** The existing estimator fails the 5% seed gate on every coarse partition (`VL146`);
+  candidate F2 (deterministic LightGBM) failed Tier-S coverage of its bias-corrected statistical
+  intervals at the nominal and E_avail-tilt truths (`VL150`, independently reproduced), with its two
+  development revisions exhausted. End-to-end pseudo-experiments also showed the purity background
+  method biases the highest-W cells by up to 4% at nominal truth, 0.36–1.07 of the adopted quoted σ
+  (`VL149`, `KNOWN_ISSUES.md` 75). **No F2 product is adopted; the adopted trunk `3d7465f6…` stands
+  with that bias recorded against it.** Route: `docs/orchestration/CAMPAIGN-s5c-20260924-index.md`.
 
 - **Prospective Z precursor `z_precursor_20260914` COMPLETED 2026-09-14 (construction evidence,
   NOT adoption).** 62/62 tasks validated by identity at deployment `zdeploy-e09513d8`

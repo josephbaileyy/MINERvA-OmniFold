@@ -57,7 +57,11 @@ def truth_weight(name: str, gen: np.ndarray, edges: list, amplitude: float,
     fine (E_avail, W) truth cell while preserving that cell's w_truth-weighted total exactly: within
     each cell r = 1 + a z, where z is the cell-standardized q3, clipped to [-2, 2] and re-centred to
     weighted mean zero (so the (E_avail, W) marginal of the reweighted truth equals the nominal one
-    to rounding; r > 0 for |a| < 0.5)."""
+    to rounding; r > 0 for |a| < 0.5). Only rows inside the 5D grid on every axis enter the cell statistics
+    and are reweighted (the rows np.histogramdd keeps for x_true); rows outside it, including the
+    -9999 gen sentinels of the input sample, keep r = 1. Before 2026-09-25 the sentinels entered the
+    statistics: 2,801 rows, which broke the in-grid marginal (EW5 1.128, EW36 0.981) and all but
+    removed the deformation in the lowest-E_avail row (independent review round 4)."""
     if name == "nominal":
         return np.ones(gen.shape[0])
     if name == "eavail_tilt":
@@ -67,20 +71,28 @@ def truth_weight(name: str, gen: np.ndarray, edges: list, amplitude: float,
     if name == "q3_given_eavail_w":
         if w_truth is None or abs(amplitude) >= 0.5:
             raise ValueError("q3_given_eavail_w needs w_truth and |amplitude| < 0.5")
+        ok = np.ones(gen.shape[0], bool)
+        for k in range(gen.shape[1]):
+            e = np.asarray(edges[k], float)
+            ok &= (gen[:, k] >= e[0]) & (gen[:, k] <= e[-1])
+        rows = np.flatnonzero(ok)
+        gen = gen[rows]
         ie = np.clip(np.searchsorted(edges[AXIS["eavail"]], gen[:, AXIS["eavail"]], side="right") - 1,
                      0, len(edges[AXIS["eavail"]]) - 2)
         iw = np.clip(np.searchsorted(edges[AXIS["W"]], gen[:, AXIS["W"]], side="right") - 1,
                      0, len(edges[AXIS["W"]]) - 2)
         cell = ie * (len(edges[AXIS["W"]]) - 1) + iw
         n = int(cell.max()) + 1
-        w = np.asarray(w_truth, float)
+        w = np.asarray(w_truth, float)[rows]
         q = gen[:, AXIS["q3"]].astype(float)
         sw = np.bincount(cell, weights=w, minlength=n)
         mu = np.bincount(cell, weights=w * q, minlength=n) / np.where(sw > 0, sw, 1)
         var = np.bincount(cell, weights=w * (q - mu[cell]) ** 2, minlength=n) / np.where(sw > 0, sw, 1)
         z = np.clip((q - mu[cell]) / np.sqrt(np.where(var > 0, var, 1.0))[cell], -2.0, 2.0)
         z = z - (np.bincount(cell, weights=w * z, minlength=n) / np.where(sw > 0, sw, 1))[cell]
-        return 1.0 + amplitude * z
+        r = np.ones(ok.size)
+        r[rows] = 1.0 + amplitude * z
+        return r
     raise ValueError(name)
 
 

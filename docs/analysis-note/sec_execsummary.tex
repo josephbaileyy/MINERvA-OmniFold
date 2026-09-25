@@ -23,7 +23,13 @@ and uncertainty propagation still become harder with dimension.
 The fixed-dimension measurements use gradient-boosted decision trees, validated
 with closure, iteration, pull, and calibration diagnostics and neural-network
 cross-checks. The existing 2D toy ensemble does not provide an independent-truth
-coverage test; that test remains open.
+coverage test; that test remains open. In five dimensions an end-to-end
+independent-truth test was run on the statistical intervals of a deterministic
+variant of the estimator, with a nominal-truth bias correction (1,200
+pseudo-experiments over three truths). It failed its predeclared futility
+criterion at the nominal and the $\Eavail$-tilted truths, so no frequentist
+coverage is claimed for any five-dimensional interval.
+% Source: docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
 
 \paragraph{Results overview:}
 \begin{itemize}[itemsep=2pt]

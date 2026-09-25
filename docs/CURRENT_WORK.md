@@ -13,7 +13,6 @@ never derived from OI state prose; terminal and deferred records never enter thi
 |---|---|---|---|---|---|
 | OI-71 | WAITING-JOSEPH | Joseph | publication/P1 | Decide whether recovery evidence may be quoted without a measurement at the promoted configuration. | docs/OPEN_ITEMS.md (`OI-71`) |
 | OI-125 | NOW | PET lane | publication/P1 | Record the end-of-run fold-forward scalar, not the neighbouring consumption-time reduction, and bind the like-for-like result. | docs/OPEN_ITEMS.md (`OI-125`) |
-| OI-190 | NOW | scalar5d campaign | publication/P1 | Execute the approved scalar-5D uncertainty and inference plan through final disposition; commit ledger, run-log and status records with each result. | docs/OPEN_ITEMS.md (`OI-190`) |
 | OI-93 | NOW | lane B | publication/P2 | Require every truncated C_stat consumer to declare effective rank, ensemble size, precision-bias treatment, and the PPP diagnostic. | docs/OPEN_ITEMS.md (`OI-93`) |
 | OI-130 | NOW | lane D (audit / inventory / verification, READ-ONLY) | publication/P2 | Enumerate quoted values to artifacts and preservation status, then remediate by evidence class. | docs/OPEN_ITEMS.md (`OI-130`) |
 | OI-75 | WAITING-JOSEPH | Joseph | provenance/P1 | Reconcile the unrecorded standard-P4 Stage-3 run with the standing no-run hold before preserving or using its products. | docs/OPEN_ITEMS.md (`OI-75`) |

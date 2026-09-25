@@ -64,6 +64,29 @@ class CorrelationDeformation(unittest.TestCase):
         q_def = np.histogram(gen[:, 3], bins=edges[3], weights=w * r)[0]
         self.assertGreater(np.max(np.abs(q_def / q_nom - 1)), 0.02)
 
+    def test_gen_sentinels_neither_enter_the_statistics_nor_break_the_in_grid_marginal(self):
+        """The input sample carries -9999 gen sentinels (2,801 pass_truth rows have q3 or W = -9999).
+        They must keep r = 1 and must not move the in-grid (E_avail, W) marginal that x_true is built on."""
+        rng = np.random.default_rng(5)
+        n = 100_000
+        gen = rng.random((n, 5)) * np.array([4.5, 60, 3.0, 3.0, 3.0])
+        gen[:, 3] = gen[:, 2] * 0.8 + rng.random(n)
+        edges = [np.linspace(0, 4.5, 4), np.linspace(0, 60, 4), np.linspace(0, 3, 7),
+                 np.linspace(0, 4, 6), np.linspace(0, 3, 6)]
+        bad = rng.choice(n, 2000, replace=False)
+        gen[bad[:1000], 3] = -9999.0
+        gen[bad[1000:], 4] = -9999.0
+        gen[bad[:1000], 2] = 0.1          # sentinels sit in the lowest-E_avail row, as in the data
+        w = rng.uniform(0.5, 1.5, n)
+        r = s5c_pseudo.truth_weight("q3_given_eavail_w", gen, edges, 0.3, w_truth=w)
+        np.testing.assert_array_equal(r[bad], 1.0)
+        kept = np.histogramdd(gen, bins=edges, weights=w)[0].sum(axis=(0, 1, 3))
+        moved = np.histogramdd(gen, bins=edges, weights=w * r)[0].sum(axis=(0, 1, 3))
+        np.testing.assert_allclose(moved, kept, rtol=1e-10)
+        q_nom = np.histogramdd(gen, bins=edges, weights=w)[0].sum(axis=(0, 1, 2, 4))
+        q_def = np.histogramdd(gen, bins=edges, weights=w * r)[0].sum(axis=(0, 1, 2, 4))
+        self.assertGreater(np.max(np.abs(q_def / q_nom - 1)), 0.02)
+
     def test_refuses_nonpositive_amplitude_range(self):
         with self.assertRaises(ValueError):
             s5c_pseudo.truth_weight("q3_given_eavail_w", np.zeros((3, 5)), [np.linspace(0, 1, 3)] * 5, 0.6,

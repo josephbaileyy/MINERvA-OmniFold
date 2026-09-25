@@ -1,0 +1,74 @@
+[futility] 2026-09-25T10:55:27Z present 30 of 1200
+[futility] 2026-09-25T11:05:27Z present 46 of 1200
+[futility] 2026-09-25T11:15:27Z present 62 of 1200
+[futility] 2026-09-25T11:20:36Z watcher restarted on deploy 12d94181 (fail-closed count)
+[futility] 2026-09-25T11:20:36Z present 70 of 1200
+[futility] 2026-09-25T11:30:37Z present 86 of 1200
+[futility] 2026-09-25T11:40:37Z present 101 of 1200
+[futility] 2026-09-25T11:50:37Z present 126 of 1200
+[futility] 2026-09-25T12:00:37Z present 152 of 1200
+[futility] 2026-09-25T12:10:37Z present 177 of 1200
+[futility] 2026-09-25T12:20:38Z present 199 of 1200
+[futility] 2026-09-25T12:30:38Z present 229 of 1200
+[futility] 2026-09-25T12:40:38Z present 267 of 1200
+[futility] 2026-09-25T12:50:38Z present 308 of 1200
+[futility] 2026-09-25T13:00:38Z present 349 of 1200
+[futility] 2026-09-25T13:10:39Z present 387 of 1200
+[futility] 2026-09-25T13:20:39Z present 425 of 1200
+[futility] 2026-09-25T13:30:39Z present 470 of 1200
+[futility] 2026-09-25T13:40:39Z present 510 of 1200
+[futility] 2026-09-25T13:50:40Z present 549 of 1200
+[futility] 2026-09-25T14:00:40Z present 580 of 1200
+[futility] 2026-09-25T14:10:40Z present 606 of 1200
+[futility] 2026-09-25T14:20:40Z present 645 of 1200
+[futility] 2026-09-25T14:30:41Z present 686 of 1200
+[futility] 2026-09-25T14:40:41Z present 722 of 1200
+[futility] 2026-09-25T14:50:41Z present 765 of 1200
+[futility] 2026-09-25T15:00:41Z present 806 of 1200
+[futility] 2026-09-25T15:10:42Z present 840 of 1200
+[futility] 2026-09-25T15:20:42Z present 872 of 1200
+[futility] 2026-09-25T15:30:42Z present 914 of 1200
+[futility] 2026-09-25T15:40:42Z present 953 of 1200
+[futility] 2026-09-25T15:50:43Z present 987 of 1200
+[futility] 2026-09-25T16:00:43Z present 1010 of 1200
+[futility] 2026-09-25T16:10:43Z present 1035 of 1200
+[futility] 2026-09-25T16:20:43Z present 1058 of 1200
+[futility] 2026-09-25T16:30:43Z present 1082 of 1200
+[futility] 2026-09-25T16:40:44Z present 1106 of 1200
+[futility] 2026-09-25T16:50:44Z present 1128 of 1200
+[futility] 2026-09-25T17:00:44Z present 1150 of 1200
+[futility] 2026-09-25T17:10:44Z present 1169 of 1200
+[futility] 2026-09-25T17:20:44Z present 1186 of 1200
+[futility] 2026-09-25T17:30:44Z present 1196 of 1200
+[futility] 2026-09-25T17:40:44Z present 1200 of 1200
+{
+ "verdict": "FUTILITY-FAIL",
+ "g0": {
+  "truth": "nominal",
+  "n_present": 400,
+  "min_lcb68": 0.4764142913469907,
+  "min_lcb95": 0.774715018662089,
+  "argmin68": "EW36",
+  "argmin95": "EW36"
+ },
+ "g1": {
+  "truth": "eavail_tilt",
+  "n_present": 400,
+  "min_lcb68": 0.025250212016202932,
+  "min_lcb95": 0.20835601153407649,
+  "argmin68": "J224",
+  "argmin95": "EW17"
+ },
+ "g2": {
+  "truth": "q3_given_eavail_w",
+  "n_present": 400,
+  "min_lcb68": 0.0,
+  "min_lcb95": 0.0,
+  "argmin68": "EW1",
+  "argmin95": "EW1"
+ }
+}
+[futility] 2026-09-25T17:40:55Z verdict=FUTILITY-FAIL out=/pscratch/sd/j/josephrb/s5c-20260924/runs/futility/interim_400.json
+[futility] 2026-09-25T17:40:55Z cancelled validation allocation 58868867
+[futility] 2026-09-25T17:40:55Z cancelled validation allocation 58872289
+[futility] 2026-09-25T17:40:55Z cancelled validation allocation 58870274
