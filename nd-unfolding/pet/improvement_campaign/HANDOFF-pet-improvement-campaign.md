@@ -28,7 +28,7 @@ Read this, then `README.md` (state table), then `PROTOCOL-20260922.md` (design +
 | `pet-improvement-20260922-phaseE1` | distortion library, identifiability, scalar references under distortion, reference assessment |
 | `pet-improvement-20260922-phaseF1` | AUSSIE scalar benchmark + miss-handling ablation; development-stage scalar scaling (`phase_d/`) |
 | `pet-improvement-20260922-pools` | event-pool manifest (`pools/POOL_MANIFEST.json`) |
-| `pet-improvement-20260922-confirm` | confirmatory runner; PILOT/FINAL/STRESS execution (**still receiving commits** — merge it again) |
+| `pet-improvement-20260922-confirm` | confirmatory runner; PILOT and FINAL execution (merged at `ce1f97e0`; retired — later work is on the campaign branch) |
 | `pet-improvement-20260922-deck` | generated deck v2 (`slides/`) |
 
 ## Where things stand (update this block)
@@ -47,8 +47,9 @@ Read this, then `README.md` (state table), then `PROTOCOL-20260922.md` (design +
 
 ## How to resume
 
-1. `git fetch origin && git merge origin/pet-improvement-20260922-confirm` into the campaign branch (the runner
-   commits there). Read `confirm/README.md` (status block, job ids, run tables) and `confirm/CONFIRM_RESULTS.md`.
+1. Since 2026-09-24 23:45Z harvests and analysis commit **directly to the campaign branch** (the V1 delegate that
+   used `pet-improvement-20260922-confirm` ended; that branch is fully merged at `ce1f97e0` and receives no more
+   commits). Read `confirm/README.md` (status block, job ids, run tables) and `confirm/CONFIRM_RESULTS.md`.
 2. On Perlmutter (`ssh perlmutter.nersc.gov`; access is a **24-hour sshproxy certificate** — if ssh says
    `Permission denied (publickey)`, check `ssh-keygen -L -f ~/.ssh/nersc-cert.pub` and ask Joseph to run
    `/usr/local/bin/sshproxy -u josephrb -o nersc`): `squeue -u josephrb` for `pv1-*` jobs. Run outputs:
@@ -60,7 +61,8 @@ Read this, then `README.md` (state table), then `PROTOCOL-20260922.md` (design +
 4. When FINAL is complete: run the analyzer, write the confirmatory section of the report, regenerate the deck
    (`cd slides && python make_campaign_deck.py`, then `pytest test_deck_numbers.py`), run review round 2 on the
    FINAL/STRESS results, then the required records, the resource ledger (`python aggregate_resources.py`), the draft
-   PR, and update this handoff.
+   PR, and update this handoff. Resources: re-run `confirm/ledger_from_sacct.py` (command in its docstring), then
+   `python aggregate_resources.py`.
 5. Coverage runs only if amendment 2's condition holds (adequate at K* on FINAL **and** no "moves away" on an
    identifiable stress case).
 
