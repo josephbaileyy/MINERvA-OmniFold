@@ -192,6 +192,43 @@ def test_nonfinite_value_is_refused_with_its_location(world):
     assert '"position": [0, 0, 5]' in msg
 
 
+def test_nonfinite_momentum_policy(world):
+    reco = np.flatnonzero(world.pass_reco & (world.row_index >= 0))
+    victim = int(reco[3])
+    shard, local = world.origin[world.row_index[victim]]
+    blob = dict(np.load(world.files[shard]))
+    blob["tokens"] = blob["tokens"].copy()
+    blob["tokens"][local, 0, 0:3] = np.nan               # the observed shape: px = py = pz = NaN
+    np.savez_compressed(world.files[shard], **blob)
+    rows = np.sort(np.concatenate([reco[:10], np.flatnonzero(~world.pass_reco)[:5]]))
+    with pytest.raises(SystemExit, match="non-finite"):
+        tr.gather(world.index, rows, world.pass_reco)
+    got = tr.gather(world.index, rows, world.pass_reco, nonfinite_momentum="zero")
+    ref = mtz.materialize(world.files, world.row_index, world.origin, rows, world.pass_reco)
+    i = int(np.searchsorted(rows, victim))
+    assert np.isfinite(got["packed"]).all()
+    rep = got["record"]["nonfinite_momentum_repairs"]
+    assert [r["inventory_row"] for r in rep] == [victim] and rep[0]["tokens"] == [0]
+    tok = got["packed"][i, 0]
+    assert tok[0] == 0.0 and tok[1] == 0.0 and tok[2] == np.float32(np.log(1e-6))
+    assert tok[3:].tobytes() == ref["packed"][i, 0, 3:].tobytes()       # log E, PID, add_info
+    mask = np.ones(len(rows), bool)
+    mask[i] = False
+    assert got["packed"][mask].tobytes() == ref["packed"][mask].tobytes()
+    assert got["packed"][i, 1:].tobytes() == ref["packed"][i, 1:].tobytes()
+    assert got["record"]["nonfinite_momentum_policy"] == "zero"
+    # a non-finite value outside the momentum is never repaired
+    blob["add_info"] = blob["add_info"].copy()
+    blob["add_info"][local, 1, 2] = np.inf
+    np.savez_compressed(world.files[shard], **blob)
+    with pytest.raises(SystemExit, match="outside the token momentum"):
+        tr.gather(world.index, rows, world.pass_reco, nonfinite_momentum="zero")
+    # the policy is part of the cache key
+    legs = {"prior": rows}
+    k1 = tr.cache_key(world.index, "d", legs, "refuse")
+    assert k1 != tr.cache_key(world.index, "d", legs, "zero")
+
+
 def test_pass_reco_length_mismatch_refused(world):
     with pytest.raises(SystemExit, match="pass_reco"):
         tr.gather(world.index, np.array([1, 2]), world.pass_reco[:-1])

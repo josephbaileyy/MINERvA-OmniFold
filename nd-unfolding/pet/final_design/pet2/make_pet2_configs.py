@@ -112,7 +112,8 @@ def pet2_config(base: RunConfig, variant: str, constants: dict[str, Any], *, ite
 
 
 def build(stage: str, candidates: list[str], selections: list[tuple[str, int, str]],
-          iterations: int, out_dir: Path, manifest: Path, **kw: Any) -> list[str]:
+          iterations: int, out_dir: Path, manifest: Path, nonfinite_momentum: str = "refuse",
+          **kw: Any) -> list[str]:
     base = mdc.base_config()
     constants = pet2_recipe_constants()
     cfg_dir = out_dir / stage
@@ -137,7 +138,10 @@ def build(stage: str, candidates: list[str], selections: list[tuple[str, int, st
             (cfg_dir / f"{name}.json").write_text(cfg.to_json(indent=1) + "\n")
             rel = f"../../final_design/configs/{stage}/{name}.json"
             rows.append("\t".join([name, rel, cfg.content_hash(), f"{pool}:{r}", dist, "-",
-                                   f"--step2-miss-mode {EFF}", RUNNER]))
+                                   f"--step2-miss-mode {EFF}"
+                                   + ("" if nonfinite_momentum == "refuse"
+                                      else f" --nonfinite-momentum {nonfinite_momentum}"),
+                                   RUNNER]))
     manifest.parent.mkdir(parents=True, exist_ok=True)
     manifest.write_text("\n".join(rows) + "\n")
     return rows[1:]
@@ -157,6 +161,8 @@ def main(argv: Any = None) -> int:
     ap.add_argument("--step1-batch", type=int, default=None, help="default: 2048 (declared)")
     ap.add_argument("--step1-learning-rate", type=float, default=None,
                     help="default: 1e-4 (declared); a tuning opportunity applies to both variants")
+    ap.add_argument("--nonfinite-momentum", choices=("refuse", "zero"), default="refuse",
+                    help="driver argument written to the manifest (theirs_rows policy)")
     ap.add_argument("--out-dir", type=Path, default=STUDY / "configs")
     ap.add_argument("--manifest", type=Path, required=True)
     a = ap.parse_args(argv)
@@ -165,7 +171,7 @@ def main(argv: Any = None) -> int:
         pool, r, dist = s.split(":", 2)
         sels.append((pool, int(r), dist))
     rows = build(a.stage, a.candidates, sels, a.iterations, a.out_dir, a.manifest,
-                 step1_epochs=a.step1_epochs, step2_epochs=a.step2_epochs,
+                 nonfinite_momentum=a.nonfinite_momentum, step1_epochs=a.step1_epochs, step2_epochs=a.step2_epochs,
                  step1_iteration_lr=a.step1_iteration_lr, step1_batch=a.step1_batch,
                  step1_learning_rate=a.step1_learning_rate)
     print(f"{len(rows)} runs -> {a.manifest}")

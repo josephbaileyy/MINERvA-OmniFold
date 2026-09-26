@@ -93,6 +93,11 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     p.add_argument("--theirs-cache", type=Path, default=None,
                    help="keyed per-replicate PET2 input cache (built if absent, reused if the "
                         "key matches, refused otherwise)")
+    p.add_argument("--nonfinite-momentum", choices=tr.NONFINITE_MOMENTUM_POLICIES,
+                   default="refuse",
+                   help="a STORED non-finite PET2 token momentum in a reco-passing row: refuse "
+                        "(default) or zero it before the historical conversion, listing every "
+                        "repair (theirs_rows.NONFINITE_MOMENTUM_POLICIES)")
     p.add_argument("--pretrained-reference", type=Path, default=PRETRAINED_STATE,
                    help="the exported pretrained state the first-step verification compares "
                         "with (both variants); must hash to the pinned sha256")
@@ -168,10 +173,11 @@ def preflight(args: argparse.Namespace) -> tuple[Path, RunConfig, Any, Any, dict
 
 
 def run_identity(config: RunConfig, arm: Any, miss_mode: str, selection: Any, distortion: Any,
-                 index: Any) -> dict[str, Any]:
+                 index: Any, nonfinite_momentum: str = "refuse") -> dict[str, Any]:
     ident = rr.run_identity(config, arm, miss_mode, selection, distortion)
     ident.pop("run_identity")
     ident.update({"driver": hd.SCHEMA, "variant": hd.variant_of(config),
+                  "nonfinite_momentum": nonfinite_momentum,
                   "theirs_join_npz_sha256": index.record["join_sig_npz_sha256"]})
     ident["run_identity"] = hashlib.sha256(json.dumps(ident, sort_keys=True).encode()).hexdigest()
     return ident
@@ -203,7 +209,7 @@ def theirs_cache_only(args: argparse.Namespace, config: RunConfig, arm: Any, dis
             "prior": selection.prior_rows}
     del pass_truth
     theirs = tr.gather_legs_cached(index, legs, pass_reco, tr.sha256_array(pass_reco),
-                                   args.theirs_cache)
+                                   args.theirs_cache, nonfinite_momentum=args.nonfinite_momentum)
     record = {"schema": SCHEMA + "/theirs-cache", "config_hash": config.content_hash(),
               "selection": selection.record, "join": index.record, "union": theirs["union"],
               "legs": theirs["legs"], "cache": theirs["cache"],
@@ -258,7 +264,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         args.pool, args.replicate, pools_npz=args.pools_npz, manifest=args.manifest,
         identity_sidecar=args.identity_sidecar, n_prior=args.n_prior, n_pseudo=args.n_pseudo,
         family=args.family)
-    ident = run_identity(config, arm, args.step2_miss_mode, selection, distortion, index)
+    ident = run_identity(config, arm, args.step2_miss_mode, selection, distortion, index,
+                         args.nonfinite_momentum)
     ident_path = out / "run_identity.json"
     if ident_path.exists():
         before = json.loads(ident_path.read_text())
@@ -295,7 +302,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         raise SystemExit("[pet2] a pseudodata step-1 row does not pass reco")
     theirs = tr.gather_legs_cached(index, {"pdata": inputs.pdata["rows"],
                                            "prior": inputs.mc["rows"]},
-                                   pass_reco_all, pass_reco_sha, args.theirs_cache)
+                                   pass_reco_all, pass_reco_sha, args.theirs_cache,
+                                   nonfinite_momentum=args.nonfinite_momentum)
     del pass_reco_all
     theirs_record = {"join": index.record, "pass_reco_sha256": pass_reco_sha,
                      "union": theirs["union"], "legs": theirs["legs"], "cache": theirs["cache"],
