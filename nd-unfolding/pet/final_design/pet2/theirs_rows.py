@@ -245,7 +245,9 @@ def gather(index: TheirsIndex, rows: np.ndarray, pass_reco: np.ndarray, *,
         raise JoinError(f"[theirs_rows] opened {opened} shards for {needed} needed")
     bad = int((~np.isfinite(packed[reco_ok])).sum() + (~np.isfinite(globals_[reco_ok])).sum())
     if bad:
-        raise JoinError(f"[theirs_rows] {bad} non-finite values in gathered reco-passing rows")
+        where = nonfinite_locations(index, rows, packed, globals_, selected)
+        raise JoinError(f"[theirs_rows] {bad} non-finite values in gathered reco-passing rows: "
+                        f"{json.dumps(where[:20])}")
     zero_rows = ~(packed.reshape(rows.size, -1).any(axis=1) | globals_.any(axis=1))
     record = {"rows": int(rows.size), "rows_sha256": rows_digest(rows),
               "pass_reco_rows": int(reco_ok.sum()), "rows_without_reco": int((~reco_ok).sum()),
@@ -258,6 +260,31 @@ def gather(index: TheirsIndex, rows: np.ndarray, pass_reco: np.ndarray, *,
     if record["nonzero_rows_without_reco"]:
         raise JoinError("[theirs_rows] a !pass_reco row carries PET2 content")
     return {"packed": packed, "globals": globals_, "record": record}
+
+
+def nonfinite_locations(index: TheirsIndex, rows: np.ndarray, packed: np.ndarray,
+                        globals_: np.ndarray, selected: np.ndarray) -> list[dict[str, Any]]:
+    """Where each non-finite gathered value sits, with the value the shard STORES there."""
+    out: list[dict[str, Any]] = []
+    for block, arr in (("packed", packed), ("globals", globals_)):
+        for hit in np.argwhere(~np.isfinite(arr))[:50]:
+            i = int(hit[0])
+            shard, local = (int(x) for x in index.origin[selected[i]])
+            entry = {"block": block, "inventory_row": int(rows[i]), "position": hit.tolist(),
+                     "gathered": repr(float(arr[tuple(hit)])), "shard": index.files[shard],
+                     "row_in_shard": local}
+            with np.load(index.files[shard]) as blob:
+                if block == "globals":
+                    entry["stored"] = repr(float(blob["globals"][local, hit[1]]))
+                else:
+                    tok, col = int(hit[1]), int(hit[2])
+                    member, c = ("tokens", col) if col < 5 else ("add_info", col - 5)
+                    entry["stored_member"] = member
+                    entry["stored"] = repr(float(blob[member][local, tok, c]))
+                    entry["stored_token"] = [repr(float(x)) for x in blob["tokens"][local, tok]]
+                    entry["stored_add_info"] = [repr(float(x)) for x in blob["add_info"][local, tok]]
+            out.append(entry)
+    return out
 
 
 def gather_legs(index: TheirsIndex, legs: Mapping[str, np.ndarray], pass_reco: np.ndarray,

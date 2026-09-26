@@ -178,6 +178,20 @@ def test_bad_row_sets_are_refused(world, rows, match):
         tr.gather(world.index, rows, world.pass_reco)
 
 
+def test_nonfinite_value_is_refused_with_its_location(world):
+    victim = int(np.flatnonzero(world.pass_reco & (world.row_index >= 0))[0])
+    shard, local = world.origin[world.row_index[victim]]
+    blob = dict(np.load(world.files[shard]))
+    blob["add_info"] = blob["add_info"].copy()
+    blob["add_info"][local, 0, 0] = np.nan          # a stored NaN dE/dx on the first token
+    np.savez_compressed(world.files[shard], **blob)
+    with pytest.raises(SystemExit, match="non-finite") as err:
+        tr.gather(world.index, np.array([victim]), world.pass_reco)
+    msg = str(err.value)
+    assert f'"inventory_row": {victim}' in msg and '"stored_member": "add_info"' in msg
+    assert '"position": [0, 0, 5]' in msg
+
+
 def test_pass_reco_length_mismatch_refused(world):
     with pytest.raises(SystemExit, match="pass_reco"):
         tr.gather(world.index, np.array([1, 2]), world.pass_reco[:-1])
