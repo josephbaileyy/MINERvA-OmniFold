@@ -411,6 +411,65 @@ class DiagnosisCampaignTests(MeterHarness):
                                      timelimit="10").returncode, 0)
 
 
+class PrecisionCampaignTests(MeterHarness):
+    """The OI-193 precision-measurement campaign s5p: its own prefix and scan, CPU and GPU pools each
+    bound by the carried-forward envelope, the stages-1-2 cap, and the 2-node / 4-GPU concurrency."""
+
+    def s5p_budget(self) -> dict:
+        budget = _budget(cpu_cap=310.184, cpu_stages={"development": 46.527, "verification_repair": 62.037},
+                         gpu_cap=114.904, gpu_stages={"development": 17.235, "verification_repair": 22.981})
+        budget["campaign_key"] = "s5p-20260926"
+        budget["pools"]["cpu"]["carried_forward"] = {"envelope_node_hours": 345.27,
+                                                     "prior_charged_node_hours": 35.085911458333335}
+        budget["pools"]["gpu"]["carried_forward"] = {"envelope_node_hours": 125.0,
+                                                     "prior_charged_node_hours": 10.095277777777778}
+        return budget
+
+    def test_job_carries_the_s5p_prefix_and_scan_sees_only_it(self):
+        self.write_budget(self.s5p_budget())
+        self.assertEqual(self.submit("--dry-run", "--", "job.sh", stage="development").returncode, 0)
+        self.assertIn("--job-name=s5p-t", self.ledger_records()[0]["argv"])
+        self.sacct_out.write_text("998|s5e-closed-campaign|COMPLETED|60|billing=32|2026-09-26T01:00:00\n")
+        self.assertEqual(self.run_meter("measure").returncode, 0)
+        self.sacct_out.write_text("997|s5p-rogue|RUNNING|60|billing=32|2026-09-26T01:00:00\n")
+        self.assertEqual(self.run_meter("measure").returncode, 6)
+
+    def test_cap_above_the_unspent_envelope_is_refused(self):
+        budget = self.s5p_budget()
+        budget["pools"]["cpu"]["campaign_cap_node_hours"] = 310.19
+        self.write_budget(budget)
+        self.assertEqual(self.run_meter("measure").returncode, 5)
+
+    def test_development_stage_cap_refuses(self):
+        self.write_budget(self.s5p_budget())
+        self.assertEqual(self.submit("--", "job.sh", stage="development", billing="256", qos="regular",
+                                     timelimit="47").returncode, 3)
+        self.assertEqual(self.submit("--", "job.sh", stage="development", billing="256", qos="regular",
+                                     timelimit="4").returncode, 0)
+
+    def test_unallocated_stage_refused(self):
+        self.write_budget(self.s5p_budget())
+        self.assertEqual(self.submit("--", "job.sh", stage="validation", billing="256", qos="regular",
+                                     timelimit="1").returncode, 3)
+
+    def test_committed_s5p_budget_carries_all_three_prior_campaigns(self):
+        repo = HERE.parent.parent
+        state = repo / "docs/orchestration/state/s5p"
+        budget = s5c_meter.load_budget(state / "budget.json")
+        self.assertEqual(s5c_meter.job_prefix(budget), "s5p-")
+        for pool, envelope in (("cpu", 345.27), ("gpu", 125.0)):
+            prior = sum(json.loads((state / f"prior-ledger-{c}-20260926T1604Z.json").read_text())["summary"][pool]["charged_node_hours"]
+                        for c in ("s5c", "s5n", "s5e"))
+            section = budget["pools"][pool]
+            self.assertAlmostEqual(section["carried_forward"]["prior_charged_node_hours"], prior, places=9)
+            self.assertAlmostEqual(section["carried_forward"]["envelope_node_hours"], envelope)
+            cap = section["campaign_cap_node_hours"]
+            self.assertLessEqual(cap, envelope - prior)
+            self.assertGreater(cap, envelope - prior - 0.002)
+            self.assertLessEqual(section["stages"]["development"], 0.15 * cap)
+            self.assertGreaterEqual(section["stages"]["verification_repair"], 0.2 * cap - 0.001)
+
+
 class UnitTests(unittest.TestCase):
     def test_bracket_expansion(self):
         self.assertEqual(s5c_meter._expand_bracket("7_[0-2,5%2]"), ["7_0", "7_1", "7_2", "7_5"])

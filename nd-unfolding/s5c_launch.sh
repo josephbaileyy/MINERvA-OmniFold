@@ -11,7 +11,8 @@
 # inherits the job's 4 GPUs excludes every other step, as on allocation 58857791).
 # Exit: 0 and "LAUNCHED job=<id>" when admitted and started; otherwise the meter's exit code
 # (4 = refused by concurrency, 7 = not granted), so s5c_queue.sh can tell retryable refusals apart.
-# S5C_CAMPAIGN selects the campaign (default s5c; s5n = the OI-191 successor; s5e = the OI-192 diagnosis): its committed state
+# S5C_CAMPAIGN selects the campaign (default s5c; s5n = the OI-191 successor; s5e = the OI-192 diagnosis;
+# s5p = the OI-193 precision-measurement completion): its committed state
 # directory docs/orchestration/state/<campaign>/ (task tables and budget.json) and, unless S5C_NS is
 # set, its namespace; the meter then prices against that campaign's budget and ledger only.
 
@@ -24,6 +25,7 @@ case "$CAMP" in
     s5c) NS=${S5C_NS:-/pscratch/sd/j/josephrb/s5c-20260924} ;;
     s5n) NS=${S5C_NS:-/pscratch/sd/j/josephrb/s5n-20260925} ;;
     s5e) NS=${S5C_NS:-/pscratch/sd/j/josephrb/s5e-20260925} ;;
+    s5p) NS=${S5C_NS:-/pscratch/sd/j/josephrb/s5p-20260926} ;;
     *) echo "unknown campaign $CAMP" >&2; exit 2 ;;
 esac
 T="$DEPLOY/docs/orchestration/state/$CAMP"
