@@ -99,6 +99,30 @@ class UniverseTests(Stubbed):
         with self.assertRaises(RuntimeError):
             su.universe_inputs(inputs, bkg, bank_for(inputs, bkg, 0), w, "Flux", "3", None)
 
+    def test_prior_reweight_moves_the_denominator_with_the_truth(self):
+        inputs, bkg = toy()
+        shape = tuple(len(e) - 1 for e in EDGES)
+        inputs["denom_nd"] = np.full(shape, 80.0)
+        r = np.where(inputs["MCgen"][:, 2] > 0.4, 1.5, 1.0)
+        ui = su.prior_inputs(inputs, r)
+        np.testing.assert_array_equal(ui["w_truth"], np.asarray(inputs["w_truth"]) * r)
+        m = inputs["pass_truth"]
+        samp = np.asarray(inputs["MCgen"])[m].astype(float)
+        of0, _ = np.histogramdd(samp, bins=EDGES, weights=np.asarray(inputs["w_truth"])[m])
+        of1, _ = np.histogramdd(samp, bins=EDGES, weights=ui["w_truth"][m])
+        ok = of0 > 0
+        np.testing.assert_allclose((of1 / ui["denom_nd"])[ok], (of0 / inputs["denom_nd"])[ok])  # completeness unchanged
+        self.assertGreater(ui["denom_nd"].sum(), inputs["denom_nd"].sum())
+
+    def test_constant_prior_reweight_leaves_the_cross_section_unchanged(self):
+        inputs, bkg = toy()
+        inputs["denom_nd"] = np.full(tuple(len(e) - 1 for e in EDGES), 80.0)
+        import s5p_numerics
+        x0, _ = s5p_numerics.unfold_one(s5n_pseudo.build_data(inputs, bkg), np.float32, 42, 1, 3)
+        ui = su.prior_inputs(inputs, np.full(inputs["MCgen"].shape[0], 1.3))
+        x1, _ = s5p_numerics.unfold_one(s5n_pseudo.build_data(ui, bkg), np.float32, 42, 1, 3)
+        np.testing.assert_allclose(x1, x0, rtol=1e-4)  # the defect this guards against gives 1/1.3
+
     def test_cv_control_is_the_production_data_path(self):
         inputs, bkg = toy()
         exp = s5n_pseudo.build_data(inputs, bkg)

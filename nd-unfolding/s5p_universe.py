@@ -123,6 +123,25 @@ def universe_inputs(inputs: dict, bkg: dict, bank_cv, w: dict, band: str, idx: s
     return ui, ub, info
 
 
+def prior_inputs(inputs: dict, r: np.ndarray) -> dict:
+    """The MC truth prior reweighted by r: w_truth and w_reco of every row x r, and the truth denominator
+    reweighted consistently, cell by cell, by the same factor as the truth-passing weight (ofin_r / ofin), so the
+    per-cell completeness is the CV one. (Without the denominator step the extraction divides each cell by its
+    mean prior reweight: the s5p study-P defect of 2026-09-26.)"""
+    ui = dict(inputs)
+    wt = np.asarray(inputs["w_truth"], float)
+    ui["w_truth"] = wt * r
+    ui["w_reco"] = np.asarray(inputs["w_reco"], float) * r
+    m = np.asarray(inputs["pass_truth"], bool)
+    samp = np.column_stack([np.asarray(inputs["MCgen"])[m, i] for i in range(np.asarray(inputs["MCgen"]).shape[1])])
+    edges = [np.asarray(e, float) for e in inputs["edges"]]
+    of0, _ = np.histogramdd(samp, bins=edges, weights=wt[m])
+    of1, _ = np.histogramdd(samp, bins=edges, weights=(wt * r)[m])
+    dn = np.asarray(inputs["denom_nd"], float)
+    ui["denom_nd"] = np.where(of0 > 0, dn * of1 / np.where(of0 > 0, of0, 1), dn)
+    return ui
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     ap.add_argument("--npz", type=Path, required=True)
@@ -170,9 +189,7 @@ def main(argv=None) -> int:
         t1 = time.time()
         ratio, ratio_sha = (json.loads(Path(rf[0]).read_text()), s5n_pseudo.sha256_path(Path(rf[0]))) if rf else (None, None)
         r = s5n_pseudo.truth_weight(truth, inputs, float(amp), ratio)
-        ui = dict(inputs)
-        ui["w_truth"] = np.asarray(inputs["w_truth"], float) * r
-        ui["w_reco"] = np.asarray(inputs["w_reco"], float) * r
+        ui = prior_inputs(inputs, r)
         exp = s5n_pseudo.build_data(ui, bkg)
         with s5p_numerics.omnifold_capacity(capacity):
             xs, ev = s5p_numerics.unfold_one(exp, np.float32, a.estimator_seed, a.threads, a.iters)

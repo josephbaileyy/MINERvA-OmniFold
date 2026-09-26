@@ -104,6 +104,10 @@
   {
    "utc": "2026-09-26T16:40Z",
    "what": "s2-num-tasks.tsv at abdc88c5 passed --pairs values beginning with '-' as a separate token; argparse read them as options and the tool exited 2 before any unfold (lines 0-3, 14-16 in allocation 58904837; lines 25-27, 62-66 would have failed the same way). Queue runners stopped before allocations B, C and the GPU lane launched. Repair: --pairs=<value>. This is the one corrective resubmission permitted for the Stage-2 study tables (queues s2-cpu-r.q, s2-gpu-r.q)."
+  },
+  {
+   "utc": "2026-09-26T20:40Z",
+   "what": "study P (amendment 3) defect: s5p_universe --prior reweighted the MC truth/reco weights but not the truth denominator, so each prior-varied product was divided by its cells' mean prior reweight (a synthetic constant reweight of 1.3 reproduces a factor 1/1.3). Found by a development cross-check before any use: restoring the reweight per cell makes the data shifts correlate 0.88-0.96 with minus the pseudo-experiment bias. Repaired (prior_inputs reweights the denominator by ofin_r/ofin), regression test red on the defective form; the five prior products d1-d5 of job 58906549 are superseded and re-run once (the corrective resubmission for study P); d0 and the CV control are unaffected (r = 1)."
   }
  ],
  "findings": [
