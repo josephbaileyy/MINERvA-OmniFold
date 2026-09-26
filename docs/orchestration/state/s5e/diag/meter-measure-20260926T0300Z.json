@@ -1,0 +1,97 @@
+{
+ "admissions": {
+  "2026-09-25T22:57:14Z-608364-s5e_dryrun": {
+   "charged": 0.0,
+   "closed": true,
+   "job_id": null,
+   "measured": 0.0,
+   "pool": "cpu",
+   "released": true,
+   "reservation_node_hours": 4.0,
+   "stage": "diagnosis",
+   "tasks_seen": 0,
+   "underpriced": false
+  },
+  "2026-09-25T22:57:16Z-609016-s5e_dryrun_over": {
+   "charged": 0.0,
+   "closed": true,
+   "job_id": null,
+   "measured": 0.0,
+   "pool": "cpu",
+   "released": true,
+   "reservation_node_hours": 6.5,
+   "stage": "diagnosis",
+   "tasks_seen": 0,
+   "underpriced": false
+  },
+  "2026-09-25T22:59:27Z-746083-s5e_diag_a": {
+   "charged": 1.5869444444444445,
+   "closed": true,
+   "job_id": "58881080",
+   "measured": 1.5869444444444445,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "diagnosis",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-25T22:59:31Z-746318-s5e_diag_b": {
+   "charged": 2.0919444444444446,
+   "closed": true,
+   "job_id": "58881083",
+   "measured": 2.0919444444444446,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 4.0,
+   "stage": "diagnosis",
+   "tasks_seen": 1,
+   "underpriced": false
+  },
+  "2026-09-26T02:44:30Z-2170826-s5e_diag_r": {
+   "charged": 0.25333333333333335,
+   "closed": true,
+   "job_id": "58886919",
+   "measured": 0.25333333333333335,
+   "pool": "cpu",
+   "released": false,
+   "reservation_node_hours": 1.0,
+   "stage": "diagnosis",
+   "tasks_seen": 1,
+   "underpriced": false
+  }
+ },
+ "budget_sha256": "24e01f9d33457206a37f3dc65a14180ce996e914248f674275530798aee76c7c",
+ "campaign_key": "s5e-20260925",
+ "ledger_sha256": "5287c01cbb7696ae9b1badea2ef1d6b3859c74138a0cfa4439ee11e6a3c75665",
+ "measured_utc": "2026-09-26T03:00:32Z",
+ "summary": {
+  "cpu": {
+   "cap_node_hours": 60.0,
+   "carried_forward": {
+    "envelope_charged_node_hours": 28.619244791666667,
+    "envelope_node_hours": 345.27,
+    "prior_charged_node_hours": 24.687022569444444
+   },
+   "charged_by_stage": {
+    "diagnosis": 3.9322222222222227,
+    "verification_repair": 0.0
+   },
+   "charged_node_hours": 3.9322222222222227,
+   "open_concurrency": 0.0,
+   "stage_allocations": {
+    "diagnosis": 10.0,
+    "verification_repair": 12.0
+   }
+  },
+  "gpu": {
+   "cap_node_hours": 0.0,
+   "charged_a100_hours": 0.0,
+   "charged_by_stage": {},
+   "charged_node_hours": 0,
+   "open_concurrency": 0.0,
+   "stage_allocations": {}
+  }
+ },
+ "unit": "billed node-hours = ElapsedRaw/3600 * billing/(256 CPU | 128 GPU) * qos_factor; GPU A100-h = 4 x GPU node-h"
+}

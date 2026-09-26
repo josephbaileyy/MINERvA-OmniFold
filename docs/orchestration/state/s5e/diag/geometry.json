@@ -1,0 +1,23 @@
+{
+ "schema": "s5e-geometry/1",
+ "input_npz_sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+ "rows_eligible": 20402110,
+ "rows_used": 2000000,
+ "train_fraction": 0.4996505,
+ "r2_test": {
+  "reco_q3 | reco(pt,pz,eavail)": 0.7353339875199585,
+  "reco_W | reco(pt,pz,eavail)": 0.7275225465136499,
+  "truth_q3 | truth(pt,pz,eavail)": 0.8765044434128393,
+  "truth_W | truth(pt,pz,eavail)": 0.8655597503770605,
+  "reco_eavail | truth(pt,pz,eavail)": 0.7461767857757037,
+  "reco_eavail | truth(all five)": 0.7990323683233377,
+  "reco_W | truth(pt,pz,eavail)": 0.6172020258823241,
+  "reco_W | truth(all five)": 0.6900933785574661
+ },
+ "code_sha256": "e2ed023af53d48cfd37f72bd79196736ec1948529945e939127dbf59af99b20e",
+ "pearson_reco_eavail_with": {
+  "truth_eavail": 0.8669228311908183,
+  "truth_W": 0.8421184244602332,
+  "truth_q3": 0.8950767827483209
+ }
+}

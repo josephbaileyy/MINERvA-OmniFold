@@ -1,0 +1,92 @@
+{
+ "schema": "s5e-shape-ratio/1",
+ "label": "W2: GENIE MEC over GENIE CV (E_avail,W) shape",
+ "kind": "eavailW",
+ "histogram": "hXSec_eavailW",
+ "axes": [
+  2,
+  4
+ ],
+ "edges": [
+  [
+   0.0,
+   0.1,
+   0.2,
+   0.4,
+   0.8,
+   1.5,
+   3.0,
+   100.0
+  ],
+  [
+   0.0,
+   1.1,
+   1.4,
+   1.8,
+   2.2,
+   3.0,
+   100.0
+  ]
+ ],
+ "definition": "shape_ratio = frac_num / frac_den per cell (C order), frac = content x cell volume normalized over cells with both predictions positive; ratio 1 where either is non-positive; clipped to [0.25, 4]",
+ "shape_ratio": [
+  1.047472776367583,
+  1.1156933893075338,
+  0.9911364795880366,
+  0.9664752947013642,
+  0.9866233194573406,
+  0.902755368577668,
+  1.078609054372131,
+  1.0798969317671923,
+  1.0152056880628955,
+  0.887940131418759,
+  0.9416977570261162,
+  1.0898422277670672,
+  1.046161294953786,
+  1.0959867301298116,
+  0.9993253155739686,
+  0.9779416753521423,
+  0.9101480336599627,
+  1.0107930293202285,
+  1.009029799864565,
+  1.084001165076205,
+  0.9881667194434897,
+  0.9867016764728392,
+  0.9480411944144747,
+  0.9259619881679325,
+  0.9897533295220426,
+  0.9782416136209102,
+  0.9751844555336158,
+  0.9529101030898584,
+  0.9689642087063942,
+  0.9910900554254157,
+  1.0113841363549188,
+  0.9649031192512288,
+  0.949906435029806,
+  0.9534241338723031,
+  0.9588807631857942,
+  0.9625654640705965,
+  1.0659271945558775,
+  0.8496521116025111,
+  0.9065606287031606,
+  0.9582310883905458,
+  0.963124928995304,
+  0.9507615075341258
+ ],
+ "stats": {
+  "cells": 42,
+  "cells_without_shape_information": 0,
+  "cells_clipped": 0,
+  "rho_min": 0.8496521116025111,
+  "rho_max": 1.1156933893075338
+ },
+ "numerator": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mec_xsec_eavailW.root",
+  "sha256": "99a3ec767a4607d27f9c8d9f8dc282cce78c3b44e8fe98707c6fbbf054533961"
+ },
+ "denominator": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec_eavailW.root",
+  "sha256": "b01613297e9a7759b50ac7cce0bfa142dfb14f9467c5365383e2d595ec328a10"
+ },
+ "code_sha256": "6726ff99c7787d1ee6dff7fa5d08df88f9df76285d98c4c462f964ac6164779f"
+}

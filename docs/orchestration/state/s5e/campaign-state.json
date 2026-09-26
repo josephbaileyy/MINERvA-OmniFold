@@ -14,8 +14,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-oi192",
  "branch": "campaign/oi192-diagnosis-20260925",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5e-20260925/",
- "phase": "DIAGNOSIS RUNNING",
- "phase_detail": "diagnosis allocations A and B admitted by the s5e meter (4.0 + 4.0 of 10.0 diagnosis node-h reserved) and running at deploy 581daf98; cluster tests passed in the analysis environment (16/16, none skipped); admission verified in native units (dry runs admitted and released at zero charge; a 10.5 node-h request and a GPU request refused, exit 3)",
+ "phase": "DIAGNOSIS MEASURED; INDEPENDENT REVIEW PENDING",
+ "phase_detail": "D0-D7 and the amendment-2 repairs complete (3.932 of 10.0 diagnosis CPU node-h, all admissions closed); receipt state/s5e/diag/diag_receipt.json (sha256 f0880725...) and DIAGNOSIS-20260926-s5e-oi192-estimator.md committed; the independent read-only operand-level review of the diagnosis is next, then the candidate decision record",
  "pinned": {
   "contract": "docs/orchestration/state/s5e/contract.json (frozen at the commit that first adds it)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -36,7 +36,7 @@
    "label": "s5e_diag_a (salloc interactive, 1 CPU node, 4 h)",
    "stage": "diagnosis",
    "queue": "state/s5e/queues/diag-A.q",
-   "state": "RUNNING",
+   "state": "COMPLETED: released by runner; 1.587 CPU node-h",
    "started_utc": "2026-09-25T22:59:29Z"
   },
   {
@@ -44,26 +44,54 @@
    "label": "s5e_diag_b (salloc interactive, 1 CPU node, 4 h)",
    "stage": "diagnosis",
    "queue": "state/s5e/queues/diag-B.q",
-   "state": "RUNNING",
+   "state": "COMPLETED: released by runner; 2.092 CPU node-h",
    "started_utc": "2026-09-25T22:59:32Z"
+  },
+  {
+   "job": "58886919",
+   "label": "s5e_diag_r (salloc interactive, 1 CPU node, 1 h)",
+   "stage": "diagnosis",
+   "queue": "state/s5e/queues/diag-R.q",
+   "state": "COMPLETED: released by runner; 0.253 CPU node-h",
+   "started_utc": "2026-09-26T02:44:37Z"
   }
  ],
- "receipts": [],
+ "receipts": [
+  {
+   "path": "docs/orchestration/state/s5e/diag/diag_receipt.json",
+   "what": "diagnosis D0-D7 + repairs (s5e_analyze_diag.py at 700797e3)"
+  },
+  {
+   "path": "docs/orchestration/state/s5e/diag/meter-measure-20260926T0300Z.json",
+   "what": "diagnosis spend 3.932 CPU node-h, all admissions closed"
+  },
+  {
+   "path": "docs/orchestration/state/s5e/diag/geometry.json",
+   "what": "D6(i) input geometry"
+  },
+  {
+   "path": "docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md",
+   "what": "diagnosis record"
+  }
+ ],
  "candidates": [],
- "next_action": "monitor 58881080/58881083 to release; then the diagnosis analysis (s5e_analyze_diag.py), the diagnosis receipt and its independent review",
+ "next_action": "independent read-only operand-level review of the diagnosis; then the candidate decision record and, if a candidate is justified, its freeze amendment",
  "concurrent_work_at_start": "jobs 58880337/58880338/58880339 and further josephrb GPU jobs and CPU job 58880449 belong to other lanes (not touched); shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "35f8757b231f524e52c060e4db93af87420af4d9",
   "analysis_note_main": "a1027e6449f60db55f83d8f6806995f633131479 (s5n closeout record; re-verified at the deliverables step)"
  },
  "amendments": [
-  "docs/orchestration/state/s5e/contract-amendment-1-diagnosis-execution.json"
+  "docs/orchestration/state/s5e/contract-amendment-1-diagnosis-execution.json",
+  "docs/orchestration/state/s5e/contract-amendment-2-diagnosis-repairs.json"
  ],
  "deploy": {
   "root": "/pscratch/sd/j/josephrb/s5e-20260925/deploy/",
   "trees": [
    "7577a4a6 (tests, dry runs; its queue lines were refused before admission: uppercase labels)",
-   "581daf98 (diagnosis)"
+   "581daf98 (diagnosis)",
+   "da71c7b7 (repairs)",
+   "700797e3 (receipt, W2/W3 ratio files)"
   ]
  },
  "incidents": [
@@ -71,5 +99,12 @@
    "utc": "2026-09-25T22:57:38Z",
    "what": "both queue lines exited 2 at the meter's label check (uppercase A/B) before any admission; fixed at 581daf98 and relaunched 22:59:26Z"
   }
- ]
+ ],
+ "prepared_not_frozen": {
+  "withheld_ratio_files": [
+   "docs/orchestration/state/s5e/w2-genie-mec-over-cv-eavailW.json",
+   "docs/orchestration/state/s5e/w3-nuwro-over-genie-pt-pz-eavail.json"
+  ],
+  "note": "built at 700797e3 from fixed generator predictions only (no unfold output read); frozen by the assessment amendment"
+ }
 }
