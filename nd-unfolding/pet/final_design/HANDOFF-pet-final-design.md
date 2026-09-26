@@ -1,6 +1,6 @@
 # Cold-start handoff — PET final-design study (living document; update at each milestone)
 
-Read this, then `PROTOCOL-20260925.md` (with Amendments 1, 2, 2b, 2c, 3a), `DEVELOPMENT-20260926.md`,
+Read this, then `PROTOCOL-20260925.md` (with Amendments 1, 2, 2b, 2c, 3a, 3b), `DEVELOPMENT-20260926.md`,
 `DIAGNOSTICS-20260925.md`, `CAPACITY-20260925.md`, and the three review dispositions (IMPL, STAT, SCOPE). Everything referenced is on the
 pushed branch; nothing depends on a local scratch directory.
 
@@ -56,30 +56,42 @@ pushed branch; nothing depends on a local scratch directory.
   at k = 4 on the development tilt (S-N1 fails there). The watcher runs from checkout `3e3059f3`; its helper
   `$B/start_watcher.sh <sha>` restarts it (never `pkill -f`/`pgrep -f` inside an ssh one-liner).
 
+- **2026-09-26 ~20:40Z (supersedes the next-actions list below where they differ).** Sizing pilot complete and scored
+  (`sizing/SIZING-20260926.md`: n_F = 30; library E4/E5 draws 60, E4 NI a quantified limit). **N2 finding**
+  (Amendment 3b): estimator-seed sd of R_E0 0.095 (H2S1 K5) / 0.091 (L128S1 K5) > 0.05, located in the truth step.
+  Repair arm running: `runs/dev3N.tsv` (H2S1T24/L128S1T24 screens, OUT `$B/dev3N`), `runs/s3n_fast.tsv` and
+  `runs/s3n_slow.tsv` (N2 seed runs on the pilot's events/seeds, OUT `$B/s3p`). H2S1 FB rows paused. Step-2 ensemble
+  fallback code merged (`runner/step2_ensemble.py`, inert at M = 1; needs the cluster smoke test in its commit message
+  before use). Watcher from `b98986e9` with per-GPU lanes; restart with `bash $B/start_watcher.sh <sha>`
+  (copy in `jobs/start_watcher.sh`). Two overlap lanes run inside the current interactive allocations.
+
 ## Next actions, in order
 
-1. **Harvest development** when complete: `dev2P`, `dev2T` (run `diagnostics/posthoc_iterations.py` on the cluster
-   into `posthoc/<stage>/`, `results/harvest.sh <stage>`), regenerate `dev/DEV_TABLES-*.json` with
-   `dev/summarize_dev.py`, apply `dev/apply_finalist_rule.py`. Extend `DEVELOPMENT-20260926.md` with the PET2
-   pretrained-vs-scratch contrast and the 16-epoch large arm.
-2. **Amendment 3 (large-slot freeze)**: the rule's large finalist and its K; if it is not L128S1 K = 5, pilot it on
-   the same S3P draws before fixing `n_F`; fill `freeze/EVIDENCE_DECLARATION-20260926.json` (`<LARGE>`, `<N_F>`,
-   m); generate its FB manifests with `freeze/make_final_stage.sh` (same stages → paired draws), list them with
-   `RELEASED-MANIFEST` lines; if `n_F` > 24 list FINAL draws 24…n_F−1 for every finalist and anchor. Must not
-   contain the word UNBLIND.
-3. Run the large finalist's FB rows (blinded).
-4. **UNBLIND amendment** only when every look-1 row (both finalists, anchors) of `s4f` and `s4s` is COMPLETE; list
-   them in a completeness manifest. Then score with `analysis/score_design.py`, harvest, and decide with
-   `analysis/decide.py --evidence <filled declaration>`.
-5. **Coverage (§9 as amended)** for each finalist not INELIGIBLE: B = 6 bootstrap members per replicate
-   (`freeze/make_stage_manifests.py --bootstrap-members 1-6`, stage `S5`), N_cov = 120 at look 1, D4c 60; release by
-   amendment with `RELEASED-MANIFEST` lines.
-6. Selection (§6.6 as amended), independent scientific-scope review, report, deck, decision record, RUN_LOG/STATUS/
-   VALIDATION_LEDGER (at delivery, after merging `origin/main` for the next dense VL id), draft PR.
+1. When `dev3N`, `s3n_fast`, `s3n_slow`, `dev2P`, `dev2T`, `dev2Q` are complete: post-hoc (`posthoc_iterations.py
+   --workers 24` into `$B/posthoc_v2/<stage>`, CPU debug, guarded), score the S3P seed runs at k = 4, 5, 6
+   (`analysis/score_design.py`), `dev/n2_table.py` at each design's K\*, regenerate the tables
+   (`dev/summarize_dev.py --root <view with posthoc2 dev1 dev2L dev2S dev2T dev2P dev2Q dev3N>`), apply
+   `dev/apply_finalist_rule.py --n2 n2.json`, commit `DEV_TABLES`/`SCREENS`, harvest (`results/harvest.sh`).
+2. **Amendment 3c (re-freeze)**: both packages by the rule with S-N2; if a finalist changes, pilot it on the S3P draws
+   (`freeze/make_stage_manifests.py --stage S3P ...`) and recompute sizing (`analysis/build_pilot.py`, `sizing.py`);
+   fill `freeze/EVIDENCE_DECLARATION-*.json` (decision set, m, n_F, n_required D4c/D3 = library n, cost block from
+   `analysis/cost_from_receipts.py` at declared packing); generate FB manifests (`freeze/make_final_stage.sh`, same
+   stages → paired draws; extensions for FINAL draws 24…n_F−1 and D4c/D3 draws 8…n−1) and list them with
+   `RELEASED-MANIFEST` sha256 lines. Must not contain the word UNBLIND. If every design fails S-N2: smoke-test the
+   step-2 ensemble on the cluster and run an X4 arm (Amendment 3b item 5) first.
+3. Run the finalists' FB rows (blinded; watcher priorities).
+4. **UNBLIND amendment** only when every look-1 row is COMPLETE (completeness manifest). Score (`score_design.py`),
+   decide (`decide.py --evidence`), then `decide.py --provisional` to order coverage (3a.5).
+5. Coverage (`freeze/make_coverage_stage.sh <ID:K> <tag>`; release by amendment), `analysis/coverage.py`, final decision.
+6. Independent review of the final decision, report/deck (`slides/make_final_deck.py`), decision record, RUN_LOG/
+   STATUS/VALIDATION_LEDGER (after merging `origin/main` for the next dense VL id), resource ledger, draft PR.
 
 ## Known traps (measured this study)
 
 - `grep -l COMPLETE` also matches `INCOMPLETE`; use `grep -lx COMPLETE`.
+- Never `pkill -f`/`pgrep -f` a pattern inside an ssh one-liner (it matches its own shell); use `start_watcher.sh`.
+- The local shell is zsh: unquoted `$VAR` lists do not word-split (use `${=VAR}`); `${t:+--flag $t}` is one word.
+- Post-hoc files written while a run is going are stale; the tool now refreshes them (checks iteration count and tool sha).
 - `gpu_shared` jobs with long walltimes rarely start; 1–2 h requests start sometimes; `gpu_regular`/`gpu_preempt`
   did not start in 6 h. `gpu_debug` (2 running, 5 submitted per user) and `gpu_interactive` (2 per user, 4 h,
   `srun` only) carry the load. Iterations longer than ~26 min (16 epochs, PET2) cannot use `gpu_debug`.
