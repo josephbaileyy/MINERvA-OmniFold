@@ -1,0 +1,70 @@
+{
+ "schema": "s5p-contract-amendment/1",
+ "amends": "docs/orchestration/state/s5p/contract.json",
+ "number": 2,
+ "stage": "2_construction_questions",
+ "status": "FROZEN at the commit that first adds this file, after amendment 1 and BEFORE any Stage-2 compute. It freezes the three Stage-2 studies (N numerical/bootstrap overlap, C calibration failures, K convergence/observability), their controls, the analysis rules applied to them, and the rule that will choose configurations 2 and 3 from study K; configurations 2 and 3 themselves are frozen by a later amendment before their first development run. Executor choices under the delegation.",
+ "configuration_1": {"name": "R", "definition": "contract baseline_estimator R (5 iterations)", "iters": 5},
+ "code": {"numerics": "nd-unfolding/s5p_numerics.py", "convergence": "nd-unfolding/s5p_converge.py", "ensemble": "nd-unfolding/s5e_candidate.py --candidate R (the s5e product path)", "tests": "nd-unfolding/tests/test_s5p_stage2_tools.py"},
+ "tables": {
+  "numerics_and_calibration": "docs/orchestration/state/s5p/s2-num-tasks.tsv (71 lines)",
+  "convergence_B0": "docs/orchestration/state/s5p/s2-conv-b0-tasks.tsv (5 lines)",
+  "convergence_capacity": "docs/orchestration/state/s5p/s2-conv-cap-tasks.tsv (3 lines)"
+ },
+ "seeds": "shared_development_studies range 930000-949999 of the contract: pseudo seeds 930000 (N2), 931000 (N3), 930001-930004 (C1), 930100-930199 (C2), 930300-930339 (C3, fixed split of 930000), 932000 (C4); pseudo-experiment bootstrap seeds 5001-5040; real-data bootstrap seeds 1-50 (the s5e replicas b1-b50 are the unjittered partners) and 1-2 re-run as controls; jitter seeds 1-20 (base constructions) and 101-150 (replica partners)",
+ "study_N_numerical_bootstrap_overlap": {
+  "question": "does the refit-per-replica bootstrap already contain the estimator's rounding-scale sensitivity, and how large is that sensitivity on the data, at nominal and at a physical departure",
+  "design": {
+   "N1_data": "the real data under R: the unperturbed product (control), 20 edge-safe jitters of it (seeds 1-20), and 50 bootstrap replicas b = 1-50 each re-run with jitter seed 100 + b; the unjittered partners are the s5e data replicas b1-b50 (assess/data/boot); replicas 1 and 2 are re-run unjittered as controls",
+   "N2_nominal_pseudo": "pseudo experiment 930000 (nominal truth): base, 20 jitters, 40 replicas b = 5001-5040 each unjittered and with jitter seed 100 + (b - 5000)",
+   "N3_departure_pseudo": "pseudo experiment 931000 (GiBUU/GENIE E_avail shape, a = 1): the same design"
+  },
+  "estimands_per_functional": {
+   "sigma_num_base": "SD over the 20 jitters of the base construction",
+   "sigma_boot": "SD over the unjittered replicas",
+   "sigma_num_rep": "SD over replicas of (f_bj - f_b0) / sqrt(2)",
+   "sigma_smooth_sq": "the covariance over replicas of f_b0 and f_bj (the rounding-independent part)",
+   "absorption_ratio": "sigma_num_rep^2 / sigma_boot^2 (the share of the bootstrap variance that is rounding noise)",
+   "consistency": "sigma_num_rep / sigma_num_base (is the noise at the replicas the noise at the base construction)"
+  },
+  "decision_rule": "the numerical component is ABSORBED by the bootstrap for a reporting definition if, over its reported functionals, the median of sigma_num_rep / sigma_num_base lies in [0.7, 1.4] (the replicas carry the base construction's rounding noise at its size) and sigma_boot^2 >= sigma_num_rep^2 for >= 95% of functionals; the variance decomposition sigma_boot^2 = sigma_smooth^2 + sigma_num_rep^2 is reported with its sampling error. If not absorbed, the numerical component is declared as an independent probabilistic component with variance sigma_num_base^2 (from >= 20 jitters of the construction it applies to) and added once; in either case T3 is evaluated against the total sigma of the selected definition",
+  "interpretation": "the jitter is a probability model over equally valid float32 representations of the same inputs (each value uniformly within +-1/2 ulp, grid membership preserved and checked); a spread under it is an algorithmic uncertainty of the estimator's output, not a physical fluctuation",
+  "controls": ["N1 unperturbed product equals s5e assess/data/data_R.npz bitwise (xsec_flat)", "N1 replicas b1, b2 re-run unjittered equal s5e boot_b1, boot_b2 bitwise", "every jittered product records zero grid-membership changes (the tool refuses otherwise)", "every product's refinement classifier parameters and OmniFold estimator parameters equal R's (metadata, not launcher flags)"]
+ },
+ "study_C_calibration_failures": {
+  "the_six": "s5e assessment (assess_receipt.json, 40 fresh nominal experiments, sigma from the 100-replica bootstrap of development experiment 700000): pull SD outside 1 +- 3 SE for EW41 (1.42; 68% coverage 0.375), J85 (1.42), J162 (0.65), J206 (1.50), J215 (1.78), J232 (1.45); EW41, J206 and J215 also out in development (pull SDs correlate 0.48 between the samples); review round 2 M1",
+  "hypotheses_tested": {
+   "H_sigma_varies": "the bootstrap sigma of one experiment is not the sigma of others (heteroscedasticity over experiments): C1 bootstraps 4 more nominal experiments (930001-930004, 40 replicas each) beside N2 (930000) and s5e 700000",
+   "H_ensemble_estimate": "the 40-experiment pull SD is itself noisy: C2 adds 100 nominal experiments (930100-930199) to the 60 existing R nominal experiments (s5e K1_R 700000-700019, assessment 800000-800039), giving 160 (SE of a pull SD 0.056)",
+   "H_split": "the per-experiment MC split (half A unfolding MC, half B pseudo-data source, background C/D) adds variance the single-experiment bootstrap does not resample: C3 runs 40 nominal experiments (930300-930339) with the fixed split of 930000; the fixed-split ensemble SD against the varying-split SD isolates it",
+   "H_departure_scale": "sigma depends on the truth: N3 (GiBUU) and C4 (W3, 932000, 40 replicas) bootstraps at physical departures against the s5e departure ensembles",
+   "H_bias": "the mean pull (bias) of each of the six over the 160 nominal experiments, separately from its scale"
+  },
+  "analysis": "for each of the six and for all reported functionals of RD1/RD2: pull SD with (a) sigma of 700000, (b) the mean of the six per-experiment sigmas (700000, 930000-930004), with sampling uncertainties; the CV of sigma over the six experiments; fixed-split / varying-split ensemble SD ratio; mean pull and its SE; the departure-point bootstrap sigma over the nominal sigma, beside the departure-ensemble SD",
+  "disposition_rule": "each of the six is recorded as ADDRESSED if a tested hypothesis accounts for its excess (its pull SD with the corrected sigma construction lies within [0.80, 1.25], T5's band, on the 160 experiments), or UNRESOLVED with its measured pull SD; the corrected construction becomes a proposal for the interval design of Stage 3 (it is checked there on construction experiments and validated only on fresh ones); resolving the numerical study alone does not discharge any of them, and a pooled pass cannot"
+ },
+ "study_K_convergence_observability": {
+  "design": {
+   "B0_classifiers_200_iterations": "noise-free asimov_same (the full MC unfolds its own reco-passing rows reweighted by r; no background, so R and B0 coincide), 200 iterations, truths nominal, GiBUU/GENIE E_avail a = 1, q3_given_eavail_w a = 0.3, W1 NuWro/GENIE E_avail a = 1, W3 NuWro/GENIE (pT, p_parallel, E_avail) a = 1",
+   "capacity_probe_100_iterations": "the same with n_estimators 400, num_leaves 31 on the three OmniFold estimators, 100 iterations, truths GiBUU, q3, W3 (a diagnostic probe of the capacity dimension, like s5e D5; not an estimator configuration)"
+  },
+  "metrics_per_iteration": ["per reporting definition (EW, J, H2 reported cells): median, 90th percentile and maximum |relative residual|; the median over cells with a departure > 1% of |bias| / |departure| (the T2 proxy) and the recovered fraction", "detector level: chi2 between the unfolded result's reco fold and the folded truth with the analysis-exposure Poisson variance of the measured side (EW projection every iteration; 5D at the snapshots), the explained fraction 1 - chi2 / S_dep, and S_dep itself (the departure's visibility after detector response at the actual exposure)", "improvement and deterioration: the iteration of the minimum of each metric and its change from k = 5 to 200, per alternative"],
+  "no_optimality_claim": "a finite scan that does not reach a target is reported as such"
+ },
+ "configuration_selection_rule": {
+  "inputs": "study K noise-free metrics and study N/C sigma scales; the per-iteration costs measured by the s5e products (pseudo experiment about 40 s + 55 s per iteration, data about 40 s + 126 s per iteration, 32 threads; capacity 400/31 about 3.4x per iteration) re-measured on the study-K products",
+  "M_of_k": "for reporting definition P in {J, H2} and iteration k, M_P(k) = the maximum over the four development alternatives (GiBUU, q3, W1, W3) of the noise-free median over reported cells (departure > 1%) of |bias| / |departure|",
+  "affordability": "K_afford = the largest k whose complete remaining-work forecast (construction, validation at the Stage-2 provisional sample sizes, verification and repair reserves, joint inference separately) fits the remaining pools; computed in the Stage-2 receipt before any choice",
+  "configuration_2": "R with B0 classifiers and K2 iterations: K2 = the smallest k in {10, 15, 20, 30, 40, 50, 75, 100, 150, 200} with k <= K_afford and M_J(k) <= 0.25; if none, the smallest such k with M_H2(k) <= 0.25; if none, the k <= K_afford minimizing M_H2(k). If K2 = 5 is not improved upon (M at K2 >= M at 5 for both J and H2), no configuration 2 is frozen",
+  "configuration_3": "R with capacity 400/31 on the three OmniFold estimators and K3 iterations, K3 chosen by the same rule on the capacity probe (k up to 100, cost scaled by the measured factor); frozen only if M at K3 is below configuration 2's M at K2 by >= 20% relative on the definition configuration 2 was chosen for; otherwise slot 3 stays unused",
+  "then": "each frozen configuration gets development checks (a later amendment: nominal closure, the development alternatives on background-inclusive pseudo experiments, the numerical probe on data, the bootstrap sigma) and at most two development revisions each, each prompted by a recorded unmet development requirement"
+ },
+ "R_verification": "the Stage-2 receipt re-reads the metadata of every R product it uses (s5e and new): refinement classifier parameters (400/31, random_state 45), OmniFold estimator parameters (F2), input digests, seeds, and for the new products the tool's grid-membership check",
+ "resources": {
+  "stage": "development (budget revision 1: 46.527 CPU, 17.235 GPU node-h for stages 1-2)",
+  "forecast_cpu_node_h": {"study_N_and_C_cpu": 7.2, "study_N3_gpu_as_gpu_node_h": 2.4, "study_K_B0": 5.1, "study_K_capacity": 5.1, "total_cpu": 17.4},
+  "reservations": "study K: two shared-QOS arrays (32 CPUs, 56G, billing 32 = 0.125 node each): B0 5 tasks x 10 h = 6.25 node-h, capacity 3 tasks x 16 h = 6.0 node-h; studies N/C: three sequential interactive CPU allocations of 1 node x 4 h (12.0) and one interactive GPU allocation of 1 node x 4 h (4.0 GPU node-h, CPU-only steps with --gres=none); concurrency 1.0 (K) + 1 node <= 2 CPU nodes; 4 GPUs",
+  "basis": "measured s5e costs (asimov 147 s/iteration at B0, 493 s at 400/31; pseudo 330 s at 5 iterations; data 670 s)"
+ },
+ "cannot_authorize": "any interval, covariance, adoption, coverage or stability verdict; the studies inform the Stage-3 design, which is independently reviewed before any production or fresh validation"
+}

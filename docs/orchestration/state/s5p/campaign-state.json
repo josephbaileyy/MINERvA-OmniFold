@@ -25,8 +25,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "STAGE_1_FROZEN",
- "phase_detail": "amendment 1 freezes the use case, targets T1-T7 with retrospective motivations, reporting definitions RD1 (J) / RD2 (H2) / RD3 (EW fallback) with the selection procedure, and the initial joint design; next: Stage 2 (configurations frozen by amendment 2 before any development compute)",
+ "phase": "STAGE_2_STUDIES_FROZEN",
+ "phase_detail": "amendment 2 freezes studies N (numerical/bootstrap overlap), C (the six calibration failures), K (convergence to 200 iterations and observability), their controls and analysis rules, and the rule choosing configurations 2-3; next: deploy the commit, rebind the ledger, launch queues s2-cpu.q and s2-gpu.q",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -38,7 +38,7 @@
  },
  "stages": {
   "1_use_case": "FROZEN (amendment 1)",
-  "2_construction_questions": "NOT STARTED (configurations 0 of 3 frozen)",
+  "2_construction_questions": "STUDIES FROZEN (amendment 2); configuration 1 = R; configurations 2-3 chosen by the amendment-2 rule after study K",
   "3_admission": "NOT STARTED",
   "4_construction": "NOT STARTED",
   "5_validation": "NOT STARTED",
@@ -58,10 +58,15 @@
    "number": 1,
    "path": "docs/orchestration/state/s5p/contract-amendment-1-use-case-and-targets.json",
    "stage": "1_use_case"
+  },
+  {
+   "number": 2,
+   "path": "docs/orchestration/state/s5p/contract-amendment-2-stage2-studies.json",
+   "stage": "2_construction_questions"
   }
  ],
  "reviews": [],
- "next_action": "amendment 2: Stage-2 design (R verification, numerical/bootstrap overlap, six calibration failures, convergence study to 200 iterations; configurations 2-3 frozen after the convergence study) with task tables and cost",
+ "next_action": "deploy, ledger rebind, launch s2 queues; monitor; then the Stage-2 analysis receipt",
  "concurrent_work_at_start": "josephrb GPU jobs pfd-chain/pfd-shr/pfd-fin (58893071-58903623, m3246_g) and other users' m3246_g jobs belong to other lanes (not touched); no m3246 CPU row; shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "b30752864c70c76da3a888136e52c3dea4b615b7",
