@@ -194,7 +194,8 @@ def preflight(args: argparse.Namespace) -> tuple[Path, RunConfig, Any]:
     scope.refuse_real_data_inputs(
         bkg_mode="mc-only", measured_leg_is_real=False, npz_keys_read=ri.SIGNAL_MEMBERS,
         input_paths=[x for x in (args.inputs_npz, args.identity_sidecar, args.populations,
-                                 args.pools_npz, args.manifest) if x is not None])
+                                 args.pools_npz, args.manifest, args.banks_npz)   # [pfd]
+                     if x is not None])
     config = RunConfig.from_json(args.config.read_text())
     if config.content_hash() != args.config_hash:
         raise SystemExit(f"[confirm] config hash {config.content_hash()} != --config-hash "

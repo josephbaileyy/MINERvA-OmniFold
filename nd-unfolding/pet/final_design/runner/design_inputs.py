@@ -866,7 +866,9 @@ def apply_bootstrap(inputs: Any, arrays: dict[str, np.ndarray], identity_pseudo:
     Scoring arrays: the pseudodata arrays stay UNRESAMPLED (the score target is the replicate's
     own undistorted-or-distorted pseudodata truth); the prior's `prior_w_truth`/`prior_w_reco`
     carry the member's resampled weights (the member's unfolded histogram is prior weight x count x
-    push), with the unresampled legs kept beside them. The counts are stored too."""
+    push), with the unresampled legs kept beside them (`*_unresampled`). The Poisson weights are
+    stored as `prior_bootstrap_weight` / `pseudo_bootstrap_weight` (convention agreed with the
+    analysis lane); the score target never includes `pseudo_bootstrap_weight`."""
     ks_pseudo = bootstrap_counts(identity_pseudo, seed, member, "pseudo")
     ks_prior = bootstrap_counts(identity_prior, seed, member, "prior")
     rows_a, rows_b = arrays["pseudo_rows"], arrays["prior_rows"]
@@ -889,8 +891,8 @@ def apply_bootstrap(inputs: Any, arrays: dict[str, np.ndarray], identity_pseudo:
     arrays["prior_w_reco_unresampled"] = arrays["prior_w_reco"]
     arrays["prior_w_truth"] = arrays["prior_w_truth"] * ks_prior
     arrays["prior_w_reco"] = arrays["prior_w_reco"] * ks_prior
-    arrays["prior_bootstrap_count"] = ks_prior
-    arrays["pseudo_bootstrap_count"] = ks_pseudo
+    arrays["prior_bootstrap_weight"] = ks_prior
+    arrays["pseudo_bootstrap_weight"] = ks_pseudo
     after = {"pdata.weight": sha256_bytes(inputs.pdata["weight"]),
              "mc.weight": sha256_bytes(inputs.mc["weight"]),
              "mc.weight_reco": sha256_bytes(inputs.mc["weight_reco"])}

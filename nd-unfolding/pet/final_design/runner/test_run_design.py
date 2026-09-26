@@ -462,7 +462,7 @@ def test_bootstrap_resamples_weights_and_keeps_the_target(synthetic, historical_
     for k in ("pseudo_truth", "pseudo_w_truth", "pseudo_w_reco", "pseudo_distortion",
               "pseudo_pass_truth", "pseudo_rows", "prior_oracle"):
         assert np.asarray(b_ar[k]).tobytes() == np.asarray(base_ar[k]).tobytes(), k
-    kp, kq = b_ar["pseudo_bootstrap_count"], b_ar["prior_bootstrap_count"]
+    kp, kq = b_ar["pseudo_bootstrap_weight"], b_ar["prior_bootstrap_weight"]
     idp = synthetic.ident[sel.pseudo_rows]
     assert np.array_equal(kp, di.bootstrap_counts(idp, 99, 2, "pseudo"))
     np.testing.assert_array_equal(b_ar["prior_w_truth"], base_ar["prior_w_truth"] * kq)
@@ -611,3 +611,25 @@ def test_design_lib_run_row_builds_the_study_command(tmp_path):
     assert "--pool T --replicate 1 --pools-npz" in pool and "--banks-npz" in pool
     assert "--bank-draw S5:0 --pseudo-bank FB" in " ".join(out["boot"])
     assert "--bootstrap-member 2 --bootstrap-seed 7" in " ".join(out["boot"])
+
+
+# ------------------------------------------------------------------------------------------- #
+# The committed bank manifest (and, on Perlmutter, the built banks.npz)
+# ------------------------------------------------------------------------------------------- #
+CLUSTER_BANKS = Path("/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-runner/banks/"
+                     "banks.npz")
+
+
+def test_committed_bank_manifest_is_consistent():
+    m = json.loads(di.BANK_MANIFEST.read_text())
+    assert {k: v["count"] for k, v in m["banks"].items()} == {
+        "DEV": 45_089_191, "FB": 2_646_891, "RB": 1_414_846}
+    assert m["digest_check"]["summary"]["ok"] and m["digest_check"]["summary"]["n_mismatch"] == 0
+    assert m["expected_counts_check"]["equal"] and m["code"]["clean"]
+    assert all(v["bank"] == "DEV" for v in m["known_historical_rows_in_pools"].values())
+
+
+@pytest.mark.skipif(not CLUSTER_BANKS.exists(), reason="perlmutter: the built banks.npz")
+def test_cluster_banks_match_the_committed_manifest():
+    codes, rec = di.load_bank_codes(CLUSTER_BANKS)
+    assert rec["counts"]["FB"] == 2_646_891 and codes.size == 49_152_885

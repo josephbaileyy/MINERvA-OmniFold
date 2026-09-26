@@ -1,0 +1,77 @@
+{
+ "schema": "pet-final-design-bank-build-receipt/1",
+ "slurm_job_id": "58880785",
+ "account": "m3246",
+ "constraint": "cpu",
+ "qos": "shared",
+ "request": "-c 4 --mem=40G -t 00:45:00",
+ "node": "nid004116",
+ "sacct": {
+  "State": "COMPLETED",
+  "Elapsed": "00:03:22",
+  "ExitCode": "0:0",
+  "MaxRSS_batch": "2871188K"
+ },
+ "time_v": {
+  "wall": "3:14.68",
+  "user_s": 398.36,
+  "system_s": 9.68,
+  "max_rss_kb": 2553716
+ },
+ "launcher": "nd-unfolding/pet/final_design/jobs/sbatch_guarded_task.sh (LABEL=banks) via mnv_guarded_run.py",
+ "guard_verdict": "REPOSITORY-ORIGINS-INSPECTED; outside_expect_root=0; 1 checkout root (the pinned checkout)",
+ "checkout": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-runner/checkouts/728ce494",
+ "code_commit": "728ce49436067ebbf132776bfa022d5348f2c8ae",
+ "code_clean": true,
+ "outputs": {
+  "banks_npz": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-runner/banks/banks.npz",
+  "banks_npz_sha256": "50b7697c0a282e25efa35ec6e815cdf6ee0103085a78c2e9843244b4cacfe110",
+  "bank_manifest": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-runner/banks/BANK_MANIFEST.json",
+  "bank_manifest_sha256": "682e259fbe41cf37407b545c6acf1739b8e438f38ee0adfae8f16449bf8d5cb3",
+  "guard_inventory": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-runner/banks/guard-banks-58880785.json",
+  "task_log": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-runner/banks/task-banks.log"
+ },
+ "committed_manifest_is_byte_copy": true,
+ "summary": {
+  "counts": {
+   "DEV": 45089191,
+   "FB": 2646891,
+   "RB": 1414846,
+   "not_truth_passing": 1957
+  },
+  "FB_by_pool": {
+   "P": 172677,
+   "F": 680794,
+   "S": 1690695,
+   "T": 102725
+  },
+  "sorted_rows_sha256": {
+   "DEV": "e125edd9acc69ca313e0b118f2ae6373eefc020b7e807dbf3b8ad618b8d1b7da",
+   "FB": "3e63db43de0588a3f8980151c060cfe989c80f2071aa4c85b7671b3e1d66a15c",
+   "RB": "18defd28d741248801e6a75073ccfbf60123e6b6f2ea327b0e68594a758ffbf2"
+  },
+  "digest_check": {
+   "n_reconstructed": 48,
+   "n_match": 46,
+   "n_mismatch": 0,
+   "no_committed_record": [
+    "T/E1-references/1",
+    "T/E1-references/2"
+   ],
+   "records_not_in_plan": [],
+   "n_record_files_scanned_with_digests": 87,
+   "ok": true
+  },
+  "expected_counts_equal": true,
+  "historical_rows_in_pools_are_DEV": {
+   "35796924": "DEV",
+   "35824188": "DEV"
+  }
+ },
+ "independent_crosscheck": "local dry run (macOS, workers=8, pass_truth proxy) of the same reconstruction: 46/46 recorded digests matched, all 48 draws equal to the reference implementation /private/tmp/claude-501/pfd-scratch/consumption.py, FB/RB sorted-row sha256 identical (3e63db43.../18defd28...)",
+ "task_log_tail": [
+  "\tPage size (bytes): 4096",
+  "\tExit status: 0",
+  "2026-09-25T23:10:34Z exit 0"
+ ]
+}
