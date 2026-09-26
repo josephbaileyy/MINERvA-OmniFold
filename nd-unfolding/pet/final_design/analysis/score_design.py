@@ -122,7 +122,7 @@ def classify_case(case: str) -> dict[str, Any]:
     c = canonical_case(case)
     if c in NULL_CASES:
         return {"case": c, "family": "null", "natural": "eavail", "endpoint": "E7"}
-    parts = c.split("+")
+    parts = re.split(r"[+*]", c)   # "+": response + truth; "*": product of truth weights
     fams = [re.match(r"^(D5p|D\d[a-d]?|R\d)_", p) for p in parts]
     if not all(fams):
         raise ValueError(f"unknown case id {case!r}")

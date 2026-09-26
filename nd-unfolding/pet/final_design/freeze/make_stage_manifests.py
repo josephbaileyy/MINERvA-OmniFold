@@ -53,7 +53,7 @@ def build(stage: str, bank: str, reps: list[int], cands: list[tuple[str, int]], 
     cfg_dir.mkdir(parents=True, exist_ok=True)
     rows = ["# name\tconfig\tconfig_hash\tselection\tdistortion\treference_run\textra_driver_args"]
     for case in cases:
-        tag = "" if case == "dev" else f"-{case.replace('+', '_')}"
+        tag = "" if case == "dev" else f"-{case.replace('+', '_').replace('*', 'X')}"
         for r in reps:
             seed = seed_for(stage, r, seed_tag)
             for cid, k in cands:
