@@ -110,6 +110,17 @@ D4_SPECIES_HISTOGRAM = {"D4a": "eavail_x_pipm", "D4b": "eavail_x_pi0",
 DESIGNATED = {"D1_p0.350": "E0", "D1_m0.350": "E3", "D4c_p_up": "E4", "D3_p0.35": "E5"}
 
 
+def refuse_blinded_final_runs(names, protocol=None):
+    """Final-bank stages S4*/S5* stay unscored until PROTOCOL-20260925 carries Amendment 3 (the
+    large-package freeze; Amendment 2's blinding rule). Fails closed."""
+    import re as _re
+    from pathlib import Path as _P
+    protocol = _P(protocol) if protocol else _P(__file__).resolve().parents[1] / "PROTOCOL-20260925.md"
+    blinded = [n for n in names if _re.match(r"^S[45]", _P(str(n)).name)]
+    if blinded and not _re.search(r"^### Amendment 3\b", protocol.read_text(), _re.M):
+        raise SystemExit(f"refusing to score final-bank runs before Amendment 3: {blinded[:3]}")
+
+
 def canonical_case(case: str) -> str:
     """The distortion id as `phase_e/distortions.py` names it ('dev' is D1 +0.35); a run-directory
     style '_D1_' joiner for a response case is normalized to '+D1_'."""
@@ -485,6 +496,7 @@ def main(argv=None) -> int:
     ap.add_argument("--population-target", type=Path, default=None)
     ap.add_argument("--require-cross-check", action="store_true")
     a = ap.parse_args(argv)
+    refuse_blinded_final_runs(a.run)
     rf = RowFeatures(a.row_features)
     a.out_dir.mkdir(parents=True, exist_ok=True)
     for run in a.run:

@@ -184,12 +184,24 @@ def analyze_run(run: Path, rf: dict[str, np.ndarray]) -> dict:
             "oracle_block": truth_block(tru, np.ones_like(orc)), "iterations": its}
 
 
+def refuse_blinded_final_runs(names, protocol=None):
+    """Final-bank stages S4*/S5* stay unscored until PROTOCOL-20260925 carries Amendment 3 (the
+    large-package freeze; Amendment 2's blinding rule). Fails closed."""
+    import re as _re
+    from pathlib import Path as _P
+    protocol = _P(protocol) if protocol else _P(__file__).resolve().parents[1] / "PROTOCOL-20260925.md"
+    blinded = [n for n in names if _re.match(r"^S[45]", _P(str(n)).name)]
+    if blinded and not _re.search(r"^### Amendment 3\b", protocol.read_text(), _re.M):
+        raise SystemExit(f"refusing to score final-bank runs before Amendment 3: {blinded[:3]}")
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--row-features", type=Path, required=True)
     ap.add_argument("--runs", nargs="+", required=True, help="run directories (globs allowed)")
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
+    refuse_blinded_final_runs([Path(p) for g in a.runs for p in glob.glob(g)])
     R = np.load(a.row_features)
     rf = {k: R[k] for k in R.files if k.startswith(("tr_n_", "rc_"))}
     dirs = sorted({Path(p) for g in a.runs for p in glob.glob(g)

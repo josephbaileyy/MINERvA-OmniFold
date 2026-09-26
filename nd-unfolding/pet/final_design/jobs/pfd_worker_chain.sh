@@ -52,7 +52,7 @@ DEADLINE=$(( END_UNIX - ${DEADLINE_MARGIN:-240} ))
 mapfile -t ROWS < <(manifest_rows)
 LOG="$OUT/chain-$SLURM_JOB_ID.txt"
 
-for ROW in "${ROWS[@]}"; do score_row "$ROW"; done
+[[ "${SCORE:-1}" == 1 ]] && for ROW in "${ROWS[@]}"; do score_row "$ROW"; done
 unfinished() { local r; for r in "${ROWS[@]}"; do is_complete "$(row_name "$r")" || echo x; done; }
 mapfile -t UNF < <(unfinished)
 if (( ${#UNF[@]} == 0 )); then echo "all COMPLETE" > "$LOG"; exit 0; fi
