@@ -200,5 +200,11 @@
   "gpu": 0.0,
   "envelope_carried": "35.086 of 345.27 CPU node-h",
   "meter": "state/s5e/cand/meter-measure-assess.json"
- }
+ },
+ "remote_heads": {
+  "canonical_main_closeout_commit": "5683e329e993244f3b850cf287dbdfb20f1763f6",
+  "analysis_note_main": "b1410fc32d1269ad9ea44a4f9f042312bb8276a8",
+  "canonical_main": "the commit that records this field (verify with git ls-remote)"
+ },
+ "deliverables": "note/primer/paper updated at 5683e329 (build_all.sh PASS); standalone synced b1410fc3 (build_all.sh PASS); release package unchanged (nothing qualified)"
 }

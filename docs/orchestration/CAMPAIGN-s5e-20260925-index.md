@@ -64,3 +64,5 @@ Evidence:
 345.27 CPU node-h.
 
 **Next:** `OI-193`, the costed increments (outcome §6) reserved to Joseph.
+
+**Deliverables and heads (verified by `git ls-remote`, 2026-09-26).** Note, primer and paper state the findings (`5683e329`); `build_all.sh` passes in both repositories. Standalone `MINERvA-OmniFold-Analysis-Note` `main` = **`b1410fc3`**. Canonical `origin/main` is the commit that adds this line (see the state file's `remote_heads`). Release package unchanged: nothing qualified. Review worktrees `MINERvA-OmniFold-s5e-review1` and `-review2` were left clean.
