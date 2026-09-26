@@ -548,3 +548,91 @@ def test_cli_provisional_flag(tmp_path, capsys):
     assert "PROVISIONAL_SELECTED A" in capsys.readouterr().out
     assert dc.main(["--evidence", str(ev), "--out", str(out)]) == 0
     assert json.loads(out.read_text())["provisional"] is False
+
+
+# ------------------------------------------------------------------------------------------- #
+# Look-2 futility projection and the bank-effect bound (report only)
+# ------------------------------------------------------------------------------------------- #
+FLOOR = 0.5559785254924289
+
+
+def test_look1_continue_reports_a_look2_projection_without_changing_the_verdict(tmp_path):
+    import sizing
+    a = 0.05 / 1 / 2
+    for sub, gap, want in (("far", 0.004, "futile: quantified limit"), ("near", 0.0126, "extend")):
+        (tmp_path / sub).mkdir()
+        c = make_candidate(tmp_path / sub, "A", vals={"E0": FLOOR + gap}, sd_=0.03)
+        u1 = dc.evaluate(evidence({"A": c}))["eligibility"]["A"]["verdicts"]["U1"]
+        assert u1["verdict"] == "CONTINUE"                      # never changed by the projection
+        fut = u1["numbers"]["futility"]
+        assert fut["non_binding"] is True and fut["alpha_one_sided_look2"] == pytest.approx(a)
+        (row,) = fut["parts"]                                   # the mean part passes; LB straddles
+        x = np.array(list(u1["numbers"]["per_replicate"].values()))
+        assert row["label"] == "LB R_E0" and row["n1"] == N_FINAL and row["projectable"]
+        assert row["mean"] == pytest.approx(x.mean(), abs=1e-14)
+        assert row["sd"] == pytest.approx(x.std(ddof=1), abs=1e-14)
+        n_tot = sizing.smallest_n(x.mean(), FLOOR, x.std(ddof=1), a)
+        assert row["n_total_for_80pct_power"] == n_tot and row["look2_recommendation"] == want
+        assert (n_tot <= 2 * N_FINAL) == (want == "extend")
+
+
+def test_no_projection_on_resolved_verdicts_or_at_look_two(tmp_path):
+    res = dc.evaluate(evidence({"A": make_candidate(tmp_path, "A")}))
+    assert not any("futility" in v["numbers"] for v in res["eligibility"]["A"]["verdicts"].values())
+    (tmp_path / "b").mkdir()
+    c = make_candidate(tmp_path / "b", "B", vals={"E0": FLOOR + 0.004}, sd_=0.03)
+    ev = evidence({"B": c})
+    prev = tmp_path / "look1.json"
+    prev.write_text(json.dumps(dc.evaluate(ev)))
+    u1 = dc.evaluate({**ev, "look": 2, "previous": str(prev)})["eligibility"]["B"]["verdicts"]["U1"]
+    assert u1["verdict"] == "FAIL" and "futility" not in u1["numbers"]
+
+
+def test_pair_verdicts_at_look1_carry_projections_and_unprojectable_parts_say_so(tmp_path):
+    import sizing
+    L, S = unresolved_pair(tmp_path)
+    pr = dc.evaluate(evidence({"L": L, "S": S}))["ranking"]["pairs"][0]
+    ni = pr["non_inferior_6.5_small"]
+    assert ni["verdict"] == "CONTINUE"
+    rows = {r["label"]: r for r in ni["numbers"]["futility"]["parts"]}
+    e0 = rows["LB(S - L) E0 (6.5)"]
+    x = -0.01 + 0.05 * Z24
+    assert e0["projectable"] and e0["n1"] == N_FINAL and e0["mean"] == pytest.approx(-0.01)
+    assert e0["n_total_for_80pct_power"] == sizing.smallest_n(x.mean(), -0.02, x.std(ddof=1),
+                                                              0.05 / 2 / 2)
+    assert e0["look2_recommendation"] == "futile: quantified limit"
+    cost = rows["LB cost_L/cost_S"]                             # a cost ratio is not a t bound
+    assert cost["projectable"] is False and "n_total_for_80pct_power" not in cost
+    assert pr["materially_better_large"]["numbers"]["futility"]["parts"]
+
+
+def test_bank_effect_bound_is_reported_beside_every_paired_contrast_and_never_decides(tmp_path):
+    a = 0.05 / 2 / 2
+    sdv = 0.004
+    halfw = stats.t.ppf(1 - a, N_FINAL - 1) * sdv / np.sqrt(N_FINAL)
+    L, S = pair(tmp_path, -0.02 + halfw + 1e-4, sdv, (1.0, 1.05, 0.95, 1.0))
+    pr = dc.evaluate(evidence({"L": L, "S": S}))["ranking"]["pairs"][0]
+    ni = pr["non_inferior_6.5_small"]
+    e0 = ni["numbers"]["E0"]
+    assert e0["bank_effect_bound"] == pytest.approx(np.sqrt(0.227) * e0["t"]["sd"], abs=1e-15)
+    assert e0["lb_minus_bank_bound"] == pytest.approx(e0["t"]["lb"] - e0["bank_effect_bound"])
+    assert e0["lb_minus_bank_bound"] < -0.02 < e0["t"]["lb"]     # the bound would flip it ...
+    assert ni["verdict"] == "PASS"                                 # ... and does not decide
+    assert dc.FB_SAMPLING_FRACTION == 0.227
+    for key, sub in (("materially_better_large", None), ("materially_better_small", None),
+                     ("equivalent", "S-L"), ("equivalent", "L-S")):
+        nums = pr[key]["numbers"] if sub is None else pr[key]["numbers"][sub]
+        for ep in dc.NI_MARGINS:
+            assert nums[ep]["bank_effect_bound"] == pytest.approx(
+                np.sqrt(0.227) * nums[ep]["t"]["sd"], abs=1e-15), (key, ep)
+            assert "lb_minus_bank_bound" in nums[ep]
+    (tmp_path / "d").mkdir()
+    L, S = unresolved_pair(tmp_path / "d")
+    rows = dc.evaluate(evidence({"L": L, "S": S}, looks_planned=1))["ranking"]["pairs"][0][
+        "practical_default"]["decisive_inferiority"]
+    for ep, r in rows.items():
+        for tag in ("cheaper_minus_costlier", "costlier_minus_cheaper"):
+            b = r[tag]
+            assert b["bank_effect_bound"] == pytest.approx(np.sqrt(0.227) * b["sd"], abs=1e-15)
+            assert b["lb_minus_bank_bound"] == pytest.approx(b["lb"] - b["bank_effect_bound"])
+            assert b["ub_plus_bank_bound"] == pytest.approx(b["ub"] + b["bank_effect_bound"])

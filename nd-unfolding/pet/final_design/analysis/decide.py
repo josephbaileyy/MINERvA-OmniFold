@@ -10,6 +10,11 @@ Every verdict carries its rule id and numbers. Levels: every bound is one-sided 
 (default: the size of the declared decision set). A candidate lacking required evidence for a rule
 gets INCOMPLETE on that rule and is never eligible.
 
+Reported beside the verdicts, never deciding one: a look-1 CONTINUE carries a look-2 futility
+projection (`numbers.futility`: per unresolved part the n for 80 % power at the observed mean and
+sd, "extend" or "futile: quantified limit"); every paired contrast of 6.5, 6.6.1, 6.6.3 and the
+6.6 item 3(v) default carries the Amendment 2c item 7 bank-effect bound sqrt(0.227) x sd(diff).
+
 Rules (section ids):
 
 * 6.1 U1 mean R_E0 >= floor and LB >= floor (floor = 0.8 x 0.6949731569, from the historical
@@ -49,6 +54,7 @@ import argparse
 import json
 import math
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -60,6 +66,7 @@ for p in (HERE, CONFIRM):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 import inference as inf  # noqa: E402
+import sizing  # noqa: E402
 from score_design import UNDEFINED_BELOW, canonical_case, classify_case  # noqa: E402
 
 PROTOCOL_U1_FLOOR = 0.5559785255            # as printed in section 6.1 (10 decimals)
@@ -84,6 +91,12 @@ PULL_NOTE = ("pull (step-1) weights reported, not gated: N1 tests E9's final tru
 NI_MARGINS = {"E0": -0.02, "moderate": -0.04, "good": -0.04, "E3": -0.04, "E4": -0.05,
               "E5": -0.05}
 COST_RATIO_MIN = 2.0
+# Amendment 2c item 7 (report only): FB pseudodata draws overlap by chance with sampling fraction
+# 0.227 (CAPACITY-20260925.md, "Consequences for the study design" item 2), so the bank's own
+# offset from the generator population does not shrink with n. Beside every paired contrast the
+# bound sqrt(0.227) x sd(paired difference) is reported -- conservative: the whole per-draw sd
+# bounds its pseudodata component. It never changes a verdict.
+FB_SAMPLING_FRACTION = 0.227
 # Section 8 applies the two-look rule to FINAL (E0-E3) and coverage; the robustness library
 # (n_S fixed), numerical stability and the pure point rules are decided once.
 SEQUENTIAL_RULES_DEFAULT = ("U1", "U2b", "U3", "6.5", "6.6.1", "6.6.3")
@@ -153,6 +166,29 @@ class Candidate:
                 if rec["it"].get("histograms") is not None}
 
 
+@dataclass
+class TPart(inf.Part):
+    """A Part on a replicate mean (Student t), carrying its sample size and sd for the look-2
+    futility projection; its as_dict() is the Part's."""
+    n: int | None = None
+    sd: float | None = None
+
+
+def t_part(label: str, op: str, threshold: float, kind: str, tb: inf.TBound) -> TPart:
+    return TPart(label, op, threshold, kind, tb.mean, tb.lb, tb.ub, n=tb.n, sd=tb.sd)
+
+
+def bank_effect(tb: inf.TBound) -> dict[str, Any]:
+    """Amendment 2c item 7, report only: sqrt(FB_SAMPLING_FRACTION) x sd of the paired difference,
+    the LB less it (and the UB plus it, for the 6.6 item 3(v) upper bounds)."""
+    if tb.sd is None:
+        return {"bank_effect_bound": None, "lb_minus_bank_bound": None,
+                "ub_plus_bank_bound": None}
+    b = math.sqrt(FB_SAMPLING_FRACTION) * tb.sd
+    return {"bank_effect_bound": b, "lb_minus_bank_bound": tb.lb - b,
+            "ub_plus_bank_bound": tb.ub + b}
+
+
 def g_hist(name: str, field: str = "recovery"):
     return lambda rec: rec["it"]["histograms"][name][field]
 
@@ -187,8 +223,38 @@ class Rules:
 
     def decide(self, rule, parts, numbers=None) -> inf.Verdict:
         if rule in self.sequential:
-            return inf.decide(rule, parts, self.look, self.looks, numbers)
+            v = inf.decide(rule, parts, self.look, self.looks, numbers)
+            if v.verdict == inf.CONTINUE and self.look == 1:
+                v.numbers["futility"] = self.futility(rule, parts)
+            return v
         return inf.decide(rule, parts, 1, 1, numbers)
+
+    def futility(self, rule: str, parts: Sequence[inf.Part]) -> dict[str, Any]:
+        """Look-2 projection of a look-1 CONTINUE (non-binding, report only; never changes a
+        verdict). Per unresolved part (interval straddling its threshold) on a replicate mean:
+        the total n giving 80 % power at the observed mean and sd and the look-2 per-bound alpha
+        (`sizing.smallest_n`; None if unattainable), and "extend" if that n <= 2 n1 (what look 2
+        reaches), else "futile: quantified limit"."""
+        alpha = self.alpha_for(rule)
+        rows = []
+        for p in parts:
+            if p.passes() or p.decisively_fails():
+                continue
+            row: dict[str, Any] = {"label": p.label, "kind": p.kind, "op": p.op,
+                                   "threshold": p.threshold}
+            if not isinstance(p, TPart) or p.sd is None:
+                rows.append({**row, "projectable": False,
+                             "reason": "not a Student-t bound on a replicate mean"})
+                continue
+            sign = 1.0 if p.op in (">=", ">") else -1.0        # a '<=' part is mirrored
+            n_tot = sizing.smallest_n(sign * p.estimate, sign * p.threshold, p.sd, alpha)
+            rows.append({**row, "projectable": True, "mean": p.estimate, "sd": p.sd, "n1": p.n,
+                         "n_total_for_80pct_power": n_tot,
+                         "look2_recommendation": ("extend" if n_tot is not None
+                                                  and n_tot <= 2 * p.n
+                                                  else "futile: quantified limit")})
+        return {"non_binding": True, "power": sizing.POWER, "alpha_one_sided_look2": alpha,
+                "parts": rows}
 
     def _vals(self, rule: str, c: Candidate, case: str, getter, need: int
               ) -> tuple[np.ndarray | None, inf.Verdict | None, dict[str, Any]]:
@@ -211,9 +277,8 @@ class Rules:
             return bad
         tb = inf.t_bounds(x, self.alpha_for(rule))
         nums["t"] = tb.as_dict()
-        return self.decide(rule, [
-            inf.Part(f"mean {label}", ">=", mean_thr, "point", tb.mean, tb.lb, tb.ub),
-            inf.Part(f"LB {label}", lb_op, lb_thr, "bound", tb.mean, tb.lb, tb.ub)], nums)
+        return self.decide(rule, [t_part(f"mean {label}", ">=", mean_thr, "point", tb),
+                                  t_part(f"LB {label}", lb_op, lb_thr, "bound", tb)], nums)
 
     # 6.1 --------------------------------------------------------------------------------- #
     def U1(self, c):
@@ -242,8 +307,8 @@ class Rules:
                 return inf.Verdict("U2b", bad.verdict, [], {r: n}, f"{r}: {bad.reason}")
             tb = inf.t_bounds(x, self.alpha_for("U2b"))
             nums[r] = tb.as_dict()
-            parts += [inf.Part(f"{r} mean", ">=", mthr, "point", tb.mean, tb.lb, tb.ub),
-                      inf.Part(f"{r} LB", op, lthr, "bound", tb.mean, tb.lb, tb.ub)]
+            parts += [t_part(f"{r} mean", ">=", mthr, "point", tb),
+                      t_part(f"{r} LB", op, lthr, "bound", tb)]
         return self.decide("U2b", parts, nums)
 
     def U2c(self, c):
@@ -303,8 +368,7 @@ class Rules:
             if d.size:
                 tb = inf.t_bounds(d, self.alpha_for("B1"))
                 per_case[case]["t"] = tb.as_dict()
-                parts.append(inf.Part(f"{case} mean R", ">=", 0.0, "point", tb.mean, tb.lb,
-                                      tb.ub))
+                parts.append(t_part(f"{case} mean R", ">=", 0.0, "point", tb))
         if units == 0:
             return inf.incomplete("B1", "no unit with a defined recovery", {"per_case": per_case})
         lo, hi = inf.clopper_pearson(fails, units, self.alpha_for("B1"))
@@ -548,9 +612,10 @@ class Contrasts:
             if d["diff"].size < need:
                 return [], nums, f"{ep}: {d['diff'].size} paired replicates < {need}"
             tb = inf.t_bounds(d["diff"], self.r.alpha_for(rule))
-            nums[ep]["t"] = tb.as_dict()
-            parts.append(inf.Part(f"LB({a} - {b}) {ep} {label}", ">", m, "bound", tb.mean,
-                                  tb.lb, tb.ub))
+            be = bank_effect(tb)
+            nums[ep].update({"t": tb.as_dict(), "bank_effect_bound": be["bank_effect_bound"],
+                             "lb_minus_bank_bound": be["lb_minus_bank_bound"]})
+            parts.append(t_part(f"LB({a} - {b}) {ep} {label}", ">", m, "bound", tb))
         return parts, nums, None
 
     def cost_part(self, large: str, small: str) -> tuple[inf.Part | None, dict[str, Any]]:
@@ -609,7 +674,8 @@ class Contrasts:
                 d = paired_diff(self.c[x], self.c[y], ep)
                 if d["diff"].size < need:
                     return nums, f"{ep}: {d['diff'].size} paired replicates < {need}"
-                row[tag] = inf.t_bounds(d["diff"], alpha).as_dict()
+                tb = inf.t_bounds(d["diff"], alpha)
+                row[tag] = {**tb.as_dict(), **bank_effect(tb)}
             row["cheaper_decisively_inferior"] = bool(row["cheaper_minus_costlier"]["ub"] < m)
             row["costlier_decisively_inferior"] = bool(row["costlier_minus_cheaper"]["ub"] < m)
             nums[ep] = row
