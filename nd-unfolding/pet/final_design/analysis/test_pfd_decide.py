@@ -356,3 +356,105 @@ def test_library_development_tilt_is_keyed_apart_from_final_e0(tmp_path):
     assert len(c.cases[_d.E0_CASE]) == 24
     assert len(c.cases[_d.LIBRARY_E0_KEY]) == 8
     assert _d.Rules.lib_case(c, _d.E0_CASE) == _d.LIBRARY_E0_KEY
+
+
+# ------------------------------------------------------------------------------------------- #
+# Section 6.6 item 3(v): a practical default for a pair unresolved at the final look
+# ------------------------------------------------------------------------------------------- #
+LABEL_3V = ("recommended default under the goal's burden-of-proof rule; scientific superiority "
+            "and equivalence not established")
+
+
+def unresolved_pair(tmp_path, l_offsets=None, s_offsets=None, l_cost=(1.5, 1.6, 1.4, 1.5),
+                    s_cost=(1.0, 1.05, 0.95, 1.0)):
+    """Cheaper S and costlier L (cost ratio ~1.5 < 2, so 6.5 fails on cost). The E0 difference
+    S - L is -0.01 + 0.05 z: neither materially better, not equivalent (LB(S - L) < -0.02), and
+    at one look (alpha 0.05/2) no E0 bound is decisive either way."""
+    tmp_path.mkdir(exist_ok=True)
+    L = make_candidate(tmp_path, "L", cost=l_cost, offsets=l_offsets)
+    S = make_candidate(tmp_path, "S", cost=s_cost,
+                       offsets={"E0": -0.01 + 0.05 * Z24, **(s_offsets or {})})
+    return L, S
+
+
+def test_final_look_unresolved_pair_defaults_to_the_costlier_package(tmp_path):
+    L, S = unresolved_pair(tmp_path)
+    rk = dc.evaluate(evidence({"L": L, "S": S}, looks_planned=1))["ranking"]
+    assert rk["outcome"] == "UNRESOLVED_WITH_DEFAULT" and rk["default"] == "L"
+    assert "selected" not in rk and rk["label"] == LABEL_3V and "3(v)" in rk["default_rule"]
+    pr = rk["pairs"][0]
+    assert pr["default"] == "L" and pr["label"] == LABEL_3V
+    for v in ("materially_better_large", "materially_better_small", "equivalent",
+              "non_inferior_6.5_small"):
+        assert pr[v]["verdict"] == "FAIL", v
+    inf_ = pr["practical_default"]["decisive_inferiority"]
+    assert set(inf_) == {"E0", "moderate", "good", "E3", "E4", "E5"}
+    # the recorded UB is the one-sided t bound at the 6.6.1 level on the paired difference
+    x = -0.01 + 0.05 * Z24
+    half = stats.t.ppf(1 - 0.05 / 2 / 1, N_FINAL - 1) * x.std(ddof=1) / np.sqrt(N_FINAL)
+    assert inf_["E0"]["cheaper_minus_costlier"]["ub"] == pytest.approx(x.mean() + half, abs=1e-12)
+    assert inf_["E0"]["costlier_minus_cheaper"]["ub"] == pytest.approx(-x.mean() + half, abs=1e-12)
+    assert not any(r["cheaper_decisively_inferior"] or r["costlier_decisively_inferior"]
+                   for r in inf_.values())
+
+
+def test_default_is_the_cheaper_only_when_the_costlier_alone_is_decisively_inferior(tmp_path):
+    # costlier L decisively worse on E4 (S - L = +0.08, tight), S decisively worse on nothing
+    L, S = unresolved_pair(tmp_path / "a", s_offsets={"E4": 0.08 + 0.001 * Z24})
+    rk = dc.evaluate(evidence({"L": L, "S": S}, looks_planned=1))["ranking"]
+    assert rk["outcome"] == "UNRESOLVED_WITH_DEFAULT" and rk["default"] == "S"
+    e4 = rk["pairs"][0]["practical_default"]["decisive_inferiority"]["E4"]
+    assert e4["costlier_decisively_inferior"] and not e4["cheaper_decisively_inferior"]
+    # both decisively inferior somewhere (L on E4, S on E5): the costlier stays the default
+    L, S = unresolved_pair(tmp_path / "b", s_offsets={"E4": 0.08 + 0.001 * Z24,
+                                                      "E5": -0.08 + 0.001 * Z24})
+    rk = dc.evaluate(evidence({"L": L, "S": S}, looks_planned=1))["ranking"]
+    assert rk["outcome"] == "UNRESOLVED_WITH_DEFAULT" and rk["default"] == "L"
+    # only the cheaper decisively inferior: the costlier
+    L, S = unresolved_pair(tmp_path / "c", s_offsets={"E5": -0.08 + 0.001 * Z24})
+    rk = dc.evaluate(evidence({"L": L, "S": S}, looks_planned=1))["ranking"]
+    assert rk["outcome"] == "UNRESOLVED_WITH_DEFAULT" and rk["default"] == "L"
+
+
+def test_default_needs_the_final_look_and_both_costs(tmp_path):
+    L, S = unresolved_pair(tmp_path / "a")
+    rk = dc.evaluate(evidence({"L": L, "S": S}))["ranking"]          # look 1 of 2
+    assert rk["outcome"] == "CONTINUE" and "default" not in rk
+    assert "practical_default" not in rk["pairs"][0]
+    L, S = unresolved_pair(tmp_path / "b")
+    del L["cost"]
+    rk = dc.evaluate(evidence({"L": L, "S": S}, looks_planned=1))["ranking"]
+    assert rk["outcome"] == "UNRESOLVED" and "default" not in rk
+    assert "cost" in rk["reason"]
+
+
+def test_default_at_look_two_of_two_and_never_for_an_ineligible_package(tmp_path):
+    L, S = unresolved_pair(tmp_path / "a")
+    ev = evidence({"L": L, "S": S})
+    prev = tmp_path / "look1.json"
+    prev.write_text(json.dumps(dc.evaluate(ev)))
+    rk = dc.evaluate({**ev, "look": 2, "previous": str(prev)})["ranking"]
+    assert rk["outcome"] == "UNRESOLVED_WITH_DEFAULT" and rk["default"] == "L"
+    # the pair logic is reached only by ELIGIBLE packages; handled, not assumed
+    ev = evidence({"L": L, "S": S}, looks_planned=1)
+    rules = dc.Rules(ev, dc.historical_floors())
+    cands = {n: dc.Candidate(n, d) for n, d in ev["candidates"].items()}
+    con = dc.Contrasts(rules, cands)
+    d = dc._pair_decision(rules, con, cands, {"S": "ELIGIBLE", "L": "INELIGIBLE"}, "S", "L")
+    assert d.get("unresolved") and "default" not in d
+    assert "ELIGIBLE" in d["practical_default"]["default_not_formed"]
+    d = dc._pair_decision(rules, con, cands, {"S": "ELIGIBLE", "L": "ELIGIBLE"}, "S", "L")
+    assert d["default"] == "L"
+
+
+def test_a_defaulted_link_makes_the_whole_ranking_a_default(tmp_path):
+    """S vs L is defaulted (L); the costliest X then beats L by 6.6.1. X is the default, never
+    SELECTED: S vs X was never resolved."""
+    L, S = unresolved_pair(tmp_path)
+    X = make_candidate(tmp_path, "X", cost=(3.0, 3.1, 2.9, 3.0), vals={"E0": 0.80})
+    rk = dc.evaluate(evidence({"L": L, "S": S, "X": X}, looks_planned=1))["ranking"]
+    assert rk["cost_order"] == ["S", "L", "X"]
+    assert [p.get("default") or p["winner"] for p in rk["pairs"]] == ["L", "X"]
+    assert rk["pairs"][1]["by"].startswith("6.6.1 (larger")
+    assert rk["outcome"] == "UNRESOLVED_WITH_DEFAULT" and rk["default"] == "X"
+    assert "selected" not in rk and rk["discriminating_contrasts"] == ["S vs L"]

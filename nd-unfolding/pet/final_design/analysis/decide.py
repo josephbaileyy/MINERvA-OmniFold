@@ -29,7 +29,12 @@ Rules (section ids):
   pull record is INCOMPLETE); over the E0 replicates median ESS/n (of w_truth x push) >= 0.20 and
   median 99.9th percentile push <= 10. N2 pooled within-draw estimator-seed sd of R_E0 <= 0.05 from >= 4 seeds x >= 2 draws.
 * 6.4 C1-C5 from the candidate's coverage output.
-* 6.5 non-inferiority of a smaller package; 6.6 ranking, tie-break, unresolved; 6.7 cost ratio.
+* 6.5 non-inferiority of a smaller package; 6.7 cost ratio. 6.6 per pair (cheaper, costlier),
+  Amendment 2c item 3: (i) the cheaper passing 6.5; (ii) the costlier materially better; (iii)
+  the cheaper materially better; (iv) equivalent -> 6.6.3 tie-break; otherwise CONTINUE (look 2)
+  or, before the final look, UNRESOLVED; (v) at the final look an unresolved pair gets a practical
+  default (UNRESOLVED_WITH_DEFAULT: the costlier, or the cheaper when only the costlier is
+  decisively inferior on some endpoint; `practical_default`), never SELECTED.
 
     python decide.py --evidence evidence.json --out decision.json
 """
@@ -562,6 +567,27 @@ class Contrasts:
             return inf.incomplete("6.6.3", w1 or w2, {"ab": n1, "ba": n2})
         return self.r.decide("6.6.3", p1 + p2, {f"{a}-{b}": n1, f"{b}-{a}": n2})
 
+    def decisive_inferiority(self, cheaper: str, costlier: str
+                             ) -> tuple[dict[str, Any], str | None]:
+        """Section 6.6 item 3(v): X is decisively inferior to Y on endpoint e when the one-sided
+        upper bound (the 6.6.1 level) of the paired X - Y is below the section 6.5 margin
+        NI_MARGINS[e]. Both directions on every endpoint; a short endpoint forms no default."""
+        alpha = self.r.alpha_for("6.6.1")
+        nums: dict[str, Any] = {}
+        for ep, m in NI_MARGINS.items():
+            need = max(self.r.n_required[ENDPOINT_GETTERS[ep][0]], 2)
+            row: dict[str, Any] = {"margin": m, "alpha_one_sided": alpha}
+            for x, y, tag in ((cheaper, costlier, "cheaper_minus_costlier"),
+                              (costlier, cheaper, "costlier_minus_cheaper")):
+                d = paired_diff(self.c[x], self.c[y], ep)
+                if d["diff"].size < need:
+                    return nums, f"{ep}: {d['diff'].size} paired replicates < {need}"
+                row[tag] = inf.t_bounds(d["diff"], alpha).as_dict()
+            row["cheaper_decisively_inferior"] = bool(row["cheaper_minus_costlier"]["ub"] < m)
+            row["costlier_decisively_inferior"] = bool(row["costlier_minus_cheaper"]["ub"] < m)
+            nums[ep] = row
+        return nums, None
+
 
 def total_cost(c: Candidate) -> float | None:
     cost = c.decl.get("cost")
@@ -569,6 +595,41 @@ def total_cost(c: Candidate) -> float | None:
         return None
     return (cost.get("unfoldings_per_result", 1) * float(np.mean(cost["gpu_hours_per_unfolding"]))
             + cost.get("inference_gpu_hours", 0.0))
+
+
+DEFAULT_RULE = ("section 6.6 item 3(v): a pair unresolved at the final look defaults to the "
+                "costlier package (total_cost), unless the costlier is decisively inferior on some "
+                "endpoint while the cheaper is decisively inferior on none, then to the cheaper; "
+                "X is decisively inferior to Y on e when the one-sided upper bound (6.6.1 level) "
+                "of the paired X - Y is below the section 6.5 margin NI_MARGINS[e], e in E0, "
+                "moderate, good, E3, E4, E5")
+DEFAULT_LABEL = ("recommended default under the goal's burden-of-proof rule; scientific "
+                 "superiority and equivalence not established")
+
+
+def practical_default(con: "Contrasts", cands: Mapping[str, Candidate],
+                      status: Mapping[str, str], a: str, b: str) -> dict[str, Any]:
+    """Section 6.6 item 3(v) for a pair no branch (i)-(iv) resolved at the final look. Returns
+    `default` (with `default_rule`, `label`) or `default_not_formed` (the reason)."""
+    ca, cb = total_cost(cands[a]), total_cost(cands[b])
+    if ca is None or cb is None:
+        return {"default_not_formed": "cost measurements missing: no costlier package"}
+    if ca == cb:
+        return {"default_not_formed": f"equal total cost {ca}: no costlier package"}
+    cheaper, costlier = (a, b) if ca < cb else (b, a)
+    out: dict[str, Any] = {"cheaper": cheaper, "costlier": costlier,
+                           "total_cost": {a: ca, b: cb}}
+    not_eligible = [n for n in (a, b) if status[n] != "ELIGIBLE"]
+    if not_eligible:                  # rank() pairs ELIGIBLE packages only; handled, not assumed
+        return {**out, "default_not_formed": f"{not_eligible} not ELIGIBLE"}
+    rows, why = con.decisive_inferiority(cheaper, costlier)
+    out["decisive_inferiority"] = rows
+    if why:
+        return {**out, "default_not_formed": why}
+    costlier_inf = any(r["costlier_decisively_inferior"] for r in rows.values())
+    cheaper_inf = any(r["cheaper_decisively_inferior"] for r in rows.values())
+    pick = cheaper if costlier_inf and not cheaper_inf else costlier
+    return {**out, "default": pick, "default_rule": DEFAULT_RULE, "label": DEFAULT_LABEL}
 
 
 def _pair_decision(rules: Rules, con: "Contrasts", cands: Mapping[str, Candidate],
@@ -580,7 +641,9 @@ def _pair_decision(rules: Rules, con: "Contrasts", cands: Mapping[str, Candidate
     2. otherwise the larger (costlier) package materially better -> larger;
     3. the smaller package materially better -> smaller;
     4. equivalent (every 6.5 margin met in both directions) with saving < 2x -> 6.6.3 tie-break;
-    5. any straddling verdict -> CONTINUE (section 8 look 2); otherwise UNRESOLVED (6.6.4)."""
+    5. any straddling verdict -> CONTINUE (section 8 look 2); otherwise, before the final look,
+       UNRESOLVED (6.6.4); at the final look (look == looks_planned) UNRESOLVED_WITH_DEFAULT by
+       6.6 item 3(v) (`practical_default`), or UNRESOLVED with the reason no default was formed."""
     mb_large = con.materially_better(large, small)
     ni_small = con.non_inferior(small, large, status)
     mb_small = con.materially_better(small, large)
@@ -608,6 +671,15 @@ def _pair_decision(rules: Rules, con: "Contrasts", cands: Mapping[str, Candidate
                 "tie_break_keys (N2 sd, mean 95% half-width, cost)": key}
     if inf.CONTINUE in (mb_large.verdict, ni_small.verdict, mb_small.verdict, eq.verdict):
         return {**rec, "winner": None, "by": "section 8 (look 2 needed)", "continue": True}
+    if rules.look == rules.looks:
+        pd = practical_default(con, cands, status, small, large)
+        if "default" in pd:
+            return {**rec, "winner": None, "practical_default": pd,
+                    "by": "6.6.4 at the final look -> 6.6 item 3(v) (practical default)",
+                    "unresolved_with_default": True, "default": pd["default"],
+                    "default_rule": pd["default_rule"], "label": pd["label"]}
+        return {**rec, "winner": None, "by": "6.6.4 (unresolved)", "unresolved": True,
+                "practical_default": pd}
     return {**rec, "winner": None, "by": "6.6.4 (unresolved)", "unresolved": True}
 
 
@@ -616,7 +688,9 @@ def rank(rules: Rules, cands: Mapping[str, Candidate], status: Mapping[str, str]
     """Section 6.6 among ELIGIBLE candidates of the decision set. While any decision-set member is
     still pending (INCOMPLETE/CONTINUE) the outcome is CONTINUE, never SELECTED (statistical review
     8d9aaf8d, item 4). With several eligible candidates, pairs are decided in cost order: the
-    cheapest is the incumbent and each costlier candidate challenges it by _pair_decision."""
+    cheapest is the incumbent and each costlier candidate challenges it by _pair_decision. A pair
+    defaulted by 6.6 item 3(v) passes its default on as incumbent, and the outcome is then
+    UNRESOLVED_WITH_DEFAULT naming the final incumbent as `default` (never SELECTED)."""
     decision = [n for n in rules.ev["decision_set"]]
     eligible = [n for n in decision if status[n] == "ELIGIBLE"]
     pending = [n for n in decision if status[n] in ("INCOMPLETE", "CONTINUE")]
@@ -640,6 +714,7 @@ def rank(rules: Rules, cands: Mapping[str, Candidate], status: Mapping[str, str]
     order = sorted(eligible, key=lambda n: costs[n])
     out.update({"cost_order": order, "total_cost": costs, "pairs": []})
     incumbent = order[0]
+    defaulted: list[str] = []
     for challenger in order[1:]:
         d = _pair_decision(rules, con, cands, status, incumbent, challenger)
         out["pairs"].append(d)
@@ -649,9 +724,23 @@ def rank(rules: Rules, cands: Mapping[str, Candidate], status: Mapping[str, str]
         if d.get("unresolved"):
             out.update({"outcome": "UNRESOLVED", "by": d["by"],
                         "discriminating_contrasts": [f"{incumbent} vs {challenger}"]})
+            if "practical_default" in d:
+                out["reason"] = ("no 6.6 item 3(v) default: "
+                                 + d["practical_default"]["default_not_formed"])
             return out
+        if d.get("unresolved_with_default"):
+            # the default carries on as incumbent; any defaulted link makes the whole ranking a
+            # default, never SELECTED
+            defaulted.append(f"{incumbent} vs {challenger}")
+            incumbent = d["default"]
+            continue
         incumbent = d["winner"]
     last = out["pairs"][-1]
+    if defaulted:
+        out.update({"outcome": "UNRESOLVED_WITH_DEFAULT", "default": incumbent,
+                    "default_rule": DEFAULT_RULE, "label": DEFAULT_LABEL, "by": last["by"],
+                    "discriminating_contrasts": defaulted})
+        return out
     out.update({"outcome": ("EQUIVALENT_TIE_BROKEN" if last["by"].startswith("6.6.3")
                             else "SELECTED"), "selected": incumbent, "by": last["by"]})
     return out
