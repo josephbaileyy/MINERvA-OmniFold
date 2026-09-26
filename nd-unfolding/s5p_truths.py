@@ -42,7 +42,10 @@ def sha256(path: Path) -> str:
 
 def load_pred(path: Path) -> tuple[np.ndarray, list]:
     z = np.load(path, allow_pickle=True)
-    edges = [np.asarray(z[f"edges_{i}"], float) for i in range(5)]
+    if "edges_0" in z.files:
+        edges = [np.asarray(z[f"edges_{i}"], float) for i in range(5)]
+    else:  # the gen5d converter's naming
+        edges = [np.asarray(z[f"edges_{a}"], float) for a in AXES]
     shape = tuple(len(e) - 1 for e in edges)
     return np.asarray(z["xsec_flat"], float).reshape(shape), edges
 
