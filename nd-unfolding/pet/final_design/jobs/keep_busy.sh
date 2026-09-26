@@ -65,7 +65,7 @@ while (( $(date +%s) < stop_epoch )) && [[ ! -e $B/keep_busy.stop ]]; do
   if (( nd <= 2 )); then
     st=$(first_incomplete s4f_a2 s4s_a2) && {
       O=$B/${OUTS[$st]}; mkdir -p "$O"
-      j=$(cd "$O" && sbatch --parsable -o "$O/slurm-%j.out" --export=ALL,MINE="$M",MINE_COMMIT="$S",OUT="$O",MANIFEST="$R/$st.tsv",SCORE=0,SLOTS_PER_GPU=1,CHAIN=1,MAX_ROUNDS=2000,DEADLINE_MARGIN=30,ITER_ESTIMATE=800 "$M/nd-unfolding/pet/final_design/jobs/pfd_worker_chain.sh" 2>&1)
+      j=$(cd "$O" && sbatch --parsable -o "$O/slurm-%j.out" --export=ALL,MINE="$M",MINE_COMMIT="$S",OUT="$O",MANIFEST="$R/$st.tsv",SCORE=0,SLOTS_PER_GPU=1,CHAIN=1,MAX_ROUNDS=2000,DEADLINE_MARGIN=10,ITER_ESTIMATE=780 "$M/nd-unfolding/pet/final_design/jobs/pfd_worker_chain.sh" 2>&1)
       echo "$(date -u +%FT%TZ) debug chain for $st: $j" >> "$B/keep_busy.log"; }
   fi
   sleep 120
