@@ -27,7 +27,7 @@ BANKS="${BANKS:-/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-runner/ba
 C="$MINE/nd-unfolding/pet/improvement_campaign"; V="$C/confirm"
 STUDY="$MINE/nd-unfolding/pet/final_design"; D="$STUDY/runner"
 G=(python "$MINE/nd-unfolding/mnv_guarded_run.py" --expect-root "$MINE")
-CFG="${CFG:-../../final_design/configs/dev1/dev1-H1-T0-D1_p0.350.json}"
+CFG="${CFG:-../../../final_design/configs/dev1/dev1-H1-T0-D1_p0.350.json}"
 HASH=$(python -c "import sys; sys.path.insert(0, '$C'); from recipe import RunConfig; print(RunConfig.from_json(open('$V/configs/$CFG').read()).content_hash())")
 SEL="${SEL:-T:0}"
 COMMON=(--config "$V/configs/$CFG" --config-hash "$HASH" --repo "$MINE" --inputs-npz "$INPUTS"
