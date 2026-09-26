@@ -14,8 +14,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-oi192",
  "branch": "campaign/oi192-diagnosis-20260925",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5e-20260925/",
- "phase": "CANDIDATE R DEVELOPMENT PASSED; ASSESSMENT NEXT",
- "phase_detail": "development receipt state/s5e/cand/dev_receipt.json (sha256 e363f218...): K1 C3 PASS (20 nominal, max |t| 2.18; B0 on the same seeds fails, max |t| 8.6, 56 functionals), K2/K3 not worse than B0 (departures unchanged, as scoped), K4 pass (seed bitwise, permutation <= 1.2e-10 sigma), K5 calibration on K1 pass; development_exit true; no revision used",
+ "phase": "ASSESSMENT COMPLETE: A_FAIL (A3); VERIFICATION NEXT",
+ "phase_detail": "assessment receipt state/s5e/cand/assess_receipt.json (sha256 84266e30...): A1 PASS (40 fresh nominal, max |t| 2.69), A2 PASS (pooled pull SD 1.023, 3.9% outside 3 SE, Mahalanobis 43.1), A3 FAIL (seed/permutation inert, but the real-data rounding probe moves functionals by 0.78 data-sigma median, 2.58 max against bounds 0.3/1.0), A4 scope 20 of 42 EW cells, A5 PASS (sigma ratio median 0.98, max 1.49); verdict A_FAIL; no revision (the failing probe is on the real data: no fresh sample exists to re-test a revision)",
  "pinned": {
   "contract": "docs/orchestration/state/s5e/contract.json (frozen at the commit that first adds it)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -28,7 +28,7 @@
  "stages": {
   "diagnosis": "COMPLETE (3.932 CPU node-h), independently reviewed",
   "candidates": "1 of 2 frozen (R)",
-  "assessment": "frozen, not started"
+  "assessment": "COMPLETE: A_FAIL"
  },
  "jobs": [
   {
@@ -68,6 +68,20 @@
    "stage": "candidate_development",
    "queue": "state/s5e/queues/cand-dev-b.q",
    "state": "COMPLETED: released by runner; 0.913 CPU node-h"
+  },
+  {
+   "job": "58891652",
+   "label": "s5e_cand_assess_a (1 CPU node, 2.5 h)",
+   "stage": "assessment",
+   "queue": "state/s5e/queues/cand-assess.q",
+   "state": "COMPLETED: 2.258 CPU node-h"
+  },
+  {
+   "job": "58891660",
+   "label": "s5e_cand_assess_b (1 CPU node, 2.5 h)",
+   "stage": "assessment",
+   "queue": "state/s5e/queues/cand-assess-b.q",
+   "state": "COMPLETED: 1.984 CPU node-h"
   }
  ],
  "receipts": [
@@ -98,6 +112,18 @@
   {
    "path": "docs/orchestration/state/s5e/cand/meter-measure-dev.json",
    "what": "spend after development: 6.156 CPU node-h (diagnosis 3.932, candidate_development 2.224), all closed"
+  },
+  {
+   "path": "docs/orchestration/state/s5e/cand/assess_receipt.json",
+   "what": "candidate R assessment A1-A5 and real-data validation"
+  },
+  {
+   "path": "docs/orchestration/state/s5e/cand/meter-measure-assess.json",
+   "what": "spend after assessment: 10.399 CPU node-h, all closed"
+  },
+  {
+   "path": "docs/orchestration/state/s5e/cand/next_design.json",
+   "what": "costed next validation design (s5e_next_design.py)"
   }
  ],
  "candidates": [
@@ -107,10 +133,11 @@
    "scope": "nominal background-related bias only (KNOWN_ISSUES 75 residual); not a remedy for the departure response (KNOWN_ISSUES 77)",
    "revisions_used": 0,
    "revisions_allowed": 1,
-   "development": "PASSED (development_exit true)"
+   "development": "PASSED (development_exit true)",
+   "assessment": "A_FAIL (A3: numerical reproducibility floor on data); A1, A2, A5 pass; A4 scope 20/42 EW cells"
   }
  ],
- "next_action": "launch cand-assess.q and cand-assess-b.q (stage assessment), then the assessment receipt",
+ "next_action": "independent read-only operand-level verification of development, assessment and repairs; then KNOWN_ISSUES/ledger/OPEN_ITEMS, outcome record, deliverables in both repositories, closeout",
  "concurrent_work_at_start": "jobs 58880337/58880338/58880339 and further josephrb GPU jobs and CPU job 58880449 belong to other lanes (not touched); shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "35f8757b231f524e52c060e4db93af87420af4d9",

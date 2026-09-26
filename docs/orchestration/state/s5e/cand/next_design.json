@@ -1,0 +1,351 @@
+{
+ "schema": "s5e-next-design/1",
+ "inputs": {
+  "assessment": "../docs/orchestration/state/s5e/cand/assess_receipt.json",
+  "cost_pseudo": 0.0115,
+  "cost_data": 0.025,
+  "n_nominal_experiments": 40
+ },
+ "A_statistical_scope_coverage": {
+  "A4_scope_EW_cells": {
+   "F": 20,
+   "68_nominal_only": {
+    "m": 20,
+    "design_min_normal_model_coverage": 0.4986563922938143,
+    "assurance_at_design": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.0
+    },
+    "assurance_at_exactly_nominal": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.9902327243672051
+    },
+    "n_for_80pct_assurance_exactly_nominal": 11422,
+    "n_for_80pct_assurance_at_design": null,
+    "cost_cpu_node_h_exactly_nominal": 131.353,
+    "cost_cpu_node_h_at_design": null
+   },
+   "68_nominal_plus_two_nuisance_points": {
+    "m": 60,
+    "design_min_normal_model_coverage": 0.4986563922938143,
+    "assurance_at_design": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.0
+    },
+    "assurance_at_exactly_nominal": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.9075753200516425
+    },
+    "n_for_80pct_assurance_exactly_nominal": 14779,
+    "n_for_80pct_assurance_at_design": null,
+    "cost_cpu_node_h_exactly_nominal": 509.8755,
+    "cost_cpu_node_h_at_design": null
+   },
+   "95_nominal_only": {
+    "m": 20,
+    "design_min_normal_model_coverage": 0.8128234497545641,
+    "assurance_at_design": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.0
+    },
+    "assurance_at_exactly_nominal": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.9701139563704877,
+     "16000": 0.999999551762695
+    },
+    "n_for_80pct_assurance_exactly_nominal": 6418,
+    "n_for_80pct_assurance_at_design": null,
+    "cost_cpu_node_h_exactly_nominal": 73.807,
+    "cost_cpu_node_h_at_design": null
+   },
+   "95_nominal_plus_two_nuisance_points": {
+    "m": 60,
+    "design_min_normal_model_coverage": 0.8128234497545641,
+    "assurance_at_design": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.0
+    },
+    "assurance_at_exactly_nominal": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.7661289782297489,
+     "16000": 0.9999904630866543
+    },
+    "n_for_80pct_assurance_exactly_nominal": 8310,
+    "n_for_80pct_assurance_at_design": null,
+    "cost_cpu_node_h_exactly_nominal": 286.695,
+    "cost_cpu_node_h_at_design": null
+   }
+  },
+  "all_42_EW_cells": {
+   "F": 42,
+   "68_nominal_only": {
+    "m": 42,
+    "design_min_normal_model_coverage": 0.4986563922938143,
+    "assurance_at_design": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.0
+    },
+    "assurance_at_exactly_nominal": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.9536520001293955
+    },
+    "n_for_80pct_assurance_exactly_nominal": 13681,
+    "n_for_80pct_assurance_at_design": null,
+    "cost_cpu_node_h_exactly_nominal": 157.3315,
+    "cost_cpu_node_h_at_design": null
+   },
+   "68_nominal_plus_two_nuisance_points": {
+    "m": 126,
+    "design_min_normal_model_coverage": 0.4986563922938143,
+    "assurance_at_design": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.0
+    },
+    "assurance_at_exactly_nominal": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.6323764697581609
+    },
+    "n_for_80pct_assurance_exactly_nominal": 17098,
+    "n_for_80pct_assurance_at_design": null,
+    "cost_cpu_node_h_exactly_nominal": 589.881,
+    "cost_cpu_node_h_at_design": null
+   },
+   "95_nominal_only": {
+    "m": 42,
+    "design_min_normal_model_coverage": 0.8128234497545641,
+    "assurance_at_design": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.0
+    },
+    "assurance_at_exactly_nominal": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.8799682710369883,
+     "16000": 0.9999962448845681
+    },
+    "n_for_80pct_assurance_exactly_nominal": 7699,
+    "n_for_80pct_assurance_at_design": null,
+    "cost_cpu_node_h_exactly_nominal": 88.5385,
+    "cost_cpu_node_h_at_design": null
+   },
+   "95_nominal_plus_two_nuisance_points": {
+    "m": 126,
+    "design_min_normal_model_coverage": 0.8128234497545641,
+    "assurance_at_design": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.0
+    },
+    "assurance_at_exactly_nominal": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.9999386828827483
+    },
+    "n_for_80pct_assurance_exactly_nominal": 9530,
+    "n_for_80pct_assurance_at_design": null,
+    "cost_cpu_node_h_exactly_nominal": 328.78499999999997,
+    "cost_cpu_node_h_at_design": null
+   }
+  },
+  "all_153_functionals": {
+   "F": 153,
+   "68_nominal_only": {
+    "m": 153,
+    "design_min_normal_model_coverage": 0.4261356465691728,
+    "assurance_at_design": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.0
+    },
+    "assurance_at_exactly_nominal": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.4522843787902673
+    },
+    "n_for_80pct_assurance_exactly_nominal": 17709,
+    "n_for_80pct_assurance_at_design": null,
+    "cost_cpu_node_h_exactly_nominal": 203.6535,
+    "cost_cpu_node_h_at_design": null
+   },
+   "68_nominal_plus_two_nuisance_points": {
+    "m": 459,
+    "design_min_normal_model_coverage": 0.4261356465691728,
+    "assurance_at_design": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.0
+    },
+    "assurance_at_exactly_nominal": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.0
+    },
+    "n_for_80pct_assurance_exactly_nominal": 21248,
+    "n_for_80pct_assurance_at_design": null,
+    "cost_cpu_node_h_exactly_nominal": 733.056,
+    "cost_cpu_node_h_at_design": null
+   },
+   "95_nominal_only": {
+    "m": 153,
+    "design_min_normal_model_coverage": 0.7296444399214196,
+    "assurance_at_design": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.0
+    },
+    "assurance_at_exactly_nominal": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.9998929009937955
+    },
+    "n_for_80pct_assurance_exactly_nominal": 9897,
+    "n_for_80pct_assurance_at_design": null,
+    "cost_cpu_node_h_exactly_nominal": 113.8155,
+    "cost_cpu_node_h_at_design": null
+   },
+   "95_nominal_plus_two_nuisance_points": {
+    "m": 459,
+    "design_min_normal_model_coverage": 0.7296444399214196,
+    "assurance_at_design": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.0
+    },
+    "assurance_at_exactly_nominal": {
+     "500": 0.0,
+     "1000": 0.0,
+     "2000": 0.0,
+     "4000": 0.0,
+     "8000": 0.0,
+     "16000": 0.9986882288618053
+    },
+    "n_for_80pct_assurance_exactly_nominal": 11789,
+    "n_for_80pct_assurance_at_design": null,
+    "cost_cpu_node_h_exactly_nominal": 406.7205,
+    "cost_cpu_node_h_at_design": null
+   }
+  }
+ },
+ "B_model_dependence": {
+  "precision_target": "adopted total sigma of each EW cell / 3",
+  "per_deformation": {
+   "eavail_gibuu": {
+    "median_n": 1.0,
+    "max_n": 1.0,
+    "argmax": "EW0",
+    "rel_sd_median_pct": 0.3296369832990639
+   },
+   "q3": {
+    "median_n": 1.0,
+    "max_n": 1.0,
+    "argmax": "EW0",
+    "rel_sd_median_pct": 0.3153051794496435
+   },
+   "W1": {
+    "median_n": 1.0,
+    "max_n": 1.0,
+    "argmax": "EW0",
+    "rel_sd_median_pct": 0.29987194489558444
+   },
+   "W2": {
+    "median_n": 1.0,
+    "max_n": 1.0,
+    "argmax": "EW0",
+    "rel_sd_median_pct": 0.23333103439217842
+   },
+   "W3": {
+    "median_n": 1.0,
+    "max_n": 1.0,
+    "argmax": "EW0",
+    "rel_sd_median_pct": 0.3427951567352407
+   }
+  },
+  "n_per_truth": 1.0,
+  "generator_truths": 6,
+  "cost_cpu_node_h": 0.069
+ },
+ "C_numerical_reproducibility": {
+  "rounding_probe_unfolds": 51,
+  "data_bootstrap_replicas": 200,
+  "cost_cpu_node_h": 6.275
+ }
+}
