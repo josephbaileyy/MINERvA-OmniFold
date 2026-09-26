@@ -120,7 +120,19 @@ the learned push against the oracle.
    one-hot encoding at this effort.
 3. More epochs help (0.87 → 0.97): the historical 8-epoch budget under-fits even the truth step.
 
-(Step 2 given the real iteration-1 pulls of C and B: rerun after a helper bug, pending.)
+**Step 2 given the real iteration-1 pull** (same events, T0 D4c; jobs 58886796):
+
+| pull source → truth arm | proton class: pull over selected | push over selected / missed | joint E×p |
+|---|---|---|---|
+| C → raw PDG | 0.017 | 0.019 / 0.014 | 0.015 |
+| C → one-hot | 0.017 | 0.017 / 0.010 | 0.012 |
+| C → one-hot + counts | 0.017 | 0.015 / 0.009 | 0.010 |
+| B → one-hot | 0.121 | 0.136 / 0.109 | 0.114 |
+
+4. Whatever its representation, the truth step returns what the pull carries: from C's pull (0.017 of the
+   proton-class change) no truth arm recovers topology; from B's (0.12) it recovers 0.11–0.14. **The
+   proton failure is located in the detector step**: the baseline step-1 representation does not transmit
+   the hadron-content change, and step 2 (either miss rule) cannot restore what it never receives.
 
 ## 6. What this does and does not establish
 
