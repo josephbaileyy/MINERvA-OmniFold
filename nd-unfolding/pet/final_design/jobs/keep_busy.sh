@@ -6,7 +6,8 @@
 #   usage: nohup bash keep_busy.sh <pinned checkout> <commit> <stop, e.g. 2026-09-27T20:00Z> &
 # Priorities (first incomplete wins):
 #   interactive 1 : dev2Pa (PET2, 1 run/GPU) -> dev2Q (PET2, annealed step 1) -> s4s -> s4f
-#   interactive 2 : GPU0 dev2Ta -> s4s ; GPU1 s3p_all -> s4s ; GPUs 2-3 s3p_all -> s4f -> s4s   (2 runs/GPU)
+#   interactive 2 : GPUs 0-1 dev2Ta -> s3p_all -> s4s ; GPUs 2-3 s3p_all -> s4f -> s4s   (2 runs/GPU; dev2T
+#                   and the pilot are the large-slot freeze's critical path)
 #   debug chains  : s3p_all -> s4f -> s4s   (all fit a 30-min round at ~760 s/iteration; the sizing pilot
 #                   goes first because it fixes n_F before the large slot can be frozen)
 # Final-bank manifests run with SCORE=0 (the launcher also forces it before an UNBLIND amendment).
@@ -53,11 +54,10 @@ while (( $(date +%s) < stop_epoch )) && [[ ! -e $B/keep_busy.stop ]]; do
       launch_inter pfd-inter1 "$c" "$B/${OUTS[$st]}"; }
   fi
   if ! grep -q '^pfd-inter2 ' <<<"$q"; then
-    g0=$(first_incomplete dev2Ta s4s_a2 s4f_a2); g1=$(first_incomplete s3p_all s4s_a2 s4f_a2)
+    g01=$(first_incomplete dev2Ta s3p_all s4s_a2 s4f_a2)
     g23=$(first_incomplete s3p_all s4f_a2 s4s_a2)
     c=""
-    [[ -n "$g0" ]] && c+="$(lane 0 2 "$g0" $([[ $g0 == dev2Ta ]] && echo 2800 || echo 1300)) & "
-    [[ -n "$g1" ]] && c+="$(lane 1 2 "$g1" 1300) & "
+    [[ -n "$g01" ]] && c+="$(lane 0,1 2 "$g01" $([[ $g01 == dev2Ta ]] && echo 2800 || echo 1300)) & "
     [[ -n "$g23" ]] && c+="$(lane 2,3 2 "$g23" 1300) & "
     [[ -n "$c" ]] && launch_inter pfd-inter2 "$c" "$B/s4f"
   fi
