@@ -35,6 +35,14 @@ pushed branch; nothing depends on a local scratch directory.
 - Independent reviews so far: implementation (`REVIEW_DISPOSITION-IMPL-20260926.md`: 1 BLOCK + 5 MAJOR fixed) and
   statistical design (`REVIEW_DISPOSITION-STAT-20260926.md`: 1 BLOCK + 7 MAJOR fixed, all prospective).
 
+- **2026-09-26 16:10Z additions.** Interim sizing from 28/44 pilot runs (H2S1 vs L128S1 at K = 5, 4 DEV draws; not
+  yet the sizing record): FINAL contrasts give n_F = 30 (E0-driven, joint power ≈ 0.73); the E4 (proton-topology)
+  non-inferiority contrast sits at −0.045 against its −0.05 margin (sd 0.040) and would need ≈ 1,770 draws — a
+  quantified limit for the equivalence path (the cost path is closed anyway if the large finalist costs < 2×).
+  PET2-pretrained diverges from k = 3 under the declared constant per-iteration rate (pull max 5.5 × 10⁵ at k = 5)
+  while PET2-scratch is stable; a matched tuning arm (`dev2Q`, both initializations with the annealed step-1
+  schedule) is queued before the large slot is closed. The watcher now runs from checkout `0e00644f`.
+
 ## Next actions, in order
 
 1. **Harvest development** when complete: `dev2P`, `dev2T` (run `diagnostics/posthoc_iterations.py` on the cluster
