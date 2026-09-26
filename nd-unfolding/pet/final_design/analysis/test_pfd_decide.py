@@ -29,7 +29,9 @@ def doc(path, case, rep, k, h, stab=None):
          "provenance": {"receipt": {"complete": True}},
          "iterations": [{"k": k, "histograms": h, "stability": stab or {
              "n_nonfinite_truth_passing": 0, "n_negative_truth_passing": 0, "push_max": 3.0,
-             "push_p999": 2.5, "final_truth_weight_ess_over_n": 0.8}}]}
+             "push_p999": 2.5, "final_truth_weight_ess_over_n": 0.8,
+             "n_nonfinite_pull_all_rows": 0, "n_negative_pull_all_rows": 0, "pull_max": 2.0,
+             "pull_min": 0.5}}]}
     path.write_text(json.dumps(d))
     return str(path)
 
@@ -150,6 +152,48 @@ def test_failures_make_candidate_ineligible(tmp_path):
                                                     sd_=0.3)}))
     b1 = res["eligibility"]["E"]["verdicts"]["B1"]
     assert b1["verdict"] == "FAIL" and b1["numbers"]["failures"] > 0
+
+
+def edit_stability(decl, stem, drop=(), **fields):
+    """Rewrite the stability block of the candidate's run whose score file is `<stem>.json`."""
+    run = next(x for x in decl["runs"] if x["score"].endswith(f"/{stem}.json"))
+    d = json.loads(open(run["score"]).read())
+    st = d["iterations"][0]["stability"]
+    st.update(fields)
+    for f in drop:
+        st.pop(f)
+    open(run["score"], "w").write(json.dumps(d))
+    return d["run_name"]
+
+
+def test_N1_covers_the_step1_pull_weights(tmp_path):
+    """Section 6.3 N1 "all weights": the step-1 pull as well as the step-2 push must be finite and
+    non-negative, and the max over both <= 100 in every run; a run without the pull record is
+    INCOMPLETE, never a silent pass."""
+    good = dc.evaluate(evidence({"A": make_candidate(tmp_path, "A")}))["eligibility"]["A"]
+    n1 = good["verdicts"]["N1"]
+    assert n1["verdict"] == "PASS" and n1["numbers"]["max_pull_over_runs"] == 2.0
+    assert n1["numbers"]["max_weight_over_runs"] == 3.0          # the push max binds here
+    for name, stem, fields, want in (
+            ("B", "e3_5", {"n_negative_pull_all_rows": 1, "pull_min": -0.1}, "FAIL"),
+            ("C", "null_2", {"n_nonfinite_pull_all_rows": 4}, "FAIL"),
+            ("D", "d4d_0", {"pull_max": 150.0}, "FAIL"),
+            ("E", "e0_7", {"pull_max": 99.0}, "PASS")):
+        decl = make_candidate(tmp_path, name)
+        run = edit_stability(decl, stem, **fields)
+        v = dc.evaluate(evidence({name: decl}))["eligibility"][name]["verdicts"]["N1"]
+        assert v["verdict"] == want, (name, v)
+        if name in ("B", "C"):
+            assert v["numbers"]["runs_nonfinite_or_negative"] == [run]
+        if name == "D":
+            assert v["numbers"]["max_pull_over_runs"] == 150.0
+            assert next(p for p in v["parts"] if p["label"] == "max weight in every run"
+                        )["estimate"] == 150.0
+    decl = make_candidate(tmp_path, "F")
+    run = edit_stability(decl, "e4_3", drop=("n_negative_pull_all_rows",))
+    v = dc.evaluate(evidence({"F": decl}))["eligibility"]["F"]
+    assert v["verdicts"]["N1"]["verdict"] == "INCOMPLETE" and v["status"] == "INCOMPLETE"
+    assert v["verdicts"]["N1"]["numbers"]["runs_lacking_pull_fields"] == [run]
 
 
 def test_sequential_straddle_continues_then_fails_at_look_two(tmp_path):

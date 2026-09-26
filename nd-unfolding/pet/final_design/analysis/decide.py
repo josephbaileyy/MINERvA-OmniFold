@@ -24,9 +24,10 @@ Rules (section ids):
   E_avail L1 <= 0.012 and mean spurious E_avail x proton L1 <= 3 x its null floor (the mean prior
   L1 to the target on the same null replicates = the oracle residual under the null). B4 |mean
   E8| <= 0.15 for both signs of R1, E8 = R_E0(R1 + D1) - R_E0(D1) paired by replicate.
-* 6.3 N1 every run's truth-passing push finite and non-negative, max <= 100 in every run; over
-  the E0 replicates median ESS/n (of w_truth x push) >= 0.20 and median 99.9th percentile push
-  <= 10. N2 pooled within-draw estimator-seed sd of R_E0 <= 0.05 from >= 4 seeds x >= 2 draws.
+* 6.3 N1 all weights of every run -- the step-2 push on truth-passing rows and the step-1 pull on
+  every row -- finite and non-negative, max(push, pull) <= 100 in every run (a run without the
+  pull record is INCOMPLETE); over the E0 replicates median ESS/n (of w_truth x push) >= 0.20 and
+  median 99.9th percentile push <= 10. N2 pooled within-draw estimator-seed sd of R_E0 <= 0.05 from >= 4 seeds x >= 2 draws.
 * 6.4 C1-C5 from the candidate's coverage output.
 * 6.5 non-inferiority of a smaller package; 6.6 ranking, tie-break, unresolved; 6.7 cost ratio.
 
@@ -63,6 +64,8 @@ E4_CASE = "D4c_p_up"
 E5_CASE = "D3_p0.35"
 R1_SIGNS = ("R1_x1.05+D1_p0.350", "R1_x0.95+D1_p0.350")
 REGIONS = ("low_acceptance", "moderate", "good")
+# N1's step-1 (pull) record in every run's stability block (score_design.stability)
+PULL_FIELDS = ("n_nonfinite_pull_all_rows", "n_negative_pull_all_rows", "pull_max")
 
 # section 6.5 margins on LB(small - large) and the section 6.6 materiality margins
 NI_MARGINS = {"E0": -0.02, "moderate": -0.04, "good": -0.04, "E3": -0.04, "E4": -0.05,
@@ -372,19 +375,33 @@ class Rules:
 
     # 6.3 --------------------------------------------------------------------------------- #
     def N1(self, c):
+        """All weights = the step-2 push on truth-passing rows and the step-1 pull on every row:
+        finite and non-negative, max over both <= 100 in every run. ESS/n and the 99.9th
+        percentile stay on the truth weights (w_truth x push), as the protocol writes them."""
         allrecs = [rec for case in c.cases.values() for rec in case.values()]
         e0 = [rec for rec in c.cases.get(E0_CASE, {}).values()]
         if len(e0) < self.n_final:
             return inf.incomplete("N1", f"{len(e0)} E0 replicates < {self.n_final}")
         st = [rec["it"]["stability"] for rec in allrecs]
+        lacking = [rec["run"] for rec, s in zip(allrecs, st)
+                   if any(f not in s for f in PULL_FIELDS)]
+        if lacking:
+            return inf.incomplete("N1", f"{len(lacking)} runs lack the step-1 (pull) weight "
+                                        f"fields {list(PULL_FIELDS)}; rescore them",
+                                  {"runs_lacking_pull_fields": lacking})
         bad = [rec["run"] for rec, s in zip(allrecs, st)
-               if s["n_nonfinite_truth_passing"] or s["n_negative_truth_passing"]]
-        wmax = max(s.get("push_max", math.inf) for s in st)
+               if s["n_nonfinite_truth_passing"] or s["n_negative_truth_passing"]
+               or s["n_nonfinite_pull_all_rows"] or s["n_negative_pull_all_rows"]]
+        # an absent/None max (no finite weight at all) counts as unbounded
+        push_max = max(math.inf if s.get("push_max") is None else s["push_max"] for s in st)
+        pull_max = max(math.inf if s["pull_max"] is None else s["pull_max"] for s in st)
+        wmax = max(push_max, pull_max)
         e0s = [rec["it"]["stability"] for rec in e0]
         ess = [s.get("final_truth_weight_ess_over_n") for s in e0s]
         p999 = [s.get("push_p999") for s in e0s]
         nums = {"runs_checked": len(st), "runs_nonfinite_or_negative": bad,
-                "max_push_over_runs": wmax, "e0_ess_over_n": ess, "e0_push_p999": p999}
+                "max_push_over_runs": push_max, "max_pull_over_runs": pull_max,
+                "max_weight_over_runs": wmax, "e0_ess_over_n": ess, "e0_push_p999": p999}
         if bad or any(x is None for x in ess + p999):
             return self.decide("N1", [inf.Part("all weights finite and non-negative", ">=", 1,
                                                "point", 0.0)], nums)

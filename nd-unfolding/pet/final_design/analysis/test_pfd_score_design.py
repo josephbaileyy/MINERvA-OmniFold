@@ -212,6 +212,27 @@ def test_nonfinite_push_is_reported_not_scored(tmp_path, features):
         "n_nonfinite_truth_passing"] >= 1
 
 
+def test_stability_records_the_step1_pull_weights(tmp_path, features):
+    """Protocol 6.3 N1 covers all weights: the step-1 pull (every prior row) is recorded beside
+    the step-2 push -- its range and its count of negative finite values."""
+    rf, _ = features
+    n = 20_000
+    make_run(tmp_path / "x")
+    scorer = sd.DesignScorer(tmp_path / "x", sd.RowFeatures(rf))
+    pull = np.linspace(0.5, 2.0, n)
+    pull[3], pull[4], pull[7] = -0.25, -1.5, np.inf
+    st = scorer.stability(np.ones(n), pull)
+    assert st["n_nonfinite_pull_all_rows"] == 1
+    assert st["n_negative_pull_all_rows"] == 2
+    assert st["pull_max"] == pytest.approx(2.0) and st["pull_min"] == pytest.approx(-1.5)
+    good = scorer.stability(np.ones(n), np.linspace(0.5, 2.0, n))    # silent on good pulls
+    assert good["n_negative_pull_all_rows"] == 0 and good["n_nonfinite_pull_all_rows"] == 0
+    assert good["pull_min"] == pytest.approx(0.5)
+    none = scorer.stability(np.ones(n), np.full(n, np.nan))           # no finite pull at all
+    assert none["n_nonfinite_pull_all_rows"] == n and none["n_negative_pull_all_rows"] == 0
+    assert none["pull_max"] is None and none["pull_min"] is None
+
+
 def test_missing_k_is_refused(tmp_path, features):
     rf, _ = features
     make_run(tmp_path / "r")

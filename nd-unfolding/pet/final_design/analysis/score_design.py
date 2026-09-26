@@ -356,14 +356,20 @@ class DesignScorer:
                                      keep_spectra) for name in unf}
 
     def stability(self, push: np.ndarray, pull: np.ndarray) -> dict[str, Any]:
-        """E9: weights over truth-passing prior rows (the predecessor's fields)."""
+        """E9: weights over truth-passing prior rows (the predecessor's fields), and the step-1
+        pull over every prior row (section 6.3 N1: all weights finite and non-negative, max <= 100;
+        `pull_max`/`pull_min` are None when no pull value is finite)."""
         kb = self.prior.keep
         w = push[kb]
         fin = np.isfinite(w)
+        pf = pull[np.isfinite(pull)]
         out: dict[str, Any] = {
             "n_truth_passing": int(kb.sum()),
             "n_nonfinite_push_all_rows": int((~np.isfinite(push)).sum()),
             "n_nonfinite_pull_all_rows": int((~np.isfinite(pull)).sum()),
+            "n_negative_pull_all_rows": int((pf < 0).sum()),
+            "pull_max": float(pf.max()) if pf.size else None,
+            "pull_min": float(pf.min()) if pf.size else None,
             "n_nonfinite_truth_passing": int((~fin).sum()),
             "n_negative_truth_passing": int((w[fin] < 0).sum()),
         }
