@@ -87,12 +87,40 @@ energy). The truth cloud is capped in only 2.8 % of events. The detector step's 
 most events, so whole-event detector summaries (pre-cap reco `E_avail`, reco `q3`, stored-cluster count/energy)
 carry information the tokens do not.
 
-## 5. Bounded interventions
+## 5. Bounded interventions: can the truth step represent the change?
 
-(appended when complete: `diagnostics/step2_fixed_target.py`, 19 fits listed in
-`runs/step2_interventions.txt` — truth-level learnability of the exact multiplicity weights with raw PDG,
-one-hot PDG, one-hot plus truncated-cloud counts, one-hot plus true `E_avail`/`q3`; efficiency-corrected vs
-carry; 8 vs 24 epochs; and step 2 given the real iteration-1 pull of the predecessor's C and B runs.)
+`diagnostics/step2_fixed_target.py` runs ONE step-2 fit on a fixed class-1 target through the
+predecessor's run path (same selection, loader, arms, B2 fit; runs in `step2int/`, job 58880466; each fit
+7.5 min on one A100) and the post-hoc instrument scores it. Target = the exact distortion weight
+(`oracle`) — a truth-level **learnability** test of the step-2 input set, not an unfolding. Pool T
+replicate 0 (D4c, D4d) and pool F replicate 0 (development tilt); 8 epochs unless noted; recovery of
+the learned push against the oracle.
+
+| fit (truth arm, miss rule) | case | proton class sel / miss | joint E×p | neutron class sel / miss | joint E×n | `E_avail` all |
+|---|---|---|---|---|---|---|
+| raw PDG, eff.-corrected | D4c | 0.83 / 0.83 | 0.81 | 0.59 / 0.43 | 0.50 | 0.40 |
+| one-hot, eff.-corrected | D4c | 0.87 / 0.88 | 0.88 | 0.88 / 0.85 | 0.87 | 0.78 |
+| one-hot, 24 epochs | D4c | 0.97 / 0.97 | 0.96 | 0.98 / 0.97 | 0.96 | 0.85 |
+| one-hot + truncated-cloud counts | D4c | 0.89 / 0.92 | 0.90 | 0.88 / 0.88 | 0.87 | 0.70 |
+| one-hot + true `E_avail`, `q3` | D4c | 0.87 / 0.89 | 0.88 | 0.88 / 0.86 | 0.87 | 0.78 |
+| one-hot, carry (trained on all truth) | D4c | 0.93 / 0.93 | 0.93 | 0.92 / 0.89 | 0.91 | 0.96 |
+| raw PDG, eff.-corrected | D4d | 0.31 / 0.08 | 0.19 | 0.84 / 0.80 | 0.81 | small inj. |
+| one-hot, eff.-corrected | D4d | 0.92 / 0.91 | 0.91 | 0.91 / 0.91 | 0.91 | small inj. |
+| one-hot + counts, eff.-corrected | D4d | 0.91 / 0.94 | 0.90 | 0.91 / 0.94 | 0.92 | small inj. |
+| one-hot, carry | D4d | 0.95 / 0.95 | 0.95 | 0.95 / 0.95 | 0.95 | small inj. |
+| one-hot, eff.-corrected | dev tilt | 0.76 / 0.49 | 0.89 | — | 0.89 | 0.89 |
+
+1. **Given the correct per-event target, the truth step learns the multiplicity change and extrapolates
+   it to the missed events as well as it fits the selected ones** (categorical PDG: 0.87–0.92 at 8 epochs,
+   0.97 at 24). The efficiency-corrected rule is therefore not what loses the topology correction; the
+   correction never reaches step 2 (section 3).
+2. **Raw PDG codes as a continuous column fail on neutrons** (D4c neutron class 0.59 selected / 0.43
+   missed; D4d proton class 0.31 / 0.08): the categorical encoding is required for a topology-sensitive
+   truth step. Explicit truncated-cloud counts or true `E_avail`/`q3` add nothing resolvable over the
+   one-hot encoding at this effort.
+3. More epochs help (0.87 → 0.97): the historical 8-epoch budget under-fits even the truth step.
+
+(Step 2 given the real iteration-1 pulls of C and B: rerun after a helper bug, pending.)
 
 ## 6. What this does and does not establish
 

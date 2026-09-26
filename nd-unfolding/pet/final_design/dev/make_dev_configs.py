@@ -58,6 +58,13 @@ def _epochs1(n: int) -> Callable[[RunConfig], RunConfig]:
     return f
 
 
+def _epochs2(n: int) -> Callable[[RunConfig], RunConfig]:
+    def f(c: RunConfig) -> RunConfig:
+        return c.replace(step2=dataclasses.replace(
+            c.step2, stopping=dataclasses.replace(c.step2.stopping, max_epochs=int(n))))
+    return f
+
+
 # candidate id -> (description, transform of the base config, miss rule)
 CANDIDATES: dict[str, tuple[str, Callable[[RunConfig], RunConfig], str]] = {
     "Cref": ("C as frozen by the predecessor (reference)", lambda c: c, EFF),
@@ -78,6 +85,14 @@ CANDIDATES: dict[str, tuple[str, Callable[[RunConfig], RunConfig], str]] = {
     "L128H2": ("H2 with an enlarged step-1 PET (projection 128, 4 transformer layers, 8 heads)",
                lambda c: _model({"projection_dim": 128, "num_transformer": 4, "num_heads": 8})(
                    c.replace(feature_arm="reco_summaries_pdg_onehot")), EFF),
+    "L64S1": ("H2S1 with an enlarged step-1 PET (projection 64, 4 transformer layers, 4 heads)",
+              lambda c: _model({"projection_dim": 64, "num_transformer": 4, "num_heads": 4})(
+                  CANDIDATES["H2S1"][1](c)), EFF),
+    "L128S1": ("H2S1 with an enlarged step-1 PET (projection 128, 4 transformer layers, 8 heads)",
+               lambda c: _model({"projection_dim": 128, "num_transformer": 4, "num_heads": 8})(
+                   CANDIDATES["H2S1"][1](c)), EFF),
+    "H2S1E16": ("H2S1 with 16 epochs per fit at both steps (optimization-effort arm)",
+                lambda c: _epochs2(16)(_epochs1(16)(CANDIDATES["H2S1"][1](c))), EFF),
     "L128H2E16": ("L128H2 with 16 step-1 epochs per fit (learning-curve arm)",
                   lambda c: _epochs1(16)(_model({"projection_dim": 128, "num_transformer": 4,
                                                  "num_heads": 8})(
