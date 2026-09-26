@@ -1,0 +1,3 @@
+# name	config	config_hash	selection	distortion	reference_run	extra_driver_args
+smokeX-H2S1X2K2-DEV0	../../../final_design/configs/smokeX/smokeX-H2S1X2K2-DEV0.json	76985ce0e246c92f6c36612c7a89575d8e9b40b59069a1b724b14435d4d79eff	BANK:DEV:S3P:0	dev	-	--step2-miss-mode efficiency_corrected
+smokeX-H2S1X1K2-DEV0	../../../final_design/configs/smokeX/smokeX-H2S1X1K2-DEV0.json	d08a09f10e9fdef0c60bb8d271d7d0a1c8fae6a85d7500a9ad84d3bb165dacf3	BANK:DEV:S3P:0	dev	-	--step2-miss-mode efficiency_corrected
