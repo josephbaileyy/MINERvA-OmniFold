@@ -1,5 +1,19 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-09-26 s5e (OI-192): estimator diagnosis, refinement-capacity candidate, development-scale assessment
+
+Campaign under [`AUTHORIZATION-20260925-oi192-estimator-diagnosis.md`](docs/orchestration/AUTHORIZATION-20260925-oi192-estimator-diagnosis.md);
+contract `docs/orchestration/state/s5e/contract.json` with amendments 1–3. Development seeds and noise-free
+constructions for the diagnosis; fresh seeds 800000–805019 and withheld deformations W1–W3 for the
+assessment. **Nothing is adopted; no row grades or changes `3d7465f6…`, s5c, s5n or Z.** Records:
+[`DIAGNOSIS-20260926-s5e-oi192-estimator.md`](docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md),
+[`OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md`](docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md).
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL153 | diagnosis D0–D7 of the F2 5D estimator: traced unfolds (per-iteration forward folds, step-1/step-2 response, missed-event fill), noise-free scans to k = 30, one-factor probes, driver-vs-npz matching, input parity, background pairing over 12 seeds; receipt `state/s5e/diag/diag_receipt.json` | D0 28/28 bitwise; driver reproduces the E_avail departure (EW29 73.8% vs 73.5%, corr 0.9998); inputs identical after removing 2,801 sentinel rows; unfolded fold reproduces ≥ 99.2% (EW) of the reco departure while EW residuals stay median 5–11%, max 38–74%; E_avail −26% k = 5→30 (still falling), q3 +31%; capacity improves the reco fit not the E_avail truth; refinement 400/31 cuts the paired background bias > 80% in every worst cell (max \|t\| 11.2 → 4.05) | **Named: refinement-classifier capacity for the nominal background bias (`KNOWN_ISSUES.md` 75).** Departure cause INCONCLUSIVE; no authorized change passes its screen (`KNOWN_ISSUES.md` 77); driver/npz difference not a pipeline defect (79). Independently reproduced (review round 1, F1–F7 accepted) |
+| VL154 | candidate `R` (B0 + refinement 400 trees/31 leaves): development K1–K5 (seeds 700000–702019) and assessment A1–A5 (fresh seeds; 40 nominal, 20 each GiBUU E_avail, q3, W1 NuWro E_avail, W2 GENIE MEC (E_avail,W), W3 NuWro (pT,p‖,E_avail)); real data with a 100-replica bootstrap; receipts `state/s5e/cand/{dev,assess}_receipt.json` | K1 max \|t\| 2.18 (B0 8.6); A1 max \|t\| 2.69; A2 pooled pull SD 1.023, Mahalanobis 43.1; A3 seed/permutation inert but real-data rounding probe 0.78 σ median, 2.58 σ max; A4 W1/W2/W3 median 6.2/1.9/5.7%, max 31/16/24%, 20/42 EW cells within adopted σ; A5 σ ratio 0.98; data R − B0 0.28% median, 1.58% max | **A_FAIL (A3, numerical reproducibility floor, `KNOWN_ISSUES.md` 80; B0 shows the same, so it belongs to the estimator family).** A2 is a pooled pass (6 functionals miscalibrated, incl. EW41 in the A4 scope); development exit relied on a declared change of the screen. Development scale, not a coverage validation; independently reproduced (review round 2, M1–M4 accepted) |
+
 ## 2026-09-25 s5n successor (OI-191): negweight-refined development controls, real-data method sensitivity
 
 Successor under [`AUTHORIZATION-20260925-negweight-refined-successor.md`](docs/orchestration/AUTHORIZATION-20260925-negweight-refined-successor.md);

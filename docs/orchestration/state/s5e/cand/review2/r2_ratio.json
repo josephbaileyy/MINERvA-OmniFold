@@ -1,0 +1,36 @@
+{
+ "w2-genie-mec-over-cv-eavailW.json": {
+  "numerator": {
+   "sha_ok": true,
+   "edges_ok": true,
+   "n_nonpos": 0
+  },
+  "denominator": {
+   "sha_ok": true,
+   "edges_ok": true,
+   "n_nonpos": 0
+  },
+  "max_abs_diff_vs_committed": 0.0,
+  "n_no_info": 0,
+  "n_clipped": 0,
+  "volume_matters_only_via_normalization": true,
+  "rho_without_volume_max_diff": 0.04332543467556427
+ },
+ "w3-nuwro-over-genie-pt-pz-eavail.json": {
+  "numerator": {
+   "sha_ok": true,
+   "edges_ok": true,
+   "n_nonpos": 253
+  },
+  "denominator": {
+   "sha_ok": true,
+   "edges_ok": true,
+   "n_nonpos": 282
+  },
+  "max_abs_diff_vs_committed": 0.0,
+  "n_no_info": 300,
+  "n_clipped": 36,
+  "volume_matters_only_via_normalization": true,
+  "rho_without_volume_max_diff": 0.132060843827698
+ }
+}

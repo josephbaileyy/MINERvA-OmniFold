@@ -444,6 +444,19 @@ therefore remains open: the refined footing reduces one bias but does not by its
 qualify an uncertainty.
 % Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md; VL151, VL152.
 
+\paragraph{Refinement capacity (2026-09-26).}
+The residual nominal bias of the refined footing comes from the Stay-Positive classifier
+itself. At the unfold's GBDT setting (100 trees, 8 leaves) it underfits the positive-weight
+probability, leaving a reco-level subtraction error of up to \SI{4}{\percent} per
+$(\Eavail,W)$ reco cell. At 400 trees and 31 leaves that error falls to \SI{1.7}{\percent}.
+The paired truth-level bias then falls by more than \SI{80}{\percent} in every affected
+cell, and the nominal background-inclusive closure passes on 20 development and 40 fresh
+pseudo-experiments. Splitting the background simulation into independent injection and
+subtraction halves is not the cause. The higher-capacity refinement is not adopted: the
+estimator it feeds failed a stability test on the data (\S\ref{sec:validation}).
+% Source: docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md §5;
+% docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md; VL153, VL154.
+
 \paragraph{The footing question is settled; the adoption gate is a different one.}
 \textbf{Nothing here adopts any five-dimensional covariance.} The
 selection-complete active-lateral component is built --- five bands, ten endpoint

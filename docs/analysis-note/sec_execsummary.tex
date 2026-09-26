@@ -41,6 +41,23 @@ and up to \SI{74}{\percent} off in the highest-$W$ column. This regularization b
 not in the quoted covariance.
 % Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md; VL151-VL152;
 % KNOWN_ISSUES 75, 77.
+A diagnosis of the estimator followed. The shortfall under generator-sized departures is
+the same through the full analysis driver as in the development pipeline. For the
+physically anchored $\Eavail$ departure, neither more iterations (thirty reduce it by about
+a quarter), nor higher classifier capacity, nor a different treatment of events that fail
+reconstruction removes it. It is therefore carried as an unfolding-model dependence. For
+other fixed generator shapes (NuWro; GENIE with enhanced meson-exchange currents) it reaches
+\SIrange{16}{31}{\percent} in the most affected cell and stays within the quoted total
+uncertainty in 20 of the 42 $(\Eavail,W)$ cells. The residual background bias was traced to
+the capacity of the refinement classifier. A higher-capacity refinement closes the nominal
+background-inclusive test on fresh pseudo-experiments, with calibrated statistical
+intervals. However, the estimator's output on the real data moves by up to 2.6 statistical
+standard deviations when its inputs change at the level of floating-point rounding. No
+estimator therefore qualifies. The unfolding-model dependence is in no quoted covariance,
+and whether the numerical instability is absorbed by any quoted uncertainty is not
+established.
+% Source: docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md;
+% docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md; VL153-VL154; KNOWN_ISSUES 75, 77, 79, 80.
 
 \paragraph{Results overview:}
 \begin{itemize}[itemsep=2pt]

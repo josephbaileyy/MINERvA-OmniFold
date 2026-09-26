@@ -1,0 +1,27 @@
+{
+ "jitter_sd_over_dsig_rms_(j1-j2)": 0.7193568274329539,
+ "jitter_sd_over_dsig_rms_(j-up)": 0.7963553589424626,
+ "sqrt(1 - sig^2/dsig^2)_rms": 0.8047801164262404,
+ "frac_functionals_dsig_gt_sig": 0.9607843137254902,
+ "dsig_over_sig_median_all153": 1.8733363408300818,
+ "slope_jittervar_on_excessvar_(rel)": 0.8693231809449633,
+ "corr_jittervar_excessvar_(rel)": 0.06385888233244368,
+ "spearman_rank_corr": 0.07193786605551311,
+ "B0_asimov_eavail_jitter": {
+  "upcast_equals_b0": false,
+  "over_B0_pseudo_sigma_median": 0.3743678406691537,
+  "max": 3.3319063576363903,
+  "over_R_pseudo_sigma_median": 0.4427336621733741,
+  "rel_pct_median": 0.0896871088620238,
+  "rel_pct_max": 0.9680407852655006
+ },
+ "B0_asimov_jitter_meta": {
+  "construction": "asimov_same",
+  "coords": "float64",
+  "jitter_f32": 1,
+  "jitter_mode": "edge_safe",
+  "truth": "eavail_shape",
+  "amplitude": 1.0
+ },
+ "pull_sd_nominal_pooled_implied_if_jitter_uncovered_(pseudo units)": 1.5246369301338345
+}

@@ -14,8 +14,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-oi192",
  "branch": "campaign/oi192-diagnosis-20260925",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5e-20260925/",
- "phase": "ASSESSMENT COMPLETE: A_FAIL (A3); VERIFICATION NEXT",
- "phase_detail": "assessment receipt state/s5e/cand/assess_receipt.json (sha256 84266e30...): A1 PASS (40 fresh nominal, max |t| 2.69), A2 PASS (pooled pull SD 1.023, 3.9% outside 3 SE, Mahalanobis 43.1), A3 FAIL (seed/permutation inert, but the real-data rounding probe moves functionals by 0.78 data-sigma median, 2.58 max against bounds 0.3/1.0), A4 scope 20 of 42 EW cells, A5 PASS (sigma ratio median 0.98, max 1.49); verdict A_FAIL; no revision (the failing probe is on the real data: no fresh sample exists to re-test a revision)",
+ "phase": "CLOSED",
+ "phase_detail": "final disposition 2026-09-26: diagnosis complete (review round 1); candidate R developed (PASS) and assessed A_FAIL on A3 (the estimator family's real-data numerical floor); review round 2 confirmed every number, M1-M4 and L1-L5 accepted; nothing adopted; next increments OI-193",
  "pinned": {
   "contract": "docs/orchestration/state/s5e/contract.json (frozen at the commit that first adds it)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -124,6 +124,14 @@
   {
    "path": "docs/orchestration/state/s5e/cand/next_design.json",
    "what": "costed next validation design (s5e_next_design.py)"
+  },
+  {
+   "path": "docs/orchestration/state/s5e/cand/review-round-2.md",
+   "what": "independent operand-level review of development, assessment, repairs and the next design (scripts in cand/review2/)"
+  },
+  {
+   "path": "docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md",
+   "what": "final disposition"
   }
  ],
  "candidates": [
@@ -137,7 +145,7 @@
    "assessment": "A_FAIL (A3: numerical reproducibility floor on data); A1, A2, A5 pass; A4 scope 20/42 EW cells"
   }
  ],
- "next_action": "independent read-only operand-level verification of development, assessment and repairs; then KNOWN_ISSUES/ledger/OPEN_ITEMS, outcome record, deliverables in both repositories, closeout",
+ "next_action": "none within this campaign; OI-193 awaits Joseph",
  "concurrent_work_at_start": "jobs 58880337/58880338/58880339 and further josephrb GPU jobs and CPU job 58880449 belong to other lanes (not touched); shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "35f8757b231f524e52c060e4db93af87420af4d9",
@@ -164,7 +172,7 @@
   },
   {
    "utc": "2026-09-26T04:37:04Z",
-   "what": "task k5_b16 (bootstrap replicas 16-20) exited 129 from a ROOT/cppyy signal in CPyCppyy::op_str after its fifth replica was written at 04:36Z; all five products carry complete metadata (bootstrap_seed, candidate R, n_estimators 400); no retry"
+   "what": "task k5_b16 (bootstrap replicas 16-20) exited 129 from a ROOT/cppyy signal in CPyCppyy::op_str after its fifth replica was written at 04:36Z; all five products carry complete metadata (bootstrap_seed, candidate R, n_estimators 400); no retry; cause only partly identified: a segfault in CPyCppyy::op_str while Python printed an unseen exception in the post-run inventory step (review round 2, L5)"
   }
  ],
  "prepared_not_frozen": {
@@ -173,5 +181,24 @@
    "docs/orchestration/state/s5e/w3-nuwro-over-genie-pt-pz-eavail.json"
   ],
   "note": "built at 700797e3 from fixed generator predictions only (no unfold output read); frozen by the assessment amendment"
+ },
+ "verification": "review round 1 (diagnosis, worktree MINERvA-OmniFold-s5e-review1 at 0998742b) and round 2 (candidate, MINERvA-OmniFold-s5e-review2 at 843fc99e), both read-only with own code, both worktrees clean afterwards; every number reproduced; accepted findings implemented",
+ "four_status_fields": {
+  "campaign_disposition": "CLOSED: bounded objective met; diagnosis complete; one candidate (R) assessed A_FAIL (A3); nothing qualifies",
+  "reportable_uncertainty_scope": "unchanged: 2D standalone covariance; C_EW 835828bf under exception with M1-M4; KNOWN_ISSUES 75 and 77 in no covariance; absorption of 80 not established; no 5D coverage claim",
+  "joint_5d_inference_status": "NOT PERFORMED",
+  "publication_readiness": "NOT READY"
+ },
+ "spend": {
+  "cpu_node_h": 10.398888888888889,
+  "by_stage": {
+   "diagnosis": 3.932,
+   "candidate_development": 2.224,
+   "assessment": 4.243,
+   "verification_repair": 0.0
+  },
+  "gpu": 0.0,
+  "envelope_carried": "35.086 of 345.27 CPU node-h",
+  "meter": "state/s5e/cand/meter-measure-assess.json"
  }
 }

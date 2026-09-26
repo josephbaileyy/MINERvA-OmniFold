@@ -107,6 +107,12 @@ the unfolding follows a generator-sized change of the $\Eavail$ shape only partl
 the true shape is reweighted by the GiBUU-to-GENIE ratio, the $(\Eavail,W)$ cells
 deviate from it by several percent in the largest cells and by more at high $W$, with or
 without background. This regularization bias is also not in the quoted uncertainties.
+More iterations or a larger classifier do not remove it; for other fixed generator shapes it
+is \SIrange{16}{31}{\percent} in the most affected cell and within the quoted total
+uncertainty in about half of the $(\Eavail,W)$ cells. The unfolded values on data also move
+by up to a few statistical standard deviations under input changes at the level of
+floating-point rounding; whether the statistical uncertainty already absorbs this is not
+established.
 No frequentist coverage is claimed for the five-dimensional intervals: an
 end-to-end test of bias-corrected statistical intervals from a deterministic
 variant of the estimator failed its predeclared criterion under the tested
@@ -117,6 +123,8 @@ truth departures.
 % docs/orchestration/state/s5c/d1/bias_vs_adopted.json (max |bias|/sigma 1.07, EW35). KNOWN_ISSUES 75.
 % Negweight-refined and generator-sized departures: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md
 % (VL151, VL152); KNOWN_ISSUES 75, 77.
+% Estimator diagnosis and stability: docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md
+% (VL153, VL154); KNOWN_ISSUES 77, 80.
 
 The $\Eavail$ dimension provides an independent view of the established
 low-recoil discrepancy.  GENIE, the MINERvA Tune~v1, NuWro, and GiBUU all

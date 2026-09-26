@@ -113,6 +113,16 @@ available energy is changed by as much as two standard generators differ, the un
 follows it only partly: typical cells come back about \SI{10}{\percent} off, and the
 highest-$W$ cells much more. Neither effect is in the quoted uncertainty yet.
 
+A follow-up study looked inside the unfolding to find out why. Letting it run six times
+longer helps only a little, and a larger machine-learning model does not help. For other
+generators the effect is \SIrange{16}{31}{\percent} in the worst cell and smaller than the
+quoted uncertainty in about half of the $(\Eavail,W)$ cells. The study did find the source
+of the remaining background bias, a too-simple helper classifier, and a larger one removes
+it. But it also found that the result on the real data shifts by up to a few times its
+statistical uncertainty when the inputs are rounded differently. The generator dependence
+is not in the quoted uncertainty, whether the rounding effect is remains to be checked, and
+nothing was adopted.
+
 The two-dimensional trust check is unaffected and retains its independently
 constructed uncertainty.
 

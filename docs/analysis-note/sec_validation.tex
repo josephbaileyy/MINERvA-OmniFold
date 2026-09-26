@@ -79,6 +79,43 @@ is not adopted.
 % Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md (VL151, VL152);
 % KNOWN_ISSUES 75, 77; independently reproduced (state/s5n/stage1/review-round-1.md).
 
+\paragraph{Diagnosis of the departure response; a refinement-capacity candidate.}
+An instrumented rerun recorded every OmniFold iteration of these experiments. It
+reproduced the development results bitwise and repeated them through the unmodified
+driver, which shows the same response to the $\Eavail$ departure (highest-$W$ cell
+\SI{73.8}{\percent} against \SI{73.5}{\percent}).
+
+The two steps behave as intended. The first step matches the pseudo-data at reco level
+within statistical noise, and the second reproduces its truth-level weight sums to
+\SI{0.5}{\percent}. Yet the unfolded result folds back onto the data less well than the
+true model does. On noise-free pseudo-data it reproduces more than \SI{99}{\percent} of
+the departure's reco-level signal while the $(\Eavail,W)$ cells stay \SIrange{5}{11}{\percent}
+off in the median and up to \SI{74}{\percent} in the worst cell. The remaining reco-level
+imprint is small relative to the departure but still statistically significant at the
+analysis exposure.
+
+Thirty iterations reduce the $\Eavail$ residual by \SI{26}{\percent}, and it is still
+falling slowly; the $q_3$ residual grows with iterations. A larger classifier improves the
+reco-level fit without improving the $\Eavail$ truth residual, and removing the regression
+for events that fail reconstruction does not help it. No single cause is established, and
+no authorized estimator change passes its predeclared screen for the physical departure.
+
+The residual background bias has a named cause: the refinement classifier underfits.
+Raising its capacity (400 trees, 31 leaves) reduces the background-related bias by more
+than \SI{80}{\percent} in every affected cell. A candidate built on this passes the
+nominal background-inclusive closure on 40 fresh pseudo-experiments (largest deviation
+2.7 standard errors) and a calibration test of its statistical intervals (pull width 1.02).
+It fails the predeclared stability test on the data: perturbing the inputs within
+floating-point rounding moves the reported functionals by 0.8 statistical standard
+deviations in the median and 2.6 at most. The same instability, at most \SI{1.2}{\percent}, explains the
+difference between the driver and development pipelines on the data; whether the
+data-bootstrap uncertainty already absorbs it is not established. Under withheld
+generator shapes the unfolding-model dependence is \SIrange{2}{6}{\percent} in the median
+and \SIrange{16}{31}{\percent} at most. Nothing is adopted.
+% Source: docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md (VL153);
+% docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (VL154); KNOWN_ISSUES 75, 77, 79, 80;
+% independently reproduced (state/s5e/diag/review-round-1.md, state/s5e/cand/review-round-2.md).
+
 \paragraph{Unbinned diagnostic (C2ST).}
 As a binning-free check that the unfold removes the data\,$\leftrightarrow$\,MC mismatch, we use
 a classifier two-sample test (C2ST): a classifier is trained to separate the data from the

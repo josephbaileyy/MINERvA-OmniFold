@@ -82,7 +82,8 @@ with the same input differences, and no separate refinement defect appears:
 **A new estimator property follows, and it matters beyond `KNOWN_ISSUES.md` 79.** The F2 estimator's
 real-data output has a numerical reproducibility floor of about 1% (max) and 0.2% (median) under input
 changes of float32-rounding size. That is comparable to the statistical σ (the median per-seed spread of
-nominal closure is 0.21%). No covariance carries it.
+nominal closure is 0.21%). Whether a data bootstrap that refits everything per replica already absorbs it
+is not established (candidate review round 2, M3).
 
 **Withdrawn.** The original D2(b) jitter probe moved exact zeros on the grid edge 0 out of the grid:
 

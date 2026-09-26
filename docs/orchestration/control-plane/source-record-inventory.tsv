@@ -1,7 +1,8 @@
 source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
 OI-190	retired	-	declared	e214d52d14a140d0d82a31fd62930d02d508e67ba26293a2f7556450d2ed730b	CLOSED 2026-09-25
 OI-191	retired	-	declared	6c39adc76363598db781194ee7a5e33b1b8f7a8f13348fb79ede241ec84579d1	CLOSED 2026-09-25
-OI-192	active	NOW	declared	76ccfb9c5989521ea69dfe725d454d8493bbbf16d37613271e46ff188f829506	OPEN
+OI-192	retired	-	declared	fbebadf8c31f99a692d1538b286aa3824adf54939abf6a5d0bdbd21594b4d6c5	CLOSED 2026-09-26
+OI-193	active	WAITING-JOSEPH	declared	b22777ff344cfa474b0ca0f0fd472ec480c219060a3ad5988111accb14c75fc7	OPEN
 OI-188	active	NOW	migration-carried-forward	577c1bbba8cc1c763a60ebee78f9401dcb67c3698ae30f1b756af23fb5c8dfab	OPEN
 OI-187	active	NOW	migration-carried-forward	7b3861f98d5d918ada0bad05927a1516bcc4284569a372a3653c030b1671e041	RULED 2026-09-01 BY JOSEPH — (a) UPGRADE, NOT A SUBMISSION BLOCKER, and (b) THE DEPENDENCY IS RETAINED BY CHOICE — "keep
 OI-186	active	NOW	migration-carried-forward	2eee4f9d1140ecf106fed1cb3bf5c59f05a94247e67d02119f39991065753dd4	OPEN
