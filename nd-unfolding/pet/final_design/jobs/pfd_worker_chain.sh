@@ -98,6 +98,7 @@ worker() {   # SLOT DEVICE
     next_open_claim || break
     row=$CLAIMED_ROW; name=$(row_name "$row")
     echo "$(date -u +%FT%TZ) slot $slot gpu $dev -> $name" >> "$LOG"
+    touch "$OUT/.started-${SLURM_JOB_ID:-none}"
     is_complete "$name" || run_row "$row" "$dev" "$DEADLINE" || rc=1
     if is_complete "$name"; then [[ "${SCORE:-1}" == 1 ]] && score_row "$row"; fi
     # the claim's fd stays open in this worker: release it by closing every lock fd we took
@@ -120,9 +121,16 @@ mapfile -t UNF < <(unfinished)
 if (( ${#UNF[@]} == 0 )) && [[ -n "$NEXT" ]]; then
   [[ "$(squeue -h -j "$NEXT" -o '%u %j' 2>/dev/null)" == "$USER pfd-chain" ]] && scancel "$NEXT"
   echo "all COMPLETE; cancelled $NEXT" >> "$LOG"
+elif [[ ! -e "$OUT/.started-${SLURM_JOB_ID:-none}" ]] && [[ -n "$NEXT" ]]; then
+  # no worker could start a row this round (every open row held elsewhere, or the iteration
+  # estimate never fits the round): a successor would do the same, so the chain stops here
+  # instead of cycling (2026-09-26: ~80 empty 35-s debug rounds with ITER_ESTIMATE=1500)
+  [[ "$(squeue -h -j "$NEXT" -o '%u %j' 2>/dev/null)" == "$USER pfd-chain" ]] && scancel "$NEXT"
+  echo "no row started in this round; cancelled $NEXT" >> "$LOG"
 elif (( status != 0 )) && [[ -n "$NEXT" ]]; then
   [[ "$(squeue -h -j "$NEXT" -o '%u %j' 2>/dev/null)" == "$USER pfd-chain" ]] && scancel "$NEXT"
   echo "a run exited non-zero (exit-codes.txt); cancelled $NEXT" >> "$LOG"
 fi
+rm -f "$OUT/.started-${SLURM_JOB_ID:-none}"
 echo "status $status" >> "$LOG"
 exit $status

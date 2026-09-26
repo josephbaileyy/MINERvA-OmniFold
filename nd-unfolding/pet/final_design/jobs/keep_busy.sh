@@ -18,7 +18,9 @@ B=/pscratch/sd/j/josephrb/pet-final-design-20260925
 R=../../final_design/runs
 declare -A OUTS=([dev2Pa]=dev2P [dev2Q]=dev2Q [dev2Ta]=dev2T [s3p_all]=s3p [s4f_a2]=s4f [s4s_a2]=s4s
                  [dev3N]=dev3N [s3n_fast]=s3p [s3n_slow]=s3p)
-declare -A ITER=([dev3N]=1500 [s3n_fast]=1500 [s3n_slow]=2900 [s4f_a2]=780 [s4s_a2]=780 [s3p_all]=780)
+# debug rounds (1 worker per GPU, 30 min): the worker starts a row only if now + 1.1 x estimate + 150 s
+# < deadline (~1790 s after start), so an estimate must stay below ~1400 s or the chain runs nothing
+declare -A ITER=([dev3N]=1150 [s3n_fast]=1150 [s4f_a2]=780 [s4s_a2]=780 [s3p_all]=780)
 stop_epoch=$(date -d "$STOP" +%s)
 
 incomplete() {   # MANIFEST_STEM -> 0 if some row of the manifest is not COMPLETE
@@ -75,7 +77,7 @@ while (( $(date +%s) < stop_epoch )) && [[ ! -e $B/keep_busy.stop ]]; do
   # a debug chain holds 2 submissions (running + queued successor); keep two chains (<= 4 of 5)
   nd=$(grep -c ' gpu_debug$' <<<"$q" || true)
   if (( nd <= 2 )); then
-    st=$(first_incomplete dev3N s3n_fast s4f_a2 s4s_a2) && {
+    st=$(first_incomplete dev3N s3n_fast s4f_a2 s4s_a2) && (( ${ITER[$st]:-9999} * 11 / 10 + 150 < 1790 )) && {
       O=$B/${OUTS[$st]}; mkdir -p "$O"; sc=1; [[ $st == s4* ]] && sc=0
       j=$(cd "$O" && sbatch --parsable -o "$O/slurm-%j.out" --export=ALL,MINE="$M",MINE_COMMIT="$S",OUT="$O",MANIFEST="$R/$st.tsv",SCORE=$sc,SLOTS_PER_GPU=1,CHAIN=1,MAX_ROUNDS=2000,DEADLINE_MARGIN=10,ITER_ESTIMATE=${ITER[$st]} "$M/nd-unfolding/pet/final_design/jobs/pfd_worker_chain.sh" 2>&1)
       echo "$(date -u +%FT%TZ) debug chain for $st: $j" >> "$B/keep_busy.log"; }
