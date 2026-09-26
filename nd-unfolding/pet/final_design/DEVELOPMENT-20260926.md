@@ -21,8 +21,10 @@ recoveries were inspected (`dev/FINALIST_RULE-20260926.md`).
 | L64H2 / L128H2 | H2 with a step-1 PET of projection 64 / 128, 4 layers (247,809 / 970,753 parameters) |
 | L64S1 / L128S1 | H2S1 with the same enlarged step-1 PETs |
 | H2S1E16 | H2S1 with 16 epochs per fit at both steps |
-| L128S1E16 | L128S1 with 16 epochs per fit (running) |
-| P2preS1 / P2scrS1 | PET2-small at step 1 on its native 33-token inputs, pretrained / random init, declared PET2 recipe; H2S1's truth step (running) |
+| L128S1E16 | L128S1 with 16 epochs per fit |
+| H2S1T24 / L128S1T24 | H2S1 / L128S1 with 24 epochs per truth-step fit (N2 repair arm, Amendment 3b) |
+| P2preS1 / P2scrS1 | PET2-small at step 1 on its native 33-token inputs, pretrained / random init, declared PET2 recipe (constant per-iteration rate); H2S1's truth step |
+| P2preA1 / P2scrA1 | the same with C's annealed step-1 schedule (1e-5 after iteration 1): the PET2 learning-rate-policy arm (dev2Q) |
 
 ## Findings (development)
 
@@ -57,6 +59,41 @@ recoveries were inspected (`dev/FINALIST_RULE-20260926.md`).
 lower, outside the 0.02 tie margin). **The large-package slot is not decided here**: the rule compares all larger
 designs, and the PET2 pretrained/scratch and 16-epoch large runs are incomplete; it is frozen by a later
 amendment on the same paired final-bank draws (protocol Amendment 2).
+
+## Additions (2026-09-26 evening; development evidence)
+
+**Post-hoc recomputation.** 15 dev1 post-hoc files had been written while their runs were still going (e.g.
+H2S1's second D1 −0.35 draw at k ≥ 5); every development post-hoc file is recomputed by the committed tool
+(`diagnostics/posthoc_iterations.py` at `7280bc98`, which records its sha256 and refreshes stale files) and
+re-harvested (`results/`, `4543c37d`). The predecessor's 81 files reproduce exactly (810 iterations, zero
+difference). On the complete evidence the pre-committed rule gives the same compact choice (H2S1, K\* = 5,
+development tilt 0.906; D1 −0.35 at k = 5 now 0.802 on both draws).
+
+**Weight tails (S-N1, the addendum's development proxy of N1).** On the four screen cases every design ran,
+maximum weights at K\* are small for our PET designs (push ≤ 7, pull ≤ 11 for H2S1 at k = 5; L128S1 push 2.8,
+pull 5.5; L64S1 pull 4.6) and for PET2-scratch (pull ≤ 4). **PET2-pretrained is unstable already at k = 4**
+under the declared constant per-iteration rate: its step-1 (pull) weights grow from 4–6 (k = 1–2) to 24–29
+(k = 3), 334–1,217 (k = 4) and 1.1–5.5 × 10⁵ (k = 5) on the development tilt, with the truth weights
+following (push max 8.4 at k = 4, 460–1,619 at k = 5; development tilt −2.4 at k = 5); on the stress cases the
+pull reaches 54–141 at k = 4. It fails S-N1 at its K\* = 4. (The earlier statement "diverges from k = 3" is
+corrected: the weights grow from k = 3; the result diverges at k = 5.) Outside the screen cases H2S1's step-1
+weights grow under the ×1.05 response case (max 119 at k = 5, 131 at k = 6): detector mis-modelling is
+absorbed by the step-1 weights (reported with the response results; N1 tests E9's truth weights, 3a.3).
+
+**Measured cost** (charged A100-hours per unfolding at the declared packing, `analysis/cost_from_receipts.py`
+on the development and pilot runs): H2S1 K5 0.88; L128S1 K5 0.98–1.02; L64S1 K4 0.77; H2S1E16 K4 1.29;
+L128S1E16 K5 2.04; P2preS1 K4 2.23; P2scrS1 K5 2.78. A validated result is 6 unfoldings (§9). L128S1/H2S1 ≈
+1.16: the §6.5 cost path (ratio ≥ 2) cannot open for this pair.
+
+**Estimator-seed reproducibility (N2) and its location** (protocol Amendment 3b). The S3P seed runs give
+pooled within-draw seed sd of `R_E0` 0.095 (H2S1 K5) and 0.091 (L128S1 K5) against N2's 0.05; per iteration
+0.18, 0.06, 0.06, 0.05–0.06, 0.09 (k = 1…5). At fixed events the detector step's reco-level recovery varies
+little with the seed (sd 0.01–0.03 for k ≥ 2) and the pull's truth projection over selected events is
+0.84–0.97, while the truth step's push over the same events swings 0.52–0.99 between seeds and iterations; the
+two designs share the identical truth step and move together at a common seed. The truth step at 8 epochs is
+the reproducibility bottleneck (consistent with the fixed-target test: 0.87 at 8 epochs, 0.97 at 24). A bounded
+repair arm (24-epoch truth step `H2S1T24`/`L128S1T24`; N2 of the 16-epoch designs, CS1 and L64S1) is running
+before either package is re-frozen with the S-N2 screen.
 
 ## Generated tables (means over the available draws; counts in parentheses)
 
