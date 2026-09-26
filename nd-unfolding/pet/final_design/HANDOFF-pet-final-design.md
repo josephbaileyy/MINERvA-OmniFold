@@ -35,7 +35,7 @@ pushed branch; nothing depends on a local scratch directory.
 - Independent reviews so far: implementation (`REVIEW_DISPOSITION-IMPL-20260926.md`: 1 BLOCK + 5 MAJOR fixed) and
   statistical design (`REVIEW_DISPOSITION-STAT-20260926.md`: 1 BLOCK + 7 MAJOR fixed, all prospective).
 
-- **2026-09-26 16:10Z additions.** Interim sizing from 28/44 pilot runs (H2S1 vs L128S1 at K = 5, 4 DEV draws; not
+- **2026-09-26 15:50Z additions.** Interim sizing from 28/44 pilot runs (H2S1 vs L128S1 at K = 5, 4 DEV draws; not
   yet the sizing record): FINAL contrasts give n_F = 30 (E0-driven, joint power ≈ 0.73); the E4 (proton-topology)
   non-inferiority contrast sits at −0.045 against its −0.05 margin (sd 0.040) and would need ≈ 1,770 draws — a
   quantified limit for the equivalence path (the cost path is closed anyway if the large finalist costs < 2×).
