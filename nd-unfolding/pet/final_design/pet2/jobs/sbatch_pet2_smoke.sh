@@ -34,10 +34,11 @@ while IFS=$'\t' read -r name cfg hash selection distortion ref extra runner; do
   [[ -z "$name" || "$name" == \#* ]] && continue
   [[ "$runner" == final_design/pet2/run_pet2_replicate.py ]] || { echo "$name: runner $runner" >> "$OUT/exit-codes.txt"; status=1; continue; }
   RUN="$OUT/$name"; mkdir -p "$RUN"
+  CFG="$V/configs/$cfg"; [[ -e "$CFG" ]] || CFG="$V/$cfg"   # design_lib convention, or the older
   echo "$name start $(date +%s.%N)" >> "$OUT/phases-$SLURM_JOB_ID.txt"
   /usr/bin/time -v python "$GUARD" --expect-root "$MINE" \
     --inventory "$RUN/guard-$SLURM_JOB_ID.json" --label "PET2-$name" \
-    -- "$RUNNER" --config "$V/$cfg" --config-hash "$hash" --repo "$MINE" --out "$RUN" \
+    -- "$RUNNER" --config "$CFG" --config-hash "$hash" --repo "$MINE" --out "$RUN" \
     --inputs-npz "$INPUTS" --identity-sidecar "$SIDECAR" --populations "$POPULATIONS" \
     --pool "${selection%%:*}" --replicate "${selection##*:}" --pools-npz "$POOLS" \
     --manifest "$C/pools/POOL_MANIFEST.json" --distortion "$distortion" \

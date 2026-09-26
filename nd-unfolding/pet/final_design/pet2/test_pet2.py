@@ -8,7 +8,8 @@
 * `make_pet2_configs`: P2pre and P2scr differ ONLY in the step-1 init; the declared PET2 recipe;
   C's step 2 and split; drawn selections only (needs TensorFlow's import for the historical
   recipe constants; skipped without it);
-* `run_pet2_replicate`: the selection and distortion refusals;
+* `run_pet2_replicate`: selections (drawn pools, bank draws, sealed banks), distortions (null,
+  products, R1/R2), bootstrap flags, the response on the pseudodata leg only;
 * optional, `PFD_PRETRAINED_STATE`/`PFD_PRETRAINED_MANIFEST` set to local copies of the export:
   the verifier on a REAL PET2-small, loaded (must pass as pretrained) and scratch (must pass as
   scratch, and fail as pretrained).
@@ -42,6 +43,8 @@ import b2_arms  # noqa: E402
 import hybrid_driver as hd  # noqa: E402
 import theirs_rows as tr  # noqa: E402  (appends configuration_comparison LAST on sys.path)
 import materialize_theirs as mtz  # noqa: E402
+import pet2_response as pr  # noqa: E402
+import theirs_token_schema as tts  # noqa: E402
 from recipe import RunConfig  # noqa: E402
 
 C_CONFIG = CAMPAIGN / "phase_b/pet/configs/b2e4-M-K10-s1.json"
@@ -192,41 +195,87 @@ def test_nonfinite_value_is_refused_with_its_location(world):
     assert '"position": [0, 0, 5]' in msg
 
 
-def test_nonfinite_momentum_policy(world):
-    reco = np.flatnonzero(world.pass_reco & (world.row_index >= 0))
-    victim = int(reco[3])
+def _poison(world, victim: int, token: int, member: str, col: int, value: float) -> None:
     shard, local = world.origin[world.row_index[victim]]
     blob = dict(np.load(world.files[shard]))
-    blob["tokens"] = blob["tokens"].copy()
-    blob["tokens"][local, 0, 0:3] = np.nan               # the observed shape: px = py = pz = NaN
+    blob[member] = blob[member].copy()
+    blob[member][local, token, col] = value
     np.savez_compressed(world.files[shard], **blob)
-    rows = np.sort(np.concatenate([reco[:10], np.flatnonzero(~world.pass_reco)[:5]]))
+
+
+@pytest.mark.parametrize("path", ["materialize", "raw"])
+def test_nonfinite_momentum_and_addinfo_policies(world, path):
+    reco = np.flatnonzero(world.pass_reco & (world.row_index >= 0))
+    rows = np.sort(np.concatenate([reco[:12], np.flatnonzero(~world.pass_reco)[:5]]))
+    clean = mtz.materialize(world.files, world.row_index, world.origin, rows, world.pass_reco)
+    vm, va, vd = int(reco[3]), int(reco[5]), int(reco[7])
+    for c in range(3):                                   # observed: px = py = pz = NaN
+        _poison(world, vm, 0, "tokens", c, np.nan)
+    _poison(world, va, 1, "add_info", 2, np.nan)         # a NaN y position
+    _poison(world, vd, 2, "add_info", 0, np.inf)         # +inf dE/dx: historical map -> 100
+    ident = (None if path == "materialize"
+             else (reco[:12], lambda t, a, g: (t, a, g)))    # identity transform: raw path
+    kw = {"transform": ident}
     with pytest.raises(SystemExit, match="non-finite"):
-        tr.gather(world.index, rows, world.pass_reco)
-    got = tr.gather(world.index, rows, world.pass_reco, nonfinite_momentum="zero")
+        tr.gather(world.index, rows, world.pass_reco, **kw)
+    with pytest.raises(SystemExit, match="non-finite"):  # momentum alone repaired: add_info left
+        tr.gather(world.index, rows, world.pass_reco, nonfinite_momentum="zero", **kw)
+    got = tr.gather(world.index, rows, world.pass_reco, nonfinite_momentum="zero",
+                    nonfinite_addinfo="zero", **kw)
     ref = mtz.materialize(world.files, world.row_index, world.origin, rows, world.pass_reco)
-    i = int(np.searchsorted(rows, victim))
     assert np.isfinite(got["packed"]).all()
-    rep = got["record"]["nonfinite_momentum_repairs"]
-    assert [r["inventory_row"] for r in rep] == [victim] and rep[0]["tokens"] == [0]
-    tok = got["packed"][i, 0]
+    rep = {r["inventory_row"]: r["entries"] for r in got["record"]["nonfinite_repairs"]}
+    assert set(rep) == {vm, va}                          # the inf dE/dx row is NOT repaired
+    assert [(e["class"], e["token"], e["column"], e["stored"]) for e in rep[vm]] == \
+        [("momentum", 0, c, "nan") for c in range(3)]
+    assert [(e["class"], e["token"], e["column"], e["stored"]) for e in rep[va]] == \
+        [("add_info", 1, 7, "nan")]
+    im, ia, idd = (int(np.searchsorted(rows, v)) for v in (vm, va, vd))
+    tok = got["packed"][im, 0]
     assert tok[0] == 0.0 and tok[1] == 0.0 and tok[2] == np.float32(np.log(1e-6))
-    assert tok[3:].tobytes() == ref["packed"][i, 0, 3:].tobytes()       # log E, PID, add_info
-    mask = np.ones(len(rows), bool)
-    mask[i] = False
-    assert got["packed"][mask].tobytes() == ref["packed"][mask].tobytes()
-    assert got["packed"][i, 1:].tobytes() == ref["packed"][i, 1:].tobytes()
-    assert got["record"]["nonfinite_momentum_policy"] == "zero"
-    # a non-finite value outside the momentum is never repaired
-    blob["add_info"] = blob["add_info"].copy()
-    blob["add_info"][local, 1, 2] = np.inf
-    np.savez_compressed(world.files[shard], **blob)
-    with pytest.raises(SystemExit, match="outside the token momentum"):
-        tr.gather(world.index, rows, world.pass_reco, nonfinite_momentum="zero")
-    # the policy is part of the cache key
+    assert tok[3:].tobytes() == clean["packed"][im, 0, 3:].tobytes()
+    assert got["packed"][ia, 1, 7] == 0.0
+    assert got["packed"][idd, 2, 5] == np.float32(np.log(100.1))   # the historical inf mapping
+    assert got["packed"][idd].tobytes() == ref["packed"][idd].tobytes()
+    untouched = np.ones(rows.size, bool)
+    untouched[[im, ia]] = False
+    assert got["packed"][untouched].tobytes() == ref["packed"][untouched].tobytes()
+    assert got["globals"].tobytes() == ref["globals"].tobytes()
+    assert got["record"]["path"] == ("materialize" if path == "materialize" else "raw+transform")
     legs = {"prior": rows}
-    k1 = tr.cache_key(world.index, "d", legs, "refuse")
-    assert k1 != tr.cache_key(world.index, "d", legs, "zero")
+    keys = {tr.cache_key(world.index, "d", legs, m, a) for m in ("refuse", "zero")
+            for a in ("refuse", "zero")}
+    assert len(keys) == 4
+    assert tr.cache_key(world.index, "d", legs, transform_key="x") != \
+        tr.cache_key(world.index, "d", legs)
+
+
+def test_raw_path_with_identity_transform_equals_materialize(world):
+    rows = np.sort(np.random.default_rng(2).choice(world.n_inv, 300, replace=False))
+    reco = rows[world.pass_reco[rows]]
+    for group in (9, 100_000):
+        got = tr.gather(world.index, rows, world.pass_reco, group_rows=group,
+                        transform=(reco, lambda t, a, g: (t, a, g)))
+        ref = mtz.materialize(world.files, world.row_index, world.origin, rows, world.pass_reco)
+        assert got["packed"].tobytes() == ref["packed"].tobytes()
+        assert got["globals"].tobytes() == ref["globals"].tobytes()
+        assert got["record"]["rows_transformed"] == reco.size
+    with pytest.raises(SystemExit, match="transformed rows"):
+        tr.gather(world.index, rows, world.pass_reco,
+                  transform=(rows[~world.pass_reco[rows]][:3], lambda t, a, g: (t, a, g)))
+
+
+def test_transform_changes_only_the_named_rows(world):
+    rows = np.sort(np.random.default_rng(4).choice(world.n_inv, 200, replace=False))
+    reco = rows[world.pass_reco[rows]]
+    some = reco[::3]
+    got = tr.gather(world.index, rows, world.pass_reco,
+                    transform=(some, lambda t, a, g: pr.r1(t, a, g, 1.05)))
+    ref = mtz.materialize(world.files, world.row_index, world.origin, rows, world.pass_reco)
+    hit = np.isin(rows, some)
+    assert got["packed"][~hit].tobytes() == ref["packed"][~hit].tobytes()
+    assert got["globals"][~hit].tobytes() == ref["globals"][~hit].tobytes()
+    assert not np.array_equal(got["packed"][hit], ref["packed"][hit])
 
 
 def test_census_counts_stored_nonfinite_values(world):
@@ -510,55 +559,173 @@ def test_build_writes_seeded_configs_and_refuses_undrawn(pet2, tmp_path):
         mpc.build("t", ["P2pre"], [("R", 0, "dev")], 3, tmp_path, tmp_path / "m.tsv")
 
 
+def test_s1_candidates_and_manifest_columns(pet2, tmp_path):
+    mpc, k = pet2
+    base = _c()
+    s1 = mpc.pet2_config(base, "scratch", k, iterations=5, step2_iteration_lr="constant")
+    assert s1.step2.iteration_lr.kind == "constant" and s1.step2.iteration_lr.later_learning_rate \
+        is None
+    assert dataclasses_replace_equal(s1.step2, base.step2, "iteration_lr")
+    assert mpc.pet2_config(base, "scratch", k, iterations=5).step2 == base.step2
+    rows = mpc.build("t", ["P2preS1", "P2scrS1", "P2pre"], [("T", 0, "D1_m0.350")], 5, tmp_path,
+                     tmp_path / "m.tsv", nonfinite_momentum="zero", nonfinite_addinfo="zero")
+    got = {r.split("\t")[0]: r.split("\t") for r in rows}
+    for name, cols in got.items():
+        assert len(cols) == 8 and cols[7] == mpc.RUNNER
+        assert cols[1] == f"../../../final_design/configs/t/{name}.json"
+        assert cols[6] == ("--step2-miss-mode efficiency_corrected --nonfinite-momentum zero "
+                           "--nonfinite-addinfo zero")
+        cfg = RunConfig.from_json((tmp_path / "t" / f"{name}.json").read_text())
+        want = "anneal_after_first" if name.endswith("P2pre-T0-D1_m0.350") else "constant"
+        assert cfg.step2.iteration_lr.kind == want and cfg.iterations == 5
+    committed = (STUDY / "runs" / "dev2P.tsv").read_text().splitlines()[1:]
+    assert len(committed) == 16
+    for line in committed:
+        cols = line.split("\t")
+        cfg = RunConfig.from_json((CAMPAIGN / "confirm" / "configs" / cols[1]).read_text())
+        assert cfg.content_hash() == cols[2] and cols[7] == mpc.RUNNER
+
+
+def dataclasses_replace_equal(a, b, field: str) -> bool:
+    import dataclasses
+    return dataclasses.replace(a, **{field: getattr(b, field)}) == b
+
+
+def test_design_lib_dispatch_dry_run():
+    import shutil
+    import subprocess
+    bash = shutil.which("bash")
+    v = subprocess.run([bash, "-c", "echo ${BASH_VERSINFO[0]}"], capture_output=True, text=True)
+    if int(v.stdout.strip() or 0) < 4:
+        pytest.skip("design_lib.sh needs bash >= 4 (mapfile); run on Perlmutter")
+    r = subprocess.run([bash, str(HERE / "test_design_lib_dispatch.sh")], capture_output=True,
+                       text=True)
+    assert r.returncode == 0 and r.stdout.startswith("PASS"), r.stdout + r.stderr
+
+
 # ------------------------------------------------------------------------------------------- #
 # run_pet2_replicate refusals
 # ------------------------------------------------------------------------------------------- #
-def test_selection_refusals():
-    import run_pet2_replicate as rpr
-    assert rpr.refuse_selection("F", 11, rpr.ri.FAMILY, rpr.ri.N_PRIOR, rpr.ri.N_PSEUDO)
-    assert rpr.refuse_selection("T", 1, rpr.ri.FAMILY, rpr.ri.N_PRIOR, rpr.ri.N_PSEUDO)
-    with pytest.raises(scope.ScopeViolation, match="reserve"):
-        rpr.refuse_selection("R", 0, rpr.ri.FAMILY, rpr.ri.N_PRIOR, rpr.ri.N_PSEUDO)
-    for pool, r in (("F", 12), ("S", 1), ("P", 3), ("T", 2)):
-        with pytest.raises(scope.ScopeViolation, match="not drawn"):
-            rpr.refuse_selection(pool, r, rpr.ri.FAMILY, rpr.ri.N_PRIOR, rpr.ri.N_PSEUDO)
-    with pytest.raises(SystemExit, match="family"):
-        rpr.refuse_selection("F", 0, "bank-v1", rpr.ri.N_PRIOR, rpr.ri.N_PSEUDO)
-    with pytest.raises(SystemExit, match="family"):
-        rpr.refuse_selection("F", 0, rpr.ri.FAMILY, 1000, rpr.ri.N_PSEUDO)
-
-
-def test_preflight_refuses_r1_and_ours_configs(pet2, tmp_path, monkeypatch):
+def _runner_args(pet2, tmp_path, monkeypatch, variant="scratch"):
     import run_pet2_replicate as rpr
     mpc, k = pet2
     state = tmp_path / "state.npz"
     state.write_bytes(b"not the export")
     monkeypatch.setattr(rpr, "pinned_state_sha256", lambda: tr.sha256_file(state))
-    cfg = mpc.pet2_config(_c(), "scratch", k, iterations=2)
+    cfg = mpc.pet2_config(_c(), variant, k, iterations=2)
     cfile = tmp_path / "c.json"
     cfile.write_text(cfg.to_json(indent=1))
     common = ["--config", str(cfile), "--config-hash", cfg.content_hash(), "--repo", "x",
               "--out", str(tmp_path / "out"), "--inputs-npz", str(tmp_path / "i.npz"),
-              "--identity-sidecar", "s", "--populations", "p", "--pool", "F", "--replicate",
-              "0", "--pools-npz", "q", "--manifest", "m", "--step2-miss-mode",
+              "--identity-sidecar", "s", "--populations", "p", "--step2-miss-mode",
               "efficiency_corrected", "--pretrained-reference", str(state)]
-    out, config, arm, dist, hybrid = rpr.preflight(rpr.parse_args(common))
-    assert hybrid["variant"] == "scratch" and dist.name == "dev"
-    with pytest.raises(SystemExit, match="reco-response"):
-        rpr.preflight(rpr.parse_args(common + ["--distortion", "R1_x1.05+D1_p0.350"]))
+    pool = ["--pool", "F", "--replicate", "0", "--pools-npz", "q", "--manifest", "m"]
+    return rpr, cfg, cfile, common, pool
+
+
+def test_runner_selections_distortions_and_refusals(pet2, tmp_path, monkeypatch):
+    rpr, cfg, cfile, common, pool = _runner_args(pet2, tmp_path, monkeypatch)
+    out, config, arm, dist, hybrid, response = rpr.preflight(rpr.parse_args(common + pool))
+    assert hybrid["variant"] == "scratch" and dist.name == "dev" and response is None
+    for name in ("null", "D4c_p_up*D1_p0.350"):             # null and a product
+        _o, _c2, _a, d, _h, resp = rpr.preflight(rpr.parse_args(common + pool
+                                                                + ["--distortion", name]))
+        assert d.name == name and resp is None
+    for name, fam, s in (("R1_x1.05+D1_p0.350", "R1", 1.05), ("R2_x0.99", "R2", 0.99)):
+        _o, _c2, _a, d, h, resp = rpr.preflight(rpr.parse_args(common + pool
+                                                               + ["--distortion", name]))
+        assert resp[:2] == (fam, s) and h["pet2_response"]["family"] == fam
+    # selections: the predecessor's drawn pool replicates only; R never; DEV bank draws open;
+    # FB / RB sealed until their release amendments
+    for p, r in (("F", 12), ("S", 1), ("P", 3), ("T", 2), ("R", 0)):
+        with pytest.raises(scope.ScopeViolation):
+            rpr.preflight(rpr.parse_args(common + ["--pool", p, "--replicate", str(r),
+                                                   "--pools-npz", "q", "--manifest", "m"]))
+    bank = ["--bank-draw", "S2:3", "--banks-npz", "b.npz"]
+    a = rpr.parse_args(common + bank + ["--pseudo-bank", "DEV"])
+    rpr.preflight(a)
+    assert (a.bank_stage, a.bank_replicate, a.pseudo_bank) == ("S2", 3, "DEV")
+    for sealed in ("FB", "RB"):
+        with pytest.raises(scope.ScopeViolation, match="sealed"):
+            rpr.preflight(rpr.parse_args(common + bank + ["--pseudo-bank", sealed]))
+    b = rpr.parse_args(common + pool + ["--bootstrap-member", "2", "--bootstrap-seed", "7",
+                                        "--nonfinite-momentum", "zero",
+                                        "--nonfinite-addinfo", "zero"])
+    assert (b.bootstrap_member, b.bootstrap_seed, b.nonfinite_momentum,
+            b.nonfinite_addinfo) == (2, 7, "zero", "zero")
+    with pytest.raises(SystemExit):
+        rpr.parse_args(common + pool + ["--bootstrap-member", "2"])       # needs a seed
+    with pytest.raises(SystemExit, match="historical"):
+        rpr.parse_args(common + ["--historical-halves"])
     with pytest.raises(SystemExit, match="hash"):
         rpr.preflight(rpr.parse_args([x if x != cfg.content_hash() else "0" * 64
-                                      for x in common]))
+                                      for x in common] + pool))
     ours = tmp_path / "ours.json"
     ours.write_text(_c().to_json(indent=1))
     swapped = [str(ours) if x == str(cfile) else (_c().content_hash()
                                                   if x == cfg.content_hash() else x)
                for x in common]
     with pytest.raises(SystemExit, match="PET2"):
-        rpr.preflight(rpr.parse_args(swapped))
-    with pytest.raises(SystemExit):     # the miss rule has no default
+        rpr.preflight(rpr.parse_args(swapped + pool))
+    with pytest.raises(SystemExit, match="miss"):     # the miss rule has no default
         rpr.parse_args([x for x in common if x not in ("--step2-miss-mode",
-                                                       "efficiency_corrected")])
+                                                       "efficiency_corrected")] + pool)
+
+
+def test_runner_gathers_the_response_on_the_pseudodata_leg_only(world, tmp_path):
+    import run_pet2_replicate as rpr
+    reco = np.flatnonzero(world.pass_reco & (world.row_index >= 0))
+    pdata, prior = reco[:40], np.setdiff1d(np.arange(world.n_inv), reco[:40])[:150]
+    args = SimpleNamespace(theirs_cache=tmp_path / "c.npz", nonfinite_momentum="refuse",
+                           nonfinite_addinfo="refuse")
+    sys.path.insert(0, str(STUDY / "runner"))
+    import design_inputs as di
+    resp = pr.transform_for(di.get_distortion("R1_x1.05+D1_p0.350"))
+    got = rpr.gather_theirs(args, world.index, pdata, prior, world.pass_reco, "d", resp)
+    plain = tr.gather_legs(world.index, {"pdata": pdata, "prior": prior}, world.pass_reco)
+    assert got["prior"]["packed"].tobytes() == plain["prior"]["packed"].tobytes()
+    assert got["prior"]["globals"].tobytes() == plain["prior"]["globals"].tobytes()
+    assert not np.array_equal(got["pdata"]["packed"], plain["pdata"]["packed"])
+    assert got["union"]["rows_transformed"] == pdata.size
+    # the cache is keyed on the response: the R1 cache is refused for an undistorted run
+    with pytest.raises(SystemExit, match="another key"):
+        rpr.gather_theirs(args, world.index, pdata, prior, world.pass_reco, "d", None)
+
+
+def test_bootstrap_weights_survive_the_step1_substitution():
+    """run_design's bootstrap multiplies the engine weights; swapping in PET2's step-1 inputs
+    touches only reco/reco_evt, so the Poisson weights reach both steps unchanged."""
+    sys.path.insert(0, str(STUDY / "runner"))
+    import design_inputs as di
+    rows_a, rows_b = np.array([3, 5, 9, 11]), np.array([1, 2, 4, 6, 8])
+    inputs = SimpleNamespace(
+        pdata={"rows": np.array([5, 11]), "reco": np.zeros((2, 12, 6)),
+               "reco_evt": np.zeros((2, 9)), "weight": np.ones(2, np.float32)},
+        mc={"rows": rows_b, "reco": np.zeros((5, 12, 6)), "reco_evt": np.zeros((5, 9)),
+            "gen": np.zeros((5, 12, 8)), "weight": np.full(5, 2.0, np.float32),
+            "weight_reco": np.full(5, 3.0, np.float32)},
+        meta={"dump_rows_a": rows_a, "coord_reco": (1, 2)})
+    arrays = {"pseudo_rows": rows_a, "prior_rows": rows_b,
+              "prior_w_truth": np.ones(5), "prior_w_reco": np.ones(5)}
+    ident_a = np.stack([rows_a, rows_a * 10, rows_a + 1], 1)
+    ident_b = np.stack([rows_b, rows_b * 10, rows_b + 1], 1)
+    di.apply_bootstrap(inputs, arrays, ident_a, ident_b, seed=7, member=1)
+    before = {k: np.array(v) for k, v in (("p", inputs.pdata["weight"]),
+                                          ("t", inputs.mc["weight"]),
+                                          ("r", inputs.mc["weight_reco"]))}
+    theirs = {"pdata": {"packed": np.ones((2, 33, 10), np.float32),
+                        "globals": np.ones((2, 16), np.float32)},
+              "prior": {"packed": np.ones((5, 33, 10), np.float32),
+                        "globals": np.ones((5, 16), np.float32)},
+              "legs": {"pdata": {"rows_sha256": tr.rows_digest(inputs.pdata["rows"])},
+                       "prior": {"rows_sha256": tr.rows_digest(rows_b)}}}
+    hd.substitute_theirs(inputs, theirs)
+    assert inputs.pdata["weight"].tobytes() == before["p"].tobytes()
+    assert inputs.mc["weight"].tobytes() == before["t"].tobytes()
+    assert inputs.mc["weight_reco"].tobytes() == before["r"].tobytes()
+    ks = di.bootstrap_counts(ident_b, 7, 1, "prior")
+    np.testing.assert_array_equal(inputs.mc["weight"], (2.0 * ks).astype(np.float32))
+    assert inputs.pdata["reco"].shape == (2, 33, 10)
 
 
 # ------------------------------------------------------------------------------------------- #
@@ -702,3 +869,103 @@ def test_hybrid_loop_on_cpu_with_resume(pet2, tmp_path, variant, monkeypatch):
                 np.load(tmp_path / "split" / "iterations" / name) as b:
             assert a["push"].tobytes() == b["push"].tobytes(), name
             assert a["pull"].tobytes() == b["pull"].tobytes(), name
+
+
+# ------------------------------------------------------------------------------------------- #
+# R1 / R2 on synthetic stored PET2 tokens
+# ------------------------------------------------------------------------------------------- #
+def _stored_event() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """One stored event per row: muon, photon (dE/dx), blob, prong (dE/dx), aggregate, padding."""
+    def tok(px, py, pz, e, pid):
+        return [px, py, pz, np.log(e + 1e-3), pid]
+    tokens = np.zeros((2, 33, 5), np.float32)
+    add = np.zeros((2, 33, 5), np.float32)
+    tokens[0, :5] = [tok(120.0, -40.0, 2900.0, 2905.0, 0), tok(30.0, 60.0, 200.0, 211.0, 1),
+                     tok(-50.0, 10.0, 80.0, 94.9, 2), tok(90.0, -20.0, 400.0, 450.0, 3),
+                     tok(5.0, 5.0, 40.0, 41.0, 7)]
+    add[0, 1] = [2.5, 0, 0, 0, 10.0]
+    add[0, 2] = [0.0, 100.0, -300.0, 5000.0, 12.0]
+    add[0, 3] = [-999.0, 200.0, 50.0, 6000.0, 11.0]
+    add[0, 4] = [99.0, 0, 0, 0, 0]
+    tokens[1, :2] = [tok(-10.0, 300.0, 1500.0, 1535.0, 0), tok(20.0, 20.0, 60.0, 66.0, 5)]
+    add[1, 1] = [7.0, 1.0, 2.0, 3.0, 4.0]
+    glob = np.zeros((2, 16), np.float32)
+    for i in range(2):
+        g = [np.log(15.0 + 1e-5), np.log(3.0 + 1e-5), np.log(400.0 + 1e-5),
+             np.log(0.02 + 1e-3), np.log(0.01 + 1e-3), np.log(0.03 + 1e-3), 1.0, 1.0,
+             (120.0 if i == 0 else 0.0), 1.0]
+        glob[i, :10] = g
+        glob[i, 10:] = np.log(pr.energy_sums(tokens[i:i + 1])[0] + 1e-3)
+    return tokens, add, glob
+
+
+def _conv(t, a):
+    return tts.convert_packed(np.concatenate([t, a], axis=2))
+
+
+def test_r1_scales_calorimetric_energy_only():
+    t, a, g = _stored_event()
+    s = 1.05
+    t2, a2, g2 = pr.r1(t, a, g, s)
+    real = t[..., 3] != 0
+    mu = real & (t[..., 4] == 0)
+    nonmu = real & ~mu
+    e = np.exp(t[..., 3].astype(np.float64)) - 1e-3
+    e2 = np.exp(t2[..., 3].astype(np.float64)) - 1e-3
+    np.testing.assert_allclose(e2[nonmu], s * e[nonmu], rtol=1e-5)
+    np.testing.assert_allclose(t2[..., 0:3][nonmu], s * t[..., 0:3][nonmu], rtol=1e-6)
+    assert t2[mu].tobytes() == t[mu].tobytes() and t2[~real].tobytes() == t[~real].tobytes()
+    assert (t2[..., 4] == t[..., 4]).all()
+    c, c2 = _conv(t, a), _conv(t2, a2)
+    np.testing.assert_allclose(c2[..., 0:2][nonmu], c[..., 0:2][nonmu], atol=1e-6)  # eta, phi
+    np.testing.assert_allclose(c2[..., 2][nonmu] - c[..., 2][nonmu], np.log(s), atol=1e-5)
+    # dE/dx x s on photons/prongs, the -999 sentinel untouched, positions/time untouched
+    assert a2[0, 1, 0] == np.float32(2.5 * s) and a2[0, 3, 0] == -999.0
+    assert a2[0, 4, 0] == np.float32(99.0 * s) and np.isclose(c2[0, 4, 5], np.log(100.1))
+    assert a2[..., 1:].tobytes() == a[..., 1:].tobytes()
+    inv = lambda v, eps: np.exp(v.astype(np.float64)) - eps   # noqa: E731
+    for col, eps in ((0, 1e-5), (1, 1e-5), (2, 1e-5), (3, 1e-3), (4, 1e-3)):
+        np.testing.assert_allclose(inv(g2[:, col], eps), s * inv(g[:, col], eps), rtol=1e-5)
+    np.testing.assert_allclose(inv(g2[:, 5], 1e-3), inv(g2[:, 3], 1e-3) + inv(g2[:, 4], 1e-3),
+                               rtol=1e-5)
+    assert g2[0, 8] == np.float32(120.0 * s) and g2[1, 8] == 0.0
+    assert g2[:, [6, 7, 9]].tobytes() == g[:, [6, 7, 9]].tobytes()
+    np.testing.assert_allclose(g2[:, 10:], np.log(pr.energy_sums(t2) + 1e-3), rtol=1e-6)
+    np.testing.assert_allclose(inv(g2[0:1, 10:], 1e-3), s * inv(g[0:1, 10:], 1e-3), rtol=1e-4,
+                               atol=1e-2)   # each token carries its +1e-3 offset unscaled
+    # s = 1 reproduces the stored inputs
+    t1, a1, g1 = pr.r1(t, a, g, 1.0)
+    np.testing.assert_allclose(t1, t, rtol=1e-6)
+    np.testing.assert_allclose(g1, g, rtol=1e-6, atol=1e-6)
+    assert a1.tobytes() == a.tobytes()
+
+
+def test_r2_scales_the_muon_only():
+    t, a, g = _stored_event()
+    s = 1.01
+    t2, a2, g2 = pr.r2(t, a, g, s)
+    mu = (t[..., 3] != 0) & (t[..., 4] == 0)
+    assert mu.sum() == 2
+    assert t2[~mu].tobytes() == t[~mu].tobytes()
+    assert a2.tobytes() == a.tobytes() and g2.tobytes() == g.tobytes()
+    np.testing.assert_allclose(t2[..., 0:3][mu], s * t[..., 0:3][mu], rtol=1e-6)
+    p2 = (t[..., 0:3].astype(np.float64) ** 2).sum(-1)[mu]
+    p2b = (t2[..., 0:3].astype(np.float64) ** 2).sum(-1)[mu]
+    e = np.exp(t[..., 3].astype(np.float64))[mu] - 1e-3
+    e2 = np.exp(t2[..., 3].astype(np.float64))[mu] - 1e-3
+    np.testing.assert_allclose(e2 ** 2 - p2b, e ** 2 - p2, rtol=1e-3, atol=50.0)   # mass
+    np.testing.assert_allclose(e2, np.sqrt(e ** 2 + (s * s - 1) * p2), rtol=1e-6)
+    c, c2 = _conv(t, a), _conv(t2, a2)
+    np.testing.assert_allclose(c2[..., 0:2][mu], c[..., 0:2][mu], atol=1e-6)
+    np.testing.assert_allclose(c2[..., 2][mu] - c[..., 2][mu], np.log(s), atol=1e-5)
+
+
+def test_transform_for_design_distortions():
+    sys.path.insert(0, str(STUDY / "runner"))
+    import design_inputs as di
+    assert pr.transform_for(di.get_distortion("D4c_p_up")) is None
+    fam, s, _fn = pr.transform_for(di.get_distortion("R1_x1.05+D1_p0.350"))
+    assert (fam, s) == ("R1", 1.05)
+    fam, s, _fn = pr.transform_for(di.get_distortion("R2_x0.99"))
+    assert (fam, s) == ("R2", 0.99)
+    assert pr.transform_key("R1", 1.05) != pr.transform_key("R1", 0.95) != pr.transform_key(None, None)
