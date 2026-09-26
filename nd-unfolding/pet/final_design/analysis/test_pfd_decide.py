@@ -126,7 +126,7 @@ def test_missing_evidence_is_incomplete_never_eligible(tmp_path):
     res = dc.evaluate(evidence({"A": make_candidate(tmp_path, "A", coverage=False)}))
     e = res["eligibility"]["A"]
     assert e["status"] == "INCOMPLETE" and set(e["incomplete"]) == {"C1", "C2", "C3", "C4", "C5"}
-    assert res["ranking"]["eligible"] == [] and "YET" in res["ranking"]["outcome"]
+    assert res["ranking"]["eligible"] == [] and res["ranking"]["outcome"].startswith("CONTINUE")
     res = dc.evaluate(evidence({"B": make_candidate(tmp_path, "B", drop_case="D4d_n_up")}))
     assert "B1" in res["eligibility"]["B"]["incomplete"]
     ev = evidence({"C": make_candidate(tmp_path, "C")})
@@ -185,8 +185,8 @@ def test_non_inferiority_edges(tmp_path):
     L, S = pair(tmp_path, -0.02 + halfw + 1e-4, sdv, (1.0, 1.05, 0.95, 1.0))
     res = dc.evaluate(evidence({"L": L, "S": S}))
     rk = res["ranking"]
-    assert rk["leader"] == "L"
-    ni = rk["non_inferiority_6.5"]["S"]
+    assert rk["cost_order"] == ["S", "L"]
+    ni = rk["pairs"][0]["non_inferior_6.5_small"]
     e0 = next(p for p in ni["parts"] if " E0 " in p["label"])
     assert e0["lb"] == pytest.approx(-0.02 + 1e-4, abs=1e-9) and e0["passes"]
     assert ni["verdict"] == "PASS"
@@ -198,14 +198,16 @@ def test_non_inferiority_fails_just_below_margin_and_on_cost(tmp_path):
     sdv = 0.004
     halfw = stats.t.ppf(1 - a, N_FINAL - 1) * sdv / np.sqrt(N_FINAL)
     L, S = pair(tmp_path, -0.02 + halfw - 1e-4, sdv, (1.0, 1.05, 0.95, 1.0))
-    ni = dc.evaluate(evidence({"L": L, "S": S}))["ranking"]["non_inferiority_6.5"]["S"]
+    ni = dc.evaluate(evidence({"L": L, "S": S}))["ranking"]["pairs"][0]["non_inferior_6.5_small"]
     assert ni["verdict"] in ("FAIL", "CONTINUE")
     assert not next(p for p in ni["parts"] if " E0 " in p["label"])["passes"]
     (tmp_path / "x").mkdir()
     L, S = pair(tmp_path / "x", -0.001, sdv, (3.0, 3.1, 2.9, 3.0))   # cost ratio ~1.33
     rk = dc.evaluate(evidence({"L": L, "S": S}))["ranking"]
-    cost = next(p for p in rk["non_inferiority_6.5"]["S"]["parts"] if "cost" in p["label"])
-    assert not cost["passes"] and rk.get("selected") != "S"
+    cost = next(p for p in rk["pairs"][0]["non_inferior_6.5_small"]["parts"] if "cost" in p["label"])
+    # equivalent but < 2x cheaper: never a 6.5 (cost) selection; the brief's step 3 applies
+    # (reproducibility tie-break, then cost) -- the large model does not win by default either
+    assert not cost["passes"] and rk["by"].startswith("6.6.3")
 
 
 def test_materially_better_and_equivalence_tie_break(tmp_path):
@@ -224,8 +226,35 @@ def test_materially_better_and_equivalence_tie_break(tmp_path):
     D = make_candidate(tmp_path / "eq", "D", seed_sd=0.002, offsets={"E0": 0.003 * Z24})
     rk = dc.evaluate(evidence({"C": C, "D": D}))["ranking"]
     assert rk["outcome"] == "EQUIVALENT_TIE_BROKEN" and rk["selected"] == "D"
-    assert rk["pairs"]["C vs D"]["materially_better"]["verdict"] != "PASS"
-    assert rk["pairs"]["C vs D"]["equivalent"]["verdict"] == "PASS"
+    pr = rk["pairs"][0]
+    assert pr["materially_better_large"]["verdict"] != "PASS"
+    assert pr["materially_better_small"]["verdict"] != "PASS"
+    assert pr["equivalent"]["verdict"] == "PASS"
+
+
+def test_comparable_and_2x_cheaper_small_wins_over_slightly_better_large(tmp_path):
+    """Item 3(c), ruled by the goal text: a smaller package that is non-inferior (6.5) and >= 2x
+    cheaper is selected even when the larger one is statistically better by less than the margin;
+    the larger package wins only when 6.5 fails and it is materially better."""
+    L = make_candidate(tmp_path, "L", cost=(4.0, 4.2, 3.8, 4.0), vals={"E0": 0.80})
+    S = make_candidate(tmp_path, "S", cost=(1.0, 1.05, 0.95, 1.0), vals={"E0": 0.79})
+    rk = dc.evaluate(evidence({"L": L, "S": S}))["ranking"]
+    assert rk["selected"] == "S" and rk["by"].startswith("6.6.2")
+    (tmp_path / "far").mkdir()
+    L2 = make_candidate(tmp_path / "far", "L", cost=(4.0, 4.2, 3.8, 4.0), vals={"E0": 0.85})
+    S2 = make_candidate(tmp_path / "far", "S", cost=(1.0, 1.05, 0.95, 1.0), vals={"E0": 0.79})
+    rk = dc.evaluate(evidence({"L": L2, "S": S2}))["ranking"]
+    assert rk["selected"] == "L" and rk["by"].startswith("6.6.1 (larger")
+
+
+def test_brief_order_cheaper_leader_still_gets_6_5(tmp_path):
+    """Item 3(a): a cheaper package that also leads on mean is chosen by 6.5 (or 6.6.1), never by
+    the 6.6.3 tie-break when the saving is >= 2x."""
+    L = make_candidate(tmp_path, "L", cost=(4.0, 4.2, 3.8, 4.0), seed_sd=0.001)
+    S = make_candidate(tmp_path, "S", cost=(1.0, 1.05, 0.95, 1.0), seed_sd=0.004,
+                       offsets={"E0": 0.001 + 0.003 * Z24})
+    rk = dc.evaluate(evidence({"L": L, "S": S}))["ranking"]
+    assert rk["selected"] == "S" and not rk["by"].startswith("6.6.3")
 
 
 def test_unpaired_replicates_are_refused(tmp_path):

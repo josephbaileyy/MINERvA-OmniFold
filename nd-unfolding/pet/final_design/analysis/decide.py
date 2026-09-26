@@ -316,7 +316,9 @@ class Rules:
             d = np.array([res[r] - inj[r] for r in inj])
             tb = inf.t_bounds(d, self.alpha_for("B2"))
             nums[case] = {"mean_injected_l1": float(np.mean(list(inj.values()))),
-                          "residual_minus_injected": tb.as_dict()}
+                          "residual_minus_injected": tb.as_dict(),
+                          # point rule; flagged when its interval straddles the threshold
+                          "statistically_unresolved": bool(tb.lb <= 0.010 <= tb.ub)}
             parts.append(inf.Part(f"{case} mean(residual - injected)", "<=", 0.010, "point",
                                   tb.mean))
         nums["cases_below_3F"] = sorted(k for k in nums)
@@ -552,84 +554,89 @@ def total_cost(c: Candidate) -> float | None:
             + cost.get("inference_gpu_hours", 0.0))
 
 
+def _pair_decision(rules: Rules, con: "Contrasts", cands: Mapping[str, Candidate],
+                   status: Mapping[str, str], small: str, large: str) -> dict[str, Any]:
+    """Section 6.6 for one pair (statistical review 8d9aaf8d, item 3; ruling from the goal text:
+    "Prefer our smaller network ONLY if it is demonstrably comparable and substantially cheaper.
+    Otherwise choose the stronger larger/pretrained design"):
+    1. the smaller package passes 6.5 (simultaneous non-inferiority AND the >= 2x cost ratio) -> smaller;
+    2. otherwise the larger (costlier) package materially better -> larger;
+    3. the smaller package materially better -> smaller;
+    4. equivalent (every 6.5 margin met in both directions) with saving < 2x -> 6.6.3 tie-break;
+    5. any straddling verdict -> CONTINUE (section 8 look 2); otherwise UNRESOLVED (6.6.4)."""
+    mb_large = con.materially_better(large, small)
+    ni_small = con.non_inferior(small, large, status)
+    mb_small = con.materially_better(small, large)
+    eq = con.equivalent(small, large)
+    rec = {"small": small, "large": large, "materially_better_large": mb_large.as_dict(),
+           "non_inferior_6.5_small": ni_small.as_dict(),
+           "materially_better_small": mb_small.as_dict(), "equivalent": eq.as_dict()}
+    if ni_small.verdict == inf.PASS:
+        return {**rec, "winner": small, "by": "6.6.2 (smaller package: 6.5 non-inferior and >= 2x cheaper)"}
+    if mb_large.verdict == inf.PASS:
+        return {**rec, "winner": large, "by": "6.6.1 (larger package materially better)"}
+    if mb_small.verdict == inf.PASS:
+        return {**rec, "winner": small, "by": "6.6.1 (smaller package materially better)"}
+    if eq.verdict == inf.PASS:
+        key = {}
+        for n in (small, large):
+            c = cands[n]
+            n2 = rules.N2(c).numbers.get("pooled_within_draw_sd", math.inf)
+            cov = (c.coverage or {}).get("dev_eavail") or {}
+            width = (np.mean(cov["levels"]["0.95"]["per_bin_mean_half_width"])
+                     if cov else math.inf)
+            key[n] = (n2, float(width), total_cost(c) or math.inf)
+        pick = min((small, large), key=lambda n: key[n])
+        return {**rec, "winner": pick, "by": "6.6.3 (equivalent, saving < 2x: tie-break)",
+                "tie_break_keys (N2 sd, mean 95% half-width, cost)": key}
+    if inf.CONTINUE in (mb_large.verdict, ni_small.verdict, mb_small.verdict, eq.verdict):
+        return {**rec, "winner": None, "by": "section 8 (look 2 needed)", "continue": True}
+    return {**rec, "winner": None, "by": "6.6.4 (unresolved)", "unresolved": True}
+
+
 def rank(rules: Rules, cands: Mapping[str, Candidate], status: Mapping[str, str]
          ) -> dict[str, Any]:
-    """Section 6.6 among ELIGIBLE candidates of the decision set."""
+    """Section 6.6 among ELIGIBLE candidates of the decision set. While any decision-set member is
+    still pending (INCOMPLETE/CONTINUE) the outcome is CONTINUE, never SELECTED (statistical review
+    8d9aaf8d, item 4). With several eligible candidates, pairs are decided in cost order: the
+    cheapest is the incumbent and each costlier candidate challenges it by _pair_decision."""
     decision = [n for n in rules.ev["decision_set"]]
     eligible = [n for n in decision if status[n] == "ELIGIBLE"]
     pending = [n for n in decision if status[n] in ("INCOMPLETE", "CONTINUE")]
-    out: dict[str, Any] = {"eligible": eligible, "pending_not_eligible": pending,
-                           "provisional": bool(pending)}
-    if not eligible:
-        out["outcome"] = ("NO_ELIGIBLE_DESIGN" if not pending else
-                          "NO_ELIGIBLE_DESIGN_YET (candidates pending: " + ", ".join(pending) + ")")
+    out: dict[str, Any] = {"eligible": eligible, "pending_not_eligible": pending}
+    if pending:
+        out["outcome"] = "CONTINUE (candidates pending: " + ", ".join(pending) + ")"
         return out
-    con = Contrasts(rules, cands)
+    if not eligible:
+        out["outcome"] = "NO_ELIGIBLE_DESIGN"
+        return out
     mean_e0 = {n: float(np.nanmean([x for x in cands[n].values(E0_CASE, g_hist("eavail")).values()
                                     if x is not None])) for n in eligible}
-    order = sorted(eligible, key=lambda n: -mean_e0[n])
-    leader = order[0]
-    out.update({"mean_R_E0": mean_e0, "order_by_mean_R_E0": order, "leader": leader,
-                "pairs": {}})
+    out["mean_R_E0"] = mean_e0
     if len(eligible) == 1:
-        out.update({"outcome": "SELECTED", "selected": leader, "by": "6.6.1 (only eligible)"})
+        out.update({"outcome": "SELECTED", "selected": eligible[0],
+                    "by": "only eligible candidate (6.6.1)"})
         return out
-    better, equiv, unresolved, cont = [], [], [], []
-    for other in order[1:]:
-        mb = con.materially_better(leader, other)
-        pair = {"materially_better": mb.as_dict()}
-        if mb.verdict == inf.PASS:
-            better.append(other)
-        else:
-            eq = con.equivalent(leader, other)
-            pair["equivalent"] = eq.as_dict()
-            if eq.verdict == inf.PASS:
-                equiv.append(other)
-            elif inf.CONTINUE in (mb.verdict, eq.verdict):
-                cont.append(other)
-            else:
-                unresolved.append(other)
-        out["pairs"][f"{leader} vs {other}"] = pair
-    # 6.6.2: a smaller (cheaper) package on cost only under 6.5, against the leader
-    ni = {}
-    for other in order[1:]:
-        tl, to = total_cost(cands[leader]), total_cost(cands[other])
-        if tl is not None and to is not None and to < tl:
-            v = con.non_inferior(other, leader, status)
-            ni[other] = v.as_dict()
-    out["non_inferiority_6.5"] = ni
-    cheaper_ok = [o for o, v in ni.items() if v["verdict"] == inf.PASS]
-    cont += [f"6.5 {o} vs {leader}" for o, v in ni.items() if v["verdict"] == inf.CONTINUE]
-    if cont:
-        out.update({"outcome": "CONTINUE", "by": "section 8 (look 2 needed)",
-                    "straddling_pairs": cont})
-        return out
-    if unresolved:
-        out.update({"outcome": "UNRESOLVED", "by": "6.6.4",
-                    "discriminating_contrasts": [f"{leader} vs {o}" for o in unresolved]})
-        return out
-    if cheaper_ok:
-        pick = max(cheaper_ok, key=lambda n: mean_e0[n])
-        out.update({"outcome": "SELECTED", "selected": pick,
-                    "by": f"6.6.2 (smaller package, 6.5 non-inferior to {leader})"})
-        return out
-    if not equiv:
-        out.update({"outcome": "SELECTED", "selected": leader, "by": "6.6.1 (materially better)"})
-        return out
-    # 6.6.3: equivalent set, saving < 2x -> tie-break: N2 sd, coverage width, cost
-    tied = [leader] + equiv
-    key = {}
-    for n in tied:
-        c = cands[n]
-        n2 = rules.N2(c).numbers.get("pooled_within_draw_sd", math.inf)
-        cov = (c.coverage or {}).get("dev_eavail") or {}
-        width = (np.mean(cov["levels"]["0.95"]["per_bin_mean_half_width"])
-                 if cov else math.inf)
-        key[n] = (n2, float(width), total_cost(c) or math.inf)
-    pick = min(tied, key=lambda n: key[n])
-    out.update({"outcome": "EQUIVALENT_TIE_BROKEN", "selected": pick, "by": "6.6.3",
-                "equivalent_set": tied,
-                "tie_break_keys (N2 sd, mean 95% half-width, cost)": key})
+    con = Contrasts(rules, cands)
+    costs = {n: (total_cost(cands[n]) if total_cost(cands[n]) is not None else math.inf)
+             for n in eligible}
+    order = sorted(eligible, key=lambda n: costs[n])
+    out.update({"cost_order": order, "total_cost": costs, "pairs": []})
+    incumbent = order[0]
+    for challenger in order[1:]:
+        d = _pair_decision(rules, con, cands, status, incumbent, challenger)
+        out["pairs"].append(d)
+        if d.get("continue"):
+            out.update({"outcome": "CONTINUE", "by": d["by"]})
+            return out
+        if d.get("unresolved"):
+            out.update({"outcome": "UNRESOLVED", "by": d["by"],
+                        "discriminating_contrasts": [f"{incumbent} vs {challenger}"]})
+            return out
+        incumbent = d["winner"]
+    last = out["pairs"][-1]
+    out.update({"outcome": ("EQUIVALENT_TIE_BROKEN" if last["by"].startswith("6.6.3")
+                            else "SELECTED"), "selected": incumbent, "by": last["by"]})
     return out
 
 
@@ -656,6 +663,9 @@ def evaluate(ev: Mapping[str, Any], floors: Mapping[str, Any] | None = None) -> 
         raise ValueError(f"decision-set members without evidence: {missing}")
     elig = {n: rules.eligibility(cands[n]) for n in ev["decision_set"]}
     prev = ev.get("previous")
+    if int(ev.get("look", 1)) > 1 and not prev:      # statistical review 8d9aaf8d item 4
+        raise ValueError("look 2 needs the look-1 decision file ('previous'): resolved look-1 "
+                         "verdicts are carried, never re-decided")
     if prev:                                         # section 8: resolved look-1 verdicts stay
         before = json.loads(Path(prev).read_text())["eligibility"]
         for n, e in elig.items():
@@ -675,6 +685,10 @@ def evaluate(ev: Mapping[str, Any], floors: Mapping[str, Any] | None = None) -> 
            "n_final": rules.n_final,
            "n_stress": rules.n_stress, "floors": floors, "eligibility": elig,
            "ranking": rank(rules, cands, status)}
+    if prev:                          # a decisive look-1 ranking is carried, never re-decided
+        before_rank = json.loads(Path(prev).read_text()).get("ranking", {})
+        if before_rank and not str(before_rank.get("outcome", "")).startswith("CONTINUE"):
+            res["ranking"] = {**before_rank, "carried_from_look": 1}
     if ev.get("reference") and ev["reference"] in cands:
         res["switching_vs_reference"] = switching_report(rules, cands, ev["reference"])
     return inf.jsonable(res)

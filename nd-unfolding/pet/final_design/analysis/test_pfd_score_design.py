@@ -66,6 +66,15 @@ def test_undefined_below_three_floors():
     assert sd.recovery_stats(p, p, t2)["recovery"] == pytest.approx(0.0)
 
 
+def test_undefined_floor_scales_for_joint_histograms():
+    # 28-bin joint histograms: the 3F rule scales by sqrt(28/7) = 2 (Amendment 2c)
+    p = np.full(28, 1 / 28)
+    t = p.copy(); t[0] += 0.009; t[1] -= 0.009                  # injected L1 0.018 < 0.024
+    assert sd.recovery_stats(p, p, t)["defined"] is False
+    t[0] += 0.004; t[1] -= 0.004                                 # 0.026 >= 0.024
+    assert sd.recovery_stats(p, p, t)["defined"] is True
+
+
 def test_null_case_reports_spurious_residuals(tmp_path, features):
     rf, _ = features
     make_run(tmp_path / "n", case="null", same_events=False)

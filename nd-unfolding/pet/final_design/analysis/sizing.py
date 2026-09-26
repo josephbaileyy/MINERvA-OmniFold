@@ -79,10 +79,14 @@ def size(contrasts: Sequence[Mapping[str, Any]], bonferroni_m: int | None = None
             raise ValueError(f"{c['id']}: need >= 2 pilot values")
         sd = float(v.std(ddof=1))
         ucb = inf.ucb80_sd(sd, v.size - 1)
-        n = smallest_n(float(v.mean()), float(c["margin"]), ucb, alpha)
-        n_one_look = smallest_n(float(v.mean()), float(c["margin"]), ucb,
-                                inf.per_bound_alpha(m, 1))
+        # a non-inferiority contrast is sized at a true difference of min(pilot mean, 0): a noisy
+        # favourable pilot mean must not shrink n (Amendment 2c; statistical review 8d9aaf8d item 6)
+        kind = c.get("kind", "ni" if float(c["margin"]) <= 0 else "level")
+        mu = min(float(v.mean()), 0.0) if kind == "ni" else float(v.mean())
+        n = smallest_n(mu, float(c["margin"]), ucb, alpha)
+        n_one_look = smallest_n(mu, float(c["margin"]), ucb, inf.per_bound_alpha(m, 1))
         rows[c["id"]] = {"n_pilot": int(v.size), "mean": float(v.mean()), "sd": sd,
+                         "kind": kind, "true_value_assumed": mu,
                          "sd_ucb80": ucb, "margin": float(c["margin"]),
                          "n_for_power": n, "status": ("OK" if n is not None and n <= cap else
                                                       "EXCEEDS_CAP" if n is not None else
@@ -91,10 +95,18 @@ def size(contrasts: Sequence[Mapping[str, Any]], bonferroni_m: int | None = None
         need.append(n)
     worst = None if any(n is None for n in need) else max(need)
     capped = worst is None or worst > cap
-    return {"alpha_one_sided_per_contrast": alpha, "bonferroni_m": m,
+    n_final = cap if capped else max(floor, worst)
+    powers = {k: float(power(np.array([n_final]), r["true_value_assumed"], r["margin"], r["sd_ucb80"],
+                             alpha)[0]) for k, r in rows.items()}
+    joint = float(np.prod(list(powers.values())))
+    return {"power_at_n_F": powers,
+            "joint_power_at_n_F_product": joint,
+            "joint_power_note": "product of the per-contrast powers (independence); the joint power "
+                                "of positively correlated contrasts is at least this",
+            "alpha_one_sided_per_contrast": alpha, "bonferroni_m": m,
             "looks_planned": looks_planned, "power": POWER, "floor": floor, "cap": cap,
             "contrasts": rows, "n_required_uncapped": worst,
-            "n_F": cap if capped else max(floor, worst), "capped": capped,
+            "n_F": n_final, "capped": capped,
             "binding_contrasts": [k for k, r in rows.items()
                                   if r["n_for_power"] is None or r["n_for_power"] == worst]}
 

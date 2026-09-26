@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
 from typing import Any, Mapping, Sequence
@@ -53,6 +54,11 @@ B_MEMBERS = 6
 LEVELS = (0.68, 0.95)
 C4_TOP_BIN_BOUND_QUOTED = 0.068
 TARGET_TOL = 1e-12
+
+
+def c4(n: int) -> float:
+    """E[sample sd] / sigma for n normal draws."""
+    return math.sqrt(2.0 / (n - 1)) * math.exp(math.lgamma(n / 2.0) - math.lgamma((n - 1) / 2.0))
 
 
 def t_factor(level: float, b: int) -> float:
@@ -74,9 +80,18 @@ def coverage_arrays(members: np.ndarray, target: np.ndarray, alpha: float,
     out: dict[str, Any] = {"n_replicates": R, "B": B, "n_bins": nb, "levels": {}}
     emp_sd = est.std(axis=0, ddof=1) if R > 1 else np.full(nb, np.nan)
     with np.errstate(divide="ignore", invalid="ignore"):
-        pull = np.where(sd > 0, dev / sd, np.nan)
+        pull = np.where(sd > 0, dev / (sd * math.sqrt(1.0 + 1.0 / B)), np.nan)
+    # the reported estimate is the MEAN of B members, so the prediction interval for its error adds
+    # the members' Monte-Carlo variance sd^2/B to the sampling variance sd^2 the member spread
+    # estimates: half-width = t(B-1) x sd x sqrt(1 + 1/B) (statistical review 8d9aaf8d, item 2;
+    # PROTOCOL Amendment 2c)
+    inflate = math.sqrt(1.0 + 1.0 / B)
+    out["interval_inflation_sqrt_1_plus_1_over_B"] = inflate
+    rms = np.sqrt(np.nanmean(np.where(empty, np.nan, dev) ** 2, axis=0))
+    out["per_bin_rms_error"] = rms.tolist()
+    out["per_bin_calibrated_mean_half_width_95"] = (t_factor(0.95, B) * c4(B) * inflate * rms).tolist()
     for level in LEVELS:
-        hw = t_factor(level, B) * sd
+        hw = t_factor(level, B) * sd * inflate
         hits = (np.abs(dev) <= hw).astype(np.float64)
         hits[empty] = np.nan
         pooled = inf.cluster_bootstrap_bounds(hits, alpha)
@@ -85,7 +100,7 @@ def coverage_arrays(members: np.ndarray, target: np.ndarray, alpha: float,
             "per_bin_coverage": np.nanmean(hits, axis=0).tolist(),
             "per_bin_mean_half_width": hw.mean(axis=0).tolist(),
             "pooled": pooled}
-    hw95 = t_factor(0.95, B) * sd
+    hw95 = t_factor(0.95, B) * sd * inflate
     with np.errstate(divide="ignore", invalid="ignore"):
         width_ratio = hw95.mean(axis=0) / emp_sd
     out.update({
@@ -184,8 +199,12 @@ def rules(dev: Mapping[str, Any] | None, regions: Mapping[str, Mapping[str, Any]
                                look, looks_planned, {"per_bin_coverage_95": cov})
         hw = dev["levels"]["0.95"]["per_bin_mean_half_width"]
         esd = dev["per_bin_empirical_sd_of_estimates"]
-        parts = [inf.Part(f"bin {j} mean 95% half-width <= 2.5 x empirical sd", "<=",
-                          2.5 * s, "point", estimate=h) for j, (h, s) in enumerate(zip(hw, esd))]
+        # C4 as amended (Amendment 2c; statistical review 8d9aaf8d, BLOCK): per bin, the mean 95 %
+        # half-width may exceed a CALIBRATED interval's expected half-width,
+        # t(B-1) c4(B) sqrt(1+1/B) x RMS(estimate - target), by at most 25 %
+        cal = dev["per_bin_calibrated_mean_half_width_95"]
+        parts = [inf.Part(f"bin {j} mean 95% half-width <= 1.25 x calibrated", "<=",
+                          1.25 * c, "point", estimate=h) for j, (h, c) in enumerate(zip(hw, cal))]
         inj_top = dev.get("per_bin_mean_injected_abs", [None])[-1]
         numbers = {"per_bin_mean_half_width_95": hw, "per_bin_empirical_sd": esd,
                    "top_bin_injected_abs": inj_top, "top_bin_bound_quoted": C4_TOP_BIN_BOUND_QUOTED}

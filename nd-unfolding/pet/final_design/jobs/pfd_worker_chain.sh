@@ -52,9 +52,10 @@ DEADLINE=$(( END_UNIX - ${DEADLINE_MARGIN:-240} ))
 mapfile -t ROWS < <(manifest_rows)
 LOG="$OUT/chain-$SLURM_JOB_ID.txt"
 # Blinding (PROTOCOL-20260925 Amendment 2): final/reserve-bank rows are never scored in the job
-# until the protocol carries an Amendment 3 heading, whatever SCORE says (review ec475e7b).
+# until the protocol carries an explicit "### Amendment ... UNBLIND" heading, whatever SCORE says
+# (review ec475e7b; Amendment 2c).
 if printf '%s\n' "${ROWS[@]}" | grep -qE $'\tBANK:(FB|RB):' && \
-   ! grep -qE '^### Amendment 3\b' "$MINE/nd-unfolding/pet/final_design/PROTOCOL-20260925.md"; then
+   ! grep -qE '^### Amendment [^ ]+ .*\bUNBLIND\b' "$MINE/nd-unfolding/pet/final_design/PROTOCOL-20260925.md"; then
   SCORE=0; export SCORE
 fi
 

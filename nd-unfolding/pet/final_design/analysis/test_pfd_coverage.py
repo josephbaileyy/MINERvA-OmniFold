@@ -12,16 +12,17 @@ import inference as inf
 
 
 def calibrated(R, nb=7, B=6, sigma=0.01, scale=1.0, seed=0):
-    """members = target + delta + sigma z_b, delta ~ N(0, sigma^2 (1 - 1/B)): then
-    (mean - target) / member-sd is exactly t(B-1), so mean +/- t x sd covers at nominal.
+    """The bootstrap model the procedure assumes: the data-level estimate misses the target by
+    delta ~ N(0, sigma^2) and each member adds its own z_b ~ N(0, sigma^2); the reported mean then
+    misses by delta + zbar (variance sigma^2 (1 + 1/B)) while the member sd estimates sigma, so
+    mean +/- t(B-1) sd sqrt(1 + 1/B) covers at nominal (Amendment 2c).
     `scale` multiplies the member spread only (scale > 1 over-covers, < 1 under-covers)."""
     rng = np.random.default_rng(seed)
     target = rng.dirichlet(np.ones(nb) * 20, size=R)
-    delta = rng.normal(0, sigma * np.sqrt(1 - 1 / B), (R, 1, nb))
+    delta = rng.normal(0, sigma, (R, 1, nb))
     z = rng.normal(0, sigma, (R, B, nb))
-    z = z - z.mean(axis=1, keepdims=True)
-    zbar = rng.normal(0, sigma / np.sqrt(B), (R, 1, nb))
-    members = target[:, None, :] + delta + zbar + scale * z
+    zbar = z.mean(axis=1, keepdims=True)
+    members = target[:, None, :] + delta + zbar + scale * (z - zbar)
     prior = np.repeat((target - 0.02)[:, None, :], B, axis=1)
     return members, target, prior
 
@@ -37,14 +38,14 @@ def test_calibrated_procedure_covers_at_nominal():
     assert np.allclose(out["per_bin_bias"], 0, atol=1e-3)
 
 
-def test_half_width_is_t_times_member_sd_not_sd_of_mean():
+def test_half_width_is_t_times_member_sd_times_sqrt_1_plus_1_over_B():
     m = np.zeros((2, 6, 1))
     m[:, :, 0] = [0, 1, 2, 3, 4, 5]
     out = cov.coverage_arrays(m, np.full((2, 1), 2.5), 0.05)
     sd = np.std([0, 1, 2, 3, 4, 5], ddof=1)
     from scipy import stats
     assert out["levels"]["0.95"]["per_bin_mean_half_width"][0] == pytest.approx(
-        stats.t.ppf(0.975, 5) * sd)
+        stats.t.ppf(0.975, 5) * sd * np.sqrt(1 + 1 / 6))
 
 
 def rules_for(m, t, p, look=1, looks=2):
