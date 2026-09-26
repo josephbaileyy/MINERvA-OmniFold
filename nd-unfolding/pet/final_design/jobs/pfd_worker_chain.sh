@@ -12,6 +12,7 @@
 #   env: MINE MINE_COMMIT OUT MANIFEST (relative to improvement_campaign/confirm/)
 #        [SLOTS_PER_GPU=1] [CHAIN=1] [CHAIN_QOS=debug] [CHAIN_TIME=00:30:00] [MAX_ROUNDS=24]
 #        [DEADLINE_MARGIN=240] [ITER_ESTIMATE=800] [SCORE=1]
+#        [BANKS=<banks.npz>] [BANK_MANIFEST=<json>]  (design_lib.sh; see its header)
 #SBATCH --account=m3246_g
 #SBATCH --constraint=gpu
 #SBATCH --qos=debug
@@ -31,6 +32,12 @@ esac
 mkdir -p "$OUT"
 scontrol show job -o "$SLURM_JOB_ID" > "$OUT/allocation-$SLURM_JOB_ID.txt"
 source "$MINE/nd-unfolding/pet/improvement_campaign/confirm/jobs/confirm_lib.sh"
+# The study runner (final_design/runner/run_design.py: bank draws BANK:<bank>:<stage>:<rep>,
+# null distortion, bootstrap members, study arms) replaces run_replicate.py in run_row when the
+# pinned checkout carries design_lib.sh; predecessor-style rows (<pool>:<rep>, historical) keep
+# byte-identical inputs through it.
+DESIGN_LIB="$MINE/nd-unfolding/pet/final_design/jobs/design_lib.sh"
+if [[ -f "$DESIGN_LIB" ]]; then source "$DESIGN_LIB"; fi
 setup_env
 require_coherent_flock
 # Population targets are whole-pool aggregate spectra; this study computes none over the predecessor
