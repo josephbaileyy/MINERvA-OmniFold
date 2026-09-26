@@ -6,8 +6,9 @@
 #   usage: nohup bash keep_busy.sh <pinned checkout> <commit> <stop, e.g. 2026-09-27T20:00Z> &
 # Priorities (first incomplete wins):
 #   interactive 1 : dev2Pa (PET2, 1 run/GPU) -> dev2Q (PET2, annealed step 1) -> s4s -> s4f
-#   interactive 2 : GPU0 dev2Ta -> s4s ; GPU1 s3p_all -> s4s ; GPUs 2-3 s4f -> s4s   (2 runs/GPU)
-#   debug chains  : s4f -> s4s   (both fit a 30-min round at ~760 s/iteration)
+#   interactive 2 : GPU0 dev2Ta -> s4s ; GPU1 s3p_all -> s4s ; GPUs 2-3 s3p_all -> s4f -> s4s   (2 runs/GPU)
+#   debug chains  : s3p_all -> s4f -> s4s   (all fit a 30-min round at ~760 s/iteration; the sizing pilot
+#                   goes first because it fixes n_F before the large slot can be frozen)
 # Final-bank manifests run with SCORE=0 (the launcher also forces it before an UNBLIND amendment).
 set -u
 M=$1; S=$2; STOP=$3
@@ -40,7 +41,7 @@ launch_inter() {   # NAME "lane1 & lane2 & ..." LOGDIR
 }
 if [[ ${DRY:-0} == 1 ]]; then      # print the decisions and exit
   for st in dev2Pa dev2Q dev2Ta s3p_all s4f_a2 s4s_a2; do incomplete "$st" && echo "$st incomplete" || echo "$st complete"; done
-  echo "inter1 -> $(first_incomplete dev2Pa s4s_a2 s4f_a2)"; echo "debug -> $(first_incomplete s4f_a2 s4s_a2)"
+  echo "inter1 -> $(first_incomplete dev2Pa dev2Q s4s_a2 s4f_a2)"; echo "debug -> $(first_incomplete s3p_all s4f_a2 s4s_a2)"
   lane 2,3 2 s4f_a2 1300; exit 0
 fi
 while (( $(date +%s) < stop_epoch )) && [[ ! -e $B/keep_busy.stop ]]; do
@@ -53,7 +54,7 @@ while (( $(date +%s) < stop_epoch )) && [[ ! -e $B/keep_busy.stop ]]; do
   fi
   if ! grep -q '^pfd-inter2 ' <<<"$q"; then
     g0=$(first_incomplete dev2Ta s4s_a2 s4f_a2); g1=$(first_incomplete s3p_all s4s_a2 s4f_a2)
-    g23=$(first_incomplete s4f_a2 s4s_a2)
+    g23=$(first_incomplete s3p_all s4f_a2 s4s_a2)
     c=""
     [[ -n "$g0" ]] && c+="$(lane 0 2 "$g0" $([[ $g0 == dev2Ta ]] && echo 2800 || echo 1300)) & "
     [[ -n "$g1" ]] && c+="$(lane 1 2 "$g1" 1300) & "
@@ -63,9 +64,9 @@ while (( $(date +%s) < stop_epoch )) && [[ ! -e $B/keep_busy.stop ]]; do
   # a debug chain holds 2 submissions (running + queued successor); keep two chains (<= 4 of 5)
   nd=$(grep -c ' gpu_debug$' <<<"$q" || true)
   if (( nd <= 2 )); then
-    st=$(first_incomplete s4f_a2 s4s_a2) && {
-      O=$B/${OUTS[$st]}; mkdir -p "$O"
-      j=$(cd "$O" && sbatch --parsable -o "$O/slurm-%j.out" --export=ALL,MINE="$M",MINE_COMMIT="$S",OUT="$O",MANIFEST="$R/$st.tsv",SCORE=0,SLOTS_PER_GPU=1,CHAIN=1,MAX_ROUNDS=2000,DEADLINE_MARGIN=10,ITER_ESTIMATE=780 "$M/nd-unfolding/pet/final_design/jobs/pfd_worker_chain.sh" 2>&1)
+    st=$(first_incomplete s3p_all s4f_a2 s4s_a2) && {
+      O=$B/${OUTS[$st]}; mkdir -p "$O"; sc=1; [[ $st == s4* ]] && sc=0
+      j=$(cd "$O" && sbatch --parsable -o "$O/slurm-%j.out" --export=ALL,MINE="$M",MINE_COMMIT="$S",OUT="$O",MANIFEST="$R/$st.tsv",SCORE=$sc,SLOTS_PER_GPU=1,CHAIN=1,MAX_ROUNDS=2000,DEADLINE_MARGIN=10,ITER_ESTIMATE=780 "$M/nd-unfolding/pet/final_design/jobs/pfd_worker_chain.sh" 2>&1)
       echo "$(date -u +%FT%TZ) debug chain for $st: $j" >> "$B/keep_busy.log"; }
   fi
   sleep 120
