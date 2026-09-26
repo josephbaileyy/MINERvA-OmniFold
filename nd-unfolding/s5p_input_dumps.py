@@ -132,6 +132,7 @@ def lateral(a) -> int:
     for path in (a.out, a.out_bkg):
         if path.exists():
             raise RuntimeError(f"refusing to overwrite {path}")
+        path.parent.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
     f = ROOT.TFile.Open(str(a.omnifile), "READ")
     data_pot, mc_pot, pot_scale = u2d.get_pot_scales(f)

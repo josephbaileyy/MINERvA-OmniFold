@@ -1,0 +1,20 @@
+{
+ "schema": "s5p-contract-amendment/1",
+ "amends": "docs/orchestration/state/s5p/contract.json",
+ "number": 3,
+ "stage": "2_construction_questions",
+ "status": "FROZEN at the commit that first adds this file, before any of its compute. It adds two supplementary development studies to amendment 2 and changes nothing there. Executor choices under the delegation.",
+ "study_P_prior_variation_linearity": {
+  "question": "does the real-data unfolded result's shift under a change of the MC truth prior to a development vertex equal, cell by cell, minus the estimator's bias at that vertex as a truth (the linear-response relation x(prior_k) - x(cv) = (I - A)(v_k - prior) = -bias(v_k) that makes a data-side prior-variation envelope a bound on the regularization bias over the hull of the vertices)",
+  "design": "the real data under R (5 iterations) unfolded with the MC truth prior reweighted (w_truth and w_reco of every MC row times r(truth); response per event, denominator, background and flux unchanged) to D1 GiBUU/GENIE E_avail, D2 NuWro/GENIE E_avail (W1), D3 GENIE MEC/CV (E_avail,W) (W2), D4 NuWro/GENIE (pT,p_parallel,E_avail) (W3), D5 the anchored NuWro/GENIE q3 | (E_avail, W) conditional ratio (state/s5p/ratios/d5-nuwro-over-genie-q3-given-eavail-w.json, built by s5p_truths.py at 29455b10 from the gen5d predictions; sha256 5a4aae61...), each at amplitude 1; controls: the CV path (--universes CV) and the nominal prior d0 must both equal the N1 base product bitwise",
+  "comparison": "for D1, D2, D4 the noise-free bias at iteration 5 from study K (asimov traces), for D3 the mean residual of the 20 s5e W2 experiments; per reported cell of EW, J and H2: the correlation and least-squares slope between the data shift and minus the bias, and the median |shift + bias| / |bias| over cells with |bias| > 1%",
+  "use": "development evidence for the Stage-3 model-component design only; the data shifts are data-informed widths (no observed central value is compared with any generator) and are recorded as such"
+ },
+ "study_I_input_dump_pilots": {
+  "design": "s5p_input_dumps.py detector (MinosEfficiency and GEANT_Neutron/Pion/Proton +-1 sigma from the background-aware universes omnifile) and lateral (one endpoint, BeamAngleX_0), each refusing to write unless its CV arrays reproduce the npz / background dump",
+  "use": "their measured cost, memory and output size enter the Stage-2 forecast; the products are Stage-4 inputs and are not used before the Stage-3 admission"
+ },
+ "tables": ["docs/orchestration/state/s5p/s2-prior-tasks.tsv", "docs/orchestration/state/s5p/s2-dump-tasks.tsv"],
+ "queue": "docs/orchestration/state/s5p/queues/s2-gpu-b.q (GPU pool, shared QOS: prior 2 tasks x 1 GPU x 1.5 h = 0.75 GPU node-h reserved; dumps 2 tasks x 2 GPUs x 4 h = 4.0 GPU node-h; CPU-only steps)",
+ "budget_stage": "development (GPU pool)"
+}
