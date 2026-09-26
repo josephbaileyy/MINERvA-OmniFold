@@ -14,8 +14,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-oi192",
  "branch": "campaign/oi192-diagnosis-20260925",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5e-20260925/",
- "phase": "DIAGNOSIS READY",
- "phase_detail": "meter/launcher registration of s5e, diagnosis instrumentation (s5e_trace.py, s5e_driver_departure.py, s5e_geometry.py) with local tests (stub estimators; mutation-checked) and cluster tests, contract amendment 1, and the D-series task tables and queues committed; no campaign compute yet",
+ "phase": "DIAGNOSIS RUNNING",
+ "phase_detail": "diagnosis allocations A and B admitted by the s5e meter (4.0 + 4.0 of 10.0 diagnosis node-h reserved) and running at deploy 581daf98; cluster tests passed in the analysis environment (16/16, none skipped); admission verified in native units (dry runs admitted and released at zero charge; a 10.5 node-h request and a GPU request refused, exit 3)",
  "pinned": {
   "contract": "docs/orchestration/state/s5e/contract.json (frozen at the commit that first adds it)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -30,10 +30,27 @@
   "candidates": "NOT STARTED (0 of 2 frozen)",
   "assessment": "NOT STARTED"
  },
- "jobs": [],
+ "jobs": [
+  {
+   "job": "58881080",
+   "label": "s5e_diag_a (salloc interactive, 1 CPU node, 4 h)",
+   "stage": "diagnosis",
+   "queue": "state/s5e/queues/diag-A.q",
+   "state": "RUNNING",
+   "started_utc": "2026-09-25T22:59:29Z"
+  },
+  {
+   "job": "58881083",
+   "label": "s5e_diag_b (salloc interactive, 1 CPU node, 4 h)",
+   "stage": "diagnosis",
+   "queue": "state/s5e/queues/diag-B.q",
+   "state": "RUNNING",
+   "started_utc": "2026-09-25T22:59:32Z"
+  }
+ ],
  "receipts": [],
  "candidates": [],
- "next_action": "deploy a clean clone at this commit under the namespace, run tests/test_s5e_cluster.py in the analysis environment, rebind the ledger to budget revision 1, verify admission by a meter dry run, then launch queues diag-A.q and diag-B.q",
+ "next_action": "monitor 58881080/58881083 to release; then the diagnosis analysis (s5e_analyze_diag.py), the diagnosis receipt and its independent review",
  "concurrent_work_at_start": "jobs 58880337/58880338/58880339 and further josephrb GPU jobs and CPU job 58880449 belong to other lanes (not touched); shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "35f8757b231f524e52c060e4db93af87420af4d9",
@@ -41,5 +58,18 @@
  },
  "amendments": [
   "docs/orchestration/state/s5e/contract-amendment-1-diagnosis-execution.json"
+ ],
+ "deploy": {
+  "root": "/pscratch/sd/j/josephrb/s5e-20260925/deploy/",
+  "trees": [
+   "7577a4a6 (tests, dry runs; its queue lines were refused before admission: uppercase labels)",
+   "581daf98 (diagnosis)"
+  ]
+ },
+ "incidents": [
+  {
+   "utc": "2026-09-25T22:57:38Z",
+   "what": "both queue lines exited 2 at the meter's label check (uppercase A/B) before any admission; fixed at 581daf98 and relaunched 22:59:26Z"
+  }
  ]
 }
