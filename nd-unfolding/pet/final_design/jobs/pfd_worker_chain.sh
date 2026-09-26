@@ -83,7 +83,8 @@ next_open_claim() {   # claim the next open row into CLAIMED_ROW (no subshell: t
     name=$(row_name "$row")
     is_complete "$name" && continue
     # a row that has crashed 3 times is left for inspection instead of re-claimed by every chain
-    (( $(grep -c "^$name exit" "$OUT/exit-codes.txt" 2>/dev/null || true) >= 3 )) && continue
+    local nc; nc=$(grep -c "^$name exit" "$OUT/exit-codes.txt" 2>/dev/null || true)
+    (( ${nc:-0} >= 3 )) && continue
     held_by_other "$name" && continue
     if claim "$name"; then CLAIMED_ROW=$row; return 0; fi
   done
