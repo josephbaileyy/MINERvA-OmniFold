@@ -59,7 +59,10 @@ if (( ${#UNF[@]} == 0 )); then echo "all COMPLETE" > "$LOG"; exit 0; fi
 
 NEXT=""
 if [[ "${CHAIN:-1}" == 1 ]] && (( $(ls "$OUT"/chain-*.txt 2>/dev/null | wc -l) < ${MAX_ROUNDS:-24} )); then
-  NEXT=$(sbatch --parsable -q "${CHAIN_QOS:-debug}" -t "${CHAIN_TIME:-00:30:00}" \
+  # CHAIN_EXTRA: extra sbatch arguments for the successor, e.g. "--gpus=1 -c 32" for a gpu_shared
+  # chain (the #SBATCH header describes a whole debug node)
+  # shellcheck disable=SC2086
+  NEXT=$(sbatch --parsable -q "${CHAIN_QOS:-debug}" -t "${CHAIN_TIME:-00:30:00}" ${CHAIN_EXTRA:-} \
     --dependency="afterany:$SLURM_JOB_ID" -o "$OUT/slurm-%j.out" --export=ALL "$SELF" 2>&1) || {
     echo "$(date -u +%FT%TZ) job $SLURM_JOB_ID could NOT queue its successor: $NEXT" >> "$OUT/exit-codes.txt"
     NEXT=""; }
