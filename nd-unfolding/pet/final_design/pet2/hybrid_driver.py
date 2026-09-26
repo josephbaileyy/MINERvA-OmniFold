@@ -60,6 +60,17 @@ def variant_of(config: Any) -> str:
     return "pretrained" if config.step1.init.policy == "pretrained" else "scratch"
 
 
+def step1_additions(arm: Any) -> tuple:
+    """Step-1 inputs an arm would add: a predecessor B2 arm's declaration, or, for a study arm
+    built on a base arm (`design_arms.CountsArm`), its base arm's."""
+    base = getattr(arm, "base", None)
+    if base is not None:
+        import b2_arms
+        arm = b2_arms.get(base)
+    return tuple(getattr(arm, "step1_reco_scalars", ())) + \
+        tuple(getattr(arm, "step1_cloud_summaries", ()))
+
+
 def check_hybrid_config(config: Any, b2_arm: Any, pinned_state_sha256: str) -> dict[str, Any]:
     """Refuse a config that is not a PET2-step-1 / our-PET-step-2 hybrid, before any data."""
     problems = []
@@ -68,8 +79,8 @@ def check_hybrid_config(config: Any, b2_arm: Any, pinned_state_sha256: str) -> d
                         f"{config.model_step1.kind!r})")
     if config.model_step2.kind != "ours_pet":
         problems.append("step 2 must be our truth PET")
-    if b2_arm.step1_reco_scalars or b2_arm.step1_cloud_summaries:
-        problems.append(f"B2 arm {b2_arm.name!r} changes step-1 inputs; PET2's inputs are fixed")
+    if step1_additions(b2_arm):
+        problems.append(f"input arm {b2_arm.name!r} changes step-1 inputs; PET2's inputs are fixed")
     init = config.step1.init
     if init.policy == "pretrained" and init.pretrained_state_sha256 != pinned_state_sha256:
         problems.append(f"pretrained state sha256 {init.pretrained_state_sha256} is not the pinned "

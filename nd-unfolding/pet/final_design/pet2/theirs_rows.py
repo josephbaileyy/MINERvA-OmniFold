@@ -76,7 +76,8 @@ GROUP_ROWS = 65_536
 # replaces the stored non-finite momentum components by 0 (no direction information) and applies
 # his conversion unchanged, so eta = 0 and phi = 0 by his own edge convention and log pT =
 # log(1e-6); every repair is listed. Any other non-finite value is always refused.
-NONFINITE_MOMENTUM_POLICIES = ("refuse", "zero")
+NONFINITE_POLICIES = ("refuse", "zero")
+NONFINITE_MOMENTUM_POLICIES = NONFINITE_POLICIES
 
 
 class JoinError(SystemExit):
@@ -218,13 +219,89 @@ def shard_groups(shard_of_row: np.ndarray, group_rows: int) -> list[np.ndarray]:
     return groups
 
 
+def _raw_rows(index: TheirsIndex, rows: np.ndarray, selected: np.ndarray
+              ) -> tuple[np.ndarray, np.ndarray, int]:
+    """STORED tokens, add_info and globals of `rows` (zeros where the join has no built row),
+    gathered with `materialize`'s own indexing: one open per shard, rows in the given order."""
+    present = selected >= 0
+    where = index.origin[np.where(present, selected, 0)]
+    packed = np.zeros((rows.size, TOKEN_CAP, PACKED_WIDTH), dtype=np.float32)
+    globals_ = np.zeros((rows.size, GLOBAL_WIDTH), dtype=np.float32)
+    order = np.argsort(np.where(present, where[:, 0], -1), kind="stable")
+    order = order[present[order]]
+    shard_ids = where[order, 0]
+    bounds = np.searchsorted(shard_ids, np.arange(len(index.files) + 1))
+    opened = 0
+    for shard in range(len(index.files)):
+        lo, hi = bounds[shard], bounds[shard + 1]
+        if lo == hi:
+            continue
+        opened += 1
+        take = order[lo:hi]
+        with np.load(index.files[shard]) as blob:
+            tokens = blob["tokens"][where[take, 1]]
+            add = blob["add_info"][where[take, 1]]
+            glob = blob["globals"][where[take, 1]]
+        packed[take] = np.concatenate([tokens, add], axis=2)
+        globals_[take] = glob
+    return packed, globals_, opened
+
+
+def _convert(raw: np.ndarray, glob: np.ndarray, reco_ok: np.ndarray
+             ) -> tuple[np.ndarray, np.ndarray]:
+    """The historical conversion and `!pass_reco` zeroing (materialize's last two lines)."""
+    import theirs_loader_substitution as tls
+    import theirs_token_schema as tts
+    packed = tts.convert_packed(raw).astype(np.float32)
+    return tls.zero_non_reco(packed, glob, reco_ok)
+
+
+def repair_raw_row(raw: np.ndarray, momentum: str, addinfo: str) -> tuple[np.ndarray, list]:
+    """Repair ONE stored row `(33, 10)` under the policies; returns (row, repaired entries).
+
+    Repaired only where the historical conversion would leave a non-finite value: a non-finite
+    px/py/pz (policy `momentum`), a NaN dE/dx or a non-finite x/y/z/t (policy `addinfo`; a +-inf
+    dE/dx is mapped to 100 by the historical conversion and is left alone). Any other non-finite
+    stored value (log E, PID), or one whose policy is `refuse`, is left as stored, so the
+    caller's final non-finite check refuses it with its location."""
+    row = np.array(raw, dtype=np.float32, copy=True)
+    bad = np.zeros(row.shape, dtype=bool)
+    bad[:, 0:3] = ~np.isfinite(row[:, 0:3])
+    bad[:, 5] = np.isnan(row[:, 5])
+    bad[:, 6:10] = ~np.isfinite(row[:, 6:10])
+    entries = []
+    for tok, col in np.argwhere(bad):
+        cls = "momentum" if col < 3 else "add_info"
+        if (momentum if cls == "momentum" else addinfo) != "zero":
+            continue                  # left non-finite: the caller's final check refuses it
+        entries.append({"class": cls, "token": int(tok), "column": int(col),
+                        "stored": repr(float(row[tok, col]))})
+        row[tok, col] = 0.0
+    return row, entries
+
+
+def _needs_repair(raw: np.ndarray) -> np.ndarray:
+    """Rows whose historical conversion would carry a non-finite value."""
+    return ((~np.isfinite(raw[..., 0:5])).any(axis=(1, 2)) | np.isnan(raw[..., 5]).any(axis=1)
+            | (~np.isfinite(raw[..., 6:10])).any(axis=(1, 2)))
+
+
 def gather(index: TheirsIndex, rows: np.ndarray, pass_reco: np.ndarray, *,
            group_rows: int = GROUP_ROWS,
            materialize: Callable[..., dict[str, Any]] | None = None,
-           nonfinite_momentum: str = "refuse") -> dict[str, Any]:
-    """Packed tokens `(n, 33, 10)` and globals `(n, 16)` for sorted `rows`, in that order."""
-    if nonfinite_momentum not in NONFINITE_MOMENTUM_POLICIES:
-        raise JoinError(f"[theirs_rows] unknown non-finite momentum policy {nonfinite_momentum!r}")
+           nonfinite_momentum: str = "refuse", nonfinite_addinfo: str = "refuse",
+           transform: tuple[np.ndarray, Callable] | None = None) -> dict[str, Any]:
+    """Packed tokens `(n, 33, 10)` and globals `(n, 16)` for sorted `rows`, in that order.
+
+    Without `transform` the historical `materialize` produces every group (byte-identical to the
+    historical caches); rows it leaves non-finite are rebuilt from their stored values under the
+    repair policies. With `transform = (rows_to_transform, fn)` (a reco-response distortion,
+    `pet2_response`), each group is read raw by `materialize`'s own indexing, repaired, the given
+    rows transformed by `fn(tokens, add_info, globals)` on their STORED values, and converted by
+    the historical conversion; with an identity `fn` this is byte-identical to `materialize`."""
+    for name, policy in (("momentum", nonfinite_momentum), ("add_info", nonfinite_addinfo)):
+        if policy not in NONFINITE_POLICIES:
+            raise JoinError(f"[theirs_rows] unknown non-finite {name} policy {policy!r}")
     materialize = mtz.materialize if materialize is None else materialize
     pass_reco = np.asarray(pass_reco, dtype=bool)
     if pass_reco.shape != index.row_index.shape:
@@ -237,26 +314,47 @@ def gather(index: TheirsIndex, rows: np.ndarray, pass_reco: np.ndarray, *,
     if missing:
         raise JoinError(f"[theirs_rows] {missing} of {int(reco_ok.sum())} requested pass_reco rows "
                         "have no built PET2 input; refusing (the join must be resolved first)")
+    t_rows, t_fn = (None, None) if transform is None else transform
+    if t_rows is not None:
+        t_rows = check_rows(t_rows, index.row_index.shape[0], "transformed")
+        if not np.isin(t_rows, rows).all() or not pass_reco[t_rows].all():
+            raise JoinError("[theirs_rows] transformed rows must be requested reco-passing rows")
     shard = np.where(selected >= 0, index.origin[np.where(selected >= 0, selected, 0), 0], -1)
     packed = np.zeros((rows.size, TOKEN_CAP, PACKED_WIDTH), dtype=np.float32)
     globals_ = np.zeros((rows.size, GLOBAL_WIDTH), dtype=np.float32)
-    opened = 0
+    opened, repairs, n_transformed = 0, [], 0
+    policies = (nonfinite_momentum, nonfinite_addinfo)
     t0 = time.perf_counter()
     for pos in shard_groups(shard, group_rows):
-        out = materialize(index.files, index.row_index, index.origin, rows[pos], pass_reco,
-                          cap=TOKEN_CAP, packed_width=PACKED_WIDTH, global_width=GLOBAL_WIDTH)
-        if out["packed"].shape != (pos.size, TOKEN_CAP, PACKED_WIDTH) or \
-                out["globals"].shape != (pos.size, GLOBAL_WIDTH):
-            raise JoinError("[theirs_rows] materialize returned an unexpected shape")
-        packed[pos] = out["packed"]
-        globals_[pos] = out["globals"]
-        opened += int(out["shards_opened"])
+        if t_fn is None:
+            out = materialize(index.files, index.row_index, index.origin, rows[pos], pass_reco,
+                              cap=TOKEN_CAP, packed_width=PACKED_WIDTH,
+                              global_width=GLOBAL_WIDTH)
+            if out["packed"].shape != (pos.size, TOKEN_CAP, PACKED_WIDTH) or \
+                    out["globals"].shape != (pos.size, GLOBAL_WIDTH):
+                raise JoinError("[theirs_rows] materialize returned an unexpected shape")
+            packed[pos], globals_[pos] = out["packed"], out["globals"]
+            opened += int(out["shards_opened"])
+            continue
+        raw, glob, n_open = _raw_rows(index, rows[pos], selected[pos])
+        opened += n_open
+        for j in np.flatnonzero(_needs_repair(raw) & reco_ok[pos]):
+            raw[j], entries = repair_raw_row(raw[j], *policies)
+            repairs.append(_repair_record(index, rows[pos][j], selected[pos][j], entries))
+        hit = np.isin(rows[pos], t_rows)
+        if hit.any():
+            tok, add, gl = t_fn(raw[hit, :, 0:5], raw[hit, :, 5:10], glob[hit])
+            raw[hit] = np.concatenate([tok, add], axis=2)
+            glob[hit] = gl
+            n_transformed += int(hit.sum())
+        packed[pos], globals_[pos] = _convert(raw, glob, reco_ok[pos])
     needed = int(np.unique(shard[shard >= 0]).size)
     if opened != needed:
         raise JoinError(f"[theirs_rows] opened {opened} shards for {needed} needed")
-    repairs: list[dict[str, Any]] = []
-    if nonfinite_momentum == "zero":
-        repairs = repair_nonfinite_momentum(index, rows, packed, globals_, selected, reco_ok)
+    if t_fn is None and "zero" in policies:
+        repairs = rebuild_nonfinite(index, rows, packed, globals_, selected, reco_ok, policies)
+    if t_rows is not None and n_transformed != t_rows.size:
+        raise JoinError(f"[theirs_rows] transformed {n_transformed} of {t_rows.size} rows")
     bad = int((~np.isfinite(packed[reco_ok])).sum() + (~np.isfinite(globals_[reco_ok])).sum())
     if bad:
         where = nonfinite_locations(index, rows, packed, globals_, selected)
@@ -271,11 +369,53 @@ def gather(index: TheirsIndex, rows: np.ndarray, pass_reco: np.ndarray, *,
               "nonzero_rows_without_reco": int((~zero_rows & ~reco_ok).sum()),
               "shards_opened": opened, "seconds": time.perf_counter() - t0,
               "packed_sha256": sha256_array(packed), "globals_sha256": sha256_array(globals_),
+              "path": "materialize" if t_fn is None else "raw+transform",
+              "rows_transformed": n_transformed,
               "nonfinite_momentum_policy": nonfinite_momentum,
-              "nonfinite_momentum_repairs": repairs}
+              "nonfinite_addinfo_policy": nonfinite_addinfo,
+              "nonfinite_repairs": repairs}
     if record["nonzero_rows_without_reco"]:
         raise JoinError("[theirs_rows] a !pass_reco row carries PET2 content")
     return {"packed": packed, "globals": globals_, "record": record}
+
+
+def _repair_record(index: TheirsIndex, row: int, sel: int, entries: list) -> dict[str, Any]:
+    shard, local = (int(x) for x in index.origin[sel])
+    return {"inventory_row": int(row), "shard": index.files[shard], "row_in_shard": local,
+            "entries": entries}
+
+
+def rebuild_nonfinite(index: TheirsIndex, rows: np.ndarray, packed: np.ndarray,
+                      globals_: np.ndarray, selected: np.ndarray, reco_ok: np.ndarray,
+                      policies: tuple[str, str]) -> list[dict[str, Any]]:
+    """Materialize path: each reco-passing row left non-finite is rebuilt from its STORED row,
+    repaired (`repair_raw_row`), converted by the historical conversion and written back; every
+    token it did not repair must come back byte for byte. Rows are only touched when needed, so
+    with no stored non-finite value this is a no-op (the byte-identity with the caches stands)."""
+    hit_rows = np.flatnonzero(reco_ok & ~np.isfinite(packed).reshape(len(rows), -1).all(axis=1))
+    repairs = []
+    for i in hit_rows:
+        shard, local = (int(x) for x in index.origin[selected[i]])
+        with np.load(index.files[shard]) as blob:
+            raw = np.concatenate([np.asarray(blob["tokens"][local], np.float32),
+                                  np.asarray(blob["add_info"][local], np.float32)], axis=1)
+        fixed, entries = repair_raw_row(raw, *policies)
+        if not entries:
+            continue
+        conv, _g = _convert(fixed[None], globals_[i:i + 1], np.array([True]))
+        touched = np.zeros(TOKEN_CAP, dtype=bool)
+        touched[[e["token"] for e in entries]] = True
+        if conv[0, ~touched].tobytes() != packed[i, ~touched].tobytes():
+            raise JoinError(f"[theirs_rows] rebuilding row {int(rows[i])} did not reproduce its "
+                            "untouched tokens")
+        rec = _repair_record(index, rows[i], selected[i], entries)
+        rec["before"] = {int(t): [repr(float(v)) for v in packed[i, t]]
+                         for t in np.flatnonzero(touched)}
+        rec["after"] = {int(t): [repr(float(v)) for v in conv[0, t]]
+                        for t in np.flatnonzero(touched)}
+        repairs.append(rec)
+        packed[i] = conv[0]
+    return repairs
 
 
 def nonfinite_locations(index: TheirsIndex, rows: np.ndarray, packed: np.ndarray,
@@ -303,45 +443,6 @@ def nonfinite_locations(index: TheirsIndex, rows: np.ndarray, packed: np.ndarray
     return out
 
 
-def repair_nonfinite_momentum(index: TheirsIndex, rows: np.ndarray, packed: np.ndarray,
-                              globals_: np.ndarray, selected: np.ndarray,
-                              reco_ok: np.ndarray) -> list[dict[str, Any]]:
-    """Policy `zero`: rebuild each affected row from its STORED shard row with non-finite
-    px/py/pz set to 0, through the historical conversion and zeroing, in place. Only momentum
-    columns are repaired; the rebuilt row must reproduce every untouched token byte for byte."""
-    import theirs_loader_substitution as tls
-    import theirs_token_schema as tts
-    hit_rows = np.flatnonzero(reco_ok & ~np.isfinite(packed).reshape(len(rows), -1).all(axis=1))
-    repairs = []
-    for i in hit_rows:
-        shard, local = (int(x) for x in index.origin[selected[i]])
-        with np.load(index.files[shard]) as blob:
-            tokens = np.array(blob["tokens"][local], dtype=np.float32)
-            add = np.array(blob["add_info"][local], dtype=np.float32)
-        raw = np.concatenate([tokens, add], axis=1)[None]
-        bad_mom = ~np.isfinite(raw[0, :, 0:3])
-        if not np.isfinite(np.where(np.pad(bad_mom, ((0, 0), (0, 7))), 0.0, raw[0])).all():
-            raise JoinError(f"[theirs_rows] row {int(rows[i])} stores a non-finite value outside "
-                            "the token momentum; not repaired")
-        fixed = raw.copy()
-        fixed[0, :, 0:3][bad_mom] = 0.0
-        conv = tts.convert_packed(fixed).astype(np.float32)
-        conv, _g = tls.zero_non_reco(conv, globals_[i:i + 1], np.array([True]))
-        touched = bad_mom.any(axis=1)
-        if conv[0, ~touched].tobytes() != packed[i, ~touched].tobytes():
-            raise JoinError(f"[theirs_rows] rebuilding row {int(rows[i])} did not reproduce its "
-                            "untouched tokens")
-        repairs.append({"inventory_row": int(rows[i]), "shard": index.files[shard],
-                        "row_in_shard": local, "tokens": np.flatnonzero(touched).tolist(),
-                        "columns_zeroed": np.argwhere(bad_mom).tolist(),
-                        "before": [[repr(float(v)) for v in packed[i, t]]
-                                   for t in np.flatnonzero(touched)],
-                        "after": [[repr(float(v)) for v in conv[0, t]]
-                                  for t in np.flatnonzero(touched)]})
-        packed[i] = conv[0]
-    return repairs
-
-
 def gather_legs(index: TheirsIndex, legs: Mapping[str, np.ndarray], pass_reco: np.ndarray,
                 **kw: Any) -> dict[str, Any]:
     """Several sorted row sets in ONE pass over the shards (their union), split back per leg."""
@@ -363,8 +464,10 @@ def gather_legs(index: TheirsIndex, legs: Mapping[str, np.ndarray], pass_reco: n
 # A keyed per-replicate cache (the P2pre and P2scr runs of one replicate share their inputs)
 # ------------------------------------------------------------------------------------------- #
 def cache_key(index: TheirsIndex, pass_reco_sha256: str, legs: Mapping[str, np.ndarray],
-              nonfinite_momentum: str = "refuse") -> str:
-    payload = {"schema": SCHEMA, "nonfinite_momentum": nonfinite_momentum, "join_sig_npz_sha256": index.record["join_sig_npz_sha256"],
+              nonfinite_momentum: str = "refuse", nonfinite_addinfo: str = "refuse",
+              transform_key: str = "none") -> str:
+    payload = {"schema": SCHEMA, "nonfinite_momentum": nonfinite_momentum,
+               "nonfinite_addinfo": nonfinite_addinfo, "transform": transform_key, "join_sig_npz_sha256": index.record["join_sig_npz_sha256"],
                "join_sig_json_sha256": index.record["join_sig_json_sha256"],
                "pass_reco_sha256": pass_reco_sha256, "token_cap": TOKEN_CAP,
                "legs": {k: rows_digest(v) for k, v in sorted(legs.items())},
@@ -374,8 +477,10 @@ def cache_key(index: TheirsIndex, pass_reco_sha256: str, legs: Mapping[str, np.n
 
 
 def gather_legs_cached(index: TheirsIndex, legs: Mapping[str, np.ndarray], pass_reco: np.ndarray,
-                       pass_reco_sha256: str, cache: Path | None, **kw: Any) -> dict[str, Any]:
-    key = cache_key(index, pass_reco_sha256, legs, kw.get("nonfinite_momentum", "refuse"))
+                       pass_reco_sha256: str, cache: Path | None, transform_key: str = "none",
+                       **kw: Any) -> dict[str, Any]:
+    key = cache_key(index, pass_reco_sha256, legs, kw.get("nonfinite_momentum", "refuse"),
+                    kw.get("nonfinite_addinfo", "refuse"), transform_key)
     if cache is not None and Path(cache).exists():
         with np.load(cache, allow_pickle=False) as blob:
             if str(blob["key"]) != key:
