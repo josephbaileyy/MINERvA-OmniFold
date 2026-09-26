@@ -216,19 +216,35 @@ def refuse_blinded_final_runs(names, protocol=None):
         raise SystemExit(f"refusing to score final-bank runs before an UNBLIND amendment: {blinded[:3]}")
 
 
+_RF: dict = {}
+
+
+def _one(job: tuple) -> str:
+    d, out, tool = job
+    res = analyze_run(d, _RF)
+    res["tool_sha256"] = tool
+    tmp = out.with_suffix(".tmp")
+    tmp.write_text(json.dumps(res))
+    tmp.replace(out)
+    return f"{d.name}: {len(res['iterations'])} iterations"
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--row-features", type=Path, required=True)
     ap.add_argument("--runs", nargs="+", required=True, help="run directories (globs allowed)")
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--workers", type=int, default=1,
+                    help="parallel processes (forked after the row features are loaded)")
     a = ap.parse_args(argv)
     refuse_blinded_final_runs([Path(p) for g in a.runs for p in glob.glob(g)])
     R = np.load(a.row_features)
-    rf = {k: R[k] for k in R.files if k.startswith(("tr_n_", "rc_"))}
+    _RF.update({k: R[k] for k in R.files if k.startswith(("tr_n_", "rc_"))})
     dirs = sorted({Path(p) for g in a.runs for p in glob.glob(g)
                    if (Path(p) / "replicate_arrays.npz").exists()})
     a.out.mkdir(parents=True, exist_ok=True)
     tool = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    jobs = []
     for d in dirs:
         out = a.out / f"{d.name}.posthoc.json"
         n_iter = len(glob.glob(str(d / "iterations" / "iter[0-9][0-9].npz")))
@@ -239,14 +255,16 @@ def main(argv=None) -> int:
             # older version, is recomputed)
             if len(old["iterations"]) == n_iter and old.get("tool_sha256") == tool:
                 continue
-        res = analyze_run(d, rf)
-        res["tool_sha256"] = tool
-        tmp = out.with_suffix(".tmp")
-        tmp.write_text(json.dumps(res))
-        tmp.replace(out)
-        print(f"{d.name}: {len(res['iterations'])} iterations", flush=True)
+        jobs.append((d, out, tool))
+    if a.workers > 1 and len(jobs) > 1:
+        import multiprocessing as mp
+        with mp.get_context("fork").Pool(a.workers) as pool:
+            for msg in pool.imap_unordered(_one, jobs):
+                print(msg, flush=True)
+    else:
+        for j in jobs:
+            print(_one(j), flush=True)
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())
