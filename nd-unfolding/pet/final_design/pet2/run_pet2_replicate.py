@@ -119,6 +119,9 @@ def preflight(args: argparse.Namespace) -> tuple[Path, RunConfig, Any, Any, dict
     if config.content_hash() != args.config_hash:
         raise SystemExit(f"[pet2] config hash {config.content_hash()} != --config-hash "
                          f"{args.config_hash}")
+    if config.step2.ensemble != 1:   # not wired into HybridMultiFold (runner/step2_ensemble.py)
+        raise SystemExit(f"[pet2] step2.ensemble = {config.step2.ensemble}: the PET2 runner "
+                         "executes a single truth-step fit only")
     import design_arms
     arm = design_arms.get(config.feature_arm)
     pinned = pinned_state_sha256()

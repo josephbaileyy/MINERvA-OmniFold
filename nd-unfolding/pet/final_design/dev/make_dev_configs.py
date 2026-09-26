@@ -65,6 +65,14 @@ def _epochs2(n: int) -> Callable[[RunConfig], RunConfig]:
     return f
 
 
+def _ensemble2(m: int) -> Callable[[RunConfig], RunConfig]:
+    """A step-2 ensemble of `m` independently seeded truth-step fits per iteration, averaged in
+    weight space (`runner/step2_ensemble.py`; PROTOCOL-20260925 Amendment 3b item 5)."""
+    def f(c: RunConfig) -> RunConfig:
+        return c.replace(step2=dataclasses.replace(c.step2, ensemble=int(m)))
+    return f
+
+
 # candidate id -> (description, transform of the base config, miss rule)
 CANDIDATES: dict[str, tuple[str, Callable[[RunConfig], RunConfig], str]] = {
     "Cref": ("C as frozen by the predecessor (reference)", lambda c: c, EFF),
@@ -106,6 +114,16 @@ CANDIDATES: dict[str, tuple[str, Callable[[RunConfig], RunConfig], str]] = {
                                                  "num_heads": 8})(
                       c.replace(feature_arm="reco_summaries_pdg_onehot"))), EFF),
 }
+
+# PREPARED, NOT CANDIDATES. Amendment 3b item 5: the step-2 ensemble arm is costed and run only if
+# the 24-epoch (T24) and 16-epoch (E16) arms all fail S-N2; it enters CANDIDATES only by a
+# protocol amendment. Definitions (step 2 at 8 epochs, M = 4 fits averaged per iteration):
+# "H2S1X4": ("H2S1 with a 4-member step-2 ensemble (4 independently seeded truth-step fits per "
+#            "iteration, weights averaged; step 1 unchanged)",
+#            lambda c: _ensemble2(4)(CANDIDATES["H2S1"][1](c)), EFF),
+# "L128S1X4": ("L128S1 with a 4-member step-2 ensemble (4 independently seeded truth-step fits "
+#              "per iteration, weights averaged; step 1 unchanged)",
+#              lambda c: _ensemble2(4)(CANDIDATES["L128S1"][1](c)), EFF),
 
 
 def base_config() -> RunConfig:

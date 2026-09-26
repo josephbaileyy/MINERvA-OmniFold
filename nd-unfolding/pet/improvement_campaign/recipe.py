@@ -169,12 +169,20 @@ class StepRecipe:
     iteration_lr: IterationLRSpec = field(default_factory=IterationLRSpec)
     seed: int = 0
     predict_batch_size: int = 4096
+    # [pfd] PET final-design study (PROTOCOL-20260925 Amendment 3b, item 5): M independently
+    # seeded fits per iteration whose weights are averaged. Executed only by
+    # `final_design/runner/step2_ensemble.py`; every other driver refuses M != 1
+    # (`run_unfold.RecipeMultiFold`). Serialized only when != 1, so configs written before the
+    # field existed keep their content hash.
+    ensemble: int = 1
 
     def validate(self) -> None:
         for part in (self.optimizer, self.stopping, self.schedule, self.clipping,
                      self.validation, self.init, self.iteration_lr):
             part.validate()
         _require(self.batch_size >= 1, "batch_size must be >= 1")
+        _require(type(self.ensemble) is int and self.ensemble >= 1,
+                 "ensemble must be an integer >= 1")
         _require(self.clipping.kind != "global_norm_torch" or
                  self.optimizer.family == "torch_adamw",
                  "torch-style clipping is implemented by ClippedTorchAdamW only")
@@ -244,10 +252,15 @@ class RunConfig:
         _require((self.arm == "theirs") == (self.model_step1.kind == "theirs_pet2_small"),
                  "the theirs arm is his PET2 on his tokens; ours is our PET on our cloud")
         _require(self.step2.init.policy == "scratch", "the truth-side PET has no pretrained state")
+        _require(self.step1.ensemble == 1, "only the truth step (step 2) may be an ensemble")
 
     # ---- serialization ------------------------------------------------------------------ #
     def to_dict(self) -> dict[str, Any]:
-        return _plain(dataclasses.asdict(self))
+        d = _plain(dataclasses.asdict(self))
+        for step in ("step1", "step2"):          # [pfd] the default is not serialized
+            if d[step].get("ensemble") == 1:
+                del d[step]["ensemble"]
+        return d
 
     def to_json(self, indent: int | None = None) -> str:
         if indent is None:
@@ -299,7 +312,8 @@ def _step_from(d: dict[str, Any]) -> StepRecipe:
         stopping=StoppingSpec(**d["stopping"]), schedule=ScheduleSpec(**d["schedule"]),
         clipping=ClippingSpec(**d["clipping"]), validation=ValidationSpec(**d["validation"]),
         init=InitSpec(**d["init"]), iteration_lr=IterationLRSpec(**d["iteration_lr"]),
-        seed=d["seed"], predict_batch_size=d["predict_batch_size"])
+        seed=d["seed"], predict_batch_size=d["predict_batch_size"],
+        ensemble=d.get("ensemble", 1))
 
 
 def model_params(**kwargs: Any) -> tuple:

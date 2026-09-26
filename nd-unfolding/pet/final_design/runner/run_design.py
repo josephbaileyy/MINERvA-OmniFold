@@ -16,7 +16,9 @@ are the predecessor's (imported: `phase_b/pet/b2_driver`, `run_unfold`, `closure
   seeds, B); the scorer target stays the unresampled pseudodata truth;
 * the step-2 miss rule from the config when it carries one (`step2_miss_mode`), else the CLI;
 * the truth arm `pdg_onehot_counts` (`design_arms.py`, extending the B2 registry);
-* receipts record the bank manifest digest and the draw digests.
+* receipts record the bank manifest digest and the draw digests;
+* the step-2 ensemble (PROTOCOL-20260925 Amendment 3b item 5; `step2_ensemble.py`) when the
+  config's `step2.ensemble` M > 1; M = 1 runs the predecessor's B2 class unchanged.
 
     run_design.py --config C.json --config-hash <sha256> --repo <checkout> --out <dir>
         --inputs-npz ... --identity-sidecar ... --populations <B1 populations.npz>
@@ -374,6 +376,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         "bootstrap_config": boot_config, "run_config_hash": run_config.content_hash(),
         "step2_miss_mode_source": args.miss_mode_source, "distortion_name": distortion.name,
         "study_protocol_sha256": ri.sha256_file(ri.STUDY_PROTOCOL)}
+    import step2_ensemble as s2e                      # [pfd] absent from the receipt at M = 1
+    if s2e.ensemble_size(run_config) > 1:
+        study["step2_ensemble"] = s2e.receipt_record(run_config, ru.derive_seed)
     if args.inputs_only:
         write_json_atomic(out / "inputs_receipt.json", {
             "schema": SCHEMA + "/inputs-only", "config_hash": config.content_hash(),
@@ -404,6 +409,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     # ---- the unfolding (B2's loop) -------------------------------------------------------
     B2 = b2d.make_b2_multifold(mods["omnifold"].MultiFold, tf, np)
+    B2 = s2e.driver_class(B2, run_config, tf, np, ru)  # [pfd] M = 1: B2 itself
     unfolder = B2(run_config.name, config=run_config, factories=factories, data=pdata, mc=mcb,
                   out_dir=out, pretrained_check=None, training_recipe=training_recipe,
                   torch_adamw=torch_adamw, probe_rows=args.probe_rows,

@@ -674,6 +674,21 @@ def test_runner_selections_distortions_and_refusals(pet2, tmp_path, monkeypatch)
                                                        "efficiency_corrected")] + pool)
 
 
+def test_runner_refuses_a_step2_ensemble(pet2, tmp_path, monkeypatch):
+    """The step-2 ensemble (runner/step2_ensemble.py) is not wired into HybridMultiFold."""
+    import dataclasses
+    rpr, cfg, cfile, common, pool = _runner_args(pet2, tmp_path, monkeypatch)
+    ens = cfg.replace(step2=dataclasses.replace(cfg.step2, ensemble=2))
+    efile = tmp_path / "e.json"
+    efile.write_text(ens.to_json(indent=1))
+    args = [str(efile) if x == str(cfile) else (ens.content_hash()
+                                                if x == cfg.content_hash() else x)
+            for x in common]
+    with pytest.raises(SystemExit, match="ensemble"):
+        rpr.preflight(rpr.parse_args(args + pool))
+    rpr.preflight(rpr.parse_args(common + pool))                    # M = 1 still admitted
+
+
 def test_runner_gathers_the_response_on_the_pseudodata_leg_only(world, tmp_path):
     import run_pet2_replicate as rpr
     reco = np.flatnonzero(world.pass_reco & (world.row_index >= 0))
