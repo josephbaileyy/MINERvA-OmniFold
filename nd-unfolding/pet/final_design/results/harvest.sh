@@ -1,7 +1,8 @@
 #!/bin/bash
 # Harvest committed evidence for one study stage from Perlmutter: per COMPLETE run directory its
 # receipt.json, scores.json (predecessor scorer, run in the job), run_identity.json and the post-hoc
-# diagnostics JSON (study posthoc/<stage>/). Incomplete runs are listed, not copied.
+# diagnostics JSON (study posthoc_v2/<stage>/: recomputed 2026-09-26 by the committed tool, which records
+# its sha256 and refreshes files written mid-run). Incomplete runs are listed, not copied.
 #   usage: bash harvest.sh <stage> [<stage> ...]     (run from this directory; needs ssh saul.nersc.gov)
 set -euo pipefail
 B=/pscratch/sd/j/josephrb/pet-final-design-20260925
@@ -20,7 +21,7 @@ for S in "$@"; do
     for f in receipt.json scores.json run_identity.json; do
       rsync -a "saul.nersc.gov:$B/$S/$d/$f" "$HERE/$S/$d.$f" 2>/dev/null || echo "missing $S/$d/$f"
     done
-    rsync -a "saul.nersc.gov:$B/posthoc/$S/$d.posthoc.json" "$HERE/$S/" 2>/dev/null || echo "no posthoc $S/$d"
+    rsync -a "saul.nersc.gov:$B/posthoc_v2/$S/$d.posthoc.json" "$HERE/$S/" 2>/dev/null || echo "no posthoc $S/$d"
   done
   rm -f "$HERE/$S/.status"
   echo "$S: $(ls "$HERE/$S"/*.receipt.json 2>/dev/null | wc -l) runs harvested; $(wc -l < "$HERE/$S/INCOMPLETE.txt") incomplete"
