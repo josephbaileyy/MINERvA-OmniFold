@@ -171,7 +171,7 @@ def residual_summary(files: list[Path], maps: dict, vol: np.ndarray, reported: d
             with np.errstate(divide="ignore", invalid="ignore"):
                 per[name]["rel"].append(np.where(t > 0, a / t - 1.0, 0.0))
             per[name]["truth"].append(t)
-    out = {"n": len(files), "files_first_last": [files[0].name, files[-1].name] if files else []}
+    out = {"n": len(files), "files_first_last": [str(files[0]), str(files[-1])] if files else []}
     for name in maps:
         R = np.array(per[name]["rel"])
         m, sd = R.mean(0), R.std(0, ddof=1)
