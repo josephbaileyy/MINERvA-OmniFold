@@ -314,6 +314,61 @@ def study_c(num: Path, s5e: Path, cells: Cells) -> dict:
     return out
 
 
+# ------------------------------------------------------------------------------------------ study P
+
+
+def study_p(runs: Path, s5e: Path, cells: Cells) -> dict:
+    """Amendment 3: data shift under a prior change to vertex k against minus the estimator's bias there."""
+    pdir = runs / "s2/prior"
+    cv_path = pdir / "prior_R5_CV.npz"
+    if not cv_path.exists():
+        return {"missing": True}
+    cv = load(cv_path)["xsec_flat"]
+    out = {"controls": {}}
+    base = runs / "s2/num/data/data_b-_j-.npz"
+    d0 = pdir / "prior_R5_prior_d0.npz"
+    if base.exists():
+        out["controls"]["CV_path_equals_N1_base"] = bool(np.array_equal(cv, load(base)["xsec_flat"]))
+    if d0.exists():
+        out["controls"]["nominal_prior_equals_CV_path"] = bool(np.array_equal(load(d0)["xsec_flat"], cv))
+    C0 = cells.of(cv)
+    conv = runs / "s2/conv"
+    bias_src = {"d1": ("asimov", conv / "k_b0_gibuu.npz"), "d2": ("asimov", conv / "k_b0_w1.npz"),
+                "d4": ("asimov", conv / "k_b0_w3.npz"), "d3": ("pseudo", s5e / "cand/assess/W2")}
+    out["vertices"] = {}
+    for k in ("d1", "d2", "d3", "d4", "d5"):
+        f = pdir / f"prior_R5_prior_{k}.npz"
+        if not f.exists():
+            continue
+        Ck = cells.of(load(f)["xsec_flat"])
+        entry = {}
+        bias = None
+        kind, src = bias_src.get(k, (None, None))
+        if kind == "asimov" and src.exists():
+            p = load(src)
+            rows = trace_functionals(p)
+            bias = {P: p["fn_push"][4][idx] / p["fn_true"][idx] - 1.0 for P, idx in rows.items()}
+        elif kind == "pseudo" and src.exists():
+            rel, _, _ = ensemble(sorted(src.glob("*.npz")), cells)
+            bias = {P: rel[P].mean(0) for P in rel}
+        for P in cells.maps:
+            m = cells.reported[P]
+            shift = np.where(C0[P] > 0, Ck[P] / np.where(C0[P] > 0, C0[P], 1) - 1.0, 0.0)
+            e = {"median_abs_shift_pct": 100 * med_rep(np.abs(shift), m), "max_abs_shift_pct": 100 * float(np.abs(shift[m]).max())}
+            if bias is not None:
+                b = bias[P]
+                x, y = -b[m], shift[m]
+                e["corr_shift_vs_minus_bias"] = float(np.corrcoef(x, y)[0, 1])
+                e["slope_shift_on_minus_bias"] = float(np.dot(x, y) / np.dot(x, x))
+                big = np.abs(b[m]) > 0.01
+                e["median_rel_mismatch"] = float(np.median(np.abs(y[big] - x[big]) / np.abs(x[big]))) if big.any() else None
+                e["median_abs_bias_pct"] = 100 * float(np.median(np.abs(b[m])))
+            entry[P] = e
+        entry["bias_source"] = None if bias is None else kind
+        out["vertices"][k] = entry
+    return out
+
+
 # ------------------------------------------------------------------------------------------ R metadata
 
 
@@ -363,13 +418,14 @@ def main(argv=None) -> int:
     stage1 = json.loads(a.stage1.read_text())
     cells = Cells(stage1, json.loads(a.s5c_contract.read_text()))
     num, conv = a.runs / "s2/num", a.runs / "s2/conv"
-    new_products = sorted(num.rglob("*.npz"))
+    new_products = sorted(num.rglob("*.npz")) + sorted((a.runs / "s2/prior").glob("*.npz"))
     receipt = {"schema": "s5p-stage2-receipt/1", "stage1_sha256": sha256(a.stage1),
                "code_sha256": {"s5p_stage2_analyze.py": sha256(Path(__file__).resolve()),
                                "s5p_stage1_inspect.py": sha256(Path(s1.__file__).resolve())},
                "runs_dir": str(a.runs), "s5e_runs_dir": str(a.s5e_runs),
                "study_K": study_k(conv, cells), "study_N": study_n(num, a.s5e_runs, cells),
                "study_C": study_c(num, a.s5e_runs, cells),
+               "study_P": study_p(a.runs, a.s5e_runs, cells),
                "R_verification": verify_r(new_products + sorted(conv.glob("k_*.npz"))),
                "costs": costs(new_products + sorted(conv.glob("k_*.npz")))}
     a.out.write_text(json.dumps(receipt) + "\n")
