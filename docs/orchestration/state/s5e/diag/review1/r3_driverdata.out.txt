@@ -1,0 +1,14 @@
+order check eavail 65856 65856 max rel 0.00e+00
+order check q3 65856 65856 max rel 0.00e+00
+order check nominal 65856 65856 max rel 0.00e+00
+driver vs npz b0: max 1.286% (J111) med 0.189%
+driver vs npz nosentinel: max 1.042% (J35) med 0.277%
+driver vs jitteredge1: max 1.010% (J70) med 0.238%
+driver vs jitteredge2: max 1.138% (J71) med 0.233%
+probe scale (max of 2 seeds per functional): max 1.225% med 0.271%
+functionals where |driver-npz| > probe scale: 57 of 153
+functionals where mask moves |diff| by > probe: 37  signed diff moved > probe: 45
+  of those, mask SHRINKS |diff|: 12
+driver-npz diff in units of 3-draw rounding SD: median |z| 1.11, max 26.04, n>3: 31
+EW-only: driver-npz max 0.705% (EW5) med 0.137% | probe med 0.217%
+driver refinement: {'refined_sum': 3972466.8514428646, 'n_clipped': 1279, 'signed_sum': 3972465.5155915567, 'clipped_fraction': 0.00027137566029793186}

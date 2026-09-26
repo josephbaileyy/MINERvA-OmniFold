@@ -2,8 +2,8 @@
  "schema": "s5e-budget/1",
  "campaign_key": "s5e-20260925",
  "authority": "docs/orchestration/AUTHORIZATION-20260925-oi192-estimator-diagnosis.md sections 3 (E4, E5) and 4",
- "revision": 1,
- "revision_reason": "activation budget: CPU cap = min(60 explicit, unspent prior cumulative envelope 320.583, 10% of uncommitted after reservations 342.816) = 60; diagnosis <= 10.0 (initial cap), verification/repair >= 12.0 (20%); the remaining 38.0 unallocated until a candidate amendment and budget revision; no GPU pool",
+ "revision": 2,
+ "revision_reason": "contract amendment 3 (candidate R and its assessment): candidate_development 4.5 and assessment 7.0 CPU node-h allocated from the unallocated 38.0; diagnosis stays capped at 10.0 (charged 3.932, closed); verification/repair stays 12.0; 26.5 remain unallocated",
  "measured_utc": "2026-09-25T22:30:34Z",
  "evidence": {
   "allocation": "docs/orchestration/state/s5e/allocation-measurement-20260925T2230Z.txt (iris, squeue -h -r -A m3246,m3246_g all users, showquota, hpssquota, sacctmgr qos)",
@@ -41,7 +41,9 @@
    "concurrency_nodes": 2,
    "stages": {
     "diagnosis": 10.0,
-    "verification_repair": 12.0
+    "verification_repair": 12.0,
+    "candidate_development": 4.5,
+    "assessment": 7.0
    }
   },
   "gpu": {
@@ -54,7 +56,9 @@
  "stage_rules": {
   "diagnosis": "contract stage_D_diagnosis: at most 10.0 CPU node-h (authorization section 1, item 1)",
   "verification_repair": "20% floor of the 60 CPU node-h (independent review compute, reverification of repairs)",
-  "unallocated": "38.0 CPU node-h, allocated only by a candidate/assessment amendment plus a budget revision and a ledger rebind"
+  "unallocated": "26.5 CPU node-h",
+  "candidate_development": "contract amendment 3 development of candidate R (K1-K5)",
+  "assessment": "contract amendment 3 assessment of candidate R on fresh seeds and withheld deformations, and R on the real data with its bootstrap; only after the development receipt records development_exit true"
  },
  "storage": {
   "pscratch": {
@@ -73,6 +77,11 @@
    "revision": 1,
    "measured_utc": "2026-09-25T22:30:34Z",
    "note": "activation budget"
+  },
+  {
+   "revision": 2,
+   "utc": "2026-09-26",
+   "note": "amendment 3: candidate_development 4.5, assessment 7.0; diagnosis charged 3.932 (meter 2026-09-26T03:00:32Z)"
   }
  ]
 }

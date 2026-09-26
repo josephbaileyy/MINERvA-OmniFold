@@ -487,8 +487,11 @@ def main(argv=None) -> int:
     if (a.construction == "pseudo") != (a.pseudo_seed is not None):
         print("--pseudo-seed is required for, and only for, --construction pseudo", file=sys.stderr)
         return 2
-    if a.construction != "pseudo" and (a.no_background or a.expectation_template or a.refine_capacity):
+    if a.construction != "pseudo" and (a.no_background or a.expectation_template):
         print("background variants apply to --construction pseudo only", file=sys.stderr)
+        return 2
+    if a.construction == "asimov_same" and a.refine_capacity:
+        print("the asimov construction has no refinement", file=sys.stderr)
         return 2
     if a.jitter_f32 is not None and a.coords != "float64":
         print("--jitter-f32 needs --coords float64", file=sys.stderr)

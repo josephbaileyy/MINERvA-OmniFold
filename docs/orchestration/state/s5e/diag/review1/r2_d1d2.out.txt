@@ -1,0 +1,41 @@
+== D1: driver fn_unf vs fn_true, npz asimov fn_push[4] vs fn_true
+nominal driver (0.0, 0.0, 'EW6') npz k5 (0.0, 0.0, 'EW19') npz(xsec_it5) (0.0, 0.0, 'EW19') max|diff|pp all153 0.000 (J93) EW-only 0.000 (EW0) corrEW 0.97291 truth relmax 2.35e-15
+   fn_push[4] == U@xsec_it5 ? True
+   driver meta problems [] r {'min': 1.0, 'max': 1.0, 'in_grid_weighted_mean': 1.0} parity {'driver_rows': 32846302, 'driver_pass_truth': 32846302, 'npz_rows': 32849103, 'aligned': False}
+eavail driver (10.498, 73.783, 'EW29') npz k5 (10.852, 73.507, 'EW29') npz(xsec_it5) (10.852, 73.507, 'EW29') max|diff|pp all153 1.781 (EW17) EW-only 1.781 (EW17) corrEW 0.99976 truth relmax 2.73e-15
+   fn_push[4] == U@xsec_it5 ? True
+   driver meta problems [] r {'min': 0.6972155505363503, 'max': 1.3332113792775921, 'in_grid_weighted_mean': 1.000000000000001} parity {'driver_rows': 32846302, 'driver_pass_truth': 32846302, 'npz_rows': 32849103, 'aligned': False}
+q3 driver (4.953, 37.628, 'EW36') npz k5 (5.002, 37.77, 'EW36') npz(xsec_it5) (5.002, 37.77, 'EW36') max|diff|pp all153 0.874 (EW5) EW-only 0.874 (EW5) corrEW 0.99991 truth relmax 6.53e-07
+   fn_push[4] == U@xsec_it5 ? True
+   driver meta problems [] r {'min': 0.40815215412004247, 'max': 1.6212439110131378, 'in_grid_weighted_mean': 0.9999999999999992} parity {'driver_rows': 32846302, 'driver_pass_truth': 32846302, 'npz_rows': 32849103, 'aligned': False}
+== D2 asimov probes vs asimov_b0_eavail k5
+asimov_eavail_upcast bitwise: True max 0.0000% med 0.0000% float64 None False
+asimov_eavail_seedper bitwise: True max 0.0000% med 0.0000% float32 None True
+asimov_eavail_jitter1 bitwise: False max 1.0578% med 0.0989% float64 1 False
+== D2 data probes vs data_b0
+drv/data_upcast bitwise: True max 0.0000% (EW0) med 0.0000% mode None dropped None
+drv/data_seedper bitwise: True max 0.0000% (EW0) med 0.0000% mode None dropped None
+drv/data_jitter1 bitwise: False max 30.0161% (EW36) med 1.1130% mode None dropped None
+rep/rep_data_jitteredge1 bitwise: False max 1.2253% (J147) med 0.1792% mode edge_safe dropped 0
+rep/rep_data_jitteredge2 bitwise: False max 0.9832% (J93) med 0.1883% mode edge_safe dropped 0
+rep/rep_data_nosentinel bitwise: False max 1.1419% (J147) med 0.1434% mode all dropped 2801
+edge-safe asimov: max 0.9680% med 0.0897% edge_safe
+jitter1 vs jitter2 (seed-to-seed): max 1.4180% med 0.1606%
+drv/data_b0 refined_sum 3972476.93 n_clipped 1313 signed_sum 3972465.52
+rep/rep_data_nosentinel refined_sum 3972476.93 n_clipped 1313 signed_sum 3972465.52
+parity meta: {'driver_rows': 32846302, 'driver_pass_truth': 32846302, 'npz_rows': 32849103, 'npz_sentinel_rows': 2801, 'npz_rows_compared': 32846302, 'aligned': True, 'reco_float32_equal': True, 'max_abs_gen_f64_minus_npz': [2.381347563584768e-07, 1.9073474462061313e-06, 3.8069491665737587e-06, 3.81400766968909e-06, 4.768190251525084e-07], 'max_abs_reco_f64_minus_npz': [2.3840516316653293e-07, 1.9073436590133497e-06, 1.906389144323839e-06, 7.60379236908193e-06, 9.30539489019111e-07], 'pass_reco_equal': True, 'w_truth_equal': True, 'w_reco_equal': True, 'w_truth_sum': [5778936.126366271, 5778936.126366271], 'w_reco_sum_pass_reco': [3533454.2048297306, 3533454.2048297306]}
+== zero counts in inputs
+edge 0 0.0 4.5 14
+edge 1 1.5 60.0 16
+edge 2 0.0 100.0 7
+edge 3 0.0 100.0 7
+edge 4 0.0 100.0 6
+MCgen dtype float32 (32849103, 5)
+MC truth zeros per axis (all rows): [0, 0, 293292, 0, 0]
+MC truth zeros per axis (pass_truth): [0, 0, 293292, 0, 0]
+sentinel rows: 2801 of which pass_truth 2801 pass_reco 1755
+sentinel reco-passing weight: 389.26 of 3533843.46 (0.0110%)
+MC reco zeros per axis (all rows): [0, 0, 2104, 0, 231685]
+MC reco zeros per axis (pass_reco&pass_truth): [0, 0, 2104, 0, 231685] frac W=0 among reco-passing: 0.0114
+data rows (4091707, 5) data zeros per axis: [0, 0, 82, 0, 48082] frac W=0: 0.0118
+bkg reco zeros per axis: [0, 0, 13, 0, 11503]

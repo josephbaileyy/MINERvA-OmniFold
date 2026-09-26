@@ -1,0 +1,160 @@
+===== D3 traced pseudo (4 seeds), seed-mean residual; chi2 with measured-side variance
+===== D4/D5 noise-free, Poisson variance = F_true (analysis exposure)
+-- B0 nominal: S_dep EW 0, 5D 0 over 10499 cells;  reco_ew_D==reco_ew_true? True
+   k= 1: (0.0, 0.0, 'EW0')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00 5D chi2 0 EF5D nan p5D=1.0e+00
+   k= 2: (0.0, 0.0, 'EW5')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00 5D chi2 0 EF5D nan p5D=1.0e+00
+   k= 3: (0.0, 0.0, 'EW0')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00 5D chi2 0 EF5D nan p5D=1.0e+00
+   k= 4: (0.0, 0.0, 'EW0')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k= 5: (0.0, 0.0, 'EW19')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00 5D chi2 0 EF5D nan p5D=1.0e+00
+   k= 6: (0.0, 0.0, 'EW14')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k= 7: (0.0, 0.0, 'EW0')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k= 8: (0.0, 0.0, 'EW1')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00 5D chi2 0 EF5D nan p5D=1.0e+00
+   k= 9: (0.0, 0.0, 'EW10')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=10: (0.0, 0.0, 'EW36')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00 5D chi2 0 EF5D nan p5D=1.0e+00
+   k=11: (0.0, 0.0, 'EW10')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=12: (0.0, 0.0, 'EW12')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=13: (0.0, 0.0, 'EW2')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=14: (0.0, 0.0, 'EW6')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=15: (0.0, 0.0, 'EW8')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00 5D chi2 0 EF5D nan p5D=1.0e+00
+   k=16: (0.0, 0.0, 'EW4')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=17: (0.0, 0.0, 'EW10')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=18: (0.0, 0.0, 'EW3')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=19: (0.0, 0.0, 'EW27')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=20: (0.0, 0.0, 'EW8')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00 5D chi2 0 EF5D nan p5D=1.0e+00
+   k=21: (0.0, 0.0, 'EW0')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=22: (0.0, 0.0, 'EW13')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=23: (0.0, 0.0, 'EW36')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=24: (0.0, 0.0, 'EW33')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=25: (0.0, 0.0, 'EW0')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00 5D chi2 0 EF5D nan p5D=1.0e+00
+   k=26: (0.0, 0.0, 'EW7')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=27: (0.0, 0.0, 'EW5')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=28: (0.0, 0.0, 'EW13')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=29: (0.0, 0.0, 'EW41')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00
+   k=30: (0.0, 0.0, 'EW30')  EW chi2 0 EF_EW nan p(EW,42)=1.0e+00 5D chi2 0 EF5D nan p5D=1.0e+00
+-- B0 eavail: S_dep EW 83379, 5D 92364 over 10499 cells;  reco_ew_D==reco_ew_true? True
+   k= 1: (14.273, 69.469, 'EW29')  EW chi2 4736 EF_EW 0.9432 p(EW,42)=0.0e+00 5D chi2 5553 EF5D 0.9399 p5D=1.0e+00
+   k= 2: (12.374, 74.317, 'EW29')  EW chi2 680 EF_EW 0.9918 p(EW,42)=4.5e-116 5D chi2 1037 EF5D 0.9888 p5D=1.0e+00
+   k= 3: (11.362, 74.733, 'EW29')  EW chi2 237 EF_EW 0.9972 p(EW,42)=6.1e-29 5D chi2 511 EF5D 0.9945 p5D=1.0e+00
+   k= 4: (11.215, 74.342, 'EW29')  EW chi2 163 EF_EW 0.9980 p(EW,42)=3.4e-16
+   k= 5: (10.852, 73.507, 'EW29')  EW chi2 144 EF_EW 0.9983 p(EW,42)=5.0e-13 5D chi2 368 EF5D 0.9960 p5D=1.0e+00
+   k= 6: (10.715, 72.821, 'EW29')  EW chi2 137 EF_EW 0.9984 p(EW,42)=5.8e-12
+   k= 7: (10.51, 71.906, 'EW29')  EW chi2 129 EF_EW 0.9985 p(EW,42)=8.9e-11
+   k= 8: (9.885, 71.261, 'EW29')  EW chi2 122 EF_EW 0.9985 p(EW,42)=1.1e-09 5D chi2 312 EF5D 0.9966 p5D=1.0e+00
+   k= 9: (9.755, 70.371, 'EW29')  EW chi2 117 EF_EW 0.9986 p(EW,42)=6.0e-09
+   k=10: (9.614, 69.671, 'EW29')  EW chi2 111 EF_EW 0.9987 p(EW,42)=3.6e-08 5D chi2 284 EF5D 0.9969 p5D=1.0e+00
+   k=11: (9.442, 68.855, 'EW29')  EW chi2 106 EF_EW 0.9987 p(EW,42)=1.7e-07
+   k=12: (9.354, 68.149, 'EW29')  EW chi2 103 EF_EW 0.9988 p(EW,42)=4.6e-07
+   k=13: (9.669, 67.811, 'EW29')  EW chi2 100 EF_EW 0.9988 p(EW,42)=1.2e-06
+   k=14: (9.31, 67.419, 'EW29')  EW chi2 98 EF_EW 0.9988 p(EW,42)=2.5e-06
+   k=15: (9.157, 66.786, 'EW29')  EW chi2 95 EF_EW 0.9989 p(EW,42)=5.3e-06 5D chi2 238 EF5D 0.9974 p5D=1.0e+00
+   k=16: (9.563, 66.367, 'EW29')  EW chi2 94 EF_EW 0.9989 p(EW,42)=8.4e-06
+   k=17: (9.434, 65.86, 'EW29')  EW chi2 90 EF_EW 0.9989 p(EW,42)=2.4e-05
+   k=18: (9.36, 65.146, 'EW29')  EW chi2 87 EF_EW 0.9990 p(EW,42)=5.3e-05
+   k=19: (9.229, 64.795, 'EW29')  EW chi2 86 EF_EW 0.9990 p(EW,42)=8.0e-05
+   k=20: (9.111, 64.321, 'EW29')  EW chi2 84 EF_EW 0.9990 p(EW,42)=1.3e-04 5D chi2 206 EF5D 0.9978 p5D=1.0e+00
+   k=21: (8.962, 63.996, 'EW29')  EW chi2 83 EF_EW 0.9990 p(EW,42)=1.9e-04
+   k=22: (8.862, 63.75, 'EW29')  EW chi2 82 EF_EW 0.9990 p(EW,42)=2.4e-04
+   k=23: (8.745, 63.239, 'EW29')  EW chi2 79 EF_EW 0.9991 p(EW,42)=4.5e-04
+   k=24: (8.663, 62.859, 'EW29')  EW chi2 77 EF_EW 0.9991 p(EW,42)=7.5e-04
+   k=25: (8.568, 62.002, 'EW29')  EW chi2 75 EF_EW 0.9991 p(EW,42)=1.3e-03 5D chi2 183 EF5D 0.9980 p5D=1.0e+00
+   k=26: (8.44, 61.452, 'EW29')  EW chi2 74 EF_EW 0.9991 p(EW,42)=1.8e-03
+   k=27: (8.198, 61.166, 'EW29')  EW chi2 72 EF_EW 0.9991 p(EW,42)=2.6e-03
+   k=28: (8.171, 60.756, 'EW29')  EW chi2 71 EF_EW 0.9992 p(EW,42)=3.8e-03
+   k=29: (8.175, 60.269, 'EW29')  EW chi2 70 EF_EW 0.9992 p(EW,42)=4.6e-03
+   k=30: (8.051, 59.947, 'EW29')  EW chi2 68 EF_EW 0.9992 p(EW,42)=7.0e-03 5D chi2 164 EF5D 0.9982 p5D=1.0e+00
+-- B0 q3: S_dep EW 26863, 5D 92245 over 10499 cells;  reco_ew_D==reco_ew_true? True
+   k= 1: (3.279, 21.245, 'EW30')  EW chi2 1568 EF_EW 0.9416 p(EW,42)=1.2e-301 5D chi2 5544 EF5D 0.9399 p5D=1.0e+00
+   k= 2: (3.829, 28.777, 'EW30')  EW chi2 516 EF_EW 0.9808 p(EW,42)=5.6e-83 5D chi2 2227 EF5D 0.9759 p5D=1.0e+00
+   k= 3: (4.26, 33.169, 'EW36')  EW chi2 331 EF_EW 0.9877 p(EW,42)=1.6e-46 5D chi2 1611 EF5D 0.9825 p5D=1.0e+00
+   k= 4: (4.684, 35.824, 'EW36')  EW chi2 268 EF_EW 0.9900 p(EW,42)=9.0e-35
+   k= 5: (5.002, 37.77, 'EW36')  EW chi2 225 EF_EW 0.9916 p(EW,42)=7.4e-27 5D chi2 1260 EF5D 0.9863 p5D=1.0e+00
+   k= 6: (5.228, 38.703, 'EW36')  EW chi2 202 EF_EW 0.9925 p(EW,42)=1.0e-22
+   k= 7: (5.419, 40.27, 'EW36')  EW chi2 189 EF_EW 0.9930 p(EW,42)=1.4e-20
+   k= 8: (5.456, 40.187, 'EW36')  EW chi2 175 EF_EW 0.9935 p(EW,42)=3.5e-18 5D chi2 1107 EF5D 0.9880 p5D=1.0e+00
+   k= 9: (5.592, 40.094, 'EW36')  EW chi2 162 EF_EW 0.9940 p(EW,42)=6.3e-16
+   k=10: (5.813, 40.222, 'EW36')  EW chi2 159 EF_EW 0.9941 p(EW,42)=1.8e-15 5D chi2 1065 EF5D 0.9885 p5D=1.0e+00
+   k=11: (5.919, 40.016, 'EW36')  EW chi2 152 EF_EW 0.9943 p(EW,42)=2.4e-14
+   k=12: (5.975, 40.297, 'EW36')  EW chi2 147 EF_EW 0.9945 p(EW,42)=1.4e-13
+   k=13: (6.086, 41.421, 'EW36')  EW chi2 141 EF_EW 0.9947 p(EW,42)=1.2e-12
+   k=14: (6.107, 40.473, 'EW37')  EW chi2 143 EF_EW 0.9947 p(EW,42)=5.4e-13
+   k=15: (6.164, 40.602, 'EW36')  EW chi2 148 EF_EW 0.9945 p(EW,42)=8.9e-14 5D chi2 1031 EF5D 0.9888 p5D=1.0e+00
+   k=16: (6.209, 40.925, 'EW36')  EW chi2 143 EF_EW 0.9947 p(EW,42)=5.2e-13
+   k=17: (6.259, 40.502, 'EW36')  EW chi2 140 EF_EW 0.9948 p(EW,42)=2.0e-12
+   k=18: (6.29, 40.735, 'EW36')  EW chi2 136 EF_EW 0.9949 p(EW,42)=6.7e-12
+   k=19: (6.331, 41.288, 'EW36')  EW chi2 136 EF_EW 0.9949 p(EW,42)=6.8e-12
+   k=20: (6.345, 41.269, 'EW36')  EW chi2 131 EF_EW 0.9951 p(EW,42)=4.1e-11 5D chi2 982 EF5D 0.9894 p5D=1.0e+00
+   k=21: (6.432, 41.75, 'EW36')  EW chi2 132 EF_EW 0.9951 p(EW,42)=3.0e-11
+   k=22: (6.442, 41.717, 'EW36')  EW chi2 133 EF_EW 0.9950 p(EW,42)=2.0e-11
+   k=23: (6.415, 40.718, 'EW36')  EW chi2 136 EF_EW 0.9949 p(EW,42)=7.7e-12
+   k=24: (6.434, 40.922, 'EW36')  EW chi2 135 EF_EW 0.9950 p(EW,42)=1.3e-11
+   k=25: (6.458, 41.307, 'EW36')  EW chi2 135 EF_EW 0.9950 p(EW,42)=9.8e-12 5D chi2 999 EF5D 0.9892 p5D=1.0e+00
+   k=26: (6.427, 41.545, 'EW36')  EW chi2 137 EF_EW 0.9949 p(EW,42)=5.0e-12
+   k=27: (6.449, 40.518, 'EW36')  EW chi2 134 EF_EW 0.9950 p(EW,42)=1.5e-11
+   k=28: (6.461, 40.74, 'EW36')  EW chi2 137 EF_EW 0.9949 p(EW,42)=4.7e-12
+   k=29: (6.443, 41.104, 'EW36')  EW chi2 133 EF_EW 0.9951 p(EW,42)=2.4e-11
+   k=30: (6.562, 41.464, 'EW36')  EW chi2 132 EF_EW 0.9951 p(EW,42)=3.3e-11 5D chi2 987 EF5D 0.9893 p5D=1.0e+00
+-- capacity eavail: S_dep EW 83379, 5D 92364 over 10499 cells;  reco_ew_D==reco_ew_true? True
+   k= 1: (15.005, 70.809, 'EW29')  EW chi2 3992 EF_EW 0.9521 p(EW,42)=0.0e+00 5D chi2 4710 EF5D 0.9490 p5D=1.0e+00
+   k= 2: (12.212, 75.53, 'EW29')  EW chi2 500 EF_EW 0.9940 p(EW,42)=9.7e-80 5D chi2 754 EF5D 0.9918 p5D=1.0e+00
+   k= 3: (11.463, 75.999, 'EW29')  EW chi2 166 EF_EW 0.9980 p(EW,42)=1.0e-16 5D chi2 330 EF5D 0.9964 p5D=1.0e+00
+   k= 4: (11.013, 75.49, 'EW29')  EW chi2 117 EF_EW 0.9986 p(EW,42)=5.6e-09
+   k= 5: (10.684, 74.841, 'EW29')  EW chi2 103 EF_EW 0.9988 p(EW,42)=4.2e-07 5D chi2 218 EF5D 0.9976 p5D=1.0e+00
+   k= 6: (10.483, 74.15, 'EW29')  EW chi2 96 EF_EW 0.9988 p(EW,42)=3.8e-06
+   k= 7: (10.175, 73.412, 'EW29')  EW chi2 91 EF_EW 0.9989 p(EW,42)=2.0e-05
+   k= 8: (9.881, 72.68, 'EW29')  EW chi2 86 EF_EW 0.9990 p(EW,42)=7.5e-05 5D chi2 174 EF5D 0.9981 p5D=1.0e+00
+   k= 9: (9.698, 71.916, 'EW29')  EW chi2 82 EF_EW 0.9990 p(EW,42)=2.4e-04
+   k=10: (9.796, 71.163, 'EW29')  EW chi2 78 EF_EW 0.9991 p(EW,42)=6.2e-04 5D chi2 156 EF5D 0.9983 p5D=1.0e+00
+   k=11: (9.918, 70.456, 'EW29')  EW chi2 75 EF_EW 0.9991 p(EW,42)=1.5e-03
+   k=12: (10.051, 69.799, 'EW29')  EW chi2 71 EF_EW 0.9991 p(EW,42)=3.1e-03
+   k=13: (10.183, 69.065, 'EW29')  EW chi2 69 EF_EW 0.9992 p(EW,42)=6.0e-03
+   k=14: (10.303, 68.367, 'EW29')  EW chi2 66 EF_EW 0.9992 p(EW,42)=1.1e-02
+   k=15: (10.287, 67.701, 'EW29')  EW chi2 63 EF_EW 0.9992 p(EW,42)=1.8e-02 5D chi2 124 EF5D 0.9987 p5D=1.0e+00
+-- missed-unity eavail: S_dep EW 83379, 5D 92364 over 10499 cells;  reco_ew_D==reco_ew_true? True
+   k= 1: (14.642, 57.294, 'EW29')  EW chi2 19881 EF_EW 0.7616 p(EW,42)=0.0e+00 5D chi2 22575 EF5D 0.7556 p5D=0.0e+00
+   k= 5: (12.787, 72.701, 'EW29')  EW chi2 598 EF_EW 0.9928 p(EW,42)=1.9e-99 5D chi2 1190 EF5D 0.9871 p5D=1.0e+00
+   k=10: (11.016, 73.616, 'EW29')  EW chi2 167 EF_EW 0.9980 p(EW,42)=8.2e-17 5D chi2 425 EF5D 0.9954 p5D=1.0e+00
+   k=15: (10.263, 71.553, 'EW29')  EW chi2 126 EF_EW 0.9985 p(EW,42)=2.6e-10 5D chi2 330 EF5D 0.9964 p5D=1.0e+00
+   k=20: (9.687, 70.57, 'EW29')  EW chi2 111 EF_EW 0.9987 p(EW,42)=3.6e-08 5D chi2 292 EF5D 0.9968 p5D=1.0e+00
+   k=30: (9.102, 67.797, 'EW29')  EW chi2 97 EF_EW 0.9988 p(EW,42)=3.1e-06 5D chi2 246 EF5D 0.9973 p5D=1.0e+00
+-- capacity q3: S_dep EW 26863, 5D 92245 over 10499 cells;  reco_ew_D==reco_ew_true? True
+   k= 1: (2.886, 23.238, 'EW30')  EW chi2 1109 EF_EW 0.9587 p(EW,42)=4.1e-205 5D chi2 4061 EF5D 0.9560 p5D=1.0e+00
+   k= 2: (3.549, 28.995, 'EW31')  EW chi2 276 EF_EW 0.9897 p(EW,42)=3.7e-36 5D chi2 1101 EF5D 0.9881 p5D=1.0e+00
+   k= 3: (3.49, 32.791, 'EW38')  EW chi2 146 EF_EW 0.9946 p(EW,42)=2.1e-13 5D chi2 580 EF5D 0.9937 p5D=1.0e+00
+   k= 4: (3.565, 35.728, 'EW37')  EW chi2 102 EF_EW 0.9962 p(EW,42)=5.9e-07
+   k= 5: (3.544, 37.701, 'EW37')  EW chi2 81 EF_EW 0.9970 p(EW,42)=2.5e-04 5D chi2 331 EF5D 0.9964 p5D=1.0e+00
+   k= 6: (3.475, 39.061, 'EW37')  EW chi2 69 EF_EW 0.9974 p(EW,42)=5.4e-03
+   k= 7: (3.361, 40.112, 'EW37')  EW chi2 61 EF_EW 0.9977 p(EW,42)=2.7e-02
+   k= 8: (3.246, 40.425, 'EW37')  EW chi2 56 EF_EW 0.9979 p(EW,42)=6.8e-02 5D chi2 236 EF5D 0.9974 p5D=1.0e+00
+   k= 9: (3.093, 40.834, 'EW37')  EW chi2 52 EF_EW 0.9980 p(EW,42)=1.3e-01
+   k=10: (2.975, 41.515, 'EW37')  EW chi2 50 EF_EW 0.9981 p(EW,42)=1.9e-01 5D chi2 210 EF5D 0.9977 p5D=1.0e+00
+   k=11: (2.947, 41.72, 'EW37')  EW chi2 47 EF_EW 0.9982 p(EW,42)=2.6e-01
+   k=12: (3.045, 41.668, 'EW37')  EW chi2 45 EF_EW 0.9983 p(EW,42)=3.3e-01
+   k=13: (3.115, 41.861, 'EW37')  EW chi2 44 EF_EW 0.9984 p(EW,42)=3.9e-01
+   k=14: (3.142, 41.58, 'EW37')  EW chi2 42 EF_EW 0.9984 p(EW,42)=4.5e-01
+   k=15: (3.142, 41.652, 'EW37')  EW chi2 41 EF_EW 0.9985 p(EW,42)=5.0e-01 5D chi2 174 EF5D 0.9981 p5D=1.0e+00
+-- missed-unity q3: S_dep EW 26863, 5D 92245 over 10499 cells;  reco_ew_D==reco_ew_true? True
+   k= 1: (2.737, 11.847, 'EW7')  EW chi2 4471 EF_EW 0.8336 p(EW,42)=0.0e+00 5D chi2 17003 EF5D 0.8157 p5D=0.0e+00
+   k= 5: (4.299, 29.957, 'EW36')  EW chi2 426 EF_EW 0.9841 p(EW,42)=5.1e-65 5D chi2 2341 EF5D 0.9746 p5D=1.0e+00
+   k=10: (5.286, 35.284, 'EW36')  EW chi2 239 EF_EW 0.9911 p(EW,42)=1.9e-29 5D chi2 1412 EF5D 0.9847 p5D=1.0e+00
+   k=15: (5.367, 36.254, 'EW36')  EW chi2 198 EF_EW 0.9926 p(EW,42)=3.9e-22 5D chi2 1256 EF5D 0.9864 p5D=1.0e+00
+   k=20: (5.461, 36.741, 'EW36')  EW chi2 188 EF_EW 0.9930 p(EW,42)=2.8e-20 5D chi2 1237 EF5D 0.9866 p5D=1.0e+00
+   k=30: (5.597, 36.476, 'EW36')  EW chi2 172 EF_EW 0.9936 p(EW,42)=9.9e-18 5D chi2 1209 EF5D 0.9869 p5D=1.0e+00
+===== rule-relevant relative changes of the median |EW residual|
+eavail: B0 k5 10.85% best k 30 8.05% drop 0.258; k30 8.05% drop k5->30 0.258; chi2 k5 144 k30 68
+    B0 median by k: 1:14.27 2:12.37 3:11.36 4:11.22 5:10.85 6:10.72 7:10.51 8:9.89 9:9.76 10:9.61 11:9.44 12:9.35 13:9.67 14:9.31 15:9.16 16:9.56 17:9.43 18:9.36 19:9.23 20:9.11 21:8.96 22:8.86 23:8.74 24:8.66 25:8.57 26:8.44 27:8.20 28:8.17 29:8.17 30:8.05
+    capacity k=1: 15.01% vs B0 14.27% rel -0.051; chi2 3992 vs 4736
+    capacity k=5: 10.68% vs B0 10.85% rel +0.015; chi2 103 vs 144
+    capacity k=10: 9.80% vs B0 9.61% rel -0.019; chi2 78 vs 111
+    capacity k=15: 10.29% vs B0 9.16% rel -0.123; chi2 63 vs 95
+    unity k=5: 12.79% vs B0 10.85% rel -0.178; chi2 598 vs 144
+    unity k=15: 10.26% vs B0 9.16% rel -0.121; chi2 126 vs 95
+    unity k=30: 9.10% vs B0 8.05% rel -0.131; chi2 97 vs 68
+q3: B0 k5 5.00% best k 1 3.28% drop 0.345; k30 6.56% drop k5->30 -0.312; chi2 k5 225 k30 132
+    B0 median by k: 1:3.28 2:3.83 3:4.26 4:4.68 5:5.00 6:5.23 7:5.42 8:5.46 9:5.59 10:5.81 11:5.92 12:5.98 13:6.09 14:6.11 15:6.16 16:6.21 17:6.26 18:6.29 19:6.33 20:6.34 21:6.43 22:6.44 23:6.42 24:6.43 25:6.46 26:6.43 27:6.45 28:6.46 29:6.44 30:6.56
+    capacity k=1: 2.89% vs B0 3.28% rel +0.120; chi2 1109 vs 1568
+    capacity k=5: 3.54% vs B0 5.00% rel +0.291; chi2 81 vs 225
+    capacity k=10: 2.97% vs B0 5.81% rel +0.488; chi2 50 vs 159
+    capacity k=15: 3.14% vs B0 6.16% rel +0.490; chi2 41 vs 148
+    unity k=5: 4.30% vs B0 5.00% rel +0.141; chi2 426 vs 225
+    unity k=15: 5.37% vs B0 6.16% rel +0.129; chi2 198 vs 148
+    unity k=30: 5.60% vs B0 6.56% rel +0.147; chi2 172 vs 132

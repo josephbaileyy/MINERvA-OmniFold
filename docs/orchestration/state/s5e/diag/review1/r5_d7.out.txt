@@ -1,0 +1,42 @@
+variant metas seed 300005: [('b0', False, None, False), ('sig', True, None, False), ('refcap', False, {'n_estimators': 400, 'num_leaves': 31}, False), ('exptmpl', False, None, True)]
+paired b0-sig: max|t| 11.24 n|t|>3.6 57 n|t|>3 65 max|mean| 1.461% total +0.123% | total_integrated:+0.123±0.011(t=11.2) EW33:+0.196±0.021(t=9.1) EW40:+0.258±0.030(t=8.5) J161:+0.643±0.080(t=8.0) EW15:+0.143±0.019(t=7.4)
+    J80: mean +0.776% se 0.110% t 7.06
+    J161: mean +0.643% se 0.080% t 8.02
+    EW40: mean +0.258% se 0.030% t 8.52
+    J58: mean +0.071% se 0.025% t 2.88
+    median SE 0.0368%  median |mean| 0.0929%
+paired refcap-sig: max|t| 4.05 n|t|>3.6 1 n|t|>3 2 max|mean| 0.146% total +0.008% | J58:+0.038±0.009(t=4.0) EW40:+0.045±0.015(t=3.1) J136:+0.038±0.013(t=3.0) J139:+0.023±0.008(t=2.9) J145:+0.040±0.014(t=2.9)
+    J80: mean +0.033% se 0.068% t 0.48
+    J161: mean +0.012% se 0.047% t 0.25
+    EW40: mean +0.045% se 0.015% t 3.08
+    J58: mean +0.038% se 0.009% t 4.05
+    median SE 0.0184%  median |mean| 0.0180%
+    on B0's 12 worst cells: |mean| reduction min 0.824 median 0.929; SE ratio variant/B0 median 0.52
+    SE ratio variant/B0 over all 153: median 0.444
+paired exptmpl-sig: max|t| 15.32 n|t|>3.6 61 n|t|>3 71 max|mean| 1.584% total +0.127% | total_integrated:+0.127±0.008(t=15.3) J161:+0.729±0.053(t=13.8) J80:+0.814±0.070(t=11.6) EW21:+0.153±0.015(t=10.5) EW15:+0.151±0.015(t=10.2)
+    J80: mean +0.814% se 0.070% t 11.55
+    J161: mean +0.729% se 0.053% t 13.80
+    EW40: mean +0.245% se 0.032% t 7.69
+    J58: mean +0.067% se 0.017% t 3.98
+    median SE 0.0339%  median |mean| 0.0933%
+    on B0's 12 worst cells: |mean| reduction min -0.134 median -0.037; SE ratio variant/B0 median 0.91
+    SE ratio variant/B0 over all 153: median 0.940
+refcap - b0 direct: max|t| 12.46 n|t|>3.6 61 max|mean| 1.433% total -0.115%
+exptmpl - b0 direct: max|t| 2.83 n|t|>3.6 0 max|mean| 0.252% total +0.004%
+closure vs truth:
+  b0: max|t| 6.94 n|t|>3.6 41 max|mean| 1.416% total +0.147% median per-seed SD 0.208% (EW median SD 0.204%)
+  refcap: max|t| 2.78 n|t|>3.6 0 max|mean| 0.416% total +0.032% median per-seed SD 0.225% (EW median SD 0.210%)
+     per-seed SD ratio to B0: median 1.119, EW median 1.055
+  exptmpl: max|t| 9.52 n|t|>3.6 42 max|mean| 1.539% total +0.151% median per-seed SD 0.196% (EW median SD 0.204%)
+     per-seed SD ratio to B0: median 0.975, EW median 1.027
+  sig: max|t| 2.98 n|t|>3.6 0 max|mean| 0.308% total +0.024% median per-seed SD 0.217% (EW median SD 0.201%)
+     per-seed SD ratio to B0: median 1.089, EW median 1.043
+reco EW subtraction residual b0: max|.| 4.13% median|.| 0.52%  spearman vs truth paired -0.324 (p=0.036)
+    reco residual SE median 0.04%  n cells |mean/SE|>3: 37
+reco EW subtraction residual refcap: max|.| 1.68% median|.| 0.07%  spearman vs truth paired +0.142 (p=0.368)
+    reco residual SE median 0.03%  n cells |mean/SE|>3: 18
+reco EW subtraction residual exptmpl: max|.| 3.74% median|.| 0.54%  spearman vs truth paired -0.435 (p=0.004)
+    reco residual SE median 0.04%  n cells |mean/SE|>3: 38
+b0 refined/signed mean 1.000005  clipped frac mean 0.00028 g_min median 0.3974 n_eff_refined/n_eff_signed median 0.9866
+refcap refined/signed mean 1.000016  clipped frac mean 0.00037 g_min median 0.0081 n_eff_refined/n_eff_signed median 0.9850
+exptmpl refined/signed mean 1.000005  clipped frac mean 0.00028 g_min median 0.4009 n_eff_refined/n_eff_signed median 0.9867

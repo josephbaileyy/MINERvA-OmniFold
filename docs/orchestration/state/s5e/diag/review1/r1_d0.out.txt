@@ -1,0 +1,36 @@
+trace_nominal_bkg_s300000 True True xsec_it5_flat float64 float64 nominal_a0_s300000.npz
+trace_nominal_bkg_s300001 True True xsec_it5_flat float64 float64 nominal_a0_s300001.npz
+trace_nominal_bkg_s300002 True True xsec_it5_flat float64 float64 nominal_a0_s300002.npz
+trace_nominal_bkg_s300003 True True xsec_it5_flat float64 float64 nominal_a0_s300003.npz
+trace_eavail_bkg_s301000 True True xsec_it5_flat float64 float64 eavail_shape_a1_s301000.npz
+trace_eavail_bkg_s301001 True True xsec_it5_flat float64 float64 eavail_shape_a1_s301001.npz
+trace_eavail_bkg_s301002 True True xsec_it5_flat float64 float64 eavail_shape_a1_s301002.npz
+trace_eavail_bkg_s301003 True True xsec_it5_flat float64 float64 eavail_shape_a1_s301003.npz
+trace_q3_bkg_s302000 True True xsec_it5_flat float64 float64 q3_given_eavail_w_a0.3_s302000.npz
+trace_q3_bkg_s302001 True True xsec_it5_flat float64 float64 q3_given_eavail_w_a0.3_s302001.npz
+trace_q3_bkg_s302002 True True xsec_it5_flat float64 float64 q3_given_eavail_w_a0.3_s302002.npz
+trace_q3_bkg_s302003 True True xsec_it5_flat float64 float64 q3_given_eavail_w_a0.3_s302003.npz
+trace_eavail_sig_s301000 True True xsec_it5_flat float64 float64 diag_sigonly_eavail_shape_a1_s301000.npz
+trace_eavail_sig_s301001 True True xsec_it5_flat float64 float64 diag_sigonly_eavail_shape_a1_s301001.npz
+trace_eavail_sig_s301002 True True xsec_it5_flat float64 float64 diag_sigonly_eavail_shape_a1_s301002.npz
+trace_eavail_sig_s301003 True True xsec_it5_flat float64 float64 diag_sigonly_eavail_shape_a1_s301003.npz
+trace_q3_sig_s302000 True True xsec_it5_flat float64 float64 diag_sigonly_q3_given_eavail_w_a0.3_s302000.npz
+trace_q3_sig_s302001 True True xsec_it5_flat float64 float64 diag_sigonly_q3_given_eavail_w_a0.3_s302001.npz
+trace_q3_sig_s302002 True True xsec_it5_flat float64 float64 diag_sigonly_q3_given_eavail_w_a0.3_s302002.npz
+trace_q3_sig_s302003 True True xsec_it5_flat float64 float64 diag_sigonly_q3_given_eavail_w_a0.3_s302003.npz
+bkg_b0_s300004 True True xsec_flat float64 float64 nominal_a0_s300004.npz
+bkg_b0_s300005 True True xsec_flat float64 float64 nominal_a0_s300005.npz
+bkg_b0_s300006 True True xsec_flat float64 float64 nominal_a0_s300006.npz
+bkg_b0_s300007 True True xsec_flat float64 float64 nominal_a0_s300007.npz
+bkg_b0_s300008 True True xsec_flat float64 float64 nominal_a0_s300008.npz
+bkg_b0_s300009 True True xsec_flat float64 float64 nominal_a0_s300009.npz
+bkg_b0_s300010 True True xsec_flat float64 float64 nominal_a0_s300010.npz
+bkg_b0_s300011 True True xsec_flat float64 float64 nominal_a0_s300011.npz
+N bitwise xsec&xtrue equal: 28 of 28
+data_b0 vs c7 xsec equal: True keys ref: ['xsec_flat', 'shape']
+traced products: 83 with checks != iters: []
+trace code sha (meta): ceb5b8af6f90dcddecbe106e9ea8208c5a7b0663c789a0ec215aabc16aa26f2d  deploy file: e15168367bf3bd1cf91d0d19c4d8fd2488f23ba68d555465ce03f22460b95bba
+asimov code sha set: {'ceb5b8af6f90dcddecbe106e9ea8208c5a7b0663c789a0ec215aabc16aa26f2d'}
+bkg code sha set: {'ceb5b8af6f90dcddecbe106e9ea8208c5a7b0663c789a0ec215aabc16aa26f2d'}
+drv code sha set: {'1074c109e8e13431cde8bf09a669eaf8a3e6cd12d70670e860d2f476e441baa3', 'ceb5b8af6f90dcddecbe106e9ea8208c5a7b0663c789a0ec215aabc16aa26f2d'}
+rep code sha set: {'e15168367bf3bd1cf91d0d19c4d8fd2488f23ba68d555465ce03f22460b95bba', '653ee4536e17c6139f3943da029b539b87d4b1edec0888f3232935ca981b4945'}

@@ -1,0 +1,43 @@
+===== D3 traced pseudo (4 seeds), seed-mean residual; chi2 with measured-side variance
+nominal_bkg k=1: push (0.095, 0.327, 'EW36') vsA (0.094, 0.269, 'EW37') pull (0.094, 0.298, 'EW5') | chi2EW D-push 106 D-pull 76 D-true 116 push-true 6 | step2 med 0.016% max 0.223%
+nominal_bkg k=5: push (0.142, 0.625, 'EW37') vsA (0.139, 0.625, 'EW37') pull (0.146, 0.351, 'EW37') | chi2EW D-push 105 D-pull 75 D-true 116 push-true 10 | step2 med 0.029% max 0.316%
+nominal_bkg k=10: push (0.17, 0.753, 'EW37') vsA (0.149, 0.753, 'EW37') pull (0.168, 0.489, 'EW37') | chi2EW D-push 106 D-pull 75 D-true 116 push-true 11 | step2 med 0.029% max 0.264%
+nominal_bkg k=20: push (0.174, 0.901, 'EW37') vsA (0.168, 0.901, 'EW37') pull (0.176, 0.661, 'EW37') | chi2EW D-push 106 D-pull 76 D-true 116 push-true 11 | step2 med 0.023% max 0.257%
+   nominal_bkg 5D chi2 (k=5): D-push 19451 D-true 19557 over 9782 cells
+nominal_sig k=1: push (0.071, 0.316, 'EW37') vsA (0.067, 0.316, 'EW37') pull (0.075, 0.396, 'EW36') | chi2EW D-push 42 D-pull 33 D-true 48 push-true 4 | step2 med 0.007% max 0.086%
+nominal_sig k=5: push (0.084, 0.817, 'EW37') vsA (0.077, 0.817, 'EW37') pull (0.089, 0.941, 'EW37') | chi2EW D-push 41 D-pull 32 D-true 48 push-true 6 | step2 med 0.011% max 0.173%
+nominal_sig k=10: push (0.082, 0.912, 'EW37') vsA (0.073, 0.912, 'EW37') pull (0.095, 1.03, 'EW37') | chi2EW D-push 41 D-pull 32 D-true 48 push-true 6 | step2 med 0.017% max 0.159%
+nominal_sig k=20: push (0.081, 0.935, 'EW37') vsA (0.07, 0.935, 'EW37') pull (0.098, 1.049, 'EW37') | chi2EW D-push 41 D-pull 32 D-true 48 push-true 6 | step2 med 0.014% max 0.116%
+   nominal_sig 5D chi2 (k=5): D-push 14208 D-true 14202 over 9564 cells
+eavail_bkg k=1: push (13.78, 70.062, 'EW29') vsA (13.781, 70.053, 'EW29') pull (14.991, 70.05, 'EW29') | chi2EW D-push 3957 D-pull 167 D-true 119 push-true 3725 | step2 med 0.261% max 3.494%
+     missed k=1: |fill - pass new_w| med 1.43% max 5.75%; |r_fail - r_pass| max 8.02e-14; |pass new_w - r| med 13.4% max 48.7%
+eavail_bkg k=5: push (10.692, 74.447, 'EW29') vsA (10.692, 74.439, 'EW29') pull (10.559, 74.668, 'EW29') | chi2EW D-push 254 D-pull 84 D-true 119 push-true 142 | step2 med 0.107% max 0.489%
+     missed k=5: |fill - pass new_w| med 0.09% max 0.45%; |r_fail - r_pass| max 8.02e-14; |pass new_w - r| med 17.7% max 33.5%
+eavail_bkg k=10: push (10.235, 71.138, 'EW29') vsA (10.235, 71.13, 'EW29') pull (10.164, 71.461, 'EW29') | chi2EW D-push 234 D-pull 86 D-true 119 push-true 121 | step2 med 0.123% max 0.409%
+eavail_bkg k=20: push (9.722, 67.38, 'EW29') vsA (9.722, 67.372, 'EW29') pull (9.662, 67.511, 'EW29') | chi2EW D-push 219 D-pull 82 D-true 119 push-true 105 | step2 med 0.073% max 0.253%
+   eavail_bkg 5D chi2 (k=5): D-push 20838 D-true 20899 over 9775 cells
+eavail_sig k=1: push (14.288, 69.846, 'EW29') vsA (14.289, 69.837, 'EW29') pull (15.079, 69.949, 'EW29') | chi2EW D-push 3500 D-pull 122 D-true 53 push-true 3359 | step2 med 0.243% max 3.414%
+eavail_sig k=5: push (10.502, 74.066, 'EW29') vsA (10.499, 74.058, 'EW29') pull (10.676, 74.458, 'EW29') | chi2EW D-push 160 D-pull 52 D-true 53 push-true 110 | step2 med 0.203% max 0.753%
+eavail_sig k=10: push (9.952, 70.567, 'EW29') vsA (9.951, 70.559, 'EW29') pull (10.026, 70.872, 'EW29') | chi2EW D-push 143 D-pull 49 D-true 53 push-true 94 | step2 med 0.098% max 0.556%
+eavail_sig k=20: push (9.504, 66.31, 'EW29') vsA (9.504, 66.301, 'EW29') pull (9.663, 66.315, 'EW29') | chi2EW D-push 125 D-pull 47 D-true 53 push-true 79 | step2 med 0.083% max 0.421%
+   eavail_sig 5D chi2 (k=5): D-push 14618 D-true 14522 over 9556 cells
+q3_bkg k=1: push (3.396, 21.504, 'EW30') vsA (3.393, 21.542, 'EW30') pull (2.939, 21.908, 'EW30') | chi2EW D-push 1270 D-pull 117 D-true 121 push-true 1353 | step2 med 0.266% max 1.024%
+     missed k=1: |fill - pass new_w| med 4.81% max 9.15%; |r_fail - r_pass| max 1.40e-01; |pass new_w - r| med 2.9% max 23.0%
+q3_bkg k=5: push (4.695, 37.37, 'EW36') vsA (4.672, 37.27, 'EW36') pull (4.545, 38.652, 'EW36') | chi2EW D-push 342 D-pull 88 D-true 121 push-true 238 | step2 med 0.200% max 1.425%
+     missed k=5: |fill - pass new_w| med 0.18% max 0.51%; |r_fail - r_pass| max 1.40e-01; |pass new_w - r| med 3.0% max 5.5%
+q3_bkg k=10: push (5.419, 40.595, 'EW36') vsA (5.468, 40.494, 'EW36') pull (5.406, 41.997, 'EW36') | chi2EW D-push 292 D-pull 91 D-true 121 push-true 181 | step2 med 0.153% max 1.505%
+q3_bkg k=20: push (5.915, 40.285, 'EW36') vsA (5.977, 40.184, 'EW36') pull (6.034, 42.528, 'EW36') | chi2EW D-push 269 D-pull 89 D-true 121 push-true 158 | step2 med 0.112% max 1.585%
+   q3_bkg 5D chi2 (k=5): D-push 22265 D-true 21377 over 9688 cells
+q3_sig k=1: push (3.319, 20.829, 'EW30') vsA (3.316, 20.868, 'EW30') pull (2.933, 21.224, 'EW30') | chi2EW D-push 1119 D-pull 90 D-true 59 push-true 1150 | step2 med 0.249% max 0.992%
+q3_sig k=5: push (4.866, 36.307, 'EW36') vsA (4.866, 36.209, 'EW36') pull (4.691, 37.79, 'EW36') | chi2EW D-push 214 D-pull 52 D-true 59 push-true 177 | step2 med 0.170% max 1.152%
+q3_sig k=10: push (5.582, 38.99, 'EW36') vsA (5.657, 38.889, 'EW36') pull (5.637, 40.692, 'EW36') | chi2EW D-push 168 D-pull 52 D-true 59 push-true 131 | step2 med 0.113% max 1.388%
+q3_sig k=20: push (6.134, 38.725, 'EW36') vsA (6.258, 38.624, 'EW36') pull (6.2, 40.505, 'EW36') | chi2EW D-push 149 D-pull 51 D-true 59 push-true 115 | step2 med 0.120% max 1.274%
+   q3_sig 5D chi2 (k=5): D-push 14859 D-true 14291 over 9436 cells
+===== D4/D5 noise-free, Poisson variance = F_true (analysis exposure)
+-- B0 nominal: S_dep EW 0, 5D 0 over 10499 cells;  reco_ew_D==reco_ew_true? True
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/s5e-20260925/review1/r4_d3d5.py", line 53, in <module>
+    res[("b0", t)] = series(L(f"{RUNS}/asimov/asimov_b0_{t}.npz"), f"B0 {t}", list(range(1, 31)))
+  File "/pscratch/sd/j/josephrb/s5e-20260925/review1/r4_d3d5.py", line 47, in series
+    c5 = chi2(p[f"reco5d_push_it{k}"], p["reco5d_true"], vt5)[0]; s5 = f" 5D chi2 {c5:.0f} EF5D {1 - c5 / S5[0]:.4f} p5D={stats.chi2.sf(c5, S5[1]):.1e}"
+ZeroDivisionError: float division by zero

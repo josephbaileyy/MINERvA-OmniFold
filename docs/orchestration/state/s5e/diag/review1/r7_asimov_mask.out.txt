@@ -1,0 +1,10 @@
+nosentinel fn_true == b0 fn_true: True max rel 0.00e+00
+driver-npz (with sentinel): max 1.781 pp (EW17) med 0.078
+driver-npz (without):       max 0.918 pp (EW17) med 0.087
+mask move on npz residual:  max 0.942 pp (EW29) med 0.096
+edge-safe probe:            max 0.968 % (EW36) med 0.090
+EW17: diff with 1.781, without 0.918, mask move 0.863, probe 0.066 (pp)
+functionals where |driver-npz| > probe: with 88, without 83 (of 153)
+functionals where mask shrinks |diff| by more than probe: 34  grows by more than probe: 32
+original (confounded) jitter asimov: max 1.058% med 0.099%
+nosentinel residual EW (10.918, 74.449, 'EW29')  b0 k5 (10.852, 73.507, 'EW29')

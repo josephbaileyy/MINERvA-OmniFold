@@ -14,8 +14,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-oi192",
  "branch": "campaign/oi192-diagnosis-20260925",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5e-20260925/",
- "phase": "DIAGNOSIS MEASURED; INDEPENDENT REVIEW PENDING",
- "phase_detail": "D0-D7 and the amendment-2 repairs complete (3.932 of 10.0 diagnosis CPU node-h, all admissions closed); receipt state/s5e/diag/diag_receipt.json (sha256 f0880725...) and DIAGNOSIS-20260926-s5e-oi192-estimator.md committed; the independent read-only operand-level review of the diagnosis is next, then the candidate decision record",
+ "phase": "CANDIDATE R FROZEN; DEVELOPMENT NEXT",
+ "phase_detail": "diagnosis independently reviewed (review-round-1.md; F1-F7 accepted, record revised); contract amendment 3 freezes the candidate decision (one candidate, R: refinement classifier 400 trees / 31 leaves, a targeted refinement repair for the nominal background bias), its development plan, and the complete assessment construction with acceptance and useful-width criteria; budget revision 2 (candidate_development 4.5, assessment 7.0)",
  "pinned": {
   "contract": "docs/orchestration/state/s5e/contract.json (frozen at the commit that first adds it)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -23,12 +23,12 @@
  },
  "budget": {
   "path": "docs/orchestration/state/s5e/budget.json",
-  "revision": 1
+  "revision": 2
  },
  "stages": {
-  "diagnosis": "NOT STARTED",
-  "candidates": "NOT STARTED (0 of 2 frozen)",
-  "assessment": "NOT STARTED"
+  "diagnosis": "COMPLETE (3.932 CPU node-h), independently reviewed",
+  "candidates": "1 of 2 frozen (R)",
+  "assessment": "frozen, not started"
  },
  "jobs": [
   {
@@ -72,10 +72,22 @@
   {
    "path": "docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md",
    "what": "diagnosis record"
+  },
+  {
+   "path": "docs/orchestration/state/s5e/diag/review-round-1.md",
+   "what": "independent operand-level review of the diagnosis with dispositions (scripts in diag/review1/)"
   }
  ],
- "candidates": [],
- "next_action": "independent read-only operand-level review of the diagnosis; then the candidate decision record and, if a candidate is justified, its freeze amendment",
+ "candidates": [
+  {
+   "name": "R",
+   "definition": "B0 + refinement classifier n_estimators 400, num_leaves 31",
+   "scope": "nominal background-related bias only (KNOWN_ISSUES 75 residual); not a remedy for the departure response (KNOWN_ISSUES 77)",
+   "revisions_used": 0,
+   "revisions_allowed": 1
+  }
+ ],
+ "next_action": "rebind the ledger to budget revision 2, launch cand-dev.q and cand-dev-b.q (stage candidate_development), then the development receipt (s5e_analyze_candidate.py --stage development)",
  "concurrent_work_at_start": "jobs 58880337/58880338/58880339 and further josephrb GPU jobs and CPU job 58880449 belong to other lanes (not touched); shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "35f8757b231f524e52c060e4db93af87420af4d9",
@@ -83,7 +95,8 @@
  },
  "amendments": [
   "docs/orchestration/state/s5e/contract-amendment-1-diagnosis-execution.json",
-  "docs/orchestration/state/s5e/contract-amendment-2-diagnosis-repairs.json"
+  "docs/orchestration/state/s5e/contract-amendment-2-diagnosis-repairs.json",
+  "docs/orchestration/state/s5e/contract-amendment-3-candidate-R-and-assessment.json"
  ],
  "deploy": {
   "root": "/pscratch/sd/j/josephrb/s5e-20260925/deploy/",

@@ -1,0 +1,4 @@
+xtrue nonzero cells driver/npz: 10694 10694
+driver/npz xtrue ratio: min 1.000000 max 1.000000 median 1.000000
+denom_nd shape (14, 16, 7, 7, 6) sum 5778936.1
+completeness ofin/denom over denom>0 cells: min 0.9996 median 1.0000 max 1.0004 ; sum ofin 5778936.1 sum denom 5778936.1
