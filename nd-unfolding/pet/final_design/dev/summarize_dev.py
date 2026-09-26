@@ -32,7 +32,7 @@ SOURCES = {  # candidate -> glob template relative to --root ({st} = final|stres
     "L128H2": "dev2L/dev2L-L128H2-{sel}", "L128H2E16": "dev2L/dev2L-L128H2E16-{sel}",
     "L64S1": "dev2S/dev2S-L64S1-{sel}", "L128S1": "dev2S/dev2S-L128S1-{sel}",
     "H2S1E16": "dev2S/dev2S-H2S1E16-{sel}", "L128S1E16": "dev2T/dev2T-L128S1E16-{sel}",
-    "P2pre": "dev2P/dev2P-P2pre-{sel}", "P2scr": "dev2P/dev2P-P2scr-{sel}",
+    "P2preS1": "dev2P/dev2P-P2preS1-{sel}", "P2scrS1": "dev2P/dev2P-P2scrS1-{sel}",
 }
 ROWS = [  # (label, selection glob, path into an iteration record, field)
     ("dev tilt R (F reps)", "F*", ("eavail_vs_pseudodata",), "recovery"),
