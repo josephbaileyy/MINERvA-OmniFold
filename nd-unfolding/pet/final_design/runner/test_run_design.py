@@ -163,11 +163,14 @@ def assert_same_inputs(a_inputs, a_arrays, b_inputs, b_arrays):
 # ------------------------------------------------------------------------------------------- #
 # (i) predecessor selections: byte-identical through the study runner
 # ------------------------------------------------------------------------------------------- #
+# DistortionSpec, _r1_distortion, load_signal_rows and scaled_reader gained the final library's
+# R2 and product distortions (PROTOCOL-20260925 section 7); without them their outputs are
+# byte-identical to the predecessor's, which the predecessor-selection parity test above checks.
 UNCHANGED = ("sha256_bytes", "sha256_file", "refuse_sealed_pool", "_frozen_design",
-             "historical_tilt_spec", "development_tilt_raw", "unit_mean", "DistortionSpec",
-             "_r1_distortion", "Selection", "_sorted_unique", "historical_selection",
-             "LoadedRows", "load_signal_rows", "truth_mapping", "_subset", "assemble_closure",
-             "historical_cr", "region_codes", "compare_inputs", "scaled_reader")
+             "historical_tilt_spec", "development_tilt_raw", "unit_mean",
+             "Selection", "_sorted_unique", "historical_selection",
+             "LoadedRows", "truth_mapping", "_subset", "assemble_closure",
+             "historical_cr", "region_codes", "compare_inputs")
 
 
 def test_unmarked_functions_are_the_predecessors_source():

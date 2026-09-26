@@ -269,6 +269,7 @@ class DistortionSpec:
     raw: Callable[[Mapping[str, np.ndarray]], np.ndarray]
     needs_species: bool = False
     reco_energy_scale: float | None = None   # R1 (amendment 3 item 3): pseudodata only
+    muon_momentum_scale: float | None = None  # [pfd] R2: pseudodata only
 
     def content_hash(self) -> str:
         return hashlib.sha256(json.dumps(self.record, sort_keys=True, default=repr)
@@ -290,8 +291,23 @@ def get_distortion(name: str, endpoint_amplitude: float | None = None,
                                      "pseudodata truth"},
                               lambda t: np.ones(len(t["eavail"]), dtype=np.float64))
     registry = dist.registry()
-    if "+" in name or (name in registry and registry[name].family == "R1"):
+    if "+" in name or (name in registry and registry[name].family in ("R1", "R2")):
         return _r1_distortion(name, registry)
+    if "*" in name:                                   # [pfd] product of truth-weight distortions
+        parts = [get_distortion(x) for x in name.split("*")]
+        if any(x.reco_energy_scale is not None or x.muon_momentum_scale is not None
+               for x in parts):
+            raise SystemExit(f"[confirm] {name}: a product takes truth-weight factors only")
+
+        def raw(t: Mapping[str, np.ndarray], parts=parts) -> np.ndarray:
+            w = np.ones(len(t["eavail"]), dtype=np.float64)
+            for x in parts:
+                w = w * np.asarray(x.raw(t), np.float64)
+            return w
+        return DistortionSpec(name, {"name": name, "form": "product of the factors' raw weights, "
+                                     "then unit mean over the pseudodata's truth-passing rows",
+                                     "factors": [x.record for x in parts]},
+                              raw, needs_species=any(x.needs_species for x in parts))
     if name not in registry:
         raise SystemExit(f"[confirm] unknown distortion {name!r}")
     d = registry[name]
@@ -314,25 +330,30 @@ def _r1_distortion(name: str, registry: Mapping[str, Any]) -> DistortionSpec:
     Phase E1's R1, reco q3 is NOT recomputed from the scaled recoil). Alone, or combined with a
     truth-weight distortion as `R1_x<s>+<truth id>`; the truth target is the truth part's."""
     reco_id, _, truth_id = name.partition("+")
-    if reco_id not in registry or registry[reco_id].family != "R1":
-        raise SystemExit(f"[confirm] {name}: only R1 is implemented on the PET path "
-                         "(R2/R3 refused, not approximated)")
+    if reco_id not in registry or registry[reco_id].family not in ("R1", "R2"):
+        raise SystemExit(f"[confirm] {name}: only R1 and R2 are implemented on the PET path "
+                         "(R3 refused, not approximated)")
+    family = registry[reco_id].family
     factor = float(dict(registry[reco_id].params)["scale"])
     if truth_id:
         truth = get_distortion(truth_id)
-        if truth.reco_energy_scale is not None:
+        if truth.reco_energy_scale is not None or truth.muon_momentum_scale is not None:
             raise SystemExit(f"[confirm] {name}: two reco distortions")
     else:
         truth = DistortionSpec("none", {"name": "none"}, lambda t: np.ones(len(t["eavail"])))
+    applied = ("pseudodata part_reco[...,0] and reco_scalars[:,eavail] x factor on reco-passing "
+               "rows; muon, q3, prior and selection unchanged (amendment 3 item 3)"
+               if family == "R1" else
+               "[pfd] pseudodata reco muon momentum x factor at fixed angle on reco-passing rows: "
+               "reco_scalars pt, pparallel x s; reco_muon px, py, pz x s, E -> sqrt(E^2 + "
+               "(s^2 - 1) p^2), q/p / s; reco q3 recomputed from the scaled muon and the "
+               "unchanged recoil q0 (phase_e R2); E_avail, tokens, prior and selection unchanged")
     record = {"name": name, "reco": {"id": reco_id, "phase_e_spec": registry[reco_id].spec(),
-                                     "applied": "pseudodata part_reco[...,0] and reco_scalars"
-                                                "[:,eavail] x factor on reco-passing rows; muon, "
-                                                "q3, prior and selection unchanged "
-                                                "(amendment 3 item 3)",
-                                     "factor": factor},
+                                     "applied": applied, "factor": factor},
               "truth": truth.record}
     return DistortionSpec(name, record, truth.raw, needs_species=truth.needs_species,
-                          reco_energy_scale=factor)
+                          reco_energy_scale=factor if family == "R1" else None,
+                          muon_momentum_scale=factor if family == "R2" else None)
 
 
 # ------------------------------------------------------------------------------------------- #
@@ -550,7 +571,8 @@ class LoadedRows:
 
 def load_signal_rows(ffd: Any, DataLoader: type, inputs_npz: Path, rows: np.ndarray, *,
                      feature_names: Any = None, truth_feature_names: Any = None,
-                     reco_energy_scale: tuple[np.ndarray, float] | None = None) -> LoadedRows:
+                     reco_energy_scale: tuple[np.ndarray, float] | None = None,
+                     muon_momentum_scale: tuple[np.ndarray, float] | None = None) -> LoadedRows:
     """`build_fullevent_loaders(..., bkg_mode="mc-only")` with `imc = rows`, reading signal-MC
     members only (see the module docstring for the one deliberate difference).
 
@@ -593,6 +615,13 @@ def load_signal_rows(ffd: Any, DataLoader: type, inputs_npz: Path, rows: np.ndar
             part_reco[scaled, :, 0] = part_reco[scaled, :, 0] * f
             col = ffd.SCALAR_COLS["eavail"]
             reco_scalars[scaled, col] = reco_scalars[scaled, col] * reco_scalars.dtype.type(factor)
+        mscaled = None
+        reco_muon = np.asarray(d["reco_muon"])[imc] if "reco_muon" in d.files else None
+        if muon_momentum_scale is not None:           # [pfd] R2
+            scale_rows, factor = muon_momentum_scale
+            mscaled = np.isin(imc, np.asarray(scale_rows, np.int64)) & np.asarray(pass_reco, bool)
+            reco_scalars, reco_muon = apply_muon_scale(ffd, reco_scalars, reco_muon, mscaled,
+                                                       float(factor))
         reco_cloud, coord_reco = ffd.build_reco_cloud(part_reco,
                                                       _tok("reco_view"), _tok("reco_time"))
         part_gen = np.asarray(d["part_gen"])[imc]
@@ -601,7 +630,7 @@ def load_signal_rows(ffd: Any, DataLoader: type, inputs_npz: Path, rows: np.ndar
         pass_truth = np.asarray(d["pass_truth"])[imc]
         reco_blocks = ffd.evt_blocks(
             scalars=reco_scalars,
-            muon=(np.asarray(d["reco_muon"])[imc] if "reco_muon" in d.files else None),
+            muon=reco_muon,
             vertex=(np.asarray(d["reco_vertex"])[imc] if "reco_vertex" in d.files else None))
         truth_blocks = ffd.evt_blocks(scalars=truth_scalars)
         # The data event block is built and discarded by the mc-only loader; its statistics do
@@ -630,6 +659,9 @@ def load_signal_rows(ffd: Any, DataLoader: type, inputs_npz: Path, rows: np.ndar
                         normalization_factor=ffd.STEP1_MC_NORMALIZATION, reco_evt=event_reco,
                         gen_evt=event_truth, rank=0, size=1)
         meta["mc_only"] = True
+        meta["muon_momentum_scale"] = (None if mscaled is None else
+                                       {"factor": float(muon_momentum_scale[1]),
+                                        "rows_scaled": int(mscaled.sum())})
         meta["reco_energy_scale"] = (None if scaled is None else
                                      {"factor": float(reco_energy_scale[1]),
                                       "rows_scaled": int(scaled.sum())})
@@ -781,11 +813,62 @@ def compare_inputs(np_: Any, ours: Any, reference: Any) -> dict[str, Any]:
     return out
 
 
-def scaled_reader(np_: Any, read: Callable, r1: tuple[np.ndarray, float] | None) -> Callable:
+MUON_COLS = {"px": 0, "py": 1, "pz": 2, "E": 3, "qp": 5}   # fullevent_fps_dataloader.MUON_COLS
+
+
+def r2_scalars(pt: np.ndarray, ppar: np.ndarray, q3: np.ndarray, s: float
+               ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """[pfd] R2 on reco scalars (GeV): p -> s p at fixed angle, q3 recomputed from the scaled
+    muon and the unchanged recoil q0 (phase_e distortions.muon_scale)."""
+    q0, _bad = dist.recoil_q0(pt, ppar, q3)
+    pt2, ppar2 = s * pt, s * ppar
+    return pt2, ppar2, dist.reco_q3(pt2, ppar2, q0)
+
+
+def apply_muon_scale(ffd: Any, reco_scalars: np.ndarray, reco_muon: np.ndarray | None,
+                     rows: np.ndarray, s: float) -> tuple[np.ndarray, np.ndarray | None]:
+    """[pfd] R2 at the raw-array level on the masked rows (reco-passing pseudodata)."""
+    rs = np.array(reco_scalars, copy=True)
+    c = ffd.SCALAR_COLS
+    pt, ppar, q3 = (rs[rows, c[k]].astype(np.float64) for k in ("pt", "pparallel", "q3"))
+    pt2, ppar2, q32 = r2_scalars(pt, ppar, q3, s)
+    for k, v in (("pt", pt2), ("pparallel", ppar2), ("q3", q32)):
+        rs[rows, c[k]] = v.astype(rs.dtype)
+    mu = None
+    if reco_muon is not None:
+        mu = np.array(reco_muon, copy=True)
+        p2 = sum(mu[rows, MUON_COLS[k]].astype(np.float64) ** 2 for k in ("px", "py", "pz"))
+        E = mu[rows, MUON_COLS["E"]].astype(np.float64)
+        for k in ("px", "py", "pz"):
+            mu[rows, MUON_COLS[k]] = (mu[rows, MUON_COLS[k]] * s).astype(mu.dtype)
+        mu[rows, MUON_COLS["E"]] = np.sqrt(np.maximum(E ** 2 + (s ** 2 - 1.0) * p2, 0.0)
+                                           ).astype(mu.dtype)
+        mu[rows, MUON_COLS["qp"]] = (mu[rows, MUON_COLS["qp"]] / s).astype(mu.dtype)
+    return rs, mu
+
+
+def scaled_reader(np_: Any, read: Callable, r1: tuple[np.ndarray, float] | None,
+                  r2: tuple[np.ndarray, float] | None = None) -> Callable:
     """The B2 arms' reco-scalar reader with R1 applied to reco E_avail of the pseudodata rows
     (the arms read reco scalars straight from the inventory, bypassing the loader)."""
-    if r1 is None:
+    if r1 is None and r2 is None:
         return read
+    if r2 is not None:                                # [pfd] R2: pt, pparallel, q3 of the rows
+        r2_rows, r2_s = np_.asarray(r2[0], np_.int64), float(r2[1])
+
+        def wrapped2(which: str, column: str, rows: Any) -> Any:
+            vals = np_.array(read(which, column, rows), dtype=np_.float64, copy=True)
+            if which == "reco" and column in ("pt", "pparallel", "q3"):
+                hit = np_.isin(np_.asarray(rows, np_.int64), r2_rows)
+                r = np_.asarray(rows)[hit]
+                pt, ppar, q3 = (read("reco", k, r) for k in ("pt", "pparallel", "q3"))
+                ok = q3 > -999      # the dump's miss sentinel is never scaled
+                new = dict(zip(("pt", "pparallel", "q3"), r2_scalars(pt, ppar, q3, r2_s)))
+                v = vals[hit]
+                v[ok] = new[column][ok].astype(np_.float32).astype(np_.float64)
+                vals[hit] = v
+            return vals
+        return wrapped2
     rows_scaled, factor = np_.asarray(r1[0], np_.int64), float(r1[1])
 
     def wrapped(which: str, column: str, rows: Any) -> Any:

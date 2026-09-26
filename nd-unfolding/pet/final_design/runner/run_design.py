@@ -263,8 +263,11 @@ def build_inputs(args: argparse.Namespace, config: RunConfig, distortion: Any, s
     ffd = mods["ffd"]
     r1 = (None if distortion.reco_energy_scale is None
           else (selection.pseudo_rows, distortion.reco_energy_scale))
+    r2 = (None if getattr(distortion, "muon_momentum_scale", None) is None
+          else (selection.pseudo_rows, distortion.muon_momentum_scale))
+    args._r2 = r2
     loaded = ri.load_signal_rows(ffd, mods["DataLoader"], args.inputs_npz, selection.load_rows,
-                                 reco_energy_scale=r1)
+                                 reco_energy_scale=r1, muon_momentum_scale=r2)
     inputs, arrays = ri.assemble_closure(ffd, loaded, selection, distortion, ClosureInputs)
     del loaded
     boot = None
@@ -389,7 +392,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(json.dumps({"inputs_receipt": str(out / "inputs_receipt.json"),
                           "load_seconds": time.perf_counter() - t_load}))
         return 0
-    read = ri.scaled_reader(np, b2d.scalar_reader(np, ffd, args.inputs_npz), r1)
+    read = ri.scaled_reader(np, b2d.scalar_reader(np, ffd, args.inputs_npz), r1,
+                            getattr(args, "_r2", None))
     arm_record = design_arms.apply_arm(np, arm, inputs, read, None, b2d)   # [pfd]
     pdata, mcb = cd.make_loaders(mods, np, inputs)
     factories, _check = ru.model_factories(run_config, mods, inputs)
