@@ -101,7 +101,8 @@ def cluster_bootstrap_bounds(hits: np.ndarray, alpha: float, draws: int = BOOTST
 def cost_ratio_lb(cost_large: Sequence[float], cost_small: Sequence[float], alpha: float,
                   unfoldings_large: float = 1.0, unfoldings_small: float = 1.0,
                   fixed_large: float = 0.0, fixed_small: float = 0.0) -> dict[str, Any]:
-    """Lower bound of total-cost ratio large/small (section 6.7) by the delta method on log costs.
+    """Lower (and, for the decisive-failure test, upper) one-sided bound of the total-cost ratio
+    large/small (section 6.7) by the delta method on log costs.
 
     Total cost = unfoldings x mean per-unfolding GPU-hours + fixed (inference). The variance of
     log(total) is (unfoldings x sd / sqrt(n))^2 / total^2 (delta method); the two packages'
@@ -121,7 +122,8 @@ def cost_ratio_lb(cost_large: Sequence[float], cost_small: Sequence[float], alph
     diff = math.log(out["large"]["total"]) - math.log(out["small"]["total"])
     se = math.hypot(out["large"]["se_log_total"], out["small"]["se_log_total"])
     z = float(stats.norm.ppf(1.0 - alpha))
-    out.update({"ratio": math.exp(diff), "lb": math.exp(diff - z * se), "se_log_ratio": se,
+    out.update({"ratio": math.exp(diff), "lb": math.exp(diff - z * se),
+                "ub": math.exp(diff + z * se), "se_log_ratio": se,
                 "alpha_one_sided": alpha, "method": "delta method on log costs, normal"})
     return out
 

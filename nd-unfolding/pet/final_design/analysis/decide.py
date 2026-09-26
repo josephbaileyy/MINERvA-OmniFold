@@ -627,8 +627,10 @@ class Contrasts:
                                cs.get("unfoldings_per_result", 1),
                                cl.get("inference_gpu_hours", 0.0),
                                cs.get("inference_gpu_hours", 0.0))
+        # the UB lets a ratio clearly below 2 fail decisively (without it the cost part could
+        # only pass or straddle, and 6.5 would CONTINUE at look 1 on a settled cost ratio)
         return inf.Part(f"LB cost_{large}/cost_{small}", ">=", COST_RATIO_MIN, "bound",
-                        cr["ratio"], cr["lb"], None), cr
+                        cr["ratio"], cr["lb"], cr["ub"]), cr
 
     def non_inferior(self, small: str, large: str, status: Mapping[str, str]) -> inf.Verdict:
         """Section 6.5: select `small` over `large` on cost."""
@@ -734,9 +736,10 @@ def _pair_decision(rules: Rules, con: "Contrasts", cands: Mapping[str, Candidate
     2. otherwise the larger (costlier) package materially better -> larger;
     3. the smaller package materially better -> smaller;
     4. equivalent (every 6.5 margin met in both directions) with saving < 2x -> 6.6.3 tie-break;
-    5. any straddling verdict -> CONTINUE (section 8 look 2); otherwise, before the final look,
-       UNRESOLVED (6.6.4); at the final look (look == looks_planned) UNRESOLVED_WITH_DEFAULT by
-       6.6 item 3(v) (`practical_default`), or UNRESOLVED with the reason no default was formed."""
+    5. any straddling verdict -> CONTINUE (section 8 look 2); otherwise the pair is terminally
+       unresolved -- at the final look, or at look 1 with every verdict decided (a decisive look-1
+       ranking is carried, never re-decided, Amendment 2c item 4) -- and gets UNRESOLVED_WITH_DEFAULT
+       by 6.6 item 3(v) (`practical_default`), or UNRESOLVED with the reason no default was formed."""
     mb_large = con.materially_better(large, small)
     ni_small = con.non_inferior(small, large, status)
     mb_small = con.materially_better(small, large)
@@ -764,16 +767,15 @@ def _pair_decision(rules: Rules, con: "Contrasts", cands: Mapping[str, Candidate
                 "tie_break_keys (N2 sd, mean 95% half-width, cost)": key}
     if inf.CONTINUE in (mb_large.verdict, ni_small.verdict, mb_small.verdict, eq.verdict):
         return {**rec, "winner": None, "by": "section 8 (look 2 needed)", "continue": True}
-    if rules.look == rules.looks:
-        pd = practical_default(con, cands, status, small, large)
-        if "default" in pd:
-            return {**rec, "winner": None, "practical_default": pd,
-                    "by": "6.6.4 at the final look -> 6.6 item 3(v) (practical default)",
-                    "unresolved_with_default": True, "default": pd["default"],
-                    "default_rule": pd["default_rule"], "label": pd["label"]}
-        return {**rec, "winner": None, "by": "6.6.4 (unresolved)", "unresolved": True,
-                "practical_default": pd}
-    return {**rec, "winner": None, "by": "6.6.4 (unresolved)", "unresolved": True}
+    # no straddling verdict: terminal at any look (see 5. above)
+    pd = practical_default(con, cands, status, small, large)
+    if "default" in pd:
+        return {**rec, "winner": None, "practical_default": pd,
+                "by": f"6.6.4 terminal at look {rules.look} -> 6.6 item 3(v) (practical default)",
+                "unresolved_with_default": True, "default": pd["default"],
+                "default_rule": pd["default_rule"], "label": pd["label"]}
+    return {**rec, "winner": None, "by": "6.6.4 (unresolved)", "unresolved": True,
+            "practical_default": pd}
 
 
 def rank(rules: Rules, cands: Mapping[str, Candidate], status: Mapping[str, str]

@@ -590,7 +590,8 @@ def test_no_projection_on_resolved_verdicts_or_at_look_two(tmp_path):
 
 def test_pair_verdicts_at_look1_carry_projections_and_unprojectable_parts_say_so(tmp_path):
     import sizing
-    L, S = unresolved_pair(tmp_path)
+    # a cost ratio straddling 2 (mean 2.0, wide) so that 6.5 is CONTINUE at look 1
+    L, S = unresolved_pair(tmp_path, l_cost=(1.6, 2.4, 1.7, 2.3))
     pr = dc.evaluate(evidence({"L": L, "S": S}))["ranking"]["pairs"][0]
     ni = pr["non_inferior_6.5_small"]
     assert ni["verdict"] == "CONTINUE"
@@ -636,3 +637,31 @@ def test_bank_effect_bound_is_reported_beside_every_paired_contrast_and_never_de
             assert b["bank_effect_bound"] == pytest.approx(np.sqrt(0.227) * b["sd"], abs=1e-15)
             assert b["lb_minus_bank_bound"] == pytest.approx(b["lb"] - b["bank_effect_bound"])
             assert b["ub_plus_bank_bound"] == pytest.approx(b["ub"] + b["bank_effect_bound"])
+
+
+def test_a_decisively_unresolved_look_one_pair_gets_its_default_there(tmp_path):
+    # look 1 of 2, nothing straddles: S - L = -0.005 on E0 (tight: neither materially better), L
+    # decisively worse on E5 (+0.08 tight): the pair is terminal at look 1 (carried, never
+    # re-decided), so 3(v) applies there; L alone decisively inferior -> the cheaper S
+    L, S = unresolved_pair(tmp_path, s_offsets={"E0": -0.005 + 0.0005 * Z24,
+                                                 "E5": 0.08 + 0.001 * Z24},
+                           l_cost=(1.50, 1.51, 1.49, 1.50), s_cost=(1.00, 1.01, 0.99, 1.00))
+    rk = dc.evaluate(evidence({"L": L, "S": S}))["ranking"]
+    pr = rk["pairs"][0]
+    assert all(pr[v]["verdict"] == "FAIL" for v in ("materially_better_large",
+               "materially_better_small", "equivalent", "non_inferior_6.5_small"))
+    assert rk["outcome"] == "UNRESOLVED_WITH_DEFAULT" and rk["default"] == "S"
+    assert "terminal at look 1" in pr["by"]
+
+
+def test_a_cost_ratio_clearly_below_two_fails_6_5_decisively_at_look_one(tmp_path):
+    # ratio 1.5 with tight measurements: the UB is below 2, so 6.5 FAILs (not CONTINUE) at look 1
+    L, S = unresolved_pair(tmp_path, l_cost=(1.50, 1.51, 1.49, 1.50), s_cost=(1.00, 1.01, 0.99, 1.00))
+    ni = dc.evaluate(evidence({"L": L, "S": S}))["ranking"]["pairs"][0]["non_inferior_6.5_small"]
+    cost = next(p for p in ni["parts"] if p["label"].startswith("LB cost"))
+    assert cost["ub"] < 2.0 and cost["decisively_fails"] and ni["verdict"] == "FAIL"
+    # a ratio straddling 2 stays undecided
+    L, S = unresolved_pair(tmp_path / "b", l_cost=(1.6, 2.4, 1.7, 2.3))
+    ni = dc.evaluate(evidence({"L": L, "S": S}))["ranking"]["pairs"][0]["non_inferior_6.5_small"]
+    cost = next(p for p in ni["parts"] if p["label"].startswith("LB cost"))
+    assert cost["lb"] < 2.0 < cost["ub"] and not cost["decisively_fails"]
