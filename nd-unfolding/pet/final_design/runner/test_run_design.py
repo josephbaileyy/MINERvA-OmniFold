@@ -328,13 +328,40 @@ def test_bank_draw_through_the_input_path(synthetic, historical_mods, stub_regio
 # ------------------------------------------------------------------------------------------- #
 # (iii) FB / RB access
 # ------------------------------------------------------------------------------------------- #
-def test_committed_protocol_seals_fb_and_rb():
+def test_committed_protocol_releases_fb_rows_only_by_listing_and_seals_rb():
+    # Amendment 2 released FB; RB stays sealed; an unlisted FB row is refused by the row check
     assert di.refuse_bank("DEV")["sealed"] is False
-    for bank in ("FB", "RB"):
-        with pytest.raises(scope.ScopeViolation, match="sealed"):
-            di.refuse_bank(bank)
+    assert di.refuse_bank("FB")["sealed"] is True
+    with pytest.raises(scope.ScopeViolation, match="sealed"):
+        di.refuse_bank("RB")
     with pytest.raises(SystemExit):
         di.refuse_bank("R")
+    with pytest.raises(scope.ScopeViolation):
+        di.check_release_listing("FB", "0" * 64, "S4F:0", "dev", None)
+
+
+def test_release_listing_admits_exactly_the_listed_rows(tmp_path):
+    import hashlib
+    man = tmp_path / "runs" / "m.tsv"
+    man.parent.mkdir()
+    rows = ["# name\tconfig\tconfig_hash\tselection\tdistortion\treference_run\textra",
+            "r0\tc.json\t" + "a" * 64 + "\tBANK:FB:S4F:0\tdev\t-\t--step2-miss-mode carry",
+            "r1\tc.json\t" + "a" * 64 + "\tBANK:FB:S5:3\tdev\t-\t--bootstrap-member 2 --bootstrap-seed 9"]
+    man.write_text("\n".join(rows) + "\n")
+    sha = hashlib.sha256(man.read_bytes()).hexdigest()
+    proto = tmp_path / "PROTOCOL.md"
+    proto.write_text(f"# p\n\nRELEASED-MANIFEST FB runs/m.tsv {sha}\n")
+    ok = di.check_release_listing("FB", "a" * 64, "S4F:0", "dev", None, proto)
+    assert ok["listed"]["row"] == "r0"
+    assert di.check_release_listing("FB", "a" * 64, "S5:3", "dev", 2, proto)["listed"]["row"] == "r1"
+    for args in (("FB", "b" * 64, "S4F:0", "dev", None), ("FB", "a" * 64, "S4F:1", "dev", None),
+                 ("FB", "a" * 64, "S4F:0", "null", None), ("FB", "a" * 64, "S5:3", "dev", 1),
+                 ("FB", "a" * 64, "S5:3", "dev", None), ("RB", "a" * 64, "S4F:0", "dev", None)):
+        with pytest.raises(scope.ScopeViolation):
+            di.check_release_listing(*args, proto)
+    man.write_text(man.read_text() + "r2\tc.json\t" + "a" * 64 + "\tBANK:FB:S4F:9\tdev\t-\t-\n")
+    with pytest.raises(scope.ScopeViolation, match="sha256"):       # a tampered manifest
+        di.check_release_listing("FB", "a" * 64, "S4F:0", "dev", None, proto)
 
 
 def _git(d, *a):
@@ -346,7 +373,7 @@ def test_release_amendments_open_exactly_their_bank(tmp_path):
     repo.mkdir()
     _git(repo, "init", "-q")
     proto = repo / "PROTOCOL.md"
-    base = di.STUDY_PROTOCOL.read_text()
+    base = "# a study protocol with no release amendment\n"   # not the live protocol (it releases FB)
     proto.write_text(base)
     _git(repo, "add", "PROTOCOL.md")
     _git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "v1")

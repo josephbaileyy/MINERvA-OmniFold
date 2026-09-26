@@ -196,6 +196,43 @@ def refuse_bank(bank: str, protocol: Path = STUDY_PROTOCOL) -> dict[str, Any]:
             "protocol": str(protocol), "protocol_sha256": sha256_file(protocol), "git": git}
 
 
+RELEASE_LISTING = re.compile(r"^RELEASED-MANIFEST\s+(FB|RB)\s+(\S+)\s+([0-9a-f]{64})\s*$",
+                             re.MULTILINE)
+
+
+def check_release_listing(bank: str, config_hash: str, bank_draw: str, distortion: str,
+                          bootstrap_member: int | None, protocol: Path = STUDY_PROTOCOL
+                          ) -> dict[str, Any]:
+    """[pfd] Row-level release (review ec475e7b): a FB/RB run is allowed only if a manifest the
+    committed protocol lists as `RELEASED-MANIFEST <bank> <path relative to final_design> <sha256>`
+    exists in this checkout with that exact sha256 and contains a row with this config hash,
+    selection `BANK:<bank>:<stage>:<rep>`, distortion and bootstrap member. DEV needs none."""
+    if bank == "DEV":
+        return {"bank": bank, "listed": None}
+    text = Path(protocol).read_text()
+    listings = [(b, rel, sha) for b, rel, sha in RELEASE_LISTING.findall(text) if b == bank]
+    if not listings:
+        raise scope.ScopeViolation(f"bank {bank}: the protocol lists no RELEASED-MANIFEST for it")
+    selection = f"BANK:{bank}:{bank_draw}"
+    member = None if bootstrap_member is None else str(int(bootstrap_member))
+    for _b, rel, sha in listings:
+        path = Path(protocol).resolve().parent / rel
+        if not path.exists() or sha256_file(path) != sha:
+            raise scope.ScopeViolation(f"released manifest {rel} missing or its sha256 differs "
+                                       "from the protocol's listing")
+        for line in path.read_text().splitlines():
+            if not line.strip() or line.startswith("#"):
+                continue
+            f = line.split("\t")
+            if len(f) < 7 or f[2] != config_hash or f[3] != selection or f[4] != distortion:
+                continue
+            m = re.search(r"--bootstrap-member\s+(\d+)", f[6])
+            if (m.group(1) if m else None) == member:
+                return {"bank": bank, "listed": {"manifest": rel, "sha256": sha, "row": f[0]}}
+    raise scope.ScopeViolation(f"bank {bank}: no released manifest lists config {config_hash[:12]}, "
+                               f"{selection}, {distortion}, bootstrap member {member}")
+
+
 # ------------------------------------------------------------------------------------------- #
 # Distortions
 # ------------------------------------------------------------------------------------------- #

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 
 import numpy as np
 import pytest
@@ -86,7 +87,11 @@ def test_missing_inputs_are_incomplete_and_carry_over():
 
 
 def member_doc(path, case, k, hists, rows="a0"):
-    doc = {"run_name": path.stem, "case": {"case": case}, "identity": {"pseudo_rows_sha256": rows},
+    m_ = re.search(r"b(\d+)$", path.stem)
+    member = int(m_.group(1)) if m_ else 99
+    doc = {"run_name": path.stem, "case": {"case": case},
+           "identity": {"pseudo_rows_sha256": rows, "prior_rows_sha256": "p" + rows,
+                        "bootstrap": {"member": member, "seed": 7}},
            "iterations": [{"k": k, "histograms": hists}]}
     path.write_text(json.dumps(doc))
     return str(path)
@@ -112,5 +117,8 @@ def test_load_replicates_checks_members(tmp_path):
                     "prior_norm": p[0, 0].tolist()}})]
     with pytest.raises(ValueError, match="targets differ"):
         cov.load_replicates([{"replicate": "x", "members": bad}], 3, "eavail", "D1_p0.350")
+    dup = entries[0]["members"][:5] + [entries[0]["members"][0]]     # a duplicated member
+    with pytest.raises(ValueError, match="distinct"):
+        cov.load_replicates([{"replicate": "x", "members": dup}], 3, "eavail", "D1_p0.350")
     with pytest.raises(ValueError, match="cases"):
         cov.load_replicates(entries, 3, "eavail", "D4c_p_up")

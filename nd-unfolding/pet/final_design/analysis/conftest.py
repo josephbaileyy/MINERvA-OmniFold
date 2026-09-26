@@ -88,7 +88,11 @@ def make_run(path: Path, *, case: str = "D1_p0.350", same_events: bool = False,
     arrays["pseudo_distortion"] = dist
     arrays["prior_oracle"] = oracle
     if bootstrap:
-        arrays["prior_bootstrap_weight"] = rng.poisson(1.0, n).astype(np.float64)
+        k = rng.poisson(1.0, n).astype(np.float64)
+        # as runner/design_inputs.apply_bootstrap writes a member: w x k, and w kept aside
+        arrays["prior_w_truth_unresampled"] = arrays["prior_w_truth"]
+        arrays["prior_w_truth"] = arrays["prior_w_truth"] * k
+        arrays["prior_bootstrap_weight"] = k
         arrays["pseudo_bootstrap_weight"] = rng.poisson(1.0, n).astype(np.float64)
     np.savez(path / "replicate_arrays.npz", **arrays)
     (path / "iterations").mkdir(exist_ok=True)

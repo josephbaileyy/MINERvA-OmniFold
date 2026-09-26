@@ -128,6 +128,15 @@ def load_replicates(entries: Sequence[Mapping[str, Any]], k: int, histogram: str
         rows = {d.get("identity", {}).get("pseudo_rows_sha256") for d in docs}
         if len(rows) > 1:
             raise ValueError(f"replicate {e['replicate']}: members differ in pseudodata rows")
+        prows = {d.get("identity", {}).get("prior_rows_sha256") for d in docs}
+        if len(prows) > 1:
+            raise ValueError(f"replicate {e['replicate']}: members differ in prior rows")
+        # distinct members (review ec475e7b): a duplicated member would shrink the spread
+        boots = [json.dumps(d.get("identity", {}).get("bootstrap"), sort_keys=True) for d in docs]
+        if None in [d.get("identity", {}).get("bootstrap") for d in docs] or \
+                len(set(boots)) != len(boots) or len({str(p) for p in e["members"]}) != len(docs):
+            raise ValueError(f"replicate {e['replicate']}: members are not {B} distinct bootstrap "
+                             "members")
         its = [_iteration(d, k)["histograms"][histogram] for d in docs]
         t = np.array([h["target_norm"] for h in its])
         if np.abs(t - t[0]).max() > TARGET_TOL:

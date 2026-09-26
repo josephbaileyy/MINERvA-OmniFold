@@ -66,7 +66,14 @@ def mean_recovery(x: np.ndarray, w: np.ndarray, w0: np.ndarray, wo: np.ndarray) 
 
 
 def eavail_bin(e: np.ndarray) -> np.ndarray:
-    return np.clip(np.digitize(e, EAVAIL_EDGES) - 1, 0, len(EAVAIL_EDGES) - 2)
+    """Bin index; non-finite or out-of-range values go to an overflow code that no histogram
+    counts (review ec475e7b: they used to be clipped into the edge bins)."""
+    e = np.asarray(e, dtype=np.float64)
+    idx = np.digitize(e, EAVAIL_EDGES) - 1
+    bad = ~np.isfinite(e) | (e < EAVAIL_EDGES[0]) | (e > EAVAIL_EDGES[-1])
+    idx = np.clip(idx, 0, len(EAVAIL_EDGES) - 2)
+    idx[bad] = len(EAVAIL_EDGES) - 1        # hist(..., n) keeps only codes < n
+    return idx
 
 
 def species_class(n: np.ndarray, top: int) -> np.ndarray:
@@ -190,7 +197,18 @@ def refuse_blinded_final_runs(names, protocol=None):
     import re as _re
     from pathlib import Path as _P
     protocol = _P(protocol) if protocol else _P(__file__).resolve().parents[1] / "PROTOCOL-20260925.md"
-    blinded = [n for n in names if _re.match(r"^S[45]", _P(str(n)).name)]
+    def _bank(n):
+        """The pseudodata bank a run recorded (receipt or inputs receipt), '' if none."""
+        import json as _j
+        for f in ("receipt.json", "inputs_receipt.json"):
+            try:
+                sel = _j.loads((_P(str(n)) / f).read_text()).get("selection") or {}
+                return str(sel.get("pseudo_bank") or sel.get("record", {}).get("pseudo_bank", ""))
+            except (OSError, ValueError, AttributeError):
+                continue
+        return ""
+    blinded = [n for n in names if _re.match(r"^S[45]", _P(str(n)).name)
+               or _bank(n) in ("FB", "RB")]
     if blinded and not _re.search(r"^### Amendment 3\b", protocol.read_text(), _re.M):
         raise SystemExit(f"refusing to score final-bank runs before Amendment 3: {blinded[:3]}")
 

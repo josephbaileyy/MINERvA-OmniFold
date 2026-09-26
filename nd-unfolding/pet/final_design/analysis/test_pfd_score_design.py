@@ -169,10 +169,23 @@ def test_bootstrap_member_target_excludes_pseudodata_poisson_weights(tmp_path, f
                                atol=1e-14)
     kb = A["prior_pass_truth"] & np.isfinite(A["prior_truth"][:, 2])
     p, _ = np.histogram(A["prior_truth"][kb, 2], bins=sd.EAVAIL_EDGES,
-                        weights=(A["prior_w_truth"] * A["prior_bootstrap_weight"])[kb])
+                        weights=(A["prior_w_truth_unresampled"] * A["prior_bootstrap_weight"])[kb])
+    # prior_w_truth already holds the resampled weight: it is used once, never times k again
+    np.testing.assert_allclose(A["prior_w_truth"],
+                               A["prior_w_truth_unresampled"] * A["prior_bootstrap_weight"])
     np.testing.assert_allclose(by_k(res, 1)["histograms"]["eavail"]["unfolded_norm"], p / p.sum(),
                                atol=1e-14)
     assert res["cross_check"]["performed"] is False
+
+
+def test_bootstrap_member_with_inconsistent_weights_is_refused(tmp_path, features):
+    rf, _ = features
+    make_run(tmp_path / "c", bootstrap=True)
+    z = dict(np.load(tmp_path / "c" / "replicate_arrays.npz"))
+    z["prior_w_truth"] = z["prior_w_truth_unresampled"] * z["prior_bootstrap_weight"] ** 2
+    np.savez(tmp_path / "c" / "replicate_arrays.npz", **z)
+    with pytest.raises(ValueError, match="unresampled x bootstrap"):
+        score(tmp_path / "c", rf)
 
 
 def test_nonfinite_push_is_reported_not_scored(tmp_path, features):

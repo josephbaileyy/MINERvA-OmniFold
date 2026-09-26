@@ -645,9 +645,11 @@ def test_runner_selections_distortions_and_refusals(pet2, tmp_path, monkeypatch)
     a = rpr.parse_args(common + bank + ["--pseudo-bank", "DEV"])
     rpr.preflight(a)
     assert (a.bank_stage, a.bank_replicate, a.pseudo_bank) == ("S2", 3, "DEV")
-    for sealed in ("FB", "RB"):
-        with pytest.raises(scope.ScopeViolation, match="sealed"):
-            rpr.preflight(rpr.parse_args(common + bank + ["--pseudo-bank", sealed]))
+    # RB is sealed; FB is released (Amendment 2) but only for release-listed rows
+    with pytest.raises(scope.ScopeViolation, match="sealed"):
+        rpr.preflight(rpr.parse_args(common + bank + ["--pseudo-bank", "RB"]))
+    with pytest.raises(scope.ScopeViolation, match="RELEASED-MANIFEST|released manifest|no released"):
+        rpr.preflight(rpr.parse_args(common + bank + ["--pseudo-bank", "FB"]))
     b = rpr.parse_args(common + pool + ["--bootstrap-member", "2", "--bootstrap-seed", "7",
                                         "--nonfinite-momentum", "zero",
                                         "--nonfinite-addinfo", "zero"])

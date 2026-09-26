@@ -6,7 +6,12 @@
 set -euo pipefail
 B=/pscratch/sd/j/josephrb/pet-final-design-20260925
 HERE=$(cd "$(dirname "$0")" && pwd)
+PROTO="$HERE/../PROTOCOL-20260925.md"
 for S in "$@"; do
+  # blinded until Amendment 3 (Amendment 2): receipts carry FB-derived weight statistics
+  if [[ "$S" =~ ^s[45] ]] && ! grep -qE '^### Amendment 3\b' "$PROTO"; then
+    echo "refusing to harvest final-bank stage $S before Amendment 3" >&2; exit 2
+  fi
   mkdir -p "$HERE/$S"
   ssh -o BatchMode=yes saul.nersc.gov "cd $B/$S && for d in */; do d=\${d%/}; [ -f \$d/status.txt ] || continue; \
     if [ \"\$(cat \$d/status.txt)\" = COMPLETE ]; then echo C \$d; else echo I \$d; fi; done" > "$HERE/$S/.status"

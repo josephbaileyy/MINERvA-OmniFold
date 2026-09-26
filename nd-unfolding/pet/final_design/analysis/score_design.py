@@ -116,7 +116,18 @@ def refuse_blinded_final_runs(names, protocol=None):
     import re as _re
     from pathlib import Path as _P
     protocol = _P(protocol) if protocol else _P(__file__).resolve().parents[1] / "PROTOCOL-20260925.md"
-    blinded = [n for n in names if _re.match(r"^S[45]", _P(str(n)).name)]
+    def _bank(n):
+        """The pseudodata bank a run recorded (receipt or inputs receipt), '' if none."""
+        import json as _j
+        for f in ("receipt.json", "inputs_receipt.json"):
+            try:
+                sel = _j.loads((_P(str(n)) / f).read_text()).get("selection") or {}
+                return str(sel.get("pseudo_bank") or sel.get("record", {}).get("pseudo_bank", ""))
+            except (OSError, ValueError, AttributeError):
+                continue
+        return ""
+    blinded = [n for n in names if _re.match(r"^S[45]", _P(str(n)).name)
+               or _bank(n) in ("FB", "RB")]
     if blinded and not _re.search(r"^### Amendment 3\b", protocol.read_text(), _re.M):
         raise SystemExit(f"refusing to score final-bank runs before Amendment 3: {blinded[:3]}")
 
@@ -288,9 +299,18 @@ class DesignScorer:
         with np.load(self.run / "replicate_arrays.npz") as z:
             A = {k: np.asarray(z[k]) for k in z.files}
         self.bootstrap = {k: k in A for k in ("prior_bootstrap_weight", "pseudo_bootstrap_weight")}
+        # A bootstrap member's `prior_w_truth` is ALREADY the resampled weight (w x k):
+        # runner/design_inputs.apply_bootstrap writes w x k there and keeps w as
+        # `prior_w_truth_unresampled`. The scorer uses it as is (the prior the engine trained on)
+        # and checks the relation instead of multiplying by k again (review ec475e7b, BLOCK).
         wb = A["prior_w_truth"].astype(np.float64)
         if self.bootstrap["prior_bootstrap_weight"]:
-            wb = wb * A["prior_bootstrap_weight"].astype(np.float64)
+            if "prior_w_truth_unresampled" not in A:
+                raise ValueError(f"{self.run}: bootstrap member without prior_w_truth_unresampled")
+            expect = (A["prior_w_truth_unresampled"].astype(np.float64)
+                      * A["prior_bootstrap_weight"].astype(np.float64))
+            if not np.allclose(wb, expect, rtol=1e-6, atol=0.0):
+                raise ValueError(f"{self.run}: prior_w_truth is not unresampled x bootstrap weight")
         wa = A["pseudo_w_truth"].astype(np.float64) * A["pseudo_distortion"].astype(np.float64)
         self.prior = build_side(A, "prior", rf, wb)
         self.pseudo = build_side(A, "pseudo", rf, wa)

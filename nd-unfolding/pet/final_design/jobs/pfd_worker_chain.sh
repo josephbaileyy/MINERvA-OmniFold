@@ -51,6 +51,12 @@ END_UNIX=$(date -d "$(squeue -h -j "$SLURM_JOB_ID" -o %e)" +%s)
 DEADLINE=$(( END_UNIX - ${DEADLINE_MARGIN:-240} ))
 mapfile -t ROWS < <(manifest_rows)
 LOG="$OUT/chain-$SLURM_JOB_ID.txt"
+# Blinding (PROTOCOL-20260925 Amendment 2): final/reserve-bank rows are never scored in the job
+# until the protocol carries an Amendment 3 heading, whatever SCORE says (review ec475e7b).
+if printf '%s\n' "${ROWS[@]}" | grep -qE $'\tBANK:(FB|RB):' && \
+   ! grep -qE '^### Amendment 3\b' "$MINE/nd-unfolding/pet/final_design/PROTOCOL-20260925.md"; then
+  SCORE=0; export SCORE
+fi
 
 [[ "${SCORE:-1}" == 1 ]] && for ROW in "${ROWS[@]}"; do score_row "$ROW"; done
 unfinished() { local r; for r in "${ROWS[@]}"; do is_complete "$(row_name "$r")" || echo x; done; }
@@ -75,6 +81,8 @@ next_open_claim() {   # claim the next open row into CLAIMED_ROW (no subshell: t
   for row in "${ROWS[@]}"; do
     name=$(row_name "$row")
     is_complete "$name" && continue
+    # a row that has crashed 3 times is left for inspection instead of re-claimed by every chain
+    (( $(grep -c "^$name exit" "$OUT/exit-codes.txt" 2>/dev/null || true) >= 3 )) && continue
     held_by_other "$name" && continue
     if claim "$name"; then CLAIMED_ROW=$row; return 0; fi
   done

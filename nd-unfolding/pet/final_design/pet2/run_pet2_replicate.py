@@ -140,6 +140,9 @@ def preflight(args: argparse.Namespace) -> tuple[Path, RunConfig, Any, Any, dict
     if args.bank_draw is not None:
         di.refuse_bank(args.pseudo_bank)
         di.bank_draw_salts(args.bank_stage, args.bank_replicate)
+        args.release_listing = di.check_release_listing(       # [pfd] row-level release
+            args.pseudo_bank, config.content_hash(), args.bank_draw, args.distortion,
+            args.bootstrap_member)
     args.miss_mode, args.miss_mode_source = rd.resolve_miss_mode(config, args.step2_miss_mode)
     distortion = di.get_distortion(args.distortion, config.endpoint.amplitude,
                                    config.endpoint.clip)
@@ -398,8 +401,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         "gpus": gpus, "slurm_job_id": os.environ.get("SLURM_JOB_ID"),
         "measured_leg_is_real_data": False, "scored_here": False,
     }
+    audit_ok = bool(receipt["recipe_audit"].get("all_as_declared"))
     rd.write_json_atomic(out / "receipt.json", receipt)
-    (out / "status.txt").write_text("COMPLETE\n" if complete else "INCOMPLETE\n")
+    # a run whose executed recipe differs from the declared one is never COMPLETE (review ec475e7b)
+    (out / "status.txt").write_text("COMPLETE\n" if complete and audit_ok else "INCOMPLETE\n")
+    if complete and not audit_ok:
+        raise SystemExit("[pet2] recipe audit failed: executed recipe differs from the declared "
+                         "one (receipt recipe_audit); run not marked COMPLETE")
     print(json.dumps({"receipt": str(out / "receipt.json"), "complete": bool(complete),
                       "variant": hybrid["variant"],
                       "init_ok": [r["ok"] for r in unfolder.init_records],

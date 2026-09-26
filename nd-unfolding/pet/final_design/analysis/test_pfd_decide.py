@@ -261,3 +261,25 @@ def test_cli_main_writes_strict_json(tmp_path):
         {"id": "U1", "values": [0.70, 0.72, 0.69, 0.71], "margin": 0.5559785255}]}))
     assert sizing.main(["--pilot", str(pilot), "--out", str(tmp_path / "s.json")]) == 0
     assert json.loads((tmp_path / "s.json").read_text())["n_F"] == 24
+
+
+def test_library_development_tilt_is_keyed_apart_from_final_e0(tmp_path):
+    """S4F dev and S4S D1_p0.350 share a case id; they must not collide or pool (review ec475e7b)."""
+    import json as _json
+    import decide as _d
+
+    def doc(name, case):
+        return {"run_name": name, "case": {"case": case, "natural": "eavail"},
+                "provenance": {"receipt": {"complete": True}},
+                "identity": {"prior_rows_sha256": name, "pseudo_rows_sha256": name},
+                "iterations": [{"k": 5, "histograms": {"eavail": {"recovery": 0.8}}}]}
+    runs = []
+    for stage, n in (("S4F", 24), ("S4S", 8)):
+        for r in range(n):
+            f = tmp_path / f"{stage}-X-FB{r}.json"
+            f.write_text(_json.dumps(doc(f"{stage}-XK5-FB{r}", "D1_p0.350")))
+            runs.append({"score": str(f), "replicate": f"FB{r}"})
+    c = _d.Candidate("X", {"k": 5, "runs": runs})
+    assert len(c.cases[_d.E0_CASE]) == 24
+    assert len(c.cases[_d.LIBRARY_E0_KEY]) == 8
+    assert _d.Rules.lib_case(c, _d.E0_CASE) == _d.LIBRARY_E0_KEY

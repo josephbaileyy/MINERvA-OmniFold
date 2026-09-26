@@ -53,6 +53,11 @@ from score_design import UNDEFINED_BELOW, canonical_case, classify_case  # noqa:
 
 PROTOCOL_U1_FLOOR = 0.5559785255            # as printed in section 6.1 (10 decimals)
 E0_CASE = "D1_p0.350"
+# The final library also runs the development tilt (the matched control of the R1 cases, B4) on its
+# own draws. Those runs are keyed apart from FINAL's E0 runs (review ec475e7b): E0/E1/E2/U/6.5 use the
+# FINAL stage only; the library's copy serves B1/B2/B4.
+LIBRARY_STAGES = ("S4S",)
+LIBRARY_E0_KEY = E0_CASE + "@library"
 E3_CASE = "D1_m0.350"
 E4_CASE = "D4c_p_up"
 E5_CASE = "D3_p0.35"
@@ -112,7 +117,11 @@ class Candidate:
         if rc.get("complete") is not True:
             self.problems.append(f"{doc['run_name']}: receipt not complete")
         ident = doc.get("identity", {})
-        return {"case": canonical_case(doc["case"]["case"]), "replicate": str(run["replicate"]),
+        case = canonical_case(doc["case"]["case"])
+        stage = str(run.get("stage") or str(doc["run_name"]).split("-")[0])
+        if case == E0_CASE and stage in LIBRARY_STAGES:
+            case = LIBRARY_E0_KEY
+        return {"case": case, "stage": stage, "replicate": str(run["replicate"]),
                 "seed": run.get("seed"), "run": doc["run_name"], "it": it,
                 "rows": (ident.get("prior_rows_sha256"), ident.get("pseudo_rows_sha256")),
                 "natural": doc["case"]["natural"]}
@@ -249,11 +258,16 @@ class Rules:
     def library(self) -> list[str]:
         return [canonical_case(x) for x in self.ev["library"]]
 
+    @staticmethod
+    def lib_case(c, case):
+        """A library case's key: the development tilt of the library stage when it exists."""
+        return LIBRARY_E0_KEY if case == E0_CASE and LIBRARY_E0_KEY in c.cases else case
+
     def B1(self, c):
         units, per_case, parts = 0, {}, []
         fails = 0
         for case in self.library():
-            v = c.values(case, g_natural())
+            v = c.values(self.lib_case(c, case), g_natural())
             if len(v) < self.n_stress:
                 return inf.incomplete("B1", f"{case}: {len(v)} replicates < {self.n_stress}",
                                       {"per_case": per_case})
@@ -272,7 +286,18 @@ class Rules:
             return inf.incomplete("B1", "no unit with a defined recovery", {"per_case": per_case})
         lo, hi = inf.clopper_pearson(fails, units, self.alpha_for("B1"))
         lo0, hi0 = inf.clopper_pearson(fails, units, 0.05)
+        # replicate-cluster companion (review ec475e7b; reported, not a rule): the 21 cases of one
+        # draw share events and seeds, so also bound the share of draws with any failure
+        per_rep: dict[str, int] = {}
+        for case in self.library():
+            for r, x in c.values(self.lib_case(c, case), g_natural()).items():
+                per_rep[r] = per_rep.get(r, 0) + int(x is not None and x < 0)
+        n_rep, f_rep = len(per_rep), sum(1 for v in per_rep.values() if v > 0)
+        cl_lo, cl_hi = (inf.clopper_pearson(f_rep, n_rep, self.alpha_for("B1")) if n_rep
+                        else (None, None))
         nums = {"units": units, "failures": fails, "cp_upper": hi, "cp_lower": lo,
+                "replicate_cluster": {"draws": n_rep, "draws_with_a_failure": f_rep,
+                                      "cp_upper": cl_hi, "reported_only": True},
                 "cp_upper_unadjusted_0.05": hi0, "alpha_one_sided": self.alpha_for("B1"),
                 "per_case": per_case}
         parts.insert(0, inf.Part("CP upper bound on P(R<0)", "<=", 0.10, "bound",
@@ -282,12 +307,12 @@ class Rules:
     def B2(self, c):
         parts, nums = [], {}
         for case in self.library():
-            inj = c.values(case, g_hist("eavail", "injected_l1"))
+            inj = c.values(self.lib_case(c, case), g_hist("eavail", "injected_l1"))
             if len(inj) < self.n_stress:
                 return inf.incomplete("B2", f"{case}: {len(inj)} replicates < {self.n_stress}")
             if np.mean(list(inj.values())) >= UNDEFINED_BELOW:
                 continue
-            res = c.values(case, g_hist("eavail", "residual_l1"))
+            res = c.values(self.lib_case(c, case), g_hist("eavail", "residual_l1"))
             d = np.array([res[r] - inj[r] for r in inj])
             tb = inf.t_bounds(d, self.alpha_for("B2"))
             nums[case] = {"mean_injected_l1": float(np.mean(list(inj.values()))),
@@ -325,9 +350,10 @@ class Rules:
                 return inf.incomplete("B4", f"{rcase} not in the declared library "
                                             "(B4 needs both signs of R1)")
             r1 = c.values(rcase, g_hist("eavail"))
-            d1 = c.values(E0_CASE, g_hist("eavail"))
+            d1key = self.lib_case(c, E0_CASE)
+            d1 = c.values(d1key, g_hist("eavail"))
             common = sorted(set(r1) & set(d1))
-            bad = [r for r in common if c.cases[rcase][r]["rows"] != c.cases[E0_CASE][r]["rows"]]
+            bad = [r for r in common if c.cases[rcase][r]["rows"] != c.cases[d1key][r]["rows"]]
             if bad:
                 raise ValueError(f"{c.name}: {rcase} and {E0_CASE} replicates {bad} are not "
                                  "event-paired (row digests differ)")

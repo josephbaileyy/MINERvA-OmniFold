@@ -212,6 +212,9 @@ def preflight(args: argparse.Namespace) -> tuple[Path, RunConfig, Any]:
     if args.bank_draw is not None:                    # [pfd] before any data is read
         ri.refuse_bank(args.pseudo_bank)
         ri.bank_draw_salts(args.bank_stage, args.bank_replicate)
+        args.release_listing = ri.check_release_listing(       # [pfd] row-level release
+            args.pseudo_bank, config.content_hash(), args.bank_draw, args.distortion,
+            args.bootstrap_member)
     args.miss_mode, args.miss_mode_source = resolve_miss_mode(config, args.step2_miss_mode)
     distortion = ri.get_distortion(args.distortion, config.endpoint.amplitude,
                                    config.endpoint.clip)
