@@ -1,7 +1,7 @@
 # Cold-start handoff — PET final-design study (living document; update at each milestone)
 
-Read this, then `PROTOCOL-20260925.md` (with Amendments 1, 2, 2b, 2c), `DEVELOPMENT-20260926.md`,
-`DIAGNOSTICS-20260925.md`, `CAPACITY-20260925.md`, and the two review dispositions. Everything referenced is on the
+Read this, then `PROTOCOL-20260925.md` (with Amendments 1, 2, 2b, 2c, 3a), `DEVELOPMENT-20260926.md`,
+`DIAGNOSTICS-20260925.md`, `CAPACITY-20260925.md`, and the three review dispositions (IMPL, STAT, SCOPE). Everything referenced is on the
 pushed branch; nothing depends on a local scratch directory.
 
 ## Identity
@@ -42,6 +42,19 @@ pushed branch; nothing depends on a local scratch directory.
   PET2-pretrained diverges from k = 3 under the declared constant per-iteration rate (pull max 5.5 × 10⁵ at k = 5)
   while PET2-scratch is stable; a matched tuning arm (`dev2Q`, both initializations with the annealed step-1
   schedule) is queued before the large slot is closed. The watcher now runs from checkout `0e00644f`.
+
+- **2026-09-26 ~18:30Z additions.** Independent scientific-scope review done (`REVIEW_DISPOSITION-SCOPE-20260926.md`);
+  prospective rules in **Amendment 3a** (terminal practical default `UNRESOLVED_WITH_DEFAULT`; cost = charged A100-h at
+  declared packing via `analysis/cost_from_receipts.py`; N1 stays on E9 truth weights, pull reported; E4/E5 sized as a
+  separate library group; coverage ordered by `decide.py --provisional`; futility and bank-effect bound reported; cost
+  part UB repair) and the **finalist-rule addendum** (`dev/FINALIST_RULE-20260926.md`: completeness on both draws,
+  S-N1 at K* gating pull+push weights, between-design step in `dev/apply_finalist_rule.py`). The PET2 policy arm
+  `dev2Q` now has ids `P2preA1`/`P2scrA1` and D1 −0.35 rows (16 runs, not started at 18:20Z). All development
+  post-hoc files are being recomputed with the committed tool into `$B/posthoc_v2/<stage>` (15 dev1 files were stale).
+  DEV costs per unfolding (A100-h, declared packing): H2S1 K5 0.88, L128S1 K5 ≈1.0, L64S1 K4 0.77, H2S1E16 K4 1.29,
+  L128S1E16 K5 2.04, P2preS1 K4 2.23, P2scrS1 K5 2.78 (`$B/costs/`). PET2-pretrained's step-1 weights reach 334–1,217
+  at k = 4 on the development tilt (S-N1 fails there). The watcher runs from checkout `3e3059f3`; its helper
+  `$B/start_watcher.sh <sha>` restarts it (never `pkill -f`/`pgrep -f` inside an ssh one-liner).
 
 ## Next actions, in order
 
