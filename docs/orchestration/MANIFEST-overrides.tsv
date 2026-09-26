@@ -469,3 +469,10 @@ docs/orchestration/state/s5e/contract-amendment-2-diagnosis-repairs.json	MACHINE
 docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md	LIVE	open	
 docs/orchestration/state/s5e/contract-amendment-3-candidate-R-and-assessment.json	MACHINE	open	
 docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md	LIVE	open	
+docs/orchestration/GOAL-20260926-precision-measurement-completion.txt	LIVE	open	
+docs/orchestration/HANDOFF-20260926-precision-measurement-completion.md	LIVE	open	
+docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md	LIVE	open	
+docs/orchestration/CAMPAIGN-s5p-20260926-index.md	LIVE	open	
+docs/orchestration/state/s5p/contract.json	MACHINE	open	
+docs/orchestration/state/s5p/campaign-state.json	MACHINE	open	
+docs/orchestration/state/s5p/budget.json	MACHINE	open	

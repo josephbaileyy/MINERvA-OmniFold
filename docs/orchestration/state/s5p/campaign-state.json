@@ -1,0 +1,58 @@
+{
+ "schema": "s5p-state/1",
+ "campaign_key": "s5p-20260926",
+ "tracker": "OI-193",
+ "authority": {
+  "record": "docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md",
+  "commit": "the commit that first adds this file"
+ },
+ "approved_documents": {
+  "goal": {
+   "path": "docs/orchestration/GOAL-20260926-precision-measurement-completion.txt",
+   "blob": "f3a2da95b5fa5eeafcf96a905cf2404112568288"
+  },
+  "handoff": {
+   "path": "docs/orchestration/HANDOFF-20260926-precision-measurement-completion.md",
+   "blob": "49c8e767b964c6446468f4e3e3d4ff3e0d23b3e8",
+   "edited": false
+  },
+  "prior_plan": {
+   "path": "docs/orchestration/PLAN-scalar5d-reportable-uncertainties-and-inference.md",
+   "blob": "8b0617b6e044a55a9b5870b46e5d90a15a6ced7a",
+   "edited": false
+  }
+ },
+ "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
+ "branch": "campaign/s5p-precision-20260926",
+ "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
+ "phase": "AUTHORIZED",
+ "phase_detail": "authorization, contract, budget and state committed before implementation; next: Stage 1 (use case, targets, reporting definitions, initial joint design) from development MC and committed receipts, frozen as amendment 1; in parallel register s5p in the meter and launcher with tests",
+ "pinned": {
+  "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
+  "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
+  "adopted_projection_sha256": "835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e"
+ },
+ "budget": {
+  "path": "docs/orchestration/state/s5p/budget.json",
+  "revision": 1
+ },
+ "stages": {
+  "1_use_case": "NOT STARTED",
+  "2_construction_questions": "NOT STARTED (configurations 0 of 3 frozen)",
+  "3_admission": "NOT STARTED",
+  "4_construction": "NOT STARTED",
+  "5_validation": "NOT STARTED",
+  "6_adoption": "NOT STARTED",
+  "7_inference_release": "NOT STARTED"
+ },
+ "jobs": [],
+ "receipts": [],
+ "amendments": [],
+ "reviews": [],
+ "next_action": "Stage 1 inspection (development MC) and amendment 1; meter/launcher registration of s5p with tests",
+ "concurrent_work_at_start": "josephrb GPU jobs pfd-chain/pfd-shr/pfd-fin (58893071-58903623, m3246_g) and other users' m3246_g jobs belong to other lanes (not touched); no m3246 CPU row; shared main checkout c496135f untouched",
+ "remote_heads_at_start": {
+  "canonical_origin_main": "b30752864c70c76da3a888136e52c3dea4b615b7",
+  "analysis_note_main": "b1410fc32d1269ad9ea44a4f9f042312bb8276a8"
+ }
+}

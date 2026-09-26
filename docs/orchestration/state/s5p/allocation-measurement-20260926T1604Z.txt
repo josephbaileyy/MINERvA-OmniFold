@@ -1,0 +1,172 @@
+# measured 2026-09-26T16:04:38Z on login33
+## iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               1740.4            10000.0     16583.7      20000.0
+m3246_g              510.7            90000.0    121510.3     180000.0
+rc=0
+## squeue -A m3246,m3246_g (all users) %i|%u|%a|%q|%T|%D|%C|%b|%l|%M|%L|%P
+58838272|gregork|m3246_g|cron|PENDING|1|1|N/A|1-00:00:00|0:00|1-00:00:00|cron
+58838271|gregork|m3246_g|cron|RUNNING|1|2|N/A|1-00:00:00|16:39:33|7:20:27|cron
+58903623|josephrb|m3246_g|gpu_debug|PENDING|1|1|N/A|30:00|0:00|30:00|gpu_ss11
+58903377|josephrb|m3246_g|gpu_debug|PENDING|1|1|N/A|30:00|0:00|30:00|gpu_ss11
+58835102_0|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58793726_1|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58793726_2|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58793726_3|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58793726_4|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58835102_1|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58835102_2|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58835102_3|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58835102_4|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58743554_3|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58743554_4|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58794737_1|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58794737_2|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58794737_3|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58794737_4|ljpuslar|m3246_g|gpu_regular|PENDING|1|1|N/A|9:00:00|0:00|9:00:00|gpu_ss11
+58903088|josephrb|m3246_g|gpu_debug|RUNNING|1|128|N/A|30:00|6:22|23:38|gpu_ss11
+58902729|josephrb|m3246_g|gpu_debug|RUNNING|1|128|N/A|30:00|15:31|14:29|gpu_ss11
+58793726_0|ljpuslar|m3246_g|gpu_regular|RUNNING|1|128|N/A|9:00:00|5:02:14|3:57:46|gpu_ss11
+58743549_4|ljpuslar|m3246_g|gpu_regular|RUNNING|1|128|N/A|9:00:00|5:13:18|3:46:42|gpu_ss11
+58794737_0|ljpuslar|m3246_g|gpu_regular|RUNNING|1|128|N/A|9:00:00|1:16:53|7:43:07|gpu_ss11
+58743554_2|ljpuslar|m3246_g|gpu_regular|RUNNING|1|128|N/A|9:00:00|1:13:09|7:46:51|gpu_ss11
+58893072|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58893071|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58901946|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58901945|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898565|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898564|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898563|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898562|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898561|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898560|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898559|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898557|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898556|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898555|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898553|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898551|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898550|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898549|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898548|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898547|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898546|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898545|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898544|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898542|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898539|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898538|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898537|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898536|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58898328|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58897770|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58895722|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58895720|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58895719|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58895718|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58895715|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58895714|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58895711|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58895710|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58893426|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58893081|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58893080|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58893079|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58893078|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58893077|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58893076|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58893075|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58893074|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58893073|josephrb|m3246_g|gpu_shared|PENDING|1|32|N/A|2:00:00|0:00|2:00:00|shared_gpu_ss11
+58893069|josephrb|m3246_g|gpu_shared|RUNNING|1|32|N/A|2:00:00|58:25|1:01:35|shared_gpu_ss11
+58893070|josephrb|m3246_g|gpu_shared|RUNNING|1|32|N/A|2:00:00|58:24|1:01:36|shared_gpu_ss11
+58890360|gregork|m3246_g|gpu_shared|RUNNING|1|32|gres/gpu:1|12:00:00|8:13:40|3:46:20|shared_gpu_ss11
+58890369|gregork|m3246_g|gpu_shared|RUNNING|1|32|gres/gpu:1|12:00:00|6:31:38|5:28:22|shared_gpu_ss11
+58890363|gregork|m3246_g|gpu_shared|RUNNING|1|32|gres/gpu:1|12:00:00|6:50:35|5:09:25|shared_gpu_ss11
+58902972|vmikuni|m3246_g|gpu_interactive|RUNNING|4|512|gres/gpu:4|4:00:00|29:32|3:30:28|urgent_gpu_ss11
+58902653|gregork|m3246_g|gpu_interactive|RUNNING|1|128|gres/gpu:4|4:00:00|38:08|3:21:52|urgent_gpu_ss11
+58902112|dkobylia|m3246_g|gpu_interactive|RUNNING|1|128|N/A|4:00:00|54:04|3:05:56|urgent_gpu_ss11
+58901422|josephrb|m3246_g|gpu_interactive|RUNNING|1|128|N/A|4:00:00|1:13:54|2:46:06|urgent_gpu_ss11
+58900863|josephrb|m3246_g|gpu_interactive|RUNNING|1|128|N/A|4:00:00|1:29:44|2:30:16|urgent_gpu_ss11
+58899967|gregork|m3246_g|gpu_interactive|RUNNING|1|128|gres/gpu:4|4:00:00|2:01:33|1:58:27|urgent_gpu_ss11
+rc=0
+## showquota
++-------------+------------+-------------+----------------+------------+-------------+----------------+
+| File system | Space used | Space quota | Space used (%) | Inode used | Inode quota | Inode used (%) |
++-------------+------------+-------------+----------------+------------+-------------+----------------+
+|        home |   21.38GiB |    40.00GiB |          53.5% |    232.00K |       1.00M |          23.2% |
+|    pscratch |   16.43TiB |    20.00TiB |          82.1% |    865.46K |      10.00M |           8.7% |
++-------------+------------+-------------+----------------+------------+-------------+----------------+
+rc=0
+## hpssquota
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+|                             File system | Space used | Space quota | Space used (%) | Inode used | Inode quota | Inode used (%) |
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+|                                    home |   21.38GiB |    40.00GiB |          53.5% |    232.00K |       1.00M |          23.2% |
+|                                pscratch |   16.43TiB |    20.00TiB |          82.1% |    865.46K |      10.00M |           8.7% |
+| josephrb usage on HPSS charged to m3246 |  347.90GiB |   512.00GiB |          67.9% |          - |           - |              - |
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+rc=0
+## sacctmgr qos
+normal|1.000000
+regular_1|1.000000
+regular_0|1.000000
+batchdisable|1.000000
+deleted|1.000000
+system|1.000000
+gpu_special_m1759|1.000000
+gpu_interactive|1.000000
+gpu_regular|1.000000
+cron|1.000000
+resv_shared|1.000000
+resv|1.000000
+badger|1.000000
+gpu_debug|1.000000
+sow|1.000000
+early_science|1.000000
+sparewarmer|1.000000
+preempt|1.000000
+largemem|1.000000
+gpu_preempt|1.000000
+gpu_jupyter|1.000000
+jupyter|1.000000
+interactive|1.000000
+realtime|1.000000
+shared|1.000000
+debug|1.000000
+xfer|1.000000
+realtime_lcls|1.000000
+realtime_desi|1.000000
+realtime_desi_g|1.000000
+realtime_m3795|1.000000
+realtime_m3739|1.000000
+realtime_nstaff|1.000000
+realtime_nstaff_g|1.000000
+overrun|1.000000
+workflow|1.000000
+realtime_m3792|1.000000
+realtime_m2859|1.000000
+realtime_m3562|1.000000
+realtime_m3562_g|1.000000
+realtime_m4064_g|1.000000
+realtime_m2859_g|1.000000
+realtime_m4064|1.000000
+realtime_m3792_g|1.000000
+realtime_lcls_g|1.000000
+realtime_m2218|1.000000
+realtime_lz|1.000000
+gpu_shared|1.000000
+gpu_shared_jupyter|1.000000
+special_lz|1.000000
+shared_overrun|1.000000
+debug_preempt|1.000000
+shared_interactive|1.000000
+gpu_shared_interactive|1.000000
+premium|1.000000
+gpu_premium|1.000000
+gpu_special_nstaff|1.000000
+special_nstaff|1.000000
+realtime_m4386|1.000000
+realtime_als|1.000000
+rc=0

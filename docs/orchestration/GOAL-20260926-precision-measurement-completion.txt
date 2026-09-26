@@ -1,0 +1,58 @@
+Execute docs/orchestration/HANDOFF-20260926-precision-measurement-completion.md
+through all seven stages. All handoff requirements apply.
+
+I approve its delegated scientific choices, implementation, compute, independent
+review, conditional adoption, commits, merges and pushes to both repositories.
+Proceed without routine approval. Seek a useful scalar measurement with defensible
+TOTAL uncertainties and calibrated joint-5D inference. Neither zero bias nor
+significant disagreement is required. Projection-only is incomplete.
+
+Before implementation commit this authorization/date, approved document identities,
+scoped supersession, contract, state and budget. Preserve history.
+For this successor ONLY, under the handoff's conditions, I supersede OI-193 holds,
+diagnosis-only limits, spent family/revision limits, exclusions of model-uncertainty,
+full-production/inference work and reserved adoption acts. I authorize justified
+new total-measurement criteria, reporting/fiducial choices and p-value precision,
+frozen before fresh assessment. Record retrospective motivations; never rescue
+validation failures by changing criteria or historical grades.
+
+Retain cumulative caps of 345.27 billed CPU node-h and 500 A100-h across s5c/s5n/s5e
+and this work. Reconcile charges/reservations; no resets. Each new pool is also
+capped at 10% of current uncommitted allocation after reservations.
+Reserve 20% for verification/repair; at most two CPU nodes/four GPUs concurrently.
+Retain storage/retry rules and the scoped R5 calendar/task-hour replacement through
+verified campaign admission. No guard bypass, purchases or allocation transfers.
+
+1. Freeze physics-use/precision targets and at most three reporting definitions.
+Account for migrations/selection; define joint nulls, nuisances and power alternatives.
+2. Start with R. Resolve numerical/bootstrap overlap and convergence/observability;
+address the six calibration failures in development. At most three configurations,
+two development revisions each. Stages 1-2 use at most 15% of each pool and establish
+a provisionally affordable validation method, sample sizes/assurance and complete
+remaining-work forecast with reserves.
+3. Define model dependence/domain and withheld truths. Freeze uncertainty and
+joint-test designs together, preserving bounded/profiled interpretations.
+Before Stage 4, independently review and freeze the handoff's complete production
+admission: claims, calibration, validation/assurance, acceptance/stopping rules,
+joint-test design/precision/power, costs and reserves. No construction without
+affordable required validation; identify infeasible inference.
+4. Build all matched central/uncertainty products under that admission. Avoid double
+counting; refit refinement as required.
+5. Validate frozen intervals on fresh background-inclusive experiments and withheld
+truths. Pooled passes cannot certify cells; statistical coverage cannot certify
+totals. Permitted revisions return through Stage-3 review before fresh production/
+assessment.
+6. Adopt only exact, independently verified products passing every applicable gate.
+Record scope/supersession and preserve historical adopted bytes.
+7. Execute/verify the frozen joint-test design and feasible inference; protect
+measurement-validation resources. Prepare release materials, build/synchronize
+note/primer/paper, test reproduction, push and verify both remote heads.
+
+Use isolated worktrees, preserve concurrent work, checkpoint and monitor without
+duplicate jobs. No PET, general cleanup, external messages,
+public deposit, release tagging or submission.
+Complete independent authorized work when a branch fails. Deliver the four status
+fields, paper-wide readiness, evidence, spend, heads and costed remaining requirements.
+The bounded goal completes at honest terminal disposition and delivery, even if
+no measurement qualifies. Publication completion requires the joint result and
+all retained claims to qualify.

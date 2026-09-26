@@ -1,0 +1,119 @@
+{
+ "schema": "s5p-contract/1",
+ "campaign_key": "s5p-20260926",
+ "tracker": "OI-193",
+ "status": "FROZEN at the commit that first adds this file, before any campaign code change, compute or new observed statistic. Executor choices under the delegation of docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md and the approved handoff (blob 49c8e767), not owner quotations. This file is the campaign FRAMEWORK: stage order, limits, seed roles, operand separation, amendment protocol, criteria-change rules and terminal branches. Each stage's scientific choices (use case and targets, reporting definitions, configurations, model domain, interval and joint-test design, validation sample sizes and acceptance rules) are frozen by numbered amendments, new files beside this one that cite it; this file is never edited.",
+ "authority": "docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md",
+ "identities": {
+  "goal_blob": "f3a2da95b5fa5eeafcf96a905cf2404112568288",
+  "handoff_blob": "49c8e767b964c6446468f4e3e3d4ff3e0d23b3e8",
+  "prior_plan_blob_unchanged": "8b0617b6e044a55a9b5870b46e5d90a15a6ced7a",
+  "predecessor_contract_not_modified": "docs/orchestration/state/s5e/contract.json (and amendments 1-3)",
+  "starting_origin_main": "b30752864c70c76da3a888136e52c3dea4b615b7",
+  "starting_analysis_note_main": "b1410fc32d1269ad9ea44a4f9f042312bb8276a8",
+  "inputs_rehashed_at_use": {
+   "input_npz": {"path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz", "sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f"},
+   "cv_omnifile": {"path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root", "sha256": "b6d2651cfdbc52790cc7ed6032f2062a3e0ea50c12d63725beba29098dd5175a"},
+   "background_dump": {"path": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz", "sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955"},
+   "note": "every further input (universe bank, detector/lateral omnifiles, generator event samples) is identified by path and sha256 in the amendment that first uses it"
+  },
+  "adopted_trunk_not_modified": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
+  "adopted_projection_not_modified": "835828bf3e25bbd9f279088e5cc89b8b325d727446fec9fabbbc92fd7e71a54e",
+  "historical_products_read_only": "every s5c, s5n and s5e product and receipt; s5e development and assessment products may be READ as development operands (they are no longer fresh for any purpose; W1-W3 have been observed and are development alternatives here, never withheld truths)"
+ },
+ "baseline_estimator": {
+  "name": "R",
+  "definition": "exactly s5e contract amendment 3 candidate R: the s5n family N (s5c F2 deterministic LightGBM OmniFold through s5c_unfold.unfold, config 'deterministic': n_estimators 100, num_leaves 8, learning_rate 0.1, bin_construct_sample_cnt all rows, deterministic, force_row_wise, num_threads 32, random_state = estimator_seed for all three estimators; 5 iterations; LGBMRegressor missed-event fill; negweight-refined background with the driver's refine_stay_positive) with the Stay-Positive refinement classifier at n_estimators 400, num_leaves 31 (random_state estimator_seed + 3); implemented by nd-unfolding/s5e_candidate.py --candidate R",
+  "inherited_evidence": "s5e dev_receipt.json (K1 nominal closure PASS on 20 development experiments) and assess_receipt.json (A1 PASS on 40 fresh experiments; A2 pooled PASS with six per-functional failures; A3 FAIL; A4 20/42; A5 PASS). Reused as development evidence; R's s5e A_FAIL is not re-graded",
+  "verify_execution": "every R product used here is checked from its own metadata (refinement classifier parameters actually built, estimator parameters recorded by the factory patch, input digests), not from launcher flags"
+ },
+ "stages": {
+  "1_use_case": {
+   "deliverable": "amendment 1 (frozen before any Stage-2 candidate selection or new development compute): a short physics-use case; numerical precision targets for total uncertainty, bias control, numerical stability, useful interval width, coverage and joint-test power, each justified by the intended use and not by making existing results pass; the intended generator comparisons, null hypotheses, nuisance domains and physically meaningful power alternatives probing joint structure beyond the (E_avail,W) marginal; at most THREE physically motivated reporting definitions including the baseline, from an inspection of efficiency, migration, resolution, background fraction and effective sample size on development MC only; the reporting-selection procedure; the initial joint-inference design; the inventory of real-data-informed choices",
+   "inputs_allowed": "development MC and the npz MC arrays, earlier committed receipts (listed as data-informed where they are); no new observed-data statistic",
+   "rules": [
+    "prefer contiguous regions and coarser resolution over a list of cells selected from favourable residuals",
+    "keep a broader unfolding domain for boundary migrations when a narrower reporting region is used",
+    "a narrower fiducial definition changes the estimand: its selection, normalization, affected systematics and generator predictions are recomputed before use",
+    "a geometrical volume change needs direct evidence and a costed input-production path",
+    "joint-5D qualification needs subdivisions in all five coordinates where support permits; a lower-dimensional fallback qualifies separately and does not fulfil the joint objective",
+    "do not require an observed rejection"
+   ]
+  },
+  "2_construction_questions": {
+   "deliverable": "a selected estimator, development calibration results, an explicit map of unresolved uncertainty sources and a provisionally affordable validation path with sample sizes, assurance and a complete remaining-work forecast with reserves (a committed development receipt and forecast)",
+   "items": {
+    "R_verification": "verify R's actual execution and metadata; reuse its nominal-closure evidence",
+    "numerical_bootstrap_overlap": "matched resampling/perturbation controls that measure the numerical (rounding-scale) sensitivity and whether the refit-per-replica bootstrap already contains it; physical statistical fluctuations kept separate from coordinate-representation and algorithmic effects; grid membership preserved in every rounding probe (edge-safe); a covariance sum needs justified independence or measured cross terms; a numerical spread needs a defensible interpretation before any adoption",
+    "six_calibration_failures": "the six s5e per-functional calibration failures traced from assess_receipt.json and review round 2 (M1) to the proposed reporting quantities, including any changed binning; bias and interval scale investigated separately; the proposed interval construction checked on development experiments; checks of statistical components distinguished from checks of total intervals; recorded as addressed or unresolved before costly fresh validation; resolving numerical sensitivity alone does not discharge them and a pooled pass cannot",
+    "convergence_observability": "a fixed convergence study (noise-free, up to 200 iterations) on the E_avail and q3 alternatives with detector-level checks, measuring improvement and deterioration; whether relevant truth alternatives remain distinguishable after detector response at the actual exposure; no optimality claim from a finite unsuccessful scan"
+   },
+   "configurations": "at most THREE estimator configurations including R, each a declared setting in the authorized dimensions (stopping/iterations, capacity, regularization, missed-event regression, refinement, resampling), frozen with its cost forecast by an amendment before its first run; at most TWO development revisions each, each prompted by a recorded unmet development requirement and frozen before its re-run; no broad architecture or grid search; background treatment negweight-refined",
+   "budget_rule": "stages 1-2 together use at most 15% of each pool (budget stage 'development'); the exit needs at least one scientifically justified validation method whose provisional sample-size, assurance and complete remaining-work cost fit the reconciled budget with verification and repair reserves, measurement costs separated from joint inference; historical forecasts do not establish successor feasibility"
+  },
+  "3_model_dependence_and_admission": {
+   "deliverable": "the model dependence and domain, withheld truths and the frozen uncertainty and joint-test designs (one amendment), then an independently reviewed production-admission record containing every item of handoff Stage 3: reporting scope, estimator, total-uncertainty/interval construction and exact claims with truth/nuisance domain and conditioning; development evidence on the known per-functional failures, useful width and expected joint sensitivity with unresolved findings explicit; the validation method with sample sizes, assurance, Monte Carlo precision, per-functional and joint criteria, multiplicity control, frozen stopping, futility, stability and width/usefulness rules; the joint-inference design with its calibration and power requirements; the reconciled cost of all remaining work with protected reserves, measurement resources separated from feasible or infeasible inference resources",
+   "rules": [
+    "alternatives used for development/construction are separated from withheld validation truths before either is run; a withheld truth is never run, reweighted onto a product or inspected before the admission record is committed",
+    "each uncertainty source is declared probabilistic, a profiled nuisance or a deterministic bounded alternative; generator choices are not independent random universes by default; an outer product of a closure residual is not automatically a covariance; a correction is part of the data estimator and is tested for transfer",
+    "a deterministic bounded envelope enters intervals and the joint test only through a declared bounded-nuisance procedure; a profiled nuisance keeps its treatment; neither becomes a random covariance term without a justified probability model",
+    "cross-coordinate deformations are included; one-dimensional generator ratios are not complete joint coverage; positivity, support, normalization and marginal-preservation claims are verified numerically",
+    "generator nulls, nuisance domains, test statistics and power alternatives outside the null families are frozen; nuisance-averaged versus uniform composite-null calibration and total-rate versus shape-only tests are distinguished; shared-input correlations, data-informed selection, multiplicity and separate development, calibration and validation operands are specified",
+    "test and p-value precision appropriate to the use case are frozen before any new observed test; earlier data-driven selection/localization is accounted for; a later freeze does not make the analysis blind",
+    "no construction is admitted whose required validation cannot fit; an infeasible joint test permits an otherwise qualified measurement checkpoint with the joint objective explicitly unmet and a priced next increment; a failed admission stops the affected production branch"
+   ]
+  },
+  "4_construction": "only under the Stage-3 admission: nominal, statistical, background, detector, flux, model and algorithmic components on one declared estimator/background footing with their frozen interpretations; Stay-Positive refinement recomputed inside each applicable resampling/nuisance variation; observed-mixture fluctuations distinguished from finite background-template MC and physical nuisance uncertainty; correlations preserved and double counts avoided; fresh output namespaces; common row maps, support, units, bin volumes, normalization, seed policy and projection operators; selection-complete lateral treatment and all five formerly seed-pinned bands; actual production imports, mode propagation and metadata validated at readback; no splice of purity covariance blocks onto a negative-weight central result; a projection of a new 5D central is a new product",
+  "5_validation": "the frozen validation design exactly: the estimator and interval construction applied to real data, validated with background-inclusive event-level pseudo-experiments, fresh seeds and the withheld physical alternatives; finite-MC effects for unconditional claims or the conditioning named; per-functional and relevant joint behaviour; pooled calibration never certifies an individually failing functional; statistical coverage never certifies total intervals; the frozen sample counts or sequential procedure, futility, multiplicity, assurance and width/usefulness rules; any permitted revision affecting the frozen construction or validation design returns through a Stage-3 review before new production or fresh assessment",
+  "6_adoption": "delegated conditional adoption only of identified immutable product bytes with independently reproduced construction, passed applicable validation and precision criteria, complete required physical uncertainty scope, correct pairing and no unresolved result-changing defect, after an independent scientific review of those operands and claims; recorded as delegated under the activation; qualified scope only; prior adopted bytes preserved and what is superseded identified; dependent claims updated consistently; no new exception",
+  "7_inference_and_release": "the joint-inference design frozen at Stage 3 executed and independently verified: missing generator predictions constructed on the actual joint reporting domain and flux with input identities, finite-MC uncertainties and tuning dependence; the declared residual covariance including shared inputs; bounded/profiled contributions as contracted; separate development, calibration and validation operands; test size, numerical precision, seed/numerical stability and joint power verified; the frozen precision tier applied with Monte Carlo bounds; never p = 0 or an extrapolated tail; low power is not evidence for agreement. Measurement-validation resources are protected: inference proceeds only within its own reservation. Then the paper-wide completion table, the release package, a tested fresh-checkout reproduction, note/primer/paper builds in both repositories, synchronization, pushes and verified remote heads"
+ },
+ "seed_roles": {
+  "estimator_seed": "42 by default (+3 for the refinement classifier), as s5n/s5e",
+  "pseudo_seed": "one repeated experiment (s5n_pseudo.build_pseudo; MC split keys from the seed)",
+  "bootstrap_seed": "one replica of the s5n repaired bootstrap (per-event Poisson(k) observed, Poisson(1) unfolding-MC and template rows, refinement refit)",
+  "jitter_seed": "one edge-safe rounding-scale input perturbation (s5e_trace.py edge-safe probe convention)",
+  "ranges": {
+   "development_stages_1_2": {"configuration_1_R": [900000, 909999], "configuration_2": [910000, 919999], "configuration_3": [920000, 929999], "shared_development_studies": [930000, 949999]},
+   "stage_3_construction_and_calibration": [950000, 999999],
+   "stage_5_fresh_validation": [1000000, 1199999],
+   "stage_7_inference_calibration": [1200000, 1399999],
+   "stage_7_inference_validation": [1400000, 1599999],
+   "revision_fresh_validation_reserve": [1600000, 1799999],
+   "bootstrap_seeds": "real-data replicas 1-1000; pseudo-experiment replicas 5001-9999",
+   "jitter_seeds": "1-999",
+   "rule": "never reused across roles; disjoint from every s5c (1-99999, 200000-211999), s5n (300000-349999, 400000-649999 reserved) and s5e (700000-839999) pseudo-experiment range; a stage's seeds are drawn only from its own range; stage-5 and stage-7 ranges are not touched before the Stage-3 admission record is committed; a revision's validation uses the revision reserve"
+  }
+ },
+ "operand_separation": {
+  "development": "s5e products, stage 1-2 development experiments and noise-free constructions; may inform every choice",
+  "construction_and_calibration": "stage-3 range: model-dependence alternatives declared for construction, interval calibration experiments, inference development; may inform the frozen design, never the validation verdict",
+  "fresh_validation": "stage-5 range with the withheld truths; read only by the frozen evaluator after the admission record; never used to revise anything except through a permitted revision with wholly fresh validation",
+  "inference": "calibration and validation ensembles separate from each other and from measurement validation, unless the admission record justifies a shared use that preserves independence and sampling populations"
+ },
+ "criteria_change_rules": {
+  "principle": "this successor may define new qualification criteria for the COMPLETE measurement (total uncertainty, residual bias treatment, numerical sensitivity, coverage, width, p-value precision). Each is justified by the frozen use case and a stated probabilistic or bounded-nuisance interpretation, frozen before any fresh assessment it governs, and independently reviewed at the Stage-3 admission",
+  "historical_rules_that_may_be_replaced": ["plan section 6 5% projected-sigma movement gate", "plan section 7 simultaneous one-sided Clopper-Pearson coverage gates 0.66/0.94 over every functional and grid point", "plan section 7 p-value precision +-0.005 (p >= 0.05) and 0.25 p (0.001 <= p < 0.05)", "s5e amendment 3 A3 rounding criterion 0.3/1.0 data-sigma", "the statistical-only interval of s5c/s5n/s5e"],
+  "required_record_per_change": "the old rule, the new rule, the physics-use justification, the interpretation, and the RETROSPECTIVE MOTIVATION: which existing results (receipt and number) motivated the change; a change motivated by an existing failure is never described as uninformed by data",
+  "forbidden": ["tuning a criterion on fresh validation results", "changing a criterion after a fresh look to rescue it", "re-grading any historical result", "calling a later freeze blind"]
+ },
+ "not_allowed": ["PET", "another classifier family or a hyperparameter grid search", "choosing seeds, functionals, cells, deformations or amplitudes after seeing their fresh-validation or observed-test result", "inflating an interval to buy coverage without a frozen, justified construction", "a manufactured statistical label for a model band", "raw fine-bin covariance inversion or pseudoinverse degrees of freedom", "a final-covariance Gaussian toy as validation of unfolding", "general cleanup", "guard bypass (--no-verify, environment spoofing, silently altered receipts)"],
+ "review": "independent reviewers in isolated read-only worktrees with their own operand checks, status inspected afterwards; changed scope only; at most two targeted repair/reverification cycles per frozen stage or candidate; an unresolved material finding blocks its qualification; independent negative results preserved",
+ "terminal_branches": {
+  "S1_NO_USEFUL_SPEC": "no reporting definition can be given a physics use with attainable targets: record and stop measurement branches; complete independent authorized work",
+  "S2_NO_AFFORDABLE_VALIDATION": "no justified validation method fits the reconciled budget: record the limitation, the measured costs and the priced next increment",
+  "S3_ADMISSION_REFUSED": "the independent review does not admit production for a branch: that branch stops",
+  "S5_VALIDATION_FAIL": "a frozen acceptance criterion fails on fresh validation: no qualification for the affected scope; a permitted revision returns through Stage 3 with wholly fresh validation, or the branch stops",
+  "S6_NOT_ADOPTED": "a product that passed validation fails an adoption condition: reported without adoption",
+  "MEASUREMENT_CHECKPOINT_JOINT_UNMET": "a measurement scope is adopted; the joint-5D objective is unmet (infeasible, failed calibration, failed power): the priced next increment is recorded",
+  "MEASUREMENT_AND_JOINT_QUALIFIED": "the adopted measurement and the calibrated joint-5D inference both qualify at the frozen resolution",
+  "RESOURCE_LIMITED": "resource- or evidence-limited: report measured costs and what is missing"
+ },
+ "final_fields": ["campaign_disposition", "reportable_uncertainty_scope", "joint_5d_inference_status", "publication_readiness"],
+ "resources": {
+  "admission": "nd-unfolding/s5c_meter.py bound to docs/orchestration/state/s5p/budget.json and /pscratch/sd/j/josephrb/s5p-20260926/ledger/admissions.jsonl; job prefix s5p-; at most 2 CPU nodes and 4 GPUs over every open admission; the GPU pool's nodes may run CPU-only steps with --gres=none as in s5c",
+  "namespace": "/pscratch/sd/j/josephrb/s5p-20260926/ (fresh outputs only; <= 20 GiB new files); every historical product is read, never written",
+  "deploy": "clean clones at pinned commits under the namespace's deploy/ (s5c_array.sh refuses any other tree)",
+  "retries": "at most two retries per task for a diagnosed infrastructure failure; at most one corrective resubmission per stage after a diagnosed code defect, verified repair and fresh admission; the stricter applies; scientific failure never triggers an identical retry; --no-requeue"
+ }
+}

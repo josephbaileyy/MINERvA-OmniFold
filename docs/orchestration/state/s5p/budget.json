@@ -1,0 +1,102 @@
+{
+ "schema": "s5p-budget/1",
+ "campaign_key": "s5p-20260926",
+ "authority": "docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md sections 3 (P7) and 4",
+ "revision": 1,
+ "revision_reason": "activation budget: each pool = min(unspent cumulative envelope, 10% of uncommitted allocation after reservations); CPU min(310.184, 341.630) = 310.184; GPU min(114.905 GPU node-h = 459.62 A100-h, 5824.26) = 114.905; stages 1-2 'development' <= 15% of each pool; verification/repair >= 20%; the remainder unallocated until the Stage-3 production admission and a budget revision",
+ "measured_utc": "2026-09-26T16:04:38Z",
+ "evidence": {
+  "allocation": "docs/orchestration/state/s5p/allocation-measurement-20260926T1604Z.txt (iris, squeue -h -r -A m3246,m3246_g all users, showquota, hpssquota, sacctmgr qos)",
+  "prior_charges": {
+   "s5c": "docs/orchestration/state/s5p/prior-ledger-s5c-20260926T1604Z.json (ledger sha256 4f89112e5b8f1b9938a2745edeff32bb8e796700168c50e3f6ce8086f9eb8449, no admission open)",
+   "s5n": "docs/orchestration/state/s5p/prior-ledger-s5n-20260926T1604Z.json (ledger sha256 5e3fa4298209d2a9f10c51f85c69aefd79b51360600b0c6eebeeb5a93f7e2bc2, no admission open)",
+   "s5e": "docs/orchestration/state/s5p/prior-ledger-s5e-20260926T1604Z.json (ledger sha256 cdea86e94533c8f2d100602712610d2060b89e3da40b1895c0b18f4d19b4ec45, no admission open)"
+  }
+ },
+ "billing_rule": "as docs/orchestration/state/s5c/budget.json billing_rule (unchanged): CPU node-h = ElapsedRaw/3600 * billing/256 * qos_factor; GPU node-h = ElapsedRaw/3600 * billing/128 * qos_factor, A100-h = 4 x GPU node-h; every admitted QOS has UsageFactor 1.0 (sacctmgr 2026-09-26T16:04Z); premium and overrun refused",
+ "allocation_measured": {
+  "cpu": {
+   "account": "m3246",
+   "project_allocated": 20000.0,
+   "project_charged": 16583.7,
+   "queued_or_running_reservations_node_hours": 0.0,
+   "reservations": "none: no pending or running m3246 row",
+   "uncommitted_remaining_node_hours": 3416.3,
+   "ten_percent_node_hours": 341.63
+  },
+  "gpu": {
+   "account": "m3246_g",
+   "project_allocated": 180000.0,
+   "project_charged": 121510.3,
+   "queued_or_running_reservations_node_hours": 247.0718,
+   "reservations": "84 pending or running m3246_g rows of other lanes and users (66 pending at full limit, 18 running at remaining limit)",
+   "uncommitted_remaining_node_hours": 58242.628,
+   "ten_percent_node_hours": 5824.263
+  },
+  "reservation_method": "every pending/running row of squeue -r, all users: remaining limit (running) or full limit (pending) x node fraction (whole nodes for non-shared QOS; cpus/128 for shared) -- the s5c/s5n/s5e method"
+ },
+ "pools": {
+  "cpu": {
+   "campaign_cap_node_hours": 310.184,
+   "carried_forward": {
+    "envelope_node_hours": 345.27,
+    "prior_charged_node_hours": 35.085911458333335,
+    "prior_charged_by_campaign": {
+     "s5c-20260924": 20.085911458333335,
+     "s5n-20260925": 4.601111111111111,
+     "s5e-20260925": 10.398888888888889
+    },
+    "unspent_node_hours": 310.18408854166665
+   },
+   "binding": "the unspent cumulative envelope (10% of uncommitted, 341.630, does not bind)",
+   "concurrency_nodes": 2,
+   "stages": {
+    "development": 46.527,
+    "verification_repair": 62.037
+   }
+  },
+  "gpu": {
+   "campaign_cap_node_hours": 114.904,
+   "carried_forward": {
+    "envelope_node_hours": 125.0,
+    "prior_charged_node_hours": 10.095277777777778,
+    "prior_charged_by_campaign": {
+     "s5c-20260924": 9.786111111111111,
+     "s5n-20260925": 0.30916666666666665,
+     "s5e-20260925": 0.0
+    },
+    "unspent_node_hours": 114.90472222222222
+   },
+   "binding": "the unspent cumulative envelope, 459.62 A100-h (10% of uncommitted, 5824.26 GPU node-h, does not bind)",
+   "concurrency_gpus": 4,
+   "stages": {
+    "development": 17.235,
+    "verification_repair": 22.981
+   }
+  }
+ },
+ "stage_rules": {
+  "development": "contract stages 1-2 together: at most 15% of each pool (handoff Stage 2)",
+  "verification_repair": "20% floor of each pool (independent review compute, reverification of repairs); a floor, not a claim that all required validation fits",
+  "unallocated": "CPU 201.620, GPU 74.688 node-h: allocated only by the Stage-3 production admission (a contract amendment and a budget revision with a ledger rebind), which also reserves the full priced validation and protects measurement-validation resources from inference"
+ },
+ "storage": {
+  "pscratch": {
+   "measured_used_tib": 16.43,
+   "quota_tib": 20.0,
+   "campaign_cap_gib": 20.0,
+   "namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
+   "rule": "no bulk storage expansion (the predecessors' rule retained)"
+  }
+ },
+ "concurrency": "2 CPU nodes and 4 GPUs over every open admission",
+ "retries": "as the s5c/s5n/s5e budgets (retained): at most two retries per task for a diagnosed infrastructure failure; at most one corrective resubmission per stage after a diagnosed code defect, verified repair and fresh admission; the stricter applies; scientific failure never triggers an identical retry; --no-requeue enforced by the meter",
+ "ledger": "/pscratch/sd/j/josephrb/s5p-20260926/ledger/admissions.jsonl",
+ "revision_history": [
+  {
+   "revision": 1,
+   "measured_utc": "2026-09-26T16:04:38Z",
+   "note": "activation budget"
+  }
+ ]
+}
