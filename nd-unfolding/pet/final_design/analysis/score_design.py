@@ -85,18 +85,16 @@ CROSS_CHECK_TOL = 1e-9
 SPECIES = {"proton": ("tr_n_p", 3), "neutron": ("tr_n_n", 3),
            "pipm": ("tr_n_pipm", 2), "pi0": ("tr_n_pi0", 1)}
 
-# E5: true-q3 quartile edges (GeV). PROVISIONAL constant, computed ONCE by `q3_quartiles.py` on
-# 2026-09-25 from ALL 49,149,598 truth-passing inventory rows with finite true q3 (unweighted,
-# numpy.quantile linear; inventory G2_FPS_MEFHC_P12.npz sha256 fa6b3463...; 1,330 truth-passing
-# rows have non-finite q3). The protocol names the DEV bank; banks/BANK_MANIFEST.json does not
-# exist yet, so this must be recomputed with `q3_quartiles.py --exclude-rows <FB+RB rows>` and
-# replaced (by a dated protocol amendment) before any E5 number is used for a decision.
-Q3_QUARTILE_EDGES = (1.2509283125400543, 2.596855401992798, 4.490886569023132)
+# DEV-bank quartiles of true q3 (unweighted, 45,087,969 truth-passing DEV rows with finite q3),
+# adopted by PROTOCOL-20260925 Amendment 1; job 58891701, provenance/q3_quartiles_dev_20260926.json.
+# (The provisional all-inventory constant of 2026-09-25 is superseded.)
+Q3_QUARTILE_EDGES = (1.2509539127349854, 2.5968730449676514, 4.490950584411621)
 Q3_QUARTILE_PROVENANCE = {
-    "status": "PROVISIONAL (all truth-passing inventory rows, not yet the DEV bank)",
+    "status": "ADOPTED (DEV bank), PROTOCOL-20260925 Amendment 1",
     "script": "nd-unfolding/pet/final_design/analysis/q3_quartiles.py",
     "inventory_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
-    "n_used": 49149598, "weighting": "unweighted rows", "date": "2026-09-25"}
+    "excluded": "FB and RB rows (banks/BANK_MANIFEST.json)", "job": "58891701",
+    "n_used": 45087969, "weighting": "unweighted rows", "date": "2026-09-26"}
 
 HISTOGRAM_BINS = {"eavail": N_EAV, "eavail_x_proton": N_EAV * 4, "eavail_x_neutron": N_EAV * 4,
                   "eavail_x_pipm": N_EAV * 3, "eavail_x_pi0": N_EAV * 2,
