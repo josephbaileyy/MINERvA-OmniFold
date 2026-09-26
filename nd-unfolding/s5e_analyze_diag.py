@@ -320,6 +320,51 @@ def d7(runs: Path, U, names, shape) -> dict:
     return out
 
 
+def repairs(runs: Path, s5n: Path, U, names) -> dict:
+    """Amendment 2: the edge-safe precision probe, the sentinel-row mask probe and the driver parity.
+    The D2 attribution rule is applied with the edge-safe probe scale."""
+    out = {"note": "D2 entries asimov_eavail_jitter1 and data_jitter1 are the CONFOUNDED original probe "
+                   "(exact zeros pushed off the grid edge 0; amendment 2) and are not a rounding measurement"}
+    rep = runs / "rep"
+    base = load(runs / "asimov" / "asimov_b0_eavail.npz")
+    b5 = U @ base["xsec_it5_flat"]
+    p = load(rep / "rep_asimov_eavail_jitteredge1.npz")
+    f = U @ p["xsec_flat"]
+    out["asimov_eavail_edge_safe_jitter"] = {"max_rel_pct": 100 * float(np.max(np.abs(rel(f, b5)))),
+                                             "median_rel_pct": 100 * float(np.median(np.abs(rel(f, b5))))}
+    d = U @ load(runs / "drv" / "data_b0.npz")["xsec_flat"]
+    scale = []
+    for s in (1, 2):
+        f = U @ load(rep / f"rep_data_jitteredge{s}.npz")["xsec_flat"]
+        x = np.abs(rel(f, d))
+        scale.append(x)
+        out[f"data_edge_safe_jitter{s}"] = {"max_rel_pct": 100 * float(x.max()), "median_rel_pct": 100 * float(np.median(x)),
+                                           "argmax": names[int(x.argmax())]}
+    scale = np.maximum(*scale)
+    drv = U @ s5c_assemble.read_flat(str(s5n / "c7" / "xsec_5d_driver_negweight_F2.root"))
+    ns = U @ load(rep / "rep_data_nosentinel.npz")["xsec_flat"]
+    orig, masked = np.abs(rel(drv, d)), np.abs(rel(drv, ns))
+    out["data_sentinel_mask"] = {
+        "nosentinel_vs_b0_max_rel_pct": 100 * float(np.max(np.abs(rel(ns, d)))),
+        "nosentinel_vs_b0_median_rel_pct": 100 * float(np.median(np.abs(rel(ns, d)))),
+        "driver_vs_npz_b0": {"max_pct": 100 * float(orig.max()), "median_pct": 100 * float(np.median(orig)), "argmax": names[int(orig.argmax())]},
+        "driver_vs_npz_nosentinel": {"max_pct": 100 * float(masked.max()), "median_pct": 100 * float(np.median(masked)), "argmax": names[int(masked.argmax())]},
+        "edge_safe_probe_scale_max_pct": 100 * float(scale.max()), "edge_safe_probe_scale_median_pct": 100 * float(np.median(scale)),
+        "functionals_where_mask_moves_the_difference_by_more_than_the_probe": int(np.sum(np.abs(orig - masked) > scale)),
+        "rule": "a pipeline factor is named only if switching it alone moves the driver-npz difference by more than the edge-safe probe scale"}
+    a0 = load(runs / "drv" / "driver_eavail.npz")
+    an = load(rep / "rep_asimov_eavail_nosentinel.npz")
+    rd, rn, rb = rel(a0["fn_unf"], a0["fn_true"]), rel(U @ an["xsec_flat"], an["fn_true"]), rel(b5, base["fn_true"])
+    out["asimov_eavail_driver_vs_npz"] = {"with_sentinel_rows_max_pp": 100 * float(np.max(np.abs(rd - rb))),
+                                          "with_sentinel_rows_median_pp": 100 * float(np.median(np.abs(rd - rb))),
+                                          "without_sentinel_rows_max_pp": 100 * float(np.max(np.abs(rd - rn))),
+                                          "without_sentinel_rows_median_pp": 100 * float(np.median(np.abs(rd - rn)))}
+    par = load(rep / "rep_driver_nominal_parity.npz")
+    out["driver_parity"] = par["meta"]["input_parity"]
+    out["driver_parity_nominal_residual"] = ew_stats(rel(par["fn_unf"], par["fn_true"]))
+    return out
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     ap.add_argument("--s5c-contract", type=Path, required=True)
@@ -339,6 +384,8 @@ def main(argv=None) -> int:
                  "S_dep": {t: {"ew": rec["D4"][t]["S_dep_ew"], "reco5d": rec["D4"][t]["S_dep_reco5d"],
                                "ncell_reco5d": rec["D4"][t]["ncell_reco5d"]} for t in TRUTHS}}
     rec["D7"] = d7(a.runs, U, names, shape)
+    if (a.runs / "rep").is_dir():
+        rec["D2_repairs"] = repairs(a.runs, a.s5n_runs, U, names)
     rec["interpretation_rules"] = rules(rec)
     a.out.write_text(json.dumps(rec, indent=1, default=float) + "\n")
     print(json.dumps({"D0": {k: rec["D0"][k] for k in ("n_equal", "n_compared", "data_b0_vs_s5n_c7_npz_equal")},
