@@ -210,5 +210,49 @@ class Constructions(unittest.TestCase):
         np.testing.assert_array_equal(out["tmpl_w"], 2.0 * bkg["bkg_w"][is_c][keep])
 
 
+
+class DiagnosisRepairs(unittest.TestCase):
+    """Amendment 2: the precision probe must not move values off grid edges; the mask probe drops
+    exactly the sentinel rows; the driver parity handles the driver's smaller truth-passing set."""
+
+    def test_edge_safe_jitter_never_moves_a_value_on_a_grid_edge(self):
+        x = np.random.default_rng(1).uniform(0.05, 1.9, (5000, 5)).astype(np.float32)
+        x[:100, 2] = 0.0   # exact zeros on the lower E_avail edge (as in the MC truth)
+        x[100:150, 4] = 1.5  # an interior W edge
+        naive = st.jitter_coords(x, 3)
+        self.assertTrue(np.any(naive[:100, 2] < 0.0))  # the original probe pushes zeros out of the grid
+        safe = st.jitter_coords(x, 3, EDGES)
+        np.testing.assert_array_equal(safe[:100, 2], 0.0)
+        np.testing.assert_array_equal(safe[100:150, 4], 1.5)
+        self.assertGreater(np.mean(safe[150:, 0] != x[150:, 0].astype(np.float64)), 0.99)  # others still move
+
+    def test_drop_sentinel_rows_marks_exactly_the_sentinels(self):
+        inp = toy_inputs(n=300)
+        inp["MCgen"][:7, 3] = -9999.0
+        inp["MCgen"][7:9, 4] = -9999.0
+        self.assertEqual(st.drop_sentinel_rows(inp), 9)
+        np.testing.assert_array_equal(inp["pass_truth"], np.arange(300) >= 9)
+
+    def test_driver_parity_compares_after_removing_the_npz_sentinel_rows(self):
+        import s5e_driver_departure as dd
+
+        rng = np.random.default_rng(2)
+        n = 400
+        gen = rng.uniform(0, 2, (n, 5))
+        reco = gen + rng.normal(0, 0.1, gen.shape)
+        pr = rng.uniform(size=n) < 0.6
+        wt, wr = rng.uniform(0.1, 0.3, n), rng.uniform(0.1, 0.3, n)
+        npz = {"MCgen": gen.astype(np.float32), "MCreco": reco.astype(np.float32), "pass_reco": pr,
+               "w_truth": wt, "w_reco": wr}
+        npz["MCgen"][:5, 3] = -9999.0
+        pt = np.ones(n, bool)
+        pt[:5] = False  # the driver never admits the sentinel rows
+        out = dd.input_parity((gen, reco, None, pr, pt), {"MCgen_weights": wt, "MCreco_weights": wr}, npz)
+        self.assertEqual(out["npz_sentinel_rows"], 5)
+        self.assertTrue(out["aligned"] and out["reco_float32_equal"] and out["w_truth_equal"] and out["pass_reco_equal"])
+        pt[5] = False  # a different row set: refused, not silently compared
+        out = dd.input_parity((gen, reco, None, pr, pt), {"MCgen_weights": wt, "MCreco_weights": wr}, npz)
+        self.assertFalse(out["aligned"])
+
 if __name__ == "__main__":
     unittest.main()

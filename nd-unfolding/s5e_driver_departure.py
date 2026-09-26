@@ -50,9 +50,16 @@ def input_parity(args, kwargs, npz: dict) -> dict:
     MCgen, MCreco, _, pass_reco, pass_truth = (np.asarray(x) for x in args[:5])
     pt = pass_truth.astype(bool)
     out = {"driver_rows": int(pt.size), "driver_pass_truth": int(pt.sum()), "npz_rows": int(npz["MCgen"].shape[0])}
-    if pt.sum() != npz["MCgen"].shape[0]:
-        out["aligned"] = False
-        return out
+    keep = np.ones(npz["MCgen"].shape[0], bool)
+    if pt.sum() != keep.size:
+        # the npz keeps rows whose truth q3 or W is the -9999 sentinel; the driver does not admit them
+        keep = ~np.any(npz["MCgen"] < -9000, axis=1)
+        out["npz_sentinel_rows"] = int((~keep).sum())
+        if pt.sum() != keep.sum():
+            out["aligned"] = False
+            return out
+    npz = {k: np.asarray(npz[k])[keep] for k in ("MCgen", "MCreco", "pass_reco", "w_truth", "w_reco")}
+    out["npz_rows_compared"] = int(keep.sum())
     g, r = MCgen[pt], MCreco[pt]
     out["aligned"] = bool(np.array_equal(g.astype(np.float32), npz["MCgen"]))
     out["reco_float32_equal"] = bool(np.array_equal(r.astype(np.float32), npz["MCreco"]))

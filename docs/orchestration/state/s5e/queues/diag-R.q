@@ -1,0 +1,2 @@
+# s5e diagnosis repair allocation (CPU pool, stage diagnosis, contract amendment 2): 6 steps of 32 CPUs. Run by nd-unfolding/s5c_queue.sh with S5C_NS set to the s5e namespace.
+S5C_CAMPAIGN=s5e bash "$S5C_DEPLOY/nd-unfolding/s5c_launch.sh" "$S5C_DEPLOY" "$S5C_PIN" cpu diagnosis 1 s5e_diag_r 56G "s5e diagnosis repairs: edge-safe precision probe, sentinel mask probe, driver parity" diag-repair-tasks.tsv:diag/rep:6

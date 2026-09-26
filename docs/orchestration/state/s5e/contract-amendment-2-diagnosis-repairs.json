@@ -1,0 +1,17 @@
+{
+ "schema": "s5e-contract-amendment/1",
+ "amends": "docs/orchestration/state/s5e/contract.json",
+ "number": 2,
+ "status": "FROZEN at the commit that first adds this file, after the first diagnosis allocations (58881080, 58881083) and BEFORE the repair runs it declares; it changes no gate and no interpretation rule",
+ "findings_prompting_it": {
+  "D2b_jitter_probe_invalid": "the original float32-ulp jitter moved exact zeros on the lower grid edge 0 below the edge: 293,292 MC truth E_avail values, 231,685 MC reco W values and 48,082 data reco W values are exactly 0 (and 11,503 background reco W). About half leave the grid or window per run, which float64-to-float32 rounding never does (0 is exact in both). Its data result (functionals moved by up to 30.0%, median 1.1%) and asimov result (up to 1.06%, median 0.10%) are therefore NOT a rounding-sensitivity measurement and are withdrawn as such; they remain in the receipt labelled as the confounded probe",
+  "D2c_parity_stopped": "the driver admits 32,846,302 truth-passing rows, the npz 32,849,103; the difference, 2,801, equals the npz's rows with a -9999 truth sentinel (KNOWN_ISSUES 76). The parity check stopped at the count, as designed, so masks, weights and coordinates were not compared"
+ },
+ "repairs": {
+  "edge_safe_jitter": "s5e_trace.py --jitter-mode edge_safe: a value equal to a grid edge of its axis is not moved; every other value moves uniformly within +-1/2 float32 ulp. Rows: the asimov E_avail departure (K5, seed 1) and the real data (seeds 1 and 2)",
+  "sentinel_mask_probe": "s5e_trace.py --drop-sentinel-rows: the 2,801 sentinel rows fail the truth selection, as in the driver. Rows: the real data and the asimov E_avail departure (K5); compared with the driver products (s5n c7 data; D1 driver_eavail)",
+  "parity_repair": "s5e_driver_departure.input_parity compares against the npz with its sentinel rows removed when, and only when, the counts then agree; the driver nominal closure is re-run to obtain the comparison (a different row set is still refused)"
+ },
+ "attribution_use": "the D2 rule is applied with the edge-safe probe scale: a pipeline factor is named only if switching it alone moves the driver-npz difference by more than the edge-safe rounding-probe scale",
+ "execution": "one interactive CPU allocation, stage diagnosis, 1.0 h, 6 steps of 32 CPUs (queue diag-R.q); diagnosis charged so far 3.679 of 10.0 CPU node-h (meter, 2026-09-26T02:42:25Z)"
+}

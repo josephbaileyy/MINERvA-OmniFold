@@ -348,15 +348,32 @@ class Recorder:
 # ------------------------------------------------------------------------------ constructions
 
 
-def jitter_coords(x: np.ndarray, seed: int | None) -> np.ndarray:
-    """float64 copy; with a seed, each value moved uniformly within +-1/2 of its float32 ulp."""
+def jitter_coords(x: np.ndarray, seed: int | None, edges: list | None = None) -> np.ndarray:
+    """float64 copy; with a seed, each value moved uniformly within +-1/2 of its float32 ulp.
+
+    With ``edges`` (edge-safe mode) a value equal to a grid edge of its axis is NOT moved. Without it
+    (the original D2(b) probe) exact zeros sitting on the lower edge 0 -- 293,292 truth E_avail and
+    231,685 reco W rows of the MC, 48,082 reco W rows of the data -- can be pushed below the edge and
+    out of the grid, a change that float64-to-float32 rounding never makes (0 is exact in both)."""
     x32 = np.asarray(x, np.float32)
     out = x32.astype(np.float64)
     if seed is None:
         return out
     ulp = np.spacing(np.abs(x32)).astype(np.float64)
     rng = np.random.default_rng(seed)
-    return out + (rng.uniform(-0.5, 0.5, out.shape) * ulp)
+    step = rng.uniform(-0.5, 0.5, out.shape) * ulp
+    if edges is not None:
+        for k, e in enumerate(edges):
+            step[np.isin(out[:, k], np.asarray(e, np.float32).astype(np.float64)), k] = 0.0
+    return out + step
+
+
+def drop_sentinel_rows(inputs: dict) -> int:
+    """Mark MC rows with a -9999 truth sentinel on any axis as failing the truth selection (the driver
+    never admits them: its truth-passing set is 2,801 rows smaller than the npz's); returns the count."""
+    bad = np.any(np.asarray(inputs["MCgen"]) < -9000, axis=1)
+    inputs["pass_truth"] = np.asarray(inputs["pass_truth"], bool) & ~bad
+    return int(bad.sum())
 
 
 def asimov_same(inputs: dict, r: np.ndarray) -> tuple[dict, np.ndarray]:
@@ -455,6 +472,10 @@ def main(argv=None) -> int:
     ap.add_argument("--seed-per-estimator", action="store_true")
     ap.add_argument("--coords", choices=("float32", "float64"), default="float32")
     ap.add_argument("--jitter-f32", type=int, default=None, help="seed of the +-1/2 float32-ulp perturbation")
+    ap.add_argument("--jitter-mode", choices=("all", "edge_safe"), default="all",
+                    help="edge_safe: values equal to a grid edge are not moved (amendment 2)")
+    ap.add_argument("--drop-sentinel-rows", action="store_true",
+                    help="rows with a -9999 truth sentinel fail the truth selection, as in the driver (amendment 2)")
     ap.add_argument("--refine-capacity", default=None, help="N,L of the refinement classifier")
     ap.add_argument("--expectation-template", action="store_true")
     ap.add_argument("--threads", type=int, default=int(os.environ.get("SLURM_CPUS_PER_TASK", "32")))
@@ -472,7 +493,7 @@ def main(argv=None) -> int:
     if a.jitter_f32 is not None and a.coords != "float64":
         print("--jitter-f32 needs --coords float64", file=sys.stderr)
         return 2
-    if a.construction == "pseudo" and a.coords != "float32":
+    if a.construction == "pseudo" and (a.coords != "float32" or a.drop_sentinel_rows):
         print("the pseudo construction is the s5n experiment (float32 coordinates)", file=sys.stderr)
         return 2
     t0 = time.time()
@@ -492,10 +513,12 @@ def main(argv=None) -> int:
     ratio, ratio_sha = None, None
     if a.eavail_ratio is not None:
         ratio, ratio_sha = json.loads(a.eavail_ratio.read_text()), s5n_pseudo.sha256_path(a.eavail_ratio)
+    n_dropped = drop_sentinel_rows(inputs) if a.drop_sentinel_rows else 0
     if a.coords == "float64":
+        je = inputs["edges"] if a.jitter_mode == "edge_safe" else None
         for key in ("MCgen", "MCreco", "measured"):
-            inputs[key] = jitter_coords(inputs[key], a.jitter_f32)
-        bkg["bkg_reco"] = jitter_coords(bkg["bkg_reco"], a.jitter_f32)
+            inputs[key] = jitter_coords(inputs[key], a.jitter_f32, je)
+        bkg["bkg_reco"] = jitter_coords(bkg["bkg_reco"], a.jitter_f32, je)
     capacity, refine_cap = parse_pair(a.capacity), parse_pair(a.refine_capacity)
     refine_override = {"n_estimators": refine_cap[0], "num_leaves": refine_cap[1]} if refine_cap else None
     r_full = s5n_pseudo.truth_weight(a.truth, inputs, a.amplitude, ratio)
@@ -536,6 +559,7 @@ def main(argv=None) -> int:
         "pseudo_seed": a.pseudo_seed, "split_key": split_key, "no_background": a.no_background,
         "estimator_seed": a.estimator_seed, "iters": a.iters, "capacity": capacity, "missed": a.missed,
         "seed_per_estimator": a.seed_per_estimator, "coords": a.coords, "jitter_f32": a.jitter_f32,
+        "jitter_mode": a.jitter_mode, "sentinel_rows_dropped": n_dropped,
         "refine_override": refine_override, "expectation_template": a.expectation_template,
         "threads": a.threads, "input_npz_sha256": npz_sha, "bkg_dump_sha256": bkg_sha,
         "eavail_ratio_sha256": ratio_sha, "functional_names": names, "snapshots": rec.snap,
