@@ -1,0 +1,1318 @@
+{
+ "schema": "gen5d-build/v1",
+ "created_by": "gen_to_xsec5d.py (s5p gen5d lane)",
+ "output_dir": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/",
+ "grid": {
+  "axes": [
+   "pt",
+   "pz",
+   "eavail",
+   "q3",
+   "W"
+  ],
+  "shape": [
+   14,
+   16,
+   7,
+   7,
+   6
+  ],
+  "n_cells": 65856,
+  "order": "C"
+ },
+ "code": {
+  "code_root_on_cluster": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree",
+  "source": "export-of:81d94a95646c4826ae7d353ad188fe91b89ed193",
+  "files": {
+   "3d-unfolding/genie/gen_to_xsec5d.py": "1608acd52ea12e86633de2beb847a50576df9a3e6d59ba82c994dfb8cbb85de1",
+   "3d-unfolding/unfold_3d_omnifold_unbinned.py": "4ae386204e95f00f8f794effc5cacdc3adb311bf79975e01b0202b53dc66ad0b",
+   "2d-unfolding/unfold_2d_omnifold_unbinned.py": "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e",
+   "3d-unfolding/genie/genie_to_xsec3d.py": "c7f288dcbf4a8f0297c53984a302dea1aaa31228b1b3ee5caeebb4fe73a306d8",
+   "3d-unfolding/genie/gen_to_xsec_eavailW.py": "5191ad5bda9dd7d869959cab946d49d544f3b2dac6625d6c217096c83a2357e8",
+   "3d-unfolding/genie/gibuu_to_xsec_eavailW.py": "ee60eb15c396595684146cd55ae19f9734c361c4b4825024140cac59f97120ff",
+   "3d-unfolding/genie/gibuu_to_xsec3d.py": "d792f476a07d37afbb9abe5e1a53460583641f374604147a772bc13f575b6bb7",
+   "3d-unfolding/genie/gst_reader.py": "dd72f87414a695d0abf46245f02453c7e0e88051c51c385a8332407d68803783",
+   "3d-unfolding/xsec_3d.py": "4dfcff5d462dfefcc3fb43b46e44eb656577d72f03021c0b71c1e7fe7ede5969",
+   "3d-unfolding/genie/nuwro_to_flat_5d.C": "01e89fb215f1641554b750377e33ba01c1f4bc9462ccd45ae969a4499dbd9b81"
+  }
+ },
+ "nuwro_flat5d": [
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p1.root",
+   "sha256": "385d5ba62bca7252988a32c75cecb42a8ab5e710348da0fb440998b65deefc01",
+   "bytes": 15594645
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p2.root",
+   "sha256": "47dbc870330cbc00e53953b69a58b7ec255edc0145fd89a5c7f215daa0af08e0",
+   "bytes": 15594370
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p3.root",
+   "sha256": "4aaa9df3d190450498e4d7d6b06c1bcd0e2ee076d1c554b370457531eddf0232",
+   "bytes": 15595222
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p4.root",
+   "sha256": "e830e4a7bf48d46c4b3518a2734f7992e4a1c8d4582f3d942abe6882408d0976",
+   "bytes": 15593707
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p5.root",
+   "sha256": "46c78779432d45f89943c6b18430e2d9bad48908f7880891023e55537cf27bf8",
+   "bytes": 15595332
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p6.root",
+   "sha256": "bddd3223889c6a2ef0d190ebc0d68690bcd19b8b23dd5cf7792fe8611a92363d",
+   "bytes": 15593950
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p7.root",
+   "sha256": "364959421642748ee91a595a5c7c11bb8ffc75a0462c5591b67a52987876b549",
+   "bytes": 15594419
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p8.root",
+   "sha256": "6ba095144165f252e63a1e4f3c78b2abc8df25a3a112981f26326683bc0f095e",
+   "bytes": 15595088
+  }
+ ],
+ "generators": {
+  "genie_cv": {
+   "label": "GENIE 2.12.10 CV (no MEC)",
+   "npz": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/genie_cv_xsec5d.npz",
+   "npz_sha256": "8ff4e5e6824f3ba76d292d4bd56eeffd41f0007b83a5e6d777d76a4e0a4f0257",
+   "meta_json": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/genie_cv_xsec5d.meta.json",
+   "meta_json_sha256": "bd3302516bac0354bd19cc35fd4b9a7dac783834cce1e5ad287c7075663feb1e",
+   "n_events_in_grid": 938141,
+   "n_in_phase_space": 938141,
+   "n_nonzero_cells": 7290,
+   "range_accounting": {
+    "pt": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.0014066993594377076,
+     "max": 4.028424393436187
+    },
+    "pz": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 1.500007111325272,
+     "max": 47.34720474259035
+    },
+    "eavail": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.0,
+     "max": 46.814291303579
+    },
+    "q3": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.04728284765233716,
+     "max": 47.456836171761964
+    },
+    "W": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.0,
+     "max": 9.07940476117417
+    }
+   },
+   "normalisation": {
+    "convention": "genie_to_xsec3d.py / gen_to_xsec_eavailW.py: sigma_totcc/13 x N_bin/N_cc",
+    "sigma_totcc_flux_avg_per_nucleon_cm2": 3.867551373548918e-38,
+    "sigma_info": "<sigmaCC>_CH=50.278e-38 cm^2, /13 nucleon",
+    "N_events_in_file": 2000000,
+    "N_cc": 1484189,
+    "N_nonMEC_cc": 1484189,
+    "f_MEC": 0.0,
+    "per_event_xsec_cm2": 2.605834818576959e-44,
+    "graphs": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/xsec_graphs.root",
+    "flux": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/flux_mefhc_numu.root",
+    "flux_hist": "flux_numu"
+   },
+   "event_inputs": [
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_cv_ALL.gst.root",
+     "sha256": "bafb698ceae7dc1a41b7bf1105dce5d2e073373f529573584b01dd7dff081a35",
+     "bytes": 999514329,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/xsec_graphs.root",
+     "sha256": "d795d6e09a6de1afaa3ac11fcd7c94b90ec4fb60143c0b31d11caaff0f44d84b",
+     "bytes": 2510485,
+     "role": "normalisation"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/flux_mefhc_numu.root",
+     "sha256": "91b5b899e4677be7ef8920718a4441dedc8b96c980dd512a596c7229cb30ed10",
+     "bytes": 5538,
+     "role": "normalisation"
+    }
+   ],
+   "validation_references": [
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec3d.root",
+     "sha256": "13249535e95581ef16462617b776652356d09ae4042f651958b3d644f3fbdfbe"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec_eavailW.root",
+     "sha256": "b01613297e9a7759b50ac7cce0bfa142dfb14f9467c5365383e2d595ec328a10"
+    }
+   ],
+   "validation": {
+    "recomputed_3d_vs_committed_3d": {
+     "max_rel_diff_nonzero_bins": 4.83106212491108,
+     "n_bins": 1568,
+     "n_ref_zero": 282,
+     "n_zero_mismatch": 64,
+     "bitwise_equal": false
+    },
+    "recomputed_eavailW_vs_committed_eavailW": {
+     "max_rel_diff_nonzero_bins": 0.0,
+     "n_bins": 42,
+     "n_ref_zero": 0,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": true
+    },
+    "5d_marginal_vs_committed_3d": {
+     "max_rel_diff_nonzero_bins": 4.83106212491108,
+     "n_bins": 1568,
+     "n_ref_zero": 282,
+     "n_zero_mismatch": 64,
+     "bitwise_equal": false,
+     "chi2_equal_stats_approx": 1785.5442985307282,
+     "ndf": 1274
+    },
+    "5d_marginal_vs_committed_eavailW": {
+     "max_rel_diff_nonzero_bins": 1.3295520789188408e-15,
+     "n_bins": 42,
+     "n_ref_zero": 0,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    },
+    "5d_marginal_vs_recomputed_3d": {
+     "max_rel_diff_nonzero_bins": 5.024841185462178e-16,
+     "n_bins": 1568,
+     "n_ref_zero": 294,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    },
+    "5d_marginal_vs_recomputed_eavailW": {
+     "max_rel_diff_nonzero_bins": 1.3295520789188408e-15,
+     "n_bins": 42,
+     "n_ref_zero": 0,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    }
+   },
+   "integrated_sigma_cm2": {
+    "5d_grid": 2.444640482534607e-38,
+    "committed_3d": 2.516697481511018e-38,
+    "committed_eavailW": 2.444640482534607e-38,
+    "5d_stat_rel_err": 0.0010324426615690343
+   },
+   "ledger_compare": {
+    "row": "VL35",
+    "ledger_integrated_sigma_cm2": 2.4446e-38,
+    "5d_over_ledger": 1.0000165599830675
+   },
+   "diagnostics": {
+    "reader_parity": {
+     "n_checked": 20000,
+     "n_mismatch": 0
+    },
+    "gst_Q2_vs_lab_Q2_max_absdiff_GeV2": 0.0,
+    "gst_Q2_vs_lab_Q2_max_reldiff": 0.0,
+    "W_struck_nucleon_mass": {
+     "n": 938141,
+     "n_W2_negative_nan_in_CVUniverse": 29,
+     "n_W_bin_changes": 1438,
+     "max_abs_dW_GeV": 0.07935219322514908
+    }
+   },
+   "stageA_3d_shape_compare": {
+    "total_ratio_5d_over_3dStageA": 0.9713684304507079,
+    "chi2_raw": 1688.9582647603565,
+    "chi2_shape_scaled": 1287.8279057702975,
+    "ndf": 1274,
+    "ndf_shape": 1273,
+    "n_bins_zero_in_one_only": 64
+   }
+  },
+  "genie_mec": {
+   "label": "GENIE 2.12.10 + Valencia MEC (Default+CCMEC)",
+   "npz": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/genie_mec_xsec5d.npz",
+   "npz_sha256": "12ae97d529adc4736f02ec881f5d957f675af0b2e208f54f65a86a103cb77aec",
+   "meta_json": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/genie_mec_xsec5d.meta.json",
+   "meta_json_sha256": "e1b33b0d27c54955f5f434b70ab2dca1f8a981382a68323ac0838ba87da90600",
+   "n_events_in_grid": 960128,
+   "n_in_phase_space": 960128,
+   "n_nonzero_cells": 7323,
+   "range_accounting": {
+    "pt": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.0010845785770186073,
+     "max": 3.777223988303955
+    },
+    "pz": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 1.5000039357004995,
+     "max": 48.23296716705123
+    },
+    "eavail": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.0,
+     "max": 42.78680331760378
+    },
+    "q3": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.04786440615405455,
+     "max": 44.92700271542944
+    },
+    "W": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.0,
+     "max": 9.055049716525144
+    }
+   },
+   "normalisation": {
+    "convention": "genie_mec_to_xsec3d.py: sigma_totcc/13 / N_nonMEC per event (3D convention)",
+    "sigma_totcc_flux_avg_per_nucleon_cm2": 3.867551373548918e-38,
+    "sigma_info": "<sigmaCC>_CH=50.278e-38 cm^2, /13 nucleon",
+    "N_events_in_file": 2000000,
+    "N_cc": 1495571,
+    "N_nonMEC_cc": 1452626,
+    "f_MEC": 0.028714785189068257,
+    "per_event_xsec_cm2": 2.6624550115094446e-44,
+    "graphs": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/xsec_graphs.root",
+    "flux": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/flux_mefhc_numu.root",
+    "flux_hist": "flux_numu",
+    "factor_to_eavailW_band_convention": 0.9712852148109318
+   },
+   "event_inputs": [
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_mec_ALL.gst.root",
+     "sha256": "61463c871812c64ea710aa905da506556d1582e673aad7fb9d99e06295df2f74",
+     "bytes": 997606940,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/xsec_graphs.root",
+     "sha256": "d795d6e09a6de1afaa3ac11fcd7c94b90ec4fb60143c0b31d11caaff0f44d84b",
+     "bytes": 2510485,
+     "role": "normalisation"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/flux_mefhc_numu.root",
+     "sha256": "91b5b899e4677be7ef8920718a4441dedc8b96c980dd512a596c7229cb30ed10",
+     "bytes": 5538,
+     "role": "normalisation"
+    }
+   ],
+   "validation_references": [
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mec_cv_xsec3d.root",
+     "sha256": "4787e0b2aa34d5db7e2ed4a1ad9a6617608a4a06836b07c1266a8e49ac310569"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mec_xsec_eavailW.root",
+     "sha256": "99a3ec767a4607d27f9c8d9f8dc282cce78c3b44e8fe98707c6fbbf054533961"
+    }
+   ],
+   "validation": {
+    "recomputed_3d_vs_committed_3d": {
+     "max_rel_diff_nonzero_bins": 0.0,
+     "n_bins": 1568,
+     "n_ref_zero": 288,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": true
+    },
+    "recomputed_eavailW_vs_committed_eavailW": {
+     "max_rel_diff_nonzero_bins": 0.0,
+     "n_bins": 42,
+     "n_ref_zero": 0,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": true
+    },
+    "5d_marginal_vs_committed_3d": {
+     "max_rel_diff_nonzero_bins": 5.373121876471441e-16,
+     "n_bins": 1568,
+     "n_ref_zero": 288,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    },
+    "5d_marginal_vs_committed_eavailW": {
+     "max_rel_diff_nonzero_bins": 0.029563700498271447,
+     "n_bins": 42,
+     "n_ref_zero": 0,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    },
+    "5d_marginal_vs_recomputed_3d": {
+     "max_rel_diff_nonzero_bins": 5.373121876471441e-16,
+     "n_bins": 1568,
+     "n_ref_zero": 288,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    },
+    "5d_marginal_vs_recomputed_eavailW": {
+     "max_rel_diff_nonzero_bins": 0.029563700498271447,
+     "n_bins": 42,
+     "n_ref_zero": 0,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    },
+    "5d_marginal_vs_committed_eavailW_x_Nnonmec_over_Ncc": {
+     "max_rel_diff_nonzero_bins": 1.3594694176237422e-15,
+     "n_bins": 42,
+     "n_ref_zero": 0,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    }
+   },
+   "integrated_sigma_cm2": {
+    "5d_grid": 2.5562976052905404e-38,
+    "committed_3d": 2.55629760529054e-38,
+    "committed_eavailW": 2.4828940686752924e-38,
+    "5d_stat_rel_err": 0.0010205526915812958
+   },
+   "ledger_compare": {
+    "row": "VL36",
+    "ledger_integrated_sigma_cm2": 2.4829e-38,
+    "5d_over_ledger": 1.0295612410046884,
+    "5d_x_factor_over_ledger": 0.9999976111302481
+   },
+   "diagnostics": {
+    "reader_parity": {
+     "n_checked": 20000,
+     "n_mismatch": 0
+    },
+    "gst_Q2_vs_lab_Q2_max_absdiff_GeV2": 0.0,
+    "gst_Q2_vs_lab_Q2_max_reldiff": 0.0,
+    "W_struck_nucleon_mass": {
+     "n": 960128,
+     "n_W2_negative_nan_in_CVUniverse": 37,
+     "n_W_bin_changes": 1449,
+     "max_abs_dW_GeV": 0.011234650102561083
+    }
+   }
+  },
+  "nuwro_cv": {
+   "label": "NuWro 21.09",
+   "npz": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_cv_xsec5d.npz",
+   "npz_sha256": "3f4c7c6f575fb73d19cdff7586c37ccddd81264f65fadd07fa134f9a91e6953a",
+   "meta_json": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_cv_xsec5d.meta.json",
+   "meta_json_sha256": "1af4b772a62eef3012af23cae587075bd7a7e1e536042feadac892d433fc7c06",
+   "n_events_in_grid": 1261997,
+   "n_in_phase_space": 1261997,
+   "n_nonzero_cells": 7994,
+   "range_accounting": {
+    "pt": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.0008564903396495842,
+     "max": 3.54465072070873
+    },
+    "pz": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 1.5000003790342316,
+     "max": 49.548005010319464
+    },
+    "eavail": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.0,
+     "max": 40.34412338302607
+    },
+    "q3": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.014003595362704485,
+     "max": 42.527422662788034
+    },
+    "W": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.0,
+     "max": 8.618410827669159
+    }
+   },
+   "normalisation": {
+    "convention": "nuwro_to_xsec3d.py / nuwro_to_xsec_eavailW.py: sum(weight in bin)/N_total; weight = NuWro flux-avg sigma_CC/nucleon",
+    "N_total": 2000000,
+    "N_cc": 1999767,
+    "weight_mean_cm2": 3.7153775461654117e-38,
+    "weight_unique": 8
+   },
+   "event_inputs": [
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p1.root",
+     "sha256": "385d5ba62bca7252988a32c75cecb42a8ab5e710348da0fb440998b65deefc01",
+     "bytes": 15594645,
+     "role": "events (nuwro_to_flat_5d.C output)"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p2.root",
+     "sha256": "47dbc870330cbc00e53953b69a58b7ec255edc0145fd89a5c7f215daa0af08e0",
+     "bytes": 15594370,
+     "role": "events (nuwro_to_flat_5d.C output)"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p3.root",
+     "sha256": "4aaa9df3d190450498e4d7d6b06c1bcd0e2ee076d1c554b370457531eddf0232",
+     "bytes": 15595222,
+     "role": "events (nuwro_to_flat_5d.C output)"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p4.root",
+     "sha256": "e830e4a7bf48d46c4b3518a2734f7992e4a1c8d4582f3d942abe6882408d0976",
+     "bytes": 15593707,
+     "role": "events (nuwro_to_flat_5d.C output)"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p5.root",
+     "sha256": "46c78779432d45f89943c6b18430e2d9bad48908f7880891023e55537cf27bf8",
+     "bytes": 15595332,
+     "role": "events (nuwro_to_flat_5d.C output)"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p6.root",
+     "sha256": "bddd3223889c6a2ef0d190ebc0d68690bcd19b8b23dd5cf7792fe8611a92363d",
+     "bytes": 15593950,
+     "role": "events (nuwro_to_flat_5d.C output)"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p7.root",
+     "sha256": "364959421642748ee91a595a5c7c11bb8ffc75a0462c5591b67a52987876b549",
+     "bytes": 15594419,
+     "role": "events (nuwro_to_flat_5d.C output)"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p8.root",
+     "sha256": "6ba095144165f252e63a1e4f3c78b2abc8df25a3a112981f26326683bc0f095e",
+     "bytes": 15595088,
+     "role": "events (nuwro_to_flat_5d.C output)"
+    }
+   ],
+   "validation_references": [
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/nuwro_cv_xsec3d.root",
+     "sha256": "b9e4b801365467c7a38e2c0a18f83898dfe70d49060bcc98ddd4d2a72dd34451"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/nuwro_cv_xsec_eavailW.root",
+     "sha256": "86b3da58c2f346dd0899ca80e61a177e60c36ed48db8eb3fded91e990c4f2c50"
+    }
+   ],
+   "validation": {
+    "recomputed_3d_vs_committed_3d": {
+     "max_rel_diff_nonzero_bins": 0.0,
+     "n_bins": 1568,
+     "n_ref_zero": 253,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": true
+    },
+    "recomputed_eavailW_vs_committed_eavailW": {
+     "max_rel_diff_nonzero_bins": 0.0,
+     "n_bins": 42,
+     "n_ref_zero": 0,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": true
+    },
+    "5d_marginal_vs_committed_3d": {
+     "max_rel_diff_nonzero_bins": 1.9196280706828214e-13,
+     "n_bins": 1568,
+     "n_ref_zero": 253,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    },
+    "5d_marginal_vs_committed_eavailW": {
+     "max_rel_diff_nonzero_bins": 1.7493820790499192e-12,
+     "n_bins": 42,
+     "n_ref_zero": 0,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    },
+    "5d_marginal_vs_recomputed_3d": {
+     "max_rel_diff_nonzero_bins": 1.9196280706828214e-13,
+     "n_bins": 1568,
+     "n_ref_zero": 253,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    },
+    "5d_marginal_vs_recomputed_eavailW": {
+     "max_rel_diff_nonzero_bins": 1.7493820790499192e-12,
+     "n_bins": 42,
+     "n_ref_zero": 0,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    }
+   },
+   "integrated_sigma_cm2": {
+    "5d_grid": 2.3443976585640818e-38,
+    "committed_3d": 2.3443976585640628e-38,
+    "committed_eavailW": 2.3443976585653002e-38,
+    "5d_stat_rel_err": 0.0008902018268917618
+   },
+   "ledger_compare": {
+    "row": "VL37",
+    "ledger_integrated_sigma_cm2": 2.3444e-38,
+    "5d_over_ledger": 0.9999990012643242
+   },
+   "diagnostics": {
+    "flat_parity_vs_existing_nuwro_flat": [
+     {
+      "new": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p1.root",
+      "old": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p1/nuwro_flat.root",
+      "nTotal_equal": true,
+      "branches_bitwise_equal": {
+       "cc": true,
+       "pt": true,
+       "pz": true,
+       "eavail": true,
+       "W": true,
+       "weight": true
+      }
+     },
+     {
+      "new": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p2.root",
+      "old": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p2/nuwro_flat.root",
+      "nTotal_equal": true,
+      "branches_bitwise_equal": {
+       "cc": true,
+       "pt": true,
+       "pz": true,
+       "eavail": true,
+       "W": true,
+       "weight": true
+      }
+     },
+     {
+      "new": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p3.root",
+      "old": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p3/nuwro_flat.root",
+      "nTotal_equal": true,
+      "branches_bitwise_equal": {
+       "cc": true,
+       "pt": true,
+       "pz": true,
+       "eavail": true,
+       "W": true,
+       "weight": true
+      }
+     },
+     {
+      "new": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p4.root",
+      "old": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p4/nuwro_flat.root",
+      "nTotal_equal": true,
+      "branches_bitwise_equal": {
+       "cc": true,
+       "pt": true,
+       "pz": true,
+       "eavail": true,
+       "W": true,
+       "weight": true
+      }
+     },
+     {
+      "new": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p5.root",
+      "old": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p5/nuwro_flat.root",
+      "nTotal_equal": true,
+      "branches_bitwise_equal": {
+       "cc": true,
+       "pt": true,
+       "pz": true,
+       "eavail": true,
+       "W": true,
+       "weight": true
+      }
+     },
+     {
+      "new": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p6.root",
+      "old": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p6/nuwro_flat.root",
+      "nTotal_equal": true,
+      "branches_bitwise_equal": {
+       "cc": true,
+       "pt": true,
+       "pz": true,
+       "eavail": true,
+       "W": true,
+       "weight": true
+      }
+     },
+     {
+      "new": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p7.root",
+      "old": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p7/nuwro_flat.root",
+      "nTotal_equal": true,
+      "branches_bitwise_equal": {
+       "cc": true,
+       "pt": true,
+       "pz": true,
+       "eavail": true,
+       "W": true,
+       "weight": true
+      }
+     },
+     {
+      "new": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p8.root",
+      "old": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p8/nuwro_flat.root",
+      "nTotal_equal": true,
+      "branches_bitwise_equal": {
+       "cc": true,
+       "pt": true,
+       "pz": true,
+       "eavail": true,
+       "W": true,
+       "weight": true
+      }
+     }
+    ],
+    "in_PS_failing_eavailW_W_mask": 0,
+    "in_PS_q3_sentinel": 0,
+    "W_struck_nucleon_mass": {
+     "n": 1261997,
+     "n_W2_negative_nan_in_CVUniverse": 37,
+     "n_W_bin_changes": 1757,
+     "max_abs_dW_GeV": 0.017107716466905676
+    }
+   }
+  },
+  "gibuu_cv": {
+   "label": "GiBUU 2019",
+   "npz": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/gibuu_cv_xsec5d.npz",
+   "npz_sha256": "b183fccaf620b798cf068a2e039578332fbcdc945399678f72e974420dca96fc",
+   "meta_json": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/gibuu_cv_xsec5d.meta.json",
+   "meta_json_sha256": "d0948f40ec43666426d91eae7db7e9315d36d2b1732eb49beb4664364e8cf84e",
+   "n_events_in_grid": 910378,
+   "n_in_phase_space": 913859,
+   "n_nonzero_cells": 7742,
+   "range_accounting": {
+    "pt": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.0005253246640382403,
+     "max": 3.1675044250747306
+    },
+    "pz": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 1.500029,
+     "max": 19.90048
+    },
+    "eavail": {
+     "n_nonfinite": 0,
+     "n_below": 3481,
+     "n_above": 0,
+     "min": -0.05626320000000007,
+     "max": 17.5044023
+    },
+    "q3": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.011513463577435481,
+     "max": 17.967397039728468
+    },
+    "W": {
+     "n_nonfinite": 0,
+     "n_below": 0,
+     "n_above": 0,
+     "min": 0.0,
+     "max": 5.865683289253588
+    }
+   },
+   "normalisation": {
+    "convention": "gibuu_to_xsec3d.py / gibuu_to_xsec_eavailW.py: sum(perweight in bin)/M x 1e-38, M = number of FinalEvents files",
+    "M_files": 80,
+    "N_events": 1904367
+   },
+   "event_inputs": [
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task1/FinalEvents.dat",
+     "sha256": "cf71eeb1ca407bff43437a2640b7097ce30a02a6ecec5de3784dad2d0a733c63",
+     "bytes": 26152151,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task10/FinalEvents.dat",
+     "sha256": "0612004e01e1292ae9bc6632cb54147a697f748a6ea9dd81ad3a4d9e37ce3dd4",
+     "bytes": 26266221,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task11/FinalEvents.dat",
+     "sha256": "13b33e49bfda2e840763bc161e5cc0e861e5e0d63de11e6de7bde95b9d94a384",
+     "bytes": 26467671,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task12/FinalEvents.dat",
+     "sha256": "b13329101b2c5394cb37a4e9b55fd8411294a16435b51048853b5eb9cc7351b6",
+     "bytes": 26535331,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task13/FinalEvents.dat",
+     "sha256": "3821295d04ecd25450023da2ed1c377a08a6f961e5bc2e6b6b7bdd722eeeaaf9",
+     "bytes": 26238171,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task14/FinalEvents.dat",
+     "sha256": "1ea98dae1cb5ba4081b14e265c67632f918557a7fa16022958fd428e1f9a8739",
+     "bytes": 26497421,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task15/FinalEvents.dat",
+     "sha256": "8b50298a3e30330c4f195184f08c033e3cadb3b5f18272ea67759fcaf3b0e4ef",
+     "bytes": 26075651,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task16/FinalEvents.dat",
+     "sha256": "8e924418bd7c41fa1d62302387f7670b1869eb14f8368c6b5f8fc1de101975c6",
+     "bytes": 26476171,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task17/FinalEvents.dat",
+     "sha256": "12733beb24567d94b55cf0a9c6542888c19f9d4aad61ca6f9335ec0b1e540e43",
+     "bytes": 26280331,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task18/FinalEvents.dat",
+     "sha256": "03d00d5216f149e0803a6de11eaca35b54d3a660fb02815ab1b68ddb499c94aa",
+     "bytes": 26314501,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task19/FinalEvents.dat",
+     "sha256": "6ebd2516ac1a9799a90b8cf5da7d048186ca36826571dbfb416985515f2bf0ee",
+     "bytes": 26409531,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task2/FinalEvents.dat",
+     "sha256": "910d306c6726b6e83f6bbd4592040ffb82c06ea33e10da7f075898cf5401b08c",
+     "bytes": 26481781,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task20/FinalEvents.dat",
+     "sha256": "2d55ae1024483a6575e9155fc9d6276d8499f6a7752807b72da62bc74aa7fa4e",
+     "bytes": 26214711,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task21/FinalEvents.dat",
+     "sha256": "46edcf9bdc3b5b2464364d97753872033653ef3c74341a0880e7c98434835358",
+     "bytes": 26103701,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task22/FinalEvents.dat",
+     "sha256": "71cffbfd481d9a7755c81df828d9af1950f6d0d83fdbc48d849212c99c39b8da",
+     "bytes": 26341531,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task23/FinalEvents.dat",
+     "sha256": "8dcf51c88a9fff38e55a920139dbd3b5a81a848226096b367d649d4f3ddd8824",
+     "bytes": 26329801,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task24/FinalEvents.dat",
+     "sha256": "386393b8610d911ed55810f5c3d5a6cb6f4ab01fb0261f5d98d0e7d7416f0624",
+     "bytes": 26511531,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task25/FinalEvents.dat",
+     "sha256": "c8b7b79feec8fe36687d7bbfbdc7f685a553b17c6d2f0d99102da2e820c4ed34",
+     "bytes": 26302091,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task26/FinalEvents.dat",
+     "sha256": "a57a46a1b7606001e01498637cc0917ba5fc824398db2a3d4f613d30c2ffa91a",
+     "bytes": 26323511,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task27/FinalEvents.dat",
+     "sha256": "0a118a3c7fe2f2f3119dc0bd50658796b30d8a505aa4109d5613e0193fb9ef06",
+     "bytes": 26406131,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task28/FinalEvents.dat",
+     "sha256": "bbb6005c4fc1bd32e4490f8beb7f947349aef8dc59fe56edb93e18fa66d11c45",
+     "bytes": 26221341,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task29/FinalEvents.dat",
+     "sha256": "10d17f11d3706641594b2251b7fee48ddac791391a747f51dd70c7cf780fca59",
+     "bytes": 26393211,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task3/FinalEvents.dat",
+     "sha256": "2773da651a8f6711de8098c062ebc0255aa708ef13767b559844fdcc0267db02",
+     "bytes": 25922991,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task30/FinalEvents.dat",
+     "sha256": "da596ccc5e11dc28f08b5173c76d4e1dbf42137510d8f2705d1570c66f9cc732",
+     "bytes": 26049131,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task31/FinalEvents.dat",
+     "sha256": "f257207654027f9148e56074d9c71927fb2baeac9977d57b385cfcb62f5f20a3",
+     "bytes": 26224741,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task32/FinalEvents.dat",
+     "sha256": "86f56e6f3152ac2e313664fe5e73e01814678969fedde1e09e99bc4d772fdc14",
+     "bytes": 26414971,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task33/FinalEvents.dat",
+     "sha256": "f2f19294ce41e9ab3bb04200a375993252a96cd510b4c5a1e9b7065eff83005b",
+     "bytes": 26182581,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task34/FinalEvents.dat",
+     "sha256": "aa8dbee8a620cad1e50a6c15dff694d1cadb61314c2cd34a1853992c1131311c",
+     "bytes": 26294101,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task35/FinalEvents.dat",
+     "sha256": "b3d5b29c3b132b8727687f47e2813dfe79a6823a4ee65ef9e4da66afb387d6ce",
+     "bytes": 26219641,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task36/FinalEvents.dat",
+     "sha256": "50d777c700d16b6d7864a0936d29ed7770cc043a426e46efa72068b85ecc14ae",
+     "bytes": 26264521,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task37/FinalEvents.dat",
+     "sha256": "e054d8028a28054cc4c17ca1498c9253e243ced419303b1944e99cdf15be8537",
+     "bytes": 26457981,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task38/FinalEvents.dat",
+     "sha256": "e1a32cdbc3d42f6961640f23bfce1c75244750b66024f72b5e97fd132e44b640",
+     "bytes": 26288151,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task39/FinalEvents.dat",
+     "sha256": "7a41845295993a4ffdb3e5c7b2749666970c30f346f1c7ce2c2662df66aff68e",
+     "bytes": 26278291,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task4/FinalEvents.dat",
+     "sha256": "16572f8f87a1304488a38ee67365734a94a0b9a2898bc6f002dec80dfdd78f06",
+     "bytes": 26305831,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task40/FinalEvents.dat",
+     "sha256": "d0966a40d052cd0791295e11eb0b5e313ac16a3b3e806ed7b0af23c7c8bceab5",
+     "bytes": 26078881,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task41/FinalEvents.dat",
+     "sha256": "27ddc18c179e64add14ac1486e64980c741698143a56d482b1391a83c99e8950",
+     "bytes": 26362441,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task42/FinalEvents.dat",
+     "sha256": "a7cb7c029d1639e52614fb197e676e724e4e960b397bceb51392934828fba566",
+     "bytes": 26284071,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task43/FinalEvents.dat",
+     "sha256": "ee0cefbb72b9dd69b4b785bdd5b4cbe3caf1cec4950e082b642502af75303c5c",
+     "bytes": 26085341,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task44/FinalEvents.dat",
+     "sha256": "e5aa3a66bfb40ada8a2e68c27b248b33de5a897cb8f3dd33ef4ce2d0713bba2d",
+     "bytes": 26292741,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task45/FinalEvents.dat",
+     "sha256": "4b6ae0ba25acb32c9a267ca6243900f89be046c4e5dee3ecf4258cbe8de23d4f",
+     "bytes": 26333201,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task46/FinalEvents.dat",
+     "sha256": "84f2f21a3e117cacca599ec1ccab2abbf813714def1ea6dd937d2bb4844a4ce0",
+     "bytes": 26236641,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task47/FinalEvents.dat",
+     "sha256": "c12125b8040f558f4c6376721c0cfb30e0f0a901c341a694b93765a2c921e197",
+     "bytes": 26519521,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task48/FinalEvents.dat",
+     "sha256": "68a70b745ca8203e4edbe1deb4a93bcd3e023a9f4019bd0403259a01fa2b25b2",
+     "bytes": 26184281,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task49/FinalEvents.dat",
+     "sha256": "7640e5a0e3d620700537a94c61d43c8d284b12e0ecea4ab59cfed7863f487ed5",
+     "bytes": 26307191,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task5/FinalEvents.dat",
+     "sha256": "a2b50c5bf3a85e7eff0c5d5d8383c448275d12d30e1961521549334a6e851792",
+     "bytes": 26361591,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task50/FinalEvents.dat",
+     "sha256": "1c4deca2444d65935f55cd4eb12bae913f3fb9d3b24e593e66ca6dfa986e9c3b",
+     "bytes": 26634441,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task51/FinalEvents.dat",
+     "sha256": "1df88cf82d078aa01f6ee548485b737c604290816d61191e0fc19bd466ef89f9",
+     "bytes": 26028901,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task52/FinalEvents.dat",
+     "sha256": "30f20e6735a7794b4a5146199ae2312bcc1bd42948ec24cfc537503030b4807f",
+     "bytes": 26416671,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task53/FinalEvents.dat",
+     "sha256": "b83b2081ee3f133829d82759f4a76f1e869a422e073c65d3750fdfe08e29e39a",
+     "bytes": 26441151,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task54/FinalEvents.dat",
+     "sha256": "14d55d3bce86275845ece02d0f6e4d360a33899bbea5cbb3d0dea0ed550cc729",
+     "bytes": 26102341,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task55/FinalEvents.dat",
+     "sha256": "ec55eca32f33caf256af969bbcaa5ee04871b7cc5eaf5656b4c91c36ff2426f2",
+     "bytes": 26149261,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task56/FinalEvents.dat",
+     "sha256": "b1b251c744e28128ebe6276992dcfbe6233098dfad120def1bf6948156155dd6",
+     "bytes": 26250751,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task57/FinalEvents.dat",
+     "sha256": "2ee83c1dde6286658fa2fdaefc6409d93a66add58b8ff66ee2bc16b0a4073e8c",
+     "bytes": 26189381,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task58/FinalEvents.dat",
+     "sha256": "7bca3f57f4bef48d71650deb7d0e2fd70a2974b9348ba456bafa552f1bc38fbd",
+     "bytes": 26284241,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task59/FinalEvents.dat",
+     "sha256": "6d5c5d5e0167fdc0849a25de9ea281c7be1675e6ae8ff39f2a2ce2ed0f9c248d",
+     "bytes": 26384881,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task6/FinalEvents.dat",
+     "sha256": "47a1cafc77d450894724bc8081f85f5f476813913e34adbc633d4ac1076de379",
+     "bytes": 26308721,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task60/FinalEvents.dat",
+     "sha256": "de78f5a23a6b90ef15cddf308f093bf100555a12efa9b758c53cbbd82382da59",
+     "bytes": 26383521,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task61/FinalEvents.dat",
+     "sha256": "460d833e1d1c2985a4a1b6132ccd6c14189cce330c37046011ff1434a21506ef",
+     "bytes": 26072421,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task62/FinalEvents.dat",
+     "sha256": "fb9f30da3fdbb575107ed09caa62910184d951d311924c17864c1fccf7ee599a",
+     "bytes": 26154871,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task63/FinalEvents.dat",
+     "sha256": "7052564ea617766cee9fcd88f1d2dd64602f65dcb4c68ad59b5c2b90634caa8f",
+     "bytes": 25948491,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task64/FinalEvents.dat",
+     "sha256": "eaac36434803487528a06dd35388f6105eb20fb7e5abaa560586c4ee54367f40",
+     "bytes": 26377741,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task65/FinalEvents.dat",
+     "sha256": "37ddfe1f163261b97cda05f34741fa8547948fe8e7670c272afaa79a856cb958",
+     "bytes": 26225251,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task66/FinalEvents.dat",
+     "sha256": "62d252186a0405faf2d5dc18d5c016961ca89205e17d85c1a2ac5fb18f728e1c",
+     "bytes": 26431121,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task67/FinalEvents.dat",
+     "sha256": "98dd34ec4178551a8dd53ce38fa4b138e8e0963ddfb1250a6720263718a672f0",
+     "bytes": 26372811,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task68/FinalEvents.dat",
+     "sha256": "aebd03c4561261c7257340555cb39f2afd6761ece6f879d5abcf5d91abb28d8f",
+     "bytes": 26403241,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task69/FinalEvents.dat",
+     "sha256": "0c09acabe93911408122ff8a27839fdae503996cfffb7f335c4627e7b55155a8",
+     "bytes": 26334221,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task7/FinalEvents.dat",
+     "sha256": "b45347825bc2d2e6db46173250c2b4b8192bf8f22e082625cc0162722045df27",
+     "bytes": 26025331,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task70/FinalEvents.dat",
+     "sha256": "0df87df6638a4256c084695e8e66bdfb3f833645058fe89b13e8843427c70762",
+     "bytes": 26146371,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task71/FinalEvents.dat",
+     "sha256": "aa4d92b9692d59469492ca15095cc13fe3303992c42c7d05ecb552eba545f481",
+     "bytes": 26465121,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task72/FinalEvents.dat",
+     "sha256": "b2b2ea25cb295aa1cb7469afeb5f6ffc484f6eddefc4f6bad391f812a29da722",
+     "bytes": 26211821,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task73/FinalEvents.dat",
+     "sha256": "ac2737c5ad4766b45a0fdf0d0c4a287d8c4a9461087d1a48d495ce1d82e186a6",
+     "bytes": 26106761,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task74/FinalEvents.dat",
+     "sha256": "3b0d15f678e62e2d2c6d1b72997f688a876f816970f21c5a0933a3a60ebede07",
+     "bytes": 26471411,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task75/FinalEvents.dat",
+     "sha256": "f524c1d0f1617359545845b0e787828605f53da53b280288858be78e24b35590",
+     "bytes": 26420411,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task76/FinalEvents.dat",
+     "sha256": "5b8528a51e37400638e7690e1673631ecb08adf349d015acaa9cb682a90222b7",
+     "bytes": 26240041,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task77/FinalEvents.dat",
+     "sha256": "f0bf46b1ea520ea217d00fec2554cfcafd2789f3cef8a567ed0c5a1eac787437",
+     "bytes": 26231371,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task78/FinalEvents.dat",
+     "sha256": "33bfd6db3c05f959150cf991e5fb58dc7710378959d0fab99a25476f58dd44ec",
+     "bytes": 26289851,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task79/FinalEvents.dat",
+     "sha256": "c703551faa1e7b779c80aba50186e40973e437c76e3456e6284d667d75a5dea1",
+     "bytes": 26445741,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task8/FinalEvents.dat",
+     "sha256": "9a144fa5eb01a59ef30824b5a8b72ba6c104216cb0afd36e59bf6bbfb82cf4f5",
+     "bytes": 26438771,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task80/FinalEvents.dat",
+     "sha256": "afac14b95e1eb1d51e3b29aa0b634f4541550236cdfd7816739443a038074944",
+     "bytes": 26307701,
+     "role": "events"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr/task9/FinalEvents.dat",
+     "sha256": "9d107d468988aa6a0afc4bcfbc7f9252b9159fb3b3ef8c75315cc526a5aa3b1b",
+     "bytes": 26309571,
+     "role": "events"
+    }
+   ],
+   "validation_references": [
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/gibuu_cv_xsec3d.root",
+     "sha256": "e6b9d02f87113a41fdd96221ad09964863ff111263e1e2fda64ca3d8032bc8d6"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/gibuu_cv_xsec_eavailW.root",
+     "sha256": "2461bdfdd522d207d9b73804a98cd07b263324bbce07b655c02e0a3088522856"
+    }
+   ],
+   "validation": {
+    "recomputed_3d_vs_committed_3d": {
+     "max_rel_diff_nonzero_bins": 0.0,
+     "n_bins": 1568,
+     "n_ref_zero": 350,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": true
+    },
+    "recomputed_eavailW_vs_committed_eavailW": {
+     "max_rel_diff_nonzero_bins": 0.0,
+     "n_bins": 42,
+     "n_ref_zero": 0,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": true
+    },
+    "5d_marginal_vs_committed_3d": {
+     "max_rel_diff_nonzero_bins": 5.1954698719741694e-15,
+     "n_bins": 1568,
+     "n_ref_zero": 350,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    },
+    "5d_marginal_vs_committed_eavailW": {
+     "max_rel_diff_nonzero_bins": 1.3454289941750766e-14,
+     "n_bins": 42,
+     "n_ref_zero": 0,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    },
+    "5d_marginal_vs_recomputed_3d": {
+     "max_rel_diff_nonzero_bins": 5.1954698719741694e-15,
+     "n_bins": 1568,
+     "n_ref_zero": 350,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    },
+    "5d_marginal_vs_recomputed_eavailW": {
+     "max_rel_diff_nonzero_bins": 1.3454289941750766e-14,
+     "n_bins": 42,
+     "n_ref_zero": 0,
+     "n_zero_mismatch": 0,
+     "bitwise_equal": false
+    }
+   },
+   "integrated_sigma_cm2": {
+    "5d_grid": 2.2227210293886448e-38,
+    "committed_3d": 2.222721029388645e-38,
+    "committed_eavailW": 2.2227210293886508e-38,
+    "5d_stat_rel_err": 0.005052242959179562
+   },
+   "ledger_compare": {
+    "row": "VL38",
+    "ledger_integrated_sigma_cm2": 2.2227e-38,
+    "5d_over_ledger": 1.0000094611907342
+   },
+   "diagnostics": {
+    "in_PS_enu_not_finite": 0
+   }
+  }
+ },
+ "probes": {
+  "mad_mc_Q2_is_lab_Q2": {
+   "script": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/_probe_mad_q2.py",
+   "output": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/_probe_mad_q2.out",
+   "output_sha256": "922275579384dbe1123c6e3d2ade20a9c71bbc1f55cdbcdc7679d0d3d906c1a2"
+  },
+  "genie_cv_stageA_shape": {
+   "script": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/_genie_cv_stageA_shape.py",
+   "output": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/_genie_cv_stageA_shape.out"
+  }
+ }
+}

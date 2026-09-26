@@ -70,6 +70,10 @@
    "path": "docs/orchestration/state/s5p/stage1/stage1_inspect.json",
    "sha256": "def4c67cfb59f5ae917f86d2745416b172be6aca3764eba11f3d116db4621d9d",
    "what": "Stage-1 inspection: support/resolution per RD cell (development MC) and R development residuals, departures, recovered fractions"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/gen5d/gen5d-build.json",
+   "what": "5D truth-level generator predictions (GENIE 2.12.10 CV, +MEC, NuWro 21.09, GiBUU 2019) on the fine grid; marginals reproduce the committed (E_avail,W) predictions (and 3D except GENIE CV, different surviving sample); GENIE+MEC (E_avail,W) file normalized to all CC (factor 0.97129 vs the 3D convention; VL36 affected); GiBUU empty above E_nu ~ 20 GeV"
   }
  ],
  "amendments": [
@@ -95,6 +99,23 @@
   {
    "utc": "2026-09-26T16:40Z",
    "what": "s2-num-tasks.tsv at abdc88c5 passed --pairs values beginning with '-' as a separate token; argparse read them as options and the tool exited 2 before any unfold (lines 0-3, 14-16 in allocation 58904837; lines 25-27, 62-66 would have failed the same way). Queue runners stopped before allocations B, C and the GPU lane launched. Repair: --pairs=<value>. This is the one corrective resubmission permitted for the Stage-2 study tables (queues s2-cpu-r.q, s2-gpu-r.q)."
+  }
+ ],
+ "findings": [
+  {
+   "id": "s5p-F1",
+   "what": "GENIE+MEC committed (E_avail,W) prediction divides by all CC events, the 3D one by non-MEC events: factor 0.97129 (VL36 corner ratio 1.579 and /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mec_xsec_eavailW.root affected); found by the gen5d build",
+   "route": "Stage-7 deliverables / KNOWN_ISSUES"
+  },
+  {
+   "id": "s5p-F2",
+   "what": "GiBUU 2019 sample stops at E_nu ~ 20 GeV although its flux extends to 94.75 GeV: GiBUU predictions are empty above p_parallel ~ 20 GeV/c",
+   "route": "Stage-7 generator nulls: GiBUU restricted or flagged"
+  },
+  {
+   "id": "s5p-F3",
+   "what": "the committed GENIE-CV 3D prediction came from an earlier sample whose gst files are gone; the surviving sample totals 0.9714x (shapes agree)",
+   "route": "Stage-7 deliverables"
   }
  ]
 }
