@@ -1,0 +1,12 @@
+{
+ "config_hash": "23b6fdfde62cce403cf52112ba09ef28b8d3d70b6174295106c89c4a07ace36e",
+ "b2_arm": "pdg_onehot",
+ "b2_arm_hash": "5fb9f6377074252ac7440dd3d31551428ddb9dd662d6ba228eef8e3f68ea4594",
+ "step2_miss_mode": "efficiency_corrected",
+ "selection_mode": "replicate",
+ "prior_rows_sha256": "8f19f1616528f2f2f96ba007f9473f30b868bcf48350cc78cc62647417b0d70c",
+ "pseudo_rows_sha256": "582034238d758c10c76b6b25094eefe2f7bcfe9e1cfa098906123be7e9f09df0",
+ "distortion": "D4d_n_up",
+ "distortion_hash": "ec08355b5d43d090b10e36ea0cdd809cbcf1500e0d403b312e9c0eded15e4157",
+ "run_identity": "54b346ce22f146f262de90d735ac18361b6b4b2bb5d65ff5bc90cebff5025b71"
+}
