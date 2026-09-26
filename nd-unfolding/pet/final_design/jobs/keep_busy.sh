@@ -5,7 +5,7 @@
 # (pfd_worker_chain.sh, pinned clean checkout, guarded runs); it never cancels anything.
 #   usage: nohup bash keep_busy.sh <pinned checkout> <commit> <stop, e.g. 2026-09-27T20:00Z> &
 # Priorities (first incomplete wins):
-#   interactive 1 : dev2Pa (PET2, 1 run/GPU)  -> s4s -> s4f
+#   interactive 1 : dev2Pa (PET2, 1 run/GPU) -> dev2Q (PET2, annealed step 1) -> s4s -> s4f
 #   interactive 2 : GPU0 dev2Ta -> s4s ; GPU1 s3p_all -> s4s ; GPUs 2-3 s4f -> s4s   (2 runs/GPU)
 #   debug chains  : s4f -> s4s   (both fit a 30-min round at ~760 s/iteration)
 # Final-bank manifests run with SCORE=0 (the launcher also forces it before an UNBLIND amendment).
@@ -13,7 +13,7 @@ set -u
 M=$1; S=$2; STOP=$3
 B=/pscratch/sd/j/josephrb/pet-final-design-20260925
 R=../../final_design/runs
-declare -A OUTS=([dev2Pa]=dev2P [dev2Ta]=dev2T [s3p_all]=s3p [s4f_a2]=s4f [s4s_a2]=s4s)
+declare -A OUTS=([dev2Pa]=dev2P [dev2Q]=dev2Q [dev2Ta]=dev2T [s3p_all]=s3p [s4f_a2]=s4f [s4s_a2]=s4s)
 stop_epoch=$(date -d "$STOP" +%s)
 
 incomplete() {   # MANIFEST_STEM -> 0 if some row of the manifest is not COMPLETE
@@ -39,15 +39,15 @@ launch_inter() {   # NAME "lane1 & lane2 & ..." LOGDIR
   echo "$(date -u +%FT%TZ) $name: $cmd" >> "$B/keep_busy.log"
 }
 if [[ ${DRY:-0} == 1 ]]; then      # print the decisions and exit
-  for st in dev2Pa dev2Ta s3p_all s4f_a2 s4s_a2; do incomplete "$st" && echo "$st incomplete" || echo "$st complete"; done
+  for st in dev2Pa dev2Q dev2Ta s3p_all s4f_a2 s4s_a2; do incomplete "$st" && echo "$st incomplete" || echo "$st complete"; done
   echo "inter1 -> $(first_incomplete dev2Pa s4s_a2 s4f_a2)"; echo "debug -> $(first_incomplete s4f_a2 s4s_a2)"
   lane 2,3 2 s4f_a2 1300; exit 0
 fi
 while (( $(date +%s) < stop_epoch )) && [[ ! -e $B/keep_busy.stop ]]; do
   q=$(squeue --me -h -o '%j %q' 2>/dev/null) || { sleep 60; continue; }
   if ! grep -q '^pfd-inter1 ' <<<"$q"; then
-    st=$(first_incomplete dev2Pa s4s_a2 s4f_a2) && {
-      if [[ $st == dev2Pa ]]; then c="$(lane 0,1,2,3 1 dev2Pa 2200) & "
+    st=$(first_incomplete dev2Pa dev2Q s4s_a2 s4f_a2) && {
+      if [[ $st == dev2Pa || $st == dev2Q ]]; then c="$(lane 0,1,2,3 1 "$st" 2200) & "
       else c="$(lane 0,1,2,3 2 "$st" 1300) & "; fi
       launch_inter pfd-inter1 "$c" "$B/${OUTS[$st]}"; }
   fi
