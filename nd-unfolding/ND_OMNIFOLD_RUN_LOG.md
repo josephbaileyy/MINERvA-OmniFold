@@ -1,5 +1,25 @@
 # N-D OmniFold run log
 
+## 2026-09-26 — PET final-design study: stages S2–S3 (large designs, reviews, sizing, N2 finding; in progress)
+
+Development and sizing evidence only (DEV bank); final-bank runs execute blinded and nothing is scored on FB.
+- **Reviews:** implementation (1 BLOCK + 5 MAJOR fixed), statistical design (1 BLOCK + 7 MAJOR fixed; Amendment 2c),
+  scientific scope (`final_design/REVIEW_DISPOSITION-SCOPE-20260926.md`; Amendment 3a: terminal practical default,
+  cost at declared packing, N1 scope ruled on E9's text, E4/E5 sizing group, coverage order, futility, bank-effect
+  bound, cost-part repair; finalist-rule addendum with completeness, S-N1 at K\* and the between-design step in code).
+- **Larger/pretrained designs:** enlarged step-1 PETs (0.25 M, 0.97 M parameters) match the 47 k one at 8 epochs;
+  PET2-small pretrained is unstable in the loop from k = 4 under the declared constant rate (step-1 weights 334–1,217
+  at k = 4, divergence at k = 5) while PET2-scratch is stable but fails the topology screen; a matched annealed-rate
+  arm is running. AUSSIE closed by its matched test (12/12 losses). Measured costs per unfolding: H2S1 K5 0.88,
+  L128S1 K5 ≈ 1.0, P2preS1 K4 2.23 A100-h.
+- **Post-hoc recomputation:** 15 stale dev1 files recomputed; predecessor files reproduce exactly; the compact choice
+  (H2S1 K = 5) holds on complete evidence.
+- **Sizing pilot** (`final_design/sizing/SIZING-20260926.md`, provisional): n_F = 30; E4/E5 library draws at the cap 60
+  (E4 non-inferiority H2S1 − L128S1 would need 1,770 draws: a quantified limit).
+- **N2 finding (Amendment 3b):** estimator-seed sd of the primary recovery at fixed events 0.095 (H2S1) / 0.091
+  (L128S1) against the frozen 0.05, located in the 8-epoch truth step; a bounded repair arm (24-epoch truth step,
+  16-epoch designs; 64 runs) runs before both packages are re-frozen with an S-N2 screen. Study total 314.8 A100-h.
+
 ## 2026-09-26 — PET final-design study: stages S0–S1 (capacity, banks, diagnostics, development screen; in progress)
 
 Authorization `docs/orchestration/AUTHORIZATION-20260925-pet-final-design.md` (Joseph's 2026-09-25 grant,
