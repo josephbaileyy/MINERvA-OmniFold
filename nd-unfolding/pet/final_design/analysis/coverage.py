@@ -4,8 +4,8 @@ Input: coverage replicates, each with B = 6 bootstrap-member run directories alr
 `score_design.py` (one `*.design_scores.json` per member). For each replicate and histogram:
 
 * estimate = member mean of the unit-normalized unfolded histograms; member sd (ddof 1);
-* interval = mean +/- t_{(1+L)/2}(B - 1) x member sd per bin, L = 0.68 and 0.95 (section 9 as
-  written: the member sd, not the sd of the mean);
+* interval = mean +/- t_{(1+L)/2}(B - 1) x member sd x sqrt(1 + 1/B) per bin, L = 0.68 and 0.95
+  (section 9 as amended by Amendment 2c item 1);
 * covered = |target - estimate| <= half-width, target = the replicate's OWN pseudodata truth
   (unit-normalized; identical across the members, refused otherwise), and, reported only, the
   population target when the member scores carry `vs_population`.
@@ -22,7 +22,8 @@ Rules (section 6.4), each with its numbers:
   68 % coverage LB >= 0.60 and point <= 0.80.
 * C2: no bin's 95 % coverage point estimate < 0.85.
 * C3: moderate and good regions, pooled 95 % coverage LB >= 0.85 (each region).
-* C4: every bin's mean 95 % half-width <= 2.5 x the empirical sd of the estimates; and the top
+* C4 (Amendment 2c item 2): every bin's mean 95 % half-width <= 1.25 x the calibrated width
+  t(B-1) c4(B) sqrt(1 + 1/B) x RMS(estimate - target); and the top
   E_avail bin's (3-100 GeV) mean 95 % half-width <= 0.5 x its injected displacement (mean over
   replicates of |target - prior| in that bin; the protocol quotes 0.068 for this bound).
 * C5 (D4c up, 60 replicates, natural histogram E_avail x proton class): pooled 95 % LB >= 0.85.
