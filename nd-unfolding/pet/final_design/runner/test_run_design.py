@@ -587,8 +587,12 @@ def _bash4() -> str | None:
     return None
 
 
-@pytest.mark.skipif(_bash4() is None, reason="needs bash >= 4 (the launcher's shell)")
 def test_design_lib_run_row_builds_the_study_command(tmp_path):
+    # probed inside the test, not at import: a module-level subprocess made collection fail under
+    # mnv_guarded_run.py (Perlmutter job 58886821); run this test outside the guard
+    bash = _bash4()
+    if bash is None:
+        pytest.skip("needs bash >= 4 (the launcher's shell)")
     lib = STUDY / "jobs" / "design_lib.sh"
     rows = {
         "bank": "r1\tcfg.json\tH\tBANK:DEV:S1:3\tnull\t-\t--step2-miss-mode efficiency_corrected",
@@ -600,7 +604,7 @@ def test_design_lib_run_row_builds_the_study_command(tmp_path):
         script = (f'set -eo pipefail; MINE="{REPO}"; OUT="{tmp_path}"; SLURM_JOB_ID=1; '
                   f'source "{CONFIRM}/jobs/confirm_lib.sh"; source "{lib}"; '
                   f'DESIGN_DRY_RUN=1 run_row "$1" 0 123')
-        r = subprocess.run([_bash4(), "-c", script, "x", row], capture_output=True, text=True)
+        r = subprocess.run([bash, "-c", script, "x", row], capture_output=True, text=True)
         assert r.returncode == 0, r.stderr
         out[key] = r.stdout.split("\n")
     bank = " ".join(out["bank"])

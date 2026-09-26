@@ -91,6 +91,8 @@ CANDIDATES: dict[str, tuple[str, Callable[[RunConfig], RunConfig], str]] = {
     "L128S1": ("H2S1 with an enlarged step-1 PET (projection 128, 4 transformer layers, 8 heads)",
                lambda c: _model({"projection_dim": 128, "num_transformer": 4, "num_heads": 8})(
                    CANDIDATES["H2S1"][1](c)), EFF),
+    "L128S1E16": ("L128S1 with 16 epochs per fit at both steps (large model, optimization-effort arm)",
+                  lambda c: _epochs2(16)(_epochs1(16)(CANDIDATES["L128S1"][1](c))), EFF),
     "H2S1E16": ("H2S1 with 16 epochs per fit at both steps (optimization-effort arm)",
                 lambda c: _epochs2(16)(_epochs1(16)(CANDIDATES["H2S1"][1](c))), EFF),
     "L128H2E16": ("L128H2 with 16 step-1 epochs per fit (learning-curve arm)",

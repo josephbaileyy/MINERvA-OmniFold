@@ -1,0 +1,9 @@
+# name	config	config_hash	selection	distortion	reference_run	extra_driver_args
+dev2T-L128S1E16-F0	../../../final_design/configs/dev2T/dev2T-L128S1E16-F0.json	921a9f231b31fbefec2465d3bc17b06413f1091533b611427ebd867c63ab7372	F:0	dev	-	--step2-miss-mode efficiency_corrected
+dev2T-L128S1E16-T0-D1_m0.350	../../../final_design/configs/dev2T/dev2T-L128S1E16-T0-D1_m0.350.json	767931e961a61f67b3e22aa2be732655e8f47deff582d2d9fb7ceb7e75641207	T:0	D1_m0.350	-	--step2-miss-mode efficiency_corrected
+dev2T-L128S1E16-T0-D4c_p_up	../../../final_design/configs/dev2T/dev2T-L128S1E16-T0-D4c_p_up.json	aa34de7fb5bbca51a52b48376dd4ea53696e020ab7e8f2e37f177432172e5ef1	T:0	D4c_p_up	-	--step2-miss-mode efficiency_corrected
+dev2T-L128S1E16-T0-D4d_n_up	../../../final_design/configs/dev2T/dev2T-L128S1E16-T0-D4d_n_up.json	d5ca7bef3730aaf544befd5b3d54e03b941a81c3a36c7a993f4040d9a0bdcd0c	T:0	D4d_n_up	-	--step2-miss-mode efficiency_corrected
+dev2T-L128S1E16-F1	../../../final_design/configs/dev2T/dev2T-L128S1E16-F1.json	5b9b71f78058e6fdc994028951fefc623a99770c8aa7649f056718444940bd2a	F:1	dev	-	--step2-miss-mode efficiency_corrected
+dev2T-L128S1E16-T1-D1_m0.350	../../../final_design/configs/dev2T/dev2T-L128S1E16-T1-D1_m0.350.json	1667cea4a1cdca65932312e3ae00632153e3f5459e66abfcb565e7b5e4349ce3	T:1	D1_m0.350	-	--step2-miss-mode efficiency_corrected
+dev2T-L128S1E16-T1-D4c_p_up	../../../final_design/configs/dev2T/dev2T-L128S1E16-T1-D4c_p_up.json	489d48036ef0b983bedd83a443f4450a9d7d31737c66c548b4c0ac92fdec18d0	T:1	D4c_p_up	-	--step2-miss-mode efficiency_corrected
+dev2T-L128S1E16-T1-D4d_n_up	../../../final_design/configs/dev2T/dev2T-L128S1E16-T1-D4d_n_up.json	705862843f72242f48a506a8754c76cf18b234dc44c12ce5aaa475f3f4111613	T:1	D4d_n_up	-	--step2-miss-mode efficiency_corrected
