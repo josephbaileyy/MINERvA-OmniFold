@@ -84,3 +84,11 @@ evaluated on the four screen cases every design ran (F draws, D1 −0.35, D4c up
 large design ran any other case, so the large-slot inputs are unchanged; for the (information-only) compact
 package H2S1 passes S-N1 at K\* = 5 on the matched population. The R1 step-1 weight growth is reported with the
 response results.
+
+## Addendum 2 (2026-09-26 ~20:15Z, protocol Amendment 3b; before any run of the N2 repair arm)
+
+**S-N2** (Amendment 3b item 3): at K\* only, after the four screens and S-N1, the pooled within-draw
+estimator-seed sd of `R_E0` on the S3P seed runs (DEV draws 0–1, ≥ 4 seeds) ≤ 0.05 (§6.3 N2's threshold),
+computed by `dev/n2_table.py` through `decide.Rules.N2`. An unmeasured N2 at K\* makes the design incomplete.
+New candidates `H2S1T24` (compact) and `L128S1T24` (large): 24-epoch truth step. The rule is re-applied to both
+packages with S-N2 (Amendment 3b item 4).

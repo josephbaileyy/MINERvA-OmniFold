@@ -33,8 +33,10 @@ TIE = 0.02
 # design's run length is not evidence and not incompleteness ("k in {2..6} or its run length")
 RUN_LENGTH = {"H1": 6, "H2": 6, "H2S1": 6, "CS1": 6, "L64H2": 4, "L128H2": 4, "L128H2E16": 4,
               "L64S1": 5, "L128S1": 5, "H2S1E16": 5, "L128S1E16": 5, "P2preS1": 5, "P2scrS1": 5,
-              "P2preA1": 5, "P2scrA1": 5}
-COMPACT = ("H1", "H2", "H2S1", "CS1", "H2S1E16")          # our PET, 47,041-parameter step 1
+              "P2preA1": 5, "P2scrA1": 5, "H2S1T24": 5, "L128S1T24": 5}
+# S-N2 (Amendment 3b): section 6.3 N2's frozen threshold on the S3P seed runs at k = K*
+N2_MAX = 0.05
+COMPACT = ("H1", "H2", "H2S1", "CS1", "H2S1E16", "H2S1T24")          # our PET, 47,041-parameter step 1
 LARGE_PREFIXES = ("L64", "L128", "P2pre", "P2scr")          # enlarged step 1 or PET2
 # (detector representation, truth step) for the challenger condition
 TOK, SUM, P2 = "C tokens", "C tokens + reco summaries", "PET2 native 33 tokens"
@@ -45,7 +47,9 @@ ATTR = {"H1": (TOK, "PDG one-hot, annealed"), "CS1": (TOK, "raw PDG, constant"),
         "L64S1": (SUM, "PDG one-hot, constant"), "L128S1": (SUM, "PDG one-hot, constant"),
         "L128S1E16": (SUM, "PDG one-hot, constant"), "P2preS1": (P2, "PDG one-hot, constant"),
         "P2scrS1": (P2, "PDG one-hot, constant"), "P2preA1": (P2, "PDG one-hot, constant"),
-        "P2scrA1": (P2, "PDG one-hot, constant")}
+        "P2scrA1": (P2, "PDG one-hot, constant"),
+        "H2S1T24": (SUM, "PDG one-hot, constant, 24 epochs"),
+        "L128S1T24": (SUM, "PDG one-hot, constant, 24 epochs")}
 
 
 def _ok(v, op, th) -> bool:
@@ -61,7 +65,15 @@ def s_n1(tab: dict, c: str, k: int) -> dict:
             "values": {q: cell.get(q) for q in N1}}
 
 
-def apply(tab: dict) -> dict:
+def s_n2(n2: dict | None, c: str, k: int) -> dict:
+    e = (n2 or {}).get(c)
+    if not e or int(e.get("k", -1)) != k or e.get("pooled_within_draw_sd") is None:
+        return {"status": "incomplete", "needed_at_k": k}
+    sd = float(e["pooled_within_draw_sd"])
+    return {"status": "PASS" if sd <= N2_MAX else "fail", "sd": sd, "k": k}
+
+
+def apply(tab: dict, n2: dict | None = None, use_n2: bool = False) -> dict:
     cands = sorted({c for lab, _, _ in SCREENS.values() for c in tab.get(lab, {})})
     out = {}
     for c in cands:
@@ -88,9 +100,11 @@ def apply(tab: dict) -> dict:
             best = max(passing.values())
             kstar = min(k for k, u in passing.items() if u >= best - TIE)
         n1 = s_n1(tab, c, kstar) if kstar is not None else None
+        pre = kstar is not None and n1["status"] == "PASS"
+        sn2 = s_n2(n2, c, kstar) if (use_n2 and pre) else None
         out[c] = {"rows": rows, "Kstar": kstar, "dev_tilt_at_Kstar": passing.get(kstar),
-                  "S-N1_at_Kstar": n1,
-                  "passes_all_at_Kstar": kstar is not None and n1["status"] == "PASS",
+                  "S-N1_at_Kstar": n1, "S-N2_at_Kstar": sn2,
+                  "passes_all_at_Kstar": pre and (sn2 is None or sn2["status"] == "PASS"),
                   "D4d_at_Kstar": (next(r["values"]["S-B2"][0] for r in rows if r["k"] == kstar)
                                    if kstar is not None else None)}
     return out
@@ -117,7 +131,8 @@ def choose(res: dict, pkg: str, cost: dict | None) -> dict:
     passing = {c: r for c, r in members.items() if r["passes_all_at_Kstar"]}
     incomplete = sorted(c for c, r in members.items()
                         if any(x["status"] == "incomplete" for x in r["rows"])
-                        or (r["S-N1_at_Kstar"] or {}).get("status") == "incomplete")
+                        or (r["S-N1_at_Kstar"] or {}).get("status") == "incomplete"
+                        or (r.get("S-N2_at_Kstar") or {}).get("status") == "incomplete")
     if incomplete:
         return {"package": pkg, "finalist": None, "status": "incomplete evidence (Amendment 2)",
                 "incomplete_members": incomplete, "passing_so_far": sorted(passing)}
@@ -146,9 +161,10 @@ def choose(res: dict, pkg: str, cost: dict | None) -> dict:
         for x in r["rows"]:
             if x["status"] == "fail":
                 cand.append((x["n_failed"], -x["values"]["S-U1"][0], c, x["k"]))
-    for c, r in members.items():      # four screens pass at K* but S-N1 fails: one failed screen
+    for c, r in members.items():      # four screens pass at K* but S-N1/S-N2 fails: count them
         if r["Kstar"] is not None and not r["passes_all_at_Kstar"]:
-            cand.append((1, -r["dev_tilt_at_Kstar"], c, r["Kstar"]))
+            nf = sum((r.get(x) or {}).get("status") == "fail" for x in ("S-N1_at_Kstar", "S-N2_at_Kstar"))
+            cand.append((max(nf, 1), -r["dev_tilt_at_Kstar"], c, r["Kstar"]))
     if not cand:
         return {"package": pkg, "finalist": None, "status": "closed or incomplete",
                 "incomplete_members": incomplete}
@@ -170,8 +186,10 @@ def main(argv=None) -> int:
     ap.add_argument("tables")
     ap.add_argument("out")
     ap.add_argument("--cost", help="JSON {candidate: A100-hours per unfolding} (tie-break only)")
+    ap.add_argument("--n2", help="dev/n2_table.py output; with it S-N2 applies (Amendment 3b)")
     a = ap.parse_args(argv)
-    res = apply(json.load(open(a.tables)))
+    res = apply(json.load(open(a.tables)), json.load(open(a.n2)) if a.n2 else None,
+                use_n2=bool(a.n2))
     cost = json.load(open(a.cost)) if a.cost else None
     choice = {p: choose(res, p, cost) for p in ("compact", "large")}
     fins = [v["finalist"] for v in choice.values() if v.get("finalist")]
@@ -179,7 +197,9 @@ def main(argv=None) -> int:
     json.dump(doc, open(a.out, "w"), indent=1)
     for c, r in res.items():
         n1 = (r["S-N1_at_Kstar"] or {}).get("status")
+        n2s = r.get("S-N2_at_Kstar") or {}
         print(c, "K*", r["Kstar"], "dev", r["dev_tilt_at_Kstar"], "S-N1", n1,
+              "S-N2", n2s.get("status"), n2s.get("sd"),
               " ".join(f"k{x['k']}:{x['status']}" for x in r["rows"]))
     for p, v in choice.items():
         print(p, "->", v.get("finalist"), "K", v.get("K"), v["status"], v.get("steps", ""))

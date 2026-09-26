@@ -95,6 +95,12 @@ CANDIDATES: dict[str, tuple[str, Callable[[RunConfig], RunConfig], str]] = {
                   lambda c: _epochs2(16)(_epochs1(16)(CANDIDATES["L128S1"][1](c))), EFF),
     "H2S1E16": ("H2S1 with 16 epochs per fit at both steps (optimization-effort arm)",
                 lambda c: _epochs2(16)(_epochs1(16)(CANDIDATES["H2S1"][1](c))), EFF),
+    # N2 repair arm (Amendment 3b): the estimator-seed spread is in the truth step, which the
+    # fixed-target test shows under-trained at 8 epochs (0.87 -> 0.97 at 24)
+    "H2S1T24": ("H2S1 with 24 epochs per truth-step (step-2) fit; step 1 unchanged (N2 repair arm)",
+                lambda c: _epochs2(24)(CANDIDATES["H2S1"][1](c)), EFF),
+    "L128S1T24": ("L128S1 with 24 epochs per truth-step (step-2) fit; step 1 unchanged (N2 repair arm)",
+                  lambda c: _epochs2(24)(CANDIDATES["L128S1"][1](c)), EFF),
     "L128H2E16": ("L128H2 with 16 step-1 epochs per fit (learning-curve arm)",
                   lambda c: _epochs1(16)(_model({"projection_dim": 128, "num_transformer": 4,
                                                  "num_heads": 8})(

@@ -95,3 +95,29 @@ def test_challenger_condition():
     fins = [ch["compact"]["finalist"], ch["large"]["finalist"]]
     assert fins == ["H2S1", "L128S1"]
     assert ar.challengers(res, fins) == ["P2preS1"]   # L64S1 shares H2S1's representation/truth
+
+
+def test_s_n2_gates_at_kstar_and_missing_n2_blocks_the_package():
+    d = {"H2S1": {k: PASS for k in range(2, 7)}, "H2S1E16": {k: (0.85, 0.8, 0.3, 0.015)
+                                                             for k in range(2, 6)}}
+    tab = table(d)
+    n2 = {"H2S1": {"k": 2, "pooled_within_draw_sd": 0.09},
+          "H2S1E16": {"k": 2, "pooled_within_draw_sd": 0.04}}
+    res = ar.apply(tab, n2, use_n2=True)
+    assert res["H2S1"]["S-N2_at_Kstar"]["status"] == "fail" and not res["H2S1"]["passes_all_at_Kstar"]
+    assert ar.choose(res, "compact", None)["finalist"] == "H2S1E16"
+    # N2 measured at another k than K* is not evidence -> incomplete, package blocked
+    res = ar.apply(tab, {**n2, "H2S1E16": {"k": 4, "pooled_within_draw_sd": 0.04}}, use_n2=True)
+    ch = ar.choose(res, "compact", None)
+    assert ch["finalist"] is None and "H2S1E16" in ch["incomplete_members"]
+    # without --n2 the screen is off (the pre-3b rule)
+    assert ar.choose(ar.apply(tab), "compact", None)["finalist"] == "H2S1"
+
+
+def test_s_n2_failure_everywhere_falls_back_with_the_failure_counted():
+    d = {"H2S1": {k: PASS for k in range(2, 7)}, "CS1": {k: (0.65, 0.8, 0.3, 0.015)
+                                                         for k in range(2, 7)}}
+    n2 = {"H2S1": {"k": 2, "pooled_within_draw_sd": 0.09},
+          "CS1": {"k": 2, "pooled_within_draw_sd": 0.07}}
+    ch = ar.choose(ar.apply(table(d), n2, use_n2=True), "compact", None)
+    assert ch["finalist"] == "H2S1" and ch["status"].startswith("fallback: fails 1")
