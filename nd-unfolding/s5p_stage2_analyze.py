@@ -320,13 +320,13 @@ def study_c(num: Path, s5e: Path, cells: Cells) -> dict:
 def study_p(runs: Path, s5e: Path, cells: Cells) -> dict:
     """Amendment 3: data shift under a prior change to vertex k against minus the estimator's bias there."""
     pdir = runs / "s2/prior"
-    cv_path = pdir / "prior_R5_CV.npz"
+    cv_path = pdir / "prior_R5fix_CV.npz"
     if not cv_path.exists():
         return {"missing": True}
     cv = load(cv_path)["xsec_flat"]
     out = {"controls": {}}
     base = runs / "s2/num/data/data_b-_j-.npz"
-    d0 = pdir / "prior_R5_prior_d0.npz"
+    d0 = pdir / "prior_R5fix_prior_d0.npz"
     if base.exists():
         out["controls"]["CV_path_equals_N1_base"] = bool(np.array_equal(cv, load(base)["xsec_flat"]))
     if d0.exists():
@@ -337,7 +337,7 @@ def study_p(runs: Path, s5e: Path, cells: Cells) -> dict:
                 "d4": ("asimov", conv / "k_b0_w3.npz"), "d3": ("pseudo", s5e / "cand/assess/W2")}
     out["vertices"] = {}
     for k in ("d1", "d2", "d3", "d4", "d5"):
-        f = pdir / f"prior_R5_prior_{k}.npz"
+        f = pdir / f"prior_R5fix_prior_{k}.npz"
         if not f.exists():
             continue
         Ck = cells.of(load(f)["xsec_flat"])
@@ -418,7 +418,7 @@ def main(argv=None) -> int:
     stage1 = json.loads(a.stage1.read_text())
     cells = Cells(stage1, json.loads(a.s5c_contract.read_text()))
     num, conv = a.runs / "s2/num", a.runs / "s2/conv"
-    new_products = sorted(num.rglob("*.npz")) + sorted((a.runs / "s2/prior").glob("*.npz"))
+    new_products = sorted(num.rglob("*.npz")) + sorted((a.runs / "s2/prior").glob("prior_R5fix_*.npz"))
     receipt = {"schema": "s5p-stage2-receipt/1", "stage1_sha256": sha256(a.stage1),
                "code_sha256": {"s5p_stage2_analyze.py": sha256(Path(__file__).resolve()),
                                "s5p_stage1_inspect.py": sha256(Path(s1.__file__).resolve())},
