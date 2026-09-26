@@ -47,6 +47,7 @@ import s5c_unfold  # noqa: E402
 import s5e_candidate  # noqa: E402
 import s5e_trace  # noqa: E402
 import s5n_pseudo  # noqa: E402
+import s5p_truths  # noqa: E402
 import s5p_numerics  # noqa: E402
 
 SENTINEL_ROWS = 2801
@@ -131,8 +132,12 @@ def main(argv=None) -> int:
                     help="where the universe weight files live (default --bank; a detector dump directory)")
     ap.add_argument("--expect-npz-sha256", required=True)
     ap.add_argument("--expect-bkg-sha256", required=True)
-    ap.add_argument("--universes", required=True, help="BAND:IDX[,BAND:IDX...] or CV")
+    ap.add_argument("--universes", default="", help="BAND:IDX[,BAND:IDX...] or CV")
     ap.add_argument("--flux-universe-file", type=Path, default=None)
+    ap.add_argument("--prior", action="append", default=[],
+                    help="PRIOR VARIATION NAME=TRUTH:AMPLITUDE[:RATIO_FILE]: unfold the data with the MC truth prior "
+                         "reweighted by s5n_pseudo.truth_weight(TRUTH) (w_truth and w_reco of every MC row x r(truth); "
+                         "denominator, background and flux unchanged); repeatable")
     ap.add_argument("--config", choices=("R",), default="R")
     ap.add_argument("--capacity", default=None)
     ap.add_argument("--iters", type=int, default=5)
@@ -142,6 +147,7 @@ def main(argv=None) -> int:
     ap.add_argument("--out", type=Path, required=True, help="output directory")
     a = ap.parse_args(argv)
     s5e_candidate.install(a.config)
+    s5p_truths.install(s5n_pseudo)
     capacity = s5e_trace.parse_pair(a.capacity)
     t0 = time.time()
     npz_sha, bkg_sha = s5n_pseudo.sha256_path(a.npz), s5n_pseudo.sha256_path(a.bkg)
@@ -155,7 +161,32 @@ def main(argv=None) -> int:
     alignment = check_alignment(bank_cv, inputs, bkg)
     a.out.mkdir(parents=True, exist_ok=True)
     status = 0
-    for item in a.universes.split(","):
+    for spec in a.prior:
+        name, _, rest = spec.partition("=")
+        truth, amp, *rf = rest.split(":")
+        target = a.out / f"{a.tag}_prior_{name}.npz"
+        if target.exists():
+            continue
+        t1 = time.time()
+        ratio, ratio_sha = (json.loads(Path(rf[0]).read_text()), s5n_pseudo.sha256_path(Path(rf[0]))) if rf else (None, None)
+        r = s5n_pseudo.truth_weight(truth, inputs, float(amp), ratio)
+        ui = dict(inputs)
+        ui["w_truth"] = np.asarray(inputs["w_truth"], float) * r
+        ui["w_reco"] = np.asarray(inputs["w_reco"], float) * r
+        exp = s5n_pseudo.build_data(ui, bkg)
+        with s5p_numerics.omnifold_capacity(capacity):
+            xs, ev = s5p_numerics.unfold_one(exp, np.float32, a.estimator_seed, a.threads, a.iters)
+        meta = {"schema": "s5p-prior-variation/1", "prior": name, "truth": truth, "amplitude": float(amp),
+                "ratio_file": rf[0] if rf else None, "ratio_sha256": ratio_sha, "config": a.config, "capacity": capacity,
+                "iters": a.iters, "estimator_seed": a.estimator_seed, "input_npz_sha256": npz_sha, "bkg_dump_sha256": bkg_sha,
+                "r_in_grid_weighted_mean": float(np.average(r[np.asarray(inputs["pass_truth"], bool)],
+                                                            weights=np.asarray(inputs["w_truth"], float)[np.asarray(inputs["pass_truth"], bool)])),
+                **ev, "code_sha256": {**s5n_pseudo.code_digests(), "s5p_universe.py": s5n_pseudo.sha256_path(Path(__file__).resolve())},
+                "slurm_job": os.environ.get("SLURM_JOB_ID"), "seconds_unfold": round(time.time() - t1, 3)}
+        rc = s5n_pseudo.write_product(target, {"xsec_flat": xs.ravel(order="C"), "shape": np.array(xs.shape)}, meta)
+        status |= rc
+        print(json.dumps({"out": target.name, "rc": rc, "seconds_unfold": meta["seconds_unfold"]}))
+    for item in [u for u in a.universes.split(",") if u]:
         tag = "CV" if item == "CV" else item.replace(":", "_")
         target = a.out / f"{a.tag}_{tag}.npz"
         if target.exists():

@@ -36,6 +36,7 @@ import s5c_coverage  # noqa: E402
 import s5e_deform  # noqa: E402
 import s5e_trace  # noqa: E402
 import s5n_pseudo  # noqa: E402
+import s5p_truths  # noqa: E402
 
 H2_EDGES = {"pt": [0.0, 0.7, 4.5], "pz": [1.5, 4.5, 60.0], "eavail": [0.0, 0.8, 100.0],
             "q3": [0.0, 2.0, 100.0], "W": [0.0, 1.8, 100.0]}
@@ -70,6 +71,7 @@ def install() -> None:
     if getattr(s5c_coverage.reported_functionals, "_s5p_h2", False):
         return
     s5e_deform.install_ratio_truth(s5n_pseudo)
+    s5p_truths.install(s5n_pseudo)
     original = s5c_coverage.reported_functionals
 
     def with_h2(contract):

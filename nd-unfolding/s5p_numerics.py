@@ -49,6 +49,7 @@ import s5c_unfold  # noqa: E402
 import s5e_candidate  # noqa: E402
 import s5e_trace  # noqa: E402
 import s5n_pseudo  # noqa: E402
+import s5p_truths  # noqa: E402
 
 COORD_KEYS = ("MCgen", "MCreco", "measured")
 
@@ -155,6 +156,7 @@ def main(argv=None) -> int:
         seeds = [a.pseudo_seed]
     capacity = s5e_trace.parse_pair(a.capacity)
     s5e_candidate.install(a.config)
+    s5p_truths.install(s5n_pseudo)
     t0 = time.time()
     npz_sha, bkg_sha = s5n_pseudo.sha256_path(a.npz), s5n_pseudo.sha256_path(a.bkg)
     if npz_sha != a.expect_npz_sha256 or bkg_sha != a.expect_bkg_sha256:
