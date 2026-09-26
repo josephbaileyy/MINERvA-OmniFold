@@ -17,3 +17,12 @@ Snapshots (append; never edit a past row):
 |---|---:|---:|---:|---:|
 | 2026-09-25 21:48 (start) | 0 | 0 | 58,714 | 3,430 |
 | 2026-09-26 08:45 | 123.9 | 0.23 | 58,602 | 3,420 |
+| 2026-09-26 20:34 | 314.8 | 0.30 | 58,424 | 3,410 |
+
+2026-09-26 20:34 UTC: study total 314.8 A100-hours over 331 jobs (running jobs counted to the snapshot time);
+`iris` user-charged `m3246_g` 526.8 units (GPU node-hours), project charged 121,575.9 of 180,000; `m3246` CPU
+project 16,589.5 of 20,000. Competing commitments measured the same day: the `s5p`/`s5e` lanes (same user) run
+CPU `shared`/`interactive` jobs and one `gpu_shared` array; this study uses GPU `debug`/`interactive`/`shared` and
+≤ 1 CPU debug node at a time for post-hoc/scoring. Reserve for final validation: coverage of one finalist at
+N_cov 120 + D4c 60 ≈ 1,080 unfoldings ≈ 0.9–1.1 k A100-hours, well inside the S5 budget (2,200) and the project
+balance.
