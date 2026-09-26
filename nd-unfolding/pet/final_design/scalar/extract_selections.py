@@ -183,22 +183,30 @@ def main(argv: list[str] | None = None) -> int:
         b = v["base"]
         out: dict[str, np.ndarray] = {}
         checks: dict[str, bool] = {}
+        weight_ratio: dict[str, dict[str, float]] = {}
         for side in ("prior", "pseudo"):
             rows = b[f"{side}_rows"].astype(np.int64)
             pos = np.searchsorted(all_rows, rows)
             g = {k: val[pos] for k, val in inv.items()}
             h = {k: val[pos] for k, val in rf.items()}
             checks[f"{side}_truth"] = same(g["truth_scalars"][:, [0, 1, 2, 3]], b[f"{side}_truth"])
-            checks[f"{side}_w_truth"] = same(g["w_truth"], b[f"{side}_w_truth"])
-            checks[f"{side}_w_reco"] = same(g["w_reco"], b[f"{side}_w_reco"])
+            for w in ("w_truth", "w_reco"):
+                # replicate_arrays carries the weights AFTER the engine DataLoader normalized them
+                # in place (one constant per run); require a constant ratio to the inventory
+                ratio = b[f"{side}_{w}"] / g[w].astype(np.float64)
+                spread = float(np.abs(ratio / ratio[0] - 1.0).max())
+                weight_ratio[f"{side}_{w}"] = {"ratio": float(ratio[0]), "max_rel_spread": spread}
+                checks[f"{side}_{w}_constant_ratio"] = bool(np.isfinite(ratio).all()
+                                                            and spread < 1e-6)
             checks[f"{side}_pass_reco"] = same(g["pass_reco"].astype(bool), b[f"{side}_pass_reco"])
             checks[f"{side}_pass_truth"] = same(g["pass_truth"].astype(bool),
                                                 b[f"{side}_pass_truth"])
             out[f"{side}_rows"] = rows
             out[f"{side}_reco_scalars"] = g["reco_scalars"].astype(np.float32)
             out[f"{side}_truth_scalars"] = g["truth_scalars"].astype(np.float32)
-            out[f"{side}_w_truth"] = g["w_truth"].astype(np.float32)
-            out[f"{side}_w_reco"] = g["w_reco"].astype(np.float32)
+            # the weights the predecessor's PET scorer used (bit-identical pairing)
+            out[f"{side}_w_truth"] = b[f"{side}_w_truth"].astype(np.float64)
+            out[f"{side}_w_reco"] = b[f"{side}_w_reco"].astype(np.float64)
             out[f"{side}_pass_reco"] = g["pass_reco"].astype(bool)
             out[f"{side}_pass_truth"] = g["pass_truth"].astype(bool)
             out[f"{side}_region"] = b[f"{side}_region"].astype(np.int8)
@@ -229,6 +237,9 @@ def main(argv: list[str] | None = None) -> int:
             "cases": sorted(v["cases"]), "r1_factors": {k: R1_FACTOR[k] for k in v["cases"]
                                                         if k in R1_FACTOR},
             "replicate_arrays": v["digests"], "cross_checks": checks,
+            "weights_source": "replicate_arrays.npz (engine-normalized in place); ratio to "
+                              "the inventory weights recorded",
+            "weight_ratio_to_inventory": weight_ratio,
             "n_prior": int(out["prior_rows"].size), "n_pseudo": int(out["pseudo_rows"].size)}
         print(f"[{s}] wrote {path}, {time.time() - t0:.0f}s", flush=True)
     receipt["seconds"] = round(time.time() - t0, 1)
