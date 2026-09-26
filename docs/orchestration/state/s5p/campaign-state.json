@@ -45,7 +45,26 @@
   "6_adoption": "NOT STARTED",
   "7_inference_release": "NOT STARTED"
  },
- "jobs": [],
+ "jobs": [
+  {
+   "job": "58904830",
+   "label": "s5p_k_b0 (shared array 5 x 10 h)",
+   "stage": "development",
+   "state": "PENDING at 16:45Z"
+  },
+  {
+   "job": "58904836",
+   "label": "s5p_k_cap (shared array 3 x 16 h)",
+   "stage": "development",
+   "state": "PENDING at 16:45Z"
+  },
+  {
+   "job": "58904837",
+   "label": "s5p_s2_num_a (interactive CPU node, 4 h; table lines 0-24 at abdc88c5)",
+   "stage": "development",
+   "state": "RUNNING; lines whose --pairs value began with '-' (0-3, 14-16) exited rc 2 before any unfold (argparse); replica lines run"
+  }
+ ],
  "receipts": [
   {
    "path": "docs/orchestration/state/s5p/stage1/stage1_inspect.json",
@@ -71,5 +90,11 @@
  "remote_heads_at_start": {
   "canonical_origin_main": "b30752864c70c76da3a888136e52c3dea4b615b7",
   "analysis_note_main": "b1410fc32d1269ad9ea44a4f9f042312bb8276a8"
- }
+ },
+ "incidents": [
+  {
+   "utc": "2026-09-26T16:40Z",
+   "what": "s2-num-tasks.tsv at abdc88c5 passed --pairs values beginning with '-' as a separate token; argparse read them as options and the tool exited 2 before any unfold (lines 0-3, 14-16 in allocation 58904837; lines 25-27, 62-66 would have failed the same way). Queue runners stopped before allocations B, C and the GPU lane launched. Repair: --pairs=<value>. This is the one corrective resubmission permitted for the Stage-2 study tables (queues s2-cpu-r.q, s2-gpu-r.q)."
+  }
+ ]
 }
