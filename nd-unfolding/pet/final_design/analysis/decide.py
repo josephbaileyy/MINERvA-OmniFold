@@ -37,7 +37,11 @@ Rules (section ids):
   default (UNRESOLVED_WITH_DEFAULT: the costlier, or the cheaper when only the costlier is
   decisively inferior on some endpoint; `practical_default`), never SELECTED.
 
-    python decide.py --evidence evidence.json --out decision.json
+With evidence key `"provisional": true` (or `--provisional`) the output is a provisional ranking
+that orders the coverage runs: eligibility from 6.1-6.3 and provenance only, C1-C5 NOT_ASSESSED,
+outcome prefixed PROVISIONAL_ (never a plain SELECTED); it is never accepted as a look-1 file.
+
+    python decide.py --evidence evidence.json --out decision.json [--provisional]
 """
 from __future__ import annotations
 
@@ -83,6 +87,12 @@ COST_RATIO_MIN = 2.0
 # Section 8 applies the two-look rule to FINAL (E0-E3) and coverage; the robustness library
 # (n_S fixed), numerical stability and the pure point rules are decided once.
 SEQUENTIAL_RULES_DEFAULT = ("U1", "U2b", "U3", "6.5", "6.6.1", "6.6.3")
+# A provisional ranking (evidence "provisional": true) decides which finalist's coverage runs
+# first: eligibility from 6.1-6.3 and provenance only, C1-C5 NOT_ASSESSED (neither passing nor
+# pending), every ranking outcome prefixed PROVISIONAL_; it never emits a plain SELECTED.
+NOT_ASSESSED = "NOT_ASSESSED"
+PROVISIONAL_NOTE = ("provisional ranking: eligibility from sections 6.1-6.3 and provenance only "
+                    "(C1-C5 not assessed); it orders the coverage runs and selects nothing")
 
 
 def historical_floors() -> dict[str, Any]:
@@ -164,6 +174,7 @@ class Rules:
         self.alpha = inf.per_bound_alpha(self.m, self.looks)
         self.alpha_fixed = inf.per_bound_alpha(self.m, 1)
         self.sequential = set(ev.get("sequential_rules", SEQUENTIAL_RULES_DEFAULT))
+        self.provisional = bool(ev.get("provisional", False))
         self.n_final = int(ev["n_final"])
         self.n_stress = int(ev["n_stress"])
         self.n_required = {E0_CASE: self.n_final, E3_CASE: self.n_final,
@@ -459,6 +470,9 @@ class Rules:
     def C(self, c) -> list[inf.Verdict]:
         cov = c.coverage
         rules = ("C1", "C2", "C3", "C4", "C5")
+        if self.provisional:          # a provisional ranking orders coverage runs; never read here
+            return [inf.Verdict(r, NOT_ASSESSED, [], {}, "provisional ranking: coverage not "
+                                                         "assessed") for r in rules]
         if cov is None:
             return [inf.incomplete(r, "no coverage output") for r in rules]
         if cov.get("candidate") not in (None, c.name) or int(cov["k"]) != c.k:
@@ -492,7 +506,8 @@ class Rules:
         return {"status": status, "verdicts": {v.rule: v.as_dict() for v in verdicts},
                 "failed": sorted(r for r, x in vs.items() if x == inf.FAIL),
                 "incomplete": sorted(r for r, x in vs.items() if x == inf.INCOMPLETE),
-                "continue": sorted(r for r, x in vs.items() if x == inf.CONTINUE)}
+                "continue": sorted(r for r, x in vs.items() if x == inf.CONTINUE),
+                "not_assessed": sorted(r for r, x in vs.items() if x == NOT_ASSESSED)}
 
 
 # ------------------------------------------------------------------------------------------- #
@@ -770,6 +785,18 @@ def switching_report(rules: Rules, cands: Mapping[str, Candidate], ref: str) -> 
     return out
 
 
+def provisional_label(ranking: Mapping[str, Any]) -> dict[str, Any]:
+    """Prefix the outcome PROVISIONAL_ and rename `selected`: a provisional ranking never carries a
+    plain SELECTED or a `selected` key a consumer could read as a selection."""
+    out = dict(ranking)
+    outcome = str(out.get("outcome", ""))
+    if not outcome.startswith("PROVISIONAL_"):
+        out["outcome"] = "PROVISIONAL_" + outcome
+    if "selected" in out:
+        out["provisional_selected"] = out.pop("selected")
+    return out
+
+
 def evaluate(ev: Mapping[str, Any], floors: Mapping[str, Any] | None = None) -> dict[str, Any]:
     floors = floors or historical_floors()
     rules = Rules(ev, floors)
@@ -784,8 +811,12 @@ def evaluate(ev: Mapping[str, Any], floors: Mapping[str, Any] | None = None) -> 
     if int(ev.get("look", 1)) > 1 and not prev:      # statistical review 8d9aaf8d item 4
         raise ValueError("look 2 needs the look-1 decision file ('previous'): resolved look-1 "
                          "verdicts are carried, never re-decided")
+    prev_doc = json.loads(Path(prev).read_text()) if prev else None
+    if prev_doc is not None and prev_doc.get("provisional"):
+        raise ValueError(f"{prev} is a provisional ranking (C1-C5 not assessed), not a look-1 "
+                         "decision file")
     if prev:                                         # section 8: resolved look-1 verdicts stay
-        before = json.loads(Path(prev).read_text())["eligibility"]
+        before = prev_doc["eligibility"]
         for n, e in elig.items():
             for rule, v in before.get(n, {}).get("verdicts", {}).items():
                 if v["verdict"] in (inf.PASS, inf.FAIL):
@@ -801,12 +832,15 @@ def evaluate(ev: Mapping[str, Any], floors: Mapping[str, Any] | None = None) -> 
                                          "fixed_rules": rules.alpha_fixed},
            "sequential_rules": sorted(rules.sequential), "n_required": rules.n_required,
            "n_final": rules.n_final,
-           "n_stress": rules.n_stress, "floors": floors, "eligibility": elig,
-           "ranking": rank(rules, cands, status)}
+           "n_stress": rules.n_stress, "floors": floors, "provisional": rules.provisional,
+           "eligibility": elig, "ranking": rank(rules, cands, status)}
     if prev:                          # a decisive look-1 ranking is carried, never re-decided
-        before_rank = json.loads(Path(prev).read_text()).get("ranking", {})
+        before_rank = prev_doc.get("ranking", {})
         if before_rank and not str(before_rank.get("outcome", "")).startswith("CONTINUE"):
             res["ranking"] = {**before_rank, "carried_from_look": 1}
+    if rules.provisional:             # after the carry: a carried SELECTED is relabelled too
+        res["provisional_note"] = PROVISIONAL_NOTE
+        res["ranking"] = provisional_label(res["ranking"])
     if ev.get("reference") and ev["reference"] in cands:
         res["switching_vs_reference"] = switching_report(rules, cands, ev["reference"])
     return inf.jsonable(res)
@@ -817,13 +851,20 @@ def main(argv=None) -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--evidence", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--provisional", action="store_true",
+                    help="provisional ranking for coverage ordering (C1-C5 NOT_ASSESSED)")
     a = ap.parse_args(argv)
-    res = evaluate(json.loads(a.evidence.read_text()))
+    ev = json.loads(a.evidence.read_text())
+    if a.provisional:
+        ev["provisional"] = True
+    res = evaluate(ev)
     a.out.write_text(json.dumps(res, indent=1, allow_nan=False) + "\n")
     for n, e in res["eligibility"].items():
         print(f"{n}: {e['status']}  failed={e['failed']} incomplete={e['incomplete']} "
               f"continue={e['continue']}")
-    print(f"ranking: {res['ranking'].get('outcome')} {res['ranking'].get('selected', '')}")
+    rk = res["ranking"]
+    named = rk.get("selected") or rk.get("provisional_selected") or rk.get("default") or ""
+    print(f"ranking: {rk.get('outcome')} {named}")
     return 0
 
 

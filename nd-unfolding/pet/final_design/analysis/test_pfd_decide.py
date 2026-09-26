@@ -477,3 +477,74 @@ def test_a_defaulted_link_makes_the_whole_ranking_a_default(tmp_path):
     assert rk["pairs"][1]["by"].startswith("6.6.1 (larger")
     assert rk["outcome"] == "UNRESOLVED_WITH_DEFAULT" and rk["default"] == "X"
     assert "selected" not in rk and rk["discriminating_contrasts"] == ["S vs L"]
+
+
+# ------------------------------------------------------------------------------------------- #
+# Provisional ranking (which finalist's coverage runs first)
+# ------------------------------------------------------------------------------------------- #
+def test_provisional_ranking_skips_coverage_and_never_selects(tmp_path):
+    A = make_candidate(tmp_path, "A", coverage=False)
+    res = dc.evaluate(evidence({"A": A}, provisional=True))
+    e = res["eligibility"]["A"]
+    assert res["provisional"] is True and e["status"] == "ELIGIBLE" and e["incomplete"] == []
+    assert e["not_assessed"] == ["C1", "C2", "C3", "C4", "C5"]
+    assert {e["verdicts"][r]["verdict"] for r in e["not_assessed"]} == {"NOT_ASSESSED"}
+    rk = res["ranking"]
+    assert rk["outcome"] == "PROVISIONAL_SELECTED" and rk["provisional_selected"] == "A"
+    assert "selected" not in rk
+    # without the key the same evidence is INCOMPLETE on C1-C5 and nothing is provisional
+    res = dc.evaluate(evidence({"A": A}))
+    assert res["provisional"] is False and res["eligibility"]["A"]["status"] == "INCOMPLETE"
+    assert res["eligibility"]["A"]["not_assessed"] == []
+    # a failing coverage output is not assessed either (provisional) -- and fails otherwise
+    B = make_candidate(tmp_path, "B")
+    cv = json.loads(open(B["coverage"]).read())
+    cv["rules"]["C1"]["verdict"] = "FAIL"
+    open(B["coverage"], "w").write(json.dumps(cv))
+    assert dc.evaluate(evidence({"B": B}, provisional=True))["eligibility"]["B"]["status"] == \
+        "ELIGIBLE"
+    assert dc.evaluate(evidence({"B": B}))["eligibility"]["B"]["status"] == "INELIGIBLE"
+
+
+def test_provisional_prefixes_every_outcome(tmp_path):
+    L, S = unresolved_pair(tmp_path / "a")
+    for n in (L, S):
+        del n["coverage"]
+    rk = dc.evaluate(evidence({"L": L, "S": S}, looks_planned=1, provisional=True))["ranking"]
+    assert rk["outcome"] == "PROVISIONAL_UNRESOLVED_WITH_DEFAULT" and rk["default"] == "L"
+    rk = dc.evaluate(evidence({"L": L, "S": S}, provisional=True))["ranking"]
+    assert rk["outcome"] == "PROVISIONAL_CONTINUE"
+    (tmp_path / "b").mkdir()
+    A = make_candidate(tmp_path / "b", "A", vals={"E0": 0.40}, coverage=False)   # fails U1
+    rk = dc.evaluate(evidence({"A": A}, provisional=True))["ranking"]
+    assert rk["outcome"] == "PROVISIONAL_NO_ELIGIBLE_DESIGN"
+    A = make_candidate(tmp_path / "b", "P", coverage=False)
+    A["provenance_complete"] = False                                            # still required
+    rk = dc.evaluate(evidence({"P": A}, provisional=True))["ranking"]
+    assert rk["outcome"].startswith("PROVISIONAL_CONTINUE (candidates pending")
+
+
+def test_provisional_never_carries_a_plain_selection_and_is_never_a_look1_record(tmp_path):
+    A = make_candidate(tmp_path, "A")
+    ev = evidence({"A": A})
+    look1 = tmp_path / "look1.json"
+    look1.write_text(json.dumps(dc.evaluate(ev)))
+    rk = dc.evaluate({**ev, "look": 2, "previous": str(look1), "provisional": True})["ranking"]
+    assert rk["carried_from_look"] == 1 and rk["outcome"] == "PROVISIONAL_SELECTED"
+    assert "selected" not in rk
+    prov = tmp_path / "prov.json"
+    prov.write_text(json.dumps(dc.evaluate({**ev, "provisional": True})))
+    with pytest.raises(ValueError, match="provisional"):
+        dc.evaluate({**ev, "look": 2, "previous": str(prov)})
+
+
+def test_cli_provisional_flag(tmp_path, capsys):
+    ev = tmp_path / "ev.json"
+    ev.write_text(json.dumps(evidence({"A": make_candidate(tmp_path, "A", coverage=False)})))
+    out = tmp_path / "decision.json"
+    assert dc.main(["--evidence", str(ev), "--out", str(out), "--provisional"]) == 0
+    res = json.loads(out.read_text())
+    assert res["provisional"] is True and res["ranking"]["outcome"] == "PROVISIONAL_SELECTED"
+    assert "PROVISIONAL_SELECTED A" in capsys.readouterr().out
+    assert dc.main(["--evidence", str(ev), "--out", str(out)]) == 0
+    assert json.loads(out.read_text())["provisional"] is False
