@@ -357,8 +357,8 @@ class DesignScorer:
 
     def stability(self, push: np.ndarray, pull: np.ndarray) -> dict[str, Any]:
         """E9: weights over truth-passing prior rows (the predecessor's fields), and the step-1
-        pull over every prior row (section 6.3 N1: all weights finite and non-negative, max <= 100;
-        `pull_max`/`pull_min` are None when no pull value is finite)."""
+        pull over every prior row (reported beside N1, not gated; `pull_max`/`pull_min` are None
+        when no pull value is finite)."""
         kb = self.prior.keep
         w = push[kb]
         fin = np.isfinite(w)

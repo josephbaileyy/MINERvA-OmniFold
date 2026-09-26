@@ -166,34 +166,53 @@ def edit_stability(decl, stem, drop=(), **fields):
     return d["run_name"]
 
 
-def test_N1_covers_the_step1_pull_weights(tmp_path):
-    """Section 6.3 N1 "all weights": the step-1 pull as well as the step-2 push must be finite and
-    non-negative, and the max over both <= 100 in every run; a run without the pull record is
-    INCOMPLETE, never a silent pass."""
+def test_N1_reports_the_step1_pull_weights_without_gating_them(tmp_path):
+    """N1 tests E9's final truth weights (protocol section 4); the step-1 pull is reported beside
+    it (numbers, never a Part), and a run without the pull record reports null, not INCOMPLETE."""
     good = dc.evaluate(evidence({"A": make_candidate(tmp_path, "A")}))["eligibility"]["A"]
     n1 = good["verdicts"]["N1"]
     assert n1["verdict"] == "PASS" and n1["numbers"]["max_pull_over_runs"] == 2.0
-    assert n1["numbers"]["max_weight_over_runs"] == 3.0          # the push max binds here
-    for name, stem, fields, want in (
-            ("B", "e3_5", {"n_negative_pull_all_rows": 1, "pull_min": -0.1}, "FAIL"),
-            ("C", "null_2", {"n_nonfinite_pull_all_rows": 4}, "FAIL"),
-            ("D", "d4d_0", {"pull_max": 150.0}, "FAIL"),
-            ("E", "e0_7", {"pull_max": 99.0}, "PASS")):
+    assert n1["numbers"]["runs_with_nonfinite_or_negative_pull"] == []
+    assert n1["numbers"]["pull_note"] == dc.PULL_NOTE
+    assert not any("pull" in p["label"] for p in n1["parts"])
+    for name, stem, fields in (("B", "e3_5", {"n_negative_pull_all_rows": 1, "pull_min": -0.1}),
+                               ("C", "null_2", {"n_nonfinite_pull_all_rows": 4}),
+                               ("D", "d4d_0", {"pull_max": 1.0e6})):
         decl = make_candidate(tmp_path, name)
         run = edit_stability(decl, stem, **fields)
         v = dc.evaluate(evidence({name: decl}))["eligibility"][name]["verdicts"]["N1"]
-        assert v["verdict"] == want, (name, v)
-        if name in ("B", "C"):
-            assert v["numbers"]["runs_nonfinite_or_negative"] == [run]
+        assert v["verdict"] == "PASS" and v["parts"] == n1["parts"], name   # verdict unchanged
         if name == "D":
-            assert v["numbers"]["max_pull_over_runs"] == 150.0
-            assert next(p for p in v["parts"] if p["label"] == "max weight in every run"
-                        )["estimate"] == 150.0
+            assert v["numbers"]["max_pull_over_runs"] == 1.0e6
+            assert v["numbers"]["max_push_over_runs"] == 3.0
+        else:
+            assert v["numbers"]["runs_with_nonfinite_or_negative_pull"] == [run]
     decl = make_candidate(tmp_path, "F")
     run = edit_stability(decl, "e4_3", drop=("n_negative_pull_all_rows",))
     v = dc.evaluate(evidence({"F": decl}))["eligibility"]["F"]
-    assert v["verdicts"]["N1"]["verdict"] == "INCOMPLETE" and v["status"] == "INCOMPLETE"
-    assert v["verdicts"]["N1"]["numbers"]["runs_lacking_pull_fields"] == [run]
+    assert v["verdicts"]["N1"]["verdict"] == "PASS" and v["status"] == "ELIGIBLE"
+    nums = v["verdicts"]["N1"]["numbers"]
+    assert nums["runs_lacking_pull_fields"] == [run] and nums["max_pull_over_runs"] is None
+    assert nums["runs_with_nonfinite_or_negative_pull"] is None
+
+
+def test_N1_truth_weight_gates_still_fire(tmp_path):
+    for name, stem, fields, rule in (
+            ("A", "e3_5", {"n_negative_truth_passing": 1}, "all weights finite and non-negative"),
+            ("B", "null_2", {"n_nonfinite_truth_passing": 2}, "all weights finite and non-negative"),
+            ("C", "d4d_0", {"push_max": 150.0}, "max weight in every run")):
+        decl = make_candidate(tmp_path, name)
+        run = edit_stability(decl, stem, **fields)
+        v = dc.evaluate(evidence({name: decl}))["eligibility"][name]["verdicts"]["N1"]
+        assert v["verdict"] == "FAIL", (name, v)
+        assert not next(p for p in v["parts"] if p["label"] == rule)["passes"]
+        if name != "C":
+            assert v["numbers"]["runs_nonfinite_or_negative"] == [run]
+    decl = make_candidate(tmp_path, "D")
+    for r in range(N_FINAL):                         # median ESS/n over the E0 replicates
+        edit_stability(decl, f"e0_{r}", final_truth_weight_ess_over_n=0.1)
+    v = dc.evaluate(evidence({"D": decl}))["eligibility"]["D"]["verdicts"]["N1"]
+    assert v["verdict"] == "FAIL" and v["numbers"]["median_ess_over_n"] == 0.1
 
 
 def test_sequential_straddle_continues_then_fails_at_look_two(tmp_path):
