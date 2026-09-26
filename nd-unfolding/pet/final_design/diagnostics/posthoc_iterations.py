@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import glob
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -227,11 +228,19 @@ def main(argv=None) -> int:
     dirs = sorted({Path(p) for g in a.runs for p in glob.glob(g)
                    if (Path(p) / "replicate_arrays.npz").exists()})
     a.out.mkdir(parents=True, exist_ok=True)
+    tool = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     for d in dirs:
         out = a.out / f"{d.name}.posthoc.json"
+        n_iter = len(glob.glob(str(d / "iterations" / "iter[0-9][0-9].npz")))
         if out.exists():
-            continue
+            old = json.loads(out.read_text())
+            # an existing file is reused only if it covers every iteration now on disk and was
+            # written by this exact tool (a file written while the run was still going, or by an
+            # older version, is recomputed)
+            if len(old["iterations"]) == n_iter and old.get("tool_sha256") == tool:
+                continue
         res = analyze_run(d, rf)
+        res["tool_sha256"] = tool
         tmp = out.with_suffix(".tmp")
         tmp.write_text(json.dumps(res))
         tmp.replace(out)
