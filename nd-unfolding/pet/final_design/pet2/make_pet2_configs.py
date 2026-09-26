@@ -64,9 +64,15 @@ from recipe import (InitSpec, IterationLRSpec, ModelSpec, RunConfig, StoppingSpe
 
 EFF = "efficiency_corrected"
 VARIANTS = {"P2pre": "pretrained", "P2scr": "scratch"}
-# candidate -> (step-1 init variant, forced step-2 across-iteration rate or None = the CLI's)
-CANDIDATES = {"P2pre": ("pretrained", None), "P2scr": ("scratch", None),
-              "P2preS1": ("pretrained", "constant"), "P2scrS1": ("scratch", "constant")}
+# candidate -> (step-1 init variant, forced step-2 across-iteration rate, forced step-1
+# across-iteration rate; None = the CLI's). "A1" = the S1 truth step with C's annealed step-1
+# schedule (1e-5 after the first iteration): the PET2 learning-rate-policy arm (stage dev2Q), added
+# after P2preS1 was seen to diverge at k = 5 under the constant step-1 rate -- the matched
+# counterpart of our PET's H2 (annealed) / H2S1 (constant) pair.
+CANDIDATES = {"P2pre": ("pretrained", None, None), "P2scr": ("scratch", None, None),
+              "P2preS1": ("pretrained", "constant", None), "P2scrS1": ("scratch", "constant", None),
+              "P2preA1": ("pretrained", "constant", "anneal"),
+              "P2scrA1": ("scratch", "constant", "anneal")}
 RUNNER = "final_design/pet2/run_pet2_replicate.py"
 
 
@@ -140,12 +146,13 @@ def build(stage: str, candidates: list[str], selections: list[tuple[str, int, st
         seed = freeze_runs.seed_for(pool, r)
         tag = "" if dist == "dev" else f"-{dist.replace('+', '_')}"
         for cand in candidates:
-            variant, forced = CANDIDATES[cand]
+            variant, forced, forced1 = CANDIDATES[cand]
             s2lr = forced or step2_iteration_lr
+            kwc = {**kw, "step1_iteration_lr": forced1} if forced1 else kw
             cfg = pet2_config(base, variant, constants, iterations=iterations,
-                              step2_iteration_lr=s2lr, **kw)
+                              step2_iteration_lr=s2lr, **kwc)
             name = f"{stage}-{cand}-{pool}{r}{tag}"
-            extra = ", ".join(f"{k}={v}" for k, v in sorted(kw.items()) if v is not None)
+            extra = ", ".join(f"{k}={v}" for k, v in sorted(kwc.items()) if v is not None)
             if s2lr != "anneal":
                 extra = ", ".join(x for x in (extra, f"step2_iteration_lr={s2lr}") if x)
             note = (f"{stage}: {cand} = PET2-small {variant} at step 1 (declared PET2 "

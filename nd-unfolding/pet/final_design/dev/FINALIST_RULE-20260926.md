@@ -40,3 +40,38 @@ Fewer iterations win ties: more iterations are not presumed safer.
 If no compact design passes, the compact finalist is the one failing the fewest screens (the failure is
 carried into the final eligibility test, not waived); likewise for the large package. A package with no
 passing and no near-passing design is recorded as closed with its development evidence.
+
+## Addendum (2026-09-26 ~18:30Z; before the large slot is chosen, before any dev2Q run started, and before any per-design pull-weight tail or any PET2 k = 4 weight tail was tabulated)
+
+Prompted by the independent scientific-scope review (findings Q2-a, Q2-c, Q2-e and "implement the
+between-design step"). Disclosed motivation: P2preS1 was seen to reach step-1 weights ≈ 5.5 × 10⁵ at
+k = 5 (development tilt −2.4) while passing the four screens at k = 4.
+
+1. **Completeness.** A k counts only when every screen is measured on the manifests' 2 event draws;
+   a k beyond a design's run length (its configs' `iterations`) is neither evidence nor incompleteness.
+   A package is chosen only when none of its members is incomplete (Amendment 2). `L128H2E16`
+   (2 learning-curve runs, no D1 −0.35/D4d rows, both left incomplete at k = 2 because 16-epoch fits do not
+   fit the debug queue) is not a screen candidate; the 16-epoch large candidate is `L128S1E16`.
+2. **S-N1 at K\* only**, applied to every design: the frozen §6.3 N1 thresholds on the development runs'
+   post-hoc weight tails at k = K\* — max over all the design's runs of the truth-passing push weight
+   and of the selected-event pull weight ≤ 100, no non-positive weight, median over the F runs of the
+   push ESS/n ≥ 0.20 and of its 99.9th percentile ≤ 10 (the ESS is of the push alone: a stated proxy of
+   N1's prior-truth-weight × push). A design passing the four screens at K\* but failing S-N1 does not
+   pass; K\* is not re-searched (no screening at K\* + 1, which would tailor the rule to the observed
+   failure).
+3. **Between-design step** (as the rule states, now in code, `apply_finalist_rule.choose`): package
+   membership (compact: H1, H2, H2S1, CS1, H2S1E16; large: L64\*, L128\*, P2pre\*, P2scr\*); highest
+   development tilt at K\*; designs within 0.02 of it are tied; ties broken by the lower D4d residual at
+   K\*, then by the lower per-unfolding cost (charged A100-hours at the design's declared packing, the
+   §6.7 clarification of Amendment 3); fallback = fewest failed screens (S-N1 counting as one).
+   The challenger condition (passes everything; differs from both finalists in detector
+   representation or truth step) is reported; it is necessary, not sufficient, for a third finalist.
+4. **PET2 learning-rate-policy arm (stage dev2Q)** gets its own ids `P2preA1`/`P2scrA1` (PET2 step 1
+   with C's annealed schedule, 1e-5 after the first iteration; H2S1's constant truth step) — the matched
+   counterpart of our PET's H2 (annealed) / H2S1 (constant) pair — and the D1 −0.35 rows the screen set
+   requires (16 runs; the 12 configs first committed under the colliding ids `P2preS1`/`P2scrS1` were never
+   run and are replaced by content-identical configs). It was added after the constant-rate divergence was
+   seen; it is a rule candidate like every other large design.
+
+The compact finalist stays as frozen by Amendment 2 (H2S1, K = 5); for the compact package the
+addendum's outputs (S-N1 at K\*, the between-design step) are reported for information only.

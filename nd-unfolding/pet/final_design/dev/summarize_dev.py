@@ -33,6 +33,7 @@ SOURCES = {  # candidate -> glob template relative to --root ({st} = final|stres
     "L64S1": "dev2S/dev2S-L64S1-{sel}", "L128S1": "dev2S/dev2S-L128S1-{sel}",
     "H2S1E16": "dev2S/dev2S-H2S1E16-{sel}", "L128S1E16": "dev2T/dev2T-L128S1E16-{sel}",
     "P2preS1": "dev2P/dev2P-P2preS1-{sel}", "P2scrS1": "dev2P/dev2P-P2scrS1-{sel}",
+    "P2preA1": "dev2Q/dev2Q-P2preA1-{sel}", "P2scrA1": "dev2Q/dev2Q-P2scrA1-{sel}",
 }
 ROWS = [  # (label, selection glob, path into an iteration record, field)
     ("dev tilt R (F reps)", "F*", ("eavail_vs_pseudodata",), "recovery"),
@@ -77,9 +78,51 @@ def collect(root: Path, ks: list[int]) -> dict:
     return out
 
 
+STABILITY = "stability (all runs; ESS/p99.9 over F reps)"
+
+
+def stability(root: Path, ks: list[int]) -> dict:
+    """Development proxy of the section-6.3 N1 quantities per candidate and k, from the post-hoc
+    `tails` (finite weights): max over ALL the candidate's runs of the push (truth-passing) and
+    pull (selected) maxima and non-positive fractions; median over the F (development-tilt) runs
+    of the push ESS/n and 99.9th percentile. The ESS is of the push alone (N1 uses prior truth
+    weight x push), a stated proxy."""
+    out: dict = {}
+    for cand, tmpl in SOURCES.items():
+        files = sorted({f for st in ("final", "stress")
+                        for f in glob.glob(str(root / (tmpl.format(st=st, sel="*") + ".posthoc.json")))})
+        if not files:
+            continue
+        runs = [json.loads(Path(f).read_text()) for f in files]
+        cell = {}
+        for k in ks:
+            at = [(d, d["iterations"][k - 1]["tails"]) for d in runs if len(d["iterations"]) >= k]
+            if not at:
+                cell[str(k)] = {"n": 0}
+                continue
+            f_runs = [t for d, t in at if "-F" in d["run"].split("/")[-1]]
+            g = lambda t, pop, key: t.get(pop, {}).get(key, math.nan)  # noqa: E731
+            cell[str(k)] = {
+                "n": len(at), "n_F": len(f_runs),
+                "max_push": float(max(g(t, "push_all", "max") for _, t in at)),
+                "max_pull": float(max(g(t, "pull_selected", "max") for _, t in at)),
+                "max_frac_nonpositive": float(max(max(g(t, "push_all", "frac_nonpositive"),
+                                                      g(t, "pull_selected", "frac_nonpositive"))
+                                                  for _, t in at)),
+                "median_push_ess_over_n_F": (float(np.median([g(t, "push_all", "ess_over_n")
+                                                              for t in f_runs])) if f_runs else None),
+                "median_push_p999_F": (float(np.median([g(t, "push_all", "p999") for t in f_runs]))
+                                       if f_runs else None),
+                "runs": [d["run"] for d, _ in at]}
+        out[cand] = cell
+    return out
+
+
 def markdown(tab: dict, ks: list[int]) -> str:
     lines = []
     for label, cands in tab.items():
+        if label == STABILITY:
+            continue
         lines.append(f"\n**{label}**\n")
         lines.append("| candidate | " + " | ".join(f"k = {k}" for k in ks) + " |")
         lines.append("|---|" + "---:|" * len(ks))
@@ -101,6 +144,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     ks = [int(x) for x in a.ks.split(",")]
     tab = collect(a.root, ks)
+    tab[STABILITY] = stability(a.root, ks)
     md = markdown(tab, ks)
     if a.json:
         a.json.write_text(json.dumps(tab, indent=1))
