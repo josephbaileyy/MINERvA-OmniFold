@@ -1,0 +1,98 @@
+{
+ "power_at_n_F": {
+  "6.5 E4 (H2S1 - L128S1)": 0.045972753894614526,
+  "6.5 E5 (H2S1 - L128S1)": 1.0,
+  "U4 H2S1": 1.0,
+  "U4 L128S1": 1.0,
+  "U5 H2S1": 1.0,
+  "U5 L128S1": 1.0
+ },
+ "joint_power_at_n_F_product": 0.045972753894614526,
+ "joint_power_note": "product of the per-contrast powers (independence); the joint power of positively correlated contrasts is at least this",
+ "alpha_one_sided_per_contrast": 0.0125,
+ "bonferroni_m": 2,
+ "looks_planned": 2,
+ "power": 0.8,
+ "floor": 24,
+ "cap": 60,
+ "contrasts": {
+  "6.5 E4 (H2S1 - L128S1)": {
+   "n_pilot": 4,
+   "mean": -0.04494973603544944,
+   "sd": 0.03985519652987572,
+   "kind": "ni",
+   "true_value_assumed": -0.04494973603544944,
+   "sd_ucb80": 0.06885333112827095,
+   "margin": -0.05,
+   "n_for_power": 1770,
+   "status": "EXCEEDS_CAP",
+   "n_for_power_if_single_look": 1461
+  },
+  "6.5 E5 (H2S1 - L128S1)": {
+   "n_pilot": 4,
+   "mean": -0.009027879797344929,
+   "sd": 0.008895604262967646,
+   "kind": "ni",
+   "true_value_assumed": -0.009027879797344929,
+   "sd_ucb80": 0.015367932897910611,
+   "margin": -0.05,
+   "n_for_power": 5,
+   "status": "OK",
+   "n_for_power_if_single_look": 4
+  },
+  "U4 H2S1": {
+   "n_pilot": 4,
+   "mean": 0.3659401453617287,
+   "sd": 0.06320414479111099,
+   "kind": "level",
+   "true_value_assumed": 0.3659401453617287,
+   "sd_ucb80": 0.10919067747462732,
+   "margin": 0.1,
+   "n_for_power": 5,
+   "status": "OK",
+   "n_for_power_if_single_look": 4
+  },
+  "U4 L128S1": {
+   "n_pilot": 4,
+   "mean": 0.4108898813971782,
+   "sd": 0.02371732523196856,
+   "kind": "level",
+   "true_value_assumed": 0.4108898813971782,
+   "sd_ucb80": 0.040973749720428713,
+   "margin": 0.1,
+   "n_for_power": 3,
+   "status": "OK",
+   "n_for_power_if_single_look": 3
+  },
+  "U5 H2S1": {
+   "n_pilot": 4,
+   "mean": 0.4509427582485793,
+   "sd": 0.05390620024847086,
+   "kind": "level",
+   "true_value_assumed": 0.4509427582485793,
+   "sd_ucb80": 0.09312766662165596,
+   "margin": 0.1,
+   "n_for_power": 4,
+   "status": "OK",
+   "n_for_power_if_single_look": 3
+  },
+  "U5 L128S1": {
+   "n_pilot": 4,
+   "mean": 0.4599706380459243,
+   "sd": 0.05966657120993739,
+   "kind": "level",
+   "true_value_assumed": 0.4599706380459243,
+   "sd_ucb80": 0.10307921030390131,
+   "margin": 0.1,
+   "n_for_power": 4,
+   "status": "OK",
+   "n_for_power_if_single_look": 3
+  }
+ },
+ "n_required_uncapped": 1770,
+ "n_F": 60,
+ "capped": true,
+ "binding_contrasts": [
+  "6.5 E4 (H2S1 - L128S1)"
+ ]
+}

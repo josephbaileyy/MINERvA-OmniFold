@@ -1,0 +1,98 @@
+{
+ "power_at_n_F": {
+  "6.5 E0 (H2S1 - L128S1)": 0.8033873391666766,
+  "6.5 moderate (H2S1 - L128S1)": 0.999999999669995,
+  "6.5 good (H2S1 - L128S1)": 0.9999999999999988,
+  "6.5 E3 (H2S1 - L128S1)": 0.904922835843211,
+  "U1 H2S1": 0.9999999999576752,
+  "U1 L128S1": 0.9999999985603887
+ },
+ "joint_power_at_n_F_product": 0.727003547921952,
+ "joint_power_note": "product of the per-contrast powers (independence); the joint power of positively correlated contrasts is at least this",
+ "alpha_one_sided_per_contrast": 0.0125,
+ "bonferroni_m": 2,
+ "looks_planned": 2,
+ "power": 0.8,
+ "floor": 24,
+ "cap": 60,
+ "contrasts": {
+  "6.5 E0 (H2S1 - L128S1)": {
+   "n_pilot": 4,
+   "mean": 0.008347936407019918,
+   "sd": 0.0195887011055074,
+   "kind": "ni",
+   "true_value_assumed": 0.0,
+   "sd_ucb80": 0.03384119113750194,
+   "margin": -0.02,
+   "n_for_power": 30,
+   "status": "OK",
+   "n_for_power_if_single_look": 25
+  },
+  "6.5 moderate (H2S1 - L128S1)": {
+   "n_pilot": 4,
+   "mean": 0.008538418478374638,
+   "sd": 0.014363462148160606,
+   "kind": "ni",
+   "true_value_assumed": 0.0,
+   "sd_ucb80": 0.024814134706232047,
+   "margin": -0.04,
+   "n_for_power": 7,
+   "status": "OK",
+   "n_for_power_if_single_look": 6
+  },
+  "6.5 good (H2S1 - L128S1)": {
+   "n_pilot": 4,
+   "mean": -0.003890461441074633,
+   "sd": 0.01073867516435083,
+   "kind": "ni",
+   "true_value_assumed": -0.003890461441074633,
+   "sd_ucb80": 0.01855199876923785,
+   "margin": -0.04,
+   "n_for_power": 6,
+   "status": "OK",
+   "n_for_power_if_single_look": 5
+  },
+  "6.5 E3 (H2S1 - L128S1)": {
+   "n_pilot": 4,
+   "mean": -0.012722558752297775,
+   "sd": 0.02327752842087593,
+   "kind": "ni",
+   "true_value_assumed": -0.012722558752297775,
+   "sd_ucb80": 0.04021396233760602,
+   "margin": -0.04,
+   "n_for_power": 24,
+   "status": "OK",
+   "n_for_power_if_single_look": 20
+  },
+  "U1 H2S1": {
+   "n_pilot": 4,
+   "mean": 0.8446978661269396,
+   "sd": 0.09989790815839807,
+   "kind": "level",
+   "true_value_assumed": 0.8446978661269396,
+   "sd_ucb80": 0.17258235684011142,
+   "margin": 0.5559785255,
+   "n_for_power": 7,
+   "status": "OK",
+   "n_for_power_if_single_look": 6
+  },
+  "U1 L128S1": {
+   "n_pilot": 4,
+   "mean": 0.8363499297199196,
+   "sd": 0.10360898742700145,
+   "kind": "level",
+   "true_value_assumed": 0.8363499297199196,
+   "sd_ucb80": 0.17899357023189258,
+   "margin": 0.5559785255,
+   "n_for_power": 7,
+   "status": "OK",
+   "n_for_power_if_single_look": 6
+  }
+ },
+ "n_required_uncapped": 30,
+ "n_F": 30,
+ "capped": false,
+ "binding_contrasts": [
+  "6.5 E0 (H2S1 - L128S1)"
+ ]
+}
