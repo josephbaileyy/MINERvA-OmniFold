@@ -1,5 +1,37 @@
 # N-D OmniFold run log
 
+## 2026-09-26 — PET final-design study: stages S0–S1 (capacity, banks, diagnostics, development screen; in progress)
+
+Authorization `docs/orchestration/AUTHORIZATION-20260925-pet-final-design.md` (Joseph's 2026-09-25 grant,
+verbatim); protocol `nd-unfolding/pet/final_design/PROTOCOL-20260925.md` (decision table frozen before any
+successor run; Amendment 1: DEV-bank q3 quartiles). Branch `pet-final-design-20260925` from
+`pet-improvement-20260922` @ `9368ec9e`. Simulation only; PET stays diagnostic; nothing adopted; historical
+thresholds, verdicts and the predecessor's disposition unchanged. **All results below are development
+evidence (DEV bank), not confirmatory.**
+
+- **Capacity** (`final_design/CAPACITY-20260925.md`): 4,061,737 inventory rows were never drawn into a scored
+  predecessor run (3.4 historical-size replicates); no further same-model simulation exists. Frozen banks
+  (`banks/BANK_MANIFEST.json`, job 58880785; 46/46 predecessor draw digests reproduced): DEV 45,089,191,
+  FB 2,646,891 (final bank, sealed), RB 1,414,846 (reserve, sealed). Final inference will be conditional on
+  the banks.
+- **Failure localization** (`final_design/DIAGNOSTICS-20260925.md`; post-hoc analysis of the predecessor's 81
+  runs, job 58879830, reproducing every committed score to 1e-9; 19 bounded step-2 fits, jobs 58880466/
+  58886796): the multiplicity injections barely move `E_avail` (D4d 0.011 L1), so C's "neutron failure" is a
+  near-zero-injection artifact while B's is real; under the proton change the baseline detector step does not
+  transmit the hadron-content change (stored reco cloud capped at 12 clusters in 85.5 % of selected events);
+  given the exact weights the truth step learns it (categorical PDG 0.87–0.97) and extrapolates to misses, and
+  given C's real pull it recovers only what the pull carries (≈0.02).
+- **Development screen** (dev1: 64 runs; dev2L: 12; dev2S partial; seed-paired with the predecessor on the same
+  events): C + categorical truth PDG + detector reco summaries with a constant per-iteration learning rate
+  (H2S1) passes the committed development screens at k = 5 (dev tilt 0.906, proton topology 0.39, neutron-case
+  `E_avail` residual 0.020 ≤ 0.021); with the forced 1e-5 schedule (H2) the same inputs fail the neutron screen
+  from k = 3; enlarging the step-1 PET to 0.25 M / 0.97 M parameters at 8 epochs changes nothing resolvable.
+  AUSSIE closed at scalar level by its matched stress test (loses robustness and stability in 12/12 matched
+  comparisons; `scalar/SCALAR_AUSSIE_MATCHED-20260925.md`).
+- **In progress:** PET2-small pretrained vs scratch (path verified: 176/176 pretrained tensors at the first
+  optimizer step; materialization byte-identical to the historical cache), 16-epoch arms, sizing pilot S3P.
+- **Resources so far:** 123.9 A100-h, 0.23 CPU node-h (`final_design/resources/RESOURCE_LEDGER.tsv`, 08:45Z).
+
 ## 2026-09-25 — PET improvement campaign: confirmatory stage complete (FINAL, STRESS; coverage not run)
 
 Same campaign and authorization as the entry below. Simulation only; PET stays diagnostic; the historical thresholds
