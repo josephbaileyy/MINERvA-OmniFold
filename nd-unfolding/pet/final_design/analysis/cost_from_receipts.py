@@ -140,13 +140,20 @@ def chain_packings(directory: Path) -> dict[str, int]:
     return out
 
 
-def parse_run_name(name: str, pattern: str | re.Pattern = DEFAULT_CANDIDATE_RE
-                   ) -> tuple[str, int] | None:
-    """(candidate id, K) from a run directory name, or None when it does not match."""
+def parse_run_name(name: str, pattern: str | re.Pattern = DEFAULT_CANDIDATE_RE,
+                   k_of: Mapping[str, int] | None = None) -> tuple[str, int] | None:
+    """(candidate id, K) from a run directory name, or None when it does not match. K comes from
+    the name's `k` group, else from `k_of` (development runs carry no K in their names)."""
     m = re.match(pattern, name)
     if m is None:
         return None
-    return m.group("cid"), int(m.group("k"))
+    cid = m.group("cid")
+    k = m.groupdict().get("k")
+    if k is None:
+        if not k_of or cid not in k_of:
+            raise ValueError(f"run {name}: no K in the name and no --k-of entry for {cid}")
+        return cid, int(k_of[cid])
+    return cid, int(k)
 
 
 def parse_packing(items: Sequence[str]) -> dict[str, int]:
@@ -216,7 +223,8 @@ def evidence_cost(values: Sequence[float]) -> dict[str, Any]:
 
 
 def summarize(runs: Sequence[Path], packing: Mapping[str, int],
-              pattern: str = DEFAULT_CANDIDATE_RE) -> dict[str, Any]:
+              pattern: str = DEFAULT_CANDIDATE_RE,
+              k_of: Mapping[str, int] | None = None) -> dict[str, Any]:
     compiled = re.compile(pattern)
     if not {"cid", "k"} <= set(compiled.groupindex):
         raise ValueError("--candidate-of needs named groups 'cid' and 'k'")
@@ -229,7 +237,7 @@ def summarize(runs: Sequence[Path], packing: Mapping[str, int],
         if key in seen:
             raise ValueError(f"run {r} listed twice")
         seen.add(key)
-        parsed = parse_run_name(r.name, compiled)
+        parsed = parse_run_name(r.name, compiled, k_of)
         if parsed is None:
             unmatched.append(str(r))
             continue
@@ -277,10 +285,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                     help="declared worker slots per GPU for each candidate")
     ap.add_argument("--candidate-of", default=DEFAULT_CANDIDATE_RE, metavar="REGEX",
                     help="regex with named groups cid and k, matched against run names")
+    ap.add_argument("--k-of", nargs="+", default=None, metavar="CAND=K",
+                    help="K for candidates whose run names carry none (development stages)")
     ap.add_argument("--out", required=True, type=Path)
     args = ap.parse_args(argv)
     try:
-        doc = summarize(args.runs, parse_packing(args.packing), args.candidate_of)
+        k_of = parse_packing(args.k_of) if args.k_of else None
+        doc = summarize(args.runs, parse_packing(args.packing), args.candidate_of, k_of)
     except (ValueError, re.error) as exc:
         print(f"cost_from_receipts: {exc}", file=sys.stderr)
         return 2

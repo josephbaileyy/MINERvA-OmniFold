@@ -203,3 +203,12 @@ def test_refusals(tmp_path, capsys):
     assert cfr.main(["--runs", str(a), "--packing", "H2S1=2", "--candidate-of", r"^(?P<cid>\w+)$",
                      "--out", out]) == 2
     assert not Path(out).exists()
+
+
+def test_k_from_k_of_when_the_name_has_none():
+    import cost_from_receipts as cfr
+    pat = r"^(?P<stage>dev2[A-Z])-(?P<cid>[A-Za-z0-9]+?)(?:K(?P<k>\d+))?-"
+    assert cfr.parse_run_name("dev2P-P2preS1-F0", pat, {"P2preS1": 4}) == ("P2preS1", 4)
+    assert cfr.parse_run_name("dev2P-P2preS1K3-F0", pat, {"P2preS1": 4}) == ("P2preS1", 3)
+    with pytest.raises(ValueError, match="no K in the name"):
+        cfr.parse_run_name("dev2P-P2preS1-F0", pat, None)
