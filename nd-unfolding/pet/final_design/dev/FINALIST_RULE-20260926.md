@@ -75,3 +75,12 @@ k = 5 (development tilt −2.4) while passing the four screens at k = 4.
 
 The compact finalist stays as frozen by Amendment 2 (H2S1, K = 5); for the compact package the
 addendum's outputs (S-N1 at K\*, the between-design step) are reported for information only.
+
+**Correction to addendum item 2 (2026-09-26 ~18:45Z, after the recomputed development tables were read).**
+S-N1's population was "all the design's runs". The dev1 designs (H1, H2, H2S1, CS1) also ran response and
+generator cases (R1 ×1.05, D1 +0.35, D2, D5) that the larger designs never ran, so the screen compared unequal
+populations: H2S1's only weight above 100 (step-1 max 119 at k = 5) is in its R1 ×1.05 response case. S-N1 is
+evaluated on the four screen cases every design ran (F draws, D1 −0.35, D4c up, D4d up). Disclosed effect: no
+large design ran any other case, so the large-slot inputs are unchanged; for the (information-only) compact
+package H2S1 passes S-N1 at K\* = 5 on the matched population. The R1 step-1 weight growth is reported with the
+response results.

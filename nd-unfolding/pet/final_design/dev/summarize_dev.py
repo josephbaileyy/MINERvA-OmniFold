@@ -78,19 +78,23 @@ def collect(root: Path, ks: list[int]) -> dict:
     return out
 
 
-STABILITY = "stability (all runs; ESS/p99.9 over F reps)"
+STABILITY = "stability (screen-case runs; ESS/p99.9 over F reps)"
+# the four screen cases every development design ran (addendum correction: dev1 designs also ran
+# response/generator cases that the larger designs never ran, so "all runs" compared unequal
+# populations)
+SCREEN_SELECTIONS = ("F*", "T*-D1_m0.350", "T*-D4c_p_up", "T*-D4d_n_up")
 
 
 def stability(root: Path, ks: list[int]) -> dict:
     """Development proxy of the section-6.3 N1 quantities per candidate and k, from the post-hoc
-    `tails` (finite weights): max over ALL the candidate's runs of the push (truth-passing) and
+    `tails` (finite weights): max over the candidate's SCREEN-CASE runs of the push (truth-passing) and
     pull (selected) maxima and non-positive fractions; median over the F (development-tilt) runs
     of the push ESS/n and 99.9th percentile. The ESS is of the push alone (N1 uses prior truth
     weight x push), a stated proxy."""
     out: dict = {}
     for cand, tmpl in SOURCES.items():
-        files = sorted({f for st in ("final", "stress")
-                        for f in glob.glob(str(root / (tmpl.format(st=st, sel="*") + ".posthoc.json")))})
+        files = sorted({f for st in ("final", "stress") for sel in SCREEN_SELECTIONS
+                        for f in glob.glob(str(root / (tmpl.format(st=st, sel=sel) + ".posthoc.json")))})
         if not files:
             continue
         runs = [json.loads(Path(f).read_text()) for f in files]

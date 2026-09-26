@@ -24,7 +24,7 @@ SCREENS = {"S-U1": ("dev tilt R (F reps)", ">=", 0.60), "S-U3": ("D1 -0.35 R", "
            "S-U4": ("D4c topo (E x p) R", ">=", 0.25), "S-B2": ("D4d E_avail res L1", "<=", 0.021)}
 KS = (2, 3, 4, 5, 6)
 MIN_DRAWS = 2                  # every development manifest runs 2 event draws per case
-STABILITY = "stability (all runs; ESS/p99.9 over F reps)"
+STABILITY = "stability (screen-case runs; ESS/p99.9 over F reps)"
 # S-N1 (addendum): section 6.3 N1's frozen thresholds on the post-hoc tails at k = K*
 N1 = {"max_push": ("<=", 100.0), "max_pull": ("<=", 100.0), "max_frac_nonpositive": ("<=", 0.0),
       "median_push_ess_over_n_F": (">=", 0.20), "median_push_p999_F": ("<=", 10.0)}
