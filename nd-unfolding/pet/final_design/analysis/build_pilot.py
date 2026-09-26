@@ -7,7 +7,8 @@ Reads `*.design_scores.json` (score_design.py) of the S3P runs, loads each final
 
 * FINAL (sizes n_F): the section-6.5 non-inferiority contrasts small - large on E0, the moderate and
   good regions and E3, and U1 (R_E0 against the historical floor) for every finalist;
-* library (sizes the E4/E5 cases' draw count): the non-inferiority contrasts on E4 and E5.
+* library (sizes the E4/E5 cases' draw count): the non-inferiority contrasts on E4 and E5, and U4/U5
+  (LB > 0.10) for every finalist.
 
 Seed-variant runs (`-s<tag>`, the N2 estimator-seed runs) are excluded from the contrasts.
 
@@ -28,6 +29,7 @@ import decide  # noqa: E402
 
 NAME = re.compile(r"^S3P-(?P<cid>[A-Za-z0-9]+)K(?P<k>\d+)-DEV(?P<rep>\d+)(?P<rest>.*)$")
 FINAL_NI = ("E0", "moderate", "good", "E3")
+U_LB_FLOOR = 0.10              # section 6.1 U4/U5: LB > 0.10
 LIBRARY_NI = ("E4", "E5")
 
 
@@ -74,6 +76,12 @@ def main(argv=None) -> int:
         final.append({"id": f"U1 {c.name}", "values": [v[r] for r in sorted(v)],
                       "replicates": sorted(v), "margin": decide.PROTOCOL_U1_FLOOR, "kind": "level"})
     library = [contrast(small, large, ep) for ep in LIBRARY_NI]
+    for rule, ep in (("U4", "E4"), ("U5", "E5")):
+        case, getter = decide.ENDPOINT_GETTERS[ep]
+        for c in (small, large):
+            v = c.values(case, getter)
+            library.append({"id": f"{rule} {c.name}", "values": [v[r] for r in sorted(v)],
+                            "replicates": sorted(v), "margin": U_LB_FLOOR, "kind": "level"})
     a.final_out.write_text(json.dumps({**head, "contrasts": final}, indent=1) + "\n")
     a.library_out.write_text(json.dumps({**head, "contrasts": library}, indent=1) + "\n")
     for c in final + library:

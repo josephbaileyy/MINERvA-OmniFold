@@ -58,7 +58,10 @@ def test_contrasts_are_paired_differences_with_protocol_margins(tmp_path):
     u1 = got["U1 H2S1"]
     assert u1["margin"] == dc.PROTOCOL_U1_FLOOR and u1["kind"] == "level"
     np.testing.assert_allclose(u1["values"], [0.84 + 0.01 * r for r in range(4)], atol=1e-12)
-    assert {c["id"].split(" (")[0] for c in lib["contrasts"]} == {"6.5 E4", "6.5 E5"}
+    assert {c["id"].split(" (")[0] for c in lib["contrasts"]} == {
+        "6.5 E4", "6.5 E5", "U4 H2S1", "U4 L128S1", "U5 H2S1", "U5 L128S1"}
+    np.testing.assert_allclose(got["U4 L128S1"]["values"], [0.40 + 0.01 * r for r in range(4)])
+    assert got["U4 L128S1"]["margin"] == 0.10
 
 
 def test_unpaired_draws_are_refused(tmp_path):
