@@ -31,6 +31,17 @@ incomplete() {   # MANIFEST_STEM -> 0 if some row of the manifest is not COMPLET
   done < "$M/nd-unfolding/pet/final_design/runs/$stem.tsv"
   return 1
 }
+claimable() {   # STEM -> 0 if some incomplete row is not held by a running job (flock probe)
+  local stem=$1 out=$B/${OUTS[$1]} n
+  while IFS=$'\t' read -r n _; do
+    [[ -z "$n" || "$n" == \#* ]] && continue
+    [[ "$(cat "$out/$n/status.txt" 2>/dev/null)" == COMPLETE ]] && continue
+    [[ ! -e "$out/$n/.flock" ]] && return 0
+    flock -n "$out/$n/.flock" true 2>/dev/null && return 0
+  done < "$M/nd-unfolding/pet/final_design/runs/$stem.tsv"
+  return 1
+}
+first_claimable() { local s; for s in "$@"; do claimable "$s" && { echo "$s"; return 0; }; done; return 1; }
 first_incomplete() { local s; for s in "$@"; do incomplete "$s" && { echo "$s"; return 0; }; done; return 1; }
 # per-GPU lanes: each GPU walks its own priority list (rows are claimed per row, so lanes on the same
 # manifest never collide), so a GPU whose manifest runs out moves on instead of idling until the
@@ -60,7 +71,7 @@ launch_inter() {   # NAME "lane1 & lane2 & ..." LOGDIR
 }
 if [[ ${DRY:-0} == 1 ]]; then      # print the decisions and exit
   for st in dev2Pa dev2Q dev2Ta dev3N s3n_fast s3n_slow s4f_a2 s4s_a2; do incomplete "$st" && echo "$st incomplete" || echo "$st complete"; done
-  echo "debug -> $(first_incomplete dev3N s3n_fast s4f_a2 s4s_a2)"
+  echo "debug -> $(first_claimable dev3N s3n_fast s4f_a2 s4s_a2)"
   echo "inter1 GPU0: $(lane_seq 0 "${INTER1[@]}")"; echo "inter2 GPU2: $(lane_seq 2 "${INTER2_23[@]}")"; exit 0
 fi
 while (( $(date +%s) < stop_epoch )) && [[ ! -e $B/keep_busy.stop ]]; do
@@ -77,7 +88,7 @@ while (( $(date +%s) < stop_epoch )) && [[ ! -e $B/keep_busy.stop ]]; do
   # a debug chain holds 2 submissions (running + queued successor); keep two chains (<= 4 of 5)
   nd=$(grep -c ' gpu_debug$' <<<"$q" || true)
   if (( nd <= 2 )); then
-    st=$(first_incomplete dev3N s3n_fast s4f_a2 s4s_a2) && (( ${ITER[$st]:-9999} * 11 / 10 + 150 < 1790 )) && {
+    st=$(first_claimable dev3N s3n_fast s4f_a2 s4s_a2) && (( ${ITER[$st]:-9999} * 11 / 10 + 150 < 1790 )) && {
       O=$B/${OUTS[$st]}; mkdir -p "$O"; sc=1; [[ $st == s4* ]] && sc=0
       j=$(cd "$O" && sbatch --parsable -o "$O/slurm-%j.out" --export=ALL,MINE="$M",MINE_COMMIT="$S",OUT="$O",MANIFEST="$R/$st.tsv",SCORE=$sc,SLOTS_PER_GPU=1,CHAIN=1,MAX_ROUNDS=2000,DEADLINE_MARGIN=10,ITER_ESTIMATE=${ITER[$st]} "$M/nd-unfolding/pet/final_design/jobs/pfd_worker_chain.sh" 2>&1)
       echo "$(date -u +%FT%TZ) debug chain for $st: $j" >> "$B/keep_busy.log"; }
