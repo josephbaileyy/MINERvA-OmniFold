@@ -486,6 +486,66 @@ def crosscheck(cache: Path, inputs_npz: Path, join_dir: Path, max_rows: int | No
     return report
 
 
+def census(inputs_npz: Path, join_dir: Path, inventory_rows: int = INVENTORY_ROWS,
+           list_max: int = 500) -> dict[str, Any]:
+    """Every STORED non-finite value in every shard, and which reco-passing inventory rows use it.
+
+    One pass over all shards (tokens, add_info, globals); per value class: built rows and tokens
+    affected, and those referenced by a reco-passing inventory row (the rows PET2 can be asked
+    for). The historical comparison applied no treatment (`materialize` passes values through;
+    its three caches contain none), so this is the population a policy has to cover."""
+    t0 = time.perf_counter()
+    index = load_index(join_dir, inventory_rows=inventory_rows)
+    pass_reco, pass_sha = read_pass_reco(inputs_npz)
+    valid = (index.row_index >= 0) & pass_reco
+    built_to_inv = np.full(index.origin.shape[0], -1, dtype=np.int64)
+    built_to_inv[index.row_index[valid]] = np.flatnonzero(valid)
+    del pass_reco, valid
+    order = np.lexsort((index.origin[:, 1], index.origin[:, 0]))
+    shard_of = index.origin[order, 0]
+    bounds = np.searchsorted(shard_of, np.arange(len(index.files) + 1))
+    totals = {k: {"built_rows": 0, "tokens_or_entries": 0, "reco_rows": 0,
+                  "reco_tokens_or_entries": 0} for k in ("momentum", "log_e_pid", "add_info",
+                                                        "globals")}
+    listed: list[dict[str, Any]] = []
+    for k, path in enumerate(index.files):
+        built = order[bounds[k]:bounds[k + 1]]
+        local = index.origin[built, 1]
+        with np.load(path) as blob:
+            tok = blob["tokens"]
+            add = blob["add_info"]
+            glob = blob["globals"]
+        if tok.shape[0] != local.size or not np.array_equal(local, np.arange(local.size)):
+            raise JoinError(f"[theirs_rows] shard {path} does not match the join's origin")
+        classes = {"momentum": (~np.isfinite(tok[..., 0:3])).any(-1),
+                   "log_e_pid": (~np.isfinite(tok[..., 3:5])).any(-1),
+                   "add_info": (~np.isfinite(add)).any(-1),
+                   "globals": ~np.isfinite(glob)}
+        inv = built_to_inv[built]
+        for name, bad in classes.items():
+            per_row = bad.sum(axis=1)
+            hit = per_row > 0
+            ref = hit & (inv >= 0)
+            t = totals[name]
+            t["built_rows"] += int(hit.sum())
+            t["tokens_or_entries"] += int(per_row.sum())
+            t["reco_rows"] += int(ref.sum())
+            t["reco_tokens_or_entries"] += int(per_row[ref].sum())
+            for j in np.flatnonzero(ref)[:max(0, list_max - len(listed))]:
+                cols = np.flatnonzero(bad[j]).tolist()
+                listed.append({"class": name, "inventory_row": int(inv[j]), "shard": path,
+                               "row_in_shard": int(j), "tokens_or_entries": cols,
+                               "pid": ([repr(float(tok[j, c, 4])) for c in cols]
+                                       if name != "globals" else None)})
+    return {"schema": SCHEMA + "/nonfinite-census", "join": index.record,
+            "pass_reco_sha256": pass_sha, "shards": len(index.files), "totals": totals,
+            "listed": listed, "listed_truncated_at": list_max,
+            "historical_treatment": "none: materialize_theirs passes stored values through; "
+                                    "the historical tuning/pilot/final caches hold no non-finite "
+                                    "value (crosscheck + NaN scan)",
+            "seconds": time.perf_counter() - t0, "slurm_job_id": os.environ.get("SLURM_JOB_ID")}
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -497,10 +557,21 @@ def main(argv: Sequence[str] | None = None) -> int:
     c.add_argument("--max-rows", type=int, default=None,
                    help="compare a random subset of this many rows per leg (default: all)")
     c.add_argument("--out", type=Path, required=True)
+    n = sub.add_parser("census", help="stored non-finite values across all shards")
+    n.add_argument("--inputs-npz", type=Path, required=True)
+    n.add_argument("--join-dir", type=Path, default=JOIN_DIR)
+    n.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
     scope.refuse_real_data_inputs(bkg_mode="mc-only", measured_leg_is_real=False,
                                   npz_keys_read=["pass_reco"],
-                                  input_paths=[a.inputs_npz, a.cache, a.join_dir])
+                                  input_paths=[a.inputs_npz, a.join_dir]
+                                  + ([a.cache] if a.cmd == "crosscheck" else []))
+    if a.cmd == "census":
+        report = census(a.inputs_npz, a.join_dir)
+        a.out.parent.mkdir(parents=True, exist_ok=True)
+        a.out.write_text(json.dumps(report, indent=1) + "\n")
+        print(json.dumps({"totals": report["totals"], "seconds": report["seconds"]}))
+        return 0
     report = crosscheck(a.cache, a.inputs_npz, a.join_dir, a.max_rows)
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(report, indent=1) + "\n")

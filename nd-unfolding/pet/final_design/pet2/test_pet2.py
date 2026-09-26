@@ -229,6 +229,28 @@ def test_nonfinite_momentum_policy(world):
     assert k1 != tr.cache_key(world.index, "d", legs, "zero")
 
 
+def test_census_counts_stored_nonfinite_values(world):
+    reco = np.flatnonzero(world.pass_reco & (world.row_index >= 0))
+    victim = int(reco[2])
+    shard, local = world.origin[world.row_index[victim]]
+    blob = dict(np.load(world.files[shard]))
+    blob["tokens"] = blob["tokens"].copy()
+    blob["tokens"][local, 4, 0:3] = np.nan
+    unused = np.setdiff1d(np.flatnonzero(world.origin[:, 0] == shard),
+                          world.row_index[world.row_index >= 0])[0]
+    blob["tokens"][world.origin[unused, 1], 1, 1] = np.inf      # a row no inventory row uses
+    np.savez_compressed(world.files[shard], **blob)
+    rep = tr.census(world.inventory, world.join, inventory_rows=world.n_inv)
+    m = rep["totals"]["momentum"]
+    assert (m["built_rows"], m["tokens_or_entries"], m["reco_rows"],
+            m["reco_tokens_or_entries"]) == (2, 2, 1, 1)
+    assert rep["listed"] == [{"class": "momentum", "inventory_row": victim,
+                              "shard": world.files[shard], "row_in_shard": int(local),
+                              "tokens_or_entries": [4],
+                              "pid": [repr(float(blob["tokens"][local, 4, 4]))]}]
+    assert rep["totals"]["globals"]["built_rows"] == 0
+
+
 def test_pass_reco_length_mismatch_refused(world):
     with pytest.raises(SystemExit, match="pass_reco"):
         tr.gather(world.index, np.array([1, 2]), world.pass_reco[:-1])
