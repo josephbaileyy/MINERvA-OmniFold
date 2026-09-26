@@ -14,8 +14,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-oi192",
  "branch": "campaign/oi192-diagnosis-20260925",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5e-20260925/",
- "phase": "CANDIDATE R FROZEN; DEVELOPMENT NEXT",
- "phase_detail": "diagnosis independently reviewed (review-round-1.md; F1-F7 accepted, record revised); contract amendment 3 freezes the candidate decision (one candidate, R: refinement classifier 400 trees / 31 leaves, a targeted refinement repair for the nominal background bias), its development plan, and the complete assessment construction with acceptance and useful-width criteria; budget revision 2 (candidate_development 4.5, assessment 7.0)",
+ "phase": "CANDIDATE R DEVELOPMENT PASSED; ASSESSMENT NEXT",
+ "phase_detail": "development receipt state/s5e/cand/dev_receipt.json (sha256 e363f218...): K1 C3 PASS (20 nominal, max |t| 2.18; B0 on the same seeds fails, max |t| 8.6, 56 functionals), K2/K3 not worse than B0 (departures unchanged, as scoped), K4 pass (seed bitwise, permutation <= 1.2e-10 sigma), K5 calibration on K1 pass; development_exit true; no revision used",
  "pinned": {
   "contract": "docs/orchestration/state/s5e/contract.json (frozen at the commit that first adds it)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -54,6 +54,20 @@
    "queue": "state/s5e/queues/diag-R.q",
    "state": "COMPLETED: released by runner; 0.253 CPU node-h",
    "started_utc": "2026-09-26T02:44:37Z"
+  },
+  {
+   "job": "58887442",
+   "label": "s5e_cand_dev_a (1 CPU node, 1.5 h)",
+   "stage": "candidate_development",
+   "queue": "state/s5e/queues/cand-dev.q",
+   "state": "COMPLETED: released by runner; 1.311 CPU node-h; step k5_b16 exit 129 AFTER writing its five replicas (ROOT/cppyy op_str crash at teardown; replicas 16-20 verified complete)"
+  },
+  {
+   "job": "58887443",
+   "label": "s5e_cand_dev_b (1 CPU node, 1.5 h)",
+   "stage": "candidate_development",
+   "queue": "state/s5e/queues/cand-dev-b.q",
+   "state": "COMPLETED: released by runner; 0.913 CPU node-h"
   }
  ],
  "receipts": [
@@ -76,6 +90,14 @@
   {
    "path": "docs/orchestration/state/s5e/diag/review-round-1.md",
    "what": "independent operand-level review of the diagnosis with dispositions (scripts in diag/review1/)"
+  },
+  {
+   "path": "docs/orchestration/state/s5e/cand/dev_receipt.json",
+   "what": "candidate R development K1-K5 (s5e_analyze_candidate.py at 2f958652)"
+  },
+  {
+   "path": "docs/orchestration/state/s5e/cand/meter-measure-dev.json",
+   "what": "spend after development: 6.156 CPU node-h (diagnosis 3.932, candidate_development 2.224), all closed"
   }
  ],
  "candidates": [
@@ -84,10 +106,11 @@
    "definition": "B0 + refinement classifier n_estimators 400, num_leaves 31",
    "scope": "nominal background-related bias only (KNOWN_ISSUES 75 residual); not a remedy for the departure response (KNOWN_ISSUES 77)",
    "revisions_used": 0,
-   "revisions_allowed": 1
+   "revisions_allowed": 1,
+   "development": "PASSED (development_exit true)"
   }
  ],
- "next_action": "rebind the ledger to budget revision 2, launch cand-dev.q and cand-dev-b.q (stage candidate_development), then the development receipt (s5e_analyze_candidate.py --stage development)",
+ "next_action": "launch cand-assess.q and cand-assess-b.q (stage assessment), then the assessment receipt",
  "concurrent_work_at_start": "jobs 58880337/58880338/58880339 and further josephrb GPU jobs and CPU job 58880449 belong to other lanes (not touched); shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "35f8757b231f524e52c060e4db93af87420af4d9",
@@ -111,6 +134,10 @@
   {
    "utc": "2026-09-25T22:57:38Z",
    "what": "both queue lines exited 2 at the meter's label check (uppercase A/B) before any admission; fixed at 581daf98 and relaunched 22:59:26Z"
+  },
+  {
+   "utc": "2026-09-26T04:37:04Z",
+   "what": "task k5_b16 (bootstrap replicas 16-20) exited 129 from a ROOT/cppyy signal in CPyCppyy::op_str after its fifth replica was written at 04:36Z; all five products carry complete metadata (bootstrap_seed, candidate R, n_estimators 400); no retry"
   }
  ],
  "prepared_not_frozen": {
