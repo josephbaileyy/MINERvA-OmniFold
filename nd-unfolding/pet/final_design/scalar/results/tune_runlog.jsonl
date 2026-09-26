@@ -1,0 +1,1 @@
+{"stage": "tune", "groups": 16, "tasks_declared": 32, "tasks_written_this_run": 32, "tasks_skipped_existing": 0, "workers": 3, "threads_per_worker": 3, "seconds": 151.36972354212776, "host": "DNa1d666d.SUNet", "machine": "arm64", "python": "3.12.2", "commit": "e19bbdf52c166b79dfacdc95e9ee6731de97b9a3+dirty", "versions": {"sklearn": "1.8.0", "numpy": "1.26.4", "torch": "2.6.0"}}
