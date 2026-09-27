@@ -185,6 +185,13 @@
    "reviewed_head": "7f05a413",
    "worktree": "../MINERvA-OmniFold-s5p-review2 (left clean)",
    "verdict": "admission NOT ready: H1 HIGH; M1-M6 MEDIUM; F1/F2/F5/double-count/sequential rule CONFIRMED"
+  },
+  {
+   "round": "repair-review (exception)",
+   "record": "docs/orchestration/EXCEPTION-20260927-s5p-pilot-negative-rate-resubmission.md",
+   "reviewed_head": "3e5f0c23",
+   "worktree": "../MINERvA-OmniFold-s5p-review3 (left clean)",
+   "verdict": "REPAIR VALIDATED with documentation conditions C1, C2 (met)"
   }
  ],
  "next_action": "deploy; rebind to budget revision 4; run s3v-cpu.q; then D (16 pairs, bias-aligned), F2 NuWro, M1 merged-x2 comparison, V from the rebuilt pilot, development power; freeze amendment 7 with every digest; production",
