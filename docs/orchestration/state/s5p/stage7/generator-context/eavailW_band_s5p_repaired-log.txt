@@ -1,0 +1,17 @@
+Info in <TCanvas::Print>: png file eavailW_band.png has been created
+Info in <TCanvas::Print>: pdf file eavailW_band.pdf has been created
+[band] GENIE-CV: total=2.7645e-38 (data 3.0699e-38, ratio 1.110); hiE-hiW corner=1.1818e-38 (data 1.3497e-38, data/gen=1.142)
+[band] GENIE+MEC: total=2.8756e-38 (data 3.0699e-38, ratio 1.068); hiE-hiW corner=1.1854e-38 (data 1.3497e-38, data/gen=1.139)
+[band] NuWro: total=2.6628e-38 (data 3.0699e-38, ratio 1.153); hiE-hiW corner=1.1635e-38 (data 1.3497e-38, data/gen=1.160)
+[band] GiBUU: total=2.2152e-38 (data 3.0699e-38, ratio 1.386); hiE-hiW corner=8.3993e-39 (data 1.3497e-38, data/gen=1.607)
+
+=== dsigma/dW (data vs generators) ===
+  W band         data     GENIE-CV    GENIE+MEC        NuWro        GiBUU
+   0.0-  1.1   4.370e-39    3.232e-39    3.523e-39    3.768e-39    3.999e-39
+   1.1-  1.4   1.875e-38    1.646e-38    1.846e-38    1.513e-38    1.378e-38
+   1.4-  1.8   1.419e-38    1.552e-38    1.586e-38    1.273e-38    1.033e-38
+   1.8-  2.2   1.152e-38    1.131e-38    1.129e-38    1.094e-38    8.544e-39
+   2.2-  3.0   7.481e-39    6.663e-39    6.735e-39    6.621e-39    5.572e-39
+   3.0-100.0   4.121e-41    3.188e-41    3.190e-41    3.275e-41    1.662e-41
+
+[band] wrote eavailW_band.png and eavailW_band.root

@@ -1,5 +1,25 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-09-27 s5p (OI-193): the generator comparisons on the flux-repaired predictions (`KNOWN_ISSUES.md` 83)
+
+The GENIE 2.12.10 CV, GENIE+MEC and NuWro truth predictions were generated from a density-valued flux sampled by
+bin content (non-PPFX, 50 GeV cap); they are repaired by an exact per-event reweight to the analysis PPFX CV flux on
+0–100 GeV plus correctly sampled 50–100 GeV supplements, and GiBUU is reweighted to the same flux convention
+(receipts `docs/orchestration/state/s5p/gen5d/gen5d-fluxfix.json`, `-2.json`, `-3.json`). The unchanged producers of
+the deliverables' figures re-run on the repaired inputs (receipt
+[`generator-context-receipt.json`](docs/orchestration/state/s5p/stage7/generator-context/generator-context-receipt.json),
+logs beside it; the unrepaired 5D products reproduce the committed (E_avail,W) files to 2e-16). **These rows
+SUPERSEDE VL35–VL38 (2026-08-11), which stay below unedited as history.** Central values only, as VL35–VL38: no
+covariance enters the corner ratio and no significance is claimed from it. Tune v1 (the analysis MC) is unaffected.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL156 | (E_avail,W) high-E_avail/high-W corner (E_avail ≥ 0.8, W ≥ 1.8 GeV) data/generator, `overlay_eavailW_band.py`, repaired | GENIE-CV **1.142**, GENIE+MEC **1.139**, NuWro **1.160**, GiBUU **1.607** (data corner 1.3497e-38) | VERIFIED-NUMERIC; supersedes VL35–VL38 (1.535 / 1.579 / 1.563 / 1.609): every generator stays below the data in the corner, by 14–16% (GENIE, NuWro) instead of 54–58% |
+| VL157 | integrated (E_avail,W) cross section data/generator, repaired | GENIE-CV 1.110 (2.7645e-38), GENIE+MEC 1.068 (2.8756e-38; the 3D convention, which also removes `KNOWN_ISSUES.md` 81), NuWro 1.153 (2.6628e-38), GiBUU 1.386 (2.2152e-38); data 3.0699e-38 cm²/nucleon | VERIFIED-NUMERIC; supersedes the integrated σ column of VL35–VL38 |
+| VL158 | dσ/dW at W ∈ [2.2, 3.0) GeV, data/generator, repaired | GENIE-CV 1.123, GENIE+MEC 1.111, NuWro 1.130, GiBUU 1.343 | VERIFIED-NUMERIC; supersedes the note's 1.30–1.35 |
+| VL159 | 3D integrated σ below the data (E_avail axis, catch bin dropped; `overlay_generators_band.py`), repaired | GENIE-CV -7.2% (1.3 σ_tot), Tune v1 -9.5% (1.8), NuWro -12.8% (2.4), GiBUU -22.2% (4.2) | VERIFIED-NUMERIC; the note's 7.2/9.5/15.3/21.9% become 7.2/9.5/12.8/22.2% (GENIE-CV's committed 3D was a different sample, so its unchanged −7.2% is not evidence the defect was absent) |
+| VL160 | GENIE Valencia 2p2h against the data's low-E_avail deficit (`compare_mec_eavail.py`), repaired | CV -7.2% → CV+MEC -2.6%; MEC adds **63%** of the integrated deficit and fills 52% of the E_avail ≤ 0.4 GeV gap | VERIFIED-NUMERIC; supersedes the note's −5.2%, 27% and 46%: the 27% was mostly an artifact of the committed CV and MEC files being different samples (measured from the MEC-only component it was 64% before the repair) |
+
 ## 2026-09-27 s5p (OI-193): Stage 2 of the precision-measurement completion
 
 Campaign under [`AUTHORIZATION-20260926-precision-measurement-completion.md`](docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md);

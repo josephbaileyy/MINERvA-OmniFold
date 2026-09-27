@@ -1,0 +1,256 @@
+{
+ "schema": "s5p-generator-context/1",
+ "purpose": "Stage 7 re-examination of the deliverables' generator comparisons on the flux-repaired predictions (KNOWN_ISSUES 83); the unchanged producers (overlay_eavailW_band.py, overlay_generators_band.py, compare_3d_fullcov.py, compare_mec_eavail.py, mode_decomp_eavail.py) of deploy 4e4b4f56 on inputs written by 3d-unfolding/genie/gen5d_to_rootpreds.py and (MEC component, modes) gen5d_mode_components.py",
+ "work_dir": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie",
+ "inputs_prediction_sidecars": {
+  "genie_cv_xsec3d.json": {
+   "schema": "gen5d-rootpred/1",
+   "label": "genie_cv",
+   "kind": "3d",
+   "input": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz",
+    "sha256": "cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2"
+   },
+   "total_sigma_cm2_per_nucleon": 2.7644632745513893e-38,
+   "out": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec3d.root",
+   "out_sha256": "8d417234dd33de2b0944d1bb9a75d5f888fa95c5ad0a02d4f71048a5bd410e3c",
+   "code_sha256": "bd7d0d7f82b73cf39c421530a850712491c020d3a199998f0e42d061b32c0210"
+  },
+  "genie_cv_xsec_eavailW.json": {
+   "schema": "gen5d-rootpred/1",
+   "label": "genie_cv",
+   "kind": "eavailW",
+   "input": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz",
+    "sha256": "cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2"
+   },
+   "total_sigma_cm2_per_nucleon": 2.7644632745513893e-38,
+   "out": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec_eavailW.root",
+   "out_sha256": "debaf83e66cb8918ab10ecbeeb0a34bec1be8f457ae3fe3ab29dd8399796a664",
+   "code_sha256": "bd7d0d7f82b73cf39c421530a850712491c020d3a199998f0e42d061b32c0210"
+  },
+  "genie_mec_xsec3d.json": {
+   "schema": "gen5d-rootpred/1",
+   "label": "genie_mec",
+   "kind": "3d",
+   "input": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz",
+    "sha256": "c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f"
+   },
+   "total_sigma_cm2_per_nucleon": 2.875640901698505e-38,
+   "out": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_xsec3d.root",
+   "out_sha256": "ab91c4431933fd795a3d063f7876faa0c871416798ad8cc91effc978fb0ddc6d",
+   "code_sha256": "bd7d0d7f82b73cf39c421530a850712491c020d3a199998f0e42d061b32c0210"
+  },
+  "genie_mec_xsec_eavailW.json": {
+   "schema": "gen5d-rootpred/1",
+   "label": "genie_mec",
+   "kind": "eavailW",
+   "input": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz",
+    "sha256": "c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f"
+   },
+   "total_sigma_cm2_per_nucleon": 2.875640901698505e-38,
+   "out": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_xsec_eavailW.root",
+   "out_sha256": "1098e9124ddd6ee2e6845594ee65f486fc3c86679a1dde9a34c876638421e70d",
+   "code_sha256": "bd7d0d7f82b73cf39c421530a850712491c020d3a199998f0e42d061b32c0210"
+  },
+  "gibuu_cv_xsec3d.json": {
+   "schema": "gen5d-rootpred/1",
+   "label": "gibuu_cv",
+   "kind": "3d",
+   "input": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz",
+    "sha256": "48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18"
+   },
+   "total_sigma_cm2_per_nucleon": 2.2151544845271735e-38,
+   "out": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/gibuu_cv_xsec3d.root",
+   "out_sha256": "a54035aa96b587ad6b04e518138ea48fa0517954c77c317b56d85a4f626c7b24",
+   "code_sha256": "bd7d0d7f82b73cf39c421530a850712491c020d3a199998f0e42d061b32c0210"
+  },
+  "gibuu_cv_xsec_eavailW.json": {
+   "schema": "gen5d-rootpred/1",
+   "label": "gibuu_cv",
+   "kind": "eavailW",
+   "input": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz",
+    "sha256": "48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18"
+   },
+   "total_sigma_cm2_per_nucleon": 2.2151544845271735e-38,
+   "out": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/gibuu_cv_xsec_eavailW.root",
+   "out_sha256": "b430ddc6c2f22568d1f3cfd4b997afda1860daa1422946ff5653adb53ca556d9",
+   "code_sha256": "bd7d0d7f82b73cf39c421530a850712491c020d3a199998f0e42d061b32c0210"
+  },
+  "nuwro_cv_xsec3d.json": {
+   "schema": "gen5d-rootpred/1",
+   "label": "nuwro_cv",
+   "kind": "3d",
+   "input": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz",
+    "sha256": "475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070"
+   },
+   "total_sigma_cm2_per_nucleon": 2.6627696637999757e-38,
+   "out": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/nuwro_cv_xsec3d.root",
+   "out_sha256": "e728f0893cc6d0bf4e8355279fe46b9c6a458cedbbc79877e42cb49a62d26374",
+   "code_sha256": "bd7d0d7f82b73cf39c421530a850712491c020d3a199998f0e42d061b32c0210"
+  },
+  "nuwro_cv_xsec_eavailW.json": {
+   "schema": "gen5d-rootpred/1",
+   "label": "nuwro_cv",
+   "kind": "eavailW",
+   "input": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz",
+    "sha256": "475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070"
+   },
+   "total_sigma_cm2_per_nucleon": 2.6627696637999757e-38,
+   "out": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/nuwro_cv_xsec_eavailW.root",
+   "out_sha256": "d7d46a0c547dfd83ccce7bba39a2f81eae80a597a32817bf7289b80729145d3c",
+   "code_sha256": "bd7d0d7f82b73cf39c421530a850712491c020d3a199998f0e42d061b32c0210"
+  }
+ },
+ "eavailW_band": {
+  "GENIE-CV": {
+   "total": 2.7645e-38,
+   "data_total": 3.0699e-38,
+   "data_over_gen_total": 1.11,
+   "corner": 1.1818e-38,
+   "data_corner": 1.3497e-38,
+   "data_over_gen_corner": 1.142
+  },
+  "GENIE+MEC": {
+   "total": 2.8756e-38,
+   "data_total": 3.0699e-38,
+   "data_over_gen_total": 1.068,
+   "corner": 1.1854e-38,
+   "data_corner": 1.3497e-38,
+   "data_over_gen_corner": 1.139
+  },
+  "NuWro": {
+   "total": 2.6628e-38,
+   "data_total": 3.0699e-38,
+   "data_over_gen_total": 1.153,
+   "corner": 1.1635e-38,
+   "data_corner": 1.3497e-38,
+   "data_over_gen_corner": 1.16
+  },
+  "GiBUU": {
+   "total": 2.2152e-38,
+   "data_total": 3.0699e-38,
+   "data_over_gen_total": 1.386,
+   "corner": 8.3993e-39,
+   "data_corner": 1.3497e-38,
+   "data_over_gen_corner": 1.607
+  }
+ },
+ "W_2p2_3p0": {
+  "data": {
+   "dsigma_dW": 7.481e-39,
+   "data_over_gen": 1.0
+  },
+  "GENIE-CV": {
+   "dsigma_dW": 6.663e-39,
+   "data_over_gen": 1.1227675221371753
+  },
+  "GENIE+MEC": {
+   "dsigma_dW": 6.735e-39,
+   "data_over_gen": 1.1107646622123235
+  },
+  "NuWro": {
+   "dsigma_dW": 6.621e-39,
+   "data_over_gen": 1.1298897447515481
+  },
+  "GiBUU": {
+   "dsigma_dW": 5.572e-39,
+   "data_over_gen": 1.3426058865757358
+  }
+ },
+ "integrated_sigma_3d_eavail_axis_catch_dropped": {
+  "GENIE-CV": {
+   "sigma": 2.245e-38,
+   "rel_vs_data_pct": -7.2,
+   "sigma_tot_units": 1.3
+  },
+  "Tune-v1": {
+   "sigma": 2.189e-38,
+   "rel_vs_data_pct": -9.5,
+   "sigma_tot_units": 1.8
+  },
+  "NuWro": {
+   "sigma": 2.109e-38,
+   "rel_vs_data_pct": -12.8,
+   "sigma_tot_units": 2.4
+  },
+  "GiBUU": {
+   "sigma": 1.88e-38,
+   "rel_vs_data_pct": -22.2,
+   "sigma_tot_units": 4.2
+  }
+ },
+ "full_3d_chi2_tol_1e-10": {
+  "GENIE-CV": {
+   "chi2": 172113.6,
+   "ndf": 247,
+   "chi2_per_ndf": 696.82
+  },
+  "Tune-v1": {
+   "chi2": 32371.8,
+   "ndf": 247,
+   "chi2_per_ndf": 131.06
+  },
+  "NuWro": {
+   "chi2": 289121.6,
+   "ndf": 247,
+   "chi2_per_ndf": 1170.53
+  },
+  "GiBUU": {
+   "chi2": 7133366.2,
+   "ndf": 247,
+   "chi2_per_ndf": 28880.03
+  }
+ },
+ "compare_mec_eavail": {
+  "repaired": {
+   "CV_rel_pct": -7.2,
+   "CV_MEC_rel_pct": -2.6,
+   "MEC_added_pct_of_integrated_deficit": 63.0,
+   "dip_fill_pct": 52.0
+  },
+  "committed_inputs": {
+   "CV_rel_pct": -7.2,
+   "CV_MEC_rel_pct": -5.2,
+   "MEC_added_pct_of_integrated_deficit": 27.0,
+   "dip_fill_pct": 46.0
+  }
+ },
+ "logs": {
+  "docs/orchestration/state/s5p/stage7/generator-context/compare_mec_eavail-log.txt": {
+   "sha256": "af6cf1091e235ebf591f92f82166418af8c02252f78c981e4dcb85c057948dc5",
+   "copy_of": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/compare_mec_eavail.log"
+  },
+  "docs/orchestration/state/s5p/stage7/generator-context/compare_mec_eavail_before-log.txt": {
+   "sha256": "b3e0546e0e092e61b83fd5896ef488a2f9d04aae2792aca0b8d009e283a0efb8",
+   "copy_of": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/compare_mec_eavail_before.log"
+  },
+  "docs/orchestration/state/s5p/stage7/generator-context/eavailW_band_s5p_repaired-log.txt": {
+   "sha256": "9ce5a2eba9e0bde0efa7af049f72b80f3ce3c1217231e99a90cefc4f6faff506",
+   "copy_of": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/eavailW_band_s5p_repaired.log"
+  },
+  "docs/orchestration/state/s5p/stage7/generator-context/fullcov3d_s5p_repaired-log.txt": {
+   "sha256": "b40d44a247573786af6402c56d58eff8c444240f226ac344c5191c5cbdf1b871",
+   "copy_of": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/fullcov3d_s5p_repaired.log"
+  },
+  "docs/orchestration/state/s5p/stage7/generator-context/gen3d_band_s5p_repaired-log.txt": {
+   "sha256": "c433252c335e6fefecceee5ff8fe7e59de91fa445fd3047068d6ece0c57297ed",
+   "copy_of": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/gen3d_band_s5p_repaired.log"
+  },
+  "docs/orchestration/state/s5p/stage7/generator-context/mode_decomp_eavail-log.txt": {
+   "sha256": "ef2ac8afdd77f8c676939872805b97d9f4ebbd929db77551384fce8a5486576b",
+   "copy_of": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/mode_decomp_eavail.log"
+  },
+  "docs/orchestration/state/s5p/stage7/generator-context/mode_decomp_eavail_before-log.txt": {
+   "sha256": "5cda4bf45525607d7d72dc2e2e6166bf7c9cf334164fb53a2940948f89a70c45",
+   "copy_of": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/mode_decomp_eavail_before.log"
+  }
+ },
+ "superseded_ledger_rows": "VL35-VL38 (2026-08-11 corner ratios; KNOWN_ISSUES 83 and 81)"
+}

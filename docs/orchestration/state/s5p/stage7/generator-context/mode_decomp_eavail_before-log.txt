@@ -1,0 +1,29 @@
+[mode-decomp] CC-in-PS events used = 938141; E_avail bins = 7 (last is the catch bin)
+[mode-decomp] MEC fraction in this CV = 0 (confirmed) -> any 2p2h would be ADDED, not reweighted
+
+bin  Eavail[GeV]      data        CV     d-CV   (d-CV)/sig   | QE      RES     DIS     COH   | 2p2h/QE to close
+---------------------------------------------------------------------------------------------------------------
+  0  [0.00,0.10)  2.185e-38 2.070e-38 +1.16e-39   +0.80   | 1.46e-38 1.81e-39 4.18e-39 5.5e-41 |  +0.08
+  1  [0.10,0.20)  2.042e-38 1.552e-38 +4.90e-39   +3.92   | 7.83e-39 4.59e-39 2.69e-39 4.0e-40 |  +0.63
+  2  [0.20,0.40)  1.839e-38 1.600e-38 +2.39e-39   +2.25   | 4.22e-39 8.14e-39 3.36e-39 2.8e-40 |  +0.57
+  3  [0.40,0.80)  1.205e-38 1.232e-38 -2.73e-40   -0.36   | 1.40e-39 6.93e-39 3.83e-39 1.5e-40 |  -0.19
+  4  [0.80,1.50)  7.451e-39 7.510e-39 -5.90e-41   -0.14   | 2.89e-40 2.79e-39 4.32e-39 1.1e-40 |  -0.20
+  5  [1.50,3.00)  4.163e-39 3.625e-39 +5.37e-40   +2.21   | 8.49e-41 2.34e-40 3.26e-39 4.5e-41 |  +6.33
+  6  [3.00,100.00)  6.809e-41 2.807e-41 +4.00e-41  +10.23   | 1.29e-43 6.37e-44 2.76e-41 2.8e-43 | +309.91  <-- catch bin
+
+[integrated, catch bin dropped]
+  data   = 2.418e-38   CV = 2.244e-38   deficit = +1.74e-39 (-7.2% of data)
+  CV QE component = 3.983e-39  -> a 2p2h equal to 44% of the QE rate would close the integrated deficit
+  fraction of the positive deficit in E_avail<=0.4 GeV (the QE-Delta dip, where 2p2h lives) = 57%
+[mode-decomp] wrote /pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/mode_decomp_eavail_before.png
+
+[stderr]
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 

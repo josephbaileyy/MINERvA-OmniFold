@@ -1,0 +1,18 @@
+[INFO] reported bins = 1431; cov (1431, 1431)
+[INFO] cov sqrt-trace = 5.724e-39, hard rank (>1e-12) = 247/1431
+
+=== FULL-3D truncated-spectral chi^2 (data vs generator) ===
+    reported bins 1431; r = data - model; ndf = n_kept eigenmodes
+  generator    chi2/ndf@1e-06  chi2/ndf@1e-08  chi2/ndf@1e-10  chi2/ndf@1e-12   diag chi2/ndf   ||r||_out%
+  GENIE-CV         191.8(160)      696.8(247)      696.8(247)      696.8(247)        13.9      0.67
+  Tune-v1           77.2(160)      131.1(247)      131.1(247)      131.1(247)         4.8      0.05
+  NuWro            263.9(160)     1170.5(247)     1170.5(247)     1170.5(247)        69.5      0.91
+  GiBUU           4866.1(160)    28880.0(247)    28880.0(247)    28880.0(247)        32.2     22.68
+
+  headline (tol=1e-10): chi2/ndf and p-value (TMath.Prob)
+    GENIE-CV    chi2/ndf =  172113.6/247 = 696.82   p = 0.00e+00   (captures 99.3% of ||r||^2)
+    Tune-v1     chi2/ndf =   32371.8/247 = 131.06   p = 0.00e+00   (captures 99.9% of ||r||^2)
+    NuWro       chi2/ndf =  289121.6/247 = 1170.53   p = 0.00e+00   (captures 99.1% of ||r||^2)
+    GiBUU       chi2/ndf = 7133366.2/247 = 28880.03   p = 0.00e+00   (captures 77.3% of ||r||^2)
+
+[wrote] compare_3d_fullcov.png

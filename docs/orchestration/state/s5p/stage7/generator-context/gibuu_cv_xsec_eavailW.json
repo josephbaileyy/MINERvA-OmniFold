@@ -1,0 +1,13 @@
+{
+ "schema": "gen5d-rootpred/1",
+ "label": "gibuu_cv",
+ "kind": "eavailW",
+ "input": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz",
+  "sha256": "48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18"
+ },
+ "total_sigma_cm2_per_nucleon": 2.2151544845271735e-38,
+ "out": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/gibuu_cv_xsec_eavailW.root",
+ "out_sha256": "b430ddc6c2f22568d1f3cfd4b997afda1860daa1422946ff5653adb53ca556d9",
+ "code_sha256": "bd7d0d7f82b73cf39c421530a850712491c020d3a199998f0e42d061b32c0210"
+}

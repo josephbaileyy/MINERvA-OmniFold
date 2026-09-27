@@ -1,0 +1,13 @@
+{
+ "schema": "gen5d-rootpred/1",
+ "label": "genie_mec",
+ "kind": "eavailW",
+ "input": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz",
+  "sha256": "c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f"
+ },
+ "total_sigma_cm2_per_nucleon": 2.875640901698505e-38,
+ "out": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_xsec_eavailW.root",
+ "out_sha256": "1098e9124ddd6ee2e6845594ee65f486fc3c86679a1dde9a34c876638421e70d",
+ "code_sha256": "bd7d0d7f82b73cf39c421530a850712491c020d3a199998f0e42d061b32c0210"
+}

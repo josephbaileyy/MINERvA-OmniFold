@@ -1,0 +1,13 @@
+{
+ "schema": "gen5d-rootpred/1",
+ "label": "nuwro_cv",
+ "kind": "eavailW",
+ "input": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz",
+  "sha256": "475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070"
+ },
+ "total_sigma_cm2_per_nucleon": 2.6627696637999757e-38,
+ "out": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/nuwro_cv_xsec_eavailW.root",
+ "out_sha256": "d7d46a0c547dfd83ccce7bba39a2f81eae80a597a32817bf7289b80729145d3c",
+ "code_sha256": "bd7d0d7f82b73cf39c421530a850712491c020d3a199998f0e42d061b32c0210"
+}
