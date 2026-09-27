@@ -25,8 +25,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "STAGE_3_JOINT_DESIGN",
- "phase_detail": "amendment 4 applies the frozen rules to the Stage-2 receipt: R selected (no configuration 2 or 3); numerical component absorbed; six calibration failures addressed; no reporting definition meets T1/T2 at development resolution, so the measurement branch is not admitted (limitation recorded); the joint-test branch proceeds to the Stage-3 design and independent admission review",
+ "phase": "STAGE_3_REPAIR_CYCLE_1",
+ "phase_detail": "independent review round 1 (REVIEW-20260927-s5p-round1-stage2-exit-and-joint-design.md) confirmed the Stage-2 numbers and the measurement-branch disposition and returned findings on the amendment-5 joint-test design (F1 HIGH generator flux sampling, KNOWN_ISSUES 83, verified; F2 HIGH within-cell shapes of the nulls; F3-F6 MEDIUM/LOW); repair cycle 1 of at most two before the admission review; no calibration ensemble runs until the repaired design passes review",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -39,7 +39,7 @@
  "stages": {
   "1_use_case": "FROZEN (amendment 1)",
   "2_construction_questions": "EXIT (amendment 4): R selected; measurement branch not admitted; inference branch to Stage 3",
-  "3_admission": "NEXT: inference-branch design (joint test), budget revision for the stage-3 design pilot, independent review",
+  "3_admission": "REPAIR CYCLE 1: F1 predictions rebuilt by exact flux reweight (delegated), F2-F6 design repairs, then review round 2",
   "4_construction": "NOT STARTED",
   "5_validation": "NOT STARTED",
   "6_adoption": "NOT STARTED",
@@ -49,17 +49,27 @@
   {
    "job": "58932367",
    "label": "s5p_k_b0r (checkpointed departure traces to 200 iterations)",
-   "state": "RUNNING"
+   "state": "RUNNING (07:59Z)"
   },
   {
    "job": "58904836",
    "label": "s5p_k_cap (capacity probe to 100 iterations, no checkpoints)",
-   "state": "RUNNING; superseded for the rule by 58934771 (10 iterations, complete)"
+   "state": "RUNNING; superseded for the rule by 58934771"
   },
   {
-   "job": "detector dump (s5p_dump_det)",
-   "label": "study I",
-   "state": "queued/running on the GPU pool"
+   "job": "58939604",
+   "label": "s3 lateral-band input dumps (serial array)",
+   "state": "RUNNING (6 of 10 endpoints written 07:59Z)"
+  },
+  {
+   "job": "queue s3-det.q",
+   "label": "detector-band dump on CPU shared",
+   "state": "waiting on the 2-node concurrency cap"
+  },
+  {
+   "job": "queue s3-cpu.q",
+   "label": "design pilot (MnvTune null + P1-P3; unaffected by F1/F2)",
+   "state": "waiting for the detector dump"
   }
  ],
  "receipts": [
@@ -113,8 +123,16 @@
    "stage": "3 (joint-test branch)"
   }
  ],
- "reviews": [],
- "next_action": "deploy; ledger rebind to budget revision 2; run queue s3-cpu.q (lateral dumps, pilot); lateral endpoint unfold table; build V; independent admission review; amendment 6 (admission, production pricing)",
+ "reviews": [
+  {
+   "round": 1,
+   "record": "docs/orchestration/REVIEW-20260927-s5p-round1-stage2-exit-and-joint-design.md",
+   "reviewed_head": "75746779",
+   "worktree": "../MINERvA-OmniFold-s5p-review1 (left clean)",
+   "verdict": "Stage 2 CONFIRMED; joint design NOT READY (F1, F2 HIGH)"
+  }
+ ],
+ "next_action": "F1 rebuild (delegate) -> nulls/ratios/D1 rebuilt; F5 standardized shrinkage; F2 fine-shape null; F3/F4/F6 re-specification; repair amendment 6; review round 2; then admission (amendment 7)",
  "concurrent_work_at_start": "josephrb GPU jobs pfd-chain/pfd-shr/pfd-fin (58893071-58903623, m3246_g) and other users' m3246_g jobs belong to other lanes (not touched); no m3246 CPU row; shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "b30752864c70c76da3a888136e52c3dea4b615b7",
@@ -140,6 +158,10 @@
   {
    "utc": "2026-09-27T04:20Z",
    "what": "study K capacity probe: the 100-iteration array (58904836, 16 h limit) has no checkpoints and may time out; a checkpointable 10-iteration run of the same probe (s2-conv-cap10-tasks.tsv; identical first 10 iterations by determinism) is queued on the GPU pool; the rule needs k <= 5 only (capacity affordable only at 5 iterations)."
+  },
+  {
+   "utc": "2026-09-27T07:50Z",
+   "what": "review round 1 F1: GENIE CV, GENIE+MEC and NuWro truth predictions were generated from a density-valued variable-width flux histogram sampled by content (non-PPFX, 50 GeV cap); every committed prediction of these generators is affected (KNOWN_ISSUES 83). Verified by the campaign before acting. Repair: exact per-event flux reweight to the PPFX CV spectrum (0-100 GeV, the data normalization), delegated; the joint nulls for these generators wait for it."
   }
  ],
  "findings": [
