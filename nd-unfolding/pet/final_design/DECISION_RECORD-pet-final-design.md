@@ -30,11 +30,15 @@ final-bank scores (and `analysis/coverage.py` for §6.4). PET is diagnostic: not
 | 2026-09-26 | N2 failure of H2S1 K5 (0.095) and L128S1 K5 (0.091), located in the truth step; repair arm; S-N2 screen; re-freeze rule | Amendment 3b, rule Addendum 2 | `sizing/n2.json`, `DEVELOPMENT-20260926.md` |
 | 2026-09-27 | S-N2 decided so far (repair arm, S3P seed runs, `sizing/n2_arm_partial.json`): L64S1 K\*=4 **0.057 FAIL**; L128S1E16 K\*=4 **0.071 FAIL** (0.071 at k=5); CS1 K\*=6 **0.054 FAIL** (0.100 at k=5); **H2S1T24 K\*=5 0.037 PASS** (0.042 at k=4; 0.092 at k=3); earlier H2S1 K5 0.095, L128S1 K5 0.091 FAIL | finalist-rule Addendum 2, Amendment 3b | `scored/s3n` (cluster), `dev/n2_table.py` |
 | 2026-09-27 | PET2 learning-rate-policy arm closed: P2preA1 (annealed step 1) stable, development tilt 0.928 at k = 5, but proton topology ≤ 0.225 < 0.25 at every k; P2scrA1 ≤ 0.06; no PET2 design passes the four screens | finalist rule | `results/` post-hoc (dev2Q) |
+| 2026-09-27 | S-N2 for the last designs: H2S1E16 0.074 FAIL; **L128S1T24 K\*=4 0.043 PASS** | rule Addendum 2 | `sizing/n2_all-20260927.json` |
+| 2026-09-27 | ensemble fallback (X4) started early with unchanged entry condition, then stopped (not needed) | Amendment 3b-bis | `PROTOCOL` |
+| 2026-09-27 | **compact finalist H2S1T24 K5** (supersedes H2S1 K5) | Amendment 3c | `dev/SCREENS-20260927.json` |
+| 2026-09-27 | **large finalist L128S1T24 K4**; decision set {H2S1T24K5, L128S1T24K4}, m = 2; anchors CTL K3 / C K3; FB release FINAL 0–23 + library 21×8 (blinded); measured cost 1.77 / 1.49 A100-h per unfolding (compact not cheaper) | Amendment 3d | `runs/s4f_a3.tsv`, `runs/s4s_a3.tsv`, `resources/cost_t24-20260927.json` |
+| 2026-09-27 | **n_F = 60** (capped; E0 NI needs ≈ 250 draws: quantified limit); FINAL 24–59 released | Amendment 3e | `sizing/sizing_final-20260927.json`, `runs/s4f_a3e.tsv` |
+| 2026-09-27 | **N_LIB = 40** (E4-bound); D4c/D3 draws 0–39 used | Amendment 3f | `sizing/sizing_library-20260927.json`, `runs/s4s_a3e_n40.tsv` |
 
 ## Pending decisions (filled at the time they are taken)
 
-1. Re-freeze of the compact and large packages with S-N2 (Amendment 3c): finalists, K, decision set, m.
-2. Sizing for the re-frozen pair (re-pilot if changed); FB manifests released by sha256.
 3. UNBLIND amendment (completeness manifest).
 4. FINAL / library decisions per §6.1–6.3, §6.5, §6.6 (look 1; look 2 if CONTINUE), with bank-effect bounds.
 5. Coverage (§9, §6.4) for the provisionally preferred finalist first (3a.5); the other if required.

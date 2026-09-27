@@ -1,6 +1,6 @@
 # Cold-start handoff — PET final-design study (living document; update at each milestone)
 
-Read this, then `PROTOCOL-20260925.md` (with Amendments 1, 2, 2b, 2c, 3a, 3b, 3b-bis, 3c, 3d, 3e), `DEVELOPMENT-20260926.md`,
+Read this, then `PROTOCOL-20260925.md` (with Amendments 1, 2, 2b, 2c, 3a, 3b, 3b-bis, 3c, 3d, 3e, 3f), `DEVELOPMENT-20260926.md`,
 `DIAGNOSTICS-20260925.md`, `CAPACITY-20260925.md`, and the three review dispositions (IMPL, STAT, SCOPE). Everything referenced is on the
 pushed branch; nothing depends on a local scratch directory.
 
@@ -77,9 +77,8 @@ pushed branch; nothing depends on a local scratch directory.
 
 - **2026-09-27 14:20Z.** Amendment 3e: n_F = 60 (capped; E0 NI between the finalists needs 250 draws); FINAL draws 24–59
   and D4c/D3 draws 8–59 released blinded (`runs/s4f_a3e.tsv`, `runs/s4s_a3e.tsv`; draw-ordered; only the first N_LIB
-  D4c/D3 draws enter decisions). **Still to do before UNBLIND:** the library-group sizing (N_LIB) once the L128S1T24
-  D4c/D3 pilot rows in `runs/s3p_l24.tsv` are COMPLETE (score at k = 4 into `$B/scored/s3p_new`, `build_pilot.py
-  --small H2S1T24:5 --large L128S1T24:4`, `sizing.py` on the library file), recorded by amendment. The watcher
+  D4c/D3 draws enter decisions). **Done 15:00Z (Amendment 3f): N_LIB = 40**; the lanes run `runs/s4s_a3e_n40.tsv`; draws 40–59 are held unused by
+  `$B/hold_lib40.py` (6 h) and never enter decisions. The watcher
   (`c2978ddd`) runs **until 2026-10-01T22:00Z** so the released FB rows keep running while no session is attached;
   stop early with `touch $B/keep_busy.stop`. The NERSC certificate of the orchestrating session expired 2026-09-27
   16:04Z; renew with `sshproxy` to continue (scoring, UNBLIND, decision, coverage).
