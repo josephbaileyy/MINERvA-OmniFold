@@ -34,12 +34,12 @@
  },
  "budget": {
   "path": "docs/orchestration/state/s5p/budget.json",
-  "revision": 2
+  "revision": 3
  },
  "stages": {
   "1_use_case": "FROZEN (amendment 1)",
   "2_construction_questions": "EXIT (amendment 4): R selected; measurement branch not admitted; inference branch to Stage 3",
-  "3_admission": "REPAIR CYCLE 1: F1 predictions rebuilt by exact flux reweight (delegated), F2-F6 design repairs, then review round 2",
+  "3_admission": "REPAIR CYCLE 1 (amendment 6): F1 flux reweight (delegated); fine-ratio nulls; F4 MC-size shift variants and the claim rule; standardized shrinkage; response-model universe; re-issued pilot; then review round 2 and admission (amendment 7)",
   "4_construction": "NOT STARTED",
   "5_validation": "NOT STARTED",
   "6_adoption": "NOT STARTED",
@@ -68,8 +68,13 @@
   },
   {
    "job": "queue s3-cpu.q",
-   "label": "design pilot (MnvTune null + P1-P3; unaffected by F1/F2)",
-   "state": "waiting for the detector dump"
+   "label": "amendment-5 pilot",
+   "state": "STOPPED 2026-09-27T08:13Z before launch (explicit PIDs on login33); superseded by s3r-cpu.q"
+  },
+  {
+   "job": "queue s3r-cpu.q",
+   "label": "F4 pair at the MnvTune null; re-issued pilot after the detector dump",
+   "state": "to launch from the amendment-6 deploy"
   }
  ],
  "receipts": [
@@ -94,6 +99,10 @@
   {
    "path": "docs/orchestration/state/s5p/stage2/meter-measure-stage2-exit.json",
    "what": "meter at the Stage-2 exit: CPU development 33.643 (incl. open reservations), GPU 4.086 node-h"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/stage3/envelope-receipt.json",
+   "what": "study-P envelope h (reproduces 12.02/9.60/13.44% J/H2/EW), h without D1 (11.25/4.28/9.90%) and vertex linearity; review round 1 LOW"
   }
  ],
  "amendments": [
@@ -121,6 +130,11 @@
    "number": 5,
    "path": "docs/orchestration/state/s5p/contract-amendment-5-joint-test-design.json",
    "stage": "3 (joint-test branch)"
+  },
+  {
+   "number": 6,
+   "path": "docs/orchestration/state/s5p/contract-amendment-6-review1-repairs.json",
+   "stage": "3 repair cycle 1 (review round 1)"
   }
  ],
  "reviews": [
@@ -132,7 +146,7 @@
    "verdict": "Stage 2 CONFIRMED; joint design NOT READY (F1, F2 HIGH)"
   }
  ],
- "next_action": "F1 rebuild (delegate) -> nulls/ratios/D1 rebuilt; F5 standardized shrinkage; F2 fine-shape null; F3/F4/F6 re-specification; repair amendment 6; review round 2; then admission (amendment 7)",
+ "next_action": "deploy the amendment-6 commit; rebind the ledger to budget revision 3; run s3r-cpu.q (F4 pair now, pilot after the detector dump); lateral-unfold table when the dumps finish; phase B after the F1 products; review round 2",
  "concurrent_work_at_start": "josephrb GPU jobs pfd-chain/pfd-shr/pfd-fin (58893071-58903623, m3246_g) and other users' m3246_g jobs belong to other lanes (not touched); no m3246 CPU row; shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "b30752864c70c76da3a888136e52c3dea4b615b7",
@@ -162,6 +176,14 @@
   {
    "utc": "2026-09-27T07:50Z",
    "what": "review round 1 F1: GENIE CV, GENIE+MEC and NuWro truth predictions were generated from a density-valued variable-width flux histogram sampled by content (non-PPFX, 50 GeV cap); every committed prediction of these generators is affected (KNOWN_ISSUES 83). Verified by the campaign before acting. Repair: exact per-event flux reweight to the PPFX CV spectrum (0-100 GeV, the data normalization), delegated; the joint nulls for these generators wait for it."
+  },
+  {
+   "utc": "2026-09-27T08:13Z",
+   "what": "queue runner s3-cpu.q (deploy c1cba7bf) stopped before its pilot line launched, because review round 1 repairs change s5p_nullexp.py; the campaign also found that the amendment-5 background-universe draw could pick a GEANT band the detector draw applies too (a double count in never-run code); repaired in amendment 6"
+  },
+  {
+   "utc": "2026-09-27T08:40Z",
+   "what": "namespace storage 19 GB against the 20 GiB campaign cap: 17 deploy clones not used by any live job or runner (each a commit on origin/main, verified) removed; 14 GB after; kept 0d624616, 75746779, abdc88c5, c1cba7bf; the 12 GB of lateral dumps are removed after their unfolds and the Delta_b are receipted"
   }
  ],
  "findings": [

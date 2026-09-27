@@ -14,12 +14,24 @@ are not simulated at event level are drawn with the experiment's own recorded z 
 * the prediction's finite MC: the residual gets - eps, eps ~ N(0, diag Var(mu_G)) (from the prediction's sumw2).
 
 ``T_total = r' W^-1 r`` and ``T_shape`` (s5p_inference.stat_shape) with r = f - mu_G on the test domain and the
-FIXED metric W = V + diag Var(mu_G), V the Ledoit-Wolf-shrunk covariance of the frozen development null
-ensemble (built by ``build-v`` and committed before any calibration ensemble). p-values (k+1)/(B+1) against the
-null's calibration ensemble, Holm over the declared family, power against the MnvTune null's ensemble, size from
-independent validation ensembles.
+FIXED metric W = V + diag Var(mu_G), V the standardized Ledoit-Wolf-shrunk covariance of the frozen development
+null ensemble (built by ``build-v`` and committed before any calibration ensemble). p-values (k+1)/(B+1) against
+the null's calibration ensemble.
 
-MEASURES: the frozen joint statistics, p-values, power and size. CANNOT AUTHORIZE: a rejection outside the frozen
+Process sensitivity (review round 1 F3/F4): the pseudo experiments unfold with half the MC, the data with all of
+it. A declared per-null shift D (J cells; the measured change of the pseudo-process mean from a quarter to a half
+of the MC) enters as VARIANTS of the calibration ensemble, f -> f + c D for the declared coefficients c (0, 1/2,
+1: no shift, the 1/n extrapolation to the full MC, a slower decay). Each test's CLAIM p-value is the largest over
+the variants (a rejection must hold under every variant); Holm over the family uses the claim p-values. Per
+variant c > 0 the implied size of the unshifted test (the null draws shifted by c D against the unshifted
+ensemble) is reported. The iid size-validation ensembles of amendment 5 are withdrawn: against an exchangeable
+calibration ensemble their rejection rate is alpha by construction and cannot see the data-versus-pseudo
+difference.
+
+Power against the MnvTune null's ensemble at the declared levels (0.05 and the Holm first-step level
+alpha_family / m), both for the unshifted test and under the claim rule.
+
+MEASURES: the frozen joint statistics, p-values, their process-shift variants and power. CANNOT AUTHORIZE: a rejection outside the frozen
 family, tier and multiplicity rule, or any statement about fine bins.
 """
 from __future__ import annotations
@@ -69,16 +81,22 @@ def prediction(path, U) -> tuple[np.ndarray, np.ndarray]:
 
 
 def ledoit_wolf(X: np.ndarray) -> tuple[np.ndarray, float]:
-    """Ledoit-Wolf shrinkage towards a scaled identity (Ledoit and Wolf 2004), on standardized data."""
+    """Ledoit-Wolf shrinkage on STANDARDIZED data (the correlation shrunk toward its diagonal, Schaefer and
+    Strimmer 2005 target D, with the Ledoit-Wolf 2004 intensity), rescaled by the sample SDs: every diagonal is
+    the sample variance (ddof 1) and V(X S) = S V(X) S for a cell rescaling S. A constant cell keeps variance 0.
+    (Until review round 1 F5 the raw cells, whose variances span ~1e5, were shrunk toward (mean variance) x I.)"""
     X = np.asarray(X, float)
     n, p = X.shape
     Xc = X - X.mean(0)
-    S = Xc.T @ Xc / n
-    mu = np.trace(S) / p
-    d2 = np.sum((S - mu * np.eye(p)) ** 2)
-    b2 = sum(np.sum((np.outer(x, x) - S) ** 2) for x in Xc) / n ** 2
+    sd = np.sqrt((Xc ** 2).mean(0))
+    Z = Xc / np.where(sd > 0, sd, 1.0)
+    S = Z.T @ Z / n
+    off = ~np.eye(p, dtype=bool)
+    d2 = np.sum(S[off] ** 2)
+    b2 = sum(np.sum((np.outer(z, z) - S)[off] ** 2) for z in Z) / n ** 2
     shrink = min(1.0, b2 / d2) if d2 > 0 else 1.0
-    return shrink * mu * np.eye(p) + (1 - shrink) * S * n / (n - 1), float(shrink)
+    R = np.where(off, (1 - shrink) * S, S)
+    return R * np.outer(sd, sd) * n / (n - 1), float(shrink)
 
 
 class Model:
@@ -132,6 +150,23 @@ def statistics(F: np.ndarray, mu: np.ndarray, var_mu: np.ndarray, V: np.ndarray,
     return np.array(tt), np.array(ts)
 
 
+def pvals_against(t: np.ndarray, t_null: np.ndarray) -> np.ndarray:
+    """(#{null >= t} + 1) / (B + 1) for every t (the rank rule of s5p_inference.mc_pvalue)."""
+    s = np.sort(np.asarray(t_null, float))
+    return (s.size - np.searchsorted(s, np.asarray(t, float), side="left") + 1) / (s.size + 1)
+
+
+def load_shift(spec: dict | None, n: int) -> np.ndarray | None:
+    if spec is None:
+        return None
+    if sha256(spec["path"]) != spec["sha256"]:
+        raise SystemExit(f"{spec['path']}: digest differs from the design's")
+    D = np.asarray(np.load(spec["path"], allow_pickle=False)["D_J"], float)
+    if D.size != n:
+        raise SystemExit(f"{spec['path']}: {D.size} cells, {n} expected")
+    return D
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -162,40 +197,57 @@ def main(argv=None) -> int:
         print(json.dumps({"n": len(files), "shrinkage": shrink, "median_rel_sd": float(np.median(np.sqrt(np.diag(V)) / np.abs(F.mean(0))))}))
         return 0
     V = np.asarray(np.load(a.v, allow_pickle=False)["V"], float)
-    res = {"schema": "s5p-joint/1", "design_sha256": sha256(a.design), "v_sha256": sha256(a.v), "names": names, "tests": {}}
+    res = {"schema": "s5p-joint/2", "design_sha256": sha256(a.design), "v_sha256": sha256(a.v), "names": names, "tests": {}}
+    coefs = [float(c) for c in design.get("shift_coefficients", [0.0])]
+    if coefs[0] != 0.0:
+        raise SystemExit("the first shift coefficient must be 0 (the unshifted test)")
     pvals = {}
-    mu0, var0 = prediction(design["nulls"]["MnvTune_v1"]["prediction"], U)
     for key, spec in design["nulls"].items():
         mu, var = prediction(spec["prediction"], U)
         dom = np.ones(len(names), bool) if spec.get("domain") != "pz_lt_6" else (pz_index <= 1)
         files = sorted(glob.glob(spec["calibration_glob"]))
         if len(files) != spec["calibration_n"]:
             raise SystemExit(f"{key}: {len(files)} calibration products, {spec['calibration_n']} declared")
-        tt_n, ts_n = statistics(ensemble(model, files), mu, var, V, dom, spec["surrogate_seed0"])
-        f_obs = model.f_data
-        tt_o, ts_o = statistics(f_obs[None, :], mu, var, V, dom, 0, draw=False)
+        F = ensemble(model, files)
+        D = load_shift(design.get("process_shift", {}).get(key), len(names))
+        tt_o, ts_o = statistics(model.f_data[None, :], mu, var, V, dom, 0, draw=False)
         entry = {"domain_cells": int(dom.sum()), "T_total_obs": float(tt_o[0]), "T_shape_obs": float(ts_o[0]),
-                 "total": si.mc_pvalue(tt_o[0], tt_n), "shape": si.mc_pvalue(ts_o[0], ts_n),
+                 "process_shift": None if D is None else design["process_shift"][key], "variants": {}}
+        base = None
+        for c in (coefs if D is not None else [0.0]):
+            tt_n, ts_n = statistics(F + (c * D if D is not None else 0.0), mu, var, V, dom, spec["surrogate_seed0"])
+            if base is None:
+                base = (tt_n, ts_n)
+            v = {"total": si.mc_pvalue(tt_o[0], tt_n), "shape": si.mc_pvalue(ts_o[0], ts_n),
                  "null_T_total_median": float(np.median(tt_n)), "null_T_shape_median": float(np.median(ts_n))}
+            if c > 0:
+                v["implied_size_of_unshifted_test"] = {"total": si.power(tt_n, base[0], 0.05), "shape": si.power(ts_n, base[1], 0.05)}
+            entry["variants"][str(c)] = v
+        for s in ("total", "shape"):
+            claim = max(entry["variants"].values(), key=lambda v: v[s]["p"])[s]
+            entry[s] = dict(claim, rule="the largest p over the declared shift variants")
         res["tests"][key] = entry
         pvals[f"{key}:total"], pvals[f"{key}:shape"] = entry["total"]["p"], entry["shape"]["p"]
     res["holm"] = si.holm(pvals, design["alpha_family"])
-    base = design["nulls"]["MnvTune_v1"]
-    tt_base, ts_base = statistics(ensemble(model, sorted(glob.glob(base["calibration_glob"]))), mu0, var0, V,
-                                  np.ones(len(names), bool), base["surrogate_seed0"])
-    res["power"] = {}
+    levels = [0.05, design["alpha_family"] / len(pvals)]
+    base_spec = design["nulls"]["MnvTune_v1"]
+    mu0, var0 = prediction(base_spec["prediction"], U)
+    all_dom = np.ones(len(names), bool)
+    F0 = ensemble(model, sorted(glob.glob(base_spec["calibration_glob"])))
+    D0 = load_shift(design.get("process_shift", {}).get("MnvTune_v1"), len(names))
+    nulls0 = [statistics(F0 + (c * D0 if D0 is not None else 0.0), mu0, var0, V, all_dom, base_spec["surrogate_seed0"])
+              for c in (coefs if D0 is not None else [0.0])]
+    res["power"] = {"levels": levels}
     for key, spec in design.get("power", {}).items():
         files = sorted(glob.glob(spec["glob"]))
-        tt_a, ts_a = statistics(ensemble(model, files), mu0, var0, V, np.ones(len(names), bool), spec["surrogate_seed0"])
-        res["power"][key] = {"n": len(files), "total": si.power(tt_a, tt_base, 0.05), "shape": si.power(ts_a, ts_base, 0.05)}
-    res["size"] = {}
-    for key, spec in design.get("size", {}).items():
-        null = design["nulls"][spec["null"]]
-        mu, var = prediction(null["prediction"], U)
-        dom = np.ones(len(names), bool) if null.get("domain") != "pz_lt_6" else (pz_index <= 1)
-        tt_c, ts_c = statistics(ensemble(model, sorted(glob.glob(null["calibration_glob"]))), mu, var, V, dom, null["surrogate_seed0"])
-        tt_v, ts_v = statistics(ensemble(model, sorted(glob.glob(spec["glob"]))), mu, var, V, dom, spec["surrogate_seed0"])
-        res["size"][key] = {"total": si.size(tt_v, tt_c, 0.05), "shape": si.size(ts_v, ts_c, 0.05)}
+        tt_a, ts_a = statistics(ensemble(model, files), mu0, var0, V, all_dom, spec["surrogate_seed0"])
+        out = {"n": len(files)}
+        for s, t_alt in (("total", tt_a), ("shape", ts_a)):
+            k = 0 if s == "total" else 1
+            p_claim = np.max([pvals_against(t_alt, nn[k]) for nn in nulls0], axis=0)
+            out[s] = {str(al): {"unshifted": si.power(t_alt, nulls0[0][k], al),
+                                "claim_rule": {"power": float(np.mean(p_claim <= al)), "n": int(p_claim.size)}} for al in levels}
+        res["power"][key] = out
     res["lateral_symmetry"] = model.symmetry(design)
     a.out.write_text(json.dumps(res, indent=1) + "\n")
     print(json.dumps({k: {kk: (vv if not isinstance(vv, dict) else vv.get("p")) for kk, vv in v.items() if kk in ("total", "shape")}

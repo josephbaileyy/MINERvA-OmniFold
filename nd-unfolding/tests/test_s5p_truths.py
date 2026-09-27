@@ -56,6 +56,84 @@ class Tests(unittest.TestCase):
         r2 = st.coarse_weight(gen, EDGES, w, ratio, 1.0)
         self.assertAlmostEqual((w[ok] * r2[ok]).sum() / w[ok].sum(), 1.0, places=12)
 
+    def _fine_setup(self):
+        shape = tuple(len(e) - 1 for e in EDGES)
+        cedges = [EDGES[0][[0, 2]], EDGES[1][[0, 1, 2]], EDGES[2][[0, 2]], EDGES[3][[0, 1, 3]], EDGES[4][[0, 2]]]
+        rng = np.random.default_rng(7)
+        den = rng.uniform(0.5, 1.5, shape)
+        num = den * rng.uniform(0.6, 1.6, shape)
+        n_den = np.full(shape, 100.0).ravel()
+        n_num = np.full(shape, 100.0).ravel()
+        return shape, cedges, num, den, n_num, n_den
+
+    def test_fine_ratio_is_the_fine_ratio_and_keeps_every_coarse_integral(self):
+        """Review round 1 F2: the fine null's within-coarse-cell shape is the numerator's; the coarse integrals
+        of rho x D are N_c exactly, also when low-count fine cells share a remainder."""
+        shape, cedges, num, den, n_num, n_den = self._fine_setup()
+        n_num[::5] = 3.0  # unresolved fine cells
+        only = np.ones(4, bool)
+        only[3] = False
+        rho, acc = st.fine_ratio(num, den, n_num, n_den, EDGES, cedges, only)
+        vol = st.volumes(EDGES).ravel()
+        cell = st.fine_cell_of_fine_grid(EDGES, cedges)
+        N, D = num.ravel() * vol, den.ravel() * vol
+        resolved = n_num >= st.FINE_N_MIN
+        for c in range(3):
+            inc = cell == c
+            self.assertAlmostEqual((rho[inc] * D[inc]).sum() / N[inc].sum(), 1.0, places=12)
+            np.testing.assert_allclose(rho[inc & resolved], (N / D)[inc & resolved], rtol=1e-12)
+        self.assertTrue(np.all(rho[cell == 3] == 1.0))
+        self.assertEqual(acc["coarse_cells_carrying"], 3)
+        self.assertGreater(acc["fine_cells_fallback"], 0)
+        self.assertLess(acc["max_abs_coarse_integral_error_rel"], 1e-12)
+
+    def test_fine_ratio_reverts_a_cell_whose_remainder_is_unphysical(self):
+        shape, cedges, num, den, n_num, n_den = self._fine_setup()
+        vol = st.volumes(EDGES).ravel()
+        cell = st.fine_cell_of_fine_grid(EDGES, cedges)
+        inc = np.flatnonzero(cell == 0)
+        n_num[inc[0]] = 1.0  # one unresolved cell whose remainder ratio 50 exceeds the fallback clip
+        num = num.ravel().copy()
+        num[inc[0]] = 50.0 * den.ravel()[inc[0]]
+        rho, acc = st.fine_ratio(num.reshape(shape), den, n_num, n_den, EDGES, cedges, np.ones(4, bool))
+        D, N = den.ravel() * vol, num * vol
+        np.testing.assert_allclose(rho[inc], N[inc].sum() / D[inc].sum(), rtol=1e-12)
+        self.assertEqual(acc["coarse_cells_reverted_to_coarse"], 1)
+
+    def test_fine_ratio_lets_an_empty_generator_region_empty_the_truth(self):
+        shape, cedges, num, den, n_num, n_den = self._fine_setup()
+        cell = st.fine_cell_of_fine_grid(EDGES, cedges)
+        inc = np.flatnonzero(cell == 0)
+        num = num.ravel().copy()
+        num[inc[:2]] = 0.0
+        n_num[inc[:2]] = 0.0
+        rho, acc = st.fine_ratio(num.reshape(shape), den, n_num, n_den, EDGES, cedges, np.ones(4, bool))
+        self.assertTrue(np.all(rho[inc[:2]] == 0.0))
+        self.assertEqual(acc["coarse_cells_reverted_to_coarse"], 0)
+
+    def test_fine_ratio_of_a_prediction_with_itself_is_one(self):
+        shape, cedges, num, den, n_num, n_den = self._fine_setup()
+        rho, _ = st.fine_ratio(den, den, n_den, n_den, EDGES, cedges, np.ones(4, bool))
+        np.testing.assert_allclose(rho, 1.0, rtol=1e-12)
+
+    def test_fine_weight_reads_a_verified_rho_and_reweights_rows_by_fine_cell(self):
+        import tempfile
+        gen, w = rows()
+        shape, cedges, num, den, n_num, n_den = self._fine_setup()
+        rho, _ = st.fine_ratio(num, den, n_num, n_den, EDGES, cedges, np.ones(4, bool))
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "rho.npz"
+            np.savez_compressed(f, rho=rho)
+            ratio = {"schema": "s5p-fine-ratio/1", "fine_edges": [e.tolist() for e in EDGES],
+                     "rho_npz": {"path": str(f), "sha256": st.sha256(f)}}
+            r = st.hypothesis_weight(gen, EDGES, w, ratio)
+            self.assertTrue(np.all(r[:10] == 1.0))
+            ok, idx = st.cell_of(gen, EDGES)
+            np.testing.assert_allclose(r[ok], rho[np.ravel_multi_index(idx, shape)], rtol=0)
+            ratio["rho_npz"]["sha256"] = "0" * 64
+            with self.assertRaises(ValueError):
+                st.hypothesis_weight(gen, EDGES, w, ratio)
+
 
 if __name__ == "__main__":
     unittest.main()

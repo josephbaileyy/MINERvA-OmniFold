@@ -1,0 +1,79 @@
+{
+ "schema": "s5p-contract-amendment/1",
+ "amends": "docs/orchestration/state/s5p/contract.json",
+ "number": 6,
+ "stage": "3_model_dependence_and_admission (joint-test branch), repair cycle 1 of at most 2",
+ "status": "FROZEN at the commit that first adds this file, after independent review round 1 (docs/orchestration/REVIEW-20260927-s5p-round1-stage2-exit-and-joint-design.md) and BEFORE any repaired development compute, any calibration ensemble and any observed joint statistic. It supersedes the named parts of amendment 5 and nothing else; amendment 5 stays in history unedited. Production ensembles still run only after independent review round 2 and the admission record (amendment 7). Executor choices under the delegation; no owner quotation.",
+ "review_round_1": {
+  "record": "docs/orchestration/REVIEW-20260927-s5p-round1-stage2-exit-and-joint-design.md",
+  "reviewed_head": "75746779",
+  "confirmed": "the Stage-2 numbers (studies N, C, P, K) and the measurement-branch disposition; B = 1999 meets T7; the dropped shape cell; the -eps treatment; the GiBUU domain; P1-P3 outside the null"
+ },
+ "responses": {
+  "F1_generator_flux_HIGH": {
+   "verified": "by the campaign before acting (KNOWN_ISSUES.md 83): the flux histogram stores densities in variable-width bins, gevgen and NuWro sample by content, the flux average sums contents, the flux is non-PPFX and generation stops at 50 GeV",
+   "repair": "an exact per-event reweight of the existing GENIE CV, GENIE+MEC and NuWro samples to the PPFX CV flux spectrum on 0-100 GeV (the data normalization: MINERvA101 util/GetFluxIntegral, Emin 0, Emax 100); r(E) = (phi_t(E)/Phi_t) / phi_s(E) with phi_s the sampled content density of the generation range; self-normalized per-event cross sections; the E_nu > 50 GeV contribution absent from the samples is quantified, not patched. Implemented by a delegate as new code 3d-unfolding/genie/gen5d_flux_reweight.py with products under /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/ and the receipt state/s5p/gen5d/gen5d-fluxfix.json, with a sampling-model check, an identity check (r = 1 reproduces the existing products), the phi_t identity and the corrected marginals",
+   "consequences": "the joint nulls GENIE_2_12_10_CV, GENIE_2_12_10_MEC and NuWro_21_09 use the repaired predictions (their digests enter the review-round-2 package); GiBUU (its own flux) and MnvTune (the analysis MC) are not affected; P1 (W3 NuWro/GENIE), P2 (D5 NuWro/GENIE) and P3 (W2 GENIE MEC/CV) are ratios of two affected predictions, in which the defect cancels to first order: they are re-derived from the repaired predictions and their change is measured before review round 2; the committed 3D and (E_avail, W) predictions of the three generators, VL35-VL38 and the deliverables' generator statements are re-examined at Stage 7 from the repaired marginals",
+   "measurement_disposition": "unchanged, and no longer dependent on the contaminated vertex D1: the new receipt state/s5p/stage3/envelope-receipt.json reproduces h (median J 12.02%, H2 9.60%, EW 13.44%) and gives h without D1 (J 11.25%, H2 4.28%, EW 9.90%); the T1 half-width is at least h_f + 1.4% cell by cell (amendment 4), so RD1 (>= 12.6%) and RD3 (>= 11.3%) fail T1 without D1, and RD1/RD2 fail T2 through W3's recovery ratio (0.31-0.63 > 0.25), which does not involve h"
+  },
+  "F2_within_cell_shapes_HIGH": {
+   "repair": "generator nulls at the FINE resolution: s5p_truths kind 'fine' (schema s5p-fine-ratio/1): rho_f = G_f / MnvTune_f on fine cells with >= 20 events in both predictions and a ratio in [0.1, 10]; the remaining fine cells of each supported J cell share the remainder so that every J integral of the null truth is G's exactly; a J cell whose remainder ratio exceeds 10 takes the coarse ratio (counted); unsupported J cells keep rho = 1; rate kept. The null truth's within-J-cell shapes are then the generator's own down to the fine grid, and within a fine cell MnvTune's (declared). The coarse-ratio files of amendment 5 are superseded for the generator nulls; MnvTune's own null is rho = 1 either way",
+   "sensitivity": "noise-free full-MC asimov unfolds (s5p_converge.py, construction asimov_same, k = 5) at the fine- and the coarse-ratio truth of each external generator; delta = f_fine - f_coarse on the J cells (s5p_pairdiff.py) and delta' W^-1 delta are reported in the review-round-2 package; not a gate"
+  },
+  "F3_size_check_MEDIUM": {
+   "finding_accepted": "against an exchangeable calibration ensemble the iid validation ensembles' rejection rate is alpha by construction; they cannot see a data-versus-pseudo difference, and at n = 300 the four checks had low assurance and the Bonferroni 'simultaneous' clause of T6 was dropped silently",
+   "repair": "the size-validation ensembles of amendment 5 (2 x 300) are WITHDRAWN. T6's size clause is re-specified (retrospective motivation: this finding) as process sensitivity: the pseudo process differs from the data process by the unfolding-MC size (F4) and by the within-fine-cell shapes (F2, bounded by the fine null). A per-null shift D enters the evaluation as calibration variants f -> f + c D, c in (0, 1/2, 1); each test's CLAIM p-value is the LARGEST over the variants and Holm uses the claim p-values (a rejection must hold under every variant). For each null the implied size of the unshifted test at c = 1/2 is reported; if it exceeds 0.08 the unshifted p-value is shown as 'not calibrated for the data process' and only the claim p-value is quoted. Rank-test exactness within the pseudo process holds by construction; the implementation is protected by disjoint seed ranges (enforced when the production tables are generated) and the unit tests of s5p_joint"
+  },
+  "F4_half_versus_full_MC_MEDIUM": {
+   "finding_accepted": "the reviewer's comparison (pseudo mean against the full-MC self-asimov) mixes the MC-size effect with effects the real data share (the data are independent of the MC, as the pseudo-data are); the relevant difference is the unfolding-MC size at fixed independent pseudo-data",
+   "measurement": "D_G = mean over four split keys of f(half MC) - f(quarter MC) on the J cells, from the noise-free (expectation) pseudo process at the null truth G (s5p_nullexp.py --no-nuisance --expectation --mc-fraction half|quarter; seeds 970000-970003 at the MnvTune null, the other nulls after the F1 predictions exist; s5p_pairdiff.py); under a 1/n_MC bias law the half-to-full shift is D/2, under 1/sqrt(n) about 0.71 D, hence the variants c = 1/2 and 1",
+   "use": "the per-null D files (npz 'D_J', sha256) are named in the production design ('process_shift'); the claim rule of F3 applies"
+  },
+  "F5_shrinkage_MEDIUM": {
+   "repair": "s5p_joint.ledoit_wolf now standardizes: the sample correlation is shrunk toward its diagonal (Schaefer-Strimmer target D) with the Ledoit-Wolf intensity and rescaled by the sample SDs, so every diagonal is the sample variance and V(X S) = S V(X) S; tests red on the old code (scale equivariance, constant cell)"
+  },
+  "F6_power_and_conditioning": {
+   "power": "reported at alpha = 0.05 and at the Holm first-step level alpha_family / 10 = 0.005, for the unshifted test and under the claim rule; T6's power criterion is evaluated at 0.005 under the claim rule (stricter than amendment 5's 0.05); low power stays a limitation, never agreement",
+   "response_model": "the interaction-model universe is now applied COHERENTLY: one non-flux, non-GEANT vertical universe per experiment reweights the background source and the signal source's reco weights, the latter renormalized per fine truth cell over the source (s5p_nullexp.truth_preserving) so the hypothesis truth is unchanged and only the within-fine-cell composition, hence the response, moves. Remaining conditioning, stated in every claim: the MC's per-event detector simulation beyond the drawn detector bands and the lateral surrogate, and within-fine-cell shapes",
+   "lateral_noise": "the Delta_b carry the data endpoints' rounding noise (about 0.23%); conservative (widens the null), kept and stated"
+  },
+  "double_count_found_by_the_campaign": "amendment 5's background-universe draw took any non-flux bank band, including GEANT_Neutron/Pion/Proton, which the detector draw also applies to the background: a detector band could be applied twice. The model-universe list now excludes the GEANT bands (s5p_nullexp.model_bands; test). The defective code never ran (the pilot's queue was stopped before its launch, 2026-09-27T08:13Z)",
+  "LOW_items": {
+   "h_provenance": "state/s5p/stage3/envelope-receipt.json (nd-unfolding/s5p_envelope.py) now holds h, h without D1 and the linearity diagnostics",
+   "T2_list": "amendment 4 evaluated T2 through study K's alternatives (GiBUU, unanchored q3 at a = 0.3, W1, W3) whereas amendment 1 names GiBUU, W1, W2, W3 and the anchored D5; W3, in both lists, fails at every k (0.311 on H2 at k = 5, 0.626 on J), so the disposition does not depend on the list; recorded, not re-graded",
+   "bound_wording": "the Stage-2 record's 'empirical, slightly conservative bound' is withdrawn: per cell |shift + bias| / |bias| has median 0.30-0.52 and |shift| >= |bias| holds in only 52-78% of cells (envelope receipt, linearity); h is evidence that T1/T2 fail, not a per-cell bias bound",
+   "study_C_cause": "the Stage-2 record overstates the cause: the sigma CV over experiments is mostly replica noise (about 10.7% of 13.9% expected from 40-100 replicas), and EW41's pull SD stays 1.06-1.41 over the six sigma estimates (mean 1.19, 3.4 SE above 1); the real-data interval's construction (one experiment's own sigma) was not checked. The measurement branch is closed, so no interval uses it"
+  }
+ },
+ "pilot_reissued": {
+  "table": "docs/orchestration/state/s5p/s3r-pilot-tasks.tsv (35 lines: 200 MnvTune-null experiments with the repaired nuisance draws, seeds 960000-960199, the V ensemble; 50 each of P1/P2/P3 at a = 1, seeds 961000/962000/963000; development power only)",
+  "never_ran": "docs/orchestration/state/s5p/s3-pilot-tasks.tsv (amendment 5): its queue runner was stopped before launch; no product exists",
+  "p1_p3_inputs": "the pilot's P1-P3 use the committed ratio files (W3, D5, W2), built from the unrepaired predictions; development power only; the production alternatives are re-derived from the repaired predictions and their change is reported"
+ },
+ "development_runs": {
+  "phase_A_now": [
+   "s3r-f4-tasks.tsv: F4 at the MnvTune null (2 lines, 4 seeds each)",
+   "s3r-pilot-tasks.tsv (after the detector dump)",
+   "the ten lateral endpoint unfolds (table added when the dumps' digests exist)"
+  ],
+  "phase_B_after_F1": [
+   "fine-ratio nulls of GENIE CV, GENIE MEC, NuWro (repaired) and GiBUU",
+   "F4 at those four nulls",
+   "F2 asimov sensitivity (8 unfolds)",
+   "P1-P3 ratio changes"
+  ],
+  "then": "the review-round-2 package: repaired predictions and their receipt, null files, V (build-v on the re-issued pilot), D per null, delta per generator, the pilot's development power under the claim rule, the production pricing"
+ },
+ "shift_coefficients": [
+  0.0,
+  0.5,
+  1.0
+ ],
+ "production_changes": "calibration B = 1999 per null (unchanged; seeds 1200000 + 20000 i); size ensembles withdrawn; power 3 alternatives x 2 amplitudes x 200 (unchanged; seeds 1450000...); the production cost estimate falls by the 600 withdrawn experiments (about 7 CPU node-h with packing)",
+ "budget": "revision 3: stage3_design 12.0 -> 20.0 CPU node-h from the unallocated pool (re-issued pilot reservation 8.75, F4/F2 development about 2.3, the lateral unfolds 1.25, the detector dump 0.97, the lateral dumps 2.18); CPU unallocated 181.620",
+ "corrections_to_commit_messages": [
+  "the Stage-2 study-table repair commit counted '(70 lines)' of repaired --pairs values; the count is 61 (already noted in the message of 18337b8c)",
+  "the Stage-2 exit commit 690ff304 said verify_hash_bindings moved 122->124; it moved 123->124 (122->123 was amendment 1, ed798eec)"
+ ],
+ "not_admitted": "the measurement branch (amendment 4); nothing here constructs, validates or adopts a measurement"
+}
