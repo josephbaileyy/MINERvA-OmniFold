@@ -25,8 +25,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "STAGE_3_REPAIR_CYCLE_1",
- "phase_detail": "repair cycle 1 measurements in: F4 D at four nulls (noise-level), F2 delta at three generators (0.65-2.8% median: fine null required), lateral endpoint unfolds done, repaired predictions and alternatives committed; the design pilot (V, development power) running; review round 2 starts on the design and the production admission draft",
+ "phase": "STAGE_3_REPAIR_CYCLE_2",
+ "phase_detail": "independent review round 2 (REVIEW-20260927-s5p-round2-repairs-and-admission-draft.md): repair cycle 1 confirmed for F1/F2/F5 and the double count; H1 (HIGH: one interaction-model universe drawn per experiment) and M1-M6/L1-L7 answered by amendment 8; the design pilot rebuilt with the all-band draw; the admission (amendment 7) freezes after this cycle's measurements",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -34,7 +34,7 @@
  },
  "budget": {
   "path": "docs/orchestration/state/s5p/budget.json",
-  "revision": 3
+  "revision": 4
  },
  "stages": {
   "1_use_case": "FROZEN (amendment 1)",
@@ -47,13 +47,8 @@
  },
  "jobs": [
   {
-   "job": "queue s3r-lat.q",
-   "label": "ten lateral endpoint unfolds",
-   "state": "to launch from the next deploy"
-  },
-  {
-   "job": "queue s3r2-cpu.q",
-   "label": "design pilot (amendment 6b)",
+   "job": "queue s3v-cpu.q",
+   "label": "repair cycle 2: detector dump, F4 pairs, asimovs, all-band pilot",
    "state": "to launch"
   }
  ],
@@ -150,6 +145,11 @@
    "number": "6b",
    "path": "docs/orchestration/state/s5p/contract-amendment-6b-pilot-detector.json",
    "stage": "3 repair cycle 1 addendum"
+  },
+  {
+   "number": 8,
+   "path": "docs/orchestration/state/s5p/contract-amendment-8-review2-repairs.json",
+   "stage": "3 repair cycle 2"
   }
  ],
  "reviews": [
@@ -159,9 +159,16 @@
    "reviewed_head": "75746779",
    "worktree": "../MINERvA-OmniFold-s5p-review1 (left clean)",
    "verdict": "Stage 2 CONFIRMED; joint design NOT READY (F1, F2 HIGH)"
+  },
+  {
+   "round": 2,
+   "record": "docs/orchestration/REVIEW-20260927-s5p-round2-repairs-and-admission-draft.md",
+   "reviewed_head": "7f05a413",
+   "worktree": "../MINERvA-OmniFold-s5p-review2 (left clean)",
+   "verdict": "admission NOT ready: H1 HIGH; M1-M6 MEDIUM; F1/F2/F5/double-count/sequential rule CONFIRMED"
   }
  ],
- "next_action": "deploy e13caf87+; lanes s3r-lat.q (lateral unfolds) and s3r-b.q (F4 phase B, F2 asimovs); s3r-cpu.q continues (F4 MnvTune running; pilot after the detector dump); then V, D per null, delta per generator, pilot power; P1-P3 re-derivation; review round 2; admission (amendment 7)",
+ "next_action": "deploy; rebind to budget revision 4; run s3v-cpu.q; then D (16 pairs, bias-aligned), F2 NuWro, M1 merged-x2 comparison, V from the rebuilt pilot, development power; freeze amendment 7 with every digest; production",
  "concurrent_work_at_start": "josephrb GPU jobs pfd-chain/pfd-shr/pfd-fin (58893071-58903623, m3246_g) and other users' m3246_g jobs belong to other lanes (not touched); no m3246 CPU row; shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "b30752864c70c76da3a888136e52c3dea4b615b7",
@@ -223,6 +230,14 @@
   {
    "utc": "2026-09-27T12:15Z",
    "what": "F4 phase B: the NuWro pair (tasks 4, 5 of 58945613) failed in 29 s: the NuWro fine null has rho = 0 in fallback cells where NuWro predicts nothing (allowed by amendment 6), and s5p_truths.fine_weight refused every non-positive weight; repaired to refuse only negative weights (test). Not rerun in stage 3 (its corrective resubmission is spent): the NuWro F4 pair and the NuWro-fine F2 asimov move to the production admission with the detector dump. D at the MnvTune, GENIE CV, GENIE MEC and GiBUU nulls: median |D|/f 0.03%, 0.06%, 0.05%, 0.17%, median |D|/se 0.58-0.86 (consistent with noise at four pairs)"
+  },
+  {
+   "utc": "2026-09-27T14:03Z",
+   "what": "design pilot 58950326 (s3r2; the single-universe interaction-model draw, review round 2 H1) cancelled after 31 null products; its reservation closes at the measured elapsed; the products are development history"
+  },
+  {
+   "utc": "2026-09-27T15:05Z",
+   "what": "the ten lateral-endpoint dumps (12 GB) removed after their ten endpoint unfolds exist (runs/s3/latunf); digests recorded in /pscratch/sd/j/josephrb/s5p-20260926/measure/lateral-dumps-sha256-before-removal.txt; reproducible from the committed omnifiles with s3-latdump-tasks.tsv; namespace 1.6 GB"
   }
  ],
  "findings": [

@@ -51,13 +51,14 @@ class E2E(unittest.TestCase):
             product(d / "data.npz", noise())
             np.savez(d / "pred0.npz", xsec_flat=x0, sumw2_flat=(0.001 * x0) ** 2)
             np.savez(d / "pred1.npz", xsec_flat=x0 * 1.2, sumw2_flat=(0.001 * x0) ** 2)
-            np.savez(d / "D.npz", D_J=0.02 * (U @ x0))
+            np.savez(d / "D.npz", D_J=0.02 * (U @ x0), d_pairs=np.array([0.02 * (U @ x0)] * 4))
             design = {"stage1": str(STAGE1), "s5c_contract": str(S5C), "alpha_family": 0.05,
                       "lateral_endpoints": {"B": [str(d / "lat/b0.npz"), str(d / "lat/b1.npz")]},
                       "data_jitters": [str(d / f"lat/j{i}.npz") for i in range(3)], "data_central": str(d / "data.npz"),
                       "v_ensemble_glob": str(d / "v/*.npz"), "v_ensemble_n": 60,
                       "shift_coefficients": [0.0, 0.5, 1.0],
-                      "process_shift": {"MnvTune_v1": {"path": str(d / "D.npz"), "sha256": sj.sha256(d / "D.npz")}},
+                      "process_shift": {"MnvTune_v1": {"path": str(d / "D.npz"), "sha256": sj.sha256(d / "D.npz"), "mode": "raw"},
+                                        "Displaced": {"none": "test fixture"}},
                       "nulls": {"MnvTune_v1": {"prediction": str(d / "pred0.npz"), "calibration_glob": str(d / "cal_ok/*.npz"),
                                                "calibration_n": 199, "surrogate_seed0": 10},
                                 "Displaced": {"prediction": str(d / "pred1.npz"), "calibration_glob": str(d / "cal_bad/*.npz"),
@@ -91,6 +92,12 @@ class E2E(unittest.TestCase):
         self.assertEqual(set(bad["variants"]), {"0.0"})  # no shift declared for it
         self.assertEqual(set(res["power"]["P"]["total"]), {"0.05", str(0.05 / 4)})  # 2 nulls x 2 tests: Holm first step alpha / 4
         self.assertGreater(res["power"]["P"]["total"]["0.05"]["unshifted"]["power"], 0.9)
+        # the determinacy rule: at B = 199 no rejection is determined at alpha / 4 (upper bound for k = 0 is 0.018)
+        self.assertEqual(res["decisions"]["Displaced:total"]["decision"], "undetermined")
+        self.assertIn(res["decisions"]["MnvTune_v1:total"]["decision"], ("undetermined", "not rejected"))
+        self.assertLessEqual(res["power"]["P"]["total"]["0.05"]["claim_rule_determined"]["power"],
+                             res["power"]["P"]["total"]["0.05"]["claim_rule"]["power"])
+        self.assertEqual(ok["observed_jitter_p"]["total"]["n"], 3)
 
 
 if __name__ == "__main__":

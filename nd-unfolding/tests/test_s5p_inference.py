@@ -78,5 +78,33 @@ class SequentialTests(unittest.TestCase):
         self.assertAlmostEqual(min(si.holm_thresholds(0.05, 10)), 0.005)
 
 
+class DeterminacyTests(unittest.TestCase):
+    def test_holm_rejects_only_determined_steps_and_stops_on_undetermined(self):
+        e = {"a": {"p": 1 / 2000, "k": 0, "B": 1999},     # interval [0, 0.0018] < 0.05/3: rejected
+             "b": {"p": 51 / 2000, "k": 50, "B": 1999},   # ~0.025 vs 0.025: straddles -> undetermined
+             "c": {"p": 0.5, "k": 999, "B": 1999}}
+        d = si.holm_determined(e, 0.05)
+        self.assertEqual(d["a"]["decision"], "rejected")
+        self.assertEqual(d["b"]["decision"], "undetermined")
+        self.assertEqual(d["c"]["decision"], "undetermined")  # the procedure stopped at b
+
+    def test_holm_not_rejected_stops_the_procedure(self):
+        e = {"a": {"p": 0.3, "k": 600, "B": 1999}, "b": {"p": 0.6, "k": 1200, "B": 1999}}
+        d = si.holm_determined(e, 0.05)
+        self.assertEqual({v["decision"] for v in d.values()}, {"not rejected"})
+
+    def test_power_determined_is_stricter_than_the_rank_rule(self):
+        rng = np.random.default_rng(12)
+        null = rng.chisquare(10, 800)
+        alt = rng.chisquare(10, 400) + 12.0
+        rank = si.power(alt, null, 0.005)["power"]
+        det = si.power_determined(alt, [null], 0.005)["power"]
+        self.assertLessEqual(det, rank)
+        self.assertGreater(rank, 0.0)
+        # at B = 800 and alpha = 0.005 a rejection needs k = 0
+        k = np.array([np.sum(null >= a) for a in alt])
+        self.assertAlmostEqual(det, float(np.mean(k == 0)), places=12)
+
+
 if __name__ == "__main__":
     unittest.main()

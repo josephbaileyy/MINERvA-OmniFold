@@ -124,6 +124,51 @@ def holm(pvals: dict[str, float], alpha: float = 0.05) -> dict:
     return out
 
 
+def holm_determined(entries: dict[str, dict], alpha: float = 0.05, level: float = 0.95) -> dict:
+    """Holm step-down with the determinacy rule of the s5p admission (review round 2 M3). ``entries`` maps a
+    test to its claim {"p", "k", "B"}. In increasing p, step i compares with alpha / (m - i): the test is
+    REJECTED if the exact Clopper-Pearson interval (``level``) of k / B lies entirely below the threshold; the
+    procedure STOPS with 'not rejected' for this and every later test if the interval lies entirely above; it
+    STOPS with 'undetermined' for this and every later test if the interval contains the threshold (no claim
+    either way at that level; more calibration draws would decide)."""
+    order = sorted(entries, key=lambda k: entries[k]["p"])
+    m = len(order)
+    out, state = {}, None
+    for i, key in enumerate(order):
+        e = entries[key]
+        th = alpha / (m - i)
+        lo, hi = cp_interval(int(e["k"]), int(e["B"]), level)
+        if state is None:
+            if hi < th:
+                decision = "rejected"
+            elif lo > th:
+                state = decision = "not rejected"
+            else:
+                state = decision = "undetermined"
+        else:
+            decision = state
+        out[key] = {"p": e["p"], "k": int(e["k"]), "B": int(e["B"]), "threshold": th, "interval": [lo, hi],
+                    "level": level, "decision": decision}
+    return out
+
+
+def power_determined(t_alt: np.ndarray, t_nulls: list, alpha: float, level: float = 0.95) -> dict:
+    """The fraction of alternative experiments the admission's rule would REJECT at ``alpha``: under the claim rule
+    k is the largest exceedance count over the null variants, and a rejection needs the Clopper-Pearson interval
+    of k / B entirely below alpha (review round 2 M3)."""
+    t_alt = np.asarray(t_alt, float)
+    ks = []
+    for tn in t_nulls:
+        s = np.sort(np.asarray(tn, float))
+        ks.append(s.size - np.searchsorted(s, t_alt, side="left"))
+    k = np.max(np.array(ks), axis=0)
+    B = np.asarray(t_nulls[0]).size
+    rej = np.array([cp_interval(int(x), B, level)[1] < alpha for x in k])
+    n, x = rej.size, int(rej.sum())
+    lo, hi = cp_interval(x, n, level)
+    return {"power": x / n, "n": n, "interval": [lo, hi], "alpha": alpha, "B": B, "rule": "claim rule with determinacy"}
+
+
 def critical_value(t_null: np.ndarray, alpha: float) -> float:
     """The smallest t with (k(t) + 1) / (B + 1) <= alpha under the rank rule."""
     t = np.sort(np.asarray(t_null, float))[::-1]

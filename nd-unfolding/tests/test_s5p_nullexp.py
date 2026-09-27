@@ -72,7 +72,7 @@ class Tests(unittest.TestCase):
                 for key, v in u[tag].items():
                     np.save(where / f"{tag}_{key}.npy", v)
                 np.save(where / f"{tag}_{'tdw' if where == bank else 'denom_nd'}.npy", np.ones(4))
-            d_ = {"flux": 7, "model_universe": "MaRES_1", "detector": {b: 1 for b in ne.DETECTOR_BANDS}}
+            d_ = {"flux": 7, "model": {"MaRES": "MaRES_1"}, "detector": {b: 1 for b in ne.DETECTOR_BANDS}}
             fs, fb = ne.source_factors(d_, inp, bkg, bank, det, source)
         wr, bw = inp["w_reco"], bkg["bkg_w"]
         g = ne.truth_preserving(u["MaRES_1"]["wt"] / inp["w_truth"], inp, source)
@@ -137,9 +137,65 @@ class Tests(unittest.TestCase):
 
     def test_draw_covers_exactly_the_declared_detector_bands(self):
         rng = np.random.default_rng(3)
-        d = ne.draw(rng, [1, 2], ["MaRES_1"], ("GEANT_Pion", "GEANT_Proton"))
+        g = ne.model_groups(["MaRES_0", "MaRES_1"])
+        d = ne.draw(rng, [1, 2], g, ("GEANT_Pion", "GEANT_Proton"))
         self.assertEqual(set(d["detector"]), {"GEANT_Pion", "GEANT_Proton"})
-        self.assertEqual(set(ne.draw(rng, [1], ["MaRES_1"])["detector"]), set(ne.DETECTOR_BANDS))
+        self.assertEqual(set(ne.draw(rng, [1], g)["detector"]), set(ne.DETECTOR_BANDS))
+
+    def test_model_groups(self):
+        g = ne.model_groups(["2p2h_0", "2p2h_1", "2p2h_2", "MaRES_0", "MaRES_1", "FrAbs_pi_0", "FrAbs_pi_1"])
+        self.assertEqual(g, {"2p2h": ["2p2h_0", "2p2h_1", "2p2h_2"], "FrAbs_pi": ["FrAbs_pi_0", "FrAbs_pi_1"],
+                             "MaRES": ["MaRES_0", "MaRES_1"]})
+        with self.assertRaises(ValueError):
+            ne.model_groups(["cv"])
+
+    def test_every_band_is_drawn_and_the_prior_variance_is_the_band_sum(self):
+        """Review round 2 H1: the drawn interaction-model prior must carry the band-sum covariance (MAT: per band
+        the mean over its universes of (u - cv)^2), not one universe of all bands."""
+        inp = inputs(n=3000, seed=8)
+        rng = np.random.default_rng(9)
+        n = inp["w_truth"].size
+        bkg = {"bkg_w": rng.uniform(0.1, 1.0, 200)}
+        eps = {"A": 0.05, "B": 0.03, "C": 0.08}
+        pattern = {k: rng.normal(size=n) * 0.2 + 1.0 for k in eps}  # a row pattern, so the effect is not flat
+        with tempfile.TemporaryDirectory() as d:
+            bank = Path(d)
+            unis = []
+            for k, e in eps.items():
+                for i, s in enumerate((+1, -1)):
+                    u = f"{k}_{i}"
+                    unis.append(u)
+                    np.save(bank / f"{u}_wr.npy", inp["w_reco"] * (1 + s * e * pattern[k]))
+                    np.save(bank / f"{u}_wt.npy", inp["w_truth"])
+                    np.save(bank / f"{u}_tdw.npy", np.ones(4))
+                    np.save(bank / f"{u}_bkgw.npy", bkg["bkg_w"] * (1 + s * e))
+            groups = ne.model_groups(unis)
+            cache = ne.ModelCache(bank, unis, inp, bkg, preload=True)
+            S = []
+            draws = [ne.draw(np.random.default_rng([s, 1]), [0], groups, ())["model"] for s in range(3000)]
+            self.assertTrue(all(set(m) == set(eps) for m in draws))  # every band, every experiment
+            for m in draws:
+                k_wr, _, k_b = cache.product(list(m.values()))
+                S.append((inp["w_reco"] * k_wr).sum())
+        cv = inp["w_reco"].sum()
+        band_sum = sum((((inp["w_reco"] * e * pattern[k]).sum()) ** 2) for k, e in eps.items())
+        self.assertAlmostEqual(np.var(S) / band_sum, 1.0, delta=0.08)
+        self.assertAlmostEqual(np.mean(S) / cv, 1.0, delta=0.003)
+
+    def test_streaming_and_preloaded_products_agree(self):
+        inp = inputs(n=500, seed=10)
+        bkg = {"bkg_w": np.random.default_rng(11).uniform(0.1, 1.0, 50)}
+        with tempfile.TemporaryDirectory() as d:
+            bank = Path(d)
+            for i, u in enumerate(("X_0", "X_1", "Y_0", "Y_1")):
+                np.save(bank / f"{u}_wr.npy", inp["w_reco"] * (1 + 0.01 * (i + 1)))
+                np.save(bank / f"{u}_wt.npy", inp["w_truth"] * (1 - 0.01 * i))
+                np.save(bank / f"{u}_tdw.npy", np.ones(4))
+                np.save(bank / f"{u}_bkgw.npy", bkg["bkg_w"] * (1 + 0.02 * i))
+            a = ne.ModelCache(bank, ["X_0", "X_1", "Y_0", "Y_1"], inp, bkg, preload=True).product(["X_1", "Y_0"])
+            b = ne.ModelCache(bank, ["X_0", "X_1", "Y_0", "Y_1"], inp, bkg).product(["X_1", "Y_0"])
+        for x, y in zip(a, b):
+            np.testing.assert_array_equal(x, y)
 
 
 if __name__ == "__main__":

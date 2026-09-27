@@ -151,6 +151,20 @@ class Tests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 st.fine_weight(gen, EDGES, w, ratio, 2.0)  # 1 + 2 (0 - 1) < 0
 
+    def test_mid_ratio_keeps_coarse_integrals_and_is_constant_within_merged_cells(self):
+        shape, cedges, num, den, n_num, n_den = self._fine_setup()
+        me = st.merged_edges(EDGES, cedges, 2)
+        for m, c in zip(me, cedges):
+            self.assertTrue(set(np.asarray(c).tolist()) <= set(m.tolist()))
+        rho, acc = st.mid_ratio(num, den, n_num, n_den, EDGES, cedges, np.ones(4, bool), 2)
+        vol = st.volumes(EDGES).ravel()
+        cell = st.fine_cell_of_fine_grid(EDGES, cedges)
+        N, D = num.ravel() * vol, den.ravel() * vol
+        for c in range(4):
+            inc = cell == c
+            self.assertAlmostEqual((rho[inc] * D[inc]).sum() / N[inc].sum(), 1.0, places=12)
+        self.assertEqual(acc["resolution"], "merged x2")
+
 
 if __name__ == "__main__":
     unittest.main()

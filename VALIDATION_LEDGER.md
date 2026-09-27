@@ -20,6 +20,8 @@ covariance enters the corner ratio and no significance is claimed from it. Tune 
 | VL159 | 3D integrated σ below the data (E_avail axis, catch bin dropped; `overlay_generators_band.py`), repaired | GENIE-CV -7.2% (1.3 σ_tot), Tune v1 -9.5% (1.8), NuWro -12.8% (2.4), GiBUU -22.2% (4.2) | VERIFIED-NUMERIC; the note's 7.2/9.5/15.3/21.9% become 7.2/9.5/12.8/22.2% (GENIE-CV's committed 3D was a different sample, so its unchanged −7.2% is not evidence the defect was absent) |
 | VL160 | GENIE Valencia 2p2h against the data's low-E_avail deficit (`compare_mec_eavail.py`), repaired | CV -7.2% → CV+MEC -2.6%; MEC adds **63%** of the integrated deficit and fills 52% of the E_avail ≤ 0.4 GeV gap | VERIFIED-NUMERIC; supersedes the note's −5.2%, 27% and 46%: the 27% was mostly an artifact of the committed CV and MEC files being different samples (measured from the MEC-only component it was 64% before the repair) |
 
+*Review round 2 (L7):* VL159's σ_tot units rest on the historical 3D covariance (superseded and quarantined as a significance source); they are descriptive only. The GiBUU W-integrated data/generator in the E_avail tail is 1.59 ([0.8,1.5) GeV) and 1.37 ([1.5,3.0)) (`docs/orchestration/state/s5p/stage7/generator-context/eavail-marginal-ratios.json`).
+
 ## 2026-09-27 s5p (OI-193): Stage 2 of the precision-measurement completion
 
 Campaign under [`AUTHORIZATION-20260926-precision-measurement-completion.md`](docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md);

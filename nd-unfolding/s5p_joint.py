@@ -108,6 +108,7 @@ class Model:
         self.Delta = np.array([(U @ xs(lat[b][1]) - U @ xs(lat[b][0])) / 2.0 for b in sorted(lat)])
         self.lat_bands = sorted(lat)
         J = np.array([U @ xs(p) for p in design["data_jitters"]])
+        self.jitters = J
         self.s_num = J.std(0, ddof=1)
         self.f_data = U @ xs(design["data_central"])
 
@@ -131,19 +132,30 @@ class Model:
         return out
 
 
-def ensemble(model: Model, files: list[str]) -> np.ndarray:
-    return np.array([model.apply(model.U @ xs(p), meta(p), int(meta(p)["pseudo_seed"])) for p in files])
+def product_files(pattern: str) -> list[str]:
+    """The finished products a glob names: a task killed mid-write leaves ``*.partial-<pid>.npz``, never counted
+    (review round 2 M6)."""
+    return sorted(p for p in glob.glob(pattern) if ".partial" not in Path(p).name)
+
+
+def ensemble(model: Model, files: list[str]) -> tuple[np.ndarray, np.ndarray]:
+    ms = [meta(p) for p in files]
+    F = np.array([model.apply(model.U @ xs(p), m, int(m["pseudo_seed"])) for p, m in zip(files, ms)])
+    return F, np.array([int(m["pseudo_seed"]) for m in ms], dtype=np.int64)
 
 
 def statistics(F: np.ndarray, mu: np.ndarray, var_mu: np.ndarray, V: np.ndarray, dom: np.ndarray, seed0: int,
-               draw: bool = True) -> tuple[np.ndarray, np.ndarray]:
+               draw: bool = True, seeds: np.ndarray | None = None) -> tuple[np.ndarray, np.ndarray]:
     """The metric is always W = V + diag Var(mu); ``draw`` adds the prediction's MC error to simulated residuals
-    (the observed residual carries it already)."""
+    (the observed residual carries it already). The draw of experiment i is keyed by (seed0, its pseudo seed),
+    so adding or retrying a product never re-assigns another product's draw (review round 2 M6); without
+    ``seeds`` the position i stands in (tests)."""
     W = V[np.ix_(dom, dom)] + np.diag(var_mu[dom])
     Winv = np.linalg.inv(W)
     tt, ts = [], []
+    keys = seeds if seeds is not None else np.arange(len(F))
     for i, f in enumerate(F):
-        eps = np.random.default_rng([seed0 + i, 0x4A02]).normal(size=mu.size) * np.sqrt(var_mu) if draw else 0.0
+        eps = np.random.default_rng([int(seed0), int(keys[i]), 0x4A02]).normal(size=mu.size) * np.sqrt(var_mu) if draw else 0.0
         r_mu = mu + eps
         tt.append(si.stat_total(f[dom], r_mu[dom], Winv))
         ts.append(si.stat_shape(f[dom], r_mu[dom], W))
@@ -156,15 +168,44 @@ def pvals_against(t: np.ndarray, t_null: np.ndarray) -> np.ndarray:
     return (s.size - np.searchsorted(s, np.asarray(t, float), side="left") + 1) / (s.size + 1)
 
 
-def load_shift(spec: dict | None, n: int) -> np.ndarray | None:
+def load_shift(spec: dict | None, n: int) -> tuple[np.ndarray | None, np.ndarray | None]:
+    """The declared process shift of a null: {"none": reason} (explicit), or {"path", "sha256", "mode"} with the
+    s5p_pairdiff npz (D_J and its per-pair d_pairs). A null without a declaration is refused (review round 2 M6)."""
     if spec is None:
-        return None
+        raise SystemExit("a null without a process_shift declaration (give {'none': reason} explicitly)")
+    if "none" in spec:
+        return None, None
     if sha256(spec["path"]) != spec["sha256"]:
         raise SystemExit(f"{spec['path']}: digest differs from the design's")
-    D = np.asarray(np.load(spec["path"], allow_pickle=False)["D_J"], float)
+    z = np.load(spec["path"], allow_pickle=False)
+    D = np.asarray(z["D_J"], float)
     if D.size != n:
         raise SystemExit(f"{spec['path']}: {D.size} cells, {n} expected")
-    return D
+    return D, (np.asarray(z["d_pairs"], float) if "d_pairs" in z.files else None)
+
+
+def shift_vector(spec: dict, D: np.ndarray, d_pairs: np.ndarray | None, F: np.ndarray, mu: np.ndarray,
+                 var: np.ndarray, V: np.ndarray, dom: np.ndarray) -> tuple[np.ndarray, dict]:
+    """The variant shift S of a null. ``raw``: S = D. ``bias_aligned_upper`` (review round 2 M2): only the component
+    of the process difference along the null's own bias direction moves T to first order, so S = m u with
+    u = b / |b|_W (b = the calibration ensemble's mean minus mu on the test domain), m = max(a + 2 se, 0), a the
+    mean over the F4 pairs of d_j' W^-1 u and se its standard error: the protective (T-increasing) upper bound."""
+    mode = spec.get("mode", "raw")
+    if mode == "raw":
+        return D, {"mode": "raw"}
+    if mode != "bias_aligned_upper" or d_pairs is None or len(d_pairs) < 2:
+        raise SystemExit(f"shift mode {mode} needs >= 2 F4 pairs")
+    W = V[np.ix_(dom, dom)] + np.diag(var[dom])
+    Winv = np.linalg.inv(W)
+    b = F.mean(0)[dom] - mu[dom]
+    nb = float(np.sqrt(b @ Winv @ b))
+    u = b / nb if nb > 0 else np.zeros_like(b)
+    a_j = np.array([dj[dom] @ Winv @ u for dj in d_pairs])
+    a, se = float(a_j.mean()), float(a_j.std(ddof=1) / np.sqrt(len(a_j)))
+    m = max(a + 2.0 * se, 0.0)
+    S = np.zeros(D.size)
+    S[dom] = m * u
+    return S, {"mode": mode, "bias_norm_W": nb, "a": a, "se": se, "n_pairs": int(len(a_j)), "magnitude": m}
 
 
 def test_null(model: Model, design: dict, key: str, V: np.ndarray, names: list, pz_index: np.ndarray, files: list,
@@ -174,14 +215,18 @@ def test_null(model: Model, design: dict, key: str, V: np.ndarray, names: list, 
     spec = design["nulls"][key]
     mu, var = prediction(spec["prediction"], model.U)
     dom = np.ones(len(names), bool) if spec.get("domain") != "pz_lt_6" else (pz_index <= 1)
-    F = ensemble(model, files)
-    D = load_shift(design.get("process_shift", {}).get(key), len(names))
+    F, seeds = ensemble(model, files)
+    pspec = design.get("process_shift", {}).get(key)
+    D, d_pairs = load_shift(pspec, len(names))
+    S, sinfo = shift_vector(pspec, D, d_pairs, F, mu, var, V, dom) if D is not None else (None, {"mode": "none", "reason": pspec["none"]})
     tt_o, ts_o = statistics(model.f_data[None, :], mu, var, V, dom, 0, draw=False)
     entry = {"domain_cells": int(dom.sum()), "T_total_obs": float(tt_o[0]), "T_shape_obs": float(ts_o[0]),
-             "process_shift": None if D is None else design["process_shift"][key], "variants": {}}
+             "process_shift": pspec, "shift": sinfo, "variants": {}}
     base = None
-    for c in (coefs if D is not None else [0.0]):
-        tt_n, ts_n = statistics(F + (c * D if D is not None else 0.0), mu, var, V, dom, spec["surrogate_seed0"])
+    nulls = []
+    for c in (coefs if S is not None else [0.0]):
+        tt_n, ts_n = statistics(F + (c * S if S is not None else 0.0), mu, var, V, dom, spec["surrogate_seed0"], seeds=seeds)
+        nulls.append((tt_n, ts_n))
         if base is None:
             base = (tt_n, ts_n)
         v = {"total": si.mc_pvalue(tt_o[0], tt_n), "shape": si.mc_pvalue(ts_o[0], ts_n),
@@ -192,6 +237,15 @@ def test_null(model: Model, design: dict, key: str, V: np.ndarray, names: list, 
     for s in ("total", "shape"):
         claim = max(entry["variants"].values(), key=lambda v: v[s]["p"])[s]
         entry[s] = dict(claim, rule="the largest p over the declared shift variants")
+    # numerical stability of the observed p (review round 2 L2): the 20 real-data rounding jitters as observations
+    k = {"total": 0, "shape": 1}
+    tj, sj_ = statistics(model.jitters, mu, var, V, dom, 0, draw=False)
+    stab = {}
+    for s, tobs in (("total", tj), ("shape", sj_)):
+        pj = np.max([pvals_against(tobs, nn[k[s]]) for nn in nulls], axis=0)
+        stab[s] = {"min": float(pj.min()), "median": float(np.median(pj)), "max": float(pj.max()), "n": int(pj.size)}
+    entry["observed_jitter_p"] = stab
+    entry["_nulls"] = nulls  # kept in memory for the power step, removed before writing
     return entry
 
 
@@ -227,10 +281,10 @@ def main(argv=None) -> int:
     U, names, pz_index = j_matrix(stage1, supported)
     model = Model(design, U)
     if a.cmd == "build-v":
-        files = sorted(glob.glob(design["v_ensemble_glob"]))
+        files = product_files(design["v_ensemble_glob"])
         if len(files) != design["v_ensemble_n"]:
             raise SystemExit(f"{len(files)} V-ensemble products, {design['v_ensemble_n']} declared")
-        F = ensemble(model, files)
+        F, _ = ensemble(model, files)
         V, shrink = ledoit_wolf(F)
         np.savez(a.out, V=V, names=np.array(names), shrinkage=shrink, n=len(files),
                  meta=json.dumps({"files_first_last": [files[0], files[-1]], "shrinkage": shrink,
@@ -238,38 +292,44 @@ def main(argv=None) -> int:
         print(json.dumps({"n": len(files), "shrinkage": shrink, "median_rel_sd": float(np.median(np.sqrt(np.diag(V)) / np.abs(F.mean(0))))}))
         return 0
     V = np.asarray(np.load(a.v, allow_pickle=False)["V"], float)
-    res = {"schema": "s5p-joint/2", "design_sha256": sha256(a.design), "v_sha256": sha256(a.v), "names": names, "tests": {}}
+    res = {"schema": "s5p-joint/3", "design_sha256": sha256(a.design), "v_sha256": sha256(a.v), "names": names, "tests": {}}
     coefs = [float(c) for c in design.get("shift_coefficients", [0.0])]
     if coefs[0] != 0.0:
         raise SystemExit("the first shift coefficient must be 0 (the unshifted test)")
-    pvals = {}
+    pvals, claims, null_sets = {}, {}, {}
     for key, spec in design["nulls"].items():
-        files = sorted(glob.glob(spec["calibration_glob"]))
+        files = product_files(spec["calibration_glob"])
         want = calibration_count(spec)
         if len(files) != want:
             raise SystemExit(f"{key}: {len(files)} calibration products, {want} declared")
         entry = test_null(model, design, key, V, names, pz_index, files, coefs)
+        null_sets[key] = entry.pop("_nulls")
         res["tests"][key] = entry
-        pvals[f"{key}:total"], pvals[f"{key}:shape"] = entry["total"]["p"], entry["shape"]["p"]
-    res["holm"] = si.holm(pvals, design["alpha_family"])
+        for s in ("total", "shape"):
+            pvals[f"{key}:{s}"] = entry[s]["p"]
+            claims[f"{key}:{s}"] = {"p": entry[s]["p"], "k": entry[s]["k"], "B": entry[s]["B"]}
+    res["holm_point"] = si.holm(pvals, design["alpha_family"])
+    res["decisions"] = si.holm_determined(claims, design["alpha_family"])
     levels = [0.05, design["alpha_family"] / len(pvals)]
-    base_spec = design["nulls"]["MnvTune_v1"]
-    mu0, var0 = prediction(base_spec["prediction"], U)
-    all_dom = np.ones(len(names), bool)
-    F0 = ensemble(model, sorted(glob.glob(base_spec["calibration_glob"])))
-    D0 = load_shift(design.get("process_shift", {}).get("MnvTune_v1"), len(names))
-    nulls0 = [statistics(F0 + (c * D0 if D0 is not None else 0.0), mu0, var0, V, all_dom, base_spec["surrogate_seed0"])
-              for c in (coefs if D0 is not None else [0.0])]
     res["power"] = {"levels": levels}
     for key, spec in design.get("power", {}).items():
-        files = sorted(glob.glob(spec["glob"]))
-        tt_a, ts_a = statistics(ensemble(model, files), mu0, var0, V, all_dom, spec["surrogate_seed0"])
-        out = {"n": len(files)}
+        nk = spec.get("null", "MnvTune_v1")
+        nspec = design["nulls"][nk]
+        mu0, var0 = prediction(nspec["prediction"], U)
+        dom = np.ones(len(names), bool) if nspec.get("domain") != "pz_lt_6" else (pz_index <= 1)
+        files = product_files(spec["glob"])
+        if "n" in spec and len(files) != int(spec["n"]):
+            raise SystemExit(f"power {key}: {len(files)} products, {spec['n']} declared")
+        Fa, sa = ensemble(model, files)
+        tt_a, ts_a = statistics(Fa, mu0, var0, V, dom, spec["surrogate_seed0"], seeds=sa)
+        out = {"n": len(files), "null": nk}
         for s, t_alt in (("total", tt_a), ("shape", ts_a)):
             k = 0 if s == "total" else 1
-            p_claim = np.max([pvals_against(t_alt, nn[k]) for nn in nulls0], axis=0)
-            out[s] = {str(al): {"unshifted": si.power(t_alt, nulls0[0][k], al),
-                                "claim_rule": {"power": float(np.mean(p_claim <= al)), "n": int(p_claim.size)}} for al in levels}
+            nn = [x[k] for x in null_sets[nk]]
+            p_claim = np.max([pvals_against(t_alt, x) for x in nn], axis=0)
+            out[s] = {str(al): {"unshifted": si.power(t_alt, nn[0], al),
+                                "claim_rule": {"power": float(np.mean(p_claim <= al)), "n": int(p_claim.size)},
+                                "claim_rule_determined": si.power_determined(t_alt, nn, al)} for al in levels}
         res["power"][key] = out
     res["lateral_symmetry"] = model.symmetry(design)
     a.out.write_text(json.dumps(res, indent=1) + "\n")

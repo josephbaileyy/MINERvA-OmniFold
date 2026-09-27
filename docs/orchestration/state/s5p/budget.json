@@ -2,8 +2,8 @@
  "schema": "s5p-budget/1",
  "campaign_key": "s5p-20260926",
  "authority": "docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md sections 3 (P7) and 4",
- "revision": 3,
- "revision_reason": "amendment 6 (review round 1 repairs): stage3_design 12.0 -> 20.0 CPU node-h from the unallocated pool (the re-issued design pilot, the F4 MC-size and F2 fine-shape development unfolds, the lateral endpoint unfolds, the detector and lateral dumps); development (46.527) and verification/repair (62.037) unchanged; CPU unallocated 181.620",
+ "revision": 4,
+ "revision_reason": "amendment 8 (review round 2 repairs): unspent allocations released (development CPU 46.527 -> 24.0 against 23.930 charged; stage3_design 20.0 -> 11.0 against 10.399 charged incl. an open 8.75 reservation measured 0.643; GPU development 17.235 -> 2.5 against 2.086), a new stage3_repair2 of 25.0 CPU node-h; CPU unallocated 188.147, GPU 89.423; verification/repair unchanged (meter measure /pscratch/sd/j/josephrb/s5p-20260926/measure/meter-measure-repair2.json)",
  "measured_utc": "2026-09-26T16:04:38Z",
  "evidence": {
   "allocation": "docs/orchestration/state/s5p/allocation-measurement-20260926T1604Z.txt (iris, squeue -h -r -A m3246,m3246_g all users, showquota, hpssquota, sacctmgr qos)",
@@ -51,9 +51,10 @@
    "binding": "the unspent cumulative envelope (10% of uncommitted, 341.630, does not bind)",
    "concurrency_nodes": 2,
    "stages": {
-    "development": 46.527,
+    "development": 24.0,
     "verification_repair": 62.037,
-    "stage3_design": 20.0
+    "stage3_design": 11.0,
+    "stage3_repair2": 25.0
    }
   },
   "gpu": {
@@ -71,7 +72,7 @@
    "binding": "the unspent cumulative envelope, 459.62 A100-h (10% of uncommitted, 5824.26 GPU node-h, does not bind)",
    "concurrency_gpus": 4,
    "stages": {
-    "development": 17.235,
+    "development": 2.5,
     "verification_repair": 22.981
    }
   }
@@ -79,8 +80,9 @@
  "stage_rules": {
   "development": "contract stages 1-2 together: at most 15% of each pool (handoff Stage 2)",
   "verification_repair": "20% floor of each pool (independent review compute, reverification of repairs); a floor, not a claim that all required validation fits",
-  "unallocated": "CPU 181.620, GPU 74.688 node-h",
-  "stage3_design": "amendment 5 pilot and amendment 6 repairs (development only); production ensembles are priced by the Stage-3 admission record"
+  "unallocated": "CPU 188.147, GPU 89.423 node-h",
+  "stage3_design": "amendment 5 pilot and amendment 6 repairs (development only); production ensembles are priced by the Stage-3 admission record",
+  "stage3_repair2": "amendment 8 repair cycle 2 development (rebuilt V pilot, F4 pairs, NuWro F4/F2, merged-null asimovs) and the Stage-4 detector dump; production is priced by amendment 7"
  },
  "storage": {
   "pscratch": {
@@ -109,6 +111,11 @@
    "revision": 3,
    "utc": "2026-09-27",
    "note": "stage3_design 20.0 CPU node-h (amendment 6)"
+  },
+  {
+   "revision": 4,
+   "utc": "2026-09-27",
+   "note": "releases; stage3_repair2 25.0 (amendment 8)"
   }
  ]
 }

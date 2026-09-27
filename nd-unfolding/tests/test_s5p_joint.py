@@ -86,19 +86,43 @@ class Tests(unittest.TestCase):
         self.assertGreater(si.power(tt1, tt0, 0.05)["power"], 0.5)
         self.assertLess(si.power(tt0, tt0, 0.05)["power"], 0.06)
 
-    def test_load_shift_checks_digest_and_length(self):
+    def test_load_shift_checks_digest_length_and_requires_a_declaration(self):
         import tempfile
         with tempfile.TemporaryDirectory() as d:
             f = Path(d) / "D.npz"
-            np.savez(f, D_J=np.ones(4))
+            np.savez(f, D_J=np.ones(4), d_pairs=np.ones((3, 4)))
             spec = {"path": str(f), "sha256": sj.sha256(f)}
-            np.testing.assert_array_equal(sj.load_shift(spec, 4), np.ones(4))
+            D, pairs = sj.load_shift(spec, 4)
+            np.testing.assert_array_equal(D, np.ones(4))
+            self.assertEqual(pairs.shape, (3, 4))
             with self.assertRaises(SystemExit):
                 sj.load_shift(spec, 5)
             with self.assertRaises(SystemExit):
                 sj.load_shift(dict(spec, sha256="0" * 64), 4)
-        self.assertIsNone(sj.load_shift(None, 4))
+        self.assertEqual(sj.load_shift({"none": "declared"}, 4), (None, None))
+        with self.assertRaises(SystemExit):
+            sj.load_shift(None, 4)
 
+    def test_bias_aligned_shift_points_along_the_bias_at_the_upper_bound(self):
+        rng = np.random.default_rng(13)
+        p = 6
+        mu = np.ones(p)
+        b = np.array([0.1, -0.05, 0.02, 0.0, 0.03, -0.01])
+        F = mu + b + rng.normal(size=(500, p)) * 1e-3
+        V = np.eye(p) * 1e-4
+        var = np.zeros(p)
+        dom = np.ones(p, bool)
+        u = b / np.sqrt(b @ b / 1e-4)
+        pairs = np.array([0.5 * u + rng.normal(size=p) * 1e-4 for _ in range(6)])  # a positive component along u
+        S, info = sj.shift_vector({"mode": "bias_aligned_upper"}, pairs.mean(0), pairs, F, mu, var, V, dom)
+        self.assertGreater(info["magnitude"], info["a"])  # a + 2 se
+        cos = S @ b / np.sqrt((S @ S) * (b @ b))
+        self.assertGreater(cos, 0.999)
+        S2, info2 = sj.shift_vector({"mode": "bias_aligned_upper"}, -pairs.mean(0), -pairs, F, mu, var, V, dom)
+        self.assertEqual(info2["magnitude"], 0.0)  # a process difference that lowers the bias is not protective
+        self.assertTrue(np.all(S2 == 0))
+        with self.assertRaises(SystemExit):
+            sj.shift_vector({"mode": "bias_aligned_upper"}, pairs[0], pairs[:1], F, mu, var, V, dom)
 
 if __name__ == "__main__":
     unittest.main()

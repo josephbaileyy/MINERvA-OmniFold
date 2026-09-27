@@ -205,6 +205,36 @@ def fine_ratio(num: np.ndarray, den: np.ndarray, n_num: np.ndarray, n_den: np.nd
     return rho, acc
 
 
+def merged_edges(fine: list, coarse: list, merge: int) -> list:
+    """Per axis the fine edges kept at every ``merge``-th position plus every coarse edge (so no merged cell
+    straddles a coarse cell)."""
+    out = []
+    for f, c in zip(fine, coarse):
+        f = np.asarray(f, float)
+        keep = set(f[::merge].tolist()) | {f[0], f[-1]} | {x for x in np.asarray(c, float).tolist() if np.any(np.isclose(f, x))}
+        out.append(np.array(sorted(keep)))
+    return out
+
+
+def mid_ratio(num: np.ndarray, den: np.ndarray, n_num: np.ndarray, n_den: np.ndarray, edges: list, cedges: list,
+              only: np.ndarray, merge: int) -> tuple[np.ndarray, dict]:
+    """The fine-null construction on a MERGED grid (review round 2 M1: the resolution between J and fine), with rho
+    expanded back to the fine cells (every fine cell takes its merged cell's rho)."""
+    medges = merged_edges(edges, cedges, merge)
+    vol = volumes(edges)
+    grids = np.meshgrid(*[0.5 * (np.asarray(e)[:-1] + np.asarray(e)[1:]) for e in edges], indexing="ij")
+    midx = [np.clip(np.searchsorted(m, g, side="right") - 1, 0, len(m) - 2) for g, m in zip(grids, medges)]
+    mshape = [len(m) - 1 for m in medges]
+    mflat = np.ravel_multi_index(midx, mshape).ravel()
+    nm = int(np.prod(mshape))
+    agg = lambda x: np.bincount(mflat, weights=np.asarray(x, float).ravel(), minlength=nm)  # noqa: E731
+    mvol = volumes(medges).ravel()
+    N, D = agg(num * vol) / mvol, agg(den * vol) / mvol
+    rho_m, acc = fine_ratio(N.reshape(mshape), D.reshape(mshape), agg(n_num), agg(n_den), medges, cedges, only)
+    acc.update({"resolution": f"merged x{merge}", "merged_shape": mshape})
+    return rho_m[mflat], acc
+
+
 def load_fine_rho(ratio: dict) -> np.ndarray:
     path = Path(ratio["rho_npz"]["path"])
     if sha256(path) != ratio["rho_npz"]["sha256"]:
@@ -273,6 +303,7 @@ def main(argv=None) -> int:
     ap.add_argument("--denominator", type=Path, required=True, help="5D prediction npz (gen5d) or an MC-truth npz of the same form")
     ap.add_argument("--coarse-edges", default=None, help="JSON list of five edge lists (kinds coarse and fine)")
     ap.add_argument("--rho-out", type=Path, default=None, help="kind fine: the npz that receives rho")
+    ap.add_argument("--merge", type=int, default=1, help="kind fine: build on a grid merging this many fine bins per axis")
     ap.add_argument("--preserve-total", action="store_true")
     ap.add_argument("--only-cells", default=None,
                     help="JSON list of coarse cell indices that carry the ratio; every other cell keeps rho = 1 (kind coarse)")
@@ -301,7 +332,10 @@ def main(argv=None) -> int:
         cedges = [np.asarray(c, float) for c in json.loads(a.coarse_edges)]
         only = np.zeros(int(np.prod([len(c) - 1 for c in cedges])), bool)
         only[np.asarray(json.loads(a.only_cells), int)] = True
-        rho, stats = fine_ratio(num, den, load_counts(a.numerator), load_counts(a.denominator), edges, cedges, only)
+        if a.merge > 1:
+            rho, stats = mid_ratio(num, den, load_counts(a.numerator), load_counts(a.denominator), edges, cedges, only, a.merge)
+        else:
+            rho, stats = fine_ratio(num, den, load_counts(a.numerator), load_counts(a.denominator), edges, cedges, only)
         np.savez_compressed(a.rho_out, rho=rho)
         out.update({"schema": "s5p-fine-ratio/1", "fine_edges": [e.tolist() for e in edges],
                     "coarse_edges": [c.tolist() for c in cedges], "only_cells": json.loads(a.only_cells),

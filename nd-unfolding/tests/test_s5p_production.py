@@ -19,7 +19,9 @@ def spec(base1=1220000):
                       "throttle": 3, "timelimit_h": 2, "billing": 32, "logs": "/ns/logs", "products": "/ns/runs/prod/tasks"},
             "nulls": {"MnvTune_v1": {"hypothesis": "h0.json", "prediction": "p0.npz", "seed_base": 1200000},
                       "NuWro_21_09": {"hypothesis": "h1.json", "prediction": "p1.npz", "seed_base": base1}},
-            "power": {"P1": {"ratio": "w3.json", "truth": "ratio_nd", "amplitudes": [1.0, 0.5], "n": 200, "seed_base": 1450000}},
+            "power": {"P1": {"ratio": "w3.json", "truth": "ratio_nd", "amplitudes": [1.0, 0.5], "n": 200, "seed_base": 1450000},
+                      "P1g": {"ratio": "w3.json", "truth": "ratio_nd", "amplitudes": [1.0], "n": 200, "seed_base": 1480000,
+                              "null": "NuWro_21_09"}},
             "evaluator": {"alpha_family": 0.05, "shift_coefficients": [0.0, 0.5, 1.0]}}
 
 
@@ -45,12 +47,29 @@ class Tests(unittest.TestCase):
                 self.assertEqual(len(q), 21)
                 self.assertTrue(all("s5p_seqstop.py" in q[2 * b] and "squeue" in q[2 * b + 1] for b in range(10)))
                 self.assertIn("exit 9", q[-1])
+                self.assertIn('--force-stop "batches exhausted"', q[-1])
+                self.assertIn("--force-stop budget", q[0])
+                self.assertIn('out=$(squeue', q[1])
             pw = (out / "tables/pow-P1_a0.5.tsv").read_text().splitlines()[1:]
             self.assertEqual(len(seeds(pw)), 200)
             self.assertIn("--alternative-amplitude\t0.5", pw[0])
             des = json.loads((out / "design.json").read_text())
             self.assertEqual(des["nulls"]["NuWro_21_09"]["calibration_n"]["sequential_status"], "/ns/runs/prod/status/NuWro_21_09-final.json")
-            self.assertEqual(set(des["power"]), {"P1_a1.0", "P1_a0.5"})
+            self.assertEqual(set(des["power"]), {"P1_a1.0", "P1_a0.5", "P1g_a1.0"})
+            self.assertEqual(des["power"]["P1g_a1.0"]["null"], "NuWro_21_09")
+            self.assertIn("--hypothesis\th1.json", (out / "tables/pow-P1g_a1.0.tsv").read_text())
+
+    def test_every_generated_queue_line_is_valid_bash(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "spec.json").write_text(json.dumps(spec()))
+            sp.main(["--spec", f"{d}/spec.json", "--out", f"{d}/prod"])
+            for q in (Path(d) / "prod/queues").glob("*.q"):
+                for ln in q.read_text().splitlines():
+                    if ln.startswith("#") or not ln.strip():
+                        continue
+                    r = subprocess.run(["bash", "-n"], input=ln, text=True, capture_output=True)
+                    self.assertEqual(r.returncode, 0, f"{q.name}: {r.stderr[:200]}")
 
     def test_overlapping_seed_ranges_are_refused(self):
         with tempfile.TemporaryDirectory() as d:

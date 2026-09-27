@@ -7,8 +7,9 @@ variant) and applies ``s5p_inference.sequential_decision`` to each, with the dec
 family (every Holm level alpha / j, j = 1..m, and 0.01, 0.05). It writes one status file per look
 (``<status-dir>/<null>-B<B>.json``) and ``<status-dir>/<null>-final.json`` when it stops.
 
-Exit 0: continue (launch the next batch); 3: stopped (the rule is met for both tests, or the declared maximum
-is reached); any other code is an error and stops the queue.
+Exit 0: continue (launch the next batch); 3: stopped (the rule is met for both tests, the declared maximum is
+reached, or ``--force-stop`` records that the batches are exhausted or the meter refused the budget); any other
+code is an error and stops the queue.
 
 MEASURES: whether the frozen stopping rule is met. CANNOT AUTHORIZE: a rejection (the evaluator's Holm step
 decides); a stop that the rule does not give.
@@ -17,7 +18,6 @@ from __future__ import annotations
 
 import argparse
 import datetime
-import glob
 import json
 from pathlib import Path
 
@@ -33,6 +33,8 @@ def main(argv=None) -> int:
     ap.add_argument("--v", type=Path, required=True)
     ap.add_argument("--null", required=True)
     ap.add_argument("--status-dir", type=Path, required=True)
+    ap.add_argument("--force-stop", default=None, choices=("batches exhausted", "budget"),
+                    help="record a final stop regardless of the rule (the last queue line; a meter cap refusal)")
     a = ap.parse_args(argv)
     design = json.loads(a.design.read_text())
     spec = design["nulls"][a.null]
@@ -40,7 +42,7 @@ def main(argv=None) -> int:
     if not isinstance(seq, dict) or "max" not in seq:
         raise SystemExit(f"{a.null}: not a sequential calibration")
     a.status_dir.mkdir(parents=True, exist_ok=True)
-    files = sorted(glob.glob(spec["calibration_glob"]))
+    files = sj.product_files(spec["calibration_glob"])
     B = len(files)
     status = {"schema": "s5p-seqstop/1", "null": a.null, "B": B, "max": int(seq["max"]),
               "utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -55,6 +57,7 @@ def main(argv=None) -> int:
         V = np.asarray(np.load(a.v, allow_pickle=False)["V"], float)
         coefs = [float(c) for c in design.get("shift_coefficients", [0.0])]
         entry = sj.test_null(model, design, a.null, V, names, pz_index, files, coefs)
+        entry.pop("_nulls", None)
         m = 2 * len(design["nulls"])
         th = sorted(set(si.holm_thresholds(design["alpha_family"], m)) | {0.01, 0.05})
         dec = {s: si.sequential_decision(entry[s]["k"], entry[s]["B"], th) for s in ("total", "shape")}
@@ -62,6 +65,9 @@ def main(argv=None) -> int:
         status.update({"files_first_last": [files[0], files[-1]], "decisions": dec, "thresholds": th,
                        "stop": rule or B >= int(seq["max"]),
                        "reason": "rule met for both tests" if rule else ("maximum reached" if B >= int(seq["max"]) else "continue")})
+    if a.force_stop and not status["stop"]:
+        # the p-value stays valid at the B reached; only determined decisions are claimed (admission)
+        status.update({"stop": True, "reason": a.force_stop})
     (a.status_dir / f"{a.null}-B{B}.json").write_text(json.dumps(status, indent=1) + "\n")
     if status["stop"]:
         (a.status_dir / f"{a.null}-final.json").write_text(json.dumps(status, indent=1) + "\n")

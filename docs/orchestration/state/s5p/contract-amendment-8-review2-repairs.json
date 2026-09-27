@@ -1,0 +1,39 @@
+{
+ "schema": "s5p-contract-amendment/1",
+ "amends": "docs/orchestration/state/s5p/contract.json",
+ "number": 8,
+ "stage": "3 repair cycle 2 of at most 2 (independent review round 2)",
+ "status": "FROZEN at the commit that first adds this file, after review round 2 (docs/orchestration/REVIEW-20260927-s5p-round2-repairs-and-admission-draft.md) and BEFORE any repaired development compute, any calibration ensemble and any observed joint statistic. It supersedes the named parts of amendments 6 and 6b; they stay in history unedited. The production admission (amendment 7) is frozen only after this cycle's measurements, with every digest filled; no production ensemble runs before it.",
+ "responses": {
+  "H1_interaction_model_prior_HIGH": {
+   "verified": "by the campaign: s5p_nullexp.draw chose ONE universe of 69 (34 bands) per experiment; the design-pilot products 58950326 (31, cancelled at 14:03Z) carry single-band draws",
+   "repair": "every band drawn per experiment, independently and uniformly over its universes (a +-1 sigma pair: either endpoint; 2p2h: one of three), the product of the weight ratios applied to the background source and to the signal response, the fine-cell truth preservation applied to the combined truth factor (s5p_nullexp.model_groups, draw, ModelCache: the chosen universes are streamed per experiment, ~13 GB read against a ~550 s unfold, since a preload of all 69 over 32.8M signal rows would need ~18 GB); unit test: the drawn prior's variance equals the band sum (MAT per-band mean of (u - cv)^2) to 8% at 3000 draws, every band present in every draw",
+   "consequence": "the V pilot is rebuilt (s3v-pilot-tasks.tsv); the pilot products of s3r2 are development history, used for nothing"
+  },
+  "M1_within_fine_cell_residual": {
+   "measurement": "merged-x2 nulls (s5p_truths --kind fine --merge 2: the fine-null construction on a grid keeping every other fine edge and every J edge, rho expanded to the fine cells; state/s5p/ratios/nullsM/) and one noise-free full-MC asimov per generator: fine minus merged-x2 is compared with fine minus coarse (F2) in null-T units using the rebuilt V; if the fine-vs-merged shift is small against the coarse-vs-fine shift the residual below the fine grid is reported as bounded by that convergence, otherwise the condition is stated as 'unmeasured, potentially material' with the numbers",
+   "wording": "amendment 6's 'bounded by the fine null' and the draft's 'at a finer level than the effect it removes' are withdrawn"
+  },
+  "M2_F4_variants": {
+   "repair": "12 more F4 pairs per null (16 in all; NuWro all 16) and the variant shift made BIAS-ALIGNED at the upper bound: S = max(a + 2 se, 0) u, u the null's own bias direction in the metric, a the mean over pairs of the pair differences projected on u (s5p_joint.shift_vector, mode 'bias_aligned_upper'); variants c in (0, 1/2, 1) of S; the claim p is the largest over them",
+   "wording": "the draft's 'bracketed by the variants' is replaced by 'consistent with zero; its protective magnitude bounded at the 2 se upper end along the direction that moves T'; the T6 size clause states that it has no failing outcome (it reports the implied size; validity rests on the claim rule and the determinacy rule)"
+  },
+  "M3_determinacy": "implemented: s5p_inference.holm_determined (a Holm step rejects only when the 95% Clopper-Pearson interval of k / B lies entirely below its threshold; an interval above stops with 'not rejected', one containing it stops with 'undetermined'), s5p_inference.power_determined (the same rule under the claim rule); s5p_joint records 'decisions' (claims) beside 'holm_point' (point p, reference only); tests",
+  "M4_non_rejection_power": "power ensembles also at an external null: P1r, P2r, P3r at a = 1 on the GENIE 2.12.10 CV fine null (200 each), reported against the GENIE CV calibration ensemble; the admission's non-rejection sentence names the null each power belongs to",
+  "M5_costs_placement": "production re-priced from the rebuilt pilot's measured seconds; 6 seeds per line with a 2.5 h limit; the power lanes on the CPU pool (no GPU path); a controller force-stop ('budget' on a meter cap refusal, 'batches exhausted' on the last line) writes the final status the evaluator accepts; a storage line (products ~96 kB each; the 12 GB of lateral dumps removed once the endpoint unfolds are receipted, here); budget revision 4 releases unspent development and stage-3 allocations",
+  "M6_queue_robustness": "the wait line treats a failed squeue as 'not yet'; product globs exclude *.partial-*.npz (s5p_joint.product_files); the prediction-error draw of each simulated experiment is keyed by (seed0, its pseudo seed); a null without a process_shift declaration is refused (explicit {'none': reason}); the power ensemble size is checked; every generated queue line passes bash -n (test)",
+  "L_items": {
+   "L1": "the NuWro D and F2 and the detector dump run in this cycle, so every digest of the admission is committed before its freeze and before any calibration",
+   "L2": "the observed p's numerical stability: the 20 real-data jitters evaluated as observations against the same calibration (s5p_joint 'observed_jitter_p'); the validation operand named in the admission; the joint branch's independence from measurement qualification argued in the admission",
+   "L3": "the GiBUU null's out-of-domain truth (E_nu < 20 GeV truncated) enters the migrations: stated as a condition of the GiBUU test",
+   "L4": "no recoil-energy-scale band exists in the analysis's systematic set (app_statmethods.tex): stated as a condition of every claim",
+   "L7": "deliverable wording: VL159's sigma_tot rests on the historical (quarantined) 3D covariance; sec_3d.tex's 'every GENIE and NuWro prediction repaired' narrowed (the FSI dials and the NuWro-shaped FPS prior are not); GiBUU's x0.9966 is an energy-dependent reweight (0.990-1.001 by E_avail bin); the E_nu > 100 GeV wording; corrected in this commit where textual"
+  },
+  "data_informed_disclosure": "the reviewer computed descriptive per-cell data residuals (median |f_data / mu_G - 1| over the 109 J cells: MnvTune 14.4%, GENIE CV 10.2%, MEC 10.0%, NuWro 20.7%, GiBUU 38.6%, GiBUU unrestricted); the campaign has read them; the frozen statistics, family, rules and nulls were fixed before and are not changed by them; recorded as a data-informed context"
+ },
+ "stage_and_retry_rule": "repair cycle 2 runs as budget stage 'stage3_repair2' (review-mandated redesign: a new stage with its own admission). The detector dump (refused twice in stage 3, once at launch, once by its guard) and the NuWro F4/F2 items (refused in stage 3 by the zero-weight defect) are each re-run ONCE here after their verified repairs; this is disclosed, and any further failure of them is not resubmitted in this stage",
+ "tables": ["docs/orchestration/state/s5p/s3v-pilot-tasks.tsv", "docs/orchestration/state/s5p/s3v-f4-tasks.tsv", "docs/orchestration/state/s5p/s3v-asimov-tasks.tsv", "docs/orchestration/state/s5p/s2-dump2-tasks.tsv"],
+ "queue": "docs/orchestration/state/s5p/queues/s3v-cpu.q",
+ "budget": "revision 4: development CPU 46.527 -> 24.0 (charged 23.930), stage3_design 20.0 -> 11.0 (charged 10.399 incl. the cancelled pilot's open 8.75 reservation, measured 0.643), new stage3_repair2 25.0; GPU development 17.235 -> 2.5 (charged 2.086); CPU unallocated 188.147, GPU 89.423; verification/repair unchanged (62.037 CPU, 22.981 GPU)",
+ "not_changed": "the family, the nulls, the statistics, the seeds of production, the sequential rule, T1-T7"
+}

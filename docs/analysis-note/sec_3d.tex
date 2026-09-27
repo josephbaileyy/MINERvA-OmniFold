@@ -220,12 +220,15 @@ histogram whose variable-width bins store flux \emph{densities} but were
 sampled and normalized by bin \emph{content}, from the flux without PPFX
 weights and capped at \SI{50}{GeV}. Every wide high-energy bin was
 under-weighted, so those predictions were suppressed at high $\pPar$ and in
-their integrated rate (\texttt{KNOWN\_ISSUES.md} row 83). Every GENIE and NuWro
-prediction in this note is now the repaired one: an exact per-event reweight of
+their integrated rate (\texttt{KNOWN\_ISSUES.md} row 83). The GENIE and NuWro
+predictions of the generator comparisons below are now the repaired ones (the
+FSI-dial studies and the NuWro-shaped prior of \S\ref{sec:fps} still use the
+unrepaired samples, as stated there): an exact per-event reweight of
 the generated events to the analysis PPFX central-value flux on
 0--\SI{100}{GeV}, plus correctly sampled 50--\SI{100}{GeV} supplementary
-samples. GiBUU reads its own flux and is reweighted to the same flux convention
-(a normalization factor $0.9966$); its event sample still stops at
+samples. GiBUU reads its own flux and is reweighted per event to the same flux convention
+(an energy-dependent reweight; the integrated cross section changes by a factor
+$0.9966$); its event sample still stops at
 $E_\nu\approx\SI{20}{GeV}$, so it is empty above $\pPar\approx\SI{20}{GeV/c}$
 (\texttt{KNOWN\_ISSUES.md} row 82). The generator comparisons of this section
 and of \S\ref{sec:eavailw-band} were rebuilt on 2026-09-27 by re-running the
@@ -350,7 +353,9 @@ $\times\,\Eavail$ axes.
 pass on the 2M central-value GENIE events varying the pion-FSI dials shows both
 are sub-percent on $d\sigma/d\Eavail$: \texttt{FrInel\_pi} shifts the spectrum by
 $\le\SI{0.74}{\percent}$ (peak in $0.10$--$\SI{0.20}{GeV}$) and \texttt{FrAbs\_pi}
-by $\le\SI{0.82}{\percent}$ (peak in the lowest bin), with the integrated rate
+by $\le\SI{0.82}{\percent}$ (peak in the lowest bin; both measured on the GENIE sample
+before its flux repair, \texttt{KNOWN\_ISSUES.md} row 83, as same-sample ratios in
+which the flux defect cancels to first order, not recomputed), with the integrated rate
 moving only $\pm\SI{0.02}{}$--$\SI{0.03}{\percent}$ at $\pm1\sigma$.
 \footnote{\texttt{FrInel\_pi} is commented out of the standard MAT-MINERvA systematics
 registry; the collaboration confirmed in 2026 that this remains current
