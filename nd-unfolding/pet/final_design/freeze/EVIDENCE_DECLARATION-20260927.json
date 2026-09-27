@@ -1,6 +1,6 @@
 {
  "schema": "pet-final-design/evidence-declaration/1",
- "note": "Amendment 3d (2026-09-27): decision set re-frozen {H2S1T24K5, L128S1T24K4}; <N_F> and the D4c/D3 n are set by the sizing amendment after the new pilots; cost per Amendment 3a item 2 (analysis/cost_from_receipts.py at the declared packing, 6 unfoldings per result).",
+ "note": "Amendment 3d (2026-09-27): decision set re-frozen {H2S1T24K5, L128S1T24K4}; <N_F> and the D4c/D3 n are set by the sizing amendment after the new pilots; cost per Amendment 3a item 2 (analysis/cost_from_receipts.py at the declared packing, 6 unfoldings per result). Amendment 3e: n_final = 60 (capped); N_LIB from the library-group sizing when the L128S1T24 D4c/D3 pilot rows are complete (first N_LIB draws used).",
  "stage": "FINAL look 1",
  "look": 1,
  "looks_planned": 2,
@@ -16,7 +16,7 @@
  ],
  "final_stage": "S4F",
  "library_stage": "S4S",
- "n_final": "<N_F>",
+ "n_final": 60,
  "n_stress": 8,
  "n_required": {
   "D4c_p_up": "<N_LIB>",
