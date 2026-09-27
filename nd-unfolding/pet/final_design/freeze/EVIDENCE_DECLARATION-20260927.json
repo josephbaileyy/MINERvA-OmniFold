@@ -1,6 +1,6 @@
 {
  "schema": "pet-final-design/evidence-declaration/1",
- "note": "Amendment 3d (2026-09-27): decision set re-frozen {H2S1T24K5, L128S1T24K4}; <N_F> and the D4c/D3 n are set by the sizing amendment after the new pilots; cost per Amendment 3a item 2 (analysis/cost_from_receipts.py at the declared packing, 6 unfoldings per result). Amendment 3e: n_final = 60 (capped); N_LIB from the library-group sizing when the L128S1T24 D4c/D3 pilot rows are complete (first N_LIB draws used). Amendment 3f: N_LIB = 40 (library-group sizing; draws 0-39 of D4c up and D3 +0.35 enter decisions).",
+ "note": "Amendment 3d (2026-09-27): decision set re-frozen {H2S1T24K5, L128S1T24K4}; <N_F> and the D4c/D3 n are set by the sizing amendment after the new pilots; cost per Amendment 3a item 2 (analysis/cost_from_receipts.py at the declared packing, 6 unfoldings per result). Amendment 3e: n_final = 60 (capped); N_LIB from the library-group sizing when the L128S1T24 D4c/D3 pilot rows are complete (first N_LIB draws used). Amendment 3f: N_LIB = 40 (library-group sizing; draws 0-39 of D4c up and D3 +0.35 enter decisions). Naming fix: the anchors are the run-name ids CTLrefK3 / CrefK3 (the 20260926 file wrote CTLK3).",
  "stage": "FINAL look 1",
  "look": 1,
  "looks_planned": 2,
@@ -9,9 +9,9 @@
   "L128S1T24K4"
  ],
  "bonferroni_m": 2,
- "reference": "CTLK3",
+ "reference": "CTLrefK3",
  "anchors": [
-  "CTLK3",
+  "CTLrefK3",
   "CrefK3"
  ],
  "final_stage": "S4F",
