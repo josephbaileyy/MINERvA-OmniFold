@@ -11,7 +11,8 @@ margins, thresholds) are labels, not results.
 
 Sources (relative to `nd-unfolding/pet/final_design/`):
   banks/BANK_MANIFEST.json; results/predecessor_posthoc/*.posthoc.json; results/step2int/*.posthoc.json;
-  dev/DEV_TABLES.json (dev/summarize_dev.py) and dev/SCREENS.json (dev/apply_finalist_rule.py);
+  dev/DEV_TABLES-20260927.json (dev/summarize_dev.py), dev/SCREENS-20260927.json (dev/apply_finalist_rule.py
+  --n2), sizing/n2_all-20260927.json (dev/n2_table.py), resources/cost_t24-20260927.json, sizing/sizing_*-20260927.json;
   scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json; results/final/decision_look*.json and
   results/final/coverage_*.json (rendered as "pending" while absent).
 
@@ -38,16 +39,21 @@ FIG_DIR = "figures"
 SCOPE = ("PET is diagnostic method development. Nothing here is a publication adoption; no historical "
          "threshold, verdict or the predecessor campaign's disposition changes; simulation only.")
 BANKS = "banks/BANK_MANIFEST.json"
-DEVT = "dev/DEV_TABLES.json"
-SCR = "dev/SCREENS.json"
+DEVT = "dev/DEV_TABLES-20260927.json"
+SCR = "dev/SCREENS-20260927-3d.json"
+N2T = "sizing/n2_all-20260927-3d.json"
+COST = "resources/cost_t24-20260927.json"
+SZF = "sizing/sizing_final-20260927.json"
+SZL = "sizing/sizing_library-20260927.json"
 AUS = "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json"
 PP = "results/predecessor_posthoc/{run}.posthoc.json"
 S2 = "results/step2int/{run}.posthoc.json"
 DEC = "results/final/decision_look1.json"
-CURVE_DESIGNS = ("C", "H1", "H2", "H2S1", "H2S1E16", "L128S1", "P2preS1", "P2scrS1")
+CURVE_DESIGNS = ("C", "H1", "H2", "H2S1", "H2S1T24", "L128S1", "L128S1T24", "P2preA1", "P2scrS1")
 COLORS = {"C": "#009E73", "H1": "#999999", "H2": "#E69F00", "H2S1": "#0072B2", "H2S1E16": "#56B4E9",
           "L128S1": "#CC79A7", "L128S1E16": "#D55E00", "P2preS1": "#000000", "P2scrS1": "#8C564B",
-          "CTL": "#1F4E79", "B": "#F0E442"}
+          "CTL": "#1F4E79", "B": "#F0E442", "H2S1T24": "#0B3D91", "L128S1T24": "#882255",
+          "P2preA1": "#444444"}
 
 
 def fig(name: str, width: str = r"0.95\linewidth") -> str:
@@ -198,19 +204,69 @@ def s_devscreen(d: Deck, n: Numbers, out: Path) -> None:
 
 
 def s_screens(d: Deck, n: Numbers) -> None:
-    scr = d.n.src.load(SCR)
+    doc = d.n.src.load(SCR)
+    scr = doc["designs"]
     rows = []
-    for c in ("H2S1", "H2S1E16", "CS1", "L64S1", "L128S1", "L128S1E16", "P2preS1", "P2scrS1"):
+    for c in ("H2S1T24", "H2S1", "H2S1E16", "CS1", "L128S1T24", "L128S1", "L128S1E16", "L64S1", "P2preS1",
+              "P2preA1", "P2scrS1"):
         if c not in scr:
             continue
-        kst = scr[c]["Kstar"]
-        passing = ", ".join(str(r["k"]) for r in scr[c]["rows"] if r["status"] == "PASS") or "none"
-        dv = n.f(f"scr_dev_{c}", SCR, [c, "dev_tilt_at_Kstar"], "3") if kst is not None else "---"
-        rows.append([c, passing, "---" if kst is None else str(kst), dv])
-    body = table(["design", "passing $k$", "$K^*$", r"dev.\ tilt at $K^*$"], rows, "lllr") + (
-        r"\par\vspace{0.2cm}\small Rule committed before the dev2S/dev2T/PET2 recoveries were inspected "
-        r"(\texttt{dev/FINALIST\_RULE-20260926.md}); compact finalist H2S1 $K{=}5$ (Amendment 2).")
+        r = scr[c]
+        kst = r["Kstar"]
+        dv = n.f(f"scr_dev_{c}", SCR, ["designs", c, "dev_tilt_at_Kstar"], "3") if kst is not None else "---"
+        n1 = (r.get("S-N1_at_Kstar") or {}).get("status") or "---"
+        n2 = r.get("S-N2_at_Kstar") or {}
+        n2s = n.f(f"scr_n2_{c}", SCR, ["designs", c, "S-N2_at_Kstar", "sd"], "3") if n2.get("sd") is not None else "---"
+        rows.append([c, "---" if kst is None else str(kst), dv, n1, n2s])
+    comp, large = doc["packages"]["compact"], doc["packages"]["large"]
+    body = table(["design", "$K^*$", r"dev.\ tilt at $K^*$", "S-N1", r"seed sd (S-N2 $\le 0.05$)"], rows,
+                 "llrlr", r"\scriptsize") + (
+        r"\par\vspace{0.2cm}\small Rule committed before the recoveries it ranks were inspected, with addenda "
+        r"(completeness, S-N1, S-N2); finalists: compact " + base.esc(comp["finalist"]) + r" $K{=}" + str(comp["K"])
+        + r"$, large " + base.esc(large["finalist"]) + r" $K{=}" + str(large["K"]) + r"$ (Amendments 3c, 3d).")
     d.frame("Finalist rule applied mechanically", body, [SCR, "dev/FINALIST_RULE-20260926.md"])
+    d.claim("Finalist screens", [k for k in n.entries if k.startswith(("scr_dev_", "scr_n2_"))])
+
+
+def s_repro(d: Deck, n: Numbers) -> None:
+    ids = []
+    rows = []
+    for c in ("H2S1", "L128S1", "L64S1", "CS1", "H2S1E16", "L128S1E16", "H2S1T24", "L128S1T24"):
+        t = d.n.src.load(N2T)
+        if c not in t:
+            continue
+        v = n.f(f"n2_{c}", N2T, [c, "pooled_within_draw_sd"], "3")
+        ids.append(f"n2_{c}")
+        rows.append([c, "8 epochs" if c in ("H2S1", "L128S1", "L64S1", "CS1") else
+                     ("16 epochs (both steps)" if "E16" in c else "24 epochs"), str(t[c]["k"]), v,
+                     "pass" if t[c]["pooled_within_draw_sd"] <= 0.05 else "fail"])
+    body = table(["design", "truth step", "$k$", r"seed sd of $R_{E0}$", r"N2 ($\le 0.05$)"], rows, "llrrl",
+                 r"\scriptsize") + (
+        r"\par\vspace{0.2cm}\small DEV draws 0--1 $\times$ 4 estimator seeds at fixed events. The spread sits in "
+        r"the truth step (the detector step varies little with the seed); a 24-epoch truth step repairs it "
+        r"(Amendment 3b).")
+    d.frame("Reproducibility repair (single-unfolding seed spread)", body, [N2T, "PROTOCOL-20260925.md (3b)"])
+    d.claim("Reproducibility", ids)
+
+
+def s_finalists(d: Deck, n: Numbers) -> None:
+    cs = n.f("cost_H2S1T24", COST, ["candidates", "H2S1T24", "median"], "2")
+    cl = n.f("cost_L128S1T24", COST, ["candidates", "L128S1T24", "median"], "2")
+    nf = n.f("n_F", SZF, ["n_F"], "int")
+    ne0 = n.f("n_E0_ni", SZF, ["contrasts", "6.5 E0 (H2S1T24 - L128S1T24)", "n_for_power"], "int")
+    nl = n.f("n_lib", SZL, ["n_F"], "int")
+    body = (r"\small\begin{itemize}"
+            r"\item Compact \textbf{H2S1T24} ($K{=}5$) and large \textbf{L128S1T24} ($K{=}4$): detector reco "
+            r"summaries, categorical truth PDG, constant rate, 24-epoch truth step; step-1 PET 47\,k vs 0.97\,M "
+            r"parameters. Anchors CTL and C at $k{=}3$."
+            r"\item Cost per unfolding (charged A100-h, declared packing): " + cs + r" (compact) vs " + cl +
+            r" (large): the smaller network is not cheaper, so the cost-based preference cannot apply."
+            r"\item Independent sizing: $n_F = " + nf + r"$ (capped; $E_0$ non-inferiority between the finalists "
+            r"would need " + ne0 + r" draws --- a quantified limit); D4c/D3 draws " + nl + r"."
+            r"\item Final bank: FINAL, 21-case library and coverage run blinded until the UNBLIND amendment."
+            r"\end{itemize}")
+    d.frame("Frozen finalists and final-stage design", body, [COST, SZF, SZL, "PROTOCOL-20260925.md (3c--3f)"])
+    d.claim("Finalists, cost and sizing", ["cost_H2S1T24", "cost_L128S1T24", "n_F", "n_E0_ni", "n_lib"])
 
 
 def s_aussie(d: Deck, n: Numbers) -> None:
@@ -273,8 +329,10 @@ def build(out: Path, make_pdf: bool) -> dict[str, Any]:
     s_diagnostics(d, n)
     s_learnability(d, n)
     s_devscreen(d, n, out)
+    s_repro(d, n)
     s_screens(d, n)
     s_aussie(d, n)
+    s_finalists(d, n)
     s_final(d, n)
     s_cannot(d)
     title = (r"\title{PET final-design selection study}" "\n"
