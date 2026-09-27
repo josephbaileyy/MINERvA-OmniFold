@@ -29,7 +29,7 @@ def key_of(path: str) -> str | int:
     z = np.load(path, allow_pickle=False)
     if "meta" in z.files:
         m = json.loads(str(z["meta"]))
-        if "pseudo_seed" in m:
+        if m.get("pseudo_seed") is not None:  # traces record pseudo_seed: null and pair by order
             return int(m["pseudo_seed"])
     return path
 
