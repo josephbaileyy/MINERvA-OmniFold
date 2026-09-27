@@ -111,7 +111,9 @@ def detector(a) -> int:
     same("measured", np.column_stack([meas_pt, meas_pz, *meas_ex]).astype(np.float32), z["measured"])
     denom_cv, _ = und.histnd([td["pt"], td["pz"]] + td["extras"], td["w"], edges)
     same("denom_nd", denom_cv, z["denom_nd"])
-    same("bkg_reco", np.column_stack([bkg_pt, bkg_pz] + bkg_ex), bz["bkg_reco"])
+    # the reference background dump stores bkg_reco as float32 (s5c_dump_bkg.py); compare in its dtype
+    # (s5p 2026-09-27: the uncast float64 comparison refused job 58947238 after 39 min)
+    same("bkg_reco", np.column_stack([bkg_pt, bkg_pz] + bkg_ex).astype(np.float32), bz["bkg_reco"])
     same("bkg_w", bkg_w, bz["bkg_w"])
     a.out.mkdir(parents=True, exist_ok=True)
     written = {}

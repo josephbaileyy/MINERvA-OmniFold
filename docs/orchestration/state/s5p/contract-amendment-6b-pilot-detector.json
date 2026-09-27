@@ -1,0 +1,18 @@
+{
+ "schema": "s5p-contract-amendment/1",
+ "amends": "docs/orchestration/state/s5p/contract.json",
+ "number": "6b",
+ "stage": "3 repair cycle 1 (addendum to amendment 6)",
+ "status": "FROZEN at the commit that first adds this file, before the design pilot runs and before any calibration ensemble or observed joint statistic.",
+ "facts": [
+  "the weight-only detector dump (s2-dump2-tasks.tsv) failed twice: job 58944910 in 2 s (s5c_array.sh required an array task; repaired, the stage-3 corrective resubmission), then job 58947238 after 39 min, refused by its own alignment guard because it compared the background coordinates in float64 against the float32 reference dump (s5c_dump_bkg.py casts); the cast is now made (s5p_input_dumps.py), not yet rerun",
+  "stage 3's one corrective resubmission is spent (retry rule of the budget), so the repaired dump is NOT resubmitted in stage 3",
+  "the bank bank_sweep_5d_bkgaware carries GEANT_Neutron/Pion/Proton +-1 sigma universes (wt, wr, tdw, bkgw) but not MinosEfficiency"
+ ],
+ "decisions": {
+  "detector_dump": "a Stage-4 input (its own docstring), run under the production admission (amendment 7) as a fresh admission after independent review round 2, before any calibration ensemble; it will also be checked against the bank's GEANT universes (identical rows and weights expected)",
+  "design_pilot": "s3r2-pilot-tasks.tsv: the s3r pilot (never launched) with the detector draws over the bank's three GEANT bands and MinosEfficiency absent. The pilot builds V, which sets only the metric (power), never validity, and gives development power; the production calibration, power and the claims draw all four detector bands",
+  "nullexp": "s5p_nullexp.py --detector-bands (default all four) and --detector-dir optional: each band's universe from the dump when it carries it, else from the bank, refused before any unfold if missing"
+ },
+ "not_changed": "every criterion, the family, the seeds of production, the shift rule and the claim rule of amendment 6"
+}

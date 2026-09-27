@@ -47,24 +47,14 @@
  },
  "jobs": [
   {
-   "job": "58944840",
-   "label": "F4 pair at the MnvTune null (s3r-cpu.q line 1)",
-   "state": "admitted 08:45Z"
-  },
-  {
-   "job": "58944910",
-   "label": "detector dump (s3-det.q restarted from deploy 66cf3129)",
-   "state": "admitted 08:48Z"
-  },
-  {
-   "job": "queue s3r-cpu.q",
-   "label": "re-issued pilot after the detector dump",
-   "state": "waiting"
-  },
-  {
    "job": "queue s3r-lat.q",
    "label": "ten lateral endpoint unfolds",
    "state": "to launch from the next deploy"
+  },
+  {
+   "job": "queue s3r2-cpu.q",
+   "label": "design pilot (amendment 6b)",
+   "state": "to launch"
   }
  ],
  "receipts": [
@@ -143,6 +133,11 @@
    "number": 6,
    "path": "docs/orchestration/state/s5p/contract-amendment-6-review1-repairs.json",
    "stage": "3 repair cycle 1 (review round 1)"
+  },
+  {
+   "number": "6b",
+   "path": "docs/orchestration/state/s5p/contract-amendment-6b-pilot-detector.json",
+   "stage": "3 repair cycle 1 addendum"
   }
  ],
  "reviews": [
@@ -208,6 +203,10 @@
   {
    "utc": "2026-09-27T10:12Z",
    "what": "detector dump 58944910 FAILED in 2 s: the meter omits --array for --ntasks 1 and s5c_array.sh required SLURM_ARRAY_TASK_ID (a latent incompatibility, never exercised: the earlier single-task GPU dump was cancelled while pending). Repair: s5c_array.sh treats a non-array job as task 0 only when its table has exactly one task line (else refuses); tests/test_s5c_array_single.py (red on the old script). The meter's priced --array flag is untouched. Relaunched once from the repaired deploy: the stage-3 corrective resubmission (retry rule: one per stage after a diagnosed code defect, verified repair and fresh admission)"
+  },
+  {
+   "utc": "2026-09-27T11:55Z",
+   "what": "detector dump 58947238 ran 39 min and was refused by its own alignment guard: bkg_reco compared in float64 against the float32 reference background dump; cast repaired (s5p_input_dumps.py), not rerun in stage 3 (its corrective resubmission is spent); the dump moves to the production admission (amendment 6b); queue s3r-cpu.q stopped at its wait line by explicit PIDs; the pilot re-issued as s3r2 with GEANT from the bank"
   }
  ],
  "findings": [

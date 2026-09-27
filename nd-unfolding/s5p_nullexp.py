@@ -19,9 +19,10 @@ pseudo-data; refinement; the declared estimator configuration) with two addition
     cell, so the source truth is unchanged cell by cell (the hypothesis fixes the truth; the knob moves only the
     within-fine-cell composition and hence the detector response; review round 1 F6); truth-failing rows get the
     plain factor;
-  - weight-only detector bands (MinosEfficiency, GEANT_Neutron/Pion/Proton): each at its -1 or +1 sigma endpoint
-    with probability 1/2 each (a discrete draw), signal source reco weights x (wr / w_reco), background x
-    (bkgw / bkg_w);
+  - weight-only detector bands (``--detector-bands``, default MinosEfficiency, GEANT_Neutron/Pion/Proton): each at
+    its -1 or +1 sigma endpoint with probability 1/2 each (a discrete draw), signal source reco weights x
+    (wr / w_reco), background x (bkgw / bkg_w); a band's universe is read from ``--detector-dir`` when that
+    directory carries it, otherwise from the bank (which carries the GEANT bands but not MinosEfficiency);
   the draws are recorded in the product. Lateral bands and the flat normalization are applied downstream as a
   declared linear surrogate on the unfolded functionals (z_b Delta_b and 1 + 0.014 z), their z recorded here.
 
@@ -72,9 +73,10 @@ def model_bands(bank: Path) -> list[str]:
                    if not p.stem.startswith("Flux_") and not p.stem.startswith("GEANT_")})
 
 
-def draw(rng: np.random.Generator, flux_ids: list[int], bkg_bands: list[str]) -> dict:
+def draw(rng: np.random.Generator, flux_ids: list[int], bkg_bands: list[str],
+         det_bands: tuple = DETECTOR_BANDS) -> dict:
     return {"flux": int(rng.choice(flux_ids)), "model_universe": str(rng.choice(bkg_bands)),
-            "detector": {b: int(rng.integers(0, 2)) for b in DETECTOR_BANDS},
+            "detector": {b: int(rng.integers(0, 2)) for b in det_bands},
             "lateral_z": {b: float(rng.normal()) for b in LATERAL_BANDS}, "normalization_z": float(rng.normal())}
 
 
@@ -97,6 +99,14 @@ def truth_preserving(k_truth: np.ndarray, inputs: dict, source: np.ndarray) -> n
     return g
 
 
+def detector_source(det_dir: Path | None, bank: Path, tag: str) -> Path:
+    """The directory that carries detector universe ``tag``: the detector dump if it has it, else the bank."""
+    for d in ([det_dir] if det_dir is not None else []) + [bank]:
+        if (d / f"{tag}_wr.npy").exists():
+            return d
+    raise FileNotFoundError(f"no detector universe {tag} in {det_dir} or {bank}")
+
+
 def source_factors(d: dict, inputs: dict, bkg: dict, bank: Path, det_dir: Path,
                    source: np.ndarray | None = None) -> tuple[np.ndarray, np.ndarray]:
     """Multiplicative factors for every signal row's reco weight and every background row's weight
@@ -112,7 +122,7 @@ def source_factors(d: dict, inputs: dict, bkg: dict, bank: Path, det_dir: Path,
     src = np.ones(fs.size, bool) if source is None else source
     fs *= ratio(wv["wr"], wr) * truth_preserving(ratio(wv["wt"], inputs["w_truth"]), inputs, src)
     for b, i in d["detector"].items():
-        wd = s5p_universe.weights(det_dir, f"{b}_{i}")
+        wd = s5p_universe.weights(detector_source(det_dir, bank, f"{b}_{i}"), f"{b}_{i}")
         fs *= ratio(wd["wr"], wr)
         fb *= ratio(wd["bkgw"], bw)
     return fs, fb
@@ -153,7 +163,8 @@ def main(argv=None) -> int:
     ap.add_argument("--npz", type=Path, required=True)
     ap.add_argument("--bkg", type=Path, required=True)
     ap.add_argument("--bank", type=Path, required=True)
-    ap.add_argument("--detector-dir", type=Path, required=True)
+    ap.add_argument("--detector-dir", type=Path, default=None)
+    ap.add_argument("--detector-bands", default=",".join(DETECTOR_BANDS), help="comma list of the drawn detector bands")
     ap.add_argument("--expect-npz-sha256", required=True)
     ap.add_argument("--expect-bkg-sha256", required=True)
     ap.add_argument("--hypothesis", type=Path, required=True, help="s5p-coarse-ratio/1 file N_c / MnvTune_c")
@@ -193,6 +204,10 @@ def main(argv=None) -> int:
         r_h = r_h * s5n_pseudo.truth_weight(a.alternative_truth, base, a.alternative_amplitude, alt)
     flux_ids = sorted(int(p.stem.split("_")[1]) for p in a.bank.glob("Flux_*_wr.npy"))
     bkg_bands = model_bands(a.bank)
+    det_bands = tuple(b for b in a.detector_bands.split(",") if b)
+    for b in det_bands:
+        for i in (0, 1):
+            detector_source(a.detector_dir, a.bank, f"{b}_{i}")  # refuse before any unfold if a band is missing
     first, last = (int(v) for v in a.pseudo_seeds.split(":"))
     a.out.mkdir(parents=True, exist_ok=True)
     status = 0
@@ -202,7 +217,7 @@ def main(argv=None) -> int:
             continue
         t0 = time.time()
         rng = np.random.default_rng([seed, 0x5F5])
-        d = draw(rng, flux_ids, bkg_bands) if not a.no_nuisance else None
+        d = draw(rng, flux_ids, bkg_bands, det_bands) if not a.no_nuisance else None
         split = s5c_pseudo.split_key_for(seed)
         n = inputs["MCgen"].shape[0]
         is_b = s5c_pseudo.half_mask(n, split)
@@ -223,7 +238,7 @@ def main(argv=None) -> int:
         meta = {"schema": "s5p-null-experiment/1", "hypothesis": {"path": str(a.hypothesis), "label": hyp.get("label"),
                 "sha256": s5n_pseudo.sha256_path(a.hypothesis)}, "alternative": None if a.alternative is None else
                 {"path": str(a.alternative), "truth": a.alternative_truth, "amplitude": a.alternative_amplitude,
-                 "sha256": s5n_pseudo.sha256_path(a.alternative)}, "nuisance_draw": d, "pseudo_seed": seed,
+                 "sha256": s5n_pseudo.sha256_path(a.alternative)}, "nuisance_draw": d, "detector_bands": list(det_bands), "pseudo_seed": seed,
                 "split_key": split, "config": a.config, "capacity": capacity, "iters": a.iters, "experiment": info, **ev,
                 "development": {"expectation": a.expectation, "mc_fraction": a.mc_fraction},
                 "input_npz_sha256": npz_sha, "bkg_dump_sha256": bkg_sha,

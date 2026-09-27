@@ -121,6 +121,26 @@ class Tests(unittest.TestCase):
         self.assertAlmostEqual(expq["w_truth"].sum() / exp["w_truth"].sum(), 1.0, delta=0.05)
         np.testing.assert_allclose(expq["obs_counts"], exp["obs_counts"], rtol=0)
 
+    def test_detector_source_prefers_the_dump_then_the_bank_and_refuses_a_missing_band(self):
+        with tempfile.TemporaryDirectory() as d:
+            bank, det = Path(d) / "bank", Path(d) / "det"
+            bank.mkdir()
+            det.mkdir()
+            np.save(bank / "GEANT_Pion_1_wr.npy", np.ones(2))
+            np.save(bank / "MinosEfficiency_1_wr.npy", np.ones(2))
+            np.save(det / "MinosEfficiency_1_wr.npy", np.ones(2))
+            self.assertEqual(ne.detector_source(det, bank, "MinosEfficiency_1"), det)
+            self.assertEqual(ne.detector_source(det, bank, "GEANT_Pion_1"), bank)
+            self.assertEqual(ne.detector_source(None, bank, "GEANT_Pion_1"), bank)
+            with self.assertRaises(FileNotFoundError):
+                ne.detector_source(None, bank, "GEANT_Proton_0")
+
+    def test_draw_covers_exactly_the_declared_detector_bands(self):
+        rng = np.random.default_rng(3)
+        d = ne.draw(rng, [1, 2], ["MaRES_1"], ("GEANT_Pion", "GEANT_Proton"))
+        self.assertEqual(set(d["detector"]), {"GEANT_Pion", "GEANT_Proton"})
+        self.assertEqual(set(ne.draw(rng, [1], ["MaRES_1"])["detector"]), set(ne.DETECTOR_BANDS))
+
 
 if __name__ == "__main__":
     unittest.main()
