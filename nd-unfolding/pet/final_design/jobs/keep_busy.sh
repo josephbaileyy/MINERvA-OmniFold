@@ -18,7 +18,8 @@ B=/pscratch/sd/j/josephrb/pet-final-design-20260925
 R=../../final_design/runs
 declare -A OUTS=([dev2Pa]=dev2P [dev2Q]=dev2Q [dev2Ta]=dev2T [s3p_all]=s3p [s4f_a2]=s4f [s4s_a2]=s4s
                  [dev3N]=dev3N [s3n_fast]=s3p [s3n_slow]=s3p
-                 [dev3N_h]=dev3N [dev3N_l]=dev3N [s3n_short]=s3p [s3n_long]=s3p)
+                 [dev3N_h]=dev3N [dev3N_l]=dev3N [s3n_short]=s3p [s3n_long]=s3p
+                 [dev3X]=dev3X [s3x]=s3p)
 # debug rounds (1 worker per GPU, 30 min): the worker starts a row only if now + 1.1 x estimate + 150 s
 # < deadline (~1790 s after start), so an estimate must stay below ~1400 s or the chain runs nothing
 # measured 2026-09-27 at 1 run/GPU: CS1/L64S1 800-1,300 s fit; 24- and 16-epoch rows (1,600-2,900 s) do NOT
@@ -50,7 +51,7 @@ first_incomplete() { local s; for s in "$@"; do incomplete "$s" && { echo "$s"; 
 # manifest never collide), so a GPU whose manifest runs out moves on instead of idling until the
 # allocation ends; PET2 stems run 1 worker per GPU (33 GB), the others 2
 declare -A IT2=([dev2Pa]=2200 [dev2Q]=2200 [dev2Ta]=2900 [s3n_slow]=2950 [dev3N]=2000 [s3n_fast]=2000
-                [dev3N_h]=2600 [dev3N_l]=2850 [s3n_long]=2850 [s3n_short]=1350
+                [dev3N_h]=2600 [dev3N_l]=2850 [s3n_long]=2850 [s3n_short]=1350 [dev3X]=3400 [s3x]=3400
                 [s3p_all]=1300 [s4f_a2]=1300 [s4s_a2]=1300)
 lane_seq() {   # GPU STEM... -> "( worker on STEM1 ; worker on STEM2 ; ... )" over the incomplete stems
   local g=$1; shift; local cmd="" st k sc
@@ -62,12 +63,12 @@ lane_seq() {   # GPU STEM... -> "( worker on STEM1 ; worker on STEM2 ; ... )" ov
   done
   [[ -n "$cmd" ]] && echo "( $cmd) & "
 }
-INTER1=(dev2Q s3n_long dev3N_l s3n_slow s4s_a2 s4f_a2)
-INTER2_01=(s3n_long dev3N_l s3n_slow dev2Q s4s_a2 s4f_a2)
-INTER2_23=(dev3N_l dev3N_h s3n_long s3n_slow s4f_a2 s4s_a2)
+INTER1=(dev2Q s3n_long dev3N_l s3x dev3X s3n_slow s4s_a2 s4f_a2)
+INTER2_01=(s3n_long dev3N_l s3x dev3X s3n_slow dev2Q s4s_a2 s4f_a2)
+INTER2_23=(dev3N_l dev3N_h s3n_long dev3X s3x s3n_slow s4f_a2 s4s_a2)
 # gpu_shared_interactive (a separate QOS, 2 jobs per user, interactive priority): two 2-GPU allocations
-SINT1=(s3n_long dev3N_l s3n_slow s4s_a2 s4f_a2)
-SINT2=(dev3N_l s3n_long s3n_slow s4f_a2 s4s_a2)
+SINT1=(s3n_long dev3N_l s3x dev3X s3n_slow s4s_a2 s4f_a2)
+SINT2=(dev3N_l s3n_long dev3X s3x s3n_slow s4f_a2 s4s_a2)
 launch_inter() {   # NAME "lane1 & lane2 & ..." LOGDIR [QOS GPUS CPUS]
   local name=$1 cmd=$2 log=$3 qos=${4:-interactive} ng=${5:-4} nc=${6:-128}
   mkdir -p "$log"
@@ -77,7 +78,7 @@ launch_inter() {   # NAME "lane1 & lane2 & ..." LOGDIR [QOS GPUS CPUS]
   echo "$(date -u +%FT%TZ) $name: $cmd" >> "$B/keep_busy.log"
 }
 if [[ ${DRY:-0} == 1 ]]; then      # print the decisions and exit
-  for st in dev2Q dev3N_h dev3N_l s3n_short s3n_long s3n_slow s4f_a2 s4s_a2; do incomplete "$st" && echo "$st incomplete" || echo "$st complete"; done
+  for st in dev2Q dev3N_h dev3N_l s3n_short s3n_long s3n_slow dev3X s3x s4f_a2 s4s_a2; do incomplete "$st" && echo "$st incomplete" || echo "$st complete"; done
   echo "debug -> $(first_claimable s3n_short s4f_a2 s4s_a2)"
   echo "inter1 GPU0: $(lane_seq 0 "${INTER1[@]}")"; echo "inter2 GPU2: $(lane_seq 2 "${INTER2_23[@]}")"; exit 0
 fi

@@ -33,10 +33,11 @@ TIE = 0.02
 # design's run length is not evidence and not incompleteness ("k in {2..6} or its run length")
 RUN_LENGTH = {"H1": 6, "H2": 6, "H2S1": 6, "CS1": 6, "L64H2": 4, "L128H2": 4, "L128H2E16": 4,
               "L64S1": 5, "L128S1": 5, "H2S1E16": 5, "L128S1E16": 5, "P2preS1": 5, "P2scrS1": 5,
-              "P2preA1": 5, "P2scrA1": 5, "H2S1T24": 5, "L128S1T24": 5}
+              "P2preA1": 5, "P2scrA1": 5, "H2S1T24": 5, "L128S1T24": 5,
+              "H2S1X4": 5, "L128S1X4": 5}
 # S-N2 (Amendment 3b): section 6.3 N2's frozen threshold on the S3P seed runs at k = K*
 N2_MAX = 0.05
-COMPACT = ("H1", "H2", "H2S1", "CS1", "H2S1E16", "H2S1T24")          # our PET, 47,041-parameter step 1
+COMPACT = ("H1", "H2", "H2S1", "CS1", "H2S1E16", "H2S1T24", "H2S1X4")          # our PET, 47,041-parameter step 1
 LARGE_PREFIXES = ("L64", "L128", "P2pre", "P2scr")          # enlarged step 1 or PET2
 # (detector representation, truth step) for the challenger condition
 TOK, SUM, P2 = "C tokens", "C tokens + reco summaries", "PET2 native 33 tokens"
@@ -49,7 +50,12 @@ ATTR = {"H1": (TOK, "PDG one-hot, annealed"), "CS1": (TOK, "raw PDG, constant"),
         "P2scrS1": (P2, "PDG one-hot, constant"), "P2preA1": (P2, "PDG one-hot, constant"),
         "P2scrA1": (P2, "PDG one-hot, constant"),
         "H2S1T24": (SUM, "PDG one-hot, constant, 24 epochs"),
-        "L128S1T24": (SUM, "PDG one-hot, constant, 24 epochs")}
+        "L128S1T24": (SUM, "PDG one-hot, constant, 24 epochs"),
+        "H2S1X4": (SUM, "PDG one-hot, constant, 4-fit ensemble"),
+        "L128S1X4": (SUM, "PDG one-hot, constant, 4-fit ensemble")}
+# Amendment 3b item 5 / 3b-bis: the step-2 ensemble designs are a fallback; they enter a package only
+# if no other design of that package passes every screen (S-N2 included)
+FALLBACK = ("H2S1X4", "L128S1X4")
 
 
 def _ok(v, op, th) -> bool:
@@ -128,6 +134,9 @@ def package(c: str) -> str | None:
 def choose(res: dict, pkg: str, cost: dict | None) -> dict:
     """The rule's between-design step for one package."""
     members = {c: r for c, r in res.items() if package(c) == pkg}
+    primary = {c: r for c, r in members.items() if c not in FALLBACK}
+    if any(r["passes_all_at_Kstar"] for r in primary.values()):
+        members = primary            # a primary design passes: the fallback designs do not enter
     passing = {c: r for c, r in members.items() if r["passes_all_at_Kstar"]}
     incomplete = sorted(c for c, r in members.items()
                         if any(x["status"] == "incomplete" for x in r["rows"])

@@ -1,0 +1,17 @@
+# name	config	config_hash	selection	distortion	reference_run	extra_driver_args
+S3P-H2S1X4K5-DEV0	../../../final_design/configs/S3P/S3P-H2S1X4K5-DEV0.json	a4fd52e9a65277a747db4327416caf24d40a1e8695204ae0f9b95933c79ad927	BANK:DEV:S3P:0	dev	-	--step2-miss-mode efficiency_corrected
+S3P-L128S1X4K5-DEV0	../../../final_design/configs/S3P/S3P-L128S1X4K5-DEV0.json	3a6a1c7a18c5cc5a3b475b0ca68844f7c4af383c71f9edb1e39e6a4e4f9fcd09	BANK:DEV:S3P:0	dev	-	--step2-miss-mode efficiency_corrected
+S3P-H2S1X4K5-DEV1	../../../final_design/configs/S3P/S3P-H2S1X4K5-DEV1.json	8734cea41188b2683343c9fb578b47049db4d50c940c7c0e1b3810b1fd703e24	BANK:DEV:S3P:1	dev	-	--step2-miss-mode efficiency_corrected
+S3P-L128S1X4K5-DEV1	../../../final_design/configs/S3P/S3P-L128S1X4K5-DEV1.json	b0bec5361eb2ef072926b8af04c5dac6ae70b2a9686d75d08c75e23c8f7d90a4	BANK:DEV:S3P:1	dev	-	--step2-miss-mode efficiency_corrected
+S3P-H2S1X4K5-DEV0-s1	../../../final_design/configs/S3P/S3P-H2S1X4K5-DEV0-s1.json	e96f655be670facdd4628c31f8270befc42a555d264c0ebcc84014e7accb767e	BANK:DEV:S3P:0	dev	-	--step2-miss-mode efficiency_corrected
+S3P-L128S1X4K5-DEV0-s1	../../../final_design/configs/S3P/S3P-L128S1X4K5-DEV0-s1.json	2c82dfcb12b377ea949b7ba67e7adbedbf24d9066f55c6b023745f548405c559	BANK:DEV:S3P:0	dev	-	--step2-miss-mode efficiency_corrected
+S3P-H2S1X4K5-DEV1-s1	../../../final_design/configs/S3P/S3P-H2S1X4K5-DEV1-s1.json	63835ebe7c8c9102cf5cf3fd3f9933cbbf859903303e021c5e8017e2e8e9a389	BANK:DEV:S3P:1	dev	-	--step2-miss-mode efficiency_corrected
+S3P-L128S1X4K5-DEV1-s1	../../../final_design/configs/S3P/S3P-L128S1X4K5-DEV1-s1.json	e53b76c21b4e3938380acaad6e121f218438a3113673fac070e129dc5791d470	BANK:DEV:S3P:1	dev	-	--step2-miss-mode efficiency_corrected
+S3P-H2S1X4K5-DEV0-s2	../../../final_design/configs/S3P/S3P-H2S1X4K5-DEV0-s2.json	c5571aad366b0d9c6cbb075ad63bb975473be30c5b1e9d978558e9c80032e411	BANK:DEV:S3P:0	dev	-	--step2-miss-mode efficiency_corrected
+S3P-L128S1X4K5-DEV0-s2	../../../final_design/configs/S3P/S3P-L128S1X4K5-DEV0-s2.json	00ef9bb1cd5631da63edeab466f4b708bdb73bfd5fdba8969e7119643eaf4024	BANK:DEV:S3P:0	dev	-	--step2-miss-mode efficiency_corrected
+S3P-H2S1X4K5-DEV1-s2	../../../final_design/configs/S3P/S3P-H2S1X4K5-DEV1-s2.json	dcb2472a0544ce4d06abce6f54d82d1245a477bc22795fac434c7fd55cd694bd	BANK:DEV:S3P:1	dev	-	--step2-miss-mode efficiency_corrected
+S3P-L128S1X4K5-DEV1-s2	../../../final_design/configs/S3P/S3P-L128S1X4K5-DEV1-s2.json	f61b0c6251e3c86cb623ee8e4e3217e564726d8b0e9ccccacc2ea2c91c9a0236	BANK:DEV:S3P:1	dev	-	--step2-miss-mode efficiency_corrected
+S3P-H2S1X4K5-DEV0-s3	../../../final_design/configs/S3P/S3P-H2S1X4K5-DEV0-s3.json	45bf1608b93b8a39ec03d73a2f6fa951bbbaa1136c81d2030c8b3119fa61ea7b	BANK:DEV:S3P:0	dev	-	--step2-miss-mode efficiency_corrected
+S3P-L128S1X4K5-DEV0-s3	../../../final_design/configs/S3P/S3P-L128S1X4K5-DEV0-s3.json	34a600adb65cf357f0a73dc5661333e9980e018499fa24e77324002c856c38d5	BANK:DEV:S3P:0	dev	-	--step2-miss-mode efficiency_corrected
+S3P-H2S1X4K5-DEV1-s3	../../../final_design/configs/S3P/S3P-H2S1X4K5-DEV1-s3.json	cb746205b59c5a6df70867d4f275fa72c79a878f650e19acf9501f0d4547248e	BANK:DEV:S3P:1	dev	-	--step2-miss-mode efficiency_corrected
+S3P-L128S1X4K5-DEV1-s3	../../../final_design/configs/S3P/S3P-L128S1X4K5-DEV1-s3.json	c36f7d1697c8469581fdcd71f5f7bed3e2a6e80b9b1e4a8440ada710e24c13e1	BANK:DEV:S3P:1	dev	-	--step2-miss-mode efficiency_corrected

@@ -121,3 +121,19 @@ def test_s_n2_failure_everywhere_falls_back_with_the_failure_counted():
           "CS1": {"k": 2, "pooled_within_draw_sd": 0.07}}
     ch = ar.choose(ar.apply(table(d), n2, use_n2=True), "compact", None)
     assert ch["finalist"] == "H2S1" and ch["status"].startswith("fallback: fails 1")
+
+
+def test_ensemble_fallback_enters_only_if_no_primary_design_passes():
+    d = {"H2S1": {k: PASS for k in range(2, 7)}, "H2S1X4": {k: (0.95, 0.8, 0.3, 0.015)
+                                                          for k in range(2, 6)}}
+    tab = table(d)
+    ok = {"H2S1": {"k": 2, "pooled_within_draw_sd": 0.04},
+          "H2S1X4": {"k": 2, "pooled_within_draw_sd": 0.03}}
+    ch = ar.choose(ar.apply(tab, ok, use_n2=True), "compact", None)
+    assert ch["finalist"] == "H2S1"          # X4 has higher tilt but H2S1 passes: X4 stays out
+    bad = {**ok, "H2S1": {"k": 2, "pooled_within_draw_sd": 0.09}}
+    ch = ar.choose(ar.apply(tab, bad, use_n2=True), "compact", None)
+    assert ch["finalist"] == "H2S1X4"
+    # an incomplete fallback design does not block the package when a primary design passes
+    ch = ar.choose(ar.apply(tab, {"H2S1": ok["H2S1"]}, use_n2=True), "compact", None)
+    assert ch["finalist"] == "H2S1"

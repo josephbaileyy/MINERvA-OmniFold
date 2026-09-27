@@ -115,16 +115,15 @@ CANDIDATES: dict[str, tuple[str, Callable[[RunConfig], RunConfig], str]] = {
                       c.replace(feature_arm="reco_summaries_pdg_onehot"))), EFF),
 }
 
-# PREPARED, NOT CANDIDATES. Amendment 3b item 5: the step-2 ensemble arm is costed and run only if
-# the 24-epoch (T24) and 16-epoch (E16) arms all fail S-N2; it enters CANDIDATES only by a
-# protocol amendment. Definitions (step 2 at 8 epochs, M = 4 fits averaged per iteration):
-# "H2S1X4": ("H2S1 with a 4-member step-2 ensemble (4 independently seeded truth-step fits per "
-#            "iteration, weights averaged; step 1 unchanged)",
-#            lambda c: _ensemble2(4)(CANDIDATES["H2S1"][1](c)), EFF),
-# "L128S1X4": ("L128S1 with a 4-member step-2 ensemble (4 independently seeded truth-step fits "
-#              "per iteration, weights averaged; step 1 unchanged)",
-#              lambda c: _ensemble2(4)(CANDIDATES["L128S1"][1](c)), EFF),
-
+# Step-2 ensemble arm (Amendment 3b item 5; started early by Amendment 3b-bis with its entry condition
+# unchanged: these designs enter the finalist rule only if no other design of their package passes
+# S-N2). Step 2 at 8 epochs, M = 4 independently seeded truth-step fits averaged per iteration.
+CANDIDATES["H2S1X4"] = ("H2S1 with a 4-member step-2 ensemble (4 independently seeded truth-step fits "
+                        "per iteration, weights averaged; step 1 unchanged)",
+                        lambda c: _ensemble2(4)(CANDIDATES["H2S1"][1](c)), EFF)
+CANDIDATES["L128S1X4"] = ("L128S1 with a 4-member step-2 ensemble (4 independently seeded truth-step "
+                          "fits per iteration, weights averaged; step 1 unchanged)",
+                          lambda c: _ensemble2(4)(CANDIDATES["L128S1"][1](c)), EFF)
 
 def base_config() -> RunConfig:
     _, path, sha = BASE
