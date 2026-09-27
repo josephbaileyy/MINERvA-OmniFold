@@ -89,7 +89,7 @@ def trace_functionals(p: dict) -> dict:
 
 def study_k(conv: Path, cells: Cells) -> dict:
     out = {}
-    for family, kmax in (("b0", 200), ("cap", 100)):
+    for family, kmax in (("b0", 200), ("cap", 100), ("cap10", 10)):
         runs, partial = {}, {}
         for f in sorted(conv.glob(f"k_{family}_*.npz")):
             if f.name.endswith(".partial.npz") or ".partial" in f.name:
@@ -442,7 +442,7 @@ def main(argv=None) -> int:
                "R_verification": verify_r(new_products + sorted(conv.glob("k_*.npz"))),
                "costs": costs(new_products + sorted(conv.glob("k_*.npz")))}
     a.out.write_text(json.dumps(receipt) + "\n")
-    print(json.dumps({"K_M": {f: receipt["study_K"].get(f, {}).get("M") for f in ("b0", "cap")},
+    print(json.dumps({"K_M": {f: receipt["study_K"].get(f, {}).get("M") for f in ("b0", "cap", "cap10")},
                       "N": {g: {P: {k: v[P][k] for k in ("median_sigma_num_base_pct", "median_sigma_boot_pct", "median_absorption",
                                                            "median_consistency", "absorbed")} for P in ("J", "H2")}
                             for g, v in receipt["study_N"].items() if g != "controls"},

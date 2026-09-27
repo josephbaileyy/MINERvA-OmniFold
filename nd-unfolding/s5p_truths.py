@@ -168,6 +168,8 @@ def main(argv=None) -> int:
     ap.add_argument("--denominator", type=Path, required=True, help="5D prediction npz (gen5d) or an MC-truth npz of the same form")
     ap.add_argument("--coarse-edges", default=None, help="JSON list of five edge lists (kind coarse)")
     ap.add_argument("--preserve-total", action="store_true")
+    ap.add_argument("--only-cells", default=None,
+                    help="JSON list of coarse cell indices that carry the ratio; every other cell keeps rho = 1 (kind coarse)")
     ap.add_argument("--label", required=True)
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
@@ -191,10 +193,15 @@ def main(argv=None) -> int:
         cedges = [np.asarray(c, float) for c in json.loads(a.coarse_edges)]
         n_c, d_c = coarse_integrals(num, edges, cedges), coarse_integrals(den, edges, cedges)
         ok = (n_c > 0) & (d_c > 0)
+        if a.only_cells is not None:
+            only = np.zeros(ok.size, bool)
+            only[np.asarray(json.loads(a.only_cells), int)] = True
+            ok &= only
         rho = np.ones_like(n_c)
         rho[ok] = n_c[ok] / d_c[ok]
         out.update({"schema": "s5p-coarse-ratio/1", "coarse_edges": [c.tolist() for c in cedges],
-                    "preserve_total": bool(a.preserve_total), "rho": rho.tolist(),
+                    "preserve_total": bool(a.preserve_total), "only_cells": None if a.only_cells is None else json.loads(a.only_cells),
+                    "rho": rho.tolist(),
                     "numerator_cell_integrals": n_c.tolist(), "denominator_cell_integrals": d_c.tolist(),
                     "definition": "rho_c = N_c / D_c of coarse-cell integrated cross sections (fine cells assigned by centre); 1 where either is empty",
                     "stats": {"cells": int(rho.size), "cells_without_information": int((~ok).sum()),

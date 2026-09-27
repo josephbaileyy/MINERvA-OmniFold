@@ -1,0 +1,93 @@
+{
+ "measured_seconds": {
+  "pseudo": [
+   32,
+   52
+  ],
+  "data": [
+   50,
+   120
+  ],
+  "asimov": [
+   30,
+   172
+  ]
+ },
+ "packing": 1.25,
+ "counts": {
+  "stage3_asimov_vertices": 8,
+  "stage3_construction_pseudo": 140,
+  "stage3_prior_data": 6,
+  "bootstrap": 200,
+  "universes": 177,
+  "laterals": 10,
+  "priors": 0,
+  "jitters": 20,
+  "dump_node_h": 4.0,
+  "validation_pseudo": 1050,
+  "validation_sigma_pseudo": 200,
+  "nulls": 5,
+  "null_calibration": 199,
+  "null_validation": 100,
+  "power_pseudo": 600
+ },
+ "verification_fraction": 0.1,
+ "available_cpu_equivalent_node_h": {
+  "measurement": 160.0,
+  "inference": 79.0
+ },
+ "configurations": [
+  [
+   5,
+   0
+  ],
+  [
+   10,
+   0
+  ],
+  [
+   15,
+   0
+  ],
+  [
+   20,
+   0
+  ],
+  [
+   30,
+   0
+  ],
+  [
+   40,
+   0
+  ],
+  [
+   50,
+   0
+  ],
+  [
+   5,
+   3.4
+  ],
+  [
+   10,
+   3.4
+  ],
+  [
+   15,
+   3.4
+  ],
+  [
+   20,
+   3.4
+  ]
+ ],
+ "basis": {
+  "pseudo": "s5p Stage-2 products: nominal pseudo experiments at 5 iterations, median seconds_unfold 292 (N2/C1, 100 products; build, refinement and unfold) = 32 + 5 x 52; s5e traced 20-iteration pseudo runs give 62 s per iteration including tracer overhead",
+  "data": "s5p N1 data products at 5 iterations, median 647-663 s = 50 + 5 x 120",
+  "asimov": "s5p study-K traces: nominal 147 s per iteration, departures ~172-233 s per iteration (shared nodes); 172 used",
+  "capacity_factor": "s5e D5 and s5p cap10: 400/31 costs ~3.4x per iteration",
+  "available": "after stages 1-2: CPU 310.184 - 46.527 (development cap) - 62.037 (20% verification/repair) = 201.6 CPU node-h; GPU 114.904 - 17.235 - 22.981 = 74.7 GPU node-h = 37.3 CPU-node-equivalent (4 vs 8 steps per node); split for the forecast as 160 measurement + 79 inference",
+  "counts": "provisional Stage-3/4/5 counts of the measurement design (bootstrap 200, 177 vertical+detector universes, 10 lateral endpoints, 20 jitters, validation 1050 + 200 sigma-source experiments) and the inference design (5 nulls x (199 calibration + 100 validation), 600 power)"
+ }
+}
