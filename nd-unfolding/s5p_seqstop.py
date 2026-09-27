@@ -41,6 +41,7 @@ def main(argv=None) -> int:
     seq = spec["calibration_n"]
     if not isinstance(seq, dict) or "max" not in seq:
         raise SystemExit(f"{a.null}: not a sequential calibration")
+    sj.check_v(design, a.v)
     a.status_dir.mkdir(parents=True, exist_ok=True)
     final = a.status_dir / f"{a.null}-final.json"
     if final.exists():  # a stop is terminal: no later line may add batches or overwrite it (confirmation review F2)

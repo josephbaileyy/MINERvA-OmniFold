@@ -270,6 +270,13 @@ def test_null(model: Model, design: dict, key: str, V: np.ndarray, names: list, 
     return entry
 
 
+def check_v(design: dict, v_path) -> None:
+    """The frozen metric: a design that records V's sha256 refuses any other V (confirmation review, advisory)."""
+    want = design.get("v_sha256")
+    if want is not None and sha256(v_path) != want:
+        raise SystemExit(f"{v_path}: sha256 differs from the design's frozen V")
+
+
 def calibration_count(spec: dict) -> int:
     """A fixed count, or the final B of a sequential calibration (the controller's last status file)."""
     n = spec["calibration_n"]
@@ -312,6 +319,7 @@ def main(argv=None) -> int:
                                   "lateral_symmetry": model.symmetry(design), "design_sha256": sha256(a.design)}))
         print(json.dumps({"n": len(files), "shrinkage": shrink, "median_rel_sd": float(np.median(np.sqrt(np.diag(V)) / np.abs(F.mean(0))))}))
         return 0
+    check_v(design, a.v)
     V = np.asarray(np.load(a.v, allow_pickle=False)["V"], float)
     res = {"schema": "s5p-joint/3", "design_sha256": sha256(a.design), "v_sha256": sha256(a.v), "names": names, "tests": {}}
     coefs = [float(c) for c in design.get("shift_coefficients", [0.0])]

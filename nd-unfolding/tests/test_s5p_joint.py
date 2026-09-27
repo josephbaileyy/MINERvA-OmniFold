@@ -123,6 +123,16 @@ class Tests(unittest.TestCase):
         self.assertTrue(np.all(S2 == 0))
         with self.assertRaises(SystemExit):
             sj.shift_vector({"mode": "bias_aligned_upper"}, pairs[0], pairs[:1], F, mu, var, V, dom)
+    def test_check_v_refuses_a_different_metric(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "V.npz"
+            np.savez(f, V=np.eye(2))
+            sj.check_v({"v_sha256": sj.sha256(f)}, f)
+            sj.check_v({}, f)
+            with self.assertRaises(SystemExit):
+                sj.check_v({"v_sha256": "0" * 64}, f)
+
 
 if __name__ == "__main__":
     unittest.main()
