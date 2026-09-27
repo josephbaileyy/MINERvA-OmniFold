@@ -1,5 +1,17 @@
 # N-D OmniFold run log
 
+## 2026-09-27 — PET final-design study: finalists re-frozen after the reproducibility repair; final bank running (blinded; in progress)
+
+- **Reproducibility repair (Amendments 3b, 3b-bis):** the estimator-seed sd of the primary recovery at fixed events is
+  0.054–0.095 for every design with the 8-epoch truth step and for both 16-epoch designs (limit 0.05); the 24-epoch
+  truth step brings it to **0.037 (H2S1T24 K5)** and **0.043 (L128S1T24 K4)**. PET2 is closed on its screens (the
+  annealed pretrained arm is stable but its proton topology stays ≤ 0.225 < 0.25). The step-2 ensemble fallback was
+  smoke-tested and started early, then stopped unneeded.
+- **Finalists (Amendments 3c, 3d; before any final-bank score):** compact H2S1T24 K5, large L128S1T24 K4; anchors CTL
+  K3, C K3. Measured cost 1.77 / 1.49 A100-h per unfolding: the compact design is not cheaper.
+- **Sizing (3e):** n_F = 60 (capped; the finalists' E0 non-inferiority needs ≈ 250 draws: a quantified limit).
+  FINAL draws 0–59 and the 21-case library are running blinded. Study total 683 A100-h (2026-09-27 14:14Z).
+
 ## 2026-09-26 — PET final-design study: stages S2–S3 (large designs, reviews, sizing, N2 finding; in progress)
 
 Development and sizing evidence only (DEV bank); final-bank runs execute blinded and nothing is scored on FB.
