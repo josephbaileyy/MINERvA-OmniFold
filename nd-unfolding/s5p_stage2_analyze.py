@@ -432,6 +432,7 @@ def main(argv=None) -> int:
     cells = Cells(stage1, json.loads(a.s5c_contract.read_text()))
     num, conv = a.runs / "s2/num", a.runs / "s2/conv"
     new_products = sorted(num.rglob("*.npz")) + sorted((a.runs / "s2/prior").glob("prior_R5fix_*.npz"))
+    finals = sorted(p for p in conv.glob("k_*.npz") if ".partial" not in p.name)
     receipt = {"schema": "s5p-stage2-receipt/1", "stage1_sha256": sha256(a.stage1),
                "code_sha256": {"s5p_stage2_analyze.py": sha256(Path(__file__).resolve()),
                                "s5p_stage1_inspect.py": sha256(Path(s1.__file__).resolve())},
@@ -439,8 +440,8 @@ def main(argv=None) -> int:
                "study_K": study_k(conv, cells), "study_N": study_n(num, a.s5e_runs, cells),
                "study_C": study_c(num, a.s5e_runs, cells),
                "study_P": study_p(a.runs, a.s5e_runs, cells),
-               "R_verification": verify_r(new_products + sorted(conv.glob("k_*.npz"))),
-               "costs": costs(new_products + sorted(conv.glob("k_*.npz")))}
+               "R_verification": verify_r(new_products + finals),
+               "costs": costs(new_products + finals)}
     a.out.write_text(json.dumps(receipt) + "\n")
     print(json.dumps({"K_M": {f: receipt["study_K"].get(f, {}).get("M") for f in ("b0", "cap", "cap10")},
                       "N": {g: {P: {k: v[P][k] for k in ("median_sigma_num_base_pct", "median_sigma_boot_pct", "median_absorption",
