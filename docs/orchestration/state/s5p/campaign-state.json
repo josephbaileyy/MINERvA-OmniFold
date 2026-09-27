@@ -113,6 +113,14 @@
    "path": "docs/orchestration/state/s5p/gen5d/gen5d-fluxfix-2.json",
    "sha256": "48a6b024248f1a347e8ab1709c8d9e4b1f099bae79c1e10f68c1aab10741d7b1",
    "what": "F1 follow-up: 50-100 GeV supplements merged (/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz, .../genie_mec_xsec5d_full.npz, .../nuwro_cv_xsec5d_full.npz; sigma x1.006), GiBUU reweighted to the analysis flux and convention (x0.9966; its sampling test was revised after the first form failed below 1.5 GeV, where threshold acceptance shapes the counts: recorded as post-hoc); re-measured by the campaign"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/ratios/nullsF/",
+   "what": "fine-ratio generator nulls (F2) from the flux-repaired predictions: GENIE CV/MEC/NuWro _xsec5d_full, GiBUU _fluxfix; 94.7-95.5% of each J-cell cross section in resolved fine cells, J integrals exact (<= 4.4e-16), one GiBUU J cell reverted to coarse; rho npz on the cluster, sha256 in each file"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/ratios/nullsJr/",
+   "what": "coarse-ratio nulls of the same repaired predictions (the F2 comparison only; amendment-5 nullsJ files are superseded for the external generators)"
   }
  ],
  "amendments": [
@@ -156,7 +164,7 @@
    "verdict": "Stage 2 CONFIRMED; joint design NOT READY (F1, F2 HIGH)"
   }
  ],
- "next_action": "deploy the amendment-6 commit; rebind the ledger to budget revision 3; run s3r-cpu.q (F4 pair now, pilot after the detector dump); lateral-unfold table when the dumps finish; phase B after the F1 products; review round 2",
+ "next_action": "deploy e13caf87+; lanes s3r-lat.q (lateral unfolds) and s3r-b.q (F4 phase B, F2 asimovs); s3r-cpu.q continues (F4 MnvTune running; pilot after the detector dump); then V, D per null, delta per generator, pilot power; P1-P3 re-derivation; review round 2; admission (amendment 7)",
  "concurrent_work_at_start": "josephrb GPU jobs pfd-chain/pfd-shr/pfd-fin (58893071-58903623, m3246_g) and other users' m3246_g jobs belong to other lanes (not touched); no m3246 CPU row; shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "b30752864c70c76da3a888136e52c3dea4b615b7",
