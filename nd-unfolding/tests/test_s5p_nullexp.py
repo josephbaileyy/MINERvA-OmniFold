@@ -207,6 +207,25 @@ class Tests(unittest.TestCase):
             with self.assertRaises(FileNotFoundError):
                 ne.drawn_detector_bands("MinosEfficiency,GEANT_Pion", False, None, bank)
 
+    def test_negative_universe_weights_are_clipped_and_counted(self):
+        inp = inputs(n=400, seed=14)
+        rng = np.random.default_rng(15)
+        bkg = {"bkg_w": rng.uniform(0.1, 1.0, 30)}
+        with tempfile.TemporaryDirectory() as d:
+            bank = Path(d)
+            wr_bad = inp["w_reco"].copy()
+            wr_bad[:7] *= -3.0
+            for u, wrx in (("LowQ2_1", wr_bad), ("Flux_2", inp["w_reco"])):
+                np.save(bank / f"{u}_wr.npy", wrx)
+                np.save(bank / f"{u}_wt.npy", inp["w_truth"])
+                np.save(bank / f"{u}_tdw.npy", np.ones(4))
+                np.save(bank / f"{u}_bkgw.npy", bkg["bkg_w"])
+            d_ = {"flux": 2, "model": {"LowQ2": "LowQ2_1"}, "detector": {}}
+            fs, fb = ne.source_factors(d_, inp, bkg, bank, None)
+        self.assertTrue(np.all(fs >= 0) and np.all(np.isfinite(fs)))
+        self.assertEqual(d_["clipped_rows"]["signal"], 7)
+        self.assertTrue(np.all(fs[:7] == 0.0))
+
 
 if __name__ == "__main__":
     unittest.main()

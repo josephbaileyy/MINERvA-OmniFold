@@ -175,6 +175,13 @@ def source_factors(d: dict, inputs: dict, bkg: dict, bank: Path, det_dir: Path |
     fb *= k_b
     src = np.ones(fs.size, bool) if source is None else source
     fs *= k_wr * truth_preserving(k_wt, inputs, src)
+    # two bank universes (LowQ2_1: 462 rows, HighQ2_1: 99 rows of 32.8M) carry negative weights; a Poisson mean
+    # cannot be negative, so a negative combined factor is clipped to 0 and the count recorded (s5p 2026-09-27:
+    # the all-band pilot 58954259 failed on 'lam < 0' until this)
+    bad_s, bad_b = ~np.isfinite(fs) | (fs < 0), ~np.isfinite(fb) | (fb < 0)
+    d["clipped_rows"] = {"signal": int(bad_s.sum()), "background": int(bad_b.sum())}
+    fs[bad_s] = 0.0
+    fb[bad_b] = 0.0
     for b, i in d["detector"].items():
         wd = s5p_universe.weights(detector_source(det_dir, bank, f"{b}_{i}"), f"{b}_{i}")
         fs *= ratio(wd["wr"], wr)

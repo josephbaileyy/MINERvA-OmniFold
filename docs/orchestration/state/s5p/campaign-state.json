@@ -47,9 +47,24 @@
  },
  "jobs": [
   {
-   "job": "queue s3v-cpu.q",
-   "label": "repair cycle 2: detector dump, F4 pairs, asimovs, all-band pilot",
-   "state": "to launch"
+   "job": "58954256",
+   "label": "F4 pairs (s3v-f4r)",
+   "state": "RUNNING"
+  },
+  {
+   "job": "58953710",
+   "label": "asimovs (NuWro fine F2, merged-x2 M1)",
+   "state": "queued"
+  },
+  {
+   "job": "58953705",
+   "label": "detector dump",
+   "state": "see sacct"
+  },
+  {
+   "job": "58954259",
+   "label": "all-band pilot",
+   "state": "FAILED/CANCELLED 19:07Z"
   }
  ],
  "receipts": [
@@ -246,6 +261,10 @@
   {
    "utc": "2026-09-27T14:45Z",
    "what": "two cancelled arrays (58950326 pilot, 58953708 F4) could not close in the meter: tasks the scheduler had split off while pending (58950326_6/_7, 58953708_1) have no sacct row at all, so 'all tasks seen' never held; their reservations (8.75, 1.25) stayed charged and their concurrency (0.75, 0.5) held every new admission (2.6 of 2.0). Meter repair: an admission also closes when its job has left the scheduler (squeue, successfully queried, fail-closed) and every task sacct shows is terminal; charges never below measured (tests). The waiting runners (s3v-cpu.q at the pilot line, s3v-f4r.q) were stopped by PID and their unsubmitted lines re-issued from the fixed deploy (s3v-pilot.q, s3v-f4r.q); nothing was submitted twice"
+  },
+  {
+   "utc": "2026-09-27T19:10Z",
+   "what": "all-band design pilot 58954259: 12 tasks FAILED ('lam < 0 or lam contains NaNs' in build_pseudo's Poisson draw; 5 products written), 48 pending tasks cancelled. Cause (measured by a scan of the 69 model universes): LowQ2_1 has negative weights on 462 rows (435 reco-passing, ratio down to -156) and HighQ2_1 on 99 rows (94, down to -18); the all-band draw includes one of them in half the experiments, the single-universe draw rarely did. Repair: a negative or non-finite combined factor is clipped to 0 and counted per experiment ('clipped_rows' in the draw; <= ~460 of 20.4M reco-passing rows); test. Not re-run in stage3_repair2 (its corrective resubmission was spent on the F4 lines): the V ensemble moves into production as its first job on its own seeds, used only for V (decision recorded for amendment 7; confirmation review before production)"
   }
  ],
  "findings": [
