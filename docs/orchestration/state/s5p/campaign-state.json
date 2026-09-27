@@ -123,6 +123,10 @@
   {
    "path": "docs/orchestration/state/s5p/ratios/altR/",
    "what": "production power alternatives P1r-P3r from the repaired predictions"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/stage3/m1/",
+   "what": "M1 (review round 2): fine minus merged-x2 null truth (noise-free full-MC asimov, R, k=5) against fine minus coarse (F2): L2 ratio 0.76 (GENIE CV), 0.86 (MEC), 0.54 (NuWro), 0.50 (GiBUU); median |fine-mid|/f 0.32/0.59/0.66/1.10% vs |fine-coarse| 0.65/0.65/2.02/2.80%. NOT converged: by amendment 8's frozen rule the residual below the fine grid is stated as 'unmeasured, potentially material' with these numbers (part may be finite-MC noise in the sparse fine ratios; not separable here); null-T units follow with the production V. F2 NuWro: median |delta|/f 2.02%, p90 4.5%"
   }
  ],
  "amendments": [

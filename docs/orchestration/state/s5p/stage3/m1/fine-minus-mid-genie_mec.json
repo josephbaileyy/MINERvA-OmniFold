@@ -1,0 +1,22 @@
+{
+ "schema": "s5p-pairdiff/1",
+ "label": "M1 at genie_mec: asimov at the fine-ratio minus the merged-x2 null truth",
+ "n_pairs": 1,
+ "cells": 109,
+ "median_abs_D_over_fB": 0.0058908103840509185,
+ "max_abs_D_over_fB": 0.02353136105383245,
+ "median_abs_D_over_se": null,
+ "out": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/m1/fine-minus-mid-genie_mec.npz",
+  "sha256": "5e6aa8a6397a2fd7e688dc0f2249e1cae2b80e66f6d01378b077bdb2ab25d122"
+ },
+ "inputs": [
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_genie_mec_fine.npz",
+   "a_sha256": "d6b24d6f2350498d6577b8af2646ca3a5f4ff9245f21d28dc22b095f030eb68f",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3v_m1_genie_mec_mid.npz",
+   "b_sha256": "b5580883b0c45168a78c217046803de1a4ecca22d594b7f40545330b50514bce"
+  }
+ ],
+ "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+}

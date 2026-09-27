@@ -1,0 +1,22 @@
+{
+ "schema": "s5p-pairdiff/1",
+ "label": "F2 delta at nuwro_cv: noise-free full-MC asimov (R, k=5) at the fine-ratio minus the coarse-ratio null truth",
+ "n_pairs": 1,
+ "cells": 109,
+ "median_abs_D_over_fB": 0.02022673413708516,
+ "max_abs_D_over_fB": 0.05877912072548591,
+ "median_abs_D_over_se": null,
+ "out": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f2/delta-nuwro_cv.npz",
+  "sha256": "d6d662ca3118981ce82f20626dfad66be39e095a3be49c1e0e572972b558637c"
+ },
+ "inputs": [
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_nuwro_cv_fine.npz",
+   "a_sha256": "42dbc87f4905d3ab6bcd4d900ae128668a2c0aa1bd708f1ebe65a1b6a9af6235",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_nuwro_cv_coarse.npz",
+   "b_sha256": "b1795746da69b0a7c18896f6df3ef2dfc97b24e4699a06c9c7e635bc2c688db2"
+  }
+ ],
+ "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+}
