@@ -147,6 +147,18 @@ def detector_source(det_dir: Path | None, bank: Path, tag: str) -> Path:
     raise FileNotFoundError(f"no detector universe {tag} in {det_dir} or {bank}")
 
 
+def drawn_detector_bands(spec: str, no_nuisance: bool, det_dir: Path | None, bank: Path) -> tuple:
+    """The detector bands this run draws, each checked present (dump or bank) before any unfold; none under
+    --no-nuisance (s5p 2026-09-27: the check refused the no-nuisance F4 lines for an undrawn band)."""
+    if no_nuisance:
+        return ()
+    bands = tuple(b for b in spec.split(",") if b)
+    for b in bands:
+        for i in (0, 1):
+            detector_source(det_dir, bank, f"{b}_{i}")
+    return bands
+
+
 def source_factors(d: dict, inputs: dict, bkg: dict, bank: Path, det_dir: Path | None,
                    source: np.ndarray | None = None, cache: ModelCache | None = None) -> tuple[np.ndarray, np.ndarray]:
     """Multiplicative factors for every signal row's reco weight and every background row's weight
@@ -246,10 +258,7 @@ def main(argv=None) -> int:
         r_h = r_h * s5n_pseudo.truth_weight(a.alternative_truth, base, a.alternative_amplitude, alt)
     flux_ids = sorted(int(p.stem.split("_")[1]) for p in a.bank.glob("Flux_*_wr.npy"))
     groups = model_groups(model_bands(a.bank))
-    det_bands = tuple(b for b in a.detector_bands.split(",") if b)
-    for b in det_bands:
-        for i in (0, 1):
-            detector_source(a.detector_dir, a.bank, f"{b}_{i}")  # refuse before any unfold if a band is missing
+    det_bands = drawn_detector_bands(a.detector_bands, a.no_nuisance, a.detector_dir, a.bank)
     first, last = (int(v) for v in a.pseudo_seeds.split(":"))
     a.out.mkdir(parents=True, exist_ok=True)
     status = 0

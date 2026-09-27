@@ -197,6 +197,16 @@ class Tests(unittest.TestCase):
         for x, y in zip(a, b):
             np.testing.assert_array_equal(x, y)
 
+    def test_drawn_detector_bands_none_without_nuisance_and_checked_with(self):
+        with tempfile.TemporaryDirectory() as d:
+            bank = Path(d)
+            np.save(bank / "GEANT_Pion_0_wr.npy", np.ones(2))
+            np.save(bank / "GEANT_Pion_1_wr.npy", np.ones(2))
+            self.assertEqual(ne.drawn_detector_bands("MinosEfficiency,GEANT_Pion", True, None, bank), ())
+            self.assertEqual(ne.drawn_detector_bands("GEANT_Pion", False, None, bank), ("GEANT_Pion",))
+            with self.assertRaises(FileNotFoundError):
+                ne.drawn_detector_bands("MinosEfficiency,GEANT_Pion", False, None, bank)
+
 
 if __name__ == "__main__":
     unittest.main()

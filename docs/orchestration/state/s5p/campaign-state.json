@@ -238,6 +238,10 @@
   {
    "utc": "2026-09-27T15:05Z",
    "what": "the ten lateral-endpoint dumps (12 GB) removed after their ten endpoint unfolds exist (runs/s3/latunf); digests recorded in /pscratch/sd/j/josephrb/s5p-20260926/measure/lateral-dumps-sha256-before-removal.txt; reproducible from the committed omnifiles with s3-latdump-tasks.tsv; namespace 1.6 GB"
+  },
+  {
+   "utc": "2026-09-27T14:35Z",
+   "what": "F4 lines (58953708) refused in seconds: the new up-front detector-band check ran under --no-nuisance and refused the undrawn MinosEfficiency; fixed (s5p_nullexp.drawn_detector_bands, test); tasks 1-9 cancelled before running; re-submitted once from the fixed deploy (queue s3v-f4r.q): the stage3_repair2 corrective resubmission"
   }
  ],
  "findings": [
