@@ -314,8 +314,15 @@ def base_job(task_id: str) -> str:
     return task_id.split("_", 1)[0]
 
 
-def charges(folded: dict[str, dict], sacct_tasks: dict[str, dict]) -> dict[str, dict]:
-    """Per admission: measured node-hours, whether closed, and the charged value."""
+def charges(folded: dict[str, dict], sacct_tasks: dict[str, dict], live_jobs: set[str] | None = None) -> dict[str, dict]:
+    """Per admission: measured node-hours, whether closed, and the charged value.
+
+    An admission is closed when sacct shows all its tasks terminal, OR (``live_jobs`` given: the scheduler's
+    successfully queried set of the user's queued/running job ids) when its job has left the scheduler and
+    every task sacct does show is terminal: a cancelled array can leave tasks the scheduler split off while
+    pending with no accounting record at all (s5p 2026-09-27: 58950326_6/_7, 58953708_1), which can never
+    spend, and would otherwise hold their reservation and concurrency forever. Charges never fall below
+    what sacct measured."""
     out = {}
     for token, adm in folded.items():
         if adm["released"] and not adm["job_id"]:
@@ -333,7 +340,8 @@ def charges(folded: dict[str, dict], sacct_tasks: dict[str, dict]) -> dict[str, 
         terminal = all(
             e["states"] and all(s in TERMINAL_STATES for s in e["states"]) for e in mine.values()
         )
-        closed = bool(mine) and len(mine) >= adm["ntasks"] and terminal
+        gone = live_jobs is not None and bool(job) and str(job) not in live_jobs
+        closed = bool(mine) and terminal and (len(mine) >= adm["ntasks"] or gone)
         charged = measured if closed else max(measured, adm["reservation_node_hours"])
         billed = [b for e in mine.values() for (_, b, _) in e["attempts"].values()]
         out[token] = {
@@ -606,6 +614,16 @@ def run_sacct(job_ids: Sequence[str], raw_ids: Sequence[str] = ()) -> str:
     return "\n".join(out)
 
 
+def run_squeue_jobs() -> set[str]:
+    """The user's queued and running job ids (array base ids and raw task ids); a failed query raises (a
+    closure must never rest on an empty answer from a failed query)."""
+    user = os.environ.get("USER", "josephrb")
+    proc = subprocess.run(["squeue", "-h", "-r", "-u", user, "-o", "%F %A"], capture_output=True, text=True)
+    if proc.returncode != 0:
+        raise MeterError(f"squeue failed rc={proc.returncode}: {proc.stderr.strip()}", EXIT_INTEGRITY)
+    return {x for line in proc.stdout.split() for x in [line] if x.isdigit()}
+
+
 def state_of(budget_path: Path, ledger_path: Path, sacct_text: str | None) -> tuple[dict, dict, dict, dict]:
     budget = load_budget(budget_path)
     records = read_ledger(ledger_path)
@@ -618,7 +636,8 @@ def state_of(budget_path: Path, ledger_path: Path, sacct_text: str | None) -> tu
     orphans = unregistered(folded, tasks, job_prefix(budget))
     if orphans:
         raise MeterError(f"unregistered campaign jobs in sacct: {orphans}", EXIT_UNREGISTERED)
-    charged = charges(folded, tasks)
+    live = run_squeue_jobs() if sacct_text is None else None
+    charged = charges(folded, tasks, live)
     return budget, folded, charged, summarize(budget, folded, charged)
 
 

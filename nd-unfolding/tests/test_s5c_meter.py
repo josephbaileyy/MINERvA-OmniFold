@@ -39,6 +39,9 @@ class MeterHarness(unittest.TestCase):
         self.sacct_out.write_text("")
         self.write_budget(_budget())
         self._fake("sacct", f'cat "{self.sacct_out}"\n')
+        self.squeue_out = self.tmp / "squeue.txt"
+        self.squeue_out.write_text("12345 12345\n")  # the test job is live unless a test says otherwise
+        self._fake("squeue", f'cat "{self.squeue_out}"\n')
         self._fake("sbatch", 'echo "12345;perlmutter"\n')
         self.tres = self.tmp / "tres.txt"
         self.tres.write_text("JobId=12345 JobName=s5c-t AllocTRES=cpu=64,mem=100G,node=1,billing=128 Foo=bar\n")
@@ -67,6 +70,39 @@ class MeterHarness(unittest.TestCase):
 
     def ledger_records(self) -> list[dict]:
         return [json.loads(x) for x in self.ledger.read_text().splitlines()]
+
+
+class GoneJobClosureTests(unittest.TestCase):
+    """An admission whose job has left the scheduler closes at its measured cost even when sacct records fewer
+    tasks than declared (tasks split off while pending and cancelled have no accounting row)."""
+
+    def setUp(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("s5c_meter_mod", METER)
+        self.m = importlib.util.module_from_spec(spec)
+        sys.modules["s5c_meter_mod"] = self.m  # dataclasses resolve their module through sys.modules
+        spec.loader.exec_module(self.m)
+        self.folded = {"t": {"released": False, "job_id": "500", "raw_ids": {}, "ntasks": 4, "qos": "shared",
+                             "pool": "cpu", "reservation_node_hours": 9.0, "billing": 32}}
+        self.tasks = self.m.parse_sacct("500_0|s5p-x|CANCELLED by 1|3600|billing=32|2026-09-27T10:00:00\n"
+                                        "500_[2-3%2]|s5p-x|CANCELLED by 1|0||Unknown\n")
+
+    def test_open_while_the_job_is_live(self):
+        c = self.m.charges(self.folded, self.tasks, {"500", "501"})["t"]
+        self.assertFalse(c["closed"])
+        self.assertEqual(c["charged"], 9.0)
+
+    def test_closed_at_measured_once_the_job_is_gone(self):
+        c = self.m.charges(self.folded, self.tasks, {"777"})["t"]
+        self.assertTrue(c["closed"])
+        self.assertAlmostEqual(c["charged"], 3600 / 3600 * 32 / 256)
+
+    def test_without_a_scheduler_view_the_old_rule_holds(self):
+        self.assertFalse(self.m.charges(self.folded, self.tasks, None)["t"]["closed"])
+
+    def test_a_running_task_keeps_it_open_even_if_gone(self):
+        tasks = self.m.parse_sacct("500_0|s5p-x|RUNNING|60|billing=32|2026-09-27T10:00:00\n")
+        self.assertFalse(self.m.charges(self.folded, tasks, set())["t"]["closed"])
 
 
 class AdmissionTests(MeterHarness):
