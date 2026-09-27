@@ -43,7 +43,7 @@
   "4_construction": "NOT STARTED",
   "5_validation": "NOT STARTED",
   "6_adoption": "NOT STARTED",
-  "7_inference_release": "NOT STARTED"
+  "7_inference_release": "IN PROGRESS (independent part): generator comparisons re-run on the flux-repaired predictions (VL156-VL160), figures replaced, note/primer/paper generator claims corrected; joint results pending admission"
  },
  "jobs": [
   {
@@ -206,6 +206,10 @@
   {
    "utc": "2026-09-27T08:27Z",
    "what": "queue s3-det.q (deploy 75746779, budget revision 2) stopped with exit 5 after the ledger was rebound to budget revision 3 (the meter refuses a budget digest the ledger does not carry: the intended guard); restarted from deploy 66cf3129 with the byte-identical queue and table (cmp); admitted 08:48Z; no job lost"
+  },
+  {
+   "utc": "2026-09-27T09:35Z",
+   "what": "s5p_k_cap 58904836 (the superseded 100-iteration capacity probe, no checkpoints) reached its 16 h limit: TIMEOUT, no product; the capacity rule was decided on the completed checkpointed 10-iteration run 58934771 (amendment 4), so nothing depends on it; its charge is the measured elapsed"
   }
  ],
  "findings": [

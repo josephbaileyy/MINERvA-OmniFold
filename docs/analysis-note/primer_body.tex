@@ -109,8 +109,11 @@ simulated pseudo-data include background and are processed exactly as the data a
 way we remove background biases the highest-$W$ cells by about \SI{4}{\percent}. A finer,
 unbinned removal cuts that to below \SI{0.3}{\percent}, but leaves about \SI{1}{\percent}
 in a few combined cells. More importantly, when the simulated ``true'' distribution of
-available energy is changed by as much as two standard generators differ, the unfolding
-follows it only partly: typical cells come back about \SI{10}{\percent} off, and the
+available energy is changed by a test pattern taken from the ratio of two standard
+generators, the unfolding follows it only partly. (One of the two predictions behind that
+pattern was later found to have been made with a wrongly sampled beam spectrum, so the
+pattern is a test of a chosen size, not a measured difference between generators.) In
+that test typical cells come back about \SI{10}{\percent} off, and the
 highest-$W$ cells much more. Neither effect is in the quoted uncertainty yet.
 
 A follow-up study looked inside the unfolding to find out why. Letting it run six times
@@ -158,7 +161,8 @@ simpler one --- a built-in consistency check.
 
 The first physics payoff appears in the available energy. When we compare the
 data to four state-of-the-art simulation predictions, all four fall short of
-the data in the low-energy region (Fig.~\ref{fig:primergen}, left). This is not a
+the data in the low-energy region, just above the very lowest energies
+(Fig.~\ref{fig:primergen}, left). This is not a
 surprise --- it resembles an established low-recoil discrepancy that simulations
 have historically struggled to model. Adding a process in which the neutrino
 interacts with a pair of nucleons (``2p2h'') fills part of the gap. The two tested
@@ -176,27 +180,34 @@ with it at central-value level on the maximal common grid.
   \caption{The unfolded central values (black points) compared to four tested
   simulation predictions --- GENIE's own untuned central configuration (version 2.12.10), the same GENIE
   with the two-nucleon process added, NuWro (21.09) and GiBUU (2019). \emph{Left:} available
-  energy; all four fall below the data at low available energy, the known
+  energy; all four fall below the data at low available energy (between about
+  $0.1$ and $0.4$~GeV), the known
   ``low-recoil'' shortfall, here rediscovered by a different unfolding method.
   \emph{Right:} hadronic mass; all four sit below the data at high hadronic
-  mass. \textbf{Central values only.} No uncertainty band is drawn and no
+  mass, the first three by about as much as they fall short overall. \textbf{Central values only.} No uncertainty band is drawn and no
   significance is assigned, for the reason given at the start of this section.
   The first two predictions are two configurations of the same generator and
   are not independent of each other.}
   \label{fig:primergen}
 \end{figure}
 
-\subsection*{A new puzzle that no simulation explains}
+\subsection*{A new puzzle for the tuned simulation}
 
-Adding the hadronic-mass axis $W$ lets us look where the simulations still miss
-\emph{after} the two-nucleon process is included. The leftover discrepancy sits
+Adding the hadronic-mass axis $W$ lets us look where MINERvA's tuned simulation,
+which already includes an enhanced two-nucleon process, still misses. The
+leftover discrepancy sits
 in a specific corner: high available energy \emph{and} high $W$ --- the
 ``deep-inelastic'' region where the neutrino shatters the nucleon. That corner
 is a statement about the two quantities \emph{jointly}, so
 Fig.~\ref{fig:primerjoint} shows the joint map rather than the two separate
 one-dimensional views of Fig.~\ref{fig:primergen}: neither of those alone
-would show it. There, all four simulations undershoot the central result. Its
-statistical significance is not assigned. The random seed described at the start of this section moves
+would show it. The four other simulations also fall short of the data there,
+but three of them (the two GENIE versions and NuWro) fall short by roughly as
+much as they do everywhere: the data are \SIrange{14}{16}{\percent} above them
+in the corner and \SIrange{7}{15}{\percent} above them overall, so for them the
+corner is not a special place. Only GiBUU falls much further behind there (the
+data are \SI{61}{\percent} above it in the corner, \SI{39}{\percent} overall).
+Its statistical significance is not assigned. The random seed described at the start of this section moves
 these central values as well, by at most \SI{\cvMoveOverSigmaMax}{\percent} of
 their own uncertainty; how far the corner's share of the excess could shift
 with it was not separately measured. This is the kind of localized discrepancy that
@@ -266,7 +277,7 @@ separately labeled, simulation-dependent extrapolation.
 Unbinned machine-learning unfolding reproduces a flagship MINERvA measurement
 \emph{and} scales to many quantities at once, where the binned method's
 response table does not. Using that, this analysis recovered a known low-recoil discrepancy with
-a different unfolding method, exposed a localized central-value difference that all four tested
-simulations underpredict, and
+a different unfolding method, exposed a localized central-value difference from the
+MINERvA-tuned simulation, and
 mapped a possible extension of the signal definition while exposing where the
 detector provides too little information for a model-independent result.

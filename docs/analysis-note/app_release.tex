@@ -69,7 +69,11 @@ their identity or value already fixed and are listed in
         predictions (GENIE-CV, GENIE$+$Valencia~2p2h, NuWro, GiBUU) and the
         MINERvA~Tune~v1 ancillary model, as arrays on the release binning
         rather than as figure curves, each with its generator version,
-        configuration, target and flux.
+        configuration, target and flux --- for GENIE and NuWro the
+        flux-repaired predictions of 2026-09-27 (per-event reweight to the
+        analysis PPFX flux plus the 50--\SI{100}{GeV} supplements), for GiBUU
+        its reweight to the same flux convention (\texttt{KNOWN\_ISSUES.md}
+        rows 82--83; \S\ref{sec:3d-models}).
   \item \textbf{Provenance}: for each object, the producing
         revision, the producing job, and the digest of the bytes as read back
         out of the closed file. This is fixed only in part: the assembling

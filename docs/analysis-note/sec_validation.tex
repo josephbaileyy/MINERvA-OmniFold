@@ -65,7 +65,10 @@ half. Sixty experiments at nominal truth bring the highest-$W$ column to
 cells nevertheless remains \SIrange{0.7}{1.1}{\percent} high, up to 14 standard errors,
 against \SI{-0.2}{\percent} without background; the mechanism is not established.
 Experiments whose truth is reweighted by the GiBUU-to-GENIE $\Eavail$ shape ratio
-(0.70--1.33 per $\Eavail$ bin, total preserved) are not followed by the unfolding. The
+(0.70--1.33 per $\Eavail$ bin, total preserved) are not followed by the unfolding. (The
+ratio was built from a GENIE prediction later found to have been generated from a
+mis-sampled flux, \texttt{KNOWN\_ISSUES.md} row 83; it remains a valid known-truth
+deformation of this size but is not a measured GiBUU--GENIE difference.) The
 $(\Eavail,W)$ cells deviate from that truth by a median of \SI{9.7}{\percent}, up to
 \SI{74}{\percent} in the highest-$W$ column, and by several percent in the largest cells.
 A $q_3$ deformation that leaves the $(\Eavail,W)$ truth unchanged moves those cells by up
@@ -98,7 +101,7 @@ Thirty iterations reduce the $\Eavail$ residual by \SI{26}{\percent}, and it is 
 falling slowly; the $q_3$ residual grows with iterations. A larger classifier improves the
 reco-level fit without improving the $\Eavail$ truth residual, and removing the regression
 for events that fail reconstruction does not help it. No single cause is established, and
-no authorized estimator change passes its predeclared screen for the physical departure.
+no authorized estimator change passes its predeclared screen for the GiBUU-to-GENIE departure.
 
 The residual background bias has a named cause: the refinement classifier underfits.
 Raising its capacity (400 trees, 31 leaves) reduces the background-related bias by more

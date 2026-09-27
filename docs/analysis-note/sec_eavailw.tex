@@ -1,17 +1,20 @@
 \section{Fifth axis: the $(\Eavail,W)$ deep-inelastic-tail study}
 \label{sec:eavailw}
 
-Enabling Valencia 2p2h resolves the low-recoil excess (\S\ref{sec:3d-2p2h})
-but leaves a separate high-$\Eavail$ data excess where 2p2h does not
+Enabling Valencia 2p2h fills about half of the low-recoil gap
+(\S\ref{sec:3d-2p2h}) but leaves a separate high-$\Eavail$ data excess over
+the MINERvA Tune~v1 prior, where 2p2h does not
 contribute and the sub-percent pion-FSI dials cannot reach. A corrected
 $(\Eavail,W)$ covariance is now adopted --- under a digest-bound exception and
 carrying four measurements that qualify what it supports
 (\S\ref{sec:eavailw-adopted}) --- so the comparison below, which was made at
 central-value level while none existed, is stated together with that
-covariance and the conditions on it. GiBUU spreads its deficit across the entire
-tail (data/generator $1.59$ at $\Eavail\in[0.8,1.5)$, $1.36$ at $[1.5,3.0)$)
-rather than piling it in the deep catch bin like the GENIE variants --- an
-independent, qualitatively distinct confirmation. To test the deep-inelastic
+covariance and the conditions on it. Against the external generators the
+high-$\Eavail$ picture is generator-dependent: GiBUU is low across the entire
+tail (data/generator $\approx1.6$ at $\Eavail\in[0.8,1.5)$ and $\approx1.4$ at
+$[1.5,3.0)$), whereas the flux-repaired GENIE CV matches the data in
+$[0.8,1.5)$ and is about \SI{9}{\percent} low in $[1.5,3.0)$
+(\S\ref{sec:3d-2p2h}). To test the deep-inelastic
 hypothesis directly, we added the hadronic invariant mass $W$ as a fifth
 OmniFold axis.
 
@@ -89,11 +92,33 @@ has not yet produced a result.
   \label{fig:eavailWexcess}
 \end{figure}
 
-\subsection{Generator band: the corner is generator- and tune-robust}
+\subsection{Generator band: the corner against four external generators}
 \label{sec:eavailw-band}
-We confirm this against independent spline-normalized $(\Eavail,W)$
+We compare the corner with spline-normalized $(\Eavail,W)$
 predictions from GENIE~CV, GENIE$+$Valencia~2p2h/MEC, NuWro, and GiBUU
-(Fig.~\ref{fig:eavailWband}). These are separate productions from the 3D samples of \S\ref{sec:3d-models}; this GENIE~CV's in-phase-space total, \SI{2.44e-38}{cm^2/nucleon}, is \SI{3}{\percent} below the \SI{2.52e-38}{} quoted there, and that difference has not been reconciled.
+(Fig.~\ref{fig:eavailWband}). These are the flux-repaired predictions of
+\S\ref{sec:3d-models}, rebuilt on 2026-09-27 after the flux-sampling defect
+(\texttt{KNOWN\_ISSUES.md} row 83; ledger rows \texttt{VL156}--\texttt{VL158}
+supersede \texttt{VL35}--\texttt{VL38}). The 3D and $(\Eavail,W)$ comparisons
+now take each generator from one five-dimensional histogram, so the earlier
+unreconciled \SI{3}{\percent} difference between two GENIE~CV productions no
+longer enters: the in-phase-space GENIE~CV total is \SI{2.76e-38}{cm^2/nucleon}
+in both. The GENIE$+$MEC prediction uses the 3D normalization convention, which
+also removes a \SI{2.87}{\percent} under-normalization of the earlier
+$(\Eavail,W)$ MEC prediction (\texttt{KNOWN\_ISSUES.md} row 81).
+% --- SUPERSEDED 2026-09-27 (s5p, OI-193; KNOWN_ISSUES 83 and 81) ---------------
+% Every GENIE/NuWro number in the provenance block below (1.535/1.579/1.563, the
+% 2.4446e-38 vs 2.52e-38 discrepancy, the W-band 1.30-1.35) rests on the
+% flux-defective predictions and is HISTORY. GiBUU moved only by its x0.9966
+% flux-convention reweight (1.609 -> 1.607). The current numbers are
+% VALIDATION_LEDGER VL156-VL160, from
+% docs/orchestration/state/s5p/stage7/generator-context/generator-context-receipt.json
+% (eavailW_band, W_2p2_3p0) and eavailW_band_s5p_repaired-log.txt beside it:
+%   corner data/gen  GENIE-CV 1.142  GENIE+MEC 1.139  NuWro 1.160  GiBUU 1.607
+%   integrated       GENIE-CV 1.110  GENIE+MEC 1.068  NuWro 1.153  GiBUU 1.386
+%   W in [2.2,3.0)   GENIE-CV 1.123  GENIE+MEC 1.111  NuWro 1.130  GiBUU 1.343
+%   corner/integrated (derived): 1.029, 1.066, 1.006, 1.159
+% The block below is kept unedited as the record of the 2026-08 reduction.
 % --- PROVENANCE / REDUCTION for the corner ratios (J27.3, recorded 2026-08-02) ---
 % The ratios below are CORNER-INTEGRATED cross-section ratios -- not per-bin means,
 % not a weighted mean, not the worst bin. Reduction, from
@@ -173,12 +198,17 @@ predictions from GENIE~CV, GENIE$+$Valencia~2p2h/MEC, NuWro, and GiBUU
 % i.e. "23-26% below the data". The prose changed convention; no number moved.
 % The corrected contrast is now legible on the page: 1.54-1.61 against 1.30-1.35.
 % --------------------------------------------------------------------------------
-GENIE~CV, GENIE$+$MEC, NuWro, and GiBUU all underpredict the
-high-$\Eavail\times$high-$W$ corner, with data/generator $=1.54$, $1.58$,
-$1.56$, and $1.61$ respectively (span $1.54$--$1.61$). Crucially,
-enabling Valencia 2p2h does \emph{not} close the corner --- it slightly
-worsens it ($1.54\to1.58$), since 2p2h populates low $W$ --- and the
-independent NuWro and GiBUU generators miss it by the same margin or more.
+GENIE~CV, GENIE$+$MEC, NuWro, and GiBUU all lie below the data in the
+high-$\Eavail\times$high-$W$ corner ($\Eavail\ge\SI{0.8}{GeV}$,
+$W\ge\SI{1.8}{GeV}$), with data/generator $=1.14$, $1.14$, $1.16$, and $1.61$
+respectively. For GENIE and NuWro this is close to their shortfall over the
+whole plane (integrated data/generator $1.11$, $1.07$ and $1.15$): the corner
+ratio exceeds the integrated one by \SIrange{1}{7}{\percent} for them, against
+\SI{16}{\percent} for GiBUU (integrated $1.39$). On the flux-repaired
+predictions the corner is therefore not a distinct deficit of GENIE or NuWro;
+it is one of GiBUU. Enabling Valencia 2p2h leaves the corner essentially
+unchanged ($1.142\to1.139$), since 2p2h populates low $W$; it raises the
+integrated prediction instead.
 These are central-value ratios. A projected covariance now exists
 (\S\ref{sec:eavailw-adopted}); the compatibility metric it would support is
 \emph{not} quoted here, because the estimator-seed sensitivity measured on that
@@ -188,18 +218,23 @@ size would state a precision the input does not have.
 GiBUU is the most deficient generator both overall (integrated
 $\sigma=\SI{2.22e-38}{cm^2/nucleon}$ against the data's \SI{3.07e-38}{}) and
 in the corner, where it sets the upper end of the band; no generator
-considered here reaches the corner. At
-$W\in[2.2,3.0)\,\si{GeV}$ the same four generators underpredict by a smaller
-factor, data/generator $=1.30$, $1.33$, $1.31$, and $1.35$ (span
-$1.30$--$1.35$).
+considered here reaches the data in the corner. At
+$W\in[2.2,3.0)\,\si{GeV}$ the same four generators have data/generator
+$=1.12$, $1.11$, $1.13$, and $1.34$, again close to their integrated ratios.
+The localization of \S\ref{sec:eavailw-map} is therefore a statement relative
+to the MINERvA Tune~v1 prior. Against the four external generators, the
+data lie above all of them overall and in the corner, and only GiBUU is
+markedly more deficient in the corner than overall.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{eavailW_band}
   \caption{Unfolded $(\Eavail,W)$ cross section versus the four-generator
-  band (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU). Every generator underpredicts
-  the high-$W$, high-$\Eavail$ DIS corner; adding 2p2h does not help there
-  because 2p2h populates low $W$.}
+  band (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU; GENIE and NuWro flux-repaired,
+  \S\ref{sec:3d-models}). Every generator lies below the data in the high-$W$,
+  high-$\Eavail$ DIS corner --- GENIE and NuWro by about their overall
+  normalization shortfall, GiBUU by more; adding 2p2h leaves the corner
+  unchanged because 2p2h populates low $W$.}
   \label{fig:eavailWband}
 \end{figure}
 
