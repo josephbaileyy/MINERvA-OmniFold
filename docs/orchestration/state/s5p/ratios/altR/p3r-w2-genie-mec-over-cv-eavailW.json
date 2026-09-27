@@ -1,0 +1,102 @@
+{
+ "schema": "s5e-shape-ratio/1",
+ "label": "P3r: W2 GENIE MEC / GENIE CV (E_avail,W) shape, flux-repaired 5D marginals",
+ "kind": "eavailW",
+ "histogram": "5D marginal (hXSec_eavailW axes)",
+ "axes": [
+  2,
+  4
+ ],
+ "edges": [
+  [
+   0.0,
+   0.1,
+   0.2,
+   0.4,
+   0.8,
+   1.5,
+   3.0,
+   100.0
+  ],
+  [
+   0.0,
+   1.1,
+   1.4,
+   1.8,
+   2.2,
+   3.0,
+   100.0
+  ]
+ ],
+ "definition": "shape_ratio = frac_num / frac_den per cell (C order), frac = content x cell volume normalized over cells with both predictions positive; ratio 1 where either is non-positive; clipped to [0.25, 4] (s5e_deform.ratio_from_contents on the 5D predictions' marginals)",
+ "shape_ratio": [
+  1.0463800350146373,
+  1.1226734538860275,
+  0.9847690912785849,
+  0.968152419887626,
+  1.0164483870557917,
+  1.3274788585656156,
+  1.081855753048857,
+  1.0917216674697614,
+  1.0194263353477369,
+  0.8780526439042565,
+  0.9558884946308057,
+  1.4146870488955423,
+  1.0504470516343387,
+  1.0997412318420932,
+  1.0001374660743527,
+  0.9815684526102768,
+  0.9768442431071993,
+  0.9279480821476171,
+  1.007789374195849,
+  1.0825075353435243,
+  0.9885119075028211,
+  0.9935517423156658,
+  0.951240714809263,
+  1.0309386820229738,
+  0.9927172097549573,
+  0.9935640984086817,
+  0.9786927781975469,
+  0.9497989628041619,
+  0.9763605736861806,
+  1.0194857467923657,
+  1.0121989559916067,
+  0.9911367839241256,
+  0.9554451686670858,
+  0.9619564376692724,
+  0.9691742669852907,
+  1.009634424275479,
+  1.1095457093559857,
+  0.3648502015224601,
+  1.1890186402802212,
+  0.9508207520550753,
+  0.9739136312329276,
+  0.9557037724638822
+ ],
+ "stats": {
+  "cells": 42,
+  "cells_without_shape_information": 0,
+  "cells_clipped": 0,
+  "rho_min": 0.3648502015224601,
+  "rho_max": 1.4146870488955423
+ },
+ "numerator": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz",
+  "sha256": "c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f"
+ },
+ "denominator": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz",
+  "sha256": "cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2"
+ },
+ "code_sha256": {
+  "s5p_alt_ratios.py": "3cf1ea4d8847b08b468014bae8710460200878faa41a03a8cda2d673fe894a1c",
+  "s5e_deform.py": "6726ff99c7787d1ee6dff7fa5d08df88f9df76285d98c4c462f964ac6164779f"
+ },
+ "change_against": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/deploy/913b0a7a/docs/orchestration/state/s5e/w2-genie-mec-over-cv-eavailW.json",
+  "sha256": "80e16f95702266d0e61b7529c8b5d36a5e4b140cfcde04640606b408c2b1e19b",
+  "median_abs_change_over_departure": 0.2107543947345633,
+  "corr_departures": 0.514209927228227,
+  "cells_informative": 38
+ }
+}

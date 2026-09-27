@@ -204,7 +204,7 @@ docs/orchestration/LEDGER-20260920-deleted-branch-names-to-sha.md	tracked	LIVE	d
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	66	70	8866
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	6	161	8117
 docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data	20260919-cause3-two-member-campaign		generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/whose_row.py;nd-unfolding/tests/test_draft_adoption_record.py;nd-unfolding/tests/test_object_identity_checks.py	no	38	487	40024
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/merge_guard.sh;nd-unfolding/tests/test_object_identity_checks.py	no	66	1321	247258
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/merge_guard.sh;nd-unfolding/tests/test_object_identity_checks.py	no	66	1324	247747
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	9	214	16307
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	18	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	7	239	14244
@@ -1111,8 +1111,8 @@ docs/orchestration/state/s5e/queues/cand-dev.q	tracked	MACHINE	state-artifact	s5
 docs/orchestration/state/s5e/queues/diag-A.q	tracked	MACHINE	state-artifact	s5e		generated		exact-path-only		yes	1	2	515
 docs/orchestration/state/s5e/queues/diag-B.q	tracked	MACHINE	state-artifact	s5e		generated		exact-path-only		yes	1	2	560
 docs/orchestration/state/s5e/queues/diag-R.q	tracked	MACHINE	state-artifact	s5e		generated		exact-path-only		yes	2	2	415
-docs/orchestration/state/s5e/w2-genie-mec-over-cv-eavailW.json	tracked	MACHINE	state-artifact	s5e		generated		exact-path-only	docs/orchestration/state/s5e/cand/review2/r2_load.py;docs/orchestration/state/s5e/cand/review2/r2_ratio.py;docs/orchestration/state/s5e/cand/review2/r2_truth.py	yes	12	92	2117
-docs/orchestration/state/s5e/w3-nuwro-over-genie-pt-pz-eavail.json	tracked	MACHINE	state-artifact	s5e		generated		exact-path-only	docs/orchestration/state/s5e/cand/review2/r2_load.py;docs/orchestration/state/s5e/cand/review2/r2_ratio.py;docs/orchestration/state/s5e/cand/review2/r2_truth.py	yes	17	1646	30634
+docs/orchestration/state/s5e/w2-genie-mec-over-cv-eavailW.json	tracked	MACHINE	state-artifact	s5e		generated		exact-path-only	docs/orchestration/state/s5e/cand/review2/r2_load.py;docs/orchestration/state/s5e/cand/review2/r2_ratio.py;docs/orchestration/state/s5e/cand/review2/r2_truth.py	yes	13	92	2117
+docs/orchestration/state/s5e/w3-nuwro-over-genie-pt-pz-eavail.json	tracked	MACHINE	state-artifact	s5e		generated		exact-path-only	docs/orchestration/state/s5e/cand/review2/r2_load.py;docs/orchestration/state/s5e/cand/review2/r2_ratio.py;docs/orchestration/state/s5e/cand/review2/r2_truth.py	yes	18	1646	30634
 docs/orchestration/state/s5n/allocation-measurement-20260925T1901Z.txt	tracked	MACHINE	state-artifact	s5n	20260925	generated		exact-path-only		yes	2	92	5097
 docs/orchestration/state/s5n/budget.json	tracked	MACHINE	state-artifact	s5n		open		exact-path-only	nd-unfolding/s5c_launch.sh;nd-unfolding/s5c_valid_launch.sh;nd-unfolding/tests/test_s5c_meter.py	no	32	89	4382
 docs/orchestration/state/s5n/campaign-state.json	tracked	MACHINE	state-artifact	s5n		open		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	8	114	4546
@@ -1190,6 +1190,9 @@ docs/orchestration/state/s5p/queues/s3r-b.q	tracked	MACHINE	state-artifact	s5p		
 docs/orchestration/state/s5p/queues/s3r-cpu.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	1	4	1902
 docs/orchestration/state/s5p/queues/s3r-lat.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	1	2	964
 docs/orchestration/state/s5p/queues/s3r2-cpu.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	1	2	937
+docs/orchestration/state/s5p/ratios/altR/p1r-w3-nuwro-over-genie-pt-pz-eavail.json	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	0	1656	31908
+docs/orchestration/state/s5p/ratios/altR/p2r-d5-nuwro-over-genie-q3-given-eavail-w.json	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	0	353	4593
+docs/orchestration/state/s5p/ratios/altR/p3r-w2-genie-mec-over-cv-eavailW.json	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	0	102	2686
 docs/orchestration/state/s5p/ratios/d5-nuwro-over-genie-q3-given-eavail-w.json	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	6	353	4546
 docs/orchestration/state/s5p/ratios/nullsF/null-genie_cv-F.json	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	739	11450
 docs/orchestration/state/s5p/ratios/nullsF/null-genie_mec-F.json	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	739	11443
