@@ -23,11 +23,11 @@
  ],
  "geometry": {
   "batch": 200,
-  "per_line": 10,
+  "per_line": 6,
   "max": 1999
  },
  "controller": {
-  "v": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/V/V-s3r2.npz",
+  "v": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/V/V-s3v.npz",
   "status_dir": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/status"
  },
  "queue": {
@@ -37,7 +37,7 @@
   "pool": "cpu",
   "qos": "shared",
   "throttle": 3,
-  "timelimit_h": 2,
+  "timelimit_h": 2.5,
   "billing": 32,
   "logs": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs",
   "products": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/tasks"
@@ -75,8 +75,7 @@
    "ratio": "docs/orchestration/state/s5p/ratios/altR/p1r-w3-nuwro-over-genie-pt-pz-eavail.json",
    "truth": "ratio_nd",
    "amplitudes": [
-    1.0,
-    0.5
+    1.0
    ],
    "n": 200,
    "seed_base": 1450000
@@ -85,8 +84,7 @@
    "ratio": "docs/orchestration/state/s5p/ratios/altR/p2r-d5-nuwro-over-genie-q3-given-eavail-w.json",
    "truth": "cond_ratio",
    "amplitudes": [
-    1.0,
-    0.5
+    1.0
    ],
    "n": 200,
    "seed_base": 1460000
@@ -95,11 +93,40 @@
    "ratio": "docs/orchestration/state/s5p/ratios/altR/p3r-w2-genie-mec-over-cv-eavailW.json",
    "truth": "ratio_nd",
    "amplitudes": [
-    1.0,
-    0.5
+    1.0
    ],
    "n": 200,
    "seed_base": 1470000
+  },
+  "P1g": {
+   "ratio": "docs/orchestration/state/s5p/ratios/altR/p1r-w3-nuwro-over-genie-pt-pz-eavail.json",
+   "truth": "ratio_nd",
+   "amplitudes": [
+    1.0
+   ],
+   "n": 200,
+   "seed_base": 1480000,
+   "null": "GENIE_2_12_10_CV"
+  },
+  "P2g": {
+   "ratio": "docs/orchestration/state/s5p/ratios/altR/p2r-d5-nuwro-over-genie-q3-given-eavail-w.json",
+   "truth": "cond_ratio",
+   "amplitudes": [
+    1.0
+   ],
+   "n": 200,
+   "seed_base": 1490000,
+   "null": "GENIE_2_12_10_CV"
+  },
+  "P3g": {
+   "ratio": "docs/orchestration/state/s5p/ratios/altR/p3r-w2-genie-mec-over-cv-eavailW.json",
+   "truth": "ratio_nd",
+   "amplitudes": [
+    1.0
+   ],
+   "n": 200,
+   "seed_base": 1500000,
+   "null": "GENIE_2_12_10_CV"
   }
  },
  "evaluator": {
@@ -151,7 +178,7 @@
    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j20.npz"
   ],
   "data_central": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz",
-  "v_ensemble_glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/pilot/null_mnvtune/null_mnvtune_s*.npz",
+  "v_ensemble_glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3v/pilot/null_mnvtune/null_mnvtune_s*.npz",
   "v_ensemble_n": 200,
   "shift_coefficients": [
    0.0,
@@ -161,23 +188,28 @@
   "process_shift": {
    "MnvTune_v1": {
     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-mnvtune_v1.npz",
-    "sha256": "FILLED AT FREEZE"
+    "sha256": "FILLED AT FREEZE",
+    "mode": "bias_aligned_upper"
    },
    "GENIE_2_12_10_CV": {
     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-genie_cv.npz",
-    "sha256": "FILLED AT FREEZE"
+    "sha256": "FILLED AT FREEZE",
+    "mode": "bias_aligned_upper"
    },
    "GENIE_2_12_10_MEC": {
     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-genie_mec.npz",
-    "sha256": "FILLED AT FREEZE"
+    "sha256": "FILLED AT FREEZE",
+    "mode": "bias_aligned_upper"
    },
    "NuWro_21_09": {
     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-nuwro_cv.npz",
-    "sha256": "FILLED AT FREEZE"
+    "sha256": "FILLED AT FREEZE",
+    "mode": "bias_aligned_upper"
    },
    "GiBUU_2019": {
     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-gibuu_cv.npz",
-    "sha256": "FILLED AT FREEZE"
+    "sha256": "FILLED AT FREEZE",
+    "mode": "bias_aligned_upper"
    }
   }
  }

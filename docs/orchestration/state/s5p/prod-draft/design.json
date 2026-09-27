@@ -47,7 +47,7 @@
   "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j20.npz"
  ],
  "data_central": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz",
- "v_ensemble_glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/pilot/null_mnvtune/null_mnvtune_s*.npz",
+ "v_ensemble_glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3v/pilot/null_mnvtune/null_mnvtune_s*.npz",
  "v_ensemble_n": 200,
  "shift_coefficients": [
   0.0,
@@ -57,23 +57,28 @@
  "process_shift": {
   "MnvTune_v1": {
    "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-mnvtune_v1.npz",
-   "sha256": "FILLED AT FREEZE"
+   "sha256": "FILLED AT FREEZE",
+   "mode": "bias_aligned_upper"
   },
   "GENIE_2_12_10_CV": {
    "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-genie_cv.npz",
-   "sha256": "FILLED AT FREEZE"
+   "sha256": "FILLED AT FREEZE",
+   "mode": "bias_aligned_upper"
   },
   "GENIE_2_12_10_MEC": {
    "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-genie_mec.npz",
-   "sha256": "FILLED AT FREEZE"
+   "sha256": "FILLED AT FREEZE",
+   "mode": "bias_aligned_upper"
   },
   "NuWro_21_09": {
    "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-nuwro_cv.npz",
-   "sha256": "FILLED AT FREEZE"
+   "sha256": "FILLED AT FREEZE",
+   "mode": "bias_aligned_upper"
   },
   "GiBUU_2019": {
    "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-gibuu_cv.npz",
-   "sha256": "FILLED AT FREEZE"
+   "sha256": "FILLED AT FREEZE",
+   "mode": "bias_aligned_upper"
   }
  },
  "nulls": {
@@ -131,27 +136,39 @@
  "power": {
   "P1_a1.0": {
    "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P1_a1.0/pow_P1_a1.0_s*.npz",
-   "surrogate_seed0": 1951000
-  },
-  "P1_a0.5": {
-   "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P1_a0.5/pow_P1_a0.5_s*.npz",
-   "surrogate_seed0": 1950500
+   "surrogate_seed0": 1951000,
+   "n": 200,
+   "null": "MnvTune_v1"
   },
   "P2_a1.0": {
    "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P2_a1.0/pow_P2_a1.0_s*.npz",
-   "surrogate_seed0": 1961000
-  },
-  "P2_a0.5": {
-   "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P2_a0.5/pow_P2_a0.5_s*.npz",
-   "surrogate_seed0": 1960500
+   "surrogate_seed0": 1961000,
+   "n": 200,
+   "null": "MnvTune_v1"
   },
   "P3_a1.0": {
    "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P3_a1.0/pow_P3_a1.0_s*.npz",
-   "surrogate_seed0": 1971000
+   "surrogate_seed0": 1971000,
+   "n": 200,
+   "null": "MnvTune_v1"
   },
-  "P3_a0.5": {
-   "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P3_a0.5/pow_P3_a0.5_s*.npz",
-   "surrogate_seed0": 1970500
+  "P1g_a1.0": {
+   "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P1g_a1.0/pow_P1g_a1.0_s*.npz",
+   "surrogate_seed0": 1981000,
+   "n": 200,
+   "null": "GENIE_2_12_10_CV"
+  },
+  "P2g_a1.0": {
+   "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P2g_a1.0/pow_P2g_a1.0_s*.npz",
+   "surrogate_seed0": 1991000,
+   "n": 200,
+   "null": "GENIE_2_12_10_CV"
+  },
+  "P3g_a1.0": {
+   "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P3g_a1.0/pow_P3g_a1.0_s*.npz",
+   "surrogate_seed0": 2001000,
+   "n": 200,
+   "null": "GENIE_2_12_10_CV"
   }
  }
 }
