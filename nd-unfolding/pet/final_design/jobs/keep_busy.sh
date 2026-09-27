@@ -65,10 +65,13 @@ lane_seq() {   # GPU STEM... -> "( worker on STEM1 ; worker on STEM2 ; ... )" ov
 INTER1=(dev2Q s3n_long dev3N_l s3n_slow s4s_a2 s4f_a2)
 INTER2_01=(s3n_long dev3N_l s3n_slow dev2Q s4s_a2 s4f_a2)
 INTER2_23=(dev3N_l dev3N_h s3n_long s3n_slow s4f_a2 s4s_a2)
-launch_inter() {   # NAME "lane1 & lane2 & ..." LOGDIR
-  local name=$1 cmd=$2 log=$3
+# gpu_shared_interactive (a separate QOS, 2 jobs per user, interactive priority): two 2-GPU allocations
+SINT1=(s3n_long dev3N_l s3n_slow s4s_a2 s4f_a2)
+SINT2=(dev3N_l s3n_long s3n_slow s4f_a2 s4s_a2)
+launch_inter() {   # NAME "lane1 & lane2 & ..." LOGDIR [QOS GPUS CPUS]
+  local name=$1 cmd=$2 log=$3 qos=${4:-interactive} ng=${5:-4} nc=${6:-128}
   mkdir -p "$log"
-  ( cd "$log" && nohup srun -A m3246_g -q interactive -C gpu -N 1 --ntasks=1 -G 4 -c 128 -t 04:00:00 \
+  ( cd "$log" && nohup srun -A m3246_g -q "$qos" -C gpu -N 1 --ntasks=1 -G "$ng" -c "$nc" -t 04:00:00 \
       -J "$name" --export=ALL,MINE="$M",MINE_COMMIT="$S" bash -c "$cmd wait" \
       > "$log/$name-$(date +%s).log" 2>&1 < /dev/null & )
   echo "$(date -u +%FT%TZ) $name: $cmd" >> "$B/keep_busy.log"
@@ -89,6 +92,13 @@ while (( $(date +%s) < stop_epoch )) && [[ ! -e $B/keep_busy.stop ]]; do
     for g in 2 3; do c+="$(lane_seq $g "${INTER2_23[@]}")"; done
     [[ -n "$c" ]] && launch_inter pfd-inter2 "$c" "$B/s4f"
   fi
+  for k in 1 2; do
+    if ! grep -q "^pfd-sint$k " <<<"$q"; then
+      eval "lst=(\"\${SINT$k[@]}\")"
+      c=""; for g in 0 1; do c+="$(lane_seq $g "${lst[@]}")"; done
+      [[ -n "$c" ]] && launch_inter pfd-sint$k "$c" "$B/s3p" shared_interactive 2 64
+    fi
+  done
   # a debug chain holds 2 submissions (running + queued successor); keep two chains (<= 4 of 5)
   nd=$(grep -c ' gpu_debug$' <<<"$q" || true)
   if (( nd <= 2 )); then
