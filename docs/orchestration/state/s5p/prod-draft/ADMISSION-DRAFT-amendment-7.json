@@ -1,0 +1,49 @@
+{
+ "schema": "s5p-contract-amendment/1",
+ "amends": "docs/orchestration/state/s5p/contract.json",
+ "number": 7,
+ "stage": "3 -> 4/7: the production admission of the joint-test branch (handoff Stage 3 exit)",
+ "status": "DRAFT for independent review round 2. NOT frozen: it becomes amendment 7 only when a later commit adds docs/orchestration/state/s5p/contract-amendment-7-production-admission.json with the review's required changes and the pilot-measured values filled in; nothing here admits a job.",
+ "branch": "joint-5D inference only. The measurement branch is not admitted (amendment 4; its disposition does not depend on the contaminated D1: state/s5p/stage3/envelope-receipt.json). Stages 4-6 of the handoff therefore construct, validate and adopt no measurement product; their content for this branch is the calibration and power ensembles (construction), their verification and the sequential stopping rule (validation/assurance) and the independently verified evaluator output (the only adoption-like act: recording the joint result; no adopted measurement bytes change).",
+ "claims": {
+  "family": "for each of the five predictions G (MnvTune v1, GENIE 2.12.10 CV, GENIE 2.12.10 + Valencia MEC, NuWro 21.09, GiBUU 2019; the last three and GENIE CV flux-repaired, KNOWN_ISSUES 83): H0(G) 'the true cross sections of the 109 supported J cells (GiBUU: the p_parallel < 6 GeV/c domain) equal G's'; two tests each (total, shape-only), 10 tests",
+  "rejection": "H0(G) is rejected at familywise 0.05 when the Holm step on the CLAIM p-values (the largest p over the process-shift variants c in (0, 1/2, 1), amendment 6) rejects it AND the 95% Clopper-Pearson interval of the tail probability at the stopped B lies entirely below the Holm threshold applied; an interval straddling it is 'undetermined at that level'",
+  "non_rejection": "reported with the power of the same test against P1r-P3r (amplitudes 1 and 0.5, levels 0.05 and 0.005, claim rule); low power is a limitation, never agreement",
+  "conditions_stated_with_every_claim": [
+   "the null truth is G at the fine 5D grid (fine-ratio null; within a fine cell MnvTune's shape); the F2 measurement shows the coarse alternative would have moved the J cells by 0.65-2.8% (median), so this conditioning is at a finer level than the effect it removes",
+   "the MC detector simulation per event beyond the drawn detector bands (MinosEfficiency, GEANT neutron/pion/proton) and the linear lateral surrogate (five bands)",
+   "the pseudo-experiment process unfolds with half the MC; the data with all of it: bracketed by the variants c D (D measured per null, F4)",
+   "GiBUU: E_nu > 20 GeV absent (KNOWN_ISSUES 82), domain p_parallel < 6 GeV/c; all generators: E_nu > 100 GeV absent (the data flux integral ends at 100 GeV)",
+   "the predictions' own finite MC enters as diag Var(mu_G) in the metric and as a drawn residual term"
+  ]
+ },
+ "calibration": {
+  "process": "s5p_nullexp.py at the null truth, each experiment: fresh Poisson pseudo-data from half B of the MC and background source C, refinement refit, R (5 iterations) on half A; per-experiment nuisance draws applied to the pseudo-data source: one PPFX flux universe (of 100), one interaction-model universe coherently for the background source and the signal response (fine-cell truth-preserving), each of the four weight-only detector bands at a random +-1 sigma endpoint; downstream surrogates: lateral z_b Delta_b (five bands, Delta from the ten real-data endpoint unfolds), normalization 1.4% z, the data's rounding noise (20 real-data jitters), the prediction's finite-MC residual",
+  "sequential_rule": "batches of 200 seeds in fixed order per null, at most 1999 (10 batches); before each batch s5p_seqstop.py evaluates both claim p-values on the products present and stops the null when s5p_inference.sequential_decision stops both (99.5% Clopper-Pearson look interval: no decision threshold straddled, T7 precision met at the point estimate, or an upper end below every threshold); the final B is recorded; p = (k + 1)/(B + 1) with the 95% interval reported",
+  "seeds": "calibration 1200000 + 20000 i (i = 0 MnvTune, 1 GENIE CV, 2 GENIE MEC, 3 NuWro, 4 GiBUU), power 1450000/1460000/1470000 + 1000 a; the generator refuses overlapping ranges",
+  "metric": "W = V + diag Var(mu_G); V = standardized Ledoit-Wolf covariance (s5p_joint build-v) of the 200-experiment MnvTune-null design pilot (s3r2: GEANT from the bank, no MinosEfficiency; V sets power only)"
+ },
+ "first_production_jobs": [
+  "the weight-only detector dump (repaired dtype; fresh admission in the production stage); its GEANT universes checked against the bank's (rows and weights)",
+  "F4 at the NuWro fine null (half vs quarter, seeds 970000-970003) and the F2 NuWro-fine asimov (after the fine_weight zero-weight repair)",
+  "then the calibration lanes (one queue per null) and the power lane"
+ ],
+ "validation_and_assurance": {
+  "rank_exactness": "within the pseudo process the rank p-value is exact for any B; implementation protected by the unit and end-to-end tests of s5p_joint/s5p_seqstop and disjoint seed ranges",
+  "process_sensitivity": "implied size of the unshifted test at c = 1/2 and 1 reported per null (amendment 6 T6 size clause); D is at noise level at the four nulls measured (median |D|/f 0.03-0.17%)",
+  "evaluator_verification": "an independent re-computation of every p-value from the products (a reviewer's own code) before the joint result is recorded"
+ },
+ "power": "P1r (W3), P2r (D5), P3r (W2) rebuilt from the repaired predictions, on the MnvTune-null truth, amplitudes 1 and 0.5, 200 each (1200 experiments), against the MnvTune calibration ensemble; T6 power >= 0.80 at 0.005 under the claim rule for the shape test at a = 1 is the target; the design pilot's development power (committed P1-P3, 50 each) is reported for review",
+ "costs_and_reserves": {
+  "measured_seconds_per_experiment": "expectation construction without nuisances ~400 s (F4, 28 experiments); the nuisance construction's time is measured by the design pilot and substituted here before the freeze",
+  "worst_case": "5 x 1999 + 1200 = 11,195 experiments + ~0.5 node-h of first jobs; at 450 s: 1,399 step-h = 175 CPU node-h (8 steps per node) x 1.25 packing = 219 CPU-equivalent node-h",
+  "expected": "sequential stopping at 4-6 batches per null (bulk p: ~800 draws for the 99.5% absolute half-width 0.05; k = 0: ~1,200): ~5,000-7,000 experiments, 100-140 CPU-equivalent node-h",
+  "placement": "a 'production' stage of 150 CPU node-h (unallocated CPU 181.620 -> 31.620) and the power lane on the GPU pool (37 GPU node-h of the 74.688 unallocated: 4 steps per GPU node); verification/repair (62.037 CPU, 22.981 GPU) untouched; if the production stage is exhausted before every null stops, the ensembles stop where they are, p-values stay valid at their B with their intervals, and only determined decisions are claimed",
+  "wall_clock": "~20 concurrent unfolds (2 CPU nodes shared + 4 GPUs): ~180 experiments per hour, ~30-40 h expected"
+ },
+ "infeasible_inference_identified": [
+  "no measurement (branch not admitted)",
+  "no test at a finer resolution than the J cells",
+  "no GiBUU statement above p_parallel 6 GeV/c"
+ ]
+}
