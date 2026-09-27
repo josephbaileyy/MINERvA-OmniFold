@@ -1,0 +1,2 @@
+# s5p amendment 3 study I, detector dump only (CORRECTIVE: the collector drops the 2,801 sentinel rows the npz keeps; the dump now aligns on the non-sentinel rows; the lateral pilot line succeeded and is not repeated)
+dump_detector	s5p_input_dumps.py	detector	--omnifile	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--out	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector

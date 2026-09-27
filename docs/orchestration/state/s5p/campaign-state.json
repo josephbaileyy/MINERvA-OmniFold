@@ -112,6 +112,14 @@
   {
    "utc": "2026-09-27T02:20Z",
    "what": "study K: the B0 departure traces (58904830_1-4) ran past 9.4 h against a 10 h limit sized from the nominal trace (8.2 h); the tracer writes only at the end. Prepared the corrective resubmission (s2-conv-b0r-tasks.tsv, queue s2-conv-r.q: 24 h limit, per-iteration checkpoints at k = 10...175 via s5p_converge.install_checkpoints), launched only after the original tasks leave the queue; a line whose product exists is skipped."
+  },
+  {
+   "utc": "2026-09-27T04:20Z",
+   "what": "study I: the detector dump (58917890_0) refused to write, as designed: the current collector drops the 2,801 truth-sentinel rows the older npz keeps (32,846,302 vs 32,849,103 rows). Repaired: align on the npz's non-sentinel rows, verify equality there, keep the sentinel rows at CV weights (declared); re-run alone (s2-dump2-tasks.tsv). The lateral pilot (58917890_1) completed in 12 min (1.55 GB npz). Consequence recorded for Stage 4: lateral endpoint npz files lack the sentinel rows, so a lateral band's shift must be taken against a CV product without them."
+  },
+  {
+   "utc": "2026-09-27T04:20Z",
+   "what": "study K capacity probe: the 100-iteration array (58904836, 16 h limit) has no checkpoints and may time out; a checkpointable 10-iteration run of the same probe (s2-conv-cap10-tasks.tsv; identical first 10 iterations by determinism) is queued on the GPU pool; the rule needs k <= 5 only (capacity affordable only at 5 iterations)."
   }
  ],
  "findings": [

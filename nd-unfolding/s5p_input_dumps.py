@@ -91,12 +91,23 @@ def detector(a) -> int:
     bz = np.load(a.bkg, allow_pickle=True)
     MCgen = np.column_stack([sig["truth_pt"], sig["truth_pz"], *sig["truth_extras"]]).astype(np.float32)
     MCreco = np.column_stack([sig["reco_pt"], sig["reco_pz"], *sig["reco_extras"]]).astype(np.float32)
-    same("MCgen", MCgen, z["MCgen"])
-    same("MCreco", MCreco, z["MCreco"])
-    same("pass_reco", sig["pass_reco"], z["pass_reco"])
-    same("pass_truth", sig["pass_truth"], z["pass_truth"])
-    same("w_truth", sig["w_truth"], z["w_truth"])
-    same("w_reco", sig["w_reco"], z["w_reco"])
+    # The collector's finite-observable contract drops the -9999 truth-sentinel rows that the npz (an earlier
+    # dump) keeps (KNOWN_ISSUES 76). Align on the npz's non-sentinel rows and verify equality there; the
+    # sentinel rows keep their CV weights in every universe (declared; 0.011% of the reco-passing weight).
+    sentinel = np.any(np.asarray(z["MCgen"]) < -9000, axis=1)
+    if MCgen.shape[0] == z["MCgen"].shape[0]:
+        rows = np.arange(MCgen.shape[0])
+    elif MCgen.shape[0] == int((~sentinel).sum()):
+        rows = np.flatnonzero(~sentinel)
+    else:
+        raise RuntimeError(f"collected {MCgen.shape[0]} signal rows; the npz has {z['MCgen'].shape[0]} "
+                           f"({int(sentinel.sum())} sentinel rows)")
+    same("MCgen", MCgen, z["MCgen"][rows])
+    same("MCreco", MCreco, z["MCreco"][rows])
+    same("pass_reco", sig["pass_reco"], z["pass_reco"][rows])
+    same("pass_truth", sig["pass_truth"], z["pass_truth"][rows])
+    same("w_truth", sig["w_truth"], z["w_truth"][rows])
+    same("w_reco", sig["w_reco"], z["w_reco"][rows])
     same("measured", np.column_stack([meas_pt, meas_pz, *meas_ex]).astype(np.float32), z["measured"])
     denom_cv, _ = und.histnd([td["pt"], td["pz"]] + td["extras"], td["w"], edges)
     same("denom_nd", denom_cv, z["denom_nd"])
@@ -107,7 +118,11 @@ def detector(a) -> int:
     for k, (b, i) in enumerate(unis):
         tag = f"{b}_{i}"
         dn, _ = und.histnd([td["pt"], td["pz"]] + td["extras"], td["extra_w"][k], edges)
-        arrays = {"wt": np.asarray(sig["extra_wt"][k], np.float32), "wr": np.asarray(sig["extra_wr"][k], np.float32),
+        wt_full = np.asarray(z["w_truth"], np.float64).copy()
+        wr_full = np.asarray(z["w_reco"], np.float64).copy()
+        wt_full[rows] = sig["extra_wt"][k]
+        wr_full[rows] = sig["extra_wr"][k]
+        arrays = {"wt": wt_full.astype(np.float32), "wr": wr_full.astype(np.float32),
                   "bkgw": np.asarray(bkg_uw[k], np.float32), "denom_nd": np.asarray(dn, np.float64)}
         for key, arr in arrays.items():
             path = a.out / f"{tag}_{key}.npy"
@@ -118,7 +133,8 @@ def detector(a) -> int:
     receipt = {"schema": "s5p-detector-dump/1", "omnifile": str(a.omnifile), "npz": str(a.npz), "npz_sha256": sha256(a.npz),
                "bkg_dump": str(a.bkg), "bkg_sha256": sha256(a.bkg), "universes": [f"{b}:{i}" for b, i in unis],
                "cv_reproduced": ["MCgen", "MCreco", "pass_reco", "pass_truth", "w_truth", "w_reco", "measured", "denom_nd",
-                                 "bkg_reco", "bkg_w"], "files_sha256": written, "seconds": round(time.time() - t0, 1),
+                                 "bkg_reco", "bkg_w"], "aligned_rows": int(rows.size), "sentinel_rows_kept_at_cv": int(z["MCgen"].shape[0] - rows.size),
+               "files_sha256": written, "seconds": round(time.time() - t0, 1),
                "code_sha256": sha256(Path(__file__).resolve())}
     (a.out / "detector-dump.json").write_text(json.dumps(receipt, indent=1) + "\n")
     print(json.dumps({"written": len(written), "seconds": receipt["seconds"]}))
