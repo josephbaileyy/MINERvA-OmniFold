@@ -220,8 +220,10 @@ def fine_weight(gen: np.ndarray, edges: list, w_truth: np.ndarray, ratio: dict, 
     rho = load_fine_rho(ratio)
     ok, idx = cell_of(gen, edges)
     raw = 1.0 + amplitude * (rho[np.ravel_multi_index(idx, [len(e) - 1 for e in fe])] - 1.0)
-    if np.any(raw <= 0):
-        raise ValueError("amplitude makes the reweight non-positive")
+    # zero is legitimate here (a generator empty in a fine cell empties the null truth there, amendment 6);
+    # only a negative weight is refused (s5p 2026-09-27: the NuWro fine null, rho_min = 0, was refused)
+    if np.any(raw < 0):
+        raise ValueError("amplitude makes the reweight negative")
     r = np.ones(gen.shape[0])
     r[ok] = raw
     return r

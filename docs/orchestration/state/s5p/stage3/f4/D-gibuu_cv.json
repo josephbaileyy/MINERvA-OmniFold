@@ -1,0 +1,40 @@
+{
+ "schema": "s5p-pairdiff/1",
+ "label": "F4 D at the gibuu_cv fine null: half minus quarter unfolding MC, expectation process, seeds 970000-970003",
+ "n_pairs": 4,
+ "cells": 109,
+ "median_abs_D_over_fB": 0.0017254310971860285,
+ "max_abs_D_over_fB": 0.00910753095890311,
+ "median_abs_D_over_se": 0.860099079264823,
+ "out": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-gibuu_cv.npz",
+  "sha256": "562d19076ca30a0d490c2d4f79232301c7ea001ce4cd9ee2c0ce8de3e798db54"
+ },
+ "inputs": [
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970000.npz",
+   "a_sha256": "0a73cf532a74673f8179a1cae92f8e282db4c6e68a2516261fda46e127eb2fbb",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970000.npz",
+   "b_sha256": "eeae10f714b903c4474df217f109a41e4c1053856aaa0fb5b86d2325a0560ed3"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970001.npz",
+   "a_sha256": "8eb7b7d306cdbed2ec65262da64707c0dde9da0517d9c9cc0b7d463b1e061a22",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970001.npz",
+   "b_sha256": "10f3df3fe9301b77a942ec3143fa465f76d655b4e7f1bcc85973d84df9908ab9"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970002.npz",
+   "a_sha256": "52c7bc5b322aa9ece8065dcfa3a3432687c5c0c9180cdd6b831fe66f9b4010c7",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970002.npz",
+   "b_sha256": "0eda39917b2c90aa9380efe0667384dc4f1d7a5c6405d04d7d475e62cc7f386a"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970003.npz",
+   "a_sha256": "13ef90915b196fde44b11af95172c6162cb07292c2bcae236b0b26b37f4f1f42",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970003.npz",
+   "b_sha256": "2c70ada9e2f1c15ce828f84faf413f57255f27da59d778d9df84e8e71c6a22c0"
+  }
+ ],
+ "code_sha256": "306b8dc8ead51ebac0657acf3931dbe400cbf6ac322781a963d6e3681680de3e"
+}

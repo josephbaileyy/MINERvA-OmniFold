@@ -1,0 +1,40 @@
+{
+ "schema": "s5p-pairdiff/1",
+ "label": "F4 D at the MnvTune null: half minus quarter unfolding MC, expectation process, seeds 970000-970003",
+ "n_pairs": 4,
+ "cells": 109,
+ "median_abs_D_over_fB": 0.00028656211629452314,
+ "max_abs_D_over_fB": 0.004442016135777667,
+ "median_abs_D_over_se": 0.5751162263395756,
+ "out": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-mnvtune_v1.npz",
+  "sha256": "987d0eb60212ccaf3cde7f7279060c90abeb6ecac9e31f22808db4961c5cab0a"
+ },
+ "inputs": [
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970000.npz",
+   "a_sha256": "7ff283575c3339807221a0c45d5045d14b34e0fa7ff6ed80486fd17e462c63f7",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970000.npz",
+   "b_sha256": "f55e27afce60c20791ef820cc6732f6cdb8e1e0b1976a76a0225dc701151798c"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970001.npz",
+   "a_sha256": "56b1e1979313caa95dabe5326ecb075f4ec4547a789f639c2b62cae41e5890ee",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970001.npz",
+   "b_sha256": "90717157d5b269446bc7c4863c0f952dfd39f318c43a4334bc2ea24833c3b5cf"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970002.npz",
+   "a_sha256": "723f7ee2aabdf3c2886fc491ba1cf402becac4eebf0fd06806500a7d44c3eab1",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970002.npz",
+   "b_sha256": "87b98adddae248e42cfff619d0c8ebdc4ddae4f34de6b1221754ee8bbe52c159"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970003.npz",
+   "a_sha256": "b5b7ab468926ebcfce407f12e920c88a2096b331aad0d2bf8aab13a17f3a9c3b",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970003.npz",
+   "b_sha256": "e8a90518f007d5053c326d4afe8c72c942fb35e7048ed5b56f7f769050f307cc"
+  }
+ ],
+ "code_sha256": "306b8dc8ead51ebac0657acf3931dbe400cbf6ac322781a963d6e3681680de3e"
+}

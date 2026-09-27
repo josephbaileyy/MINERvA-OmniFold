@@ -134,6 +134,23 @@ class Tests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 st.hypothesis_weight(gen, EDGES, w, ratio)
 
+    def test_fine_weight_accepts_a_zero_rho_and_refuses_a_negative_weight(self):
+        import tempfile
+        gen, w = rows()
+        shape = tuple(len(e) - 1 for e in EDGES)
+        rho = np.ones(int(np.prod(shape)))
+        rho[0] = 0.0
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "rho.npz"
+            np.savez_compressed(f, rho=rho)
+            ratio = {"schema": "s5p-fine-ratio/1", "fine_edges": [e.tolist() for e in EDGES],
+                     "rho_npz": {"path": str(f), "sha256": st.sha256(f)}}
+            r = st.fine_weight(gen, EDGES, w, ratio, 1.0)
+            ok, idx = st.cell_of(gen, EDGES)
+            self.assertTrue(np.all(r[ok][np.ravel_multi_index(idx, shape) == 0] == 0.0))
+            with self.assertRaises(ValueError):
+                st.fine_weight(gen, EDGES, w, ratio, 2.0)  # 1 + 2 (0 - 1) < 0
+
 
 if __name__ == "__main__":
     unittest.main()

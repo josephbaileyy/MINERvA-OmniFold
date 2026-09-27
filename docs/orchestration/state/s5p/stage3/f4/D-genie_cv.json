@@ -1,0 +1,40 @@
+{
+ "schema": "s5p-pairdiff/1",
+ "label": "F4 D at the genie_cv fine null: half minus quarter unfolding MC, expectation process, seeds 970000-970003",
+ "n_pairs": 4,
+ "cells": 109,
+ "median_abs_D_over_fB": 0.0005679666588864155,
+ "max_abs_D_over_fB": 0.004659816741574324,
+ "median_abs_D_over_se": 0.6847949149207799,
+ "out": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-genie_cv.npz",
+  "sha256": "4d2917ca2651deebdecca7e74a569c42fcf1e6bca7b91e2be9f869af9fa81e7c"
+ },
+ "inputs": [
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_cv_half/f4_genie_cv_half_s970000.npz",
+   "a_sha256": "a1fa35bc6bf4d3bb0126918d75ea712e6823b222e16b7174133b051ecd7db689",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_cv_quarter/f4_genie_cv_quarter_s970000.npz",
+   "b_sha256": "6cddbc2669dec06d63aa15b7c675049adc1cf699491f01eb01ac3a2044a6cea7"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_cv_half/f4_genie_cv_half_s970001.npz",
+   "a_sha256": "dd558cfc7250c525f9d4ab9ae69c156097c02f4cd9b41f4ea21b4088dc85f341",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_cv_quarter/f4_genie_cv_quarter_s970001.npz",
+   "b_sha256": "34147b1fa49beb54654ad151dc556835a8245ea6ec4e44eb1b5257f7b1eee775"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_cv_half/f4_genie_cv_half_s970002.npz",
+   "a_sha256": "a88a7eb6d7d9de21a835055d05b2d6c8cc6e9620a55be92fce72b3d934502cba",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_cv_quarter/f4_genie_cv_quarter_s970002.npz",
+   "b_sha256": "047a6722044125d6f7e9a34696e4ac7b45849fce3bdddf6860aeb6bb0193e517"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_cv_half/f4_genie_cv_half_s970003.npz",
+   "a_sha256": "9e2110825317cfbc32ea76b979b33e0a10425ce4e6a1f28647b072f1d3604ac4",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_cv_quarter/f4_genie_cv_quarter_s970003.npz",
+   "b_sha256": "4a55a00cbce97b8ea264e9eecd8b4a3c616703132422360e322c18e400770ebb"
+  }
+ ],
+ "code_sha256": "306b8dc8ead51ebac0657acf3931dbe400cbf6ac322781a963d6e3681680de3e"
+}

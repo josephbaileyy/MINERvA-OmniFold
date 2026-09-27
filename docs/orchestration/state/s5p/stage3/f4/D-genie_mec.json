@@ -1,0 +1,40 @@
+{
+ "schema": "s5p-pairdiff/1",
+ "label": "F4 D at the genie_mec fine null: half minus quarter unfolding MC, expectation process, seeds 970000-970003",
+ "n_pairs": 4,
+ "cells": 109,
+ "median_abs_D_over_fB": 0.0004877449131159073,
+ "max_abs_D_over_fB": 0.0045674710729989325,
+ "median_abs_D_over_se": 0.5951048555436376,
+ "out": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-genie_mec.npz",
+  "sha256": "c727111ff9d873bb57333406bb658e506dd4ac243ef8a12230d8e0849d26487c"
+ },
+ "inputs": [
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_mec_half/f4_genie_mec_half_s970000.npz",
+   "a_sha256": "1dd7857446e7f1ee8bf538394c86049ad9674edbb83614008f3f42515d698ef7",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_mec_quarter/f4_genie_mec_quarter_s970000.npz",
+   "b_sha256": "774dda7e19fa82b99dff4bcadd66b4f16743394fb876e6528209d0dc2e52a39c"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_mec_half/f4_genie_mec_half_s970001.npz",
+   "a_sha256": "db6ec2c37c28d7df80f25147546b24bb3dfc5bb6d8ba5b5bea5080d3ec661a83",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_mec_quarter/f4_genie_mec_quarter_s970001.npz",
+   "b_sha256": "1bc4cc3a642baef3b0e31839e10a25b84c7bf1ea4a80c7222435c96ac51c6f21"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_mec_half/f4_genie_mec_half_s970002.npz",
+   "a_sha256": "bf0dd8efadaff1b5f254321977a629d41275908f529804a6d6b5b2001d92d58c",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_mec_quarter/f4_genie_mec_quarter_s970002.npz",
+   "b_sha256": "a407f71253f9c8876a38ca041cf26c89bd45e880de6418568a4856c46a374cf2"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_mec_half/f4_genie_mec_half_s970003.npz",
+   "a_sha256": "93d85f55cf1faaede6f1f451fedecee6884bd31c4c9f30b672ccf8c75c42e5bb",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/genie_mec_quarter/f4_genie_mec_quarter_s970003.npz",
+   "b_sha256": "c99ed19815c8d0e85abaae6e3c120678be8b6f86db68930480240f263c384ac2"
+  }
+ ],
+ "code_sha256": "306b8dc8ead51ebac0657acf3931dbe400cbf6ac322781a963d6e3681680de3e"
+}

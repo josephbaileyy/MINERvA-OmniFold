@@ -101,6 +101,10 @@
   {
    "path": "docs/orchestration/state/s5p/ratios/nullsJr/",
    "what": "coarse-ratio nulls of the same repaired predictions (the F2 comparison only; amendment-5 nullsJ files are superseded for the external generators)"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/stage3/f4/",
+   "what": "F4 MC-size shifts D (s5p_pairdiff summaries; the D npz on the cluster, sha256 in each file)"
   }
  ],
  "amendments": [
@@ -207,6 +211,10 @@
   {
    "utc": "2026-09-27T11:55Z",
    "what": "detector dump 58947238 ran 39 min and was refused by its own alignment guard: bkg_reco compared in float64 against the float32 reference background dump; cast repaired (s5p_input_dumps.py), not rerun in stage 3 (its corrective resubmission is spent); the dump moves to the production admission (amendment 6b); queue s3r-cpu.q stopped at its wait line by explicit PIDs; the pilot re-issued as s3r2 with GEANT from the bank"
+  },
+  {
+   "utc": "2026-09-27T12:15Z",
+   "what": "F4 phase B: the NuWro pair (tasks 4, 5 of 58945613) failed in 29 s: the NuWro fine null has rho = 0 in fallback cells where NuWro predicts nothing (allowed by amendment 6), and s5p_truths.fine_weight refused every non-positive weight; repaired to refuse only negative weights (test). Not rerun in stage 3 (its corrective resubmission is spent): the NuWro F4 pair and the NuWro-fine F2 asimov move to the production admission with the detector dump. D at the MnvTune, GENIE CV, GENIE MEC and GiBUU nulls: median |D|/f 0.03%, 0.06%, 0.05%, 0.17%, median |D|/se 0.58-0.86 (consistent with noise at four pairs)"
   }
  ],
  "findings": [
