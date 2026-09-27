@@ -28,7 +28,8 @@ final-bank scores (and `analysis/coverage.py` for §6.4). PET is diagnostic: not
 | 2026-09-26 | PET2-pretrained (P2preS1) fails S-N1 at K\* = 4 (step-1 weights 334–1,217) | rule Addendum item 2 | `results/` post-hoc, `DEVELOPMENT-20260926.md` |
 | 2026-09-26 | sizing (provisional): n_F = 30; library E4/E5 draws 60; E4 NI a quantified limit (1,770 draws) | §8, 2c.6, 3a.4 | `sizing/SIZING-20260926.md` |
 | 2026-09-26 | N2 failure of H2S1 K5 (0.095) and L128S1 K5 (0.091), located in the truth step; repair arm; S-N2 screen; re-freeze rule | Amendment 3b, rule Addendum 2 | `sizing/n2.json`, `DEVELOPMENT-20260926.md` |
-| 2026-09-27 | S-N2 decided so far (repair arm, S3P seed runs, `sizing/n2_arm_partial.json`): L64S1 K\*=4 **0.057 FAIL**; L128S1E16 K\*=4 **0.071 FAIL** (0.071 at k=5); CS1 K\*=6 **0.054 FAIL** (0.100 at k=5); earlier H2S1 K5 0.095, L128S1 K5 0.091 FAIL | finalist-rule Addendum 2, Amendment 3b | `scored/s3n` (cluster), `dev/n2_table.py` |
+| 2026-09-27 | S-N2 decided so far (repair arm, S3P seed runs, `sizing/n2_arm_partial.json`): L64S1 K\*=4 **0.057 FAIL**; L128S1E16 K\*=4 **0.071 FAIL** (0.071 at k=5); CS1 K\*=6 **0.054 FAIL** (0.100 at k=5); **H2S1T24 K\*=5 0.037 PASS** (0.042 at k=4; 0.092 at k=3); earlier H2S1 K5 0.095, L128S1 K5 0.091 FAIL | finalist-rule Addendum 2, Amendment 3b | `scored/s3n` (cluster), `dev/n2_table.py` |
+| 2026-09-27 | PET2 learning-rate-policy arm closed: P2preA1 (annealed step 1) stable, development tilt 0.928 at k = 5, but proton topology ≤ 0.225 < 0.25 at every k; P2scrA1 ≤ 0.06; no PET2 design passes the four screens | finalist rule | `results/` post-hoc (dev2Q) |
 
 ## Pending decisions (filled at the time they are taken)
 
