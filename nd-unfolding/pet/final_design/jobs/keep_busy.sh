@@ -21,7 +21,7 @@ declare -A OUTS=([dev2Pa]=dev2P [dev2Q]=dev2Q [dev2Ta]=dev2T [s3p_all]=s3p [s4f_
                  [dev3N_h]=dev3N [dev3N_l]=dev3N [s3n_short]=s3p [s3n_long]=s3p
                  [dev3X]=dev3X [s3x]=s3p [s3p_t24]=s3p [s3p_l24]=s3p
                  [s4f_a3]=s4f [s4s_a3]=s4s [s4f_a3_anchors]=s4f
-                 [s4f_a3e]=s4f [s4s_a3e]=s4s [s4f_a3e_anchors]=s4f)
+                 [s4f_a3e]=s4f [s4s_a3e]=s4s [s4f_a3e_anchors]=s4f [s4s_a3e_n40]=s4s)
 # debug rounds (1 worker per GPU, 30 min): the worker starts a row only if now + 1.1 x estimate + 150 s
 # < deadline (~1790 s after start), so an estimate must stay below ~1400 s or the chain runs nothing
 # measured 2026-09-27 at 1 run/GPU: CS1/L64S1 800-1,300 s fit; 24- and 16-epoch rows (1,600-2,900 s) do NOT
@@ -53,7 +53,7 @@ first_incomplete() { local s; for s in "$@"; do incomplete "$s" && { echo "$s"; 
 # manifest never collide), so a GPU whose manifest runs out moves on instead of idling until the
 # allocation ends; PET2 stems run 1 worker per GPU (33 GB), the others 2
 declare -A IT2=([dev2Pa]=2200 [dev2Q]=2200 [dev2Ta]=2900 [s3n_slow]=2950 [dev3N]=2000 [s3n_fast]=2000
-                [dev3N_h]=2600 [dev3N_l]=2850 [s3n_long]=2850 [s3n_short]=1350 [dev3X]=3400 [s3x]=3400 [s3p_t24]=2600 [s3p_l24]=2850 [s4f_a3]=2850 [s4s_a3]=2850 [s4f_a3e]=2850 [s4s_a3e]=2850
+                [dev3N_h]=2600 [dev3N_l]=2850 [s3n_long]=2850 [s3n_short]=1350 [dev3X]=3400 [s3x]=3400 [s3p_t24]=2600 [s3p_l24]=2850 [s4f_a3]=2850 [s4s_a3]=2850 [s4f_a3e]=2850 [s4s_a3e]=2850 [s4s_a3e_n40]=2850
                 [s3p_all]=1300 [s4f_a2]=1300 [s4s_a2]=1300)
 lane_seq() {   # GPU STEM... -> "( worker on STEM1 ; worker on STEM2 ; ... )" over the incomplete stems
   local g=$1; shift; local cmd="" st k sc
@@ -65,12 +65,12 @@ lane_seq() {   # GPU STEM... -> "( worker on STEM1 ; worker on STEM2 ; ... )" ov
   done
   [[ -n "$cmd" ]] && echo "( $cmd) & "
 }
-INTER1=(s3p_t24 s3p_l24 s4f_a3 s4s_a3 s4f_a3e s4s_a3e)
-INTER2_01=(s3p_l24 s3p_t24 s4s_a3 s4f_a3 s4s_a3e s4f_a3e)
-INTER2_23=(s3p_t24 s3p_l24 s4f_a3 s4s_a3 s4f_a3e s4s_a3e)
+INTER1=(s3p_t24 s3p_l24 s4f_a3 s4s_a3 s4f_a3e s4s_a3e_n40)
+INTER2_01=(s3p_l24 s3p_t24 s4s_a3 s4f_a3 s4s_a3e_n40 s4f_a3e)
+INTER2_23=(s3p_t24 s3p_l24 s4f_a3 s4s_a3 s4f_a3e s4s_a3e_n40)
 # gpu_shared_interactive (a separate QOS, 2 jobs per user, interactive priority): two 2-GPU allocations
-SINT1=(s3p_t24 s3p_l24 s4f_a3 s4s_a3 s4f_a3e s4s_a3e)
-SINT2=(s3p_l24 s3p_t24 s4s_a3 s4f_a3 s4s_a3e s4f_a3e)
+SINT1=(s3p_t24 s3p_l24 s4f_a3 s4s_a3 s4f_a3e s4s_a3e_n40)
+SINT2=(s3p_l24 s3p_t24 s4s_a3 s4f_a3 s4s_a3e_n40 s4f_a3e)
 launch_inter() {   # NAME "lane1 & lane2 & ..." LOGDIR [QOS GPUS CPUS]
   local name=$1 cmd=$2 log=$3 qos=${4:-interactive} ng=${5:-4} nc=${6:-128}
   mkdir -p "$log"
@@ -80,7 +80,7 @@ launch_inter() {   # NAME "lane1 & lane2 & ..." LOGDIR [QOS GPUS CPUS]
   echo "$(date -u +%FT%TZ) $name: $cmd" >> "$B/keep_busy.log"
 }
 if [[ ${DRY:-0} == 1 ]]; then      # print the decisions and exit
-  for st in s3p_t24 s3p_l24 s4f_a3 s4s_a3 s4f_a3_anchors s4f_a3e s4s_a3e; do incomplete "$st" && echo "$st incomplete" || echo "$st complete"; done
+  for st in s3p_t24 s3p_l24 s4f_a3 s4s_a3 s4f_a3_anchors s4f_a3e s4s_a3e_n40; do incomplete "$st" && echo "$st incomplete" || echo "$st complete"; done
   echo "debug -> $(first_claimable s4f_a3_anchors s4f_a3e_anchors)"
   echo "inter1 GPU0: $(lane_seq 0 "${INTER1[@]}")"; echo "inter2 GPU2: $(lane_seq 2 "${INTER2_23[@]}")"; exit 0
 fi
