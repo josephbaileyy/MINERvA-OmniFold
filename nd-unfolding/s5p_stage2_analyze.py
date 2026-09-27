@@ -90,15 +90,28 @@ def trace_functionals(p: dict) -> dict:
 def study_k(conv: Path, cells: Cells) -> dict:
     out = {}
     for family, kmax in (("b0", 200), ("cap", 100)):
-        runs = {}
+        runs, partial = {}, {}
         for f in sorted(conv.glob(f"k_{family}_*.npz")):
+            if f.name.endswith(".partial.npz") or ".partial" in f.name:
+                continue
             runs[f.stem.split("_", 2)[2]] = load(f)
+        for f in sorted(conv.glob(f"k_{family}_*.npz.partial.npz")):
+            truth = f.name[len(f"k_{family}_"):].split(".npz")[0]
+            if truth in runs:
+                continue
+            z = np.load(f, allow_pickle=False)
+            ref_meta = next(iter(runs.values()))["meta"] if runs else load(conv / "k_b0_nominal.npz")["meta"]
+            runs[truth] = {"fn_push": z["fn_push"], "fn_pull": z["fn_pull"], "fn_true": z["fn_true_A"],
+                           "reco_ew_push": z["reco_ew_push"], "reco_ew_true": z["reco_ew_true"], "reco_ew_prior": z["reco_ew_prior"],
+                           "reco5d_true": z["reco5d_true"], "reco5d_prior": z["reco5d_prior"],
+                           "meta": {"functional_names": ref_meta["functional_names"], "partial_through_k": int(z["k"])}}
+            partial[truth] = int(z["k"])
         if not runs:
             out[family] = {"missing": True}
             continue
         nominal = runs.get("nominal")
         ref = nominal if nominal is not None else load(conv / "k_b0_nominal.npz") if (conv / "k_b0_nominal.npz").exists() else None
-        fam = {"runs": {}, "M": {}}
+        fam = {"runs": {}, "M": {}, "partial_checkpoints": partial}
         for truth, p in runs.items():
             rows = trace_functionals(p)
             K = p["fn_push"].shape[0]
