@@ -47,16 +47,6 @@
  },
  "jobs": [
   {
-   "job": "58932367",
-   "label": "s5p_k_b0r",
-   "state": "RUNNING"
-  },
-  {
-   "job": "58904836",
-   "label": "s5p_k_cap (superseded diagnostic)",
-   "state": "RUNNING to its 16 h limit"
-  },
-  {
    "job": "58944840",
    "label": "F4 pair at the MnvTune null (s3r-cpu.q line 1)",
    "state": "admitted 08:45Z"
@@ -210,6 +200,10 @@
   {
    "utc": "2026-09-27T09:35Z",
    "what": "s5p_k_cap 58904836 (the superseded 100-iteration capacity probe, no checkpoints) reached its 16 h limit: TIMEOUT, no product; the capacity rule was decided on the completed checkpointed 10-iteration run 58934771 (amendment 4), so nothing depends on it; its charge is the measured elapsed"
+  },
+  {
+   "utc": "2026-09-27T09:45Z",
+   "what": "s5p_k_b0r 58932367 (the optional 200-iteration extension of the Stage-2 study-K departure traces) cancelled by the campaign after its checkpoints reached k = 100 (GiBUU, q3) and 125 (W1): the Stage-2 decisions used k <= 20 and are applied (amendment 4); the remaining ~6 h x 3 tasks would have held 0.375 of the 2-node concurrency while the shared partition is resource-bound and the stage-3 pilot waits. The checkpoints stay the study-K record beyond k = 20"
   }
  ],
  "findings": [
