@@ -44,4 +44,7 @@ Prior charges carried forward: CPU s5c 20.086 + s5n 4.601 + s5e 10.399 = 35.086;
 
 ## Progress
 
-See the state file. Records are added here as stages close.
+See the state file.
+
+- Stage 1 frozen: amendment 1 (use case, targets T1–T7, RD1/RD2/RD3), receipt `state/s5p/stage1/stage1_inspect.json`.
+- Stage 2: amendments 2–3 (studies N, C, K, P, I); exit [`RECORD-20260927-s5p-stage2-exit.md`](RECORD-20260927-s5p-stage2-exit.md) and amendment 4: `R` selected; measurement branch not admitted (T1/T2 unattainable); joint-test branch to Stage 3.

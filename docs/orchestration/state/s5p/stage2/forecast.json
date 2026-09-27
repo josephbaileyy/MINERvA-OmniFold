@@ -1,0 +1,274 @@
+{
+ "schema": "s5p-forecast/1",
+ "inputs": {
+  "measured_seconds": {
+   "pseudo": [
+    32,
+    52
+   ],
+   "data": [
+    50,
+    120
+   ],
+   "asimov": [
+    30,
+    172
+   ]
+  },
+  "packing": 1.25,
+  "counts": {
+   "stage3_asimov_vertices": 8,
+   "stage3_construction_pseudo": 140,
+   "stage3_prior_data": 6,
+   "bootstrap": 200,
+   "universes": 177,
+   "laterals": 10,
+   "priors": 0,
+   "jitters": 20,
+   "dump_node_h": 4.0,
+   "validation_pseudo": 1050,
+   "validation_sigma_pseudo": 200,
+   "nulls": 5,
+   "null_calibration": 199,
+   "null_validation": 100,
+   "power_pseudo": 600
+  },
+  "verification_fraction": 0.1,
+  "available_cpu_equivalent_node_h": {
+   "measurement": 160.0,
+   "inference": 79.0
+  },
+  "configurations": [
+   [
+    5,
+    0
+   ],
+   [
+    10,
+    0
+   ],
+   [
+    15,
+    0
+   ],
+   [
+    20,
+    0
+   ],
+   [
+    30,
+    0
+   ],
+   [
+    40,
+    0
+   ],
+   [
+    50,
+    0
+   ],
+   [
+    5,
+    3.4
+   ],
+   [
+    10,
+    3.4
+   ],
+   [
+    15,
+    3.4
+   ],
+   [
+    20,
+    3.4
+   ]
+  ],
+  "basis": {
+   "pseudo": "s5p Stage-2 products: nominal pseudo experiments at 5 iterations, median seconds_unfold 292 (N2/C1, 100 products; build, refinement and unfold) = 32 + 5 x 52; s5e traced 20-iteration pseudo runs give 62 s per iteration including tracer overhead",
+   "data": "s5p N1 data products at 5 iterations, median 647-663 s = 50 + 5 x 120",
+   "asimov": "s5p study-K traces: nominal 147 s per iteration, departures ~172-233 s per iteration (shared nodes); 172 used",
+   "capacity_factor": "s5e D5 and s5p cap10: 400/31 costs ~3.4x per iteration",
+   "available": "after stages 1-2: CPU 310.184 - 46.527 (development cap) - 62.037 (20% verification/repair) = 201.6 CPU node-h; GPU 114.904 - 17.235 - 22.981 = 74.7 GPU node-h = 37.3 CPU-node-equivalent (4 vs 8 steps per node); split for the forecast as 160 measurement + 79 inference",
+   "counts": "provisional Stage-3/4/5 counts of the measurement design (bootstrap 200, 177 vertical+detector universes, 10 lateral endpoints, 20 jitters, validation 1050 + 200 sigma-source experiments) and the inference design (5 nulls x (199 calibration + 100 validation), 600 power)"
+  }
+ },
+ "rows": [
+  {
+   "K": 5,
+   "capacity_factor": 1.0,
+   "pseudo_h": 0.0811111111111111,
+   "data_h": 0.18055555555555555,
+   "stage3": 2.2526041666666665,
+   "stage4": 15.510416666666668,
+   "stage5": 15.84201388888889,
+   "measurement": 33.60503472222223,
+   "verification": 3.360503472222223,
+   "inference": 26.55121527777778,
+   "measurement_plus_verification": 36.96553819444445,
+   "all": 63.51675347222223,
+   "fits_measurement": true,
+   "fits_all": true
+  },
+  {
+   "K": 10,
+   "capacity_factor": 1.0,
+   "pseudo_h": 0.15333333333333332,
+   "data_h": 0.3472222222222222,
+   "stage3": 4.287326388888888,
+   "stage4": 26.135416666666664,
+   "stage5": 29.947916666666664,
+   "measurement": 60.370659722222214,
+   "verification": 6.037065972222222,
+   "inference": 50.19270833333333,
+   "measurement_plus_verification": 66.40772569444444,
+   "all": 116.60043402777777,
+   "fits_measurement": true,
+   "fits_all": true
+  },
+  {
+   "K": 15,
+   "capacity_factor": 1.0,
+   "pseudo_h": 0.22555555555555556,
+   "data_h": 0.5138888888888888,
+   "stage3": 6.322048611111112,
+   "stage4": 36.760416666666664,
+   "stage5": 44.05381944444444,
+   "measurement": 87.13628472222223,
+   "verification": 8.713628472222224,
+   "inference": 73.83420138888889,
+   "measurement_plus_verification": 95.84991319444445,
+   "all": 169.68411458333333,
+   "fits_measurement": true,
+   "fits_all": true
+  },
+  {
+   "K": 20,
+   "capacity_factor": 1.0,
+   "pseudo_h": 0.29777777777777775,
+   "data_h": 0.6805555555555556,
+   "stage3": 8.356770833333332,
+   "stage4": 47.38541666666667,
+   "stage5": 58.159722222222214,
+   "measurement": 113.90190972222221,
+   "verification": 11.390190972222221,
+   "inference": 97.47569444444444,
+   "measurement_plus_verification": 125.29210069444443,
+   "all": 222.76779513888886,
+   "fits_measurement": true,
+   "fits_all": true
+  },
+  {
+   "K": 30,
+   "capacity_factor": 1.0,
+   "pseudo_h": 0.44222222222222224,
+   "data_h": 1.0138888888888888,
+   "stage3": 12.426215277777777,
+   "stage4": 68.63541666666666,
+   "stage5": 86.37152777777779,
+   "measurement": 167.43315972222223,
+   "verification": 16.743315972222224,
+   "inference": 144.75868055555557,
+   "measurement_plus_verification": 184.17647569444446,
+   "all": 328.93515625000003,
+   "fits_measurement": false,
+   "fits_all": false
+  },
+  {
+   "K": 40,
+   "capacity_factor": 1.0,
+   "pseudo_h": 0.5866666666666667,
+   "data_h": 1.3472222222222223,
+   "stage3": 16.49565972222222,
+   "stage4": 89.88541666666669,
+   "stage5": 114.58333333333334,
+   "measurement": 220.96440972222226,
+   "verification": 22.096440972222226,
+   "inference": 192.04166666666666,
+   "measurement_plus_verification": 243.06085069444447,
+   "all": 435.10251736111115,
+   "fits_measurement": false,
+   "fits_all": false
+  },
+  {
+   "K": 50,
+   "capacity_factor": 1.0,
+   "pseudo_h": 0.7311111111111112,
+   "data_h": 1.6805555555555556,
+   "stage3": 20.565104166666668,
+   "stage4": 111.13541666666666,
+   "stage5": 142.79513888888889,
+   "measurement": 274.4956597222222,
+   "verification": 27.449565972222217,
+   "inference": 239.3246527777778,
+   "measurement_plus_verification": 301.9452256944444,
+   "all": 541.2698784722222,
+   "fits_measurement": false,
+   "fits_all": false
+  },
+  {
+   "K": 5,
+   "capacity_factor": 3.4,
+   "pseudo_h": 0.2544444444444444,
+   "data_h": 0.5805555555555556,
+   "stage3": 7.135937500000001,
+   "stage4": 41.01041666666667,
+   "stage5": 49.69618055555556,
+   "measurement": 97.84253472222223,
+   "verification": 9.784253472222224,
+   "inference": 83.2907986111111,
+   "measurement_plus_verification": 107.62678819444444,
+   "all": 190.91758680555554,
+   "fits_measurement": true,
+   "fits_all": true
+  },
+  {
+   "K": 10,
+   "capacity_factor": 3.4,
+   "pseudo_h": 0.5,
+   "data_h": 1.1472222222222221,
+   "stage3": 14.053993055555555,
+   "stage4": 77.13541666666666,
+   "stage5": 97.65625,
+   "measurement": 188.8456597222222,
+   "verification": 18.88456597222222,
+   "inference": 163.671875,
+   "measurement_plus_verification": 207.7302256944444,
+   "all": 371.4021006944444,
+   "fits_measurement": false,
+   "fits_all": false
+  },
+  {
+   "K": 15,
+   "capacity_factor": 3.4,
+   "pseudo_h": 0.7455555555555555,
+   "data_h": 1.7138888888888888,
+   "stage3": 20.972048611111113,
+   "stage4": 113.26041666666666,
+   "stage5": 145.61631944444446,
+   "measurement": 279.84878472222226,
+   "verification": 27.984878472222228,
+   "inference": 244.05295138888889,
+   "measurement_plus_verification": 307.8336631944445,
+   "all": 551.8866145833334,
+   "fits_measurement": false,
+   "fits_all": false
+  },
+  {
+   "K": 20,
+   "capacity_factor": 3.4,
+   "pseudo_h": 0.9911111111111112,
+   "data_h": 2.2805555555555554,
+   "stage3": 27.890104166666667,
+   "stage4": 149.38541666666666,
+   "stage5": 193.57638888888889,
+   "measurement": 370.8519097222222,
+   "verification": 37.08519097222222,
+   "inference": 324.43402777777777,
+   "measurement_plus_verification": 407.93710069444444,
+   "all": 732.3711284722222,
+   "fits_measurement": false,
+   "fits_all": false
+  }
+ ]
+}

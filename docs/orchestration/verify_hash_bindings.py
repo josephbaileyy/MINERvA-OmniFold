@@ -334,8 +334,16 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: frozen. The delta was enumerated before the constant moved: removing both entries reproduces
 #: 122 / f5fc1a9e exactly (rc 0). Power-tested: flipping the pin's last hex digit makes this file
 #: report `MISMATCH docs/orchestration/state/s5p/stage1/stage1_inspect.json`, rc 1; then restored.
-RECEIPT_BINDING_COUNT = 123
-RECEIPT_BINDING_SHA256 = "334f670df80cd6dfcb3de30589d560f4b7428b95274215fb93d66d2fb37f7313"
+#: 123 -> 124, digest 334f670d -> 4a6b7e21 (2026-09-27, OI-193, the s5p campaign). One binding was
+#: ADDED, by contract amendment 4 state/s5p/contract-amendment-4-stage2-decisions.json (stage2_receipt)
+#: and the campaign state's receipts list, which pin the same (path, sha256):
+#:   ADDED   docs/orchestration/state/s5p/stage2/stage2_receipt.json
+#:           0daa7cd8a677a38a9a489d033f5052e5a78d05b52abc3e968228131d462c2846
+#: It pins the Stage-2 receipt the amendment's decisions were applied to. Removing both entries
+#: reproduces 123 / 334f670d exactly; flipping the pin's last hex digit makes this file report
+#: `MISMATCH docs/orchestration/state/s5p/stage2/stage2_receipt.json`, rc 1; then restored.
+RECEIPT_BINDING_COUNT = 124
+RECEIPT_BINDING_SHA256 = "4a6b7e215aa536fb6e3a131351ba5f626afab39c36c1f0d0e2613ec107f85ccf"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

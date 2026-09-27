@@ -1,5 +1,16 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-09-27 s5p (OI-193): Stage 2 of the precision-measurement completion
+
+Campaign under [`AUTHORIZATION-20260926-precision-measurement-completion.md`](docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md);
+contract `docs/orchestration/state/s5p/contract.json` with amendments 1–4. Development seeds (930000–949999) and
+noise-free constructions only. **Nothing is adopted; no row grades or changes `3d7465f6…`, s5c, s5n, s5e or Z.**
+Record: [`RECORD-20260927-s5p-stage2-exit.md`](docs/orchestration/RECORD-20260927-s5p-stage2-exit.md).
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL155 | s5p Stage 2 under candidate `R` (5 iterations): rounding-scale jitters paired with refit bootstrap replicas on the data and two pseudo experiments; per-experiment bootstraps and a 160-experiment nominal ensemble for the six s5e calibration failures; noise-free B0 traces to 200 iterations and a 400/31 capacity probe; the data unfolded with the MC prior reweighted to five development vertices; receipt `state/s5p/stage2/stage2_receipt.json` (`0daa7cd8…`) | data rounding spread median 0.23% (J) inside the bootstrap (0.37%; consistency 1.02, absorbed); six failures inside [0.80, 1.25] with the mean per-experiment σ (0.95–1.19; single-experiment σ was the cause); max over alternatives of the noise-free \|bias\|/\|departure\| median 0.626 (J) / 0.314 (H2) at k = 5, not improved by iterations (W3 plateau, fixed point) or capacity (−3%/−8%); data prior-shift envelope median 12.0% (J), 9.6% (H2), 13.4% (EW), linear response to −bias verified (W3 corr 0.92, slope 1.12) | development evidence, not yet independently reviewed; applies the frozen rules: no configuration 2 or 3, no reporting definition meets T1/T2, measurement branch not admitted; the joint-test branch proceeds to Stage 3 |
+
 ## 2026-09-26 s5e (OI-192): estimator diagnosis, refinement-capacity candidate, development-scale assessment
 
 Campaign under [`AUTHORIZATION-20260925-oi192-estimator-diagnosis.md`](docs/orchestration/AUTHORIZATION-20260925-oi192-estimator-diagnosis.md);

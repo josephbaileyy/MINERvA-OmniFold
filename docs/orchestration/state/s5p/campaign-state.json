@@ -25,8 +25,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "STAGE_2_STUDIES_FROZEN",
- "phase_detail": "amendment 2 freezes studies N (numerical/bootstrap overlap), C (the six calibration failures), K (convergence to 200 iterations and observability), their controls and analysis rules, and the rule choosing configurations 2-3; next: deploy the commit, rebind the ledger, launch queues s2-cpu.q and s2-gpu.q",
+ "phase": "STAGE_2_EXIT",
+ "phase_detail": "amendment 4 applies the frozen rules to the Stage-2 receipt: R selected (no configuration 2 or 3); numerical component absorbed; six calibration failures addressed; no reporting definition meets T1/T2 at development resolution, so the measurement branch is not admitted (limitation recorded); the joint-test branch proceeds to the Stage-3 design and independent admission review",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -38,8 +38,8 @@
  },
  "stages": {
   "1_use_case": "FROZEN (amendment 1)",
-  "2_construction_questions": "STUDIES FROZEN (amendment 2); configuration 1 = R; configurations 2-3 chosen by the amendment-2 rule after study K",
-  "3_admission": "NOT STARTED",
+  "2_construction_questions": "EXIT (amendment 4): R selected; measurement branch not admitted; inference branch to Stage 3",
+  "3_admission": "NEXT: inference-branch design (joint test), budget revision for the stage-3 design pilot, independent review",
   "4_construction": "NOT STARTED",
   "5_validation": "NOT STARTED",
   "6_adoption": "NOT STARTED",
@@ -47,22 +47,19 @@
  },
  "jobs": [
   {
-   "job": "58904830",
-   "label": "s5p_k_b0 (shared array 5 x 10 h)",
-   "stage": "development",
-   "state": "PENDING at 16:45Z"
+   "job": "58932367",
+   "label": "s5p_k_b0r (checkpointed departure traces to 200 iterations)",
+   "state": "RUNNING"
   },
   {
    "job": "58904836",
-   "label": "s5p_k_cap (shared array 3 x 16 h)",
-   "stage": "development",
-   "state": "PENDING at 16:45Z"
+   "label": "s5p_k_cap (capacity probe to 100 iterations, no checkpoints)",
+   "state": "RUNNING; superseded for the rule by 58934771 (10 iterations, complete)"
   },
   {
-   "job": "58904837",
-   "label": "s5p_s2_num_a (interactive CPU node, 4 h; table lines 0-24 at abdc88c5)",
-   "stage": "development",
-   "state": "RUNNING; lines whose --pairs value began with '-' (0-3, 14-16) exited rc 2 before any unfold (argparse); replica lines run"
+   "job": "detector dump (s5p_dump_det)",
+   "label": "study I",
+   "state": "queued/running on the GPU pool"
   }
  ],
  "receipts": [
@@ -74,6 +71,19 @@
   {
    "path": "docs/orchestration/state/s5p/gen5d/gen5d-build.json",
    "what": "5D truth-level generator predictions (GENIE 2.12.10 CV, +MEC, NuWro 21.09, GiBUU 2019) on the fine grid; marginals reproduce the committed (E_avail,W) predictions (and 3D except GENIE CV, different surviving sample); GENIE+MEC (E_avail,W) file normalized to all CC (factor 0.97129 vs the 3D convention; VL36 affected); GiBUU empty above E_nu ~ 20 GeV"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/stage2/stage2_receipt.json",
+   "sha256": "0daa7cd8a677a38a9a489d033f5052e5a78d05b52abc3e968228131d462c2846",
+   "what": "Stage-2 receipt: studies K (checkpointed traces flagged), N, C, P, R verification, costs"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/stage2/forecast.json",
+   "what": "remaining-work forecast by configuration (K_afford 20 at B0, 5 at 400/31)"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/stage2/meter-measure-stage2-exit.json",
+   "what": "meter at the Stage-2 exit: CPU development 33.643 (incl. open reservations), GPU 4.086 node-h"
   }
  ],
  "amendments": [
@@ -91,10 +101,15 @@
    "number": 3,
    "path": "docs/orchestration/state/s5p/contract-amendment-3-stage2-supplement.json",
    "stage": "2_construction_questions"
+  },
+  {
+   "number": 4,
+   "path": "docs/orchestration/state/s5p/contract-amendment-4-stage2-decisions.json",
+   "stage": "2 exit"
   }
  ],
  "reviews": [],
- "next_action": "deploy, ledger rebind, launch s2 queues; monitor; then the Stage-2 analysis receipt",
+ "next_action": "Stage 3 (inference branch): amendment 5 freezing the joint-test design and the stage-3 design pilot; budget revision 2; then the independent admission review",
  "concurrent_work_at_start": "josephrb GPU jobs pfd-chain/pfd-shr/pfd-fin (58893071-58903623, m3246_g) and other users' m3246_g jobs belong to other lanes (not touched); no m3246 CPU row; shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "b30752864c70c76da3a888136e52c3dea4b615b7",
