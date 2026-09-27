@@ -301,3 +301,65 @@ error is at most 1.28% (CV), 1.30% (MEC) and 1.12% (NuWro).
 2. **E_ν > 100 GeV is absent from every product**, as it is from the data flux integral.
 3. **The GiBUU sampling test was revised after seeing the data** (above). The GENIE and NuWro
    supplement tests were run as specified before the data were seen.
+
+## Round 3 (2026-09-27): per-mode GENIE E_avail figures on the repaired flux
+
+The machine receipt for this round is `gen5d-fluxfix-3.json`, next to this file. The numbers below
+were copied from it; where they differ, the receipt wins.
+
+**What was built.** The code is `3d-unfolding/genie/gen5d_mode_components.py`, which is new. It ran
+from `/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/`, and the receipt's `code` field
+records the sha256 of every file used.
+- **Outputs** are in `/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/`:
+  - `genie_cv_xsec3d_modes.root` and `genie_mec_cv_xsec3d.root`, which use the committed histogram
+    names;
+  - the plots `compare_mec_eavail.png` and `mode_decomp_eavail.png`;
+  - `*_before.png` for the same scripts on their committed inputs;
+  - a `.log` for each run.
+- The coordinator's `genie_cv_xsec3d.root` there was not touched. My `hXSec_eavail` is bitwise
+  identical to it, as is the MEC file's to `genie_mec_xsec3d.root`.
+- **How the histograms are made:**
+  - `hXSec3D/2D/pt/pz/eavail` are the `_full` products' marginals, computed with
+    `gen5d_to_rootpreds.integrate`.
+  - The components `hXSec_eavail_{mec,nomec,qel,res,dis,coh,charm}` are σ-weighted sums over the
+    same in-phase-space events: the main sample with its r(E) weights plus the 50–100 GeV supplement.
+  - Those sums reproduce `hXSec_eavail` to 4.5e-13.
+  - 67 CV events and 87 MEC events belong to none of QE/RES/DIS/COH/MEC. They are other GENIE
+    channels, worth 0.04% and 0.19% of σ.
+- **Producers:** `compare_mec_eavail.py` and `mode_decomp_eavail.py` were run unchanged, from the
+  deploy export of `4e4b4f56` (their sha256 equal the cluster checkout's). Every path was passed
+  absolute, because both scripts resolve relative paths against their own directory.
+- **The mode-decomposition wrapper** replaces `mode_decomp_eavail.mode_counts` with a σ-weighted
+  version and runs the script's own `main()`. The script shares dσ_CV[b] among modes by
+  N_mode[b]/N_tot[b]; with unequal per-event weights, the exact analogue is W_mode[b]/W_tot[b].
+  Weights are scaled to mean 1, so the script's `np.maximum(tot, 1)` has no effect: the smallest
+  bin total is 54,825.
+
+**What the scripts print (catch bin dropped).**
+
+| quantity | before (committed inputs) | after (repaired) |
+|---|---|---|
+| CV deficit | −7.2% | −7.2% |
+| CV+MEC deficit | −5.2% | −2.6% |
+| "MEC added … of the integrated deficit" | 27% | 63% |
+| "in the dip MEC fills … of the data−CV gap" | 46% | 52% |
+| 2p2h needed, as a fraction of the QE rate | 44% | 45% |
+| share of the positive deficit at E_avail ≤ 0.4 GeV | 57% | 70% |
+
+**Reading the "before" column.** It is not a like-for-like comparison. Its CV file is the Stage-A
+sample (gen5d README deviation 1). The non-MEC part of the MEC file is only 0.9714 of it, a
+normalization offset that is not the MEC component.
+- The script's "MEC added" is the MEC file minus the CV file, so it absorbs that offset.
+- Measured with the MEC-only histogram, MEC covers 64% of the integrated deficit before the fix
+  and 63% after.
+- Measured the same way, the dip fill is 62% before and 53% after.
+- After the fix, the non-MEC part equals the CV to 1.0001, so the script's difference is the MEC
+  component.
+- The MEC-only integral itself changes by −1.3%, from 1.113e-39 to 1.099e-39.
+
+**Limitations of round 3.**
+1. The CV deficit is −7.2% both before and after, but on different samples: the Stage-A file
+   before, and the repaired seed sample after. The equality is a numerical coincidence of their
+   normalizations, not a sign that the fix leaves the CV unchanged. That is inferred from the
+   Stage-A/seed-sample normalization difference (0.9714), not tested.
+2. The high-E_avail statistics are limited by the <50 GeV sample, as in round 2.

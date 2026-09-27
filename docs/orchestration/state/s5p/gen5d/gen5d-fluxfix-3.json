@@ -1,0 +1,523 @@
+{
+ "schema": "gen5d-fluxfix-3-receipt/v1",
+ "created_utc": "2026-09-27T09:23:02.134194+00:00",
+ "mec_decomposition_catch_bin_dropped": {
+  "before": {
+   "cv_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec3d.root",
+   "mec_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mec_cv_xsec3d.root",
+   "integral_cv": 2.244370757654013e-38,
+   "integral_mec_file": 2.291519116850937e-38,
+   "integral_mec_only": 1.1128795702608329e-39,
+   "integral_nonmec_part": 2.1802311598248544e-38,
+   "nonmec_part_over_cv": 0.9714220132255678,
+   "script_MEC_added_(mec_file_minus_cv)": 4.714835919692411e-40,
+   "integral_data_minus_cv": 1.740057730352493e-39,
+   "mec_only_over_integrated_deficit": 0.6395647402085853,
+   "dip_mec_only": 6.7200364490498364e-40,
+   "dip_script_MEC_added": 5.190316184295249e-40,
+   "dip_data_minus_cv": 1.0843249800123246e-39,
+   "dip_mec_only_over_gap": 0.6197437643623644
+  },
+  "after": {
+   "cv_file": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec3d_modes.root",
+   "mec_file": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_cv_xsec3d.root",
+   "integral_cv": 2.2446866031031892e-38,
+   "integral_mec_file": 2.354757612954387e-38,
+   "integral_mec_only": 1.0987521075494703e-39,
+   "integral_nonmec_part": 2.2448824021994764e-38,
+   "nonmec_part_over_cv": 1.000087227809894,
+   "script_MEC_added_(mec_file_minus_cv)": 1.1007100985119781e-39,
+   "integral_data_minus_cv": 1.736899275860735e-39,
+   "mec_only_over_integrated_deficit": 0.6325940270802257,
+   "dip_mec_only": 6.632577338454081e-40,
+   "dip_script_MEC_added": 6.759460337617405e-40,
+   "dip_data_minus_cv": 1.252336684053188e-39,
+   "dip_mec_only_over_gap": 0.5296161505856192
+  },
+  "note": "compare_mec_eavail.py's 'MEC added' is hXSec_eavail(MEC file) - hXSec_eavail(CV file); it equals the MEC-only component only when the two files' non-MEC parts agree (nonmec_part_over_cv = 1)"
+ },
+ "created_by": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_mode_components.py receipt (machine-generated)",
+ "output_dir": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie",
+ "code": [
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_mode_components.py",
+   "sha256": "19f9c15bbdaffe1b19f44e1bafff0a8868bd5421f5af81ad3f0d2a3d8e4331db"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_supplement.py",
+   "sha256": "ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_reweight.py",
+   "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/deploy/4e4b4f56/3d-unfolding/genie/gen5d_to_rootpreds.py",
+   "sha256": "bd7d0d7f82b73cf39c421530a850712491c020d3a199998f0e42d061b32c0210"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/deploy/4e4b4f56/3d-unfolding/genie/compare_mec_eavail.py",
+   "sha256": "56f47ecdc7f5b2e5df6d07c3a667e98f957093d9553b533ee2badbdd1bd16573"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/deploy/4e4b4f56/3d-unfolding/genie/mode_decomp_eavail.py",
+   "sha256": "62598724d199a4adb72bb8846be6d7a7dfc0c3593de05797afbe4734bcd29c90"
+  }
+ ],
+ "files": {
+  "genie_cv": {
+   "out": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec3d_modes.root",
+    "role": "per-mode E_avail components on the repaired flux",
+    "bytes": 22008,
+    "sha256": "16962b6d0b7c5fc05035507603f941cef6678e3a57adf3cac8aeb35766b2dfcc"
+   },
+   "from_full_product": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz",
+    "role": "_full product",
+    "bytes": 1627680,
+    "sha256": "cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2"
+   },
+   "events": [
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_cv_ALL.gst.root",
+     "role": "main events",
+     "bytes": 999514329,
+     "sha256": "bafb698ceae7dc1a41b7bf1105dce5d2e073373f529573584b01dd7dff081a35"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_cv/genie_supp_cv.gst.root",
+     "role": "supp events",
+     "bytes": 71762297,
+     "sha256": "f19b6c31137b166cbf89613a07a14f741efabb325956290e93edef8288ca5312"
+    }
+   ],
+   "checks": {
+    "events_vs_full_marginal_max_rel": 4.178733707082865e-13,
+    "mec_plus_nomec_vs_full_marginal_max_rel": 4.178733707082865e-13,
+    "qel_res_dis_coh_mec_vs_full_marginal_max_rel": 0.0004342810127026618,
+    "n_events_not_in_exactly_one_of_qel_res_dis_coh_mec": 67
+   },
+   "hXSec_eavail_vs_coordinator_file": {
+    "file": {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec3d.root",
+     "role": "coordinator's committed-format file",
+     "bytes": 19244,
+     "sha256": "8d417234dd33de2b0944d1bb9a75d5f888fa95c5ad0a02d4f71048a5bd410e3c"
+    },
+    "bitwise_equal": true,
+    "max_rel_diff": 0.0
+   },
+   "hXSec_eavail": [
+    2.0200155981944486e-38,
+    1.5061726633181974e-38,
+    1.563338820423216e-38,
+    1.2084679584040845e-38,
+    7.499339218431093e-39,
+    3.807060561436472e-39,
+    5.358522386063924e-41
+   ],
+   "hXSec_eavail_mec": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "mode_components": {
+    "qel": [
+     1.4121601765070305e-38,
+     7.548723099576763e-39,
+     4.064232664422577e-39,
+     1.3647078251452038e-39,
+     2.898650231793538e-40,
+     8.942921895665391e-41,
+     1.6131014452703513e-43
+    ],
+    "res": [
+     1.756971950237143e-39,
+     4.437511245342297e-39,
+     7.912987141300761e-39,
+     6.718989679562194e-39,
+     2.735224195907696e-39,
+     2.3996834308414065e-40,
+     1.3141694360973595e-43
+    ],
+    "dis": [
+     4.2622647702468194e-39,
+     2.6926277380088924e-39,
+     3.384079790480648e-39,
+     3.857721988315257e-39,
+     4.364507082326345e-39,
+     3.431681827740723e-39,
+     5.294330141216629e-41
+    ],
+    "coh": [
+     5.05449521936261e-41,
+     3.8286455025443245e-40,
+     2.7208860802826305e-40,
+     1.432600910188997e-40,
+     1.0974291701883099e-40,
+     4.598117165629375e-41,
+     3.4919536034696993e-43
+    ],
+    "charm": [
+     1.8568856874740858e-41,
+     1.4658376794167032e-41,
+     2.1340811696522755e-41,
+     3.3821246432273485e-41,
+     6.430977964151951e-41,
+     9.095451802323203e-41,
+     1.7145406278067698e-42
+    ]
+   },
+   "definitions": {
+    "hXSec_eavail": "gen5d_to_rootpreds.integrate(_full, keep E_avail)",
+    "components": "sum over in-PS CC events (main sample with r(E), supplement) of the per-event sigma contribution of the _full product, / dE_avail",
+    "fMEC": "sigma-weighted MEC share of the in-PS events (committed file: raw count fraction of all CC)",
+    "nCCtotal": "raw CC count, main + supplement"
+   }
+  },
+  "genie_mec": {
+   "out": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_cv_xsec3d.root",
+    "role": "per-mode E_avail components on the repaired flux",
+    "bytes": 23356,
+    "sha256": "38552e52ee706e1ee69dfe30de39a4572923e9738dfdd390206e1e45bf1e9f3e"
+   },
+   "from_full_product": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz",
+    "role": "_full product",
+    "bytes": 1632624,
+    "sha256": "c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f"
+   },
+   "events": [
+    {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_mec_ALL.gst.root",
+     "role": "main events",
+     "bytes": 997606940,
+     "sha256": "61463c871812c64ea710aa905da506556d1582e673aad7fb9d99e06295df2f74"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_mec/genie_supp_mec.gst.root",
+     "role": "supp events",
+     "bytes": 71672982,
+     "sha256": "9b593e1ea40aef8982969e8023898eac494b11f0210d2a5d1042472f8001a1b5"
+    }
+   ],
+   "checks": {
+    "events_vs_full_marginal_max_rel": 4.505571174140162e-13,
+    "mec_plus_nomec_vs_full_marginal_max_rel": 2.1720916237742713e-13,
+    "qel_res_dis_coh_mec_vs_full_marginal_max_rel": 0.001896670719200422,
+    "n_events_not_in_exactly_one_of_qel_res_dis_coh_mec": 87
+   },
+   "hXSec_eavail_vs_coordinator_file": {
+    "file": {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_xsec3d.root",
+     "role": "coordinator's committed-format file",
+     "bytes": 19330,
+     "sha256": "ab91c4431933fd795a3d063f7876faa0c871416798ad8cc91effc978fb0ddc6d"
+    },
+    "bitwise_equal": true,
+    "max_rel_diff": 0.0
+   },
+   "hXSec_eavail": [
+    2.1959768573202849e-38,
+    1.6761853024859232e-38,
+    1.7283248881573053e-38,
+    1.2897756296290773e-38,
+    7.599755556601638e-39,
+    3.826555190190395e-39,
+    5.369930811795032e-41
+   ],
+   "hXSec_eavail_mec": [
+    1.718658467222413e-39,
+    1.6912122711653295e-39,
+    1.6113533000331695e-39,
+    9.529194830978883e-40,
+    7.760940066415273e-41,
+    0.0,
+    0.0
+   ],
+   "mode_components": {
+    "qel": [
+     1.4094051851783494e-38,
+     7.554326248787882e-39,
+     4.06162337683363e-39,
+     1.354977082419276e-39,
+     2.965277860878668e-40,
+     8.867611997456015e-41,
+     1.3604547939317313e-43
+    ],
+    "res": [
+     1.787462810428974e-39,
+     4.458666305734598e-39,
+     7.944531956199728e-39,
+     6.61387144516918e-39,
+     2.7470270385357682e-39,
+     2.4307969882838986e-40,
+     1.230292956058222e-43
+    ],
+    "dis": [
+     4.2665186906779735e-39,
+     2.6587280402898256e-39,
+     3.383660104669134e-39,
+     3.836916756824621e-39,
+     4.371117274787006e-39,
+     3.451080084984483e-39,
+     5.305213386202828e-41
+    ],
+    "coh": [
+     5.142630303678351e-41,
+     3.989201588817836e-40,
+     2.820801438367902e-40,
+     1.3907152877990532e-40,
+     1.0747405652688943e-40,
+     4.3719286403251373e-41,
+     3.880994809533505e-43
+    ],
+    "charm": [
+     1.746110995300447e-41,
+     1.2157520264191887e-41,
+     2.1532568278465867e-41,
+     3.8551795467873663e-41,
+     6.177938142111794e-41,
+     8.910364174869684e-41,
+     1.5723252658736623e-42
+    ]
+   },
+   "definitions": {
+    "hXSec_eavail": "gen5d_to_rootpreds.integrate(_full, keep E_avail)",
+    "components": "sum over in-PS CC events (main sample with r(E), supplement) of the per-event sigma contribution of the _full product, / dE_avail",
+    "fMEC": "sigma-weighted MEC share of the in-PS events (committed file: raw count fraction of all CC)",
+    "nCCtotal": "raw CC count, main + supplement"
+   }
+  }
+ },
+ "runs": {
+  "schema": "gen5d-fluxfix-modes-runs/v1",
+  "created_utc": "2026-09-27T09:21:57.588836+00:00",
+  "cwd": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie",
+  "runs": {
+   "compare_mec_eavail_before": {
+    "argv": [
+     "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+     "/pscratch/sd/j/josephrb/s5p-20260926/deploy/4e4b4f56/3d-unfolding/genie/compare_mec_eavail.py",
+     "--data",
+     "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root",
+     "--cv",
+     "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec3d.root",
+     "--mec",
+     "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mec_cv_xsec3d.root",
+     "--cov",
+     "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root",
+     "--plot",
+     "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/compare_mec_eavail_before.png"
+    ],
+    "returncode": 0,
+    "log": {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/compare_mec_eavail_before.log",
+     "role": "stdout+stderr",
+     "bytes": 2254,
+     "sha256": "b3e0546e0e092e61b83fd5896ef488a2f9d04aae2792aca0b8d009e283a0efb8"
+    },
+    "plot": {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/compare_mec_eavail_before.png",
+     "role": "figure",
+     "bytes": 36612,
+     "sha256": "f1ab5cdec3acff6be84321090d9f9edd483d24efa6a3375ce3c1cf46243d7ad2"
+    },
+    "key_lines": [
+     "data=2.418e-38  CV=2.244e-38 (-7.2%)  CV+MEC=2.292e-38 (-5.2%)",
+     "MEC added +4.71e-40 = 27% of the integrated deficit",
+     "in the dip (Eavail<=0.4): MEC fills 46% of the data-CV gap",
+     "[compare-mec] wrote /pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/compare_mec_eavail_before.png"
+    ],
+    "table": [
+     "  0 [0.00, 0.10) 2.19e-38 2.07e-38 2.19e-38 1.7e-39 |  +0.80    -0.04  |  105.2",
+     "  1 [0.10, 0.20) 2.04e-38 1.55e-38 1.69e-38 1.7e-39 |  +3.92    +2.85  |   27.3",
+     "  2 [0.20, 0.40) 1.84e-38 1.60e-38 1.73e-38 1.6e-39 |  +2.25    +1.01  |   55.1",
+     "  3 [0.40, 0.80) 1.20e-38 1.23e-38 1.28e-38 9.7e-40 |  -0.36    -1.02  |    nan",
+     "  4 [0.80, 1.50) 7.45e-39 7.51e-39 7.39e-39 7.8e-41 |  -0.14    +0.15  |    nan",
+     "  5 [1.50, 3.00) 4.16e-39 3.63e-39 3.52e-39 0.0e+00 |  +2.21    +2.65  |  -20.0",
+     "  6 [3.00,100.00) 6.81e-41 2.81e-41 2.73e-41 0.0e+00 | +10.23   +10.43  |   -1.9 catch"
+    ]
+   },
+   "compare_mec_eavail": {
+    "argv": [
+     "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+     "/pscratch/sd/j/josephrb/s5p-20260926/deploy/4e4b4f56/3d-unfolding/genie/compare_mec_eavail.py",
+     "--data",
+     "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root",
+     "--cv",
+     "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec3d_modes.root",
+     "--mec",
+     "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_cv_xsec3d.root",
+     "--cov",
+     "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root",
+     "--plot",
+     "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/compare_mec_eavail.png"
+    ],
+    "returncode": 0,
+    "log": {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/compare_mec_eavail.log",
+     "role": "stdout+stderr",
+     "bytes": 2247,
+     "sha256": "af6cf1091e235ebf591f92f82166418af8c02252f78c981e4dcb85c057948dc5"
+    },
+    "plot": {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/compare_mec_eavail.png",
+     "role": "figure",
+     "bytes": 36523,
+     "sha256": "7a02261614af5b243c4febda739a00617d1be6bbb51280a3d954277fcc3da4df"
+    },
+    "key_lines": [
+     "data=2.418e-38  CV=2.245e-38 (-7.2%)  CV+MEC=2.355e-38 (-2.6%)",
+     "MEC added +1.10e-39 = 63% of the integrated deficit",
+     "in the dip (Eavail<=0.4): MEC fills 52% of the data-CV gap",
+     "[compare-mec] wrote /pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/compare_mec_eavail.png"
+    ],
+    "table": [
+     "  0 [0.00, 0.10) 2.19e-38 2.02e-38 2.20e-38 1.7e-39 |  +1.15    -0.07  |  106.5",
+     "  1 [0.10, 0.20) 2.04e-38 1.51e-38 1.68e-38 1.7e-39 |  +4.29    +2.93  |   31.8",
+     "  2 [0.20, 0.40) 1.84e-38 1.56e-38 1.73e-38 1.6e-39 |  +2.59    +1.04  |   59.8",
+     "  3 [0.40, 0.80) 1.20e-38 1.21e-38 1.29e-38 9.5e-40 |  -0.05    -1.13  |    nan",
+     "  4 [0.80, 1.50) 7.45e-39 7.50e-39 7.60e-39 7.8e-41 |  -0.12    -0.36  |    nan",
+     "  5 [1.50, 3.00) 4.16e-39 3.81e-39 3.83e-39 0.0e+00 |  +1.46    +1.38  |    5.5",
+     "  6 [3.00,100.00) 6.81e-41 5.36e-41 5.37e-41 0.0e+00 |  +3.71    +3.68  |    0.8 catch"
+    ]
+   },
+   "mode_decomp_eavail_before": {
+    "argv": [
+     "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+     "/pscratch/sd/j/josephrb/s5p-20260926/deploy/4e4b4f56/3d-unfolding/genie/mode_decomp_eavail.py",
+     "--gst",
+     "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_cv_ALL.gst.root",
+     "--cv",
+     "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_cv_xsec3d.root",
+     "--data",
+     "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root",
+     "--cov",
+     "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root",
+     "--plot",
+     "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/mode_decomp_eavail_before.png"
+    ],
+    "returncode": 0,
+    "log": {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/mode_decomp_eavail_before.log",
+     "role": "stdout+stderr",
+     "bytes": 2759,
+     "sha256": "5cda4bf45525607d7d72dc2e2e6166bf7c9cf334164fb53a2940948f89a70c45"
+    },
+    "plot": {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/mode_decomp_eavail_before.png",
+     "role": "figure",
+     "bytes": 42540,
+     "sha256": "408805bb260dacd81e2829d9fbad1c0edc63e6e0735152e51df1f6a7e1f0dbdb"
+    },
+    "key_lines": [
+     "[mode-decomp] CC-in-PS events used = 938141; E_avail bins = 7 (last is the catch bin)",
+     "data   = 2.418e-38   CV = 2.244e-38   deficit = +1.74e-39 (-7.2% of data)",
+     "CV QE component = 3.983e-39  -> a 2p2h equal to 44% of the QE rate would close the integrated deficit",
+     "fraction of the positive deficit in E_avail<=0.4 GeV (the QE-Delta dip, where 2p2h lives) = 57%",
+     "[mode-decomp] wrote /pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/mode_decomp_eavail_before.png"
+    ],
+    "table": [
+     "  0  [0.00,0.10)  2.185e-38 2.070e-38 +1.16e-39   +0.80   | 1.46e-38 1.81e-39 4.18e-39 5.5e-41 |  +0.08",
+     "  1  [0.10,0.20)  2.042e-38 1.552e-38 +4.90e-39   +3.92   | 7.83e-39 4.59e-39 2.69e-39 4.0e-40 |  +0.63",
+     "  2  [0.20,0.40)  1.839e-38 1.600e-38 +2.39e-39   +2.25   | 4.22e-39 8.14e-39 3.36e-39 2.8e-40 |  +0.57",
+     "  3  [0.40,0.80)  1.205e-38 1.232e-38 -2.73e-40   -0.36   | 1.40e-39 6.93e-39 3.83e-39 1.5e-40 |  -0.19",
+     "  4  [0.80,1.50)  7.451e-39 7.510e-39 -5.90e-41   -0.14   | 2.89e-40 2.79e-39 4.32e-39 1.1e-40 |  -0.20",
+     "  5  [1.50,3.00)  4.163e-39 3.625e-39 +5.37e-40   +2.21   | 8.49e-41 2.34e-40 3.26e-39 4.5e-41 |  +6.33",
+     "  6  [3.00,100.00)  6.809e-41 2.807e-41 +4.00e-41  +10.23   | 1.29e-43 6.37e-44 2.76e-41 2.8e-43 | +309.91  <-- catch bin"
+    ]
+   },
+   "mode_decomp_eavail": {
+    "argv": [
+     "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+     "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_mode_components.py",
+     "mode-decomp"
+    ],
+    "returncode": 0,
+    "log": {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/mode_decomp_eavail.log",
+     "role": "stdout+stderr",
+     "bytes": 3098,
+     "sha256": "ef2ac8afdd77f8c676939872805b97d9f4ebbd929db77551384fce8a5486576b"
+    },
+    "plot": {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/mode_decomp_eavail.png",
+     "role": "figure",
+     "bytes": 42609,
+     "sha256": "8c35b66765fc33c8cc063fbce50d7a2bd61543a93be19a795332446f7a76717e"
+    },
+    "key_lines": [
+     "[wrapper] {\"min_weighted_tot_per_bin\": 54824.70499811147, \"n_events\": 1006265, \"weight_normalisation\": \"per-event sigma contribution x N/sum (mean 1)\", \"events\": [\"/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_cv_ALL.gst.root\", \"/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_cv/genie_supp_cv.gst.root\"]}",
+     "[mode-decomp] CC-in-PS events used = 1006265; E_avail bins = 7 (last is the catch bin)",
+     "data   = 2.418e-38   CV = 2.245e-38   deficit = +1.74e-39 (-7.2% of data)",
+     "CV QE component = 3.863e-39  -> a 2p2h equal to 45% of the QE rate would close the integrated deficit",
+     "fraction of the positive deficit in E_avail<=0.4 GeV (the QE-Delta dip, where 2p2h lives) = 70%",
+     "[mode-decomp] wrote /pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/mode_decomp_eavail.png"
+    ],
+    "table": [
+     "  0  [0.00,0.10)  2.185e-38 2.020e-38 +1.65e-39   +1.15   | 1.41e-38 1.76e-39 4.26e-39 5.1e-41 |  +0.12",
+     "  1  [0.10,0.20)  2.042e-38 1.506e-38 +5.35e-39   +4.29   | 7.55e-39 4.44e-39 2.69e-39 3.8e-40 |  +0.71",
+     "  2  [0.20,0.40)  1.839e-38 1.563e-38 +2.76e-39   +2.59   | 4.06e-39 7.91e-39 3.38e-39 2.7e-40 |  +0.68",
+     "  3  [0.40,0.80)  1.205e-38 1.208e-38 -3.77e-41   -0.05   | 1.36e-39 6.72e-39 3.86e-39 1.4e-40 |  -0.03",
+     "  4  [0.80,1.50)  7.451e-39 7.499e-39 -4.84e-41   -0.12   | 2.90e-40 2.74e-39 4.36e-39 1.1e-40 |  -0.17",
+     "  5  [1.50,3.00)  4.163e-39 3.807e-39 +3.56e-40   +1.46   | 8.94e-41 2.40e-40 3.43e-39 4.6e-41 |  +3.98",
+     "  6  [3.00,100.00)  6.809e-41 5.359e-41 +1.45e-41   +3.71   | 1.61e-43 1.31e-43 5.29e-41 3.5e-43 | +89.92  <-- catch bin"
+    ]
+   }
+  },
+  "code": [
+   {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_mode_components.py",
+    "sha256": "19f9c15bbdaffe1b19f44e1bafff0a8868bd5421f5af81ad3f0d2a3d8e4331db"
+   },
+   {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_supplement.py",
+    "sha256": "ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61"
+   },
+   {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_reweight.py",
+    "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5"
+   },
+   {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/deploy/4e4b4f56/3d-unfolding/genie/gen5d_to_rootpreds.py",
+    "sha256": "bd7d0d7f82b73cf39c421530a850712491c020d3a199998f0e42d061b32c0210"
+   },
+   {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/deploy/4e4b4f56/3d-unfolding/genie/compare_mec_eavail.py",
+    "sha256": "56f47ecdc7f5b2e5df6d07c3a667e98f957093d9553b533ee2badbdd1bd16573"
+   },
+   {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/deploy/4e4b4f56/3d-unfolding/genie/mode_decomp_eavail.py",
+    "sha256": "62598724d199a4adb72bb8846be6d7a7dfc0c3593de05797afbe4734bcd29c90"
+   }
+  ],
+  "environment": {
+   "python": "3.11.14",
+   "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+   "numpy": "1.26.4",
+   "host": "login33",
+   "PLOTUTILSROOT": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib",
+   "cwd": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie"
+  }
+ },
+ "environment": {
+  "python": "3.11.14",
+  "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+  "numpy": "1.26.4",
+  "host": "login33",
+  "PLOTUTILSROOT": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib",
+  "cwd": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie",
+  "ROOT": "6.28/12"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_mode_components.py",
+  "receipt"
+ ]
+}
