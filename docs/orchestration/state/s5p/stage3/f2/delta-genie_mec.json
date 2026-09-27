@@ -1,0 +1,22 @@
+{
+ "schema": "s5p-pairdiff/1",
+ "label": "F2 delta at genie_mec: noise-free full-MC asimov (R, k=5) at the fine-ratio minus the coarse-ratio null truth",
+ "n_pairs": 1,
+ "cells": 109,
+ "median_abs_D_over_fB": 0.006502771840447995,
+ "max_abs_D_over_fB": 0.030791401988365285,
+ "median_abs_D_over_se": null,
+ "out": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f2/delta-genie_mec.npz",
+  "sha256": "0058ae586f471cc6565cdf0c0018ef4fe8c8d7551bcc557ab288fb9d48aa02cf"
+ },
+ "inputs": [
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_genie_mec_fine.npz",
+   "a_sha256": "d6b24d6f2350498d6577b8af2646ca3a5f4ff9245f21d28dc22b095f030eb68f",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_genie_mec_coarse.npz",
+   "b_sha256": "84c08dd65f252d64706cc81569287ad1b3055a31d673c4a5ceb5c292528981ac"
+  }
+ ],
+ "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+}

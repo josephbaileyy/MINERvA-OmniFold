@@ -1,0 +1,22 @@
+{
+ "schema": "s5p-pairdiff/1",
+ "label": "F2 delta at gibuu_cv: noise-free full-MC asimov (R, k=5) at the fine-ratio minus the coarse-ratio null truth",
+ "n_pairs": 1,
+ "cells": 109,
+ "median_abs_D_over_fB": 0.0279745234985211,
+ "max_abs_D_over_fB": 0.1535565147992904,
+ "median_abs_D_over_se": null,
+ "out": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f2/delta-gibuu_cv.npz",
+  "sha256": "5e2b14337a3efefcba46046a89458607d6dc042605dc03c9f2c952757802056e"
+ },
+ "inputs": [
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_gibuu_cv_fine.npz",
+   "a_sha256": "6bc6c640e68967833e02019748d7e77da2567f0e28d93eab3d05a4b1d3a14f3f",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_gibuu_cv_coarse.npz",
+   "b_sha256": "40bfa421bed64a65b37a38324d490657cfebe5737fc986d18fe7243b4cff3bfd"
+  }
+ ],
+ "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+}

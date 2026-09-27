@@ -26,7 +26,7 @@
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
  "phase": "STAGE_3_REPAIR_CYCLE_1",
- "phase_detail": "independent review round 1 (REVIEW-20260927-s5p-round1-stage2-exit-and-joint-design.md) confirmed the Stage-2 numbers and the measurement-branch disposition and returned findings on the amendment-5 joint-test design (F1 HIGH generator flux sampling, KNOWN_ISSUES 83, verified; F2 HIGH within-cell shapes of the nulls; F3-F6 MEDIUM/LOW); repair cycle 1 of at most two before the admission review; no calibration ensemble runs until the repaired design passes review",
+ "phase_detail": "repair cycle 1 measurements in: F4 D at four nulls (noise-level), F2 delta at three generators (0.65-2.8% median: fine null required), lateral endpoint unfolds done, repaired predictions and alternatives committed; the design pilot (V, development power) running; review round 2 starts on the design and the production admission draft",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -105,6 +105,14 @@
   {
    "path": "docs/orchestration/state/s5p/stage3/f4/",
    "what": "F4 MC-size shifts D (s5p_pairdiff summaries; the D npz on the cluster, sha256 in each file)"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/stage3/f2/",
+   "what": "F2 fine-minus-coarse null-truth sensitivity (noise-free full-MC asimov, R, k=5): median |delta|/f 0.65% (GENIE CV), 0.65% (GENIE MEC), 2.8% (GiBUU), p90 1.9/1.9/8.2%, max 5.2/3.1/15.4% - far above the statistical sigma; the coarse nulls would have been mis-specified (review F2 confirmed); NuWro pending (production)"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/ratios/altR/",
+   "what": "production power alternatives P1r-P3r from the repaired predictions"
   }
  ],
  "amendments": [
