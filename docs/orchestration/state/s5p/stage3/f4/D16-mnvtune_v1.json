@@ -1,0 +1,112 @@
+{
+ "schema": "s5p-pairdiff/1",
+ "label": "F4 D at the mnvtune_v1 null (16 pairs): half minus quarter unfolding MC, expectation process, seeds 970000-970015",
+ "n_pairs": 16,
+ "cells": 109,
+ "median_abs_D_over_fB": 0.00022335456620666347,
+ "max_abs_D_over_fB": 0.005384086142504085,
+ "median_abs_D_over_se": 0.7899079720020696,
+ "out": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D16-mnvtune_v1.npz",
+  "sha256": "c4e9586b01dff338e341861529d6e5d3f917d06d2537abb3ac0b04d87077a78b"
+ },
+ "inputs": [
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970000.npz",
+   "a_sha256": "7ff283575c3339807221a0c45d5045d14b34e0fa7ff6ed80486fd17e462c63f7",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970000.npz",
+   "b_sha256": "f55e27afce60c20791ef820cc6732f6cdb8e1e0b1976a76a0225dc701151798c"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970001.npz",
+   "a_sha256": "56b1e1979313caa95dabe5326ecb075f4ec4547a789f639c2b62cae41e5890ee",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970001.npz",
+   "b_sha256": "90717157d5b269446bc7c4863c0f952dfd39f318c43a4334bc2ea24833c3b5cf"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970002.npz",
+   "a_sha256": "723f7ee2aabdf3c2886fc491ba1cf402becac4eebf0fd06806500a7d44c3eab1",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970002.npz",
+   "b_sha256": "87b98adddae248e42cfff619d0c8ebdc4ddae4f34de6b1221754ee8bbe52c159"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970003.npz",
+   "a_sha256": "b5b7ab468926ebcfce407f12e920c88a2096b331aad0d2bf8aab13a17f3a9c3b",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970003.npz",
+   "b_sha256": "e8a90518f007d5053c326d4afe8c72c942fb35e7048ed5b56f7f769050f307cc"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970004.npz",
+   "a_sha256": "0f231ecdc76fadf85859f25a9ce6d73aca19b0764860407395f1fc72ec7915a5",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970004.npz",
+   "b_sha256": "a69d6b750ffa7a35c2138f726de8d5e1d32dca96c8cf9319acfa6395c62ac5ff"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970005.npz",
+   "a_sha256": "078316e82b3da683bcf6462fb2c30d912bd7d1ab846e091142809525cb5fbeaf",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970005.npz",
+   "b_sha256": "b263667f70101788c0d45b5a7683198fac7e1f569144f5376755db654e1b01c6"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970006.npz",
+   "a_sha256": "a0a58c75dcb8b88872572a24408d4535696f630736192b458cddd4589113a65d",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970006.npz",
+   "b_sha256": "24ba25e654f60304e6d77ca71e8cf4fae58c8f2593593679b8c688543cd51a74"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970007.npz",
+   "a_sha256": "b4a2397d609e232f107e5640b4b060839f8867a6e19a9023dea49e55bee52ebc",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970007.npz",
+   "b_sha256": "c9a43e243539e5e43bc72bb326bf15241102c53b8242285ae2c67fccf55a6bd2"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970008.npz",
+   "a_sha256": "1d5d9d04bee1d8154959c8b4ac43fb61978eb2df8c9a2c473f0f2e638d802880",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970008.npz",
+   "b_sha256": "1570c9d51516a07bd926f3d2cad9f0d972f29c71e87bedcca9738db0c7dfae7b"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970009.npz",
+   "a_sha256": "c9d9e3471028b824da1c1f31e7f690a83c6f4f48a99189b03e20210533a9ece2",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970009.npz",
+   "b_sha256": "a73ad9f7e5587b4d5906381c201f737782659ff5fde888c7237f490d53009e04"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970010.npz",
+   "a_sha256": "9a78061c9455ac6be73cd826bb6b579110013f527f9d13901791cf4e1ea96bc1",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970010.npz",
+   "b_sha256": "6047140664bffb547816213e9a97a78394c44e6f648725c998b63cf59ac5eef9"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970011.npz",
+   "a_sha256": "b6f8f1c159d861c24f3a12529816a1a3f6a6e0265fff4216d2c199567cf612c4",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970011.npz",
+   "b_sha256": "1d10749834e5de9a9738caaa5cc7d50c90b17a10d0e0b268efde6c31446ff0bf"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970012.npz",
+   "a_sha256": "c4af2d769194d8153645c7e90bca96e668f517670043c35c66d16238d15e9a3e",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970012.npz",
+   "b_sha256": "87e9b9bba4160786ccd1de2f778832ce1465fa8a8fdfea1d2149e4f6a291686d"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970013.npz",
+   "a_sha256": "b49e9297465087f27573486eb29e9e1a1e8813816083c41e038364058da4f72b",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970013.npz",
+   "b_sha256": "fa1e1d59bd5b55ef95b290dbea00f1db4f4760611f7de73d64d8e56e0b5dee6a"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970014.npz",
+   "a_sha256": "c0cf51dbabd0921fda292adecf258d535f91346f0ae0a30b7f0e55b2e975c9d5",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970014.npz",
+   "b_sha256": "bfc34efa1373e706df7bd4d886f36caa968336ddf86672dbb8ae2869b895fcbe"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_half/f4_mnvtune_half_s970015.npz",
+   "a_sha256": "d4f488c4c891f53c2cd8b9ef0b56cd069411ee730bb8568e0a14500541722d18",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/mnvtune_quarter/f4_mnvtune_quarter_s970015.npz",
+   "b_sha256": "140a4a6e9b1d17bb8b2e21a7c6b1507419b5f20495a1cd4abe656e31de4dcd76"
+  }
+ ],
+ "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+}

@@ -1,0 +1,112 @@
+{
+ "schema": "s5p-pairdiff/1",
+ "label": "F4 D at the gibuu_cv null (16 pairs): half minus quarter unfolding MC, expectation process, seeds 970000-970015",
+ "n_pairs": 16,
+ "cells": 109,
+ "median_abs_D_over_fB": 0.0007480649100626672,
+ "max_abs_D_over_fB": 0.005559285308062682,
+ "median_abs_D_over_se": 0.7514364014225855,
+ "out": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D16-gibuu_cv.npz",
+  "sha256": "e388a2b2456c2d579fe29c28154b81dfb01eecdc5ec1611d3f9623c7c39c86a5"
+ },
+ "inputs": [
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970000.npz",
+   "a_sha256": "0a73cf532a74673f8179a1cae92f8e282db4c6e68a2516261fda46e127eb2fbb",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970000.npz",
+   "b_sha256": "eeae10f714b903c4474df217f109a41e4c1053856aaa0fb5b86d2325a0560ed3"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970001.npz",
+   "a_sha256": "8eb7b7d306cdbed2ec65262da64707c0dde9da0517d9c9cc0b7d463b1e061a22",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970001.npz",
+   "b_sha256": "10f3df3fe9301b77a942ec3143fa465f76d655b4e7f1bcc85973d84df9908ab9"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970002.npz",
+   "a_sha256": "52c7bc5b322aa9ece8065dcfa3a3432687c5c0c9180cdd6b831fe66f9b4010c7",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970002.npz",
+   "b_sha256": "0eda39917b2c90aa9380efe0667384dc4f1d7a5c6405d04d7d475e62cc7f386a"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970003.npz",
+   "a_sha256": "13ef90915b196fde44b11af95172c6162cb07292c2bcae236b0b26b37f4f1f42",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970003.npz",
+   "b_sha256": "2c70ada9e2f1c15ce828f84faf413f57255f27da59d778d9df84e8e71c6a22c0"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970004.npz",
+   "a_sha256": "59d43c501414889c5f1573bc62d2df6f3bfa2b0498418ec25de077c7b387773a",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970004.npz",
+   "b_sha256": "a6d5e5971a480c7ce7cbff569a3d9bf3ccb051e78d6a7eda3a302d1295842c0d"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970005.npz",
+   "a_sha256": "a75eada9678abb67456dfba1b3f6309e2eed97be7aa99e201908194a23192b89",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970005.npz",
+   "b_sha256": "b17b0365c908e6332d5d7418024273d093a29f4607ec812e0963f739f3fc0102"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970006.npz",
+   "a_sha256": "1e6dcc6541ad107fcf5177997921b91d8f3c73cc1699d6cdf42a47281c88a8af",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970006.npz",
+   "b_sha256": "6c6605bcc8382d1e9a2015fb5beea58c4cd26732fe15408e19f1d2128c0be2fc"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970007.npz",
+   "a_sha256": "de491b37e8422538c290af150cbfedcf3a871827d18eebcc855e0260e1513a1c",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970007.npz",
+   "b_sha256": "b043579b18679e6fe8ed275a00cadf0ea01a5ec7b6af3376a1b51d41fec1b1b2"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970008.npz",
+   "a_sha256": "e27e3844935d10e3ded35ff1d7512063008222d5a8ab23a4a043f715d7d752b9",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970008.npz",
+   "b_sha256": "5ce2c8277d124b89af22b985c495e9ac654b114a7896bf5208a55c561c4c6b21"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970009.npz",
+   "a_sha256": "4d6f519df7d8db073f0aa6174fcdb7ec8a0b3d5af5ac6c9e660020008e9e1bb6",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970009.npz",
+   "b_sha256": "275be929f285d0945c05dbf501b4ac9ebe6a61c6a17f38035d53fe1176fbee26"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970010.npz",
+   "a_sha256": "06e4bc4996550d81882adc73313535f3449a4e87cee79c19dbf781bddd60d530",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970010.npz",
+   "b_sha256": "f3df5b5b63ede0bb00450eabf686953a69f94b269596ee0a8a43db5c1fe6f8de"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970011.npz",
+   "a_sha256": "10b6ab5648dee490199ea36bd84ef9faf3d34566d5411a2ecd518444748424c1",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970011.npz",
+   "b_sha256": "1fbac8f2964f394e054485ebd4f6294f0e6078e8174cd383570a57fcf2560a50"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970012.npz",
+   "a_sha256": "ddba22e9c7ced640926cf3a11ea8df41189c873550ee2cdbcee983d85016e1c2",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970012.npz",
+   "b_sha256": "aef4c22b0bedc8a271a91f12c997f1d69b8f5a1299748a428348a30f2df3c096"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970013.npz",
+   "a_sha256": "15890e68c5b4f1a3be3921f0de6b69b319093445c97d89d44116c339b4ca71de",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970013.npz",
+   "b_sha256": "903140d4f69aa7be96fe1d4d59ce9d4bb911c190ccd4faf6037f6f59d599da69"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970014.npz",
+   "a_sha256": "edd53797c702b190ff2cb6c378d00bb4610bf525552c91705667957a7c2a680f",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970014.npz",
+   "b_sha256": "2da667048bd2f0dfe723c4651b9fa5e0b72881397e61d641d333902759dfbb9e"
+  },
+  {
+   "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_half/f4_gibuu_cv_half_s970015.npz",
+   "a_sha256": "fd09c780ae3480df4168b582dafcc3ca1a27736dc77e20740ca6c3a9ee732c33",
+   "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f4/gibuu_cv_quarter/f4_gibuu_cv_quarter_s970015.npz",
+   "b_sha256": "a71c8aa8fe45d023efb14ad726f102b4c563251136f81b4d352617628a6c6af7"
+  }
+ ],
+ "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+}

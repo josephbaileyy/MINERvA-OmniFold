@@ -47,24 +47,9 @@
  },
  "jobs": [
   {
-   "job": "58954256",
-   "label": "F4 pairs (s3v-f4r)",
-   "state": "RUNNING"
-  },
-  {
-   "job": "58953710",
-   "label": "asimovs (NuWro fine F2, merged-x2 M1)",
-   "state": "queued"
-  },
-  {
-   "job": "58953705",
-   "label": "detector dump",
-   "state": "see sacct"
-  },
-  {
-   "job": "58954259",
-   "label": "all-band pilot",
-   "state": "FAILED/CANCELLED 19:07Z"
+   "job": "58968218",
+   "label": "all-band design pilot (the one exception resubmission)",
+   "state": "RUNNING (first products valid, weight_treatment recorded)"
   }
  ],
  "receipts": [
@@ -127,6 +112,10 @@
   {
    "path": "docs/orchestration/state/s5p/stage3/m1/",
    "what": "M1 (review round 2): fine minus merged-x2 null truth (noise-free full-MC asimov, R, k=5) against fine minus coarse (F2): L2 ratio 0.76 (GENIE CV), 0.86 (MEC), 0.54 (NuWro), 0.50 (GiBUU); median |fine-mid|/f 0.32/0.59/0.66/1.10% vs |fine-coarse| 0.65/0.65/2.02/2.80%. NOT converged: by amendment 8's frozen rule the residual below the fine grid is stated as 'unmeasured, potentially material' with these numbers (part may be finite-MC noise in the sparse fine ratios; not separable here); null-T units follow with the production V. F2 NuWro: median |delta|/f 2.02%, p90 4.5%"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/stage3/f4/",
+   "what": "F4 D from 16 pairs per null (D16-*): median |D|/f 0.022% (MnvTune), 0.040% (GENIE CV), 0.032% (MEC), 0.052% (NuWro), 0.075% (GiBUU); median |D|/se 0.74-0.88 (pure noise ~0.7): the half-vs-quarter MC-size effect is at noise level at every null; the 4-pair D-* files are history"
   }
  ],
  "amendments": [
