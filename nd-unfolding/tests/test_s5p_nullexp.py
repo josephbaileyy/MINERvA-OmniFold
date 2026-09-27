@@ -24,7 +24,7 @@ def inputs(n=5000, seed=0):
     pass_truth = np.ones(n, bool)
     pass_truth[:20] = False
     return {"MCgen": gen, "edges": EDGES, "w_truth": rng.uniform(0.5, 1.5, n), "w_reco": rng.uniform(0.2, 1.0, n),
-            "pass_truth": pass_truth}
+            "pass_truth": pass_truth, "pass_reco": np.ones(n, bool)}
 
 
 def fine_flat(inp):
@@ -207,25 +207,58 @@ class Tests(unittest.TestCase):
             with self.assertRaises(FileNotFoundError):
                 ne.drawn_detector_bands("MinosEfficiency,GEANT_Pion", False, None, bank)
 
-    def test_negative_universe_weights_are_clipped_and_counted(self):
-        inp = inputs(n=400, seed=14)
-        rng = np.random.default_rng(15)
-        bkg = {"bkg_w": rng.uniform(0.1, 1.0, 30)}
-        with tempfile.TemporaryDirectory() as d:
-            bank = Path(d)
-            wr_bad = inp["w_reco"].copy()
-            wr_bad[:7] *= -3.0
-            for u, wrx in (("LowQ2_1", wr_bad), ("Flux_2", inp["w_reco"])):
-                np.save(bank / f"{u}_wr.npy", wrx)
-                np.save(bank / f"{u}_wt.npy", inp["w_truth"])
-                np.save(bank / f"{u}_tdw.npy", np.ones(4))
-                np.save(bank / f"{u}_bkgw.npy", bkg["bkg_w"])
-            d_ = {"flux": 2, "model": {"LowQ2": "LowQ2_1"}, "detector": {}}
-            fs, fb = ne.source_factors(d_, inp, bkg, bank, None)
-        self.assertTrue(np.all(fs >= 0) and np.all(np.isfinite(fs)))
-        self.assertEqual(d_["clipped_rows"]["signal"], 7)
-        self.assertTrue(np.all(fs[:7] == 0.0))
+    def _bank(self, d, inp, bkg, universes):
+        bank = Path(d)
+        for u, wrx in universes.items():
+            np.save(bank / f"{u}_wr.npy", wrx)
+            np.save(bank / f"{u}_wt.npy", inp["w_truth"])
+            np.save(bank / f"{u}_tdw.npy", np.ones(4))
+            np.save(bank / f"{u}_bkgw.npy", bkg["bkg_w"])
+        return bank
 
+    def test_negative_model_ratios_are_clipped_per_universe_and_counted(self):
+        inp = inputs(n=400, seed=14)
+        bkg = {"bkg_w": np.random.default_rng(15).uniform(0.1, 1.0, 30)}
+        a, b = inp["w_reco"].copy(), inp["w_reco"].copy()
+        a[:7] *= -3.0
+        b[:7] *= -2.0  # the same rows negative in a second band: the product must be 0, not positive
+        with tempfile.TemporaryDirectory() as d:
+            bank = self._bank(d, inp, bkg, {"LowQ2_1": a, "HighQ2_1": b, "Flux_2": inp["w_reco"]})
+            d_ = {"flux": 2, "model": {"LowQ2": "LowQ2_1", "HighQ2": "HighQ2_1"}, "detector": {}}
+            fs, fb = ne.source_factors(d_, inp, bkg, bank, None)
+        self.assertTrue(np.all(fs[:7] == 0.0))
+        self.assertTrue(np.all(fs >= 0))
+        self.assertEqual(d_["weight_treatment"]["LowQ2_1:wr:negative_clipped_to_0"], 7)
+        self.assertEqual(d_["weight_treatment"]["HighQ2_1:wr:negative_clipped_to_0"], 7)
+
+    def test_nonfinite_is_refused_where_used_and_declared_where_unused(self):
+        inp = inputs(n=300, seed=16)
+        bkg = {"bkg_w": np.random.default_rng(17).uniform(0.1, 1.0, 20)}
+        inp["pass_reco"][:5] = False
+        w = inp["w_reco"].copy()
+        w[:3] = np.nan  # rows that fail reco: the reco weight is never read
+        with tempfile.TemporaryDirectory() as d:
+            bank = self._bank(d, inp, bkg, {"Flux_2": inp["w_reco"], "MinosEfficiency_1": w})
+            d_ = {"flux": 2, "model": {}, "detector": {"MinosEfficiency": 1}}
+            fs, _ = ne.source_factors(d_, inp, bkg, bank, None, cache=ne.ModelCache(bank, [], inp, bkg))
+            self.assertEqual(d_["weight_treatment"]["MinosEfficiency_1:wr:nonfinite_unused_set_to_1"], 3)
+            self.assertTrue(np.all(np.isfinite(fs)))
+            w2 = inp["w_reco"].copy()
+            w2[10] = np.nan  # a reco-passing row: refused, never zeroed
+            np.save(bank / "MinosEfficiency_1_wr.npy", w2)
+            with self.assertRaises(ValueError):
+                ne.source_factors(dict(d_), inp, bkg, bank, None, cache=ne.ModelCache(bank, [], inp, bkg))
+
+    def test_a_negative_flux_ratio_is_refused(self):
+        inp = inputs(n=200, seed=18)
+        bkg = {"bkg_w": np.random.default_rng(19).uniform(0.1, 1.0, 10)}
+        f = inp["w_reco"].copy()
+        f[4] = -0.1
+        with tempfile.TemporaryDirectory() as d:
+            bank = self._bank(d, inp, bkg, {"Flux_2": f})
+            with self.assertRaises(ValueError):
+                ne.source_factors({"flux": 2, "model": {}, "detector": {}}, inp, bkg, bank, None,
+                                  cache=ne.ModelCache(bank, [], inp, bkg))
 
 if __name__ == "__main__":
     unittest.main()

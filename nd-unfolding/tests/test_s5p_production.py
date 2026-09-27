@@ -71,6 +71,21 @@ class Tests(unittest.TestCase):
                     r = subprocess.run(["bash", "-n"], input=ln, text=True, capture_output=True)
                     self.assertEqual(r.returncode, 0, f"{q.name}: {r.stderr[:200]}")
 
+    def test_v_ensemble_lane_and_calibration_waits_for_v(self):
+        s = spec()
+        s["v_ensemble"] = {"seed_base": 1190000, "n": 200}
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "spec.json").write_text(json.dumps(s))
+            out = Path(d) / "prod"
+            sp.main(["--spec", f"{d}/spec.json", "--out", str(out)])
+            rows = (out / "tables/v-ensemble.tsv").read_text().splitlines()[1:]
+            self.assertEqual(seeds(rows), list(range(1190000, 1190200)))
+            q = [ln for ln in (out / "queues/cal-MnvTune_v1.q").read_text().splitlines() if not ln.startswith("#")]
+            self.assertIn("/ns/V.npz", q[0])
+            self.assertIn("until [ -e", q[0])
+            des = json.loads((out / "design.json").read_text())
+            self.assertEqual(des["v_ensemble_n"], 200)
+
     def test_overlapping_seed_ranges_are_refused(self):
         with tempfile.TemporaryDirectory() as d:
             (Path(d) / "spec.json").write_text(json.dumps(spec(base1=1201000)))

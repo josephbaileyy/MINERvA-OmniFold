@@ -27,7 +27,7 @@
   "max": 1999
  },
  "controller": {
-  "v": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/V/V-s3v.npz",
+  "v": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/V/V-prod.npz",
   "status_dir": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/status"
  },
  "queue": {
@@ -212,5 +212,9 @@
     "mode": "bias_aligned_upper"
    }
   }
+ },
+ "v_ensemble": {
+  "seed_base": 1190000,
+  "n": 200
  }
 }

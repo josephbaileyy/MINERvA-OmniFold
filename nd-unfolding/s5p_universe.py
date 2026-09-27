@@ -86,11 +86,16 @@ def weight_keys(bank: Path, tag: str) -> tuple[str, ...]:
     return ("wt", "wr", "denom_nd", "bkgw") if (bank / f"{tag}_denom_nd.npy").exists() else ("wt", "wr", "tdw", "bkgw")
 
 
-def weights(bank: Path, tag: str) -> dict:
+def weights(bank: Path, tag: str, nonfinite: str = "zero") -> dict:
+    """A universe's weight arrays. ``nonfinite='zero'`` is sweep_bank_5d.do_run's rule (the universe unfolds);
+    ``'keep'`` returns them untouched so the caller decides (s5p_nullexp refuses them where they are used)."""
     out = {}
     for key in weight_keys(bank, tag):
         w = np.load(bank / f"{tag}_{key}.npy", mmap_mode="r").astype(np.float64)
-        np.nan_to_num(w, copy=False, nan=0.0, posinf=0.0, neginf=0.0)  # sweep_bank_5d.do_run's rule
+        if nonfinite == "zero":
+            np.nan_to_num(w, copy=False, nan=0.0, posinf=0.0, neginf=0.0)  # sweep_bank_5d.do_run's rule
+        elif nonfinite != "keep":
+            raise ValueError(f"nonfinite={nonfinite!r}")
         out[key] = w
     return out
 

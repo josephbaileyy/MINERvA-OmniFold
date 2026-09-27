@@ -269,6 +269,10 @@
   {
    "utc": "2026-09-27T19:10Z",
    "what": "all-band design pilot 58954259: 12 tasks FAILED ('lam < 0 or lam contains NaNs' in build_pseudo's Poisson draw; 5 products written), 48 pending tasks cancelled. Cause (measured by a scan of the 69 model universes): LowQ2_1 has negative weights on 462 rows (435 reco-passing, ratio down to -156) and HighQ2_1 on 99 rows (94, down to -18); the all-band draw includes one of them in half the experiments, the single-universe draw rarely did. Repair: a negative or non-finite combined factor is clipped to 0 and counted per experiment ('clipped_rows' in the draw; <= ~460 of 20.4M reco-passing rows); test. Not re-run in stage3_repair2 (its corrective resubmission was spent on the F4 lines): the V ensemble moves into production as its first job on its own seeds, used only for V (decision recorded for amendment 7; confirmation review before production)"
+  },
+  {
+   "utc": "2026-09-27T19:40Z",
+   "what": "owner exception (EXCEPTION-20260927-s5p-pilot-negative-rate-resubmission.md): one additional corrective resubmission of the all-band pilot, after a quantified negative-weight treatment and an independent review; the combined-factor clip of 17773f02 is replaced by per-universe clipping (two negative bands no longer multiply to a positive weight) and non-finite values are refused where used (MinosEfficiency: 18 reco-failing rows set to 1 and counted); development only"
   }
  ],
  "findings": [

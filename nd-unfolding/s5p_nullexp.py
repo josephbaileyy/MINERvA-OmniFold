@@ -96,11 +96,23 @@ class ModelCache:
     def __init__(self, bank: Path, universes: list[str], inputs: dict, bkg: dict, preload: bool = False):
         self.bank = bank
         self.wr, self.wt, self.bw = (np.asarray(x, float) for x in (inputs["w_reco"], inputs["w_truth"], bkg["bkg_w"]))
+        self.used = (np.asarray(inputs["pass_reco"], bool), np.asarray(inputs["pass_truth"], bool), np.ones(self.bw.size, bool))
+        self.clipped: dict[str, dict] = {}
         self.r = {u: self._ratios(u) for u in universes} if preload else {}
 
     def _ratios(self, u: str) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-        w = s5p_universe.weights(self.bank, u)
-        return ratio(w["wr"], self.wr), ratio(w["wt"], self.wt), ratio(w["bkgw"], self.bw)
+        """A universe's weight ratios with its NEGATIVE ratios clipped to 0 PER UNIVERSE (before any product, so two
+        negative bands never multiply into a positive weight) and counted; a non-finite ratio is refused where used.
+        Justification (state/s5p/stage3/negw/negative-weight-diagnostic.json): only LowQ2_1 (462 rows) and HighQ2_1
+        (99) carry negative weights; clipping moves any reco J-cell yield by <= 2.1e-5 relative, <= 4.2% of that
+        cell's band shift and <= 1.0% of its statistical sigma, so the band's drawn shift, and the prior's
+        covariance, are unchanged to that level."""
+        w = s5p_universe.weights(self.bank, u, nonfinite="keep")
+        rec: dict = {}
+        out = tuple(checked_ratio(w[k], cv, used, f"{u}:{k}", rec, clip_negative=True)
+                    for k, cv, used in zip(("wr", "wt", "bkgw"), (self.wr, self.wt, self.bw), self.used))
+        self.clipped[u] = rec
+        return out
 
     def product(self, chosen: list[str]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         k_wr, k_wt, k_b = np.ones(self.wr.size), np.ones(self.wt.size), np.ones(self.bw.size)
@@ -118,6 +130,29 @@ def draw(rng: np.random.Generator, flux_ids: list[int], groups: dict[str, list[s
             "model": {s: str(rng.choice(groups[s])) for s in sorted(groups)},
             "detector": {b: int(rng.integers(0, 2)) for b in det_bands},
             "lateral_z": {b: float(rng.normal()) for b in LATERAL_BANDS}, "normalization_z": float(rng.normal())}
+
+
+def checked_ratio(num: np.ndarray, cv: np.ndarray, used: np.ndarray, what: str, record: dict,
+                  clip_negative: bool = False) -> np.ndarray:
+    """num / cv (1 where cv <= 0). A NON-FINITE ratio is refused on a row where this weight is used (``used``) and
+    set to 1 on a row where it is never read (e.g. a reco weight of a reco-failing row), counted in ``record``;
+    a NEGATIVE ratio is clipped to 0 and counted if ``clip_negative`` (the interaction-model universes), refused
+    otherwise. Nothing is zeroed silently (review of the s5p negative-rate repair, 2026-09-27)."""
+    with np.errstate(divide="ignore", invalid="ignore"):
+        r = np.where(cv > 0, num / np.where(cv > 0, cv, 1.0), 1.0)
+    nf = ~np.isfinite(r)
+    if np.any(nf & used):
+        raise ValueError(f"{what}: {int((nf & used).sum())} non-finite ratios on rows where the weight is used")
+    if nf.any():
+        record[f"{what}:nonfinite_unused_set_to_1"] = int(nf.sum())
+        r = np.where(nf, 1.0, r)
+    neg = r < 0
+    if neg.any():
+        if not clip_negative:
+            raise ValueError(f"{what}: {int(neg.sum())} negative ratios")
+        record[f"{what}:negative_clipped_to_0"] = int(neg.sum())
+        r = np.where(neg, 0.0, r)
+    return r
 
 
 def truth_preserving(k_truth: np.ndarray, inputs: dict, source: np.ndarray) -> np.ndarray:
@@ -166,26 +201,29 @@ def source_factors(d: dict, inputs: dict, bkg: dict, bank: Path, det_dir: Path |
     fs = np.ones(inputs["w_reco"].shape[0])
     fb = np.ones(bkg["bkg_w"].shape[0])
     wr, bw = np.asarray(inputs["w_reco"], float), np.asarray(bkg["bkg_w"], float)
-    w = s5p_universe.weights(bank, f"Flux_{d['flux']}")
-    fs *= ratio(w["wr"], wr)
-    fb *= ratio(w["bkgw"], bw)
+    used_r, used_b = np.asarray(inputs["pass_reco"], bool), np.ones(bw.size, bool)
+    rec: dict = {}
+    tag = f"Flux_{d['flux']}"
+    w = s5p_universe.weights(bank, tag, nonfinite="keep")
+    fs *= checked_ratio(w["wr"], wr, used_r, f"{tag}:wr", rec)
+    fb *= checked_ratio(w["bkgw"], bw, used_b, f"{tag}:bkgw", rec)
     chosen = list(d["model"].values())
     cache = cache if cache is not None else ModelCache(bank, chosen, inputs, bkg)
     k_wr, k_wt, k_b = cache.product(chosen)
     fb *= k_b
     src = np.ones(fs.size, bool) if source is None else source
     fs *= k_wr * truth_preserving(k_wt, inputs, src)
-    # two bank universes (LowQ2_1: 462 rows, HighQ2_1: 99 rows of 32.8M) carry negative weights; a Poisson mean
-    # cannot be negative, so a negative combined factor is clipped to 0 and the count recorded (s5p 2026-09-27:
-    # the all-band pilot 58954259 failed on 'lam < 0' until this)
-    bad_s, bad_b = ~np.isfinite(fs) | (fs < 0), ~np.isfinite(fb) | (fb < 0)
-    d["clipped_rows"] = {"signal": int(bad_s.sum()), "background": int(bad_b.sum())}
-    fs[bad_s] = 0.0
-    fb[bad_b] = 0.0
     for b, i in d["detector"].items():
-        wd = s5p_universe.weights(detector_source(det_dir, bank, f"{b}_{i}"), f"{b}_{i}")
-        fs *= ratio(wd["wr"], wr)
-        fb *= ratio(wd["bkgw"], bw)
+        tag = f"{b}_{i}"
+        wd = s5p_universe.weights(detector_source(det_dir, bank, tag), tag, nonfinite="keep")
+        fs *= checked_ratio(wd["wr"], wr, used_r, f"{tag}:wr", rec)
+        fb *= checked_ratio(wd["bkgw"], bw, used_b, f"{tag}:bkgw", rec)
+    # the model universes' negative ratios are clipped per universe in ModelCache (counted); after that every
+    # factor must be finite and non-negative: a violation (e.g. a negative flux or detector ratio) is refused
+    d["weight_treatment"] = {**rec, **{k: v for u in chosen for k, v in cache.clipped.get(u, {}).items()}}
+    for name, f in (("signal", fs), ("background", fb)):
+        if not np.all(np.isfinite(f)) or np.any(f < 0):
+            raise ValueError(f"{name} source factor: {int((~np.isfinite(f)).sum())} non-finite, {int((f < 0).sum())} negative")
     return fs, fb
 
 
