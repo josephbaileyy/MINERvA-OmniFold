@@ -95,8 +95,33 @@ def install() -> None:
     s5n_pseudo.code_digests = code_digests
 
 
+def install_checkpoints(out: Path, every: tuple[int, ...]) -> None:
+    """Write the recorder's per-iteration truth functionals so far to ``<out>.partial.npz`` at the declared
+    iterations (a DIAGNOSTIC checkpoint: the trace's bitwise checks and the final product are unchanged; a
+    run that dies at its time limit keeps the iterations it completed)."""
+    orig = s5e_trace.Recorder.on_iteration
+    if getattr(orig, "_s5p_ckpt", False):
+        return
+
+    def on_iteration(self, k, w_pull, w_push, new_w):
+        orig(self, k, w_pull, w_push, new_w)
+        if k in every:
+            o = self.out
+            tmp = out.with_name(out.name + ".partial.tmp.npz")
+            np.savez(tmp, k=np.array(k), fn_push=o["fn_push"][:k], fn_pull=o["fn_pull"][:k], fn_true_A=o["fn_true_A"],
+                     reco_ew_push=o["reco_ew_push"][:k], reco_ew_true=o["reco_ew_true"], reco_ew_prior=o["reco_ew_prior"],
+                     reco5d_true=o["reco5d_true"], reco5d_prior=o["reco5d_prior"])
+            tmp.replace(out.with_name(out.name + ".partial.npz"))
+
+    on_iteration._s5p_ckpt = True
+    s5e_trace.Recorder.on_iteration = on_iteration
+
+
 def main(argv=None) -> int:
     install()
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if "--out" in argv:
+        install_checkpoints(Path(argv[argv.index("--out") + 1]), (10, 20, 30, 40, 50, 75, 100, 125, 150, 175))
     return s5e_trace.main(argv)
 
 
