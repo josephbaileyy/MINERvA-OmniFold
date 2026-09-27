@@ -1,0 +1,49 @@
+{
+ "schema": "s5p-contract-amendment/1",
+ "amends": "docs/orchestration/state/s5p/contract.json",
+ "number": 7,
+ "stage": "3 -> 4/7: the production admission of the joint-test branch (handoff Stage 3 exit)",
+ "status": "CANDIDATE for the confirmation review. It becomes amendment 7 only when a later commit adds docs/orchestration/state/s5p/contract-amendment-7-production-admission.json with the review's required changes, V's sha256 (built by s5p_joint.py build-v from the 200-experiment all-band design pilot s3v) and the pilot's development power; nothing here admits a job. Supersedes the earlier ADMISSION-DRAFT-amendment-7.json (history).",
+ "branch": "joint-5D inference only. The measurement branch is not admitted (amendment 4; its disposition does not depend on the contaminated D1: state/s5p/stage3/envelope-receipt.json). For this branch the handoff's Stage 4 is the construction of the calibration and power ensembles, Stage 5 their verification and the frozen sequential stopping, Stage 6 the independent verification of the evaluator output (no measurement product is adopted and no adopted bytes change), Stage 7 the joint result and deliverables. The joint branch does not depend on measurement qualification: its validity rests on the calibration of its own statistic, not on any interval of the measurement.",
+ "claims": {
+  "family": "for each of the five predictions G (MnvTune v1 = the analysis MC; GENIE 2.12.10 CV, GENIE 2.12.10 + Valencia MEC and NuWro 21.09, flux-repaired, KNOWN_ISSUES 83; GiBUU 2019 in the analysis flux convention, KNOWN_ISSUES 82): H0(G) 'the true cross sections of the 109 supported J cells (GiBUU: the 36 cells with p_parallel < 6 GeV/c) equal G's'; two tests each (total, shape-only): 10 tests",
+  "rejection": "H0(G) is rejected at familywise 0.05 only by s5p_inference.holm_determined on the CLAIM p-values (the largest p over the process-shift variants): a step rejects only when the 95% Clopper-Pearson interval of k/B lies entirely below its Holm threshold; an interval containing it stops the procedure with 'undetermined' (no claim either way at that level)",
+  "non_rejection": "reported with the power of the same test against P1r-P3r at the NULL IT BELONGS TO (MnvTune null: a = 1, 200 each; GENIE CV null: a = 1, 100 each), at 0.05 and at the Holm first-step level 0.005, under the claim rule with the determinacy rule (s5p_inference.power_determined); low power is a limitation, never agreement",
+  "conditions_stated_with_every_claim": [
+   "the null truth is G at the fine 5D grid (fine-ratio null, J integrals exactly G's). Below the fine grid the null truth carries MnvTune's shapes and G's finite-MC fine-cell fluctuations, and this residual is UNMEASURED AND POTENTIALLY MATERIAL: the fine-vs-merged-x2 check (M1) moved the J cells by 0.50-0.86 of the coarse-to-fine step (median |fine - merged|/f 0.32-1.10%), i.e. not converged (state/s5p/stage3/m1/); its size in null-T units is reported with the result",
+   "the MC detector simulation per event beyond the drawn detector bands (MinosEfficiency, GEANT neutron/pion/proton, each +-1 sigma) and the linear lateral surrogate (five bands); there is no recoil-energy-scale band in the analysis's systematic set (app_statmethods.tex), so hadronic-response completeness is not established",
+   "the interaction-model prior is the analysis's vertical band set (34 bands, every band drawn per experiment); negative weights of LowQ2_1/HighQ2_1 are clipped per universe (EXCEPTION-20260927-s5p-pilot-negative-rate-resubmission.md: <= 0.35% of a band's shift in whitened norm)",
+   "the pseudo-experiment process unfolds with half the MC, the data with all of it; the MC-size shift D is at noise level at all five nulls (16 pairs: median |D|/f 0.02-0.075%) and enters as the bias-aligned upper-bound variant",
+   "GiBUU: E_nu > 20 GeV absent (KNOWN_ISSUES 82) and its out-of-domain truth (p_parallel >= 6 GeV/c, E_nu-truncated) enters the migrations into the domain cells; all generators: E_nu > 100 GeV absent (only the data's flux integral stops there; negligible)",
+   "the predictions' own finite MC enters as diag Var(mu_G) in the metric and as a drawn residual term"
+  ]
+ },
+ "calibration": {
+  "process": "s5p_nullexp.py at the null truth (fine-ratio null; MnvTune: rho = 1): per experiment fresh Poisson pseudo-data from MC half B and background source C, refinement refit, R (5 iterations) on MC half A; nuisance draws on the pseudo-data source: one PPFX flux universe (of 100); EVERY interaction-model band at one of its universes (34 bands), coherently for the background source and the signal response with fine-cell truth preservation; the four weight-only detector bands (dump; MinosEfficiency's 18 reco-failing NaN rows set to 1 and counted, non-finite values refused where used); downstream: lateral z_b Delta_b (Delta from the ten real-data endpoint unfolds, runs/s3/latunf), normalization 1.4% z, the data's rounding noise (20 real-data jitters), the prediction's finite-MC residual (drawn per experiment, keyed by seed)",
+  "sequential_rule": "batches of 200 seeds in fixed order per null, at most 1999; before each batch s5p_seqstop.py evaluates both claim p-values on the finished products (partials excluded) and stops the null when s5p_inference.sequential_decision stops both (99.5% Clopper-Pearson look interval: no decision threshold straddled, T7 precision at the point estimate, or an upper end below every threshold); a meter cap refusal writes a 'budget' final status, the last line a 'batches exhausted' one; the p-value stays valid at the B reached (the determinacy rule decides claims)",
+  "seeds": "calibration 1200000 + 20000 i (i = 0 MnvTune, 1 GENIE CV, 2 GENIE MEC, 3 NuWro, 4 GiBUU); power MnvTune null 1451000/1461000/1471000 (a = 1), GENIE CV null 1481000/1491000/1501000; the generator refuses overlapping ranges",
+  "metric": "W = V + diag Var(mu_G); V = the standardized Ledoit-Wolf covariance (s5p_joint build-v) of the 200-experiment all-band design pilot s3v (MnvTune null, GEANT detector bands from the bank, MinosEfficiency absent; seeds 965000-965199); V sets power only; its sha256 is recorded here at the freeze",
+  "process_shift": "D16-<null>.npz (state/s5p/stage3/f4/, digests in the design), mode bias_aligned_upper, variants c in (0, 1/2, 1)"
+ },
+ "validation_and_assurance": {
+  "validation_operand": "the calibration ensemble of each null itself, through (i) rank exactness within the pseudo process (any B), (ii) the determinacy rule for decisions, (iii) the process-shift variants and the implied size they report, (iv) the observed p's stability over the 20 real-data rounding jitters (reported per test), and (v) an independent re-computation of every p-value and decision from the products by a reviewer's own code before the joint result is recorded",
+  "size_clause": "T6's size clause is a report without a failing outcome (amendment 8): validity rests on (i)-(iii)"
+ },
+ "power": "P1r (W3), P2r (D5), P3r (W2) rebuilt from the repaired predictions: at the MnvTune null a = 1 (200 each) and at the GENIE CV null a = 1 (100 each); the a = 0.5 sets of the earlier draft are dropped for cost; T6 power >= 0.80 at 0.005 under the claim and determinacy rules for the shape test at a = 1 at the MnvTune null is the target; the design pilot's development power (P1r-P3r, 50 each, all-band) is recorded here at the freeze",
+ "costs_and_reserves": {
+  "measured_seconds_per_experiment": "all-band nuisance construction: 530-700 s, the first experiment of a task ~1,350 s (cold file cache): ~720 s mean per experiment for 6-seed lines (s3v pilot products)",
+  "expected": "sequential stopping at ~4 batches for a bulk p and ~6 for k = 0: ~5,600 calibration experiments + 900 power = ~6,500 x 720 s = 1,300 step-h = ~163 CPU node-h",
+  "worst_case": "5 x 1999 + 900 = 10,895 experiments = ~272 CPU node-h: more than the placement; the 'budget' stop then applies and only determined decisions are claimed",
+  "placement": "a 'production' stage of 185 CPU node-h (budget revision 5 from the unallocated 188.147 CPU); all lanes on the CPU pool (s5p_nullexp has no GPU path); verification/repair (62.037 CPU, 22.981 GPU) untouched; cumulative CPU within 345.27",
+  "concurrency": "five calibration lanes and one power lane at throttle 2 (6 lanes x 2 x 1/8 node = 1.5 of the 2-node cap; the meter enforces it)",
+  "storage": "products ~96 kB: ~0.7 GB; namespace 1.6 GB before production",
+  "wall_clock": "~12 concurrent six-seed tasks: ~60 experiments per hour, ~4-5 days expected on the shared partition"
+ },
+ "first_production_jobs": "none remain outside the lanes: the detector dump, the NuWro F4 pairs, the F2 NuWro-fine and the merged-x2 asimovs ran in repair cycle 2",
+ "infeasible_inference_identified": [
+  "no measurement (branch not admitted)",
+  "no test at a resolution finer than the J cells",
+  "no GiBUU statement at p_parallel >= 6 GeV/c",
+  "no claim that the null truth is resolved below the fine grid (M1)"
+ ]
+}

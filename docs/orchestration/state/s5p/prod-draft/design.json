@@ -56,28 +56,28 @@
  ],
  "process_shift": {
   "MnvTune_v1": {
-   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-mnvtune_v1.npz",
-   "sha256": "FILLED AT FREEZE",
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D16-mnvtune_v1.npz",
+   "sha256": "c4e9586b01dff338e341861529d6e5d3f917d06d2537abb3ac0b04d87077a78b",
    "mode": "bias_aligned_upper"
   },
   "GENIE_2_12_10_CV": {
-   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-genie_cv.npz",
-   "sha256": "FILLED AT FREEZE",
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D16-genie_cv.npz",
+   "sha256": "0d7d1b581003df398e854aa96e0a62d37efdd654c37afe9bc063536893884a9e",
    "mode": "bias_aligned_upper"
   },
   "GENIE_2_12_10_MEC": {
-   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-genie_mec.npz",
-   "sha256": "FILLED AT FREEZE",
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D16-genie_mec.npz",
+   "sha256": "768f942c369baa87937265aa06a5964d20214b7eadc5499bd30cca93aabc7a1c",
    "mode": "bias_aligned_upper"
   },
   "NuWro_21_09": {
-   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-nuwro_cv.npz",
-   "sha256": "FILLED AT FREEZE",
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D16-nuwro_cv.npz",
+   "sha256": "b7b5de719e2fc689ae10ddefbb8f43fda96938532dde004d8542ea1d52631290",
    "mode": "bias_aligned_upper"
   },
   "GiBUU_2019": {
-   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D-gibuu_cv.npz",
-   "sha256": "FILLED AT FREEZE",
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D16-gibuu_cv.npz",
+   "sha256": "e388a2b2456c2d579fe29c28154b81dfb01eecdc5ec1611d3f9623c7c39c86a5",
    "mode": "bias_aligned_upper"
   }
  },
@@ -155,19 +155,19 @@
   "P1g_a1.0": {
    "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P1g_a1.0/pow_P1g_a1.0_s*.npz",
    "surrogate_seed0": 1981000,
-   "n": 200,
+   "n": 100,
    "null": "GENIE_2_12_10_CV"
   },
   "P2g_a1.0": {
    "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P2g_a1.0/pow_P2g_a1.0_s*.npz",
    "surrogate_seed0": 1991000,
-   "n": 200,
+   "n": 100,
    "null": "GENIE_2_12_10_CV"
   },
   "P3g_a1.0": {
    "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P3g_a1.0/pow_P3g_a1.0_s*.npz",
    "surrogate_seed0": 2001000,
-   "n": 200,
+   "n": 100,
    "null": "GENIE_2_12_10_CV"
   }
  }
