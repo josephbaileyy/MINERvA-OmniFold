@@ -342,8 +342,26 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: It pins the Stage-2 receipt the amendment's decisions were applied to. Removing both entries
 #: reproduces 123 / 334f670d exactly; flipping the pin's last hex digit makes this file report
 #: `MISMATCH docs/orchestration/state/s5p/stage2/stage2_receipt.json`, rc 1; then restored.
-RECEIPT_BINDING_COUNT = 124
-RECEIPT_BINDING_SHA256 = "4a6b7e215aa536fb6e3a131351ba5f626afab39c36c1f0d0e2613ec107f85ccf"
+#: 124 -> 125, digest 4a6b7e21 -> cd584788 (2026-09-27, OI-193, the s5p campaign). One binding was
+#: ADDED, by the flux-repair receipts state/s5p/gen5d/gen5d-fluxfix.json and gen5d-fluxfix-2.json
+#: (KNOWN_ISSUES 83), which both pin the GiBUU jobcard they read for its flux convention:
+#:   ADDED   3d-unfolding/genie/work_gibuu/gibuu_mefhc_numu.job
+#:           d00a622c0f732a6089aae9e4b7c0cceb500a1b3133a53142462f01dc7cefeb63
+#: Removing both receipts reproduces 124 / 4a6b7e21 exactly; flipping the pin's last hex digit in
+#: gen5d-fluxfix.json makes this file report `MISMATCH 3d-unfolding/genie/work_gibuu/gibuu_mefhc_numu.job`,
+#: rc 1; then restored (sha256 6325a4e9... re-measured).
+#: 125 -> 127, digest cd584788 -> e6313052 (2026-09-27, OI-193, the s5p campaign). Two bindings were
+#: ADDED, by the campaign state's receipts list state/s5p/campaign-state.json, which pins the two flux-repair
+#: receipts it cites:
+#:   ADDED   docs/orchestration/state/s5p/gen5d/gen5d-fluxfix.json
+#:           6325a4e948bf2c9f38b7e68ecf42aa8f724f9ae0ea8c0fc95f6e904c0e790260
+#:   ADDED   docs/orchestration/state/s5p/gen5d/gen5d-fluxfix-2.json
+#:           48a6b024248f1a347e8ab1709c8d9e4b1f099bae79c1e10f68c1aab10741d7b1
+#: Removing both entries reproduces 125 / cd584788 exactly; flipping the second pin's last hex digit
+#: makes this file report `MISMATCH docs/orchestration/state/s5p/gen5d/gen5d-fluxfix-2.json`, rc 1;
+#: then restored (cmp).
+RECEIPT_BINDING_COUNT = 127
+RECEIPT_BINDING_SHA256 = "e6313052886245651e40fdb8999fbd368fb9e54a2456545e29533e25ec7c1941"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

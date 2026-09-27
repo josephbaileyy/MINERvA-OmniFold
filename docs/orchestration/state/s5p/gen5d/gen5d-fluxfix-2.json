@@ -1,0 +1,1541 @@
+{
+ "schema": "gen5d-fluxfix-2-receipt/v1",
+ "created_utc": "2026-09-27T09:04:49.088082+00:00",
+ "created_by": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_supplement.py receipt (machine-generated from the products' meta)",
+ "output_dir": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix",
+ "code": [
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_supplement.py",
+   "sha256": "ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_reweight.py",
+   "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5"
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/run_gen5d_supplement.sh",
+   "sha256": "9c2088522b4d684b8394a733ad2b68bdcda2e3c722c7f25dd2ff78db17f304fb"
+  }
+ ],
+ "products": {
+  "genie_cv_full": {
+   "npz": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz",
+   "npz_sha256": "cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2",
+   "meta_json": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.meta.json",
+   "meta_json_sha256": "c26ab03aa3ded4cb63fd149ef310f0ef6ed05dfc7e082e101cfb3a276e97946e",
+   "composition": "full = <50 GeV product (/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d.npz) + E_nu 50-100 GeV supplement; sumw2 and nevt add; E_nu > 100 GeV is absent (phi_t ends at 100 GeV)",
+   "supplement_events": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_cv/genie_supp_cv.gst.root",
+    "role": "supplement events",
+    "bytes": 71762297,
+    "sha256": "f19b6c31137b166cbf89613a07a14f741efabb325956290e93edef8288ca5312"
+   },
+   "supplement_generation_dir": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_cv",
+   "supplement_normalisation": {
+    "convention": "S_50^100 * N_bin / N_CC",
+    "S_50_100_cm2": 1.8416764017371225e-40,
+    "N_normalising_population": 75433,
+    "N_events_in_file": 100000,
+    "N_cc": 75433,
+    "N_nonMEC_cc": 75433,
+    "r_constant": 0.0004837530877832332,
+    "per_event_xsec_cm2": 2.4414730976324985e-45
+   },
+   "supplement_n_in_grid": 68124,
+   "supplement_integrated_sigma_cm2": 1.663229133031163e-40,
+   "supplement_stat_rel_err": 0.003831333260864943,
+   "sampling_model": [
+    {
+     "population": "non-MEC CC events (all)",
+     "mode": "strict (generator sigma graphs, no free shape)",
+     "n_events": 75433,
+     "n_outside_generation_bins": 0,
+     "across": {
+      "chi2": 0.10000287230905874,
+      "ndf": 4,
+      "p": 0.9987908274191954,
+      "max_abs_pull": 0.2511380811568525,
+      "E_lo_of_max_pull": 55.0,
+      "n_bins_used": 5,
+      "n_bins_low_expectation": 1
+     },
+     "across_alternative": {
+      "chi2": 7695.406054748046,
+      "ndf": 4,
+      "p": 0.0,
+      "max_abs_pull": 54.9133108777508,
+      "E_lo_of_max_pull": 60.0,
+      "n_bins_used": 5,
+      "n_bins_low_expectation": 1
+     },
+     "within": {
+      "chi2": 17.740417734017065,
+      "ndf": 20,
+      "p": 0.6045035861395153,
+      "max_abs_pull": 1.652723735571886,
+      "wide_bins_chi2": 17.740417734017065,
+      "wide_bins_ndf": 20,
+      "wide_bins_p": 0.6045035861395153
+     },
+     "pass": true
+    }
+   ],
+   "main_event_reconstruction_check": {
+    "aligned": true,
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "continuity_across_50_GeV": [
+    {
+     "E_lo": 40,
+     "E_hi": 45,
+     "sample": "main",
+     "n_events": 84,
+     "sigma_contribution_cm2": 1.8021006561802379e-40,
+     "implied_sigma_per_nucleon_over_E_cm2_per_GeV": 6.21039255110074e-39,
+     "stat_rel_err": 0.10910894511799618,
+     "cc_mean_muon_pz_over_Enu": 0.48566774689364933,
+     "cc_frac_in_ps_diagnostic": 0.9166666666666666,
+     "sigma_contribution_over_graph_expectation": 0.9329202865171814
+    },
+    {
+     "E_lo": 45,
+     "E_hi": 50,
+     "sample": "main",
+     "n_events": 47,
+     "sigma_contribution_cm2": 1.157623076047362e-40,
+     "implied_sigma_per_nucleon_over_E_cm2_per_GeV": 5.306655708047943e-39,
+     "stat_rel_err": 0.14586499149789456,
+     "cc_mean_muon_pz_over_Enu": 0.38975068860270917,
+     "cc_frac_in_ps_diagnostic": 0.8297872340425532,
+     "sigma_contribution_over_graph_expectation": 0.7982003666040564
+    },
+    {
+     "E_lo": 50,
+     "E_hi": 55,
+     "sample": "supp",
+     "n_events": 36989,
+     "sigma_contribution_cm2": 9.030764840832846e-41,
+     "implied_sigma_per_nucleon_over_E_cm2_per_GeV": 6.643156636463873e-39,
+     "stat_rel_err": 0.005199525408980016,
+     "cc_mean_muon_pz_over_Enu": 0.5191748271579623,
+     "cc_frac_in_ps_diagnostic": 0.9410905945010679,
+     "sigma_contribution_over_graph_expectation": 1.0003343254449972
+    },
+    {
+     "E_lo": 55,
+     "E_hi": 60,
+     "sample": "supp",
+     "n_events": 16759,
+     "sigma_contribution_cm2": 4.091664764322303e-41,
+     "implied_sigma_per_nucleon_over_E_cm2_per_GeV": 6.621152933368862e-39,
+     "stat_rel_err": 0.007724599106123196,
+     "cc_mean_muon_pz_over_Enu": 0.5197892348272929,
+     "cc_frac_in_ps_diagnostic": 0.9458798257652604,
+     "sigma_contribution_over_graph_expectation": 0.9980619397757288
+    }
+   ],
+   "sigma_CC_graphs_to_100": {
+    "file": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e100.root",
+    "S_0_100_over_Phi_t_CH_cm2": 4.201313615127409e-38,
+    "S_50_100_over_Phi_t_CH_cm2": 1.8416764017371225e-40,
+    "frac_50_100_of_0_100": 0.004383572783297854
+   },
+   "pz": {
+    "edges": [
+     1.5,
+     2.0,
+     2.5,
+     3.0,
+     3.5,
+     4.0,
+     4.5,
+     5.0,
+     6.0,
+     7.0,
+     8.0,
+     9.0,
+     10.0,
+     15.0,
+     20.0,
+     40.0,
+     60.0
+    ],
+    "ratio_to_mnvtune_main_lt50": [
+     1.023567443148028,
+     1.017090858879932,
+     1.032602989203775,
+     1.0410501725871213,
+     1.0373082032301062,
+     1.037295314210179,
+     1.0322650967549318,
+     1.0173232793736133,
+     0.9980181088600003,
+     0.9886785146244927,
+     0.9968804139275227,
+     1.025263274413009,
+     1.0147685828570585,
+     0.9659897942766814,
+     0.8923657462697617,
+     0.20571334996975188
+    ],
+    "ratio_to_mnvtune_full": [
+     1.0239640558002114,
+     1.0174524912652863,
+     1.032910592203034,
+     1.0413780166349458,
+     1.037678911094825,
+     1.0377195848754486,
+     1.0327320295449252,
+     1.0179434390855686,
+     0.9990329909912723,
+     0.9906849785658403,
+     1.0009868680384906,
+     1.0321722106836204,
+     1.0287785114202985,
+     0.9951450783091157,
+     0.9858827101277157,
+     0.7904478050567367
+    ],
+    "supplement_share_of_full": [
+     0.0003873306391339831,
+     0.00035542925931097155,
+     0.00029780215401108866,
+     0.0003148175231158588,
+     0.0003572471799851646,
+     0.00040884904886928354,
+     0.00045213354155283303,
+     0.0006092280652768409,
+     0.001015864481376892,
+     0.002025329933085574,
+     0.004102405578022021,
+     0.006693588723954566,
+     0.013618022157070751,
+     0.029297521203614726,
+     0.09485607455864534,
+     0.7397508745628231
+    ],
+    "supplement_stat_rel_err": [
+     0.07474350927519359,
+     0.06178020632152155,
+     0.0588235294117647,
+     0.053760333057047034,
+     0.04981354813867179,
+     0.04708816093480111,
+     0.04642383454426297,
+     0.031219527052723135,
+     0.030178582014172842,
+     0.029172998299578916,
+     0.0282729643226657,
+     0.028432506701809176,
+     0.01279215927422227,
+     0.012698988629324323,
+     0.006225728063646903,
+     0.0067680441828029516
+    ],
+    "supplement_raw_events": [
+     179,
+     262,
+     289,
+     346,
+     403,
+     451,
+     464,
+     1026,
+     1098,
+     1175,
+     1251,
+     1237,
+     6111,
+     6201,
+     25800,
+     21831
+    ],
+    "full_stat_rel_err": [
+     0.005846807991691015,
+     0.004325128169232774,
+     0.004099959435278862,
+     0.0034824002403984673,
+     0.00347690940478972,
+     0.0036793751436965077,
+     0.004103975996960697,
+     0.0032264811459513498,
+     0.004390057672803983,
+     0.007528594867650377,
+     0.0122957984436652,
+     0.02395453979074494,
+     0.017657546599728513,
+     0.034192773947675836,
+     0.041122610344933405,
+     0.09234563109251158
+    ],
+    "affected_bins_rule": "supplement share of the full >= 1%",
+    "affected_bins": [
+     12,
+     13,
+     14,
+     15
+    ],
+    "max_supplement_rel_err_in_affected_bins": 0.01279215927422227,
+    "ratio_to_mnvtune_40_60_full": 0.7904478050567367
+   },
+   "integrated_sigma_cm2": {
+    "main_lt50": 2.747830983221078e-38,
+    "full": 2.76446327455139e-38,
+    "full_over_main": 1.006052880046798,
+    "full_stat_rel_err": 0.0018734833392202734,
+    "frac_pz_ge_6_main": 0.270813157763221,
+    "frac_pz_ge_6_full": 0.2748982415836072,
+    "mnvtune_v1": 2.705701780471725e-38,
+    "frac_pz_ge_6_mnvtune": 0.28092598501184524
+   },
+   "E_gt_20_shares_of_full": {
+    "frac_sigma_in_grid_from_E_gt_20": 0.06959795631482711,
+    "frac_sigma_pz_lt_6_from_E_gt_20": 0.010220039091919122,
+    "event_sum_over_grid_total": 0.999999999999999
+   },
+   "inputs": [
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d.npz",
+     "role": "<50 GeV repaired product",
+     "bytes": 1640728,
+     "sha256": "59b4177658ee73d85c3643f04d04e4b335b89774cb78710ff88f7b138b7756a2"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/flux_phi_t_50_100.root",
+     "role": "supplement flux (content = phi_t x width, 50-100 GeV)",
+     "bytes": 4484,
+     "sha256": "6fd4a62f9cde4bf3fbd37fd8bc60ca419b12c38237162181d1903bf123c9e03e"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_cv/genie_supp_cv.gst.root",
+     "role": "supplement events",
+     "bytes": 71762297,
+     "sha256": "f19b6c31137b166cbf89613a07a14f741efabb325956290e93edef8288ca5312"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e100.root",
+     "role": "sigma_CC to 100 GeV",
+     "bytes": 2396177,
+     "sha256": "0b9d68ab2a769a012f9b184e060fa1bbee414537206c8b52e4b8eba568e30398"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/phi_t.npz",
+     "role": "phi_t",
+     "bytes": 21414,
+     "sha256": "bbcbade310d90e1ae487dde9d982e85cfe16fae35bba09dbde7db2dc99274ec5"
+    }
+   ],
+   "code": [
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_supplement.py",
+     "sha256": "ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_reweight.py",
+     "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/run_gen5d_supplement.sh",
+     "sha256": "9c2088522b4d684b8394a733ad2b68bdcda2e3c722c7f25dd2ff78db17f304fb"
+    }
+   ]
+  },
+  "genie_mec_full": {
+   "npz": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz",
+   "npz_sha256": "c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f",
+   "meta_json": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.meta.json",
+   "meta_json_sha256": "a0b0798089cd916709233cca0415216cf228920280e95ea16d1e019f8d530cc6",
+   "composition": "full = <50 GeV product (/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d.npz) + E_nu 50-100 GeV supplement; sumw2 and nevt add; E_nu > 100 GeV is absent (phi_t ends at 100 GeV)",
+   "supplement_events": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_mec/genie_supp_mec.gst.root",
+    "role": "supplement events",
+    "bytes": 71672982,
+    "sha256": "9b593e1ea40aef8982969e8023898eac494b11f0210d2a5d1042472f8001a1b5"
+   },
+   "supplement_generation_dir": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_mec",
+   "supplement_normalisation": {
+    "convention": "N_bin * (S_50^100 / N_nonMEC CC)",
+    "S_50_100_cm2": 1.8416764017371225e-40,
+    "N_normalising_population": 75060,
+    "N_events_in_file": 100000,
+    "N_cc": 75286,
+    "N_nonMEC_cc": 75060,
+    "r_constant": 0.0004837530877832332,
+    "per_event_xsec_cm2": 2.453605651128594e-45,
+    "nonMEC_over_CC": 0.9969981138591505
+   },
+   "supplement_n_in_grid": 68104,
+   "supplement_integrated_sigma_cm2": 1.6710035926446173e-40,
+   "supplement_stat_rel_err": 0.003831895790527912,
+   "sampling_model": [
+    {
+     "population": "non-MEC CC events (all)",
+     "mode": "strict (generator sigma graphs, no free shape)",
+     "n_events": 75060,
+     "n_outside_generation_bins": 0,
+     "across": {
+      "chi2": 11.984959670572994,
+      "ndf": 4,
+      "p": 0.01746346013977804,
+      "max_abs_pull": 2.901152190232316,
+      "E_lo_of_max_pull": 60.0,
+      "n_bins_used": 5,
+      "n_bins_low_expectation": 1
+     },
+     "across_alternative": {
+      "chi2": 7988.396925370935,
+      "ndf": 4,
+      "p": 0.0,
+      "max_abs_pull": 57.17023563572212,
+      "E_lo_of_max_pull": 60.0,
+      "n_bins_used": 5,
+      "n_bins_low_expectation": 1
+     },
+     "within": {
+      "chi2": 14.264795171721564,
+      "ndf": 20,
+      "p": 0.8168203767317386,
+      "max_abs_pull": 1.8610864871007955,
+      "wide_bins_chi2": 14.264795171721564,
+      "wide_bins_ndf": 20,
+      "wide_bins_p": 0.8168203767317386
+     },
+     "pass": true
+    },
+    {
+     "population": "MEC CC events",
+     "mode": "proxy (GENIE graph sigma x smooth exp(poly3(log E)) factor)",
+     "n_events": 226,
+     "n_outside_generation_bins": 0,
+     "across": {
+      "chi2": 0.5156182969688683,
+      "ndf": 1,
+      "p": 0.47271680046418496,
+      "max_abs_pull": 0.4860425380055324,
+      "E_lo_of_max_pull": 70.0,
+      "n_bins_used": 5,
+      "n_bins_low_expectation": 1
+     },
+     "across_alternative": {
+      "chi2": 0.29409351868495837,
+      "ndf": 1,
+      "p": 0.5876091701959644,
+      "max_abs_pull": 0.40486793417619193,
+      "E_lo_of_max_pull": 70.0,
+      "n_bins_used": 5,
+      "n_bins_low_expectation": 1
+     },
+     "within": {
+      "chi2": 24.276578097587763,
+      "ndf": 12,
+      "p": 0.01864851277688144,
+      "max_abs_pull": 2.500176054198104,
+      "wide_bins_chi2": 24.276578097587763,
+      "wide_bins_ndf": 12,
+      "wide_bins_p": 0.01864851277688144
+     },
+     "pass": true
+    }
+   ],
+   "main_event_reconstruction_check": {
+    "aligned": true,
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "continuity_across_50_GeV": [
+    {
+     "E_lo": 40,
+     "E_hi": 45,
+     "sample": "main",
+     "n_events": 81,
+     "sigma_contribution_cm2": 1.772636556215545e-40,
+     "implied_sigma_per_nucleon_over_E_cm2_per_GeV": 6.108853479840718e-39,
+     "stat_rel_err": 0.11111111111111109,
+     "cc_mean_muon_pz_over_Enu": 0.5448882106241175,
+     "cc_frac_in_ps_diagnostic": 0.9382716049382716,
+     "sigma_contribution_over_graph_expectation": 0.91766716706086
+    },
+    {
+     "E_lo": 45,
+     "E_hi": 50,
+     "sample": "main",
+     "n_events": 50,
+     "sigma_contribution_cm2": 1.2562447086500441e-40,
+     "implied_sigma_per_nucleon_over_E_cm2_per_GeV": 5.758746773280491e-39,
+     "stat_rel_err": 0.14142135623730948,
+     "cc_mean_muon_pz_over_Enu": 0.4906728595376141,
+     "cc_frac_in_ps_diagnostic": 0.92,
+     "sigma_contribution_over_graph_expectation": 0.8662016227360055
+    },
+    {
+     "E_lo": 50,
+     "E_hi": 55,
+     "sample": "supp",
+     "n_events": 36949,
+     "sigma_contribution_cm2": 9.065827520355044e-41,
+     "implied_sigma_per_nucleon_over_E_cm2_per_GeV": 6.668949232801551e-39,
+     "stat_rel_err": 0.005202339081313964,
+     "cc_mean_muon_pz_over_Enu": 0.5229458332290476,
+     "cc_frac_in_ps_diagnostic": 0.9419470080381066,
+     "sigma_contribution_over_graph_expectation": 1.0042182048822674
+    },
+    {
+     "E_lo": 55,
+     "E_hi": 60,
+     "sample": "supp",
+     "n_events": 16784,
+     "sigma_contribution_cm2": 4.118131724854233e-41,
+     "implied_sigma_per_nucleon_over_E_cm2_per_GeV": 6.663981904816224e-39,
+     "stat_rel_err": 0.0077188440136804785,
+     "cc_mean_muon_pz_over_Enu": 0.5220760693422493,
+     "cc_frac_in_ps_diagnostic": 0.9447688274547188,
+     "sigma_contribution_over_graph_expectation": 1.0045179100201145
+    }
+   ],
+   "sigma_CC_graphs_to_100": {
+    "file": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e100.root",
+    "S_0_100_over_Phi_t_CH_cm2": 4.201313615127409e-38,
+    "S_50_100_over_Phi_t_CH_cm2": 1.8416764017371225e-40,
+    "frac_50_100_of_0_100": 0.004383572783297854
+   },
+   "pz": {
+    "edges": [
+     1.5,
+     2.0,
+     2.5,
+     3.0,
+     3.5,
+     4.0,
+     4.5,
+     5.0,
+     6.0,
+     7.0,
+     8.0,
+     9.0,
+     10.0,
+     15.0,
+     20.0,
+     40.0,
+     60.0
+    ],
+    "ratio_to_mnvtune_main_lt50": [
+     1.037639882282049,
+     1.0530068090679472,
+     1.053761675465564,
+     1.0678594949144855,
+     1.0802948707518254,
+     1.0749713958093352,
+     1.0685545114204376,
+     1.0709839847833964,
+     1.0597960196116252,
+     1.0367312482550448,
+     1.0599537606686122,
+     1.0648257919113095,
+     1.0662960080332111,
+     1.0069187111257625,
+     0.9151785199811234,
+     0.31654413022833455
+    ],
+    "ratio_to_mnvtune_full": [
+     1.0379872511967476,
+     1.0533494315035328,
+     1.0540643890973436,
+     1.0681775413197458,
+     1.080666496354782,
+     1.0754034472754976,
+     1.0690571381739296,
+     1.0716558221199268,
+     1.0608187317369202,
+     1.0387751408690082,
+     1.0639387706970065,
+     1.0717466091965955,
+     1.0799447149147043,
+     1.0354723169337992,
+     1.0087704341013883,
+     0.9148975828658341
+    ],
+    "supplement_share_of_full": [
+     0.0003346562438972615,
+     0.00032526949304586357,
+     0.0002871870399101443,
+     0.00029774676302177976,
+     0.0003438855597081481,
+     0.0004017575610875163,
+     0.000470158923732037,
+     0.0006269152116405679,
+     0.0009640781169280563,
+     0.0019675986973019905,
+     0.0037455257183486826,
+     0.006457512648884646,
+     0.012638338512144461,
+     0.027575441024428927,
+     0.0927782089526014,
+     0.6540114039466706
+    ],
+    "supplement_stat_rel_err": [
+     0.08006407690254355,
+     0.06362847629757777,
+     0.0594438298277764,
+     0.05471756551645828,
+     0.04987546680538165,
+     0.0467780269724988,
+     0.04485613040162566,
+     0.030069238966213184,
+     0.03013743873394561,
+     0.028976379389987234,
+     0.0287717668824218,
+     0.028478588590558702,
+     0.012992492508368576,
+     0.01286393102810901,
+     0.006238678298829064,
+     0.006707181165351703
+    ],
+    "supplement_raw_events": [
+     156,
+     247,
+     283,
+     334,
+     402,
+     457,
+     497,
+     1106,
+     1101,
+     1191,
+     1208,
+     1233,
+     5924,
+     6043,
+     25693,
+     22229
+    ],
+    "full_stat_rel_err": [
+     0.005065900566278831,
+     0.004690603888417377,
+     0.003713513964495033,
+     0.003518001594099395,
+     0.003543026526962067,
+     0.0036832563465907385,
+     0.0038471703717330836,
+     0.0030982090946782823,
+     0.0043410728069775495,
+     0.006475488086100244,
+     0.012460784131508525,
+     0.022325863913418408,
+     0.018080585483403366,
+     0.032992168435070156,
+     0.04193331349936416,
+     0.10017575195749945
+    ],
+    "affected_bins_rule": "supplement share of the full >= 1%",
+    "affected_bins": [
+     12,
+     13,
+     14,
+     15
+    ],
+    "max_supplement_rel_err_in_affected_bins": 0.012992492508368576,
+    "ratio_to_mnvtune_40_60_full": 0.9148975828658341
+   },
+   "integrated_sigma_cm2": {
+    "main_lt50": 2.858930865772059e-38,
+    "full": 2.8756409016985053e-38,
+    "full_over_main": 1.0058448548464407,
+    "full_stat_rel_err": 0.0018559808452263999,
+    "frac_pz_ge_6_main": 0.27419953036075356,
+    "frac_pz_ge_6_full": 0.278119980382424,
+    "mnvtune_v1": 2.705701780471725e-38,
+    "frac_pz_ge_6_mnvtune": 0.28092598501184524
+   },
+   "E_gt_20_shares_of_full": {
+    "frac_sigma_in_grid_from_E_gt_20": 0.06790822279532151,
+    "frac_sigma_pz_lt_6_from_E_gt_20": 0.009236498403930697,
+    "event_sum_over_grid_total": 0.9999999999999989
+   },
+   "inputs": [
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d.npz",
+     "role": "<50 GeV repaired product",
+     "bytes": 1660240,
+     "sha256": "fda2eb8688f37d977dcf73115ac29279c0e7fbda779a4ee73769fd6fdec3009c"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/flux_phi_t_50_100.root",
+     "role": "supplement flux (content = phi_t x width, 50-100 GeV)",
+     "bytes": 4484,
+     "sha256": "6fd4a62f9cde4bf3fbd37fd8bc60ca419b12c38237162181d1903bf123c9e03e"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_mec/genie_supp_mec.gst.root",
+     "role": "supplement events",
+     "bytes": 71672982,
+     "sha256": "9b593e1ea40aef8982969e8023898eac494b11f0210d2a5d1042472f8001a1b5"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e100.root",
+     "role": "sigma_CC to 100 GeV",
+     "bytes": 2396177,
+     "sha256": "0b9d68ab2a769a012f9b184e060fa1bbee414537206c8b52e4b8eba568e30398"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/phi_t.npz",
+     "role": "phi_t",
+     "bytes": 21414,
+     "sha256": "bbcbade310d90e1ae487dde9d982e85cfe16fae35bba09dbde7db2dc99274ec5"
+    }
+   ],
+   "code": [
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_supplement.py",
+     "sha256": "ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_reweight.py",
+     "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/run_gen5d_supplement.sh",
+     "sha256": "9c2088522b4d684b8394a733ad2b68bdcda2e3c722c7f25dd2ff78db17f304fb"
+    }
+   ]
+  },
+  "nuwro_cv_full": {
+   "npz": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz",
+   "npz_sha256": "475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070",
+   "meta_json": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.meta.json",
+   "meta_json_sha256": "52bd8021c5fda1d99d2da70fe10ea090eacd773d16b5a859b022fdb135762ae5",
+   "composition": "full = <50 GeV product (/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d.npz) + E_nu 50-100 GeV supplement; sumw2 and nevt add; E_nu > 100 GeV is absent (phi_t ends at 100 GeV)",
+   "supplement_events": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/nuwro/nuwro_supp_flat5d.root",
+    "role": "supplement events",
+    "bytes": 6147377,
+    "sha256": "2a4ad5520c97ffc48095f06f007a8bdf393f19a28e42854e3feccf76ea830f2f"
+   },
+   "supplement_generation_dir": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/nuwro",
+   "supplement_normalisation": {
+    "convention": "sum_bin w_e r / N_total, r = int_50^100 phi_t / Phi_t (constant)",
+    "r_constant": 0.0004837530877832332,
+    "N_total": 100000,
+    "N_cc": 99900,
+    "weight_mean_cm2": 3.6709964648399154e-37,
+    "weight_unique": 1,
+    "S_50_100_nuwro_cm2": 1.7758558751076424e-40,
+    "S_50_100_genie_C12_graph_cm2": 1.888619976193984e-40
+   },
+   "supplement_n_in_grid": 90549,
+   "supplement_integrated_sigma_cm2": 1.6080197363512897e-40,
+   "supplement_stat_rel_err": 0.0033232129439831784,
+   "sampling_model": [
+    {
+     "population": "all CC events",
+     "mode": "proxy (GENIE graph sigma x smooth exp(poly3(log E)) factor)",
+     "n_events": 99900,
+     "n_outside_generation_bins": 0,
+     "across": {
+      "chi2": 1.5695466489723233,
+      "ndf": 1,
+      "p": 0.2102728634787971,
+      "max_abs_pull": 0.7337470850751618,
+      "E_lo_of_max_pull": 70.0,
+      "n_bins_used": 5,
+      "n_bins_low_expectation": 1
+     },
+     "across_alternative": {
+      "chi2": 951.4284657606288,
+      "ndf": 1,
+      "p": 6.489786591294263e-209,
+      "max_abs_pull": 19.80258352682084,
+      "E_lo_of_max_pull": 70.0,
+      "n_bins_used": 5,
+      "n_bins_low_expectation": 1
+     },
+     "within": {
+      "chi2": 8.019800956314784,
+      "ndf": 20,
+      "p": 0.9917359493665862,
+      "max_abs_pull": 1.3847063967991289,
+      "wide_bins_chi2": 8.019800956314784,
+      "wide_bins_ndf": 20,
+      "wide_bins_p": 0.9917359493665862
+     },
+     "pass": true
+    },
+    {
+     "population": "CC RES/DIS (dyn 2-5)",
+     "mode": "proxy (GENIE graph sigma x smooth exp(poly3(log E)) factor)",
+     "n_events": 98116,
+     "n_outside_generation_bins": 0,
+     "across": {
+      "chi2": 1.665514828719646,
+      "ndf": 1,
+      "p": 0.19686036474360477,
+      "max_abs_pull": 0.7560143231006649,
+      "E_lo_of_max_pull": 70.0,
+      "n_bins_used": 5,
+      "n_bins_low_expectation": 1
+     },
+     "across_alternative": {
+      "chi2": 933.4103456379557,
+      "ndf": 1,
+      "p": 5.357454457992822e-205,
+      "max_abs_pull": 19.617270477110022,
+      "E_lo_of_max_pull": 70.0,
+      "n_bins_used": 5,
+      "n_bins_low_expectation": 1
+     },
+     "within": {
+      "chi2": 8.949853047486819,
+      "ndf": 20,
+      "p": 0.9834808359529104,
+      "max_abs_pull": 1.4296411069017505,
+      "wide_bins_chi2": 8.949853047486819,
+      "wide_bins_ndf": 20,
+      "wide_bins_p": 0.9834808359529104
+     },
+     "pass": true
+    },
+    {
+     "population": "CC QEL/COH/MEC",
+     "mode": "proxy (GENIE graph sigma x smooth exp(poly3(log E)) factor)",
+     "n_events": 1784,
+     "n_outside_generation_bins": 0,
+     "across": {
+      "chi2": 0.14216341076823272,
+      "ndf": 1,
+      "p": 0.7061396916061755,
+      "max_abs_pull": 0.21749818516568667,
+      "E_lo_of_max_pull": 70.0,
+      "n_bins_used": 5,
+      "n_bins_low_expectation": 1
+     },
+     "across_alternative": {
+      "chi2": 19.35476865694186,
+      "ndf": 1,
+      "p": 1.0854783782203385e-05,
+      "max_abs_pull": 2.7971164228778793,
+      "E_lo_of_max_pull": 70.0,
+      "n_bins_used": 5,
+      "n_bins_low_expectation": 1
+     },
+     "within": {
+      "chi2": 13.72336040628394,
+      "ndf": 16,
+      "p": 0.6193143912586807,
+      "max_abs_pull": 1.6308104200065319,
+      "wide_bins_chi2": 13.72336040628394,
+      "wide_bins_ndf": 16,
+      "wide_bins_p": 0.6193143912586807
+     },
+     "pass": true
+    }
+   ],
+   "main_event_reconstruction_check": {
+    "aligned": true,
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "continuity_across_50_GeV": [
+    {
+     "E_lo": 40,
+     "E_hi": 45,
+     "sample": "main",
+     "n_events": 144,
+     "sigma_contribution_cm2": 2.20111882646055e-40,
+     "implied_sigma_per_nucleon_over_E_cm2_per_GeV": 7.5854874793248e-39,
+     "stat_rel_err": 0.08333710860290837,
+     "cc_mean_muon_pz_over_Enu": 0.5414495477636357,
+     "cc_frac_in_ps_diagnostic": 0.9722222222222222
+    },
+    {
+     "E_lo": 45,
+     "E_hi": 50,
+     "sample": "main",
+     "n_events": 83,
+     "sigma_contribution_cm2": 1.455086364619913e-40,
+     "implied_sigma_per_nucleon_over_E_cm2_per_GeV": 6.670256081001856e-39,
+     "stat_rel_err": 0.10976918091829806,
+     "cc_mean_muon_pz_over_Enu": 0.48145803859094455,
+     "cc_frac_in_ps_diagnostic": 0.9397590361445783
+    },
+    {
+     "E_lo": 50,
+     "E_hi": 55,
+     "sample": "supp",
+     "n_events": 48902,
+     "sigma_contribution_cm2": 8.684290400451392e-41,
+     "implied_sigma_per_nucleon_over_E_cm2_per_GeV": 6.388285203251701e-39,
+     "stat_rel_err": 0.004522063841663703,
+     "cc_mean_muon_pz_over_Enu": 0.5256266163773115,
+     "cc_frac_in_ps_diagnostic": 0.9441373945795464
+    },
+    {
+     "E_lo": 55,
+     "E_hi": 60,
+     "sample": "supp",
+     "n_events": 22100,
+     "sigma_contribution_cm2": 3.9246414839878897e-41,
+     "implied_sigma_per_nucleon_over_E_cm2_per_GeV": 6.350875003424554e-39,
+     "stat_rel_err": 0.006726727939963124,
+     "cc_mean_muon_pz_over_Enu": 0.5232874007535732,
+     "cc_frac_in_ps_diagnostic": 0.9477807971014492
+    }
+   ],
+   "sigma_CC_graphs_to_100": {
+    "file": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e100.root",
+    "S_0_100_over_Phi_t_CH_cm2": 4.201313615127409e-38,
+    "S_50_100_over_Phi_t_CH_cm2": 1.8416764017371225e-40,
+    "frac_50_100_of_0_100": 0.004383572783297854
+   },
+   "pz": {
+    "edges": [
+     1.5,
+     2.0,
+     2.5,
+     3.0,
+     3.5,
+     4.0,
+     4.5,
+     5.0,
+     6.0,
+     7.0,
+     8.0,
+     9.0,
+     10.0,
+     15.0,
+     20.0,
+     40.0,
+     60.0
+    ],
+    "ratio_to_mnvtune_main_lt50": [
+     1.007955772428209,
+     0.9817538854438496,
+     0.9768573294272312,
+     0.9857901619657133,
+     0.98947530385665,
+     0.9898169445564595,
+     0.9842966269452927,
+     0.9743479346984805,
+     0.9705221872409271,
+     0.9733845148585564,
+     0.970541865359955,
+     0.9814564056782306,
+     0.9695148446003878,
+     0.9852463512569489,
+     0.9411870801916576,
+     0.3947748164528302
+    ],
+    "ratio_to_mnvtune_full": [
+     1.0083296740005525,
+     0.9820721447122696,
+     0.9771499738798315,
+     0.9861058168077615,
+     0.9898058327852393,
+     0.9902309228890755,
+     0.9847855816487312,
+     0.9749537792120251,
+     0.9714936740011898,
+     0.9753234003863243,
+     0.9742355154510577,
+     0.987903650871065,
+     0.9827868917237228,
+     1.0134159320815341,
+     1.0301686868013178,
+     0.9779393108269459
+    ],
+    "supplement_share_of_full": [
+     0.00037081282241763853,
+     0.0003240691329387029,
+     0.000299487755639269,
+     0.000320102403482203,
+     0.00033393309843343124,
+     0.00041806241660114667,
+     0.0004965087959755782,
+     0.0006214084467001843,
+     0.000999992883393085,
+     0.0019879411557231956,
+     0.0037913318007017044,
+     0.006526188244319022,
+     0.013504501571095248,
+     0.027796662685897807,
+     0.0863757632606255,
+     0.5963197183279109
+    ],
+    "supplement_stat_rel_err": [
+     0.06565321642986124,
+     0.05616559563017301,
+     0.05143444998736393,
+     0.04672693135159973,
+     0.04499212706658471,
+     0.04065578140908705,
+     0.03869116162670681,
+     0.026938622922018318,
+     0.026306682088232867,
+     0.025310373177627632,
+     0.02542464180904603,
+     0.02510218561694021,
+     0.01120910010287295,
+     0.011018322176109749,
+     0.005443310539517794,
+     0.005779960588895217
+    ],
+    "supplement_raw_events": [
+     232,
+     317,
+     378,
+     458,
+     494,
+     605,
+     668,
+     1378,
+     1445,
+     1561,
+     1547,
+     1587,
+     7959,
+     8237,
+     33750,
+     29933
+    ],
+    "full_stat_rel_err": [
+     0.004792554240033719,
+     0.0035381149420414958,
+     0.0032374294389181154,
+     0.003160982618497902,
+     0.0031415432351603037,
+     0.0032097480956076612,
+     0.00349788343092554,
+     0.002882118200358316,
+     0.0042563235600302516,
+     0.006870105341619875,
+     0.01123092347939924,
+     0.019360560555618363,
+     0.015968020875826116,
+     0.028217529810750906,
+     0.035392361349000215,
+     0.08633045790032409
+    ],
+    "affected_bins_rule": "supplement share of the full >= 1%",
+    "affected_bins": [
+     12,
+     13,
+     14,
+     15
+    ],
+    "max_supplement_rel_err_in_affected_bins": 0.01120910010287295,
+    "ratio_to_mnvtune_40_60_full": 0.9779393108269459
+   },
+   "integrated_sigma_cm2": {
+    "main_lt50": 2.6466894664364637e-38,
+    "full": 2.662769663799977e-38,
+    "full_over_main": 1.006075588982928,
+    "full_stat_rel_err": 0.0016909937518287555,
+    "frac_pz_ge_6_main": 0.2765786492565676,
+    "frac_pz_ge_6_full": 0.2806452027901756,
+    "mnvtune_v1": 2.705701780471725e-38,
+    "frac_pz_ge_6_mnvtune": 0.28092598501184524
+   },
+   "E_gt_20_shares_of_full": {
+    "frac_sigma_in_grid_from_E_gt_20": 0.07425830333499758,
+    "frac_sigma_pz_lt_6_from_E_gt_20": 0.010517827540619435,
+    "event_sum_over_grid_total": 0.9999999999999984
+   },
+   "inputs": [
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d.npz",
+     "role": "<50 GeV repaired product",
+     "bytes": 1690928,
+     "sha256": "f5231637ce012dc3d4e6257d6501a92cd8c97f3f3f78c68ea29f8f15ef49f609"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/flux_phi_t_50_100.root",
+     "role": "supplement flux (content = phi_t x width, 50-100 GeV)",
+     "bytes": 4484,
+     "sha256": "6fd4a62f9cde4bf3fbd37fd8bc60ca419b12c38237162181d1903bf123c9e03e"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/nuwro/nuwro_supp_flat5d.root",
+     "role": "supplement events",
+     "bytes": 6147377,
+     "sha256": "2a4ad5520c97ffc48095f06f007a8bdf393f19a28e42854e3feccf76ea830f2f"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e100.root",
+     "role": "sigma_CC to 100 GeV",
+     "bytes": 2396177,
+     "sha256": "0b9d68ab2a769a012f9b184e060fa1bbee414537206c8b52e4b8eba568e30398"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/phi_t.npz",
+     "role": "phi_t",
+     "bytes": 21414,
+     "sha256": "bbcbade310d90e1ae487dde9d982e85cfe16fae35bba09dbde7db2dc99274ec5"
+    }
+   ],
+   "code": [
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_supplement.py",
+     "sha256": "ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_reweight.py",
+     "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/run_gen5d_supplement.sh",
+     "sha256": "9c2088522b4d684b8394a733ad2b68bdcda2e3c722c7f25dd2ff78db17f304fb"
+    }
+   ]
+  },
+  "gibuu_cv_fluxfix": {
+   "npz": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz",
+   "npz_sha256": "48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18",
+   "meta_json": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.meta.json",
+   "meta_json_sha256": "a92185b04a1ed03daaa7856a2cc69045bcd7fd6fe751c8a8d33fe58aadb00164",
+   "fix": {
+    "r": "r(E) = (phi_t(E)/Phi_t) / phi_gibuu(E), phi_gibuu = GiBUU's own flux zeroed outside [0.0,20.0] GeV (esample.read_fluxfile) and normalised; E = the event's neutrino energy (FinalEvents column 15)",
+    "pred": "sum_bin perweight * r / M x 1e-38 (M = number of runs, as gibuu_to_xsec3d.py)",
+    "why_exact": "initNeutrino.f90: each nucleon draws flux_enu = userFlux() (eneut: content-proportional point, uniform within +-step/2), perweight = sigma/numtry at that energy, no flux factor; so sum perweight/M = <sigma> over the renormalised cut flux and a per-event r(E) reweights it exactly to phi_t / Phi_t(0-100)",
+    "E_gt_cut": "absent (not patched)"
+   },
+   "gibuu_sampled_density": {
+    "flux_file": {
+     "path": "/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/buuinput2019/neutrino/MINERvA_MEflux.dat",
+     "role": "GiBUU flux",
+     "bytes": 5188,
+     "sha256": "37b56a0a0f12d33a5100cd4a3896c09b9ab745a7d57d4118bafb66aec0f4dc95"
+    },
+    "jobcard": {
+     "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu/gibuu_mefhc_numu.job",
+     "role": "jobcard",
+     "bytes": 18215,
+     "sha256": "d00a622c0f732a6089aae9e4b7c0cceb500a1b3133a53142462f01dc7cefeb63"
+    },
+    "cut_GeV": [
+     0.0,
+     20.0
+    ],
+    "step_GeV": 0.5,
+    "n_points_in_cut": 40
+   },
+   "checks": {
+    "identity_r1": {
+     "xsec_flat": {
+      "bitwise_equal": true,
+      "max_rel_diff_nonzero": 0.0,
+      "n_zero_mismatch": 0
+     },
+     "sumw2_flat": {
+      "bitwise_equal": true,
+      "max_rel_diff_nonzero": 0.0,
+      "n_zero_mismatch": 0
+     },
+     "nevt_flat": {
+      "bitwise_equal": true,
+      "max_rel_diff_nonzero": 0.0,
+      "n_zero_mismatch": 0
+     },
+     "pass": true
+    },
+    "event_alignment_with_extract_gibuu": true,
+    "sampling_diagnostic_low_E": {
+     "E_below_test_min_within_bin": [
+      {
+       "E_lo": 0.0,
+       "n": 1673,
+       "within_chi2_ndf4": 1085.5206216377765,
+       "sub_bin_counts": [
+        0,
+        90,
+        329,
+        526,
+        728
+       ]
+      },
+      {
+       "E_lo": 0.5,
+       "n": 8977,
+       "within_chi2_ndf4": 103.82822769299321,
+       "sub_bin_counts": [
+        1513,
+        1624,
+        1901,
+        1917,
+        2022
+       ]
+      },
+      {
+       "E_lo": 1.0,
+       "n": 11058,
+       "within_chi2_ndf4": 23.738108156990414,
+       "sub_bin_counts": [
+        2144,
+        2056,
+        2232,
+        2276,
+        2350
+       ]
+      }
+     ],
+     "note": "the pre-registered form (all E, uniform within points) failed only through these threshold points; the in-PS count population was dropped: acceptance depends on E"
+    },
+    "r_quantiles_1_50_99": [
+     0.8266572376243713,
+     0.9856047858042748,
+     1.2198527537913233
+    ],
+    "r_min_max": [
+     0.610115581051642,
+     1.3441536073247704
+    ],
+    "effective_N_in_grid": 38961.92857621731,
+    "effective_N_in_grid_before": 39177.729109596716,
+    "n_in_grid": 910378,
+    "sampling_model": [
+     {
+      "population": "all written events with E_nu >= 1.5 GeV (counts)",
+      "mode": "proxy (GENIE graph sigma x smooth exp(poly3(log E)) factor)",
+      "n_events": 1882659,
+      "n_outside_generation_bins": 0,
+      "across": {
+       "chi2": 40.29489453414016,
+       "ndf": 33,
+       "p": 0.1787991658015524,
+       "max_abs_pull": 2.4450538676155116,
+       "E_lo_of_max_pull": 3.5,
+       "n_bins_used": 37,
+       "n_bins_low_expectation": 0
+      },
+      "within": {
+       "chi2": 167.03274587597917,
+       "ndf": 148,
+       "p": 0.1355648356164867,
+       "max_abs_pull": 2.5034083587535263,
+       "wide_bins_chi2": 167.03274587597917,
+       "wide_bins_ndf": 148,
+       "wide_bins_p": 0.1355648356164867
+      },
+      "pass": true
+     },
+     {
+      "population": "edge-jump test, all written events, edges in (1.5,20.0) GeV, delta=0.1 GeV",
+      "mode": "density jump at flux-point boundaries = content ratio (no free parameter)",
+      "n_events": 1904367,
+      "n_outside_generation_bins": 0,
+      "across": {
+       "chi2": 43.01017819527482,
+       "ndf": 36,
+       "p": 0.19617114195732546,
+       "max_abs_pull": 2.4987564335345076,
+       "E_lo_of_max_pull": 12.5
+      },
+      "within": {
+       "chi2": null,
+       "ndf": 0,
+       "p": null,
+       "max_abs_pull": null,
+       "wide_bins_chi2": null,
+       "wide_bins_ndf": 0,
+       "wide_bins_p": null
+      },
+      "pass": true
+     }
+    ]
+   },
+   "integrated_sigma_cm2": {
+    "before": 2.2227210293886448e-38,
+    "after": 2.2151544845271735e-38,
+    "after_over_before": 0.9965958189258,
+    "after_stat_rel_err": 0.005066128136191825,
+    "frac_pz_ge_6_before": 0.23728283708806602,
+    "frac_pz_ge_6_after": 0.23970975666814345
+   },
+   "pz": {
+    "edges": [
+     1.5,
+     2.0,
+     2.5,
+     3.0,
+     3.5,
+     4.0,
+     4.5,
+     5.0,
+     6.0,
+     7.0,
+     8.0,
+     9.0,
+     10.0,
+     15.0,
+     20.0,
+     40.0,
+     60.0
+    ],
+    "ratio_to_mnvtune_before": [
+     0.8293297399408261,
+     0.8565448142070597,
+     0.8658001306880466,
+     0.8949069244759393,
+     0.9101357078185789,
+     0.8783771233005654,
+     0.8541365326465824,
+     0.8577813963288574,
+     0.8583751048915824,
+     0.8352410173260028,
+     0.8279796029244508,
+     0.8185313252959009,
+     0.6304750125449334,
+     0.32268095548283005,
+     0.0,
+     0.0
+    ],
+    "ratio_to_mnvtune_after": [
+     0.8174538359722028,
+     0.8485948633588473,
+     0.8567711054736349,
+     0.8865121752769025,
+     0.9009889523541792,
+     0.8717739648687358,
+     0.8501489426557614,
+     0.8600359569904162,
+     0.8690238296706686,
+     0.8483314114421703,
+     0.8343739433789374,
+     0.8197285133487854,
+     0.6199963168291299,
+     0.3127481052853659,
+     0.0,
+     0.0
+    ],
+    "after_over_before": [
+     0.9856801180559728,
+     0.9907185815425523,
+     0.9895714670229533,
+     0.9906194164226041,
+     0.989950119102213,
+     0.992482547351623,
+     0.995331437260428,
+     1.0026283627404464,
+     1.0124056775626447,
+     1.0156725949092826,
+     1.0077228236443283,
+     1.0014626050535715,
+     0.9833796811811687,
+     0.9692177365019836,
+     NaN,
+     NaN
+    ]
+   },
+   "eavail_ratio_to_mnvtune_before": [
+    1.2613850928032921,
+    1.0389180126577078,
+    0.913840493794057,
+    0.7846793141601869,
+    0.7006259625869103,
+    0.8573287339552411,
+    0.6461927848438715
+   ],
+   "eavail_ratio_to_mnvtune_after": [
+    1.2493905288059453,
+    1.0299728778765151,
+    0.9076071415807356,
+    0.7805358664807518,
+    0.6983994473428337,
+    0.8579343798910298,
+    0.6481647434902429
+   ],
+   "E_gt_cut_absent_share": {
+    "sigma_CC_phi_t_E_gt_cut_over_0_100_genie_CH_graphs_to_100": 0.05211959901410392,
+    "in_grid_shares_from_E_gt_20_of_other_generators_full_products": {
+     "genie_cv": {
+      "frac_sigma_in_grid_from_E_gt_20": 0.06959795631482711,
+      "frac_sigma_pz_lt_6_from_E_gt_20": 0.010220039091919122,
+      "event_sum_over_grid_total": 0.999999999999999
+     },
+     "genie_mec": {
+      "frac_sigma_in_grid_from_E_gt_20": 0.06790822279532151,
+      "frac_sigma_pz_lt_6_from_E_gt_20": 0.009236498403930697,
+      "event_sum_over_grid_total": 0.9999999999999989
+     },
+     "nuwro_cv": {
+      "frac_sigma_in_grid_from_E_gt_20": 0.07425830333499758,
+      "frac_sigma_pz_lt_6_from_E_gt_20": 0.010517827540619435,
+      "event_sum_over_grid_total": 0.9999999999999984
+     }
+    },
+    "note": "GiBUU has no E > 20 GeV events; these are the shares the other generators' full (0-100 GeV) predictions put there, overall in the 5D grid and in its p_par < 6 GeV/c part"
+   },
+   "pre_fix_product": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/gibuu_cv_xsec5d.npz",
+    "role": "pre-fix GiBUU 5D (identity reference)",
+    "bytes": 1679456,
+    "sha256": "b183fccaf620b798cf068a2e039578332fbcdc945399678f72e974420dca96fc"
+   },
+   "code": [
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_supplement.py",
+     "sha256": "ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_reweight.py",
+     "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5"
+    },
+    {
+     "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/run_gen5d_supplement.sh",
+     "sha256": "9c2088522b4d684b8394a733ad2b68bdcda2e3c722c7f25dd2ff78db17f304fb"
+    }
+   ]
+  }
+ },
+ "supplement_flux": {
+  "created_utc": "2026-09-27T08:44:15.190531+00:00",
+  "file": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/flux_phi_t_50_100.root",
+   "role": "supplement flux",
+   "bytes": 4484,
+   "sha256": "6fd4a62f9cde4bf3fbd37fd8bc60ca419b12c38237162181d1903bf123c9e03e"
+  },
+  "definition": "content_i = phi_t_i * w_i for bins inside [50,100] GeV, else 0",
+  "phi_t_npz": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/phi_t.npz",
+  "code": [
+   {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_reweight.py",
+    "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5"
+   },
+   {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_reweight.py",
+    "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5"
+   },
+   {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/run_gen5d_supplement.sh",
+    "sha256": "6b92537160eb91a3f4c820da8a1a23b998c82d8a9721f4a2702a8355a2f52a75"
+   }
+  ]
+ },
+ "graphs_check": {
+  "created_utc": "2026-09-27T09:04:48.393184+00:00",
+  "reference": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/xsec_graphs.root",
+   "role": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/xsec_graphs.root (the graphs gen5d and gen5d_fluxfix used)",
+   "bytes": 2510485,
+   "sha256": "d795d6e09a6de1afaa3ac11fcd7c94b90ec4fb60143c0b31d11caaff0f44d84b"
+  },
+  "regen_e50": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e50.root",
+   "role": "gspl2root -e 50",
+   "bytes": 2510815,
+   "sha256": "3980f63a08f1ad19843ae83a965bd9dadf49057249c5926293c3358d571bbf20"
+  },
+  "regen_e100": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e100.root",
+   "role": "gspl2root -e 100",
+   "bytes": 2396177,
+   "sha256": "0b9d68ab2a769a012f9b184e060fa1bbee414537206c8b52e4b8eba568e30398"
+  },
+  "graphs": {
+   "nu_mu_C12/tot_cc": {
+    "n_ref": 1000,
+    "n_regen_e50": 1000,
+    "n_regen_e100": 1000,
+    "e50_x_bitwise": true,
+    "e50_y_bitwise": true,
+    "e50_max_rel_diff_y": 0.0,
+    "e100_at_ref_knots_max_rel_diff": 0.9661096383134676,
+    "e100_x_max": 100.0,
+    "e100_at_ref_knots_max_rel_diff_by_Emin": {
+     "0.5": 0.0030916317321742024,
+     "1.0": 0.0009419972527130848,
+     "2.0": 0.0005727220455310206,
+     "5.0": 3.297088842760508e-05,
+     "20.0": 1.5553424822622974e-06
+    },
+    "e100_vs_ref_linear_extrapolation_50_100": {
+     "55.0": 0.9999099355177471,
+     "70.0": 0.9991185979830398,
+     "85.0": 0.9980303914802348,
+     "100.0": 0.996530863587934
+    },
+    "ref_all_zero": false
+   },
+   "nu_mu_C12/mec_cc": {
+    "n_ref": 1000,
+    "n_regen_e50": 1000,
+    "n_regen_e100": 1000,
+    "e50_x_bitwise": true,
+    "e50_y_bitwise": true,
+    "e50_max_rel_diff_y": null,
+    "e100_at_ref_knots_max_rel_diff": null,
+    "e100_x_max": 100.0,
+    "e100_at_ref_knots_max_rel_diff_by_Emin": {
+     "0.5": null,
+     "1.0": null,
+     "2.0": null,
+     "5.0": null,
+     "20.0": null
+    },
+    "e100_vs_ref_linear_extrapolation_50_100": null,
+    "ref_all_zero": true
+   },
+   "nu_mu_H1/tot_cc": {
+    "n_ref": 1000,
+    "n_regen_e50": 1000,
+    "n_regen_e100": 1000,
+    "e50_x_bitwise": true,
+    "e50_y_bitwise": true,
+    "e50_max_rel_diff_y": 0.0,
+    "e100_at_ref_knots_max_rel_diff": 25.44986969289562,
+    "e100_x_max": 100.0,
+    "e100_at_ref_knots_max_rel_diff_by_Emin": {
+     "0.5": 0.019287592142539285,
+     "1.0": 0.0013487649362096035,
+     "2.0": 0.0006687913035192369,
+     "5.0": 8.212796164424761e-06,
+     "20.0": 1.1678260276564995e-07
+    },
+    "e100_vs_ref_linear_extrapolation_50_100": {
+     "55.0": 0.9999934582405106,
+     "70.0": 1.0001450115028077,
+     "85.0": 1.0002805740829472,
+     "100.0": 1.0002642640951631
+    },
+    "ref_all_zero": false
+   },
+   "nu_mu_H1/mec_cc": {
+    "n_ref": 1000,
+    "n_regen_e50": 1000,
+    "n_regen_e100": 1000,
+    "e50_x_bitwise": true,
+    "e50_y_bitwise": true,
+    "e50_max_rel_diff_y": null,
+    "e100_at_ref_knots_max_rel_diff": null,
+    "e100_x_max": 100.0,
+    "e100_at_ref_knots_max_rel_diff_by_Emin": {
+     "0.5": null,
+     "1.0": null,
+     "2.0": null,
+     "5.0": null,
+     "20.0": null
+    },
+    "e100_vs_ref_linear_extrapolation_50_100": null,
+    "ref_all_zero": true
+   }
+  }
+ },
+ "receipt_v1": {
+  "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gen5d-fluxfix.json",
+  "sha256": "6325a4e948bf2c9f38b7e68ecf42aa8f724f9ae0ea8c0fc95f6e904c0e790260"
+ },
+ "environment": {
+  "python": "3.11.14",
+  "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+  "numpy": "1.26.4",
+  "host": "login33",
+  "PLOTUTILSROOT": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib",
+  "cwd": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/gen5d_flux_supplement.py",
+  "receipt"
+ ]
+}

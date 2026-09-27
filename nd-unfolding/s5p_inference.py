@@ -74,6 +74,43 @@ def besag_clifford(t_obs: float, t_null_stream, h: int, n_max: int) -> dict:
     return {"p": (k + 1) / (n_max + 1), "stopped_at": n, "exceedances": k, "rule": "n_max reached"}
 
 
+def cp_interval(k: int, B: int, level: float) -> tuple[float, float]:
+    a = 1 - level
+    lo = 0.0 if k == 0 else float(stats.beta.ppf(a / 2, k, B - k + 1))
+    hi = 1.0 if k == B else float(stats.beta.ppf(1 - a / 2, k + 1, B - k))
+    return lo, hi
+
+
+def holm_thresholds(alpha: float, m: int) -> list[float]:
+    """Every level a Holm step can compare a raw p-value with: alpha / j, j = 1..m."""
+    return sorted(alpha / j for j in range(1, m + 1))
+
+
+def sequential_decision(k: int, B: int, thresholds: list[float], look_level: float = 0.995) -> dict:
+    """The frozen batch-sequential stopping rule of a calibration ensemble (s5p amendment 7 candidate).
+
+    With k exceedances in B null draws, stop only when the exact Clopper-Pearson interval of the tail
+    probability at ``look_level`` (Bonferroni over at most ten looks: 0.995) (a) contains no decision threshold
+    (every Holm, 0.05 and 0.01 comparison is determined) and (b) meets the T7 precision at the point estimate
+    p = (k + 1) / (B + 1): half-width <= 0.05 for p >= 0.05, <= 0.5 p for 0.01 <= p < 0.05, and below 0.01 an
+    upper end below the smallest threshold (a one-sided bound). Continuing is always allowed up to the
+    declared maximum."""
+    lo, hi = cp_interval(k, B, look_level)
+    p = (k + 1) / (B + 1)
+    straddle = [th for th in thresholds if lo < th <= hi]
+    half = (hi - lo) / 2
+    if hi < min(thresholds):
+        precise, tier = True, "one-sided bound below every threshold"
+    elif p >= 0.05:
+        precise, tier = half <= 0.05, "absolute half-width <= 0.05"
+    elif p >= 0.01:
+        precise, tier = half <= 0.5 * p, "relative half-width <= 0.5 p"
+    else:
+        precise, tier = False, "p < 0.01 without a bound below every threshold"
+    return {"k": k, "B": B, "p": p, "look_interval": [lo, hi], "look_level": look_level,
+            "straddled_thresholds": straddle, "precise": precise, "tier": tier, "stop": precise and not straddle}
+
+
 def holm(pvals: dict[str, float], alpha: float = 0.05) -> dict:
     order = sorted(pvals, key=pvals.get)
     m = len(order)

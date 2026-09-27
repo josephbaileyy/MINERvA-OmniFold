@@ -167,6 +167,47 @@ def load_shift(spec: dict | None, n: int) -> np.ndarray | None:
     return D
 
 
+def test_null(model: Model, design: dict, key: str, V: np.ndarray, names: list, pz_index: np.ndarray, files: list,
+              coefs: list) -> dict:
+    """One null's observed statistics against its calibration ensemble ``files``, per shift variant, and the
+    claim p-values (the largest over the variants)."""
+    spec = design["nulls"][key]
+    mu, var = prediction(spec["prediction"], model.U)
+    dom = np.ones(len(names), bool) if spec.get("domain") != "pz_lt_6" else (pz_index <= 1)
+    F = ensemble(model, files)
+    D = load_shift(design.get("process_shift", {}).get(key), len(names))
+    tt_o, ts_o = statistics(model.f_data[None, :], mu, var, V, dom, 0, draw=False)
+    entry = {"domain_cells": int(dom.sum()), "T_total_obs": float(tt_o[0]), "T_shape_obs": float(ts_o[0]),
+             "process_shift": None if D is None else design["process_shift"][key], "variants": {}}
+    base = None
+    for c in (coefs if D is not None else [0.0]):
+        tt_n, ts_n = statistics(F + (c * D if D is not None else 0.0), mu, var, V, dom, spec["surrogate_seed0"])
+        if base is None:
+            base = (tt_n, ts_n)
+        v = {"total": si.mc_pvalue(tt_o[0], tt_n), "shape": si.mc_pvalue(ts_o[0], ts_n),
+             "null_T_total_median": float(np.median(tt_n)), "null_T_shape_median": float(np.median(ts_n))}
+        if c > 0:
+            v["implied_size_of_unshifted_test"] = {"total": si.power(tt_n, base[0], 0.05), "shape": si.power(ts_n, base[1], 0.05)}
+        entry["variants"][str(c)] = v
+    for s in ("total", "shape"):
+        claim = max(entry["variants"].values(), key=lambda v: v[s]["p"])[s]
+        entry[s] = dict(claim, rule="the largest p over the declared shift variants")
+    return entry
+
+
+def calibration_count(spec: dict) -> int:
+    """A fixed count, or the final B of a sequential calibration (the controller's last status file)."""
+    n = spec["calibration_n"]
+    if isinstance(n, int):
+        return n
+    if not Path(n["sequential_status"]).exists():
+        raise SystemExit(f"{n['sequential_status']}: no final status (the sequential calibration has not stopped)")
+    st = json.loads(Path(n["sequential_status"]).read_text())
+    if not st.get("stop"):
+        raise SystemExit(f"{n['sequential_status']}: the sequential calibration has not stopped")
+    return int(st["B"])
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -203,29 +244,11 @@ def main(argv=None) -> int:
         raise SystemExit("the first shift coefficient must be 0 (the unshifted test)")
     pvals = {}
     for key, spec in design["nulls"].items():
-        mu, var = prediction(spec["prediction"], U)
-        dom = np.ones(len(names), bool) if spec.get("domain") != "pz_lt_6" else (pz_index <= 1)
         files = sorted(glob.glob(spec["calibration_glob"]))
-        if len(files) != spec["calibration_n"]:
-            raise SystemExit(f"{key}: {len(files)} calibration products, {spec['calibration_n']} declared")
-        F = ensemble(model, files)
-        D = load_shift(design.get("process_shift", {}).get(key), len(names))
-        tt_o, ts_o = statistics(model.f_data[None, :], mu, var, V, dom, 0, draw=False)
-        entry = {"domain_cells": int(dom.sum()), "T_total_obs": float(tt_o[0]), "T_shape_obs": float(ts_o[0]),
-                 "process_shift": None if D is None else design["process_shift"][key], "variants": {}}
-        base = None
-        for c in (coefs if D is not None else [0.0]):
-            tt_n, ts_n = statistics(F + (c * D if D is not None else 0.0), mu, var, V, dom, spec["surrogate_seed0"])
-            if base is None:
-                base = (tt_n, ts_n)
-            v = {"total": si.mc_pvalue(tt_o[0], tt_n), "shape": si.mc_pvalue(ts_o[0], ts_n),
-                 "null_T_total_median": float(np.median(tt_n)), "null_T_shape_median": float(np.median(ts_n))}
-            if c > 0:
-                v["implied_size_of_unshifted_test"] = {"total": si.power(tt_n, base[0], 0.05), "shape": si.power(ts_n, base[1], 0.05)}
-            entry["variants"][str(c)] = v
-        for s in ("total", "shape"):
-            claim = max(entry["variants"].values(), key=lambda v: v[s]["p"])[s]
-            entry[s] = dict(claim, rule="the largest p over the declared shift variants")
+        want = calibration_count(spec)
+        if len(files) != want:
+            raise SystemExit(f"{key}: {len(files)} calibration products, {want} declared")
+        entry = test_null(model, design, key, V, names, pz_index, files, coefs)
         res["tests"][key] = entry
         pvals[f"{key}:total"], pvals[f"{key}:shape"] = entry["total"]["p"], entry["shape"]["p"]
     res["holm"] = si.holm(pvals, design["alpha_family"])

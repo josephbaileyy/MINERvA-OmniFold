@@ -53,5 +53,30 @@ class Tests(unittest.TestCase):
         self.assertLess(si.size(rng.chisquare(5, 400), null, 0.05)["rejection_fraction"], 0.1)
 
 
+class SequentialTests(unittest.TestCase):
+    TH = sorted(set(si.holm_thresholds(0.05, 10)) | {0.01, 0.05})
+
+    def test_bulk_p_stops_once_precise_and_not_before(self):
+        # p ~ 0.5: the absolute half-width 0.05 at 99.5% needs B ~ 800
+        self.assertFalse(si.sequential_decision(100, 200, self.TH)["stop"])
+        d = si.sequential_decision(500, 1000, self.TH)
+        self.assertTrue(d["stop"], d)
+
+    def test_zero_exceedances_stop_only_below_every_threshold(self):
+        self.assertFalse(si.sequential_decision(0, 200, self.TH)["stop"])  # 99.5% upper bound 0.026
+        d = si.sequential_decision(0, 1200, self.TH)
+        self.assertTrue(d["stop"], d)
+        self.assertLess(d["look_interval"][1], 0.005)
+
+    def test_a_straddled_threshold_never_stops(self):
+        d = si.sequential_decision(100, 1999, self.TH)  # p ~ 0.05
+        self.assertIn(0.05, d["straddled_thresholds"])
+        self.assertFalse(d["stop"])
+
+    def test_holm_thresholds(self):
+        self.assertEqual(si.holm_thresholds(0.05, 2), [0.025, 0.05])
+        self.assertAlmostEqual(min(si.holm_thresholds(0.05, 10)), 0.005)
+
+
 if __name__ == "__main__":
     unittest.main()

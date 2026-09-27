@@ -48,33 +48,33 @@
  "jobs": [
   {
    "job": "58932367",
-   "label": "s5p_k_b0r (checkpointed departure traces to 200 iterations)",
-   "state": "RUNNING (07:59Z)"
+   "label": "s5p_k_b0r",
+   "state": "RUNNING"
   },
   {
    "job": "58904836",
-   "label": "s5p_k_cap (capacity probe to 100 iterations, no checkpoints)",
-   "state": "RUNNING; superseded for the rule by 58934771"
+   "label": "s5p_k_cap (superseded diagnostic)",
+   "state": "RUNNING to its 16 h limit"
   },
   {
-   "job": "58939604",
-   "label": "s3 lateral-band input dumps (serial array)",
-   "state": "RUNNING (6 of 10 endpoints written 07:59Z)"
+   "job": "58944840",
+   "label": "F4 pair at the MnvTune null (s3r-cpu.q line 1)",
+   "state": "admitted 08:45Z"
   },
   {
-   "job": "queue s3-det.q",
-   "label": "detector-band dump on CPU shared",
-   "state": "waiting on the 2-node concurrency cap"
-  },
-  {
-   "job": "queue s3-cpu.q",
-   "label": "amendment-5 pilot",
-   "state": "STOPPED 2026-09-27T08:13Z before launch (explicit PIDs on login33); superseded by s3r-cpu.q"
+   "job": "58944910",
+   "label": "detector dump (s3-det.q restarted from deploy 66cf3129)",
+   "state": "admitted 08:48Z"
   },
   {
    "job": "queue s3r-cpu.q",
-   "label": "F4 pair at the MnvTune null; re-issued pilot after the detector dump",
-   "state": "to launch from the amendment-6 deploy"
+   "label": "re-issued pilot after the detector dump",
+   "state": "waiting"
+  },
+  {
+   "job": "queue s3r-lat.q",
+   "label": "ten lateral endpoint unfolds",
+   "state": "to launch from the next deploy"
   }
  ],
  "receipts": [
@@ -103,6 +103,16 @@
   {
    "path": "docs/orchestration/state/s5p/stage3/envelope-receipt.json",
    "what": "study-P envelope h (reproduces 12.02/9.60/13.44% J/H2/EW), h without D1 (11.25/4.28/9.90%) and vertex linearity; review round 1 LOW"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/gen5d/gen5d-fluxfix.json",
+   "sha256": "6325a4e948bf2c9f38b7e68ecf42aa8f724f9ae0ea8c0fc95f6e904c0e790260",
+   "what": "F1: GENIE CV, GENIE+MEC, NuWro reweighted to the PPFX CV flux on 0-100 GeV (<50 GeV samples); sampling-model, identity and phi_t checks; re-measured by the campaign"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/gen5d/gen5d-fluxfix-2.json",
+   "sha256": "48a6b024248f1a347e8ab1709c8d9e4b1f099bae79c1e10f68c1aab10741d7b1",
+   "what": "F1 follow-up: 50-100 GeV supplements merged (/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz, .../genie_mec_xsec5d_full.npz, .../nuwro_cv_xsec5d_full.npz; sigma x1.006), GiBUU reweighted to the analysis flux and convention (x0.9966; its sampling test was revised after the first form failed below 1.5 GeV, where threshold acceptance shapes the counts: recorded as post-hoc); re-measured by the campaign"
   }
  ],
  "amendments": [
@@ -184,6 +194,10 @@
   {
    "utc": "2026-09-27T08:40Z",
    "what": "namespace storage 19 GB against the 20 GiB campaign cap: 17 deploy clones not used by any live job or runner (each a commit on origin/main, verified) removed; 14 GB after; kept 0d624616, 75746779, abdc88c5, c1cba7bf; the 12 GB of lateral dumps are removed after their unfolds and the Delta_b are receipted"
+  },
+  {
+   "utc": "2026-09-27T08:27Z",
+   "what": "queue s3-det.q (deploy 75746779, budget revision 2) stopped with exit 5 after the ledger was rebound to budget revision 3 (the meter refuses a budget digest the ledger does not carry: the intended guard); restarted from deploy 66cf3129 with the byte-identical queue and table (cmp); admitted 08:48Z; no job lost"
   }
  ],
  "findings": [
