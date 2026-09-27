@@ -1,6 +1,6 @@
 # Cold-start handoff — PET final-design study (living document; update at each milestone)
 
-Read this, then `PROTOCOL-20260925.md` (with Amendments 1, 2, 2b, 2c, 3a, 3b), `DEVELOPMENT-20260926.md`,
+Read this, then `PROTOCOL-20260925.md` (with Amendments 1, 2, 2b, 2c, 3a, 3b, 3b-bis, 3c, 3d), `DEVELOPMENT-20260926.md`,
 `DIAGNOSTICS-20260925.md`, `CAPACITY-20260925.md`, and the three review dispositions (IMPL, STAT, SCOPE). Everything referenced is on the
 pushed branch; nothing depends on a local scratch directory.
 
@@ -65,26 +65,34 @@ pushed branch; nothing depends on a local scratch directory.
   before use). Watcher from `b98986e9` with per-GPU lanes; restart with `bash $B/start_watcher.sh <sha>`
   (copy in `jobs/start_watcher.sh`). Two overlap lanes run inside the current interactive allocations.
 
+- **2026-09-27 ~09:15Z — FINALISTS RE-FROZEN (supersedes earlier state lines).** N2 repair arm decided (seed sd of R_E0
+  at K\*, limit 0.05; `sizing/n2_all-20260927.json`): H2S1 0.095, L128S1 0.091, L64S1 0.057, L128S1E16 0.071, H2S1E16
+  0.074, CS1 0.054 FAIL; **H2S1T24 (24-epoch truth step) 0.037 PASS, L128S1T24 0.043 PASS**. PET2 closed (P2preA1
+  stable but topology ≤ 0.225). **Decision set {H2S1T24 K5, L128S1T24 K4}** (Amendments 3c, 3d), anchors CTL K3 /
+  C K3. X4 arm stopped (not needed). FB released blinded: `runs/s4f_a3.tsv` (FINAL draws 0–23, finalists + anchors),
+  `runs/s4s_a3.tsv` (library 21 × 8). Measured cost per unfolding: H2S1T24 1.77, L128S1T24 1.49 A100-h.
+  Pilots for the new finalists running: `runs/s3p_t24.tsv`, `runs/s3p_l24.tsv` (OUT `$B/s3p`). Withdrawn rows (X4,
+  H2S1 K5 FB) are flock-held by `$B/hold_rows.py` (until ~23:00Z) so old lanes skip them. Watcher `aa5f847e`
+  (interactive ×2, shared_interactive ×2, debug = anchors' FINAL rows only).
+
 ## Next actions, in order
 
-1. When `dev3N`, `s3n_fast`, `s3n_slow`, `dev2P`, `dev2T`, `dev2Q` are complete: post-hoc (`posthoc_iterations.py
-   --workers 24` into `$B/posthoc_v2/<stage>`, CPU debug, guarded), score the S3P seed runs at k = 4, 5, 6
-   (`analysis/score_design.py`), `dev/n2_table.py` at each design's K\*, regenerate the tables
-   (`dev/summarize_dev.py --root <view with posthoc2 dev1 dev2L dev2S dev2T dev2P dev2Q dev3N>`), apply
-   `dev/apply_finalist_rule.py --n2 n2.json`, commit `DEV_TABLES`/`SCREENS`, harvest (`results/harvest.sh`).
-2. **Amendment 3c (re-freeze)**: both packages by the rule with S-N2; if a finalist changes, pilot it on the S3P draws
-   (`freeze/make_stage_manifests.py --stage S3P ...`) and recompute sizing (`analysis/build_pilot.py`, `sizing.py`);
-   fill `freeze/EVIDENCE_DECLARATION-*.json` (decision set, m, n_F, n_required D4c/D3 = library n, cost block from
-   `analysis/cost_from_receipts.py` at declared packing); generate FB manifests (`freeze/make_final_stage.sh`, same
-   stages → paired draws; extensions for FINAL draws 24…n_F−1 and D4c/D3 draws 8…n−1) and list them with
-   `RELEASED-MANIFEST` sha256 lines. Must not contain the word UNBLIND. If every design fails S-N2: smoke-test the
-   step-2 ensemble on the cluster and run an X4 arm (Amendment 3b item 5) first.
-3. Run the finalists' FB rows (blinded; watcher priorities).
-4. **UNBLIND amendment** only when every look-1 row is COMPLETE (completeness manifest). Score (`score_design.py`),
-   decide (`decide.py --evidence`), then `decide.py --provisional` to order coverage (3a.5).
-5. Coverage (`freeze/make_coverage_stage.sh <ID:K> <tag>`; release by amendment), `analysis/coverage.py`, final decision.
-6. Independent review of the final decision, report/deck (`slides/make_final_deck.py`), decision record, RUN_LOG/
-   STATUS/VALIDATION_LEDGER (after merging `origin/main` for the next dense VL id), resource ledger, draft PR.
+1. When `s3p_t24` and `s3p_l24` are COMPLETE: score (`analysis/score_design.py --k 4 5`, guarded CPU debug, into
+   `$B/scored/s3p_new`), then `analysis/build_pilot.py --small H2S1T24:5 --large L128S1T24:4` (build_pilot matches the
+   run name's K: both pilots are named with their frozen K) → `analysis/sizing.py` for the FINAL and library groups;
+   commit `sizing/SIZING-*.md`.
+2. **Amendment 3e (sizing + extension release):** fill `freeze/EVIDENCE_DECLARATION-20260927.json` (`<N_F>`,
+   `<N_LIB>`); if n_F > 24 generate FINAL draws 24…n_F−1 for finalists and anchors
+   (`freeze/make_stage_manifests.py --stage S4F --bank FB --replicates 24-<n_F−1> --candidates H2S1T24:5 L128S1T24:4
+   CTLref:3 Cref:3 --cases dev D1_m0.350`), and D4c up / D3 +0.35 draws 8…N_LIB−1 (`--stage S4S --replicates 8-..
+   --candidates H2S1T24:5 L128S1T24:4 --cases D4c_p_up D3_p0.35`); list them with `RELEASED-MANIFEST` lines; add
+   them to the watcher lanes. No word UNBLIND.
+3. When every look-1 row (s4f_a3, s4s_a3, extensions) is COMPLETE: completeness manifest + **UNBLIND amendment**;
+   score FB rows; `analysis/decide.py --evidence <filled declaration>`; then `--provisional` for the coverage order.
+4. Coverage (`freeze/make_coverage_stage.sh <ID:K> <tag>`, release by amendment), `analysis/coverage.py`, final decision.
+5. Independent review of the decision; report/deck; decision record; RUN_LOG/STATUS/VALIDATION_LEDGER (merge
+   `origin/main` first for the next dense VL id); resource ledger (note the lost rounds: ~80 empty debug rounds
+   20:00–21:08Z and ~12 killed L128S1T24 debug iterations, 2026-09-26/27); update draft PR #4.
 
 ## Known traps (measured this study)
 
