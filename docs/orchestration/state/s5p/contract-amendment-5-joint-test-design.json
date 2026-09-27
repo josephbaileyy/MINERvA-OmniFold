@@ -1,0 +1,84 @@
+{
+ "schema": "s5p-contract-amendment/1",
+ "amends": "docs/orchestration/state/s5p/contract.json",
+ "number": 5,
+ "stage": "3_model_dependence_and_admission (joint-test branch)",
+ "status": "FROZEN at the commit that first adds this file, after amendment 4 and BEFORE any stage-3 compute and any observed joint statistic. It freezes the joint-test design of the inference branch and its stage-3 design pilot. Production ensembles (calibration, size, power) run only after an independent admission review and the admission record (amendment 6) that prices them. Executor choices under the delegation.",
+ "estimator": "configuration 1 = R (amendment 4), 5 iterations, npz path, negweight-refined with the refinement refit per experiment",
+ "joint_cells": "the 109 supported cells of partition J (RD1's joint part; cell integrals over the fine grid, cm^2/nucleon); a joint-5D test at this coarse resolution, not a validation of any fine bin",
+ "predictions": {
+  "GENIE_2_12_10_CV": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/genie_cv_xsec5d.npz",
+   "sha256": "8ff4e5e6824f3ba76d292d4bd56eeffd41f0007b83a5e6d777d76a4e0a4f0257"
+  },
+  "GENIE_2_12_10_MEC": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/genie_mec_xsec5d.npz",
+   "sha256": "12ae97d529adc4736f02ec881f5d957f675af0b2e208f54f65a86a103cb77aec"
+  },
+  "NuWro_21_09": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_cv_xsec5d.npz",
+   "sha256": "3f4c7c6f575fb73d19cdff7586c37ccddd81264f65fadd07fa134f9a91e6953a"
+  },
+  "GiBUU_2019": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/gibuu_cv_xsec5d.npz",
+   "sha256": "b183fccaf620b798cf068a2e039578332fbcdc945399678f72e974420dca96fc"
+  },
+  "MnvTune_v1": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz",
+   "sha256": "bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c"
+  }
+ },
+ "prediction_notes": [
+  "the four external predictions are the gen5d build (state/s5p/gen5d/README-gen5d-build.md): truth-level, the analysis's E_avail, Getq3True q3 and the existing converters' W (differs from CVUniverse's struck-nucleon W for ~0.15% of events)",
+  "GENIE_2_12_10_MEC uses the 3D normalization convention (KNOWN_ISSUES 81: the committed (E_avail,W) file is 2.87% low; the 5D build is not)",
+  "GiBUU_2019 is empty above E_nu ~ 20 GeV (KNOWN_ISSUES 82): its tests use only the J cells with p_parallel < 6 GeV/c (domain 'pz_lt_6'; the pz index of the cell <= 1)",
+  "MnvTune_v1 is the analysis MC's own truth (s5p_mc_truth_pred.py) and the unfolding prior; its null is recorded as such"
+ ],
+ "nulls": "H0(G) for each of the five predictions: the true J-cell cross sections equal G's. Pseudo-data truth: the analysis MC truth reweighted by rho_c = G_c / MnvTune_c on the supported J cells (rate kept; rho = 1 in unsupported cells, which stay in the unfolding domain; files state/s5p/ratios/nullsJ/null-<g>-J.json); within-cell shapes are MnvTune v1's (declared conditioning)",
+ "tests": "per null: total (T_total = r' W^-1 r) and shape-only (T_shape, normalized over the test domain, rank-one constraint removed by dropping one cell); family = 5 nulls x 2 = 10 tests; claims of rejection use Holm at familywise 0.05; raw and Holm-adjusted p reported",
+ "metric": "W = V + diag Var(mu_G): V the Ledoit-Wolf-shrunk covariance of the 200-experiment MnvTune-null pilot ensemble (with every nuisance draw and surrogate below), built by s5p_joint.py build-v and committed before any calibration ensemble; Var(mu_G) the prediction's finite-MC variance per cell. W sets power only; validity comes from the calibration",
+ "nuisance_model": {
+  "event_level_draws": "per null experiment (s5p_nullexp.py), applied to the pseudo-data source only: one PPFX flux universe (uniform over the bank's 100); one non-flux vertical universe applied to the background source weights (background-model prior); each weight-only detector band (MinosEfficiency, GEANT_Neutron/Pion/Proton) at a random -1 or +1 sigma endpoint",
+  "surrogates": "added to the unfolded J cells (s5p_joint.py): lateral bands sum_b z_b Delta_b with Delta_b = half the difference of the real-data unfolds of the band's two selection-complete endpoints (a linear-response surrogate; its symmetry check (f+ - f0) vs -(f- - f0) is reported and not used to select anything); flat normalization x (1 + 0.014 z); the data's rounding-scale noise N(0, diag s_num^2) from the 20 real-data jitters (the pseudo-data are 20x less chaotic than the data, study N); the prediction's finite MC as -eps, eps ~ N(0, Var(mu_G))",
+  "interpretation": "nuisance-AVERAGED (prior-predictive) calibration over the flux, background-model, detector and lateral priors; NOT a uniform composite-null guarantee. Conditional on the MC detector response per event, the MnvTune within-cell shapes and the half-MC pseudo-experiment construction (each experiment unfolds with half the MC at weight x2, the real data with the full MC; the null spread therefore includes more MC-statistical variation than the data's, which is conservative in that respect)",
+  "GENIE_knobs": "not nuisances of a generator null (the null fixes the signal physics)"
+ },
+ "calibration": {
+  "B_per_null": 1999,
+  "p_value": "(k + 1) / (B + 1) with the exact 95% Clopper-Pearson interval of k / B; the smallest reportable p is 1/2000 as a one-sided bound; never p = 0",
+  "precision": "B = 1999 meets T7 over 0.01 <= p <= 1 (half-width <= 0.05 for p >= 0.05, <= 0.5 p for 0.01 <= p < 0.05); below 0.01 a one-sided bound; an interval straddling 0.05 or 0.01 is reported as undetermined at that level",
+  "seeds": "stage-7 calibration range: null i uses 1200000 + 20000 i ... + 1998 (i = 0 MnvTune, 1 GENIE CV, 2 GENIE MEC, 3 NuWro, 4 GiBUU)"
+ },
+ "validity_route": "empirical (not the finite-sample route: the real data are not generated by the pseudo-experiment process, so exchangeability is not claimed). Size check (T6): independent validation ensembles of 300 null experiments at the MnvTune and NuWro nulls (stage-7 validation seeds 1400000...), rejection fraction at alpha = 0.05 with the one-sided 95% upper bound <= 0.08; the data-versus-pseudo process differences are stated, not certified",
+ "power": {
+  "alternatives": {
+   "P1": "W3 NuWro/GENIE (pT,p_parallel,E_avail) shape, state/s5e/w3-nuwro-over-genie-pt-pz-eavail.json",
+   "P2": "D5 NuWro/GENIE q3 | (E_avail,W), state/s5p/ratios/d5-nuwro-over-genie-q3-given-eavail-w.json",
+   "P3": "W2 GENIE MEC/CV (E_avail,W), state/s5e/w2-genie-mec-over-cv-eavailW.json"
+  },
+  "construction": "each alternative applied on top of the MnvTune-null truth, amplitudes a = 1 and 0.5, 200 experiments each (stage-7 validation seeds 1450000...), with the same nuisance draws and surrogates",
+  "criterion": "T6: shape-test power >= 0.80 at alpha = 0.05 against the MnvTune null's calibration ensemble at a = 1 for each of P1, P2, P3 (the alternatives preserve the in-grid total, so the shape test is the relevant one; total-test power reported); the 95% interval is reported; low power is a limitation, never agreement",
+  "outside_null": "P1-P3 change the signal truth, which no nuisance of the null family varies; their distinguishability after detector response and nuisances is exactly what the power measures"
+ },
+ "pilot": {
+  "purpose": "the V ensemble; development power of P1-P3 at a = 1 (50 each) to confirm the design is not powerless before production; the lateral endpoint inputs",
+  "tables": [
+   "docs/orchestration/state/s5p/s3-latdump-tasks.tsv",
+   "docs/orchestration/state/s5p/s3-pilot-tasks.tsv"
+  ],
+  "queue": "docs/orchestration/state/s5p/queues/s3-cpu.q",
+  "seeds": "stage-3 range: 950000-950199 (null), 951000-951049 (P1), 952000-952049 (P2), 953000-953049 (P3)",
+  "lateral_unfolds": "the ten real-data endpoint unfolds (R on each lateral npz with its own background dump) are a table added after the dumps, when their digests exist"
+ },
+ "data_informed_choices": [
+  "the observed data and the high-E_avail/high-W generator deficit are known; the joint test is not blind",
+  "the J partition, the generator list and the alternatives were fixed before any observed joint statistic; the family and Holm rule are fixed here",
+  "P1 and P3 were observed as development departures (s5e W3/W2); they are named physics directions for power, not validation truths"
+ ],
+ "costs": {
+  "pilot_cpu_node_h": "~6.6 (reservation 10.9)",
+  "production_cpu_equivalent_node_h": "calibration 5 x 1999 + size 2 x 300 + power 6 x 200 = 11,795 experiments at ~330 s (incl. nuisance loading) -> ~1,080 step-hours -> ~135 CPU node-h, ~170 with packing; placed on both pools at the admission (amendment 6)",
+  "available": "CPU unallocated 189.6 after this revision; GPU unallocated 74.7 GPU node-h (~37 CPU-equivalent)"
+ },
+ "not_admitted": "the measurement branch (amendment 4); no measurement construction, validation or adoption is part of this design"
+}

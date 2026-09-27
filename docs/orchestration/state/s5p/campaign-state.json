@@ -25,7 +25,7 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "STAGE_2_EXIT",
+ "phase": "STAGE_3_JOINT_DESIGN",
  "phase_detail": "amendment 4 applies the frozen rules to the Stage-2 receipt: R selected (no configuration 2 or 3); numerical component absorbed; six calibration failures addressed; no reporting definition meets T1/T2 at development resolution, so the measurement branch is not admitted (limitation recorded); the joint-test branch proceeds to the Stage-3 design and independent admission review",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
@@ -34,7 +34,7 @@
  },
  "budget": {
   "path": "docs/orchestration/state/s5p/budget.json",
-  "revision": 1
+  "revision": 2
  },
  "stages": {
   "1_use_case": "FROZEN (amendment 1)",
@@ -106,10 +106,15 @@
    "number": 4,
    "path": "docs/orchestration/state/s5p/contract-amendment-4-stage2-decisions.json",
    "stage": "2 exit"
+  },
+  {
+   "number": 5,
+   "path": "docs/orchestration/state/s5p/contract-amendment-5-joint-test-design.json",
+   "stage": "3 (joint-test branch)"
   }
  ],
  "reviews": [],
- "next_action": "Stage 3 (inference branch): amendment 5 freezing the joint-test design and the stage-3 design pilot; budget revision 2; then the independent admission review",
+ "next_action": "deploy; ledger rebind to budget revision 2; run queue s3-cpu.q (lateral dumps, pilot); lateral endpoint unfold table; build V; independent admission review; amendment 6 (admission, production pricing)",
  "concurrent_work_at_start": "josephrb GPU jobs pfd-chain/pfd-shr/pfd-fin (58893071-58903623, m3246_g) and other users' m3246_g jobs belong to other lanes (not touched); no m3246 CPU row; shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "b30752864c70c76da3a888136e52c3dea4b615b7",

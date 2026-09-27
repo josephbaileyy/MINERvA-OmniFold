@@ -2,8 +2,8 @@
  "schema": "s5p-budget/1",
  "campaign_key": "s5p-20260926",
  "authority": "docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md sections 3 (P7) and 4",
- "revision": 1,
- "revision_reason": "activation budget: each pool = min(unspent cumulative envelope, 10% of uncommitted allocation after reservations); CPU min(310.184, 341.630) = 310.184; GPU min(114.905 GPU node-h = 459.62 A100-h, 5824.26) = 114.905; stages 1-2 'development' <= 15% of each pool; verification/repair >= 20%; the remainder unallocated until the Stage-3 production admission and a budget revision",
+ "revision": 2,
+ "revision_reason": "amendment 5: a 'stage3_design' stage of 12.0 CPU node-h from the unallocated pool for the joint-test design pilot (lateral endpoint dumps and unfolds, the 200-experiment V ensemble, development power of P1-P3); development (46.527) and verification/repair (62.037) unchanged; CPU unallocated 189.620",
  "measured_utc": "2026-09-26T16:04:38Z",
  "evidence": {
   "allocation": "docs/orchestration/state/s5p/allocation-measurement-20260926T1604Z.txt (iris, squeue -h -r -A m3246,m3246_g all users, showquota, hpssquota, sacctmgr qos)",
@@ -52,7 +52,8 @@
    "concurrency_nodes": 2,
    "stages": {
     "development": 46.527,
-    "verification_repair": 62.037
+    "verification_repair": 62.037,
+    "stage3_design": 12.0
    }
   },
   "gpu": {
@@ -78,7 +79,8 @@
  "stage_rules": {
   "development": "contract stages 1-2 together: at most 15% of each pool (handoff Stage 2)",
   "verification_repair": "20% floor of each pool (independent review compute, reverification of repairs); a floor, not a claim that all required validation fits",
-  "unallocated": "CPU 201.620, GPU 74.688 node-h: allocated only by the Stage-3 production admission (a contract amendment and a budget revision with a ledger rebind), which also reserves the full priced validation and protects measurement-validation resources from inference"
+  "unallocated": "CPU 189.620, GPU 74.688 node-h",
+  "stage3_design": "amendment 5 pilot only; production ensembles are priced by the Stage-3 admission record"
  },
  "storage": {
   "pscratch": {
@@ -97,6 +99,11 @@
    "revision": 1,
    "measured_utc": "2026-09-26T16:04:38Z",
    "note": "activation budget"
+  },
+  {
+   "revision": 2,
+   "utc": "2026-09-27",
+   "note": "stage3_design 12.0 CPU node-h (amendment 5)"
   }
  ]
 }
