@@ -204,6 +204,10 @@
   {
    "utc": "2026-09-27T09:45Z",
    "what": "s5p_k_b0r 58932367 (the optional 200-iteration extension of the Stage-2 study-K departure traces) cancelled by the campaign after its checkpoints reached k = 100 (GiBUU, q3) and 125 (W1): the Stage-2 decisions used k <= 20 and are applied (amendment 4); the remaining ~6 h x 3 tasks would have held 0.375 of the 2-node concurrency while the shared partition is resource-bound and the stage-3 pilot waits. The checkpoints stay the study-K record beyond k = 20"
+  },
+  {
+   "utc": "2026-09-27T10:12Z",
+   "what": "detector dump 58944910 FAILED in 2 s: the meter omits --array for --ntasks 1 and s5c_array.sh required SLURM_ARRAY_TASK_ID (a latent incompatibility, never exercised: the earlier single-task GPU dump was cancelled while pending). Repair: s5c_array.sh treats a non-array job as task 0 only when its table has exactly one task line (else refuses); tests/test_s5c_array_single.py (red on the old script). The meter's priced --array flag is untouched. Relaunched once from the repaired deploy: the stage-3 corrective resubmission (retry rule: one per stage after a diagnosed code defect, verified repair and fresh admission)"
   }
  ],
  "findings": [

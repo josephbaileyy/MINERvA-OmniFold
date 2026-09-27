@@ -16,7 +16,17 @@ DEPLOY=${1:?deploy tree}
 PIN=${2:?pinned sha}
 TABLE=${3:?task table}
 OUT=${4:?out dir}
-TASK=${SLURM_ARRAY_TASK_ID:?not an array task}
+# The meter omits --array for a single-task admission (--ntasks 1); such a job is task 0, and only
+# when the table has exactly one task line (s5p 2026-09-27: the detector dump failed here in 2 s).
+n_lines=$(grep -v '^#' "$TABLE" | grep -c -v '^[[:space:]]*$')
+if [ -n "${SLURM_ARRAY_TASK_ID:-}" ]; then
+    TASK=$SLURM_ARRAY_TASK_ID
+elif [ -n "${SLURM_JOB_ID:-}" ] && [ "$n_lines" -eq 1 ]; then
+    TASK=0
+else
+    echo "[s5c] refusing: not an array task and the table has $n_lines task lines" >&2
+    exit 2
+fi
 
 head_sha=$(git -C "$DEPLOY" rev-parse HEAD 2>/dev/null)
 dirty=$(git -C "$DEPLOY" status --porcelain --untracked-files=no 2>/dev/null | wc -l)
