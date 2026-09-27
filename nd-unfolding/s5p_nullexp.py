@@ -324,6 +324,12 @@ def main(argv=None) -> int:
             if cache is None:
                 cache = ModelCache(a.bank, [u for us in groups.values() for u in us], inputs, bkg)
             fs, fb = source_factors(d, inputs, bkg, a.bank, a.detector_dir, is_b, cache)
+            sel = is_b & np.asarray(inputs["pass_reco"], bool)
+            wsrc = np.asarray(inputs["w_reco"], float)[sel] * fs[sel] * r_h[sel]
+            w0 = np.asarray(inputs["w_reco"], float)[sel] * r_h[sel]
+            kish = lambda w: float(w.sum() ** 2 / (w ** 2).sum() / w.size) if w.size and (w ** 2).sum() > 0 else None  # noqa: E731
+            d["weight_diagnostics"] = {"max_signal_factor": float(fs[sel].max()), "max_background_factor": float(fb.max()),
+                                       "kish_ratio_signal_source": kish(wsrc), "kish_ratio_signal_source_cv": kish(w0)}
             ui["w_reco"] = np.where(is_b, np.asarray(inputs["w_reco"], float) * fs, inputs["w_reco"])
             ub["bkg_w"] = np.where(is_c, np.asarray(bkg["bkg_w"], float) * fb, bkg["bkg_w"])
         orig = s5n_pseudo.truth_weight

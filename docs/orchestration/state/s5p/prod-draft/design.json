@@ -81,6 +81,35 @@
    "mode": "bias_aligned_upper"
   }
  },
+ "m1_shift": {
+  "MnvTune_v1": {
+   "none": "the MnvTune null is the analysis MC (rho = 1): no sub-fine residual"
+  },
+  "GENIE_2_12_10_CV": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/m1/fine-minus-mid-genie_cv.npz",
+   "sha256": "40d9aa1c3c84a6f019ea03524b465f5223b85bc75cea82357087e8850e8aaa51",
+   "kappa": 2,
+   "kappa_robust": 3
+  },
+  "GENIE_2_12_10_MEC": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/m1/fine-minus-mid-genie_mec.npz",
+   "sha256": "5e6aa8a6397a2fd7e688dc0f2249e1cae2b80e66f6d01378b077bdb2ab25d122",
+   "kappa": 2,
+   "kappa_robust": 3
+  },
+  "NuWro_21_09": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/m1/fine-minus-mid-nuwro_cv.npz",
+   "sha256": "706b87d4437ddf91a9c2f6867ce118631469c738b215a3d26d8f48fc556548d0",
+   "kappa": 2,
+   "kappa_robust": 3
+  },
+  "GiBUU_2019": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/m1/fine-minus-mid-gibuu_cv.npz",
+   "sha256": "6fbfc786f76e66d58e6bf190dc5c6a075786c8b4a02f8f0d1e4821d0f701b73b",
+   "kappa": 2,
+   "kappa_robust": 3
+  }
+ },
  "nulls": {
   "MnvTune_v1": {
    "prediction": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz",
@@ -88,6 +117,7 @@
    "calibration_glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/MnvTune_v1/cal_MnvTune_v1_s*.npz",
    "calibration_n": {
     "max": 1999,
+    "min": 1200,
     "sequential_status": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/status/MnvTune_v1-final.json"
    },
    "surrogate_seed0": 1700000
@@ -98,6 +128,7 @@
    "calibration_glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_CV/cal_GENIE_2_12_10_CV_s*.npz",
    "calibration_n": {
     "max": 1999,
+    "min": 1200,
     "sequential_status": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/status/GENIE_2_12_10_CV-final.json"
    },
    "surrogate_seed0": 1720000
@@ -108,6 +139,7 @@
    "calibration_glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s*.npz",
    "calibration_n": {
     "max": 1999,
+    "min": 0,
     "sequential_status": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/status/GENIE_2_12_10_MEC-final.json"
    },
    "surrogate_seed0": 1740000
@@ -118,6 +150,7 @@
    "calibration_glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/NuWro_21_09/cal_NuWro_21_09_s*.npz",
    "calibration_n": {
     "max": 1999,
+    "min": 0,
     "sequential_status": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/status/NuWro_21_09-final.json"
    },
    "surrogate_seed0": 1760000
@@ -128,6 +161,7 @@
    "calibration_glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GiBUU_2019/cal_GiBUU_2019_s*.npz",
    "calibration_n": {
     "max": 1999,
+    "min": 0,
     "sequential_status": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/status/GiBUU_2019-final.json"
    },
    "surrogate_seed0": 1780000
@@ -155,19 +189,19 @@
   "P1g_a1.0": {
    "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P1g_a1.0/pow_P1g_a1.0_s*.npz",
    "surrogate_seed0": 1981000,
-   "n": 100,
+   "n": 200,
    "null": "GENIE_2_12_10_CV"
   },
   "P2g_a1.0": {
    "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P2g_a1.0/pow_P2g_a1.0_s*.npz",
    "surrogate_seed0": 1991000,
-   "n": 100,
+   "n": 200,
    "null": "GENIE_2_12_10_CV"
   },
   "P3g_a1.0": {
    "glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P3g_a1.0/pow_P3g_a1.0_s*.npz",
    "surrogate_seed0": 2001000,
-   "n": 100,
+   "n": 200,
    "null": "GENIE_2_12_10_CV"
   }
  }

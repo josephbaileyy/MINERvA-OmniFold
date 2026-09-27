@@ -181,6 +181,13 @@
    "reviewed_head": "3e5f0c23",
    "worktree": "../MINERvA-OmniFold-s5p-review3 (left clean)",
    "verdict": "REPAIR VALIDATED with documentation conditions C1, C2 (met)"
+  },
+  {
+   "round": "admission confirmation",
+   "record": "docs/orchestration/REVIEW-20260927-s5p-admission-confirmation.md",
+   "reviewed_head": "8ee54a45",
+   "worktree": "../MINERvA-OmniFold-s5p-review4 (left clean)",
+   "verdict": "READY WITH REQUIRED CHANGES (applied; freeze after V with a mechanical re-check)"
   }
  ],
  "next_action": "deploy; rebind to budget revision 4; run s3v-cpu.q; then D (16 pairs, bias-aligned), F2 NuWro, M1 merged-x2 comparison, V from the rebuilt pilot, development power; freeze amendment 7 with every digest; production",

@@ -222,21 +222,42 @@ def test_null(model: Model, design: dict, key: str, V: np.ndarray, names: list, 
     tt_o, ts_o = statistics(model.f_data[None, :], mu, var, V, dom, 0, draw=False)
     entry = {"domain_cells": int(dom.sum()), "T_total_obs": float(tt_o[0]), "T_shape_obs": float(ts_o[0]),
              "process_shift": pspec, "shift": sinfo, "variants": {}}
+    # the sub-fine-grid residual (confirmation review F5): declared variants F +- kappa delta_M1 (delta_M1 = the
+    # fine-minus-merged-x2 asimov difference) enter the CLAIM rule at kappa; kappa_robust is reported only
+    m1 = design.get("m1_shift", {}).get(key)
+    variant_shifts = [(str(c), (c * S if S is not None else None)) for c in (coefs if S is not None else [0.0])]
+    robust_shifts = []
+    if m1 is not None and "none" not in m1:
+        d1, _ = load_shift({k: v for k, v in m1.items() if k in ("path", "sha256")}, len(names))
+        variant_shifts += [(f"m1+{m1['kappa']}", m1["kappa"] * d1), (f"m1-{m1['kappa']}", -m1["kappa"] * d1)]
+        robust_shifts = [(f"m1+{m1['kappa_robust']}", m1["kappa_robust"] * d1), (f"m1-{m1['kappa_robust']}", -m1["kappa_robust"] * d1)]
+        entry["m1_shift"] = {"kappa": m1["kappa"], "kappa_robust": m1["kappa_robust"], "path": m1["path"]}
+    elif m1 is None:
+        raise SystemExit(f"{key}: no m1_shift declaration (give {{'none': reason}} explicitly)")
     base = None
     nulls = []
-    for c in (coefs if S is not None else [0.0]):
-        tt_n, ts_n = statistics(F + (c * S if S is not None else 0.0), mu, var, V, dom, spec["surrogate_seed0"], seeds=seeds)
+    for name, sv in variant_shifts:
+        tt_n, ts_n = statistics(F + (sv if sv is not None else 0.0), mu, var, V, dom, spec["surrogate_seed0"], seeds=seeds)
         nulls.append((tt_n, ts_n))
         if base is None:
             base = (tt_n, ts_n)
         v = {"total": si.mc_pvalue(tt_o[0], tt_n), "shape": si.mc_pvalue(ts_o[0], ts_n),
-             "null_T_total_median": float(np.median(tt_n)), "null_T_shape_median": float(np.median(ts_n))}
-        if c > 0:
+             "null_T_total_median": float(np.median(tt_n)), "null_T_shape_median": float(np.median(ts_n)),
+             "null_T_total_sd": float(np.std(tt_n)), "null_T_shape_sd": float(np.std(ts_n))}
+        if name != "0.0":
             v["implied_size_of_unshifted_test"] = {"total": si.power(tt_n, base[0], 0.05), "shape": si.power(ts_n, base[1], 0.05)}
-        entry["variants"][str(c)] = v
+            v["median_shift_in_null_sd"] = {s: float((np.median(x) - np.median(b)) / max(np.std(b), 1e-300))
+                                            for s, x, b in (("total", tt_n, base[0]), ("shape", ts_n, base[1]))}
+        entry["variants"][name] = v
+    entry["robustness_variants"] = {}
+    for name, sv in robust_shifts:
+        tt_n, ts_n = statistics(F + sv, mu, var, V, dom, spec["surrogate_seed0"], seeds=seeds)
+        entry["robustness_variants"][name] = {"total": si.mc_pvalue(tt_o[0], tt_n), "shape": si.mc_pvalue(ts_o[0], ts_n)}
     for s in ("total", "shape"):
         claim = max(entry["variants"].values(), key=lambda v: v[s]["p"])[s]
         entry[s] = dict(claim, rule="the largest p over the declared shift variants")
+        robust = max([claim] + [r[s] for r in entry["robustness_variants"].values()], key=lambda v: v["p"])
+        entry[s + "_robust"] = dict(robust, rule="the claim p with the kappa_robust M1 variants added (report only)")
     # numerical stability of the observed p (review round 2 L2): the 20 real-data rounding jitters as observations
     k = {"total": 0, "shape": 1}
     tj, sj_ = statistics(model.jitters, mu, var, V, dom, 0, draw=False)
@@ -296,20 +317,30 @@ def main(argv=None) -> int:
     coefs = [float(c) for c in design.get("shift_coefficients", [0.0])]
     if coefs[0] != 0.0:
         raise SystemExit("the first shift coefficient must be 0 (the unshifted test)")
-    pvals, claims, null_sets = {}, {}, {}
+    pvals, claims, robust, null_sets = {}, {}, {}, {}
     for key, spec in design["nulls"].items():
         files = product_files(spec["calibration_glob"])
         want = calibration_count(spec)
         if len(files) != want:
             raise SystemExit(f"{key}: {len(files)} calibration products, {want} declared")
+        if want == 0:  # a null stopped by the budget before its first batch: no test, no claim (it stays in the family)
+            res["tests"][key] = {"not_calibrated": "B = 0 at the stop"}
+            for s in ("total", "shape"):
+                pvals[f"{key}:{s}"] = 1.0
+                claims[f"{key}:{s}"] = robust[f"{key}:{s}"] = {"p": 1.0, "k": 0, "B": 0}
+            continue
         entry = test_null(model, design, key, V, names, pz_index, files, coefs)
         null_sets[key] = entry.pop("_nulls")
         res["tests"][key] = entry
         for s in ("total", "shape"):
             pvals[f"{key}:{s}"] = entry[s]["p"]
             claims[f"{key}:{s}"] = {"p": entry[s]["p"], "k": entry[s]["k"], "B": entry[s]["B"]}
+            robust[f"{key}:{s}"] = {"p": entry[s + "_robust"]["p"], "k": entry[s + "_robust"]["k"], "B": entry[s + "_robust"]["B"]}
     res["holm_point"] = si.holm(pvals, design["alpha_family"])
     res["decisions"] = si.holm_determined(claims, design["alpha_family"])
+    res["decisions_robust_kappa"] = si.holm_determined(robust, design["alpha_family"])
+    res["robust_to_the_sub_fine_residual"] = {k: res["decisions"][k]["decision"] == res["decisions_robust_kappa"][k]["decision"]
+                                              for k in res["decisions"]}
     levels = [0.05, design["alpha_family"] / len(pvals)]
     res["power"] = {"levels": levels}
     for key, spec in design.get("power", {}).items():
@@ -318,11 +349,16 @@ def main(argv=None) -> int:
         mu0, var0 = prediction(nspec["prediction"], U)
         dom = np.ones(len(names), bool) if nspec.get("domain") != "pz_lt_6" else (pz_index <= 1)
         files = product_files(spec["glob"])
-        if "n" in spec and len(files) != int(spec["n"]):
-            raise SystemExit(f"power {key}: {len(files)} products, {spec['n']} declared")
+        if nk not in null_sets:
+            res["power"][key] = {"n": len(files), "null": nk, "not_evaluated": "its null was not calibrated"}
+            continue
+        incomplete = "n" in spec and len(files) != int(spec["n"])
+        if incomplete and len(files) < 20:  # recorded, never aborting the joint result (confirmation review F3)
+            res["power"][key] = {"n": len(files), "declared": int(spec["n"]), "null": nk, "not_evaluated": "fewer than 20 products"}
+            continue
         Fa, sa = ensemble(model, files)
         tt_a, ts_a = statistics(Fa, mu0, var0, V, dom, spec["surrogate_seed0"], seeds=sa)
-        out = {"n": len(files), "null": nk}
+        out = {"n": len(files), "null": nk, "declared": int(spec["n"]) if "n" in spec else None, "incomplete": bool(incomplete)}
         for s, t_alt in (("total", tt_a), ("shape", ts_a)):
             k = 0 if s == "total" else 1
             nn = [x[k] for x in null_sets[nk]]

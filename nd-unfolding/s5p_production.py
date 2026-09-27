@@ -57,6 +57,14 @@ def controller(rel: str, ctl: dict, key: str, extra: str = "") -> str:
             f'--design {rel}/design.json --v {ctl["v"]} --null {key} --status-dir {ctl["status_dir"]}{extra})')
 
 
+def drain_line() -> str:
+    """A cap refusal is reservation-driven (a batch reserves ~2x what it spends): wait until no production job of
+    ANY lane is queued or running, so every production reservation has closed at its measured cost, before the
+    one retry (confirmation review F2); a failed squeue counts as 'not yet'."""
+    return ('until out=$(squeue -h --me -o %j 2>/dev/null) && ! printf "%s\\n" "$out" | grep -q "^s5p-s5p_\\(cal\\|pow\\)_"; '
+            'do sleep 300; done')
+
+
 def wait_line(label: str) -> str:
     """Wait until the batch's job has left the scheduler; a failed squeue counts as 'not yet' (review round 2
     M6: an empty answer from a failed query must not end the wait)."""
@@ -101,9 +109,11 @@ def main(argv=None) -> int:
             rows = [task_line(f"{name}_{i}", spec["common_args"], ["--hypothesis", n["hypothesis"]], f, l, f"cal_{key}", out)
                     for i, (f, l) in enumerate(lines_for(seeds, per_line))]
             tables[f"tables/{name}.tsv"] = [f"# s5p production: calibration batch {b} of {key}, seeds {seeds.start}-{seeds.stop - 1}"] + rows
-            label = f"s5p_cal_{key}_b{b}"
+            label = f"s5p_cal_{key.lower()}_b{b}"  # the meter's label rule is [a-z0-9_.] (confirmation review F1)
+            sub = submit(spec, f"{rel}/tables/{name}.tsv", label, len(rows), f"s5p production calibration {key} batch {b}")
             q.append(f'rc=0; {controller(rel, ctl, key)} || rc=$?; '
-                     f'if [ $rc = 0 ]; then m=0; {submit(spec, f"{rel}/tables/{name}.tsv", label, len(rows), f"s5p production calibration {key} batch {b}")} || m=$?; '
+                     f'if [ $rc = 0 ]; then m=0; {sub} || m=$?; '
+                     f'if [ $m = 3 ]; then {drain_line()}; m=0; {sub} || m=$?; fi; '
                      f'if [ $m = 3 ]; then {controller(rel, ctl, key, " --force-stop budget")}; [ $? = 3 ] || exit 9; elif [ $m != 0 ]; then exit $m; fi; '
                      f'elif [ $rc = 3 ]; then echo "{key} stopped before batch {b}"; else exit $rc; fi')
             q.append(wait_line(label))
@@ -125,7 +135,7 @@ def main(argv=None) -> int:
                      "--alternative-truth", p["truth"], "--alternative-amplitude", str(amp)]
             rows = [task_line(f"{name}_{i}", spec["common_args"], extra, f, l, f"pow_{tag}", out) for i, (f, l) in enumerate(lines_for(seeds, per_line))]
             tables[f"tables/{name}.tsv"] = [f"# s5p production: power alternative {key} at amplitude {amp}, seeds {seeds.start}-{seeds.stop - 1}"] + rows
-            label = f"s5p_pow_{key}_a{str(amp).replace('.', 'p')}"
+            label = f"s5p_pow_{key.lower()}_a{str(amp).replace('.', 'p')}"
             pq.append(submit(spec, f"{rel}/tables/{name}.tsv", label, len(rows), f"s5p production power {key} a={amp}"))
             pq.append(wait_line(label))
             power[tag] = {"glob": f"{out}/pow_{tag}_s*.npz", "surrogate_seed0": base + 500000, "n": n_amp, "null": null_key}
@@ -140,7 +150,8 @@ def main(argv=None) -> int:
         design["v_ensemble_n"] = int(ve["n"])
     design["nulls"] = {key: {"prediction": n["prediction"], "domain": n.get("domain"),
                              "calibration_glob": f"{spec['products_root']}/cal/{key}/cal_{key}_s*.npz",
-                             "calibration_n": {"max": mx, "sequential_status": f"{ctl['status_dir']}/{key}-final.json"},
+                             "calibration_n": {"max": mx, "min": int(n.get("min_B", 0)),
+                                               "sequential_status": f"{ctl['status_dir']}/{key}-final.json"},
                              "surrogate_seed0": int(n["seed_base"]) + 500000} for key, n in spec["nulls"].items()}
     design["power"] = {k: {"glob": v["glob"], "surrogate_seed0": v["surrogate_seed0"], "n": v["n"], "null": v["null"]}
                        for k, v in power.items()}

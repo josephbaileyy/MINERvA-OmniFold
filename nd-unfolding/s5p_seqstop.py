@@ -42,6 +42,10 @@ def main(argv=None) -> int:
     if not isinstance(seq, dict) or "max" not in seq:
         raise SystemExit(f"{a.null}: not a sequential calibration")
     a.status_dir.mkdir(parents=True, exist_ok=True)
+    final = a.status_dir / f"{a.null}-final.json"
+    if final.exists():  # a stop is terminal: no later line may add batches or overwrite it (confirmation review F2)
+        print(json.dumps({"null": a.null, "stop": True, "reason": "already stopped", "final": str(final)}))
+        return 3
     files = sj.product_files(spec["calibration_glob"])
     B = len(files)
     status = {"schema": "s5p-seqstop/1", "null": a.null, "B": B, "max": int(seq["max"]),
@@ -57,13 +61,15 @@ def main(argv=None) -> int:
         V = np.asarray(np.load(a.v, allow_pickle=False)["V"], float)
         coefs = [float(c) for c in design.get("shift_coefficients", [0.0])]
         entry = sj.test_null(model, design, a.null, V, names, pz_index, files, coefs)
-        entry.pop("_nulls", None)
+        entry.pop("_nulls", None)  # (the M1 claim variants are part of test_null's claim p)
         m = 2 * len(design["nulls"])
         th = sorted(set(si.holm_thresholds(design["alpha_family"], m)) | {0.01, 0.05})
         dec = {s: si.sequential_decision(entry[s]["k"], entry[s]["B"], th) for s in ("total", "shape")}
-        rule = all(d["stop"] for d in dec.values())
+        min_b = int(seq.get("min", 0))
+        rule = all(d["stop"] for d in dec.values()) and B >= min_b  # power-carrying nulls reach min_b first (F4)
         status.update({"files_first_last": [files[0], files[-1]], "decisions": dec, "thresholds": th,
                        "stop": rule or B >= int(seq["max"]),
+                       "min": min_b,
                        "reason": "rule met for both tests" if rule else ("maximum reached" if B >= int(seq["max"]) else "continue")})
     if a.force_stop and not status["stop"]:
         # the p-value stays valid at the B reached; only determined decisions are claimed (admission)

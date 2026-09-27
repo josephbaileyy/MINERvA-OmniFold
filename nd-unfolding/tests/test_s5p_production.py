@@ -86,6 +86,33 @@ class Tests(unittest.TestCase):
             des = json.loads((out / "design.json").read_text())
             self.assertEqual(des["v_ensemble_n"], 200)
 
+    def test_every_generated_submit_passes_the_meters_own_validation(self):
+        import importlib.util
+        import shlex
+        spec_m = importlib.util.spec_from_file_location("s5c_meter_v", Path(__file__).resolve().parents[1] / "s5c_meter.py")
+        m = importlib.util.module_from_spec(spec_m)
+        sys.modules["s5c_meter_v"] = m
+        spec_m.loader.exec_module(m)
+        s = spec()
+        s["nulls"]["GENIE_2_12_10_MEC"] = {"hypothesis": "h2.json", "prediction": "p2.npz", "seed_base": 1240000}
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "spec.json").write_text(json.dumps(s))
+            sp.main(["--spec", f"{d}/spec.json", "--out", f"{d}/prod"])
+            n = 0
+            for q in (Path(d) / "prod/queues").glob("*.q"):
+                for ln in q.read_text().splitlines():
+                    for seg in ln.split("; "):
+                        if "s5c_meter.py" not in seg or " submit " not in seg:
+                            continue
+                        argv = shlex.split(seg[seg.index("--stage"):].split(" -- ")[0])
+                        kv = dict(zip(argv[::2], argv[1::2]))
+                        req = m.Request(stage=kv["--stage"], pool=kv["--pool"], qos=kv["--qos"], ntasks=int(kv["--ntasks"]),
+                                        throttle=int(kv["--throttle"]), timelimit_h=float(kv["--timelimit-h"]),
+                                        billing=float(kv["--billing"]), gpus_per_task=0, label=kv["--label"])
+                        m.validate_request(req, shlex.split(seg.split(" -- ", 1)[1].split(" \"$S5C_DEPLOY/nd-unfolding/s5c_array.sh")[0]))
+                        n += 1
+            self.assertGreater(n, 20)
+
     def test_overlapping_seed_ranges_are_refused(self):
         with tempfile.TemporaryDirectory() as d:
             (Path(d) / "spec.json").write_text(json.dumps(spec(base1=1201000)))

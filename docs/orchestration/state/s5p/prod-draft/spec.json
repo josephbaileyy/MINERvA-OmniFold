@@ -37,7 +37,7 @@
   "pool": "cpu",
   "qos": "shared",
   "throttle": 2,
-  "timelimit_h": 2.5,
+  "timelimit_h": 2.0,
   "billing": 32,
   "logs": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs",
   "products": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/tasks"
@@ -46,12 +46,14 @@
   "MnvTune_v1": {
    "hypothesis": "docs/orchestration/state/s5p/ratios/nullsJ/null-mnvtune_v1-J.json",
    "prediction": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz",
-   "seed_base": 1200000
+   "seed_base": 1200000,
+   "min_B": 1200
   },
   "GENIE_2_12_10_CV": {
    "hypothesis": "docs/orchestration/state/s5p/ratios/nullsF/null-genie_cv-F.json",
    "prediction": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz",
-   "seed_base": 1220000
+   "seed_base": 1220000,
+   "min_B": 1200
   },
   "GENIE_2_12_10_MEC": {
    "hypothesis": "docs/orchestration/state/s5p/ratios/nullsF/null-genie_mec-F.json",
@@ -104,7 +106,7 @@
    "amplitudes": [
     1.0
    ],
-   "n": 100,
+   "n": 200,
    "seed_base": 1480000,
    "null": "GENIE_2_12_10_CV"
   },
@@ -114,7 +116,7 @@
    "amplitudes": [
     1.0
    ],
-   "n": 100,
+   "n": 200,
    "seed_base": 1490000,
    "null": "GENIE_2_12_10_CV"
   },
@@ -124,7 +126,7 @@
    "amplitudes": [
     1.0
    ],
-   "n": 100,
+   "n": 200,
    "seed_base": 1500000,
    "null": "GENIE_2_12_10_CV"
   }
@@ -210,6 +212,35 @@
     "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D16-gibuu_cv.npz",
     "sha256": "e388a2b2456c2d579fe29c28154b81dfb01eecdc5ec1611d3f9623c7c39c86a5",
     "mode": "bias_aligned_upper"
+   }
+  },
+  "m1_shift": {
+   "MnvTune_v1": {
+    "none": "the MnvTune null is the analysis MC (rho = 1): no sub-fine residual"
+   },
+   "GENIE_2_12_10_CV": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/m1/fine-minus-mid-genie_cv.npz",
+    "sha256": "40d9aa1c3c84a6f019ea03524b465f5223b85bc75cea82357087e8850e8aaa51",
+    "kappa": 2,
+    "kappa_robust": 3
+   },
+   "GENIE_2_12_10_MEC": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/m1/fine-minus-mid-genie_mec.npz",
+    "sha256": "5e6aa8a6397a2fd7e688dc0f2249e1cae2b80e66f6d01378b077bdb2ab25d122",
+    "kappa": 2,
+    "kappa_robust": 3
+   },
+   "NuWro_21_09": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/m1/fine-minus-mid-nuwro_cv.npz",
+    "sha256": "706b87d4437ddf91a9c2f6867ce118631469c738b215a3d26d8f48fc556548d0",
+    "kappa": 2,
+    "kappa_robust": 3
+   },
+   "GiBUU_2019": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/m1/fine-minus-mid-gibuu_cv.npz",
+    "sha256": "6fbfc786f76e66d58e6bf190dc5c6a075786c8b4a02f8f0d1e4821d0f701b73b",
+    "kappa": 2,
+    "kappa_robust": 3
    }
   }
  }
