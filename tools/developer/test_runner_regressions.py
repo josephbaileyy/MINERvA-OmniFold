@@ -273,3 +273,101 @@ def test_initializer_outside_checkout_is_not_an_environment_dependency(
     _admit(checkout, ["test_case.py"], {})
     code, report = _run(checkout, tmp_path / "report")
     assert code != 0 and not report["complete_pass"] and not marker.exists()
+
+
+@pytest.mark.parametrize("tracked", [False, True], ids=["untracked", "tracked"])
+def test_stdlib_shadow_cannot_execute(
+    checkout: Path, tmp_path: Path, tracked: bool
+) -> None:
+    """An unlisted secrets module is refused before its import-time marker write."""
+    manifest = json.loads((SOURCE / "suites.json").read_text())
+    for name in manifest["default_suites"]:
+        for relative in manifest["suites"][name]["reviewed_sha256"]:
+            target = checkout / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(SOURCE.parents[1] / relative, target)
+    _freeze(checkout)
+    marker = tmp_path / "shadow-executed"
+    (checkout / "docs/orchestration/secrets.py").write_text(
+        f"from pathlib import Path\nPath({str(marker)!r}).touch()\n"
+    )
+    if tracked:
+        _freeze(checkout)
+    code, report = _run(checkout, tmp_path / "report")
+    assert not marker.exists(), "unreviewed checkout module executed"
+    assert code != 0 and not report["complete_pass"]
+
+
+def test_runner_common_cache_is_ignored(checkout: Path, tmp_path: Path) -> None:
+    """The documented -B launch reads current common.py despite valid old bytecode."""
+    helper = checkout / "tools/developer/common.py"
+    source = helper.read_text()
+    marker = tmp_path / "cached-helper-executed"
+    stale = source + f"\nPath({str(marker)!r}).touch()\n"
+    helper.write_text(stale)
+    stamp = helper.stat().st_mtime_ns
+    py_compile.compile(
+        str(helper),
+        doraise=True,
+        invalidation_mode=py_compile.PycInvalidationMode.TIMESTAMP,
+    )
+    helper.write_text(
+        source + "\n#" + " " * (len(stale.encode()) - len(source.encode()) - 3) + "\n"
+    )
+    assert helper.stat().st_size == len(stale.encode())
+    os.utime(helper, ns=(stamp, stamp))
+    (checkout / "test_case.py").write_text("def test_ok():\n    pass\n")
+    _admit(checkout, ["test_case.py"], {})
+    code, report = _run(checkout, tmp_path / "report")
+    assert not marker.exists(), "runner executed cached common.py"
+    assert code == 0 and report["complete_pass"]
+
+
+@pytest.mark.parametrize("termination", [signal.SIGTERM, signal.SIGHUP])
+def test_reap_timeout_retains_signal_report(
+    checkout: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, termination: int
+) -> None:
+    """A controlled failed reap retains the suite, signal exit and worker diagnostic."""
+    import importlib.util
+
+    (checkout / "test_case.py").write_text("def test_ok():\n    pass\n")
+    _admit(checkout, ["test_case.py"], {})
+    spec = importlib.util.spec_from_file_location(
+        "runner_probe", checkout / "tools/developer/run_tests.py"
+    )
+    assert spec is not None and spec.loader is not None
+    runner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runner)
+    output = tmp_path / "report"
+    killed: list[tuple[int, int]] = []
+
+    class Worker:
+        pid = 12345
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            kwargs["stderr"].write("controlled worker diagnostic\n")
+
+        def wait(self, timeout: float) -> int:
+            if timeout != 5:
+                handler = signal.getsignal(termination)
+                assert callable(handler)
+                handler(termination, None)
+            raise subprocess.TimeoutExpired("controlled-worker", timeout)
+
+    monkeypatch.setattr(runner.platform, "platform", lambda: "controlled-platform")
+    monkeypatch.setattr(runner, "identity", lambda root: {})
+    monkeypatch.setattr(runner, "git", lambda *args: "test-git")
+    monkeypatch.setattr(runner.subprocess, "Popen", Worker)
+    monkeypatch.setattr(runner.os, "killpg", lambda pid, sig: killed.append((pid, sig)))
+    monkeypatch.setattr(sys, "argv", ["run_tests.py", "--output", str(output)])
+    assert runner.main() == 128 + termination
+    report = json.loads((output / "report.json").read_text())
+    suite = report["suites"]["fixture"]
+    assert suite["termination_signal"] == termination
+    assert suite["exit_status"] == 128 + termination
+    assert suite["cleanup_timed_out"] and suite["cleanup_error"]
+    assert not suite["complete_pass"] and not report["complete_pass"]
+    assert killed == [(12345, signal.SIGKILL)]
+    assert (
+        output / "fixture/stderr.txt"
+    ).read_text() == "controlled worker diagnostic\n"

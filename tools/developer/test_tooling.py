@@ -11,7 +11,7 @@ from typing import Any
 
 import pytest
 
-from common import private_environment
+from common import digest, private_environment
 from navigate import query
 from run_tests import run_suite
 
@@ -135,7 +135,14 @@ def test_runner_outcomes(tmp_path: Path, source: str, expected: dict[str, Any]) 
     """Exercise actual pytest collection and execution, including misleading zero exits."""
     (tmp_path / "test_case.py").write_text(source)
     result = run_suite(
-        tmp_path, {"file": "test_case.py", "origins": {}}, tmp_path / "report", 10
+        tmp_path,
+        {
+            "file": "test_case.py",
+            "origins": {},
+            "reviewed_sha256": {"test_case.py": digest(tmp_path / "test_case.py")},
+        },
+        tmp_path / "report",
+        10,
     )
     for key, value in expected.items():
         assert result[key] == value, result
@@ -153,7 +160,14 @@ def test_timeout_kills_children(tmp_path: Path) -> None:
         f"    open({str(tmp_path / 'started')!r}, 'w').write('started')\n    time.sleep(30)\n"
     )
     result = run_suite(
-        tmp_path, {"file": "test_slow.py", "origins": {}}, tmp_path / "report", 1
+        tmp_path,
+        {
+            "file": "test_slow.py",
+            "origins": {},
+            "reviewed_sha256": {"test_slow.py": digest(tmp_path / "test_slow.py")},
+        },
+        tmp_path / "report",
+        1,
     )
     assert (
         result["timed_out"]
@@ -176,7 +190,14 @@ def test_environment_and_wrong_import_origin(
     (tmp_path / "test_case.py").write_text(
         "import local_module\ndef test_ok():\n    assert local_module.VALUE == 1\n"
     )
-    suite = {"file": "test_case.py", "origins": {"local_module": "local_module.py"}}
+    suite = {
+        "file": "test_case.py",
+        "origins": {"local_module": "local_module.py"},
+        "reviewed_sha256": {
+            name: digest(tmp_path / name)
+            for name in ("test_case.py", "local_module.py")
+        },
+    }
     good = run_suite(tmp_path, suite, tmp_path / "good", 10)
     assert good["complete_pass"]
     suite["origins"] = {"local_module": "other.py"}

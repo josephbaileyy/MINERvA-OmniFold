@@ -145,3 +145,51 @@ trusted. A venv is not a security sandbox and the runner adds no network restric
 Navigation is unchanged: Python-only, static, scoped, and not exhaustive for dynamic
 calls or suitable as the sole basis for excluding tests. All changes are confined
 to developer tooling; shared checkouts and PET/GBDT campaigns are outside this work.
+
+
+## Bounded follow-up from 842f985f
+
+The follow-up starts at `842f985f562fd9d281d89761f3d982b43091c039` and
+closes three remaining correctness gaps without changing campaign code or the
+suite manifest. The existing normal-import finder now checks all file-backed
+modules, not only package initializers. Installed interpreter/environment modules
+remain trusted; namespace packages have no initializer to execute. This is an
+explicit source-hash boundary, not general sandboxing.
+
+| Durable test in `test_runner_regressions.py` | Reproduction at 842f985f | Fixed behavior |
+| --- | --- | --- |
+| `test_stdlib_shadow_cannot_execute[untracked]` | Add `docs/orchestration/secrets.py` with an import-time marker to the exact default source fixture; its marker executes | Import rejected before marker creation, incomplete run |
+| `test_stdlib_shadow_cannot_execute[tracked]` | Commit the same unlisted addition before running; its marker still executes | Identical pre-execution refusal, independent of Git status |
+| `test_reap_timeout_retains_signal_report[15]` | A controlled worker double records SIGTERM, then raises `TimeoutExpired` for the five-second reap; main drops the suite and returns generic exit 1 | Suite and parent retain exit 143, signal, cleanup error and incomplete status; stderr retained |
+| `test_reap_timeout_retains_signal_report[1]` | Same controlled double with SIGHUP | Exit 129 and the same retained diagnostic record |
+| `test_runner_common_cache_is_ignored` | Compile helper code with a marker, replace it with equal-size current source and preserve mtime; documented `python -B tools/developer/run_tests.py` executes stale helper bytes | Fresh lookup prefix around the runner's local helper import; no marker, useful suite still passes |
+
+The cleanup double does not spawn or signal a real process. It checks that exactly
+one group kill is requested and makes only the final bounded reap fail; the
+ordinary signal/child tests remain real subprocess tests. Cleanup failure is now
+a suite result (`cleanup_timed_out`, `cleanup_error`) rather than an exception that
+loses the suite record. It also prevents a complete pass if the worker had exited
+successfully before a failed reap.
+
+The five new cases fail against an exact archive of 842f985f at the expected
+assertions and pass after the repair. To reproduce the before case, use the
+archive/alternate-source command above with revision 842f985f and append
+`-k 'stdlib_shadow or runner_common or reap_timeout'`. The unchanged seven earlier
+regressions remain included in the complete acceptance run.
+
+Validation on macOS arm64 with the existing pinned CPython 3.11.15 environment:
+**30 acceptance tests passed in 25.06 s; 18 default tests passed** with unchanged
+inputs/status. Optional open-items still exits 1 with 15 passed and exactly the
+same 18 failing IDs listed above, zero errors/skips and unchanged inputs/status.
+Ruff, Black and strict mypy passed. Synthetic direct-run fixtures now explicitly
+admit their own test/helper source hashes; no production admission hashes changed.
+
+The earlier failed bootstrap attempts above remain historical access failures.
+An independent fresh-bootstrap success was subsequently reported by the maintainer
+for macOS only. That evidence does not establish Linux support, and it is distinct
+from this repair session's validation in the existing pinned environment.
+
+SIGKILL, deliberately detached children and arbitrary hostile code remain excluded.
+No promise covers direct execution, custom import loaders, concurrent hostile
+edits, or Python children overriding cache settings. No general sandbox or network
+restriction is added. Navigation and all scientific/campaign code are unchanged.

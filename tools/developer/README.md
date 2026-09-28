@@ -103,10 +103,12 @@ source hashes are checked **before collection**: changed code requires reviewing
 imports, fixtures, collection and subprocess effects before deliberately updating
 `suites.json`. Do not automatically refresh these hashes to make a run pass.
 Read-only fixtures and reviewed inputs are hashed in the report and checked again
-after execution. Package initializers resolved during collection/import also need
-matching reviewed hashes, including newly added `__init__.py` files. Unreviewed
-checkout initializers and package initializers from other source trees cause an
-import/collection error before execution. Installed environment and standard-library
+after execution. Every checkout module resolved during collection/import needs
+a matching reviewed hash, including package initializers and newly added tracked
+or untracked files. A local `secrets.py` cannot silently shadow the standard
+library: the import boundary refuses its execution unless deliberately admitted.
+Unreviewed checkout modules and modules from other source trees cause an
+import/collection error before their code executes. Installed environment and standard-library
 packages remain trusted. New admission requires the same review, including parent hooks.
 
 The runner constructs a minimal environment with private HOME/temp/cache paths,
@@ -116,9 +118,13 @@ Git's child-generated `GIT_INDEX_FILE` intact. The worker and its ordinary child
 processes share a new POSIX process group that is killed on timeout and on exit.
 SIGTERM/SIGHUP received by the parent while a worker is active are recorded;
 a 100 ms polling interval triggers group cleanup, with a five-second worker reap
-bound. The parent stops selecting suites and reports exit 143/129 respectively.
+bound. If reaping times out, the suite retains its original termination status,
+`cleanup_timed_out` and `cleanup_error`, and its diagnostic streams; it cannot
+report a complete pass. The parent stops selecting suites and reports exit 143/129 respectively.
 SIGKILL cannot trigger cleanup. A fresh private bytecode lookup prefix prevents
 existing source caches from overriding admitted source; writes remain disabled.
+The documented runner launch also uses a fresh lookup prefix while importing
+its own `common.py`, so an existing valid helper cache cannot replace its source.
 Ordinary Python children inherit the prefix, but children overriding Python
 settings or using isolated mode must be reviewed separately.
 A deliberately daemonized child could escape that group: this is not arbitrary-code

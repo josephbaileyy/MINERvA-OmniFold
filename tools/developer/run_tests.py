@@ -19,7 +19,15 @@ import time
 from types import FrameType
 from typing import Any
 
-from common import digest, git, identity, private_environment
+# -B disables writes but still reads existing caches. Use an empty lookup prefix
+# while importing the runner's sole local helper through the documented CLI.
+with tempfile.TemporaryDirectory(prefix="minerva-runner-import-") as helper_cache:
+    previous_cache_prefix = sys.pycache_prefix
+    sys.pycache_prefix = helper_cache
+    try:
+        from common import digest, git, identity, private_environment
+    finally:
+        sys.pycache_prefix = previous_cache_prefix
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
@@ -76,6 +84,7 @@ def complete(result: dict[str, Any]) -> bool:
                 "deselected",
                 "collection_errors",
                 "timed_out",
+                "cleanup_timed_out",
             )
         )
     )
@@ -163,7 +172,10 @@ def run_suite(
                     os.killpg(process.pid, signal.SIGKILL)
                 except ProcessLookupError:
                     pass
-                process.wait(timeout=5)
+                try:
+                    process.wait(timeout=5)
+                except subprocess.TimeoutExpired as exc:
+                    result.update(cleanup_timed_out=True, cleanup_error=str(exc))
             if received:
                 result.update(
                     termination_signal=received[0], exit_status=128 + received[0]
