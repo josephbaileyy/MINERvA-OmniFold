@@ -92,6 +92,15 @@ pushed branch; nothing depends on a local scratch directory.
   s4s_a3e_n40 13/128), ≈ 16–18 rows/h → complete ≈ 2026-09-29 18:00–22:00Z. Study total 1,196.0 A100-h. Certificate
   valid to 2026-09-29 04:56Z: one more renewal is needed before the UNBLIND step.
 
+- **2026-09-28 22:15Z.** Look-1 FB 547/944 (FINAL draws 0–23 complete; the rest mostly 24-epoch library rows at
+  ≈ 3.5 h each), ≈ 7–14 rows/h → complete ≈ 2026-09-30 06:00–14:00Z. Extra `gpu_regular`/`gpu_preempt` chains
+  queued (pending). Detached stall monitor `$B/fbmon.sh` → `$B/fbmon.out` (written on exit; relaunch with
+  `nohup setsid bash fbmon.sh`). **Post-UNBLIND tooling is ready:** `freeze/completeness_manifest.py`,
+  `jobs/score_fb.sh <sha>` (5 guarded CPU-debug jobs, dry-run verified: 240 + 4 × 176 = 944 rows),
+  `analysis/run_look1.sh <scores> <cost> <out>` (evidence → look-1 decision → provisional ranking). Certificate
+  valid to 2026-09-29 16:05Z; renew before the UNBLIND step. PR #5 (developer tooling under `tools/developer/`) has
+  no path or dependency overlap with this campaign.
+
 ## Next actions, in order
 
 1. When `s3p_t24` and `s3p_l24` are COMPLETE: score (`analysis/score_design.py --k 4 5`, guarded CPU debug, into
