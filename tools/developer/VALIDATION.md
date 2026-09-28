@@ -1,5 +1,9 @@
 # Developer tooling validation
 
+This is the original implementation measurement. Subsequent review found three
+gaps; their fixes and current results are recorded in
+[REVIEW_RESOLUTION.md](REVIEW_RESOLUTION.md).
+
 Measured on 2026-09-27. Implementation baseline:
 `58ffc4c30699a3355bd132b7a837edd663248c5f`, observed as remote `main` before
 implementation. The handoff inspection baseline
@@ -8,7 +12,8 @@ checkout. A separate clone fetched and checked out the observed remote commit.
 The selected source/tests were unchanged between those revisions; no equivalent
 navigation or isolated developer runner was found in the remote tree.
 
-No delivery commits were created. All additions are under `tools/developer/`.
+At this original measurement, no delivery commits had been created. All additions
+are under `tools/developer/`.
 Tracked files, Git index, hooks and configuration in the shared checkout were
 unchanged; its original untracked plans remained present. Both implementation and
 fresh validation clones had no tracked/staged diff. Validation did not contact a

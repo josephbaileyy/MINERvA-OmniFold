@@ -54,6 +54,7 @@ def private_environment(directory: Path) -> dict[str, str]:
         "GIT_TERMINAL_PROMPT": "0",
         "GIT_TEMPLATE_DIR": str(home),
         "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONPYCACHEPREFIX": str(directory / "bytecode"),
         "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
         "LC_ALL": "C",
         "TZ": "UTC",

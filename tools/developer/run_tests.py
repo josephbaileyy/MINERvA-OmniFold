@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+from collections.abc import Iterator
+from contextlib import contextmanager
 import importlib.metadata
 import json
 import math
@@ -14,12 +16,33 @@ import subprocess
 import sys
 import tempfile
 import time
+from types import FrameType
 from typing import Any
 
 from common import digest, git, identity, private_environment
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
+
+
+@contextmanager
+def _termination_requests() -> Iterator[list[int]]:
+    received: list[int] = []
+
+    def record(signum: int, frame: FrameType | None) -> None:
+        # Defer cleanup until Popen has returned its process handle. Raising in a
+        # handler could interrupt process creation before the handle is assigned.
+        if not received:
+            received.append(signum)
+
+    previous = {sig: signal.getsignal(sig) for sig in (signal.SIGTERM, signal.SIGHUP)}
+    try:
+        for sig in previous:
+            signal.signal(sig, record)
+        yield received
+    finally:
+        for sig, handler in previous.items():
+            signal.signal(sig, handler)
 
 
 def dependencies() -> dict[str, str]:
@@ -89,16 +112,23 @@ def run_suite(
             sys.executable,
             "-I",
             "-B",
+            "-X",
+            f"pycache_prefix={temporary / 'bytecode'}",
             str(HERE / "pytest_worker.py"),
             str(root),
             suite["file"],
             str(output / "counts.json"),
             temp,
-            json.dumps(suite["origins"]),
+            json.dumps(
+                {
+                    "origins": suite["origins"],
+                    "reviewed_sha256": suite.get("reviewed_sha256", {}),
+                }
+            ),
         ]
-        with (output / "stdout.txt").open("w") as stdout, (output / "stderr.txt").open(
+        with _termination_requests() as received, (output / "stdout.txt").open(
             "w"
-        ) as stderr:
+        ) as stdout, (output / "stderr.txt").open("w") as stderr:
             process = subprocess.Popen(
                 command,
                 cwd=root / Path(suite["file"]).parent,
@@ -108,16 +138,36 @@ def run_suite(
                 start_new_session=True,
             )
             try:
-                result["exit_status"] = process.wait(timeout=timeout)
-            except subprocess.TimeoutExpired:
-                result.update(timed_out=True, exit_status=124)
+                deadline = time.monotonic() + timeout
+                while True:
+                    if received:
+                        result.update(
+                            termination_signal=received[0],
+                            exit_status=128 + received[0],
+                        )
+                        break
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        result.update(timed_out=True, exit_status=124)
+                        break
+                    try:
+                        result["exit_status"] = process.wait(
+                            timeout=min(0.1, remaining)
+                        )
+                        break
+                    except subprocess.TimeoutExpired:
+                        continue
             finally:
                 # Reap children even if the worker exited while a child was still alive.
                 try:
                     os.killpg(process.pid, signal.SIGKILL)
                 except ProcessLookupError:
                     pass
-                process.wait()
+                process.wait(timeout=5)
+            if received:
+                result.update(
+                    termination_signal=received[0], exit_status=128 + received[0]
+                )
     counts = output / "counts.json"
     if counts.exists():
         result.update(json.loads(counts.read_text()))
@@ -206,6 +256,11 @@ def main() -> int:
             report["suites"][name] = run_suite(
                 ROOT, manifest["suites"][name], output / name, args.timeout
             )
+            if report["suites"][name].get("termination_signal"):
+                report["termination_signal"] = report["suites"][name][
+                    "termination_signal"
+                ]
+                break
         report["source_after"] = identity(ROOT)
         report["source_status_unchanged"] = (
             report["source_before"] == report["source_after"]
@@ -217,14 +272,18 @@ def main() -> int:
         report["complete_pass"] = (
             report["source_status_unchanged"]
             and report["inputs_unchanged"]
+            and len(report["suites"]) == len(selected)
             and all(r["complete_pass"] for r in report["suites"].values())
         )
         report["exit_status"] = 0 if report["complete_pass"] else 1
+        if report.get("termination_signal"):
+            report["exit_status"] = 128 + report["termination_signal"]
     except (
         OSError,
         ValueError,
         importlib.metadata.PackageNotFoundError,
         subprocess.CalledProcessError,
+        subprocess.TimeoutExpired,
     ) as exc:
         report["error"] = str(exc)
     report["elapsed_seconds"] = round(time.monotonic() - started, 3)

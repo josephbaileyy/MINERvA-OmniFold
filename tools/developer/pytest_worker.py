@@ -3,12 +3,70 @@
 from __future__ import annotations
 
 from collections import Counter
+from collections.abc import Sequence
+import hashlib
+from importlib.abc import MetaPathFinder
+from importlib.machinery import ModuleSpec, PathFinder
 import json
 from pathlib import Path
 import sys
+from types import ModuleType
 from typing import Any
 
 import pytest
+
+
+class PackageAdmission(MetaPathFinder):
+    """Require reviewed bytes for checkout package initializers before import."""
+
+    def __init__(self, root: Path, hashes: dict[str, str]) -> None:
+        self.root = root.resolve()
+        self.hashes = hashes
+        self.environment_roots = (
+            Path(sys.prefix).resolve(),
+            Path(sys.base_prefix).resolve(),
+        )
+
+    def find_spec(
+        self,
+        fullname: str,
+        path: Sequence[str] | None,
+        target: ModuleType | None = None,
+    ) -> ModuleSpec | None:
+        """Check normal package imports while leaving loader selection unchanged."""
+        spec = PathFinder.find_spec(fullname, path, target)
+        if (
+            spec is None
+            or spec.origin is None
+            or spec.submodule_search_locations is None
+        ):
+            return None
+        origin = Path(spec.origin).absolute()
+        resolved = origin.resolve()
+        if not (origin.is_relative_to(self.root) or resolved.is_relative_to(self.root)):
+            if any(resolved.is_relative_to(root) for root in self.environment_roots):
+                return None
+            raise ImportError(
+                f"Package initializer outside admitted checkout/environment: {origin}"
+            )
+        if (
+            not resolved.is_relative_to(self.root)
+            or origin.is_symlink()
+            or origin.suffix != ".py"
+        ):
+            raise ImportError(
+                f"Package initializer is not local Python source: {origin}"
+            )
+        relative = resolved.relative_to(self.root).as_posix()
+        expected = self.hashes.get(relative)
+        if (
+            expected is None
+            or hashlib.sha256(resolved.read_bytes()).hexdigest() != expected
+        ):
+            raise ImportError(
+                f"Unreviewed package initializer: {relative}; review and admit its source before collection"
+            )
+        return None
 
 
 class Report:
@@ -82,10 +140,12 @@ class Report:
 
 def main() -> int:
     """Load only the named suite, with no repository conftests or ambient plugins."""
-    root, suite_file, output, temporary, origin_json = sys.argv[1:]
+    root, suite_file, output, temporary, admission_json = sys.argv[1:]
+    admission = json.loads(admission_json)
+    sys.meta_path.insert(0, PackageAdmission(Path(root), admission["reviewed_sha256"]))
     suite = Path(root) / suite_file
     sys.path.insert(0, str(suite.parent))
-    plugin = Report(Path(output), Path(root), json.loads(origin_json))
+    plugin = Report(Path(output), Path(root), admission["origins"])
     return int(
         pytest.main(
             [

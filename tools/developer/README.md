@@ -103,13 +103,24 @@ source hashes are checked **before collection**: changed code requires reviewing
 imports, fixtures, collection and subprocess effects before deliberately updating
 `suites.json`. Do not automatically refresh these hashes to make a run pass.
 Read-only fixtures and reviewed inputs are hashed in the report and checked again
-after execution. New admission requires the same review, including parent hooks.
+after execution. Package initializers resolved during collection/import also need
+matching reviewed hashes, including newly added `__init__.py` files. Unreviewed
+checkout initializers and package initializers from other source trees cause an
+import/collection error before execution. Installed environment and standard-library
+packages remain trusted. New admission requires the same review, including parent hooks.
 
 The runner constructs a minimal environment with private HOME/temp/cache paths,
 disables system/global Git configuration and inherited Git/Python/pytest settings,
 and uses the private interpreter for Python subprocesses. Git hook tests keep
 Git's child-generated `GIT_INDEX_FILE` intact. The worker and its ordinary child
 processes share a new POSIX process group that is killed on timeout and on exit.
+SIGTERM/SIGHUP received by the parent while a worker is active are recorded;
+a 100 ms polling interval triggers group cleanup, with a five-second worker reap
+bound. The parent stops selecting suites and reports exit 143/129 respectively.
+SIGKILL cannot trigger cleanup. A fresh private bytecode lookup prefix prevents
+existing source caches from overriding admitted source; writes remain disabled.
+Ordinary Python children inherit the prefix, but children overriding Python
+settings or using isolated mode must be reviewed separately.
 A deliberately daemonized child could escape that group: this is not arbitrary-code
 containment. No network restriction is installed by the runner itself.
 
@@ -119,13 +130,15 @@ packages, selected suites, collection/pass/failure/error/skip counts, elapsed ti
 exit status, actual import origins and source-status checks. Setup/teardown errors
 are counted as errors, not passes. Collection failures are counted separately.
 A missing worker report is incomplete, not zero tests passed. An interrupted parent
-leaves the pre-execution report with `complete_pass: false`.
+leaves the pre-execution report with `complete_pass: false` if final reporting
+cannot finish; handled SIGTERM/SIGHUP also record `termination_signal`.
 
 Success requires positive collection, every collected test fully passed, verified
 origins, unchanged inputs/status and zero worker exits. **No expected skips** are
 admitted: skip, xfail, xpass, deselection, zero collection, timeout, missing/wrong
 versions and any failure all prevent a complete pass. The parent returns 1 for an
-incomplete/failed run (argument errors return 2); raw pytest exits are retained.
+incomplete/failed run (argument errors return 2; handled termination returns
+128 + signal number); raw pytest exits are retained.
 This is tooling verification, not scientific validation or production admission.
 
 `test_atomic_write.py` was inspected but not admitted: its final test imports
@@ -140,13 +153,17 @@ Run the bounded acceptance fixtures (runtime lock is sufficient):
 ```sh
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 "$DEV_WORK/venv/bin/python" -B -m pytest \
   -q -c tools/developer/pytest.ini --noconftest -p no:cacheprovider \
-  --basetemp="$DEV_WORK/acceptance-tmp" tools/developer/test_tooling.py
+  --basetemp="$DEV_WORK/acceptance-tmp" tools/developer/test_tooling.py \
+  tools/developer/test_runner_regressions.py
 ```
 
 The fixtures exercise duplicate names, import aliases, source changes/deletions/
 renames, excluded files and static-only navigation; real failing/empty/skipped/
 errored pytest executions; timeout child cleanup; environment contamination;
-wrong import origins; missing dependencies; empty selection; and admission drift.
+wrong import origins; missing dependencies; empty selection; admission drift;
+existing valid bytecode; newly added and explicitly imported package initializers;
+and parent SIGTERM/SIGHUP cleanup. These are reviewed-code checks, not containment
+against custom import loaders, direct execution, or concurrent hostile source edits.
 
 Install optional pinned review dependencies and check only the new tooling:
 
@@ -161,3 +178,6 @@ Install optional pinned review dependencies and check only the new tooling:
 Jedi has no installed typing stubs; its API boundary uses dynamic types. Existing
 scientific sources and repository-wide discovery are outside these checks.
 See [VALIDATION.md](VALIDATION.md) for the measured baseline and acceptance results.
+
+See [REVIEW_RESOLUTION.md](REVIEW_RESOLUTION.md) for the independent findings,
+before/after regressions, optional failure IDs and fresh-bootstrap limitation.
