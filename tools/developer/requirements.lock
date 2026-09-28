@@ -1,0 +1,7 @@
+# Runtime lock for CPython 3.11; bootstrap uses --no-deps.
+jedi==0.19.2
+parso==0.8.4
+pytest==8.3.5
+iniconfig==2.1.0
+packaging==25.0
+pluggy==1.5.0
