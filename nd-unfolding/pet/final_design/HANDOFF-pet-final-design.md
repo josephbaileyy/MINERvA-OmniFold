@@ -88,6 +88,10 @@ pushed branch; nothing depends on a local scratch directory.
   healthy; stall monitor `$B/fbmon.sh` (8-h cycles). The orchestrating certificate expires 2026-09-28 10:46Z: renew
   (`sshproxy`) before look-1 completes to run the UNBLIND step (next actions 3–5).
 
+- **2026-09-28 10:58Z.** Look-1 FB 426/944 (s4f_a3 **192/192 complete**, s4s_a3 80/336, s4f_a3e 141/288,
+  s4s_a3e_n40 13/128), ≈ 16–18 rows/h → complete ≈ 2026-09-29 18:00–22:00Z. Study total 1,196.0 A100-h. Certificate
+  valid to 2026-09-29 04:56Z: one more renewal is needed before the UNBLIND step.
+
 ## Next actions, in order
 
 1. When `s3p_t24` and `s3p_l24` are COMPLETE: score (`analysis/score_design.py --k 4 5`, guarded CPU debug, into

@@ -20,6 +20,7 @@ Snapshots (append; never edit a past row):
 | 2026-09-26 20:34 | 314.8 | 0.30 | 58,424 | 3,410 |
 | 2026-09-27 14:14 | 683.1 | 0.50 | 58,123 | 3,385 |
 | 2026-09-28 02:40 | 1,001.8 | 0.51 | 57,975 | 3,377 |
+| 2026-09-28 10:58 | 1,196.0 | 0.51 | 57,890 | 3,377 |
 
 2026-09-26 20:34 UTC: study total 314.8 A100-hours over 331 jobs (running jobs counted to the snapshot time);
 `iris` user-charged `m3246_g` 526.8 units (GPU node-hours), project charged 121,575.9 of 180,000; `m3246` CPU
