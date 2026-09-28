@@ -1,0 +1,43 @@
+{
+  "suites": {
+    "scheduler": {
+      "file": "docs/orchestration/test_slurm_array_status.py",
+      "origins": {
+        "slurm_array_status": "docs/orchestration/slurm_array_status.py"
+      },
+      "reviewed_sha256": {
+        "docs/orchestration/test_slurm_array_status.py": "2b500f008aa695f3892e61af3400dc685174e774aa8ac9b73f2d3c153fda3e38",
+        "docs/orchestration/slurm_array_status.py": "d9d472ba49469916819cf63d3a23c632f428c721ee23791a230d226e6ded386c"
+      }
+    },
+    "open-items": {
+      "file": "docs/open-items/test_check_open_items_columns.py",
+      "origins": {
+        "check_open_items_columns": "docs/open-items/check_open_items_columns.py",
+        "verify_open_items_restructure": "docs/open-items/verify_open_items_restructure.py"
+      },
+      "reviewed_sha256": {
+        "docs/open-items/test_check_open_items_columns.py": "9b531f2873ad76eaa5336a5f0ac3b16c3f41ed9a0856d28f2e10266409f6a5f3",
+        "docs/open-items/check_open_items_columns.py": "5cb82e856c34740cc8a0ca2754fb2251c93f3d19cc75138d327e74da0c448fb8",
+        "docs/open-items/verify_open_items_restructure.py": "025cb44136153d94ff8bf989c9dd48b32e36028c9da99a41f3d256194c75449a"
+      },
+      "read_only_inputs": [
+        "docs/OPEN_ITEMS.md"
+      ]
+    },
+    "preservation": {
+      "file": "docs/orchestration/test_preserve_f17b_record.py",
+      "origins": {
+        "preserve_f17b_record": "docs/orchestration/preserve_f17b_record.py"
+      },
+      "reviewed_sha256": {
+        "docs/orchestration/test_preserve_f17b_record.py": "509646cf4a5234e9ff7eda647a2e0c2fc7ee1143b907cd27b867351addf0eb90",
+        "docs/orchestration/preserve_f17b_record.py": "ea2dea540e24c38abf8d63669f8d06989a05172b95f6b2e31afc7d79358fefd9"
+      }
+    }
+  },
+  "default_suites": [
+    "scheduler",
+    "preservation"
+  ]
+}
