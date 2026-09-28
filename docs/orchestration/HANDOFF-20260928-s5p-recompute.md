@@ -10,6 +10,8 @@ the calibration (the nuisance model, the pseudo-experiment process, the conditio
 Task pointer: `docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md` §1 (at `origin/main` `12991771`).
 Branch `s5p-parallel-recompute-20260928`, worktree `../MINERvA-OmniFold-s5p-recompute` (created from `12991771`).
 Cluster scratch (mine only): `/pscratch/sd/j/josephrb/s5p-parallel-recompute/`.
+Evaluator as described here: commit `27c7ff37` on that branch (`nd-unfolding/s5p_recompute.py` sha256 `707421ee…`, the
+copy the real-input dry run used); the branch is local (not pushed) at the time of writing.
 
 ## 1. Source and contracts verified (2026-09-28)
 
