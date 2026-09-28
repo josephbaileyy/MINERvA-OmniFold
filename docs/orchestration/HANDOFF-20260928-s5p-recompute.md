@@ -10,8 +10,9 @@ the calibration (the nuisance model, the pseudo-experiment process, the conditio
 Task pointer: `docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md` §1 (at `origin/main` `12991771`).
 Branch `s5p-parallel-recompute-20260928`, worktree `../MINERvA-OmniFold-s5p-recompute` (created from `12991771`).
 Cluster scratch (mine only): `/pscratch/sd/j/josephrb/s5p-parallel-recompute/`.
-Evaluator as described here: `nd-unfolding/s5p_recompute.py` sha256 `707421ee…` (first committed at `27c7ff37`; the
-copy the real-input dry run used; unchanged since). The branch is pushed to `origin` for durability and is **not
+Evaluator: `nd-unfolding/s5p_recompute.py` at the branch tip, sha256 `bacc5675…`. It is `707421ee…` (commit
+`27c7ff37`, the copy the real-input dry run used) plus the labelled A8 sensitivity readings of §3.1. Its primary
+outputs are unchanged. The branch is pushed to `origin` for durability and is **not
 merged** into `main`.
 
 **STATUS: FINAL VERIFICATION PENDING.** Production was non-terminal (calibration batch 0) when this was written.
@@ -38,9 +39,9 @@ Nothing below is a verification result.
 |---|---|
 | `nd-unfolding/s5p_recompute.py` | the evaluator: J geometry, surrogates, statistics, variants, claim p, Holm with determinacy, κ = 3 flag, power, implied size, observed-jitter p, sequential-rule re-evaluation at every look; CLI `evaluate` / `compare` |
 | `nd-unfolding/s5p_recompute_compare.py` | compares a recompute output with production's `joint-evaluate.json`; lists every production numeric leaf it could not map |
-| `nd-unfolding/tests/test_s5p_recompute.py`, `tests/s5p_recompute_toy.py` | 32 controls (below); a synthetic world in the production file formats |
+| `nd-unfolding/tests/test_s5p_recompute.py`, `tests/s5p_recompute_toy.py` | 39 controls (below and §3.1); a synthetic world in the production file formats |
 
-Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **32 passed**, ~15 s):
+Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **39 passed**; ~20 s on an idle machine):
 no import of the three production modules (AST); Clopper–Pearson closed form and the reviews' own numbers
 (review 1: `[0.0057, 0.0148]` at p = 0.01, B = 1999; review 2 M3: determined k at 0.005 is `{0}` at B = 800 and
 `{0..3}` at B = 1999, rank rule `{0..3}` at 800); statistics (total = inverse quadratic form; shape invariant to
@@ -112,7 +113,7 @@ disagree on a decision. The primary reading stays in force until then. It is nev
 | A5 | `s5p_joint.shift_vector` docstring (b = ensemble mean − μ; a, se over F4 pairs) | b from surrogated f without eps; se = SD(ddof 1)/√16; one S for both tests | eps included in b; ddof 0; a separate S for the shape test | S → the c-variant p-values | **yes**: through the claim p when a c-variant is the argmax near a Holm threshold | b, a, se: yes; eps, ddof, shape S: no | no |
 | **A6** | am. 7 `claims.rejection` "process-shift variants … AND the sub-fine-residual variants F ± 2δ_M1" | UNION: {cS} ∪ {±κδ} (5 variants) | cross product cS + sκδ (9 variants; larger combined shifts → larger claim p) | claim p of the four external nulls, Holm decisions, power at GENIE CV, sequential looks | **yes** (a rejection can become undetermined or not rejected) | **no** (production key names `variants` / `robustness_variants` do not decide it) | **yes**: `product_reading`, `family.holm_product_variant_reading`, `decisions_changed_by_product_reading` — **RULING** |
 | **A7** | am. 7 "Every rejection is also flagged 'robust to the sub-fine residual' or not at kappa = 3 (report only)" | per rejected test: κ=3 claim interval below the threshold of the step that rejected it | a full Holm re-run at κ = 3 (production writes `decisions_robust_kappa`) | the robustness flag only | no claim decision (report only); the flag itself: **yes** | no | **yes**: `family.holm_at_kappa_robust` — **RULING** |
-| **A8** | am. 7 `sequential_rule`; `sequential_decision` docstring "(b) meets the T7 precision at the point estimate" | half-width on the 99.5% look interval; "contains" closed | half-width on a 95% interval; open boundaries | whether each look should have stopped (the sequential verification verdict), not the p at production's B | the verdict on production's stop: **yes**; p-values at the B reached: no | threshold condition: yes; precision interval level: no | no (cheap to add as a diagnostic) — **RULING** if my look verdict disagrees with a production stop |
+| **A8** | am. 7 `sequential_rule`; `sequential_decision` docstring "(b) meets the T7 precision at the point estimate" | half-width on the 99.5% look interval; "contains" closed | (i) half-width on the 95% interval; (ii) open containment; (iii) both | whether each look should have stopped (the sequential verification verdict), not the p at production's B | the verdict on production's stop: **yes**, only at B = 200–800 and only through (i) (§3.1); p-values at the B reached: no | threshold condition: yes; precision interval level: no | **yes**: `sequential.a8_sensitivity` (labelled readings; the primary alone gives `stop_verdict`) — **RULING** if the readings' verdicts disagree on a production stop |
 | A9 | am. 7 "a budget stop at B = 0 leaves the null 'not calibrated' (it stays in the Holm family with p = 1)" | interval [0, 1] → 'undetermined' at its step, labelled 'not calibrated' | 'not rejected' at its step | labels of that null (and of equal-p tests after it) | no rejection can change (p = 1 is last) | label and p: yes; step outcome: no | no |
 | A10 | none (ties unaddressed) | family order (design null order; total before shape) | any other stable order | Holm labels at exactly equal claim p | only with equal p and different B | no | no |
 | A11 | `power_determined` docstring (k = largest count over null variants); design `power.*.surrogate_seed0` | alternatives unshifted, own surrogates, eps keyed by the set's seed0 | variants applied to the alternative too | power | — | yes, in substance | no |
@@ -121,8 +122,53 @@ disagree on a decision. The primary reading stays in force until then. It is nev
 | A14 | am. 7 `non_rejection` (B ≥ 1200 floor so 0.005 is attainable) | power against the null's final ensemble | power as the sequential procedure would behave on alternative data (review 4 F4 option) | power at 0.005 | — | yes (the floor was the adopted remedy) | no |
 | — | am. 7 "a k = 0 decision needs B >= 737" | exact two-sided 95% CP: B ≥ 736 suffices | — | none (the floor is 1200) | no | arithmetic | — |
 
+### 3.1 A8 sensitivity (computed; the primary reading unchanged)
+
+The stopping condition is now a pure function `stop_condition(look, precision, p, thresholds, boundary)`. It is
+evaluated under four labelled readings (`A8_READINGS`): `primary` (precision on the 99.5% look interval,
+closed), `A8_alt_precision_95`, `A8_alt_open_boundaries` and `A8_alt_precision_95_open`. Condition (a), no
+threshold in the 99.5% look interval, is the same in all of them.
+
+The primary output is **identical** to that of the committed evaluator (sha256 `707421ee…`) at all 22,098
+(k, B) points checked (m = 4 and 10; B = 1, 37, 200, …, 1800, 1999; every k).
+
+Each look of the sequential verification records every alternative reading's `rule_stops` and
+`differs_from_primary`. Per null the output adds `first_look_where_rule_stops` and a `stop_verdict_by_reading`
+against the final status (`stop_verdict`: 'rule met' needs the first stop exactly at the final B; 'maximum
+reached' / 'batches exhausted' / 'budget' need no earlier stop). Only `primary` feeds the `stop_verdict` field.
+
+Where the readings differ (m = 10, every k; reproduce with `python3 nd-unfolding/s5p_recompute.py a8-map --out
+<file>`, about 1 s):
+
+| look B | k where (i) stops and the primary continues | point p ranges | the reverse |
+|---:|---:|---|---:|
+| 200 | 22 | 0.109–0.139, 0.866–0.935 | 0 |
+| 400 | 262 | 0.145–0.469, 0.534–0.858 | 0 |
+| 600 | 305 | 0.248–0.754 | 0 |
+| 800 | 53 | 0.468–0.533 | 0 |
+| 1000–1999 | 0 | — | 0 |
+
+- Reading (ii), open containment, differs **nowhere** on the attainable (k, B) grid; an endpoint equal to a
+  threshold does not occur. The synthetic endpoint cases show it would matter only there.
+- Reading (iii) equals (i).
+- (i) can only make a null stop **earlier**, never later.
+- MnvTune and GENIE CV may not stop before B = 1200, so **A8 can bind only for GENIE MEC, NuWro and GiBUU at a
+  stop at B ≤ 800.** There a primary verdict of "INCONSISTENT" alongside a "consistent" under (i), or the
+  reverse, is routed for a ruling and is not resolved by this lane.
+- The p-values and decisions at the B production reached do not depend on A8.
+
+Synthetic boundary controls (`A8Sensitivity`, 7 tests):
+- the primary defaults equal the primary reading;
+- the precision-level split at B = 200 (k = 179) and B = 400 (k = 119);
+- a threshold in the look interval blocks every reading;
+- no difference from B = 1000 on, and (i) never stops later;
+- open vs closed with a threshold exactly at either end;
+- the inclusive T7 bounds and the strict small-p bound;
+- the verdict mapping;
+- an end-to-end run carrying and labelling the readings.
+
 **Items needing an explicit ruling if they bind: A6 (can change a rejection), A7 (the robustness flag), A8 (the
-verdict on a production stop).** A1–A5 matter for bit-level agreement. Each needs a ruling only if production
+verdict on a production stop of MEC, NuWro or GiBUU at B ≤ 800; §3.1).** A1–A5 matter for bit-level agreement. Each needs a ruling only if production
 reads it differently and a decision moves. That is diagnosed at the final comparison by computing the
 competing reading as a labelled diagnostic.
 
@@ -203,7 +249,8 @@ Then:
 - each Holm decision with its threshold and interval, and the κ = 3 flag;
 - the ambiguity alternatives: `decisions_changed_by_product_reading` (A6) and `holm_at_kappa_robust` (A7);
 - the sequential verification per look (`nulls.<null>.sequential`: the rule's stop against the status file's
-  `stop`/`reason`, and `first_look_where_rule_stops` against the final B);
+  `stop`/`reason`, `first_look_where_rule_stops` against the final B, `stop_verdict`) and the A8 readings
+  (`sequential.a8_sensitivity.stop_verdict_by_reading`, `looks_where_a_reading_differs`);
 - power per set at 0.05 and 0.005 (rank unshifted, rank claim, determined claim, n present against declared).
 
 For any disagreement on a **RULING** item (§3), record it and route it for a ruling. Do not re-read the

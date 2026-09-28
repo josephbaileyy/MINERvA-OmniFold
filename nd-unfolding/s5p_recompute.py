@@ -86,7 +86,9 @@ AMBIGUITIES = {
                       "of 2 (c variants unchanged) has its 95% interval entirely below the Holm threshold of the "
                       "step that rejected it; a full Holm re-run at kappa = 3 is reported beside it",
     "A8_look_precision": "the sequential rule's T7 half-width is measured on the 99.5% look interval (the same "
-                         "interval as the threshold condition); 'contains' is closed at both ends",
+                         "interval as the threshold condition); 'contains' is closed at both ends. Sensitivity "
+                         "readings (labelled, never used for a verdict): precision on the 95% interval, open "
+                         "containment, and both (A8_READINGS; sequential.a8_sensitivity)",
     "A9_not_calibrated": "a null with B = 0 has p = 1, k = 0 and the interval [0, 1]; at its Holm step it stops "
                          "'undetermined' and is labelled 'not calibrated'",
     "A10_holm_ties": "equal claim p-values are ordered by the family order (design null order, total before "
@@ -193,22 +195,106 @@ def decision_thresholds(alpha: float, m: int) -> list[float]:
     return sorted({alpha / j for j in range(1, m + 1)} | {0.01, 0.05})
 
 
-def sequential_stop(k: int, n: int, thresholds: list[float], look_level: float = LOOK_LEVEL) -> dict:
-    """The frozen per-test stopping condition at one look (amendment 7 calibration.sequential_rule)."""
-    if n <= 0:
-        return {"stop": False, "why": "no products"}
-    lo, hi = cp_interval(k, n, look_level)
-    straddled = [t for t in thresholds if lo <= t <= hi]
-    p = mc_p(k, n)
-    half = (hi - lo) / 2.0
+# A8 (handoff section 3): the frozen text fixes condition (a) on the 99.5% look interval but not the interval on which
+# (b)'s T7 half-width is measured, nor whether "contains" is closed. The PRIMARY reading is the first entry and is
+# the only one that feeds any verdict; the others are labelled sensitivity readings, reported beside it.
+A8_READINGS = {
+    "primary": {"precision_level": LOOK_LEVEL, "boundary": "closed"},
+    "A8_alt_precision_95": {"precision_level": CP_LEVEL, "boundary": "closed"},
+    "A8_alt_open_boundaries": {"precision_level": LOOK_LEVEL, "boundary": "open"},
+    "A8_alt_precision_95_open": {"precision_level": CP_LEVEL, "boundary": "open"},
+}
+
+
+def stop_condition(look: tuple[float, float], prec: tuple[float, float], p: float, thresholds: list[float],
+                   boundary: str = "closed") -> dict:
+    """Conditions (a) and (b) of the stopping rule from given interval endpoints (a pure function).
+
+    (a) no threshold inside the look interval (``closed``: lo <= t <= hi; ``open``: lo < t < hi);
+    (b) the T7 precision at the point estimate p, measured on the precision interval ``prec``: half-width <= 0.05
+    for p >= 0.05, <= 0.5 p for 0.01 <= p < 0.05, and below 0.01 an upper end strictly below the smallest
+    threshold.
+    """
+    lo, hi = look
+    if boundary == "closed":
+        straddled = [t for t in thresholds if lo <= t <= hi]
+    elif boundary == "open":
+        straddled = [t for t in thresholds if lo < t < hi]
+    else:
+        raise ValueError(boundary)
+    plo, phi = prec
+    half = (phi - plo) / 2.0
     if p >= 0.05:
         precise = half <= 0.05
     elif p >= 0.01:
         precise = half <= 0.5 * p
     else:
-        precise = hi < min(thresholds)
-    return {"stop": (not straddled) and precise, "p": p, "k": int(k), "B": int(n), "look_interval": [lo, hi],
-            "straddled": straddled, "t7_precise": bool(precise)}
+        precise = phi < min(thresholds)
+    return {"stop": (not straddled) and bool(precise), "straddled": straddled, "t7_precise": bool(precise),
+            "precision_half_width": half}
+
+
+def sequential_stop(k: int, n: int, thresholds: list[float], look_level: float = LOOK_LEVEL,
+                    precision_level: float | None = None, boundary: str = "closed") -> dict:
+    """The frozen per-test stopping condition at one look (amendment 7 calibration.sequential_rule).
+
+    Defaults are the primary reading (precision measured on the look interval, closed containment); the A8
+    sensitivity readings pass ``precision_level`` / ``boundary`` explicitly.
+    """
+    if n <= 0:
+        return {"stop": False, "why": "no products"}
+    look = cp_interval(k, n, look_level)
+    prec = look if precision_level is None or precision_level == look_level else cp_interval(k, n, precision_level)
+    p = mc_p(k, n)
+    c = stop_condition(look, prec, p, thresholds, boundary)
+    out = {"stop": c["stop"], "p": p, "k": int(k), "B": int(n), "look_interval": list(look),
+           "straddled": c["straddled"], "t7_precise": c["t7_precise"]}
+    if prec is not look:
+        out["precision_interval"] = list(prec)
+    return out
+
+
+def stop_readings(k: int, n: int, thresholds: list[float]) -> dict:
+    """The stopping condition of one test under every A8 reading (``primary`` first)."""
+    return {name: sequential_stop(k, n, thresholds, LOOK_LEVEL, r["precision_level"], r["boundary"])
+            for name, r in A8_READINGS.items()}
+
+
+def stop_verdict(reason, first_stop, B_final) -> str:
+    """Whether a controller's final stop agrees with where a reading of the rule first stops.
+
+    'rule met for both tests': the reading must first stop exactly at the final B. 'maximum reached' / 'batches
+    exhausted': the reading must not stop before the final B. 'budget': the reading must not stop before the
+    budget stop. Without a final status: 'not terminal'.
+    """
+    if B_final is None or reason is None:
+        return "not terminal"
+    if reason == "rule met for both tests":
+        return "consistent" if first_stop == B_final else "INCONSISTENT"
+    if reason in ("maximum reached", "batches exhausted", "budget"):
+        return "consistent" if first_stop is None or first_stop >= B_final else "INCONSISTENT"
+    return f"unknown reason {reason!r}"
+
+
+def a8_sensitivity_map(thresholds: list[float], looks=range(200, 2000, 200), final=1999) -> dict:
+    """For every look size B and every k, where the A8 readings' stop decisions differ from the primary's."""
+    out = {}
+    for B in list(looks) + [final]:
+        rows = {}
+        for k in range(B + 1):
+            r = stop_readings(k, B, thresholds)
+            prim = r["primary"]["stop"]
+            for name in A8_READINGS:
+                if name != "primary" and r[name]["stop"] != prim:
+                    rows.setdefault(name, []).append({"k": k, "p": mc_p(k, B), "primary_stop": prim,
+                                                       "alt_stop": r[name]["stop"]})
+        out[str(B)] = {name: {"n_k_differing": len(v), "p_min": min(x["p"] for x in v),
+                              "p_max": max(x["p"] for x in v),
+                              "alt_stops_where_primary_continues": sum(1 for x in v if x["alt_stop"]),
+                              "primary_stops_where_alt_continues": sum(1 for x in v if not x["alt_stop"]),
+                              "k_differing": [x["k"] for x in v]}
+                       for name, v in rows.items()}
+    return out
 
 
 # ----------------------------------------------------------------------------------------------- geometry
@@ -750,6 +836,7 @@ def verify_sequential(ev: Evaluator, key: str, prods: list[Product], thresholds:
             status_files[int(m.group(1))] = p
     horizon = B_final if B_final is not None else max(status_files, default=0)
     looks, first_stop = [], None
+    first_stop_alt = {name: None for name in A8_READINGS if name != "primary"}
     b = 1
     while True:
         edge = base + min(batch * b, nmax)
@@ -761,20 +848,45 @@ def verify_sequential(ev: Evaluator, key: str, prods: list[Product], thresholds:
         _, shifts = ev.shifts_for(ctx)
         ens = null_ensembles(ctx["f_cal"], ctx["eps"], ctx["ts"], shifts)
         obs = stats_of(ev.f_data[ctx["ts"].dom], ctx["ts"].mu, ctx["ts"])
-        per = {t: sequential_stop(claim(obs[t], ens, t)["k"], len(sub), thresholds) for t in TESTS}
         n = len(sub)
+        k_claim = {t: claim(obs[t], ens, t)["k"] for t in TESTS}
+        by_reading = {t: stop_readings(k_claim[t], n, thresholds) for t in TESTS}
+        per = {t: by_reading[t]["primary"] for t in TESTS}
         rule = all(per[t]["stop"] for t in TESTS) and n >= nmin
+        a8 = {}
+        for name in A8_READINGS:
+            if name == "primary":
+                continue
+            r_alt = all(by_reading[t][name]["stop"] for t in TESTS) and n >= nmin
+            a8[name] = {"rule_stops": r_alt, "tests": {t: by_reading[t][name] for t in TESTS},
+                        "differs_from_primary": r_alt != rule}
+            if r_alt and first_stop_alt[name] is None:
+                first_stop_alt[name] = n
         st_path = status_files.get(n)
         st = json.load(open(st_path)) if st_path else None
         looks.append({"B": n, "edge_seed": edge, "tests": per, "rule_stops": rule, "below_min_B": n < nmin,
-                      "status_file": st_path, "status": st})
+                      "status_file": st_path, "status": st, "a8_sensitivity": a8})
         if rule and first_stop is None:
             first_stop = n
         if edge >= base + nmax or n >= horizon:
             break
         b += 1
+    final_path = cn["sequential_status"]
+    final = json.load(open(final_path)) if os.path.exists(final_path) else None
+    reason = final.get("reason") if final else None
+    verdicts = {"primary": stop_verdict(reason, first_stop, B_final)}
+    verdicts.update({name: stop_verdict(reason, fs, B_final) for name, fs in first_stop_alt.items()})
     return {"looks": looks, "first_look_where_rule_stops": first_stop, "min_B": nmin, "max_B": nmax,
-            "status_files": {str(k): v for k, v in sorted(status_files.items())}}
+            "status_files": {str(k): v for k, v in sorted(status_files.items())},
+            "final_reason": reason, "stop_verdict": verdicts["primary"],
+            "a8_sensitivity": {"readings": A8_READINGS,
+                               "first_look_where_rule_stops": {"primary": first_stop, **first_stop_alt},
+                               "stop_verdict_by_reading": verdicts,
+                               "looks_where_a_reading_differs": [lk["B"] for lk in looks
+                                                                 if any(v["differs_from_primary"]
+                                                                        for v in lk["a8_sensitivity"].values())],
+                               "note": "sensitivity only: the primary reading alone gives the verdict; a "
+                                       "disagreement between readings that binds is routed for a ruling"}}
 
 
 # ----------------------------------------------------------------------------------------------- CLI
@@ -807,6 +919,10 @@ def main(argv=None) -> int:
     e.add_argument("--no-sequential", action="store_true")
     e.add_argument("--require-terminal", action="store_true",
                    help="refuse unless every null has a final status (the final verification)")
+    m = sub.add_parser("a8-map", help="where the A8 stopping-rule readings differ, over every k at each look size")
+    m.add_argument("--m", type=int, default=10, help="family size (Holm levels alpha/j, j = 1..m)")
+    m.add_argument("--alpha", type=float, default=0.05)
+    m.add_argument("--out", required=True)
     c = sub.add_parser("compare", help="compare a recompute output with production's joint-evaluate.json")
     c.add_argument("--mine", required=True)
     c.add_argument("--production", required=True)
@@ -826,6 +942,13 @@ def main(argv=None) -> int:
                          "s5c_contract": a.s5c_contract, "s5c_contract_sha256": sha256(a.s5c_contract),
                          "code_sha256": sha256(__file__)}
         Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(a.out).write_text(json.dumps(jsonable(res), indent=1, sort_keys=True) + "\n")
+        print(f"wrote {a.out}")
+        return 0
+    if a.cmd == "a8-map":
+        res = {"schema": "s5p-recompute-a8-map/1", "readings": A8_READINGS, "m": a.m, "alpha": a.alpha,
+               "thresholds": decision_thresholds(a.alpha, a.m),
+               "map": a8_sensitivity_map(decision_thresholds(a.alpha, a.m)), "code_sha256": sha256(__file__)}
         Path(a.out).write_text(json.dumps(jsonable(res), indent=1, sort_keys=True) + "\n")
         print(f"wrote {a.out}")
         return 0

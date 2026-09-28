@@ -414,3 +414,103 @@ class Compare(unittest.TestCase):
         self.assertEqual(bad, {"GiBUU_2019:shape:claim_k", "GiBUU_2019:total:T_obs", "decisions:MnvTune_v1:total"})
         del prod["tests"]["GiBUU_2019"]
         self.assertIn("GiBUU_2019", C.compare(self.mine, prod)["not_located"])
+
+
+class A8Sensitivity(unittest.TestCase):
+    """The A8 readings of the stopping rule on synthetic boundary cases; the primary reading is unchanged."""
+
+    def test_primary_defaults_are_the_primary_reading(self):
+        for B in (200, 400, 1999):
+            for k in range(0, B + 1, 7):
+                self.assertEqual(R.sequential_stop(k, B, THR), R.stop_readings(k, B, THR)["primary"])
+
+    def test_precision_level_boundary_at_200_and_400(self):
+        # p ~ 0.90 at B = 200: 99.5% half-width 0.058 > 0.05 (continue), 95% half-width 0.042 <= 0.05 (stop)
+        r = R.stop_readings(179, 200, THR)
+        self.assertFalse(r["primary"]["stop"])
+        self.assertTrue(r["A8_alt_precision_95"]["stop"])
+        lo, hi = r["primary"]["look_interval"]
+        plo, phi = r["A8_alt_precision_95"]["precision_interval"]
+        self.assertGreater((hi - lo) / 2, 0.05)
+        self.assertLessEqual((phi - plo) / 2, 0.05)
+        # p ~ 0.30 at B = 400: the same split
+        r = R.stop_readings(119, 400, THR)
+        self.assertEqual((r["primary"]["stop"], r["A8_alt_precision_95"]["stop"]), (False, True))
+        # a threshold in the look interval blocks every reading (condition (a) is on the look interval in all)
+        r = R.stop_readings(20, 400, THR)  # p ~ 0.052, look interval contains 0.05
+        self.assertFalse(any(v["stop"] for v in r.values()))
+
+    def test_readings_agree_from_1000_on_and_alt_never_stops_later(self):
+        m = R.a8_sensitivity_map(THR, looks=(200, 800, 1000, 1600), final=1999)
+        for B in ("1000", "1600", "1999"):
+            self.assertEqual(m[B], {}, B)
+        for B in ("200", "800"):
+            self.assertNotIn("A8_alt_open_boundaries", m[B])
+            self.assertEqual(m[B]["A8_alt_precision_95"]["primary_stops_where_alt_continues"], 0)
+            self.assertGreater(m[B]["A8_alt_precision_95"]["alt_stops_where_primary_continues"], 0)
+
+    def test_open_versus_closed_on_exact_endpoints(self):
+        thr = [0.01, 0.05]
+        # threshold exactly at the upper end (p = 0.035: half-width 0.015 <= 0.5 p = 0.0175)
+        c = R.stop_condition((0.02, 0.05), (0.02, 0.05), 0.035, thr, "closed")
+        o = R.stop_condition((0.02, 0.05), (0.02, 0.05), 0.035, thr, "open")
+        self.assertEqual((c["straddled"], o["straddled"]), ([0.05], []))
+        self.assertEqual((c["stop"], o["stop"]), (False, True))
+        # threshold exactly at the lower end (p = 0.1: half-width 0.045 <= 0.05)
+        c = R.stop_condition((0.05, 0.14), (0.05, 0.14), 0.1, thr, "closed")
+        o = R.stop_condition((0.05, 0.14), (0.05, 0.14), 0.1, thr, "open")
+        self.assertEqual((c["stop"], o["stop"]), (False, True))
+        c = R.stop_condition((0.01, 0.04), (0.01, 0.04), 0.02, thr, "closed")
+        o = R.stop_condition((0.01, 0.04), (0.01, 0.04), 0.02, thr, "open")
+        self.assertEqual((c["straddled"], o["straddled"]), ([0.01], []))
+        both = R.stop_condition((0.005, 0.02), (0.005, 0.02), 0.01, thr, "open")
+        self.assertEqual(both["straddled"], [0.01])  # an interior threshold is straddled in both readings
+
+    def test_precision_bounds_are_inclusive_and_the_small_p_bound_strict(self):
+        thr = [0.005, 0.05]
+        self.assertTrue(R.stop_condition((0.2, 0.3), (0.2, 0.3), 0.25, thr)["t7_precise"])     # half = 0.05
+        self.assertTrue(R.stop_condition((0.02, 0.04), (0.02, 0.04), 0.02, thr)["t7_precise"])  # half = 0.5 p
+        self.assertFalse(R.stop_condition((0.0, 0.005), (0.0, 0.005), 0.004, thr, "open")["t7_precise"])
+        self.assertTrue(R.stop_condition((0.0, 0.0049), (0.0, 0.0049), 0.004, thr)["t7_precise"])
+
+    def test_stop_verdict(self):
+        v = R.stop_verdict
+        self.assertEqual(v("rule met for both tests", 600, 600), "consistent")
+        self.assertEqual(v("rule met for both tests", 400, 600), "INCONSISTENT")
+        self.assertEqual(v("rule met for both tests", None, 600), "INCONSISTENT")
+        self.assertEqual(v("batches exhausted", None, 1999), "consistent")
+        self.assertEqual(v("maximum reached", 1999, 1999), "consistent")
+        self.assertEqual(v("maximum reached", 1400, 1999), "INCONSISTENT")
+        self.assertEqual(v("budget", None, 800), "consistent")
+        self.assertEqual(v("budget", 600, 800), "INCONSISTENT")
+        self.assertEqual(v(None, None, None), "not terminal")
+
+    def test_end_to_end_readings_are_carried_and_labelled(self):
+        d = Path(tempfile.mkdtemp(prefix="s5p_recompute_a8_"))
+        try:
+            t = Toy(d / "w")
+            base = t.truth["MnvTune_v1"]
+            t.calibration("MnvTune_v1", 600)
+            t.calibration("GiBUU_2019", 20)
+            t.set_data(base * (1 + 0.01 * np.random.default_rng(21).standard_normal(base.size)))
+            for B in (200, 400):
+                t.status("MnvTune_v1", B, False, "continue")
+            t.status("MnvTune_v1", 600, True, "batches exhausted")
+            out = R.evaluate(t.design(), t.v_path, t.contract, log=lambda *a: None)
+            seq = out["nulls"]["MnvTune_v1"]["sequential"]
+            a8 = seq["a8_sensitivity"]
+            self.assertEqual(list(a8["readings"])[0], "primary")
+            self.assertEqual(a8["first_look_where_rule_stops"]["primary"], seq["first_look_where_rule_stops"])
+            self.assertEqual(a8["stop_verdict_by_reading"]["primary"], seq["stop_verdict"])
+            thr = R.decision_thresholds(0.05, 4)
+            for lk in seq["looks"]:
+                for name, rec in lk["a8_sensitivity"].items():
+                    self.assertNotEqual(name, "primary")
+                    want = all(R.stop_readings(lk["tests"][t_]["k"], lk["B"], thr)[name]["stop"] for t_ in R.TESTS)
+                    self.assertEqual(rec["rule_stops"], want)
+                    self.assertEqual(rec["differs_from_primary"], want != lk["rule_stops"])
+            fs = a8["first_look_where_rule_stops"]
+            if fs["primary"] is not None and fs["A8_alt_precision_95"] is not None:
+                self.assertLessEqual(fs["A8_alt_precision_95"], fs["primary"])
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
