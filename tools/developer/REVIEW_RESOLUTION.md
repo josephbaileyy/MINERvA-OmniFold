@@ -193,3 +193,76 @@ SIGKILL, deliberately detached children and arbitrary hostile code remain exclud
 No promise covers direct execution, custom import loaders, concurrent hostile
 edits, or Python children overriding cache settings. No general sandbox or network
 restriction is added. Navigation and all scientific/campaign code are unchanged.
+
+
+## Assertion-rewrite precedence repair from 7fa0c63c
+
+Starting commit: `7fa0c63c9289291dcd97553106f2cbe817677bf5`. The maintainer
+confirmed that this version was pushed and draft PR #5 verified at that commit;
+earlier publication-failure notes describe historical attempts, not its current
+publication status.
+
+An admitted test importing an unlisted `helper_test.py` could execute the helper's
+marker write and report a complete pass. Pytest installed `AssertionRewritingHook`
+ahead of `SourceAdmission` after the worker's initial finder insertion. Its loader
+therefore bypassed the source-hash check for rewrite-eligible module names.
+
+The existing admission finder is now also a pytest plugin. A late configuration
+hook restores it to index zero after assertion rewriting is installed. A collection
+hook wrapper observes the actual finder order before collection imports; it raises
+a usage error if admission is not first. The suite report retains
+`collection_import_order` and `admission_first`, and the parent requires the latter
+for a complete pass. This retains pytest assertion rewriting after admission;
+it does not replace pytest's loader or introduce a general import sandbox.
+
+Durable regression:
+`test_assertion_rewrite_cannot_bypass_admission[test_helper]` and
+`test_assertion_rewrite_cannot_bypass_admission[helper_test]` in
+`test_runner_regressions.py`. Each creates a marker-writing helper and admits only
+the importing test. Both fail against unchanged 7fa0c63c because the marker exists
+(**2 failed in 1.45 s**). Both pass after the fix (**2 passed in 2.74 s**): refusal
+occurs before any helper marker write. The admitted importing module independently
+records the live finder order during collection, and the test compares that with
+the worker's observation. Each case then deliberately admits the helper and checks
+that its marker is written, its assertion succeeds, and its loader remains
+`AssertionRewritingHook`. These positive controls rule out disabling helper imports
+or assertion rewriting as the reason the negative cases pass.
+
+To reproduce before/after with the command pattern above, use archived revision
+7fa0c63c as `DEVELOPER_TOOLING_TEST_SOURCE` and select `-k assertion_rewrite`; then
+unset that variable to test the repaired implementation. No changes to the archived
+implementation are required.
+
+The repaired branch passed **32 acceptance tests in 28.74 s**, **18 default tests**,
+and Ruff, Black and strict mypy checks. The default reports observed:
+
+```text
+SourceAdmission, AssertionRewritingHook, DistutilsMetaFinder, type, type, type
+admission_first: true
+```
+
+Optional open-items retains 15 passes and exactly the same 18 failing IDs listed
+above; it still exits 1. Input hashes and source status remain unchanged for both
+default and optional runs. No admission hashes were refreshed.
+
+### Isolated integration measurement
+
+The shared checkout's locally observed `origin/main` was
+`4f5a613f383d3776db0be64eccc05e2d89af4a86`. Its objects were fetched by local path
+into the tooling clone, leaving the shared checkout untouched. A separate clone
+checked out that commit detached, merged the published 7fa0c63c without committing,
+and overlaid this repair's Python files. The merge was clean, and every path in
+the integration diff against main remained under `tools/developer/`. Default tests
+passed 18/18; optional tests retained the same 15 passes and 18 failures with
+unchanged inputs/status. Integration acceptance passed **32 tests in 23.57 s**.
+No scientific file or admission hash was changed to obtain these results.
+
+Live GitHub fetch/read attempts failed with `Could not resolve host: github.com`
+and API reads with `error connecting to api.github.com`. Thus this establishes
+compatibility with the exact locally observed origin/main above, not proof that
+GitHub's main had not advanced further at measurement time.
+
+Existing boundaries remain: macOS-only execution evidence, static/scoped Python
+navigation, no general sandbox, trusted installed environment code, and no cleanup
+guarantee for SIGKILL or deliberately detached children. Arbitrary hostile code,
+custom loaders or concurrent malicious edits are outside the reviewed-code contract.

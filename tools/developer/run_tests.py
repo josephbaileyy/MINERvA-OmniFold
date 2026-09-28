@@ -75,6 +75,7 @@ def complete(result: dict[str, Any]) -> bool:
         and result.get("collected", 0) > 0
         and result.get("passed") == result.get("collected")
         and result.get("origins_ok")
+        and result.get("admission_first")
         and not any(
             result.get(k, 0)
             for k in (

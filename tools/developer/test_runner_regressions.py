@@ -371,3 +371,39 @@ def test_reap_timeout_retains_signal_report(
     assert (
         output / "fixture/stderr.txt"
     ).read_text() == "controlled worker diagnostic\n"
+
+
+@pytest.mark.parametrize("helper_name", ["test_helper", "helper_test"])
+def test_assertion_rewrite_cannot_bypass_admission(
+    checkout: Path, tmp_path: Path, helper_name: str
+) -> None:
+    """Both rewrite filename patterns refuse unlisted source before marker effects."""
+    marker = tmp_path / "helper-executed"
+    ordering = tmp_path / "collection-order.json"
+    helper = checkout / f"{helper_name}.py"
+    helper.write_text(
+        f"from pathlib import Path\nPath({str(marker)!r}).touch()\nVALUE = 1\n"
+    )
+    test = checkout / "test_case.py"
+    test.write_text(
+        "import json, sys\nfrom pathlib import Path\n"
+        f"Path({str(ordering)!r}).write_text(json.dumps([type(f).__name__ for f in sys.meta_path]))\n"
+        f"import {helper_name}\n"
+        f"def test_value():\n    assert {helper_name}.VALUE == 1\n"
+        f"    assert type({helper_name}.__loader__).__name__ == 'AssertionRewritingHook'\n"
+    )
+    _admit(checkout, [test.name], {})
+    code, report = _run(checkout, tmp_path / "unlisted")
+    assert not marker.exists(), "assertion rewriting executed unreviewed helper"
+    assert code != 0 and not report["complete_pass"]
+    order = json.loads(ordering.read_text())
+    assert order.index("SourceAdmission") < order.index("AssertionRewritingHook")
+    assert report["suites"]["fixture"]["collection_import_order"] == order
+    assert report["suites"]["fixture"]["admission_first"]
+    # Deliberate admission preserves pytest rewriting and useful helper execution.
+    _admit(checkout, [test.name, helper.name], {})
+    code, report = _run(checkout, tmp_path / "admitted")
+    assert marker.exists() and code == 0 and report["complete_pass"]
+    order = json.loads(ordering.read_text())
+    assert order.index("SourceAdmission") < order.index("AssertionRewritingHook")
+    assert report["suites"]["fixture"]["collection_import_order"] == order

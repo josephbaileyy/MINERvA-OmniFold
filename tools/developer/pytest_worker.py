@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
 import hashlib
 from importlib.abc import MetaPathFinder
 from importlib.machinery import ModuleSpec, PathFinder
@@ -20,12 +20,33 @@ class SourceAdmission(MetaPathFinder):
     """Require reviewed bytes for checkout modules before normal imports execute."""
 
     def __init__(self, root: Path, hashes: dict[str, str]) -> None:
+        self.collection_import_order: list[str] = []
+        self.admission_first = False
         self.root = root.resolve()
         self.hashes = hashes
         self.environment_roots = (
             Path(sys.prefix).resolve(),
             Path(sys.base_prefix).resolve(),
         )
+
+    @pytest.hookimpl(trylast=True)
+    def pytest_configure(self, config: Any) -> None:
+        """Restore precedence after pytest installs its assertion-rewrite finder."""
+        sys.meta_path.remove(self)
+        sys.meta_path.insert(0, self)
+
+    @pytest.hookimpl(hookwrapper=True, tryfirst=True)
+    def pytest_collection(self, session: Any) -> Iterator[None]:
+        """Measure and enforce admission precedence before collection imports."""
+        self.collection_import_order = [
+            type(finder).__name__ for finder in sys.meta_path
+        ]
+        self.admission_first = bool(sys.meta_path and sys.meta_path[0] is self)
+        if not self.admission_first:
+            raise pytest.UsageError(
+                "Source admission must precede collection import finders"
+            )
+        yield
 
     def find_spec(
         self,
@@ -64,7 +85,14 @@ class SourceAdmission(MetaPathFinder):
 class Report:
     """Collect pytest outcomes without treating skips or partial execution as passes."""
 
-    def __init__(self, output: Path, root: Path, origins: dict[str, str]) -> None:
+    def __init__(
+        self,
+        output: Path,
+        root: Path,
+        origins: dict[str, str],
+        admission: SourceAdmission,
+    ) -> None:
+        self.admission = admission
         self.output = output
         self.root = root
         self.origins = origins
@@ -123,6 +151,8 @@ class Report:
                     "pytest_exit_status": int(exitstatus),
                     "import_origins": actual,
                     "origins_ok": origins_ok,
+                    "admission_first": self.admission.admission_first,
+                    "collection_import_order": self.admission.collection_import_order,
                 },
                 indent=2,
             )
@@ -134,10 +164,11 @@ def main() -> int:
     """Load only the named suite, with no repository conftests or ambient plugins."""
     root, suite_file, output, temporary, admission_json = sys.argv[1:]
     admission = json.loads(admission_json)
-    sys.meta_path.insert(0, SourceAdmission(Path(root), admission["reviewed_sha256"]))
+    guard = SourceAdmission(Path(root), admission["reviewed_sha256"])
+    sys.meta_path.insert(0, guard)
     suite = Path(root) / suite_file
     sys.path.insert(0, str(suite.parent))
-    plugin = Report(Path(output), Path(root), admission["origins"])
+    plugin = Report(Path(output), Path(root), admission["origins"], guard)
     return int(
         pytest.main(
             [
@@ -154,7 +185,7 @@ def main() -> int:
                 "--basetemp",
                 str(Path(temporary) / "pytest"),
             ],
-            plugins=[plugin],
+            plugins=[plugin, guard],
         )
     )
 

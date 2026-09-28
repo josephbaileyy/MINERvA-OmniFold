@@ -108,7 +108,12 @@ a matching reviewed hash, including package initializers and newly added tracked
 or untracked files. A local `secrets.py` cannot silently shadow the standard
 library: the import boundary refuses its execution unless deliberately admitted.
 Unreviewed checkout modules and modules from other source trees cause an
-import/collection error before their code executes. Installed environment and standard-library
+import/collection error before their code executes. After pytest installs its
+assertion-rewrite finder, the worker restores admission to the front of the import
+finder list. Before collection it records the actual `collection_import_order`
+and refuses collection unless `admission_first` is true. A complete pass requires
+that observation; filename patterns such as `test_*.py` and `*_test.py` do not
+exempt imported helpers from admission. Installed environment and standard-library
 packages remain trusted. New admission requires the same review, including parent hooks.
 
 The runner constructs a minimal environment with private HOME/temp/cache paths,
