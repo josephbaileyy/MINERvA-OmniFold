@@ -1,0 +1,416 @@
+"""Controls for the independent s5p evaluator (s5p_recompute): library known answers from the specification and
+the reviews' own numbers, exchangeability (size), the variant and claim rules, Holm with determinacy, the
+sequential stopping rule, and end-to-end runs on a synthetic world in the production file formats covering
+incomplete products, budget-terminal stops, keyed draws and determinism."""
+import ast
+import json
+import shutil
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(1, str(HERE.parent))
+sys.path.insert(1, str(HERE))
+import s5p_recompute as R  # noqa: E402
+from s5p_recompute_toy import SEED_BASE, Toy  # noqa: E402
+
+THR = R.decision_thresholds(0.05, 10)
+
+
+class Independence(unittest.TestCase):
+    def test_imports_nothing_from_the_production_evaluator(self):
+        for name in ("s5p_recompute.py", "s5p_recompute_compare.py"):
+            tree = ast.parse((HERE.parent / name).read_text())
+            mods = set()
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Import):
+                    mods |= {a.name.split(".")[0] for a in node.names}
+                elif isinstance(node, ast.ImportFrom) and node.module:
+                    mods.add(node.module.split(".")[0])
+            self.assertFalse(mods & {"s5p_joint", "s5p_inference", "s5p_seqstop"}, name)
+
+
+class ClopperPearson(unittest.TestCase):
+    def test_k0_closed_form(self):
+        for n in (1, 200, 1999):
+            self.assertAlmostEqual(R.cp_interval(0, n)[1], 1 - 0.025 ** (1 / n), places=12)
+            self.assertEqual(R.cp_interval(0, n)[0], 0.0)
+            self.assertEqual(R.cp_interval(n, n)[1], 1.0)
+
+    def test_review1_interval_at_p_001(self):
+        lo, hi = R.cp_interval(19, 1999)  # p = 20/2000
+        self.assertAlmostEqual(lo, 0.0057, places=4)
+        self.assertAlmostEqual(hi, 0.0148, places=4)
+
+    def test_review2_m3_counts(self):
+        det = lambda B: [k for k in range(10) if R.cp_interval(k, B)[1] < 0.005]  # noqa: E731
+        rank = lambda B: [k for k in range(10) if R.mc_p(k, B) <= 0.005]  # noqa: E731
+        self.assertEqual(det(800), [0])
+        self.assertEqual(rank(800), [0, 1, 2, 3])
+        self.assertEqual(det(1999), [0, 1, 2, 3])
+
+    def test_k0_at_0005_needs_736(self):
+        # amendment 7 states B >= 737; the exact two-sided 95% interval already allows 736 (recorded in the handoff)
+        self.assertGreater(R.cp_interval(0, 735)[1], 0.005)
+        self.assertLess(R.cp_interval(0, 736)[1], 0.005)
+
+    def test_empty(self):
+        self.assertEqual(R.cp_interval(0, 0), (0.0, 1.0))
+
+
+class Statistics(unittest.TestCase):
+    def setUp(self):
+        r = np.random.default_rng(1)
+        a = r.standard_normal((9, 9))
+        self.W = a @ a.T + 9 * np.eye(9)
+        self.mu = r.uniform(1, 2, 9)
+        self.f = self.mu * (1 + 0.1 * r.standard_normal(9))
+
+    def test_total_is_the_inverse_quadratic_form(self):
+        r = self.f - self.mu
+        from scipy import linalg
+        ch = linalg.cho_factor(self.W, lower=True)
+        self.assertAlmostEqual(R.t_total(r, ch), r @ np.linalg.inv(self.W) @ r, places=10)
+        stack = np.vstack([r, 2 * r])
+        np.testing.assert_allclose(R.t_total(stack, ch), [r @ np.linalg.inv(self.W) @ r * m for m in (1, 4)])
+
+    def test_shape_invariances(self):
+        t = R.t_shape(self.f, self.mu, self.W)
+        self.assertAlmostEqual(R.t_shape(self.mu * 3.0, self.mu, self.W), 0.0, places=20)
+        perm = np.r_[1:9, 0]  # a different cell becomes the dropped last one
+        self.assertAlmostEqual(R.t_shape(self.f[perm], self.mu[perm], self.W[np.ix_(perm, perm)]), t, places=8)
+        # scaling f and W together (a unit change) leaves the shape statistic unchanged
+        self.assertAlmostEqual(R.t_shape(5 * self.f, self.mu, 25 * self.W), t, places=8)
+
+    def test_rank_counts_ties_count(self):
+        self.assertEqual(list(R.rank_counts([1.0, 2.0, 5.0], [1.0, 1.0, 2.0, 3.0])), [4, 2, 0])
+
+
+class Holm(unittest.TestCase):
+    def e(self, name, k, B):
+        return {"test": name, "k": k, "B": B, "p": R.mc_p(k, B)}
+
+    def test_rejections_then_undetermined_stop(self):
+        ents = [self.e("a", 0, 1999), self.e("b", 0, 1999), self.e("c", 9, 1999), self.e("d", 400, 1999)]
+        out = R.holm_determined(ents, 0.05)
+        # c: p = 0.005 against 0.05/2 = 0.025; its interval [0.0021, 0.0085] lies below -> rejected
+        self.assertEqual([o["decision"] for o in out], ["rejected", "rejected", "rejected", "not rejected"])
+        ents = [self.e("a", 0, 1999), self.e("b", 50, 1999), self.e("c", 60, 1999)]
+        out = R.holm_determined(ents, 0.05)
+        # b: the interval of 50/1999, [0.019, 0.033], contains 0.05/2 -> undetermined; c inherits it although its
+        # own interval [0.023, 0.038] lies below its threshold 0.05
+        self.assertEqual([o["decision"] for o in out], ["rejected", "undetermined", "undetermined"])
+        ents = [self.e("a", 0, 1999), self.e("b", 20, 1999)]  # [0.0061, 0.0154] below 0.025: rejected
+        self.assertEqual([o["decision"] for o in R.holm_determined(ents, 0.05)], ["rejected", "rejected"])
+
+    def test_not_rejected_stops_every_later_test(self):
+        ents = [self.e("a", 1500, 1999), self.e("b", 0, 1999), self.e("c", 1900, 1999)]
+        out = R.holm_determined(ents, 0.05)
+        self.assertEqual([o["decision"] for o in out], ["not rejected", "rejected", "not rejected"])
+        self.assertEqual(out[1]["threshold"], 0.05 / 3)
+
+    def test_point_holm_differs_from_determined(self):
+        ents = [self.e("a", 3, 800)]  # p = 0.005 <= 0.05 but also the determinacy check at m = 1
+        self.assertEqual(R.holm_point(ents, 0.05), ["rejected"])
+        ents = [self.e("a", 3, 800), self.e("b", 3, 800)]
+        self.assertEqual(R.holm_point(ents, 0.01), ["rejected", "rejected"])
+        self.assertEqual([o["decision"] for o in R.holm_determined(ents, 0.01)], ["undetermined", "undetermined"])
+
+    def test_uncalibrated_null_is_undetermined_at_its_step(self):
+        ents = [self.e("a", 0, 1999), {"test": "b", "k": 0, "B": 0, "p": 1.0}]
+        self.assertEqual([o["decision"] for o in R.holm_determined(ents, 0.05)], ["rejected", "undetermined"])
+
+
+class Sequential(unittest.TestCase):
+    def test_review_described_stops(self):
+        self.assertTrue(R.sequential_stop(190, 200, THR)["stop"])       # p ~ 0.95 at 200
+        self.assertTrue(R.sequential_stop(40, 400, THR)["stop"])        # p ~ 0.1 at 400
+        self.assertTrue(R.sequential_stop(0, 1200, THR)["stop"])        # below every threshold
+        self.assertFalse(R.sequential_stop(0, 200, THR)["stop"])        # straddles the Holm levels
+        self.assertFalse(R.sequential_stop(9, 1999, THR)["stop"])       # p = 0.005 on a threshold
+        self.assertFalse(R.sequential_stop(0, 0, THR)["stop"])
+
+    def test_precision_branch(self):
+        # p ~ 0.5 at B = 200: no threshold inside, half-width ~0.09 > 0.05 -> continue
+        s = R.sequential_stop(100, 200, THR)
+        self.assertFalse(s["straddled"])
+        self.assertFalse(s["t7_precise"])
+        self.assertFalse(s["stop"])
+
+    def test_thresholds(self):
+        self.assertEqual(len(THR), 10)
+        self.assertIn(0.01, THR)
+        self.assertAlmostEqual(min(THR), 0.005)
+
+
+class Variants(unittest.TestCase):
+    def setUp(self):
+        from scipy import linalg
+        r = np.random.default_rng(3)
+        n = 6
+        self.mu = np.ones(n)
+        self.ts = R.TestSetup(dom=np.arange(n), mu=self.mu, var_mu=np.zeros(n), w=np.eye(n),
+                              w_chol=linalg.cho_factor(np.eye(n), lower=True))
+        self.b = np.array([1.0, 0, 0, 0, 0, 0])
+        self.F = self.mu + self.b + 0.01 * r.standard_normal((50, n))
+        self.F -= self.F.mean(0) - (self.mu + self.b)
+
+    def test_aligned_pairs_give_positive_magnitude_along_b(self):
+        d = np.tile([0.1, 0, 0, 0, 0, 0], (16, 1)) + 0.01 * np.random.default_rng(4).standard_normal((16, 6))
+        sh = R.bias_aligned_shift(self.F, self.ts, d)
+        self.assertGreater(sh["magnitude"], 0.1)
+        np.testing.assert_allclose(sh["S"] / sh["magnitude"], self.b, atol=1e-12)
+
+    def test_anti_aligned_pairs_give_zero(self):
+        d = np.tile([-0.1, 0, 0, 0, 0, 0], (16, 1)) + 0.001 * np.random.default_rng(4).standard_normal((16, 6))
+        self.assertEqual(R.bias_aligned_shift(self.F, self.ts, d)["magnitude"], 0.0)
+
+    def test_variant_sets(self):
+        S, dm = np.ones(3), np.full(3, 2.0)
+        u = R.variant_shifts(S, dm, [0, 0.5, 1], 2, "union")
+        self.assertEqual(sorted(u), ["c=0", "c=0.5", "c=1", "m1=+2", "m1=-2"])
+        np.testing.assert_allclose(u["m1=-2"], -4.0)
+        self.assertEqual(len(R.variant_shifts(S, dm, [0, 0.5, 1], 2, "product")), 9)
+        self.assertEqual(sorted(R.variant_shifts(S, None, [0, 0.5, 1], None, "union")), ["c=0", "c=0.5", "c=1"])
+        self.assertEqual(len(R.variant_shifts(S, None, [0, 0.5, 1], None, "product")), 3)
+
+    def test_claim_is_the_largest_count(self):
+        ens = {"c=0": {"total": np.array([1.0, 2, 3, 4])}, "c=1": {"total": np.array([3.0, 4, 5, 6])}}
+        c = R.claim(3.5, ens, "total")
+        self.assertEqual((c["variants"]["c=0"]["k"], c["variants"]["c=1"]["k"], c["k"]), (1, 3, 3))
+        self.assertEqual(c["p"], 4 / 5)
+
+
+class Size(unittest.TestCase):
+    def test_rank_p_is_valid_under_exchangeability(self):
+        """Observed and null draws from one process: P(p <= a) <= a for the unshifted test and the claim."""
+        from scipy import linalg
+        r = np.random.default_rng(11)
+        n, B, reps = 5, 99, 1500
+        W = np.eye(n) + 0.3
+        ch = linalg.cho_factor(W, lower=True)
+        ts = R.TestSetup(dom=np.arange(n), mu=np.full(n, 10.0), var_mu=np.zeros(n), w=W, w_chol=ch)
+        L = np.linalg.cholesky(W)
+        rej = {"total": 0, "shape": 0, "claim": 0}
+        for _ in range(reps):
+            F = 10.0 + (L @ r.standard_normal((n, B + 1))).T
+            eps = np.zeros_like(F)
+            ens = R.null_ensembles(F[1:], eps[1:], ts, {"c=0": np.zeros(n), "c=1": 0.2 * np.ones(n)})
+            obs = R.stats_of(F[0], ts.mu, ts)
+            for t in ("total", "shape"):
+                rej[t] += R.claim(obs[t], {"c=0": ens["c=0"]}, t)["p"] <= 0.05
+            rej["claim"] += R.claim(obs["total"], ens, "total")["p"] <= 0.05
+        se = np.sqrt(0.05 * 0.95 / reps)
+        for t in ("total", "shape"):
+            self.assertLess(rej[t] / reps, 0.05 + 3 * se, t)
+            self.assertGreater(rej[t] / reps, 0.05 - 3 * se, t)
+        self.assertLessEqual(rej["claim"], rej["total"] + 0)  # the claim can only be more conservative
+
+
+class EndToEnd(unittest.TestCase):
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp(prefix="s5p_recompute_"))
+        self.t = Toy(self.dir / "w")
+
+    def tearDown(self):
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def run_eval(self, **kw):
+        return R.evaluate(self.t.design(**kw), self.t.v_path, self.t.contract, log=lambda *a: None)
+
+    def test_known_answer_without_surrogates(self):
+        t = self.t
+        for b in t.lat:  # identical endpoints: Delta = 0
+            t.lat[b][1] = t.lat[b][0]
+        base = t.truth["MnvTune_v1"]
+        t.jitters = [t.npz(f"jit0/j{j}.npz", xsec_flat=base) for j in range(20)]  # s_num = 0
+        t.pred["MnvTune_v1"] = t.npz("pred0.npz", xsec_flat=base, sumw2_flat=np.zeros_like(base), **t.edges())
+        x = base * (1 + 0.02 * np.random.default_rng(5).standard_normal(base.size))
+        t.set_data(x)
+        t.calibration("MnvTune_v1", 30)
+        t.calibration("GiBUU_2019", 30)
+        out = self.run_eval()
+        r = t.jint(x) - t.jint(base)
+        expect = r @ np.linalg.inv(t.V) @ r
+        self.assertAlmostEqual(out["nulls"]["MnvTune_v1"]["observed_T"]["total"] / expect, 1.0, places=10)
+
+    def test_domain_is_pz_index_le_1(self):
+        t = self.t
+        t.calibration("MnvTune_v1", 20)
+        t.calibration("GiBUU_2019", 20)
+        out = self.run_eval()
+        pz = [np.unravel_index(c, [3] * 5)[1] for c in t.supported]
+        self.assertEqual(out["nulls"]["GiBUU_2019"]["domain_cells"], sum(1 for p in pz if p <= 1))
+        self.assertEqual(out["nulls"]["MnvTune_v1"]["domain_cells"], len(t.supported))
+
+    def test_incomplete_products_are_reported_and_partials_excluded(self):
+        t = self.t
+        t.calibration("MnvTune_v1", 60, skip=(7, 33))
+        t.product("cal", "MnvTune_v1", SEED_BASE["MnvTune_v1"] + 60, t.truth["MnvTune_v1"], partial=True)
+        t.product("cal", "MnvTune_v1", SEED_BASE["MnvTune_v1"] + 75, t.truth["MnvTune_v1"])  # beyond final B
+        t.status("MnvTune_v1", 60, True, "budget")
+        t.calibration("GiBUU_2019", 20)
+        out = self.run_eval()
+        cal = out["nulls"]["MnvTune_v1"]["calibration"]
+        self.assertEqual(cal["partials_excluded"], 1)
+        self.assertEqual(cal["missing_seeds_in_range"], [SEED_BASE["MnvTune_v1"] + 7, SEED_BASE["MnvTune_v1"] + 33])
+        self.assertEqual(cal["seeds_outside_final_range"], [SEED_BASE["MnvTune_v1"] + 75])
+        self.assertEqual(cal["products_used"], 58)
+        self.assertFalse(cal["count_matches_final_B"])
+
+    def test_budget_stop_at_zero_is_not_calibrated(self):
+        t = self.t
+        t.status("GiBUU_2019", 0, True, "budget")
+        t.calibration("MnvTune_v1", 400)
+        base = t.truth["MnvTune_v1"]
+        t.set_data(base * np.repeat(np.linspace(0.8, 1.2, 4), base.size // 4))  # MnvTune rejected first
+        out = self.run_eval()
+        g = out["nulls"]["GiBUU_2019"]
+        self.assertEqual(g["B"], 0)
+        self.assertEqual(g["tests"]["total"]["p"], 1.0)
+        labels = {d["test"]: d for d in out["family"]["decisions"]}
+        self.assertEqual(labels["GiBUU_2019:total"].get("label"), "not calibrated")
+        self.assertEqual(labels["MnvTune_v1:total"]["decision"], "rejected")
+        self.assertEqual(labels["GiBUU_2019:total"]["decision"], "undetermined")
+        self.assertEqual(labels["GiBUU_2019:shape"]["decision"], "undetermined")
+
+    def test_draws_are_keyed_by_seed(self):
+        t = self.t
+        t.calibration("MnvTune_v1", 50)
+        t.calibration("GiBUU_2019", 10)
+        ev = R.Evaluator(t.design(), t.v_path, t.contract, log=lambda *a: None)
+        prods, _ = ev.load_ensemble(t.design()["nulls"]["MnvTune_v1"]["calibration_glob"], SEED_BASE["MnvTune_v1"], None)
+        a = ev.null_context("MnvTune_v1", prods)
+        b = ev.null_context("MnvTune_v1", prods[::-1][:20])
+        by_seed = {p.seed: i for i, p in enumerate(prods)}
+        for j, p in enumerate(prods[::-1][:20]):
+            np.testing.assert_array_equal(b["f_cal"][j], a["f_cal"][by_seed[p.seed]])
+            np.testing.assert_array_equal(b["eps"][j], a["eps"][by_seed[p.seed]])
+
+    def test_pseudo_seed_mismatch_is_refused(self):
+        t = self.t
+        p = t.product("cal", "MnvTune_v1", SEED_BASE["MnvTune_v1"], t.truth["MnvTune_v1"])
+        z = dict(np.load(p))
+        meta = json.loads(str(z["meta"]))
+        meta["pseudo_seed"] = 5
+        z["meta"] = np.array(json.dumps(meta))
+        np.savez(p, **z)
+        t.calibration("GiBUU_2019", 5)
+        with self.assertRaises(SystemExit):
+            self.run_eval()
+
+    def test_declared_digest_is_enforced(self):
+        t = self.t
+        t.calibration("MnvTune_v1", 10)
+        t.calibration("GiBUU_2019", 10)
+        d = t.design()
+        d["process_shift"]["MnvTune_v1"]["sha256"] = "0" * 64
+        with self.assertRaises(SystemExit):
+            R.evaluate(d, t.v_path, t.contract, log=lambda *a: None)
+
+    def test_deterministic(self):
+        t = self.t
+        t.calibration("MnvTune_v1", 40)
+        t.calibration("GiBUU_2019", 40)
+        a = json.dumps(R.jsonable(self.run_eval()), sort_keys=True)
+        b = json.dumps(R.jsonable(self.run_eval()), sort_keys=True)
+        self.assertEqual(a, b)
+
+    def test_rejection_power_and_incomplete_power_set(self):
+        t = self.t
+        base = t.truth["MnvTune_v1"]
+        t.calibration("MnvTune_v1", 400)
+        t.calibration("GiBUU_2019", 200)
+        t.status("MnvTune_v1", 400, True, "maximum reached")
+        t.status("GiBUU_2019", 200, True, "rule met for both tests")
+        factor = np.repeat(np.linspace(0.8, 1.2, 4), base.size // 4)  # a pT-ordered tilt
+        t.set_data(base * factor)
+        t.power("P1_a1.0", 30, "MnvTune_v1", factor)
+        spec = {"P1_a1.0": {"glob": str(t.root / "pow/P1_a1.0/pow_P1_a1.0_s*.npz"), "surrogate_seed0": 1951000,
+                            "n": 40, "null": "MnvTune_v1"}}
+        out = self.run_eval(power=spec)
+        dec = {d["test"]: d["decision"] for d in out["family"]["decisions"]}
+        self.assertEqual(dec["MnvTune_v1:total"], "rejected")
+        self.assertEqual(dec["MnvTune_v1:shape"], "rejected")
+        pw = out["power"]["P1_a1.0"]
+        self.assertFalse(pw["complete"])
+        self.assertEqual(pw["n_present"], 30)
+        self.assertEqual(pw["shape"]["0.05"]["rank_unshifted"]["power"], 1.0)
+        # at B = 400 a determined rejection at 0.005 needs k = 0 and B >= 736: power is zero by construction
+        self.assertEqual(pw["shape"]["0.005"]["determined_claim"]["count"], 0)
+        self.assertEqual(pw["shape"]["0.005"]["rank_claim"]["power"], 1.0)
+
+    def test_sequential_looks_pair_with_status_and_respect_min_B(self):
+        t = self.t
+        base = t.truth["MnvTune_v1"]
+        t.calibration("MnvTune_v1", 600)
+        t.calibration("GiBUU_2019", 20)
+        for B in (200, 400):
+            t.status("MnvTune_v1", B, False, "continue")
+        t.status("MnvTune_v1", 600, True, "rule met for both tests")
+        t.set_data(base * np.repeat(np.linspace(0.7, 1.3, 4), base.size // 4))
+        out = self.run_eval(mins={"MnvTune_v1": 400})
+        seq = out["nulls"]["MnvTune_v1"]["sequential"]
+        self.assertEqual([lk["B"] for lk in seq["looks"]], [200, 400, 600])
+        self.assertTrue(all(lk["status_file"] for lk in seq["looks"]))
+        lk200 = seq["looks"][0]
+        self.assertTrue(lk200["below_min_B"])
+        self.assertFalse(lk200["rule_stops"])
+        # k = 0 everywhere. The toy family has m = 4 tests, so the smallest Holm level is 0.0125: at B = 400 the
+        # 99.5% upper end 0.0149 straddles it, at B = 600 (0.0099) every threshold lies above -> the rule stops
+        self.assertEqual([lk["rule_stops"] for lk in seq["looks"]], [False, False, True])
+        self.assertEqual(seq["first_look_where_rule_stops"], 600)
+        self.assertEqual(seq["looks"][2]["status"]["reason"], "rule met for both tests")
+        self.assertEqual(out["nulls"]["MnvTune_v1"]["tests"]["total"]["k"], 0)
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+class Compare(unittest.TestCase):
+    """The comparer reports agreement on a production-shaped copy and flags a changed count, p and decision."""
+
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp(prefix="s5p_recompute_cmp_"))
+        t = Toy(self.dir / "w")
+        t.calibration("MnvTune_v1", 60)
+        t.calibration("GiBUU_2019", 60)
+        self.mine = R.jsonable(R.evaluate(t.design(), t.v_path, t.contract, log=lambda *a: None))
+
+    def tearDown(self):
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def production_like(self):
+        m = self.mine
+        tests, dec, hp = {}, {}, {}
+        for key, rec in m["nulls"].items():
+            tests[key] = {"domain_cells": rec["domain_cells"], "T_total_obs": rec["observed_T"]["total"],
+                          "T_shape_obs": rec["observed_T"]["shape"]}
+            for t in ("total", "shape"):
+                tests[key][t] = {x: rec["tests"][t][x] for x in ("p", "k", "B")}
+        for d in m["family"]["decisions"]:
+            key, t = d["test"].split(":")
+            dec.setdefault(key, {})[t] = d["decision"]
+            hp.setdefault(key, {})[t] = d["holm_point"]
+        return {"tests": tests, "decisions": dec, "holm_point": hp, "power": {}}
+
+    def test_agreement_and_discrepancy(self):
+        import s5p_recompute_compare as C
+        prod = self.production_like()
+        rep = C.compare(self.mine, prod)
+        self.assertEqual(rep["discrepancies"], [])
+        self.assertEqual(rep["not_located"], [])
+        self.assertGreaterEqual(rep["items"], 2 * (3 + 2 * 3) + 2 * 4)
+        prod["tests"]["GiBUU_2019"]["shape"]["k"] += 1
+        prod["tests"]["GiBUU_2019"]["T_total_obs"] *= 1 + 1e-6  # (MnvTune data = truth: T = 0)
+        prod["decisions"]["MnvTune_v1"]["total"] = "rejected" if self.mine["family"]["decisions"][0]["decision"] \
+            != "rejected" else "undetermined"
+        bad = {r["item"] for r in C.compare(self.mine, prod)["discrepancies"]}
+        self.assertEqual(bad, {"GiBUU_2019:shape:claim_k", "GiBUU_2019:total:T_obs", "decisions:MnvTune_v1:total"})
+        del prod["tests"]["GiBUU_2019"]
+        self.assertIn("GiBUU_2019", C.compare(self.mine, prod)["not_located"])
