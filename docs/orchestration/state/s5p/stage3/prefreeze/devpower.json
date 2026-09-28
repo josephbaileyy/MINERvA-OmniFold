@@ -1,0 +1,302 @@
+{
+ "schema": "s5p-prefreeze-devpower/1",
+ "design_sha256": "2f44cfba8fd6b39e36916ec402fd8d80b0165d377e3f41da3e0aa80d3830990c",
+ "v_sha256": "35979ef75ca1b0fb019c07a20e11a4bf0fe3b230e7cea495930fb572fe8e1c84",
+ "inputs": {
+  "null_glob": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3v/pilot/null_mnvtune/null_mnvtune_s*.npz",
+  "alternatives": {
+   "P1r": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3v/pilot/p1/p1_s*.npz",
+   "P2r": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3v/pilot/p2/p2_s*.npz",
+   "P3r": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3v/pilot/p3/p3_s*.npz"
+  }
+ },
+ "code_sha256": "1fa1ee420b9f74e8ff553cc0716475f666d7727037d6d396918e8443690085f0",
+ "result": {
+  "null_n": 194,
+  "P1r": {
+   "n": 47,
+   "total": {
+    "0.05": {
+     "rank": {
+      "power": 1.0,
+      "n": 47,
+      "interval": [
+       0.9245142663089414,
+       1.0
+      ],
+      "alpha": 0.05
+     },
+     "determined": {
+      "power": 1.0,
+      "n": 47,
+      "interval": [
+       0.9245142663089414,
+       1.0
+      ],
+      "alpha": 0.05,
+      "B": 194,
+      "rule": "claim rule with determinacy"
+     }
+    },
+    "0.005": {
+     "rank": {
+      "power": 0.0,
+      "n": 47,
+      "interval": [
+       0.0,
+       0.07548573369105858
+      ],
+      "alpha": 0.005
+     },
+     "determined": {
+      "power": 0.0,
+      "n": 47,
+      "interval": [
+       0.0,
+       0.07548573369105858
+      ],
+      "alpha": 0.005,
+      "B": 194,
+      "rule": "claim rule with determinacy"
+     }
+    }
+   },
+   "shape": {
+    "0.05": {
+     "rank": {
+      "power": 1.0,
+      "n": 47,
+      "interval": [
+       0.9245142663089414,
+       1.0
+      ],
+      "alpha": 0.05
+     },
+     "determined": {
+      "power": 1.0,
+      "n": 47,
+      "interval": [
+       0.9245142663089414,
+       1.0
+      ],
+      "alpha": 0.05,
+      "B": 194,
+      "rule": "claim rule with determinacy"
+     }
+    },
+    "0.005": {
+     "rank": {
+      "power": 0.0,
+      "n": 47,
+      "interval": [
+       0.0,
+       0.07548573369105858
+      ],
+      "alpha": 0.005
+     },
+     "determined": {
+      "power": 0.0,
+      "n": 47,
+      "interval": [
+       0.0,
+       0.07548573369105858
+      ],
+      "alpha": 0.005,
+      "B": 194,
+      "rule": "claim rule with determinacy"
+     }
+    }
+   }
+  },
+  "P2r": {
+   "n": 48,
+   "total": {
+    "0.05": {
+     "rank": {
+      "power": 1.0,
+      "n": 48,
+      "interval": [
+       0.9260272146527198,
+       1.0
+      ],
+      "alpha": 0.05
+     },
+     "determined": {
+      "power": 1.0,
+      "n": 48,
+      "interval": [
+       0.9260272146527198,
+       1.0
+      ],
+      "alpha": 0.05,
+      "B": 194,
+      "rule": "claim rule with determinacy"
+     }
+    },
+    "0.005": {
+     "rank": {
+      "power": 0.0,
+      "n": 48,
+      "interval": [
+       0.0,
+       0.0739727853472802
+      ],
+      "alpha": 0.005
+     },
+     "determined": {
+      "power": 0.0,
+      "n": 48,
+      "interval": [
+       0.0,
+       0.0739727853472802
+      ],
+      "alpha": 0.005,
+      "B": 194,
+      "rule": "claim rule with determinacy"
+     }
+    }
+   },
+   "shape": {
+    "0.05": {
+     "rank": {
+      "power": 1.0,
+      "n": 48,
+      "interval": [
+       0.9260272146527198,
+       1.0
+      ],
+      "alpha": 0.05
+     },
+     "determined": {
+      "power": 1.0,
+      "n": 48,
+      "interval": [
+       0.9260272146527198,
+       1.0
+      ],
+      "alpha": 0.05,
+      "B": 194,
+      "rule": "claim rule with determinacy"
+     }
+    },
+    "0.005": {
+     "rank": {
+      "power": 0.0,
+      "n": 48,
+      "interval": [
+       0.0,
+       0.0739727853472802
+      ],
+      "alpha": 0.005
+     },
+     "determined": {
+      "power": 0.0,
+      "n": 48,
+      "interval": [
+       0.0,
+       0.0739727853472802
+      ],
+      "alpha": 0.005,
+      "B": 194,
+      "rule": "claim rule with determinacy"
+     }
+    }
+   }
+  },
+  "P3r": {
+   "n": 48,
+   "total": {
+    "0.05": {
+     "rank": {
+      "power": 1.0,
+      "n": 48,
+      "interval": [
+       0.9260272146527198,
+       1.0
+      ],
+      "alpha": 0.05
+     },
+     "determined": {
+      "power": 1.0,
+      "n": 48,
+      "interval": [
+       0.9260272146527198,
+       1.0
+      ],
+      "alpha": 0.05,
+      "B": 194,
+      "rule": "claim rule with determinacy"
+     }
+    },
+    "0.005": {
+     "rank": {
+      "power": 0.0,
+      "n": 48,
+      "interval": [
+       0.0,
+       0.0739727853472802
+      ],
+      "alpha": 0.005
+     },
+     "determined": {
+      "power": 0.0,
+      "n": 48,
+      "interval": [
+       0.0,
+       0.0739727853472802
+      ],
+      "alpha": 0.005,
+      "B": 194,
+      "rule": "claim rule with determinacy"
+     }
+    }
+   },
+   "shape": {
+    "0.05": {
+     "rank": {
+      "power": 0.9791666666666666,
+      "n": 48,
+      "interval": [
+       0.8893038394068478,
+       0.9994726847465769
+      ],
+      "alpha": 0.05
+     },
+     "determined": {
+      "power": 0.9375,
+      "n": 48,
+      "interval": [
+       0.8280400692094296,
+       0.9869207555904473
+      ],
+      "alpha": 0.05,
+      "B": 194,
+      "rule": "claim rule with determinacy"
+     }
+    },
+    "0.005": {
+     "rank": {
+      "power": 0.0,
+      "n": 48,
+      "interval": [
+       0.0,
+       0.0739727853472802
+      ],
+      "alpha": 0.005
+     },
+     "determined": {
+      "power": 0.0,
+      "n": 48,
+      "interval": [
+       0.0,
+       0.0739727853472802
+      ],
+      "alpha": 0.005,
+      "B": 194,
+      "rule": "claim rule with determinacy"
+     }
+    }
+   }
+  }
+ }
+}

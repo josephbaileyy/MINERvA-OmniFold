@@ -25,8 +25,8 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "STAGE_3_REPAIR_CYCLE_2",
- "phase_detail": "independent review round 2 (REVIEW-20260927-s5p-round2-repairs-and-admission-draft.md): repair cycle 1 confirmed for F1/F2/F5 and the double count; H1 (HIGH: one interaction-model universe drawn per experiment) and M1-M6/L1-L7 answered by amendment 8; the design pilot rebuilt with the all-band draw; the admission (amendment 7) freezes after this cycle's measurements",
+ "phase": "STAGE_4_PRODUCTION",
+ "phase_detail": "amendment 7 (production admission) FROZEN after the confirmation review and a mechanical re-check; V frozen (194 all-band pilot experiments, sha256 35979ef7...); pre-freeze residuals in null-T units and development power committed before any observed statistic; budget revision 5 (production 200 CPU node-h); production lanes: power first, then the five calibration lanes",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
   "adopted_z_cv_sha256": "3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5",
@@ -34,22 +34,22 @@
  },
  "budget": {
   "path": "docs/orchestration/state/s5p/budget.json",
-  "revision": 4
+  "revision": 5
  },
  "stages": {
   "1_use_case": "FROZEN (amendment 1)",
   "2_construction_questions": "EXIT (amendment 4): R selected; measurement branch not admitted; inference branch to Stage 3",
-  "3_admission": "REPAIR CYCLE 1 (amendment 6): F1 flux reweight (delegated); fine-ratio nulls; F4 MC-size shift variants and the claim rule; standardized shrinkage; response-model universe; re-issued pilot; then review round 2 and admission (amendment 7)",
-  "4_construction": "NOT STARTED",
+  "3_admission": "FROZEN: amendment 7 (after reviews round 1, round 2, the exception repair review and the admission confirmation review)",
+  "4_construction": "IN PROGRESS: calibration and power ensembles (state/s5p/prod/)",
   "5_validation": "NOT STARTED",
   "6_adoption": "NOT STARTED",
   "7_inference_release": "IN PROGRESS (independent part): generator comparisons re-run on the flux-repaired predictions (VL156-VL160), figures replaced, note/primer/paper generator claims corrected; joint results pending admission"
  },
  "jobs": [
   {
-   "job": "58968218",
-   "label": "all-band design pilot (the one exception resubmission)",
-   "state": "RUNNING (first products valid, weight_treatment recorded)"
+   "job": "production lanes",
+   "label": "pow.q first, then cal-<null>.q x5",
+   "state": "to launch"
   }
  ],
  "receipts": [
@@ -116,6 +116,14 @@
   {
    "path": "docs/orchestration/state/s5p/stage3/f4/",
    "what": "F4 D from 16 pairs per null (D16-*): median |D|/f 0.022% (MnvTune), 0.040% (GENIE CV), 0.032% (MEC), 0.052% (NuWro), 0.075% (GiBUU); median |D|/se 0.74-0.88 (pure noise ~0.7): the half-vs-quarter MC-size effect is at noise level at every null; the 4-pair D-* files are history"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/stage3/V/V-receipt.json",
+   "what": "the frozen metric V (194 experiments, shrinkage 0.0155)"
+  },
+  {
+   "path": "docs/orchestration/state/s5p/stage3/prefreeze/",
+   "what": "pre-freeze: lambda and the declared residuals in null-T units per external null; development power (no observed statistic)"
   }
  ],
  "amendments": [
@@ -158,6 +166,11 @@
    "number": 8,
    "path": "docs/orchestration/state/s5p/contract-amendment-8-review2-repairs.json",
    "stage": "3 repair cycle 2"
+  },
+  {
+   "number": 7,
+   "path": "docs/orchestration/state/s5p/contract-amendment-7-production-admission.json",
+   "stage": "3 -> 4/7 production admission (frozen)"
   }
  ],
  "reviews": [
@@ -190,7 +203,7 @@
    "verdict": "READY WITH REQUIRED CHANGES (applied; freeze after V with a mechanical re-check)"
   }
  ],
- "next_action": "deploy; rebind to budget revision 4; run s3v-cpu.q; then D (16 pairs, bias-aligned), F2 NuWro, M1 merged-x2 comparison, V from the rebuilt pilot, development power; freeze amendment 7 with every digest; production",
+ "next_action": "deploy the freeze commit; rebind to budget revision 5; launch pow.q, then the five cal queues; monitor; evaluate when every null has a final status; independent re-computation; Stage 7 deliverables",
  "concurrent_work_at_start": "josephrb GPU jobs pfd-chain/pfd-shr/pfd-fin (58893071-58903623, m3246_g) and other users' m3246_g jobs belong to other lanes (not touched); no m3246 CPU row; shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "b30752864c70c76da3a888136e52c3dea4b615b7",
@@ -276,6 +289,10 @@
   {
    "utc": "2026-09-27T19:40Z",
    "what": "owner exception (EXCEPTION-20260927-s5p-pilot-negative-rate-resubmission.md): one additional corrective resubmission of the all-band pilot, after a quantified negative-weight treatment and an independent review; the combined-factor clip of 17773f02 is replaced by per-universe clipping (two negative bands no longer multiply to a positive weight) and non-finite values are refused where used (MinosEfficiency: 18 reco-failing rows set to 1 and counted); development only"
+  },
+  {
+   "utc": "2026-09-28T16:10Z",
+   "what": "design pilot 58968218 finished: 56 tasks COMPLETED, 5 TIMEOUT at 2.5 h on two slow nodes (nid004076/77: 1,100-4,450 s per experiment), losing 6 null and 7 alternative seeds; not retried (V from the 194 null products; the loss is independent of outcomes); the production controller counts the products that exist, so a timeout costs time, not validity"
   }
  ],
  "findings": [

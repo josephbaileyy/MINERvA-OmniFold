@@ -1,0 +1,37 @@
+{
+ "schema": "s5p-V-receipt/1",
+ "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/V/V-s3v.npz",
+ "sha256": "35979ef75ca1b0fb019c07a20e11a4bf0fe3b230e7cea495930fb572fe8e1c84",
+ "n": 194,
+ "shrinkage": 0.015494889917521543,
+ "meta": {
+  "files_first_last": [
+   "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3v/pilot/null_mnvtune/null_mnvtune_s965000.npz",
+   "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3v/pilot/null_mnvtune/null_mnvtune_s965199.npz"
+  ],
+  "shrinkage": 0.015494889917521543,
+  "lateral_symmetry": {
+   "BeamAngleX": {
+    "corr_up_vs_minus_down": -0.3369748820684811,
+    "median_abs_delta_rel": 0.0015980191187519694
+   },
+   "BeamAngleY": {
+    "corr_up_vs_minus_down": -0.5110345878779788,
+    "median_abs_delta_rel": 0.0014954350275243693
+   },
+   "MuonResolution": {
+    "corr_up_vs_minus_down": -0.296564839243219,
+    "median_abs_delta_rel": 0.0009490151097814383
+   },
+   "Muon_Energy_MINERvA": {
+    "corr_up_vs_minus_down": 0.9615692342383431,
+    "median_abs_delta_rel": 0.020152760848126082
+   },
+   "Muon_Energy_MINOS": {
+    "corr_up_vs_minus_down": 0.9447569705888765,
+    "median_abs_delta_rel": 0.021371328682604586
+   }
+  },
+  "design_sha256": "2f44cfba8fd6b39e36916ec402fd8d80b0165d377e3f41da3e0aa80d3830990c"
+ }
+}
