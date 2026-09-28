@@ -83,6 +83,11 @@ pushed branch; nothing depends on a local scratch directory.
   stop early with `touch $B/keep_busy.stop`. The NERSC certificate of the orchestrating session expired 2026-09-27
   16:04Z; renew with `sshproxy` to continue (scoring, UNBLIND, decision, coverage).
 
+- **2026-09-28 02:40Z.** Look-1 FB progress 285/944 (s4f_a3 161/192, s4s_a3 34/336, s4f_a3e 82/288, s4s_a3e_n40
+  8/128), ≈ 15–18 rows/h → complete ≈ 2026-09-29 18:00–22:00Z. Study total 1,001.8 A100-h (`resources/`). All lanes
+  healthy; stall monitor `$B/fbmon.sh` (8-h cycles). The orchestrating certificate expires 2026-09-28 10:46Z: renew
+  (`sshproxy`) before look-1 completes to run the UNBLIND step (next actions 3–5).
+
 ## Next actions, in order
 
 1. When `s3p_t24` and `s3p_l24` are COMPLETE: score (`analysis/score_design.py --k 4 5`, guarded CPU debug, into

@@ -1,8 +1,8 @@
 {
- "gpu_hours": 683.066,
- "cpu_node_hours": 0.504,
- "jobs": 574,
+ "gpu_hours": 1001.781,
+ "cpu_node_hours": 0.509,
+ "jobs": 699,
  "start": "2026-09-25T14:00:00",
- "end": "2026-09-27T07:14:29",
+ "end": "2026-09-27T19:40:14",
  "prefix": "pfd-"
 }
