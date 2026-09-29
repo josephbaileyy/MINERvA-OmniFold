@@ -115,9 +115,13 @@ def compare(mine: dict, prod: dict) -> dict:
                         continue
                     name = str(ent.get("label", ent.get("variant", lbl)))
                     m = mine_var.get(name)
+                    if m is None:  # a naming difference is a mapping gap, never a discrepancy or an agreement
+                        unmapped.setdefault(key, []).append({"path": f"{where}/{vkey}/{lbl}/{t}", "value": v,
+                                                             "note": f"no recompute variant named {name!r}"})
+                        continue
                     for f, kind in (("k", "count"), ("p", "p")):
                         if f in v:
-                            item(rows, f"{key}:{t}:{vkey}[{name}]:{f}", kind, m.get(f) if m else None, v[f],
+                            item(rows, f"{key}:{t}:{vkey}[{name}]:{f}", kind, m.get(f), v[f],
                                  f"{where}/{vkey}/{lbl}/{t}/{f}")
         for p, val in walk(sub):
             if isinstance(val, (int, float)) and not isinstance(val, bool) and (p[:1] not in used and p[:2] not in used):
@@ -148,6 +152,19 @@ def compare(mine: dict, prod: dict) -> dict:
             if isinstance(theirs, dict):
                 theirs = theirs.get("decision", theirs.get("label"))
             item(dec_rows, f"decisions_robust_kappa:{test}", "exact", md["decision"], theirs, "decisions_robust_kappa")
+    # A7 (ruled 2026-09-29): the frozen boolean, compared separately from the ruled label (robust-labels.json)
+    pb = prod.get("robust_to_the_sub_fine_residual")
+    mine_bool = mine["family"].get("robust_boolean_equivalent", {})
+    if pb is None:
+        missing.append("robust_to_the_sub_fine_residual")
+    else:
+        for test, mv in mine_bool.items():
+            null, t = test.split(":")
+            theirs = leaf(pb, null, t)
+            if theirs is None and isinstance(pb, dict):
+                theirs = pb.get(test)
+            item(dec_rows, f"robust_to_the_sub_fine_residual:{test}", "exact", mv, theirs,
+                 "robust_to_the_sub_fine_residual")
     # power
     pow_rows = []
     ppow = prod.get("power", {})
@@ -178,11 +195,43 @@ def compare(mine: dict, prod: dict) -> dict:
             "rows": allrows}
 
 
-def compare_files(mine_path: str, prod_path: str, out_path: str) -> int:
+def compare_labels(mine: dict, labels_doc: dict) -> dict:
+    """The ruled A7 label (``family.robust_labels``) against production's separate robust-labels.json."""
+    rows, missing = [], []
+    pl = labels_doc.get("labels")
+    if pl is None:
+        return {"rows": [], "not_located": ["labels"]}
+    for test, mv in mine["family"].get("robust_labels", {}).items():
+        null, t = test.split(":")
+        theirs = leaf(pl, null, t)
+        if theirs is None and isinstance(pl, dict):
+            theirs = pl.get(test)
+        if theirs is None and isinstance(pl, list):
+            theirs = next((e.get("label") for e in pl if isinstance(e, dict) and e.get("test") in (test, f"{null}/{t}")),
+                          None)
+        if isinstance(theirs, dict):
+            theirs = theirs.get("label")
+        if theirs is None:
+            missing.append(f"robust_labels:{test}")
+        item(rows, f"robust_labels:{test}", "exact", mv, theirs, "robust-labels.json/labels")
+    return {"rows": rows, "not_located": missing}
+
+
+def compare_files(mine_path: str, prod_path: str, out_path: str, labels_path: str | None = None) -> int:
     mine = json.loads(Path(mine_path).read_text())
     prod = json.loads(Path(prod_path).read_text())
     rep = compare(mine, prod)
-    rep["inputs"] = {"mine": mine_path, "production": prod_path}
+    rep["inputs"] = {"mine": mine_path, "production": prod_path, "robust_labels": labels_path}
+    if labels_path:
+        lab = compare_labels(mine, json.loads(Path(labels_path).read_text()))
+        rep["rows"] += lab["rows"]
+        rep["items"] += len(lab["rows"])
+        bad = [r for r in lab["rows"] if not r["agree"]]
+        rep["discrepancies"] += bad
+        rep["agree"] += len(lab["rows"]) - len(bad)
+        rep["not_located"] += lab["not_located"]
+    else:
+        rep["not_located"].append("robust-labels.json (not given)")
     Path(out_path).write_text(json.dumps(rep, indent=1, sort_keys=True, default=str) + "\n")
     print(f"{rep['agree']}/{rep['items']} items agree; {len(rep['discrepancies'])} discrepancies; "
           f"not located: {rep['not_located']}; wrote {out_path}")

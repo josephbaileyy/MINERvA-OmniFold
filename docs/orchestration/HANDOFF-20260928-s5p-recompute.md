@@ -10,10 +10,9 @@ the calibration (the nuisance model, the pseudo-experiment process, the conditio
 Task pointer: `docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md` §1 (at `origin/main` `12991771`).
 Branch `s5p-parallel-recompute-20260928`, worktree `../MINERvA-OmniFold-s5p-recompute` (created from `12991771`).
 Cluster scratch (mine only): `/pscratch/sd/j/josephrb/s5p-parallel-recompute/`.
-Evaluator: `nd-unfolding/s5p_recompute.py` at the branch tip, sha256 `bacc5675…`. It is `707421ee…` (commit
-`27c7ff37`, the copy the real-input dry run used) plus the labelled A8 sensitivity readings of §3.1. Its primary
-outputs are unchanged. The branch is pushed to `origin` for durability and is **not
-merged** into `main`.
+Evaluator: `nd-unfolding/s5p_recompute.py` at the branch tip, sha256 `8ae72876…`. Its history: `707421ee…` (commit
+`27c7ff37`, the copy the real-input dry run used), then the labelled A8 sensitivity readings (§3.1, primary outputs
+unchanged), then the owner's A7 ruling (§3.2, which changes only the reported κ = 3 label).
 
 **STATUS: FINAL VERIFICATION PENDING.** Production was non-terminal (calibration batch 0) when this was written.
 Nothing below is a verification result.
@@ -39,9 +38,9 @@ Nothing below is a verification result.
 |---|---|
 | `nd-unfolding/s5p_recompute.py` | the evaluator: J geometry, surrogates, statistics, variants, claim p, Holm with determinacy, κ = 3 flag, power, implied size, observed-jitter p, sequential-rule re-evaluation at every look; CLI `evaluate` / `compare` |
 | `nd-unfolding/s5p_recompute_compare.py` | compares a recompute output with production's `joint-evaluate.json`; lists every production numeric leaf it could not map |
-| `nd-unfolding/tests/test_s5p_recompute.py`, `tests/s5p_recompute_toy.py` | 39 controls (below and §3.1); a synthetic world in the production file formats |
+| `nd-unfolding/tests/test_s5p_recompute.py`, `tests/s5p_recompute_toy.py` | 43 controls (below, §3.1, §3.2); a synthetic world in the production file formats |
 
-Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **39 passed**; ~20 s on an idle machine):
+Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **43 passed**; ~16 s on an idle machine):
 no import of the three production modules (AST); Clopper–Pearson closed form and the reviews' own numbers
 (review 1: `[0.0057, 0.0148]` at p = 0.01, B = 1999; review 2 M3: determined k at 0.005 is `{0}` at B = 800 and
 `{0..3}` at B = 1999, rank rule `{0..3}` at 800); statistics (total = inverse quadratic form; shape invariant to
@@ -100,9 +99,10 @@ Reading:
 ## 3. Ambiguities: governing text, readings, consequences
 
 Every reading used is embedded in each output (`ambiguities`). **None was chosen by looking at production output.**
-"Alt. computed" says whether the competing reading is computed beside the primary one in the same run. Items marked
-**RULING** need an explicit ruling from the specification owner if the final comparison shows that the readings
-disagree on a decision. The primary reading stays in force until then. It is never swapped to match production.
+"Alt. computed" says whether the competing reading is computed beside the primary one in the same run. **2026-09-29:** A7 is
+ruled by the owner. A6 and A8 are assessed by this lane as resolved by the frozen text (assessment document), with
+no owner ruling. The primary readings are unchanged, and the alternatives stay computed as labelled diagnostics. A
+reading is never swapped to match production.
 
 | # | governing text | reading used (primary) | competing reading(s) | affected outputs | decision could change? | resolved by an authoritative record? | alt. computed |
 |---|---|---|---|---|---|---|---|
@@ -111,9 +111,9 @@ disagree on a decision. The primary reading stays in force until then. It is nev
 | A3 | am. 5 "N(0, diag s_num²)" | `standard_normal(109)` × SD | `multivariate_normal` (different stream consumption) | all simulated T | as A2 | distribution yes, stream no | no |
 | A4 | `s5p_inference` docstring (Jacobian at f); am. 5 "residual gets −eps" | shape: p(f) vs p(μ+eps) | p(f−eps) vs p(μ) | simulated T_shape | only at a near-tie | Jacobian at f: yes; eps placement: no | no |
 | A5 | `s5p_joint.shift_vector` docstring (b = ensemble mean − μ; a, se over F4 pairs) | b from surrogated f without eps; se = SD(ddof 1)/√16; one S for both tests | eps included in b; ddof 0; a separate S for the shape test | S → the c-variant p-values | **yes**: through the claim p when a c-variant is the argmax near a Holm threshold | b, a, se: yes; eps, ddof, shape S: no | no |
-| **A6** | am. 7 `claims.rejection` "process-shift variants … AND the sub-fine-residual variants F ± 2δ_M1" | UNION: {cS} ∪ {±κδ} (5 variants) | cross product cS + sκδ (9 variants; larger combined shifts → larger claim p) | claim p of the four external nulls, Holm decisions, power at GENIE CV, sequential looks | **yes** (a rejection can become undetermined or not rejected) | **no** (production key names `variants` / `robustness_variants` do not decide it) | **yes**: `product_reading`, `family.holm_product_variant_reading`, `decisions_changed_by_product_reading` — **RULING** |
-| **A7** | am. 7 "Every rejection is also flagged 'robust to the sub-fine residual' or not at kappa = 3 (report only)" | per rejected test: κ=3 claim interval below the threshold of the step that rejected it | a full Holm re-run at κ = 3 (production writes `decisions_robust_kappa`) | the robustness flag only | no claim decision (report only); the flag itself: **yes** | no | **yes**: `family.holm_at_kappa_robust` — **RULING** |
-| **A8** | am. 7 `sequential_rule`; `sequential_decision` docstring "(b) meets the T7 precision at the point estimate" | half-width on the 99.5% look interval; "contains" closed | (i) half-width on the 95% interval; (ii) open containment; (iii) both | whether each look should have stopped (the sequential verification verdict), not the p at production's B | the verdict on production's stop: **yes**, only at B = 200–800 and only through (i) (§3.1); p-values at the B reached: no | threshold condition: yes; precision interval level: no | **yes**: `sequential.a8_sensitivity` (labelled readings; the primary alone gives `stop_verdict`) — **RULING** if the readings' verdicts disagree on a production stop |
+| **A6** | am. 7 `claims.rejection` "process-shift variants … AND the sub-fine-residual variants F ± 2δ_M1" | UNION: {cS} ∪ {±κδ} (5 variants) | cross product cS + sκδ (9 variants; larger combined shifts → larger claim p) | claim p of the four external nulls, Holm decisions, power at GENIE CV, sequential looks | **yes** (a rejection can become undetermined or not rejected), bounded: cS is 0.024–0.068 null SD beside 0.55–2.0 for 2δ | **yes, by text**. Revised 2026-09-29: this lane's assessment `ASSESSMENT-20260929-s5p-recompute-A6-A8.md` §1 agrees with the campaign's clarification. **No owner ruling.** | **yes**: `product_reading`, `family.holm_product_variant_reading`, `decisions_changed_by_product_reading` (labelled diagnostic) |
+| **A7** | am. 7 "Every rejection is also flagged 'robust to the sub-fine residual' or not at kappa = 3 (report only)" | **RULED 2026-09-29** (R7(a)): the full Holm re-run at κ = 3 over claim variants ∪ F ± 3δ_M1; labels "robust to the sub-fine residual" / "not robust" / "not applicable" (§3.2) | (b) per-test at the rejecting step's threshold (non-adopted); this lane's earlier set with ±2δ replaced by ±3δ | the reported label only | no claim decision (report only) | **yes: owner ruling** `RULING-20260929-s5p-A7-robustness-flag.md` (origin/main `4a1d931c`) | the ruled label is primary; (b) and the replacing set are labelled diagnostics |
+| **A8** | am. 7 `sequential_rule`; `sequential_decision` docstring "(b) meets the T7 precision at the point estimate" | half-width on the 99.5% look interval; "contains" closed | (i) half-width on the 95% interval; (ii) open containment; (iii) both | whether each look should have stopped (the sequential verification verdict), not the p at production's B | the verdict on production's stop: **yes**, only at B ≤ 800 and only through (i) (§3.1); (ii) at no B = 1..1999 | **level: yes, by text**. Revised 2026-09-29: assessment §2 agrees with the clarification. Closure: not by text, immaterial at every B. **No owner ruling.** | **yes**: `sequential.a8_sensitivity` (labelled readings; only the primary gives `stop_verdict`) |
 | A9 | am. 7 "a budget stop at B = 0 leaves the null 'not calibrated' (it stays in the Holm family with p = 1)" | interval [0, 1] → 'undetermined' at its step, labelled 'not calibrated' | 'not rejected' at its step | labels of that null (and of equal-p tests after it) | no rejection can change (p = 1 is last) | label and p: yes; step outcome: no | no |
 | A10 | none (ties unaddressed) | family order (design null order; total before shape) | any other stable order | Holm labels at exactly equal claim p | only with equal p and different B | no | no |
 | A11 | `power_determined` docstring (k = largest count over null variants); design `power.*.surrogate_seed0` | alternatives unshifted, own surrogates, eps keyed by the set's seed0 | variants applied to the alternative too | power | — | yes, in substance | no |
@@ -148,8 +148,11 @@ Where the readings differ (m = 10, every k; reproduce with `python3 nd-unfolding
 | 800 | 53 | 0.468–0.533 | 0 |
 | 1000–1999 | 0 | — | 0 |
 
-- Reading (ii), open containment, differs **nowhere** on the attainable (k, B) grid; an endpoint equal to a
-  threshold does not occur. The synthetic endpoint cases show it would matter only there.
+- Reading (ii), open containment, changes the stop at **no** (k, B) for **any** B = 1..1999. This was re-scanned
+  2026-09-29. The first version of this line covered only the batch-edge B above; a look between them occurs when
+  seeds are lost. The one exact endpoint equality (B = 2, k = 2) fails the T7 precision under either reading, and
+  the closest approach for B ≥ 100 is 4.5e-9. The synthetic endpoint cases show it would matter only at an exact
+  equality.
 - Reading (iii) equals (i).
 - (i) can only make a null stop **earlier**, never later.
 - MnvTune and GENIE CV may not stop before B = 1200, so **A8 can bind only for GENIE MEC, NuWro and GiBUU at a
@@ -167,10 +170,34 @@ Synthetic boundary controls (`A8Sensitivity`, 7 tests):
 - the verdict mapping;
 - an end-to-end run carrying and labelling the readings.
 
-**Items needing an explicit ruling if they bind: A6 (can change a rejection), A7 (the robustness flag), A8 (the
-verdict on a production stop of MEC, NuWro or GiBUU at B ≤ 800; §3.1).** A1–A5 matter for bit-level agreement. Each needs a ruling only if production
+**Status of the three decision-relevant items (2026-09-29):**
+- **A7** is RULED (§3.2).
+- **A6** (union) and **A8** (99.5% level) are resolved by the frozen text in this lane's assessment, in agreement
+  with the campaign's clarification. **Neither has an owner ruling.**
+- Should a diagnostic reading disagree with the primary on a decision (A6), or on a stop verdict (A8: MEC, NuWro or
+  GiBUU at B ≤ 800), the disagreement is reported as such for the owner. It does not change the primary. A1–A5 matter for bit-level agreement. Each needs a ruling only if production
 reads it differently and a decision moves. That is diagnosed at the final comparison by computing the
 competing reading as a labelled diagnostic.
+
+### 3.2 A7 as ruled (2026-09-29)
+
+The ruling is `RULING-20260929-s5p-A7-robustness-flag.md` at origin/main `4a1d931c`. It quotes Joseph verbatim:
+*"the full Holm rerun at κ = 3 …"*. It was received ~01:22Z, before any observed claim p existed, and is report only.
+
+- The κ = 3 robust claim of each test is the largest p over the claim variants ∪ {F ± 3δ_M1}. This is R7(a)'s text
+  in the clarification; the ±2δ members are kept. MnvTune, with no M1 variant, uses its claim.
+- `family.holm_at_kappa_robust` is `holm_determined` over the ten robust claims.
+- `family.robust_labels`: a primary rejection is "robust to the sub-fine residual" iff it is also rejected there,
+  else "not robust"; every other test is "not applicable".
+- `family.robust_boolean_equivalent` gives, per test, whether the two decision labels are equal. This is compared
+  separately with the frozen evaluator's boolean `robust_to_the_sub_fine_residual`, which differs from the label
+  only off rejections.
+- Kept as labelled diagnostics:
+  - A7(b), per test (`decisions[i].A7b_per_test_robust_diagnostic`);
+  - this lane's earlier κ = 3 set, with ±2δ replaced by ±3δ (`*_replacing_kappa2_diagnostic`).
+- Tests (`A7Ruling`, 3, plus a comparer control) cover the labels; a case where the full re-run and the per-test
+  reading disagree (a blocker undetermined at κ = 3); and the variant sets end to end (the ruled set is a superset
+  of both the claim set and the replacing set).
 
 If a discrepancy appears, diagnose it by computing the alternative reading as a labelled diagnostic and report
 both; do **not** change the primary reading to make the numbers agree.
@@ -201,11 +228,14 @@ echo "final statuses: $n/5"
 squeue -h --me -o %j > "$S/squeue-terminal-check.txt"; echo "squeue rc=$?"
 echo "queued s5p cal/pow jobs: $(grep -cE '^s5p-s5p_(cal|pow)_' "$S/squeue-terminal-check.txt")"
 if [ -f "$R/stage7/joint/joint-evaluate.json" ]; then echo "joint-evaluate.json present"; sha256sum "$R/stage7/joint/joint-evaluate.json"; else echo "joint-evaluate.json MISSING"; fi
+if [ -f "$R/stage7/joint/robust-labels.json" ]; then echo "robust-labels.json present"; sha256sum "$R/stage7/joint/robust-labels.json"; else echo "robust-labels.json MISSING"; fi
 for d in "$R"/runs/prod/pow/*; do echo "power $(basename "$d"): $(ls "$d" | grep -v partial | grep -c 'npz$')"; done
 EOF
 ```
 
-A `squeue` failure (rc ≠ 0) means UNKNOWN, not "no jobs". An incomplete power set does not block the
+`robust-labels.json` (the ruled A7 label, produced by the campaign after the evaluation) is needed only for the A7
+label comparison. If it is missing, `compare` reports it as not located (exit 2) and the rest of the comparison
+still stands; rerun `compare` when it appears. A `squeue` failure (rc ≠ 0) means UNKNOWN, not "no jobs". An incomplete power set does not block the
 verification (amendment 7 records it); report it.
 
 **5.2 Deploy the committed evaluator** from the pushed branch tip, not a working tree, and record the sha:
@@ -229,7 +259,9 @@ python s5p_recompute.py evaluate --require-terminal --design design.json \
   --v /pscratch/sd/j/josephrb/s5p-20260926/stage3/V/V-s3v.npz --s5c-contract s5c_contract.json \
   --out ../final/recompute.json; echo "evaluate rc=$?"
 python s5p_recompute.py compare --mine ../final/recompute.json \
-  --production /pscratch/sd/j/josephrb/s5p-20260926/stage7/joint/joint-evaluate.json --out ../final/compare.json; echo "compare rc=$?"
+  --production /pscratch/sd/j/josephrb/s5p-20260926/stage7/joint/joint-evaluate.json \
+  --robust-labels /pscratch/sd/j/josephrb/s5p-20260926/stage7/joint/robust-labels.json \
+  --out ../final/compare.json; echo "compare rc=$?"
 EOF
 ```
 
@@ -246,13 +278,22 @@ Then:
 
 **5.4 Report and record.** Report each of the following against production:
 - every p-value of the 10 tests (per variant, claim, unshifted);
-- each Holm decision with its threshold and interval, and the κ = 3 flag;
-- the ambiguity alternatives: `decisions_changed_by_product_reading` (A6) and `holm_at_kappa_robust` (A7);
+- each Holm decision with its threshold and interval;
+- the ruled A7 label (`family.robust_labels`) against `robust-labels.json`, and **separately**
+  `robust_boolean_equivalent` against the frozen `robust_to_the_sub_fine_residual`;
+- the labelled diagnostics: `decisions_changed_by_product_reading` (A6), the A7(b) and replacing-set labels (A7), and
+  `a8_sensitivity` (A8);
 - the sequential verification per look (`nulls.<null>.sequential`: the rule's stop against the status file's
   `stop`/`reason`, `first_look_where_rule_stops` against the final B, `stop_verdict`) and the A8 readings
   (`sequential.a8_sensitivity.stop_verdict_by_reading`, `looks_where_a_reading_differs`);
 - power per set at 0.05 and 0.005 (rank unshifted, rank claim, determined claim, n present against declared).
 
-For any disagreement on a **RULING** item (§3), record it and route it for a ruling. Do not re-read the
+For any disagreement between a primary reading and its diagnostic that moves a decision or a stop verdict, record
+it and route it to the owner. Do not re-read the
 specification to agree. Commit `recompute.json`, `compare.json` and a report beside this file. Only then may the
 verification be called complete. Agreement verifies the calculation, not the adequacy of the calibration.
+
+**Downstream reader.** The reproduction harness (branch `s5p-parallel-reproduction-20260928`, config key
+`joint.independent_compare`) records `/pscratch/sd/j/josephrb/s5p-parallel-recompute/final/compare.json` by sha256
+only. If this route changes, follow "Steps to incorporate the final joint result" in
+`HANDOFF-20260928-s5p-reproduction-harness.md` on that branch.

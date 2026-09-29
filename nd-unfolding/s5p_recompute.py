@@ -81,14 +81,21 @@ AMBIGUITIES = {
                        "the same S (from the total metric) shifts both tests",
     "A6_variant_set": "amendment 7 names the process-shift variants c in (0, 1/2, 1) AND the M1 variants F +- "
                       "kappa delta_M1; read as a UNION (3 + 2 variants, c = 0 carrying no M1 term); the cross "
-                      "product (9 variants) is computed beside it and any decision it would change is reported",
-    "A7_robust_flag": "a rejected test is 'robust to the sub-fine residual' iff its claim with kappa = 3 in place "
-                      "of 2 (c variants unchanged) has its 95% interval entirely below the Holm threshold of the "
-                      "step that rejected it; a full Holm re-run at kappa = 3 is reported beside it",
+                      "product (9 variants) is computed beside it and any decision it would change is reported. "
+                      "2026-09-29: assessed as resolved by the frozen text to the union "
+                      "(ASSESSMENT-20260929-s5p-recompute-A6-A8.md); no owner ruling",
+    "A7_robust_flag": "RULED 2026-09-29 (RULING-20260929-s5p-A7-robustness-flag.md, R7(a)): the full Holm re-run "
+                      "at kappa = 3 over the robust claims (claim variants UNION F +- 3 delta_M1); a primary "
+                      "rejection is 'robust to the sub-fine residual' iff also rejected there, else 'not robust'; "
+                      "every non-rejected test 'not applicable' (family.robust_labels). Diagnostics kept: A7(b) per "
+                      "test (A7b_per_test_robust_diagnostic) and this lane's earlier set with +-2 replaced by +-3 "
+                      "(*_replacing_kappa2_diagnostic)",
     "A8_look_precision": "the sequential rule's T7 half-width is measured on the 99.5% look interval (the same "
                          "interval as the threshold condition); 'contains' is closed at both ends. Sensitivity "
                          "readings (labelled, never used for a verdict): precision on the 95% interval, open "
-                         "containment, and both (A8_READINGS; sequential.a8_sensitivity)",
+                         "containment, and both (A8_READINGS; sequential.a8_sensitivity). 2026-09-29: the level is assessed "
+                         "as resolved by the frozen text to the 99.5% look interval; closure is not fixed by text and "
+                         "changes no stop at any B = 1..1999; no owner ruling",
     "A9_not_calibrated": "a null with B = 0 has p = 1, k = 0 and the interval [0, 1]; at its Holm step it stops "
                          "'undetermined' and is labelled 'not calibrated'",
     "A10_holm_ties": "equal claim p-values are ordered by the family order (design null order, total before "
@@ -175,6 +182,25 @@ def holm_determined(entries: list[dict], alpha: float, level: float = CP_LEVEL) 
         if stopped is not None:
             rec["decision"] = stopped
         out[i] = rec
+    return out
+
+
+ROBUST = "robust to the sub-fine residual"
+NOT_ROBUST = "not robust"
+NOT_APPLICABLE = "not applicable"
+
+
+def robust_labels(primary: list[dict], robust: list[dict]) -> dict:
+    """The reported kappa = 3 label under the owner's A7 ruling (R7(a), report only): a primary rejection is robust
+    iff the full Holm re-run at kappa = 3 also rejects it; every non-rejected test is 'not applicable'."""
+    out = {}
+    for d, r in zip(primary, robust):
+        if d["test"] != r["test"]:
+            raise ValueError("primary and robust Holm records are not aligned")
+        if d["decision"] != "rejected":
+            out[d["test"]] = NOT_APPLICABLE
+        else:
+            out[d["test"]] = ROBUST if r["decision"] == "rejected" else NOT_ROBUST
     return out
 
 
@@ -648,10 +674,15 @@ class Evaluator:
         ens = null_ensembles(ctx["f_cal"], ctx["eps"], ts, shifts)
         _, rob_shifts = self.shifts_for(ctx, "kappa_robust") if "none" not in ctx["m1"] else (None, {})
         rob_only = {k: v for k, v in rob_shifts.items() if k not in shifts}
-        ens_rob = dict(ens)
+        # A7 as ruled (RULING-20260929-s5p-A7-robustness-flag.md, R7(a)): the kappa = 3 robust claim is the largest
+        # p over the claim variants UNION F +- 3 delta_M1 (the +-2 members kept). The earlier reading of this lane,
+        # the claim set with +-2 REPLACED by +-3, is kept only as a labelled diagnostic.
+        ens_rob, ens_rob_replace = dict(ens), dict(ens)
         if rob_only:
-            ens_rob = {k: v for k, v in ens.items() if not k.startswith("m1=")}
-            ens_rob.update(null_ensembles(ctx["f_cal"], ctx["eps"], ts, rob_only))
+            extra = null_ensembles(ctx["f_cal"], ctx["eps"], ts, rob_only)
+            ens_rob.update(extra)
+            ens_rob_replace = {k: v for k, v in ens.items() if not k.startswith("m1=")}
+            ens_rob_replace.update(extra)
         _, prod_shifts = self.shifts_for(ctx, mode="product")
         ens_prod = null_ensembles(ctx["f_cal"], ctx["eps"], ts, {k: v for k, v in prod_shifts.items()})
         tests = {}
@@ -659,6 +690,7 @@ class Evaluator:
             c = claim(obs[t], ens, t)
             c["unshifted"] = c["variants"]["c=0"]
             c["robust_kappa3"] = claim(obs[t], ens_rob, t) if rob_only else None
+            c["robust_kappa3_replacing_kappa2_diagnostic"] = claim(obs[t], ens_rob_replace, t) if rob_only else None
             cp_ = claim(obs[t], ens_prod, t)
             c["product_reading"] = {k: cp_[k] for k in ("k", "B", "p", "argmax")}
             size = {}
@@ -775,20 +807,26 @@ def evaluate(design: dict, v_path: str, s5c_contract: dict, variant_mode: str = 
             d["label"] = "not calibrated"
         d["holm_point"] = p
     out["family"]["decisions"] = dec
-    rob = []
+    rob, rob_replace = [], []
     for e, d in zip(entries, dec):
         key, t = e["test"].split(":")
-        r = out["nulls"][key]["tests"][t].get("robust_kappa3")
-        if r is None:
-            rob.append({"test": e["test"], "p": e["p"], "k": e["k"], "B": e["B"]})
-        else:
-            rob.append({"test": e["test"], "p": r["p"], "k": r["k"], "B": r["B"]})
-        if d["decision"] == "rejected":
-            if r is None:
-                d["robust_to_sub_fine_residual"] = "no M1 variant (null without a sub-fine residual)"
-            else:
-                d["robust_to_sub_fine_residual"] = bool(cp_interval(r["k"], r["B"])[1] < d["threshold"])
-    out["family"]["holm_at_kappa_robust"] = holm_determined(rob, ev.alpha)
+        tr = out["nulls"][key]["tests"][t]
+        for dest, field_ in ((rob, "robust_kappa3"), (rob_replace, "robust_kappa3_replacing_kappa2_diagnostic")):
+            r = tr.get(field_)
+            src = r if r is not None else e  # a null without M1 variants: its robust claim is its claim
+            dest.append({"test": e["test"], "p": src["p"], "k": src["k"], "B": src["B"]})
+        if d["decision"] == "rejected":  # A7(b), the per-test reading: a labelled, non-adopted diagnostic
+            r = tr.get("robust_kappa3")
+            d["A7b_per_test_robust_diagnostic"] = ("no M1 variant (null without a sub-fine residual)" if r is None
+                                                   else bool(cp_interval(r["k"], r["B"])[1] < d["threshold"]))
+    holm_rob = holm_determined(rob, ev.alpha)
+    out["family"]["holm_at_kappa_robust"] = holm_rob
+    out["family"]["robust_labels"] = robust_labels(dec, holm_rob)
+    out["family"]["robust_boolean_equivalent"] = {d["test"]: d["decision"] == r["decision"]
+                                                  for d, r in zip(dec, holm_rob)}
+    holm_rep = holm_determined(rob_replace, ev.alpha)
+    out["family"]["holm_at_kappa_robust_replacing_kappa2_diagnostic"] = holm_rep
+    out["family"]["robust_labels_replacing_kappa2_diagnostic"] = robust_labels(dec, holm_rep)
     prod_entries = []
     for key in design["nulls"]:
         for t in TESTS:
@@ -926,6 +964,8 @@ def main(argv=None) -> int:
     c = sub.add_parser("compare", help="compare a recompute output with production's joint-evaluate.json")
     c.add_argument("--mine", required=True)
     c.add_argument("--production", required=True)
+    c.add_argument("--robust-labels", default=None,
+                   help="production's robust-labels.json (the ruled A7 label, produced after the evaluation)")
     c.add_argument("--out", required=True)
     a = ap.parse_args(argv)
     if a.cmd == "evaluate":
@@ -954,7 +994,7 @@ def main(argv=None) -> int:
         return 0
     if a.cmd == "compare":
         from s5p_recompute_compare import compare_files
-        return compare_files(a.mine, a.production, a.out)
+        return compare_files(a.mine, a.production, a.out, a.robust_labels)
     return 2
 
 
