@@ -497,3 +497,5 @@ docs/orchestration/RULING-20260929-s5p-A7-robustness-flag.md	LIVE	open
 docs/orchestration/HANDOFF-20260928-s5p-reproduction-harness.md	LIVE	open	
 docs/orchestration/HANDOFF-20260929-s5p-campaign-cold-start.md	LIVE	open	
 docs/orchestration/GOAL-20260929-s5p-campaign-successor.txt	LIVE	open	
+docs/orchestration/HANDOFF-20260929-s5p-recompute-seed-gap-correction.md	LIVE	open	
+docs/orchestration/RECORD-20260929-s5p-lost-seed-runtime-diagnostic.md	LIVE	open	
