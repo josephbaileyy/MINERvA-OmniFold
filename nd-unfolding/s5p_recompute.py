@@ -901,7 +901,9 @@ def seed_gap_report(design: dict, key: str, base: int, seeds: list[int], batch: 
     batch, so the batches submitted are the per-look status files with ``stop`` false. Only when no status file
     exists are they inferred as the batches up to the last one holding a product (``span_basis`` gives both
     counts and the one used). The span ``[base, base + 200 x batches)`` is capped at the declared maximum. A product
-    outside it is listed and stays in the ensemble.
+    outside it is listed and stays in the ensemble. Diagnostic only (the ensemble and the looks do not use it): a
+    batch refused by the meter after a look that continued is counted as submitted, and two looks at one B share
+    one status file, so a batch lost whole after a continuing look is not counted.
     """
     nmax = int(design["nulls"][key]["calibration_n"]["max"])
     files = look_status_files(design, key)
@@ -927,30 +929,30 @@ def verify_sequential(ev: Evaluator, key: str, prods: list[Product], thresholds:
     """Re-evaluate the stopping rule at every look on the products of the finished batches.
 
     The look before batch b (b >= 1) sees the finished products of batches 0..b-1 (seeds < base + 200 b, capped at
-    the maximum); lost seeds make its B smaller than 200 b. There is one look after each submitted batch
-    (``seed_gap_report``), and none beyond the final B when a final status exists, or beyond the largest B of the
-    controller's per-look status files otherwise. A batch that adds no product (still running, never run after a
-    budget refusal, or lost whole) would repeat the previous look's B, so it gets no look of its own and is listed
-    in ``batches_adding_no_product``. Each look is paired with the status file of the same B, and a status file
-    (B > 0) that no look reproduces is listed.
+    the maximum); lost seeds make its B smaller than 200 b. Looks run batch by batch until every product has been
+    looked at, and never beyond the final B when a final status exists (or beyond the largest B of the controller's
+    per-look status files otherwise); they do not depend on how many status files exist. A batch that adds no
+    product while later batches do (lost whole) would repeat the previous look's B and decision, so it gets no look
+    of its own and is listed in ``batches_adding_no_product``. Each look is paired with the status file of the same
+    B; a status file (B > 0) that no look reproduces is listed, and ``final_look_is_final_B`` says whether the last
+    look reached the final status's B.
     """
     spec = design["nulls"][key]
     cn = spec["calibration_n"]
     nmax, nmin = int(cn["max"]), int(cn.get("min") or 0)
     status_files = look_status_files(design, key)
-    n_batches = seed_gap_report(design, key, base, [p.seed for p in prods], batch)["batches_submitted"]
     horizon = B_final if B_final is not None else max(status_files, default=0)
     looks, first_stop, no_new, prev_n = [], None, [], 0
     first_stop_alt = {name: None for name in A8_READINGS if name != "primary"}
-    for b in range(1, n_batches + 1):
+    for b in range(1, -(-nmax // batch) + 1):
         edge = base + min(batch * b, nmax)
         sub = [p for p in prods if p.seed < edge]
         if len(sub) > horizon:
             break
         if len(sub) == prev_n:
+            if len(sub) == len(prods):
+                break  # nothing left to look at: batches not submitted, or still running
             no_new.append(b - 1)
-            if edge >= base + nmax:
-                break
             continue
         prev_n = len(sub)
         ctx = ev.null_context(key, sub)
@@ -978,7 +980,7 @@ def verify_sequential(ev: Evaluator, key: str, prods: list[Product], thresholds:
                       "status_file": st_path, "status": st, "a8_sensitivity": a8})
         if rule and first_stop is None:
             first_stop = n
-        if edge >= base + nmax:
+        if edge >= base + nmax or n == len(prods):
             break
     final_path = cn["sequential_status"]
     final = json.load(open(final_path)) if os.path.exists(final_path) else None
@@ -990,6 +992,7 @@ def verify_sequential(ev: Evaluator, key: str, prods: list[Product], thresholds:
             "status_files": {str(k): v for k, v in sorted(status_files.items())},
             "status_files_without_a_look": sorted(b for b in status_files if b > 0 and b not in looked),
             "batches_adding_no_product": no_new,
+            "final_look_is_final_B": ((looks[-1]["B"] if looks else 0) == B_final) if B_final is not None else None,
             "final_reason": reason, "stop_verdict": verdicts["primary"],
             "a8_sensitivity": {"readings": A8_READINGS,
                                "first_look_where_rule_stops": {"primary": first_stop, **first_stop_alt},

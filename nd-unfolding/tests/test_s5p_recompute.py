@@ -453,8 +453,9 @@ class SeedGaps(unittest.TestCase):
             bad.append(f"look B {[lk['B'] for lk in seq['looks']]}, expected [198, 397]")
         if not all(lk["status_file"] and lk["status"]["B"] == lk["B"] for lk in seq["looks"]):
             bad.append("a look is not paired with the status file of its B")
-        if seq["batches_adding_no_product"]:
-            bad.append(f"batches adding no product {seq['batches_adding_no_product']}")
+        if seq["batches_adding_no_product"] or seq["final_look_is_final_B"] is not True:
+            bad.append(f"batches adding no product {seq['batches_adding_no_product']}, final look is final B "
+                       f"{seq['final_look_is_final_B']}")
         if seq["status_files_without_a_look"]:
             bad.append(f"status files without a look {seq['status_files_without_a_look']}")
         gaps = cal["seed_gaps"]
@@ -487,6 +488,7 @@ class SeedGaps(unittest.TestCase):
         self.assertTrue(0 < k < B, k)  # an extreme T_obs would make k = 0 whatever the ensemble
 
     def test_control_the_withdrawn_selection_goes_red(self):
+        # the withdrawn SELECTION under the corrected look loop (1bfd8910's own loop repeated B = 394 nine times)
         from unittest import mock
         b = self.base
         with mock.patch.object(R.Evaluator, "load_ensemble", withdrawn_a13_selection({self.NULL: b + 397})):
@@ -497,25 +499,62 @@ class SeedGaps(unittest.TestCase):
         for part in ("ensemble B 394", "not matched", "look B [198, 394]", "B_null 394"):
             self.assertIn(part, joined)
 
-    def test_a_batch_adding_no_product_gets_no_look(self):
-        """Batch 1 submitted after the B = 198 look but holding no product yet (or never run after a budget refusal):
-        its look would repeat B = 198; there is one look, and batch 1 is listed."""
+    def test_a_trailing_batch_without_products_gets_no_look(self):
+        """Batch 1 launched after the B = 198 look but holding no product (still running, or refused by the meter and
+        then a 'budget' final status written without rewriting the look file): one look, nothing listed. The gap
+        diagnostic counts batch 1 as submitted (documented: a budget refusal is not visible in the look files)."""
         for final in (None, "budget"):
             with self.subTest(final=final):
                 t = Toy(self.dir / f"w-nonew-{final}")
                 t.calibration(self.NULL, 200, skip=(5, 17))
                 t.status(self.NULL, 198, False, "continue")
                 if final:
-                    t.status(self.NULL, 198, True, final)
-                    (t.root / "status" / f"{self.NULL}-B198.json").write_text(
-                        json.dumps({"null": self.NULL, "B": 198, "max": 1999, "stop": False, "reason": "continue"}))
+                    (t.root / "status" / f"{self.NULL}-final.json").write_text(
+                        json.dumps({"null": self.NULL, "B": 198, "max": 1999, "stop": True, "reason": final}))
                 t.calibration("GiBUU_2019", 20)
                 out = R.evaluate(t.design(), t.v_path, t.contract, log=lambda *a: None)
                 seq = out["nulls"][self.NULL]["sequential"]
                 self.assertEqual([lk["B"] for lk in seq["looks"]], [198])
-                self.assertEqual(seq["batches_adding_no_product"], [1])
+                self.assertEqual(seq["batches_adding_no_product"], [])
                 self.assertEqual(seq["status_files_without_a_look"], [])
+                self.assertEqual(seq["final_look_is_final_B"], True if final else None)
                 self.assertEqual(out["nulls"][self.NULL]["calibration"]["seed_gaps"]["batches_submitted"], 2)
+
+    def lost_batches_world(self, name, lost, final_B, reason, statuses, drop_b0=False):
+        """k = 0 at every look (m = 4: the rule first stops at B = 600); `lost` batches have no product at all."""
+        t = Toy(self.dir / name)
+        truth = t.truth[self.NULL]
+        t.set_data(truth * np.repeat(np.linspace(0.7, 1.3, 4), truth.size // 4))
+        n_seeds = 200 * (final_B // 200 + len(lost))
+        t.calibration(self.NULL, n_seeds, skip={i for bt in lost for i in range(200 * bt, 200 * bt + 200)})
+        for B in statuses:  # a repeated look at one B writes one file
+            t.status(self.NULL, B, False, "continue")
+        t.status(self.NULL, final_B, True, reason)
+        if drop_b0:
+            (t.root / "status" / f"{self.NULL}-B0.json").unlink()
+        t.calibration("GiBUU_2019", 20)
+        return R.evaluate(t.design(), t.v_path, t.contract, log=lambda *a: None)["nulls"][self.NULL]["sequential"]
+
+    def test_a_batch_lost_whole_keeps_every_later_look(self):
+        # review F1: batch 1 lost whole; the look after it repeats B = 200 (one file); the rule stops at 600
+        seq = self.lost_batches_world("w-lost1", [1], 600, "rule met for both tests", [200, 400])
+        self.assertEqual([lk["B"] for lk in seq["looks"]], [200, 400, 600])
+        self.assertEqual(seq["batches_adding_no_product"], [1])
+        self.assertEqual((seq["first_look_where_rule_stops"], seq["stop_verdict"]), (600, "consistent"))
+        self.assertTrue(seq["final_look_is_final_B"])
+        self.assertTrue(all(lk["status_file"] for lk in seq["looks"]))
+        # two batches lost whole (two collisions): the missed looks would hide a failure to stop at 600
+        seq = self.lost_batches_world("w-lost2", [1, 2], 800, "batches exhausted", [200, 400, 600])
+        self.assertEqual([lk["B"] for lk in seq["looks"]], [200, 400, 600, 800])
+        self.assertEqual(seq["batches_adding_no_product"], [1, 2])
+        self.assertEqual((seq["first_look_where_rule_stops"], seq["stop_verdict"]), (600, "INCONSISTENT"))
+        self.assertTrue(seq["final_look_is_final_B"])
+
+    def test_looks_do_not_need_the_b0_file(self):
+        # review F2: B-files for 200 and 400 and a rule stop at 600, but no B0 file
+        seq = self.lost_batches_world("w-nob0", [], 600, "rule met for both tests", [200, 400], drop_b0=True)
+        self.assertEqual([lk["B"] for lk in seq["looks"]], [200, 400, 600])
+        self.assertEqual((seq["stop_verdict"], seq["final_look_is_final_B"]), ("consistent", True))
 
     def test_any_partial_name_is_excluded(self):
         d = Path(tempfile.mkdtemp(prefix="s5p_partial_"))
