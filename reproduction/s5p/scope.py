@@ -85,38 +85,65 @@ RECEIPTS = {
 DIGEST_SOURCES = [p for p in RECEIPTS if p.endswith(".json")
                   and p not in (f"{S5P}/stage1/stage1_inspect.json", "docs/orchestration/state/s5c/contract.json")]
 
-# Recorded digests that are KNOWN not to hold for the preserved bytes, each with the measurement that
-# established it. They are still measured and reported (status DECLARED_DIFFERENCE), never skipped, and a
-# match would be reported as a match.
-DECLARED_DIFFERENCES = {
-    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/conv/k_b0_gibuu.npz.partial.npz": (
-        "a running trace's checkpoint: the envelope receipt (committed 66cf3129, 2026-09-27 01:24 PDT) recorded "
-        "sha256 1998b347...; the file now hashes to 1fbbdf95... with mtime 2026-09-27 02:12 PDT, after the receipt "
-        "(measured 2026-09-28). The envelope reads only iteration 5 of the checkpoint, and its d1 linearity block "
-        "regenerates exactly from the later file (tier B); only the recorded digest differs."),
-    "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/conv/k_b0_w1.npz.partial.npz": (
-        "a running trace's checkpoint: recorded dc39afb5...; the file now hashes to d06c46a1... with mtime "
-        "2026-09-27 02:32 PDT, after the receipt (measured 2026-09-28). The d2 linearity block regenerates exactly "
-        "from the later file (tier B); only the recorded digest differs."),
-    "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/run_gen5d_supplement.sh": (
-        "gen5d-fluxfix-2.json records two digests for this copy: supplement_flux.code (6b925371...) and, in the "
-        "top-level and every product's code, 9c208852... (the committed e13caf87 blob and the copy today). "
-        "README-gen5d-fluxfix.md round 2 says of the supplement flux file: 'The file itself was written once, by an "
-        "earlier version of the script, and is never overwritten'; "
-        "that earlier version is in no commit. The flux file itself is digest-checked and matches."),
-}
-# Envelope receipt fields that record those checkpoints' digests (compared; a difference is DECLARED_DIFFERENCE).
+# The SEVEN declared differences. Each is a recorded digest that is KNOWN not to hold for the preserved bytes,
+# declared with BOTH the recorded and the observed sha256 measured on 2026-09-28: it is reported as
+# DECLARED_DIFFERENCE only when both still match, and as MISMATCH otherwise (new bytes, or a digest that starts to
+# match, are never silently absorbed). Five are tier-A rows (three file digests, two producer identities) and two
+# are tier-B envelope rows. Every report lists them individually, apart from the exact matches.
 _GIBUU_PARTIAL = "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/conv/k_b0_gibuu.npz.partial.npz"
 _W1_PARTIAL = "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/conv/k_b0_w1.npz.partial.npz"
+_SUPP_SH = "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/run_gen5d_supplement.sh"
+_WHY_GIBUU = ("a running trace's checkpoint: the envelope receipt (committed 66cf3129, 2026-09-27 01:24 PDT) recorded "
+              "1998b347...; the file now hashes to 1fbbdf95... with mtime 2026-09-27 02:12 PDT, after the receipt "
+              "(measured 2026-09-28). The envelope reads only iteration 5 of the checkpoint, and its d1 linearity block "
+              "regenerates exactly from the later file (tier B); only the recorded digest differs.")
+_WHY_W1 = ("a running trace's checkpoint: recorded dc39afb5...; the file now hashes to d06c46a1... with mtime "
+           "2026-09-27 02:32 PDT, after the receipt (measured 2026-09-28). The d2 linearity block regenerates exactly "
+           "from the later file (tier B); only the recorded digest differs.")
+_WHY_SUPP = ("gen5d-fluxfix-2.json records two digests for this copy: supplement_flux.code (6b925371...) and, in the "
+             "top-level and every product's code, 9c208852... (the committed e13caf87 blob and the copy today). "
+             "README-gen5d-fluxfix.md round 2 says of the supplement flux file: 'The file itself was written once, by an "
+             "earlier version of the script, and is never overwritten'; that earlier version is in no commit. The flux "
+             "file itself is digest-checked and matches.")
+_WHY_PAIRDIFF = ("the four 4-pair F4 receipts (stage3/f4/D-*.json) record the committed 66cf3129 blob of s5p_pairdiff.py; "
+                 "the checkout carries the later e7bd0812 version (pairing of traces without a pseudo seed), and tier B "
+                 "regenerates those four products' arrays and statistics bitwise with it.")
+DECLARED_DIFFERENCES = {  # tier A digests: recorded path -> (recorded sha256, observed sha256, why)
+    _GIBUU_PARTIAL: ("1998b347512ce2a8412c04a38ebccc81fb3820b084d4a51c0925e9b03e21512a",
+                     "1fbbdf95dbca3c08a01348707ab759b653a14dcc5ccca70f818dc437157702c0", _WHY_GIBUU),
+    _W1_PARTIAL: ("dc39afb5dc6e34cbac177447fc64eacdbcf5385e7d173d88d57faaaf6771025c",
+                  "d06c46a19232c520e26d4a572143cab4aced09b9b31fd891b67c854b38185eea", _WHY_W1),
+    _SUPP_SH: ("6b92537160eb91a3f4c820da8a1a23b998c82d8a9721f4a2702a8355a2f52a75",
+               "9c2088522b4d684b8394a733ad2b68bdcda2e3c722c7f25dd2ff78db17f304fb", _WHY_SUPP),
+}
+DECLARED_CODE = {  # tier A producer identity: (producer name, recorded sha256) -> (checkout sha256, why)
+    ("run_gen5d_supplement.sh", "6b92537160eb91a3f4c820da8a1a23b998c82d8a9721f4a2702a8355a2f52a75"):
+        ("9c2088522b4d684b8394a733ad2b68bdcda2e3c722c7f25dd2ff78db17f304fb", _WHY_SUPP),
+    ("s5p_pairdiff.py", "306b8dc8ead51ebac0657acf3931dbe400cbf6ac322781a963d6e3681680de3e"):
+        ("dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8", _WHY_PAIRDIFF),
+}
+# tier B envelope: the only field allowed to differ in these blocks is `sha256`, and only by the declared digests.
 ENVELOPE_DECLARED_FIELDS = {("bias_sources", "d1"): _GIBUU_PARTIAL, ("bias_sources", "d2"): _W1_PARTIAL}
+N_DECLARED = len(DECLARED_DIFFERENCES) + len(DECLARED_CODE) + len(ENVELOPE_DECLARED_FIELDS)
 
-# Recorded code digests with no copy on disk and no commit: {(producer name, sha256): the DECLARED_DIFFERENCES key}.
-DECLARED_CODE = {("run_gen5d_supplement.sh", "6b92537160eb91a3f4c820da8a1a23b998c82d8a9721f4a2702a8355a2f52a75"):
-                 "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/code/run_gen5d_supplement.sh"}
-
-# The figure producers ran from a scratch export of this commit (gen5d-fluxfix-3.json `code`); the export
-# directory s5p:deploy/4e4b4f56 has since been removed, so its bytes are checked as the commit's git blobs.
+# Recorded code copies whose scratch export was removed, checked instead as git blobs of the commit they were
+# exported from: the figures' deploy (gen5d-fluxfix-3.json `code`) and the gen5d build's code tree
+# (gen5d-build.json `code.source`).
 FIGURE_DEPLOY_COMMIT = "4e4b4f56"
+CODE_EXPORTS = {
+    "/pscratch/sd/j/josephrb/s5p-20260926/deploy/4e4b4f56/": "4e4b4f56",
+    "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/": "81d94a95646c4826ae7d353ad188fe91b89ed193",
+}
+
+# Every 64-hex value in the digest sources must be compared by some check. File digests are extracted by
+# `declared_digests`; the rest are classified here by their JSON key, and the harness verifies at run time that
+# each classified value was actually compared by the check named (the coverage row).
+NON_FILE_DIGEST_KEYS = {
+    "code_sha256": "producer",
+    "design_sha256": "design",
+    "v_sha256": "V",
+    "stage1_sha256": "stage1",
+}
 
 # Committed producers that must be byte-identical in the checkout to the copy that ran (recorded sha256 ->
 # checkout path). The copies live under s5p/deploy/<sha>/ or s5p/gen5d_fluxfix/code/ on the cluster.

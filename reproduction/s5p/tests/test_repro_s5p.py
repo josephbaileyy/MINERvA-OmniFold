@@ -3,12 +3,15 @@ bad input) and in the other (it stays silent on a good one); none needs the clus
 
     python3 -m unittest discover -s reproduction/s5p/tests
 """
+import contextlib
 import hashlib
+import io
 import json
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import numpy as np
 
@@ -18,10 +21,16 @@ import repro_s5p as R  # noqa: E402
 import scope as S  # noqa: E402
 
 ROOTS = {"s5p": "/data/s5p", "analysis": "/data/analysis", "s5e": "/data/s5e", "cvmfs": "/cvmfs"}
+REC = S.RECORDED_ROOTS["s5p"]
 
 
 def sha(b: bytes) -> str:
     return hashlib.sha256(b).hexdigest()
+
+
+def quiet(fn, *a, **k):
+    with contextlib.redirect_stdout(io.StringIO()):
+        return fn(*a, **k)
 
 
 class RootsTests(unittest.TestCase):
@@ -31,8 +40,8 @@ class RootsTests(unittest.TestCase):
                          Path("/data/analysis/3d-unfolding/x.root"))
         self.assertIsNone(r.local("/pscratch/sd/j/josephrb/MINERvA-OmniFold-s5p/x.npz"))  # a sibling checkout
         self.assertIsNone(r.local("/global/homes/j/josephrb/x"))
-        self.assertEqual(r.rebase({"a": ["/pscratch/sd/j/josephrb/s5p-20260926/runs/x_s*.npz", 3]}),
-                         {"a": ["/data/s5p/runs/x_s*.npz", 3]})
+        self.assertEqual(r.split(f"{REC}/runs/a.npz"), ("s5p", "runs/a.npz"))
+        self.assertEqual(r.rebase({"a": [f"{REC}/runs/x_s*.npz", 3]}), {"a": ["/data/s5p/runs/x_s*.npz", 3]})
         self.assertFalse(r.identity())
         self.assertTrue(R.Roots(dict(S.RECORDED_ROOTS)).identity())
 
@@ -49,18 +58,28 @@ class ExtractionTests(unittest.TestCase):
         doc = {"x": {"path": "/p/1", "sha256": h}, "npz": "/p/2", "npz_sha256": h,
                "logs": {"docs/l.txt": {"sha256": h, "copy_of": "/p/3"}},
                "products": {"/p/4": h}, "inputs": [{"a": "/p/5", "a_sha256": h, "b": "/p/6", "b_sha256": h}],
+               "code": {"code_root_on_cluster": "/p/tree", "files": {"sub/m.py": h}},
                "ignored": {"path": "/p/7", "sha256": None}}
         got = {p for p, _, _ in R.declared_digests(doc)}
-        self.assertEqual(got, {"/p/1", "/p/2", "/p/3", "docs/l.txt", "/p/4", "/p/5", "/p/6"})
+        self.assertEqual(got, {"/p/1", "/p/2", "/p/3", "docs/l.txt", "/p/4", "/p/5", "/p/6", "/p/tree/sub/m.py"})
+
+    def test_every_hex_digest_in_the_committed_receipts_is_extracted_or_classified(self):
+        """The static half of the coverage row, on the real receipts (it caught the gen5d code tree)."""
+        loose = []
+        for rel in S.DIGEST_SOURCES:
+            doc = json.loads((R.REPO / rel).read_text())
+            files = {v for _, v, _ in R.declared_digests(doc)}
+            for trail, v in R.all_hex(doc):
+                if v not in files and not any(isinstance(k, str) and k in S.NON_FILE_DIGEST_KEYS for k in trail):
+                    loose.append(f"{rel}:{trail}")
+        self.assertEqual(loose, [])
 
     def test_the_committed_receipts_declare_every_scoped_product(self):
-        paths = {p for rel in S.DIGEST_SOURCES
-                 for p, _, _ in R.declared_digests(json.loads((R.REPO / rel).read_text()))}
-        for must in ("/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz",
-                     "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz",
-                     "/pscratch/sd/j/josephrb/s5p-20260926/stage3/V/V-s3v.npz",
-                     "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f4/D16-nuwro_cv.npz",
-                     "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_cv_xsec3d.root"):
+        paths = {p for rel in S.DIGEST_SOURCES for p, _, _ in R.declared_digests(json.loads((R.REPO / rel).read_text()))}
+        for must in (f"{REC}/gen5d_fluxfix/genie_cv_xsec5d_full.npz", f"{REC}/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz",
+                     f"{REC}/stage3/V/V-s3v.npz", f"{REC}/stage3/f4/D16-nuwro_cv.npz",
+                     f"{REC}/stage7/genfig/3d-unfolding/genie/genie_mec_cv_xsec3d.root",
+                     f"{REC}/gen5d/code/tree/3d-unfolding/genie/gen_to_xsec5d.py"):
             self.assertIn(must, paths)
 
 
@@ -73,7 +92,10 @@ class CompareTests(unittest.TestCase):
         self.assertEqual(R.compare({"a": 1}, {"a": 1, "b": 2}, 1e-12)[0], R.MISMATCH)
         self.assertEqual(R.compare({"a": None}, {"a": 0.0}, 1e-12)[0], R.MISMATCH)
         self.assertEqual(R.compare({"a": True}, {"a": 1}, 1e-12)[0], R.MISMATCH)
+        self.assertEqual(R.compare({"a": {"b": 1}}, {"a": None}, 1e-12)[0], R.MISMATCH)
         self.assertEqual(R.compare([float("nan")], [float("nan")], 0.0)[0], R.REPRODUCED)
+        self.assertEqual(R.compare([1.0], [float("inf")], 1e-12)[0], R.MISMATCH)
+        self.assertEqual(R.compare([float("inf")], [float("-inf")], 1e-12)[0], R.MISMATCH)
 
     def test_arrays(self):
         x = np.linspace(1, 2, 5)
@@ -82,6 +104,17 @@ class CompareTests(unittest.TestCase):
         self.assertEqual(R.compare_arrays({"x": x}, {"x": x * (1 + 1e-6)}, 1e-12)[0], R.MISMATCH)
         self.assertEqual(R.compare_arrays({"x": x}, {"x": x[:4]}, 1e-12)[0], R.MISMATCH)
         self.assertEqual(R.compare_arrays({"x": x}, {}, 1e-12)[0], R.MISMATCH)
+        self.assertEqual(R.compare_arrays({}, {}, 1e-12)[0], R.MISMATCH)  # nothing compared is not a pass
+
+    def test_arrays_nonfinite_on_one_side_is_a_mismatch(self):
+        e = np.array([1.0, 2.0, 3.0])
+        for bad in ([1.0, np.nan, 3.0], [1.0, np.inf, 3.0]):
+            self.assertEqual(R.compare_arrays({"x": e}, {"x": np.array(bad)}, 1e-12)[0], R.MISMATCH)
+        self.assertEqual(R.compare_arrays({"x": np.array([np.inf])}, {"x": np.array([-np.inf])}, 1e-12)[0], R.MISMATCH)
+        both = np.array([1.0, np.nan, np.inf])
+        self.assertEqual(R.compare_arrays({"x": both}, {"x": both.copy()}, 0.0)[0], R.REPRODUCED)
+        near = np.array([1.0 + 1e-15, np.nan, np.inf])
+        self.assertEqual(R.compare_arrays({"x": both}, {"x": near}, 1e-12)[0], R.WITHIN_TOL)
 
 
 class OutputGuardTests(unittest.TestCase):
@@ -99,8 +132,13 @@ class OutputGuardTests(unittest.TestCase):
                 R.check_out_dir(d / "used", [d / "inputs"])
             R.check_out_dir(d / "new", [d / "inputs"])  # silent on a good directory
 
+    def test_recorded_roots_are_forbidden_even_when_relocated(self):
+        h = R.Harness({"roots": ROOTS, "out_dir": f"{REC}/runs/mine"}, None)
+        with self.assertRaises(SystemExit):
+            h.prepare_out()
 
-class LogAndPdfTests(unittest.TestCase):
+
+class LogPdfTraceTests(unittest.TestCase):
     def test_input_paths(self):
         argv = ["--data", "/a/d.root", "--gen", "GENIE-CV:/b/g.root", "--cov", "/a/c.root:hCov", "--png", "x.png"]
         self.assertEqual(R.input_paths(argv), ["/a/d.root", "/b/g.root", "/a/c.root"])
@@ -123,6 +161,20 @@ class LogAndPdfTests(unittest.TestCase):
             self.assertEqual(R.compare_pdf(a, b)["status"], R.REPRODUCED)
             self.assertEqual(R.compare_pdf(a, c)["status"], R.MISMATCH)
 
+    def test_scan_trace_fires_on_a_recorded_root_and_needs_evidence_it_looked(self):
+        with tempfile.TemporaryDirectory() as d:
+            t = Path(d, "t.txt")
+            t.write_text('1 openat(AT_FDCWD, "/stage/s5p/x.npz", O_RDONLY) = 3\n')
+            self.assertEqual(quiet(R.cmd_scan_trace, t, "/stage"), 0)
+            t.write_text('1 openat(AT_FDCWD, "/stage/s5p/x.npz", O_RDONLY) = 3\n'
+                         f'1 newfstatat(AT_FDCWD, "{REC}/runs/x.npz", {{}}) = 0\n')
+            self.assertEqual(quiet(R.cmd_scan_trace, t, "/stage"), 1)
+            t.write_text('1 openat(AT_FDCWD, "/usr/lib/libc.so", O_RDONLY) = 3\n')
+            self.assertEqual(quiet(R.cmd_scan_trace, t, "/stage"), 2)
+            t.write_text('1 openat(AT_FDCWD, "/pscratch/sd/j/josephrb/s5p-20260926-other/x", O_RDONLY) = 3\n'
+                         '1 openat(AT_FDCWD, "/stage/x", O_RDONLY) = 3\n')
+            self.assertEqual(quiet(R.cmd_scan_trace, t, "/stage"), 0)  # a sibling prefix is not the recorded root
+
 
 class HarnessTests(unittest.TestCase):
     def setUp(self):
@@ -137,25 +189,47 @@ class HarnessTests(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def test_digest_fires_on_change_and_missing_and_is_silent_on_match(self):
-        good, bad = self.d / "s5p/good.npz", self.d / "s5p/bad.npz"
-        good.write_bytes(b"good")
-        bad.write_bytes(b"changed")
+    def _digests(self, entries, declared=None):
         rec = self.d / "receipt.json"
-        base = S.RECORDED_ROOTS["s5p"]
-        rec.write_text(json.dumps({"x": [{"path": f"{base}/good.npz", "sha256": sha(b"good")},
-                                         {"path": f"{base}/bad.npz", "sha256": sha(b"original")},
-                                         {"path": f"{base}/gone.npz", "sha256": sha(b"gone")},
-                                         {"path": "/nowhere/x", "sha256": sha(b"x")}]}))
-        old = S.DIGEST_SOURCES
-        S.DIGEST_SOURCES = [str(rec)]
-        try:
+        rec.write_text(json.dumps({"x": [{"path": p, "sha256": s} for p, s in entries]}))
+        with mock.patch.object(S, "DIGEST_SOURCES", [str(rec)]), \
+                mock.patch.object(S, "DECLARED_DIFFERENCES", declared or {}):
             self.h.a_digests()
-        finally:
-            S.DIGEST_SOURCES = old
-        st = {r.check.split("/")[-1]: r.status for r in self.h.results}
+        return {r.check.rsplit("/", 1)[-1]: r.status for r in self.h.results}
+
+    def test_digest_fires_on_change_and_missing_and_is_silent_on_match(self):
+        (self.d / "s5p/good.npz").write_bytes(b"good")
+        (self.d / "s5p/bad.npz").write_bytes(b"changed")
+        st = self._digests([(f"{REC}/good.npz", sha(b"good")), (f"{REC}/bad.npz", sha(b"original")),
+                            (f"{REC}/gone.npz", sha(b"gone")), ("/nowhere/x", sha(b"x"))])
         self.assertEqual(st, {"good.npz": R.REPRODUCED, "bad.npz": R.MISMATCH, "gone.npz": R.INPUT_MISSING,
                               "x": R.INPUT_MISSING})
+        self.assertTrue(all(r.basis == R.BASIS_RECORDED for r in self.h.results))
+
+    def test_a_declared_difference_needs_both_digests(self):
+        (self.d / "s5p/ck.npz").write_bytes(b"later checkpoint")
+        path = f"{REC}/ck.npz"
+        right = {path: (sha(b"early"), sha(b"later checkpoint"), "why")}
+        self.assertEqual(self._digests([(path, sha(b"early"))], right), {"ck.npz": R.DECLARED})
+        self.h.results.clear()
+        wrong_obs = {path: (sha(b"early"), sha(b"something else"), "why")}
+        self.assertEqual(self._digests([(path, sha(b"early"))], wrong_obs), {"ck.npz": R.MISMATCH})
+        self.h.results.clear()
+        wrong_rec = {path: (sha(b"other"), sha(b"later checkpoint"), "why")}
+        self.assertEqual(self._digests([(path, sha(b"early"))], wrong_rec), {"ck.npz": R.MISMATCH})
+
+    def test_a_producer_difference_is_declared_only_by_scope(self):
+        prod = self.d / "producer.py"
+        prod.write_text("new = 1\n")
+        with mock.patch.dict(S.PRODUCER_FILES, {"producer.py": str(prod)}):
+            with mock.patch.object(S, "DECLARED_CODE", {}):
+                self.h._producer("producer.py", sha(b"old = 1\n"), "test")
+            with mock.patch.object(S, "DECLARED_CODE", {("producer.py", sha(b"old = 1\n")): (sha(b"new = 1\n"), "why")}):
+                self.h._producer("producer.py", sha(b"old = 1\n"), "test")
+            with mock.patch.object(S, "DECLARED_CODE", {("producer.py", sha(b"old = 1\n")): (sha(b"other"), "why")}):
+                self.h._producer("producer.py", sha(b"old = 1\n"), "test")
+            self.h._producer("producer.py", sha(b"new = 1\n"), "test")
+        self.assertEqual([r.status for r in self.h.results], [R.MISMATCH, R.DECLARED, R.MISMATCH, R.REPRODUCED])
 
     def test_launch_flags_an_import_from_outside_the_checkout(self):
         foreign = self.d / "foreign"
@@ -169,9 +243,14 @@ class HarnessTests(unittest.TestCase):
         rc_good = self.h.launch("good", str(good), [], self.d, self.d / "good.log")
         self.assertEqual((rc_bad, rc_good), (0, 0))
         self.assertEqual(Path(self.d / "good.log").read_text(), "ran\n")  # the launcher prints nothing itself
-        flagged = [r.check for r in self.h.results if r.status == R.MISMATCH]
-        self.assertEqual(flagged, ["provenance:bad"])
+        self.assertEqual([r.check for r in self.h.results if r.status == R.MISMATCH], ["provenance:bad"])
         self.assertIn(str((foreign / "hijack_mod.py").resolve()), self.h.provenance["bad"]["foreign_modules"])
+
+    def test_launch_without_an_import_record_is_not_silent(self):
+        p = self.d / "exits_hard.py"
+        p.write_text("import os\nos._exit(0)\n")
+        self.assertEqual(self.h.launch("hard", str(p), [], self.d, self.d / "h.log"), 0)
+        self.assertEqual([(r.check, r.status) for r in self.h.results], [("provenance:hard", R.MISMATCH)])
 
     def test_launch_propagates_a_producer_refusal(self):
         p = self.d / "refuses.py"
@@ -179,22 +258,81 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(self.h.launch("refuses", str(p), [], self.d, self.d / "r.log"), 1)
         self.assertIn("refusing to overwrite x", (self.d / "r.log").read_text())
 
+    def test_a_harness_exception_is_an_error_row(self):
+        def boom():
+            raise KeyError("block")
+        self.h.guarded(boom, "envelope", R.B, R.BASIS_REGENERATED)
+        self.assertEqual(self.h.results[0].status, R.ERROR)
+        self.assertEqual(self.h.exit_code(["A", "B"]), 1)
+
     def test_joint_is_pending_and_never_reproduced_without_terminal_products(self):
         self.h.tier_d()
         self.assertEqual([r.status for r in self.h.results], [R.PENDING])
         self.assertFalse(self.h.results[0].detail["committed_result_present"])
 
     def test_exit_codes(self):
-        self.h.add("x", R.A, R.REPRODUCED)
-        self.h.add("j", R.D, R.PENDING)
-        self.assertEqual(self.h.write_report(["A", "D"]), 0)
-        self.h.add("m", R.B, R.INPUT_MISSING)
-        self.assertEqual(self.h.write_report(["A", "B"]), 2)
-        self.h.add("bad", R.A, R.MISMATCH)
-        self.assertEqual(self.h.write_report(["A", "B"]), 1)
-        rep = json.loads((self.h.out / "report.json").read_text())
-        self.assertEqual(rep["exit_code"], 1)
-        self.assertIn("MISMATCH", (self.h.out / "report.md").read_text())
+        h = self.h
+        h.add("x", R.A, R.REPRODUCED, R.BASIS_RECORDED)
+        h.add("y", R.B, R.REPRODUCED, R.BASIS_REGENERATED)
+        h.add("dd", R.A, R.DECLARED, R.BASIS_RECORDED, expected="a", observed="b", why="w")
+        h.add("j", R.D, R.PENDING, R.BASIS_JOINT)
+        self.assertEqual(h.exit_code(["A", "B", "D"]), 0)
+        self.assertEqual(h.exit_code(["C", "D"]), 2)          # A and B not run is not a pass
+        self.assertEqual(h.exit_code(["A"]), 2)
+        h.add("n", R.A, R.NOT_RUN, R.BASIS_LANE)
+        self.assertEqual(h.exit_code(["A", "B"]), 2)          # NOT_RUN in A/B never counts as reproduced
+        h.results.pop()
+        h.add("i", R.B, R.INFO, R.BASIS_CODE)
+        self.assertEqual(h.exit_code(["A", "B"]), 2)
+        h.results.pop()
+        h.add("jm", R.D, R.MISMATCH, R.BASIS_JOINT)
+        self.assertEqual(h.exit_code(["A", "B", "D"]), 1)
+        self.assertEqual(quiet(h.write_report, ["A", "B", "D"]), 1)
+        rep = json.loads((h.out / "report.json").read_text())
+        self.assertEqual((rep["exit_code"], len(rep["declared_differences"])), (1, 1))
+
+    def test_report_separates_declared_lane_and_exact(self):
+        h = self.h
+        h.pins = {"measured_utc": "2026-09-28T21:56:37+00:00", "host": "h", "groups": {"g": {"s5p:a": {}}}}
+        h.add("digest:/a", R.A, R.REPRODUCED, R.BASIS_RECORDED)
+        h.add("pin:s5p:a", R.A, R.REPRODUCED, R.BASIS_LANE, group="g")
+        h.add("digest:/b", R.A, R.DECLARED, R.BASIS_RECORDED, expected="r" * 64, observed="o" * 64, why="the reason")
+        h.add("sigma:x", R.A, R.WITHIN_TOL, R.BASIS_RECOMPUTED, diffs=[{"rel": 1e-16}])
+        quiet(h.write_report, ["A", "B"])
+        md = (h.out / "report.md").read_text()
+        decl = md.split("## Declared differences")[1].split("## Within tolerance")[0]
+        self.assertIn("`digest:/b`", decl)
+        self.assertIn("recorded `" + "r" * 64, decl)
+        self.assertIn("the reason", decl)
+        self.assertNotIn("digest:/a", decl)
+        lane = md.split("## Newly recorded digests")[1].split("## Not run")[0]
+        self.assertIn("NOT historical provenance", md.split("## Newly recorded digests")[1].splitlines()[0])
+        self.assertIn("- g:", lane)
+        exact = md.split("## Exact matches, by basis")[1]
+        self.assertIn(f"### {R.BASIS_RECORDED} (1)", exact)
+        self.assertIn(f"### {R.BASIS_LANE} (1)", exact)
+        self.assertNotIn("digest:/b", exact)
+        self.assertNotIn("sigma:x", exact)
+
+    def test_stage_copies_the_declared_inventory_only(self):
+        (self.d / "s5p/sub").mkdir()
+        (self.d / "s5p/sub/rec.npz").write_bytes(b"recorded")
+        (self.d / "s5p/sub/pinned.npz").write_bytes(b"pinned")
+        (self.d / "s5p/sub/other.npz").write_bytes(b"undeclared")
+        rec = self.d / "receipt.json"
+        rec.write_text(json.dumps({"p": {"path": f"{REC}/sub/rec.npz", "sha256": sha(b"recorded")},
+                                   "q": {"path": f"{REC}/sub/gone.npz", "sha256": sha(b"gone")}}))
+        pins = {"groups": {"g": {"s5p:sub/pinned.npz": {"sha256": sha(b"pinned")}}}}
+        to = self.d / "staging"
+        with mock.patch.object(S, "DIGEST_SOURCES", [str(rec)]):
+            self.assertEqual(quiet(R.cmd_stage, self.h.config, pins, to), 0)
+        man = json.loads((to / "staging-manifest.json").read_text())
+        self.assertEqual(sorted(f["rel"] for f in man["files"]), ["sub/pinned.npz", "sub/rec.npz"])
+        self.assertEqual(man["absent_at_source"], ["s5p:sub/gone.npz"])
+        self.assertFalse((to / "s5p/sub/other.npz").exists())
+        self.assertEqual((to / "s5p/sub/rec.npz").read_bytes(), b"recorded")
+        with self.assertRaises(SystemExit):  # never over an existing staging tree
+            quiet(R.cmd_stage, self.h.config, pins, to)
 
 
 class ScopeTests(unittest.TestCase):
@@ -203,10 +341,13 @@ class ScopeTests(unittest.TestCase):
         for rel, want in S.RECEIPTS.items():
             self.assertEqual(R.sha256(R.REPO / rel), want, rel)
 
-    def test_every_declared_field_and_code_names_a_declared_difference(self):
+    def test_exactly_seven_declared_differences_each_with_both_digests(self):
+        self.assertEqual(S.N_DECLARED, 7)
+        for rec, obs, why in S.DECLARED_DIFFERENCES.values():
+            self.assertTrue(R.is_hex64(rec) and R.is_hex64(obs) and rec != obs and why)
+        for (_, rec), (obs, why) in S.DECLARED_CODE.items():
+            self.assertTrue(R.is_hex64(rec) and R.is_hex64(obs) and rec != obs and why)
         for path in S.ENVELOPE_DECLARED_FIELDS.values():
-            self.assertIn(path, S.DECLARED_DIFFERENCES)
-        for path in S.DECLARED_CODE.values():
             self.assertIn(path, S.DECLARED_DIFFERENCES)
 
 
