@@ -2,8 +2,8 @@
 
 **CITABLE FOR:** the independent reviewer's findings on `nd-unfolding/s5p_recompute_compare.py` at `4a772838`, quoted
 verbatim below. The five areas: required-field coverage, metadata exclusions, B = 0 handling, variant-family
-membership, and verdict/exit-code behaviour. **NOT CITABLE FOR:** any repair (the responses are in
-`HANDOFF-20260928-s5p-recompute.md` §5.5 and the commit that follows this file), any p-value or decision.
+membership, and verdict/exit-code behaviour. The follow-up verification of the fixes is quoted in Round 2 below. **NOT CITABLE FOR:** any repair (the responses
+are in `HANDOFF-20260928-s5p-recompute.md` §5.5), any p-value or decision.
 
 - Requested by the owner, 2026-09-29.
 - Reviewer: an independent agent with no authorship of the reviewed code.
@@ -15,7 +15,7 @@ membership, and verdict/exit-code behaviour. **NOT CITABLE FOR:** any repair (th
   (`common.py`, `negative_cases.py`, `b0_cases.py`, `list_cases.py`, `exit_cases.py`, `exit_cli.sh`, and their `.out`
   files). These are session-local, not durable. The case table below is the durable record.
 
-## Report (verbatim)
+## Round 1: review of `4a772838` (verbatim)
 
 Five areas reviewed; four have findings, two of them HIGH. The main problem is that the comparer checks only the production fields that are present: a required p-value, count, variant or digest that is missing, or hidden under an excluded key name, still gives AGREE.
 
@@ -177,3 +177,106 @@ The expected and observed verdicts are listed in `*.out`. "DEFECT" means the obs
 | S5, S6 | unknown list-of-scalars field; unknown mixed list | INCOMPLETE |
 | S7 | unknown empty dict (produces no leaf) | AGREE |
 | Exit codes | `compare_files`: all agree 0, no labels file 2, discrepant plus unresolved 1. CLI: all agree 0, missing labels file **1**, malformed production **1**; the stale AGREE output survives | see F-8 |
+
+## Round 2: verification of the fixes at `6c7c7b9f` (verbatim)
+
+The same reviewer, resumed with its round-1 context, in the same read-only worktree moved to `6c7c7b9f`, left clean.
+
+**Disclosure.** For production's output layout the reviewer read the frozen production end-to-end test
+`nd-unfolding/tests/test_s5p_joint_e2e.py`, lines 96–114. That file is unchanged since `4f5a613f`, and it is not one
+of the four modules excluded from reading. It gives the output layout, not statistical logic.
+
+Scratch: `scratchpad/review-verify/` (session-local).
+
+Fixes verified at 6c7c7b9f: NO. The fixes hold on my original probes: 98 of 100 give the expected verdict, and the two others (M4, X9) are the author's dispositions, which I accept. But the fixes introduce new defects. The most important one means a correct production output could never reach AGREE.
+
+**Reviewer:** independent agent, no authorship of the code under review.
+**Worktree:** `/Users/josephbailey/local-research/MINERvA-OmniFold-s5p-recompute-review1`
+**HEAD:** `6c7c7b9ff2536407c484f9976aec053dc1207f0a` (checked before and after)
+**Scratch:** `/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/af747db6-96ed-4487-90e9-4ed640a884a3/scratchpad/review-verify/`
+**`git -C <worktree> status --porcelain`:** empty output, rc=0.
+**Test suite:** `PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider nd-unfolding/tests/test_s5p_recompute.py` gives **55 passed** in 25.07 s.
+**Production modules:** I did not read `s5p_joint.py`, `s5p_inference.py`, `s5p_seqstop.py` or `s5p_robust_labels.py`. For the production layout I used the assertions of the production end-to-end test, `nd-unfolding/tests/test_s5p_joint_e2e.py` lines 96–114. That file and `s5p_joint.py` have no commits in `4f5a613f..6c7c7b9f`, so they are unchanged since the freeze.
+**Author's re-run:** I did not read or use `review-rerun/`.
+
+### (1) Verdict per finding
+
+| Finding | Status | Evidence |
+|---|---|---|
+| F-1 missing required quantity gives AGREE | **PARTIAL** | M1–M3 and M5–M11 now give INCOMPLETE; M4 is the accepted disposition. New gap ND-2: the contents of two containers the docstring lists as required are not required (P1–P4 give AGREE). |
+| F-2 labels-document fields optional | **FIXED** | L3–L7 give INCOMPLETE, naming the missing field. |
+| F-3 lax types | **FIXED** | A16 (`True`→`1`), A17 (p as a string) and F5 (family given as a dict) give DISCREPANT. Integral floats are still accepted (N4 gives AGREE). |
+| F-4 exclusion by key name at any depth | **FIXED** | X1–X5 and X8 give INCOMPLETE. Exclusions are anchored patterns on scalar leaves (lines 56–72, 211–218), and the excluded paths are listed. |
+| F-5 exclusion reasons rest on an optional digest | **FIXED** | M14, X6 and X7 give INCOMPLETE; D2 and D3 give DISCREPANT. Open item: the frozen e2e test never shows a top-level `design_sha256` or `v_sha256` in `joint-evaluate.json` (it does not show their absence either). |
+| F-6 dict `not_calibrated` marker | **FIXED** | Z6 gives DISCREPANT. New issue ND-3 (LOW): a dict marker now gives DISCREPANT rather than INCOMPLETE. |
+| F-7 keep-both member in the robust slot | **FIXED** | F8b gives INCOMPLETE; `robustness_variants` is matched only against the ruled m1 ±3 members. |
+| F-8 exit codes and stale report | **PARTIAL** | Fixed: a missing labels file exits 2 (CLI). An unreadable `--mine` exits 3 and writes an ERROR report over the earlier AGREE file. A malformed production file now gives DISCREPANT (exit 1), by design. Still open: an `--out` in a missing directory exits 1 with a traceback (N7, ND-5). |
+
+### (2) Re-run of the original cases
+
+The case scripts `negative_cases.py`, `b0_cases.py`, `list_cases.py` and `exit_cases.py` are byte-identical copies of the 4a772838 scripts (checked with `cmp`). I adapted only the fixture, in `common.py`, whose docstring records these adaptations:
+- **A1:** `production_like()` now writes flat `"<null>:<test>"` decision keys. The fixture nests them so the unchanged mutation paths still address them. With `LAYOUT=flat`, `run()` flattens them again after the mutation. Both layouts were run and give identical verdicts for all 100 cases.
+- **A2:** `mine["inputs"]["design_sha256"] = "d"*64`, as the new `Compare.setUp` does.
+- **A3:** in the B = 0 world, the null's new `{"not_calibrated": ...}` record is replaced by the 4a772838 statistics record, so case Z0 keeps its meaning. Cases Z1–Z12 overwrite it themselves.
+- **A4:** `enrich()` no longer rebuilds `variants` and `robustness_variants`, which now come from `production_like()`. It adds only the per-test `unshifted` and `interval`, and the power set.
+- **A5:** the TestCase is built with an existing method name, because `test_exit_codes` was renamed.
+- **Harness:** the `cd` target in `exit_cli.sh` points at `review-verify/exit`. `base_check.py` reads `excluded_by_scope.paths` instead of `counts`.
+
+Results (`*.nested.out`, `*.flat.out`):
+- There are 100 cases: 77 negative, 15 B = 0 or family-slot, and 8 list cases.
+- The baseline gives AGREE, with 216 rows.
+- **98 give the expected verdict.** The two others are M4 (AGREE, expected INCOMPLETE) and X9 (INCOMPLETE, expected AGREE), the two dispositions judged in (3).
+- Every other case that was a DEFECT at 4a772838 now gives the expected verdict: M1–M3, M5–M11, L3–L7, A16, A17, X1–X8, F5, F8b, Z6, Z8, Z9.
+
+Exit codes: `compare_files` returns 0, 2 and 1 for agree, no labels, and discrepant plus unresolved. The CLI returns 0 when all agree, 2 for a nonexistent labels file, 1 for a malformed production file (now a type discrepancy), and 3 for a missing `--mine`, writing the ERROR report.
+
+### (3) The two dispositions not adopted
+
+- **M4: ACCEPT.** In the recompute, `c["unshifted"] = c["variants"]["c=0"]` (`s5p_recompute.py:700`), so the unshifted test is the same object as the c = 0 variant. The "0.0" variant's `k` and `p` are required for each test: M5 and M6 give INCOMPLETE. The frozen e2e test asserts `ok["variants"]["0.0"]["total"]["p"]` and no per-test `unshifted` key. Requiring a second copy would block a correct output.
+- **X9: ACCEPT.** `path` is not an owner-stated field of `robust-labels.json`, and the contract makes an unstated leaf unresolved. The result is stricter than my control and fails safe, and it can be resolved by a commit.
+
+### (4) New defects in the five areas
+
+Probes: `new_defect_probes.py` (flat layout) and `partial_requirement_probes.py`; outputs in the matching `.out` files.
+
+**ND-1 (MEDIUM, area 1): a correct production output cannot reach AGREE.**
+- The fixed comparer requires `tests/<null>/implied_size_of_unshifted_test` (lines 334–336).
+- The frozen e2e test (line 99) puts it inside each variant entry: `ok["variants"]["1.0"]["implied_size_of_unshifted_test"]["total"]["power"]`.
+- **N1:** correct values in that layout give INCOMPLETE. The item is not located for both nulls, and `tests/*/variants/*/implied_size_of_unshifted_test/*/power` is unresolved.
+- **Fix:** map and require the per-variant `implied_size_of_unshifted_test/<t>/power`.
+
+**ND-2 (MEDIUM, area 1): contents of required containers are optional.**
+- For `observed_jitter_p` and `implied_size_of_unshifted_test`, only the container's presence is required.
+- **P1–P4 give AGREE** after deleting `observed_jitter_p/shape`, `observed_jitter_p/total/median`, `implied_size…/0.5`, or `implied_size…/m1+2/shape`.
+- **Fix:** require, for each test, `min`, `median`, `max` and `n` for the jitter summary, and each recompute implied-size label.
+
+**ND-3 (LOW, area 3): a dict marker is reported as a disagreement.**
+- **N3:** with the recompute at B = 0, `{"not_calibrated": {"reason": "budget", "B": 0}}` gives DISCREPANT.
+- The owner has not stated the marker's value type, so an unknown marker shape is a mapping gap, not a disagreement. It should give INCOMPLETE.
+
+**ND-4 (LOW, area 4; present before the fixes, not introduced by them): a correct `argmax` gives a false DISCREPANT.**
+- **N6:** a claim `argmax` written with production variant names (`"0.0"`) gives DISCREPANT against the recompute's `"c=0"`.
+- `same_names` compares it as an exact list and never parses the names.
+
+**ND-5 (LOW, area 5): a failed report write still exits 1.**
+- **N7:** an `--out` in a missing directory raises `FileNotFoundError` outside the `try` (line 562). The exit code is 1, the DISCREPANT code, with a traceback.
+
+**Observation, not a regression (N2):**
+- The frozen e2e test (line 111) shows `tests/<null>/total_robust` (and presumably `shape_robust`, which it does not assert).
+- These are unmapped, so the real output will be INCOMPLETE. The recompute has matching keep-both values.
+- This fails safe, but it needs a mapping before the final verification.
+
+**Strictness checks that are fine:** integral floats as counts and an int p (N4), and dict decision nodes (N5), all give AGREE.
+
+### Verdict table
+
+| Area | Result |
+|---|---|
+| 1. Required-field coverage | F-1 PARTIAL; F-2 FIXED; new ND-1 MEDIUM and ND-2 MEDIUM |
+| 2. Metadata exclusions | F-4 FIXED; F-5 FIXED (open item: where the top-level digests live is not evidenced) |
+| 3. B = 0 handling | F-6 FIXED; new ND-3 LOW |
+| 4. Variant-family membership | F-7 FIXED; ND-4 LOW (present before the fixes) |
+| 5. Verdict and exit codes | F-8 PARTIAL; new ND-5 LOW |
+| Dispositions | M4 ACCEPT; X9 ACCEPT |
+
+Fixes verified at 6c7c7b9f: NO (open items: ND-1, ND-2, ND-5, and the F-5 digest location; also ND-3, ND-4, and the unmapped `total_robust`/`shape_robust`)

@@ -198,7 +198,7 @@ docs/orchestration/HANDOFF-20260924-preparation-for-scalar5d-campaign.md	tracked
 docs/orchestration/HANDOFF-20260925-negweight-refined-successor.md	tracked	LIVE	document	20260924-scalar5d-campaign	20260925	open		route-only		no	5	67	3950
 docs/orchestration/HANDOFF-20260926-precision-measurement-completion.md	tracked	LIVE	document	20260924-scalar5d-campaign	20260926	open		route-only		no	6	381	23282
 docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md	tracked	LIVE	document		20260928	open		route-only	nd-unfolding/s5p_recompute.py	no	4	92	9143
-docs/orchestration/HANDOFF-20260928-s5p-recompute.md	tracked	LIVE	document		20260928	open		route-only		no	5	384	34519
+docs/orchestration/HANDOFF-20260928-s5p-recompute.md	tracked	LIVE	document		20260928	open		route-only		no	5	404	36597
 docs/orchestration/HOLD-20260821-clause-c-verification.md	tracked	ARCHIVAL	document		20260821	terminal		exact-path-only		yes	7	66	4401
 docs/orchestration/INDEX-20260920-retained-branches-not-on-main.md	tracked	LIVE	index	z-campaign	20260920	open		route-only		no	3	101	9262
 docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index			open		route-only	docs/open-items/verify_open_items_restructure.py;docs/orchestration/findings_row_lint.py;nd-unfolding/pet/check_canonical_designation.py	no	26	196	37643
@@ -379,7 +379,7 @@ docs/orchestration/REVIEW-20260919-multi-member-grader-two-rounds.md	tracked	LIV
 docs/orchestration/REVIEW-20260927-s5p-admission-confirmation.md	tracked	LIVE	review		20260927	open		route-only		no	6	82	11424
 docs/orchestration/REVIEW-20260927-s5p-round1-stage2-exit-and-joint-design.md	tracked	LIVE	review		20260927	open		route-only		no	5	174	12486
 docs/orchestration/REVIEW-20260927-s5p-round2-repairs-and-admission-draft.md	tracked	LIVE	review		20260927	open		route-only		no	4	153	16171
-docs/orchestration/REVIEW-20260929-s5p-recompute-comparer.md	tracked	LIVE	review		20260929	open		route-only	nd-unfolding/s5p_recompute_compare.py;nd-unfolding/tests/test_s5p_recompute.py	no	5	179	15013
+docs/orchestration/REVIEW-20260929-s5p-recompute-comparer.md	tracked	LIVE	review		20260929	open		route-only	nd-unfolding/s5p_recompute_compare.py;nd-unfolding/tests/test_s5p_recompute.py	no	5	282	24605
 docs/orchestration/REVIEW-CONTRACT-20260822-k0-execution-integrity.md	tracked	LIVE	review		20260822	open		route-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/verify_run_receipt_blind_spots.py;nd-unfolding/bootstrap_nd.py;nd-unfolding/mii_adopt_unified_5d_stamped.py;nd-unfolding/mnv_source_manifest.py;nd-unfolding/seedscan_split.py;nd-unfolding/sweep_bank_5d.py;nd-unfolding/tests/test_n2_child_boundary.py;nd-unfolding/tests/test_n3_rooted_import_repair.py;nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py;nd-unfolding/unfold_nd_omnifold_unbinned.py;nd-unfolding/unified_throw_cov.py;nd-unfolding/unified_throw_cov_5d.py	no	41	1516	110082
 docs/orchestration/ROW-OWNERS.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/test_whose_row_clean_merge.py;docs/orchestration/whose_row.py	no	5	74	5692
 docs/orchestration/RULING-20260817-lanec-oi126-branch-set-not-exhaustive.md	tracked	ARCHIVAL	document		20260817	terminal		exact-path-only	nd-unfolding/pet/probe_oi126_test2_target_level_spatial.py	yes	5	264	18843

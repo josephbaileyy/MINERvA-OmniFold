@@ -11,10 +11,14 @@ and the robust-labels schema "s5p-robust-labels/2".
 1. **Required leaves.** Derived from the recompute record and the owner-stated schema, not from what production
    happens to contain. A missing one is NOT LOCATED, and the verdict cannot be AGREE. Required:
    - top-level ``design_sha256`` and ``v_sha256``;
-   - per calibrated null: ``T_total_obs``, ``T_shape_obs``, ``domain_cells``, ``observed_jitter_p`` and
-     ``implied_size_of_unshifted_test``; per test the claim ``p``/``k``/``B``; every claim variant (``p``, ``k`` per
-     test) in ``variants``; every ruled κ = 3 M1 member in ``robustness_variants``;
-   - per null at B = 0: a scalar ``not_calibrated`` marker, or claims with B = 0;
+   - per calibrated null: ``T_total_obs``, ``T_shape_obs`` and ``domain_cells``; per test the claim ``p``/``k``/``B``,
+     the jitter summary (``min``, ``median``, ``max``, ``n``) and the implied size of each process-shift variant
+     c > 0 (per null, or inside the variant entry as the frozen e2e test shows); every claim variant (``p``, ``k``
+     per test) in ``variants``; every ruled κ = 3 M1 member in ``robustness_variants``. The top-level location of
+     the two digests is inferred from the key names production writes; if they sit elsewhere, the verdict is
+     INCOMPLETE until the mapping is extended;
+   - per null at B = 0: a scalar ``not_calibrated`` marker (a marker of another shape is INCOMPLETE, a false one
+     DISCREPANT), or claims with B = 0;
    - per test: ``decisions``, ``holm_point``, ``decisions_robust_kappa`` and ``robust_to_the_sub_fine_residual``;
    - per power set with products: ``n``, and each (test, level, rule);
    - in ``robust-labels.json``: ``labels``; ``decisions_kappa3_replace`` (``p``, ``k``, ``B``, ``threshold``,
@@ -32,7 +36,8 @@ Verdicts and exit codes:
 - AGREE (exit 0): every row agrees, nothing required is missing, and no leaf is unresolved.
 - DISCREPANT (exit 1): at least one row disagrees.
 - INCOMPLETE (exit 2): nothing disagrees, but something required is not located or a leaf is unresolved.
-- ERROR (exit 3): an input could not be read or processed. The report records the error.
+- ERROR (exit 3): an input could not be read or processed (the report records the error), or the report itself
+  could not be removed or written.
 
 ``--out`` is removed before comparing, so a failed run never leaves an earlier report in place.
 
@@ -309,11 +314,14 @@ def compare_evaluate(mine, prod) -> Ledger:
         if rec["B"] == 0:
             if "not_calibrated" in node:
                 mark = node["not_calibrated"]
-                ok = mark is True or (isinstance(mark, str) and mark != "")
-                L.rows.append({"item": f"{key}:not_calibrated", "kind": "exact", "mine": True, "production": mark,
-                               "production_path": f"{L.name}:" + "/".join(base + ("not_calibrated",)), "agree": ok})
-                if ok:
+                if is_scalar(mark):  # true or a non-empty reason agrees; false, 0, "" or null is a disagreement
+                    ok = mark is True or (isinstance(mark, str) and mark != "")
+                    L.rows.append({"item": f"{key}:not_calibrated", "kind": "exact", "mine": True, "production": mark,
+                                   "production_path": f"{L.name}:" + "/".join(base + ("not_calibrated",)),
+                                   "agree": ok})
                     L.consumed.add(base + ("not_calibrated",))
+                else:  # a marker of an unstated shape is a mapping gap, not a disagreement; its leaves stay unresolved
+                    L.missing.append(f"{L.name}:{key}:not_calibrated (a scalar marker; found {type(mark).__name__})")
             else:
                 for t in TESTS:
                     for f in ("p", "k", "B"):
@@ -331,9 +339,6 @@ def compare_evaluate(mine, prod) -> Ledger:
         L.require(f"{key}:T_total_obs", base + ("T_total_obs",), "stat", rec["observed_T"]["total"])
         L.require(f"{key}:T_shape_obs", base + ("T_shape_obs",), "stat", rec["observed_T"]["shape"])
         L.require(f"{key}:domain_cells", base + ("domain_cells",), "count", rec["domain_cells"])
-        for pk in ("observed_jitter_p", "implied_size_of_unshifted_test"):
-            if L.get(base + (pk,)) is None:
-                L.missing.append(f"{L.name}:{key}:{pk}")
         ps = dict(rec.get("process_shift") or {})
         ps.update(prov.get(f"process_shift:{key}") or {})
         L.same_names(f"{key}:process_shift", ps, base + ("process_shift",))
@@ -342,7 +347,7 @@ def compare_evaluate(mine, prod) -> Ledger:
             mt = rec["tests"][t]
             for f in ("p", "k", "B"):
                 L.require(f"{key}:{t}:claim_{f}", base + (t, f), kind_of(f), mt.get(f))
-            L.same_names(f"{key}:{t}:claim", mt, base + (t,), skip=("variants", "unshifted", "p", "k", "B"))
+            L.same_names(f"{key}:{t}:claim", mt, base + (t,), skip=("variants", "unshifted", "p", "k", "B", "argmax"))
             if isinstance(L.get(base + (t, "unshifted")), dict):
                 L.same_names(f"{key}:{t}:unshifted", mt.get("unshifted") or {}, base + (t, "unshifted"))
             for stat in ("median", "sd"):
@@ -352,17 +357,29 @@ def compare_evaluate(mine, prod) -> Ledger:
             jit = mt.get("observed_jitter") or {}
             for stat, mk in (("min", "p_min"), ("median", "p_median"), ("max", "p_max"), ("n", "n")):
                 p = L.first(base + ("observed_jitter_p", t, stat), base + (t, "observed_jitter_p", stat))
-                if p is not None:
+                if p is None:
+                    L.missing.append(f"{L.name}:{key}:{t}:observed_jitter_p:{stat}")
+                else:
                     L.row(f"{key}:{t}:observed_jitter_p:{stat}", "count" if stat == "n" else "p", jit.get(mk), p)
-            for pk, mine_map in (("implied_size_of_unshifted_test", mt.get("implied_size") or {}),
-                                 ("median_shift_in_null_sd", mt.get("median_shift_in_null_sd") or {})):
-                for lbl, mv in mine_map.items():
-                    cands = [base + (pk, x, t) for x in _names_like(L.get(base + (pk,)), lbl)] + \
-                            [base + (pk, t, x) for x in _names_like(L.get(base + (pk, t)), lbl)] + \
-                            [base + (t, pk, x) for x in _names_like(L.get(base + (t, pk)), lbl)]
-                    p = L.first(*cands)
-                    if p is not None:
-                        L.row(f"{key}:{t}:{pk}[{lbl}]", "p" if pk.startswith("implied") else "stat", mv, p)
+            for lbl, mv in (mt.get("implied_size") or {}).items():
+                # the frozen evaluator reports the implied size "per variant c > 0" (s5p_joint docstring): required for
+                # the process-shift variants, compared where present for any other
+                p = _implied_size_path(L, base, lbl, t)
+                if p is not None:
+                    L.row(f"{key}:{t}:implied_size_of_unshifted_test[{lbl}]", "p", mv, p)
+                elif lbl.startswith("c="):
+                    L.missing.append(f"{L.name}:{key}:{t}:implied_size_of_unshifted_test[{lbl}]")
+            for lbl, mv in (mt.get("median_shift_in_null_sd") or {}).items():
+                p = L.first(*[base + ("median_shift_in_null_sd", x, t) for x in _names_like(L.get(base + ("median_shift_in_null_sd",)), lbl)],
+                            *[base + ("median_shift_in_null_sd", t, x) for x in _names_like(L.get(base + ("median_shift_in_null_sd", t)), lbl)])
+                if p is not None:
+                    L.row(f"{key}:{t}:median_shift_in_null_sd[{lbl}]", "stat", mv, p)
+            # the frozen keep-both robust claim, when production writes it per test (e.g. tests/<null>/total_robust)
+            rob = mt.get("robust_kappa3_retain_kappa2") or {"p": mt.get("p"), "k": mt.get("k"), "B": mt.get("B")}
+            if isinstance(L.get(base + (f"{t}_robust",)), dict):
+                L.same_names(f"{key}:{t}_robust(keep-both)", rob, base + (f"{t}_robust",), skip=("variants", "argmax"))
+                _compare_argmax(L, f"{key}:{t}_robust(keep-both)", rob, base + (f"{t}_robust",))
+            _compare_argmax(L, f"{key}:{t}:claim", mt, base + (t,))
         _compare_variant_family(L, key, rec, base, "variants", _claim_members(rec))
         _compare_variant_family(L, key, rec, base, "robustness_variants", _robust_m1_members(rec))
     fam = mine["family"]
@@ -426,6 +443,36 @@ def compare_evaluate(mine, prod) -> Ledger:
                     else:
                         L.row(label, "p", mr.get("power"), p)
     return L
+
+
+def _implied_size_path(L, base, lbl, t):
+    """The production path of one implied size: per null (``implied_size_of_unshifted_test/<variant>/<t>``, or
+    ``.../<t>/<variant>``), or inside the variant entry (``variants/<variant>/implied_size_of_unshifted_test/<t>``,
+    the layout the frozen e2e test asserts), where the value may be a scalar or ``{"power": ...}``."""
+    pk = "implied_size_of_unshifted_test"
+    cands = [base + (pk, x, t) for x in _names_like(L.get(base + (pk,)), lbl)] + \
+            [base + (pk, t, x) for x in _names_like(L.get(base + (pk, t)), lbl)] + \
+            [base + ("variants", x, pk, t) for x in _names_like(L.get(base + ("variants",)), lbl)]
+    p = L.first(*cands)
+    if p is not None and isinstance(L.get(p), dict) and "power" in L.get(p):
+        p = p + ("power",)
+    return p
+
+
+def _compare_argmax(L, label, mine_rec, path):
+    """``argmax`` (the variants attaining the claim) compared as a set of parsed variant names."""
+    node = L.get(path + ("argmax",))
+    if node is None or "argmax" not in mine_rec:
+        return
+    ok_type = isinstance(node, list) and all(isinstance(x, str) for x in node)
+    keys = [variant_key(x) for x in node] if ok_type else None
+    if ok_type and any(k is None for k in keys):
+        return  # an unparsable name: left UNRESOLVED
+    L.rows.append({"item": f"{label}:argmax", "kind": "names", "mine": mine_rec["argmax"], "production": node,
+                   "production_path": f"{L.name}:" + "/".join(path + ("argmax",)),
+                   "agree": ok_type and sorted(keys) == sorted(variant_key(x) for x in mine_rec["argmax"])})
+    if ok_type:
+        L.consumed.add(path + ("argmax",))
 
 
 def _names_like(container, mine_label):
@@ -543,8 +590,12 @@ EXIT = {"AGREE": 0, "DISCREPANT": 1, "INCOMPLETE": 2, "ERROR": 3}
 
 def compare_files(mine_path: str, prod_path: str, out_path: str, labels_path: str | None = None) -> int:
     out = Path(out_path)
-    if out.exists():
-        out.unlink()  # a failed run must never leave an earlier report in place
+    try:
+        if out.exists():
+            out.unlink()  # a failed run must never leave an earlier report in place
+    except OSError as exc:
+        print(f"ERROR: cannot remove the earlier report {out_path}: {exc}")
+        return EXIT["ERROR"]
     try:
         mine = json.loads(Path(mine_path).read_text())
         prod_bytes = Path(prod_path).read_bytes()
@@ -559,7 +610,11 @@ def compare_files(mine_path: str, prod_path: str, out_path: str, labels_path: st
     except Exception as exc:  # noqa: BLE001 - any failure is an ERROR verdict, never a comparison result
         rep = {"schema": "s5p-recompute-compare/3", "verdict": "ERROR", "error": f"{type(exc).__name__}: {exc}"}
     rep["inputs"] = {"mine": mine_path, "production": prod_path, "robust_labels": labels_path}
-    out.write_text(json.dumps(rep, indent=1, sort_keys=True, default=str) + "\n")
+    try:
+        out.write_text(json.dumps(rep, indent=1, sort_keys=True, default=str) + "\n")
+    except OSError as exc:
+        print(f"ERROR: cannot write the report {out_path}: {exc} (verdict would have been {rep['verdict']})")
+        return EXIT["ERROR"]
     if rep["verdict"] == "ERROR":
         print(f"ERROR: {rep['error']}; wrote {out_path}")
     else:

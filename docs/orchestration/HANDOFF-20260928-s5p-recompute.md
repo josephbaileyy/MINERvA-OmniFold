@@ -39,9 +39,9 @@ Nothing below is a verification result.
 |---|---|
 | `nd-unfolding/s5p_recompute.py` | the evaluator: J geometry, surrogates, statistics, variants, claim p, Holm with determinacy, κ = 3 flag, power, implied size, observed-jitter p, sequential-rule re-evaluation at every look; CLI `evaluate` / `compare` |
 | `nd-unfolding/s5p_recompute_compare.py` | compares a recompute output with production's `joint-evaluate.json`; lists every production numeric leaf it could not map |
-| `nd-unfolding/tests/test_s5p_recompute.py`, `tests/s5p_recompute_toy.py` | 55 controls (below, §3.1, §3.2, §5.5); a synthetic world in the production file formats |
+| `nd-unfolding/tests/test_s5p_recompute.py`, `tests/s5p_recompute_toy.py` | 58 controls (below, §3.1, §3.2, §5.5); a synthetic world in the production file formats |
 
-Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **55 passed**; ~25 s on an idle machine):
+Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **58 passed**; ~25 s on an idle machine):
 no import of the three production modules (AST); Clopper–Pearson closed form and the reviews' own numbers
 (review 1: `[0.0057, 0.0148]` at p = 0.01, B = 1999; review 2 M3: determined k at 0.005 is `{0}` at B = 800 and
 `{0..3}` at B = 1999, rank rule `{0..3}` at 800); statistics (total = inverse quadratic form; shape invariant to
@@ -377,6 +377,26 @@ verification be called complete. Agreement verifies the calculation, not the ade
 | F-8 missing labels file exit 1; stale report | **fixed**: missing labels → INCOMPLETE (2); any exception → ERROR (3); `--out` removed first. `pending_ruling` (dead) removed |
 | M4 (missing per-test `unshifted`) still AGREE | **disposition, not adopted**: the unshifted quantity is required and compared as the `0.0` variant (k, p). A separate per-test `unshifted` key is compared if present, but not required, because production may not write one. |
 | X9 (scalar under `path` in the labels document) now INCOMPLETE | **stricter than the reviewer's control, kept**: exclusions are anchored to owner-stated fields, and `path` is not one |
+
+**Round 2: verification of `6c7c7b9f`.** Result: NO. F-2, F-3, F-4, F-5, F-6 and F-7 FIXED; F-1 and F-8 PARTIAL;
+M4 and X9 ACCEPTED; five new items (report, Round 2). Responses in the next commit:
+
+| item | response |
+|---|---|
+| ND-1 (MEDIUM): implied size required at the null level, while the frozen e2e test puts it in each variant entry | **fixed**: located in either layout, including `variants/<v>/implied_size_of_unshifted_test/<t>/power` |
+| ND-2 (MEDIUM): contents of required containers optional | **fixed**: the jitter `min`, `median`, `max` and `n` are required per test; the implied size is required for each process-shift variant c > 0 per test |
+| ND-2, P4 (deleting `implied_size…/m1+2/shape` gives AGREE) | **disposition, not adopted**: the frozen `s5p_joint` docstring says the implied size is reported "per variant c > 0". An M1 variant's value is compared where present, but not required. |
+| ND-3 (LOW): a dict marker gives DISCREPANT | **fixed**: a marker of unstated shape gives INCOMPLETE; a false or empty scalar marker gives DISCREPANT |
+| ND-4 (LOW): `argmax` not parsed | **fixed**: compared as a set of parsed names (for the claim and the keep-both robust claim) |
+| ND-5 (LOW): an unwritable `--out` exits 1 | **fixed**: failing to remove or write the report gives ERROR (3) |
+| N2: `tests/<null>/{total,shape}_robust` unmapped | **fixed**: compared, when present, with the keep-both robust claim (for MnvTune, the claim) |
+| F-5 open item: where the top-level digests live is not evidenced | **kept as a requirement**; the location is inferred from production's key names; if the digests sit elsewhere the verdict is INCOMPLETE until the mapping is extended |
+
+After these fixes the reviewer's round-2 probes were re-run from copies in `scratchpad/review-verify2/` (paths
+repointed only). Results, in both layouts:
+- all 77 negative, 15 B = 0 and 8 list cases give the expected verdict except M4 and X9 (accepted);
+- the new-defect probes N1–N7 all do;
+- of the partial-requirement probes, P1–P3 do and P4 differs (the disposition above).
 
 **Downstream reader.** The reproduction harness (branch `s5p-parallel-reproduction-20260928`, config key
 `joint.independent_compare`) records `/pscratch/sd/j/josephrb/s5p-parallel-recompute/final/compare.json` by sha256

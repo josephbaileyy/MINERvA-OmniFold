@@ -785,6 +785,74 @@ class Compare(unittest.TestCase):
             with self.subTest(name):
                 self.assertVerdict("INCOMPLETE", prod, labels)
 
+    def test_verification_round_ND1_to_ND5_and_robust_claims(self):
+        """Second review round (verification of 6c7c7b9f): ND-1..ND-5 and the per-test keep-both robust claims."""
+        import copy
+        G = "GiBUU_2019"
+        base_prod, base_labels = self.production_like()
+        # ND-1: the frozen e2e layout, the implied size inside each variant entry as {"power": ...}
+        prod, labels = copy.deepcopy(base_prod), copy.deepcopy(base_labels)
+        for key, rec in prod["tests"].items():
+            per = rec.pop("implied_size_of_unshifted_test")
+            for name, by_t in per.items():
+                for t, v in by_t.items():
+                    rec["variants"][name].setdefault("implied_size_of_unshifted_test", {})[t] = {"power": v}
+        self.assertVerdict("AGREE", prod, labels)
+        prod["tests"][G]["variants"]["0.5"]["implied_size_of_unshifted_test"]["shape"]["power"] += 0.01
+        self.assertVerdict("DISCREPANT", prod, labels)
+        # ND-2: the contents of the jitter summary and the c > 0 implied sizes are required
+        for mut in (lambda p: p["tests"][G]["observed_jitter_p"].pop("shape"),
+                    lambda p: p["tests"][G]["observed_jitter_p"]["total"].pop("median"),
+                    lambda p: p["tests"][G]["implied_size_of_unshifted_test"].pop("0.5"),
+                    lambda p: p["tests"][G]["implied_size_of_unshifted_test"]["1.0"].pop("shape")):
+            prod = copy.deepcopy(base_prod)
+            mut(prod)
+            self.assertVerdict("INCOMPLETE", prod, base_labels)
+        prod = copy.deepcopy(base_prod)  # an M1 variant's implied size is compared where present, not required
+        prod["tests"][G]["implied_size_of_unshifted_test"].pop("m1+2")
+        self.assertVerdict("AGREE", prod, base_labels)
+        # ND-4: argmax written with production variant names
+        prod = copy.deepcopy(base_prod)
+        am = self.mine["nulls"][G]["tests"]["total"]["argmax"]
+        prod["tests"][G]["total"]["argmax"] = [self.prod_name(n) for n in am]
+        self.assertVerdict("AGREE", prod, base_labels)
+        prod["tests"][G]["total"]["argmax"] = ["0.5"] if am != ["c=0.5"] else ["1.0"]
+        self.assertVerdict("DISCREPANT", prod, base_labels)
+        # N2: the frozen per-test keep-both robust claim (tests/<null>/total_robust)
+        prod = copy.deepcopy(base_prod)
+        for key, rec in self.mine["nulls"].items():
+            for t in ("total", "shape"):
+                r = rec["tests"][t].get("robust_kappa3_retain_kappa2") or rec["tests"][t]
+                prod["tests"][key][f"{t}_robust"] = {x: r[x] for x in ("p", "k", "B")}
+        self.assertVerdict("AGREE", prod, base_labels)
+        prod["tests"][G]["shape_robust"]["k"] += 1
+        self.assertVerdict("DISCREPANT", prod, base_labels)
+
+    def test_ND3_marker_of_unstated_shape_is_incomplete(self):
+        d = Path(tempfile.mkdtemp(prefix="s5p_recompute_nd3_"))
+        try:
+            t = Toy(d / "w")
+            t.calibration("MnvTune_v1", 60)
+            t.status("GiBUU_2019", 0, True, "budget")
+            self.mine = R.jsonable(R.evaluate(t.design(), t.v_path, t.contract, log=lambda *a: None))
+            self.mine["inputs"] = {"design_sha256": "d" * 64}
+            prod, labels = self.production_like()
+            prod["tests"]["GiBUU_2019"] = {"not_calibrated": {"reason": "budget", "B": 0}}
+            self.assertVerdict("INCOMPLETE", prod, labels)
+            prod["tests"]["GiBUU_2019"] = {"not_calibrated": ""}
+            self.assertVerdict("DISCREPANT", prod, labels)
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
+
+    def test_ND5_unwritable_report_is_an_error(self):
+        import s5p_recompute_compare as C
+        prod, labels = self.production_like()
+        f = {n: self.dir / f"{n}.json" for n in ("mine", "prod", "labels")}
+        for n, doc in (("mine", self.mine), ("prod", prod), ("labels", labels)):
+            f[n].write_text(json.dumps(doc))
+        self.assertEqual(C.compare_files(str(f["mine"]), str(f["prod"]), str(self.dir / "no" / "such" / "cmp.json"),
+                                         str(f["labels"])), 3)
+
     def test_F8_exit_codes_errors_and_no_stale_report(self):
         import s5p_recompute_compare as C
         import hashlib
