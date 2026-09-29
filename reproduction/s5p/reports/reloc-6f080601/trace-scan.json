@@ -1,0 +1,8 @@
+{
+ "trace": "/pscratch/sd/j/josephrb/s5p-parallel-reproduction/reloc-6f080601.strace",
+ "lines": 910336,
+ "accesses_under_expected_prefix": 4137,
+ "recorded_root_paths_touched": 0,
+ "examples": {},
+ "exit_code": 0
+}
