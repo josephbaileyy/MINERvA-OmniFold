@@ -1,7 +1,8 @@
 # s5p reproduction harness: fresh-checkout handoff (2026-09-28)
 
-**CITABLE FOR:** what the harness at `reproduction/s5p/` reproduces from a fresh checkout, what it cannot, the
-exact commands, and the route for adding the final joint result. This is task 3 of
+**CITABLE FOR:** what the harness at `reproduction/s5p/` reproduces from a fresh checkout, at the recorded input
+locations and relocated. It also records what the harness cannot reproduce, the exact commands, and the route
+for adding the final joint result. This is task 3 of
 [`HANDOFF-20260928-s5p-parallel-tasks.md`](HANDOFF-20260928-s5p-parallel-tasks.md).
 **NOT CITABLE FOR:** any physics result, grade, adoption, release, or anything about the joint test. Agreement
 shows that the committed calculation was re-executed faithfully. It does not show that the calculation is
@@ -11,102 +12,136 @@ scientifically adequate. Expected values live in the receipts the harness reads,
 
 | | status |
 |---|---|
-| **This bounded preparation** (harness, fresh-checkout test, durable route for the joint result) | **COMPLETE** at the commit that carries this file, on branch `s5p-parallel-reproduction-20260928` (not merged) |
-| **The s5p campaign (`OI-193`)** | **NOT complete.** Production is still writing: at 15:10 PDT 2026-09-28, `find` showed files newer than 14:45 PDT under `s5p:runs/prod/cal/*` and `s5p:runs/prod/pow/P1_a1.0`. No terminal joint product exists. The final joint-result reproduction is **PENDING** until independently verified terminal products exist. |
+| **This bounded preparation** (harness, independent review and repairs, fresh-checkout test at the recorded and relocated roots, durable route for the joint result) | **COMPLETE** on branch `s5p-parallel-reproduction-20260928` at the commit that carries this file |
+| **The s5p campaign (`OI-193`)** | **NOT complete.** Production was still writing at 15:10 PDT 2026-09-28: `find` showed files newer than 14:45 PDT under `s5p:runs/prod/cal/*` and `s5p:runs/prod/pow/P1_a1.0`. No terminal joint product exists. Reproduction of the final joint result is **PENDING** until independently verified terminal products exist. |
 
 ## Tested source
 
-- **Harness commit `888dae697e5dfaf4e0d3f50a5a87a5daf562b656`** (branch `s5p-parallel-reproduction-20260928`,
-  parent `129917715b2c`, the `origin/main` of 2026-09-28). The scope is written against the receipts at
-  `12991771` (`scope.SOURCE_COMMIT`). The frozen admission is `4f5a613f`, and the frozen design sha256 is
-  `404446eb…` at both commits.
-- **Fresh clone:** `git clone https://github.com/josephbaileyy/MINERvA-OmniFold.git`, checked out at `888dae69`
-  into `/pscratch/sd/j/josephrb/s5p-parallel-reproduction/fresh-888dae69`. `git status --porcelain` was empty
-  before and after the run.
-- **Environment:** Perlmutter `login07`; root_6_28 activated by prefix; Python 3.11.14, numpy 1.26.4, ROOT
-  6.28/12, matplotlib 3.10.8. These are the interpreter and versions the production receipts record.
-- **Result:** unit tests 17/17 OK. `run` exited **0** after 128 s wall time (login node, no Slurm). The report is
-  committed at [`reproduction/s5p/reports/fresh-888dae69/`](../../reproduction/s5p/reports/fresh-888dae69/):
-  `report.json` sha256 `e827a945…`, `report.md` `de523e12…`, `unittest-output.txt` (the run's `fresh-unittest.log`) `26a728bd…`. The unit tests also
-  pass from a second fresh clone on macOS (Python 3.12.2, numpy 1.26.4); the products are not reachable there.
-- **Negative control on real inputs:** one pin corrupted (the 3D unfold's digest). Tier A then exited **1**,
-  with exactly one `MISMATCH` on that file.
+- **Harness commit `6f080601f4bd72a0b63d065320248f4703ab1ab8`** (branch `s5p-parallel-reproduction-20260928`).
+  The scope is written against the receipts at `129917715b2c` (`scope.SOURCE_COMMIT`, the `origin/main` of
+  2026-09-28). The frozen admission is `4f5a613f`, and the frozen design sha256 is `404446eb…`. Those receipts
+  and producers are unchanged on `origin/main` up to `ab96ae0a`, which was checked when the first version was
+  pushed.
+- **Fresh clone:** `git clone https://github.com/josephbaileyy/MINERvA-OmniFold.git`, checked out at `6f080601`
+  into `/pscratch/sd/j/josephrb/s5p-parallel-reproduction/fresh-6f080601`. `git status --porcelain` was empty
+  before and after every run.
+- **Environment:** Perlmutter login nodes; root_6_28 activated by prefix; Python 3.11.14, numpy 1.26.4, ROOT
+  6.28/12, matplotlib 3.10.8. These are the versions the production receipts record.
+- **Unit tests:** 28/28 OK.
+- **Identity run** (recorded roots): exit **0**, 959 rows. Report:
+  [`reproduction/s5p/reports/fresh-6f080601/`](../../reproduction/s5p/reports/fresh-6f080601/). Digests:
+  `report.json` `abc12aca…`, `report.md` `243b419c…`. The pins file used is the committed one (sha256 `2429fc86…`).
+- **Relocated run** (roots on a staged copy, traced): exit **0**, and the same 959 rows with the same statuses
+  (0 rows differ). Report: [`reproduction/s5p/reports/reloc-6f080601/`](../../reproduction/s5p/reports/reloc-6f080601/).
+  Digests: `report.json` `aff5aa83…`, `report.md` `063d1d53…`, `trace-scan.json` `c1570422…`,
+  `staging-manifest.json` `8a3fe565…`. The strace output stays on scratch:
+  `/pscratch/sd/j/josephrb/s5p-parallel-reproduction/reloc-6f080601.strace`, sha256 `1d468141…`,
+  114,476,936 B.
 
-| tier | REPRODUCED | WITHIN_TOL | DECLARED_DIFFERENCE | other |
-|---|---:|---:|---:|---|
-| A replay | 880 | 3 | 5 | 0 mismatch, 0 missing |
-| B regenerate | 54 | 0 | 2 | 0 mismatch, 0 missing; no producer imported code outside the checkout (35 launches) |
-| C full regeneration | | | | 6 `NOT_RUN` |
-| D joint | | | | 1 `PENDING` |
+### Counts (identical in both runs), by tier and basis
 
-## What reproduced
+| tier and basis | REPRODUCED | WITHIN_TOL | DECLARED |
+|---|---:|---:|---:|
+| A: committed file vs scope pin | 52 | | |
+| A: receipt-recorded digest (historical provenance) | 377 | | 3 |
+| A: receipt-recorded digest, bytes from git history (scratch copy removed) | 3 | | |
+| A: code identity vs recorded code | 16 | | 2 |
+| A: recomputed from preserved products | 32 | 3 | |
+| A: coverage of the receipts' recorded digests | 1 | | |
+| A: **lane-pinned digest (newly recorded here; NOT historical provenance)** | 407 (401 files + 6 population rows) | | |
+| B: regenerated by the checkout's producer | 47 | | 2 |
+| B: code identity (modules the figure producers imported) | 7 | | |
+| C: not run | | | 6 `NOT_RUN` |
+| D: joint result | | | 1 `PENDING` |
 
-**Replay (tier A), from preserved bytes:**
+There are no failures, errors or missing inputs. The three within-tolerance rows are the integrated σ of the
+three `_full` predictions against `gen5d-fluxfix-2.json`. They are computed by a different producer and agree to
+at most 4e-16 relative.
 
-- The 52 committed receipts, logs, designs and note figures equal their pins.
-- All 382 distinct `(path, sha256)` pairs recorded by the 37 in-scope JSON receipts reproduce, apart from the 3
-  declared differences below. This includes the flux-repaired 5D predictions and their input identities
-  (pre-fix products, `phi_t`, GENIE graphs, cvmfs flux files, supplement events and flux) and the stored ROOT
-  prediction and mode files.
-- The producers match the code that ran.
-- The integrated σ of every repaired prediction agrees with the generator-context sidecars exactly, and with the
-  flux-fix receipts to at most 4e-16 relative.
-- The F2/F4/M1 summary statistics and V's receipt fields match exactly.
-- All 401 lane-pinned unrecorded inputs match their pins.
+## The seven declared differences (each listed individually in both reports)
 
-**Regeneration (tier B), from the fresh checkout on the preserved inputs:**
+`scope.py` declares each one by its recorded **and** its observed digest. Any other value is a `MISMATCH`.
 
-- `gen5d_to_rootpreds.py`: all 8 prediction ROOT files, every histogram bitwise.
-- The six figure runs, with logs equal line for line and PDFs bitwise except creation date and ID:
-  `eavailW_band` (VL156–VL158), `generators_vs_unfolded_band` (VL159), `compare_3d_fullcov`,
-  `compare_mec_eavail` (VL160), `compare_mec_eavail_before`, `mode_decomp_eavail_before`. The four PDFs among
-  them are the note's `eavailW_band`, `generators_vs_unfolded_band`, `compare_3d_fullcov` and
-  `compare_mec_eavail`.
-- `s5p_pairdiff.py`: all 17 F2/F4/M1 products, arrays bitwise.
-- `s5p_prefreeze.py units` and `devpower`: `result` exactly.
-- `s5p_joint.py build-v`: V bitwise.
-- `s5p_envelope.py`: every block exactly, apart from 2 declared recorded digests.
+| # | row | recorded → observed | reason |
+|---|---|---|---|
+| 1 | A digest `runs/s2/conv/k_b0_gibuu.npz.partial.npz` | `1998b347…` → `1fbbdf95…` | running-trace checkpoint modified after the envelope receipt (mtime 02:12 PDT 2026-09-27; receipt committed `66cf3129` at 01:24) |
+| 2 | A digest `runs/s2/conv/k_b0_w1.npz.partial.npz` | `dc39afb5…` → `d06c46a1…` | the same; mtime 02:32 PDT |
+| 3 | A digest `gen5d_fluxfix/code/run_gen5d_supplement.sh` | `6b925371…` → `9c208852…` | `supplement_flux.code` records an earlier script version that is in no commit. The README says the flux file "was written once, by an earlier version of the script"; the flux file itself matches |
+| 4 | A producer `run_gen5d_supplement.sh@6b925371` | `6b925371…` → `9c208852…` | the same fact, as code identity |
+| 5 | A producer `s5p_pairdiff.py@306b8dc8` | `306b8dc8…` (the `66cf3129` blob) → `dd17d970…` (`e7bd0812`) | the four 4-pair F4 receipts were written by the older version; tier B regenerates them bitwise with the checkout's |
+| 6 | B `envelope:bias_sources.d1` | only `.sha256` differs, by #1's digests | the envelope reads iteration 5 of the checkpoint; its linearity blocks regenerate exactly |
+| 7 | B `envelope:bias_sources.d2` | only `.sha256` differs, by #2's digests | the same |
+
+## Independent review and repairs
+
+A read-only reviewer examined `9575d4ab` and reported 11 defects. All were repaired in `335fd481` and
+`6f080601`, and each has a control in `tests/test_repro_s5p.py`:
+
+- **HIGH:** a NaN or inf on one side of an array comparison passed as within tolerance. Now `MISMATCH`, and an
+  empty comparison fails.
+- **Producer differences were auto-declared** if the recorded digest matched any older commit of the file. Now
+  only `scope.py` declares, by both digests. The older commit is reported as context.
+- **Declarations were matched by path only.** They are now matched by recorded and observed digest. The envelope
+  blocks may differ only at `.sha256`, and only by the declared digests.
+- **`gen5d-build.json` `code.files` were not extracted.** Nine of the ten were already compared through other
+  receipts; `nuwro_to_flat_5d.C` was not compared anywhere. Now extracted. A coverage row also requires every
+  64-hex value in the receipts to be compared by the check it is classified under.
+- **Exit 0 was possible with `NOT_RUN`/`INFO` rows or without tier A/B.** Now exit 2.
+- **Missing inputs raised exceptions, or read as mismatches.** They now give `INPUT_MISSING` pre-checks, and
+  harness exceptions become `ERROR` rows (exit 1) while the report is still written.
+- **Lane pins and receipt digests were merged in the report.** Every row now has a `basis`. The pins file's path,
+  sha256 and measurement time are recorded. `report.md` has separate sections for failures, the declared
+  differences, within-tolerance rows, lane pins, not-run/pending rows, and exact matches by basis.
+- **A producer that exits without the import record now fails** (`os._exit` or a signal).
+- **The ROOT comparison now fails if it compares nothing.** It records the number of histograms and every key's
+  class.
+- **Shallow-clone `INFO` rows are now `INPUT_MISSING`.**
+- **The output-directory guard now forbids the recorded roots too.**
+
+## The relocation check
+
+- `stage` copied exactly the declared inventory into
+  `/pscratch/sd/j/josephrb/s5p-parallel-reproduction/staging-6f080601/{s5p,analysis,s5e,cvmfs}`, verifying each
+  copy's digest. The declared inventory is every receipt-recorded file plus every lane-pinned file: 766 files,
+  5,247,332,188 B. The 3 files absent at source are the removed deploy copies, which the harness reads from git.
+- The run under `strace -f --seccomp-bpf -e trace=%file` had 910,336 trace lines, including 4,137 accesses under
+  the staging tree. **0 paths under any recorded root were touched.** No input was missing, so the declared
+  inventory is complete for tiers A, B and D.
+- **The trace scan demonstrably fires.** The first traced run, at `335fd481`, found exactly 3 accesses: `lstat` of
+  the three recorded root directories themselves, made by the harness's own output guard while it resolved them.
+  No file under them was touched. `6f080601` makes the guard compare those roots lexically, and a unit test pins
+  that it touches nothing under them.
+- **Negative control:** with one staged input hidden (`model_tunev1_xsec3d.root`), the relocated A+B run reported
+  `INPUT_MISSING` for that pin and for both figure runs that need it. It exited **1**, because the pin-population
+  row counts a vanished pinned file as a `MISMATCH`. The file was restored and matches its pin (`2d3b6bed…`).
+- **Earlier negative control** (at `888dae69`, recorded roots): one corrupted pin gave tier A exit 1, with that
+  one `MISMATCH`.
 
 ## Findings a later session needs
 
-1. **The figures' scratch export is gone.** `s5p:deploy/4e4b4f56` no longer exists; `deploy/` holds only
-   `4f5a613f` and `55a41765`. The figure producers' recorded digests equal the git blobs at `4e4b4f56`, so the
-   harness checks them there, and the report row says so. A fresh clone therefore needs full history (not
-   `--depth 1`).
-2. **The envelope receipt's d1/d2 bias sources were running-trace checkpoints**
-   (`runs/s2/conv/k_b0_{gibuu,w1}.npz.partial.npz`). They were modified after the receipt (mtimes 02:12 and
-   02:32 PDT 2026-09-27; receipt committed `66cf3129` at 01:24). Their recorded digests no longer hold. The
-   envelope reads only iteration 5, and its **linearity blocks regenerate exactly** from the later files. An
-   earlier draft of `scope.py` said these blocks "cannot be replayed". The measurement refuted that before
-   commit, and the committed text is the measured one.
-3. **`gen5d-fluxfix-2.json` records two digests for `run_gen5d_supplement.sh`.** The earlier one
-   (`supplement_flux.code`, `6b925371…`) is in no commit. The README says the supplement flux file "was written
-   once, by an earlier version of the script". The flux file itself matches.
-4. **The four 4-pair F4 `D-*.json` were written by the committed `66cf3129` version of `s5p_pairdiff.py`.** The
-   later producer regenerates them bitwise. Code identity is reported separately from numerical agreement.
-5. **Six groups of input (17 globs, 401 files) have no producer-recorded digest.** They are listed in
-   `scope.UNRECORDED_INPUT_GLOBS` (untracked figure data in the canonical analysis checkout, lateral endpoints,
-   data jitters, V ensemble, power pilot, M1 mid asimovs, s5e W2, MnvTune 5D). The committed lane pins
-   (`pins/unrecorded-inputs-20260928.json`) prove only constancy since 21:56Z 2026-09-28. What ties them to
-   production is tier B's bitwise regeneration of the committed outputs.
-6. **An unattributed observation, recorded without inference.** `s5p:deploy/4f5a613f/.git` has directory mtime
-   15:09:28 PDT, about 8 s after the fresh run's last write, and no file inside it is newer. No code in the
-   harness references that directory.
+1. **The figures' scratch export `s5p:deploy/4e4b4f56` is gone.** Its recorded digests are checked as that
+   commit's git blobs, so a fresh clone needs full history.
+2. **The envelope receipt's d1/d2 bias sources were running-trace checkpoints** that were modified after the
+   receipt. Only their recorded digests fail; the envelope regenerates exactly. An earlier draft of `scope.py`
+   claimed those blocks "cannot be replayed". The measurement refuted that before the first commit.
+3. **Six groups of input (17 globs, 401 files) have no producer-recorded digest.** The committed lane pins
+   (`pins/unrecorded-inputs-20260928.json`, measured 21:56Z 2026-09-28) prove only constancy since then. What
+   ties them to production is tier B's bitwise regeneration of the committed outputs.
+4. **An observation, not attributed.** `s5p:deploy/4f5a613f/.git` had directory mtime 15:09:28 PDT, about 8 s
+   after the first fresh run's last write, and no file inside it was newer. The traced relocated run shows the
+   harness touches nothing under `s5p-20260926`.
 
 ## Not reproduced here (tier C, and why)
 
-- the <50 GeV flux reweight and the 50–100 GeV supplements from events (event generation; the producers hardcode
-  `S5P`/`REPO`);
+- the <50 GeV flux reweight and the 50–100 GeV supplements, from events (the producers hardcode `S5P`/`REPO`);
 - the per-mode files and the σ-weighted `mode_decomp_eavail` run behind the note's `mode_decomp_eavail.pdf`
   (`gen5d_mode_components.py` writes only to the campaign's stage-7 directory). Its outputs and log are
   digest-checked;
 - the generator event samples;
-- every production unfold behind F2/F4/M1, V, devpower and the envelope;
-- `paper_eavailW_generators.pdf` (`pdfcrop` is absent on Perlmutter; the committed file is digest-pinned).
+- every production unfold;
+- `paper_eavailW_generators.pdf` (`pdfcrop` is absent on Perlmutter; the file is digest-pinned).
 
-Also untested: relocated roots end to end (only unit-tested), other interpreters or numpy builds, and the joint
-result. Making the mode files regenerable needs an output-directory option on `gen5d_mode_components.py`. That
-is a producer change and was not made here.
+Also untested: other interpreters or numpy builds, and the joint result.
 
 ## Exact commands
 
@@ -114,47 +149,54 @@ is a producer change and was not made here.
 W=/pscratch/sd/j/josephrb/s5p-parallel-reproduction
 git clone https://github.com/josephbaileyy/MINERvA-OmniFold.git $W/fresh-<sha> && cd $W/fresh-<sha> && git checkout <sha>
 eval "$(/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda shell.bash hook)"
-conda activate "$HOME/.conda/envs/root_6_28"; export TMPDIR=$SCRATCH/tmp      # not setup_salloc_env.sh
+conda activate "$HOME/.conda/envs/root_6_28"; export TMPDIR=$SCRATCH/tmp   # not setup_salloc_env.sh; no `set -u`
+P=reproduction/s5p/pins/unrecorded-inputs-20260928.json
 python3 -m unittest discover -s reproduction/s5p/tests
-# a config: config.example.json with out_dir set to a NEW directory, e.g. $W/runs/fresh-<sha>
-python3 reproduction/s5p/repro_s5p.py run --config $W/config-fresh.json \
-    --pins reproduction/s5p/pins/unrecorded-inputs-20260928.json
+python3 reproduction/s5p/repro_s5p.py run --config $W/config-fresh-<sha>.json --pins $P            # recorded roots
+python3 reproduction/s5p/repro_s5p.py stage --config $W/config-fresh-<sha>.json --pins $P --to $W/staging-<sha>
+strace -f --seccomp-bpf -e trace=%file -o $W/reloc-<sha>.strace \
+    python3 reproduction/s5p/repro_s5p.py run --config $W/config-reloc-<sha>.json --pins $P       # roots = staging
+python3 reproduction/s5p/repro_s5p.py scan-trace --trace $W/reloc-<sha>.strace --expect-prefix $W/staging-<sha>
 ```
 
-Do not use `set -u` in the calling shell. The root_6_28 activation script references unset variables
-(`ADDR2LINE`) and aborts. The scope, tolerances and the full not-run list are in
-[`reproduction/s5p/README.md`](../../reproduction/s5p/README.md) and `repro_s5p.py list`.
+The configs are `config.example.json` with `out_dir` set to a new directory. For the relocated run, also set
+`roots` to `$W/staging-<sha>/{s5p,analysis,s5e,cvmfs}`. The recorded-root run takes about 2 min, `stage` about
+35 s, and the traced relocated run about 4.5 min. All run on a login node; none is a Slurm job.
 
 ## Steps to incorporate the final joint result
 
-Tier D is already wired (`repro_s5p.py tier_d`). It reports `PENDING` until
-`state/s5p/stage7/joint/joint-evaluate.json` is committed and all five `s5p:runs/prod/status/<null>-final.json`
-exist. Once the campaign is terminal (see the parallel-tasks handoff §1):
+Tier D is wired. It reports `PENDING` until `state/s5p/stage7/joint/joint-evaluate.json` is committed and all
+five `s5p:runs/prod/status/<null>-final.json` exist. Then:
 
-1. Wait for the campaign's committed `joint-evaluate.json` and for the independent recomputation's report. Task 1
-   is branch `s5p-parallel-recompute-20260928`; its lane states the output route
-   `/pscratch/sd/j/josephrb/s5p-parallel-recompute/final/{recompute.json,compare.json}`, which is the config
-   default for `joint.independent_compare`.
-2. On a new branch from that `origin/main`, add the joint receipt(s) and the note/primer/paper joint figures to
-   `scope.RECEIPTS`. Add the calibration and power products either to `DIGEST_SOURCES` (if the campaign's
-   receipt records their digests) or to `UNRECORDED_INPUT_GLOBS` plus a new `pin`. Add each joint figure's
-   producer to `FIGURE_RUNS`. Move `SOURCE_COMMIT`.
-3. From a fresh clone, run `run`. Tier D then checks the design/V pins (`404446eb…`/`35979ef7…`), replays
-   `s5p_joint.py evaluate` into the output directory, compares it with the committed file at 1e-12, and records
-   the independent report by digest. The harness does not grade that report.
-4. Commit the report beside this one, and write a successor to this handoff.
+1. Wait for the campaign's committed `joint-evaluate.json` and the independent recomputation's report. Task 1 is
+   branch `s5p-parallel-recompute-20260928`, and its route
+   `/pscratch/sd/j/josephrb/s5p-parallel-recompute/final/compare.json` is the config default for
+   `joint.independent_compare`.
+2. On a new branch from that `origin/main`, add the joint receipt(s) and the joint deliverable figures to
+   `scope.RECEIPTS`. Add the calibration/power products to `DIGEST_SOURCES` (if a receipt records their
+   digests) or to `UNRECORDED_INPUT_GLOBS` plus a new `pin`. Add each joint figure's producer to `FIGURE_RUNS`,
+   and move `SOURCE_COMMIT`. The coverage row will then demand that every new digest is compared.
+3. From a fresh clone, run the recorded-root run and the staged, traced relocated run. Tier D checks the
+   design/V pins (`404446eb…`/`35979ef7…`), replays `s5p_joint.py evaluate` and compares it with the committed
+   file at 1e-12, and records the independent report by digest. The harness does not grade that report.
+4. Commit the reports beside these, and write a successor to this handoff.
 
 Until then, nothing here is evidence about the joint result.
 
 ## Coordination and footprint
 
-- The lanes were declared to the note-sync session (branch `note-sync-s5p-20260928`) and the recomputation session
-  (branch `s5p-parallel-recompute-20260928`). Neither touches `reproduction/s5p/**` or this file.
-- All three branches add neighbouring rows to `CATALOG.md` / `MANIFEST-overrides.tsv` and regenerate
-  `MANIFEST.tsv`. Whichever merges later should rebase and regenerate rather than hand-merge.
+- The note-sync lane (branch `note-sync-s5p-20260928`) and the recomputation lane
+  (`s5p-parallel-recompute-20260928`) touch neither `reproduction/s5p/**` nor this file. All three add
+  neighbouring `CATALOG.md` / `MANIFEST-overrides.tsv` rows. The shared `MANIFEST.tsv` is regenerated at
+  integration, never hand-merged.
 - No Slurm job was submitted. Nothing was written to `../MINERvA-OmniFold-s5p`, `state/s5p/`, or
-  `/pscratch/sd/j/josephrb/s5p-20260926/`.
-- Cluster outputs are only under `/pscratch/sd/j/josephrb/s5p-parallel-reproduction/`: `dev/`, a scratch
-  clone with the harness copied in, used for development runs `runs/dev1`, `runs/dev2`; `fresh-888dae69/`;
-  `runs/fresh-888dae69/`; `runs/control-corrupt-pin/`; and the pins, configs and logs. Scratch is purgeable,
-  so the committed report copy is the durable record.
+  `/pscratch/sd/j/josephrb/s5p-20260926/`. The traced relocated run verifies this for the harness itself.
+- Cluster outputs are only under `/pscratch/sd/j/josephrb/s5p-parallel-reproduction/`:
+  - fresh clones `fresh-{888dae69,335fd481,6f080601}`;
+  - `staging-6f080601`, 5.2 GB (a copy of preserved inputs; the `335fd481` staging copy was removed);
+  - `runs/` and the traces;
+  - `dev/`, a development scratch clone.
+
+  Scratch is purgeable, so the committed report copies are the durable record.
+- The first version's report, `reproduction/s5p/reports/fresh-888dae69/`, is kept as history. It was produced
+  by the pre-review harness, so cite the `6f080601` reports.
