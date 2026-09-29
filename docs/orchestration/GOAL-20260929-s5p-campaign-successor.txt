@@ -1,0 +1,40 @@
+Continue the s5p precision-measurement campaign (OI-193), replacing the previous campaign session. This continues the existing authorization and grants nothing new: docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md and GOAL-20260926-precision-measurement-completion.txt govern, with every cap, reserve and prohibition in them.
+
+Objective: carry the frozen joint-5D inference (amendment 7, frozen at 4f5a613f) to an honest terminal disposition and delivery.
+- The measurement branch is not admitted (amendment 4).
+- Finish the calibration and power production.
+- Evaluate. Derive the ruled robustness labels. Obtain the independent recomputation's final verification.
+- Complete the Stage-7 deliverables: the joint result with its stated conditions, power per null, release materials, the note/primer/paper build and standalone sync, a reproduction update, and both remote heads pushed and verified.
+- Deliver the four status fields, paper-wide readiness, evidence, spend, heads and costed remaining requirements.
+- The goal completes at honest terminal disposition even if nothing is rejected or qualifies.
+
+Start here:
+- The handoff is docs/orchestration/HANDOFF-20260929-s5p-campaign-cold-start.md in github.com/josephbaileyy/MINERvA-OmniFold, branch campaign/s5p-precision-20260926 (worktree /Users/josephbailey/local-research/MINERvA-OmniFold-s5p), pushed to origin/main at the commit that adds it.
+- Read AGENTS.md, the authorization, amendment 7, RULING-20260929-s5p-A7-robustness-flag.md and the handoff before acting.
+- Treat the handoff's state as stale: re-measure heads, runners, jobs, products, status files, logs and the meter with the handoff's section 7 commands.
+
+Next authorized action: monitoring only. Production runs itself (six runners on login33, one per lane).
+- Arm your own read-only event monitor (handoff section 7).
+- Act only on an event, as handoff section 8 lists.
+- When batch 1 / P2 have run, report the achieved throughput after the 2026-09-28 throttle change and a revised ETA. It is owed to the owner.
+- At terminal (five <null>-final.json, the pow queue done, no s5p-s5p_(cal|pow)_ job queued, meter open concurrency 0), run the evaluation and label commands from a NEW clean deploy of origin/main, then notify the recompute lane (session "gbdt independent") for its final verification.
+
+Taking over operational ownership:
+- Adopt the six existing runners; do not start new ones.
+- Before any recovery, verify there is exactly one runner per lane. Never run a queue file from its start.
+- Recover a verified-dead runner only by the resume procedure in handoff section 6: s5p_requeue.py, a new commit, a new deploy, one runner.
+- Never edit or move $NS/deploy/*, $NS/runs/prod/*, status or STOP files.
+- Message "gbdt independent" that you are now the campaign session.
+
+Boundaries:
+- Caps: cumulative 345.27 billed CPU node-h and 500 A100-h; each new pool at most 10% of uncommitted allocation; a 20% verification/repair reserve; at most 2 CPU nodes and 4 GPUs concurrently.
+- Never: guard bypasses, purchases or allocation transfers; PET work, general cleanup, external messages, public deposit, release tagging or submission.
+- No change to frozen claims, statistics, stopping rules, terminal statuses, seeds, batches or estimator settings. Never rescue a failure by changing criteria.
+- Do not stop, restart or re-submit jobs for tidiness.
+- Git: use isolated worktrees, stage explicit paths only, pass an explicit git identity, regenerate the manifest, and verify every push with git branch -r --contains.
+- Do not edit other lanes' branches.
+
+Owner decisions:
+- None is required now.
+- A6 (cross product, R6) and A8 (95% look precision, R8) have no owner ruling. Both reviews read the frozen text as settling them. Only the owner may rule otherwise; do not rule them yourself.
+- If an event falls outside the frozen rules and retry limits, identify the decision for the owner; do not decide it.

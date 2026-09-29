@@ -47,9 +47,25 @@
  },
  "jobs": [
   {
-   "job": "production lanes",
-   "label": "pow.q first, then cal-<null>.q x5",
-   "state": "to launch"
+   "job": "production lanes (measured 2026-09-29T06:27Z)",
+   "state": "running",
+   "arrays": {
+    "pow P1_a1.0": "59021632",
+    "MnvTune_v1 b0": "59021669",
+    "GENIE_2_12_10_CV b0": "59021681",
+    "GENIE_2_12_10_MEC b0": "59021698",
+    "NuWro_21_09 b0": "59021752",
+    "GiBUU_2019 b0": "59021765"
+   },
+   "runners_login33": {
+    "pow": "PGID 565706 (deploy 55a41765, queues-r1/pow.q, log runs/queue-prod-r1-pow.log)",
+    "MnvTune_v1": "PGID 565712 (55a41765, queues-r1)",
+    "GENIE_2_12_10_CV": "PGID 565718 (55a41765, queues-r1)",
+    "GENIE_2_12_10_MEC": "PGID 565720 (55a41765, queues-r1)",
+    "NuWro_21_09": "PGID 1283647 (deploy 4f5a613f, queues/, log runs/queue-prod-NuWro_21_09.log)",
+    "GiBUU_2019": "PGID 1285855 (4f5a613f, queues/)"
+   },
+   "handoff": "docs/orchestration/HANDOFF-20260929-s5p-campaign-cold-start.md"
   }
  ],
  "receipts": [
@@ -203,7 +219,7 @@
    "verdict": "READY WITH REQUIRED CHANGES (applied; freeze after V with a mechanical re-check)"
   }
  ],
- "next_action": "deploy the freeze commit; rebind to budget revision 5; launch pow.q, then the five cal queues; monitor; evaluate when every null has a final status; independent re-computation; Stage 7 deliverables",
+ "next_action": "monitor production (runners are autonomous); when terminal (five <null>-final.json, pow queue done, no s5p-s5p_(cal|pow)_ job queued, meter open concurrency 0): evaluate, derive robust labels (s5p_robust_labels.py v2), notify the recompute lane for final verification, Stage 7 deliverables; see HANDOFF-20260929-s5p-campaign-cold-start.md",
  "concurrent_work_at_start": "josephrb GPU jobs pfd-chain/pfd-shr/pfd-fin (58893071-58903623, m3246_g) and other users' m3246_g jobs belong to other lanes (not touched); no m3246 CPU row; shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "b30752864c70c76da3a888136e52c3dea4b615b7",
