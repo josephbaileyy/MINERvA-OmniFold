@@ -132,9 +132,13 @@ below, which I re-ran myself.
   - the closest endpoint-to-threshold approach for B ≥ 100 is 4.5e-9 at (B, k) = (1507, 24), the same as the
     clarification's.
   - So closure is immaterial at every B, and no ruling on it is needed.
-- **A7:** the ruled alternative R7(a), whose text I take verbatim from the clarification and the ruling record,
-  fixes the κ = 3 variant set as "claim variants ∪ F ± 3δ_M1" (the ±2δ members kept). My earlier κ = 3 set replaced
-  ±2δ by ±3δ. That set is now a labelled diagnostic, and the ruled set is the reported one (handoff §3.2).
+- **A7 — CORRECTED 2026-09-29, later the same day.** The first version of this bullet said that R7(a)'s text fixes
+  the κ = 3 variant set as "claim variants ∪ F ± 3δ_M1" (the ±2δ members kept), and made that set the reported one.
+  That is **withdrawn**. The owner states that the ruling selected the full Holm re-run and the labels, **not** the
+  variant set. No governing record at `4f5a613f` fixes it either (search and citations in
+  `HANDOFF-20260928-s5p-recompute.md` §3.2). The set is open question **A7-VS**, flagged for a ruling before final
+  verification. Both sets ("retain" and "replace") are computed, and a test on which they differ is reported
+  UNRESOLVED.
 - **A8 deadline arithmetic.** The clarification estimates the earliest first look with B > 0 near 2026-09-29T11Z
   (MEC), as a lower bound. It is not re-measured here.
 

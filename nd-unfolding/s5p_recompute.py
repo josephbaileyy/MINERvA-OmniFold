@@ -84,12 +84,13 @@ AMBIGUITIES = {
                       "product (9 variants) is computed beside it and any decision it would change is reported. "
                       "2026-09-29: assessed as resolved by the frozen text to the union "
                       "(ASSESSMENT-20260929-s5p-recompute-A6-A8.md); no owner ruling",
-    "A7_robust_flag": "RULED 2026-09-29 (RULING-20260929-s5p-A7-robustness-flag.md, R7(a)): the full Holm re-run "
-                      "at kappa = 3 over the robust claims (claim variants UNION F +- 3 delta_M1); a primary "
-                      "rejection is 'robust to the sub-fine residual' iff also rejected there, else 'not robust'; "
-                      "every non-rejected test 'not applicable' (family.robust_labels). Diagnostics kept: A7(b) per "
-                      "test (A7b_per_test_robust_diagnostic) and this lane's earlier set with +-2 replaced by +-3 "
-                      "(*_replacing_kappa2_diagnostic)",
+    "A7_robust_flag": "RULED 2026-09-29 (RULING-20260929-s5p-A7-robustness-flag.md): the full Holm re-run at "
+                      "kappa = 3; a primary rejection is 'robust to the sub-fine residual' iff also rejected there, "
+                      "else 'not robust'; every non-rejected test 'not applicable'. Diagnostic kept: A7(b) per test",
+    "A7_VS_kappa3_variant_set": "OPEN: the ruling does not fix whether the kappa = 3 set keeps the +-2 delta_M1 "
+                                "members (retain: claim variants UNION F +- 3 delta_M1) or replaces them (replace: "
+                                "process-shift variants UNION F +- 3 delta_M1); both are computed "
+                                "(family.kappa3); a test on which they differ is reported UNRESOLVED",
     "A8_look_precision": "the sequential rule's T7 half-width is measured on the 99.5% look interval (the same "
                          "interval as the threshold condition); 'contains' is closed at both ends. Sensitivity "
                          "readings (labelled, never used for a verdict): precision on the 95% interval, open "
@@ -186,6 +187,7 @@ def holm_determined(entries: list[dict], alpha: float, level: float = CP_LEVEL) 
 
 
 ROBUST = "robust to the sub-fine residual"
+UNRESOLVED_VS = "UNRESOLVED: kappa = 3 variant set (A7-VS)"
 NOT_ROBUST = "not robust"
 NOT_APPLICABLE = "not applicable"
 
@@ -674,9 +676,9 @@ class Evaluator:
         ens = null_ensembles(ctx["f_cal"], ctx["eps"], ts, shifts)
         _, rob_shifts = self.shifts_for(ctx, "kappa_robust") if "none" not in ctx["m1"] else (None, {})
         rob_only = {k: v for k, v in rob_shifts.items() if k not in shifts}
-        # A7 as ruled (RULING-20260929-s5p-A7-robustness-flag.md, R7(a)): the kappa = 3 robust claim is the largest
-        # p over the claim variants UNION F +- 3 delta_M1 (the +-2 members kept). The earlier reading of this lane,
-        # the claim set with +-2 REPLACED by +-3, is kept only as a labelled diagnostic.
+        # A7 (RULING-20260929-s5p-A7-robustness-flag.md) fixes the full Holm re-run and the labels, NOT the kappa = 3
+        # variant set (A7-VS, open): both candidate sets are computed under neutral names, neither is preferred:
+        # "retain": claim variants UNION F +- 3 delta_M1; "replace": process-shift variants UNION F +- 3 delta_M1.
         ens_rob, ens_rob_replace = dict(ens), dict(ens)
         if rob_only:
             extra = null_ensembles(ctx["f_cal"], ctx["eps"], ts, rob_only)
@@ -689,8 +691,8 @@ class Evaluator:
         for t in TESTS:
             c = claim(obs[t], ens, t)
             c["unshifted"] = c["variants"]["c=0"]
-            c["robust_kappa3"] = claim(obs[t], ens_rob, t) if rob_only else None
-            c["robust_kappa3_replacing_kappa2_diagnostic"] = claim(obs[t], ens_rob_replace, t) if rob_only else None
+            c["robust_kappa3_retain_kappa2"] = claim(obs[t], ens_rob, t) if rob_only else None
+            c["robust_kappa3_replace_kappa2"] = claim(obs[t], ens_rob_replace, t) if rob_only else None
             cp_ = claim(obs[t], ens_prod, t)
             c["product_reading"] = {k: cp_[k] for k in ("k", "B", "p", "argmax")}
             size = {}
@@ -768,7 +770,7 @@ def power_of_set(ev: Evaluator, set_key: str, null_ctx: dict, ens: dict) -> dict
 def evaluate(design: dict, v_path: str, s5c_contract: dict, variant_mode: str = "union", log=print,
              sequential: bool = True) -> dict:
     ev = Evaluator(design, v_path, s5c_contract, variant_mode=variant_mode, log=log)
-    out = {"schema": SCHEMA, "variant_mode": variant_mode, "ambiguities": AMBIGUITIES,
+    out = {"schema": SCHEMA, "variant_mode": variant_mode, "ambiguities": AMBIGUITIES, "names": ev.names,
            "alpha_family": ev.alpha, "nulls": {}, "power": {}, "family": {}}
     thresholds = decision_thresholds(ev.alpha, 2 * len(design["nulls"]))
     null_state = {}
@@ -807,26 +809,39 @@ def evaluate(design: dict, v_path: str, s5c_contract: dict, variant_mode: str = 
             d["label"] = "not calibrated"
         d["holm_point"] = p
     out["family"]["decisions"] = dec
-    rob, rob_replace = [], []
-    for e, d in zip(entries, dec):
-        key, t = e["test"].split(":")
-        tr = out["nulls"][key]["tests"][t]
-        for dest, field_ in ((rob, "robust_kappa3"), (rob_replace, "robust_kappa3_replacing_kappa2_diagnostic")):
-            r = tr.get(field_)
+    kappa3 = {}
+    for vs, field_ in (("retain_kappa2", "robust_kappa3_retain_kappa2"), ("replace_kappa2", "robust_kappa3_replace_kappa2")):
+        ents = []
+        for e in entries:
+            key, t = e["test"].split(":")
+            r = out["nulls"][key]["tests"][t].get(field_)
             src = r if r is not None else e  # a null without M1 variants: its robust claim is its claim
-            dest.append({"test": e["test"], "p": src["p"], "k": src["k"], "B": src["B"]})
-        if d["decision"] == "rejected":  # A7(b), the per-test reading: a labelled, non-adopted diagnostic
-            r = tr.get("robust_kappa3")
-            d["A7b_per_test_robust_diagnostic"] = ("no M1 variant (null without a sub-fine residual)" if r is None
-                                                   else bool(cp_interval(r["k"], r["B"])[1] < d["threshold"]))
-    holm_rob = holm_determined(rob, ev.alpha)
-    out["family"]["holm_at_kappa_robust"] = holm_rob
-    out["family"]["robust_labels"] = robust_labels(dec, holm_rob)
-    out["family"]["robust_boolean_equivalent"] = {d["test"]: d["decision"] == r["decision"]
-                                                  for d, r in zip(dec, holm_rob)}
-    holm_rep = holm_determined(rob_replace, ev.alpha)
-    out["family"]["holm_at_kappa_robust_replacing_kappa2_diagnostic"] = holm_rep
-    out["family"]["robust_labels_replacing_kappa2_diagnostic"] = robust_labels(dec, holm_rep)
+            ents.append({"test": e["test"], "p": src["p"], "k": src["k"], "B": src["B"]})
+        holm_rob = holm_determined(ents, ev.alpha)
+        per_test = {}
+        for d, e in zip(dec, ents):  # A7(b), the per-test reading: a labelled, non-adopted diagnostic
+            if d["decision"] == "rejected":
+                per_test[d["test"]] = bool(cp_interval(e["k"], e["B"])[1] < d["threshold"])
+        kappa3[vs] = {"holm": holm_rob, "labels": robust_labels(dec, holm_rob),
+                      "boolean_equivalent": {d["test"]: d["decision"] == r["decision"] for d, r in zip(dec, holm_rob)},
+                      "A7b_per_test_robust_diagnostic": per_test}
+    merged_labels, merged_bool, merged_holm = {}, {}, []
+    for d, a, b in zip(dec, kappa3["retain_kappa2"]["holm"], kappa3["replace_kappa2"]["holm"]):
+        t = d["test"]
+        la, lb = kappa3["retain_kappa2"]["labels"][t], kappa3["replace_kappa2"]["labels"][t]
+        merged_labels[t] = la if la == lb else UNRESOLVED_VS
+        ba, bb = kappa3["retain_kappa2"]["boolean_equivalent"][t], kappa3["replace_kappa2"]["boolean_equivalent"][t]
+        merged_bool[t] = ba if ba == bb else UNRESOLVED_VS
+        merged_holm.append(dict(a) if a["decision"] == b["decision"] else {"test": t, "decision": UNRESOLVED_VS})
+    kappa3["variant_set_question"] = (
+        "OPEN (A7-VS): the ruling fixes the full Holm re-run and the labels, not whether the kappa = 3 set keeps the "
+        "+-2 delta_M1 members; where the two candidate sets give different outcomes the reported value is "
+        "UNRESOLVED until that narrow question is ruled")
+    kappa3["tests_where_the_sets_differ"] = [t for t, v in merged_labels.items() if v == UNRESOLVED_VS]
+    out["family"]["kappa3"] = kappa3
+    out["family"]["holm_at_kappa_robust"] = merged_holm
+    out["family"]["robust_labels"] = merged_labels
+    out["family"]["robust_boolean_equivalent"] = merged_bool
     prod_entries = []
     for key in design["nulls"]:
         for t in TESTS:

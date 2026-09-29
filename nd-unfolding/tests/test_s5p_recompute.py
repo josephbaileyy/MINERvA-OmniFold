@@ -368,132 +368,6 @@ class EndToEnd(unittest.TestCase):
         self.assertEqual(out["nulls"]["MnvTune_v1"]["tests"]["total"]["k"], 0)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
-class Compare(unittest.TestCase):
-    """The comparer reports agreement on a production-shaped copy and flags a changed count, p and decision."""
-
-    def setUp(self):
-        self.dir = Path(tempfile.mkdtemp(prefix="s5p_recompute_cmp_"))
-        t = Toy(self.dir / "w")
-        t.calibration("MnvTune_v1", 60)
-        t.calibration("GiBUU_2019", 60)
-        self.mine = R.jsonable(R.evaluate(t.design(), t.v_path, t.contract, log=lambda *a: None))
-
-    def tearDown(self):
-        shutil.rmtree(self.dir, ignore_errors=True)
-
-    def production_like(self):
-        m = self.mine
-        tests, dec, hp = {}, {}, {}
-        for key, rec in m["nulls"].items():
-            tests[key] = {"domain_cells": rec["domain_cells"], "T_total_obs": rec["observed_T"]["total"],
-                          "T_shape_obs": rec["observed_T"]["shape"]}
-            for t in ("total", "shape"):
-                tests[key][t] = {x: rec["tests"][t][x] for x in ("p", "k", "B")}
-        rb = {}
-        for d in m["family"]["decisions"]:
-            key, t = d["test"].split(":")
-            dec.setdefault(key, {})[t] = d["decision"]
-            hp.setdefault(key, {})[t] = d["holm_point"]
-            rb.setdefault(key, {})[t] = m["family"]["robust_boolean_equivalent"][d["test"]]
-        return {"tests": tests, "decisions": dec, "holm_point": hp, "power": {},
-                "robust_to_the_sub_fine_residual": rb}
-
-    def test_agreement_and_discrepancy(self):
-        import s5p_recompute_compare as C
-        prod = self.production_like()
-        rep = C.compare(self.mine, prod)
-        self.assertEqual(rep["discrepancies"], [])
-        self.assertEqual(rep["not_located"], [])
-        self.assertGreaterEqual(rep["items"], 2 * (3 + 2 * 3) + 2 * 4)
-        prod["tests"]["GiBUU_2019"]["shape"]["k"] += 1
-        prod["tests"]["GiBUU_2019"]["T_total_obs"] *= 1 + 1e-6  # (MnvTune data = truth: T = 0)
-        prod["decisions"]["MnvTune_v1"]["total"] = "rejected" if self.mine["family"]["decisions"][0]["decision"] \
-            != "rejected" else "undetermined"
-        bad = {r["item"] for r in C.compare(self.mine, prod)["discrepancies"]}
-        self.assertEqual(bad, {"GiBUU_2019:shape:claim_k", "GiBUU_2019:total:T_obs", "decisions:MnvTune_v1:total"})
-        del prod["tests"]["GiBUU_2019"]
-        self.assertIn("GiBUU_2019", C.compare(self.mine, prod)["not_located"])
-
-    def test_robust_labels_and_frozen_boolean(self):
-        import s5p_recompute_compare as C
-        prod = self.production_like()
-        labels = {"labels": {}}
-        for test, lab in self.mine["family"]["robust_labels"].items():
-            null, t = test.split(":")
-            labels["labels"].setdefault(null, {})[t] = lab
-        rep = C.compare_labels(self.mine, labels)
-        self.assertEqual(rep["not_located"], [])
-        self.assertTrue(all(r["agree"] for r in rep["rows"]))
-        self.assertEqual(len(rep["rows"]), 4)
-        first = next(iter(labels["labels"]))
-        t0 = next(iter(labels["labels"][first]))
-        labels["labels"][first][t0] = "robust to the sub-fine residual" \
-            if labels["labels"][first][t0] != "robust to the sub-fine residual" else "not robust"
-        self.assertEqual(sum(not r["agree"] for r in C.compare_labels(self.mine, labels)["rows"]), 1)
-        prod["robust_to_the_sub_fine_residual"]["GiBUU_2019"]["total"] ^= True
-        bad = {r["item"] for r in C.compare(self.mine, prod)["discrepancies"]}
-        self.assertEqual(bad, {"robust_to_the_sub_fine_residual:GiBUU_2019:total"})
-        del prod["robust_to_the_sub_fine_residual"]
-        self.assertIn("robust_to_the_sub_fine_residual", C.compare(self.mine, prod)["not_located"])
-
-
-class A7Ruling(unittest.TestCase):
-    """The ruled label (full Holm re-run at kappa = 3) and the preserved per-test diagnostic can differ."""
-
-    def e(self, name, k, B=1999):
-        return {"test": name, "k": k, "B": B, "p": R.mc_p(k, B)}
-
-    def test_labels(self):
-        prim = R.holm_determined([self.e("a", 0), self.e("b", 5), self.e("c", 1500)], 0.05)
-        rob = R.holm_determined([self.e("a", 0), self.e("b", 60), self.e("c", 1500)], 0.05)
-        lab = R.robust_labels(prim, rob)
-        self.assertEqual(lab, {"a": R.ROBUST, "b": R.NOT_ROBUST, "c": R.NOT_APPLICABLE})
-        with self.assertRaises(ValueError):
-            R.robust_labels(prim, rob[::-1])
-
-    def test_full_rerun_and_per_test_reading_disagree(self):
-        # primary: blocker z (k = 0) rejected at 0.05/2; x (k = 40, upper 0.027) rejected at its step's 0.05
-        prim = R.holm_determined([self.e("z", 0), self.e("x", 40)], 0.05)
-        self.assertEqual([(d["decision"], d["threshold"]) for d in prim], [("rejected", 0.025), ("rejected", 0.05)])
-        # kappa = 3: z (k = 45, interval [0.0165, 0.030]) sorts first and contains 0.025 -> the re-run stops
-        # 'undetermined'; x (k = 46) inherits it -> the ruled label for x is 'not robust'
-        rob = R.holm_determined([self.e("z", 45), self.e("x", 46)], 0.05)
-        self.assertEqual([d["decision"] for d in rob], ["undetermined", "undetermined"])
-        self.assertEqual(R.robust_labels(prim, rob), {"z": R.NOT_ROBUST, "x": R.NOT_ROBUST})
-        # the preserved per-test reading A7(b): x's own kappa = 3 interval lies below the threshold of the step
-        # that rejected it -> 'robust'; the two readings disagree on x
-        self.assertLess(R.cp_interval(46, 1999)[1], prim[1]["threshold"])
-
-    def test_end_to_end_sets_and_labels(self):
-        d = Path(tempfile.mkdtemp(prefix="s5p_recompute_a7_"))
-        try:
-            t = Toy(d / "w")
-            t.calibration("MnvTune_v1", 200)
-            t.calibration("GiBUU_2019", 200)
-            out = R.evaluate(t.design(), t.v_path, t.contract, log=lambda *a: None)
-            g = out["nulls"]["GiBUU_2019"]["tests"]
-            for test in R.TESTS:
-                ruled, rep = g[test]["robust_kappa3"], g[test]["robust_kappa3_replacing_kappa2_diagnostic"]
-                self.assertEqual(sorted(ruled["variants"]), ["c=0", "c=0.5", "c=1", "m1=+2", "m1=+3", "m1=-2", "m1=-3"])
-                self.assertEqual(sorted(rep["variants"]), ["c=0", "c=0.5", "c=1", "m1=+3", "m1=-3"])
-                self.assertGreaterEqual(ruled["k"], max(rep["k"], g[test]["k"]))  # a superset of both
-            self.assertIsNone(out["nulls"]["MnvTune_v1"]["tests"]["total"]["robust_kappa3"])
-            fam = out["family"]
-            for dd, rr in zip(fam["decisions"], fam["holm_at_kappa_robust"]):
-                want = R.NOT_APPLICABLE if dd["decision"] != "rejected" else (
-                    R.ROBUST if rr["decision"] == "rejected" else R.NOT_ROBUST)
-                self.assertEqual(fam["robust_labels"][dd["test"]], want)
-                self.assertEqual(fam["robust_boolean_equivalent"][dd["test"]], dd["decision"] == rr["decision"])
-                if dd["decision"] == "rejected":
-                    self.assertIn("A7b_per_test_robust_diagnostic", dd)
-        finally:
-            shutil.rmtree(d, ignore_errors=True)
-
-
 class A8Sensitivity(unittest.TestCase):
     """The A8 readings of the stopping rule on synthetic boundary cases; the primary reading is unchanged."""
 
@@ -592,3 +466,199 @@ class A8Sensitivity(unittest.TestCase):
                 self.assertLessEqual(fs["A8_alt_precision_95"], fs["primary"])
         finally:
             shutil.rmtree(d, ignore_errors=True)
+
+
+
+
+class Compare(unittest.TestCase):
+    """The comparer's verdict: AGREE only when every production leaf is consumed or excluded by the documented
+    scope; an unmapped required field, an unknown variant name, a missing labels file or a pending A7-VS label leaves
+    it INCOMPLETE; a changed value makes it DISCREPANT."""
+
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp(prefix="s5p_recompute_cmp_"))
+        t = Toy(self.dir / "w")
+        t.calibration("MnvTune_v1", 60)
+        t.calibration("GiBUU_2019", 60)
+        self.mine = R.jsonable(R.evaluate(t.design(), t.v_path, t.contract, log=lambda *a: None))
+        self.assertEqual(self.mine["family"]["kappa3"]["tests_where_the_sets_differ"], [])
+
+    def tearDown(self):
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def production_like(self):
+        m = self.mine
+        tests, dec, hp, rk, rb = {}, {}, {}, {}, {}
+        for key, rec in m["nulls"].items():
+            tests[key] = {"domain_cells": rec["domain_cells"], "T_total_obs": rec["observed_T"]["total"],
+                          "T_shape_obs": rec["observed_T"]["shape"]}
+            for t in ("total", "shape"):
+                tests[key][t] = {x: rec["tests"][t][x] for x in ("p", "k", "B")}
+        rob = {d["test"]: d["decision"] for d in m["family"]["holm_at_kappa_robust"]}
+        for d in m["family"]["decisions"]:
+            key, t = d["test"].split(":")
+            dec.setdefault(key, {})[t] = d["decision"]
+            hp.setdefault(key, {})[t] = d["holm_point"]
+            rk.setdefault(key, {})[t] = rob[d["test"]]
+            rb.setdefault(key, {})[t] = m["family"]["robust_boolean_equivalent"][d["test"]]
+        prod = {"schema": "x", "v_sha256": m["provenance"]["V"]["sha256"], "names": m["names"], "tests": tests,
+                "decisions": dec, "holm_point": hp, "decisions_robust_kappa": rk,
+                "robust_to_the_sub_fine_residual": rb, "power": {}}
+        labels = {"schema": "y", "labels": {}}
+        for test, lab in m["family"]["robust_labels"].items():
+            null, t = test.split(":")
+            labels["labels"].setdefault(null, {})[t] = lab
+        return prod, labels
+
+    def test_agree_only_when_everything_is_accounted_for(self):
+        import s5p_recompute_compare as C
+        prod, labels = self.production_like()
+        rep = C.compare(self.mine, prod, labels)
+        self.assertEqual((rep["verdict"], rep["discrepancies"], rep["unresolved_production_leaves"],
+                          rep["not_located"], rep["pending_ruling"]), ("AGREE", [], [], [], []))
+        self.assertEqual(rep["excluded_by_scope"]["counts"], {"schema": 1})
+
+    def test_unmapped_required_field_blocks_agreement(self):
+        import s5p_recompute_compare as C
+        prod, labels = self.production_like()
+        prod["tests"]["GiBUU_2019"]["total"]["some_new_quantity"] = 0.3
+        rep = C.compare(self.mine, prod, labels)
+        self.assertEqual(rep["verdict"], "INCOMPLETE")
+        self.assertEqual([u["path"] for u in rep["unresolved_production_leaves"]],
+                         ["tests/GiBUU_2019/total/some_new_quantity"])
+        prod, labels = self.production_like()
+        prod["family_summary"] = {"rejections": 1}  # an unknown top-level field is required too
+        self.assertEqual(C.compare(self.mine, prod, labels)["verdict"], "INCOMPLETE")
+
+    def test_unknown_variant_name_is_unresolved(self):
+        import s5p_recompute_compare as C
+        prod, labels = self.production_like()
+        prod["tests"]["GiBUU_2019"]["variants"] = [{"label": "c=0"}, {"label": "m1+2"}]
+        prod["tests"]["GiBUU_2019"]["variants"][0]["total"] = {
+            "k": self.mine["nulls"]["GiBUU_2019"]["tests"]["total"]["variants"]["c=0"]["k"]}
+        prod["tests"]["GiBUU_2019"]["variants"][1]["total"] = {"k": 3}
+        rep = C.compare(self.mine, prod, labels)
+        self.assertEqual(rep["discrepancies"], [])
+        self.assertEqual(rep["verdict"], "INCOMPLETE")
+        self.assertIn("tests/GiBUU_2019/variants/1/total/k", [u["path"] for u in rep["unresolved_production_leaves"]])
+
+    def test_excluded_metadata_does_not_block(self):
+        import s5p_recompute_compare as C
+        prod, labels = self.production_like()
+        prod.update({"utc": "2026-10-01T00:00:00Z", "lateral_symmetry": {"BeamAngleX": {"corr": -0.3}},
+                     "shrinkage": 0.015})
+        rep = C.compare(self.mine, prod, labels)
+        self.assertEqual(rep["verdict"], "AGREE")
+        self.assertEqual(rep["excluded_by_scope"]["counts"], {"schema": 1, "utc": 1, "lateral_symmetry": 1,
+                                                              "shrinkage": 1})
+
+    def test_discrepancy_and_missing_inputs(self):
+        import s5p_recompute_compare as C
+        prod, labels = self.production_like()
+        prod["tests"]["GiBUU_2019"]["shape"]["k"] += 1
+        self.assertEqual(C.compare(self.mine, prod, labels)["verdict"], "DISCREPANT")
+        prod, labels = self.production_like()
+        self.assertEqual(C.compare(self.mine, prod, None)["verdict"], "INCOMPLETE")
+        prod, labels = self.production_like()
+        del prod["robust_to_the_sub_fine_residual"]
+        rep = C.compare(self.mine, prod, labels)
+        self.assertEqual((rep["verdict"], rep["not_located"]), ("INCOMPLETE", ["robust_to_the_sub_fine_residual"]))
+        prod, labels = self.production_like()
+        first = next(iter(labels["labels"]))
+        t0 = next(iter(labels["labels"][first]))
+        labels["labels"][first][t0] = "something else"
+        self.assertEqual(C.compare(self.mine, prod, labels)["verdict"], "DISCREPANT")
+
+    def test_pending_variant_set_label_is_never_agreement(self):
+        import s5p_recompute_compare as C
+        prod, labels = self.production_like()
+        test = self.mine["family"]["decisions"][2]["test"]
+        self.mine["family"]["robust_labels"][test] = R.UNRESOLVED_VS
+        rep = C.compare(self.mine, prod, labels)
+        self.assertEqual(rep["verdict"], "INCOMPLETE")
+        self.assertIn(f"robust_labels:{test}", rep["pending_ruling"])
+        null, t = test.split(":")
+        self.assertIn(f"robust-labels.json/labels/{null}/{t}", [u["path"] for u in rep["unresolved_production_leaves"]])
+
+    def test_exit_codes(self):
+        import s5p_recompute_compare as C
+        prod, labels = self.production_like()
+        files = {}
+        for name, doc in (("mine", self.mine), ("prod", prod), ("labels", labels)):
+            files[name] = self.dir / f"{name}.json"
+            files[name].write_text(json.dumps(doc))
+        out = str(self.dir / "cmp.json")
+        self.assertEqual(C.compare_files(str(files["mine"]), str(files["prod"]), out, str(files["labels"])), 0)
+        self.assertEqual(C.compare_files(str(files["mine"]), str(files["prod"]), out, None), 2)
+        prod["tests"]["MnvTune_v1"]["total"]["B"] += 1
+        files["prod"].write_text(json.dumps(prod))
+        self.assertEqual(C.compare_files(str(files["mine"]), str(files["prod"]), out, str(files["labels"])), 1)
+
+
+class A7Ruling(unittest.TestCase):
+    """The ruled label (full Holm re-run at kappa = 3) and the preserved per-test diagnostic can differ."""
+
+    def e(self, name, k, B=1999):
+        return {"test": name, "k": k, "B": B, "p": R.mc_p(k, B)}
+
+    def test_labels(self):
+        prim = R.holm_determined([self.e("a", 0), self.e("b", 5), self.e("c", 1500)], 0.05)
+        rob = R.holm_determined([self.e("a", 0), self.e("b", 60), self.e("c", 1500)], 0.05)
+        lab = R.robust_labels(prim, rob)
+        self.assertEqual(lab, {"a": R.ROBUST, "b": R.NOT_ROBUST, "c": R.NOT_APPLICABLE})
+        with self.assertRaises(ValueError):
+            R.robust_labels(prim, rob[::-1])
+
+    def test_full_rerun_and_per_test_reading_disagree(self):
+        # primary: blocker z (k = 0) rejected at 0.05/2; x (k = 40, upper 0.027) rejected at its step's 0.05
+        prim = R.holm_determined([self.e("z", 0), self.e("x", 40)], 0.05)
+        self.assertEqual([(d["decision"], d["threshold"]) for d in prim], [("rejected", 0.025), ("rejected", 0.05)])
+        # kappa = 3: z (k = 45, interval [0.0165, 0.030]) sorts first and contains 0.025 -> the re-run stops
+        # 'undetermined'; x (k = 46) inherits it -> the ruled label for x is 'not robust'
+        rob = R.holm_determined([self.e("z", 45), self.e("x", 46)], 0.05)
+        self.assertEqual([d["decision"] for d in rob], ["undetermined", "undetermined"])
+        self.assertEqual(R.robust_labels(prim, rob), {"z": R.NOT_ROBUST, "x": R.NOT_ROBUST})
+        # the preserved per-test reading A7(b): x's own kappa = 3 interval lies below the threshold of the step
+        # that rejected it -> 'robust'; the two readings disagree on x
+        self.assertLess(R.cp_interval(46, 1999)[1], prim[1]["threshold"])
+
+    def test_end_to_end_sets_and_labels(self):
+        d = Path(tempfile.mkdtemp(prefix="s5p_recompute_a7_"))
+        try:
+            t = Toy(d / "w")
+            t.calibration("MnvTune_v1", 200)
+            t.calibration("GiBUU_2019", 200)
+            out = R.evaluate(t.design(), t.v_path, t.contract, log=lambda *a: None)
+            g = out["nulls"]["GiBUU_2019"]["tests"]
+            for test in R.TESTS:
+                keep, repl = g[test]["robust_kappa3_retain_kappa2"], g[test]["robust_kappa3_replace_kappa2"]
+                self.assertEqual(sorted(keep["variants"]), ["c=0", "c=0.5", "c=1", "m1=+2", "m1=+3", "m1=-2", "m1=-3"])
+                self.assertEqual(sorted(repl["variants"]), ["c=0", "c=0.5", "c=1", "m1=+3", "m1=-3"])
+                self.assertGreaterEqual(keep["k"], max(repl["k"], g[test]["k"]))  # a superset of both
+            self.assertIsNone(out["nulls"]["MnvTune_v1"]["tests"]["total"]["robust_kappa3_retain_kappa2"])
+            fam = out["family"]
+            k3 = fam["kappa3"]
+            self.assertIn("OPEN", k3["variant_set_question"])
+            for i, dd in enumerate(fam["decisions"]):
+                labs = {vs: k3[vs]["labels"][dd["test"]] for vs in ("retain_kappa2", "replace_kappa2")}
+                for vs in labs:
+                    rr = k3[vs]["holm"][i]
+                    want = R.NOT_APPLICABLE if dd["decision"] != "rejected" else (
+                        R.ROBUST if rr["decision"] == "rejected" else R.NOT_ROBUST)
+                    self.assertEqual(labs[vs], want)
+                merged = labs["retain_kappa2"] if labs["retain_kappa2"] == labs["replace_kappa2"] else R.UNRESOLVED_VS
+                self.assertEqual(fam["robust_labels"][dd["test"]], merged)
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
+
+    def test_differing_sets_report_unresolved(self):
+        """Where the two candidate kappa = 3 sets give different outcomes the reported label is UNRESOLVED."""
+        prim = R.holm_determined([self.e("z", 0), self.e("x", 40)], 0.05)
+        keep = R.holm_determined([self.e("z", 45), self.e("x", 46)], 0.05)   # the +-2 members raise z's k
+        repl = R.holm_determined([self.e("z", 10), self.e("x", 20)], 0.05)
+        a, b = R.robust_labels(prim, keep), R.robust_labels(prim, repl)
+        self.assertEqual((a["x"], b["x"]), (R.NOT_ROBUST, R.ROBUST))
+
+
+if __name__ == "__main__":
+    unittest.main()
