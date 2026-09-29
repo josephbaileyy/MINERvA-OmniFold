@@ -37,7 +37,7 @@ it as a labelled diagnostic, but it is not the reported label.
   ("retain"). This is an IMPLEMENTATION FACT (`s5p_joint.py:233, 252-260`), not ruled; see the correction below.
 - `decisions_robust_kappa` = `holm_determined` over the ten robust claim p-values.
 - The ruling fixes the procedure (a full Holm re-run at κ = 3) and the labels. It does not fix the variant set, which
-  is open as A7-VS.
+  was open as A7-VS until the owner ruled "replace" at about 04:33Z (see the A7-VS section below).
 
 **Correction (2026-09-29T03:10Z).** The first version of this file said the frozen set was "exactly the ruled 'κ = 3
 procedure'". That overstated the ruling.
@@ -60,29 +60,77 @@ procedure'". That overstated the ruling.
 - **Timing:** this was raised after production outputs became visible, and before any observed claim p-value. At
   03:10Z the only status files were the five B = 0 looks.
 
-**New: the output label, derived in a separate step.**
-- The script is `nd-unfolding/s5p_robust_labels.py`, with tests in `tests/test_s5p_robust_labels.py`.
-- It reads the evaluator's `joint-evaluate.json` and never modifies it. It writes its own file, which records the
-  input's sha256, the ruling path and the frozen field verbatim.
-- The label for each test is:
-  - "robust to the sub-fine residual" if `decisions[t]` is 'rejected' and `decisions_robust_kappa[t]` is 'rejected';
-  - "not robust" if `decisions[t]` is 'rejected' and `decisions_robust_kappa[t]` is anything else;
-  - "not applicable" otherwise, i.e. `decisions[t]` is 'not rejected' or 'undetermined' (including a null not calibrated
-    at B = 0).
+## A7-VS: owner ruling on the κ = 3 variant set (Joseph, verbatim)
 
-**The change of output labels (documented separately, as required).** The frozen field
-`robust_to_the_sub_fine_residual` stays in the evaluator output, unchanged, as a boolean for all ten tests: whether the
-two decision labels are equal.
-- **Primary rejections:** `true` corresponds to "robust to the sub-fine residual" and `false` to "not robust". The
-  information is the same; only the wording changes.
-- **Non-rejections:** the boolean has a value (for example `true` when both runs say 'not rejected'), but under the ruling
-  it is not a flag. The reported label is "not applicable".
-- **Reporting:** results and deliverables report the ruled label from the separate file, never the boolean.
+> For A7-VS, I choose replacement: the κ = 3 robustness family retains the process-shift variants and replaces the M1
+> ±2δ variants with ±3δ. Run the full Holm procedure on that family.
+>
+> Label each primary κ = 2 rejection "robust to the sub-fine residual" only if that hypothesis is also rejected in this
+> κ = 3 rerun; otherwise "not robust." Primary non-rejections remain "not applicable."
+>
+> Record this as an explicit report-only clarification made now, with its actual timing—not as a recovered
+> pre-production definition. Preserve the frozen boolean and the keep-both calculation as separately named diagnostics.
+>
+> Do not change primary p-values, primary decisions, stopping rules or production jobs.
+
+**Status: an explicit report-only clarification made on 2026-09-29. It is NOT a recovered pre-production definition.**
+The governing records at `4f5a613f` do not fix the set (see the correction above). The frozen code's keep-both set is
+an implementation fact that no one ruled on.
+
+**Timing (actual).**
+- Received in the campaign session at about 2026-09-29T04:33Z; recorded at the commit that adds this section.
+- At the time, production outputs were visible and only the five B = 0 looks existed. There was no observed claim
+  p-value, and the evaluator had not run (last measured 04:14:55Z).
+
+## The label step (current: `s5p-robust-labels/2`)
+
+This supersedes the first version of the label step (`4a1d931c`, schema 1), which took the κ = 3 run to be the frozen
+`decisions_robust_kappa`.
+
+**What the script does.** `nd-unfolding/s5p_robust_labels.py`, tested by `tests/test_s5p_robust_labels.py`:
+- It reads `joint-evaluate.json` and the design, and refuses if the output's `design_sha256` is not that design's.
+- It writes a separate file and never modifies the evaluator output.
+- **κ = 3 family (replace):** the process-shift variants c·S (`tests.<null>.variants` without the `m1±κ` members) plus
+  F ± 3δ_M1 (`robustness_variants`). MnvTune has no M1, so its family is its c-variants. A null stopped at B = 0 gets
+  p = 1 with k = B = 0.
+- The robust claim p is the largest p over the family. `s5p_inference.holm_determined` is run on the ten values,
+  giving the field `decisions_kappa3_replace`.
+- **Labels:**
+  - a primary rejection (`decisions[t]` = 'rejected') is "robust to the sub-fine residual" iff it is 'rejected' in
+    `decisions_kappa3_replace`, else "not robust";
+  - every other hypothesis is "not applicable".
+- **Guard:** before the stored leaves are used, the primary claims and the keep-both robust claims are rebuilt from them.
+  They must reproduce the evaluator's `decisions` and `decisions_robust_kappa` exactly, or the script refuses.
+- **Diagnostics, never reported as the label:**
+  - `diagnostics.frozen_boolean_robust_to_the_sub_fine_residual`, verbatim;
+  - `diagnostics.keep_both`, the frozen claim variants ∪ F ± 3δ_M1, i.e. `decisions_robust_kappa`, with the labels it
+    would give.
+
+**What is unchanged: the statistical calculation.**
+- `s5p_joint.py` (frozen `4f5a613f`) is not modified.
+- Every per-variant p, k and B comes from the evaluator as written.
+- The primary p-values and decisions (`decisions`) are unchanged, and so are the stopping rule and every job.
+
+**What changes in the output (documented separately):**
+1. **The reported robustness output becomes the label.** The frozen boolean says whether the two frozen runs give
+   equal decision labels, for all ten tests. It stays in the evaluator output and in the diagnostics, but is not
+   reported. For primary non-rejections the label is "not applicable" whatever the boolean says.
+2. **The κ = 3 Holm run behind the label changes from keep-both to replace.** This is a new derived calculation in the
+   label step: a Holm run over a different set of the SAME frozen per-variant p-values. It does not recompute any
+   statistic.
+   - The two can give different labels in either direction: removing a large κ = 2 leaf of another test changes the
+     step-down order and thresholds.
+   - A control test shows it: X is "not robust" under keep-both and "robust" under replace, because Y's k = 40 κ = 2
+     leaf is dropped.
+   - Where they differ, the reported label is the replace one, and the keep-both label stays in the diagnostics.
 
 **Output route:** `/pscratch/sd/j/josephrb/s5p-20260926/stage7/joint/robust-labels.json`, with a committed copy at
-`docs/orchestration/state/s5p/stage7/joint/robust-labels.json`. It is produced by
-`PYTHONPATH=nd-unfolding python3 nd-unfolding/s5p_robust_labels.py --evaluate <joint-evaluate.json> --out <route>` after
-the evaluation.
+`docs/orchestration/state/s5p/stage7/joint/robust-labels.json`. It is produced after the evaluation by:
+`PYTHONPATH=nd-unfolding python3 nd-unfolding/s5p_robust_labels.py --evaluate <joint-evaluate.json> --design
+docs/orchestration/state/s5p/prod/design.json --out <route>`
+
+**Independent comparison.** The recompute lane owns its comparer (`origin/s5p-parallel-recompute-20260928`). The
+campaign sends it this schema and the ruling, and does not edit that branch.
 
 ## Preserved alternatives and open items
 
@@ -90,5 +138,6 @@ the evaluation.
 - **A6:** union (the frozen code and the campaign's textual reading) vs the cross-product ruling R6.
 - **A8:** the 99.5% look precision (the frozen code and text) vs the optional 95% reading R8.
 
-A6 and A8 stay as recorded in the clarification, pending the independent reviewer's assessment from the governing
-records. The owner has not ruled on either.
+A6 and A8: the independent assessment (recompute lane `155d630a`) agrees that both are resolved by the frozen text
+(union; the 99.5% look). The owner has not ruled on either. A7-VS is ruled above (replace). Keep-both stays a named
+diagnostic.

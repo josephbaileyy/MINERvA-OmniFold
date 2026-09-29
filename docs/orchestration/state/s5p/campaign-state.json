@@ -313,6 +313,10 @@
   {
    "utc": "2026-09-29T03:10Z",
    "what": "CORRECTION to the 01:22Z A7 ruling record: the ruling fixes the full Holm re-run at kappa = 3 and the labels, NOT the kappa = 3 variant set. The frozen implementation keeps the +-2 delta_M1 members ('retain': claim variants union F +- 3 delta_M1); 'replace' (c S union F +- 3 delta_M1) is equally consistent with the governing records at 4f5a613f. Flagged A7-VS OPEN by the recompute lane (78194f9b); an owner ruling is needed before final verification; report only (no claim, stop, status or job changes). RULING-20260929-s5p-A7-robustness-flag.md corrected in place, with a dated correction section. Only B = 0 looks exist (03:10Z)."
+  },
+  {
+   "utc": "2026-09-29T04:33Z",
+   "what": "OWNER RULING A7-VS (Joseph; an explicit REPORT-ONLY clarification made now, NOT a recovered pre-production definition; received ~04:33Z; recorded in RULING-20260929-s5p-A7-robustness-flag.md): the kappa = 3 robustness family keeps the process-shift variants c S and REPLACES F +- 2 delta_M1 by F +- 3 delta_M1; the full Holm procedure with determinacy is run on it; a primary kappa = 2 rejection is 'robust to the sub-fine residual' iff also rejected there, else 'not robust'; non-rejections 'not applicable'. Timing: after production outputs became visible, before any observed claim p-value (only B = 0 looks; evaluator never run). Implementation: nd-unfolding/s5p_robust_labels.py schema s5p-robust-labels/2 derives it from the frozen evaluator's stored per-variant leaves (no statistic recomputed; s5p_joint.py unchanged), after rebuilding decisions and decisions_robust_kappa from the leaves exactly; the frozen boolean and the keep-both calculation are kept as named diagnostics. Primary p-values, primary decisions, stopping rules and jobs unchanged."
   }
  ],
  "findings": [
