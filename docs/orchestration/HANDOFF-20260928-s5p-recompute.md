@@ -13,7 +13,7 @@ Cluster scratch (mine only): `/pscratch/sd/j/josephrb/s5p-parallel-recompute/`.
 Evaluator: **the recorded evaluator checkpoint is `4a772838`** (owner, 2026-09-29). Its statistical code (every
 p-value, decision, family, stop verdict and power) is unchanged since. The commit after the comparer review adds
 only `provenance` fields: the shift files' paths, digests, mode and κ values, which the comparer checks against
-production's echoes. The comparer's status is in §5.5.
+production's echoes. The comparer's status is in §5.5: **final reviewed commit `1bfd8910`** (three review rounds; fixes verified YES).
 
 **STATUS: FINAL VERIFICATION PENDING.** Production was non-terminal (calibration batch 0) when this was written.
 Nothing below is a verification result.
@@ -397,6 +397,24 @@ repointed only). Results, in both layouts:
 - all 77 negative, 15 B = 0 and 8 list cases give the expected verdict except M4 and X9 (accepted);
 - the new-defect probes N1–N7 all do;
 - of the partial-requirement probes, P1–P3 do and P4 differs (the disposition above).
+
+**Round 3: verification of `1bfd8910`.** **Fixes verified at `1bfd8910`: YES.** ND-1 to ND-5 and N2 are fixed; F-1
+and F-8 are fully fixed; P4 is accepted.
+
+**Final reviewed commit (comparer): `1bfd8910`.** The commit that records round 3 changes documentation only. The
+comparer, evaluator and test code at the branch tip are byte-identical to `1bfd8910`.
+
+**Open LOW items, deliberately not changed.** A change now would itself be unreviewed and would void the final
+reviewed commit. Each is to be acted on only if it binds at the final comparison:
+- **R1 (fail-safe).** A MnvTune `{total,shape}_robust` record that carries fields beyond `p`, `k` and `B` would be
+  INCOMPLETE, with those leaves listed. The fix, if it binds: fall back to the full claim record.
+- **R6.** Two production entries naming the same variant (e.g. `0.5` and `c=0.5`) can supply `k`/`p` and the
+  implied size separately. This is outside the owner-stated names. The fix, if it binds: take the implied size from
+  the selected entry, and treat a duplicate as unresolved.
+- **R8 (observation).** A decision node without `threshold` or `interval` is not required to carry them. §5.4 reports
+  the recompute's threshold and interval regardless.
+
+A fix to any of these after the final verification needs its own review round before it is used.
 
 **Downstream reader.** The reproduction harness (branch `s5p-parallel-reproduction-20260928`, config key
 `joint.independent_compare`) records `/pscratch/sd/j/josephrb/s5p-parallel-recompute/final/compare.json` by sha256

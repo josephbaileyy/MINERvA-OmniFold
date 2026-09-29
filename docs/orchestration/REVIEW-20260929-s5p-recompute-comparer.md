@@ -280,3 +280,85 @@ Probes: `new_defect_probes.py` (flat layout) and `partial_requirement_probes.py`
 | Dispositions | M4 ACCEPT; X9 ACCEPT |
 
 Fixes verified at 6c7c7b9f: NO (open items: ND-1, ND-2, ND-5, and the F-5 digest location; also ND-3, ND-4, and the unmapped `total_robust`/`shape_robust`)
+
+## Round 3: verification of the fixes at `1bfd8910` (verbatim)
+
+The same reviewer, in the same read-only worktree moved to `1bfd8910`, left clean. It again used the frozen e2e test
+for the layout, and read no production module, docstrings included.
+
+Scratch: `scratchpad/review-verify3/` (session-local).
+
+Fixes verified at 1bfd8910: YES. All round-2 items (ND-1 to ND-5, N2) are fixed, and F-1 and F-8 are now fully fixed. This round's fixes introduce two new LOW items, R1 and R6; neither blocks the final verification.
+
+**Reviewer:** independent agent, no authorship of the code under review.
+**Worktree:** `/Users/josephbailey/local-research/MINERvA-OmniFold-s5p-recompute-review1`
+**HEAD:** `1bfd89109dc4edf7f849d935b3e171b72760939f` (checked before and after)
+**Scratch:** `/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/af747db6-96ed-4487-90e9-4ed640a884a3/scratchpad/review-verify3/`
+**`git -C <worktree> status --porcelain`:** empty output, rc=0.
+**Test suite:** `PYTHONDONTWRITEBYTECODE=1 python3 -m pytest -q -p no:cacheprovider nd-unfolding/tests/test_s5p_recompute.py` gives **58 passed** in 21.62 s.
+**Production modules:** I did not read `s5p_joint.py`, `s5p_inference.py`, `s5p_seqstop.py` or `s5p_robust_labels.py`, docstrings included. For the production layout I again used the frozen e2e test assertions (`nd-unfolding/tests/test_s5p_joint_e2e.py` lines 96–114). I did not read the author's `review-verify2/` outputs.
+
+### (1) Round-2 items
+
+| Item | Status | Evidence |
+|---|---|---|
+| ND-1 implied size in the variant entries | **FIXED** | N1 (e2e layout, correct values) gives AGREE. R5 (per-null layout keyed test-first) gives AGREE. R4 (e2e layout, `0.5/shape` missing) gives INCOMPLETE. |
+| ND-2 contents of required containers | **FIXED**, P4 excepted | P1–P3 give INCOMPLETE. P4 gives AGREE, which is the disposition judged in (3). |
+| ND-3 dict marker | **FIXED** | N3 gives INCOMPLETE, with `not_calibrated (a scalar marker; found dict)` not located and its leaves unresolved. Z7 (marker `false`) still gives DISCREPANT. |
+| ND-4 argmax names | **FIXED** | N6 (production names) gives AGREE. R10 (unparsable name) gives INCOMPLETE. R9 (a scalar name) gives DISCREPANT. |
+| ND-5 unwritable `--out` | **FIXED** | N7 (missing directory) exits 3. An `--out` that is a directory exits 3 ("cannot remove the earlier report"). |
+| N2 `*_robust` unmapped | **FIXED for GiBUU; PARTIAL for MnvTune** | N2 and R2 (GiBUU with `p`, `k`, `B`, `interval`, `argmax`) give AGREE; R2b (`k` altered) gives DISCREPANT. R1 (MnvTune): see new item R1. |
+| F-1 | **Fully fixed**: every item the docstring lists as required is enforced | M1–M3, M5–M11, P1–P3, Z8 and Z9 give INCOMPLETE; M4 and P4 are the accepted dispositions. |
+| F-8 | **Fully fixed** | Missing labels file exits 2. Missing `--mine` exits 3 and overwrites the earlier AGREE report with ERROR. An unwritable or unremovable `--out` exits 3. |
+
+### (2) Re-run from `review-verify3/`
+
+Because `production_like()` did not change between `6c7c7b9f` and `1bfd8910`, no layout adaptation was forced:
+- All `.py` files are byte-identical to the round-2 copies (checked with `cmp`).
+- The only edit is the `cd` path in `exit_cli.sh`, which now points at `review-verify3/exit`.
+- The fixture adaptations A1–A5 from round 2 still apply unchanged.
+
+| Script | Cases | Result | Differences from expected |
+|---|---|---|---|
+| `negative_cases` | 77 | 75 as expected | M4 and X9 (accepted in round 2) |
+| `b0_cases` | 15 | all as expected | none |
+| `list_cases` | 8 | all as expected | none |
+| `partial_requirement_probes` | 4 | 3 as expected | P4 (the disposition) |
+| `new_defect_probes` | N1–N7 | all as expected | none |
+| exit harness | — | as expected | none |
+
+- Every case table gives identical verdicts in the nested and flat layouts.
+- The exit harness gives, for `compare_files`: 0 when all agree, 2 without labels, 1 for discrepant plus unresolved.
+- For the CLI: 0 when all agree, 2 for a nonexistent labels file, 1 for a malformed production file (a type discrepancy).
+- Two new files: `exit_extra.sh` (stale-report and `--out` checks) and `round3_probes.py`.
+
+### (3) Disposition P4 (an M1 variant's implied size compared where present, not required)
+
+**ACCEPT.**
+- The required set, "per variant c > 0", matches what the frozen e2e test asserts: only `variants["1.0"]["implied_size_of_unshifted_test"]["total"]["power"]` (line 99).
+- The implied size of every c > 0 variant is still required (R4, P3).
+- The M1 value is compared whenever production writes it.
+- Caveat: I did not verify the quoted `s5p_joint` docstring myself, because the rules forbid reading that file. The acceptance rests on the quote plus the e2e evidence.
+
+### (4) New defects from this round's fixes (`round3_probes.py`, flat layout)
+
+**Can a correct production output still never reach AGREE?** Only in the MnvTune case R1 (LOW):
+- The fallback robust record for a null without M1 is `{"p", "k", "B"}` only.
+- A correct `tests/MnvTune_v1/{total,shape}_robust` that also carries `interval` or `argmax` therefore gives INCOMPLETE, with those leaves unresolved.
+- This fails safe. The e2e test asserts only `bad["total_robust"]["p"]`, so whether production writes those fields is not evidenced.
+- **Fix:** fall back to the full claim record `mt`, not only its `p`, `k` and `B`.
+
+**Can the dual-layout lookup satisfy a required value from the wrong entry?** Yes, in one non-conforming layout (R6, LOW):
+- In the e2e layout, if the implied size of `0.5` sits in a second entry keyed `c=0.5` (the same parsed variant), the verdict is AGREE.
+- The `k`/`p` rows come from the `0.5` entry, while the implied size comes from `c=0.5`.
+- Two entries naming one variant are outside the owner-stated names, which is why this is LOW.
+- **Fix:** take the implied size from the same entry that `_compare_variant_family` selected, and treat any second entry with the same parsed name as unresolved in full.
+
+**Checks that behave correctly:**
+- R3: both layouts present, with the per-variant copy wrong, gives INCOMPLETE; the extra copy is unresolved, never agreed.
+- R6b: a duplicate `0.50` entry with a different `k` gives INCOMPLETE.
+- R7: an implied-size dict without `power` gives DISCREPANT, consistent with the strict-type rule.
+
+**Observation, not a regression (R8):** a decision node written as `{decision, p}` without `threshold` or `interval` gives AGREE. The docstring requires only the decision label for each test, while §5.4 asks for each decision to be reported with its threshold and interval.
+
+Fixes verified at 1bfd8910: YES (open items, both new and LOW: R1 MnvTune `*_robust` fallback; R6 split duplicate variant entry. Observation: R8)
