@@ -137,6 +137,22 @@ class OutputGuardTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             h.prepare_out()
 
+    def test_the_guard_touches_nothing_under_a_recorded_root(self):
+        """A relocated run must make no filesystem access under a recorded root, the guard included."""
+        import os
+        seen = []
+        real_lstat, real_stat = os.lstat, os.stat
+
+        def spy(fn):
+            def wrapped(p, *a, **k):
+                seen.append(os.fspath(p))
+                return fn(p, *a, **k)
+            return wrapped
+        with tempfile.TemporaryDirectory() as d, mock.patch("os.lstat", spy(real_lstat)), mock.patch("os.stat", spy(real_stat)):
+            R.check_out_dir(Path(d) / "new", [Path(d) / "inputs"], R.recorded_roots())
+        self.assertTrue(seen)  # the spy saw the guard's own accesses
+        self.assertEqual([p for p in seen for r in R.recorded_roots() if R.under(p, r)], [])
+
 
 class LogPdfTraceTests(unittest.TestCase):
     def test_input_paths(self):

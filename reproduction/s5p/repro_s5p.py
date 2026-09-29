@@ -395,11 +395,8 @@ class Harness:
             return self.roots.local(recorded)
         return REPO / recorded
 
-    def forbidden_out(self) -> list:
-        return [REPO] + list(self.roots.local_roots.values()) + [Path(v) for k, v in S.RECORDED_ROOTS.items() if k != "cvmfs"]
-
     def prepare_out(self):
-        check_out_dir(self.out, self.forbidden_out())
+        check_out_dir(self.out, [REPO] + list(self.roots.local_roots.values()), recorded_roots())
         self.out.mkdir(parents=True, exist_ok=True)
         (self.out / "logs").mkdir()
 
@@ -1058,14 +1055,24 @@ class Harness:
 
 # ----------------------------------------------------------------------------------------------- helpers
 
-def check_out_dir(out: Path, forbidden: list) -> None:
+def recorded_roots() -> list[str]:
+    return [v for v in S.RECORDED_ROOTS.values()]
+
+
+def check_out_dir(out: Path, forbidden: list, lexical: list = ()) -> None:
     """A run writes only to a new directory outside the checkout, every configured root and every recorded root
-    (so it can neither dirty the tree under test nor touch the preserved campaign products)."""
+    (so it can neither dirty the tree under test nor touch the preserved campaign products). ``forbidden`` paths
+    are resolved; ``lexical`` ones (the recorded roots) are compared as strings only, so a relocated run makes no
+    filesystem access under them at all."""
+    raw = os.path.normpath(os.path.abspath(out))
     out = Path(out).resolve()
     for f in forbidden:
         f = Path(f).resolve()
         if out == f or f in out.parents:
             raise SystemExit(f"{out} is inside {f}; choose a fresh directory outside the checkout and every input root")
+    for f in lexical:
+        if under(str(out), f) or under(raw, f):
+            raise SystemExit(f"{out} is inside the recorded root {f}; choose a fresh directory outside it")
     if out.exists() and any(out.iterdir()):
         raise SystemExit(f"{out} exists and is not empty; every run writes a fresh directory")
 
@@ -1261,7 +1268,7 @@ def cmd_stage(config: dict, pins: dict, to: Path) -> int:
     nothing is written outside ``to``."""
     roots = Roots(config["roots"])
     to = to.resolve()
-    check_out_dir(to, [REPO] + list(roots.local_roots.values()) + [Path(v) for k, v in S.RECORDED_ROOTS.items() if k != "cvmfs"])
+    check_out_dir(to, [REPO] + list(roots.local_roots.values()), recorded_roots())
     files = {}
     for rel in S.DIGEST_SOURCES:
         for path, want, _ in declared_digests(json.loads((REPO / rel).read_text())):
