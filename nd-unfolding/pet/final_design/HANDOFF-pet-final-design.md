@@ -1,5 +1,8 @@
 # Cold-start handoff — PET final-design study (living document; update at each milestone)
 
+> **Replacement sessions start with `HANDOFF-COLDSTART-20260929.md`** (self-contained: authority, commits, running
+> processes, ownership transfer, next actions, prohibitions). This file keeps the history, procedures and traps.
+
 Read this, then `PROTOCOL-20260925.md` (with Amendments 1, 2, 2b, 2c, 3a, 3b, 3b-bis, 3c, 3d, 3e, 3f), `DEVELOPMENT-20260926.md`,
 `DIAGNOSTICS-20260925.md`, `CAPACITY-20260925.md`, and the three review dispositions (IMPL, STAT, SCOPE). Everything referenced is on the
 pushed branch; nothing depends on a local scratch directory.
