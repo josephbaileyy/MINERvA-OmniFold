@@ -6,25 +6,32 @@ Production's nesting was not read from its code: only the key names its output w
 
 **Every production leaf must be accounted for.** A leaf is either CONSUMED by a comparison row (agree or discrepancy),
 or EXCLUDED by the explicit metadata scope ``EXCLUDED_SCOPE`` below (each entry with its reason), or it is UNRESOLVED.
-An unresolved leaf is a mapping gap, never an agreement. Examples: a key the matcher does not know, a variant name
-without a recompute counterpart, or an A7 label pending the kappa = 3 variant-set question.
+An unresolved leaf is a mapping gap, never an agreement. Examples: a key the matcher does not know, or a variant
+name without a recompute counterpart.
+
+A7 as ruled (the full Holm re-run; A7-VS: the kappa = 3 family REPLACES +-2 delta_M1 by +-3 delta_M1):
+- ``robust-labels.json`` ``labels`` is compared with ``family.robust_labels`` (the ruled replace family);
+- the frozen evaluator's ``decisions_robust_kappa`` and its boolean ``robust_to_the_sub_fine_residual`` (a keep-both
+  family, as the campaign reports the frozen code) are compared with the separately named diagnostics
+  ``family.keep_both_kappa3_diagnostic`` and ``family.frozen_boolean_equivalent_diagnostic``.
 
 Verdicts and exit codes:
 - AGREE (exit 0): every row agrees, nothing expected is missing, and no leaf is unresolved.
 - DISCREPANT (exit 1): at least one row disagrees.
 - INCOMPLETE (exit 2): no row disagrees, but something expected is not located or a leaf is unresolved. Extend the
-  mapping, or rule the pending question, and re-run.
+  mapping (or document an exclusion) in a commit, and re-run.
 
 Agreement rules: counts (k, B, n) exactly; p-values and interval ends to 1e-12 absolute; statistics to 1e-8
 relative; labels, booleans and digests exactly.
 """
 from __future__ import annotations
 
+import hashlib
 import json
+import re
 from pathlib import Path
 
 TESTS = ("total", "shape")
-UNRESOLVED_VS = "UNRESOLVED: kappa = 3 variant set (A7-VS)"
 
 # Optional metadata: excluded from the agreement verdict by key name (at any depth), each with its reason. Anything
 # not listed here is required.
@@ -42,7 +49,29 @@ EXCLUDED_SCOPE = {
     "lateral_symmetry": "V-construction diagnostic, frozen with V (V's sha256 is compared)",
     "shrinkage": "V-construction metadata, frozen with V (V's sha256 is compared)",
     "median_rel_sd": "V-construction metadata, frozen with V (V's sha256 is compared)",
+    "ruling": "citation of a ruling record (text)",
+    "evaluate": "input path echo (robust-labels.json; its evaluate_sha256 is compared)",
 }
+
+# robust-labels.json, schema "s5p-robust-labels/2" (the campaign's label step at origin/main 67eadf25, as described
+# by the campaign; its code was not read here): labels, decisions_kappa3_replace, family_members,
+# diagnostics.{frozen_boolean_robust_to_the_sub_fine_residual, keep_both.{family, labels}}, and provenance
+# (evaluate_sha256, design_sha256, alpha_family). A field under any other name stays UNRESOLVED until mapped.
+
+_C_NAME = re.compile(r"^(?:c\s*=\s*)?([0-9]*\.?[0-9]+)$")
+_M1_NAME = re.compile(r"^m1\s*=?\s*([+-])\s*([0-9]*\.?[0-9]+)$")
+
+
+def variant_key(name: str):
+    """A variant name as ('c', coefficient) or ('m1', signed kappa); None if it cannot be parsed (never guessed)."""
+    n = str(name).strip()
+    m = _C_NAME.match(n)
+    if m:
+        return ("c", float(m.group(1)))
+    m = _M1_NAME.match(n)
+    if m:
+        return ("m1", float(m.group(2)) * (1 if m.group(1) == "+" else -1))
+    return None
 
 
 def walk(node, path=()):
@@ -158,7 +187,7 @@ def locate_null(prod, key):
     return best
 
 
-def compare(mine: dict, prod: dict, labels_doc: dict | None = None) -> dict:
+def compare(mine: dict, prod: dict, labels_doc: dict | None = None, prod_sha256: str | None = None) -> dict:
     L = Ledger(prod)
     for pk, mv in (("design_sha256", (mine.get("inputs") or {}).get("design_sha256")),
                    ("v_sha256", ((mine.get("provenance") or {}).get("V") or {}).get("sha256"))):
@@ -208,15 +237,16 @@ def compare(mine: dict, prod: dict, labels_doc: dict | None = None) -> dict:
                     if not isinstance(ent, dict) or not isinstance(ent.get(t), dict):
                         continue
                     name = str(ent.get("label", ent.get("variant", lbl)))
-                    m = mine_var.get(name)
+                    vk = variant_key(name)
+                    m = next((v for n, v in mine_var.items() if vk is not None and variant_key(n) == vk), None)
                     if m is None:
-                        continue  # left UNRESOLVED: no recompute variant of that name
+                        continue  # left UNRESOLVED: unparsable name or no recompute variant of that key
                     for f in ("k", "p"):
                         if f in ent[t]:
                             L.row(f"{key}:{t}:{vkey}[{name}]:{f}", kind_of(f), m.get(f),
                                   base + (vkey, str(lbl), t, f))
     mine_dec = {d["test"]: d for d in mine["family"]["decisions"]}
-    mine_rob = {d["test"]: d for d in mine["family"]["holm_at_kappa_robust"]}
+    mine_rob = {d["test"]: d for d in mine["family"]["keep_both_kappa3_diagnostic"]["holm"]}
     for field, source, attr in (("decisions", mine_dec, "decision"), ("holm_point", mine_dec, "holm_point"),
                                 ("decisions_robust_kappa", mine_rob, "decision")):
         if field not in prod:
@@ -228,9 +258,6 @@ def compare(mine: dict, prod: dict, labels_doc: dict | None = None) -> dict:
             if p is None:
                 L.missing.append(f"{field}:{test}")
                 continue
-            if md.get(attr) == UNRESOLVED_VS:
-                L.pending.append(f"{field}:{test}")
-                continue
             node = L.get(p)
             if isinstance(node, dict):
                 leafk = "decision" if "decision" in node else "label"
@@ -241,13 +268,11 @@ def compare(mine: dict, prod: dict, labels_doc: dict | None = None) -> dict:
     if "robust_to_the_sub_fine_residual" not in prod:
         L.missing.append("robust_to_the_sub_fine_residual")
     else:
-        for test, mv in mine["family"].get("robust_boolean_equivalent", {}).items():
+        for test, mv in mine["family"].get("frozen_boolean_equivalent_diagnostic", {}).items():
             null, t = test.split(":")
             p = L.first(("robust_to_the_sub_fine_residual", null, t), ("robust_to_the_sub_fine_residual", test))
             if p is None:
                 L.missing.append(f"robust_to_the_sub_fine_residual:{test}")
-            elif mv == UNRESOLVED_VS:
-                L.pending.append(f"robust_to_the_sub_fine_residual:{test}")
             else:
                 L.row(f"robust_to_the_sub_fine_residual:{test}", "exact", mv, p)
     if isinstance(prod.get("not_calibrated"), list):
@@ -282,24 +307,7 @@ def compare(mine: dict, prod: dict, labels_doc: dict | None = None) -> dict:
     if labels_doc is None:
         L.missing.append("robust-labels.json (not given)")
     else:
-        LL = Ledger(labels_doc)
-        if labels_doc.get("labels") is None:
-            L.missing.append("robust-labels.json:labels")
-        else:
-            for test, mv in mine["family"].get("robust_labels", {}).items():
-                null, t = test.split(":")
-                p = LL.first(("labels", null, t), ("labels", test))
-                if p is None:
-                    L.missing.append(f"robust_labels:{test}")
-                elif mv == UNRESOLVED_VS:
-                    L.pending.append(f"robust_labels:{test}")
-                else:
-                    node = LL.get(p)
-                    LL.row(f"robust_labels:{test}", "exact", mv, p + (("label",) if isinstance(node, dict) else ()))
-            for p, v in walk(labels_doc["labels"], ("labels",)):
-                if not LL.is_consumed(p) and not excluded(p):
-                    unresolved.append({"path": "robust-labels.json/" + "/".join(p), "value": v})
-        label_rows = LL.rows
+        label_rows = compare_labels_doc(mine, labels_doc, prod_sha256, L, unresolved)
     for p, v in walk(prod):
         if L.is_consumed(p):
             continue
@@ -322,6 +330,65 @@ def compare(mine: dict, prod: dict, labels_doc: dict | None = None) -> dict:
             "excluded_by_scope": {"counts": excl, "scope": EXCLUDED_SCOPE}, "rows": rows}
 
 
+def family_names(mine: dict, which: str) -> dict:
+    """Per test, the variant names of the recompute's kappa = 3 family ('replace' ruled, 'retain' keep-both)."""
+    out = {}
+    for key, rec in mine["nulls"].items():
+        for t in TESTS:
+            tr = rec["tests"][t]
+            fam = tr.get(f"robust_kappa3_{which}_kappa2")
+            out[f"{key}:{t}"] = sorted((fam or tr).get("variants", {}))
+    return out
+
+
+def compare_labels_doc(mine, doc, prod_sha256, L, unresolved) -> list:
+    LL = Ledger(doc)
+    fam = mine["family"]
+    for pk, mv in (("evaluate_sha256", prod_sha256), ("design_sha256", (mine.get("inputs") or {}).get("design_sha256")),
+                   ("alpha_family", mine.get("alpha_family"))):
+        if pk in doc and mv is not None:
+            LL.row(f"robust-labels.json:{pk}", "p" if pk == "alpha_family" else "exact", mv, (pk,))
+    if doc.get("labels") is None:
+        L.missing.append("robust-labels.json:labels")
+
+    def per_test(field_path, src, what):
+        if LL.get(field_path) is None:
+            return
+        for test, mv in src.items():
+            null, t = test.split(":")
+            p = LL.first(field_path + (test,), field_path + (null, t))
+            if p is None:
+                L.missing.append(f"robust-labels.json:{'/'.join(field_path)}:{test}")
+                continue
+            node = LL.get(p)
+            label = f"robust-labels.json:{'/'.join(field_path)}:{test}"
+            if what == "names":
+                theirs = [variant_key(x) for x in (node or [])]
+                if any(x is None for x in theirs):
+                    continue  # an unparsable name: left UNRESOLVED
+                LL.rows.append({"item": label, "kind": "exact", "mine": mv, "production": node,
+                                "production_path": "/".join(p),
+                                "agree": sorted(theirs) == sorted(variant_key(x) for x in mv)})
+                LL.consumed.add(tuple(p))
+            elif what == "holm" and isinstance(node, dict):
+                LL.row(label + ":decision", "exact", mv.get("decision"), p + ("decision",))
+                LL.same_names(label, mv, p, skip=("decision", "test"))
+            else:
+                LL.row(label, "exact", mv, p)
+
+    per_test(("labels",), fam.get("robust_labels", {}), "value")
+    per_test(("decisions_kappa3_replace",), {d["test"]: d for d in fam["holm_at_kappa_robust"]}, "holm")
+    per_test(("family_members",), family_names(mine, "replace"), "names")
+    per_test(("diagnostics", "frozen_boolean_robust_to_the_sub_fine_residual"),
+             fam.get("frozen_boolean_equivalent_diagnostic", {}), "value")
+    per_test(("diagnostics", "keep_both", "labels"), fam["keep_both_kappa3_diagnostic"]["labels"], "value")
+    per_test(("diagnostics", "keep_both", "family"), family_names(mine, "retain"), "names")
+    for p, v in walk(doc):
+        if not LL.is_consumed(p) and not excluded(p):
+            unresolved.append({"path": "robust-labels.json/" + "/".join(p), "value": v})
+    return LL.rows
+
+
 EXIT = {"AGREE": 0, "DISCREPANT": 1, "INCOMPLETE": 2}
 
 
@@ -329,7 +396,7 @@ def compare_files(mine_path: str, prod_path: str, out_path: str, labels_path: st
     mine = json.loads(Path(mine_path).read_text())
     prod = json.loads(Path(prod_path).read_text())
     labels = json.loads(Path(labels_path).read_text()) if labels_path else None
-    rep = compare(mine, prod, labels)
+    rep = compare(mine, prod, labels, hashlib.sha256(Path(prod_path).read_bytes()).hexdigest())
     rep["inputs"] = {"mine": mine_path, "production": prod_path, "robust_labels": labels_path}
     Path(out_path).write_text(json.dumps(rep, indent=1, sort_keys=True, default=str) + "\n")
     print(f"{rep['verdict']}: {rep['agree']}/{rep['items']} rows agree; {len(rep['discrepancies'])} discrepancies; "

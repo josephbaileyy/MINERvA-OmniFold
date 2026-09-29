@@ -10,9 +10,9 @@ the calibration (the nuisance model, the pseudo-experiment process, the conditio
 Task pointer: `docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md` §1 (at `origin/main` `12991771`).
 Branch `s5p-parallel-recompute-20260928`, worktree `../MINERvA-OmniFold-s5p-recompute` (created from `12991771`).
 Cluster scratch (mine only): `/pscratch/sd/j/josephrb/s5p-parallel-recompute/`.
-Evaluator: `nd-unfolding/s5p_recompute.py` at the branch tip, sha256 `8286af23…`. Its history: `707421ee…` (commit
+Evaluator: `nd-unfolding/s5p_recompute.py` at the branch tip, sha256 `8f783f87…`. Its history: `707421ee…` (commit
 `27c7ff37`, the copy the real-input dry run used), then the labelled A8 sensitivity readings (§3.1, primary outputs
-unchanged), then the owner's A7 ruling with both κ = 3 variant sets computed (§3.2, A7-VS open; only the reported κ = 3 label is affected), then the comparer's leaf accounting (§5.3).
+unchanged), then the owner's A7 and A7-VS rulings (§3.2; only the reported κ = 3 label is affected), with the comparer's leaf accounting (§5.3).
 
 **STATUS: FINAL VERIFICATION PENDING.** Production was non-terminal (calibration batch 0) when this was written.
 Nothing below is a verification result.
@@ -38,9 +38,9 @@ Nothing below is a verification result.
 |---|---|
 | `nd-unfolding/s5p_recompute.py` | the evaluator: J geometry, surrogates, statistics, variants, claim p, Holm with determinacy, κ = 3 flag, power, implied size, observed-jitter p, sequential-rule re-evaluation at every look; CLI `evaluate` / `compare` |
 | `nd-unfolding/s5p_recompute_compare.py` | compares a recompute output with production's `joint-evaluate.json`; lists every production numeric leaf it could not map |
-| `nd-unfolding/tests/test_s5p_recompute.py`, `tests/s5p_recompute_toy.py` | 49 controls (below, §3.1, §3.2); a synthetic world in the production file formats |
+| `nd-unfolding/tests/test_s5p_recompute.py`, `tests/s5p_recompute_toy.py` | 51 controls (below, §3.1, §3.2); a synthetic world in the production file formats |
 
-Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **49 passed**; ~20 s on an idle machine):
+Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **51 passed**; ~20 s on an idle machine):
 no import of the three production modules (AST); Clopper–Pearson closed form and the reviews' own numbers
 (review 1: `[0.0057, 0.0148]` at p = 0.01, B = 1999; review 2 M3: determined k at 0.005 is `{0}` at B = 800 and
 `{0..3}` at B = 1999, rank rule `{0..3}` at 800); statistics (total = inverse quadratic form; shape invariant to
@@ -113,7 +113,7 @@ reading is never swapped to match production.
 | A5 | `s5p_joint.shift_vector` docstring (b = ensemble mean − μ; a, se over F4 pairs) | b from surrogated f without eps; se = SD(ddof 1)/√16; one S for both tests | eps included in b; ddof 0; a separate S for the shape test | S → the c-variant p-values | **yes**: through the claim p when a c-variant is the argmax near a Holm threshold | b, a, se: yes; eps, ddof, shape S: no | no |
 | **A6** | am. 7 `claims.rejection` "process-shift variants … AND the sub-fine-residual variants F ± 2δ_M1" | UNION: {cS} ∪ {±κδ} (5 variants) | cross product cS + sκδ (9 variants; larger combined shifts → larger claim p) | claim p of the four external nulls, Holm decisions, power at GENIE CV, sequential looks | **yes** (usually a rejection becoming undetermined or not rejected; since Holm with determinacy is not monotone in k across unequal B (§3.2), rarely the reverse), bounded: cS is 0.024–0.068 null SD beside 0.55–2.0 for 2δ | **yes, by text**. Revised 2026-09-29: this lane's assessment `ASSESSMENT-20260929-s5p-recompute-A6-A8.md` §1 agrees with the campaign's clarification. **No owner ruling.** | **yes**: `product_reading`, `family.holm_product_variant_reading`, `decisions_changed_by_product_reading` (labelled diagnostic) |
 | **A7** | am. 7 "Every rejection is also flagged 'robust to the sub-fine residual' or not at kappa = 3 (report only)" | **RULED 2026-09-29**: the full Holm re-run at κ = 3; labels "robust to the sub-fine residual" / "not robust" / "not applicable" (§3.2) | (b) per test at the rejecting step's threshold (non-adopted) | the reported label only | no claim decision (report only) | **yes: owner ruling** `RULING-20260929-s5p-A7-robustness-flag.md` (origin/main `4a1d931c`), for the procedure and the labels | the ruled labels; (b) as a labelled diagnostic |
-| **A7-VS** | the κ = 3 **variant set**: am. 7 "…or not at kappa = 3"; `calibration.m1_shift` "kappa 2 (claim), kappa_robust 3 (report)"; design `kappa_robust: 3`; prefreeze "3 M1 (the robustness variant)" | **none: OPEN.** Both sets are computed under neutral names | *retain*: claim variants ∪ F ± 3δ_M1 (the frozen implementation as the campaign reports it, and the clarification's R7(a) wording); *replace*: {cS} ∪ F ± 3δ_M1 (κ read as a parameter of the M1 variant, "the robustness variant" being 3δ) | the reported κ = 3 label and `decisions_robust_kappa` | the label only, never a claim; *retain* ⊇ *replace*, so each test's robust k is never smaller under *retain*, but the label change has **no guaranteed direction** (§3.2) | **no.** No governing record fixes it; the ruling selected the procedure and labels, not the set (owner, 2026-09-29). **Flag for a ruling before final verification** | **yes**: `family.kappa3.{retain_kappa2,replace_kappa2}`; a test on which they differ is reported `UNRESOLVED` (`kappa3.tests_where_the_sets_differ`) |
+| **A7-VS** | the κ = 3 **variant family**; the frozen text (am. 7 "…at kappa = 3"; `kappa_robust 3`; prefreeze "3 M1 (the robustness variant)") does not fix it | **RULED 2026-09-29 ~04:33Z, report only: REPLACE**, i.e. {cS} ∪ F ± 3δ_M1; full Holm re-run (§3.2) | *keep both* (claim variants ∪ F ± 3δ_M1, the frozen implementation as the campaign reports it) | the reported κ = 3 label | the label only, never a claim | **yes: owner ruling**, an explicit clarification made then, **not** a recovered pre-production definition (`RULING-20260929-s5p-A7-VS-kappa3-variant-set.md`; campaign record on origin/main `67eadf25`) | ruled: `family.robust_labels`, `holm_at_kappa_robust`; diagnostics: `keep_both_kappa3_diagnostic`, `frozen_boolean_equivalent_diagnostic`; `kappa3.tests_where_the_sets_differ` |
 | **A8** | am. 7 `sequential_rule`; `sequential_decision` docstring "(b) meets the T7 precision at the point estimate" | half-width on the 99.5% look interval; "contains" closed | (i) half-width on the 95% interval; (ii) open containment; (iii) both | whether each look should have stopped (the sequential verification verdict), not the p at production's B | the verdict on production's stop: **yes**, only at B ≤ 800 and only through (i) (§3.1); (ii) at no B = 1..1999 | **level: yes, by text**. Revised 2026-09-29: assessment §2 agrees with the clarification. Closure: not by text, immaterial at every B. **No owner ruling.** | **yes**: `sequential.a8_sensitivity` (labelled readings; only the primary gives `stop_verdict`) |
 | A9 | am. 7 "a budget stop at B = 0 leaves the null 'not calibrated' (it stays in the Holm family with p = 1)" | interval [0, 1] → 'undetermined' at its step, labelled 'not calibrated' | 'not rejected' at its step | labels of that null (and of equal-p tests after it) | no rejection can change (p = 1 is last) | label and p: yes; step outcome: no | no |
 | A10 | none (ties unaddressed) | family order (design null order; total before shape) | any other stable order | Holm labels at exactly equal claim p | only with equal p and different B | no | no |
@@ -172,8 +172,7 @@ Synthetic boundary controls (`A8Sensitivity`, 7 tests):
 - an end-to-end run carrying and labelling the readings.
 
 **Status of the decision-relevant items (2026-09-29):**
-- **A7** is RULED for the procedure and labels (§3.2). **A7-VS** (the κ = 3 variant set) is **OPEN and flagged for a
-  ruling before final verification**.
+- **A7** is RULED (procedure, labels), and so is **A7-VS** (family: *replace*; report only, ~04:33Z) (§3.2).
 - **A6** (union) and **A8** (99.5% level) are resolved by the frozen text in this lane's assessment, in agreement
   with the campaign's clarification. **Neither has an owner ruling.**
 - Should a diagnostic reading disagree with the primary on a decision (A6), or on a stop verdict (A8: MEC, NuWro or
@@ -181,47 +180,48 @@ Synthetic boundary controls (`A8Sensitivity`, 7 tests):
 reads it differently and a decision moves. That is diagnosed at the final comparison by computing the
 competing reading as a labelled diagnostic.
 
-### 3.2 A7 as ruled (2026-09-29), and the open variant-set question A7-VS
+### 3.2 A7 and A7-VS as ruled (2026-09-29)
 
-The ruling is `RULING-20260929-s5p-A7-robustness-flag.md` at origin/main `4a1d931c`. It quotes Joseph verbatim:
-*"the full Holm rerun at κ = 3 …"*. It was received ~01:22Z, before any observed claim p existed, and is report only.
-It fixes the **procedure** (a full Holm re-run) and the **labels**. By the owner's own statement (2026-09-29) it does
-**not** fix whether the κ = 3 variant set keeps the ±2δ_M1 members.
+**A7** (`RULING-20260929-s5p-A7-robustness-flag.md`, origin/main `4a1d931c`, ~01:22Z) fixes the procedure, a full
+Holm re-run at κ = 3, and the labels. **A7-VS** fixes the variant family: *replace*.
+- Record: `RULING-20260929-s5p-A7-VS-kappa3-variant-set.md` on this branch, received in this session just before
+  04:33:56Z. The campaign's record of the same ruling is on origin/main `67eadf25`.
+- It is an explicit **report-only clarification made then**, **not** a recovered pre-production definition.
+- The frozen records at `4f5a613f` do not fix the family. Everything searched: am. 7 `claims.rejection` "at kappa =
+  3"; `calibration.m1_shift` "kappa_robust 3"; design `kappa_robust: 3`; the `s5p_prefreeze` docstring "3 M1 (the
+  robustness variant)"; amendments 1, 5, 6, 6b, 8; spec; the reviews.
+- At 04:33:57Z only the five B = 0 looks existed, and `stage7/joint/` did not.
 
-**A7-VS (OPEN; flagged for a ruling before final verification).** Every statement at `4f5a613f` that bears on the
-set was searched (amendments, design, spec, prefreeze, reviews):
-- am. 7 `claims.rejection`: "…flagged 'robust to the sub-fine residual' or not at kappa = 3";
-- `calibration.m1_shift`: "kappa 2 (claim), kappa_robust 3 (report)"; `prod/design.json`: `kappa_robust: 3` per null;
-- the `s5p_prefreeze` docstring: "2 M1 (the claim variant), 3 M1 (the robustness variant)"; `units.json`
-  `M1_robust_variant_3x`; am. 7 `M1_robust_variant_in_null_sd`.
+**Reported (ruled).**
+- Family per test: {c·S : c ∈ 0, ½, 1} ∪ {F ± 3δ_M1}. MnvTune, with no M1 variant, uses its c-variants, so its
+  robust claim is its claim.
+- Robust claim = the largest p over that family. `family.holm_at_kappa_robust` is `holm_determined` over the ten
+  robust claims.
+- `family.robust_labels`: a primary rejection is "robust to the sub-fine residual" iff also rejected there, else
+  "not robust"; every primary non-rejection is "not applicable".
 
-None of these says whether the ±2δ members remain. The words treat κ as a parameter of the M1 variant, which reads
-naturally as *replace*, but they do not say so. *Retain* appears only in the frozen implementation, as reported by
-the campaign's clarification (`s5p_joint.py:233`; this lane has not read it), and in the clarification's R7(a)
-wording, written after production outputs became visible. Neither is a governing definition.
+**Separately named diagnostics (preserved).**
+- `family.keep_both_kappa3_diagnostic` (`holm`, `labels`): the family keeping ±2δ and ±3δ. This is the frozen
+  evaluator's `decisions_robust_kappa` as the campaign reports the frozen code.
+- `family.frozen_boolean_equivalent_diagnostic`: the frozen boolean `robust_to_the_sub_fine_residual`, meaning equal
+  decision labels in the primary and the keep-both re-run.
+- `family.kappa3.<set>.A7b_per_test_robust_diagnostic`: the per-test reading.
+- `family.kappa3.tests_where_the_sets_differ`: the tests on which the ruled and keep-both labels differ, measured at
+  the final evaluation. The difference has no guaranteed direction: Holm with determinacy is not monotone in k across
+  unequal B (3 of 20,000 random ten-test configurations gained a rejection when a k rose).
 
-The evaluator therefore computes both sets and prefers neither:
-- `family.kappa3.retain_kappa2` and `family.kappa3.replace_kappa2`, each with `holm`, `labels`,
-  `boolean_equivalent` and the A7(b) diagnostic;
-- `family.robust_labels`, `family.holm_at_kappa_robust` and `family.robust_boolean_equivalent` hold the common value
-  where the two sets agree, and `UNRESOLVED: kappa = 3 variant set (A7-VS)` where they differ
-  (`kappa3.tests_where_the_sets_differ`);
-- the comparer never scores an UNRESOLVED test as agreement (`pending_ruling`, verdict INCOMPLETE).
+**Production labeler.** It is updated by its owner, the campaign: `nd-unfolding/s5p_robust_labels.py` at `67eadf25`,
+sha256 prefix `e08b76083b7abd0a`, schema `s5p-robust-labels/2`.
+- This lane has not read its code.
+- The comparer maps its fields as the campaign describes them: `labels` and `decisions_kappa3_replace` (the ruled
+  family), `family_members`, `diagnostics.frozen_boolean_robust_to_the_sub_fine_residual`,
+  `diagnostics.keep_both.{family, labels}`, `evaluate_sha256`, `design_sha256` and `alpha_family`. `code_sha256`,
+  `ruling` and `schema` are excluded as identity/citation.
+- Variant names are matched through an explicit parser (`c=0.5` ≡ `0.5`; `m1=+3` ≡ `m1+3`). An unparsable name stays
+  UNRESOLVED and is never guessed.
 
-*Retain* ⊇ *replace*, so each test's robust claim k is never smaller under *retain*. The label change still has
-**no guaranteed direction**:
-- Holm with determinacy orders the steps by p but decides them on the Clopper-Pearson interval, and B differs
-  between nulls.
-- Raising one test's k can therefore move another test to a looser threshold.
-- A randomized check of 20,000 ten-test configurations (B in {200, 400, 737, 1200, 1999}) found 3 in which raising
-  k gained a rejection. Example: a B = 400 test from k = 0 to 2 added one rejection.
-- A first draft of this paragraph claimed monotonicity; the check refuted it before commit.
-
-If the two sets give the same labels at the final evaluation, the question is moot for this result. That is
-measured then, not assumed.
-
-The per-test reading A7(b) stays as a labelled diagnostic under each set. Tests: `A7Ruling` (4) and the comparer's
-pending-label control.
+Tests: `A7Ruling` (4), and the comparer's controls for the labels document (a wrong ruled label, a keep-both family
+reported as the ruled one, an unparsable member name, provenance, an unknown field).
 
 If a discrepancy appears, diagnose it by computing the alternative reading as a labelled diagnostic and report
 both; do **not** change the primary reading to make the numbers agree.
@@ -295,7 +295,7 @@ Exit codes:
   - 0 = **AGREE**: every row agrees, nothing expected is missing, and **no production leaf is unresolved**.
   - 1 = **DISCREPANT**: a row disagrees. `compare.json` gives both values and the production path.
   - 2 = **INCOMPLETE**: nothing disagrees, but something expected is not located, a production leaf is unresolved,
-    or a label is pending (A7-VS).
+    or a label is pending.
 
 Every production leaf in `joint-evaluate.json` and in `robust-labels.json`'s `labels` must be **consumed** by a
 comparison row or **excluded** by the documented metadata scope `EXCLUDED_SCOPE` in `s5p_recompute_compare.py`.
@@ -308,7 +308,7 @@ entry removed.
 An unresolved leaf is resolved in one of three ways, and only these:
 - by extending the mapping, in a commit;
 - by a documented addition to the scope, in a commit, with its reason;
-- for A7-VS, by a ruling.
+- for a question of the specification, by a ruling.
 
 Never by reading it as agreement.
 
@@ -320,8 +320,10 @@ Then:
 - each Holm decision with its threshold and interval;
 - the ruled A7 label (`family.robust_labels`) against `robust-labels.json`, and **separately**
   `robust_boolean_equivalent` against the frozen `robust_to_the_sub_fine_residual`;
-- **A7-VS**: `family.kappa3.tests_where_the_sets_differ`. If it is non-empty, those labels are UNRESOLVED pending
-  the variant-set ruling; say so, and say which set production's labels coincide with, **without** adopting it;
+- **A7-VS**: the ruled labels against `robust-labels.json` `labels` / `decisions_kappa3_replace` /
+  `family_members`; the keep-both and frozen-boolean diagnostics against `diagnostics.*` and the frozen
+  `decisions_robust_kappa` / `robust_to_the_sub_fine_residual`; and `family.kappa3.tests_where_the_sets_differ`
+  (which tests the ruling changed relative to keep-both), reported as a measurement;
 - the labelled diagnostics: `decisions_changed_by_product_reading` (A6), the A7(b) and replacing-set labels (A7), and
   `a8_sensitivity` (A8);
 - the sequential verification per look (`nulls.<null>.sequential`: the rule's stop against the status file's

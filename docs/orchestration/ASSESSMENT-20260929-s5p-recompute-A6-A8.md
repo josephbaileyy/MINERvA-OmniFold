@@ -139,6 +139,8 @@ below, which I re-ran myself.
   `HANDOFF-20260928-s5p-recompute.md` §3.2). The set is open question **A7-VS**, flagged for a ruling before final
   verification. Both sets ("retain" and "replace") are computed, and a test on which they differ is reported
   UNRESOLVED.
+  **Then RULED by the owner (~04:33Z): *replace*, as a report-only clarification made then**
+  (`RULING-20260929-s5p-A7-VS-kappa3-variant-set.md`). The keep-both set is a named diagnostic.
 - **A8 deadline arithmetic.** The clarification estimates the earliest first look with B > 0 near 2026-09-29T11Z
   (MEC), as a lower bound. It is not re-measured here.
 

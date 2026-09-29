@@ -87,10 +87,11 @@ AMBIGUITIES = {
     "A7_robust_flag": "RULED 2026-09-29 (RULING-20260929-s5p-A7-robustness-flag.md): the full Holm re-run at "
                       "kappa = 3; a primary rejection is 'robust to the sub-fine residual' iff also rejected there, "
                       "else 'not robust'; every non-rejected test 'not applicable'. Diagnostic kept: A7(b) per test",
-    "A7_VS_kappa3_variant_set": "OPEN: the ruling does not fix whether the kappa = 3 set keeps the +-2 delta_M1 "
-                                "members (retain: claim variants UNION F +- 3 delta_M1) or replaces them (replace: "
-                                "process-shift variants UNION F +- 3 delta_M1); both are computed "
-                                "(family.kappa3); a test on which they differ is reported UNRESOLVED",
+    "A7_VS_kappa3_variant_set": "RULED 2026-09-29 (~04:33Z; RULING-20260929-s5p-A7-VS-kappa3-variant-set.md), a "
+                                "report-only clarification made then: REPLACE (process-shift variants UNION F +- 3 "
+                                "delta_M1; family.robust_labels, family.holm_at_kappa_robust). Diagnostics kept: keep "
+                                "both +-2 and +-3 (family.keep_both_kappa3_diagnostic) and the frozen boolean "
+                                "(family.frozen_boolean_equivalent_diagnostic)",
     "A8_look_precision": "the sequential rule's T7 half-width is measured on the 99.5% look interval (the same "
                          "interval as the threshold condition); 'contains' is closed at both ends. Sensitivity "
                          "readings (labelled, never used for a verdict): precision on the 95% interval, open "
@@ -172,7 +173,7 @@ def holm_determined(entries: list[dict], alpha: float, level: float = CP_LEVEL) 
         thr = alpha / (m - step)
         lo, hi = cp_interval(e["k"], e["B"], level)
         rec = {"test": e["test"], "step": step, "threshold": thr, "p": e["p"], "k": e["k"], "B": e["B"],
-               "interval": [lo, hi]}
+               "interval": [lo, hi], "level": level}
         if stopped is None:
             if hi < thr:
                 rec["decision"] = "rejected"
@@ -187,7 +188,6 @@ def holm_determined(entries: list[dict], alpha: float, level: float = CP_LEVEL) 
 
 
 ROBUST = "robust to the sub-fine residual"
-UNRESOLVED_VS = "UNRESOLVED: kappa = 3 variant set (A7-VS)"
 NOT_ROBUST = "not robust"
 NOT_APPLICABLE = "not applicable"
 
@@ -676,9 +676,9 @@ class Evaluator:
         ens = null_ensembles(ctx["f_cal"], ctx["eps"], ts, shifts)
         _, rob_shifts = self.shifts_for(ctx, "kappa_robust") if "none" not in ctx["m1"] else (None, {})
         rob_only = {k: v for k, v in rob_shifts.items() if k not in shifts}
-        # A7 (RULING-20260929-s5p-A7-robustness-flag.md) fixes the full Holm re-run and the labels, NOT the kappa = 3
-        # variant set (A7-VS, open): both candidate sets are computed under neutral names, neither is preferred:
-        # "retain": claim variants UNION F +- 3 delta_M1; "replace": process-shift variants UNION F +- 3 delta_M1.
+        # A7 fixes the full Holm re-run and the labels; A7-VS (ruled later, report only) fixes the family as
+        # "replace": process-shift variants UNION F +- 3 delta_M1. "retain" (claim variants UNION F +- 3 delta_M1)
+        # is computed beside it as the keep-both diagnostic.
         ens_rob, ens_rob_replace = dict(ens), dict(ens)
         if rob_only:
             extra = null_ensembles(ctx["f_cal"], ctx["eps"], ts, rob_only)
@@ -825,23 +825,21 @@ def evaluate(design: dict, v_path: str, s5c_contract: dict, variant_mode: str = 
         kappa3[vs] = {"holm": holm_rob, "labels": robust_labels(dec, holm_rob),
                       "boolean_equivalent": {d["test"]: d["decision"] == r["decision"] for d, r in zip(dec, holm_rob)},
                       "A7b_per_test_robust_diagnostic": per_test}
-    merged_labels, merged_bool, merged_holm = {}, {}, []
-    for d, a, b in zip(dec, kappa3["retain_kappa2"]["holm"], kappa3["replace_kappa2"]["holm"]):
-        t = d["test"]
-        la, lb = kappa3["retain_kappa2"]["labels"][t], kappa3["replace_kappa2"]["labels"][t]
-        merged_labels[t] = la if la == lb else UNRESOLVED_VS
-        ba, bb = kappa3["retain_kappa2"]["boolean_equivalent"][t], kappa3["replace_kappa2"]["boolean_equivalent"][t]
-        merged_bool[t] = ba if ba == bb else UNRESOLVED_VS
-        merged_holm.append(dict(a) if a["decision"] == b["decision"] else {"test": t, "decision": UNRESOLVED_VS})
-    kappa3["variant_set_question"] = (
-        "OPEN (A7-VS): the ruling fixes the full Holm re-run and the labels, not whether the kappa = 3 set keeps the "
-        "+-2 delta_M1 members; where the two candidate sets give different outcomes the reported value is "
-        "UNRESOLVED until that narrow question is ruled")
-    kappa3["tests_where_the_sets_differ"] = [t for t, v in merged_labels.items() if v == UNRESOLVED_VS]
+    # A7-VS RULED (RULING-20260929-s5p-A7-VS-kappa3-variant-set.md, received ~2026-09-29T04:33Z, report only): the
+    # kappa = 3 family REPLACES the +-2 delta_M1 members by +-3 delta_M1 and keeps the process-shift variants.
+    ruled, keep = kappa3["replace_kappa2"], kappa3["retain_kappa2"]
+    kappa3["ruling"] = ("A7-VS ruled 2026-09-29 (~04:33Z), a report-only clarification made then (not a recovered "
+                        "pre-production definition): the kappa = 3 family is the process-shift variants UNION "
+                        "F +- 3 delta_M1 (replace_kappa2). retain_kappa2 (keep both +-2 and +-3) is a diagnostic.")
+    kappa3["tests_where_the_sets_differ"] = [d["test"] for d in dec
+                                             if ruled["labels"][d["test"]] != keep["labels"][d["test"]]]
     out["family"]["kappa3"] = kappa3
-    out["family"]["holm_at_kappa_robust"] = merged_holm
-    out["family"]["robust_labels"] = merged_labels
-    out["family"]["robust_boolean_equivalent"] = merged_bool
+    out["family"]["holm_at_kappa_robust"] = ruled["holm"]
+    out["family"]["robust_labels"] = ruled["labels"]
+    out["family"]["keep_both_kappa3_diagnostic"] = {"holm": keep["holm"], "labels": keep["labels"]}
+    # the frozen evaluator's boolean (equal decision labels in the primary and its kappa = 3 re-run, whose family keeps
+    # both +-2 and +-3 as the campaign reports the frozen code): reproduced as a separately named diagnostic
+    out["family"]["frozen_boolean_equivalent_diagnostic"] = keep["boolean_equivalent"]
     prod_entries = []
     for key in design["nulls"]:
         for t in TESTS:
