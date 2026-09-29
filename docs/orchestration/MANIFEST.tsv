@@ -199,7 +199,7 @@ docs/orchestration/HANDOFF-20260925-negweight-refined-successor.md	tracked	LIVE	
 docs/orchestration/HANDOFF-20260926-precision-measurement-completion.md	tracked	LIVE	document	20260924-scalar5d-campaign	20260926	open		route-only		no	6	381	23282
 docs/orchestration/HANDOFF-20260928-s5p-analysis-note-sync.md	tracked	LIVE	document		20260928	open		route-only		no	2	106	7289
 docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md	tracked	LIVE	document		20260928	open		route-only	reproduction/s5p/scope.py	no	9	92	9143
-docs/orchestration/HANDOFF-20260928-s5p-reproduction-harness.md	tracked	LIVE	document		20260928	open		route-only		no	2	202	14847
+docs/orchestration/HANDOFF-20260928-s5p-reproduction-harness.md	tracked	LIVE	document		20260928	open		route-only		no	2	218	16188
 docs/orchestration/HOLD-20260821-clause-c-verification.md	tracked	ARCHIVAL	document		20260821	terminal		exact-path-only		yes	7	66	4401
 docs/orchestration/INDEX-20260920-retained-branches-not-on-main.md	tracked	LIVE	index	z-campaign	20260920	open		route-only		no	3	101	9262
 docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index			open		route-only	docs/open-items/verify_open_items_restructure.py;docs/orchestration/findings_row_lint.py;nd-unfolding/pet/check_canonical_designation.py	no	26	196	37643
@@ -448,7 +448,7 @@ docs/orchestration/findings_row_lint.py	tracked	MACHINE	script			generated		exac
 docs/orchestration/followup-agent-A-standard-05.md	tracked	ARCHIVAL	followup-prompt			terminal		exact-path-only		yes	10	52	3575
 docs/orchestration/gate2_queue_hedge_controller.sh	tracked	MACHINE	shell-tool			generated		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	3	331	16015
 docs/orchestration/generate_live_state.py	tracked	MACHINE	generator-script			generated		exact-path-only	docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;nd-unfolding/tests/test_mnv_guarded_run.py	no	36	1375	59812
-docs/orchestration/generate_manifest.py	tracked	MACHINE	generator-script			generated		exact-path-only	docs/orchestration/campaignctl.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/probes/probe-20260922-seven-gates.sh;nd-unfolding/tests/test_mnv_guarded_run.py;nd-unfolding/tests/test_object_identity_checks.py	no	71	742	32672
+docs/orchestration/generate_manifest.py	tracked	MACHINE	generator-script			generated		exact-path-only	docs/orchestration/campaignctl.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/probes/probe-20260922-seven-gates.sh;nd-unfolding/tests/test_mnv_guarded_run.py;nd-unfolding/tests/test_object_identity_checks.py	no	72	742	32672
 docs/orchestration/install_agent_notifications.py	tracked	MACHINE	script			generated		exact-path-only		no	3	139	4772
 docs/orchestration/live_doc_indexed.py	tracked	MACHINE	script			generated		exact-path-only	nd-unfolding/tests/test_mnv_guarded_run.py;nd-unfolding/tests/test_object_identity_checks.py	no	21	445	25039
 docs/orchestration/m1m6_expected_differences.json	tracked	MACHINE	machine-data			generated		exact-path-only	docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/test_compare_m1_m6.py	no	19	140	11302

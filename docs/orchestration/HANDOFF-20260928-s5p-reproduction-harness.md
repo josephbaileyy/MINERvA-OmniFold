@@ -12,8 +12,24 @@ scientifically adequate. Expected values live in the receipts the harness reads,
 
 | | status |
 |---|---|
-| **This bounded preparation** (harness, independent review and repairs, fresh-checkout test at the recorded and relocated roots, durable route for the joint result) | **COMPLETE** on branch `s5p-parallel-reproduction-20260928` at the commit that carries this file |
+| **This bounded preparation** (harness, independent review and repairs, fresh-checkout test at the recorded and relocated roots, durable route for the joint result) | **COMPLETE**, and **integrated into `main`** (see "Integration" below) |
 | **The s5p campaign (`OI-193`)** | **NOT complete.** Production was still writing at 15:10 PDT 2026-09-28: `find` showed files newer than 14:45 PDT under `s5p:runs/prod/cal/*` and `s5p:runs/prod/pow/P1_a1.0`. No terminal joint product exists. Reproduction of the final joint result is **PENDING** until independently verified terminal products exist. |
+
+## Integration into `main` (2026-09-28, authorized by the owner as a repository integration only)
+
+- **Merge commit `126525b3b878fd27187205504cc43c0ef121eb21`** (parents: `56e0e874`, the `origin/main` of the time,
+  and `e8a06360`, the branch head). It was pushed as a normal fast-forward of `origin/main`, `56e0e874..126525b3`,
+  with no force. **The remote head was verified with `git ls-remote origin refs/heads/main` to be `126525b3…`.**
+- Before the push, `origin/main` was fetched and had not moved past `56e0e874`. The merge kept both sides' rows
+  in `CATALOG.md` and `MANIFEST-overrides.tsv`; `MANIFEST.tsv` was regenerated, not hand-merged.
+  `generate_manifest.py --check` passed on the merged tree, as did the pre-commit hook (13 checks) and the
+  harness tests (28/28).
+- No in-scope receipt or producer changed on `main` between `12991771` and `56e0e874`. The one new `s5p_` file
+  there is `nd-unfolding/s5p_robust_labels.py` (the owner ruling A7). It belongs to the joint result, and a
+  tier-D successor must add it to the scope.
+- This file's own record of the integration is the child commit of `126525b3`, pushed the same way. Its sha is
+  the one `git log -1 -- docs/orchestration/HANDOFF-20260928-s5p-reproduction-harness.md` prints on `main`.
+- **This is not a release or a publication.** The joint-result slot (tier D) remains **PENDING**.
 
 ## Tested source
 
