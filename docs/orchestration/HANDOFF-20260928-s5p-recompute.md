@@ -10,10 +10,15 @@ the calibration (the nuisance model, the pseudo-experiment process, the conditio
 Task pointer: `docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md` §1 (at `origin/main` `12991771`).
 Branch `s5p-parallel-recompute-20260928`, worktree `../MINERvA-OmniFold-s5p-recompute` (created from `12991771`).
 Cluster scratch (mine only): `/pscratch/sd/j/josephrb/s5p-parallel-recompute/`.
-Evaluator: **the recorded evaluator checkpoint is `4a772838`** (owner, 2026-09-29). Its statistical code (every
-p-value, decision, family, stop verdict and power) is unchanged since. The commit after the comparer review adds
-only `provenance` fields: the shift files' paths, digests, mode and κ values, which the comparer checks against
-production's echoes. The comparer's status is in §5.5: **final reviewed commit `1bfd8910`** (three review rounds; fixes verified YES).
+**Commits (owner, 2026-09-29):**
+- **`1bfd8910` is the reviewed executable code and the deployment target.** It is the final reviewed commit of the
+  comparer (three read-only review rounds; fixes verified YES) and contains the evaluator it was reviewed with.
+  Deploy from this commit only (§5.2).
+- **`da0999b0` is the report-bearing branch tip.** It carries the review record and the final-reviewed-commit
+  entry. It and every later commit on this branch are documentation only (checked by `git diff 1bfd8910 <tip> --
+  nd-unfolding/` being empty).
+- **`4a772838` is a historical checkpoint, not the deployment target.** Its statistical code is the same as at
+  `1bfd8910`; the only evaluator change since then adds provenance fields that the comparer checks.
 
 **STATUS: FINAL VERIFICATION PENDING.** Production was non-terminal (calibration batch 0) when this was written.
 Nothing below is a verification result.
@@ -270,14 +275,24 @@ label comparison. If it is missing, `compare` reports it as not located (exit 2)
 still stands; rerun `compare` when it appears. A `squeue` failure (rc ≠ 0) means UNKNOWN, not "no jobs". An incomplete power set does not block the
 verification (amendment 7 records it); report it.
 
-**5.2 Deploy the committed evaluator** from the pushed branch tip, not a working tree, and record the sha:
+**5.2 Deploy the reviewed executable code: commit `1bfd8910`, never the branch tip or a working tree.** The
+deployment refuses if the tip's code has moved away from `1bfd8910`, because that code would be unreviewed:
 
 ```bash
 W=/Users/josephbailey/local-research/MINERvA-OmniFold-s5p-recompute; S=/pscratch/sd/j/josephrb/s5p-parallel-recompute
-git -C "$W" fetch origin s5p-parallel-recompute-20260928 && SHA=$(git -C "$W" rev-parse FETCH_HEAD) && echo "deploying $SHA"
-mkdir -p /tmp/s5p-recompute-deploy && for f in nd-unfolding/s5p_recompute.py nd-unfolding/s5p_recompute_compare.py \
-  docs/orchestration/state/s5p/prod/design.json; do git -C "$W" show "$SHA:$f" > "/tmp/s5p-recompute-deploy/$(basename "$f")"; done
-git -C "$W" show "$SHA:docs/orchestration/state/s5c/contract.json" > /tmp/s5p-recompute-deploy/s5c_contract.json
+REVIEWED=1bfd89109dc4edf7f849d935b3e171b72760939f
+git -C "$W" fetch origin s5p-parallel-recompute-20260928 || exit 1
+git -C "$W" cat-file -e "$REVIEWED^{commit}" || { echo "reviewed commit missing"; exit 1; }
+git -C "$W" diff --quiet "$REVIEWED" FETCH_HEAD -- nd-unfolding/ \
+  || { echo "REFUSED: code at the tip differs from the reviewed commit; a code change needs its bounded re-review"; exit 1; }
+rm -rf /tmp/s5p-recompute-deploy && mkdir -p /tmp/s5p-recompute-deploy
+for f in nd-unfolding/s5p_recompute.py nd-unfolding/s5p_recompute_compare.py docs/orchestration/state/s5p/prod/design.json; do
+  git -C "$W" show "$REVIEWED:$f" > "/tmp/s5p-recompute-deploy/$(basename "$f")"; done
+git -C "$W" show "$REVIEWED:docs/orchestration/state/s5c/contract.json" > /tmp/s5p-recompute-deploy/s5c_contract.json
+shasum -a 256 /tmp/s5p-recompute-deploy/*
+# expect: s5p_recompute.py ac623946f22a66a769efb2dc90ca1b99f822484225f087e47e9b77cbada1633a
+#         s5p_recompute_compare.py 2cef96881dee75b84e568cb67a864a2db760b5a5c0064d4a7d24a296a5881ed4
+#         design.json 404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285
 scp -o BatchMode=yes /tmp/s5p-recompute-deploy/* saul.nersc.gov:$S/code/
 ```
 
@@ -348,7 +363,21 @@ Then:
 - power per set at 0.05 and 0.005 (rank unshifted, rank claim, determined claim, n present against declared).
 
 For any disagreement between a primary reading and its diagnostic that moves a decision or a stop verdict, record
-it and route it to the owner. Do not re-read the
+it and route it to the owner.
+
+**Carried into the final report (owner, 2026-09-29).** Report each of these explicitly, whether or not it is
+encountered. If one is encountered, record its disposition. Never relax a comparison requirement merely to obtain
+AGREE, and a code fix needs the bounded re-review (§5.5) before it is used:
+- **R1:** a MnvTune `{total,shape}_robust` record carrying fields beyond `p`, `k` and `B` gives INCOMPLETE, with the
+  leaves listed. It fails safe, and is not a pass.
+- **R6:** two production entries naming the same parsed variant can supply `k`/`p` and the implied size separately.
+  If found, report it as a layout outside the owner-stated names.
+- **R8:** decision nodes without `threshold`/`interval` are not required to carry them. The report states the
+  recompute's threshold and interval for each decision regardless.
+- **P4 evidence limitation:** requiring the implied size only for the process-shift variants c > 0 rests on this
+  lane's quotation of the frozen `s5p_joint` docstring ("per variant c > 0") and the frozen e2e test. The reviewer
+  could not verify the quotation, because reading that file is barred. An M1 implied size present in production is
+  compared; its absence is not a failure. Do not re-read the
 specification to agree. Commit `recompute.json`, `compare.json` and a report beside this file. Only then may the
 verification be called complete. Agreement verifies the calculation, not the adequacy of the calibration.
 
