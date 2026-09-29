@@ -516,7 +516,7 @@ class Compare(unittest.TestCase):
         m.setdefault("inputs", {})["design_sha256"] = "d" * 64
         fam = m["family"]
         members = lambda which: {f"{k}:{t}": [self.prod_name(n) for n in  # noqa: E731
-                                              (r["tests"][t].get(f"robust_kappa3_{which}_kappa2") or r["tests"][t])["variants"]]
+                                              (r["tests"][t].get(f"robust_kappa3_{which}_kappa2") or r["tests"][t]).get("variants", {})]
                                  for k, r in m["nulls"].items() for t in ("total", "shape")}
         return {"schema": "s5p-robust-labels/2", "labels": dict(fam["robust_labels"]),
                 "decisions_kappa3_replace": {d["test"]: {x: d[x] for x in ("p", "k", "B", "threshold", "interval",
@@ -644,6 +644,33 @@ class Compare(unittest.TestCase):
         self.assertEqual(rep["verdict"], "INCOMPLETE")
         self.assertEqual([u["path"] for u in rep["unresolved_production_leaves"]],
                          ["robust-labels.json/labels_new_name/MnvTune_v1:total"])
+
+    def test_production_variant_names_parse(self):
+        # the exact names the frozen evaluator writes (campaign, 2026-09-29): str(float(c)) and f"m1{sign}{kappa}"
+        import s5p_recompute_compare as C
+        prod_names = ["0.0", "0.5", "1.0", "m1+2", "m1-2", "m1+3", "m1-3"]
+        mine = ["c=0", "c=0.5", "c=1", "m1=+2", "m1=-2", "m1=+3", "m1=-3"]
+        self.assertEqual(sorted(map(C.variant_key, prod_names)), sorted(map(C.variant_key, mine)))
+
+    def test_null_not_calibrated_at_B0_is_located(self):
+        import s5p_recompute_compare as C
+        d = Path(tempfile.mkdtemp(prefix="s5p_recompute_b0_"))
+        try:
+            t = Toy(d / "w")
+            t.calibration("MnvTune_v1", 60)
+            t.status("GiBUU_2019", 0, True, "budget")
+            self.mine = R.jsonable(R.evaluate(t.design(), t.v_path, t.contract, log=lambda *a: None))
+            prod, labels = self.production_like()
+            prod["tests"]["GiBUU_2019"] = {"not_calibrated": "budget stop at B = 0"}
+            for fam in ("family_members",):
+                labels[fam]["GiBUU_2019:total"] = labels[fam]["GiBUU_2019:shape"] = []
+            rep = C.compare(self.mine, prod, labels, prod_sha256="e" * 64)
+            self.assertEqual((rep["verdict"], rep["not_located"]), ("AGREE", []))
+            self.assertIn("GiBUU_2019:not_calibrated", [r["item"] for r in rep["rows"]])
+            self.mine["nulls"]["GiBUU_2019"]["B"] = 5  # a recompute that did calibrate it disagrees
+            self.assertEqual(C.compare(self.mine, prod, labels, prod_sha256="e" * 64)["verdict"], "DISCREPANT")
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
 
     def test_variant_names_are_parsed_never_guessed(self):
         import s5p_recompute_compare as C

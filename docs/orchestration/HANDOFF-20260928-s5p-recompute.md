@@ -38,9 +38,9 @@ Nothing below is a verification result.
 |---|---|
 | `nd-unfolding/s5p_recompute.py` | the evaluator: J geometry, surrogates, statistics, variants, claim p, Holm with determinacy, κ = 3 flag, power, implied size, observed-jitter p, sequential-rule re-evaluation at every look; CLI `evaluate` / `compare` |
 | `nd-unfolding/s5p_recompute_compare.py` | compares a recompute output with production's `joint-evaluate.json`; lists every production numeric leaf it could not map |
-| `nd-unfolding/tests/test_s5p_recompute.py`, `tests/s5p_recompute_toy.py` | 51 controls (below, §3.1, §3.2); a synthetic world in the production file formats |
+| `nd-unfolding/tests/test_s5p_recompute.py`, `tests/s5p_recompute_toy.py` | 53 controls (below, §3.1, §3.2); a synthetic world in the production file formats |
 
-Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **51 passed**; ~20 s on an idle machine):
+Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **53 passed**; ~20 s on an idle machine):
 no import of the three production modules (AST); Clopper–Pearson closed form and the reviews' own numbers
 (review 1: `[0.0057, 0.0148]` at p = 0.01, B = 1999; review 2 M3: determined k at 0.005 is `{0}` at B = 800 and
 `{0..3}` at B = 1999, rank rule `{0..3}` at 800); statistics (total = inverse quadratic form; shape invariant to
@@ -219,6 +219,13 @@ sha256 prefix `e08b76083b7abd0a`, schema `s5p-robust-labels/2`.
   `ruling` and `schema` are excluded as identity/citation.
 - Variant names are matched through an explicit parser (`c=0.5` ≡ `0.5`; `m1=+3` ≡ `m1+3`). An unparsable name stays
   UNRESOLVED and is never guessed.
+  - The campaign states (2026-09-29) that the frozen names are exactly `0.0`, `0.5`, `1.0`, `m1+2`, `m1-2` in
+    `variants`, and `m1+3`, `m1-3` in `robustness_variants` (`{}` for MnvTune). Its `family_members` are
+    `["0.0", "0.5", "1.0", "m1+3", "m1-3"]` (MnvTune: the three c-names; a null stopped at B = 0: `[]`). All
+    parse; a control pins them.
+- A null stopped at B = 0 appears in the frozen output as `{"not_calibrated": …}` with no statistic. The comparer
+  locates it and agrees only if the recompute also has B = 0 for it. Before this fix it would have been
+  "not located", leaving the verdict INCOMPLETE.
 
 Tests: `A7Ruling` (4), and the comparer's controls for the labels document (a wrong ruled label, a keep-both family
 reported as the ruled one, an unparsable member name, provenance, an unknown field).

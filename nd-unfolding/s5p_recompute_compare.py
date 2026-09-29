@@ -166,7 +166,8 @@ def excluded(path):
 
 
 def locate_null(prod, key):
-    """The shortest production path ending at ``key`` whose dict holds the null's statistics."""
+    """The shortest production path ending at ``key`` whose dict holds the null's statistics, or marks it
+    ``not_calibrated`` (a null stopped at B = 0 has no statistic in the frozen output)."""
     best = None
 
     def visit(node, path):
@@ -174,7 +175,8 @@ def locate_null(prod, key):
         if isinstance(node, dict):
             for k, v in node.items():
                 p = path + (str(k),)
-                if k == key and isinstance(v, dict) and ("T_total_obs" in v or "T_shape_obs" in v or any(
+                if k == key and isinstance(v, dict) and ("T_total_obs" in v or "T_shape_obs" in v or
+                                                         "not_calibrated" in v or any(
                         isinstance(v.get(t), dict) and "p" in v[t] for t in TESTS)):
                     if best is None or len(p) < len(best):
                         best = p
@@ -200,6 +202,12 @@ def compare(mine: dict, prod: dict, labels_doc: dict | None = None, prod_sha256:
         if base is None:
             L.missing.append(key)
             continue
+        if "not_calibrated" in (L.get(base) or {}):
+            # agree iff the recompute also has B = 0 for this null; the marker's own value is consumed with it
+            L.rows.append({"item": f"{key}:not_calibrated", "kind": "exact", "mine": rec["B"] == 0,
+                           "production": L.get(base + ("not_calibrated",)), "production_path": "/".join(base + ("not_calibrated",)),
+                           "agree": rec["B"] == 0 and L.get(base + ("not_calibrated",)) not in (None, False)})
+            L.consumed.add(base + ("not_calibrated",))
         for t, pk in (("total", "T_total_obs"), ("shape", "T_shape_obs")):
             if L.get(base + (pk,)) is not None:
                 L.row(f"{key}:{t}:T_obs", "stat", rec["observed_T"][t], base + (pk,))
