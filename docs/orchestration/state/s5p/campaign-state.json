@@ -305,6 +305,10 @@
   {
    "utc": "2026-09-29T01:22Z",
    "what": "OWNER RULING A7 (Joseph; report only; received ~01:22Z, recorded in docs/orchestration/RULING-20260929-s5p-A7-robustness-flag.md): the kappa = 3 robustness label is the full Holm re-run; a primary rejection is 'robust to the sub-fine residual' iff also rejected at kappa = 3, else 'not robust'; non-rejections 'not applicable'. Made after production outputs became visible and before any observed claim p-value (only B = 0 looks; the evaluator had not run; measured 01:23:55Z). The statistical calculation (s5p_joint.py, frozen) is unchanged; the label is derived by nd-unfolding/s5p_robust_labels.py into a separate file. A7(b), A6 (R6) and A8 (R8) alternatives preserved; primary claims, stopping rules and production jobs unchanged."
+  },
+  {
+   "utc": "2026-09-29T01:50Z",
+   "what": "INDEPENDENT ASSESSMENT of the A6/A8 clarification (recompute lane, origin/s5p-parallel-recompute-20260928 at 155d630a, not merged; docs/orchestration/ASSESSMENT-20260929-s5p-recompute-A6-A8.md): AGREE on A6 (the frozen text suffices for the UNION; residual: 'F' is not defined in the text, inferred from the fine nulls) and on A8 (the 99.5% look interval; closure not fixed by text and immaterial: closest approach 4.5e-9 at B = 1507, k = 24, independently rescanned). The assessor discloses it knew the campaign's conclusions before re-reading and inspected no observed p. Neither item has an owner ruling; the cross-product, 95% and open-boundary readings stay labelled diagnostics. The A7 ruling is incorporated into its final verification (family.robust_labels compared with robust-labels.json 'labels'; the frozen boolean compared separately). Final verification PENDING until production is terminal."
   }
  ],
  "findings": [
