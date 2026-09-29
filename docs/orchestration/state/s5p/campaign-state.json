@@ -47,7 +47,7 @@
  },
  "jobs": [
   {
-   "job": "production lanes (measured 2026-09-29T06:27Z)",
+   "job": "production lanes (measured 2026-09-29T11:18Z)",
    "state": "running",
    "arrays": {
     "pow P1_a1.0": "59021632",
@@ -55,7 +55,8 @@
     "GENIE_2_12_10_CV b0": "59021681",
     "GENIE_2_12_10_MEC b0": "59021698",
     "NuWro_21_09 b0": "59021752",
-    "GiBUU_2019 b0": "59021765"
+    "GiBUU_2019 b0": "59021765",
+    "GENIE_2_12_10_MEC b1": "59072824 (throttle 3; b0 59021698 done, look B193 continue)"
    },
    "runners_login33": {
     "pow": "PGID 565706 (deploy 55a41765, queues-r1/pow.q, log runs/queue-prod-r1-pow.log)",
@@ -65,7 +66,8 @@
     "NuWro_21_09": "PGID 1283647 (deploy 4f5a613f, queues/, log runs/queue-prod-NuWro_21_09.log)",
     "GiBUU_2019": "PGID 1285855 (4f5a613f, queues/)"
    },
-   "handoff": "docs/orchestration/HANDOFF-20260929-s5p-campaign-cold-start.md"
+   "handoff": "docs/orchestration/HANDOFF-20260929-s5p-campaign-cold-start.md",
+   "campaign_session": "gbdt worker [dfdda9] (takeover 2026-09-29T07:08Z)"
   }
  ],
  "receipts": [
@@ -333,6 +335,18 @@
   {
    "utc": "2026-09-29T04:33Z",
    "what": "OWNER RULING A7-VS (Joseph; an explicit REPORT-ONLY clarification made now, NOT a recovered pre-production definition; received ~04:33Z; recorded in RULING-20260929-s5p-A7-robustness-flag.md): the kappa = 3 robustness family keeps the process-shift variants c S and REPLACES F +- 2 delta_M1 by F +- 3 delta_M1; the full Holm procedure with determinacy is run on it; a primary kappa = 2 rejection is 'robust to the sub-fine residual' iff also rejected there, else 'not robust'; non-rejections 'not applicable'. Timing: after production outputs became visible, before any observed claim p-value (only B = 0 looks; evaluator never run). Implementation: nd-unfolding/s5p_robust_labels.py schema s5p-robust-labels/2 derives it from the frozen evaluator's stored per-variant leaves (no statistic recomputed; s5p_joint.py unchanged), after rebuilding decisions and decisions_robust_kappa from the leaves exactly; the frozen boolean and the keep-both calculation are kept as named diagnostics. Primary p-values, primary decisions, stopping rules and jobs unchanged."
+  },
+  {
+   "utc": "2026-09-29T07:05Z",
+   "what": "PRODUCTION TASK TIMEOUTS (not detected by the handoff s7 Traceback/rc grep: a task killed at its 2.0 h limit writes no such line; found by sacct State). By 07:04Z 12 of ~130 finished batch-0/P1 tasks were TIMEOUT (pow 4, MnvTune 2, GENIE CV 2, GiBUU 2, MEC 1, NuWro 1), losing 24 seeds counted against the task tables (pow 7, MEC 5, CV 4, GiBUU 4, MnvTune 3, NuWro 1); every COMPLETED task has all its seeds. Further TIMEOUTs by 11:17Z: CV_22, MnvTune_21, MEC_27, CV_26 (16 of 147+ finished). Partly node-clustered (nid004113 4 of 6 tasks, nid004072 2 of 6, nid004090 2 of 3), like the design pilot's slow nodes. Handling: none (the frozen controller counts the products that exist, s5p_seqstop.py B = len(product_files); precedent 2026-09-28T16:10Z, not retried); a timeout costs time and ~0.25 node-h, not validity. Expected consequence: the MnvTune and GENIE CV nulls (min B 1200) will likely be short of 1200 after six batches and run a seventh by the frozen rule. No submission setting (time limit, node exclusion) is changed: that would be an owner decision."
+  },
+  {
+   "utc": "2026-09-29T07:08Z",
+   "what": "CAMPAIGN SESSION TAKEOVER (successor goal GOAL-20260929-s5p-campaign-successor.txt; grants nothing new): the campaign session is now 'gbdt worker [dfdda9]', replacing 'gbdt [c5747d]'. Re-measured 07:04Z per HANDOFF-20260929-s5p-campaign-cold-start.md s7: HEAD = origin/main = e55c9617 clean; exactly six runners on login33 (PGIDs 565706/565712/565718/565720/1283647/1285855, PPID 1, one child each), adopted, none started; six first-batch arrays (11 tasks RUNNING); 788 products; only the five B = 0 looks; meter measure-takeover-20260929T0704Z.json: open CPU concurrency 1.5, production charged 51.0 (reservations; measured 19.0), envelope CPU 124.49 of 345.27; s5p_joint/s5p_inference/s5p_seqstop byte-identical to 4f5a613f. Own read-only event monitor armed (runner-log lines, status files, Traceback/rc, sacct non-COMPLETED states, runner count per lane). The takeover message to the recompute lane ('gbdt independent') was NOT deliverable: no such session is live (ListAgents 07:08Z and 07:40Z); its branch head is 8a581f69 (handoff; reviewed code 1bfd8910). To be re-sent when a recompute session exists; its final verification is needed only at terminal."
+  },
+  {
+   "utc": "2026-09-29T11:05Z",
+   "what": "FIRST LOOK WITH B > 0: GENIE_2_12_10_MEC-B193.json (s5p_seqstop, 11:05:33Z; design 404446eb..., V 35979ef7...): B = 193 (7 seeds lost to timeouts), total and shape k = 0, p = 1/194, 99.5% look interval [0, 0.0306] straddling nine thresholds; 'continue' as the frozen rule gives. Batch 1 submitted by the runner through the meter: array 59072824 (s5p-s5p_cal_genie_2_12_10_mec_b1, 34 tasks, ArrayTaskThrottle 3 = the first submission under the 2026-09-28T20:50Z scheduling change, TimeLimit 2:00:00), admitted 8.5 CPU node-h, production stage 54.990 after. This is a controller look, not a claim: rejections are decided only by the evaluator's Holm step at terminal (amendment 7 data_informed_disclosure applies)."
   }
  ],
  "findings": [
