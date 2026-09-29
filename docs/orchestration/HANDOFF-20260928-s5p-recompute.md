@@ -10,18 +10,22 @@ the calibration (the nuisance model, the pseudo-experiment process, the conditio
 Task pointer: `docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md` §1 (at `origin/main` `12991771`).
 Branch `s5p-parallel-recompute-20260928`, worktree `../MINERvA-OmniFold-s5p-recompute` (created from `12991771`).
 Cluster scratch (mine only): `/pscratch/sd/j/josephrb/s5p-parallel-recompute/`.
-**Commits (owner, 2026-09-29):**
-- **`1bfd8910` is the reviewed executable code and the deployment target.** It is the final reviewed commit of the
-  comparer (three read-only review rounds; fixes verified YES) and contains the evaluator it was reviewed with.
-  Deploy from this commit only (§5.2).
-- **`da0999b0` is the report-bearing branch tip.** It carries the review record and the final-reviewed-commit
-  entry. It and every later commit on this branch are documentation only (checked by `git diff 1bfd8910 <tip> --
-  nd-unfolding/` being empty).
-- **`4a772838` is a historical checkpoint, not the deployment target.** Its statistical code is the same as at
-  `1bfd8910`; the only evaluator change since then adds provenance fields that the comparer checks.
+**Commits (updated 2026-09-29, s5p-F4 correction, §5.6):**
+- **`0142a228` is the reviewed executable code and the deployment target.** It is the final reviewed commit of the
+  s5p-F4 correction: a fresh independent read-only review, CHANGES REQUIRED at `04a1d313`, then fixes verified YES
+  at `0142a228` (`REVIEW-20260929-s5p-recompute-f4-correction.md`). The comparer in it is byte-identical to
+  `1bfd8910`. Deploy from this commit only (§5.2). Every later commit on this branch must be documentation only
+  (`git diff 0142a228 <tip> -- nd-unfolding/` empty); §5.2 refuses otherwise.
+- **`1bfd8910` is SUPERSEDED as the deployment target.** It was the final reviewed commit of the comparer (three
+  review rounds, fixes verified YES), and its comparer is unchanged. Its evaluator restricts the calibration
+  ensemble to a seed range (withdrawn A13, finding s5p-F4) and must not be deployed.
+- **`04a1d313` is an intermediate, not a deployment target:** the first F4 correction, whose look loop the review
+  found defective (F1 MEDIUM).
+- **`4a772838` is a historical checkpoint, not the deployment target.**
 
-**STATUS: FINAL VERIFICATION PENDING.** Production was non-terminal (calibration batch 0) when this was written.
-Nothing below is a verification result.
+**STATUS: FINAL VERIFICATION PENDING.** Production was non-terminal when this was last updated (2026-09-29
+~17:00Z: 0/5 final statuses, 8 s5p cal/pow jobs queued, batch 1 running, no `joint-evaluate.json`). Nothing below
+is a verification result.
 
 ## 1. Source and contracts verified (2026-09-28)
 
@@ -46,7 +50,8 @@ Nothing below is a verification result.
 | `nd-unfolding/s5p_recompute_compare.py` | compares a recompute output with production's `joint-evaluate.json`; lists every production numeric leaf it could not map |
 | `nd-unfolding/tests/test_s5p_recompute.py`, `tests/s5p_recompute_toy.py` | 58 controls (below, §3.1, §3.2, §5.5); a synthetic world in the production file formats |
 
-Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **58 passed**; ~25 s on an idle machine):
+Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **67 passed** at `0142a228`, ~30 s; 58 at
+`1bfd8910`; the nine added by the F4 correction are listed in §5.6):
 no import of the three production modules (AST); Clopper–Pearson closed form and the reviews' own numbers
 (review 1: `[0.0057, 0.0148]` at p = 0.01, B = 1999; review 2 M3: determined k at 0.005 is `{0}` at B = 800 and
 `{0..3}` at B = 1999, rank rule `{0..3}` at 800); statistics (total = inverse quadratic form; shape invariant to
@@ -57,7 +62,7 @@ and the claim = largest count; the bias-aligned shift (positive along b; zero wh
 determined); **sequential rule** (the review-described stops at B = 200/400/1200, straddling, T7 precision
 branch, m-dependence of the smallest threshold, `min_B` respected, looks paired with status files); end-to-end on
 the toy: a brute-force known answer without surrogates, the GiBUU `pz_lt_6` domain, **incomplete products**
-(missing seeds, a `.partial-` file, a product beyond the final B, count ≠ final B — all reported, not repaired),
+(missing seeds, a partial file, a product beyond the final B — kept, count ≠ final B — all reported, not repaired),
 **budget-terminal** stops (B = 0 → p = 1, "not calibrated", undetermined at its step; a budget stop at B < max
 uses the B reached), draws keyed by seed (independent of which other products exist), refusal of a pseudo-seed
 mismatch and of a wrong declared digest, determinism (two runs byte-identical), rejection of a tilted truth,
@@ -125,7 +130,7 @@ reading is never swapped to match production.
 | A10 | none (ties unaddressed) | family order (design null order; total before shape) | any other stable order | Holm labels at exactly equal claim p | only with equal p and different B | no | no |
 | A11 | `power_determined` docstring (k = largest count over null variants); design `power.*.surrogate_seed0` | alternatives unshifted, own surrogates, eps keyed by the set's seed0 | variants applied to the alternative too | power | — | yes, in substance | no |
 | A12 | `s5p_joint` docstring "null draws shifted by c D against the unshifted ensemble" | full unshifted ensemble (draw's own unshifted T included) | leave-one-out | implied size; the "not calibrated for the data process" flag (> 0.08 at c = ½) | the flag near 0.08: yes; claims: no | no | no |
-| A13 | design `calibration_n`; `calibration_count` / `product_files` docstrings | finished products with seed in [base, base + final B); mismatches reported | every finished product; refuse on mismatch | B, every p | only if production's product set differs from the final B (reported by `count_matches_final_B`) | partial exclusion: yes; mismatch handling: no | the mismatch is reported, not repaired |
+| A13 | am. 7 `sequential_rule` "the finished products (partials excluded)"; `product_files` / `calibration_count` docstrings | **REVISED 2026-09-29 (s5p-F4, §5.6):** every finished product of the null's glob (a name containing `.partial` excluded), **no seed-range restriction**; B = its count; a count ≠ the final status's B is reported (`count_mismatch`), never repaired; missing seeds are a separate diagnostic over the submitted-batch span (`seed_gaps`) | refuse on a count mismatch (production's evaluator is said to) | B, every p, every look, power | only if production's product set differs from the final B (reported) | ensemble: **yes, by text**; mismatch handling: no | the mismatch is reported, not repaired. **WITHDRAWN reading** (in force at `1bfd8910`): "finished products with seed in [base, base + final B)"; kept in the code as `A13_withdrawn_20260929` |
 | A14 | am. 7 `non_rejection` (B ≥ 1200 floor so 0.005 is attainable) | power against the null's final ensemble | power as the sequential procedure would behave on alternative data (review 4 F4 option) | power at 0.005 | — | yes (the floor was the adopted remedy) | no |
 | — | am. 7 "a k = 0 decision needs B >= 737" | exact two-sided 95% CP: B ≥ 736 suffices | — | none (the floor is 1200) | no | arithmetic | — |
 
@@ -275,12 +280,13 @@ label comparison. If it is missing, `compare` reports it as not located (exit 2)
 still stands; rerun `compare` when it appears. A `squeue` failure (rc ≠ 0) means UNKNOWN, not "no jobs". An incomplete power set does not block the
 verification (amendment 7 records it); report it.
 
-**5.2 Deploy the reviewed executable code: commit `1bfd8910`, never the branch tip or a working tree.** The
-deployment refuses if the tip's code has moved away from `1bfd8910`, because that code would be unreviewed:
+**5.2 Deploy the reviewed executable code: commit `0142a228`, never the branch tip or a working tree** (updated
+2026-09-29; `1bfd8910` is superseded, §5.6). The deployment refuses if the tip's code has moved away from
+`0142a228`, because that code would be unreviewed:
 
 ```bash
 W=/Users/josephbailey/local-research/MINERvA-OmniFold-s5p-recompute; S=/pscratch/sd/j/josephrb/s5p-parallel-recompute
-REVIEWED=1bfd89109dc4edf7f849d935b3e171b72760939f
+REVIEWED=0142a228b637e4a7e88dba70ddc7744a2fd23c19
 git -C "$W" fetch origin s5p-parallel-recompute-20260928 || exit 1
 git -C "$W" cat-file -e "$REVIEWED^{commit}" || { echo "reviewed commit missing"; exit 1; }
 git -C "$W" diff --quiet "$REVIEWED" FETCH_HEAD -- nd-unfolding/ \
@@ -290,7 +296,7 @@ for f in nd-unfolding/s5p_recompute.py nd-unfolding/s5p_recompute_compare.py doc
   git -C "$W" show "$REVIEWED:$f" > "/tmp/s5p-recompute-deploy/$(basename "$f")"; done
 git -C "$W" show "$REVIEWED:docs/orchestration/state/s5c/contract.json" > /tmp/s5p-recompute-deploy/s5c_contract.json
 shasum -a 256 /tmp/s5p-recompute-deploy/*
-# expect: s5p_recompute.py ac623946f22a66a769efb2dc90ca1b99f822484225f087e47e9b77cbada1633a
+# expect: s5p_recompute.py 05664adbfb19cb17a527bff6a26efec7031d70cc2e0715a117f21ff4f5db82ac
 #         s5p_recompute_compare.py 2cef96881dee75b84e568cb67a864a2db760b5a5c0064d4a7d24a296a5881ed4
 #         design.json 404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285
 scp -o BatchMode=yes /tmp/s5p-recompute-deploy/* saul.nersc.gov:$S/code/
@@ -360,7 +366,13 @@ Then:
 - the sequential verification per look (`nulls.<null>.sequential`: the rule's stop against the status file's
   `stop`/`reason`, `first_look_where_rule_stops` against the final B, `stop_verdict`) and the A8 readings
   (`sequential.a8_sensitivity.stop_verdict_by_reading`, `looks_where_a_reading_differs`);
-- power per set at 0.05 and 0.005 (rank unshifted, rank claim, determined claim, n present against declared).
+- power per set at 0.05 and 0.005 (rank unshifted, rank claim, determined claim, n present against declared);
+- per null, the calibration record of the F4 correction (§5.6): `products_used`, `count_matches_final_B` and
+  `count_mismatch` (a mismatch is reported, never repaired), `seed_gaps` (missing seeds by batch, span and its basis,
+  `seeds_outside_submitted_batches`), `partials_excluded`; and in `sequential`: `final_look_is_final_B`,
+  `batches_adding_no_product`, `status_files_without_a_look`. A `final_look_is_final_B` of false, or a status file
+  without a look, is reported as such and routed; at a B = 0 budget stop `final_look_is_final_B` reads true with no
+  look (review NOTE; there is nothing to look at).
 
 For any disagreement between a primary reading and its diagnostic that moves a decision or a stop verdict, record
 it and route it to the owner.
@@ -431,7 +443,9 @@ repointed only). Results, in both layouts:
 and F-8 are fully fixed; P4 is accepted.
 
 **Final reviewed commit (comparer): `1bfd8910`.** The commit that records round 3 changes documentation only. The
-comparer, evaluator and test code at the branch tip are byte-identical to `1bfd8910`.
+comparer, evaluator and test code at the branch tip were then byte-identical to `1bfd8910`. **Superseded
+2026-09-29:** the evaluator and tests changed with the s5p-F4 correction (§5.6; final reviewed commit `0142a228`);
+the comparer is still byte-identical to `1bfd8910`.
 
 **Open LOW items, deliberately not changed.** A change now would itself be unreviewed and would void the final
 reviewed commit. Each is to be acted on only if it binds at the final comparison:
@@ -444,6 +458,90 @@ reviewed commit. Each is to be acted on only if it binds at the final comparison
   the recompute's threshold and interval regardless.
 
 A fix to any of these after the final verification needs its own review round before it is used.
+
+**5.6 Correction of finding s5p-F4 (2026-09-29): the calibration ensemble.**
+
+*Source.* The campaign session's handoff `HANDOFF-20260929-s5p-recompute-seed-gap-correction.md` (origin/main
+`04b9c6b9`). This lane treated its diagnosis and proposed correction as claims and checked them.
+
+*Verification of the finding (this lane, against the frozen text only).*
+- Amendment 7 `calibration.sequential_rule`: "before each batch s5p_seqstop.py evaluates both claim p-values on the
+  finished products (partials excluded)" and "the p-value stays valid at the B reached". It sets no seed range, and
+  so the withdrawn A13 reading ("seed in [base, base + final B)") departs from it. **Confirmed.**
+- It binds now. The real look `GENIE_2_12_10_CV-B193.json` has `B = 193` with `files_first_last` `s1220000` …
+  `s1220199`, so seeds are missing inside batch 0 and a final ensemble restricted to [base, base + B) drops valid
+  products.
+- The `product_files` docstring (AST, as permitted) says a killed task leaves `*.partial-<pid>.npz`, never counted.
+  The handoff's statements about production code bodies (line numbers, `B = len(files)`, a refusal on a count
+  mismatch, the `.partial` substring rule) were **not** verified: reading them is barred for this lane. The partial
+  rule was widened to any `.partial` name; on the documented `.partial-<pid>` names it is identical.
+- At `1bfd8910` on the handoff's gap world the evaluator gives B = 394, power `B_null` 394, and looks
+  `[198, 394 × 9]`: a short ensemble made the old look loop repeat the last B up to the maximum. That is a second
+  symptom, not listed in the handoff.
+
+*What changed (evaluator only; the comparer is unchanged).*
+- A13 revised to the frozen definition; the old reading kept, dated, as `A13_withdrawn_20260929`.
+- `calibration`: `count_mismatch`; `seed_gaps` (missing seeds over the submitted-batch span, from the per-look status
+  files with stop false, or from the products when no status file exists; a product outside the span is listed and
+  kept). The gap report is diagnostic only: a batch refused by the meter after a continuing look counts as
+  submitted, and a whole-batch loss after a continuing look shares one status file and is not counted.
+- `sequential`: looks run batch by batch until every product has been looked at, never beyond the final B, and do
+  not depend on how many status files exist. A batch that adds no product while later ones do gets no look of its
+  own (`batches_adding_no_product`); `final_look_is_final_B`; `status_files_without_a_look`.
+- A smoke run on the real non-terminal products (scratch `f4-smoke/`, not quoted) found the duplicate-look defect
+  of the first version: a batch submitted but still running repeated the last look's B. That was fixed before the
+  review.
+
+*Readings preserved.* On gap-free toy worlds (terminal with power, non-terminal, B = 0 budget) the output is
+byte-identical to `1bfd8910` outside the calibration record, the `ambiguities` text and the new sequential fields
+(this lane's probe and the reviewer's, both rounds). No other reading (A1–A12, A14) changed; A6 and A8 stay as
+assessed; the comparer and its required items are unchanged.
+
+*Tests added (58 → 67).* Class `SeedGaps`:
+- the handoff's two-batch world: +5, +17 and +203 missing, a partial at +17, final B = 397;
+  - 397 used, including +397 … +399; the count matches;
+  - looks 198 and 397, each paired with its status file;
+  - gaps exactly {+5, +17, +203}; the partial excluded;
+  - unshifted k, B and p against a brute force written from the specification (surrogates off);
+  - power `B_null` 397;
+- a mutation control: the withdrawn selection goes red at 394;
+- any `.partial` name excluded;
+- a product outside the submitted batches listed and kept;
+- a trailing batch without products (running, or budget-refused);
+- one and two batches lost whole;
+- looks without a B0 file.
+
+The toy writes the B = 0 look, as production does (all five nulls have `-B0.json`). One pre-existing test changed
+by the definition itself: the product beyond the final B is now kept (58 → 59), with a count mismatch.
+
+*Deviation from the handoff §4.* The handoff asks that k, B and p "agree with the frozen `s5p_joint` on the same
+files". Running or reading production code is barred for this lane, so a brute force from the specification is used
+instead. The reviewer assessed this as adequate for a selection defect, but it does **not** establish agreement with
+`s5p_joint`: not the partial rule, not the selection, not the statistic. That agreement is established only by the
+final comparison (§5.3) on the real products.
+
+*Review.*
+- Fresh independent read-only agent, detached worktree `../MINERvA-OmniFold-s5p-recompute-review-f4`, left clean.
+  Report verbatim: `REVIEW-20260929-s5p-recompute-f4-correction.md`.
+- Round 1 at `04a1d313`: CHANGES REQUIRED.
+  - F1 MEDIUM: the look loop was bounded by the look-file count, so a whole-batch loss dropped the final looks.
+  - F2 LOW: the loop depended on the B0 file.
+  - F3 LOW: gap-diagnostic batch count.
+  - F4 LOW: a seed below base enters every look (loud).
+  - F5, F6 NOTE: the control models the old selection, not the old loop; the brute force is not a production
+    comparison.
+- Round 2 at `0142a228`: **fixes verified YES**, no new finding at LOW or above. One NOTE: `final_look_is_final_B`
+  reads true at a B = 0 budget stop; recorded in §5.4 and not changed.
+- **Final reviewed commit: `0142a228`.**
+
+*Open items, deliberately not changed* (a change would void the review; act only if one binds at the final
+comparison, with its own review round): F4 (a seed below base, reported loudly), the F3 gap-count caveat, the B = 0
+NOTE, and the earlier R1, R6 and R8 (§5.5).
+
+*Timing.* The correction was made after production outputs became visible: the five batch-0 looks with k = 0 at
+every null, and batch-1 products appearing during the work. It is a definitional alignment with the frozen text. No
+production job, product, budget, status, rule or schedule was touched; the only cluster writes were to this lane's
+scratch (`f4-smoke/`, `squeue-terminal-check.txt`).
 
 **Downstream reader.** The reproduction harness (branch `s5p-parallel-reproduction-20260928`, config key
 `joint.independent_compare`) records `/pscratch/sd/j/josephrb/s5p-parallel-recompute/final/compare.json` by sha256
