@@ -47,16 +47,16 @@
  },
  "jobs": [
   {
-   "job": "production lanes (measured 2026-09-29T11:18Z)",
+   "job": "production lanes (measured 2026-09-29T16:03Z)",
    "state": "running",
    "arrays": {
-    "pow P1_a1.0": "59021632",
-    "MnvTune_v1 b0": "59021669",
-    "GENIE_2_12_10_CV b0": "59021681",
-    "GENIE_2_12_10_MEC b0": "59021698",
-    "NuWro_21_09 b0": "59021752",
-    "GiBUU_2019 b0": "59021765",
-    "GENIE_2_12_10_MEC b1": "59072824 (throttle 3; b0 59021698 done, look B193 continue)"
+    "pow P1_a1.0": "59021632 (done, 193)",
+    "pow P2_a1.0": "59076165",
+    "MnvTune_v1 b1": "59080426",
+    "GENIE_2_12_10_CV b1": "59081838",
+    "GENIE_2_12_10_MEC b1": "59072824",
+    "NuWro_21_09 b1": "59080573",
+    "GiBUU_2019 b1": "59082762"
    },
    "runners_login33": {
     "pow": "PGID 565706 (deploy 55a41765, queues-r1/pow.q, log runs/queue-prod-r1-pow.log)",
@@ -347,6 +347,10 @@
   {
    "utc": "2026-09-29T11:05Z",
    "what": "FIRST LOOK WITH B > 0: GENIE_2_12_10_MEC-B193.json (s5p_seqstop, 11:05:33Z; design 404446eb..., V 35979ef7...): B = 193 (7 seeds lost to timeouts), total and shape k = 0, p = 1/194, 99.5% look interval [0, 0.0306] straddling nine thresholds; 'continue' as the frozen rule gives. Batch 1 submitted by the runner through the meter: array 59072824 (s5p-s5p_cal_genie_2_12_10_mec_b1, 34 tasks, ArrayTaskThrottle 3 = the first submission under the 2026-09-28T20:50Z scheduling change, TimeLimit 2:00:00), admitted 8.5 CPU node-h, production stage 54.990 after. This is a controller look, not a claim: rejections are decided only by the evaluator's Holm step at terminal (amendment 7 data_informed_disclosure applies)."
+  },
+  {
+   "utc": "2026-09-29T16:03Z",
+   "what": "BATCH-0 LOOKS COMPLETE; POWER P1 DONE; FIRST MEASURED BATCH COSTS. Looks (s5p_seqstop, design 404446eb..., V 35979ef7..., all 'continue', total and shape k = 0 at every null): GENIE_2_12_10_MEC B193 (11:05Z), MnvTune_v1 B195 (15:18Z, min 1200), NuWro_21_09 B197 (15:22Z), GENIE_2_12_10_CV B193 (15:36Z, min 1200), GiBUU_2019 B195 (15:56Z). Batch-1 arrays via the meter: MEC 59072824, MnvTune 59080426, CV 59081838 (throttle 3); NuWro 59080573, GiBUU 59082762 (throttle 2). Power: P1_a1.0 final 193 of 200 (7 seeds lost to TIMEOUT; an incomplete power set is recorded, amendment 7 power); P2 submitted 13:42Z as 59076165 (throttle 3). Meter (meter-measure-batch0-looks-20260929T1603Z.json): open CPU concurrency 2.0 (the cap), production 79.752 (6 closed batches measured 3.990-5.201, sum 28.751; 6 open reservations 51.0), envelope CPU 153.244 of 345.27. At 14:0xZ the new arrays' pending reason was Resources (shared partition 757 pending), so the throttle raise had not yet changed throughput. TIMEOUTs to 16:03Z: 20. These looks are controller looks, not claims. FORECAST (projection, not a rule): at ~194 products per batch, six batches give B ~1165, below the 1200 floor of MnvTune/CV AND below the B ~1195 at which a k = 0 null's 99.5% upper end falls under the smallest threshold 0.005, so each calibration null is expected to need 7 batches if k stays 0: ~5 x 7 + 6 power = ~41 batches x ~4.8 = ~195-205 CPU node-h against the 200 production stage. A reservation-driven meter refusal near the end (drain, one retry, then a terminal 'budget' status by the frozen rule) is therefore plausible; nothing is changed. Re-forecast with batch-1 costs."
   }
  ],
  "findings": [
