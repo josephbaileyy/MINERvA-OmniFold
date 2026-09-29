@@ -309,6 +309,10 @@
   {
    "utc": "2026-09-29T01:50Z",
    "what": "INDEPENDENT ASSESSMENT of the A6/A8 clarification (recompute lane, origin/s5p-parallel-recompute-20260928 at 155d630a, not merged; docs/orchestration/ASSESSMENT-20260929-s5p-recompute-A6-A8.md): AGREE on A6 (the frozen text suffices for the UNION; residual: 'F' is not defined in the text, inferred from the fine nulls) and on A8 (the 99.5% look interval; closure not fixed by text and immaterial: closest approach 4.5e-9 at B = 1507, k = 24, independently rescanned). The assessor discloses it knew the campaign's conclusions before re-reading and inspected no observed p. Neither item has an owner ruling; the cross-product, 95% and open-boundary readings stay labelled diagnostics. The A7 ruling is incorporated into its final verification (family.robust_labels compared with robust-labels.json 'labels'; the frozen boolean compared separately). Final verification PENDING until production is terminal."
+  },
+  {
+   "utc": "2026-09-29T03:10Z",
+   "what": "CORRECTION to the 01:22Z A7 ruling record: the ruling fixes the full Holm re-run at kappa = 3 and the labels, NOT the kappa = 3 variant set. The frozen implementation keeps the +-2 delta_M1 members ('retain': claim variants union F +- 3 delta_M1); 'replace' (c S union F +- 3 delta_M1) is equally consistent with the governing records at 4f5a613f. Flagged A7-VS OPEN by the recompute lane (78194f9b); an owner ruling is needed before final verification; report only (no claim, stop, status or job changes). RULING-20260929-s5p-A7-robustness-flag.md corrected in place, with a dated correction section. Only B = 0 looks exist (03:10Z)."
   }
  ],
  "findings": [
