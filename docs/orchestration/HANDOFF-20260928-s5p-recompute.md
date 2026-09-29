@@ -258,8 +258,17 @@ both; do **not** change the primary reading to make the numbers agree.
 No polling from this lane. Resume when the production worker reports terminal readiness, then run these checks
 before anything else.
 
-**5.1 Terminal checks.** Each exit status is read on its own, never through a pipe. The condition holds only if
-all four lines read `5/5`, `squeue rc=0`, `queued s5p cal/pow jobs: 0` and `joint-evaluate.json present`:
+**5.1 Terminal checks** (extended 2026-09-29 at the owner's request: the power queue's terminal disposition and the
+meter's open concurrency, the campaign's own terminal definition, `HANDOFF-20260929-s5p-campaign-cold-start.md` §8).
+Run them independently when the campaign reports terminal; its report is a trigger, not the evidence. Each exit status
+is read on its own, never through a pipe. **Production is terminal only if ALL of these read:**
+1. `final statuses: 5/5`;
+2. the power queue is terminal: `pow runner 'queue done' lines: 1` or more, **or** a budget / incomplete pow outcome
+   that the printed pow runner lines themselves show (a `refusing` / force-stop line) and the campaign has recorded.
+   A pow runner that is still waiting or running is **not** terminal;
+3. `squeue rc=0` and `queued s5p cal/pow jobs: 0`;
+4. `meter rc=0` and `meter open concurrency: cpu 0.0 gpu 0.0`;
+5. `joint-evaluate.json present` (and, for the A7 label comparison, `robust-labels.json present`).
 
 ```bash
 ssh -o BatchMode=yes saul.nersc.gov 'bash -s' <<'EOF'
@@ -267,18 +276,33 @@ R=/pscratch/sd/j/josephrb/s5p-20260926; S=/pscratch/sd/j/josephrb/s5p-parallel-r
 n=0; for k in MnvTune_v1 GENIE_2_12_10_CV GENIE_2_12_10_MEC NuWro_21_09 GiBUU_2019; do
   if [ -f "$R/runs/prod/status/$k-final.json" ]; then n=$((n+1)); else echo "MISSING final status: $k"; fi; done
 echo "final statuses: $n/5"
+P=$R/runs/queue-prod-r1-pow.log   # the live pow runner (the replaced runner's queue-prod-pow.log is historical)
+echo "pow runner 'queue done' lines: $(grep -c 'queue done' "$P")"
+echo "pow runner refusal/stop lines:"; grep -nE 'refus|STOPPED the queue|force-stop' "$P" | tail -5
+echo "pow runner last lines:"; tail -3 "$P" | cut -c1-200
 squeue -h --me -o %j > "$S/squeue-terminal-check.txt"; echo "squeue rc=$?"
 echo "queued s5p cal/pow jobs: $(grep -cE '^s5p-s5p_(cal|pow)_' "$S/squeue-terminal-check.txt")"
+# the meter's measure reads the ledger, sacct and squeue and writes only --out (here: this lane's scratch)
+(cd "$R/deploy/55a41765" && /usr/bin/python3.11 nd-unfolding/s5c_meter.py --budget docs/orchestration/state/s5p/budget.json \
+  --ledger "$R/ledger/admissions.jsonl" measure --out "$S/meter-terminal-check.json" > /dev/null); echo "meter rc=$?"
+/usr/bin/python3.11 -c 'import json,sys; s=json.load(open(sys.argv[1]))["summary"]; print("meter open concurrency: cpu", s["cpu"]["open_concurrency"], "gpu", s["gpu"]["open_concurrency"])' "$S/meter-terminal-check.json"
 if [ -f "$R/stage7/joint/joint-evaluate.json" ]; then echo "joint-evaluate.json present"; sha256sum "$R/stage7/joint/joint-evaluate.json"; else echo "joint-evaluate.json MISSING"; fi
 if [ -f "$R/stage7/joint/robust-labels.json" ]; then echo "robust-labels.json present"; sha256sum "$R/stage7/joint/robust-labels.json"; else echo "robust-labels.json MISSING"; fi
 for d in "$R"/runs/prod/pow/*; do echo "power $(basename "$d"): $(ls "$d" | grep -v partial | grep -c 'npz$')"; done
 EOF
 ```
 
-`robust-labels.json` (the ruled A7 label, produced by the campaign after the evaluation) is needed only for the A7
-label comparison. If it is missing, `compare` reports it as not located (exit 2) and the rest of the comparison
-still stands; rerun `compare` when it appears. A `squeue` failure (rc ≠ 0) means UNKNOWN, not "no jobs". An incomplete power set does not block the
-verification (amendment 7 records it); report it.
+- A `squeue` or meter failure (rc ≠ 0; the meter exits nonzero on an unregistered campaign job) means UNKNOWN, not
+  "no jobs" or "no concurrency".
+- Nonzero open concurrency means a reservation is still open, so production is not terminal.
+- `robust-labels.json` (the ruled A7 label, produced by the campaign after the evaluation) is needed only for the A7
+  label comparison. If it is missing, `compare` reports it as not located (exit 2) and the rest of the comparison
+  still stands; rerun `compare` when it appears.
+- An incomplete power set does not block the verification (amendment 7 records it); report it, with its seed
+  disposition (§5.4).
+- Dry-run 2026-09-29 ~17:40Z on the non-terminal state: the block read `0/5`, pow `queue done` 0 (the runner waiting on
+  P2), `squeue rc=0` with 8 queued jobs, `meter rc=0` with open concurrency cpu 2.0 / gpu 0.0, both JSON files
+  missing. Every added line reported non-terminal, as it should.
 
 **5.2 Deploy the reviewed executable code: commit `0142a228`, never the branch tip or a working tree** (updated
 2026-09-29; `1bfd8910` is superseded, §5.6). The deployment refuses if the tip's code has moved away from
@@ -295,10 +319,14 @@ rm -rf /tmp/s5p-recompute-deploy && mkdir -p /tmp/s5p-recompute-deploy
 for f in nd-unfolding/s5p_recompute.py nd-unfolding/s5p_recompute_compare.py docs/orchestration/state/s5p/prod/design.json; do
   git -C "$W" show "$REVIEWED:$f" > "/tmp/s5p-recompute-deploy/$(basename "$f")"; done
 git -C "$W" show "$REVIEWED:docs/orchestration/state/s5c/contract.json" > /tmp/s5p-recompute-deploy/s5c_contract.json
+# the report-side seed-disposition script (§5.4; NOT part of the reviewed code; pinned by content, not by commit)
+git -C "$W" show FETCH_HEAD:docs/orchestration/state/s5p/recompute/s5p_recompute_seed_disposition.py \
+  > /tmp/s5p-recompute-deploy/s5p_recompute_seed_disposition.py
 shasum -a 256 /tmp/s5p-recompute-deploy/*
 # expect: s5p_recompute.py 05664adbfb19cb17a527bff6a26efec7031d70cc2e0715a117f21ff4f5db82ac
 #         s5p_recompute_compare.py 2cef96881dee75b84e568cb67a864a2db760b5a5c0064d4a7d24a296a5881ed4
 #         design.json 404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285
+#         s5p_recompute_seed_disposition.py bdc19179cbd64debf13c0368b63a4140ecb82ff7c560d6d25606c59e6f1cec77
 scp -o BatchMode=yes /tmp/s5p-recompute-deploy/* saul.nersc.gov:$S/code/
 ```
 
@@ -315,8 +343,21 @@ python s5p_recompute.py compare --mine ../final/recompute.json \
   --production /pscratch/sd/j/josephrb/s5p-20260926/stage7/joint/joint-evaluate.json \
   --robust-labels /pscratch/sd/j/josephrb/s5p-20260926/stage7/joint/robust-labels.json \
   --out ../final/compare.json; echo "compare rc=$?"
+# the seed disposition (§5.4), immediately after evaluate so both see the same products
+R=/pscratch/sd/j/josephrb/s5p-20260926
+diff -rq $R/deploy/4f5a613f/docs/orchestration/state/s5p/prod/tables $R/deploy/55a41765/docs/orchestration/state/s5p/prod/tables; echo "tables diff rc=$?"
+ids=$(/usr/bin/python3.11 -c 'import json,sys; print(",".join(sorted({str(json.loads(l)["job_id"]) for l in open(sys.argv[1]) if l.strip() and json.loads(l).get("kind") == "job"})))' $R/ledger/admissions.jsonl)
+sacct -X -n -P -o JobID,State -j "$ids" > ../final/sacct-dispositions.txt; echo "sacct rc=$?"
+/usr/bin/python3.11 s5p_recompute_seed_disposition.py --design design.json \
+  --tables $R/deploy/55a41765/docs/orchestration/state/s5p/prod/tables --ledger $R/ledger/admissions.jsonl \
+  --logs $R/runs/prod/logs --sacct ../final/sacct-dispositions.txt --recompute ../final/recompute.json \
+  --out ../final/seed-disposition.json; echo "disposition rc=$?"
 EOF
 ```
+
+- `tables diff rc` must be 0. The submitting deploys carry the same task tables (checked 2026-09-29 for `4f5a613f`
+  and `55a41765`). If the runners were moved to another deploy, add its tables to the diff first.
+- `sacct rc` ≠ 0 leaves every no-log task `submitted_task_no_log_unverified`; rerun it before describing anything.
 
 Exit codes:
 - `evaluate`: 0 = written; 4 = not terminal (a final status is missing). Any other code is an error.
@@ -367,6 +408,23 @@ Then:
   `stop`/`reason`, `first_look_where_rule_stops` against the final B, `stop_verdict`) and the A8 readings
   (`sequential.a8_sensitivity.stop_verdict_by_reading`, `looks_where_a_reading_differs`);
 - power per set at 0.05 and 0.005 (rank unshifted, rank claim, determined claim, n present against declared);
+- **the missing seeds, qualified by their submission records** (`seed-disposition.json`, owner request 2026-09-29).
+  The recompute's `seed_gaps` is inferred from the look files, and a batch refused before submission can read as 200
+  "missing" seeds. So:
+  - **never describe a recompute gap as lost work until it has been compared with the submission records.** Report
+    the three classes separately, per null and per power set:
+    - *lost work*: submitted and missing: `submitted_interrupted`, `submitted_never_started`,
+      `submitted_task_no_log` (with `sacct` terminal), `submitted_failed_rc`, `submitted_finished_no_product`;
+    - *not submitted*: `not_submitted_no_admission` (no meter admission: refused before submission, or never
+      reached), `not_submitted_released`;
+    - *not established*: `submitted_task_not_yet_run`, `submitted_task_no_log_unverified`,
+      `submitted_unaccounted`. At terminal each of these is itself a finding: resolve it with a per-task `sacct -j
+      <id>_<i>` before saying anything about it.
+  - `recompute_missing_seeds_equal` must be true (run immediately after `evaluate`). Any difference is reported with
+    `recompute_missing_not_disposed` and `disposed_not_in_recompute_missing`, never reconciled.
+  - Set the lost-work counts beside the campaign's lost-seed record
+    (`RECORD-20260929-s5p-lost-seed-runtime-diagnostic.md` and its successors). A difference is reported as a
+    measurement;
 - per null, the calibration record of the F4 correction (§5.6): `products_used`, `count_matches_final_B` and
   `count_mismatch` (a mismatch is reported, never repaired), `seed_gaps` (missing seeds by batch, span and its basis,
   `seeds_outside_submitted_batches`), `partials_excluded`; and in `sequential`: `final_look_is_final_B`,
@@ -542,6 +600,35 @@ NOTE, and the earlier R1, R6 and R8 (§5.5).
 every null, and batch-1 products appearing during the work. It is a definitional alignment with the frozen text. No
 production job, product, budget, status, rule or schedule was touched; the only cluster writes were to this lane's
 scratch (`f4-smoke/`, `squeue-terminal-check.txt`).
+
+**5.7 Terminal checklist and seed disposition added (2026-09-29, owner request; documentation and a report-side
+script only).**
+- §5.1 now includes the campaign's full terminal definition: the pow queue's disposition and the meter's open
+  concurrency (read with `s5c_meter.py measure`, which reads the ledger, `sacct` and `squeue` and writes only its
+  `--out`; checked in its source on origin/main).
+- The new `docs/orchestration/state/s5p/recompute/s5p_recompute_seed_disposition.py` (sha256 `bdc19179…`) classifies
+  every missing seed against the submission records:
+  - the frozen task tables;
+  - the meter ledger's `open` / `job` / `release` records;
+  - the Slurm task logs (the header, the per-seed `rc` lines, the cancellation line);
+  - `sacct` task states.
+- It is **not** part of the reviewed evaluator or comparer, and feeds no p-value, decision or verdict. It lives
+  outside `nd-unfolding/`, so the §5.2 guard and the reviewed commit `0142a228` are unchanged. It had no independent
+  code review (the owner asked for none).
+- Its evidence is a known-answer control on the real records (2026-09-29 ~17:35Z, non-terminal, scratch
+  `f4-smoke/disposition-control.json`).
+  - Batch 0 of every null and P1 matches the campaign's independent 16:33Z table exactly (interrupted / never
+    started):
+
+    | CV | MEC | GiBUU | MnvTune | NuWro | P1 |
+    |---|---|---|---|---|---|
+    | 4 / 3 | 2 / 5 | 3 / 2 | 4 / 1 | 3 / 0 | 4 / 3 |
+
+    Lost work is 34 seeds in total (20 interrupted, 14 never started).
+  - Without `sacct`, the first version counted pending tasks of the running batch 1 as lost. This is why `sacct` is
+    required and no-log tasks without a state are `unverified`.
+  - Two P2 tasks had no log and no `sacct -X` row. They are unverified and not counted, consistent with the
+    campaign's record that tasks split off while pending can lack an `sacct` row.
 
 **Downstream reader.** The reproduction harness (branch `s5p-parallel-reproduction-20260928`, config key
 `joint.independent_compare`) records `/pscratch/sd/j/josephrb/s5p-parallel-recompute/final/compare.json` by sha256
