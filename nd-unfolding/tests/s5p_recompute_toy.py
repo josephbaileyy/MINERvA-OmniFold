@@ -141,6 +141,10 @@ class Toy:
     def status(self, key, B, stop, reason):
         p = self.root / "status" / f"{key}-{'final' if stop else 'B' + str(B)}.json"
         p.parent.mkdir(parents=True, exist_ok=True)
+        look0 = self.root / "status" / f"{key}-B0.json"
+        if B > 0 and not look0.exists():  # the controller's first look, written before batch 0 (as in production)
+            look0.write_text(json.dumps({"null": key, "B": 0, "max": 1999, "stop": False,
+                                         "reason": "no calibration product yet"}))
         rec = {"null": key, "B": B, "max": 1999, "stop": stop, "reason": reason}
         p.write_text(json.dumps(rec))
         if stop:

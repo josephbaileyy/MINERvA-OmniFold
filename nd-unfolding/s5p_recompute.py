@@ -106,9 +106,19 @@ AMBIGUITIES = {
                        "power set's surrogate_seed0); the variants shift the null ensemble only",
     "A12_implied_size": "the implied size of a variant v is the fraction of calibration draws shifted by v whose "
                         "rank p against the full unshifted ensemble is <= 0.05",
-    "A13_calibration_set": "the calibration ensemble is every finished product (no '.partial-') of the null's glob "
-                           "whose seed lies in [seed0, seed0 + final B); a count different from the final status's "
-                           "B, a seed outside the range and a missing seed are reported, not repaired",
+    "A13_calibration_set": "REVISED 2026-09-29 to the frozen definition (amendment 7 sequential_rule: 'the finished "
+                           "products (partials excluded)'): the calibration ensemble is every finished product of the "
+                           "null's glob (a name containing '.partial' is excluded), with no seed-range restriction; B "
+                           "is its count. A count different from the final status's B is reported as a count "
+                           "mismatch, never repaired. Missing seeds are a diagnostic over the seed span of the "
+                           "submitted batches [seed0, seed0 + 200 x batches), separate from the ensemble; a product "
+                           "outside that span is reported and kept",
+    "A13_withdrawn_20260929": "WITHDRAWN 2026-09-29 (finding s5p-F4), in force at 1bfd8910: 'every finished product "
+                              "(no '.partial-') whose seed lies in [seed0, seed0 + final B)'. The frozen text has no "
+                              "seed range; once lost seeds leave gaps it drops valid products with seeds in "
+                              "[seed0 + final B, seed0 + 200 x batches). Corrected after production outputs were "
+                              "visible (the five batch-0 looks, k = 0 at every null); a definitional alignment, no "
+                              "production rule changed",
     "A14_power_null_B": "power is evaluated against the null's final calibration ensemble (the admission's B >= "
                         "1200 floor for the two powered nulls makes the 0.005 level attainable)",
 }
@@ -391,7 +401,9 @@ def sha256(path) -> str:
 
 
 def finished_products(pattern: str) -> list[str]:
-    return sorted(p for p in glob.glob(pattern) if ".partial-" not in os.path.basename(p))
+    """Every glob match that is not a partial: a killed task leaves ``*.partial-<pid>.npz``; any ``.partial`` name
+    is excluded (A13)."""
+    return sorted(p for p in glob.glob(pattern) if ".partial" not in os.path.basename(p))
 
 
 SEED_RE = re.compile(r"_s(\d+)\.npz$")
@@ -611,13 +623,9 @@ class Evaluator:
                 self._fe = {ax: np.asarray(z[f"edges_{ax}"], float) for ax in AXES}
         return self._fe
 
-    def load_ensemble(self, pattern: str, seed_lo: int, seed_hi: int | None):
-        files = finished_products(pattern)
-        seeds = [seed_of(p) for p in files]
-        outside = [s for s in seeds if s < seed_lo or (seed_hi is not None and s >= seed_hi)]
-        keep = [p for p, s in zip(files, seeds) if s >= seed_lo and (seed_hi is None or s < seed_hi)]
-        prods = [load_product(p, self.geom, self.bands) for p in keep]
-        return prods, outside
+    def load_ensemble(self, pattern: str) -> list[Product]:
+        """The calibration ensemble (A13): every finished product of the glob, with no seed-range restriction."""
+        return [load_product(p, self.geom, self.bands) for p in finished_products(pattern)]
 
     def calibration_B(self, key: str) -> dict:
         spec = self.design["nulls"][key]["calibration_n"]
@@ -786,17 +794,17 @@ def evaluate(design: dict, v_path: str, s5c_contract: dict, variant_mode: str = 
         base = seed_base_of(design, key)
         final = st["final"]
         B_final = int(final["B"]) if final else None
-        hi = base + B_final if B_final is not None else None
-        prods, outside = ev.load_ensemble(spec["calibration_glob"], base, hi)
-        present = sorted(p.seed for p in prods)
-        expect_hi = hi if hi is not None else (present[-1] + 1 if present else base)
-        missing = sorted(set(range(base, expect_hi)) - set(present))
-        log(f"[{key}] products {len(prods)} final B {B_final} outside-range {len(outside)} missing {len(missing)}")
+        prods = ev.load_ensemble(spec["calibration_glob"])
+        gaps = seed_gap_report(design, key, base, [p.seed for p in prods])
+        log(f"[{key}] products {len(prods)} final B {B_final} outside-span "
+            f"{len(gaps['seeds_outside_submitted_batches'])} missing {len(gaps['missing_seeds'])}")
         rec, state = ev.evaluate_null(key, prods)
         rec["calibration"] = {"seed_base": base, "final_status": final, "status_sha256": st.get("status_sha256"),
                               "final_status_present": final is not None, "products_used": len(prods),
                               "count_matches_final_B": (B_final == len(prods)) if final else None,
-                              "seeds_outside_final_range": outside, "missing_seeds_in_range": missing,
+                              "count_mismatch": ({"final_status_B": B_final, "products": len(prods)}
+                                                 if final and B_final != len(prods) else None),
+                              "seed_gaps": gaps,
                               "partials_excluded": len(glob.glob(spec["calibration_glob"])) -
                               len(finished_products(spec["calibration_glob"]))}
         if sequential:
@@ -875,32 +883,76 @@ def seed_base_of(design: dict, key: str) -> int:
     return int(design["nulls"][key]["seed_base"])
 
 
+def look_status_files(design: dict, key: str) -> dict:
+    """The controller's per-look status files of one null, ``{B: path}``."""
+    status_dir = os.path.dirname(design["nulls"][key]["calibration_n"]["sequential_status"])
+    out = {}
+    for p in glob.glob(os.path.join(status_dir, f"{glob.escape(key)}-B*.json")):
+        m = re.search(r"-B(\d+)\.json$", p)
+        if m:
+            out[int(m.group(1))] = p
+    return out
+
+
+def seed_gap_report(design: dict, key: str, base: int, seeds: list[int], batch: int = 200) -> dict:
+    """Missing seeds over the span of the submitted batches: a diagnostic, separate from the ensemble (A13).
+
+    The controller writes a status file at every look (B = 0 included) and a look that did not stop launched one
+    batch, so the batches submitted are the per-look status files with ``stop`` false. Only when no status file
+    exists are they inferred as the batches up to the last one holding a product (``span_basis`` gives both
+    counts and the one used). The span ``[base, base + 200 x batches)`` is capped at the declared maximum. A product
+    outside it is listed and stays in the ensemble.
+    """
+    nmax = int(design["nulls"][key]["calibration_n"]["max"])
+    files = look_status_files(design, key)
+    by_looks = sum(1 for p in files.values() if not json.load(open(p)).get("stop"))
+    by_products = max(((s - base) // batch + 1 for s in seeds if base <= s < base + nmax), default=0)
+    n_batches = by_looks if files else by_products
+    basis = {"looks_with_stop_false": by_looks, "last_batch_holding_a_product": by_products,
+             "used": "looks" if files else "products (no per-look status file)"}
+    hi = base + min(batch * n_batches, nmax)
+    present = set(seeds)
+    missing = sorted(set(range(base, hi)) - present)
+    by_batch = {}
+    for s in missing:
+        by_batch.setdefault(str((s - base) // batch), []).append(s)
+    return {"span": [base, hi], "span_basis": basis, "batches_submitted": n_batches,
+            "batches_holding_a_product": len({(s - base) // batch for s in present if base <= s < hi}),
+            "missing_seeds": missing, "missing_seeds_by_batch": by_batch,
+            "seeds_outside_submitted_batches": sorted(s for s in present if s < base or s >= hi)}
+
+
 def verify_sequential(ev: Evaluator, key: str, prods: list[Product], thresholds: list[float], base: int,
                       design: dict, B_final: int | None, batch: int = 200) -> dict:
     """Re-evaluate the stopping rule at every look on the products of the finished batches.
 
-    The look before batch b (b >= 1) sees the products of batches 0..b-1 (seeds < base + 200 b, capped at the
-    maximum). Looks are evaluated up to the final B when a final status exists, otherwise up to the largest B of
-    the controller's per-look status files; each look is paired with the status file of the same B.
+    The look before batch b (b >= 1) sees the finished products of batches 0..b-1 (seeds < base + 200 b, capped at
+    the maximum); lost seeds make its B smaller than 200 b. There is one look after each submitted batch
+    (``seed_gap_report``), and none beyond the final B when a final status exists, or beyond the largest B of the
+    controller's per-look status files otherwise. A batch that adds no product (still running, never run after a
+    budget refusal, or lost whole) would repeat the previous look's B, so it gets no look of its own and is listed
+    in ``batches_adding_no_product``. Each look is paired with the status file of the same B, and a status file
+    (B > 0) that no look reproduces is listed.
     """
     spec = design["nulls"][key]
     cn = spec["calibration_n"]
     nmax, nmin = int(cn["max"]), int(cn.get("min") or 0)
-    status_dir = os.path.dirname(cn["sequential_status"])
-    status_files = {}
-    for p in glob.glob(os.path.join(status_dir, f"{glob.escape(key)}-B*.json")):
-        m = re.search(r"-B(\d+)\.json$", p)
-        if m:
-            status_files[int(m.group(1))] = p
+    status_files = look_status_files(design, key)
+    n_batches = seed_gap_report(design, key, base, [p.seed for p in prods], batch)["batches_submitted"]
     horizon = B_final if B_final is not None else max(status_files, default=0)
-    looks, first_stop = [], None
+    looks, first_stop, no_new, prev_n = [], None, [], 0
     first_stop_alt = {name: None for name in A8_READINGS if name != "primary"}
-    b = 1
-    while True:
+    for b in range(1, n_batches + 1):
         edge = base + min(batch * b, nmax)
         sub = [p for p in prods if p.seed < edge]
-        if not sub or len(sub) > horizon:
+        if len(sub) > horizon:
             break
+        if len(sub) == prev_n:
+            no_new.append(b - 1)
+            if edge >= base + nmax:
+                break
+            continue
+        prev_n = len(sub)
         ctx = ev.null_context(key, sub)
         ctx["key"] = key
         _, shifts = ev.shifts_for(ctx)
@@ -926,16 +978,18 @@ def verify_sequential(ev: Evaluator, key: str, prods: list[Product], thresholds:
                       "status_file": st_path, "status": st, "a8_sensitivity": a8})
         if rule and first_stop is None:
             first_stop = n
-        if edge >= base + nmax or n >= horizon:
+        if edge >= base + nmax:
             break
-        b += 1
     final_path = cn["sequential_status"]
     final = json.load(open(final_path)) if os.path.exists(final_path) else None
     reason = final.get("reason") if final else None
     verdicts = {"primary": stop_verdict(reason, first_stop, B_final)}
     verdicts.update({name: stop_verdict(reason, fs, B_final) for name, fs in first_stop_alt.items()})
+    looked = {lk["B"] for lk in looks}
     return {"looks": looks, "first_look_where_rule_stops": first_stop, "min_B": nmin, "max_B": nmax,
             "status_files": {str(k): v for k, v in sorted(status_files.items())},
+            "status_files_without_a_look": sorted(b for b in status_files if b > 0 and b not in looked),
+            "batches_adding_no_product": no_new,
             "final_reason": reason, "stop_verdict": verdicts["primary"],
             "a8_sensitivity": {"readings": A8_READINGS,
                                "first_look_where_rule_stops": {"primary": first_stop, **first_stop_alt},

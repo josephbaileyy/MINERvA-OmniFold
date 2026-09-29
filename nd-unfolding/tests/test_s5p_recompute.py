@@ -256,11 +256,21 @@ class EndToEnd(unittest.TestCase):
         t.calibration("GiBUU_2019", 20)
         out = self.run_eval()
         cal = out["nulls"]["MnvTune_v1"]["calibration"]
+        b = SEED_BASE["MnvTune_v1"]
         self.assertEqual(cal["partials_excluded"], 1)
-        self.assertEqual(cal["missing_seeds_in_range"], [SEED_BASE["MnvTune_v1"] + 7, SEED_BASE["MnvTune_v1"] + 33])
-        self.assertEqual(cal["seeds_outside_final_range"], [SEED_BASE["MnvTune_v1"] + 75])
-        self.assertEqual(cal["products_used"], 58)
+        # A13 (revised): every finished product is used, the one beyond the final B included; the count mismatch
+        # against the final status is reported, not repaired
+        self.assertEqual(cal["products_used"], 59)
+        self.assertEqual(out["nulls"]["MnvTune_v1"]["B"], 59)
         self.assertFalse(cal["count_matches_final_B"])
+        self.assertEqual(cal["count_mismatch"], {"final_status_B": 60, "products": 59})
+        gaps = cal["seed_gaps"]
+        self.assertEqual(gaps["span"], [b, b + 200])  # the B = 0 look continued: one batch submitted
+        self.assertEqual(gaps["span_basis"], {"looks_with_stop_false": 1, "last_batch_holding_a_product": 1,
+                                              "used": "looks"})
+        self.assertEqual(gaps["missing_seeds"], sorted({b + 7, b + 33, b + 60} | set(range(b + 61, b + 75))
+                                                       | set(range(b + 76, b + 200))))
+        self.assertEqual(gaps["seeds_outside_submitted_batches"], [])
 
     def test_budget_stop_at_zero_is_not_calibrated(self):
         t = self.t
@@ -283,7 +293,7 @@ class EndToEnd(unittest.TestCase):
         t.calibration("MnvTune_v1", 50)
         t.calibration("GiBUU_2019", 10)
         ev = R.Evaluator(t.design(), t.v_path, t.contract, log=lambda *a: None)
-        prods, _ = ev.load_ensemble(t.design()["nulls"]["MnvTune_v1"]["calibration_glob"], SEED_BASE["MnvTune_v1"], None)
+        prods = ev.load_ensemble(t.design()["nulls"]["MnvTune_v1"]["calibration_glob"])
         a = ev.null_context("MnvTune_v1", prods)
         b = ev.null_context("MnvTune_v1", prods[::-1][:20])
         by_seed = {p.seed: i for i, p in enumerate(prods)}
@@ -366,6 +376,170 @@ class EndToEnd(unittest.TestCase):
         self.assertEqual(seq["first_look_where_rule_stops"], 600)
         self.assertEqual(seq["looks"][2]["status"]["reason"], "rule met for both tests")
         self.assertEqual(out["nulls"]["MnvTune_v1"]["tests"]["total"]["k"], 0)
+
+
+def withdrawn_a13_selection(seed_hi: dict):
+    """The selection in force at 1bfd8910 (seeds restricted to [base, base + final B)), for the mutation control."""
+    def load(self, pattern):
+        key = next(k for k, s in self.design["nulls"].items() if s["calibration_glob"] == pattern)
+        return [p for p in load_ensemble_fixed(self, pattern) if p.seed < seed_hi.get(key, float("inf"))]
+    return load
+
+
+load_ensemble_fixed = R.Evaluator.load_ensemble
+
+
+class SeedGaps(unittest.TestCase):
+    """s5p-F4: lost seeds leave gaps; the ensemble is every finished product (amendment 7), not a seed range.
+
+    A null with two batches (seeds base .. base + 399): base + 5, base + 17 and base + 203 have no product, base + 17
+    a partial; looks B = 0 and 198 continue, the final status has B = 397. A power set is judged against this null.
+    """
+
+    NULL = "MnvTune_v1"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.dir = Path(tempfile.mkdtemp(prefix="s5p_recompute_gaps_"))
+        t = cls.t = Toy(cls.dir / "w")
+        b = cls.base = SEED_BASE[cls.NULL]
+        # surrogates off for a known answer: Delta = 0, s_num = 0, Var(mu) = 0 (the normalization z stays)
+        for band in t.lat:
+            t.lat[band][1] = t.lat[band][0]
+        truth = t.truth[cls.NULL]
+        t.jitters = [t.npz(f"jit0/j{j}.npz", xsec_flat=truth) for j in range(20)]
+        t.pred[cls.NULL] = t.npz("pred0.npz", xsec_flat=truth, sumw2_flat=np.zeros_like(truth), **t.edges())
+        t.set_data(truth + t.fine_noise(np.random.default_rng(31), truth * t.noise))  # a typical T: k inside (0, B)
+        t.calibration(cls.NULL, 400, skip=(5, 17, 203))
+        t.product("cal", cls.NULL, b + 17, truth, partial=True)
+        t.status(cls.NULL, 0, False, "no calibration product yet")
+        t.status(cls.NULL, 198, False, "continue")
+        t.status(cls.NULL, 397, True, "batches exhausted")
+        t.calibration("GiBUU_2019", 20)
+        t.power("P1_a1.0", 12, cls.NULL, 1.0)
+        cls.power = {"P1_a1.0": {"glob": str(t.root / "pow/P1_a1.0/pow_P1_a1.0_s*.npz"), "surrogate_seed0": 1951000,
+                                 "n": 12, "null": cls.NULL}}
+        cls.out = R.evaluate(t.design(power=cls.power), t.v_path, t.contract, log=lambda *a: None)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.dir, ignore_errors=True)
+
+    def brute_unshifted(self, seeds):
+        """k, B, p of the unshifted test from the product files, written from the specification (no evaluator)."""
+        t, b = self.t, self.base
+        chol = np.linalg.cholesky(t.V)
+        tq = lambda r: float(np.sum(np.linalg.solve(chol, r) ** 2))  # noqa: E731
+        with np.load(t.data) as z:
+            t_obs = tq(t.jint(z["xsec_flat"]) - t.jint(t.truth[self.NULL]))
+        k = 0
+        for s in seeds:
+            with np.load(t.root / f"cal/{self.NULL}/cal_{self.NULL}_s{s}.npz") as z:
+                f = t.jint(z["xsec_flat"]) * (1 + 0.014 * json.loads(str(z["meta"]))["nuisance_draw"]["normalization_z"])
+            k += tq(f - t.jint(t.truth[self.NULL])) >= t_obs
+        return k, len(seeds), (k + 1) / (len(seeds) + 1)
+
+    def failures(self, out):
+        """Every assertion of the correction, as a list (empty = the corrected selection); the mutation reuses it."""
+        b, bad = self.base, []
+        rec = out["nulls"][self.NULL]
+        cal, seq = rec["calibration"], rec["sequential"]
+        expect = [s for s in range(b, b + 400) if s not in (b + 5, b + 17, b + 203)]
+        if rec["B"] != 397 or cal["products_used"] != 397:
+            bad.append(f"ensemble B {rec['B']} (products_used {cal['products_used']}), expected 397")
+        if cal["count_matches_final_B"] is not True or cal["count_mismatch"] is not None:
+            bad.append("count against the final status B = 397 not matched")
+        if [lk["B"] for lk in seq["looks"]] != [198, 397]:
+            bad.append(f"look B {[lk['B'] for lk in seq['looks']]}, expected [198, 397]")
+        if not all(lk["status_file"] and lk["status"]["B"] == lk["B"] for lk in seq["looks"]):
+            bad.append("a look is not paired with the status file of its B")
+        if seq["batches_adding_no_product"]:
+            bad.append(f"batches adding no product {seq['batches_adding_no_product']}")
+        if seq["status_files_without_a_look"]:
+            bad.append(f"status files without a look {seq['status_files_without_a_look']}")
+        gaps = cal["seed_gaps"]
+        if gaps["missing_seeds"] != [b + 5, b + 17, b + 203] or gaps["span"] != [b, b + 400]:
+            bad.append(f"gap report {gaps['missing_seeds']} over {gaps['span']}")
+        if gaps["seeds_outside_submitted_batches"]:
+            bad.append("seeds reported outside the submitted batches")
+        k, B, p = self.brute_unshifted(expect)
+        for t in ("total",):
+            u = rec["tests"][t]["unshifted"]
+            if (u["k"], rec["tests"][t]["B"], u["p"]) != (k, B, p):
+                bad.append(f"{t} unshifted (k, B, p) {(u['k'], rec['tests'][t]['B'], u['p'])} != brute {(k, B, p)}")
+        if out["power"]["P1_a1.0"].get("B_null") != 397:
+            bad.append(f"power judged against B_null {out['power']['P1_a1.0'].get('B_null')}, expected 397")
+        return bad
+
+    def test_ensemble_looks_gaps_and_power_follow_the_frozen_definition(self):
+        self.assertEqual(self.failures(self.out), [])
+
+    def test_the_seeds_beyond_the_final_B_are_used(self):
+        b = self.base
+        seeds = sorted(R.seed_of(p) for p in R.finished_products(self.t.design()["nulls"][self.NULL]["calibration_glob"]))
+        self.assertEqual(seeds[-3:], [b + 397, b + 398, b + 399])
+        self.assertEqual(len(seeds), 397)
+        self.assertEqual(self.out["nulls"][self.NULL]["calibration"]["partials_excluded"], 1)
+
+    def test_known_answer_is_discriminating(self):
+        k, B, _ = self.brute_unshifted([s for s in range(self.base, self.base + 400)
+                                        if s not in (self.base + 5, self.base + 17, self.base + 203)])
+        self.assertTrue(0 < k < B, k)  # an extreme T_obs would make k = 0 whatever the ensemble
+
+    def test_control_the_withdrawn_selection_goes_red(self):
+        from unittest import mock
+        b = self.base
+        with mock.patch.object(R.Evaluator, "load_ensemble", withdrawn_a13_selection({self.NULL: b + 397})):
+            out = R.evaluate(self.t.design(power=self.power), self.t.v_path, self.t.contract, log=lambda *a: None)
+        self.assertEqual(out["nulls"][self.NULL]["B"], 394)
+        bad = self.failures(out)
+        joined = "\n".join(bad)
+        for part in ("ensemble B 394", "not matched", "look B [198, 394]", "B_null 394"):
+            self.assertIn(part, joined)
+
+    def test_a_batch_adding_no_product_gets_no_look(self):
+        """Batch 1 submitted after the B = 198 look but holding no product yet (or never run after a budget refusal):
+        its look would repeat B = 198; there is one look, and batch 1 is listed."""
+        for final in (None, "budget"):
+            with self.subTest(final=final):
+                t = Toy(self.dir / f"w-nonew-{final}")
+                t.calibration(self.NULL, 200, skip=(5, 17))
+                t.status(self.NULL, 198, False, "continue")
+                if final:
+                    t.status(self.NULL, 198, True, final)
+                    (t.root / "status" / f"{self.NULL}-B198.json").write_text(
+                        json.dumps({"null": self.NULL, "B": 198, "max": 1999, "stop": False, "reason": "continue"}))
+                t.calibration("GiBUU_2019", 20)
+                out = R.evaluate(t.design(), t.v_path, t.contract, log=lambda *a: None)
+                seq = out["nulls"][self.NULL]["sequential"]
+                self.assertEqual([lk["B"] for lk in seq["looks"]], [198])
+                self.assertEqual(seq["batches_adding_no_product"], [1])
+                self.assertEqual(seq["status_files_without_a_look"], [])
+                self.assertEqual(out["nulls"][self.NULL]["calibration"]["seed_gaps"]["batches_submitted"], 2)
+
+    def test_any_partial_name_is_excluded(self):
+        d = Path(tempfile.mkdtemp(prefix="s5p_partial_"))
+        try:
+            for n in ("c_s1.npz", "c_s2.partial-77.npz", "c_s3.partial.npz"):
+                (d / n).write_bytes(b"")
+            self.assertEqual([Path(p).name for p in R.finished_products(str(d / "c_s*.npz"))], ["c_s1.npz"])
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
+
+    def test_a_product_outside_the_submitted_batches_is_kept_and_listed(self):
+        d = self.t.design()
+        b = self.base
+        g = R.seed_gap_report(d, self.NULL, b, list(range(b, b + 10)) + [b + 450, b - 1])
+        self.assertEqual(g["span"], [b, b + 400])
+        self.assertEqual(g["batches_submitted"], 2)
+        self.assertEqual(g["seeds_outside_submitted_batches"], [b - 1, b + 450])
+        self.assertEqual(g["missing_seeds_by_batch"]["1"], list(range(b + 200, b + 400)))
+        self.assertEqual(g["span_basis"]["last_batch_holding_a_product"], 3)  # reported, not used: looks exist
+        # no per-look status file: the batches are inferred from the products
+        d["nulls"][self.NULL]["calibration_n"]["sequential_status"] = str(self.dir / "nostatus" / "x-final.json")
+        g = R.seed_gap_report(d, self.NULL, b, [b + 3, b + 450])
+        self.assertEqual((g["span"], g["span_basis"]["used"]), ([b, b + 600], "products (no per-look status file)"))
+        self.assertEqual(g["seeds_outside_submitted_batches"], [])
 
 
 class A8Sensitivity(unittest.TestCase):
