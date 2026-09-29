@@ -10,9 +10,10 @@ the calibration (the nuisance model, the pseudo-experiment process, the conditio
 Task pointer: `docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md` §1 (at `origin/main` `12991771`).
 Branch `s5p-parallel-recompute-20260928`, worktree `../MINERvA-OmniFold-s5p-recompute` (created from `12991771`).
 Cluster scratch (mine only): `/pscratch/sd/j/josephrb/s5p-parallel-recompute/`.
-Evaluator: `nd-unfolding/s5p_recompute.py` at the branch tip, sha256 `8f783f87…`. Its history: `707421ee…` (commit
-`27c7ff37`, the copy the real-input dry run used), then the labelled A8 sensitivity readings (§3.1, primary outputs
-unchanged), then the owner's A7 and A7-VS rulings (§3.2; only the reported κ = 3 label is affected), with the comparer's leaf accounting (§5.3).
+Evaluator: **the recorded evaluator checkpoint is `4a772838`** (owner, 2026-09-29). Its statistical code (every
+p-value, decision, family, stop verdict and power) is unchanged since. The commit after the comparer review adds
+only `provenance` fields: the shift files' paths, digests, mode and κ values, which the comparer checks against
+production's echoes. The comparer's status is in §5.5.
 
 **STATUS: FINAL VERIFICATION PENDING.** Production was non-terminal (calibration batch 0) when this was written.
 Nothing below is a verification result.
@@ -38,9 +39,9 @@ Nothing below is a verification result.
 |---|---|
 | `nd-unfolding/s5p_recompute.py` | the evaluator: J geometry, surrogates, statistics, variants, claim p, Holm with determinacy, κ = 3 flag, power, implied size, observed-jitter p, sequential-rule re-evaluation at every look; CLI `evaluate` / `compare` |
 | `nd-unfolding/s5p_recompute_compare.py` | compares a recompute output with production's `joint-evaluate.json`; lists every production numeric leaf it could not map |
-| `nd-unfolding/tests/test_s5p_recompute.py`, `tests/s5p_recompute_toy.py` | 53 controls (below, §3.1, §3.2); a synthetic world in the production file formats |
+| `nd-unfolding/tests/test_s5p_recompute.py`, `tests/s5p_recompute_toy.py` | 55 controls (below, §3.1, §3.2, §5.5); a synthetic world in the production file formats |
 
-Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **53 passed**; ~20 s on an idle machine):
+Tests (`python3 -m pytest -q nd-unfolding/tests/test_s5p_recompute.py`: **55 passed**; ~25 s on an idle machine):
 no import of the three production modules (AST); Clopper–Pearson closed form and the reviews' own numbers
 (review 1: `[0.0057, 0.0148]` at p = 0.01, B = 1999; review 2 M3: determined k at 0.005 is `{0}` at B = 800 and
 `{0..3}` at B = 1999, rank rule `{0..3}` at 800); statistics (total = inverse quadratic form; shape invariant to
@@ -299,25 +300,33 @@ EOF
 Exit codes:
 - `evaluate`: 0 = written; 4 = not terminal (a final status is missing). Any other code is an error.
 - `compare` prints and records a **verdict**:
-  - 0 = **AGREE**: every row agrees, nothing expected is missing, and **no production leaf is unresolved**.
-  - 1 = **DISCREPANT**: a row disagrees. `compare.json` gives both values and the production path.
-  - 2 = **INCOMPLETE**: nothing disagrees, but something expected is not located, a production leaf is unresolved,
-    or a label is pending.
+  - 0 = **AGREE**: every row agrees, every **required** item is located, and **no production leaf is unresolved**.
+  - 1 = **DISCREPANT**: a row disagrees, including a type mismatch. `compare.json` gives both values and the
+    production path.
+  - 2 = **INCOMPLETE**: nothing disagrees, but a required item is not located (`not_located`), or a production leaf
+    is unresolved (`unresolved_production_leaves`). A missing `robust-labels.json` falls here.
+  - 3 = **ERROR**: an input could not be read or processed. The report records the error.
+  - `--out` is removed before comparing, so a failed run never leaves an earlier report in place.
 
-Every production leaf in `joint-evaluate.json` and in `robust-labels.json`'s `labels` must be **consumed** by a
-comparison row or **excluded** by the documented metadata scope `EXCLUDED_SCOPE` in `s5p_recompute_compare.py`.
-Otherwise it is listed in `unresolved_production_leaves`, and the verdict cannot be AGREE. The scope covers `schema`,
-`utc`, `files_first_last`, `path`, `sha256`, `code_sha256`, `mode`, `kappa`, `kappa_robust`, `reason`,
-`lateral_symmetry`, `shrinkage` and `median_rel_sd`, each with its reason: input echoes, V-construction metadata
-frozen with V's compared sha256, identities and free text. `excluded_by_scope.counts` reports how many leaves each
-entry removed.
-
-An unresolved leaf is resolved in one of three ways, and only these:
-- by extending the mapping, in a commit;
-- by a documented addition to the scope, in a commit, with its reason;
-- for a question of the specification, by a ruling.
-
-Never by reading it as agreement.
+The comparer enforces **both directions** (after the independent review, §5.5):
+- **Required items are derived from the recompute and the owner-stated schema**, not from what production
+  contains. The full list is in the comparer's module docstring, including:
+  - both digests;
+  - per null: the statistics, claims, every claim variant and every ruled κ = 3 M1 member;
+  - a scalar `not_calibrated` marker (or claims with B = 0) for a null at B = 0;
+  - the four family fields per test;
+  - power per set, test, level and rule;
+  - the nine `robust-labels.json` fields.
+- **Every production leaf is accounted for.** It is consumed by a row, or excluded by an **anchored path pattern**
+  that only a scalar leaf can match (`EXCLUDED_SCOPE`: `schema`, `utc`, `code_sha256`, `files_first_last`,
+  `lateral_symmetry/*/*`, `shrinkage` and `median_rel_sd` in `joint-evaluate.json`; `schema`, `code_sha256`,
+  `ruling` and `evaluate` in `robust-labels.json`; each with its reason). Otherwise it is unresolved.
+  - The excluded paths are listed in `excluded_by_scope.paths`.
+  - An empty container counts as a leaf.
+  - The shift-file digests, paths, mode and κ values are compared against the recompute's enforced inputs, not
+    excluded.
+- **Types are strict:** a bool is not a number, and a string is not a p-value.
+- **Variant names are parsed.** `robustness_variants` may hold only the ruled m1 ±3 members.
 
 Then:
 - check that the committed copy of `joint-evaluate.json` has the same sha256 as the cluster file.
@@ -326,7 +335,7 @@ Then:
 - every p-value of the 10 tests (per variant, claim, unshifted);
 - each Holm decision with its threshold and interval;
 - the ruled A7 label (`family.robust_labels`) against `robust-labels.json`, and **separately**
-  `robust_boolean_equivalent` against the frozen `robust_to_the_sub_fine_residual`;
+  `frozen_boolean_equivalent_diagnostic` against the frozen `robust_to_the_sub_fine_residual`;
 - **A7-VS**: the ruled labels against `robust-labels.json` `labels` / `decisions_kappa3_replace` /
   `family_members`; the keep-both and frozen-boolean diagnostics against `diagnostics.*` and the frozen
   `decisions_robust_kappa` / `robust_to_the_sub_fine_residual`; and `family.kappa3.tests_where_the_sets_differ`
@@ -342,6 +351,32 @@ For any disagreement between a primary reading and its diagnostic that moves a d
 it and route it to the owner. Do not re-read the
 specification to agree. Commit `recompute.json`, `compare.json` and a report beside this file. Only then may the
 verification be called complete. Agreement verifies the calculation, not the adequacy of the calibration.
+
+**5.5 Independent comparer review (2026-09-29) and responses.**
+- The report is `REVIEW-20260929-s5p-recompute-comparer.md`, verbatim. The reviewer was an independent agent in the
+  read-only detached worktree `../MINERvA-OmniFold-s5p-recompute-review1` at `4a772838`, left clean.
+- It found 8 findings: F-1 and F-4 HIGH; F-2, F-5 and F-8 MEDIUM; F-3, F-6 and F-7 LOW.
+- The fixes are in the commit after that file. The **final reviewed commit** is recorded at the end of this section.
+- Check after the fixes: the reviewer's own probes were re-run against the fixed comparer, using copies in scratch
+  (`review-rerun/`).
+  - Two adaptations only: the fixture adapter `_old_layout` rebuilds the 4a772838 layout, and two report-schema field
+    reads were updated. The mutation cases are unchanged.
+  - **99 of 101 cases now give the reviewer's expected verdict**, including every case that was a DEFECT at
+    `4a772838` except M4. The exit-code probes were re-run too.
+  - The two remaining differences are deliberate, and are listed in the table below.
+
+| finding | response |
+|---|---|
+| F-1 missing required quantity → AGREE | **fixed**: required items derived from the recompute record (not located → INCOMPLETE); power per set, test, level and rule |
+| F-2 labels-document fields optional | **fixed**: all nine owner-stated fields required, and each per-test key |
+| F-3 lax types | **fixed**: strict types; a dict or list where a scalar is expected is a discrepancy, consuming nothing beneath it |
+| F-4 exclusion by key name at any depth | **fixed**: anchored path patterns, scalar leaves only; excluded paths listed; empty containers are leaves |
+| F-5 exclusion reasons rest on an optional digest | **fixed**: `design_sha256` and `v_sha256` required; shift digests, paths, mode and κ compared with the recompute's enforced inputs (new `provenance` fields) |
+| F-6 dict `not_calibrated` marker | **fixed**: scalar marker only; a B = 0 null without a marker needs claims with B = 0, whose p, k and B (and T if present) are compared |
+| F-7 keep-both member in the robust slot | **fixed**: `robustness_variants` matched only against the ruled m1 ±3 members, both required |
+| F-8 missing labels file exit 1; stale report | **fixed**: missing labels → INCOMPLETE (2); any exception → ERROR (3); `--out` removed first. `pending_ruling` (dead) removed |
+| M4 (missing per-test `unshifted`) still AGREE | **disposition, not adopted**: the unshifted quantity is required and compared as the `0.0` variant (k, p). A separate per-test `unshifted` key is compared if present, but not required, because production may not write one. |
+| X9 (scalar under `path` in the labels document) now INCOMPLETE | **stricter than the reviewer's control, kept**: exclusions are anchored to owner-stated fields, and `path` is not one |
 
 **Downstream reader.** The reproduction harness (branch `s5p-parallel-reproduction-20260928`, config key
 `joint.independent_compare`) records `/pscratch/sd/j/josephrb/s5p-parallel-recompute/final/compare.json` by sha256

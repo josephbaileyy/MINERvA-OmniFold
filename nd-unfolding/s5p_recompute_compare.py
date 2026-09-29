@@ -1,28 +1,43 @@
-"""Compare an s5p_recompute output with production's ``stage7/joint/joint-evaluate.json`` (and ``robust-labels.json``).
+"""Compare an s5p_recompute output with production's ``stage7/joint/joint-evaluate.json`` and ``robust-labels.json``.
 
-Production's nesting was not read from its code: only the key names its output writes (``tests``, ``T_total_obs``,
-``total``/``shape`` with ``p``/``k``/``B``, ``variants``, ``decisions``, ``holm_point``, ``decisions_robust_kappa``,
-``robust_to_the_sub_fine_residual``, ``power``, ...). The matcher therefore locates quantities by key name.
+Production's nesting was not read from its code. The matcher uses the key names production writes (``tests``,
+``T_total_obs``, ``total``/``shape`` with ``p``/``k``/``B``, ``variants``, ``robustness_variants``, ``decisions``,
+``holm_point``, ``decisions_robust_kappa``, ``robust_to_the_sub_fine_residual``, ``power``, ...), plus the facts
+stated by the production owner: variant names, the ``{"not_calibrated": ...}`` record of a null stopped at B = 0,
+and the robust-labels schema "s5p-robust-labels/2".
 
-**Every production leaf must be accounted for.** A leaf is either CONSUMED by a comparison row (agree or discrepancy),
-or EXCLUDED by the explicit metadata scope ``EXCLUDED_SCOPE`` below (each entry with its reason), or it is UNRESOLVED.
-An unresolved leaf is a mapping gap, never an agreement. Examples: a key the matcher does not know, or a variant
-name without a recompute counterpart.
+**Two directions, both enforced (independent review 2026-09-29, REVIEW-20260929-s5p-recompute-comparer.md):**
 
-A7 as ruled (the full Holm re-run; A7-VS: the kappa = 3 family REPLACES +-2 delta_M1 by +-3 delta_M1):
-- ``robust-labels.json`` ``labels`` is compared with ``family.robust_labels`` (the ruled replace family);
-- the frozen evaluator's ``decisions_robust_kappa`` and its boolean ``robust_to_the_sub_fine_residual`` (a keep-both
-  family, as the campaign reports the frozen code) are compared with the separately named diagnostics
-  ``family.keep_both_kappa3_diagnostic`` and ``family.frozen_boolean_equivalent_diagnostic``.
+1. **Required leaves.** Derived from the recompute record and the owner-stated schema, not from what production
+   happens to contain. A missing one is NOT LOCATED, and the verdict cannot be AGREE. Required:
+   - top-level ``design_sha256`` and ``v_sha256``;
+   - per calibrated null: ``T_total_obs``, ``T_shape_obs``, ``domain_cells``, ``observed_jitter_p`` and
+     ``implied_size_of_unshifted_test``; per test the claim ``p``/``k``/``B``; every claim variant (``p``, ``k`` per
+     test) in ``variants``; every ruled κ = 3 M1 member in ``robustness_variants``;
+   - per null at B = 0: a scalar ``not_calibrated`` marker, or claims with B = 0;
+   - per test: ``decisions``, ``holm_point``, ``decisions_robust_kappa`` and ``robust_to_the_sub_fine_residual``;
+   - per power set with products: ``n``, and each (test, level, rule);
+   - in ``robust-labels.json``: ``labels``; ``decisions_kappa3_replace`` (``p``, ``k``, ``B``, ``threshold``,
+     ``interval``, ``level``, ``decision``); ``family_members``;
+     ``diagnostics.frozen_boolean_robust_to_the_sub_fine_residual``; ``diagnostics.keep_both.{family, labels}``;
+     ``evaluate_sha256``, ``design_sha256`` and ``alpha_family``.
+2. **Every production leaf accounted for.** A leaf is CONSUMED by a comparison row, or EXCLUDED by an anchored path
+   pattern of ``EXCLUDED_SCOPE`` (a scalar leaf only; each pattern with its reason; the excluded paths are listed in
+   the report), or it is UNRESOLVED, and the verdict cannot be AGREE.
+
+Types are strict: a bool is not a number, a string is not a p-value, and a dict or list where a scalar is expected
+is a discrepancy that consumes nothing beneath it.
 
 Verdicts and exit codes:
-- AGREE (exit 0): every row agrees, nothing expected is missing, and no leaf is unresolved.
+- AGREE (exit 0): every row agrees, nothing required is missing, and no leaf is unresolved.
 - DISCREPANT (exit 1): at least one row disagrees.
-- INCOMPLETE (exit 2): no row disagrees, but something expected is not located or a leaf is unresolved. Extend the
-  mapping (or document an exclusion) in a commit, and re-run.
+- INCOMPLETE (exit 2): nothing disagrees, but something required is not located or a leaf is unresolved.
+- ERROR (exit 3): an input could not be read or processed. The report records the error.
 
-Agreement rules: counts (k, B, n) exactly; p-values and interval ends to 1e-12 absolute; statistics to 1e-8
-relative; labels, booleans and digests exactly.
+``--out`` is removed before comparing, so a failed run never leaves an earlier report in place.
+
+Agreement rules: counts exactly (integral numbers); p-values and interval ends to 1e-12 absolute; statistics to
+1e-8 relative; labels, booleans and digests exactly and of the same type.
 """
 from __future__ import annotations
 
@@ -32,39 +47,39 @@ import re
 from pathlib import Path
 
 TESTS = ("total", "shape")
+LEVELS = ("0.05", "0.005")
+POWER_RULES = (("rank_unshifted", "unshifted"), ("rank_claim", "claim_rule"),
+               ("determined_claim", "claim_rule_determined"))
 
-# Optional metadata: excluded from the agreement verdict by key name (at any depth), each with its reason. Anything
-# not listed here is required.
+_V_REASON = "V-construction metadata frozen with V; v_sha256 is required and compared"
+# Anchored path patterns ("*" = one segment) of optional metadata, matched only by scalar leaves (or lists of scalars).
 EXCLUDED_SCOPE = {
-    "schema": "format identifier, not a computed quantity",
-    "utc": "timestamp",
-    "files_first_last": "input path echo",
-    "path": "input path echo (the recompute enforces the design's declared digests at load)",
-    "sha256": "input digest echo (the recompute refuses any input whose digest differs from the design's)",
-    "code_sha256": "producer identity",
-    "mode": "echo of the frozen design's process-shift mode (the design's sha256 is compared)",
-    "kappa": "echo of the frozen design's kappa (the design's sha256 is compared)",
-    "kappa_robust": "echo of the frozen design's kappa_robust (the design's sha256 is compared)",
-    "reason": "free text",
-    "lateral_symmetry": "V-construction diagnostic, frozen with V (V's sha256 is compared)",
-    "shrinkage": "V-construction metadata, frozen with V (V's sha256 is compared)",
-    "median_rel_sd": "V-construction metadata, frozen with V (V's sha256 is compared)",
-    "ruling": "citation of a ruling record (text)",
-    "evaluate": "input path echo (robust-labels.json; its evaluate_sha256 is compared)",
+    "joint-evaluate.json": [
+        (("schema",), "format identifier, not a computed quantity"),
+        (("utc",), "timestamp"),
+        (("code_sha256",), "producer identity"),
+        (("files_first_last",), "input path echo"),
+        (("lateral_symmetry", "*", "*"), _V_REASON),
+        (("shrinkage",), _V_REASON),
+        (("median_rel_sd",), _V_REASON),
+    ],
+    "robust-labels.json": [
+        (("schema",), "format identifier"),
+        (("code_sha256",), "producer identity"),
+        (("ruling",), "citation of the ruling record (text)"),
+        (("evaluate",), "input path echo; evaluate_sha256 is required and compared"),
+    ],
 }
-
-# robust-labels.json, schema "s5p-robust-labels/2" (the campaign's label step at origin/main 67eadf25, as described
-# by the campaign; its code was not read here): labels, decisions_kappa3_replace, family_members,
-# diagnostics.{frozen_boolean_robust_to_the_sub_fine_residual, keep_both.{family, labels}}, and provenance
-# (evaluate_sha256, design_sha256, alpha_family). A field under any other name stays UNRESOLVED until mapped.
 
 _C_NAME = re.compile(r"^(?:c\s*=\s*)?([0-9]*\.?[0-9]+)$")
 _M1_NAME = re.compile(r"^m1\s*=?\s*([+-])\s*([0-9]*\.?[0-9]+)$")
 
 
-def variant_key(name: str):
+def variant_key(name):
     """A variant name as ('c', coefficient) or ('m1', signed kappa); None if it cannot be parsed (never guessed)."""
-    n = str(name).strip()
+    if not isinstance(name, str):
+        return None
+    n = name.strip()
     m = _C_NAME.match(n)
     if m:
         return ("c", float(m.group(1)))
@@ -74,52 +89,72 @@ def variant_key(name: str):
     return None
 
 
+def is_scalar(v):
+    return v is None or isinstance(v, (bool, int, float, str))
+
+
 def walk(node, path=()):
-    """Every leaf with its path; a list of scalars is one leaf, a list of containers is walked."""
-    if isinstance(node, dict):
+    """Every leaf with its path; a list of scalars is one leaf, a list containing containers is walked, and an
+    EMPTY dict is itself a leaf (so an unknown empty container cannot pass unseen)."""
+    if isinstance(node, dict) and not node:
+        yield path, node
+    elif isinstance(node, dict):
         for k, v in node.items():
             yield from walk(v, path + (str(k),))
-    elif isinstance(node, list) and node and all(isinstance(x, (dict, list)) for x in node):
+    elif isinstance(node, list) and node and not all(is_scalar(x) for x in node):
         for i, v in enumerate(node):
             yield from walk(v, path + (str(i),))
     else:
         yield path, node
 
 
+def _num(x):
+    return isinstance(x, (int, float)) and not isinstance(x, bool)
+
+
 def agree(kind, a, b):
     if a is None or b is None:
         return False
-    if isinstance(a, list) or isinstance(b, list):
-        if not (isinstance(a, list) and isinstance(b, list)) or len(a) != len(b):
+    if isinstance(a, (list, tuple)) or isinstance(b, (list, tuple)):
+        if not (isinstance(a, (list, tuple)) and isinstance(b, (list, tuple))) or len(a) != len(b):
             return False
         return all(agree(kind, x, y) for x, y in zip(a, b))
+    if isinstance(a, dict) or isinstance(b, dict):
+        return False
     if kind == "count":
-        return (isinstance(a, (int, float)) and isinstance(b, (int, float)) and not isinstance(a, bool)
-                and not isinstance(b, bool) and float(a) == float(b))
+        return _num(a) and _num(b) and float(a) == float(b) and float(b).is_integer()
     if kind == "p":
-        return abs(float(a) - float(b)) <= 1e-12
+        return _num(a) and _num(b) and abs(float(a) - float(b)) <= 1e-12
     if kind == "stat":
+        if not (_num(a) and _num(b)):
+            return False
         a, b = float(a), float(b)
         return a == b or abs(a - b) <= 1e-8 * max(abs(a), abs(b))
-    return a == b
+    if isinstance(a, bool) or isinstance(b, bool):
+        return isinstance(a, bool) and isinstance(b, bool) and a == b
+    if _num(a) and _num(b):
+        return float(a) == float(b)
+    return type(a) is type(b) and a == b
 
 
 def kind_of(key: str) -> str:
-    if key in ("k", "B", "n", "domain_cells", "count", "n_present", "n_declared", "min_B", "max_B", "step"):
+    if key in ("k", "B", "n", "domain_cells", "count", "n_present", "n_declared", "min_B", "max_B", "step",
+               "n_pairs", "declared"):
         return "count"
     if key.startswith("T") or key in ("mean", "median", "sd", "magnitude", "a", "se", "a_over_se", "bias_norm_W"):
         return "stat"
-    if key in ("p", "interval", "power", "p_min", "p_max", "p_median", "min", "max", "threshold"):
+    if key in ("p", "interval", "power", "p_min", "p_max", "p_median", "min", "max", "threshold", "level",
+               "alpha_family"):
         return "p"
     return "exact"
 
 
 class Ledger:
-    """Comparison rows plus the set of production leaf paths they consumed."""
+    """Comparison rows, the production leaf paths they consumed, and required items not located."""
 
-    def __init__(self, doc):
-        self.doc = doc
-        self.rows, self.consumed, self.missing, self.pending = [], set(), [], []
+    def __init__(self, doc, name):
+        self.doc, self.name = doc, name
+        self.rows, self.consumed, self.missing = [], set(), []
 
     def get(self, path):
         cur = self.doc
@@ -133,10 +168,21 @@ class Ledger:
         return cur
 
     def row(self, label, kind, mine, path):
+        """Compare one production value with the recompute's. A container where a scalar (or a list, when the
+        recompute's value is a list) is expected is a discrepancy, and nothing beneath it is consumed."""
         theirs = self.get(path)
+        shape_ok = not isinstance(theirs, dict) and (isinstance(mine, (list, tuple)) or not isinstance(theirs, list))
         self.rows.append({"item": label, "kind": kind, "mine": mine, "production": theirs,
-                          "production_path": "/".join(path), "agree": agree(kind, mine, theirs)})
-        self.consumed.add(tuple(path))
+                          "production_path": f"{self.name}:" + "/".join(path),
+                          "agree": shape_ok and agree(kind, mine, theirs)})
+        if shape_ok:
+            self.consumed.add(tuple(path))
+
+    def require(self, label, path, kind, mine):
+        if self.get(path) is None:
+            self.missing.append(f"{self.name}:{label}")
+        else:
+            self.row(label, kind, mine, path)
 
     def first(self, *paths):
         for p in paths:
@@ -158,16 +204,26 @@ class Ledger:
         return any(path[:len(c)] == c for c in self.consumed)
 
 
-def excluded(path):
-    for p in path:
-        if p in EXCLUDED_SCOPE:
-            return p
+def _match(pattern, path):
+    return len(pattern) == len(path) and all(a == "*" or a == b for a, b in zip(pattern, path))
+
+
+def excluded(doc_name, path, value):
+    """The reason an unconsumed leaf is optional metadata, or None: an anchored pattern and a scalar value."""
+    if not (is_scalar(value) or (isinstance(value, list) and all(is_scalar(x) for x in value))):
+        return None
+    for pattern, reason in EXCLUDED_SCOPE[doc_name]:
+        if _match(pattern, path):
+            return reason
     return None
 
 
 def locate_null(prod, key):
-    """The shortest production path ending at ``key`` whose dict holds the null's statistics, or marks it
-    ``not_calibrated`` (a null stopped at B = 0 has no statistic in the frozen output)."""
+    """``tests/<key>`` if production has it, else the shortest path ending at ``key`` whose dict holds statistics or
+    a ``not_calibrated`` marker."""
+    tests = prod.get("tests")
+    if isinstance(tests, dict) and isinstance(tests.get(key), dict):
+        return ("tests", key)
     best = None
 
     def visit(node, path):
@@ -189,39 +245,109 @@ def locate_null(prod, key):
     return best
 
 
-def compare(mine: dict, prod: dict, labels_doc: dict | None = None, prod_sha256: str | None = None) -> dict:
-    L = Ledger(prod)
-    for pk, mv in (("design_sha256", (mine.get("inputs") or {}).get("design_sha256")),
-                   ("v_sha256", ((mine.get("provenance") or {}).get("V") or {}).get("sha256"))):
-        if pk in prod:
-            L.row(pk, "exact", mv, (pk,))
+def _variant_entries(pv):
+    """(name, index-or-key, entry) of a production variant container (dict keyed by name, or list of labelled)."""
+    if isinstance(pv, dict):
+        for lbl, ent in pv.items():
+            yield str(lbl), str(lbl), ent
+    elif isinstance(pv, list):
+        for i, ent in enumerate(pv):
+            if isinstance(ent, dict):
+                yield str(ent.get("label", ent.get("variant", i))), str(i), ent
+
+
+def _compare_variant_family(L, key, rec, base, vkey, mine_members):
+    """Required: every recompute member of this family, each test's k and p; production extras stay unresolved."""
+    pv = L.get(base + (vkey,))
+    if not mine_members and pv in ({}, []):
+        L.consumed.add(base + (vkey,))  # expected empty (a null without M1 members) and empty
+        return
+    found = {}
+    for name, idx, ent in _variant_entries(pv if pv is not None else {}):
+        vk = variant_key(name)
+        if vk is not None and vk not in found:
+            found[vk] = (idx, ent)
+        if isinstance(pv, list) and isinstance(ent, dict) and "label" in ent:
+            L.consumed.add(base + (vkey, idx, "label"))
+    for mname in mine_members:
+        vk = variant_key(mname)
+        if vk not in found:
+            L.missing.append(f"{L.name}:{key}:{vkey}[{mname}]")
+            continue
+        idx, ent = found[vk]
+        for t in TESTS:
+            m = rec["tests"][t]
+            src = m["variants"] if vkey == "variants" else (m.get("robust_kappa3_replace_kappa2") or {}).get("variants", {})
+            mv = src.get(mname)
+            for f in ("k", "p"):
+                L.require(f"{key}:{t}:{vkey}[{mname}]:{f}", base + (vkey, idx, t, f), kind_of(f),
+                          mv.get(f) if mv else None)
+
+
+def _claim_members(rec):
+    return list(rec["tests"]["total"].get("variants", {}))
+
+
+def _robust_m1_members(rec):
+    r = rec["tests"]["total"].get("robust_kappa3_replace_kappa2")
+    return [n for n in (r or {}).get("variants", {}) if n.startswith("m1=")]
+
+
+def compare_evaluate(mine, prod) -> Ledger:
+    L = Ledger(prod, "joint-evaluate.json")
+    L.require("design_sha256", ("design_sha256",), "exact", (mine.get("inputs") or {}).get("design_sha256"))
+    L.require("v_sha256", ("v_sha256",), "exact", ((mine.get("provenance") or {}).get("V") or {}).get("sha256"))
     if "names" in prod:
         L.row("names", "exact", mine.get("names"), ("names",))
+    prov = mine.get("provenance") or {}
     for key, rec in mine["nulls"].items():
         base = locate_null(prod, key)
         if base is None:
-            L.missing.append(key)
+            L.missing.append(f"{L.name}:{key}")
             continue
-        if "not_calibrated" in (L.get(base) or {}):
-            # agree iff the recompute also has B = 0 for this null; the marker's own value is consumed with it
-            L.rows.append({"item": f"{key}:not_calibrated", "kind": "exact", "mine": rec["B"] == 0,
-                           "production": L.get(base + ("not_calibrated",)), "production_path": "/".join(base + ("not_calibrated",)),
-                           "agree": rec["B"] == 0 and L.get(base + ("not_calibrated",)) not in (None, False)})
-            L.consumed.add(base + ("not_calibrated",))
-        for t, pk in (("total", "T_total_obs"), ("shape", "T_shape_obs")):
-            if L.get(base + (pk,)) is not None:
-                L.row(f"{key}:{t}:T_obs", "stat", rec["observed_T"][t], base + (pk,))
-        if L.get(base + ("domain_cells",)) is not None:
-            L.row(f"{key}:domain_cells", "count", rec["domain_cells"], base + ("domain_cells",))
-        L.same_names(f"{key}:process_shift", rec.get("process_shift") or {}, base + ("process_shift",))
+        node = L.get(base)
+        if rec["B"] == 0:
+            if "not_calibrated" in node:
+                mark = node["not_calibrated"]
+                ok = mark is True or (isinstance(mark, str) and mark != "")
+                L.rows.append({"item": f"{key}:not_calibrated", "kind": "exact", "mine": True, "production": mark,
+                               "production_path": f"{L.name}:" + "/".join(base + ("not_calibrated",)), "agree": ok})
+                if ok:
+                    L.consumed.add(base + ("not_calibrated",))
+            else:
+                for t in TESTS:
+                    for f in ("p", "k", "B"):
+                        L.require(f"{key}:{t}:claim_{f}", base + (t, f), kind_of(f), rec["tests"][t].get(f))
+                for pk, mv, kd in (("T_total_obs", rec["observed_T"]["total"], "stat"),
+                                   ("T_shape_obs", rec["observed_T"]["shape"], "stat"),
+                                   ("domain_cells", rec["domain_cells"], "count")):
+                    if L.get(base + (pk,)) is not None:
+                        L.row(f"{key}:{pk}", kd, mv, base + (pk,))
+            continue
+        if "not_calibrated" in node:  # the recompute calibrated this null
+            L.rows.append({"item": f"{key}:not_calibrated", "kind": "exact", "mine": False,
+                           "production": node["not_calibrated"],
+                           "production_path": f"{L.name}:" + "/".join(base + ("not_calibrated",)), "agree": False})
+        L.require(f"{key}:T_total_obs", base + ("T_total_obs",), "stat", rec["observed_T"]["total"])
+        L.require(f"{key}:T_shape_obs", base + ("T_shape_obs",), "stat", rec["observed_T"]["shape"])
+        L.require(f"{key}:domain_cells", base + ("domain_cells",), "count", rec["domain_cells"])
+        for pk in ("observed_jitter_p", "implied_size_of_unshifted_test"):
+            if L.get(base + (pk,)) is None:
+                L.missing.append(f"{L.name}:{key}:{pk}")
+        ps = dict(rec.get("process_shift") or {})
+        ps.update(prov.get(f"process_shift:{key}") or {})
+        L.same_names(f"{key}:process_shift", ps, base + ("process_shift",))
+        L.same_names(f"{key}:m1_shift", prov.get(f"m1_shift:{key}") or {}, base + ("m1_shift",))
         for t in TESTS:
             mt = rec["tests"][t]
-            L.same_names(f"{key}:{t}:claim", mt, base + (t,), skip=("variants", "unshifted"))
+            for f in ("p", "k", "B"):
+                L.require(f"{key}:{t}:claim_{f}", base + (t, f), kind_of(f), mt.get(f))
+            L.same_names(f"{key}:{t}:claim", mt, base + (t,), skip=("variants", "unshifted", "p", "k", "B"))
             if isinstance(L.get(base + (t, "unshifted")), dict):
                 L.same_names(f"{key}:{t}:unshifted", mt.get("unshifted") or {}, base + (t, "unshifted"))
             for stat in ("median", "sd"):
                 pk = f"null_T_{t}_{stat}"
-                if L.get(base + (pk,)) is not None and "null_T_summary" in rec:
+                if L.get(base + (pk,)) is not None:
                     L.row(f"{key}:{pk}", "stat", rec["null_T_summary"][t][stat], base + (pk,))
             jit = mt.get("observed_jitter") or {}
             for stat, mk in (("min", "p_min"), ("median", "p_median"), ("max", "p_max"), ("n", "n")):
@@ -231,115 +357,87 @@ def compare(mine: dict, prod: dict, labels_doc: dict | None = None, prod_sha256:
             for pk, mine_map in (("implied_size_of_unshifted_test", mt.get("implied_size") or {}),
                                  ("median_shift_in_null_sd", mt.get("median_shift_in_null_sd") or {})):
                 for lbl, mv in mine_map.items():
-                    p = L.first(base + (pk, lbl, t), base + (pk, t, lbl), base + (t, pk, lbl))
+                    cands = [base + (pk, x, t) for x in _names_like(L.get(base + (pk,)), lbl)] + \
+                            [base + (pk, t, x) for x in _names_like(L.get(base + (pk, t)), lbl)] + \
+                            [base + (t, pk, x) for x in _names_like(L.get(base + (t, pk)), lbl)]
+                    p = L.first(*cands)
                     if p is not None:
                         L.row(f"{key}:{t}:{pk}[{lbl}]", "p" if pk.startswith("implied") else "stat", mv, p)
-            for vkey in ("variants", "robustness_variants"):
-                pv = L.get(base + (vkey,))
-                if pv is None:
-                    continue
-                mine_var = (mt.get("variants") or {}) if vkey == "variants" else \
-                    ((mt.get("robust_kappa3_retain_kappa2") or {}).get("variants") or {})
-                entries = pv.items() if isinstance(pv, dict) else enumerate(pv)
-                for lbl, ent in entries:
-                    if not isinstance(ent, dict) or not isinstance(ent.get(t), dict):
-                        continue
-                    name = str(ent.get("label", ent.get("variant", lbl)))
-                    vk = variant_key(name)
-                    m = next((v for n, v in mine_var.items() if vk is not None and variant_key(n) == vk), None)
-                    if m is None:
-                        continue  # left UNRESOLVED: unparsable name or no recompute variant of that key
-                    for f in ("k", "p"):
-                        if f in ent[t]:
-                            L.row(f"{key}:{t}:{vkey}[{name}]:{f}", kind_of(f), m.get(f),
-                                  base + (vkey, str(lbl), t, f))
-    mine_dec = {d["test"]: d for d in mine["family"]["decisions"]}
-    mine_rob = {d["test"]: d for d in mine["family"]["keep_both_kappa3_diagnostic"]["holm"]}
-    for field, source, attr in (("decisions", mine_dec, "decision"), ("holm_point", mine_dec, "holm_point"),
-                                ("decisions_robust_kappa", mine_rob, "decision")):
-        if field not in prod:
-            L.missing.append(field)
-            continue
+        _compare_variant_family(L, key, rec, base, "variants", _claim_members(rec))
+        _compare_variant_family(L, key, rec, base, "robustness_variants", _robust_m1_members(rec))
+    fam = mine["family"]
+    sources = (("decisions", {d["test"]: d for d in fam["decisions"]}, "decision"),
+               ("holm_point", {d["test"]: d for d in fam["decisions"]}, "holm_point"),
+               ("decisions_robust_kappa", {d["test"]: d for d in fam["keep_both_kappa3_diagnostic"]["holm"]},
+                "decision"))
+    for field, source, attr in sources:
         for test, md in source.items():
             null, t = test.split(":")
             p = L.first((field, null, t), (field, test))
             if p is None:
-                L.missing.append(f"{field}:{test}")
+                L.missing.append(f"{L.name}:{field}:{test}")
                 continue
             node = L.get(p)
             if isinstance(node, dict):
                 leafk = "decision" if "decision" in node else "label"
-                L.row(f"{field}:{test}", "exact", md.get(attr), p + (leafk,))
+                L.require(f"{field}:{test}", p + (leafk,), "exact", md.get(attr))
                 L.same_names(f"{field}:{test}", md, p, skip=(leafk, "test"))
             else:
                 L.row(f"{field}:{test}", "exact", md.get(attr), p)
-    if "robust_to_the_sub_fine_residual" not in prod:
-        L.missing.append("robust_to_the_sub_fine_residual")
-    else:
-        for test, mv in mine["family"].get("frozen_boolean_equivalent_diagnostic", {}).items():
-            null, t = test.split(":")
-            p = L.first(("robust_to_the_sub_fine_residual", null, t), ("robust_to_the_sub_fine_residual", test))
-            if p is None:
-                L.missing.append(f"robust_to_the_sub_fine_residual:{test}")
-            else:
-                L.row(f"robust_to_the_sub_fine_residual:{test}", "exact", mv, p)
-    if isinstance(prod.get("not_calibrated"), list):
+    for test, mv in fam.get("frozen_boolean_equivalent_diagnostic", {}).items():
+        null, t = test.split(":")
+        p = L.first(("robust_to_the_sub_fine_residual", null, t), ("robust_to_the_sub_fine_residual", test))
+        if p is None:
+            L.missing.append(f"{L.name}:robust_to_the_sub_fine_residual:{test}")
+        else:
+            L.row(f"robust_to_the_sub_fine_residual:{test}", "exact", mv, p)
+    if "not_calibrated" in prod:
         L.row("not_calibrated", "exact", sorted(k for k, r in mine["nulls"].items() if r["B"] == 0),
               ("not_calibrated",))
     ppow = prod.get("power") if isinstance(prod.get("power"), dict) else {}
+    if not mine.get("power") and ppow == {} and "power" in prod:
+        L.consumed.add(("power",))  # no power set on either side
     for sk, mp in mine.get("power", {}).items():
         if sk not in ppow:
-            L.missing.append(f"power:{sk}")
+            L.missing.append(f"{L.name}:power:{sk}")
             continue
         base = ("power", sk)
-        for pk, mv, kd in (("n", mp.get("n_present"), "count"), ("declared", mp.get("n_declared"), "count"),
-                           ("null", mp.get("null"), "exact"), ("incomplete", not mp.get("complete", False), "exact")):
+        L.require(f"power:{sk}:n", base + ("n",), "count", mp.get("n_present"))
+        for pk, mv, kd in (("declared", mp.get("n_declared"), "count"), ("null", mp.get("null"), "exact"),
+                           ("incomplete", not mp.get("complete", False), "exact")):
             if L.get(base + (pk,)) is not None:
                 L.row(f"power:{sk}:{pk}", kd, mv, base + (pk,))
+        if not mp.get("n_present"):
+            continue
         for t in TESTS:
-            for lvl in ("0.05", "0.005"):
-                for mine_rule, prod_rule in (("rank_unshifted", "unshifted"), ("rank_claim", "claim_rule"),
-                                             ("determined_claim", "claim_rule_determined")):
+            for lvl in LEVELS:
+                for mine_rule, prod_rule in POWER_RULES:
                     mr = mp.get(t, {}).get(lvl, {}).get(mine_rule) or {}
                     p = L.first(base + (t, prod_rule, lvl), base + (prod_rule, t, lvl),
                                 base + ("levels", lvl, t, prod_rule), base + (t, lvl, prod_rule),
                                 base + (prod_rule, lvl, t))
+                    label = f"power:{sk}:{t}:{lvl}:{mine_rule}"
                     if p is None:
-                        continue
-                    if isinstance(L.get(p), dict):
-                        L.same_names(f"power:{sk}:{t}:{lvl}:{mine_rule}", mr, p)
+                        L.missing.append(f"{L.name}:{label}")
+                    elif isinstance(L.get(p), dict):
+                        L.same_names(label, mr, p)
+                        if not any(r["item"].startswith(label + ":") for r in L.rows):
+                            L.missing.append(f"{L.name}:{label} (no comparable field)")
                     else:
-                        L.row(f"power:{sk}:{t}:{lvl}:{mine_rule}", "p", mr.get("power"), p)
-    unresolved, excl = [], {}
-    label_rows = []
-    if labels_doc is None:
-        L.missing.append("robust-labels.json (not given)")
-    else:
-        label_rows = compare_labels_doc(mine, labels_doc, prod_sha256, L, unresolved)
-    for p, v in walk(prod):
-        if L.is_consumed(p):
-            continue
-        e = excluded(p)
-        if e:
-            excl[e] = excl.get(e, 0) + 1
-            continue
-        unresolved.append({"path": "/".join(p), "value": v})
-    rows = L.rows + label_rows
-    bad = [r for r in rows if not r["agree"]]
-    if bad:
-        verdict = "DISCREPANT"
-    elif L.missing or unresolved or L.pending:
-        verdict = "INCOMPLETE"
-    else:
-        verdict = "AGREE"
-    return {"schema": "s5p-recompute-compare/2", "verdict": verdict, "items": len(rows),
-            "agree": len(rows) - len(bad), "discrepancies": bad, "not_located": L.missing,
-            "unresolved_production_leaves": unresolved, "pending_ruling": L.pending,
-            "excluded_by_scope": {"counts": excl, "scope": EXCLUDED_SCOPE}, "rows": rows}
+                        L.row(label, "p", mr.get("power"), p)
+    return L
+
+
+def _names_like(container, mine_label):
+    """Production keys of ``container`` naming the same variant as the recompute's label."""
+    if not isinstance(container, dict):
+        return []
+    vk = variant_key(mine_label.replace("c=", "")) or variant_key(mine_label)
+    return [k for k in container if variant_key(k) == vk] if vk else []
 
 
 def family_names(mine: dict, which: str) -> dict:
-    """Per test, the variant names of the recompute's kappa = 3 family ('replace' ruled, 'retain' keep-both)."""
+    """Per test, the variant names of the recompute's κ = 3 family ('replace' ruled, 'retain' keep-both)."""
     out = {}
     for key, rec in mine["nulls"].items():
         for t in TESTS:
@@ -349,38 +447,46 @@ def family_names(mine: dict, which: str) -> dict:
     return out
 
 
-def compare_labels_doc(mine, doc, prod_sha256, L, unresolved) -> list:
-    LL = Ledger(doc)
+def compare_labels_doc(mine, doc, prod_sha256) -> Ledger:
+    LL = Ledger(doc, "robust-labels.json")
     fam = mine["family"]
-    for pk, mv in (("evaluate_sha256", prod_sha256), ("design_sha256", (mine.get("inputs") or {}).get("design_sha256")),
-                   ("alpha_family", mine.get("alpha_family"))):
-        if pk in doc and mv is not None:
-            LL.row(f"robust-labels.json:{pk}", "p" if pk == "alpha_family" else "exact", mv, (pk,))
-    if doc.get("labels") is None:
-        L.missing.append("robust-labels.json:labels")
+    if prod_sha256 is None:  # the evaluate file's digest was not computed: nothing to check against, not a discrepancy
+        LL.missing.append(f"{LL.name}:evaluate_sha256 (the evaluate file's digest was not computed)")
+        if "evaluate_sha256" in doc:
+            LL.consumed.add(("evaluate_sha256",))
+    else:
+        LL.require("evaluate_sha256", ("evaluate_sha256",), "exact", prod_sha256)
+    LL.require("design_sha256", ("design_sha256",), "exact", (mine.get("inputs") or {}).get("design_sha256"))
+    LL.require("alpha_family", ("alpha_family",), "p", mine.get("alpha_family"))
 
     def per_test(field_path, src, what):
         if LL.get(field_path) is None:
+            LL.missing.append(f"{LL.name}:{'/'.join(field_path)}")
             return
         for test, mv in src.items():
             null, t = test.split(":")
             p = LL.first(field_path + (test,), field_path + (null, t))
+            label = f"{'/'.join(field_path)}:{test}"
             if p is None:
-                L.missing.append(f"robust-labels.json:{'/'.join(field_path)}:{test}")
+                LL.missing.append(f"{LL.name}:{label}")
                 continue
             node = LL.get(p)
-            label = f"robust-labels.json:{'/'.join(field_path)}:{test}"
             if what == "names":
-                theirs = [variant_key(x) for x in (node or [])]
-                if any(x is None for x in theirs):
+                ok_type = isinstance(node, list) and all(isinstance(x, str) for x in node)
+                keys = [variant_key(x) for x in node] if ok_type else None
+                if ok_type and any(k is None for k in keys):
                     continue  # an unparsable name: left UNRESOLVED
-                LL.rows.append({"item": label, "kind": "exact", "mine": mv, "production": node,
-                                "production_path": "/".join(p),
-                                "agree": sorted(theirs) == sorted(variant_key(x) for x in mv)})
-                LL.consumed.add(tuple(p))
-            elif what == "holm" and isinstance(node, dict):
-                LL.row(label + ":decision", "exact", mv.get("decision"), p + ("decision",))
-                LL.same_names(label, mv, p, skip=("decision", "test"))
+                LL.rows.append({"item": label, "kind": "names", "mine": mv, "production": node,
+                                "production_path": f"{LL.name}:" + "/".join(p),
+                                "agree": ok_type and sorted(keys) == sorted(variant_key(x) for x in mv)})
+                if ok_type:
+                    LL.consumed.add(tuple(p))
+            elif what == "holm":
+                if not isinstance(node, dict):
+                    LL.row(label, "exact", mv.get("decision"), p)
+                    continue
+                for f in ("p", "k", "B", "threshold", "interval", "level", "decision"):
+                    LL.require(f"{label}:{f}", p + (f,), kind_of(f), mv.get(f))
             else:
                 LL.row(label, "exact", mv, p)
 
@@ -391,23 +497,73 @@ def compare_labels_doc(mine, doc, prod_sha256, L, unresolved) -> list:
              fam.get("frozen_boolean_equivalent_diagnostic", {}), "value")
     per_test(("diagnostics", "keep_both", "labels"), fam["keep_both_kappa3_diagnostic"]["labels"], "value")
     per_test(("diagnostics", "keep_both", "family"), family_names(mine, "retain"), "names")
-    for p, v in walk(doc):
-        if not LL.is_consumed(p) and not excluded(p):
-            unresolved.append({"path": "robust-labels.json/" + "/".join(p), "value": v})
-    return LL.rows
+    return LL
 
 
-EXIT = {"AGREE": 0, "DISCREPANT": 1, "INCOMPLETE": 2}
+def account(ledger: Ledger, doc_name: str):
+    """Every leaf of a production document: consumed, excluded by an anchored pattern, or unresolved."""
+    unresolved, excl = [], []
+    for p, v in walk(ledger.doc):
+        if ledger.is_consumed(p):
+            continue
+        reason = excluded(doc_name, p, v)
+        if reason:
+            excl.append({"path": f"{doc_name}:" + "/".join(p), "reason": reason})
+        else:
+            unresolved.append({"path": f"{doc_name}:" + "/".join(p), "value": v})
+    return unresolved, excl
+
+
+def compare(mine: dict, prod: dict, labels_doc: dict | None = None, prod_sha256: str | None = None,
+            labels_missing_reason: str | None = None) -> dict:
+    L = compare_evaluate(mine, prod)
+    unresolved, excl = account(L, "joint-evaluate.json")
+    rows, missing = list(L.rows), list(L.missing)
+    if labels_doc is None:
+        missing.append(f"robust-labels.json ({labels_missing_reason or 'not given'})")
+    else:
+        LL = compare_labels_doc(mine, labels_doc, prod_sha256)
+        u2, e2 = account(LL, "robust-labels.json")
+        rows += LL.rows
+        missing += LL.missing
+        unresolved += u2
+        excl += e2
+    bad = [r for r in rows if not r["agree"]]
+    verdict = "DISCREPANT" if bad else ("INCOMPLETE" if missing or unresolved else "AGREE")
+    return {"schema": "s5p-recompute-compare/3", "verdict": verdict, "items": len(rows),
+            "agree": len(rows) - len(bad), "discrepancies": bad, "not_located": missing,
+            "unresolved_production_leaves": unresolved,
+            "excluded_by_scope": {"paths": excl, "scope": {d: [["/".join(p), r] for p, r in v]
+                                                           for d, v in EXCLUDED_SCOPE.items()}},
+            "rows": rows}
+
+
+EXIT = {"AGREE": 0, "DISCREPANT": 1, "INCOMPLETE": 2, "ERROR": 3}
 
 
 def compare_files(mine_path: str, prod_path: str, out_path: str, labels_path: str | None = None) -> int:
-    mine = json.loads(Path(mine_path).read_text())
-    prod = json.loads(Path(prod_path).read_text())
-    labels = json.loads(Path(labels_path).read_text()) if labels_path else None
-    rep = compare(mine, prod, labels, hashlib.sha256(Path(prod_path).read_bytes()).hexdigest())
+    out = Path(out_path)
+    if out.exists():
+        out.unlink()  # a failed run must never leave an earlier report in place
+    try:
+        mine = json.loads(Path(mine_path).read_text())
+        prod_bytes = Path(prod_path).read_bytes()
+        prod = json.loads(prod_bytes)
+        labels, why = None, None
+        if labels_path:
+            if Path(labels_path).exists():
+                labels = json.loads(Path(labels_path).read_text())
+            else:
+                why = f"file does not exist: {labels_path}"
+        rep = compare(mine, prod, labels, hashlib.sha256(prod_bytes).hexdigest(), why)
+    except Exception as exc:  # noqa: BLE001 - any failure is an ERROR verdict, never a comparison result
+        rep = {"schema": "s5p-recompute-compare/3", "verdict": "ERROR", "error": f"{type(exc).__name__}: {exc}"}
     rep["inputs"] = {"mine": mine_path, "production": prod_path, "robust_labels": labels_path}
-    Path(out_path).write_text(json.dumps(rep, indent=1, sort_keys=True, default=str) + "\n")
-    print(f"{rep['verdict']}: {rep['agree']}/{rep['items']} rows agree; {len(rep['discrepancies'])} discrepancies; "
-          f"{len(rep['unresolved_production_leaves'])} unresolved leaves; {len(rep['pending_ruling'])} pending a "
-          f"ruling; not located: {rep['not_located']}; wrote {out_path}")
+    out.write_text(json.dumps(rep, indent=1, sort_keys=True, default=str) + "\n")
+    if rep["verdict"] == "ERROR":
+        print(f"ERROR: {rep['error']}; wrote {out_path}")
+    else:
+        print(f"{rep['verdict']}: {rep['agree']}/{rep['items']} rows agree; {len(rep['discrepancies'])} "
+              f"discrepancies; {len(rep['unresolved_production_leaves'])} unresolved leaves; "
+              f"{len(rep['not_located'])} required items not located; wrote {out_path}")
     return EXIT[rep["verdict"]]

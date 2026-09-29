@@ -638,6 +638,13 @@ class Evaluator:
         eps = np.array([prediction_error(seed0, p.seed, var) for p in prods]) if prods else np.zeros((0, self.geom.n))
         ps = load_shift_file(self.design["process_shift"][key], self.names, f"process_shift:{key}")
         m1s = load_shift_file(self.design["m1_shift"][key], self.names, f"m1_shift:{key}")
+        # the enforced shift inputs, so a comparison can check production's echoes of them instead of excluding them
+        psd, m1d = self.design["process_shift"][key], self.design["m1_shift"][key]
+        self.provenance[f"process_shift:{key}"] = (
+            {"none": psd["none"]} if "none" in psd else {"path": psd["path"], "sha256": ps["sha256"], "mode": psd["mode"]})
+        self.provenance[f"m1_shift:{key}"] = (
+            {"none": m1d["none"]} if "none" in m1d else
+            {"path": m1d["path"], "sha256": m1s["sha256"], "kappa": m1d["kappa"], "kappa_robust": m1d["kappa_robust"]})
         return {"spec": spec, "mu": mu, "var": var, "ts": ts, "f_cal": f_cal, "eps": eps, "ps": ps, "m1": m1s,
                 "seed0": seed0}
 

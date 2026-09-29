@@ -471,9 +471,10 @@ class A8Sensitivity(unittest.TestCase):
 
 
 class Compare(unittest.TestCase):
-    """The comparer's verdict: AGREE only when every production leaf is consumed or excluded by the documented
-    scope; an unmapped required field, an unknown variant name or a missing labels file leaves it INCOMPLETE; a
-    changed value makes it DISCREPANT. The ruled labels and the frozen keep-both fields are compared separately."""
+    """The comparer (review REVIEW-20260929-s5p-recompute-comparer.md, F-1..F-8): AGREE only when every REQUIRED leaf
+    is located and agrees, and every production leaf is consumed or excluded by an anchored scalar pattern; strict
+    types; a B = 0 null needs a scalar marker; the ruled robustness members are m1 +-3 only; ERROR/exit 3 on
+    failure, and a stale report is never left behind."""
 
     def setUp(self):
         self.dir = Path(tempfile.mkdtemp(prefix="s5p_recompute_cmp_"))
@@ -481,220 +482,343 @@ class Compare(unittest.TestCase):
         t.calibration("MnvTune_v1", 60)
         t.calibration("GiBUU_2019", 60)
         self.mine = R.jsonable(R.evaluate(t.design(), t.v_path, t.contract, log=lambda *a: None))
+        self.mine["inputs"] = {"design_sha256": "d" * 64}
 
     def tearDown(self):
         shutil.rmtree(self.dir, ignore_errors=True)
 
+    @staticmethod
+    def prod_name(n):  # production-form variant names, as the owner states them ("0.5", "m1+3")
+        return str(float(n[2:])) if n.startswith("c=") else n.replace("m1=", "m1")
+
     def production_like(self):
+        """A joint-evaluate.json and a robust-labels.json (schema /2) in production form, agreeing with self.mine."""
         m = self.mine
-        tests, dec, hp, rk, rb = {}, {}, {}, {}, {}
+        pn = self.prod_name
+        tests = {}
         for key, rec in m["nulls"].items():
-            tests[key] = {"domain_cells": rec["domain_cells"], "T_total_obs": rec["observed_T"]["total"],
-                          "T_shape_obs": rec["observed_T"]["shape"]}
+            if rec["B"] == 0:
+                tests[key] = {"not_calibrated": "budget stop at B = 0"}
+                continue
+            r = {"domain_cells": rec["domain_cells"], "T_total_obs": rec["observed_T"]["total"],
+                 "T_shape_obs": rec["observed_T"]["shape"], "variants": {}, "robustness_variants": {},
+                 "observed_jitter_p": {}, "implied_size_of_unshifted_test": {},
+                 "process_shift": {"path": m["provenance"][f"process_shift:{key}"]["path"],
+                                   "sha256": m["provenance"][f"process_shift:{key}"]["sha256"],
+                                   "mode": m["provenance"][f"process_shift:{key}"]["mode"],
+                                   "magnitude": rec["process_shift"]["magnitude"]}}
             for t in ("total", "shape"):
-                tests[key][t] = {x: rec["tests"][t][x] for x in ("p", "k", "B")}
-        rob = {d["test"]: d["decision"] for d in m["family"]["keep_both_kappa3_diagnostic"]["holm"]}  # frozen field
+                tr = rec["tests"][t]
+                r[t] = {x: tr[x] for x in ("p", "k", "B")}
+                for n, v in tr["variants"].items():
+                    r["variants"].setdefault(pn(n), {})[t] = {"k": v["k"], "p": v["p"]}
+                rob = tr.get("robust_kappa3_replace_kappa2")
+                for n, v in ((rob or {}).get("variants") or {}).items():
+                    if n.startswith("m1="):
+                        r["robustness_variants"].setdefault(pn(n), {})[t] = {"k": v["k"], "p": v["p"]}
+                j = tr["observed_jitter"]
+                r["observed_jitter_p"][t] = {"min": j["p_min"], "median": j["p_median"], "max": j["p_max"], "n": j["n"]}
+                for n, v in tr["implied_size"].items():
+                    r["implied_size_of_unshifted_test"].setdefault(pn(n), {})[t] = v
+            tests[key] = r
+        dec, hp, rk, rb = {}, {}, {}, {}
+        keep = {d["test"]: d["decision"] for d in m["family"]["keep_both_kappa3_diagnostic"]["holm"]}
         for d in m["family"]["decisions"]:
-            key, t = d["test"].split(":")
-            dec.setdefault(key, {})[t] = d["decision"]
-            hp.setdefault(key, {})[t] = d["holm_point"]
-            rk.setdefault(key, {})[t] = rob[d["test"]]
-            rb.setdefault(key, {})[t] = m["family"]["frozen_boolean_equivalent_diagnostic"][d["test"]]
-        prod = {"schema": "x", "v_sha256": m["provenance"]["V"]["sha256"], "names": m["names"], "tests": tests,
-                "decisions": dec, "holm_point": hp, "decisions_robust_kappa": rk,
-                "robust_to_the_sub_fine_residual": rb, "power": {}}
-        labels = self.labels_v2()
+            dec[d["test"]] = d["decision"]
+            hp[d["test"]] = d["holm_point"]
+            rk[d["test"]] = keep[d["test"]]
+            rb[d["test"]] = m["family"]["frozen_boolean_equivalent_diagnostic"][d["test"]]
+        prod = {"schema": "x", "design_sha256": "d" * 64, "v_sha256": m["provenance"]["V"]["sha256"],
+                "names": m["names"], "tests": tests, "decisions": dec, "holm_point": hp,
+                "decisions_robust_kappa": rk, "robust_to_the_sub_fine_residual": rb, "power": {}}
+        fam = m["family"]
+        members = lambda which: {test: [pn(n) for n in v] for test, v in C_family(m, which).items()}  # noqa: E731
+        labels = {"schema": "s5p-robust-labels/2", "labels": dict(fam["robust_labels"]),
+                  "decisions_kappa3_replace": {d["test"]: {x: d[x] for x in ("p", "k", "B", "threshold", "interval",
+                                                                            "level", "decision")}
+                                               for d in fam["holm_at_kappa_robust"]},
+                  "family_members": members("replace"),
+                  "diagnostics": {"frozen_boolean_robust_to_the_sub_fine_residual":
+                                  dict(fam["frozen_boolean_equivalent_diagnostic"]),
+                                  "keep_both": {"family": members("retain"),
+                                                "labels": dict(fam["keep_both_kappa3_diagnostic"]["labels"])}},
+                  "evaluate_sha256": "e" * 64, "design_sha256": "d" * 64, "alpha_family": 0.05,
+                  "code_sha256": "c" * 64, "ruling": "RULING-20260929-s5p-A7-robustness-flag.md",
+                  "evaluate": "/x/joint-evaluate.json"}
         return prod, labels
 
-    @staticmethod
-    def prod_name(n):  # production-style variant names, as the campaign describes them ("0.5", "m1+3")
-        return n.replace("c=", "").replace("m1=", "m1") if not n.startswith("c=") else str(float(n[2:]))
-
-    def labels_v2(self):
-        """A robust-labels.json in the campaign's schema s5p-robust-labels/2 (flat '<null>:<test>' keys)."""
-        m = self.mine
-        m.setdefault("inputs", {})["design_sha256"] = "d" * 64
-        fam = m["family"]
-        members = lambda which: {f"{k}:{t}": [self.prod_name(n) for n in  # noqa: E731
-                                              (r["tests"][t].get(f"robust_kappa3_{which}_kappa2") or r["tests"][t]).get("variants", {})]
-                                 for k, r in m["nulls"].items() for t in ("total", "shape")}
-        return {"schema": "s5p-robust-labels/2", "labels": dict(fam["robust_labels"]),
-                "decisions_kappa3_replace": {d["test"]: {x: d[x] for x in ("p", "k", "B", "threshold", "interval",
-                                                                          "level", "decision")}
-                                             for d in fam["holm_at_kappa_robust"]},
-                "family_members": members("replace"),
-                "diagnostics": {"frozen_boolean_robust_to_the_sub_fine_residual":
-                                dict(fam["frozen_boolean_equivalent_diagnostic"]),
-                                "keep_both": {"family": members("retain"),
-                                              "labels": dict(fam["keep_both_kappa3_diagnostic"]["labels"])}},
-                "evaluate_sha256": "e" * 64, "design_sha256": "d" * 64, "alpha_family": 0.05,
-                "code_sha256": "c" * 64, "ruling": "RULING-20260929-s5p-A7-robustness-flag.md"}
-
-    def test_agree_only_when_everything_is_accounted_for(self):
+    def cmp(self, prod, labels, sha="e" * 64):
         import s5p_recompute_compare as C
-        prod, labels = self.production_like()
-        rep = C.compare(self.mine, prod, labels, prod_sha256="e" * 64)
-        self.assertEqual((rep["verdict"], rep["discrepancies"], rep["unresolved_production_leaves"],
-                          rep["not_located"], rep["pending_ruling"]), ("AGREE", [], [], [], []))
-        self.assertEqual(rep["excluded_by_scope"]["counts"], {"schema": 1})
-        items = {r["item"].split(":")[0] + ":" + r["item"].split(":")[1] for r in rep["rows"]
-                 if r["item"].startswith("robust-labels.json")}
-        for f in ("labels", "decisions_kappa3_replace", "family_members",
-                  "diagnostics/frozen_boolean_robust_to_the_sub_fine_residual", "diagnostics/keep_both/labels",
-                  "diagnostics/keep_both/family", "evaluate_sha256", "design_sha256", "alpha_family"):
-            self.assertIn(f"robust-labels.json:{f}", items)
+        return C.compare(self.mine, prod, labels, prod_sha256=sha)
 
-    def test_unmapped_required_field_blocks_agreement(self):
-        import s5p_recompute_compare as C
-        prod, labels = self.production_like()
-        prod["tests"]["GiBUU_2019"]["total"]["some_new_quantity"] = 0.3
-        rep = C.compare(self.mine, prod, labels, prod_sha256="e" * 64)
-        self.assertEqual(rep["verdict"], "INCOMPLETE")
-        self.assertEqual([u["path"] for u in rep["unresolved_production_leaves"]],
-                         ["tests/GiBUU_2019/total/some_new_quantity"])
-        prod, labels = self.production_like()
-        prod["family_summary"] = {"rejections": 1}  # an unknown top-level field is required too
-        self.assertEqual(C.compare(self.mine, prod, labels, prod_sha256="e" * 64)["verdict"], "INCOMPLETE")
+    def assertVerdict(self, want, prod, labels, sha="e" * 64):
+        rep = self.cmp(prod, labels, sha)
+        self.assertEqual(rep["verdict"], want, (rep["discrepancies"][:3], rep["not_located"][:5],
+                                                rep["unresolved_production_leaves"][:5]))
+        return rep
 
-    def test_unknown_variant_name_is_unresolved(self):
-        import s5p_recompute_compare as C
-        k0 = self.mine["nulls"]["GiBUU_2019"]["tests"]["total"]["variants"]["c=0"]["k"]
+    def test_baseline_agrees_with_everything_accounted_for(self):
         prod, labels = self.production_like()
-        prod["tests"]["GiBUU_2019"]["variants"] = [{"label": "0.0", "total": {"k": k0}},
-                                                   {"label": "kappa-two-up", "total": {"k": 3}}]
-        rep = C.compare(self.mine, prod, labels, prod_sha256="e" * 64)
-        self.assertEqual(rep["discrepancies"], [])
-        self.assertEqual(rep["verdict"], "INCOMPLETE")
-        self.assertIn("tests/GiBUU_2019/variants/1/total/k", [u["path"] for u in rep["unresolved_production_leaves"]])
-        self.assertNotIn("tests/GiBUU_2019/variants/0/total/k", [u["path"] for u in rep["unresolved_production_leaves"]])
-        # a parsable production name ("m1+2") maps to the recompute's "m1=+2": a wrong count is then a discrepancy
-        kp2 = self.mine["nulls"]["GiBUU_2019"]["tests"]["total"]["variants"]["m1=+2"]["k"]
-        prod["tests"]["GiBUU_2019"]["variants"][1] = {"label": "m1+2", "total": {"k": kp2 + 1}}
-        bad = C.compare(self.mine, prod, labels, prod_sha256="e" * 64)["discrepancies"]
-        self.assertEqual([b["item"] for b in bad], ["GiBUU_2019:total:variants[m1+2]:k"])
+        rep = self.assertVerdict("AGREE", prod, labels)
+        self.assertEqual((rep["not_located"], rep["unresolved_production_leaves"]), ([], []))
+        self.assertEqual(sorted(e["path"] for e in rep["excluded_by_scope"]["paths"]),
+                         ["joint-evaluate.json:schema", "robust-labels.json:code_sha256", "robust-labels.json:evaluate",
+                          "robust-labels.json:ruling", "robust-labels.json:schema"])
 
-    def test_excluded_metadata_does_not_block(self):
-        import s5p_recompute_compare as C
+    def test_F1_missing_required_quantities(self):
+        G = "GiBUU_2019"
+        cases = {
+            "claim p": lambda p, l: p["tests"][G]["total"].pop("p"),
+            "claim k and B": lambda p, l: (p["tests"][G]["total"].pop("k"), p["tests"][G]["total"].pop("B")),
+            "whole test": lambda p, l: p["tests"][G].pop("total"),
+            "all variants": lambda p, l: p["tests"][G].pop("variants"),
+            "one variant": lambda p, l: p["tests"][G]["variants"].pop("m1-2"),
+            "robustness empty": lambda p, l: p["tests"][G].__setitem__("robustness_variants", {}),
+            "variant p": lambda p, l: p["tests"][G]["variants"]["m1+2"]["total"].pop("p"),
+            "null reduced to T": lambda p, l: p["tests"].__setitem__(G, {"T_total_obs": p["tests"][G]["T_total_obs"]}),
+            "jitter p": lambda p, l: p["tests"][G].pop("observed_jitter_p"),
+            "implied size": lambda p, l: p["tests"][G].pop("implied_size_of_unshifted_test"),
+            "design digest": lambda p, l: p.pop("design_sha256"),
+            "V digest": lambda p, l: p.pop("v_sha256"),
+        }
+        for name, mut in cases.items():
+            prod, labels = self.production_like()
+            mut(prod, labels)
+            with self.subTest(name):
+                self.assertVerdict("INCOMPLETE", prod, labels)
+
+    def test_F1_power_requirements(self):
+        prod, labels = self.production_like()
+        self.mine["power"] = {"P1": {"null": "MnvTune_v1", "n_declared": 12, "n_present": 10, "complete": False,
+                                     "total": {}, "shape": {}}}
+        mp = self.mine["power"]["P1"]
+        pw = {"n": 10, "declared": 12, "null": "MnvTune_v1", "incomplete": True}
+        for t in ("total", "shape"):
+            pw[t] = {}
+            for rule, prule in (("rank_unshifted", "unshifted"), ("rank_claim", "claim_rule"),
+                                ("determined_claim", "claim_rule_determined")):
+                pw[t][prule] = {}
+                for lvl in ("0.05", "0.005"):
+                    mp[t].setdefault(lvl, {})[rule] = {"count": 3, "power": 0.3, "interval": [0.1, 0.6]}
+                    pw[t][prule][lvl] = 0.3
+        prod["power"] = {"P1": pw}
+        self.assertVerdict("AGREE", prod, labels)
+        for mut in (lambda: prod["power"].__setitem__("P1", {}), lambda: pw.pop("shape"),
+                    lambda: pw["total"]["claim_rule"].pop("0.005"), lambda: pw.pop("n")):
+            import copy
+            saved = copy.deepcopy(prod["power"])
+            mut()
+            with self.subTest(str(mut)):
+                self.assertVerdict("INCOMPLETE", prod, labels)
+            prod["power"] = saved
+            pw = prod["power"]["P1"]
+
+    def test_F2_labels_document_requirements(self):
+        cases = {
+            "decisions_kappa3_replace": lambda l: l.pop("decisions_kappa3_replace"),
+            "family_members": lambda l: l.pop("family_members"),
+            "diagnostics": lambda l: l.pop("diagnostics"),
+            "keep_both family": lambda l: l["diagnostics"]["keep_both"].pop("family"),
+            "evaluate_sha256": lambda l: l.pop("evaluate_sha256"),
+            "design_sha256": lambda l: l.pop("design_sha256"),
+            "alpha_family": lambda l: l.pop("alpha_family"),
+            "replace p": lambda l: l["decisions_kappa3_replace"]["GiBUU_2019:total"].pop("p"),
+            "replace level": lambda l: l["decisions_kappa3_replace"]["GiBUU_2019:total"].pop("level"),
+            "one label": lambda l: l["labels"].pop("MnvTune_v1:shape"),
+        }
+        for name, mut in cases.items():
+            prod, labels = self.production_like()
+            mut(labels)
+            with self.subTest(name):
+                self.assertVerdict("INCOMPLETE", prod, labels)
+        prod, labels = self.production_like()
+        self.assertVerdict("INCOMPLETE", prod, None)
+
+    def test_F3_strict_types(self):
+        cases = {
+            "bool as int": lambda p, l: p["robust_to_the_sub_fine_residual"].__setitem__(
+                "MnvTune_v1:total", int(p["robust_to_the_sub_fine_residual"]["MnvTune_v1:total"])),
+            "p as string": lambda p, l: p["tests"]["GiBUU_2019"]["total"].__setitem__(
+                "p", str(p["tests"]["GiBUU_2019"]["total"]["p"])),
+            "members as dict": lambda p, l: l["family_members"].__setitem__(
+                "GiBUU_2019:total", {n: {"k": 999} for n in l["family_members"]["GiBUU_2019:total"]}),
+            "count as bool": lambda p, l: p["tests"]["GiBUU_2019"].__setitem__("domain_cells", True),
+            "decision as list": lambda p, l: p["decisions"].__setitem__("MnvTune_v1:total", ["rejected"]),
+        }
+        for name, mut in cases.items():
+            prod, labels = self.production_like()
+            mut(prod, labels)
+            with self.subTest(name):
+                self.assertNotEqual(self.cmp(prod, labels)["verdict"], "AGREE")
+
+    def test_F4_exclusions_are_anchored_and_scalar(self):
+        G = "GiBUU_2019"
+        hidden = {
+            "under kappa": lambda p, l: p["tests"][G]["total"].__setitem__("kappa", {"p": 0.9, "k": 55}),
+            "top ruling": lambda p, l: p.__setitem__("ruling", {"decisions": {"x": "rejected"}}),
+            "evaluate wrapper": lambda p, l: p.__setitem__("evaluate", {"tests": {}}),
+            "null reason": lambda p, l: p["tests"][G].__setitem__("reason", "budget"),
+            "mode dict": lambda p, l: p["tests"][G].__setitem__("mode", {"a": {"p": 0.5}}),
+            "labels keep_both ruling": lambda p, l: l["diagnostics"]["keep_both"].__setitem__("ruling", {"x": "y"}),
+            "schema not at top": lambda p, l: p["tests"][G].__setitem__("schema", "v9"),
+            "lateral_symmetry deep": lambda p, l: p["tests"][G].__setitem__("lateral_symmetry", {"b": {"c": 1.0}}),
+            "schema as dict": lambda p, l: p.__setitem__("schema", {"p": 0.5}),
+        }
+        for name, mut in hidden.items():
+            prod, labels = self.production_like()
+            mut(prod, labels)
+            with self.subTest(name):
+                self.assertVerdict("INCOMPLETE", prod, labels)
         prod, labels = self.production_like()
         prod.update({"utc": "2026-10-01T00:00:00Z", "lateral_symmetry": {"BeamAngleX": {"corr": -0.3}},
-                     "shrinkage": 0.015})
-        rep = C.compare(self.mine, prod, labels, prod_sha256="e" * 64)
-        self.assertEqual(rep["verdict"], "AGREE")
-        self.assertEqual(rep["excluded_by_scope"]["counts"], {"schema": 1, "utc": 1, "lateral_symmetry": 1,
-                                                              "shrinkage": 1})
+                     "shrinkage": 0.015, "files_first_last": ["a", "b"]})
+        rep = self.assertVerdict("AGREE", prod, labels)
+        self.assertIn("joint-evaluate.json:lateral_symmetry/BeamAngleX/corr",
+                      [e["path"] for e in rep["excluded_by_scope"]["paths"]])
 
-    def test_discrepancy_and_missing_inputs(self):
-        import s5p_recompute_compare as C
+    def test_F5_digests_are_compared_not_excluded(self):
         prod, labels = self.production_like()
-        prod["tests"]["GiBUU_2019"]["shape"]["k"] += 1
-        self.assertEqual(C.compare(self.mine, prod, labels, prod_sha256="e" * 64)["verdict"], "DISCREPANT")
+        prod["tests"]["GiBUU_2019"]["process_shift"]["sha256"] = "0" * 64
+        self.assertVerdict("DISCREPANT", prod, labels)
         prod, labels = self.production_like()
-        self.assertEqual(C.compare(self.mine, prod, None)["verdict"], "INCOMPLETE")
+        prod["tests"]["GiBUU_2019"]["process_shift"]["mode"] = "raw"
+        self.assertVerdict("DISCREPANT", prod, labels)
         prod, labels = self.production_like()
-        del prod["robust_to_the_sub_fine_residual"]
-        rep = C.compare(self.mine, prod, labels, prod_sha256="e" * 64)
-        self.assertEqual((rep["verdict"], rep["not_located"]), ("INCOMPLETE", ["robust_to_the_sub_fine_residual"]))
+        prod.pop("v_sha256")
+        prod["provenance"] = {"V": {"sha256": "wrong"}}
+        self.assertVerdict("INCOMPLETE", prod, labels)
         prod, labels = self.production_like()
-        first = next(iter(labels["labels"]))
-        labels["labels"][first] = "something else"
-        self.assertEqual(C.compare(self.mine, prod, labels, prod_sha256="e" * 64)["verdict"], "DISCREPANT")
+        prod["v_sha256"] = "0" * 64
+        self.assertVerdict("DISCREPANT", prod, labels)
 
-    def test_ruled_labels_and_frozen_keep_both_fields_are_compared_separately(self):
-        import s5p_recompute_compare as C
-        prod, labels = self.production_like()
-        fam = self.mine["family"]
-        test = fam["decisions"][2]["test"]
-        null, t = test.split(":")
-        # production's labels file must carry the RULED (replace) label: the keep-both label is not accepted there
-        wrong = R.NOT_ROBUST if fam["robust_labels"][test] != R.NOT_ROBUST else R.ROBUST
-        labels["labels"][test] = wrong
-        bad = {r["item"] for r in C.compare(self.mine, prod, labels, prod_sha256="e" * 64)["discrepancies"]}
-        self.assertEqual(bad, {f"robust-labels.json:labels:{test}"})
-        # a family member set that differs (the keep-both members reported as the ruled family) is a discrepancy
-        prod, labels = self.production_like()
-        labels["family_members"]["GiBUU_2019:total"] = labels["diagnostics"]["keep_both"]["family"]["GiBUU_2019:total"]
-        bad = {r["item"] for r in C.compare(self.mine, prod, labels, prod_sha256="e" * 64)["discrepancies"]}
-        self.assertEqual(bad, {"robust-labels.json:family_members:GiBUU_2019:total"})
-        # an unparsable member name is never guessed: UNRESOLVED
-        prod, labels = self.production_like()
-        labels["family_members"]["GiBUU_2019:shape"] = ["c-half", "m1+3"]
-        rep = C.compare(self.mine, prod, labels, prod_sha256="e" * 64)
-        self.assertEqual(rep["verdict"], "INCOMPLETE")
-        self.assertIn("robust-labels.json/family_members/GiBUU_2019:shape",
-                      [u["path"] for u in rep["unresolved_production_leaves"]])
-        # the frozen decisions_robust_kappa is checked against the keep-both diagnostic, not the ruled re-run
-        prod, labels = self.production_like()
-        ruled = {d["test"]: d["decision"] for d in fam["holm_at_kappa_robust"]}
-        keep = {d["test"]: d["decision"] for d in fam["keep_both_kappa3_diagnostic"]["holm"]}
-        self.assertEqual(prod["decisions_robust_kappa"][null][t], keep[test])
-        self.assertEqual(C.compare(self.mine, prod, labels, prod_sha256="e" * 64)["verdict"], "AGREE")
-        if ruled != keep:  # where the families differ, the frozen field must still match keep-both
-            diff = next(k for k in ruled if ruled[k] != keep[k])
-            n2, t2 = diff.split(":")
-            prod["decisions_robust_kappa"][n2][t2] = ruled[diff]
-            self.assertEqual(C.compare(self.mine, prod, labels, prod_sha256="e" * 64)["verdict"], "DISCREPANT")
-
-    def test_labels_doc_provenance_and_unknown_fields(self):
-        import s5p_recompute_compare as C
-        prod, labels = self.production_like()
-        self.assertEqual(C.compare(self.mine, prod, labels, prod_sha256="e" * 64)["verdict"], "AGREE")
-        self.assertEqual(C.compare(self.mine, prod, labels, prod_sha256="f" * 64)["verdict"], "DISCREPANT")
-        labels["labels_new_name"] = {"MnvTune_v1:total": "x"}
-        rep = C.compare(self.mine, prod, labels, prod_sha256="e" * 64)
-        self.assertEqual(rep["verdict"], "INCOMPLETE")
-        self.assertEqual([u["path"] for u in rep["unresolved_production_leaves"]],
-                         ["robust-labels.json/labels_new_name/MnvTune_v1:total"])
-
-    def test_production_variant_names_parse(self):
-        # the exact names the frozen evaluator writes (campaign, 2026-09-29): str(float(c)) and f"m1{sign}{kappa}"
-        import s5p_recompute_compare as C
-        prod_names = ["0.0", "0.5", "1.0", "m1+2", "m1-2", "m1+3", "m1-3"]
-        mine = ["c=0", "c=0.5", "c=1", "m1=+2", "m1=-2", "m1=+3", "m1=-3"]
-        self.assertEqual(sorted(map(C.variant_key, prod_names)), sorted(map(C.variant_key, mine)))
-
-    def test_null_not_calibrated_at_B0_is_located(self):
-        import s5p_recompute_compare as C
+    def test_B0_marker_rules(self):
         d = Path(tempfile.mkdtemp(prefix="s5p_recompute_b0_"))
         try:
             t = Toy(d / "w")
             t.calibration("MnvTune_v1", 60)
             t.status("GiBUU_2019", 0, True, "budget")
             self.mine = R.jsonable(R.evaluate(t.design(), t.v_path, t.contract, log=lambda *a: None))
+            self.mine["inputs"] = {"design_sha256": "d" * 64}
             prod, labels = self.production_like()
-            prod["tests"]["GiBUU_2019"] = {"not_calibrated": "budget stop at B = 0"}
-            for fam in ("family_members",):
-                labels[fam]["GiBUU_2019:total"] = labels[fam]["GiBUU_2019:shape"] = []
-            rep = C.compare(self.mine, prod, labels, prod_sha256="e" * 64)
-            self.assertEqual((rep["verdict"], rep["not_located"]), ("AGREE", []))
-            self.assertIn("GiBUU_2019:not_calibrated", [r["item"] for r in rep["rows"]])
-            self.mine["nulls"]["GiBUU_2019"]["B"] = 5  # a recompute that did calibrate it disagrees
-            self.assertEqual(C.compare(self.mine, prod, labels, prod_sha256="e" * 64)["verdict"], "DISCREPANT")
+            self.assertEqual(labels["family_members"]["GiBUU_2019:total"], [])
+            self.assertVerdict("AGREE", prod, labels)
+            prod["tests"]["GiBUU_2019"] = {"not_calibrated": {"B": 7, "p": 0.3, "k": 2}}  # F-6: a dict marker
+            self.assertNotEqual(self.cmp(prod, labels)["verdict"], "AGREE")
+            prod["tests"]["GiBUU_2019"] = {"not_calibrated": False}
+            self.assertVerdict("DISCREPANT", prod, labels)
+            tobs = self.mine["nulls"]["GiBUU_2019"]["observed_T"]["total"]
+            prod["tests"]["GiBUU_2019"] = {"T_total_obs": tobs}  # Z8: neither a marker nor a B -> not located
+            self.assertVerdict("INCOMPLETE", prod, labels)
+            prod["tests"]["GiBUU_2019"] = {"T_total_obs": tobs + 1.0}  # a wrong T beside it is a discrepancy
+            self.assertVerdict("DISCREPANT", prod, labels)
+            prod["tests"]["GiBUU_2019"] = {"total": {"p": 1.0, "k": 0, "B": 0}, "shape": {"p": 1.0, "k": 0, "B": 0}}
+            self.assertVerdict("AGREE", prod, labels)
+            prod["tests"]["GiBUU_2019"]["total"]["B"] = 60
+            self.assertVerdict("DISCREPANT", prod, labels)
+            self.mine["nulls"]["GiBUU_2019"]["B"] = 5  # a recompute that calibrated it, against a marker
+            prod["tests"]["GiBUU_2019"] = {"not_calibrated": "budget"}
+            self.assertNotEqual(self.cmp(prod, labels)["verdict"], "AGREE")
         finally:
             shutil.rmtree(d, ignore_errors=True)
 
-    def test_variant_names_are_parsed_never_guessed(self):
-        import s5p_recompute_compare as C
-        self.assertEqual([C.variant_key(n) for n in ("c=0.5", "0.5", "m1=+3", "m1+3", "m1-2")],
-                         [("c", 0.5), ("c", 0.5), ("m1", 3.0), ("m1", 3.0), ("m1", -2.0)])
-        self.assertIsNone(C.variant_key("kappa3"))
+    def test_F7_robustness_slot_holds_only_the_ruled_m1_members(self):
+        prod, labels = self.production_like()
+        rv = prod["tests"]["GiBUU_2019"]["robustness_variants"]
+        self.assertEqual(sorted(rv), ["m1+3", "m1-3"])
+        rv.clear()
+        rv["m1+2"] = prod["tests"]["GiBUU_2019"]["variants"]["m1+2"]
+        self.assertVerdict("INCOMPLETE", prod, labels)
+        prod, labels = self.production_like()
+        prod["tests"]["GiBUU_2019"]["variants"]["m1+3"] = prod["tests"]["GiBUU_2019"]["robustness_variants"]["m1+3"]
+        self.assertVerdict("INCOMPLETE", prod, labels)  # an extra member in the claim slot is unresolved
 
-    def test_exit_codes(self):
+    def test_family_membership_and_names(self):
         import s5p_recompute_compare as C
         prod, labels = self.production_like()
-        files = {}
+        labels["family_members"]["GiBUU_2019:total"] = labels["diagnostics"]["keep_both"]["family"]["GiBUU_2019:total"]
+        bad = {r["item"] for r in self.cmp(prod, labels)["discrepancies"]}
+        self.assertEqual(bad, {"family_members:GiBUU_2019:total"})
+        prod, labels = self.production_like()
+        labels["family_members"]["GiBUU_2019:total"] = labels["family_members"]["GiBUU_2019:total"][:-1]
+        self.assertVerdict("DISCREPANT", prod, labels)
+        prod, labels = self.production_like()
+        labels["family_members"]["GiBUU_2019:shape"] = ["c-half", "m1+3"]
+        self.assertVerdict("INCOMPLETE", prod, labels)
+        prod_names = ["0.0", "0.5", "1.0", "m1+2", "m1-2", "m1+3", "m1-3"]
+        mine = ["c=0", "c=0.5", "c=1", "m1=+2", "m1=-2", "m1=+3", "m1=-3"]
+        self.assertEqual(sorted(map(C.variant_key, prod_names)), sorted(map(C.variant_key, mine)))
+        self.assertEqual([C.variant_key(n) for n in ("kappa3", "m1=3", "-0.5", 3)], [None, None, None, None])
+
+    def test_altered_values_are_discrepant(self):
+        G = "GiBUU_2019"
+        cases = {
+            "claim k": lambda p, l: p["tests"][G]["shape"].__setitem__("k", p["tests"][G]["shape"]["k"] + 1),
+            "T": lambda p, l: p["tests"][G].__setitem__("T_total_obs", p["tests"][G]["T_total_obs"] * (1 + 1e-6)),
+            "decision": lambda p, l: p["decisions"].__setitem__("MnvTune_v1:total", "something"),
+            "robust variant k": lambda p, l: p["tests"][G]["robustness_variants"]["m1+3"]["total"].__setitem__("k", -1),
+            "label": lambda p, l: l["labels"].__setitem__("MnvTune_v1:total", "something"),
+            "keep-both label": lambda p, l: l["diagnostics"]["keep_both"]["labels"].__setitem__("MnvTune_v1:total", "x"),
+            "replace k": lambda p, l: l["decisions_kappa3_replace"]["MnvTune_v1:total"].__setitem__("k", 10 ** 6),
+            "frozen boolean": lambda p, l: p["robust_to_the_sub_fine_residual"].__setitem__(
+                "MnvTune_v1:total", not p["robust_to_the_sub_fine_residual"]["MnvTune_v1:total"]),
+            "jitter median": lambda p, l: p["tests"][G]["observed_jitter_p"]["total"].__setitem__("median", -1.0),
+        }
+        for name, mut in cases.items():
+            prod, labels = self.production_like()
+            mut(prod, labels)
+            with self.subTest(name):
+                self.assertVerdict("DISCREPANT", prod, labels)
+        prod, labels = self.production_like()
+        self.assertVerdict("DISCREPANT", prod, labels, sha="f" * 64)  # labels bound to another evaluate file
+
+    def test_unknown_fields_at_any_depth_are_unresolved(self):
+        G = "GiBUU_2019"
+        for name, mut in {
+            "top": lambda p, l: p.__setitem__("family_summary", {"rejections": 1}),
+            "test record": lambda p, l: p["tests"][G]["total"].__setitem__("new_q", 0.3),
+            "variant entry": lambda p, l: p["tests"][G]["variants"]["0.5"]["total"].__setitem__("extra", 1),
+            "unparsable variant": lambda p, l: p["tests"][G]["variants"].__setitem__("kappa-two", {"total": {"k": 1}}),
+            "labels top": lambda p, l: l.__setitem__("labels_new_name", {"MnvTune_v1:total": "x"}),
+        }.items():
+            prod, labels = self.production_like()
+            mut(prod, labels)
+            with self.subTest(name):
+                self.assertVerdict("INCOMPLETE", prod, labels)
+
+    def test_F8_exit_codes_errors_and_no_stale_report(self):
+        import s5p_recompute_compare as C
         import hashlib
-        files["prod"] = self.dir / "prod.json"
-        files["prod"].write_text(json.dumps(prod))
-        labels["evaluate_sha256"] = hashlib.sha256(files["prod"].read_bytes()).hexdigest()
-        for name, doc in (("mine", self.mine), ("labels", labels)):
-            files[name] = self.dir / f"{name}.json"
-            files[name].write_text(json.dumps(doc))
-        out = str(self.dir / "cmp.json")
-        self.assertEqual(C.compare_files(str(files["mine"]), str(files["prod"]), out, str(files["labels"])), 0)
-        self.assertEqual(C.compare_files(str(files["mine"]), str(files["prod"]), out, None), 2)
+        prod, labels = self.production_like()
+        f = {n: self.dir / f"{n}.json" for n in ("mine", "prod", "labels")}
+        f["prod"].write_text(json.dumps(prod))
+        labels["evaluate_sha256"] = hashlib.sha256(f["prod"].read_bytes()).hexdigest()
+        f["mine"].write_text(json.dumps(self.mine))
+        f["labels"].write_text(json.dumps(labels))
+        out = self.dir / "cmp.json"
+        s = lambda: json.loads(out.read_text())["verdict"]  # noqa: E731
+        self.assertEqual(C.compare_files(str(f["mine"]), str(f["prod"]), str(out), str(f["labels"])), 0)
+        self.assertEqual(s(), "AGREE")
+        self.assertEqual(C.compare_files(str(f["mine"]), str(f["prod"]), str(out), str(self.dir / "nope.json")), 2)
+        self.assertEqual(s(), "INCOMPLETE")
+        self.assertEqual(C.compare_files(str(f["mine"]), str(f["prod"]), str(out), None), 2)
+        bad = dict(prod)
+        bad["tests"] = "not a dict"  # handled, not an error: the nulls are not located (and the digest differs)
+        f["prod"].write_text(json.dumps(bad))
+        self.assertEqual(C.compare_files(str(f["mine"]), str(f["prod"]), str(out), str(f["labels"])), 1)
+        f["prod"].write_text("[]")  # unprocessable: a top-level list
+        self.assertEqual(C.compare_files(str(f["mine"]), str(f["prod"]), str(out), str(f["labels"])), 3)
+        self.assertEqual(s(), "ERROR")
+        f["prod"].write_text("{not json")
+        self.assertEqual(C.compare_files(str(f["mine"]), str(f["prod"]), str(out), str(f["labels"])), 3)
+        self.assertEqual(s(), "ERROR")  # the earlier AGREE report is gone
         prod["tests"]["MnvTune_v1"]["total"]["B"] += 1
-        files["prod"].write_text(json.dumps(prod))  # (its digest no longer matches the labels file either)
-        self.assertEqual(C.compare_files(str(files["mine"]), str(files["prod"]), out, str(files["labels"])), 1)
+        f["prod"].write_text(json.dumps(prod))
+        self.assertEqual(C.compare_files(str(f["mine"]), str(f["prod"]), str(out), str(f["labels"])), 1)
+
+
+def C_family(mine, which):
+    import s5p_recompute_compare as C
+    return C.family_names(mine, which)
 
 
 class A7Ruling(unittest.TestCase):
