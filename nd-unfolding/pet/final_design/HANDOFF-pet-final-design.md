@@ -101,6 +101,11 @@ pushed branch; nothing depends on a local scratch directory.
   valid to 2026-09-29 16:05Z; renew before the UNBLIND step. PR #5 (developer tooling under `tools/developer/`) has
   no path or dependency overlap with this campaign.
 
+- **2026-09-29 00:02Z.** Watcher restarted once, from `04703b90` on **login07**, running until **2026-10-03T22:00Z**; the old
+  login33 one had been left running by a node-local restart and was stopped via the stop file. Look-1 560/944 at
+  23:58Z, ≈ 7 rows/h (long 24-epoch library rows) → complete ≈ 2026-09-30 14:00Z – 10-01 07:00Z.
+  `jobs/start_watcher.sh` is now node-independent (stop file, then start).
+
 ## Next actions, in order
 
 1. When `s3p_t24` and `s3p_l24` are COMPLETE: score (`analysis/score_design.py --k 4 5`, guarded CPU debug, into
