@@ -301,6 +301,10 @@
   {
    "utc": "2026-09-28T21:50Z",
    "what": "CORRECTION of the 2026-09-28T20:50Z scheduling-change entry (that entry is unedited): its phrase 'made after observed p-values became visible to the controllers' overstates the state at 20:50Z. The controllers had run only the B = 0 looks (runs/prod/status/<null>-B0.json, 16:11-16:12Z, reason 'no calibration product yet', no statistic, p-value or decision); production PRODUCTS were visible, observed claim p-values were not. The change is still treated as made after production began. Recorded with docs/orchestration/CLARIFICATION-20260928-s5p-recompute-A6-A8.md (the recomputation's ambiguities A6-A8, written after production outputs became visible; no ruling given, nothing changed)."
+  },
+  {
+   "utc": "2026-09-29T01:22Z",
+   "what": "OWNER RULING A7 (Joseph; report only; received ~01:22Z, recorded in docs/orchestration/RULING-20260929-s5p-A7-robustness-flag.md): the kappa = 3 robustness label is the full Holm re-run; a primary rejection is 'robust to the sub-fine residual' iff also rejected at kappa = 3, else 'not robust'; non-rejections 'not applicable'. Made after production outputs became visible and before any observed claim p-value (only B = 0 looks; the evaluator had not run; measured 01:23:55Z). The statistical calculation (s5p_joint.py, frozen) is unchanged; the label is derived by nd-unfolding/s5p_robust_labels.py into a separate file. A7(b), A6 (R6) and A8 (R8) alternatives preserved; primary claims, stopping rules and production jobs unchanged."
   }
  ],
  "findings": [
