@@ -122,3 +122,19 @@ tooling (e.g. PR #5); no new watcher without stopping the old one via the stop f
 Only (a) renewing the NERSC certificate when cluster access is needed, and (b) any merge of PR #3/#4 (out of scope).
 No scientific decision is pending an owner: UNBLIND, look 2, coverage order and the terminal rule are all
 pre-registered.
+
+## 10. Campaign-review choice (2026-09-30, `docs/orchestration/CAMPAIGN-REVIEW-20260929.md` §1)
+
+- **Decision answered:** the terminal outcome for the pair {H2S1T24 K5, L128S1T24 K4} under the frozen §6 and its
+  amendments. NO_ELIGIBLE_DESIGN and UNRESOLVED_WITH_DEFAULT (with the quantified limit, 3a.1/3a.6) are useful
+  terminal results; none is promoted after scoring.
+- **Owner:** the successor orchestrator (Claude Opus 5.5, session `572b8667-2242-4991-ad5b-602e655e23c9`), which
+  took over from this handoff on 2026-09-29 07:02Z without starting any watcher, allocation or chain.
+- **Independent reviewer of the decision:** a fresh read-only session in an isolated worktree at the fixed decision
+  commit, preferably Astra High via Codex (the review's strongest attributed reviews), otherwise a fresh read-only
+  Claude session. Frozen rubric: does each verdict follow from the committed evidence under §6 plus amendments;
+  operands, reproductions, material impact and a disposition per finding. The reviewer writes nothing.
+- **Budgets:** compute per protocol §8 (S4 ≤ 1,800, S5 ≤ 2,200 A100-h; re-plan if the `m3246_g` balance falls below
+  the §8 floor). Review/repair: at most two review → repair cycles on the decision, then an explicit
+  continue/stop recorded in the decision record; minor bookkeeping findings are dispositioned without restarting
+  the review. Strategy reassessed after the look-1 decision and after coverage.
