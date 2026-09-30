@@ -47,7 +47,7 @@
  },
  "jobs": [
   {
-   "job": "production lanes (measured 2026-09-30T19:47Z)",
+   "job": "production lanes (transition r2 complete 2026-09-30T22:44:35Z)",
    "state": "running",
    "arrays": {
     "pow P1_a1.0": "59021632 (done, 193)",
@@ -60,15 +60,16 @@
     "GiBUU_2019 b2": "59132264"
    },
    "runners_login33": {
-    "pow": "PGID 565706 (deploy 55a41765, queues-r1/pow.q, log runs/queue-prod-r1-pow.log)",
-    "MnvTune_v1": "PGID 565712 (55a41765, queues-r1)",
-    "GENIE_2_12_10_CV": "PGID 565718 (55a41765, queues-r1)",
-    "GENIE_2_12_10_MEC": "PGID 565720 (55a41765, queues-r1)",
-    "NuWro_21_09": "PGID 1283647 (deploy 4f5a613f, queues/, log runs/queue-prod-NuWro_21_09.log)",
-    "GiBUU_2019": "PGID 1285855 (4f5a613f, queues/)"
+    "pow": "PGID 1174643 (deploy c754f3cd, queues-r2/pow.q, log runs/queue-prod-r2-pow.log)",
+    "MnvTune_v1": "PGID 1174644 (c754f3cd, queues-r2)",
+    "GENIE_2_12_10_CV": "PGID 1174645 (c754f3cd, queues-r2)",
+    "GENIE_2_12_10_MEC": "PGID 1174646 (c754f3cd, queues-r2)",
+    "NuWro_21_09": "PGID 1174647 (c754f3cd, queues-r2)",
+    "GiBUU_2019": "PGID 1174648 (c754f3cd, queues-r2)"
    },
    "handoff": "docs/orchestration/HANDOFF-20260929-s5p-campaign-cold-start.md",
-   "campaign_session": "gbdt worker [dfdda9] (takeover 2026-09-29T07:08Z)"
+   "campaign_session": "gbdt worker [dfdda9] (takeover 2026-09-29T07:08Z)",
+   "meter_deploy": "c754f3cd (budget revision 6; the old deploys' budget is refused by the meter)"
   }
  ],
  "receipts": [
@@ -376,6 +377,10 @@
   {
    "utc": "2026-09-30T22:50Z",
    "what": "TRANSITION R2 EXECUTION, PART 2 (commit B = execution target): budget.json revision 6 made live (production 209.647 from the unallocated 9.647; the text of state/s5p/transition-r2/budget-rev6-PREPARED.json with the live revision_reason and date). Takes effect only after the ledger rebind (E5) from the new deploy of this commit; the old deploys' budget (revision 5) is refused by the meter from then on."
+  },
+  {
+   "utc": "2026-09-30T22:50Z",
+   "what": "TRANSITION R2 COMPLETE (E4-E8). E4: commits A 5dc0fee2 (rollback target, budget rev 5) and B c754f3cd (budget rev 6) cloned to NEW $NS/deploy/5dc0fee2 and $NS/deploy/c754f3cd (no existing deploy touched); validate_deploy.py: A as rev 5 VALID, B as rev 6 VALID (production 209.647, stages 310.184 = cap, verification/repair 62.037, other stages/GPU/envelope unchanged, six queues-r2 byte-identical from their wait lines, throttles 3/3/3/3/2/2); rejection cases INVALID as required (A as rev 6; B with a wrong sha; 55a41765 without queues-r2). E5 22:44Z: ledger rebind from deploy B, budget sha256 b9260acd... (receipt meter-measure-transition-r2-after-rebind-20260930T2244Z.json): production allocation 209.647, charged 107.295, the same six open admissions (59118595 59121208 59123787 59129697 59132264 59132520), open concurrency 2.0, envelope CPU 180.787; measure from the old deploy 55a41765 now refused (rc 5), as dry-run. E6 22:44:35Z on login33: one runner per lane from deploy B, PGIDs pow 1174643, MnvTune_v1 1174644, GENIE_2_12_10_CV 1174645, GENIE_2_12_10_MEC 1174646, NuWro_21_09 1174647, GiBUU_2019 1174648; logs runs/queue-prod-r2-<lane>.log, STOP files runs/STOP-prod-r2-<lane> (not created). Runner downtime 22:40:03-22:44:35Z; no array left the scheduler meanwhile; nothing submitted. E7 postcheck PASS (six PPID-1 leaders, each pinned to c754f3cd... and waiting on its label; squeue exactly the six arrays); its first run FAILED on a defect of the check itself (deploy path built from the full sha, directories are short-sha) and was fixed and re-run; its rejection paths (wrong array set; wrong deploy) FAIL as required. An independent read-only confirmation by the peer session (Codex) at 22:44-22:45Z agrees (rebind b9260acd, six leaders 1174643-1174648 under c754f3cd/queues-r2, no old-deploy queue leaders). FROM NOW ON every meter call (monitoring, the recompute lane's terminal check, the evaluation deploy) must use deploy c754f3cd or a later commit carrying budget revision 6. Also preserved: the peer's read-only whole-node packing assessment (state/s5p/transition-r2/packing-assessment-codex-20260930/, packing-assessment.txt sha256 0812cba2...): no packing, benchmark or production switch is authorized by it."
   }
  ],
  "findings": [
@@ -404,7 +409,7 @@
    "id": "s5p-F5",
    "what": "a budget revision is not runner-transparent: every runner calls s5c_meter.py with the budget.json inside its pinned deploy (55a41765 / 4f5a613f), and the meter refuses when the budget sha256 differs from the ledger's last 'budget' record (s5c_meter.py:241-246; rebind). A revision + rebind would make every running runner's next submission error and STOP its queue unless all six runners move at the same moment to a new deploy carrying the revised budget (the 2026-09-28T20:50Z procedure for six lanes). Corrects the campaign's earlier advice that moving the unallocated 9.647 CPU node-h into production needs 'no job changes'.",
    "route": "only if the batch-1 forecast requires it: prepare the coordinated six-runner transition and its checks, then request owner approval (RECORD-20260929-s5p-lost-seed-runtime-diagnostic.md section 6)",
-   "status": "transition prepared 2026-09-30 (RUNBOOK-20260930-s5p-transition-r2-budget-rev6.md); not executed; owner approval pending"
+   "status": "executed 2026-09-30T22:40-22:45Z by owner approval (transition r2): budget revision 6 live, ledger rebound, six runners on deploy c754f3cd"
   }
  ]
 }

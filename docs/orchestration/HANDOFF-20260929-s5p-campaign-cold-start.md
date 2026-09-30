@@ -263,3 +263,15 @@ never pipe a command whose status you read).
 
 `docs/orchestration/GOAL-20260929-s5p-campaign-successor.txt`. It continues the existing authorization and grants
 nothing new.
+
+## Addendum 2026-09-30: transition r2 (budget revision 6) changed the runners, deploy and meter commands
+
+This addendum is dated and does not edit the sections above. Owner-approved on 2026-09-30, and executed and verified
+22:40–22:45Z (RUNBOOK-20260930-s5p-transition-r2-budget-rev6.md; `campaign-state.json` incidents):
+- **The budget:** revision 6, production 209.647. The ledger is bound to it (`b9260acd…`).
+- **The runners:** the six runners are now PGIDs 1174643–1174648 on login33, running deploy `$NS/deploy/c754f3cd`
+  with `prod/queues-r2/<lane>.q`. Their logs are `runs/queue-prod-r2-<lane>.log` and their STOP files
+  `runs/STOP-prod-r2-<lane>`. The PGIDs, logs and deploys in §3 and §7 are superseded.
+- **The meter:** every meter call must run from `$NS/deploy/c754f3cd`, or from a later commit carrying revision 6.
+  The §7 command from `deploy/55a41765` is now refused (rc 5, binding mismatch). The §6 recovery procedure is
+  unchanged, except that it resumes from `queues-r2`.

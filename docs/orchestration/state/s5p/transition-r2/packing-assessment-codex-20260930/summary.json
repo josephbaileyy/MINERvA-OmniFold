@@ -1,0 +1,16 @@
+{
+  "utc": "2026-09-30T22:35:13.558857+00:00",
+  "tasks": 408,
+  "completed": 382,
+  "timeout": 26,
+  "mean_task_h": 1.0425690808609656,
+  "median_task_h": 0.9836111111111111,
+  "memory_samples": 403,
+  "peak_rss_gib_max": 42.358848571777344,
+  "peak_rss_gib_median": 32.5711669921875,
+  "task_requests_per_node": 8,
+  "requested_memory_eight_tasks_gib": 448,
+  "ideal_capacity_products_per_h": 92.080229274325,
+  "current_reported_products_per_h": 49,
+  "data_dir": "/private/tmp/minerva-gbdt-speed-20260930"
+}

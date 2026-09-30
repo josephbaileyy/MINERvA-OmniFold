@@ -6,7 +6,7 @@
 # array ids (no new submission). Exit 1 otherwise, 2 if a probe failed. CANNOT AUTHORIZE: anything.
 NS=/pscratch/sd/j/josephrb/s5p-20260926
 SHA=${1:?deploy sha}; IDS=${2:?expected array ids}
-D=$NS/deploy/$SHA
+D=$NS/deploy/${SHA:0:8}   # deploy directories are named by the 8-character short sha
 fail=0
 PS=$(ssh -n -q -o LogLevel=ERROR -o BatchMode=yes -o ConnectTimeout=30 login33 'ps -eo pid,pgid,ppid,args') || { echo "PROBE FAILED: login33 ps"; exit 2; }
 total=$(printf '%s\n' "$PS" | awk '$3==1 && $5 ~ /s5c_queue\.sh$/' | grep -c .)

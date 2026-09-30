@@ -1,0 +1,88 @@
+Whole-node packing assessment for s5p — 2026-09-30
+
+Disposition: packing is feasible on paper and merits a bounded benchmark;
+production deployment is not supported by a measured speedup yet.
+
+Read-only measurements at 22:35Z
+- The shared CPU partition has 70 nodes; regular CPU has 3,002.
+- Each current task requests 32 logical CPUs and 56 GiB, with 32 application
+  threads. Eight task requests use 256 CPUs and 448 GiB. The regular partition's
+  MaxMemPerNode is 487,802 MiB, so this fits the scheduler's advertised limit.
+- Accounting for the first 12 batches gives 408 tasks: 382 completed and 26
+  timed out. Completed task runtime mean 1.043 h, median 0.984 h.
+- 403 memory samples: largest recorded MaxRSS 42.36 GiB, median 32.57 GiB.
+  MaxRSS is a task accounting measurement, not proof of aggregate concurrent
+  resident memory. Keep the requested 56 GiB per worker for the benchmark.
+- The shared tasks span 56.2947 billed CPU node-hours. This agrees within
+  0.002 node-hours with the owner's 56.293 receipt rounded in the report.
+
+Exploratory scheduling calculation
+A 16-slot global dispatch of all 408 recorded durations, including timeouts,
+takes 28.526 h and charges 57.053 whole-node hours: 1.35% above shared billing.
+Longest-first ordering takes 28.337 h and charges 56.673, 0.67% above shared.
+These are illustrative calculations, not campaign forecasts. They assume
+unchanged task runtimes, no queue wait, no memory-bandwidth contention, no
+controller barriers, and continuously full slots. They do not establish that
+the packed jobs will run faster or finish the campaign on a particular date.
+The current report measures approximately 49 experiments/hour. Using its
+2,353 surviving experiments over the same 12 batches, ideal saturated capacity
+would be about 83/hour before the omitted effects. Do not quote this as a
+benchmark or guaranteed 1.7x speedup.
+
+Important implementation constraints
+- Reuse original committed task-table rows and arguments, retaining thread
+  count, seed sets, cohort boundaries, estimator and stopping rules. Packing
+  cannot turn a budget-stopped or scientifically terminal lane into a new run.
+- The existing s5c_array.sh identifies a row by SLURM_ARRAY_TASK_ID; a packed
+  wrapper must supply the original row index explicitly. SLURM_PROCID is not
+  an array index. Retain clean pinned checkout and mnv_guarded_run checks.
+- Use disjoint CPU sets and explicit memory limits for eight workers. Preserve
+  each original task's two-hour cutoff. A whole-node allocation must not silently
+  extend a seed chunk's time limit or retroactively retry omitted seeds.
+- A reusable slot dispatcher is needed to avoid idle tail slots; batch barriers
+  and final lane tails can make whole-node costs higher than the simulation.
+- The current meter refuses --ntasks-per-node and --exclusive as unpriced
+  resource flags. A packed launcher must use supported, correctly priced outer
+  allocation requests or a reviewed meter extension; never bypass admission.
+- Scheduler job identity changes need matching wait/drain logic, lost-seed
+  records, task logs, and accounting linkage. A packed job cannot be introduced
+  while the current queues still wait solely for original array names.
+- All six current admissions reserve the full two-node concurrency limit.
+  A benchmark requires a deliberate, recorded scheduling window; submitting it
+  alongside the current six admissions would violate the cap.
+
+Concrete proposed benchmark (not launched)
+- One regular CPU node, at most two hours, at most 2 billed CPU node-hours.
+  Charge a reviewed allocation to verification/repair, leaving production
+  products untouched. Confirm a free whole-node concurrency slot first.
+- Run eight fixed, already completed representative task rows concurrently,
+  with original thread count and arguments except isolated output paths. Choose
+  rows independently of their scientific outcomes. Include representative
+  calibration/power workloads, retain the original two-hour task cutoff, and
+  record scheduling wait, CPU binding, total allocation elapsed time, per-task
+  elapsed/CPU time, peak memory and outcomes for every chosen row.
+- Compare the numerical arrays with the corresponding existing reference
+  products. Exact equality is the preferred check; any mismatch is a finding
+  requiring interpretation under existing numerical tolerances before rollout.
+  Different byte hashes caused only by timestamps are not a numerical mismatch.
+- Stop on OOM, incorrect CPU isolation, guard failure, overlapping output paths,
+  any mismatch in seed identity, or unresolved numerical differences.
+- Continue toward rollout only if measured throughput INCLUDING allocation
+  wait and idle tails beats the present path and a fresh remaining-work forecast
+  fits production 209.647, cumulative 345.27 and the retained reserve. A two-hour
+  sample cannot establish sustained queue advantage; report that uncertainty.
+
+Recommendation
+Prepare the budget transition independently. For packing, benchmark first and
+then price a concrete dispatcher/queue change; do not deploy an untested wrapper
+into this frozen campaign. A larger partition is an opportunity, not evidence
+that its queue will be faster.
+
+Sources
+- Current production table and queues; s5c_array.sh; s5c_meter.py; s5p_requeue.py.
+- REPORT-20260930-s5p-batch1-throughput-eta-cost.md at 4601cc37.
+- Raw read-only accounting: tasks.txt, memory.txt, partitions.txt and summary.json
+  in this assessment bundle. The exact queried array IDs are in the raw files.
+- NERSC official queue/charging and architecture documentation:
+  https://docs.nersc.gov/jobs/policy/
+  https://docs.nersc.gov/systems/perlmutter/architecture/
