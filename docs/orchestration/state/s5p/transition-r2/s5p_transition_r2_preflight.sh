@@ -1,10 +1,11 @@
 # s5p transition r2 (budget revision 6 + coordinated six-runner transition): READ-ONLY preflight.
-# Run from the campaign worktree:  ssh saul.nersc.gov 'bash -s' < s5p_transition_r2_preflight.sh [NEW_DEPLOY_SHA]
+# Run from the campaign worktree:  ssh saul.nersc.gov 'bash -s' < s5p_transition_r2_preflight.sh ; exit 0 = READY, 1 = NOT READY, 2 = probe failed.
+# LIVE-RUNNER preflight only: it requires six live runners, so it is run BEFORE the stop (E1). Candidate deploys are
+# checked by validate_deploy.py (E4); the restarted runners by s5p_transition_r2_postcheck.sh (E7).
 # MEASURES: whether every lane can be stopped safely now (one runner, on its wait line, its array with pending
-# tasks), the ledger's budget binding, the meter, and (given a sha) the candidate new deploy. It writes only the
+# tasks), the ledger's budget binding and the meter. It writes only the
 # meter's --out receipt under $NS/diag-20260929/transition-dry/. CANNOT AUTHORIZE: the transition (owner approval).
 NS=/pscratch/sd/j/josephrb/s5p-20260926
-NEW=${1:-}
 T=$NS/diag-20260929/transition-dry
 mkdir -p "$T"
 echo "preflight $(date -u +%FT%TZ)"
@@ -35,21 +36,9 @@ done
 echo "status files: $(ls $NS/runs/prod/status | wc -l), finals: $(ls $NS/runs/prod/status | grep -c final)"
 last_bind=$(grep '"kind": "budget"' $NS/ledger/admissions.jsonl | tail -1 | sed -n 's/.*"budget_sha256": "\([0-9a-f]*\)".*/\1/p')
 rev5=$(sha256sum $NS/deploy/55a41765/docs/orchestration/state/s5p/budget.json | cut -d' ' -f1)
-echo "ledger last budget binding ${last_bind:0:12}; deploy 55a41765 budget ${rev5:0:12} :: $([ "$last_bind" = "$rev5" ] && echo OK || { fail=1; echo MISMATCH; })"
+if [ -n "$last_bind" ] && [ "$last_bind" = "$rev5" ]; then echo "ledger last budget binding ${last_bind:0:12} == deploy 55a41765 budget ${rev5:0:12} :: OK"
+else echo "NOT READY: ledger last budget binding ${last_bind:0:12} != deploy 55a41765 budget ${rev5:0:12}"; fail=1; fi
 ( cd $NS/deploy/55a41765 && /usr/bin/python3.11 nd-unfolding/s5c_meter.py --budget docs/orchestration/state/s5p/budget.json \
     --ledger $NS/ledger/admissions.jsonl measure --out $T/preflight-meter-$(date -u +%Y%m%dT%H%MZ).json > /dev/null 2>&1 ) \
   && echo "meter measure (rev 5) rc=0" || { echo "NOT READY: meter measure failed"; fail=1; }
-if [ -n "$NEW" ]; then
-  D=$NS/deploy/$NEW
-  if [ ! -d "$D/.git" ]; then echo "NOT READY: no deploy $D"; fail=1
-  else
-    head=$(git -C "$D" rev-parse --short=8 HEAD); dirty=$(git -C "$D" status --porcelain --untracked-files=no | wc -l)
-    extra=$(git -C "$D" diff --name-only 55a41765 HEAD -- nd-unfolding | grep -vE '^nd-unfolding/(s5p_robust_labels\.py|tests/test_s5p_robust_labels\.py)$' | wc -l)
-    frozen=$(git -C "$D" diff --quiet 4f5a613f HEAD -- nd-unfolding/s5p_joint.py nd-unfolding/s5p_inference.py nd-unfolding/s5p_seqstop.py && echo identical || echo CHANGED)
-    rev=$(/usr/bin/python3.11 -c "import json;b=json.load(open('$D/docs/orchestration/state/s5p/budget.json'));s=b['pools']['cpu']['stages'];print(b['revision'],s['production'],round(sum(s.values()),3),b['pools']['cpu']['campaign_cap_node_hours'],s['verification_repair'])")
-    nq=$(ls $D/docs/orchestration/state/s5p/prod/queues-r2/*.q 2>/dev/null | wc -l)
-    echo "new deploy $NEW: HEAD $head, tracked changes $dirty, extra nd-unfolding changes vs 55a41765 $extra, frozen modules $frozen, budget [rev prod sum cap vr] $rev, queues-r2 $nq"
-    [ "$head" = "${NEW:0:8}" ] && [ "$dirty" = 0 ] && [ "$extra" = 0 ] && [ "$frozen" = identical ] && [ "$nq" -ge 1 ] || { echo "NOT READY: new deploy check"; fail=1; }
-  fi
-fi
-[ $fail = 0 ] && echo "PREFLIGHT: READY" || echo "PREFLIGHT: NOT READY"
+if [ $fail = 0 ]; then echo "PREFLIGHT: READY"; exit 0; else echo "PREFLIGHT: NOT READY"; exit 1; fi
