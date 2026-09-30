@@ -1,23 +1,26 @@
 # MINERvA-OmniFold scientific front door
 
-This is the shared orientation surface for Codex and Claude. It summarizes the current scientific
-picture but is **not evidence or authorization**. Before quoting a result, changing code, launching
-compute, or deciding a gate, open the routed canonical artifact and re-measure any volatile state.
+This is the shared orientation surface for Codex and Claude. It summarizes the current scientific picture but is **not evidence or authorization**. Before quoting a result,
+changing code, launching compute, or deciding a gate, open the routed canonical artifact and re-measure any volatile state.
+
+## Before any campaign work: read the session and campaign review
+
+**Required reading before designing, starting, resuming, coordinating, or reviewing a campaign:** [`CAMPAIGN-REVIEW-20260929.md`](docs/orchestration/CAMPAIGN-REVIEW-20260929.md).
+It records the successful sessions, failed strategies, model-attribution limits, and recommended role/model choices. Use it to make an informed choice; do not copy historical model
+names blindly. In the existing campaign plan or handoff, briefly state the owner/reviewer setup, the decision the work will answer, and its terminal and review-budget conditions.
+No separate approval form is needed. The review is advisory: it grants no compute or delegation authority, changes no scientific gate, and does not override an explicit instruction
+or an existing campaign contract.
 
 ## Objective and publication scope
 
-This repository develops MINERvA ME-FHC inclusive charged-current cross sections with unbinned
-OmniFold: the finalized 2D `(p_T, p_parallel)` reproduction of arXiv:2106.16210, a 3D
-`E_avail` extension, scalar 4D/5D extensions through `q3` and `W`, and PET/FPS full-event studies.
-**PET is diagnostic and method-development, not a publication uncertainty product** — ruled by Joseph
-on 2026-08-20; it must read that way in note, primer *and* paper.
-Publication completion requires a ratified central value and uncertainty construction, supported
-reproduction paths, clean note/primer/paper builds, and no unresolved publication blocker.
+This repository develops MINERvA ME-FHC inclusive charged-current cross sections with unbinned OmniFold: the finalized 2D `(p_T, p_parallel)` reproduction of arXiv:2106.16210, a 3D
+`E_avail` extension, scalar 4D/5D extensions through `q3` and `W`, and PET/FPS full-event studies. **PET is diagnostic and method-development, not a publication uncertainty
+product** — ruled by Joseph on 2026-08-20; it must read that way in note, primer *and* paper. Publication completion requires a ratified central value and uncertainty construction,
+supported reproduction paths, clean note/primer/paper builds, and no unresolved publication blocker.
 
 ## Scientific picture
 
-The controlled states below apply to result components, not whole workstreams. A workstream may have
-a validated central value and a quarantined covariance at the same time.
+The controlled states below apply to result components, not whole workstreams. A workstream may have a validated central value and a quarantined covariance at the same time.
 
 | Result component | State | Safe current statement | Decisive qualification | Evidence route |
 |---|---|---|---|---|
@@ -76,27 +79,25 @@ a validated central value and a quarantined covariance at the same time.
 
 ## Principal unresolved scientific question
 
-**`OI-126` is no longer it — Joseph ruled it on 2026-08-20 and it has left the routed queue.** The
-P5A nominal does lie outside its own bootstrap family, spatially organized, and those measurements
-stand; what the ruling settles is that the pairing is declined and PET is demoted rather than any
-branch being chosen. Do not reopen it, and do not restart the completed containment, tail-geometry,
-target-factor, extraction, or occupancy probes.
+**`OI-126` is no longer it — Joseph ruled it on 2026-08-20 and it has left the routed queue.** The P5A nominal does lie outside its own bootstrap family, spatially organized, and
+those measurements stand; what the ruling settles is that the pairing is declined and PET is demoted rather than any branch being chosen. Do not reopen it, and do not restart the
+completed containment, tail-geometry, target-factor, extraction, or occupancy probes.
 
-**Nor is it the ADOPTION of a scalar-5D covariance: Joseph adopted `3d7465f6…` on 2026-09-20 as
-publication-under-exception, and the `(E_avail,W)` projection built from it is verified.** It is now
-**the estimator-seed sensitivity of that trunk, which exceeds its own declared limit** —
-`s_proj = 6.145%` against a `5%` bound fixed before production, and it did **not fall over the tested `N = 40`–`160`** (`6.02%`/`6.02%`/`6.145%`) while the same-seed resampling floor fell `20.91% → 7.57%` between `N = 40` and `80` — **so the failing leg is not reporting its own resampling noise. That is why no generator significance is quoted.**
-⚠ **CORRECTED 2026-09-21, and it reached the deliverables: this read *"flat in `N`, so a property of the estimator and not of the ensemble's resolution"*, and the unqualified "flat in `N`" propagated an infinite-`N` claim into note, primer and paper.** The `40`/`80` points are **nested subsets of one 160-throw ensemble at ONE seed pair**, so it is a within-ensemble statement; larger `N` and the seed-pair width are **unmeasured**. No number moved — [`CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md`](docs/orchestration/CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md).
-⚠ It is **not** a licence to re-open the declined member campaign, the completed central-value
-studies, or PET (2026-09-19 §7 stopping rule), and it is **not** bounded below — the *"lower bound"*
-reading was **withdrawn 2026-09-20**. Read the routed `OI-*` end-state and
-`OPERATIVE-SHEET-scalar5d.md`, never an older paragraph or a generated summary.
+**Nor is it the ADOPTION of a scalar-5D covariance: Joseph adopted `3d7465f6…` on 2026-09-20 as publication-under-exception, and the `(E_avail,W)` projection built from it is
+verified.** It is now **the estimator-seed sensitivity of that trunk, which exceeds its own declared limit** — `s_proj = 6.145%` against a `5%` bound fixed before production, and
+it did **not fall over the tested `N = 40`–`160`** (`6.02%`/`6.02%`/`6.145%`) while the same-seed resampling floor fell `20.91% → 7.57%` between `N = 40` and `80` — **so the
+failing leg is not reporting its own resampling noise. That is why no generator significance is quoted.** ⚠ **CORRECTED 2026-09-21, and it reached the deliverables: this read
+*"flat in `N`, so a property of the estimator and not of the ensemble's resolution"*, and the unqualified "flat in `N`" propagated an infinite-`N` claim into note, primer and
+paper.** The `40`/`80` points are **nested subsets of one 160-throw ensemble at ONE seed pair**, so it is a within-ensemble statement; larger `N` and the seed-pair width are
+**unmeasured**. No number moved —
+[`CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md`](docs/orchestration/CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md). ⚠ It is
+**not** a licence to re-open the declined member campaign, the completed central-value studies, or PET (2026-09-19 §7 stopping rule), and it is **not** bounded below — the *"lower
+bound"* reading was **withdrawn 2026-09-20**. Read the routed `OI-*` end-state and `OPERATIVE-SHEET-scalar5d.md`, never an older paragraph or a generated summary.
 
 ## Next-action discipline
 
-There is no standing authorization here for a new scientific analysis. Read `docs/CURRENT_WORK.md`
-for the exact authorized action and terminal-event posture, then the governing `OI-*` record;
-`LIVE-STATE.md` is a measurement and route-health view and carries no authored action. In particular:
+There is no standing authorization here for a new scientific analysis. Read `docs/CURRENT_WORK.md` for the exact authorized action and terminal-event posture, then the governing
+`OI-*` record; `LIVE-STATE.md` is a measurement and route-health view and carries no authored action. In particular:
 
 1. Do not repeat the completed `OI-126` containment, tail-geometry, target-factor, extraction, or
    signal-MC occupancy probes; their surviving conclusions and retractions are already recorded.
@@ -145,6 +146,5 @@ for the exact authorized action and terminal-event posture, then the governing `
 
 ## Deliverable synchronization
 
-A change under `docs/analysis-note/` is incomplete until the corresponding source files are also
-committed and pushed to the standalone `MINERvA-OmniFold-Analysis-Note` repository. Build and verify
-the standalone checkout before declaring the note work complete, and record both remote heads.
+A change under `docs/analysis-note/` is incomplete until the corresponding source files are also committed and pushed to the standalone `MINERvA-OmniFold-Analysis-Note` repository.
+Build and verify the standalone checkout before declaring the note work complete, and record both remote heads.

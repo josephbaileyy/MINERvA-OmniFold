@@ -1,4 +1,5 @@
 path	class	event_status	canonical_successor
+docs/orchestration/CAMPAIGN-REVIEW-20260929.md	LIVE	open	""
 docs/orchestration/AMENDMENT-20260831-oi177-per-arm-ceilings.md	LIVE	open	
 docs/orchestration/AMENDMENT-20260918-spec-6.4-candidate-specific-null-exception.md	LIVE	open	
 docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md	LIVE	open	
