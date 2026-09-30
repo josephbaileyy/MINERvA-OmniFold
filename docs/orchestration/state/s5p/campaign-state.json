@@ -47,16 +47,17 @@
  },
  "jobs": [
   {
-   "job": "production lanes (measured 2026-09-29T16:03Z)",
+   "job": "production lanes (measured 2026-09-30T19:47Z)",
    "state": "running",
    "arrays": {
     "pow P1_a1.0": "59021632 (done, 193)",
-    "pow P2_a1.0": "59076165",
-    "MnvTune_v1 b1": "59080426",
-    "GENIE_2_12_10_CV b1": "59081838",
-    "GENIE_2_12_10_MEC b1": "59072824",
-    "NuWro_21_09 b1": "59080573",
-    "GiBUU_2019 b1": "59082762"
+    "pow P2_a1.0": "59076165 (done, 195)",
+    "pow P3_a1.0": "59121208",
+    "MnvTune_v1 b2": "59123787",
+    "GENIE_2_12_10_CV b2": "59129697",
+    "GENIE_2_12_10_MEC b2": "59118595",
+    "NuWro_21_09 b2": "59132520",
+    "GiBUU_2019 b2": "59132264"
    },
    "runners_login33": {
     "pow": "PGID 565706 (deploy 55a41765, queues-r1/pow.q, log runs/queue-prod-r1-pow.log)",
@@ -359,6 +360,10 @@
   {
    "utc": "2026-09-29T17:10Z",
    "what": "RECOMPUTE LANE CONTACT RESTORED; s5p-F4 CORRECTED ON ITS BRANCH (not merged; the campaign does not edit it). Message from session 'gbdt independent' (~17:05Z): s5p-F4 corrected in the evaluator (ensemble = every finished product, B = count; count_mismatch reported, never repaired; seed_gaps over the submitted-batch span; out-of-span products listed and kept; A13 revised, old reading kept as A13_withdrawn_20260929) plus a second symptom it found (the look loop repeating the last B on a short ensemble), 67 tests including the handoff's gap world; independent review REVIEW-20260929-s5p-recompute-f4-correction.md: round 1 CHANGES REQUIRED (F1 MEDIUM, look loop after a whole-batch loss) at 04a1d313, round 2 fixes verified YES at 0142a228. NEW DEPLOYMENT TARGET for the final verification: 0142a228 (supersedes 1bfd8910); pins s5p_recompute.py sha256 05664adb..., s5p_recompute_compare.py 2cef9688... (byte-identical to 1bfd8910), design 404446eb.... Campaign check (read-only): branch tip 80ebf7aa contains 0142a228 with identical nd-unfolding/, the pins match, the review verdicts are as stated. Its declared deviation: agreement with the frozen s5p_joint on the same files was not checked (that lane may not read or run production); only the final comparison establishes agreement. Timing as that lane records it: after the batch-0 looks were visible, a definitional alignment. The campaign sent its takeover notice (owed since 07:08Z) and will message that session at terminal with the terminal evidence, the evaluation deploy sha and the output digests."
+  },
+  {
+   "utc": "2026-09-30T19:47Z",
+   "what": "BATCH-1 / P2 COMPLETE; OWED THROUGHPUT/ETA/COST REPORT DELIVERED (REPORT-20260930-s5p-batch1-throughput-eta-cost.md). Batch-1 looks (s5p_seqstop, design 404446eb..., V 35979ef7..., all 'continue', total and shape k = 0): GENIE_2_12_10_MEC B387 (09-30T09:49Z), MnvTune_v1 B393 (14:40Z, min 1200), GENIE_2_12_10_CV B393 (17:49Z, min 1200), GiBUU_2019 B395 (19:34Z), NuWro_21_09 B397 (19:44Z). Power P2 final 195 of 200 (2 TIMEOUT); P3 submitted 12:30Z (59121208, throttle 3). Batch-2 arrays via the meter: MEC 59118595, MnvTune 59123787, CV 59129697 (throttle 3), GiBUU 59132264, NuWro 59132520 (throttle 2). Throughput: batch durations 18.9-23.7 h at throttle 2 (b0/P1) vs 22.7-26.2 h at throttle 3 and 27.6-28.4 h at throttle 2 (b1/P2); ~49 products/h in both phases: the throttle change produced no measurable gain (partition-bound, pending reason Resources). Batch-1 seed losses 13 of 1,200. Meter (meter-measure-batch1-report-20260930T1947Z.json, committed under state/s5p/diag/): 12 closed batches 56.293 (mean 4.691, SD 0.400), production 107.295 of 200 incl. six open 8.5 reservations, envelope CPU 180.787 of 345.27, verification/repair 0. Forecast (projection; s5p_endgame_forecast_20260930.py): ~40-41 batches; under the frozen reservation rule one refusal and drain near 10-05 at the measured mean (terminal ~10-07); a terminal 'budget' stop for one external null at 6 batches if the remaining cost/batch exceeds ~4.8; a budget revision to 209.647 (the unallocated 9.647) would remove both and gain ~1 day but needs the coordinated six-runner transition (s5p-F5) and an owner decision. Disposition: no intervention now; re-forecast at the batch-3 looks (~10-02); if the running mean exceeds ~4.75 or a 'budget' stop is forecast, prepare the transition and its checks, then request approval (latest ~10-04T12Z). Campaign-review note (CAMPAIGN-REVIEW-20260929.md at 093ad566): owner = this campaign session; independent reviewer = the recompute lane (0142a228); decision, terminal and review/repair budget = amendment 7, handoff s8, retry limits and the 20% reserve (unchanged). Nothing changed."
   }
  ],
  "findings": [

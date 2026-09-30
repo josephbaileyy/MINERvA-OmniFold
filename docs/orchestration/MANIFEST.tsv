@@ -37,6 +37,7 @@ docs/orchestration/BLOCKED-20260922-issue59-figure-rerun.md	tracked	LIVE	documen
 docs/orchestration/BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/state/oi137-covering-search-20260822.sh	no	8	397	27018
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md	tracked	LIVE	document		20260901	open		route-only		no	7	226	14356
 docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-pet.md	tracked	LIVE	document		20260901	open		route-only		no	6	296	19292
+docs/orchestration/CAMPAIGN-REVIEW-20260929.md	tracked	LIVE	document	pet-improvement-campaign	20260929	open		route-only		no	8	246	17884
 docs/orchestration/CAMPAIGN-s5c-20260924-index.md	tracked	LIVE	document	20260924-scalar5d-campaign	20260924	open		route-only		no	13	103	9950
 docs/orchestration/CAMPAIGN-s5c-20260924-paper-wide-table.md	tracked	LIVE	document	20260924-scalar5d-campaign	20260924	open		route-only		no	4	397	48191
 docs/orchestration/CAMPAIGN-s5e-20260925-index.md	tracked	LIVE	document		20260925	open		route-only		no	6	68	5944
@@ -44,7 +45,7 @@ docs/orchestration/CAMPAIGN-s5n-20260925-index.md	tracked	LIVE	document		2026092
 docs/orchestration/CAMPAIGN-s5p-20260926-index.md	tracked	LIVE	document		20260926	open		route-only		no	5	50	4130
 docs/orchestration/CATALOG-ARCHIVE-gate1-k0.md	tracked	LIVE	document			open		route-only	docs/orchestration/live_doc_indexed.py	no	3	514	44319
 docs/orchestration/CATALOG-ARCHIVE-scalar5d.md	tracked	LIVE	document	20260919-cause3-two-member-campaign		open		route-only	docs/orchestration/state/check-withdrawal-completeness-20260910.py	no	5	2818	280172
-docs/orchestration/CATALOG.md	tracked	LIVE	router	20260924-preparation-for-scalar5d-campaign		open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/probes/probe-20260922-render-checks.py;docs/orchestration/state/check-withdrawal-completeness-20260910.py;docs/orchestration/state/probe-z-endpointA-projected-diagonal-20260910.py;docs/orchestration/whose_row.py;nd-unfolding/tests/test_object_identity_checks.py	no	62	1332	131146
+docs/orchestration/CATALOG.md	tracked	LIVE	router	20260924-preparation-for-scalar5d-campaign		open		always	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/probes/probe-20260922-render-checks.py;docs/orchestration/state/check-withdrawal-completeness-20260910.py;docs/orchestration/state/probe-z-endpointA-projected-diagonal-20260910.py;docs/orchestration/whose_row.py;nd-unfolding/tests/test_object_identity_checks.py	no	62	1337	132114
 docs/orchestration/CENSUS-20260902-permanence-language-in-leg-grade-cells.md	tracked	LIVE	document		20260902	open		route-only		no	4	170	10966
 docs/orchestration/CHECK-20260911-three-relayed-readings-gate2-mii-and-cost.md	tracked	ARCHIVAL	document		20260911	terminal		exact-path-only		yes	2	339	25602
 docs/orchestration/CHECKLIST-20260919-reverification-against-a-new-digest.md	tracked	LIVE	document		20260919	open		route-only		no	2	65	5110
@@ -211,8 +212,8 @@ docs/orchestration/INVENTORY-20260919-scientific-acceptance-criteria-from-code.m
 docs/orchestration/LEDGER-20260920-deleted-branch-names-to-sha.md	tracked	LIVE	document	z-two-member-campaign	20260920	open		route-only		no	4	196	13494
 docs/orchestration/LIVE-STATE.md	tracked	LIVE	live-status			generated		always	docs/orchestration/control_plane_lint.py;docs/orchestration/deploy_oi135_watcher_swap.sh;docs/orchestration/generate_live_state.py;docs/orchestration/generate_manifest.py;docs/orchestration/test_deploy_oi135_watcher_swap.py;docs/orchestration/test_generate_live_state_carry_forward.py;docs/orchestration/test_generate_live_state_watch_health.py;docs/orchestration/wakerctl.py;docs/orchestration/watch_slurm_array_resume.sh	no	66	70	8866
 docs/orchestration/LIVE-USAGE.md	tracked	LIVE	live-status			open		route-only		no	6	161	8117
-docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data	20260919-cause3-two-member-campaign		generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/whose_row.py;nd-unfolding/tests/test_draft_adoption_record.py;nd-unfolding/tests/test_object_identity_checks.py	no	40	501	41128
-docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/merge_guard.sh;nd-unfolding/tests/test_object_identity_checks.py	no	68	1507	277387
+docs/orchestration/MANIFEST-overrides.tsv	tracked	MACHINE	tabular-data	20260919-cause3-two-member-campaign		generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/whose_row.py;nd-unfolding/tests/test_draft_adoption_record.py;nd-unfolding/tests/test_object_identity_checks.py	no	40	503	41268
+docs/orchestration/MANIFEST.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/generate_manifest.py;docs/orchestration/live_doc_indexed.py;docs/orchestration/merge_guard.sh;nd-unfolding/tests/test_object_identity_checks.py	no	68	1512	278200
 docs/orchestration/MAP-20260817-gbdt-note-section-blockers.md	tracked	LIVE	document		20260817	open		route-only		no	9	214	16307
 docs/orchestration/MEASUREMENT-20260822-m1-m6-at-pinned-sha.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/compare_m1_m6.py;docs/orchestration/measure_k0_farend_f1b_f17b.sh;docs/orchestration/measure_m1_m6.py	no	18	146	8336
 docs/orchestration/MEASUREMENT-20260823-m1-m6-at-the-candidate-and-canonical.md	tracked	LIVE	document		20260823	open		route-only		no	7	239	14244
@@ -231,9 +232,9 @@ docs/orchestration/OUTCOME-20260922-3d-covariance-projected-from-the-adopted-tru
 docs/orchestration/OUTCOME-20260922-L2-sproj-measured-and-the-pair-is-not-code-comparable.md	tracked	LIVE	document		20260922	open		route-only	docs/orchestration/state/check-withdrawal-completeness-20260910.py	no	8	225	18102
 docs/orchestration/OUTCOME-20260922-ten-adopted-receipts-superseded-by-code-drift.md	tracked	LIVE	document		20260922	open		route-only		no	7	144	9049
 docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md	tracked	LIVE	document		20260925	open		route-only		no	12	109	9316
-docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md	tracked	LIVE	document		20260925	open		route-only		no	12	102	7229
+docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md	tracked	LIVE	document		20260925	open		route-only		no	13	102	7229
 docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md	tracked	LIVE	document		20260925	open		route-only		no	17	186	13930
-docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md	tracked	LIVE	document		20260926	open		route-only		no	12	149	11590
+docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md	tracked	LIVE	document		20260926	open		route-only		no	13	149	11590
 docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	tracked	LIVE	document		20260822	open		route-only		no	4	160	8870
 docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	tracked	LIVE	document		20260823	open		route-only		no	4	149	8296
 docs/orchestration/PACKET-20260823-round5-f2a-f17a-repair.md	tracked	LIVE	document		20260823	open		route-only		no	10	259	16441
@@ -252,7 +253,7 @@ docs/orchestration/PLAN-20260905-prompts-11-30-reconciled-to-the-0902-decision.m
 docs/orchestration/PLAN-20260918-scalar5d-publication-completion.md	tracked	LIVE	plan		20260918	open		route-only	nd-unfolding/tests/test_run_m1_projection_refusals.py	no	14	1724	125017
 docs/orchestration/PLAN-20260923-issue26-issue5-studies.md	tracked	ARCHIVAL	plan		20260923	terminal		exact-path-only	2d-unfolding/strip_ratio_receipt.py;nd-unfolding/compare_eavail_scale.py;nd-unfolding/sbatch_eavail_scale_study.sh	yes	5	133	8211
 docs/orchestration/PLAN-scalar5d-reportable-uncertainties-and-inference.md	tracked	LIVE	plan			open		route-only		no	21	697	53132
-docs/orchestration/PLAYBOOK.md	tracked	LIVE	document			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/whose_row.py	no	14	40	9074
+docs/orchestration/PLAYBOOK.md	tracked	LIVE	document			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/whose_row.py	no	16	40	9074
 docs/orchestration/PORTING.md	tracked	LIVE	document			open		route-only	docs/orchestration/test_wakerctl.py	no	8	164	9418
 docs/orchestration/PREDECLARATION-20260808-gate4-and-d2-fraction.md	tracked	ARCHIVAL	predeclaration		20260808	terminal		exact-path-only	nd-unfolding/pet/pet_diagnostic_quarantine.py;nd-unfolding/pet/sbatch_fullevent_diagnostic_extract.sh;nd-unfolding/pet/validate_pet_nominal_gate4.py	yes	7	248	16826
 docs/orchestration/PREDECLARATION-20260810-annealed-production-reproduction.md	tracked	ARCHIVAL	predeclaration		20260810	terminal		exact-path-only	nd-unfolding/pet/sbatch_pet_fullevent_nominal_annealed.sh	yes	4	154	10150
@@ -290,7 +291,7 @@ docs/orchestration/PREREGISTER-20260915-epsilon-and-B-acceptance-requirements.md
 docs/orchestration/PREREGISTRATION-20260919-cause3-two-member-campaign.json	tracked	MACHINE	machine-data		20260919	open		exact-path-only		no	3	106	4006
 docs/orchestration/PREREGISTRATION-20260919-cause3-two-member-campaign.md	tracked	LIVE	document	20260919-cause3-two-member-campaign	20260919	open		route-only		no	3	123	7130
 docs/orchestration/PROCEDURE-gbdtFive-macro-update.md	tracked	LIVE	procedure			open		route-only	docs/orchestration/state/probe-z-criteria-acceptance-mathematics-20260910.py	no	14	176	16639
-docs/orchestration/PROMPTS-20260811-four-session-closeout.md	tracked	LIVE	document		20260811	open		route-only	docs/orchestration/waker_fired_but_unread.sh	no	11	398	27073
+docs/orchestration/PROMPTS-20260811-four-session-closeout.md	tracked	LIVE	document		20260811	open		route-only	docs/orchestration/waker_fired_but_unread.sh	no	12	398	27073
 docs/orchestration/PROMPTS-20260820-publication-closeout-orchestrator.md	tracked	ARCHIVAL	document		20260820	terminal		exact-path-only		yes	3	157	9827
 docs/orchestration/PROMPTS-20260906-z-specification-session.md	tracked	LIVE	document		20260906	open		route-only		no	5	146	10764
 docs/orchestration/PROPOSAL-20260815-instrumented-and-corrected-foldforward-closure.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only	nd-unfolding/pet/closure_foldforward_instrumented.py;nd-unfolding/pet/sbatch_foldforward_instrumented_closure.sh	yes	6	168	11735
@@ -314,7 +315,7 @@ docs/orchestration/READBACK-20260918-causes-5-and-7.md	tracked	ARCHIVAL	document
 docs/orchestration/READBACK-20260918-rank3-lineage-footing-components-completeness.md	tracked	ARCHIVAL	document		20260918	terminal		exact-path-only		yes	2	277	17344
 docs/orchestration/READINESS-20260911-precursor-launch-six-dimensions.md	tracked	ARCHIVAL	document		20260911	terminal		exact-path-only		yes	2	255	15412
 docs/orchestration/READING-ORDER-20260824-k0-package-annotations.md	tracked	LIVE	document		20260824	open		route-only		no	5	181	16585
-docs/orchestration/README.md	tracked	DEAD	document			superseded	docs/orchestration/CATALOG.md	never	docs/orchestration/state/check-withdrawal-completeness-20260910.py;docs/orchestration/test_watch_report_train_run.py;nd-unfolding/pm_inspection/test_pm_staging_check.py;nd-unfolding/s5p_mc_truth_pred.py;omnifold_nn/setup.py	yes	32	35	2036
+docs/orchestration/README.md	tracked	DEAD	document			superseded	docs/orchestration/CATALOG.md	never	docs/orchestration/state/check-withdrawal-completeness-20260910.py;docs/orchestration/test_watch_report_train_run.py;nd-unfolding/pm_inspection/test_pm_staging_check.py;nd-unfolding/s5p_mc_truth_pred.py;omnifold_nn/setup.py	yes	32	45	2699
 docs/orchestration/RECEIPT-20260812-hpss-space-audit.md	tracked	ARCHIVAL	document	non-campaign	20260812	terminal		exact-path-only		yes	5	309	20023
 docs/orchestration/RECEIPT-20260820-oi50-hashverify.md	tracked	ARCHIVAL	document		20260820	terminal		exact-path-only	2d-unfolding/HANDOFF_bkg_negweight/build_negweight_hpss_manifest.py;2d-unfolding/HANDOFF_bkg_negweight/hpss_preserve_negweight.sh;2d-unfolding/HANDOFF_bkg_negweight/hpss_recover_negweight.sh	yes	10	167	7895
 docs/orchestration/RECEIPT-20260821-negweight-hpss-durability.md	tracked	ARCHIVAL	document		20260821	terminal		exact-path-only	2d-unfolding/HANDOFF_bkg_negweight/hpss_preserve_negweight.sh;docs/analysis-note/check_dead_containment.py	yes	7	408	23906
@@ -341,7 +342,8 @@ docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	tracked	LIVE	
 docs/orchestration/REPAIR4-DEFECT-STATUS-20260807.md	tracked	ARCHIVAL	document		20260807	terminal		exact-path-only	nd-unfolding/run_p4_standard.sh	yes	5	201	13579
 docs/orchestration/REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md	tracked	ARCHIVAL	document			terminal		exact-path-only	nd-unfolding/p4_evidence.py;nd-unfolding/tests/test_p4_sweep_snapshots.py	yes	6	442	32574
 docs/orchestration/REPORT-20260920-scalar5d-uncertainty-completion.md	tracked	LIVE	document		20260920	open		route-only	docs/orchestration/state/check-withdrawal-completeness-20260910.py	no	6	224	15442
-docs/orchestration/REPORT-20260922-review-residue.md	tracked	LIVE	document		20260922	open		route-only	docs/orchestration/probes/probe-20260922-ledger-guard-mutations.py;docs/orchestration/probes/probe-20260922-ledger-reconciles.py;docs/orchestration/probes/probe-20260922-seven-gates.sh;docs/orchestration/state/check-withdrawal-completeness-20260910.py	no	12	558	203322
+docs/orchestration/REPORT-20260922-review-residue.md	tracked	LIVE	document		20260922	open		route-only	docs/orchestration/probes/probe-20260922-ledger-guard-mutations.py;docs/orchestration/probes/probe-20260922-ledger-reconciles.py;docs/orchestration/probes/probe-20260922-seven-gates.sh;docs/orchestration/state/check-withdrawal-completeness-20260910.py	no	13	558	203322
+docs/orchestration/REPORT-20260930-s5p-batch1-throughput-eta-cost.md	tracked	LIVE	document		20260930	open		route-only		no	3	86	6664
 docs/orchestration/REPRODUCTION-20260918-scalar5d-trunk-path.md	tracked	LIVE	document		20260918	open		route-only		no	4	230	15652
 docs/orchestration/REQUIREMENTS-20260814-cstat-assembly-conventions.md	tracked	ARCHIVAL	document		20260814	terminal		exact-path-only	nd-unfolding/pet/build_cstat_gate5_n50.py	yes	8	779	54474
 docs/orchestration/RESTORE-2026-08-03.md	tracked	ARCHIVAL	document			terminal		exact-path-only	lib/enumerate_backfill_families.py;nd-unfolding/pet/closure_fullevent_fps.py;nd-unfolding/pet/fullevent_fps_dataloader.py;nd-unfolding/pet/stress_closure_muon.py;nd-unfolding/pet/validate_pet_nominal_gate4.py;nd-unfolding/tests/test_b1_normalization_fix.py;nd-unfolding/tests/test_pet_nominal_gate4_validator.py	yes	32	1428	91909
@@ -401,11 +403,11 @@ docs/orchestration/RUNS.tsv	tracked	MACHINE	tabular-data	fe-fps-campaign		genera
 docs/orchestration/SCHEDULING-STRATEGY.md	tracked	LIVE	document			open		route-only		no	6	212	14246
 docs/orchestration/SCOPE-20260818-gate1-seed-separation-two-keys.md	tracked	ARCHIVAL	document		20260818	terminal		exact-path-only	nd-unfolding/unified_throw_cov.py	yes	6	340	23755
 docs/orchestration/SCOREBOARD-20260817-quarantine-seven-causes.md	tracked	LIVE	document		20260817	open		route-only		no	20	860	68091
-docs/orchestration/SESSION-WORKFLOW.md	tracked	LIVE	document			open		route-only		no	4	170	8468
+docs/orchestration/SESSION-WORKFLOW.md	tracked	LIVE	document			open		route-only		no	4	176	8942
 docs/orchestration/SPEC-20260814-gate5-cstat-construction-v1.md	tracked	LIVE	document		20260814	open		route-only	docs/orchestration/live_doc_indexed.py;nd-unfolding/pet/build_cstat_gate5_n50.py	no	17	1069	77774
 docs/orchestration/SPEC-20260825-f17b-tree-comparison-instrument.md	tracked	LIVE	document		20260825	open		route-only	docs/orchestration/compare_m1_m6.py	no	11	208	12935
 docs/orchestration/SPEC-20260906-complete-scalar5d-successor-Z.md	tracked	LIVE	document		20260906	open		route-only	nd-unfolding/z_contract.py	no	18	4309	392144
-docs/orchestration/TASK-HANDOFF.template.md	tracked	LIVE	template			open		route-only		no	4	125	4731
+docs/orchestration/TASK-HANDOFF.template.md	tracked	LIVE	template			open		route-only		no	4	133	5473
 docs/orchestration/TASK.template.md	tracked	LIVE	template			open		route-only		no	5	34	1256
 docs/orchestration/TRAVEL-MODE-DEPLOYMENT-20260825.md	tracked	ARCHIVAL	document		20260825	terminal		exact-path-only		yes	2	67	3536
 docs/orchestration/TRIAGE-20260821-open-items-vs-publication-path.md	tracked	ARCHIVAL	document		20260821	terminal		exact-path-only		yes	2	88	6341
@@ -441,8 +443,8 @@ docs/orchestration/control-plane/campaign-origin.json	tracked	LIVE	machine-data	
 docs/orchestration/control-plane/owners.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/probes/probe-20260917-projection-bound-counterexample.py	no	35	16	1053
 docs/orchestration/control-plane/playbook.tsv	tracked	LIVE	tabular-data			open		route-only	docs/orchestration/control_plane_lint.py	no	5	26	8403
 docs/orchestration/control-plane/policy.json	tracked	LIVE	machine-data			open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/generate_live_state.py;docs/orchestration/test_generate_live_state_routes.py;docs/orchestration/test_usagectl.py;docs/orchestration/usagectl.py	no	15	38	1060
-docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_generate_live_state_routes.py	no	14	143	25658
-docs/orchestration/control-plane/work-items.tsv	tracked	LIVE	tabular-data	20260924-scalar5d-campaign		open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_generate_live_state_routes.py	no	9	145	30889
+docs/orchestration/control-plane/source-record-inventory.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_generate_live_state_routes.py	no	14	143	25646
+docs/orchestration/control-plane/work-items.tsv	tracked	LIVE	tabular-data	20260924-scalar5d-campaign		open		route-only	docs/orchestration/control_plane_lint.py;docs/orchestration/test_generate_live_state_routes.py	no	9	145	30847
 docs/orchestration/control_plane_lint.py	tracked	LIVE	script			open		route-only	docs/orchestration/generate_live_state.py;docs/orchestration/probes/probe-20260922-seven-gates.sh;nd-unfolding/tests/test_mnv_guarded_run.py	no	20	1207	65446
 docs/orchestration/dashboard.html	tracked	MACHINE	artifact			generated		exact-path-only	docs/orchestration/dashboard_serve.py	no	7	638	29854
 docs/orchestration/dashboard_collector.py	tracked	MACHINE	script			generated		exact-path-only	docs/orchestration/dashboard_serve.py	no	10	1282	52589
@@ -1169,7 +1171,7 @@ docs/orchestration/state/s5n/stage1/review1/r8_fulln.py	tracked	MACHINE	state-ar
 docs/orchestration/state/s5n/stage1/truth_check.json	tracked	MACHINE	state-artifact	s5n		generated		exact-path-only	docs/orchestration/state/s5n/stage1/review1/r2_response.py	yes	4	147	3877
 docs/orchestration/state/s5p/allocation-measurement-20260926T1604Z.txt	tracked	MACHINE	state-artifact	s5p	20260926	generated		exact-path-only		yes	2	172	10908
 docs/orchestration/state/s5p/budget.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only	nd-unfolding/s5c_launch.sh;nd-unfolding/s5c_valid_launch.sh;nd-unfolding/tests/test_s5c_meter.py	no	56	128	6100
-docs/orchestration/state/s5p/campaign-state.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	12	392	39341
+docs/orchestration/state/s5p/campaign-state.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	12	397	41541
 docs/orchestration/state/s5p/contract-amendment-1-use-case-and-targets.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	3	68	17630
 docs/orchestration/state/s5p/contract-amendment-2-stage2-studies.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only		no	2	70	11685
 docs/orchestration/state/s5p/contract-amendment-3-stage2-supplement.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only		no	2	20	2858
@@ -1180,7 +1182,10 @@ docs/orchestration/state/s5p/contract-amendment-6b-pilot-detector.json	tracked	M
 docs/orchestration/state/s5p/contract-amendment-7-production-admission.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only		no	4	108	14614
 docs/orchestration/state/s5p/contract-amendment-8-review2-repairs.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only		no	2	39	7552
 docs/orchestration/state/s5p/contract.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only	docs/orchestration/state/s5e/cand/review2/r2_chaos.py;docs/orchestration/state/s5e/cand/review2/r2_load.py;docs/orchestration/state/s5e/cand/review2/r2_recompute.py;docs/orchestration/state/s5e/diag/review1/common.py;docs/orchestration/state/s5n/stage1/review1/r1_products.py;docs/orchestration/state/s5n/stage1/review1/r1b_driver.py;docs/orchestration/state/s5n/stage1/review1/r2_response.py;docs/orchestration/state/s5n/stage1/review1/r3_inputs.py;docs/orchestration/state/s5n/stage1/review1/r6_refine_reco.py;docs/orchestration/state/s5n/stage1/review1/r8_fulln.py;docs/orchestration/test_campaignctl.py;docs/orchestration/verify_hash_bindings.py;nd-unfolding/s5c_dump_bkg.py;nd-unfolding/s5c_futility_watch.sh;nd-unfolding/s5c_pseudo.py;nd-unfolding/s5c_valid_launch.sh;nd-unfolding/s5e_analyze_diag.py;nd-unfolding/s5e_trace.py;nd-unfolding/s5n_analyze_dev.py;nd-unfolding/s5n_eavail_ratio.py;nd-unfolding/s5n_pseudo.py;nd-unfolding/s5p_converge.py;nd-unfolding/s5p_numerics.py;nd-unfolding/s5p_stage1_inspect.py;nd-unfolding/tests/test_s5c_queue.py;nd-unfolding/tests/test_s5e_analyze_candidate.py;nd-unfolding/tests/test_s5p_assemble.py;nd-unfolding/tests/test_s5p_joint_e2e.py;nd-unfolding/tests/test_s5p_prefreeze.py;nd-unfolding/tests/test_s5p_robust_labels.py;reproduction/s5p/repro_s5p.py;reproduction/s5p/scope.py	no	120	119	21219
+docs/orchestration/state/s5p/diag/endgame-forecast-20260930T1947Z.txt	tracked	MACHINE	state-artifact	s5p	20260930	generated		exact-path-only		yes	1	13	1916
 docs/orchestration/state/s5p/diag/lost-seed-runtime-diagnostic-20260929T1633Z.json	tracked	MACHINE	state-artifact	s5p	20260929	generated		exact-path-only		yes	1	12008	260586
+docs/orchestration/state/s5p/diag/meter-measure-batch1-report-20260930T1947Z.json	tracked	MACHINE	state-artifact	s5p	20260930	generated		exact-path-only	docs/orchestration/state/s5p/diag/s5p_endgame_forecast_20260930.py	yes	3	618	16186
+docs/orchestration/state/s5p/diag/s5p_endgame_forecast_20260930.py	tracked	MACHINE	state-artifact	s5p	20260930	generated		exact-path-only		yes	2	61	3187
 docs/orchestration/state/s5p/diag/s5p_lost_seed_runtime_diagnostic.py	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	1	274	15402
 docs/orchestration/state/s5p/gen5d/README-gen5d-build.md	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	161	10579
 docs/orchestration/state/s5p/gen5d/README-gen5d-fluxfix.md	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only	reproduction/s5p/scope.py	yes	7	365	23487
