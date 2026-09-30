@@ -263,11 +263,12 @@ meter's open concurrency, the campaign's own terminal definition, `HANDOFF-20260
 Run them independently when the campaign reports terminal; its report is a trigger, not the evidence. Each exit status
 is read on its own, never through a pipe. **Production is terminal only if ALL of these read:**
 1. `final statuses: 5/5`;
-2. the power queue is terminal: `pow runner 'queue done' lines: 1` or more, **or** a budget / incomplete pow outcome
+2. the power queue is terminal: `pow runner 'queue done' lines: 1` or more in the LIVE runner's log, **or** a budget / incomplete pow outcome
    that the printed pow runner lines themselves show (a `refusing` / force-stop line) and the campaign has recorded.
    A pow runner that is still waiting or running is **not** terminal;
 3. `squeue rc=0` and `queued s5p cal/pow jobs: 0`;
-4. `meter rc=0` and `meter open concurrency: cpu 0.0 gpu 0.0`;
+4. `meter budget sha256` equal to the ledger's latest `budget` record, `meter rc=0` and `meter open concurrency:
+   cpu 0.0 gpu 0.0`;
 5. `joint-evaluate.json present` (and, for the A7 label comparison, `robust-labels.json present`).
 
 ```bash
@@ -276,14 +277,17 @@ R=/pscratch/sd/j/josephrb/s5p-20260926; S=/pscratch/sd/j/josephrb/s5p-parallel-r
 n=0; for k in MnvTune_v1 GENIE_2_12_10_CV GENIE_2_12_10_MEC NuWro_21_09 GiBUU_2019; do
   if [ -f "$R/runs/prod/status/$k-final.json" ]; then n=$((n+1)); else echo "MISSING final status: $k"; fi; done
 echo "final statuses: $n/5"
-P=$R/runs/queue-prod-r1-pow.log   # the live pow runner (the replaced runner's queue-prod-pow.log is historical)
+P=$R/runs/queue-prod-r2-pow.log   # the live pow runner since transition r2 (r1 and unsuffixed logs are historical)
 echo "pow runner 'queue done' lines: $(grep -c 'queue done' "$P")"
 echo "pow runner refusal/stop lines:"; grep -nE 'refus|STOPPED the queue|force-stop' "$P" | tail -5
 echo "pow runner last lines:"; tail -3 "$P" | cut -c1-200
 squeue -h --me -o %j > "$S/squeue-terminal-check.txt"; echo "squeue rc=$?"
 echo "queued s5p cal/pow jobs: $(grep -cE '^s5p-s5p_(cal|pow)_' "$S/squeue-terminal-check.txt")"
-# the meter's measure reads the ledger, sacct and squeue and writes only --out (here: this lane's scratch)
-(cd "$R/deploy/55a41765" && /usr/bin/python3.11 nd-unfolding/s5c_meter.py --budget docs/orchestration/state/s5p/budget.json \
+# the meter's measure reads the ledger, sacct and squeue and writes only --out (here: this lane's scratch); run it from
+# the deploy whose budget.json the ledger is bound to (transition r2: c754f3cd; rc 5 = binding mismatch = wrong deploy)
+M=$R/deploy/c754f3cd; echo "meter budget sha256 $(sha256sum < $M/docs/orchestration/state/s5p/budget.json | cut -c1-12)"
+/usr/bin/python3.11 -c 'import json,sys; b=[json.loads(l) for l in open(sys.argv[1]) if l.strip() and json.loads(l).get("kind") == "budget"][-1]; print("ledger budget sha256", b["budget_sha256"][:12])' "$R/ledger/admissions.jsonl"
+(cd "$M" && /usr/bin/python3.11 nd-unfolding/s5c_meter.py --budget docs/orchestration/state/s5p/budget.json \
   --ledger "$R/ledger/admissions.jsonl" measure --out "$S/meter-terminal-check.json" > /dev/null); echo "meter rc=$?"
 /usr/bin/python3.11 -c 'import json,sys; s=json.load(open(sys.argv[1]))["summary"]; print("meter open concurrency: cpu", s["cpu"]["open_concurrency"], "gpu", s["gpu"]["open_concurrency"])' "$S/meter-terminal-check.json"
 if [ -f "$R/stage7/joint/joint-evaluate.json" ]; then echo "joint-evaluate.json present"; sha256sum "$R/stage7/joint/joint-evaluate.json"; else echo "joint-evaluate.json MISSING"; fi
@@ -292,8 +296,18 @@ for d in "$R"/runs/prod/pow/*; do echo "power $(basename "$d"): $(ls "$d" | grep
 EOF
 ```
 
-- A `squeue` or meter failure (rc ≠ 0; the meter exits nonzero on an unregistered campaign job) means UNKNOWN, not
-  "no jobs" or "no concurrency".
+- A `squeue` or meter failure (rc ≠ 0; the meter exits nonzero on an unregistered campaign job, and 5 on a budget
+  binding mismatch) means UNKNOWN, not "no jobs" or "no concurrency".
+- **Transition r2 (2026-09-30T22:44Z; origin/main `74c681ef`, `RUNBOOK-20260930-s5p-transition-r2-budget-rev6.md`):**
+  the ledger was rebound to budget revision 6 (sha256 `b9260acd…`, production 209.647), and the six runners moved to
+  deploy `c754f3cd` with `prod/queues-r2/`, logging to `runs/queue-prod-r2-<lane>.log`.
+  - Checked by this lane 22:47Z: the meter from `c754f3cd` gave rc 0 (open cpu 2.0, gpu 0.0); from `55a41765` it
+    gave rc 5 ("budget sha256 f29db3899610 differs from the ledger's b9260acd2fbd").
+  - `git diff 55a41765 c754f3cd` over the meter, the task tables, the design and the three production evaluator
+    modules is `budget.json` only.
+  - The cluster task tables are identical across the deploys.
+  - If the campaign moves the runners or rebinds again, re-point `P` and `M` to what it names, and re-check both
+    lines above before reading any verdict.
 - Nonzero open concurrency means a reservation is still open, so production is not terminal.
 - `robust-labels.json` (the ruled A7 label, produced by the campaign after the evaluation) is needed only for the A7
   label comparison. If it is missing, `compare` reports it as not located (exit 2) and the rest of the comparison
@@ -345,18 +359,19 @@ python s5p_recompute.py compare --mine ../final/recompute.json \
   --out ../final/compare.json; echo "compare rc=$?"
 # the seed disposition (§5.4), immediately after evaluate so both see the same products
 R=/pscratch/sd/j/josephrb/s5p-20260926
-diff -rq $R/deploy/4f5a613f/docs/orchestration/state/s5p/prod/tables $R/deploy/55a41765/docs/orchestration/state/s5p/prod/tables; echo "tables diff rc=$?"
+T=docs/orchestration/state/s5p/prod/tables
+diff -rq $R/deploy/4f5a613f/$T $R/deploy/55a41765/$T && diff -rq $R/deploy/55a41765/$T $R/deploy/c754f3cd/$T; echo "tables diff rc=$?"
 ids=$(/usr/bin/python3.11 -c 'import json,sys; print(",".join(sorted({str(json.loads(l)["job_id"]) for l in open(sys.argv[1]) if l.strip() and json.loads(l).get("kind") == "job"})))' $R/ledger/admissions.jsonl)
 sacct -X -n -P -o JobID,State -j "$ids" > ../final/sacct-dispositions.txt; echo "sacct rc=$?"
 /usr/bin/python3.11 s5p_recompute_seed_disposition.py --design design.json \
-  --tables $R/deploy/55a41765/docs/orchestration/state/s5p/prod/tables --ledger $R/ledger/admissions.jsonl \
+  --tables $R/deploy/c754f3cd/$T --ledger $R/ledger/admissions.jsonl \
   --logs $R/runs/prod/logs --sacct ../final/sacct-dispositions.txt --recompute ../final/recompute.json \
   --out ../final/seed-disposition.json; echo "disposition rc=$?"
 EOF
 ```
 
-- `tables diff rc` must be 0. The submitting deploys carry the same task tables (checked 2026-09-29 for `4f5a613f`
-  and `55a41765`). If the runners were moved to another deploy, add its tables to the diff first.
+- `tables diff rc` must be 0. The submitting deploys carry the same task tables (checked for `4f5a613f`,
+  `55a41765` and, 2026-09-30, `c754f3cd`). If the runners are moved again, add the new deploy to the diff first.
 - `sacct rc` ≠ 0 leaves every no-log task `submitted_task_no_log_unverified`; rerun it before describing anything.
 
 Exit codes:
