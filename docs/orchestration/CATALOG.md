@@ -5,6 +5,10 @@
 
 This is a pointer-only active-tree router. It contains no scientific evidence or authorization.
 
+**Before campaign work:** [CAMPAIGN-REVIEW-20260929.md](CAMPAIGN-REVIEW-20260929.md) — successful
+sessions and campaigns, strategies to avoid, model evidence limits, and prospective role choices.
+Required reading via `AGENTS.md`; recommendations do not replace the governing authorization.
+
 > ## ⚠ READ THIS FIRST — what is where
 >
 > This router grew append-only through three campaigns. Its closed history now sits in two
