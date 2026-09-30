@@ -1,6 +1,6 @@
 # Decision record — PET final-design selection study (living; completed at delivery)
 
-**Status: OPEN.** No final-bank quantity has been scored. This record lists every decision taken, its rule, its
+**Status: OPEN (look 1 decided 2026-09-30; coverage of H2S1T24 K5 pending).** This record lists every decision taken, its rule, its
 evidence and its date; the terminal selection is filled in only from `analysis/decide.py` output on unblinded
 final-bank scores (and `analysis/coverage.py` for §6.4). PET is diagnostic: nothing here is an adoption.
 
@@ -10,7 +10,7 @@ final-bank scores (and `analysis/coverage.py` for §6.4). PET is diagnostic: not
 |---|---|
 | authorization (verbatim) | `docs/orchestration/AUTHORIZATION-20260925-pet-final-design.md` |
 | scope (byte copy of the handoff) | `SCOPE-HANDOFF-20260925.md`, `GOAL-20260925-pet-final-design.txt` |
-| protocol and frozen decision table | `PROTOCOL-20260925.md` §6 (+ Amendments 1, 2, 2b, 2c, 3a, 3b) |
+| protocol and frozen decision table | `PROTOCOL-20260925.md` §6 (+ Amendments 1, 2, 2b, 2c, 3a–3f, 4) |
 | finalist rule | `dev/FINALIST_RULE-20260926.md` (+ Addendum, correction, Addendum 2), `dev/apply_finalist_rule.py` |
 | reviews | `REVIEW_DISPOSITION-{IMPL,STAT,SCOPE}-20260926.md` |
 
@@ -36,11 +36,14 @@ final-bank scores (and `analysis/coverage.py` for §6.4). PET is diagnostic: not
 | 2026-09-27 | **large finalist L128S1T24 K4**; decision set {H2S1T24K5, L128S1T24K4}, m = 2; anchors CTL K3 / C K3; FB release FINAL 0–23 + library 21×8 (blinded); measured cost 1.77 / 1.49 A100-h per unfolding (compact not cheaper) | Amendment 3d | `runs/s4f_a3.tsv`, `runs/s4s_a3.tsv`, `resources/cost_t24-20260927.json` |
 | 2026-09-27 | **n_F = 60** (capped; E0 NI needs ≈ 250 draws: quantified limit); FINAL 24–59 released | Amendment 3e | `sizing/sizing_final-20260927.json`, `runs/s4f_a3e.tsv` |
 | 2026-09-27 | **N_LIB = 40** (E4-bound); D4c/D3 draws 0–39 used | Amendment 3f | `sizing/sizing_library-20260927.json`, `runs/s4s_a3e_n40.tsv` |
+| 2026-09-30 23:02Z | **UNBLIND look 1**: all 944 look-1 rows COMPLETE with receipt digests (exit 0); 622 runs were resumed bit-exactly across Slurm jobs (listed) | Amendment 4, 2c.9, 2c.10 | `freeze/COMPLETENESS-look1.tsv`, `results/final/look1_segments.tsv` |
+| 2026-09-30 | FB cost at the declared packing: H2S1T24 K5 median **1.768**, L128S1T24 K4 median **1.517** A100-h per unfolding (n = 352 each, none excluded); §6.5 cost path closed (compact not cheaper) | §6.7, 3a.2 | `resources/cost_fb_look1-20260930.json` |
+| 2026-09-30 | **Look-1 decision.** L128S1T24 K4 **INELIGIBLE: B2 FAIL — point-decided, statistically unresolved** (D4d n down, mean E_avail residual − injected L1 **0.0122**, 95 % t interval 0.0064–0.0181, n = 8, vs ≤ 0.010; every other §6.1–6.3 rule PASS). H2S1T24 K5 passes every §6.1–6.3 rule (R_E0 0.895, LB 0.876; B2 **0.0097**, 0.0025–0.0169, **also statistically unresolved**; N1 max weight 90.2 ≤ 100); C1–C5 not yet assessed. Outcome **CONTINUE (coverage of H2S1T24 K5 pending)**; no rule returned a look-2 CONTINUE, so there is no look 2. B2 is not a sequential rule and look-1 verdicts are never re-decided (2c.4): the two finalists are statistically indistinguishable on B2 (paired, H2S1T24 lower on 7 of 8 draws) and the frozen point rule separates them | §6.2 B2, 2c.4, 2c.5, §10 | `results/final/decision_look1.json`, `results/final/evidence_look1.json`, `results/final/scored_fb/` (B2 reproduced from the raw histograms) |
+| 2026-09-30 | Provisional ranking **PROVISIONAL_SELECTED H2S1T24 K5** → its coverage runs first; L128S1T24's coverage cannot change the outcome (ineligible on B2) and is not run | 3a.5 | `results/final/decision_look1_provisional.json` |
 
 ## Pending decisions (filled at the time they are taken)
 
-3. UNBLIND amendment (completeness manifest).
-4. FINAL / library decisions per §6.1–6.3, §6.5, §6.6 (look 1; look 2 if CONTINUE), with bank-effect bounds.
+3. ~~UNBLIND amendment~~ (Amendment 4, 2026-09-30). 4. ~~Look-1 decisions~~ (2026-09-30, above; no look 2).
 5. Coverage (§9, §6.4) for the provisionally preferred finalist first (3a.5); the other if required.
 6. Terminal selection: SELECTED / UNRESOLVED_WITH_DEFAULT / NO_ELIGIBLE_DESIGN, with the executable configuration
    (config JSON, content hash, K, miss rule, uncertainty procedure B = 6), measured cost and limits.
