@@ -21,6 +21,7 @@ Snapshots (append; never edit a past row):
 | 2026-09-27 14:14 | 683.1 | 0.50 | 58,123 | 3,385 |
 | 2026-09-28 02:40 | 1,001.8 | 0.51 | 57,975 | 3,377 |
 | 2026-09-28 10:58 | 1,196.0 | 0.51 | 57,890 | 3,377 |
+| 2026-09-30 23:22 | 2,087.2 | 0.85 | 57,179 | 3,286 |
 
 2026-09-26 20:34 UTC: study total 314.8 A100-hours over 331 jobs (running jobs counted to the snapshot time);
 `iris` user-charged `m3246_g` 526.8 units (GPU node-hours), project charged 121,575.9 of 180,000; `m3246` CPU
@@ -36,3 +37,9 @@ rounds (2026-09-26 19:57–21:08Z, iteration estimate too large for a 30-min rou
 iterations (24-epoch iterations do not fit a debug round), four dev3N runs and the overlap lanes lost when an
 interactive allocation ended early, the stopped X4 arm (partial). Remaining released work (blinded): ~430 look-1
 FB rows of `s4f_a3`/`s4s_a3` plus the 3e extensions (~500 rows), at 1.5–1.8 A100-h per unfolding.
+
+2026-09-30 23:22 UTC (after look 1): study total 2,087.2 A100-hours over 959 `pfd-` jobs (sacct); `iris` user-charged
+`m3246_g` 973.4 units, project charged 122,820.9 of 180,000 (57,179 remaining); `m3246` CPU project 16,714.5 of 20,000.
+Look-1 FB scoring: 5 CPU-debug jobs of 4–5 min. Per-unfolding FB cost at the declared packing
+(`cost_fb_look1-20260930.json`): H2S1T24 K5 1.768, L128S1T24 K4 1.517 A100-h (median, n = 352 each). Reserve for
+final validation: coverage of H2S1T24 K5 (Amendment 5), 1,080 unfoldings ≈ 1.9 k A100-h (S5 budget 2,200).

@@ -138,3 +138,26 @@ pre-registered.
   the §8 floor). Review/repair: at most two review → repair cycles on the decision, then an explicit
   continue/stop recorded in the decision record; minor bookkeeping findings are dispositioned without restarting
   the review. Strategy reassessed after the look-1 decision and after coverage.
+
+## 11. State after look 1 (2026-09-30 23:45Z; supersedes §3–§4 and §7 items 1–4 for operations)
+
+- **Done:** 944/944 look-1 rows COMPLETE → `freeze/COMPLETENESS-look1.tsv` → **Amendment 4 UNBLIND look 1**
+  (`39e8cbbd`) → FB scored (`results/final/scored_fb/`, 5 jobs) and FB cost (`resources/cost_fb_look1-20260930.json`)
+  → `analysis/run_look1.sh` → **look-1 decision** (`96e6a412`, `results/final/decision_look1*.json`): L128S1T24 K4
+  **INELIGIBLE on B2** (point-decided, statistically unresolved; D4c n down 0.0122 vs ≤ 0.010, 95 % 0.0064–0.0181);
+  H2S1T24 K5 passes §6.1–6.3, C1–C5 pending; no look 2. Provisional: H2S1T24 K5 first for coverage.
+- **Running:** **Amendment 5** (`d06a495e`) released coverage of H2S1T24 K5: `runs/s5c_a5_H2S1T24.tsv` (720, dev tilt,
+  C1–C4) then `runs/s5d_a5_H2S1T24.tsv` (360, D4c up, C5), output `$B/s5`, `SCORE=0`. Watcher restarted by
+  `start_watcher.sh` from **`checkouts/d06a495e`** on **login05**, stop **2026-10-10T22:00Z**; lanes = coverage only
+  (dev tilt before D4c). Deployed checkouts `04703b90` (look-1 lanes, finished), `016f1fac` (manifest tool),
+  `39e8cbbd` (scoring), `d06a495e` (coverage lanes) — never modify any of them.
+- **Next:** when all 720 `s5c` rows are COMPLETE: `completeness_manifest.py --manifest s5c_a5_H2S1T24:s5` from
+  `checkouts/d06a495e` (module `tensorflow/2.15.0` python — the login `python3` is 3.6), commit `### Amendment 6 — UNBLIND
+  coverage (development tilt)` citing it, deploy, score the members at k = 5 (`score_design.py`, as `score_fb.sh`
+  does), `analysis/coverage.py` for C1–C4. Then the same for the 360 `s5d` rows and C5 (skipped only after a decisive
+  C1–C4 FAIL), then `decide.py` with the coverage file → terminal outcome. Then the independent review (§10).
+- **Traps found this session:** `freeze/completeness_manifest.py` is not in `04703b90` (run tools from a checkout
+  that has them; the `runs/*.tsv` are identical); login-node `python3` is 3.6 (use the module); the Mac has no
+  `timeout`; `runner/test_step2_ensemble.py` has 2 stale failures that predate this session (X4 arm; fail on
+  `96e6a412` clean); `ps | grep fbmon` matches its own ssh command line; `keep_busy.log` started/stopped counts are
+  historical artifacts (start_watcher then waits its full 300 s).

@@ -10,7 +10,7 @@ final-bank scores (and `analysis/coverage.py` for §6.4). PET is diagnostic: not
 |---|---|
 | authorization (verbatim) | `docs/orchestration/AUTHORIZATION-20260925-pet-final-design.md` |
 | scope (byte copy of the handoff) | `SCOPE-HANDOFF-20260925.md`, `GOAL-20260925-pet-final-design.txt` |
-| protocol and frozen decision table | `PROTOCOL-20260925.md` §6 (+ Amendments 1, 2, 2b, 2c, 3a–3f, 4) |
+| protocol and frozen decision table | `PROTOCOL-20260925.md` §6 (+ Amendments 1, 2, 2b, 2c, 3a–3f, 4, 5) |
 | finalist rule | `dev/FINALIST_RULE-20260926.md` (+ Addendum, correction, Addendum 2), `dev/apply_finalist_rule.py` |
 | reviews | `REVIEW_DISPOSITION-{IMPL,STAT,SCOPE}-20260926.md` |
 
@@ -40,6 +40,7 @@ final-bank scores (and `analysis/coverage.py` for §6.4). PET is diagnostic: not
 | 2026-09-30 | FB cost at the declared packing: H2S1T24 K5 median **1.768**, L128S1T24 K4 median **1.517** A100-h per unfolding (n = 352 each, none excluded); §6.5 cost path closed (compact not cheaper) | §6.7, 3a.2 | `resources/cost_fb_look1-20260930.json` |
 | 2026-09-30 | **Look-1 decision.** L128S1T24 K4 **INELIGIBLE: B2 FAIL — point-decided, statistically unresolved** (D4d n down, mean E_avail residual − injected L1 **0.0122**, 95 % t interval 0.0064–0.0181, n = 8, vs ≤ 0.010; every other §6.1–6.3 rule PASS). H2S1T24 K5 passes every §6.1–6.3 rule (R_E0 0.895, LB 0.876; B2 **0.0097**, 0.0025–0.0169, **also statistically unresolved**; N1 max weight 90.2 ≤ 100); C1–C5 not yet assessed. Outcome **CONTINUE (coverage of H2S1T24 K5 pending)**; no rule returned a look-2 CONTINUE, so there is no look 2. B2 is not a sequential rule and look-1 verdicts are never re-decided (2c.4): the two finalists are statistically indistinguishable on B2 (paired, H2S1T24 lower on 7 of 8 draws) and the frozen point rule separates them | §6.2 B2, 2c.4, 2c.5, §10 | `results/final/decision_look1.json`, `results/final/evidence_look1.json`, `results/final/scored_fb/` (B2 reproduced from the raw histograms) |
 | 2026-09-30 | Provisional ranking **PROVISIONAL_SELECTED H2S1T24 K5** → its coverage runs first; L128S1T24's coverage cannot change the outcome (ineligible on B2) and is not run | 3a.5 | `results/final/decision_look1_provisional.json` |
+| 2026-09-30 23:45Z | **Coverage release** for H2S1T24 K5 at its exact configuration: 720 development-tilt members (N_cov 120 × B 6; C1–C4) then 360 D4c-up members (60 × 6; C5), blinded until each group is complete; watcher lanes moved to coverage (stop 2026-10-10T22:00Z) | Amendment 5, §9, 3a.5 | `runs/s5c_a5_H2S1T24.tsv`, `runs/s5d_a5_H2S1T24.tsv` |
 
 ## Pending decisions (filled at the time they are taken)
 
