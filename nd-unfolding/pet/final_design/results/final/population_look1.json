@@ -7,6 +7,10 @@
    "path": "results/final/population/fb_population_D1_m0.350.json",
    "distortion_hash": "963ad9fcba87799342f882edb421e771f55281303d8728731a9c3b99e9066d37"
   },
+  "D3_p0.35": {
+   "path": "results/final/population/fb_population_D3_p0.35.json",
+   "distortion_hash": "08e815fb4c2effe1d5ca4e4c323a6307375e46b3e86ff8459e1cc604fbbf5eee"
+  },
   "D4c_p_up": {
    "path": "results/final/population/fb_population_D4c_p_up.json",
    "distortion_hash": "d0dbd8fd74a166d6794f96ea1991359a821e55420a9241b498440b2117da7d04"
@@ -346,6 +350,73 @@
      "mean_target_vs_population_l1": 0.0032537338791990564
     }
    },
+   "S4S:D3_p0.35": {
+    "eavail": {
+     "R": {
+      "n": 40,
+      "mean": 0.6669928674258635,
+      "sd": 0.07503461591990392
+     },
+     "R_pop": {
+      "n": 40,
+      "mean": 0.667324662863149,
+      "sd": 0.07505123411995114
+     },
+     "mean_target_vs_population_l1": 0.001962314426893177
+    },
+    "eavail@low_acceptance": {
+     "R": {
+      "n": 40,
+      "mean": 0.39323028404809524,
+      "sd": 0.06764572045582964
+     },
+     "R_pop": {
+      "n": 40,
+      "mean": 0.3924763429386219,
+      "sd": 0.0671734620786756
+     },
+     "mean_target_vs_population_l1": 0.0023427287300575063
+    },
+    "eavail@moderate": {
+     "R": {
+      "n": 40,
+      "mean": 0.5565218069462498,
+      "sd": 0.07641302799484088
+     },
+     "R_pop": {
+      "n": 40,
+      "mean": 0.5565593337458205,
+      "sd": 0.07537682229021775
+     },
+     "mean_target_vs_population_l1": 0.004954823143298197
+    },
+    "eavail@good": {
+     "R": {
+      "n": 40,
+      "mean": 0.7348417677644707,
+      "sd": 0.07971419397027225
+     },
+     "R_pop": {
+      "n": 40,
+      "mean": 0.7362243130531768,
+      "sd": 0.08086029801017726
+     },
+     "mean_target_vs_population_l1": 0.0034638628911899025
+    },
+    "eavail_x_q3": {
+     "R": {
+      "n": 40,
+      "mean": 0.4496915280225853,
+      "sd": 0.04049541556511898
+     },
+     "R_pop": {
+      "n": 40,
+      "mean": 0.44994632528602574,
+      "sd": 0.0400704651466179
+     },
+     "mean_target_vs_population_l1": 0.0033591722923365258
+    }
+   },
    "S4S:D4c_p_up": {
     "eavail": {
      "R": {
@@ -523,6 +594,73 @@
      "mean_target_vs_population_l1": 0.0032537338791990564
     }
    },
+   "S4S:D3_p0.35": {
+    "eavail": {
+     "R": {
+      "n": 40,
+      "mean": 0.6633677607586888,
+      "sd": 0.0849690920194336
+     },
+     "R_pop": {
+      "n": 40,
+      "mean": 0.6638249540350153,
+      "sd": 0.08637868244608947
+     },
+     "mean_target_vs_population_l1": 0.001962314426893177
+    },
+    "eavail@low_acceptance": {
+     "R": {
+      "n": 40,
+      "mean": 0.365844202498163,
+      "sd": 0.08062984912035943
+     },
+     "R_pop": {
+      "n": 40,
+      "mean": 0.36460671355472707,
+      "sd": 0.07968434201646672
+     },
+     "mean_target_vs_population_l1": 0.0023427287300575063
+    },
+    "eavail@moderate": {
+     "R": {
+      "n": 40,
+      "mean": 0.5751507460231424,
+      "sd": 0.08997306496316186
+     },
+     "R_pop": {
+      "n": 40,
+      "mean": 0.5744821480032332,
+      "sd": 0.08524980638846262
+     },
+     "mean_target_vs_population_l1": 0.004954823143298197
+    },
+    "eavail@good": {
+     "R": {
+      "n": 40,
+      "mean": 0.7510603194462784,
+      "sd": 0.07618082744858334
+     },
+     "R_pop": {
+      "n": 40,
+      "mean": 0.751573748814776,
+      "sd": 0.07886439181894678
+     },
+     "mean_target_vs_population_l1": 0.0034638628911899025
+    },
+    "eavail_x_q3": {
+     "R": {
+      "n": 40,
+      "mean": 0.4459280308610259,
+      "sd": 0.04655952124233412
+     },
+     "R_pop": {
+      "n": 40,
+      "mean": 0.4461305360415471,
+      "sd": 0.04521026781251418
+     },
+     "mean_target_vs_population_l1": 0.0033591722923365258
+    }
+   },
    "S4S:D4c_p_up": {
     "eavail": {
      "R": {
@@ -603,7 +741,6 @@
    "S4S:D2_bump_c0.3": 8,
    "S4S:D2_bump_c1.0": 8,
    "S4S:D3_m0.35": 8,
-   "S4S:D3_p0.35": 40,
    "S4S:D4a_pipm_up": 8,
    "S4S:D4b_pi0_up": 8,
    "S4S:D4c_p_down": 8,
@@ -625,7 +762,6 @@
    "S4S:D2_bump_c0.3": 8,
    "S4S:D2_bump_c1.0": 8,
    "S4S:D3_m0.35": 8,
-   "S4S:D3_p0.35": 40,
    "S4S:D4a_pipm_up": 8,
    "S4S:D4b_pi0_up": 8,
    "S4S:D4c_p_down": 8,
