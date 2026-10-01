@@ -10,8 +10,12 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 PROTO="$HERE/../PROTOCOL-20260925.md"
 for S in "$@"; do
   # blinded until an UNBLIND amendment (Amendments 2, 2c): receipts carry FB-derived statistics
-  if [[ "$S" =~ ^s[45] ]] && ! grep -qE '^### Amendment [^ ]+ .*\bUNBLIND\b' "$PROTO"; then
-    echo "refusing to harvest final-bank stage $S before an UNBLIND amendment" >&2; exit 2
+  # look-1 stages only after `UNBLIND look 1`; coverage (s5) is scored per manifest by jobs/score_cov.sh
+  if [[ "$S" =~ ^s5 ]]; then
+    echo "refusing to harvest coverage stage $S here: use jobs/score_cov.sh after its own UNBLIND group" >&2; exit 2
+  fi
+  if [[ "$S" =~ ^s4 ]] && ! grep -qE '^### Amendment [^ ]+ .*\bUNBLIND look 1([^0-9]|$)' "$PROTO"; then
+    echo "refusing to harvest final-bank stage $S before the UNBLIND look 1 amendment" >&2; exit 2
   fi
   mkdir -p "$HERE/$S"
   ssh -o BatchMode=yes saul.nersc.gov "cd $B/$S && for d in */; do d=\${d%/}; [ -f \$d/status.txt ] || continue; \

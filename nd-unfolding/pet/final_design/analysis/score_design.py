@@ -111,28 +111,66 @@ D4_SPECIES_HISTOGRAM = {"D4a": "eavail_x_pipm", "D4b": "eavail_x_pi0",
 DESIGNATED = {"D1_p0.350": "E0", "D1_m0.350": "E3", "D4c_p_up": "E4", "D3_p0.35": "E5"}
 
 
-def refuse_blinded_final_runs(names, protocol=None):
-    """Final-bank stages S4*/S5* (and any run whose receipt records a FB/RB pseudodata bank) stay
-    unscored until PROTOCOL-20260925 carries an explicit `### Amendment ... UNBLIND` heading
-    (Amendment 2c: scoring unlocks on a completeness declaration, not on the large-slot freeze).
-    Fails closed."""
+# Final-bank unblinding groups (Amendments 2c item 9, 4, 5): each group unlocks only on its own
+# `### Amendment ... UNBLIND <group>` heading AND only the rows its completeness record lists as COMPLETE.
+# A look-1 heading does not unlock coverage, the development-tilt coverage group does not unlock D4c, and no
+# group unlocks RB. Add a group here (with its amendment) before scoring a new final-bank manifest.
+UNBLIND_GROUPS = {
+    "look 1": "freeze/COMPLETENESS-look1.tsv",
+    "coverage s5c_a5_H2S1T24": "freeze/COMPLETENESS-s5c_a5_H2S1T24.tsv",
+    "coverage s5d_a5_H2S1T24": "freeze/COMPLETENESS-s5d_a5_H2S1T24.tsv",
+}
+
+
+def _recorded_bank(run) -> str:
+    """The pseudodata bank a run recorded (receipt or inputs receipt), '' if none."""
+    for f in ("receipt.json", "inputs_receipt.json"):
+        try:
+            sel = json.loads((Path(str(run)) / f).read_text()).get("selection") or {}
+            return str(sel.get("pseudo_bank") or sel.get("record", {}).get("pseudo_bank", ""))
+        except (OSError, ValueError, AttributeError):
+            continue
+    return ""
+
+
+def unblinded_rows(protocol, study=None) -> dict[str, str]:
+    """{run name: group} for every row unlocked by a committed UNBLIND heading and its completeness record."""
     import re as _re
-    from pathlib import Path as _P
-    protocol = _P(protocol) if protocol else _P(__file__).resolve().parents[1] / "PROTOCOL-20260925.md"
-    def _bank(n):
-        """The pseudodata bank a run recorded (receipt or inputs receipt), '' if none."""
-        import json as _j
-        for f in ("receipt.json", "inputs_receipt.json"):
-            try:
-                sel = _j.loads((_P(str(n)) / f).read_text()).get("selection") or {}
-                return str(sel.get("pseudo_bank") or sel.get("record", {}).get("pseudo_bank", ""))
-            except (OSError, ValueError, AttributeError):
+    protocol = Path(protocol)
+    study = Path(study) if study else protocol.parent
+    text = protocol.read_text()
+    rows: dict[str, str] = {}
+    for group, record in UNBLIND_GROUPS.items():
+        if not _re.search(rf"^### Amendment \S+ .*\bUNBLIND {_re.escape(group)}(?![\w.])", text, _re.M):
+            continue
+        path = study / record
+        if not path.exists():
+            raise SystemExit(f"UNBLIND {group}: completeness record {record} is missing")
+        for line in path.read_text().splitlines():
+            if line.startswith("#") or not line.strip():
                 continue
-        return ""
-    blinded = [n for n in names if _re.match(r"^S[45]", _P(str(n)).name)
-               or _bank(n) in ("FB", "RB")]
-    if blinded and not _re.search(r"^### Amendment \S+ .*\bUNBLIND\b", protocol.read_text(), _re.M):
-        raise SystemExit(f"refusing to score final-bank runs before an UNBLIND amendment: {blinded[:3]}")
+            f = line.split("\t")
+            if len(f) >= 3 and f[2] == "COMPLETE":
+                rows[f[1]] = group
+    return rows
+
+
+def refuse_blinded_final_runs(names, protocol=None):
+    """Final-bank stages S4*/S5* (and any run whose receipt records a FB/RB pseudodata bank) stay unscored
+    until the protocol carries the UNBLIND heading of the run's own group and that group's completeness record
+    lists the run as COMPLETE (`UNBLIND_GROUPS`); RB runs are always refused. Fails closed."""
+    protocol = Path(protocol) if protocol else Path(__file__).resolve().parents[1] / "PROTOCOL-20260925.md"
+    final = [n for n in names if re.match(r"^S[45]", Path(str(n)).name) or _recorded_bank(n) in ("FB", "RB")]
+    if not final:
+        return
+    rb = [n for n in final if _recorded_bank(n) == "RB" or re.search(r"-RB\d", Path(str(n)).name)]
+    if rb:
+        raise SystemExit(f"refusing to score reserve-bank (RB) runs: no UNBLIND group covers RB: {rb[:3]}")
+    open_rows = unblinded_rows(protocol)
+    blinded = [n for n in final if Path(str(n)).name not in open_rows]
+    if blinded:
+        raise SystemExit("refusing to score final-bank runs not unlocked by their own UNBLIND group "
+                         f"(heading + completeness record): {blinded[:3]}")
 
 
 def canonical_case(case: str) -> str:

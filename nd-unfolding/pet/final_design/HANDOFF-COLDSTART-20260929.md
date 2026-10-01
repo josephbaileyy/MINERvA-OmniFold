@@ -151,11 +151,14 @@ pre-registered.
   `start_watcher.sh` from **`checkouts/d06a495e`** on **login05**, stop **2026-10-10T22:00Z**; lanes = coverage only
   (dev tilt before D4c). Deployed checkouts `04703b90` (look-1 lanes, finished), `016f1fac` (manifest tool),
   `39e8cbbd` (scoring), `d06a495e` (coverage lanes) — never modify any of them.
-- **Next:** when all 720 `s5c` rows are COMPLETE: `completeness_manifest.py --manifest s5c_a5_H2S1T24:s5` from
-  `checkouts/d06a495e` (module `tensorflow/2.15.0` python — the login `python3` is 3.6), commit `### Amendment 6 — UNBLIND
-  coverage (development tilt)` citing it, deploy, score the members at k = 5 (`score_design.py`, as `score_fb.sh`
-  does), `analysis/coverage.py` for C1–C4. Then the same for the 360 `s5d` rows and C5 (skipped only after a decisive
-  C1–C4 FAIL), then `decide.py` with the coverage file → terminal outcome. Then the independent review (§10).
+- **Next:** when all 720 `s5c` rows are COMPLETE: from `checkouts/d06a495e` (module `tensorflow/2.15.0` python — the
+  login `python3` is 3.6) run `completeness_manifest.py --manifest s5c_a5_H2S1T24:s5 --out
+  freeze/COMPLETENESS-s5c_a5_H2S1T24.tsv` (write it in the study area, copy into the repo), commit it with
+  `### Amendment 6 (<date>) — UNBLIND coverage s5c_a5_H2S1T24` (Amendment 5b: the exact group name), deploy, then
+  `jobs/score_cov.sh <sha> s5c_a5_H2S1T24 5 $B/population/fb_population_dev.json` and `analysis/coverage.py` for
+  C1–C4. Then the same for `s5d_a5_H2S1T24` (population `fb_population_D4c_p_up.json`) and C5 (skipped only after a
+  decisive C1–C4 FAIL), then `decide.py` with the coverage file → terminal outcome; then the review under
+  `REVIEW_BRIEF-DECISION-20261001.md`.
 - **Traps found this session:** `freeze/completeness_manifest.py` is not in `04703b90` (run tools from a checkout
   that has them; the `runs/*.tsv` are identical); login-node `python3` is 3.6 (use the module); the Mac has no
   `timeout`; `runner/test_step2_ensemble.py` has 2 stale failures that predate this session (X4 arm; fail on

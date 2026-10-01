@@ -193,27 +193,13 @@ def analyze_run(run: Path, rf: dict[str, np.ndarray]) -> dict:
 
 
 def refuse_blinded_final_runs(names, protocol=None):
-    """Final-bank stages S4*/S5* (and any run whose receipt records a FB/RB pseudodata bank) stay
-    unscored until PROTOCOL-20260925 carries an explicit `### Amendment ... UNBLIND` heading
-    (Amendment 2c: scoring unlocks on a completeness declaration, not on the large-slot freeze).
-    Fails closed."""
-    import re as _re
-    from pathlib import Path as _P
-    protocol = _P(protocol) if protocol else _P(__file__).resolve().parents[1] / "PROTOCOL-20260925.md"
-    def _bank(n):
-        """The pseudodata bank a run recorded (receipt or inputs receipt), '' if none."""
-        import json as _j
-        for f in ("receipt.json", "inputs_receipt.json"):
-            try:
-                sel = _j.loads((_P(str(n)) / f).read_text()).get("selection") or {}
-                return str(sel.get("pseudo_bank") or sel.get("record", {}).get("pseudo_bank", ""))
-            except (OSError, ValueError, AttributeError):
-                continue
-        return ""
-    blinded = [n for n in names if _re.match(r"^S[45]", _P(str(n)).name)
-               or _bank(n) in ("FB", "RB")]
-    if blinded and not _re.search(r"^### Amendment \S+ .*\bUNBLIND\b", protocol.read_text(), _re.M):
-        raise SystemExit(f"refusing to score final-bank runs before an UNBLIND amendment: {blinded[:3]}")
+    """The study's one final-bank unblinding gate (`analysis/score_design.refuse_blinded_final_runs`: each run
+    only by its own UNBLIND group and completeness record; RB never)."""
+    analysis = str(Path(__file__).resolve().parents[1] / "analysis")
+    if analysis not in sys.path:
+        sys.path.insert(0, analysis)
+    from score_design import refuse_blinded_final_runs as gate
+    gate(names, protocol)
 
 
 _RF: dict = {}

@@ -2,13 +2,19 @@
 # Score one coverage manifest (Amendment 5; after its UNBLIND coverage amendment is committed and deployed):
 # analysis/score_design.py at the finalist's frozen K on every member run, with the FB population target of the
 # manifest's case (report-only vs_population), into $B/scored/<stem>, in guarded CPU-debug jobs of <= 200 runs
-# (~4 s per run). Refuses unless the deployed checkout's protocol carries an UNBLIND coverage heading.
+# (~4 s per run). Refuses unless the deployed checkout's protocol carries `UNBLIND coverage <stem>` for this
+# manifest and its committed completeness record freeze/COMPLETENESS-<stem>.tsv.
 #   usage (cluster): bash score_cov.sh <deployed checkout sha> <manifest stem> <K> <population target json>
 set -euo pipefail
 B=/pscratch/sd/j/josephrb/pet-final-design-20260925; S=$1; STEM=$2; K=$3; POP=$4; M=$B/checkouts/${S:0:8}
 [[ "$(git -C "$M" rev-parse HEAD)" == "$S" ]] || { echo "checkout $M not at $S" >&2; exit 2; }
 P=$M/nd-unfolding/pet/final_design/PROTOCOL-20260925.md
-grep -qE '^### Amendment [^ ]+ .*\bUNBLIND coverage\b' "$P" || { echo "no UNBLIND coverage amendment in $P" >&2; exit 2; }
+# this manifest's own group only (score_design.UNBLIND_GROUPS; the scorer re-checks per run)
+grep -qE "^### Amendment [^ ]+ .*\bUNBLIND coverage ${STEM}([^[:alnum:]_.]|\$)" "$P" \
+  || { echo "no 'UNBLIND coverage $STEM' amendment in $P" >&2; exit 2; }
+C=$M/nd-unfolding/pet/final_design/freeze/COMPLETENESS-$STEM.tsv
+[[ -f "$C" ]] || { echo "no completeness record $C" >&2; exit 2; }
+grep -q "^# $STEM.tsv sha256 " "$C" || { echo "$C is not the record of $STEM" >&2; exit 2; }
 [[ -f "$POP" ]] || { echo "no population target $POP" >&2; exit 2; }
 R=$M/nd-unfolding/pet/final_design/runs/$STEM.tsv; O=$B/scored/$STEM; mkdir -p "$O"; cd "$O"
 runs=(); while IFS= read -r n; do runs+=("$B/s5/$n"); done < <(cut -f1 "$R" | grep -v '^#')
