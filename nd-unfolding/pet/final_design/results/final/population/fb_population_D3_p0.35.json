@@ -1,0 +1,134 @@
+{
+ "schema": "pet-final-design/population-target/1",
+ "bank": "FB",
+ "distortion": "D3_p0.35",
+ "distortion_hash": "08e815fb4c2effe1d5ca4e4c323a6307375e46b3e86ff8459e1cc604fbbf5eee",
+ "distortion_record": {
+  "name": "D3_p0.35",
+  "phase_e_spec": {
+   "version": "phase-e-distortion/1",
+   "id": "D3_p0.35",
+   "family": "D3",
+   "kind": "truth_weight",
+   "params": {
+    "amplitude": 0.35,
+    "clip_z": 3.0,
+    "iqr": 0.41916364793854344,
+    "p50": 0.6492113473114207,
+    "standardization_sha256": "dc53c37345cf9bb660f1223fe3b809ec8ed9001d9de79ed9eccc964f8356e4a3"
+   },
+   "description": "clipped exponential tilt in the standardized ratio true E_avail / true q3 (pool-T quantiles); q3 <= 0 or non-finite -> weight 1"
+  },
+  "phase_e_hash": "8d6cc72a35c0ba54af4915e619a86b33c6c6ad1c0d970edb7c03786a1ea35e7d",
+  "normalization": "unit mean over the pseudodata's truth-passing rows"
+ },
+ "n_bank_rows": 2646891,
+ "n_scored_rows": 2646891,
+ "natural_histogram": "eavail_x_q3",
+ "targets": {
+  "aggregate": [
+   0.03220439481739953,
+   0.0341492485546255,
+   0.07559818324699392,
+   0.12487682963063858,
+   0.1527286349725492,
+   0.231030863634642,
+   0.3494118451431512
+  ],
+  "regions": {
+   "low_acceptance": [
+    0.01075661341238224,
+    0.005638938009274245,
+    0.015692308858913248,
+    0.04179151652446811,
+    0.09356228089165639,
+    0.2525324779255214,
+    0.5800258643777844
+   ],
+   "moderate": [
+    0.01653794995822635,
+    0.015487900440274793,
+    0.045067067873174105,
+    0.10355448152650788,
+    0.17327584376185723,
+    0.3103618506369093,
+    0.3357149058030504
+   ],
+   "good": [
+    0.05493293107005454,
+    0.06353197965941164,
+    0.13362054365886614,
+    0.19639797950787033,
+    0.1888295185359341,
+    0.17896951430920263,
+    0.1837175332586606
+   ]
+  },
+  "histograms": {
+   "eavail_x_q3": [
+    0.02367001957164208,
+    0.004045891971231898,
+    0.003285549128273393,
+    0.0011700028691851887,
+    0.030171635671929212,
+    0.0024929289695335695,
+    0.0011024653894931475,
+    0.00038338052353704375,
+    0.06371413996827842,
+    0.007606548520156041,
+    0.003235878223033052,
+    0.0010441889224071267,
+    0.07968862256700807,
+    0.0343791754695574,
+    0.007961590141924565,
+    0.0028516906484169794,
+    0.01621541346505873,
+    0.1098838643739823,
+    0.01936177554416348,
+    0.007272778501755147,
+    0.0,
+    0.0632014458364928,
+    0.14351021498172106,
+    0.02432706412654907,
+    0.0,
+    0.0,
+    0.0781348386406496,
+    0.27128889597402045
+   ]
+  }
+ },
+ "weight_check": {
+  "run": "/pscratch/sd/j/josephrb/pet-final-design-20260925/s4s/S4S-H2S1T24K5-FB0-D3_p0.35",
+  "rows": 600111,
+  "max_abs_diff": 0.0
+ },
+ "banks": {
+  "banks_npz": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-runner/banks/banks.npz",
+  "banks_npz_sha256": "50b7697c0a282e25efa35ec6e815cdf6ee0103085a78c2e9843244b4cacfe110",
+  "bank_manifest": "/pscratch/sd/j/josephrb/pet-final-design-20260925/checkouts/54a5fc31/nd-unfolding/pet/final_design/banks/BANK_MANIFEST.json",
+  "bank_manifest_sha256": "682e259fbe41cf37407b545c6acf1739b8e438f38ee0adfae8f16449bf8d5cb3",
+  "bank_manifest_code_commit": "728ce49436067ebbf132776bfa022d5348f2c8ae",
+  "counts": {
+   "DEV": 45089191,
+   "FB": 2646891,
+   "RB": 1414846
+  },
+  "identity_sidecar_sha256": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c"
+ },
+ "inputs_npz": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+ "inputs_npz_members": [
+  "truth_scalars",
+  "w_truth",
+  "pass_truth"
+ ],
+ "populations": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseB1/prep/populations.npz",
+ "populations_sha256": "b2b55791a25523ef510a099cbbd0defcf3157ab59af2580c219fe088ccb96da1",
+ "row_features": "/pscratch/sd/j/josephrb/pet-final-design-20260925/rowfeatures/row_features.npz",
+ "scalar_cols": {
+  "pt": 0,
+  "pparallel": 1,
+  "eavail": 2,
+  "q3": 3
+ },
+ "code_commit": "54a5fc3104cab49ed430e818bc9773defba77f1d"
+}

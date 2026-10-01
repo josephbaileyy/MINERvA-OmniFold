@@ -1,0 +1,132 @@
+{
+ "schema": "pet-final-design/population-target/1",
+ "bank": "FB",
+ "distortion": "D4c_p_up",
+ "distortion_hash": "d0dbd8fd74a166d6794f96ea1991359a821e55420a9241b498440b2117da7d04",
+ "distortion_record": {
+  "name": "D4c_p_up",
+  "phase_e_spec": {
+   "version": "phase-e-distortion/1",
+   "id": "D4c_p_up",
+   "family": "D4",
+   "kind": "truth_weight",
+   "params": {
+    "factor": 1.3,
+    "pdg": 2212,
+    "species": "p"
+   },
+   "description": "f^N, N = stored truth hadrons with |pdg| = 2212 among the <= 12 highest-energy (part_gen truncation)"
+  },
+  "phase_e_hash": "7556c7f1165316ef8fc1b30240ace4893517c9a8b0253126e4fdc6fdae5f37e3",
+  "normalization": "unit mean over the pseudodata's truth-passing rows"
+ },
+ "n_bank_rows": 2646891,
+ "n_scored_rows": 2646891,
+ "natural_histogram": "eavail_x_proton",
+ "targets": {
+  "aggregate": [
+   0.04857480021426889,
+   0.050466135845449504,
+   0.0969458289737052,
+   0.1443235770150141,
+   0.15886574678868445,
+   0.2100511678961235,
+   0.2907727432667544
+  ],
+  "regions": {
+   "low_acceptance": [
+    0.013797891495265266,
+    0.00805733962985815,
+    0.021805700955277677,
+    0.05486692601565172,
+    0.11240018675487233,
+    0.258393331876898,
+    0.5306786232721769
+   ],
+   "moderate": [
+    0.021686478872676888,
+    0.02289963401042305,
+    0.06083635626591539,
+    0.12599785341484332,
+    0.18901765161925016,
+    0.29124230576469823,
+    0.2883197200521931
+   ],
+   "good": [
+    0.08066918118356159,
+    0.08775584269980358,
+    0.15803899778607874,
+    0.20777740704357534,
+    0.17705624775667658,
+    0.14688494783530306,
+    0.14181737569500102
+   ]
+  },
+  "histograms": {
+   "eavail_x_proton": [
+    0.008968795128854685,
+    0.018874881505082503,
+    0.006018448805651702,
+    0.014712674774678832,
+    0.004005784697633367,
+    0.018017941422399077,
+    0.008702111344229354,
+    0.019740298381187668,
+    0.00918063617245115,
+    0.03459639134333202,
+    0.018499210108396794,
+    0.03466959134952364,
+    0.016476997913703377,
+    0.04954549094976604,
+    0.025340461670442377,
+    0.05296062648110042,
+    0.023908763120558185,
+    0.05362786665741926,
+    0.023579765750549056,
+    0.057749351260153924,
+    0.0387888141883799,
+    0.0756043682637244,
+    0.027364214591328668,
+    0.06829377085269665,
+    0.04084225017343711,
+    0.1152017151299081,
+    0.04230296874981879,
+    0.09242580921359296
+   ]
+  }
+ },
+ "weight_check": {
+  "run": "/pscratch/sd/j/josephrb/pet-final-design-20260925/s4s/S4S-H2S1T24K5-FB0-D4c_p_up",
+  "rows": 600111,
+  "max_abs_diff": 0.0
+ },
+ "banks": {
+  "banks_npz": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-runner/banks/banks.npz",
+  "banks_npz_sha256": "50b7697c0a282e25efa35ec6e815cdf6ee0103085a78c2e9843244b4cacfe110",
+  "bank_manifest": "/pscratch/sd/j/josephrb/pet-final-design-20260925/checkouts/ed686aae/nd-unfolding/pet/final_design/banks/BANK_MANIFEST.json",
+  "bank_manifest_sha256": "682e259fbe41cf37407b545c6acf1739b8e438f38ee0adfae8f16449bf8d5cb3",
+  "bank_manifest_code_commit": "728ce49436067ebbf132776bfa022d5348f2c8ae",
+  "counts": {
+   "DEV": 45089191,
+   "FB": 2646891,
+   "RB": 1414846
+  },
+  "identity_sidecar_sha256": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c"
+ },
+ "inputs_npz": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+ "inputs_npz_members": [
+  "truth_scalars",
+  "w_truth",
+  "pass_truth"
+ ],
+ "populations": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseB1/prep/populations.npz",
+ "populations_sha256": "b2b55791a25523ef510a099cbbd0defcf3157ab59af2580c219fe088ccb96da1",
+ "row_features": "/pscratch/sd/j/josephrb/pet-final-design-20260925/rowfeatures/row_features.npz",
+ "scalar_cols": {
+  "pt": 0,
+  "pparallel": 1,
+  "eavail": 2,
+  "q3": 3
+ },
+ "code_commit": "ed686aae8957201c7eed9c4106c0a09259735742"
+}

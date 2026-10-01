@@ -184,6 +184,12 @@ def make_recipe_multifold(MultiFold: type, tf: Any, np: Any) -> type:
                      training_recipe: Any = None, torch_adamw: Any = None,
                      probe_rows: int = 50_000, verbose: bool = False) -> None:
             config.validate()
+            # [pfd] fail closed: a step-2 ensemble (recipe.StepRecipe.ensemble) is executed only
+            # by a subclass that declares it (final_design/runner/step2_ensemble.py); any other
+            # driver would silently run M = 1 under a config hash that says M.
+            if config.step2.ensemble != 1 and not getattr(self, "EXECUTES_STEP2_ENSEMBLE", False):
+                raise SystemExit(f"[recipe] {type(self).__name__} does not execute a step-2 "
+                                 f"ensemble (config step2.ensemble = {config.step2.ensemble})")
             self.config = config
             self.factories = factories
             self.out_dir = Path(out_dir)
