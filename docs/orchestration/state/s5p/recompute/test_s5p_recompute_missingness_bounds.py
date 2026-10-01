@@ -84,17 +84,30 @@ def toy_record(tmp):
     t.power("P1_a1.0", 20, "MnvTune_v1", np.repeat(np.linspace(0.7, 1.3, 4), base.size // 4))
     pw = {"P1_a1.0": {"glob": str(t.root / "pow/P1_a1.0/pow_P1_a1.0_s*.npz"), "surrogate_seed0": 1951000,
                       "n": 24, "null": "MnvTune_v1"}}
-    return R.jsonable(R.evaluate(t.design(power=pw), t.v_path, t.contract, log=lambda *a: None))
+    rec = R.jsonable(R.evaluate(t.design(power=pw), t.v_path, t.contract, log=lambda *a: None))
+    rec["inputs"] = {"design_sha256": "toy"}
+    return rec
 
 
-def disposition(counts_by_null, power=None):
+TOY_FROZEN = {"design_sha256": "toy", "nulls": ["MnvTune_v1", "GiBUU_2019"], "variant_mode": "union",
+              "variants": {"MnvTune_v1": ["c=0", "c=0.5", "c=1"], "GiBUU_2019": ["c=0", "c=0.5", "c=1", "m1=+2", "m1=-2"]}}
+
+
+def disposition(counts_by_null, power=None, products=None):
     nulls = {}
+    products = products or {"MnvTune_v1": 800, "GiBUU_2019": 200}
     for k, c in counts_by_null.items():
         lost = sum(v for x, v in c.items() if x in ("submitted_interrupted", "submitted_never_started",
                                                     "submitted_task_no_log", "submitted_failed_rc"))
         nulls[k] = {"counts": c, "lost_work": lost, "recompute_missing_seeds_equal": True,
-                    "not_submitted": c.get("not_submitted_no_admission", 0)}
-    return {"nulls": nulls, "power": power or {}}
+                    "not_submitted": c.get("not_submitted_no_admission", 0), "products": products[k]}
+    return {"nulls": nulls, "power": power if power is not None else
+            {"P1_a1.0": {"admitted": True, "products": 20, "counts": {"submitted_never_started": 4},
+                         "lost_work": 4, "not_submitted": 0}}}
+
+
+def run(rec, d, frozen=None):
+    return M.evaluate_bounds(rec, d, frozen or TOY_FROZEN)
 
 
 class EndToEnd(unittest.TestCase):
@@ -110,8 +123,9 @@ class EndToEnd(unittest.TestCase):
     def test_complete_run_certifies_and_bounds(self):
         d = disposition({"MnvTune_v1": {"submitted_interrupted": 2, "submitted_never_started": 3},
                          "GiBUU_2019": {}},
-                        {"P1_a1.0": {"counts": {"submitted_interrupted": 1}, "lost_work": 1}})
-        out = M.evaluate_bounds(self.rec, d)
+                        {"P1_a1.0": {"admitted": True, "products": 20, "counts": {"submitted_interrupted": 1,
+                                     "submitted_never_started": 3}, "lost_work": 4, "not_submitted": 0}})
+        out = run(self.rec, d)
         self.assertEqual(out["status"], "complete", out["incomplete"])
         self.assertIn("MnvTune_v1:total", out["primary_rejections"])
         a, b = out["populations"]["a_interrupted"], out["populations"]["b_all_lost"]
@@ -128,43 +142,64 @@ class EndToEnd(unittest.TestCase):
         self.assertIn("all_worst:MnvTune_v1:total", b["decisions_changed_in_runs"])
         self.assertEqual(out["holm_level"], 0.95)
         p = out["power"]["P1_a1.0"]
-        self.assertEqual((p["n_present"], p["L"]), (20, 1))
+        self.assertEqual((p["n_present"], p["L"]), (20, 4))
         c = p["shape"]["0.05"]["rank_unshifted"]["count"]
-        self.assertEqual(p["shape"]["0.05"]["rank_unshifted"]["bounds"], [c / 21, (c + 1) / 21])
+        self.assertEqual(p["shape"]["0.05"]["rank_unshifted"]["bounds"], [c / 24, (c + 4) / 24])
+        self.assertEqual((p["conditional_on_retained_null_ensemble"], p["certifies_power_robustness"]), (True, False))
 
     def test_unknown_losses_fail_closed(self):
         d = disposition({"MnvTune_v1": {"submitted_task_no_log_unverified": 6}, "GiBUU_2019": {}})
-        out = M.evaluate_bounds(self.rec, d)
+        out = run(self.rec, d)
         self.assertEqual(out["status"], "INCOMPLETE")
         self.assertEqual(out["losses"]["MnvTune_v1"]["L"], {"a_interrupted": 6, "b_all_lost": 6})
         self.assertTrue(any("not-established" in x for x in out["incomplete"]))
 
     def test_not_submitted_is_excluded(self):
         d = disposition({"MnvTune_v1": {"not_submitted_no_admission": 200}, "GiBUU_2019": {}})
-        out = M.evaluate_bounds(self.rec, d)
+        out = run(self.rec, d)
         self.assertEqual(out["losses"]["MnvTune_v1"]["L"], {"a_interrupted": 0, "b_all_lost": 0})
         self.assertEqual(out["losses"]["MnvTune_v1"]["not_submitted"], 200)
         self.assertEqual(out["status"], "complete")
 
     def test_large_loss_breaks_the_certificate(self):
         d = disposition({"MnvTune_v1": {"submitted_never_started": 40}, "GiBUU_2019": {}})
-        out = M.evaluate_bounds(self.rec, d)
+        out = run(self.rec, d)
         self.assertTrue(out["populations"]["a_interrupted"]["certificate"]["holds"])  # never-started not in (a)
         self.assertFalse(out["populations"]["b_all_lost"]["certificate"]["holds"])
         self.assertIn("NOT certified", out["populations"]["b_all_lost"]["verdict"])
+
+    def test_frozen_identity_is_enforced(self):
+        d = disposition({"MnvTune_v1": {}, "GiBUU_2019": {}})
+        self.assertEqual(run(self.rec, d)["status"], "complete")
+        joined = "\n".join(M.evaluate_bounds(self.rec, d)["incomplete"])  # the production FROZEN spec
+        for part in ("design sha256", "nulls"):  # the toy's two nulls carry the frozen variant families themselves
+            self.assertIn(part, joined)
+        bad = dict(TOY_FROZEN, variants=dict(TOY_FROZEN["variants"], GiBUU_2019=["c=0", "c=0.5", "c=1"]))
+        self.assertIn("GiBUU_2019:total variants", "\n".join(run(self.rec, d, bad)["incomplete"]))
+
+    def test_power_and_product_counts_must_add_up(self):
+        d = disposition({"MnvTune_v1": {}, "GiBUU_2019": {}}, power={})
+        out = run(self.rec, d)
+        self.assertIn("power P1_a1.0: no seed disposition", out["incomplete"])
+        d = disposition({"MnvTune_v1": {}, "GiBUU_2019": {}},
+                        {"P1_a1.0": {"admitted": True, "products": 20, "counts": {}, "lost_work": 0,
+                                     "not_submitted": 0}})
+        self.assertTrue(any("!= declared 24" in x for x in run(self.rec, d)["incomplete"]))  # 4 unaccounted
+        d = disposition({"MnvTune_v1": {}, "GiBUU_2019": {}}, products={"MnvTune_v1": 799, "GiBUU_2019": 200})
+        self.assertTrue(any("disposition products 799" in x for x in run(self.rec, d)["incomplete"]))
 
     def test_incoherent_claim_and_non_terminal_are_incomplete(self):
         import copy
         rec = copy.deepcopy(self.rec)
         rec["nulls"]["MnvTune_v1"]["tests"]["total"]["k"] += 1
         rec["nulls"]["GiBUU_2019"]["calibration"]["final_status_present"] = False
-        out = M.evaluate_bounds(rec, disposition({"MnvTune_v1": {}, "GiBUU_2019": {}}))
+        out = run(rec, disposition({"MnvTune_v1": {}, "GiBUU_2019": {}}))
         joined = "\n".join(out["incomplete"])
         self.assertIn("claim k", joined)
         self.assertIn("no final status", joined)
         d = disposition({"MnvTune_v1": {}, "GiBUU_2019": {}})
         d["nulls"]["MnvTune_v1"]["recompute_missing_seeds_equal"] = False
-        self.assertIn("differ", "\n".join(M.evaluate_bounds(self.rec, d)["incomplete"]))
+        self.assertIn("differ", "\n".join(run(self.rec, d)["incomplete"]))
 
 
 if __name__ == "__main__":

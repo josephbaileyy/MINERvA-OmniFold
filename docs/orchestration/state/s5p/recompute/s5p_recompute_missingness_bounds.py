@@ -33,8 +33,26 @@ made at a later Holm step with a larger threshold. Holm with determinacy is NOT 
 certificate the corner and one-at-a-time runs below are reported as "not proven extremal" and nothing is concluded
 from them.
 
-Power. The missing power experiments bound each count c over n present as [c / (n + L), (c + L) / (n + L)]. The
-effect of missing NULL experiments on power is not bounded here (it needs each alternative's count).
+Power. The missing power experiments bound each count c over n present as [c / (n + L), (c + L) / (n + L)].
+These bounds are CONDITIONAL on the retained null ensemble. A lost null experiment can change each alternative's
+count, and that effect is not bounded here, so no power robustness is ever certified from them
+(``certifies_power_robustness: false``).
+
+Identity, checked before anything is bounded (``FROZEN``):
+- the design sha256;
+- the five nulls in the family order;
+- each null's frozen variant family (MnvTune: the three process-shift variants; the others: those plus F +- 2
+  delta_M1);
+- the primary (union) variant mode.
+
+A mismatch, a missing disposition, or counts that do not add up gives INCOMPLETE; nothing defaults to zero losses.
+The counts that must add up:
+- the disposition's product count equals the recompute's;
+- for a power set: present + lost + not established + not submitted = declared.
+
+The certificate is reported in two forms: ``holds`` (step-aware) and ``simple_alpha_over_m``. A method that uses
+only the simple form must be compared with ``simple_alpha_over_m``. A case where the step-aware form holds and the
+simple one does not is NOT a disagreement.
 
 Exit: 0 written and complete; 3 written but INCOMPLETE (a terminal or coherence condition failed, listed in
 ``incomplete``); 2 an input is missing or unreadable.
@@ -46,6 +64,14 @@ import json
 import sys
 from pathlib import Path
 
+FROZEN = {
+    "design_sha256": "404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285",
+    "nulls": ["MnvTune_v1", "GENIE_2_12_10_CV", "GENIE_2_12_10_MEC", "NuWro_21_09", "GiBUU_2019"],
+    "variants": {"MnvTune_v1": ["c=0", "c=0.5", "c=1"],
+                 **{k: ["c=0", "c=0.5", "c=1", "m1=+2", "m1=-2"]
+                    for k in ("GENIE_2_12_10_CV", "GENIE_2_12_10_MEC", "NuWro_21_09", "GiBUU_2019")}},
+    "variant_mode": "union",
+}
 NOT_ESTABLISHED = ("submitted_task_not_yet_run", "submitted_task_no_log_unverified", "submitted_unaccounted")
 TOL = 1e-12
 
@@ -135,10 +161,29 @@ def family_runs(entries: list[dict], per: dict, alpha: float) -> dict:
     return {name: {d["test"]: d["decision"] for d in R.holm_determined(ents, alpha)} for name, ents in runs.items()}
 
 
-def evaluate_bounds(rec: dict, disp: dict) -> dict:
+def identity(rec: dict, frozen: dict) -> list[str]:
+    R, bad = _R(), []
+    got = (rec.get("inputs") or {}).get("design_sha256")
+    if got != frozen["design_sha256"]:
+        bad.append(f"design sha256 {got} != frozen {frozen['design_sha256']}")
+    if list(rec["nulls"]) != frozen["nulls"]:
+        bad.append(f"nulls {list(rec['nulls'])} != frozen {frozen['nulls']}")
+    if rec.get("variant_mode") != frozen["variant_mode"]:
+        bad.append(f"variant mode {rec.get('variant_mode')} != {frozen['variant_mode']}")
+    for key, n in rec["nulls"].items():
+        for t in R.TESTS:
+            tr = n["tests"][t]
+            if tr.get("not_calibrated"):
+                continue
+            if sorted(tr["variants"]) != sorted(frozen["variants"].get(key, [])):
+                bad.append(f"{key}:{t} variants {sorted(tr['variants'])} != frozen {frozen['variants'].get(key)}")
+    return bad
+
+
+def evaluate_bounds(rec: dict, disp: dict, frozen: dict = FROZEN) -> dict:
     R = _R()
     alpha = float(rec["alpha_family"])
-    incomplete = []
+    incomplete = identity(rec, frozen)
     for key, n in rec["nulls"].items():
         cal = n.get("calibration", {})
         if not cal.get("final_status_present"):
@@ -148,8 +193,12 @@ def evaluate_bounds(rec: dict, disp: dict) -> dict:
         dn = disp.get("nulls", {}).get(key)
         if dn is None:
             incomplete.append(f"{key}: no seed disposition")
-        elif dn.get("recompute_missing_seeds_equal") is not True:
-            incomplete.append(f"{key}: the disposition's missing seeds differ from the recompute's")
+        else:
+            if dn.get("recompute_missing_seeds_equal") is not True:
+                incomplete.append(f"{key}: the disposition's missing seeds differ from the recompute's")
+            if dn.get("products") != cal.get("products_used"):
+                incomplete.append(f"{key}: disposition products {dn.get('products')} != recompute "
+                                  f"{cal.get('products_used')}")
     incomplete += coherence(rec, alpha)
     losses = {k: null_losses(disp.get("nulls", {}).get(k, {})) for k in rec["nulls"]}
     for k, ls in losses.items():
@@ -175,14 +224,26 @@ def evaluate_bounds(rec: dict, disp: dict) -> dict:
                         "NOT certified: see the runs (not proven extremal); route to the owner"),
             "runs_not_proven_extremal": runs, "decisions_changed_in_runs": changed}
     for sk, pw in rec.get("power", {}).items():
-        dp = disp.get("power", {}).get(sk, {})
+        n = int(pw.get("n_present", 0))
+        dp = disp.get("power", {}).get(sk)
+        if dp is None:
+            incomplete.append(f"power {sk}: no seed disposition")
+            out["power"][sk] = {"n_present": n, "status": "no disposition: not bounded"}
+            continue
+        if dp.get("products") != n:
+            incomplete.append(f"power {sk}: disposition products {dp.get('products')} != recompute {n}")
         c = dp.get("counts", {})
         unknown = sum(c.get(k, 0) for k in NOT_ESTABLISHED)
-        L = dp.get("lost_work", 0) + unknown
-        n = int(pw.get("n_present", 0))
-        rec_p = {"n_present": n, "n_declared": pw.get("n_declared"), "lost_work": dp.get("lost_work", 0),
-                 "not_established": unknown, "not_submitted": dp.get("not_submitted", 0), "L": L,
-                 "admitted": dp.get("admitted", True)}
+        admitted = dp.get("admitted", False)
+        lost = dp.get("lost_work", 0)
+        not_sub = dp.get("not_submitted", 0) if admitted else int(pw.get("n_declared") or 0) - n
+        L = lost + unknown
+        if n + lost + unknown + not_sub != int(pw.get("n_declared") or -1):
+            incomplete.append(f"power {sk}: present {n} + lost {lost} + not established {unknown} + not submitted "
+                              f"{not_sub} != declared {pw.get('n_declared')}")
+        rec_p = {"n_present": n, "n_declared": pw.get("n_declared"), "lost_work": lost,
+                 "not_established": unknown, "not_submitted": not_sub, "L": L, "admitted": admitted,
+                 "conditional_on_retained_null_ensemble": True, "certifies_power_robustness": False}
         if unknown:
             incomplete.append(f"power {sk}: {unknown} not-established seeds (counted as lost: fail closed)")
         for t in R.TESTS:

@@ -341,7 +341,7 @@ shasum -a 256 /tmp/s5p-recompute-deploy/*
 #         s5p_recompute_compare.py 2cef96881dee75b84e568cb67a864a2db760b5a5c0064d4a7d24a296a5881ed4
 #         design.json 404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285
 #         s5p_recompute_seed_disposition.py bdc19179cbd64debf13c0368b63a4140ecb82ff7c560d6d25606c59e6f1cec77
-#         s5p_recompute_missingness_bounds.py 8c418a863ab3bc73e14337a1ded3509945e3802a22165ef32f7e2f38fb2cbee3
+#         s5p_recompute_missingness_bounds.py d5fdb27cb992084405c12b4b55cfb3205ebf8b21df366d048c4312781168c6c4
 scp -o BatchMode=yes /tmp/s5p-recompute-deploy/* saul.nersc.gov:$S/code/
 ```
 
@@ -663,8 +663,8 @@ an owner ruling and is recorded as such. Scope: no change to the reviewed code (
 `0142a228`), to production, or to any primary output, rule or label. Nothing is gated on it.
 
 *Files and procedure.*
-- Files: `docs/orchestration/state/s5p/recompute/s5p_recompute_missingness_bounds.py` (sha256 `8c418a863ab3bc73…`) and
-  its tests `test_s5p_recompute_missingness_bounds.py` (7).
+- Files: `docs/orchestration/state/s5p/recompute/s5p_recompute_missingness_bounds.py` (sha256 `d5fdb27cb9920844…`) and
+  its tests `test_s5p_recompute_missingness_bounds.py` (9).
 - The procedure and the CP interval are **imported** from the reviewed module, not retyped. Holm uses the 95% level;
   the 99.5% look interval belongs to the stopping rule and is not used here.
 
@@ -699,6 +699,18 @@ variants) lies in [k, k + L] at B' = B + L.
 - End to end on the toy: (a) certified; (b) with 5 lost MnvTune experiments **not** certified, and correctly so: the
   all-worst run moves GiBUU to step 0, where it is undetermined.
 - Fail-closed, not-submitted exclusion, coherence, non-terminal and power-denominator controls.
+
+*Second coordination cycle (2026-09-30), the same day.*
+- **Identity before certification:** the design sha256 (`404446eb…`), the five frozen nulls in order, each null's
+  frozen variant family and the union mode. A mismatch gives INCOMPLETE.
+- **No zero-loss defaults:** a missing power disposition gives INCOMPLETE, and so do product counts that differ from
+  the recompute's or power counts that do not add up to `n` declared.
+- Power bounds are labelled `conditional_on_retained_null_ensemble: true` and
+  `certifies_power_robustness: false`.
+- Both certificate forms are reported. A method that uses only the simple α/m form is compared with
+  `simple_alpha_over_m`; step-aware YES with simple NO is not a disagreement.
+- Tests 7 → 9. Two further mutants go red: the power-disposition check silenced, and the design-digest check
+  silenced.
 
 *What it does not establish.* It does not establish ignorable missingness; it bounds the decisions without that
 assumption. It does not bound the effect of missing **null** experiments on power, which needs each alternative's
