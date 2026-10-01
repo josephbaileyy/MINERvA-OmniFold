@@ -71,6 +71,13 @@ class World:
         led.append({"kind": "budget", "budget_sha256": "x"})
         self.ledger.write_text("\n".join(json.dumps(r) for r in led) + "\n")
 
+    def design(self):
+        return {"alpha_family": 0.05,
+                "nulls": {n: {"calibration_glob": str(self.prod / n / f"{n}_s*.npz"),
+                              "calibration_n": {"min": 0, "max": 1999, "sequential_status": str(self.status / f"{n}-final.json")}}
+                          for n in ("A", "Z")},
+                "power": {"P1_a1.0": {"glob": str(self.prod / "P1_a1.0" / "P1_a1.0_s*.npz"), "n": 6}}}
+
     def product(self, lane, seed):
         (self.prod / lane / f"{lane}_s{seed}.npz").write_bytes(b"x")
 
@@ -103,28 +110,36 @@ class Classification(unittest.TestCase):
             self.assertEqual(a["by_batch"][1], {"completed": 3, "interrupted": 1, "never started": 1, "unestablished": 1})
             self.assertEqual(a["not_submitted_batches"], [2])
             self.assertNotIn(2, a["by_batch"])
-            self.assertEqual(ms.missing(a), {"interrupted": 1, "all": 3})
-            self.assertEqual(ms.missing(a, upto_batch=1), {"interrupted": 0, "all": 0})
-            self.assertEqual(ms.missing(c[("pow", "P1_a1.0")]), {"interrupted": 1, "all": 1})
+            # the unestablished seed counts pessimistically in the interrupted-only bound
+            self.assertEqual(ms.missing(a), {"interrupted_or_unestablished": 2, "unestablished": 1, "all": 3})
+            self.assertEqual(ms.missing(a, upto_batch=1), {"interrupted_or_unestablished": 0, "unestablished": 0, "all": 0})
+            self.assertEqual(ms.missing(c[("pow", "P1_a1.0")])["all"], 1)
 
     def test_label_mapping(self):
         self.assertEqual(ms.label_of("cal-GENIE_2_12_10_CV-b2"), "s5p_cal_genie_2_12_10_cv_b2")
         self.assertEqual(ms.label_of("pow-P3_a1.0"), "s5p_pow_p3_a1p0")
 
-    def test_count_mismatch_refused(self):
+    def test_identity_with_the_evaluator_selection(self):
         with tempfile.TemporaryDirectory() as d:
             w, st = build(Path(d))
+            design = w.design()
             c = ms.classify(ms.read_tables(w.tables), ms.submitted_labels(w.ledger), st)
             res = evaluate({"A": entry(0, 0, 9), "Z": entry(0, 0, 6)})  # A has 9 completed: consistent
-            ms.check_counts(res, c)
-            bad = evaluate({"A": entry(0, 0, 10), "Z": entry(0, 0, 6)})
+            ms.check_identity(res, design, c)
+            with self.assertRaises(SystemExit):  # B differs from the selection
+                ms.check_identity(evaluate({"A": entry(0, 0, 10), "Z": entry(0, 0, 6)}), design, c)
+            # a partial file is excluded by the evaluator's selection and by the classification alike
+            (w.prod / "A" / "A_s1011.partial-77.npz").write_bytes(b"x")
+            ms.check_identity(res, design, c)
+            # a product outside every submitted table row is in the selection but not classified: refused
+            w.product("A", 1999)
             with self.assertRaises(SystemExit):
-                ms.check_counts(bad, c)
+                ms.check_identity(res, design, c)
 
 
 class Bounds(unittest.TestCase):
     def test_shifts(self):
-        c, m = leaf(2, 100), {"interrupted": 3, "all": 7}
+        c, m = leaf(2, 100), {"interrupted_or_unestablished": 3, "all": 7}
         self.assertEqual(ms.shifted(c, "worst_interrupted", m)["k"], 5)
         self.assertEqual(ms.shifted(c, "worst_interrupted", m)["B"], 103)
         self.assertEqual((ms.shifted(c, "worst_all_missing", m)["k"], ms.shifted(c, "worst_all_missing", m)["B"]), (9, 107))
@@ -171,23 +186,62 @@ class Bounds(unittest.TestCase):
         self.assertFalse(cert["certified"])
 
 
+class Status(unittest.TestCase):
+    def test_counterexample_versus_unestablished_wording(self):
+        def rec(i, n):
+            return {"by_batch": {0: {"completed": 1, "interrupted": i, "never started": n}}, "seeds": {"completed": [1]}, "not_submitted_batches": []}
+        res = evaluate({"A": entry(0, 0, 999), "Z": entry(900, 900, 1999)})
+        # 40 missing draws flip A at the worst corner: an explicit counterexample
+        out = ms.decisions(res, {"alpha_family": 0.05}, {("cal", "A"): rec(20, 20), ("cal", "Z"): rec(0, 0)})
+        self.assertTrue(out["per_test_status"]["A:total"].startswith("can change (counterexample: "))
+        # no missing draws: certified
+        out = ms.decisions(res, {"alpha_family": 0.05}, {("cal", "A"): rec(0, 0), ("cal", "Z"): rec(0, 0)})
+        self.assertTrue(out["per_test_status"]["A:total"].startswith("certified"))
+        self.assertEqual(out["per_test_status"]["Z:total"], "not certified: survival under all missing-outcome assignments is unestablished")
+        # an incomplete output never certifies
+        out = ms.decisions(res, {"alpha_family": 0.05}, {("cal", "A"): rec(0, 0), ("cal", "Z"): rec(0, 0)}, complete=False)
+        self.assertFalse(out["certificates"]["all"]["primary"]["certified"])
+        self.assertFalse(out["per_test_status"]["A:total"].startswith("certified"))
+
+
 class Looks(unittest.TestCase):
+    def _design(self, sdir):
+        return {"alpha_family": 0.05, "nulls": {"A": {"calibration_n": {"min": 0, "max": 1999,
+                                                                       "sequential_status": str(sdir / "A-final.json")}}}}
+
     def test_rule_reapplied_with_draws_missing_by_each_look(self):
         with tempfile.TemporaryDirectory() as d:
             sdir = Path(d)
-            design = {"alpha_family": 0.05, "nulls": {"A": {"calibration_n": {"min": 0, "max": 1999,
-                                                                             "sequential_status": str(sdir / "A-final.json")}}}}
             (sdir / "A-B0.json").write_text(json.dumps({"B": 0, "stop": False, "reason": "no calibration product yet"}))
             th = sorted(set(si.holm_thresholds(0.05, 2)) | {0.01, 0.05})
             dec = {s: si.sequential_decision(0, 1300, th) for s in ("total", "shape")}
             (sdir / "A-B1300.json").write_text(json.dumps({"B": 1300, "decisions": dec, "stop": True, "reason": "rule met for both tests"}))
-            classes = {("cal", "A"): {"by_batch": {0: {"interrupted": 30, "never started": 10}}, "seeds": {}, "not_submitted_batches": []}}
-            out = ms.looks(design, classes, 0.05)["A"]["looks"]
-            self.assertEqual(out[0]["status"], "A-B0.json")
-            self.assertNotIn("worst_all_missing", out[0])
-            self.assertEqual(out[1]["worst_all_missing"]["missing_by_look"], {"interrupted": 30, "all": 40})
+            classes = {("cal", "A"): {"by_batch": {0: {"completed": 1300, "interrupted": 30, "never started": 10}},
+                                      "seeds": {}, "not_submitted_batches": []}}
+            lk = ms.looks(self._design(sdir), classes, 0.05)["A"]
+            out = lk["looks"]
+            self.assertTrue(lk["all_looks_mapped"])
+            self.assertEqual((out[0]["batches_before_look"], out[1]["batches_before_look"]), (0, 1))
+            self.assertEqual(out[1]["worst_all_missing"]["missing_by_look"]["all"], 40)
             self.assertTrue(out[1]["best_all_missing"]["rule_stops"])
             self.assertFalse(out[1]["worst_all_missing"]["rule_stops"])  # k = 40 at B = 1340: no bound below 0.005
+
+    def test_wholly_lost_batch_makes_the_look_unresolved(self):
+        # batch 1 lost every product: the look after batch 1 and the look after batch 2 would share B = 200 (one
+        # status file, the later overwriting the earlier), so batch counts 1 and 2 both fit B = 200
+        with tempfile.TemporaryDirectory() as d:
+            sdir = Path(d)
+            th = sorted(set(si.holm_thresholds(0.05, 2)) | {0.01, 0.05})
+            dec = {s: si.sequential_decision(0, 200, th) for s in ("total", "shape")}
+            (sdir / "A-B200.json").write_text(json.dumps({"B": 200, "decisions": dec, "stop": False, "reason": "continue"}))
+            classes = {("cal", "A"): {"by_batch": {0: {"completed": 200}, 1: {"interrupted": 34, "never started": 166},
+                                                   2: {"completed": 150, "interrupted": 50}},
+                                      "seeds": {}, "not_submitted_batches": []}}
+            lk = ms.looks(self._design(sdir), classes, 0.05)["A"]
+            self.assertFalse(lk["all_looks_mapped"])
+            self.assertIsNone(lk["looks"][0]["batches_before_look"])
+            self.assertIn("unresolved", lk["looks"][0]["batch_mapping"])
+            self.assertNotIn("worst_all_missing", lk["looks"][0])
 
 
 class Power(unittest.TestCase):
@@ -201,6 +255,33 @@ class Power(unittest.TestCase):
         self.assertAlmostEqual(b["upper_all_detected"], 4 / 6)
 
 
+class Complete(unittest.TestCase):
+    def test_complete_run_exits_0_and_certifies(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            w, st = build(root)
+            w.product("A", 1011)  # the unestablished seed now has its product
+            w.product("A", 1010)  # and the never-started one too: only seed 1009 (interrupted) and 9005 are missing
+            st["tasks"][0]["seeds"].pop("1010")
+            for n in ("A", "Z"):
+                (w.status / f"{n}-final.json").write_text(json.dumps({"B": 0, "stop": True, "reason": "rule met for both tests"}))
+            seed_states = root / "states.json"
+            seed_states.write_text(json.dumps(st))
+            dpath = root / "design.json"
+            dpath.write_text(json.dumps(w.design()))
+            res = evaluate({"A": entry(0, 0, 11), "Z": entry(0, 0, 6)})
+            res["design_sha256"] = hashlib.sha256(dpath.read_bytes()).hexdigest()
+            res["power"] = {"levels": [0.05], "P1_a1.0": {"n": 5, "total": {}, "shape": {}}}
+            epath = root / "evaluate.json"
+            epath.write_text(json.dumps(res))
+            out = root / "sens.json"
+            rc = ms.main(["--evaluate", str(epath), "--design", str(dpath), "--tables", str(w.tables), "--ledger", str(w.ledger),
+                          "--seed-states", str(seed_states), "--out", str(out)])
+            r = json.loads(out.read_text())
+            self.assertEqual((rc, r["status"]), (0, "COMPLETE"))
+            self.assertEqual(r["classification"]["cal:A"]["missing_seeds"], {"interrupted": [1009]})
+
+
 class Cli(unittest.TestCase):
     def test_separate_file_design_check_no_overwrite(self):
         with tempfile.TemporaryDirectory() as d:
@@ -208,9 +289,7 @@ class Cli(unittest.TestCase):
             w, st = build(root)
             seed_states = root / "states.json"
             seed_states.write_text(json.dumps(st))
-            sdir = root / "status"
-            design = {"alpha_family": 0.05, "nulls": {n: {"calibration_n": {"min": 0, "max": 1999,
-                                                                              "sequential_status": str(sdir / f"{n}-final.json")}} for n in ("A", "Z")}}
+            design = w.design()
             dpath = root / "design.json"
             dpath.write_text(json.dumps(design))
             res = evaluate({"A": entry(0, 0, 9), "Z": entry(0, 0, 6)})
@@ -222,9 +301,14 @@ class Cli(unittest.TestCase):
             args = ["--evaluate", str(epath), "--design", str(dpath), "--tables", str(w.tables), "--ledger", str(w.ledger),
                     "--seed-states", str(seed_states), "--out", str(out)]
             before = epath.read_bytes()
-            self.assertEqual(ms.main(args), 0)
+            self.assertEqual(ms.main(args), 4)  # an unestablished seed and no final statuses: INCOMPLETE
             self.assertEqual(epath.read_bytes(), before)
             r = json.loads(out.read_text())
+            self.assertEqual(r["status"], "INCOMPLETE")
+            self.assertTrue(any("unestablished" in x for x in r["incomplete_reasons"]))
+            self.assertTrue(any("no final status" in x for x in r["incomplete_reasons"]))
+            for c in r["decisions"]["certificates"].values():
+                self.assertFalse(c["primary"]["certified"])
             self.assertEqual(r["schema"], "s5p-missing-sensitivity/1")
             self.assertIn("LABELLED SENSITIVITY", r["label"])
             self.assertEqual(r["classification"]["cal:A"]["missing_seeds"]["unestablished"], [1011])

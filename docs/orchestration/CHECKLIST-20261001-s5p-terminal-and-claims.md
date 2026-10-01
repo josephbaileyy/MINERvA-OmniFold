@@ -67,13 +67,20 @@ ledger, status files and a fresh classification on 2026-10-01: completed plus mi
 
   Unsubmitted batches are not missing.
 - **Bounds per test.** The claim count moves with the missing draws of its null. Corners:
-  - `worst_interrupted`: k + I, B + I;
+  - `worst_interrupted`: k + I + U, B + I + U, so unestablished draws count pessimistically;
   - `worst_all_missing`: k + M, B + M;
   - `best_all_missing`: k, B + M.
 
-  Holm with determinacy is re-run under each corner, and so are the κ = 3 replace labels. The frozen stopping rule
-  is re-applied at every look with the draws missing by then. Power fractions are bounded: none or all of the
-  missing alternatives detected.
+  Holm with determinacy is re-run under each corner, and so are the κ = 3 replace labels.
+- **Looks.** Each look is mapped to its batch count by the products, never by file order. The frozen stopping rule
+  is re-applied at every mapped look with the draws missing by then. A look whose batch count is ambiguous (a wholly
+  lost batch, or a status overwritten at the same B) is marked unresolved, and stopping is then not certifiable.
+- **Power.** Power fractions are bounded with none or all of the missing alternatives detected. The bounds
+  **condition on the retained null calibration**; the effect of the null's own lost draws on power is not bounded.
+- **Completeness.** The output is COMPLETE, with exit 0, only when four things hold: every null has a final status,
+  no task log is unfinished, no seed is unestablished, and every lane's completed seeds are exactly the evaluator's
+  own product selection (`s5p_joint.product_files`; partials excluded). Otherwise the file says INCOMPLETE, gives its
+  reasons, exits 4, and certifies nothing.
 - **Holm with determinacy is not monotone, so the corners are descriptive, not proven extremes.** A rejection is
   reported as **certified** only by the sufficient all-assignment certificate (raised by the peer, Codex). Let R be
   the rejected set. For every member of R, the 95% Clopper-Pearson upper end at (k + M, B + M) must be below α/m.
@@ -82,13 +89,21 @@ ledger, status files and a fresh classification on 2026-10-01: completed plus mi
   - The certificate is computed for M = interrupted only and for M = all missing.
   - A κ = 3 "robust" label is certified only when certified in both families.
   - Decisions outside R are never certified by this check.
-- **How it is reported, beside each primary decision:**
-  - "certified under interrupted-only / all-missing";
-  - or, if not certified, "**not certified**: the unobserved missing draws could change this decision (corner
-    results descriptive, not proven extremal)".
+- **How it is reported, beside each primary decision** (the `per_test_status` field):
+  - "**certified** under all missing-outcome assignments", or certified for the interrupted and unestablished draws
+    only;
+  - "**can change** (counterexample: <corner>)", only when a corner, which is an explicit and realizable assignment,
+    changes the decision;
+  - otherwise "**not certified**: survival under all missing-outcome assignments is unestablished". A failed
+    sufficient certificate is **not** evidence that any assignment changes a decision.
 
   The primary decision is reported as the frozen evaluator gives it and is **never** revised from this step. Every
-  sensitivity number is labelled as a sensitivity.
+  sensitivity number is labelled as a sensitivity. These are numerical labels. Their scientific interpretation in
+  the deliverables, as a stated condition or otherwise, is **Joseph's decision**.
+- **Comparison with the independent lane.** That lane computes its own report-side bounds, the simple α/m
+  certificate and a stronger step-aware group certificate. The common per-test bounds and the simple certificate
+  must agree **exactly**; any difference there is a finding. Different sufficient certificates may legitimately
+  differ in strength: a stronger certificate certifying more is not a numerical disagreement.
 
 ## 4. The four final fields: wording rules (the measurement and joint-test branches stay distinct)
 
@@ -109,8 +124,15 @@ Each field is filled from the records, never from memory.
 
 ## 5. Status of the three relayed concerns (2026-10-01)
 
-1. **Missing seeds:** the report-side bound is implemented, tested and smoke-run (§3). It runs at terminal (§2,
-   step 4). Its certificate answers the non-monotonicity point.
+1. **Missing seeds:** the report-side bound is implemented, tested (13 controls) and smoke-run (§3). It runs at
+   terminal (§2, step 4). Its certificate answers the non-monotonicity point. Cycle-1 review (Codex) found four
+   defects, all fixed:
+   - unknown seeds now count pessimistically, and an incomplete output cannot certify;
+   - looks are mapped by products, not file order;
+   - products are checked against the evaluator's own selection;
+   - the power bounds carry their conditioning caveat.
+
+   The wording follows the counterexample rule.
 2. **Branch distinctness:** the rules are in §4, and the terminal delivery must use them.
 3. **ETA and packing:**
    - Budget revision 6 is live (ledger `b9260acd…`). The applicable forecast is the 209.647 column of
