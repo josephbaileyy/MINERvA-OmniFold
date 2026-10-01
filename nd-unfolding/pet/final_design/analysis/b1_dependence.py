@@ -68,14 +68,22 @@ def analyse(rules: Rules, c: Candidate) -> dict:
                                          "its 'any failure' units test different panels, so its CP bound is not a "
                                          "bound on full-library draw failure (reported unchanged in the decision file)",
         "dependence_aware_le_0.10_established": False,
+        "estimands": {
+            "frozen_B1": "per-unit probability that a (case, draw) unit with a defined recovery has R < 0, pooled over "
+                         "the library, bounded as if units were independent",
+            "common_panel_companion": "probability that a draw carrying every declared case has at least one failing "
+                                      "unit (draw-level any-failure)"},
         "interpretation": (
-            f"B1 PASSes under its frozen independence-based bound. Under within-draw dependence, a failure "
-            f"probability <= 0.10 is not established: on the common panel ({com['n_draws']} draws carrying every "
-            f"declared case) {com['draws_with_a_failure']} draw(s) have a failure (one-sided {1 - alpha:.3f} CP upper "
-            f"{com.get('cp_upper_draw_any_failure', float('nan')):.3f}); even with no failing draw the bound would be "
+            f"B1 PASSes under its frozen independence-based bound on the per-unit failure probability. Under "
+            f"within-draw dependence the evidence is insufficient to establish that probability <= 0.10: the "
+            f"dependence-robust companion bounds a different estimand, the draw-level any-failure probability on the "
+            f"common panel ({com['n_draws']} draws carrying every declared case), where "
+            f"{com['draws_with_a_failure']} draw(s) have a failure (one-sided {1 - alpha:.3f} CP upper "
+            f"{com.get('cp_upper_draw_any_failure', float('nan')):.3f}); even with no failing draw that bound would be "
             f"{com.get('cp_upper_if_no_draw_failed', float('nan')):.3f}"
-            + (", so the panel cannot support the claim at any outcome" if not reaches else "")
-            + ". This is an interpretation limit of the n_S = 8 library, not a regrade."),
+            + (", so this panel cannot establish the claim at any outcome" if not reaches else "")
+            + ". This does not show that the per-unit or any per-case failure probability exceeds 0.10. It is an "
+              "interpretation limit of the n_S = 8 library, not a regrade."),
         "alpha_one_sided": alpha,
     }
 
