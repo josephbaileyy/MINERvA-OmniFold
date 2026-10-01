@@ -1,0 +1,653 @@
+{
+ "schema": "pet-final-design/b1-dependence/1",
+ "evidence": "results/final/evidence_look1.json",
+ "report_only": true,
+ "candidates": {
+  "H2S1T24K5": {
+   "frozen_B1": {
+    "units": 224,
+    "failures": 2,
+    "cp_upper": 0.03187910885118069,
+    "replicate_cluster": {
+     "draws": 40,
+     "draws_with_a_failure": 2,
+     "cp_upper": 0.16919686395941763,
+     "reported_only": true
+    }
+   },
+   "frozen_B1_verdict": "PASS",
+   "per_draw": {
+    "FB0": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {}
+    },
+    "FB1": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {}
+    },
+    "FB2": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {}
+    },
+    "FB3": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {
+      "D4d_n_down": -0.005681014798285089
+     }
+    },
+    "FB4": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {}
+    },
+    "FB5": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {}
+    },
+    "FB6": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {
+      "D4d_n_down": -0.006713077182827432
+     }
+    },
+    "FB7": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {}
+    },
+    "FB8": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB9": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB10": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB11": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB12": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB13": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB14": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB15": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB16": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB17": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB18": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB19": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB20": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB21": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB22": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB23": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB24": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB25": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB26": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB27": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB28": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB29": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB30": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB31": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB32": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB33": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB34": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB35": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB36": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB37": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB38": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB39": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    }
+   },
+   "common_panel": {
+    "draws": [
+     "FB0",
+     "FB1",
+     "FB2",
+     "FB3",
+     "FB4",
+     "FB5",
+     "FB6",
+     "FB7"
+    ],
+    "n_draws": 8,
+    "draws_with_a_failure": 2,
+    "units": 160,
+    "unit_failures": 2,
+    "cp_upper_draw_any_failure": 0.6508557944128242,
+    "cp_upper_if_no_draw_failed": 0.3694166475528192
+   },
+   "extended_panel": {
+    "draws": [
+     "FB8",
+     "FB9",
+     "FB10",
+     "FB11",
+     "FB12",
+     "FB13",
+     "FB14",
+     "FB15",
+     "FB16",
+     "FB17",
+     "FB18",
+     "FB19",
+     "FB20",
+     "FB21",
+     "FB22",
+     "FB23",
+     "FB24",
+     "FB25",
+     "FB26",
+     "FB27",
+     "FB28",
+     "FB29",
+     "FB30",
+     "FB31",
+     "FB32",
+     "FB33",
+     "FB34",
+     "FB35",
+     "FB36",
+     "FB37",
+     "FB38",
+     "FB39"
+    ],
+    "n_draws": 32,
+    "draws_with_a_failure": 0,
+    "units": 64,
+    "unit_failures": 0,
+    "cp_upper_draw_any_failure": 0.10888116067935288,
+    "cp_upper_if_no_draw_failed": 0.10888116067935288
+   },
+   "original_companion_limitation": "decide.py's replicate_cluster pools common-panel and extended-panel draws; its 'any failure' units test different panels, so its CP bound is not a bound on full-library draw failure (reported unchanged in the decision file)",
+   "dependence_aware_le_0.10_established": false,
+   "interpretation": "B1 PASSes under its frozen independence-based bound. Under within-draw dependence, a failure probability <= 0.10 is not established: on the common panel (8 draws carrying every declared case) 2 draw(s) have a failure (one-sided 0.975 CP upper 0.651); even with no failing draw the bound would be 0.369, so the panel cannot support the claim at any outcome. This is an interpretation limit of the n_S = 8 library, not a regrade.",
+   "alpha_one_sided": 0.025
+  },
+  "L128S1T24K4": {
+   "frozen_B1": {
+    "units": 224,
+    "failures": 1,
+    "cp_upper": 0.024621064254776552,
+    "replicate_cluster": {
+     "draws": 40,
+     "draws_with_a_failure": 1,
+     "cp_upper": 0.13158585848276572,
+     "reported_only": true
+    }
+   },
+   "frozen_B1_verdict": "PASS",
+   "per_draw": {
+    "FB0": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {}
+    },
+    "FB1": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {}
+    },
+    "FB2": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {
+      "D5_nuwro": -0.06740243884642316
+     }
+    },
+    "FB3": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {}
+    },
+    "FB4": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {}
+    },
+    "FB5": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {}
+    },
+    "FB6": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {}
+    },
+    "FB7": {
+     "n_cases_scored": 21,
+     "n_cases_defined": 20,
+     "panel": "common",
+     "failed": {}
+    },
+    "FB8": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB9": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB10": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB11": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB12": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB13": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB14": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB15": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB16": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB17": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB18": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB19": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB20": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB21": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB22": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB23": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB24": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB25": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB26": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB27": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB28": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB29": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB30": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB31": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB32": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB33": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB34": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB35": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB36": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB37": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB38": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    },
+    "FB39": {
+     "n_cases_scored": 2,
+     "n_cases_defined": 2,
+     "panel": "extended (D3_p0.35, D4c_p_up)",
+     "failed": {}
+    }
+   },
+   "common_panel": {
+    "draws": [
+     "FB0",
+     "FB1",
+     "FB2",
+     "FB3",
+     "FB4",
+     "FB5",
+     "FB6",
+     "FB7"
+    ],
+    "n_draws": 8,
+    "draws_with_a_failure": 1,
+    "units": 160,
+    "unit_failures": 1,
+    "cp_upper_draw_any_failure": 0.5265096708752065,
+    "cp_upper_if_no_draw_failed": 0.3694166475528192
+   },
+   "extended_panel": {
+    "draws": [
+     "FB8",
+     "FB9",
+     "FB10",
+     "FB11",
+     "FB12",
+     "FB13",
+     "FB14",
+     "FB15",
+     "FB16",
+     "FB17",
+     "FB18",
+     "FB19",
+     "FB20",
+     "FB21",
+     "FB22",
+     "FB23",
+     "FB24",
+     "FB25",
+     "FB26",
+     "FB27",
+     "FB28",
+     "FB29",
+     "FB30",
+     "FB31",
+     "FB32",
+     "FB33",
+     "FB34",
+     "FB35",
+     "FB36",
+     "FB37",
+     "FB38",
+     "FB39"
+    ],
+    "n_draws": 32,
+    "draws_with_a_failure": 0,
+    "units": 64,
+    "unit_failures": 0,
+    "cp_upper_draw_any_failure": 0.10888116067935288,
+    "cp_upper_if_no_draw_failed": 0.10888116067935288
+   },
+   "original_companion_limitation": "decide.py's replicate_cluster pools common-panel and extended-panel draws; its 'any failure' units test different panels, so its CP bound is not a bound on full-library draw failure (reported unchanged in the decision file)",
+   "dependence_aware_le_0.10_established": false,
+   "interpretation": "B1 PASSes under its frozen independence-based bound. Under within-draw dependence, a failure probability <= 0.10 is not established: on the common panel (8 draws carrying every declared case) 1 draw(s) have a failure (one-sided 0.975 CP upper 0.527); even with no failing draw the bound would be 0.369, so the panel cannot support the claim at any outcome. This is an interpretation limit of the n_S = 8 library, not a regrade.",
+   "alpha_one_sided": 0.025
+  }
+ }
+}

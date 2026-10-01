@@ -348,6 +348,9 @@ class DesignScorer:
         tg = {"eavail": np.asarray(t["aggregate"], float)}
         tg.update({f"eavail@{k}": np.asarray(v, float) for k, v in t["regions"].items()
                    if k in SCOREABLE_REGIONS})
+        # natural joint histograms of D4 cases (`fb_population_target.py`), e.g. eavail_x_proton
+        tg.update({k: np.asarray(v, float) for k, v in t.get("histograms", {}).items()
+                   if k in HISTOGRAM_BINS})
         return {"path": str(path), "sha256": sha256_file(path), "targets": tg}
 
     def block(self, weights: np.ndarray, keep_spectra: bool = True) -> dict[str, Any]:
