@@ -334,13 +334,14 @@ for f in nd-unfolding/s5p_recompute.py nd-unfolding/s5p_recompute_compare.py doc
   git -C "$W" show "$REVIEWED:$f" > "/tmp/s5p-recompute-deploy/$(basename "$f")"; done
 git -C "$W" show "$REVIEWED:docs/orchestration/state/s5c/contract.json" > /tmp/s5p-recompute-deploy/s5c_contract.json
 # the report-side seed-disposition script (§5.4; NOT part of the reviewed code; pinned by content, not by commit)
-git -C "$W" show FETCH_HEAD:docs/orchestration/state/s5p/recompute/s5p_recompute_seed_disposition.py \
-  > /tmp/s5p-recompute-deploy/s5p_recompute_seed_disposition.py
+for f in s5p_recompute_seed_disposition.py s5p_recompute_missingness_bounds.py; do
+  git -C "$W" show "FETCH_HEAD:docs/orchestration/state/s5p/recompute/$f" > "/tmp/s5p-recompute-deploy/$f"; done
 shasum -a 256 /tmp/s5p-recompute-deploy/*
 # expect: s5p_recompute.py 05664adbfb19cb17a527bff6a26efec7031d70cc2e0715a117f21ff4f5db82ac
 #         s5p_recompute_compare.py 2cef96881dee75b84e568cb67a864a2db760b5a5c0064d4a7d24a296a5881ed4
 #         design.json 404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285
 #         s5p_recompute_seed_disposition.py bdc19179cbd64debf13c0368b63a4140ecb82ff7c560d6d25606c59e6f1cec77
+#         s5p_recompute_missingness_bounds.py 8c418a863ab3bc73e14337a1ded3509945e3802a22165ef32f7e2f38fb2cbee3
 scp -o BatchMode=yes /tmp/s5p-recompute-deploy/* saul.nersc.gov:$S/code/
 ```
 
@@ -367,12 +368,18 @@ sacct -X -n -P -o JobID,State -j "$ids" > ../final/sacct-dispositions.txt; echo 
   --tables $R/deploy/c754f3cd/$T --ledger $R/ledger/admissions.jsonl \
   --logs $R/runs/prod/logs --sacct ../final/sacct-dispositions.txt --recompute ../final/recompute.json \
   --out ../final/seed-disposition.json; echo "disposition rc=$?"
+# the missing-experiment bounds (§5.8; report only; imports the reviewed s5p_recompute beside it)
+python s5p_recompute_missingness_bounds.py --recompute ../final/recompute.json \
+  --disposition ../final/seed-disposition.json --out ../final/missingness-bounds.json; echo "bounds rc=$?"
 EOF
 ```
 
 - `tables diff rc` must be 0. The submitting deploys carry the same task tables (checked for `4f5a613f`,
   `55a41765` and, 2026-09-30, `c754f3cd`). If the runners are moved again, add the new deploy to the diff first.
 - `sacct rc` ≠ 0 leaves every no-log task `submitted_task_no_log_unverified`; rerun it before describing anything.
+- `bounds rc`: 0 = complete; 3 = written but INCOMPLETE (listed in `incomplete`: not terminal, a count mismatch, a
+  disposition that differs from the recompute, an incoherent claim, or not-established seeds counted as lost); 2 =
+  an input is unreadable.
 
 Exit codes:
 - `evaluate`: 0 = written; 4 = not terminal (a final status is missing). Any other code is an error.
@@ -437,6 +444,10 @@ Then:
       <id>_<i>` before saying anything about it.
   - `recompute_missing_seeds_equal` must be true (run immediately after `evaluate`). Any difference is reported with
     `recompute_missing_not_disposed` and `disposed_not_in_recompute_missing`, never reconciled.
+  - **the missing-experiment bounds** (`missingness-bounds.json`, §5.8), per population: the certificate verdict;
+    each rejection's `s_min`, threshold and worst upper end; the decisions changed in the corner and one-at-a-time
+    runs, labelled "not proven extremal"; and the power bounds. A rejection that is not certified is reported as such
+    and routed to the owner. **It never relabels a primary decision.**
   - Set the lost-work counts beside the campaign's lost-seed record
     (`RECORD-20260929-s5p-lost-seed-runtime-diagnostic.md` and its successors). A difference is reported as a
     measurement;
@@ -644,6 +655,55 @@ script only).**
     required and no-log tasks without a state are `unverified`.
   - Two P2 tasks had no log and no `sacct -X` row. They are unverified and not counted, consistent with the
     campaign's record that tasks split off while pending can lack an `sacct` row.
+
+**5.8 Missing-experiment sensitivity bounds (2026-09-30; report only; not reviewed code).**
+
+*Requested and scoped.* Requested by a Codex coordination session that relays the owner's request; that relay is not
+an owner ruling and is recorded as such. Scope: no change to the reviewed code (`nd-unfolding/` still equals
+`0142a228`), to production, or to any primary output, rule or label. Nothing is gated on it.
+
+*Files and procedure.*
+- Files: `docs/orchestration/state/s5p/recompute/s5p_recompute_missingness_bounds.py` (sha256 `8c418a863ab3bc73…`) and
+  its tests `test_s5p_recompute_missingness_bounds.py` (7).
+- The procedure and the CP interval are **imported** from the reviewed module, not retyped. Holm uses the 95% level;
+  the 99.5% look interval belongs to the stopping rule and is not used here.
+
+*The bound.* For a null with retained k and B, and L missing, the claim count k' (the largest over the frozen
+variants) lies in [k, k + L] at B' = B + L.
+- Populations:
+  - (a) interrupted plus not-established;
+  - (b) all lost work plus not-established.
+- Not-established seeds are counted as lost (**fail closed**), and the run is marked INCOMPLETE.
+- **Not-submitted seeds are excluded**: amendment 7 makes p valid at the B reached.
+- Coherence is checked before bounding:
+  - claim k = the largest variant k;
+  - p = (k + 1)/(B + 1);
+  - the family reproduces from its entries.
+- Terminal completeness: final statuses, count = final B, disposition = the recompute's missing seeds.
+
+*The certificate (group separation, step-aware).*
+- (i) max over R of the worst p < min over the tests outside R of the best p;
+- (ii) each R test's worst upper end < alpha/(m − s_min(i)), where s_min(i) counts the R tests whose worst p is
+  strictly below its best p.
+- The Codex coordination form "each R worst upper < alpha/m" is the special case s_min = 0. It is also sufficient
+  and is reported as `simple_alpha_over_m`. Alone it is too strict: on the toy family it fails with **no** missing
+  experiment, because two rejections sit at Holm steps 2–3 with upper 0.018 > 0.0125.
+- Without the certificate, the corners and one-at-a-time runs are reported as **not proven extremal**, because Holm
+  with determinacy is not monotone in k.
+
+*Validation.*
+- Exhaustive soundness: in 500 random 4-test families, for every certified case, every assignment (each count
+  raised by 0..L) keeps every primary rejection. This holds for both forms.
+- The step-aware form certifies every L = 0 rejection (exact there).
+- Two mutants go red: dropping the separation condition, and loosening the step threshold by one step.
+- End to end on the toy: (a) certified; (b) with 5 lost MnvTune experiments **not** certified, and correctly so: the
+  all-worst run moves GiBUU to step 0, where it is undetermined.
+- Fail-closed, not-submitted exclusion, coherence, non-terminal and power-denominator controls.
+
+*What it does not establish.* It does not establish ignorable missingness; it bounds the decisions without that
+assumption. It does not bound the effect of missing **null** experiments on power, which needs each alternative's
+count. Production's own computation, if the campaign makes one, should be compared with this output and not
+substituted for it.
 
 **Downstream reader.** The reproduction harness (branch `s5p-parallel-reproduction-20260928`, config key
 `joint.independent_compare`) records `/pscratch/sd/j/josephrb/s5p-parallel-recompute/final/compare.json` by sha256
