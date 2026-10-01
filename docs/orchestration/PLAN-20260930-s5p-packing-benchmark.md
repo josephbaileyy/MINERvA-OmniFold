@@ -14,8 +14,8 @@ Input: the read-only assessment by the peer session Codex,
 
 Would packing eight 32-thread GBDT pseudo-experiment tasks into one regular-partition CPU node give:
 - (a) the same numerical products,
-- (b) the same or better cost per experiment, and
-- (c) a shorter time until eight task slots are running,
+- (b) cost per experiment within the pre-declared tolerance, and
+- (c) shorter start delays and completion time for the same eight-task workload,
 
 compared with the current eight 1/8-node tasks on the shared partition? The answer informs **future** campaigns
 only. s5p's production is frozen and will be terminal before this runs.
@@ -48,8 +48,12 @@ only. s5p's production is frozen and will be terminal before this runs.
   UTC block where the calendar allows) and at least 3 h apart. Positions are fixed before the first submission.
 - **Per pair, from `sacct` (Submit / Eligible / Start):**
   - `W_R` = start(R) − submit(R);
-  - `W_S8` = max start(S tasks) − submit(S), the time until all eight slots run;
-  - `W_S1` = median start(S tasks) − submit(S).
+  - `W_S_last` = max start(S tasks) − submit(S), the time until every shared task has started;
+  - `W_S_median` = median start(S tasks) − submit(S).
+
+  A shared probe can finish before another starts. `W_S_last` does **not** measure eight simultaneously running
+  slots, and does not credit useful work that earlier tasks could have performed. These probes measure start
+  delays only. The matched compute workload below measures completion time including the earlier starts.
 
   Also record the pending counts of both partitions at submission.
 - **Cost:** about 1–2 min × 1 node per side, roughly 0.05 node-h per pair.
@@ -71,9 +75,14 @@ only. s5p's production is frozen and will be terminal before this runs.
   memory limit is 56G, and each keeps the original **2-h per-worker cutoff** (`timeout 7200`). There is no retry.
 - **Guards.** Workers run through the same pinned clean checkout and `mnv_guarded_run` path as `s5c_array.sh`. A
   worker's row is passed explicitly, never taken from `SLURM_PROCID`.
-- **Control, for the reproducibility baseline.** Two of the 8 rows are rerun as ordinary 1/8-node shared tasks, at
-  most 2 h each, with the same isolated outputs. Without it, a packed-vs-production difference could not be
-  attributed to packing.
+- **Matched controls.** All **8** selected rows are also rerun as ordinary 1/8-node shared tasks, at most 2 h each,
+  with separate isolated outputs and otherwise identical arguments. Submit the packed job and the eight-task
+  shared array in the same minute, with no array throttle below 8. The pair uses at most 2 nodes concurrently.
+  Every packed row has its own shared control; two controls cannot establish reproducibility for the other six.
+- **Completion time.** For each execution path, record submit-to-last-product time for the identical eight rows,
+  the completed experiment count, failures and timeouts. If any required product is missing, report an incomplete
+  workload rather than a shorter successful completion time. Keep queue wait, computation time and idle tails
+  separate. A single matched workload pair supports a descriptive comparison, not a general scheduling claim.
 - **Measurements:**
   - allocation elapsed time;
   - per worker: elapsed, CPU time, per-experiment `seconds_unfold`, exit code;
@@ -83,45 +92,77 @@ only. s5p's production is frozen and will be terminal before this runs.
 
 ### 3.3 Numerical comparison
 
-- **What is compared:** each benchmark and control product's `xsec_flat` and `xtrue_flat`, against the production
-  product of the same seed.
+- **What is compared:** for every selected row and seed, compare `xsec_flat` and `xtrue_flat` pairwise between the
+  packed rerun, its matched shared rerun and the original production product. Require the expected seed set and
+  complete products on both rerun paths before comparing; missing products are not numerical passes.
 - **Tiers:** exact equality first. Otherwise report the maximum absolute and relative difference per array.
   Timestamps or other metadata are not numerics.
 - **Interpretation:**
-  - the control exact and packed not exact: a **packing-induced difference**, a finding, stop;
-  - neither exact: the nondeterminism baseline is non-zero; compare the magnitudes and record them;
-  - nothing is tuned.
+  - both reruns agree exactly with production: numerical equivalence is demonstrated for that tested seed;
+  - packed differs from its matched control, including when the control agrees with production: an
+    **execution-associated discrepancy**, a finding that blocks the recommendation. One rerun per path cannot
+    determine whether packing or rerun variability caused it;
+  - both reruns agree with each other but differ from production: historical reproducibility is unresolved;
+    record the differences and block the recommendation;
+  - neither reproduces production and the reruns differ: report all three comparisons; do not subtract a
+    baseline inferred from other rows or declare equivalence from similar difference magnitudes;
+  - nothing is tuned. Any unresolved difference blocks the recommendation. Exact matches establish equivalence
+    only for the selected workload, not every future input or machine.
 
 ## 4. Pre-declared decision rules (fixed before any observation)
 
-- **Scheduling advantage** is claimed **only if** both hold over **at least 8 pairs**:
-  - `W_R < W_S8` in **at least 7 of 8** pairs (one-sided sign test, p ≈ 0.035), with the same proportion if more
+- **A probe start-delay advantage** is claimed **only if** both hold over **at least 8 pairs**:
+  - `W_R < W_S_last` in **at least 7 of 8** pairs (one-sided sign test, p ≈ 0.035), with the same proportion if more
     pairs are run;
-  - the median of `W_S8 − W_R` is at least 0.5 h, about half a task duration.
+  - the median of `W_S_last − W_R` is at least 0.5 h, about half a task duration.
 
   With fewer than 8 pairs no scheduling claim is made in either direction. A reverse advantage is reported the same
   way. Probe waits are a proxy that depends on the requested time limit, fair-share and time of day; that
-  limitation is stated with every result.
+  limitation is stated with every result. This rule does not establish simultaneous shared-slot availability or
+  overall throughput. Report the matched compute workload's completion-time comparison separately; if it is
+  incomplete or does not finish sooner under packing, no end-to-end advantage is demonstrated. Even a faster
+  single matched workload pair is not a general estimate of campaign speed-up.
 - **Compute:** packed experiments per billed node-h must be at least 0.95 × the shared production value (2,353
-  experiments per 56.29 node-h, i.e. 41.8). The node memory high-water must stay at or below 90% of the node.
+  experiments per 56.29 node-h, i.e. 41.8). This is an **efficiency floor**, equivalent to cost per experiment
+  **at most `1 / 0.95 = 1.052632` times baseline** (about 5.3% higher cost permitted). It is not a claim of equal
+  or lower cost. Report cost per experiment for the matched shared controls as well, including idle allocation
+  time in packed billing. The node memory high-water must stay at or below 90% of the node.
   There must be no OOM, guard failure, CPU-set overlap, output collision or seed mismatch.
-- **Numerics:** as in §3.3. Any packing-induced difference blocks the recommendation.
+- **Numerics:** as in §3.3. Every tested seed must reproduce exactly on both rerun paths; any missing comparison
+  or unresolved discrepancy blocks the recommendation, without assigning a cause that the controls do not establish.
 - **Outcome:** recommend a reviewed packed dispatcher **for a future campaign** only if the compute, numerics and
-  scheduling rules all pass. Otherwise report "no demonstrated advantage", with the measurements. The benchmark
+  probe start-delay rules all pass and the complete matched workload finishes sooner under packing. Otherwise
+  report "no demonstrated advantage", with the measurements. The benchmark
   never changes s5p results, products or records.
 
 ## 5. Cost, concurrency, calendar
 
-| part | estimate | cap |
+| part | estimate | limit |
 |---|---:|---:|
-| probes, 8 pairs (+2 spare) | about 0.5 | 1.0 |
+| probes, 8 pairs (+2 spare) | about 0.5 | 1.0 actual-spend stop threshold |
 | compute benchmark, 1 node | ≤ 2.0 | 2.0 |
-| shared control, 2 × 1/8 node | ≤ 0.5 | 0.5 |
-| **total** | **about 3** | **4.0 billed CPU node-h** |
+| shared controls, 8 × 1/8 node | about 1, ≤ 2.0 | 2.0 |
+| **total** | **about 3.5, depending on runtime** | **5.0 billed CPU node-h** |
 
-- **Concurrency:** at most 2 nodes. One probe pair is 1 + 1 node, and the benchmark runs alone.
+- **Reservation accounting:** use one proposed `packing_benchmark` stage of **5.0** node-h. A two-hour probe
+  reserves 2.0 node-h on each side, **4.0 per pair**, even though
+  `sleep 60` spends much less. The former 4.0 stage cap could admit the first pair but would refuse a later pair
+  after any positive prior spend (for example, 0.05 + 2.0 + 2.0 = 4.05). Probes run before compute; at most one
+  pair is open, and it must fully reconcile before the next. At most 1.0 of prior probe spend plus a 4.0 pair
+  reservation fits the proposed 5.0 stage. The compute job and eight shared controls also reserve 4.0 combined,
+  leaving room for at most 1.0 already spent on probes. The probe threshold is checked after each reconciliation;
+  it is not a separate 1.0 stage allocation and cannot guarantee that an abnormal two-hour probe spends under
+  1.0. If reconciled probe spend reaches 1.0, do not submit another pair; if it exceeds 1.0, the compute pair's
+  4.0 reservation cannot fit and the study ends incomplete. The combined 5.0 meter cap remains the hard limit.
+  Stop at a meter refusal; do not revise limits in response to results.
+- **Admission check:** before committing any executable request, exercise `validate_request` **and** `decide`
+  with both sides open and all earlier reconciled charges, through every planned pair and the compute controls.
+  Also check the remaining cumulative envelope and reconcile before every actual admission. Syntax validation
+  alone does not establish affordability. These are proposed limits, not a revision of the live budget.
+- **Concurrency:** at most 2 nodes. One probe pair is 1 + 1 node; the matched compute pair is also 1 + 1 node.
+  Queue probes and compute do not overlap.
 - **Calendar:** at least 2 days, for the probes.
-- **Storage:** about 50 products × 185 kB.
+- **Storage:** at most 96 rerun products (eight rows of at most six seeds on each path) × 185 kB, plus logs and receipts.
 
 ## 6. Prerequisites and the grant
 
@@ -129,15 +170,18 @@ only. s5p's production is frozen and will be terminal before this runs.
    rebind come only after the recompute lane's final verification**, because a rebind makes the meter refuse the
    deploy that lane uses, as recorded for transition r2.
 2. **An owner grant, separate from s5p's authorization,** stating:
-   - the amount (at most 4.0 billed CPU node-h);
+   - the amount (at most **5.0 billed CPU node-h**, revised to cover all eight controls and peak reservations);
    - where it is accounted. The **proposed route** is a new stage, `packing_benchmark`, in an s5p budget revision
      after terminal, funded from s5p's reconciled unspent production. It is **not** funded from verification/repair
-     and is within the cumulative 345.27. The alternative is a new meter campaign key, which needs a reviewed meter
+     and fits within the cumulative 345.27 **after terminal charges are reconciled**; if 5.0 cannot be funded
+     while retaining the verification reserve, the benchmark is not affordable under this route. The alternative
+     is a new meter campaign key, which needs a reviewed meter
      code change;
    - concurrency (at most 2 nodes) and QOS (`regular` and `shared` only);
    - that the benchmark changes nothing in s5p.
 3. **Meter admission without unpriced flags.** Before any submission, pass each probe and benchmark request
-   through the meter's `validate_request` as a dry validation. The regular request must be modelled as a whole node
+   through the meter's `validate_request` and the reservation-aware `decide` checks in §5. The regular request must
+   be modelled as a whole node
    without `--exclusive` or `--ntasks-per-node`, which the meter refuses. If it cannot be, a reviewed meter extension
    comes first. **No bypass.**
 4. **Review of the benchmark wrapper.** The 8-worker launcher and the product comparison get **one bounded
@@ -150,4 +194,5 @@ only. s5p's production is frozen and will be terminal before this runs.
 - No change to s5p's production, queues, runners, budget or records beyond the post-terminal stage above.
 - No packed production for s5p.
 - No claim of speed-up from the idealized schedule.
-- No scheduling claim from fewer than 8 pairs.
+- No probe start-delay claim from fewer than 8 pairs, no simultaneous-slot claim from `sleep 60`, and no general
+  scheduling or campaign speed-up claim from one matched compute pair.
