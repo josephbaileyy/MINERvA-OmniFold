@@ -8,7 +8,7 @@ target (`score_design.build_side` on the pseudodata: `pseudo_w_truth x pseudo_di
 E_avail, `eavail_codes`, historical region codes) with the replicate's rows replaced by the whole bank. `d` is the
 runner's own distortion (`design_inputs.get_distortion`); its unit-mean normalization cancels in the normalized
 spectra. A D4 (species) distortion also gets its natural joint histogram (E_avail x the species class the case
-changes, e.g. `eavail_x_proton` for D4c), and its species counts come from `row_features.npz`, the truncated-cloud
+changes, e.g. `eavail_x_proton` for D4c; D3 gets `eavail_x_q3`), and its species counts come from `row_features.npz`, the truncated-cloud
 counts the scorer bins on; `--check-run` proves on a run's own rows that they reproduce the runner's stored
 distortion weights (`pseudo_distortion`, computed from the truth cloud). The output is the `--population-target`
 file `score_design.py` reads (its `distortion_hash` is checked against each run's).
@@ -36,8 +36,8 @@ STUDY = HERE.parent
 sys.path.insert(0, str(STUDY / "runner"))
 sys.path.insert(0, str(HERE))
 import design_inputs as di  # noqa: E402
-from score_design import (HISTOGRAM_BINS, N_EAV, REGION_CODES, SCOREABLE_REGIONS, SPECIES, RowFeatures,  # noqa: E402
-                          class_codes, classify_case, eavail_codes, hist, joint)
+from score_design import (HISTOGRAM_BINS, N_EAV, Q3_QUARTILE_EDGES, REGION_CODES, SCOREABLE_REGIONS,  # noqa: E402
+                          SPECIES, RowFeatures, class_codes, classify_case, eavail_codes, hist, joint, q3_codes)
 
 SCHEMA = "pet-final-design/population-target/1"
 DATALOADER = STUDY.parent / "fullevent_fps_dataloader.py"
@@ -122,9 +122,11 @@ def build(bank: str, distortion: str, inputs_npz: Path, banks_npz: Path, populat
     for name in SCOREABLE_REGIONS:
         targets["regions"][name] = normalized(hist(np.where(region == REGION_CODES[name], eb, -1), wt, N_EAV))
     natural = classify_case(distortion)["natural"]
-    if natural != "eavail":
-        species = natural.split("eavail_x_", 1)[1]
-        col, top = SPECIES[species]
+    if natural == "eavail_x_q3":                      # E5 (D3): true q3 at the DEV quartiles (Amendment 1)
+        jc = joint(eb, q3_codes(truth["q3"]), len(Q3_QUARTILE_EDGES) + 1)
+        targets["histograms"][natural] = normalized(hist(jc, wt, HISTOGRAM_BINS[natural]))
+    elif natural != "eavail":
+        col, top = SPECIES[natural.split("eavail_x_", 1)[1]]
         jc = joint(eb, class_codes(rf.take(col, rows), top), top + 1)
         targets["histograms"][natural] = normalized(hist(jc, wt, HISTOGRAM_BINS[natural]))
     try:
