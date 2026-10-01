@@ -712,6 +712,26 @@ variants) lies in [k, k + L] at B' = B + L.
 - Tests 7 → 9. Two further mutants go red: the power-disposition check silenced, and the design-digest check
   silenced.
 
+*The campaign's independent counterpart and the comparison at terminal.* `nd-unfolding/s5p_missing_sensitivity.py`
+(origin/main `d0cca826`, sha256 `34768e47c2bd…`, 13 tests). It writes `$NS/stage7/joint/missing-sensitivity.json` and
+`seed-states.json`; their sha256 come in the terminal packet. The campaign confirmed definitions (1)–(5) on
+2026-09-30. Compare **only** what both compute:
+
+| quantity | this lane (`missingness-bounds.json`) | campaign (`missing-sensitivity.json`) |
+|---|---|---|
+| population (a) | `a_interrupted` | `interrupted_or_unestablished` |
+| population (b) | `b_all_lost` | all submitted-and-missing |
+| certificate | `certificate.simple_alpha_over_m` (**not** `holds`) | its certificate on the primary family |
+| corners | (a) `all_worst`; (b) `all_worst`, `all_best` | `worst_interrupted`; `worst_all_missing`, `best_all_missing` |
+| power bounds | `rank_unshifted`, `rank_claim`, `determined_claim` | `unshifted`, `claim_rule`, `claim_rule_determined` |
+| INCOMPLETE | exit 3 | exit 4 |
+
+- **Not compared, because it is computed on one side only:**
+  - this lane's step-aware `holds` (a YES with simple NO is not a disagreement) and its one-at-a-time runs;
+  - the campaign's κ = 3 replace-family certificate and its robust-label gating.
+- A corner is a realizable assignment, so a decision flipped there is a real counterexample on either side.
+- A difference in any compared quantity is reported, with both values, and is not reconciled.
+
 *What it does not establish.* It does not establish ignorable missingness; it bounds the decisions without that
 assumption. It does not bound the effect of missing **null** experiments on power, which needs each alternative's
 count. Production's own computation, if the campaign makes one, should be compared with this output and not

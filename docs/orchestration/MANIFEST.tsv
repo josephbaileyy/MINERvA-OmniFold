@@ -198,7 +198,7 @@ docs/orchestration/HANDOFF-20260924-preparation-for-scalar5d-campaign.md	tracked
 docs/orchestration/HANDOFF-20260925-negweight-refined-successor.md	tracked	LIVE	document	20260924-scalar5d-campaign	20260925	open		route-only		no	5	67	3950
 docs/orchestration/HANDOFF-20260926-precision-measurement-completion.md	tracked	LIVE	document	20260924-scalar5d-campaign	20260926	open		route-only		no	6	381	23282
 docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md	tracked	LIVE	document		20260928	open		route-only	nd-unfolding/s5p_recompute.py	no	4	92	9143
-docs/orchestration/HANDOFF-20260928-s5p-recompute.md	tracked	LIVE	document	20260929-s5p-campaign	20260928	open		route-only		no	6	723	62128
+docs/orchestration/HANDOFF-20260928-s5p-recompute.md	tracked	LIVE	document	20260929-s5p-campaign	20260928	open		route-only		no	6	743	63604
 docs/orchestration/HOLD-20260821-clause-c-verification.md	tracked	ARCHIVAL	document		20260821	terminal		exact-path-only		yes	7	66	4401
 docs/orchestration/INDEX-20260920-retained-branches-not-on-main.md	tracked	LIVE	index	z-campaign	20260920	open		route-only		no	3	101	9262
 docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index			open		route-only	docs/open-items/verify_open_items_restructure.py;docs/orchestration/findings_row_lint.py;nd-unfolding/pet/check_canonical_designation.py	no	26	196	37643
