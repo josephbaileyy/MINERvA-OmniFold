@@ -401,6 +401,10 @@
   {
    "utc": "2026-10-02T07:50Z",
    "what": "LOOKS SINCE 10-01T04Z (all 'continue', total and shape k = 0; design 404446eb..., V 35979ef7...): MnvTune_v1 B587 (10-01T10:12Z, b3 59154958), GENIE_2_12_10_CV B592 (12:16Z, b3 59156411), GiBUU_2019 B593 (20:53Z, b3 59172964, throttle 2), NuWro_21_09 B587 (22:31Z, b3 59175970, throttle 2), GENIE_2_12_10_MEC B779 (10-02T07:44Z, b4 59192345). Power: P3 final 195 of 200; P1g submitted 10-01T07:55Z (59152494). Batch costs: MEC b2 4.61, P3 5.21, MnvTune b2 5.52, CV b2 5.02, GiBUU b2 4.96, NuWro b2 5.82, MEC b3 4.60 (19 closed, mean 4.84). RE-FORECAST (REPORT-20261002-s5p-reforecast-and-slot-transfer-option.md): shared partition congested again (4 of 16 slots running, 624 pending); terminal ~2026-10-06..07; production ~194-199 of 209.647; slot-transfer options A/B re-checked against the meter cap rule, no transition now (throttles not binding under congestion); option A's window moves with power's P3g closing (not before ~10-04)."
+  },
+  {
+   "utc": "2026-10-02T18:30Z",
+   "what": "LOOKS (all 'continue', total and shape k = 0; design 404446eb..., V 35979ef7...): MnvTune_v1 B787 (10-02T15:18Z, min 1200; b4 59207385), GENIE_2_12_10_CV B791 (17:34Z, min 1200; b4 59213686, production stage 156.019). Power: P1g final 199 of 200 (13:19Z), P2g submitted 59201808 (throttle 3). LOGIN33 OVERLOAD (other users; load average ~710 at 18:22Z): ps on login33 hung (a monitor poll stalled ~20 min at the inner 'ps'); all six runners verified alive through /proc (PIDs 1174643-1174648, PPID 1, each on its queues-r2 queue) and producing looks/submissions normally. Monitor hardened (not a production change): a 15-min remote timeout per poll and a /proc fallback for the runner check. Risk noted: a login33 reboot would kill the runners (arrays continue, nothing new submitted); recovery is the handoff s6 resume procedure."
   }
  ],
  "findings": [
