@@ -148,7 +148,7 @@ pre-registered.
   H2S1T24 K5 passes §6.1–6.3, C1–C5 pending; no look 2. Provisional: H2S1T24 K5 first for coverage.
 - **Running:** **Amendment 5** (`d06a495e`) released coverage of H2S1T24 K5: `runs/s5c_a5_H2S1T24.tsv` (720, dev tilt,
   C1–C4) then `runs/s5d_a5_H2S1T24.tsv` (360, D4c up, C5), output `$B/s5`, `SCORE=0`. Watcher restarted by
-  `start_watcher.sh` from **`checkouts/d06a495e`** on **login05**, stop **2026-10-10T22:00Z**; lanes = coverage only
+  `start_watcher.sh` from **`checkouts/d06a495e`** on **login05** (moved to **login37** on 2026-10-02, see incident below), stop **2026-10-10T22:00Z**; lanes = coverage only
   (dev tilt before D4c). Deployed checkouts `04703b90` (look-1 lanes, finished), `016f1fac` (manifest tool),
   `39e8cbbd` (scoring), `d06a495e` (coverage lanes) — never modify any of them.
 - **Next:** when all 720 `s5c` rows are COMPLETE: from `checkouts/d06a495e` (module `tensorflow/2.15.0` python — the
@@ -164,3 +164,10 @@ pre-registered.
   `timeout`; `runner/test_step2_ensemble.py` has 2 stale failures that predate this session (X4 arm; fail on
   `96e6a412` clean); `ps | grep fbmon` matches its own ssh command line; `keep_busy.log` started/stopped counts are
   historical artifacts (start_watcher then waits its full 300 s).
+- **Incident 2026-10-02:** the watcher on login05 stayed alive but launched nothing after 04:16Z (its four allocations
+  completed normally at 07:28–07:50Z and were not relaunched; login05 refused internal ssh; most likely its `squeue`
+  call kept failing, a branch of `keep_busy.sh` that sleeps and retries without logging). It still obeyed the stop
+  file: `start_watcher.sh d06a495e… 2026-10-10T22:00Z` from login37 at 09:23Z relaunched all four allocations. No run
+  was interrupted (216/720 COMPLETE); ≈ 1.6 h of capacity lost. **Watcher is now on login37.** Signal to watch: zero
+  running `pfd-inter*`/`pfd-sint*` allocations for two consecutive polls while rows remain → restart the watcher on
+  another node through `start_watcher.sh` (same checkout and stop).
