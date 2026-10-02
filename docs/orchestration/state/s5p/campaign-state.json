@@ -397,6 +397,10 @@
   {
    "utc": "2026-10-01T04:08Z",
    "what": "FIRST LOOK BY AN r2 RUNNER: GENIE_2_12_10_MEC-B583.json (04:04:19Z; design 404446eb..., V 35979ef7...): B = 583, total and shape k = 0, p = 1/584, 99.5% look interval [0, 0.0102], 'continue'. Batch 3 submitted through the revision-6 meter from deploy c754f3cd: array 59148048 (s5p-s5p_cal_genie_2_12_10_mec_b3, throttle 3), production stage 111.902 of 209.647; batch 2 measured about 4.61 CPU node-h and took 18.3 h (09-30T09:49Z -> 10-01T04:04Z). Also recorded: the peer session Codex closed its cycle-1 implementation review of the missing-seed sensitivity at d0cca826 (fixes accepted; no further producer changes requested), with the condition, adopted here, that the independent terminal comparison stays INCOMPLETE until production ends and that no 'no problems' or 'missingness ignorable' claim is made from this coordination. The recompute lane recorded the comparison field mapping (its branch 2a696072)."
+  },
+  {
+   "utc": "2026-10-02T07:50Z",
+   "what": "LOOKS SINCE 10-01T04Z (all 'continue', total and shape k = 0; design 404446eb..., V 35979ef7...): MnvTune_v1 B587 (10-01T10:12Z, b3 59154958), GENIE_2_12_10_CV B592 (12:16Z, b3 59156411), GiBUU_2019 B593 (20:53Z, b3 59172964, throttle 2), NuWro_21_09 B587 (22:31Z, b3 59175970, throttle 2), GENIE_2_12_10_MEC B779 (10-02T07:44Z, b4 59192345). Power: P3 final 195 of 200; P1g submitted 10-01T07:55Z (59152494). Batch costs: MEC b2 4.61, P3 5.21, MnvTune b2 5.52, CV b2 5.02, GiBUU b2 4.96, NuWro b2 5.82, MEC b3 4.60 (19 closed, mean 4.84). RE-FORECAST (REPORT-20261002-s5p-reforecast-and-slot-transfer-option.md): shared partition congested again (4 of 16 slots running, 624 pending); terminal ~2026-10-06..07; production ~194-199 of 209.647; slot-transfer options A/B re-checked against the meter cap rule, no transition now (throttles not binding under congestion); option A's window moves with power's P3g closing (not before ~10-04)."
   }
  ],
  "findings": [
