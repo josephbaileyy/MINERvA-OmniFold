@@ -113,8 +113,14 @@ nominal background-inclusive closure on 40 fresh pseudo-experiments (largest dev
 It fails the predeclared stability test on the data: perturbing the inputs within
 floating-point rounding moves the reported functionals by 0.8 statistical standard
 deviations in the median and 2.6 at most. The same instability, at most \SI{1.2}{\percent}, explains the
-difference between the driver and development pipelines on the data; whether the
-data-bootstrap uncertainty already absorbs it is not established. Under withheld
+difference between the driver and development pipelines on the data. A later
+measurement under the same candidate found it already inside the data-bootstrap
+uncertainty, which refits everything per replica: each replica carries the same rounding
+spread (median \SI{0.23}{\percent} per joint cell), about \SI{37}{\percent} of the bootstrap
+variance, and it is below a tenth of any total uncertainty. The central value is
+reproducible only to this size.
+% Source: KNOWN_ISSUES 80; docs/orchestration/RECORD-20260927-s5p-stage2-exit.md section 2 (VL155).
+Under withheld
 generator shapes the unfolding-model dependence is \SIrange{2}{6}{\percent} in the median
 and \SIrange{16}{31}{\percent} at most. For these other fixed generator shapes (NuWro; GENIE
 with enhanced meson-exchange currents) it stays within the quoted total uncertainty in
