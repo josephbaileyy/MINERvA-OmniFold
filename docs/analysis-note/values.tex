@@ -145,9 +145,15 @@
 %   sec_pet.tex:112 (note build only) -- STRUCK as $\sim$\,\dead{\SI{\petClosure}{\percent}}
 %     with an explicit "struck: legacy two-iteration self-consistency diagnostic, not a
 %     current validation" label, matching \dead{\petRatio} in that same caption.
+%   (stale before 2026-10-03; was sec_pet.tex:112) There is no current location: commit
+%     95d03169 (2026-08-23) removed the struck \petClosure and \petRatio from sec_pet.tex
+%     rather than moving them, and app_history.tex does not carry them either. Measured
+%     2026-10-03: neither macro is used in any .tex file; only these definitions remain.
 %
 % THE MACRO IS MARKED, NOT RETIRED, AND THAT IS DELIBERATE: sec_pet.tex still references
-% it inside \dead{}, so deleting the definition would break the note build. Its comment
+% it inside \dead{}, so deleting the definition would break the note build. [Stale before
+% 2026-10-03, for the same reason: no file references it, so the build no longer needs
+% the definition. It is left in place; retiring it is a separate decision.] Its comment
 % now carries the same "niter=2 LEGACY, struck at use" marking as its two siblings --
 % which is precisely the marking whose ABSENCE made its status undetermined before.
 %

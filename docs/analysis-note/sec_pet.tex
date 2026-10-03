@@ -200,19 +200,6 @@ numerical: ordinary closure alone cannot assign a data-side gap uniquely to trai
 configuration, and the recoil-only feature contract is a further difference --- at
 fixed recoil, the conditional muon distribution remains inherited from the prior.
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.95\textwidth]{pet_vs_gbdt_absolute}
-  \caption{Recoil-only PET representation cross-check: absolutely-normalized
-  4D cross section from the point-cloud unfold (full-statistics reweight of the generator sample) versus the
-  production scalar GBDT result, projected on each axis. The PET/GBDT total
-  offset shown is a two-iteration legacy result, withdrawn as a current comparison
-  (see text) and not quoted here as a level of agreement. Ordinary closure was
-  assessed only as a legacy two-iteration self-consistency diagnostic; no current
-  closure level is quoted, and it does not test omitted muon dependence.}
-  \label{fig:petabs}
-\end{figure}
-
 \subsection{Statistical and training diagnostics of the recoil-only estimator}
 \label{sec:pet-syst}
 The PET statistical replicas independently
@@ -284,18 +271,11 @@ stored final-state hadrons --- a small, one-sided, bounded effect. The 12-partic
 does not limit $\Eavail$-scale observables and does not need to be raised.
 
 \paragraph{Coverage: closing the acceptance gap.}
-Originally the cloud was filled only in the reco-signal event loop, so the
-truth-only ``miss'' events appended for the unfold (\SI{\pcMiss}{\percent} of
-the truth sample) carried no cloud --- only \SI{\pcHasCloudBefore}{\percent} of
-truth events had one, and cloud projections were correspondingly
-acceptance-limited, landing exactly on the stored-$\Eavail$ projection
-restricted to the has-cloud subset but sitting $1.5$--$2\times$ below
-the full unfold per bin. This is a truth-side instance of the same
-dangling-miss-row dump issue tracked for the systematic bank. We fixed it at
-source by carrying the truth final-state hadrons through the
-truth-denominator loop and filling \texttt{part\_gen} for the appended miss
-rows (the reco cloud \texttt{part\_reco} correctly stays empty for a miss),
-then re-dumping, rebuilding the inputs, and re-training. Coverage is now
+The truth-only ``miss'' events appended for the unfold (\SI{\pcMiss}{\percent} of
+the truth sample) carry a cloud: the truth final-state hadrons are carried through the
+truth-denominator loop, filling \texttt{part\_gen} for the appended miss
+rows (the reco cloud \texttt{part\_reco} correctly stays empty for a miss;
+App.~\ref{app:history}). Coverage is now
 complete: \SI{\pcHasCloud}{\percent} of truth events carry a cloud (only
 \pcEmptyCloud{} residual empties out of \num{32.8}~million), and the
 cloud-recomputed $d\sigma/d\Eavail$ now reproduces the full unfold to
@@ -309,9 +289,8 @@ holds the three near-coincident $\Eavail$ projections (\texttt{pet\_cloud\_hascl
 \SI{\pcCloudFull}{\percent} is their largest per-bin relative spread; they overlay in the
 centre panel of Fig.~\ref{fig:pcxsec}. The summary and figure were regenerated on
 2026-09-23 after the projection stopped dividing the push-weighted counts by the reco
-efficiency (\texttt{ISSUE-30}): the unfolded counts are already acceptance-corrected, so
-that division corrected for acceptance twice. The fix lowers every projected
-$d\sigma/d\Eavail$ bin by 25--51\% and leaves the spread above essentially unchanged.
+efficiency (\texttt{ISSUE-30}): the unfolded counts are already acceptance-corrected
+(App.~\ref{app:history}).
 
 \paragraph{Exploratory projection yields new hadronic diagnostics.}
 $W_{\text{had}}$ is not a lossy copy of the leptonic ``experimenter's''

@@ -206,9 +206,19 @@ covariance reports and \textbf{no choice between (a) and (b) follows from it}. T
 recorded because the measurements were gathered while they were live and a reader will meet them in
 that form elsewhere; neither is asserted.
 
-In the resampling argument that follows:
+The resampling argument that follows opened with the sentence
+``What follows concerns the resampling scheme alone and is offered as an argument rather than a
+ratified result; it bears on reading (b) without adjudicating the retracted fork.''
+Within it:
 An earlier version concluded that the scheme ``is the sampling
 distribution rather than a stand-in that might be the wrong one''; that promotion is withdrawn.
+
+In the paragraph on the discriminating $\mathrm{Exponential}(1)$ contrast, which the body keeps, the
+sentence before the surviving objection read, with the opening of that objection:
+No ``publish it as it stands''
+branch exists for either outcome to select; the earlier framing here --- that an unimportant zero
+atom would mean publishing the covariance as it stands --- described a posture the ruling had already
+closed, and is withdrawn. What stands on its own is the other half: \ldots
 
 In ``What the band figure is'':
 An earlier version called it an ``upper bound on how poorly the data constrain the
@@ -259,6 +269,22 @@ ${\sim}\SI{3}{\percent}$ background scale biases PET high, so the underlying gap
 \emph{larger} than the withdrawn figure. It has not been re-extracted under the
 pinned configuration, and the same three grounds withdraw the legacy closure level
 and the higher-epoch retrain response.
+
+The figure that followed that discussion in \S\ref{sec:pet-abs} plots the withdrawn comparison, and
+is kept here with it.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{pet_vs_gbdt_absolute}
+  \caption{Recoil-only PET representation cross-check: absolutely-normalized
+  4D cross section from the point-cloud unfold (full-statistics reweight of the generator sample) versus the
+  production scalar GBDT result, projected on each axis. The PET/GBDT total
+  offset shown is a two-iteration legacy result, withdrawn as a current comparison
+  (see text) and not quoted here as a level of agreement. Ordinary closure was
+  assessed only as a legacy two-iteration self-consistency diagnostic; no current
+  closure level is quoted, and it does not test omitted muon dependence.}
+  \label{fig:petabs}
+\end{figure}
 
 \subsection{Superseded uncertainty constructions and their figures}
 \label{app:history-superseded}
@@ -383,6 +409,7 @@ anywhere in this note.
 The paragraph that followed, stating the three requirements declared for a replacement and that the adopted object meets them, remains in the body at the head of \S\ref{sec:eavailw-construction}.
 
 \subsubsection{The superseded 5D candidate unified-throw constructions}
+\label{app:history-5dcandidates}
 From \S\ref{sec:uq-combine}:
 
 For the 5D candidate this construction was carried out both mean-centered and
@@ -440,3 +467,46 @@ The
   \emph{superseded} historical unified-throw 4D covariance, not from a
   corrected one, and are not quotable; the published points carry the
   published covariance.
+
+\subsubsection{Pre-repair values}
+\label{app:history-prerepair}
+Values from before a repair or correction, which the body mentioned in passing beside the current value it still prints.
+
+\paragraph{From \S\ref{sec:3d-2p2h}, the high-$\Eavail$ bin.}
+2p2h also does not touch the high-$\Eavail$ $[1.50,3.00)$ bin, where the data
+exceed the flux-repaired GENIE CV by about \SI{9}{\percent} (data/CV $1.09$;
+it was $1.15$ before the repair) \ldots
+
+\paragraph{From \S\ref{sec:eavailw-band}, the generator inputs.}
+The 3D and $(\Eavail,W)$ comparisons
+now take each generator from one five-dimensional histogram, so the earlier
+unreconciled \SI{3}{\percent} difference between two GENIE~CV productions no
+longer enters: the in-phase-space GENIE~CV total is \SI{2.76e-38}{cm^2/nucleon}
+in both. The GENIE$+$MEC prediction uses the 3D normalization convention, which
+also removes a \SI{2.87}{\percent} under-normalization of the earlier
+$(\Eavail,W)$ MEC prediction (\texttt{KNOWN\_ISSUES.md} row 81).
+
+\paragraph{From \S\ref{sec:uq-combine}, the background-CV choice.}
+``\ldots the effect on the \emph{adopted}
+covariance is smaller still, \SI{0.09}{\percent} before the flux (J28)
+correction and \SI{0.18}{\percent} after it \ldots''
+
+\paragraph{From \S\ref{sec:pet-projection}, cloud coverage before the miss-row fix.}
+Originally the cloud was filled only in the reco-signal event loop, so the
+truth-only ``miss'' events appended for the unfold (\SI{\pcMiss}{\percent} of
+the truth sample) carried no cloud --- only \SI{\pcHasCloudBefore}{\percent} of
+truth events had one, and cloud projections were correspondingly
+acceptance-limited, landing exactly on the stored-$\Eavail$ projection
+restricted to the has-cloud subset but sitting $1.5$--$2\times$ below
+the full unfold per bin. This is a truth-side instance of the same
+dangling-miss-row dump issue tracked for the systematic bank. We fixed it at
+source by carrying the truth final-state hadrons through the
+truth-denominator loop and filling \texttt{part\_gen} for the appended miss
+rows (the reco cloud \texttt{part\_reco} correctly stays empty for a miss),
+then re-dumping, rebuilding the inputs, and re-training.
+
+\paragraph{From \S\ref{sec:pet-projection}, the \texttt{ISSUE-30} projection fix.}
+After ``the unfolded counts are already acceptance-corrected'':
+``\ldots so
+that division corrected for acceptance twice. The fix lowers every projected
+$d\sigma/d\Eavail$ bin by 25--51\% and leaves the spread above essentially unchanged.''

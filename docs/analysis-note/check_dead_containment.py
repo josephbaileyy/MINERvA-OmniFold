@@ -70,7 +70,7 @@ INPUT_RE = re.compile(r"\\(?:input|include)\{([^}]+)\}")
 # `\s*` is load-bearing and BEN-090 is the reason. This read `r"\\dead\{"` from 4f75e50 until
 # 2026-08-12: enforcement landed and was evadable by one character, because `\dead {x}` renders
 # identically and did not match. The evasion form is NOT hypothetical and not an imagined careless
-# author -- LaTeX EMITS it. `sec_pet.tex:91` is `$\dead{\petRatio}$`, unspaced, and `\newlabel`
+# author -- LaTeX EMITS it. `sec_pet.tex:91` was (at the time) `$\dead{\petRatio}$`, unspaced, and `\newlabel`
 # serialises it into `main_note.aux:345` as `\dead {\petRatio }`. So the string this regex could not
 # match is the string LaTeX writes when it round-trips its own input. Consequence worth keeping:
 # the natural "robust" way to build an include closure is to read the build's own .aux or .fls
@@ -92,6 +92,8 @@ INPUT_RE = re.compile(r"\\(?:input|include)\{([^}]+)\}")
 #
 # Occupied vs latent, because they are not the same risk: the SPACED form is emitted by the build
 # today (`\newlabel` serialises `\dead{\petRatio}` into `main_note.aux:345` as `\dead {\petRatio }`).
+# [At the time, 2026-08-12. Measured 2026-10-03: no `\dead` sits in a caption or heading, so no
+# build currently writes one into an .aux; the spaced form is latent again, and still covered.]
 # Nothing emits the COMMENT form today. Both are covered; only one is currently occupied.
 COMMENT_RE = re.compile(r"(?<!\\)%[^\n]*")  # `[^\n]*`, not `.*?\n`, so line positions are preserved
 DEAD_RE = re.compile(r"\\dead\s*\{")
@@ -382,7 +384,7 @@ def pdf_text(pdf: Path, tmp: Path) -> str | None:
     # were not. Found by Session D on 98b926a with a fake pdftotext that succeeded empty for
     # main_paper.pdf only, so the note control still passed and the run still exited 0.
     # LATENT, NOT OCCUPIED: D could not produce it from latexmk with a real PDF, only by simulating
-    # an extractor. Same distinction as spaced (emitted by the build today) vs comment (not).
+    # an extractor. Same distinction as spaced (emitted by the build at the time) vs comment (not).
     # Returning None routes it into the existing strict-fatal path with no new mechanism.
     text = dest.read_text(encoding="utf-8", errors="replace")
     return text if text.strip() else None
