@@ -109,12 +109,16 @@ rather than a measured generator difference: the GENIE prediction it used was la
 to have been generated from a mis-sampled flux), the $(\Eavail,W)$ cells
 deviate from it by several percent in the largest cells and by more at high $W$, with or
 without background. This regularization bias is also not in the quoted uncertainties.
-More iterations or a larger classifier do not remove it; for other fixed generator shapes it
+The tested iteration and capacity scans do not remove it; for other fixed generator shapes it
 is \SIrange{16}{31}{\percent} in the most affected cell and within the quoted total
 uncertainty in about half of the $(\Eavail,W)$ cells. The unfolded values on data also move
 by up to a few statistical standard deviations under input changes at the level of
-floating-point rounding; whether the statistical uncertainty already absorbs this is not
-established.
+floating-point rounding. A later paired study supports containment of this rounding
+variability in candidate $R$'s refit bootstrap, without regrading its failed stability
+test or qualifying the adopted uncertainty. The longer-iteration and capacity scans
+measure noise-free recovery without matched repeat variances; they therefore do not
+establish a bias--variance tradeoff. Coarser reporting changes the quantities estimated,
+and correlated prior shifts do not establish bounds on the unknown real-data bias.
 No frequentist coverage is claimed for the five-dimensional intervals: an
 end-to-end test of bias-corrected statistical intervals from a deterministic
 variant of the estimator failed its predeclared criterion under the tested

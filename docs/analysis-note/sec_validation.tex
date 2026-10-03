@@ -107,17 +107,179 @@ The residual background bias has a named cause: the refinement classifier underf
 Raising its capacity (400 trees, 31 leaves) reduces the background-related bias by more
 than \SI{80}{\percent} in every affected cell. A candidate built on this passes the
 nominal background-inclusive closure on 40 fresh pseudo-experiments (largest deviation
-2.7 standard errors) and a calibration test of its statistical intervals (pull width 1.02).
+2.7 standard errors) and a pooled calibration test of its statistical intervals (pull width 1.02),
+which did not establish calibration for every functional.
 It fails the predeclared stability test on the data: perturbing the inputs within
 floating-point rounding moves the reported functionals by 0.8 statistical standard
 deviations in the median and 2.6 at most. The same instability, at most \SI{1.2}{\percent}, explains the
-difference between the driver and development pipelines on the data; whether the
-data-bootstrap uncertainty already absorbs it is not established. Under withheld
-generator shapes the unfolding-model dependence is \SIrange{2}{6}{\percent} in the median
+difference between the driver and development pipelines on the data. The later
+paired-bootstrap study below addresses containment for this candidate only. Under
+the historical shapes withheld during that assessment the unfolding-model dependence is \SIrange{2}{6}{\percent} in the median
 and \SIrange{16}{31}{\percent} at most. Nothing is adopted.
 % Source: docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md (VL153);
 % docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (VL154); KNOWN_ISSUES 75, 77, 79, 80;
 % independently reproduced (state/s5e/diag/review-round-1.md, state/s5e/cand/review-round-2.md).
+
+\subsection{Model dependence, variability and reporting resolution}
+\label{sec:gbdt-model-dependence}
+
+The existing studies do not establish a bias--variance tradeoff across estimator
+settings. They establish a truth-dependent response to iterations and capacity,
+small repeat variability at one setting, and appreciable prior sensitivity. These
+are different quantities. Evaluating them separately is also the basis of unfolding
+benchmarks~\cite{Brenner2020Unfolding}; regularization bias can invalidate intervals
+built from estimator variability alone~\cite{Kuusela2015Unfolding}. Neither literature
+result supplies a missing variance measurement for this estimator.
+
+The noise-free study unfolds the full simulation's reweighted reconstructed events
+without background. Its baseline classifiers and missed-event regressor use 100 trees
+and 8 leaves; a capacity probe uses 400 trees and 31 leaves. The repeated-experiment
+study instead uses candidate $R$: five iterations, the baseline OmniFold estimators,
+and a separate 400-tree, 31-leaf background-refinement classifier. Its 40 nominal
+and 20 experiments at each of five departures include Poisson pseudo-data, changing
+MC splits and background refinement, with estimator seed 42. These assessment
+samples have since informed development and are not fresh validation here.
+
+We integrate the same saved fine-grid outputs into 109 supported joint cells
+(partition J), 27 supported coarser joint cells (H2), and 39 supported
+$(\Eavail,W)$ cells (EW). Each joint partition subdivides all five axes; H2 is not
+nested within J. Unsupported cells remain in the full-domain rate. The historical
+interval assessment retains all 42 EW cells, including three outside the later
+support rule. Definitions and normalization checks are in
+App.~\ref{sec:gbdt-diagnostic-definitions}.
+
+The truth labels describe \emph{fixed historical test deformations}: D1 is a
+GiBUU/GENIE $\Eavail$ ratio; W1 a NuWro/GENIE $\Eavail$ ratio; W2 a GENIE
+MEC/CV $(\Eavail,W)$ ratio; and W3 a NuWro/GENIE
+$(\pT,\pPar,\Eavail)$ ratio. They predate the generator-flux repair. Removing
+D1 does not make the remaining ratios corrected generator comparisons. The
+$q_3$ stress changes the conditional distribution at fixed $(\Eavail,W)$ with
+amplitude 0.3. None of these tests changes the simulated detector response.
+
+\paragraph{Recovery changes, but not uniformly.}
+Figure~\ref{fig:gbdt-recovery} shows the available traces, with no extension beyond
+the committed iteration ranges. D1 and W1 improve slowly. For W3, the J-cell
+median absolute residual is \SI{5.57}{\percent} at iteration 5 and
+\SI{6.57}{\percent} at 200; the largest residual grows from
+\SI{32.9}{\percent} to \SI{44.8}{\percent}. The corresponding H2 medians are
+\SI{3.42}{\percent} and \SI{3.68}{\percent}. This is a persistent residual over
+the measured finite scan, not a claim about infinitely many iterations or every
+possible classifier. The $q_3$ stress illustrates the importance of the functional:
+its EW median residual rises from \SI{4.99}{\percent} at iteration 5 to
+\SI{6.42}{\percent} at 30 even while some joint-cell summaries improve.
+The capacity probe changes recovery, but its affordable five-iteration setting did
+not meet the frozen improvement requirement. No reporting definition qualified
+under the historical usefulness and budget rules, and no measurement construction
+was admitted. Those verdicts are preserved.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/gbdt_recovery.pdf}
+\caption{Noise-free scalar-5D recovery for the historical test truths, at fixed
+simulated response. Solid: 100 trees/8 leaves; dashed: 400/31 on the OmniFold
+estimators. D1 and W1 are retained through 40 iterations, the $q_3$ stress through
+30, W3 through 200, and capacity probes through 10; some baseline traces are
+partial checkpoints. The upper row gives median $|\hat f/f_{\rm true}-1|$ over
+supported cells. The lower row reproduces the historical proxy
+$\operatorname{median}(|\hat f/f_{\rm true}-1|/|f_{\rm true}/f_0-1|)$,
+restricted to departures above 1\%; the dotted line is its frozen 0.25 bound.
+Its two denominators differ, so one minus this proxy is not an exact recovered
+fraction. The $q_3$ stress has no eligible EW departure. No repeat variance is
+measured by these traces.}
+\label{fig:gbdt-recovery}
+\end{figure}
+
+\paragraph{Variability and interval behavior at five iterations.}
+Figure~\ref{fig:gbdt-bias-spread} places ensemble residual means beside their
+repeat standard deviations at the \emph{same} setting. At the historical W3 truth,
+EW29 has a mean residual of \SI{23.67}{\percent} and repeat SD of
+\SI{0.56}{\percent}; EW7 has \SI{-6.81}{\percent} and \SI{0.30}{\percent},
+respectively. Small spread does not imply small bias. Coarser cells can have smaller
+residuals and spread, but they estimate different integrals; this is not an improvement
+in precision on an unchanged quantity. There are no matching repeat ensembles at
+the longer iterations or larger OmniFold capacity from which to infer a tradeoff.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/gbdt_bias_spread.pdf}
+\caption{Candidate $R$ at five iterations: each point is a supported J or H2 cell,
+with the mean and SD of $(\hat f-f_{\rm true})/f_{\rm true}$ from the same
+background-inclusive ensemble. Nominal has 40 experiments; W2 and W3 have 20
+each. Bars are pointwise 95\% Student-$t$ intervals for the mean and
+normal-model intervals for the SD, conditional on the saved simulation; they
+are not simultaneous bounds or total uncertainties. Different truth panels and
+reporting cells do not form a frontier across estimator settings.}
+\label{fig:gbdt-bias-spread}
+\end{figure}
+
+The historical statistical intervals used a fixed width estimated from 100 bootstrap
+replicas of \emph{one nominal development experiment}, not a width recomputed
+for each assessment experiment. Their behavior is correspondingly limited
+(Fig.~\ref{fig:gbdt-coverage}). For example, nominal EW41 contains the truth in
+15 of 40 nominal 68\% intervals: 37.5\%, with a pointwise exact 95\% interval
+of [22.7\%, 54.2\%]. A pooled calibration pass cannot qualify this cell. A later
+160-experiment check using the mean of six bootstrap-width estimates changed the
+pull scales, but did not validate the real-data procedure using its own width;
+finite replica noise explains much of the apparent variation between those six
+width estimates. Neither check establishes total coverage.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/gbdt_coverage.pdf}
+\caption{Development reuse of the historical $R$ assessment: empirical containment
+in $\hat f\pm\sigma$ with fixed nominal-bootstrap $\sigma$, on all 42 EW
+functionals. The right panel shows EW7 ($\Eavail\in[0.1,0.2)$,
+$W\in[1.1,1.4)$ GeV) and EW41 (both above 3 GeV), with pointwise 95\%
+Clopper--Pearson bounds. The dotted line is nominal Gaussian 68.27\% coverage.
+Zero of 20 contains the truth with an upper 95\% bound of 16.8\%, not zero
+population coverage. Truth ratios are historical; no total-uncertainty construction
+or newly validated interval is shown.}
+\label{fig:gbdt-coverage}
+\end{figure}
+
+A separate paired perturbation study supports containment of rounding variability
+\emph{for the tested $R$ refit-per-replica bootstrap}. Twenty edge-safe data
+jitters give a J-cell median SD of \SI{0.228}{\percent}, compared with a
+\SI{0.368}{\percent} bootstrap SD. Fifty bootstrap replicas with jittered partners
+give a median consistency ratio of 1.02 and estimated numerical share of 0.37 of
+the bootstrap variance. Adding that share again would double-count it under this
+design. This does not regrade the earlier stability failure, certify interval
+coverage, or transfer to the adopted covariance.
+
+\paragraph{Prior sensitivity is not a measured real-data bias.}
+Changing the prior on the real data gives shifts correlated with minus the
+noise-free residual at the same historical truth (Fig.~\ref{fig:gbdt-prior}).
+For W3 the correlation is 0.92 on J, yet $|\mathrm{shift}|\geq|\mathrm{residual}|$
+in only 71\% of its supported cells (52\% on H2 and 54\% on EW). The maximum
+shift over the five historical vertices has median 12.0\%, 9.6\% and 13.4\%
+on J, H2 and EW; omitting D1 gives 11.2\%, 4.3\% and 9.9\%. These are
+sensitivity envelopes, not probabilities, covariance components, or guaranteed
+bias bounds. The assumption that the data truth lies within their span has not
+been demonstrated.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/gbdt_prior_response.pdf}
+\caption{Historical W3 at five iterations. The horizontal quantity is minus the
+noise-free relative truth residual; the vertical quantity is the relative shift
+of the real-data $R$ result when its MC prior is changed to W3, normalized to the
+CV-prior result. Points are supported cells, not independent repeated experiments.
+The diagonal is equality. Strong correlation does not imply a per-cell bound,
+and these shifts do not measure the unknown real-data bias.}
+\label{fig:gbdt-prior}
+\end{figure}
+
+A decisive next measurement would use the same pseudo-data and MC splits across a
+small set of iteration and capacity settings, and measure bias, variance and mean
+squared error for common functionals. A statistical comparison of settings and
+validation of an interval are separate tasks; total-interval validation also needs
+an explicit treatment of physical nuisances and model dependence. No such new
+ensemble is part of this synthesis, and the precision-measurement objective remains
+unmet.
+% Evidence: nd-unfolding/gbdt_model_dependence/{inputs,results,README.md}; VL161.
+% Historical grades: s5e A_FAIL; s5p amendment 4 NOT ADMITTED; amendment 6 LOW corrections.
+
+\subsection{Other validation diagnostics}
 
 \paragraph{Unbinned diagnostic (C2ST).}
 As a binning-free check that the unfold removes the data\,$\leftrightarrow$\,MC mismatch, we use

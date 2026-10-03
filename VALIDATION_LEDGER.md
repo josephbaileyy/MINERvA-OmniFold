@@ -1,5 +1,16 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-10-03 existing-data scalar-5D methodological synthesis
+
+Source: [reduction package](nd-unfolding/gbdt_model_dependence/README.md), with digest-checked
+projected operands, per-cell CSVs and reproducible PDF/SVG figures. Historical receipts and
+VL153–VL155 are preserved. The later amendment-6 corrections govern the initial Stage-2
+bound and calibration interpretations. No new unfold or allocation; no adopted product used.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL161 | Existing-data reductions of historical noise-free traces, candidate R assessment, paired rounding/bootstrap products and denominator-fixed prior variations | W3 J median absolute residual 5.573% at k=5, 6.573% at k=200 (maximum 32.904%→44.770%); R5 W3 EW29 mean relative residual +23.665%, repeat residual SD 0.558% (n=20); nominal EW41 historical fixed-σ interval hits 15/40, exact pointwise 95% coverage bounds [0.2273,0.5420]; J rounding SD median 0.228%, bootstrap SD 0.368%, consistency 1.018; W3 prior shift exceeds absolute residual in 70.6% J / 51.9% H2 / 53.8% EW supported cells | Same-analyst independent implementation reproduces original receipt values; new H2/interval-bound reductions and figures have no fresh independent reviewer. Diagnostic development reuse, historical truth ratios; no tradeoff established without matched variance across settings. Original A_FAIL / NOT ADMITTED preserved; no new uncertainty or adoption; publication NOT READY. |
+
 ## 2026-09-27 s5p (OI-193): the generator comparisons on the flux-repaired predictions (`KNOWN_ISSUES.md` 83)
 
 The GENIE 2.12.10 CV, GENIE+MEC and NuWro truth predictions were generated from a density-valued flux sampled by

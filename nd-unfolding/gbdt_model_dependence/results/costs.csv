@@ -1,0 +1,8 @@
+construction,n,median_seconds_unfold,max,scope
+"('pseudo', 5, 'None', 'float32')",423,293.973,348.522,"measured seconds_unfold; mixed tasks, no billing inference"
+"('data', 5, 'None', 'float32')",3,629.908,692.864,"measured seconds_unfold; mixed tasks, no billing inference"
+"('data', 5, 'None', 'float64')",70,648.0435,692.265,"measured seconds_unfold; mixed tasks, no billing inference"
+"('pseudo', 5, 'None', 'float64')",120,339.244,370.784,"measured seconds_unfold; mixed tasks, no billing inference"
+"('?', 5, 'None', 'float32')",7,644.091,660.005,"measured seconds_unfold; mixed tasks, no billing inference"
+"('asimov_same', 200, 'None', 'float32')",2,31954.207,34429.74,"measured seconds_unfold; mixed tasks, no billing inference"
+"('asimov_same', 10, '[400, 31]', 'float32')",3,4895.386,4988.566,"measured seconds_unfold; mixed tasks, no billing inference"

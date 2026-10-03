@@ -122,9 +122,15 @@ generators the effect is \SIrange{16}{31}{\percent} in the worst cell and smalle
 quoted uncertainty in about half of the $(\Eavail,W)$ cells. The study did find the source
 of the remaining background bias, a too-simple helper classifier, and a larger one removes
 it. But it also found that the result on the real data shifts by up to a few times its
-statistical uncertainty when the inputs are rounded differently. The generator dependence
-is not in the quoted uncertainty, whether the rounding effect is remains to be checked, and
-nothing was adopted.
+statistical uncertainty when the inputs are rounded differently. A later paired study
+found that the candidate's bootstrap already carries this rounding variability; this
+does not qualify the uncertainty attached to the published result or reverse the failed
+stability test. The truth dependence is not included in the quoted uncertainty. Longer
+runs sometimes improve recovery and sometimes leave a persistent residual, but their
+repeat variability was not measured at the same settings. We therefore have not
+established a tradeoff between bias and variability. Combining cells changes what is
+measured, and changing the starting model does not give a guaranteed error bound.
+Nothing new was adopted.
 
 The two-dimensional trust check is unaffected and retains its independently
 constructed uncertainty.

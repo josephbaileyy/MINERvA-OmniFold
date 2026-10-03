@@ -360,8 +360,16 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: Removing both entries reproduces 125 / cd584788 exactly; flipping the second pin's last hex digit
 #: makes this file report `MISMATCH docs/orchestration/state/s5p/gen5d/gen5d-fluxfix-2.json`, rc 1;
 #: then restored (cmp).
-RECEIPT_BINDING_COUNT = 127
-RECEIPT_BINDING_SHA256 = "e6313052886245651e40fdb8999fbd368fb9e54a2456545e29533e25ec7c1941"
+#: 127 -> 132, digest e6313052 -> aca9a776 (2026-10-03, GBDT evidence synthesis).
+#: The raw-product inventory newly binds five existing historical truth definitions:
+#: s5e/w2-genie-mec-over-cv-eavailW.json, s5e/w3-nuwro-over-genie-pt-pz-eavail.json,
+#: s5n/eavail-ratio-{gibuu,nuwro}-over-genie.json, and
+#: s5p/ratios/d5-nuwro-over-genie-q3-given-eavail-w.json (under orchestration/state).
+#: Excluding the synthesis package reproduces 127 / e6313052 exactly; no prior binding
+#: was removed or repointed. Exact added rows and the negative-control result are in
+#: nd-unfolding/gbdt_model_dependence/build_evidence.json.
+RECEIPT_BINDING_COUNT = 132
+RECEIPT_BINDING_SHA256 = "aca9a77686af5ffd3b7d56d6c095923fe6aaef6223e5e385c443fe479e9722a1"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"
