@@ -4,99 +4,56 @@
 
 We apply \emph{unbinned machine-learning unfolding}
 (OmniFold~\cite{Andreassen:2019cjw, Andreassen:2021zzk}) to MINERvA's
-medium-energy neutrino data. The analysis begins with a reproduction of a
-published measurement and extends it to simultaneous three-, four-, and
-five-observable scalar cross sections. We also study a recoil-only point-cloud
-representation and a preliminary extended fiducial domain with relaxed
-truth-muon cuts. The specific scalar extensions studied here do not have direct
-binned MINERvA counterparts.
-
-Traditional unfolding corrects detector effects with a migration matrix between
-histogram bins, so each added observable multiplies the number of bins. OmniFold
-instead learns an event weight that morphs simulation into data and transfers it
-to the pre-detector level through the simulation's truth--reconstruction pairing.
-
-Reporting binning is imposed only at the end. A recorded observable can therefore
-be added without constructing a new response tensor, although training, support,
-and uncertainty propagation still become harder with dimension.
-
-The fixed-dimension measurements use gradient-boosted decision trees, validated
-with closure, iteration, pull, and calibration diagnostics and neural-network
-cross-checks. The existing 2D toy ensemble does not provide an independent-truth
-coverage test; that test remains open. In five dimensions an end-to-end
-independent-truth test was run on the statistical intervals of a deterministic
-variant of the estimator, with a nominal-truth bias correction (1,200
-pseudo-experiments over three truths). It failed its predeclared futility
-criterion at the nominal and the $\Eavail$-tilted truths, so no frequentist
-coverage is claimed for any five-dimensional interval.
-% Source: docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
-A successor development test replaced the per-bin purity weights by the unbinned
-negative-weight background treatment. It removed most of the purity method's
-nominal-truth bias in the highest-$W$ cells (from about \SI{-4}{\percent} to below
-\SI{0.3}{\percent}), but left a bias of up to about \SI{1}{\percent} in some joint cells.
-It also showed that the estimator itself does not follow a generator-sized change of the
-$\Eavail$ shape: signal-only pseudo-experiments whose truth carries the GiBUU-to-GENIE
-$\Eavail$ shape ratio come back several percent off in the largest $(\Eavail,W)$ cells
-and up to \SI{74}{\percent} off in the highest-$W$ column. This regularization bias is
-not in the quoted covariance.
-% Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md; VL151-VL152;
-% KNOWN_ISSUES 75, 77.
-A diagnosis of the estimator followed. The shortfall under generator-sized departures is
-the same through the full analysis driver as in the development pipeline. For the
-GiBUU-to-GENIE $\Eavail$ departure (a deformation of fixed size, not a measured generator
-difference: the GENIE prediction it was built from was later found flux-defective,
-\texttt{KNOWN\_ISSUES.md} row 83), neither more iterations (thirty reduce it by about
-a quarter), nor higher classifier capacity, nor a different treatment of events that fail
-reconstruction removes it. It is therefore carried as an unfolding-model dependence. For
-other fixed generator shapes (NuWro; GENIE with enhanced meson-exchange currents) it reaches
-\SIrange{16}{31}{\percent} in the most affected cell and stays within the quoted total
-uncertainty in 20 of the 42 $(\Eavail,W)$ cells. The residual background bias was traced to
-the capacity of the refinement classifier. A higher-capacity refinement closes the nominal
-background-inclusive test on fresh pseudo-experiments, with calibrated statistical
-intervals. However, the estimator's output on the real data moves by up to 2.6 statistical
-standard deviations when its inputs change at the level of floating-point rounding. No
-estimator therefore qualifies. The unfolding-model dependence is in no quoted covariance,
-and whether the numerical instability is absorbed by any quoted uncertainty is not
-established.
-% Source: docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md;
-% docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md; VL153-VL154; KNOWN_ISSUES 75, 77, 79, 80.
+medium-energy neutrino data. Instead of a migration matrix between histogram bins,
+whose size multiplies with each added observable, OmniFold learns an event weight
+that morphs simulation into data and transfers it to the pre-detector level through
+the simulation's truth--reconstruction pairing. Reporting binning is imposed only at
+the end, so a recorded observable can be added without constructing a new response
+tensor, although training, support, and uncertainty propagation still become harder
+with dimension. The analysis reproduces a published measurement and extends it to
+simultaneous three-, four-, and five-observable scalar cross sections; it also studies
+a recoil-only point-cloud representation and a preliminary extended fiducial domain
+with relaxed truth-muon cuts. The specific scalar extensions studied here do not have
+direct binned MINERvA counterparts. The fixed-dimension measurements use
+gradient-boosted decision trees, validated with closure, iteration, pull, and
+calibration diagnostics and neural-network cross-checks.
 
 \paragraph{Results overview:}
 \begin{itemize}[itemsep=2pt]
-  \item \textbf{Reproduction.} 
-  Our unbinned measurement of the muon transverse and longitudinal momentum,  $d^{2}\sigma/(d\pT\,d\pPar)$, matches the published measurement~\cite{MINERvA:2021owq}: total cross-section ratio $\ratioTot$, \SI{\binsTen}{\percent} of bins within \SI{10}{\percent}, per-bin standardized differences sub-$1\sigma$, and a separately reconstructed uncertainty budget whose median per-bin uncertainty (\SI{\uqMedian}{\percent}) matches the published \SI{\uqPaper}{\percent} (\S\ref{sec:results}, \S\ref{sec:systematics}, Fig.~\ref{fig:xsec}).
-  
-  \item \textbf{Unbinned 3D/4D/5D MINERvA unfolds.}
-  Adding available energy ($\Eavail$), momentum transfer ($q_{3}$), and hadronic mass ($W$) produces \emph{unbinned} simultaneous three-, four- and five-observable unfolds of MINERvA data; every result passes the projection anchors against its lower-dimensional predecessor to $\approx$1--2\,\% --- a built-in cross-check (\S\ref{sec:3d}). Prior MINERvA multi-differential cross sections, including a binned triple-differential quasielastic-like measurement~\cite{MINERvA:2022qe}, used explicit binned unfolding; the methodological distinction here is the unbinned, simultaneously-unfolded formulation rather than multi-dimensionality itself.
-  
-  \item \textbf{Established low-recoil discrepancy recovered.}
-  All four truth-level generators (GENIE~\cite{Andreopoulos:2009rq}, MINERvA Tune~\cite{MINERvA:2016lowrecoil}, NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx}) under-predict the data in the quasielastic--$\Delta$ dip ($0.1\le\Eavail<\SI{0.4}{GeV}$); pion final-state-interaction dials move the spectrum by less than \SI{1}{\percent} while adding Valencia 2p2h~\cite{Nieves:2011pp,Gran:2013kda} fills \SI{52}{\percent} of the data$-$CV gap in that dip (\SI{63}{\percent} of the integrated deficit; GENIE and NuWro are the flux-repaired predictions of 2026-09-27, \texttt{KNOWN\_ISSUES.md} row 83) --- the established MINERvA low-recoil/2p2h deficit~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}, re-found by an independent method (\S\ref{sec:3d-2p2h}, Fig.~\ref{fig:3dmodels}).
-  
-  The FSI statement concerns the tested pion dials only; it does not exclude
-  other transport effects or uniquely identify the nuclear mechanism.
+  \item \textbf{Reproduction.}
+  Our unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ matches the published measurement~\cite{MINERvA:2021owq}: total cross-section ratio $\ratioTot$, \SI{\binsTen}{\percent} of bins within \SI{10}{\percent}, per-bin standardized differences sub-$1\sigma$, and a separately reconstructed uncertainty budget whose median per-bin uncertainty (\SI{\uqMedian}{\percent}) matches the published \SI{\uqPaper}{\percent} (\S\ref{sec:results}, \S\ref{sec:systematics}, Fig.~\ref{fig:xsec}).
 
-  \item \textbf{A new localization of the remaining excess.} 
-  The high-$\Eavail$ excess that 2p2h cannot explain is localized in the $(\Eavail, W)$ plane: its positive difference from the MINERvA Tune~v1 prior concentrates in the deep-inelastic corner ($\Eavail\ge\SI{0.8}{GeV}$, $W\ge\SI{1.8}{GeV}$). The four external generators all lie below the data there too, but on the flux-repaired predictions GENIE and NuWro fall short in the corner by about as much as overall (corner data/generator $1.14$--$1.16$ against $1.07$--$1.15$ integrated); only GiBUU is markedly more deficient there ($1.61$ against $1.39$). \textbf{A covariance for this projection \emph{is} adopted} --- the \zprojCells-cell projection \zprojDigest\ldots\ of the five-axis trunk \zcvDigest\ldots, adopted as publication-under-exception on 2026-09-20 and paired to the figure's central values by digest identity. The comparison is nonetheless reported at central-value level, and the reason is measured rather than precautionary: the estimator-seed sensitivity of that covariance is \SI{\sprojMeasured}{\percent} against a \SI{\sprojBound}{\percent} limit fixed before production, so no compatibility metric computed from it would state a precision the input has. That measurement and the three others that travel with the adoption are in \S\ref{sec:eavailw-adopted}; the adopted construction itself is specified in \S\ref{sec:eavailw-construction} (\S\ref{sec:eavailw}, Fig.~\ref{fig:eavailWband}).
-  
-  \item \textbf{A methodological finding.} 
-  The standard covariance adds matrices built for one systematic source at a time, which omits cross-source response terms. In MINERvA's \texttt{GetTotalErrorMatrix}, each named source contributes its own covariance, built with all other sources held nominal; the sum retains within-source bin--bin correlations but contains no cross-source terms. The corrected unified-throw test perturbs all reweightable sources simultaneously using actual asymmetric endpoints, one fixed estimator seed, and mean-centered throws; it reports the joint mean shift separately. The selection-complete lateral replacement has since landed and one resulting 5D product is adopted as publication-under-exception, carrying four measurements that qualify everything built from it (\S\ref{sec:uq-combine}, \S\ref{sec:eavailw-adopted}); the other corrected candidates are not adopted.
-  
+  \item \textbf{Unbinned 3D/4D/5D MINERvA unfolds.}
+  Adding available energy ($\Eavail$), momentum transfer ($q_{3}$), and hadronic mass ($W$) produces unbinned simultaneous three-, four- and five-observable unfolds; every result passes its projection anchors against its lower-dimensional predecessor to $\approx$1--2\,\% (\S\ref{sec:3d}). Prior MINERvA multi-differential measurements, including a binned triple-differential one~\cite{MINERvA:2022qe}, used explicit binned unfolding; the distinction here is the unbinned, simultaneously-unfolded formulation, not multi-dimensionality itself.
+
+  \item \textbf{Established low-recoil discrepancy recovered.}
+  All four truth-level generators (GENIE~\cite{Andreopoulos:2009rq}, MINERvA Tune~\cite{MINERvA:2016lowrecoil}, NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx}) under-predict the data in the quasielastic--$\Delta$ dip ($0.1\le\Eavail<\SI{0.4}{GeV}$). The tested pion final-state-interaction dials move the spectrum by less than \SI{1}{\percent}, while adding Valencia 2p2h~\cite{Nieves:2011pp,Gran:2013kda} fills \SI{52}{\percent} of the data$-$CV gap in that dip (\SI{63}{\percent} of the integrated deficit; GENIE and NuWro are the flux-repaired predictions, \texttt{KNOWN\_ISSUES.md} row 83): the established MINERvA low-recoil/2p2h deficit~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}, re-found by an independent method (\S\ref{sec:3d-2p2h}, Fig.~\ref{fig:3dmodels}).
+
+  \item \textbf{A new localization of the remaining excess.}
+  The high-$\Eavail$ excess over the MINERvA Tune~v1 prior that 2p2h cannot explain concentrates in the deep-inelastic corner ($\Eavail\ge\SI{0.8}{GeV}$, $W\ge\SI{1.8}{GeV}$). The four external generators also lie below the data there, but on the flux-repaired predictions GENIE and NuWro fall short in the corner by about as much as overall (corner data/generator $1.14$--$1.16$ against $1.07$--$1.15$ integrated); only GiBUU is markedly more deficient there ($1.61$ against $1.39$ integrated). A covariance for this projection is adopted, as publication-under-exception (\zprojCells-cell projection \zprojDigest\ldots\ of the five-axis trunk \zcvDigest\ldots, paired to the figure's central values by digest identity), but the comparison is reported at central-value level: the covariance's estimator-seed sensitivity is \SI{\sprojMeasured}{\percent} against a \SI{\sprojBound}{\percent} limit fixed before production, so no compatibility metric computed from it would state a precision the input has (\S\ref{sec:eavailw}, Fig.~\ref{fig:eavailWband}; adoption and construction in \S\ref{sec:eavailw-adopted}, \S\ref{sec:eavailw-construction}).
+
+  \item \textbf{A methodological finding.}
+  The standard covariance adds matrices built for one systematic source at a time, with all other sources held nominal, so it contains no cross-source response terms. A corrected unified-throw test perturbs all reweightable sources simultaneously and reports the joint mean shift separately. One resulting 5D product is adopted as publication-under-exception; the other corrected candidates are not adopted (\S\ref{sec:uq-combine}, \S\ref{sec:eavailw-adopted}).
+
   \item \textbf{Recoil-point-cloud representation cross-check (diagnostic, method development).}
-  A point-cloud transformer uses reconstructed recoil clusters at step~1 and truth
-  final-state hadrons at step~2; muon kinematics enter selection and binning but
-  neither classifier. Its central value and ordinary closure therefore test a
-  recoil-only estimator. The historical uncertainty assembly is quarantined
-  because nuisance and retraining shifts were not combined with their cross term
-  and detector membership was limited to CV support. A full-event estimator ---
-  one trained jointly on the muon and recoil --- requires a new nominal fit,
-  omitted-muon stress closure, and uncertainty budget (\S\ref{sec:pet},
-  \S\ref{sec:pet-projection}). No PET
-  covariance is adopted as a publication uncertainty product. The full-event
-  central/statistical pairing was declined rather than resolved, with coverage
-  the missing evidence.
+  A point-cloud transformer uses reconstructed recoil clusters at step~1 and truth final-state hadrons at step~2; muon kinematics enter selection and binning but neither classifier, so its central value and ordinary closure test a recoil-only estimator (\S\ref{sec:pet}, \S\ref{sec:pet-projection}).
 
   \item \textbf{A preliminary extended-fiducial study.}
-  Re-running the scalar 2D $(\pT,\pPar)$ unfold with the truth-muon kinematic cuts removed enlarges the signal definition while retaining the tracker fiducial interaction volume and the unchanged MINOS-based reconstructed selection. About \SI{6}{\percent} of the rate lies in a newly acceptance-supported extension (tier~1), while about \SI{28}{\percent} lies in low- or zero-efficiency cells and is reported separately as prior-dominated extrapolation (tier~2). The result includes a restricted-region anchor, closure tests and a three-prior envelope, but not a corrected extended-fiducial covariance (\S\ref{sec:fps}).
- 
-  
+  Re-running the scalar 2D unfold with the truth-muon kinematic cuts removed enlarges the signal definition, keeping the tracker fiducial interaction volume and the unchanged MINOS-based reconstructed selection. About \SI{6}{\percent} of the rate lies in a newly acceptance-supported extension (tier~1); about \SI{28}{\percent} lies in low- or zero-efficiency cells (tier~2) (\S\ref{sec:fps}).
+\end{itemize}
+
+\paragraph{What is not claimed:}
+\begin{itemize}[itemsep=2pt]
+  \item \emph{Coverage.} No 2D coverage number is quoted; the independent-truth test remains open (\S\ref{sec:coverage}). No frequentist coverage is claimed for any five-dimensional interval: the 5D independent-truth test failed its predeclared futility criterion (\S\ref{sec:coverage-5d}).
+% Source: docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
+  \item \emph{Regularization bias.} The estimator does not follow a generator-sized change of the $\Eavail$ shape (up to \SI{74}{\percent} off in the highest-$W$ column), and this bias is in no quoted uncertainty. The unbinned negative-weight background treatment removes most of the purity method's bias at high $W$ but leaves up to about \SI{1}{\percent} in some joint cells (\S\ref{sec:val-negweight}).
+% Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md; VL151-VL152;
+% KNOWN_ISSUES 75, 77.
+  \item \emph{Unfolding-model dependence and estimator stability.} The GiBUU-to-GENIE departure is a deformation of fixed size, not a measured generator difference (its GENIE input was later found flux-defective, \texttt{KNOWN\_ISSUES.md} row 83); no tested remedy removes the shortfall, so it is carried as an unfolding-model dependence that is in no quoted covariance. No estimator qualifies: the refinement-capacity candidate's output on the real data moves by up to 2.6 statistical standard deviations under floating-point-level input changes, and whether any quoted uncertainty absorbs this is not established (\S\ref{sec:val-departure}).
+% Source: docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md;
+% docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md; VL153-VL154; KNOWN_ISSUES 75, 77, 79, 80.
+  \item \emph{Mechanism.} The FSI statement concerns the tested pion dials only; it does not exclude other transport effects or uniquely identify the nuclear mechanism.
+  \item \emph{Adopted covariance.} The adopted 5D product carries four measurements that qualify everything built from it (\S\ref{sec:eavailw-adopted}); the other corrected candidates are not adopted.
+  \item \emph{PET.} No PET covariance is adopted as a publication uncertainty product; the historical uncertainty assembly is quarantined; a full-event estimator, trained jointly on the muon and recoil, would need a new nominal fit, omitted-muon stress closure, and uncertainty budget; and the full-event central/statistical pairing was declined rather than resolved, with coverage the missing evidence (\S\ref{sec:pet}).
+  \item \emph{Extended fiducial domain.} Tier~2 is prior-dominated extrapolation, reported separately, and there is no corrected extended-fiducial covariance (\S\ref{sec:fps}).
 \end{itemize}
