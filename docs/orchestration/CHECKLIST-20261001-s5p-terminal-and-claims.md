@@ -25,6 +25,17 @@ three concerns and at most two review/repair cycles.
 
 ## 2. Evaluation sequence (login node; no allocation)
 
+`state/s5p/stage7/s5p_terminal_run.sh` implements §1 and §2, steps 1–4 and 6, with assertions and exit codes:
+- `check` exits 0 only when §1 holds;
+- `deploy <sha>` makes the new clean clone and verifies it;
+- `verify <sha>` re-checks an existing deploy;
+- `evaluate <sha>` re-runs `check` and `verify`, refuses to overwrite any output, then runs the four steps and
+  prints the recompute packet.
+
+Its exit codes are 0 done, 1 a check failed, 2 a probe failed, 4 sensitivity INCOMPLETE. It was tested read-only
+on 2026-10-03: `check` correctly gave TERMINAL: NO; `verify c754f3cd` passed the frozen, design and V checks and
+correctly failed on the missing sensitivity script.
+
 1. **Deploy.** Make a NEW clean clone of current `origin/main` into `$NS/deploy/<sha>`. Verify:
    - HEAD and a clean tree;
    - `s5p_joint.py`, `s5p_inference.py` and `s5p_seqstop.py` byte-identical to `4f5a613f`;
