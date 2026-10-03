@@ -1,5 +1,11 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-10-03 analysis note: the 2D statistical bootstrap spreads on the quoted pure-Poisson set
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL162 | 2D MEFHC lgbm statistical bootstrap, pure-Poisson (`--seed 1`) replicas boot1–boot300, `analyze_uq.py` definitions, [`state/note-boot-20261003/`](docs/orchestration/state/note-boot-20261003/README.md) (`boot_spreads.json` `e0fa99d5…`) | N = 300: total-σ relative std **0.0606%**, per-bin median **0.5494%**, p84 **1.2025%**; first 50: 0.0674% / 0.5409% / 1.1945% | MEASURED 2026-10-03; control: the replicas reproduce `uq_covariance_boot300.root` (covariance to 4.1e-16, √tr 1.817e-40, median 0.549%); replaces App. A's superseded seed-varying values (0.068→0.061%, 0.532→0.564%, 1.235→1.215%); single lane, not independently reviewed |
+
 ## 2026-09-27 s5p (OI-193): the generator comparisons on the flux-repaired predictions (`KNOWN_ISSUES.md` 83)
 
 The GENIE 2.12.10 CV, GENIE+MEC and NuWro truth predictions were generated from a density-valued flux sampled by
