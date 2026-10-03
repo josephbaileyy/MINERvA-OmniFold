@@ -62,8 +62,8 @@ documented default for that function}, $\tau = \texttt{rcond}\cdot\sigma_{\max}$
 with $\texttt{rcond}=10^{-15}$ --- \emph{not} the
 $n\,\sigma_{\max}\varepsilon_{\text{machine}}$ convention of
 \texttt{np.linalg.lstsq} and MATLAB, which at $n=205$ would be about
-$45\times$ looser ($205\times2.22\times10^{-16}=4.6\times10^{-14}$); an earlier
-version of this appendix quoted that formula for \texttt{pinv} and was wrong.
+$45\times$ looser ($205\times2.22\times10^{-16}=4.6\times10^{-14}$)
+(App.~\ref{app:history}).
 Singular modes below the cutoff are set to $0$ in the inverse rather than
 $\infty$, so the quadratic form is stable even when $\mathbf{C}$ has zero or
 near-zero eigenvalues.
@@ -166,16 +166,15 @@ covariance
 i.e.\ \texttt{np.cov(Xrep, rowvar=False, ddof=1)}, checked with the
 Cholesky-plus-jitter pattern of \S\ref{sec:invert}.
 \emph{Seed pinning:} the quoted $N=300$ block pins \texttt{-{}-seed 1} and varies
-only \texttt{-{}-bootstrap-seed}, so it carries no training-seed variation. It
-superseded an earlier set whose replicas varied both seeds and so leaked ML
-stochasticity into the statistical block (\S\ref{sec:combine}).
+only \texttt{-{}-bootstrap-seed}, so it carries no training-seed variation
+(App.~\ref{app:history}).
 % Source: 2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md:99, :111-116 (pure-Poisson sbatch 53489662
 % supersedes the seed-varying sbatch 53327775).
 
 On the quoted pure-Poisson replicas (205 bins, MEFHC \texttt{lgbm}), going from the first
 $50$ replicas to all $300$ moves the total-$\sigma$ relative std $0.067\%\to\boxed{0.061\%}$,
 the per-bin median relative spread $0.541\%\to\boxed{0.549\%}$, and the per-bin $p_{84}$
-$1.194\%\to1.202\%$ (the superseded seed-varying set gave a median of $\dead{0.564\%}$). The
+$1.194\%\to1.202\%$. The
 median is stable; the $N=300$ block is used because it is full rank.
 % Source: VALIDATION_LEDGER VL162, docs/orchestration/state/note-boot-20261003/. Printed here before
 % 2026-10-03, from the superseded set: total sigma 0.068 -> 0.061%, median 0.532 -> 0.564%, p84 1.235 -> 1.215%.
@@ -275,29 +274,25 @@ Band & Per-bin median rel.\ $\sigma$ \\
 Muon\_Energy\_MINOS & $2.305\%$ \\
 Muon\_Energy\_MINERvA & $1.285\%$ \\
 MinosEfficiency & $1.472\%$ \\
-Flux (PPFX, $N_{u}=100$) & $\dead{1.008\%}$ $\to$ $4.993\%$ \\
+Flux (PPFX, $N_{u}=100$) & $4.993\%$ \\
 MaRES & $0.548\%$ \\
 MvRES & $0.377\%$ \\
 MaCCQE & $0.357\%$ \\
 \midrule
-\shortstack[l]{Systematic total\\(44 bands $+$ norm)} & \shortstack[l]{$\dead{4.783\%} \to \boxed{6.830\%}$ (median)\\$\sqrt{\Tr\mathbf{C}}=\dead{2.463\times10^{-39}} \to 3.214\times10^{-39}$} \\
+\shortstack[l]{Systematic total\\(44 bands $+$ norm)} & \shortstack[l]{$\boxed{6.830\%}$ (median)\\$\sqrt{\Tr\mathbf{C}}=3.214\times10^{-39}$} \\
 \bottomrule
 \end{tabular}
 \caption{Top contributing bands of the full matcorr sweep: per-bin median
 relative $\sigma_{i}/X^{\CV}_{i}$ over the $205$ reported bins.}
 \label{tab:band-medians}
 \end{table}
-\textbf{Struck entries in Table~\ref{tab:band-medians} are the pre-flux-fix rollup}
-(\texttt{uq/universe\_stage2\_MEFHC\_full\_matcorr/uq\_universe\_covariance\_full\_matcorr.root});
-the live values to their right are the flux-fixed rollup
+Table~\ref{tab:band-medians} carries the flux-fixed rollup
 \texttt{...\_full\_matcorr\_fluxfix/uq\_universe\_summary.txt}, which is the
-product this note quotes (\S\ref{sec:systematics}). Of the individual systematic
-bands only \texttt{Flux} moved; the grouped \emph{Statistical} category also moved
-($0.563\% \to 0.549\%$) for the separate reason given in the provenance note in
-\S\ref{sec:combine}.
+product this note quotes (\S\ref{sec:systematics}); the pre-flux-fix entries it
+replaced are listed in App.~\ref{app:history}.
 Grouped by category the medians are: Muon reconstruction $3.366\%$,
-Models $2.034\%$, Flux $\dead{1.008\%} \to 4.993\%$, Hadronic response $0.758\%$,
-Statistical $\dead{0.563\%} \to 0.549\%$, Normalization $0.081\%$. Muon energy scale
+Models $2.034\%$, Flux $4.993\%$, Hadronic response $0.758\%$,
+Statistical $0.549\%$, Normalization $0.081\%$. Muon energy scale
 (MINOS$+$MINERvA) and the MINOS-efficiency band dominate; these are
 exactly the bands the Ruterbories paper flags as flux-correlated
 (\S\ref{sec:rank}).
@@ -413,46 +408,8 @@ combination, before the ML block, as $6.845\%$
 ``\texttt{Combined (universe + bootstrap) median rel}''] --- also a read value,
 not one derived from the entries printed here.
 
-\begin{quote}
-\textbf{Provenance note (2026-07-31; table corrected 2026-08-11).} Table~\ref{tab:combine}
-carries the \emph{flux-fixed} rollup. An earlier draft printed the
-\emph{pre-flux-fix} product --- systematic $\dead{2.463\times10^{-39}}$ /
-$\dead{4.783\%}$, combined $\dead{2.470\times10^{-39}}$ / $\dead{4.822\%}$ ---
-and inferred from it that the OmniFold envelope is $\dead{\approx\!70\%}$ of the
-paper's. Those four figures and that inference are \textbf{retracted}: they are
-artefacts of a superseded covariance, not of the measurement. The current budget
-agrees with \S\ref{sec:systematics}, where the envelope essentially
-\emph{matches} the paper ($6.865\%$ against $6.86\%$).
-
-The two rollups differ in \emph{exactly one band}. Comparing
-\texttt{2d-unfolding/uq/universe\_stage2\_MEFHC\_full\_matcorr/} against
-\texttt{...\_matcorr\_fluxfix/}, every systematic band agrees to the last quoted
-digit except \texttt{full\_Flux}, whose per-bin median rises
-$1.008\% \rightarrow 4.993\%$ once each PPFX universe is divided by its own flux
-integral $\Phi_u$ instead of by $\Phi_{\rm CV}$. That single correction carries the
-universe total $4.783\% \rightarrow 6.830\%$ and the combined figure to
-$6.845\%$ before the ML block, which is the whole of the discrepancy. The pull
-widths of \S\ref{sec:pull} were affected identically:
-$\dead{0.069}/\dead{0.466}$ were computed on the same superseded covariance, and
-the flux-fixed values are $0.051/0.409$ (\texttt{VALIDATION\_LEDGER.md}).
-
-The statistical cell moved for an unrelated and earlier reason, recorded because
-it is a correction in its own right and \emph{not} because it changed the
-headline: it is quoted from the pure-Poisson $N=300$ bootstrap
-($\dead{1.828\times10^{-40}}$ / $\dead{0.564\%}$ $\to$
-$1.817\times10^{-40}$ / $0.549\%$), which superseded a seed-varying set that leaked
-ML stochasticity into the statistical block
-(\texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29).
-\textbf{It is not what moved the combined row.} The block sum rounds to
-$3.220\times10^{-39}$ with either statistical cell --- the change sits about two
-orders of magnitude below the printed precision --- and essentially the whole
-movement of the combined entry comes from the systematic cell, i.e.\ from the flux
-fix. This is stated explicitly so that a later check does not reverse a correct
-edit on finding that the headline is insensitive to it.
-
-The same defect, uncorrected, is still present in the N-D and 5-D kernels; see
-\texttt{AUDIT-FINDINGS-20260731.md} J18 and J28.
-\end{quote}
+Table~\ref{tab:combine} carries the flux-fixed rollup; the pre-flux-fix figures it
+replaced, and the inference drawn from them, are retracted (App.~\ref{app:history}).
 
 \subsection{Comparing to the paper}
 \label{sec:compare}
@@ -581,7 +538,7 @@ separate shared-systematics reason given with the worked example below.
 Metric (205 bins) & Paper & OmniFold (combined) \\
 \midrule
 Width-weighted total $\sigma$, $\sqrt{\mathbf{w}\T\mathbf{C}\,\mathbf{w}}/(\mathbf{w}\T\mathbf{x})$ & $4.61\%$ & $2.26\%$ \\
-Per-bin median relative $\sigma$ & $6.86\%$ & $\dead{4.822\%} \to 6.865\%$ \\
+Per-bin median relative $\sigma$ & $6.86\%$ & $6.865\%$ \\
 $\chi^{2}/\mathrm{ndf}$ & $3.661$ (paper-only) & $\boxed{\chiCombined}$ (paper$+$ours) \\
 Log-normal $\chi^{2}/\mathrm{ndf}$ & --- & $\chiCombinedLog$ \\
 \bottomrule
@@ -607,15 +564,12 @@ omits their correlation, and the sign of the net error is not determined. No
 value of this statistic --- $1.5$, $1$, or anything else --- can therefore be
 converted into a goodness-of-fit or a $p$-value.
 
-\emph{(ii) ``Correct uncertainties give exactly one'' is false and has been
-removed from this appendix.} Under the usual calibrated assumptions
+\emph{(ii) A realization near one is not evidence of correct uncertainties.} Under the usual calibrated assumptions
 $\chi^{2}/\mathrm{ndf}$ has \emph{expectation} $1$ and a spread of order
 $\sqrt{2/\mathrm{ndf}}$, which at $\mathrm{ndf}=205$ is about $0.10$; a single
 realization near $1$ is not evidence of correct uncertainties and a
-realization at $1.5$ is not by itself evidence against them. An earlier version
-of this paragraph said that a perfectly correct model with correct
-uncertainties gives exactly $1$, and then used $\approx1.5$ as a tolerance
-against it. Both halves of that inference are withdrawn.
+realization at $1.5$ is not by itself evidence against them
+(App.~\ref{app:history}).
 
 \emph{(iii) The coverage question is untouched by it.} The 2D toy ensemble
 provides no independent-truth coverage test (\S\ref{sec:coverage}), so nothing
@@ -663,11 +617,9 @@ For each of the $205$ reported bins,
 summarized by the pull mean, RMS, the $14\times16$ pull heatmap and a pull
 histogram (\texttt{compare\_to\_paper\_fullcov.py}). With the combined
 covariance (paper TotalCov $+$ flux-fixed matcorr universe $+$ bootstrap-300
-$+$ ML) the pull mean is $\dead{0.069} \to \boxed{0.051}$ (centered on zero; no
-global offset) and the pull RMS $\dead{0.466} \to \boxed{0.409}$.
-The struck values were computed on the pre-flux-fix combined covariance and are
-\textbf{retracted}; the live pair is the flux-fixed one recorded in
-\texttt{VALIDATION\_LEDGER.md} (\S\ref{sec:combine} provenance note).
+$+$ ML) the pull mean is $\boxed{0.051}$ (centered on zero; no
+global offset) and the pull RMS $\boxed{0.409}$, the flux-fixed pair recorded in
+\texttt{VALIDATION\_LEDGER.md} (App.~\ref{app:history}).
 Pull RMS $< 1$ means the combined error band is \emph{conservative}
 relative to the actual disagreement --- wider than it needs to be to absorb
 the observed scatter. No bins have $|\mathrm{pull}|>3$ in the reported set.
@@ -1083,11 +1035,8 @@ expected for small perturbations, with fitted slope
 $\kappa_{\text{leak}} = \boxed{0.113}$: about $11\%$ of a hidden $\dpT$ bias
 leaks into the measured $(\pT,\pPar)$ marginal. \textbf{Against the $3.0\%$
 acceptance bound, two of the three arms pass and the largest does not:}
-$A=0.30$ gives $3.43\%$, which \emph{exceeds} $3.0\%$. \S\ref{sec:validation}
-records that arm as exceeding the threshold and this appendix agrees with it;
-the earlier reading here --- that $A=0.30$ was under threshold and the leakage
-was ``small enough to be safely ignored'' --- was an arithmetic error and is
-withdrawn. What the scan establishes is the linearity and the coefficient: the
+$A=0.30$ gives $3.43\%$, which \emph{exceeds} $3.0\%$, as \S\ref{sec:validation}
+records (App.~\ref{app:history}). What the scan establishes is the linearity and the coefficient: the
 acceptance bound is satisfied for hidden-$\dpT$ deformations up to roughly
 $A\simeq0.26$ and is violated above it. No non-closure uncertainty is assigned
 from this scan either way (\S\ref{sec:validation}); a $\dpT$-shaped mismodeling
@@ -1166,8 +1115,7 @@ Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:coverage} &
         ML, statistical, and systematic. The bootstrap pins the GBDT
         seed (so ML noise cancels at first order); universes pin the
         seed too; the training-seed variation pins the bootstrap. Cross-terms are
-        higher-order. (The quoted $N=300$ bootstrap pins the GBDT seed;
-        only the superseded seed-varying set leaked, \S\ref{sec:bootstrap}.)
+        higher-order.
   \item \textbf{Bootstrap diagnostic.} The
         same-ensemble $68.71\%$ fraction of \S\ref{sec:coverage} is a Gaussianity check, not a
         half-percent certification of $\mathbf{C}^{\stat}$.
@@ -1315,9 +1263,8 @@ It resamples three inventories --- $4{,}116{,}128$ data, $49{,}152{,}885$ signal
 background-MC rows --- with raw counting fractions $1/\sqrt{N}$ of $0.0493\%$, $0.0143\%$ and
 $0.1331\%$: the smallest inventory, the background MC, carries by far the largest counting floor,
 and the quadrature combination, $0.1426\%$, is $2.89\times$ the data stream's $0.0493\%$ alone.
-\textbf{These are row-count fractions on inventories, not variance shares of the cross section.} An
-earlier version reported from them that MC accounted for ${\sim}88\%$ of the variance and the
-background MC alone for $87\%$; that step does not follow and is withdrawn. The streams enter with
+\textbf{These are row-count fractions on inventories, not variance shares of the cross section}
+(App.~\ref{app:history}). The streams enter with
 different weights and leverage (the background as a negative injection through the Stay-Positive
 refinement, the signal MC through the trained map, the data through both target and fit), so a
 cross-section variance decomposition needs propagation weights this analysis has not computed. The
@@ -1357,9 +1304,8 @@ median per-cell nominal-to-family-mean ratio, whole reported plane & $1.000323$ 
 The last row is the context for the others and must travel with them: over the whole reported plane
 the central value and the replica mean agree to $0.03\%$ per cell, so the disagreement is
 concentrated rather than global. The affected band carries $15.5\%$ of the reported cross-section
-integral. An earlier internal statement of the band ratio used a single member's value,
-$\dead{5.0467}$ --- \textbf{struck: a $70$th-percentile draw quoted as if typical}; the
-family-typical value is $3.5969$ with the spread above.
+integral. The family-typical band ratio is $3.5969$ with the spread above
+(App.~\ref{app:history}).
 
 \subsubsection{What is established}
 
@@ -1398,20 +1344,10 @@ decisive.
 \subsubsection{Why the two readings of the band are not a live fork}
 
 The family disagrees with the central value by a factor of order three, coherently, in the
-best-accepted region of the plane. Two readings are available a priori.
-\textbf{(a) The spread is real:} the estimator is genuinely this sensitive to the measured
-sample there, and the quoted uncertainties in $6<p_{\parallel}<\SI{20}{GeV/c}$ really are of
-order $67\%$. \textbf{(b) The proxy is wrong:} $\mathrm{Poisson}(1)$ resampling gives $36.8\%$
-of measured rows zero weight, and a learned estimator facing that much removed support may
-respond in a way that is a property of the perturbation rather than of the data. Both fit the
-measurements above: an unstable estimator and an invalid perturbation both act during training,
-concentrate where information is scarcest, and leave the extraction faithful.
-The proposed binary was withdrawn on 2026-08-19 as a type mismatch: a covariance measures
-dispersion \emph{about a centre} and does not establish finite-family \emph{containment} of a
-separately trained nominal, so non-containment of the nominal by $50$ draws is not what this
-covariance reports and \textbf{no choice between (a) and (b) follows from it}. The readings are
-recorded because the measurements were gathered while they were live and a reader will meet them in
-that form elsewhere; neither is asserted.
+best-accepted region of the plane. Two readings were proposed as a binary --- \textbf{(a)} the spread is real, \textbf{(b)} the
+$\mathrm{Poisson}(1)$ proxy is wrong --- and no choice between them follows from this
+covariance, which measures dispersion about a centre and does not establish finite-family
+containment of a separately trained nominal (App.~\ref{app:history}).
 
 What follows concerns the resampling scheme alone and is offered as an argument rather than a
 ratified result; it bears on reading (b) without adjudicating the retracted fork. The resampled
@@ -1425,8 +1361,8 @@ continuous alternatives do not: they match the first two moments and get the dis
 of resampled rows; this covariance disperses the output of a weighted, learned, iteratively refit
 estimator evaluated on every replica, and nothing above shows that a perturbation with the right
 counting behaviour induces the right \emph{sampling} distribution for that functional --- still less
-that the resulting interval covers. An earlier version concluded that the scheme ``is the sampling
-distribution rather than a stand-in that might be the wrong one''; that promotion is withdrawn. What
+that the resulting interval covers
+(App.~\ref{app:history}). What
 survives is narrower, and is what reading~(b) needs: the zero atom is what counting noise does to a
 row observed once, so its presence is not by itself evidence that the proxy is invalid.
 
@@ -1453,13 +1389,9 @@ travel with the number wherever it is quoted. First, it is the observed refit di
 this estimator} --- a learned, iterative reweighting refit on every replica --- not a property of
 the data alone; it includes the estimator's own sensitivity to which events are present. Second, it
 is a property of \emph{this} estimator-plus-perturbation pair and \textbf{not} a bound on what the
-data can support. An earlier version called it an ``upper bound on how poorly the data constrain the
-cross section,'' reasoning that a better-regularised estimator could improve on it and none could do
-worse for want of information. That is withdrawn: no information bound follows from an observed
+data can support. No information bound follows from an observed
 refit dispersion without conditions on the estimator's bias and on the perturbation's validity as a
-sampling proxy, and neither is established here; a more strongly regularised estimator can show
-\emph{less} dispersion while constraining the cross section no better, exactly the direction that
-breaks the claimed inequality. What is measured is a dispersion, under a stated perturbation, of a
+sampling proxy, and neither is established here (App.~\ref{app:history}). What is measured is a dispersion, under a stated perturbation, of a
 stated estimator, on the statistical component only; it says nothing about systematics.
 Ratification rests with the estimator's owner and the covariance-construction reviewer, the open
 item recording the question is not closed by anything here, and nothing here licenses promoting the
@@ -1486,8 +1418,8 @@ five enter the reported set in some members and not others, so their apparent va
 reporting mask switching rather than the cross section moving, and one of the five is reported in
 only $24$ of the $50$ members. Those five are published and flagged and are used in no inversion or
 goodness-of-fit. \textbf{The $257$ are the quotable all-member domain, and they are not an
-``invertible sub-block'' --- this appendix called them one, which is impossible at this rank, and the
-name is corrected here.} The covariance's rank is $49=N-1$, so no sub-block larger than $49$ cells is
+``invertible sub-block''}
+(App.~\ref{app:history}). The covariance's rank is $49=N-1$, so no sub-block larger than $49$ cells is
 ordinarily invertible, $257$ and $262$ alike; any use requiring an inverse requires a declared
 regularisation which this analysis does not silently supply (\S\ref{sec:rank}). Finally, the
 covariance is on the density scale and centred on the replica mean rather than on the published
@@ -1508,7 +1440,5 @@ integral and the external comparison in
 \texttt{state/RECEIPT-20260815-cstat-tail-geometry-and-weighting-correction}; and the two per-cell
 relative standard deviations tabulated above as fields of
 \texttt{state/p5a-nominal-vs-cstat-family-percell-20260815}, recomputable from that receipt's own
-shipped per-cell array. That receipt carries two retracted share-of-total fields, marked in place;
-neither relative-standard-deviation field is among them, and no share-of-total figure from it is used
-here. The members' input file is measured in \texttt{state/gate5-source-npz-verified-20260813}, which
+shipped per-cell array. No share-of-total figure from that receipt is used here (App.~\ref{app:history}). The members' input file is measured in \texttt{state/gate5-source-npz-verified-20260813}, which
 should be cited for that purpose in preference to the members' own recorded input digest.

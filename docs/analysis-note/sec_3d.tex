@@ -237,7 +237,7 @@ unchanged figure producers on the repaired inputs (ledger rows
 The MINERvA Tune~v1 prediction is the analysis simulation and is unaffected.
 
 Figure~\ref{fig:3dmodels} overlays the four on the unfolded result, with the
-combined-covariance systematic band of \S\ref{sec:3d-syst} on the data.
+superseded historical 3D band of \S\ref{sec:3d-syst} drawn on the data for orientation only.
 Integrated over the full measurement phase space, the totals order as
 GiBUU ($\SI{2.22e-38}{}$) $<$ NuWro ($\SI{2.66e-38}{}$) $<$ Tune v1
 ($\SI{2.71e-38}{}$) $<$ GENIE CV ($\SI{2.76e-38}{}$) $<$ data
@@ -265,12 +265,8 @@ reach.
   dip ($0.1\le\Eavail<\SI{0.4}{GeV}$). The wide
   $\Eavail$ catch bin is omitted from the axis.
   \textbf{The grey band labelled ``total syst$\oplus$stat'' inside the graphic
-  is the SUPERSEDED historical 3D covariance} of \S\ref{sec:3d-syst}
-  (\texttt{hCov\_combined3d\_total}), drawn for orientation only. It is not the
-  uncertainty of this measurement, it is not quotable, and no comparison in this
-  section uses it; the quotable 3D covariance must be projected from the adopted
-  5D trunk; that projection now exists (2026-09-22) but is \emph{not adopted},
-  so nothing here is quotable from it. Only the central values are interpreted.}
+  is the superseded historical 3D covariance}, drawn for orientation only and not
+  quotable (App.~\ref{app:history}). Only the central values are interpreted.}
   \label{fig:3dmodels}
 \end{figure}
 
@@ -278,64 +274,10 @@ At central-value level, the integrated $\Eavail$ rate (catch bin dropped) places
 GENIE CV, Tune~v1, NuWro and GiBUU respectively
 $\SI{7.2}{\percent}$, $\SI{9.5}{\percent}$, $\SI{12.8}{\percent}$ and
 $\SI{22.2}{\percent}$ below the data (flux-repaired predictions; ledger row
-\texttt{VL159}). The historical truncated-spectral scan
-ranked Tune~v1 closest and GiBUU farthest, and still does when redrawn on the
-flux-repaired predictions, but its covariance is superseded by
-the corrected dependency contract: the final 3D covariance must be projected
-from the adopted, selection-complete 5D trunk. Consequently no 3D generator
-$\chi^{2}$, $p$-value or significance is quoted here. The old scan is retained
-only as a quarantined numerical diagnostic in Fig.~\ref{fig:3dfullcov}.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.9\textwidth]{compare_3d_fullcov}
-  \caption{Quarantined historical full-3D truncated-spectral scan. It shows the
-  per-generator $\chi^{2}/\mathrm{ndf}$ against the historical covariance versus
-  eigenvalue tolerance (redrawn 2026-09-27 on the flux-repaired GENIE and NuWro
-  predictions, \S\ref{sec:3d-models}) and is
-  retained only to document numerical behavior; no value is interpreted until
-  the selection-complete 5D covariance is adopted \emph{and} projected to 3D.
-  The first has happened, and on 2026-09-22 so did the second: the projection
-  exists (\texttt{20c16e16}\ldots, 1431 reported cells). \textbf{The gate still
-  holds, on different ground} --- that product is \emph{constructed, not
-  adopted}, and it exists only in the receiving-cells destination-mask variant,
-  not the \texttt{declared-dst-cv} variant a figure would require.}
-  \label{fig:3dfullcov}
-\end{figure}
-
-\subsection{The historical 3D uncertainty budget, and why it is not quoted}
-\label{sec:3d-syst}
-The historical band on Fig.~\ref{fig:3dmodels} was built as a full 3D
-analog of the 2D uncertainty budget of \S\ref{sec:systematics}. The
-systematic universes are dumped on the three-axis
-$(\pT,\pPar,\Eavail)$ grid (187 universes), the bootstrap
-statistical and ML training-seed-variation covariances propagated, and the three summed into a
-single historical combined
-covariance $C_{\mathrm{syst}}+C_{\mathrm{stat}}+C_{\mathrm{ML}}$ over all 1431
-reported bins. It has $\sqrt{\operatorname{tr}}=\SI{5.72e-39}{}$, median
-per-bin relative uncertainty \SI{10.4}{\percent}, numerical rank $247$ (of
-1431; eigenvalues above $10^{-12}\lambda_{\max}$), and the same flux-dominated band ordering as 2D
-(Fig.~\ref{fig:3dbands}). These are audit descriptors, not publication
-uncertainties. Under the corrected contract, the quotable 3D covariance is the
-exact projection of the adopted 5D covariance. That covariance now exists
-(\S\ref{sec:eavailw-construction}) and the replacement it waited on has landed, but
-the 3D projection was built on 2026-09-22 (\texttt{20c16e16}\ldots).
-Covariance-dependent 3D comparisons remain gated, on the two grounds that
-survive: that projection is \emph{constructed, not adopted}, and it exists only
-in the receiving-cells destination-mask variant, not the
-\texttt{declared-dst-cv} variant a comparison against the frozen 3D central
-value would require.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.49\textwidth]{uq_universe_3d_band_eavail}
-  \includegraphics[width=0.49\textwidth]{uq_universe_3d_band_pt}
-  \caption{Grouped fractional systematic bands of the historical 3D covariance
-  projected onto $\Eavail$ (left) and $\pT$ (right): flux-dominated, with the
-  same band ordering as the 2D budget. The magnitudes are quarantined pending
-  the final selection-complete 5D-to-3D projection.}
-  \label{fig:3dbands}
-\end{figure}
+\texttt{VL159}). No 3D covariance, generator $\chi^{2}$, $p$-value or significance is quoted.
+The quotable 3D covariance is the exact projection of the adopted 5D covariance;
+that projection is constructed but not adopted, so covariance-dependent 3D
+comparisons are not made here (App.~\ref{app:history}).
 
 \subsection{The low-available-energy excess recovers the known low-recoil 2p2h deficit}
 \label{sec:3d-2p2h}
@@ -403,10 +345,7 @@ and moves GENIE toward the data throughout the three low-$\Eavail$ bins
 (Fig.~\ref{fig:mec}). On the flux-repaired predictions it fills
 \SI{52}{\percent} of the data$-$CV gap at $\Eavail\le\SI{0.4}{GeV}$ and \SI{63}{\percent} of the
 integrated deficit (CV $-\SI{7.2}{\percent}\to-\SI{2.6}{\percent}$; ledger row
-\texttt{VL160}). An earlier \SI{27}{\percent} came mostly from comparing two
-different generated samples for CV and CV$+$MEC; the MEC component alone gave
-\SI{64}{\percent} before the repair. Historical 3D $\chi^{2}$ values
-are not quoted pending the corrected covariance projection. The prediction
+\texttt{VL160}; App.~\ref{app:history}). The prediction
 still falls short of the data in the dip, most in $[0.10,0.20)$, although
 integrated over the reported $\Eavail$ range it lies closer to the data than
 Tune~v1 ($-\SI{2.6}{\percent}$ against $-\SI{9.5}{\percent}$). Tune v1
@@ -449,10 +388,8 @@ shape comparison awaits the public \cite{MINERvA:2022incl} data release.
     \caption{Central-value $d\sigma/d\Eavail$ decomposed by interaction mode and
     overlaid with the unfolded data. The data excess is localized to the
     quasielastic--$\Delta$ dip ($\Eavail\le\SI{0.4}{GeV}$), the shape and size of
-    a missing 2p2h component. \textbf{The error bars drawn on the data points
-    (``$\pm$ total'') are from the superseded historical 3D covariance}
-    (\S\ref{sec:3d-syst}); they orient the eye and are not quotable, and the
-    excess is read here as a central-value shape statement.}
+    a missing 2p2h component. The ``$\pm$ total'' error bars are from the
+    superseded historical 3D covariance and are not quotable (App.~\ref{app:history}).}
     \label{fig:modedecomp}
   \end{minipage}\hfill
   \begin{minipage}{0.49\textwidth}
@@ -462,10 +399,8 @@ shape comparison awaits the public \cite{MINERvA:2022incl} data release.
     stacked on the no-2p2h CV; both flux-repaired) fills part of the low-$\Eavail$ dip --- about half
     the data$-$CV gap (\SI{52}{\percent}), the remainder being the region the
     MINERvA tune's empirical enhancement is built to absorb.
-    \textbf{As in Fig.~\ref{fig:modedecomp}, the ``$\pm$ total'' bars on the
-    data points come from the superseded historical 3D covariance}
-    (\S\ref{sec:3d-syst}) and are not quotable; the gap-filling fraction is a
-    central-value statement.}
+    The ``$\pm$ total'' bars are from the superseded historical 3D covariance and
+    are not quotable (App.~\ref{app:history}).}
     \label{fig:mec}
   \end{minipage}
 \end{figure}
@@ -538,11 +473,9 @@ future work.
   \caption{Bin-identical comparison to Ascencio
   \emph{et al.}~\cite{MINERvA:2022incl} on the maximal common
   $(\Eavail,q_{3})$ grid. Only the central-value comparison is used. The
-  uncertainty-derived annotations inside the panel --- the error bars on our
-  points and the $\chi^{2}$ it prints --- are computed from the
-  \emph{superseded} historical unified-throw 4D covariance, not from a
-  corrected one, and are not quotable; the published points carry the
-  published covariance.}
+  error bars on our points and the printed $\chi^{2}$ are from the superseded
+  historical unified-throw 4D covariance and are not quotable
+  (App.~\ref{app:history}); the published points carry the published covariance.}
   \label{fig:ascencio}
 \end{figure}
 

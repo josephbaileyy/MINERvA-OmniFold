@@ -188,16 +188,11 @@ flux/POT/nucleon constants). Two gates validate the absolute path:
 \end{enumerate}
 
 \paragraph{No current PET--GBDT level of agreement is quoted.}
-The only such comparison that exists was taken with a two-iteration training,
-against the campaign's pinned three-iteration policy (\texttt{CLM-010},
-\texttt{CLM-012}, \textsc{frozen}); before the 2026-08-01 full-event schema change,
-which makes a pre-08-01 PET total a different estimator rather than a
-differently-trained one; and with unit measured weights and \emph{no} background
-subtraction (audit finding J21), which at this analysis's
-${\sim}\SI{3}{\percent}$ background scale biases PET high, so the underlying gap is
-\emph{larger} than the withdrawn figure. It has not been re-extracted under the
-pinned configuration, and the same three grounds withdraw the legacy closure level
-and the higher-epoch retrain response. Routed record:
+The only such comparison used a two-iteration training, predates the 2026-08-01
+full-event schema change and has no background subtraction; it has not been
+re-extracted under the pinned configuration, and the legacy closure level and
+higher-epoch retrain response are withdrawn on the same grounds
+(App.~\ref{app:history}). Routed record:
 App.~\ref{app:provenance} (\texttt{retracted-values}).
 
 What survives independently of the withdrawn comparison is structural rather than
@@ -247,26 +242,10 @@ populations --- 20 recoil-only replicas here against 50 full-event members there
 two resampled inventories here against three there --- so neither object's measurements,
 disclaimers or rulings transfer to the other.
 
-The historical recoil-PET campaign produced vertical, retraining, ML,
-statistical and detector blocks on a common nominal.  That assembly is now
-quarantined rather than quoted as an uncertainty.  For a nuisance endpoint
-$u$, the physical shift and the induced retraining response form one joint
-shift,
-\begin{equation}
-  \delta_u=x_u^{\rm varied+retrained}-x_{\rm CV}.
-\end{equation}
-Writing this as a frozen-map piece plus a retraining increment is an algebraic
-decomposition, but adding the two separate covariances omits
-$\operatorname{Cov}(\delta_{\rm frozen},\delta_{\rm retrain})$ and its
-transpose.  Positive semidefiniteness of that sum does not restore the missing
-cross term.
-
-The historical detector block is additionally CV-support-limited: it propagates
-shifted weights and observables through the nominal cloud membership instead of
-regenerating the selected cloud for every lateral endpoint.  A replacement
-construction would need end-to-end joint nuisance/retraining shifts and the
-selection-complete FPS lateral samples, and would belong to a full-event PET
-estimator with its own statistical and ML ensembles.  This section therefore
+No uncertainty is quoted from the historical recoil-PET assembly of vertical,
+retraining, ML, statistical and detector blocks: adding the separate frozen-map
+and retraining covariances omits their cross term, and the detector block is
+CV-support-limited (App.~\ref{app:history}).  This section therefore
 retains the recoil-only central extraction and ordinary closure as historical
 method-development diagnostics.  It quotes neither a current PET--GBDT agreement
 level nor a current closure level, and no recoil-only covariance is paired with

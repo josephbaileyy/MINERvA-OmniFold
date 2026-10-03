@@ -26,6 +26,14 @@ A test that only asserted absence would pass if `\\dead{}` vanished from the rep
 the note quietly stopped marking its retractions. That is this repo's most-repeated defect shape --
 a gate that cannot fail -- so the positive control is not optional.
 
+A THIRD INVARIANT, ADDED 2026-10-03: inside the note, `\\dead{}` occurs only in `app_history.tex`.
+The note's history (struck values, withdrawn arguments, superseded constructions) was moved into
+that one appendix so the body reads as current state; the struck values now live there and nowhere
+else in the note (the note before the move is commit 152ef7a6). A `\\dead{}` written into any other
+note file is a struck value back in the body, and the check fails. The positive control above
+still applies: the note must carry struck values, now all of them in `app_history.tex`.
+test_build_all.py::StruckOnlyInHistoryTest plants one in a body file to show this check fires.
+
 The struck values are DERIVED from the sources, never hardcoded: a hardcoded list silently stops
 covering anything added after it was written. Macro-valued `\\dead{\\petRatio}` bodies are resolved
 through values.tex, and any body this script cannot reduce to a literal is REPORTED rather than
@@ -56,6 +64,7 @@ from pathlib import Path
 
 BUILDS = {"main_note": "note", "main_paper": "paper", "main_primer": "primer"}
 STRUCK_ALLOWED_IN = "main_note"
+STRUCK_ALLOWED_FILE = "app_history.tex"   # the one note file that may carry \dead{}
 
 INPUT_RE = re.compile(r"\\(?:input|include)\{([^}]+)\}")
 # `\s*` is load-bearing and BEN-090 is the reason. This read `r"\\dead\{"` from 4f75e50 until
@@ -525,6 +534,13 @@ def main() -> int:
             else:
                 notes.append(f"note: {n_uses} \\dead{{}} uses across "
                              f"{', '.join(n for n, _ in users)}")
+                for name, bodies in users:
+                    if name != STRUCK_ALLOWED_FILE:
+                        failures.append(
+                            f"main_note: {len(bodies)} \\dead{{}} use(s) in {name}: "
+                            f"{bodies[:3]}{'...' if len(bodies) > 3 else ''} -- inside the note a "
+                            f"struck value belongs only in {STRUCK_ALLOWED_FILE}; state the current "
+                            f"value in the body and move the struck one there")
                 for _, bodies in users:
                     for body in bodies:
                         nums, unres = literals_from(body, macros)

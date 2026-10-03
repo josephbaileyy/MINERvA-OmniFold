@@ -533,6 +533,10 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
 
     BODIES = {"main_note": r"struck $\dead{1.234}$ here", "main_paper": "clean paper",
               "main_primer": "clean primer"}
+    # The note's struck values live in app_history.tex (the checker enforces it), so the
+    # fixture's note body carries that name; the outward bodies keep their generic names.
+    BODY_FILES = {"main_note": "app_history", "main_paper": "body_main_paper",
+                  "main_primer": "body_main_primer"}
 
     def setUp(self):
         import hashlib
@@ -545,16 +549,17 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
         (shim / "pdftotext").chmod(0o755)
         self.env = dict(os.environ, PATH=f"{shim}{os.pathsep}{os.environ.get('PATH', '')}")
         for driver, body in self.BODIES.items():
+            stem = self.BODY_FILES[driver]
             (self.note / f"{driver}.tex").write_text(
-                "\\documentclass{article}\n\\input{body_%s}\n" % driver)
-            (self.note / f"body_{driver}.tex").write_text(body + "\n")
+                "\\documentclass{article}\n\\input{%s}\n" % stem)
+            (self.note / f"{stem}.tex").write_text(body + "\n")
             (self.note / f"{driver}.pdf").write_text(
                 "1.234 rendered\n" if driver == "main_note" else "nothing struck\n")
             rows = "".join(
                 '  "%s" 1790000000 %d %s ""\n' % (
                     name, (self.note / name).stat().st_size,
                     hashlib.md5((self.note / name).read_bytes()).hexdigest())
-                for name in (f"{driver}.tex", f"body_{driver}.tex"))
+                for name in (f"{driver}.tex", f"{stem}.tex"))
             (self.note / f"{driver}.fdb_latexmk").write_text(
                 '# Fdb version 4\n["pdflatex"] 1790000000 "%s.tex" "%s.pdf" "%s" 1790000001 0\n'
                 '%s  (generated)\n  "%s.pdf"\n' % (driver, driver, driver, rows, driver))
@@ -615,6 +620,51 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
         code, line, out = self._run()
         self.assertEqual(code, 1, out)
         self.assertIn("products=main_note.pdf=absent", line)
+
+
+class StruckOnlyInHistoryTest(unittest.TestCase):
+    r"""Inside the note, `\dead{}` may occur only in app_history.tex.
+
+    Same synthetic directory as ResultLineNamesItsObjectTest, whose note keeps its only strike in
+    app_history.tex and passes. Here a body file joins the note's closure: clean, it must still
+    pass; carrying a `\dead{}` -- in any of the forms DEAD_RE reads -- it must FAIL and name the
+    file. Adding the file changes main_note.tex after its .fdb_latexmk was written, so these runs
+    use --source-only and the PDF stage's staleness cannot be what fails or passes them.
+    """
+
+    BODIES = ResultLineNamesItsObjectTest.BODIES
+    BODY_FILES = ResultLineNamesItsObjectTest.BODY_FILES
+    setUp = ResultLineNamesItsObjectTest.setUp
+    tearDown = ResultLineNamesItsObjectTest.tearDown
+    _run = ResultLineNamesItsObjectTest._run
+
+    def _add_body(self, text):
+        (self.note / "main_note.tex").write_text(
+            "\\documentclass{article}\n\\input{app_history}\n\\input{sec_body}\n")
+        (self.note / "sec_body.tex").write_text(text + "\n")
+        return self._run("--source-only")
+
+    def test_a_clean_body_file_passes(self):
+        code, line, out = self._add_body("current value $4.993$ only")
+        self.assertEqual(code, 0, out)
+        self.assertTrue(line.startswith("RESULT :: PASS :: "), line)
+
+    def test_a_struck_value_in_a_body_file_FAILS(self):
+        for form in (r"was $\dead{1.008}$ before", r"was $\dead {1.008}$ before",
+                     "was $\\dead%c\n{1.008}$ before"):
+            with self.subTest(form=form):
+                code, line, out = self._add_body(form)
+                self.assertEqual(code, 1, out)
+                self.assertTrue(line.startswith("RESULT :: FAIL :: "), line)
+                self.assertIn("in sec_body.tex", out)
+                self.assertIn("belongs only in app_history.tex", out)
+
+    def test_a_struck_value_only_in_a_body_file_FAILS(self):
+        """Moving the strike out of app_history.tex, not just adding one, is caught too."""
+        (self.note / "app_history.tex").write_text("no struck values here\n")
+        code, line, out = self._add_body(r"was $\dead{1.008}$ before")
+        self.assertEqual(code, 1, out)
+        self.assertIn("in sec_body.tex", out)
 
 
 # The mutation runner points the whole suite at a mutated copy without editing anything.
