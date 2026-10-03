@@ -2,6 +2,8 @@
 
 The existing products **do not establish a bias–variance tradeoff across estimator settings**. Noise-free recovery improves for some historical truths, persists or deteriorates for others, and is sensitive to which integral is reported. Repeated experiments at five iterations measure small residual spread alongside material bias. There are no matched repeat ensembles at the other iteration/capacity settings. This is a delivered methodological synthesis, not a qualifying precision measurement.
 
+**Next measurement: DEFERRED** until the current GBDT campaign (`s5p-20260926`, `OI-193`) finishes and its required independent terminal verification is recorded. The [proposal's scheduling disposition](PROPOSAL.md#scheduling-disposition-2026-10-03) defines the evidence needed before reconsideration; it grants no automatic launch. Review and integration of this existing-data synthesis can proceed meanwhile.
+
 ## Scope and frozen inputs
 
 Authority: the user’s 2026-10-03 instruction to execute [the supplied handoff](HANDOFF.md). Baseline canonical `main`: `556d16373ae859e449b3fb71c1f61b14b7b61891`; standalone `main`: `9191693249d5af2dec8ddf20561119f8f1d84286`, both read from the remotes before work. One analyst owns code and text. Prior independent reviews support only their original operands. This task uses a separate implementation and numerical checks by the same analyst, **not a fresh independent review**. At most two focused review/repair cycles are budgeted. The terminal result is this synthesis, both manuscript deliveries and the costed proposal, even without a tradeoff or a useful total uncertainty. No extraction, training, unfolding, ensemble generation, allocation, production control or collaborator messaging is part of this task.

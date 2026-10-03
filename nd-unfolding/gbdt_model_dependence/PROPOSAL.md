@@ -2,6 +2,14 @@
 
 The smallest next decision is whether changing iteration/capacity produces a useful relationship between recovery and variability **on common functionals**, under a fixed simulated response. It is not whether a new total uncertainty qualifies. The existing synthesis cannot supply the missing repeat-variance axis.
 
+## Scheduling disposition (2026-10-03)
+
+**DEFERRED pending completion and independent verification of the current GBDT campaign (`s5p-20260926`, `OI-193`).** Do not launch this panel or its compute benchmarks while that campaign is running or awaiting its required independent terminal check. Establish completion from the [terminal checklist](../../docs/orchestration/CHECKLIST-20261001-s5p-terminal-and-claims.md), direct scheduler and source observations, and committed terminal results and independent verification. A forecast completion date or an empty queue alone does not satisfy this condition.
+
+After those records land, reconsider the panel's scientific value against the remaining note claims. Completion of the current campaign does not authorize this panel: a separate compute decision, a frozen design and independent design review are still required. Re-measure available allocation, concurrent PET and other commitments, storage and the proposed throughput before admission. Preserve existing campaigns' budgets, reservations, jobs, pinned code and outputs; separate output directories alone do not prevent resource competition.
+
+The note already identifies the missing matched comparison in **Model dependence, variability and reporting resolution**: paired pseudo-data and MC splits across iteration/capacity settings are needed to compare bias, variability and mean squared error on common functionals. Deferral leaves that question open. Statistical-interval validation and total-uncertainty construction remain separate requirements, and completing this panel would not by itself meet the precision-measurement objective. Review and integration of the existing-data synthesis can proceed during the deferral.
+
 ## Prioritized gap table
 
 | Priority / proposed claim | Existing evidence | Exact missing quantity | Minimal study and precision | Cost basis / decision |
@@ -14,7 +22,7 @@ The smallest next decision is whether changing iteration/capacity produces a use
 
 ## Concrete first request
 
-Authorize **one development panel capped at 70 CPU node-hours, zero GPUs, at most two CPU nodes concurrently and 10 GiB of new saved products**, after a committed design and required independent review. No existing campaign jobs or allocations are reused, stopped or changed. This is a proposal, not an authorization recorded by this document.
+Once the scheduling conditions above are satisfied, consider authorizing **one development panel capped at 70 CPU node-hours, zero GPUs, at most two CPU nodes concurrently and 10 GiB of new saved products**, after a committed design and required independent review. No existing campaign jobs or allocations are reused, stopped or changed. This is a proposal, not an authorization recorded by this document.
 
 **Settings (development-informed):**
 
