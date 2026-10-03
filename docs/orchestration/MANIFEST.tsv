@@ -1175,7 +1175,7 @@ docs/orchestration/state/s5n/stage1/review1/r8_fulln.py	tracked	MACHINE	state-ar
 docs/orchestration/state/s5n/stage1/truth_check.json	tracked	MACHINE	state-artifact	s5n		generated		exact-path-only	docs/orchestration/state/s5n/stage1/review1/r2_response.py	yes	4	147	3877
 docs/orchestration/state/s5p/allocation-measurement-20260926T1604Z.txt	tracked	MACHINE	state-artifact	s5p	20260926	generated		exact-path-only		yes	3	172	10908
 docs/orchestration/state/s5p/budget.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only	docs/orchestration/state/s5p/transition-r2/s5p_transition_r2_preflight.sh;docs/orchestration/state/s5p/transition-r2/validate_deploy.py;nd-unfolding/s5c_launch.sh;nd-unfolding/s5c_valid_launch.sh;nd-unfolding/tests/test_s5c_meter.py	no	67	133	6567
-docs/orchestration/state/s5p/campaign-state.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	13	439	53817
+docs/orchestration/state/s5p/campaign-state.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	13	443	55246
 docs/orchestration/state/s5p/contract-amendment-1-use-case-and-targets.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only	docs/orchestration/verify_hash_bindings.py	no	3	68	17630
 docs/orchestration/state/s5p/contract-amendment-2-stage2-studies.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only		no	2	70	11685
 docs/orchestration/state/s5p/contract-amendment-3-stage2-supplement.json	tracked	MACHINE	state-artifact	s5p		open		exact-path-only		no	2	20	2858
