@@ -194,5 +194,34 @@
       "render_identical": true,
       "png_sha256": "2e27e0252aec6493651c428b8b6e0e8f48fb9741ec5732976e43ad89ececa299"
     }
-  ]
+  ],
+  "receipt_binding_inventory_delta": {
+    "before_count": 127,
+    "before_sha256": "e6313052886245651e40fdb8999fbd368fb9e54a2456545e29533e25ec7c1941",
+    "after_count": 132,
+    "after_sha256": "aca9a77686af5ffd3b7d56d6c095923fe6aaef6223e5e385c443fe479e9722a1",
+    "added": [
+      [
+        "docs/orchestration/state/s5e/w2-genie-mec-over-cv-eavailW.json",
+        "80e16f95702266d0e61b7529c8b5d36a5e4b140cfcde04640606b408c2b1e19b"
+      ],
+      [
+        "docs/orchestration/state/s5e/w3-nuwro-over-genie-pt-pz-eavail.json",
+        "3455daf3ab5321a33314ca9ab51644c34134443cc49168c3be5c06a41d0e87bb"
+      ],
+      [
+        "docs/orchestration/state/s5n/eavail-ratio-gibuu-over-genie.json",
+        "45cc3e0abfe0dfae985113137e54b1d3f3961e86f4d29c454e08a0aa9f1f08a2"
+      ],
+      [
+        "docs/orchestration/state/s5n/eavail-ratio-nuwro-over-genie.json",
+        "2a208df97fcd63937587d67098feb542c5e7e6759693bcc0609f0eb5fa0ff767"
+      ],
+      [
+        "docs/orchestration/state/s5p/ratios/d5-nuwro-over-genie-q3-given-eavail-w.json",
+        "5a4aae6160a32f790bcd84519caab21b3e3e575ddd3f89af9a26d9bf3f892154"
+      ]
+    ],
+    "negative_control": "Changed newly added W2 ratio_file/ratio_sha256 pin: exit 1 with named MISMATCH; restored bytes: exit 0. An initial mutation of unpaired raw metadata did not exercise this binding."
+  }
 }
