@@ -6,10 +6,12 @@ uncertainty product.}
 Everything in this section is a diagnostic and method-development result. No PET
 covariance --- historical recoil-only or full-event --- is adopted as a publication
 uncertainty product, and the full-event central/statistical pairing was declined on
-2026-08-20 rather than resolved, with coverage the missing evidence rather than any
-branch having been chosen. The publication uncertainty critical path ran through the
+2026-08-20 rather than resolved, with estimator-equivalence and coverage evidence the conditions for
+reconsideration rather than any branch having been chosen. The publication uncertainty critical path ran through the
 adoption of a selection-complete scalar five-dimensional covariance, which has
-since happened (\S\ref{sec:uq-combine}), and never through this section. Routed record:
+since happened under exception (\S\ref{sec:uq-combine}), and never through this section;
+that path is not yet complete. \TODO{Revise when the scalar-5D campaign (s5p, \texttt{OI-193}) closes. Adoption is not publication readiness: the s5e outcome records the publication objective as NOT READY.}
+Routed record:
 App.~\ref{app:provenance} (\texttt{pet-pairing}).
 
 \paragraph{What goes in.}
@@ -177,10 +179,10 @@ flux/POT/nucleon constants). Two gates validate the absolute path:
 \begin{enumerate}[itemsep=2pt]
   \item \textbf{Full-statistics reweight sanity}: the pushed weights over the
         32.8M generator events are finite with mean $1.028$;
-  \item \textbf{Ordinary closure}: unfolding MC-reco-as-pseudo-data
-        recovers MC truth to total $0.9884$ with uniform per-axis median
-        residuals of $\sim\SI{1.1}{\percent}$ --- the absolute machinery is
-        internally consistent. Because pseudo-data and prior come from the
+  \item \textbf{Ordinary closure} (a legacy two-iteration self-consistency
+        diagnostic, not a current validation): unfolding MC-reco-as-pseudo-data
+        was assessed only at two iterations, and no current closure level is
+        quoted (ruling of 2026-08-21). Because pseudo-data and prior come from the
         same simulation, this test cannot expose omitted muon dependence at
         fixed recoil.
 \end{enumerate}

@@ -4,7 +4,9 @@
 \paragraph{Summary.}
 Unbinned OmniFold with gradient-boosted trees reproduces the published
 MINERvA ME FHC CC-inclusive $d^{2}\sigma/(d\pT\,d\pPar)$
-and its uncertainty scale (\S\ref{sec:execsummary}, \S\ref{sec:results}). The
+and its uncertainty scale, with a correlated shape difference along the low-$\pT$
+peak ridge ($\chi^{2}/\mathrm{ndf}=\chiPaper$ against the published covariance,
+\S\ref{sec:results-tension}) (\S\ref{sec:execsummary}, \S\ref{sec:results}). The
 result passes closure, iteration, pull, calibration, and classifier-family
 checks, but the existing 2D toys do not furnish an independent-truth coverage
 test. On that foundation we
@@ -26,7 +28,8 @@ unbinned, simultaneously-unfolded formulation.) The physics output:
   \item the unified-throw machinery now tests the block sum with asymmetric
         endpoints, a fixed estimator seed, and mean-centered joint throws;
         the selection-complete lateral replacement has landed and one
-        resulting 5D covariance is adopted as publication-under-exception,
+        resulting 5D covariance, the CV-centered variant, is adopted as
+        publication-under-exception,
         subject to the four measurements of \S\ref{sec:eavailw-adopted}; no
         corrected 4D covariance is reported
         (\S\ref{sec:uq-combine});
@@ -34,15 +37,17 @@ unbinned, simultaneously-unfolded formulation.) The physics output:
         excess over the MINERvA Tune~v1 prior to the deep-inelastic region.
         The four external generator predictions (GENIE and NuWro rebuilt on
         2026-09-27 after a flux-sampling defect) all lie below the central
-        result there, but only GiBUU by clearly more than its overall
-        normalization shortfall (\S\ref{sec:eavailw-band}). A projected covariance for that plane
+        result there, each by about its overall normalization shortfall
+        once the $E_\nu>\SI{20}{GeV}$ events missing from the GiBUU sample
+        are accounted for (\S\ref{sec:eavailw-band}). A projected covariance for that plane
         is adopted and built (\S\ref{sec:eavailw-construction}); no
-        significance is quoted because its measured estimator-seed sensitivity
-        exceeds the limit declared for it before production
+        significance is quoted because the estimator-seed sensitivity that
+        travels with it (measured on two seed-varied sibling products) exceeds the limit declared for it before production
         (\S\ref{sec:eavailw-adopted});
   \item the recoil-only PET point-cloud track provides a low-level-input
         representation cross-check, yielding an absolutely-normalized central
-        value that passes ordinary closure. Its historical five-component budget
+        value; its ordinary closure survives only as a legacy two-iteration
+        self-consistency diagnostic, and no current closure level is quoted. Its historical five-component budget
         is quarantined because nuisance and retraining shifts require a joint
         covariance (or explicit cross term) and the detector sample was
         CV-support-limited (\S\ref{sec:pet}). Because the muon is omitted from both classifiers,
@@ -66,7 +71,10 @@ $C_{\rm stat}$ artifacts exist, but their pairing was declined and no PET
 covariance is adopted. Its remaining closure and complete-UQ requirements are
 method development and are not on the publication critical path. That path ran
 through the adoption of a selection-complete scalar five-dimensional
-covariance, which has now happened (\S\ref{sec:eavailw-adopted}). Natural
+covariance, which has happened under exception (\S\ref{sec:eavailw-adopted}); the path
+itself is not complete. \TODO{Revise when the scalar-5D campaign (s5p, \texttt{OI-193}) closes. Adoption is not publication readiness: the s5e outcome records the publication objective as NOT READY.}
+% Source: docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (publication_readiness); docs/OPEN_ITEMS.md OI-193.
+Natural
 additional refinements are NEUT as a fifth generator and the finer
 44-cell Ascencio comparison (the maximal-common-grid
 comparison is presented in \S\ref{sec:4d}). One

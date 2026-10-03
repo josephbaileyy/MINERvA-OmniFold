@@ -1,0 +1,92 @@
+{
+ "axes": [
+  "pt",
+  "pz",
+  "eavail",
+  "q3",
+  "W"
+ ],
+ "eavail_edges": [
+  0.0,
+  0.1,
+  0.2,
+  0.4,
+  0.8,
+  1.5,
+  3.0,
+  100.0
+ ],
+ "W_edges": [
+  0.0,
+  1.1,
+  1.4,
+  1.8,
+  2.2,
+  3.0,
+  100.0
+ ],
+ "Ecut_GeV": 20.0,
+ "generators": {
+  "genie_cv": {
+   "aligned": true,
+   "recon_main_vs_product": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "corner_full": 1.1817617160507976e-38,
+   "total_full": 2.7644632745513893e-38,
+   "corner_main_lt50": 1.1659827195681085e-38,
+   "total_main_lt50": 2.747830983221078e-38,
+   "corner_lt20": 1.0128060013438103e-38,
+   "total_lt20": 2.572062280335218e-38,
+   "share_ge20_corner": 0.14296935872284144,
+   "share_ge20_total": 0.06959795631482713,
+   "n_events_ps": 938141,
+   "n_events_ps_ge20": 3813,
+   "n_events_ps_ge20_corner": 3245
+  },
+  "genie_mec": {
+   "aligned": true,
+   "recon_main_vs_product": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "corner_full": 1.1854483386989973e-38,
+   "total_full": 2.875640901698505e-38,
+   "corner_main_lt50": 1.1696591409734196e-38,
+   "total_main_lt50": 2.858930865772059e-38,
+   "corner_lt20": 1.014058887981806e-38,
+   "total_lt20": 2.6803612386666236e-38,
+   "share_ge20_corner": 0.14457774761006226,
+   "share_ge20_total": 0.0679082227953215,
+   "n_events_ps": 960128,
+   "n_events_ps_ge20": 3724,
+   "n_events_ps_ge20_corner": 3181
+  },
+  "nuwro": {
+   "aligned": true,
+   "recon_main_vs_product": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "corner_full": 1.163471900797544e-38,
+   "total_full": 2.6627696637999757e-38,
+   "corner_main_lt50": 1.1483108864349867e-38,
+   "total_main_lt50": 2.6466894664364637e-38,
+   "corner_lt20": 9.910471791317146e-39,
+   "total_lt20": 2.465036906394288e-38,
+   "share_ge20_corner": 0.14819844084557143,
+   "share_ge20_total": 0.07425830333499739,
+   "n_events_ps": 1261997,
+   "n_events_ps_ge20": 5247,
+   "n_events_ps_ge20_corner": 4444
+  }
+ },
+ "gibuu_fluxfix": {
+  "corner": 8.399280008832679e-39,
+  "total": 2.2151544845271735e-38
+ }
+}
