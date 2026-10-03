@@ -220,8 +220,8 @@ unchanged ($1.142\to1.139$), since 2p2h populates low $W$; it raises the
 integrated prediction instead.
 These are central-value ratios. A projected covariance now exists
 (\S\ref{sec:eavailw-adopted}); the compatibility metric it would support is
-\emph{not} quoted here, because the estimator-seed sensitivity measured on that
-covariance exceeds the movement limit declared for it before production, and a
+\emph{not} quoted here, because the estimator-seed sensitivity that travels with that
+covariance (measured on two seed-varied sibling products of its construction) exceeds the movement limit declared for it before production, and a
 $\chi^{2}$ computed against a matrix carrying an unclosed sensitivity of that
 size would state a precision the input does not have.
 GiBUU is the most deficient generator both overall (integrated
@@ -402,8 +402,9 @@ not supply silently. The cutoff scan is recorded in
 \texttt{PLAN-20260918-scalar5d-publication-completion.md} \S16.1a, performed
 on the diagnostic projection of the same source through the same $M$; its
 $\lambda_{\min}$, $\lambda_{\min}/\lambda_{\max}$ and rank-at-$10^{-12}$ are
-identical to the values the publication run recorded, and no separate scan on
-the publication bytes exists.
+identical to the values the publication run recorded. A later independent scan of
+the publication bytes (ledger row \texttt{VL145}) found the publication and diagnostic
+$42\times42$ matrices bitwise identical.
 
 \paragraph{Masks, and what the pairing is.} The support mask, pinned mask and
 row-index arrays travel with the covariance and are byte-identical between the

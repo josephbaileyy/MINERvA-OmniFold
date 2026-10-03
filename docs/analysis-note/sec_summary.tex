@@ -28,7 +28,8 @@ unbinned, simultaneously-unfolded formulation.) The physics output:
   \item the unified-throw machinery now tests the block sum with asymmetric
         endpoints, a fixed estimator seed, and mean-centered joint throws;
         the selection-complete lateral replacement has landed and one
-        resulting 5D covariance is adopted as publication-under-exception,
+        resulting 5D covariance, the CV-centered variant, is adopted as
+        publication-under-exception,
         subject to the four measurements of \S\ref{sec:eavailw-adopted}; no
         corrected 4D covariance is reported
         (\S\ref{sec:uq-combine});
@@ -40,12 +41,13 @@ unbinned, simultaneously-unfolded formulation.) The physics output:
         once the $E_\nu>\SI{20}{GeV}$ events missing from the GiBUU sample
         are accounted for (\S\ref{sec:eavailw-band}). A projected covariance for that plane
         is adopted and built (\S\ref{sec:eavailw-construction}); no
-        significance is quoted because its measured estimator-seed sensitivity
-        exceeds the limit declared for it before production
+        significance is quoted because the estimator-seed sensitivity that
+        travels with it (measured on two seed-varied sibling products) exceeds the limit declared for it before production
         (\S\ref{sec:eavailw-adopted});
   \item the recoil-only PET point-cloud track provides a low-level-input
         representation cross-check, yielding an absolutely-normalized central
-        value that passes ordinary closure. Its historical five-component budget
+        value; its ordinary closure survives only as a legacy two-iteration
+        self-consistency diagnostic, and no current closure level is quoted. Its historical five-component budget
         is quarantined because nuisance and retraining shifts require a joint
         covariance (or explicit cross term) and the detector sample was
         CV-support-limited (\S\ref{sec:pet}). Because the muon is omitted from both classifiers,

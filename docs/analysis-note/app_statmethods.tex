@@ -165,23 +165,23 @@ covariance
 \end{equation}
 i.e.\ \texttt{np.cov(Xrep, rowvar=False, ddof=1)}, checked with the
 Cholesky-plus-jitter pattern of \S\ref{sec:invert}.
-\emph{Caveat (seed-varying replicas):} the $N=300$ covariance was produced with
-replicas that varied \emph{both} \texttt{-{}-bootstrap-seed N} and
-\texttt{-{}-seed N}, so it carries a small ML-stochastic contribution on top of
-the pure Poisson statistics; the leak is numerically small relative to the
-systematic block (the ML floor is $0.166\%$ vs the stat $0.564\%$), and a purely
-Poisson block would fix \texttt{-{}-seed} while varying only
-\texttt{-{}-bootstrap-seed}.
+\emph{Seed pinning:} the quoted $N=300$ block pins \texttt{-{}-seed 1} and varies
+only \texttt{-{}-bootstrap-seed}, so it carries no training-seed variation. It
+superseded an earlier set whose replicas varied both seeds and so leaked ML
+stochasticity into the statistical block (\S\ref{sec:combine}).
+% Source: 2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md:99, :111-116 (pure-Poisson sbatch 53489662
+% supersedes the seed-varying sbatch 53327775).
 
-From $N=50$ to $N=300$ (205 bins, MEFHC \texttt{lgbm}) the total-$\sigma$
-relative std goes $0.068\%\to\boxed{0.061\%}$, the per-bin median relative
-spread $0.532\%\to\boxed{0.564\%}$, and the per-bin $p_{84}$
-$1.235\%\to1.215\%$. The median is stable ($0.53\%\to0.56\%$); the $N=300$
-block is used because it is full rank. The bootstrap median is
-$\approx 3.4\times$ the training-seed median ($0.166\%$), as expected for a
+From $N=50$ to $N=300$ (205 bins, MEFHC \texttt{lgbm}) the per-bin median relative
+spread is stable: $0.532\%$ at $N=50$ and $\boxed{0.549\%}$ for the quoted
+pure-Poisson $N=300$ block (the superseded seed-varying set gave $\dead{0.564\%}$). The
+$N=300$ block is used because it is full rank. The total-$\sigma$ relative std
+($0.068\%\to0.061\%$) and the per-bin $p_{84}$ ($1.235\%\to1.215\%$) were measured on the
+superseded set and have not been re-measured on the quoted one. The bootstrap median is
+$\approx 3.3\times$ the training-seed median ($0.166\%$), as expected for a
 sample of $\mathcal{O}(10^{6})$ data events, and across datasets it scales as
 $\sqrt{N_{\text{events}}}$: playlist $1A$ ($\approx N/12$ of MEFHC) gives
-$1.46\%$, consistent with $\sqrt{12}\times 0.56\% \approx 1.9\%$ at the same
+$1.46\%$, consistent with $\sqrt{12}\times 0.55\% \approx 1.9\%$ at the same
 backend.
 
 \paragraph{Universes.}
@@ -471,12 +471,13 @@ remaining $19$ are paper-unreported cells that the paper's analysis
 suppresses via an efficiency cut, and we drop them from both sides
 of every $\chi^{2}$ and pull. A secondary strict-interior mask, used only as a
 sensitivity check, keeps cells with $\pT^{\text{high}} / \pPar^{\text{low}}
-\le \tan 20^{\circ}$: some cells in the $205$-bin set straddle the
-$\theta_{\mu}<20^{\circ}$ kinematic cut and have wildly suppressed paper
-efficiencies that we do not replicate; pulls on those cells run to
-$\mathcal{O}(100)\sigma$ and dominate the $\chi^{2}$. The $185$-bin interior cut
-removes them and is quoted only to check that the headline tension is not an
-artifact of those few boundary cells.
+\le \tan 20^{\circ}$, removing the $20$ reported cells that straddle the
+$\theta_{\mu}<20^{\circ}$ kinematic cut. The mask dates from an early stage of the
+analysis, when the paper's unreported diagonal cells dominated the $\chi^{2}$; for the
+current result the straddling cells are not outliers (every reported pull is within
+$\pm3$, \S\ref{sec:pull}), and the $185$-bin cut is quoted only to check that the
+headline tension is not an artifact of the boundary.
+% Source: pre-freeze 2D_OMNIFOLD_RUN_LOG_ARCHIVE.md:50-59 (Phase 4, unreported bins), :716-726.
 \textbf{The canonical metric is the 205-bin set} used everywhere below.
 
 \subsubsection{Covariance-aware $\chi^{2}/\mathrm{ndf}$}
@@ -1163,8 +1164,8 @@ Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:coverage} &
         ML, statistical, and systematic. The bootstrap pins the GBDT
         seed (so ML noise cancels at first order); universes pin the
         seed too; the training-seed variation pins the bootstrap. Cross-terms are
-        higher-order. (The available $N=300$ bootstrap block carries a
-        small residual ML leak, \S\ref{sec:bootstrap}.)
+        higher-order. (The quoted $N=300$ bootstrap pins the GBDT seed;
+        only the superseded seed-varying set leaked, \S\ref{sec:bootstrap}.)
   \item \textbf{Bootstrap diagnostic.} The
         same-ensemble $68.71\%$ fraction of \S\ref{sec:coverage} is a Gaussianity check, not a
         half-percent certification of $\mathbf{C}^{\stat}$.
