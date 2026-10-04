@@ -978,6 +978,84 @@ flux\,$\leftrightarrow$\,Muon\_Energy joint block (rederived at
 $\rho=\rhoFluxMuon$, \S\ref{sec:rank}) is exactly the covariance structure
 governing the region that carries the tension.
 
+\subsection{Scalar-5D diagnostic reductions and interval definitions}
+\label{sec:gbdt-diagnostic-definitions}
+
+The methodological synthesis in \S\ref{sec:gbdt-model-dependence} uses saved
+products, with no new unfolding, training or pseudo-experiments. Fine-grid
+cross-section densities are converted to integrals by multiplying by all five
+bin widths before aggregation. The saved EW trace functionals are differential
+in $(\Eavail,W)$ and are multiplied by their EW areas; saved J and H2
+functionals are already integrals. Direct tensor-slice integration checks the
+index-map sums and full-domain rate. Reporting boundaries coincide with fine
+edges. The J boundaries are $\pT=(0,0.55,0.85,4.5)$,
+$\pPar=(1.5,3.5,6,60)$, $\Eavail=(0,0.4,1.5,100)$,
+$q_3=(0,1.2,2,100)$ and $W=(0,1.4,2.2,100)$; H2 uses interior
+boundaries $(0.7,4.5,0.8,2,1.8)$, respectively, with the same outer
+boundaries. Energy units are GeV and momentum units GeV/$c$. A cell is supported
+when both its expected reconstructed signal and selected truth weight at data
+exposure are at least 1000. This gives 109 J, 27 H2 and 39 EW cells; EW11,
+EW36 and EW37 are omitted only from the later supported-cell summaries.
+
+For experiment $i$ and cell $f$, define
+\begin{equation}
+ r_{if}=\frac{\hat f_i-f_{{\rm true},i}}{f_{{\rm true},i}},\qquad
+ \bar r_f=\frac1n\sum_i r_{if},\qquad
+ s_f^2=\frac1{n-1}\sum_i(r_{if}-\bar r_f)^2.
+\end{equation}
+The truth is the stored pseudo-data-source truth for that experiment; it varies
+with the MC split. Thus $s_f$ is the spread of a \emph{relative residual}, not
+an unconditional variance of a fixed-truth cross-section estimator. The saved
+table also gives $\sqrt{n^{-1}\sum_i r_{if}^2}$, which retains bias. Pointwise
+95\% mean intervals use $t_{0.975,n-1}s_f/\sqrt n$; SD intervals use
+$s_f\sqrt{(n-1)/\chi^2_{0.975,n-1}}$ and
+$s_f\sqrt{(n-1)/\chi^2_{0.025,n-1}}$. These are normal-model approximations
+conditional on the finite simulation, not simultaneous claims over cells.
+No error band is assigned to a deterministic noise-free trace from a single
+simulation; its variation across cells is not sampling uncertainty.
+
+For the historical interval diagnostic, $\sigma_f$ is the sample SD of
+100 refitted bootstrap replicas of nominal development experiment 700000.
+Each assessment result is scored against $[\hat f_i-\sigma_f,\hat f_i+\sigma_f]$
+and $[\hat f_i-1.96\sigma_f,\hat f_i+1.96\sigma_f]$, with no bias correction
+or model envelope added. The table records the integer hit counts, both empirical
+fractions, exact pointwise 95\% binomial intervals, and the fixed half-width as a
+fraction of mean truth. These intervals condition on the fixed bootstrap-width
+estimate; they do not propagate its finite-replica uncertainty. Coverage is not
+pooled to certify individual cells. The selected examples include a populated
+low-energy cell (EW7) and the previously identified failing corner (EW41), not
+freshly selected validation targets.
+
+The rounding study keeps the fine-grid membership fixed under uniform input
+perturbations within half a float32 unit in the last place. With 20 base jitters,
+50 unperturbed bootstrap replicas $f_b$ and their jittered partners $f'_b$, the
+reported quantities are
+\begin{equation}
+ s_{\rm base}=\operatorname{SD}(f_j),\quad
+ s_{\rm boot}=\operatorname{SD}(f_b),\quad
+ s_{\rm pair}=\operatorname{SD}\!\left((f'_b-f_b)/\sqrt2\right).
+\end{equation}
+The consistency ratio is $s_{\rm pair}/s_{\rm base}$ and the estimated numerical
+share is $s_{\rm pair}^2/s_{\rm boot}^2$. The factor $\sqrt2$ belongs to the
+paired perturbation model; it does not turn the jitter into a new physical noise
+source. The frozen design calls the component contained when the median ratio
+is in $[0.7,1.4]$ and at least 95\% of supported cells have
+$s_{\rm boot}^2\geq s_{\rm pair}^2$. All supported cells meet the latter
+inequality here. This finite-sample diagnostic supports that construction and is
+not a proof of coverage or independence from every physical uncertainty.
+
+For prior vertex $v$, the data sensitivity is
+$d_{vf}=\hat f_{{\rm data},v}/\hat f_{{\rm data},0}-1$ and its envelope is
+$h_f=\max_v|d_{vf}|$. Its denominator differs from that of the simulated
+residual. Neither $h_f$ nor an outer product of a closure residual is assigned a
+probability model here. The reduction package preserves the per-cell values,
+input identities, exclusions and the distinction between full products and
+metadata-free checkpoint prefixes. The latter are used only through the
+committed ranges that reproduce the original receipt; later checkpoint entries
+are excluded. The new reductions have numerical cross-checks by the analyst;
+no fresh independent scientific review of this synthesis is claimed.
+% Reproduction: nd-unfolding/gbdt_model_dependence/{reduce.py,analyze.py,README.md}.
+
 \subsection{Closure tests: detecting bias}
 \label{sec:closure}
 

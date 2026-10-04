@@ -126,6 +126,18 @@ GBDT and PET entries above supersede their respective historical products; no
 replacement is implied for 4D/FPS or dependent significances. See
 `KNOWN_ISSUES.md` #14-16.
 
+## Existing-data methodological synthesis — 2026-10-03
+
+[VL163 reduction package](gbdt_model_dependence/README.md): historical truth-dependent
+recovery, repeat residual variability, fixed statistical interval behavior and prior
+sensitivity are now integrated into the note. **No bias–variance tradeoff across settings
+is established**, because the required matched repeat ensembles are absent. The historical
+candidate A_FAIL and measurement NOT ADMITTED remain; no new uncertainty or estimator is
+adopted. The [70 CPU-node-hour development proposal](gbdt_model_dependence/PROPOSAL.md)
+is not compute authorization. New reductions have same-analyst numerical cross-checks;
+fresh independent scientific review remains outstanding. Both repository deliveries are
+recorded in the package DELIVERY.md. No live campaign state is changed.
+
 ## Remediation in flight
 
 - **2026-09-25, s5n successor (`OI-191`) — FINAL DISPOSITION: STAGE1_FAIL, no Stage 2, nothing

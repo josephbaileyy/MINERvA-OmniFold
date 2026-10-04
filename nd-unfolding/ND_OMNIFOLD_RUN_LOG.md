@@ -426,3 +426,18 @@ Authority `docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activatio
 - Spend (meter 22:06:24Z): 4.601 CPU + 0.309 GPU node-h; envelope totals with s5c 24.687 / 345.27 CPU and
   10.095 / 125 GPU node-h. No s5n job remains.
 
+
+
+## 2026-10-03 — Existing-data model-dependence synthesis (VL163)
+
+Reduced 376 distinct saved products into conserved cell integrals in a separate analysis
+namespace; no extraction, training, unfolding, ensemble generation or allocation. The
+[package](gbdt_model_dependence/README.md) records identities, 697 available exclusions,
+partial-checkpoint limits, receipt reproductions, four figure families, fixed-width
+coverage diagnostics and the [costed next panel](gbdt_model_dependence/PROPOSAL.md).
+The relationship across estimator settings remains unresolved: repeat variance exists
+at five iterations only, while noise-free recovery is truth- and functional-dependent.
+The paper/primer rounding statement is narrowed to containment in the tested R bootstrap.
+Historical A_FAIL, measurement NOT ADMITTED, adoption boundaries and NOT READY remain.
+New results are same-analyst reductions, not a newly independent scientific review.
+Delivery/build evidence and both pushed branch heads: package DELIVERY.md.
