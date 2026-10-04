@@ -275,3 +275,17 @@ This addendum is dated and does not edit the sections above. Owner-approved on 2
 - **The meter:** every meter call must run from `$NS/deploy/c754f3cd`, or from a later commit carrying revision 6.
   The §7 command from `deploy/55a41765` is now refused (rc 5, binding mismatch). The §6 recovery procedure is
   unchanged, except that it resumes from `queues-r2`.
+
+## Addendum 2026-10-04: transition r3 (budget revision 7) changed the runners, deploy and meter commands again
+
+This addendum is dated and does not edit the sections above. The owner decided on 2026-10-04
+(`DECISION-20261004-s5p-production-budget-extension.md`), and the transition was executed and verified at
+04:46–04:47Z:
+- **The budget:** revision 7, with production 234.647, verification/repair 68.287, pool 341.434 and cumulative ceiling
+  376.52. The ledger is bound to it (`be29f2c3…`).
+- **The runners:** the six runners are now PIDs 1047835, 1047836, 1047838, 1047839, 1047840 and 1047841 on login33.
+  They run deploy `$NS/deploy/e0d7b04a` with `prod/queues-r3/<lane>.q`. Their logs are
+  `runs/queue-prod-r3-<lane>.log` and their STOP files `runs/STOP-prod-r3-<lane>`.
+- **The meter:** every meter call must run from `$NS/deploy/e0d7b04a` or later. The r2 addendum's deploy `c754f3cd`
+  is now refused (rc 5).
+- **The rollback target** is deploy `ae85b7f2` (revision 6 plus queues-r3).

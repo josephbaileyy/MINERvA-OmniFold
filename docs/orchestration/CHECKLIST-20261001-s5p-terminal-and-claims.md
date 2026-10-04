@@ -15,13 +15,13 @@ three concerns and at most two review/repair cycles.
 1. Five `$NS/runs/prod/status/<null>-final.json` files exist. Read each one's `reason` (`rule met for both tests`,
    `maximum reached`, `batches exhausted`, `budget`).
 2. Power is finished:
-   - `runs/queue-prod-r2-pow.log` (**the r2 log**, not r1) contains `queue done`;
+   - `runs/queue-prod-r3-pow.log` (**the r3 log**, since transition r3 on 2026-10-04; not r1 or r2) contains `queue done`;
    - or the runner's own lines show a budget or incomplete outcome.
 3. `squeue -h -u josephrb -o "%j"` exits **rc 0**, read into a file and with its own rc checked, and lists no
    `s5p-s5p_(cal|pow)_` job.
-4. `s5c_meter.py measure`, run **from `$NS/deploy/c754f3cd`** (or a later deploy carrying budget revision 6), exits
-   rc 0 with open concurrency **0** for both cpu and gpu. The old deploys' budget is refused (rc 5).
-5. All six r2 runners have ended (`queue done`, or a recorded stop). No queue-runner process is left on login33.
+4. `s5c_meter.py measure`, run **from `$NS/deploy/e0d7b04a`** (or a later deploy carrying budget revision 7), exits
+   rc 0 with open concurrency **0** for both cpu and gpu. The older deploys' budgets are refused (rc 5).
+5. All six r3 runners have ended (`queue done`, or a recorded stop). No queue-runner process is left on login33.
 
 ## 2. Evaluation sequence (login node; no allocation)
 
