@@ -8,7 +8,10 @@ the current position in one or two sentences with a pointer to this appendix; a 
 skip it. Struck values are shown struck through and are not quotable. Except for headings,
 joining sentences and cross-reference targets, the text of parts~B and~C and of the context
 passages in part~A is reproduced verbatim from the note as it stood before this restructure,
-which is commit \texttt{152ef7a6} of the MINERvA-OmniFold repository (\repolink). The
+which is commit \texttt{152ef7a6} of the MINERvA-OmniFold repository (\repolink). Part~A
+also covers the struck values that commit \texttt{95d03169} (2026-08-23) removed from the body
+instead of moving; their rows and sentences are taken from that commit's parent,
+\texttt{95d03169\^{}}. The
 repository's index of retracted and superseded values is routed in App.~\ref{app:provenance}
 (\texttt{retracted-values}).
 
@@ -20,11 +23,11 @@ gave for it. A value struck in several places is listed once, with every place i
 
 {\footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.11\textwidth}
-                  >{\raggedright\arraybackslash}p{0.25\textwidth}
-                  >{\raggedright\arraybackslash}p{0.13\textwidth}
-                  >{\raggedright\arraybackslash}p{0.24\textwidth}
-                  >{\raggedright\arraybackslash}p{0.22\textwidth}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.23\textwidth}
+                  >{\raggedright\arraybackslash}p{0.20\textwidth}
+                  >{\raggedright\arraybackslash}p{0.11\textwidth}
+                  >{\raggedright\arraybackslash}p{0.21\textwidth}
+                  >{\raggedright\arraybackslash}p{0.20\textwidth}@{}}
 \toprule
 Struck & Quantity (where it was printed) & Current value & Reason & Record \\
 \midrule
@@ -41,12 +44,63 @@ $\dead{0.563\%}$ & 2D grouped \emph{Statistical} category median (\S\ref{sec:uni
 $\dead{1.828\times10^{-40}}$ & 2D statistical $\sqrt{\Tr\mathbf{C}}$ (provenance note, App.~\ref{app:history-combine}) & $1.817\times10^{-40}$ & As above: superseded seed-varying bootstrap set & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29 \\
 $\dead{0.564\%}$ & 2D statistical per-bin median relative spread (\S\ref{sec:bootstrap}; provenance note, App.~\ref{app:history-combine}) & $0.549\%$ & As above: superseded seed-varying bootstrap set & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29; current spreads \texttt{VL162} \\
 $\dead{5.0467}$ & Full-event $C_{\rm stat}$ family: nominal-to-member ratio of unfolded yield in $6<p_{\parallel}<\SI{20}{GeV/c}$ (App.~\ref{app:cstatlimit}) & $3.5969$ (family mean; s.d.\ $1.6091$) & A single member's value, a $70$th-percentile draw quoted as if typical & \texttt{state/probe-oi126-band-\allowbreak Rpush-sigma-20260815} (family spread) \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Removed from the body on 2026-08-23 by \texttt{95d03169}; text from its parent, \texttt{95d03169\^{}}}} \\
+\midrule
+$\dead{\SI{2.796e-38}{cm^2/nucleon}}$ & Recoil-only PET absolute total on data, in the \texttt{niter}${}={}$2 cross-check against GBDT (removed 2026-08-23, 95d03169) & Not quoted & \texttt{niter}${}={}$2 legacy, withdrawn as a current comparison: the pinned policy is \texttt{niter}${}={}$3 (CLM-010, CLM-012), the 2026-08-01 full-event schema makes a pre-08-01 PET total a different estimator, and the missing background subtraction (J21) biases PET high & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+$\dead{\SI{3.066e-38}{}}$ & GBDT absolute total on data, the other operand of that cross-check (removed 2026-08-23, 95d03169) & Not quoted & Struck with the cross-check it is an operand of, on the grounds above & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+$\dead{\petRatio}$ & PET/GBDT absolute total ratio, in that cross-check and in the Fig.~\ref{fig:petabs} caption (removed 2026-08-23, 95d03169) & Not quoted & Arithmetically correct, the exact quotient of the two struck operands; withdrawn because its operands describe a training configuration that no longer exists & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+\dead{\SIrange{6.5}{9.9}{\percent}} & Per-axis median PET/GBDT differences in that cross-check (removed 2026-08-23, 95d03169) & Not quoted & As above & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+$\dead{\sim\SI{\petGbdtGap}{\percent}}$ & PET--GBDT data-side gap (removed 2026-08-23, 95d03169) & Not quoted & Struck beside the scope note, which covers every quantity derived from the cross-check's struck figures & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+$\dead{-1.6\%}$ & Shift of the PET total under a higher-epoch retrain (removed 2026-08-23, 95d03169) & Not quoted & Struck on the same grounds, being the same legacy run & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+$\dead{0.897}$ & Ratio of the PET total under that higher-epoch retrain (removed 2026-08-23, 95d03169) & Not quoted & Struck on the same grounds, being the same legacy run & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+$\sim$\,\dead{\SI{\petClosure}{\percent}} & Ordinary-closure level of the recoil-only PET, in the Fig.~\ref{fig:petabs} caption (removed 2026-08-23, 95d03169) & Not quoted & Legacy two-iteration self-consistency diagnostic, not a current validation & None given in the deleted text \\
+\dead{\SI{\gbdtFiveBlockMedian}{\percent}} & 5D candidate background-aware block sum: median per-bin uncertainty (removed 2026-08-23, 95d03169) & Not quoted & Pre-J28, and under the 2026-07-12 construction-cause quarantine (two independent grounds); no replacement magnitude is quoted or authorized, because the corrected J28 products are non-background-aware & \texttt{PROCEDURE-gbdtFive-\allowbreak macro-update.md} \\
+$\dead{\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}}$ & 5D candidate mean-centered covariance including cross-source nonlinear response, $\sqrt{\mathrm{Tr}\,C}$ (removed 2026-08-23, 95d03169) & Not quoted & As above & \texttt{PROCEDURE-gbdtFive-\allowbreak macro-update.md} \\
+$\dead{\SI{\gbdtFiveMeanShift}{cm^2/nucleon}}$ & 5D candidate joint mean-shift norm (removed 2026-08-23, 95d03169) & Not quoted & As above & \texttt{PROCEDURE-gbdtFive-\allowbreak macro-update.md} \\
+$\dead{\SI{\gbdtFiveCVTrace}{cm^2/nucleon}}$ & 5D candidate CV-centered construction, the conservative variant, $\sqrt{\mathrm{Tr}\,C}$ (removed 2026-08-23, 95d03169) & Not quoted & As above & \texttt{PROCEDURE-gbdtFive-\allowbreak macro-update.md} \\
 \bottomrule
 \end{longtable}
 }
 
 \subsubsection{The struck entries in context}
 \label{app:history-errata-context}
+
+\paragraph{Struck values removed from the body on 2026-08-23.}
+Commit \texttt{95d03169} deleted the sentences below instead of moving them; they are reproduced from its parent, \texttt{95d03169\^{}}. The unstruck prose it deleted with them, including the two scope notes that the reasons in the table above are taken from, is not reproduced.
+
+From \S\ref{sec:pet-abs}, the third gate of the absolute path:
+\textbf{Cross-check vs GBDT} (\textbf{\texttt{niter}${}={}$2 legacy --- not
+        a current number}; see the scope note below): on data, the PET absolute total was
+        $\dead{\SI{2.796e-38}{cm^2/nucleon}}$ versus the GBDT
+        $\dead{\SI{3.066e-38}{}}$, ratio $\dead{\petRatio}$, with per-axis median
+        differences of \dead{\SIrange{6.5}{9.9}{\percent}} (Fig.~\ref{fig:petabs}).
+
+From the paragraph after its scope note:
+What survives independently of the withdrawn comparison: the
+$\dead{\sim\SI{\petGbdtGap}{\percent}}$ data-side gap is not
+a normalization bug, but ordinary closure alone cannot assign it uniquely to
+training configuration. A higher-epoch retrain moved the PET total by
+$\dead{-1.6\%}$ (ratio $\dead{0.897}$) --- struck on the same grounds, being the
+same legacy run --- which demonstrated training sensitivity qualitatively.
+
+From the caption of Fig.~\ref{fig:petabs}:
+The PET/GBDT total
+  ratio is $\dead{\petRatio}$ --- \textbf{struck: \texttt{niter}${}={}$2 legacy, see
+  the scope note in the text}; ordinary closure was assessed to
+  $\sim$\,\dead{\SI{\petClosure}{\percent}} --- \textbf{struck: legacy two-iteration
+  self-consistency diagnostic, not a current validation} --- and it does not test
+  omitted muon dependence.
+
+From \S\ref{sec:uq-combine}:
+For the 5D candidate, the background-aware block sum gave median per-bin uncertainty
+\dead{\SI{\gbdtFiveBlockMedian}{\percent}}; including cross-source nonlinear response
+raised the candidate mean-centered covariance to
+$\sqrt{\mathrm{Tr}\,C}=\dead{\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}}$. The joint mean
+shift, norm $\dead{\SI{\gbdtFiveMeanShift}{cm^2/nucleon}}$, was reported separately
+rather than folded into that covariance. A CV-centered construction gave the
+larger $\dead{\SI{\gbdtFiveCVTrace}{cm^2/nucleon}}$ and was retained as a conservative
+variant.
 
 \paragraph{From \S\ref{sec:bootstrap}, the bootstrap block.}
 The $N=50\to300$ comparison of the quoted replicas carried the parenthesis
