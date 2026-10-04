@@ -120,6 +120,7 @@ not imply otherwise.
 | Validation details | `sec_validation.tex`, `app_response_mismatch.tex` |
 | Scalar higher-dimensional result | `sec_3d.tex`, `sec_eavailw.tex` |
 | Uncertainty construction and inference rules | `sec_systematics.tex`, `app_statmethods.tex` |
+| Struck values, withdrawn arguments, superseded constructions (note only; the only note file allowed `\dead{}`) | `app_history.tex` |
 | Generated figure inputs | `figures/`, `make_figures.sh` |
 | Build and containment behavior | `build_all.sh`, `test_build_all.py`, `check_dead_containment.py` |
 

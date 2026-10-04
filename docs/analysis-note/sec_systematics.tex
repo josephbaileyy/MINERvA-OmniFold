@@ -5,7 +5,7 @@
 
 The uncertainty budget combines three independent blocks --- systematic
 (universe), statistical (bootstrap), and ML (training-seed variation) --- summed assuming
-independence (distinct RNGs / physics sources). The 3D and 4D budgets
+independence (distinct RNGs / physics sources). The historical 3D and the 4D budgets
 (\S\ref{sec:3d-syst}, \S\ref{sec:4d}) repeat the identical procedure on the
 higher-dimensional grids. Full mathematical procedures, with worked examples
 on the reported numbers, are in App.~\ref{app:statmethods}. This section describes
@@ -160,26 +160,16 @@ uses the MAT convention: universe-mean centering and the biased $1/N$
 normalization, with both endpoints re-unfolded.
 
 For the 5D candidate this construction was carried out both mean-centered and
-CV-centered, with the joint mean shift reported separately rather than folded into
-the covariance. \textbf{No magnitude from either construction is quoted here.} Both are
-pre-J28 and background-aware, both sit under the 2026-07-12 construction-cause
-quarantine, and the corrected J28 products are footed on the
-\emph{non}-background-aware configuration --- so no substitution is available, and
-supplying one would make the sentence false rather than current. Neither is adopted for publication, and that
-is no longer a statement about waiting: the selection-complete lateral
-replacement has landed and the adopted product is a different object
-(\S\ref{sec:eavailw-adopted}), so these two are superseded rather than
-pending. No
-positive-semidefiniteness measurement exists for either: \texttt{VL16} and \texttt{VL17}
-record that property for the \emph{successor} background-aware products only, and it does
-not transfer by inheritance. Routed record:
+CV-centered; no magnitude from either is quoted, neither is adopted, and both are
+superseded, the adopted product being a different object
+(\S\ref{sec:eavailw-adopted}; App.~\ref{app:history}). Routed record:
 App.~\ref{app:provenance} (\texttt{gbdtfive-macros}).
 
 Repeating all 188 universe unfolds with
 per-universe background subtraction changes the combined \emph{block-sum}
 sqrt-trace by only \SI{0.28}{\percent}; the effect on the \emph{adopted}
-covariance is smaller still, \SI{0.09}{\percent} before the flux (J28)
-correction and \SI{0.18}{\percent} after it, because the adoption's per-bin
+covariance is smaller still, \SI{0.18}{\percent} after the flux (J28)
+correction (App.~\ref{app:history}), because the adoption's per-bin
 $\max$ inflation transfer (Eq.~\eqref{eq:zinflation},
 \S\ref{sec:eavailw-construction}) damps the block-sum change. These are ratios taken against
 the superseded products described above, so they bound the size of the background-CV

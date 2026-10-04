@@ -1,0 +1,566 @@
+\section{Superseded values and withdrawn results}
+\label{app:history}
+
+This appendix is the note's audit trail. It holds the values that have been struck, the
+arguments that were stated and then withdrawn, and the superseded uncertainty constructions with
+their figures. The body quotes only current values and, where a passage was moved here, states
+the current position in one or two sentences with a pointer to this appendix; a first reading can
+skip it. Struck values are shown struck through and are not quotable. Except for headings,
+joining sentences and cross-reference targets, the text of parts~B and~C and of the context
+passages in part~A is reproduced verbatim from the note as it stood before this restructure,
+which is commit \texttt{152ef7a6} of the MINERvA-OmniFold repository (\repolink). Part~A
+also covers the struck values that commit \texttt{95d03169} (2026-08-23) removed from the body
+instead of moving; their rows and sentences are taken from that commit's parent,
+\texttt{95d03169\^{}}. The
+repository's index of retracted and superseded values is routed in App.~\ref{app:provenance}
+(\texttt{retracted-values}).
+
+\subsection{Struck values}
+\label{app:history-errata}
+
+Each row is one struck value as the note printed it, with the reason and the record the note
+gave for it. A value struck in several places is listed once, with every place it was printed.
+
+{\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.23\textwidth}
+                  >{\raggedright\arraybackslash}p{0.20\textwidth}
+                  >{\raggedright\arraybackslash}p{0.11\textwidth}
+                  >{\raggedright\arraybackslash}p{0.21\textwidth}
+                  >{\raggedright\arraybackslash}p{0.20\textwidth}@{}}
+\toprule
+Struck & Quantity (where it was printed) & Current value & Reason & Record \\
+\midrule
+\endhead
+$\dead{1.008\%}$ & 2D \texttt{Flux} (PPFX) per-bin median relative $\sigma$, band and grouped category (Table~\ref{tab:band-medians}; \S\ref{sec:universes}) & $4.993\%$ & Pre-flux-fix rollup: each PPFX universe divided by $\Phi_{\rm CV}$ instead of by its own flux integral $\Phi_u$ & \texttt{...\_matcorr\_fluxfix/uq\_universe\_summary.txt} \\
+$\dead{4.783\%}$ & 2D systematic total per-bin median (Table~\ref{tab:band-medians}; provenance note, App.~\ref{app:history-combine}) & $6.830\%$ & Pre-flux-fix rollup, as above & \texttt{...\_matcorr\_fluxfix/uq\_universe\_summary.txt} \\
+$\dead{2.463\times10^{-39}}$ & 2D systematic $\sqrt{\Tr\mathbf{C}}$ (Table~\ref{tab:band-medians}; provenance note, App.~\ref{app:history-combine}) & $3.214\times10^{-39}$ & Pre-flux-fix rollup, as above & \texttt{...\_matcorr\_fluxfix/uq\_universe\_summary.txt} \\
+$\dead{2.470\times10^{-39}}$ & 2D combined (block-sum) $\sqrt{\Tr\mathbf{C}}$ (provenance note, App.~\ref{app:history-combine}) & $3.220\times10^{-39}$ & Pre-flux-fix rollup, as above & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, \S``Stage-2 UQ envelope'' \\
+$\dead{4.822\%}$ & 2D combined per-bin median relative $\sigma$ (provenance note, App.~\ref{app:history-combine}; worked example of \S\ref{sec:chisq}) & $6.865\%$ & Pre-flux-fix rollup, as above & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, \S``Stage-2 UQ envelope'' \\
+$\dead{\approx\!70\%}$ & OmniFold 2D envelope as a fraction of the paper's (provenance note, App.~\ref{app:history-combine}) & Not quoted; the envelope matches the paper ($6.865\%$ against $6.86\%$) & An inference drawn from the pre-flux-fix covariance, retracted with it & None given beyond the provenance note \\
+$\dead{0.069}$ & 2D pull mean, combined covariance (\S\ref{sec:pull}; provenance note, App.~\ref{app:history-combine}) & $0.051$ & Computed on the pre-flux-fix combined covariance & \texttt{VALIDATION\_LEDGER.md} \\
+$\dead{0.466}$ & 2D pull RMS, combined covariance (\S\ref{sec:pull}; provenance note, App.~\ref{app:history-combine}) & $0.409$ & Computed on the pre-flux-fix combined covariance & \texttt{VALIDATION\_LEDGER.md} \\
+$\dead{0.563\%}$ & 2D grouped \emph{Statistical} category median (\S\ref{sec:universes}) & $0.549\%$ & Re-quoted from the pure-Poisson $N=300$ bootstrap, which superseded a seed-varying set that leaked ML stochasticity into the statistical block & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29 \\
+$\dead{1.828\times10^{-40}}$ & 2D statistical $\sqrt{\Tr\mathbf{C}}$ (provenance note, App.~\ref{app:history-combine}) & $1.817\times10^{-40}$ & As above: superseded seed-varying bootstrap set & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29 \\
+$\dead{0.564\%}$ & 2D statistical per-bin median relative spread (\S\ref{sec:bootstrap}; provenance note, App.~\ref{app:history-combine}) & $0.549\%$ & As above: superseded seed-varying bootstrap set & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29; current spreads \texttt{VL162} \\
+$\dead{5.0467}$ & Full-event $C_{\rm stat}$ family: nominal-to-member ratio of unfolded yield in $6<p_{\parallel}<\SI{20}{GeV/c}$ (App.~\ref{app:cstatlimit}) & $3.5969$ (family mean; s.d.\ $1.6091$) & A single member's value, a $70$th-percentile draw quoted as if typical & \texttt{state/probe-oi126-band-\allowbreak Rpush-sigma-20260815} (family spread) \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{Removed from the body on 2026-08-23 by \texttt{95d03169}; text from its parent, \texttt{95d03169\^{}}}} \\
+\midrule
+$\dead{\SI{2.796e-38}{cm^2/nucleon}}$ & Recoil-only PET absolute total on data, in the \texttt{niter}${}={}$2 cross-check against GBDT (removed 2026-08-23, 95d03169) & Not quoted & \texttt{niter}${}={}$2 legacy, withdrawn as a current comparison: the pinned policy is \texttt{niter}${}={}$3 (CLM-010, CLM-012), the 2026-08-01 full-event schema makes a pre-08-01 PET total a different estimator, and the missing background subtraction (J21) biases PET high & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+$\dead{\SI{3.066e-38}{}}$ & GBDT absolute total on data, the other operand of that cross-check (removed 2026-08-23, 95d03169) & Not quoted & Struck with the cross-check it is an operand of, on the grounds above & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+$\dead{\petRatio}$ & PET/GBDT absolute total ratio, in that cross-check and in the Fig.~\ref{fig:petabs} caption (removed 2026-08-23, 95d03169) & Not quoted & Arithmetically correct, the exact quotient of the two struck operands; withdrawn because its operands describe a training configuration that no longer exists & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+\dead{\SIrange{6.5}{9.9}{\percent}} & Per-axis median PET/GBDT differences in that cross-check (removed 2026-08-23, 95d03169) & Not quoted & As above & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+$\dead{\sim\SI{\petGbdtGap}{\percent}}$ & PET--GBDT data-side gap (removed 2026-08-23, 95d03169) & Not quoted & Struck beside the scope note, which covers every quantity derived from the cross-check's struck figures & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+$\dead{-1.6\%}$ & Shift of the PET total under a higher-epoch retrain (removed 2026-08-23, 95d03169) & Not quoted & Struck on the same grounds, being the same legacy run & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+$\dead{0.897}$ & Ratio of the PET total under that higher-epoch retrain (removed 2026-08-23, 95d03169) & Not quoted & Struck on the same grounds, being the same legacy run & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
+$\sim$\,\dead{\SI{\petClosure}{\percent}} & Ordinary-closure level of the recoil-only PET, in the Fig.~\ref{fig:petabs} caption (removed 2026-08-23, 95d03169) & Not quoted & Legacy two-iteration self-consistency diagnostic, not a current validation & None given in the deleted text \\
+\dead{\SI{\gbdtFiveBlockMedian}{\percent}} & 5D candidate background-aware block sum: median per-bin uncertainty (removed 2026-08-23, 95d03169) & Not quoted & Pre-J28, and under the 2026-07-12 construction-cause quarantine (two independent grounds); no replacement magnitude is quoted or authorized, because the corrected J28 products are non-background-aware & \texttt{PROCEDURE-gbdtFive-\allowbreak macro-update.md} \\
+$\dead{\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}}$ & 5D candidate mean-centered covariance including cross-source nonlinear response, $\sqrt{\mathrm{Tr}\,C}$ (removed 2026-08-23, 95d03169) & Not quoted & As above & \texttt{PROCEDURE-gbdtFive-\allowbreak macro-update.md} \\
+$\dead{\SI{\gbdtFiveMeanShift}{cm^2/nucleon}}$ & 5D candidate joint mean-shift norm (removed 2026-08-23, 95d03169) & Not quoted & As above & \texttt{PROCEDURE-gbdtFive-\allowbreak macro-update.md} \\
+$\dead{\SI{\gbdtFiveCVTrace}{cm^2/nucleon}}$ & 5D candidate CV-centered construction, the conservative variant, $\sqrt{\mathrm{Tr}\,C}$ (removed 2026-08-23, 95d03169) & Not quoted & As above & \texttt{PROCEDURE-gbdtFive-\allowbreak macro-update.md} \\
+\bottomrule
+\end{longtable}
+}
+
+\subsubsection{The struck entries in context}
+\label{app:history-errata-context}
+
+\paragraph{Struck values removed from the body on 2026-08-23.}
+Commit \texttt{95d03169} deleted the sentences below instead of moving them; they are reproduced from its parent, \texttt{95d03169\^{}}. The unstruck prose it deleted with them, including the two scope notes that the reasons in the table above are taken from, is not reproduced.
+
+From \S\ref{sec:pet-abs}, the third gate of the absolute path:
+\textbf{Cross-check vs GBDT} (\textbf{\texttt{niter}${}={}$2 legacy --- not
+        a current number}; see the scope note below): on data, the PET absolute total was
+        $\dead{\SI{2.796e-38}{cm^2/nucleon}}$ versus the GBDT
+        $\dead{\SI{3.066e-38}{}}$, ratio $\dead{\petRatio}$, with per-axis median
+        differences of \dead{\SIrange{6.5}{9.9}{\percent}} (Fig.~\ref{fig:petabs}).
+
+From the paragraph after its scope note:
+What survives independently of the withdrawn comparison: the
+$\dead{\sim\SI{\petGbdtGap}{\percent}}$ data-side gap is not
+a normalization bug, but ordinary closure alone cannot assign it uniquely to
+training configuration. A higher-epoch retrain moved the PET total by
+$\dead{-1.6\%}$ (ratio $\dead{0.897}$) --- struck on the same grounds, being the
+same legacy run --- which demonstrated training sensitivity qualitatively.
+
+From the caption of Fig.~\ref{fig:petabs}:
+The PET/GBDT total
+  ratio is $\dead{\petRatio}$ --- \textbf{struck: \texttt{niter}${}={}$2 legacy, see
+  the scope note in the text}; ordinary closure was assessed to
+  $\sim$\,\dead{\SI{\petClosure}{\percent}} --- \textbf{struck: legacy two-iteration
+  self-consistency diagnostic, not a current validation} --- and it does not test
+  omitted muon dependence.
+
+From \S\ref{sec:uq-combine}:
+For the 5D candidate, the background-aware block sum gave median per-bin uncertainty
+\dead{\SI{\gbdtFiveBlockMedian}{\percent}}; including cross-source nonlinear response
+raised the candidate mean-centered covariance to
+$\sqrt{\mathrm{Tr}\,C}=\dead{\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}}$. The joint mean
+shift, norm $\dead{\SI{\gbdtFiveMeanShift}{cm^2/nucleon}}$, was reported separately
+rather than folded into that covariance. A CV-centered construction gave the
+larger $\dead{\SI{\gbdtFiveCVTrace}{cm^2/nucleon}}$ and was retained as a conservative
+variant.
+
+\paragraph{From \S\ref{sec:bootstrap}, the bootstrap block.}
+The $N=50\to300$ comparison of the quoted replicas carried the parenthesis
+(the superseded seed-varying set gave a median of $\dead{0.564\%}$), and the seed-pinning statement continued: ``It
+superseded an earlier set whose replicas varied both seeds and so leaked ML
+stochasticity into the statistical block (App.~\ref{app:history-combine}).'' The standing assumption on independence of error sources added
+(The quoted $N=300$ bootstrap pins the GBDT seed;
+        only the superseded seed-varying set leaked, \S\ref{sec:bootstrap}.)
+
+\paragraph{From \S\ref{sec:universes}, Table~\ref{tab:band-medians}.}
+The two struck rows, as the table printed them:
+\begin{center}
+\begin{tabular}{@{}lc@{}}
+\toprule
+Band & Per-bin median rel.\ $\sigma$ \\
+\midrule
+Flux (PPFX, $N_{u}=100$) & $\dead{1.008\%}$ $\to$ $4.993\%$ \\
+\midrule
+\shortstack[l]{Systematic total\\(44 bands $+$ norm)} & \shortstack[l]{$\dead{4.783\%} \to \boxed{6.830\%}$ (median)\\$\sqrt{\Tr\mathbf{C}}=\dead{2.463\times10^{-39}} \to 3.214\times10^{-39}$} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textbf{Struck entries in Table~\ref{tab:band-medians} are the pre-flux-fix rollup}
+(\texttt{uq/universe\_stage2\_MEFHC\_full\_matcorr/uq\_universe\_covariance\_full\_matcorr.root});
+the live values to their right are the flux-fixed rollup
+\texttt{...\_full\_matcorr\_fluxfix/uq\_universe\_summary.txt}, which is the
+product this note quotes (\S\ref{sec:systematics}). Of the individual systematic
+bands only \texttt{Flux} moved; the grouped \emph{Statistical} category also moved
+($0.563\% \to 0.549\%$) for the separate reason given in the provenance note in
+App.~\ref{app:history-combine}.
+Grouped by category the medians are: Muon reconstruction $3.366\%$,
+Models $2.034\%$, Flux $\dead{1.008\%} \to 4.993\%$, Hadronic response $0.758\%$,
+Statistical $\dead{0.563\%} \to 0.549\%$, Normalization $0.081\%$.
+
+\paragraph{From \S\ref{sec:chisq}, worked example.}
+The median row read:
+\begin{center}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Metric (205 bins) & Paper & OmniFold (combined) \\
+\midrule
+Per-bin median relative $\sigma$ & $6.86\%$ & $\dead{4.822\%} \to 6.865\%$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{From \S\ref{sec:pull}.}
+With the combined
+covariance (paper TotalCov $+$ flux-fixed matcorr universe $+$ bootstrap-300
+$+$ ML) the pull mean is $\dead{0.069} \to \boxed{0.051}$ (centered on zero; no
+global offset) and the pull RMS $\dead{0.466} \to \boxed{0.409}$.
+The struck values were computed on the pre-flux-fix combined covariance and are
+\textbf{retracted}; the live pair is the flux-fixed one recorded in
+\texttt{VALIDATION\_LEDGER.md} (App.~\ref{app:history-combine} provenance note).
+
+\paragraph{From App.~\ref{app:cstatlimit}, the measured spread and the recomputation route.}
+An earlier internal statement of the band ratio used a single member's value,
+$\dead{5.0467}$ --- \textbf{struck: a $70$th-percentile draw quoted as if typical}; the
+family-typical value is $3.5969$ with the spread above.
+That receipt carries two retracted share-of-total fields, marked in place;
+neither relative-standard-deviation field is among them, and no share-of-total figure from it is used
+here.
+
+\subsection{Withdrawn arguments}
+\label{app:history-withdrawn}
+
+Each passage below stated an inference and withdrew it in place. The body keeps only the
+surviving statement.
+
+\paragraph{From \S\ref{sec:invert}, pseudo-inverse.}
+After giving NumPy's documented \texttt{pinv} cutoff and the looser $n\,\sigma_{\max}\varepsilon_{\text{machine}}$ convention, the sentence ended
+``\ldots; an earlier
+version of this appendix quoted that formula for \texttt{pinv} and was wrong.''
+
+\subsubsection{From \S\ref{sec:combine}: the provenance note on the 2D budget}
+\label{app:history-combine}
+\begin{quote}
+\textbf{Provenance note (2026-07-31; table corrected 2026-08-11).} Table~\ref{tab:combine}
+carries the \emph{flux-fixed} rollup. An earlier draft printed the
+\emph{pre-flux-fix} product --- systematic $\dead{2.463\times10^{-39}}$ /
+$\dead{4.783\%}$, combined $\dead{2.470\times10^{-39}}$ / $\dead{4.822\%}$ ---
+and inferred from it that the OmniFold envelope is $\dead{\approx\!70\%}$ of the
+paper's. Those four figures and that inference are \textbf{retracted}: they are
+artefacts of a superseded covariance, not of the measurement. The current budget
+agrees with \S\ref{sec:systematics}, where the envelope essentially
+\emph{matches} the paper ($6.865\%$ against $6.86\%$).
+
+The two rollups differ in \emph{exactly one band}. Comparing
+\texttt{2d-unfolding/uq/universe\_stage2\_MEFHC\_full\_matcorr/} against
+\texttt{...\_matcorr\_fluxfix/}, every systematic band agrees to the last quoted
+digit except \texttt{full\_Flux}, whose per-bin median rises
+$1.008\% \rightarrow 4.993\%$ once each PPFX universe is divided by its own flux
+integral $\Phi_u$ instead of by $\Phi_{\rm CV}$. That single correction carries the
+universe total $4.783\% \rightarrow 6.830\%$ and the combined figure to
+$6.845\%$ before the ML block, which is the whole of the discrepancy. The pull
+widths of \S\ref{sec:pull} were affected identically:
+$\dead{0.069}/\dead{0.466}$ were computed on the same superseded covariance, and
+the flux-fixed values are $0.051/0.409$ (\texttt{VALIDATION\_LEDGER.md}).
+
+The statistical cell moved for an unrelated and earlier reason, recorded because
+it is a correction in its own right and \emph{not} because it changed the
+headline: it is quoted from the pure-Poisson $N=300$ bootstrap
+($\dead{1.828\times10^{-40}}$ / $\dead{0.564\%}$ $\to$
+$1.817\times10^{-40}$ / $0.549\%$), which superseded a seed-varying set that leaked
+ML stochasticity into the statistical block
+(\texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29).
+\textbf{It is not what moved the combined row.} The block sum rounds to
+$3.220\times10^{-39}$ with either statistical cell --- the change sits about two
+orders of magnitude below the printed precision --- and essentially the whole
+movement of the combined entry comes from the systematic cell, i.e.\ from the flux
+fix. This is stated explicitly so that a later check does not reverse a correct
+edit on finding that the headline is insensitive to it.
+
+The same defect, uncorrected, is still present in the N-D and 5-D kernels; see
+\texttt{AUDIT-FINDINGS-20260731.md} J18 and J28.
+\end{quote}
+
+\paragraph{From \S\ref{sec:chisq}, limit (ii) of the worked example.}
+The heading of the limit, and the end of its paragraph, read:
+
+\emph{(ii) ``Correct uncertainties give exactly one'' is false and has been
+removed from this appendix.}
+
+An earlier version
+of this paragraph said that a perfectly correct model with correct
+uncertainties gives exactly $1$, and then used $\approx1.5$ as a tolerance
+against it. Both halves of that inference are withdrawn.
+
+\paragraph{From \S\ref{sec:closure-hv}, hidden-variable closure.}
+After ``$A=0.30$ gives $3.43\%$, which \emph{exceeds} $3.0\%$'':
+\S\ref{sec:validation}
+records that arm as exceeding the threshold and this appendix agrees with it;
+the earlier reading here --- that $A=0.30$ was under threshold and the leakage
+was ``small enough to be safely ignored'' --- was an arithmetic error and is
+withdrawn.
+
+\paragraph{From App.~\ref{app:cstatlimit}, construction.}
+An
+earlier version reported from them that MC accounted for ${\sim}88\%$ of the variance and the
+background MC alone for $87\%$; that step does not follow and is withdrawn.
+
+\paragraph{From App.~\ref{app:cstatlimit}, the two readings of the band.}
+After ``The family disagrees with the central value by a factor of order three, coherently, in the best-accepted region of the plane.'':
+
+Two readings are available a priori.
+\textbf{(a) The spread is real:} the estimator is genuinely this sensitive to the measured
+sample there, and the quoted uncertainties in $6<p_{\parallel}<\SI{20}{GeV/c}$ really are of
+order $67\%$. \textbf{(b) The proxy is wrong:} $\mathrm{Poisson}(1)$ resampling gives $36.8\%$
+of measured rows zero weight, and a learned estimator facing that much removed support may
+respond in a way that is a property of the perturbation rather than of the data. Both fit the
+measurements above: an unstable estimator and an invalid perturbation both act during training,
+concentrate where information is scarcest, and leave the extraction faithful.
+The proposed binary was withdrawn on 2026-08-19 as a type mismatch: a covariance measures
+dispersion \emph{about a centre} and does not establish finite-family \emph{containment} of a
+separately trained nominal, so non-containment of the nominal by $50$ draws is not what this
+covariance reports and \textbf{no choice between (a) and (b) follows from it}. The readings are
+recorded because the measurements were gathered while they were live and a reader will meet them in
+that form elsewhere; neither is asserted.
+
+The resampling argument that follows opened with the sentence
+``What follows concerns the resampling scheme alone and is offered as an argument rather than a
+ratified result; it bears on reading (b) without adjudicating the retracted fork.''
+Within it:
+An earlier version concluded that the scheme ``is the sampling
+distribution rather than a stand-in that might be the wrong one''; that promotion is withdrawn.
+
+In the paragraph on the discriminating $\mathrm{Exponential}(1)$ contrast, which the body keeps, the
+sentence before the surviving objection read, with the opening of that objection:
+No ``publish it as it stands''
+branch exists for either outcome to select; the earlier framing here --- that an unimportant zero
+atom would mean publishing the covariance as it stands --- described a posture the ruling had already
+closed, and is withdrawn. What stands on its own is the other half: \ldots
+
+In ``What the band figure is'':
+An earlier version called it an ``upper bound on how poorly the data constrain the
+cross section,'' reasoning that a better-regularised estimator could improve on it and none could do
+worse for want of information. That is withdrawn: no information bound follows from an observed
+refit dispersion without conditions on the estimator's bias and on the perturbation's validity as a
+sampling proxy, and neither is established here; a more strongly regularised estimator can show
+\emph{less} dispersion while constraining the cross section no better, exactly the direction that
+breaks the claimed inequality.
+
+\paragraph{From App.~\ref{app:cstatlimit}, limitations of the covariance object.}
+\textbf{The $257$ are the quotable all-member domain, and they are not an
+``invertible sub-block'' --- this appendix called them one, which is impossible at this rank, and the
+name is corrected here.}
+
+\paragraph{From \S\ref{sec:coverage}, the 2D coverage test.}
+The
+attempted 100/100 split-sample reinterpretation is also withdrawn because it
+used the all-toy mean of the fluctuated truth histograms.
+
+\paragraph{From App.~\ref{app:negweight}, the extended-fiducial footing and the measured size of the choice.}
+\textbf{The $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$ reported in
+\S\ref{sec:fps} was not produced with negative-weight injection}, and an earlier
+version of this appendix implied that it was.
+
+What is withdrawn is the \emph{footing}: negative-weight injection
+is the intended baseline for the extended-fiducial analysis, not the one behind
+the number quoted here.
+
+It is not a theorem that the two
+footings give the same covariance, because the underlying estimands are not
+pointwise identical --- so ``the two covariances agree by construction,'' as
+this paragraph previously read, is withdrawn.
+
+\paragraph{From \S\ref{sec:eavailw-construction}, conditioning.}
+Two properties of this
+matrix are routinely misstated, including in an earlier version of this
+subsection, so both are given with their operands.
+
+\paragraph{From \S\ref{sec:pet-abs}, the PET--GBDT level of agreement.}
+The only such comparison that exists was taken with a two-iteration training,
+against the campaign's pinned three-iteration policy (\texttt{CLM-010},
+\texttt{CLM-012}, \textsc{frozen}); before the 2026-08-01 full-event schema change,
+which makes a pre-08-01 PET total a different estimator rather than a
+differently-trained one; and with unit measured weights and \emph{no} background
+subtraction (audit finding J21), which at this analysis's
+${\sim}\SI{3}{\percent}$ background scale biases PET high, so the underlying gap is
+\emph{larger} than the withdrawn figure. It has not been re-extracted under the
+pinned configuration, and the same three grounds withdraw the legacy closure level
+and the higher-epoch retrain response.
+
+The figure that followed that discussion in \S\ref{sec:pet-abs} plots the withdrawn comparison, and
+is kept here with it.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{pet_vs_gbdt_absolute}
+  \caption{Recoil-only PET representation cross-check: absolutely-normalized
+  4D cross section from the point-cloud unfold (full-statistics reweight of the generator sample) versus the
+  production scalar GBDT result, projected on each axis. The PET/GBDT total
+  offset shown is a two-iteration legacy result, withdrawn as a current comparison
+  (see text) and not quoted here as a level of agreement. Ordinary closure was
+  assessed only as a legacy two-iteration self-consistency diagnostic; no current
+  closure level is quoted, and it does not test omitted muon dependence.}
+  \label{fig:petabs}
+\end{figure}
+
+\subsection{Superseded uncertainty constructions and their figures}
+\label{app:history-superseded}
+
+None of the constructions below is a publication uncertainty, and no number in this part is
+quotable.
+
+\subsubsection{The historical 3D generator scan and uncertainty budget}
+From \S\ref{sec:3d-models}, after the central-value generator ratios:
+
+The historical truncated-spectral scan
+ranked Tune~v1 closest and GiBUU farthest, and still does when redrawn on the
+flux-repaired predictions, but its covariance is superseded by
+the corrected dependency contract: the final 3D covariance must be projected
+from the adopted, selection-complete 5D trunk. Consequently no 3D generator
+$\chi^{2}$, $p$-value or significance is quoted here. The old scan is retained
+only as a quarantined numerical diagnostic in Fig.~\ref{fig:3dfullcov}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{compare_3d_fullcov}
+  \caption{Quarantined historical full-3D truncated-spectral scan. It shows the
+  per-generator $\chi^{2}/\mathrm{ndf}$ against the historical covariance versus
+  eigenvalue tolerance (redrawn 2026-09-27 on the flux-repaired GENIE and NuWro
+  predictions, \S\ref{sec:3d-models}) and is
+  retained only to document numerical behavior; no value is interpreted until
+  the selection-complete 5D covariance is adopted \emph{and} projected to 3D.
+  The first has happened, and on 2026-09-22 so did the second: the projection
+  exists (\texttt{20c16e16}\ldots, 1431 reported cells). \textbf{The gate still
+  holds, on different ground} --- that product is \emph{constructed, not
+  adopted}, and it exists only in the receiving-cells destination-mask variant,
+  not the \texttt{declared-dst-cv} variant a figure would require.}
+  \label{fig:3dfullcov}
+\end{figure}
+
+\paragraph{The historical 3D uncertainty budget, and why it is not quoted.}
+\label{sec:3d-syst}
+The historical band on Fig.~\ref{fig:3dmodels} was built as a full 3D
+analog of the 2D uncertainty budget of \S\ref{sec:systematics}. The
+systematic universes are dumped on the three-axis
+$(\pT,\pPar,\Eavail)$ grid (187 universes), the bootstrap
+statistical and ML training-seed-variation covariances propagated, and the three summed into a
+single historical combined
+covariance $C_{\mathrm{syst}}+C_{\mathrm{stat}}+C_{\mathrm{ML}}$ over all 1431
+reported bins. It has $\sqrt{\operatorname{tr}}=\SI{5.72e-39}{}$, median
+per-bin relative uncertainty \SI{10.4}{\percent}, numerical rank $247$ (of
+1431; eigenvalues above $10^{-12}\lambda_{\max}$), and the same flux-dominated band ordering as 2D
+(Fig.~\ref{fig:3dbands}). These are audit descriptors, not publication
+uncertainties. Under the corrected contract, the quotable 3D covariance is the
+exact projection of the adopted 5D covariance. That covariance now exists
+(\S\ref{sec:eavailw-construction}) and the replacement it waited on has landed, but
+the 3D projection was built on 2026-09-22 (\texttt{20c16e16}\ldots).
+Covariance-dependent 3D comparisons remain gated, on the two grounds that
+survive: that projection is \emph{constructed, not adopted}, and it exists only
+in the receiving-cells destination-mask variant, not the
+\texttt{declared-dst-cv} variant a comparison against the frozen 3D central
+value would require.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.49\textwidth]{uq_universe_3d_band_eavail}
+  \includegraphics[width=0.49\textwidth]{uq_universe_3d_band_pt}
+  \caption{Grouped fractional systematic bands of the historical 3D covariance
+  projected onto $\Eavail$ (left) and $\pT$ (right): flux-dominated, with the
+  same band ordering as the 2D budget. The magnitudes are quarantined pending
+  the final selection-complete 5D-to-3D projection.}
+  \label{fig:3dbands}
+\end{figure}
+
+\paragraph{From \S\ref{sec:3d-2p2h}, the Valencia 2p2h fraction.}
+An earlier \SI{27}{\percent} came mostly from comparing two
+different generated samples for CV and CV$+$MEC; the MEC component alone gave
+\SI{64}{\percent} before the repair. Historical 3D $\chi^{2}$ values
+are not quoted pending the corrected covariance projection.
+
+\subsubsection{The historical recoil-PET uncertainty assembly}
+\label{app:history-petbudget}
+From \S\ref{sec:pet-syst}:
+
+The historical recoil-PET campaign produced vertical, retraining, ML,
+statistical and detector blocks on a common nominal.  That assembly is now
+quarantined rather than quoted as an uncertainty.  For a nuisance endpoint
+$u$, the physical shift and the induced retraining response form one joint
+shift,
+\begin{equation}
+  \delta_u=x_u^{\rm varied+retrained}-x_{\rm CV}.
+\end{equation}
+Writing this as a frozen-map piece plus a retraining increment is an algebraic
+decomposition, but adding the two separate covariances omits
+$\operatorname{Cov}(\delta_{\rm frozen},\delta_{\rm retrain})$ and its
+transpose.  Positive semidefiniteness of that sum does not restore the missing
+cross term.
+
+The historical detector block is additionally CV-support-limited: it propagates
+shifted weights and observables through the nominal cloud membership instead of
+regenerating the selected cloud for every lateral endpoint.  A replacement
+construction would need end-to-end joint nuisance/retraining shifts and the
+selection-complete FPS lateral samples, and would belong to a full-event PET
+estimator with its own statistical and ML ensembles.
+
+\subsubsection{The earlier direct $(\Eavail,W)$ block sum}
+\label{sec:eavailw-cov}
+From \S\ref{sec:eavailw}:
+
+\noindent\textbf{This subsection is historical. It describes a superseded
+construction and the requirements imposed on its replacement; the covariance
+this note actually quotes is specified in \S\ref{sec:eavailw-construction}.}
+
+An earlier attempt built a dedicated 42-bin $(\Eavail,W)$ covariance
+\emph{directly}, as $C = C_{\mathrm{syst}}+C_{\mathrm{stat}}+C_{\mathrm{lateral}}$,
+by a \emph{frozen-reweighter} block sum on the merged five-axis
+\texttt{\_universes\_full} sample: the central-value OmniFold push-weights
+were held fixed and only the per-event truth reweight ratios changed per
+systematic universe (the same frozen-reweighter \emph{technique} as the PET
+budget, App.~\ref{app:history-petbudget} --- not the PET covariance matrix, which is never
+applied to this GBDT central value; no per-universe re-inference). That object
+carried 13 knob bands $\pm1\sigma$, the 100-universe flux multisim, the
+projected full five-axis bootstrap covariance $C_{EW}=M C_{5D}M^{\top}$, and a
+$W$-resolved detector (lateral) block. It is not adopted and is not quoted
+anywhere in this note.
+
+The paragraph that followed, stating the three requirements declared for a replacement and that the adopted object meets them, remains in the body at the head of \S\ref{sec:eavailw-construction}.
+
+\subsubsection{The superseded 5D candidate unified-throw constructions}
+\label{app:history-5dcandidates}
+From \S\ref{sec:uq-combine}:
+
+For the 5D candidate this construction was carried out both mean-centered and
+CV-centered, with the joint mean shift reported separately rather than folded into
+the covariance. \textbf{No magnitude from either construction is quoted here.} Both are
+pre-J28 and background-aware, both sit under the 2026-07-12 construction-cause
+quarantine, and the corrected J28 products are footed on the
+\emph{non}-background-aware configuration --- so no substitution is available, and
+supplying one would make the sentence false rather than current. Neither is adopted for publication, and that
+is no longer a statement about waiting: the selection-complete lateral
+replacement has landed and the adopted product is a different object
+(\S\ref{sec:eavailw-adopted}), so these two are superseded rather than
+pending. No
+positive-semidefiniteness measurement exists for either: \texttt{VL16} and \texttt{VL17}
+record that property for the \emph{successor} background-aware products only, and it does
+not transfer by inheritance.
+
+\subsubsection{Disclosures shortened in the body}
+The body figures below still draw uncertainties from superseded covariances, and their captions now say so in one clause. The fuller wording they carried is kept here.
+
+\paragraph{From \S\ref{sec:systematics}.}
+The 3D and 4D budgets
+(\S\ref{sec:3d-syst}, \S\ref{sec:4d}) repeat the identical procedure on the
+higher-dimensional grids.
+
+\paragraph{From \S\ref{sec:3d-models}.}
+Figure~\ref{fig:3dmodels} overlays the four on the unfolded result, with the
+combined-covariance systematic band of \S\ref{sec:3d-syst} on the data.
+
+\paragraph{From Fig.~\ref{fig:3dmodels}, caption.}
+\textbf{The grey band labelled ``total syst$\oplus$stat'' inside the graphic
+  is the SUPERSEDED historical 3D covariance} of \S\ref{sec:3d-syst}
+  (\texttt{hCov\_combined3d\_total}), drawn for orientation only. It is not the
+  uncertainty of this measurement, it is not quotable, and no comparison in this
+  section uses it; the quotable 3D covariance must be projected from the adopted
+  5D trunk; that projection now exists (2026-09-22) but is \emph{not adopted},
+  so nothing here is quotable from it.
+
+\paragraph{From Fig.~\ref{fig:modedecomp}, caption.}
+\textbf{The error bars drawn on the data points
+    (``$\pm$ total'') are from the superseded historical 3D covariance}
+    (\S\ref{sec:3d-syst}); they orient the eye and are not quotable, and the
+    excess is read here as a central-value shape statement.
+
+\paragraph{From Fig.~\ref{fig:mec}, caption.}
+\textbf{As in Fig.~\ref{fig:modedecomp}, the ``$\pm$ total'' bars on the
+    data points come from the superseded historical 3D covariance}
+    (\S\ref{sec:3d-syst}) and are not quotable; the gap-filling fraction is a
+    central-value statement.
+
+\paragraph{From Fig.~\ref{fig:ascencio}, caption.}
+The
+  uncertainty-derived annotations inside the panel --- the error bars on our
+  points and the $\chi^{2}$ it prints --- are computed from the
+  \emph{superseded} historical unified-throw 4D covariance, not from a
+  corrected one, and are not quotable; the published points carry the
+  published covariance.
+
+\subsubsection{Pre-repair values}
+\label{app:history-prerepair}
+Values from before a repair or correction, which the body mentioned in passing beside the current value it still prints.
+
+\paragraph{From \S\ref{sec:3d-2p2h}, the high-$\Eavail$ bin.}
+2p2h also does not touch the high-$\Eavail$ $[1.50,3.00)$ bin, where the data
+exceed the flux-repaired GENIE CV by about \SI{9}{\percent} (data/CV $1.09$;
+it was $1.15$ before the repair) \ldots
+
+\paragraph{From \S\ref{sec:eavailw-band}, the generator inputs.}
+The 3D and $(\Eavail,W)$ comparisons
+now take each generator from one five-dimensional histogram, so the earlier
+unreconciled \SI{3}{\percent} difference between two GENIE~CV productions no
+longer enters: the in-phase-space GENIE~CV total is \SI{2.76e-38}{cm^2/nucleon}
+in both. The GENIE$+$MEC prediction uses the 3D normalization convention, which
+also removes a \SI{2.87}{\percent} under-normalization of the earlier
+$(\Eavail,W)$ MEC prediction (\texttt{KNOWN\_ISSUES.md} row 81).
+
+\paragraph{From \S\ref{sec:uq-combine}, the background-CV choice.}
+``\ldots the effect on the \emph{adopted}
+covariance is smaller still, \SI{0.09}{\percent} before the flux (J28)
+correction and \SI{0.18}{\percent} after it \ldots''
+
+\paragraph{From \S\ref{sec:pet-projection}, cloud coverage before the miss-row fix.}
+Originally the cloud was filled only in the reco-signal event loop, so the
+truth-only ``miss'' events appended for the unfold (\SI{\pcMiss}{\percent} of
+the truth sample) carried no cloud --- only \SI{\pcHasCloudBefore}{\percent} of
+truth events had one, and cloud projections were correspondingly
+acceptance-limited, landing exactly on the stored-$\Eavail$ projection
+restricted to the has-cloud subset but sitting $1.5$--$2\times$ below
+the full unfold per bin. This is a truth-side instance of the same
+dangling-miss-row dump issue tracked for the systematic bank. We fixed it at
+source by carrying the truth final-state hadrons through the
+truth-denominator loop and filling \texttt{part\_gen} for the appended miss
+rows (the reco cloud \texttt{part\_reco} correctly stays empty for a miss),
+then re-dumping, rebuilding the inputs, and re-training.
+
+\paragraph{From \S\ref{sec:pet-projection}, the \texttt{ISSUE-30} projection fix.}
+After ``the unfolded counts are already acceptance-corrected'':
+``\ldots so
+that division corrected for acceptance twice. The fix lowers every projected
+$d\sigma/d\Eavail$ bin by 25--51\% and leaves the spread above essentially unchanged.''
