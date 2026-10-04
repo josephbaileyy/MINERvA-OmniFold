@@ -77,3 +77,13 @@ against an availability figure from which they have already been subtracted.
 **Status until the owner adopts a text:** budget revision 7 stays in force, as the owner decided. The campaign
 records 10% compliance as **UNRESOLVED**: R1, R3 and R3′ pass and R2 fails. A decision is needed before measured
 production passes 209.647.
+
+## 5. Resolution (2026-10-04)
+
+**RESOLVED.** The owner adopted A2 as an explicit amendment: `AMENDMENT-20261004-s5p-10pct-pool-limit-A2.md`, which
+quotes the decision verbatim and records the operands.
+- At creation, the unspent, unreserved remainder was 310.184 against a limit of 341.63.
+- At the 2026-10-04 enlargement, it was 113.901 against a limit of 314.96.
+- Both satisfy the limit.
+
+No additional hours are authorized. The sections above are unedited.
