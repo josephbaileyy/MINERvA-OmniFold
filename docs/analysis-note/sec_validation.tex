@@ -56,6 +56,7 @@ covariance, and its size on data is not established.
 % docs/orchestration/state/s5c/d1/d1_summary.json, docs/orchestration/state/s5c/d1/bias_vs_adopted.json.
 
 \paragraph{Unbinned background treatment and generator-sized truth changes.}
+\label{sec:val-negweight}
 The same end-to-end experiments were repeated with the unbinned negative-weight
 treatment (\texttt{-{}-bkg-mode negweight-refined}): data and signed background
 simulation are refined to non-negative weights before the first OmniFold step, and the
@@ -83,6 +84,7 @@ is not adopted.
 % KNOWN_ISSUES 75, 77; independently reproduced (state/s5n/stage1/review-round-1.md).
 
 \paragraph{Diagnosis of the departure response; a refinement-capacity candidate.}
+\label{sec:val-departure}
 An instrumented rerun recorded every OmniFold iteration of these experiments. It
 reproduced the development results bitwise and repeated them through the unmodified
 driver, which shows the same response to the $\Eavail$ departure (highest-$W$ cell
@@ -112,10 +114,18 @@ which did not establish calibration for every functional.
 It fails the predeclared stability test on the data: perturbing the inputs within
 floating-point rounding moves the reported functionals by 0.8 statistical standard
 deviations in the median and 2.6 at most. The same instability, at most \SI{1.2}{\percent}, explains the
-difference between the driver and development pipelines on the data. The later
-paired-bootstrap study below addresses containment for this candidate only. Under
-the historical shapes withheld during that assessment the unfolding-model dependence is \SIrange{2}{6}{\percent} in the median
-and \SIrange{16}{31}{\percent} at most. Nothing is adopted.
+difference between the driver and development pipelines on the data. A later
+measurement under the same candidate found it already inside the data-bootstrap
+uncertainty, which refits everything per replica: each replica carries the same rounding
+spread (median \SI{0.23}{\percent} per joint cell), about \SI{37}{\percent} of the bootstrap
+variance, and it is below a tenth of any total uncertainty. The central value is
+reproducible only to this size.
+% Source: KNOWN_ISSUES 80; docs/orchestration/RECORD-20260927-s5p-stage2-exit.md section 2 (VL155).
+The later paired-bootstrap study below addresses containment for this candidate only.
+Under the historical shapes withheld during that assessment the unfolding-model dependence is \SIrange{2}{6}{\percent} in the median
+and \SIrange{16}{31}{\percent} at most. For these other fixed generator shapes (NuWro; GENIE
+with enhanced meson-exchange currents) it stays within the quoted total uncertainty in
+20 of the 42 $(\Eavail,W)$ cells. Nothing is adopted.
 % Source: docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md (VL153);
 % docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (VL154); KNOWN_ISSUES 75, 77, 79, 80;
 % independently reproduced (state/s5e/diag/review-round-1.md, state/s5e/cand/review-round-2.md).
@@ -276,7 +286,7 @@ validation of an interval are separate tasks; total-interval validation also nee
 an explicit treatment of physical nuisances and model dependence. No such new
 ensemble is part of this synthesis, and the precision-measurement objective remains
 unmet.
-% Evidence: nd-unfolding/gbdt_model_dependence/{inputs,results,README.md}; VL161.
+% Evidence: nd-unfolding/gbdt_model_dependence/{inputs,results,README.md}; VL163.
 % Historical grades: s5e A_FAIL; s5p amendment 4 NOT ADMITTED; amendment 6 LOW corrections.
 
 \subsection{Other validation diagnostics}
@@ -293,17 +303,49 @@ cross-fitting, and a valid null would require re-running the full (cross-fitted)
 pipeline per pseudoexperiment. Calibrated unbinned goodness-of-fit remains an
 open problem~\cite{unbinnedguide}.
 
-\paragraph{Toy residuals and coverage status.}
-The existing 200 2D closure toys fluctuate both the unfolded result and the
-stored \texttt{hTruthXSec2D} through the MC bootstrap. The stored truth varies
-in all 205 reported bins, so its all-toy mean is not an independent fixed truth
-for a split-sample coverage claim. We therefore quote no 2D coverage number
-from this ensemble. Its same-ensemble figures
-(\SI{\pullFrac}{\percent}, $\langle|r|\rangle=\pullMeanAbs$ vs
-$\sqrt{2/\pi}=\pullGauss$, and \SI{97.6}{\percent} of bins above
-\SI{65}{\percent}) are retained only as standardized-pull/Gaussianity
-diagnostics. A coverage test requires an independently stored unfluctuated
-truth reference (or a redesigned ensemble) and remains open.
+\paragraph{Pull diagnostics and the open 2D coverage test.}
+\label{sec:coverage}
+The existing ensemble is $N_{\text{toy}}=200$ 2D closure unfolds
+(\texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}; rollup
+\texttt{uq/coverage\_toys.py}, summary \texttt{uq/coverage/coverage\_summary.txt}),
+each combining \texttt{-{}-closure} (pseudo-data are weighted MC reco events, and
+a truth marginal is written to \texttt{hTruthXSec2D}) with
+\texttt{-{}-bootstrap-seed $k$} (per-event Poisson(1) draws as in the production
+bootstrap, seeds chosen to avoid collision with the production replicas). Toy
+seeds are independent and bins within a toy are correlated. Because the MC
+bootstrap multiplies \texttt{w\_truth}, the toys fluctuate both the unfolded
+result and the stored \texttt{hTruthXSec2D}. The stored truth varies
+in all 205 reported bins, so its all-toy mean $\bar X^{\text{truth}}$ is not an
+independent fixed truth for a split-sample coverage claim; it is used only to
+center a same-ensemble diagnostic. With $\sigma_{i}$ the across-toy standard
+deviation (ddof $=1$) in reported bin $i$ (where $\bar X^{\text{truth}}_{i}>0$)
+and $r^{(t)}_{i}=(U^{(t)}_{i}-\bar X^{\text{truth}}_{i})/\sigma_{i}$ the
+per-toy standardized residual, the per-bin fraction $c_{i}$ of toys with
+$|r^{(t)}_{i}|\le1$ is compared with the unit-normal
+$\Phi(1)-\Phi(-1)=\mathrm{erf}(1/\sqrt 2)\approx0.6827$, and the mean absolute
+pull $\langle|r|\rangle$ with $\sqrt{2/\pi}$. The fraction with $|r|\le1$ is
+\SI{\pullFrac}{\percent} (Gaussian reference $68.27\%$; $\Delta = +0.44\%$;
+median $68.50\%$); $\langle|r|\rangle=\pullMeanAbs$ vs
+$\sqrt{2/\pi}=\pullGauss$ (within $0.5\%$); the signed residual mean is
+$+0.006 \pm 0.082\,\sigma$ (no bias); and \SI{97.6}{\percent} of bins have a
+within-bin fraction above \SI{65}{\percent} (only $5$ of $205$ fall below).
+These show that the standardized toy residuals are approximately normal.
+Because $\sigma_i$ is estimated from the same toys being scored, this is not a
+frequentist coverage measurement and does not certify the bootstrap band; the
+figures are retained only as standardized-pull/Gaussianity diagnostics. We therefore quote no
+2D coverage number from this ensemble
+(App.~\ref{app:history}). A coverage test requires an
+independently stored unfluctuated truth reference (or a redesigned ensemble)
+and remains open.
+
+\paragraph{Five-dimensional coverage test.}
+\label{sec:coverage-5d}
+In five dimensions an end-to-end independent-truth test was run on the statistical
+intervals of a deterministic variant of the estimator, with a nominal-truth bias
+correction (1,200 pseudo-experiments over three truths). It failed its predeclared
+futility criterion at the nominal and the $\Eavail$-tilted truths, so no frequentist
+coverage is claimed for any five-dimensional interval.
+% Source: docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
 
 \paragraph{Stability.}
 5-iter total $\sigma$ within \SI{0.026}{\percent} of 10-iter (per-bin shape RMS

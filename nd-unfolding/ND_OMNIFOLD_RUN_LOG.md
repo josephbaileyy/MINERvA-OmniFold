@@ -428,7 +428,7 @@ Authority `docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activatio
 
 
 
-## 2026-10-03 — Existing-data model-dependence synthesis (VL161)
+## 2026-10-03 — Existing-data model-dependence synthesis (VL163)
 
 Reduced 376 distinct saved products into conserved cell integrals in a separate analysis
 namespace; no extraction, training, unfolding, ensemble generation or allocation. The

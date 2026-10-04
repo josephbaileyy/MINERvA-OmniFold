@@ -113,8 +113,11 @@ The tested iteration and capacity scans do not remove it; for other fixed genera
 is \SIrange{16}{31}{\percent} in the most affected cell and within the quoted total
 uncertainty in about half of the $(\Eavail,W)$ cells. The unfolded values on data also move
 by up to a few statistical standard deviations under input changes at the level of
-floating-point rounding. A later paired study supports containment of this rounding
-variability in candidate $R$'s refit bootstrap, without regrading its failed stability
+floating-point rounding; a later measurement found this spread already inside the
+data-bootstrap statistical uncertainty, which refits every replica, and well below the total
+uncertainty, but it limits how exactly the central values can be reproduced.
+% Absorption source: KNOWN_ISSUES 80; docs/orchestration/RECORD-20260927-s5p-stage2-exit.md section 2 (VL155).
+A later paired study supports this containment without regrading the failed stability
 test or qualifying the adopted uncertainty. The longer-iteration and capacity scans
 measure noise-free recovery without matched repeat variances; they therefore do not
 establish a bias--variance tradeoff. Coarser reporting changes the quantities estimated,
@@ -183,7 +186,12 @@ $1.11$--$1.13$ for $2.2\le W<\SI{3.0}{GeV}$, against $1.07$--$1.15$
 integrated), and in the joint high-$\Eavail$, high-$W$ region ($\Eavail\ge\SI{0.8}{GeV}$,
 $W\ge\SI{1.8}{GeV}$) it is $1.14$--$1.16$, within \SI{7}{\percent} of their
 integrated ratios.  GiBUU, the most deficient, falls furthest behind there
-($1.61$, against $1.39$ overall).  Turning on the Valencia two-particle--two-hole
+($1.61$, against $1.39$ overall), but its sample stops at $E_\nu\approx\SI{20}{GeV}$: in
+GENIE and NuWro higher energies carry \SIrange{14}{15}{\percent} of this region's cross
+section and \SI{7}{\percent} of the total, and supplying that share gives GiBUU
+about the others' contrast ($1.37$ against $1.29$).
+% Source: VALIDATION_LEDGER VL161 (docs/orchestration/state/note-capgap-20261003/); KNOWN_ISSUES 82.
+Turning on the Valencia two-particle--two-hole
 component leaves that region unchanged because it primarily populates lower
 $W$ --- visible here precisely because the first two curves are two
 configurations of one generator rather than independent predictions.  The
@@ -200,7 +208,7 @@ independent confirmation of this localized difference.
   \caption{Generator context for the unfolded $\Eavail$ (left) and $W$ (right)
   central-value projections.  GENIE-CV (untuned GENIE~2.12.10 on CH, with no two-particle--two-hole events), the same GENIE with the Valencia two-particle--
   two-hole contribution, NuWro~21.09, and GiBUU~2019 (both on carbon) all remain below the unfolded result
-  overall and at high $W$; GENIE and NuWro by about their overall normalization shortfall, GiBUU by more.  No significance is assigned.}
+  overall and at high $W$; GENIE and NuWro by about their overall normalization shortfall, GiBUU, whose sample stops at $E_\nu\approx\SI{20}{GeV}$, by more.  No significance is assigned.}
   \label{fig:generator-context}
 \end{figure*}
 
@@ -209,8 +217,8 @@ validated against an established two-dimensional measurement and extended to
 five simultaneous observables.  The higher-dimensional central values recover
 the known low-recoil behavior and expose a central-value excess over the
 MINERvA Tune~v1 localized at high $\Eavail$ and high $W$; the four external
-generator predictions compared here all lie below the data overall, GiBUU most
-so at high $\Eavail$ and $W$.  Every non-two-dimensional result in this Letter is a
+generator predictions compared here all lie below the data overall, GiBUU the
+most, partly because its sample stops at $E_\nu\approx\SI{20}{GeV}$.  Every non-two-dimensional result in this Letter is a
 central value.  A scalar five-dimensional covariance is adopted under a
 digest-bound exception, and its \zprojCells-cell $(\Eavail,W)$ projection is
 built; no superseded or historical covariance is used here.  We nevertheless

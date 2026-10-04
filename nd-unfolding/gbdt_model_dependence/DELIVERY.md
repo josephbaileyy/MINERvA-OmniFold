@@ -20,7 +20,7 @@ The canonical follow-up commit containing this record changes only delivery evid
 - [inputs/operands.npz](inputs/operands.npz), [definition.json](definition.json), [reduce.py](reduce.py), [analyze.py](analyze.py): sufficient projected inputs, source identities and independent reduction implementation. Original training is not rerun or reproduced by this package.
 - [results/](results/): five CSV tables, numerical summary and four PDF/SVG figures. All four analysis PDFs match the manuscript copies byte-for-byte.
 - [PROPOSAL.md](PROPOSAL.md): prioritized missing quantities, precision assumptions, costs and terminal decisions.
-- Ledger `VL161`, `ND_OMNIFOLD_RUN_LOG.md` and `ND_OMNIFOLD_STATUS.md`: scoped scientific record. Original receipt-bound production code and historical results remain unchanged.
+- Ledger `VL163`, `ND_OMNIFOLD_RUN_LOG.md` and `ND_OMNIFOLD_STATUS.md`: scoped scientific record. Original receipt-bound production code and historical results remain unchanged.
 
 From the repository root, run `python nd-unfolding/gbdt_model_dependence/analyze.py` to regenerate the tables and figures without cluster access. Rebuilding projected operands from raw products requires the original receipt-routed copies and a separate remote hash read, as documented in the README.
 

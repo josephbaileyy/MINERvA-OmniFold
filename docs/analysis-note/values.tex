@@ -129,6 +129,8 @@
 % struck wherever printed. Grounds: niter=2 vs the pinned niter=3 (CLM-010/CLM-012),
 % the 2026-08-01 full-event estimator change, and J21 (no background subtraction).
 % See docs/orchestration/INDEX-retracted-and-superseded-values.md.
+% (2026-10-03: those struck sec_pet.tex uses were removed by 95d03169 on 2026-08-23; since
+% 2026-10-03 the two literals and \petRatio are struck in app_history.tex H.1 instead.)
 \newcommand{\petRatio}{0.912}         % PET/GBDT absolute total ratio; niter=2 LEGACY, struck at use
 \newcommand{\petClosure}{1}           % niter=2 LEGACY, struck at use; NOT QUOTABLE as a current value
 % RULED 2026-08-21 BY JOSEPH -- the OPEN QUESTION recorded here on 2026-08-20 is CLOSED.
@@ -145,9 +147,24 @@
 %   sec_pet.tex:112 (note build only) -- STRUCK as $\sim$\,\dead{\SI{\petClosure}{\percent}}
 %     with an explicit "struck: legacy two-iteration self-consistency diagnostic, not a
 %     current validation" label, matching \dead{\petRatio} in that same caption.
+%   (stale before 2026-10-03; was sec_pet.tex:112) There is no current location: commit
+%     95d03169 (2026-08-23) removed the struck \petClosure and \petRatio from sec_pet.tex
+%     rather than moving them, and app_history.tex does not carry them either. Measured
+%     2026-10-03: neither macro is used in any .tex file; only these definitions remain.
+%   CURRENT LOCATION, 2026-10-03 (later the same day): app_history.tex H.1
+%     (\label{app:history-errata}). The struck uses removed by 95d03169 are recovered there,
+%     as errata rows and as verbatim sentences from 95d03169^ in the H.1 context subsection:
+%     $\dead{\petRatio}$ (its row plus both recovered sentences that struck it),
+%     $\sim$\,\dead{\SI{\petClosure}{\percent}}
+%     and $\dead{\sim\SI{\petGbdtGap}{\percent}}$. The dated record above stands: these macros
+%     WERE unused from 2026-08-23 to 2026-10-03.
 %
 % THE MACRO IS MARKED, NOT RETIRED, AND THAT IS DELIBERATE: sec_pet.tex still references
-% it inside \dead{}, so deleting the definition would break the note build. Its comment
+% it inside \dead{}, so deleting the definition would break the note build. [Stale before
+% 2026-10-03, for the same reason: no file references it, so the build no longer needs
+% the definition. It is left in place; retiring it is a separate decision.] [True again
+% from 2026-10-03: app_history.tex H.1 references it inside \dead{}, so the note build
+% needs the definition. Unused 2026-08-23 to 2026-10-03.] Its comment
 % now carries the same "niter=2 LEGACY, struck at use" marking as its two siblings --
 % which is precisely the marking whose ABSENCE made its status undetermined before.
 %
@@ -325,7 +342,7 @@
 % These are MEASUREMENTS, not caveats, and Joseph required them to travel with every
 % deliverable built from the adopted digest. Each is quoted from a committed receipt,
 % named beside it, so a reader can re-derive rather than take it on trust.
-\newcommand{\zcvDigest}{3d7465f6}        % first 8 of sha256 3d7465f66fbe66b0fc...918c5
+\newcommand{\zcvDigest}{3d7465f6}        % first 8 of sha256 3d7465f66fbe66b0dfcf...918c5
 \newcommand{\zprojDigest}{835828bf}      % M1 (Eavail,W) publication product, 42 cells
 \newcommand{\zprojCells}{42}
 % (1) The cause-3 grade. GRADE-20260920-cause3-two-member.json, branch 5 NOT MET - PER-BIN,

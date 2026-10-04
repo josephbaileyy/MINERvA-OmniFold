@@ -15,15 +15,29 @@ three concerns and at most two review/repair cycles.
 1. Five `$NS/runs/prod/status/<null>-final.json` files exist. Read each one's `reason` (`rule met for both tests`,
    `maximum reached`, `batches exhausted`, `budget`).
 2. Power is finished:
-   - `runs/queue-prod-r2-pow.log` (**the r2 log**, not r1) contains `queue done`;
+   - `runs/queue-prod-r3-pow.log` (**the r3 log**, since transition r3 on 2026-10-04; not r1 or r2) contains `queue done`;
    - or the runner's own lines show a budget or incomplete outcome.
 3. `squeue -h -u josephrb -o "%j"` exits **rc 0**, read into a file and with its own rc checked, and lists no
    `s5p-s5p_(cal|pow)_` job.
-4. `s5c_meter.py measure`, run **from `$NS/deploy/c754f3cd`** (or a later deploy carrying budget revision 6), exits
-   rc 0 with open concurrency **0** for both cpu and gpu. The old deploys' budget is refused (rc 5).
-5. All six r2 runners have ended (`queue done`, or a recorded stop). No queue-runner process is left on login33.
+4. `s5c_meter.py measure`, run **from `$NS/deploy/e0d7b04a`** (or a later deploy carrying budget revision 7), exits
+   rc 0 with open concurrency **0** for both cpu and gpu. The older deploys' budgets are refused (rc 5).
+5. All the runners have ended (`queue done`, or a recorded stop): the five remaining r3 runners and, since transition r4
+   stage 1 (2026-10-04T16:20Z), NuWro's r4 runner (PID 669349, deploy `$NS/deploy/b93445c4`, log
+   `runs/queue-prod-r4-NuWro_21_09.log`; a stage-2 transition would replace it again). No queue-runner process is left
+   on login33.
 
 ## 2. Evaluation sequence (login node; no allocation)
+
+`state/s5p/stage7/s5p_terminal_run.sh` implements §1 and §2, steps 1–4 and 6, with assertions and exit codes:
+- `check` exits 0 only when §1 holds;
+- `deploy <sha>` makes the new clean clone and verifies it;
+- `verify <sha>` re-checks an existing deploy;
+- `evaluate <sha>` re-runs `check` and `verify`, refuses to overwrite any output, then runs the four steps and
+  prints the recompute packet.
+
+Its exit codes are 0 done, 1 a check failed, 2 a probe failed, 4 sensitivity INCOMPLETE. It was tested read-only
+on 2026-10-03: `check` correctly gave TERMINAL: NO; `verify c754f3cd` passed the frozen, design and V checks and
+correctly failed on the missing sensitivity script.
 
 1. **Deploy.** Make a NEW clean clone of current `origin/main` into `$NS/deploy/<sha>`. Verify:
    - HEAD and a clean tree;

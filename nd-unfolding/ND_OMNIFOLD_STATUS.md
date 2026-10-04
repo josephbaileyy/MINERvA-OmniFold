@@ -128,7 +128,7 @@ replacement is implied for 4D/FPS or dependent significances. See
 
 ## Existing-data methodological synthesis — 2026-10-03
 
-[VL161 reduction package](gbdt_model_dependence/README.md): historical truth-dependent
+[VL163 reduction package](gbdt_model_dependence/README.md): historical truth-dependent
 recovery, repeat residual variability, fixed statistical interval behavior and prior
 sensitivity are now integrated into the note. **No bias–variance tradeoff across settings
 is established**, because the required matched repeat ensembles are absent. The historical

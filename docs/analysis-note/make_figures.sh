@@ -45,10 +45,20 @@ run bootstrap_MEFHC_300/uq_corr_2d.png  2d-unfolding/uq  python plot_bootstrap_f
 run seedscan_lgbm/seedscan_spread_2d.png  2d-unfolding  python seedscan/analyze_seedscan.py --glob "$REPO/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed*.root" --outdir "$REPO/2d-unfolding/seedscan_lgbm"
 
 echo "== 3D generators =="
-run generators_vs_unfolded_band.png  3d-unfolding/genie  python overlay_generators_band.py --unfolded ../xsec_3d_MEFHC_5iter_lgbm.root --cov uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root:hCov_combined3d_total --syst-cov uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root:hCov_universe3d_total --band uq_3d/stat_band_3d.root --generator GENIE-CV:genie_cv_xsec3d.root --generator Tune-v1:model_tunev1_xsec3d.root --generator NuWro:nuwro_cv_xsec3d.root --generator GiBUU:gibuu_cv_xsec3d.root --out generators_vs_unfolded_band
+# 2026-10-03: fig:3dmodels, fig:modedecomp, fig:mec (and fig:ascencio, below) drew uncertainties from
+# superseded covariances. Until a 3D/4D covariance is adopted the body shows them as central values
+# only, drawn by the note-owned redraw_central_only.py on the Stage-7 flux-repaired inputs (it refuses
+# other bytes) and written straight to figures/<name>_central.pdf. The superseded versions stay at
+# figures/<name>.pdf for App. H (reproduction/s5p/scope.py pins three of them) and are no longer
+# regenerated; their producer lines are kept, commented out. Their default inputs are pre-repair.
+S7G="/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding"
+run figures/generators_vs_unfolded_band_central.png docs/analysis-note  python redraw_central_only.py --genfig "$S7G" --outdir figures --only generators
+run figures/mode_decomp_eavail_central.png          docs/analysis-note  python redraw_central_only.py --genfig "$S7G" --outdir figures --only modedecomp
+run figures/compare_mec_eavail_central.png          docs/analysis-note  python redraw_central_only.py --genfig "$S7G" --outdir figures --only mec
+# run generators_vs_unfolded_band.png  3d-unfolding/genie  python overlay_generators_band.py --unfolded ../xsec_3d_MEFHC_5iter_lgbm.root --cov uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root:hCov_combined3d_total --syst-cov uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root:hCov_universe3d_total --band uq_3d/stat_band_3d.root --generator GENIE-CV:genie_cv_xsec3d.root --generator Tune-v1:model_tunev1_xsec3d.root --generator NuWro:nuwro_cv_xsec3d.root --generator GiBUU:gibuu_cv_xsec3d.root --out generators_vs_unfolded_band
 run compare_3d_fullcov.png           3d-unfolding/genie  python compare_3d_fullcov.py --data ../xsec_3d_MEFHC_5iter_lgbm.root --cov uq_3d/universe_stage2_3d/uq_universe_3d_covariance.root:hCov_combined3d_total --generator GENIE-CV:genie_cv_xsec3d.root --generator Tune-v1:model_tunev1_xsec3d.root --generator NuWro:nuwro_cv_xsec3d.root --generator GiBUU:gibuu_cv_xsec3d.root --out compare_3d_fullcov
-run compare_mec_eavail.png           3d-unfolding/genie  python compare_mec_eavail.py --plot compare_mec_eavail.png
-run mode_decomp_eavail.png           3d-unfolding/genie  python mode_decomp_eavail.py --gst genie_mefhc_cv_ALL.gst.root --plot mode_decomp_eavail.png
+# run compare_mec_eavail.png           3d-unfolding/genie  python compare_mec_eavail.py --plot compare_mec_eavail.png
+# run mode_decomp_eavail.png           3d-unfolding/genie  python mode_decomp_eavail.py --gst genie_mefhc_cv_ALL.gst.root --plot mode_decomp_eavail.png
 
 echo "== (Eavail,W) + q3 =="
 run products/5d/excess_eavail_W.png  nd-unfolding  python excess_eavail_W.py
@@ -97,7 +107,10 @@ run universe_stage2_3d/uq_universe_3d_band_eavail.png  3d-unfolding/uq_3d  pytho
 echo "== control / migration / ascencio / landscape =="
 run products/5d/control_plots.png        nd-unfolding  python make_control_plots.py
 run products/5d/control_corner.png       nd-unfolding  python plot_control_corner.py
-run products/4d/ascencio_fullcov_compare.png nd-unfolding  python compare_ascencio_fullcov.py
+# 2026-10-03: central values only, as for the 3D generators above (our bars and the chi^2 came from
+# the superseded unified-throw 4D covariance; the published points keep the published covariance).
+run figures/ascencio_fullcov_compare_central.png docs/analysis-note  python redraw_central_only.py --xsec4d "$REPO/nd-unfolding/products/4d/xsec_4d_MEFHC_5iter_lgbm.root" --supplemental "$REPO/3d-unfolding/genie/ascencio_2110.13372_supplemental.txt" --outdir figures --only ascencio
+# run products/4d/ascencio_fullcov_compare.png nd-unfolding  python compare_ascencio_fullcov.py
 run minerva_unfolding_landscape.png      3d-unfolding  python plot_minerva_landscape.py
 
 echo

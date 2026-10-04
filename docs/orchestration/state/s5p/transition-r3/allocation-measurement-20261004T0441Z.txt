@@ -1,0 +1,12 @@
+# measured 2026-10-04T04:41:22Z on login31
+## iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               1932.0            10000.0     16817.7      20000.0
+m3246_g             1196.0            90000.0    123660.8     180000.0
+rc=0
+## squeue -A m3246 (all users) pending/running rows %i|%u|%q|%T|%D|%C|%l|%L|%P
+squeue_rc=0
+131
+    121 josephrb shared PENDING
+     10 josephrb shared RUNNING

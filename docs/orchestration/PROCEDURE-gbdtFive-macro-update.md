@@ -22,7 +22,7 @@ rather than recall, so the check exists when the pressure is to just change the 
     values.tex:59  \gbdtFiveCVTrace      6.24e-38  conservative CV-centered variant
     values.tex:60  \gbdtFiveMeanShift    1.65e-38  separately reported joint mean-shift norm
 
-**All four are consumed in one continuous prose block, `sec_systematics.tex:162-170`** — at `:163`, `:165`,
+**All four are consumed in one continuous prose block, `sec_systematics.tex:162-170`** *(moved 2026-10-03: that block's successor text is now `docs/analysis-note/app_history.tex` H.3.4, `\label{app:history-5dcandidates}`, and consumes none of the four macros)* — at `:163`, `:165`,
 `:166` and `:168` respectively. There is **no second consumption site anywhere in the note.** So this is one
 sentence-chain to re-read, not four independent edits, and the risk is that a per-macro search-and-replace
 leaves the chain internally inconsistent.
