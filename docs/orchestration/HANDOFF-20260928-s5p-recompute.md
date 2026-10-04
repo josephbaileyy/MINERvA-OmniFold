@@ -692,6 +692,19 @@ script only).**
   - Two P2 tasks had no log and no `sacct -X` row. They are unverified and not counted, consistent with the
     campaign's record that tasks split off while pending can lack an `sacct` row.
 
+*Observation 2026-10-04 (campaign incident 17:15Z, `campaign-state.json` at `eed3a7c0`): the first non-TIMEOUT task
+failure.*
+- `59321575_0` (MEC b6 task 0) is `sacct` FAILED 129:0: the interpreter segfaulted in finalization (ROOT
+  `TClass::LoadClassInfo`) after its work.
+- Checked by this lane, read-only: its log has six `rc 0` lines and none nonzero. Each of seeds 1241200–1241205 has
+  exactly one product, with no `.partial`; each zip tests clean; each `xsec_flat` holds 65,856 finite values; each
+  `pseudo_seed` matches.
+- So these are finished products. They are in the ensemble and are not missing seeds.
+- In general, the seed disposition classifies missing seeds by product absence, so a FAILED task whose seeds all
+  have products contributes nothing. A FAILED task that does leave seeds missing gives `submitted_unaccounted`: it
+  has a log but no cancellation line. That is "not established" and fails closed (§5.4, §5.8). Resolve it from the
+  log and `sacct` before describing it.
+
 **5.8 Missing-experiment sensitivity bounds (2026-09-30; report only; not reviewed code).**
 
 *Requested and scoped.* Requested by a Codex coordination session that relays the owner's request; that relay is not
