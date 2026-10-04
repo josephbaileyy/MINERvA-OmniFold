@@ -47,7 +47,7 @@
  },
  "jobs": [
   {
-   "job": "production lanes (transition r2 complete 2026-09-30T22:44:35Z)",
+   "job": "production lanes (transition r3 complete 2026-10-04T04:47Z)",
    "state": "running",
    "arrays": {
     "pow P1_a1.0": "59021632 (done, 193)",
@@ -60,16 +60,16 @@
     "GiBUU_2019 b2": "59132264"
    },
    "runners_login33": {
-    "pow": "PGID 1174643 (deploy c754f3cd, queues-r2/pow.q, log runs/queue-prod-r2-pow.log)",
-    "MnvTune_v1": "PGID 1174644 (c754f3cd, queues-r2)",
-    "GENIE_2_12_10_CV": "PGID 1174645 (c754f3cd, queues-r2)",
-    "GENIE_2_12_10_MEC": "PGID 1174646 (c754f3cd, queues-r2)",
-    "NuWro_21_09": "PGID 1174647 (c754f3cd, queues-r2)",
-    "GiBUU_2019": "PGID 1174648 (c754f3cd, queues-r2)"
+    "pow": "PID 1047835 (deploy e0d7b04a, queues-r3/pow.q, log runs/queue-prod-r3-pow.log)",
+    "MnvTune_v1": "PID 1047836 (e0d7b04a, queues-r3)",
+    "GENIE_2_12_10_CV": "PID 1047838 (e0d7b04a, queues-r3)",
+    "GENIE_2_12_10_MEC": "PID 1047839 (e0d7b04a, queues-r3)",
+    "NuWro_21_09": "PID 1047840 (e0d7b04a, queues-r3)",
+    "GiBUU_2019": "PID 1047841 (e0d7b04a, queues-r3)"
    },
    "handoff": "docs/orchestration/HANDOFF-20260929-s5p-campaign-cold-start.md",
    "campaign_session": "gbdt worker [dfdda9] (takeover 2026-09-29T07:08Z)",
-   "meter_deploy": "c754f3cd (budget revision 6; the old deploys' budget is refused by the meter)"
+   "meter_deploy": "e0d7b04a (budget revision 7; older deploys refused by the meter)"
   }
  ],
  "receipts": [
@@ -421,6 +421,10 @@
   {
    "utc": "2026-10-04T05:05Z",
    "what": "TRANSITION R3, PART 2 (commit B = execution target): budget.json revision 7 made live (byte-identical to state/s5p/transition-r3/budget-rev7.json): production 234.647, verification/repair 68.287, pool 341.434, cumulative ceiling 376.52. Effective only after the ledger rebind from the new deploy of this commit; the rev-6 deploys' budget is refused by the meter from then on."
+  },
+  {
+   "utc": "2026-10-04T04:50Z",
+   "what": "TRANSITION R3 COMPLETE (cluster times). Deploys built and validated BEFORE any stop: A ae85b7f2 (rollback, rev 6) and B e0d7b04a (rev 7) cloned to NEW $NS/deploy/ae85b7f2 and $NS/deploy/e0d7b04a; validate_deploy_r3.py: B as rev 7 VALID (production 234.647, verification/repair 68.287 = 20%, pool 341.434, envelope 376.52, other stages/GPU/concurrency unchanged, six queues-r3 byte-identical from their wait lines, throttles unchanged), A as rev 6 VALID; rejections INVALID (A as rev 7; c754f3cd lacking queues-r3, rejected by an exception rather than a clean INVALID); rebind dry run on a ledger copy (rev 7 measures, rev 6 then refused rc 5, rollback rc 0; real ledger unchanged). E2 04:46:13-04:46:31Z: the six r2 runners stopped by process group, each on its planned wait line, logs unchanged. E5 04:46Z: ledger rebound from deploy B, budget sha256 be29f2c3... (receipt meter-measure-transition-r3-after-rebind-20261004T0446Z.json): production allocation 234.647, reserve 68.287, pool 341.434, charged production 189.127 (6 open reservations), envelope CPU 262.619 of 376.52, the same six open admissions, open concurrency 2.0; measure from c754f3cd now refused (rc 5). E6 04:47:01Z: one runner per lane from deploy B, PIDs pow 1047835, MnvTune_v1 1047836, GENIE_2_12_10_CV 1047838, GENIE_2_12_10_MEC 1047839, NuWro_21_09 1047840, GiBUU_2019 1047841; logs runs/queue-prod-r3-<lane>.log. E7 postcheck OK (six PPID-1 leaders on e0d7b04a, logs pinned and on their wait lines, no old r2 group alive); squeue exactly the six arrays 59247862 59253130 59266398 59272530 59288694 59300403 (nothing submitted). Runner downtime ~48 s. The terminal-run script, CHECKLIST s1 and the cold-start handoff addendum now point at deploy e0d7b04a, the r3 PIDs and the r3 pow log."
   }
  ],
  "findings": [

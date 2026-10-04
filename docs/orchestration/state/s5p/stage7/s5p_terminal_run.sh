@@ -14,8 +14,8 @@ NULLS="MnvTune_v1 GENIE_2_12_10_CV GENIE_2_12_10_MEC NuWro_21_09 GiBUU_2019"
 DESIGN_SHA=404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285
 V=$NS/stage3/V/V-s3v.npz
 V_SHA=35979ef75ca1b0fb019c07a20e11a4bf0fe3b230e7cea495930fb572fe8e1c84
-METER_DEPLOY=$NS/deploy/c754f3cd
-RUNNER_PIDS="1174643 1174644 1174645 1174646 1174647 1174648"
+METER_DEPLOY=$NS/deploy/e0d7b04a   # budget revision 7 (transition r3); older deploys are refused by the meter
+RUNNER_PIDS="1047835 1047836 1047838 1047839 1047840 1047841"   # r3 runners (2026-10-04)
 OUT=$NS/stage7/joint
 cmd=${1:?check | deploy <sha> | verify <sha> | evaluate <sha>}
 fail=0
@@ -28,7 +28,7 @@ check_terminal() {
     if [ -f "$f" ]; then say "PASS final $n: $(/usr/bin/python3.11 -c "import json,sys;d=json.load(open(sys.argv[1]));print('B',d['B'],'reason',d['reason'])" "$f")"
     else bad "no final status for $n"; fi
   done
-  P=$NS/runs/queue-prod-r2-pow.log
+  P=$NS/runs/queue-prod-r3-pow.log
   if grep -q "queue done" "$P"; then say "PASS power: 'queue done' in $(basename $P)"
   elif grep -qE "refused|--force-stop budget|\"reason\": \"budget\"|STOPPED the queue" "$P"; then bad "power: no 'queue done'; outcome lines: $(grep -E 'refused|--force-stop budget|"reason": "budget"|STOPPED the queue' "$P" | tail -2 | cut -c1-120)"
   else bad "power: queue not done"; fi
@@ -45,7 +45,7 @@ check_terminal() {
   A=$(timeout 120 ssh -n -q -o LogLevel=ERROR -o BatchMode=yes -o ConnectTimeout=30 login33 \
         "n=0; for p in $RUNNER_PIDS; do [ -r /proc/\$p/cmdline ] && n=\$((n+1)); done; echo \$n; timeout 60 ps -eo ppid,args 2>/dev/null | awk '\$1==1 && \$3 ~ /s5c_queue\\.sh\$/' | wc -l") || { echo "PROBE FAILED login33"; exit 2; }
   set -- $A
-  [ "$1" = 0 ] && say "PASS no r2 runner process left" || bad "$1 r2 runner processes still alive"
+  [ "$1" = 0 ] && say "PASS no r3 runner process left" || bad "$1 r3 runner processes still alive"
   [ "${2:-0}" = 0 ] && say "PASS no queue-runner session leader on login33" || bad "${2} queue-runner session leaders on login33"
 }
 
