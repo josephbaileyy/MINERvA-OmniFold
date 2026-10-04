@@ -289,3 +289,19 @@ This addendum is dated and does not edit the sections above. The owner decided o
 - **The meter:** every meter call must run from `$NS/deploy/e0d7b04a` or later. The r2 addendum's deploy `c754f3cd`
   is now refused (rc 5).
 - **The rollback target** is deploy `ae85b7f2` (revision 6 plus queues-r3).
+
+## Addendum 2026-10-04: transition r4 stage 1 moved NuWro to throttle 5
+
+This addendum is dated and does not edit the sections above. On the owner's instruction ("Prepare and execute the
+NuWro concurrency increase as other lanes finish, within the existing concurrency cap and budget …"), NuWro alone moved
+to a new runner at 16:20Z, verified at 16:20:29Z (campaign-state incident 2026-10-04T16:21Z):
+- **NuWro's runner** is now PID 669349 on login33, deploy `$NS/deploy/b93445c4`, queue
+  `prod/queues-r4/cal-NuWro_21_09.q` (resumed at the `s5p_cal_nuwro_21_09_b5` wait line, `--throttle 5`), log
+  `runs/queue-prod-r4-NuWro_21_09.log`, STOP file `runs/STOP-prod-r4-NuWro_21_09`. The r3 runner 1047840 is stopped.
+- **The other runners** are unchanged (r3, deploy `e0d7b04a`); power's runner ended at `queue done` (15:42Z).
+- **The budget** is unchanged: b93445c4 carries revision 7 byte-identical (`be29f2c3…`), so the meter runs from
+  either deploy. No rebind.
+- **Rollback:** `prod/queues-r4-rollback/cal-NuWro_21_09.q` (throttle 2), started by the same `transition-r4/runner_r4.sh`
+  procedure. Do not restart the r3 queue: it would re-run the b4 look and resubmit b5.
+- **Stage 2** (NuWro to throttle 16, 2.0 nodes alone) is planned only when MEC, MnvTune, CV and GiBUU are all terminal
+  (final statuses, no queued arrays), as another one-lane transition while NuWro waits on a batch.
