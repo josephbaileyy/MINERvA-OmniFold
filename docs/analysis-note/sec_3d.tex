@@ -236,8 +236,8 @@ unchanged figure producers on the repaired inputs (ledger rows
 \texttt{VL156}--\texttt{VL160}, which supersede \texttt{VL35}--\texttt{VL38}).
 The MINERvA Tune~v1 prediction is the analysis simulation and is unaffected.
 
-Figure~\ref{fig:3dmodels} overlays the four on the unfolded result, with the
-superseded historical 3D band of \S\ref{sec:3d-syst} drawn on the data for orientation only.
+Figure~\ref{fig:3dmodels} overlays the four on the unfolded result as central values only;
+no uncertainty is drawn, because the quotable 3D covariance is not yet adopted (App.~\ref{app:history}).
 Integrated over the full measurement phase space, the totals order as
 GiBUU ($\SI{2.22e-38}{}$) $<$ NuWro ($\SI{2.66e-38}{}$) $<$ Tune v1
 ($\SI{2.71e-38}{}$) $<$ GENIE CV ($\SI{2.76e-38}{}$) $<$ data
@@ -255,7 +255,7 @@ reach.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.99\textwidth]{generators_vs_unfolded_band}
+  \includegraphics[width=0.99\textwidth]{generators_vs_unfolded_band_central}
   \caption{1D projections of the unfolded 3D central cross section (black)
   versus four generator predictions
   produced at truth level: GENIE 2.12 CV, MINERvA Tune v1, NuWro 21.09, and
@@ -264,9 +264,8 @@ reach.
   they split, and all under-predict the data across the quasielastic--$\Delta$
   dip ($0.1\le\Eavail<\SI{0.4}{GeV}$). The wide
   $\Eavail$ catch bin is omitted from the axis.
-  \textbf{The grey band labelled ``total syst$\oplus$stat'' inside the graphic
-  is the superseded historical 3D covariance}, drawn for orientation only and not
-  quotable (App.~\ref{app:history}). Only the central values are interpreted.}
+  Central values only: the data points carry no error bars, because the quotable
+  3D covariance is not yet adopted (App.~\ref{app:history}).}
   \label{fig:3dmodels}
 \end{figure}
 
@@ -384,23 +383,23 @@ shape comparison awaits the public \cite{MINERvA:2022incl} data release.
   \centering
   \begin{minipage}{0.49\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{mode_decomp_eavail}
+    \includegraphics[width=\textwidth]{mode_decomp_eavail_central}
     \caption{Central-value $d\sigma/d\Eavail$ decomposed by interaction mode and
     overlaid with the unfolded data. The data excess is localized to the
     quasielastic--$\Delta$ dip ($\Eavail\le\SI{0.4}{GeV}$), the shape and size of
-    a missing 2p2h component. The ``$\pm$ total'' error bars are from the
-    superseded historical 3D covariance and are not quotable (App.~\ref{app:history}).}
+    a missing 2p2h component. Central values only: the data points carry no error
+    bars, because the quotable 3D covariance is not yet adopted (App.~\ref{app:history}).}
     \label{fig:modedecomp}
   \end{minipage}\hfill
   \begin{minipage}{0.49\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{compare_mec_eavail}
+    \includegraphics[width=\textwidth]{compare_mec_eavail_central}
     \caption{Re-generating GENIE with the empirical Valencia 2p2h enabled (red,
     stacked on the no-2p2h CV; both flux-repaired) fills part of the low-$\Eavail$ dip --- about half
     the data$-$CV gap (\SI{52}{\percent}), the remainder being the region the
     MINERvA tune's empirical enhancement is built to absorb.
-    The ``$\pm$ total'' bars are from the superseded historical 3D covariance and
-    are not quotable (App.~\ref{app:history}).}
+    Central values only: the data points carry no error bars, because the quotable
+    3D covariance is not yet adopted (App.~\ref{app:history}).}
     \label{fig:mec}
   \end{minipage}
 \end{figure}
@@ -469,13 +468,13 @@ future work.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{ascencio_fullcov_compare}
+  \includegraphics[width=0.85\textwidth]{ascencio_fullcov_compare_central}
   \caption{Bin-identical comparison to Ascencio
   \emph{et al.}~\cite{MINERvA:2022incl} on the maximal common
-  $(\Eavail,q_{3})$ grid. Only the central-value comparison is used. The
-  error bars on our points and the printed $\chi^{2}$ are from the superseded
-  historical unified-throw 4D covariance and are not quotable
-  (App.~\ref{app:history}); the published points carry the published covariance.}
+  $(\Eavail,q_{3})$ grid. Only the central-value comparison is used. Our points
+  are central values only, with no uncertainty or $\chi^{2}$ drawn, because the
+  quotable 4D covariance is not yet adopted (App.~\ref{app:history}); the
+  published points carry the published covariance.}
   \label{fig:ascencio}
 \end{figure}
 
