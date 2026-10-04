@@ -277,15 +277,15 @@ R=/pscratch/sd/j/josephrb/s5p-20260926; S=/pscratch/sd/j/josephrb/s5p-parallel-r
 n=0; for k in MnvTune_v1 GENIE_2_12_10_CV GENIE_2_12_10_MEC NuWro_21_09 GiBUU_2019; do
   if [ -f "$R/runs/prod/status/$k-final.json" ]; then n=$((n+1)); else echo "MISSING final status: $k"; fi; done
 echo "final statuses: $n/5"
-P=$R/runs/queue-prod-r2-pow.log   # the live pow runner since transition r2 (r1 and unsuffixed logs are historical)
+P=$R/runs/queue-prod-r3-pow.log   # the live pow runner since transition r3 (r2, r1 and unsuffixed logs are historical)
 echo "pow runner 'queue done' lines: $(grep -c 'queue done' "$P")"
 echo "pow runner refusal/stop lines:"; grep -nE 'refus|STOPPED the queue|force-stop' "$P" | tail -5
 echo "pow runner last lines:"; tail -3 "$P" | cut -c1-200
 squeue -h --me -o %j > "$S/squeue-terminal-check.txt"; echo "squeue rc=$?"
 echo "queued s5p cal/pow jobs: $(grep -cE '^s5p-s5p_(cal|pow)_' "$S/squeue-terminal-check.txt")"
 # the meter's measure reads the ledger, sacct and squeue and writes only --out (here: this lane's scratch); run it from
-# the deploy whose budget.json the ledger is bound to (transition r2: c754f3cd; rc 5 = binding mismatch = wrong deploy)
-M=$R/deploy/c754f3cd; echo "meter budget sha256 $(sha256sum < $M/docs/orchestration/state/s5p/budget.json | cut -c1-12)"
+# the deploy whose budget.json the ledger is bound to (transition r3: e0d7b04a; rc 5 = binding mismatch = wrong deploy)
+M=$R/deploy/e0d7b04a; echo "meter budget sha256 $(sha256sum < $M/docs/orchestration/state/s5p/budget.json | cut -c1-12)"
 /usr/bin/python3.11 -c 'import json,sys; b=[json.loads(l) for l in open(sys.argv[1]) if l.strip() and json.loads(l).get("kind") == "budget"][-1]; print("ledger budget sha256", b["budget_sha256"][:12])' "$R/ledger/admissions.jsonl"
 (cd "$M" && /usr/bin/python3.11 nd-unfolding/s5c_meter.py --budget docs/orchestration/state/s5p/budget.json \
   --ledger "$R/ledger/admissions.jsonl" measure --out "$S/meter-terminal-check.json" > /dev/null); echo "meter rc=$?"
@@ -308,6 +308,18 @@ EOF
   - The cluster task tables are identical across the deploys.
   - If the campaign moves the runners or rebinds again, re-point `P` and `M` to what it names, and re-check both
     lines above before reading any verdict.
+- **Transition r3 (2026-10-04T04:46–04:47Z):** an owner decision, `DECISION-20261004-s5p-production-budget-extension.md`
+  (origin/main `80a85324`). Budget revision 7, ledger bound to `be29f2c3…`; the six runners moved to deploy
+  `e0d7b04a` with `prod/queues-r3/`, logging to `runs/queue-prod-r3-<lane>.log`.
+  - Checked by this lane 04:50Z:
+    - `e0d7b04a` is at that HEAD, its budget sha256 `be29f2c3009e` = the ledger's latest record;
+    - the meter from `e0d7b04a` gave rc 0 (open cpu 2.0, gpu 0.0), and from `c754f3cd` rc 5;
+    - six r3 runner logs exist (pow waiting on P3g, no `queue done`);
+    - the cluster task tables are identical;
+    - `git diff c754f3cd e0d7b04a` over the meter, tables, design, the three evaluator modules, the queue and array
+      scripts and `s5p_nullexp.py` is `budget.json` only.
+  - The campaign reports shared-node timeouts near 25% of tasks since about 10-02, so expect about 7% missing seeds
+    per batch in the later batches. That raises L in §5.8; it changes no definition.
 - Nonzero open concurrency means a reservation is still open, so production is not terminal.
 - `robust-labels.json` (the ruled A7 label, produced by the campaign after the evaluation) is needed only for the A7
   label comparison. If it is missing, `compare` reports it as not located (exit 2) and the rest of the comparison
@@ -361,11 +373,12 @@ python s5p_recompute.py compare --mine ../final/recompute.json \
 # the seed disposition (§5.4), immediately after evaluate so both see the same products
 R=/pscratch/sd/j/josephrb/s5p-20260926
 T=docs/orchestration/state/s5p/prod/tables
-diff -rq $R/deploy/4f5a613f/$T $R/deploy/55a41765/$T && diff -rq $R/deploy/55a41765/$T $R/deploy/c754f3cd/$T; echo "tables diff rc=$?"
+diff -rq $R/deploy/4f5a613f/$T $R/deploy/55a41765/$T && diff -rq $R/deploy/55a41765/$T $R/deploy/c754f3cd/$T \
+  && diff -rq $R/deploy/c754f3cd/$T $R/deploy/e0d7b04a/$T; echo "tables diff rc=$?"
 ids=$(/usr/bin/python3.11 -c 'import json,sys; print(",".join(sorted({str(json.loads(l)["job_id"]) for l in open(sys.argv[1]) if l.strip() and json.loads(l).get("kind") == "job"})))' $R/ledger/admissions.jsonl)
 sacct -X -n -P -o JobID,State -j "$ids" > ../final/sacct-dispositions.txt; echo "sacct rc=$?"
 /usr/bin/python3.11 s5p_recompute_seed_disposition.py --design design.json \
-  --tables $R/deploy/c754f3cd/$T --ledger $R/ledger/admissions.jsonl \
+  --tables $R/deploy/e0d7b04a/$T --ledger $R/ledger/admissions.jsonl \
   --logs $R/runs/prod/logs --sacct ../final/sacct-dispositions.txt --recompute ../final/recompute.json \
   --out ../final/seed-disposition.json; echo "disposition rc=$?"
 # the missing-experiment bounds (§5.8; report only; imports the reviewed s5p_recompute beside it)
@@ -375,7 +388,7 @@ EOF
 ```
 
 - `tables diff rc` must be 0. The submitting deploys carry the same task tables (checked for `4f5a613f`,
-  `55a41765` and, 2026-09-30, `c754f3cd`). If the runners are moved again, add the new deploy to the diff first.
+  `55a41765`, `c754f3cd` (2026-09-30) and `e0d7b04a` (2026-10-04)). If the runners are moved again, add the new deploy to the diff first.
 - `sacct rc` ≠ 0 leaves every no-log task `submitted_task_no_log_unverified`; rerun it before describing anything.
 - `bounds rc`: 0 = complete; 3 = written but INCOMPLETE (listed in `incomplete`: not terminal, a count mismatch, a
   disposition that differs from the recompute, an incoherent claim, or not-established seeds counted as lost); 2 =
