@@ -433,6 +433,10 @@
   {
    "utc": "2026-10-04T05:35Z",
    "what": "OWNER AMENDMENT A2 adopted (AMENDMENT-20261004-s5p-10pct-pool-limit-A2.md, verbatim): for s5p the 10% pool limit applies whenever a pool is created or enlarged, comparing the pool's unspent, unreserved remainder (pool minus charges and open reservations) with 10% of current uncommitted allocation after reservations; operands recorded: creation 2026-09-26 310.184 vs 341.63, enlargement 2026-10-04 113.901 vs 314.96, both satisfied. Revision 7 kept (production 234.647, verification/repair 68.287, cumulative ceiling 376.52); no additional hours. CLARIFICATION-20261004-s5p-10pct-pool-limit.md marked RESOLVED by an appended section."
+  },
+  {
+   "utc": "2026-10-04T11:20Z",
+   "what": "LOOK: GiBUU_2019 B953 (10-04T11:00Z; total and shape k = 0, p = 1/954, look interval [0, 0.0063]; continue; b5 59315232, throttle 2). GiBUU b4 took 30.8 h, produced 165 of 200 (17.5% lost to timeouts) and cost 6.39 CPU node-h (b4 costs: MnvTune 6.24, CV 6.08, GiBUU 6.39). Production 195.514 of 234.647 (29 closed, 144.514). BINDING WATCH (projection under revision 7, owner instruction of 2026-10-04): at <= 6.5 per batch no refusal and no budget stop for any lane (terminal ~10-07T13Z, or ~10-08T23Z if NuWro needs 8 batches); EARLY WARNING, conditional: at ~7.0 per batch with NuWro needing 8 batches, NuWro would be budget-stopped after 7; at ~7.5, after 6 (first refusal ~10-06T03Z); the other lanes finish in every case. Costed extension if needed: ~+10 CPU node-h would protect NuWro's 8 batches at 7.5 per batch. Scientific consequence of a NuWro budget stop: its label would read 'budget' instead of 'rule met' and its p would rest on fewer calibration draws; its shape test (k = 1, the family's largest p) stands last in the Holm order (threshold 0.05), so a determined decision remains likely. No action now; re-checked at every look; owner decision point, if costs reach ~7 per batch, by ~10-05T18Z."
   }
  ],
  "findings": [
