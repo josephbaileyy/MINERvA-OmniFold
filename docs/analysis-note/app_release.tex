@@ -1,99 +1,95 @@
-\section{The result package: what a reader needs, and what is pinned today}
+\section{Result package and fixed identities}
 \label{app:release}
 
-Rebuilding the three PDFs of this note is document assembly. It is not
-reproduction of any scientific result, and this appendix exists so that the
-difference is not left implicit. App.~\ref{app:provenance} lists the internal
-records that statements rest on; this appendix specifies the \emph{external}
+Rebuilding this note's three PDFs assembles documents; it does not reproduce
+scientific results. App.~\ref{app:provenance} lists the supporting internal
+records. This appendix specifies the \emph{external}
 release that would let a reader outside the collaboration recompute the quoted
 numbers, records the identities that are already fixed, and states plainly
 which parts do not exist yet.
 
-\paragraph{Status, measured.} \textbf{No release tag and no release manifest
-exist.} Measured on 2026-09-21 in a local checkout of the canonical analysis repository (a dated census, to be re-measured against the remote when a release is cut): 35 git tags, of which 30 are
-\texttt{evidence/*} preservation anchors, one is a \texttt{freeze/*} anchor and
-four are deployment tags; none is a publication-results release. The adopted
-covariance and the five-axis central values are not in the repository at all
---- they live on \texttt{/pscratch} on the compute system and are identified
-here by digest (\S\ref{sec:eavailw-construction}). Consequently the release
+\paragraph{Release status.} \textbf{No release tag and no release manifest
+exist.} A local checkout
+of the canonical analysis repository on 2026-09-21 contained 35 git tags:
+30 \texttt{evidence/*} preservation anchors, one \texttt{freeze/*} anchor and
+four deployment tags. None releases publication results. This dated census
+must be repeated against the remote when a release is cut. The adopted
+covariance and five-axis central values reside on the compute system's
+\texttt{/pscratch}, outside the repository, and are identified by digest
+(\S\ref{sec:eavailw-construction}). Consequently the release
 below is a \emph{specification plus an identity register}, not an index of
-something already published. Assembling it is packaging work on existing
-products: it requires no reanalysis and no new compute.
+something already published. Packaging these existing products requires no
+reanalysis or new compute.
 
 \subsection{What today's reader can and cannot recompute}
 \label{app:release-scope}
 
-Recomputable from public inputs: everything in the 2D reproduction that uses
-the published data release --- the comparison to
-Ref.~\cite{MINERvA:2021owq}'s central values and covariance, the standardized
-differences, the tension anatomy, and the MINERvA~Tune~v1 model comparison, all
-of which read only the public ancillary files.
+Public ancillary files suffice for every part of the 2D reproduction using
+the published data release: the comparison to
+Ref.~\cite{MINERvA:2021owq}'s central values and covariance, standardized
+differences, tension anatomy, and MINERvA~Tune~v1 model comparison.
 
-Not recomputable from public inputs: every $\Eavail$, $q_{3}$ and $W$ result.
-These need the MINERvA production AnaTuples (collaboration-internal), the
-event-loop outputs derived from them, the four truth-level generator samples
-produced for this analysis, and the adopted five-axis covariance. A reader
-without those can check internal consistency of the numbers quoted here and
-nothing more.
+No $\Eavail$, $q_{3}$ or $W$ result is recomputable from public inputs. Each
+requires collaboration-internal MINERvA production AnaTuples, their event-loop
+outputs, the four truth-level generator samples produced for this analysis,
+and the adopted five-axis covariance. Without them, readers can check only
+the internal consistency of the quoted numbers.
 
 \subsection{Release schema}
 \label{app:release-schema}
 
-The package must carry all of the following. Items marked $\checkmark$ have
-their identity or value already fixed and are listed in
-\S\ref{app:release-identities}; the rest are packaging.
+The package must contain every item below. A $\checkmark$ marks identities or
+values already fixed in \S\ref{app:release-identities}; the rest are packaging.
 
 \begin{enumerate}[itemsep=2pt]
-  \item \textbf{Reporting bin edges, per axis, in physical units}
+  \item \textbf{Reporting bin edges and units, per axis}
         $\checkmark$: $\pT$ and $\pPar$ in \si{GeV/c}, $\Eavail$, $q_{3}$ and
-        $W$ in \si{GeV}, each with its wide terminal catch bin stated as such.
+        $W$ in \si{GeV}, with each wide terminal catch bin identified.
   \item \textbf{The flattened-cell ordering} $\checkmark$: the dense
         $14\times16\times7\times7\times6$ grid in C order, with the reported
-        subset given explicitly as an index array rather than implied by a
+        subset supplied as an explicit index array, never inferred from a
         positivity cut.
   \item \textbf{Central values}: the five-axis array and every projection
-        quoted, each with its own digest, on the density scale, in
+        quoted, each with its own digest, on the density scale in
         \si{cm^2/nucleon} divided by the product of its kept axes' units.
   \item \textbf{Covariances} $\checkmark$: the adopted five-axis object and its
-        $(\Eavail,W)$ projection, with the assembly algebra of
+        $(\Eavail,W)$ projection, with the algebra of
         Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation}, the declared
         centering variant, and the band partition.
   \item \textbf{Masks} $\checkmark$: the support mask, the pinned mask (bins
-        where the inflation denominator vanished and $g$ was set to $1$ by
-        declaration), and the unreported-cell mask.
+        where the inflation denominator vanished and $g$ was declared $1$),
+        and the unreported-cell mask.
   \item \textbf{Projection matrices} $\checkmark$: $M$ itself, with its
-        content digest, its shape, and the statement that its entries are the
-        dropped axes' bin-width products --- without which the destination's
-        units are ambiguous.
+        content digest, shape, and explicit identification of its entries as
+        dropped axes' bin-width products, needed to specify destination units.
   \item \textbf{Generator predictions}: the four truth-level $(\Eavail,W)$
         predictions (GENIE-CV, GENIE$+$Valencia~2p2h, NuWro, GiBUU) and the
         MINERvA~Tune~v1 ancillary model, as arrays on the release binning
-        rather than as figure curves, each with its generator version,
-        configuration, target and flux --- for GENIE and NuWro the
+        rather than figure curves, each with generator version,
+        configuration, target and flux. GENIE and NuWro require the
         flux-repaired predictions of 2026-09-27 (per-event reweight to the
-        analysis PPFX flux plus the 50--\SI{100}{GeV} supplements), for GiBUU
-        its reweight to the same flux convention (App.~\ref{app:provenance},
+        analysis PPFX flux plus the 50--\SI{100}{GeV} supplements); GiBUU
+        requires its reweight to the same flux convention (App.~\ref{app:provenance},
         \texttt{flux-repair}; \S\ref{sec:3d-models}).
         % KNOWN_ISSUES.md rows 82--83
-  \item \textbf{Provenance}: for each object, the producing
-        revision, the producing job, and the digest of the bytes as read back
-        out of the closed file. This is fixed only in part: the assembling
-        revision and job of $C_{Z}$, the job of $C_{EW}$ and the read-back
-        digest of the row index (\S\ref{app:release-identities}). No producing
-        revision or job is recorded for the other objects, and the assembled
-        package carries none.
+  \item \textbf{Provenance}: each object's producing revision, job, and
+        digest of bytes read back from the closed file. Only the assembling
+        revision and job of $C_{Z}$, job of $C_{EW}$ and read-back row-index
+        digest are fixed (\S\ref{app:release-identities}). Other objects lack
+        recorded producing revisions and jobs; the assembled package carries
+        none.
   \item \textbf{One minimal worked example}: \S\ref{app:release-example}.
   \item \textbf{The four measurements} that travel with the adopted covariance
-        (\S\ref{sec:eavailw-adopted}), carried \emph{in} the package and not
-        only in this note, since the package is what a reader will quote from.
+        (\S\ref{sec:eavailw-adopted}) must appear \emph{in} the package readers
+        will quote, beyond their inclusion in this note.
 \end{enumerate}
 
 \subsection{Identities already fixed}
 \label{app:release-identities}
 
-Every row is from a committed receipt (App.~\ref{app:provenance},
-\texttt{z-projection}). Digests are truncated for display; the
-full values are in the cited records.
+Every row comes from a committed receipt (App.~\ref{app:provenance},
+\texttt{z-projection}). The cited records contain the full digests abbreviated
+here.
 
 \begin{center}
 \small
@@ -163,9 +159,8 @@ acceptance cells of \S\ref{sec:method-binning}.
 \subsection{One minimal projection example}
 \label{app:release-example}
 
-This is the whole computation a reader should be able to run against the
-package, and it is the check that the ordering, the mask and the weights were
-released correctly.
+Readers should be able to run this complete computation to check the released
+ordering, mask and weights.
 
 \begin{enumerate}[itemsep=2pt]
   \item Load the five-axis central values $\mathbf{x}$ and the reported-cell
@@ -176,28 +171,25 @@ released correctly.
   \item Form $\mathbf{y}=M\mathbf{x}_{\text{reported}}$ and reshape to
         $7\times6$ \textbf{in C order}. This must reproduce the
         $(\Eavail,W)$ central-value map of Fig.~\ref{fig:eavailWexcess}. The
-        F-order reshape is the discriminating control: the C-order reshape
-        agrees with the figure to a relative $1.7\times10^{-16}$ and the
-        F-order reshape disagrees at relative $1.0$, which is how the ordering
-        was established rather than assumed.
+        F-order control establishes the ordering: C order agrees with the
+        figure to a relative $1.7\times10^{-16}$; F order disagrees at relative
+        $1.0$.
   \item Form $C_{EW}=M\,C_{Z}\,M^{\top}$ and check
         $\sqrt{\Tr C_{EW}}=\SI{4.4552e-39}{}$ and exact symmetry
-        ($\max|C-C^{\top}|=0$). \textbf{Do not check a rank.} The spectrum
-        decays smoothly with no plateau, so the retained count is set by
-        whatever cutoff is used --- 26 at $10^{-6}$, 36 at the $10^{-12}$ the
-        projector hardcodes, 41 at \texttt{numpy.linalg.matrix\_rank}'s
-        default, 42 at none --- and a reader following a ``rank should be 36''
-        instruction with NumPy defaults would get 41 and wrongly conclude the
-        package is corrupt. Check instead that
+        ($\max|C-C^{\top}|=0$). Do not check a rank. The spectrum decays
+        smoothly with no plateau. The cutoff sets the retained count: 26 at
+        $10^{-6}$, 36 at the projector's hardcoded $10^{-12}$, 41 at
+        \texttt{numpy.linalg.matrix\_rank}'s default, 42 with no cutoff.
+        A ``rank should be 36'' check using NumPy defaults would return 41 and
+        falsely flag corruption. Check that
         $|\lambda_{\min}|/\lambda_{\max}$ is of order $10^{-15}$, the edge of
-        double precision, and treat the object as ill-conditioned rather than
-        as having a definite rank. Do not check the sign of $\lambda_{\min}$:
-        it sits at the noise floor, carries no information, and a second host
+        double precision. Treat the object as ill-conditioned, without a
+        definite rank. Do not check the sign of $\lambda_{\min}$, which sits
+        at the noise floor and carries no information. A second host
         reproduces $\lambda_{\min}$ to only five significant digits.
   \item Read the per-cell relative uncertainty as
         $\sqrt{(C_{EW})_{rr}}/y_{r}$. Because $M$ carries the dropped axes'
-        widths, $\mathbf{y}$ and $C_{EW}$ are on the \emph{density} scale:
-        converting cell $r$ to an integrated cross section requires
+        widths, $\mathbf{y}$ and $C_{EW}$ are on the \emph{density} scale. Converting cell $r$ to an integrated cross section requires
         multiplying by that cell's own $\Delta\Eavail\,\Delta W$, and the
         catch bins make that factor large.
   \item Do \emph{not} invert $C_{EW}$ without a declared regularization: its
@@ -207,12 +199,12 @@ released correctly.
         significance is computed from it at all.
 \end{enumerate}
 
-\paragraph{One field is undeclared and is named rather than defaulted.} The
+\paragraph{Undeclared acceptance field.} The
 projection receipt records \texttt{acceptance\_question: UNDECLARED}: whether
-an acceptance correction is owed at the destination binning was not decided
-when the projection was built. The released package must carry that field with
-that value until it is decided, because a silent default here would be a
-scientific choice made by a data format.
+an acceptance correction is owed at the destination binning was undecided
+when the projection was built. The package must retain this field and value
+until a decision is made, because a silent default would let the data format make a
+scientific choice.
 
 \subsection{Construction and audit record of the $(\Eavail,W)$ covariance}
 \label{app:release-audit}
@@ -230,31 +222,31 @@ predeclared magnitude criterion for the estimator-seed sensitivity ---
 \emph{cause~3}'s $M(\mathrm{ii})$ in the internal dependency register --- was
 computed by the 2026-09-20 campaign for two \emph{other} products.
 
-\paragraph{Assembly and centering.} The count of pinned bins ($g=1$ by
-declaration) is carried in the product's receipt. The algebra of
+\paragraph{Assembly and centering.} The receipt records the pinned-bin count
+($g=1$ by declaration). The algebra of
 Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation} is implemented in
 \texttt{nd-unfolding/z\_assembly.py} (App.~\ref{app:provenance},
-\texttt{z-assembly}) and asserted independently of the producer that wrote the
-object. The mean-centered sibling \texttt{z-mean.npz} is structurally identical
---- same seven keys, same shapes, byte-identical central values, support mask,
-pinned mask and row index. The projector enforces the variant:
+\texttt{z-assembly}) and asserted independently of the object's producer.
+The mean-centered sibling \texttt{z-mean.npz} shares all seven keys and shapes,
+with byte-identical central values, support mask, pinned mask and row index.
+The projector enforces the variant:
 \texttt{project\_cov\_nd.py -{}-expect-variant} is required with no default,
 and \texttt{-{}-run-class publication} from a mean-centered source is refused.
 
 \paragraph{Projection.} $M$ is built by
 \texttt{project\_cov\_nd.build\_projection}. The C-order of the rows is
 established by the F-order control of \S\ref{app:release-example}, step~3. No
-source cell is dropped ($\texttt{src\_cells\_dropped}=0$), and the exact symmetry
-$\max|C-C^{\top}|=0$ is a structural consequence of the $M C M^{\top}$ form
-rather than a tolerance.
+source cell is dropped ($\texttt{src\_cells\_dropped}=0$). Exact symmetry
+$\max|C-C^{\top}|=0$ follows structurally from $M C M^{\top}$, without a
+tolerance.
 
-\paragraph{Conditioning.} The commonly transcribed label ``most-negative over
-max'' for $\lambda_{\min}/\lambda_{\max}$ is a misnomer: there is no negative
-eigenvalue. That $n_{\mathrm{negative}}=0$ is not a property the object need
-retain under a different mask, summation order or precision. The cutoff scan was
-performed on the diagnostic projection of the same source through the same $M$;
-its $\lambda_{\min}$, $\lambda_{\min}/\lambda_{\max}$ and rank-at-$10^{-12}$ are
-identical to the values the publication run recorded, and a later independent
-scan of the publication bytes found the publication and diagnostic
+\paragraph{Conditioning.} The common label ``most-negative over max'' for
+$\lambda_{\min}/\lambda_{\max}$ is misleading because no eigenvalue is
+negative. A different mask, summation order or precision need not preserve
+$n_{\mathrm{negative}}=0$. The cutoff scan used the diagnostic projection of
+the same source through the same $M$. Its $\lambda_{\min}$,
+$\lambda_{\min}/\lambda_{\max}$ and rank-at-$10^{-12}$ match the publication
+run's recorded values identically. A later independent scan of the publication
+bytes found the publication and diagnostic
 $42\times42$ matrices bitwise identical (App.~\ref{app:provenance},
 \texttt{z-conditioning}).

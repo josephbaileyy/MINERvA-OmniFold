@@ -1,104 +1,94 @@
 \section{Unbinned background subtraction by negative-weight injection}
 \label{app:negweight}
 
-The background subtraction of \S\ref{sec:method-algo} is the one step in which
-the analysis binning enters before the final histogramming: each data event in
-reconstructed bin $b$ is down-weighted by the purity
+Background subtraction in \S\ref{sec:method-algo} is the only step that uses
+analysis binning before final histogramming. Each data event in reconstructed
+bin $b$ receives the purity weight
 $w_{\mathrm{pur}}(b)=\max(0,\,N_{\mathrm{data}}(b)-N_{\mathrm{bkg}}(b))/
-N_{\mathrm{data}}(b)$. This appendix documents the fully unbinned realization of
-the same correction --- injecting the background simulation onto the measured
-side of the fit with negative weight --- shows that it targets an identical
-estimand, and quantifies its agreement with the binned correction on the 2D
-measurement. It is the continuous version of the purity weight recommended for
-nontrivial backgrounds by Ref.~\cite{unbinnedguide}, and the natural treatment
-for the extended-fiducial analysis, where the background is larger.
+N_{\mathrm{data}}(b)$. Injecting background simulation on the measured side
+with negative weight gives a fully unbinned correction with the same
+bin-integrated estimand. Its agreement with the binned correction is quantified
+on the 2D measurement below. It is the continuous version of the purity weight
+recommended for nontrivial backgrounds in Ref.~\cite{unbinnedguide}, and the
+natural treatment for the larger backgrounds of the extended-fiducial analysis.
 
-\paragraph{Scope of this appendix's numbers.}
-None of them is a publication uncertainty product, and the analytic derivation, the
-estimand identity and the displacement argument need none of them. \textbf{The
-background subtraction used for every result in this note is the binned purity weight
-of \S\ref{sec:method-algo}}; negative-weight injection is documented here as an
-equivalence study and as the natural treatment for the extended-fiducial analysis, and
-nothing here makes it a supported production path or changes any default. The two
+\paragraph{Scope of the numbers.}
+No number here is a publication uncertainty product; the analytic derivation,
+estimand identity and displacement argument require none of them. Every result
+in this note uses the binned purity weight of \S\ref{sec:method-algo}.
+Negative-weight injection serves as an equivalence study and the natural
+extended-fiducial treatment; this appendix establishes no supported production
+path and changes no default. The two
 covariance ratios are agreement diagnostics between two realizations of one
-subtraction, not uncertainty products. Their provenance, including two limits that
-travel with the production numbers, is in App.~\ref{app:provenance}
+subtraction, not uncertainty products. Their provenance and the two limits
+attached to the production numbers are in App.~\ref{app:provenance}
 (\texttt{negweight-hpss}, \texttt{negweight-toy}).
 
 \subsection{Estimator}
 \label{sec:negweight-estimator}
 
-Step 1 of OmniFold trains a classifier that separates the simulated
-reconstruction (class~0, weighted density $S$) from the measured sample
-(class~1, weighted density $\rho_1$), then reweights the simulation by the
-learned density ratio $r(x)=p(x)/(1-p(x))$, whose population optimum is
-$r^{\star}(x)=\rho_1(x)/S(x)$. The background treatment is entirely a choice of
-$\rho_1$:
+OmniFold step 1 trains a classifier to separate simulated reconstruction (class~0, weighted density
+$S$) from the measured sample (class~1, weighted density $\rho_1$), then
+reweights simulation by the learned density ratio $r(x)=p(x)/(1-p(x))$. Its population optimum is
+$r^{\star}(x)=\rho_1(x)/S(x)$. Background treatment is entirely a choice of $\rho_1$:
 \begin{itemize}
-  \item the binned purity weight applies one scalar per reconstructed analysis
-    bin $b$ to every data event in that bin, so for $x\in b$
+  \item binned purity assigns every data event in reconstructed analysis bin
+    $b$ the same scalar. For $x\in b$,
     \begin{equation}
       \label{eq:negweight-purity}
       \rho_1^{\mathrm{pur}}(x)
       \;=\; D(x)\,w_{\mathrm{pur}}(b)
       \;=\; D(x)\,\max\!\Big(0,\;1-\frac{B_{b}}{D_{b}}\Big),
     \end{equation}
-    with $D$ the data density, $B$ the POT-scaled background density, and
-    $D_{b},B_{b}$ their bin masses;
-  \item negative-weight injection appends the background-simulation
-    reconstruction events to the measured side with weight
-    $-w_{\mathrm{bkg}}\,\times\,(\text{POT scale})$, leaving the data events at
-    $+1$, so that
+    where $D$ is the data density, $B$ the POT-scaled background density,
+    and $D_{b},B_{b}$ their bin masses;
+  \item negative-weight injection appends reconstructed background-simulation
+    events to the measured side with weight
+    $-w_{\mathrm{bkg}}\,\times\,(\text{POT scale})$ and keeps data weights at
+    $+1$, giving
     \begin{equation}
       \label{eq:negweight-continuous}
       \rho_1^{\mathrm{neg}}(x) \;=\; D(x)-B(x)
     \end{equation}
-    pointwise, with no analysis binning.
+    pointwise, without analysis binning.
 \end{itemize}
-\textbf{Equations~\eqref{eq:negweight-purity} and \eqref{eq:negweight-continuous}
-are not the same function of $x$.} Rescaling the data density by a bin-constant
-factor reproduces $D(x)-B(x)$ inside bin $b$ only when $B/D$ is constant across
-that bin; where the background's shape differs from the data's within a bin,
-$D(x)\,(1-B_{b}/D_{b})$ and $D(x)-B(x)$ differ while sharing the same bin
-integral. The two constructions therefore agree \emph{exactly} in the binned
-limit --- on the same bin masses, which is what \S\ref{sec:negweight-binned}
-proves under the piecewise-constant sieve --- and agree only up to within-bin
-shape terms in general. It is the \emph{bin-integrated} background-subtracted
-estimand that both target,
-$r^{\star}(b)=(D_{b}-B_{b})/S_{b}$, not the same continuous estimand
-$r^{\star}(x)=(D(x)-B(x))/S(x)$ (App.~\ref{app:history}). What is measured rather than assumed is how
-much the difference matters in this analysis: \S\ref{sec:negweight-2d} and
-\S\ref{sec:negweight-uq}. The injected background is restricted to the same
-reconstructed fiducial window as the data, so the two constructions do act on
-identical support.
+Equations~\eqref{eq:negweight-purity} and \eqref{eq:negweight-continuous}
+differ as functions of $x$. A bin-constant rescaling reproduces $D(x)-B(x)$
+inside bin $b$ only when $B/D$ is constant there. Otherwise,
+$D(x)\,(1-B_{b}/D_{b})$ and $D(x)-B(x)$ share a bin integral but differ
+within the bin. The constructions agree \emph{exactly} on bin masses under the
+piecewise-constant sieve of \S\ref{sec:negweight-binned}; in general they differ
+by within-bin shape terms. Both target the \emph{bin-integrated} estimand
+$r^{\star}(b)=(D_{b}-B_{b})/S_{b}$; they do not share the continuous estimand
+$r^{\star}(x)=(D(x)-B(x))/S(x)$ (App.~\ref{app:history}).
+\S\ref{sec:negweight-2d} and \S\ref{sec:negweight-uq} measure the effect
+of that difference. The injected background and data occupy the same
+reconstructed fiducial window, giving identical support.
 
-\paragraph{The floor.} Where the background locally exceeds the data,
-$D-B<0$, the binned method floors the correction at zero through the
-$\max(0,\cdot)$. In the unbinned case the classifier output $p\in(0,1)$ forces
-$r=p/(1-p)\ge 0$, so a negative reweight cannot arise; the non-negativity
-is therefore structural, while the value at the floor follows from the
+\paragraph{The floor.} Where $D-B<0$, binned purity floors the correction at
+zero through $\max(0,\cdot)$. The unbinned classifier's bounded output
+$p\in(0,1)$ forces $r=p/(1-p)\ge 0$. Non-negativity is structural, while the value at the floor follows from the
 bounded output and ordinary regularization rather than from a minimizer of
-the fit (\S\ref{sec:negweight-binned}). The fit is not well-posed in such a region,
-however --- the class-1 weighted mass is locally negative --- so the principled
-treatment there is a positive-target prescription. In this analysis we use the
-``Stay Positive'' refinement of Ref.~\cite{Nachman:2025staypositive}, followed
-by an explicit zero clip of the learned refinement factor, before step-1
-training. Whether the plain injection and this clipped refinement coincide in
-practice depends on the classifier.
-With the histogrammed gradient-boosted density estimator used for \emph{this
-comparison} they agree to the median of $\nwMedianBin$ reported below, at
-the sub-percent genuine-background scale of this measurement. Note that
-\texttt{hist} is neither the backend of the production central value
-(\texttt{exact}) nor of its covariance ensemble (\texttt{lgbm}); see
-\S\ref{sec:method}. This validation therefore establishes the equivalence on a
+the fit (\S\ref{sec:negweight-binned}). Locally negative
+class-1 mass makes the fit ill-posed and calls for a positive-target
+prescription. We apply the ``Stay Positive'' refinement of
+Ref.~\cite{Nachman:2025staypositive}, then explicitly zero-clip the learned
+refinement factor before step-1 training. Agreement between plain injection
+and clipped refinement depends on the classifier.
+
+For the histogrammed gradient-boosted density estimator used in \emph{this
+comparison}, they agree to the reported median $\nwMedianBin$ at this
+measurement's sub-percent genuine-background scale. The \texttt{hist} backend
+differs from both the production central value's \texttt{exact} and the
+covariance ensemble's \texttt{lgbm} (\S\ref{sec:method}). This validation therefore establishes the equivalence on a
 third backend, and its transfer to the production configuration is an assumption
-rather than a demonstration. With an
-\emph{exact} (tree-boosted) classifier the raw signed weights instead
-destabilize training --- a full low-$p_T$ row of the cross section inflates by
-up to a factor ${\sim}\nwSpRawMax$ where the local background is large --- and
-the clipped Stay-Positive refinement removes the pathology, recovering
-agreement with the binned purity to a median of $\nwSpMedian$
-($\nwSpWithin$ bins within \SI{5}{\percent}). This clipped refinement is
+rather than a demonstration.
+Raw signed weights destabilize an \emph{exact} (tree-boosted) classifier,
+inflating a full low-$p_T$ cross-section row by up to a factor
+${\sim}\nwSpRawMax$ where local background is large. Clipped Stay-Positive
+refinement removes this pathology and recovers binned-purity agreement to a
+median $\nwSpMedian$ ($\nwSpWithin$ bins within \SI{5}{\percent}).
+This clipped refinement is
 therefore what makes the unbinned subtraction robust across estimators, and it
 matters most for the larger, more structured backgrounds of the
 extended-fiducial analysis.
@@ -106,98 +96,89 @@ extended-fiducial analysis.
 \subsection{Binned limit: exact reduction to the purity correction}
 \label{sec:negweight-binned}
 
-Restrict the step-1 classifier to the sieve of functions piecewise-constant on
-the reconstructed analysis bins $\{b\}$ --- the population-level binned limit
-that gives the OmniFold/Richardson--Lucy correspondence
-of Refs.~\cite{Andreassen:2019cjw,Andreassen:2021zzk}. Within a bin the
-classifier output collapses to a single value $p$, and, using the same support
-and unnormalized class weights in both constructions, the weighted
-cross-entropy of step~1 separates into independent per-bin objectives
+A step-1 classifier restricted to functions piecewise-constant on reconstructed
+analysis bins $\{b\}$ gives the population-level binned limit of the
+OmniFold/Richardson--Lucy correspondence
+in Refs.~\cite{Andreassen:2019cjw,Andreassen:2021zzk}. Its output is a single
+$p$ per bin. With common support and unnormalized class weights, step~1
+weighted cross-entropy separates into per-bin objectives
 \begin{equation}
   \label{eq:negweight-Lb}
   L_b(p) = -W_1\,\ln p - W_0\,\ln(1-p),
 \end{equation}
-with $W_0=S(b)>0$ the simulated-reconstruction weight of bin $b$ --- the bin
-integral of the class-0 density $S$ --- and $W_1$ the signed class-1 weight.
-Under negative-weight injection the measured side carries the data at $+1$ and
-the background simulation at negative weight, so $W_1=D(b)-B(b)$, writing $D(b)$
-and $B(b)$ for the bin masses of $D$ and $B$ (equivalently $N_{\mathrm{data}}(b)$
-and $N_{\mathrm{bkg}}(b)$ of \S\ref{sec:negweight-estimator}).
+where $W_0=S(b)>0$ is the integral of simulated class-0 density $S$ in bin $b$,
+and $W_1$ is the signed class-1 weight. Injecting background simulation at
+negative weight while keeping data at $+1$ gives $W_1=D(b)-B(b)$.
+Here $D(b)$ and $B(b)$ are the bin masses of $D$ and $B$, equivalently
+$N_{\mathrm{data}}(b)$ and $N_{\mathrm{bkg}}(b)$ in
+\S\ref{sec:negweight-estimator}.
 
-For every bin with $D(b)>B(b)$ the objective~\eqref{eq:negweight-Lb} is
-strictly convex on $(0,1)$ and has the unique interior minimizer
-$p=W_1/(W_0+W_1)$, so that
+For $D(b)>B(b)$, objective~\eqref{eq:negweight-Lb} is strictly convex on
+$(0,1)$ with unique interior minimizer $p=W_1/(W_0+W_1)$, giving
 \begin{equation}
   \label{eq:negweight-rb}
   r(b) = \frac{p}{1-p} = \frac{W_1}{W_0} = \frac{D(b)-B(b)}{S(b)}.
 \end{equation}
-This is exactly the reweight produced under the same sieve by the purity
-construction, for which the class-1 weight
-$W_1=D(b)\,w_{\mathrm{pur}}(b)=\max(0,\,D(b)-B(b))$ coincides with $D(b)-B(b)$ on
-this domain. At $D(b)=B(b)$ the infimum lies at the boundary $p\to0^+$ and
-$r(b)\to0$, again giving the purity result when that boundary is admitted.
-Thus, at the population optimum and under the common binned sieve, the two
-background treatments agree bin by bin. Composed with the binned
-OmniFold/Richardson--Lucy correspondence, this is precisely the traditional
-subtract-background-then-unfold update. Finite, regularized classifiers only
-approximate this identity; their residual differences are tested below.
+Purity gives exactly this reweight under the same sieve, since its class-1
+weight $W_1=D(b)\,w_{\mathrm{pur}}(b)=\max(0,\,D(b)-B(b))$ equals $D(b)-B(b)$
+on this domain. At $D(b)=B(b)$, the infimum lies at $p\to0^+$ and
+$r(b)\to0$, again giving purity when the boundary is admitted.
+The treatments therefore agree bin by bin at the population optimum under the
+common sieve. Combined with the binned OmniFold/Richardson--Lucy correspondence,
+they give the traditional subtract-background-then-unfold update.
+Finite, regularized classifiers approximate this identity; their residual
+differences are tested below.
 
-Where $D(b)<B(b)$ the reduction does not extend. With $W_1<0$ the objective
-$L_b(p)=|W_1|\,\ln p-W_0\,\ln(1-p)$ tends to $-\infty$ as $p\to0^+$: it is
-unbounded below and has no minimizer. A minimizing sequence has $r(b)\to0$,
-but adopting $\max(0,\cdot)$ is a prescription, not the value of a minimizer;
-the behavior of a finite regularized classifier is estimator-dependent. The
-Stay-Positive refinement remains well behaved in this setting but can retain
-negative refined weights where the target density is genuinely negative. The
+The reduction fails where $D(b)<B(b)$. With $W_1<0$,
+$L_b(p)=|W_1|\,\ln p-W_0\,\ln(1-p)$ tends to $-\infty$ as $p\to0^+$
+and is unbounded below, with no minimizer. A minimizing sequence gives $r(b)\to0$.
+The $\max(0,\cdot)$ floor is a prescription, not a minimizer's value.
+A finite regularized classifier's behavior depends on the estimator.
+Stay-Positive remains well behaved but can
+retain negative refined weights where the target density is genuinely negative.
+The
 zero clip used here is therefore an additional analysis prescription chosen to
-match the physical purity floor. Ref.~\cite{Nachman:2025staypositive} documents
-the same divergence of the reweighting loss where the target density turns
-negative; signed binary cross-entropy exhibits the analogous pathology in the
-sWeights context~\cite{GlazierTyson:2024}.
+match the physical purity floor.
+Ref.~\cite{Nachman:2025staypositive} documents the same reweighting-loss
+divergence for negative targets; signed binary cross-entropy has an analogous
+pathology for sWeights~\cite{GlazierTyson:2024}.
 
-The three ingredients --- the binned $D-B$ update, negative-weight classification
-of the measured side, and the binned OmniFold/Richardson--Lucy correspondence ---
-already appear together in Ref.~\cite{Andreassen:2021zzk}. Equation
-\eqref{eq:negweight-rb} makes their immediate binwise corollary, and its precise
-domain of validity, explicit for this analysis; it is a consistency check rather
-than a separate method claim.
+The binned $D-B$ update, negative-weight classification of the measured side,
+and binned OmniFold/Richardson--Lucy correspondence already appear together in
+Ref.~\cite{Andreassen:2021zzk}. Equation~\eqref{eq:negweight-rb} states their
+immediate binwise corollary and its precise validity domain for this analysis.
+It is a consistency check, with no separate method claim.
 
 \subsection{Closed-form toy}
 \label{sec:negweight-toy}
 
-The estimator is verified on a one-dimensional problem with a known answer:
-signal simulation drawn from $\mathcal{N}(0,1)$, a data signal from
-$\mathcal{N}(0.3,1.1)$ with equal normalization, and a background
-$\mathcal{N}(2,0.7)$ contributing \SI{16.7}{\percent} of the pseudo-data, so
-that the target reweight $(D-B)/S=\phi(x;0.3,1.1)/\phi(x;0,1)$ is a smooth
-positive function. A gradient-boosted classifier trained with the signed-weight
-construction recovers this ratio to a median \SI{\nwToyNeg}{\percent} relative
-error --- matching the binned purity construction's \SI{\nwToyPur}{\percent} on
-the identical problem, and reproducing it bin-for-bin --- while omitting the
-subtraction leaves a \SI{\nwToyBias}{\percent} bias from the residual
-background. The result is stable across classifier seeds
-($\pm\SI{\nwToySeed}{\percent}$), and the negative sample weights introduce no
-numerical instability. In a stress configuration with the background moved into
-the sparse signal tail and deliberately over-subtracted, the learned reweight
-floors cleanly at zero over the region where $B>D$, as anticipated above.
+A one-dimensional toy uses signal simulation $\mathcal{N}(0,1)$, equally
+normalized data signal $\mathcal{N}(0.3,1.1)$, and background
+$\mathcal{N}(2,0.7)$ contributing \SI{16.7}{\percent} of pseudo-data.
+The known target $(D-B)/S=\phi(x;0.3,1.1)/\phi(x;0,1)$ is smooth and positive.
+A signed-weight gradient-boosted classifier recovers it with median
+\SI{\nwToyNeg}{\percent} relative error, matching binned purity's
+\SI{\nwToyPur}{\percent} and reproducing it bin-for-bin on the same problem.
+Omitting subtraction leaves \SI{\nwToyBias}{\percent} residual-background bias.
+Results are stable across classifier seeds ($\pm\SI{\nwToySeed}{\percent}$),
+with no numerical instability from negative weights. Moving background into
+the sparse signal tail and deliberately over-subtracting makes the learned
+reweight floor cleanly at zero where $B>D$, as anticipated.
 
 \subsection{Comparison on the 2D measurement}
 \label{sec:negweight-2d}
 
-Table~\ref{tab:negweight} compares the two background treatments on the
-ME~FHC data, unfolded with identical settings and a common classifier
-seed so that the difference isolates the background treatment. The two agree to
-\SI{\nwPctTot}{\percent} on the total cross section --- an order of magnitude
-inside the ${\sim}\SI{3}{\percent}$ purity correction itself --- with a median
-per-bin ratio of $\nwMedianBin$ and a \SI{\nwRmsBin}{\percent} RMS scatter
-across the plane (Fig.~\ref{fig:negweight-ratio}).
-The only bin differing by more than a few percent is a single low-$p_T$,
-high-background edge bin (\SI{\nwWorstBin}{\percent}), exactly where the
-background concentrates and the subtraction is largest. The unbinned
-subtraction thus reproduces the adopted binned correction wherever the
-correction is well determined, and departs from it only in the regime where the
-binned $\max(0,\cdot)$ floor and the structural floor of
-\S\ref{sec:negweight-estimator} are themselves the operative choice.
+With identical unfolding settings and a common classifier seed, the ME~FHC
+comparison isolates background treatment (Table~\ref{tab:negweight}).
+Total cross sections agree to \SI{\nwPctTot}{\percent}, an order of magnitude
+inside the ${\sim}\SI{3}{\percent}$ purity correction. The per-bin ratio has
+median $\nwMedianBin$ and \SI{\nwRmsBin}{\percent} RMS scatter across the plane
+(Fig.~\ref{fig:negweight-ratio}). Only one low-$p_T$, high-background edge bin
+differs by more than a few percent (\SI{\nwWorstBin}{\percent}); background
+concentrates there and subtraction is largest. Unbinned subtraction reproduces
+the adopted binned correction wherever it is well determined. Departures occur
+only where the binned $\max(0,\cdot)$ and structural floor of
+\S\ref{sec:negweight-estimator} govern the result.
 
 \begin{table}[t]
   \centering
@@ -222,212 +203,190 @@ binned $\max(0,\cdot)$ floor and the structural floor of
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.62\textwidth]{negweight_ratio_2d}
-  \caption{Per-bin ratio of the negative-weight to the binned-purity
-    cross section on the 2D ME~FHC measurement (common estimator and seed),
-    over the populated bins. The two agree to a median of $\nwMedianBin$ across
-    the plane (near-white); the only departure beyond a few percent is the
-    single low-$p_T$, high-background edge bin, where the background is largest
-    and the $\max(0,\cdot)$/structural floor of \S\ref{sec:negweight-estimator}
-    is the operative choice.}
+  \caption{Negative-weight/binned-purity cross-section ratio in populated
+    bins of the 2D ME~FHC measurement, with common estimator and seed.
+    The median is $\nwMedianBin$ (near-white). Only the low-$p_T$,
+    high-background edge bin departs by more than a few percent. Background
+    is largest there, and the $\max(0,\cdot)$/structural floor of
+    \S\ref{sec:negweight-estimator} governs the result.}
   \label{fig:negweight-ratio}
 \end{figure}
 
 \subsection{Propagation through systematics and statistics}
 \label{sec:negweight-uq}
 
-A central-value match is necessary but not sufficient: to replace the binned
-correction the unbinned subtraction must also reproduce the \emph{uncertainty}
-budget. The full 2D ME~FHC covariance was therefore rebuilt end to end under
-negative-weight injection --- the systematic ensemble of 187 universes, with the
-genuine background varied consistently within each universe rather than frozen
-at nominal, and a statistical bootstrap --- and compared to the binned-purity
-construction with identical settings. The two agree at the level the $(D-B)/S$
-identity predicts: the systematic covariance matches in overall magnitude to a
-$\sqrt{\mathrm{tr}}$ ratio of $\nwSystRatio$ (negative-weight/purity), and the
-statistical covariance, compared on matched bootstrap seeds, to $\nwStatRatio$.
-The residual differences --- \SI{\nwSystResid}{\percent} and
-\SI{\nwStatResid}{\percent}
+Replacing binned subtraction requires reproducing its \emph{uncertainty}
+budget as well as the central value. The full 2D ME~FHC covariance was rebuilt
+end to end with negative-weight injection and compared to binned purity at
+identical settings. The 187-universe systematic ensemble varied genuine
+background consistently within each universe instead of freezing it at nominal;
+a statistical bootstrap used matched seeds. Agreement is at the level predicted
+by the $(D-B)/S$ identity. Overall systematic magnitude has
+$\sqrt{\mathrm{tr}}$ ratio $\nwSystRatio$ (negative-weight/purity), and the
+statistical ratio is $\nwStatRatio$.
+Residuals of \SI{\nwSystResid}{\percent} and \SI{\nwStatResid}{\percent}
 % --- each defined from its parent ratio rather than written
 % out, so that a later revision of either ratio propagates to it ---
---- are consistent
-with the ``to within \SI{2}{\percent}'' stated in \S\ref{sec:method} and are
-bootstrap and classifier-seed sampling noise, not a method bias. Negative-weight
-injection thus reproduces the central cross section \emph{per bin} (median
-$\nwMedianBin$, RMS \SI{\nwRmsBin}{\percent}, worst bin \SI{\nwWorstBin}{\percent})
-and its covariance \emph{in aggregate}. The covariance comparison is two trace
-ratios; per-bin, correlation and eigenmode equivalence are not established.
+are consistent with ``to within \SI{2}{\percent}'' in \S\ref{sec:method}.
+They are bootstrap and classifier-seed sampling noise, with no method bias.
+Negative-weight injection reproduces the central cross section \emph{per bin}
+(median $\nwMedianBin$, RMS \SI{\nwRmsBin}{\percent}, worst bin
+\SI{\nwWorstBin}{\percent}) and covariance \emph{in aggregate}.
+The covariance comparison gives two trace ratios; per-bin, correlation and eigenmode
+equivalence are not established.
 
-The equivalence at the 2D scale --- in the central value, the closed-form
-estimator recovery, and now the full systematic and statistical covariance ---
-together with the Stay-Positive refinement that keeps the estimator robust on
-the larger backgrounds of the extended-fiducial analysis, supports
-negative-weight injection as an unbinned alternative to the binned purity correction
-at the 2D scale. The binned purity is retained as the default for the
-reproduction measurement of this note, with negative-weight injection carried as
-the validated unbinned cross-check and as the \emph{designated} baseline
-subtraction for the extended-fiducial analysis (\S\ref{sec:fps}), where its
-binning-independence and continuous floor are essential.
+The 2D central-value, closed-form recovery and full covariance comparisons,
+together with Stay-Positive robustness on larger extended-fiducial backgrounds,
+support negative-weight injection as an unbinned alternative at the 2D scale.
+Binned purity remains the default for this note's reproduction measurement.
+Negative-weight injection is the validated unbinned cross-check and
+\emph{designated} extended-fiducial baseline (\S\ref{sec:fps}), where
+binning-independence and the continuous floor are essential.
 
 \subsection{Which footing each production chain stands on}
 \label{sec:negweight-footing}
 
-The two constructions above are validated against one another; that does not make
-the choice between them arbitrary, and the two production chains of this analysis
-do not make it the same way.
+Validation against one another does not make the two subtraction choices
+arbitrary. The production chains choose differently.
 
-\paragraph{The standard \(N\)-dimensional chain is purity-footed.}
-The whole standard (five-dimensional) chain --- the central unfold, the $169$
-vertical-band unfolds, the $18$ detector unfolds and the $10$ active-lateral
-endpoint unfolds --- uses the binned purity correction of
-\S\ref{sec:method-algo}. It is positively identified as purity-footed rather
-than merely unstamped, and the evidence differs between the unfolds that already
-exist and the chain as it is run today. \emph{For the existing endpoint unfolds},
-produced in 2026-07, the identification is by elimination: neither launcher that
-could have produced them passes \texttt{-{}-bkg-mode}, the driver's default for
-that flag is \texttt{purity}, and the driver announces its mode only on the
-negative-weight branches --- so the lateral logs carry the purity branch's own
-signature line and no mode announcement anywhere. Both the flag and those
-announcements predate the files, so the absence of an announcement is
-informative rather than a version gap. \emph{For the chain as it now stands},
-the footing is no longer inferred at all: it is pinned in code, in a
-configuration object that refuses to validate against any other mode
-(App.~\ref{app:provenance}, \texttt{bkg-mode-pins}), the canonical
-launcher passes \texttt{-{}-bkg-mode} explicitly from that pinned configuration
+\paragraph{The standard \(N\)-dimensional chain uses purity.}
+The entire standard five-dimensional chain uses binned purity
+(\S\ref{sec:method-algo}): the central unfold, $169$ vertical-band unfolds,
+$18$ detector unfolds and $10$ active-lateral endpoint unfolds.
+Its footing is positively identified, with different evidence for existing
+unfolds and current production.
+
+Existing endpoint unfolds from 2026-07 are identified by elimination.
+Neither possible launcher passes \texttt{-{}-bkg-mode}; the driver defaults
+to \texttt{purity} and announces its mode only on negative-weight branches.
+The lateral logs contain the purity branch's signature line and no mode
+announcement. The flag and announcements predate the files, making that absence
+informative without a version gap. Current production pins the footing in a
+configuration object that rejects every other mode
+(App.~\ref{app:provenance}, \texttt{bkg-mode-pins}). The canonical launcher
+passes \texttt{-{}-bkg-mode} explicitly from that pinned configuration
 rather than inheriting the default, and the value is stamped into every endpoint
-receipt as it is written. That change is a provenance change and a physics
-no-op, since the value it asserts is the default it replaces; its effect is that
+receipt as it is written. Asserting the previous default changes
+provenance without changing physics. Its effect is that
 a future component's footing is provable from the component instead of from the
 absence of a flag.
 
-\textbf{This is a recorded choice, not a silent default}
-(App.~\ref{app:provenance}, \texttt{gbdt-closeout} and
-\texttt{oi6-oi8-oi126}). Two
-grounds carried it. First, mixing footings inside one covariance is worse than
+\textbf{This is a recorded choice, not a silent default} (App.~\ref{app:provenance}, \texttt{gbdt-closeout} and
+\texttt{oi6-oi8-oi126}). Two grounds carried it. First, mixing footings inside one covariance is worse than
 either consistent choice: dropping a negative-weight-footed lateral block into a
-purity-footed central and vertical set is a footing mismatch, not an upgrade.
-Second, the alternative required re-running every unfold named above, which would
-have invalidated the flux-corrected (J28) covariance adopted immediately
-beforehand --- and it is that consequence, not the cost, that decided it. The
+purity-footed central and vertical set is a footing mismatch, not an upgrade. Second, switching required rerunning every
+unfold above and would have invalidated the flux-corrected (J28) covariance
+adopted immediately beforehand. That consequence decided the choice; cost did
+not. The
 decision carries an explicit obligation to revisit the footing before
 submission. It is recorded as such, and nothing in this subsection discharges it.
 
-\paragraph{What the quoted extended-fiducial number actually used.}
-\textbf{The $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$ reported in
-\S\ref{sec:fps} was not produced with negative-weight injection}
-(App.~\ref{app:history}). It comes from
-the FPS ME~FHC battery of \textbf{2026-06-10}, which predates the negative-weight
-driver; its ten endpoint unfolds ran on the driver's purity default and are recorded as
-\textbf{purity controls, not publication inputs} (App.~\ref{app:provenance},
-\texttt{fps-battery}, \texttt{negweight-audit}). The
-negweight-refined FPS production has not been run.
-The \emph{value} is unaffected --- \SI{\fpsSigma}{cm^2/nucleon} remains the
-ledger-verified central number from that gated battery. Negative-weight injection
-is the intended baseline for the extended-fiducial analysis, not the one behind
-the number quoted here.
+\paragraph{What the quoted extended-fiducial number used.}
+The $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$ in \S\ref{sec:fps}
+was not produced with negative-weight injection (App.~\ref{app:history}).
+It comes from the FPS ME~FHC battery of 2026-06-10, before the negative-weight
+driver. Its ten endpoint unfolds used the driver's purity default and are
+recorded as purity controls, not publication inputs (App.~\ref{app:provenance},
+\texttt{fps-battery}, \texttt{negweight-audit}). Negweight-refined FPS production
+has not run. The ledger-verified central value from that gated battery remains
+\SI{\fpsSigma}{cm^2/nucleon}. Negative-weight injection is the intended
+extended-fiducial baseline; it did not produce the quoted number.
 
-\paragraph{So the published pair is a measurement and a matched control at
-different footings.} The extended-fiducial lane's designated publication footing
-is negative-weight injection with the Stay-Positive refinement, pinned in code
-(App.~\ref{app:provenance}, \texttt{bkg-mode-pins}) and enforced there by a gate that fails closed on any endpoint whose recorded mode
-differs or is missing; what the number quoted in \S\ref{sec:fps} actually used is
-the separate matter stated immediately above. The standard chain is purity-footed
-throughout. Each side is therefore internally consistent in its footing, which is
-what we claim, rather than uniform across both, which we do not.
+\paragraph{The published pair has different footings.}
+The extended-fiducial lane designates negative-weight injection with Stay-Positive
+refinement as its publication footing. Code pins it
+(App.~\ref{app:provenance}, \texttt{bkg-mode-pins}) and a gate fails closed
+if any endpoint's recorded mode differs or is missing. What the number in
+\S\ref{sec:fps} actually used is the separate matter stated above;
+the standard chain uses purity throughout. We claim internally consistent
+footings for each side of the measurement and matched-control pair.
+Uniformity across both is not claimed.
 
 \subsection{Measured size of the footing choice and its scope}
 
-\paragraph{The measured size of the choice.}
-It has been measured at full statistics with the adopted estimator on the 2D
-ME~FHC measurement, and it is one to two percent on the covariance. The
-$187$-universe systematic covariance agrees to a $\sqrt{\mathrm{Tr}}$ ratio of
-$\nwSystRatio$, from \SI{2.9828e-39}{cm^2/nucleon} negative-weight against
-\SI{3.0242e-39}{cm^2/nucleon} purity; the statistical covariance on matched
-bootstrap seeds agrees to $\nwStatRatio$, from \SI{1.7260e-40}{cm^2/nucleon}
-against \SI{1.7576e-40}{cm^2/nucleon}; and the real-data totals agree to
+\paragraph{Measured size.}
+At full statistics with the adopted estimator on 2D ME~FHC, the covariance
+difference is one to two percent. The $187$-universe systematic
+$\sqrt{\mathrm{Tr}}$ ratio is $\nwSystRatio$, from
+\SI{2.9828e-39}{cm^2/nucleon} negative-weight and
+\SI{3.0242e-39}{cm^2/nucleon} purity. Matched-seed statistical covariance has
+ratio $\nwStatRatio$, from \SI{1.7260e-40}{cm^2/nucleon} and
+\SI{1.7576e-40}{cm^2/nucleon}, respectively. Real-data totals agree to
 \SI{\nwPctTot}{\percent}, with per-bin median $\nwMedianBin$ and
-\SI{\nwRmsBin}{\percent} RMS. These are the comparisons of
-\S\ref{sec:negweight-2d} and \S\ref{sec:negweight-uq}, restated here with the
-operands of each ratio so that the ratios can be checked rather than taken.
+\SI{\nwRmsBin}{\percent} RMS. These repeat the comparisons in
+\S\ref{sec:negweight-2d} and \S\ref{sec:negweight-uq} with explicit operands
+for checking the ratios.
 
-\paragraph{Why the agreement is not two lucky universes.}
-The argument is a displacement argument and it rests on a \emph{measured} input,
-not on an identity between the two estimands.
-\S\ref{sec:negweight-binned} makes the two constructions agree on bin masses in
-the binned limit, and \S\ref{sec:negweight-estimator} states the within-bin
-shape term that separates them in general; what is measured is that the net
-per-universe effect of switching footing, residual and shape term together, is a
-displacement of order \SI{0.1}{\percent} at this measurement's sub-percent
-genuine-background scale. A systematic covariance is the spread \emph{across}
-universes about their own mean, so a footing change that displaces every
-universe by a similar small amount leaves that spread nearly unchanged. That is
-why the $187$-universe ratio lands at $\nwSystRatio$ rather than anywhere near
-the size of the purity correction itself (${\sim}\SI{3}{\percent}$). A reader is
-entitled to ask how a comparison on a handful of universes can support a
-statement about a $187$-universe object; the displacement argument is the reason
-it can, and the full $187$-universe rebuild of \S\ref{sec:negweight-uq} is that
-reasoning's test at 2D, which it passes.
+\paragraph{Displacement across universes.}
+The displacement argument rests on a \emph{measured} input; it assumes no
+identity of continuous estimands. The constructions share bin masses in the
+binned limit (\S\ref{sec:negweight-binned}) but differ by within-bin shape
+terms (\S\ref{sec:negweight-estimator}). Switching footing produces a measured
+net per-universe displacement of order \SI{0.1}{\percent}, including residual
+and shape effects, at this measurement's sub-percent genuine-background scale.
+Systematic covariance measures spread across universes about their own mean. Similar
+small shifts of each universe leave that spread nearly unchanged, explaining
+the $187$-universe ratio $\nwSystRatio$, far from the purity correction's
+${\sim}\SI{3}{\percent}$. This argument connects a handful-of-universes
+comparison to the $187$-universe covariance; the full $187$-universe rebuild
+in \S\ref{sec:negweight-uq} tests it at 2D and passes.
 
-\paragraph{The scope this does and does not have.} The measured agreement is
-evidence about \emph{these} objects: the 2D systematic and statistical
-covariances at the configurations stated above. It is not a theorem that the two
+\paragraph{Scope.}
+Measured agreement concerns these 2D systematic and statistical covariances at
+the stated configurations. It is not a theorem that the two
 footings give the same covariance, because the underlying estimands are not
-pointwise identical
-(App.~\ref{app:history}). In particular nothing here
-establishes covariance equivalence for the continuous estimator or in five
-dimensions; the five-dimensional evidence is the two-universe spot check whose
-limits are stated in the next paragraph.
+pointwise identical (App.~\ref{app:history}).
+Covariance equivalence for the continuous estimator or in five dimensions is not established.
+The five-dimensional evidence is limited to the following two-universe spot check.
 
-\paragraph{What the five-dimensional evidence does and does not cover.}
-\textbf{There is no full five-dimensional $187$-universe both-footing comparison at the
-publication configuration} ($5$ iterations, \texttt{lgbm}). The five-dimensional
-evidence is a two-universe spot check at one iteration on the \texttt{hist} backend ---
-on the on-disk five-dimensional universe file, \texttt{2p2h:0} gives
-$3.014\times10^{-38}$ under both footings with per-bin median $1.0005$, and
-\texttt{MaCCQE:0} differs by \SI{-0.03}{\percent} with median $0.9990$ --- together with
-the displacement argument above and the full-statistics 2D result. That supports quoting
-the standard chain on purity and saying so, which is what this subsection does. It does
-not support the stronger statement that the background footing is irrelevant in five
-dimensions, which would require the comparison named at the head of this paragraph. The
-same limit applies to the estimator caveat: raw negative weights destabilise the
-\texttt{exact} backend (\S\ref{sec:negweight-estimator}) and the standard chain runs
-\texttt{lgbm}, so neither footing risks that pathology here --- a reason the choice is
-safe, not evidence that it is immaterial.
+\paragraph{Limits of the five-dimensional evidence.}
+There is no full five-dimensional $187$-universe both-footing comparison at the
+publication configuration ($5$ iterations, \texttt{lgbm}). The spot check
+uses one iteration and \texttt{hist} on the on-disk five-dimensional universe
+file. Under both footings \texttt{2p2h:0} gives $3.014\times10^{-38}$ with
+per-bin median $1.0005$; \texttt{MaCCQE:0} differs by \SI{-0.03}{\percent}
+with median $0.9990$. Together with the displacement argument and full-statistics
+2D result, this supports quoting the standard chain on purity and stating its
+footing. It does not support calling footing irrelevant in five dimensions;
+that stronger claim requires the full comparison above. Raw negative weights
+destabilize \texttt{exact} (\S\ref{sec:negweight-estimator}), while the standard
+chain uses \texttt{lgbm}. Neither footing risks that pathology here, making
+the choice safe without establishing that it is immaterial.
 
 \subsection{Five-dimensional pseudo-experiments on both footings}
 
-The five-dimensional end-to-end tests of both footings are reported with the other
-five-axis validation (\S\ref{sec:val-negweight}, \S\ref{sec:val-departure}): the purity
-footing's bias in the highest-$W$ column at nominal truth, its reduction under the
-\texttt{negweight-refined} footing, the difference between the footings on data, and the
-refinement-capacity candidate, which is not adopted. What is specific to the footing is
-recorded here.
+The five-axis validation (\S\ref{sec:val-negweight}, \S\ref{sec:val-departure})
+reports end-to-end tests of both footings: purity bias in the highest-$W$ column
+at nominal truth, its reduction with \texttt{negweight-refined}, the data
+difference, and the refinement-capacity candidate, which is not adopted.
 
-\paragraph{The purity bias.}
-The bias is 8--12 statistical standard deviations, while signal-only experiments close.
-The subtraction is exact per reconstructed bin; the widest bin ($W\ge\SI{3}{GeV}$,
-background \SI{13}{\percent} of signal) carries a within-bin background shape that the
-unbinned classifier resolves and the bin-uniform purity weight does not. This is the
-within-bin shape term of \S\ref{sec:negweight-estimator} realised at a measurable size,
-and it is direct evidence for the obligation of \S\ref{sec:negweight-footing} to revisit
-the footing before submission. A five-dimensional purity-versus-\texttt{negweight-refined}
-comparison on data is the cheapest estimate of its size on data.
+\paragraph{Purity bias.}
+Purity bias is 8--12 statistical standard deviations; signal-only experiments
+close. Subtraction is exact per reconstructed bin, but the widest bin
+($W\ge\SI{3}{GeV}$, background \SI{13}{\percent} of signal) contains background
+shape resolved by the unbinned classifier and missed by bin-uniform purity.
+The within-bin shape term of \S\ref{sec:negweight-estimator} is therefore
+measurable. It is direct evidence for the obligation in \S\ref{sec:negweight-footing}
+to revisit footing before submission. Comparing five-dimensional purity with
+\texttt{negweight-refined} on data is the cheapest estimate of its size on data.
 % Source: docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md; KNOWN_ISSUES 75.
 % Heading date (2026-09-25) and the numbers repeated in sec_validation.tex removed (lane 3 App. B #7):
 % highest-$W$ column \SIrange{3.5}{4.1}{\percent} low, highest-$\Eavail$, highest-$W$ cell \SI{1.7}{\percent} high.
 
-\paragraph{The refined footing.}
-The refinement classifier used the same deterministic GBDT configuration as the unfold,
-the background simulation was split into independent injection and subtraction halves,
-and each bootstrap replica resampled every pseudo-event individually and refit the
-refinement. The refinement preserves the signed total to $3\times10^{-6}$ and clips
-\SIrange{0.01}{0.05}{\percent} of events. The corner bias falls from \SI{1.66}{\percent}
-to \SI{0.24}{\percent}, but a residual remains in some joint cells, so the predeclared
-nominal closure criterion fails. On data the sign pattern of the difference between the
-footings matches the simulated purity bias at an order of magnitude smaller size; this is
-method sensitivity, not a measured bias. With either footing the estimator does not follow
-generator-sized $\Eavail$ shape changes. No coverage test was run, and the footing
-obligation therefore remains open: the refined footing reduces one bias but does not by
-itself qualify an uncertainty.
+\paragraph{Refined footing.}
+Refinement used the unfold's deterministic GBDT configuration, independent
+injection and subtraction halves of background simulation, and bootstrap
+replicas that individually resampled every pseudo-event and refit refinement.
+It preserves the signed total to $3\times10^{-6}$ and clips
+\SIrange{0.01}{0.05}{\percent} of events. Corner bias falls from
+\SI{1.66}{\percent} to \SI{0.24}{\percent}, but residuals in some joint cells
+fail the predeclared nominal closure criterion. The data difference's sign
+pattern matches simulated purity bias at an order of magnitude smaller size;
+the difference is method sensitivity, not a measured bias. With either footing,
+the estimator does not follow generator-sized $\Eavail$ shape changes.
+No coverage test was run.
+The footing obligation therefore remains open; reducing one bias does not itself qualify
+an uncertainty.
 % Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md; VL151, VL152.
 % Heading date (2026-09-25) and numbers repeated in sec_validation.tex removed (lane 3 App. B #7):
 % highest-$W$ bias falls from \SIrange{-3.5}{-4.1}{\percent} to \SIrange{0.11}{0.24}{\percent};
@@ -435,26 +394,26 @@ itself qualify an uncertainty.
 % differ by a median of \SI{0.36}{\percent} and at most \SI{1.4}{\percent}.
 
 \paragraph{Refinement capacity.}
-The residual nominal bias of the refined footing comes from the Stay-Positive classifier
-itself. At the unfold's GBDT setting (100 trees, 8 leaves) it underfits the positive-weight
-probability, leaving a reco-level subtraction error of up to \SI{4}{\percent} per
-$(\Eavail,W)$ reco cell. At 400 trees and 31 leaves that error falls to \SI{1.7}{\percent},
-the paired truth-level bias falls by more than \SI{80}{\percent} in every affected
-cell, and the nominal background-inclusive closure passes on 20 development and 40 fresh
-pseudo-experiments. Splitting the background simulation into independent injection and
-subtraction halves is not the cause.
+Stay-Positive classifier underfitting causes the refined footing's residual
+nominal bias. At the unfold's GBDT setting (100 trees, 8 leaves), the
+positive-weight probability is underfit, leaving up to \SI{4}{\percent}
+reco-level subtraction error per $(\Eavail,W)$ reco cell. With 400 trees and 31 leaves,
+error falls to \SI{1.7}{\percent}, paired truth-level bias falls by more than
+\SI{80}{\percent} in every affected cell, and nominal background-inclusive
+closure passes on 20 development and 40 fresh pseudo-experiments.
+Splitting background simulation into independent injection and subtraction
+halves is not the cause.
 % Source: docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md §5;
 % docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md; VL153, VL154.
 % Heading date (2026-09-26) removed. Moved to the pointer above: "The higher-capacity refinement
 % is not adopted: the estimator it feeds failed a stability test on the data (\S\ref{sec:validation})."
 
 \paragraph{The footing was chosen, not discharged; the adoption gate is separate.}
-\textbf{Nothing here adopts any five-dimensional covariance.} The
-selection-complete active-lateral component is built --- five bands, ten endpoint
-unfolds carrying distinct digests bound in the adopted product's receipt --- and one
-five-axis covariance is adopted under a digest-bound exception
-(\S\ref{sec:eavailw-adopted}). Neither fact follows from anything in this appendix,
-and neither is needed by it: the footing question and the adoption gate are
-independent, and the footing choice removes one blocking decision while leaving
-every other precondition on that component exactly where it stood
+Nothing here adopts any five-dimensional covariance. The selection-complete
+active-lateral component is built, with five bands and ten endpoint unfolds
+carrying distinct digests bound in the adopted product's receipt. One five-axis
+covariance is adopted under a digest-bound exception
+(\S\ref{sec:eavailw-adopted}). Neither fact follows from or is needed by this
+appendix. Footing choice and adoption are independent; the choice removes one
+blocking decision while leaving every other component precondition intact
 (App.~\ref{app:provenance}, \texttt{p4-verifier}).

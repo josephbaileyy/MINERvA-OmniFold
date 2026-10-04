@@ -2,89 +2,85 @@
 \label{sec:validation}
 
 \paragraph{Closure.}
-Three existing closure families were exercised (playlist 1A, LightGBM, five iterations; thresholds in parentheses):
+Three existing closure families used playlist 1A, LightGBM and five iterations
+(thresholds in parentheses).
 % (1A lgbm 5-iter)
 \begin{itemize}
-  \item \textbf{Truth-reweight} (multiply truth and reco weights by the same
-        factor): gaussian-$\pT$ residual \SI{0.046}{\percent}, tilt-$\pPar$
-        \SI{0.013}{\percent} (thr \SI{1.5}{\percent}) --- injected truth recovered.
+  \item \textbf{Truth-reweight} (same factor for truth and reco weights):
+        gaussian-$\pT$ residual \SI{0.046}{\percent}, tilt-$\pPar$
+        \SI{0.013}{\percent} (thr \SI{1.5}{\percent}). Injected truth recovered.
   \item \textbf{Hidden-variable} (bias on $\Delta\pT=\pT^{\mathrm{reco}}-\pT^{\mathrm{truth}}$,
-        a resolution variable not in the feature set): leakage linear in amplitude,
+        a resolution variable outside the feature set): leakage linear in amplitude,
         $A=0.05/0.10/0.30\to0.57/1.14/3.43\,\%$ (thr \SI{3.0}{\percent});
-        the first two amplitudes pass and the deliberately large $A=0.30$ arm exceeds
+        the first two amplitudes pass; the deliberately large $A=0.30$ arm exceeds
         the threshold.
   \item \textbf{Alt-model} (train on CV, pseudo-data from an alternative universe):
         MaCCQE \SI{0.068}{\percent}, Flux \SI{0.376}{\percent} (thr \SI{2.0}{\percent}).
 \end{itemize}
 
-\paragraph{Bottom-line test.}
-Following the unbinned-unfolding guide~\cite{unbinnedguide}, the unfolded result must
-recover the data's deviation from the prior with a residual far smaller than the feature
-itself (the unfolding cannot manufacture discriminating power). Using the closure runs,
-in the bins carrying the injected feature the unfolded result tracks the injected truth to
-$\approx10\times$ better than the feature size: 2D (gaussian-bump truth reweight) residual
-\SI{1.69}{\percent} vs injected \SI{17.2}{\percent} (ratio $0.098$). The 2D test passes
-(3D: \S\ref{sec:3d-closure}).
-(The naive data-vs-prior form---reco vs truth $\chi^2$---instead has truth$>$reco, as
-expected for a high-resolution measurement where detector smearing lowers the reco baseline
-and a stat-only diagonal omits the unfolding covariance; the proper full-covariance
-goodness-of-fit is the $\chi^2$-vs-paper of \S\ref{sec:results-tension} and the generator
-comparisons.)
+\paragraph{Injected-feature recovery.}
+The 2D gaussian-bump truth-reweight closure passes the unbinned-unfolding guide's
+recovery test~\cite{unbinnedguide}. In the feature bins, the residual from injected truth is
+\SI{1.69}{\percent} for an injected \SI{17.2}{\percent} feature
+(ratio $0.098$), or $\approx10\times$ smaller. Recovery of the data's deviation
+from the prior must leave a residual far smaller than the feature;
+unfolding cannot manufacture discriminating power (3D: \S\ref{sec:3d-closure}).
 
-These closure tests validate the estimator but are not used to assign a
-non-closure uncertainty. Such an uncertainty would require a predeclared suite
+The naive reco-vs-truth $\chi^2$ data-vs-prior test gives truth$>$reco.
+As expected at high resolution, detector smearing lowers the
+reco baseline and a stat-only diagonal omits unfolding covariance. The proper
+full-covariance goodness-of-fit uses the $\chi^2$-vs-paper of
+\S\ref{sec:results-tension} and the generator comparisons.
+
+These closure tests validate the estimator; they are not used to assign a non-closure
+uncertainty. Such an uncertainty would require a predeclared suite
 of injection shapes and amplitudes rather than calibration to a single
 Gaussian bump.
 
-They also do not test the distinct failure mode in which pseudo-data are
-generated with a detector response that disagrees with the response supplied
-to the unfold. Appendix~\ref{app:response-mismatch} defines a complementary
-record-only $\Eavail$ response-mismatch closure and a more complete
+They do not test pseudo-data with a detector response that disagrees
+with the unfolding response. Appendix~\ref{app:response-mismatch} defines a
+complementary record-only $\Eavail$ response-mismatch closure and a more complete
 leading-nucleon follow-up. No result from that test is claimed here.
-The five-axis estimator, including its background subtraction, is validated in
-\S\ref{sec:val-fiveaxis}.
+\S\ref{sec:val-fiveaxis} validates the five-axis estimator, including background
+subtraction.
 
 \subsection{Other validation diagnostics}
 
 \paragraph{Unbinned diagnostic (C2ST).}
-As a binning-free check that the unfold removes the data\,$\leftrightarrow$\,MC mismatch, we use
-a classifier two-sample test (C2ST): a classifier is trained to separate the data from the
+The classifier two-sample test (C2ST) AUC drops from $\approx0.535$ before
+unfolding to $\approx0.501$ after, indicating removal of the reconstructed
+data\,$\leftrightarrow$\,MC mismatch. A classifier is trained to separate the data from the
 (reweighted) simulation in the full unbinned feature space, and its held-out AUC/accuracy is
-compared to the chance value $0.5$. The discriminator AUC drops from $\approx0.535$ before
-unfolding to $\approx0.501$ after, indicating that the reweighting removes the reconstructed
-data--MC mismatch. We report this strictly as a \emph{descriptive} diagnostic and do \emph{not}
-quote a calibrated $p$-value: the C2ST as run trains and evaluates on the same sample without
-cross-fitting, and a valid null would require re-running the full (cross-fitted) OmniFold
-pipeline per pseudoexperiment. Calibrated unbinned goodness-of-fit remains an
-open problem~\cite{unbinnedguide}.
+compared to the chance value $0.5$. This binning-free check is strictly
+\emph{descriptive}; we do \emph{not} quote a calibrated $p$-value. The C2ST as run
+trains and evaluates on the same sample without cross-fitting. A valid null
+would require re-running the full cross-fitted OmniFold pipeline per
+pseudoexperiment. Calibrated unbinned goodness-of-fit remains
+open~\cite{unbinnedguide}.
 
 \paragraph{Pull diagnostics and the open 2D coverage test.}
 \label{sec:coverage}
-The existing ensemble is $N_{\text{toy}}=200$ 2D closure unfolds
+The ensemble contains $N_{\text{toy}}=200$ 2D closure unfolds
 (App.~\ref{app:provenance}, \texttt{coverage-toys}),
 % (\texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}; rollup
 % \texttt{uq/coverage\_toys.py}, summary \texttt{uq/coverage/coverage\_summary.txt})
-each a closure unfold (pseudo-data are weighted MC reco events, and
-a truth marginal is written to the stored truth histogram) with its own
-bootstrap seed $k$ (per-event Poisson(1) draws as in the production
-bootstrap, seeds chosen to avoid collision with the production replicas).
+with weighted MC reco pseudo-data and truth marginals stored in truth
+histograms. Each uses its own bootstrap seed $k$ and per-event Poisson(1) draws,
+as in production; seeds avoid collisions with production replicas.
 % CLI: \texttt{-{}-closure} with \texttt{-{}-bootstrap-seed $k$}; truth histogram \texttt{hTruthXSec2D}
-Toy seeds are independent and bins within a toy are correlated. Because the MC
-bootstrap multiplies the truth weight, the toys fluctuate both the unfolded
-result and the stored truth.
+Toy seeds are independent; bins within a toy are correlated. The MC bootstrap
+multiplies the truth weight, fluctuating both the unfolded result and stored truth.
 % truth weight: \texttt{w\_truth}; stored truth: \texttt{hTruthXSec2D}
-The stored truth varies
-in all 205 reported bins, so its all-toy mean $\bar X^{\text{truth}}$ is not an
-independent fixed truth for a split-sample coverage claim; it is used only to
-center a same-ensemble diagnostic.
+Stored truth varies in all 205 reported bins, so its all-toy mean
+$\bar X^{\text{truth}}$ is not an independent fixed truth for a split-sample
+coverage claim; it only centers a same-ensemble diagnostic.
 
-With $\sigma_{i}$ the across-toy standard
-deviation (ddof $=1$) in reported bin $i$ (where $\bar X^{\text{truth}}_{i}>0$)
-and $r^{(t)}_{i}=(U^{(t)}_{i}-\bar X^{\text{truth}}_{i})/\sigma_{i}$ the
-per-toy standardized residual, the per-bin fraction $c_{i}$ of toys with
-$|r^{(t)}_{i}|\le1$ is compared with the unit-normal
-$\Phi(1)-\Phi(-1)=\mathrm{erf}(1/\sqrt 2)\approx0.6827$, and the mean absolute
-pull $\langle|r|\rangle$ with $\sqrt{2/\pi}$. The fraction with $|r|\le1$ is
+In reported bin $i$ with $\bar X^{\text{truth}}_{i}>0$, define the across-toy
+standard deviation $\sigma_{i}$ (ddof $=1$) and standardized residual
+$r^{(t)}_{i}=(U^{(t)}_{i}-\bar X^{\text{truth}}_{i})/\sigma_{i}$.
+Compare the per-bin fraction $c_{i}$ of toys with $|r^{(t)}_{i}|\le1$ to the unit-normal
+$\Phi(1)-\Phi(-1)=\mathrm{erf}(1/\sqrt 2)\approx0.6827$ and the mean absolute
+pull $\langle|r|\rangle$ to $\sqrt{2/\pi}$. The fraction with $|r|\le1$ is
 \SI{\pullFrac}{\percent} (Gaussian reference $68.27\%$; $\Delta = +0.44\%$;
 median $68.50\%$); $\langle|r|\rangle=\pullMeanAbs$ vs
 $\sqrt{2/\pi}=\pullGauss$ (within $0.5\%$); the signed residual mean is
@@ -92,16 +88,14 @@ $+0.006 \pm 0.082\,\sigma$ (no bias); and \SI{97.6}{\percent} of bins have a
 within-bin fraction above \SI{65}{\percent} (only $5$ of $205$ fall below).
 These show that the standardized toy residuals are approximately normal.
 
-Because $\sigma_i$ is estimated from the same toys being scored, this is not a
-frequentist coverage measurement and does not certify the bootstrap band; the
-figures are retained only as standardized-pull/Gaussianity diagnostics. We therefore quote no
-2D coverage number from this ensemble
-(App.~\ref{app:history}). A coverage test requires an
-independently stored unfluctuated truth reference (or a redesigned ensemble)
-and remains open.
+With $\sigma_i$ estimated from the scored toys, these diagnostics are not a
+frequentist coverage measurement and do not certify the bootstrap band. The figures
+serve only as standardized-pull/Gaussianity diagnostics; no 2D coverage number is quoted from
+this ensemble (App.~\ref{app:history}). Coverage testing remains open and requires
+an independently stored unfluctuated truth reference or a redesigned ensemble.
 
 \paragraph{Stability and efficiency.}
-5-iter total $\sigma$ within \SI{0.026}{\percent} of 10-iter (per-bin shape RMS
+The 5-iter total $\sigma$ is within \SI{0.026}{\percent} of 10-iter (per-bin shape RMS
 \SI{1.54}{\percent}); HistGBT and exact-GBT agree on total $\sigma$ to
 \SI{0.04}{\percent}. Efficiency (Fig.~\ref{fig:eff}) reproduces the published
 Fig.~5.
@@ -109,8 +103,8 @@ Fig.~5.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.62\textwidth]{MEFHC_5iter_xsec_eff_heatmap}
-  \caption{Selection efficiency over the $(\pT,\pPar)$ truth grid. Efficiency is
-  diagnostic only --- OmniFold's miss treatment performs the acceptance
-  correction natively (\S\ref{sec:method-algo}).}
+  \caption{Selection efficiency on the $(\pT,\pPar)$ truth grid. Efficiency is
+  diagnostic only; OmniFold's miss treatment natively corrects acceptance
+  (\S\ref{sec:method-algo}).}
   \label{fig:eff}
 \end{figure}

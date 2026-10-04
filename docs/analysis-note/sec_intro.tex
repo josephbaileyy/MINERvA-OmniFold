@@ -4,69 +4,60 @@
 
 
 MINERvA (Main Injector Experiment for $\nu$-A) is a dedicated neutrino--nucleus
-scattering experiment at Fermilab, situated in the NuMI beamline immediately
-upstream of the MINOS near detector~\cite{MINERvA:2013zvz}. Over roughly a
-decade of operation, ending in 2019, MINERvA recorded high-statistics samples
-in both the low-energy and medium-energy (ME) NuMI beam
-configurations~\cite{MINERvA:2016iqn} and in neutrino-dominated (forward horn
-current, FHC) and antineutrino-dominated beam modes. Its physics goal is the
-precision measurement of neutrino--nucleus interaction cross sections on a
-range of nuclear targets in the few-GeV region most relevant to
-accelerator-based oscillation experiments. These cross sections, and the
-nuclear effects that shape them, are a leading systematic uncertainty for
-T2K~\cite{T2K:2023osc}, NOvA~\cite{NOvA:2021nfi},
-Hyper-Kamiokande~\cite{HyperK:2018design}, and DUNE~\cite{DUNE:2020jqi}. The
-few-GeV regime mixes quasielastic, resonant, and deep-inelastic processes that
-no single model describes cleanly. This note uses the public ME FHC
-CC-inclusive data product; the detector is described in \S\ref{sec:experiment}.
+scattering experiment in Fermilab's NuMI beamline, immediately upstream of the
+MINOS near detector~\cite{MINERvA:2013zvz}. During roughly a decade of operation
+ending in 2019, it recorded high-statistics samples in low-energy and
+medium-energy (ME) beam configurations~\cite{MINERvA:2016iqn} and in
+neutrino-dominated (forward horn current, FHC) and antineutrino-dominated modes.
+MINERvA aims to measure neutrino--nucleus cross sections precisely on a range
+of nuclear targets in the few-GeV region most relevant to accelerator-based
+oscillation experiments. These cross sections and their nuclear effects are a
+leading systematic uncertainty for T2K~\cite{T2K:2023osc},
+NOvA~\cite{NOvA:2021nfi}, Hyper-Kamiokande~\cite{HyperK:2018design}, and
+DUNE~\cite{DUNE:2020jqi}. The few-GeV regime combines quasielastic, resonant,
+and deep-inelastic processes that no single model describes cleanly. We use
+the public ME FHC CC-inclusive data product (detector details in
+\S\ref{sec:experiment}).
 
-The MINERvA ME FHC charged-current (CC) inclusive
-double-differential cross section in muon transverse and longitudinal momentum,
+The MINERvA ME FHC charged-current (CC) inclusive double-differential cross
+section in muon transverse and longitudinal momentum,
 $d^{2}\sigma/(d\pT\,d\pPar)$, was published by Ruterbories \emph{et al.}
 \cite{MINERvA:2021owq} using D'Agostini iterative Bayesian unfolding
-(IBU)~\cite{DAgostini:1994fjx} with a binned response matrix. This note reproduces
-that measurement with \emph{unbinned} OmniFold~\cite{Andreassen:2019cjw,
-Andreassen:2021zzk}, an unfolding technique based on iterated reweighting with
-machine-learned likelihood ratios that operates on per-event observables rather
+(IBU)~\cite{DAgostini:1994fjx} with a binned response matrix. We reproduce it
+with \emph{unbinned} OmniFold~\cite{Andreassen:2019cjw,
+Andreassen:2021zzk}, which iteratively reweights events using machine-learned
+likelihood ratios on per-event observables rather
 than on a fixed histogram binning.
 
-Recent advances in machine learning have enabled unbinned unfolding
-techniques; see Refs.~\cite{Arratia:2021otl,Huetsch:2024quz} for overviews
-and Ref.~\cite{unbinnedguide} for cross-experiment practical
-guidance. These methods fall into two broad families: those that
-iteratively reweight a starting simulation, of which
-OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk,Chan:2023tbf} is the
-most widely adopted, and those that generate new samples directly with a
-neural network~\cite{Datta:2018mwd,Bellagente:2019uyp,Bellagente:2020piv,
-Backes:2022vmn}. These techniques lift the binned-response limitations of widely-used
-classical unfolding methods~\cite{Adye:2011gm} like IBU, the SVD
+Machine-learning advances have enabled unbinned unfolding
+(overviews in Refs.~\cite{Arratia:2021otl,Huetsch:2024quz}; cross-experiment
+guidance in Ref.~\cite{unbinnedguide}). One broad family iteratively reweights
+a starting simulation; OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk,Chan:2023tbf}
+is its most widely adopted method. The other generates new samples directly
+with a neural network~\cite{Datta:2018mwd,Bellagente:2019uyp,Bellagente:2020piv,
+Backes:2022vmn}. Both lift the binned-response limitations of widely-used
+classical methods~\cite{Adye:2011gm} such as IBU, the SVD
 method~\cite{Hocker:1995kb}, and TUnfold~\cite{Schmitt:2012kp}.
 
 \paragraph{Prior OmniFold applications.}
 % Merged here from sec_method.tex (prior applications, background practice,
 % Huang et al.) and the earlier one-sentence H1/T2K summary of this section.
-OmniFold has moved from method paper to production measurement over the last
-few years. H1 published the first real-data applications --- jet substructure
-in high-$Q^{2}$ deep-inelastic scattering, followed by a multi-differential
-eight-observable jet measurement~\cite{H1:2021wkz,H1:2023fzk}; LHCb unfolded
-identified-hadron distributions in $Z$-tagged jets~\cite{LHCb:2022rky}; and
-ATLAS performed a simultaneous unbinned measurement of twenty-four $Z+$jets
-observables~\cite{ATLAS:2024jets}. Ref.~\cite{unbinnedguide} collects these
+OmniFold has advanced from method paper to production measurement over the last few years. H1 published the first real-data applications: jet substructure in high-$Q^{2}$ deep-inelastic scattering, followed by a multi-differential eight-observable jet measurement~\cite{H1:2021wkz,H1:2023fzk}. LHCb unfolded identified-hadron distributions in $Z$-tagged jets~\cite{LHCb:2022rky}. ATLAS performed a simultaneous unbinned measurement of twenty-four $Z+$jets observables~\cite{ATLAS:2024jets}. Ref.~\cite{unbinnedguide} collects these
 and other applications and distills cross-experiment practice; several of the
 practices audited there appear in our uncertainty budget (the ensemble-mean
 cross-check of the central value, the bootstrap statistical block, and the
 unified-throw covariance check of \S\ref{sec:uq-combine}).
 
-These measurements used several background treatments: H1 cut backgrounds to a negligible
-level, LHCb corrected per track upstream of the unfold, and ATLAS left its
+H1 cut backgrounds to a negligible level; LHCb corrected per track before
+unfolding. ATLAS left its
 less-than-\SI{0.25}{\percent} background in place and assigned it as an uncertainty,
 while identifying negatively-weighted simulated events as the natural
 in-method subtraction~\cite{ATLAS:2024jets,Andreassen:2021zzk};
 Ref.~\cite{unbinnedguide} recommends that route for nontrivial backgrounds.
-More recent methodological work explicitly treats backgrounds, fakes,
-acceptance, and inefficiency in OmniFold-HI~\cite{Falcao:2025backgrounds} and in
-generative unfolding~\cite{Butter:2025genfold}. These constructions address
-related problems but need not use the same subtraction prescription.
+Recent methodological work explicitly treats backgrounds, fakes, acceptance,
+and inefficiency in OmniFold-HI~\cite{Falcao:2025backgrounds} and generative
+unfolding~\cite{Butter:2025genfold}. These constructions address related
+problems; their subtraction prescriptions can differ.
 
 Closest to this analysis is the study of Huang \emph{et
 al.}~\cite{Huang:2024omnifold}, the first application of OmniFold to a
@@ -87,31 +78,26 @@ the method directly against a published binned measurement of the same data
 
 \paragraph{Why unbinned:}
 \begin{itemize}
-  \item \textbf{No binning at unfold time, with one deliberate exception.}
-        OmniFold learns event weights in the full observable space; the result is
-        histogrammed only at the end, so the reported binning can be chosen (or
-        refined) after unfolding without re-running. The exception is the
-        background subtraction, a per-reco-bin $(D-B)/D$ purity weight fixed
+  \item OmniFold learns event weights in the full observable space and
+        histograms only the final result. Reported bins can therefore be chosen
+        or refined after unfolding without rerunning the unfold. Background subtraction is the
+        deliberate exception: a per-reco-bin $(D-B)/D$ purity weight is fixed
         \emph{before} training (\S\ref{sec:method-algo}).
-  \item \textbf{Natural path to higher dimensions.} Adding observables is adding
-        input features, not multiplying response-matrix bins --- this is the
-        enabling property for the available-energy extension
-        (\S\ref{sec:3d}) that has no practical IBU analog.
-  \item \textbf{Different regularization.} OmniFold regularizes through the
-        machine-learning model capacity as well as through the iteration count it
-        shares with IBU. Comparing the two
-        approaches on the same data quantifies the method-dependence of the result
-        (\S\ref{sec:results}).
+  \item Additional observables enter as input features, avoiding multiplication
+        of response-matrix bins. This enables the available-energy extension
+        (\S\ref{sec:3d}), which has no practical IBU analog.
+  \item OmniFold regularizes through model capacity and the iteration count
+        shared with IBU. Comparing both methods on the same data quantifies
+        the result's method-dependence (\S\ref{sec:results}).
 \end{itemize}
 
 \paragraph{Analysis strategy.}
-The published 2D cross section provides a quantitative validation of unbinned
-OmniFold on MINERvA data, including its uncertainty budget
-(\S\S\ref{sec:experiment}--\ref{sec:validation}). The validated
-pipeline is then extended by adding $\Eavail$, $q_{3}$ (\S\ref{sec:3d}) and $W$
-(\S\ref{sec:eavailw}) as classifier
-inputs. Marginalization to each lower-dimensional result, closure, coverage and
-classifier-family comparisons test the extensions. A scalar study with relaxed
-truth-muon cuts (\S\ref{sec:fps}) and a recoil-only point-cloud
+The published 2D cross section provides quantitative validation of unbinned
+OmniFold and its uncertainty budget on MINERvA data
+(\S\S\ref{sec:experiment}--\ref{sec:validation}). The validated pipeline
+adds $\Eavail$, $q_{3}$ (\S\ref{sec:3d}) and $W$ (\S\ref{sec:eavailw}) as
+classifier inputs. Tests include marginalization to each lower-dimensional
+result, closure, coverage and classifier-family comparisons. A scalar study
+with relaxed truth-muon cuts (\S\ref{sec:fps}) and a recoil-only point-cloud
 cross-check (\S\ref{sec:pet}) probe alternative signal definitions and
 representations.
