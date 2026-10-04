@@ -198,7 +198,7 @@ docs/orchestration/HANDOFF-20260924-preparation-for-scalar5d-campaign.md	tracked
 docs/orchestration/HANDOFF-20260925-negweight-refined-successor.md	tracked	LIVE	document	20260924-scalar5d-campaign	20260925	open		route-only		no	5	67	3950
 docs/orchestration/HANDOFF-20260926-precision-measurement-completion.md	tracked	LIVE	document	20260924-scalar5d-campaign	20260926	open		route-only		no	6	381	23282
 docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md	tracked	LIVE	document		20260928	open		route-only	nd-unfolding/s5p_recompute.py	no	4	92	9143
-docs/orchestration/HANDOFF-20260928-s5p-recompute.md	tracked	LIVE	document	20260929-s5p-campaign	20260928	open		route-only		no	6	756	64721
+docs/orchestration/HANDOFF-20260928-s5p-recompute.md	tracked	LIVE	document	20260929-s5p-campaign	20260928	open		route-only		no	6	779	66993
 docs/orchestration/HOLD-20260821-clause-c-verification.md	tracked	ARCHIVAL	document		20260821	terminal		exact-path-only		yes	7	66	4401
 docs/orchestration/INDEX-20260920-retained-branches-not-on-main.md	tracked	LIVE	index	z-campaign	20260920	open		route-only		no	3	101	9262
 docs/orchestration/INDEX-retracted-and-superseded-values.md	tracked	LIVE	index			open		route-only	docs/open-items/verify_open_items_restructure.py;docs/orchestration/findings_row_lint.py;nd-unfolding/pet/check_canonical_designation.py	no	26	196	37643
@@ -1193,7 +1193,7 @@ docs/orchestration/state/s5p/prod-draft/queues/cal-GENIE_2_12_10_CV.q	tracked	MA
 docs/orchestration/state/s5p/prod-draft/queues/cal-GENIE_2_12_10_MEC.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	0	22	29041
 docs/orchestration/state/s5p/prod-draft/queues/cal-GiBUU_2019.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	0	22	28257
 docs/orchestration/state/s5p/prod-draft/queues/cal-MnvTune_v1.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only	nd-unfolding/tests/test_s5p_production.py;nd-unfolding/tests/test_s5p_requeue.py	yes	2	22	28257
-docs/orchestration/state/s5p/prod-draft/queues/cal-NuWro_21_09.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	0	22	28369
+docs/orchestration/state/s5p/prod-draft/queues/cal-NuWro_21_09.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	1	22	28369
 docs/orchestration/state/s5p/prod-draft/queues/pow.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only	nd-unfolding/s5p_production.py	yes	4	13	5483
 docs/orchestration/state/s5p/prod-draft/spec.json	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only	nd-unfolding/tests/test_s5p_production.py	yes	3	248	9286
 docs/orchestration/state/s5p/prod-draft/tables/cal-GENIE_2_12_10_CV-b0.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	25435
@@ -1242,7 +1242,7 @@ docs/orchestration/state/s5p/prod-draft/tables/cal-NuWro_21_09-b2.tsv	tracked	MA
 docs/orchestration/state/s5p/prod-draft/tables/cal-NuWro_21_09-b3.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920
 docs/orchestration/state/s5p/prod-draft/tables/cal-NuWro_21_09-b4.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920
 docs/orchestration/state/s5p/prod-draft/tables/cal-NuWro_21_09-b5.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920
-docs/orchestration/state/s5p/prod-draft/tables/cal-NuWro_21_09-b6.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920
+docs/orchestration/state/s5p/prod-draft/tables/cal-NuWro_21_09-b6.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	3	35	24920
 docs/orchestration/state/s5p/prod-draft/tables/cal-NuWro_21_09-b7.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920
 docs/orchestration/state/s5p/prod-draft/tables/cal-NuWro_21_09-b8.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920
 docs/orchestration/state/s5p/prod-draft/tables/cal-NuWro_21_09-b9.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920
@@ -1261,7 +1261,7 @@ docs/orchestration/state/s5p/prod/queues/cal-GENIE_2_12_10_CV.q	tracked	MACHINE	
 docs/orchestration/state/s5p/prod/queues/cal-GENIE_2_12_10_MEC.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	0	22	28795
 docs/orchestration/state/s5p/prod/queues/cal-GiBUU_2019.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	0	22	28011
 docs/orchestration/state/s5p/prod/queues/cal-MnvTune_v1.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only	nd-unfolding/tests/test_s5p_production.py;nd-unfolding/tests/test_s5p_requeue.py	yes	2	22	28011
-docs/orchestration/state/s5p/prod/queues/cal-NuWro_21_09.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	0	22	28123
+docs/orchestration/state/s5p/prod/queues/cal-NuWro_21_09.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	1	22	28123
 docs/orchestration/state/s5p/prod/queues/pow.q	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only	nd-unfolding/s5p_production.py	yes	4	13	5447
 docs/orchestration/state/s5p/prod/spec.json	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only	nd-unfolding/tests/test_s5p_production.py	yes	3	248	9286
 docs/orchestration/state/s5p/prod/tables/cal-GENIE_2_12_10_CV-b0.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	25435
@@ -1310,7 +1310,7 @@ docs/orchestration/state/s5p/prod/tables/cal-NuWro_21_09-b2.tsv	tracked	MACHINE	
 docs/orchestration/state/s5p/prod/tables/cal-NuWro_21_09-b3.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920
 docs/orchestration/state/s5p/prod/tables/cal-NuWro_21_09-b4.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920
 docs/orchestration/state/s5p/prod/tables/cal-NuWro_21_09-b5.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920
-docs/orchestration/state/s5p/prod/tables/cal-NuWro_21_09-b6.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920
+docs/orchestration/state/s5p/prod/tables/cal-NuWro_21_09-b6.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	3	35	24920
 docs/orchestration/state/s5p/prod/tables/cal-NuWro_21_09-b7.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920
 docs/orchestration/state/s5p/prod/tables/cal-NuWro_21_09-b8.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920
 docs/orchestration/state/s5p/prod/tables/cal-NuWro_21_09-b9.tsv	tracked	MACHINE	state-artifact	s5p		generated		exact-path-only		yes	2	35	24920

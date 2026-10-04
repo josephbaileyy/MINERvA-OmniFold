@@ -320,6 +320,27 @@ EOF
       scripts and `s5p_nullexp.py` is `budget.json` only.
   - The campaign reports shared-node timeouts near 25% of tasks since about 10-02, so expect about 7% missing seeds
     per batch in the later batches. That raises L in §5.8; it changes no definition.
+- **Transition r4 stage 1 (2026-10-04T16:20Z; origin/main `6c730f0f`, plan at `b93445c4`):** NuWro's runner moved to
+  throttle 5. The campaign relays this as owner-instructed. New runner PID 669349 on login33, deploy `b93445c4`,
+  `prod/queues-r4/cal-NuWro_21_09.q`, log `runs/queue-prod-r4-NuWro_21_09.log`; the other four lanes stay on r3, and
+  pow ended "queue done" in the r3 log at 15:42Z.
+  - Checked by this lane at 16:25Z:
+    - (a) the deploy's `validate_deploy_r4.py`, byte-identical to the committed one, run with
+      `GIT_OPTIONAL_LOCKS=0`: rc 0, VALID;
+    - (b) the r4 queue from the b5 wait line equals the r3 queue line for line once `--throttle` is normalized
+      (8 lines: 2 → 5);
+    - (c) the budget sha256 `be29f2c3009e` = the ledger's latest record (no rebind);
+    - (d) 669349 has PPID 1 and PGID = PID, and its cmdline is `s5c_queue.sh … queues-r4/cal-NuWro_21_09.q`; the
+      old 1047840 is gone, and the other four r3 runners are alive;
+    - (e) the r4 b6 line has table `cal-NuWro_21_09-b6.tsv`, 34 tasks, throttle 5; the table holds 200 contiguous
+      seeds 1261200–1261399 and is byte-identical to `4f5a613f`;
+    - `nd-unfolding/`, the budget, the design and the tables are byte-identical between `e0d7b04a` and `b93445c4`.
+  - **Open, checked at terminal from the ledger (no polling):** NuWro b6 and later submissions must show
+    `--array=0-33%5` with the frozen b<b> table.
+  - Stage 2 (throttle 16) is only planned. The campaign will message before it, and it gets the same five checks.
+  - Throttle is scheduling, not science: it changes neither which seeds a batch holds nor any rule.
+  - The meter is valid from either `e0d7b04a` or `b93445c4` (identical budget). §5.1 keeps `M=e0d7b04a` and
+    `P` = the r3 pow log, where pow's `queue done` is.
 - Nonzero open concurrency means a reservation is still open, so production is not terminal.
 - `robust-labels.json` (the ruled A7 label, produced by the campaign after the evaluation) is needed only for the A7
   label comparison. If it is missing, `compare` reports it as not located (exit 2) and the rest of the comparison
@@ -374,7 +395,9 @@ python s5p_recompute.py compare --mine ../final/recompute.json \
 R=/pscratch/sd/j/josephrb/s5p-20260926
 T=docs/orchestration/state/s5p/prod/tables
 diff -rq $R/deploy/4f5a613f/$T $R/deploy/55a41765/$T && diff -rq $R/deploy/55a41765/$T $R/deploy/c754f3cd/$T \
-  && diff -rq $R/deploy/c754f3cd/$T $R/deploy/e0d7b04a/$T; echo "tables diff rc=$?"
+  && diff -rq $R/deploy/c754f3cd/$T $R/deploy/e0d7b04a/$T && diff -rq $R/deploy/e0d7b04a/$T $R/deploy/b93445c4/$T; echo "tables diff rc=$?"
+# r4: NuWro's batches from b6 on must have been submitted at throttle 5 with the frozen tables (from the ledger)
+/usr/bin/python3.11 -c 'import json,sys; [print(r["utc"], [a for a in r["argv"] if a.startswith("--array") or a.endswith(".tsv")]) for r in map(json.loads, open(sys.argv[1])) if r.get("kind") == "open" and any("nuwro_21_09_b" in a for a in r.get("argv", []))]' $R/ledger/admissions.jsonl
 ids=$(/usr/bin/python3.11 -c 'import json,sys; print(",".join(sorted({str(json.loads(l)["job_id"]) for l in open(sys.argv[1]) if l.strip() and json.loads(l).get("kind") == "job"})))' $R/ledger/admissions.jsonl)
 sacct -X -n -P -o JobID,State -j "$ids" > ../final/sacct-dispositions.txt; echo "sacct rc=$?"
 /usr/bin/python3.11 s5p_recompute_seed_disposition.py --design design.json \
@@ -388,7 +411,7 @@ EOF
 ```
 
 - `tables diff rc` must be 0. The submitting deploys carry the same task tables (checked for `4f5a613f`,
-  `55a41765`, `c754f3cd` (2026-09-30) and `e0d7b04a` (2026-10-04)). If the runners are moved again, add the new deploy to the diff first.
+  `55a41765`, `c754f3cd` (2026-09-30), `e0d7b04a` and `b93445c4` (2026-10-04)). If the runners are moved again, add the new deploy to the diff first.
 - `sacct rc` ≠ 0 leaves every no-log task `submitted_task_no_log_unverified`; rerun it before describing anything.
 - `bounds rc`: 0 = complete; 3 = written but INCOMPLETE (listed in `incomplete`: not terminal, a count mismatch, a
   disposition that differs from the recompute, an incoherent claim, or not-established seeds counted as lost); 2 =
