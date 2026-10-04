@@ -1,0 +1,53 @@
+{
+ "schema": "s5p-transition-plan/1",
+ "transition": "r3",
+ "observed_utc": "2026-10-04T04:42:02Z",
+ "source_dir": "queues-r2",
+ "target_dir": "queues-r3",
+ "lanes": {
+  "pow.q": {
+   "lane": "pow",
+   "label": "s5p_pow_p3g_a1p0",
+   "throttle": 3,
+   "old_pid": 1174643
+  },
+  "cal-MnvTune_v1.q": {
+   "lane": "MnvTune_v1",
+   "label": "s5p_cal_mnvtune_v1_b5",
+   "throttle": 3,
+   "old_pid": 1174644
+  },
+  "cal-GENIE_2_12_10_CV.q": {
+   "lane": "GENIE_2_12_10_CV",
+   "label": "s5p_cal_genie_2_12_10_cv_b5",
+   "throttle": 3,
+   "old_pid": 1174645
+  },
+  "cal-GENIE_2_12_10_MEC.q": {
+   "lane": "GENIE_2_12_10_MEC",
+   "label": "s5p_cal_genie_2_12_10_mec_b5",
+   "throttle": 3,
+   "old_pid": 1174646
+  },
+  "cal-NuWro_21_09.q": {
+   "lane": "NuWro_21_09",
+   "label": "s5p_cal_nuwro_21_09_b4",
+   "throttle": 2,
+   "old_pid": 1174647
+  },
+  "cal-GiBUU_2019.q": {
+   "lane": "GiBUU_2019",
+   "label": "s5p_cal_gibuu_2019_b4",
+   "throttle": 2,
+   "old_pid": 1174648
+  }
+ },
+ "budget": {
+  "from_revision": 6,
+  "to_revision": 7,
+  "production": 234.647,
+  "verification_repair": 68.287,
+  "cpu_pool": 341.434,
+  "cumulative_ceiling": 376.52
+ }
+}
