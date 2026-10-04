@@ -72,8 +72,9 @@ their identity or value already fixed and are listed in
         configuration, target and flux --- for GENIE and NuWro the
         flux-repaired predictions of 2026-09-27 (per-event reweight to the
         analysis PPFX flux plus the 50--\SI{100}{GeV} supplements), for GiBUU
-        its reweight to the same flux convention (\texttt{KNOWN\_ISSUES.md}
-        rows 82--83; \S\ref{sec:3d-models}).
+        its reweight to the same flux convention (App.~\ref{app:provenance},
+        \texttt{flux-repair}; \S\ref{sec:3d-models}).
+        % KNOWN_ISSUES.md rows 82--83
   \item \textbf{Provenance}: for each object, the producing
         revision, the producing job, and the digest of the bytes as read back
         out of the closed file. This is fixed only in part: the assembling
@@ -90,7 +91,8 @@ their identity or value already fixed and are listed in
 \subsection{Identities already fixed}
 \label{app:release-identities}
 
-Every row is from a committed receipt. Digests are truncated for display; the
+Every row is from a committed receipt (App.~\ref{app:provenance},
+\texttt{z-projection}). Digests are truncated for display; the
 full values are in the cited records.
 
 \begin{center}
@@ -114,8 +116,7 @@ Mean-centered sibling &
 $(\Eavail,W)$ projection $C_{EW}$ &
   \texttt{sha256} \zprojDigest\ldots &
   \num{17101} bytes; \zprojCells\ cells; no source cell dropped;
-  $\max|C-C^{\top}|=0$; $\lambda_{\min}=+4.359104\times10^{-92}$ on the build host (its sign sits at the floating-point noise floor and carries no information, \S\ref{sec:eavailw-construction};
-  $n_{\mathrm{negative}}=0$ describes this computation only) against $\lambda_{\max}=1.488215\times10^{-77}$,
+  $\max|C-C^{\top}|=0$; $\lambda_{\min}=+4.359104\times10^{-92}$ on the build host against $\lambda_{\max}=1.488215\times10^{-77}$,
   condition number $\approx3.4\times10^{14}$; \textbf{no bare rank} --- the
   retained count runs 26 to 42 over defensible cutoffs;
   $\sqrt{\Tr C}=\SI{4.4552e-39}{}$; job \texttt{58655509}. \\
@@ -212,3 +213,48 @@ an acceptance correction is owed at the destination binning was not decided
 when the projection was built. The released package must carry that field with
 that value until it is decided, because a silent default here would be a
 scientific choice made by a data format.
+
+\subsection{Construction and audit record of the $(\Eavail,W)$ covariance}
+\label{app:release-audit}
+
+These are the audit details behind \S\ref{sec:eavailw-construction}.
+
+\paragraph{Adoption.} The adoption, recorded on 2026-09-20
+(App.~\ref{app:provenance}, \texttt{z-adoption}), is a decision to publish under a
+digest-bound exception. The object's own metadata is preserved unedited, and
+\textbf{an adoption does not turn those fields into pass labels.} The
+specification requires the null bound to be fixed before production and
+production had already happened, so the derivation step is unperformable for this
+object by anyone, which is why this is an exception and not a repair. The
+predeclared magnitude criterion for the estimator-seed sensitivity ---
+\emph{cause~3}'s $M(\mathrm{ii})$ in the internal dependency register --- was
+computed by the 2026-09-20 campaign for two \emph{other} products.
+
+\paragraph{Assembly and centering.} The count of pinned bins ($g=1$ by
+declaration) is carried in the product's receipt. The algebra of
+Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation} is implemented in
+\texttt{nd-unfolding/z\_assembly.py} (App.~\ref{app:provenance},
+\texttt{z-assembly}) and asserted independently of the producer that wrote the
+object. The mean-centered sibling \texttt{z-mean.npz} is structurally identical
+--- same seven keys, same shapes, byte-identical central values, support mask,
+pinned mask and row index. The projector enforces the variant:
+\texttt{project\_cov\_nd.py -{}-expect-variant} is required with no default,
+and \texttt{-{}-run-class publication} from a mean-centered source is refused.
+
+\paragraph{Projection.} $M$ is built by
+\texttt{project\_cov\_nd.build\_projection}. The C-order of the rows is
+established by the F-order control of \S\ref{app:release-example}, step~3. No
+source cell is dropped ($\texttt{src\_cells\_dropped}=0$), and the exact symmetry
+$\max|C-C^{\top}|=0$ is a structural consequence of the $M C M^{\top}$ form
+rather than a tolerance.
+
+\paragraph{Conditioning.} The commonly transcribed label ``most-negative over
+max'' for $\lambda_{\min}/\lambda_{\max}$ is a misnomer: there is no negative
+eigenvalue. That $n_{\mathrm{negative}}=0$ is not a property the object need
+retain under a different mask, summation order or precision. The cutoff scan was
+performed on the diagnostic projection of the same source through the same $M$;
+its $\lambda_{\min}$, $\lambda_{\min}/\lambda_{\max}$ and rank-at-$10^{-12}$ are
+identical to the values the publication run recorded, and a later independent
+scan of the publication bytes found the publication and diagnostic
+$42\times42$ matrices bitwise identical (App.~\ref{app:provenance},
+\texttt{z-conditioning}).

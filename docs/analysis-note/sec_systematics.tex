@@ -5,9 +5,8 @@
 
 The uncertainty budget combines three independent blocks --- systematic
 (universe), statistical (bootstrap), and ML (training-seed variation) --- summed assuming
-independence (distinct RNGs / physics sources). The historical 3D and the 4D budgets
-(\S\ref{sec:3d-syst}, \S\ref{sec:4d}) repeat the identical procedure on the
-higher-dimensional grids. Full mathematical procedures, with worked examples
+independence (distinct RNGs / physics sources). The historical 3D budget (\S\ref{sec:3d-syst}) was built as its analog on the
+3D grid; no 4D uncertainty magnitude is reported (\S\ref{sec:4d}). Full mathematical procedures, with worked examples
 on the reported numbers, are in App.~\ref{app:statmethods}. This section describes
 how each block is built; the resulting budget, and its agreement with the published
 total, are reported with the measurement in \S\ref{sec:results-uq}.
@@ -21,34 +20,8 @@ error bands and 187 universes in total, identical to the published analysis's
 central estimator seed. All per-band covariances use the MAT convention:
 universe-mean centering and biased $1/N$. For a $\pm1\sigma$ pair this is the
 outer product of the half-difference; a common displacement of both endpoints
-from CV is excluded from the variance. No per-band displacement artifact is
-stored; only the joint-throw mean shift described below is stored separately. The 100 PPFX
+from CV is excluded from the variance. The 100 PPFX
 universes use the same mean-centered $1/N$ formula.
-
-Dump-all shifted branches are limited to CV event-loop support. For the five
-genuinely kinematic bands (BeamAngleX/Y, MuonResolution, and
-Muon\_Energy\_MINERvA/MINOS), selection-complete active-universe event loops
-are the production migration gate. That replacement has landed for the adopted
-five-axis covariance, whose lateral block is built from those selection-complete
-bands; higher-dimensional products still built from the dump-all lateral
-branches remain candidates. Replacing the support-limited lateral block by the
-selection-complete one moves that block's square-root trace by
-\SI{\latTraceMove}{\percent}. That is a change in a square-root trace and is
-\emph{not} a bound on any individual bin: across the \latBins\ reported bins
-the per-bin ratio of active to support standard deviation runs \latRatioMin\ to
-\latRatioMax, and within the top \SI{1}{\percent} of bins by support variance
---- which carry \SI{\latTopVarShare}{\percent} of the total --- it runs
-\latRatioTopMin\ to \latRatioTopMax. A small share of the aggregate variance
-does not make a bin irrelevant to a quoted result.
-
-\paragraph{Scope of the selection-complete replacement.} The selection-complete
-replacement covers the five detector bands implemented through shifted
-reconstructed kinematics. MINOS efficiency and the three GEANT
-hadron-interaction bands (GEANT\_Neutron, GEANT\_Pion, GEANT\_Proton) retain
-their weight-based treatment. This classification establishes their exclusion
-from the kinematic replacement; it does not independently validate the
-completeness of the hadronic-response model for the $\Eavail$ and $W$
-measurement.
 
 Top 2D bands: Flux \SI{\fluxBand}{\percent}, Muon\_Energy\_MINOS
 \SI{2.31}{\percent}, MinosEfficiency \SI{1.47}{\percent},
@@ -92,12 +65,12 @@ correlation), and the GBDT seed pinned per replica so the bootstrap and
 training-seed variances are separable. Each replica is a full re-unfold; the
 covariance is the sample covariance over replicas
 (Fig.~\ref{fig:bootstrap}). Our bootstrap block is genuinely smaller than the
-published statistical block ($\approx2.5\times$ by trace). We report this as an
+published statistical block ($\approx2.55\times$ in square-root trace). We report this as an
 \emph{observed} difference in the statistical covariance rather than a
-demonstrated causal efficiency advantage; it is consistent with an unbinned
-statistical-efficiency gain, and the data-only stream of the data/MC split
-bootstrap ($C_{\mathrm{data}}/\texttt{StatOnly}=0.356$) confirms it is not a
-missing term (App.~\ref{sec:rank}).
+demonstrated causal efficiency advantage; the data-only stream of the data/MC split
+bootstrap ($C_{\mathrm{data}}/\texttt{StatOnly}=0.356$) shows it is not a
+missing MC term, but cannot separate an efficiency gain from regularization bias
+or undercoverage (App.~\ref{sec:rank}).
 
 \begin{figure}[H]
   \centering
@@ -116,23 +89,9 @@ seeds at fixed data and fixed universe (Fig.~\ref{fig:seedscan}); the sample
 covariance over seeds is the ML block. It is the smallest block
 (median \SI{0.166}{\percent} per bin). Two refinements harden it: (i) a
 \emph{train/test-split} variant, which also re-draws the internal training
-split, gives a band $1.24\times$ the pure-seed band, moving the combined 3D
-budget by only $+0.04\%$ in $\sqrt{\mathrm{Tr}\,C}$ --- the published budgets use
-the split-inclusive band; (ii) the ensemble-mean central value (averaging the
+split, gives a band $1.24\times$ the pure-seed band
+--- the 2D budget of Table~\ref{tab:uq} uses the pure-seed band; (ii) the ensemble-mean central value (averaging the
 seed ensemble) agrees with the production single-run CV to \SI{0.28}{\percent}.
-For the corrected 5D candidate campaign, the ML ensemble fixes the estimator seed
-at 42 and varies the train/test split seed. It therefore measures split response,
-not the full estimator stochasticity. A dedicated fixed-data estimator-seed scan
-(twelve estimator seeds at fixed data and fixed split) closes this scope: its
-covariance matrix has $\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtAiEstTrace}{cm^2/nucleon}$,
-\SI{\gbdtAiEstFrac}{\percent} of the candidate split-varied band
-(\SI{\gbdtMlSplitTrace}{cm^2/nucleon}), so the adopted band is dominated by
-genuine estimator stochasticity rather than by the particular train/test
-partition. The scan remains an auxiliary robustness check rather than an
-independent matrix --- split and estimator responses are not assumed
-uncorrelated --- and both bands are minor components, about three percent of
-the combined budget in $\sqrt{\mathrm{Tr}\,C}$.
-
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.49\textwidth]{seedscan_spread_2d}
@@ -149,7 +108,7 @@ $C = C_{\mathrm{syst}} + C_{\mathrm{stat}} + C_{\mathrm{ML}}$, which assumes
 the blocks are independent \emph{and} that the unfolding responds linearly to
 simultaneous perturbations (so that per-band covariances add). The second
 assumption is tested directly by the \emph{unified throw}
-(\S\ref{sec:4d}): joint re-unfolds with all reweightable knob bands and the
+(App.~\ref{sec:universes}; \S\ref{sec:eavailw-construction}): joint re-unfolds with all reweightable knob bands and the
 flux multisim perturbed simultaneously per event.  The corrected construction
 uses the actual $-1\sigma$ and $+1\sigma$ event-weight endpoints, interpolates
 asymmetrically between them, holds the unfolding-estimator seed fixed for every
@@ -157,25 +116,11 @@ throw, and forms the joint covariance about the throw mean.  The joint
 displacement of that mean from the CV is stored separately as a per-bin vector
 and its norm; per-band endpoint displacements are not stored. The matched block comparator
 uses the MAT convention: universe-mean centering and the biased $1/N$
-normalization, with both endpoints re-unfolded.
-
-For the 5D candidate this construction was carried out both mean-centered and
-CV-centered; no magnitude from either is quoted, neither is adopted, and both are
-superseded, the adopted product being a different object
-(\S\ref{sec:eavailw-adopted}; App.~\ref{app:history}). Routed record:
-App.~\ref{app:provenance} (\texttt{gbdtfive-macros}).
-
-Repeating all 188 universe unfolds with
-per-universe background subtraction changes the combined \emph{block-sum}
-sqrt-trace by only \SI{0.28}{\percent}; the effect on the \emph{adopted}
-covariance is smaller still, \SI{0.18}{\percent} after the flux (J28)
-correction (App.~\ref{app:history}), because the adoption's per-bin
-$\max$ inflation transfer (Eq.~\eqref{eq:zinflation},
-\S\ref{sec:eavailw-construction}) damps the block-sum change. These are ratios taken against
-the superseded products described above, so they bound the size of the background-CV
-choice rather than describing a current covariance; either way that concern is
-numerically negligible. The 4D and extended-fiducial results do not yet have covariances
-constructed with this procedure; the 5D covariance is not transferred to them.
+normalization, with both endpoints re-unfolded. A single-throw superposition
+probe is insufficient to test the nonlinear response. The construction does not
+subtract a scalar run-to-run jitter floor, and the 5D result uses its strict
+joint ensemble and matched-endpoint comparator.
+% Implementation: nd-unfolding/unified_throw_cov.py
 
 More generally, this reframes the block sum as an approximation --- valid only
 where the unfolding responds linearly --- rather than as a default
@@ -183,10 +128,60 @@ construction.  We retain the per-source block decomposition for attribution,
 but use it only after joint throws and matched block endpoints pass the stated
 validation tests.
 
-\paragraph{$\chi^{2}$ caveat.}
-The combined paper$+$ours $\chi^{2}/\mathrm{ndf}=1.481$ double-counts systematics
-shared with the paper (flux/GENIE/MINOS); the ours-only inverse-covariance
-$\chi^{2}$ is evaluated only with a truncated-spectral convention on the
-well-constrained subspace. We therefore quote per-bin pulls, the regularization
-scan, and the truncated result together rather than treating an unconstrained
-pseudo-inverse as a standalone goodness-of-fit (App.~\ref{sec:rank}).
+\subsection{What changes for the higher-dimensional products}
+\label{sec:uq-higherdim}
+Dump-all shifted branches are limited to CV event-loop support. For the five
+genuinely kinematic bands (BeamAngleX/Y, MuonResolution, and
+Muon\_Energy\_MINERvA/MINOS), selection-complete active-universe event loops
+are the production migration gate. That replacement is in place for the adopted
+five-axis covariance, whose lateral block is built from those selection-complete
+bands; higher-dimensional products still built from the dump-all lateral
+branches remain candidates. Replacing the support-limited lateral block by the
+selection-complete one moves that block's square-root trace by
+\SI{\latTraceMove}{\percent}. That is a change in a square-root trace and is
+\emph{not} a bound on any individual bin: across the \latBins\ reported bins
+the per-bin ratio of active to support standard deviation runs \latRatioMin\ to
+\latRatioMax, and within the top \SI{1}{\percent} of bins by support variance
+--- which carry \SI{\latTopVarShare}{\percent} of the total --- it runs
+\latRatioTopMin\ to \latRatioTopMax. A small share of the aggregate variance
+does not make a bin irrelevant to a quoted result.
+
+\paragraph{Scope of the selection-complete replacement.} The selection-complete
+replacement covers the five detector bands implemented through shifted
+reconstructed kinematics. MINOS efficiency and the three GEANT
+hadron-interaction bands (GEANT\_Neutron, GEANT\_Pion, GEANT\_Proton) retain
+their weight-based treatment. This classification establishes their exclusion
+from the kinematic replacement; it does not independently validate the
+completeness of the hadronic-response model for the $\Eavail$ and $W$
+measurement.
+
+For the corrected 5D construction, the ML ensemble fixes the estimator seed
+at 42 and varies the train/test split seed. It therefore measures split response,
+not the full estimator stochasticity. A dedicated fixed-data estimator-seed scan
+(twelve estimator seeds at fixed data and fixed split) closes this scope: its
+covariance matrix has $\sqrt{\mathrm{Tr}\,C}=\SI{\gbdtAiEstTrace}{cm^2/nucleon}$,
+\SI{\gbdtAiEstFrac}{\percent} of the candidate split-varied band
+(\SI{\gbdtMlSplitTrace}{cm^2/nucleon}), so the adopted band is dominated by
+genuine estimator stochasticity rather than by the particular train/test
+partition. The scan remains an auxiliary robustness check rather than an
+independent matrix --- split and estimator responses are not assumed
+uncorrelated --- and both bands are minor components, about three percent of
+the combined budget in $\sqrt{\mathrm{Tr}\,C}$.
+
+For an earlier 5D candidate the unified-throw construction of
+\S\ref{sec:uq-combine} was carried out both mean-centered
+and CV-centered; no magnitude from either is quoted, and neither is adopted. The
+adopted product is a later, separate \texttt{cv}-variant build
+(\S\ref{sec:eavailw-construction}; App.~\ref{app:history-5dcandidates}).
+% Routed record: App.~\ref{app:provenance} (\texttt{gbdtfive-macros}).
+
+Repeating all 187 universe unfolds and the CV with per-universe background
+subtraction changes the combined \emph{block-sum} sqrt-trace by only
+\SI{0.28}{\percent} and the \emph{adopted} covariance by \SI{0.18}{\percent},
+a numerically negligible bound on the background-CV choice (App.~\ref{app:history}).
+% (\SI{0.18}{\percent} is after the flux (J28) correction; App. H keeps the
+% superseded-product wording and the inflation-damping explanation.)
+The 4D and extended-fiducial results do not yet have covariances
+constructed with this procedure; the 5D covariance is not transferred to them.
+
+% The chi^2 caveat formerly here moved to sec_results.tex (\S\ref{sec:results-compare}).

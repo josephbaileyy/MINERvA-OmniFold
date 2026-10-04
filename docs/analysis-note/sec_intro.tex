@@ -28,7 +28,9 @@ $d^{2}\sigma/(d\pT\,d\pPar)$, was published by Ruterbories \emph{et al.}
 that measurement with \emph{unbinned} OmniFold~\cite{Andreassen:2019cjw,
 Andreassen:2021zzk}, an unfolding technique based on iterated reweighting with
 machine-learned likelihood ratios that operates on per-event observables rather
-than on a fixed histogram binning. Recent advances in machine learning have enabled unbinned unfolding
+than on a fixed histogram binning.
+
+Recent advances in machine learning have enabled unbinned unfolding
 techniques; see Refs.~\cite{Arratia:2021otl,Huetsch:2024quz} for overviews
 and Ref.~\cite{unbinnedguide} for cross-experiment practical
 guidance. These methods fall into two broad families: those that
@@ -36,13 +38,50 @@ iteratively reweight a starting simulation, of which
 OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk,Chan:2023tbf} is the
 most widely adopted, and those that generate new samples directly with a
 neural network~\cite{Datta:2018mwd,Bellagente:2019uyp,Bellagente:2020piv,
-Backes:2022vmn}. OmniFold was first demonstrated on collider data by the H1
-collaboration~\cite{H1:2021wkz,H1:2023fzk} and has since been adopted across
-a number of experiments; the application closest to this work is the
-OmniFold study on simulated T2K near-detector data~\cite{Huang:2024omnifold}.
-These techniques lift the binned-response limitations of widely-used
+Backes:2022vmn}. These techniques lift the binned-response limitations of widely-used
 classical unfolding methods~\cite{Adye:2011gm} like IBU, the SVD
-method~\cite{Hocker:1995kb}, and TUnfold~\cite{Schmitt:2012kp}. 
+method~\cite{Hocker:1995kb}, and TUnfold~\cite{Schmitt:2012kp}.
+
+\paragraph{Prior OmniFold applications.}
+% Merged here from sec_method.tex (prior applications, background practice,
+% Huang et al.) and the earlier one-sentence H1/T2K summary of this section.
+OmniFold has moved from method paper to production measurement over the last
+few years. H1 published the first real-data applications --- jet substructure
+in high-$Q^{2}$ deep-inelastic scattering, followed by a multi-differential
+eight-observable jet measurement~\cite{H1:2021wkz,H1:2023fzk}; LHCb unfolded
+identified-hadron distributions in $Z$-tagged jets~\cite{LHCb:2022rky}; and
+ATLAS performed a simultaneous unbinned measurement of twenty-four $Z+$jets
+observables~\cite{ATLAS:2024jets}. Ref.~\cite{unbinnedguide} collects these
+and other applications and distills cross-experiment practice; several of the
+practices audited there appear in our uncertainty budget (the ensemble-mean
+cross-check of the central value, the bootstrap statistical block, and the
+unified-throw covariance check of \S\ref{sec:uq-combine}).
+
+These measurements used several background treatments: H1 cut backgrounds to a negligible
+level, LHCb corrected per track upstream of the unfold, and ATLAS left its
+less-than-\SI{0.25}{\percent} background in place and assigned it as an uncertainty,
+while identifying negatively-weighted simulated events as the natural
+in-method subtraction~\cite{ATLAS:2024jets,Andreassen:2021zzk};
+Ref.~\cite{unbinnedguide} recommends that route for nontrivial backgrounds.
+More recent methodological work explicitly treats backgrounds, fakes,
+acceptance, and inefficiency in OmniFold-HI~\cite{Falcao:2025backgrounds} and in
+generative unfolding~\cite{Butter:2025genfold}. These constructions address
+related problems but need not use the same subtraction prescription.
+
+Closest to this analysis is the study of Huang \emph{et
+al.}~\cite{Huang:2024omnifold}, the first application of OmniFold to a
+neutrino cross section: a mock-data unfolding of muon kinematics on the
+public T2K near-detector simulated dataset, benchmarked against traditional
+binned approaches. Two of its findings shape expectations for neutrino
+applications: its iteration count, which we do not adopt
+(\S\ref{sec:method-config}), and an ensemble of reweighting trials with
+different train/test splits that controls the ML stochastic component --- which we
+budget explicitly via the training-seed variation band (\S\ref{sec:systematics}). The
+present work differs in unfolding \emph{real} MINERvA data to an absolutely
+normalized cross section with a complete finalized 2D uncertainty budget, in using GBDT
+learners suited to a low-dimensional tabular feature set, and in validating
+the method directly against a published binned measurement of the same data
+(\S\ref{sec:results}).
 
 
 
@@ -52,10 +91,8 @@ method~\cite{Hocker:1995kb}, and TUnfold~\cite{Schmitt:2012kp}.
         OmniFold learns event weights in the full observable space; the result is
         histogrammed only at the end, so the reported binning can be chosen (or
         refined) after unfolding without re-running. The exception is the
-        background subtraction: the default purity mode assigns each data event a
-        $(D-B)/D$ weight by analysis-bin lookup \emph{before} training, so the
-        reco grid that weight was computed on is fixed even though the reported
-        grid is not (\S\ref{sec:method}).
+        background subtraction, a per-reco-bin $(D-B)/D$ purity weight fixed
+        \emph{before} training (\S\ref{sec:method-algo}).
   \item \textbf{Natural path to higher dimensions.} Adding observables is adding
         input features, not multiplying response-matrix bins --- this is the
         enabling property for the available-energy extension
@@ -69,9 +106,12 @@ method~\cite{Hocker:1995kb}, and TUnfold~\cite{Schmitt:2012kp}.
 
 \paragraph{Analysis strategy.}
 The published 2D cross section provides a quantitative validation of unbinned
-OmniFold on MINERvA data, including its uncertainty budget. The validated
-pipeline is then extended by adding $\Eavail$, $q_{3}$ and $W$ as classifier
+OmniFold on MINERvA data, including its uncertainty budget
+(\S\S\ref{sec:experiment}--\ref{sec:validation}). The validated
+pipeline is then extended by adding $\Eavail$, $q_{3}$ (\S\ref{sec:3d}) and $W$
+(\S\ref{sec:eavailw}) as classifier
 inputs. Marginalization to each lower-dimensional result, closure, coverage and
-classifier-family comparisons test the extensions. A recoil-only point-cloud
-cross-check and a scalar study with relaxed truth-muon cuts probe alternative
-representations and signal definitions.
+classifier-family comparisons test the extensions. A scalar study with relaxed
+truth-muon cuts (\S\ref{sec:fps}) and a recoil-only point-cloud
+cross-check (\S\ref{sec:pet}) probe alternative signal definitions and
+representations.

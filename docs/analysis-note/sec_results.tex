@@ -7,9 +7,7 @@ uncertainty --- the combined systematic (universe), statistical (bootstrap),
 and ML (training-seed variation) budget constructed in \S\ref{sec:systematics}; the
 published points carry the published total covariance. Two figures are
 exceptions and say so in their own captions:
-Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} carry statistical errors only,
-and their second curve is the simulated truth rather than the published
-data.
+Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} carry statistical errors only.
 
 \subsection{Double-differential cross section}
 \label{sec:results-xsec}
@@ -61,7 +59,17 @@ $\binsFive\%$ of bins agree within \SI{5}{\percent} and $\binsTen\%$ within
 quoted: against the published covariance alone ($\chiPaper$) and against the
 combined covariance that also credits this measurement's own uncertainty
 ($\chiCombined$). The anatomy of the former is examined in
-\S\ref{sec:results-tension}. The per-bin standardized
+\S\ref{sec:results-tension}.
+
+% chi^2 caveat, moved here from sec_systematics.tex (formerly \paragraph{$\chi^{2}$ caveat.}).
+The combined paper$+$ours $\chi^{2}/\mathrm{ndf}=\chiCombined$ double-counts systematics
+shared with the paper (flux/GENIE/MINOS); the ours-only inverse-covariance
+$\chi^{2}$ is evaluated only with a truncated-spectral convention on the
+well-constrained subspace. We therefore quote per-bin pulls, the regularization
+scan, and the truncated result together rather than treating an unconstrained
+pseudo-inverse as a standalone goodness-of-fit (App.~\ref{sec:rank}).
+
+The per-bin standardized
 difference using the published uncertainty as a scale (Fig.~\ref{fig:pull}) is centered (mean
 $\pullMean$) with RMS $\pullRMSr$, well inside the published
 uncertainties. Figures~\ref{fig:ptslices}--\ref{fig:pzslices} display the
@@ -108,9 +116,10 @@ data.
   $\pT$ versus $\pPar$. \textbf{This is a data-versus-simulation comparison and
   does not read the published measurement.} The histogram is the analysis MC
   truth denominator passed through the same flux, nucleon-count and efficiency
-  normalization as the unfolded result
-  (\texttt{2d-unfolding/plot\_2d\_paper\_comparison.py} builds it from
-  \texttt{hOFTruthDenom2D}), so the only difference between the two curves is
+  normalization as the unfolded result%
+  % (\texttt{2d-unfolding/plot\_2d\_paper\_comparison.py} builds it from
+  % \texttt{hOFTruthDenom2D}; listed in App.~\ref{app:codebase})
+  , so the only difference between the two curves is
   data versus the MC prior; only the \emph{panel format} follows Fig.~13 of
   Ref.~\cite{MINERvA:2021owq}. The annotated per-panel $\chi^{2}$ uses the
   statistical errors of the unfolded points alone and is a descriptive scale.
@@ -159,7 +168,7 @@ blocks together contribute under a tenth of the combined $\sqrt{\mathrm{Tr}\,C}$
   (\SI{6.86}{\percent}).}
   \label{tab:uq}
 \end{table}
-\subsection{Anatomy of the $\chi^{2}=3.66$ tension}
+\subsection{Anatomy of the $\chi^{2}=\chiPaper$ tension}
 \label{sec:results-tension}
 Using the published uncertainties as a descriptive scale, the central values
 have pull RMS $\pullRMS$ (a diagonal-only $\chi^{2}/\mathrm{ndf}$ would be
@@ -176,8 +185,7 @@ the low-$\pT$ cross-section peak ridge where the flux and muon-energy bands
 dominate. A $\sim1$-unit methodological band comes from the GBDT estimator
 (exact-GBT $\chiPaper$ vs HistGBT $2.70\pm0.04$ vs LightGBM $2.65$; iteration count is
 negligible, $5\to10$ iters move it by $+0.01$). Full treatment:
-App.~\ref{sec:tension}. The eigenmode-localization maps and the additional
-model-comparison ratio maps are shown in
+App.~\ref{sec:tension}. The eigenmode-localization maps are shown in
 Figs.~\ref{fig:tension}--\ref{fig:tensionmodes}.
 % NOTE: the estimator-band value "exact-GBT 3.66" below is the same number as
 % the paper-covariance chi2 (\chiPaper); they coincide by construction.
@@ -209,7 +217,8 @@ under-predicts the total by $\sim\SI{9}{\percent}$
 ($\sigma_{\mathrm{tune}}/\sigma_{\mathrm{data}}=0.91$), concentrated in the
 low-$\pT$ peak, and is strongly disfavored by the data covariance
 ($\chi^{2}/\mathrm{ndf}$: data vs tune $33.0$, ours vs tune $26.5$). Our unfolded
-result tracks the data far more closely than the model does.
+result tracks the data far more closely than the model does
+(Fig.~\ref{fig:modelmaps}).
 The published analysis~\cite{MINERvA:2021owq}
 additionally compares to NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx} and
 NEUT~\cite{Hayato:2009zz}; because OmniFold delivers a per-event reweighted
@@ -233,7 +242,8 @@ classifier feature and is re-unfolded accordingly.
   \caption{Bin-by-bin ratio maps on the $(\pT,\pPar)$ grid, \textbf{both taken
   to the MINERvA Tune~v1 model}: ours/Tune~v1 (left) and published
   data/Tune~v1 (right), on a common colour scale $0.7$--$1.3$
-  (\texttt{2d-unfolding/compare\_to\_models.py}; the panels carry no printed
+  % (\texttt{2d-unfolding/compare\_to\_models.py}; listed in App.~\ref{app:codebase})
+  (the panels carry no printed
   titles, so this caption is the only label). Neither map is a ratio to the
   published data, and neither is flat near unity: both show the same tune
   deficit, rising above unity over most of the plane and dipping below it at

@@ -110,6 +110,13 @@ stochasticity into the statistical block (App.~\ref{app:history-combine}).'' The
 (The quoted $N=300$ bootstrap pins the GBDT seed;
         only the superseded seed-varying set leaked, \S\ref{sec:bootstrap}.)
 
+\paragraph{From \S\ref{sec:invert}, rank deficiency at $N\le n$.}
+After ``has rank at most $N-1$'' the paragraph continued: ``This was the regime of the Stage-1
+bootstrap ($N=50$ replicas, $n=205$ bins): Cholesky failed without jitter, and the required
+jitter, $1.6\times10^{-94}$, was a numerical artifact of the rank deficiency rather than a real
+near-singularity.'' The body keeps the rank bound and the full rank of the Stage-2 ($N=300$)
+bootstrap.
+
 \paragraph{From \S\ref{sec:universes}, Table~\ref{tab:band-medians}.}
 The two struck rows, as the table printed them:
 \begin{center}
@@ -147,6 +154,12 @@ Per-bin median relative $\sigma$ & $6.86\%$ & $\dead{4.822\%} \to 6.865\%$ \\
 \end{tabular}
 \end{center}
 
+\paragraph{From \S\ref{sec:205bins}, the strict-interior mask.}
+Before its current justification the sentence on the $185$-bin mask opened: ``The mask dates from
+an early stage of the analysis, when the paper's unreported diagonal cells dominated the
+$\chi^{2}$;''.
+% Source: pre-freeze 2D_OMNIFOLD_RUN_LOG_ARCHIVE.md:50-59 (Phase 4, unreported bins), :716-726.
+
 \paragraph{From \S\ref{sec:pull}.}
 With the combined
 covariance (paper TotalCov $+$ flux-fixed matcorr universe $+$ bootstrap-300
@@ -174,6 +187,10 @@ surviving statement.
 After giving NumPy's documented \texttt{pinv} cutoff and the looser $n\,\sigma_{\max}\varepsilon_{\text{machine}}$ convention, the sentence ended
 ``\ldots; an earlier
 version of this appendix quoted that formula for \texttt{pinv} and was wrong.''
+The comparison with the looser convention read: ``\ldots\ convention of \texttt{np.linalg.lstsq}
+and MATLAB, which at $n=205$ would be about $45\times$ looser
+($205\times2.22\times10^{-16}=4.6\times10^{-14}$)''. The body keeps the operative cutoff
+($\texttt{rcond}=10^{-15}$) and the statement that it is not that convention.
 
 \subsubsection{From \S\ref{sec:combine}: the provenance note on the 2D budget}
 \label{app:history-combine}
@@ -283,6 +300,32 @@ sampling proxy, and neither is established here; a more strongly regularised est
 \emph{less} dispersion while constraining the cross section no better, exactly the direction that
 breaks the claimed inequality.
 
+\paragraph{From App.~\ref{app:cstatlimit}, the resampling argument.}
+The subsection on the band, then titled ``Why the two readings of the band are not a live fork'',
+opened: ``The family disagrees with the central value by a factor of order three, coherently, in
+the best-accepted region of the plane. Two readings were proposed as a binary --- \textbf{(a)} the
+spread is real, \textbf{(b)} the $\mathrm{Poisson}(1)$ proxy is wrong --- and no choice between
+them follows from this covariance, which measures dispersion about a centre and does not establish
+finite-family containment of a separately trained nominal.'' The resampling argument that followed
+read, in full:
+
+What follows concerns the resampling scheme alone and is offered as an argument rather than a
+ratified result; it bears on reading (b). The resampled
+objects are individual reconstructed events. A $\mathrm{Poisson}(1)$ multiplicity $k$ on a row
+states that, were the data retaken, that event occurred $k$ times; zero states that it did not
+occur, which is exactly what counting noise does to an event observed once, so the zero atom is not
+an artifact of the method. Independent $\mathrm{Poisson}(1)$ multiplicities also reproduce exact
+Poisson fluctuations in every aggregate of those rows (\S\ref{app:poisson}), which variance-matched
+continuous alternatives do not: they match the first two moments and get the discreteness wrong.
+\textbf{That argument reaches counts, and it stops there.} Exact aggregation concerns unweighted sums
+of resampled rows; this covariance disperses the output of a weighted, learned, iteratively refit
+estimator evaluated on every replica, and nothing above shows that a perturbation with the right
+counting behaviour induces the right \emph{sampling} distribution for that functional --- still less
+that the resulting interval covers.
+
+The body keeps the surviving conclusion: the zero atom is what counting noise does to a row
+observed once, so its presence is not by itself evidence that the proxy is invalid.
+
 \paragraph{From App.~\ref{app:cstatlimit}, limitations of the covariance object.}
 \textbf{The $257$ are the quotable all-member domain, and they are not an
 ``invertible sub-block'' --- this appendix called them one, which is impossible at this rank, and the
@@ -306,6 +349,12 @@ It is not a theorem that the two
 footings give the same covariance, because the underlying estimands are not
 pointwise identical --- so ``the two covariances agree by construction,'' as
 this paragraph previously read, is withdrawn.
+
+\paragraph{From App.~\ref{sec:negweight-estimator}, the continuous estimand.}
+After stating that the purity weight and negative-weight injection agree exactly only in the
+binned limit and target the bin-integrated estimand $r^{\star}(b)=(D_{b}-B_{b})/S_{b}$, the
+sentence continued ``\ldots; the claim that they give the same continuous estimand
+$r^{\star}(x)=(D(x)-B(x))/S(x)$ was stated here without those conditions and is corrected.''
 
 \paragraph{From \S\ref{sec:eavailw-construction}, conditioning.}
 Two properties of this
@@ -339,6 +388,11 @@ is kept here with it.
   closure level is quoted, and it does not test omitted muon dependence.}
   \label{fig:petabs}
 \end{figure}
+
+\paragraph{From \S\ref{sec:summary}, outlook.}
+After listing the remaining paper-independent cross-checks, the outlook continued ``The
+truncated-spectral `ours-only' goodness-of-fit convention (App.~\ref{sec:rank}) is no longer
+among them: the collaboration confirmed it uses the same truncated-spectral pseudo-inverse.''
 
 \subsection{Superseded uncertainty constructions and their figures}
 \label{app:history-superseded}
@@ -408,6 +462,11 @@ value would require.
   \label{fig:3dbands}
 \end{figure}
 
+\paragraph{From \S\ref{sec:uq-ml}, the split-inclusive ML band on the 3D budget.}
+``\ldots\ a \emph{train/test-split} variant, which also re-draws the internal training
+split, gives a band $1.24\times$ the pure-seed band, moving the combined 3D
+budget by only $+0.04\%$ in $\sqrt{\mathrm{Tr}\,C}$ \ldots''
+
 \paragraph{From \S\ref{sec:3d-2p2h}, the Valencia 2p2h fraction.}
 An earlier \SI{27}{\percent} came mostly from comparing two
 different generated samples for CV and CV$+$MEC; the MEC component alone gave
@@ -460,11 +519,11 @@ projected full five-axis bootstrap covariance $C_{EW}=M C_{5D}M^{\top}$, and a
 $W$-resolved detector (lateral) block. It is not adopted and is not quoted
 anywhere in this note.
 
-The paragraph that followed, stating the three requirements declared for a replacement and that the adopted object meets them, remains in the body at the head of \S\ref{sec:eavailw-construction}.
+The paragraph that followed, stating the three requirements declared for a replacement and that the adopted object meets them, remains in the body in the ``Construction'' paragraph of \S\ref{sec:eavailw-construction}.
 
 \subsubsection{The superseded 5D candidate unified-throw constructions}
 \label{app:history-5dcandidates}
-From \S\ref{sec:uq-combine}:
+From \S\ref{sec:uq-higherdim}:
 
 For the 5D candidate this construction was carried out both mean-centered and
 CV-centered, with the joint mean shift reported separately rather than folded into
@@ -593,11 +652,123 @@ longer enters: the in-phase-space GENIE~CV total is \SI{2.76e-38}{cm^2/nucleon}
 in both. The GENIE$+$MEC prediction uses the 3D normalization convention, which
 also removes a \SI{2.87}{\percent} under-normalization of the earlier
 $(\Eavail,W)$ MEC prediction (\texttt{KNOWN\_ISSUES.md} row 81).
+% Source-only comment block moved verbatim from sec_eavailw.tex (sec:eavailw-band),
+% organization review 2026-10-04 (lane 2 sec. 8.3 finding 2). Not rendered.
+% --- SUPERSEDED 2026-09-27 (s5p, OI-193; KNOWN_ISSUES 83 and 81) ---------------
+% Every GENIE/NuWro number in the provenance block below (1.535/1.579/1.563, the
+% 2.4446e-38 vs 2.52e-38 discrepancy, the W-band 1.30-1.35) rests on the
+% flux-defective predictions and is HISTORY. GiBUU moved only by its x0.9966
+% flux-convention reweight (1.609 -> 1.607). The current numbers are
+% VALIDATION_LEDGER VL156-VL160, from
+% docs/orchestration/state/s5p/stage7/generator-context/generator-context-receipt.json
+% (eavailW_band, W_2p2_3p0) and eavailW_band_s5p_repaired-log.txt beside it:
+%   corner data/gen  GENIE-CV 1.142  GENIE+MEC 1.139  NuWro 1.160  GiBUU 1.607
+%   integrated       GENIE-CV 1.110  GENIE+MEC 1.068  NuWro 1.153  GiBUU 1.386
+%   W in [2.2,3.0)   GENIE-CV 1.123  GENIE+MEC 1.111  NuWro 1.130  GiBUU 1.343
+%   corner/integrated (derived): 1.029, 1.066, 1.006, 1.159
+% The block below is kept unedited as the record of the 2026-08 reduction.
+% --- PROVENANCE / REDUCTION for the corner ratios (J27.3, recorded 2026-08-02) ---
+% The ratios below are CORNER-INTEGRATED cross-section ratios -- not per-bin means,
+% not a weighted mean, not the worst bin. Reduction, from
+% 3d-unfolding/genie/overlay_eavailW_band.py:88-108:
+%   corner = outer(EAVAIL_EDGES[:-1] >= 0.8, W_EDGES[:-1] >= 1.8)  -> 3x3 = 9 cells
+%            [Eavail 0.8-1.5, 1.5-3.0, 3.0-100] x [W 1.8-2.2, 2.2-3.0, 3.0-100]
+%   data/gen = sum_corner(hData2D * dEavail * dW)
+%              / sum_corner(hXSec_eavailW * dEavail * dW)
+% Source of 1.54/1.58/1.56: ND_OMNIFOLD_RUN_LOG.md:988-990 (2026-06-08 band run),
+% which reads "All THREE underpredict ... 1.54 CV, 1.58 +MEC, 1.56 NuWro" and states
+% "GiBUU excluded (FinalEvents.dat lacks per-event Enu)". GiBUU was structurally
+% ABSENT from the run these three numbers come from. This paragraph previously read
+% "All four underpredict ... by 54-58%" -- a later edit that attached three
+% magnitudes to four generators without a recomputation; corrected 2026-08-02 to
+% attribute them to the three that produced them. GiBUU was afterwards added to
+% the band (gibuu_to_xsec_eavailW.py, Task 16; make_figures.sh:55 passes it and the
+% figure legend shows it), so the 4-generator overlay DID print a GiBUU corner
+% ratio -- to stdout, never captured. To close: re-run make_figures.sh:55 and read
+% the "hiE-hiW corner ... data/gen=" line. Inputs live only on Perlmutter /pscratch.
+% Do NOT substitute either of these -- both are different reductions:
+%   - Eavail-projected GiBUU data/gen 1.59 / 1.36 / 1.91 (RUN_LOG:1126-1127)
+%     integrates over ALL W, not W>=1.8.
+%   - corner chi2 381.1/12 (RUN_LOG:1155-1157) uses Eavail>=0.4 -> 12 cells,
+%     a different sub-block that adds the 0.4-0.8 Eavail row.
+% Until recomputed, 54-58% is a THREE-generator span. When the GiBUU ratio arrives
+% this is a one-line upgrade: add it, and widen the span only if it lands outside.
+%
+% CLOSED 2026-08-11. All FOUR ratios recomputed TOGETHER on one data file, so the set
+% is internally consistent rather than a fourth number appended to three older ones.
+% Log (whole stream, no tail): 3d-unfolding/genie/eavailW_band_20260811_allfour.log
+% Ledger: "2026-08-11 (E_avail,W) four-generator corner ratios". Predeclared at
+% docs/orchestration/PREDECLARE-20260811-gibuu-corner-ratio.md, branch G1.
+%   GENIE-CV  corner 8.7918e-39  data/gen 1.535    (note had 1.54)
+%   GENIE+MEC corner 8.5484e-39  data/gen 1.579    (note had 1.58)
+%   NuWro     corner 8.6369e-39  data/gen 1.563    (note had 1.56)
+%   GiBUU     corner 8.3893e-39  data/gen 1.609    <- NEW; lands OUTSIDE 1.54-1.58,
+%   data      corner 1.3497e-38                       so the span widens 54-58 -> 54-61
+% The three reproduce AT THE PRECISION THIS NOTE QUOTES. Identity is NOT established:
+% the only surviving record of the 2026-06-08 values is RUN_LOG:988-990 at three
+% significant figures, and the data file (excess_eavail_W.root, 2026-07-14) POSTDATES
+% them by five weeks -- so a shift in the third decimal is masked by rounding. Per
+% BEN-086, agreement at printed precision is not identity; do not re-quote these at
+% more digits from the 2026-06-08 lineage.
+% Controls that reproduce EXACTLY and are why the set is trustworthy: GiBUU integrated
+% 2.2227e-38 and data 3.0699e-38 (this paragraph's own 2.22 / 3.07). The ORDERING
+% GiBUU < NuWro < GENIE CV matches sec_3d.tex:215-217, but the GENIE value does not:
+% this band's GENIE-CV 2.4446e-38 (work_seed* gevgen, gen_to_xsec_eavailW.py) is a
+% different object from sec_3d's 2.52e-38 (Stage-A work_p* gevgen, genie_to_xsec3d.py);
+% the 2.95% difference is not reconciled. (The ledger's VL35 prose repeats the old claim.)
+%
+% NORMALIZATION INCONSISTENCY, FOUND WHILE CLOSING THIS AND DELIBERATELY LEFT ALONE.
+% This paragraph states two deficits, two sentences apart, in TWO DIFFERENT
+% NORMALIZATIONS, both rendered as a bare percentage with no marker:
+%   "underpredict ... by 54-61%"  is generator-relative, (data-gen)/gen = data/gen - 1
+%   "sit 23-26% below the data"   is data-relative,      (data-gen)/data
+% Both are internally correct and each matches its own arithmetic. But in a COMMON
+% normalization the corner deficit is 34.9-37.8% data-relative (or the high-W deficit
+% is 29.8-34.8% generator-relative), so a reader comparing "54-61%" against "23-26%"
+% infers a contrast of ~2.4x where the consistent answer is ~1.2x. Choosing the
+% convention is an authorial decision about a physics claim, so it was ROUTED rather
+% than silently changed; the ratios above are unaffected either way.
+%
+% RESOLVED 2026-08-12 by Joseph (-> Session A -> Session B, BEN-082(v)): "use one
+% normalization throughout -- prefer explicit data/generator ratios for both
+% comparisons rather than mixing 'percent above generator' with 'percent below data.'"
+% Both sentences now state data/generator and neither states a bare percentage.
+% The W-band ratios were COMPUTED FROM THE SOURCE CROSS-SECTIONS, not converted from
+% the rounded 23-26%, because converting rounded endpoints would manufacture precision
+% the source does not have (the BEN-086 trap this same comment block warns about).
+% From eavailW_band_20260811_allfour.log:22-23, W in [2.2,3.0) GeV, units cm^2/nucleon:
+%   data 7.481e-39
+%   GENIE-CV  5.764e-39 -> 1.2979    GENIE+MEC 5.622e-39 -> 1.3307
+%   NuWro     5.715e-39 -> 1.3090    GiBUU     5.550e-39 -> 1.3479
+%   span 1.298-1.348 -> quoted 1.30-1.35
+% CROSS-CHECK, and it is why these are trustworthy: the same operands reproduce the
+% note's previous data-relative wording exactly -- 22.95%, 24.85%, 23.61%, 25.81%,
+% i.e. "23-26% below the data". The prose changed convention; no number moved.
+% The corrected contrast is now legible on the page: 1.54-1.61 against 1.30-1.35.
+% --------------------------------------------------------------------------------
 
-\paragraph{From \S\ref{sec:uq-combine}, the background-CV choice.}
+\paragraph{From \S\ref{sec:3d-models} and \S\ref{sec:eavailw-band}, the superseded ledger rows.}
+The generator comparisons of \S\ref{sec:3d-models} and \S\ref{sec:eavailw-band} were
+rebuilt on 2026-09-27 by re-running the unchanged figure producers on the repaired inputs
+(App.~\ref{app:provenance}, \texttt{flux-repair}). Ledger rows \texttt{VL156}--\texttt{VL160}
+(\texttt{VL156}--\texttt{VL158} for the $(\Eavail,W)$ band) supersede the pre-repair rows
+\texttt{VL35}--\texttt{VL38}.
+
+\paragraph{From \S\ref{sec:uq-higherdim}, the background-CV choice.}
 ``\ldots the effect on the \emph{adopted}
 covariance is smaller still, \SI{0.09}{\percent} before the flux (J28)
 correction and \SI{0.18}{\percent} after it \ldots''
+The fuller wording read:
+``Repeating all 187 universe unfolds and the CV with
+per-universe background subtraction changes the combined \emph{block-sum}
+sqrt-trace by only \SI{0.28}{\percent}; the effect on the \emph{adopted}
+covariance is smaller still, \SI{0.18}{\percent} after the flux (J28)
+correction, because the adoption's per-bin
+$\max$ inflation transfer (Eq.~\eqref{eq:zinflation},
+\S\ref{sec:eavailw-construction}) damps the block-sum change. These are ratios taken against
+the superseded products [the 5D candidates of \S\ref{app:history-5dcandidates}], so they bound the size of the background-CV
+choice rather than describing a current covariance; either way that concern is
+numerically negligible.''
 
 \paragraph{From \S\ref{sec:pet-projection}, cloud coverage before the miss-row fix.}
 Originally the cloud was filled only in the reco-signal event loop, so the

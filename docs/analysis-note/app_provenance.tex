@@ -20,54 +20,99 @@ the body becomes stronger because its record is listed. Where a claim depends on
 limitations matter---most importantly the adopted covariance's four measurements
 (\S\ref{sec:eavailw-adopted})---those limitations are stated at the claim, not delegated here.
 
-The tags are stable; the paths are current as of 2026-09-21.
+The tags are stable; the paths are current as of 2026-10-04. Rows are ordered by the
+section that cites them. Table~\ref{tab:prov-paths} lists records with a repository path;
+Table~\ref{tab:prov-trackers} lists tracker rows and code identifiers that have no
+document of their own.
 
-\begin{center}
-\small
-\begin{tabular}{@{}llp{0.50\textwidth}@{}}
+{\small
+\begin{longtable}{@{}llp{0.50\textwidth}@{}}
+\caption{Repository records with a path.}\label{tab:prov-paths}\\
 \toprule
 Tag & Cited at & Record \\
 \midrule
-\texttt{negweight-toy} & \S\ref{app:negweight} &
-  \repopath{docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json} \\
-\texttt{negweight-audit} & \S\ref{app:negweight} &
-  \repopath{docs/orchestration/AUDIT-FINDINGS-20260731.md}, tier~A \\
-\texttt{gbdt-closeout} & \S\ref{app:negweight} &
-  \repopath{docs/orchestration/RUNBOOK-20260807-gbdt-closeout.md} \S2.1--2.2 \\
-\texttt{oi6-oi8-oi126} & \S\ref{app:negweight} &
-  \repopath{docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md} \\
-\texttt{p4-verifier} & \S\ref{app:negweight} &
-  \repopath{docs/orchestration/runs/standard-p4-verifier/} \\
-\texttt{fps-battery} & \S\ref{app:negweight} &
-  FPS ME~FHC battery of 2026-06-10, scheduler job \texttt{54244120} \\
-\texttt{rank-inversion} & \S\ref{app:statmethods} &
-  \repopath{docs/orchestration/RANK-AND-INVERSION-20260810.md} \\
+\endfirsthead
+\toprule
+Tag & Cited at & Record \\
+\midrule
+\endhead
+\midrule \multicolumn{3}{r}{\emph{continued\ldots}}\\ \endfoot
+\bottomrule
+\endlastfoot
 \texttt{gbdtfive-macros} & \S\ref{sec:systematics} &
   \repopath{docs/orchestration/PROCEDURE-gbdtFive-macro-update.md} \\
+\texttt{coverage-toys} & \S\ref{sec:coverage} &
+  see below \\
+\texttt{flux-repair} & \shortstack[l]{\S\ref{sec:3d-models}, \S\ref{sec:eavailw-band},\\
+  App.~\ref{app:release-schema}, App.~\ref{app:history}} &
+  see below \\
+\texttt{q3-excess} & \S\ref{sec:4d} &
+  \texttt{nd-unfolding/}\allowbreak\texttt{q3\_excess\_projection.py} (comparator: Tune~v1 prior,
+  weights \texttt{w\_truth}); produces Fig.~\ref{fig:q3excess} \\
+\texttt{eavailw-excess} & Fig.~\ref{fig:eavailWexcess} &
+  \texttt{nd-unfolding/}\allowbreak\texttt{excess\_eavail\_W.py} (cell-integrated differences;
+  comparator weights \texttt{w\_truth}) \\
+\texttt{z-adoption} & \S\ref{sec:eavailw-construction}, App.~\ref{app:release-audit} &
+  see below \\
 \texttt{retracted-values} & \S\ref{sec:pet}, App.~\ref{app:history} &
   \repopath{docs/orchestration/INDEX-retracted-and-superseded-values.md} \\
 \texttt{pet-pairing} & \S\ref{sec:pet}, \S\ref{app:cstatlimit} &
-  \texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md} \\
-\texttt{z-adoption} & \S\ref{sec:eavailw-construction} &
   see below \\
-\texttt{z-projection} & \S\ref{app:release} &
-  see below \\
+\texttt{pet-closure-legacy} & \S\ref{sec:pet-abs} &
+  ruling of 2026-08-21;
+  \repopath{docs/orchestration/DETERMINATION-20260819-lanec-petclosure-is-legacy.md} \\
 \texttt{pet-projection-figure} & \S\ref{sec:pet-projection} &
   see below \\
-\bottomrule
-\end{tabular}
-\end{center}
+\texttt{variance-sources} & Table~\ref{tab:variance-sources} (\S\ref{sec:variance}) &
+  see below \\
+\texttt{rank-inversion} & \S\ref{sec:nd-declarations} &
+  \repopath{docs/orchestration/RANK-AND-INVERSION-20260810.md}; the predeclared rank cut itself is
+  a statistics decision recorded in \texttt{docs/}\allowbreak\texttt{STATVAL\_REPAIR.md} \\
+\texttt{closure-scripts} & \S\ref{sec:closure} &
+  \texttt{uq/closure/}\allowbreak\texttt{closure\_truth\_reweight.py} (\S\ref{sec:closure-tr});
+  \texttt{uq/closure/}\allowbreak\texttt{closure\_hidden\_var.py} (\S\ref{sec:closure-hv});
+  \texttt{uq/closure/}\allowbreak\texttt{closure\_alt\_model.py} (\S\ref{sec:closure-alt}) \\
+\texttt{cstat-recompute} & \S\ref{app:cstatlimit} &
+  see below \\
+\texttt{negweight-toy} & \S\ref{app:negweight} &
+  \repopath{docs/orchestration/receipts/RECEIPT-negweight-toy-20260821.json} \\
+\texttt{negweight-hpss} & \S\ref{app:negweight} &
+  see below \\
+\texttt{negweight-audit} & \S\ref{app:negweight} &
+  \repopath{docs/orchestration/AUDIT-FINDINGS-20260731.md}, tier~A, finding J22 \\
+\texttt{gbdt-closeout} & \S\ref{app:negweight} &
+  \repopath{docs/orchestration/RUNBOOK-20260807-gbdt-closeout.md} \S2.1--2.2 \\
+\texttt{oi6-oi8-oi126} & \S\ref{app:negweight} &
+  see below \\
+\texttt{p4-verifier} & \S\ref{app:negweight} &
+  \repopath{docs/orchestration/runs/standard-p4-verifier/} \\
+\texttt{fps-battery} & \S\ref{app:negweight} &
+  see below \\
+\texttt{z-projection} & App.~\ref{app:release-identities} &
+  see below \\
+\texttt{z-assembly} & App.~\ref{app:release-audit} &
+  \texttt{nd-unfolding/}\allowbreak\texttt{z\_assembly.py} (implements
+  Eqs.~\eqref{eq:zassembly}--\eqref{eq:zinflation}); the same algebra is asserted independently
+  of the producer \\
+\texttt{z-conditioning} & App.~\ref{app:release-audit} &
+  see below \\
+\end{longtable}
+}
 
-\noindent The last four tags carry records whose paths are too long for the
+\noindent Tags marked ``see below'' carry records or context too long for the
 column above, so they are given here at full width.
 
 \begin{description}[leftmargin=0pt,itemsep=3pt]
-  \item[\texttt{pet-pairing}.] \texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md}.
-    The 2026-08-20 ruling: the central/statistical pairing is declined, no PET
-    total covariance is adopted for publication, PET remains a
-    diagnostic and method-development result, and reconsideration requires
-    estimator-equivalence \emph{and} coverage evidence --- coverage being a
-    different object from verifying the construction.
+  \item[\texttt{coverage-toys}.] Launcher \texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}; rollup
+    \texttt{uq/coverage\_toys.py}; summary \texttt{uq/coverage/}\allowbreak\texttt{coverage\_summary.txt}.
+    Each toy runs the driver with \texttt{-{}-closure} and \texttt{-{}-bootstrap-seed $k$}; the
+    stored truth histogram is \texttt{hTruthXSec2D}, fluctuated through \texttt{w\_truth}.
+  \item[\texttt{flux-repair}.] \texttt{KNOWN\_ISSUES.md} rows 82 (GiBUU sample stops at
+    $E_\nu\approx\SI{20}{GeV}$) and 83 (GENIE/NuWro flux mis-sampling); repair and rebuild of
+    2026-09-27, \texttt{VALIDATION\_LEDGER.md} rows \texttt{VL156}--\texttt{VL160} (\texttt{VL159}:
+    3D integrated-rate shares; \texttt{VL160}: Valencia-2p2h fill), superseding
+    \texttt{VL35}--\texttt{VL38}; receipt
+    \repopath{docs/orchestration/state/s5p/stage7/generator-context/generator-context-receipt.json}.
   \item[\texttt{z-adoption}.] The adoption itself at
     \repopath{docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md};
     the seed measurements at
@@ -75,14 +120,129 @@ column above, so they are given here at full width.
     and \repopath{docs/orchestration/state/SEED-EFFECT-20260920.json}; and the
     withdrawal of the lower-bound reading at
     \repopath{docs/orchestration/CORRECTION-20260920-lower-bound-inference-withdrawn.md}.
+    Adoption recorded 2026-09-20; the predeclared magnitude criterion is \emph{cause~3}'s
+    $M(\mathrm{ii})$ in the internal dependency register, computed by the 2026-09-20 campaign
+    for the two companion products only.
+  \item[\texttt{pet-pairing}.] \texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md}.
+    The 2026-08-20 ruling: the central/statistical pairing is declined, no PET
+    total covariance is adopted for publication, PET remains a
+    diagnostic and method-development result, and reconsideration requires
+    estimator-equivalence \emph{and} coverage evidence --- coverage being a
+    different object from verifying the construction.
+    Ratification rests with the estimator's owner and the covariance-construction reviewer, and
+    the open item recording the question (\texttt{OI-126}) is not closed by
+    App.~\ref{app:cstatlimit}.
+  \item[\texttt{pet-projection-figure}.] \texttt{ISSUE-59} in
+    \texttt{KNOWN\_ISSUES.md} (fixed 2026-09-23; \texttt{pet\_cloud\_projection\_xsec} regenerated) and the corrected values at
+    \texttt{nd-unfolding/products/pet/fullcloud/pointcloud\_projection\_summary.json},
+    which holds the three $\Eavail$ projections (\texttt{pet\_cloud\_hascloud},
+    \texttt{pet\_stored\_hascloud}, \texttt{pet\_stored\_full}); method and
+    reproduction at \texttt{nd-unfolding/pet/POINTCLOUD\_PROJECTION.md}.
+  \item[\texttt{variance-sources}.] Code pointers, one per row of
+    Table~\ref{tab:variance-sources}. Training-seed variation:
+    \texttt{seedscan/analyze\_seedscan.py}; \texttt{uq/seedscan\_lgbm\_ml/
+    uq\_covariance\_ml.root}. Poisson bootstrap: \texttt{unfold\_2d\_omnifold\_unbinned.py}
+    (\texttt{-{}-bootstrap-seed}, \texttt{-{}-seed}); \texttt{uq/analyze\_uq.py};
+    \texttt{uq/bootstrap\_MEFHC\_300/ uq\_covariance\_boot300.root}. Universes:
+    \texttt{runEventLoopOmniFold.cpp} (\texttt{MNV101\_DUMP\_UNIVERSES});
+    \texttt{unfold\_2d\_omnifold\_unbinned.py -{}-universe BAND:IDX};
+    \texttt{uq/analyze\_universes.py} (\texttt{-{}-add-norm 0.014}). MAT reference:
+    \texttt{uq/verify\_matcorr\_vs\_mnvh1d.py}. Block sum:
+    \texttt{compare\_to\_paper\_fullcov.py} (\texttt{-{}-omnifold-cov}).
+  \item[\texttt{cstat-recompute}.] Every figure in App.~\ref{app:cstatlimit} is derived from
+    committed artifacts, and the per-cell arrays behind the aggregates are published with them:
+    the family spread and its per-replica values in
+    \texttt{state/probe-oi126-band-Rpush-sigma-20260815}; the training-versus-extraction split,
+    its control region, and the thresholds fixed before that comparison ran in
+    \texttt{state/probe-oi126-push-vs-extraction-20260815} and the predeclaration beside it; the
+    $\mathrm{Poisson}(1)$ verification of the targets in
+    \texttt{state/RECEIPT-20260815-oi126-mechanism-narrowing} and
+    \texttt{state/probe-oi126-zero-fraction-per-column-20260815}; the band geometry, acceptance,
+    share of integral and the external comparison in
+    \texttt{state/RECEIPT-20260815-cstat-tail-geometry-and-weighting-correction}; and the two
+    per-cell relative standard deviations tabulated there as fields of
+    \texttt{state/p5a-nominal-vs-cstat-family-percell-20260815}, recomputable from that receipt's
+    own shipped per-cell array. No share-of-total figure from that receipt is used
+    (App.~\ref{app:history}). The members' input file is measured in
+    \texttt{state/gate5-source-npz-verified-20260813}, which should be cited for that purpose in
+    preference to the members' own recorded input digest.
+  \item[\texttt{negweight-hpss}.]
+    \repopath{docs/orchestration/RECEIPT-20260821-negweight-hpss-durability.md}.
+    The real-data products behind the twelve
+    production values are archived and were restored end to end from tape under a tested
+    recovery route; the synthetic-toy values come from a committed, fully deterministic
+    script that reproduces all four on re-run (\texttt{negweight-toy}). Two provenance
+    limits travel with the production numbers: the driver was uncommitted when those
+    outputs were written, so the executing revision is corroborated by a version-distinct
+    log string rather than pinned by a digest, and no output carries a producing job
+    identifier, which no later run can supply.
+  \item[\texttt{oi6-oi8-oi126}.]
+    \repopath{docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md}. The purity
+    footing of the standard chain was raised as a question --- whether the locked
+    instruction that $N$-D production runs \texttt{negweight-refined} reaches the
+    standard-phase-space chain, or only its extended-fiducial form --- and answered in
+    favour of purity on 2026-08-07 (\texttt{gbdt-closeout}) and again, after the
+    alternative was costed, on 2026-08-15.
+  \item[\texttt{fps-battery}.] FPS ME~FHC battery of 2026-06-10, scheduler job
+    \texttt{54244120} (\texttt{VALIDATION\_LEDGER.md}, ``FPS MEFHC battery''). The
+    negative-weight driver code did not land until 2026-07-11 (commit \texttt{cf8a4a6})
+    and the \texttt{-{}-bkg-mode negweight-refined} launcher flag not until 2026-07-20.
+    Both FPS unfold launchers omitted \texttt{-{}-bkg-mode} entirely, so the ten endpoint
+    unfolds ran on the driver default \texttt{-{}-bkg-mode=purity}; they are recorded as
+    purity controls at
+    \texttt{nd-unfolding/uq\_fps/corrected/}\allowbreak\texttt{FPS\_UQ\_CORRECTED\_STATE.md}.
   \item[\texttt{z-projection}.]
     \repopath{docs/orchestration/state/PROJ-20260920-m1-publication-receipt.json}
     and \repopath{docs/orchestration/state/PROJ-20260920-binding-check.json}.
-  \item[\texttt{pet-projection-figure}.] \texttt{ISSUE-59} in
-    \texttt{KNOWN\_ISSUES.md} --- the stale
-    \texttt{pet\_cloud\_projection\_xsec} asset --- and the corrected values at
-    \texttt{nd-unfolding/products/pet/fullcloud/pointcloud\_projection\_summary.json}.
+  \item[\texttt{z-conditioning}.] Cutoff scan:
+    \texttt{PLAN-20260918-scalar5d-publication-completion.md} \S16.1a (diagnostic projection, same
+    $M$); independent scan of the publication bytes: \texttt{VALIDATION\_LEDGER.md} row
+    \texttt{VL145} (publication and diagnostic $42\times42$ matrices bitwise identical). Default
+    cutoff $10^{-12}$ is hardcoded in \texttt{project\_cov\_nd.py}.
 \end{description}
+
+{\small
+\begin{longtable}{@{}llp{0.25\textwidth}p{0.30\textwidth}@{}}
+\caption{Tracker rows and code identifiers: \texttt{KNOWN\_ISSUES.md} rows,
+\texttt{VALIDATION\_LEDGER.md} rows (VL), open items (OI), issues, audit findings,
+gates and receipt fields, commits and job identifiers, and code symbols.}\label{tab:prov-trackers}\\
+\toprule
+Tag & Cited at & Record & Content \\
+\midrule
+\endfirsthead
+\toprule
+Tag & Cited at & Record & Content \\
+\midrule
+\endhead
+\midrule \multicolumn{4}{r}{\emph{continued\ldots}}\\ \endfoot
+\bottomrule
+\endlastfoot
+\texttt{pet-code} & \S\ref{sec:pet-inputs}, \S\ref{sec:pet-abs} &
+  \texttt{nd-unfolding/pet/}\allowbreak\texttt{minerva\_pet\_dataloader.py}; \texttt{MultiFold.reweight}
+  (\texttt{omnifold\_nn/omnifold/}\allowbreak\texttt{omnifold.py}); \texttt{extract\_cross\_section\_nd}
+  (\texttt{nd-unfolding/xsec\_nd.py}) &
+  the dataloader slices off PDG before classification; the full-sample reweight;
+  the standard extraction \\
+\texttt{cstat-family} & \S\ref{sec:pet-syst}, \S\ref{app:cstatlimit} &
+  \texttt{VL132} (the Gate-5 family); \texttt{CSTAT-R7} &
+  the full-event extended-fiducial 50-member replica family; the design document specifying
+  $N=100$ labels a family of this size \texttt{INSUFFICIENT}, and because that document's
+  supersession is unratified, the label stands in the record as written \\
+\texttt{pet-gate6} & \S\ref{sec:pet-full-event-status} &
+  Gate~6 (blocked); receipt prohibitions \texttt{do\_not\_select\_passing\_subset},
+  \texttt{do\_not\_construct\_C\_ML}, \texttt{do\_not\_move\_central},
+  \texttt{do\_not\_start\_leg\_2}, \texttt{do\_not\_retry\_unchanged} &
+  construction of a PET ML-variance component is not authorized to start \\
+\texttt{pot-ratio} & \S\ref{sec:tension} (footnote) &
+  \texttt{KNOWN\_ISSUES} \texttt{J36} &
+  one global $\mathrm{POT}_{\mathrm{data}}/\mathrm{POT}_{\mathrm{MC}}$ ratio rather than a
+  per-playlist ratio \\
+\texttt{bkg-mode-pins} & \S\ref{sec:negweight-footing} &
+  \texttt{STANDARD\_BKG\_MODE} (\texttt{nd-unfolding/p4\_lib.py});
+  \texttt{PUBLICATION\_BKG\_MODE} (\texttt{nd-unfolding/}\allowbreak\texttt{fps\_provenance.py}) &
+  standard-chain purity footing; extended-fiducial designated footing \\
+\end{longtable}
+}
 
 \paragraph{One record is deliberately \emph{not} moved here.} The adopted five-axis covariance is
 identified in the body by its \texttt{sha256} (\S\ref{sec:eavailw-adopted}), and that digest stays

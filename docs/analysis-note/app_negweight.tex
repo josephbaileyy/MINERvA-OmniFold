@@ -21,15 +21,9 @@ of \S\ref{sec:method-algo}}; negative-weight injection is documented here as an
 equivalence study and as the natural treatment for the extended-fiducial analysis, and
 nothing here makes it a supported production path or changes any default. The two
 covariance ratios are agreement diagnostics between two realizations of one
-subtraction, not uncertainty products. The real-data products behind the twelve
-production values are archived and were restored end to end from tape under a tested
-recovery route; the synthetic-toy values come from a committed, fully deterministic
-script that reproduces all four on re-run. Two provenance limits travel with the
-production numbers: the driver was uncommitted when those outputs were written, so the
-executing revision is corroborated by a version-distinct log string rather than pinned
-by a digest, and no output carries a producing job identifier, which no later run can
-supply. Receipts: \texttt{RECEIPT-20260821-negweight-hpss-durability} and
-App.~\ref{app:provenance} (\texttt{negweight-toy}).
+subtraction, not uncertainty products. Their provenance, including two limits that
+travel with the production numbers, is in App.~\ref{app:provenance}
+(\texttt{negweight-hpss}, \texttt{negweight-toy}).
 
 \subsection{Estimator}
 \label{sec:negweight-estimator}
@@ -71,9 +65,8 @@ limit --- on the same bin masses, which is what \S\ref{sec:negweight-binned}
 proves under the piecewise-constant sieve --- and agree only up to within-bin
 shape terms in general. It is the \emph{bin-integrated} background-subtracted
 estimand that both target,
-$r^{\star}(b)=(D_{b}-B_{b})/S_{b}$; the claim that they give the same
-continuous estimand $r^{\star}(x)=(D(x)-B(x))/S(x)$ was stated here without
-those conditions and is corrected. What is measured rather than assumed is how
+$r^{\star}(b)=(D_{b}-B_{b})/S_{b}$, not the same continuous estimand
+$r^{\star}(x)=(D(x)-B(x))/S(x)$ (App.~\ref{app:history}). What is measured rather than assumed is how
 much the difference matters in this analysis: \S\ref{sec:negweight-2d} and
 \S\ref{sec:negweight-uq}. The injected background is restricted to the same
 reconstructed fiducial window as the data, so the two constructions do act on
@@ -253,8 +246,10 @@ identity predicts: the systematic covariance matches in overall magnitude to a
 $\sqrt{\mathrm{tr}}$ ratio of $\nwSystRatio$ (negative-weight/purity), and the
 statistical covariance, compared on matched bootstrap seeds, to $\nwStatRatio$.
 The residual differences --- \SI{\nwSystResid}{\percent} and
-\SI{\nwStatResid}{\percent}, each defined from its parent ratio rather than written
-out, so that a later revision of either ratio propagates to it --- are consistent
+\SI{\nwStatResid}{\percent}
+% --- each defined from its parent ratio rather than written
+% out, so that a later revision of either ratio propagates to it ---
+--- are consistent
 with the ``to within \SI{2}{\percent}'' stated in \S\ref{sec:method} and are
 bootstrap and classifier-seed sampling noise, not a method bias. Negative-weight
 injection thus reproduces the central cross section \emph{per bin} (median
@@ -265,35 +260,13 @@ ratios; per-bin, correlation and eigenmode equivalence are not established.
 The equivalence at the 2D scale --- in the central value, the closed-form
 estimator recovery, and now the full systematic and statistical covariance ---
 together with the Stay-Positive refinement that keeps the estimator robust on
-the larger backgrounds of the extended-fiducial analysis, establishes
-negative-weight injection as a fully validated unbinned replacement for the
-binned purity correction. The binned purity is retained as the default for the
+the larger backgrounds of the extended-fiducial analysis, supports
+negative-weight injection as an unbinned alternative to the binned purity correction
+at the 2D scale. The binned purity is retained as the default for the
 reproduction measurement of this note, with negative-weight injection carried as
 the validated unbinned cross-check and as the \emph{designated} baseline
 subtraction for the extended-fiducial analysis (\S\ref{sec:fps}), where its
 binning-independence and continuous floor are essential.
-
-\paragraph{What the quoted extended-fiducial number actually used.}
-\textbf{The $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$ reported in
-\S\ref{sec:fps} was not produced with negative-weight injection}
-(App.~\ref{app:history}). The product is dated: it comes from
-the FPS ME~FHC battery of \textbf{2026-06-10} (App.~\ref{app:provenance}, \texttt{fps-battery})
-(\texttt{VALIDATION\_LEDGER.md}, ``FPS MEFHC battery''), whereas the
-negative-weight driver code did not land until \textbf{2026-07-11}
-(\texttt{cf8a4a6}) and the \texttt{-{}-bkg-mode negweight-refined} launcher flag
-not until 2026-07-20. Both FPS unfold launchers omitted \texttt{-{}-bkg-mode}
-entirely, so the ten endpoint unfolds ran on the driver default
-\texttt{-{}-bkg-mode=purity}; they are recorded as \textbf{purity controls, not
-publication inputs}
-(\texttt{nd-unfolding/uq\_fps/corrected/FPS\_UQ\_CORRECTED\_STATE.md}). The
-negweight-refined FPS production has not been run.
-
-The \emph{value} is unaffected --- \SI{\fpsSigma}{cm^2/nucleon} remains the
-ledger-verified central number from that gated battery, and this correction does
-not change it. Negative-weight injection
-is the intended baseline for the extended-fiducial analysis, not the one behind
-the number quoted here. (Audit finding J22,
-App.~\ref{app:provenance}, \texttt{negweight-audit}.)
 
 \subsection{Which footing each production chain stands on}
 \label{sec:negweight-footing}
@@ -316,9 +289,9 @@ negative-weight branches --- so the lateral logs carry the purity branch's own
 signature line and no mode announcement anywhere. Both the flag and those
 announcements predate the files, so the absence of an announcement is
 informative rather than a version gap. \emph{For the chain as it now stands},
-the footing is no longer inferred at all: it is pinned in code
-(\texttt{nd-unfolding/p4\_lib.py}, \texttt{STANDARD\_BKG\_MODE}, whose
-configuration object refuses to validate against any other mode), the canonical
+the footing is no longer inferred at all: it is pinned in code, in a
+configuration object that refuses to validate against any other mode
+(App.~\ref{app:provenance}, \texttt{bkg-mode-pins}), the canonical
 launcher passes \texttt{-{}-bkg-mode} explicitly from that pinned configuration
 rather than inheriting the default, and the value is stamped into every endpoint
 receipt as it is written. That change is a provenance change and a physics
@@ -326,11 +299,7 @@ no-op, since the value it asserts is the default it replaces; its effect is that
 a future component's footing is provable from the component instead of from the
 absence of a flag.
 
-\textbf{This is a recorded choice, not a silent default.} It was raised as a
-question --- whether the locked instruction that $N$-D production runs
-\texttt{negweight-refined} reaches the standard-phase-space chain, or only its
-extended-fiducial form --- and answered in favour of purity on 2026-08-07 and
-again, after the alternative was costed, on 2026-08-15
+\textbf{This is a recorded choice, not a silent default}
 (App.~\ref{app:provenance}, \texttt{gbdt-closeout} and
 \texttt{oi6-oi8-oi126}). Two
 grounds carried it. First, mixing footings inside one covariance is worse than
@@ -342,15 +311,30 @@ beforehand --- and it is that consequence, not the cost, that decided it. The
 decision carries an explicit obligation to revisit the footing before
 submission. It is recorded as such, and nothing in this subsection discharges it.
 
+\paragraph{What the quoted extended-fiducial number actually used.}
+\textbf{The $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$ reported in
+\S\ref{sec:fps} was not produced with negative-weight injection}
+(App.~\ref{app:history}). It comes from
+the FPS ME~FHC battery of \textbf{2026-06-10}, which predates the negative-weight
+driver; its ten endpoint unfolds ran on the driver's purity default and are recorded as
+\textbf{purity controls, not publication inputs} (App.~\ref{app:provenance},
+\texttt{fps-battery}, \texttt{negweight-audit}). The
+negweight-refined FPS production has not been run.
+The \emph{value} is unaffected --- \SI{\fpsSigma}{cm^2/nucleon} remains the
+ledger-verified central number from that gated battery. Negative-weight injection
+is the intended baseline for the extended-fiducial analysis, not the one behind
+the number quoted here.
+
 \paragraph{So the published pair is a measurement and a matched control at
 different footings.} The extended-fiducial lane's designated publication footing
-is negative-weight injection with the Stay-Positive refinement
-(\texttt{nd-unfolding/fps\_provenance.py}, \texttt{PUBLICATION\_BKG\_MODE}),
-enforced there by a gate that fails closed on any endpoint whose recorded mode
+is negative-weight injection with the Stay-Positive refinement, pinned in code
+(App.~\ref{app:provenance}, \texttt{bkg-mode-pins}) and enforced there by a gate that fails closed on any endpoint whose recorded mode
 differs or is missing; what the number quoted in \S\ref{sec:fps} actually used is
 the separate matter stated immediately above. The standard chain is purity-footed
 throughout. Each side is therefore internally consistent in its footing, which is
 what we claim, rather than uniform across both, which we do not.
+
+\subsection{Measured size of the footing choice and its scope}
 
 \paragraph{The measured size of the choice.}
 It has been measured at full statistics with the adopted estimator on the 2D
@@ -383,7 +367,7 @@ statement about a $187$-universe object; the displacement argument is the reason
 it can, and the full $187$-universe rebuild of \S\ref{sec:negweight-uq} is that
 reasoning's test at 2D, which it passes.
 
-\textbf{The scope this does and does not have.} The measured agreement is
+\paragraph{The scope this does and does not have.} The measured agreement is
 evidence about \emph{these} objects: the 2D systematic and statistical
 covariances at the configurations stated above. It is not a theorem that the two
 footings give the same covariance, because the underlying estimands are not
@@ -409,61 +393,68 @@ same limit applies to the estimator caveat: raw negative weights destabilise the
 \texttt{lgbm}, so neither footing risks that pathology here --- a reason the choice is
 safe, not evidence that it is immaterial.
 
-\paragraph{End-to-end evidence against the safety argument (2026-09-25).}
-Five-dimensional pseudo-experiments that inject background-simulation events and rebuild
-the per-bin purity weights as the measurement does are biased at nominal truth: the
-highest-$W$ column of the $(\Eavail,W)$ projection comes back \SIrange{3.5}{4.1}{\percent}
-low and the highest-$\Eavail$, highest-$W$ cell \SI{1.7}{\percent} high, 8--12 statistical
-standard deviations, while signal-only experiments close. The subtraction is exact per
-reconstructed bin; the widest bin ($W\ge\SI{3}{GeV}$, background \SI{13}{\percent} of
-signal) carries a within-bin background shape that the unbinned classifier resolves and the
-bin-uniform purity weight does not. This is the within-bin shape term of
-\S\ref{app:negweight} realised at a measurable size, and it is direct evidence for the
-obligation above to revisit the footing before submission. A five-dimensional
-purity-versus-\texttt{negweight-refined} comparison on data is the cheapest estimate of its
-size on data.
-% Source: docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md; KNOWN_ISSUES 75.
+\subsection{Five-dimensional pseudo-experiments on both footings}
 
-\paragraph{The five-dimensional \texttt{negweight-refined} test (2026-09-25).}
-The refined footing was run end to end in the same five-dimensional pseudo-experiments.
+The five-dimensional end-to-end tests of both footings are reported with the other
+five-axis validation (\S\ref{sec:val-negweight}, \S\ref{sec:val-departure}): the purity
+footing's bias in the highest-$W$ column at nominal truth, its reduction under the
+\texttt{negweight-refined} footing, the difference between the footings on data, and the
+refinement-capacity candidate, which is not adopted. What is specific to the footing is
+recorded here.
+
+\paragraph{The purity bias.}
+The bias is 8--12 statistical standard deviations, while signal-only experiments close.
+The subtraction is exact per reconstructed bin; the widest bin ($W\ge\SI{3}{GeV}$,
+background \SI{13}{\percent} of signal) carries a within-bin background shape that the
+unbinned classifier resolves and the bin-uniform purity weight does not. This is the
+within-bin shape term of \S\ref{sec:negweight-estimator} realised at a measurable size,
+and it is direct evidence for the obligation of \S\ref{sec:negweight-footing} to revisit
+the footing before submission. A five-dimensional purity-versus-\texttt{negweight-refined}
+comparison on data is the cheapest estimate of its size on data.
+% Source: docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md; KNOWN_ISSUES 75.
+% Heading date (2026-09-25) and the numbers repeated in sec_validation.tex removed (lane 3 App. B #7):
+% highest-$W$ column \SIrange{3.5}{4.1}{\percent} low, highest-$\Eavail$, highest-$W$ cell \SI{1.7}{\percent} high.
+
+\paragraph{The refined footing.}
 The refinement classifier used the same deterministic GBDT configuration as the unfold,
 the background simulation was split into independent injection and subtraction halves,
 and each bootstrap replica resampled every pseudo-event individually and refit the
 refinement. The refinement preserves the signed total to $3\times10^{-6}$ and clips
-\SIrange{0.01}{0.05}{\percent} of events. At nominal truth the purity footing's
-highest-$W$ bias falls from \SIrange{-3.5}{-4.1}{\percent} to
-\SIrange{0.11}{0.24}{\percent}, and the corner from \SI{1.66}{\percent} to
-\SI{0.24}{\percent}. A residual of up to about \SI{1}{\percent} remains in some joint
-cells, so the predeclared nominal closure criterion fails. On the data the two footings
-differ by a median of \SI{0.36}{\percent} and at most \SI{1.4}{\percent}. The sign
-pattern matches the simulated purity bias at an order of magnitude smaller size; this is
-method sensitivity, not a measured bias. The same study found that the estimator, with
-either footing, does not follow generator-sized $\Eavail$ shape changes
-(\S\ref{sec:validation}). No coverage test was run, and the footing obligation above
-therefore remains open: the refined footing reduces one bias but does not by itself
-qualify an uncertainty.
+\SIrange{0.01}{0.05}{\percent} of events. The corner bias falls from \SI{1.66}{\percent}
+to \SI{0.24}{\percent}, but a residual remains in some joint cells, so the predeclared
+nominal closure criterion fails. On data the sign pattern of the difference between the
+footings matches the simulated purity bias at an order of magnitude smaller size; this is
+method sensitivity, not a measured bias. With either footing the estimator does not follow
+generator-sized $\Eavail$ shape changes. No coverage test was run, and the footing
+obligation therefore remains open: the refined footing reduces one bias but does not by
+itself qualify an uncertainty.
 % Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md; VL151, VL152.
+% Heading date (2026-09-25) and numbers repeated in sec_validation.tex removed (lane 3 App. B #7):
+% highest-$W$ bias falls from \SIrange{-3.5}{-4.1}{\percent} to \SIrange{0.11}{0.24}{\percent};
+% residual of up to about \SI{1}{\percent}; on the data the two footings
+% differ by a median of \SI{0.36}{\percent} and at most \SI{1.4}{\percent}.
 
-\paragraph{Refinement capacity (2026-09-26).}
+\paragraph{Refinement capacity.}
 The residual nominal bias of the refined footing comes from the Stay-Positive classifier
 itself. At the unfold's GBDT setting (100 trees, 8 leaves) it underfits the positive-weight
 probability, leaving a reco-level subtraction error of up to \SI{4}{\percent} per
-$(\Eavail,W)$ reco cell. At 400 trees and 31 leaves that error falls to \SI{1.7}{\percent}.
-The paired truth-level bias then falls by more than \SI{80}{\percent} in every affected
+$(\Eavail,W)$ reco cell. At 400 trees and 31 leaves that error falls to \SI{1.7}{\percent},
+the paired truth-level bias falls by more than \SI{80}{\percent} in every affected
 cell, and the nominal background-inclusive closure passes on 20 development and 40 fresh
 pseudo-experiments. Splitting the background simulation into independent injection and
-subtraction halves is not the cause. The higher-capacity refinement is not adopted: the
-estimator it feeds failed a stability test on the data (\S\ref{sec:validation}).
+subtraction halves is not the cause.
 % Source: docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md §5;
 % docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md; VL153, VL154.
+% Heading date (2026-09-26) removed. Moved to the pointer above: "The higher-capacity refinement
+% is not adopted: the estimator it feeds failed a stability test on the data (\S\ref{sec:validation})."
 
-\paragraph{The footing question is settled; the adoption gate is a different one.}
+\paragraph{The footing was chosen, not discharged; the adoption gate is separate.}
 \textbf{Nothing here adopts any five-dimensional covariance.} The
 selection-complete active-lateral component is built --- five bands, ten endpoint
 unfolds carrying distinct digests bound in the adopted product's receipt --- and one
 five-axis covariance is adopted under a digest-bound exception
 (\S\ref{sec:eavailw-adopted}). Neither fact follows from anything in this appendix,
 and neither is needed by it: the footing question and the adoption gate are
-independent, and settling the footing removes one blocking decision while leaving
-every other precondition on that component exactly where it stood. Routed record:
-App.~\ref{app:provenance} (\texttt{p4-verifier}).
+independent, and the footing choice removes one blocking decision while leaving
+every other precondition on that component exactly where it stood
+(App.~\ref{app:provenance}, \texttt{p4-verifier}).
