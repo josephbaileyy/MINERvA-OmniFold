@@ -485,6 +485,10 @@
   {
    "utc": "2026-10-05T04:03Z",
    "what": "LOOK: GiBUU_2019 B1151 (2026-10-05T04:00:36Z; total and shape k = 0, p = 1/1152 = 0.000868, 99.5% look interval [0, 0.00519], straddles 0.005; continue; b6 59349568 at --throttle 2). GiBUU b5 59315232 closed at 4.03, MEC b6 59321575 at 4.10. Meter (from 95572965, rc 0): production charged 214.385 of 234.647 = 36 closed 180.385 + 4 open reservations 34.0 (NuWro b5, MnvTune b6, CV b6, GiBUU b6); envelope 287.88 of 376.52; open concurrency 1.25. BINDING WATCH: with current k (only NuWro shape k = 1) the remaining production batches are the 4 open + NuWro b6, b7, b8 = 7; remaining 54.262, so they fit at mean <= 7.75; NuWro's b8 submission passes the cap check at a mean of the batches closed before it <= 7.45 (GiBUU b6 still open) or <= 7.63 (closed). Last closed: 4.89, 4.03, 4.10. No flag. Conditional: k = 1 for MnvTune, CV or GiBUU at its next look adds 2-3 batches to that lane (9-10 remaining at mean <= 5.4-6.0), which would be close; the campaign will flag before the cap refuses."
+  },
+  {
+   "utc": "2026-10-05T07:45Z",
+   "what": "LOOK: NuWro_21_09 B1152 (2026-10-05T07:25:22Z; total k = 0, p = 1/1153, interval [0, 0.00519]; shape k = 1 (unchanged), p = 2/1153 = 0.001735, interval [0, 0.00711]; continue; b6 59358653). First NuWro submission under transition r5: the r5 log and the ledger show --throttle 8 (%8); squeue at 07:45Z shows 8 RUNNING and 26 PENDING (JobArrayTaskLimit), so the r5 throttle is in effect. NuWro b5 59317189 closed at 4.31. Meter (from 95572965, rc 0): production charged 218.698 of 234.647 = 37 closed 184.698 + 4 open reservations 34.0 (MnvTune b6, CV b6, GiBUU b6, NuWro b6); envelope 292.19 of 376.52; open concurrency 2.0 (the cap: 3 + 3 + 2 + 8 slots). BINDING WATCH: remaining production batches with current k are the 4 open + NuWro b7, b8 = 6; remaining 49.949, so they fit at mean <= 8.32 (recent 4.0-4.9). No flag. NuWro still needs B ~1660 for its shape test (b7 ~1350, b8 ~1550, so b8 alone may not suffice: see the next look)."
   }
  ],
  "findings": [
