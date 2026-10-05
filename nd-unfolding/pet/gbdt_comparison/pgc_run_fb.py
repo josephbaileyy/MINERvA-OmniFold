@@ -197,6 +197,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--stop-core-hours", type=float, default=7.5)
     ap.add_argument("--first-task-core-hours", type=float, default=0.1)
     ap.add_argument("--limit", type=int, default=None, help="run at most this many new tasks")
+    ap.add_argument("--wait-for-inputs", type=float, default=0.0,
+                    help="hold the next task (keeping the order) until its inputs exist, up to "
+                         "this many seconds; 0 starts it regardless")
     a = ap.parse_args(argv)
     if a.workers * a.threads > a.max_threads:
         raise SystemExit(f"{a.workers} workers x {a.threads} threads > {a.max_threads}")
@@ -226,6 +229,7 @@ def main(argv: list[str] | None = None) -> int:
     entries = read_ledger(ledger_path)
     written, stopped = [], None
     pending: list[Any] = []
+    waited: dict[str, float] = {}
     with ctx.Pool(a.workers, maxtasksperchild=1) as pool:
         queue = list(todo)
         while queue or pending:
@@ -238,9 +242,15 @@ def main(argv: list[str] | None = None) -> int:
                                f"{1.25 * (largest or 0):.3f}")
                     queue = []
                     break
+                if not _inputs_ready(a.raw / queue[0]["run"], a.wait_for_inputs, waited):
+                    break
                 t = queue.pop(0)
                 pending.append((t, pool.apply_async(run_task, ((t, paths, a.threads),))))
             if not pending:
+                if queue and a.wait_for_inputs and \
+                        waited.get(str(a.raw / queue[0]["run"]), 0.0) < a.wait_for_inputs:
+                    time.sleep(5.0)
+                    continue
                 break
             time.sleep(1.0)
             still = []
@@ -280,6 +290,19 @@ def main(argv: list[str] | None = None) -> int:
         f.write(json.dumps(log) + "\n")
     print(json.dumps(log))
     return 0
+
+
+def _inputs_ready(run_dir: Path, limit: float, waited: dict[str, float]) -> bool:
+    """True when the run's inputs exist; otherwise records the wait and holds the queue (the
+    order is part of the plan) until ``limit`` seconds have passed, then lets the task start and
+    fail (charged) rather than skip it."""
+    if limit <= 0 or ((run_dir / "replicate_arrays.npz").exists()
+                      and (run_dir / "run_identity.json").exists()):
+        return True
+    key = str(run_dir)
+    first = waited.setdefault(key + "#t0", time.time())
+    waited[key] = time.time() - first
+    return waited[key] >= limit
 
 
 def _default(o: Any) -> Any:
