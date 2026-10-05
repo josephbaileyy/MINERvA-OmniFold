@@ -4,98 +4,110 @@
 \paragraph{Summary.}
 Unbinned OmniFold with gradient-boosted trees reproduces the published
 MINERvA ME FHC CC-inclusive $d^{2}\sigma/(d\pT\,d\pPar)$
-and its uncertainty scale, with a correlated shape difference along the low-$\pT$
-peak ridge ($\chi^{2}/\mathrm{ndf}=\chiPaper$ against the published covariance,
-\S\ref{sec:results-tension}) (\S\ref{sec:execsummary}, \S\ref{sec:results}). The
-result passes closure, iteration, pull, calibration, and classifier-family
-checks, but the existing 2D toys do not furnish an independent-truth coverage
-test. On that foundation we
-performed \emph{unbinned} simultaneous three-, four- and five-observable
-unfolds of MINERvA data ($+\Eavail$, $+q_{3}$, $+W$), each validated against its
-lower-dimensional predecessor by projection anchors agreeing to $\approx$1--2\,\%. (Binned MINERvA multi-differential
-measurements, up to triple-differential~\cite{MINERvA:2022qe,MINERvA:2026qeleme}, exist; the methodological distinction is the
-unbinned, simultaneously-unfolded formulation.) The physics output:
+and its uncertainty scale (\S\ref{sec:execsummary}, \S\ref{sec:results}).
+A correlated shape difference follows the low-$\pT$ peak ridge
+($\chi^{2}/\mathrm{ndf}=\chiPaper$ against the published covariance,
+\S\ref{sec:results-tension}). Closure, iteration, pull, calibration, and
+classifier-family checks pass; the existing 2D toys provide no independent-truth
+coverage test. Simultaneous \emph{unbinned}
+three-, four- and five-observable unfolds of MINERvA data ($+\Eavail$,
+$+q_{3}$, $+W$) are validated against their lower-dimensional predecessors
+by projection anchors agreeing to $\approx$1--2\,\% (prior binned measurements
+in App.~\ref{app:landscape}).
+% Cut (lane 3 §11 #1, lane 5 R2); the disclaimer's homes are the abstract, sec_3d.tex and App. D:
+% (Binned MINERvA multi-differential
+% measurements, up to triple-differential~\cite{MINERvA:2022qe,MINERvA:2026qeleme}, exist; the methodological distinction is the
+% unbinned, simultaneously-unfolded formulation.)
 \begin{itemize}[itemsep=2pt]
   \item the low-$\Eavail$ excess over all four truth-level generators in the
-        quasielastic--$\Delta$ dip recovers the established MINERvA low-recoil/2p2h deficit through an
-        independent unfolding method, with small responses to the tested
-        pion-FSI variations and an improved description when Valencia 2p2h is
-        included. These tests do not exclude other transport effects or uniquely
+        quasielastic--$\Delta$ dip recovers the established MINERvA low-recoil/2p2h
+        deficit through independent unfolding. Tested pion-FSI variations give
+        small responses; including Valencia 2p2h improves the description.
+        These tests do not exclude other transport effects or uniquely
         identify a nuclear mechanism (\S\ref{sec:3d-2p2h});
   \item the $(\Eavail,q_{3})$ plane resolves the deficit's momentum-transfer
-        structure (\S\ref{sec:4d}); (the 4D systematic-budget composition is not
-        quoted --- no corrected 4D covariance is adopted, \S\ref{sec:3d});
-  \item the unified-throw machinery now tests the block sum with asymmetric
-        endpoints, a fixed estimator seed, and mean-centered joint throws;
-        the selection-complete lateral replacement has landed and one
-        resulting 5D covariance, the CV-centered variant, is adopted as
-        publication-under-exception,
-        subject to the four measurements of \S\ref{sec:eavailw-adopted}; no
-        corrected 4D covariance is reported
-        (\S\ref{sec:uq-combine});
+        structure (\S\ref{sec:4d}). The 4D systematic-budget composition is not
+        quoted; no corrected 4D covariance is adopted (\S\ref{sec:3d});
+  \item following the unified-throw block-sum test (\S\ref{sec:uq-combine}) and
+        selection-complete lateral replacement, the CV-centered variant of
+        the resulting 5D covariance is adopted as publication-under-exception, subject to the
+        four measurements of \S\ref{sec:eavailw-adopted};
+        % Construction details cut (lane 3 §11 #2; stated in sec:uq-combine): the unified-throw
+        % machinery tests the block sum with asymmetric endpoints, a fixed estimator seed, and
+        % mean-centered joint throws.
+        % "no corrected 4D covariance is reported" cut here: stated in the bullet above (lane 5 R10).
   \item the $(\Eavail,W)$ study localizes the remaining high-$\Eavail$
         excess over the MINERvA Tune~v1 prior to the deep-inelastic region.
-        The four external generator predictions (GENIE and NuWro rebuilt on
-        2026-09-27 after a flux-sampling defect) all lie below the central
-        result there, each by about its overall normalization shortfall
-        once the $E_\nu>\SI{20}{GeV}$ events missing from the GiBUU sample
-        are accounted for (\S\ref{sec:eavailw-band}). A projected covariance for that plane
-        is adopted and built (\S\ref{sec:eavailw-construction}); no
-        significance is quoted because the estimator-seed sensitivity that
-        travels with it (measured on two seed-varied sibling products) exceeds the limit declared for it before production
+        % GENIE and NuWro rebuilt on 2026-09-27 after a flux-sampling defect.
+        All four external generator predictions (GENIE and NuWro flux-repaired,
+        \S\ref{sec:3d-models}) lie below the central result there,
+        each by about its overall normalization shortfall after accounting
+        for the $E_\nu>\SI{20}{GeV}$ events missing from GiBUU
+        (\S\ref{sec:eavailw-band}). The plane's projected covariance is built
+        and adopted (\S\ref{sec:eavailw-construction}); no significance is
+        quoted because its estimator-seed sensitivity exceeds
+        the declared limit
         (\S\ref{sec:eavailw-adopted});
-  \item the recoil-only PET point-cloud track provides a low-level-input
-        representation cross-check, yielding an absolutely-normalized central
-        value; its ordinary closure survives only as a legacy two-iteration
-        self-consistency diagnostic, and no current closure level is quoted
-        (\S\ref{sec:pet}). Because the muon is omitted from both classifiers,
-        these products do not establish a joint muon--hadron unfold and no
-        covariance component transfers automatically to the full-event replacement.
-        The whole track is diagnostic and method development: no PET covariance
-        is adopted as a publication uncertainty product, and the full-event
-        central/statistical pairing was declined rather than resolved.
+        % Cut (lane 3 §11 #3; stated in sec:eavailw-adopted): "(measured on two seed-varied
+        % sibling products)"; "the limit declared for it before production".
+  \item the recoil-only PET point-cloud track provides an absolutely-normalized
+        central value for a low-level-input representation cross-check.
+        Both classifiers omit the muon, so a joint muon--hadron unfold is not
+        established. The whole track is diagnostic and method development;
+        no PET covariance is adopted as a publication uncertainty product
+        (\S\ref{sec:pet}).
+        % Cut (lane 3 §11 #4, lane 5 R8); each survives in sec_pet.tex:
+        % its ordinary closure survives only as a legacy two-iteration
+        % self-consistency diagnostic, and no current closure level is quoted;
+        % no covariance component transfers automatically to the full-event replacement;
+        % the full-event central/statistical pairing was declined rather than resolved.
 \end{itemize}
 
 \paragraph{Outlook.}
 The scalar extended-fiducial study (\S\ref{sec:fps}) yields a preliminary
 central value $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$
-(\SI{\fpsAbove}{\percent} above the restricted phase space), with an anchor,
-closure tests and a three-prior envelope but without a corrected covariance
-(\S\ref{sec:uq-combine}). About \SI{6}{\percent} of the rate is a newly
-acceptance-supported extension, while about \SI{28}{\percent} is a separately
-labeled prior-dominated extrapolation. The full-event PET candidate adds the
-distinguished muon and declared event context; nominal and unverified
-$C_{\rm stat}$ artifacts exist, but their pairing was declined and no PET
-covariance is adopted. Its remaining closure and complete-UQ requirements are
-method development and are not on the publication critical path. That path ran
+(\SI{\fpsAbove}{\percent} above the restricted phase space).
+% Cut (lane 3 §11 #8; stated at the head of sec_fps.tex): with an anchor,
+% closure tests and a three-prior envelope but without a corrected covariance
+New acceptance-supported cells contribute about \SI{6}{\percent} of the rate;
+separately labeled prior-dominated extrapolation contributes about
+\SI{28}{\percent}. The full-event PET candidate
+(\S\ref{sec:pet-full-event-status}) remains method development, off the
+publication critical path.
+% Cut (lane 3 §11 #5, lane 5 R8; stated in sec_pet.tex): The full-event PET candidate adds the
+% distinguished muon and declared event context; nominal and unverified
+% $C_{\rm stat}$ artifacts exist, but their pairing was declined and no PET
+% covariance is adopted. Its remaining closure and complete-UQ requirements are
+% method development and are not on the publication critical path.
+The publication critical path ran
 through the adoption of a selection-complete scalar five-dimensional
-covariance, which has happened under exception (\S\ref{sec:eavailw-adopted}); the path
-itself is not complete. \TODO{Revise when the scalar-5D campaign (s5p, \texttt{OI-193}) closes. Adoption is not publication readiness: the s5e outcome records the publication objective as NOT READY.}
+covariance, which has happened under exception (\S\ref{sec:eavailw-adopted}) and never
+through PET; the path itself is not complete.
+% Demoted from a rendered \TODO (lane 5 R12):
+% TODO: Revise when the scalar-5D campaign (s5p, \texttt{OI-193}) closes. Adoption is not publication readiness: the s5e outcome records the publication objective as NOT READY.
 % Source: docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (publication_readiness); docs/OPEN_ITEMS.md OI-193.
-Natural
-additional refinements are NEUT as a fifth generator and the finer
-44-cell Ascencio comparison (the maximal-common-grid
-comparison is presented in \S\ref{sec:4d}). One
-paper-independent cross-check would further strengthen the analysis --- a
-flux\,$\leftrightarrow$\,muon
-posterior from MAT-MINERvA for a fully self-derived $\rho$. The
-truncated-spectral ``ours-only'' goodness-of-fit convention
-(App.~\ref{sec:rank}) is no longer among them: the collaboration confirmed it
-uses the same truncated-spectral pseudo-inverse.
+Further refinements are a fifth generator, NEUT, and a finer 44-cell Ascencio
+comparison (maximal-common-grid comparison in \S\ref{sec:4d}).
+A paper-independent flux\,$\leftrightarrow$\,muon posterior from MAT-MINERvA
+for a fully self-derived $\rho$ would further strengthen the analysis.
+% Withdrawn outlook item moved to App. H (sidecar appH-additions.tex, "From \S\ref{sec:summary}, outlook"):
+% The truncated-spectral ``ours-only'' goodness-of-fit convention
+% (App.~\ref{sec:rank}) is no longer among them: the collaboration confirmed it
+% uses the same truncated-spectral pseudo-inverse.
 
 \paragraph{Reusing the unbinned result.}
 The public ATLAS charged-particle phase-space release
-\cite{ATLAS:2026fpsdata} provides a concrete example of distributing unbinned
-products. The emerging \texttt{omnifold\_publication} proposal
-\cite{Bajpai:2026publication} emphasizes weight-family metadata, normalization,
-row alignment, and checksums. A MINERvA release should likewise specify event
+\cite{ATLAS:2026fpsdata} exemplifies unbinned distribution. The emerging
+\texttt{omnifold\_publication} proposal \cite{Bajpai:2026publication} emphasizes
+weight-family metadata, normalization, row alignment, and checksums.
+A MINERvA release should likewise specify event
 identity, estimator and uncertainty-family definitions, units, support,
-normalization, and a reproducible projection example. That release is specified
-for this analysis in App.~\ref{app:release}, which also records which of its
-objects have fixed identities today and which do not exist yet; \textbf{no
-release tag or release manifest exists}, so rebuilding the documents is not
-reproduction of any result here. New projections require
-their own applicability checks; nominal weights alone cannot certify arbitrary
-downstream inference (App.~\ref{sec:unbinned-inference}). Neither this release
-design nor a public example bears on the covariance adoption, which is settled
-separately (\S\ref{sec:eavailw-adopted}).
+normalization, and a reproducible projection example.
+App.~\ref{app:release} specifies this release for our analysis. It records
+which objects have fixed identities today and which do not exist yet.
+\textbf{No release tag or release manifest
+exists}; rebuilding the documents reproduces no result here. New projections
+require their own applicability checks; nominal weights alone cannot certify arbitrary
+downstream inference (App.~\ref{sec:unbinned-inference}). The release design and
+public example have no bearing on the separately settled covariance adoption
+(\S\ref{sec:eavailw-adopted}).

@@ -83,7 +83,7 @@
 % stream, not the full adopted band. No aggregate binomial error is quoted.
 \newcommand{\covFPS}{68.67}
 \newcommand{\covNominal}{68.27}                              % Gaussian nominal
-\newcommand{\covFPSanalytic}{77.6}   % FPS variant-A (independent C_stat): conservatively over-covers
+\newcommand{\covFPSanalytic}{77.6}   % FPS variant-A (scalar uq_cov_stat_fps.root): conservatively over-covers
 \newcommand{\pullFrac}{68.71}        % OLD 2D "coverage" = same-ensemble pull fraction (diagnostic)
 \newcommand{\pullMeanAbs}{0.794}\newcommand{\pullGauss}{0.798}  % <|r|> vs sqrt(2/pi)
 \newcommand{\chiPaper}{3.66}          % chi2/ndf vs paper covariance
@@ -256,7 +256,7 @@
 % UNBACKED STATUS (verified 2026-08-20): none of these artifacts is under version
 % control -- .gitignore:2 is a blanket `*.root`, and `git ls-files` returns ZERO
 % .root files anywhere under 2d-unfolding/, including all eight ROOTs in
-% HANDOFF_bkg_negweight/runs/ and the 51 bootstrap / 188 universe replicas under
+% HANDOFF_bkg_negweight/runs/ and the 51 bootstrap / 187+CV universe replicas under
 % uq/negweight_boot/ and uq/negweight_uni/ that back \nwSystRatio and \nwStatRatio.
 % No docs/orchestration/RUNS.tsv row and no VALIDATION_LEDGER.md row cites any of
 % the jobids above or any *_hist5.root / *_exact5.root path (the negweight rows in

@@ -3,165 +3,156 @@
 
 \subsection{Detector and beam}
 MINERvA~\cite{MINERvA:2013zvz} was a fine-grained scintillator-tracker
-neutrino experiment on the NuMI beamline at Fermilab. The central tracker is
-built from hexagonal planes of triangular polystyrene scintillator strips in
-three stereo orientations, surrounded by electromagnetic and hadronic
-calorimetry; the magnetized MINOS near detector, \SI{2}{m} downstream, serves
-as the muon spectrometer, providing the muon momentum and charge for
-MINOS-matched tracks. This analysis uses the \emph{medium-energy} (ME)
-neutrino-mode (FHC) exposure with $\langle E_\nu\rangle\sim\SI{6}{GeV}$. The
-neutrino flux is the \emph{a posteriori} constrained NuMI ME prediction of
-Ref.~\cite{MINERvA:2016iqn} (PPFX hadron-production weights plus the
-neutrino--electron-scattering constraint), identical to the flux used by the
-published measurement~\cite{MINERvA:2021owq}.
+neutrino experiment on Fermilab's NuMI beamline. Its central tracker comprises
+hexagonal planes of triangular polystyrene scintillator strips in three stereo
+orientations, surrounded by electromagnetic and hadronic calorimetry. The
+magnetized MINOS near detector, \SI{2}{m} downstream, serves as the muon
+spectrometer, measuring momentum and charge for MINOS-matched tracks.
+We use the \emph{medium-energy} (ME)
+neutrino-mode (FHC) exposure with $\langle E_\nu\rangle\sim\SI{6}{GeV}$.
+The flux is the \emph{a posteriori} constrained NuMI ME prediction of
+Ref.~\cite{MINERvA:2016iqn}, combining PPFX hadron-production weights and the
+neutrino--electron-scattering constraint, identical to the published
+measurement's flux~\cite{MINERvA:2021owq}.
 
 \subsection{Data and simulation samples}
-The data are the twelve ME FHC playlists (ME1A--ME1G, ME1L--ME1P),
-corresponding to $1.057\times10^{21}$ protons on target --- the same exposure
-as Ref.~\cite{MINERvA:2021owq}. After the selection below the data sample
-contains $4\,119\,797$ reconstructed events.
+The twelve ME FHC playlists (ME1A--ME1G, ME1L--ME1P) contain
+$1.057\times10^{21}$ protons on target, the same exposure as
+Ref.~\cite{MINERvA:2021owq}. The selection below leaves
+$4\,119\,797$ reconstructed data events.
 
-The reference simulation is GENIE 2.12.6~\cite{Andreopoulos:2009rq} with the
-MINERvA Tune v1 applied as per-event weights through the MAT (MINERvA Analysis
-Toolkit) reweighters: the flux-and-CV weight, the GENIE dial weights, the
-low-recoil 2p2h enhancement fit, and the non-resonant-pion reduction. Detector
-response is the full \textsc{Geant4}-based~\cite{GEANT4:2002zbu} MINERvA simulation underlying the
-production AnaTuples. The simulated sample comprises $32\,849\,103$ true
-signal events (POT-normalized to data exposure event-by-event), processed
-through the identical reconstruction and selection as the data.
+The reference simulation uses GENIE 2.12.6~\cite{Andreopoulos:2009rq} and
+MINERvA Tune v1, applied as per-event weights through MAT (MINERvA Analysis
+Toolkit) reweighters. These are the flux-and-CV and GENIE dial weights,
+the low-recoil 2p2h enhancement fit, and the non-resonant-pion reduction.
+The full \textsc{Geant4}-based~\cite{GEANT4:2002zbu} MINERvA detector
+simulation underlies the production AnaTuples. The simulated sample contains
+$32\,849\,103$ true signal events, POT-normalized event-by-event to the data
+exposure and processed with identical reconstruction and selection.
 
 \subsection{Signal definition and event selection}
 \label{sec:selection}
 The signal definition and phase space follow Ref.~\cite{MINERvA:2021owq}
-exactly. The truth-level signal is a charged-current $\nu_\mu$ interaction
-with vertex in the central-tracker fiducial volume, with muon phase space
+exactly. Truth-level signal events are charged-current $\nu_\mu$ interactions
+in the central-tracker fiducial volume with muon phase space
 \begin{equation*}
   \theta_\mu < 20^{\circ},\qquad
   1.5 < \pPar < \SI{60}{GeV/c},\qquad
   \pT < \SI{4.5}{GeV/c}.
 \end{equation*}
-The fiducial volume is the tracker region $5980 < z < \SI{8422}{mm}$ within an
-\SI{850}{mm} apothem, containing $3.2353\times10^{30}$ nucleons (the fixed
-tracker-geometry constant).
+The fiducial volume spans $5980 < z < \SI{8422}{mm}$ within an
+\SI{850}{mm} apothem and contains $3.2353\times10^{30}$ nucleons, the fixed
+tracker-geometry constant.
 
-Reconstructed events are selected by requiring: a reconstructed vertex in the
-same tracker fiducial volume and apothem; a muon track with
-$\theta_\mu<20^{\circ}$ matched to a track in MINOS with a passing MINOS fit;
-no dead-time overlap; and a neutrino (rather than antineutrino) candidate.
-The MINOS-match requirement is implemented as
-\texttt{isMinosMatchTrack==1 \&\& minos\_trk\_is\_ok==1} (the current
-MINERvA-101 tutorial enforces the same \texttt{isMinosMatchTrack} match; we
-additionally require a passing MINOS fit). This yields a predicted genuine-background rate --- charged-current events of
-other flavors or wrong sign, neutral-current interactions, and
-out-of-fiducial-vertex events; out-of-phase-space signal (\emph{fakes}) is
-treated separately --- of \SI{0.35}{\percent} of the selected sample
-(evaluated on playlist 1A). This is
-the same sub-percent scale as the 8655 (\SI{0.2}{\percent}) predicted
-background events of Ref.~\cite{MINERvA:2021owq}, whose definition counts
-only the wrong-flavor, wrong-sign, and neutral-current components; exact
-agreement is not expected given the definitional and selection differences,
-and neither prediction carries an uncertainty. Backgrounds (reconstructed events whose true
-interaction fails the signal definition) and \emph{fakes} (reconstructed in
-phase space, true muon outside it) are POT-scaled and subtracted from the
-reconstructed-data target before unfolding (\S\ref{sec:method}).
+Reconstructed events require a vertex in the same fiducial volume and apothem,
+a muon track with $\theta_\mu<20^{\circ}$ matched to a MINOS track with a
+passing fit, no dead-time overlap, and a neutrino (rather than antineutrino)
+candidate. The MINOS-match
+requirement is implemented as
+\texttt{isMinosMatchTrack==1 \&\& minos\_trk\_is\_ok==1}.
+% (the current MINERvA-101 tutorial enforces the same \texttt{isMinosMatchTrack} match; we
+% additionally require a passing MINOS fit)
+The predicted genuine-background rate is \SI{0.35}{\percent} of selected
+events, evaluated on playlist 1A. Genuine backgrounds comprise charged-current
+events of other flavors or wrong sign, neutral-current interactions, and
+out-of-fiducial-vertex events. Out-of-phase-space signal (\emph{fakes}) is
+treated separately. The rate has the same sub-percent scale as the 8655
+(\SI{0.2}{\percent}) predicted background events in
+Ref.~\cite{MINERvA:2021owq}, which counts only wrong-flavor, wrong-sign, and
+neutral-current components. Exact agreement is not expected given the
+definitional and selection differences; neither prediction carries an
+uncertainty. Backgrounds (reconstructed events whose true interaction fails
+the signal definition) and \emph{fakes} (reconstructed in phase space, true
+muon outside it) are POT-scaled and subtracted from the reconstructed-data
+target before unfolding (\S\ref{sec:method}).
 
 \subsection{Per-event analysis trees}
 \label{sec:evloop}
-Unbinned unfolding needs per-event records rather than histograms. A dedicated
-event loop
-(\texttt{MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp}),
-built on the MAT systematic-universe machinery, writes four flat trees per
-playlist: \texttt{mc\_truth\_denom} (every true signal event --- the
-efficiency denominator), \texttt{mc\_signal\_reco} (reconstructed,
-truth-matched simulated events), \texttt{mc\_background}, and \texttt{data}.
-Each entry carries the truth and reconstructed observables
-($\pT$, $\pPar$, and in the extended runs $\Eavail$, $q_{3}$, $W$), the
-MnvTune central-value weight, and --- in the \texttt{\_universes\_full}
-variants --- the full set of systematic-universe weights and
-laterally-shifted observables (\S\ref{sec:systematics}). Two invariants make
-the result truth-tree authoritative:
+Unbinned unfolding needs per-event records rather than histograms.
+A dedicated event loop
+(App.~\ref{app:codebase}) built on MAT's systematic-universe machinery writes
+four flat trees per playlist: all true signal events (the efficiency
+denominator), reconstructed truth-matched simulated events, simulated
+background, and data. Entries carry truth and reconstructed observables
+($\pT$, $\pPar$, and in extended runs $\Eavail$, $q_{3}$, $W$) and the
+MnvTune central-value weight. Universe-complete
+% (\texttt{\_universes\_full})
+variants also carry all systematic-universe weights and laterally-shifted
+observables (\S\ref{sec:systematics}). Two invariants keep the result
+truth-tree authoritative:
 \begin{itemize}
-  \item \textbf{Truth-tree-authoritative reco gate}: a reconstructed signal
-        event is filled only when its
-        $(\mathrm{run},\mathrm{subrun},\mathrm{event})$ key is present in the
-        truth denominator; truth-only events enter as native OmniFold
-        ``miss'' entries.
-  \item \textbf{Completeness} $c = (\text{events in the OmniFold
-        input})/(\text{all truth events})$ is $1.000000$ by construction at
-        ME~FHC (\num{32849103} entries), so the cross-section completeness
-        division is a no-op self-check.
+  \item A reconstructed signal event is filled only if its
+        $(\mathrm{run},\mathrm{subrun},\mathrm{event})$ key is in the truth
+        denominator. Truth-only events enter as native OmniFold ``miss'' entries.
+  \item Completeness is $c=1.000000$ by construction at ME~FHC
+        (\num{32849103} entries; \S\ref{sec:method-xsec}).
 \end{itemize}
-Because the event loop selects one global playlist flux/calibration from the
-first event, it is always run per playlist and the twelve outputs merged
-afterwards (with a \texttt{TTree::SetMaxTreeSize}-aware merger for the
-more-than-\SI{100}{GB} universe dumps). The flux histogram
-(\texttt{pTmu\_reweightedflux\_integrated}) comes from the corresponding
-baseline histogram event loop and is POT-weighted across playlists;
-playlist-to-playlist flux differences are a $\sim\SI{0.2}{\percent}$ effect.
+The loop takes one global playlist flux/calibration from the first event,
+so it always runs per playlist. The twelve outputs are then merged, using
+a tree-size-aware merger for
+% (\texttt{TTree::SetMaxTreeSize}-aware)
+the more-than-\SI{100}{GB} universe dumps. The corresponding baseline
+histogram event loop supplies the flux histogram, POT-weighted across
+playlists; playlist-to-playlist flux differences are a
+$\sim\SI{0.2}{\percent}$ effect.
 
 
 
 \subsection{Reco-level control distributions}
 \label{sec:controlplots}
-Figure~\ref{fig:control} compares the selected data to the POT-scaled
-simulation (signal $+$ background) at reconstruction level in all five
-observables. The selected event count exceeds the MnvTune-v1 prediction by
-$\sim\SI{12}{\percent}$ in overall normalization, with a clear trend in
-$\pT$ (the data/MC ratio rises from $0.88$ in the lowest bin
-to $\sim1.2$ above \SI{1}{GeV/c}) --- the reco-level image of the
-normalization deficit quantified at truth level in
+Selected data exceed the POT-scaled MnvTune-v1 prediction (signal $+$
+background) by $\sim\SI{12}{\percent}$ in overall normalization.
+Figure~\ref{fig:control} compares all five reconstructed observables.
+The data/MC ratio has a clear $\pT$ trend, rising from $0.88$ in the lowest bin to $\sim1.2$
+above \SI{1}{GeV/c}. Excess and trend together reflect the truth-level normalization deficit in
 \S\ref{sec:results-model} and \S\ref{sec:3d-models}. The simulation
 describes the \emph{shapes} well, which is what the unfolding relies on; the
 rate offset is what the data pull corrects.
 
-The shapes themselves are set by the beam and the acceptance. The $\pPar$
-spectrum peaks at $4$--$6$~GeV/$c$ --- the image of the
-${\langle E_\nu\rangle}\approx\SI{6}{GeV}$ NuMI medium-energy peak --- and
-the spectrometer-match requirement removes the lowest-$\pPar$ muons; $\pT$
-peaks near $0.7$~GeV/$c$ and falls by over an order of magnitude across
-the measured range. On the hadronic side the sample is dominated by
-low-recoil (quasi-elastic and $2p2h$) events: $\Eavail$ is concentrated
-below ${\sim}\SI{0.5}{GeV}$ with a long inelastic tail collected by the
-wide upper bins, $q_{3}$ tracks the momentum transfer of the same
-population, and reconstructed $W$ rises through the smeared quasi-elastic
-and $\Delta(1232)$ region before the deep-inelastic continuum takes over
-above ${\sim}\SI{2}{GeV}$. The absolute background is at the few-percent
-level under the muon projections and is concentrated at high recoil
-(highest $\Eavail$, $q_{3}$ and $W$ bins). Beyond the $\pT$ trend noted
-above, the ratio panels also show a mild enhancement in the lowest
-$\Eavail$ bins --- the reco-level trace of the low-recoil excess examined
-at truth level in \S\ref{sec:results-model}.
+The beam and acceptance set the shapes. The $\pPar$ peak at $4$--$6$~GeV/$c$
+reflects the ${\langle E_\nu\rangle}\approx\SI{6}{GeV}$ NuMI medium-energy
+peak; spectrometer matching removes the lowest-$\pPar$ muons. The $\pT$
+spectrum peaks near $0.7$~GeV/$c$ and falls by over an order of magnitude
+across the measured range. Low-recoil (quasi-elastic and $2p2h$) events
+dominate the sample. Available energy $\Eavail$ concentrates below
+${\sim}\SI{0.5}{GeV}$, with a long inelastic tail in the wide upper bins;
+$q_{3}$ tracks this population's momentum transfer. Reconstructed $W$ rises
+through the smeared quasi-elastic and $\Delta(1232)$ region before the
+deep-inelastic continuum takes over above ${\sim}\SI{2}{GeV}$.
+Absolute background is at the few-percent level under the muon projections
+and concentrates at high recoil (highest $\Eavail$, $q_{3}$ and $W$ bins).
+Beyond the $\pT$ trend noted
+above, the ratio panels also show a mild enhancement in the lowest $\Eavail$ bins,
+reflecting the low-recoil excess examined at truth level in
+\S\ref{sec:3d-2p2h}.
 
 
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{control_plots}
-  \caption{Reco-level control distributions for the analysis selection: data
-  (points) versus POT-scaled simulated signal (blue) stacked on background
-  (orange), with the data/MC ratio below, for $\pT$, $\pPar$, $\Eavail$,
-  $q_{3}$ and $W$. On the hadronic axes the wide catch bin is drawn
-  compressed at the right of each panel, running out to \SI{100}{GeV}. The gray band on the ratio
-  is the MC statistical uncertainty, mostly narrower than the points. The
-  $\sim\SI{12}{\percent}$ normalization excess of the data over MnvTune v1
-  is the reco-level counterpart of the truth-level generator deficits of
-  \S\ref{sec:3d-models}.}
+  \caption{Reconstructed $\pT$, $\pPar$, $\Eavail$, $q_{3}$ and $W$ for the
+  analysis selection. Data points overlay POT-scaled simulated signal (blue)
+  stacked on background (orange); data/MC ratios appear below. Wide hadronic
+  catch bins extend to \SI{100}{GeV} and are compressed at each panel's right
+  edge. The gray MC-statistical band on the ratio is mostly narrower than the points.
+  The $\sim\SI{12}{\percent}$ data normalization excess over MnvTune v1
+  reflects the truth-level generator deficits in \S\ref{sec:3d-models}.}
   \label{fig:control}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.92\textwidth]{control_corner}
-  \caption{Reco-level corner plot of the five observables: pairwise
-  POT-scaled MC (signal$+$background) densities (lower triangle,
-  logarithmic color scale; wide catch bins dropped) with the weighted
-  Pearson correlation of the simulation and the corresponding data value
-  annotated per panel, and the 1D marginals (data points over MC) on the
-  diagonal. The strongest correlations are kinematic by construction:
-  $q_{3}$ with $\Eavail$ ($r\approx0.81$) and $W$ with $\Eavail$
-  ($r\approx0.73$), which share the recoil energy, and $q_{3}$ with $\pT$
-  ($r\approx0.59$), which shares the muon transverse kick; $\Eavail$ and
-  $W$ are nearly uncorrelated with the muon variables. The data reproduce
-  every simulated coefficient to within $0.02$.}
+  \caption{Reco-level corner plot of five observables. The lower triangle
+  shows pairwise POT-scaled MC (signal$+$background) densities on a logarithmic
+  color scale, with wide catch bins dropped. Each panel annotates the
+  simulation's weighted Pearson correlation and the corresponding data value.
+  The diagonal shows 1D marginals (data points over MC). The strongest
+  correlations follow from kinematics: $q_{3}$ with $\Eavail$ ($r\approx0.81$)
+  and $W$ with $\Eavail$ ($r\approx0.73$) share recoil energy; $q_{3}$ with
+  $\pT$ ($r\approx0.59$) shares the muon transverse kick. Both $\Eavail$ and
+  $W$ are nearly uncorrelated with the muon variables. Data reproduce every
+  simulated coefficient within $0.02$.}
   \label{fig:control-corner}
 \end{figure}
