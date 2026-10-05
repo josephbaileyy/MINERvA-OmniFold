@@ -45,7 +45,9 @@ next action.
 
 ## 3. Remaining dependencies (owners keep their procedures and budgets)
 
-- **D1:** the extended comparer is reviewed, compare returns AGREE, and the joint result is recorded.
+- **D1:** half done. The extended comparer review is APPROVE and the compare returns **AGREE 1379/1379**
+  (`466b427b` on `s5p-parallel-recompute-20260928`; the recompute lane notified `pub`, and this lane verified the
+  committed report §8). Still to come: the campaign records the joint result on main.
 - **D2:** the lost-seed recovery. Procedure revision 5 is at `51648245`, and **Phase 0 PASS** is at `15a32b0e`, and the
   **determinism array 59397841** was submitted at `87256e75` (measured 2026-10-05T23:42Z). Still to come: the
   determinism verdict, the recovery, the resolution and the recompute cross-check.
