@@ -25,7 +25,7 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "lost-seed recovery: Phase 0 PASS; Phase A (determinism) next; joint result unrecorded pending the reviewed comparer AGREE",
+ "phase": "lost-seed recovery: Phase A determinism array 59397841 submitted; joint result unrecorded pending the reviewed comparer AGREE",
  "phase_detail": "amendment 7 (production admission) FROZEN after the confirmation review and a mechanical re-check; V frozen (194 all-band pilot experiments, sha256 35979ef7...); pre-freeze residuals in null-T units and development power committed before any observed statistic; budget revision 5 (production 200 CPU node-h); production lanes: power first, then the five calibration lanes",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
@@ -565,6 +565,10 @@
   {
    "utc": "2026-10-05T23:34Z",
    "what": "RECOVERY PHASE 0 PASS (PROCEDURE section 2; deploy $NS/deploy/51648245 = 5164824563927155ba842c2d2403a96b6c41a5d4, a new clean clone; login31, 2026-10-05T23:28-23:34Z; no submission). Steps 1-4: HEAD and clean tree; the nd-unfolding diff vs 4f5a613f printed exactly the three report/requeue tools; the --quiet diff of ratios, prod/tables, 2d-unfolding/unfold_2d_omnifold_unbinned.py, setup_salloc_env.sh, s5c/contract.json, stage1_inspect.json rc 0; design 404446eb, V 35979ef7, budget be29f2c3 = the ledger's last budget record, seed-states 6823e701; REF = runs/prod/status/MnvTune_v1-B0.json (2026-09-28 16:11Z) and find -L bank+detector (-newer -o -cnewer REF) printed nothing; recovery dirs absent and not under runs/prod; logs/tasks created; environment Python 3.11.14, numpy 1.26.4, scipy 1.16.3; tables regenerated from the canonical seed-states byte-identical (12 determinism + 14 recovery .tsv), manifest seeds equal, sha 6823e701. (A first run with set -u aborted at the conda activation, as the memory note warns; those steps were rerun without it.) Step 5 self-validation on the real frozen products: frozen-s with an empty manifest rc 0 - every variant's p/k/B/interval/median/sd, robust variants, T_obs, power claim_rule and claim_rule_determined reproduced exactly, and decisions, decisions_robust_kappa, labels and decisions_kappa3_replace equal the frozen ones (sha256 933d4e93...); stopping on the frozen design rc 0 - all 37 frozen looks reproduced (k, B, per-test and overall stop, min, thresholds), earliest stops = the frozen final looks (sha256 14b858cd...). Copies in state/s5p/recovery/phase0/. Next: Phase A determinism array (16 tasks, verification_repair, reservation 4.0 node-h)."
+  },
+  {
+   "utc": "2026-10-05T23:37Z",
+   "what": "RECOVERY PHASE A SUBMITTED (PROCEDURE section 3): meter dry-run then submit from deploy 51648245, stage verification_repair, 'admitted: reserve 4.0000 cpu node-h; stage after 4.000'; JOB 59397841 (sbatch --array=0-15%16 --time=120 -C cpu --cpus-per-task=32 --mem=56G, table rec-determinism-part1.tsv, output $NS/recovery/logs, tasks $NS/recovery/tasks) at 2026-10-05T23:37:11Z. The criterion is fixed in PROCEDURE section 3 (non-meta arrays bitwise; meta equal minus exactly slurm_job, seconds_unfold, refinement.seconds; rerun slurm_job a task id of this array and different from the original's; distinct files). On FAIL, recovery stops and returns to the owner."
   }
  ],
  "findings": [
