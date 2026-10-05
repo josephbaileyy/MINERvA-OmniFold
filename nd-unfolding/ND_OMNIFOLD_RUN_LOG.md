@@ -1,5 +1,20 @@
 # N-D OmniFold run log
 
+## 2026-10-01 — PET final-design study: look 1 decided; coverage of H2S1T24 K5 running (blinded; in progress)
+
+- **Look 1 (Amendment 4 UNBLIND after 944/944 rows; decision `pet/final_design/results/final/decision_look1.json`,
+  commit `96e6a412`):** L128S1T24 K4 **INELIGIBLE on B2 — point-decided, statistically unresolved** (D4c n down,
+  residual − injected L1 0.0122, 95 % 0.0064–0.0181, vs ≤ 0.010; every other rule passes). H2S1T24 K5 passes every
+  §6.1–6.3 rule (R_E0 0.895, simultaneous LB 0.876; its own B2 0.0097 is also unresolved); coverage pending. The B2
+  difference between the finalists is not resolved by this comparison; neither superiority nor equivalence is claimed.
+  No look 2. FB cost 1.768 / 1.517 A100-h per unfolding (compact not cheaper).
+- **Report-only additions after a coordinating review (two cycles, closed):** B1 common-panel dependence analysis
+  (a dependence-aware ≤ 0.10 per-unit failure probability is not established); FB population targets (designated
+  endpoints within 0.0021 of like-for-like); unblinding bound to each group (Amendment 5b, controls in
+  `test_pfd_unblind_gate.py`); terminal review brief `REVIEW_BRIEF-DECISION-20261001.md`.
+- **Coverage (Amendment 5):** 720 development-tilt + 360 D4c-up members of H2S1T24 K5 (B = 6), blinded; ≈ 1.9 k
+  A100-h. 648/720 at 2026-10-05 03:42Z. Study total 2,087 A100-h at 2026-09-30 23:22Z.
+
 ## 2026-09-27 — PET final-design study: finalists re-frozen after the reproducibility repair; final bank running (blinded; in progress)
 
 - **Reproducibility repair (Amendments 3b, 3b-bis):** the estimator-seed sd of the primary recovery at fixed events is
