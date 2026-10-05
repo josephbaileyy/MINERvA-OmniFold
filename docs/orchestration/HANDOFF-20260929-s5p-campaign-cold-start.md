@@ -321,3 +321,22 @@ This addendum is dated and does not edit the sections above.
 - **Rollback:** `prod/queues-r5-rollback/cal-NuWro_21_09.q` (throttle 5) via `transition-r5/runner_r5.sh`.
 - **Next:** when MnvTune and CV are final, one more one-lane transition (NuWro 14 while GiBUU runs, 16 once GiBUU is
   final too), only while NuWro waits on a batch, and with the recompute lane told first.
+
+## Addendum 2026-10-05: the note layout for the Stage-7 s5p text (after PR #13)
+
+This addendum is dated and does not edit the sections above. The note lane (session `minerva-omnifold-bf`) restructured
+the analysis note: main `f6a1cea0` (PR #13), standalone repo synced at `c6b069a`. Write the Stage-7 s5p text against
+this layout, and tell that session before editing. Labels were checked at `f6a1cea0` (2026-10-05T05:30Z):
+- **Five-axis material** belongs in §8 (`sec_eavailw.tex`). §8 ends with "validation of the five-axis estimator"
+  (`sec:val-fiveaxis`, line 315), which also holds the PR #9 GBDT material (`sec:gbdt-model-dependence`, line 422).
+  The covariance subsection keeps both labels, `sec:eavailw-construction` and `sec:eavailw-adopted`. The existing s5p
+  history comment is at `sec_eavailw.tex:585`.
+- **§6** is 2D only. **§9** is the extended fiducial phase space and **§10** is PET. The flux-repair caveat lives only in
+  §7.5 (`sec:3d-models`).
+- **Repository paths, ledger rows and record ids** go in App. E (`app_provenance.tex`): paths in `tab:prov-paths`,
+  KNOWN_ISSUES/VL/OI ids in `tab:prov-trackers`. Superseded values go in App. H (`app_history.tex`). None of these go in
+  the body.
+- **Open TODO** at `sec_summary.tex:87`: "Revise when the scalar-5D campaign (s5p, OI-193) closes".
+- **Style:** the prose was rewritten for brevity; match it.
+- **Paper:** the paper and note PDFs are separate builds (`paper_body.tex`), so a note-side change does not reach the
+  paper by itself.
