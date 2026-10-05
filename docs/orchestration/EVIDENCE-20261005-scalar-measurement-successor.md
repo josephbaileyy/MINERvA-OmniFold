@@ -33,6 +33,11 @@ observations below remain dated history. No job was restarted or controlled.
 The initial independent-review attempt stopped at a usage limit without a
 review report. It does not count as a completed review cycle or as approval.
 The same reviewer is retained for the resumed fixed-commit review.
+That review subsequently completed and accepted the proposal; its own
+successful remote-head refresh immediately before 19:56:41 UTC is recorded
+in [the review](REVIEW-20261005-scalar-measurement-successor.md). This includes
+the standalone remote at `97e8449f999e9098fe6c85c3c87b0547edba47f7` and does
+not erase the earlier failed observation or imply a scheduler refresh.
 
 ## Additional source check: estimator matching
 

@@ -1,5 +1,9 @@
 # Scalar measurement successor: a bounded 2D admission check
 
+**Review:** [accepted in one completed independent review cycle](REVIEW-20261005-scalar-measurement-successor.md).
+The nonblocking comparison-subset correction is applied. Acceptance covers
+this proposal and its no-go, not compute admission or scientific adoption.
+
 **Recommendation: narrow the proposed publication measurement to the existing
 2D muon-kinematic estimator, and stop new measurement production for now.**
 The next step is an existing-product audit of whether its central estimate and
@@ -102,7 +106,8 @@ admissible reporting definition at the frozen usefulness targets.
 decision after independent review and corrects two tempting interpretations:
 
 - The prior-shift envelope is **not a per-cell bias bound**. Shifts exceed the
-  corresponding bias in only about 52-78% of cells in the checked comparisons;
+  corresponding bias in only about 52-78% of cells in the noise-free
+  D1/D2/D4 comparisons;
   membership of the true shape in a generator-vertex hull is unproved.
 - Averaging bootstrap widths from six experiments does **not** verify the
   actual interval using each experiment's own width; the initial attribution
