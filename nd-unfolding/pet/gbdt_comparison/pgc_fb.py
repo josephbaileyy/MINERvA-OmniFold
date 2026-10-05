@@ -16,7 +16,11 @@ The scalar recipe's other inputs are gathered at the same rows:
 
 The result is a `selection_data.Problem` (the matched study's container), so the estimator runs
 unchanged. As there, the R factor scales the pseudodata's stored-cluster energy sum on reco-passing
-rows; reco E_avail comes scaled from the run itself. Simulation only.
+rows; reco E_avail comes scaled from the run itself. For an R2 (muon momentum) case the PET path
+scales the pseudodata's reco p_T and p_par and recomputes reco q3 on reco-passing rows
+(`final_design/runner/design_inputs.apply_muon_scale` -> `r2_scalars`, cast to the inventory's
+float32); the same function is applied here to the gathered `reco_scalars`, and the run's reco
+E_avail must equal the unscaled inventory value. Simulation only.
 """
 from __future__ import annotations
 
@@ -29,13 +33,24 @@ import numpy as np
 
 ROW_FEATURE_COLUMNS = ("rc_n_valid", "rc_E_sum", "tr_n_p", "tr_n_n", "tr_n_pipm", "tr_n_pi0",
                        "tr_n_other", "pass_reco", "pass_truth")
-R_FACTOR_RE = re.compile(r"^R\d_x([0-9.]+)[+_]")
+R_FACTOR_RE = re.compile(r"^(R\d)_x([0-9.]+)(?:[+_]|$)")
+
+
+def r_case(case: str) -> tuple[str, float] | None:
+    """(family, factor) of a reco-response case ('R1_x1.05+D1_p0.350' -> ('R1', 1.05)), else
+    None. Only R1 (hadronic energy scale) and R2 (muon momentum scale) exist on the PET path."""
+    m = R_FACTOR_RE.match(case)
+    if not m:
+        return None
+    if m.group(1) not in ("R1", "R2"):
+        raise ValueError(f"{case}: reco response {m.group(1)} is not implemented on the PET path")
+    return m.group(1), float(m.group(2))
 
 
 def r_factor(case: str) -> float | None:
-    """The reco response factor of an R case ('R1_x1.05+D1_p0.350' -> 1.05), else None."""
-    m = R_FACTOR_RE.match(case)
-    return float(m.group(1)) if m else None
+    """The R1 energy-scale factor of a case, else None."""
+    rc = r_case(case)
+    return rc[1] if rc is not None and rc[0] == "R1" else None
 
 
 def load_arrays(run: Path | str) -> dict[str, np.ndarray]:
@@ -85,12 +100,15 @@ class InventoryColumns:
         return out
 
 
-def build_problem(run: Path | str, cols: InventoryColumns, sd: Any) -> Any:
-    """The run's pair as `sd.Problem` (``sd`` is the imported `selection_data` module)."""
+def build_problem(run: Path | str, cols: InventoryColumns, sd: Any,
+                  r2_scalars: Any = None) -> Any:
+    """The run's pair as `sd.Problem` (``sd`` is the imported `selection_data` module;
+    ``r2_scalars`` the PET path's `design_inputs.r2_scalars`, required for an R2 case)."""
     run = Path(run)
     ident = json.loads((run / "run_identity.json").read_text())
     case = ident["distortion"]
     A = load_arrays(run)
+    rc = r_case(case)
     factor = r_factor(case)
     A["prior_reco_eavail_unscaled"] = A["prior_reco_eavail"]
     if factor is None:
@@ -107,6 +125,16 @@ def build_problem(run: Path | str, cols: InventoryColumns, sd: Any) -> Any:
                              f"x float32({factor}) on reco-passing rows")
         A["pseudo_reco_eavail_unscaled"] = inv
     prior, pseudo = cols.side(A, "prior"), cols.side(A, "pseudo")
+    if rc is not None and rc[0] == "R2":
+        if r2_scalars is None:
+            raise ValueError(f"{run.name}: an R2 case needs the PET path's r2_scalars")
+        hit = pseudo["pass_reco"]
+        r = pseudo["reco_scalars"].astype(np.float32)
+        pt2, ppar2, q32 = r2_scalars(r[hit, 0].astype(np.float64), r[hit, 1].astype(np.float64),
+                                     r[hit, 3].astype(np.float64), rc[1])
+        for col, v in ((0, pt2), (1, ppar2), (3, q32)):
+            r[hit, col] = np.asarray(v).astype(np.float32)
+        pseudo["reco_scalars"] = r.astype(np.float64)
     if factor is not None:
         hit = pseudo["pass_reco"]
         e = pseudo["rc_E_sum"].astype(np.float32)
@@ -121,6 +149,7 @@ def build_problem(run: Path | str, cols: InventoryColumns, sd: Any) -> Any:
     if np.intersect1d(prior["rows"], pseudo["rows"]).size:
         raise ValueError(f"{run.name}: prior and pseudodata share rows")
     record = {"run": run.name, "case": case, "r_factor": factor,
+              "reco_response": None if rc is None else {"family": rc[0], "factor": rc[1]},
               "n_prior": int(prior["rows"].size), "n_pseudo": int(pseudo["rows"].size)}
     prob = sd.Problem(run.name, case, prior, pseudo, distortion, oracle, factor, record)
     record.update({"prior_pass_truth": int(prob.pg_prior.sum()),

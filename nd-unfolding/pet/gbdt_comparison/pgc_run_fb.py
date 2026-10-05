@@ -145,7 +145,12 @@ def _run_task(task: dict[str, Any], paths: dict[str, str]) -> dict[str, Any]:
     run_dir = Path(paths["raw"]) / task["run"]
     cols = pgc_fb.InventoryColumns(paths["reco_scalars"], paths["row_features"])
     t0 = time.perf_counter()
-    prob = pgc_fb.build_problem(run_dir, cols, sd)
+    r2 = None
+    if (pgc_fb.r_case(json.loads((run_dir / "run_identity.json").read_text())["distortion"])
+            or ("",))[0] == "R2":
+        import design_inputs as di
+        r2 = di.r2_scalars
+    prob = pgc_fb.build_problem(run_dir, cols, sd, r2_scalars=r2)
     scorer = sdz.DesignScorer(run_dir, sdz.RowFeatures(paths["row_features"]))
     load_seconds = time.perf_counter() - t0
     keep = scorer.prior.keep

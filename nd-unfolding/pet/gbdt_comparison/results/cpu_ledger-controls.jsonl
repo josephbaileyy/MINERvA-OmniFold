@@ -1,1 +1,0 @@
-{"task": "control-matched-repro-F0-dev-s1", "run": "dev3N-H2S1T24-F0", "ok": true, "error": null, "wall_seconds": 32.23443262500223, "cpu_seconds": 40.974016999999996, "threads": 2, "charge_core_hours": 0.017908018125001236, "cpu_core_hours": 0.011381671388888888, "finished_utc": "2026-10-05T16:10:05Z"}

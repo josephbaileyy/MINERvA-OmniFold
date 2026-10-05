@@ -1,0 +1,153 @@
+{
+ "schema": "pet-gbdt-comparison/costs/1",
+ "rates": {
+  "H2": {
+   "file": "results/timing/S4F-H2S1T24K5-FB0.fits.jsonl",
+   "sha256": "c6fad6a79ae7038f17b7848f9ca1362373db1410c95788de2c9773c3d6d999f5",
+   "fits": 10,
+   "step1": {
+    "train_rows": [
+     681465
+    ],
+    "epochs": [
+     8
+    ],
+    "seconds": 2463.03351086803,
+    "s_per_row_epoch": 9.035803419354003e-05
+   },
+   "step2": {
+    "train_rows": [
+     960208
+    ],
+    "epochs": [
+     24
+    ],
+    "seconds": 10023.248959190969,
+    "s_per_row_epoch": 8.698852192433799e-05
+   },
+   "study_fit_a100_hours": 1.7342058986193054
+  },
+  "L128": {
+   "file": "results/timing/S4F-L128S1T24K4-FB0.fits.jsonl",
+   "sha256": "0f9ae3a26938e6c80535b5b8c50715ca38ba52afe7ee343a5f6f294c10452edf",
+   "fits": 8,
+   "step1": {
+    "train_rows": [
+     681465
+    ],
+    "epochs": [
+     8
+    ],
+    "seconds": 3126.0547588189947,
+    "s_per_row_epoch": 0.0001433517659939888
+   },
+   "step2": {
+    "train_rows": [
+     960208
+    ],
+    "epochs": [
+     24
+    ],
+    "seconds": 8031.151070913998,
+    "s_per_row_epoch": 8.712468929164739e-05
+   },
+   "study_fit_a100_hours": 1.549611920796249
+  }
+ },
+ "model_check": {
+  "H2": {
+   "model_study_a100h": 1.7339935592427245,
+   "measured_fit_a100h": 1.7342058986193054,
+   "receipt_median_a100h": 1.767919
+  },
+  "L128": {
+   "model_study_a100h": 1.549342422019348,
+   "measured_fit_a100h": 1.549611920796249,
+   "receipt_median_a100h": 1.517087
+  }
+ },
+ "data_scale_unfolding": {
+  "H2": {
+   "2M (historical full-event practice)": {
+    "a100_hours": 6.855305231189297,
+    "range": [
+     3.4276526155946483,
+     13.710610462378593
+    ],
+    "wall_hours_at_2_per_gpu": 13.710610462378593,
+    "step1_train_rows": 4414274.111874654,
+    "step2_train_rows": 3200000.0
+   },
+   "10M": {
+    "a100_hours": 26.757582734571326,
+    "range": [
+     13.378791367285663,
+     53.51516546914265
+    ],
+    "wall_hours_at_2_per_gpu": 53.51516546914265,
+    "step1_train_rows": 7093069.75937327,
+    "step2_train_rows": 16000000.0
+   },
+   "full inventory": {
+    "a100_hours": 124.16153052557179,
+    "range": [
+     62.080765262785896,
+     248.32306105114358
+    ],
+    "wall_hours_at_2_per_gpu": 248.32306105114358,
+    "step1_train_rows": 20203392.0,
+    "step2_train_rows": 78644616.0
+   }
+  },
+  "L128": {
+   "2M (historical full-event practice)": {
+    "a100_hours": 6.529737807638192,
+    "range": [
+     3.264868903819096,
+     13.059475615276384
+    ],
+    "wall_hours_at_2_per_gpu": 13.059475615276384,
+    "step1_train_rows": 4414274.111874654,
+    "step2_train_rows": 3200000.0
+   },
+   "10M": {
+    "a100_hours": 23.105729610327955,
+    "range": [
+     11.552864805163978,
+     46.21145922065591
+    ],
+    "wall_hours_at_2_per_gpu": 46.21145922065591,
+    "step1_train_rows": 7093069.75937327,
+    "step2_train_rows": 16000000.0
+   },
+   "full inventory": {
+    "a100_hours": 104.23046721178484,
+    "range": [
+     52.11523360589242,
+     208.46093442356968
+    ],
+    "wall_hours_at_2_per_gpu": 208.46093442356968,
+    "step1_train_rows": 20203392.0,
+    "step2_train_rows": 78644616.0
+   }
+  }
+ },
+ "constants": {
+  "data_side_rows": 4680719,
+  "reco_pass_fraction": 0.4185618199216587,
+  "k": {
+   "H2": 5,
+   "L128": 4
+  },
+  "epochs": {
+   "1": 8,
+   "2": 24
+  },
+  "packing": 2,
+  "range": [
+   0.5,
+   2.0
+  ]
+ },
+ "status": "per row-epoch rates MEASURED at study scale; data-scale costs SCALED (estimate)"
+}

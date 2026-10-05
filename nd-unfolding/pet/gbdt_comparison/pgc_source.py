@@ -49,11 +49,17 @@ PINNED_BLOBS = {
         "e57d1d2c172cf5548500b05a6ac8e79c578f752a",
     "nd-unfolding/pet/improvement_campaign/phase_e/common.py":
         "b427f2ac6a6601b065da7a60ab6d1e957342981d",
+    # R2 (muon momentum scale) cases only: the PET path's own reco transform
+    "nd-unfolding/pet/final_design/runner/design_inputs.py":
+        "5ce1d03a76e9f32d57c1be07b5f7605808a9e0b5",
+    "nd-unfolding/pet/improvement_campaign/phase_e/distortions.py":
+        "b01e3b7becf8fbf39e75cb2a5d5c5a3dbefb7676",
 }
 
 SEARCH_DIRS = (
     "nd-unfolding/pet/final_design/scalar",
     "nd-unfolding/pet/final_design/analysis",
+    "nd-unfolding/pet/final_design/runner",
 )
 
 

@@ -216,7 +216,53 @@ def test_build_problem_refuses_flag_mismatch(tmp_path):
         pgc_fb.build_problem(run, cols, _SD)
 
 
-def test_r_factor():
+def test_r_factor_and_r_case():
     assert pgc_fb.r_factor("R1_x1.05+D1_p0.350") == 1.05
-    assert pgc_fb.r_factor("R2_x1.01_D1_p0.350") == 1.01
-    assert pgc_fb.r_factor("D1_p0.350") is None
+    assert pgc_fb.r_factor("R2_x1.01_D1_p0.350") is None          # not an energy scale
+    assert pgc_fb.r_case("R2_x1.01+D1_p0.350") == ("R2", 1.01)
+    assert pgc_fb.r_case("D1_p0.350") is None and pgc_fb.r_factor("D1_p0.350") is None
+    with pytest.raises(ValueError, match="not implemented"):
+        pgc_fb.r_case("R3_x0.05")
+
+
+def test_build_problem_r2_scales_muon_and_q3_only_on_reco_passing(tmp_path):
+    run, cols, reco, rf = _fixture(tmp_path, "R2_x1.01+D1_p0.350")
+
+    def r2(pt, ppar, q3, s):          # stand-in with the PET function's signature
+        return s * pt, s * ppar, q3 + 1.0
+    with pytest.raises(ValueError, match="r2_scalars"):
+        pgc_fb.build_problem(run, cols, _SD)
+    p = pgc_fb.build_problem(run, cols, _SD, r2_scalars=r2)
+    r, hit = p.pseudo["rows"], p.pseudo["pass_reco"]
+    base = reco[r].astype(np.float64)
+    got = p.pseudo["reco_scalars"]
+    assert np.allclose(got[hit, 0], 1.01 * base[hit, 0], rtol=1e-6)
+    assert np.allclose(got[hit, 1], 1.01 * base[hit, 1], rtol=1e-6)
+    assert np.allclose(got[hit, 3], base[hit, 3] + 1.0, rtol=1e-6)
+    assert np.array_equal(got[~hit], base[~hit])
+    assert np.array_equal(got[:, 2], base[:, 2])                    # E_avail untouched
+    assert np.array_equal(p.prior["reco_scalars"], reco[p.prior["rows"]].astype(np.float64))
+
+
+# --------------------------------------------------------------------------------------------- #
+# pgc_compare: paired statistics use the draw as the unit and only common draws
+# --------------------------------------------------------------------------------------------- #
+def test_paired_uses_common_draws_and_draw_unit():
+    import pgc_compare as pc
+    pet = {0: 0.9, 1: 0.8, 2: 0.85, 5: 0.1}
+    gb = {0: 0.7, 1: 0.75, 2: 0.6, 3: 0.2}
+    s = pc.paired(pet, gb)
+    d = np.array([0.2, 0.05, 0.25])
+    assert s["draws"] == [0, 1, 2] and s["n"] == 3 and s["n_pet_higher"] == 3
+    assert s["mean"] == pytest.approx(d.mean())
+    assert s["sd"] == pytest.approx(d.std(ddof=1))
+    half = 4.302652729911275 * d.std(ddof=1) / np.sqrt(3)       # t_{0.975, 2}
+    assert s["ci95"] == pytest.approx([d.mean() - half, d.mean() + half])
+    assert s["bank_effect_bound"] == pytest.approx(np.sqrt(0.227) * d.std(ddof=1))
+
+
+def test_t_summary_drops_undefined():
+    import pgc_compare as pc
+    s = pc.t_summary(np.array([0.5, np.nan, 0.7]))
+    assert s["n"] == 2 and s["mean"] == pytest.approx(0.6)
+    assert pc.t_summary(np.array([], float)) == {"n": 0}
