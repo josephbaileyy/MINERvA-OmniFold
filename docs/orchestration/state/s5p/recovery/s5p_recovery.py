@@ -590,9 +590,16 @@ def cmd_frozen_s(a) -> int:
     out["primary_decisions"] = {k: v["decision"] for k, v in frozen_eval["decisions"].items()}
     out["label"] = ("REPORT ONLY: the recovered draws scored against the FROZEN shift variants; the primary decisions "
                     "are those of the frozen evaluation")
+    import platform
+    import scipy
+    out["environment"] = {"python": platform.python_version(), "numpy": np.__version__, "scipy": scipy.__version__}
     if not any(t["seeds"] for t in man["tables"].values()):
         # the Phase 0 self-validation: with nothing recovered, frozen-s must reproduce the frozen decision layer
-        frozen_labels = json.loads(a.robust_labels.read_text()) if a.robust_labels else None
+        if a.robust_labels is None:
+            raise SystemExit("the self-validation (an empty manifest) needs --robust-labels")
+        frozen_labels = json.loads(a.robust_labels.read_text())
+        if frozen_labels.get("evaluate_sha256") != hashlib.sha256(a.evaluate.read_bytes()).hexdigest():
+            raise SystemExit("robust-labels.json was not derived from this --evaluate file (evaluate_sha256 differs)")
         pick = lambda d: {t: (v["decision"], v["k"], v["B"]) for t, v in d.items()}
         checks = [("decisions", pick(out["decisions_complete_set"]), pick(frozen_eval["decisions"])),
                   ("decisions_robust_kappa", pick(out["decisions_complete_set_kappa3_keep_both"]),
