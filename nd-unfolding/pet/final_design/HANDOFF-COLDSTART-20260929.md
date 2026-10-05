@@ -227,7 +227,9 @@ pre-registered.
   - The raw run directories stay on Perlmutter scratch in `$B` (326 GB at 2026-10-05: `s4f` 65 G, `s4s` 70 G,
     `s5` 106 G, development stages ≈ 58 G, pinned `checkouts/` 16 G), alongside the predecessors'
     `/pscratch/sd/j/josephrb/pet-improvement-20260922` and `pet-direct-token-runtime-20260911`.
-  - **Scratch is purged after about eight weeks without access, and no HPSS archive of these studies exists.**
-    Archiving them (for example `htar` of `$B` into `/home/j/josephrb/pet-final-design-20260925.tar` from an `xfer`
-    job, then `hsi` verification) uses shared HPSS quota and is an owner decision; it was not done here.
+  - **Scratch is purged after about eight weeks without access, and no preservation copy of these studies exists.**
+    The group's preservation destination is **CFS**, not HPSS (correction, 2026-10-05): copy to
+    `/global/cfs/cdirs/m3246/josephrb/` and digest-verify. Measured 2026-10-05 21:18Z: Joseph's CFS directory holds
+    1.1 T against his 3 TB rule (the three PET studies total ≈ 368 G); HPSS has ≈ 164 GiB free of 512, too little for
+    326 G. The copy is an owner decision and was not done here.
 - **Stopped.** No further PET work is authorized: no repair, candidate search, compute or adoption.
