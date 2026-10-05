@@ -263,3 +263,41 @@ move with the same MC draw. The rule now reads:
 
 The rule stays attribution only. It does not change the primary verdict, the windows, the
 intervals, the positive control or N. The A1.4 closure bias is reported alongside it.
+
+## Amendment 2 (2026-10-05 ~18:40 UTC, during wave 1, before any full-run toy output was read)
+
+Operational only. No definition, window, interval, verdict rule, control or N changes. No
+full-run toy file had been opened or extracted when this was written.
+
+**A2.1 Queue lanes.** The regular queue started about 2.5 toys/h, which would not finish before
+the NERSC certificate expires. Pending indices of the wave array are therefore moved into two
+more lanes. A pending task is cancelled (`scancel --state=PENDING`, so a running task is never
+touched) and the same index is resubmitted with the same script and commit:
+
+- **debug**: at most 2 at a time (the QOS per-user limit), 128 CPUs, 30 min limit, taking the
+  highest pending index;
+- **shared**: at most 12 at a time, 64 CPUs, 1 h limit, taking the lowest pending index.
+
+An index keeps its seeds and its output path, and outputs publish atomically through the resume
+guard. The scored set is still "every index 1–200 with a `.done` marker". Both QOS have usage
+factor 1.0, and neither is premium or overrun. The s5p campaign's jobs, state and budget are not
+touched. Regular and debug submissions carry a 30 min limit, against a measured 10–13 min, which
+bounds the cost of a runaway job.
+
+**A2.2 Thread count in the shared lane.** `OMP_NUM_THREADS` follows `--cpus-per-task`, so
+shared-lane toys run lgbm with 64 threads instead of 128. Histogram summation order can then
+differ, so a shared-lane toy is not bit-identical to the same index at 128 threads. It is the
+same estimator, inputs and seeds. P1 established exact reproduction at 128 threads. Each toy's
+QOS is recorded from `sacct` in the receipts. The final report gives C1 and C2 split by lane as
+a descriptive check with no verdict role.
+
+**A2.3 Cost.** The shared-lane test toy (index 17, job 59384420) took 1091 s at billing 64/256,
+which is 0.076 node-h. Regular and debug toys take 0.20 node-h. The projected total stays below
+the 0.198 × 200 × 1.05 bound of A1.7 (42.4 node-h), whatever the lane mix.
+
+The lane feeder is `docs/orchestration/state/coverage-2d-20261005/tools/qos_feeder.sh`, run from the workstation over ssh.
+
+**A2.4 Incident.** The first version of the debug feeder cancelled pending index 100 and did
+not resubmit it, because `sacct` gives no state for a cancelled pending array element. It was
+stopped after that one index. Index 100 was resubmitted by hand on debug (job 59374208), with the
+same seeds, and no other index was affected. The feeder now checks `squeue` instead.
