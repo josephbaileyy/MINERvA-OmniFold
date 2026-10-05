@@ -191,3 +191,43 @@ pre-registered.
   rows were taken out of this branch's ledger (restored to PR #3's bytes) and are added on the integration branch as
   **VL164–VL167**, the next dense ids on `main`, in an ordinary commit after the merge.
 - **Owner decisions:** the §11 repair (decision record, last coverage row; report §8) and any merge of PRs #3/#4.
+
+## 13. Close-out and integration into `main` (2026-10-05; Joseph's authorization of 2026-10-05)
+
+- **Integrated** through branch `integrate/pet-studies-20261005` (isolated worktree), with three `--no-ff` merges that
+  preserve every reviewed commit: `pet-direct-token-comparison` (`7090fcc1`, PR #3's base, no PR of its own), then
+  `pet-improvement-20260922` (`9368ec9e`, PR #3), then `pet-final-design-20260925` (`bc356b0c`, PR #4), and a
+  fourth merge of the same branch at `1d1bbc00` that brings in the post-review deck commits only; `main` was then
+  merged in at `c6b43a28` (two s5p commits; only the generated `MANIFEST.tsv` conflicted, and it was regenerated). The
+  integration PR, its merge commit and the verified remote `main` head are recorded in PRs #3/#4 and in the
+  integration PR body.
+- **Integration changes:** the receipt-binding inventory 132 → 140 → 142, each delta enumerated; the RUN_LOG
+  chronology; ledger rows renumbered to VL164–VL167 and their references updated; `MANIFEST-overrides.tsv` rows for the
+  two campaign authorizations (ARCHIVAL, terminal); `MANIFEST.tsv` regenerated; one `AGENTS.md` routing pointer. Two
+  fixes came out of a per-test comparison against `origin/main` and the study tip:
+  - `nd-unfolding/tests/test_hash_bindings.py`: 17 revision-pinned PET pairs, each verified at its revision.
+  - The PET scalar lane loads the byte-identical `68cf9d29` copy of `closure_powered_truth_reweight.py`, because
+    `main`'s live module moved on (KNOWN_ISSUES #31).
+  No scientific number, verdict or rule changed; the outcome stays **NO_ELIGIBLE_DESIGN** with no selected default.
+- **Post-review presentation additions (no verdict, number or scope change; every number re-derived by
+  `slides/test_final_deck_numbers.py`):**
+  - The architectures tested, the parts taken from Gregor's work (from the pinned configuration comparison) and why
+    each did not pass (`ba6c0247`).
+  - Slides for an outside reader: the evidence summary, the finalists side by side, design names, how the numbers
+    are measured, reference methods (`a9c14526`).
+  - A short summary deck, `slides/pet_final_design_summary_deck.pdf` (8 slides plus an AUSSIE backup slide), built
+    by `make_final_deck.py --deck ben`, with an abstracted decision-rules slide (`1d1bbc00`).
+- **Cluster verified stopped (2026-10-05 14:55Z):** no `pfd-` job queued or running; the watcher logged
+  "keep_busy stopped" at 13:24:22Z after its last start; no `keep_busy`/`fbmon`/worker process on login24 or login37;
+  `$B/keep_busy.stop` present; no `scrontab` entry; fbmon last exited 2026-09-30. Other lanes' jobs (`s5p-*`,
+  `cov2d_fixedtruth`) untouched.
+- **Evidence and recovery routes (nothing deleted):**
+  - Every decision reproduces from committed files: `results/final/` (scores, decisions, coverage),
+    `freeze/COMPLETENESS-*.tsv`, `resources/`, and `analysis/run_look1.sh` / `analysis/run_final.sh`.
+  - The raw run directories stay on Perlmutter scratch in `$B` (326 GB at 2026-10-05: `s4f` 65 G, `s4s` 70 G,
+    `s5` 106 G, development stages ≈ 58 G, pinned `checkouts/` 16 G), alongside the predecessors'
+    `/pscratch/sd/j/josephrb/pet-improvement-20260922` and `pet-direct-token-runtime-20260911`.
+  - **Scratch is purged after about eight weeks without access, and no HPSS archive of these studies exists.**
+    Archiving them (for example `htar` of `$B` into `/home/j/josephrb/pet-final-design-20260925.tar` from an `xfer`
+    job, then `hsi` verification) uses shared HPSS quota and is an owner decision; it was not done here.
+- **Stopped.** No further PET work is authorized: no repair, candidate search, compute or adoption.
