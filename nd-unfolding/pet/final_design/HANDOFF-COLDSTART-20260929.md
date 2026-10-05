@@ -156,8 +156,9 @@ pre-registered.
   freeze/COMPLETENESS-s5c_a5_H2S1T24.tsv` (write it in the study area, copy into the repo), commit it with
   `### Amendment 6 (<date>) — UNBLIND coverage s5c_a5_H2S1T24` (Amendment 5b: the exact group name), deploy, then
   `jobs/score_cov.sh <sha> s5c_a5_H2S1T24 5 $B/population/fb_population_dev.json` and `analysis/coverage.py` for
-  C1–C4. Then the same for `s5d_a5_H2S1T24` (population `fb_population_D4c_p_up.json`) and C5 (skipped only after a
-  decisive C1–C4 FAIL), then `decide.py` with the coverage file → terminal outcome; then the review under
+  C1–C4 via `analysis/run_final.sh results/final/scored_fb resources/cost_fb_look1-20260930.json <dev scores> - <out>`
+  (C5 stays incomplete). Then the same for `s5d_a5_H2S1T24` (population `fb_population_D4c_p_up.json`) and C5 (skipped
+  only after a decisive C1–C4 FAIL): `run_final.sh … <dev scores> <D4c scores> <out>` → terminal outcome; then the review under
   `REVIEW_BRIEF-DECISION-20261001.md`.
 - **Traps found this session:** `freeze/completeness_manifest.py` is not in `04703b90` (run tools from a checkout
   that has them; the `runs/*.tsv` are identical); login-node `python3` is 3.6 (use the module); the Mac has no
