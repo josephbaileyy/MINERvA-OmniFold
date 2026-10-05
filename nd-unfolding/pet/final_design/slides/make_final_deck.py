@@ -51,6 +51,8 @@ S2 = "results/step2int/{run}.posthoc.json"
 DEC = "results/final/decision_look1.json"
 B1D = "results/final/b1_dependence_look1.json"
 FBC = "resources/cost_fb_look1-20260930.json"
+COV = "results/final/coverage_dev/coverage_H2S1T24K5.json"
+FIN = "results/final/coverage_dev/decision_final.json"
 CURVE_DESIGNS = ("C", "H1", "H2", "H2S1", "H2S1T24", "L128S1", "L128S1T24", "P2preA1", "P2scrS1")
 COLORS = {"C": "#009E73", "H1": "#999999", "H2": "#E69F00", "H2S1": "#0072B2", "H2S1E16": "#56B4E9",
           "L128S1": "#CC79A7", "L128S1E16": "#D55E00", "P2preS1": "#000000", "P2scrS1": "#8C564B",
@@ -356,6 +358,51 @@ def s_final(d: Deck, n: Numbers) -> None:
     d.claim("B2 point decision and B1 dependence", sorted(k for k in n.entries if k.startswith(("b2_", "b1dep_"))))
 
 
+def s_coverage(d: Deck, n: Numbers) -> None:
+    if not d.n.src.exists(COV):
+        d.frame("Uncertainty calibration", r"\centering\Large Pending --- coverage runs blinded.",
+                ["PROTOCOL-20260925.md (Amendment 5)"])
+        return
+    cov = d.n.src.load(COV)["rules"]
+
+    def part(rule, i, key, fmt="3"):
+        return n.f(f"cov_{rule}_{i}_{key}", COV, ["rules", rule, "parts", i, key], fmt)
+
+    ratios = [cov["C4"]["parts"][i]["estimate"] / cov["C4"]["parts"][i]["threshold"] for i in range(1, 7)]
+    lo = n.add("cov_C4_ratio_min", "ratio", [(COV, ["rules", "C4", "parts", 1 + ratios.index(min(ratios)), "estimate"]),
+                                             (COV, ["rules", "C4", "parts", 1 + ratios.index(min(ratios)), "threshold"])], "2")
+    hi = n.add("cov_C4_ratio_max", "ratio", [(COV, ["rules", "C4", "parts", 1 + ratios.index(max(ratios)), "estimate"]),
+                                             (COV, ["rules", "C4", "parts", 1 + ratios.index(max(ratios)), "threshold"])], "2")
+    rows = [["C1 pooled 95\\,\\% (LB $\\ge$0.90, point $\\le$0.99)", part("C1", 1, "estimate") + " (LB " + part("C1", 0, "lb") + ")",
+             base.esc(cov["C1"]["verdict"])],
+            ["C1 pooled 68\\,\\% (LB $\\ge$0.60, point $\\le$0.80)", part("C1", 3, "estimate") + " (LB " + part("C1", 2, "lb") + ")", ""],
+            ["C2 every bin 95\\,\\% $\\ge$ 0.85", "all bins pass", base.esc(cov["C2"]["verdict"])],
+            ["C3 moderate / good 95\\,\\% LB $\\ge$ 0.85", part("C3", 0, "lb") + " / " + part("C3", 1, "lb"), base.esc(cov["C3"]["verdict"])],
+            ["C4 half-width / limit, bins 1--6 ($\\le$1)", lo + "--" + hi, base.esc(cov["C4"]["verdict"])],
+            ["C5 D4c up", "skipped after decisive C1--C4 FAIL", "---"]]
+    body = table(["H2S1T24 $K{=}5$, B = 6, 120 replicates", "measured", "verdict"], rows, "llr", r"\scriptsize") + (
+        r"\par\vspace{0.15cm}\small The six-member interval is \textbf{too wide} (over-conservative), not "
+        r"anti-conservative; the same against the FB population target. Mechanism not established.")
+    d.frame("Uncertainty calibration: coverage of H2S1T24", body, [COV])
+    d.claim("Coverage C1-C4", sorted(k for k in n.entries if k.startswith("cov_")))
+
+
+def s_terminal(d: Deck, n: Numbers) -> None:
+    if not d.n.src.exists(FIN):
+        return
+    fin = d.n.src.load(FIN)
+    rows = [[base.esc(c), base.esc(_status(e))] for c, e in fin["eligibility"].items()
+            if c in ("H2S1T24K5", "L128S1T24K4")]
+    body = (r"\centering\Large\textbf{" + base.esc(str(fin["ranking"].get("outcome"))) + r"}\par\vspace{0.3cm}" +
+            table(["finalist", "status (rules)"], rows, "ll", r"\small") + r"\raggedright\par\vspace{0.3cm}\small"
+            r"\begin{itemize}\item No design selected and no default named (the default must itself be eligible)."
+            r"\item Supported: H2S1T24's point estimator passes every accuracy, robustness and stability rule; its "
+            r"interval procedure is too wide. Not supported: a ranking of the finalists."
+            r"\item Remaining route (owner decision): \S11 repair --- interval calibrated on DEV, re-validated on the "
+            r"sealed RB bank.\end{itemize}")
+    d.frame("Terminal outcome (frozen rules)", body, [FIN, "DECISION_RECORD-pet-final-design.md"])
+
+
 def s_cannot(d: Deck) -> None:
     body = r"""\small\begin{itemize}
 \item No publication adoption; no real-data unfolding; no \texttt{C\_stat}/\texttt{C\_ML}; no Gate-6 work;
@@ -388,6 +435,8 @@ def build(out: Path, make_pdf: bool) -> dict[str, Any]:
     s_aussie(d, n)
     s_finalists(d, n)
     s_final(d, n)
+    s_coverage(d, n)
+    s_terminal(d, n)
     s_cannot(d)
     title = (r"\title{PET final-design selection study}" "\n"
              r"\subtitle{Study deck (generated from committed results)}" "\n"

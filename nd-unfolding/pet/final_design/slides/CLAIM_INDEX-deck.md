@@ -97,3 +97,11 @@ Paths relative to `nd-unfolding/pet/final_design/`.
 |  |  | `b2_l_lb` = 0.0064 |
 |  |  | `b2_l_mean` = 0.0122 |
 |  |  | `b2_l_ub` = 0.0181 |
+| 13 | Coverage C1-C4 | `cov_C1_0_lb` = 0.980 |
+|  |  | `cov_C1_1_estimate` = 0.990 |
+|  |  | `cov_C1_2_lb` = 0.858 |
+|  |  | `cov_C1_3_estimate` = 0.896 |
+|  |  | `cov_C3_0_lb` = 0.949 |
+|  |  | `cov_C3_1_lb` = 0.993 |
+|  |  | `cov_C4_ratio_max` = 1.72 |
+|  |  | `cov_C4_ratio_min` = 1.32 |
