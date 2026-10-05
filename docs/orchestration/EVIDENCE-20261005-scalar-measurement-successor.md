@@ -5,6 +5,46 @@ This is an observation record for
 control file or a new scientific result. No training, unfolding, ensemble,
 allocation, covariance replacement, or worker-control action was performed.
 
+## Refresh after interruption, 2026-10-05 19:51 UTC
+
+Direct canonical `git ls-remote` returned:
+
+| Ref | Full head |
+|---|---|
+| `main` | `1fc9d8ce52842eab849db4408e0d4f5f22c923c0` |
+| `s5p-parallel-recompute-20260928` | `be183e559176c802c6ca7e6ac98885c34cef0300` |
+| `study/2d-coverage-test-20261005` | `ae1f91f37436bc3de7e3d5de33dbb811919ad20f` |
+| `pet-final-design-20260925` | `1d1bbc00a990dc96eb692a1b74438af3df4edc12` |
+
+The proposal was rebased onto that observed main in an isolated clone. PET
+integration changed neither `NO_ELIGIBLE_DESIGN` nor its scientific scope.
+Scalar commit `c6b43a28` records NuWro final at B=1751 and its runner ended,
+leaving GiBUU as the only open lane in that committed record. The 2D branch
+adds operational amendment 2, including shared/debug scheduling and a
+64-thread timing; its scientific scoring criteria are unchanged.
+
+Subsequent network reads failed: the standalone remote query and fetch
+reported `Could not resolve host: github.com`, and the SSH scheduler refresh
+exited 255. These are observation failures, not job termination. The local
+standalone checkout and its tracking ref both remain at `97e8449f...`; its
+current remote head is not newly verified. The prior successful direct
+observations below remain dated history. No job was restarted or controlled.
+
+The initial independent-review attempt stopped at a usage limit without a
+review report. It does not count as a completed review cycle or as approval.
+The same reviewer is retained for the resumed fixed-commit review.
+
+## Additional source check: estimator matching
+
+At the proposal baseline, the full systematic and matched-CV launchers
+`2d-unfolding/sbatch_unfold_2d_MEFHC_5iter_universes_full.sh` and
+`sbatch_unfold_2d_MEFHC_5iter_universes_full_CV.sh` specify seed 42. The
+`sbatch_unfold_2d_MEFHC_5iter_bootstrap_scaleup.sh` launcher specifies seed 1.
+This owner-side observation was provided to the reviewer as a source to
+check; it is not an independent reviewer discovery. The candidate now
+requires evidence for seed-1 matching or a declared transfer, and otherwise
+stops before compute. No cross-seed equivalence was measured.
+
 ## Remote identities and ownership
 
 Direct `git ls-remote` observations on 2026-10-05, approximately 14:47-14:54 UTC:

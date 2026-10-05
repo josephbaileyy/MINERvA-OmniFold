@@ -34,14 +34,19 @@ proposal not executable. The proposal review does not replace any campaign's
 required independent numerical verification.
 
 [Evidence snapshot](EVIDENCE-20261005-scalar-measurement-successor.md) records
-the remote heads and direct observations. The baseline is canonical `main`
-`c64228dab8b4d55e3fec772b8c05c004268578b7`, not the six-commit-older initial
-checkout. At the observed time, both existing CPU campaigns have live jobs.
+the remote heads and direct observations. The current baseline is canonical
+`main` `1fc9d8ce52842eab849db4408e0d4f5f22c923c0`, observed directly at
+19:51 UTC. The initial draft used `c64228da`. The last successful direct
+scheduler observation at 14:53 UTC found both CPU campaigns active. Later
+committed scalar state records four of five nulls final; neither campaign
+has a committed independently verified terminal result in the inspected refs.
+The attempted live refresh was unavailable, so those records are not
+represented as a new scheduler observation.
 
 | Work | Owner and preserved responsibility | Governing route |
 |---|---|---|
 | Scalar joint inference | `scalar5d campaign`, local branch `campaign/s5p-precision-20260926`, publishing to `main`; its independent recomputation lane remains responsible for terminal verification | [campaign index](CAMPAIGN-s5p-20260926-index.md), [cold-start handoff](HANDOFF-20260929-s5p-campaign-cold-start.md), [terminal checklist](CHECKLIST-20261001-s5p-terminal-and-claims.md), `OI-193` |
-| 2D statistical coverage | Owner of `study/2d-coverage-test-20261005`; its own fresh reviewer and independent numerical recomputation remain required | [pinned preregistration and amendment 1](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/37a0cf8c0d838282f7b6ec3a45fe704082392290/docs/orchestration/PREREG-20261005-2d-fixed-truth-coverage.md) |
+| 2D statistical coverage | Owner of `study/2d-coverage-test-20261005`; its own fresh reviewer and independent numerical recomputation remain required | [pinned preregistration and amendments 1-2](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/ae1f91f37436bc3de7e3d5de33dbb811919ad20f/docs/orchestration/PREREG-20261005-2d-fixed-truth-coverage.md) |
 | PET | Final-design owner retains its terminal record; development is paused | [pinned terminal decision](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/9a9a7bfb8fe0ce646a9895090a8d7b6c09568866/nd-unfolding/pet/final_design/DECISION_RECORD-pet-final-design.md) |
 
 The scalar CPU pool is 341.434 node-hours, with production 234.647 and a
@@ -58,7 +63,7 @@ with those owners. No operational message or instruction was sent to them.
 | Component | Supported claim | What prevents a stronger measurement claim |
 |---|---|---|
 | 2D central value | Phase-18.2 five-iteration LightGBM result, 205 paper-reported bins, integrated cross section `3.073e-38 cm2/nucleon`; established reproduction and extraction checks | Those checks do not measure total-interval coverage or robustness to an arbitrary truth/response |
-| 2D uncertainty construction | Matched-CV, flux-fixed 187-universe systematic construction plus statistical and ML blocks; recorded median relative combined standard deviation 6.87% | MAT agreement verifies a covariance recipe. It does not establish coverage, independence of all blocks, or a model-bias bound. The current coverage study identifies an additional pairing question below |
+| 2D uncertainty construction | Internally matched-CV, flux-fixed 187-universe systematic construction plus statistical and ML blocks; recorded median relative combined standard deviation 6.87% | MAT agreement verifies a covariance recipe. It does not establish coverage, independence of all blocks, or a model-bias bound. Systematic and statistical launchers use different estimator seeds; the coverage study identifies a further normalization question below |
 | 2D statistical band | VL162 reproduces the 300-replica rollup: median relative spread 0.5494%, fixed estimator seed, data and signal-MC Poisson streams | The ongoing study tests a transferred statistical band at prior-equals-truth, with same-population MC and closure background limitations. Even a verified PASS would not cover systematics, model dependence, 5D, or total intervals |
 | 3D/4D/5D central components | Existing central results, dimensional anchors, and injected-variable closure records support their stated finite tests | Central closure cannot qualify quarantined historical covariances or guarantee response to other departures |
 | Adopted scalar-5D trunk | One digest was adopted under a byte-scoped exception; its projection and pairing are identified | Adoption does not change `NON-PASSING` / `adoptable: false`, discharge cause 3, or transfer to candidate R. See the four measurements below |
@@ -123,12 +128,28 @@ independently certify all its reductions.
 
 ## 3. The one proposed successor and why it addresses a measured failure
 
-**Candidate:** retain the published-phase-space 2D five-iteration LightGBM
+**Candidate:** use the published-phase-space 2D five-iteration LightGBM
 point-estimator recipe, including the existing purity/fake subtraction,
 truth-pass selection, event weights, flux and target normalization, and
-fixed estimator seed 1. Use the matched LightGBM central product, not an
-exact-GBT central value, an ensemble mean, or a 5D marginal. No new tuning,
-iteration selection, classifier family, or bias correction is proposed.
+fixed estimator seed 1. This seed matches the quoted 300 statistical replicas
+and the current coverage worker's estimator. It defines a proposed successor
+central value, not an assertion that the historical quoted central value or
+the systematic sweep's CV was produced at seed 1. Require its own matching
+data central product; do not substitute an exact-GBT result, ensemble mean,
+or 5D marginal. No new tuning, iteration selection, classifier family, or
+bias correction is proposed. Replacing a quoted central value would require
+separate adoption, even if its numerical movement proved small.
+
+**Additional measured matching obstacle:** the full systematic sweep and
+its matched-CV launcher both specify `--seed 42`; the statistical scale-up
+launcher specifies `--seed 1`. Internally matched systematics are not thereby
+matched to the entire proposed seed-1 measurement. Stage A must trace the
+actual products to their producer flags and backend, and find compatible
+seed-1 systematics or evidence adequate to justify a declared transfer.
+If neither exists, same-seed systematic production must be costed in a new
+request and Stage A stops with **PAIRING NOT ESTABLISHED**. Completeness
+rescaling cannot change an estimator seed. Likewise, a seedscan directory's
+label cannot establish its backend: inspect actual producer records.
 
 **Reporting domain:** the 205 cells selected by the paper's reported-bin mask
 within `0 <= pT <= 4.5` and `1.5 <= p_parallel <= 60 GeV/c`, plus their
@@ -163,8 +184,9 @@ If identities, normalization convention, or extraction sufficient statistics
 are missing, stop. Do not reconstruct `c` from a mislabeled closure truth
 histogram or silently assume the correction is warranted.
 
-This changes a proposed statistical sampling construction, not the central
-estimator. The old 300 replicas, original covariance and current coverage
+The algebra changes the proposed statistical sampling construction at a fixed
+seed; it is not a change to the point-estimator algorithm. The old 300
+replicas, original covariance and current coverage
 verdict remain preserved. Any resulting shadow covariance is unadopted
 development evidence, requiring its own review and subsequent authorization
 before it could replace a quoted block. A small statistical component does
@@ -196,7 +218,7 @@ identities:
 |---|---|
 | Data and signal-MC statistics | Replica covariance, sample-centered with `ddof=1`, from the paired estimator after the completeness question is resolved; distinguish MC population conditioning from unconditional finite-MC inference |
 | Background and finite template statistics | Include them under the purity/fake algorithm wherever they enter; present replicas do not fluctuate background MC. Verify negligible effect against a declared threshold or construct the missing component; omission cannot be called total |
-| Flux, detector, response and interaction nuisance parameters | Reuse the 187-universe flux-fixed MAT construction only after endpoint support, matching CV, centering, flux-index and physical-source checks. The 1.4% target-normalization block enters once. Interaction knobs concern response/efficiency and background, distinct from the truth-shape allowance |
+| Flux, detector, response and interaction nuisance parameters | Reuse the 187-universe flux-fixed MAT construction only after endpoint support, estimator-seed/backend matching or a justified transfer, matching CV, centering, flux-index and physical-source checks. No such seed transfer is established here. The 1.4% target-normalization block enters once. Interaction knobs concern response/efficiency and background, distinct from the truth-shape allowance |
 | Estimator and numerical variability | Reassess seedscan pairing and what the statistical resampling already includes. Add a separate component only with an independence or joint-draw argument. R5's rounding-containment result does not transfer to 2D |
 | Dependence between probabilistic blocks | State the physical joint nuisance law. Use coherent joint throws or measured cross terms when sources overlap; different RNG seeds do not prove physical independence. The old block sum is a candidate, not a coverage theorem |
 | Unfolding-model dependence | On fixed development truths, calculate signed mean residuals; Bminus covers positive estimator bias and Bplus negative bias, using simultaneous upper confidence limits on those magnitudes. Freeze cellwise maxima over that finite development set before validation. Prior variations are sensitivity diagnostics only; never convert them directly to a covariance, probability law or guaranteed bias bound |
@@ -334,6 +356,11 @@ reserve inside an 8-node-hour ceiling. This is an extrapolation from
 nominal statistical toys to background/nuisance/departure workloads;
 the allowance is not a measurement of those new workloads. Scalar R timing
 (about 294 s at 32 threads) and eight-way packing are not used to price 2D.
+The worker's later operational amendment measured one shared-lane toy at
+1091 s with billing 64/256 (about 0.076 node-hours), but changed its thread
+count from 128 to 64 and did not establish bitwise equivalence. This proposal
+retains the measured 128-thread baseline and does not import that saving
+into a different workload without an equivalence and throughput check.
 
 Bill elapsed time using the actual scheduler billing fraction and QOS factor,
 and admit only if spent plus all open worst-case reservations plus protected
