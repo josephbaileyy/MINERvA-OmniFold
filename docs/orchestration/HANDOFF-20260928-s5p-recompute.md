@@ -365,6 +365,19 @@ EOF
       `stage7/s5p_terminal_run.sh`, `transition-r5/*`), besides the r5 queues.
   - **Open, checked at terminal from the ledger:** NuWro b6 onward must read `--array=0-33%8` with the frozen tables.
     §5.3's table chain adds `95572965`.
+  - **CLOSED 2026-10-05:** the ledger opens NuWro b6 at 07:25:45Z with `--array=0-33%8` and `cal-NuWro_21_09-b6.tsv`.
+- **Transition r6, PRE-execution check (2026-10-05 ~08:30Z):** NuWro throttle 8 → 14, prepared at origin/main
+  `756e1d6c`. MnvTune went final at 08:15:22Z (B 1365) and GENIE CV at 08:23:24Z (B 1366); this lane read both
+  final statuses (rule met for both tests, k = 0, upper 0.00438). The worst case is GiBUU 2 + NuWro 14 = 16 slots.
+  - Repository: `nd-unfolding/` is unchanged from `95572965`; the frozen modules = `4f5a613f`; the budget, design,
+    tables and ratios are identical. `validate_deploy_r6.py` and `runner_r6.sh` differ from r5's by renames only, and
+    the runner's LANES PID is the live r5 runner 435867.
+  - Cluster: the deploy is at HEAD; the validator is byte-identical, rc 0, VALID; queues-r6 = queues-r5 from the b6
+    wait line with the throttle normalized (6 lines at 14; rollback at 8); the budget = the ledger's; tables
+    identical.
+  - The campaign was told this is a verification result, not an authorization. **Post-switch checks are owed**
+    (runner PPID 1, cmdline queues-r6, the old runner gone, log pin), and NuWro b7 onward must read `%14` at terminal.
+    §5.3's chain adds `756e1d6c`.
   - Throttle is scheduling, not science: it changes neither which seeds a batch holds nor any rule.
   - The meter is valid from either `e0d7b04a` or `b93445c4` (identical budget). §5.1 keeps `M=e0d7b04a` and
     `P` = the r3 pow log, where pow's `queue done` is.
@@ -423,8 +436,8 @@ R=/pscratch/sd/j/josephrb/s5p-20260926
 T=docs/orchestration/state/s5p/prod/tables
 diff -rq $R/deploy/4f5a613f/$T $R/deploy/55a41765/$T && diff -rq $R/deploy/55a41765/$T $R/deploy/c754f3cd/$T \
   && diff -rq $R/deploy/c754f3cd/$T $R/deploy/e0d7b04a/$T && diff -rq $R/deploy/e0d7b04a/$T $R/deploy/b93445c4/$T \
-  && diff -rq $R/deploy/b93445c4/$T $R/deploy/95572965/$T; echo "tables diff rc=$?"
-# r4/r5: NuWro b6 on must have been submitted at throttle 8 (r5; 5 only if submitted under r4) with the frozen tables
+  && diff -rq $R/deploy/b93445c4/$T $R/deploy/95572965/$T && diff -rq $R/deploy/95572965/$T $R/deploy/756e1d6c/$T; echo "tables diff rc=$?"
+# r4-r6: NuWro b6 at throttle 8 (r5, confirmed), b7 on at 14 if r6 ran first, each with its frozen table
 /usr/bin/python3.11 -c 'import json,sys; [print(r["utc"], [a for a in r["argv"] if a.startswith("--array") or a.endswith(".tsv")]) for r in map(json.loads, open(sys.argv[1])) if r.get("kind") == "open" and any("nuwro_21_09_b" in a for a in r.get("argv", []))]' $R/ledger/admissions.jsonl
 ids=$(/usr/bin/python3.11 -c 'import json,sys; print(",".join(sorted({str(json.loads(l)["job_id"]) for l in open(sys.argv[1]) if l.strip() and json.loads(l).get("kind") == "job"})))' $R/ledger/admissions.jsonl)
 sacct -X -n -P -o JobID,State -j "$ids" > ../final/sacct-dispositions.txt; echo "sacct rc=$?"
