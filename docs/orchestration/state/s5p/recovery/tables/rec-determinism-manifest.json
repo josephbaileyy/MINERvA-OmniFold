@@ -1,0 +1,56 @@
+{
+ "phase": "determinism",
+ "seed_states_sha256": "bd25f1ec03ac07a205aed533193fa291bef785525529b1e5bf54a45984eaf031",
+ "root": "/pscratch/sd/j/josephrb/s5p-20260926/recovery",
+ "tables": {
+  "rec-determinism-cal-GENIE_2_12_10_CV.tsv": {
+   "lane": "cal-GENIE_2_12_10_CV",
+   "n": 2,
+   "seeds": [
+    1220000,
+    1221205
+   ]
+  },
+  "rec-determinism-cal-GENIE_2_12_10_MEC.tsv": {
+   "lane": "cal-GENIE_2_12_10_MEC",
+   "n": 2,
+   "seeds": [
+    1240000,
+    1241205
+   ]
+  },
+  "rec-determinism-cal-GiBUU_2019.tsv": {
+   "lane": "cal-GiBUU_2019",
+   "n": 2,
+   "seeds": [
+    1280000,
+    1281205
+   ]
+  },
+  "rec-determinism-cal-MnvTune_v1.tsv": {
+   "lane": "cal-MnvTune_v1",
+   "n": 2,
+   "seeds": [
+    1200000,
+    1201205
+   ]
+  },
+  "rec-determinism-cal-NuWro_21_09.tsv": {
+   "lane": "cal-NuWro_21_09",
+   "n": 2,
+   "seeds": [
+    1260000,
+    1261605
+   ]
+  }
+ },
+ "n_seeds": 10,
+ "submission_parts": [
+  {
+   "table": "rec-determinism-part1.tsv",
+   "ntasks": 10,
+   "first": "cal-GENIE_2_12_10_CV-b0_0-s1220000-rec",
+   "last": "cal-NuWro_21_09-b8_0-s1261605-rec"
+  }
+ ]
+}

@@ -516,3 +516,4 @@ docs/orchestration/state/s5p/stage7/joint/robust-labels.json	MACHINE	open
 docs/orchestration/state/s5p/stage7/joint/seed-states.abs-log-paths.json	MACHINE	open	
 docs/orchestration/state/s5p/stage7/joint/missing-sensitivity.json	MACHINE	open	
 docs/orchestration/DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md	LIVE	open	
+docs/orchestration/PROCEDURE-20261005-s5p-lost-seed-recovery.md	LIVE	open	
