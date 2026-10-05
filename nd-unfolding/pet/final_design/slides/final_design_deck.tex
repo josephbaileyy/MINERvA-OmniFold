@@ -21,7 +21,7 @@
 \gdef\evidencetext{}
 \frame{\titlepage}
 
-\gdef\evidencetext{\texttt{results/final/decision\_look1.json}; \texttt{results/final/coverage\_dev/coverage\_H2S1T24K5.json}; \texttt{dev/SCREENS-20260927-3d.json}; \texttt{scalar/results/SCALAR\_AUSSIE\_MATCHED-20260925.json}}
+\gdef\evidencetext{\texttt{results/final/decision\_look1.json}; \texttt{results/final/coverage\_dev/coverage\_H2S1T24K5.json}; \texttt{../gbdt\_comparison/results/comparison.json}; \texttt{scalar/results/SCALAR\_AUSSIE\_MATCHED-20260925.json}}
 \begin{frame}{What the evidence supports}
 {\footnotesize
 \begin{tabular}{>{\raggedright\arraybackslash}p{0.30\linewidth}>{\raggedright\arraybackslash}p{0.64\linewidth}}
@@ -29,9 +29,9 @@
 question & what the evidence supports \\
 \midrule
 Can improved PET recover meaningful physics changes? & \textbf{Yes, in this simulation test.} H2S1T24 $K{=}5$ passed every frozen point-estimator rule: energy tilt 0.895, proton topology 0.391, energy $\times\,q_3$ 0.446. \\
-Is it more accurate than current GBDT? & \textbf{Suggestive, not decisive.} On the development tilt (DEV bank) scalar GBDT OmniFold reached 0.783 ($k{=}3$) to 0.817 ($k{=}10$), H2S1T24 0.904; inputs, $k$ and events are not matched. Efficiency-corrected binned IBU reached 0.923 on the tilt but fails the proton case. \\
+Is it more accurate than GBDT OmniFold? & \textbf{On energy shape, yes; on generator changes, no.} On the same final-bank events PET beats a tuned scalar GBDT OmniFold on the energy tilt (H2S1T24 +0.102, L128S1T24 +0.070 in $R$) but is worse on every generator-model reweighting (NuWro \ensuremath{-}0.247, GiBUU \ensuremath{-}0.206 for H2S1T24). Binned IBU (0.923 on the development tilt) matches PET on the 1D tilt but fails the proton case. \\
 Can it give tighter, reliable confidence intervals? & \textbf{Unestablished.} Its six-member bootstrap interval failed calibration: too wide overall (68\,\% intervals cover 0.896), too narrow at low acceptance (0.257). \\
-Will it distinguish generators more strongly? & \textbf{Unestablished.} That needs calibrated inference including detector and model uncertainties; no tested procedure provides it. \\
+Will it distinguish generators more strongly? & \textbf{Unestablished.} That needs calibrated inference including detector and model uncertainties; no tested procedure provides it, and PET recovers generator-model changes less well than GBDT. \\
 \bottomrule
 \end{tabular}}\par\vspace{0.15cm}\scriptsize Terminal outcome by the frozen rules: \textbf{NO\_ELIGIBLE\_DESIGN}, no selected default. Signal-only simulation, conditional on the frozen event banks; PET is diagnostic.
 \end{frame}
@@ -265,6 +265,34 @@ C4 half-width / limit, bins 1--6 ($\le$1) & 1.32--1.72 & FAIL \\
 C5 D4c up & skipped after decisive C1--C4 FAIL & --- \\
 \bottomrule
 \end{tabular}}\par\vspace{0.15cm}\small In aggregate the six-member interval is \textbf{too wide}; the same against the FB population target. Not uniformly conservative: the low-acceptance region \textbf{under-covers} (68\,\%: 0.26, 95\,\%: 0.79), a region no rule gates. Mechanism not established.
+\end{frame}
+
+\gdef\evidencetext{\texttt{../gbdt\_comparison/results/comparison.json}; \texttt{../gbdt\_comparison/REPORT-20261005.md}}
+\begin{frame}{PET vs GBDT OmniFold on the same events}
+{\scriptsize
+\begin{tabular}{lll}
+\toprule
+paired difference in $R$, PET $-$ GBDT & H2S1T24 $K{=}5$ & L128S1T24 $K{=}4$ \\
+\midrule
+energy tilt E0 (60 draws) & +0.102 [0.084, 0.119] & +0.070 [0.051, 0.089] \\
+opposite tilt E3 (60) & +0.076 [0.059, 0.093] & +0.070 [0.053, 0.088] \\
+proton topology E4 (40) & +0.055 [0.035, 0.075] & +0.012 [\ensuremath{-}0.007, 0.031] \\
+\quad E4 against GBDT run to $k{=}10$ & +0.009 [\ensuremath{-}0.012, 0.030] & \ensuremath{-}0.034 [\ensuremath{-}0.054, \ensuremath{-}0.015] \\
+energy $\times\,q_3$ E5 (40) & +0.009 [\ensuremath{-}0.009, 0.026] & +0.013 [\ensuremath{-}0.005, 0.030] \\
+generator reweighting: NuWro (8) & \ensuremath{-}0.247 [\ensuremath{-}0.345, \ensuremath{-}0.148] & \ensuremath{-}0.208 [\ensuremath{-}0.324, \ensuremath{-}0.092] \\
+\quad NuWro$'$ (8) & \ensuremath{-}0.216 [\ensuremath{-}0.303, \ensuremath{-}0.130] & \ensuremath{-}0.180 [\ensuremath{-}0.241, \ensuremath{-}0.118] \\
+\quad GiBUU (8) & \ensuremath{-}0.206 [\ensuremath{-}0.305, \ensuremath{-}0.107] & \ensuremath{-}0.121 [\ensuremath{-}0.177, \ensuremath{-}0.065] \\
+\bottomrule
+\end{tabular}}\par\vspace{0.12cm}{\scriptsize
+\begin{tabular}{lrrr}
+\toprule
+same draws & H2S1T24 & L128S1T24 & GBDT \\
+\midrule
+B2 residual, D4d n down (PET rule $\le 0.010$) & 0.0097 & 0.0122 & 0.0033 \\
+largest truth weight & 90.2 & 33.4 & 5.6 \\
+GBDT's E0 summed per-bin MSE relative to PET & 2.9\ensuremath{\times} & 1.9\ensuremath{\times} & 1 \\
+\bottomrule
+\end{tabular}}\par\vspace{0.1cm}\tiny GBDT = the matched study's tuned scalar OmniFold (HistGradientBoosting, efficiency-corrected, reco summaries + muon kinematics, truth with species counts, $k{=}7$ chosen on DEV), run on the same look-1 final-bank units with the same events, targets and scorer. Unadjusted 95\,\% intervals; exploratory. GBDT error is mostly systematic under-correction. No uncertainty comparison: this GBDT has no interval procedure here. On DEV, binned IBU and AUSSIE match PET on the 1D tilt and fail hadron or generator cases.
 \end{frame}
 
 \gdef\evidencetext{\texttt{results/final/coverage\_dev/decision\_final.json}; \texttt{DECISION\_RECORD-pet-final-design.md}}
