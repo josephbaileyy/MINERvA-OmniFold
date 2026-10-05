@@ -89,11 +89,17 @@ def product(path: Path, x, meta: dict):
     np.savez_compressed(path, xsec_flat=x, xtrue_flat=x * 2, meta=json.dumps(meta))
 
 
-BASE_META = {"schema": "s5p-null-experiment/1", "pseudo_seed": 7, "nuisance_draw": {"normalization_z": 0.1},
+# the real layout (s5p_nullexp.py:343-351): ``refinement`` sits at the TOP level (``**ev`` from unfold_one)
+BASE_META = {"schema": "s5p-null-experiment/1", "pseudo_seed": 7, "split_key": "k",
+             "nuisance_draw": {"normalization_z": 0.1},
              "code_sha256": {"a": "1"}, "input_npz_sha256": "n", "bkg_dump_sha256": "b", "config": "R", "iters": 5,
              "capacity": None, "hypothesis": {"sha256": "h"}, "alternative": None,
-             "experiment": {"refinement": {"seconds": 1.0, "n_clipped": 3}},
+             "estimator_params": [{"num_threads": 32, "seed": 42}], "development": {"expectation": False},
+             "detector_bands": ["d"], "model_bands": ["m"],
+             "refinement": {"seconds": 1.0, "n_clipped": 3, "classifier_params": {"num_leaves": 31}},
+             "experiment": {"refinement": {"seconds": 2.0}},
              "slurm_job": "111", "seconds_unfold": 10.0}
+R.split_key_for = lambda seed: "k"  # the fixture's split key (the real one is s5c_pseudo.split_key_for)
 
 
 class Determinism(unittest.TestCase):
@@ -105,7 +111,8 @@ class Determinism(unittest.TestCase):
         m = json.loads(json.dumps(BASE_META))
         for k, v in kw.items():
             if k == "refinement_seconds":
-                m["experiment"]["refinement"]["seconds"] = v
+                m["refinement"]["seconds"] = v
+                m["experiment"]["refinement"]["seconds"] = v + 1
             else:
                 m[k] = v
         return m
@@ -123,6 +130,18 @@ class Determinism(unittest.TestCase):
         same, diffs, _, _ = R.products_equivalent(self.tmp / "a.npz", self.tmp / "b.npz")
         self.assertFalse(same)
         self.assertIn("nuisance_draw", diffs[0])
+
+    def test_a_top_level_refinement_non_volatile_field_fails(self):
+        m = self.meta()
+        m["refinement"]["n_clipped"] = 4
+        product(self.tmp / "a.npz", self.x, self.meta())
+        product(self.tmp / "b.npz", self.x, m)
+        self.assertFalse(R.products_equivalent(self.tmp / "a.npz", self.tmp / "b.npz")[0])
+
+    def test_estimator_params_difference_fails(self):
+        product(self.tmp / "a.npz", self.x, self.meta())
+        product(self.tmp / "b.npz", self.x, self.meta(estimator_params=[{"num_threads": 16, "seed": 42}]))
+        self.assertFalse(R.products_equivalent(self.tmp / "a.npz", self.tmp / "b.npz")[0])
 
     def test_a_nested_non_volatile_field_fails(self):
         m = self.meta()
@@ -257,6 +276,17 @@ class ResolveResidualAndProvenance(unittest.TestCase):
         product(self.rec / "cal_X_s101.npz", np.arange(4.0), dict(BASE_META, pseudo_seed=101, input_npz_sha256="other"))
         with self.assertRaises(SystemExit):
             self.resolve(seed_states("cal-X", self.SS), union="r4", residual=[102])
+
+    def test_a_wrong_split_key_fires(self):
+        product(self.rec / "cal_X_s101.npz", np.arange(4.0), dict(BASE_META, pseudo_seed=101, split_key="other"))
+        with self.assertRaises(SystemExit):
+            self.resolve(seed_states("cal-X", self.SS), union="r6", residual=[102])
+
+    def test_a_failed_resolve_leaves_no_final_union(self):
+        product(self.rec / "cal_X_s101.npz", np.arange(4.0), dict(BASE_META, pseudo_seed=999))
+        with self.assertRaises(SystemExit):
+            self.resolve(seed_states("cal-X", self.SS), union="r7", residual=[102])
+        self.assertFalse((self.tmp / "r7").exists())
 
     def test_a_wrong_pseudo_seed_fires(self):
         product(self.rec / "cal_X_s101.npz", np.arange(4.0), dict(BASE_META, pseudo_seed=999))

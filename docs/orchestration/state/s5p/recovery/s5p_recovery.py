@@ -29,8 +29,11 @@ Subcommands:
   - It first re-derives the frozen null T arrays through ``s5p_joint.test_null`` and requires them to reproduce
     ``joint-evaluate.json``'s k and B exactly.
   - It then counts the recovered draws at or above the observed statistic in every claim and robustness variant.
-  - It gives the complete-set claim p and the Holm-with-determinacy decisions, plus the worst and best corners for
-    any residual missing draws.
+  - It gives the complete-set claim p and the Holm-with-determinacy decisions: primary, the ruled kappa = 3 replace
+    family with its labels, and the keep-both family. It also gives the worst and best corners for any residual
+    missing draws.
+  - It gives power against the frozen null ensembles over the complete power sets, after reproducing
+    ``joint-evaluate.json``'s power exactly from the frozen power products.
 - ``stopping``: the frozen sequential rule (``s5p_inference.sequential_decision``, with ``s5p_seqstop``'s thresholds
   and minimum) re-applied at each frozen look, to the complete products of the batches before that look. Each look
   records whether it reproduces the frozen status file's k, B and stop. Run on the FROZEN design (no recovered
@@ -58,7 +61,14 @@ LOST_STATES = ("interrupted", "never started")
 NS = "/pscratch/sd/j/josephrb/s5p-20260926"
 VOLATILE_TOP = ("slurm_job", "seconds_unfold")   # per-run fields written by s5p_nullexp.py
 VOLATILE_NESTED = ("refinement", "seconds")       # s5n_pseudo.refinement_evidence's wall time
-PROVENANCE = ("code_sha256", "input_npz_sha256", "bkg_dump_sha256", "schema", "config", "iters", "capacity")
+PROVENANCE = ("code_sha256", "input_npz_sha256", "bkg_dump_sha256", "schema", "config", "iters", "capacity",
+              "estimator_params", "development", "detector_bands", "model_bands")
+
+
+def split_key_for(seed: int):
+    """The frozen split key of a pseudo seed (s5c_pseudo.split_key_for; needs PYTHONPATH=nd-unfolding)."""
+    import s5c_pseudo
+    return s5c_pseudo.split_key_for(seed)
 
 
 # ------------------------------------------------------------------------------------------------ tables
@@ -313,6 +323,7 @@ def finished(pattern: str) -> list[Path]:
 def provenance(meta: dict) -> dict:
     out = {k: meta.get(k) for k in PROVENANCE}
     out["hypothesis_sha256"] = (meta.get("hypothesis") or {}).get("sha256")
+    out["refinement_classifier_params"] = (meta.get("refinement") or {}).get("classifier_params")
     alt = meta.get("alternative")
     out["alternative"] = None if alt is None else {k: alt.get(k) for k in ("sha256", "truth", "amplitude")}
     return out
@@ -328,6 +339,13 @@ def cmd_resolve(a) -> int:
         recovered_by_lane.setdefault(t["lane"], set()).update(t["seeds"])
     if a.union_root.exists():
         raise SystemExit(f"refusing to reuse {a.union_root}")
+    all_lost = {s for lane in cls for st in LOST_STATES for s in cls[lane].get(st, [])}
+    if not residual <= all_lost or not residual <= {x for v in recovered_by_lane.values() for x in v}:
+        raise SystemExit("a residual seed is not a lost recovery seed")
+    final_root = a.union_root
+    a.union_root = final_root.with_name(final_root.name + ".building")  # renamed only when every lane passes
+    if a.union_root.exists():
+        raise SystemExit(f"refusing to reuse {a.union_root} (a previous resolve failed; inspect and remove it)")
     new = json.loads(json.dumps(design))
     report = {}
     specs = [("cal", k, v, "calibration_glob") for k, v in design["nulls"].items()] + \
@@ -357,6 +375,8 @@ def cmd_resolve(a) -> int:
             m = json.loads(str(np.load(p, allow_pickle=False)["meta"]))
             if int(m.get("pseudo_seed", -1)) != seed_of(p):
                 raise SystemExit(f"{p}: pseudo_seed {m.get('pseudo_seed')} != file seed")
+            if json.dumps(m.get("split_key"), default=str) != json.dumps(split_key_for(seed_of(p)), default=str):
+                raise SystemExit(f"{p}: split_key differs from s5c_pseudo.split_key_for({seed_of(p)})")
             if json.dumps(provenance(m), sort_keys=True) not in ref:
                 raise SystemExit(f"{p}: provenance differs from the lane's frozen products")
         d = a.union_root / kind / key
@@ -364,7 +384,7 @@ def cmd_resolve(a) -> int:
         for p in frozen + rec:
             (d / p.name).symlink_to(p.resolve())
         new_spec = new["nulls"][key] if kind == "cal" else new["power"][key]
-        new_spec[gk] = str(d / pattern.name)
+        new_spec[gk] = str(final_root / kind / key / pattern.name)
         if kind == "cal":
             new_spec["calibration_n"] = len(frozen) + len(rec)
         else:
@@ -373,6 +393,7 @@ def cmd_resolve(a) -> int:
                         "submitted": len(submitted), "residual_missing": len(residual & submitted)}
     new["_report_only"] = ("resolution of the missing-seed sensitivity (DECISION-20261005 §2): the frozen design with "
                            "union globs and counts; not the frozen design, not a primary evaluation")
+    a.union_root.rename(final_root)
     a.out_design.write_text(json.dumps(new, indent=1) + "\n")
     (a.out_design.with_suffix(".report.json")).write_text(json.dumps(report, indent=1) + "\n")
     print(json.dumps(report))
@@ -415,11 +436,15 @@ def cmd_frozen_s(a) -> int:
     man = json.loads(a.manifest.read_text())
     sj, model, V, names, pz_index, coefs = _setup(design, a.v)
     residual = set(int(s) for s in json.loads(a.residual.read_text())) if a.residual else set()
-    out, claims, robust_claims, worst, best = {"tests": {}}, {}, {}, {}, {}
+    if not residual <= {x for t in man["tables"].values() for x in t["seeds"]}:
+        raise SystemExit("a residual seed is not a recovery seed")
+    out, claims, robust_claims, replace_claims, worst, best = {"tests": {}}, {}, {}, {}, {}, {}
+    null_sets, setups = {}, {}
     for key, spec in design["nulls"].items():
         files = sj.product_files(spec["calibration_glob"])
         entry = sj.test_null(model, design, key, V, names, pz_index, files, coefs)
         nulls = entry.pop("_nulls")
+        null_sets[key] = nulls
         fe = frozen_eval["tests"][key]
         for s in ("total", "shape"):  # the re-derivation must reproduce the frozen evaluation exactly
             if (entry[s]["k"], entry[s]["B"]) != (fe[s]["k"], fe[s]["B"]):
@@ -433,11 +458,31 @@ def cmd_frozen_s(a) -> int:
         D, d_pairs = sj.load_shift(pspec, len(names))
         S = sj.shift_vector(pspec, D, d_pairs, F, mu, var, V, dom)[0] if D is not None else None
         claim_v, robust_v = variant_shifts(sj, design, key, names, S, coefs)
+        # self-check against the FROZEN ARTIFACT (joint-evaluate.json), not only against this process: the variant
+        # names in order, every variant's p, k, B, interval and null-T median and SD, the robust variants' p, k, B, and
+        # the observed statistics must equal the frozen values exactly
+        if [n for n, _ in claim_v] != list(fe["variants"]) or len(claim_v) != len(nulls):
+            raise SystemExit(f"{key}: claim variants {[n for n, _ in claim_v]} != frozen {list(fe['variants'])}")
+        if [n for n, _ in robust_v] != list(fe.get("robustness_variants", {})):
+            raise SystemExit(f"{key}: robust variants differ from the frozen ones")
         for (name, sv), (tt_n, ts_n) in zip(claim_v, nulls):  # the same shifts as the frozen nulls
             tt_c, ts_c = sj.statistics(F + (sv if sv is not None else 0.0), mu, var, V, dom, spec["surrogate_seed0"],
                                        seeds=seeds)
             if tt_c.tobytes() != tt_n.tobytes() or ts_c.tobytes() != ts_n.tobytes():
                 raise SystemExit(f"{key} {name}: the re-derived frozen null T differs from test_null's")
+            fv = fe["variants"][name]
+            for s_, t_ in (("total", tt_c), ("shape", ts_c)):
+                got = {"p": entry["variants"][name][s_]["p"], "k": entry["variants"][name][s_]["k"],
+                       "B": entry["variants"][name][s_]["B"], "median": float(np.median(t_)), "sd": float(np.std(t_))}
+                want = {"p": fv[s_]["p"], "k": fv[s_]["k"], "B": fv[s_]["B"],
+                        "median": fv[f"null_T_{s_}_median"], "sd": fv[f"null_T_{s_}_sd"]}
+                if got != want or entry["variants"][name][s_] != fv[s_]:
+                    raise SystemExit(f"{key} {name} {s_}: re-derived {got} != frozen {want}")
+        for name in fe.get("robustness_variants", {}):
+            if entry["robustness_variants"][name] != fe["robustness_variants"][name]:
+                raise SystemExit(f"{key} {name}: re-derived robust variant differs from the frozen one")
+        if (entry["T_total_obs"], entry["T_shape_obs"]) != (fe["T_total_obs"], fe["T_shape_obs"]):
+            raise SystemExit(f"{key}: re-derived observed statistics differ from the frozen ones")
         lane = f"cal-{key}"
         rec_seeds = sorted(s for t in man["tables"].values() if t["lane"] == lane for s in t["seeds"]
                            if s not in residual)
@@ -475,17 +520,61 @@ def cmd_frozen_s(a) -> int:
                 return best_
             cn = [n for n, _ in claim_v]
             rn = cn + [n for n, _ in robust_v]
-            res[s] = {"claim": p_of(cn), "robust": p_of(rn),
+            # the RULED kappa = 3 family (s5p_robust_labels FAMILY "replace"): the process-shift variants c S and
+            # F +- kappa_robust delta_M1, the F +- kappa delta_M1 members removed
+            cs = [str(c) for c in coefs] if S is not None else ["0.0"]
+            xn = cs + [n for n, _ in robust_v]
+            res[s] = {"claim": p_of(cn), "robust_keep_both": p_of(rn), "robust_replace": p_of(xn),
                       "worst_residual": p_of(cn, M_res, M_res), "best_residual": p_of(cn, 0, M_res)}
             claims[f"{key}:{s}"] = {k: res[s]["claim"][k] for k in ("p", "k", "B")}
-            robust_claims[f"{key}:{s}"] = {k: res[s]["robust"][k] for k in ("p", "k", "B")}
+            robust_claims[f"{key}:{s}"] = {k: res[s]["robust_keep_both"][k] for k in ("p", "k", "B")}
+            replace_claims[f"{key}:{s}"] = {k: res[s]["robust_replace"][k] for k in ("p", "k", "B")}
             worst[f"{key}:{s}"] = {k: res[s]["worst_residual"][k] for k in ("p", "k", "B")}
             best[f"{key}:{s}"] = {k: res[s]["best_residual"][k] for k in ("p", "k", "B")}
+        setups[key] = (mu, var, dom)
         out["tests"][key] = {"per_variant": per_variant, "complete_set": res,
                              "frozen_reproduced": {s: [fe[s]["k"], fe[s]["B"]] for s in ("total", "shape")}}
     alpha = design["alpha_family"]
     out["decisions_complete_set"] = si.holm_determined(claims, alpha)
-    out["decisions_complete_set_kappa3"] = si.holm_determined(robust_claims, alpha)
+    out["decisions_complete_set_kappa3_keep_both"] = si.holm_determined(robust_claims, alpha)
+    out["decisions_complete_set_kappa3_replace"] = si.holm_determined(replace_claims, alpha)
+    out["labels_complete_set"] = {t: ("robust to the sub-fine residual" if d["decision"] == "rejected" and
+                                      out["decisions_complete_set_kappa3_replace"][t]["decision"] == "rejected"
+                                      else "not robust" if d["decision"] == "rejected" else "not rejected")
+                                  for t, d in out["decisions_complete_set"].items()}
+    # power against the FROZEN null ensembles, the alternatives over the complete power sets (frozen + recovered);
+    # first reproduce joint-evaluate's power exactly from the frozen power products alone (s5p_joint.main's rule)
+    levels = frozen_eval["power"]["levels"]
+    out["power"] = {"levels": levels}
+    for pkey, pspec in design.get("power", {}).items():
+        nk = pspec.get("null", "MnvTune_v1")
+        mu0, var0, dom0 = setups[nk]
+        frozen_files = sj.product_files(pspec["glob"])
+        lane = f"pow-{pkey}"
+        rec_seeds = sorted(x for t in man["tables"].values() if t["lane"] == lane for x in t["seeds"] if x not in residual)
+        prow = {x: r for x, r in seed_rows(a.tables).items() if x in rec_seeds}
+        rec_files = [str(product_path(man["root"], "recovery", lane, arg(prow[x][1], "--tag"), x)) for x in rec_seeds]
+        def power_of(files):
+            Fa, sa = sj.ensemble(model, files)
+            tt_a, ts_a = sj.statistics(Fa, mu0, var0, V, dom0, pspec["surrogate_seed0"], seeds=sa)
+            o = {"n": len(files)}
+            for s, t_alt in (("total", tt_a), ("shape", ts_a)):
+                kk = 0 if s == "total" else 1
+                nn = [x[kk] for x in null_sets[nk]]
+                p_claim = np.max([sj.pvals_against(t_alt, x) for x in nn], axis=0)
+                o[s] = {str(al): {"claim_rule": {"power": float(np.mean(p_claim <= al)), "n": int(p_claim.size)},
+                                  "claim_rule_determined": si.power_determined(t_alt, nn, al)} for al in levels}
+            return o
+        fo = power_of(frozen_files)
+        fe = frozen_eval["power"][pkey]
+        for s in ("total", "shape"):
+            for al in levels:
+                if fo[s][str(al)]["claim_rule"] != fe[s][str(al)]["claim_rule"]:
+                    raise SystemExit(f"{pkey} {s} {al}: re-derived frozen power differs from joint-evaluate")
+        out["power"][pkey] = {"null": nk, "frozen": fo, "complete_set": power_of(frozen_files + rec_files) if rec_files
+                              else fo, "M_recovered": len(rec_files),
+                              "M_residual": len([x for t in man["tables"].values() if t["lane"] == lane
+                                                 for x in t["seeds"] if x in residual])}
     out["decisions_worst_residual"] = si.holm_determined(worst, alpha)
     out["decisions_best_residual"] = si.holm_determined(best, alpha)
     out["primary_decisions"] = {k: v["decision"] for k, v in frozen_eval["decisions"].items()}
@@ -496,46 +585,76 @@ def cmd_frozen_s(a) -> int:
     return 0
 
 
+def replace_claim(entry: dict, design: dict, key: str, coefs: list, s: str) -> dict:
+    """The ruled kappa = 3 replace claim of one test from test_null's per-variant leaves (s5p_robust_labels)."""
+    m1 = design.get("m1_shift", {}).get(key)
+    members = [n for n in (str(c) for c in coefs) if n in entry["variants"]]  # c S (only "0.0" without a shift)
+    vals = [entry["variants"][n][s] for n in members]
+    if m1 is not None and "none" not in m1:
+        vals += [entry["robustness_variants"][f"m1{sg}{m1['kappa_robust']}"][s] for sg in "+-"]
+    best_ = max(vals, key=lambda v: v["p"])
+    return {k: best_[k] for k in ("p", "k", "B")}
+
+
 def cmd_stopping(a) -> int:
     import s5p_inference as si
-    design = json.loads(a.design.read_text())  # the report-only union design (resolve)
+    design = json.loads(a.design.read_text())  # the union design from resolve, or the frozen design (Phase 0)
+    frozen_design = json.loads(a.frozen_design.read_text())
     sj, model, V, names, pz_index, coefs = _setup(design, a.v)
     rows = seed_rows(a.tables)
     m = 2 * len(design["nulls"])
     th = sorted(set(si.holm_thresholds(design["alpha_family"], m)) | {0.01, 0.05})
-    out = {}
+    out, at_stop, at_stop_replace = {"nulls": {}}, {}, {}
     for key, spec in design["nulls"].items():
-        frozen_spec = json.loads(a.frozen_design.read_text())["nulls"][key]
-        min_b = int(frozen_spec["calibration_n"].get("min", 0))
-        looks = sorted(json.loads(p.read_text()) for p in Path(a.status_dir).glob(f"{key}-B*.json"))
+        seq = frozen_design["nulls"][key]["calibration_n"]
+        min_b, max_b = int(seq.get("min", 0)), int(seq["max"])
+        looks = sorted((json.loads(p.read_text()) for p in Path(a.status_dir).glob(f"{key}-B*.json")),
+                       key=lambda st: st["B"])
+        if len({st["B"] for st in looks}) != len(looks):
+            raise SystemExit(f"{key}: two status files at the same B (the look mapping is ambiguous)")
         files = [Path(p) for p in sj.product_files(spec["calibration_glob"])]
         batch = {p: batch_of(rows[seed_of(p)][0]) for p in files}
-        res = []
-        n_batches_seen = 0
-        for look in sorted(looks, key=lambda st: st["B"]):
+        res, n_batches_seen, first_stop = [], 0, None
+        for look in looks:
             if look["B"] == 0:
                 continue
-            n_batches_seen += 1  # a look follows each batch (the frozen queue: a look after every batch)
+            n_batches_seen += 1  # the frozen queue runs one look after each batch
             sub = [str(p) for p in files if batch[p] < n_batches_seen]
             entry = sj.test_null(model, design, key, V, names, pz_index, sub, coefs)
             entry.pop("_nulls", None)
             dec = {s: si.sequential_decision(entry[s]["k"], entry[s]["B"], th) for s in ("total", "shape")}
             rule = all(d["stop"] for d in dec.values()) and len(sub) >= min_b
+            stop = rule or len(sub) >= max_b
             fd = look.get("decisions", {})
-            same_as_frozen = (len(sub) == look["B"] and all(
-                (fd.get(s, {}).get("k"), fd.get(s, {}).get("B"), fd.get(s, {}).get("stop")) ==
-                (dec[s]["k"], dec[s]["B"], dec[s]["stop"]) for s in ("total", "shape")))
+            same = (len(sub) == look["B"] and look.get("min") == min_b and look.get("thresholds") == th
+                    and bool(look.get("stop")) == stop and all(
+                        (fd.get(s, {}).get("k"), fd.get(s, {}).get("B"), fd.get(s, {}).get("stop")) ==
+                        (dec[s]["k"], dec[s]["B"], dec[s]["stop"]) for s in ("total", "shape")))
             res.append({"frozen_look": f"{key}-B{look['B']}.json", "frozen_B": look["B"],
-                        "reproduces_frozen_look": same_as_frozen,
-                        "frozen_reason": look.get("reason"), "batches_before_look": n_batches_seen,
-                        "complete_B": len(sub), "rule_stops_complete": rule,
-                        "decisions": {s: {k: dec[s][k] for k in ("k", "B", "p", "look_interval", "stop")}
-                                      for s in dec}})
-        out[key] = res
+                        "reproduces_frozen_look": same, "frozen_reason": look.get("reason"),
+                        "batches_before_look": n_batches_seen, "complete_B": len(sub),
+                        "rule_stops_complete": rule, "stop_complete": stop,
+                        "decisions": {s: {k: dec[s][k] for k in ("k", "B", "p", "look_interval", "stop")} for s in dec}})
+            if stop and first_stop is None:
+                first_stop = len(res) - 1
+                for s in ("total", "shape"):
+                    at_stop[f"{key}:{s}"] = {k: entry[s][k] for k in ("p", "k", "B")}
+                    at_stop_replace[f"{key}:{s}"] = replace_claim(entry, design, key, coefs, s)
+        out["nulls"][key] = {"looks": res,
+                             "earliest_complete_batch_stop": None if first_stop is None else res[first_stop]["frozen_look"],
+                             "earliest_complete_batch_stop_B": None if first_stop is None else res[first_stop]["complete_B"]}
+    if len(at_stop) == m:
+        alpha = design["alpha_family"]
+        out["decisions_at_complete_batch_stop"] = si.holm_determined(at_stop, alpha)
+        out["decisions_at_complete_batch_stop_kappa3_replace"] = si.holm_determined(at_stop_replace, alpha)
+    else:
+        out["decisions_at_complete_batch_stop"] = ("not evaluable: a null's complete-batch rule does not stop by the "
+                                                   "frozen final look")
     out["label"] = ("REPORT ONLY: the frozen sequential rule re-applied at each frozen look to the complete products "
-                    "of the batches before it; the frozen stops are unchanged")
+                    "of the batches before it, and the decisions at each null's earliest complete-batch stop; the "
+                    "frozen stops and the primary decisions are unchanged")
     a.out.write_text(json.dumps(out, indent=1) + "\n")
-    print(json.dumps({k: [r["rule_stops_complete"] for r in v] for k, v in out.items() if k != "label"}))
+    print(json.dumps({k: [r["reproduces_frozen_look"] for r in v["looks"]] for k, v in out["nulls"].items()}))
     return 0
 
 
