@@ -1,0 +1,2326 @@
+{
+ "audited_at": "2026-09-24T17:19:37.247755-07:00",
+ "runs": {
+  "pilot/pilot-B-P0": {
+   "run": "pilot-B-P0",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58798408",
+    "58799224",
+    "58799743",
+    "58801929",
+    "58803600"
+   ],
+   "driver_intervals": {
+    "58798408": [
+     1790196285.0,
+     1790197947.0
+    ],
+    "58799224": [
+     1790198023.0,
+     1790199686.0
+    ],
+    "58799743": [
+     1790200585.0,
+     1790202289.0
+    ],
+    "58801929": [
+     1790202609.0,
+     1790204283.0
+    ],
+    "58803600": [
+     1790204745.0,
+     1790206406.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "pilot/pilot-B-P1": {
+   "run": "pilot-B-P1",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58799222",
+    "58799744",
+    "58801924",
+    "58803601",
+    "58804824"
+   ],
+   "driver_intervals": {
+    "58799222": [
+     1790198023.0,
+     1790199707.0
+    ],
+    "58799744": [
+     1790200585.0,
+     1790202295.0
+    ],
+    "58801924": [
+     1790202608.0,
+     1790204300.0
+    ],
+    "58803601": [
+     1790204745.0,
+     1790206432.0
+    ],
+    "58804824": [
+     1790207342.0,
+     1790209004.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "pilot/pilot-B-P2": {
+   "run": "pilot-B-P2",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58799222",
+    "58799744",
+    "58801924",
+    "58803601",
+    "58804835",
+    "58805963"
+   ],
+   "driver_intervals": {
+    "58799222": [
+     1790198023.0,
+     1790198962.0
+    ],
+    "58799744": [
+     1790200585.0,
+     1790202285.0
+    ],
+    "58801924": [
+     1790202608.0,
+     1790204290.0
+    ],
+    "58803601": [
+     1790204745.0,
+     1790206417.0
+    ],
+    "58804835": [
+     1790207342.0,
+     1790209009.0
+    ],
+    "58805963": [
+     1790209518.0,
+     1790210403.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "pilot/pilot-C-P0": {
+   "run": "pilot-C-P0",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58798408",
+    "58799224",
+    "58799743",
+    "58801929",
+    "58803600",
+    "58804824"
+   ],
+   "driver_intervals": {
+    "58798408": [
+     1790196285.0,
+     1790197201.0
+    ],
+    "58799224": [
+     1790198023.0,
+     1790199667.0
+    ],
+    "58799743": [
+     1790200585.0,
+     1790202284.0
+    ],
+    "58801929": [
+     1790202609.0,
+     1790204282.0
+    ],
+    "58803600": [
+     1790204745.0,
+     1790206420.0
+    ],
+    "58804824": [
+     1790207342.0,
+     1790208242.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "pilot/pilot-C-P1": {
+   "run": "pilot-C-P1",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58799222",
+    "58799744",
+    "58801924",
+    "58803601",
+    "58804824"
+   ],
+   "driver_intervals": {
+    "58799222": [
+     1790198023.0,
+     1790199696.0
+    ],
+    "58799744": [
+     1790200585.0,
+     1790202247.0
+    ],
+    "58801924": [
+     1790202608.0,
+     1790204301.0
+    ],
+    "58803601": [
+     1790204745.0,
+     1790206438.0
+    ],
+    "58804824": [
+     1790207342.0,
+     1790209013.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "pilot/pilot-C-P2": {
+   "run": "pilot-C-P2",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58804835",
+    "58805963",
+    "58807093",
+    "58808680",
+    "58809824"
+   ],
+   "driver_intervals": {
+    "58804835": [
+     1790207342.0,
+     1790209024.0
+    ],
+    "58805963": [
+     1790209518.0,
+     1790211131.0
+    ],
+    "58807093": [
+     1790212900.0,
+     1790214498.0
+    ],
+    "58808680": [
+     1790216097.0,
+     1790217722.0
+    ],
+    "58809824": [
+     1790218533.0,
+     1790220121.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "pilot/pilot-CTL-P0": {
+   "run": "pilot-CTL-P0",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58798408",
+    "58798410",
+    "58799224",
+    "58799743",
+    "58801929",
+    "58803600"
+   ],
+   "driver_intervals": {
+    "58798408": [
+     1790196285.0,
+     1790197201.0
+    ],
+    "58798410": [
+     1790207345.0,
+     1790208971.0
+    ],
+    "58799224": [
+     1790198023.0,
+     1790198961.0
+    ],
+    "58799743": [
+     1790200585.0,
+     1790202287.0
+    ],
+    "58801929": [
+     1790202609.0,
+     1790204289.0
+    ],
+    "58803600": [
+     1790204745.0,
+     1790206405.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "pilot/pilot-CTL-P1": {
+   "run": "pilot-CTL-P1",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58798408",
+    "58799224",
+    "58799743",
+    "58801929",
+    "58803600"
+   ],
+   "driver_intervals": {
+    "58798408": [
+     1790196285.0,
+     1790197938.0
+    ],
+    "58799224": [
+     1790198023.0,
+     1790199708.0
+    ],
+    "58799743": [
+     1790200585.0,
+     1790202296.0
+    ],
+    "58801929": [
+     1790202609.0,
+     1790204248.0
+    ],
+    "58803600": [
+     1790204745.0,
+     1790206388.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "pilot/pilot-CTL-P2": {
+   "run": "pilot-CTL-P2",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58799222",
+    "58799744",
+    "58801924",
+    "58803601",
+    "58804824"
+   ],
+   "driver_intervals": {
+    "58799222": [
+     1790198023.0,
+     1790199724.0
+    ],
+    "58799744": [
+     1790200585.0,
+     1790202272.0
+    ],
+    "58801924": [
+     1790202608.0,
+     1790204269.0
+    ],
+    "58803601": [
+     1790204745.0,
+     1790206439.0
+    ],
+    "58804824": [
+     1790207342.0,
+     1790209038.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-B-F0": {
+   "run": "final-B-F0",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58808974",
+    "58809183",
+    "58810047",
+    "58811322",
+    "58811912",
+    "58812932"
+   ],
+   "driver_intervals": {
+    "58808974": [
+     1790214165.0,
+     1790215860.0
+    ],
+    "58809183": [
+     1790216696.0,
+     1790218347.0
+    ],
+    "58810047": [
+     1790219698.0,
+     1790220647.0
+    ],
+    "58811322": [
+     1790221749.0,
+     1790223435.0
+    ],
+    "58811912": [
+     1790224002.0,
+     1790225682.0
+    ],
+    "58812932": [
+     1790226360.0,
+     1790227276.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-B-F1": {
+   "run": "final-B-F1",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58809024",
+    "58809361",
+    "58810596",
+    "58811530",
+    "58812108"
+   ],
+   "driver_intervals": {
+    "58809024": [
+     1790214727.0,
+     1790216415.0
+    ],
+    "58809361": [
+     1790217930.0,
+     1790219599.0
+    ],
+    "58810596": [
+     1790220331.0,
+     1790222014.0
+    ],
+    "58811530": [
+     1790222397.0,
+     1790224092.0
+    ],
+    "58812108": [
+     1790224701.0,
+     1790226380.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-B-F10": {
+   "run": "final-B-F10",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58830729",
+    "58831112",
+    "58831977",
+    "58832785",
+    "58833611",
+    "58836164"
+   ],
+   "driver_intervals": {
+    "58830729": [
+     1790269462.0,
+     1790271138.0
+    ],
+    "58831112": [
+     1790271632.0,
+     1790272587.0
+    ],
+    "58831977": [
+     1790273912.0,
+     1790274860.0
+    ],
+    "58832785": [
+     1790276206.0,
+     1790277900.0
+    ],
+    "58833611": [
+     1790282734.0,
+     1790284410.0
+    ],
+    "58836164": [
+     1790284692.0,
+     1790286366.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-B-F11": {
+   "run": "final-B-F11",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58831977",
+    "58832786",
+    "58833610",
+    "58836163",
+    "58837006",
+    "58838064"
+   ],
+   "driver_intervals": {
+    "58831977": [
+     1790273912.0,
+     1790275603.0
+    ],
+    "58832786": [
+     1790276206.0,
+     1790277887.0
+    ],
+    "58833610": [
+     1790282734.0,
+     1790283684.0
+    ],
+    "58836163": [
+     1790284692.0,
+     1790286360.0
+    ],
+    "58837006": [
+     1790286536.0,
+     1790288241.0
+    ],
+    "58838064": [
+     1790288496.0,
+     1790289407.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-B-F2": {
+   "run": "final-B-F2",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58809024",
+    "58809361",
+    "58810596",
+    "58811530",
+    "58812108",
+    "58813173"
+   ],
+   "driver_intervals": {
+    "58809024": [
+     1790214727.0,
+     1790216438.0
+    ],
+    "58809361": [
+     1790217930.0,
+     1790219619.0
+    ],
+    "58810596": [
+     1790220331.0,
+     1790222018.0
+    ],
+    "58811530": [
+     1790222397.0,
+     1790223342.0
+    ],
+    "58812108": [
+     1790224701.0,
+     1790226408.0
+    ],
+    "58813173": [
+     1790226979.0,
+     1790227909.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-B-F3": {
+   "run": "final-B-F3",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58813173",
+    "58814145",
+    "58814884",
+    "58815932",
+    "58817152",
+    "58817962"
+   ],
+   "driver_intervals": {
+    "58813173": [
+     1790226979.0,
+     1790228639.0
+    ],
+    "58814145": [
+     1790229901.0,
+     1790231570.0
+    ],
+    "58814884": [
+     1790232404.0,
+     1790234068.0
+    ],
+    "58815932": [
+     1790235756.0,
+     1790236711.0
+    ],
+    "58817152": [
+     1790237841.0,
+     1790239507.0
+    ],
+    "58817962": [
+     1790239867.0,
+     1790240813.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-B-F4": {
+   "run": "final-B-F4",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58813661",
+    "58813919",
+    "58815967",
+    "58817151",
+    "58817961",
+    "58818330"
+   ],
+   "driver_intervals": {
+    "58813661": [
+     1790227611.0,
+     1790229286.0
+    ],
+    "58813919": [
+     1790229900.0,
+     1790230848.0
+    ],
+    "58815967": [
+     1790235756.0,
+     1790236702.0
+    ],
+    "58817151": [
+     1790237841.0,
+     1790239543.0
+    ],
+    "58817961": [
+     1790239867.0,
+     1790241567.0
+    ],
+    "58818330": [
+     1790242318.0,
+     1790244005.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-B-F5": {
+   "run": "final-B-F5",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58817961",
+    "58818330",
+    "58818805",
+    "58819349",
+    "58820023",
+    "58820749"
+   ],
+   "driver_intervals": {
+    "58817961": [
+     1790239867.0,
+     1790241544.0
+    ],
+    "58818330": [
+     1790242318.0,
+     1790243997.0
+    ],
+    "58818805": [
+     1790244376.0,
+     1790246095.0
+    ],
+    "58819349": [
+     1790246404.0,
+     1790248082.0
+    ],
+    "58820023": [
+     1790248842.0,
+     1790249783.0
+    ],
+    "58820749": [
+     1790250932.0,
+     1790251888.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-B-F6": {
+   "run": "final-B-F6",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58818329",
+    "58818806",
+    "58819350",
+    "58819771",
+    "58820416",
+    "58821442"
+   ],
+   "driver_intervals": {
+    "58818329": [
+     1790242318.0,
+     1790244009.0
+    ],
+    "58818806": [
+     1790244376.0,
+     1790245353.0
+    ],
+    "58819350": [
+     1790245639.0,
+     1790247304.0
+    ],
+    "58819771": [
+     1790247778.0,
+     1790249451.0
+    ],
+    "58820416": [
+     1790249877.0,
+     1790251579.0
+    ],
+    "58821442": [
+     1790253463.0,
+     1790254388.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-B-F7": {
+   "run": "final-B-F7",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58820023",
+    "58820749",
+    "58822048",
+    "58822550",
+    "58823189"
+   ],
+   "driver_intervals": {
+    "58820023": [
+     1790248842.0,
+     1790250487.0
+    ],
+    "58820749": [
+     1790250932.0,
+     1790252606.0
+    ],
+    "58822048": [
+     1790255617.0,
+     1790257293.0
+    ],
+    "58822550": [
+     1790257589.0,
+     1790259270.0
+    ],
+    "58823189": [
+     1790259708.0,
+     1790261396.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-B-F8": {
+   "run": "final-B-F8",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58823189",
+    "58823954",
+    "58824804",
+    "58827682",
+    "58830728",
+    "58831113"
+   ],
+   "driver_intervals": {
+    "58823189": [
+     1790259708.0,
+     1790261374.0
+    ],
+    "58823954": [
+     1790261835.0,
+     1790263534.0
+    ],
+    "58824804": [
+     1790263986.0,
+     1790264929.0
+    ],
+    "58827682": [
+     1790267487.0,
+     1790269174.0
+    ],
+    "58830728": [
+     1790269462.0,
+     1790270429.0
+    ],
+    "58831113": [
+     1790271632.0,
+     1790273316.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-B-F9": {
+   "run": "final-B-F9",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58830728",
+    "58831113",
+    "58831976",
+    "58832785",
+    "58833611"
+   ],
+   "driver_intervals": {
+    "58830728": [
+     1790269462.0,
+     1790271165.0
+    ],
+    "58831113": [
+     1790271632.0,
+     1790273331.0
+    ],
+    "58831976": [
+     1790273912.0,
+     1790275610.0
+    ],
+    "58832785": [
+     1790276206.0,
+     1790277915.0
+    ],
+    "58833611": [
+     1790282734.0,
+     1790284409.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-C-F0": {
+   "run": "final-C-F0",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58808974",
+    "58809183",
+    "58810047",
+    "58811322",
+    "58811912",
+    "58812932"
+   ],
+   "driver_intervals": {
+    "58808974": [
+     1790214165.0,
+     1790215822.0
+    ],
+    "58809183": [
+     1790216696.0,
+     1790218343.0
+    ],
+    "58810047": [
+     1790219698.0,
+     1790220651.0
+    ],
+    "58811322": [
+     1790221749.0,
+     1790223413.0
+    ],
+    "58811912": [
+     1790224002.0,
+     1790225656.0
+    ],
+    "58812932": [
+     1790226360.0,
+     1790227269.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-C-F1": {
+   "run": "final-C-F1",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58815932",
+    "58817152",
+    "58817962",
+    "58818330",
+    "58818805",
+    "58819349"
+   ],
+   "driver_intervals": {
+    "58815932": [
+     1790235756.0,
+     1790236712.0
+    ],
+    "58817152": [
+     1790237841.0,
+     1790239514.0
+    ],
+    "58817962": [
+     1790239867.0,
+     1790241540.0
+    ],
+    "58818330": [
+     1790242318.0,
+     1790243993.0
+    ],
+    "58818805": [
+     1790244376.0,
+     1790246068.0
+    ],
+    "58819349": [
+     1790246404.0,
+     1790247366.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-C-F10": {
+   "run": "final-C-F10",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58830729",
+    "58831112",
+    "58831977",
+    "58832786",
+    "58833610"
+   ],
+   "driver_intervals": {
+    "58830729": [
+     1790269462.0,
+     1790271146.0
+    ],
+    "58831112": [
+     1790271632.0,
+     1790273344.0
+    ],
+    "58831977": [
+     1790273912.0,
+     1790275579.0
+    ],
+    "58832786": [
+     1790276206.0,
+     1790277886.0
+    ],
+    "58833610": [
+     1790282734.0,
+     1790284410.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-C-F11": {
+   "run": "final-C-F11",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58832786",
+    "58833610",
+    "58836163",
+    "58837006",
+    "58838064",
+    "58839011"
+   ],
+   "driver_intervals": {
+    "58832786": [
+     1790276206.0,
+     1790277150.0
+    ],
+    "58833610": [
+     1790282734.0,
+     1790283684.0
+    ],
+    "58836163": [
+     1790284692.0,
+     1790286353.0
+    ],
+    "58837006": [
+     1790286536.0,
+     1790288222.0
+    ],
+    "58838064": [
+     1790288496.0,
+     1790290139.0
+    ],
+    "58839011": [
+     1790290262.0,
+     1790291872.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-C-F2": {
+   "run": "final-C-F2",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58813173",
+    "58814145",
+    "58814884",
+    "58815932",
+    "58817152"
+   ],
+   "driver_intervals": {
+    "58813173": [
+     1790226979.0,
+     1790228635.0
+    ],
+    "58814145": [
+     1790229901.0,
+     1790231564.0
+    ],
+    "58814884": [
+     1790232404.0,
+     1790234066.0
+    ],
+    "58815932": [
+     1790235756.0,
+     1790237434.0
+    ],
+    "58817152": [
+     1790237841.0,
+     1790239526.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-C-F3": {
+   "run": "final-C-F3",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58813661",
+    "58814145",
+    "58814884",
+    "58815967",
+    "58817151"
+   ],
+   "driver_intervals": {
+    "58813661": [
+     1790227611.0,
+     1790229317.0
+    ],
+    "58814145": [
+     1790229901.0,
+     1790231591.0
+    ],
+    "58814884": [
+     1790232404.0,
+     1790234106.0
+    ],
+    "58815967": [
+     1790235756.0,
+     1790237423.0
+    ],
+    "58817151": [
+     1790237841.0,
+     1790239505.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-C-F4": {
+   "run": "final-C-F4",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58813661",
+    "58813919",
+    "58815967",
+    "58817151",
+    "58817961"
+   ],
+   "driver_intervals": {
+    "58813661": [
+     1790227611.0,
+     1790229297.0
+    ],
+    "58813919": [
+     1790229900.0,
+     1790231591.0
+    ],
+    "58815967": [
+     1790235756.0,
+     1790237443.0
+    ],
+    "58817151": [
+     1790237841.0,
+     1790239506.0
+    ],
+    "58817961": [
+     1790239867.0,
+     1790241552.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-C-F5": {
+   "run": "final-C-F5",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58818329",
+    "58818805",
+    "58819349",
+    "58820023",
+    "58820749",
+    "58821442"
+   ],
+   "driver_intervals": {
+    "58818329": [
+     1790242318.0,
+     1790244010.0
+    ],
+    "58818805": [
+     1790244376.0,
+     1790246077.0
+    ],
+    "58819349": [
+     1790246404.0,
+     1790248082.0
+    ],
+    "58820023": [
+     1790248842.0,
+     1790249784.0
+    ],
+    "58820749": [
+     1790250932.0,
+     1790251888.0
+    ],
+    "58821442": [
+     1790253463.0,
+     1790255130.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-C-F6": {
+   "run": "final-C-F6",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58818329",
+    "58818806",
+    "58819350",
+    "58819771",
+    "58820416",
+    "58821442"
+   ],
+   "driver_intervals": {
+    "58818329": [
+     1790242318.0,
+     1790243999.0
+    ],
+    "58818806": [
+     1790244376.0,
+     1790245354.0
+    ],
+    "58819350": [
+     1790245639.0,
+     1790247347.0
+    ],
+    "58819771": [
+     1790247778.0,
+     1790249482.0
+    ],
+    "58820416": [
+     1790249877.0,
+     1790251562.0
+    ],
+    "58821442": [
+     1790253463.0,
+     1790254381.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-C-F7": {
+   "run": "final-C-F7",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58820749",
+    "58822048",
+    "58822550",
+    "58823189",
+    "58823954"
+   ],
+   "driver_intervals": {
+    "58820749": [
+     1790250932.0,
+     1790252591.0
+    ],
+    "58822048": [
+     1790255617.0,
+     1790257282.0
+    ],
+    "58822550": [
+     1790257589.0,
+     1790259245.0
+    ],
+    "58823189": [
+     1790259708.0,
+     1790261388.0
+    ],
+    "58823954": [
+     1790261835.0,
+     1790263495.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-C-F8": {
+   "run": "final-C-F8",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58823954",
+    "58824804",
+    "58827682",
+    "58830728",
+    "58831113"
+   ],
+   "driver_intervals": {
+    "58823954": [
+     1790261835.0,
+     1790263539.0
+    ],
+    "58824804": [
+     1790263986.0,
+     1790265655.0
+    ],
+    "58827682": [
+     1790267487.0,
+     1790269170.0
+    ],
+    "58830728": [
+     1790269462.0,
+     1790271168.0
+    ],
+    "58831113": [
+     1790271632.0,
+     1790273310.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-C-F9": {
+   "run": "final-C-F9",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58830729",
+    "58831112",
+    "58831976",
+    "58832785",
+    "58833611",
+    "58836164",
+    "58837006"
+   ],
+   "driver_intervals": {
+    "58830729": [
+     1790269462.0,
+     1790270424.0
+    ],
+    "58831112": [
+     1790271632.0,
+     1790273338.0
+    ],
+    "58831976": [
+     1790273912.0,
+     1790275608.0
+    ],
+    "58832785": [
+     1790276206.0,
+     1790277168.0
+    ],
+    "58833611": [
+     1790282734.0,
+     1790283688.0
+    ],
+    "58836164": [
+     1790284692.0,
+     1790286339.0
+    ],
+    "58837006": [
+     1790286536.0,
+     1790287440.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 7,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-CTL-F0": {
+   "run": "final-CTL-F0",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58808974",
+    "58809183",
+    "58810047",
+    "58811322",
+    "58811912"
+   ],
+   "driver_intervals": {
+    "58808974": [
+     1790214165.0,
+     1790215824.0
+    ],
+    "58809183": [
+     1790216696.0,
+     1790218383.0
+    ],
+    "58810047": [
+     1790219698.0,
+     1790221389.0
+    ],
+    "58811322": [
+     1790221749.0,
+     1790223449.0
+    ],
+    "58811912": [
+     1790224002.0,
+     1790225702.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-CTL-F1": {
+   "run": "final-CTL-F1",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58808974",
+    "58809183",
+    "58810047",
+    "58811322",
+    "58811912",
+    "58812932"
+   ],
+   "driver_intervals": {
+    "58808974": [
+     1790214165.0,
+     1790215865.0
+    ],
+    "58809183": [
+     1790216696.0,
+     1790218359.0
+    ],
+    "58810047": [
+     1790219698.0,
+     1790220648.0
+    ],
+    "58811322": [
+     1790221749.0,
+     1790223413.0
+    ],
+    "58811912": [
+     1790224002.0,
+     1790225656.0
+    ],
+    "58812932": [
+     1790226360.0,
+     1790227278.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-CTL-F10": {
+   "run": "final-CTL-F10",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58830729",
+    "58831112",
+    "58831976",
+    "58832785",
+    "58833611",
+    "58836164"
+   ],
+   "driver_intervals": {
+    "58830729": [
+     1790269462.0,
+     1790270424.0
+    ],
+    "58831112": [
+     1790271632.0,
+     1790273338.0
+    ],
+    "58831976": [
+     1790273912.0,
+     1790275607.0
+    ],
+    "58832785": [
+     1790276206.0,
+     1790277901.0
+    ],
+    "58833611": [
+     1790282734.0,
+     1790284421.0
+    ],
+    "58836164": [
+     1790284692.0,
+     1790285599.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-CTL-F11": {
+   "run": "final-CTL-F11",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58831977",
+    "58832786",
+    "58833610",
+    "58836164",
+    "58837007",
+    "58838064"
+   ],
+   "driver_intervals": {
+    "58831977": [
+     1790273912.0,
+     1790274860.0
+    ],
+    "58832786": [
+     1790276206.0,
+     1790277886.0
+    ],
+    "58833610": [
+     1790282734.0,
+     1790284398.0
+    ],
+    "58836164": [
+     1790284692.0,
+     1790286356.0
+    ],
+    "58837007": [
+     1790286537.0,
+     1790288152.0
+    ],
+    "58838064": [
+     1790288496.0,
+     1790289398.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-CTL-F2": {
+   "run": "final-CTL-F2",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58809024",
+    "58809361",
+    "58810596",
+    "58811530",
+    "58812108"
+   ],
+   "driver_intervals": {
+    "58809024": [
+     1790214727.0,
+     1790216435.0
+    ],
+    "58809361": [
+     1790217930.0,
+     1790219590.0
+    ],
+    "58810596": [
+     1790220331.0,
+     1790222028.0
+    ],
+    "58811530": [
+     1790222397.0,
+     1790224107.0
+    ],
+    "58812108": [
+     1790224701.0,
+     1790226383.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-CTL-F3": {
+   "run": "final-CTL-F3",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58813173",
+    "58814145",
+    "58814884",
+    "58815932",
+    "58817151",
+    "58817962"
+   ],
+   "driver_intervals": {
+    "58813173": [
+     1790226979.0,
+     1790227915.0
+    ],
+    "58814145": [
+     1790229901.0,
+     1790231574.0
+    ],
+    "58814884": [
+     1790232404.0,
+     1790234098.0
+    ],
+    "58815932": [
+     1790235756.0,
+     1790237434.0
+    ],
+    "58817151": [
+     1790237841.0,
+     1790239486.0
+    ],
+    "58817962": [
+     1790239867.0,
+     1790240797.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-CTL-F4": {
+   "run": "final-CTL-F4",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58813661",
+    "58813919",
+    "58815967",
+    "58817152",
+    "58817962"
+   ],
+   "driver_intervals": {
+    "58813661": [
+     1790227611.0,
+     1790229271.0
+    ],
+    "58813919": [
+     1790229900.0,
+     1790231556.0
+    ],
+    "58815967": [
+     1790235756.0,
+     1790237417.0
+    ],
+    "58817152": [
+     1790237841.0,
+     1790239491.0
+    ],
+    "58817962": [
+     1790239867.0,
+     1790241534.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-CTL-F5": {
+   "run": "final-CTL-F5",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58813919",
+    "58817961",
+    "58818330",
+    "58818805",
+    "58819349",
+    "58820023"
+   ],
+   "driver_intervals": {
+    "58813919": [
+     1790229900.0,
+     1790231565.0
+    ],
+    "58817961": [
+     1790239867.0,
+     1790241522.0
+    ],
+    "58818330": [
+     1790242318.0,
+     1790243278.0
+    ],
+    "58818805": [
+     1790244376.0,
+     1790246068.0
+    ],
+    "58819349": [
+     1790246404.0,
+     1790248087.0
+    ],
+    "58820023": [
+     1790248842.0,
+     1790249751.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-CTL-F6": {
+   "run": "final-CTL-F6",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58818329",
+    "58818806",
+    "58819350",
+    "58819771",
+    "58820416",
+    "58821442"
+   ],
+   "driver_intervals": {
+    "58818329": [
+     1790242318.0,
+     1790243999.0
+    ],
+    "58818806": [
+     1790244376.0,
+     1790245361.0
+    ],
+    "58819350": [
+     1790245639.0,
+     1790247305.0
+    ],
+    "58819771": [
+     1790247778.0,
+     1790249449.0
+    ],
+    "58820416": [
+     1790249877.0,
+     1790251583.0
+    ],
+    "58821442": [
+     1790253463.0,
+     1790254403.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-CTL-F7": {
+   "run": "final-CTL-F7",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58818806",
+    "58819350",
+    "58819771",
+    "58820416",
+    "58822048",
+    "58822550"
+   ],
+   "driver_intervals": {
+    "58818806": [
+     1790244376.0,
+     1790245356.0
+    ],
+    "58819350": [
+     1790245639.0,
+     1790247340.0
+    ],
+    "58819771": [
+     1790247778.0,
+     1790249490.0
+    ],
+    "58820416": [
+     1790249877.0,
+     1790250822.0
+    ],
+    "58822048": [
+     1790255617.0,
+     1790257298.0
+    ],
+    "58822550": [
+     1790257589.0,
+     1790259296.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-CTL-F8": {
+   "run": "final-CTL-F8",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58822048",
+    "58822550",
+    "58823189",
+    "58823954",
+    "58824804",
+    "58827682"
+   ],
+   "driver_intervals": {
+    "58822048": [
+     1790255617.0,
+     1790256558.0
+    ],
+    "58822550": [
+     1790257589.0,
+     1790259247.0
+    ],
+    "58823189": [
+     1790259708.0,
+     1790261380.0
+    ],
+    "58823954": [
+     1790261835.0,
+     1790263491.0
+    ],
+    "58824804": [
+     1790263986.0,
+     1790265654.0
+    ],
+    "58827682": [
+     1790267487.0,
+     1790268406.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 6,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "final/final-CTL-F9": {
+   "run": "final-CTL-F9",
+   "status": "COMPLETE",
+   "executing_jobs": [
+    "58824804",
+    "58827682",
+    "58830728",
+    "58831113",
+    "58831976"
+   ],
+   "driver_intervals": {
+    "58824804": [
+     1790263986.0,
+     1790265642.0
+    ],
+    "58827682": [
+     1790267487.0,
+     1790269153.0
+    ],
+    "58830728": [
+     1790269462.0,
+     1790271168.0
+    ],
+    "58831113": [
+     1790271632.0,
+     1790273310.0
+    ],
+    "58831976": [
+     1790273912.0,
+     1790275607.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 5,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "stress/stress-B-T0-D1_m0.350": {
+   "run": "stress-B-T0-D1_m0.350",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58798420",
+    "58840888",
+    "58841404"
+   ],
+   "driver_intervals": {
+    "58798420": [
+     1790196285.0,
+     1790197942.0
+    ],
+    "58840888": [
+     1790292627.0,
+     1790294327.0
+    ],
+    "58841404": [
+     1790294571.0,
+     1790295471.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 3,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "stress/stress-B-T0-D2_bump_c0.3": {
+   "run": "stress-B-T0-D2_bump_c0.3",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58840888",
+    "58841404"
+   ],
+   "driver_intervals": {
+    "58840888": [
+     1790292627.0,
+     1790294328.0
+    ],
+    "58841404": [
+     1790294571.0,
+     1790295469.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 2,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "stress/stress-B-T1-D1_m0.350": {
+   "run": "stress-B-T1-D1_m0.350",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58840854",
+    "58841405"
+   ],
+   "driver_intervals": {
+    "58840854": [
+     1790292627.0,
+     1790293579.0
+    ],
+    "58841405": [
+     1790294571.0,
+     1790295471.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 2,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "stress/stress-C-T0-D1_m0.350": {
+   "run": "stress-C-T0-D1_m0.350",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58798420",
+    "58840854",
+    "58841405"
+   ],
+   "driver_intervals": {
+    "58798420": [
+     1790196285.0,
+     1790197194.0
+    ],
+    "58840854": [
+     1790292627.0,
+     1790294302.0
+    ],
+    "58841405": [
+     1790294571.0,
+     1790295464.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 3,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "stress/stress-C-T1-D1_m0.350": {
+   "run": "stress-C-T1-D1_m0.350",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58840854",
+    "58841404"
+   ],
+   "driver_intervals": {
+    "58840854": [
+     1790292627.0,
+     1790294300.0
+    ],
+    "58841404": [
+     1790294571.0,
+     1790295485.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 2,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "stress/stress-CTL-T0-D1_m0.350": {
+   "run": "stress-CTL-T0-D1_m0.350",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58798420",
+    "58840854",
+    "58841405"
+   ],
+   "driver_intervals": {
+    "58798420": [
+     1790196285.0,
+     1790197208.0
+    ],
+    "58840854": [
+     1790292627.0,
+     1790294314.0
+    ],
+    "58841405": [
+     1790294571.0,
+     1790295484.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 3,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "stress/stress-CTL-T0-D2_bump_c0.3": {
+   "run": "stress-CTL-T0-D2_bump_c0.3",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58840888",
+    "58841405"
+   ],
+   "driver_intervals": {
+    "58840888": [
+     1790292627.0,
+     1790294311.0
+    ],
+    "58841405": [
+     1790294571.0,
+     1790295477.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 2,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  },
+  "stress/stress-CTL-T1-D1_m0.350": {
+   "run": "stress-CTL-T1-D1_m0.350",
+   "status": "INCOMPLETE",
+   "executing_jobs": [
+    "58798420",
+    "58840888",
+    "58841404"
+   ],
+   "driver_intervals": {
+    "58798420": [
+     1790196285.0,
+     1790197932.0
+    ],
+    "58840888": [
+     1790292627.0,
+     1790294307.0
+    ],
+    "58841404": [
+     1790294571.0,
+     1790295474.0
+    ]
+   },
+   "overlaps": [],
+   "job_level_overlaps": [],
+   "segments": 3,
+   "segment_problems": [],
+   "jobs_without_segment": [],
+   "duplicate_fits": [],
+   "fit_problems": [],
+   "unverifiable": [],
+   "suspect": false,
+   "verdict": "clean"
+  }
+ },
+ "summary": {
+  "runs_audited": 53,
+  "jobs": 76,
+  "suspect": [],
+  "unverifiable": [],
+  "runs_with_jobs_without_segment": []
+ }
+}

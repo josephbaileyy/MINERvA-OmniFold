@@ -1,0 +1,3 @@
+date_utc	phase	slurm_job	account	partition_qos	nodes	gpus	elapsed_s	gpu_hours	cpu_core_hours	state	purpose
+2026-09-22T17:30Z	pools	58755437	m3246	regular_milan_ss11/debug	1	0	0	0	0	CANCELLED	first pool build (superseded before start: silent-skip bug)
+2026-09-22T17:34Z	pools	58755613	m3246	regular_milan_ss11/debug	1	0	101	0	7.18	COMPLETED	pool manifest build at 295572eb

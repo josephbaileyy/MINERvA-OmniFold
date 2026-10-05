@@ -1,0 +1,286 @@
+{
+ "scope": "Phase A2 Part 4: resources",
+ "raw_dir": "receipts/resources_raw",
+ "allocation": {
+  "command": "iris project m3246 ; iris (user view)",
+  "captured": "2026-09-22T08:14:16Z",
+  "units": "NERSC allocation hours as iris reports them (GPU node-hours for m3246_g, CPU node-hours for m3246) -- the unit label is INFERRED from NERSC's charging policy, iris prints no unit",
+  "projects": {
+   "m3246_g": {
+    "charged": 120684.5,
+    "allocated": 180000.0,
+    "remaining": 59315.5,
+    "fraction_used": 0.6704694444444445,
+    "user_josephrb_charged": 367.0,
+    "user_josephrb_allocated": 90000.0
+   },
+   "m3246": {
+    "charged": 16533.5,
+    "allocated": 20000.0,
+    "remaining": 3466.5,
+    "fraction_used": 0.826675,
+    "user_josephrb_charged": 1701.3,
+    "user_josephrb_allocated": 10000.0
+   }
+  }
+ },
+ "storage": {
+  "commands": [
+   "myquota",
+   "showquota",
+   "cfsquota m3246",
+   "prjquota m3246"
+  ],
+  "filesystems": {
+   "home": {
+    "used": "20.30GiB",
+    "quota": "40.00GiB",
+    "percent": "50.8%",
+    "inodes_used": "231.90K",
+    "inode_quota": "1.00M"
+   },
+   "pscratch": {
+    "used": "16.34TiB",
+    "quota": "20.00TiB",
+    "percent": "81.7%",
+    "inodes_used": "476.20K",
+    "inode_quota": "10.00M"
+   },
+   "cfs_m3246": {
+    "used_gb": 81060.0,
+    "quota_gb": 102400.0,
+    "percent": 79.0,
+    "inodes_used": 39302257,
+    "inode_quota": 75000000,
+    "remaining_gb": 21340.0
+   }
+  }
+ },
+ "queue_depth": {
+  "command": "squeue -h -q <qos> -t <state> | wc -l",
+  "captured": "2026-09-22T08:14:28Z",
+  "by_qos": {
+   "gpu_shared": {
+    "PENDING": 1384,
+    "RUNNING": 139
+   },
+   "gpu_regular": {
+    "PENDING": 7894,
+    "RUNNING": 168
+   },
+   "shared": {
+    "PENDING": 1227,
+    "RUNNING": 1256
+   },
+   "regular_1": {
+    "PENDING": 8906,
+    "RUNNING": 720
+   }
+  },
+  "gpu_shared_pending_reasons_raw": [
+   "1161 Priority",
+   "    140 Dependency",
+   "     36 JobHeldUser",
+   "     19 JobHeldAdmin",
+   "     11 DependencyNeverSatisfied",
+   "      9 JobArrayTaskLimit",
+   "      4 InvalidQOS",
+   "      2 BeginTime",
+   "      1 None",
+   "      1 Nodes required for job are DOWN, DRAINED or reserved for jobs in higher priority partitions"
+  ]
+ },
+ "start_latency_gpu_shared": {
+  "source": "sacct -u josephrb -X -S 2026-09-15 (states CD,F,TO,CA,R), QOS gpu_shared, Start - Submit",
+  "first_task_per_job_or_array": {
+   "n": 66,
+   "median_h": 0.03638888888888889,
+   "p90_h": 0.31055555555555553,
+   "max_h": 8.829722222222221
+  },
+  "every_task": {
+   "n": 427,
+   "median_h": 4.1033333333333335,
+   "p90_h": 9.160833333333333,
+   "max_h": 33.12777777777778
+  },
+  "caveat": "array tasks share one submit time and start as earlier tasks finish, so 'every_task' measures array throughput as much as queue wait; the first task is the queue-wait measure, but for a job submitted with --dependency it also includes the time waiting on the dependency, so it is an upper bound. Own jobs only: other users' submit times are not visible to this account"
+ },
+ "historical_comparison_gpu_hours": {
+  "method": "sacct -u josephrb -X -S 2026-09-15T00:00:00 -E 2026-09-22T23:59:59 --format=...ElapsedRaw,AllocTRES,WorkDir; GPU-h = gres/gpu x ElapsedRaw; attribution by job name / array id / working directory",
+  "groups": {
+   "earlier_pet_lane_2026-09-15_16_not_comparison": {
+    "allocations": 29,
+    "gpu_hours": 13.903055555555552,
+    "cpu_core_hours": 444.9144444444443,
+    "jobs": [
+     "58354898",
+     "58395631",
+     "58396676",
+     "58397664",
+     "58398421"
+    ],
+    "states": {
+     "FAILED": 2,
+     "COMPLETED": 26,
+     "CANCELLED": 1
+    }
+   },
+   "comparison_prep_and_validation": {
+    "allocations": 67,
+    "gpu_hours": 7.222777777777781,
+    "cpu_core_hours": 234.53777777777793,
+    "jobs": [
+     "58461843",
+     "58467879",
+     "58470007",
+     "58470099",
+     "58470448",
+     "58470888",
+     "58470936",
+     "58471178",
+     "58471470",
+     "58493028",
+     "58493578",
+     "58494208",
+     "58495932",
+     "58526214",
+     "58526558",
+     "58526592",
+     "58526817",
+     "58526818",
+     "58527080",
+     "58527254",
+     "58551348",
+     "58551477",
+     "58552439",
+     "58552440",
+     "58552475",
+     "58552476",
+     "58552592",
+     "58552598",
+     "58552755",
+     "58552758",
+     "58563735",
+     "58564110",
+     "58565179",
+     "58565265",
+     "58566629",
+     "58585495",
+     "58585574",
+     "58585575",
+     "58585924",
+     "58586140",
+     "58586142",
+     "58586294",
+     "58586380",
+     "58586479",
+     "58586480",
+     "58596071",
+     "58596282",
+     "58596782",
+     "58597198",
+     "58599158",
+     "58600410",
+     "58600526",
+     "58600705",
+     "58600951",
+     "58601269",
+     "58601848",
+     "58602446",
+     "58603822",
+     "58604428",
+     "58604833",
+     "58604974",
+     "58605052",
+     "58605239",
+     "58605416",
+     "58605915",
+     "58606075",
+     "58606272"
+    ],
+    "states": {
+     "FAILED": 12,
+     "COMPLETED": 43,
+     "CANCELLED": 12
+    }
+   },
+   "campaign_cpu_helpers_and_extraction": {
+    "allocations": 89,
+    "gpu_hours": 0.0,
+    "cpu_core_hours": 467.2505555555555,
+    "jobs": [
+     "58586838",
+     "58588626",
+     "58590899",
+     "58591372",
+     "58592752",
+     "58594462",
+     "58595007",
+     "58597844",
+     "58605669",
+     "58606498",
+     "58606602",
+     "58607130",
+     "58607250",
+     "58607616",
+     "58627085",
+     "58645826",
+     "58692348",
+     "58692448",
+     "58692540",
+     "58722209",
+     "58735542"
+    ],
+    "states": {
+     "COMPLETED": 67,
+     "FAILED": 16,
+     "CANCELLED": 6
+    }
+   },
+   "campaign_gpu_superseded_submissions": {
+    "allocations": 1,
+    "gpu_hours": 0.0,
+    "cpu_core_hours": 0.0,
+    "jobs": [
+     "58596605"
+    ],
+    "states": {
+     "CANCELLED": 1
+    }
+   },
+   "campaign_gpu_arrays_executed": {
+    "allocations": 56,
+    "gpu_hours": 32.843611111111116,
+    "cpu_core_hours": 1050.9955555555557,
+    "jobs": [
+     "58627088",
+     "58692542",
+     "58692544"
+    ],
+    "states": {
+     "COMPLETED": 56
+    }
+   }
+  },
+  "campaign_arrays_by_stage_gpu_hours": {
+   "tuning": 12.696666666666664,
+   "pilot": 3.200555555555556,
+   "final": 16.94638888888889
+  },
+  "campaign_arrays_total_gpu_hours": 32.84361111111111,
+  "comparison_total_gpu_hours_including_prep": 40.066388888888895,
+  "receipt_cross_check_hours": {
+   "tuning": 12.464,
+   "pilot": 3.131,
+   "final": 16.826,
+   "source": "sum of receipt.json seconds/3600 under /pscratch/sd/j/josephrb/campaign-20260920/<stage>/*/"
+  },
+  "projections_in_the_comparison_docs_were_not_consumption": {
+   "HANDOFF-20260920-complete-comparison.md": "540 GPU-h (projection, superseded)",
+   "CAMPAIGN_COST_STEP_SCOPED-20260920.json": "365.8 GPU-h (projection, superseded)",
+   "CAMPAIGN_RUNNING-20260920.md": "58.5 GPU-h, 73.1 with retries (projection)"
+  },
+  "nersc_charge_note": "a gpu_shared allocation of 1 GPU is charged as a quarter GPU node; device hours / 4 approximates GPU node-hours charged (INFERRED from NERSC policy, not read from iris per job)"
+ }
+}

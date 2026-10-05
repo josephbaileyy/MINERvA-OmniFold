@@ -1,0 +1,7 @@
+JobID|JobName|Account|Partition|QOS|NNodes|AllocCPUS|AllocTRES|ElapsedRaw|State|Start
+58786043|pv1-cpucheck|m3246|regular_milan_ss11|debug|1|256|billing=256,cpu=256,energy=112304,mem=487802M,node=1|418|FAILED|2026-09-23T03:59:45
+58786058|pv1-chain|m3246_g|gpu_ss11|gpu_debug|1|128|billing=128,cpu=128,energy=515985,gres/gpu:a100=4,gres/gpu=4,mem=229802M,node=1|1012|COMPLETED|2026-09-23T04:11:13
+58786061|pv1-chain|m3246_g|gpu_ss11|gpu_preempt|1|0||0|CANCELLED by 112498|None
+58786149|pv1-pytest|m3246|regular_milan_ss11|debug|1|256|billing=256,cpu=256,energy=17750,mem=487802M,node=1|80|COMPLETED|2026-09-23T04:09:53
+58786334|pv1-chain|m3246_g|gpu_ss11|gpu_debug|1|128|billing=128,cpu=128,energy=451093,gres/gpu:a100=4,gres/gpu=4,mem=229802M,node=1|1004|COMPLETED|2026-09-23T04:52:02
+58786713|pv1-chain|m3246_g|gpu_ss11|gpu_debug|1|128|billing=128,cpu=128,energy=417476,gres/gpu:a100=4,gres/gpu=4,mem=229802M,node=1|966|COMPLETED|2026-09-23T05:26:04
