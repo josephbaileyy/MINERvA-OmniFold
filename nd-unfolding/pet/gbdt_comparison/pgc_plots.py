@@ -140,9 +140,11 @@ def fig_k(c, out: Path) -> None:
     for ax, e in zip(axes, eps):
         t = c["k_trajectory"][e]
         ks = list(range(1, 11))
-        m = [t[str(k)]["mean"] if str(k) in t else t[k]["mean"] for k in ks]
-        se = [t[str(k)]["se"] if str(k) in t else t[k]["se"] for k in ks]
-        ax.errorbar(ks, m, yerr=se, fmt="-" + MARK["GBDT"], color=COL["GBDT"], ms=5, lw=2,
+        rec = [t[str(k)] if str(k) in t else t[k] for k in ks]
+        m = [x["mean"] for x in rec]
+        lo = [x["mean"] - x["ci95"][0] for x in rec]
+        hi = [x["ci95"][1] - x["mean"] for x in rec]
+        ax.errorbar(ks, m, yerr=[lo, hi], fmt="-" + MARK["GBDT"], color=COL["GBDT"], ms=5, lw=2,
                     label="GBDT")
         for d in ("H2S1T24K5", "L128S1T24K4"):
             p = t["pet"][d]
@@ -152,7 +154,7 @@ def fig_k(c, out: Path) -> None:
         ax.set_title(EP_LABEL[e], color=INK, fontsize=10, loc="left")
         ax.set_xlabel("GBDT iteration k", color=INK)
         _style(ax)
-    axes[0].set_ylabel("mean R (±s.e. GBDT; PET 95% band)", color=INK)
+    axes[0].set_ylabel("mean R with 95% t interval (GBDT bars, PET bands)", color=INK)
     axes[0].legend(frameon=False, fontsize=7, loc="lower right")
     fig.text(0.01, 0.01, FOOT + " Dotted: primary k = 7 (fixed on DEV beforehand).",
              fontsize=7, color=MUTED)

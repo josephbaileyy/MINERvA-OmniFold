@@ -56,12 +56,14 @@
  },
  "model_check": {
   "H2": {
-   "model_study_a100h": 1.7339935592427245,
+   "note": "calibration consistency, not validation (rates come from these fits)",
+   "model_study_a100h": 1.7342057982214896,
    "measured_fit_a100h": 1.7342058986193054,
    "receipt_median_a100h": 1.767919
   },
   "L128": {
-   "model_study_a100h": 1.549342422019348,
+   "note": "calibration consistency, not validation (rates come from these fits)",
+   "model_study_a100h": 1.5496117933724571,
    "measured_fit_a100h": 1.549611920796249,
    "receipt_median_a100h": 1.517087
   }
@@ -69,72 +71,72 @@
  "data_scale_unfolding": {
   "H2": {
    "2M (historical full-event practice)": {
-    "a100_hours": 6.855305231189297,
+    "a100_hours": 7.322306217473281,
     "range": [
-     3.4276526155946483,
-     13.710610462378593
+     3.6611531087366407,
+     14.644612434946563
     ],
-    "wall_hours_at_2_per_gpu": 13.710610462378593,
-    "step1_train_rows": 4414274.111874654,
+    "wall_hours_at_2_per_gpu": 14.644612434946563,
+    "step1_train_rows": 5344575.2,
     "step2_train_rows": 3200000.0
    },
    "10M": {
-    "a100_hours": 26.757582734571326,
+    "a100_hours": 29.092587665991253,
     "range": [
-     13.378791367285663,
-     53.51516546914265
+     14.546293832995627,
+     58.18517533198251
     ],
-    "wall_hours_at_2_per_gpu": 53.51516546914265,
-    "step1_train_rows": 7093069.75937327,
+    "wall_hours_at_2_per_gpu": 58.18517533198251,
+    "step1_train_rows": 11744575.200000001,
     "step2_train_rows": 16000000.0
    },
    "full inventory": {
-    "a100_hours": 124.16153052557179,
+    "a100_hours": 135.63875341242348,
     "range": [
-     62.080765262785896,
-     248.32306105114358
+     67.81937670621174,
+     271.27750682484697
     ],
-    "wall_hours_at_2_per_gpu": 248.32306105114358,
-    "step1_train_rows": 20203392.0,
+    "wall_hours_at_2_per_gpu": 271.27750682484697,
+    "step1_train_rows": 43066883.2,
     "step2_train_rows": 78644616.0
    }
   },
   "L128": {
    "2M (historical full-event practice)": {
-    "a100_hours": 6.529737807638192,
+    "a100_hours": 7.1224502693666265,
     "range": [
-     3.264868903819096,
-     13.059475615276384
+     3.5612251346833133,
+     14.244900538733253
     ],
-    "wall_hours_at_2_per_gpu": 13.059475615276384,
-    "step1_train_rows": 4414274.111874654,
+    "wall_hours_at_2_per_gpu": 14.244900538733253,
+    "step1_train_rows": 5344575.2,
     "step2_train_rows": 3200000.0
    },
    "10M": {
-    "a100_hours": 23.105729610327955,
+    "a100_hours": 26.06929191897013,
     "range": [
-     11.552864805163978,
-     46.21145922065591
+     13.034645959485065,
+     52.13858383794026
     ],
-    "wall_hours_at_2_per_gpu": 46.21145922065591,
-    "step1_train_rows": 7093069.75937327,
+    "wall_hours_at_2_per_gpu": 52.13858383794026,
+    "step1_train_rows": 11744575.200000001,
     "step2_train_rows": 16000000.0
    },
    "full inventory": {
-    "a100_hours": 104.23046721178484,
+    "a100_hours": 118.79723094648716,
     "range": [
-     52.11523360589242,
-     208.46093442356968
+     59.39861547324358,
+     237.59446189297432
     ],
-    "wall_hours_at_2_per_gpu": 208.46093442356968,
-    "step1_train_rows": 20203392.0,
+    "wall_hours_at_2_per_gpu": 237.59446189297432,
+    "step1_train_rows": 43066883.2,
     "step2_train_rows": 78644616.0
    }
   }
  },
  "constants": {
   "data_side_rows": 4680719,
-  "reco_pass_fraction": 0.4185618199216587,
+  "study_pseudo_reco_rows": 251701,
   "k": {
    "H2": 5,
    "L128": 4

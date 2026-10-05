@@ -269,22 +269,25 @@ def compare(a: argparse.Namespace) -> int:
                      "eavail_x_proton_null_floor": float(np.mean(fl))}
         out["rules"]["B3"] = {"quantity": "null spurious L1; frozen PET thresholds 0.012 and "
                               "3 x floor", "methods": b3}
-    r1 = [c for c in ("R1_x1.05_D1_p0.350", "R1_x0.95_D1_p0.350")
-          if ("S4S", c) in complete]
-    if ("S4S", "D1_p0.350") in complete and r1:
-        b4 = {}
-        for c in r1:
-            b4[c] = {}
+    resp = [c for c in ("R1_x1.05_D1_p0.350", "R1_x0.95_D1_p0.350", "R2_x1.01_D1_p0.350")
+            if ("S4S", c) in complete]
+    if ("S4S", "D1_p0.350") in complete and resp:
+        b4, b4p = {}, {}
+        for c in resp:
+            b4[c], per = {}, {}
             for m in methods:
-                e8 = []
+                e8 = {}
                 for (r, run), (_r2, base) in zip(runs_of("S4S", c), runs_of("S4S", "D1_p0.350")):
                     get = ((lambda x: pet_hist(m, x)["hist"]["eavail"]["recovery"]) if m in PET
                            else (lambda x: gb_hist(x, int(m.split("k")[1]))["hist"]["eavail"]
                                  ["recovery"]))
-                    e8.append(get(run) - get(base))
-                b4[c][m] = t_summary(np.array(e8))
-        out["rules"]["B4"] = {"quantity": "E8 = R_E0(R1 + D1) - R_E0(D1) by draw; frozen PET "
-                              "threshold |mean| <= 0.15", "cases": b4}
+                    e8[r] = get(run) - get(base)
+                per[m] = e8
+                b4[c][m] = t_summary(np.array(list(e8.values())))
+            b4p[c] = {f"{d} - GBDT@k7": paired(per[d], per["GBDT@k7"]) for d in PET}
+        out["rules"]["B4"] = {"quantity": "E8 = R_E0(R + D1) - R_E0(D1) by draw (the response-"
+                              "specific change); frozen PET threshold |mean| <= 0.15 applies to "
+                              "R1 only", "cases": b4, "paired": b4p}
 
     # ---- library: natural-histogram R per case and moves-away units (B1 analogue) -------- #
     lib_cases = sorted({c for (s, c) in declared if s == "S4S"})

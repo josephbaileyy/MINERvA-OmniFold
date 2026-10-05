@@ -75,7 +75,8 @@ def rules(c):
     if "B4" in r:
         for case, v in r["B4"]["cases"].items():
             print(f"**B4 E8 {case}**:", "; ".join(
-                f"{m} {x['mean']:+.3f} (sd {x['sd']:.3f})" for m, x in v.items()))
+                f"{m} {x['mean']:+.3f} (sd {x['sd']:.3f})" for m, x in v.items()),
+                "| paired:", "; ".join(f"{k} {ci(p)}" for k, p in r["B4"]["paired"][case].items()))
         print()
     print("| library case (draws; natural histogram) | H2 mean R (moves away) | L128 | GBDT k7 | GBDT k3 | "
           "GBDT k10 | H2 − GBDT₇ | L128 − GBDT₇ |")
