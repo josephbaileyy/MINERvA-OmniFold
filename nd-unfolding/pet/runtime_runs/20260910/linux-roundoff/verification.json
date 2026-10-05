@@ -1,0 +1,14 @@
+{
+  "artifact_bytes_excluding_logs_receipt": 173658980,
+  "code_commit": "ca34a03a9f04ec16b56064c5bc6faaf85b9ebf17",
+  "complete_rows": 8192,
+  "kind": "SYNTHETIC_RUNTIME_RECEIPT_CHECK",
+  "preparation_sha256": "fea412de2f1f4702873e6f62ae98ef6bdfe8e0da65b5ef5066c4cd1cdd4057c3",
+  "remote_and_local_receipt_hashes_match": true,
+  "scope": "Fake-reader run_audit, RuntimeBudget, forward checks and shard serialization only; real-source launcher accounting is not exercised.",
+  "source_launcher_accounting_exercised": false,
+  "source_opens": 0,
+  "terminal": "COMPLETE",
+  "typed_chunks": 512,
+  "wall_seconds": 268.5601944710361
+}

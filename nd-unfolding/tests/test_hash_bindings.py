@@ -626,6 +626,62 @@ def test_a_revision_pinned_bare_sha_does_not_become_an_unpaired_complaint():
 _TALK = "docs/sep-09-presentation/ai-research-talk/measurements/"
 _REV_901F = "901f2c647355d69412b5c190fcb1df02d1c8aa14"
 REVIEWED_REVISION_PINNED = frozenset({
+    # Reviewed 2026-10-05 at the PET integration (pet-direct-token-comparison merged into main): the 17 pairs
+    # of the comparison study's execution and local-validation receipts. Each digest matches
+    # `git show <revision>:<path>` (17/17), and every revision is an ancestor of this tree.
+    *{(f"nd-unfolding/pet/direct_token_comparison/{src}", path, rev, sha) for src, path, rev, sha in (
+        ('execution_runs/20260911-calibration/execution-revision-binding.json',
+         'nd-unfolding/pet/direct_token_comparison/calibration_measure.py',
+         '106ba9a872989e2617a68f48333e7c831f94c67e', '70abab75ca3fc25df89bc71bfb79fd28c97e5fbd48f5331f02042f1314836aa3'),
+        ('execution_runs/20260911-retry1/execution-revision-binding.json',
+         'nd-unfolding/pet/direct_token_comparison/calibration_measure.py',
+         '46fe3d7cd3c88570d7449a884adc4f8ffc44f041', 'e3458a17592588b78dca442cf586abd7d9133b1b6ed30a228c95db0370cdf51a'),
+        ('execution_runs/20260911-retry1/execution-revision-binding.json',
+         'nd-unfolding/pet/run_typed_token_comparison.py',
+         '46fe3d7cd3c88570d7449a884adc4f8ffc44f041', '7597d48826fe0b1913dc89bb6a15bf5a4befa773ac2970bd7b7e3525080e51fb'),
+        ('execution_runs/20260911-retry1/execution-revision-binding.json',
+         'nd-unfolding/pet/typed_descriptor_keras.py',
+         '46fe3d7cd3c88570d7449a884adc4f8ffc44f041', 'dccc8c616c03c24db2ce29bd0b6de56d08d37468fbdff2b6d1935c6ff2c9348f'),
+        ('execution_runs/20260911-retry1/execution-revision-binding.json',
+         'nd-unfolding/pet/typed_descriptors.py',
+         '46fe3d7cd3c88570d7449a884adc4f8ffc44f041', '1a0469778cc86948c7da2ff7d5795f8d19625b2ebd755eb429c8e57f4fedf08b'),
+        ('execution_runs/20260911-retry1/execution-revision-binding.json',
+         'nd-unfolding/pet/typed_token_comparison.py',
+         '46fe3d7cd3c88570d7449a884adc4f8ffc44f041', '905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95'),
+        ('execution_runs/20260913-compatibility/execution-revision-binding.json',
+         'nd-unfolding/pet/direct_token_comparison/calibration_measure.py',
+         '7673b2de5210da0d2679ed98da62a4d0f2e042b2', '000dffd97ffc2cb43826ac2d1319b08e5bfdb8011e18d381b4c2e0434c2fee01'),
+        ('execution_runs/20260913-compatibility/execution-revision-binding.json',
+         'nd-unfolding/pet/direct_token_comparison/compatibility-authorization.json',
+         '7673b2de5210da0d2679ed98da62a4d0f2e042b2', '0ddf01d3ed5b09b4519425fae5f0b0f9192202659236972bca62d92bcc8b4f83'),
+        ('execution_runs/20260913-compatibility/execution-revision-binding.json',
+         'nd-unfolding/pet/direct_token_comparison/compatibility_preflight.py',
+         '7673b2de5210da0d2679ed98da62a4d0f2e042b2', 'b4092b3ac46ec5fcb3ea95f0903a8acae15042e80ec261edec0bd20ab0794d6c'),
+        ('execution_runs/20260913-compatibility/execution-revision-binding.json',
+         'nd-unfolding/pet/direct_token_comparison/reference/typed_token_comparison_cpu.py',
+         '7673b2de5210da0d2679ed98da62a4d0f2e042b2', '905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95'),
+        ('execution_runs/20260913-compatibility/execution-revision-binding.json',
+         'nd-unfolding/pet/direct_token_comparison/repair-manifest.json',
+         '7673b2de5210da0d2679ed98da62a4d0f2e042b2', '74ec7606e12eb43e29f98d23a70601913e00835b1853d9bcfdb91914aaf10074'),
+        ('execution_runs/20260913-compatibility/execution-revision-binding.json',
+         'nd-unfolding/pet/direct_token_comparison/sbatch_compatibility_calibration.sh',
+         '7673b2de5210da0d2679ed98da62a4d0f2e042b2', 'd7b88fe9cba79d0e9f62ec86657c3e3311532005afdf7aca9d55e8230bafd375'),
+        ('execution_runs/20260913-compatibility/execution-revision-binding.json',
+         'nd-unfolding/pet/run_typed_token_comparison.py',
+         '7673b2de5210da0d2679ed98da62a4d0f2e042b2', '7597d48826fe0b1913dc89bb6a15bf5a4befa773ac2970bd7b7e3525080e51fb'),
+        ('execution_runs/20260913-compatibility/execution-revision-binding.json',
+         'nd-unfolding/pet/typed_descriptor_keras.py',
+         '7673b2de5210da0d2679ed98da62a4d0f2e042b2', 'dccc8c616c03c24db2ce29bd0b6de56d08d37468fbdff2b6d1935c6ff2c9348f'),
+        ('execution_runs/20260913-compatibility/execution-revision-binding.json',
+         'nd-unfolding/pet/typed_descriptors.py',
+         '7673b2de5210da0d2679ed98da62a4d0f2e042b2', '1a0469778cc86948c7da2ff7d5795f8d19625b2ebd755eb429c8e57f4fedf08b'),
+        ('execution_runs/20260913-compatibility/execution-revision-binding.json',
+         'nd-unfolding/pet/typed_token_comparison.py',
+         '7673b2de5210da0d2679ed98da62a4d0f2e042b2', '36306f3500a07764b537f8e1264bab757438a3610e26ed954b4327dcd14c70b7'),
+        ('local_validation/20260913/validation.json',
+         'nd-unfolding/pet/typed_token_comparison.py',
+         '46fe3d7cd3c88570d7449a884adc4f8ffc44f041', '905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95'),
+    )},
     (_TALK + "metrics.json", "docs/orchestration/receipts/RECEIPT-2d-agreement-windows-20260821.json",
      _REV_901F, "f84305193b8886f22d83a31269feaf4d73829a315e5a7be8096ac071e390dc82"),
     (_TALK + "metrics.json", "nd-unfolding/pet/fullevent_nominal/GATE_AB_PUSH_PROVENANCE.json",
@@ -653,8 +709,12 @@ REVIEWED_REVISION_PINNED = frozenset({
     (_TALK + "corner_comparison.json", "docs/COLLABORATOR_QUESTIONS.md",
      _REV_901F, "8648f2a848b92e6d8db6e9ae8a2d46169c764542ba77735610f0150953b342cf"),
 })
-#: How many TRACKED worktree bindings excluding the reviewed set costs. Measured 2026-09-23.
-REVIEWED_NARROWING_COST = 11
+#: How many TRACKED worktree bindings excluding the reviewed set costs. Measured 2026-09-23 at 11 (the Sep-09
+#: talk). Re-measured 2026-10-05 at the PET integration: 24 = those 11 + 13, the distinct (path, sha256) pairs of the
+#: 17 PET comparison pairs reviewed above (several receipts pin the same file at the same digest). Enumerated, not
+#: inferred: no other binding is excluded, and every one of the 13 names an immutable revision of a PET comparison
+#: file that has since moved on -- the case this narrowing exists for.
+REVIEWED_NARROWING_COST = 24
 
 
 def _live_receipts(m, root):

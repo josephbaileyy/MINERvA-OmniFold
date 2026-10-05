@@ -1,0 +1,125 @@
+{
+ "schema": "pet-improvement-confirm-population-target/1",
+ "pool": "S",
+ "pool_guard": {
+  "pool": "S",
+  "sealed": false
+ },
+ "pools": {
+  "pools_npz": "/pscratch/sd/j/josephrb/pet-improvement-20260922/pools/pools.npz",
+  "pools_npz_sha256": "3d8faeb1535da2c01bfe6e5e95775ed9349c85a0028e912113dde1cbca720924",
+  "manifest": "/pscratch/sd/j/josephrb/pet-improvement-20260922/checkouts/3a86a98e/nd-unfolding/pet/improvement_campaign/pools/POOL_MANIFEST.json",
+  "manifest_commit": "295572eb57c5c6fe40e4bd3fb50d8634045d5159",
+  "counts": {
+   "P": 3773400,
+   "F": 15083686,
+   "S": 18861069,
+   "T": 8018001,
+   "R": 1414846
+  }
+ },
+ "pool_rows_sha256": "b96aba3b650a5f962b5416540a40912204b8faa13fdc35c6e91f425cb3410f37",
+ "n_rows": 18861069,
+ "n_rows_nonfinite_eavail_dropped": 0,
+ "distortion": "dev",
+ "distortion_record": {
+  "name": "dev",
+  "form": "exp(A*clip((E-p50)/IQR, -Z, +Z)) / mean over the pseudodata's truth-passing rows",
+  "amplitude": 0.35,
+  "clip_z": 3.0,
+  "p50": 1.4653696417808533,
+  "iqr": 2.6336711198091507,
+  "historical_pre_normalization_mean": 1.1561864049708446,
+  "sources": {
+   "frozen_design": "nd-unfolding/pet/configuration_comparison/frozen_design.py:ENDPOINT",
+   "frozen_design_sha256": "aa9fa4ac3732fe5600b9f860a8d2d9d2e3e8af65ae3f2cc44081fb627657218d",
+   "tilt_spec": "nd-unfolding/pet/improvement_campaign/phase_b/scalar/results/populations.json:tilt_spec_half_A",
+   "tilt_spec_sha256": "98f5ec2d04bcd53e3bf094349aeeb76cb293b504e4a82c34830de16778944d2e"
+  }
+ },
+ "distortion_hash": "ae29d8b444e84ffb67747db56e8b1ee53d953f52353b846b8df6682d29ee0f5f",
+ "raw_weight_mean": 1.1553775838993845,
+ "edges": [
+  0.0,
+  0.1,
+  0.2,
+  0.4,
+  0.8,
+  1.5,
+  3.0,
+  100.0
+ ],
+ "targets": {
+  "aggregate": [
+   644613.0504565483,
+   607200.7385255436,
+   1234367.6553080142,
+   1928857.2063141037,
+   2317127.374582271,
+   3713185.550767882,
+   7977911.124955326
+  ],
+  "undistorted_aggregate": [
+   779056.8863549985,
+   723074.1020857883,
+   1441597.2451134261,
+   2167525.624385564,
+   2424861.937585869,
+   3361046.6672733705,
+   4593120.523931239
+  ],
+  "regions": {
+   "low_acceptance": [
+    73748.45866306036,
+    36982.56903484925,
+    97519.597713502,
+    243471.70928563815,
+    514579.6559078575,
+    1392523.1735727778,
+    4127608.1726602614
+   ],
+   "poor": [
+    19839.077696586777,
+    13761.335563047709,
+    40391.20950750339,
+    95732.7793827988,
+    164209.07292125383,
+    354928.07967238885,
+    585999.2915596757
+   ],
+   "moderate": [
+    49198.395290434564,
+    41756.20723629756,
+    112132.98199240166,
+    238806.69622226438,
+    381033.42336973717,
+    696511.5537308699,
+    1084166.1628681286
+   ],
+   "good": [
+    501827.11880646634,
+    514700.62669134967,
+    984323.8660946076,
+    1350846.0214234004,
+    1257305.2223834298,
+    1269222.743791839,
+    2180137.49786726
+   ]
+  }
+ },
+ "members_read": [
+  "truth_scalars",
+  "w_truth",
+  "pass_truth"
+ ],
+ "populations_sha256": "b2b55791a25523ef510a099cbbd0defcf3157ab59af2580c219fe088ccb96da1",
+ "region_counts": {
+  "low_acceptance": 5956870,
+  "poor": 1311213,
+  "moderate": 2664944,
+  "good": 8928042,
+  "outside_the_reporting_grid": 0
+ },
+ "scope": "simulation only; PET is diagnostic method development",
+ "seconds": 23.248593463999896
+}

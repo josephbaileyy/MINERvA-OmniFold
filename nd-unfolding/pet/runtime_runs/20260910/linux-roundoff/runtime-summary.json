@@ -1,0 +1,82 @@
+{
+  "activation_grid_max_absolute_errors": {
+    "keras_tensorflow": 2.7162232951738474e-07,
+    "numpy": 5.884407616729703e-08
+  },
+  "kind": "SYNTHETIC_RUNTIME_ONLY",
+  "linux_resource_limits_enforced": true,
+  "mapping": "PASS",
+  "numerical_checks_first_chunk": [
+    {
+      "family": "photons",
+      "features_equal": true,
+      "features_sha256": "01c644186999c65034f280134d60099ee0c85bb4a2b7b1537f5733889d8d02c3",
+      "max_pool_absolute_error": {
+        "keras": 1.1606098675454035e-06,
+        "numpy": 1.1606098675454035e-06
+      },
+      "max_pool_budget": 9.613708339657951e-05,
+      "max_pool_error_fraction": {
+        "keras": 0.13669964301585055,
+        "numpy": 0.05005301153707168
+      },
+      "max_token_error_fraction": {
+        "keras": 0.14404801547522914,
+        "numpy": 0.05303640298830674
+      },
+      "weights_equal": true,
+      "weights_sha256": "58398669d76c78e518dcc5103dde03ab6b668c615d434cd5c0d76f43bef34c80"
+    },
+    {
+      "family": "blobs",
+      "features_equal": true,
+      "features_sha256": "89c0e1e8e6741b5a8f39332938099322f1a0f3aa05a9b10c70a3f3682ebe8483",
+      "max_pool_absolute_error": {
+        "keras": 0.0,
+        "numpy": 0.0
+      },
+      "max_pool_budget": 2.238418845941883e-06,
+      "max_pool_error_fraction": {
+        "keras": 0.0,
+        "numpy": 0.0
+      },
+      "max_token_error_fraction": {
+        "keras": 0.0,
+        "numpy": 0.0
+      },
+      "weights_equal": true,
+      "weights_sha256": "efe4a94aac15afd2bbcfef5eb993e955fc872ffcc811e3fe65b939155a627aca"
+    },
+    {
+      "family": "prongs",
+      "features_equal": true,
+      "features_sha256": "1924de08fc14053723cc90c1dac6d4de19fcb01aaf8f7c0818e256e4291ba54d",
+      "max_pool_absolute_error": {
+        "keras": 2.319622118829301e-06,
+        "numpy": 2.4239302471862345e-06
+      },
+      "max_pool_budget": 0.0006516062176223923,
+      "max_pool_error_fraction": {
+        "keras": 0.02597265732036954,
+        "numpy": 0.021007289467209922
+      },
+      "max_token_error_fraction": {
+        "keras": 0.162055654915591,
+        "numpy": 0.04561819960255421
+      },
+      "weights_equal": true,
+      "weights_sha256": "89febb5c984332fcb79d932341f717ac602edcdf08ed97ed31b725854d1032ba"
+    }
+  ],
+  "peak_observed_rss_bytes": 993112064,
+  "peak_observed_threads": 4,
+  "source_execution_authorized": false,
+  "terminal": "COMPLETE",
+  "versions": {
+    "ROOT": "6.28/12",
+    "keras": "3.15.1",
+    "numpy": "1.26.4",
+    "scipy": "1.16.3",
+    "tensorflow": "2.16.2"
+  }
+}

@@ -1,0 +1,951 @@
+{
+  "scope": "decomposed cost and peak device memory for the PORTED arm and our incumbent; synthetic inputs at his widths; no learning claim",
+  "commits": [
+    "12fdc1fcb8841227a5bb94043c629f2a3c764952"
+  ],
+  "variant_paths": {
+    "baseline": {
+      "materialise_pair_mask": true,
+      "tile_centre": true,
+      "flat_projection": false
+    },
+    "broadcast": {
+      "materialise_pair_mask": false,
+      "tile_centre": false,
+      "flat_projection": false
+    },
+    "optimised": {
+      "materialise_pair_mask": false,
+      "tile_centre": false,
+      "flat_projection": true
+    },
+    "optimised_xla": {
+      "materialise_pair_mask": false,
+      "tile_centre": false,
+      "flat_projection": true
+    },
+    "broadcast_xla": {
+      "materialise_pair_mask": false,
+      "tile_centre": false,
+      "flat_projection": false
+    },
+    "accum4": {
+      "materialise_pair_mask": false,
+      "tile_centre": false,
+      "flat_projection": true
+    }
+  },
+  "label_warning": "a variant NAME is only meaningful with the commit beside it; `variant_means` on each cell records the switches that were actually set",
+  "cells": {
+    "optimised_xla|12|512|train": {
+      "variant": "optimised_xla",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "train",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "precision_policy_observed": {
+        "tf32_enabled": false,
+        "determinism_enabled": true,
+        "mixed_precision_policy": "float32",
+        "floatx": "float32"
+      },
+      "precision_policy_enforced": true,
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "12fdc1fcb8841227a5bb94043c629f2a3c764952",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": true,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.01081938600691501,
+          "step_seconds_min": 0.010725138999987394,
+          "step_seconds_max": 0.05101645799004473,
+          "coefficient_of_variation": 0.7012445082890504,
+          "batch": 512,
+          "seconds_per_example": 2.113161329475588e-05,
+          "microseconds_per_example": 21.13161329475588,
+          "device_memory": {
+            "peak_bytes": 280781568,
+            "current_bytes": 12345856
+          },
+          "value": 1.7216739654541016,
+          "value_finite": true
+        },
+        "forward_and_backward": {
+          "repeats": 20,
+          "step_seconds_median": 0.07919534950633533,
+          "step_seconds_min": 0.07903419699869119,
+          "step_seconds_max": 0.09579681500326842,
+          "coefficient_of_variation": 0.04642088245146604,
+          "batch": 512,
+          "seconds_per_example": 0.0001546784170045612,
+          "microseconds_per_example": 154.6784170045612,
+          "device_memory": {
+            "peak_bytes": 2236654848,
+            "current_bytes": 12345856
+          },
+          "value": 0.0717121958732605,
+          "value_finite": true
+        },
+        "folded_backward_control": {
+          "repeats": 20,
+          "step_seconds_median": 0.0793776664941106,
+          "step_seconds_min": 0.07933761397725902,
+          "step_seconds_max": 0.09601773202302866,
+          "coefficient_of_variation": 0.04633460866960149,
+          "batch": 512,
+          "seconds_per_example": 0.00015503450487130976,
+          "microseconds_per_example": 155.03450487130976,
+          "device_memory": {
+            "peak_bytes": 2236353280,
+            "current_bytes": 12345856
+          },
+          "value": 0.6932768225669861,
+          "value_finite": true
+        },
+        "reduction_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.0002710885019041598,
+          "step_seconds_min": 0.00025117400218732655,
+          "step_seconds_max": 0.00030584001797251403,
+          "coefficient_of_variation": 0.06050042530966117,
+          "batch": 512,
+          "seconds_per_example": 5.294697302815621e-07,
+          "microseconds_per_example": 0.5294697302815621,
+          "device_memory": {
+            "peak_bytes": 12346112,
+            "current_bytes": 12345856
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "sync_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.0002685990184545517,
+          "step_seconds_min": 0.0002642099861986935,
+          "step_seconds_max": 0.0002815829939208925,
+          "coefficient_of_variation": 0.01825312834263211,
+          "batch": 512,
+          "seconds_per_example": 5.246074579190463e-07,
+          "microseconds_per_example": 0.5246074579190463,
+          "device_memory": {
+            "peak_bytes": 12346112,
+            "current_bytes": 12345856
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "full_step": {
+          "repeats": 20,
+          "step_seconds_median": 0.08288105900282972,
+          "step_seconds_min": 0.08284502400783822,
+          "step_seconds_max": 0.09821636401466094,
+          "coefficient_of_variation": 0.04098332161075469,
+          "batch": 512,
+          "seconds_per_example": 0.0001618770683649018,
+          "microseconds_per_example": 161.8770683649018,
+          "device_memory": {
+            "peak_bytes": 2275109376,
+            "current_bytes": 35695104
+          },
+          "value": 0.6816064715385437,
+          "value_finite": true
+        },
+        "folding_control": {
+          "folded_over_forward": 7.336614706544145,
+          "real_over_folded": 0.99770317022624,
+          "reads": "folded_over_forward near 1 means `0.0 * gradient` still prunes the backward pass, which is what makes the real section trustworthy; if it rises toward real_over_folded, this decomposition is wrong"
+        },
+        "apply_by_difference": {
+          "step_seconds_median": 0.003956797998398542,
+          "note": "full step minus forward+backward, with the gradient-reduction probe added back because that reduction is in the backward section and not in the full step; a difference of medians, not an independent measurement"
+        }
+      },
+      "trainable_parameters": 2758702,
+      "optimizer_variables": 176
+    },
+    "optimised_xla|33|2048|forward": {
+      "variant": "optimised_xla",
+      "tokens": 33,
+      "batch": 2048,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "precision_policy_observed": {
+        "tf32_enabled": false,
+        "determinism_enabled": true,
+        "mixed_precision_policy": "float32",
+        "floatx": "float32"
+      },
+      "precision_policy_enforced": true,
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "12fdc1fcb8841227a5bb94043c629f2a3c764952",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": true,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.10178378601267468,
+          "step_seconds_min": 0.10174800199456513,
+          "step_seconds_max": 0.4237943180196453,
+          "coefficient_of_variation": 0.6107843116114836,
+          "batch": 2048,
+          "seconds_per_example": 4.969911426400131e-05,
+          "microseconds_per_example": 49.69911426400131,
+          "device_memory": {
+            "peak_bytes": 2162330880,
+            "current_bytes": 14846976
+          },
+          "value": 11.942024230957031,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 2758702
+    },
+    "optimised_xla|33|2048|train": {
+      "variant": "optimised_xla",
+      "tokens": 33,
+      "batch": 2048,
+      "mode": "train",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "precision_policy_observed": {
+        "tf32_enabled": false,
+        "determinism_enabled": true,
+        "mixed_precision_policy": "float32",
+        "floatx": "float32"
+      },
+      "precision_policy_enforced": true,
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "12fdc1fcb8841227a5bb94043c629f2a3c764952",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": true
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": true,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.1019050354952924,
+          "step_seconds_min": 0.10175966497627087,
+          "step_seconds_max": 0.42531043698545545,
+          "coefficient_of_variation": 0.6122842554960295,
+          "batch": 2048,
+          "seconds_per_example": 4.975831811293574e-05,
+          "microseconds_per_example": 49.75831811293574,
+          "device_memory": {
+            "peak_bytes": 2162334464,
+            "current_bytes": 14850560
+          },
+          "value": -7.192910194396973,
+          "value_finite": true
+        },
+        "forward_and_backward": {
+          "repeats": 20,
+          "step_seconds_median": 0.8242669850005768,
+          "step_seconds_min": 0.8240733260172419,
+          "step_seconds_max": 0.9362661940103862,
+          "coefficient_of_variation": 0.03007425546920083,
+          "batch": 2048,
+          "seconds_per_example": 0.0004024741137698129,
+          "microseconds_per_example": 402.4741137698129,
+          "device_memory": {
+            "peak_bytes": 23213787136,
+            "current_bytes": 14850560
+          },
+          "value": 0.0017815101891756058,
+          "value_finite": true
+        },
+        "folded_backward_control": {
+          "repeats": 20,
+          "step_seconds_median": 0.8232881390140392,
+          "step_seconds_min": 0.8231278700113762,
+          "step_seconds_max": 0.9352403839875478,
+          "coefficient_of_variation": 0.030171896342079018,
+          "batch": 2048,
+          "seconds_per_example": 0.0004019961616279488,
+          "microseconds_per_example": 401.9961616279488,
+          "device_memory": {
+            "peak_bytes": 23213790208,
+            "current_bytes": 14850560
+          },
+          "value": 0.6932092905044556,
+          "value_finite": true
+        },
+        "reduction_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.0002629980008350685,
+          "step_seconds_min": 0.0002573769888840616,
+          "step_seconds_max": 0.0003161609929520637,
+          "coefficient_of_variation": 0.06465049074227863,
+          "batch": 2048,
+          "seconds_per_example": 1.284169925952483e-07,
+          "microseconds_per_example": 0.1284169925952483,
+          "device_memory": {
+            "peak_bytes": 14850816,
+            "current_bytes": 14850560
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "sync_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.00027158448938280344,
+          "step_seconds_min": 0.00026693500694818795,
+          "step_seconds_max": 0.0003005000180564821,
+          "coefficient_of_variation": 0.02885908645958048,
+          "batch": 2048,
+          "seconds_per_example": 1.32609613956447e-07,
+          "microseconds_per_example": 0.132609613956447,
+          "device_memory": {
+            "peak_bytes": 14850816,
+            "current_bytes": 14850560
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "full_step": {
+          "repeats": 20,
+          "step_seconds_median": 0.8408894864987815,
+          "step_seconds_min": 0.8408377220039256,
+          "step_seconds_max": 0.9591085360152647,
+          "coefficient_of_variation": 0.031200350335033093,
+          "batch": 2048,
+          "seconds_per_example": 0.00041059056957948314,
+          "microseconds_per_example": 410.59056957948314,
+          "device_memory": {
+            "peak_bytes": 23253545472,
+            "current_bytes": 37800448
+          },
+          "value": 0.6901987195014954,
+          "value_finite": true
+        },
+        "folding_control": {
+          "folded_over_forward": 8.07897406651776,
+          "real_over_folded": 1.00118894702857,
+          "reads": "folded_over_forward near 1 means `0.0 * gradient` still prunes the backward pass, which is what makes the real section trustworthy; if it rises toward real_over_folded, this decomposition is wrong"
+        },
+        "apply_by_difference": {
+          "step_seconds_median": 0.016885499499039724,
+          "note": "full step minus forward+backward, with the gradient-reduction probe added back because that reduction is in the backward section and not in the full step; a difference of medians, not an independent measurement"
+        }
+      },
+      "trainable_parameters": 2758702,
+      "optimizer_variables": 176
+    },
+    "broadcast_xla|12|512|train": {
+      "variant": "broadcast_xla",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "train",
+      "precision": "float32",
+      "arm": "theirs_complete",
+      "precision_policy_observed": {
+        "tf32_enabled": false,
+        "determinism_enabled": true,
+        "mixed_precision_policy": "float32",
+        "floatx": "float32"
+      },
+      "precision_policy_enforced": true,
+      "configuration": {
+        "input_dim": 4,
+        "pid": true,
+        "pid_dim": 8,
+        "add_info": true,
+        "add_dim": 5,
+        "conditional": true,
+        "cond_dim": 16,
+        "num_coord": 2,
+        "K": 10,
+        "num_classes": 1
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "keras.api._v2.keras",
+        "tf_keras_root": "keras",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "12fdc1fcb8841227a5bb94043c629f2a3c764952",
+      "variant_means": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": false
+      },
+      "paths": {
+        "materialise_pair_mask": false,
+        "tile_centre": false,
+        "flat_projection": false
+      },
+      "layers_switched": {
+        "materialise_pair_mask": 1,
+        "tile_centre": 1,
+        "flat_projection": 47
+      },
+      "jit_compile": true,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.01083224848844111,
+          "step_seconds_min": 0.010737700999015942,
+          "step_seconds_max": 0.052303053002106026,
+          "coefficient_of_variation": 0.7189376901044253,
+          "batch": 512,
+          "seconds_per_example": 2.1156735328986542e-05,
+          "microseconds_per_example": 21.156735328986542,
+          "device_memory": {
+            "peak_bytes": 280781568,
+            "current_bytes": 12345856
+          },
+          "value": -1.8507336378097534,
+          "value_finite": true
+        },
+        "forward_and_backward": {
+          "repeats": 20,
+          "step_seconds_median": 0.0792052639881149,
+          "step_seconds_min": 0.07917579700006172,
+          "step_seconds_max": 0.0959154759766534,
+          "coefficient_of_variation": 0.04666799574290388,
+          "batch": 512,
+          "seconds_per_example": 0.0001546977812267869,
+          "microseconds_per_example": 154.6977812267869,
+          "device_memory": {
+            "peak_bytes": 2236719360,
+            "current_bytes": 12345856
+          },
+          "value": 0.014718975871801376,
+          "value_finite": true
+        },
+        "folded_backward_control": {
+          "repeats": 20,
+          "step_seconds_median": 0.07853972348675597,
+          "step_seconds_min": 0.07852604199433699,
+          "step_seconds_max": 0.09513001900631934,
+          "coefficient_of_variation": 0.04673571437042131,
+          "batch": 512,
+          "seconds_per_example": 0.00015339789743507026,
+          "microseconds_per_example": 153.39789743507026,
+          "device_memory": {
+            "peak_bytes": 2236678912,
+            "current_bytes": 12345856
+          },
+          "value": 0.6929453611373901,
+          "value_finite": true
+        },
+        "reduction_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.0002680274919839576,
+          "step_seconds_min": 0.00026186599279753864,
+          "step_seconds_max": 0.00030601100297644734,
+          "coefficient_of_variation": 0.04820207326526863,
+          "batch": 512,
+          "seconds_per_example": 5.234911952811672e-07,
+          "microseconds_per_example": 0.5234911952811672,
+          "device_memory": {
+            "peak_bytes": 12346112,
+            "current_bytes": 12345856
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "sync_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.0002759074850473553,
+          "step_seconds_min": 0.00026313800481148064,
+          "step_seconds_max": 0.00029686299967579544,
+          "coefficient_of_variation": 0.022176156847842524,
+          "batch": 512,
+          "seconds_per_example": 5.388818067331158e-07,
+          "microseconds_per_example": 0.5388818067331158,
+          "device_memory": {
+            "peak_bytes": 12346112,
+            "current_bytes": 12345856
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "full_step": {
+          "repeats": 20,
+          "step_seconds_median": 0.12228008850070182,
+          "step_seconds_min": 0.12206819900893606,
+          "step_seconds_max": 0.16887475101975724,
+          "coefficient_of_variation": 0.08363742691988388,
+          "batch": 512,
+          "seconds_per_example": 0.00023882829785293325,
+          "microseconds_per_example": 238.82829785293325,
+          "device_memory": {
+            "peak_bytes": 2273512448,
+            "current_bytes": 35695104
+          },
+          "value": 0.6808385848999023,
+          "value_finite": true
+        },
+        "folding_control": {
+          "folded_over_forward": 7.2505466958742915,
+          "real_over_folded": 1.0084739348677634,
+          "reads": "folded_over_forward near 1 means `0.0 * gradient` still prunes the backward pass, which is what makes the real section trustworthy; if it rises toward real_over_folded, this decomposition is wrong"
+        },
+        "apply_by_difference": {
+          "step_seconds_median": 0.043342852004570886,
+          "note": "full step minus forward+backward, with the gradient-reduction probe added back because that reduction is in the backward section and not in the full step; a difference of medians, not an independent measurement"
+        }
+      },
+      "trainable_parameters": 2758702,
+      "optimizer_variables": 176
+    },
+    "ours_incumbent|12|512|forward": {
+      "variant": "ours_incumbent",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "forward",
+      "precision": "float32",
+      "arm": "ours_incumbent",
+      "precision_policy_observed": {
+        "tf32_enabled": false,
+        "determinism_enabled": true,
+        "mixed_precision_policy": "float32",
+        "floatx": "float32"
+      },
+      "precision_policy_enforced": true,
+      "configuration": {
+        "architecture": "vendored omnifold.net.PET",
+        "step": "step2_gen",
+        "K": 3,
+        "heads": 2,
+        "transformers": 2,
+        "projection_dim": 32
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "tensorflow.keras",
+        "tf_keras_root": "tensorflow",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "12fdc1fcb8841227a5bb94043c629f2a3c764952",
+      "variant_means": "the vendored production PET",
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.008007662007003091,
+          "step_seconds_min": 0.007944640994537622,
+          "step_seconds_max": 0.008099028986180201,
+          "coefficient_of_variation": 0.005241193477911031,
+          "batch": 512,
+          "seconds_per_example": 1.5639964857427913e-05,
+          "microseconds_per_example": 15.639964857427913,
+          "device_memory": {
+            "peak_bytes": 17836800,
+            "current_bytes": 418560
+          },
+          "value": -14.602692604064941,
+          "value_finite": true
+        }
+      },
+      "trainable_parameters": 46913
+    },
+    "ours_incumbent|12|512|train": {
+      "variant": "ours_incumbent",
+      "tokens": 12,
+      "batch": 512,
+      "mode": "train",
+      "precision": "float32",
+      "arm": "ours_incumbent",
+      "precision_policy_observed": {
+        "tf32_enabled": false,
+        "determinism_enabled": true,
+        "mixed_precision_policy": "float32",
+        "floatx": "float32"
+      },
+      "precision_policy_enforced": true,
+      "configuration": {
+        "architecture": "vendored omnifold.net.PET",
+        "step": "step2_gen",
+        "K": 3,
+        "heads": 2,
+        "transformers": 2,
+        "projection_dim": 32
+      },
+      "keras_backend_selection": {
+        "tf_keras_shim_available": false,
+        "tf_use_legacy_keras": null,
+        "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+      },
+      "versions": {
+        "tensorflow": "2.15.0",
+        "tf_keras_module": "tensorflow.keras",
+        "tf_keras_root": "tensorflow",
+        "tf_keras_version": "2.15.0",
+        "standalone_keras": "2.15.0"
+      },
+      "framework": "tensorflow 2.15.0",
+      "gpu": [
+        "/device:GPU:0"
+      ],
+      "warmup": 5,
+      "repeats": 20,
+      "commit": "12fdc1fcb8841227a5bb94043c629f2a3c764952",
+      "variant_means": "the vendored production PET",
+      "jit_compile": false,
+      "sections": {
+        "forward": {
+          "repeats": 20,
+          "step_seconds_median": 0.00801892350136768,
+          "step_seconds_min": 0.007821222010534257,
+          "step_seconds_max": 0.008322911016875878,
+          "coefficient_of_variation": 0.018371286799671416,
+          "batch": 512,
+          "seconds_per_example": 1.566195996360875e-05,
+          "microseconds_per_example": 15.661959963608751,
+          "device_memory": {
+            "peak_bytes": 18064128,
+            "current_bytes": 422912
+          },
+          "value": -4.79791784286499,
+          "value_finite": true
+        },
+        "forward_and_backward": {
+          "repeats": 20,
+          "step_seconds_median": 0.012771886991686188,
+          "step_seconds_min": 0.012420092010870576,
+          "step_seconds_max": 0.013736193999648094,
+          "coefficient_of_variation": 0.02719480433834601,
+          "batch": 512,
+          "seconds_per_example": 2.4945091780637085e-05,
+          "microseconds_per_example": 24.945091780637085,
+          "device_memory": {
+            "peak_bytes": 116778752,
+            "current_bytes": 440832
+          },
+          "value": 0.5485081672668457,
+          "value_finite": true
+        },
+        "folded_backward_control": {
+          "repeats": 20,
+          "step_seconds_median": 0.008021213492611423,
+          "step_seconds_min": 0.0078052910102996975,
+          "step_seconds_max": 0.008481577009661123,
+          "coefficient_of_variation": 0.02077461291150543,
+          "batch": 512,
+          "seconds_per_example": 1.5666432602756686e-05,
+          "microseconds_per_example": 15.666432602756686,
+          "device_memory": {
+            "peak_bytes": 17897984,
+            "current_bytes": 453120
+          },
+          "value": 0.6936340928077698,
+          "value_finite": true
+        },
+        "reduction_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.00022823050676379353,
+          "step_seconds_min": 0.00021313101751729846,
+          "step_seconds_max": 0.00024754798505455256,
+          "coefficient_of_variation": 0.05527913741097449,
+          "batch": 512,
+          "seconds_per_example": 4.4576270852303423e-07,
+          "microseconds_per_example": 0.44576270852303423,
+          "device_memory": {
+            "peak_bytes": 453120,
+            "current_bytes": 453120
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "sync_probe": {
+          "repeats": 20,
+          "step_seconds_median": 0.00027395400684326887,
+          "step_seconds_min": 0.00026761600747704506,
+          "step_seconds_max": 0.00030598099692724645,
+          "coefficient_of_variation": 0.030527350961009527,
+          "batch": 512,
+          "seconds_per_example": 5.350664196157595e-07,
+          "microseconds_per_example": 0.5350664196157595,
+          "device_memory": {
+            "peak_bytes": 453632,
+            "current_bytes": 453376
+          },
+          "value": 0.0,
+          "value_finite": true
+        },
+        "full_step": {
+          "repeats": 20,
+          "step_seconds_median": 0.017900764505611733,
+          "step_seconds_min": 0.017601647006813437,
+          "step_seconds_max": 0.019904714019503444,
+          "coefficient_of_variation": 0.02623359611415648,
+          "batch": 512,
+          "seconds_per_example": 3.4962430675022915e-05,
+          "microseconds_per_example": 34.962430675022915,
+          "device_memory": {
+            "peak_bytes": 115943680,
+            "current_bytes": 864768
+          },
+          "value": 0.6898098587989807,
+          "value_finite": true
+        },
+        "folding_control": {
+          "folded_over_forward": 1.000285573399391,
+          "real_over_folded": 1.5922636897086395,
+          "reads": "folded_over_forward near 1 means `0.0 * gradient` still prunes the backward pass, which is what makes the real section trustworthy; if it rises toward real_over_folded, this decomposition is wrong"
+        },
+        "apply_by_difference": {
+          "step_seconds_median": 0.0053571080206893384,
+          "note": "full step minus forward+backward, with the gradient-reduction probe added back because that reduction is in the backward section and not in the full step; a difference of medians, not an independent measurement"
+        }
+      },
+      "trainable_parameters": 46913,
+      "optimizer_variables": 94
+    }
+  },
+  "missing_cells": [
+    "baseline|12|512|forward",
+    "baseline|12|512|train",
+    "baseline|12|2048|forward",
+    "baseline|12|2048|train",
+    "baseline|33|512|forward",
+    "baseline|33|512|train",
+    "baseline|33|2048|forward",
+    "baseline|33|2048|train",
+    "broadcast|12|512|forward",
+    "broadcast|12|512|train",
+    "broadcast|12|2048|forward",
+    "broadcast|12|2048|train",
+    "broadcast|33|512|forward",
+    "broadcast|33|512|train",
+    "broadcast|33|2048|forward",
+    "broadcast|33|2048|train",
+    "optimised|12|512|forward",
+    "optimised|12|512|train",
+    "optimised|12|2048|forward",
+    "optimised|12|2048|train",
+    "optimised|33|512|forward",
+    "optimised|33|512|train",
+    "optimised|33|2048|forward",
+    "optimised|33|2048|train",
+    "optimised_xla|12|512|forward",
+    "optimised_xla|12|2048|forward",
+    "optimised_xla|12|2048|train",
+    "optimised_xla|33|512|forward",
+    "optimised_xla|33|512|train",
+    "broadcast_xla|12|512|forward",
+    "broadcast_xla|12|2048|forward",
+    "broadcast_xla|12|2048|train",
+    "broadcast_xla|33|512|forward",
+    "broadcast_xla|33|512|train",
+    "broadcast_xla|33|2048|forward",
+    "broadcast_xla|33|2048|train",
+    "ours_incumbent|12|2048|forward",
+    "ours_incumbent|12|2048|train",
+    "ours_incumbent|33|512|forward",
+    "ours_incumbent|33|512|train",
+    "ours_incumbent|33|2048|forward",
+    "ours_incumbent|33|2048|train",
+    "accum4|12|2048|train",
+    "accum4|33|2048|train"
+  ],
+  "missing_means": "the cell's process did not write a receipt. Under a normal run that is itself a measurement, because a TensorFlow OOM can kill the interpreter before it writes -- but read `run_note` first, because a run that was stopped early has missing cells that were never attempted",
+  "run_note": null,
+  "expected_cells": [
+    "baseline|12|512|forward",
+    "baseline|12|512|train",
+    "baseline|12|2048|forward",
+    "baseline|12|2048|train",
+    "baseline|33|512|forward",
+    "baseline|33|512|train",
+    "baseline|33|2048|forward",
+    "baseline|33|2048|train",
+    "broadcast|12|512|forward",
+    "broadcast|12|512|train",
+    "broadcast|12|2048|forward",
+    "broadcast|12|2048|train",
+    "broadcast|33|512|forward",
+    "broadcast|33|512|train",
+    "broadcast|33|2048|forward",
+    "broadcast|33|2048|train",
+    "optimised|12|512|forward",
+    "optimised|12|512|train",
+    "optimised|12|2048|forward",
+    "optimised|12|2048|train",
+    "optimised|33|512|forward",
+    "optimised|33|512|train",
+    "optimised|33|2048|forward",
+    "optimised|33|2048|train",
+    "optimised_xla|12|512|forward",
+    "optimised_xla|12|512|train",
+    "optimised_xla|12|2048|forward",
+    "optimised_xla|12|2048|train",
+    "optimised_xla|33|512|forward",
+    "optimised_xla|33|512|train",
+    "optimised_xla|33|2048|forward",
+    "optimised_xla|33|2048|train",
+    "broadcast_xla|12|512|forward",
+    "broadcast_xla|12|512|train",
+    "broadcast_xla|12|2048|forward",
+    "broadcast_xla|12|2048|train",
+    "broadcast_xla|33|512|forward",
+    "broadcast_xla|33|512|train",
+    "broadcast_xla|33|2048|forward",
+    "broadcast_xla|33|2048|train",
+    "ours_incumbent|12|512|forward",
+    "ours_incumbent|12|512|train",
+    "ours_incumbent|12|2048|forward",
+    "ours_incumbent|12|2048|train",
+    "ours_incumbent|33|512|forward",
+    "ours_incumbent|33|512|train",
+    "ours_incumbent|33|2048|forward",
+    "ours_incumbent|33|2048|train",
+    "accum4|12|2048|train",
+    "accum4|33|2048|train"
+  ]
+}

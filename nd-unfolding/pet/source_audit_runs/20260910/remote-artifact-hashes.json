@@ -1,0 +1,34 @@
+{
+  "data/metadata.json": {
+    "bytes": 18590,
+    "sha256": "f3d43367a7382c74259ca54c803cf52b3a1360d6518887750814d6f67f9dbf53"
+  },
+  "data/observations/0000.json": {
+    "bytes": 40939,
+    "sha256": "469e5fdfacd7468016207b8cd4717d77675557146e343a68c8143e50b2438017"
+  },
+  "data/raw/0000.json": {
+    "bytes": 78080,
+    "sha256": "b22a4f79710fef355e7be2dacff120282ba312a7b5686bc644a7eb7dfdd992bb"
+  },
+  "interrupted.json": {
+    "bytes": 10600,
+    "sha256": "bebe850a73e8fc92d4d35eafee6492aa5f2decb81c1b567c27fde219af94858e"
+  },
+  "mc/metadata.json": {
+    "bytes": 18789,
+    "sha256": "7ed3bfbf2c5fcb1bd3d67186051544d7ea07f3b46932399a189620c192d02315"
+  },
+  "progress.jsonl": {
+    "bytes": 121,
+    "sha256": "37b2f0f91e6838a8f03aefeefbc72de641f794149ea9467bef836f468855297c"
+  },
+  "stderr.log": {
+    "bytes": 2156,
+    "sha256": "f3bd656d916d8eab1212716974802ebf47066ce6496034f1723e3a43c7885fc8"
+  },
+  "stdout.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

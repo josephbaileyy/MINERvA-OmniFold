@@ -1,0 +1,11 @@
+{
+  "receipt_path": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12_RECEIPT.json",
+  "receipt_sha256": "d466a0c18deaafa2ae645002c8dbc9b9879476adb45a40a85c0bae9e0129d25e",
+  "inventory_rows": {
+    "background": 564591,
+    "data": 4116128,
+    "signal": 49152885
+  },
+  "contract_sha256": "64f5359cd428c604c057e797819ebd58210e51ab3c896fc59d5e42f1d037f9e4",
+  "dumper_sha256": "c8fa219f0ca2537bddc8ad824a0d225c3b67cd76cab1cab1bc391f5bdd7cac5d"
+}

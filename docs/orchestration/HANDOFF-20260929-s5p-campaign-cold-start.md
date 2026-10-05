@@ -340,3 +340,16 @@ this layout, and tell that session before editing. Labels were checked at `f6a1c
 - **Style:** the prose was rewritten for brevity; match it.
 - **Paper:** the paper and note PDFs are separate builds (`paper_body.tex`), so a note-side change does not reach the
   paper by itself.
+
+## Addendum 2026-10-05: MnvTune and CV final; transition r6 moved NuWro to throttle 14
+
+This addendum is dated and does not edit the sections above.
+- **Finals:** MnvTune_v1 B 1365 (08:15:22Z) and GENIE_2_12_10_CV B 1366 (08:23:24Z), both `rule met for both tests`
+  (k = 0, upper 0.00438). Their runners logged `queue done`. Three of five finals exist (MEC, MnvTune, CV).
+- **NuWro's runner** is now PID 1100694, deploy `$NS/deploy/756e1d6c`, queue `prod/queues-r6/cal-NuWro_21_09.q`
+  (resumed at the `s5p_cal_nuwro_21_09_b6` wait line, `--throttle 14`), log `runs/queue-prod-r6-NuWro_21_09.log`,
+  STOP file `runs/STOP-prod-r6-NuWro_21_09`. Stopped/started 08:30:27Z/08:30:30Z, checked 08:30:41Z. The recompute lane
+  passed the pre-execution check (about 08:30Z) and will run the post-switch checks.
+- **Remaining runners:** GiBUU 1047841 (r3, throttle 2) and NuWro 1100694 (r6).
+- **Rollback:** `prod/queues-r6-rollback/cal-NuWro_21_09.q` (throttle 8) via `transition-r6/runner_r6.sh`.
+- **Next:** NuWro 16 only if GiBUU is final before NuWro's b8 submission, after telling the recompute lane first.

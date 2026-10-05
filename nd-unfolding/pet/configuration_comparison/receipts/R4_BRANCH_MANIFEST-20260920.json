@@ -1,0 +1,164 @@
+{
+  "authorized": "R4, Joseph 2026-09-20",
+  "typed_object_branches": [
+    "MasterAnaDev_BlobIs3D",
+    "MasterAnaDev_BlobNClusters",
+    "MasterAnaDev_BlobT",
+    "MasterAnaDev_BlobTPos",
+    "MasterAnaDev_BlobTotalE",
+    "MasterAnaDev_BlobX",
+    "MasterAnaDev_BlobY",
+    "MasterAnaDev_BlobZ",
+    "gamma1_dEdx",
+    "gamma1_direction",
+    "gamma1_time",
+    "gamma2_dEdx",
+    "gamma2_direction",
+    "gamma2_time",
+    "prong_dEdXMean",
+    "prong_part_E",
+    "prong_part_charge",
+    "prong_part_mass",
+    "prong_part_pid",
+    "prong_part_pos",
+    "prong_part_score"
+  ],
+  "typed_object_count": 21,
+  "global_source_branches": {
+    "muon_fuzz_energy": {
+      "via": "src/dataset/preprocessing.py:get_global_features",
+      "feeds": [
+        "global[0] = log(muon_fuzz_energy + 1e-5), negatives clipped to 0"
+      ]
+    },
+    "muon_iso_blobs_energy": {
+      "via": "src/dataset/preprocessing.py:get_global_features",
+      "feeds": [
+        "global[1] = log(muon_iso_blobs_energy + 1e-5), negatives clipped"
+      ]
+    },
+    "MasterAnaDev_hadron_recoil": {
+      "via": "src/dataset/preprocessing.py:get_global_features",
+      "feeds": [
+        "global[2] = log(E_recoil + 1e-5), negatives clipped"
+      ]
+    },
+    "part_response_total_recoil_passive_allNonMuonClusters_id": {
+      "via": "src/dataset/preprocessing.py:get_global_features",
+      "feeds": [
+        "global[3] = log(id/10000 + 1e-3)",
+        "global[5] = log((id + od)/10000 + 1e-3)"
+      ]
+    },
+    "part_response_total_recoil_passive_allNonMuonClusters_od": {
+      "via": "src/dataset/preprocessing.py:get_global_features",
+      "feeds": [
+        "global[4] = log(od/10000 + 1e-3)",
+        "global[5] = log((id + od)/10000 + 1e-3)"
+      ]
+    },
+    "improved_nmichel": {
+      "via": "src/dataset/preprocessing.py:get_global_features",
+      "feeds": [
+        "global[6] = N_michel, unscaled"
+      ]
+    },
+    "gamma1_E": {
+      "via": "src/dataset/preprocessing.py:get_photons",
+      "feeds": [
+        "global[8] = diphoton invariant mass when exactly 2 reco photons"
+      ]
+    },
+    "gamma1_px": {
+      "via": "get_photons",
+      "feeds": [
+        "global[8]"
+      ]
+    },
+    "gamma1_py": {
+      "via": "get_photons",
+      "feeds": [
+        "global[8]"
+      ]
+    },
+    "gamma1_pz": {
+      "via": "get_photons",
+      "feeds": [
+        "global[8]"
+      ]
+    },
+    "gamma2_E": {
+      "via": "get_photons",
+      "feeds": [
+        "global[8]"
+      ]
+    },
+    "gamma2_px": {
+      "via": "get_photons",
+      "feeds": [
+        "global[8]"
+      ]
+    },
+    "gamma2_py": {
+      "via": "get_photons",
+      "feeds": [
+        "global[8]"
+      ]
+    },
+    "gamma2_pz": {
+      "via": "get_photons",
+      "feeds": [
+        "global[8]"
+      ]
+    }
+  },
+  "global_source_count": 14,
+  "muon_count_source_branches": [
+    "MasterAnaDev_muon_E",
+    "MasterAnaDev_muon_Px",
+    "MasterAnaDev_muon_Py",
+    "MasterAnaDev_muon_Pz",
+    "muon_corrected_p",
+    "muon_phi",
+    "muon_theta",
+    "muon_thetaX",
+    "muon_thetaY",
+    "muon_trackVertexTime",
+    "truth_reco_has_muon"
+  ],
+  "global_columns": [
+    "log muon_fuzz_energy",
+    "log muon_iso_blobs_energy",
+    "log hadron_recoil",
+    "log passive_id",
+    "log passive_od",
+    "log passive_sum",
+    "improved_nmichel",
+    "muon_present_0_or_1",
+    "diphoton_invariant_mass",
+    "charged_pion_prong_count",
+    "log sum E pid=2 (blob)",
+    "log sum E pid=3 (prong 3)",
+    "log sum E pid=4 (prong 8)",
+    "log sum E pid=5 (prong 13)",
+    "log sum E pid=6 (agg blob)",
+    "log sum E pid=7 (agg prong)"
+  ],
+  "global_column_count": 16,
+  "energy_sum_pids": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "inventories": [
+    "mc_signal_reco",
+    "mc_background",
+    "data"
+  ],
+  "symmetry_requirement": "every branch in this manifest is read for EVERY inventory in `INVENTORIES`, or for none. Reading a global for signal and not for background would make the arms' inputs differ by inventory, and the difference would look like a physics effect",
+  "preservation_requirement": "selection, weights and event identity are carried through unchanged: the extraction adds columns to the existing row set and never re-selects. Row order is the inventory's, bound by the identity sidecar's order hash",
+  "derivation": "cond_dim = ol_num_cond (default 10) + e_sum_dim (6 if include_E_sum) = 16, from src/scripts/train.py:1081 and :871-874; the 10 is GLOBAL_COND_BASE_DIM at src/constants/dataset.py:5, decomposing as 7 from get_global_features and 3 from compute_extra_global_features"
+}

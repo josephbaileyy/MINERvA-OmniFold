@@ -1,0 +1,13 @@
+2026-09-23T20:41:26Z chain 58798408
+2026-09-23T20:41:27Z single pilot-CTL-P0 58798410
+2026-09-23T20:41:29Z single pilot-B-P0 58798412
+2026-09-23T20:41:32Z single pilot-C-P0 58798413
+2026-09-23T20:41:32Z single pilot-CTL-P1 58798414
+2026-09-23T20:41:32Z single pilot-B-P1 58798415
+2026-09-23T20:41:32Z single pilot-C-P1 58798416
+2026-09-23T20:41:32Z single pilot-CTL-P2 58798417
+2026-09-23T20:41:34Z single pilot-B-P2 58798418
+2026-09-23T20:41:37Z single pilot-C-P2 58798419
+2026-09-23T21:03:12Z chain(v2 c4726062c4d040bfbaef20a20a886dc93a043e3b) 58799222
+2026-09-23T21:03:12Z chain(v2 c4726062c4d040bfbaef20a20a886dc93a043e3b) 58799224
+2026-09-23T21:13:41Z cancelled old-code (661cb5b9) chain successors 58799690 (pilot) 58799686 (stress): replaced by v2 chains 58799222/58799224 on pilot; stress relies on its gpu_shared copies until pilot finishes

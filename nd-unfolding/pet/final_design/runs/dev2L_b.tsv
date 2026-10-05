@@ -1,0 +1,3 @@
+# name	config	config_hash	selection	distortion	reference_run	extra_driver_args
+dev2L-L128H2E16-F0	../../../final_design/configs/dev2L/dev2L-L128H2E16-F0.json	22162dc27ea0d661ca96b3172052fd4dc0c0f745f80cef2196b940cce5a6ceaa	F:0	dev	-	--step2-miss-mode efficiency_corrected
+dev2L-L128H2E16-T0-D4c_p_up	../../../final_design/configs/dev2L/dev2L-L128H2E16-T0-D4c_p_up.json	09931d13519680be6f83b1d4017f555ff97919ecd917d037578a5fee3d2043fc	T:0	D4c_p_up	-	--step2-miss-mode efficiency_corrected

@@ -1,0 +1,18 @@
+{
+ "config_hash": "9885ad248d02e1e1ddd0ae604a7f37c404b0431aeecf41c786fde2f1e16468b1",
+ "b2_arm": "pdg_onehot",
+ "b2_arm_hash": "5fb9f6377074252ac7440dd3d31551428ddb9dd662d6ba228eef8e3f68ea4594",
+ "step2_miss_mode": "efficiency_corrected",
+ "selection_mode": "replicate",
+ "prior_rows_sha256": "8f19f1616528f2f2f96ba007f9473f30b868bcf48350cc78cc62647417b0d70c",
+ "pseudo_rows_sha256": "582034238d758c10c76b6b25094eefe2f7bcfe9e1cfa098906123be7e9f09df0",
+ "distortion": "D4c_p_up",
+ "distortion_hash": "d0dbd8fd74a166d6794f96ea1991359a821e55420a9241b498440b2117da7d04",
+ "driver": "pet-final-design-hybrid-driver/1",
+ "variant": "scratch",
+ "nonfinite_momentum": "zero",
+ "nonfinite_addinfo": "zero",
+ "pet2_response": "none",
+ "theirs_join_npz_sha256": "33709fa057d1443478f798112b1ca61905b3a2f9e55659e6f9726d15d55b48b6",
+ "run_identity": "e3a6f9835d6958f70fbb77fc7b6931a569e2e6c5a4f795904824a47a6c6bbc1b"
+}

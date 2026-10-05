@@ -18,7 +18,8 @@ also covers the per-bin pattern (descriptive) and the pre-registered attribution
   same resampling that built the band);
 - a corrected band. No band was rebuilt or tested.
 
-Pre-registration: [`PREREG-20261005-2d-fixed-truth-coverage.md`](PREREG-20261005-2d-fixed-truth-coverage.md).
+Ledger: `VL168`. Commits before the merge with `main` call it VL164, which the PET final-design
+rows took on `main` in the meantime. Pre-registration: [`PREREG-20261005-2d-fixed-truth-coverage.md`](PREREG-20261005-2d-fixed-truth-coverage.md).
 It was committed at `e12af23e` before any toy ran. Amendment 1, with the pilot, is `37a0cf8c`;
 Amendment 2, operational, is `ae1f91f3`. Both were committed before any full-run toy output was
 read. Amendment 2 was written during wave 1, although the pre-registration's header allows

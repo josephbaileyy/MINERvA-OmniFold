@@ -1,0 +1,56 @@
+{
+  "job_id": "58301971",
+  "execution_commit": "5de944f8141abb72e56518abaf18a5622fa62028",
+  "terminal": "FAILED",
+  "exit_code": "1:0",
+  "allocation_seconds": 128,
+  "conservative_total_seconds": 523,
+  "conservative_total_gpu_hours": 0.14527777777777778,
+  "conservative_total_reserved_cpu_hours": 4.648888888888889,
+  "tests_passed": 69,
+  "subtests_passed": 10,
+  "completed_cases": [
+    {
+      "case": "nominal",
+      "routing": "pooled",
+      "parameters": 17329,
+      "token_max_abs": 2.384185791015625e-07,
+      "initial_output_loss_gradient_max_abs": 4.76837158203125e-07,
+      "updated_weights_max_abs": 2.4848805537658336e-06,
+      "updated_prediction_max_abs": 2.384185791015625e-07,
+      "graph_max_abs": 1.1920928955078125e-07,
+      "reload_max_abs": 0.0,
+      "optimizer_updates": 2,
+      "device": "/job:localhost/replica:0/task:0/device:GPU:0"
+    },
+    {
+      "case": "nominal",
+      "routing": "direct",
+      "parameters": 17329,
+      "token_max_abs": 1.150183379650116e-07,
+      "initial_output_loss_gradient_max_abs": 5.364418029785156e-07,
+      "updated_weights_max_abs": 3.725290298461914e-06,
+      "updated_prediction_max_abs": 8.344650268554688e-07,
+      "graph_max_abs": 2.384185791015625e-07,
+      "reload_max_abs": 0.0,
+      "optimizer_updates": 2,
+      "device": "/job:localhost/replica:0/task:0/device:GPU:0"
+    }
+  ],
+  "failure": {
+    "case": "variable",
+    "routing": "pooled",
+    "case_identification": "inferred from frozen loop order, two completed rows and variable.npz; failing case not explicitly logged",
+    "stage": "CPU/GPU weights after two Adam updates",
+    "reported_max_abs": 1.204535385568306e-05,
+    "atol": 1e-05,
+    "rtol": 0.0001,
+    "failing_tensor_saved": false,
+    "cause": "UNRESOLVED"
+  },
+  "guard_records": 5,
+  "guard_outside_origins": 0,
+  "calibration_started": false,
+  "full_matrix_started": false,
+  "fresh_process_reload_reached": false
+}

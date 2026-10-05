@@ -23,9 +23,9 @@ three concerns and at most two review/repair cycles.
    rc 0 with open concurrency **0** for both cpu and gpu. The older deploys' budgets are refused (rc 5).
 5. All the runners have ended (`queue done`, or a recorded stop): the five remaining r3 runners and, since transition r4
    stage 1 (2026-10-04T16:20Z), NuWro's r4 runner (PID 669349, deploy `$NS/deploy/b93445c4`), itself replaced at
-   transition r5 (2026-10-05T03:20Z) by PID 435867 (deploy `$NS/deploy/95572965`, log
-   `runs/queue-prod-r5-NuWro_21_09.log`; a later transition would replace it again). No queue-runner process is left
-   on login33.
+   transition r5 (2026-10-05T03:20Z) by PID 435867 (deploy `$NS/deploy/95572965`), and at transition r6
+   (2026-10-05T08:30Z) by PID 1100694 (deploy `$NS/deploy/756e1d6c`, log `runs/queue-prod-r6-NuWro_21_09.log`; a later
+   transition would replace it again). No queue-runner process is left on login33.
 
 ## 2. Evaluation sequence (login node; no allocation)
 

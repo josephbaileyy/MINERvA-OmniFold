@@ -1,0 +1,86 @@
+2026-09-23T20:41:37Z chain 58798420
+2026-09-23T20:41:40Z single stress-CTL-T0-D1_m0.350 58798421
+2026-09-23T20:41:40Z single stress-B-T0-D1_m0.350 58798422
+2026-09-23T20:41:42Z single stress-C-T0-D1_m0.350 58798423
+2026-09-23T20:41:42Z single stress-CTL-T1-D1_m0.350 58798425
+2026-09-23T20:41:42Z single stress-B-T1-D1_m0.350 58798427
+2026-09-23T20:41:42Z single stress-C-T1-D1_m0.350 58798428
+2026-09-23T20:41:42Z single stress-CTL-T0-D2_bump_c0.3 58798429
+2026-09-23T20:41:42Z single stress-B-T0-D2_bump_c0.3 58798430
+2026-09-23T20:41:45Z single stress-C-T0-D2_bump_c0.3 58798431
+2026-09-23T20:41:45Z single stress-CTL-T1-D2_bump_c0.3 58798433
+2026-09-23T20:41:47Z single stress-B-T1-D2_bump_c0.3 58798434
+2026-09-23T20:41:47Z single stress-C-T1-D2_bump_c0.3 58798436
+2026-09-23T20:41:47Z single stress-CTL-T0-D4c_p_up 58798437
+2026-09-23T20:41:50Z single stress-B-T0-D4c_p_up 58798439
+2026-09-23T20:41:52Z single stress-C-T0-D4c_p_up 58798455
+2026-09-23T20:41:54Z single stress-CTL-T1-D4c_p_up 58798461
+2026-09-23T20:41:54Z single stress-B-T1-D4c_p_up 58798464
+2026-09-23T20:41:54Z single stress-C-T1-D4c_p_up 58798465
+2026-09-23T20:41:54Z single stress-CTL-T0-D4d_n_up 58798466
+2026-09-23T20:41:54Z single stress-B-T0-D4d_n_up 58798467
+2026-09-23T20:41:54Z single stress-C-T0-D4d_n_up 58798468
+2026-09-23T20:41:54Z single stress-CTL-T1-D4d_n_up 58798469
+2026-09-23T20:41:55Z single stress-B-T1-D4d_n_up 58798470
+2026-09-23T20:41:55Z single stress-C-T1-D4d_n_up 58798471
+2026-09-23T20:41:55Z single stress-CTL-T0-D5_nuwro 58798473
+2026-09-23T20:41:55Z single stress-B-T0-D5_nuwro 58798474
+2026-09-23T20:41:55Z single stress-C-T0-D5_nuwro 58798475
+2026-09-23T20:41:55Z single stress-CTL-T1-D5_nuwro 58798476
+2026-09-23T20:41:55Z single stress-B-T1-D5_nuwro 58798477
+2026-09-23T20:41:55Z single stress-C-T1-D5_nuwro 58798478
+2026-09-23T20:41:55Z single stress-CTL-T0-R1_x1.05_D1_p0.350 58798479
+2026-09-23T20:41:55Z single stress-B-T0-R1_x1.05_D1_p0.350 58798480
+2026-09-23T20:41:56Z single stress-C-T0-R1_x1.05_D1_p0.350 58798481
+2026-09-23T20:41:56Z single stress-CTL-T1-R1_x1.05_D1_p0.350 58798482
+2026-09-23T20:41:56Z single stress-B-T1-R1_x1.05_D1_p0.350 58798484
+2026-09-23T20:41:56Z single stress-C-T1-R1_x1.05_D1_p0.350 58798485
+2026-09-23T21:13:41Z cancelled old-code (661cb5b9) chain successors 58799690 (pilot) 58799686 (stress): replaced by v2 chains 58799222/58799224 on pilot; stress relies on its gpu_shared copies until pilot finishes
+2026-09-23T21:39:19Z full-node regular chain 58800973
+2026-09-23T21:39:19Z full-node regular chain 58800974
+2026-09-23T21:39:19Z full-node preempt chain 58800975
+2026-09-23T21:39:19Z full-node preempt chain 58800976
+2026-09-24T06:52:43Z cancelled all pending pv1 jobs (lock not atomic: review BLOCK); running jobs left to finish
+2026-09-24T07:17:39Z single stress-CTL-T0-D1_m0.350 58815968
+2026-09-24T07:17:39Z single stress-B-T0-D1_m0.350 58815969
+2026-09-24T07:17:42Z single stress-C-T0-D1_m0.350 58815970
+2026-09-24T07:17:42Z single stress-CTL-T1-D1_m0.350 58815971
+2026-09-24T07:17:44Z single stress-B-T1-D1_m0.350 58815972
+2026-09-24T07:17:44Z single stress-C-T1-D1_m0.350 58815973
+2026-09-24T07:17:47Z single stress-CTL-T0-D2_bump_c0.3 58815974
+2026-09-24T07:17:47Z single stress-B-T0-D2_bump_c0.3 58815975
+2026-09-24T07:17:47Z single stress-C-T0-D2_bump_c0.3 58815976
+2026-09-24T07:17:47Z single stress-CTL-T1-D2_bump_c0.3 58815977
+2026-09-24T07:17:47Z single stress-B-T1-D2_bump_c0.3 58815978
+2026-09-24T07:17:47Z single stress-C-T1-D2_bump_c0.3 58815979
+2026-09-24T07:17:50Z single stress-CTL-T0-D4c_p_up 58815980
+2026-09-24T07:17:50Z single stress-B-T0-D4c_p_up 58815981
+2026-09-24T07:17:50Z single stress-C-T0-D4c_p_up 58815982
+2026-09-24T07:17:50Z single stress-CTL-T1-D4c_p_up 58815983
+2026-09-24T07:17:50Z single stress-B-T1-D4c_p_up 58815984
+2026-09-24T07:17:50Z single stress-C-T1-D4c_p_up 58815985
+2026-09-24T07:17:50Z single stress-CTL-T0-D4d_n_up 58815986
+2026-09-24T07:17:53Z single stress-B-T0-D4d_n_up 58815991
+2026-09-24T07:17:53Z single stress-C-T0-D4d_n_up 58815992
+2026-09-24T07:17:53Z single stress-CTL-T1-D4d_n_up 58815993
+2026-09-24T07:17:53Z single stress-B-T1-D4d_n_up 58815994
+2026-09-24T07:17:53Z single stress-C-T1-D4d_n_up 58815995
+2026-09-24T07:17:53Z single stress-CTL-T0-D5_nuwro 58815996
+2026-09-24T07:17:53Z single stress-B-T0-D5_nuwro 58815997
+2026-09-24T07:17:53Z single stress-C-T0-D5_nuwro 58815998
+2026-09-24T07:17:53Z single stress-CTL-T1-D5_nuwro 58815999
+2026-09-24T07:17:54Z single stress-B-T1-D5_nuwro 58816000
+2026-09-24T07:17:54Z single stress-C-T1-D5_nuwro 58816001
+2026-09-24T07:17:54Z single stress-CTL-T0-R1_x1.05_D1_p0.350 58816002
+2026-09-24T07:17:54Z single stress-B-T0-R1_x1.05_D1_p0.350 58816003
+2026-09-24T07:17:54Z single stress-C-T0-R1_x1.05_D1_p0.350 58816004
+2026-09-24T07:17:55Z single stress-CTL-T1-R1_x1.05_D1_p0.350 58816005
+2026-09-24T07:17:55Z single stress-B-T1-R1_x1.05_D1_p0.350 58816006
+2026-09-24T07:17:55Z single stress-C-T1-R1_x1.05_D1_p0.350 58816007
+2026-09-24T07:17:55Z full-node regular chain 58816008 (flock code d01a04a940fefe1199353f77ba2bc6c2dc392be4)
+2026-09-24T07:17:55Z full-node preempt chain 58816009 (flock code d01a04a940fefe1199353f77ba2bc6c2dc392be4)
+2026-09-24T11:32:13Z debug chain 58820947 (begin 17:30Z, after FINAL projected done; flock code d01a04a940fefe1199353f77ba2bc6c2dc392be4)
+2026-09-24T11:32:13Z debug chain 58820949 (begin 17:30Z, after FINAL projected done; flock code d01a04a940fefe1199353f77ba2bc6c2dc392be4)
+2026-09-24T16:56:21Z cancelled held stress chains 58820947/58820949 (they used 2 of the 5 gpu_debug submissions and starved FINAL of its second chain)
+2026-09-24T23:18:21Z chain 58840854 (handoff from /pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/final chain 58839011)
+2026-09-24T23:19:11Z chain 58840888 (handoff from /pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/final chain 58840489)

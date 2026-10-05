@@ -1,0 +1,8 @@
+{
+  "command": "sbatch --test-only --account=m3246_g --constraint=gpu --qos=shared --nodes=1 --ntasks=1 --gpus=1 --time=02:00:00 --wrap=true --cpus-per-task=32 --mem=56G",
+  "start_utc": "2026-09-11T10:14:34.824745+00:00",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "sbatch: Job 58192234 to start at 2026-09-12T17:41:37 a using 32 processors on nodes nid001256 in partition shared_gpu_ss11\n",
+  "scope": "read-only scheduler test; no job submitted"
+}

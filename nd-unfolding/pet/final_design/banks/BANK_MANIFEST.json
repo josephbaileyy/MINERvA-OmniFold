@@ -1,0 +1,1105 @@
+{
+ "schema": "pet-final-design-bank-manifest/1",
+ "protocol": "nd-unfolding/pet/final_design/PROTOCOL-20260925.md \u00a73",
+ "built_utc": "2026-09-25T23:10:31Z",
+ "code": {
+  "commit": "728ce49436067ebbf132776bfa022d5348f2c8ae",
+  "clean": true,
+  "dirty_paths": [],
+  "script": "nd-unfolding/pet/final_design/banks/build_banks.py",
+  "script_sha256": "6f43cb08dc47ac96182c6b79623f8ae3abe04c1fc12698612ed4a30e5ba7e0f1",
+  "replicates_py_sha256": "cf9e60fdf8bdda49e7abcb71d8f7323dd0b7f0f89908406adcfbd568a916198c"
+ },
+ "inputs": {
+  "inventory": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+  "inventory_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+  "inventory_members_read": [
+   "pass_truth"
+  ],
+  "identity_sidecar": "/pscratch/sd/j/josephrb/event-identity-audit/G2_FPS_MEFHC_P12.identity.npz",
+  "identity_sidecar_sha256": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c",
+  "pools": {
+   "pools_npz": "/pscratch/sd/j/josephrb/pet-improvement-20260922/pools/pools.npz",
+   "pools_npz_sha256": "3d8faeb1535da2c01bfe6e5e95775ed9349c85a0028e912113dde1cbca720924",
+   "manifest": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-runner/checkouts/728ce494/nd-unfolding/pet/improvement_campaign/pools/POOL_MANIFEST.json",
+   "manifest_commit": "295572eb57c5c6fe40e4bd3fb50d8634045d5159",
+   "counts": {
+    "P": 3773400,
+    "F": 15083686,
+    "S": 18861069,
+    "T": 8018001,
+    "R": 1414846
+   }
+  },
+  "pool_manifest_sha256": "cbd8539eb8bd9a684faedf4d02aa6a6245d6be238dd14d20df7b4abbe7b86b82"
+ },
+ "definitions": {
+  "FB": "rows of predecessor pools P, F, S, T selected by no reconstructed draw",
+  "RB": "predecessor pool R",
+  "DEV": "every other pass_truth row",
+  "not_truth_passing": "bank code -1 (never drawn by the study)"
+ },
+ "draw_plan": [
+  {
+   "pool": "P",
+   "family": "confirm-historical-size-v1",
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "replicates": [
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "pool": "F",
+   "family": "confirm-historical-size-v1",
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "replicates": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+   ]
+  },
+  {
+   "pool": "S",
+   "family": "confirm-historical-size-v1",
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "replicates": [
+    0
+   ]
+  },
+  {
+   "pool": "S",
+   "family": "E1-assessment-1x",
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "replicates": [
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "pool": "S",
+   "family": "E1-assessment-8x",
+   "n_prior": 4801040,
+   "n_pseudo": 4800888,
+   "disjoint": false,
+   "replicates": [
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "pool": "T",
+   "family": "confirm-historical-size-v1",
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "replicates": [
+    0,
+    1
+   ]
+  },
+  {
+   "pool": "T",
+   "family": "E1-identifiability",
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "replicates": [
+    0
+   ]
+  },
+  {
+   "pool": "T",
+   "family": "E1-identifiability-null",
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "replicates": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+   ]
+  },
+  {
+   "pool": "T",
+   "family": "E1-references",
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "replicates": [
+    0,
+    1,
+    2
+   ]
+  }
+ ],
+ "salt": "pet-improvement-20260922-replicates",
+ "counts": {
+  "DEV": 45089191,
+  "FB": 2646891,
+  "RB": 1414846,
+  "not_truth_passing": 1957
+ },
+ "FB_by_pool": {
+  "P": 172677,
+  "F": 680794,
+  "S": 1690695,
+  "T": 102725
+ },
+ "expected_counts_check": {
+  "checked": true,
+  "expected": {
+   "FB": 2646891,
+   "RB": 1414846,
+   "FB_by_pool": {
+    "P": 172677,
+    "F": 680794,
+    "S": 1690695,
+    "T": 102725
+   }
+  },
+  "equal": true
+ },
+ "pool_usage": {
+  "P": {
+   "pool_rows": 3773400,
+   "drawn_union": 3600723
+  },
+  "F": {
+   "pool_rows": 15083686,
+   "drawn_union": 14402892
+  },
+  "S": {
+   "pool_rows": 18861069,
+   "drawn_union": 17170374
+  },
+  "T": {
+   "pool_rows": 8018001,
+   "drawn_union": 7915276
+  }
+ },
+ "family_union_rows": {
+  "P/confirm-historical-size-v1": 3600723,
+  "F/confirm-historical-size-v1": 14402892,
+  "S/confirm-historical-size-v1": 1200241,
+  "S/E1-assessment-1x": 3600723,
+  "S/E1-assessment-8x": 16629382,
+  "T/confirm-historical-size-v1": 2400482,
+  "T/E1-identifiability": 1200222,
+  "T/E1-identifiability-null": 7705964,
+  "T/E1-references": 3600723
+ },
+ "historical_subsample": {
+  "source": "nd-unfolding/pet/improvement_campaign/phase_b/pet/configs/b2e4-M-K10-s1.json",
+  "source_sha256": "0afffb7d4402a1dbb32f28397b53bd05c9378c21c907624fc75450dfaa35a9f2",
+  "max_events": 2000000,
+  "subsample_seed": 0,
+  "n_rows": 2000000,
+  "n_truth_passing": 1999928,
+  "n_truth_passing_not_DEV": 0,
+  "rows_in_predecessor_pools": [
+   35796924,
+   35824188
+  ],
+  "rows_in_pools_pool": {
+   "35796924": "S",
+   "35824188": "P"
+  },
+  "rows_in_pools_drawn": {
+   "35796924": true,
+   "35824188": true
+  }
+ },
+ "known_historical_rows_in_pools": {
+  "35796924": {
+   "bank": "DEV",
+   "pool": "S",
+   "drawn": true,
+   "drawn_by": [
+    "S/E1-assessment-8x/0:prior",
+    "S/E1-assessment-8x/1:prior",
+    "S/E1-assessment-8x/2:pseudo"
+   ]
+  },
+  "35824188": {
+   "bank": "DEV",
+   "pool": "P",
+   "drawn": true,
+   "drawn_by": [
+    "P/confirm-historical-size-v1/1:prior"
+   ]
+  }
+ },
+ "digest_check": {
+  "summary": {
+   "n_reconstructed": 48,
+   "n_match": 46,
+   "n_mismatch": 0,
+   "no_committed_record": [
+    "T/E1-references/1",
+    "T/E1-references/2"
+   ],
+   "records_not_in_plan": [],
+   "n_record_files_scanned_with_digests": 87,
+   "ok": true
+  },
+  "per_draw": {
+   "F/confirm-historical-size-v1/0": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-B-F0.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-C-F0.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-CTL-F0.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "F/confirm-historical-size-v1/1": {
+    "status": "match",
+    "n_records": 4,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/_quarantine/final-C-F1.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-B-F1.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-C-F1.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-CTL-F1.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "F/confirm-historical-size-v1/10": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-B-F10.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-C-F10.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-CTL-F10.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "F/confirm-historical-size-v1/11": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-B-F11.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-C-F11.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-CTL-F11.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "F/confirm-historical-size-v1/2": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-B-F2.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-C-F2.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-CTL-F2.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "F/confirm-historical-size-v1/3": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-B-F3.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-C-F3.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-CTL-F3.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "F/confirm-historical-size-v1/4": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-B-F4.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-C-F4.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-CTL-F4.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "F/confirm-historical-size-v1/5": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-B-F5.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-C-F5.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-CTL-F5.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "F/confirm-historical-size-v1/6": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-B-F6.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-C-F6.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-CTL-F6.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "F/confirm-historical-size-v1/7": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-B-F7.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-C-F7.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-CTL-F7.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "F/confirm-historical-size-v1/8": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-B-F8.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-C-F8.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-CTL-F8.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "F/confirm-historical-size-v1/9": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-B-F9.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-C-F9.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/final/final-CTL-F9.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "P/confirm-historical-size-v1/0": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/pilot/pilot-B-P0.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/pilot/pilot-C-P0.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/pilot/pilot-CTL-P0.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "P/confirm-historical-size-v1/1": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/pilot/pilot-B-P1.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/pilot/pilot-C-P1.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/pilot/pilot-CTL-P1.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "P/confirm-historical-size-v1/2": {
+    "status": "match",
+    "n_records": 3,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/pilot/pilot-B-P2.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/pilot/pilot-C-P2.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/pilot/pilot-CTL-P2.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "S/E1-assessment-1x/0": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/reference_assessment.json"
+    ],
+    "mismatching_sources": []
+   },
+   "S/E1-assessment-1x/1": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/reference_assessment.json"
+    ],
+    "mismatching_sources": []
+   },
+   "S/E1-assessment-1x/2": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/reference_assessment.json"
+    ],
+    "mismatching_sources": []
+   },
+   "S/E1-assessment-8x/0": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/reference_assessment.json"
+    ],
+    "mismatching_sources": []
+   },
+   "S/E1-assessment-8x/1": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/reference_assessment.json"
+    ],
+    "mismatching_sources": []
+   },
+   "S/E1-assessment-8x/2": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/reference_assessment.json"
+    ],
+    "mismatching_sources": []
+   },
+   "S/confirm-historical-size-v1/0": {
+    "status": "match",
+    "n_records": 2,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/cpucheck-3a86a98e/S0.inputs_receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/v1-infra-0f83a0c5/v1mech-S0-H-K2-s1.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/0": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/1": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/10": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/11": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/12": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/13": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/14": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/15": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/16": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/17": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/18": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/19": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/2": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/3": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/4": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/5": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/6": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/7": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/8": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability-null/9": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-identifiability/0": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/identifiability.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-references/0": {
+    "status": "match",
+    "n_records": 1,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/phase_e/results/references.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/E1-references/1": {
+    "status": "no committed record",
+    "n_records": 0,
+    "sources": [],
+    "mismatching_sources": []
+   },
+   "T/E1-references/2": {
+    "status": "no committed record",
+    "n_records": 0,
+    "sources": [],
+    "mismatching_sources": []
+   },
+   "T/confirm-historical-size-v1/0": {
+    "status": "match",
+    "n_records": 18,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-B-T0-D1_m0.350.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-B-T0-D2_bump_c0.3.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-B-T0-D4c_p_up.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-B-T0-D4d_n_up.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-B-T0-D5_nuwro.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-B-T0-R1_x1.05_D1_p0.350.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-C-T0-D1_m0.350.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-C-T0-D2_bump_c0.3.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-C-T0-D4c_p_up.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-C-T0-D4d_n_up.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-C-T0-D5_nuwro.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-C-T0-R1_x1.05_D1_p0.350.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-CTL-T0-D1_m0.350.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-CTL-T0-D2_bump_c0.3.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-CTL-T0-D4c_p_up.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-CTL-T0-D4d_n_up.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-CTL-T0-D5_nuwro.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-CTL-T0-R1_x1.05_D1_p0.350.receipt.json"
+    ],
+    "mismatching_sources": []
+   },
+   "T/confirm-historical-size-v1/1": {
+    "status": "match",
+    "n_records": 18,
+    "sources": [
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-B-T1-D1_m0.350.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-B-T1-D2_bump_c0.3.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-B-T1-D4c_p_up.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-B-T1-D4d_n_up.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-B-T1-D5_nuwro.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-B-T1-R1_x1.05_D1_p0.350.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-C-T1-D1_m0.350.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-C-T1-D2_bump_c0.3.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-C-T1-D4c_p_up.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-C-T1-D4d_n_up.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-C-T1-D5_nuwro.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-C-T1-R1_x1.05_D1_p0.350.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-CTL-T1-D1_m0.350.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-CTL-T1-D2_bump_c0.3.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-CTL-T1-D4c_p_up.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-CTL-T1-D4d_n_up.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-CTL-T1-D5_nuwro.receipt.json",
+     "nd-unfolding/pet/improvement_campaign/confirm/results/stress/stress-CTL-T1-R1_x1.05_D1_p0.350.receipt.json"
+    ],
+    "mismatching_sources": []
+   }
+  }
+ },
+ "reconstructed_draws": {
+  "P/confirm-historical-size-v1/0": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "7d60fa480203c4ba4fa2089cb5c55e7441eeccfb727801d77130567816810b4b",
+   "pseudo_rows_sha256": "38678e3c29e545a2555123147a7caf043cac071cdbda1e136d36e7db5d99aba0"
+  },
+  "P/confirm-historical-size-v1/1": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "72373397aa1b2edc0f518a0962c17a7769fa079d8db7448af678328cf6288130",
+   "pseudo_rows_sha256": "f94d99da47b6462adc6f71edbb42ab60aaafabc98c7c7c06ec25dc9f02f45b29"
+  },
+  "P/confirm-historical-size-v1/2": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "3c36fce8b0950f29ed7a7b72f41c8cb8f8ddb356695dc303997c8b01be8b0ec9",
+   "pseudo_rows_sha256": "f9c4738c0e2c228d9741f81db3d4045486184c486215e0ec916fd7adc332c363"
+  },
+  "F/confirm-historical-size-v1/0": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "9bc9928ffbe1072291f01e691d04d67ce894884cdd722f60ffc62cf48ee3b317",
+   "pseudo_rows_sha256": "00113bc15cc954f78388b209752310fdf758b0799e0e755b2d121f9454700169"
+  },
+  "F/confirm-historical-size-v1/1": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "f298c9659bd5453074b6abd3e59186ba08b79c883b2067fa1edd7e485c4efedf",
+   "pseudo_rows_sha256": "2be1c17a1d648d7b989c55ff8cfadb6cd02d4692ca5446628956ed93bbabe059"
+  },
+  "F/confirm-historical-size-v1/2": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "c15c38653fd5de7ffbb855f9fbf810c439412508f135bf692f6d3815d9010c49",
+   "pseudo_rows_sha256": "d0c32ba4114dd1bbf50b9c081081308af039a83a1744a2c81a2452f63425e98c"
+  },
+  "F/confirm-historical-size-v1/3": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "2850750bdc0cefca0eea9c509e86fcc8ab61b1333303b4044264cae24564cb3a",
+   "pseudo_rows_sha256": "50148e51d8d6c739569383aac6f374af13e4827af451d0df3f31e2adc31d01d0"
+  },
+  "F/confirm-historical-size-v1/4": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "d2032a167b38d50bb9ee347dc3abf22942dad3988ddaf9cd6db38ce304a4884b",
+   "pseudo_rows_sha256": "88c027419204ce4a017811d6b376e0539fc92e41e580caa705ebe1bd03a2b545"
+  },
+  "F/confirm-historical-size-v1/5": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "c6966a9fd3b8f12f72cf0cbb38e7232fae5ae1cb2754be2671971553ab025ae0",
+   "pseudo_rows_sha256": "ad75ad369eb87192719f69250f595b0a6a99f45fb2a396ae8d0896dcccdbf56d"
+  },
+  "F/confirm-historical-size-v1/6": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "e3ba2b6fc1f351faa5961fafa8c0dbbee2ff6244bd120f248ac6b0f2a966ec63",
+   "pseudo_rows_sha256": "8d4c9bebcdc65058f0608b51c2b5fb03b23d7982a3f9e88d7c57c082a39f6c9d"
+  },
+  "F/confirm-historical-size-v1/7": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "02ef81682d58e04fadeb031a923c42b1e7382be6e76cb8859afc05276b54ed1a",
+   "pseudo_rows_sha256": "fa74dd0d5173aa56448f9eebc5fbcbd83c38e8b8c9cd064327f780402e7ee5b8"
+  },
+  "F/confirm-historical-size-v1/8": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "87312ab6696c1aac5c1830c2b1548512e67786e34bb2d866fcd1cff1ee066d04",
+   "pseudo_rows_sha256": "bde5d7e219f6cd526f1db560b4db1d2df74cb6f9e6fc14fbd633f0de45b68414"
+  },
+  "F/confirm-historical-size-v1/9": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "e457e05e6aa60c8029b1883fd8e7e94e1a9ffea1454f5ca070f710a2b29713c7",
+   "pseudo_rows_sha256": "90afa0e2a4d1e593d2ed930390c50cd3a39d767bdc04c8599f0255edbff1ddb9"
+  },
+  "F/confirm-historical-size-v1/10": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "c3d5acb5cac86de640619d2474b7246a2c6499c165cfa23571104b7ca3293176",
+   "pseudo_rows_sha256": "cc5d56c1573e147cbde5790e821374a706cad92e2ebfd8254c94c4a687301951"
+  },
+  "F/confirm-historical-size-v1/11": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "77273fd420aba687cf5a18669c55e8e71e025406b8e7bf7116ca4e87662438a0",
+   "pseudo_rows_sha256": "593d93b0c0326c6ffe0b17c1a2fa196eb09ef6047c1035753969564435be3673"
+  },
+  "S/confirm-historical-size-v1/0": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "cc9260db2d2bd6dbe0b7dfc1795fa65c082c6cf439f277e3154a2cfc84d0c9c4",
+   "pseudo_rows_sha256": "8aad9c0f07bcdf31d6ede383a9be6e9204dc1b630f4297e06905dc813ef350f4"
+  },
+  "S/E1-assessment-1x/0": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "c2dea8609dbdf8dc345c18f14c081d96320799068458edf8e988b174220b94d7",
+   "pseudo_rows_sha256": "687c63b06cc81c131aaa15afb85ec0d24cb207b84b8e7e4f93562550279eaaec"
+  },
+  "S/E1-assessment-1x/1": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "f19a2c1c0d01ce43d418cacaf4fd86c9b2dad3df7462f6a1ba97ad80aea9c063",
+   "pseudo_rows_sha256": "fb578aa15beb75a97e3789574dc5044b3fe8b79d08a3462d1ccbb70dc0acdd50"
+  },
+  "S/E1-assessment-1x/2": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "ca27e99efa901f36aeb006dbe4f23d1f08c6444877b67dfd9fbb24845e57e80b",
+   "pseudo_rows_sha256": "fc39f9a2a288537240715869040558a5631c2579330a1511ab26c1f49f169d5e"
+  },
+  "S/E1-assessment-8x/0": {
+   "n_prior": 4801040,
+   "n_pseudo": 4800888,
+   "disjoint": false,
+   "prior_rows_sha256": "6025ad9e5d6db27b89e89de222c85dbd7d9b25cce1f7f5b05b98500444b857fb",
+   "pseudo_rows_sha256": "8f1983f86f27e8b0bd88d631c31ce7971515e66cbc284467cba5df544f17d0cd"
+  },
+  "S/E1-assessment-8x/1": {
+   "n_prior": 4801040,
+   "n_pseudo": 4800888,
+   "disjoint": false,
+   "prior_rows_sha256": "b9b3c9d5739fa60c119b887f9259ae9e544e03079f6b63d382457e0d1cebc4e8",
+   "pseudo_rows_sha256": "e83caa86963c09e3f18fcb7777bcf5313515794be16fdb8682b7622a9b957a76"
+  },
+  "S/E1-assessment-8x/2": {
+   "n_prior": 4801040,
+   "n_pseudo": 4800888,
+   "disjoint": false,
+   "prior_rows_sha256": "9e89e64ee7a2db17e0c344d0b483fc985beebe046b8efbe04b35fe42be73d8c7",
+   "pseudo_rows_sha256": "e63a8b4b5a29b26a5315b8b69fdead78784aecfe730f7d172390b9cab494d8d2"
+  },
+  "T/confirm-historical-size-v1/0": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "8f19f1616528f2f2f96ba007f9473f30b868bcf48350cc78cc62647417b0d70c",
+   "pseudo_rows_sha256": "582034238d758c10c76b6b25094eefe2f7bcfe9e1cfa098906123be7e9f09df0"
+  },
+  "T/confirm-historical-size-v1/1": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "f4f5454f50dcb8489ede21ebe745d1a5df2bce9451786c2ba83a66cad8d54bb5",
+   "pseudo_rows_sha256": "173b7a449389f273969fe4afefc6b1d710bcd049998c1ac2106dbece9544533c"
+  },
+  "T/E1-identifiability/0": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "86032e888223b045d071b5154f816944e80747f0422d6d5657dfd20432e76762",
+   "pseudo_rows_sha256": "ba564880c9884682b7f5a28dd40702220181533a458a498cc35880a7b1663d38"
+  },
+  "T/E1-identifiability-null/0": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "1522200fd6289cf489252008c7621af0fa9cbf819feddea7bc43ea119f50b36f",
+   "pseudo_rows_sha256": "a0a00507d7eb8a034f0bfd9ff4d424bc4843f8ca15aef2d144fc573a0f8ac206"
+  },
+  "T/E1-identifiability-null/1": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "520856ca9adafa62bad802613d6eadab6358a6fd2f7f73697136a2929213ec7d",
+   "pseudo_rows_sha256": "61859100a9f9fa8bcc9ce094beab4a3438d11d15dac58bb3ca2572d85ea449cd"
+  },
+  "T/E1-identifiability-null/2": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "3d2241381c0cc9543c7065865ac470aa5cb4a847c1964d5739669b9cc0b194ad",
+   "pseudo_rows_sha256": "3d7795c4a814e1586ec79a3dbc2f2ad953334d59b46752551a2dc9d7310de48c"
+  },
+  "T/E1-identifiability-null/3": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "18508f92b7c45acf3657a07b356c6ffc1e8cb976a478f5e71274bc2db9862b6e",
+   "pseudo_rows_sha256": "65a35719d232bb629e5a5b9357e3a3a40dae76453a635b9e35e0133864b1bafd"
+  },
+  "T/E1-identifiability-null/4": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "215f29ebc18fa0b1dc126bab8993095ec3f043d8e6119e1b5e069971610810da",
+   "pseudo_rows_sha256": "026fad14aabcd44241e3903d40cd0a6efc964b93b15448d8e6d5f617797be5ef"
+  },
+  "T/E1-identifiability-null/5": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "17fff1a42d9697647d875194bec6dde1ffa66140265cafdf517e640494704554",
+   "pseudo_rows_sha256": "58553d1e619d642e32fd556324b1ae2de864f3efbf747a0ca68a0014b294b8f0"
+  },
+  "T/E1-identifiability-null/6": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "ff0f99bba15d340b61f8bb049285e20ffb79bbed5ec4fc8497e4bf873b023189",
+   "pseudo_rows_sha256": "1aba6920b04f2845b326279984b405fbe1147ce5c6dd75986ce0cf668444ee15"
+  },
+  "T/E1-identifiability-null/7": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "2fee87ef367aec92dcee7768619c85a7190f4761f54e1f9aea4339b46859307d",
+   "pseudo_rows_sha256": "ffc23a35df9e42375e4228147d00637f7fb8030b3d532cddb9cca6d7731b0034"
+  },
+  "T/E1-identifiability-null/8": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "2d556de876e9d087d3ac07bf91270f71eb6cee1dc04d5988cc5325e822ce5d04",
+   "pseudo_rows_sha256": "1399bf17de71e8c7b51d8845357e164409c887c975f25b3743d08d0f7ddbeab3"
+  },
+  "T/E1-identifiability-null/9": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "14eedeb211a34e6dd551e4dad55aa6a43c4f20648562fc377af90ca9cbd4e2e7",
+   "pseudo_rows_sha256": "072bed370139c63980d5264df28d466a90ad7b9c5953b6d9b33deffacfa98890"
+  },
+  "T/E1-identifiability-null/10": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "3ff4a5c8cfb1a47e67029af68c48b62fe669418ac99ae0b3cb75ed7de33b7ba8",
+   "pseudo_rows_sha256": "25fa74f85e3867d05ac2d5fd7f8d3e5c873d9951bf143fd6801fa00b6eae6c0d"
+  },
+  "T/E1-identifiability-null/11": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "99a6679128d566b5c342222f920b55c5657877010f0246dabb75f2012bd3c4d1",
+   "pseudo_rows_sha256": "dcf05d6c64efdabac3741ce19f8840090676d46418eadb00c36d12de3aa37da7"
+  },
+  "T/E1-identifiability-null/12": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "5c1a0c05073e75ca2042bb80a1e8dca54e451ddb7debeb4d4bd3ade0a870582b",
+   "pseudo_rows_sha256": "a56e53ba318042fa9de30eef4f47f7f84284d2b537a96e0630bb1ddff9123184"
+  },
+  "T/E1-identifiability-null/13": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "af727a95e64485332864315571815215e12e44ff3679d159b4ce0b4612210777",
+   "pseudo_rows_sha256": "fefce975ea885facda3afb7f15676fedb13d1ba8aad418f6d53924913cb9c24a"
+  },
+  "T/E1-identifiability-null/14": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "26a43c1606e8a2f5634cb06adad2bb6f52bb98d9983b470c691be6e0d4893f98",
+   "pseudo_rows_sha256": "a5d51a62d65576e1a138df21d07074f34b351c9d131b17d0fbc33976c5c0b507"
+  },
+  "T/E1-identifiability-null/15": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "dddadc63ab821b759401879f9e1a32096e8471fd1344e7afe56dfc1e47855ccb",
+   "pseudo_rows_sha256": "099922c51a5d2b1a83eec555e5e5466b39123fe4e75e027cc0d0fd94cea9bde4"
+  },
+  "T/E1-identifiability-null/16": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "4fcf04db38c35e5b2e311e53242dbb89dcbfb760cdfe07288b23585518b04363",
+   "pseudo_rows_sha256": "25d0174a38e96cba68857a5f3235a0d0cf727c45656554ca351dfb76263e71e2"
+  },
+  "T/E1-identifiability-null/17": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "8c1d355259dff18e4f40417a7d3054c1b37c7f2d1a4dfa8d77d309c2e829c21d",
+   "pseudo_rows_sha256": "8e2e8bd7803108132205c1513c9831852927539ac56034460ad2cd0593db6525"
+  },
+  "T/E1-identifiability-null/18": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "4cb103f0cfdb1acfbf9de673be6dd88e6387f9ab6fd4d528c1da373effc1496c",
+   "pseudo_rows_sha256": "bde78f820b65c434a4475df758890393eaad5760a18a338978bfc24ac761ee35"
+  },
+  "T/E1-identifiability-null/19": {
+   "n_prior": 600111,
+   "n_pseudo": 600111,
+   "disjoint": false,
+   "prior_rows_sha256": "de6d4724a7611f9973ffcfcc61a4563af8ec63271c44a6aaa92c5e311939ea21",
+   "pseudo_rows_sha256": "ac315f61f164711dab29af6162429d866f47a3ed7c931e1458308ac0b226e019"
+  },
+  "T/E1-references/0": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "e4b3efe919c9aeab7f8fd86deada3139ce841e139fcac23d7ffadabdfd0eb36e",
+   "pseudo_rows_sha256": "8eaaec65a914436101e4ae61452eb57a7b0000a401083d994bfec2b8e4a8e694"
+  },
+  "T/E1-references/1": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "4272035366aadf43af551b985a909b4f200a229c41d7c390cb3ad3e62cdd38bf",
+   "pseudo_rows_sha256": "97a878307b8213bd40415014037bb1dfe16b3a76d0105fd9fab2068c515a8390"
+  },
+  "T/E1-references/2": {
+   "n_prior": 600130,
+   "n_pseudo": 600111,
+   "disjoint": true,
+   "prior_rows_sha256": "f8ec924f8d87b283e4333941c719760d047348e853c36b03ec9a0b3fe5485a5e",
+   "pseudo_rows_sha256": "3303da21225b896bb19582e982c9aaa4b07dcdedb1961fdf7173d9f2a994b8dd"
+  }
+ },
+ "n_rows_hashed": 380392684,
+ "workers": 4,
+ "slurm_job_id": "58880785",
+ "measured_leg_is_real_data": false,
+ "seconds": 190.67313146591187,
+ "output": {
+  "banks_npz": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-runner/banks/banks.npz",
+  "banks_npz_sha256": "50b7697c0a282e25efa35ec6e815cdf6ee0103085a78c2e9843244b4cacfe110",
+  "bank_code_sha256": "1f9efc3c15b06fc72fae6e668ba22916baace6a36b87eaa06b4868b956738286",
+  "bank_code_dtype": "int8",
+  "n_inventory_rows": 49152885,
+  "codes": {
+   "DEV": 0,
+   "FB": 1,
+   "RB": 2,
+   "not_truth_passing": -1
+  }
+ },
+ "banks": {
+  "DEV": {
+   "code": 0,
+   "count": 45089191,
+   "sorted_rows_sha256": "e125edd9acc69ca313e0b118f2ae6373eefc020b7e807dbf3b8ad618b8d1b7da"
+  },
+  "FB": {
+   "code": 1,
+   "count": 2646891,
+   "sorted_rows_sha256": "3e63db43de0588a3f8980151c060cfe989c80f2071aa4c85b7671b3e1d66a15c"
+  },
+  "RB": {
+   "code": 2,
+   "count": 1414846,
+   "sorted_rows_sha256": "18defd28d741248801e6a75073ccfbf60123e6b6f2ea327b0e68594a758ffbf2"
+  }
+ }
+}

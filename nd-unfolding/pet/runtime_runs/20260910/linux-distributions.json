@@ -1,0 +1,817 @@
+[
+  {
+    "name": "Brotli",
+    "version": "1.2.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "Jinja2",
+    "version": "3.1.6",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "Markdown",
+    "version": "3.10.3",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "MarkupSafe",
+    "version": "3.0.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "PyMuPDF",
+    "version": "1.27.2.2",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "PySocks",
+    "version": "1.7.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "PyYAML",
+    "version": "6.0.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "Pygments",
+    "version": "2.19.2",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "Send2Trash",
+    "version": "1.8.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "Werkzeug",
+    "version": "3.1.8",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "absl-py",
+    "version": "2.5.0",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "anyio",
+    "version": "4.12.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "argon2-cffi",
+    "version": "25.1.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "argon2-cffi-bindings",
+    "version": "25.1.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "arrow",
+    "version": "1.4.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "asttokens",
+    "version": "3.0.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "astunparse",
+    "version": "1.6.3",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "async-lru",
+    "version": "2.0.5",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "attrs",
+    "version": "25.4.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "babel",
+    "version": "2.17.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "backports.zstd",
+    "version": "1.2.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "beautifulsoup4",
+    "version": "4.14.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "bleach",
+    "version": "6.3.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "cached-property",
+    "version": "1.5.2",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "certifi",
+    "version": "2026.2.25",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "cffi",
+    "version": "2.0.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "charset-normalizer",
+    "version": "3.4.4",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "colorama",
+    "version": "0.4.6",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "comm",
+    "version": "0.2.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "contourpy",
+    "version": "1.3.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "cycler",
+    "version": "0.12.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "debugpy",
+    "version": "1.8.18",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "decorator",
+    "version": "5.2.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "defusedxml",
+    "version": "0.7.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "exceptiongroup",
+    "version": "1.3.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "executing",
+    "version": "2.2.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "fastjsonschema",
+    "version": "2.21.2",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "flatbuffers",
+    "version": "25.12.19",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "fonttools",
+    "version": "4.62.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "fqdn",
+    "version": "1.5.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "gast",
+    "version": "0.7.0",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "google-pasta",
+    "version": "0.2.0",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "grpcio",
+    "version": "1.83.1",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "h11",
+    "version": "0.16.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "h2",
+    "version": "4.3.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "h5py",
+    "version": "3.16.0",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "hpack",
+    "version": "4.1.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "httpcore",
+    "version": "1.0.9",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "httpx",
+    "version": "0.28.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "hyperframe",
+    "version": "6.1.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "idna",
+    "version": "3.11",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "importlib_metadata",
+    "version": "8.7.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "importlib_resources",
+    "version": "6.5.2",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "ipykernel",
+    "version": "7.1.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "ipyparallel",
+    "version": "9.0.2",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "ipython",
+    "version": "9.8.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "ipython_pygments_lexers",
+    "version": "1.1.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "isoduration",
+    "version": "20.11.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "jedi",
+    "version": "0.19.2",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "joblib",
+    "version": "1.5.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "json5",
+    "version": "0.12.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "jsonpointer",
+    "version": "3.0.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "jsonschema",
+    "version": "4.25.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "jsonschema-specifications",
+    "version": "2025.9.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "jupyter-events",
+    "version": "0.12.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "jupyter-lsp",
+    "version": "2.3.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "jupyter_client",
+    "version": "8.7.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "jupyter_core",
+    "version": "5.9.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "jupyter_server",
+    "version": "2.17.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "jupyter_server_terminals",
+    "version": "0.5.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "jupyterlab",
+    "version": "4.5.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "jupyterlab_pygments",
+    "version": "0.3.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "jupyterlab_server",
+    "version": "2.28.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "keras",
+    "version": "3.15.1",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "kiwisolver",
+    "version": "1.5.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "lark",
+    "version": "1.3.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "libclang",
+    "version": "18.1.1",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "lightgbm",
+    "version": "4.6.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "llvmlite",
+    "version": "0.46.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "markdown-it-py",
+    "version": "4.2.0",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "matplotlib",
+    "version": "3.10.8",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "matplotlib-inline",
+    "version": "0.2.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "mdurl",
+    "version": "0.1.2",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "metakernel",
+    "version": "0.30.4",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "mistune",
+    "version": "3.1.4",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "ml-dtypes",
+    "version": "0.3.2",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "namex",
+    "version": "0.1.0",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "nbclient",
+    "version": "0.10.2",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "nbconvert",
+    "version": "7.16.6",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "nbformat",
+    "version": "5.10.4",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "nersc-pymon",
+    "version": "0.5.0",
+    "location": "/opt/nersc/pymon"
+  },
+  {
+    "name": "nest_asyncio",
+    "version": "1.6.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "notebook",
+    "version": "7.5.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "notebook_shim",
+    "version": "0.2.4",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "numba",
+    "version": "0.63.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "numpy",
+    "version": "1.26.4",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "nvidia-nccl-cu12",
+    "version": "2.30.4",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "opt_einsum",
+    "version": "3.4.0",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "optree",
+    "version": "0.20.0",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "overrides",
+    "version": "7.7.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "packaging",
+    "version": "25.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "pandocfilters",
+    "version": "1.5.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "parso",
+    "version": "0.8.5",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "pexpect",
+    "version": "4.9.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "pillow",
+    "version": "12.2.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "pip",
+    "version": "25.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "pip",
+    "version": "24.0",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "platformdirs",
+    "version": "4.5.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "portalocker",
+    "version": "3.2.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "prometheus_client",
+    "version": "0.23.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "prompt_toolkit",
+    "version": "3.0.52",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "protobuf",
+    "version": "4.25.9",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "psutil",
+    "version": "7.1.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "ptyprocess",
+    "version": "0.7.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "pure_eval",
+    "version": "0.2.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "pycparser",
+    "version": "2.22",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "pyparsing",
+    "version": "3.3.2",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "pypdf",
+    "version": "6.12.2",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "python-dateutil",
+    "version": "2.9.0.post0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "python-json-logger",
+    "version": "2.0.7",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "pytz",
+    "version": "2025.2",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "pyzmq",
+    "version": "27.1.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "referencing",
+    "version": "0.37.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "requests",
+    "version": "2.32.5",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "rfc3339_validator",
+    "version": "0.1.4",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "rfc3986-validator",
+    "version": "0.1.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "rfc3987-syntax",
+    "version": "1.1.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "rich",
+    "version": "15.0.0",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "rpds-py",
+    "version": "0.30.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "scikit-learn",
+    "version": "1.8.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "scipy",
+    "version": "1.16.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "setuptools",
+    "version": "80.9.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "setuptools",
+    "version": "79.0.1",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "six",
+    "version": "1.17.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "sniffio",
+    "version": "1.3.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "soupsieve",
+    "version": "2.8.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "stack_data",
+    "version": "0.6.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "tensorboard",
+    "version": "2.16.2",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "tensorboard-data-server",
+    "version": "0.7.2",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "tensorflow-cpu",
+    "version": "2.16.2",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "tensorflow-io-gcs-filesystem",
+    "version": "0.37.1",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "termcolor",
+    "version": "3.3.0",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "terminado",
+    "version": "0.18.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "threadpoolctl",
+    "version": "3.6.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "tinycss2",
+    "version": "1.5.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "tomli",
+    "version": "2.3.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "tornado",
+    "version": "6.5.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "tqdm",
+    "version": "4.67.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "traitlets",
+    "version": "5.14.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "typing_extensions",
+    "version": "4.15.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "typing_utils",
+    "version": "0.1.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "tzdata",
+    "version": "2025.3",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "uri-template",
+    "version": "1.3.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "urllib3",
+    "version": "2.6.2",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "wcwidth",
+    "version": "0.2.14",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "webcolors",
+    "version": "25.10.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "webencodings",
+    "version": "0.5.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "websocket-client",
+    "version": "1.9.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "wheel",
+    "version": "0.45.1",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "wrapt",
+    "version": "2.4.0",
+    "location": "/pscratch/sd/j/josephrb/pet-v2-source-audit-runtime/lib/python3.11/site-packages"
+  },
+  {
+    "name": "xgboost",
+    "version": "3.2.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "xrootd",
+    "version": "5.8.4",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  },
+  {
+    "name": "zipp",
+    "version": "3.23.0",
+    "location": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages"
+  }
+]

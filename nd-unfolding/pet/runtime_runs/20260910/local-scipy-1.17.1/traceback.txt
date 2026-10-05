@@ -1,0 +1,99 @@
+MAPPING_PASS
+
+[oi136 launch] THIS CHILD CANNOT BE PROVEN TO KEEP ITS OWN PYTHON LAUNCHES GUARDED -- REFUSING BEFORE LAUNCH.
+[oi136 launch]   executable     /Users/josephbailey/local-research/MINERvA-OmniFold-pet-prong-semantics/lscpu
+[oi136 launch]   offending flag lscpu resolves to /Users/josephbailey/local-research/MINERvA-OmniFold-pet-prong-semantics/lscpu, which is neither an interpreter, a shell, a leaf tool nor a script with a readable shebang
+[oi136 launch]   argv           ['lscpu']
+[oi136 launch] A guarded process may start only a child this guard can PROVE keeps its Python launches guarded: an interpreter under the startup-flag grammar, a shell whose -c string or SCRIPT FILE has been read and scanned, a leaf tool that execs no other program and resolves under a system prefix, a read-only `git`, or a file whose shebang is one of those. Round 6 reached the wrong-tree import through a shell SCRIPT FILE, which the previous model admitted UNREAD on the strength of a PATH lookup the script declined to make. Route the work through a shell script this guard can read, or through mnv_guarded_run.py; do not widen the leaf table to make a launcher pass.
+
+Traceback (most recent call last):
+  File "/tmp/pet-runtime-trace.py", line 29, in <module>
+    audit.ForwardCheck()(batch)
+    ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-pet-prong-semantics/nd-unfolding/pet/typed_descriptor_source_audit.py", line 366, in __init__
+    self.model = adapter.build_keras_typed_descriptor_adapter(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-pet-prong-semantics/nd-unfolding/pet/typed_descriptor_keras.py", line 577, in build_keras_typed_descriptor_adapter
+    _, _, adapter_type = _keras_types()
+                         ^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-pet-prong-semantics/nd-unfolding/pet/typed_descriptor_keras.py", line 230, in _keras_types
+    tf = require_tensorflow()
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-pet-prong-semantics/nd-unfolding/pet/typed_descriptor_keras.py", line 44, in require_tensorflow
+    return importlib.import_module("tensorflow")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/tensorflow/__init__.py", line 45, in <module>
+    from tensorflow._api.v2 import __internal__
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/tensorflow/_api/v2/__internal__/__init__.py", line 13, in <module>
+    from tensorflow._api.v2.__internal__ import feature_column
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/tensorflow/_api/v2/__internal__/feature_column/__init__.py", line 8, in <module>
+    from tensorflow.python.feature_column.feature_column_v2 import DenseColumn # line: 1777
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/tensorflow/python/feature_column/feature_column_v2.py", line 38, in <module>
+    from tensorflow.python.feature_column import feature_column as fc_old
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/tensorflow/python/feature_column/feature_column.py", line 41, in <module>
+    from tensorflow.python.layers import base
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/tensorflow/python/layers/base.py", line 16, in <module>
+    from tensorflow.python.keras.legacy_tf_layers import base
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/tensorflow/python/keras/__init__.py", line 25, in <module>
+    from tensorflow.python.keras import models
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/tensorflow/python/keras/models.py", line 25, in <module>
+    from tensorflow.python.keras.engine import training_v1
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/tensorflow/python/keras/engine/training_v1.py", line 46, in <module>
+    from tensorflow.python.keras.engine import training_arrays_v1
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/tensorflow/python/keras/engine/training_arrays_v1.py", line 37, in <module>
+    from scipy.sparse import issparse  # pylint: disable=g-import-not-at-top
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/scipy/sparse/__init__.py", line 307, in <module>
+    from ._base import *
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/scipy/sparse/_base.py", line 8, in <module>
+    from ._sputils import (asmatrix, check_reshape_kwargs, check_shape,
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/scipy/sparse/_sputils.py", line 10, in <module>
+    from scipy._lib._util import np_long, np_ulong
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/scipy/_lib/_util.py", line 17, in <module>
+    from scipy._lib._array_api import (Array, array_namespace, is_lazy_array, is_numpy,
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/scipy/_lib/_array_api.py", line 24, in <module>
+    from scipy._lib.array_api_compat import (
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/scipy/_lib/array_api_compat/numpy/__init__.py", line 9, in <module>
+    __all__ = clone_module("numpy", globals())
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/scipy/_lib/array_api_compat/_internal.py", line 67, in clone_module
+    if not n.startswith("_") and hasattr(mod, n):
+                                 ^^^^^^^^^^^^^^^
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/numpy/__init__.py", line 327, in __getattr__
+    import numpy.testing as testing
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/numpy/testing/__init__.py", line 11, in <module>
+    from ._private.utils import *
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/numpy/testing/_private/utils.py", line 1253, in <module>
+    _SUPPORTS_SVE = check_support_sve()
+                    ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/minerva-pet-semantics-venv/lib/python3.11/site-packages/numpy/testing/_private/utils.py", line 1247, in check_support_sve
+    output = subprocess.run(cmd, capture_output=True, text=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-pet-prong-semantics/nd-unfolding/mnv_guarded_run.py", line 4810, in guarded_popen_init
+    armed_env, armed_argv = _prepare_launch(executable, argv, env, guard,
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-pet-prong-semantics/nd-unfolding/mnv_guarded_run.py", line 4709, in _prepare_launch
+    _refuse_the_launch(refusal, guard, argv, executable, armed_env)
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-pet-prong-semantics/nd-unfolding/mnv_guarded_run.py", line 4522, in _refuse_the_launch
+    raise SystemExit(VIOLATION_EXIT) from None
+SystemExit: 3
+[oi136] inventory: checked=1566 repo_origin_count=5 outside_expect_root=0 verdict=REFUSED launch -> /tmp/pet-runtime-trace-guard.json
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /Users/josephbailey/local-research/MINERvA-OmniFold-pet-prong-semantics  (6) __main__, atomic_write, typed_descriptor_keras, typed_descriptor_source_audit, typed_descriptor_source_smoke, typed_descriptors
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.

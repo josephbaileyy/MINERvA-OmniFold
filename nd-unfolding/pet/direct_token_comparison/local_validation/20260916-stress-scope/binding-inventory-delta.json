@@ -1,0 +1,17 @@
+{
+  "before_count": 122,
+  "before_sha256": "3374bde8558b64d3ae891cfbd540444462ec2eca88c3a9a38ea320ba9f3942c1",
+  "after_count": 123,
+  "after_sha256": "9c18673bdf772e1febcb1eee6c028daae47aefc35b7430dbcb3e38bd261d8138",
+  "added_bindings": [
+    [
+      "nd-unfolding/pet/direct_token_comparison/STRESS_SCOPE_AUTHORIZATION-20260916.md",
+      "09cebb72374ef579572985a15842aaca498dee9e37ea46399e13a1199476d860"
+    ]
+  ],
+  "removed_bindings": [],
+  "owning_receipts": [
+    "nd-unfolding/pet/direct_token_comparison/amended-execution-authorization.json"
+  ],
+  "note": "Purely additive: one new authority binding for the gate-scope decision. No prior binding changed or was removed."
+}

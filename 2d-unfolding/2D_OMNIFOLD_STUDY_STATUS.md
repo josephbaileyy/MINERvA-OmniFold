@@ -156,7 +156,7 @@ escape hatch, and the full rollup path are documented in
   alt-model MaCCQE:0 0.068 %, Flux:50 0.376 % (thr 2.0 %). Hidden-var
   axis `dpT = sim_pT − truth_pT` is a resolution variable (not in the
   feature set); alt-model target is `CV truth × (alt/cv in-acceptance)`.
-- **Coverage of the statistical band: FAIL-undercoverage (2026-10-05, `VL164`).**
+- **Coverage of the statistical band: FAIL-undercoverage (2026-10-05, `VL168`).**
   The test was pre-registered with fixed-truth closure toys, and the study stopped by the futility
   rule at 100 toys, with an independent recomputation. C1 0.679 [0.669, 0.690] is nominal; C2
   0.912 [0.907, 0.918] lies below its window [0.928, 0.972]; the pull RMS is 1.60. Per-bin

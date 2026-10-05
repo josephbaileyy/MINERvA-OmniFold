@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-pet-direct-comparison/nd-unfolding/pet/direct_token_comparison/evaluate_calibration.py", line 142, in <module>
+    result = evaluate(args.directory, args.allocation_seconds)
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-pet-direct-comparison/nd-unfolding/pet/direct_token_comparison/evaluate_calibration.py", line 23, in evaluate
+    raise ValueError("Calibration did not complete")
+ValueError: Calibration did not complete
