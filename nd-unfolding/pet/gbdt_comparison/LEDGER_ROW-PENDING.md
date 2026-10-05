@@ -1,5 +1,7 @@
 # Validation-ledger row for this study: numbered at integration
 
+**Appended (2026-10-05):** integrated into `main` with PR #16's merge, as **VL168** in `VALIDATION_LEDGER.md` (the next dense id after the PET integration's VL164–VL167). The section below is the text as appended, with `VL-NEXT` replaced by `VL168`; the row is live in the ledger.
+
 `VALIDATION_LEDGER.md` ids must be dense (`whose_row.py --check-ledger-ids`). On `main` at `52a2f6dd` the last id is
 VL163. The PET final-design integration has claimed **VL164–VL167** for its four rows
 (`pet-final-design-20260925` at `bc356b0c`, decision record § Review).

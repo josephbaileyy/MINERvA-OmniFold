@@ -80,3 +80,10 @@ unfolding at a 2 M-row prior, and about 4× that at 10 M.
   push` worked.
 - **Disk.** The local scratch copies of the FB run arrays (about 35 GB) were deleted after use, except the FB0 sample.
   Re-fetch with `pgc_fetch.py runs`, which digest-checks every file.
+
+## Integration into `main` (2026-10-05)
+
+Merged on Joseph's instruction of 2026-10-05, after the PET integration (#15), through branch
+`integrate/pet-gbdt-20261005`: a `--no-ff` merge of this branch at `4367030f`, then the ledger row appended as
+**VL168** (open item 1 is done; item 2 is done). The study's files are unchanged apart from this note and the
+appended-as note in `LEDGER_ROW-PENDING.md`. P0 remains not launched and unauthorized.
