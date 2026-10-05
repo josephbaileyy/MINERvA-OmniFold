@@ -1,0 +1,70 @@
+{
+ "study": "PREREG-20261005-2d-fixed-truth-coverage.md",
+ "cap_cpu_node_h": 60.0,
+ "account": "m3246",
+ "pool": "separate from s5p (docs/orchestration/state/s5p/budget.json is not read or written)",
+ "billing_rule": "CPU node-h = ElapsedRaw/3600 * billing/256 * qos_usage_factor (as the s5c/s5p rule); regular_1 usage factor 1.000000 (sacctmgr, 2026-10-05)",
+ "balance_before": {
+  "measured_utc": "2026-10-05T07:2x",
+  "host": "login09",
+  "tool": "iris",
+  "m3246_charged": 16863.6,
+  "m3246_allocated": 20000.0,
+  "user_charged": 1971.9,
+  "user_allocated": 10000.0
+ },
+ "jobs": [
+  {
+   "job": "59358992_9001",
+   "what": "pilot toy 9001",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "billing": 256,
+   "elapsed_raw_s": 660,
+   "node_h": 0.1833
+  },
+  {
+   "job": "59358992_9002",
+   "what": "pilot toy 9002",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "billing": 256,
+   "elapsed_raw_s": 750,
+   "node_h": 0.2083
+  },
+  {
+   "job": "59358992_9003",
+   "what": "pilot toy 9003",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "billing": 256,
+   "elapsed_raw_s": 730,
+   "node_h": 0.2028
+  },
+  {
+   "job": "59358994_1",
+   "what": "equivalence: production --closure",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "billing": 256,
+   "elapsed_raw_s": 383,
+   "node_h": 0.1064
+  },
+  {
+   "job": "59358994_2",
+   "what": "equivalence: toy driver --no-fluctuation",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "billing": 256,
+   "elapsed_raw_s": 350,
+   "node_h": 0.0972
+  }
+ ],
+ "charged_node_h": 0.7981,
+ "projection_after_pilot": {
+  "per_toy_node_h": 0.19815,
+  "n_toys": 200,
+  "margin": 1.05,
+  "projected_total_node_h": 42.41
+ }
+}

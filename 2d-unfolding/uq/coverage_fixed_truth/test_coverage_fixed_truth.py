@@ -141,7 +141,7 @@ def test_run_refuses_a_fluctuating_truth(tmp_path):
 def test_run_enforces_minimum_toy_count(tmp_path):
     U, T, m, s, rep = synthetic(n_toys=149)
     _write_npz(tmp_path / "x.npz", U, T, m, s, rep)
-    with pytest.raises(sc.InvalidInput, match="minimum 150"):
+    with pytest.raises(sc.InsufficientToys, match="minimum 150"):
         sc.run(tmp_path / "x.npz", "final")
     assert sc.run(tmp_path / "x.npz", "interim")["decision"] == "CONTINUE"
 
@@ -160,3 +160,15 @@ def test_run_rejects_nonpositive_truth_in_a_reported_bin(tmp_path):
     _write_npz(tmp_path / "x.npz", U, T, m, s, rep)
     with pytest.raises(sc.InvalidInput, match="positive"):
         sc.run(tmp_path / "x.npz", "final")
+
+
+def test_replica_form_divides_by_prior_over_truth(tmp_path):
+    U, T, m, s, rep = synthetic()
+    P = np.broadcast_to(T * 1.02, U.shape).copy()
+    out = sc.replica_form(U, P, T, rep)
+    assert np.allclose(out[:, rep], U[:, rep] / 1.02)
+    assert np.array_equal(out[:, ~rep], U[:, ~rep])
+    np.savez(tmp_path / "x.npz", toy_index=np.arange(1, 201), U=U, P=np.broadcast_to(T, U.shape),
+             T=T, T_max_abs_diff=np.zeros(200), prod_mean=m, prod_sigma=s, reported=rep)
+    res = sc.run(tmp_path / "x.npz", "final")
+    assert res["secondary_replica_form"]["C1"] == res["result"]["C1"]

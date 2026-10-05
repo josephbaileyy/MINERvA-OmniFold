@@ -14,6 +14,12 @@ Pooled coverage ``C_k`` is the fraction of (toy, bin) pairs with ``|z| <= k``.
 Every toy carries the same reported bins, so ``C_k`` is the mean over toys of the
 per-toy fraction, and intervals come from resampling toys (never bins), which keeps
 each toy's bin correlations intact.
+
+Amendment 1 adds a secondary, the replica form ``U_tb * T_b / P_tb``, where ``P`` is
+the toy's bootstrapped MC truth prior. The VL162 replicas divide by a completeness
+``c = sum(b w_truth) / sum(w_truth)`` per truth bin, which equals ``P / T``. The
+central value and the toys have ``c = 1``. Scoring the replica form against the same
+band tells whether a primary miscoverage comes from that term in the band.
 """
 
 import argparse
@@ -45,7 +51,11 @@ WINDOWS = {k: (gauss_coverage(k * BAND_RATIO_TOLERANCE[0]),
 
 
 class InvalidInput(ValueError):
-    """The toy set or band fails a pre-registered validity check."""
+    """The toy set or band fails a pre-registered validity check (a stop condition)."""
+
+
+class InsufficientToys(ValueError):
+    """Fewer completed toys than the pre-registered minimum for this look."""
 
 
 def standardized_residuals(U, T, prod_mean, prod_sigma, reported, scale=1.0):
@@ -61,6 +71,17 @@ def standardized_residuals(U, T, prod_mean, prod_sigma, reported, scale=1.0):
                            "positive in every reported bin")
     sigma = scale * (s_r / m_r) * T_r
     return (U_r - T_r[None, :]) / sigma[None, :]
+
+
+def replica_form(U, P, T, reported):
+    """``U * T / P`` on reported bins (the VL162 replicas' completeness division)."""
+    rep = np.asarray(reported, dtype=bool)
+    P = np.asarray(P, dtype=float)
+    if np.any(P[:, rep] <= 0):
+        raise InvalidInput("toy prior must be positive in every reported bin")
+    out = np.array(U, dtype=float, copy=True)
+    out[:, rep] = out[:, rep] * np.asarray(T, dtype=float)[rep][None, :] / P[:, rep]
+    return out
 
 
 def per_toy_statistics(z):
@@ -158,7 +179,7 @@ def run(npz_path, stage, min_index=1, max_index=200):
                     else (LEVEL_FINAL, N_MIN_FINAL))
     U = d["U"][keep]
     if U.shape[0] < n_min:
-        raise InvalidInput(f"{U.shape[0]} toys < pre-registered minimum {n_min} for {stage}")
+        raise InsufficientToys(f"{U.shape[0]} toys < pre-registered minimum {n_min} for {stage}")
     args = (U, d["T"], d["prod_mean"], d["prod_sigma"], d["reported"])
     base = score(*args, scale=1.0, level=level)
     scaled = {s: score(*args, scale=s, level=level) for s in CONTROL_SCALES}
@@ -169,7 +190,12 @@ def run(npz_path, stage, min_index=1, max_index=200):
     if stage == "interim":
         final = ("STOP: " + base["verdict"] + " (futility)" if base["verdict"].startswith("FAIL")
                  else "CONTINUE")
+    secondary = None
+    if "P" in d.files:
+        secondary = score(replica_form(U, d["P"][keep], d["T"], d["reported"]), *args[1:],
+                          scale=1.0, level=level)
     return {"stage": stage, "nominal": NOMINAL, "windows": WINDOWS,
+            "secondary_replica_form": secondary,
             "band_ratio_tolerance": BAND_RATIO_TOLERANCE,
             "toy_index_range": [int(d["toy_index"][keep].min()), int(d["toy_index"][keep].max())],
             "result": base, "controls": {str(s): r for s, r in scaled.items()},
@@ -189,17 +215,29 @@ def main():
         # The pilot exercises the scorer on 2-3 toys; no verdict is defined there.
         d = np.load(a.npz)
         z = standardized_residuals(d["U"], d["T"], d["prod_mean"], d["prod_sigma"], d["reported"])
+        rep = d["reported"]
+        ratio = d["prod_mean"][rep] / d["T"][rep]
         res = {"stage": "pilot", "n_toys": int(z.shape[0]), "n_bins": int(z.shape[1]),
                "per_toy": {k: v.tolist() for k, v in per_toy_statistics(z).items()},
-               "T_max_abs_diff": d["T_max_abs_diff"].tolist()}
+               "T_max_abs_diff": d["T_max_abs_diff"].tolist(),
+               "data_over_mc_truth": {q: float(np.percentile(ratio, p)) for q, p in
+                                      (("p0", 0), ("p16", 16), ("p50", 50), ("p84", 84),
+                                       ("p100", 100))}}
+        if "P" in d.files:
+            zr = standardized_residuals(replica_form(d["U"], d["P"], d["T"], rep), d["T"],
+                                        d["prod_mean"], d["prod_sigma"], rep)
+            res["per_toy_replica_form"] = {k: v.tolist()
+                                           for k, v in per_toy_statistics(zr).items()}
     else:
         try:
             res = run(a.npz, a.stage, a.min_index, a.max_index)
         except InvalidInput as exc:
             res = {"stage": a.stage, "decision": "INVALID", "reason": str(exc)}
+        except InsufficientToys as exc:
+            res = {"stage": a.stage, "decision": "INSUFFICIENT-TOYS", "reason": str(exc)}
     Path(a.out).write_text(json.dumps(res, indent=1, sort_keys=True))
     print(json.dumps({k: res[k] for k in ("stage", "decision") if k in res}))
-    return 0 if res.get("decision") != "INVALID" else 2
+    return 2 if res.get("decision") in ("INVALID", "INSUFFICIENT-TOYS") else 0
 
 
 if __name__ == "__main__":

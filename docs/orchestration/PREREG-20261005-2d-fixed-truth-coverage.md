@@ -171,3 +171,95 @@ own code. The point estimates must agree to 1e-12. The interval endpoints must a
 the allowance for a different resampling stream. Records: a ledger row with the next free VL id
 across all remote refs, `2D_OMNIFOLD_STUDY_STATUS.md`, `KNOWN_ISSUES.md` if anything opens, and the
 receipts under `docs/orchestration/state/coverage-2d-20261005/`.
+
+## Amendment 1 (2026-10-05, after the design review and the pilot, before any full-run toy)
+
+Source: an independent read-only design review of `e12af23e` (fresh Opus 5.5 subagent, same model
+family as the owner): no BLOCK, one MAJOR and five MINOR findings. Pilot results follow in
+§A1.7. Nothing in this amendment depends on a full-run toy, because none had been launched.
+
+**A1.1 (MAJOR) The VL162 band contains a completeness fluctuation the central value does not.** In
+`unfold_2d_omnifold_unbinned.py` the bootstrap multiplies `sig["w_truth"]` by the MC draw *before*
+`compute_omnifold_completeness_2d`. That function fills its numerator from those bootstrapped
+weights and its denominator from the never-bootstrapped `mc_truth_denom` tree, and the cross
+section is divided by the result. Each replica is therefore `U_b · T/P_b` per truth bin, with
+`P_b ∝ Σ b·w_truth` the replica's MC truth. The central value has `c ≡ 1` exactly, because
+numerator and denominator are the same events (Phase 17), and so do the toys. **The primary
+scoring is unchanged**: it scores the estimator that produces the central value. A **secondary,
+replica-form scoring** is added: `U·T/P` with the toy's own prior `P` (`hTruthXSec2D`), scored
+against the same band with the same windows and verdict rule. The secondary has no verdict role.
+It serves attribution only:
+
+- If the primary result is a FAIL-overcoverage and the replica form is not, the overcoverage is
+  attributed to the completeness term in the band's construction.
+- If both FAIL in the same direction, that term does not explain the miscoverage.
+
+**A1.2 (MINOR) Band transfer.** The pilot records the distribution of `prod_mean/T` over the 205
+bins (§A1.7). `r_b` is not rescaled.
+
+**A1.3 (MINOR) The MC-stat part is close to circular.** The toys' MC scatter comes from the same
+Poisson(1) resampling of the same MC that built the band. The test therefore cannot detect a
+failure of the bootstrap principle for the MC stream; only the data stream is tested by a
+different mechanism (genuine Poisson pseudo-data). Disclosed as a limitation.
+
+**A1.4 (MINOR) Fixed-seed closure bias.** `compare_equivalence.py --rollup` reports
+`(U0 − T)/(r_b T_b)` on the reported bins from the no-fluctuation run. This is the bias the seed-1
+estimator carries into every toy, so an undercoverage can be attributed to bias or to width.
+Secondary, no verdict role.
+
+**A1.5 (MINOR) P1 is an exact-reproduction test.** Under lgbm multithreading, a difference shows up
+as a flipped split, not as rounding. If P1 fails, each side is re-run twice before the failure
+counts.
+
+**A1.6 (MINOR) Text aligned with the code.**
+
+- (a) The positive control passes only if condition (1) holds and, for a PASS, condition (2)
+  holds. A PASS is void if either fails (`score_coverage.py`, `positive_control` and `run`).
+- (b) Too few toys gives the decision **INSUFFICIENT-TOYS**, not INVALID. INVALID remains the
+  truth-mismatch stop condition.
+- (c) The false-FAIL rate at a window edge is up to about twice the per-look α, because C1 and C2
+  can each trigger it: ≲ 0.01 at the interim look and ≲ 0.10 at the final look in the worst case.
+
+**A1.7 Pilot results (toys 9001–9003 and the two equivalence runs; Perlmutter, 2026-10-05).**
+Jobs 59358992_{9001,9002,9003} and 59358994_{1,2}, all `regular_1`, 1 node, billing 256.
+Extraction and pilot scoring used the amended `extract_toys.py`/`score_coverage.py` from this
+commit. Receipts are in `docs/orchestration/state/coverage-2d-20261005/`.
+
+- **P1** (equivalence, exact reproduction, A1.5): **pass on the first run.** `hXSec2D` from the production driver's `--closure` run and from `fixed_truth_toy.py --no-fluctuation` agree exactly (maximum relative difference 0), and both truths equal the production `hTruthXSec2D` exactly. Both runs did five iterations. The production log shows step-2 weights with mean, minimum and maximum all exactly 1.0000, because the closure pseudo-data and the simulation are the same weighted events, so lgbm finds no split. The A1.4 closure bias `(U0 − T)/(r_b T_b)` is therefore exactly 0 on all 205 bins. The seed-1 estimator carries no bias into the toys at the unfluctuated point, so any toy miscoverage is a property of the band width relative to the toy scatter, not of a fixed closure offset.
+- **P2 — pass.** `hTruthFixedXSec2D` is bit-identical across the three toys and to the production
+  driver's `hTruthXSec2D` from the `--closure` run (maximum absolute difference 0).
+- **P3 — failed as written, then repaired; passes after repair.** The reference in §4 was wrong:
+  3.073e-38 is the *unfolded data* total (`\sigTwoD`), but the toy truth is the *MC* truth.
+  The analysis MC (MINERvA Tune v1) totals 2.71e-38 over the same phase space (`sec_3d.tex`,
+  model comparison), about 12 % below data. Measured `Σ T·ΔA` = 2.70598e-38 is 0.88 of the data
+  total, outside the 10 % bound, and 0.9985 of the Tune v1 total. The production driver's own
+  closure run prints the same 2.706e-38. **Repair:** the P3 reference becomes the analysis MC
+  truth total 2.71e-38, with the 10 % bound unchanged. The purpose of P3 (catch a POT, flux or
+  bin-width unit error) is unchanged, and P2 already ties T bit-exactly to the production code
+  path. All 205 reported bins have `T > 0`. Under §4 this is the check's first failure. Another
+  failure of P3 after this repair would stop the study.
+- **P4 — pass.** `Σ k` = 3534504, 3533531 and 3533608 against `Σ w_reco` = 3533843.46
+  (Poisson σ ≈ 1880): +0.35σ, −0.17σ and −0.13σ.
+- **P5 — pass.** The scorer runs with finite `z` on all 205 bins for every pilot toy.
+- **P6 — pass.** ElapsedRaw for the toys is 660, 750 and 730 s; the mean of 713 s is 0.198 node-h
+  per toy (billing 256/256, `regular_1` factor 1.0). The projection is the pilot (0.594) plus
+  equivalence (0.204: 383 s and 350 s) plus 200 × 0.198 × 1.05 (41.6), for a total of 42.4 node-h ≤ 60. N stays at 200.
+- **A1.2 record.** Over the 205 reported bins, `prod_mean/T` has minimum 0.737, 16th percentile
+  1.023, median 1.145, 84th percentile 1.272 and maximum 1.712.
+- **Pilot pulls (three toys; no verdict role, recorded for completeness).** Per-toy `|z| ≤ 1`
+  fractions are 0.707, 0.659 and 0.659. The `|z| ≤ 2` fractions are 0.922, 0.873 and 0.932. Mean
+  `z²` values are 1.67, 1.83 and 2.51. In the replica form (A1.1) the `|z| ≤ 1` fractions are 0.902, 0.737 and
+  0.878, and mean `z²` is 0.45, 0.95 and 0.41.
+
+**A1.8 The A1.1 attribution rule is made symmetric (written after the pilot pulls above were
+seen, before any full-run toy).** A1.1 named only the overcoverage case. The pilot shows that the
+replica form can move the pulls in either direction, because `U` and the toy's prior `P` both
+move with the same MC draw. The rule now reads:
+
+- If the primary result is a FAIL in either direction and the replica form is not a FAIL in that
+  direction, the primary miscoverage is attributed to the completeness term the VL162 replicas
+  carry and the central value does not.
+- If both FAIL in the same direction, that term does not explain it.
+
+The rule stays attribution only. It does not change the primary verdict, the windows, the
+intervals, the positive control or N. The A1.4 closure bias is reported alongside it.

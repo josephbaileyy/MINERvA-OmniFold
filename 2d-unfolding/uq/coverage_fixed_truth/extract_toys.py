@@ -3,13 +3,16 @@
 
 Reads every ``toy<T>.root`` in ``--toy-dir`` that has a ``.done`` marker, plus the
 production bootstrap rollup (``uq/bootstrap_MEFHC_300/uq_covariance_boot300.root``,
-ledger VL162). Writes ``--out`` (npz) and ``--out``.manifest.json (per-file sha256).
+ledger VL162). Writes ``--out`` (npz) and ``--out``.manifest.json (sha256 per toy file,
+keyed by its absolute path on the compute host).
 
 npz contents (arrays are ``[n_pt=14, n_pz=16]`` per toy):
 
 * ``toy_index`` (N,), ``U`` (N,14,16) unfolded ``hXSec2D``;
 * ``T`` (14,16) the fixed truth ``hTruthFixedXSec2D`` of the first toy, and
   ``T_max_abs_diff`` (N,) each toy's maximum absolute difference from it;
+* ``P`` (N,14,16) each toy's bootstrapped MC truth prior ``hTruthXSec2D``, used by
+  the replica-form secondary (amendment 1);
 * ``prod_mean``, ``prod_sigma`` (14,16): the production rollup's ``hMean2D`` and
   ``sqrt(diag(hCov2D_reported))`` on its reported bins (zero elsewhere);
 * ``reported`` (14,16) bool: ``prod_mean > 0`` (the 205 paper-reported bins).
@@ -95,22 +98,24 @@ def main():
     if not toys:
         raise SystemExit("[FAIL] no completed toys found")
 
-    U, idx, T0, dT, metas, files = [], [], None, [], [], {}
+    U, P, idx, T0, dT, metas, files = [], [], [], None, [], [], {}
     for t, p in toys:
         u, meta = read_hist(p, "hXSec2D")
         tr, _ = read_hist(p, "hTruthFixedXSec2D")
+        prior, _ = read_hist(p, "hTruthXSec2D")
         if meta is None or meta.get("toy") != t:
             raise SystemExit(f"[FAIL] {p}: metadata toy index {meta and meta.get('toy')} != {t}")
         if T0 is None:
             T0 = tr
         U.append(u)
+        P.append(prior)
         idx.append(t)
         dT.append(float(np.max(np.abs(tr - T0))))
         metas.append(meta)
-        files[p.name] = sha256(p)
+        files[str(p.resolve())] = sha256(p)
 
     mean, sigma, reported = production_band(args.rollup)
-    np.savez(args.out, toy_index=np.array(idx), U=np.stack(U), T=T0,
+    np.savez(args.out, toy_index=np.array(idx), U=np.stack(U), P=np.stack(P), T=T0,
              T_max_abs_diff=np.array(dT), prod_mean=mean, prod_sigma=sigma,
              reported=reported)
     manifest = {"toy_dir": str(Path(args.toy_dir).resolve()), "n_toys": len(idx),
