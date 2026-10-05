@@ -23,7 +23,12 @@ Cluster scratch (mine only): `/pscratch/sd/j/josephrb/s5p-parallel-recompute/`.
   found defective (F1 MEDIUM).
 - **`4a772838` is a historical checkpoint, not the deployment target.**
 
-**STATUS (2026-10-05): FINAL VERIFICATION PERFORMED — the reviewed comparer's verdict is INCOMPLETE, not AGREE.**
+**STATUS (2026-10-05, updated): VERIFICATION AGREES.** The reviewed comparer mapping extension (`02df81e6`, review
+APPROVE) gives **AGREE, 1379/1379 rows**, on the unchanged production outputs (report §8; outputs in
+`state/s5p/recompute/final-ext/`). The missing-experiment sensitivity is still uncertified, pending the lost-seed
+recovery cross-check (§5.11). The first run, below, is kept as it was:
+
+**FIRST RUN (2026-10-05): the reviewed comparer's verdict was INCOMPLETE, not AGREE.**
 - 712 of 712 compared rows agree, with 0 discrepancies. Twenty required items are not located (production layout
   differs from the stated schema), and 713 production leaves are unmapped.
 - An unreviewed diagnostic finds every independently suppliable unmapped field in agreement, apart from a ddof
@@ -849,6 +854,23 @@ substituted for it.
 
 The bounds script defect found at the terminal run (`d5fdb27c…`: alphabetical null order from the sorted-key JSON)
 is fixed at `5a3beaf3…` with two regression tests; the first output is kept as withdrawn.
+
+**5.10 Comparer mapping extension (2026-10-05).** The final reviewed commit for the extension is **`02df81e6`**
+(review `REVIEW-20261005-s5p-recompute-comparer-extension.md`: APPROVE).
+- It supersedes `0142a228` for the comparer and the evaluator; the evaluator's existing fields are byte-identical.
+- Verification run: AGREE 1379/1379 (report §8).
+- Owed, each with its own review round: LOW 1 (move the test class above `unittest.main()`) and LOW 2 (a k > 0
+  fixture).
+
+**5.11 Recovered-seed cross-check (pending).** Agreed definitions with the campaign (2026-10-05):
+- frozen S, from the retained ensemble;
+- per-variant k_frozen (which must reproduce the terminal run), k_rec (T ≥ T_obs), and k' over B + M;
+- the resolved claim p, the maximum over variants;
+- the κ = 3 replace family, and the added family;
+- power against the retained null, over n + recovered;
+- a Holm re-run with determinacy on the resolved claims.
+
+It runs after the campaign's reviewed recovery procedure has produced its products.
 
 **Downstream reader.** The reproduction harness (branch `s5p-parallel-reproduction-20260928`, config key
 `joint.independent_compare`) records `/pscratch/sd/j/josephrb/s5p-parallel-recompute/final/compare.json` by sha256

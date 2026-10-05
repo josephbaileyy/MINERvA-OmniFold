@@ -8,8 +8,11 @@
   bounds, and an unreviewed comparison of the fields the comparer leaves unmapped;
 - the agreement of the two independent missing-sensitivity implementations.
 
+**UPDATE 2026-10-05 (§8): the reviewed comparer mapping extension returns AGREE** (1379/1379, 0 discrepancies,
+0 not located, 0 unresolved) on the unchanged production outputs. §1–§7 are the first run, kept as they were.
+
 **NOT CITABLE FOR:**
-- **a verification verdict of AGREE**: the reviewed comparer returned INCOMPLETE;
+- a verification verdict from the FIRST run: it returned INCOMPLETE. The AGREE is §8's;
 - the scientific adequacy of the calibration (the nuisance model, the pseudo-experiment process);
 - ignorable missingness;
 - any adoption, grade or publication claim.
@@ -207,3 +210,58 @@ certified" here anyway.
 
 The campaign has put decisions (1) and (2) to the owner (campaign-state at `9f257847`). It frames (1) as whether
 INCOMPLETE with 0 discrepancies satisfies amendment 7 (v). No joint result is recorded.
+
+## 8. Comparer mapping extension: reviewed, rerun, AGREE (2026-10-05)
+
+*Authority.* Owner decision 1, "Extend, review, then record", and §4 (A16 ruled report-only; new output fields
+allowed): `DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md` (origin/main `d2fe7525`,
+`18af90c3`). Both were read from origin/main by this lane before acting.
+
+*The change* (`02df81e6`):
+- the evaluator gains OUTPUT fields only;
+- the comparer maps production's layout as observed in its outputs;
+- A16 (the descriptive null-T SD and `median_shift_in_null_sd`) is compared against the ruled reading, and the
+  recompute's own reading is reported outside the verdict;
+- only rule-description texts and the two family-definition strings are excluded, by anchored pattern.
+
+*Independent review.* `REVIEW-20261005-s5p-recompute-comparer-extension.md`, verbatim: a fresh read-only agent in an
+isolated worktree, left clean. **APPROVE** (nothing at MEDIUM or above).
+- It confirmed every existing output byte-identical to `0142a228`, on the real terminal record and on toy worlds.
+- It confirmed the A16 ruled reading in the verdict, with the own reading outside it.
+- It confirmed the mapping, by exact CP and Holm restatements and 13 direct spot checks.
+- It confirmed the exclusions are text only, and the layout signature regenerated from the real files.
+- It re-ran the real comparison.
+
+The reviewer's full pytest run did not finish under machine load (30 passed, no failure seen). This lane's own run of
+the same code gave 84 passed (73 recompute + 11 bounds) before the commit.
+
+*Review findings, disposition.* Not changed, because a change would void the review; each is acted on only with its
+own review round:
+- **LOW 1** (the new test class sits after `unittest.main()`, so it runs only under pytest, the documented runner): a
+  move above the `__main__` block is owed.
+- **LOW 2** (the fixture has k = 0 throughout, so a per-variant/claim or keep-both/replace swap would pass the tests):
+  the swap is excluded on the real data by production's own rule text and by member-wise variant comparison; a k > 0
+  fixture is owed.
+- **LOW 3** (`diagnostics.keep_both.family` is checked for existence only): its text, read directly, is *"claim
+  variants union F +- kappa_robust delta_M1 (the frozen decisions_robust_kappa)"*. That is the recompute's keep-both
+  (retain) definition. Its members are compared member by member in `variants` and `robustness_variants`.
+- **LOW 4** (latent null-level rows on the non-ruled reading): they fire on 0 rows here.
+- **NOTEs 1–3:** recorded.
+
+*The verification run* (`final-ext/`). The reviewed code was deployed by the §5.2 guard at `02df81e6`: recompute
+`81b879ae…`, comparer `bc924f31…`, design `404446eb…`, contract `d54fd7c9…`. It ran after re-checking that production's
+outputs are unchanged (`b9604502…`, `206655f9…`), with 5/5 finals and no s5p job.
+
+| step | result |
+|---|---|
+| `evaluate --require-terminal` | rc 0; `recompute.json` sha256 `550a95fcd9b98452…` |
+| `compare` | **AGREE (rc 0): 1379/1379 rows agree, 0 discrepancies, 0 required items not located, 0 unresolved production leaves**; `compare.json` sha256 `97e1666a7e5722b0…` |
+
+- 61 paths excluded: the schema, rule texts, lateral-symmetry metadata, and the two family strings.
+- A16 own-reading rows: 82, 4 agree; reported, outside the verdict.
+- Decisions: all ten rejected, and all ten ruled labels "robust to the sub-fine residual", as in §4.
+- Outputs: `state/s5p/recompute/final-ext/` (byte-identical to the cluster).
+
+**Verdict: the independent recomputation AGREES with production's joint evaluation on every compared quantity.** This
+verifies the calculation from the products. It does not establish the calibration's scientific adequacy or ignorable
+missingness: §5's missing-experiment sensitivity still stands, pending the owner's lost-seed recovery (decision 2).
