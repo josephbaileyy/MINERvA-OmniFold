@@ -38,7 +38,7 @@ found. Neither the arXiv `all:OmniFold` query (15 entries) nor the MINERvA publi
 
 | work | observables | dim | unfolding | generator statement |
 |---|---|---|---|---|
-| MINERvA, Ruterbories *et al.*, PRD 104, 092007 (2021), arXiv:2106.16210 (**our 2D reference**) | p_T, p∥ (inclusive, ME) | 2 | binned D'Agostini, 10 iterations | *"The results are not well modeled by several generator predictions using a variety of input models."* (**verified**, arXiv API). Compared with GENIE (2.12.6 variants), NuWro, GiBUU (2019 and 2021), NEUT. Table I: χ² over 205 d.o.f. for 17 variants (agent-reported). |
+| MINERvA, Ruterbories *et al.*, PRD 104, 092007 (2021), arXiv:2106.16210 (**our 2D reference**) | p_T, p∥ (inclusive, ME) | 2 | binned D'Agostini, 10 iterations | *"The results are not well modeled by several generator predictions using a variety of input models."* (**verified**, arXiv API). Compared with GENIE (2.12.6 variants), NuWro, GiBUU (2019 and 2021), NEUT. Table I gives the standard χ² over 205 d.o.f. for 17 variants. Read from the full text and **verified** by this lane: Tune v1 6786, GENIE 2.12.6 8241, GiBUU v2019 5800, GiBUU v2021 5594, NuWro SF 5151, NuWro LFG 3789; the range over all variants is 3789–12345. |
 | MINERvA, Rodrigues *et al.*, PRL 116, 071802 (2016), arXiv:1511.05944 | E_avail, q3 (LE low recoil) | 2 | binned, 4 iterations | the established low-recoil excess (agent-reported) |
 | MINERvA, Ascencio *et al.*, PRD 106, 032001 (2022), arXiv:2110.13372 | E_avail, q3 < 1.2 GeV (ME) | 2 | binned, 2 iterations | χ² over 44 d.o.f.: MnvTune-v1.2 963, v3 1101, NuWro SF 9982 (agent-reported) |
 | MINERvA, Ruterbories *et al.*, PRL 129, 021803 (2022), arXiv:2203.08022 | p_T, p∥, ΣT_p (QE-like) | **3** | binned | *"the first measurement of the triple-differential cross section for νμ quasielastic-like reactions"* (agent-reported) |
@@ -64,7 +64,8 @@ multiplicity-controlled rejection. They report covariance χ², "tension" or "no
   methodological and harder to bound by search, so describe it without "first".
 
 **Not novel:**
-- That several generators fail to describe MINERvA inclusive data. The 2D reference already reports that.
+- That several generators fail to describe MINERvA inclusive data. The 2D reference already reports it, including
+  strong disfavour for every family our nulls belong to (Table I, §2).
 - That MnvTune misdescribes ME low recoil. Ascencio's χ² values and our own 2D χ²/ndf = 33.0 already show it.
 
 **Comparator for importance:** the collider precedents went to PRL (H1 2022, ATLAS 2024). Each delivered a
@@ -88,7 +89,10 @@ packet recommends a specialist journal.
   to tune the simulation and set the uncertainty on the single-particle response"*. It also says the flux
   uncertainty *"is the next largest, followed by hadronic and muon energy scales."*
 - **Test beam:** Aliaga *et al.*, NIM A 789, 28 (2015), arXiv:1501.06431, already cited in
-  `app_statmethods.tex`.
+  `app_statmethods.tex`. Its abstract (**verified**, arXiv API): *"Overall the data are well described by a
+  Geant4-based Monte Carlo simulation of the detector and particle interactions with agreements better than 4%,
+  though some features of the data are not precisely modeled."* Ascencio *et al.* does not state its input value;
+  it says only that the input *"is determined from hadron calorimetry data taken with a test beam detector"*.
 
 **Reading:** MINERvA's published recoil analyses carry a **test-beam-derived hadronic (recoil) energy response
 uncertainty**, separate from the GEANT inelastic cross-section reweights. Our declared nuisance model has the

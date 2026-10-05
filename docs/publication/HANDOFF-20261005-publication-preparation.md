@@ -37,13 +37,17 @@ next action.
 7. **Decision packet**, with its recommendation, the four questions, W1 and W2 proposed with caps, criteria and
    terminal rules, and the batched approval wording: `PACKET-20261005-publication-decision.md`.
 8. **Notification channel verified** (§4).
-9. **Independent review:** `REVIEW-20261005-independent.md`, which records the cycles and their resolution.
+9. **Independent review:** a fresh read-only Opus 5.5 subagent, in a detached worktree at `d9a75393`.
+   - Cycle 1 returned **ACCEPT WITH CHANGES** (1 blocking, 6 should-fix, 12 notes); every finding was resolved.
+   - Cycle 2 is a focused re-check of the changed artifacts.
+   - The record is `REVIEW-20261005-independent.md`.
 
 ## 3. Remaining dependencies (owners keep their procedures and budgets)
 
 - **D1:** the extended comparer is reviewed, compare returns AGREE, and the joint result is recorded.
-- **D2:** the lost-seed recovery runs (procedure revision 4 at `61cad10d`; nothing submitted), the resolution is
-  reported, and the recompute cross-check is done.
+- **D2:** the lost-seed recovery. Procedure revision 5 is at `51648245`, and **Phase 0 PASS** is at `15a32b0e`, and the
+  **determinism array 59397841** was submitted at `87256e75` (measured 2026-10-05T23:42Z). Still to come: the
+  determinism verdict, the recovery, the resolution and the recompute cross-check.
 - **D3:** Joseph's disposition of the resolution.
 - **D4:** the Stage-7 approved wording and the four final fields.
 - **D5:** the 2D coverage branch is merged into main.
@@ -58,7 +62,8 @@ Without (1), every route is a **scientific hold**, which is a legitimate termina
   D3 and D4, and will report abandonment, for example a determinism FAIL. It also recorded the commitment in
   `campaign-state.json` incidents (commit `1aa9c121`).
 - `gbdt independent` (the recompute lane) acknowledged that it will report the extension review and compare
-  verdict, the recovered-seed cross-check, and any abandonment or disagreement.
+  verdict, the recovered-seed cross-check, and any abandonment or disagreement. This commitment exists **only as a
+  relayed message** and is not committed anywhere.
 
 **Fallback, bounded and read-only.** These are existing files; no new tooling was built. Run from this worktree:
 

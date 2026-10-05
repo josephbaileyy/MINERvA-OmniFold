@@ -38,30 +38,37 @@ adoption, deposit, tag, external message or submission.
 
 ## 1. Recommendation in one paragraph
 
-**Hold the numerical headline now. Recommend a specialist-journal article (Phys. Rev. D class) as the target, and
-do not pursue the PRL Letter unless two proposed studies come back favorably.**
+**Hold the numerical headline now. Recommend a specialist-journal article (Phys. Rev. D class) as the target. Do
+not pursue the PRL Letter: the two proposed studies (W1, W2) are necessary to reopen it, but not sufficient.**
 
 The work has genuine methodological novelty. To our knowledge it is the first unbinned unfolding of neutrino data,
-and the first with five simultaneous observables, where earlier data measurements reach three (§5.1).
+and the first with five simultaneous observables, where earlier data measurements reach three (§5.1). The five are
+correlated: E_avail, q3 and W share the recoil energy.
 - **The hold** waits on three committed handoffs that do not yet exist (§3).
 - **The article** would present the validated unbinned five-observable unfolding, its measured limitations, and
   the calibrated joint generator tests as a conditioned result.
 - **The PRL case fails today on its own criteria** (PLAN §4–§5):
-  - The principal result rejects five predictions, including MINERvA Tune v1. The published 2D measurement on the
-    same data already rejects Tune v1 (χ²/ndf = 33.0), and its abstract says the data "are not well modeled by
-    several generator predictions".
+  - The pending outputs read `rejected` for all 10 tests, including MINERvA Tune v1. They are unrecorded, and no
+    rejection is certified.
+  - The published 2D measurement on the same data already disfavours these generator families strongly. Its
+    Table I gives χ² over 205 bins of 6786 for Tune v1, 8241 for GENIE 2.12.6, 5800 for GiBUU 2019 (the same
+    version as our null) and 3789–5151 for NuWro; our recomputation for Tune v1 is χ²/ndf = 33.04. Its abstract
+    says the data "are not well modeled by several generator predictions".
   - Nothing yet shows that the joint information adds discrimination.
   - The declared nuisance model omits a recoil-energy response band, and published MINERvA recoil analyses
-    include one (§5.4). A common omitted effect would reject every null in the same way, and here every null is
-    rejected.
+    include one (§5.4). A common omitted effect **could** move every null's statistic. The published muon-kinematics
+    comparison, which is largely insensitive to hadronic response, independently disfavours the same families.
+    So the concern bears chiefly on what the five-dimensional **shape** information adds along the hadronic axes,
+    not on whether these generators fail at all.
 
-None of this impugns the arithmetic: 712 of 712 recomputed rows agree. It concerns what the arithmetic means.
+None of this impugns the arithmetic: 712 of 712 recomputed rows agree (comparer verdict INCOMPLETE, pending its
+extension). It concerns what the arithmetic means.
 
 ## 2. Routes considered
 
 | route | requires | assessment |
 |---|---|---|
-| **A. PRL joint-inference Letter** (PLAN) | Joseph's scope change; AGREE; certified rejections; response adequacy; a joint-information demonstration; importance | **Not recommended now.** It becomes defensible only if W1 shows joint-only discrimination for at least one prediction **and** W2 shows the rejections survive a published-size recoil-response variation. Even then, the predictions are 2016–2021 generator versions, and modern versions are untested. |
+| **A. PRL joint-inference Letter** (PLAN) | Joseph's scope change; AGREE; certified rejections; response adequacy; a joint-information demonstration; importance | **Not recommended.** W1 and W2 are necessary for this route, but not sufficient. W1 can show only discrimination relative to matched **coarse** projections, not value beyond the published 205-bin 2D measurement, which already disfavours every family tested. A PRL case would also need an importance argument that the evidence does not now supply. The predictions are 2016–2021 generator versions, and modern versions are untested. Reopening this route is Joseph's call after W1 and W2, not an automatic consequence of them. |
 | **B. Specialist article (PRD class)** | Joseph's scope change and journal decision; the same handoffs for the inference section | **Recommended.** Its demonstrated content (L1–L12) is a complete, citable methods-and-validation result. The inference enters with its conditions in the body. If the recovery or the verification goes against it, the article survives with that section narrowed. |
 | **C. Scientific hold** | — | **The current state of the numerical headline.** It is legitimate and terminal if the recovery leaves rejections uncertified, the verification disagrees, or W2 overturns them. Route B without the inference then remains available. |
 
@@ -70,15 +77,15 @@ None of this impugns the arithmetic: 712 of 712 recomputed rows agree. It concer
 - Its length lets the conclusion-relevant limitations sit beside the results: the coverage failure, the 74%
   regularization bias at high W, the response condition, and the covariance exception. In a Letter they would be
   compressed into End Matter.
-- It needs no new compute to be defensible. W2 is still recommended before the inference is presented as a
-  statement about generator physics.
+- It needs no new compute to be defensible. W2 is still recommended before the inference's **shape** results are
+  presented as a statement about generator physics along the hadronic axes.
 
-## 3. Dependencies before the numerical headline (re-measured 2026-10-05T23:25Z)
+## 3. Dependencies before the numerical headline (re-measured 2026-10-05T23:42Z at `origin/main` `87256e75`)
 
 | # | dependency | owner | state now | notification |
 |---|---|---|---|---|
-| D1 | The extended comparer, independently reviewed, returns AGREE on the unchanged outputs (`b9604502…` etc.), and the joint result is recorded | `gbdt independent` → `gbdt worker` | Extension at `02df81e6` is **not reviewed** ("its review is running"). Nothing recorded. | Both acknowledged; one line to `pub` per event. |
-| D2 | Lost-seed recovery: Phase 0, determinism PASS, recovery, resolution (PROCEDURE §5), recompute cross-check (§6) | `gbdt worker`; `gbdt independent` for §6 | Review 3 returned READY WITH CHANGES, nothing blocking. Revision 4 applies it (`61cad10d`, 40 controls). **Nothing submitted.** | As above. A determinism FAIL is to be reported. |
+| D1 | The extended comparer, independently reviewed, returns AGREE on the unchanged outputs (`b9604502…` etc.), and the joint result is recorded | `gbdt independent` → `gbdt worker` | Extension at `02df81e6`: its committed message says "review pending … NOT REVIEWED: do not deploy". The lane's message (relayed, not committed) says the review is running. Nothing recorded. | Both acknowledged; one line to `pub` per event. |
+| D2 | Lost-seed recovery: determinism PASS, recovery, resolution (PROCEDURE §5), recompute cross-check (§6) | `gbdt worker`; `gbdt independent` for §6 | Procedure revision 5 (`51648245`, 41 controls). **Phase 0 PASS** (`15a32b0e`). **Determinism array 59397841 submitted** (`87256e75`, 4.0 node-h reserved from verification_repair). Recovery not yet submitted. | As above. A determinism FAIL is to be reported. |
 | D3 | Joseph's disposition of how the resolution enters the claims | Joseph | Comes after D2 (`gbdt worker`, 2026-10-05). | `gbdt worker` relays it. |
 | D4 | The Stage-7 approved claim text and the four final fields (`CHECKLIST-20261001` §4) | `gbdt worker` | Not started. | As above. |
 | D5 | The 2D coverage outcome merged into main (VL168) | 2D lane (`2d`) | Committed on `study/2d-coverage-test-20261005` `80862878`; not on main. | Poll (§8). |
@@ -89,7 +96,8 @@ None of this impugns the arithmetic: 712 of 712 recomputed rows agree. It concer
 
 **Demonstrated** (committed, with an independent check where the governing contract requires one):
 - The 2D reproduction to 1.11% (ratio 1.0111) and the 6.87% construction (L1, L2).
-- The statistical-band fixed-truth undercoverage of that construction (L3, on its branch).
+- The fixed-truth undercoverage of the 2D **statistical** band, VL162 (L3, on its branch). The combined 6.87%
+  construction's coverage remains untested.
 - The 3D–5D anchors and closures (L5).
 - The measured background and regularization biases (L6).
 - The low-E_avail deficit and the 2p2h fill (L7).
@@ -126,7 +134,9 @@ See `LITERATURE-20261005-comparison.md` §3. Within the searched literature (arX
 
 **Not novel:**
 - Generator failure on these data. 2106.16210 already reports it.
-- MnvTune's failure at ME low recoil. Ascencio's χ² values and our 2D χ²/ndf = 33.0 already show it.
+- MnvTune's failure on these data: at ME low recoil (Ascencio's χ² over 44 bins) and across the muon-kinematics
+  plane (2106.16210 Table I; our recomputation χ²/ndf = 33.04).
+- The other families' failure in 2D. Table I disfavours GENIE 2.12.6, GiBUU 2019 and NuWro as strongly as Tune v1.
 
 **Importance comparator:** the collider OmniFold PRLs (H1 2022, ATLAS 2024) each delivered a measurement with full
 uncertainties. This work's 5D measurement has **no qualified uncertainty**, because the measurement branch was not
@@ -148,26 +158,31 @@ GiBUU 2019.
 
 The consequence is limited further by the shape of the evidence (claims table §C, descriptive):
 - The tuned analysis simulation is about 200 null SDs from the data in the total statistic and about 40 in shape.
-- The published 2D comparison already excludes Tune v1 decisively.
-- So the new physical information is in the external-generator tests and in the shape tests. There the proxy
-  distances are 3–26 null SDs, and NuWro shape (k = 1) is the closest.
+- The published 2D comparison already disfavours Tune v1, GENIE 2.12.6, GiBUU 2019 and NuWro strongly (§1).
+- So any new physical information is in the five-dimensional **shape** tests. There the proxy distances are
+  2.8–6.1 null SDs for the external nulls, and NuWro shape (k = 1) is the closest.
 
 A referee will ask what is learned beyond "older generators fail". The honest answer today is a calibrated method
 plus a conditioned rejection, which is a specialist-journal contribution.
 
 ### 5.3 Value of the joint information
 
-**Not demonstrated.** No matched lower-dimensional test exists. The PLAN requires that the comparative claim be
-omitted in that case (§4). Because Tune v1 already fails decisively in 2D, joint-information value could only be
-shown by a prediction that a matched marginal test does **not** reject while the joint test does. W1 (§6) measures
-exactly that from existing products, with no new pseudo-experiments.
+**Not demonstrated.** No matched lower-dimensional test exists, and the PLAN requires that the comparative claim
+then be omitted (§4). The published 205-bin 2D comparison already disfavours every family tested, so
+joint-information value **against published lower-dimensional results** is not on offer from these predictions.
+
+W1 (§6) answers a narrower question from existing products: does the 5D test reject anything that the same
+calibrated test on matched 3×3 **coarse** projections of the same cells does not? A positive W1 supports only that
+scoped statement.
 
 ### 5.4 Detector-response adequacy
 
 **Not established, and it may change the conclusion.**
 - Amendment 7 states as a claim condition that "there is no recoil-energy-scale band in the analysis's systematic
   set … so hadronic-response completeness is not established".
-- The calibration draws the three GEANT hadron-interaction reweights and MinosEfficiency only.
+- The calibration draws one flux universe, all 34 interaction-model bands, the three GEANT hadron-interaction
+  reweights, MinosEfficiency, and the five muon/beam lateral bands through a linear surrogate. **None of these is a
+  recoil or calorimetric response band.**
 - MINERvA's own published recoil analyses carry a separate **test-beam-derived hadronic energy response**
   uncertainty, in addition to the GEANT reweights. These passages were verified in the source text (literature
   §4):
@@ -178,12 +193,17 @@ exactly that from existing products, with no new pseudo-experiments.
     situ measurements of a smaller version of the detector in a test beam"*, separately from the GEANT
     inelastic-cross-section variations.
 
-Three reasons the gap may matter:
+Why the gap may matter, and what bounds it:
 1. A data/simulation difference in recoil response is common to all five nulls, because they share the detector
    simulation and the unfolding.
-2. Such a difference would push every observed statistic upward together, which is the observed pattern.
+2. It **could** move every observed statistic, but not necessarily upward. To first order,
+   ΔT ≈ 2dᵀW⁻¹(F−μ) + dᵀW⁻¹d, and the first term's sign depends on how the shift d aligns with each residual.
 3. The arithmetic verification cannot detect it ("Agreement verifies the calculation from the products, not the
    calibration", recompute report).
+4. **Partial counter-evidence:** the published muon-kinematics comparison (2106.16210 Table I), which includes its
+   own hadronic-response systematics, independently disfavours the same families. The concern is therefore chiefly
+   about the five-dimensional **shape** conclusions along E_avail, q3 and W. It is a real gap, but not an
+   undecidable one.
 
 How the PM-1 ruling (`DECISION-20260919…` §4–§5) applies:
 - Generic precedent is "supporting context, not proof".
@@ -191,80 +211,100 @@ How the PM-1 ruling (`DECISION-20260919…` §4–§5) applies:
 - It requires that a concrete identified omission be brought back with its affected observable and a proposed
   remedy. **This packet does that:**
   - **Omission:** a recoil-energy or particle-response variation.
-  - **Affected observables:** E_avail, q3 and W, all through q0.
-  - **Remedy:** W2 below, with δ taken from the published MINERvA source rather than chosen here.
+  - **Affected observables:** E_avail, the primary calorimetric quantity, and q3 and W through the recoil energy.
+  - **Remedy:** W2 below, with a δ taken from a published MINERvA number (§6), which Joseph is asked to accept
+    or replace.
 
 **Alternative zero-compute route:** send the prepared collaborator question. It is an external message, so it
 needs Joseph's authorization. Silence would not settle it.
 
 ## 6. Proposed additional scientific work (proposed only; NOT executed)
 
-### W1: matched lower-dimensional comparison (value of joint information)
+### W1: matched coarse-projection comparison (value of joint information, scoped)
 
-- **Decision answered:** does the joint 5D test reject any prediction that the same calibrated test, restricted
-  to a lower-dimensional projection of the same cells, does not?
+- **Decision answered:** does the 5D test reject any prediction that the same calibrated test, restricted to
+  matched 3×3 coarse projections of the same J cells, does not? This is **not** a comparison with published
+  lower-dimensional measurements (§5.3).
 - **Quantity:**
-  - Projections: P_ptpl (onto p_T × p∥) and P_eW (onto E_avail × W) of the 109 (GiBUU 72) J cells.
-  - For each of the 10 tests, the same total and shape statistics on P·F against P·μ_G, with metric P V Pᵀ +
-    diag(P Var(μ_G) Pᵀ).
-  - The same claim rule (max over the process-shift and M1 variants), against the same frozen calibration
-    products with the same per-draw seeds. That gives 20 marginal tests.
-- **Inputs:** the frozen production products and design only (`404446eb…`, V `35979ef7…`). No new
-  pseudo-experiment, unfold or allocation.
+  - Projections: P_ptpl onto (p_T, p∥) and P_eW onto (E_avail, W), each a 9×109 sum over the dropped axes of the
+    supported J cells (9×72 for GiBUU).
+  - For each of the 10 tests, the same total or shape statistic, with total matched to total and shape to shape.
+    It is computed on P·F against P·μ_G, with metric P V Pᵀ + diag(P Var(μ_G) Pᵀ).
+  - **Variants:** each frozen 109-dimensional variant vector is projected: the process-shift vector S(c) for
+    c ∈ {0, ½, 1}, built once by the frozen `s5p_joint.shift_vector` in 109 dimensions, and the M1 shifts ±2 δ_M1.
+    Nothing is rebuilt in the projected metric.
+  - The claim p is the largest over the projected variants, with the per-draw seeds of the frozen products. That
+    gives 20 marginal tests (10 tests × 2 projections).
+- **Inputs:** the frozen production products and design only (`404446eb…`, V `35979ef7…`), plus the recovered
+  products from D2 under its own report-only labelling. No new pseudo-experiment, unfold or allocation.
 - **Resource cap:** login-node CPU ≤ 2 core-hours. Reads only; writes to a new namespace outside
   `$NS/runs/prod/`. Zero billed node-hours.
 - **Criteria, fixed now:**
-  - A prediction G shows **joint-only discrimination** if its frozen 5D test is rejected (as recorded after D1–D4)
-    and **both** of its marginal tests (total or shape, as matched) have a claim p ≥ 0.05 with determinacy.
-  - Otherwise there is no joint-information claim for G.
+  - For a prediction G and a test type t (total or shape), the 5D test shows **discrimination beyond the matched
+    coarse projections** if three things hold:
+    - its 5D t-test is rejected as recorded after D1–D3;
+    - **both** of its projected t-tests (P_ptpl and P_eW) have claim p ≥ 0.05;
+    - that holds under the D2-resolved ensemble, both (a) the union and (b) the frozen-S reading.
+  - Otherwise there is no such claim for (G, t).
   - The marginal tests are report-only. They do not enter the Holm family and change no frozen decision.
 - **Disclosure:** data-informed (the 5D outcomes were seen). It is reported as a post-hoc secondary analysis.
 - **Independent check:** the recompute lane, or a fresh reviewer's own code, reproduces the 20 marginal p-values
   exactly.
 - **Terminal rule:**
   - One run. No other projections are selected after the result.
-  - If no prediction qualifies, the joint-information claim is omitted permanently for this paper, and route A
-    is closed.
-  - If at least one qualifies, the claim is stated for those predictions only, with the disclosure.
-- **When:** after D1, so that it reads recorded outputs.
+  - If no (G, t) qualifies, the joint-information claim is omitted permanently for this paper.
+  - If any qualifies, the scoped claim is stated for those (G, t) only, with the disclosure.
+- **When:** after D1 and D2, so that it reads recorded outputs and a resolved missing-seed state.
 
-### W2: recoil-response sensitivity of the rejections (detector-response adequacy)
+### W2: recoil-response sensitivity of the rejections (detector-response adequacy), in two gated steps
 
-- **Decision answered:** does a recoil-energy response variation of the published MINERvA size remove any of the
-  10 rejections?
-- **Quantity:**
-  - Two real-data unfolds (R, 5 iterations, the frozen settings) with the simulation's reconstructed q0 scaled by
-    (1 ± δ), with E_avail, q3 and W recomputed from the scaled q0.
-  - One nominal re-run as a reproducibility control. It must reproduce `data_b-_j-.npz` (`fb5cc679…`) under the
-    procedure's determinism criterion.
-  - For each of the 10 tests, T_obs(±δ) against the **frozen** null ensemble, with the claim rule.
-  - δ is taken from a published MINERvA response uncertainty, pinned in the authorization rather than chosen by
-    this lane. The proposed source is the **hadronic-energy response input of Ascencio *et al.*, PRD 106,
-    032001** (the ME E_avail–q3 analysis), which is derived from the test beam of Aliaga *et al.*, NIM A 789, 28.
-    Its per-particle input values are not yet read (literature §4, UNVERIFIED).
-  - If the source specifies per-particle response, use per-particle scaling where the inputs carry truth-particle
-    energy fractions. Otherwise report a single-scale version, labelled as a simplification.
-- **Mechanism:** the existing lateral-endpoint machinery (`s5p_numerics.py --construction data`, as for the five
-  muon-side bands in `s3-latunfold-tasks.tsv`). The measured cost of ten such endpoints was 1.25 CPU node-hours
-  for the unfolds plus 2.18 for the dumps (amendment 6 `budget`).
-- **Resource cap:** **4 CPU node-hours** on `m3246`, including one retry. There is no GPU. It sits in a separate
-  ledger, not the s5p verification/repair reserve. Wall clock is about one day.
+- **Decision answered:** does a recoil-response variation of a published MINERvA size remove any of the 10
+  rejections?
+- **δ, proposed for Joseph to accept or replace:**
+  - δ = **0.04**, applied as a single coherent scale on the simulation's reconstructed calorimetric recoil energy.
+  - **Source:** Aliaga *et al.*, NIM A 789, 28 (2015), arXiv:1501.06431. Its abstract (verified via the arXiv API)
+    says the test-beam data agree with the Geant4 simulation of the calorimetric response "with agreements better
+    than 4%".
+  - **Status of this number:** it is a data/simulation agreement bound for 0.35–2.0 GeV/c single hadrons, used here
+    as a sensitivity size. It is **not** MINERvA's per-particle response prescription. Ascencio *et al.* applies a
+    test-beam-derived input whose values that paper does not state, so the per-particle values remain unread.
+  - **Why single-scale:** the existing dumps carry (p_T, p∥, E_avail, q3, W) only, with no q0 and no
+    truth-particle energy fractions, so per-particle scaling cannot be done from them.
+  - Accepting this δ is Joseph's ruling under PM-1, which forbids the lane from inventing a shift.
+- **W2a: implementation, review and costing.**
+  - **Code:** a new recoil-response universe in the event loop (`runEventLoopOmniFold.cpp`). It scales the
+    reconstructed calorimetric recoil by (1 ± δ) per simulated event, then derives E_avail, q0, q3 and W from the
+    scaled recoil, coherently for signal and background. The lateral dump and real-data unfold
+    (`s5p_input_dumps.py lateral`; `s5p_numerics.py --construction data`) are reused unchanged.
+  - **Gate:** the code gets one independent read-only review before any production use.
+  - **Cost measurement:** δ = 0 and ±δ on one playlist.
+  - **Cap:** ≤ 1 CPU node-hour.
+  - **Output:** a measured per-playlist cost for W2b.
+- **W2b: the run**, approved separately with W2a's measured cost.
+  - Two full real-data unfolds (R, 5 iterations, frozen settings) at ±δ, plus one δ = 0 control.
+  - **Control criterion:** the δ = 0 product reproduces `data_b-_j-.npz` (`fb5cc679…`) bitwise. If the code path
+    legitimately differs, every J-cell value must instead lie within the envelope spanned by the 20 committed
+    real-data rounding jitters (`data_jitters`).
+  - **Hard ceiling:** 8 CPU node-hours for W2a and W2b together, on `m3246`, in a separate ledger outside the s5p
+    reserve.
+  - The amendment-6 basis of 1.25 + 2.18 node-hours excludes the event-loop step, so it is not the estimate.
 - **Criteria, fixed now:**
-  - A rejection is **robust to the recoil variation at δ** if, at both +δ and −δ, its claim p against the frozen
-    null ensemble stays below its frozen Holm threshold.
-  - Otherwise it is **not robust at δ**.
-  - This is a deterministic sensitivity, not a calibrated nuisance. It moves the data, not the null, so "robust"
-    means "not removed by this variation". It does not mean "response model complete".
+  - Compute T_obs(±δ) for all 10 tests against the **frozen** null ensembles with the claim rule, then re-run
+    `s5p_inference.holm_determined` on each sign's 10 claim p-values.
+  - A rejection is **robust to the recoil variation at δ** if it is rejected under both signs. Otherwise it is
+    **not robust at δ**.
+  - **Limitation, stated with the result:** the variation moves the data and not the null. For strongly
+    non-central nulls (λ = 318–6,344) the size of that approximation is unmeasured. "Robust" means "not removed by
+    this data-side variation". It does not mean "response model complete".
 - **Terminal rule:**
-  - One δ and one run.
-  - If any rejection is not robust, every claim about that prediction is narrowed to "not robust to a recoil
-    response variation of the published size", and route A is closed.
-  - If all are robust, the condition is reported as tested at δ, and the amendment-7 completeness caveat still
-    stands.
-  - No second δ is chosen after the result.
+  - One δ and one run of W2b.
+  - Any non-robust rejection narrows every claim about that prediction to "not robust to a 4% recoil-response
+    variation".
+  - If all are robust, the condition is reported as tested at δ, and the amendment-7 completeness caveat stands.
+  - No second δ after the result.
+  - If W2a's review or cost gate fails, W2 stops, and the response condition is stated without a sensitivity.
 - **Independent check:** the recompute lane's evaluator on the two shifted products.
-- **Constraint:** this needs Joseph's explicit authorization. It is new cluster compute, and the PM-1 ruling
-  forbids inventing a shift, so the authorization must name the published source of δ.
+- **When:** after D2, so that the frozen null ensembles and their missing-seed state are final.
 
 **Not proposed:** tests of modern generator versions; a calibrated re-production with a response band (~200 node-h,
 like s5p itself); any measurement-successor work. These belong to the separate successor proposal and are not
@@ -276,20 +316,25 @@ Joseph, please answer with any subset. Each item is independent.
 
 > **(1) Scope and journal.** "For publication, the target is a specialist-journal article (PRD class), not a
 > PRL Letter. Completion of the separate full measurement uncertainty product is NOT a prerequisite for this
-> article. The measurement branch remains NOT ADMITTED / NOT READY, and every artifact grade and exception
-> condition is preserved. The 2026-09-01 retention of uncertainties before publication is modified for this
-> article only."
+> article. The s5p measurement branch remains NOT ADMITTED, and s5p's `publication_readiness` stays NOT READY as
+> recorded under its own authorization. That authorization's "publication completion requires the joint result and
+> all retained claims to qualify" continues to govern s5p's own completion, not this article. This article's
+> readiness is a separate record. Every artifact grade and exception condition is preserved. The 2026-09-01
+> retention of uncertainties before publication is modified for this article only."
 
-> **(2) Hold.** "The numerical headline stays on hold until the joint result is recorded after AGREE, the
-> lost-seed resolution and its independent cross-check are committed, and I have disposed of how the resolution
-> enters the claims."
+> **(2) Hold.** "The numerical headline stays on hold until five things are done: the joint result is recorded
+> after AGREE; the lost-seed resolution and its independent cross-check are committed; I have disposed of how the
+> resolution enters the claims; the Stage-7 claim wording and final fields are committed; and the 2D coverage
+> outcome is on main."
 
 > **(3) W1.** "Authorize W1 as specified in PACKET-20261005 §6: login-node only, ≤ 2 core-hours, report-only,
-> after D1."
+> after D1 and D2."
 
-> **(4) W2.** "Authorize W2 as specified in PACKET-20261005 §6: ≤ 4 CPU node-hours on m3246, separate ledger,
-> δ = the hadronic-energy response input of Ascencio et al., PRD 106, 032001 (test beam: Aliaga et al., NIM A 789,
-> 28), as read from that source and recorded before the run, one run, report-only."
+> **(4) W2.** "Accept δ = 0.04 as a single coherent recoil-response scale (source: Aliaga et al., NIM A 789,
+> 28, 'agreements better than 4%'), as a labelled simplification. Authorize W2a as specified in PACKET-20261005
+> §6: code, one independent review, a one-playlist cost measurement, ≤ 1 CPU node-hour on m3246, separate ledger.
+> W2b needs my separate approval at W2a's measured cost, within an 8 CPU node-hour ceiling for W2a and W2b
+> together."
 
 > **(5) Collaborator question (optional alternative or complement to W2).** "Send
 > QUESTION-20260920-hadronic-response-coverage-for-eavail-w.md to <named collaborator>."
@@ -300,7 +345,10 @@ Joseph, please answer with any subset. Each item is independent.
 If (1) is declined, uncertainties remain a publication prerequisite, and the outcome is a **scientific hold** for
 every route. That hold is legitimate and terminal for this preparation effort.
 
+Items (3) and (4) are recommended but not required for route B. Without them, the article omits the
+joint-information claim and states the response condition without a sensitivity.
+
 ## 8. Review
 
-One fresh independent read-only review: `REVIEW-20261005-independent.md`. Its findings and their resolution are
-recorded there.
+One fresh independent read-only review, of `d9a75393`: ACCEPT WITH CHANGES (1 blocking, 6 should-fix, 12 notes).
+Every finding was resolved in repair cycle 1; see `REVIEW-20261005-independent.md`.

@@ -52,7 +52,7 @@ covariance.
    a complete measurement release would add.
 9. **Data availability and reproduction.** The release levels of the release inventory §3.
 
-**Figures (roles; all exist except F4):**
+**Figures (roles). F2 and F4 do not exist yet; both are plotting-only from committed receipts and outputs:**
 - F1: the 2D validation (the current Letter's Fig. 1).
 - F2: the coverage failure of the 2D band (from VL168 receipts; plotting only).
 - F3: the joint (E_avail, W) central value with the estimator named.
@@ -70,8 +70,9 @@ The core sequence follows PLAN §5:
 3. **Validation:** a compact version of L1, L3, L5 and L6; the missing-seed resolution; the response sensitivity
    (W2).
 4. **Principal inference:** the table and F4.
-5. **Consequence:** the matched-marginal comparison (W1), **required**, because a Letter whose result is "these
-   predictions fail" needs to show the joint test sees what lower dimensions do not.
+5. **Consequence:** the matched coarse-projection comparison (W1), **required but not sufficient**. W1 can show
+   discrimination only beyond coarse projections of the same cells, and the published 2D comparison already
+   disfavours every family tested (packet §5.3).
 
 **Exclusions:**
 - The localization (L8) is not a Letter claim. It is descriptive and sits in the region of largest regularization
@@ -80,8 +81,9 @@ The core sequence follows PLAN §5:
 - No PET.
 
 **Length:** at most 3,750 word-equivalents in the core and at most two pages of End Matter (APS rules; see the
-literature file §9 for the requirements as fetched). The current `paper_body.tex` is 2,151 source words before
-figures and equations, so the inference must replace material rather than be added to it.
+literature file §5 for the requirements as fetched). The current `paper_body.tex` is 2,151 words by raw `wc -w`
+on the source, comments included, which is not an APS count. The inference must replace material rather than be
+added to it.
 
 **Text in the current Letter that must change on either route:**
 - `paper_body.tex:61`: "its coverage is untested" (L3).

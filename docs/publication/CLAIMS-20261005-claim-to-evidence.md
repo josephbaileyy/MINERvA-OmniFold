@@ -32,7 +32,7 @@ Letter.
 | I2 | Monte Carlo p-values: (k + 1)/(B + 1), with k = 0 for 9 tests (B = 1343–1751) and k = 1 for NuWro shape (p = 2/1752). | **CONDITIONAL** | Same record §3; the recompute agrees row for row. | Same as I1. Report with the finite resolution and the CP interval, never as p = 0 or a Gaussian significance (`CHECKLIST` §4, forbidden phrasings). |
 | I3 | Each rejection is robust to the sub-fine residual at κ = 3. | **CONDITIONAL**, report-only label | `robust-labels.json` `206655f9…`: all 10 robust (A7-VS ruling). | Same as I1. The label is report-only under `RULING-20260929-s5p-A7-robustness-flag.md`. |
 | I4 | Power at the MnvTune null meets the T6 target for the W3 and D5 alternatives (shape power 1.000 at 0.005) and misses it for W2 (0.231). | **CONDITIONAL**, context only | `joint-evaluate.json` `power`; every power set is incomplete. | Under amendment 7, power is reported only beside a **non-rejection**. Every primary decision is a rejection, so power is context, not a claim condition. It must not be used to argue sensitivity to interaction mechanisms in general (PLAN §4). |
-| I5 | The joint five-observable test adds discrimination beyond lower-dimensional comparisons. | **UNSUPPORTED** | No matched lower-dimensional test exists. The published 2D measurement already gives χ²/ndf = **33.0** for MINERvA Tune v1 over 205 bins with the published covariance (26.5 for our unfold; `2d-unfolding/receipt_model_chi2_2d.json`, VERIFIED-NUMERIC 2026-08-11), and its abstract reports poor modelling by several generators. | Omit it, or run proposed study **W1** (packet §6). It needs at least one prediction that the matched marginal test fails to reject and the joint test rejects. |
+| I5 | The joint five-observable test adds discrimination beyond lower-dimensional comparisons. | **UNSUPPORTED** | No matched lower-dimensional test exists. The published 2D comparison already disfavours every family tested: 2106.16210 Table I gives χ² over 205 bins of 6786 for Tune v1, 8241 for GENIE 2.12.6, 5800 for GiBUU 2019 and 3789–5151 for NuWro. This repository's recomputation for Tune v1 is χ²/ndf = 33.04 (data) and 26.49 (our unfold) (`2d-unfolding/receipt_model_chi2_2d.json`, VERIFIED-NUMERIC 2026-08-11). | Omit it. W1 (packet §6) can support only the scoped claim "beyond matched coarse projections of the same cells", never "beyond published lower-dimensional results". |
 | I6 | The rejection identifies a localized (high-E_avail, high-W) discrepancy or a nuclear mechanism. | **UNSUPPORTED** | The tests are global total and shape statistics over 109 (72) cells. | A global rejection does not localize (PLAN §4). Localization stays descriptive, with the caveats of row L8. |
 | I7 | The rejections are robust to plausible detector-response mismodelling. | **UNSUPPORTED** | Amendment 7 `conditions_stated_with_every_claim` item 2: *"there is no recoil-energy-scale band in the analysis's systematic set … so hadronic-response completeness is not established"*. The collaborator question (`QUESTION-20260920-hadronic-response-coverage-for-eavail-w.md`) is **PREPARED, NOT SENT**. | State the condition in the Letter itself, or run proposed study **W2** (packet §6). This gap may change the conclusion; see packet §5.4. |
 | I8 | First calibrated simultaneous 5D goodness-of-fit test of neutrino generators on unfolded data. | **UNSUPPORTED** as a priority claim | `LITERATURE-20261005-comparison.md` §1–§3: no real-data unbinned neutrino unfolding was found; the highest data dimensionality found is 3; the only neutrino OmniFold work is a T2K simulation study (PRD 112, 012008). | Supportable, within the search limits: "to our knowledge, the first unbinned unfolding of neutrino data", and five simultaneous observables against a previous maximum of three. Do not claim priority for the test procedure. "First use of OmniFold in neutrino physics" is excluded (PLAN §5). |
@@ -43,13 +43,13 @@ Letter.
 | # | Claim (Letter line) | Status | Evidence | Note |
 |---|---|---|---|---|
 | L1 | The 2D integrated σ is 1.11% above the published total (ratio 1.0111); 205 bins; χ²/ndf 3.66 against the published covariance (`:51–58`). | **DEMONSTRATED** | `2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md:50–56`; `AGENTS.md` row "2D central value … VALIDATED". | It validates the estimator on shared data and is not an independent comparison; the Letter already says so. |
-| L2 | The standalone 2D uncertainty construction gives a 6.87% median against the paper's 6.86% (`:58–61`). | **DEMONSTRATED**, as a construction | 2D status `:22,56`; ledger. | **"its coverage is untested" (`:61`) is STALE** (row L3). |
-| L3 | (Missing from the Letter) The 2D statistical band undercovers a fixed truth: C2 = 0.912 against a window [0.928, 0.972]; FAIL-undercoverage, independently reproduced. | **DEMONSTRATED** on its branch; **not on main** | `OUTCOME-20261005-2d-fixed-truth-coverage-fail.md` (`80862878`), ledger VL168 on that branch. | The test covers only the statistical band, not the systematic or total budget and not 5D coverage. The Letter must replace "untested" once the branch merges. |
+| L2 | The standalone 2D uncertainty construction gives a 6.87% median against the paper's 6.86% (`:58–61`). | **DEMONSTRATED**, as a construction | 2D status `:22,56`; ledger. | **"its coverage is untested" (`:61`) is INCOMPLETE:** the combined construction's coverage is still untested, but its statistical band has now failed a fixed-truth test (L3). |
+| L3 | (Missing from the Letter) The 2D statistical band (VL162) undercovers a fixed truth: C2 = 0.912 against a window [0.928, 0.972]; FAIL-undercoverage, independently reproduced. | **DEMONSTRATED** on its branch; **not on main** | `OUTCOME-20261005-2d-fixed-truth-coverage-fail.md` (`80862878`), ledger VL168 on that branch. | The test covers the VL162 statistical band only, not the systematic or combined budget and not 5D coverage. The Letter must state it once the branch merges. |
 | L4 | The central value (scikit-learn) and the covariance (LightGBM) are not estimator-matched (`:42–46`). | **DEMONSTRATED** disclosure | 2D reference. | Keep it. An inference Letter adds a third estimator (R) and must name it in each figure (PLAN §4). |
 | L5 | The 3D/4D/5D marginal normalizations agree at 1–2%, and an injected E_avail closure passes (`:95–99`). | **DEMONSTRATED** | `AGENTS.md` rows "3D central value…" and "Scalar 4D/5D central values and closures", both VALIDATED; `nd-unfolding/ND_OMNIFOLD_STATUS.md`. | It tests signal reweighting only and not the background subtraction; the Letter says so. |
 | L6 | Background bias reaches 4% at the highest W; regularization bias reaches 74% at high W under a GiBUU/GENIE shape and 16–31% for other shapes; none of it is in the quoted uncertainties (`:100–116`). | **DEMONSTRATED** limitation | VL149, VL151, VL152; `KNOWN_ISSUES` 75, 77. | It bears directly on L8: the largest regularization bias is in the region where the Letter localizes its excess. |
 | L7 | All four generators underpredict at low E_avail; Valencia 2p2h fills 52% of the gap below 0.4 GeV (`:140–149`). | **DEMONSTRATED** central value | VL159, VL160 (VL160: *"fills 52% of the E_avail ≤ 0.4 GeV gap"*; 63% is the integrated-deficit share). | No significance. |
-| L8 | A central-value excess over MnvTune is localized at high E_avail and high W (`:155–160`, the abstract). | **DEMONSTRATED as a central value only**; no significance | VL156–VL158. | It is descriptive. No approved test establishes the localization, and the same region carries the largest measured regularization bias (L6). It cannot be the headline of an inference Letter. |
+| L8 | A central-value excess over MnvTune is localized at high E_avail and high W (`:155–160`, the abstract). | **DEMONSTRATED as a central value only**; no significance | The figure `paper_joint_localization` is cropped from `excess_eavail_W.pdf` (`docs/analysis-note/make_figures.sh:178–180`), whose producers are `3d-unfolding/genie/gen_to_xsec_eavailW.py` and `overlay_eavailW_band.py`. VL156–VL158 cover the external-generator comparisons (L9), not this MnvTune excess, so no ledger row for it was identified. | It is descriptive. No approved test establishes the localization, and the same region carries the largest measured regularization bias (L6). It cannot be the headline of an inference Letter. |
 | L9 | The external generators lie below the data overall (ratios 1.07–1.39) and at high W; GiBUU lacks E_ν > 20 GeV (`:181–194`). | **DEMONSTRATED** central value | VL156–VL161; `KNOWN_ISSUES` 82. | |
 | L10 | A covariance is adopted under exception, and no significance is quoted because s_proj = 6.145% exceeds the 5% bound (`:223–251`). | **DEMONSTRATED** | VL142–VL144; adoption record §4 (the four travelling measurements); 2026-09-20 and 09-21 corrections. | The inference must **not** be derived from this covariance (PLAN §5). If the Letter keeps it, its four measurements travel with it. |
 | L11 | Hadronic-response completeness is not independently validated (`:253–258`). | **DEMONSTRATED** disclosure | `DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md` §5 wording. | For an inference Letter this disclosure is no longer peripheral; see I7. |
@@ -60,7 +60,11 @@ Letter.
 
 These were computed by this lane from the **pending** `joint-evaluate.json` copy (`b9604502…`). They are Gaussian
 proxies on skewed null distributions, used only to inform the route decision. They must not be quoted as
-significances.
+significances. The reviewer reproduced them independently.
+
+The null medians and SDs of the **shifted** variants are fields that the independent recompute did not output and
+so did not verify (recompute report §3). Only the c = 0 median and the c = 0 SD, up to its ddof convention, were
+compared.
 
 | null | T_total obs | null median (most conservative claim variant) | null SD | proxy distance | T_shape obs | proxy distance |
 |---|---:|---:|---:|---:|---:|---:|
@@ -71,11 +75,16 @@ significances.
 | GiBUU 2019 | 2867 | 1925 | 91.9 | ≈ 10 SD | 4013 | ≈ 6.1 SD |
 
 **Reading:**
+- In the **pending, unrecorded** outputs, every test reads `rejected`, and none is certified.
 - The analysis's own tuned simulation, drawn with every declared nuisance, sits about 200 null SDs from the data in
   the total statistic and about 40 in shape, so most of its excess is normalization-like.
 - The external nulls are strongly non-central (λ = 318–6,344, amendment 7 `prefreeze_measurements`), because the
   calibration simulates the estimator's pull toward the prior. Their observed statistics sit only 3–26 null SDs out.
 - NuWro shape, the only k = 1 test, is the closest to its null.
-- A **common** omitted effect, such as a recoil-energy response difference between data and simulation, would push
-  all five in the same direction. Universal rejection is therefore what such an effect would produce, as well as
-  what genuine generator inadequacy would produce. The present evidence does not discriminate between them (I7).
+- A **common** omitted effect, such as a recoil-energy response difference between data and simulation, could move
+  all five statistics. To first order, ΔT ≈ 2dᵀW⁻¹(F−μ) + dᵀW⁻¹d, so the effect can go either way per test.
+- The published muon-kinematics comparison (2106.16210 Table I, which includes hadronic-response systematics)
+  independently disfavours the same families. That is partial evidence that the rejections are not purely a
+  response artefact.
+- The open question is mainly the five-dimensional **shape** content along the hadronic axes (I7; packet §5.4,
+  W2).
