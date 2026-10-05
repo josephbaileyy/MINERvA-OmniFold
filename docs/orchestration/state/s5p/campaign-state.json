@@ -25,7 +25,7 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "STAGE_4_PRODUCTION",
+ "phase": "terminal evaluation done; awaiting the independent recompute report (the joint result is not recorded before it)",
  "phase_detail": "amendment 7 (production admission) FROZEN after the confirmation review and a mechanical re-check; V frozen (194 all-band pilot experiments, sha256 35979ef7...); pre-freeze residuals in null-T units and development power committed before any observed statistic; budget revision 5 (production 200 CPU node-h); production lanes: power first, then the five calibration lanes",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
@@ -521,6 +521,10 @@
   {
    "utc": "2026-10-05T20:33Z",
    "what": "FINAL: GiBUU_2019-final.json (2026-10-05T20:29:51Z): B 1351, total and shape k = 0, p = 1/1352 = 0.00074, 99.5% look interval [0, 0.00443] below every threshold (precise), reason 'rule met for both tests'; runner 1047841 'queue done' 20:30:19Z. PRODUCTION TERMINAL: stage7/s5p_terminal_run.sh check (run on saul, 2026-10-05T20:32Z) printed TERMINAL: YES, rc 0, with every clause PASS: five finals (MnvTune_v1 B 1365, GENIE_2_12_10_CV B 1366, GENIE_2_12_10_MEC B 1343, NuWro_21_09 B 1751, GiBUU_2019 B 1351; all 'rule met for both tests'); power 'queue done' in /pscratch/sd/j/josephrb/s5p-20260926/runs/queue-prod-r3-pow.log; squeue rc 0 with no s5p cal/pow job; meter rc 0, open concurrency cpu/gpu 0.0/0.0 ($NS/measure/meter-measure-terminal-check-20261005T203221Z.json); no runner process and no queue-runner session leader on login33. Next (CHECKLIST section 2): a NEW clean deploy of origin/main, evaluate, labels, seed states, missing-seed sensitivity; commit copies; the recompute packet to 'gbdt independent'. The joint result is not recorded before the independent report (amendment 7 validation_and_assurance (v))."
+  },
+  {
+   "utc": "2026-10-05T20:39Z",
+   "what": "EVALUATION (CHECKLIST section 2, steps 1-5): new clean deploy $NS/deploy/e9372b75 of origin/main e9372b757250e9607f52e471d9b0c447b08e65d5 ('deploy' VALID; no top-level nd-unfolding/*.py changed since the production deploy 756e1d6c, PR #15 touched only pet/**, tests/** and two .md logs). 'evaluate' ran detached on login31 20:35:24Z-~20:37Z (log /pscratch/sd/j/josephrb/s5p-20260926/stage7/evaluate-run-20261005T203524Z.log), exit 0, sensitivity COMPLETE. Outputs and sha256: joint-evaluate.json b9604502b1aa263508ba46f0be91846d7a2106f6f2fd0ba5c172b87ee256dd11; robust-labels.json 206655f906bdffac636676f39ed86267f31eb9600ed9d45a335905fdaf7fde2a; seed-states.json 6823e701064b5dfc1286015be88b6d660e8f64099dc5bf3bff99b783724e58a8; missing-sensitivity.json f48e16ef351ea78c59b7e75f5bf653dc5742857457786e3d8fd1a067be8e2293; copies committed under state/s5p/stage7/joint/: three byte-identical (re-hashed); seed-states as seed-states.abs-log-paths.json (sha256 bd25f1ec03ac07a205aed533193fa291bef785525529b1e5bf54a45984eaf031), each of its 1462 bare task-log names prefixed with /pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/ because the pre-commit receipt-artifact check refuses bare log citations; stripping the prefix reproduces 6823e701... exactly (checked). Contents are transcribed in RECORD-20261005-s5p-terminal-evaluation-pending-verification.md, which is NOT the recorded joint result (amendment 7 validation_and_assurance (v)). Owner decision to be identified (CHECKLIST section 3: the interpretation of the missing-seed label is Joseph's): every test's per_test_status is 'can change (counterexample: worst_interrupted, worst_all_missing)' and no rejection is certified."
   }
  ],
  "findings": [
