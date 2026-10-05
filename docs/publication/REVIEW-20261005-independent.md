@@ -41,6 +41,25 @@ owner both took from the same original calculation (PLAN §1).
 answer to question 3 strengthen it. The physics argument now rests on independent published evidence (Table I)
 rather than on the pattern of pending outputs alone.
 
-## Cycle 2
+## Cycle 2: focused re-check of `407c351f` (same reviewer, read-only; clean `git status`)
 
-[Recorded after the focused re-check.]
+**Verdict: ACCEPT WITH CHANGES.** All 19 cycle-1 findings were confirmed resolved in substance. The reviewer
+independently re-checked the Aliaga abstract, the Table I values, `holm_determined` (`s5p_inference.py:127`), the
+D2 readings (a)/(b) in the procedure, and the D2 commit subjects. The repairs introduced one new should-fix and
+five notes. The owner applied all of them.
+
+| id | severity | finding | resolution |
+|---|---|---|---|
+| C2-S1 | SHOULD-FIX | W2b's fallback control would fail a correct product. A 21st draw lies inside the 20-jitter range with probability 19/21 per cell, and (19/21)^109 ≈ 1.8e-5. | Replaced by a calibrated control: each of the 10 claim p-values at δ = 0 must lie within its `observed_jitter_p` range (a single value for 9 tests, 2/1752–3/1752 for NuWro shape), and the Holm decisions must equal the frozen ones. A FAIL stops W2b. |
+| C2-N1 | NOTE | W1 said "nothing rebuilt", but D2 reading (a) recomputes S. | Under (b) the frozen S is projected. Under (a) S is recomputed by the frozen `shift_vector` on the union, then projected. |
+| C2-N2 | NOTE | W1's criterion needs D3, but the run was scheduled after D1–D2. | It may run after D1 and D2, and the criterion applies only after D3. |
+| C2-N3 | NOTE | "as strongly as Tune v1" was inaccurate for NuWro. | Now "comparably strongly: χ²/ndf 40.2, 28.3 and 18.5–25.1, against 33.1". |
+| C2-N4 | NOTE | The 4% figure is an overall agreement statement that includes electrons; neutrons and recoil above 2 GeV/c are outside its range. | Added to the δ "status of this number" bullet, so that Joseph's ruling is informed. |
+| R1 | NOTE | Leftovers: "3–26" in claims §C; "33.0" and the low-recoil conflation in the literature file. | Fixed: 2.8–26; 33.04, with low recoil and the full plane separated. |
+
+**Budget:** two review/repair cycles were used, the maximum. The cycle-2 repairs were applied by the owner and were
+not re-reviewed. Each is a local wording or specification change with its operand stated above. No material
+disagreement remains between owner and reviewer. A further review would need a named reason (PLAN §7).
+
+**Not verifiable in this environment** (both cycles): cluster products and digests, the W2 event-loop cost (W2a
+measures it), the journal-versus-arXiv version identity, and the APS rules beyond the fetched pages.

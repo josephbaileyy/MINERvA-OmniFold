@@ -66,7 +66,8 @@ multiplicity-controlled rejection. They report covariance χ², "tension" or "no
 **Not novel:**
 - That several generators fail to describe MINERvA inclusive data. The 2D reference already reports it, including
   strong disfavour for every family our nulls belong to (Table I, §2).
-- That MnvTune misdescribes ME low recoil. Ascencio's χ² values and our own 2D χ²/ndf = 33.0 already show it.
+- That MnvTune misdescribes these data, both at ME low recoil (Ascencio's χ² over 44 bins) and across the
+  muon-kinematics plane (Table I: 6786 over 205 bins; this repository's recomputation, χ²/ndf = 33.04).
 
 **Comparator for importance:** the collider precedents went to PRL (H1 2022, ATLAS 2024). Each delivered a
 measurement with full uncertainties (and, for H1, a first physics observable). The present work has **no qualified

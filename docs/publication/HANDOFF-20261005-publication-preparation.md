@@ -39,7 +39,8 @@ next action.
 8. **Notification channel verified** (§4).
 9. **Independent review:** a fresh read-only Opus 5.5 subagent, in a detached worktree at `d9a75393`.
    - Cycle 1 returned **ACCEPT WITH CHANGES** (1 blocking, 6 should-fix, 12 notes); every finding was resolved.
-   - Cycle 2 is a focused re-check of the changed artifacts.
+   - Cycle 2, a focused re-check of `407c351f`, returned ACCEPT WITH CHANGES (1 should-fix, 5 notes); all were
+     applied, without a third review.
    - The record is `REVIEW-20261005-independent.md`.
 
 ## 3. Remaining dependencies (owners keep their procedures and budgets)

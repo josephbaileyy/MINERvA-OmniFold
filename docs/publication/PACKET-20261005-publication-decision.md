@@ -136,7 +136,8 @@ See `LITERATURE-20261005-comparison.md` §3. Within the searched literature (arX
 - Generator failure on these data. 2106.16210 already reports it.
 - MnvTune's failure on these data: at ME low recoil (Ascencio's χ² over 44 bins) and across the muon-kinematics
   plane (2106.16210 Table I; our recomputation χ²/ndf = 33.04).
-- The other families' failure in 2D. Table I disfavours GENIE 2.12.6, GiBUU 2019 and NuWro as strongly as Tune v1.
+- The other families' failure in 2D. Table I disfavours GENIE 2.12.6, GiBUU 2019 and NuWro comparably strongly:
+  χ²/ndf 40.2, 28.3 and 18.5–25.1 respectively, against 33.1 for Tune v1.
 
 **Importance comparator:** the collider OmniFold PRLs (H1 2022, ATLAS 2024) each delivered a measurement with full
 uncertainties. This work's 5D measurement has **no qualified uncertainty**, because the measurement branch was not
@@ -230,9 +231,10 @@ needs Joseph's authorization. Silence would not settle it.
     supported J cells (9×72 for GiBUU).
   - For each of the 10 tests, the same total or shape statistic, with total matched to total and shape to shape.
     It is computed on P·F against P·μ_G, with metric P V Pᵀ + diag(P Var(μ_G) Pᵀ).
-  - **Variants:** each frozen 109-dimensional variant vector is projected: the process-shift vector S(c) for
-    c ∈ {0, ½, 1}, built once by the frozen `s5p_joint.shift_vector` in 109 dimensions, and the M1 shifts ±2 δ_M1.
-    Nothing is rebuilt in the projected metric.
+  - **Variants:** each 109-dimensional variant vector is projected, never rebuilt in the projected metric. They
+    are the process-shift vector S(c) for c ∈ {0, ½, 1}, from the frozen `s5p_joint.shift_vector` in 109
+    dimensions, and the M1 shifts ±2 δ_M1. Under D2 reading (b), the frozen S is projected. Under reading (a), S is
+    recomputed by the frozen `shift_vector` on the union ensemble, as the procedure does, and then projected.
   - The claim p is the largest over the projected variants, with the per-draw seeds of the frozen products. That
     gives 20 marginal tests (10 tests × 2 projections).
 - **Inputs:** the frozen production products and design only (`404446eb…`, V `35979ef7…`), plus the recovered
@@ -254,7 +256,8 @@ needs Joseph's authorization. Silence would not settle it.
   - One run. No other projections are selected after the result.
   - If no (G, t) qualifies, the joint-information claim is omitted permanently for this paper.
   - If any qualifies, the scoped claim is stated for those (G, t) only, with the disclosure.
-- **When:** after D1 and D2, so that it reads recorded outputs and a resolved missing-seed state.
+- **When:** it may run after D1 and D2, so that it reads recorded outputs and a resolved missing-seed state. Its
+  criterion is applied only after D3, the disposition of the resolution.
 
 ### W2: recoil-response sensitivity of the rejections (detector-response adequacy), in two gated steps
 
@@ -265,8 +268,10 @@ needs Joseph's authorization. Silence would not settle it.
   - **Source:** Aliaga *et al.*, NIM A 789, 28 (2015), arXiv:1501.06431. Its abstract (verified via the arXiv API)
     says the test-beam data agree with the Geant4 simulation of the calorimetric response "with agreements better
     than 4%".
-  - **Status of this number:** it is a data/simulation agreement bound for 0.35–2.0 GeV/c single hadrons, used here
-    as a sensitivity size. It is **not** MINERvA's per-particle response prescription. Ascencio *et al.* applies a
+  - **Status of this number:** it is an overall statement of data/simulation agreement, not a stated uncertainty.
+    It covers test-beam protons, pions and electrons at 0.35–2.0 GeV/c. Neutrons and higher-momentum recoil
+    particles, which matter at high W, lie outside that range. It is used here as a sensitivity size, and it is
+    **not** MINERvA's per-particle response prescription. Ascencio *et al.* applies a
     test-beam-derived input whose values that paper does not state, so the per-particle values remain unread.
   - **Why single-scale:** the existing dumps carry (p_T, p∥, E_avail, q3, W) only, with no q0 and no
     truth-particle energy fractions, so per-particle scaling cannot be done from them.
@@ -283,8 +288,14 @@ needs Joseph's authorization. Silence would not settle it.
 - **W2b: the run**, approved separately with W2a's measured cost.
   - Two full real-data unfolds (R, 5 iterations, frozen settings) at ±δ, plus one δ = 0 control.
   - **Control criterion:** the δ = 0 product reproduces `data_b-_j-.npz` (`fb5cc679…`) bitwise. If the code path
-    legitimately differs, every J-cell value must instead lie within the envelope spanned by the 20 committed
-    real-data rounding jitters (`data_jitters`).
+    legitimately differs, the control instead passes only if both of these hold:
+    - every one of the 10 claim p-values at δ = 0 lies within the range that `joint-evaluate.json`
+      `observed_jitter_p` records for that test over the 20 committed real-data rounding jitters. The range is a
+      single value for 9 tests and 2/1752–3/1752 for NuWro shape;
+    - the Holm decisions at δ = 0 equal the frozen decisions.
+
+    A per-cell envelope is not used: a correct product would fail it by chance. A control FAIL stops W2b and is
+    reported.
   - **Hard ceiling:** 8 CPU node-hours for W2a and W2b together, on `m3246`, in a separate ledger outside the s5p
     reserve.
   - The amendment-6 basis of 1.25 + 2.18 node-hours excludes the event-loop step, so it is not the estimate.
@@ -351,4 +362,6 @@ joint-information claim and states the response condition without a sensitivity.
 ## 8. Review
 
 One fresh independent read-only review, of `d9a75393`: ACCEPT WITH CHANGES (1 blocking, 6 should-fix, 12 notes).
-Every finding was resolved in repair cycle 1; see `REVIEW-20261005-independent.md`.
+Every finding was resolved in repair cycle 1. The cycle-2 focused re-check of `407c351f` returned ACCEPT WITH
+CHANGES (1 should-fix, 5 notes); all were applied. Two cycles is the budget, so no further review is planned. See
+`REVIEW-20261005-independent.md`.

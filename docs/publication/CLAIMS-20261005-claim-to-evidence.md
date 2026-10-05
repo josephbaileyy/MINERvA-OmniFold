@@ -79,7 +79,7 @@ compared.
 - The analysis's own tuned simulation, drawn with every declared nuisance, sits about 200 null SDs from the data in
   the total statistic and about 40 in shape, so most of its excess is normalization-like.
 - The external nulls are strongly non-central (λ = 318–6,344, amendment 7 `prefreeze_measurements`), because the
-  calibration simulates the estimator's pull toward the prior. Their observed statistics sit only 3–26 null SDs out.
+  calibration simulates the estimator's pull toward the prior. Their observed statistics sit only 2.8–26 null SDs out.
 - NuWro shape, the only k = 1 test, is the closest to its null.
 - A **common** omitted effect, such as a recoil-energy response difference between data and simulation, could move
   all five statistics. To first order, ΔT ≈ 2dᵀW⁻¹(F−μ) + dᵀW⁻¹d, so the effect can go either way per test.
