@@ -107,3 +107,13 @@ Paths relative to `nd-unfolding/pet/final_design/`.
 |  |  | `cov_C4_ratio_min` = 1.32 |
 |  |  | `cov_low_68` = 0.26 |
 |  |  | `cov_low_95` = 0.79 |
+| 15 | Architecture table | `arch_CS1_n2` = 0.054 |
+|  |  | `arch_H1_S-U4` = 0.023 |
+|  |  | `arch_H2S1E16_n2` = 0.074 |
+|  |  | `arch_H2S1_n2` = 0.095 |
+|  |  | `arch_L128S1E16_n2` = 0.071 |
+|  |  | `arch_L128S1_n2` = 0.091 |
+|  |  | `arch_L64S1_n2` = 0.057 |
+|  |  | `arch_P2preA1_S-U4` = 0.225 |
+|  |  | `arch_P2scrA1_S-U4` = 0.060 |
+|  |  | `arch_P2scrS1_S-U4` = 0.110 |

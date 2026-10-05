@@ -2,7 +2,7 @@
  "schema": "pet-final-design-deck-numbers/1",
  "generator": "slides/make_final_deck.py",
  "root": "nd-unfolding/pet/final_design",
- "main_slides": 14,
+ "main_slides": 15,
  "sources": {
   "banks/BANK_MANIFEST.json": "682e259fbe41cf37407b545c6acf1739b8e438f38ee0adfae8f16449bf8d5cb3",
   "dev/DEV_TABLES-20260927.json": "eb7a7eb68ce5efb55ba6be15af20140e950a4ff99dd8f9ffba3f80981150a41b",
@@ -45,6 +45,198 @@
   "sizing/sizing_library-20260927.json": "eea343671cec8d6d71e7e517d05fdd657f8a8cfcb0410ebe89193a2bb9935bb9"
  },
  "numbers": [
+  {
+   "id": "arch_CS1_n2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.05419101230097023,
+   "rendered": "0.054",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "CS1",
+      "S-N2_at_Kstar",
+      "sd"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_H1_S-U4",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.02288878515600018,
+   "rendered": "0.023",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "H1",
+      "rows",
+      4,
+      "values",
+      "S-U4",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_H2S1E16_n2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.07382826854669394,
+   "rendered": "0.074",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "H2S1E16",
+      "S-N2_at_Kstar",
+      "sd"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_H2S1_n2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.09455025089147878,
+   "rendered": "0.095",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "H2S1",
+      "S-N2_at_Kstar",
+      "sd"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_L128S1E16_n2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.07079336976896868,
+   "rendered": "0.071",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "L128S1E16",
+      "S-N2_at_Kstar",
+      "sd"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_L128S1_n2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.09128353729306894,
+   "rendered": "0.091",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "L128S1",
+      "S-N2_at_Kstar",
+      "sd"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_L64S1_n2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.057479033730327436,
+   "rendered": "0.057",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "L64S1",
+      "S-N2_at_Kstar",
+      "sd"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_P2preA1_S-U4",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.2245235909065209,
+   "rendered": "0.225",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "P2preA1",
+      "rows",
+      3,
+      "values",
+      "S-U4",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_P2scrA1_S-U4",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.0598789253505389,
+   "rendered": "0.060",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "P2scrA1",
+      "rows",
+      3,
+      "values",
+      "S-U4",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_P2scrS1_S-U4",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.10986306931899603,
+   "rendered": "0.110",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "P2scrS1",
+      "rows",
+      3,
+      "values",
+      "S-U4",
+      0
+     ]
+    }
+   ]
+  },
   {
    "id": "aus_mv_carry|truth4_species|k3",
    "op": "field",

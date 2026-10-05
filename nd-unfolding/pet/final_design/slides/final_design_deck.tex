@@ -205,6 +205,33 @@ L128S1T24K4 & INELIGIBLE (B2) \\
 \end{tabular}}\raggedright\par\vspace{0.3cm}\small\begin{itemize}\item No design selected and no default named (the default must itself be eligible).\item Supported: H2S1T24's point estimator passes every accuracy, robustness and stability rule; its interval procedure fails calibration (too wide in aggregate; under-covers at low acceptance). Not supported: a ranking of the finalists.\item Remaining route (owner decision): \S11 repair --- interval calibrated on DEV, re-validated on the sealed RB bank.\end{itemize}
 \end{frame}
 
+\gdef\evidencetext{\texttt{dev/SCREENS-20260927-3d.json}; \texttt{results/final/coverage\_dev/decision\_final.json}; \texttt{DEVELOPMENT-20260926.md}; \texttt{nd-unfolding/pet/configuration\_comparison/CONFIGURATION\_COMPARISON-20260918.md (Gregor's minerva-ml pinned at fc9a099; sections cited as cmp)}}
+\begin{frame}{Architectures tested, what came from Gregor's work, and why none passed}
+{\tiny
+\begin{tabular}{llll}
+\toprule
+design & change & from Gregor's work & why it did not pass \\
+\midrule
+H1 & C + categorical truth PDG (13-way one-hot) & type encoding (cmp 2), padding kept distinct; truth step is ours & S-U4 fails at every $k$ (best 0.023; need $\ge$ 0.25) \\
+H2 & H1 + reco summaries at step 1 & whole-event energy sums + overflow (cmp 4, 6; not per-family) & no $k$ passes all four screens \\
+CS1 & C + constant rate & --- & S-N2 seed sd 0.054 $> 0.05$ \\
+H2S1 & H2 + constant rate & as H2 & S-N2 seed sd 0.095 $> 0.05$ \\
+H2S1E16 & H2S1, 16 epochs & as H2 & S-N2 seed sd 0.074 $> 0.05$ \\
+L64H2 & H2, step-1 PET width 64 & as H2 + one capacity step (cmp 7) & no $k$ passes all four screens \\
+L128H2 & H2, step-1 PET width 128 & as H2 + one capacity step (cmp 7) & no $k$ passes all four screens \\
+L64S1 & H2S1, width 64 & as L64H2 & S-N2 seed sd 0.057 $> 0.05$ \\
+L128S1 & H2S1, width 128 & as L128H2 & S-N2 seed sd 0.091 $> 0.05$ \\
+L128S1E16 & L128S1, 16 epochs & as L128H2 & S-N2 seed sd 0.071 $> 0.05$ \\
+P2preS1 & PET2-small at step 1, pretrained & his backbone, checkpoint, 33-token typed inputs, recipe & S-N1 step-1 weight tail at $K^*=4$ \\
+P2scrS1 & PET2-small, random init & as P2preS1 without the checkpoint & S-U4 fails at every $k$ (best 0.110; need $\ge$ 0.25) \\
+P2preA1 & P2preS1, annealed step-1 rate & as P2preS1 & S-U4 fails at every $k$ (best 0.225; need $\ge$ 0.25) \\
+P2scrA1 & P2scrS1, annealed step-1 rate & as P2scrS1 & S-U4 fails at every $k$ (best 0.060; need $\ge$ 0.25) \\
+H2S1T24 & H2S1, 24-epoch truth step (finalist) & as H2 & final bank: coverage C1, C4 FAIL --- INELIGIBLE (C1, C4) \\
+L128S1T24 & L128S1, 24-epoch truth step (finalist) & as L128H2 & final bank: B2 FAIL (point-decided) --- INELIGIBLE (B2) \\
+\bottomrule
+\end{tabular}}\par\vspace{0.1cm}\tiny Also closed: the step-2 ensemble fallback (H2S1X4, L128S1X4; entry condition never met) and AUSSIE (bounded matched scalar test). Anchors/controls (CTL, C, B) are not selectable. Development screens: S-U1 tilt, S-U3 opposite tilt, S-U4 proton topology, S-B2 D4d residual; then S-N1, S-N2. Gregor-derived parts follow the pinned comparison (cmp sections); the truth-step design is the study's own.
+\end{frame}
+
 \gdef\evidencetext{\texttt{docs/orchestration/AUTHORIZATION-20260925-pet-final-design.md}}
 \begin{frame}{What this study cannot authorize}
 \small\begin{itemize}

@@ -409,6 +409,83 @@ def s_terminal(d: Deck, n: Numbers) -> None:
     d.frame("Terminal outcome (frozen rules)", body, [FIN, "DECISION_RECORD-pet-final-design.md"])
 
 
+CMP = ("nd-unfolding/pet/configuration_comparison/CONFIGURATION_COMPARISON-20260918.md (Gregor's minerva-ml pinned "
+       "at fc9a099; sections cited as cmp)")
+# what each tested design changes, and which of its parts come from Gregor's work (the pinned configuration
+# comparison's borrow recommendations: per-family/whole-event energy sums 4, aggregate overflow 6, type embedding 2,
+# one capacity step 7; his paper backbone, checkpoint, typed tokens and recipe for the PET2 arms)
+ARCH = [
+    ("H1", "C + categorical truth PDG (13-way one-hot)", "type encoding (cmp 2), padding kept distinct; truth step is ours"),
+    ("H2", "H1 + reco summaries at step 1", "whole-event energy sums + overflow (cmp 4, 6; not per-family)"),
+    ("CS1", "C + constant rate", "---"),
+    ("H2S1", "H2 + constant rate", "as H2"),
+    ("H2S1E16", "H2S1, 16 epochs", "as H2"),
+    ("L64H2", "H2, step-1 PET width 64", "as H2 + one capacity step (cmp 7)"),
+    ("L128H2", "H2, step-1 PET width 128", "as H2 + one capacity step (cmp 7)"),
+    ("L64S1", "H2S1, width 64", "as L64H2"),
+    ("L128S1", "H2S1, width 128", "as L128H2"),
+    ("L128S1E16", "L128S1, 16 epochs", "as L128H2"),
+    ("P2preS1", "PET2-small at step 1, pretrained", "his backbone, checkpoint, 33-token typed inputs, recipe"),
+    ("P2scrS1", "PET2-small, random init", "as P2preS1 without the checkpoint"),
+    ("P2preA1", "P2preS1, annealed step-1 rate", "as P2preS1"),
+    ("P2scrA1", "P2scrS1, annealed step-1 rate", "as P2scrS1"),
+    ("H2S1T24", "H2S1, 24-epoch truth step (finalist)", "as H2"),
+    ("L128S1T24", "L128S1, 24-epoch truth step (finalist)", "as L128H2"),
+]
+
+
+def _why_dev(n: Numbers, c: str, r: dict) -> str:
+    """The development screen a design failed, from the committed screen table and the rule's own thresholds."""
+    sys.path.insert(0, str(STUDY / "dev"))
+    from apply_finalist_rule import SCREENS
+    if r.get("Kstar") is None:
+        rows = [x for x in r["rows"] if x["status"] != "incomplete"]
+        if not rows:
+            return "incomplete (not run to a decision)"
+
+        def fails(x, sc):
+            v, (_, op, thr) = x["values"][sc][0], SCREENS[sc]
+            return v is not None and (v < thr if op == ">=" else v > thr)
+        always = [sc for sc in SCREENS if all(fails(x, sc) for x in rows)]
+        if not always:
+            return "no $k$ passes all four screens"
+        sc = always[0]
+        op = SCREENS[sc][1]
+        best = (max if op == ">=" else min)(range(len(rows)), key=lambda i: rows[i]["values"][sc][0])
+        i = r["rows"].index(rows[best])
+        v = n.f(f"arch_{c}_{sc}", SCR, ["designs", c, "rows", i, "values", sc, 0], "3")
+        return (f"{sc} fails at every $k$ (best {v}; need {'$\\ge$' if op == '>=' else '$\\le$'}"
+                f" {SCREENS[sc][2]})")
+    if (r.get("S-N1_at_Kstar") or {}).get("status") == "fail":
+        return f"S-N1 step-1 weight tail at $K^*={r['Kstar']}$"
+    sd = (r.get("S-N2_at_Kstar") or {}).get("sd")
+    if sd is not None and sd > 0.05:
+        return "S-N2 seed sd " + n.f(f"arch_{c}_n2", SCR, ["designs", c, "S-N2_at_Kstar", "sd"], "3") + " $> 0.05$"
+    return None
+
+
+def s_architectures(d: Deck, n: Numbers) -> None:
+    scr = d.n.src.load(SCR)["designs"]
+    fin = d.n.src.load(FIN)["eligibility"] if d.n.src.exists(FIN) else {}
+    final_why = {"H2S1T24": ("H2S1T24K5", "final bank: coverage C1, C4 FAIL"),
+                 "L128S1T24": ("L128S1T24K4", "final bank: B2 FAIL (point-decided)")}
+    rows = []
+    for c, change, gregor in ARCH:
+        if c in final_why and final_why[c][0] in fin:
+            why = final_why[c][1] + " --- " + base.esc(_status(fin[final_why[c][0]]))
+        else:
+            why = _why_dev(n, c, scr[c]) or "passed every development screen"
+        rows.append([base.esc(c), change, gregor, why])
+    body = table(["design", "change", "from Gregor's work", "why it did not pass"], rows, "llll", r"\tiny") + (
+        r"\par\vspace{0.1cm}\tiny Also closed: the step-2 ensemble fallback (H2S1X4, L128S1X4; entry condition never met) and "
+        r"AUSSIE (bounded matched scalar test). Anchors/controls (CTL, C, B) are not selectable. "
+        r"Development screens: S-U1 tilt, S-U3 opposite tilt, S-U4 proton topology, S-B2 D4d residual; then S-N1, S-N2. "
+        r"Gregor-derived parts follow the pinned comparison (cmp sections); the truth-step design is the study's own.")
+    d.frame("Architectures tested, what came from Gregor's work, and why none passed", body,
+            [SCR, FIN, "DEVELOPMENT-20260926.md", CMP])
+    d.claim("Architecture table", sorted(k for k in n.entries if k.startswith("arch_")))
+
+
 def s_cannot(d: Deck) -> None:
     body = r"""\small\begin{itemize}
 \item No publication adoption; no real-data unfolding; no \texttt{C\_stat}/\texttt{C\_ML}; no Gate-6 work;
@@ -443,6 +520,7 @@ def build(out: Path, make_pdf: bool) -> dict[str, Any]:
     s_final(d, n)
     s_coverage(d, n)
     s_terminal(d, n)
+    s_architectures(d, n)
     s_cannot(d)
     title = (r"\title{PET final-design selection study}" "\n"
              r"\subtitle{Study deck (generated from committed results)}" "\n"
