@@ -64,7 +64,7 @@
     "MnvTune_v1": "PID 1047836 ended ('queue done' 2026-10-05T08:15:43Z after MnvTune-final B 1365)",
     "GENIE_2_12_10_CV": "PID 1047838 ended ('queue done' 2026-10-05T08:23:47Z after CV-final B 1366)",
     "GENIE_2_12_10_MEC": "PID 1047839 ended ('queue done' 2026-10-05T03:04:11Z after MEC-final B 1343)",
-    "NuWro_21_09": "PID 1100694 (deploy 756e1d6c, queues-r6/cal-NuWro_21_09.q, throttle 14, log /pscratch/sd/j/josephrb/s5p-20260926/runs/queue-prod-r6-NuWro_21_09.log); r5 435867 stopped 2026-10-05T08:30:27Z; r4 669349 stopped 03:19:58Z; r3 1047840 stopped 2026-10-04T16:20:16Z",
+    "NuWro_21_09": "PID 1100694 ended ('queue done' 2026-10-05T17:40:37Z after NuWro-final B 1751); earlier: r5 435867, r4 669349, r3 1047840 (all stopped at transitions)",
     "GiBUU_2019": "PID 1047841 (e0d7b04a, queues-r3)"
    },
    "handoff": "docs/orchestration/HANDOFF-20260929-s5p-campaign-cold-start.md",
@@ -509,6 +509,14 @@
   {
    "utc": "2026-10-05T12:11Z",
    "what": "LOOK: NuWro_21_09 B1351 (2026-10-05T11:57:36Z; total k = 0, p = 1/1352 = 0.00074, interval [0, 0.00443] below every threshold; shape k = 1 (unchanged), p = 2/1352 = 0.001479, interval [0, 0.00606], straddles 0.005 and 0.00556; continue; b7 59367892). First NuWro submission under r6: --throttle 14 in the r6 log; squeue at 12:10Z shows 14 RUNNING and 20 PENDING (JobArrayTaskLimit), so r6 is in effect. NuWro b6 59358653 closed at 3.70 (199 products: B 1152 -> 1351). Meter (from 756e1d6c, rc 0): production charged 213.464 of 234.647 = 40 closed 196.464 + 2 open reservations 17.0 (GiBUU b6, NuWro b7); envelope 286.96 of 376.52; open concurrency 2.0 (GiBUU 2 + NuWro 14). BINDING WATCH: remaining production batches with current k are GiBUU b6, NuWro b7 and b8 = 3; remaining 38.183, so they fit at mean <= 12.7 (recent 3.7-4.1). No flag. Projection (computed: k = 1 needs B >= 1639): NuWro's b7 look at ~1545 continues, its b8 look at ~1740 is expected to meet the rule. GiBUU b6: 17 of 34 completed, 2 running, at throttle 2. NuWro's b8 submission (~15Z) is expected while GiBUU b6 still runs (~20Z), so a NuWro 16 transition is not expected to be needed."
+  },
+  {
+   "utc": "2026-10-05T15:13Z",
+   "what": "LOOK: NuWro_21_09 B1551 (2026-10-05T15:00:53Z; total k = 0, p = 1/1552 = 0.000644, interval [0, 0.00386] below every threshold; shape k = 1 (unchanged), p = 2/1552 = 0.001289, interval [0, 0.00528], straddles 0.005 only; continue; b8 59376408, the last NuWro batch expected to be needed). squeue 15:12Z: 14 RUNNING, 20 PENDING (JobArrayTaskLimit), throttle 14. NuWro b7 59367892 closed at 3.89 (200 products: 1351 -> 1551). Meter (from 756e1d6c, rc 0): production charged 217.351 of 234.647 = 41 closed 200.351 + 2 open reservations 17.0 (GiBUU b6, NuWro b8); envelope 290.84 of 376.52; open concurrency 2.0. BINDING WATCH: remaining production batches with current k are the 2 open; remaining 34.296; they fit at any cost up to the 8.5 reservation each. No flag. A NuWro b9 (needed only if b8 yields < 88 products for k = 1, or if shape k reaches 2, when B >= 2021 > max 1999 cannot be met and the lane ends at 'maximum reached' or by batches exhausted) would also fit: 200.351 + 2 x ~4 + 8.5 << 234.647. GiBUU b6: 23 of 34 completed, 2 running."
+  },
+  {
+   "utc": "2026-10-05T18:09Z",
+   "what": "FINAL: NuWro_21_09-final.json (2026-10-05T17:40:13Z): B 1751, reason 'rule met for both tests'. Total k = 0, p = 1/1752 = 0.000571, 99.5% look interval [0, 0.00342]; shape k = 1, p = 2/1752 = 0.001142, interval [0, 0.00468]; both below every threshold (precise). The NuWro r6 runner (1100694) logged 'queue done' at 17:40:37Z (b9 not submitted). NuWro b8 59376408 closed at 3.63 (200 products: 1551 -> 1751). Final statuses: 4 of 5 (MEC 1343, MnvTune 1365, CV 1366, NuWro 1751). Open: GiBUU b6 59349568 only (28 of 34 completed, 2 running, 4 pending; throttle 2); runners: GiBUU 1047841 only. Meter (from 756e1d6c, rc 0): production charged 212.478 = 42 closed 203.978 + 1 open reservation 8.5; envelope 285.97 of 376.52; open concurrency 0.25. No NuWro 16 transition was needed (NuWro finished before GiBUU). Next: GiBUU's b6 look (~20Z), then the terminal check."
   }
  ],
  "findings": [
