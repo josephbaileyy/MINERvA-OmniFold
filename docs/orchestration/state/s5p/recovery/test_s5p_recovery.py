@@ -99,6 +99,7 @@ BASE_META = {"schema": "s5p-null-experiment/1", "pseudo_seed": 7, "split_key": "
              "refinement": {"seconds": 1.0, "n_clipped": 3, "classifier_params": {"num_leaves": 31}},
              "experiment": {"refinement": {"seconds": 2.0}},
              "slurm_job": "111", "seconds_unfold": 10.0}
+_REAL_SPLIT_KEY_FOR = R.split_key_for
 R.split_key_for = lambda seed: "k"  # the fixture's split key (the real one is s5c_pseudo.split_key_for)
 
 
@@ -276,6 +277,20 @@ class ResolveResidualAndProvenance(unittest.TestCase):
         product(self.rec / "cal_X_s101.npz", np.arange(4.0), dict(BASE_META, pseudo_seed=101, input_npz_sha256="other"))
         with self.assertRaises(SystemExit):
             self.resolve(seed_states("cal-X", self.SS), union="r4", residual=[102])
+
+    def test_the_real_split_key_path(self):
+        sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "nd-unfolding"))
+        import s5c_pseudo
+        R.split_key_for = _REAL_SPLIT_KEY_FOR
+        try:
+            real = s5c_pseudo.split_key_for(101)
+            product(self.rec / "cal_X_s101.npz", np.arange(4.0), dict(BASE_META, pseudo_seed=101, split_key=real))
+            self.assertEqual(self.resolve(seed_states("cal-X", self.SS), union="r8", residual=[102]), 0)
+            product(self.rec / "cal_X_s101.npz", np.arange(4.0), dict(BASE_META, pseudo_seed=101, split_key=real + 1))
+            with self.assertRaises(SystemExit):
+                self.resolve(seed_states("cal-X", self.SS), union="r9", residual=[102])
+        finally:
+            R.split_key_for = lambda seed: "k"
 
     def test_a_wrong_split_key_fires(self):
         product(self.rec / "cal_X_s101.npz", np.arange(4.0), dict(BASE_META, pseudo_seed=101, split_key="other"))

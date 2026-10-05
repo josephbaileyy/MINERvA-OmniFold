@@ -339,6 +339,8 @@ def cmd_resolve(a) -> int:
         recovered_by_lane.setdefault(t["lane"], set()).update(t["seeds"])
     if a.union_root.exists():
         raise SystemExit(f"refusing to reuse {a.union_root}")
+    if a.out_design.exists():
+        raise SystemExit(f"refusing to overwrite {a.out_design}")
     all_lost = {s for lane in cls for st in LOST_STATES for s in cls[lane].get(st, [])}
     if not residual <= all_lost or not residual <= {x for v in recovered_by_lane.values() for x in v}:
         raise SystemExit("a residual seed is not a lost recovery seed")
@@ -367,10 +369,14 @@ def cmd_resolve(a) -> int:
         if set(f_seeds) | set(r_seeds) != submitted - residual or not residual & submitted <= lost:
             raise SystemExit(f"{lane}: union {len(set(f_seeds) | set(r_seeds))} != submitted {len(submitted)} "
                              f"- residual {len(residual & submitted)}")
-        ref = {json.dumps(provenance(json.loads(str(np.load(p, allow_pickle=False)["meta"]))), sort_keys=True)
-               for p in frozen[:: max(1, len(frozen) // 20)]}
+        counts: dict[str, int] = {}
+        for p in frozen:  # every frozen product, not a sample
+            key_ = json.dumps(provenance(json.loads(str(np.load(p, allow_pickle=False)["meta"]))), sort_keys=True)
+            counts[key_] = counts.get(key_, 0) + 1
+        ref = set(counts)
         if len(ref) != 1:
-            raise SystemExit(f"{lane}: the frozen products' provenance is not uniform ({len(ref)} variants)")
+            raise SystemExit(f"{lane}: the frozen products' provenance is not uniform: "
+                             f"{sorted(counts.values(), reverse=True)} products per variant")
         for p in rec:
             m = json.loads(str(np.load(p, allow_pickle=False)["meta"]))
             if int(m.get("pseudo_seed", -1)) != seed_of(p):
@@ -488,6 +494,9 @@ def cmd_frozen_s(a) -> int:
                            if s not in residual)
         rows = {s: r for s, r in seed_rows(a.tables).items() if s in rec_seeds}
         rec_files = [str(product_path(man["root"], "recovery", lane, arg(rows[s][1], "--tag"), s)) for s in rec_seeds]
+        missing_rec = [f for f in rec_files if not Path(f).exists()]
+        if missing_rec:
+            raise SystemExit(f"{lane}: {len(missing_rec)} recovered products missing (declare them --residual): {missing_rec[:3]}")
         M_res = len([s for t in man["tables"].values() if t["lane"] == lane for s in t["seeds"] if s in residual])
         Fr, sr = sj.ensemble(model, rec_files) if rec_files else (np.zeros((0, F.shape[1])), np.zeros(0, np.int64))
         tt_o, ts_o = sj.statistics(model.f_data[None, :], mu, var, V, dom, 0, draw=False)
@@ -538,10 +547,8 @@ def cmd_frozen_s(a) -> int:
     out["decisions_complete_set"] = si.holm_determined(claims, alpha)
     out["decisions_complete_set_kappa3_keep_both"] = si.holm_determined(robust_claims, alpha)
     out["decisions_complete_set_kappa3_replace"] = si.holm_determined(replace_claims, alpha)
-    out["labels_complete_set"] = {t: ("robust to the sub-fine residual" if d["decision"] == "rejected" and
-                                      out["decisions_complete_set_kappa3_replace"][t]["decision"] == "rejected"
-                                      else "not robust" if d["decision"] == "rejected" else "not rejected")
-                                  for t, d in out["decisions_complete_set"].items()}
+    import s5p_robust_labels as rl
+    out["labels_complete_set"] = rl.labels(out["decisions_complete_set"], out["decisions_complete_set_kappa3_replace"])
     # power against the FROZEN null ensembles, the alternatives over the complete power sets (frozen + recovered);
     # first reproduce joint-evaluate's power exactly from the frozen power products alone (s5p_joint.main's rule)
     levels = frozen_eval["power"]["levels"]
@@ -554,6 +561,8 @@ def cmd_frozen_s(a) -> int:
         rec_seeds = sorted(x for t in man["tables"].values() if t["lane"] == lane for x in t["seeds"] if x not in residual)
         prow = {x: r for x, r in seed_rows(a.tables).items() if x in rec_seeds}
         rec_files = [str(product_path(man["root"], "recovery", lane, arg(prow[x][1], "--tag"), x)) for x in rec_seeds]
+        if any(not Path(f).exists() for f in rec_files):
+            raise SystemExit(f"{lane}: recovered power products missing (declare them --residual)")
         def power_of(files):
             Fa, sa = sj.ensemble(model, files)
             tt_a, ts_a = sj.statistics(Fa, mu0, var0, V, dom0, pspec["surrogate_seed0"], seeds=sa)
@@ -569,8 +578,9 @@ def cmd_frozen_s(a) -> int:
         fe = frozen_eval["power"][pkey]
         for s in ("total", "shape"):
             for al in levels:
-                if fo[s][str(al)]["claim_rule"] != fe[s][str(al)]["claim_rule"]:
-                    raise SystemExit(f"{pkey} {s} {al}: re-derived frozen power differs from joint-evaluate")
+                for field in ("claim_rule", "claim_rule_determined"):
+                    if fo[s][str(al)][field] != fe[s][str(al)][field]:
+                        raise SystemExit(f"{pkey} {s} {al} {field}: re-derived frozen power differs from joint-evaluate")
         out["power"][pkey] = {"null": nk, "frozen": fo, "complete_set": power_of(frozen_files + rec_files) if rec_files
                               else fo, "M_recovered": len(rec_files),
                               "M_residual": len([x for t in man["tables"].values() if t["lane"] == lane
@@ -580,6 +590,21 @@ def cmd_frozen_s(a) -> int:
     out["primary_decisions"] = {k: v["decision"] for k, v in frozen_eval["decisions"].items()}
     out["label"] = ("REPORT ONLY: the recovered draws scored against the FROZEN shift variants; the primary decisions "
                     "are those of the frozen evaluation")
+    if not any(t["seeds"] for t in man["tables"].values()):
+        # the Phase 0 self-validation: with nothing recovered, frozen-s must reproduce the frozen decision layer
+        frozen_labels = json.loads(a.robust_labels.read_text()) if a.robust_labels else None
+        pick = lambda d: {t: (v["decision"], v["k"], v["B"]) for t, v in d.items()}
+        checks = [("decisions", pick(out["decisions_complete_set"]), pick(frozen_eval["decisions"])),
+                  ("decisions_robust_kappa", pick(out["decisions_complete_set_kappa3_keep_both"]),
+                   pick(frozen_eval["decisions_robust_kappa"]))]
+        if frozen_labels is not None:
+            checks += [("labels", out["labels_complete_set"], frozen_labels["labels"]),
+                       ("decisions_kappa3_replace", pick(out["decisions_complete_set_kappa3_replace"]),
+                        pick(frozen_labels["decisions_kappa3_replace"]))]
+        for what, got, want in checks:
+            if got != want:
+                raise SystemExit(f"self-validation: {what} differ from the frozen ones")
+        out["self_validation"] = [c[0] for c in checks]
     a.out.write_text(json.dumps(out, indent=1) + "\n")
     print(json.dumps({k: v["decision"] for k, v in out["decisions_complete_set"].items()}))
     return 0
@@ -693,6 +718,7 @@ def main(argv=None) -> int:
     f.add_argument("--manifest", type=Path, required=True)
     f.add_argument("--tables", type=Path, required=True)
     f.add_argument("--residual", type=Path)
+    f.add_argument("--robust-labels", type=Path, help="the frozen robust-labels.json (checked when nothing is recovered)")
     f.add_argument("--out", type=Path, required=True)
     s = sub.add_parser("stopping")
     s.add_argument("--design", type=Path, required=True, help="the report-only union design from resolve")

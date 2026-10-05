@@ -13,10 +13,21 @@
 
 **Authority:** `DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md` §2.
 
-**Tool:** `state/s5p/recovery/s5p_recovery.py`, with 33 controls: 27 unit controls in `test_s5p_recovery.py` and 6
-end-to-end controls in `test_s5p_recovery_world.py`. The end-to-end controls run the real `s5p_joint.test_null`,
-`s5p_seqstop.main` and `s5p_inference` on a synthetic two-cell world, with real controller status files. Its tables are
-`state/s5p/recovery/tables/`.
+**Tool:** `state/s5p/recovery/s5p_recovery.py`, with 40 controls: 28 unit controls in `test_s5p_recovery.py` and 12
+end-to-end controls in `test_s5p_recovery_world.py`.
+- The end-to-end controls run the real `s5p_joint.main evaluate` (with a power lane), `s5p_robust_labels`,
+  `s5p_joint.test_null`, `s5p_seqstop.main` and `s5p_inference` on a synthetic two-cell world, with real controller
+  status files. That includes a world in which the controller stops.
+- The unit controls include the real `s5c_pseudo.split_key_for` path.
+- Its tables are `state/s5p/recovery/tables/`.
+
+**Environment (every login-node step that runs frozen code: §2.4, §2.5, §5).** The frozen evaluation ran under this
+environment, and exact-float self-checks depend on it (the review measured 1-ulp differences in `tail_interval` under
+another scipy):
+`cd $D && source ./setup_salloc_env.sh > /dev/null 2>&1 && export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4
+MKL_NUM_THREADS=4 && PYTHONPATH=nd-unfolding python3 …` (`stage7/s5p_terminal_run.sh` lines 86–87). It also makes the
+design's repo-relative paths resolve. A self-check mismatch under any other environment is not evidence of a defect;
+rerun it under this one.
 
 **Review history:** independent review 1 (2026-10-05, a fresh read-only agent in an isolated worktree, of
 `0a988bc4`) returned **NOT READY**, with 1 blocking and 7 should-fix findings. Independent review 2 (a fresh agent, of
@@ -55,11 +66,12 @@ finding and its resolution.
    - **The whole producer side is frozen.** Rather than a hand-listed closure, which would miss an import:
      `git -C $D diff --name-only 4f5a613f HEAD -- nd-unfolding ':(exclude)nd-unfolding/pet/**'
      ':(exclude)nd-unfolding/tests/**' ':(exclude)nd-unfolding/gbdt_model_dependence/**'
-     ':(exclude)nd-unfolding/*.md'` must print exactly `s5p_missing_sensitivity.py`, `s5p_requeue.py` and
-     `s5p_robust_labels.py`. These are report-step and requeue tools, not imported by the producer; this was
+     ':(exclude)nd-unfolding/*.md'` must print exactly `nd-unfolding/s5p_missing_sensitivity.py`,
+     `nd-unfolding/s5p_requeue.py` and `nd-unfolding/s5p_robust_labels.py`. These are report-step and requeue tools, not imported by the producer; this was
      measured at the procedure's commit. In addition, `git -C $D diff --quiet 4f5a613f HEAD --
      docs/orchestration/state/s5p/ratios docs/orchestration/state/s5p/prod/tables
-     2d-unfolding/unfold_2d_omnifold_unbinned.py setup_salloc_env.sh` must give rc 0. That covers the hypotheses, the
+     2d-unfolding/unfold_2d_omnifold_unbinned.py setup_salloc_env.sh docs/orchestration/state/s5c/contract.json
+     docs/orchestration/state/s5p/stage1/stage1_inspect.json` must give rc 0 (the design's `stage1` and `s5c_contract`). That covers the hypotheses, the
      frozen tables, the refinement module that `s5n_pseudo` imports and hashes, and the environment script that
      `s5c_array.sh` sources;
    - design `404446eb…` and V `35979ef7…`; budget `be29f2c3…`, equal to the ledger's last budget record;
@@ -81,8 +93,11 @@ finding and its resolution.
    the deploy's `state/s5p/recovery/tables/`; they must be identical. Each regenerated manifest must record
    `seed_states_sha256` `6823e701…`. Its per-lane seed lists must equal the committed manifest's, which was made
    from the abs-log-path copy and so records `bd25f1ec…`.
-5. **Self-validation of the resolution code on the frozen products** (login node, no submission; every command
-   with `PYTHONPATH=nd-unfolding`):
+5. **Self-validation of the resolution code on the frozen products** (login node, no submission; in the environment
+   above). `frozen-s` is given `--robust-labels $NS/stage7/joint/robust-labels.json`. With an empty manifest it
+   RAISES unless its decisions (decision, k, B), keep-both decisions, κ = 3 replace decisions and labels equal the
+   frozen `decisions`, `decisions_robust_kappa`, `decisions_kappa3_replace` and `labels`. It also raises if any
+   power set's `claim_rule` or `claim_rule_determined` differs.
    - **`frozen-s`** with the frozen design and an empty recovery manifest (a copy of the recovery manifest with every
      `seeds` list emptied). It checks against the FROZEN ARTIFACT `joint-evaluate.json`, not only against itself.
      For every null it must reproduce exactly:
@@ -149,7 +164,8 @@ finding and its resolution.
 - **Retry (once):**
   1. When all three arrays have left the scheduler, `s5p_recovery.py missing` lists the manifest seeds with no
      finished product.
-  2. `tables --phase retry --seeds-file <that list>` builds one further array of those seeds. It writes to the same
+  2. `tables --phase retry --seeds-file <that list> --seed-states $NS/stage7/joint/seed-states.json --tables
+     docs/orchestration/state/s5p/prod/tables --out-dir $NS/recovery/retry-tables` builds one further array of those seeds. It writes to the same
      recovery directories and is submitted with `--timelimit-h 4.0`, so a seed that is slow in itself is not lost twice
      for the same reason. Its reservation is n × 0.5.
   3. A seed still without a product after the retry is **residual missing**.
@@ -173,9 +189,10 @@ finding and its resolution.
      leaves no final union.
    - **Outputs:** the union directories (symlinks, partials excluded) and a `_report_only` design copy with union globs
      and counts.
-2. **(a) Union, S recomputed:** from `D`, run the frozen `s5p_joint.py evaluate --design
+2. **(a) Union, S recomputed:** in the environment above, run `PYTHONPATH=nd-unfolding python3
+   nd-unfolding/s5p_joint.py evaluate --design
    $NS/recovery/resolution-design.json --v $NS/stage3/V/V-s3v.npz --out $NS/recovery/resolved-evaluate.json`, then
-   `s5p_robust_labels.py --evaluate $NS/recovery/resolved-evaluate.json --design $NS/recovery/resolution-design.json
+   `PYTHONPATH=nd-unfolding python3 nd-unfolding/s5p_robust_labels.py --evaluate $NS/recovery/resolved-evaluate.json --design $NS/recovery/resolution-design.json
    --out $NS/recovery/resolved-robust-labels.json`.
 3. **(b) Frozen S:** `s5p_recovery.py frozen-s --design docs/orchestration/state/s5p/prod/design.json --evaluate
    $NS/stage7/joint/joint-evaluate.json --v $NS/stage3/V/V-s3v.npz --manifest <recovery manifest> --tables <prod
@@ -253,5 +270,22 @@ agreement is required before the resolution is quoted.
 | 7 | should-fix | the fixture put `refinement` under `experiment` | the fixture now has the real top-level layout with `estimator_params`; controls for both locations |
 | notes | — | provenance fields; split key; residual validation; atomic resolve; the 51.5 wording; 586 rows; the manifest sha; PYTHONPATH; residual corners only for (b) | all applied (§1, §2.4, §4, §5) |
 
-The power block of `frozen-s` is not exercised by the end-to-end controls, whose world has no power lanes. Its
-guard is the §2.5 reproduction of `joint-evaluate.json`'s real power values before any recovered product is scored.
+Until revision 4, the power block of `frozen-s` and the stopping path of `stopping` were not covered by committed
+controls. Review 3 exercised both in its own scratch controls. Revision 4 commits controls for both.
+
+## 10. Review 3 findings and their resolution (verdict READY WITH CHANGES; nothing blocking)
+
+| # | severity | finding | resolution |
+|---|---|---|---|
+| 1 | should-fix | the exact-float self-check depends on the frozen environment (1-ulp `tail_interval` differences under another scipy) | the environment is fixed for every frozen-code step (header); a mismatch elsewhere is not evidence |
+| 2 | should-fix | no control exercised a stopping look | a world in which the real controller stops; reproduction and decisions at the stop asserted |
+| 3 | should-fix | "decisions must equal" was not enforced in code; labels and `claim_rule_determined` unchecked | enforced with an empty manifest (decisions, keep-both, replace, labels via `--robust-labels`); `claim_rule_determined` always; tamper controls |
+| 4 | should-fix | the fixture was built from `test_null`, not `s5p_joint.main` | the fixture is now built with the real `s5p_joint.main evaluate` (with a power lane) and `s5p_robust_labels` |
+| 5 | note | provenance sampled about 21 products per lane | every frozen product read; counts per variant reported |
+| 6 | note | the "not rejected" label | `s5p_robust_labels.labels` used directly (`not applicable`) |
+| 7 | note | no overwrite guard on `--out-design`; frozen-s built the recovered paths unchecked | guard added; frozen-s refuses a missing recovered product (declare it `--residual`) |
+| 8 | note | wording: the prefix in the §2.1 list, retry flags, the §5.2 command, `stage1` and the s5c contract in the diff | applied |
+| 9 | note | no control on the real split-key path | a unit control with the real `s5c_pseudo.split_key_for` |
+
+The review also noted two points that need no change. The §2.2 reference may postdate the power lanes' start, which
+makes the guard stricter, not weaker. The `-cnewer` test can fire on a ctime-only change, which is fail-safe.
