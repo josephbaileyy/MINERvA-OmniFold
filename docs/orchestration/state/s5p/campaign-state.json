@@ -489,6 +489,10 @@
   {
    "utc": "2026-10-05T07:45Z",
    "what": "LOOK: NuWro_21_09 B1152 (2026-10-05T07:25:22Z; total k = 0, p = 1/1153, interval [0, 0.00519]; shape k = 1 (unchanged), p = 2/1153 = 0.001735, interval [0, 0.00711]; continue; b6 59358653). First NuWro submission under transition r5: the r5 log and the ledger show --throttle 8 (%8); squeue at 07:45Z shows 8 RUNNING and 26 PENDING (JobArrayTaskLimit), so the r5 throttle is in effect. NuWro b5 59317189 closed at 4.31. Meter (from 95572965, rc 0): production charged 218.698 of 234.647 = 37 closed 184.698 + 4 open reservations 34.0 (MnvTune b6, CV b6, GiBUU b6, NuWro b6); envelope 292.19 of 376.52; open concurrency 2.0 (the cap: 3 + 3 + 2 + 8 slots). BINDING WATCH: remaining production batches with current k are the 4 open + NuWro b7, b8 = 6; remaining 49.949, so they fit at mean <= 8.32 (recent 4.0-4.9). No flag. NuWro still needs B ~1660 for its shape test (b7 ~1350, b8 ~1550, so b8 alone may not suffice: see the next look)."
+  },
+  {
+   "utc": "2026-10-05T07:46Z",
+   "what": "CORRECTION to the NuWro B1152 entry's last sentence ('b7 ~1350, b8 ~1550, so b8 alone may not suffice'), which was not computed. Computed: the look interval is the two-sided 99.5% Clopper-Pearson interval (scipy beta.ppf(0.9975, k+1, B-k) reproduces 0.00711 at k = 1, B = 1152 and 0.00519 at k = 0). Its upper end falls below 0.005 at B >= 1639 for k = 1 (B >= 2021 for k = 2). NuWro's measured batch yields so far are 197, 200, 190, 192, 178, 195 (mean ~192); at that rate the looks fall at B ~1344 (after b6), ~1536 (after b7) and ~1728 (after b8), so with k = 1 NuWro is expected to meet its rule at the b8 look; it would need b9 only if b6-b8 average below ~162 products. NuWro has 10 tables (b0-b9, max 1999). If its shape k reached 2, B >= 2021 exceeds the maximum 1999, so NuWro would end at 'maximum reached' without meeting the precision rule (a frozen terminal status, not a failure to rescue). The binding watch is unchanged: 6 remaining batches fit at mean <= 8.32 (7 at <= 7.1 if b9 were needed)."
   }
  ],
  "findings": [
