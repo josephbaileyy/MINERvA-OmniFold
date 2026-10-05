@@ -11,7 +11,7 @@ byte-identical). The task is **complete**. Nothing was launched beyond the bound
 | branch | `analysis/pet-gbdt-existing-outputs-20261005` (based on `origin/main` at `52a2f6dd`) |
 | plan frozen before any fit | `5f9c5a99` (pushed 2026-10-05 18:12 UTC; first FB fit 18:13 UTC) |
 | results commit | `2b62c017` |
-| review and disposition commits | see `REVIEW_DISPOSITION-20261005.md` |
+| review | cycle 1 at `2b62c017`, repairs `53471b6a`; cycle 2 at `53471b6a`, final repairs in the next commit (`REVIEW_DISPOSITION-20261005.md`); closed |
 | draft PR | see the PR list (title "[pet-gbdt] PET finalists vs GBDT on existing outputs …") |
 | PET source | `pet-final-design-20260925` at `bc356b0c0c5b56cb4877bdf2312d2d5dc6d1936d`. It is not on `main`; the code imports it from a checkout after a per-file blob check (`pgc_source.py`) |
 
@@ -40,7 +40,8 @@ On identical events and scoring, both finalists beat this GBDT on the E_avail ti
 GBDT OmniFold only: binned IBU and AUSSIE do better on the 1D tilt on DEV, and fail on hadron and generator cases.
 - **E0:** +0.102 (H2) and +0.070 (L128) in R, with 2–3× lower E0 MSE. The GBDT's error is about 96 % bias.
 - **E3:** +0.076 and +0.070.
-- **Other PET leads:** most hadron-species reweightings and the muon-scale case.
+- **Other PET leads:** most hadron-species reweightings. The muon-scale case's lead is mostly the tilt; its E8
+  contrast is +0.016 / +0.028.
 - **Level or small:** E4 topology (+0.055 and +0.012; level against GBDT k = 10) and E5.
 - **PET worse:** on all three generator-model reweightings, by 0.12–0.25, and on the narrow bump.
 - **GBDT robustness:** 0/224 moves-away units, B2 0.0033, maximum weight 5.6.
@@ -58,7 +59,8 @@ unfolding at a 2 M-row prior, and about 4× that at 10 M.
 2. **PR.** Merge only by owner decision. The code imports from `bc356b0c`, so the PET integration should land first or
    together.
 3. **If P0 is authorized.**
-   - The data-scale closure inputs need a builder: 4.12 M-row DEV pseudodata, a disjoint 2 M DEV prior, and the dev /
+   - The data-scale closure inputs need a builder: ≈ 9.6 M-row DEV pseudodata (≈ 4.0 M reco-passing, matching the
+     data's 4.0 M signed signal events), a disjoint 2 M DEV prior, and the dev /
      null / NuWro distortions.
    - The real-data nominal needs the full-event negative-weight background target that already exists for the
      full-event schema (`VALIDATION_LEDGER.md` :1927-1946).

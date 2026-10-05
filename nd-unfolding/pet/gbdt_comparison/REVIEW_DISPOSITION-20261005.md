@@ -63,11 +63,54 @@ are quoted exactly.
 - 15 of the 16 DEV re-scorings (one was spot-checked);
 - the test suite, which was not run to avoid writing into the worktree.
 
-The owner adds two facts:
+**The owner states the following.** These are statements, not artifacts:
 
-- The push of `5f9c5a99` was recorded by the push output at 18:12 UTC.
-- No collaborator message was sent.
+- the push of `5f9c5a99` was seen in the push output at 18:12 UTC;
+- no collaborator message was sent;
+- the runner bytes executed were those of `44d135c2`.
 
 ## Cycle 2
 
-{{CYCLE2}}
+The **same reviewer, resumed** to keep its context, read a clean detached worktree at `53471b6a`. The scope was fixed in
+advance:
+
+- the status of findings 1–15;
+- recomputing the corrected cost model, the route totals and the P0 arithmetic;
+- checking the new B4/R2 numbers and the IBU/AUSSIE context;
+- any new defect introduced by the repairs.
+
+**Verdict, quoted:**
+
+> 11 of the 15 findings are resolved and 4 are partial. Every repaired number reproduces exactly with my own code. One
+> claim in P0 is still unsupported and material: its closures are called "data-size" but have only about 0.42× the
+> data's reconstructed events.
+
+**Recomputed at |diff| = 0:**
+
+- the costs: H2 7.3223 / 29.0926 / 135.6388 and L128 7.1225 / 26.0693 / 118.7972 A100-h at 2 M / 10 M / full;
+- the route totals;
+- the P0 arithmetic (101.1 + 29.1; 14 × 11 = 154 ≤ 165);
+- every B4 E8 value, including R2: H2 − GBDT +0.0160 [−0.0053, 0.0373] and L128 − GBDT +0.0279 [0.0125, 0.0433];
+- the IBU and AUSSIE context against `SCALAR_AUSSIE_MATCHED-20260925.json`.
+
+| # | cycle-2 finding | disposition (applied after cycle 2, **not re-reviewed**: the budget is spent) |
+|---|---|---|
+| 2 (partial) | §6 "practical reading" was not updated. AUSSIE's truth set was not labelled. "IBU beats PET on the 1D tilt" is false on D1 −0.35 (IBU 0.835 against PET 0.841 / 0.850). "Neither tuned nor weakened" remained. | **Repaired.** The practical reading now says a binned unfolding already matches PET on the 1D tilt, and that PET's value is the tilt *with* the species structure. Both AUSSIE variants are labelled (`truth4_species`: dev 0.822 / 0.897, D4c +0.248, NuWro 0.272). The D1 −0.35 wording is corrected. The tuning scope is stated. |
+| 5 (partial) | The handoff reintroduced the muon-scale "lead". | **Repaired** in the handoff. |
+| 11 (note) | The P5A estimate used only H2's rates. | **Repaired:** 2.5 (H2) and 3.5 (L128) bracket the measured ≈ 3. |
+| 14 (partial) | Owner statements were presented as facts. | **Repaired:** labelled as owner statements here and in `RUN_LOG.md`. |
+| **A (material)** | P0's "data-size" closures of 4.12 M DEV truth rows hold only about 1.73 M reco events, against the data's 4.0 M signed signal events. The fresh rows are only about 0.42 of one data-size pseudo-experiment. | **Accepted; repaired.** P0's closures now use ≈ 9.6 M DEV truth rows (≈ 4.0 M reco-passing), and the cap is unchanged. The fresh-row and R4 wording is corrected, and "7×" is corrected to "≈ 16× the study's pseudodata". |
+| B | Item 5 had no kill guard, needs the bit-exact resume, and the elapsed time was understated. | **Repaired:** it starts only if ≥ 58 A100-h of the cap remain (its 2× bound), its Slurm time limit equals the remaining cap, it uses the resume, and elapsed is now about 4 days plus queue. |
+| C | Handoff muon-scale wording. | **Repaired** (same change as 5). |
+| D | AUSSIE variant not labelled. | **Repaired** (same change as 2). |
+| E | The R5 bounds were inconsistent about shared members. | **Repaired:** R5 ≈ 5.7–7.2 k, and ≈ 23–29 k at 10 M. The conclusion is unchanged. |
+| F | The signed paired E8 had no interpretation. | **Repaired:** the report states it is not a robustness ranking, and gives |E8| both ways. |
+
+**Remaining material disagreement: none.** The reviewer's only material finding, A, was accepted and repaired as the
+reviewer proposed. Because the two-cycle budget is spent, the post-cycle-2 edits are owner repairs and have not been
+independently re-checked. Every one of them is a wording or design-specification change; **no number in the paired
+comparison changed in either cycle.**
+
+**Could not verify (reviewer, cycle 2):** the owner statements above; the measured cost of job 56563761; whether a
+10 M-prior unfolding fits two per GPU. The test suite was not run by the reviewer; the owner ran it, 19 passed.
+**The review is closed.**
