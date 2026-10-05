@@ -1,4 +1,7 @@
 """Independent recomputation of the interim 2D fixed-truth coverage look (numpy only)."""
+# Receipt copy of the independent reviewer's script. Two changes by the study owner, neither
+# touching the computation: NPZ is resolved relative to this file, and points print at 17
+# significant digits (the reviewer printed 12).
 import math
 from pathlib import Path
 import numpy as np
@@ -75,7 +78,7 @@ res = {}
 for s in (1.0, 0.7, 1.3):
     pt, ci = score(Ub, s)
     res[s] = (pt, ci, verdict(ci))
-    print(f"s={s}", {k: f"{v:.12g}" for k, v in pt.items()}, ci, res[s][2],
+    print(f"s={s}", {k: f"{v:.17g}" for k, v in pt.items()}, ci, res[s][2],
           [side(ci['C1'], W1), side(ci['C2'], W2)])
 
 p1, c1, v1 = res[1.0]
@@ -88,5 +91,5 @@ print("posctl cond1", cond1, "cond2", cond2)
 
 Urep = Ub * Tb / Pb
 pr, cr = score(Urep, 1.0)
-print("replica", {k: f"{v:.12g}" for k, v in pr.items()}, cr, verdict(cr),
+print("replica", {k: f"{v:.17g}" for k, v in pr.items()}, cr, verdict(cr),
       [side(cr['C1'], W1), side(cr['C2'], W2)])

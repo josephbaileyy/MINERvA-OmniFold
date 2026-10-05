@@ -159,9 +159,10 @@ escape hatch, and the full rollup path are documented in
 - **Coverage of the statistical band: FAIL-undercoverage (2026-10-05, `VL164`).**
   The test was pre-registered with fixed-truth closure toys, and the study stopped by the futility
   rule at 100 toys, with an independent recomputation. C1 0.679 [0.669, 0.690] is nominal; C2
-  0.912 [0.907, 0.918] lies below its window [0.928, 0.972]; the pull RMS is 1.60. The tails
-  come from about 14 edge bins and are attributed to the bootstrapped completeness in the VL162
-  replicas. Quoted uncertainties are unchanged. Record:
+  0.912 [0.907, 0.918] lies below its window [0.928, 0.972]; the pull RMS is 1.60. Per-bin
+  calibration is uneven in both directions. The 2σ deficit sits at high p∥ and low pT and in the
+  highest-pT row (post hoc). It is attributed, partially, to the bootstrapped completeness in the
+  VL162 replicas, by the Amendment-1 secondary. Quoted uncertainties are unchanged. Record:
   `docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`; `KNOWN_ISSUES.md` 84.
   The older 200 closure+bootstrap-seed toys (mean 68.71 % within ±1σ, measured against their own
   fluctuating truth) are a Gaussianity diagnostic, not a coverage measurement.

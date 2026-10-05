@@ -715,10 +715,11 @@ difference in the measured leg rather than in the simulated one. It does
 data: a smaller bootstrap dispersion is equally consistent with regularization
 bias --- an estimator that responds less to resampling because it is pulled
 toward its prior --- and with an interval that simply undercovers. The fixed-truth test of
-\S\ref{sec:coverage} measures the band against the estimator's own scatter. It finds the median
-bin's pull RMS at $\covTwoDBinRMSmed$ and strong undercoverage only in about $\covTwoDNedge$
-edge bins. Its truth equals the prior, however, so it cannot see regularization bias toward the
-prior, and it does not decide between the explanations. The measured statement is
+\S\ref{sec:coverage} measures the band against the estimator's own scatter. Per bin, the band
+is too wide in some places and too narrow in others; the two-standard-deviation deficit sits at
+high $\pPar$ and low $\pT$ and in the highest-$\pT$ row. Its truth equals the prior, however, so
+it cannot see regularization bias toward the prior, and it does not decide between the
+explanations. The measured statement is
 the ratio; ``higher statistical efficiency'' is one of at least three
 explanations of it and is not established here.
 
@@ -1178,7 +1179,7 @@ Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:coverage} &
   \item Same-ensemble $68.71\%$ in \S\ref{sec:coverage} checks Gaussianity;
         it gives no half-percent certification of $\mathbf{C}^{\stat}$. The fixed-truth test
         there finds the diagonal of $\mathbf{C}^{\stat}$ undercovers in its tails
-        ($C_2=\covTwoDCTwo$, mostly edge bins); $\mathbf{C}^{\stat}$ is not changed.
+        ($C_2=\covTwoDCTwo$, unevenly across bins); $\mathbf{C}^{\stat}$ is not changed.
   \item \textbf{Band independence in $\mathbf{C}^{\syst}$.}
         Different physics sources are taken as uncorrelated; the one
         known exception, the Bashyal flux\,$\leftrightarrow$\,muon-E

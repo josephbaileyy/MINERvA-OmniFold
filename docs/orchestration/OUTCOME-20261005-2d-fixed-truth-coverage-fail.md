@@ -21,7 +21,8 @@ also covers the per-bin pattern (descriptive) and the pre-registered attribution
 Pre-registration: [`PREREG-20261005-2d-fixed-truth-coverage.md`](PREREG-20261005-2d-fixed-truth-coverage.md).
 It was committed at `e12af23e` before any toy ran. Amendment 1, with the pilot, is `37a0cf8c`;
 Amendment 2, operational, is `ae1f91f3`. Both were committed before any full-run toy output was
-read. Receipts: [`state/coverage-2d-20261005/`](state/coverage-2d-20261005/).
+read. Amendment 2 was written during wave 1, although the pre-registration's header allows
+amendments "before the full run". It is operational and changes no criterion. Receipts: [`state/coverage-2d-20261005/`](state/coverage-2d-20261005/).
 
 ## 1. The look
 
@@ -60,11 +61,18 @@ A fresh read-only reviewer (an Opus 5.5 subagent) recomputed the look with its o
 from the npz and the pre-registration, using its own resampling stream (seed 987654321, 40,000
 resamples). It was not shown this record's numbers. Results:
 
-- Every point estimate agrees to 1e-12.
-- Every interval endpoint agrees within 2e-4, against the pre-registered allowance of 3e-3.
+- Every point estimate agrees exactly (difference 0).
+- The C1 and C2 interval endpoints agree within 5.4e-4. The pull RMS and pull-mean endpoints
+  agree within 1.7e-3. All are inside the pre-registered allowance of 3e-3.
 - Its verdict, positive-control result and interim decision are the same.
 
-Script and output:
+The comparison is in
+[`recompute_comparison.json`](state/coverage-2d-20261005/recompute/recompute_comparison.json).
+It covers the pooled statistics, intervals, controls and replica form. The per-bin descriptives
+in §3 and the lane split were re-derived separately by a second read-only reviewer, whose
+claim review of this branch agreed with them.
+
+Script, with its print precision raised to 17 digits, and output:
 [`recompute/recompute_independent.py`](state/coverage-2d-20261005/recompute/recompute_independent.py),
 [`recompute_independent_output.txt`](state/coverage-2d-20261005/recompute/recompute_independent_output.txt).
 
@@ -72,26 +80,43 @@ Script and output:
 
 - **Width, not bias.** The pull mean is consistent with zero. The no-fluctuation run reproduces
   T exactly (A1.7, P1), so the seed-1 estimator carries no closure offset into the toys.
-- **Tails.** C1 is nominal while C2 is low and the pull RMS is 1.6. Descriptively (post hoc, no
-  verdict role):
-  - The median per-bin C2 is 0.96 and the median per-bin pull RMS is 0.97.
-  - 14 of 205 bins have a per-bin pull RMS above 2.
-  - These sit at the phase-space edges. Row p_T 2.5–4.5 GeV at p_∥ 6–10 GeV is the worst, with
-    p_∥ 6–7 GeV at an RMS of 14.6. Then come column p_∥ 40–60 GeV at p_T < 0.55 GeV, and
-    p_∥ 15–20 GeV at p_T 0.25–0.47 GeV.
-  - With the 10 worst bins removed, C2 is 0.935. This is post hoc and is not a verdict.
+- **Per-bin pattern (descriptive, post hoc, no verdict role).** C1 is nominal while C2 is low
+  and the pull RMS is 1.6. The band's per-bin calibration is uneven in both directions:
+  - Per-bin pull RMS is below 0.9 in 82 bins, within 0.9–1.1 in 52 and above 1.1 in 71. The
+    16th–84th percentile range is 0.72–1.44 and the median is 0.97. The pooled C1 is nominal
+    partly because over- and under-covering bins cancel.
+  - 35 bins have a per-bin C2 below 0.85. Under nominal coverage, each such bin has probability
+    1.2e-5 over 100 toys (binomial, at most 84 of 100). Of these 35:
+    - 21 form a contiguous block at p_∥ ≥ 15 GeV/c and p_T < 0.55 GeV/c;
+    - 6 lie in the highest-p_T row (2.5–4.5 GeV/c) at p_∥ 6–20 GeV/c;
+    - 4 adjoin the block at p_∥ 9–15 GeV/c;
+    - 4 are scattered.
+  - 14 bins have a per-bin pull RMS above 2. Their deficit sums to 72 % of the pooled C2 deficit.
+    The worst is p_T 2.5–4.5, p_∥ 6–7 GeV/c, at 14.6. Eleven of the 14 are at the phase-space
+    edges; three, at p_∥ 15–20 GeV/c and p_T 0.33–0.47 GeV/c, are interior.
+  - With the 10 worst bins removed, C2 is 0.935.
 - **Lane independence (A2.2, descriptive).** C2 is 0.918 on regular (17 toys), 0.915 on debug
   (33) and 0.908 on shared (50, run with 64 threads).
 - **Attribution secondary (A1.1 and A1.8, no verdict role).** Each toy was rescored in the
   replica form `U·T/P`, which applies the bootstrapped-completeness division the VL162 replicas
-  carry. That gives C1 0.833 [0.818, 0.846], C2 0.974 [0.969, 0.979] and pull RMS 0.81,
-  FAIL-**over**coverage. Under the pre-registered rule (A1.8), the primary undercoverage is
-  therefore **attributed to the completeness term**: the VL162 replicas divide by a per-replica
+  carry. That gives C1 0.833 [0.819, 0.846], above its window, which drives the
+  FAIL-**over**coverage. C2 is 0.974 [0.968, 0.979], straddling the window's upper edge, and the
+  pull RMS is 0.81.
+  - The secondary was added by Amendment 1 after the pilot ran.
+  - Its undercoverage branch (A1.8) was written after the pilot pulls had been seen; those pulls
+    already pointed this way.
+  - Both were fixed before the full run.
+
+  Under that rule, the primary undercoverage is **attributed to the completeness term**: the VL162 replicas divide by a per-replica
   completeness `P/T` that the central value (c ≡ 1) does not carry. That division cancels part of
   the MC-driven scatter, so the band understates the scatter of the estimator that produces the
-  central value. The replica form overcovering means the band does not match that form either.
-  The band transfer (A1.2: `prod_mean/T` has a median of 1.145 and runs 1.2–1.3 in the edge bins)
-  is a disclosed difference between the data band and the MC-truth toys.
+  central value. The attribution is partial in two ways:
+  - The replica form overcovering means the band does not match that form either.
+  - In the replica form, the p_∥ 40–60 GeV/c column at p_T < 0.47 GeV/c still undercovers, with
+    per-bin C2 of 0.72–0.89 and RMS up to 2.2.
+
+  The band transfer is a disclosed difference between the data band and the MC-truth toys. Under
+  A1.2, `prod_mean/T` has a median of 1.145 and is 1.2–1.3 in most of the worst bins.
 
 ## 4. Cost
 
@@ -103,7 +128,9 @@ Total charge is 13.33 CPU node-h on m3246, against the 60 node-h cap:
 | equivalence | 2 | 0.204 |
 | wave 1 | 101 | 12.53 |
 
-Wave 1's 101 jobs include the cancelled index 100 (A2.4), which used 0 s. All jobs ran under
+Wave 1's 101 accounting records are the 100 completed toys plus one CANCELLED record at 0 s.
+That record is index 67, a pending regular task moved to the shared lane, which then completed
+it. Other cancelled pending tasks, including index 100 (A2.4), leave no `sacct` record. All jobs ran under
 regular, debug or shared QOS at usage factor 1.0, with no premium and no overrun. The account
 balance was measured before and after. The ledger is in
 [`budget.json`](state/coverage-2d-20261005/budget.json).
@@ -111,7 +138,9 @@ balance was measured before and after. The ledger is in
 ## 5. What follows, and what does not
 
 - The note no longer says the 2D statistical band's coverage is untested. It now says the band,
-  as built, undercovers a fixed truth in the tails, at the phase-space edges.
+  as built, undercovers a fixed truth in its tails. It also says the per-bin calibration is
+  uneven, and that the 2σ deficit is concentrated at high p_∥ and low p_T and in the
+  highest-p_T row.
 - The quoted 2D statistical uncertainty and covariance are **unchanged**. A coverage result
   cannot change an adopted or quoted uncertainty. Whether to rebuild the band without the
   bootstrapped completeness, and then re-test it, is a separate decision for Joseph
