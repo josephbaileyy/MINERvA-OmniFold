@@ -2,7 +2,7 @@
 \usetheme{default}
 \usecolortheme{dove}
 \setbeamertemplate{navigation symbols}{}
-\usepackage{booktabs}
+\usepackage{booktabs}\usepackage{array}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
 \usepackage{lmodern}
@@ -20,6 +20,81 @@
 
 \gdef\evidencetext{}
 \frame{\titlepage}
+
+\gdef\evidencetext{\texttt{results/final/decision\_look1.json}; \texttt{results/final/coverage\_dev/coverage\_H2S1T24K5.json}; \texttt{dev/SCREENS-20260927-3d.json}; \texttt{scalar/results/SCALAR\_AUSSIE\_MATCHED-20260925.json}}
+\begin{frame}{What the evidence supports}
+{\footnotesize
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.30\linewidth}>{\raggedright\arraybackslash}p{0.64\linewidth}}
+\toprule
+question & what the evidence supports \\
+\midrule
+Can improved PET recover meaningful physics changes? & \textbf{Yes, in this simulation test.} H2S1T24 $K{=}5$ passed every frozen point-estimator rule: energy tilt 0.895, proton topology 0.391, energy $\times\,q_3$ 0.446. \\
+Is it more accurate than current GBDT? & \textbf{Suggestive, not decisive.} On the development tilt (DEV bank) scalar GBDT OmniFold reached 0.783 ($k{=}3$) to 0.817 ($k{=}10$), H2S1T24 0.904; inputs, $k$ and events are not matched. Efficiency-corrected binned IBU reached 0.923 on the tilt but fails the proton case. \\
+Can it give tighter, reliable confidence intervals? & \textbf{Unestablished.} Its six-member bootstrap interval failed calibration: too wide overall (68\,\% intervals cover 0.896), too narrow at low acceptance (0.257). \\
+Will it distinguish generators more strongly? & \textbf{Unestablished.} That needs calibrated inference including detector and model uncertainties; no tested procedure provides it. \\
+\bottomrule
+\end{tabular}}\par\vspace{0.15cm}\scriptsize Terminal outcome by the frozen rules: \textbf{NO\_ELIGIBLE\_DESIGN}, no selected default. Signal-only simulation, conditional on the frozen event banks; PET is diagnostic.
+\end{frame}
+
+\gdef\evidencetext{\texttt{results/final/decision\_look1.json}; \texttt{results/final/coverage\_dev/decision\_final.json}; \texttt{resources/cost\_fb\_look1-20260930.json}}
+\begin{frame}{The two finalists side by side}
+{\small
+\begin{tabular}{lrr}
+\toprule
+quantity (final bank, look 1) & H2S1T24 $K{=}5$ & L128S1T24 $K{=}4$ \\
+\midrule
+Energy-tilt recovery (E0) & 0.895 & 0.863 \\
+Proton-topology recovery (E4) & 0.391 & 0.348 \\
+Joint energy--momentum-transfer recovery (E5) & 0.446 & 0.450 \\
+Estimator-seed spread of energy recovery (N2) & 0.037 & 0.043 \\
+Largest observed truth weight (N1) & 90.2 & 33.4 \\
+Measured A100-hours per unfolding & 1.77 & 1.52 \\
+Frozen point-estimator rules & all pass & B2 fails \\
+Interval calibration (coverage) & fails (C1, C4) & not tested (ineligible on B2) \\
+\bottomrule
+\end{tabular}}\par\vspace{0.15cm}\scriptsize Recoveries: 1 = exact, 0 = no better than the prior. B2's failure is a point decision whose interval crosses the limit; the two designs are not shown to differ in robustness.
+\end{frame}
+
+\gdef\evidencetext{\texttt{DEVELOPMENT-20260926.md}; \texttt{PROTOCOL-20260925.md (5)}}
+\begin{frame}{Design names, decoded}
+{\scriptsize
+\begin{tabular}{l>{\raggedright\arraybackslash}p{0.80\linewidth}}
+\toprule
+name part & meaning \\
+\midrule
+CTL & historical production PET recipe: misses carried, 3 iterations, 8 epochs, forced low rate after iteration 0 \\
+C & CTL with the predecessor's efficiency-corrected truth step \\
+B & predecessor's feature arm: reco energy summaries at step 1, one-hot particle type at step 2 \\
+H1 & C + categorical truth particle type (13-class one-hot) in the truth step \\
+H2 & H1 + reco summaries at the detector step (reco $E_\mathrm{avail}$, reco $q_3$, cluster $\Sigma E$ and count) \\
+S1 & constant learning rate at every iteration \\
+E16 / T24 & 16 epochs per fit at both steps / 24 epochs per truth-step fit \\
+L64 / L128 & wider detector-step PET (projection 64 / 128, 4 layers) \\
+P2pre / P2scr & Gregor's PET2-small backbone at the detector step on its 33-token typed inputs, pretrained / from scratch \\
+A1 & annealed detector-step learning rate after iteration 1 \\
+X4 & 4 independently seeded truth-step fits averaged per iteration \\
+$K{=}5$, $K{=}4$ & the frozen number of OmniFold iterations \\
+\bottomrule
+\end{tabular}}\par\vspace{0.1cm}\scriptsize Names compose: H2S1T24 = H2 + S1 + T24. Step 1 reweights simulation to match (pseudo)data at detector level; step 2 turns those weights into truth-level weights; one pass is one iteration.
+\end{frame}
+
+\gdef\evidencetext{\texttt{PROTOCOL-20260925.md (3, 4, 6, 9)}}
+\begin{frame}{How the numbers are measured}
+\small\begin{itemize}
+\item \textbf{Simulation only.} Pseudodata are simulated events with a known, injected change to the truth (e.g.\ an
+  $E_\mathrm{avail}$ tilt, more protons); the unfolding starts from the unchanged simulation (the prior).
+\item \textbf{Recovery} $R = 1 - L_1(\text{unfolded} - \text{target}) / L_1(\text{prior} - \text{target})$ on
+  normalized histograms: 1 = the injected change fully recovered, 0 = no better than the prior, $< 0$ = moved away.
+\item \textbf{Tests:} energy tilt and its opposite (E0, E3), proton topology (E4, $E_\mathrm{avail} \times$ proton
+  class), energy $\times$ momentum transfer (E5), a 21-case robustness library, weight tails and seed spread.
+\item \textbf{Fresh events:} designs were developed on a DEV bank; the final test used a bank no earlier work had
+  scored, blinded until every final run was complete. A third bank stays sealed.
+\item \textbf{Rules frozen first:} every threshold, finalist and sample size was committed before final results were
+  seen; the outcome is whatever those rules give.
+\item \textbf{Coverage:} does the six-member bootstrap interval contain the true value at its nominal rate across 120
+  independent replicates?
+\end{itemize}
+\end{frame}
 
 \gdef\evidencetext{\texttt{PROTOCOL-20260925.md}}
 \begin{frame}{Question, preference and decision rule}
@@ -230,6 +305,24 @@ H2S1T24 & H2S1, 24-epoch truth step (finalist) & as H2 & final bank: coverage C1
 L128S1T24 & L128S1, 24-epoch truth step (finalist) & as L128H2 & final bank: B2 FAIL (point-decided) --- INELIGIBLE (B2) \\
 \bottomrule
 \end{tabular}}\par\vspace{0.1cm}\tiny Also closed: the step-2 ensemble fallback (H2S1X4, L128S1X4; entry condition never met) and AUSSIE (bounded matched scalar test). Anchors/controls (CTL, C, B) are not selectable. Development screens: S-U1 tilt, S-U3 opposite tilt, S-U4 proton topology, S-B2 D4d residual; then S-N1, S-N2. Gregor-derived parts follow the pinned comparison (cmp sections); the truth-step design is the study's own.
+\end{frame}
+
+\gdef\evidencetext{\texttt{results/final/population\_look1.json}; \texttt{dev/SCREENS-20260927-3d.json}; \texttt{scalar/results/SCALAR\_AUSSIE\_MATCHED-20260925.json}; \texttt{../configuration\_comparison/campaign\_report.json}; \texttt{scalar/SCALAR\_AUSSIE\_MATCHED-20260925.md}}
+\begin{frame}{Reference methods and alternatives}
+{\scriptsize
+\begin{tabular}{l>{\raggedright\arraybackslash}p{0.25\linewidth}>{\raggedright\arraybackslash}p{0.12\linewidth}>{\raggedright\arraybackslash}p{0.37\linewidth}}
+\toprule
+method & what it is & from Gregor's work & result \\
+\midrule
+CTL $K{=}3$ & historical production PET recipe (anchor) & --- & final bank energy tilt 0.306 (floor 0.556) \\
+C $K{=}3$ & efficiency-corrected truth step (anchor) & --- & final bank energy tilt 0.560 \\
+B & predecessor's feature arm (control) & energy sums (cmp 4) & development tilt 0.474 at $k{=}3$ \\
+Gregor's arm & his PET2-small, his tokens, pretrained; historical comparison, $k{=}3$ & his configuration (adapted) & 0.417 vs ours 0.304; floor 0.556: \textsc{neither eligible} \\
+GBDT OmniFold & scalar HistGradientBoosting on reco $p_T$, $p_\parallel$, $E_\mathrm{avail}$, $q_3$, cluster sums & --- & development tilt 0.783 (efficiency-corrected) / 0.418 (misses carried), $k{=}3$; proton topology 0.389 only with species-count truth inputs \\
+binned IBU & response-matrix unfolding, efficiency-corrected & --- & development tilt 0.923; moves away in the proton case (\ensuremath{-}0.381) \\
+AUSSIE & scalar method of arXiv:2602.24282, matched to GBDT OmniFold & --- & lost all 12 matched comparisons on robustness and stability \\
+\bottomrule
+\end{tabular}}\par\vspace{0.1cm}\tiny Anchors are not selectable; scalar references use the predecessor's DEV-bank selections, so they are context, not matched comparisons with the PET finalists.
 \end{frame}
 
 \gdef\evidencetext{\texttt{docs/orchestration/AUTHORIZATION-20260925-pet-final-design.md}}

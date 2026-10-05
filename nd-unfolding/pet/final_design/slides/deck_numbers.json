@@ -2,8 +2,9 @@
  "schema": "pet-final-design-deck-numbers/1",
  "generator": "slides/make_final_deck.py",
  "root": "nd-unfolding/pet/final_design",
- "main_slides": 15,
+ "main_slides": 20,
  "sources": {
+  "../configuration_comparison/campaign_report.json": "96955a10222b6c95c13a5db0e48c9af96717371045398a837b996ba3d17625c2",
   "banks/BANK_MANIFEST.json": "682e259fbe41cf37407b545c6acf1739b8e438f38ee0adfae8f16449bf8d5cb3",
   "dev/DEV_TABLES-20260927.json": "eb7a7eb68ce5efb55ba6be15af20140e950a4ff99dd8f9ffba3f80981150a41b",
   "dev/SCREENS-20260927-3d.json": "79e676ef1d7a155ae3decbc1352546955eacaf712cbe57d116a1b58e4a185b27",
@@ -13,6 +14,7 @@
   "results/final/coverage_dev/coverage_H2S1T24K5.json": "1dda413c1512167405c2710ae485bdc3bd2da09f2dcc1fbd60d532b4bac21db5",
   "results/final/coverage_dev/decision_final.json": "2b0c2c398a0edd749494f86dda2be5d9a45c156487764d93f7a099e39e7a2700",
   "results/final/decision_look1.json": "b82b3733384625fafcc0edd08b1f2e866d7a9518d3fcb11f74e0ad9796fac55e",
+  "results/final/population_look1.json": "ce3af8591d9e58798e5ac02012a895e56e12c15790cd9197c15d9fac35b7447d",
   "results/predecessor_posthoc/final-C-F0.posthoc.json": "b117597358a9db1199c1bcf8c6bcc1461ea051e80d14355ce2fcd2c6b370301e",
   "results/predecessor_posthoc/final-C-F1.posthoc.json": "0cc89b3879da3022a71f2996947b8032e628cc81ef26648d61c768997181a5e3",
   "results/predecessor_posthoc/final-C-F10.posthoc.json": "a6b48e8cfaee676ab82f4a350b2fd36fd62a464f4cd9b8070edea432a585968f",
@@ -2855,6 +2857,209 @@
    ]
   },
   {
+   "id": "ref_b_dev_k3",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.47433074843445927,
+   "rendered": "0.474",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "B",
+      "rows",
+      1,
+      "values",
+      "S-U1",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_c_e0",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5598026850163459,
+   "rendered": "0.560",
+   "inputs": [
+    {
+     "file": "results/final/population_look1.json",
+     "path": [
+      "candidates",
+      "CrefK3",
+      "S4F:D1_p0.350",
+      "eavail",
+      "R",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_ctl_e0",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.3061490745070573,
+   "rendered": "0.306",
+   "inputs": [
+    {
+     "file": "results/final/population_look1.json",
+     "path": [
+      "candidates",
+      "CTLrefK3",
+      "S4F:D1_p0.350",
+      "eavail",
+      "R",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_floor",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5559785254924289,
+   "rendered": "0.556",
+   "inputs": [
+    {
+     "file": "../configuration_comparison/campaign_report.json",
+     "path": [
+      "absolute_adequacy",
+      "floor"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_gbdt_carry_k3",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.41825483176370387,
+   "rendered": "0.418",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "dev",
+      "omnifold|carry|truth4@k3",
+      "mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_gbdt_eff_k3",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.7833219997247297,
+   "rendered": "0.783",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "dev",
+      "omnifold|efficiency_corrected|truth4@k3",
+      "mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_gbdt_p_species",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.38931036202016434,
+   "rendered": "0.389",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "D4c_p_up",
+      "omnifold|efficiency_corrected|truth4_species@k10",
+      "mean_R_joint_p"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_hist_ours",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.30367486660122656,
+   "rendered": "0.304",
+   "inputs": [
+    {
+     "file": "../configuration_comparison/campaign_report.json",
+     "path": [
+      "absolute_adequacy",
+      "arms",
+      "ours",
+      "mean_recovery"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_hist_theirs",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.41652658344946014,
+   "rendered": "0.417",
+   "inputs": [
+    {
+     "file": "../configuration_comparison/campaign_report.json",
+     "path": [
+      "absolute_adequacy",
+      "arms",
+      "theirs",
+      "mean_recovery"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_ibu_eff_d4c",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.3814671951811079,
+   "rendered": "\\ensuremath{-}0.381",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "D4c_p_up",
+      "ibu|efficiency_corrected@k3",
+      "mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_ibu_eff_k3",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.9233676731424854,
+   "rendered": "0.923",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "dev",
+      "ibu|efficiency_corrected@k3",
+      "mean_R"
+     ]
+    }
+   ]
+  },
+  {
    "id": "scr_dev_CS1",
    "op": "field",
    "fmt": "3",
@@ -3147,6 +3352,423 @@
       "L64S1",
       "S-N2_at_Kstar",
       "sd"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_h_N1",
+   "op": "field",
+   "fmt": "1",
+   "value": 90.19629669189453,
+   "rendered": "90.2",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "N1",
+      "parts",
+      3,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_h_N2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.03699817389402531,
+   "rendered": "0.037",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "N2",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_h_U1",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.895063878280764,
+   "rendered": "0.895",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U1",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_h_U4",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.39126905300944664,
+   "rendered": "0.391",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U4",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_h_U5",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.4459280308610259,
+   "rendered": "0.446",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U5",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_h_cost",
+   "op": "field",
+   "fmt": "2",
+   "value": 1.7679193116208263,
+   "rendered": "1.77",
+   "inputs": [
+    {
+     "file": "resources/cost_fb_look1-20260930.json",
+     "path": [
+      "candidates",
+      "H2S1T24",
+      "median"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_l_N1",
+   "op": "field",
+   "fmt": "1",
+   "value": 33.438270568847656,
+   "rendered": "33.4",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "N1",
+      "parts",
+      3,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_l_N2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.04278892497986912,
+   "rendered": "0.043",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "N2",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_l_U1",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8632304960063774,
+   "rendered": "0.863",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U1",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_l_U4",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.34827126211891524,
+   "rendered": "0.348",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U4",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_l_U5",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.4496915280225853,
+   "rendered": "0.450",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U5",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_l_cost",
+   "op": "field",
+   "fmt": "2",
+   "value": 1.5170869864339491,
+   "rendered": "1.52",
+   "inputs": [
+    {
+     "file": "resources/cost_fb_look1-20260930.json",
+     "path": [
+      "candidates",
+      "L128S1T24",
+      "median"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_H2S1T24K5_U1_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.895063878280764,
+   "rendered": "0.895",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U1",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_H2S1T24K5_U4_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.39126905300944664,
+   "rendered": "0.391",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U4",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_H2S1T24K5_U5_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.4459280308610259,
+   "rendered": "0.446",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U5",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_cov68",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8964285714285715,
+   "rendered": "0.896",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "rules",
+      "C1",
+      "parts",
+      3,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_cov68_low",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.2571428571428571,
+   "rendered": "0.257",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "regions",
+      "low_acceptance",
+      "levels",
+      "0.68",
+      "pooled",
+      "point"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_gbdt_k10",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8170625062198216,
+   "rendered": "0.817",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "dev",
+      "omnifold|efficiency_corrected|truth4@k10",
+      "mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_gbdt_k3",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.7833219997247297,
+   "rendered": "0.783",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "dev",
+      "omnifold|efficiency_corrected|truth4@k3",
+      "mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_h2t24_dev",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.9042659915986735,
+   "rendered": "0.904",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "H2S1T24",
+      "dev_tilt_at_Kstar"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_ibu_k3",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.9233676731424854,
+   "rendered": "0.923",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "dev",
+      "ibu|efficiency_corrected@k3",
+      "mean_R"
      ]
     }
    ]

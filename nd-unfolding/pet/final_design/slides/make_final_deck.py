@@ -50,6 +50,8 @@ PP = "results/predecessor_posthoc/{run}.posthoc.json"
 S2 = "results/step2int/{run}.posthoc.json"
 DEC = "results/final/decision_look1.json"
 B1D = "results/final/b1_dependence_look1.json"
+POP = "results/final/population_look1.json"
+CAMP = "../configuration_comparison/campaign_report.json"
 FBC = "resources/cost_fb_look1-20260930.json"
 COV = "results/final/coverage_dev/coverage_H2S1T24K5.json"
 FIN = "results/final/coverage_dev/decision_final.json"
@@ -65,6 +67,147 @@ def fig(name: str, width: str = r"0.95\linewidth") -> str:
 
 
 # ------------------------------------------------------------------------------------------ slides
+def _v(n: Numbers, nid: str, rel: str, path: list, fmt: str = "3") -> str:
+    return n.f(nid, rel, path, fmt)
+
+
+def s_summary(d: Deck, n: Numbers) -> None:
+    """Opening summary for a reader who knows Gregor's work but not this study."""
+    e = lambda c, rule, i, key="estimate", fmt="3": _v(n, f"sum_{c}_{rule}_{i}_{key}", DEC,
+                                                       ["eligibility", c, "verdicts", rule, "parts", i, key], fmt)
+    h = "H2S1T24K5"
+    gb3 = _v(n, "sum_gbdt_k3", AUS, ["per_case", "dev", "omnifold|efficiency_corrected|truth4@k3", "mean_R"])
+    gb10 = _v(n, "sum_gbdt_k10", AUS, ["per_case", "dev", "omnifold|efficiency_corrected|truth4@k10", "mean_R"])
+    ibu = _v(n, "sum_ibu_k3", AUS, ["per_case", "dev", "ibu|efficiency_corrected@k3", "mean_R"])
+    pet = _v(n, "sum_h2t24_dev", SCR, ["designs", "H2S1T24", "dev_tilt_at_Kstar"])
+    c68 = _v(n, "sum_cov68", COV, ["rules", "C1", "parts", 3, "estimate"])
+    low = _v(n, "sum_cov68_low", COV, ["regions", "low_acceptance", "levels", "0.68", "pooled", "point"])
+    rows = [
+        ["Can improved PET recover meaningful physics changes?",
+         r"\textbf{Yes, in this simulation test.} H2S1T24 $K{=}5$ passed every frozen point-estimator rule: "
+         r"energy tilt " + e(h, "U1", 0) + ", proton topology " + e(h, "U4", 0) + r", energy $\times\,q_3$ "
+         + e(h, "U5", 0) + "."],
+        ["Is it more accurate than current GBDT?",
+         r"\textbf{Suggestive, not decisive.} On the development tilt (DEV bank) scalar GBDT OmniFold reached "
+         + gb3 + r" ($k{=}3$) to " + gb10 + r" ($k{=}10$), H2S1T24 " + pet + r"; inputs, $k$ and events are not "
+         r"matched. Efficiency-corrected binned IBU reached " + ibu + " on the tilt but fails the proton case."],
+        ["Can it give tighter, reliable confidence intervals?",
+         r"\textbf{Unestablished.} Its six-member bootstrap interval failed calibration: too wide overall "
+         r"(68\,\% intervals cover " + c68 + r"), too narrow at low acceptance (" + low + ")."],
+        ["Will it distinguish generators more strongly?",
+         r"\textbf{Unestablished.} That needs calibrated inference including detector and model uncertainties; "
+         r"no tested procedure provides it."],
+    ]
+    body = table(["question", "what the evidence supports"], rows, RAG + r"p{0.30\linewidth}" + RAG + r"p{0.64\linewidth}",
+                 r"\footnotesize") + (
+        r"\par\vspace{0.15cm}\scriptsize Terminal outcome by the frozen rules: \textbf{NO\_ELIGIBLE\_DESIGN}, no "
+        r"selected default. Signal-only simulation, conditional on the frozen event banks; PET is diagnostic.")
+    d.frame("What the evidence supports", body, [DEC, COV, SCR, AUS])
+    d.claim("Summary", sorted(k for k in n.entries if k.startswith("sum_")))
+
+
+def s_side_by_side(d: Deck, n: Numbers) -> None:
+    fin = (("H2S1T24K5", "H2S1T24", "h"), ("L128S1T24K4", "L128S1T24", "l"))
+    dec = d.n.src.load(DEC)["eligibility"]
+    fe = d.n.src.load(FIN)["eligibility"]
+
+    def e(c, t, rule, i, fmt="3"):
+        return _v(n, f"side_{t}_{rule}", DEC, ["eligibility", c, "verdicts", rule, "parts", i, "estimate"], fmt)
+
+    point = lambda c: ("all pass" if not dec[c]["failed"] else ", ".join(dec[c]["failed"]) + " fails")
+    calib = lambda c: ("fails (" + ", ".join(r for r in fe[c]["failed"] if r.startswith("C")) + ")"
+                       if any(r.startswith("C") for r in fe[c]["failed"]) else "not tested (ineligible on B2)")
+    rows = [["Energy-tilt recovery (E0)"] + [e(c, t, "U1", 0) for c, _, t in fin],
+            ["Proton-topology recovery (E4)"] + [e(c, t, "U4", 0) for c, _, t in fin],
+            [r"Joint energy--momentum-transfer recovery (E5)"] + [e(c, t, "U5", 0) for c, _, t in fin],
+            ["Estimator-seed spread of energy recovery (N2)"] + [e(c, t, "N2", 0) for c, _, t in fin],
+            ["Largest observed truth weight (N1)"] + [e(c, t, "N1", 3, "1") for c, _, t in fin],
+            ["Measured A100-hours per unfolding"] + [_v(n, f"side_{t}_cost", FBC, ["candidates", cid, "median"], "2")
+                                                     for _, cid, t in fin],
+            ["Frozen point-estimator rules"] + [point(c) for c, _, _ in fin],
+            ["Interval calibration (coverage)"] + [calib(c) for c, _, _ in fin]]
+    body = table(["quantity (final bank, look 1)", "H2S1T24 $K{=}5$", "L128S1T24 $K{=}4$"], rows, "lrr",
+                 r"\small") + (
+        r"\par\vspace{0.15cm}\scriptsize Recoveries: 1 = exact, 0 = no better than the prior. B2's failure is a point "
+        r"decision whose interval crosses the limit; the two designs are not shown to differ in robustness.")
+    d.frame("The two finalists side by side", body, [DEC, FIN, FBC])
+    d.claim("Finalists side by side", sorted(k for k in n.entries if k.startswith("side_")))
+
+
+def s_names(d: Deck) -> None:
+    rows = [["CTL", "historical production PET recipe: misses carried, 3 iterations, 8 epochs, forced low rate after iteration 0"],
+            ["C", r"CTL with the predecessor's efficiency-corrected truth step"],
+            ["B", "predecessor's feature arm: reco energy summaries at step 1, one-hot particle type at step 2"],
+            ["H1", r"C + categorical truth particle type (13-class one-hot) in the truth step"],
+            ["H2", r"H1 + reco summaries at the detector step (reco $E_\mathrm{avail}$, reco $q_3$, cluster $\Sigma E$ and count)"],
+            ["S1", "constant learning rate at every iteration"],
+            ["E16 / T24", "16 epochs per fit at both steps / 24 epochs per truth-step fit"],
+            ["L64 / L128", "wider detector-step PET (projection 64 / 128, 4 layers)"],
+            ["P2pre / P2scr", r"Gregor's PET2-small backbone at the detector step on its 33-token typed inputs, pretrained / from scratch"],
+            ["A1", "annealed detector-step learning rate after iteration 1"],
+            ["X4", "4 independently seeded truth-step fits averaged per iteration"],
+            [r"$K{=}5$, $K{=}4$", "the frozen number of OmniFold iterations"]]
+    body = table(["name part", "meaning"], rows, "l" + RAG + r"p{0.80\linewidth}", r"\scriptsize") + (
+        r"\par\vspace{0.1cm}\scriptsize Names compose: H2S1T24 = H2 + S1 + T24. Step 1 reweights simulation to match "
+        r"(pseudo)data at detector level; step 2 turns those weights into truth-level weights; one pass is one iteration.")
+    d.frame("Design names, decoded", body, ["DEVELOPMENT-20260926.md", "PROTOCOL-20260925.md (5)"])
+
+
+def s_reading(d: Deck) -> None:
+    body = r"""\small\begin{itemize}
+\item \textbf{Simulation only.} Pseudodata are simulated events with a known, injected change to the truth (e.g.\ an
+  $E_\mathrm{avail}$ tilt, more protons); the unfolding starts from the unchanged simulation (the prior).
+\item \textbf{Recovery} $R = 1 - L_1(\text{unfolded} - \text{target}) / L_1(\text{prior} - \text{target})$ on
+  normalized histograms: 1 = the injected change fully recovered, 0 = no better than the prior, $< 0$ = moved away.
+\item \textbf{Tests:} energy tilt and its opposite (E0, E3), proton topology (E4, $E_\mathrm{avail} \times$ proton
+  class), energy $\times$ momentum transfer (E5), a 21-case robustness library, weight tails and seed spread.
+\item \textbf{Fresh events:} designs were developed on a DEV bank; the final test used a bank no earlier work had
+  scored, blinded until every final run was complete. A third bank stays sealed.
+\item \textbf{Rules frozen first:} every threshold, finalist and sample size was committed before final results were
+  seen; the outcome is whatever those rules give.
+\item \textbf{Coverage:} does the six-member bootstrap interval contain the true value at its nominal rate across 120
+  independent replicates?
+\end{itemize}"""
+    d.frame("How the numbers are measured", body, ["PROTOCOL-20260925.md (3, 4, 6, 9)"])
+
+
+def s_references(d: Deck, n: Numbers) -> None:
+    floor = _v(n, "ref_floor", CAMP, ["absolute_adequacy", "floor"])
+    ctl = _v(n, "ref_ctl_e0", POP, ["candidates", "CTLrefK3", "S4F:D1_p0.350", "eavail", "R", "mean"])
+    c = _v(n, "ref_c_e0", POP, ["candidates", "CrefK3", "S4F:D1_p0.350", "eavail", "R", "mean"])
+    b3 = _v(n, "ref_b_dev_k3", SCR, ["designs", "B", "rows", 1, "values", "S-U1", 0])
+    ours = _v(n, "ref_hist_ours", CAMP, ["absolute_adequacy", "arms", "ours", "mean_recovery"])
+    theirs = _v(n, "ref_hist_theirs", CAMP, ["absolute_adequacy", "arms", "theirs", "mean_recovery"])
+    gb_e3 = _v(n, "ref_gbdt_eff_k3", AUS, ["per_case", "dev", "omnifold|efficiency_corrected|truth4@k3", "mean_R"])
+    gb_c3 = _v(n, "ref_gbdt_carry_k3", AUS, ["per_case", "dev", "omnifold|carry|truth4@k3", "mean_R"])
+    gb_p = _v(n, "ref_gbdt_p_species", AUS, ["per_case", "D4c_p_up", "omnifold|efficiency_corrected|truth4_species@k10",
+                                             "mean_R_joint_p"])
+    ibu = _v(n, "ref_ibu_eff_k3", AUS, ["per_case", "dev", "ibu|efficiency_corrected@k3", "mean_R"])
+    ibu_p = _v(n, "ref_ibu_eff_d4c", AUS, ["per_case", "D4c_p_up", "ibu|efficiency_corrected@k3", "mean_R"])
+    rows = [
+        ["CTL $K{=}3$", "historical production PET recipe (anchor)", "---",
+         "final bank energy tilt " + ctl + " (floor " + floor + ")"],
+        ["C $K{=}3$", "efficiency-corrected truth step (anchor)", "---", "final bank energy tilt " + c],
+        ["B", "predecessor's feature arm (control)", "energy sums (cmp 4)", "development tilt " + b3 + r" at $k{=}3$"],
+        ["Gregor's arm", "his PET2-small, his tokens, pretrained; historical comparison, $k{=}3$",
+         "his configuration (adapted)", theirs + " vs ours " + ours + "; floor " + floor + r": \textsc{neither eligible}"],
+        ["GBDT OmniFold", r"scalar HistGradientBoosting on reco $p_T$, $p_\parallel$, $E_\mathrm{avail}$, $q_3$, cluster sums",
+         "---", "development tilt " + gb_e3 + " (efficiency-corrected) / " + gb_c3 + " (misses carried), $k{=}3$; "
+         "proton topology " + gb_p + " only with species-count truth inputs"],
+        ["binned IBU", "response-matrix unfolding, efficiency-corrected", "---",
+         "development tilt " + ibu + "; moves away in the proton case (" + ibu_p + ")"],
+        ["AUSSIE", "scalar method of arXiv:2602.24282, matched to GBDT OmniFold", "---",
+         "lost all 12 matched comparisons on robustness and stability"],
+    ]
+    body = table(["method", "what it is", "from Gregor's work", "result"], rows,
+                 "l" + RAG + r"p{0.25\linewidth}" + RAG + r"p{0.12\linewidth}" + RAG + r"p{0.37\linewidth}",
+                 r"\scriptsize") + (
+        r"\par\vspace{0.1cm}\tiny Anchors are not selectable; scalar references use the predecessor's DEV-bank "
+        r"selections, so they are context, not matched comparisons with the PET finalists.")
+    d.frame("Reference methods and alternatives", body, [POP, SCR, AUS, CAMP, "scalar/SCALAR_AUSSIE_MATCHED-20260925.md"])
+    d.claim("Reference methods", sorted(k for k in n.entries if k.startswith("ref_")))
+
+
 def s_title(d: Deck) -> None:
     d.frames.append("\\gdef\\evidencetext{}\n\\frame{\\titlepage}\n")
 
@@ -498,7 +641,8 @@ def s_cannot(d: Deck) -> None:
     d.frame("What this study cannot authorize", body, ["docs/orchestration/AUTHORIZATION-20260925-pet-final-design.md"])
 
 
-PREAMBLE = base.PREAMBLE
+PREAMBLE = base.PREAMBLE.replace(r"\usepackage{booktabs}", r"\usepackage{booktabs}\usepackage{array}", 1)
+RAG = r">{\raggedright\arraybackslash}"
 
 
 def build(out: Path, make_pdf: bool) -> dict[str, Any]:
@@ -508,6 +652,10 @@ def build(out: Path, make_pdf: bool) -> dict[str, Any]:
     n = Numbers(src)
     d = Deck(n)
     s_title(d)
+    s_summary(d, n)
+    s_side_by_side(d, n)
+    s_names(d)
+    s_reading(d)
     s_question(d)
     s_capacity(d, n)
     s_diagnostics(d, n)
@@ -521,6 +669,7 @@ def build(out: Path, make_pdf: bool) -> dict[str, Any]:
     s_coverage(d, n)
     s_terminal(d, n)
     s_architectures(d, n)
+    s_references(d, n)
     s_cannot(d)
     title = (r"\title{PET final-design selection study}" "\n"
              r"\subtitle{Study deck (generated from committed results)}" "\n"
