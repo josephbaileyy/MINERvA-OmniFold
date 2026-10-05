@@ -1,0 +1,17 @@
+{
+  "job_id": "58277208",
+  "execution_commit": "6298efc2fb0558d34674e066bbc5a37319dd775b",
+  "authorization_sha256": "3653637658cdb4022524f654eebefe440b3d50c79e9dc22a2adb2699cef34d77",
+  "state_at_last_observation": "PENDING",
+  "reason": "Priority",
+  "submitted_scheduler_time": "2026-09-13T14:43:06 Pacific",
+  "scope": "single numerical diagnostic only",
+  "calibration_authorized": false,
+  "full_matrix_authorized": false,
+  "automatic_retry": false,
+  "runtime_lock_matches_prior": true,
+  "prior_conservative_seconds": 290,
+  "execution_checkout": "/pscratch/sd/j/josephrb/pet-numerical-exec-20260914",
+  "output": "/pscratch/sd/j/josephrb/pet-numerical-output-20260914",
+  "slurm_log": "/pscratch/sd/j/josephrb/pet-numerical-20260914.slurm.log"
+}

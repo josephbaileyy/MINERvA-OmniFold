@@ -1,0 +1,8 @@
+{
+  "scope": "Selected measured preparation commands only; not a total for all interactive commands",
+  "local_git_push_cpu_seconds": 0.06,
+  "local_git_bundle_cpu_seconds": 2.72,
+  "local_scp_cpu_seconds": 0.07,
+  "remote_clone_cpu_seconds": 8.03,
+  "source": "/usr/bin/time -p stdout/stderr; remote clone timing is preserved in deployment.txt"
+}

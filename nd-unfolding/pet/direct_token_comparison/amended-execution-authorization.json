@@ -1,0 +1,90 @@
+{
+  "status": "AUTHORIZED",
+  "decision": "amended-preflight-calibration-and-conditional-matrix",
+  "prior_jobs": [
+    "58198332",
+    "58201775",
+    "58240587",
+    "58277208",
+    "58301971",
+    "58320923",
+    "58354898",
+    "58395631",
+    "58396676_0"
+  ],
+  "prior_charged_seconds": 1453,
+  "wall_seconds": 6000,
+  "preflight_seconds": 1200,
+  "calibration_seconds": 4800,
+  "profile": {
+    "gpus": 1,
+    "cpus": 32,
+    "memory_GiB": 56
+  },
+  "total_gpu_hours": 290,
+  "total_cpu_core_hours": 9296,
+  "storage_GiB": 200,
+  "scope": "synthetic-only",
+  "automatic_retry": false,
+  "precision_policy": {
+    "tf32_enabled": false,
+    "determinism_enabled": true,
+    "mixed_precision_policy": "float32",
+    "floatx": "float32"
+  },
+  "manifest_sha256": "dfa22ea85129fdc60633a6756ff1725726bdd3dfccb3fc173e9fcb9d91f5c5b8",
+  "authority_source": "nd-unfolding/pet/direct_token_comparison/BEN_COMPARISON_AUTHORIZATION-20260915.md",
+  "authority_source_sha256": "5fce2195088cf1241b9706c7c6ddcee855bd7fd07922f567532fc1b00ca1af26",
+  "approval_date": "2026-09-16 Asia/Seoul",
+  "gate_scope": {
+    "stress_only_cases": [
+      "variable"
+    ],
+    "recorded_as": "FAILED-STRESS",
+    "all_other_gates": "retained unchanged",
+    "tolerances": "unchanged",
+    "production_geometry_verified_each_run": true,
+    "excludes": "variable-length or real-source training"
+  },
+  "gate_scope_authority": "nd-unfolding/pet/direct_token_comparison/STRESS_SCOPE_AUTHORIZATION-20260916.md",
+  "gate_scope_authority_sha256": "09cebb72374ef579572985a15842aaca498dee9e37ea46399e13a1199476d860",
+  "full_matrix_launcher": "nd-unfolding/pet/direct_token_comparison/sbatch_full_matrix.sh",
+  "full_matrix_launcher_sha256": "bd628d28c02ea183664f4674f9cce16b9e291a7f93cb2080896c66be57708a9c",
+  "full_matrix_released": false,
+  "closeout_launcher": "nd-unfolding/pet/direct_token_comparison/sbatch_matrix_closeout.sh",
+  "closeout_launcher_sha256": "68103810ee50ddf2478fe739ec395a25b176587974242eab23ab68c18ed99a47",
+  "replacement_array_authorized": {
+    "array": "58397664",
+    "scope": "this replacement only; future technical failures require a new decision",
+    "decided": "2026-09-16 by Joseph"
+  },
+  "inference_benchmark": {
+    "authorized": "2026-09-17 by Joseph",
+    "scope": "cost only; saved models, identical held-out inputs, same GPU and precision, warm-up and repeated timings",
+    "runs_after_matrix": true,
+    "gates_the_matrix_report": false,
+    "specification": "nd-unfolding/pet/direct_token_comparison/INFERENCE_BENCHMARK_SPECIFICATION-20260917.md",
+    "first_attempt": {
+      "job": "58461843",
+      "state": "FAILED",
+      "exit_code": "124:0",
+      "elapsed_seconds": 2104,
+      "cause": "sizing error in my launcher: 4 fixture builds at ~100s plus 78 passes over 250k rows exceeded the 2100s limit",
+      "matrix_receipts_verified_untouched": true,
+      "resubmission_requires_new_decision": true
+    },
+    "second_attempt": {
+      "job": "58467879",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 408,
+      "rows_per_pass": 50000,
+      "all_acceptance_criteria_passed": true,
+      "direct_over_pooled_inference_ratio_median": 1.2827,
+      "evidence_sha256": "60d239084087bd52d6d8c8d8bb81ee32240727e0d951529c09e1da1aa5cb0604"
+    }
+  },
+  "inference_benchmark_specification_sha256": "17b8dbacd091b4845ca96f0bb108c7d965740d5d7015944b30ac382afe7a4a73",
+  "inference_benchmark_launcher": "nd-unfolding/pet/direct_token_comparison/sbatch_inference_benchmark.sh",
+  "inference_benchmark_launcher_sha256": "7cec619dea3c94cc0fac113593fd9992e9a70f666f56b9b0cf1e0f9384a1bc14"
+}

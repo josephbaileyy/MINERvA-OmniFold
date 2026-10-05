@@ -1,0 +1,14 @@
+# LaTeX build noise stays out.
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+
+# The repository root ignores *.pdf and *.png. These two are deliverables, not
+# build noise, so they are re-included here rather than by weakening the root rule
+# for everyone.
+!recommended_pet_configuration.pdf
+!figures/*.png

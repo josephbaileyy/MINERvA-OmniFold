@@ -1,0 +1,29 @@
+[oi136] inventory: checked=151 repo_origin_count=0 outside_expect_root=0 verdict=EMPTY-REPOSITORY-ORIGIN-SET -- THE GUARD REFUSED NOTHING BECAUSE IT SAW NOTHING -> /tmp/pet-metadata-discovery-probe-guard.json
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 1   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /Users/josephbailey/local-research/MINERvA-OmniFold-pet-direct-comparison  (1) __main__
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{
+  "loaded_numpy_version": "1.26.4",
+  "metadata_discovery": "PackageNotFoundError",
+  "finder_hooks": [
+    {
+      "name": "DistutilsMetaFinder",
+      "find_distributions": false
+    },
+    {
+      "name": "BuiltinImporter",
+      "find_distributions": false
+    },
+    {
+      "name": "FrozenImporter",
+      "find_distributions": false
+    },
+    {
+      "name": "GuardedPathFinder",
+      "find_distributions": false
+    }
+  ]
+}

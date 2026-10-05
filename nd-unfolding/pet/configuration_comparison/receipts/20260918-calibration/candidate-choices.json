@@ -1,0 +1,51 @@
+{
+  "status": "CANDIDATE, NOT RATIFIED",
+  "purpose": "Fix the injection and binning BEFORE the characterization measurement, so the measurement characterizes a pre-declared candidate rather than a choice made after seeing the numbers.",
+  "does_not_ratify": [
+    "No acceptance threshold is ratified by this file.",
+    "No non-inferiority margin, switching threshold or adequacy criterion is ratified.",
+    "The reference value these choices imply is a REFERENCE MODEL, NOT A PROVEN BOUND.",
+    "Ratification of U1-U8 remains Joseph's, per ENDPOINT_EAVAIL_SPECIFICATION-20260918.md section 7."
+  ],
+  "injection": {
+    "variable": "truth E_avail",
+    "source": "truth_scalars column 2, written from MC_eavail (dump_pointcloud_inputs.py:79)",
+    "form": "clipped exponential tilt, tilt = exp(a*z)/mean(exp(a*z))",
+    "standardization": "z = clip((x - p50)/IQR, -c, +c), quantiles over the injected population only",
+    "amplitude_a": 0.35,
+    "clip_c": 3.0,
+    "amplitude_rationale": "z is IQR-standardized, so a is DIMENSIONLESS and the induced per-event weight range exp(+-1.05) is identical to the pT injection's. The amplitude therefore transfers even though the displacement FIELD it produces does not -- which is exactly the distinction the reference calibration rests on.",
+    "population": "truth-passing rows only",
+    "rate_preserving": true,
+    "halves": {"count": 2, "rows_each": 2000000, "split_seed": 7, "disjoint": true},
+    "step1_rows": "pass_reco & pass_truth on both sides"
+  },
+  "binning": {
+    "primary_domain": "truth E_avail, 1-D",
+    "edges_gev": [0.0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100.0],
+    "n_bins": 7,
+    "provenance": "the CAMPAIGN'S OWN canonical axis: unfold_nd_omnifold_unbinned.EXTRA_AXES['eavail']['edges'], used by the 3D/4D extensions and by the covariance projection.",
+    "why_this_and_not_a_new_binning": "It predates this endpoint and was chosen for the N-D analysis, so it cannot have been chosen to suit this measurement. Inventing edges here would invite exactly the suspicion the instruction warns against.",
+    "low_acceptance_regions": "RETAINED. Bin edges are not adjusted to remove or dilute poorly accepted regions: doing so would raise the reference value, flatter both arms, and delete the region where a better hadronic representation is most likely to matter. Results are reported stratified by acceptance, each stratum against its own reference value.",
+    "secondary_domain": {
+      "name": "canonical extended-FPS (pT, p_parallel) grid",
+      "n_cells": 285,
+      "role": "CO-REPORTED DIAGNOSTIC ONLY, no decision weight. It is the campaign's reporting grid, so a result must be placeable against the existing record."
+    }
+  },
+  "statistic": {
+    "primary": "recovery = 1 - E_w[|1 - r_b|] over the primary domain",
+    "mandatory_decomposition": "signed response E_w[r] and scatter penalty E_w[|1-r|] - |1-E_w[r]|, per BEN-038, because an arm can win the aggregate by being less noisy per cell",
+    "reference_model": "ceiling(k, w) = sum_b w_b (1-(1-a_b)^k) / sum_b w_b, with w = injected displacement |prior_b - target_b|; implemented in reference_calibration.py and validated against the committed acceptance-map product",
+    "reference_model_not_a_proven_bound": "The construction assumes displacement reaches a cell only through that cell's acceptance. omnifold.py:218-220 lets a smooth learner transport a tilt across cells, and BEN-038 measured a band at E_w[r] = 1.0333, above the modelled reachable value. Graded ASSUMED in FINDING-20260806-niter4-decision.md."
+  },
+  "what_the_measurement_will_report": [
+    "the truth E_avail distribution over truth-passing rows, and its p25/p50/p75",
+    "the per-bin reco acceptance a_b on the primary domain, by the committed formula",
+    "the injected displacement field |prior_b - target_b| on BOTH domains for this candidate tilt",
+    "the reference value implied on both domains at k = 1..4",
+    "the acceptance-stratified census, so poorly accepted regions are visible rather than absorbed"
+  ],
+  "iterations_k": 3,
+  "k_provenance": "NOMINAL_SEED_POLICY['niter'] = 3"
+}

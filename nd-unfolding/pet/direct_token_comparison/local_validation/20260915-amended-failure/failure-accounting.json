@@ -1,0 +1,110 @@
+{
+  "scope": "read-only accounting of a terminal GPU preflight failure",
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "exempted_tensor": "weight_27",
+  "cases": [
+    {
+      "case": "nominal-direct",
+      "gate_record_present": true,
+      "prediction_max_abs": 8.344650268554688e-07,
+      "worst_optimizer_slot_max_abs": 1.0617077350616455e-07,
+      "tensors_exceeding_tolerance": [],
+      "non_exempt_violations": 0,
+      "verdict": "WITHIN-AMENDED-GATE"
+    },
+    {
+      "case": "nominal-pooled",
+      "gate_record_present": true,
+      "prediction_max_abs": 2.384185791015625e-07,
+      "worst_optimizer_slot_max_abs": 2.2351741790771484e-08,
+      "tensors_exceeding_tolerance": [],
+      "non_exempt_violations": 0,
+      "verdict": "WITHIN-AMENDED-GATE"
+    },
+    {
+      "case": "variable-direct",
+      "gate_record_present": false,
+      "prediction_max_abs": 8.344650268554688e-07,
+      "worst_optimizer_slot_max_abs": 2.518296241760254e-06,
+      "tensors_exceeding_tolerance": [
+        {
+          "tensor": "weight_24",
+          "path": "typed_token_comparison_6/multi_head_attention_9/query/kernel",
+          "step": 1,
+          "shape": [
+            32,
+            4,
+            8
+          ],
+          "max_abs": 0.0001443326473236084,
+          "exempted": false
+        },
+        {
+          "tensor": "weight_27",
+          "path": "typed_token_comparison_6/multi_head_attention_9/key/bias",
+          "step": 1,
+          "shape": [
+            4,
+            8
+          ],
+          "max_abs": 4.580919211960577e-05,
+          "exempted": true
+        },
+        {
+          "tensor": "weight_24",
+          "path": "typed_token_comparison_6/multi_head_attention_9/query/kernel",
+          "step": 2,
+          "shape": [
+            32,
+            4,
+            8
+          ],
+          "max_abs": 0.0001548975706100464,
+          "exempted": false
+        },
+        {
+          "tensor": "weight_27",
+          "path": "typed_token_comparison_6/multi_head_attention_9/key/bias",
+          "step": 2,
+          "shape": [
+            4,
+            8
+          ],
+          "max_abs": 0.00010964638511268276,
+          "exempted": true
+        }
+      ],
+      "non_exempt_violations": 2,
+      "verdict": "OUTSIDE-AMENDED-GATE"
+    },
+    {
+      "case": "variable-pooled",
+      "gate_record_present": true,
+      "prediction_max_abs": 5.21540641784668e-07,
+      "worst_optimizer_slot_max_abs": 1.5273690223693848e-07,
+      "tensors_exceeding_tolerance": [
+        {
+          "tensor": "weight_27",
+          "path": "typed_token_comparison_4/multi_head_attention_6/key/bias",
+          "step": 2,
+          "shape": [
+            4,
+            8
+          ],
+          "max_abs": 1.204535385568306e-05,
+          "exempted": true
+        }
+      ],
+      "non_exempt_violations": 0,
+      "verdict": "WITHIN-AMENDED-GATE"
+    }
+  ],
+  "cases_outside_amended_gate": [
+    "variable-direct"
+  ],
+  "terminal": "PREFLIGHT-FAILED",
+  "non_claim": "A failed gate stays failed. This accounting does not authorize a retry, a tolerance change, a further exemption, or any learning conclusion."
+}

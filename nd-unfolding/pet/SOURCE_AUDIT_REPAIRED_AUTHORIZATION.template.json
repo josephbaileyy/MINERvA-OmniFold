@@ -1,0 +1,16 @@
+{
+  "action": "pet-v2-bounded-source-audit",
+  "execution_authorized": false,
+  "authority_reference": "UNRATIFIED: replace only after an explicit execution instruction approving SOURCE_AUDIT_REPAIRED_PACKET-20260910.md",
+  "code_commit": "ca34a03a9f04ec16b56064c5bc6faaf85b9ebf17",
+  "bindings_sha256": "fea412de2f1f4702873e6f62ae98ef6bdfe8e0da65b5ef5066c4cd1cdd4057c3",
+  "entry_interval": [
+    0,
+    4096
+  ],
+  "source_roles": [
+    "data",
+    "mc"
+  ],
+  "branch_count": 75
+}

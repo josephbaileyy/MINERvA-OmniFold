@@ -1,0 +1,65 @@
+{
+  "scope": "Failed calibration and local correction preparation, not learning performance",
+  "files": {
+    "corrected-version-check-guard.jsonl": {
+      "bytes": 8952,
+      "sha256": "975cd8a1832cb469d53f3ddf504209146074bd1a2dcfe87985c3a58eee69fe0b"
+    },
+    "corrected-version-check.json": {
+      "bytes": 113,
+      "sha256": "e16a2cca304254b57ce00e9135ed40f4a65d159af59f7416f8d3d45d57e47908"
+    },
+    "corrected-version-check.log": {
+      "bytes": 1145,
+      "sha256": "be7772c24f2bf9bc82a23f0f396d6542433fc00a2f89a129875719105554fbc4"
+    },
+    "correction-validation.json": {
+      "bytes": 1115,
+      "sha256": "85c058acbc327b109743f4cd46ed1f7eb62d16b7628fa20367d3a59c9f8c1675"
+    },
+    "execution-revision-binding.json": {
+      "bytes": 534,
+      "sha256": "878255a02a361771822d9d645d473e280635836f368cdde52cb177b41d8c385e"
+    },
+    "failed-calibration-gate.log": {
+      "bytes": 533,
+      "sha256": "910267f732a0b3364bd3e828b509d0c74d835a64228f80dbc08bd8d0f243f355"
+    },
+    "metadata-discovery-probe-guard.jsonl": {
+      "bytes": 6706,
+      "sha256": "7796c72b28c5f2f57b308df8a2130cb679e2ccdae80f81f622bfa6e1a15f1ae8"
+    },
+    "metadata-discovery-probe.log": {
+      "bytes": 1514,
+      "sha256": "826602feb2fedd25a475a4d1a503225eabf512f2cc5cb89a7fdaf657f20a7020"
+    },
+    "metadata-discovery-probe.txt": {
+      "bytes": 461,
+      "sha256": "b956928d5c14dd5095a16bfadcd6e275e8957ccd8f37898b26a6e6fde17da94c"
+    },
+    "preserved/README.md": {
+      "bytes": 896,
+      "sha256": "e7b809b1265f628245b192975c71504d98715ebe220f6063fc14661e2a7978b2"
+    },
+    "preserved/payload.tar.gz": {
+      "bytes": 9306,
+      "sha256": "0f48405d4fc26ea66a9816bdde371e1b49884118bcb87640aeda909722dcb0d4"
+    },
+    "preserved/preservation.json": {
+      "bytes": 2282,
+      "sha256": "6649852c5598d0a6de10400c539a7ec5a378e44a76eafa756b6bc24cc03554e4"
+    },
+    "storage-measurement.json": {
+      "bytes": 1014,
+      "sha256": "90d6b30ac1e0dd8bc8c941aea25f61b28646579a8bf956b025f0b832de378d33"
+    },
+    "submission.json": {
+      "bytes": 943,
+      "sha256": "5f22d4ce8dde469fb375d1a8169157ecad8f3b13a7d95688a1f060595a4fe098"
+    },
+    "terminal.json": {
+      "bytes": 2026,
+      "sha256": "155aae91c2c66153318c49b85041c76c3aaefd6b7eb96f4d8dd5555df72b2ebe"
+    }
+  }
+}

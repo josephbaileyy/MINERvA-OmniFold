@@ -1,0 +1,25 @@
+{
+  "kind": "SYNTHETIC_ROUNDING_DIAGNOSTIC_NOT_ACCEPTANCE",
+  "column": 51,
+  "family": "prongs",
+  "family_column": 4,
+  "float64_fsum_dot_then_tanh_and_fsum": -0.023751626420102034,
+  "dot_inputs_float64": [
+    -1.226749963026782,
+    30.619023310221156,
+    -0.18417205395035086
+  ],
+  "linear_float32_gamma_n_bounds": [
+    8.252590792967482e-05,
+    6.40805029748962e-05,
+    0.0003007300099335779
+  ],
+  "note": "Linear-operation bounds only; not an adopted end-to-end tolerance or proof about the runtime tanh implementation.",
+  "numpy_version": "1.26.4",
+  "feature_shape": [
+    3,
+    34
+  ],
+  "features_sha256": "74802238971b42991a76a90ab0792637b884da11aab26d9cbd869dbf6b629f89",
+  "weight_sha256": "89febb5c984332fcb79d932341f717ac602edcdf08ed97ed31b725854d1032ba"
+}

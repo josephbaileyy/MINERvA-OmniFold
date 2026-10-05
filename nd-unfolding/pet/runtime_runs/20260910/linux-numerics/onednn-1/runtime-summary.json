@@ -1,0 +1,16 @@
+{
+  "kind": "SYNTHETIC_RUNTIME_ONLY",
+  "linux_resource_limits_enforced": true,
+  "mapping": "FAIL",
+  "peak_observed_rss_bytes": 743342080,
+  "peak_observed_threads": 4,
+  "source_execution_authorized": false,
+  "terminal": "INCOMPLETE",
+  "versions": {
+    "ROOT": "6.28/12",
+    "keras": "3.15.1",
+    "numpy": "1.26.4",
+    "scipy": "1.16.3",
+    "tensorflow": "2.16.2"
+  }
+}

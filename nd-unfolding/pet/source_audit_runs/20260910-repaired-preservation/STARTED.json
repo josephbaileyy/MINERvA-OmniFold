@@ -1,0 +1,6 @@
+{
+  "complete_only_if": "COMPLETE.json exists and its manifest hash verifies",
+  "destination": "/global/cfs/cdirs/m3246/josephrb/pet-source-audits/20260910-repaired",
+  "source": "/pscratch/sd/j/josephrb/pet-v2-source-audit-repaired-20260910",
+  "started_utc": "2026-09-11T08:31:27.194057+00:00"
+}

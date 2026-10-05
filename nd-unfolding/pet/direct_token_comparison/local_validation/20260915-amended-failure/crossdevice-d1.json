@@ -1,0 +1,751 @@
+{
+  "scope": "offline decomposition of a cross-device divergence; no GPU was used",
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "thresholds": {
+    "gradient": 1e-06,
+    "common_operand": 1e-07,
+    "prediction": 1e-05
+  },
+  "exempt_tensor": "weight_27",
+  "subject_tensor": "weight_24",
+  "cases": [
+    {
+      "case": "nominal-direct",
+      "prediction_max_abs": 8.344650268554688e-07,
+      "M1_gradient_agreement": {
+        "step1": {
+          "worst_tensor": "gradient_40",
+          "worst_max_abs": 3.5762786865234375e-07,
+          "subject_max_abs": 2.2351741790771484e-08,
+          "subject_gradient_scale": 0.026327092200517654,
+          "loss_max_abs": 0.0
+        },
+        "step2": {
+          "worst_tensor": "gradient_34",
+          "worst_max_abs": 1.0579824447631836e-06,
+          "subject_max_abs": 3.026798367500305e-08,
+          "subject_gradient_scale": 0.022666040807962418,
+          "loss_max_abs": 2.384185791015625e-07
+        }
+      },
+      "M2_common_operand_replay": {
+        "cpu": {
+          "step1": {
+            "worst_weight": "weight_30",
+            "worst_weight_max_abs": 1.4901161193847656e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          },
+          "step2": {
+            "worst_weight": "weight_36",
+            "worst_weight_max_abs": 1.4901161193847656e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          }
+        },
+        "candidate": {
+          "step1": {
+            "worst_weight": "weight_30",
+            "worst_weight_max_abs": 2.9802322387695312e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          },
+          "step2": {
+            "worst_weight": "weight_30",
+            "worst_weight_max_abs": 2.9802322387695312e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          }
+        }
+      },
+      "M3_float64_bracketing": {
+        "cpu": {
+          "step1": {
+            "worst_weight": "weight_38",
+            "worst_max_abs": 6.254576989661587e-08,
+            "within_tolerance": true
+          },
+          "step2": {
+            "worst_weight": "weight_38",
+            "worst_max_abs": 1.2745621114085282e-07,
+            "within_tolerance": true
+          }
+        },
+        "candidate": {
+          "step1": {
+            "worst_weight": "weight_38",
+            "worst_max_abs": 6.254576989661587e-08,
+            "within_tolerance": true
+          },
+          "step2": {
+            "worst_weight": "weight_38",
+            "worst_max_abs": 1.2745621114085282e-07,
+            "within_tolerance": true
+          }
+        }
+      },
+      "M4_token_geometry": {
+        "cpu": {
+          "cloud_shape": [
+            4,
+            4,
+            16
+          ],
+          "presence_shape": [
+            4,
+            4
+          ],
+          "token_positions": 16,
+          "active_positions": 16,
+          "padded_positions": 0,
+          "padded_fraction": 0.0
+        },
+        "candidate": {
+          "cloud_shape": [
+            4,
+            4,
+            16
+          ],
+          "presence_shape": [
+            4,
+            4
+          ],
+          "token_positions": 16,
+          "active_positions": 16,
+          "padded_positions": 0,
+          "padded_fraction": 0.0
+        }
+      },
+      "M5_amplification": {
+        "step1": [
+          {
+            "tensor": "weight_34",
+            "gradient_max_abs": 1.1920928955078125e-07,
+            "weight_max_abs": 3.725290298461914e-06,
+            "ratio": 31.25
+          },
+          {
+            "tensor": "weight_27",
+            "gradient_max_abs": 5.3551048040390015e-09,
+            "weight_max_abs": 1.6915320202315343e-06,
+            "ratio": 315.8728133491848
+          },
+          {
+            "tensor": "weight_36",
+            "gradient_max_abs": 1.043081283569336e-07,
+            "weight_max_abs": 1.3262033462524414e-06,
+            "ratio": 12.714285714285714
+          },
+          {
+            "tensor": "weight_28",
+            "gradient_max_abs": 2.9802322387695312e-08,
+            "weight_max_abs": 4.2282044887542725e-07,
+            "ratio": 14.1875
+          },
+          {
+            "tensor": "weight_24",
+            "gradient_max_abs": 2.2351741790771484e-08,
+            "weight_max_abs": 8.940696716308594e-08,
+            "ratio": 4.0
+          }
+        ],
+        "step2": [
+          {
+            "tensor": "weight_34",
+            "gradient_max_abs": 1.0579824447631836e-06,
+            "weight_max_abs": 3.725290298461914e-06,
+            "ratio": 3.5211267605633805
+          },
+          {
+            "tensor": "weight_27",
+            "gradient_max_abs": 3.725290298461914e-09,
+            "weight_max_abs": 2.3276891738532868e-06,
+            "ratio": 624.8343048095703
+          },
+          {
+            "tensor": "weight_36",
+            "gradient_max_abs": 1.1920928955078125e-07,
+            "weight_max_abs": 1.341104507446289e-06,
+            "ratio": 11.25
+          },
+          {
+            "tensor": "weight_28",
+            "gradient_max_abs": 5.21540641784668e-08,
+            "weight_max_abs": 4.2654573917388916e-07,
+            "ratio": 8.178571428571429
+          },
+          {
+            "tensor": "weight_24",
+            "gradient_max_abs": 3.026798367500305e-08,
+            "weight_max_abs": 1.1175870895385742e-07,
+            "ratio": 3.6923076923076925
+          }
+        ]
+      },
+      "decision": {
+        "branch": "A",
+        "reason": "Computation agrees; divergence is Adam amplification of gradient rounding",
+        "worst_subject_gradient_max_abs": 3.026798367500305e-08,
+        "worst_common_operand_max_abs": 2.9802322387695312e-08,
+        "float64_bracketing_holds": true,
+        "prediction_max_abs": 8.344650268554688e-07
+      }
+    },
+    {
+      "case": "nominal-pooled",
+      "prediction_max_abs": 2.384185791015625e-07,
+      "M1_gradient_agreement": {
+        "step1": {
+          "worst_tensor": "gradient_40",
+          "worst_max_abs": 1.7881393432617188e-07,
+          "subject_max_abs": 2.60770320892334e-08,
+          "subject_gradient_scale": 0.042054012417793274,
+          "loss_max_abs": 1.1920928955078125e-07
+        },
+        "step2": {
+          "worst_tensor": "gradient_40",
+          "worst_max_abs": 1.4901161193847656e-07,
+          "subject_max_abs": 2.421438694000244e-08,
+          "subject_gradient_scale": 0.033451296389102936,
+          "loss_max_abs": 0.0
+        }
+      },
+      "M2_common_operand_replay": {
+        "cpu": {
+          "step1": {
+            "worst_weight": "weight_0",
+            "worst_weight_max_abs": 2.9802322387695312e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          },
+          "step2": {
+            "worst_weight": "weight_30",
+            "worst_weight_max_abs": 2.9802322387695312e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          }
+        },
+        "candidate": {
+          "step1": {
+            "worst_weight": "weight_30",
+            "worst_weight_max_abs": 1.4901161193847656e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          },
+          "step2": {
+            "worst_weight": "weight_4",
+            "worst_weight_max_abs": 2.9802322387695312e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          }
+        }
+      },
+      "M3_float64_bracketing": {
+        "cpu": {
+          "step1": {
+            "worst_weight": "weight_32",
+            "worst_max_abs": 5.560799198889299e-08,
+            "within_tolerance": true
+          },
+          "step2": {
+            "worst_weight": "weight_32",
+            "worst_max_abs": 9.787164034769091e-08,
+            "within_tolerance": true
+          }
+        },
+        "candidate": {
+          "step1": {
+            "worst_weight": "weight_32",
+            "worst_max_abs": 5.560305615937011e-08,
+            "within_tolerance": true
+          },
+          "step2": {
+            "worst_weight": "weight_32",
+            "worst_max_abs": 9.791938104797282e-08,
+            "within_tolerance": true
+          }
+        }
+      },
+      "M4_token_geometry": {
+        "cpu": {
+          "cloud_shape": [
+            4,
+            3,
+            16
+          ],
+          "presence_shape": [
+            4,
+            3
+          ],
+          "token_positions": 12,
+          "active_positions": 12,
+          "padded_positions": 0,
+          "padded_fraction": 0.0
+        },
+        "candidate": {
+          "cloud_shape": [
+            4,
+            3,
+            16
+          ],
+          "presence_shape": [
+            4,
+            3
+          ],
+          "token_positions": 12,
+          "active_positions": 12,
+          "padded_positions": 0,
+          "padded_fraction": 0.0
+        }
+      },
+      "M5_amplification": {
+        "step1": [
+          {
+            "tensor": "weight_27",
+            "gradient_max_abs": 5.6461431086063385e-09,
+            "weight_max_abs": 1.783192288939972e-06,
+            "ratio": 315.82484797841494
+          },
+          {
+            "tensor": "weight_24",
+            "gradient_max_abs": 2.60770320892334e-08,
+            "weight_max_abs": 4.172325134277344e-07,
+            "ratio": 16.0
+          },
+          {
+            "tensor": "weight_38",
+            "gradient_max_abs": 5.21540641784668e-08,
+            "weight_max_abs": 2.384185791015625e-07,
+            "ratio": 4.571428571428571
+          },
+          {
+            "tensor": "weight_28",
+            "gradient_max_abs": 2.60770320892334e-08,
+            "weight_max_abs": 1.4901161193847656e-07,
+            "ratio": 5.714285714285714
+          },
+          {
+            "tensor": "weight_12",
+            "gradient_max_abs": 3.725290298461914e-09,
+            "weight_max_abs": 1.1920928955078125e-07,
+            "ratio": 32.0
+          }
+        ],
+        "step2": [
+          {
+            "tensor": "weight_27",
+            "gradient_max_abs": 2.0954757928848267e-09,
+            "weight_max_abs": 2.4848805537658336e-06,
+            "ratio": 1185.8311903211807
+          },
+          {
+            "tensor": "weight_24",
+            "gradient_max_abs": 2.421438694000244e-08,
+            "weight_max_abs": 4.172325134277344e-07,
+            "ratio": 17.23076923076923
+          },
+          {
+            "tensor": "weight_38",
+            "gradient_max_abs": 2.9802322387695312e-08,
+            "weight_max_abs": 2.384185791015625e-07,
+            "ratio": 8.0
+          },
+          {
+            "tensor": "weight_28",
+            "gradient_max_abs": 1.4901161193847656e-08,
+            "weight_max_abs": 1.4901161193847656e-07,
+            "ratio": 10.0
+          },
+          {
+            "tensor": "weight_12",
+            "gradient_max_abs": 1.280568540096283e-09,
+            "weight_max_abs": 1.1920928955078125e-07,
+            "ratio": 93.0909090909091
+          }
+        ]
+      },
+      "decision": {
+        "branch": "A",
+        "reason": "Computation agrees; divergence is Adam amplification of gradient rounding",
+        "worst_subject_gradient_max_abs": 2.60770320892334e-08,
+        "worst_common_operand_max_abs": 2.9802322387695312e-08,
+        "float64_bracketing_holds": true,
+        "prediction_max_abs": 2.384185791015625e-07
+      }
+    },
+    {
+      "case": "variable-direct",
+      "prediction_max_abs": 8.344650268554688e-07,
+      "M1_gradient_agreement": {
+        "step1": {
+          "worst_tensor": "gradient_18",
+          "worst_max_abs": 1.3113021850585938e-05,
+          "subject_max_abs": 4.157540388405323e-06,
+          "subject_gradient_scale": 0.06992270052433014,
+          "loss_max_abs": 0.0
+        },
+        "step2": {
+          "worst_tensor": "gradient_18",
+          "worst_max_abs": 1.341104507446289e-05,
+          "subject_max_abs": 4.303990863263607e-06,
+          "subject_gradient_scale": 0.05746722221374512,
+          "loss_max_abs": 2.384185791015625e-07
+        }
+      },
+      "M2_common_operand_replay": {
+        "cpu": {
+          "step1": {
+            "worst_weight": "weight_36",
+            "worst_weight_max_abs": 1.4901161193847656e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          },
+          "step2": {
+            "worst_weight": "weight_28",
+            "worst_weight_max_abs": 2.9802322387695312e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          }
+        },
+        "candidate": {
+          "step1": {
+            "worst_weight": "weight_18",
+            "worst_weight_max_abs": 2.9802322387695312e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          },
+          "step2": {
+            "worst_weight": "weight_28",
+            "worst_weight_max_abs": 2.9802322387695312e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          }
+        }
+      },
+      "M3_float64_bracketing": {
+        "cpu": {
+          "step1": {
+            "worst_weight": "weight_32",
+            "worst_max_abs": 5.5111454511092006e-08,
+            "within_tolerance": true
+          },
+          "step2": {
+            "worst_weight": "weight_38",
+            "worst_max_abs": 8.148010666175765e-08,
+            "within_tolerance": true
+          }
+        },
+        "candidate": {
+          "step1": {
+            "worst_weight": "weight_32",
+            "worst_max_abs": 5.5111455843359636e-08,
+            "within_tolerance": true
+          },
+          "step2": {
+            "worst_weight": "weight_38",
+            "worst_max_abs": 8.150323282940519e-08,
+            "within_tolerance": true
+          }
+        }
+      },
+      "M4_token_geometry": {
+        "cpu": {
+          "cloud_shape": [
+            4,
+            96,
+            16
+          ],
+          "presence_shape": [
+            4,
+            96
+          ],
+          "token_positions": 384,
+          "active_positions": 100,
+          "padded_positions": 284,
+          "padded_fraction": 0.7395833333333334
+        },
+        "candidate": {
+          "cloud_shape": [
+            4,
+            96,
+            16
+          ],
+          "presence_shape": [
+            4,
+            96
+          ],
+          "token_positions": 384,
+          "active_positions": 100,
+          "padded_positions": 284,
+          "padded_fraction": 0.7395833333333334
+        }
+      },
+      "M5_amplification": {
+        "step1": [
+          {
+            "tensor": "weight_24",
+            "gradient_max_abs": 4.157540388405323e-06,
+            "weight_max_abs": 0.0001443326473236084,
+            "ratio": 34.715873771455776
+          },
+          {
+            "tensor": "weight_27",
+            "gradient_max_abs": 1.51805579662323e-07,
+            "weight_max_abs": 4.580919211960577e-05,
+            "ratio": 301.76224234645355
+          },
+          {
+            "tensor": "weight_26",
+            "gradient_max_abs": 4.58036083728075e-06,
+            "weight_max_abs": 1.4096498489379883e-05,
+            "ratio": 3.0775956284153008
+          },
+          {
+            "tensor": "weight_28",
+            "gradient_max_abs": 5.960464477539063e-08,
+            "weight_max_abs": 3.129243850708008e-07,
+            "ratio": 5.25
+          },
+          {
+            "tensor": "weight_36",
+            "gradient_max_abs": 8.940696716308594e-08,
+            "weight_max_abs": 2.60770320892334e-07,
+            "ratio": 2.9166666666666665
+          }
+        ],
+        "step2": [
+          {
+            "tensor": "weight_24",
+            "gradient_max_abs": 4.303990863263607e-06,
+            "weight_max_abs": 0.0001548975706100464,
+            "ratio": 35.98928890211246
+          },
+          {
+            "tensor": "weight_27",
+            "gradient_max_abs": 1.5302794054150581e-07,
+            "weight_max_abs": 0.00010964638511268276,
+            "ratio": 716.5121919872099
+          },
+          {
+            "tensor": "weight_26",
+            "gradient_max_abs": 4.641711711883545e-06,
+            "weight_max_abs": 2.5928020477294922e-05,
+            "ratio": 5.585874799357946
+          },
+          {
+            "tensor": "weight_28",
+            "gradient_max_abs": 2.7567148208618164e-07,
+            "weight_max_abs": 3.2223761081695557e-07,
+            "ratio": 1.1689189189189189
+          },
+          {
+            "tensor": "weight_36",
+            "gradient_max_abs": 1.043081283569336e-07,
+            "weight_max_abs": 2.60770320892334e-07,
+            "ratio": 2.5
+          }
+        ]
+      },
+      "decision": {
+        "branch": "B",
+        "reason": "Gradients or identical-operand Adam disagree beyond the predeclared limits",
+        "worst_subject_gradient_max_abs": 4.303990863263607e-06,
+        "worst_common_operand_max_abs": 2.9802322387695312e-08,
+        "float64_bracketing_holds": true,
+        "prediction_max_abs": 8.344650268554688e-07
+      }
+    },
+    {
+      "case": "variable-pooled",
+      "prediction_max_abs": 5.21540641784668e-07,
+      "M1_gradient_agreement": {
+        "step1": {
+          "worst_tensor": "gradient_18",
+          "worst_max_abs": 1.3262033462524414e-06,
+          "subject_max_abs": 6.132759153842926e-07,
+          "subject_gradient_scale": 0.040407732129096985,
+          "loss_max_abs": 2.384185791015625e-07
+        },
+        "step2": {
+          "worst_tensor": "gradient_18",
+          "worst_max_abs": 5.21540641784668e-07,
+          "subject_max_abs": 3.1152740120887756e-07,
+          "subject_gradient_scale": 0.03856837749481201,
+          "loss_max_abs": 1.1920928955078125e-07
+        }
+      },
+      "M2_common_operand_replay": {
+        "cpu": {
+          "step1": {
+            "worst_weight": "weight_36",
+            "worst_weight_max_abs": 1.4901161193847656e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          },
+          "step2": {
+            "worst_weight": "weight_36",
+            "worst_weight_max_abs": 1.4901161193847656e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          }
+        },
+        "candidate": {
+          "step1": {
+            "worst_weight": "weight_28",
+            "worst_weight_max_abs": 2.9802322387695312e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          },
+          "step2": {
+            "worst_weight": "weight_28",
+            "worst_weight_max_abs": 2.9802322387695312e-08,
+            "worst_slot": "slot_9",
+            "worst_slot_max_abs": 0.0
+          }
+        }
+      },
+      "M3_float64_bracketing": {
+        "cpu": {
+          "step1": {
+            "worst_weight": "weight_38",
+            "worst_max_abs": 5.588187601546224e-08,
+            "within_tolerance": true
+          },
+          "step2": {
+            "worst_weight": "weight_32",
+            "worst_max_abs": 8.686361629983708e-08,
+            "within_tolerance": true
+          }
+        },
+        "candidate": {
+          "step1": {
+            "worst_weight": "weight_38",
+            "worst_max_abs": 5.5881338001384506e-08,
+            "within_tolerance": true
+          },
+          "step2": {
+            "worst_weight": "weight_32",
+            "worst_max_abs": 8.65914444592164e-08,
+            "within_tolerance": true
+          }
+        }
+      },
+      "M4_token_geometry": {
+        "cpu": {
+          "cloud_shape": [
+            4,
+            3,
+            16
+          ],
+          "presence_shape": [
+            4,
+            3
+          ],
+          "token_positions": 12,
+          "active_positions": 6,
+          "padded_positions": 6,
+          "padded_fraction": 0.5
+        },
+        "candidate": {
+          "cloud_shape": [
+            4,
+            3,
+            16
+          ],
+          "presence_shape": [
+            4,
+            3
+          ],
+          "token_positions": 12,
+          "active_positions": 6,
+          "padded_positions": 6,
+          "padded_fraction": 0.5
+        }
+      },
+      "M5_amplification": {
+        "step1": [
+          {
+            "tensor": "weight_27",
+            "gradient_max_abs": 1.8291757442057133e-08,
+            "weight_max_abs": 5.74815504705839e-06,
+            "ratio": 314.24837472653144
+          },
+          {
+            "tensor": "weight_24",
+            "gradient_max_abs": 6.132759153842926e-07,
+            "weight_max_abs": 2.7120113372802734e-06,
+            "ratio": 4.422171602126044
+          },
+          {
+            "tensor": "weight_26",
+            "gradient_max_abs": 4.046596586704254e-07,
+            "weight_max_abs": 2.555549144744873e-06,
+            "ratio": 6.31530494821634
+          },
+          {
+            "tensor": "weight_34",
+            "gradient_max_abs": 5.960464477539063e-08,
+            "weight_max_abs": 2.5331974029541016e-07,
+            "ratio": 4.25
+          },
+          {
+            "tensor": "weight_6",
+            "gradient_max_abs": 6.137415766716003e-07,
+            "weight_max_abs": 2.086162567138672e-07,
+            "ratio": 0.33990895295902884
+          }
+        ],
+        "step2": [
+          {
+            "tensor": "weight_27",
+            "gradient_max_abs": 1.0484654922038317e-08,
+            "weight_max_abs": 1.204535385568306e-05,
+            "ratio": 1148.8555365197778
+          },
+          {
+            "tensor": "weight_24",
+            "gradient_max_abs": 3.1152740120887756e-07,
+            "weight_max_abs": 2.86102294921875e-06,
+            "ratio": 9.183856502242152
+          },
+          {
+            "tensor": "weight_26",
+            "gradient_max_abs": 2.0116567611694336e-07,
+            "weight_max_abs": 2.7194619178771973e-06,
+            "ratio": 13.518518518518519
+          },
+          {
+            "tensor": "weight_6",
+            "gradient_max_abs": 2.7264468371868134e-07,
+            "weight_max_abs": 2.682209014892578e-07,
+            "ratio": 0.9837745516652434
+          },
+          {
+            "tensor": "weight_34",
+            "gradient_max_abs": 8.335337042808533e-08,
+            "weight_max_abs": 2.682209014892578e-07,
+            "ratio": 3.217877094972067
+          }
+        ]
+      },
+      "decision": {
+        "branch": "A",
+        "reason": "Computation agrees; divergence is Adam amplification of gradient rounding",
+        "worst_subject_gradient_max_abs": 6.132759153842926e-07,
+        "worst_common_operand_max_abs": 2.9802322387695312e-08,
+        "float64_bracketing_holds": true,
+        "prediction_max_abs": 5.21540641784668e-07
+      }
+    }
+  ],
+  "branch_by_case": {
+    "nominal-direct": "A",
+    "nominal-pooled": "A",
+    "variable-direct": "B",
+    "variable-pooled": "A"
+  },
+  "non_claim": "A reproducibility decomposition. It does not measure learning, closure or compute cost, and it is not evidence for or against any representation."
+}

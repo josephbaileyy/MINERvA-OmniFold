@@ -1,0 +1,18 @@
+{
+  "base": "57b707b737ce817c1ef8d8bd0f0a39ce4becb7ba",
+  "status": "REVIEWABLE_PREPARATION_UNCOMMITTED",
+  "files_sha256": {
+    "nd-unfolding/pet/direct_token_comparison/evidence.json": "222bc88d44ae5d340f434ae2b8a230ff60763d6651b35e5d6703e1eea6fef5cd",
+    "nd-unfolding/pet/direct_token_comparison/external-source-check.json": "123d69e3c24bebf371504b4b0544da45c0bc0f0b62fd183a57648167d7d1d8a7",
+    "nd-unfolding/pet/direct_token_comparison/run-card.json": "567e3eabe16b7c3fc79f597621880f882783d4caca00dff1beb54462b6f96284",
+    "nd-unfolding/pet/direct_token_comparison/README.md": "711d73a86d3ecf62b487144b912f22df8eab58aec05d01f14c2b243b151c3291",
+    "nd-unfolding/pet/direct_token_comparison/summarize_runs.py": "3f802f47c87cdf7b5be97a43836b8fb11e5d52d27b70353c4740358e9ea08aa2",
+    "nd-unfolding/pet/direct_token_comparison/EXECUTION_PROPOSAL.md": "6683321f59e3db26f0b662320fa72d584a4614b57db18768290749e1c9b4fb25",
+    "nd-unfolding/pet/direct_token_comparison/reproduce_evidence.py": "72d0b5e5b4484beb1fc498cc5ed4567d5bda6dfb31fcf0c6661e341d28c6bfc6",
+    "nd-unfolding/pet/direct_token_comparison/software-validation.json": "6da875d992002cce010632205a7e28e0b34bdc220de48b6247703055d05c5360",
+    "nd-unfolding/pet/direct_token_comparison/REPORT_FOR_BEN.md": "aeaa021d9c4965f3bc3e9f169f0b4049368104cef360de1dfe5f0d101d9be4cc",
+    "nd-unfolding/pet/typed_token_comparison.py": "905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95",
+    "nd-unfolding/pet/run_typed_token_comparison.py": "7597d48826fe0b1913dc89bb6a15bf5a4befa773ac2970bd7b7e3525080e51fb",
+    "nd-unfolding/tests/test_typed_token_comparison.py": "7ec2b95c41b1c0fc4943fd00514611a1b981244a3913a634b4bf47385bf0c44d"
+  }
+}

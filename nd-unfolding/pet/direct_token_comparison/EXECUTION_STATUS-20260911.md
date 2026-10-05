@@ -1,0 +1,280 @@
+# PET routing comparison: calibration and training remain blocked
+
+## 2026-09-15 — optimizer gate amendment approved
+
+Joseph approved [the exact amendment](OPTIMIZER_GATE_AUTHORIZATION-20260915.md).
+Implementation and local adversarial validation are now authorized and pending.
+No new GPU allocation is authorized by this approval; calibration and the full
+matrix remain blocked until the amended preflight and remaining gates pass.
+
+
+## 2026-09-15 — optimizer diagnostic completed; gate amendment proposed
+
+Job `58320923` completed (216 parent / 219 conservative seconds). All eight
+instrumentation and same-device replay checks are exact. The captured masked/direct
+failure is two attention key-bias components: Adam amplifies tiny native gradient
+differences; common-operand CPU/GPU replay and all predictions pass unchanged
+thresholds. The historical variable/pooled failure remains unverified because
+initialization/checkpoint interleaving differs after the first model pair.
+[Exact result and verified evidence](OPTIMIZER_RESULT-20260915.md).
+Six allocations total 742 conservative seconds (0.206111 GPU-hours / 6.595556
+reserved CPU-hours), before preparation/accounting. No allocation is running,
+no calibration/matrix was launched, and the [gate amendment](OPTIMIZER_GATE_PROPOSAL-20260915.md)
+is proposed only. The current acceptance rule and training block remain.
+
+
+## 2026-09-15 — optimizer diagnostic submitted
+
+Authorized job `58320923` uses clean standalone revision `98fde50e`. All manifest
+hashes and the runtime lock match; queue was empty and main freshness passed
+for its own HEAD. One A100/32 CPUs/56 GiB/20 minutes; prior charge 523 seconds.
+[Submission and deployment](execution_runs/20260915-optimizer/submission.json).
+No calibration, full matrix or automatic retry is authorized by this diagnostic.
+
+
+## 2026-09-15 — optimizer evidence repair prepared; new diagnostic authorized
+
+Capture-first diagnostic passes all eight CPU instrumentation checks and the
+69-test/10-subtest suite plus two arithmetic tests. [Preparation](OPTIMIZER_PREPARATION-20260915.md)
+and [explicit new authorization](OPTIMIZER_AUTHORIZATION-20260915.md) cover one
+20-minute A100 diagnostic. Calibration and learning remain blocked.
+
+
+## 2026-09-15 — full-FP32 attempt failed; execution stopped
+
+Job `58301971` passed 69 tests plus 10 subtests and both nominal GPU model cases,
+then failed an updated-weight comparison in variable/pooled (inferred from loop
+order). Maximum reported difference: `1.204535385568306e-5`; cause unresolved.
+Calibration and full matrix were not reached. No retry is authorized.
+[Terminal result and verified evidence](FP32_RESULT-20260915.md).
+All five allocations total 523 conservative seconds, 0.145278 GPU-hours and
+4.648889 reserved CPU-hours, before preparation/accounting CPU.
+
+
+## 2026-09-14 — full-FP32 attempt authorized and submitted
+
+Job `58301971` is submitted from clean standalone revision `5de944f8` under
+[the explicit approval](FP32_AUTHORIZATION-20260914.md). Deployment hashes and
+runtime lock match; the direct queue was empty and canonical main freshness
+passed for its own HEAD. GPU compatibility and calibration must complete before
+any full job; the unchanged integrity and 20% headroom gates govern continuation.
+[Submission record](execution_runs/20260914-fp32/submission.json). No automatic retry.
+
+
+## 2026-09-14 — explicit full-FP32 policy prepared, GPU attempt pending
+
+The [policy implementation and CPU validation](FP32_PREPARATION-20260914.md) pass
+69 tests plus 10 subtests and all eight CPU model/case preflight comparisons.
+Parent/reload/calibration receipts must explicitly record the same full-FP32
+policy. The [110-minute proposal](FP32_PROPOSAL-20260914.md) is pending approval;
+no new GPU allocation or learning comparison has run. Previous 395 seconds remain
+charged. Original scientific criteria, tolerances and source restrictions stand.
+
+
+## 2026-09-14 — diagnostic complete; TF32 isolates reproduced discrepancy
+
+Job `58277208` completed in 105 seconds. TF32-on reproduces the old pooled maximum
+exactly (112/192 components fail); TF32-off reduces it to 2.384185791015625e-7
+(0/192 fail), with unchanged tolerance. All 20 repeatability comparisons and
+instrumentation parity checks are exact. [Result and qualifications](NUMERICAL_RESULT-20260914.md).
+Evidence is verified on CFS and in the committed archive. The diagnostic grant
+is consumed. No precision-policy change, calibration or full matrix is authorized.
+
+
+## 2026-09-14 — numerical diagnostic authorized and submitted
+
+Job `58277208` was submitted from clean standalone revision `6298efc2` under
+[the numerical authorization](NUMERICAL_AUTHORIZATION-20260914.md). The deployed
+manifest and runtime lock match. Canonical main's freshness check passed for its
+own `32e403b8` HEAD; direct queue observation was empty before submission. Latest
+observation: PENDING (Priority), no start time supplied. The grant permits one
+20-minute diagnostic only; calibration and the full matrix remain blocked.
+[Submission and preallocation evidence](execution_runs/20260914-numerical/submission.json).
+
+
+## 2026-09-13 — numerical diagnostic prepared; execution still blocked
+
+The [numerical preparation](NUMERICAL_PREPARATION-20260913.md) adds saved
+intermediate tensors, common-operand and float64 comparisons, and four isolated
+TF32-mode captures. Local CPU validation is complete. The [20-minute GPU-only
+diagnostic proposal](NUMERICAL_PROPOSAL-20260913.md) is pending; it cannot release
+calibration or the full matrix. The cause of `58240587` remains unresolved.
+
+
+## 2026-09-13 — GPU preflight failed; additional attempt exhausted
+
+**Job 58240587 FAILED 1:0 after 95 seconds. Calibration NOT STARTED; full
+matrix NOT STARTED; no retry submitted.** The first pooled-model CPU/GPU
+embedding comparison exceeded the fixed tolerance (maximum absolute difference
+0.0004892349243164062). The guarded Linux suite passed 60 tests + 10 subtests.
+Direct-model GPU validation and full-model gradient/update/reload checks were not
+reached. [Exact result, accounting and preservation](COMPATIBILITY_RESULT-20260913.md).
+All three allocations total 285 parent seconds, or 290 conservative longest-step
+seconds; failed/partial outputs remain excluded from performance comparisons.
+
+
+## 2026-09-13 — single compatibility/calibration attempt authorized
+
+Joseph approved `21c0d163` and its bound proposal.
+[Exact authorization](COMPATIBILITY_AUTHORIZATION-20260913.md): one A100,
+32 reserved CPUs, 56 GiB, 110 minutes total, with 20-minute preflight and
+90-minute calibration caps. Both prior attempts remain charged. The full matrix
+requires GPU compatibility, complete paired calibration, integrity and all
+existing 20% headroom gates. No automatic retry or criterion change is covered.
+Deployment and direct scheduler checks precede the single submission.
+
+
+## 2026-09-13 — compatibility repair prepared; no new allocation
+
+Local deterministic packing validation and a stronger two-arm GPU preflight are
+recorded in [the repair](COMPATIBILITY_REPAIR-20260913.md). The
+[110-minute smoke/calibration proposal](COMPATIBILITY_PROPOSAL-20260913.md) is
+pending explicit approval. Both previous attempts remain terminal failures;
+partial pooled outputs are excluded from comparisons. GPU compatibility and
+paired calibration remain unverified. No full matrix or real-data run is released.
+
+
+Retry `58201775` passed the Linux tests, package pins and A100 operation check.
+The pooled calibration arm saved three artifacts; the direct-token arm failed
+at deterministic GPU `DenseBincount` during model construction. The paired
+calibration is incomplete, so no headroom pass or full-matrix launch is possible.
+No third attempt was submitted. [Exact retry result and accounting](RETRY_RESULT-20260912.md).
+
+The two Slurm parent allocations total 190 seconds: 0.052778 GPU-hours and
+1.688889 reserved CPU-hours. Partial artifacts and failure evidence are preserved.
+No learning-performance conclusion or change of scientific scope follows.
+
+# First calibration — historical terminal record
+
+**Job 58198332 FAILED before GPU validation or training. No retry and no full
+campaign jobs were submitted.** The approved no-retry stop is in force.
+
+The [resource amendment was authorized](RESOURCE_AUTHORIZATION-20260911.md), and
+calibration executed from clean isolated commit
+`106ba9a872989e2617a68f48333e7c831f94c67e`. Canonical Perlmutter main remained at
+`32e403b84e9e8f9d9bc435028749f896653c7a43`; freshness passed before submission.
+The original occupied checkouts and remote `pet-prong-semantics` were untouched.
+
+[Exact terminal evidence](execution_runs/20260911-calibration/terminal.json)
+binds the Slurm accounting, logs, imports, local correction check and preserved
+payload. Slurm recorded `FAILED`, `1:0`, **79 seconds**, **one A100 / 32 CPUs /
+56 GiB**: **0.021944 GPU-hours and 0.702222 reserved CPU-hours**. Batch MaxRSS was
+**1,031,876 KiB**; it includes the CPU test process and is not training memory.
+The measured new cluster paths occupy **4.961057 GiB** of allocated blocks
+(runtime, isolated checkout, deployment bundles, scratch and CFS). Local
+development environments/evidence copies are outside that storage measurement.
+No extrapolated training throughput, headroom pass or learning result exists.
+
+The guarded Linux rehearsal passed **49 tests and 10 subtests in 39.64 seconds**.
+The next process failed at `importlib.metadata.version('numpy')`. The guard's
+replacement `PathFinder` exposes no `find_distributions` hook. A local read-only
+probe reproduces missing metadata while the guarded NumPy import reports
+`1.26.4`. This is an instrumentation compatibility failure, not evidence that
+NumPy is absent or that either representation learns poorly. No GPU operation
+validation, fit, prediction, weight artifact or source access occurred.
+
+The correction reads `__version__` from each actually imported module through
+the unchanged guard. Its local version-only check confirms NumPy 1.26.4,
+TensorFlow 2.16.2, Keras 3.15.1, SciPy 1.16.3 and pytest 9.1.1. The guard and
+scientific runner/model bytes are unchanged. Linux/A100 operation remains
+unverified. The prepared headroom evaluator rejects the closed failed receipt
+before attempting extrapolation; its positive resource gate has not been run.
+
+All **13 closed output files / 51,619 bytes** were copied to
+`/global/cfs/cdirs/m3246/josephrb/pet-routing-comparison/20260911-calibration-58198332/payload`.
+Source-before, source-after and destination inventories match file-by-file;
+the local copy and its committed `preserved/payload.tar.gz` archive were each
+independently read and matched to the same hashes. The unmodified raw receipt
+is historical; [its code binding](execution_runs/20260911-calibration/execution-revision-binding.json)
+uses the exact executed revision, not the corrected working-tree file.
+The [preservation receipt](execution_runs/20260911-calibration/preserved/preservation.json)
+is the evidence, not the path alone.
+
+A [single 118-minute retry is prepared](RETRY_PROPOSAL-20260911.md), requiring an
+explicit exception to the no-retry stop. It counts the failed 79 seconds and fits
+inside the existing aggregate GPU/CPU ceilings even if all 24 full jobs reach
+their 12-hour caps. Its authorization remains pending. No scientific criterion
+or scope restriction changes. Synthetic results, if eventually obtained, cannot
+establish real-data representation performance or authorize adoption, covariance
+or Gate-6 work.
+
+# Historical preflight record — superseded by the terminal result above
+
+**Calibration NOT STARTED; full matrix NOT STARTED. Zero training allocations
+submitted and zero GPU-hours consumed by this campaign.**
+
+The original grant was recorded and the reviewed preparation committed and
+pushed on `pet-direct-token-comparison` at
+`9d598c083bca742944e30b4079c7390ece2be9d1`; all 12 repository commit checks passed.
+The reviewed preparation file hashes still match. The occupied
+`pet-prong-semantics` checkout and remote branch were not altered.
+
+Perlmutter canonical main was observed at
+`32e403b84e9e8f9d9bc435028749f896653c7a43`; its freshness checker returned FRESH.
+The scheduler was observed directly and had no jobs for the account. This
+freshness result validates only the view's freshness, not any scientific gate.
+
+Read-only admission tests prove the approved reservation cannot be submitted:
+1 GPU / 8 CPUs / 64 GiB is adjusted to 38 CPUs and rejected by the shared-GPU
+queue's requirement of 32 CPUs per GPU. A reduced-memory eight-CPU control is
+also rejected. One GPU / 32 CPUs / 56 GiB passes the scheduler test. Exact evidence
+is in [the preflight records](execution_runs/20260911-preflight/).
+The test output's prospective job identifier is not an allocation. No scientific
+run failed, and no scientific result or closure verdict exists.
+
+The [resource amendment](RESOURCE_AMENDMENT-20260911.md) requests 32 reserved CPUs,
+56 GiB RAM and a 9,296 CPU core-hour total ceiling, with the 290 GPU-hour ceiling
+and all scientific settings unchanged. The amendment is not authorized by the
+original eight-CPU grant. Execution is held pending that specific correction;
+there is no automatic resource escalation or retry.
+
+The existing source-audit environment was also inspected through package
+metadata: it contains `tensorflow-cpu==2.16.2`, not the GPU distribution. A
+separate GPU runtime is installed with the same requested TensorFlow, NumPy and
+Keras versions. Dependency consistency passes (`pip check`); the resolved lock,
+installer download hashes and log are preserved beside these preflight records.
+This is software preparation, not training or source access.
+Calibration must still verify an actual A100 and successful GPU operation.
+
+## Guarded test preparation
+
+The first local attempt to run the full test suite under the unchanged import
+guard exposed NumPy testing's optional `lscpu` SVE-capability probe. The guard
+refused this unmodeled child, as it did in the earlier source-audit interruption.
+This was a local preparation test, not a GPU allocation or scientific run.
+
+The test-only driver now declines to launch that optional probe and invokes
+NumPy's existing `OSError` fallback. This is restricted to x86_64 (where ARM SVE
+is inapplicable) or a platform where `lscpu` is absent. Every other subprocess
+call still reaches the original guard, and the temporary adapter is removed
+before the tests run. No leaf is added to the guard, no forbidden child is
+executed and no guard exception is suppressed. The scientific runner does not
+use this adapter. The subsequent local test used the specified SciPy 1.16.3;
+the older local preparation environment had SciPy 1.17.1, which eagerly imports
+NumPy testing in fresh TensorFlow processes and is outside the execution pin.
+
+One existing fresh-process reload test itself called `np.testing`, causing the
+same optional probe in its child. It now uses `np.array_equal` on the finite
+saved/reloaded arrays, retaining exact value and shape equality. The guarded
+local suite then passed **62 tests and 10 subtests**. This is software evidence,
+not an A100 runtime check or a learning result.
+
+The cluster rehearsal runs the five descriptor/model/prong suites. The sixth,
+legacy source-smoke suite remains local validation only: it imports the two
+receipt-bound `dump_pointcloud_inputs.py` and `fullevent_fps_dataloader.py`
+readers, whose hardcoded cluster search paths can resolve another checkout on
+Perlmutter. They are excluded from repair by
+[`AUTHORIZATION-20260903-oi136-failopen-repair.md` §2](../../../docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md).
+Neither those readers nor the guard is changed or repinned. The isolated
+synthetic runner imports neither reader. Local source-smoke success does not
+establish that those legacy readers are safe to launch on the cluster. The
+optional `--include-source-smoke-tests` flag reproduces the full local scope;
+the cluster launcher deliberately does not request it.
+
+The final five-suite local rehearsal passed **49 tests and 10 subtests** in
+23.57 seconds, with no cluster search paths in any of its four guard records.
+The final full local suite passed **62 tests and 10 subtests** in 21.29 seconds.
+Logs, child/parent guard records, prior failure logs, package versions and file
+hashes are preserved in [the validation receipt](execution_runs/20260911-preflight/local-validation.json).
+Black, Ruff, strict mypy (Linux target), shell syntax and whitespace checks pass.
+These local results do not replace the pending Linux/A100 runtime validation.

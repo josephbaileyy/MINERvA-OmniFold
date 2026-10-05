@@ -1,0 +1,38 @@
+{
+  "accounting_receipt_sha256_matches": true,
+  "allocation": "58186616",
+  "authorization_sha256": "4e1b9b8520a332780e7937d052ce602bd3f25f51549da0813e9c0486e6952704",
+  "bounded_payload_sha256": "17dc0a014fe7f53d5711f5ceeed7bd3ab0b610f6f30c6035fb544dbca441421d",
+  "checks": {
+    "C0_C1_64_columns": "PASS",
+    "alignment_membership": "PASS",
+    "finite_numpy_keras_agreement": "PASS",
+    "identity_metadata": "PASS",
+    "independent_typed_values_masks": "PASS",
+    "round_trip": "PASS"
+  },
+  "code_commit": "ca34a03a9f04ec16b56064c5bc6faaf85b9ebf17",
+  "complete_contiguous_entry_lists": true,
+  "exceptions": 0,
+  "kind": "REAL_SOURCE_AUDIT_RECEIPT_CHECK",
+  "mapping": "PASS",
+  "object_families": {
+    "blobs": "UNRESOLVED",
+    "photons": "UNRESOLVED",
+    "prong_hypotheses": "UNRESOLVED",
+    "shared_objects_primary_lepton": "UNRESOLVED"
+  },
+  "output_bytes_before_accounting": 283206787,
+  "peak_observed_rss_bytes": 1219506176,
+  "peak_observed_threads": 4,
+  "preparation_sha256": "fea412de2f1f4702873e6f62ae98ef6bdfe8e0da65b5ef5066c4cd1cdd4057c3",
+  "release": "RELEASE_UNVERIFIED",
+  "remote_and_local_transfer_hashes_match": true,
+  "remote_artifact_mismatches": 0,
+  "remote_artifacts_rehashed": 16899,
+  "remote_unbound_files": 0,
+  "semantic": "DISCREPANCY",
+  "source_uuids_match_bindings": true,
+  "terminal": "COMPLETE",
+  "wall_seconds": 387.2546046109637
+}

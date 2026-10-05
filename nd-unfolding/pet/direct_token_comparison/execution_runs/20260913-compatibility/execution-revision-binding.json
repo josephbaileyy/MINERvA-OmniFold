@@ -1,0 +1,58 @@
+{
+  "scope": "Exact executed revision; archived raw guard receipts retain original bytes",
+  "bindings": [
+    {
+      "path": "nd-unfolding/pet/typed_token_comparison.py",
+      "revision": "7673b2de5210da0d2679ed98da62a4d0f2e042b2",
+      "sha256": "36306f3500a07764b537f8e1264bab757438a3610e26ed954b4327dcd14c70b7"
+    },
+    {
+      "path": "nd-unfolding/pet/typed_descriptor_keras.py",
+      "revision": "7673b2de5210da0d2679ed98da62a4d0f2e042b2",
+      "sha256": "dccc8c616c03c24db2ce29bd0b6de56d08d37468fbdff2b6d1935c6ff2c9348f"
+    },
+    {
+      "path": "nd-unfolding/pet/typed_descriptors.py",
+      "revision": "7673b2de5210da0d2679ed98da62a4d0f2e042b2",
+      "sha256": "1a0469778cc86948c7da2ff7d5795f8d19625b2ebd755eb429c8e57f4fedf08b"
+    },
+    {
+      "path": "nd-unfolding/pet/run_typed_token_comparison.py",
+      "revision": "7673b2de5210da0d2679ed98da62a4d0f2e042b2",
+      "sha256": "7597d48826fe0b1913dc89bb6a15bf5a4befa773ac2970bd7b7e3525080e51fb"
+    },
+    {
+      "path": "nd-unfolding/pet/direct_token_comparison/calibration_measure.py",
+      "revision": "7673b2de5210da0d2679ed98da62a4d0f2e042b2",
+      "sha256": "000dffd97ffc2cb43826ac2d1319b08e5bfdb8011e18d381b4c2e0434c2fee01"
+    },
+    {
+      "path": "nd-unfolding/pet/direct_token_comparison/compatibility_preflight.py",
+      "revision": "7673b2de5210da0d2679ed98da62a4d0f2e042b2",
+      "sha256": "b4092b3ac46ec5fcb3ea95f0903a8acae15042e80ec261edec0bd20ab0794d6c"
+    },
+    {
+      "path": "nd-unfolding/pet/direct_token_comparison/reference/typed_token_comparison_cpu.py",
+      "revision": "7673b2de5210da0d2679ed98da62a4d0f2e042b2",
+      "sha256": "905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95"
+    },
+    {
+      "path": "nd-unfolding/pet/direct_token_comparison/sbatch_compatibility_calibration.sh",
+      "revision": "7673b2de5210da0d2679ed98da62a4d0f2e042b2",
+      "sha256": "d7b88fe9cba79d0e9f62ec86657c3e3311532005afdf7aca9d55e8230bafd375"
+    },
+    {
+      "path": "nd-unfolding/pet/direct_token_comparison/compatibility-authorization.json",
+      "revision": "7673b2de5210da0d2679ed98da62a4d0f2e042b2",
+      "sha256": "0ddf01d3ed5b09b4519425fae5f0b0f9192202659236972bca62d92bcc8b4f83"
+    },
+    {
+      "path": "nd-unfolding/pet/direct_token_comparison/repair-manifest.json",
+      "revision": "7673b2de5210da0d2679ed98da62a4d0f2e042b2",
+      "sha256": "74ec7606e12eb43e29f98d23a70601913e00835b1853d9bcfdb91914aaf10074"
+    }
+  ],
+  "archive_sha256": "008f7f6060022eb70cf6027f78c030eeace415d62db8b0dcbc2577f88e2b1550",
+  "archive_readback_files": 29,
+  "archive_readback_bytes": 76082
+}
