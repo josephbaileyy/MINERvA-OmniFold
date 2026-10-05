@@ -48,8 +48,8 @@ correlated: E_avail, q3 and W share the recoil energy.
 - **The article** would present the validated unbinned five-observable unfolding, its measured limitations, and
   the calibrated joint generator tests as a conditioned result.
 - **The PRL case fails today on its own criteria** (PLAN §4–§5):
-  - The pending outputs read `rejected` for all 10 tests, including MINERvA Tune v1. They are unrecorded, and no
-    rejection is certified.
+  - The recorded result (`9b26b8c3`, after AGREE) rejects all 10 H0(G) tests, including MINERvA Tune v1. **No
+    rejection is certified against the lost draws**; the resolution (D2) is in progress.
   - The published 2D measurement on the same data already disfavours these generator families strongly. Its
     Table I gives χ² over 205 bins of 6786 for Tune v1, 8241 for GENIE 2.12.6, 5800 for GiBUU 2019 (the same
     version as our null) and 3789–5151 for NuWro; our recomputation for Tune v1 is χ²/ndf = 33.04. Its abstract
@@ -84,7 +84,7 @@ extension). It concerns what the arithmetic means.
 
 | # | dependency | owner | state now | notification |
 |---|---|---|---|---|
-| D1 | The extended comparer, independently reviewed, returns AGREE on the unchanged outputs (`b9604502…` etc.), and the joint result is recorded | `gbdt independent` → `gbdt worker` | **AGREE has landed.** The extension review is APPROVE, and the rerun compare gives **AGREE, 1379/1379 rows, 0 discrepancies** on the unchanged outputs (`466b427b` on the recompute branch; report §8; read 2026-10-06). **The joint result is not yet recorded** (`origin/main` `87256e75` phase: "joint result unrecorded pending the reviewed comparer AGREE"). | Both acknowledged; one line to `pub` per event. |
+| D1 | The extended comparer, independently reviewed, returns AGREE on the unchanged outputs (`b9604502…` etc.), and the joint result is recorded | `gbdt independent` → `gbdt worker` | **DONE.** The extension review is APPROVE; the compare gives **AGREE, 1379/1379 rows, 0 discrepancies** (`466b427b`, recompute branch, report §8). The joint result is **recorded** on main: `RECORD-20261005-s5p-joint-5d-inference-result.md` (`9b26b8c3`). All ten are rejected and robust (κ = 3), with missing-seed status "can change", not certified. Both were verified from the committed files at 2026-10-05T23:53Z. | Both acknowledged; one line to `pub` per event. |
 | D2 | Lost-seed recovery: determinism PASS, recovery, resolution (PROCEDURE §5), recompute cross-check (§6) | `gbdt worker`; `gbdt independent` for §6 | Procedure revision 5 (`51648245`, 41 controls). **Phase 0 PASS** (`15a32b0e`). **Determinism array 59397841 submitted** (`87256e75`, 4.0 node-h reserved from verification_repair). Recovery not yet submitted. | As above. A determinism FAIL is to be reported. |
 | D3 | Joseph's disposition of how the resolution enters the claims | Joseph | Comes after D2 (`gbdt worker`, 2026-10-05). | `gbdt worker` relays it. |
 | D4 | The Stage-7 approved claim text and the four final fields (`CHECKLIST-20261001` §4) | `gbdt worker` | Not started. | As above. |
@@ -109,7 +109,8 @@ extension). It concerns what the arithmetic means.
   INCOMPLETE.
 - The missing-seed sensitivity reads **"can change" for all 10 tests**.
 
-**Proposed, not yet claimable:** I1–I4, the joint incompatibility and its labels (each waits on D1–D4).
+**Recorded but not yet claimable as a headline:** I1–I4, the joint incompatibility and its labels. They have been
+recorded since `9b26b8c3`, with the missing-seed status "can change". The headline still waits on D2–D4.
 **Not supported, to be omitted unless studied:**
 - I5, joint-information value (W1);
 - I6, localization or mechanism;
