@@ -49,6 +49,8 @@ AUS = "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json"
 PP = "results/predecessor_posthoc/{run}.posthoc.json"
 S2 = "results/step2int/{run}.posthoc.json"
 DEC = "results/final/decision_look1.json"
+B1D = "results/final/b1_dependence_look1.json"
+FBC = "resources/cost_fb_look1-20260930.json"
 CURVE_DESIGNS = ("C", "H1", "H2", "H2S1", "H2S1T24", "L128S1", "L128S1T24", "P2preA1", "P2scrS1")
 COLORS = {"C": "#009E73", "H1": "#999999", "H2": "#E69F00", "H2S1": "#0072B2", "H2S1E16": "#56B4E9",
           "L128S1": "#CC79A7", "L128S1E16": "#D55E00", "P2preS1": "#000000", "P2scrS1": "#8C564B",
@@ -287,19 +289,71 @@ def s_aussie(d: Deck, n: Numbers) -> None:
             [AUS, "scalar/SCALAR_AUSSIE_MATCHED-20260925.md"])
 
 
+def _status(e: dict) -> str:
+    """Eligibility status with the rules behind it: failed for INELIGIBLE, not yet assessed for INCOMPLETE."""
+    why = e.get("failed") or e.get("incomplete") or []
+    if not why:
+        return e["status"]
+    return f"{e['status']} ({why[0]}--{why[-1]})" if len(why) > 2 else f"{e['status']} ({', '.join(why)})"
+
+
 def s_final(d: Deck, n: Numbers) -> None:
     if not d.n.src.exists(DEC):
         d.frame("Final bank results", r"\centering\Large Pending --- final-bank runs are blinded until the "
                 r"UNBLIND amendment.", ["PROTOCOL-20260925.md (Amendments 2, 2c)"])
         return
-    dec = d.n.src.load(DEC)
-    rows = []
-    for c, e in dec["eligibility"].items():
-        rows.append([base.esc(c), e["status"], ", ".join(e.get("failed", [])) or "---",
-                     ", ".join(e.get("incomplete", [])) or "---"])
-    body = table(["candidate", "status", "failed rules", "incomplete"], rows, "llll", r"\scriptsize") + (
-        r"\par\vspace{0.2cm}\small Ranking: " + base.esc(str(dec["ranking"].get("outcome"))))
-    d.frame("Final bank: eligibility and ranking", body, [DEC])
+    fin = (("H2S1T24K5", "H2S1T24", "h"), ("L128S1T24K4", "L128S1T24", "l"))
+
+    def v(c, rule, i, key, tag, fmt="3"):
+        return n.f(f"look1_{tag}_{rule}_{i}_{key}", DEC, ["eligibility", c, "verdicts", rule, "parts", i, key], fmt)
+
+    def est_lb(c, rule, i, tag):
+        return v(c, rule, i, "estimate", tag) + " (" + v(c, rule, i, "lb", tag) + ")"
+
+    rows = [["$E_0$ development tilt (U1)"] + [est_lb(c, "U1", 0, t) for c, _, t in fin],
+            ["moderate / good region (U2b)"] + [v(c, "U2b", 0, "estimate", t) + " / " + v(c, "U2b", 2, "estimate", t)
+                                               for c, _, t in fin],
+            ["$E_3$ opposite tilt (U3)"] + [est_lb(c, "U3", 0, t) for c, _, t in fin],
+            ["$E_4$ proton topology (U4)"] + [est_lb(c, "U4", 0, t) for c, _, t in fin],
+            ["$E_5$ $E_\\mathrm{avail}\\times q_3$ (U5)"] + [est_lb(c, "U5", 0, t) for c, _, t in fin],
+            ["N2 seed sd ($\\le 0.05$)"] + [v(c, "N2", 0, "estimate", t) for c, _, t in fin],
+            ["gain over CTL in $R_{E_0}$"] + [n.f(f"look1_{t}_switch", DEC, ["switching_vs_reference", c, "t", "mean"], "+3")
+                                                + " (" + n.f(f"look1_{t}_switch_lb", DEC, ["switching_vs_reference", c, "t", "lb"], "3") + ")"
+                                                for c, _, t in fin],
+            ["cost per unfolding (A100-h)"] + [n.f(f"look1_{t}_cost", FBC, ["candidates", cid, "median"], "2")
+                                               for _, cid, t in fin],
+            ["status (rules)"] + [base.esc(_status(d.n.src.load(DEC)["eligibility"][c])) for c, _, _ in fin]]
+    body = table(["look 1 (mean, simultaneous LB)", "H2S1T24 $K{=}5$", "L128S1T24 $K{=}4$"], rows, "lrr",
+                 r"\scriptsize") + (
+        r"\par\vspace{0.15cm}\small Ranking: " + base.esc(str(d.n.src.load(DEC)["ranking"].get("outcome"))) +
+        r". No look 2 (no sequential rule returned CONTINUE). Coverage of H2S1T24 runs blinded.")
+    d.frame("Look 1: finalists on the final bank", body, [DEC, FBC])
+    d.claim("Look-1 endpoints and cost", sorted(k for k in n.entries if k.startswith("look1_")))
+
+    b2 = lambda c, t, key: n.f(f"b2_{t}_{key}", DEC, ["eligibility", c, "verdicts", "B2", "numbers", "D4d_n_down",
+                                                     "residual_minus_injected", key], "4")
+    cp = lambda c, t, key, fmt="3": n.f(f"b1dep_{t}_{key}", B1D, ["candidates", c, "common_panel", key], fmt)
+    body = (r"\small\begin{itemize}"
+            r"\item \textbf{B2} (D4c n down, mean residual $-$ injected $E_\mathrm{avail}$ L1, limit 0.010, a point rule): "
+            r"H2S1T24 " + b2("H2S1T24K5", "h", "mean") + r" [" + b2("H2S1T24K5", "h", "lb") + ", " +
+            b2("H2S1T24K5", "h", "ub") + r"] PASS; L128S1T24 " + b2("L128S1T24K4", "l", "mean") + r" [" +
+            b2("L128S1T24K4", "l", "lb") + ", " + b2("L128S1T24K4", "l", "ub") + r"] FAIL. "
+            r"\textbf{Point-decided, statistically unresolved}: both intervals cross the limit; the difference is not "
+            r"resolved by this comparison. Not evidence that the compact design is more robust, nor that the two are "
+            r"equivalent."
+            r"\item \textbf{B1} PASSes under its frozen independence-based bound. Under within-draw dependence the "
+            r"evidence is insufficient to establish a per-unit failure probability $\le 0.10$: on the common panel "
+            r"(FB0--7) H2S1T24 has " + cp("H2S1T24K5", "h", "draws_with_a_failure", "int") + "/" +
+            cp("H2S1T24K5", "h", "n_draws", "int") + r" draws with a failure (CP upper " +
+            cp("H2S1T24K5", "h", "cp_upper_draw_any_failure") + r"), L128S1T24 " +
+            cp("L128S1T24K4", "l", "draws_with_a_failure", "int") + "/" + cp("L128S1T24K4", "l", "n_draws", "int") +
+            r"; with none the bound would be " + cp("H2S1T24K5", "h", "cp_upper_if_no_draw_failed") +
+            r". This does not show the probability exceeds 0.10."
+            r"\item Like-for-like and FB-population recoveries agree on the designated endpoints (report \S6, report only)."
+            r"\end{itemize}")
+    d.frame("Look 1: what the verdict does and does not show", body,
+            [DEC, B1D, "results/final/population_look1.json"])
+    d.claim("B2 point decision and B1 dependence", sorted(k for k in n.entries if k.startswith(("b2_", "b1dep_"))))
 
 
 def s_cannot(d: Deck) -> None:

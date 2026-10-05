@@ -2,12 +2,15 @@
  "schema": "pet-final-design-deck-numbers/1",
  "generator": "slides/make_final_deck.py",
  "root": "nd-unfolding/pet/final_design",
- "main_slides": 11,
+ "main_slides": 12,
  "sources": {
   "banks/BANK_MANIFEST.json": "682e259fbe41cf37407b545c6acf1739b8e438f38ee0adfae8f16449bf8d5cb3",
   "dev/DEV_TABLES-20260927.json": "eb7a7eb68ce5efb55ba6be15af20140e950a4ff99dd8f9ffba3f80981150a41b",
   "dev/SCREENS-20260927-3d.json": "79e676ef1d7a155ae3decbc1352546955eacaf712cbe57d116a1b58e4a185b27",
+  "resources/cost_fb_look1-20260930.json": "09176ccda999ae1074aeec3207304b85c4f53c0065e5335e037d479b4f53fec7",
   "resources/cost_t24-20260927.json": "3a0d146492941e438b085cbb50371a00a62df8bb42dd7d84828825c522b98d99",
+  "results/final/b1_dependence_look1.json": "d81786d7d12e111ddbfd384eeb3c7f78a131f90162e2345653f59db78ec7def6",
+  "results/final/decision_look1.json": "b82b3733384625fafcc0edd08b1f2e866d7a9518d3fcb11f74e0ad9796fac55e",
   "results/predecessor_posthoc/final-C-F0.posthoc.json": "b117597358a9db1199c1bcf8c6bcc1461ea051e80d14355ce2fcd2c6b370301e",
   "results/predecessor_posthoc/final-C-F1.posthoc.json": "0cc89b3879da3022a71f2996947b8032e628cc81ef26648d61c768997181a5e3",
   "results/predecessor_posthoc/final-C-F10.posthoc.json": "a6b48e8cfaee676ab82f4a350b2fd36fd62a464f4cd9b8070edea432a585968f",
@@ -180,6 +183,246 @@
       "carry|truth4|kF0",
       "aussie",
       "worst_case_mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b1dep_h_cp_upper_draw_any_failure",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.6508557944128242,
+   "rendered": "0.651",
+   "inputs": [
+    {
+     "file": "results/final/b1_dependence_look1.json",
+     "path": [
+      "candidates",
+      "H2S1T24K5",
+      "common_panel",
+      "cp_upper_draw_any_failure"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b1dep_h_cp_upper_if_no_draw_failed",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.3694166475528192,
+   "rendered": "0.369",
+   "inputs": [
+    {
+     "file": "results/final/b1_dependence_look1.json",
+     "path": [
+      "candidates",
+      "H2S1T24K5",
+      "common_panel",
+      "cp_upper_if_no_draw_failed"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b1dep_h_draws_with_a_failure",
+   "op": "field",
+   "fmt": "int",
+   "value": 2,
+   "rendered": "2",
+   "inputs": [
+    {
+     "file": "results/final/b1_dependence_look1.json",
+     "path": [
+      "candidates",
+      "H2S1T24K5",
+      "common_panel",
+      "draws_with_a_failure"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b1dep_h_n_draws",
+   "op": "field",
+   "fmt": "int",
+   "value": 8,
+   "rendered": "8",
+   "inputs": [
+    {
+     "file": "results/final/b1_dependence_look1.json",
+     "path": [
+      "candidates",
+      "H2S1T24K5",
+      "common_panel",
+      "n_draws"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b1dep_l_draws_with_a_failure",
+   "op": "field",
+   "fmt": "int",
+   "value": 1,
+   "rendered": "1",
+   "inputs": [
+    {
+     "file": "results/final/b1_dependence_look1.json",
+     "path": [
+      "candidates",
+      "L128S1T24K4",
+      "common_panel",
+      "draws_with_a_failure"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b1dep_l_n_draws",
+   "op": "field",
+   "fmt": "int",
+   "value": 8,
+   "rendered": "8",
+   "inputs": [
+    {
+     "file": "results/final/b1_dependence_look1.json",
+     "path": [
+      "candidates",
+      "L128S1T24K4",
+      "common_panel",
+      "n_draws"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b2_h_lb",
+   "op": "field",
+   "fmt": "4",
+   "value": 0.002509689853635211,
+   "rendered": "0.0025",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "B2",
+      "numbers",
+      "D4d_n_down",
+      "residual_minus_injected",
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b2_h_mean",
+   "op": "field",
+   "fmt": "4",
+   "value": 0.009704137017494677,
+   "rendered": "0.0097",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "B2",
+      "numbers",
+      "D4d_n_down",
+      "residual_minus_injected",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b2_h_ub",
+   "op": "field",
+   "fmt": "4",
+   "value": 0.016898584181354145,
+   "rendered": "0.0169",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "B2",
+      "numbers",
+      "D4d_n_down",
+      "residual_minus_injected",
+      "ub"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b2_l_lb",
+   "op": "field",
+   "fmt": "4",
+   "value": 0.0063856743612861365,
+   "rendered": "0.0064",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "B2",
+      "numbers",
+      "D4d_n_down",
+      "residual_minus_injected",
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b2_l_mean",
+   "op": "field",
+   "fmt": "4",
+   "value": 0.012221641505477736,
+   "rendered": "0.0122",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "B2",
+      "numbers",
+      "D4d_n_down",
+      "residual_minus_injected",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "b2_l_ub",
+   "op": "field",
+   "fmt": "4",
+   "value": 0.018057608649669335,
+   "rendered": "0.0181",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "B2",
+      "numbers",
+      "D4d_n_down",
+      "residual_minus_injected",
+      "ub"
      ]
     }
    ]
@@ -1015,6 +1258,574 @@
       "push_selected",
       "class_p",
       "recovery"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_N2_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.03699817389402531,
+   "rendered": "0.037",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "N2",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_U1_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.895063878280764,
+   "rendered": "0.895",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U1",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_U1_0_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.876270015582037,
+   "rendered": "0.876",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U1",
+      "parts",
+      0,
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_U2b_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8743815476604208,
+   "rendered": "0.874",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U2b",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_U2b_2_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.9168276991969261,
+   "rendered": "0.917",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U2b",
+      "parts",
+      2,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_U3_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8348443807136511,
+   "rendered": "0.835",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U3",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_U3_0_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8146127858227815,
+   "rendered": "0.815",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U3",
+      "parts",
+      0,
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_U4_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.39126905300944664,
+   "rendered": "0.391",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U4",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_U4_0_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.36805035899041966,
+   "rendered": "0.368",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U4",
+      "parts",
+      0,
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_U5_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.4459280308610259,
+   "rendered": "0.446",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U5",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_U5_0_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.42876594711691574,
+   "rendered": "0.429",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U5",
+      "parts",
+      0,
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_cost",
+   "op": "field",
+   "fmt": "2",
+   "value": 1.7679193116208263,
+   "rendered": "1.77",
+   "inputs": [
+    {
+     "file": "resources/cost_fb_look1-20260930.json",
+     "path": [
+      "candidates",
+      "H2S1T24",
+      "median"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_switch",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.5889148037737068,
+   "rendered": "+0.589",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "switching_vs_reference",
+      "H2S1T24K5",
+      "t",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_h_switch_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5684285810653449,
+   "rendered": "0.568",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "switching_vs_reference",
+      "H2S1T24K5",
+      "t",
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_N2_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.04278892497986912,
+   "rendered": "0.043",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "N2",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_U1_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8632304960063774,
+   "rendered": "0.863",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U1",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_U1_0_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8423925064345879,
+   "rendered": "0.842",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U1",
+      "parts",
+      0,
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_U2b_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8464170354156832,
+   "rendered": "0.846",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U2b",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_U2b_2_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.9101704324461293,
+   "rendered": "0.910",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U2b",
+      "parts",
+      2,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_U3_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8293171378410614,
+   "rendered": "0.829",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U3",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_U3_0_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8089105134642529,
+   "rendered": "0.809",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U3",
+      "parts",
+      0,
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_U4_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.34827126211891524,
+   "rendered": "0.348",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U4",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_U4_0_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.32592744478144575,
+   "rendered": "0.326",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U4",
+      "parts",
+      0,
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_U5_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.4496915280225853,
+   "rendered": "0.450",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U5",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_U5_0_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.4347647054385678,
+   "rendered": "0.435",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U5",
+      "parts",
+      0,
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_cost",
+   "op": "field",
+   "fmt": "2",
+   "value": 1.5170869864339491,
+   "rendered": "1.52",
+   "inputs": [
+    {
+     "file": "resources/cost_fb_look1-20260930.json",
+     "path": [
+      "candidates",
+      "L128S1T24",
+      "median"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_switch",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.5570814214993199,
+   "rendered": "+0.557",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "switching_vs_reference",
+      "L128S1T24K4",
+      "t",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "look1_l_switch_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.535421656010924,
+   "rendered": "0.535",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "switching_vs_reference",
+      "L128S1T24K4",
+      "t",
+      "lb"
      ]
     }
    ]
