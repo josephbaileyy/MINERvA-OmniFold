@@ -1,4 +1,4 @@
-# Review disposition — independent review of the terminal decision (cycle 1 of at most 2)
+# Review disposition — independent review of the terminal decision (2 cycles; closed)
 
 **Review:** under `REVIEW_BRIEF-DECISION-20261001.md`, by a fresh read-only Codex session (model `gpt-6-astra`,
 reasoning effort high; session `01a10c41-5115-7541-999b-e2bbb0da8693`) in a detached, clean worktree at
@@ -35,3 +35,14 @@ No verdict changed; the terminal outcome **NO_ELIGIBLE_DESIGN** stands. One defe
 on the committed evidence; five reporting/scope statements were corrected. Per the brief, a repair that changes no
 verdict is dispositioned without restarting the review; because finding 1 touched check (i)'s gate, a narrow cycle-2
 check of findings 1–6 on the repaired commit is requested (the brief's budget: at most two cycles).
+
+## Cycle 2 (closed)
+
+Fresh read-only Codex session (model `gpt-6-astra`, high; session `01a10c4f-afa2-7b72-84da-f8aaaf0c1d52`) in a clean
+detached worktree at `ca219ef07c247c352432017177ff5f553f530fda`, scope fixed in advance to findings 1–6 and checks
+(e)–(i). Result: **findings 1–6 RESOLVED; (e) PASS on the repository surfaces, (f) PASS (full parsed-JSON equality of
+`decision_look1.json`, `decision_look1_provisional.json`, `coverage_dev/decision_final.json` and the coverage output,
+regenerated in memory; all 1,680 scores bind; the stripped-provenance counterexample returns INCOMPLETE), (g) PASS for
+the committed chronology, (h) PASS, (i) PASS; remaining or new findings: none.** Limits as in cycle 1, plus: the
+sandbox forbade file writes, so the shell chains were reproduced through their Python entry points in memory. The review
+budget (two cycles) is spent; **the review is closed** and the terminal outcome NO_ELIGIBLE_DESIGN stands.

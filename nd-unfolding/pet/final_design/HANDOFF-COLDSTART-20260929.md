@@ -182,6 +182,12 @@ pre-registered.
   no study job remains. The stop file `$B/keep_busy.stop` is left in place on purpose (a restart needs
   `start_watcher.sh`, which removes it). 24 D4c members are partial and unscored (blinded); `runs/s5d_a5_H2S1T24.tsv`
   has no UNBLIND amendment and must not be scored.
-- **Remaining for delivery:** the independent read-only review under `REVIEW_BRIEF-DECISION-20261001.md` and its
-  disposition; VALIDATION_LEDGER rows (next dense id on `origin/main`); final PR #4 body. The §11 repair is an owner
-  decision (decision record, last row; report §8).
+- **Delivered (2026-10-05):** independent review closed in two cycles (`REVIEW_DISPOSITION-DECISION-20261005.md`:
+  provenance gate repaired, five reporting corrections, no verdict changed); VALIDATION_LEDGER VL142–VL145; report
+  §6–8, deck (14 slides), decision record, resource ledger, RUN_LOG/STATUS, PR #4 body.
+- **VL ids, deliberately not merged with `main`:** the protocol (§12) and §7 above say "integrate `origin/main` first".
+  `main` is 860 commits ahead and PR #4's base is the unmerged `pet-improvement-20260922`, so a merge would put all of
+  `main`'s unrelated changes into PR #4's diff. The pre-commit hook enforces dense ids on this branch, so the rows are
+  VL142–VL145 here; `origin/main` at `c64228da` already uses VL142–VL163, so **renumber them on integration** (VL164–VL167
+  at that sha, as the GBDT branch renumbered VL161 → VL163).
+- **Owner decisions:** the §11 repair (decision record, last coverage row; report §8) and any merge of PRs #3/#4.

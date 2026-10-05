@@ -1,6 +1,6 @@
 # N-D OmniFold run log
 
-## 2026-10-05 — PET final-design study: terminal outcome NO_ELIGIBLE_DESIGN (frozen rules; review pending)
+## 2026-10-05 — PET final-design study: terminal outcome NO_ELIGIBLE_DESIGN (frozen rules; independent review closed)
 
 - **Coverage of H2S1T24 K5** (Amendments 5, 6; 720 development-tilt members, B = 6): **C1 FAIL, C4 FAIL** — the
   interval procedure is over-conservative (pooled 68 % coverage 0.896, LB 0.858, vs ≤ 0.80; 95 % 0.990; half-widths
@@ -11,6 +11,9 @@
   (3a.5), D4c compute stopped. H2S1T24's point estimator passes every §6.1–6.3 rule (R_E0 0.895, +0.589 over CTL).
   The §11 repair (DEV-calibrated interval, RB revalidation, ≈ 3.2 k A100-h) is an owner decision. Study total
   3,376.6 A100-h. Evidence `pet/final_design/results/final/`; report §6–8; decision record.
+- **Independent review** (Astra High, read-only, 2 cycles): every number and the outcome reproduced; the provenance
+  gate was repaired (it had been declared, not checked) and five reporting statements corrected, with no verdict
+  change (`pet/final_design/REVIEW_DISPOSITION-DECISION-20261005.md`). VALIDATION_LEDGER VL142–VL145.
 
 ## 2026-10-01 — PET final-design study: look 1 decided; coverage of H2S1T24 K5 running (blinded; in progress)
 

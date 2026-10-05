@@ -1,6 +1,6 @@
 # Decision record — PET final-design selection study (living; completed at delivery)
 
-**Status: TERMINAL — NO_ELIGIBLE_DESIGN (2026-10-05), by the frozen rules; review cycle 1 dispositioned, cycle 2 pending.** This record lists every decision taken, its rule, its
+**Status: TERMINAL — NO_ELIGIBLE_DESIGN (2026-10-05), by the frozen rules; independent review closed (2 cycles, no verdict changed).** This record lists every decision taken, its rule, its
 evidence and its date; the terminal selection is filled in only from `analysis/decide.py` output on unblinded
 final-bank scores (and `analysis/coverage.py` for §6.4). PET is diagnostic: nothing here is an adoption.
 
@@ -49,6 +49,9 @@ final-bank scores (and `analysis/coverage.py` for §6.4). PET is diagnostic: not
 | 2026-10-05 | **TERMINAL OUTCOME: NO_ELIGIBLE_DESIGN.** H2S1T24 K5 INELIGIBLE (C1, C4: its simulation-only uncertainty procedure, B = 6 Poisson-bootstrap members, is decisively over-conservative in aggregate; it under-covers in the low-acceptance region); L128S1T24 K4 INELIGIBLE (B2, point-decided, statistically unresolved). No design is selected and no default is named (the 3a.1 default must itself be eligible). **Citable for:** neither frozen finalist meets every frozen eligibility rule at its exact configuration; H2S1T24's point estimator passes every §6.1–6.3 rule (R_E0 0.895, LB 0.876; +0.589 over CTL at LB 0.568), and its §9 interval procedure fails calibration: the aggregate E_avail intervals are too wide by ≈ 1.3–1.7 × in six of seven bins, while the low-acceptance region **under-covers** (pooled 68 % 0.257, 95 % 0.789; against the population target 0.250 / 0.787), which no rule gates (C3 covers only the moderate and good regions). **Not citable for:** a ranking of the two finalists, either finalist being unusable as a point estimator, or the uncertainty procedure being conservative in every region | §6, §10(b), 2c.3, 3a.1 | `results/final/coverage_dev/decision_final.json`, `results/final/decision_look1.json` |
 | 2026-10-05 | **Not run (owner decision):** the §11 failed-final repair (repair on DEV evidence, re-freeze by amendment, re-validate on RB). For H2S1T24 the failing component is the interval construction, e.g. an interval for the member mean calibrated on a DEV coverage ensemble (≈ 720 unfoldings, ≈ 1.3 k A100-h, ≈ 5 days at the measured throughput) and then RB coverage at the repaired configuration (≈ 1,080 unfoldings, ≈ 1.9 k A100-h, ≈ 7 days); L128S1T24's B2 would need its own DEV repair and RB library revalidation. Not started: the goal's terminal outcome is decided by the frozen rules, and a repair is a new design iteration | §11 | this record |
 
-## Pending
+## Review
 
-- Independent review cycle 1 (Astra High, at `f27d92d0`): dispositioned in `REVIEW_DISPOSITION-DECISION-20261005.md` (no verdict changed; provenance gate repaired; five reporting corrections). Cycle 2: a narrow re-check of findings 1–6 on the repaired commit.
+- Independent read-only review under `REVIEW_BRIEF-DECISION-20261001.md`, Astra High: cycle 1 at `f27d92d0` (numbers and
+  outcome reproduced; provenance gate repaired, five reporting corrections), cycle 2 at `ca219ef0` (all findings
+  resolved, no new findings). `REVIEW_DISPOSITION-DECISION-20261005.md`. Closed.
+- VALIDATION_LEDGER rows VL142–VL145.
