@@ -1,5 +1,99 @@
 # N-D OmniFold run log
 
+## 2026-10-05 — PET final-design study: terminal outcome NO_ELIGIBLE_DESIGN (frozen rules; independent review closed)
+
+- **Coverage of H2S1T24 K5** (Amendments 5, 6; 720 development-tilt members, B = 6): **C1 FAIL, C4 FAIL** — the
+  interval procedure is over-conservative (pooled 68 % coverage 0.896, LB 0.858, vs ≤ 0.80; 95 % 0.990; half-widths
+  1.3–1.7 × the calibrated limit in six of seven E_avail bins); C2, C3 PASS. Not uniformly conservative: the
+  low-acceptance region under-covers (68 % 0.257, 95 % 0.789), ungated by C3. Same against the FB population target;
+  mechanism not established. Reproduced from the raw member histograms.
+- **Terminal:** with L128S1T24 K4 ineligible on B2 (look 1), `decide.py` gives **NO_ELIGIBLE_DESIGN**; C5 skipped
+  (3a.5), D4c compute stopped. H2S1T24's point estimator passes every §6.1–6.3 rule (R_E0 0.895, +0.589 over CTL).
+  The §11 repair (DEV-calibrated interval, RB revalidation, ≈ 3.2 k A100-h) is an owner decision. Study total
+  3,376.6 A100-h. Evidence `pet/final_design/results/final/`; report §6–8; decision record.
+- **Independent review** (Astra High, read-only, 2 cycles): every number and the outcome reproduced; the provenance
+  gate was repaired (it had been declared, not checked) and five reporting statements corrected, with no verdict
+  change (`pet/final_design/REVIEW_DISPOSITION-DECISION-20261005.md`). VALIDATION_LEDGER VL164–VL167 (added at integration with `main`).
+
+## 2026-10-01 — PET final-design study: look 1 decided; coverage of H2S1T24 K5 running (blinded; in progress)
+
+- **Look 1 (Amendment 4 UNBLIND after 944/944 rows; decision `pet/final_design/results/final/decision_look1.json`,
+  commit `96e6a412`):** L128S1T24 K4 **INELIGIBLE on B2 — point-decided, statistically unresolved** (D4d n down,
+  residual − injected L1 0.0122, 95 % 0.0064–0.0181, vs ≤ 0.010; every other rule passes). H2S1T24 K5 passes every
+  §6.1–6.3 rule (R_E0 0.895, simultaneous LB 0.876; its own B2 0.0097 is also unresolved); coverage pending. The B2
+  difference between the finalists is not resolved by this comparison; neither superiority nor equivalence is claimed.
+  No look 2. FB cost 1.768 / 1.517 A100-h per unfolding (compact not cheaper).
+- **Report-only additions after a coordinating review (two cycles, closed):** B1 common-panel dependence analysis
+  (a dependence-aware ≤ 0.10 per-unit failure probability is not established); FB population targets (designated
+  endpoints within 0.0021 of like-for-like); unblinding bound to each group (Amendment 5b, controls in
+  `test_pfd_unblind_gate.py`); terminal review brief `REVIEW_BRIEF-DECISION-20261001.md`.
+- **Coverage (Amendment 5):** 720 development-tilt + 360 D4c-up members of H2S1T24 K5 (B = 6), blinded; ≈ 1.9 k
+  A100-h. 648/720 at 2026-10-05 03:42Z. Study total 2,087 A100-h at 2026-09-30 23:22Z.
+
+## 2026-09-27 — PET final-design study: finalists re-frozen after the reproducibility repair; final bank running (blinded; in progress)
+
+- **Reproducibility repair (Amendments 3b, 3b-bis):** the estimator-seed sd of the primary recovery at fixed events is
+  0.054–0.095 for every design with the 8-epoch truth step and for both 16-epoch designs (limit 0.05); the 24-epoch
+  truth step brings it to **0.037 (H2S1T24 K5)** and **0.043 (L128S1T24 K4)**. PET2 is closed on its screens (the
+  annealed pretrained arm is stable but its proton topology stays ≤ 0.225 < 0.25). The step-2 ensemble fallback was
+  smoke-tested and started early, then stopped unneeded.
+- **Finalists (Amendments 3c, 3d; before any final-bank score):** compact H2S1T24 K5, large L128S1T24 K4; anchors CTL
+  K3, C K3. Measured cost 1.77 / 1.49 A100-h per unfolding: the compact design is not cheaper.
+- **Sizing (3e):** n_F = 60 (capped; the finalists' E0 non-inferiority needs ≈ 250 draws: a quantified limit).
+  FINAL draws 0–59 and the 21-case library are running blinded. Study total 683 A100-h (2026-09-27 14:14Z).
+
+## 2026-09-26 — PET final-design study: stages S2–S3 (large designs, reviews, sizing, N2 finding; in progress)
+
+Development and sizing evidence only (DEV bank); final-bank runs execute blinded and nothing is scored on FB.
+- **Reviews:** implementation (1 BLOCK + 5 MAJOR fixed), statistical design (1 BLOCK + 7 MAJOR fixed; Amendment 2c),
+  scientific scope (`final_design/REVIEW_DISPOSITION-SCOPE-20260926.md`; Amendment 3a: terminal practical default,
+  cost at declared packing, N1 scope ruled on E9's text, E4/E5 sizing group, coverage order, futility, bank-effect
+  bound, cost-part repair; finalist-rule addendum with completeness, S-N1 at K\* and the between-design step in code).
+- **Larger/pretrained designs:** enlarged step-1 PETs (0.25 M, 0.97 M parameters) match the 47 k one at 8 epochs;
+  PET2-small pretrained is unstable in the loop from k = 4 under the declared constant rate (step-1 weights 334–1,217
+  at k = 4, divergence at k = 5) while PET2-scratch is stable but fails the topology screen; a matched annealed-rate
+  arm is running. AUSSIE closed by its matched test (12/12 losses). Measured costs per unfolding: H2S1 K5 0.88,
+  L128S1 K5 ≈ 1.0, P2preS1 K4 2.23 A100-h.
+- **Post-hoc recomputation:** 15 stale dev1 files recomputed; predecessor files reproduce exactly; the compact choice
+  (H2S1 K = 5) holds on complete evidence.
+- **Sizing pilot** (`final_design/sizing/SIZING-20260926.md`, provisional): n_F = 30; E4/E5 library draws at the cap 60
+  (E4 non-inferiority H2S1 − L128S1 would need 1,770 draws: a quantified limit).
+- **N2 finding (Amendment 3b):** estimator-seed sd of the primary recovery at fixed events 0.095 (H2S1) / 0.091
+  (L128S1) against the frozen 0.05, located in the 8-epoch truth step; a bounded repair arm (24-epoch truth step,
+  16-epoch designs; 64 runs) runs before both packages are re-frozen with an S-N2 screen. Study total 314.8 A100-h.
+
+## 2026-09-26 — PET final-design study: stages S0–S1 (capacity, banks, diagnostics, development screen; in progress)
+
+Authorization `docs/orchestration/AUTHORIZATION-20260925-pet-final-design.md` (Joseph's 2026-09-25 grant,
+verbatim); protocol `nd-unfolding/pet/final_design/PROTOCOL-20260925.md` (decision table frozen before any
+successor run; Amendment 1: DEV-bank q3 quartiles). Branch `pet-final-design-20260925` from
+`pet-improvement-20260922` @ `9368ec9e`. Simulation only; PET stays diagnostic; nothing adopted; historical
+thresholds, verdicts and the predecessor's disposition unchanged. **All results below are development
+evidence (DEV bank), not confirmatory.**
+
+- **Capacity** (`final_design/CAPACITY-20260925.md`): 4,061,737 inventory rows were never drawn into a scored
+  predecessor run (3.4 historical-size replicates); no further same-model simulation exists. Frozen banks
+  (`banks/BANK_MANIFEST.json`, job 58880785; 46/46 predecessor draw digests reproduced): DEV 45,089,191,
+  FB 2,646,891 (final bank, sealed), RB 1,414,846 (reserve, sealed). Final inference will be conditional on
+  the banks.
+- **Failure localization** (`final_design/DIAGNOSTICS-20260925.md`; post-hoc analysis of the predecessor's 81
+  runs, job 58879830, reproducing every committed score to 1e-9; 19 bounded step-2 fits, jobs 58880466/
+  58886796): the multiplicity injections barely move `E_avail` (D4d 0.011 L1), so C's "neutron failure" is a
+  near-zero-injection artifact while B's is real; under the proton change the baseline detector step does not
+  transmit the hadron-content change (stored reco cloud capped at 12 clusters in 85.5 % of selected events);
+  given the exact weights the truth step learns it (categorical PDG 0.87–0.97) and extrapolates to misses, and
+  given C's real pull it recovers only what the pull carries (≈0.02).
+- **Development screen** (dev1: 64 runs; dev2L: 12; dev2S partial; seed-paired with the predecessor on the same
+  events): C + categorical truth PDG + detector reco summaries with a constant per-iteration learning rate
+  (H2S1) passes the committed development screens at k = 5 (dev tilt 0.906, proton topology 0.39, neutron-case
+  `E_avail` residual 0.020 ≤ 0.021); with the forced 1e-5 schedule (H2) the same inputs fail the neutron screen
+  from k = 3; enlarging the step-1 PET to 0.25 M / 0.97 M parameters at 8 epochs changes nothing resolvable.
+  AUSSIE closed at scalar level by its matched stress test (loses robustness and stability in 12/12 matched
+  comparisons; `scalar/SCALAR_AUSSIE_MATCHED-20260925.md`).
+- **In progress:** PET2-small pretrained vs scratch (path verified: 176/176 pretrained tensors at the first
+  optimizer step; materialization byte-identical to the historical cache), 16-epoch arms, sizing pilot S3P.
+- **Resources so far:** 123.9 A100-h, 0.23 CPU node-h (`final_design/resources/RESOURCE_LEDGER.tsv`, 08:45Z).
+
 ## 2026-09-25 — PET improvement campaign: confirmatory stage complete (FINAL, STRESS; coverage not run)
 
 Same campaign and authorization as the entry below. Simulation only; PET stays diagnostic; the historical thresholds

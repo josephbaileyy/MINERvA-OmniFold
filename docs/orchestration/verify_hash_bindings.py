@@ -409,8 +409,18 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: The branch's five older pins of files main had already repointed (annealed_estimator.py, train_fullevent_nominal.py,
 #: validate_gate5_training_artifacts.py, validate_pet_nominal_gate4.py, omnifold.py; ISSUE-55 and the 2026-09-23
 #: Gate-4 re-issue above) are superseded by main's repointed values, as the merge keeps main's receipts.
-RECEIPT_BINDING_COUNT = 140
-RECEIPT_BINDING_SHA256 = "082b1a6228e48f19df663117e1cf736abe68cbf9e95f371ac6c25bcdd106792f"
+#: MERGE 2026-10-05 (integration of pet-final-design-20260925, PR #4): that branch moved the inventory 128 -> 130 on
+#: its own line of history. Its entry, verbatim:
+#:   128 -> 130: the PET final-design study's bank build receipt binds its builder
+#:   (build_banks.py) and the predecessor's frozen C config (b2e4-M-K10-s1.json); receipt
+#:   nd-unfolding/pet/final_design/banks/BUILD_RECEIPT-58880785.json (2 added, 0 removed).
+#: 140 -> 142, digest 082b1a62 -> e835c705 (2026-10-05, PET integration merge of pet-final-design-20260925, PR #4).
+#: Enumerated before the constant moved (receipt_inventory() rows on the post-PR-#3 tree, the branch tip and the
+#: merged tree): exactly the final-design study's two declared additions, nothing removed:
+#:   ADDED   nd-unfolding/pet/final_design/banks/build_banks.py                                 6f43cb08
+#:   ADDED   nd-unfolding/pet/improvement_campaign/phase_b/pet/configs/b2e4-M-K10-s1.json        0afffb7d
+RECEIPT_BINDING_COUNT = 142
+RECEIPT_BINDING_SHA256 = "e835c7059c291dac3385698a357693489a9dda3a041621d060a3307df7342ce7"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

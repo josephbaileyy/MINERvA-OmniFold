@@ -1,0 +1,304 @@
+{
+ "schema": "pfd-scalar/selection-extract/1",
+ "script": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-scalar/code/e19bbdf5/extract_selections.py",
+ "script_blob_sha1": "206f652243e34f0bab762e3f511e20a7020243f6",
+ "inventory": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+ "row_features": "/pscratch/sd/j/josephrb/pet-final-design-20260925/rowfeatures/row_features.npz",
+ "inventory_members_read": [
+  "reco_scalars",
+  "truth_scalars",
+  "w_truth",
+  "w_reco",
+  "pass_reco",
+  "pass_truth"
+ ],
+ "row_feature_columns_read": [
+  "rc_n_valid",
+  "rc_E_sum",
+  "tr_n_p",
+  "tr_n_n",
+  "tr_n_pipm",
+  "tr_n_pi0",
+  "tr_n_other",
+  "pass_reco",
+  "pass_truth"
+ ],
+ "selections": {
+  "T0": {
+   "output": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-scalar/extract/selection_T0.npz",
+   "output_sha256": "29928e645e9475b9cd43c65ca497ca4b44e5c5d0a3bdf5f2fb52248e3e2586e2",
+   "cases": [
+    "D1_m0.350",
+    "D2_bump_c0.3",
+    "D4c_p_up",
+    "D4d_n_up",
+    "D5_nuwro",
+    "R1_x1.05_D1_p0.350"
+   ],
+   "r1_factors": {
+    "R1_x1.05_D1_p0.350": 1.05
+   },
+   "replicate_arrays": {
+    "D1_m0.350": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/stress/stress-C-T0-D1_m0.350/replicate_arrays.npz",
+     "sha256": "1d698a2f648b033771567272960b2139405f18f68688e97b7afed4c121123f26",
+     "distortion": "D1_m0.350"
+    },
+    "D2_bump_c0.3": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/stress/stress-C-T0-D2_bump_c0.3/replicate_arrays.npz",
+     "sha256": "976f4dfb685ab326268cbac028959750d1ebd476c46e785614164c851cf476f0",
+     "distortion": "D2_bump_c0.3"
+    },
+    "D4c_p_up": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/stress/stress-C-T0-D4c_p_up/replicate_arrays.npz",
+     "sha256": "c7f10d51680b51c6b446d04ec739c1a47bb4368f362dbe4e8c08bb3d7ec88122",
+     "distortion": "D4c_p_up"
+    },
+    "D4d_n_up": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/stress/stress-C-T0-D4d_n_up/replicate_arrays.npz",
+     "sha256": "140955ec8769ffca5a3788118b6ca242b248cdf526e47dca69fed0b3ed88ffe8",
+     "distortion": "D4d_n_up"
+    },
+    "D5_nuwro": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/stress/stress-C-T0-D5_nuwro/replicate_arrays.npz",
+     "sha256": "29cbe3967ecf4a7967ea886e5dea0bf26dcf46d7cfeb936a5540f6b59c9732cb",
+     "distortion": "D5_nuwro"
+    },
+    "R1_x1.05_D1_p0.350": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/stress/stress-C-T0-R1_x1.05_D1_p0.350/replicate_arrays.npz",
+     "sha256": "34e6b55bc3fa64d89cca0015e4f78c9a1192374d8af98cef2fbce177d1f12774",
+     "distortion": "R1_x1.05+D1_p0.350"
+    }
+   },
+   "cross_checks": {
+    "prior_truth": true,
+    "prior_w_truth_constant_ratio": true,
+    "prior_w_reco_constant_ratio": true,
+    "prior_pass_reco": true,
+    "prior_pass_truth": true,
+    "pseudo_truth": true,
+    "pseudo_w_truth_constant_ratio": true,
+    "pseudo_w_reco_constant_ratio": true,
+    "pseudo_pass_reco": true,
+    "pseudo_pass_truth": true,
+    "prior_reco_eavail": true,
+    "case_D1_m0.350_pseudo_reco_eavail": true,
+    "case_D2_bump_c0.3_pseudo_reco_eavail": true,
+    "case_D4c_p_up_pseudo_reco_eavail": true,
+    "case_D4d_n_up_pseudo_reco_eavail": true,
+    "case_D5_nuwro_pseudo_reco_eavail": true,
+    "case_R1_x1.05_D1_p0.350_pseudo_reco_eavail": true
+   },
+   "weights_source": "replicate_arrays.npz (engine-normalized in place); ratio to the inventory weights recorded",
+   "weight_ratio_to_inventory": {
+    "prior_w_truth": {
+     "ratio": 2.439607389277494,
+     "max_rel_spread": 6.249169559602308e-08
+    },
+    "prior_w_reco": {
+     "ratio": 2.4396073539567014,
+     "max_rel_spread": 7.099524879095043e-08
+    },
+    "pseudo_w_truth": {
+     "ratio": 2.4396072505662194,
+     "max_rel_spread": 1.1323432613785656e-07
+    },
+    "pseudo_w_reco": {
+     "ratio": 2.439607378773325,
+     "max_rel_spread": 6.082286385655777e-08
+    }
+   },
+   "n_prior": 600130,
+   "n_pseudo": 600111
+  },
+  "T1": {
+   "output": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-scalar/extract/selection_T1.npz",
+   "output_sha256": "940981dcb72b20d4419031d4f7c926d81fb40e647cde879b1306c06783ecfa58",
+   "cases": [
+    "D1_m0.350",
+    "D2_bump_c0.3",
+    "D4c_p_up",
+    "D4d_n_up",
+    "D5_nuwro",
+    "R1_x1.05_D1_p0.350"
+   ],
+   "r1_factors": {
+    "R1_x1.05_D1_p0.350": 1.05
+   },
+   "replicate_arrays": {
+    "D1_m0.350": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/stress/stress-C-T1-D1_m0.350/replicate_arrays.npz",
+     "sha256": "291d5b42681c8a83f42817856e16cd6a57d0cf02f103972f4039445a3174351b",
+     "distortion": "D1_m0.350"
+    },
+    "D2_bump_c0.3": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/stress/stress-C-T1-D2_bump_c0.3/replicate_arrays.npz",
+     "sha256": "d865fc60a8eeecc52e6a8549c620fceaaa60235935d9d8df09a1929c692c8bf8",
+     "distortion": "D2_bump_c0.3"
+    },
+    "D4c_p_up": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/stress/stress-C-T1-D4c_p_up/replicate_arrays.npz",
+     "sha256": "b84c5a68cfadbd0f763f04bab1c216335b3fb3d098b2d6be5c7d72a92529c298",
+     "distortion": "D4c_p_up"
+    },
+    "D4d_n_up": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/stress/stress-C-T1-D4d_n_up/replicate_arrays.npz",
+     "sha256": "98970d0bc78bc610c557c05407f7db6ebf104466a62243d0d291138d10fc7619",
+     "distortion": "D4d_n_up"
+    },
+    "D5_nuwro": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/stress/stress-C-T1-D5_nuwro/replicate_arrays.npz",
+     "sha256": "9af1fa87aecb1bde814767b98b8c957f2938b5b3e5a0e208ab44444f70e50d65",
+     "distortion": "D5_nuwro"
+    },
+    "R1_x1.05_D1_p0.350": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/stress/stress-C-T1-R1_x1.05_D1_p0.350/replicate_arrays.npz",
+     "sha256": "7ca806e94a84eb39f6f9e2d7fccd3464dbd5d032839d9cc25aa49fdb44fec064",
+     "distortion": "R1_x1.05+D1_p0.350"
+    }
+   },
+   "cross_checks": {
+    "prior_truth": true,
+    "prior_w_truth_constant_ratio": true,
+    "prior_w_reco_constant_ratio": true,
+    "prior_pass_reco": true,
+    "prior_pass_truth": true,
+    "pseudo_truth": true,
+    "pseudo_w_truth_constant_ratio": true,
+    "pseudo_w_reco_constant_ratio": true,
+    "pseudo_pass_reco": true,
+    "pseudo_pass_truth": true,
+    "prior_reco_eavail": true,
+    "case_D1_m0.350_pseudo_reco_eavail": true,
+    "case_D2_bump_c0.3_pseudo_reco_eavail": true,
+    "case_D4c_p_up_pseudo_reco_eavail": true,
+    "case_D4d_n_up_pseudo_reco_eavail": true,
+    "case_D5_nuwro_pseudo_reco_eavail": true,
+    "case_R1_x1.05_D1_p0.350_pseudo_reco_eavail": true
+   },
+   "weights_source": "replicate_arrays.npz (engine-normalized in place); ratio to the inventory weights recorded",
+   "weight_ratio_to_inventory": {
+    "prior_w_truth": {
+     "ratio": 2.4388206669597423,
+     "max_rel_spread": 8.674928064777987e-08
+    },
+    "prior_w_reco": {
+     "ratio": 2.438820525463046,
+     "max_rel_spread": 9.037089165886414e-08
+    },
+    "pseudo_w_truth": {
+     "ratio": 2.438820562751656,
+     "max_rel_spread": 7.505048182920859e-08
+    },
+    "pseudo_w_reco": {
+     "ratio": 2.438820510456522,
+     "max_rel_spread": 9.649328069905039e-08
+    }
+   },
+   "n_prior": 600130,
+   "n_pseudo": 600111
+  },
+  "F0": {
+   "output": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-scalar/extract/selection_F0.npz",
+   "output_sha256": "f0a26c2fe512240fb9589bbdebfcae174da6471c91dcfbdd792bb057b1210458",
+   "cases": [
+    "dev"
+   ],
+   "r1_factors": {},
+   "replicate_arrays": {
+    "dev": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/final/final-C-F0/replicate_arrays.npz",
+     "sha256": "9751b9cacbb7945e8b1fbe7c2195ba344bc9ee61fdb447d75a9c0297710bb336",
+     "distortion": "dev"
+    }
+   },
+   "cross_checks": {
+    "prior_truth": true,
+    "prior_w_truth_constant_ratio": true,
+    "prior_w_reco_constant_ratio": true,
+    "prior_pass_reco": true,
+    "prior_pass_truth": true,
+    "pseudo_truth": true,
+    "pseudo_w_truth_constant_ratio": true,
+    "pseudo_w_reco_constant_ratio": true,
+    "pseudo_pass_reco": true,
+    "pseudo_pass_truth": true,
+    "prior_reco_eavail": true,
+    "case_dev_pseudo_reco_eavail": true
+   },
+   "weights_source": "replicate_arrays.npz (engine-normalized in place); ratio to the inventory weights recorded",
+   "weight_ratio_to_inventory": {
+    "prior_w_truth": {
+     "ratio": 2.4418651499412176,
+     "max_rel_spread": 8.242115856482712e-08
+    },
+    "prior_w_reco": {
+     "ratio": 2.4418652118021025,
+     "max_rel_spread": 6.194792079305955e-08
+    },
+    "pseudo_w_truth": {
+     "ratio": 2.4418651940207377,
+     "max_rel_spread": 6.425961673883762e-08
+    },
+    "pseudo_w_reco": {
+     "ratio": 2.441865073229809,
+     "max_rel_spread": 1.138582899073981e-07
+    }
+   },
+   "n_prior": 600130,
+   "n_pseudo": 600111
+  },
+  "F1": {
+   "output": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-scalar/extract/selection_F1.npz",
+   "output_sha256": "ff5dc008e5c6fbc982f52c2eb7c86a1b85c0dfb3e2eb8e94cdfb0dffe45737ed",
+   "cases": [
+    "dev"
+   ],
+   "r1_factors": {},
+   "replicate_arrays": {
+    "dev": {
+     "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/confirm/final/final-C-F1/replicate_arrays.npz",
+     "sha256": "b54a6c1ea5f7ce594f8e0a4af6ae53cd740a5a8412ddef277565fe5d1fb33214",
+     "distortion": "dev"
+    }
+   },
+   "cross_checks": {
+    "prior_truth": true,
+    "prior_w_truth_constant_ratio": true,
+    "prior_w_reco_constant_ratio": true,
+    "prior_pass_reco": true,
+    "prior_pass_truth": true,
+    "pseudo_truth": true,
+    "pseudo_w_truth_constant_ratio": true,
+    "pseudo_w_reco_constant_ratio": true,
+    "pseudo_pass_reco": true,
+    "pseudo_pass_truth": true,
+    "prior_reco_eavail": true,
+    "case_dev_pseudo_reco_eavail": true
+   },
+   "weights_source": "replicate_arrays.npz (engine-normalized in place); ratio to the inventory weights recorded",
+   "weight_ratio_to_inventory": {
+    "prior_w_truth": {
+     "ratio": 2.4398432089552813,
+     "max_rel_spread": 7.219701814165091e-08
+    },
+    "prior_w_reco": {
+     "ratio": 2.4398432577575324,
+     "max_rel_spread": 9.235313525035593e-08
+    },
+    "pseudo_w_truth": {
+     "ratio": 2.439843170259798,
+     "max_rel_spread": 6.262649399069176e-08
+    },
+    "pseudo_w_reco": {
+     "ratio": 2.439843257779485,
+     "max_rel_spread": 9.23472049940699e-08
+    }
+   },
+   "n_prior": 600130,
+   "n_pseudo": 600111
+  }
+ },
+ "inventory_sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+ "seconds": 54.6
+}

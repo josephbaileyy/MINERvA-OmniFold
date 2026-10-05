@@ -1,0 +1,15 @@
+# name	config	config_hash	selection	distortion	reference_run	extra_driver_args
+dev2L-L64H2-F0	../../../final_design/configs/dev2L/dev2L-L64H2-F0.json	d4934a2a57d97884239cb66250bf254d3319a69aca6c30c74517bae1f5556dfd	F:0	dev	-	--step2-miss-mode efficiency_corrected
+dev2L-L128H2-F0	../../../final_design/configs/dev2L/dev2L-L128H2-F0.json	6b886895da907f0611585c7d7b44f47b70572e3a71d3dda10adf84fa2691bee4	F:0	dev	-	--step2-miss-mode efficiency_corrected
+dev2L-L64H2-T0-D4c_p_up	../../../final_design/configs/dev2L/dev2L-L64H2-T0-D4c_p_up.json	417176148c23198f009103aa1ad2989870cbd812fdf15d5e255d888942d64355	T:0	D4c_p_up	-	--step2-miss-mode efficiency_corrected
+dev2L-L128H2-T0-D4c_p_up	../../../final_design/configs/dev2L/dev2L-L128H2-T0-D4c_p_up.json	9392898789e330de0da12f3767c042d7581ee23bb223a8d9f4548c3ca4dde6ee	T:0	D4c_p_up	-	--step2-miss-mode efficiency_corrected
+dev2L-L64H2-T0-D1_m0.350	../../../final_design/configs/dev2L/dev2L-L64H2-T0-D1_m0.350.json	043e3031a0f7486953f1d8b1f474e0bb540965fb0c66b71237a5947b62cc4d86	T:0	D1_m0.350	-	--step2-miss-mode efficiency_corrected
+dev2L-L128H2-T0-D1_m0.350	../../../final_design/configs/dev2L/dev2L-L128H2-T0-D1_m0.350.json	192f44803a33450ad65aa5b1701ed5bfa0032275a5b6dd19793fa4047b31a541	T:0	D1_m0.350	-	--step2-miss-mode efficiency_corrected
+dev2L-L64H2-T0-D4d_n_up	../../../final_design/configs/dev2L/dev2L-L64H2-T0-D4d_n_up.json	ce33ce2ef467ecb9f30bf34e35b77abfcfe5e6a7b39067139e2fe52e9e153593	T:0	D4d_n_up	-	--step2-miss-mode efficiency_corrected
+dev2L-L128H2-T0-D4d_n_up	../../../final_design/configs/dev2L/dev2L-L128H2-T0-D4d_n_up.json	f7170299ceca777adb92220c25f668933e50fd218b08ce9c32e33f63591e6a77	T:0	D4d_n_up	-	--step2-miss-mode efficiency_corrected
+dev2L-L64H2-F1	../../../final_design/configs/dev2L/dev2L-L64H2-F1.json	420600863fc311ec42ce3bd05fe50f92481d047db2b01465286f4d4130122a06	F:1	dev	-	--step2-miss-mode efficiency_corrected
+dev2L-L128H2-F1	../../../final_design/configs/dev2L/dev2L-L128H2-F1.json	eec00ec1604f7ef2c621c53fd637279057118a19e4eb2e5e1a5c9b54c76ae464	F:1	dev	-	--step2-miss-mode efficiency_corrected
+dev2L-L64H2-T1-D4c_p_up	../../../final_design/configs/dev2L/dev2L-L64H2-T1-D4c_p_up.json	b653aba284ac58c10e17a1de9917c5578fb2fa29cb824332b11c48913b4c5326	T:1	D4c_p_up	-	--step2-miss-mode efficiency_corrected
+dev2L-L128H2-T1-D4c_p_up	../../../final_design/configs/dev2L/dev2L-L128H2-T1-D4c_p_up.json	7425706e09d193d6d8067682ec4c4da399a7904ec92cdfa6d73d1240bee9d4e4	T:1	D4c_p_up	-	--step2-miss-mode efficiency_corrected
+dev2L-L128H2E16-F0	../../../final_design/configs/dev2L/dev2L-L128H2E16-F0.json	22162dc27ea0d661ca96b3172052fd4dc0c0f745f80cef2196b940cce5a6ceaa	F:0	dev	-	--step2-miss-mode efficiency_corrected
+dev2L-L128H2E16-T0-D4c_p_up	../../../final_design/configs/dev2L/dev2L-L128H2E16-T0-D4c_p_up.json	09931d13519680be6f83b1d4017f555ff97919ecd917d037578a5fee3d2043fc	T:0	D4c_p_up	-	--step2-miss-mode efficiency_corrected

@@ -1,0 +1,3 @@
+# name	config	config_hash	selection	distortion	reference_run	extra_driver_args	runner
+pet2dev-P2pre-F0	../../final_design/configs/pet2dev/pet2dev-P2pre-F0.json	ab6aea4cac131086f50d98027315d1dbc1f7f316fc9f4f154e837e0caafcf840	F:0	dev	-	--step2-miss-mode efficiency_corrected	final_design/pet2/run_pet2_replicate.py
+pet2dev-P2scr-F0	../../final_design/configs/pet2dev/pet2dev-P2scr-F0.json	ee1637e3e50f0055a0188fb57e2dc617ceb2a49b548e4445a3847570c4136716	F:0	dev	-	--step2-miss-mode efficiency_corrected	final_design/pet2/run_pet2_replicate.py
