@@ -532,9 +532,9 @@ and spread of order $\sqrt{2/\mathrm{ndf}}$, about $0.10$ for
 $\mathrm{ndf}=205$. One realization near $1$ is not evidence of correct
 uncertainties; one at $1.5$ alone is not evidence against them (App.~\ref{app:history}).
 
-\emph{(iii) The coverage question is untouched by it.} The 2D toy ensemble
-provides no independent-truth coverage test (\S\ref{sec:coverage}), so nothing
-here validates the interval this covariance implies. Agreement claims use per-bin standardized differences and ratios
+\emph{(iii) The coverage question is untouched by it.} The only 2D coverage test,
+the fixed-truth test of \S\ref{sec:coverage}, covers the statistical band alone and finds it
+undercovers in its tails. Nothing here validates the interval this covariance implies. Agreement claims use per-bin standardized differences and ratios
 (\S\ref{sec:pull}); this scalar is only a distance and ratio to the paper.
 The log-normal variant, matching the paper's Table I correlated-flux
 normalization treatment, gives essentially identical $\chiCombinedLog$.
@@ -714,9 +714,11 @@ difference in the measured leg rather than in the simulated one. It does
 \emph{not} show that our estimator extracts more information from the same
 data: a smaller bootstrap dispersion is equally consistent with regularization
 bias --- an estimator that responds less to resampling because it is pulled
-toward its prior --- and with an interval that simply undercovers. Telling
-those apart needs a coverage test against an independently stored truth, which
-this analysis does not have (\S\ref{sec:coverage}). The measured statement is
+toward its prior --- and with an interval that simply undercovers. The fixed-truth test of
+\S\ref{sec:coverage} measures the band against the estimator's own scatter. It finds the median
+bin's pull RMS at $\covTwoDBinRMSmed$ and strong undercoverage only in about $\covTwoDNedge$
+edge bins. Its truth equals the prior, however, so it cannot see regularization bias toward the
+prior, and it does not decide between the explanations. The measured statement is
 the ratio; ``higher statistical efficiency'' is one of at least three
 explanations of it and is not established here.
 
@@ -1154,6 +1156,8 @@ Pull RMS $= 0.409$ & \S\ref{sec:pull} &
   Per-bin standardized residual on combined $\mathbf{C}$ \\
 Combined median rel.\ $= 6.865\%$ & \S\ref{sec:combine} &
   $\sqrt{\diag\mathbf{C}^{\tot}}/\mathbf{X}^{\CV}$ \\
+Fixed-truth $C_2=\covTwoDCTwo$ (nominal $0.954$) & \S\ref{sec:coverage} &
+  Statistical band vs.\ fixed truth, $N_{\text{toy}}=\covTwoDNtoy$: FAIL \\
 Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:coverage} &
   Pull diagnostic, $N_{\text{toy}}=200$ \\
 \bottomrule
@@ -1172,7 +1176,9 @@ Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:coverage} &
         seed too; the training-seed variation pins the bootstrap. Cross-terms are
         higher-order.
   \item Same-ensemble $68.71\%$ in \S\ref{sec:coverage} checks Gaussianity;
-        it gives no half-percent certification of $\mathbf{C}^{\stat}$.
+        it gives no half-percent certification of $\mathbf{C}^{\stat}$. The fixed-truth test
+        there finds the diagonal of $\mathbf{C}^{\stat}$ undercovers in its tails
+        ($C_2=\covTwoDCTwo$, mostly edge bins); $\mathbf{C}^{\stat}$ is not changed.
   \item \textbf{Band independence in $\mathbf{C}^{\syst}$.}
         Different physics sources are taken as uncorrelated; the one
         known exception, the Bashyal flux\,$\leftrightarrow$\,muon-E
