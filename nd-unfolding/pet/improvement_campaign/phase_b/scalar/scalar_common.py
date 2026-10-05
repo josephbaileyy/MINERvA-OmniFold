@@ -64,6 +64,10 @@ PINNED_BLOBS = {
         "1ef66a69aefb0e6623bcb033abeb9b2ca96d71e8",
     "nd-unfolding/pet/closure_powered_truth_reweight.py":
         "336ef4000abafec8b60b50ba4fb9913f1dad58c1",
+    # The same 68cf9d29 bytes, kept beside this lane (historical_pins/) since main's live module moved on
+    # (KNOWN_ISSUES #31, 2026-09-23, an additive inference-contract change). Same blob id: same endpoint.
+    "nd-unfolding/pet/improvement_campaign/phase_b/scalar/historical_pins/closure_powered_truth_reweight.py":
+        "336ef4000abafec8b60b50ba4fb9913f1dad58c1",
     "nd-unfolding/pet/fullevent_fps_dataloader.py":
         "9a715ca0056b95dfaa6ff15ee0b265f13c036a77",
     "nd-unfolding/pet/train_fullevent_nominal.py":
@@ -129,9 +133,32 @@ def sha256_file(path: Path | str, chunk: int = 1 << 24) -> str:
     return h.hexdigest()
 
 
+HISTORICAL_PINS_DIR = HERE / "historical_pins"
+# Historical modules whose live copy in the repository has legitimately moved on since 68cf9d29: this lane loads
+# the byte-identical 68cf9d29 copy from HISTORICAL_PINS_DIR instead (verify_historical_sources still checks it).
+PINNED_COPIES = ("closure_powered_truth_reweight",)
+
+
+def _load_pinned_copies() -> None:
+    """Register the 68cf9d29 copy of each PINNED_COPIES module BEFORE any historical module imports it, unless the
+    live file still has the pinned bytes. An earlier import of a drifted copy is left in place: the guard refuses."""
+    import importlib.util
+    for name in PINNED_COPIES:
+        if name in sys.modules:
+            continue
+        live = PET_DIR / f"{name}.py"
+        if live.exists() and git_blob_sha1(live) == PINNED_BLOBS.get(str(live.relative_to(REPO))):
+            continue
+        spec = importlib.util.spec_from_file_location(name, HISTORICAL_PINS_DIR / f"{name}.py")
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules[name] = mod
+        spec.loader.exec_module(mod)
+
+
 def historical_modules() -> dict[str, Any]:
     """Import the historical modules and return them by short name."""
     _ensure_paths()
+    _load_pinned_copies()
     import characterize_regions as cr
     import closure_powered_truth_reweight as cp
     import frozen_design as fd
