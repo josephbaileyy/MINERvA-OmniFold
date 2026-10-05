@@ -12,7 +12,7 @@ byte-identical). The task is **complete**. Nothing was launched beyond the bound
 | plan frozen before any fit | `5f9c5a99` (pushed 2026-10-05 18:12 UTC; first FB fit 18:13 UTC) |
 | results commit | `2b62c017` |
 | review | cycle 1 at `2b62c017`, repairs `53471b6a`; cycle 2 at `53471b6a`, final repairs in the next commit (`REVIEW_DISPOSITION-20261005.md`); closed |
-| draft PR | see the PR list (title "[pet-gbdt] PET finalists vs GBDT on existing outputs …") |
+| draft PR | #16 (https://github.com/josephbaileyy/MINERvA-OmniFold/pull/16), base `main`, not merged |
 | PET source | `pet-final-design-20260925` at `bc356b0c0c5b56cb4877bdf2312d2d5dc6d1936d`. It is not on `main`; the code imports it from a checkout after a per-file blob check (`pgc_source.py`) |
 
 ## What was done
