@@ -47,7 +47,7 @@
  },
  "jobs": [
   {
-   "job": "production lanes (transition r3 complete 2026-10-04T04:47Z; transition r4 stage 1, NuWro only, 2026-10-04T16:20Z)",
+   "job": "production lanes (r3 2026-10-04T04:47Z; NuWro only: r4 2026-10-04T16:20Z, r5 2026-10-05T03:20Z)",
    "state": "running",
    "arrays": {
     "pow P1_a1.0": "59021632 (done, 193)",
@@ -63,13 +63,13 @@
     "pow": "PID 1047835 ended ('queue done' 2026-10-04T15:42Z; deploy e0d7b04a, queues-r3/pow.q)",
     "MnvTune_v1": "PID 1047836 (e0d7b04a, queues-r3)",
     "GENIE_2_12_10_CV": "PID 1047838 (e0d7b04a, queues-r3)",
-    "GENIE_2_12_10_MEC": "PID 1047839 (e0d7b04a, queues-r3)",
-    "NuWro_21_09": "PID 669349 (deploy b93445c4, queues-r4/cal-NuWro_21_09.q, throttle 5, log /pscratch/sd/j/josephrb/s5p-20260926/runs/queue-prod-r4-NuWro_21_09.log); r3 PID 1047840 stopped 16:20:16Z",
+    "GENIE_2_12_10_MEC": "PID 1047839 ended ('queue done' 2026-10-05T03:04:11Z after MEC-final B 1343)",
+    "NuWro_21_09": "PID 435867 (deploy 95572965, queues-r5/cal-NuWro_21_09.q, throttle 8, log /pscratch/sd/j/josephrb/s5p-20260926/runs/queue-prod-r5-NuWro_21_09.log); r4 PID 669349 stopped 2026-10-05T03:19:58Z; r3 PID 1047840 stopped 2026-10-04T16:20:16Z",
     "GiBUU_2019": "PID 1047841 (e0d7b04a, queues-r3)"
    },
    "handoff": "docs/orchestration/HANDOFF-20260929-s5p-campaign-cold-start.md",
    "campaign_session": "gbdt worker [dfdda9] (takeover 2026-09-29T07:08Z)",
-   "meter_deploy": "e0d7b04a or b93445c4 (both budget revision 7, byte-identical be29f2c3...; older deploys refused by the meter)"
+   "meter_deploy": "e0d7b04a, b93445c4 or 95572965 (all budget revision 7, byte-identical be29f2c3...; older deploys refused by the meter)"
   }
  ],
  "receipts": [
@@ -473,6 +473,10 @@
   {
    "utc": "2026-10-05T03:45Z",
    "what": "TRANSITION R5 VALIDATION FAILED CLOSED on deploy $NS/deploy/5c0ec169 (cloned from 5c0ec169; left untouched, never used for a runner): validate_deploy_r5.py's nd-unfolding allow-list (unchanged from r4) rejected 28 files added to main by PR #9 (merge 9aad3c12, the GBDT model-dependence analysis): nd-unfolding/gbdt_model_dependence/** and the top-level logs nd-unfolding/ND_OMNIFOLD_RUN_LOG.md and ND_OMNIFOLD_STATUS.md. Every other check passed (frozen modules, budget byte-identical to revision 7, target queue throttle 8, rollback throttle 5). REPAIR of this operational check (not a scientific criterion): exempt exactly that subdirectory and top-level nd-unfolding/*.md by path, print the exempted count, and add a check that no nd-unfolding .py/.sh outside the subdirectory references gbdt_model_dependence. Fixture tests on local clones: the 5c0ec169 tree VALID; a changed nd-unfolding/s5c_meter.py INVALID; a new nd-unfolding/zz_ref.py importing the subdirectory INVALID (both checks fire); a nested nd-unfolding/sub/NOTE.md INVALID. Also fixes MANIFEST.tsv, which was generated before the r5 files were tracked. A new commit and a new deploy follow; the r5 runner will start only from a deploy that its own validator reports VALID."
+  },
+  {
+   "utc": "2026-10-05T03:22Z",
+   "what": "TRANSITION R5 EXECUTED AND VERIFIED (NuWro throttle 5 -> 8). Deploy $NS/deploy/95572965 (commit 9557296589ce99abe9d85a91348a9835b6e7efa0): its own validate_deploy_r5.py prints VALID (HEAD, clean, nd-unfolding only report-step files plus the printed 28-file PR #9 exemption, no production .py/.sh references the exempt subdirectory, frozen modules identical to 4f5a613f, budget byte-identical to revision 7 be29f2c3..., target throttle 8, rollback throttle 5); a wrong sha gives INVALID. stop 03:19:55Z: NuWro r4 runner 669349 was on the s5p_cal_nuwro_21_09_b5 wait line; group TERMed 03:19:58Z; log unchanged. start 03:20:01Z: PID 435867. check 03:20:12Z: PASS one r5 session leader (PPID 1) on 95572965; PASS log /pscratch/sd/j/josephrb/s5p-20260926/runs/queue-prod-r5-NuWro_21_09.log pinned to 95572965... and waiting on b5. Others: 1047836 MnvTune, 1047838 CV, 1047841 GiBUU alive on queues-r3; 1047839 MEC ended (queue done); squeue open s5p arrays unchanged 59315232,59317189,59332184,59334421. Monitor, s5p_terminal_run.sh RUNNER_PIDS (669349 -> 435867), CHECKLIST section 1 and the handoff addendum updated. CORRECTION OF TIMESTAMP LABELS: several incident 'utc' labels written in this session were estimates ahead of the actual time, not measurements. Actual commit times (UTC): the entry labelled 2026-10-04T17:15Z was committed 17:06Z (eed3a7c0); 21:20Z -> 21:13Z (035fcd87); 2026-10-05T03:25Z -> 03:17Z (5c0ec169); 03:45Z -> 03:19Z (95572965); transition-r5/plan.json 'observed_utc' 03:20Z describes an observation made at about 03:16Z. The events inside those entries carry their own measured times, which are correct. From this entry on, each label is taken from date -u at writing."
   }
  ],
  "findings": [

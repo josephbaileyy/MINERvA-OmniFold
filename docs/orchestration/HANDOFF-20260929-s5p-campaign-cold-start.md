@@ -305,3 +305,19 @@ to a new runner at 16:20Z, verified at 16:20:29Z (campaign-state incident 2026-1
   procedure. Do not restart the r3 queue: it would re-run the b4 look and resubmit b5.
 - **Stage 2** (NuWro to throttle 16, 2.0 nodes alone) is planned only when MEC, MnvTune, CV and GiBUU are all terminal
   (final statuses, no queued arrays), as another one-lane transition while NuWro waits on a batch.
+
+## Addendum 2026-10-05: GENIE MEC final; transition r5 moved NuWro to throttle 8
+
+This addendum is dated and does not edit the sections above.
+- **GENIE MEC is final** (2026-10-05T03:03:48Z): B 1343, k = 0 for both tests, 99.5% look interval [0, 0.00445],
+  `rule met for both tests`. Its runner logged `queue done`.
+- **NuWro's runner** is now PID 435867 on login33, deploy `$NS/deploy/95572965`, queue
+  `prod/queues-r5/cal-NuWro_21_09.q` (resumed at the `s5p_cal_nuwro_21_09_b5` wait line, `--throttle 8`), log
+  `runs/queue-prod-r5-NuWro_21_09.log`, STOP file `runs/STOP-prod-r5-NuWro_21_09`. Stopped/started 03:19:58Z/03:20:01Z,
+  checked 03:20:12Z. Worst case at its b6 submission: MnvTune 3 + CV 3 + GiBUU 2 + NuWro 8 = 16 slots = 2.0 nodes.
+- **Unused deploys** `$NS/deploy/bf65a6c1` and `$NS/deploy/5c0ec169` are clean clones of main commits that never ran a
+  runner (the latter failed its validator on PR #9's files; campaign-state incident "TRANSITION R5 VALIDATION FAILED
+  CLOSED"). Do not edit or move them.
+- **Rollback:** `prod/queues-r5-rollback/cal-NuWro_21_09.q` (throttle 5) via `transition-r5/runner_r5.sh`.
+- **Next:** when MnvTune and CV are final, one more one-lane transition (NuWro 14 while GiBUU runs, 16 once GiBUU is
+  final too), only while NuWro waits on a batch, and with the recompute lane told first.

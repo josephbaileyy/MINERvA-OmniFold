@@ -22,8 +22,9 @@ three concerns and at most two review/repair cycles.
 4. `s5c_meter.py measure`, run **from `$NS/deploy/e0d7b04a`** (or a later deploy carrying budget revision 7), exits
    rc 0 with open concurrency **0** for both cpu and gpu. The older deploys' budgets are refused (rc 5).
 5. All the runners have ended (`queue done`, or a recorded stop): the five remaining r3 runners and, since transition r4
-   stage 1 (2026-10-04T16:20Z), NuWro's r4 runner (PID 669349, deploy `$NS/deploy/b93445c4`, log
-   `runs/queue-prod-r4-NuWro_21_09.log`; a stage-2 transition would replace it again). No queue-runner process is left
+   stage 1 (2026-10-04T16:20Z), NuWro's r4 runner (PID 669349, deploy `$NS/deploy/b93445c4`), itself replaced at
+   transition r5 (2026-10-05T03:20Z) by PID 435867 (deploy `$NS/deploy/95572965`, log
+   `runs/queue-prod-r5-NuWro_21_09.log`; a later transition would replace it again). No queue-runner process is left
    on login33.
 
 ## 2. Evaluation sequence (login node; no allocation)
