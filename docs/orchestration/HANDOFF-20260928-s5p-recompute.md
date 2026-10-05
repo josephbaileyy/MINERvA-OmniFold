@@ -338,6 +338,33 @@ EOF
   - **Open, checked at terminal from the ledger (no polling):** NuWro b6 and later submissions must show
     `--array=0-33%5` with the frozen b<b> table.
   - Stage 2 (throttle 16) is only planned. The campaign will message before it, and it gets the same five checks.
+- **Transition r5 (2026-10-05T03:20Z; origin/main `446963d3`, files at `95572965`):** NuWro throttle 5 → 8. GENIE
+  MEC went final at 03:03:48Z (B 1343, "rule met for both tests", k = 0 for both, upper 0.00445; read by this lane
+  from the final status). The worst case is 3 + 3 + 2 + 8 = 16 slots = 2.0 nodes.
+  - **Process note:** the campaign executed r5 **before** notifying this lane, contrary to its stage-1 undertaking. It
+    acknowledged this and undertook to message before any further transition.
+  - Checked by this lane at 03:23Z, read-only:
+    - (a) the deploy's `validate_deploy_r5.py`, byte-identical to the committed one and making only `git`
+      rev-parse/status/diff/grep calls, run with `GIT_OPTIONAL_LOCKS=0`: rc 0, VALID, 8 PASS lines, "28 files
+      exempted";
+    - (b) queues-r5 equals queues-r4 from the b5 wait line with the throttle normalized (8 lines at throttle 8);
+    - (c) the budget `be29f2c3009e` = the ledger's (no rebind);
+    - (d) runner 435867 has PPID 1 and PGID = PID, and its cmdline names queues-r5 on `95572965`; 669349 and 1047840
+      are gone, 1047839 (MEC) has ended, and 1047836/38/41 are alive.
+  - **(f) The validator exemption is sound, judged independently of the validator.**
+    - From git, the `nd-unfolding/` changes `b93445c4 → 95572965` are exactly 26 added files under
+      `gbdt_model_dependence/` plus the modified top-level `ND_OMNIFOLD_RUN_LOG.md` and `ND_OMNIFOLD_STATUS.md`
+      (28); there is nothing outside that set.
+    - The frozen modules are identical to `4f5a613f`, and the budget, design and tables are unchanged.
+    - The new files contain no `__init__.py`, `sitecustomize`/`usercustomize`, `.pth` or production-named module, so
+      nothing can shadow an import.
+    - No production `.py`/`.sh` names the subdirectory.
+    - No runner-path module walks, rglobs or dynamically imports `nd-unfolding/`. The only rglob is
+      `s5p_stage2_analyze.py` over `*.npz` products, which is off the runner path.
+    - The other state changes are records and campaign scripts the runners do not execute (`campaign-state.json`,
+      `stage7/s5p_terminal_run.sh`, `transition-r5/*`), besides the r5 queues.
+  - **Open, checked at terminal from the ledger:** NuWro b6 onward must read `--array=0-33%8` with the frozen tables.
+    §5.3's table chain adds `95572965`.
   - Throttle is scheduling, not science: it changes neither which seeds a batch holds nor any rule.
   - The meter is valid from either `e0d7b04a` or `b93445c4` (identical budget). §5.1 keeps `M=e0d7b04a` and
     `P` = the r3 pow log, where pow's `queue done` is.
@@ -395,8 +422,9 @@ python s5p_recompute.py compare --mine ../final/recompute.json \
 R=/pscratch/sd/j/josephrb/s5p-20260926
 T=docs/orchestration/state/s5p/prod/tables
 diff -rq $R/deploy/4f5a613f/$T $R/deploy/55a41765/$T && diff -rq $R/deploy/55a41765/$T $R/deploy/c754f3cd/$T \
-  && diff -rq $R/deploy/c754f3cd/$T $R/deploy/e0d7b04a/$T && diff -rq $R/deploy/e0d7b04a/$T $R/deploy/b93445c4/$T; echo "tables diff rc=$?"
-# r4: NuWro's batches from b6 on must have been submitted at throttle 5 with the frozen tables (from the ledger)
+  && diff -rq $R/deploy/c754f3cd/$T $R/deploy/e0d7b04a/$T && diff -rq $R/deploy/e0d7b04a/$T $R/deploy/b93445c4/$T \
+  && diff -rq $R/deploy/b93445c4/$T $R/deploy/95572965/$T; echo "tables diff rc=$?"
+# r4/r5: NuWro b6 on must have been submitted at throttle 8 (r5; 5 only if submitted under r4) with the frozen tables
 /usr/bin/python3.11 -c 'import json,sys; [print(r["utc"], [a for a in r["argv"] if a.startswith("--array") or a.endswith(".tsv")]) for r in map(json.loads, open(sys.argv[1])) if r.get("kind") == "open" and any("nuwro_21_09_b" in a for a in r.get("argv", []))]' $R/ledger/admissions.jsonl
 ids=$(/usr/bin/python3.11 -c 'import json,sys; print(",".join(sorted({str(json.loads(l)["job_id"]) for l in open(sys.argv[1]) if l.strip() and json.loads(l).get("kind") == "job"})))' $R/ledger/admissions.jsonl)
 sacct -X -n -P -o JobID,State -j "$ids" > ../final/sacct-dispositions.txt; echo "sacct rc=$?"
