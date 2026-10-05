@@ -53,10 +53,12 @@ integrated cross section is \SI{\sigTwoD}{cm^2/nucleon}, compared with
 \SI{\sigTwoDpaper}{cm^2/nucleon} in the published analysis, a ratio of
 $\ratioTot$.  Of the 205 reported bins, \SI{\binsTen}{\percent} agree within
 \SI{10}{\percent}; the standardized bin differences formed with the published
-uncertainties have an RMS of $\pullRMS$.  The standalone covariance combines
+uncertainties have an RMS of $\pullRMS$; against the full published covariance
+the indicative distance is $\chi^{2}/\mathrm{ndf}=\chiPaper$, a correlated
+shape difference along the low-$\pT$ peak ridge.  The standalone covariance combines
 matched-central-value systematic universes with statistical and training-seed
 blocks.  Its median relative uncertainty is \SI{\uqMedian}{\percent}, compared
-with \SI{\uqPaper}{\percent} for the publication.  Figure~\ref{fig:validation}
+with \SI{\uqPaper}{\percent} for the publication; its coverage is untested.  Figure~\ref{fig:validation}
 shows the principal one-dimensional projections.  Because both results derive
 from the same data, this validates the estimator rather than comparing
 independent measurements; no combined-covariance statistic is quoted.
@@ -93,28 +95,28 @@ independent measurements; no combined-covariance statistic is quoted.
 For the higher-dimensional results, every central-value construction is tested
 against its lower-dimensional predecessor.  The three-, four-, and
 five-observable marginal normalizations agree at the approximately
-$1$--$2\%$ level, and injected distortions in each newly added variable are
-recovered in closure tests.  These closure tests reweight the simulated signal
+$1$--$2\%$ level, and a closure test recovers an injected $\Eavail$
+distortion.  Such closure tests reweight the simulated signal
 and do not exercise the background subtraction.  End-to-end pseudo-experiments
 that include the purity-based background subtraction reproduce the input at
 nominal truth except in the highest-$W$ cells, which are biased by up to
 \SI{4}{\percent} in simulation, about one quoted standard deviation in one
 $(\Eavail,W)$ cell; this bias is not included in the quoted uncertainties.
-An unbinned negative-weight background treatment reduces it to below
+An unbinned negative-weight background treatment (not adopted) reduces it to below
 \SI{0.3}{\percent}, leaving up to \SI{1}{\percent} in some joint cells; on data the two
 treatments differ by at most \SI{1.4}{\percent}. The same pseudo-experiments show that
 the unfolding follows a generator-sized change of the $\Eavail$ shape only partly: when
 the true shape is reweighted by the GiBUU-to-GENIE ratio (a test deformation of that size
 rather than a measured generator difference: the GENIE prediction it used was later found
 to have been generated from a mis-sampled flux), the $(\Eavail,W)$ cells
-deviate from it by several percent in the largest cells and by more at high $W$, with or
+deviate from it by several percent in the largest cells and by up to \SI{74}{\percent} at high $W$, with or
 without background. This regularization bias is also not in the quoted uncertainties.
 The tested iteration and capacity scans do not remove it; for other fixed generator shapes it
 is \SIrange{16}{31}{\percent} in the most affected cell and within the quoted total
 uncertainty in about half of the $(\Eavail,W)$ cells. The unfolded values on data also move
 by up to a few statistical standard deviations under input changes at the level of
 floating-point rounding; a later measurement found this spread already inside the
-data-bootstrap statistical uncertainty, which refits every replica, and well below the total
+tested candidate's data-bootstrap statistical uncertainty, which refits every replica, and well below the total
 uncertainty, but it limits how exactly the central values can be reproduced.
 % Absorption source: KNOWN_ISSUES 80; docs/orchestration/RECORD-20260927-s5p-stage2-exit.md section 2 (VL155).
 A later paired study supports this containment without regrading the failed stability
@@ -124,8 +126,8 @@ establish a bias--variance tradeoff. Coarser reporting changes the quantities es
 and correlated prior shifts do not establish bounds on the unknown real-data bias.
 No frequentist coverage is claimed for the five-dimensional intervals: an
 end-to-end test of bias-corrected statistical intervals from a deterministic
-variant of the estimator failed its predeclared criterion under the tested
-truth departures.
+variant of the estimator failed its predeclared criterion at nominal truth
+and under an $\Eavail$ tilt.
 % Coverage source: docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md (VL150).
 % Source: docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md
 % (D1: EW5-EW35 -3.5% to -4.1%, EW41 +1.66%); size vs adopted sigma:
@@ -139,9 +141,9 @@ The $\Eavail$ dimension provides an independent view of the established
 low-recoil discrepancy.  GENIE, the MINERvA Tune~v1, NuWro, and GiBUU all
 underpredict the unfolded central value at low $\Eavail$, between the
 quasielastic and $\Delta$ peaks.  Pion final-state
-interaction variations change $d\sigma/d\Eavail$ by less than one percent,
-whereas the empirical Valencia two-particle--two-hole contribution fills the
-quasielastic--$\Delta$ dip. These tests constrain the chosen pion-FSI variations,
+interaction variations (same-sample ratios on pre-repair GENIE) change $d\sigma/d\Eavail$ by less than one percent,
+whereas the empirical Valencia two-particle--two-hole contribution fills
+\SI{52}{\percent} of the data--GENIE gap below $\Eavail=\SI{0.4}{GeV}$. These tests constrain the chosen pion-FSI variations,
 not all nuclear-transport models. Quasielastic-like measurements show sensitivity
 to proton and pion FSI~\cite{MINERvA:2026qeleme}; their different signal definition
 precludes identifying that effect with the inclusive discrepancy here.
@@ -207,7 +209,7 @@ independent confirmation of this localized difference.
   \includegraphics[width=0.84\textwidth]{paper_eavailW_generators}
   \caption{Generator context for the unfolded $\Eavail$ (left) and $W$ (right)
   central-value projections.  GENIE-CV (untuned GENIE~2.12.10 on CH, with no two-particle--two-hole events), the same GENIE with the Valencia two-particle--
-  two-hole contribution, NuWro~21.09, and GiBUU~2019 (both on carbon) all remain below the unfolded result
+  two-hole contribution, NuWro~21.09, and GiBUU~2019 (both on carbon; GENIE and NuWro flux-repaired) all remain below the unfolded result
   overall and at high $W$; GENIE and NuWro by about their overall normalization shortfall, GiBUU, whose sample stops at $E_\nu\approx\SI{20}{GeV}$, by more.  No significance is assigned.}
   \label{fig:generator-context}
 \end{figure*}
@@ -256,10 +258,10 @@ the kinematic replacement; it does not independently validate the completeness
 of the hadronic-response model for the $\Eavail$ and $W$ measurement.
 
 Two extensions lie outside this result.  Removing the published truth-level
-muon cuts gives a preliminary extended-fiducial cross section in which
+muon cuts gives a preliminary extended-fiducial central value, without a covariance, in which
 detector-supported and prior-dominated regions are reported separately.  A
 full-event point-cloud classifier could replace the scalar learner while
-preserving the two-step pairing; it remains method development because the
+preserving the two-step pairing; it remains diagnostic and method development because the
 nominal/statistical pairing was declined, coverage has not been demonstrated,
 and no point-cloud uncertainty product is adopted.  Both extensions are
 documented in the companion analysis note.
