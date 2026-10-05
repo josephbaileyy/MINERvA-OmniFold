@@ -25,7 +25,7 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "lost-seed recovery: Phase A determinism array 59397841 submitted; joint result unrecorded pending the reviewed comparer AGREE",
+ "phase": "joint result RECORDED (RECORD-20261005-s5p-joint-5d-inference-result.md); lost-seed recovery Phase A running; Stage-7 deliverables next",
  "phase_detail": "amendment 7 (production admission) FROZEN after the confirmation review and a mechanical re-check; V frozen (194 all-band pilot experiments, sha256 35979ef7...); pre-freeze residuals in null-T units and development power committed before any observed statistic; budget revision 5 (production 200 CPU node-h); production lanes: power first, then the five calibration lanes",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
@@ -569,6 +569,10 @@
   {
    "utc": "2026-10-05T23:37Z",
    "what": "RECOVERY PHASE A SUBMITTED (PROCEDURE section 3): meter dry-run then submit from deploy 51648245, stage verification_repair, 'admitted: reserve 4.0000 cpu node-h; stage after 4.000'; JOB 59397841 (sbatch --array=0-15%16 --time=120 -C cpu --cpus-per-task=32 --mem=56G, table rec-determinism-part1.tsv, output $NS/recovery/logs, tasks $NS/recovery/tasks) at 2026-10-05T23:37:11Z. The criterion is fixed in PROCEDURE section 3 (non-meta arrays bitwise; meta equal minus exactly slurm_job, seconds_unfold, refinement.seconds; rerun slurm_job a task id of this array and different from the original's; distinct files). On FAIL, recovery stops and returns to the owner."
+  },
+  {
+   "utc": "2026-10-05T23:52Z",
+   "what": "JOINT RESULT RECORDED (RECORD-20261005-s5p-joint-5d-inference-result.md) under DECISION-20261005 section 1 after the recompute lane's reviewed comparer extension returned AGREE: 1379/1379 rows, 0 discrepancies, 0 not located, 0 unresolved (reviewed code 02df81e6, REVIEW-20261005-s5p-recompute-comparer-extension.md APPROVE, nothing at MEDIUM or above; caveat disclosed by that review: its full test suite did not finish under load; compare.json 97e1666a re-read by the campaign on branch s5p-parallel-recompute-20260928 tip 466b427b: verdict AGREE). Result: all ten H0(G) tests rejected at familywise 0.05 (Holm with determinacy), all ruled robust to the sub-fine residual (kappa = 3 replace), every null stopped with 'rule met for both tests'; stated with the six amendment-7 conditions verbatim; missing-seed status 'can change', not certified, its report-only resolution in progress (DECISION section 2; Phase A 59397841). Not a measurement; publication NOT READY."
   }
  ],
  "findings": [
