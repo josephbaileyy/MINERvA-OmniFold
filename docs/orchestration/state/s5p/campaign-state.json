@@ -25,7 +25,7 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "owner decisions 2026-10-05: comparer extension + review before recording; report-only lost-seed recovery (procedure, determinism check and review pending)",
+ "phase": "lost-seed recovery: Phase 0 PASS; Phase A (determinism) next; joint result unrecorded pending the reviewed comparer AGREE",
  "phase_detail": "amendment 7 (production admission) FROZEN after the confirmation review and a mechanical re-check; V frozen (194 all-band pilot experiments, sha256 35979ef7...); pre-freeze residuals in null-T units and development power committed before any observed statistic; budget revision 5 (production 200 CPU node-h); production lanes: power first, then the five calibration lanes",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
@@ -561,6 +561,10 @@
   {
    "utc": "2026-10-05T23:25Z",
    "what": "RECOVERY PROCEDURE: delta verification of revision 4 (61cad10d) by the review-3 reviewer: READY WITH CHANGES - all nine review-3 findings resolved (empty-manifest checks measured equal on the real joint-evaluate.json and robust-labels.json layouts); one new should-fix N1 (a unit-control path one level too shallow, passing only alongside the world module) and notes N2 (--robust-labels optional; no evaluate_sha256 check), N3 (no activation check), N4 (stopping world stops at the maximum, coverage only). REVISION 5 applies N1-N3 (PROCEDURE end of section 10); each test module passes standalone with PYTHONPATH unset (28 + 13 = 41). The procedure's review condition (section 7) is met: reviews 1-3 and the delta verification, all findings resolved and recorded. Next: Phase 0 on the cluster (no submission)."
+  },
+  {
+   "utc": "2026-10-05T23:34Z",
+   "what": "RECOVERY PHASE 0 PASS (PROCEDURE section 2; deploy $NS/deploy/51648245 = 5164824563927155ba842c2d2403a96b6c41a5d4, a new clean clone; login31, 2026-10-05T23:28-23:34Z; no submission). Steps 1-4: HEAD and clean tree; the nd-unfolding diff vs 4f5a613f printed exactly the three report/requeue tools; the --quiet diff of ratios, prod/tables, 2d-unfolding/unfold_2d_omnifold_unbinned.py, setup_salloc_env.sh, s5c/contract.json, stage1_inspect.json rc 0; design 404446eb, V 35979ef7, budget be29f2c3 = the ledger's last budget record, seed-states 6823e701; REF = runs/prod/status/MnvTune_v1-B0.json (2026-09-28 16:11Z) and find -L bank+detector (-newer -o -cnewer REF) printed nothing; recovery dirs absent and not under runs/prod; logs/tasks created; environment Python 3.11.14, numpy 1.26.4, scipy 1.16.3; tables regenerated from the canonical seed-states byte-identical (12 determinism + 14 recovery .tsv), manifest seeds equal, sha 6823e701. (A first run with set -u aborted at the conda activation, as the memory note warns; those steps were rerun without it.) Step 5 self-validation on the real frozen products: frozen-s with an empty manifest rc 0 - every variant's p/k/B/interval/median/sd, robust variants, T_obs, power claim_rule and claim_rule_determined reproduced exactly, and decisions, decisions_robust_kappa, labels and decisions_kappa3_replace equal the frozen ones (sha256 933d4e93...); stopping on the frozen design rc 0 - all 37 frozen looks reproduced (k, B, per-test and overall stop, min, thresholds), earliest stops = the frozen final looks (sha256 14b858cd...). Copies in state/s5p/recovery/phase0/. Next: Phase A determinism array (16 tasks, verification_repair, reservation 4.0 node-h)."
   }
  ],
  "findings": [
