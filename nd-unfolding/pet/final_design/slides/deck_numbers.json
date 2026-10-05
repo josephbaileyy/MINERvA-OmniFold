@@ -1,6 +1,7 @@
 {
  "schema": "pet-final-design-deck-numbers/1",
  "generator": "slides/make_final_deck.py",
+ "deck": "full",
  "root": "nd-unfolding/pet/final_design",
  "main_slides": 20,
  "sources": {
@@ -258,24 +259,6 @@
    ]
   },
   {
-   "id": "aus_mv_carry|truth4|k10",
-   "op": "field",
-   "fmt": "int",
-   "value": 11,
-   "rendered": "11",
-   "inputs": [
-    {
-     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
-     "path": [
-      "decision",
-      "carry|truth4|k10",
-      "aussie",
-      "moves_away"
-     ]
-    }
-   ]
-  },
-  {
    "id": "aus_mv_carry|truth4|k3",
    "op": "field",
    "fmt": "int",
@@ -294,17 +277,35 @@
    ]
   },
   {
-   "id": "aus_mv_carry|truth4|kF0",
+   "id": "aus_mv_efficiency_corrected|truth4_species|k3",
    "op": "field",
    "fmt": "int",
-   "value": 11,
-   "rendered": "11",
+   "value": 7,
+   "rendered": "7",
    "inputs": [
     {
      "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
      "path": [
       "decision",
-      "carry|truth4|kF0",
+      "efficiency_corrected|truth4_species|k3",
+      "aussie",
+      "moves_away"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "aus_mv_efficiency_corrected|truth4|k3",
+   "op": "field",
+   "fmt": "int",
+   "value": 14,
+   "rendered": "14",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "efficiency_corrected|truth4|k3",
       "aussie",
       "moves_away"
      ]
@@ -330,24 +331,6 @@
    ]
   },
   {
-   "id": "aus_worst_carry|truth4|k10",
-   "op": "field",
-   "fmt": "+3",
-   "value": -1.0768151518159221,
-   "rendered": "\\ensuremath{-}1.077",
-   "inputs": [
-    {
-     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
-     "path": [
-      "decision",
-      "carry|truth4|k10",
-      "aussie",
-      "worst_case_mean_R"
-     ]
-    }
-   ]
-  },
-  {
    "id": "aus_worst_carry|truth4|k3",
    "op": "field",
    "fmt": "+3",
@@ -366,17 +349,35 @@
    ]
   },
   {
-   "id": "aus_worst_carry|truth4|kF0",
+   "id": "aus_worst_efficiency_corrected|truth4_species|k3",
    "op": "field",
    "fmt": "+3",
-   "value": -1.0768151518159221,
-   "rendered": "\\ensuremath{-}1.077",
+   "value": -0.7346661903974878,
+   "rendered": "\\ensuremath{-}0.735",
    "inputs": [
     {
      "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
      "path": [
       "decision",
-      "carry|truth4|kF0",
+      "efficiency_corrected|truth4_species|k3",
+      "aussie",
+      "worst_case_mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "aus_worst_efficiency_corrected|truth4|k3",
+   "op": "field",
+   "fmt": "+3",
+   "value": -3.876245588236768,
+   "rendered": "\\ensuremath{-}3.876",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "efficiency_corrected|truth4|k3",
       "aussie",
       "worst_case_mean_R"
      ]
@@ -2432,24 +2433,6 @@
    ]
   },
   {
-   "id": "of_mv_carry|truth4|k10",
-   "op": "field",
-   "fmt": "int",
-   "value": 6,
-   "rendered": "6",
-   "inputs": [
-    {
-     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
-     "path": [
-      "decision",
-      "carry|truth4|k10",
-      "omnifold",
-      "moves_away"
-     ]
-    }
-   ]
-  },
-  {
    "id": "of_mv_carry|truth4|k3",
    "op": "field",
    "fmt": "int",
@@ -2468,7 +2451,7 @@
    ]
   },
   {
-   "id": "of_mv_carry|truth4|kF0",
+   "id": "of_mv_efficiency_corrected|truth4_species|k3",
    "op": "field",
    "fmt": "int",
    "value": 6,
@@ -2478,7 +2461,25 @@
      "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
      "path": [
       "decision",
-      "carry|truth4|kF0",
+      "efficiency_corrected|truth4_species|k3",
+      "omnifold",
+      "moves_away"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "of_mv_efficiency_corrected|truth4|k3",
+   "op": "field",
+   "fmt": "int",
+   "value": 6,
+   "rendered": "6",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "efficiency_corrected|truth4|k3",
       "omnifold",
       "moves_away"
      ]
@@ -2504,24 +2505,6 @@
    ]
   },
   {
-   "id": "of_worst_carry|truth4|k10",
-   "op": "field",
-   "fmt": "+3",
-   "value": -0.24643459666362474,
-   "rendered": "\\ensuremath{-}0.246",
-   "inputs": [
-    {
-     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
-     "path": [
-      "decision",
-      "carry|truth4|k10",
-      "omnifold",
-      "worst_case_mean_R"
-     ]
-    }
-   ]
-  },
-  {
    "id": "of_worst_carry|truth4|k3",
    "op": "field",
    "fmt": "+3",
@@ -2540,17 +2523,35 @@
    ]
   },
   {
-   "id": "of_worst_carry|truth4|kF0",
+   "id": "of_worst_efficiency_corrected|truth4_species|k3",
    "op": "field",
    "fmt": "+3",
-   "value": -0.24643459666362474,
-   "rendered": "\\ensuremath{-}0.246",
+   "value": -0.3521295629514405,
+   "rendered": "\\ensuremath{-}0.352",
    "inputs": [
     {
      "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
      "path": [
       "decision",
-      "carry|truth4|kF0",
+      "efficiency_corrected|truth4_species|k3",
+      "omnifold",
+      "worst_case_mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "of_worst_efficiency_corrected|truth4|k3",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.39173706979712836,
+   "rendered": "\\ensuremath{-}0.392",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "efficiency_corrected|truth4|k3",
       "omnifold",
       "worst_case_mean_R"
      ]

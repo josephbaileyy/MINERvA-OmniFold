@@ -12,12 +12,14 @@ STUDY = HERE.parent
 sys.path.insert(0, str(STUDY.parent / "improvement_campaign" / "slides"))
 import make_campaign_deck as base  # noqa: E402
 
-RECORD = HERE / "deck_numbers.json"
+RECORDS = [HERE / "deck_numbers.json", HERE / "summary_deck_numbers.json"]   # full deck, summary deck
 
 
-@pytest.mark.skipif(not RECORD.exists(), reason="deck not generated")
-def test_every_number_recomputes_from_its_source():
-    rec = json.loads(RECORD.read_text())
+@pytest.mark.parametrize("record", RECORDS, ids=lambda p: p.name)
+def test_every_number_recomputes_from_its_source(record):
+    if not record.exists():
+        pytest.skip("deck not generated")
+    rec = json.loads(record.read_text())
     entries = {e["id"]: e for e in rec["numbers"]}
     docs: dict = {}
 
@@ -35,9 +37,11 @@ def test_every_number_recomputes_from_its_source():
         assert base.render(v, e["fmt"]) == e["rendered"], e["id"]
 
 
-@pytest.mark.skipif(not RECORD.exists(), reason="deck not generated")
-def test_sources_unchanged_since_generation():
+@pytest.mark.parametrize("record", RECORDS, ids=lambda p: p.name)
+def test_sources_unchanged_since_generation(record):
     import hashlib
-    rec = json.loads(RECORD.read_text())
+    if not record.exists():
+        pytest.skip("deck not generated")
+    rec = json.loads(record.read_text())
     for rel, sha in rec["sources"].items():
         assert hashlib.sha256((STUDY / rel).read_bytes()).hexdigest() == sha, rel

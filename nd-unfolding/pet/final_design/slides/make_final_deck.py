@@ -150,7 +150,7 @@ def s_names(d: Deck) -> None:
     body = table(["name part", "meaning"], rows, "l" + RAG + r"p{0.80\linewidth}", r"\scriptsize") + (
         r"\par\vspace{0.1cm}\scriptsize Names compose: H2S1T24 = H2 + S1 + T24. Step 1 reweights simulation to match "
         r"(pseudo)data at detector level; step 2 turns those weights into truth-level weights; one pass is one iteration.")
-    d.frame("Design names, decoded", body, ["DEVELOPMENT-20260926.md", "PROTOCOL-20260925.md (5)"])
+    d.frame("Design names", body, ["DEVELOPMENT-20260926.md", "PROTOCOL-20260925.md (5)"])
 
 
 def s_reading(d: Deck) -> None:
@@ -169,6 +169,23 @@ def s_reading(d: Deck) -> None:
   independent replicates?
 \end{itemize}"""
     d.frame("How the numbers are measured", body, ["PROTOCOL-20260925.md (3, 4, 6, 9)"])
+
+
+def s_rules(d: Deck) -> None:
+    body = r"""\small\begin{enumerate}
+\item \textbf{Eligibility first.} A design must pass every rule at its own frozen settings:
+  \begin{itemize}\item[--] \emph{accuracy}: recovery floors on the energy tilt, its opposite, the regions, proton
+  topology and energy $\times\,q_3$, at a simultaneous 95\,\% lower bound;
+  \item[--] \emph{robustness}: across a 21-case library it rarely moves away from the truth;
+  \item[--] \emph{stability}: no extreme weights, and a repeat run with new seeds agrees to within 0.05;
+  \item[--] \emph{calibration}: its uncertainty intervals cover the truth at their nominal rate.\end{itemize}
+\item \textbf{Then choose.} The smaller network wins only if it is as accurate (within 0.02) and at least twice
+  as cheap; otherwise the stronger, larger design.
+\item \textbf{No eligible design means no winner} --- and no default.
+\end{enumerate}
+\vspace{0.1cm}\footnotesize Every threshold, finalist and sample size was frozen before any final-bank result
+was seen."""
+    d.frame("Decision rules (frozen in advance)", body, ["PROTOCOL-20260925.md (6, 10)"])
 
 
 def s_references(d: Deck, n: Numbers) -> None:
@@ -418,20 +435,46 @@ def s_finalists(d: Deck, n: Numbers) -> None:
 
 def s_aussie(d: Deck, n: Numbers) -> None:
     dec = d.n.src.load(AUS)["decision"]
+    rule = {"carry": "misses carried", "efficiency_corrected": "efficiency-corrected"}
     rows = []
-    for key in list(dec)[:4]:
-        a, o = dec[key]["aussie"], dec[key]["omnifold"]
-        rows.append([base.esc(dec[key]["pair"]),
+    for key in [k for k in dec if k.endswith("|k3")]:
+        r = dec[key]
+        lam = "1000" if key.startswith("carry") else "0"
+        label = (r"$\lambda{=}" + lam + r"$, " + rule[key.split("|")[0]] + ", "
+                 + ("kinematics + species" if "species" in r["truth_set"] else "kinematics"))
+        rows.append([label,
                      n.f(f"aus_mv_{key}", AUS, ["decision", key, "aussie", "moves_away"], "int"),
                      n.f(f"of_mv_{key}", AUS, ["decision", key, "omnifold", "moves_away"], "int"),
                      n.f(f"aus_worst_{key}", AUS, ["decision", key, "aussie", "worst_case_mean_R"], "+3"),
                      n.f(f"of_worst_{key}", AUS, ["decision", key, "omnifold", "worst_case_mean_R"], "+3")])
-    body = table(["matched pair", "AUSSIE moves-away", "OmniFold", "AUSSIE worst $R$", "OmniFold"],
+    body = table(["AUSSIE setting vs OmniFold $k{=}3$", "moves-away: AUSSIE", "OmniFold", "worst $R$: AUSSIE", "OmniFold"],
                  rows, "lrrrr", r"\scriptsize") + (
-        r"\par\vspace{0.2cm}\small Bounded matched stress test (same inputs, miss handling, data and tuning "
-        r"opportunity): AUSSIE loses on robustness and stability; it does not advance to a PET backbone.")
+        r"\par\vspace{0.2cm}\small Bounded matched stress test (same scalar inputs, miss handling, data and tuning "
+        r"opportunity); truth kinematics $= (E_\mathrm{avail}, p_T, p_\parallel, q_3)$. 12 comparisons: 2 miss rules "
+        r"$\times$ 2 truth-input sets $\times$ 3 OmniFold operating points (shown: $k{=}3$). AUSSIE wins none of the 12 "
+        r"on robustness or stability, so it does not advance to a PET backbone.")
     d.frame("Algorithmic alternative: AUSSIE (scalar, matched)", body,
             [AUS, "scalar/SCALAR_AUSSIE_MATCHED-20260925.md"])
+
+
+def s_finalists(d: Deck, n: Numbers) -> None:
+    cs = n.f("cost_H2S1T24", COST, ["candidates", "H2S1T24", "median"], "2")
+    cl = n.f("cost_L128S1T24", COST, ["candidates", "L128S1T24", "median"], "2")
+    nf = n.f("n_F", SZF, ["n_F"], "int")
+    ne0 = n.f("n_E0_ni", SZF, ["contrasts", "6.5 E0 (H2S1T24 - L128S1T24)", "n_for_power"], "int")
+    nl = n.f("n_lib", SZL, ["n_F"], "int")
+    body = (r"\small\begin{itemize}"
+            r"\item Compact \textbf{H2S1T24} ($K{=}5$) and large \textbf{L128S1T24} ($K{=}4$): detector reco "
+            r"summaries, categorical truth PDG, constant rate, 24-epoch truth step; step-1 PET 47\,k vs 0.97\,M "
+            r"parameters. Anchors CTL and C at $k{=}3$."
+            r"\item Cost per unfolding (charged A100-h, declared packing): " + cs + r" (compact) vs " + cl +
+            r" (large): the smaller network is not cheaper, so the cost-based preference cannot apply."
+            r"\item Independent sizing: $n_F = " + nf + r"$ (capped; $E_0$ non-inferiority between the finalists "
+            r"would need " + ne0 + r" draws --- a quantified limit); D4c/D3 draws " + nl + r"."
+            r"\item Final bank: FINAL, 21-case library and coverage run blinded until the UNBLIND amendment."
+            r"\end{itemize}")
+    d.frame("Frozen finalists and final-stage design", body, [COST, SZF, SZL, "PROTOCOL-20260925.md (3c--3f)"])
+    d.claim("Finalists, cost and sizing", ["cost_H2S1T24", "cost_L128S1T24", "n_F", "n_E0_ni", "n_lib"])
 
 
 def _status(e: dict) -> str:
@@ -645,12 +688,16 @@ PREAMBLE = base.PREAMBLE.replace(r"\usepackage{booktabs}", r"\usepackage{booktab
 RAG = r">{\raggedright\arraybackslash}"
 
 
-def build(out: Path, make_pdf: bool) -> dict[str, Any]:
-    out.mkdir(parents=True, exist_ok=True)
-    (out / FIG_DIR).mkdir(exist_ok=True)
-    src = Sources(STUDY)
-    n = Numbers(src)
-    d = Deck(n)
+FULL = "full"
+BEN = "ben"
+DECKS = {FULL: {"tex": TEX_NAME, "numbers": "deck_numbers.json", "claims": "CLAIM_INDEX-deck.md",
+                "subtitle": "Study deck (generated from committed results)"},
+         BEN: {"tex": "pet_final_design_summary_deck.tex", "numbers": "summary_deck_numbers.json",
+               "claims": "CLAIM_INDEX-summary-deck.md",
+               "subtitle": "Summary (generated from committed results)"}}
+
+
+def _slides_full(d: Deck, n: Numbers, out: Path) -> None:
     s_title(d)
     s_summary(d, n)
     s_side_by_side(d, n)
@@ -671,28 +718,53 @@ def build(out: Path, make_pdf: bool) -> dict[str, Any]:
     s_architectures(d, n)
     s_references(d, n)
     s_cannot(d)
+
+
+def _slides_summary(d: Deck, n: Numbers, out: Path) -> None:
+    """The short deck for a reader who knows Gregor's work but not this study."""
+    s_title(d)
+    s_summary(d, n)
+    s_reading(d)
+    s_names(d)
+    s_rules(d)
+    s_architectures(d, n)
+    s_side_by_side(d, n)
+    s_coverage(d, n)
+    s_references(d, n)
+    d.appendix()
+    s_aussie(d, n)
+
+
+def build(out: Path, make_pdf: bool, deck: str = FULL) -> dict[str, Any]:
+    cfg = DECKS[deck]
+    out.mkdir(parents=True, exist_ok=True)
+    (out / FIG_DIR).mkdir(exist_ok=True)
+    src = Sources(STUDY)
+    n = Numbers(src)
+    d = Deck(n)
+    (_slides_full if deck == FULL else _slides_summary)(d, n, out)
     title = (r"\title{PET final-design selection study}" "\n"
-             r"\subtitle{Study deck (generated from committed results)}" "\n"
+             r"\subtitle{" + cfg["subtitle"] + "}\n"
              r"\author{PET final-design study}" "\n"
              r"\date{\parbox{0.8\linewidth}{\centering\small " + SCOPE + r"}}" "\n")
     tex = PREAMBLE + title + "\n\\begin{document}\n\n" + "\n".join(d.frames) + "\n\\end{document}\n"
-    (out / TEX_NAME).write_text(tex)
+    (out / cfg["tex"]).write_text(tex)
     record = {"schema": "pet-final-design-deck-numbers/1", "generator": "slides/make_final_deck.py",
-              "root": "nd-unfolding/pet/final_design", "main_slides": d.main_count,
+              "deck": deck, "root": "nd-unfolding/pet/final_design", "main_slides": d.main_count,
               "sources": {rel: src.sha[rel] for rel in sorted(src.sha)},
               "numbers": [n.entries[k] for k in sorted(n.entries)]}
-    (out / "deck_numbers.json").write_text(json.dumps(record, indent=1) + "\n")
-    lines = ["# Claim index — PET final-design study deck", "",
-             "Generated by `make_final_deck.py` with the TeX and `deck_numbers.json`; do not edit by hand.",
+    (out / cfg["numbers"]).write_text(json.dumps(record, indent=1) + "\n")
+    lines = [f"# Claim index — PET final-design study {'deck' if deck == FULL else 'summary deck'}", "",
+             f"Generated by `make_final_deck.py` with the TeX and `{cfg['numbers']}`; do not edit by hand.",
              "Paths relative to `nd-unfolding/pet/final_design/`.", "", f"**Scope.** {SCOPE}", "",
              "| slide | claim | number id = rendered |", "|---:|---|---|"]
     for c in d.claims:
         for j, nid in enumerate(c["ids"]):
             r = n.entries[nid]["rendered"].replace(r"\ensuremath{-}", "−")
             lines.append(f"| {c['slide'] if j == 0 else ''} | {c['text'] if j == 0 else ''} | `{nid}` = {r} |")
-    (out / "CLAIM_INDEX-deck.md").write_text("\n".join(lines) + "\n")
+    (out / cfg["claims"]).write_text("\n".join(lines) + "\n")
     if make_pdf:
-        base.TEX_NAME = TEX_NAME
+        base.TEX_NAME = cfg["tex"]
         base.compile_pdf(out)
     return record
 
@@ -701,9 +773,11 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out-dir", type=Path, default=HERE)
     ap.add_argument("--no-pdf", action="store_true")
+    ap.add_argument("--deck", choices=(FULL, BEN, "both"), default="both")
     a = ap.parse_args()
-    rec = build(a.out_dir.resolve(), not a.no_pdf)
-    print(f"main slides: {rec['main_slides']}; numbers: {len(rec['numbers'])}")
+    for deck in ((FULL, BEN) if a.deck == "both" else (a.deck,)):
+        rec = build(a.out_dir.resolve(), not a.no_pdf, deck)
+        print(f"{deck}: main slides {rec['main_slides']}; numbers {len(rec['numbers'])}")
 
 
 if __name__ == "__main__":

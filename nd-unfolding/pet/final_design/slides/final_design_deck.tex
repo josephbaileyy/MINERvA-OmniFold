@@ -56,7 +56,7 @@ Interval calibration (coverage) & fails (C1, C4) & not tested (ineligible on B2)
 \end{frame}
 
 \gdef\evidencetext{\texttt{DEVELOPMENT-20260926.md}; \texttt{PROTOCOL-20260925.md (5)}}
-\begin{frame}{Design names, decoded}
+\begin{frame}{Design names}
 {\scriptsize
 \begin{tabular}{l>{\raggedright\arraybackslash}p{0.80\linewidth}}
 \toprule
@@ -209,14 +209,14 @@ P2scrS1 & --- & --- & --- & --- \\
 {\scriptsize
 \begin{tabular}{lrrrr}
 \toprule
-matched pair & AUSSIE moves-away & OmniFold & AUSSIE worst $R$ & OmniFold \\
+AUSSIE setting vs OmniFold $k{=}3$ & moves-away: AUSSIE & OmniFold & worst $R$: AUSSIE & OmniFold \\
 \midrule
-AUSSIE lambda=1000 vs OmniFold carry-misses & 11 & 6 & \ensuremath{-}1.077 & \ensuremath{-}0.217 \\
-AUSSIE lambda=1000 vs OmniFold carry-misses & 11 & 6 & \ensuremath{-}1.077 & \ensuremath{-}0.246 \\
-AUSSIE lambda=1000 vs OmniFold carry-misses & 11 & 6 & \ensuremath{-}1.077 & \ensuremath{-}0.246 \\
-AUSSIE lambda=1000 vs OmniFold carry-misses & 8 & 6 & \ensuremath{-}0.985 & \ensuremath{-}0.230 \\
+$\lambda{=}1000$, misses carried, kinematics & 11 & 6 & \ensuremath{-}1.077 & \ensuremath{-}0.217 \\
+$\lambda{=}1000$, misses carried, kinematics + species & 8 & 6 & \ensuremath{-}0.985 & \ensuremath{-}0.230 \\
+$\lambda{=}0$, efficiency-corrected, kinematics & 14 & 6 & \ensuremath{-}3.876 & \ensuremath{-}0.392 \\
+$\lambda{=}0$, efficiency-corrected, kinematics + species & 7 & 6 & \ensuremath{-}0.735 & \ensuremath{-}0.352 \\
 \bottomrule
-\end{tabular}}\par\vspace{0.2cm}\small Bounded matched stress test (same inputs, miss handling, data and tuning opportunity): AUSSIE loses on robustness and stability; it does not advance to a PET backbone.
+\end{tabular}}\par\vspace{0.2cm}\small Bounded matched stress test (same scalar inputs, miss handling, data and tuning opportunity); truth kinematics $= (E_\mathrm{avail}, p_T, p_\parallel, q_3)$. 12 comparisons: 2 miss rules $\times$ 2 truth-input sets $\times$ 3 OmniFold operating points (shown: $k{=}3$). AUSSIE wins none of the 12 on robustness or stability, so it does not advance to a PET backbone.
 \end{frame}
 
 \gdef\evidencetext{\texttt{resources/cost\_t24-20260927.json}; \texttt{sizing/sizing\_final-20260927.json}; \texttt{sizing/sizing\_library-20260927.json}; \texttt{PROTOCOL-20260925.md (3c--3f)}}

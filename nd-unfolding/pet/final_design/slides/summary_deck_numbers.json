@@ -1,0 +1,1331 @@
+{
+ "schema": "pet-final-design-deck-numbers/1",
+ "generator": "slides/make_final_deck.py",
+ "deck": "ben",
+ "root": "nd-unfolding/pet/final_design",
+ "main_slides": 8,
+ "sources": {
+  "../configuration_comparison/campaign_report.json": "96955a10222b6c95c13a5db0e48c9af96717371045398a837b996ba3d17625c2",
+  "dev/SCREENS-20260927-3d.json": "79e676ef1d7a155ae3decbc1352546955eacaf712cbe57d116a1b58e4a185b27",
+  "resources/cost_fb_look1-20260930.json": "09176ccda999ae1074aeec3207304b85c4f53c0065e5335e037d479b4f53fec7",
+  "results/final/coverage_dev/coverage_H2S1T24K5.json": "1dda413c1512167405c2710ae485bdc3bd2da09f2dcc1fbd60d532b4bac21db5",
+  "results/final/coverage_dev/decision_final.json": "2b0c2c398a0edd749494f86dda2be5d9a45c156487764d93f7a099e39e7a2700",
+  "results/final/decision_look1.json": "b82b3733384625fafcc0edd08b1f2e866d7a9518d3fcb11f74e0ad9796fac55e",
+  "results/final/population_look1.json": "ce3af8591d9e58798e5ac02012a895e56e12c15790cd9197c15d9fac35b7447d",
+  "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json": "e15cc652f94d35256236bb3d793ff77cc832f98725e6e20b9acc9bf69013385d"
+ },
+ "numbers": [
+  {
+   "id": "arch_CS1_n2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.05419101230097023,
+   "rendered": "0.054",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "CS1",
+      "S-N2_at_Kstar",
+      "sd"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_H1_S-U4",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.02288878515600018,
+   "rendered": "0.023",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "H1",
+      "rows",
+      4,
+      "values",
+      "S-U4",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_H2S1E16_n2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.07382826854669394,
+   "rendered": "0.074",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "H2S1E16",
+      "S-N2_at_Kstar",
+      "sd"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_H2S1_n2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.09455025089147878,
+   "rendered": "0.095",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "H2S1",
+      "S-N2_at_Kstar",
+      "sd"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_L128S1E16_n2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.07079336976896868,
+   "rendered": "0.071",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "L128S1E16",
+      "S-N2_at_Kstar",
+      "sd"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_L128S1_n2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.09128353729306894,
+   "rendered": "0.091",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "L128S1",
+      "S-N2_at_Kstar",
+      "sd"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_L64S1_n2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.057479033730327436,
+   "rendered": "0.057",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "L64S1",
+      "S-N2_at_Kstar",
+      "sd"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_P2preA1_S-U4",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.2245235909065209,
+   "rendered": "0.225",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "P2preA1",
+      "rows",
+      3,
+      "values",
+      "S-U4",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_P2scrA1_S-U4",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.0598789253505389,
+   "rendered": "0.060",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "P2scrA1",
+      "rows",
+      3,
+      "values",
+      "S-U4",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "arch_P2scrS1_S-U4",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.10986306931899603,
+   "rendered": "0.110",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "P2scrS1",
+      "rows",
+      3,
+      "values",
+      "S-U4",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "aus_mv_carry|truth4_species|k3",
+   "op": "field",
+   "fmt": "int",
+   "value": 8,
+   "rendered": "8",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "carry|truth4_species|k3",
+      "aussie",
+      "moves_away"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "aus_mv_carry|truth4|k3",
+   "op": "field",
+   "fmt": "int",
+   "value": 11,
+   "rendered": "11",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "carry|truth4|k3",
+      "aussie",
+      "moves_away"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "aus_mv_efficiency_corrected|truth4_species|k3",
+   "op": "field",
+   "fmt": "int",
+   "value": 7,
+   "rendered": "7",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "efficiency_corrected|truth4_species|k3",
+      "aussie",
+      "moves_away"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "aus_mv_efficiency_corrected|truth4|k3",
+   "op": "field",
+   "fmt": "int",
+   "value": 14,
+   "rendered": "14",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "efficiency_corrected|truth4|k3",
+      "aussie",
+      "moves_away"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "aus_worst_carry|truth4_species|k3",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.9846568151807688,
+   "rendered": "\\ensuremath{-}0.985",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "carry|truth4_species|k3",
+      "aussie",
+      "worst_case_mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "aus_worst_carry|truth4|k3",
+   "op": "field",
+   "fmt": "+3",
+   "value": -1.0768151518159221,
+   "rendered": "\\ensuremath{-}1.077",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "carry|truth4|k3",
+      "aussie",
+      "worst_case_mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "aus_worst_efficiency_corrected|truth4_species|k3",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.7346661903974878,
+   "rendered": "\\ensuremath{-}0.735",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "efficiency_corrected|truth4_species|k3",
+      "aussie",
+      "worst_case_mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "aus_worst_efficiency_corrected|truth4|k3",
+   "op": "field",
+   "fmt": "+3",
+   "value": -3.876245588236768,
+   "rendered": "\\ensuremath{-}3.876",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "efficiency_corrected|truth4|k3",
+      "aussie",
+      "worst_case_mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cov_C1_0_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.9797619047619047,
+   "rendered": "0.980",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "rules",
+      "C1",
+      "parts",
+      0,
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cov_C1_1_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.9904761904761905,
+   "rendered": "0.990",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "rules",
+      "C1",
+      "parts",
+      1,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cov_C1_2_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8583333333333333,
+   "rendered": "0.858",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "rules",
+      "C1",
+      "parts",
+      2,
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cov_C1_3_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8964285714285715,
+   "rendered": "0.896",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "rules",
+      "C1",
+      "parts",
+      3,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cov_C3_0_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.9488095238095238,
+   "rendered": "0.949",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "rules",
+      "C3",
+      "parts",
+      0,
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cov_C3_1_lb",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.9928571428571429,
+   "rendered": "0.993",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "rules",
+      "C3",
+      "parts",
+      1,
+      "lb"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cov_C4_ratio_max",
+   "op": "ratio",
+   "fmt": "2",
+   "value": 1.7158253831231078,
+   "rendered": "1.72",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "rules",
+      "C4",
+      "parts",
+      2,
+      "estimate"
+     ]
+    },
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "rules",
+      "C4",
+      "parts",
+      2,
+      "threshold"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cov_C4_ratio_min",
+   "op": "ratio",
+   "fmt": "2",
+   "value": 1.323437280090818,
+   "rendered": "1.32",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "rules",
+      "C4",
+      "parts",
+      4,
+      "estimate"
+     ]
+    },
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "rules",
+      "C4",
+      "parts",
+      4,
+      "threshold"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cov_low_68",
+   "op": "field",
+   "fmt": "2",
+   "value": 0.2571428571428571,
+   "rendered": "0.26",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "regions",
+      "low_acceptance",
+      "levels",
+      "0.68",
+      "pooled",
+      "point"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cov_low_95",
+   "op": "field",
+   "fmt": "2",
+   "value": 0.7892857142857143,
+   "rendered": "0.79",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "regions",
+      "low_acceptance",
+      "levels",
+      "0.95",
+      "pooled",
+      "point"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "of_mv_carry|truth4_species|k3",
+   "op": "field",
+   "fmt": "int",
+   "value": 6,
+   "rendered": "6",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "carry|truth4_species|k3",
+      "omnifold",
+      "moves_away"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "of_mv_carry|truth4|k3",
+   "op": "field",
+   "fmt": "int",
+   "value": 6,
+   "rendered": "6",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "carry|truth4|k3",
+      "omnifold",
+      "moves_away"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "of_mv_efficiency_corrected|truth4_species|k3",
+   "op": "field",
+   "fmt": "int",
+   "value": 6,
+   "rendered": "6",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "efficiency_corrected|truth4_species|k3",
+      "omnifold",
+      "moves_away"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "of_mv_efficiency_corrected|truth4|k3",
+   "op": "field",
+   "fmt": "int",
+   "value": 6,
+   "rendered": "6",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "efficiency_corrected|truth4|k3",
+      "omnifold",
+      "moves_away"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "of_worst_carry|truth4_species|k3",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.2299521767675515,
+   "rendered": "\\ensuremath{-}0.230",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "carry|truth4_species|k3",
+      "omnifold",
+      "worst_case_mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "of_worst_carry|truth4|k3",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.21681387665823296,
+   "rendered": "\\ensuremath{-}0.217",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "carry|truth4|k3",
+      "omnifold",
+      "worst_case_mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "of_worst_efficiency_corrected|truth4_species|k3",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.3521295629514405,
+   "rendered": "\\ensuremath{-}0.352",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "efficiency_corrected|truth4_species|k3",
+      "omnifold",
+      "worst_case_mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "of_worst_efficiency_corrected|truth4|k3",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.39173706979712836,
+   "rendered": "\\ensuremath{-}0.392",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "decision",
+      "efficiency_corrected|truth4|k3",
+      "omnifold",
+      "worst_case_mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_b_dev_k3",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.47433074843445927,
+   "rendered": "0.474",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "B",
+      "rows",
+      1,
+      "values",
+      "S-U1",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_c_e0",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5598026850163459,
+   "rendered": "0.560",
+   "inputs": [
+    {
+     "file": "results/final/population_look1.json",
+     "path": [
+      "candidates",
+      "CrefK3",
+      "S4F:D1_p0.350",
+      "eavail",
+      "R",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_ctl_e0",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.3061490745070573,
+   "rendered": "0.306",
+   "inputs": [
+    {
+     "file": "results/final/population_look1.json",
+     "path": [
+      "candidates",
+      "CTLrefK3",
+      "S4F:D1_p0.350",
+      "eavail",
+      "R",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_floor",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5559785254924289,
+   "rendered": "0.556",
+   "inputs": [
+    {
+     "file": "../configuration_comparison/campaign_report.json",
+     "path": [
+      "absolute_adequacy",
+      "floor"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_gbdt_carry_k3",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.41825483176370387,
+   "rendered": "0.418",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "dev",
+      "omnifold|carry|truth4@k3",
+      "mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_gbdt_eff_k3",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.7833219997247297,
+   "rendered": "0.783",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "dev",
+      "omnifold|efficiency_corrected|truth4@k3",
+      "mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_gbdt_p_species",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.38931036202016434,
+   "rendered": "0.389",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "D4c_p_up",
+      "omnifold|efficiency_corrected|truth4_species@k10",
+      "mean_R_joint_p"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_hist_ours",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.30367486660122656,
+   "rendered": "0.304",
+   "inputs": [
+    {
+     "file": "../configuration_comparison/campaign_report.json",
+     "path": [
+      "absolute_adequacy",
+      "arms",
+      "ours",
+      "mean_recovery"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_hist_theirs",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.41652658344946014,
+   "rendered": "0.417",
+   "inputs": [
+    {
+     "file": "../configuration_comparison/campaign_report.json",
+     "path": [
+      "absolute_adequacy",
+      "arms",
+      "theirs",
+      "mean_recovery"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_ibu_eff_d4c",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.3814671951811079,
+   "rendered": "\\ensuremath{-}0.381",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "D4c_p_up",
+      "ibu|efficiency_corrected@k3",
+      "mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ref_ibu_eff_k3",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.9233676731424854,
+   "rendered": "0.923",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "dev",
+      "ibu|efficiency_corrected@k3",
+      "mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_h_N1",
+   "op": "field",
+   "fmt": "1",
+   "value": 90.19629669189453,
+   "rendered": "90.2",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "N1",
+      "parts",
+      3,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_h_N2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.03699817389402531,
+   "rendered": "0.037",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "N2",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_h_U1",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.895063878280764,
+   "rendered": "0.895",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U1",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_h_U4",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.39126905300944664,
+   "rendered": "0.391",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U4",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_h_U5",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.4459280308610259,
+   "rendered": "0.446",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U5",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_h_cost",
+   "op": "field",
+   "fmt": "2",
+   "value": 1.7679193116208263,
+   "rendered": "1.77",
+   "inputs": [
+    {
+     "file": "resources/cost_fb_look1-20260930.json",
+     "path": [
+      "candidates",
+      "H2S1T24",
+      "median"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_l_N1",
+   "op": "field",
+   "fmt": "1",
+   "value": 33.438270568847656,
+   "rendered": "33.4",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "N1",
+      "parts",
+      3,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_l_N2",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.04278892497986912,
+   "rendered": "0.043",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "N2",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_l_U1",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8632304960063774,
+   "rendered": "0.863",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U1",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_l_U4",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.34827126211891524,
+   "rendered": "0.348",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U4",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_l_U5",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.4496915280225853,
+   "rendered": "0.450",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "L128S1T24K4",
+      "verdicts",
+      "U5",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "side_l_cost",
+   "op": "field",
+   "fmt": "2",
+   "value": 1.5170869864339491,
+   "rendered": "1.52",
+   "inputs": [
+    {
+     "file": "resources/cost_fb_look1-20260930.json",
+     "path": [
+      "candidates",
+      "L128S1T24",
+      "median"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_H2S1T24K5_U1_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.895063878280764,
+   "rendered": "0.895",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U1",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_H2S1T24K5_U4_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.39126905300944664,
+   "rendered": "0.391",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U4",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_H2S1T24K5_U5_0_estimate",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.4459280308610259,
+   "rendered": "0.446",
+   "inputs": [
+    {
+     "file": "results/final/decision_look1.json",
+     "path": [
+      "eligibility",
+      "H2S1T24K5",
+      "verdicts",
+      "U5",
+      "parts",
+      0,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_cov68",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8964285714285715,
+   "rendered": "0.896",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "rules",
+      "C1",
+      "parts",
+      3,
+      "estimate"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_cov68_low",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.2571428571428571,
+   "rendered": "0.257",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "regions",
+      "low_acceptance",
+      "levels",
+      "0.68",
+      "pooled",
+      "point"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_gbdt_k10",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.8170625062198216,
+   "rendered": "0.817",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "dev",
+      "omnifold|efficiency_corrected|truth4@k10",
+      "mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_gbdt_k3",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.7833219997247297,
+   "rendered": "0.783",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "dev",
+      "omnifold|efficiency_corrected|truth4@k3",
+      "mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_h2t24_dev",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.9042659915986735,
+   "rendered": "0.904",
+   "inputs": [
+    {
+     "file": "dev/SCREENS-20260927-3d.json",
+     "path": [
+      "designs",
+      "H2S1T24",
+      "dev_tilt_at_Kstar"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_ibu_k3",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.9233676731424854,
+   "rendered": "0.923",
+   "inputs": [
+    {
+     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
+     "path": [
+      "per_case",
+      "dev",
+      "ibu|efficiency_corrected@k3",
+      "mean_R"
+     ]
+    }
+   ]
+  }
+ ]
+}
