@@ -505,6 +505,10 @@
   {
    "utc": "2026-10-05T08:34Z",
    "what": "INDEPENDENT POST-SWITCH VERIFICATION OF TRANSITION R6 (recompute lane, read-only, own commands, 08:32Z): PASS. Exactly one NuWro session leader 1100694 (PPID 1, PGID = PID, cmdline queues-r6 on 756e1d6c; child 1100729 its wait loop); 435867, 669349, 1047840 gone; GiBUU 1047841 alive on queues-r3; r6 log starts 08:30:31Z pinned to 756e1d6c and waiting on b6; r5 log unchanged since 07:25:46Z; no ledger admission after 08:00Z (last jobs 59349568 GiBUU b6, 59358653 NuWro b6), so the switch submitted nothing. Owed at terminal from the ledger: NuWro b7 onward at --array=0-33%14 with the frozen tables. Recorded in its handoff."
+  },
+  {
+   "utc": "2026-10-05T12:11Z",
+   "what": "LOOK: NuWro_21_09 B1351 (2026-10-05T11:57:36Z; total k = 0, p = 1/1352 = 0.00074, interval [0, 0.00443] below every threshold; shape k = 1 (unchanged), p = 2/1352 = 0.001479, interval [0, 0.00606], straddles 0.005 and 0.00556; continue; b7 59367892). First NuWro submission under r6: --throttle 14 in the r6 log; squeue at 12:10Z shows 14 RUNNING and 20 PENDING (JobArrayTaskLimit), so r6 is in effect. NuWro b6 59358653 closed at 3.70 (199 products: B 1152 -> 1351). Meter (from 756e1d6c, rc 0): production charged 213.464 of 234.647 = 40 closed 196.464 + 2 open reservations 17.0 (GiBUU b6, NuWro b7); envelope 286.96 of 376.52; open concurrency 2.0 (GiBUU 2 + NuWro 14). BINDING WATCH: remaining production batches with current k are GiBUU b6, NuWro b7 and b8 = 3; remaining 38.183, so they fit at mean <= 12.7 (recent 3.7-4.1). No flag. Projection (computed: k = 1 needs B >= 1639): NuWro's b7 look at ~1545 continues, its b8 look at ~1740 is expected to meet the rule. GiBUU b6: 17 of 34 completed, 2 running, at throttle 2. NuWro's b8 submission (~15Z) is expected while GiBUU b6 still runs (~20Z), so a NuWro 16 transition is not expected to be needed."
   }
  ],
  "findings": [
