@@ -537,6 +537,10 @@
   {
    "utc": "2026-10-05T21:00Z",
    "what": "OWNER DECISIONS (Joseph, campaign session, answers to two questions; DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md): (1) 'Extend, review, then record (Recommended)': the joint result is recorded only after a comparer mapping extension with its own bounded independent review returns AGREE; the recompute lane was asked to implement it on its branch. (2) 'Recover lost seeds (Recommended)': a report-only rerun of the 277 lost seeds (224 calibration, 53 power) from the verification/repair reserve (estimate 8-12 billed CPU node-h from the measured mean 696 s/seed), recovered products in a separate directory outside the frozen globs, primary decisions unchanged, preconditions: an independently reviewed procedure and a determinism check on ~10 completed seeds with a criterion fixed beforehand; if determinism fails, recovery stops and returns to the owner."
+  },
+  {
+   "utc": "2026-10-05T21:06Z",
+   "what": "OWNER RULINGS for the comparer extension (Joseph, answers in the campaign session; DECISION-20261005 addendum section 4): (A16) 'Rule a clarification (Recommended)': report-only, the descriptive null-T SD is ddof 0 and median_shift_in_null_sd is the shift of medians over it; the comparer checks against that reading; the recompute reports its own reading alongside. Premise checked by the campaign from production's output: residual 0 on 36 of 36 median_shift_in_null_sd leaves. (Scope) 'Allow new output fields (Recommended)': the extension may add recompute output fields (~100 leaves: per-variant null-T medians/SDs, CP intervals, implied size, classical Holm p); every existing field byte-identical to 0142a228, checked by the reviewer."
   }
  ],
  "findings": [

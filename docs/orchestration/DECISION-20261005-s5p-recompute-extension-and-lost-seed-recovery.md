@@ -69,3 +69,31 @@ because of 20 layout items and 713 unmapped leaves. `RECORD-20261005-s5p-termina
 - The outstanding A6 (R6) and A8 (R8) rulings, which are not ruled here.
 - CHECKLIST-20261001 §4: the measurement branch is NOT ADMITTED, there is no new reportable uncertainty, and
   publication readiness is NOT READY.
+
+## 4. Addendum: two follow-up rulings for the comparer extension (Joseph, 2026-10-05, campaign session)
+
+The recompute lane, while implementing decision 1, raised an unruled ambiguity (its A16) and a scope question. The
+campaign checked the A16 premise from production's own output: in `joint-evaluate.json`, `median_shift_in_null_sd`
+equals (shifted null-T median − unshifted null-T median) / the unshifted null-T SD (population, ddof 0), with residual
+0 on 36 of 36 leaves.
+
+> **Question:** "Two descriptive fields (82 leaves) have no formula in the frozen text, and the two codes read them
+> differently: production uses population SD (ddof 0) and 'shift of medians / SD'; the recompute uses sample SD and
+> 'median of per-draw shifts / SD'. They feed no p-value, decision or label. How should the verification treat
+> them?"
+>
+> **Selected:** "Rule a clarification (Recommended)". This is a report-only clarification, like A7-VS: the descriptive
+> null-T SD is ddof 0, and median_shift_in_null_sd is the shift of medians over it. The comparer checks against that
+> reading, and the recompute still reports its own reading alongside.
+
+> **Question:** "About 100 of the 713 unmapped leaves are quantities the recompute never output (per-variant null-T
+> medians/SDs, CP intervals, implied size, classical Holm-adjusted p). May the extension add these as new recompute
+> OUTPUT fields, with no existing number changing and the reviewer checking byte-identity of every existing field?"
+>
+> **Selected:** "Allow new output fields (Recommended)". The recompute computes and emits them with its own code;
+> every existing field stays byte-identical to 0142a228, which the reviewer checks.
+
+**Effect:**
+- The A16 clarification defines two descriptive quantities that the frozen text left without a formula. It feeds no
+  p-value, decision, label or stopping rule, and changes no production output.
+- The recompute's own reading is still reported as a labelled alternative.
