@@ -172,3 +172,16 @@ pre-registered.
   was interrupted (216/720 COMPLETE); ≈ 1.6 h of capacity lost. **Watcher is now on login37.** Signal to watch: zero
   running `pfd-inter*`/`pfd-sint*` allocations for two consecutive polls while rows remain → restart the watcher on
   another node through `start_watcher.sh` (same checkout and stop).
+
+## 12. Terminal state (2026-10-05 13:30Z)
+
+- **Outcome: NO_ELIGIBLE_DESIGN** (`results/final/coverage_dev/decision_final.json`, commit `337e34cf`): H2S1T24 K5 fails
+  coverage C1 and C4 (its six-member interval is too wide: 68 % coverage 0.896 vs ≤ 0.80; widths 1.3–1.7 × the limit in
+  bins 1–6); L128S1T24 K4 fails B2 (look 1). C5 skipped (3a.5); L128S1T24's coverage not assessed.
+- **Cluster:** watcher stopped through the stop file (13:24Z, `keep_busy.log`); the four study allocations cancelled;
+  no study job remains. The stop file `$B/keep_busy.stop` is left in place on purpose (a restart needs
+  `start_watcher.sh`, which removes it). 24 D4c members are partial and unscored (blinded); `runs/s5d_a5_H2S1T24.tsv`
+  has no UNBLIND amendment and must not be scored.
+- **Remaining for delivery:** the independent read-only review under `REVIEW_BRIEF-DECISION-20261001.md` and its
+  disposition; VALIDATION_LEDGER rows (next dense id on `origin/main`); final PR #4 body. The §11 repair is an owner
+  decision (decision record, last row; report §8).

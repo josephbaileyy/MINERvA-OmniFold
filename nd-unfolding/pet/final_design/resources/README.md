@@ -22,6 +22,7 @@ Snapshots (append; never edit a past row):
 | 2026-09-28 02:40 | 1,001.8 | 0.51 | 57,975 | 3,377 |
 | 2026-09-28 10:58 | 1,196.0 | 0.51 | 57,890 | 3,377 |
 | 2026-09-30 23:22 | 2,087.2 | 0.85 | 57,179 | 3,286 |
+| 2026-10-05 13:26 | 3,376.6 | 1.15 | 56,132 | 3,127 |
 
 2026-09-26 20:34 UTC: study total 314.8 A100-hours over 331 jobs (running jobs counted to the snapshot time);
 `iris` user-charged `m3246_g` 526.8 units (GPU node-hours), project charged 121,575.9 of 180,000; `m3246` CPU
@@ -43,3 +44,12 @@ FB rows of `s4f_a3`/`s4s_a3` plus the 3e extensions (~500 rows), at 1.5–1.8 A1
 Look-1 FB scoring: 5 CPU-debug jobs of 4–5 min. Per-unfolding FB cost at the declared packing
 (`cost_fb_look1-20260930.json`): H2S1T24 K5 1.768, L128S1T24 K4 1.517 A100-h (median, n = 352 each). Reserve for
 final validation: coverage of H2S1T24 K5 (Amendment 5), 1,080 unfoldings ≈ 1.9 k A100-h (S5 budget 2,200).
+
+2026-10-05 13:26 UTC (terminal): study total 3,376.6 A100-hours over 1,089 `pfd-` jobs (sacct); `iris` user-charged
+`m3246_g` 1,294.1 units, project charged 123,868.1 of 180,000 (56,132 remaining); `m3246` CPU 16,873.1 of 20,000.
+Coverage stage (Amendment 5) ≈ 1.29 k A100-h: 720 development-tilt members complete and scored; 24 D4c-up members
+started and stopped unfinished (C5 skipped after the decisive C1–C4 FAIL, 3a.5; their partial share is not separated
+in sacct). Stage budgets (§8, A100-h): S5 ≤ 2,200 respected (coverage = 3,376.6 − 2,087.2 ≈ 1.29 k, including the
+scoring and population jobs); S4 ≤ 1,800 respected by the bound 2,087.2 − 683.1 ≈ 1.40 k (2026-09-27 14:14Z →
+2026-09-30 23:22Z, which also contains non-S4 work). Losses recorded: ≈ 1.6 h of
+four idle allocations on 2026-10-02 (watcher on login05 launching nothing; handoff §11 incident).
