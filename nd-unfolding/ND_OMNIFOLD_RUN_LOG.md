@@ -13,7 +13,7 @@
   3,376.6 A100-h. Evidence `pet/final_design/results/final/`; report §6–8; decision record.
 - **Independent review** (Astra High, read-only, 2 cycles): every number and the outcome reproduced; the provenance
   gate was repaired (it had been declared, not checked) and five reporting statements corrected, with no verdict
-  change (`pet/final_design/REVIEW_DISPOSITION-DECISION-20261005.md`). VALIDATION_LEDGER VL142–VL145.
+  change (`pet/final_design/REVIEW_DISPOSITION-DECISION-20261005.md`). VALIDATION_LEDGER VL164–VL167 (added at integration with `main`).
 
 ## 2026-10-01 — PET final-design study: look 1 decided; coverage of H2S1T24 K5 running (blinded; in progress)
 

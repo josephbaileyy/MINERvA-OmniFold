@@ -54,4 +54,6 @@ final-bank scores (and `analysis/coverage.py` for §6.4). PET is diagnostic: not
 - Independent read-only review under `REVIEW_BRIEF-DECISION-20261001.md`, Astra High: cycle 1 at `f27d92d0` (numbers and
   outcome reproduced; provenance gate repaired, five reporting corrections), cycle 2 at `ca219ef0` (all findings
   resolved, no new findings). `REVIEW_DISPOSITION-DECISION-20261005.md`. Closed.
-- VALIDATION_LEDGER rows VL142–VL145.
+- VALIDATION_LEDGER rows VL164–VL167, added when the studies are integrated into `main` (the next dense ids after VL163
+  on `main` at `c64228da`). Their text was first committed on this branch in `9a9a7bfb` as VL142–VL145 and is carried
+  over unchanged apart from the ids.

@@ -1,21 +1,5 @@
 # MINERvA-OmniFold Validation Ledger
 
-
-## 2026-10-05 PET final-design selection study — terminal NO_ELIGIBLE_DESIGN (diagnostic; simulation only; nothing adopted)
-
-**PET diagnostic, not a publication product.** Signal-only simulation of the ME-FHC inventory, conditional on the frozen
-banks of `nd-unfolding/pet/final_design/` (protocol `PROTOCOL-20260925.md`, frozen decision table §6 with prospective
-Amendments 1–6). IDs are dense on this branch (its ledger ends at VL141). `origin/main` at `c64228da` (2026-10-05) already uses
-VL142–VL163, so these four rows must be renumbered (VL164–VL167 at that sha) when the branch is integrated with `main`
-(see the study handoff).
-
-| ID | measurement | verified value | disposition |
-|---|---|---|---|
-| VL142 | Look-1 eligibility of the frozen finalists on the final bank (944 rows; `results/final/decision_look1.json`) | H2S1T24 K5 passes every §6.1–6.3 rule (R_E0 **0.895**, simultaneous LB 0.876; +0.589 over CTL, LB 0.568); L128S1T24 K4 **INELIGIBLE on B2** (D4d n down, residual − injected L1 **0.0122**, 95 % 0.0064–0.0181, vs ≤ 0.010) | VERIFIED-NUMERIC 2026-10-05 (independent Astra High review, 2 cycles: `REVIEW_DISPOSITION-DECISION-20261005.md`); B2 is **point-decided, statistically unresolved** (H2S1T24's 0.0097 [0.0025, 0.0169] also crosses the limit): not evidence that either design is more robust or that they are equivalent |
-| VL143 | B1 under within-draw dependence (`results/final/b1_dependence_look1.json`) | frozen independence bound PASS (2/224, CP 0.032; 1/224, 0.025); common-panel FB0–7 any-failure 2/8 (CP 0.651) and 1/8 (0.527) | VERIFIED-NUMERIC 2026-10-05 (independent Astra High review, 2 cycles: `REVIEW_DISPOSITION-DECISION-20261005.md`); a dependence-aware per-unit failure probability ≤ 0.10 is **not established**, and this does not show it exceeds 0.10 |
-| VL144 | Coverage of H2S1T24 K5's §9 procedure (B = 6 Poisson-bootstrap members; 120 FB replicates; `results/final/coverage_dev/coverage_H2S1T24K5.json`) | C1 **FAIL** (pooled 68 % **0.896**, LB 0.858, vs ≤ 0.80; 95 % 0.990), C4 **FAIL** (half-widths 1.32–1.72 × the limit in bins 1–6), C2 and C3 PASS; low-acceptance region **under-covers** (68 % 0.257, 95 % 0.789; ungated) | VERIFIED-NUMERIC 2026-10-05 (independent Astra High review, 2 cycles: `REVIEW_DISPOSITION-DECISION-20261005.md`); same against the FB population target; mechanism not established |
-| VL145 | Terminal outcome of the study (`results/final/coverage_dev/decision_final.json`) | **NO_ELIGIBLE_DESIGN**: H2S1T24 K5 ineligible (C1, C4), L128S1T24 K4 ineligible (B2); no design selected, no default named; C5 skipped (3a.5) | VERIFIED-NUMERIC 2026-10-05 (independent Astra High review, 2 cycles: `REVIEW_DISPOSITION-DECISION-20261005.md`); the §11 repair (DEV-calibrated interval, RB revalidation, ≈ 3.2 k A100-h) is an owner decision. Study total 3,376.6 A100-h |
-
 ## 2026-08-13 Gate 6 Leg F — across-process floor at the fixed `(42,0)` policy, FIRST WAVE (3 of 5)
 
 Array `56863958` tasks 2–5, `%2` self-capped; tasks 2 and 3 `COMPLETED 0:0`, tasks 4 and 5 still

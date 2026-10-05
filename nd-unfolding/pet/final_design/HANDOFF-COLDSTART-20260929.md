@@ -183,11 +183,11 @@ pre-registered.
   `start_watcher.sh`, which removes it). 24 D4c members are partial and unscored (blinded); `runs/s5d_a5_H2S1T24.tsv`
   has no UNBLIND amendment and must not be scored.
 - **Delivered (2026-10-05):** independent review closed in two cycles (`REVIEW_DISPOSITION-DECISION-20261005.md`:
-  provenance gate repaired, five reporting corrections, no verdict changed); VALIDATION_LEDGER VL142–VL145; report
+  provenance gate repaired, five reporting corrections, no verdict changed); VALIDATION_LEDGER VL164–VL167 (added at integration); report
   §6–8, deck (14 slides), decision record, resource ledger, RUN_LOG/STATUS, PR #4 body.
-- **VL ids, deliberately not merged with `main`:** the protocol (§12) and §7 above say "integrate `origin/main` first".
-  `main` is 860 commits ahead and PR #4's base is the unmerged `pet-improvement-20260922`, so a merge would put all of
-  `main`'s unrelated changes into PR #4's diff. The pre-commit hook enforces dense ids on this branch, so the rows are
-  VL142–VL145 here; `origin/main` at `c64228da` already uses VL142–VL163, so **renumber them on integration** (VL164–VL167
-  at that sha, as the GBDT branch renumbered VL161 → VL163).
+- **VL ids:** the four rows were first committed here as VL142–VL145 (`9a9a7bfb`; this branch's hook enforces density
+  on its own ledger, which ended at VL141), but `main` already uses VL142–VL163. Merging both sets would put `main`'s
+  rows inside a conflict hunk, which `merge_guard.sh` rightly refuses to have anyone but their authors resolve. So the
+  rows were taken out of this branch's ledger (restored to PR #3's bytes) and are added on the integration branch as
+  **VL164–VL167**, the next dense ids on `main`, in an ordinary commit after the merge.
 - **Owner decisions:** the §11 repair (decision record, last coverage row; report §8) and any merge of PRs #3/#4.
