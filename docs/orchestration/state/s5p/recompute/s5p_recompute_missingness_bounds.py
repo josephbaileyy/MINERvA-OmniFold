@@ -102,12 +102,20 @@ def bound(k: int, B: int, L: int) -> dict:
     return out
 
 
+def family_tests(rec: dict) -> list[tuple[str, str]]:
+    """(null, test) in the FAMILY order, read from ``family.decisions`` (a list). ``recompute.json`` is written with
+    sorted keys, so the order of ``rec["nulls"]`` is alphabetical and must never be used: Holm breaks ties by the
+    family order (A10)."""
+    return [tuple(d["test"].split(":")) for d in rec["family"]["decisions"]]
+
+
 def coherence(rec: dict, alpha: float) -> list[str]:
     """The quantities bounded are the recompute's own: claim = largest variant count; p = (k + 1) / (B + 1); the
     family decisions reproduce from the entries."""
     R, bad, entries = _R(), [], []
-    for key, n in rec["nulls"].items():
-        for t in R.TESTS:
+    for key, t in family_tests(rec):
+        n = rec["nulls"][key]
+        if True:
             tr = n["tests"][t]
             if tr.get("not_calibrated"):
                 entries.append({"test": f"{key}:{t}", "p": tr["p"], "k": tr["k"], "B": tr["B"]})
@@ -166,8 +174,12 @@ def identity(rec: dict, frozen: dict) -> list[str]:
     got = (rec.get("inputs") or {}).get("design_sha256")
     if got != frozen["design_sha256"]:
         bad.append(f"design sha256 {got} != frozen {frozen['design_sha256']}")
-    if list(rec["nulls"]) != frozen["nulls"]:
-        bad.append(f"nulls {list(rec['nulls'])} != frozen {frozen['nulls']}")
+    if sorted(rec["nulls"]) != sorted(frozen["nulls"]):
+        bad.append(f"nulls {sorted(rec['nulls'])} != frozen {sorted(frozen['nulls'])}")
+    order = [f"{k}:{t}" for k, t in family_tests(rec)]
+    want = [f"{k}:{t}" for k in frozen["nulls"] for t in R.TESTS]
+    if order != want:
+        bad.append(f"family order {order} != frozen {want}")
     if rec.get("variant_mode") != frozen["variant_mode"]:
         bad.append(f"variant mode {rec.get('variant_mode')} != {frozen['variant_mode']}")
     for key, n in rec["nulls"].items():
@@ -204,8 +216,8 @@ def evaluate_bounds(rec: dict, disp: dict, frozen: dict = FROZEN) -> dict:
     for k, ls in losses.items():
         if ls["not_established"]:
             incomplete.append(f"{k}: {ls['not_established']} not-established seeds (counted as lost: fail closed)")
-    entries = [{"test": f"{key}:{t}", "p": n["tests"][t]["p"], "k": n["tests"][t]["k"], "B": n["tests"][t]["B"]}
-               for key, n in rec["nulls"].items() for t in R.TESTS]
+    entries = [{"test": f"{key}:{t}", "p": rec["nulls"][key]["tests"][t]["p"], "k": rec["nulls"][key]["tests"][t]["k"],
+                "B": rec["nulls"][key]["tests"][t]["B"]} for key, t in family_tests(rec)]
     primary = {d["test"]: d["decision"] for d in rec["family"]["decisions"]}
     rejected = [e["test"] for e in entries if primary[e["test"]] == "rejected"]
     m = len(entries)

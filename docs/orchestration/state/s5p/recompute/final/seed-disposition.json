@@ -1,0 +1,2925 @@
+{
+ "inputs": {
+  "design": "design.json",
+  "ledger": "/pscratch/sd/j/josephrb/s5p-20260926/ledger/admissions.jsonl",
+  "logs": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs",
+  "recompute": "../final/recompute.json",
+  "sacct": "../final/sacct-dispositions.txt",
+  "tables": "/pscratch/sd/j/josephrb/s5p-20260926/deploy/e0d7b04a/docs/orchestration/state/s5p/prod/tables"
+ },
+ "lost_work_dispositions": [
+  "submitted_task_no_log",
+  "submitted_interrupted",
+  "submitted_never_started",
+  "submitted_failed_rc",
+  "submitted_finished_no_product"
+ ],
+ "not_part_of_reviewed_code": true,
+ "nulls": {
+  "GENIE_2_12_10_CV": {
+   "batches": {
+    "0": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 4,
+      "submitted_never_started": 3
+     },
+     "jobs": [
+      "59021681"
+     ],
+     "lost_work": 7,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "1": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {},
+     "jobs": [
+      "59081838"
+     ],
+     "lost_work": 0,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "2": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 1
+     },
+     "jobs": [
+      "59129697"
+     ],
+     "lost_work": 1,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "3": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 1
+     },
+     "jobs": [
+      "59156411"
+     ],
+     "lost_work": 1,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "4": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 6,
+      "submitted_never_started": 7
+     },
+     "jobs": [
+      "59213686"
+     ],
+     "lost_work": 13,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "5": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 4,
+      "submitted_never_started": 4
+     },
+     "jobs": [
+      "59300403"
+     ],
+     "lost_work": 8,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "6": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 1,
+      "submitted_never_started": 3
+     },
+     "jobs": [
+      "59334421"
+     ],
+     "lost_work": 4,
+     "not_submitted": 0,
+     "unaccounted": 0
+    }
+   },
+   "counts": {
+    "submitted_interrupted": 17,
+    "submitted_never_started": 17
+   },
+   "disposed_not_in_recompute_missing": [],
+   "lost_work": 34,
+   "not_submitted": 0,
+   "partials": [],
+   "products": 1366,
+   "recompute_missing_not_disposed": [],
+   "recompute_missing_seeds_equal": true,
+   "seed_base": 1220000,
+   "seeds": {
+    "1220005": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b0-59021681_0.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b0_0"
+    },
+    "1220117": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b0-59021681_19.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b0_19"
+    },
+    "1220118": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b0-59021681_19.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b0_19"
+    },
+    "1220119": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b0-59021681_19.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b0_19"
+    },
+    "1220136": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b0-59021681_22.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b0_22"
+    },
+    "1220137": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b0-59021681_22.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b0_22"
+    },
+    "1220161": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b0-59021681_26.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b0_26"
+    },
+    "1220453": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b2-59129697_8.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b2_8"
+    },
+    "1220653": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b3-59156411_8.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b3_8"
+    },
+    "1220810": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b4-59213686_1.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b4_1"
+    },
+    "1220811": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b4-59213686_1.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b4_1"
+    },
+    "1220846": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b4-59213686_7.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b4_7"
+    },
+    "1220847": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b4-59213686_7.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b4_7"
+    },
+    "1220858": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b4-59213686_9.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b4_9"
+    },
+    "1220859": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b4-59213686_9.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b4_9"
+    },
+    "1220966": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b4-59213686_27.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b4_27"
+    },
+    "1220967": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b4-59213686_27.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b4_27"
+    },
+    "1220970": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b4-59213686_28.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b4_28"
+    },
+    "1220971": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b4-59213686_28.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b4_28"
+    },
+    "1220972": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b4-59213686_28.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b4_28"
+    },
+    "1220973": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b4-59213686_28.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b4_28"
+    },
+    "1220979": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b4-59213686_29.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b4_29"
+    },
+    "1221011": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b5-59300403_1.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b5_1"
+    },
+    "1221089": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b5-59300403_14.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b5_14"
+    },
+    "1221092": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b5-59300403_15.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b5_15"
+    },
+    "1221093": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b5-59300403_15.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b5_15"
+    },
+    "1221094": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b5-59300403_15.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b5_15"
+    },
+    "1221095": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b5-59300403_15.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b5_15"
+    },
+    "1221100": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b5-59300403_16.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b5_16"
+    },
+    "1221101": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b5-59300403_16.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b5_16"
+    },
+    "1221226": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b6-59334421_4.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b6_4"
+    },
+    "1221227": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b6-59334421_4.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b6_4"
+    },
+    "1221228": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b6-59334421_4.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b6_4"
+    },
+    "1221229": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_cv_b6-59334421_4.out"
+     ],
+     "task": "cal-GENIE_2_12_10_CV-b6_4"
+    }
+   },
+   "unaccounted": 0
+  },
+  "GENIE_2_12_10_MEC": {
+   "batches": {
+    "0": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 2,
+      "submitted_never_started": 5
+     },
+     "jobs": [
+      "59021698"
+     ],
+     "lost_work": 7,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "1": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 3,
+      "submitted_never_started": 3
+     },
+     "jobs": [
+      "59072824"
+     ],
+     "lost_work": 6,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "2": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 2,
+      "submitted_never_started": 2
+     },
+     "jobs": [
+      "59118595"
+     ],
+     "lost_work": 4,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "3": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 2,
+      "submitted_never_started": 2
+     },
+     "jobs": [
+      "59148048"
+     ],
+     "lost_work": 4,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "4": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 6,
+      "submitted_never_started": 10
+     },
+     "jobs": [
+      "59192345"
+     ],
+     "lost_work": 16,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "5": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 7,
+      "submitted_never_started": 7
+     },
+     "jobs": [
+      "59266398"
+     ],
+     "lost_work": 14,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "6": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 3,
+      "submitted_never_started": 3
+     },
+     "jobs": [
+      "59321575"
+     ],
+     "lost_work": 6,
+     "not_submitted": 0,
+     "unaccounted": 0
+    }
+   },
+   "counts": {
+    "submitted_interrupted": 25,
+    "submitted_never_started": 32
+   },
+   "disposed_not_in_recompute_missing": [],
+   "lost_work": 57,
+   "not_submitted": 0,
+   "partials": [],
+   "products": 1343,
+   "recompute_missing_not_disposed": [],
+   "recompute_missing_seeds_equal": true,
+   "seed_base": 1240000,
+   "seeds": {
+    "1240139": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b0-59021698_23.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b0_23"
+    },
+    "1240140": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b0-59021698_23.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b0_23"
+    },
+    "1240141": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b0-59021698_23.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b0_23"
+    },
+    "1240142": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b0-59021698_23.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b0_23"
+    },
+    "1240143": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b0-59021698_23.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b0_23"
+    },
+    "1240166": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b0-59021698_27.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b0_27"
+    },
+    "1240167": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b0-59021698_27.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b0_27"
+    },
+    "1240265": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b1-59072824_10.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b1_10"
+    },
+    "1240330": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b1-59072824_21.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b1_21"
+    },
+    "1240331": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b1-59072824_21.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b1_21"
+    },
+    "1240377": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b1-59072824_29.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b1_29"
+    },
+    "1240378": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b1-59072824_29.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b1_29"
+    },
+    "1240379": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b1-59072824_29.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b1_29"
+    },
+    "1240531": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b2-59118595_21.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b2_21"
+    },
+    "1240559": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b2-59118595_26.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b2_26"
+    },
+    "1240560": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b2-59118595_26.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b2_26"
+    },
+    "1240561": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b2-59118595_26.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b2_26"
+    },
+    "1240604": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b3-59148048_0.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b3_0"
+    },
+    "1240605": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b3-59148048_0.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b3_0"
+    },
+    "1240640": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b3-59148048_6.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b3_6"
+    },
+    "1240641": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b3-59148048_6.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b3_6"
+    },
+    "1240899": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_16.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_16"
+    },
+    "1240900": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_16.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_16"
+    },
+    "1240901": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_16.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_16"
+    },
+    "1240934": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_22.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_22"
+    },
+    "1240935": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_22.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_22"
+    },
+    "1240936": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_22.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_22"
+    },
+    "1240937": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_22.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_22"
+    },
+    "1240941": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_23.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_23"
+    },
+    "1240942": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_23.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_23"
+    },
+    "1240943": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_23.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_23"
+    },
+    "1240948": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_24.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_24"
+    },
+    "1240949": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_24.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_24"
+    },
+    "1240959": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_26.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_26"
+    },
+    "1240960": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_26.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_26"
+    },
+    "1240961": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_26.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_26"
+    },
+    "1240991": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b4-59192345_31.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b4_31"
+    },
+    "1241004": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_0.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_0"
+    },
+    "1241005": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_0.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_0"
+    },
+    "1241017": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_2.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_2"
+    },
+    "1241028": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_4.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_4"
+    },
+    "1241029": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_4.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_4"
+    },
+    "1241038": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_6.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_6"
+    },
+    "1241039": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_6.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_6"
+    },
+    "1241040": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_6.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_6"
+    },
+    "1241041": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_6.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_6"
+    },
+    "1241046": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_7.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_7"
+    },
+    "1241047": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_7.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_7"
+    },
+    "1241179": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_29.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_29"
+    },
+    "1241196": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_32.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_32"
+    },
+    "1241197": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b5-59266398_32.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b5_32"
+    },
+    "1241217": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b6-59321575_2.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b6_2"
+    },
+    "1241299": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b6-59321575_16.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b6_16"
+    },
+    "1241300": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b6-59321575_16.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b6_16"
+    },
+    "1241301": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b6-59321575_16.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b6_16"
+    },
+    "1241312": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b6-59321575_18.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b6_18"
+    },
+    "1241313": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_genie_2_12_10_mec_b6-59321575_18.out"
+     ],
+     "task": "cal-GENIE_2_12_10_MEC-b6_18"
+    }
+   },
+   "unaccounted": 0
+  },
+  "GiBUU_2019": {
+   "batches": {
+    "0": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 3,
+      "submitted_never_started": 2
+     },
+     "jobs": [
+      "59021765"
+     ],
+     "lost_work": 5,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "1": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {},
+     "jobs": [
+      "59082762"
+     ],
+     "lost_work": 0,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "2": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 1,
+      "submitted_never_started": 1
+     },
+     "jobs": [
+      "59132264"
+     ],
+     "lost_work": 2,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "3": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 3,
+      "submitted_never_started": 2
+     },
+     "jobs": [
+      "59172964"
+     ],
+     "lost_work": 5,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "4": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 12,
+      "submitted_never_started": 23
+     },
+     "jobs": [
+      "59247862"
+     ],
+     "lost_work": 35,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "5": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 1,
+      "submitted_never_started": 1
+     },
+     "jobs": [
+      "59315232"
+     ],
+     "lost_work": 2,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "6": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {},
+     "jobs": [
+      "59349568"
+     ],
+     "lost_work": 0,
+     "not_submitted": 0,
+     "unaccounted": 0
+    }
+   },
+   "counts": {
+    "submitted_interrupted": 20,
+    "submitted_never_started": 29
+   },
+   "disposed_not_in_recompute_missing": [],
+   "lost_work": 49,
+   "not_submitted": 0,
+   "partials": [],
+   "products": 1351,
+   "recompute_missing_not_disposed": [],
+   "recompute_missing_seeds_equal": true,
+   "seed_base": 1280000,
+   "seeds": {
+    "1280009": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b0-59021765_1.out"
+     ],
+     "task": "cal-GiBUU_2019-b0_1"
+    },
+    "1280010": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b0-59021765_1.out"
+     ],
+     "task": "cal-GiBUU_2019-b0_1"
+    },
+    "1280011": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b0-59021765_1.out"
+     ],
+     "task": "cal-GiBUU_2019-b0_1"
+    },
+    "1280077": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b0-59021765_12.out"
+     ],
+     "task": "cal-GiBUU_2019-b0_12"
+    },
+    "1280161": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b0-59021765_26.out"
+     ],
+     "task": "cal-GiBUU_2019-b0_26"
+    },
+    "1280422": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b2-59132264_3.out"
+     ],
+     "task": "cal-GiBUU_2019-b2_3"
+    },
+    "1280423": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b2-59132264_3.out"
+     ],
+     "task": "cal-GiBUU_2019-b2_3"
+    },
+    "1280748": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b3-59172964_24.out"
+     ],
+     "task": "cal-GiBUU_2019-b3_24"
+    },
+    "1280749": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b3-59172964_24.out"
+     ],
+     "task": "cal-GiBUU_2019-b3_24"
+    },
+    "1280767": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b3-59172964_27.out"
+     ],
+     "task": "cal-GiBUU_2019-b3_27"
+    },
+    "1280778": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b3-59172964_29.out"
+     ],
+     "task": "cal-GiBUU_2019-b3_29"
+    },
+    "1280779": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b3-59172964_29.out"
+     ],
+     "task": "cal-GiBUU_2019-b3_29"
+    },
+    "1280825": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_4.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_4"
+    },
+    "1280826": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_4.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_4"
+    },
+    "1280827": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_4.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_4"
+    },
+    "1280828": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_4.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_4"
+    },
+    "1280829": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_4.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_4"
+    },
+    "1280840": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_6.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_6"
+    },
+    "1280841": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_6.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_6"
+    },
+    "1280859": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_9.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_9"
+    },
+    "1280863": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_10.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_10"
+    },
+    "1280864": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_10.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_10"
+    },
+    "1280865": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_10.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_10"
+    },
+    "1280875": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_12.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_12"
+    },
+    "1280876": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_12.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_12"
+    },
+    "1280877": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_12.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_12"
+    },
+    "1280887": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_14.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_14"
+    },
+    "1280888": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_14.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_14"
+    },
+    "1280889": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_14.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_14"
+    },
+    "1280893": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_15.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_15"
+    },
+    "1280894": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_15.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_15"
+    },
+    "1280895": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_15.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_15"
+    },
+    "1280897": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_16.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_16"
+    },
+    "1280898": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_16.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_16"
+    },
+    "1280899": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_16.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_16"
+    },
+    "1280900": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_16.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_16"
+    },
+    "1280901": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_16.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_16"
+    },
+    "1280936": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_22.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_22"
+    },
+    "1280937": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_22.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_22"
+    },
+    "1280943": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_23.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_23"
+    },
+    "1280946": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_24.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_24"
+    },
+    "1280947": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_24.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_24"
+    },
+    "1280948": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_24.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_24"
+    },
+    "1280949": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_24.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_24"
+    },
+    "1280953": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_25.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_25"
+    },
+    "1280954": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_25.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_25"
+    },
+    "1280955": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b4-59247862_25.out"
+     ],
+     "task": "cal-GiBUU_2019-b4_25"
+    },
+    "1281046": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b5-59315232_7.out"
+     ],
+     "task": "cal-GiBUU_2019-b5_7"
+    },
+    "1281047": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_gibuu_2019_b5-59315232_7.out"
+     ],
+     "task": "cal-GiBUU_2019-b5_7"
+    }
+   },
+   "unaccounted": 0
+  },
+  "MnvTune_v1": {
+   "batches": {
+    "0": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 4,
+      "submitted_never_started": 1
+     },
+     "jobs": [
+      "59021669"
+     ],
+     "lost_work": 5,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "1": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 1,
+      "submitted_never_started": 1
+     },
+     "jobs": [
+      "59080426"
+     ],
+     "lost_work": 2,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "2": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 5,
+      "submitted_never_started": 1
+     },
+     "jobs": [
+      "59123787"
+     ],
+     "lost_work": 6,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "3": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {},
+     "jobs": [
+      "59154958"
+     ],
+     "lost_work": 0,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "4": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 7,
+      "submitted_never_started": 8
+     },
+     "jobs": [
+      "59207385"
+     ],
+     "lost_work": 15,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "5": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 5,
+      "submitted_never_started": 2
+     },
+     "jobs": [
+      "59288694"
+     ],
+     "lost_work": 7,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "6": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {},
+     "jobs": [
+      "59332184"
+     ],
+     "lost_work": 0,
+     "not_submitted": 0,
+     "unaccounted": 0
+    }
+   },
+   "counts": {
+    "submitted_interrupted": 22,
+    "submitted_never_started": 13
+   },
+   "disposed_not_in_recompute_missing": [],
+   "lost_work": 35,
+   "not_submitted": 0,
+   "partials": [],
+   "products": 1365,
+   "recompute_missing_not_disposed": [],
+   "recompute_missing_seeds_equal": true,
+   "seed_base": 1200000,
+   "seeds": {
+    "1200011": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b0-59021669_1.out"
+     ],
+     "task": "cal-MnvTune_v1-b0_1"
+    },
+    "1200016": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b0-59021669_2.out"
+     ],
+     "task": "cal-MnvTune_v1-b0_2"
+    },
+    "1200017": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b0-59021669_2.out"
+     ],
+     "task": "cal-MnvTune_v1-b0_2"
+    },
+    "1200131": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b0-59021669_21.out"
+     ],
+     "task": "cal-MnvTune_v1-b0_21"
+    },
+    "1200197": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b0-59021669_32.out"
+     ],
+     "task": "cal-MnvTune_v1-b0_32"
+    },
+    "1200246": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b1-59080426_7.out"
+     ],
+     "task": "cal-MnvTune_v1-b1_7"
+    },
+    "1200247": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b1-59080426_7.out"
+     ],
+     "task": "cal-MnvTune_v1-b1_7"
+    },
+    "1200453": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b2-59123787_8.out"
+     ],
+     "task": "cal-MnvTune_v1-b2_8"
+    },
+    "1200471": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b2-59123787_11.out"
+     ],
+     "task": "cal-MnvTune_v1-b2_11"
+    },
+    "1200482": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b2-59123787_13.out"
+     ],
+     "task": "cal-MnvTune_v1-b2_13"
+    },
+    "1200483": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b2-59123787_13.out"
+     ],
+     "task": "cal-MnvTune_v1-b2_13"
+    },
+    "1200489": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b2-59123787_14.out"
+     ],
+     "task": "cal-MnvTune_v1-b2_14"
+    },
+    "1200549": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b2-59123787_24.out"
+     ],
+     "task": "cal-MnvTune_v1-b2_24"
+    },
+    "1200841": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_6.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_6"
+    },
+    "1200851": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_8.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_8"
+    },
+    "1200852": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_8.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_8"
+    },
+    "1200853": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_8.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_8"
+    },
+    "1200889": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_14.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_14"
+    },
+    "1200907": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_17.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_17"
+    },
+    "1200918": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_19.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_19"
+    },
+    "1200919": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_19.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_19"
+    },
+    "1200977": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_29.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_29"
+    },
+    "1200978": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_29.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_29"
+    },
+    "1200979": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_29.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_29"
+    },
+    "1200982": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_30.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_30"
+    },
+    "1200983": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_30.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_30"
+    },
+    "1200984": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_30.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_30"
+    },
+    "1200985": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b4-59207385_30.out"
+     ],
+     "task": "cal-MnvTune_v1-b4_30"
+    },
+    "1201077": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b5-59288694_12.out"
+     ],
+     "task": "cal-MnvTune_v1-b5_12"
+    },
+    "1201094": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b5-59288694_15.out"
+     ],
+     "task": "cal-MnvTune_v1-b5_15"
+    },
+    "1201095": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b5-59288694_15.out"
+     ],
+     "task": "cal-MnvTune_v1-b5_15"
+    },
+    "1201113": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b5-59288694_18.out"
+     ],
+     "task": "cal-MnvTune_v1-b5_18"
+    },
+    "1201131": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b5-59288694_21.out"
+     ],
+     "task": "cal-MnvTune_v1-b5_21"
+    },
+    "1201136": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b5-59288694_22.out"
+     ],
+     "task": "cal-MnvTune_v1-b5_22"
+    },
+    "1201137": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_mnvtune_v1_b5-59288694_22.out"
+     ],
+     "task": "cal-MnvTune_v1-b5_22"
+    }
+   },
+   "unaccounted": 0
+  },
+  "NuWro_21_09": {
+   "batches": {
+    "0": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 3
+     },
+     "jobs": [
+      "59021752"
+     ],
+     "lost_work": 3,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "1": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {},
+     "jobs": [
+      "59080573"
+     ],
+     "lost_work": 0,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "2": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 5,
+      "submitted_never_started": 5
+     },
+     "jobs": [
+      "59132520"
+     ],
+     "lost_work": 10,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "3": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 6,
+      "submitted_never_started": 2
+     },
+     "jobs": [
+      "59175970"
+     ],
+     "lost_work": 8,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "4": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 10,
+      "submitted_never_started": 12
+     },
+     "jobs": [
+      "59253130"
+     ],
+     "lost_work": 22,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "5": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 2,
+      "submitted_never_started": 3
+     },
+     "jobs": [
+      "59317189"
+     ],
+     "lost_work": 5,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "6": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {
+      "submitted_interrupted": 1
+     },
+     "jobs": [
+      "59358653"
+     ],
+     "lost_work": 1,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "7": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {},
+     "jobs": [
+      "59367892"
+     ],
+     "lost_work": 0,
+     "not_submitted": 0,
+     "unaccounted": 0
+    },
+    "8": {
+     "admitted": true,
+     "counted_by_recompute": true,
+     "counts": {},
+     "jobs": [
+      "59376408"
+     ],
+     "lost_work": 0,
+     "not_submitted": 0,
+     "unaccounted": 0
+    }
+   },
+   "counts": {
+    "submitted_interrupted": 27,
+    "submitted_never_started": 22
+   },
+   "disposed_not_in_recompute_missing": [],
+   "lost_work": 49,
+   "not_submitted": 0,
+   "partials": [],
+   "products": 1751,
+   "recompute_missing_not_disposed": [],
+   "recompute_missing_seeds_equal": true,
+   "seed_base": 1260000,
+   "seeds": {
+    "1260071": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b0-59021752_11.out"
+     ],
+     "task": "cal-NuWro_21_09-b0_11"
+    },
+    "1260161": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b0-59021752_26.out"
+     ],
+     "task": "cal-NuWro_21_09-b0_26"
+    },
+    "1260185": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b0-59021752_30.out"
+     ],
+     "task": "cal-NuWro_21_09-b0_30"
+    },
+    "1260431": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b2-59132520_5.out"
+     ],
+     "task": "cal-NuWro_21_09-b2_5"
+    },
+    "1260432": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b2-59132520_5.out"
+     ],
+     "task": "cal-NuWro_21_09-b2_5"
+    },
+    "1260433": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b2-59132520_5.out"
+     ],
+     "task": "cal-NuWro_21_09-b2_5"
+    },
+    "1260434": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b2-59132520_5.out"
+     ],
+     "task": "cal-NuWro_21_09-b2_5"
+    },
+    "1260435": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b2-59132520_5.out"
+     ],
+     "task": "cal-NuWro_21_09-b2_5"
+    },
+    "1260441": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b2-59132520_6.out"
+     ],
+     "task": "cal-NuWro_21_09-b2_6"
+    },
+    "1260446": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b2-59132520_7.out"
+     ],
+     "task": "cal-NuWro_21_09-b2_7"
+    },
+    "1260447": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b2-59132520_7.out"
+     ],
+     "task": "cal-NuWro_21_09-b2_7"
+    },
+    "1260495": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b2-59132520_15.out"
+     ],
+     "task": "cal-NuWro_21_09-b2_15"
+    },
+    "1260507": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b2-59132520_17.out"
+     ],
+     "task": "cal-NuWro_21_09-b2_17"
+    },
+    "1260664": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b3-59175970_10.out"
+     ],
+     "task": "cal-NuWro_21_09-b3_10"
+    },
+    "1260665": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b3-59175970_10.out"
+     ],
+     "task": "cal-NuWro_21_09-b3_10"
+    },
+    "1260670": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b3-59175970_11.out"
+     ],
+     "task": "cal-NuWro_21_09-b3_11"
+    },
+    "1260671": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b3-59175970_11.out"
+     ],
+     "task": "cal-NuWro_21_09-b3_11"
+    },
+    "1260695": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b3-59175970_15.out"
+     ],
+     "task": "cal-NuWro_21_09-b3_15"
+    },
+    "1260749": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b3-59175970_24.out"
+     ],
+     "task": "cal-NuWro_21_09-b3_24"
+    },
+    "1260779": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b3-59175970_29.out"
+     ],
+     "task": "cal-NuWro_21_09-b3_29"
+    },
+    "1260785": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b3-59175970_30.out"
+     ],
+     "task": "cal-NuWro_21_09-b3_30"
+    },
+    "1260815": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_2.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_2"
+    },
+    "1260816": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_2.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_2"
+    },
+    "1260817": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_2.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_2"
+    },
+    "1260839": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_6.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_6"
+    },
+    "1260840": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_6.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_6"
+    },
+    "1260841": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_6.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_6"
+    },
+    "1260864": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_10.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_10"
+    },
+    "1260865": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_10.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_10"
+    },
+    "1260875": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_12.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_12"
+    },
+    "1260876": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_12.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_12"
+    },
+    "1260877": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_12.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_12"
+    },
+    "1260889": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_14.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_14"
+    },
+    "1260905": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_17.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_17"
+    },
+    "1260906": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_17.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_17"
+    },
+    "1260907": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_17.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_17"
+    },
+    "1260918": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_19.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_19"
+    },
+    "1260919": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_19.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_19"
+    },
+    "1260925": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_20.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_20"
+    },
+    "1260937": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_22.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_22"
+    },
+    "1260971": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_28.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_28"
+    },
+    "1260972": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_28.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_28"
+    },
+    "1260973": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b4-59253130_28.out"
+     ],
+     "task": "cal-NuWro_21_09-b4_28"
+    },
+    "1261093": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b5-59317189_15.out"
+     ],
+     "task": "cal-NuWro_21_09-b5_15"
+    },
+    "1261094": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b5-59317189_15.out"
+     ],
+     "task": "cal-NuWro_21_09-b5_15"
+    },
+    "1261095": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b5-59317189_15.out"
+     ],
+     "task": "cal-NuWro_21_09-b5_15"
+    },
+    "1261142": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b5-59317189_23.out"
+     ],
+     "task": "cal-NuWro_21_09-b5_23"
+    },
+    "1261143": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b5-59317189_23.out"
+     ],
+     "task": "cal-NuWro_21_09-b5_23"
+    },
+    "1261241": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_cal_nuwro_21_09_b6-59358653_6.out"
+     ],
+     "task": "cal-NuWro_21_09-b6_6"
+    }
+   },
+   "unaccounted": 0
+  }
+ },
+ "power": {
+  "P1_a1.0": {
+   "admitted": true,
+   "counts": {
+    "submitted_interrupted": 4,
+    "submitted_never_started": 3
+   },
+   "jobs": [
+    "59021632"
+   ],
+   "lost_work": 7,
+   "n_declared": 200,
+   "not_submitted": 0,
+   "products": 193,
+   "seeds": {
+    "1451071": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p1_a1p0-59021632_11.out"
+     ],
+     "task": "pow-P1_a1.0_11"
+    },
+    "1451106": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p1_a1p0-59021632_17.out"
+     ],
+     "task": "pow-P1_a1.0_17"
+    },
+    "1451107": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p1_a1p0-59021632_17.out"
+     ],
+     "task": "pow-P1_a1.0_17"
+    },
+    "1451117": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p1_a1p0-59021632_19.out"
+     ],
+     "task": "pow-P1_a1.0_19"
+    },
+    "1451118": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p1_a1p0-59021632_19.out"
+     ],
+     "task": "pow-P1_a1.0_19"
+    },
+    "1451119": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p1_a1p0-59021632_19.out"
+     ],
+     "task": "pow-P1_a1.0_19"
+    },
+    "1451125": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p1_a1p0-59021632_20.out"
+     ],
+     "task": "pow-P1_a1.0_20"
+    }
+   },
+   "unaccounted": 0
+  },
+  "P1g_a1.0": {
+   "admitted": true,
+   "counts": {
+    "submitted_interrupted": 1
+   },
+   "jobs": [
+    "59152494"
+   ],
+   "lost_work": 1,
+   "n_declared": 200,
+   "not_submitted": 0,
+   "products": 199,
+   "seeds": {
+    "1481179": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p1g_a1p0-59152494_29.out"
+     ],
+     "task": "pow-P1g_a1.0_29"
+    }
+   },
+   "unaccounted": 0
+  },
+  "P2_a1.0": {
+   "admitted": true,
+   "counts": {
+    "submitted_interrupted": 2,
+    "submitted_never_started": 3
+   },
+   "jobs": [
+    "59076165"
+   ],
+   "lost_work": 5,
+   "n_declared": 200,
+   "not_submitted": 0,
+   "products": 195,
+   "seeds": {
+    "1461147": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p2_a1p0-59076165_24.out"
+     ],
+     "task": "pow-P2_a1.0_24"
+    },
+    "1461148": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p2_a1p0-59076165_24.out"
+     ],
+     "task": "pow-P2_a1.0_24"
+    },
+    "1461149": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p2_a1p0-59076165_24.out"
+     ],
+     "task": "pow-P2_a1.0_24"
+    },
+    "1461178": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p2_a1p0-59076165_29.out"
+     ],
+     "task": "pow-P2_a1.0_29"
+    },
+    "1461179": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p2_a1p0-59076165_29.out"
+     ],
+     "task": "pow-P2_a1.0_29"
+    }
+   },
+   "unaccounted": 0
+  },
+  "P2g_a1.0": {
+   "admitted": true,
+   "counts": {
+    "submitted_interrupted": 3,
+    "submitted_never_started": 4
+   },
+   "jobs": [
+    "59201808"
+   ],
+   "lost_work": 7,
+   "n_declared": 200,
+   "not_submitted": 0,
+   "products": 193,
+   "seeds": {
+    "1491141": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p2g_a1p0-59201808_23.out"
+     ],
+     "task": "pow-P2g_a1.0_23"
+    },
+    "1491142": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p2g_a1p0-59201808_23.out"
+     ],
+     "task": "pow-P2g_a1.0_23"
+    },
+    "1491143": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p2g_a1p0-59201808_23.out"
+     ],
+     "task": "pow-P2g_a1.0_23"
+    },
+    "1491147": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p2g_a1p0-59201808_24.out"
+     ],
+     "task": "pow-P2g_a1.0_24"
+    },
+    "1491148": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p2g_a1p0-59201808_24.out"
+     ],
+     "task": "pow-P2g_a1.0_24"
+    },
+    "1491149": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p2g_a1p0-59201808_24.out"
+     ],
+     "task": "pow-P2g_a1.0_24"
+    },
+    "1491197": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p2g_a1p0-59201808_32.out"
+     ],
+     "task": "pow-P2g_a1.0_32"
+    }
+   },
+   "unaccounted": 0
+  },
+  "P3_a1.0": {
+   "admitted": true,
+   "counts": {
+    "submitted_interrupted": 4,
+    "submitted_never_started": 1
+   },
+   "jobs": [
+    "59121208"
+   ],
+   "lost_work": 5,
+   "n_declared": 200,
+   "not_submitted": 0,
+   "products": 195,
+   "seeds": {
+    "1471047": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3_a1p0-59121208_7.out"
+     ],
+     "task": "pow-P3_a1.0_7"
+    },
+    "1471161": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3_a1p0-59121208_26.out"
+     ],
+     "task": "pow-P3_a1.0_26"
+    },
+    "1471173": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3_a1p0-59121208_28.out"
+     ],
+     "task": "pow-P3_a1.0_28"
+    },
+    "1471184": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3_a1p0-59121208_30.out"
+     ],
+     "task": "pow-P3_a1.0_30"
+    },
+    "1471185": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3_a1p0-59121208_30.out"
+     ],
+     "task": "pow-P3_a1.0_30"
+    }
+   },
+   "unaccounted": 0
+  },
+  "P3g_a1.0": {
+   "admitted": true,
+   "counts": {
+    "submitted_interrupted": 12,
+    "submitted_never_started": 16
+   },
+   "jobs": [
+    "59272530"
+   ],
+   "lost_work": 28,
+   "n_declared": 200,
+   "not_submitted": 0,
+   "products": 172,
+   "seeds": {
+    "1501005": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_0.out"
+     ],
+     "task": "pow-P3g_a1.0_0"
+    },
+    "1501011": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_1.out"
+     ],
+     "task": "pow-P3g_a1.0_1"
+    },
+    "1501014": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_2.out"
+     ],
+     "task": "pow-P3g_a1.0_2"
+    },
+    "1501015": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_2.out"
+     ],
+     "task": "pow-P3g_a1.0_2"
+    },
+    "1501016": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_2.out"
+     ],
+     "task": "pow-P3g_a1.0_2"
+    },
+    "1501017": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_2.out"
+     ],
+     "task": "pow-P3g_a1.0_2"
+    },
+    "1501023": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_3.out"
+     ],
+     "task": "pow-P3g_a1.0_3"
+    },
+    "1501040": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_6.out"
+     ],
+     "task": "pow-P3g_a1.0_6"
+    },
+    "1501041": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_6.out"
+     ],
+     "task": "pow-P3g_a1.0_6"
+    },
+    "1501049": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_8.out"
+     ],
+     "task": "pow-P3g_a1.0_8"
+    },
+    "1501050": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_8.out"
+     ],
+     "task": "pow-P3g_a1.0_8"
+    },
+    "1501051": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_8.out"
+     ],
+     "task": "pow-P3g_a1.0_8"
+    },
+    "1501052": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_8.out"
+     ],
+     "task": "pow-P3g_a1.0_8"
+    },
+    "1501053": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_8.out"
+     ],
+     "task": "pow-P3g_a1.0_8"
+    },
+    "1501058": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_9.out"
+     ],
+     "task": "pow-P3g_a1.0_9"
+    },
+    "1501059": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_9.out"
+     ],
+     "task": "pow-P3g_a1.0_9"
+    },
+    "1501064": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_10.out"
+     ],
+     "task": "pow-P3g_a1.0_10"
+    },
+    "1501065": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_10.out"
+     ],
+     "task": "pow-P3g_a1.0_10"
+    },
+    "1501069": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_11.out"
+     ],
+     "task": "pow-P3g_a1.0_11"
+    },
+    "1501070": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_11.out"
+     ],
+     "task": "pow-P3g_a1.0_11"
+    },
+    "1501071": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_11.out"
+     ],
+     "task": "pow-P3g_a1.0_11"
+    },
+    "1501161": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_26.out"
+     ],
+     "task": "pow-P3g_a1.0_26"
+    },
+    "1501184": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_30.out"
+     ],
+     "task": "pow-P3g_a1.0_30"
+    },
+    "1501185": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_30.out"
+     ],
+     "task": "pow-P3g_a1.0_30"
+    },
+    "1501188": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_interrupted",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_31.out"
+     ],
+     "task": "pow-P3g_a1.0_31"
+    },
+    "1501189": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_31.out"
+     ],
+     "task": "pow-P3g_a1.0_31"
+    },
+    "1501190": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_31.out"
+     ],
+     "task": "pow-P3g_a1.0_31"
+    },
+    "1501191": {
+     "cancel": "TIME LIMIT",
+     "disposition": "submitted_never_started",
+     "logs": [
+      "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/s5p-s5p_pow_p3g_a1p0-59272530_31.out"
+     ],
+     "task": "pow-P3g_a1.0_31"
+    }
+   },
+   "unaccounted": 0
+  }
+ },
+ "schema": "s5p-recompute-seed-disposition/1"
+}

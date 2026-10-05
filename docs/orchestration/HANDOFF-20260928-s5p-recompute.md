@@ -23,9 +23,15 @@ Cluster scratch (mine only): `/pscratch/sd/j/josephrb/s5p-parallel-recompute/`.
   found defective (F1 MEDIUM).
 - **`4a772838` is a historical checkpoint, not the deployment target.**
 
-**STATUS: FINAL VERIFICATION PENDING.** Production was non-terminal when this was last updated (2026-09-29
-~17:00Z: 0/5 final statuses, 8 s5p cal/pow jobs queued, batch 1 running, no `joint-evaluate.json`). Nothing below
-is a verification result.
+**STATUS (2026-10-05): FINAL VERIFICATION PERFORMED — the reviewed comparer's verdict is INCOMPLETE, not AGREE.**
+- 712 of 712 compared rows agree, with 0 discrepancies. Twenty required items are not located (production layout
+  differs from the stated schema), and 713 production leaves are unmapped.
+- An unreviewed diagnostic finds every independently suppliable unmapped field in agreement, apart from a ddof
+  convention in a descriptive SD.
+- The missing-experiment sensitivity is NOT certified: in the all-worst corner every rejection changes. Both
+  independent implementations agree.
+- Report: [`REPORT-20261005-s5p-recompute-final-verification.md`](REPORT-20261005-s5p-recompute-final-verification.md);
+  outputs in `state/s5p/recompute/final/`.
 
 ## 1. Source and contracts verified (2026-09-28)
 
@@ -423,7 +429,7 @@ shasum -a 256 /tmp/s5p-recompute-deploy/*
 #         s5p_recompute_compare.py 2cef96881dee75b84e568cb67a864a2db760b5a5c0064d4a7d24a296a5881ed4
 #         design.json 404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285
 #         s5p_recompute_seed_disposition.py bdc19179cbd64debf13c0368b63a4140ecb82ff7c560d6d25606c59e6f1cec77
-#         s5p_recompute_missingness_bounds.py d5fdb27cb992084405c12b4b55cfb3205ebf8b21df366d048c4312781168c6c4
+#         s5p_recompute_missingness_bounds.py 5a3beaf3b040e8020c1e132de0b2294337a923e2dd416dd605d54fcc5f53b699   (d5fdb27c… withdrawn 2026-10-05, report §6)
 scp -o BatchMode=yes /tmp/s5p-recompute-deploy/* saul.nersc.gov:$S/code/
 ```
 
@@ -762,8 +768,8 @@ an owner ruling and is recorded as such. Scope: no change to the reviewed code (
 `0142a228`), to production, or to any primary output, rule or label. Nothing is gated on it.
 
 *Files and procedure.*
-- Files: `docs/orchestration/state/s5p/recompute/s5p_recompute_missingness_bounds.py` (sha256 `d5fdb27cb9920844…`) and
-  its tests `test_s5p_recompute_missingness_bounds.py` (9).
+- Files: `docs/orchestration/state/s5p/recompute/s5p_recompute_missingness_bounds.py` (sha256 `5a3beaf3b040e802…`; `d5fdb27c…` withdrawn 2026-10-05, §5.9) and
+  its tests `test_s5p_recompute_missingness_bounds.py` (11).
 - The procedure and the CP interval are **imported** from the reviewed module, not retyped. Holm uses the 95% level;
   the 99.5% look interval belongs to the stopping rule and is not used here.
 
@@ -835,6 +841,14 @@ variants) lies in [k, k + L] at B' = B + L.
 assumption. It does not bound the effect of missing **null** experiments on power, which needs each alternative's
 count. Production's own computation, if the campaign makes one, should be compared with this output and not
 substituted for it.
+
+**5.9 Final verification performed (2026-10-05).** See the report. Owner decisions routed:
+- (1) whether to extend the comparer for the two layout gaps and the unmapped fields, under a bounded independent
+  review, which is what could turn INCOMPLETE into AGREE;
+- (2) the uncertified missing-experiment sensitivity.
+
+The bounds script defect found at the terminal run (`d5fdb27c…`: alphabetical null order from the sorted-key JSON)
+is fixed at `5a3beaf3…` with two regression tests; the first output is kept as withdrawn.
 
 **Downstream reader.** The reproduction harness (branch `s5p-parallel-reproduction-20260928`, config key
 `joint.independent_compare`) records `/pscratch/sd/j/josephrb/s5p-parallel-recompute/final/compare.json` by sha256

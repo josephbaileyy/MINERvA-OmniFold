@@ -188,6 +188,30 @@ class EndToEnd(unittest.TestCase):
         d = disposition({"MnvTune_v1": {}, "GiBUU_2019": {}}, products={"MnvTune_v1": 799, "GiBUU_2019": 200})
         self.assertTrue(any("disposition products 799" in x for x in run(self.rec, d)["incomplete"]))
 
+    def test_the_written_json_gives_the_same_result(self):
+        """recompute.json is written with sorted keys (s5p_recompute.main), which reorders the nulls
+        alphabetically. The bounds must follow the FAMILY order from family.decisions, so the file on disk and the
+        in-memory record give the same output (this failed at the first terminal run, 2026-10-05)."""
+        import json as _json
+        on_disk = _json.loads(_json.dumps(self.rec, sort_keys=True))
+        self.assertNotEqual(list(on_disk["nulls"]), list(self.rec["nulls"]))  # the hazard is present in the fixture
+        d = disposition({"MnvTune_v1": {"submitted_interrupted": 2, "submitted_never_started": 3}, "GiBUU_2019": {}})
+        a, b = run(self.rec, d), run(on_disk, d)
+        self.assertEqual(b["status"], "complete", b["incomplete"])
+        self.assertEqual(_json.dumps(a, sort_keys=True), _json.dumps(b, sort_keys=True))
+
+    def test_ties_are_broken_in_family_order(self):
+        """Equal p in two tests: Holm's A10 tie order is the family order; a reordered entry list would change the
+        step at which each is decided."""
+        import copy
+        rec = copy.deepcopy(self.rec)
+        rec2 = dict(rec, nulls=dict(reversed(list(rec["nulls"].items()))))
+        d = disposition({"MnvTune_v1": {}, "GiBUU_2019": {}})
+        self.assertEqual(run(rec, d)["populations"], run(rec2, d)["populations"])
+        bad = copy.deepcopy(rec)
+        bad["family"]["decisions"] = list(reversed(bad["family"]["decisions"]))
+        self.assertTrue(any("family order" in x for x in run(bad, d)["incomplete"]))
+
     def test_incoherent_claim_and_non_terminal_are_incomplete(self):
         import copy
         rec = copy.deepcopy(self.rec)
