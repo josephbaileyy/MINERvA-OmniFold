@@ -378,6 +378,15 @@ EOF
   - The campaign was told this is a verification result, not an authorization. **Post-switch checks are owed**
     (runner PPID 1, cmdline queues-r6, the old runner gone, log pin), and NuWro b7 onward must read `%14` at terminal.
     §5.3's chain adds `756e1d6c`.
+  - **Post-switch checks PASSED (2026-10-05 08:32Z; executed 08:30:24–08:30:41Z, recorded on origin/main
+    `2e7846eb`):**
+    - exactly one NuWro session leader, 1100694, with PPID 1 and PGID = PID, cmdline `s5c_queue.sh …
+      queues-r6/cal-NuWro_21_09.q` on `756e1d6c`; its child 1100729 is its own wait loop;
+    - 435867, 669349 and 1047840 are gone, and GiBUU 1047841 is alive on queues-r3;
+    - the r6 log is pinned to `756e1d6c` and waits on b6; the r5 log is unchanged since 07:25:46Z;
+    - the ledger has no admission after 08:00Z, and its last jobs are 59349568 (GiBUU b6) and 59358653 (NuWro b6),
+      so r6 submitted nothing.
+    - Still owed at terminal from the ledger: NuWro b7 onward at `%14`.
   - Throttle is scheduling, not science: it changes neither which seeds a batch holds nor any rule.
   - The meter is valid from either `e0d7b04a` or `b93445c4` (identical budget). §5.1 keeps `M=e0d7b04a` and
     `P` = the r3 pow log, where pow's `queue done` is.
