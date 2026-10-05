@@ -301,3 +301,10 @@ The lane feeder is `docs/orchestration/state/coverage-2d-20261005/tools/qos_feed
 not resubmit it, because `sacct` gives no state for a cancelled pending array element. It was
 stopped after that one index. Index 100 was resubmitted by hand on debug (job 59374208), with the
 same seeds, and no other index was affected. The feeder now checks `squeue` instead.
+
+## Outcome (2026-10-05, after the interim look; no criterion above was changed)
+
+FAIL-undercoverage by the interim futility rule at toys 1–100. Toys 101–200 were not run. The
+verdict, intervals, positive control, attribution and recomputation are in
+[`OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`](OUTCOME-20261005-2d-fixed-truth-coverage-fail.md)
+(ledger `VL164`).

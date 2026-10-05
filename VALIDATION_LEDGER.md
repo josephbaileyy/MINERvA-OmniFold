@@ -1,5 +1,18 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-10-05 2D statistical band: pre-registered fixed-truth coverage test
+
+Record: [`OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`](docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md).
+Pre-registration: [`PREREG-20261005-2d-fixed-truth-coverage.md`](docs/orchestration/PREREG-20261005-2d-fixed-truth-coverage.md),
+with Amendment 1 (pilot) and Amendment 2 (operational). Receipts:
+[`state/coverage-2d-20261005/`](docs/orchestration/state/coverage-2d-20261005/). It replaces the
+withdrawn same-ensemble pull diagnostic (68.71%) as the 2D coverage statement, but only for the
+statistical band.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL164 | Coverage of the VL162 2D MEFHC statistical band (per-bin σ/mean × fixed truth) by fixed-truth closure toys. Each toy draws Poisson pseudo-data from the MC reco weights and the production MC bootstrap stream, and uses the unfluctuated MC truth as T. Scored at the interim look: toys 1–100, 205 bins, 99.5% toy-bootstrap intervals | C1 **0.6794** [0.6693, 0.6899] (window [0.6319, 0.7287], inside); C2 **0.9121** [0.9065, 0.9179] (window [0.9281, 0.9722], **below**); pull RMS 1.597, mean −0.034; positive control ×0.7 / ×1.3 detects both directions; replica-form secondary C2 0.974 (FAIL-over); `interim_score.json` | **FAIL-undercoverage (futility)**: the study stopped at 100 toys under the pre-registered interim rule. Independently recomputed (fresh Opus 5.5 subagent, own code and RNG): points agree to 1e-12, intervals within 2e-4. Width, not bias; concentrated in about 14 edge bins; attributed by the pre-registered secondary to the bootstrapped completeness in the replicas. 13.33 node-h. Does not change any quoted uncertainty. Not a test of systematic, total or 5D coverage, nor of the MC-stream bootstrap principle. `KNOWN_ISSUES.md` 84. |
+
 ## 2026-10-03 existing-data scalar-5D methodological synthesis
 
 Source: [reduction package](nd-unfolding/gbdt_model_dependence/README.md), with digest-checked
