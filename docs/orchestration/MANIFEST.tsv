@@ -345,7 +345,7 @@ docs/orchestration/RECORD-20260910-z-assessor-receipt-of-relayed-findings.md	tra
 docs/orchestration/RECORD-20260920-PROJ-m1-publication-under-exception.md	tracked	LIVE	document		20260920	open		route-only		no	4	128	8631
 docs/orchestration/RECORD-20260927-s5p-stage2-exit.md	tracked	LIVE	document		20260927	open		route-only		no	11	179	12238
 docs/orchestration/RECORD-20260929-s5p-lost-seed-runtime-diagnostic.md	tracked	LIVE	document		20260929	open		route-only		no	4	133	9383
-docs/orchestration/RECORD-20261005-s5p-terminal-evaluation-pending-verification.md	tracked	LIVE	document		20261005	open		route-only		no	3	128	7350
+docs/orchestration/RECORD-20261005-s5p-terminal-evaluation-pending-verification.md	tracked	LIVE	document		20261005	open		route-only		no	3	149	8688
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	tracked	LIVE	document	20260924-preparation-for-scalar5d-campaign	20260924	open		route-only		no	5	180	13118
 docs/orchestration/REPAIR4-DEFECT-STATUS-20260807.md	tracked	ARCHIVAL	document		20260807	terminal		exact-path-only	nd-unfolding/run_p4_standard.sh	yes	5	201	13579
 docs/orchestration/REPAIR6-RECORDED-NOT-CHECKED-INVENTORY.md	tracked	ARCHIVAL	document			terminal		exact-path-only	nd-unfolding/p4_evidence.py;nd-unfolding/tests/test_p4_sweep_snapshots.py	yes	6	442	32574

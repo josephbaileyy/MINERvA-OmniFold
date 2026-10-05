@@ -115,6 +115,27 @@ seed):
   worst corner.
 - **Power:** bounds per power set, conditioning on the retained null calibration.
 
+**Observed-p stability over the 20 real-data rounding jitters** (`observed_jitter_p`; amendment 7
+`validation_and_assurance` (iv)):
+- every test's p is identical across the 20 jitters, except NuWro shape;
+- NuWro shape ranges from 2/1752 to 3/1752 (0.00114–0.00171).
+
+**Power** (`joint-evaluate.json` `power`; claim rule with determinacy; 95% CP intervals):
+
+| set | null | n of 200 | total @0.05 | total @0.005 | shape @0.05 | shape @0.005 |
+|---|---|---:|---:|---:|---:|---:|
+| P1 (W3) | MnvTune | 193 | 1.000 | 1.000 | 1.000 | 1.000 |
+| P2 (D5) | MnvTune | 195 | 1.000 | 1.000 | 1.000 | 1.000 |
+| P3 (W2) | MnvTune | 195 | 0.995 | 0.862 | 0.928 | 0.231 [0.174, 0.296] |
+| P1g (W3) | GENIE CV | 199 | 1.000 | 1.000 | 0.955 | 0.739 [0.672, 0.798] |
+| P2g (D5) | GENIE CV | 193 | 0.528 | 0.088 | 0.171 | 0.021 |
+| P3g (W2) | GENIE CV | 172 | 0.012 | 0.000 [0, 0.021] | 0.017 | 0.000 [0, 0.021] |
+
+- **Incomplete sets:** every set is incomplete (time-limit losses). Amendment 7 records that and never aborts.
+- **T6 target:** shape-test power ≥ 0.80 at 0.005 at the MnvTune null, a = 1. P1 and P2 meet it; P3 does not (0.231).
+- **Use in the claims:** under amendment 7, power is reported with a NON-rejection (MnvTune and GENIE CV only). Every
+  primary decision here is a rejection, so this power is context, not a claim condition.
+
 This is a labelled sensitivity. The primary decisions are reported as the evaluator gives them, and they are not
 revised by this step (CHECKLIST §3). Whether the label enters the deliverables as a stated condition, or otherwise,
 is Joseph's decision.
