@@ -29,6 +29,10 @@ Required reading via `AGENTS.md`; recommendations do not replace the governing a
 
 ## Current work
 
+Scalar measurement successor proposal (2026-10-05):
+[bounded 2D admission and resource request](PROPOSAL-20261005-scalar-measurement-successor.md).
+This is a proposal, not compute authority or a change to the current campaigns.
+
 ### Scalar-5D — the current entry route (compacted 2026-09-24)
 
 This section summarizes nothing. Each row names the record that governs its subject — open it, and
