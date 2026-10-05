@@ -541,6 +541,10 @@
   {
    "utc": "2026-10-05T21:06Z",
    "what": "OWNER RULINGS for the comparer extension (Joseph, answers in the campaign session; DECISION-20261005 addendum section 4): (A16) 'Rule a clarification (Recommended)': report-only, the descriptive null-T SD is ddof 0 and median_shift_in_null_sd is the shift of medians over it; the comparer checks against that reading; the recompute reports its own reading alongside. Premise checked by the campaign from production's output: residual 0 on 36 of 36 median_shift_in_null_sd leaves. (Scope) 'Allow new output fields (Recommended)': the extension may add recompute output fields (~100 leaves: per-variant null-T medians/SDs, CP intervals, implied size, classical Holm p); every existing field byte-identical to 0142a228, checked by the reviewer."
+  },
+  {
+   "utc": "2026-10-05T21:25Z",
+   "what": "RECOVERY PROCEDURE REVIEW 1 (fresh read-only agent, isolated worktree, of 0a988bc4): NOT READY - 1 blocking (the bitwise determinism criterion compared the per-run meta fields slurm_job/seconds_unfold/refinement.seconds, so it would FAIL on a perfect rerun; a stale file could pass without a rerun) and 7 should-fix (the 'T unchanged' claim false for the shifted variants since S uses F.mean; no residual-missing route; no retry classifier; Phase 0 did not verify the producer or unpinned inputs; determinism skipped the power path; log dir never created; stopping not addressed). Passed: seed sets (recomputed independently), argument fidelity (574 rows, 0 other differences), isolation, evaluator compatibility of resolve, budget arithmetic, 2 h limit. REVISION 2 addresses every finding (PROCEDURE section 8 table): exact-field meta criterion with determinism-array job-id provenance and same-file refusal; 16 determinism seeds incl. 6 power; frozen-s (self-validating reproduction of the frozen nulls) alongside the union reading; residual and retry routes; whole-nd-unfolding diff vs 4f5a613f with named exclusions; Phase 0 self-validation of frozen-s and stopping on the frozen products; 23 controls pass. Re-review requested before any submission. Nothing submitted."
   }
  ],
  "findings": [
