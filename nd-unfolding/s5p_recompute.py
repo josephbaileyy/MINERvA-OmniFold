@@ -119,6 +119,17 @@ AMBIGUITIES = {
                               "[seed0 + final B, seed0 + 200 x batches). Corrected after production outputs were "
                               "visible (the five batch-0 looks, k = 0 at every null); a definitional alignment, no "
                               "production rule changed",
+    "A16_descriptive_null_T_summaries": "RULED 2026-10-05 by the owner, report only, like A7-VS "
+                                        "(DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md §4; a "
+                                        "clarification made then, after production's output was seen, not a recovered "
+                                        "definition): the frozen text defined neither. RULED: the descriptive null-T "
+                                        "SD is ddof 0 (null_T_by_variant.sd_ddof0) and median_shift_in_null_sd is "
+                                        "(median T_shifted - median T_unshifted) / SD(T_unshifted, ddof 0) "
+                                        "(median_shift_in_null_sd_A16_ruled). THE RECOMPUTE'S OWN READING, reported "
+                                        "alongside as labelled and unchanged since 1bfd8910: sample SD (ddof 1); "
+                                        "median_shift_in_null_sd = median over draws of (T_shifted - T_unshifted) / "
+                                        "SD(T_unshifted, ddof 1). Descriptive only: no p-value, decision, label or "
+                                        "stopping rule uses either",
     "A14_power_null_B": "power is evaluated against the null's final calibration ensemble (the admission's B >= "
                         "1200 floor for the two powered nulls makes the 0.005 level attainable)",
 }
@@ -556,11 +567,11 @@ def claim(t_obs: float, ens: dict, test: str) -> dict:
     for label, e in ens.items():
         k = int(rank_counts(t_obs, e[test])[0])
         B = e[test].size
-        per[label] = {"k": k, "p": mc_p(k, B)}
+        per[label] = {"k": k, "p": mc_p(k, B), "B": B, "interval": list(cp_interval(k, B)), "level": CP_LEVEL}
     kmax = max(v["k"] for v in per.values())
     arg = [lbl for lbl, v in per.items() if v["k"] == kmax]
     return {"variants": per, "k": kmax, "B": B, "p": mc_p(kmax, B), "argmax": arg,
-            "interval": list(cp_interval(kmax, B))}
+            "interval": list(cp_interval(kmax, B)), "level": CP_LEVEL}
 
 
 # ----------------------------------------------------------------------------------------------- evaluator
@@ -710,14 +721,18 @@ class Evaluator:
             c["robust_kappa3_replace_kappa2"] = claim(obs[t], ens_rob_replace, t) if rob_only else None
             cp_ = claim(obs[t], ens_prod, t)
             c["product_reading"] = {k: cp_[k] for k in ("k", "B", "p", "argmax")}
-            size = {}
+            size, size_detail = {}, {}
             base = ens["c=0"][t]
             for lbl, e in ens.items():
                 if lbl == "c=0":
                     continue
                 kk = rank_counts(e[t], base)
                 size[lbl] = float(np.mean(mc_p_vec(kk, base.size) <= 0.05))
+                cnt = int(np.sum(mc_p_vec(kk, base.size) <= 0.05))
+                size_detail[lbl] = {"count": cnt, "n": int(base.size), "power": size[lbl], "alpha": 0.05,
+                                    "interval": list(cp_interval(cnt, int(base.size)))}
             c["implied_size"] = size
+            c["implied_size_detail"] = size_detail
             half = size.get("c=0.5")
             c["unshifted_not_calibrated_for_data_process"] = bool(half is not None and half > 0.08)
             jit = []
@@ -731,6 +746,14 @@ class Evaluator:
             sd0 = float(base.std(ddof=1)) if base.size > 1 else float("nan")
             c["median_shift_in_null_sd"] = {lbl: float(np.median(e[t] - base) / sd0) for lbl, e in ens.items()
                                             if lbl != "c=0"}
+            # A16 (ruled, report only): descriptive summaries per variant (output only); the existing
+            # median_shift_in_null_sd above is the recompute's own reading, kept unchanged
+            c["null_T_by_variant"] = {lbl: {"median": float(np.median(e[t])),
+                                            "sd_ddof1": float(e[t].std(ddof=1)) if e[t].size > 1 else float("nan"),
+                                            "sd_ddof0": float(e[t].std(ddof=0))} for lbl, e in ens.items()}
+            sd_pop = float(base.std(ddof=0))
+            c["median_shift_in_null_sd_A16_ruled"] = {
+                lbl: float((np.median(e[t]) - np.median(base)) / sd_pop) for lbl, e in ens.items() if lbl != "c=0"}
             tests[t] = c
         rec["tests"] = tests
         rec["null_T_summary"] = {t: {"mean": float(ens["c=0"][t].mean()), "sd": float(ens["c=0"][t].std(ddof=1)),
@@ -824,6 +847,15 @@ def evaluate(design: dict, v_path: str, s5c_contract: dict, variant_mode: str = 
             d["label"] = "not calibrated"
         d["holm_point"] = p
     out["family"]["decisions"] = dec
+    # the classical (point) Holm-adjusted p of each claim p, in the family order (ties by family order, A10)
+    m_fam, run_max, adj = len(entries), 0.0, {}
+    for step, i in enumerate(sorted(range(len(entries)), key=lambda i: (entries[i]["p"], i))):
+        run_max = max(run_max, min(1.0, (m_fam - step) * entries[i]["p"]))
+        adj[entries[i]["test"]] = run_max
+    out["family"]["holm_point_classical"] = {e["test"]: {"p_raw": e["p"], "p_holm": adj[e["test"]],
+                                                         "reject": d["holm_point"] == "rejected"}
+                                             for e, d in zip(entries, dec)}
+    out["power_levels"] = list(POWER_LEVELS)
     kappa3 = {}
     for vs, field_ in (("retain_kappa2", "robust_kappa3_retain_kappa2"), ("replace_kappa2", "robust_kappa3_replace_kappa2")):
         ents = []

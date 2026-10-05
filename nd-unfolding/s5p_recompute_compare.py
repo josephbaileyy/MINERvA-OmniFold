@@ -43,6 +43,31 @@ Verdicts and exit codes:
 
 Agreement rules: counts exactly (integral numbers); p-values and interval ends to 1e-12 absolute; statistics to
 1e-8 relative; labels, booleans and digests exactly and of the same type.
+
+**Mapping extension (2026-10-05; owner decision DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md,
+"Extend, review, then record").** The first terminal run (REPORT-20261005-s5p-recompute-final-verification.md) left
+20 required items not located and 713 production leaves unmapped. Production's layout, now observed from its output
+(never from its code), is mapped as follows; no required item is dropped and no tolerance is changed:
+
+- per claim and per variant (``variants``, ``robustness_variants``), per test: ``B``, ``tail_interval`` (the 95% CP
+  interval) and ``level``; ``tests/<null>/<t>_robust``: the same against the keep-both robust claim (for a null
+  without M1 variants, the claim itself);
+- per variant: ``null_T_<t>_median``, ``null_T_<t>_sd`` and ``median_shift_in_null_sd/<t>``, against the reading
+  RULED by the owner as A16 (2026-10-05, report only: SD ddof 0; median shift = shift of medians over it). The
+  recompute's own reading (ddof 1; median of per-draw shifts) is compared in ``a16_recompute_own_reading_rows``,
+  which never enter the verdict;
+- per variant: ``implied_size_of_unshifted_test/<t>/{n, interval, alpha}``;
+- ``tests/<null>/shift``: the process-shift record (``mode``, ``a``, ``se``, ``magnitude``, ``bias_norm_W``,
+  ``n_pairs``);
+- ``holm_point/<test>``: a ``{p_raw, p_holm, reject}`` record (the classical Holm-adjusted p) is compared field by
+  field; a decision label is compared as before;
+- power, per (set, test, level, rule): ``n``, ``alpha`` (the level) and ``B`` (the null's B), besides ``power`` and
+  ``interval``; ``power/levels``;
+- ``robust-labels.json``: ``diagnostics.keep_both.family`` is a definition string, not per-test member names. It is
+  required to EXIST as a non-empty string, and its text is excluded (the keep-both family is compared through
+  ``diagnostics.keep_both.labels`` and ``decisions_robust_kappa``); ``kappa3_family`` likewise;
+- rule-description texts (``tests/<null>/<t>/rule``, ``.../<t>_robust/rule``, ``power/.../rule``) are excluded
+  by anchored pattern: the rule is fixed by the frozen specification and its computed values are compared.
 """
 from __future__ import annotations
 
@@ -57,6 +82,9 @@ POWER_RULES = (("rank_unshifted", "unshifted"), ("rank_claim", "claim_rule"),
                ("determined_claim", "claim_rule_determined"))
 
 _V_REASON = "V-construction metadata frozen with V; v_sha256 is required and compared"
+_RULE_TEXT = "rule-description text; the rule is fixed by the frozen specification and its computed values are compared"
+_FAMILY_TEXT = ("family-definition text; the family is compared through its members, labels and decisions "
+                "(family_members, diagnostics.keep_both.labels, decisions_robust_kappa)")
 # Anchored path patterns ("*" = one segment) of optional metadata, matched only by scalar leaves (or lists of scalars).
 EXCLUDED_SCOPE = {
     "joint-evaluate.json": [
@@ -67,12 +95,19 @@ EXCLUDED_SCOPE = {
         (("lateral_symmetry", "*", "*"), _V_REASON),
         (("shrinkage",), _V_REASON),
         (("median_rel_sd",), _V_REASON),
+        (("tests", "*", "total", "rule"), _RULE_TEXT),
+        (("tests", "*", "shape", "rule"), _RULE_TEXT),
+        (("tests", "*", "total_robust", "rule"), _RULE_TEXT),
+        (("tests", "*", "shape_robust", "rule"), _RULE_TEXT),
+        (("power", "*", "*", "*", "*", "rule"), _RULE_TEXT),
     ],
     "robust-labels.json": [
         (("schema",), "format identifier"),
         (("code_sha256",), "producer identity"),
         (("ruling",), "citation of the ruling record (text)"),
         (("evaluate",), "input path echo; evaluate_sha256 is required and compared"),
+        (("kappa3_family",), _FAMILY_TEXT),
+        (("diagnostics", "keep_both", "family"), _FAMILY_TEXT),
     ],
 }
 
@@ -159,7 +194,15 @@ class Ledger:
 
     def __init__(self, doc, name):
         self.doc, self.name = doc, name
-        self.rows, self.consumed, self.missing = [], set(), []
+        self.rows, self.consumed, self.missing, self.diag = [], set(), [], []
+
+    def diag_row(self, label, kind, mine, path):
+        """A16: the recompute's own (non-ruled) reading against production; reported, never part of the verdict."""
+        theirs = self.get(path)
+        if theirs is not None:
+            self.diag.append({"item": label, "kind": kind, "mine_alternative": mine, "production": theirs,
+                              "production_path": f"{self.name}:" + "/".join(path),
+                              "agree": not isinstance(theirs, dict) and agree(kind, mine, theirs)})
 
     def get(self, path):
         cur = self.doc
@@ -287,6 +330,30 @@ def _compare_variant_family(L, key, rec, base, vkey, mine_members):
             for f in ("k", "p"):
                 L.require(f"{key}:{t}:{vkey}[{mname}]:{f}", base + (vkey, idx, t, f), kind_of(f),
                           mv.get(f) if mv else None)
+            for pf, mf, kd in (("B", "B", "count"), ("tail_interval", "interval", "p"), ("level", "level", "p")):
+                if L.get(base + (vkey, idx, t, pf)) is not None:
+                    L.row(f"{key}:{t}:{vkey}[{mname}]:{pf}", kd, mv.get(mf) if mv else None, base + (vkey, idx, t, pf))
+            if vkey != "variants":
+                continue
+            ent_base = base + (vkey, idx)
+            nt = (m.get("null_T_by_variant") or {}).get(mname) or {}
+            for stat, mk, alt in (("median", "median", None), ("sd", "sd_ddof0", "sd_ddof1")):  # A16 ruled: ddof 0
+                pk = ent_base + (f"null_T_{t}_{stat}",)
+                if L.get(pk) is not None:
+                    L.row(f"{key}:{t}:{vkey}[{mname}]:null_T_{stat}", "stat", nt.get(mk), pk)
+                    if alt:
+                        L.diag_row(f"A16 own reading:{key}:{t}:{vkey}[{mname}]:null_T_{stat}", "stat", nt.get(alt), pk)
+            pk = ent_base + ("median_shift_in_null_sd", t)
+            if mname != "c=0" and L.get(pk) is not None:
+                L.row(f"{key}:{t}:{vkey}[{mname}]:median_shift_in_null_sd(A16 ruled)", "stat",
+                      (m.get("median_shift_in_null_sd_A16_ruled") or {}).get(mname), pk)
+                L.diag_row(f"A16 own reading:{key}:{t}:{vkey}[{mname}]:median_shift_in_null_sd", "stat",
+                           (m.get("median_shift_in_null_sd") or {}).get(mname), pk)
+            det = (m.get("implied_size_detail") or {}).get(mname) or {}
+            for pf, mf, kd in (("n", "n", "count"), ("interval", "interval", "p"), ("alpha", "alpha", "p")):
+                pk = ent_base + ("implied_size_of_unshifted_test", t, pf)
+                if mname != "c=0" and L.get(pk) is not None:
+                    L.row(f"{key}:{t}:{vkey}[{mname}]:implied_size:{pf}", kd, det.get(mf), pk)
 
 
 def _claim_members(rec):
@@ -342,12 +409,15 @@ def compare_evaluate(mine, prod) -> Ledger:
         ps = dict(rec.get("process_shift") or {})
         ps.update(prov.get(f"process_shift:{key}") or {})
         L.same_names(f"{key}:process_shift", ps, base + ("process_shift",))
+        L.same_names(f"{key}:shift", ps, base + ("shift",))
         L.same_names(f"{key}:m1_shift", prov.get(f"m1_shift:{key}") or {}, base + ("m1_shift",))
         for t in TESTS:
             mt = rec["tests"][t]
             for f in ("p", "k", "B"):
                 L.require(f"{key}:{t}:claim_{f}", base + (t, f), kind_of(f), mt.get(f))
             L.same_names(f"{key}:{t}:claim", mt, base + (t,), skip=("variants", "unshifted", "p", "k", "B", "argmax"))
+            if L.get(base + (t, "tail_interval")) is not None:  # "level" is compared by same_names
+                L.row(f"{key}:{t}:claim:tail_interval", "p", mt.get("interval"), base + (t, "tail_interval"))
             if isinstance(L.get(base + (t, "unshifted")), dict):
                 L.same_names(f"{key}:{t}:unshifted", mt.get("unshifted") or {}, base + (t, "unshifted"))
             for stat in ("median", "sd"):
@@ -375,9 +445,17 @@ def compare_evaluate(mine, prod) -> Ledger:
                 if p is not None:
                     L.row(f"{key}:{t}:median_shift_in_null_sd[{lbl}]", "stat", mv, p)
             # the frozen keep-both robust claim, when production writes it per test (e.g. tests/<null>/total_robust)
-            rob = mt.get("robust_kappa3_retain_kappa2") or {"p": mt.get("p"), "k": mt.get("k"), "B": mt.get("B")}
+            rob = mt.get("robust_kappa3_retain_kappa2") or mt  # a null without M1 variants: its robust claim is its claim
             if isinstance(L.get(base + (f"{t}_robust",)), dict):
-                L.same_names(f"{key}:{t}_robust(keep-both)", rob, base + (f"{t}_robust",), skip=("variants", "argmax"))
+                L.same_names(f"{key}:{t}_robust(keep-both)", rob, base + (f"{t}_robust",),
+                             skip=("variants", "argmax", "unshifted", "implied_size", "implied_size_detail",
+                                   "observed_jitter", "median_shift_in_null_sd", "null_T_by_variant",
+                                   "median_shift_in_null_sd_A16_ruled", "robust_kappa3_retain_kappa2",
+                                   "robust_kappa3_replace_kappa2", "product_reading",
+                                   "unshifted_not_calibrated_for_data_process"))
+                if L.get(base + (f"{t}_robust", "tail_interval")) is not None:  # "level" via same_names
+                    L.row(f"{key}:{t}_robust(keep-both):tail_interval", "p", rob.get("interval"),
+                          base + (f"{t}_robust", "tail_interval"))
                 _compare_argmax(L, f"{key}:{t}_robust(keep-both)", rob, base + (f"{t}_robust",))
             _compare_argmax(L, f"{key}:{t}:claim", mt, base + (t,))
         _compare_variant_family(L, key, rec, base, "variants", _claim_members(rec))
@@ -395,6 +473,12 @@ def compare_evaluate(mine, prod) -> Ledger:
                 L.missing.append(f"{L.name}:{field}:{test}")
                 continue
             node = L.get(p)
+            if field == "holm_point" and isinstance(node, dict) and "p_holm" in node:
+                hc = (fam.get("holm_point_classical") or {}).get(test) or {}
+                L.require(f"holm_point:{test}:p_raw", p + ("p_raw",), "p", hc.get("p_raw"))
+                L.require(f"holm_point:{test}:p_holm", p + ("p_holm",), "p", hc.get("p_holm"))
+                L.require(f"holm_point:{test}:reject", p + ("reject",), "exact", hc.get("reject"))
+                continue
             if isinstance(node, dict):
                 leafk = "decision" if "decision" in node else "label"
                 L.require(f"{field}:{test}", p + (leafk,), "exact", md.get(attr))
@@ -412,6 +496,8 @@ def compare_evaluate(mine, prod) -> Ledger:
         L.row("not_calibrated", "exact", sorted(k for k, r in mine["nulls"].items() if r["B"] == 0),
               ("not_calibrated",))
     ppow = prod.get("power") if isinstance(prod.get("power"), dict) else {}
+    if "levels" in ppow:
+        L.row("power:levels", "p", mine.get("power_levels"), ("power", "levels"))
     if not mine.get("power") and ppow == {} and "power" in prod:
         L.consumed.add(("power",))  # no power set on either side
     for sk, mp in mine.get("power", {}).items():
@@ -438,6 +524,10 @@ def compare_evaluate(mine, prod) -> Ledger:
                         L.missing.append(f"{L.name}:{label}")
                     elif isinstance(L.get(p), dict):
                         L.same_names(label, mr, p)
+                        for pf, mv, kd in (("n", mp.get("n_present"), "count"), ("alpha", float(lvl), "p"),
+                                           ("B", mp.get("B_null"), "count")):
+                            if L.get(p + (pf,)) is not None:
+                                L.row(f"{label}:{pf}", kd, mv, p + (pf,))
                         if not any(r["item"].startswith(label + ":") for r in L.rows):
                             L.missing.append(f"{L.name}:{label} (no comparable field)")
                     else:
@@ -543,7 +633,11 @@ def compare_labels_doc(mine, doc, prod_sha256) -> Ledger:
     per_test(("diagnostics", "frozen_boolean_robust_to_the_sub_fine_residual"),
              fam.get("frozen_boolean_equivalent_diagnostic", {}), "value")
     per_test(("diagnostics", "keep_both", "labels"), fam["keep_both_kappa3_diagnostic"]["labels"], "value")
-    per_test(("diagnostics", "keep_both", "family"), family_names(mine, "retain"), "names")
+    kb = LL.get(("diagnostics", "keep_both", "family"))
+    if isinstance(kb, dict) or isinstance(kb, list):  # per-test member names, the layout first assumed
+        per_test(("diagnostics", "keep_both", "family"), family_names(mine, "retain"), "names")
+    elif not (isinstance(kb, str) and kb.strip()):  # required to exist as a non-empty definition string
+        LL.missing.append(f"{LL.name}:diagnostics/keep_both/family (a definition string or per-test names)")
     return LL
 
 
@@ -565,6 +659,7 @@ def compare(mine: dict, prod: dict, labels_doc: dict | None = None, prod_sha256:
             labels_missing_reason: str | None = None) -> dict:
     L = compare_evaluate(mine, prod)
     unresolved, excl = account(L, "joint-evaluate.json")
+    a16 = list(L.diag)
     rows, missing = list(L.rows), list(L.missing)
     if labels_doc is None:
         missing.append(f"robust-labels.json ({labels_missing_reason or 'not given'})")
@@ -582,7 +677,10 @@ def compare(mine: dict, prod: dict, labels_doc: dict | None = None, prod_sha256:
             "unresolved_production_leaves": unresolved,
             "excluded_by_scope": {"paths": excl, "scope": {d: [["/".join(p), r] for p, r in v]
                                                            for d, v in EXCLUDED_SCOPE.items()}},
-            "rows": rows}
+            "rows": rows,
+            "a16_recompute_own_reading_rows": {"note": "A16: the recompute's own (non-ruled) reading, labelled; "
+                                                       "never part of the verdict",
+                                     "items": len(a16), "agree": sum(1 for r in a16 if r["agree"]), "rows": a16}}
 
 
 EXIT = {"AGREE": 0, "DISCREPANT": 1, "INCOMPLETE": 2, "ERROR": 3}

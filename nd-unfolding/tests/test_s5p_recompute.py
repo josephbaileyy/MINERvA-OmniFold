@@ -1173,3 +1173,260 @@ class A7Ruling(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# ------------------------------------------------------------------------------------------- mapping extension
+
+def _norm_path(p):
+    """A key path with nulls, variants, power sets, levels and lateral bands replaced by placeholders."""
+    import re
+    nulls = {"MnvTune_v1", "GENIE_2_12_10_CV", "GENIE_2_12_10_MEC", "NuWro_21_09", "GiBUU_2019"}
+    out = []
+    for i, seg in enumerate(p):
+        if i == 1 and p[0] == "lateral_symmetry":
+            out.append("<band>")
+        elif seg in nulls:
+            out.append("<null>")
+        elif ":" in seg and seg.split(":")[0] in nulls:
+            out.append("<null>:" + seg.split(":")[1])
+        elif re.fullmatch(r"\d+\.\d+|m1[+-]\d", seg):
+            out.append("<v>")
+        elif re.fullmatch(r"P\dg?_a1\.0", seg):
+            out.append("<set>")
+        else:
+            out.append(seg)
+    return "/".join(out)
+
+
+def _signature(doc):
+    def walk(o, p=()):
+        if isinstance(o, dict) and o:
+            for k, v in o.items():
+                yield from walk(v, p + (k,))
+        elif isinstance(o, list) and o and not all(not isinstance(x, (dict, list)) for x in o):
+            for v in o:
+                yield from walk(v, p + ("<i>",))
+        else:
+            yield p
+    return sorted({_norm_path(p) for p in walk(doc)})
+
+
+class CompareObservedLayout(unittest.TestCase):
+    """The mapping extension (owner decision DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md):
+    production's layout as OBSERVED in its terminal outputs. The fixture's key structure must equal the real files'
+    (tests/data/s5p_production_layout_signature.json, key paths only), so a layout invented here cannot pass; the
+    A16 descriptive fields are compared against the ruled reading."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.dir = Path(tempfile.mkdtemp(prefix="s5p_recompute_obs_"))
+        t = Toy(cls.dir / "w")
+        base = t.truth["MnvTune_v1"]
+        tilt = np.repeat(np.linspace(0.9, 1.1, 4), base.size // 4)
+        t.set_data(base * tilt)
+        t.calibration("MnvTune_v1", 120)
+        t.calibration("GiBUU_2019", 120)
+        t.power("P1_a1.0", 12, "MnvTune_v1", tilt)
+        pw = {"P1_a1.0": {"glob": str(t.root / "pow/P1_a1.0/pow_P1_a1.0_s*.npz"), "surrogate_seed0": 1951000,
+                          "n": 15, "null": "MnvTune_v1"}}
+        cls.mine = R.jsonable(R.evaluate(t.design(power=pw), t.v_path, t.contract, log=lambda *a: None))
+        cls.mine["inputs"] = {"design_sha256": "d" * 64}
+        cls.sig = json.loads((HERE / "data" / "s5p_production_layout_signature.json").read_text())
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.dir, ignore_errors=True)
+
+    @staticmethod
+    def pn(n):
+        return str(float(n[2:])) if n.startswith("c=") else n.replace("m1=", "m1")
+
+    def observed(self):
+        """joint-evaluate.json and robust-labels.json in production's observed layout, agreeing with self.mine under
+        the ruled A16 reading."""
+        m, pn = self.mine, self.pn
+        fam = m["family"]
+        tests = {}
+        for key, rec in m["nulls"].items():
+            prov = m["provenance"]
+            psd, m1d = prov[f"process_shift:{key}"], prov[f"m1_shift:{key}"]
+            r = {"domain_cells": rec["domain_cells"], "T_total_obs": rec["observed_T"]["total"],
+                 "T_shape_obs": rec["observed_T"]["shape"],
+                 "process_shift": {"mode": psd["mode"], "path": psd["path"], "sha256": psd["sha256"]},
+                 "shift": {"mode": psd["mode"], **{f: rec["process_shift"][f] for f in
+                                                   ("bias_norm_W", "a", "se", "n_pairs", "magnitude")}},
+                 "variants": {}, "robustness_variants": {}, "observed_jitter_p": {}}
+            if "none" not in m1d:
+                r["m1_shift"] = {"path": m1d["path"], "kappa": m1d["kappa"], "kappa_robust": m1d["kappa_robust"]}
+            for t in ("total", "shape"):
+                tr = rec["tests"][t]
+                r[t] = {"p": tr["p"], "k": tr["k"], "B": tr["B"], "tail_interval": tr["interval"],
+                        "level": tr["level"], "rule": "the largest p over the declared shift variants"}
+                rob = tr.get("robust_kappa3_retain_kappa2") or tr
+                r[f"{t}_robust"] = {"p": rob["p"], "k": rob["k"], "B": rob["B"], "tail_interval": rob["interval"],
+                                    "level": rob["level"], "rule": "the claim p with the kappa_robust M1 variants added"}
+                for n, v in tr["variants"].items():
+                    e = r["variants"].setdefault(pn(n), {})
+                    e[t] = {x: v[y] for x, y in (("p", "p"), ("k", "k"), ("B", "B"), ("tail_interval", "interval"),
+                                                 ("level", "level"))}
+                    nt = tr["null_T_by_variant"][n]
+                    e[f"null_T_{t}_median"], e[f"null_T_{t}_sd"] = nt["median"], nt["sd_ddof0"]  # A16 ruled
+                    if n != "c=0":
+                        d = tr["implied_size_detail"][n]
+                        e.setdefault("implied_size_of_unshifted_test", {})[t] = {
+                            "power": d["power"], "n": d["n"], "interval": d["interval"], "alpha": d["alpha"]}
+                        e.setdefault("median_shift_in_null_sd", {})[t] = tr["median_shift_in_null_sd_A16_ruled"][n]
+                rv = (tr.get("robust_kappa3_replace_kappa2") or {}).get("variants") or {}
+                for n, v in rv.items():
+                    if n.startswith("m1="):
+                        r["robustness_variants"].setdefault(pn(n), {})[t] = {
+                            x: v[y] for x, y in (("p", "p"), ("k", "k"), ("B", "B"), ("tail_interval", "interval"),
+                                                 ("level", "level"))}
+                j = tr["observed_jitter"]
+                r["observed_jitter_p"][t] = {"min": j["p_min"], "median": j["p_median"], "max": j["p_max"], "n": j["n"]}
+            tests[key] = r
+        drec = lambda d: {x: d[x] for x in ("p", "k", "B", "threshold", "interval", "level", "decision")}  # noqa
+        keep = {d["test"]: d for d in fam["keep_both_kappa3_diagnostic"]["holm"]}
+        power = {"levels": list(m["power_levels"])}
+        for sk, p in m["power"].items():
+            e = {"n": p["n_present"], "null": p["null"], "declared": p["n_declared"], "incomplete": not p["complete"]}
+            for t in ("total", "shape"):
+                e[t] = {}
+                for lvl in ("0.05", "0.005"):
+                    q = p[t][lvl]
+                    e[t][lvl] = {
+                        "unshifted": {"power": q["rank_unshifted"]["power"], "n": p["n_present"],
+                                      "interval": q["rank_unshifted"]["interval"], "alpha": float(lvl)},
+                        "claim_rule": {"power": q["rank_claim"]["power"], "n": p["n_present"]},
+                        "claim_rule_determined": {"power": q["determined_claim"]["power"], "n": p["n_present"],
+                                                  "interval": q["determined_claim"]["interval"], "alpha": float(lvl),
+                                                  "B": p["B_null"], "rule": "claim rule with determinacy"}}
+            power[sk] = e
+        prod = {"schema": "s5p-joint-evaluate/x", "design_sha256": "d" * 64, "v_sha256": m["provenance"]["V"]["sha256"],
+                "names": m["names"], "tests": tests,
+                "holm_point": {d["test"]: dict(fam["holm_point_classical"][d["test"]]) for d in fam["decisions"]},
+                "decisions": {d["test"]: drec(d) for d in fam["decisions"]},
+                "decisions_robust_kappa": {d["test"]: drec(keep[d["test"]]) for d in fam["decisions"]},
+                "robust_to_the_sub_fine_residual": dict(fam["frozen_boolean_equivalent_diagnostic"]),
+                "power": power,
+                "lateral_symmetry": {b: {"corr_up_vs_minus_down": -0.3, "median_abs_delta_rel": 0.001}
+                                     for b in ("BeamAngleX", "Muon_Energy_MINOS")}}
+        members = {test: [pn(n) for n in v] for test, v in C_family(m, "replace").items()}
+        labels = {"schema": "s5p-robust-labels/2", "labels": dict(fam["robust_labels"]),
+                  "decisions_kappa3_replace": {d["test"]: drec(d) for d in fam["holm_at_kappa_robust"]},
+                  "family_members": members,
+                  "kappa3_family": "replace: the process-shift variants c S and F +- kappa_robust delta_M1",
+                  "diagnostics": {"frozen_boolean_robust_to_the_sub_fine_residual":
+                                  dict(fam["frozen_boolean_equivalent_diagnostic"]),
+                                  "keep_both": {"family": "claim variants union F +- kappa_robust delta_M1",
+                                                "labels": dict(fam["keep_both_kappa3_diagnostic"]["labels"])}},
+                  "evaluate_sha256": "e" * 64, "design_sha256": "d" * 64, "alpha_family": 0.05,
+                  "code_sha256": "c" * 64, "ruling": "RULING-20260929-s5p-A7-robustness-flag.md",
+                  "evaluate": "/x/joint-evaluate.json"}
+        return prod, labels
+
+    def cmp(self, prod, labels):
+        import s5p_recompute_compare as C
+        return C.compare(self.mine, prod, labels, prod_sha256="e" * 64)
+
+    def test_the_fixture_has_production_s_observed_layout(self):
+        prod, labels = self.observed()
+        self.assertEqual(_signature(prod), self.sig["joint-evaluate.json"])
+        self.assertEqual(_signature(labels), self.sig["robust-labels.json"])
+
+    def test_the_observed_layout_agrees_with_everything_accounted_for(self):
+        prod, labels = self.observed()
+        rep = self.cmp(prod, labels)
+        self.assertEqual(rep["verdict"], "AGREE", (rep["discrepancies"][:3], rep["not_located"][:5],
+                                                   rep["unresolved_production_leaves"][:5]))
+        excl = {e["path"].split(":", 1)[1] for e in rep["excluded_by_scope"]["paths"]}
+        self.assertTrue(all(p == "schema" or p.endswith("/rule") or p.startswith("lateral_symmetry/") or
+                            p in ("code_sha256", "ruling", "evaluate", "kappa3_family", "diagnostics/keep_both/family")
+                            for p in excl), excl)
+        own = rep["a16_recompute_own_reading_rows"]
+        self.assertGreater(own["items"], 0)
+        self.assertLess(own["agree"], own["items"])  # the own reading differs and still does not enter the verdict
+
+    def mutate(self, f):
+        prod, labels = self.observed()
+        f(prod, labels)
+        return self.cmp(prod, labels)
+
+    def test_each_new_mapping_detects_a_changed_value(self):
+        G, M = "GiBUU_2019", "MnvTune_v1"
+        nt0 = self.mine["nulls"][G]["tests"]["total"]["null_T_by_variant"]["m1=+2"]
+        cases = {
+            "holm p_holm": lambda p, l: p["holm_point"][f"{G}:total"].__setitem__("p_holm", 0.5),
+            "holm reject": lambda p, l: p["holm_point"][f"{G}:shape"].__setitem__(
+                "reject", not p["holm_point"][f"{G}:shape"]["reject"]),
+            "holm p_raw": lambda p, l: p["holm_point"][f"{M}:total"].__setitem__("p_raw", 0.123),
+            "variant tail_interval": lambda p, l: p["tests"][G]["variants"]["0.5"]["total"].__setitem__(
+                "tail_interval", [0.0, 0.9]),
+            "variant B": lambda p, l: p["tests"][G]["variants"]["m1-2"]["shape"].__setitem__("B", 7),
+            "variant level": lambda p, l: p["tests"][M]["variants"]["1.0"]["total"].__setitem__("level", 0.9),
+            "robustness variant interval": lambda p, l: p["tests"][G]["robustness_variants"]["m1+3"]["total"].__setitem__(
+                "tail_interval", [0.0, 0.8]),
+            "claim tail_interval": lambda p, l: p["tests"][M]["shape"].__setitem__("tail_interval", [0.1, 0.2]),
+            "robust tail_interval (no M1: the claim)": lambda p, l: p["tests"][M]["total_robust"].__setitem__(
+                "tail_interval", [0.1, 0.2]),
+            "null-T median": lambda p, l: p["tests"][G]["variants"]["0.0"].__setitem__("null_T_total_median", 1.0),
+            "null-T SD in the recompute's own (ddof 1) reading": lambda p, l: p["tests"][G]["variants"]["m1+2"].__setitem__(
+                "null_T_total_sd", nt0["sd_ddof1"]),
+            "median shift in the recompute's own reading": lambda p, l: p["tests"][G]["variants"]["m1+2"][
+                "median_shift_in_null_sd"].__setitem__("total", self.mine["nulls"][G]["tests"]["total"][
+                    "median_shift_in_null_sd"]["m1=+2"]),
+            "implied size n": lambda p, l: p["tests"][G]["variants"]["0.5"]["implied_size_of_unshifted_test"][
+                "shape"].__setitem__("n", 3),
+            "implied size interval": lambda p, l: p["tests"][G]["variants"]["1.0"]["implied_size_of_unshifted_test"][
+                "total"].__setitem__("interval", [0.0, 1.0]),
+            "implied size alpha": lambda p, l: p["tests"][M]["variants"]["0.5"]["implied_size_of_unshifted_test"][
+                "total"].__setitem__("alpha", 0.01),
+            "shift a": lambda p, l: p["tests"][G]["shift"].__setitem__("a", 99.0),
+            "shift mode": lambda p, l: p["tests"][M]["shift"].__setitem__("mode", "other"),
+            "shift n_pairs": lambda p, l: p["tests"][M]["shift"].__setitem__("n_pairs", 15),
+            "power alpha": lambda p, l: p["power"]["P1_a1.0"]["total"]["0.005"]["unshifted"].__setitem__("alpha", 0.05),
+            "power B": lambda p, l: p["power"]["P1_a1.0"]["shape"]["0.05"]["claim_rule_determined"].__setitem__("B", 1),
+            "power n": lambda p, l: p["power"]["P1_a1.0"]["shape"]["0.05"]["claim_rule"].__setitem__("n", 99),
+            "power levels": lambda p, l: p["power"].__setitem__("levels", [0.05, 0.01]),
+        }
+        for name, mut in cases.items():
+            with self.subTest(name):
+                rep = self.mutate(mut)
+                self.assertEqual(rep["verdict"], "DISCREPANT", (name, rep["not_located"][:3],
+                                                                rep["unresolved_production_leaves"][:3]))
+
+    def test_missing_or_unknown_content_is_incomplete(self):
+        G = "GiBUU_2019"
+        cases = {
+            "holm p_holm removed": lambda p, l: p["holm_point"][f"{G}:total"].pop("p_holm"),
+            "keep-both family removed": lambda p, l: l["diagnostics"]["keep_both"].pop("family"),
+            "keep-both family empty": lambda p, l: l["diagnostics"]["keep_both"].__setitem__("family", "  "),
+            "an unknown variant field": lambda p, l: p["tests"][G]["variants"]["0.5"].__setitem__("new_stat", 1.5),
+            "a container at a rule path": lambda p, l: p["tests"][G]["total"].__setitem__("rule", {"x": 1}),
+            "a container for a family text": lambda p, l: l.__setitem__("kappa3_family", {"x": "y"}),
+        }
+        for name, mut in cases.items():
+            with self.subTest(name):
+                self.assertEqual(self.mutate(mut)["verdict"], "INCOMPLETE", name)
+
+    def test_holm_classical_adjusted_p(self):
+        hc = self.mine["family"]["holm_point_classical"]
+        dec = self.mine["family"]["decisions"]
+        ps = [(d["test"], hc[d["test"]]["p_raw"]) for d in dec]
+        m = len(ps)
+        order = sorted(range(m), key=lambda i: (ps[i][1], i))
+        run = 0.0
+        for step, i in enumerate(order):  # an independent restatement: p_holm = max over earlier steps
+            run = max(run, min(1.0, (m - step) * ps[i][1]))
+            self.assertAlmostEqual(hc[ps[i][0]]["p_holm"], run, places=15)
+            self.assertEqual(hc[ps[i][0]]["reject"], hc[ps[i][0]]["p_holm"] <= 0.05)
+
+    def test_a16_ruled_summaries_are_their_definitions(self):
+        tr = self.mine["nulls"]["GiBUU_2019"]["tests"]["total"]
+        for n, v in tr["null_T_by_variant"].items():
+            B = self.mine["nulls"]["GiBUU_2019"]["B"]
+            self.assertAlmostEqual(v["sd_ddof0"], v["sd_ddof1"] * np.sqrt((B - 1) / B), places=12)
+        base = tr["null_T_by_variant"]["c=0"]
+        for n, x in tr["median_shift_in_null_sd_A16_ruled"].items():
+            self.assertAlmostEqual(x, (tr["null_T_by_variant"][n]["median"] - base["median"]) / base["sd_ddof0"],
+                                   places=12)
