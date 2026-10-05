@@ -48,7 +48,7 @@
  "jobs": [
   {
    "job": "production lanes (r3 2026-10-04T04:47Z; NuWro only: r4 2026-10-04T16:20Z, r5 2026-10-05T03:20Z, r6 2026-10-05T08:30Z)",
-   "state": "running",
+   "state": "terminal (2026-10-05T20:32:39Z, s5p_terminal_run.sh check: TERMINAL: YES)",
    "arrays": {
     "pow P1_a1.0": "59021632 (done, 193)",
     "pow P2_a1.0": "59076165 (done, 195)",
@@ -65,7 +65,7 @@
     "GENIE_2_12_10_CV": "PID 1047838 ended ('queue done' 2026-10-05T08:23:47Z after CV-final B 1366)",
     "GENIE_2_12_10_MEC": "PID 1047839 ended ('queue done' 2026-10-05T03:04:11Z after MEC-final B 1343)",
     "NuWro_21_09": "PID 1100694 ended ('queue done' 2026-10-05T17:40:37Z after NuWro-final B 1751); earlier: r5 435867, r4 669349, r3 1047840 (all stopped at transitions)",
-    "GiBUU_2019": "PID 1047841 (e0d7b04a, queues-r3)"
+    "GiBUU_2019": "PID 1047841 ended ('queue done' 2026-10-05T20:30:19Z after GiBUU-final B 1351)"
    },
    "handoff": "docs/orchestration/HANDOFF-20260929-s5p-campaign-cold-start.md",
    "campaign_session": "gbdt worker [dfdda9] (takeover 2026-09-29T07:08Z)",
@@ -517,6 +517,10 @@
   {
    "utc": "2026-10-05T18:09Z",
    "what": "FINAL: NuWro_21_09-final.json (2026-10-05T17:40:13Z): B 1751, reason 'rule met for both tests'. Total k = 0, p = 1/1752 = 0.000571, 99.5% look interval [0, 0.00342]; shape k = 1, p = 2/1752 = 0.001142, interval [0, 0.00468]; both below every threshold (precise). The NuWro r6 runner (1100694) logged 'queue done' at 17:40:37Z (b9 not submitted). NuWro b8 59376408 closed at 3.63 (200 products: 1551 -> 1751). Final statuses: 4 of 5 (MEC 1343, MnvTune 1365, CV 1366, NuWro 1751). Open: GiBUU b6 59349568 only (28 of 34 completed, 2 running, 4 pending; throttle 2); runners: GiBUU 1047841 only. Meter (from 756e1d6c, rc 0): production charged 212.478 = 42 closed 203.978 + 1 open reservation 8.5; envelope 285.97 of 376.52; open concurrency 0.25. No NuWro 16 transition was needed (NuWro finished before GiBUU). Next: GiBUU's b6 look (~20Z), then the terminal check."
+  },
+  {
+   "utc": "2026-10-05T20:33Z",
+   "what": "FINAL: GiBUU_2019-final.json (2026-10-05T20:29:51Z): B 1351, total and shape k = 0, p = 1/1352 = 0.00074, 99.5% look interval [0, 0.00443] below every threshold (precise), reason 'rule met for both tests'; runner 1047841 'queue done' 20:30:19Z. PRODUCTION TERMINAL: stage7/s5p_terminal_run.sh check (run on saul, 2026-10-05T20:32Z) printed TERMINAL: YES, rc 0, with every clause PASS: five finals (MnvTune_v1 B 1365, GENIE_2_12_10_CV B 1366, GENIE_2_12_10_MEC B 1343, NuWro_21_09 B 1751, GiBUU_2019 B 1351; all 'rule met for both tests'); power 'queue done' in /pscratch/sd/j/josephrb/s5p-20260926/runs/queue-prod-r3-pow.log; squeue rc 0 with no s5p cal/pow job; meter rc 0, open concurrency cpu/gpu 0.0/0.0 ($NS/measure/meter-measure-terminal-check-20261005T203221Z.json); no runner process and no queue-runner session leader on login33. Next (CHECKLIST section 2): a NEW clean deploy of origin/main, evaluate, labels, seed states, missing-seed sensitivity; commit copies; the recompute packet to 'gbdt independent'. The joint result is not recorded before the independent report (amendment 7 validation_and_assurance (v))."
   }
  ],
  "findings": [
