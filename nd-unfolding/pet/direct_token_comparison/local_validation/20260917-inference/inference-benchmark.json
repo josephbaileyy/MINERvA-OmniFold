@@ -1,0 +1,200 @@
+{
+  "scope": "per-arm inference COST on saved trained models; no retraining, no learning claim",
+  "specification": "nd-unfolding/pet/direct_token_comparison/INFERENCE_BENCHMARK_SPECIFICATION-20260917.md",
+  "installed_paths": [
+    "/pscratch/sd/j/josephrb/pet-bench-exec-20260917b/nd-unfolding/pet",
+    "/pscratch/sd/j/josephrb/pet-bench-exec-20260917b/nd-unfolding/pet/direct_token_comparison"
+  ],
+  "precision_policy": {
+    "tf32_enabled": false,
+    "determinism_enabled": true,
+    "mixed_precision_policy": "float32",
+    "floatx": "float32"
+  },
+  "gpu_devices": [
+    "/device:GPU:0"
+  ],
+  "batch_size": 1024,
+  "warmup_passes": 3,
+  "timed_passes": 10,
+  "input_digest": "e4fa6c52c109276288b7a545ffb42d4c4ebc52346cfe0c9db30c20330c4f2c92",
+  "preprocessing_seconds": 18.65521489400271,
+  "seeds": [
+    {
+      "stem": "ordinary-17",
+      "input_digest": "e4fa6c52c109276288b7a545ffb42d4c4ebc52346cfe0c9db30c20330c4f2c92",
+      "rows": 50000,
+      "model_load_seconds": {
+        "pooled": 1.6037436309998157,
+        "direct": 0.170168647004175
+      },
+      "arms": {
+        "pooled": {
+          "passes": 10,
+          "seconds_mean": 3.9445248158008326,
+          "seconds_stdev": 0.0455762188965334,
+          "seconds_min": 3.870344294999086,
+          "seconds_max": 4.0101967439986765,
+          "coefficient_of_variation": 0.01155429893962534,
+          "events_per_second_mean": 12675.798058035238,
+          "seconds_each": [
+            3.910693068006367,
+            3.9748831190008787,
+            3.939950330997817,
+            4.0101967439986765,
+            4.003373008003109,
+            3.903223932000401,
+            3.870344294999086,
+            3.9630733950034482,
+            3.9580812790009077,
+            3.9114289869976346
+          ]
+        },
+        "direct": {
+          "passes": 10,
+          "seconds_mean": 5.05976586010147,
+          "seconds_stdev": 0.06152330511733188,
+          "seconds_min": 4.9719135560008,
+          "seconds_max": 5.168512224001461,
+          "coefficient_of_variation": 0.012159318596631283,
+          "events_per_second_mean": 9881.880186249822,
+          "seconds_each": [
+            5.083650170003239,
+            5.065860690003319,
+            5.091718033007055,
+            5.124240543002088,
+            4.989719220000552,
+            4.9719135560008,
+            5.0157129549988895,
+            5.168512224001461,
+            5.069034448999446,
+            5.017296760997851
+          ]
+        }
+      }
+    },
+    {
+      "stem": "ordinary-29",
+      "input_digest": "e4fa6c52c109276288b7a545ffb42d4c4ebc52346cfe0c9db30c20330c4f2c92",
+      "rows": 50000,
+      "model_load_seconds": {
+        "pooled": 0.17508447500586044,
+        "direct": 0.16580146300111664
+      },
+      "arms": {
+        "pooled": {
+          "passes": 10,
+          "seconds_mean": 3.939352908698493,
+          "seconds_stdev": 0.05567680145084076,
+          "seconds_min": 3.851315642998088,
+          "seconds_max": 3.998084672006371,
+          "coefficient_of_variation": 0.014133489113884847,
+          "events_per_second_mean": 12692.439890215193,
+          "seconds_each": [
+            3.973673731001327,
+            3.9822109269953216,
+            3.9195735239991336,
+            3.8799684879995766,
+            3.851315642998088,
+            3.977793097998074,
+            3.946832869994978,
+            3.8682960009973613,
+            3.995780132994696,
+            3.998084672006371
+          ]
+        },
+        "direct": {
+          "passes": 10,
+          "seconds_mean": 5.048013572398486,
+          "seconds_stdev": 0.10255285899245528,
+          "seconds_min": 4.883574106002925,
+          "seconds_max": 5.230025917997409,
+          "coefficient_of_variation": 0.02031548796801845,
+          "events_per_second_mean": 9904.8862058117,
+          "seconds_each": [
+            5.108518080000067,
+            4.9849160320009105,
+            5.003068430996791,
+            4.883574106002925,
+            5.04644326599373,
+            5.230025917997409,
+            5.087557419996301,
+            5.030264025997894,
+            5.159875186000136,
+            4.945893258998694
+          ]
+        }
+      }
+    },
+    {
+      "stem": "ordinary-43",
+      "input_digest": "e4fa6c52c109276288b7a545ffb42d4c4ebc52346cfe0c9db30c20330c4f2c92",
+      "rows": 50000,
+      "model_load_seconds": {
+        "pooled": 0.1740003209997667,
+        "direct": 0.24667926599795464
+      },
+      "arms": {
+        "pooled": {
+          "passes": 10,
+          "seconds_mean": 3.9525132809991192,
+          "seconds_stdev": 0.053606082222069154,
+          "seconds_min": 3.8608127370025613,
+          "seconds_max": 4.010541928997554,
+          "coefficient_of_variation": 0.013562530575107534,
+          "events_per_second_mean": 12650.178872355607,
+          "seconds_each": [
+            3.8608127370025613,
+            3.918210090996581,
+            4.010541928997554,
+            3.921480459997838,
+            3.918132610997418,
+            3.9981491319995257,
+            4.009246784997231,
+            3.904452697999659,
+            3.988415147003252,
+            3.9956912199995713
+          ]
+        },
+        "direct": {
+          "passes": 10,
+          "seconds_mean": 5.07211545659884,
+          "seconds_stdev": 0.053942684183602436,
+          "seconds_min": 5.005647764002788,
+          "seconds_max": 5.140499093999097,
+          "coefficient_of_variation": 0.010635145166781016,
+          "events_per_second_mean": 9857.819765311104,
+          "seconds_each": [
+            5.008406461995037,
+            5.119041700003436,
+            5.13286927799345,
+            5.005647764002788,
+            5.0652399089958635,
+            5.098535288001585,
+            5.007171665005444,
+            5.038864037996973,
+            5.104879367994727,
+            5.140499093999097
+          ]
+        }
+      }
+    }
+  ],
+  "checks": {
+    "B1_identical_inputs_across_arms": true,
+    "B2_precision_and_gpu": true,
+    "B3_timing_stable": true,
+    "B4_consistent_direction": true,
+    "B5_costs_separated": true
+  },
+  "noisy_measurements": [],
+  "paired_direct_over_pooled_ratio": {
+    "values": [
+      1.2827314052717442,
+      1.281432176653165,
+      1.2832633557442992
+    ],
+    "median": 1.2827314052717442
+  },
+  "non_claim": "Cost only. A faster arm is not a better one, these numbers do not enter the frozen acceptance criteria, and nothing here bears on closure accuracy or representation quality."
+}

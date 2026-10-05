@@ -1,0 +1,24 @@
+{
+  "base_commit": "71495e124f7f55214dcff47dd9e26c75d5c7c09b",
+  "scope": "pooled-numerical-diagnostic-only",
+  "files": {
+    "nd-unfolding/pet/direct_token_comparison/numerical_diagnostic.py": "daf5779bd370558e94c8a321513cdc4c6381f04e79b7e81fe830bff8bf7b1751",
+    "nd-unfolding/pet/direct_token_comparison/analyze_numerical_diagnostic.py": "10181fd6656abcc2b3128715241643141d7102ee140fc3d760d0234a05cf5d41",
+    "nd-unfolding/pet/direct_token_comparison/test_numerical_diagnostic.py": "0ad142dbf7255b837211102f7419be75c3667ec8b0fa6974a20e4f79f26219d1",
+    "nd-unfolding/pet/direct_token_comparison/run_numerical_diagnostic.sh": "997ca60aa4c99059b51dddc89a39bacf9524d34e18a9eb3281b2623de533a48a",
+    "nd-unfolding/pet/direct_token_comparison/sbatch_numerical_diagnostic.sh": "8edaae6c85de52283f76e6b6f8979ef22b41b972904cb46a7b274cf6c6d01674",
+    "nd-unfolding/pet/direct_token_comparison/NUMERICAL_PROPOSAL-20260913.md": "b48a8793e178c531da0d210c1145ce23fa835b0c135302d8e06e93571bc565fb",
+    "nd-unfolding/pet/direct_token_comparison/NUMERICAL_PREPARATION-20260913.md": "aa92e4597693356e56bdcc0779f425cbe4f086a84fed9001c3139e4ddc97e74f",
+    "nd-unfolding/pet/direct_token_comparison/compatibility_preflight.py": "b4092b3ac46ec5fcb3ea95f0903a8acae15042e80ec261edec0bd20ab0794d6c",
+    "nd-unfolding/pet/direct_token_comparison/calibration_measure.py": "000dffd97ffc2cb43826ac2d1319b08e5bfdb8011e18d381b4c2e0434c2fee01",
+    "nd-unfolding/pet/direct_token_comparison/reference/typed_token_comparison_cpu.py": "905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95",
+    "nd-unfolding/pet/direct_token_comparison/run-card.json": "567e3eabe16b7c3fc79f597621880f882783d4caca00dff1beb54462b6f96284",
+    "nd-unfolding/pet/direct_token_comparison/execution_runs/20260913-compatibility/preserved/payload.tar.gz": "008f7f6060022eb70cf6027f78c030eeace415d62db8b0dcbc2577f88e2b1550",
+    "nd-unfolding/pet/direct_token_comparison/execution_runs/20260913-compatibility/preserved/preservation.json": "066aea313c1232195d3e4bbcfd478f5eb304dbaa732ce6b358bffdbbc89ec5a5",
+    "nd-unfolding/pet/typed_token_comparison.py": "36306f3500a07764b537f8e1264bab757438a3610e26ed954b4327dcd14c70b7",
+    "nd-unfolding/pet/typed_descriptor_keras.py": "dccc8c616c03c24db2ce29bd0b6de56d08d37468fbdff2b6d1935c6ff2c9348f",
+    "nd-unfolding/pet/typed_descriptors.py": "1a0469778cc86948c7da2ff7d5795f8d19625b2ebd755eb429c8e57f4fedf08b",
+    "nd-unfolding/pet/run_typed_token_comparison.py": "7597d48826fe0b1913dc89bb6a15bf5a4befa773ac2970bd7b7e3525080e51fb",
+    "nd-unfolding/mnv_guarded_run.py": "30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b"
+  }
+}

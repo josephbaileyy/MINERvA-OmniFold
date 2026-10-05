@@ -1,0 +1,20 @@
+nd-unfolding/pet/direct_token_comparison/numerical_diagnostic.py: OK
+nd-unfolding/pet/direct_token_comparison/analyze_numerical_diagnostic.py: OK
+nd-unfolding/pet/direct_token_comparison/test_numerical_diagnostic.py: OK
+nd-unfolding/pet/direct_token_comparison/run_numerical_diagnostic.sh: OK
+nd-unfolding/pet/direct_token_comparison/sbatch_numerical_diagnostic.sh: OK
+nd-unfolding/pet/direct_token_comparison/NUMERICAL_PROPOSAL-20260913.md: OK
+nd-unfolding/pet/direct_token_comparison/NUMERICAL_PREPARATION-20260913.md: OK
+nd-unfolding/pet/direct_token_comparison/compatibility_preflight.py: OK
+nd-unfolding/pet/direct_token_comparison/calibration_measure.py: OK
+nd-unfolding/pet/direct_token_comparison/reference/typed_token_comparison_cpu.py: OK
+nd-unfolding/pet/direct_token_comparison/run-card.json: OK
+nd-unfolding/pet/direct_token_comparison/execution_runs/20260913-compatibility/preserved/payload.tar.gz: OK
+nd-unfolding/pet/direct_token_comparison/execution_runs/20260913-compatibility/preserved/preservation.json: OK
+nd-unfolding/pet/typed_token_comparison.py: OK
+nd-unfolding/pet/typed_descriptor_keras.py: OK
+nd-unfolding/pet/typed_descriptors.py: OK
+nd-unfolding/pet/run_typed_token_comparison.py: OK
+nd-unfolding/mnv_guarded_run.py: OK
+6298efc2fb0558d34674e066bbc5a37319dd775b
+sbatch: Job 58277202 to start at 2026-09-14T19:35:20 a using 32 processors on nodes nid001276 in partition shared_gpu_ss11

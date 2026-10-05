@@ -1,0 +1,2 @@
+wrote /pscratch/sd/j/josephrb/pet-v2-source-audit-20260910-preflight/LIVE-STATE.md (80 lines)
+updated /pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/state/live-state-last-known.json: this host's measurements are now the last known values other hosts will carry. COMMIT IT WITH THE DASHBOARD -- an uncommitted store is a measurement no other host can reach.

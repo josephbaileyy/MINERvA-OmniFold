@@ -1,0 +1,12 @@
+{
+ "config_hash": "f6218a169265326108992848f34c6dab366e036120e808ad78ecf8eda5836543",
+ "b2_arm": "baseline",
+ "b2_arm_hash": "acb31ec5ef9d55be932c3e0419c8d1f64497cafa6e0aeac0a0ace81e587243d8",
+ "step2_miss_mode": "efficiency_corrected",
+ "selection_mode": "replicate",
+ "prior_rows_sha256": "f4f5454f50dcb8489ede21ebe745d1a5df2bce9451786c2ba83a66cad8d54bb5",
+ "pseudo_rows_sha256": "173b7a449389f273969fe4afefc6b1d710bcd049998c1ac2106dbece9544533c",
+ "distortion": "D2_bump_c0.3",
+ "distortion_hash": "2c0f6764df4aa169197fe48b6af9c7afc8dfb54ecbc9407dd0a0a96228b7c997",
+ "run_identity": "19b461aeaa8ec8497fd815933ac2d1d69ef901ad28351df1a1005a7eb16b5216"
+}

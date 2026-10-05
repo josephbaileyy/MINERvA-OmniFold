@@ -1,0 +1,26 @@
+FRESH :: Git: 32e403b8 == HEAD
+  SCOPE OF THIS GREEN: only `Git:` and `Observed:` are checked. `Declared state`,
+        `Exact blockers` and `Next authorized action` are AUTHORED prose in
+        state/live-state.json, carried forward verbatim; regenerating fixes the sha
+        and the timestamp and REVALIDATES NOTHING. Re-derive them from the governing
+        OI-* record before acting on them.
+             JOBID                         NAME      STATE       TIME
+JobID|State|ElapsedRaw|AllocCPUS|ExitCode
+58198332|FAILED|79|32|1:0
+58198332.batch|FAILED|79|32|1:0
+58198332.extern|COMPLETED|79|32|0:0
+58201775|FAILED|111|32|1:0
+58201775.batch|FAILED|111|32|1:0
+58201775.extern|COMPLETED|114|32|0:0
+58240587|FAILED|95|32|1:0
+58240587.batch|FAILED|95|32|1:0
+58240587.extern|COMPLETED|97|32|0:0
+58277208|COMPLETED|105|32|0:0
+58277208.batch|COMPLETED|105|32|0:0
+58277208.extern|COMPLETED|105|32|0:0
+58301971|FAILED|128|32|1:0
+58301971.batch|FAILED|128|32|1:0
+58301971.extern|COMPLETED|128|32|0:0
+Filesystem                                       1024-blocks            Used      Available Capacity Mounted on
+2158@kfi,2091@kfi:2283@kfi,2219@kfi:/scratch  48152207393992  31268751955180 16397701930960      66% /pscratch
+cfs                                          165701491884032 115796973879296 49904518004736      70% /global/cfs

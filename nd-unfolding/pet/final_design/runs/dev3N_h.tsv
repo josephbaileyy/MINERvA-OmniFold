@@ -1,0 +1,9 @@
+# name	config	config_hash	selection	distortion	reference_run	extra_driver_args
+dev3N-H2S1T24-F0	../../../final_design/configs/dev3N/dev3N-H2S1T24-F0.json	989969ac0b47cbfebea276e1a3386f6547bc45d50f3f2cb6d6da74855de1ba6e	F:0	dev	-	--step2-miss-mode efficiency_corrected
+dev3N-H2S1T24-F1	../../../final_design/configs/dev3N/dev3N-H2S1T24-F1.json	305b6870c91050e8f0a243406ebaeb7f79d9e94a53489b8559c46e13469a7c60	F:1	dev	-	--step2-miss-mode efficiency_corrected
+dev3N-H2S1T24-T0-D1_m0.350	../../../final_design/configs/dev3N/dev3N-H2S1T24-T0-D1_m0.350.json	16cee44eb2b6e0c336c8c8836e38184837670bca5b6cdde33e43b2c09934e209	T:0	D1_m0.350	-	--step2-miss-mode efficiency_corrected
+dev3N-H2S1T24-T1-D1_m0.350	../../../final_design/configs/dev3N/dev3N-H2S1T24-T1-D1_m0.350.json	bef94e1f4a2a94ef7ec20c12e066db62ea0572aada7bfc81c9c8ee3ea71390e1	T:1	D1_m0.350	-	--step2-miss-mode efficiency_corrected
+dev3N-H2S1T24-T0-D4c_p_up	../../../final_design/configs/dev3N/dev3N-H2S1T24-T0-D4c_p_up.json	59ccd2cf1e462518d42709c9179e9e9531dc4800df68fcb0517fc3d3ccdba18a	T:0	D4c_p_up	-	--step2-miss-mode efficiency_corrected
+dev3N-H2S1T24-T1-D4c_p_up	../../../final_design/configs/dev3N/dev3N-H2S1T24-T1-D4c_p_up.json	30b43b624fe3daeed38c4646277cd18412f450ada3cb4ddcef8c951ab49bacba	T:1	D4c_p_up	-	--step2-miss-mode efficiency_corrected
+dev3N-H2S1T24-T0-D4d_n_up	../../../final_design/configs/dev3N/dev3N-H2S1T24-T0-D4d_n_up.json	80c06ce4886ae1fd93ba2e73439333618857975d282e2bc16c9225e93d47371e	T:0	D4d_n_up	-	--step2-miss-mode efficiency_corrected
+dev3N-H2S1T24-T1-D4d_n_up	../../../final_design/configs/dev3N/dev3N-H2S1T24-T1-D4d_n_up.json	99bb2dd626a1cbfac9ef41b7ca6c9a22195a8c62b4b309ffbedf70defe75b7a9	T:1	D4d_n_up	-	--step2-miss-mode efficiency_corrected

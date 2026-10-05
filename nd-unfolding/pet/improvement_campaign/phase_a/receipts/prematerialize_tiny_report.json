@@ -1,0 +1,8 @@
+{
+  "key": "9301e1e63521313b395c36ceec31eb7ea7c034979f3d371b88e47829ce72ab4f",
+  "path": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseA1/audit-20260922/cache/theirs-tuning-100000.npz",
+  "pdata_rows": 4208,
+  "prior_rows": 9995,
+  "shards_opened": 978,
+  "reading": "gathered once; every campaign task uses these same rows because only the estimator seed varies across the campaign"
+}

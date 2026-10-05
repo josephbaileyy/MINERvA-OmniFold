@@ -1,0 +1,167 @@
+{
+  "files": {
+    "linux-baseline/allocation.txt": {
+      "bytes": 1453,
+      "sha256": "aeee786dfeb75ea239e9db365802ce97234388077f1d0779bc533f85e7e21a8d"
+    },
+    "linux-baseline/compute.txt": {
+      "bytes": 1802,
+      "sha256": "b9cbc126bcef347d42e64b450c70fc632cfd33d836da3009971873010b62085a"
+    },
+    "linux-baseline/guard.json.gz": {
+      "bytes": 3836,
+      "sha256": "d5eeca4f83fa0b91543b2ee4955ab64c53b0676920fb3e543ff82f8c831d7aff",
+      "uncompressed_bytes": 8898,
+      "uncompressed_sha256": "69df672d0fc11de45f7d851443337b67abcb9430cf7f48bed8f67e616e5165e8"
+    },
+    "linux-baseline/receipt.json.gz": {
+      "bytes": 19008,
+      "sha256": "cfa923c38ce9e5537394651bdf567bcd1c5cc43c2abd0967c53454a14eb04043",
+      "uncompressed_bytes": 73048,
+      "uncompressed_sha256": "16a52102860968f962888fa58bae228f7532e98fe3288a5f95c42a9b46fd4e2c"
+    },
+    "linux-baseline/runtime-summary.json": {
+      "bytes": 380,
+      "sha256": "fea450a69952df3e1416fcaa79e239698c18b3545c37efe78572b2641b76a285"
+    },
+    "linux-baseline/scheduler.txt": {
+      "bytes": 200,
+      "sha256": "8b0c3a3d41b9b30faea3aec063bdae6013cf928ece8c1655a2806cd1ec3e6d25"
+    },
+    "linux-distributions.json": {
+      "bytes": 25024,
+      "sha256": "4e0ed881a94373de3ad6cd3ce1bd07349f8ff7aedc3212ab58e3aaf0ae253e37"
+    },
+    "linux-numerics/allocation.txt": {
+      "bytes": 1473,
+      "sha256": "4e739169cfcc7cab71ca24bf1b55944c14aacf548d86e75823dd26a45aeff41a"
+    },
+    "linux-numerics/compute.txt": {
+      "bytes": 203,
+      "sha256": "b0fc88e7fb6d36d4d84030178e2fd131c8d36a8ea0469959580ccf538af27449"
+    },
+    "linux-numerics/onednn-0/compute.txt": {
+      "bytes": 1648,
+      "sha256": "21cd2e3a878d08a77c37c185ec9d5bef787952f20a6b31a3f1459aaed794b1f4"
+    },
+    "linux-numerics/onednn-0/guard.json.gz": {
+      "bytes": 3842,
+      "sha256": "60aff19e3019eff49bba2bde07aee41280f366dfa21de3a17c7f0b213d99ae9d",
+      "uncompressed_bytes": 8881,
+      "uncompressed_sha256": "85c6a1a3e8d1b0e76ed24ab996ff1d0b5eeb37ae80e3f840f60e7dd526f7f7ff"
+    },
+    "linux-numerics/onednn-0/receipt.json.gz": {
+      "bytes": 19271,
+      "sha256": "3d1d0f57637b930168f3d75e6ab5eb6064d0cb9bceaed2516bd59b02ebd1c80d",
+      "uncompressed_bytes": 73712,
+      "uncompressed_sha256": "e8a9b7aab8449dc05ee312d29f2171b45e8468035e7a83934ac851bc1892872e"
+    },
+    "linux-numerics/onednn-0/runtime-summary.json": {
+      "bytes": 380,
+      "sha256": "7026ebf4cb5cd015de3b4ef6ee2e590cb3c77e8b4ffe3e963966529029b094de"
+    },
+    "linux-numerics/onednn-1/compute.txt": {
+      "bytes": 1648,
+      "sha256": "10acd6fe8a6d5e89a3c8773559362ae55aa2fef1e1bf5c3721f5cd808df17ef4"
+    },
+    "linux-numerics/onednn-1/guard.json.gz": {
+      "bytes": 3837,
+      "sha256": "b52fb093602f68e5d60d28cfbb88643f1c9394598b4b846124569d2ff001f1bf",
+      "uncompressed_bytes": 8881,
+      "uncompressed_sha256": "4082a723583b8ae6efcc6150834c250fdf8e330944368694d8427407361817cc"
+    },
+    "linux-numerics/onednn-1/receipt.json.gz": {
+      "bytes": 19270,
+      "sha256": "938013883bfd83b0b6c4a3fb41b6cdcfdcf4e417ae570ae6329d8402d7f09679",
+      "uncompressed_bytes": 73713,
+      "uncompressed_sha256": "3d9c8e6dd1d3c606e8a17eb228cf68d4772496f0517a57fd14e5a47cc930302a"
+    },
+    "linux-numerics/onednn-1/runtime-summary.json": {
+      "bytes": 380,
+      "sha256": "b064aa962b2c4a52dd3b3a15ed1b1ac029b2ebbe9885768ccb2b95a41cb9cdc2"
+    },
+    "linux-numerics/outcomes.txt": {
+      "bytes": 32,
+      "sha256": "2c4902b945c9669ce91da2855ef7489073a24a89295ba81f5e34eeb571101b7f"
+    },
+    "linux-numerics/scheduler.txt": {
+      "bytes": 311,
+      "sha256": "08da79d752c5534cdfd17ba1d2eb298d224887582d54b28aa502ed82fe7e80ae"
+    },
+    "live-state-observed.txt.gz": {
+      "bytes": 8541,
+      "sha256": "6d4c89095cc14d02196972a45ec5f19cbf9bca6a6ef26944b63288b25710f99b",
+      "uncompressed_bytes": 21296,
+      "uncompressed_sha256": "6f2709ca0d4ff3b462e8243dd4a5b59a5fbbf8ca59007e38fd0af1af4b49a4b1"
+    },
+    "local-scipy-1.17.1/guard.json.gz": {
+      "bytes": 3950,
+      "sha256": "9dcb8e6f4cc91be83413c8d36160b3a6b7dcf99fdab7f22914e4dfdda415504e",
+      "uncompressed_bytes": 9078,
+      "uncompressed_sha256": "9f45fa7d07c5722f0354d66b9c3ed6947c21d0a0707bda65ce665a9940d65a3d"
+    },
+    "local-scipy-1.17.1/probe.py": {
+      "bytes": 3043,
+      "sha256": "df6499ef3a6c796c25deea7cde3c267be18b7d62444a5385c6a87e9ebb769221"
+    },
+    "local-scipy-1.17.1/traceback.txt": {
+      "bytes": 9291,
+      "sha256": "be65211ff0c43c0e43dae88326cb89659de1923584c5bd153c9db218f0714bb0"
+    },
+    "local/compute.txt": {
+      "bytes": 1507,
+      "sha256": "286a85e34b77fe4487fb5c3fd7828dec97ee0f2c2ee70c3f36978570c53400d4"
+    },
+    "local/guard.json.gz": {
+      "bytes": 3875,
+      "sha256": "99e36c99dfa4c202e0ba69219567acf9e146de472f0614123424ae6a40426597",
+      "uncompressed_bytes": 9148,
+      "uncompressed_sha256": "809ffdc136583f32f985b762895fff7535fce34cf58bf155f240057027b46bdd"
+    },
+    "local/receipt.json.gz": {
+      "bytes": 790812,
+      "sha256": "76e84f70cd513c563bbbabab49c797ec6a3c74c12193dee73bc8c699da406d75",
+      "uncompressed_bytes": 3191261,
+      "uncompressed_sha256": "a83f29e3b25b2e2cbf1232442067831b2c22a8a6a43bf84cff88d35b3afca5e7"
+    },
+    "local/runtime-summary.json": {
+      "bytes": 354,
+      "sha256": "f38ce7f952f5004051a1cc1bcd4571df4a6265fc5e8e8b489448c3b240ee7f6d"
+    },
+    "numerical-launch/run_allocation.sh": {
+      "bytes": 682,
+      "sha256": "02d1a790eab6187cae110c6fdaff7bdf58824d85eea3ed73add4e6369eca514d"
+    },
+    "numerical-launch/run_compute.sh": {
+      "bytes": 529,
+      "sha256": "9f0d4e94c509b5e2c97d2c321b5a21767abc4a3bd89470fdd46fed14eb2797f1"
+    },
+    "rounding-diagnostic.json": {
+      "bytes": 782,
+      "sha256": "a253e0e67e94969232127dc4e070b2c65d26d5febec4266735cea9e8c2fb9473"
+    },
+    "rounding-diagnostic.py": {
+      "bytes": 1614,
+      "sha256": "845518e397e84ba393c56df69ec0e3ff4cfcbe4fc2d885af3f6440344321aebe"
+    },
+    "run_allocation.sh": {
+      "bytes": 428,
+      "sha256": "29c68a6d06cd7c0089da61528a27f211dbe80c39a2b771a2107e37e406f4b074"
+    },
+    "run_compute.sh": {
+      "bytes": 497,
+      "sha256": "a6e31d11bc4b869098f56053688df81e4fb9156360cd8a924124e6e8f8cea5e8"
+    },
+    "unit-tests.txt": {
+      "bytes": 100,
+      "sha256": "3dacba8e43bcef3193fbb15e37350a1d00d5744444bb0fc14d3adb4867366ef9"
+    }
+  },
+  "kind": "SYNTHETIC_RUNTIME_EVIDENCE_NOT_SOURCE_VALIDATION",
+  "linux_acceptance": "BLOCKED",
+  "root_source_opens": 0,
+  "tested_commits": [
+    "f59d81707b60a5bbbfad9b83bbf6cf43d8e0222b",
+    "10deb7147b88a8ea8e3a398ffabedb5da9188bec"
+  ]
+}

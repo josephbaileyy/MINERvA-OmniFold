@@ -1,0 +1,12 @@
+{
+  "job_id": "58277208",
+  "source": "/pscratch/sd/j/josephrb/pet-numerical-output-20260914",
+  "destination": "/global/cfs/cdirs/m3246/josephrb/pet-routing-comparison/20260914-numerical-58277208/payload",
+  "file_count": 6257,
+  "bytes": 38635139,
+  "readback_exact": true,
+  "archive_sha256": "47040ea04bd6d9fb35f616c98f48ca2d1f47e4f8d2236ebe5400b1ab0f796445",
+  "slurm_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "wall_seconds": 45.72542618098669,
+  "preservation_cpu_seconds": 21.951754
+}

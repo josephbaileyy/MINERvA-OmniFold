@@ -1,0 +1,151 @@
+{
+  "scope": "cross-device agreement at uniform bucket widths. Bound numerics, new scaffolding, two controls. Not a substitute for the full preflight: no bundle verification, no serialization round-trip, no packing checks.",
+  "authorization": "A3, Joseph, 2026-09-18",
+  "precision_policy": {
+    "tf32_enabled": false,
+    "determinism_enabled": true,
+    "mixed_precision_policy": "float32",
+    "floatx": "float32"
+  },
+  "gpu_devices": [
+    "/device:GPU:0"
+  ],
+  "controls": {
+    "nominal_expected": "PASS",
+    "nominal_measured": "PASS",
+    "variable_expected": "FAIL",
+    "variable_measured": "FAIL",
+    "controls_ok": true
+  },
+  "records": [
+    {
+      "case": "control-nominal",
+      "routings": {
+        "pooled": {
+          "verdict": "PASS",
+          "raw_bias_errors": []
+        },
+        "direct": {
+          "verdict": "PASS",
+          "raw_bias_errors": []
+        }
+      },
+      "verdict": "PASS"
+    },
+    {
+      "case": "control-variable",
+      "routings": {
+        "pooled": {
+          "verdict": "FAIL",
+          "error": "AssertionError: Equivalence failed: exact=False, max_abs=5.6587159633636475e-05"
+        },
+        "direct": {
+          "verdict": "FAIL",
+          "error": "AssertionError: Equivalence failed: exact=False, max_abs=7.492303848266602e-05"
+        }
+      },
+      "verdict": "FAIL"
+    },
+    {
+      "case": "w0-24-1",
+      "routings": {
+        "pooled": {
+          "verdict": "FAIL",
+          "error": "AssertionError: Equivalence failed: exact=False, max_abs=1.354515552520752e-05"
+        },
+        "direct": {
+          "verdict": "PASS",
+          "raw_bias_errors": []
+        }
+      },
+      "verdict": "FAIL",
+      "width": [
+        0,
+        24,
+        1
+      ]
+    },
+    {
+      "case": "w0-32-1",
+      "routings": {
+        "pooled": {
+          "verdict": "FAIL",
+          "error": "AssertionError: Equivalence failed: exact=False, max_abs=0.00018933415412902832"
+        },
+        "direct": {
+          "verdict": "FAIL",
+          "error": "AssertionError: Equivalence failed: exact=False, max_abs=0.00018933415412902832"
+        }
+      },
+      "verdict": "FAIL",
+      "width": [
+        0,
+        32,
+        1
+      ]
+    },
+    {
+      "case": "w0-48-1",
+      "routings": {
+        "pooled": {
+          "verdict": "FAIL",
+          "error": "AssertionError: Equivalence failed: exact=False, max_abs=0.00034731626510620117"
+        },
+        "direct": {
+          "verdict": "FAIL",
+          "error": "AssertionError: Equivalence failed: exact=False, max_abs=0.00034731626510620117"
+        }
+      },
+      "verdict": "FAIL",
+      "width": [
+        0,
+        48,
+        1
+      ]
+    },
+    {
+      "case": "w0-64-1",
+      "routings": {
+        "pooled": {
+          "verdict": "FAIL",
+          "error": "AssertionError: Equivalence failed: exact=False, max_abs=0.0004876852035522461"
+        },
+        "direct": {
+          "verdict": "FAIL",
+          "error": "AssertionError: Equivalence failed: exact=False, max_abs=0.0004876852035522461"
+        }
+      },
+      "verdict": "FAIL",
+      "width": [
+        0,
+        64,
+        1
+      ]
+    }
+  ],
+  "validated_widths": [],
+  "failed_widths": [
+    [
+      0,
+      24,
+      1
+    ],
+    [
+      0,
+      32,
+      1
+    ],
+    [
+      0,
+      48,
+      1
+    ],
+    [
+      0,
+      64,
+      1
+    ]
+  ],
+  "gate_complete": false,
+  "non_claim": "A validated width means CPU and GPU agreed there under the campaign's own tolerances. It is not a statement about closure, and if controls_ok is false every verdict here is void."
+}

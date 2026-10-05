@@ -1,0 +1,30 @@
+{
+ "schema": "pet-final-design/q3-quartiles/1",
+ "inventory": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+ "inventory_sha256": null,
+ "population": "truth-passing rows with finite true q3, excluding /pscratch/sd/j/josephrb/pet-final-design-20260925/impl-runner/banks/rows_FB_RB.npy",
+ "n_rows_inventory": 49152885,
+ "n_truth_passing": 49150928,
+ "n_truth_passing_nonfinite_q3": 1330,
+ "n_excluded_truth_passing": 4061629,
+ "n_used": 45087969,
+ "probabilities": [
+  0.25,
+  0.5,
+  0.75
+ ],
+ "quartile_edges_gev": [
+  1.2509539127349854,
+  2.5968730449676514,
+  4.490950584411621
+ ],
+ "quartile_edges_repr": [
+  "1.2509539127349854",
+  "2.5968730449676514",
+  "4.490950584411621"
+ ],
+ "weighting": "unweighted rows",
+ "quantile_method": "numpy.quantile linear",
+ "check_runs": {},
+ "seconds": 5.5
+}

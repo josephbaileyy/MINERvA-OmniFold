@@ -1,0 +1,171 @@
+{
+  "scope": "COST SCALING ONLY, local CPU; no learning statistic and no closure claim",
+  "rows": 2048,
+  "batch_size": 1024,
+  "steps": 15,
+  "repeats": 5,
+  "generic_slots": 12,
+  "measurements": [
+    {
+      "counts": {
+        "photons": 1,
+        "blobs": 1,
+        "prongs": 2
+      },
+      "typed_objects": 4,
+      "train_ratio_median": 1.0607144111812559,
+      "train_ratio_min": 0.962350467696715,
+      "train_ratio_max": 1.1239886964757866,
+      "train_ratio_each": [
+        1.1239886964757866,
+        1.0607144111812559,
+        0.962350467696715,
+        1.0975830592859397,
+        1.024654350052446
+      ],
+      "infer_ratio_median": 1.2811863879427647,
+      "infer_ratio_min": 1.203189254370134,
+      "infer_ratio_max": 1.3093746125613326,
+      "infer_ratio_each": [
+        1.2811863879427647,
+        1.3093746125613326,
+        1.203189254370134,
+        1.2826697043795992,
+        1.2654010287686397
+      ],
+      "pooled_train_ms_median": 27.17595553646485,
+      "direct_train_ms_median": 27.845961057270564
+    },
+    {
+      "counts": {
+        "photons": 2,
+        "blobs": 4,
+        "prongs": 2
+      },
+      "typed_objects": 8,
+      "train_ratio_median": 1.2322106640697112,
+      "train_ratio_min": 1.1639076415660934,
+      "train_ratio_max": 1.311614892124813,
+      "train_ratio_each": [
+        1.311614892124813,
+        1.1639076415660934,
+        1.254241169557494,
+        1.2009754275415747,
+        1.2322106640697112
+      ],
+      "infer_ratio_median": 1.2826601774838444,
+      "infer_ratio_min": 1.2130391569326293,
+      "infer_ratio_max": 1.3418684751467096,
+      "infer_ratio_each": [
+        1.3220195671093702,
+        1.2826601774838444,
+        1.3418684751467096,
+        1.2823221886199996,
+        1.2130391569326293
+      ],
+      "pooled_train_ms_median": 25.705152734493215,
+      "direct_train_ms_median": 32.22810554628571
+    },
+    {
+      "counts": {
+        "photons": 2,
+        "blobs": 8,
+        "prongs": 4
+      },
+      "typed_objects": 14,
+      "train_ratio_median": 1.420354217898632,
+      "train_ratio_min": 1.3266251288927853,
+      "train_ratio_max": 1.5310344163253178,
+      "train_ratio_each": [
+        1.3266251288927853,
+        1.4266598001374853,
+        1.420354217898632,
+        1.5310344163253178,
+        1.3418375915807208
+      ],
+      "infer_ratio_median": 1.3821774388934362,
+      "infer_ratio_min": 1.3577700001962563,
+      "infer_ratio_max": 1.4008648919112023,
+      "infer_ratio_each": [
+        1.3577700001962563,
+        1.377648667683803,
+        1.3930181906497525,
+        1.4008648919112023,
+        1.3821774388934362
+      ],
+      "pooled_train_ms_median": 28.142108333607517,
+      "direct_train_ms_median": 38.105913872520134
+    },
+    {
+      "counts": {
+        "photons": 2,
+        "blobs": 14,
+        "prongs": 4
+      },
+      "typed_objects": 20,
+      "train_ratio_median": 1.636191548275556,
+      "train_ratio_min": 1.593323888194957,
+      "train_ratio_max": 1.7196855113987057,
+      "train_ratio_each": [
+        1.593323888194957,
+        1.6472474522753668,
+        1.6053919934815657,
+        1.7196855113987057,
+        1.636191548275556
+      ],
+      "infer_ratio_median": 1.4161015499763845,
+      "infer_ratio_min": 1.3620675260688748,
+      "infer_ratio_max": 1.523069108479374,
+      "infer_ratio_each": [
+        1.3995322981729337,
+        1.3620675260688748,
+        1.4841012132731515,
+        1.523069108479374,
+        1.4161015499763845
+      ],
+      "pooled_train_ms_median": 27.477516668538254,
+      "direct_train_ms_median": 46.742122201249
+    },
+    {
+      "counts": {
+        "photons": 2,
+        "blobs": 26,
+        "prongs": 4
+      },
+      "typed_objects": 32,
+      "train_ratio_median": 2.0992581918943993,
+      "train_ratio_min": 2.006789217982972,
+      "train_ratio_max": 2.241056488520224,
+      "train_ratio_each": [
+        2.0404210538162526,
+        2.006789217982972,
+        2.119261409632188,
+        2.241056488520224,
+        2.0992581918943993
+      ],
+      "infer_ratio_median": 1.6463599404490608,
+      "infer_ratio_min": 1.4714664381475018,
+      "infer_ratio_max": 1.7402206918506107,
+      "infer_ratio_each": [
+        1.7402206918506107,
+        1.4714664381475018,
+        1.5642805961588282,
+        1.6508558639680424,
+        1.6463599404490608
+      ],
+      "pooled_train_ms_median": 29.968475007141627,
+      "direct_train_ms_median": 65.05887221234539
+    }
+  ],
+  "anchor": {
+    "counts": {
+      "photons": 1,
+      "blobs": 1,
+      "prongs": 2
+    },
+    "local_train_ratio_median": 1.0607144111812559,
+    "gpu_train_ratio_measured": 1.118,
+    "absolute_difference": 0.05728558881874424
+  },
+  "non_claim": "Ratios only. A cheaper routing is not a better one, and nothing here bears on closure accuracy. Absolute per-job GPU cost is not measured."
+}

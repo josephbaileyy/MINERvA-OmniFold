@@ -1,5 +1,15 @@
 # PET typed-descriptor fixed-sample semantic evidence packet
 
+**Follow-up recorded 2026-09-10:**
+[reconstruction-side correspondence](../../nd-unfolding/pet/PRONG_BRANCH_SEMANTICS.md)
+now supplies prong PID/charge definitions, units and hypothesis-dependent field
+meanings. It is a separate source, with explicit tentative statements and
+unverified release applicability. The unresolved raw-PID interpretation below
+describes this packet's original evidence boundary; it is not the current
+state of all available documentation. The measurements, source comparisons and
+scope limits below are preserved. Current implementation gaps and next work
+are routed by [the typed-descriptor status](../../nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md).
+
 **CITABLE FOR:** the exact fixed-sample observations and external source
 comparison recorded here at repository base
 `d8a59358be65fc924a05f707b8760cb5aff79bf4`.

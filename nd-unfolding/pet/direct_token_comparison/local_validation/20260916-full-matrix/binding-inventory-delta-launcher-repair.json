@@ -1,0 +1,18 @@
+{
+  "before_count": 124,
+  "before_sha256": "68e976583d8c0feb4e4957d044c5ac96dcdcdf18cfa58757ae82b9a200606737",
+  "after_count": 124,
+  "after_sha256": "6315ae31f4ffb079bd0cd5fa66fef8dabc670cf217e55ec5a8041d9482192bd8",
+  "added_bindings": [],
+  "removed_bindings": [],
+  "changed_bindings": [
+    [
+      "nd-unfolding/pet/direct_token_comparison/sbatch_full_matrix.sh",
+      "bd628d28c02ea183664f4674f9cce16b9e291a7f93cb2080896c66be57708a9c"
+    ]
+  ],
+  "owning_receipts": [
+    "nd-unfolding/pet/direct_token_comparison/amended-execution-authorization.json"
+  ],
+  "reason": "Repaired the storage-meter status handling that killed array task 58396676_0 six seconds in. The population is unchanged; one bound digest moved."
+}

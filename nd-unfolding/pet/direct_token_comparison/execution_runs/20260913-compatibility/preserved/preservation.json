@@ -1,0 +1,133 @@
+{
+  "scope": "Terminal failed GPU compatibility attempt and preallocation evidence; no calibration or full-matrix output",
+  "copied_at_utc": "2026-09-12T23:24:29.869141+00:00",
+  "sources": {
+    "attempt": "/pscratch/sd/j/josephrb/pet-packing-attempt-20260913",
+    "preallocation": "/pscratch/sd/j/josephrb/pet-packing-preallocation-20260913",
+    "observation": "/pscratch/sd/j/josephrb/pet-packing-preservation-20260913/observation"
+  },
+  "destination": "/global/cfs/cdirs/m3246/josephrb/pet-routing-comparison/20260913-compatibility-58240587/payload",
+  "source_before_equals_after_equals_destination": true,
+  "file_count": 29,
+  "bytes": 76082,
+  "files": {
+    "attempt/allocation.txt": {
+      "bytes": 2175,
+      "sha256": "d03a49016b6e0bd9d93986c25ec9c70224dacb4891f6acc2c2383257145c9cc1"
+    },
+    "attempt/exit-code.txt": {
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    "attempt/preflight/nominal.npz": {
+      "bytes": 7850,
+      "sha256": "a90711c38818c400bf317ec55bed195883abf4da1c54e56f57c0633532fb44ef"
+    },
+    "attempt/preflight-guard.json": {
+      "bytes": 9147,
+      "sha256": "bc78da19364b9747fea66c0bec2f9dde4c6557bdf27fa12216bcec8c761cd79d"
+    },
+    "attempt/preflight.log": {
+      "bytes": 4380,
+      "sha256": "84b6261b4ced5fa7a75dbafc6eac3f734463f66e28c36b3fbb35ddd6dfe1255b"
+    },
+    "attempt/storage-meter.log": {
+      "bytes": 70,
+      "sha256": "210e95262be6a15e4adeb9ebb896f503a607990637b4ac65e783489097f537cc"
+    },
+    "attempt/terminal.txt": {
+      "bytes": 7,
+      "sha256": "03cbb6c52e522ce55e217e3f9d66dbd66d21ef6bf85024016a3b7f3080c7944f"
+    },
+    "attempt/tests-guard.json": {
+      "bytes": 33273,
+      "sha256": "b8eda65571dee4cc4acaedcaf65092828f22feb11cded671c4356d513090a7b8"
+    },
+    "attempt/tests.log": {
+      "bytes": 1502,
+      "sha256": "32f51313385895804462fd5360405ce3ca894d4f96e9136614d087eb9edb0cb0"
+    },
+    "preallocation/free-storage.txt": {
+      "bytes": 237,
+      "sha256": "b516012d461cc8df287f3487d50e82c57dfc39d28fc37459f6fb044242cdcf1c"
+    },
+    "preallocation/gpu-runtime-lock.txt": {
+      "bytes": 1086,
+      "sha256": "41b9cbdb473e604bd482f5de77bfe8cf3bb36084cb0ab7f27bcb3295c9299895"
+    },
+    "preallocation/live-state-freshness.txt": {
+      "bytes": 401,
+      "sha256": "877fa354f5ca7b4c2d18675f74552d2134a1eb81190541d71f2ead8f29e90224"
+    },
+    "preallocation/pip-check.txt": {
+      "bytes": 30,
+      "sha256": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    },
+    "preallocation/prior-accounting.txt": {
+      "bytes": 703,
+      "sha256": "e090095666bca0d1979353d490ce0fd9274bbf23b72e342cacf2df58f96b9dc5"
+    },
+    "preallocation/python-version.txt": {
+      "bytes": 15,
+      "sha256": "8fa6fee68fb4ca8eda41d4db888f6a2a6b039d072f18375fa9df13d8912037d7"
+    },
+    "preallocation/runtime-guard.json": {
+      "bytes": 8649,
+      "sha256": "d1ac1ab0c84b425b401dd966f6c895f318d0b8f9a1935a1617f12a7c42f3726e"
+    },
+    "preallocation/runtime-versions.json": {
+      "bytes": 113,
+      "sha256": "e16a2cca304254b57ce00e9135ed40f4a65d159af59f7416f8d3d45d57e47908"
+    },
+    "preallocation/runtime.log": {
+      "bytes": 2243,
+      "sha256": "1feda2fd94ced9d9245b6404bc9588ec4b2ffb8ba4a2c416fd513d39b7462030"
+    },
+    "preallocation/scheduler-test.txt": {
+      "bytes": 123,
+      "sha256": "bab7661ceb062ecd2967f978642587d1142fd4c54a76214e11b25cc6766340a7"
+    },
+    "preallocation/scheduler.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preallocation/slurm-58240587.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "preallocation/storage.txt": {
+      "bytes": 567,
+      "sha256": "5d06c6b11241cd8f460f85d9dd055405c385446d98c45d4885d6859560ba6639"
+    },
+    "preallocation/submission.txt": {
+      "bytes": 9,
+      "sha256": "a8e5689f6db913f7d490dba84128d86169331d1a502923e1f7c766dd59b54335"
+    },
+    "preallocation/submitted-allocation.txt": {
+      "bytes": 1977,
+      "sha256": "685ef0e60f8ff8f0ce631dc0eb1c24f63b3a527e85394c78d4f4ddc028953205"
+    },
+    "observation/accounting.txt": {
+      "bytes": 1389,
+      "sha256": "0e4d0f51b249892a1927b933e6f7ba2957d538d060c25b5fb702a1663e436c75"
+    },
+    "observation/execution-head.txt": {
+      "bytes": 41,
+      "sha256": "0a3f10723960fd0038e925ddca4f329f37404a6e07254f612f2930d7452a8d13"
+    },
+    "observation/execution-status.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "observation/observed-at-utc.txt": {
+      "bytes": 21,
+      "sha256": "f326da8a52151dfde928ac364af9a71b2a539d771d6a2d2bcdc27007ab71744e"
+    },
+    "observation/scheduler.txt": {
+      "bytes": 72,
+      "sha256": "3c9807d31686f24c2873944b0212d5053e5411ff1321067c972c62bf189b8d15"
+    }
+  },
+  "archive_sha256": "008f7f6060022eb70cf6027f78c030eeace415d62db8b0dcbc2577f88e2b1550",
+  "archive_readback": "PASS"
+}

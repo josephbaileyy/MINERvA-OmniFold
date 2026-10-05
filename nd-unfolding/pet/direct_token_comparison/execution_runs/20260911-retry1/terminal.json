@@ -1,0 +1,59 @@
+{
+  "terminal": "SECOND_TECHNICAL_FAILURE_STOP",
+  "job_id": "58201775",
+  "prior_job_id": "58198332",
+  "execution_commit": "46fe3d7cd3c88570d7449a884adc4f8ffc44f041",
+  "observed_utc_date": "2026-09-12",
+  "slurm_state": "FAILED",
+  "slurm_exit_code": "1:0",
+  "parent_allocation_seconds": 111,
+  "extern_step_seconds": 114,
+  "prior_parent_allocation_seconds": 79,
+  "total_parent_allocation_seconds": 190,
+  "total_parent_gpu_hours": 0.05277777777777778,
+  "total_parent_reserved_cpu_hours": 1.6888888888888889,
+  "conservative_max_step_seconds_sum": 193,
+  "conservative_gpu_hours": 0.05361111111111111,
+  "conservative_reserved_cpu_hours": 1.7155555555555555,
+  "accounting_note": "Parent allocation rows are summed once; overlapping batch/extern steps are not summed. Retry extern cleanup lasts three seconds longer; the maximum-step total is shown separately as a conservative bound.",
+  "batch_MaxRSS_KiB": 1371956,
+  "cluster_allocated_storage_KiB": {
+    "/pscratch/sd/j/josephrb/pet-direct-token-runtime-20260911": 5102652,
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-pet-routing-20260911": 89724,
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-pet-routing-retry1-20260911": 79508,
+    "/pscratch/sd/j/josephrb/pet-routing-execution-74c149bb.bundle": 9520,
+    "/pscratch/sd/j/josephrb/pet-routing-execution-106ba9a8.bundle": 4,
+    "/pscratch/sd/j/josephrb/pet-routing-retry1-46fe3d7c.bundle": 36,
+    "/pscratch/sd/j/josephrb/pet-routing-campaign-20260911": 88,
+    "/pscratch/sd/j/josephrb/pet-routing-retry1-20260911": 556,
+    "/global/cfs/cdirs/m3246/josephrb/pet-routing-comparison/20260911-calibration-58198332": 57,
+    "/global/cfs/cdirs/m3246/josephrb/pet-routing-comparison/20260911-retry1-58201775": 553
+  },
+  "cluster_allocated_storage_total_GiB": 5.037973403930664,
+  "storage_scope": "Named new cluster runtime, checkouts, bundles, scratch and CFS paths; excludes local development environments/evidence and pre-existing shared Git objects",
+  "tests": {
+    "passed": 49,
+    "subtests_passed": 10,
+    "seconds": 38.8
+  },
+  "runtime_versions": "PASS",
+  "gpu_validation": {
+    "status": "PASS",
+    "device": "NVIDIA A100-SXM4-40GB",
+    "operation_device": "/job:localhost/replica:0/task:0/device:GPU:0"
+  },
+  "pooled_arm": "Three partial calibration artifacts saved: reco model, truth model and NPZ predictions/weights",
+  "direct_arm": "Failed during its initial two-row model call, before its training",
+  "failure_operation": "RaggedTensor.from_value_rowids invokes GPU DenseBincount, unsupported with required deterministic mode in this runtime",
+  "paired_calibration": "INCOMPLETE",
+  "resource_headroom_gate": "NOT_EVALUATED",
+  "full_jobs_submitted": 0,
+  "third_attempt_submitted": false,
+  "learning_comparison_conclusion": "NONE",
+  "preservation": {
+    "files": 19,
+    "bytes": 511304,
+    "cfs_root": "/global/cfs/cdirs/m3246/josephrb/pet-routing-comparison/20260911-retry1-58201775"
+  },
+  "scope": "Synthetic method development only; no real-data representation-performance result, adoption, covariance or Gate 6."
+}

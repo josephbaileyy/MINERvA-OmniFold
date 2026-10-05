@@ -138,7 +138,7 @@ There is no standing authorization here for a new scientific analysis. Read `doc
 | Quote a number | `VALIDATION_LEDGER.md`, then its exact product summary or receipt |
 | Assess a physics claim | `docs/orchestration/CLAIMS.md`, then the claim's original evidence and independent check |
 | Change code | `KNOWN_ISSUES.md`, the relevant `*_STATUS.md` and reference, callers, tests, and hash bindings |
-| Run 2D/3D/N-D/PET | The relevant workstream status; `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`; for PET also `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md` |
+| Run 2D/3D/N-D/PET | The relevant workstream status; `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`; for PET also `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md`; the 2026-09 PET selection studies (configuration comparison → improvement campaign → final-design study) end in `nd-unfolding/pet/final_design/DECISION_RECORD-pet-final-design.md` (terminal `NO_ELIGIBLE_DESIGN`, no selected default; PET diagnostic, nothing adopted) |
 | Launch or monitor compute | Fresh live state, direct scheduler observation, the exact runbook/launcher receipt, and environment rules routed by the workstream reference |
 | Apply process rules | `docs/orchestration/PLAYBOOK.md`; open `FINDINGS.md` only by routed `BEN-*` id |
 | Understand or recover pre-freeze history | `evidence/prepublication-2026-08-20-0b329e8a`, then the old path; never load the orchestration directory wholesale |

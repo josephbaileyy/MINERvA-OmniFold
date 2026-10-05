@@ -1,0 +1,17 @@
+{
+  "when": "2026-09-18",
+  "change": "127 -> 128 receipt bindings",
+  "old_sha256": "18936e2f7b9b19d38a8a510f7069a3da0d6702105be44d630c998925a220a0b3",
+  "new_sha256": "c3a6aa60ce84c7d26fcac653d9ab9a2cdd141115f53744536af0e9dc3f19a68e",
+  "added_rows": [
+    {
+      "path": "nd-unfolding/pet/configuration_comparison/characterize_eavail_endpoint.py",
+      "sha256": "011bc18b6f7f03ea5b36fa6c78d43bd395a6c9909c219a20ee3e39a7d6ab6150"
+    }
+  ],
+  "removed_rows": [],
+  "owning_receipt": "nd-unfolding/pet/configuration_comparison/receipts/20260918-calibration/guard.json",
+  "why": "mnv_guarded_run.py records the sha256 of the script it guards. Job 58527254 guarded characterize_eavail_endpoint.py, a newly tracked file, so its guard receipt binds one new tracked path. Exactly one row added; none removed or repointed.",
+  "verification": "The bound digest was checked against BOTH the worktree file and `git show HEAD:<path>`; all three agree at 011bc18b. The constant is updated because the binding is truthful, not to make the check pass.",
+  "method": "Isolated by removing the new receipt directory (inventory returned to 127 and INTACT) and re-adding files one at a time; guard.json is the only one that moves the count."
+}

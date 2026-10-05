@@ -1,0 +1,88 @@
+{
+  "scope": "synthetic paired routing comparison on the frozen fixture; cost and closure only",
+  "accuracy": {
+    "per_seed_gain_percent": {
+      "17": 17.11487462255481,
+      "29": 18.84713489573481,
+      "43": 8.724187234368303,
+      "59": 10.689780328679616,
+      "71": 0.930910320656584,
+      "89": 26.746401742067214,
+      "101": -47.57152511246568,
+      "113": -28.94121167254352
+    },
+    "mean_percent": 0.8175690448815175,
+    "median_percent": 9.70698378152396,
+    "sd_percent": 25.773877293349425,
+    "sem_percent": 9.112441705798679,
+    "ci95_percent": [
+      -20.72993160387556,
+      22.365069693638592
+    ],
+    "favourable_seeds": 6,
+    "paired_ttest": {
+      "t": 0.7045011115976808,
+      "p": 0.5038779782828668
+    },
+    "wilcoxon": {
+      "p": 0.546875
+    },
+    "significant_at_5pct": false,
+    "per_arm_rmse": {
+      "pooled": {
+        "mean": 0.018051723134703934,
+        "sd": 0.004742648375752302,
+        "cv": 0.26272552156722884,
+        "max": 0.025119537487626076
+      },
+      "direct": {
+        "mean": 0.017109966254793108,
+        "sd": 0.0030366231260891947,
+        "cv": 0.17747686236602184,
+        "max": 0.022415585815906525
+      }
+    },
+    "variance_ratio_F": {
+      "F": 2.439271060643424,
+      "p": 0.26229615272702334,
+      "significant_at_5pct": false
+    }
+  },
+  "power": {
+    "seeds_used": 8,
+    "seeds_needed_for_5pct_threshold_at_80pct_power": 209,
+    "note": "With the observed seed-to-seed sd of 25.77 percentage points, 8 paired seeds cannot resolve the +5% effect the frozen criteria require."
+  },
+  "null_control_shuffle": {
+    "pooled_mean": 0.004995381139451638,
+    "direct_mean": 0.00653909445827594,
+    "wilcoxon_p": 0.4609375,
+    "direct_worse_in_seeds": 4,
+    "significant": false
+  },
+  "cost": {
+    "per_job_ratio_median": 1.1180812071360995,
+    "mean": 1.1060089002343003,
+    "sd": 0.027378348808551337,
+    "min": 1.025631877636488,
+    "max": 1.136639051748349,
+    "n": 24,
+    "wilcoxon_p": 1.1920928955078125e-07,
+    "significant_at_5pct": true,
+    "note": "training cost only; per-arm inference not instrumented by the frozen producer"
+  },
+  "safeguard_failure": {
+    "job": "shuffle-71",
+    "checks": [
+      "projection0",
+      "projection1"
+    ],
+    "axis0_diff": 0.011946949308610701,
+    "axis1_diff": 0.01183041248860975,
+    "difference_limit": 0.01,
+    "absolute_limit": 0.05,
+    "absolute_values_within_limit": true,
+    "note": "marginal failure of the pooled-vs-direct DIFFERENCE criterion in one of eight shuffle controls; absolute projection errors are well inside 0.05"
+  },
+  "non_claim": "NO_PASS under the frozen criteria. Not evidence that either representation is worse; the design lacks the power to resolve the effect it tests."
+}
