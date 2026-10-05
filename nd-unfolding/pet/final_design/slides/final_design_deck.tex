@@ -171,7 +171,7 @@ status (rules) & INCOMPLETE (C1--C5) & INELIGIBLE (B2) \\
 
 \gdef\evidencetext{\texttt{results/final/decision\_look1.json}; \texttt{results/final/b1\_dependence\_look1.json}; \texttt{results/final/population\_look1.json}}
 \begin{frame}{Look 1: what the verdict does and does not show}
-\small\begin{itemize}\item \textbf{B2} (D4c n down, mean residual $-$ injected $E_\mathrm{avail}$ L1, limit 0.010, a point rule): H2S1T24 0.0097 [0.0025, 0.0169] PASS; L128S1T24 0.0122 [0.0064, 0.0181] FAIL. \textbf{Point-decided, statistically unresolved}: both intervals cross the limit; the difference is not resolved by this comparison. Not evidence that the compact design is more robust, nor that the two are equivalent.\item \textbf{B1} PASSes under its frozen independence-based bound. Under within-draw dependence the evidence is insufficient to establish a per-unit failure probability $\le 0.10$: on the common panel (FB0--7) H2S1T24 has 2/8 draws with a failure (CP upper 0.651), L128S1T24 1/8; with none the bound would be 0.369. This does not show the probability exceeds 0.10.\item Like-for-like and FB-population recoveries agree on the designated endpoints (report \S6, report only).\end{itemize}
+\small\begin{itemize}\item \textbf{B2} (D4d n down, mean residual $-$ injected $E_\mathrm{avail}$ L1, limit 0.010, a point rule): H2S1T24 0.0097 [0.0025, 0.0169] PASS; L128S1T24 0.0122 [0.0064, 0.0181] FAIL. \textbf{Point-decided, statistically unresolved}: both intervals cross the limit; the difference is not resolved by this comparison. Not evidence that the compact design is more robust, nor that the two are equivalent.\item \textbf{B1} PASSes under its frozen independence-based bound. Under within-draw dependence the evidence is insufficient to establish a per-unit failure probability $\le 0.10$: on the common panel (FB0--7) H2S1T24 has 2/8 draws with a failure (CP upper 0.651), L128S1T24 1/8; with none the bound would be 0.369. This does not show the probability exceeds 0.10.\item Like-for-like and FB-population recoveries agree on the designated endpoints (report \S6, report only).\end{itemize}
 \end{frame}
 
 \gdef\evidencetext{\texttt{results/final/coverage\_dev/coverage\_H2S1T24K5.json}}
@@ -181,14 +181,15 @@ status (rules) & INCOMPLETE (C1--C5) & INELIGIBLE (B2) \\
 \toprule
 H2S1T24 $K{=}5$, B = 6, 120 replicates & measured & verdict \\
 \midrule
-C1 pooled 95\,\% (LB $\ge$0.90, point $\le$0.99) & 0.990 (LB 0.980) & FAIL \\
-C1 pooled 68\,\% (LB $\ge$0.60, point $\le$0.80) & 0.896 (LB 0.858) &  \\
+C1 pooled 95\,\% (LB $\ge$0.90, point $\le$0.99) & 0.990 (LB 0.980) & unresolved \\
+C1 pooled 68\,\% (LB $\ge$0.60, point $\le$0.80) & 0.896 (LB 0.858) & decisive \\
+\textbf{C1} (both levels) &  & FAIL \\
 C2 every bin 95\,\% $\ge$ 0.85 & all bins pass & PASS \\
 C3 moderate / good 95\,\% LB $\ge$ 0.85 & 0.949 / 0.993 & PASS \\
 C4 half-width / limit, bins 1--6 ($\le$1) & 1.32--1.72 & FAIL \\
 C5 D4c up & skipped after decisive C1--C4 FAIL & --- \\
 \bottomrule
-\end{tabular}}\par\vspace{0.15cm}\small The six-member interval is \textbf{too wide} (over-conservative), not anti-conservative; the same against the FB population target. Mechanism not established.
+\end{tabular}}\par\vspace{0.15cm}\small In aggregate the six-member interval is \textbf{too wide}; the same against the FB population target. Not uniformly conservative: the low-acceptance region \textbf{under-covers} (68\,\%: 0.26, 95\,\%: 0.79), a region no rule gates. Mechanism not established.
 \end{frame}
 
 \gdef\evidencetext{\texttt{results/final/coverage\_dev/decision\_final.json}; \texttt{DECISION\_RECORD-pet-final-design.md}}
@@ -201,7 +202,7 @@ finalist & status (rules) \\
 H2S1T24K5 & INELIGIBLE (C1, C4) \\
 L128S1T24K4 & INELIGIBLE (B2) \\
 \bottomrule
-\end{tabular}}\raggedright\par\vspace{0.3cm}\small\begin{itemize}\item No design selected and no default named (the default must itself be eligible).\item Supported: H2S1T24's point estimator passes every accuracy, robustness and stability rule; its interval procedure is too wide. Not supported: a ranking of the finalists.\item Remaining route (owner decision): \S11 repair --- interval calibrated on DEV, re-validated on the sealed RB bank.\end{itemize}
+\end{tabular}}\raggedright\par\vspace{0.3cm}\small\begin{itemize}\item No design selected and no default named (the default must itself be eligible).\item Supported: H2S1T24's point estimator passes every accuracy, robustness and stability rule; its interval procedure fails calibration (too wide in aggregate; under-covers at low acceptance). Not supported: a ranking of the finalists.\item Remaining route (owner decision): \S11 repair --- interval calibrated on DEV, re-validated on the sealed RB bank.\end{itemize}
 \end{frame}
 
 \gdef\evidencetext{\texttt{docs/orchestration/AUTHORIZATION-20260925-pet-final-design.md}}

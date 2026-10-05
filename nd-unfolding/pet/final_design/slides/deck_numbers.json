@@ -10,7 +10,7 @@
   "resources/cost_fb_look1-20260930.json": "09176ccda999ae1074aeec3207304b85c4f53c0065e5335e037d479b4f53fec7",
   "resources/cost_t24-20260927.json": "3a0d146492941e438b085cbb50371a00a62df8bb42dd7d84828825c522b98d99",
   "results/final/b1_dependence_look1.json": "d81786d7d12e111ddbfd384eeb3c7f78a131f90162e2345653f59db78ec7def6",
-  "results/final/coverage_dev/coverage_H2S1T24K5.json": "d0931e3343c61555de3bcf0f5f53d4b88bf80bdb00f3e9bb2ec6b376a3242421",
+  "results/final/coverage_dev/coverage_H2S1T24K5.json": "1dda413c1512167405c2710ae485bdc3bd2da09f2dcc1fbd60d532b4bac21db5",
   "results/final/coverage_dev/decision_final.json": "2b0c2c398a0edd749494f86dda2be5d9a45c156487764d93f7a099e39e7a2700",
   "results/final/decision_look1.json": "b82b3733384625fafcc0edd08b1f2e866d7a9518d3fcb11f74e0ad9796fac55e",
   "results/predecessor_posthoc/final-C-F0.posthoc.json": "b117597358a9db1199c1bcf8c6bcc1461ea051e80d14355ce2fcd2c6b370301e",
@@ -682,6 +682,46 @@
       "parts",
       4,
       "threshold"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cov_low_68",
+   "op": "field",
+   "fmt": "2",
+   "value": 0.2571428571428571,
+   "rendered": "0.26",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "regions",
+      "low_acceptance",
+      "levels",
+      "0.68",
+      "pooled",
+      "point"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cov_low_95",
+   "op": "field",
+   "fmt": "2",
+   "value": 0.7892857142857143,
+   "rendered": "0.79",
+   "inputs": [
+    {
+     "file": "results/final/coverage_dev/coverage_H2S1T24K5.json",
+     "path": [
+      "regions",
+      "low_acceptance",
+      "levels",
+      "0.95",
+      "pooled",
+      "point"
      ]
     }
    ]

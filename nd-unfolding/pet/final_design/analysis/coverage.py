@@ -264,10 +264,14 @@ def run(spec: Mapping[str, Any]) -> dict[str, Any]:
         for r in SCOREABLE_REGIONS:
             Lr = load_replicates(spec["dev"], k, f"eavail@{r}", "D1_p0.350", B)
             regions[r] = coverage_arrays(Lr["members"], Lr["target"], alpha, Lr["prior"])
+            if Lr["population"] is not None:          # report only (review of f27d92d0, finding 2)
+                regions[r]["vs_population"] = coverage_arrays(Lr["members"], Lr["population"], alpha)
     if spec.get("d4c"):
         L = load_replicates(spec["d4c"], k, "eavail_x_proton", "D4c_p_up", B)
         d4c = coverage_arrays(L["members"], L["target"], alpha, L["prior"])
         d4c["replicates"] = L["replicates"]
+        if L["population"] is not None:
+            d4c["vs_population"] = coverage_arrays(L["members"], L["population"], alpha)
     res.update({"dev_eavail": dev, "regions": regions, "d4c_eavail_x_proton": d4c})
     prev = None
     if spec.get("previous"):

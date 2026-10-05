@@ -26,6 +26,7 @@ from typing import Any, Mapping
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from score_design import canonical_case, classify_case  # noqa: E402
+from decide import binding_problems  # noqa: E402
 
 RUN = re.compile(r"^(?P<stage>S4F|S4S)-(?P<cand>[A-Za-z0-9]+K\d+)-FB(?P<rep>\d+)(?P<rest>.*)$")
 SEED = re.compile(r"-DEV(?P<rep>\d+)(?:-s(?P<seed>\d+))?\.design_scores\.json$")
@@ -59,6 +60,38 @@ def collect(decl: Mapping[str, Any], score_dirs: list[Path], look: int) -> tuple
     return runs, unused
 
 
+def completeness_digests(paths: list[Path]) -> dict[str, str]:
+    """{row: receipt sha256} from committed completeness records (`freeze/COMPLETENESS-*.tsv`), COMPLETE rows only."""
+    out: dict[str, str] = {}
+    for p in paths:
+        for line in p.read_text().splitlines():
+            if line.startswith("#") or not line.strip():
+                continue
+            f = line.split("\t")
+            if len(f) >= 4 and f[2] == "COMPLETE":
+                out[f[1]] = f[3]
+    return out
+
+
+def provenance(entries: list[dict], digests: dict[str, str]) -> tuple[bool, list[str]]:
+    """Section 10 provenance of a candidate's runs, verified (review of f27d92d0, finding 1): every run bound
+    (`decide.binding_problems`), and every final-bank run's recorded receipt digest equal to its completeness
+    record's. A final-bank run absent from every record is a problem."""
+    problems: list[str] = []
+    for e in entries:
+        doc = json.loads(Path(e["score"]).read_text())
+        problems.extend(binding_problems(doc))
+        name = doc.get("run_name", "")
+        if RUN.match(name) or name.startswith("S5-"):
+            want = digests.get(name)
+            got = (doc.get("provenance") or {}).get("receipt_sha256")
+            if want is None:
+                problems.append(f"{name}: in no completeness record")
+            elif got != want:
+                problems.append(f"{name}: receipt digest {str(got)[:12]} != completeness record {want[:12]}")
+    return not problems, problems
+
+
 def seed_runs(pattern: str) -> list[dict]:
     out = []
     for f in sorted(glob.glob(pattern if pattern.endswith(".json") else pattern + ".design_scores.json")):
@@ -76,6 +109,9 @@ def main(argv=None) -> int:
     ap.add_argument("--seed-runs", nargs="*", default=[], metavar="NAME=GLOB")
     ap.add_argument("--cost", type=Path, default=None, help="cost_from_receipts.py output")
     ap.add_argument("--coverage", nargs="*", default=[], metavar="NAME=PATH")
+    ap.add_argument("--completeness", type=Path, nargs="*", default=[],
+                    help="committed completeness records (freeze/COMPLETENESS-*.tsv) of the scored final-bank rows; "
+                         "a final-bank run in none of them makes its candidate's provenance INCOMPLETE")
     ap.add_argument("--look", type=int, default=1)
     ap.add_argument("--previous", type=Path, default=None, help="look-1 decision file (look 2)")
     ap.add_argument("--provisional", action="store_true")
@@ -88,13 +124,16 @@ def main(argv=None) -> int:
     seeds = dict(x.split("=", 1) for x in a.seed_runs)
     cov = dict(x.split("=", 1) for x in a.coverage)
     cost = json.loads(a.cost.read_text())["candidates"] if a.cost else {}
+    digests = completeness_digests(a.completeness)
     cands = {}
     for name, rr in runs.items():
         k = int(re.search(r"K(\d+)$", name).group(1))
         cid = name[: name.rindex("K")]
-        d: dict[str, Any] = {"k": k, "runs": rr, "provenance_complete": True}
+        d: dict[str, Any] = {"k": k, "runs": rr}
         if name in seeds:
             d["seed_runs"] = seed_runs(seeds[name])
+        ok, probs = provenance(rr + d.get("seed_runs", []), digests)
+        d["provenance_complete"], d["provenance_problems"] = ok, probs[:50]
         c = cost.get(cid) or cost.get(name)
         if c and c.get("evidence_cost"):
             d["cost"] = c["evidence_cost"]
@@ -111,6 +150,7 @@ def main(argv=None) -> int:
     a.out.write_text(json.dumps(ev, indent=1) + "\n")
     for n, d in cands.items():
         print(f"{n}: {len(d['runs'])} runs, {len(d.get('seed_runs', []))} seed runs, "
+              f"provenance {'bound' if d['provenance_complete'] else 'INCOMPLETE'}, "
               f"cost {'yes' if 'cost' in d else 'no'}, coverage {'yes' if 'coverage' in d else 'no'}")
     print(f"unused rows (beyond the declared cuts): {len(unused)}")
     return 0

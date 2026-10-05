@@ -144,7 +144,7 @@ pre-registered.
 - **Done:** 944/944 look-1 rows COMPLETE → `freeze/COMPLETENESS-look1.tsv` → **Amendment 4 UNBLIND look 1**
   (`39e8cbbd`) → FB scored (`results/final/scored_fb/`, 5 jobs) and FB cost (`resources/cost_fb_look1-20260930.json`)
   → `analysis/run_look1.sh` → **look-1 decision** (`96e6a412`, `results/final/decision_look1*.json`): L128S1T24 K4
-  **INELIGIBLE on B2** (point-decided, statistically unresolved; D4c n down 0.0122 vs ≤ 0.010, 95 % 0.0064–0.0181);
+  **INELIGIBLE on B2** (point-decided, statistically unresolved; D4d n down 0.0122 vs ≤ 0.010, 95 % 0.0064–0.0181);
   H2S1T24 K5 passes §6.1–6.3, C1–C5 pending; no look 2. Provisional: H2S1T24 K5 first for coverage.
 - **Running:** **Amendment 5** (`d06a495e`) released coverage of H2S1T24 K5: `runs/s5c_a5_H2S1T24.tsv` (720, dev tilt,
   C1–C4) then `runs/s5d_a5_H2S1T24.tsv` (360, D4c up, C5), output `$B/s5`, `SCORE=0`. Watcher restarted by
@@ -176,8 +176,8 @@ pre-registered.
 ## 12. Terminal state (2026-10-05 13:30Z)
 
 - **Outcome: NO_ELIGIBLE_DESIGN** (`results/final/coverage_dev/decision_final.json`, commit `337e34cf`): H2S1T24 K5 fails
-  coverage C1 and C4 (its six-member interval is too wide: 68 % coverage 0.896 vs ≤ 0.80; widths 1.3–1.7 × the limit in
-  bins 1–6); L128S1T24 K4 fails B2 (look 1). C5 skipped (3a.5); L128S1T24's coverage not assessed.
+  coverage C1 and C4 (its six-member interval is too wide in aggregate: 68 % coverage 0.896 vs ≤ 0.80; widths 1.3–1.7 × the limit
+  in bins 1–6; the low-acceptance region under-covers, 68 % 0.257); L128S1T24 K4 fails B2 (look 1). C5 skipped (3a.5); L128S1T24's coverage not assessed.
 - **Cluster:** watcher stopped through the stop file (13:24Z, `keep_busy.log`); the four study allocations cancelled;
   no study job remains. The stop file `$B/keep_busy.stop` is left in place on purpose (a restart needs
   `start_watcher.sh`, which removes it). 24 D4c members are partial and unscored (blinded); `runs/s5d_a5_H2S1T24.tsv`

@@ -4,7 +4,8 @@
 
 - **Coverage of H2S1T24 K5** (Amendments 5, 6; 720 development-tilt members, B = 6): **C1 FAIL, C4 FAIL** — the
   interval procedure is over-conservative (pooled 68 % coverage 0.896, LB 0.858, vs ≤ 0.80; 95 % 0.990; half-widths
-  1.3–1.7 × the calibrated limit in six of seven E_avail bins); C2, C3 PASS. Same against the FB population target;
+  1.3–1.7 × the calibrated limit in six of seven E_avail bins); C2, C3 PASS. Not uniformly conservative: the
+  low-acceptance region under-covers (68 % 0.257, 95 % 0.789), ungated by C3. Same against the FB population target;
   mechanism not established. Reproduced from the raw member histograms.
 - **Terminal:** with L128S1T24 K4 ineligible on B2 (look 1), `decide.py` gives **NO_ELIGIBLE_DESIGN**; C5 skipped
   (3a.5), D4c compute stopped. H2S1T24's point estimator passes every §6.1–6.3 rule (R_E0 0.895, +0.589 over CTL).
@@ -14,7 +15,7 @@
 ## 2026-10-01 — PET final-design study: look 1 decided; coverage of H2S1T24 K5 running (blinded; in progress)
 
 - **Look 1 (Amendment 4 UNBLIND after 944/944 rows; decision `pet/final_design/results/final/decision_look1.json`,
-  commit `96e6a412`):** L128S1T24 K4 **INELIGIBLE on B2 — point-decided, statistically unresolved** (D4c n down,
+  commit `96e6a412`):** L128S1T24 K4 **INELIGIBLE on B2 — point-decided, statistically unresolved** (D4d n down,
   residual − injected L1 0.0122, 95 % 0.0064–0.0181, vs ≤ 0.010; every other rule passes). H2S1T24 K5 passes every
   §6.1–6.3 rule (R_E0 0.895, simultaneous LB 0.876; its own B2 0.0097 is also unresolved); coverage pending. The B2
   difference between the finalists is not resolved by this comparison; neither superiority nor equivalence is claimed.

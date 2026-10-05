@@ -121,6 +121,29 @@ def historical_floors() -> dict[str, Any]:
 # ------------------------------------------------------------------------------------------- #
 # Evidence
 # ------------------------------------------------------------------------------------------- #
+def binding_problems(doc: Mapping[str, Any]) -> list[str]:
+    """Section 10 provenance bindings of one scored run (review of f27d92d0, finding 1): the receipt is complete
+    and names the same configuration as the run identity and a code commit; the run identity carries both row
+    digests; the score records the receipt and replicate-array digests. Empty list = bound."""
+    name = doc.get("run_name", "?")
+    prov, ident = doc.get("provenance") or {}, doc.get("identity") or {}
+    rc = prov.get("receipt") or {}
+    out = []
+    if rc.get("complete") is not True:
+        out.append(f"{name}: receipt not complete")
+    if not rc.get("config_hash") or rc.get("config_hash") != ident.get("config_hash"):
+        out.append(f"{name}: receipt config hash does not match the run identity")
+    if not rc.get("code_commit"):
+        out.append(f"{name}: receipt has no code commit")
+    for key in ("prior_rows_sha256", "pseudo_rows_sha256"):
+        if not ident.get(key):
+            out.append(f"{name}: run identity has no {key}")
+    for key in ("receipt_sha256", "replicate_arrays_sha256"):
+        if not prov.get(key):
+            out.append(f"{name}: score records no {key}")
+    return out
+
+
 class Candidate:
     """One candidate's scored runs at its k: {case: {replicate: record}}."""
 
@@ -148,9 +171,7 @@ class Candidate:
         if it is None:
             self.problems.append(f"{doc['run_name']}: k={self.k} not scored")
             return None
-        rc = doc.get("provenance", {}).get("receipt", {})
-        if rc.get("complete") is not True:
-            self.problems.append(f"{doc['run_name']}: receipt not complete")
+        self.problems.extend(binding_problems(doc))
         ident = doc.get("identity", {})
         case = canonical_case(doc["case"]["case"])
         stage = str(run.get("stage") or str(doc["run_name"]).split("-")[0])

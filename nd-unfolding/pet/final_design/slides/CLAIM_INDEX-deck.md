@@ -105,3 +105,5 @@ Paths relative to `nd-unfolding/pet/final_design/`.
 |  |  | `cov_C3_1_lb` = 0.993 |
 |  |  | `cov_C4_ratio_max` = 1.72 |
 |  |  | `cov_C4_ratio_min` = 1.32 |
+|  |  | `cov_low_68` = 0.26 |
+|  |  | `cov_low_95` = 0.79 |

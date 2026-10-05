@@ -336,7 +336,7 @@ def s_final(d: Deck, n: Numbers) -> None:
                                                      "residual_minus_injected", key], "4")
     cp = lambda c, t, key, fmt="3": n.f(f"b1dep_{t}_{key}", B1D, ["candidates", c, "common_panel", key], fmt)
     body = (r"\small\begin{itemize}"
-            r"\item \textbf{B2} (D4c n down, mean residual $-$ injected $E_\mathrm{avail}$ L1, limit 0.010, a point rule): "
+            r"\item \textbf{B2} (D4d n down, mean residual $-$ injected $E_\mathrm{avail}$ L1, limit 0.010, a point rule): "
             r"H2S1T24 " + b2("H2S1T24K5", "h", "mean") + r" [" + b2("H2S1T24K5", "h", "lb") + ", " +
             b2("H2S1T24K5", "h", "ub") + r"] PASS; L128S1T24 " + b2("L128S1T24K4", "l", "mean") + r" [" +
             b2("L128S1T24K4", "l", "lb") + ", " + b2("L128S1T24K4", "l", "ub") + r"] FAIL. "
@@ -374,15 +374,20 @@ def s_coverage(d: Deck, n: Numbers) -> None:
     hi = n.add("cov_C4_ratio_max", "ratio", [(COV, ["rules", "C4", "parts", 1 + ratios.index(max(ratios)), "estimate"]),
                                              (COV, ["rules", "C4", "parts", 1 + ratios.index(max(ratios)), "threshold"])], "2")
     rows = [["C1 pooled 95\\,\\% (LB $\\ge$0.90, point $\\le$0.99)", part("C1", 1, "estimate") + " (LB " + part("C1", 0, "lb") + ")",
-             base.esc(cov["C1"]["verdict"])],
-            ["C1 pooled 68\\,\\% (LB $\\ge$0.60, point $\\le$0.80)", part("C1", 3, "estimate") + " (LB " + part("C1", 2, "lb") + ")", ""],
+             "unresolved"],
+            ["C1 pooled 68\\,\\% (LB $\\ge$0.60, point $\\le$0.80)", part("C1", 3, "estimate") + " (LB " + part("C1", 2, "lb") + ")",
+             "decisive"],
+            ["\\textbf{C1} (both levels)", "", base.esc(cov["C1"]["verdict"])],
             ["C2 every bin 95\\,\\% $\\ge$ 0.85", "all bins pass", base.esc(cov["C2"]["verdict"])],
             ["C3 moderate / good 95\\,\\% LB $\\ge$ 0.85", part("C3", 0, "lb") + " / " + part("C3", 1, "lb"), base.esc(cov["C3"]["verdict"])],
             ["C4 half-width / limit, bins 1--6 ($\\le$1)", lo + "--" + hi, base.esc(cov["C4"]["verdict"])],
             ["C5 D4c up", "skipped after decisive C1--C4 FAIL", "---"]]
     body = table(["H2S1T24 $K{=}5$, B = 6, 120 replicates", "measured", "verdict"], rows, "llr", r"\scriptsize") + (
-        r"\par\vspace{0.15cm}\small The six-member interval is \textbf{too wide} (over-conservative), not "
-        r"anti-conservative; the same against the FB population target. Mechanism not established.")
+        r"\par\vspace{0.15cm}\small In aggregate the six-member interval is \textbf{too wide}; the same against the "
+        r"FB population target. Not uniformly conservative: the low-acceptance region \textbf{under-covers} (68\,\%: " +
+        n.f("cov_low_68", COV, ["regions", "low_acceptance", "levels", "0.68", "pooled", "point"], "2") + r", 95\,\%: " +
+        n.f("cov_low_95", COV, ["regions", "low_acceptance", "levels", "0.95", "pooled", "point"], "2") +
+        r"), a region no rule gates. Mechanism not established.")
     d.frame("Uncertainty calibration: coverage of H2S1T24", body, [COV])
     d.claim("Coverage C1-C4", sorted(k for k in n.entries if k.startswith("cov_")))
 
@@ -397,7 +402,8 @@ def s_terminal(d: Deck, n: Numbers) -> None:
             table(["finalist", "status (rules)"], rows, "ll", r"\small") + r"\raggedright\par\vspace{0.3cm}\small"
             r"\begin{itemize}\item No design selected and no default named (the default must itself be eligible)."
             r"\item Supported: H2S1T24's point estimator passes every accuracy, robustness and stability rule; its "
-            r"interval procedure is too wide. Not supported: a ranking of the finalists."
+            r"interval procedure fails calibration (too wide in aggregate; under-covers at low acceptance). "
+            r"Not supported: a ranking of the finalists."
             r"\item Remaining route (owner decision): \S11 repair --- interval calibrated on DEV, re-validated on the "
             r"sealed RB bank.\end{itemize}")
     d.frame("Terminal outcome (frozen rules)", body, [FIN, "DECISION_RECORD-pet-final-design.md"])

@@ -22,11 +22,17 @@ BASE = {"E0": 0.70, "low_acceptance": 0.30, "moderate": 0.60, "good": 0.80, "E3"
         "E4": 0.35, "E5": 0.35, "D4d": 0.30, "R1": 0.0}
 
 
+def bound(prior, pseudo):
+    """A scored run's section-10 bindings (the provenance gate checks them; review of f27d92d0)."""
+    return {"identity": {"config_hash": "cfg", "prior_rows_sha256": prior, "pseudo_rows_sha256": pseudo},
+            "provenance": {"receipt": {"complete": True, "config_hash": "cfg", "code_commit": "c0"},
+                           "receipt_sha256": "r" * 64, "replicate_arrays_sha256": "a" * 64}}
+
+
 def doc(path, case, rep, k, h, stab=None):
     c = sd.classify_case(case)
     d = {"run_name": path.stem, "case": {"case": c["case"], "natural": c["natural"]},
-         "identity": {"prior_rows_sha256": f"p{rep}", "pseudo_rows_sha256": f"a{rep}"},
-         "provenance": {"receipt": {"complete": True}},
+         **bound(f"p{rep}", f"a{rep}"),
          "iterations": [{"k": k, "histograms": h, "stability": stab or {
              "n_nonfinite_truth_passing": 0, "n_negative_truth_passing": 0, "push_max": 3.0,
              "push_p999": 2.5, "final_truth_weight_ess_over_n": 0.8,
@@ -362,8 +368,7 @@ def test_library_development_tilt_is_keyed_apart_from_final_e0(tmp_path):
 
     def doc(name, case):
         return {"run_name": name, "case": {"case": case, "natural": "eavail"},
-                "provenance": {"receipt": {"complete": True}},
-                "identity": {"prior_rows_sha256": name, "pseudo_rows_sha256": name},
+                **bound(name, name),
                 "iterations": [{"k": 5, "histograms": {"eavail": {"recovery": 0.8}}}]}
     runs = []
     for stage, n in (("S4F", 24), ("S4S", 8)):
