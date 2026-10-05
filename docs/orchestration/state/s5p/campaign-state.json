@@ -47,7 +47,7 @@
  },
  "jobs": [
   {
-   "job": "production lanes (r3 2026-10-04T04:47Z; NuWro only: r4 2026-10-04T16:20Z, r5 2026-10-05T03:20Z)",
+   "job": "production lanes (r3 2026-10-04T04:47Z; NuWro only: r4 2026-10-04T16:20Z, r5 2026-10-05T03:20Z, r6 2026-10-05T08:30Z)",
    "state": "running",
    "arrays": {
     "pow P1_a1.0": "59021632 (done, 193)",
@@ -61,15 +61,15 @@
    },
    "runners_login33": {
     "pow": "PID 1047835 ended ('queue done' 2026-10-04T15:42Z; deploy e0d7b04a, queues-r3/pow.q)",
-    "MnvTune_v1": "PID 1047836 (e0d7b04a, queues-r3)",
-    "GENIE_2_12_10_CV": "PID 1047838 (e0d7b04a, queues-r3)",
+    "MnvTune_v1": "PID 1047836 ended ('queue done' 2026-10-05T08:15:43Z after MnvTune-final B 1365)",
+    "GENIE_2_12_10_CV": "PID 1047838 ended ('queue done' 2026-10-05T08:23:47Z after CV-final B 1366)",
     "GENIE_2_12_10_MEC": "PID 1047839 ended ('queue done' 2026-10-05T03:04:11Z after MEC-final B 1343)",
-    "NuWro_21_09": "PID 435867 (deploy 95572965, queues-r5/cal-NuWro_21_09.q, throttle 8, log /pscratch/sd/j/josephrb/s5p-20260926/runs/queue-prod-r5-NuWro_21_09.log); r4 PID 669349 stopped 2026-10-05T03:19:58Z; r3 PID 1047840 stopped 2026-10-04T16:20:16Z",
+    "NuWro_21_09": "PID 1100694 (deploy 756e1d6c, queues-r6/cal-NuWro_21_09.q, throttle 14, log /pscratch/sd/j/josephrb/s5p-20260926/runs/queue-prod-r6-NuWro_21_09.log); r5 435867 stopped 2026-10-05T08:30:27Z; r4 669349 stopped 03:19:58Z; r3 1047840 stopped 2026-10-04T16:20:16Z",
     "GiBUU_2019": "PID 1047841 (e0d7b04a, queues-r3)"
    },
    "handoff": "docs/orchestration/HANDOFF-20260929-s5p-campaign-cold-start.md",
    "campaign_session": "gbdt worker [dfdda9] (takeover 2026-09-29T07:08Z)",
-   "meter_deploy": "e0d7b04a, b93445c4 or 95572965 (all budget revision 7, byte-identical be29f2c3...; older deploys refused by the meter)"
+   "meter_deploy": "e0d7b04a, b93445c4, 95572965 or 756e1d6c (all budget revision 7, byte-identical be29f2c3...; older deploys refused by the meter)"
   }
  ],
  "receipts": [
@@ -497,6 +497,10 @@
   {
    "utc": "2026-10-05T08:28Z",
    "what": "FINALS: MnvTune_v1-final.json (2026-10-05T08:15:22Z) B 1365 and GENIE_2_12_10_CV-final.json (08:23:24Z) B 1366: total and shape k = 0, p = 1/1366 = 0.000732, 99.5% look interval [0, 0.00438] below every threshold (precise), reason 'rule met for both tests'. Both runners (1047836, 1047838) ran their remaining lines as 'already stopped' and logged 'queue done' (08:15:43Z, 08:23:47Z). Final statuses: 3 of 5 (MEC, MnvTune, CV); open: GiBUU b6 59349568 (throttle 2, 11/34 done or running), NuWro b6 59358653 (throttle 8, 10/34 done or running, 24 pending on JobArrayTaskLimit); runners: GiBUU 1047841 (r3), NuWro 435867 (r5). TRANSITION R6 PREPARED (owner instruction of 2026-10-04): worst case at NuWro's b7 submission is GiBUU 2 + NuWro 14 = 16 slots = 2.0 nodes, so NuWro 8 -> 14. Files: prod/queues-r6/cal-NuWro_21_09.q (s5p_requeue.py from queues-r5 at the b6 wait line, --throttle 14; body identical except the throttle), prod/queues-r6-rollback/cal-NuWro_21_09.q (throttle 8), transition-r6/plan.json, validate_deploy_r6.py (= r5's with the plan path renamed), runner_r6.sh (stop r5 435867 / start r6 / check; identical to runner_r5.sh modulo the renames, checked by diff; a first draft carried the r4 PID 669349 in LANES and was corrected before commit, the stop step would have aborted on it). The recompute lane is told before execution. Budget revision 7 unchanged, no scientific change. Next after r6: NuWro 16 if GiBUU is final before NuWro's b8 submission."
+  },
+  {
+   "utc": "2026-10-05T08:32Z",
+   "what": "TRANSITION R6 EXECUTED AND VERIFIED (NuWro throttle 8 -> 14). Pre-execution: the recompute lane ('gbdt independent') reported its own read-only pre-execution check PASS at about 08:30Z (756e1d6c on origin/main; nd-unfolding unchanged from 95572965; frozen modules = 4f5a613f; budget, design, tables identical; validator and runner equal to r5's modulo renames, LANES PID 435867; deploy validator VALID; queues-r6 = queues-r5 from the b6 wait line modulo throttle; r5 runner on its b6 wait line; finals read independently), stating it is a verification result, not an authorization. It also CLOSED r5 check (e) from the ledger: NuWro b6 opened 07:25:45Z with --array=0-33%8 and cal-NuWro_21_09-b6.tsv. Execution: stop 08:30:24Z, r5 runner 435867 on the s5p_cal_nuwro_21_09_b6 wait line, group TERMed 08:30:27Z, log unchanged; start 08:30:30Z PID 1100694; check 08:30:41Z PASS one r6 session leader (PPID 1) on 756e1d6c, PASS log /pscratch/sd/j/josephrb/s5p-20260926/runs/queue-prod-r6-NuWro_21_09.log pinned to 756e1d6c8f9f... and waiting on b6. GiBUU 1047841 alive (queues-r3); open s5p arrays unchanged 59349568,59358653. Monitor, s5p_terminal_run.sh RUNNER_PIDS (435867 -> 1100694), CHECKLIST section 1 and the handoff addendum updated. No budget or scientific change."
   }
  ],
  "findings": [
