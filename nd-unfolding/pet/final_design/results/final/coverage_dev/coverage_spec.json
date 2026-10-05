@@ -1,0 +1,1331 @@
+{
+ "candidate": "H2S1T24K5",
+ "k": 5,
+ "bonferroni_m": 2,
+ "look": 1,
+ "looks_planned": 2,
+ "B": 6,
+ "dev": [
+  {
+   "replicate": "FB0",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB0-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB0-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB0-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB0-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB0-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB0-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB1",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB1-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB1-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB1-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB1-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB1-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB1-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB2",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB2-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB2-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB2-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB2-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB2-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB2-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB3",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB3-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB3-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB3-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB3-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB3-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB3-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB4",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB4-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB4-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB4-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB4-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB4-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB4-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB5",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB5-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB5-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB5-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB5-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB5-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB5-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB6",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB6-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB6-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB6-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB6-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB6-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB6-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB7",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB7-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB7-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB7-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB7-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB7-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB7-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB8",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB8-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB8-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB8-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB8-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB8-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB8-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB9",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB9-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB9-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB9-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB9-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB9-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB9-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB10",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB10-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB10-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB10-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB10-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB10-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB10-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB11",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB11-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB11-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB11-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB11-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB11-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB11-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB12",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB12-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB12-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB12-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB12-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB12-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB12-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB13",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB13-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB13-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB13-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB13-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB13-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB13-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB14",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB14-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB14-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB14-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB14-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB14-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB14-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB15",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB15-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB15-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB15-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB15-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB15-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB15-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB16",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB16-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB16-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB16-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB16-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB16-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB16-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB17",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB17-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB17-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB17-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB17-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB17-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB17-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB18",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB18-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB18-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB18-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB18-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB18-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB18-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB19",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB19-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB19-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB19-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB19-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB19-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB19-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB20",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB20-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB20-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB20-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB20-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB20-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB20-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB21",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB21-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB21-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB21-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB21-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB21-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB21-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB22",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB22-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB22-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB22-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB22-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB22-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB22-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB23",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB23-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB23-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB23-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB23-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB23-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB23-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB24",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB24-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB24-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB24-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB24-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB24-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB24-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB25",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB25-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB25-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB25-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB25-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB25-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB25-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB26",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB26-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB26-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB26-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB26-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB26-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB26-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB27",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB27-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB27-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB27-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB27-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB27-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB27-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB28",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB28-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB28-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB28-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB28-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB28-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB28-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB29",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB29-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB29-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB29-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB29-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB29-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB29-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB30",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB30-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB30-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB30-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB30-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB30-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB30-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB31",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB31-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB31-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB31-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB31-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB31-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB31-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB32",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB32-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB32-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB32-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB32-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB32-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB32-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB33",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB33-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB33-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB33-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB33-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB33-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB33-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB34",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB34-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB34-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB34-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB34-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB34-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB34-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB35",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB35-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB35-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB35-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB35-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB35-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB35-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB36",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB36-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB36-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB36-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB36-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB36-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB36-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB37",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB37-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB37-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB37-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB37-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB37-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB37-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB38",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB38-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB38-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB38-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB38-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB38-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB38-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB39",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB39-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB39-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB39-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB39-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB39-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB39-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB40",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB40-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB40-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB40-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB40-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB40-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB40-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB41",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB41-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB41-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB41-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB41-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB41-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB41-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB42",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB42-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB42-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB42-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB42-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB42-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB42-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB43",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB43-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB43-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB43-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB43-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB43-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB43-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB44",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB44-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB44-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB44-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB44-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB44-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB44-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB45",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB45-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB45-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB45-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB45-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB45-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB45-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB46",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB46-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB46-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB46-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB46-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB46-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB46-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB47",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB47-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB47-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB47-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB47-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB47-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB47-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB48",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB48-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB48-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB48-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB48-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB48-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB48-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB49",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB49-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB49-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB49-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB49-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB49-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB49-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB50",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB50-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB50-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB50-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB50-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB50-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB50-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB51",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB51-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB51-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB51-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB51-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB51-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB51-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB52",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB52-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB52-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB52-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB52-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB52-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB52-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB53",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB53-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB53-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB53-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB53-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB53-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB53-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB54",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB54-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB54-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB54-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB54-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB54-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB54-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB55",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB55-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB55-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB55-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB55-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB55-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB55-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB56",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB56-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB56-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB56-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB56-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB56-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB56-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB57",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB57-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB57-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB57-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB57-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB57-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB57-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB58",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB58-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB58-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB58-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB58-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB58-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB58-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB59",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB59-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB59-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB59-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB59-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB59-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB59-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB60",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB60-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB60-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB60-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB60-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB60-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB60-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB61",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB61-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB61-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB61-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB61-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB61-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB61-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB62",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB62-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB62-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB62-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB62-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB62-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB62-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB63",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB63-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB63-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB63-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB63-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB63-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB63-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB64",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB64-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB64-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB64-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB64-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB64-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB64-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB65",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB65-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB65-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB65-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB65-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB65-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB65-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB66",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB66-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB66-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB66-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB66-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB66-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB66-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB67",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB67-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB67-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB67-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB67-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB67-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB67-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB68",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB68-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB68-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB68-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB68-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB68-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB68-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB69",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB69-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB69-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB69-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB69-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB69-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB69-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB70",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB70-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB70-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB70-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB70-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB70-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB70-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB71",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB71-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB71-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB71-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB71-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB71-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB71-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB72",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB72-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB72-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB72-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB72-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB72-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB72-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB73",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB73-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB73-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB73-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB73-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB73-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB73-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB74",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB74-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB74-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB74-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB74-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB74-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB74-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB75",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB75-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB75-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB75-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB75-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB75-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB75-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB76",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB76-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB76-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB76-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB76-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB76-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB76-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB77",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB77-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB77-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB77-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB77-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB77-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB77-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB78",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB78-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB78-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB78-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB78-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB78-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB78-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB79",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB79-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB79-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB79-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB79-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB79-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB79-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB80",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB80-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB80-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB80-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB80-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB80-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB80-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB81",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB81-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB81-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB81-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB81-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB81-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB81-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB82",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB82-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB82-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB82-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB82-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB82-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB82-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB83",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB83-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB83-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB83-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB83-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB83-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB83-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB84",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB84-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB84-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB84-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB84-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB84-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB84-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB85",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB85-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB85-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB85-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB85-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB85-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB85-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB86",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB86-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB86-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB86-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB86-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB86-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB86-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB87",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB87-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB87-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB87-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB87-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB87-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB87-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB88",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB88-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB88-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB88-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB88-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB88-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB88-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB89",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB89-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB89-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB89-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB89-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB89-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB89-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB90",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB90-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB90-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB90-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB90-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB90-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB90-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB91",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB91-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB91-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB91-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB91-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB91-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB91-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB92",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB92-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB92-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB92-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB92-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB92-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB92-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB93",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB93-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB93-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB93-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB93-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB93-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB93-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB94",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB94-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB94-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB94-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB94-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB94-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB94-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB95",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB95-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB95-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB95-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB95-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB95-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB95-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB96",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB96-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB96-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB96-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB96-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB96-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB96-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB97",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB97-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB97-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB97-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB97-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB97-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB97-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB98",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB98-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB98-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB98-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB98-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB98-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB98-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB99",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB99-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB99-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB99-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB99-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB99-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB99-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB100",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB100-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB100-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB100-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB100-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB100-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB100-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB101",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB101-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB101-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB101-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB101-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB101-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB101-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB102",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB102-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB102-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB102-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB102-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB102-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB102-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB103",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB103-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB103-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB103-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB103-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB103-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB103-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB104",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB104-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB104-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB104-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB104-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB104-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB104-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB105",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB105-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB105-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB105-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB105-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB105-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB105-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB106",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB106-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB106-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB106-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB106-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB106-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB106-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB107",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB107-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB107-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB107-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB107-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB107-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB107-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB108",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB108-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB108-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB108-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB108-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB108-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB108-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB109",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB109-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB109-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB109-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB109-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB109-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB109-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB110",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB110-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB110-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB110-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB110-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB110-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB110-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB111",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB111-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB111-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB111-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB111-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB111-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB111-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB112",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB112-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB112-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB112-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB112-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB112-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB112-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB113",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB113-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB113-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB113-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB113-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB113-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB113-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB114",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB114-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB114-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB114-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB114-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB114-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB114-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB115",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB115-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB115-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB115-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB115-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB115-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB115-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB116",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB116-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB116-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB116-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB116-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB116-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB116-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB117",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB117-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB117-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB117-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB117-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB117-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB117-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB118",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB118-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB118-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB118-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB118-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB118-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB118-b6.design_scores.json"
+   ]
+  },
+  {
+   "replicate": "FB119",
+   "members": [
+    "results/final/scored_s5c/S5-H2S1T24K5-FB119-b1.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB119-b2.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB119-b3.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB119-b4.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB119-b5.design_scores.json",
+    "results/final/scored_s5c/S5-H2S1T24K5-FB119-b6.design_scores.json"
+   ]
+  }
+ ],
+ "d4c": []
+}
