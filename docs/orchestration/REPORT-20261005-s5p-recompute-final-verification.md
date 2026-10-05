@@ -201,4 +201,9 @@ certified" here anyway.
    unmapped fields, with its own independent review, is what could turn it into AGREE. That needs an owner decision.
 2. **The missing-experiment sensitivity is not certified:** in the all-worst corner every rejection changes. This
    is routed to the owner.
-3. The sha256 of the committed copy of `joint-evaluate.json` is to be checked once the campaign commits it (§5.3).
+3. **CLOSED 2026-10-05:** the committed copies on origin/main (`0afd9ef5`,
+   `docs/orchestration/state/s5p/stage7/joint/`) are byte-identical to the cluster files: `joint-evaluate.json`
+   `b9604502…`, `robust-labels.json` `206655f9…`, `missing-sensitivity.json` `f48e16ef…`.
+
+The campaign has put decisions (1) and (2) to the owner (campaign-state at `9f257847`). It frames (1) as whether
+INCOMPLETE with 0 discrepancies satisfies amendment 7 (v). No joint result is recorded.
