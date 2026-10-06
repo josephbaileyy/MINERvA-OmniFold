@@ -1,0 +1,224 @@
+\subsection{Completed simulation studies of PET design}
+\label{sec:pet-campaigns}
+
+The improvement and final-design studies tested whether better point estimates
+could be combined with a calibrated uncertainty procedure. They improved
+recovery substantially, but the terminal selection outcome is
+\texttt{NO\_ELIGIBLE\_DESIGN}: no design or default was selected.
+All results below concern signal-only simulation and method development,
+not a real-data cross section or a publication uncertainty product
+\cite{PETImprovement2026,PETFinalDesign2026}.
+
+For unit-normalized histograms, recovery is
+\begin{equation}
+ R=1-\frac{\sum_b|u_b-t_b|}{\sum_b|p_b-t_b|},
+ \label{eq:pet-campaign-recovery}
+\end{equation}
+where $u$, $t$ and $p$ are the unfolded, pseudodata-truth and prior
+distributions on the stated reporting histogram. Thus $R=1$ is exact
+recovery, $R=0$ retains the prior's discrepancy, and $R<0$ moves farther
+from the target. A nearly unchanged marginal makes the denominator small;
+joint hadron-content histograms and absolute residuals are needed in such
+cases. This metric differs from the historical cellwise recovery proxy in
+\S\ref{sec:gbdt-model-dependence}.
+
+\paragraph{Improvement study: recovery gains did not qualify a design.}
+Development, pilot, final and stress samples had separate roles. On twelve
+fresh final draws, the historical PET control at three iterations recovered
+$R=0.316$ of the seven-bin $\Eavail$ tilt. The frozen interventions at
+$K^*=10$ gave the results in Table~\ref{tab:pet-improvement}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Frozen intervention & Mean $R$ & One-sided 95\% lower bound \\
+\midrule
+A: iterations alone & 0.505 & 0.490 \\
+B: reco summaries and one-hot truth PDG & 0.569 & 0.555 \\
+C: efficiency-corrected truth step & 0.786 & 0.763 \\
+\bottomrule
+\end{tabular}
+\caption{Improvement study at its declared ten-iteration operating point,
+twelve final draws per configuration. B retains the carry-misses rule;
+C trains the truth-step ratio on selected events and extrapolates it to
+missed events. The unchanged aggregate adequacy floor is 0.556, with
+additional regional mean requirements. B passes the point rule but its
+lower bound is below the floor; A fails and C clears it. B versus A combines
+two input changes and does not isolate the reco summaries.}
+\label{tab:pet-improvement}
+\end{table}
+
+The 36 final and 36 stress runs completed. Coverage was not run: no frozen
+candidate at $K^*=10$ met both adequacy and the stress requirement.
+B moved away under neutron-content reweighting, and C under proton- and
+neutron-content reweighting, despite these distortions being distinguishable
+at reconstruction level. There were only two stress draws per case.
+C at three iterations met the mean adequacy rule and had no moves-away
+stress cell, but its lower bound was below the floor and that iteration was
+not the frozen coverage point. It was not retrospectively promoted.
+The combined detector-scale-plus-tilt case had no matching identifiability
+test or unscaled control on the same draws; its recovery does not isolate
+the response effect. The review left the PET failure mechanism unestablished.
+Subsequent development showed that the predecessor's C neutron case barely
+changed the scored marginal, whereas B made a genuine wrong-direction
+push. These diagnostics motivated the next study without changing the
+predecessor's frozen verdict.
+
+\paragraph{Final design: representation, training and seed reproducibility.}
+The next study used fixed development, final and sealed reserve banks.
+Each unfolding had about 600,000 prior events and 600,000 pseudodata events;
+final inference is conditional on those banks. Detector energy summaries
+helped recover information omitted by the stored top-12-cluster cloud.
+Categorical truth PDG encoding, a constant per-iteration learning rate and
+longer truth-step training completed the hybrid designs. In development,
+extending the truth step to 24 epochs reduced the fixed-event seed SD of
+the primary recovery to 0.037 and 0.043, below the 0.05 limit. These are
+seed-reproducibility measurements, not uncertainty coverage.
+
+The frozen finalists were compact H2S1T24 at five iterations and larger
+L128S1T24 at four, with approximately 47,000 and 970,000 detector-step
+parameters. Pretrained PET2 improved on its scratch counterpart, but no
+tested PET2 design passed all development screens: the stable annealed
+variant failed the proton-topology screen. This is a result for the tested
+recipes, not a general rejection of pretraining.
+
+On 60 final-bank tilt draws, H2S1T24 and L128S1T24 reached
+$R=0.895$ and $0.863$, respectively, against the historical PET control's
+$0.306$. H2S1T24 passed the frozen accuracy, robustness and stability rules.
+L128S1T24 failed B2, the neutron-down test on the nearly unchanged
+$\Eavail$ marginal: mean residual minus
+injected $L_1$ was $0.0122$, above $0.010$, versus H2S1T24's $0.0097$.
+Both 95\% intervals cross the threshold, so the frozen point rule decides
+eligibility but the statistical comparison establishes neither a robustness
+ranking nor equivalence. The frozen B1 independence-based bound passes;
+within-draw dependence prevents establishing its intended per-unit failure
+probability bound. Nor does it show that the per-unit failure probability exceeds 0.10.
+The compact design was not cheaper at the declared packing, so the
+cost-based preference for it did not apply.
+
+\paragraph{Coverage fails, with opposite behavior across acceptance regions.}
+The H2S1T24 interval procedure uses six independent Poisson-bootstrap
+members, each with its own training seeds. Its estimate is their mean
+normalized histogram; intervals are
+$\bar u\pm t_5 s\sqrt{1+1/6}$ at the stated confidence level, where $s$
+is the member SD. On 120 final-bank development-tilt draws (720 unfoldings),
+the results are those of Table~\ref{tab:pet-final-coverage}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Scored region & Nominal 68\% coverage & Nominal 95\% coverage \\
+\midrule
+Aggregate $\Eavail$ & 0.896 & 0.990 \\
+Low acceptance & 0.257 & 0.789 \\
+Moderate acceptance & 0.701 & 0.964 \\
+Good acceptance & 0.929 & 0.998 \\
+\bottomrule
+\end{tabular}
+\caption{H2S1T24 K5 six-member interval coverage against each draw's own
+pseudodata truth. Aggregate intervals over-cover: C1 fails decisively at
+68\% (lower bound 0.858, ceiling 0.80). C4 also fails: mean 95\% half-widths
+in six of seven bins are 1.32--1.72 times the allowed limit. Low acceptance
+under-covers; no frozen rule gates that region (C3 covers only the moderate
+and good regions). C2 and C3 pass.}
+\label{tab:pet-final-coverage}
+\end{table}
+
+The same over- and under-coverage pattern survives comparison with the
+final-bank population target. Its mechanism is not established; it is not
+uniform conservatism. The proton-topology coverage stage C5 was skipped
+after the decisive failure, and L128S1T24 coverage was never measured.
+The terminal outcome remains \texttt{NO\_ELIGIBLE\_DESIGN}: H2S1T24 fails
+interval calibration and L128S1T24 fails B2 by the frozen point rule (statistically
+unresolved). Neither failure proves that the
+point estimator is unusable. No repair or reserve-bank revalidation forms
+part of these completed results.
+
+\subsection{Exploratory PET--GBDT comparison on the same events}
+\label{sec:pet-gbdt-paired}
+
+The later comparison reused both finalists' point estimates and fitted a
+scalar HistGradientBoosting OmniFold to the identical 352 final-bank units
+per finalist, with the same events, weights, distortions, targets and scorer
+\cite{PETGBDT2026}. Its efficiency-corrected miss treatment matches PET's;
+detector inputs are muon kinematics, reconstructed $\Eavail$ and $q_3$,
+stored-cluster energy sum and count. Truth inputs include four scalar
+kinematics and species counts over the stored 12-token cloud, not full
+particle multiplicities. The primary GBDT iteration, $k=7$, was chosen on
+development data before final-bank use. This is a specific comparator,
+distinct from the production scalar-5D LightGBM synthesis in
+\S\ref{sec:gbdt-model-dependence}.
+
+PET recovers both $\Eavail$ tilts better than this GBDT
+(Fig.~\ref{fig:pet-gbdt-paired}). On the development tilt, paired gains in
+$R$ are $+0.102$ [0.084, 0.119] for H2S1T24 and $+0.070$ [0.051, 0.089]
+for L128S1T24 over 60 draws. Summed per-bin mean squared residuals are
+$(3.33,5.26,9.78)\times10^{-4}$ for H2S1T24, L128S1T24 and GBDT.
+Residuals compare each estimate to its own draw's target; their spread is
+not unconditional estimator variance. On the proton-topology endpoint,
+H2S1T24's gain at GBDT $k=7$ is $+0.055$ [0.035, 0.075], but at
+$k=10$ it is $+0.009$ [$-0.012$, 0.030]; L128S1T24 is level at $k=7$
+($+0.012$ [$-0.007$, 0.031]) and below the GBDT at $k=10$ ($-0.034$
+[$-0.054$, $-0.015$]). The $\Eavail\times q_3$
+endpoint does not resolve a difference.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{pet_gbdt_paired_differences.pdf}
+\caption{Existing exact-paired comparison of the PET finalists with GBDT
+at its development-chosen $k=7$. Positive differences favor PET.
+E0 and E3 are the two $\Eavail$ tilts (60 draws); E1 subdivides E0 by
+acceptance; E4 is $\Eavail\times$ proton class and E5 is
+$\Eavail\times q_3$ (40 draws). Bars are unadjusted two-sided 95\%
+Student-$t$ intervals, conditional on the frozen banks. Exploratory point
+estimates only: no uncertainty comparison or finalist ranking follows.}
+\label{fig:pet-gbdt-paired}
+\end{figure}
+
+The broader distortion library reverses some of this ordering
+(Fig.~\ref{fig:pet-gbdt-library}). GBDT is better on all three tested
+generator-model reweightings (NuWro, NuWro$'$ and GiBUU) by 0.12--0.25 in
+$R$, and on the narrow energy bump. These are fixed-response simulation
+reweightings, not independent detector simulations or real-data comparisons.
+PET leads on several species distortions. Its raw muon-scale result largely
+includes its underlying tilt gain: the response-specific paired contrast
+is only $+0.016$ [$-0.005$, 0.037] for H2S1T24 and $+0.028$
+[0.013, 0.043] for L128S1T24. Signed response contrasts alone are not
+robustness rankings.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.94\linewidth]{pet_gbdt_library_paired.pdf}
+\caption{Paired recovery differences across the existing distortion library,
+GBDT at $k=7$. Each case uses its natural histogram; most have eight
+draws, with D4c proton-up and D3 $+0.35$ ($\Eavail\times q_3$) using 40.
+Intervals are unadjusted 95\% Student-$t$ intervals conditional on the
+banks. The response-plus-tilt rows include the tilt contribution and do
+not isolate detector-response sensitivity. The generator rows show that
+PET's tilt advantage does not extend to every tested departure.}
+\label{fig:pet-gbdt-library}
+\end{figure}
+
+All contrasts are exploratory: the PET final-bank results had already been
+inspected, intervals are not adjusted for multiple comparisons, and inference
+conditions on the finite banks at study scale (about 600,000 pseudodata
+events per unfolding). On the two matched development draws (descriptive),
+binned iterative Bayesian unfolding and AUSSIE with kinematic truth inputs
+match or beat PET on the one-dimensional tilt but fail on hadron-content or
+generator cases; the observed lead is over this HGB OmniFold, not scalar
+unfolding in general. There is no GBDT interval procedure in this comparison,
+and the measured PET procedure failed calibration. Thus no uncertainty
+comparison, universal method ordering, finalist ranking or adoption follows.
+The completed comparison leaves \texttt{NO\_ELIGIBLE\_DESIGN} unchanged.
+
+The improvement and final-design numerical conclusions have the committed
+independent checks recorded with their reports. The paired comparison's
+numbers also reproduce independently; its post-second-review wording and
+prospective design repairs were not re-reviewed. These distinctions do not
+upgrade any result to publication uncertainty status. Ledger entries
+VL164--VL168 record the final-design and comparison results; the cited
+reports route the frozen decisions and closed review dispositions.

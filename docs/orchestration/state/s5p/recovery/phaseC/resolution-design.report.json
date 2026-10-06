@@ -1,0 +1,79 @@
+{
+ "cal-MnvTune_v1": {
+  "frozen": 1365,
+  "recovered": 35,
+  "union": 1400,
+  "submitted": 1400,
+  "residual_missing": 0
+ },
+ "cal-GENIE_2_12_10_CV": {
+  "frozen": 1366,
+  "recovered": 34,
+  "union": 1400,
+  "submitted": 1400,
+  "residual_missing": 0
+ },
+ "cal-GENIE_2_12_10_MEC": {
+  "frozen": 1343,
+  "recovered": 57,
+  "union": 1400,
+  "submitted": 1400,
+  "residual_missing": 0
+ },
+ "cal-NuWro_21_09": {
+  "frozen": 1751,
+  "recovered": 49,
+  "union": 1800,
+  "submitted": 1800,
+  "residual_missing": 0
+ },
+ "cal-GiBUU_2019": {
+  "frozen": 1351,
+  "recovered": 49,
+  "union": 1400,
+  "submitted": 1400,
+  "residual_missing": 0
+ },
+ "pow-P1_a1.0": {
+  "frozen": 193,
+  "recovered": 7,
+  "union": 200,
+  "submitted": 200,
+  "residual_missing": 0
+ },
+ "pow-P2_a1.0": {
+  "frozen": 195,
+  "recovered": 5,
+  "union": 200,
+  "submitted": 200,
+  "residual_missing": 0
+ },
+ "pow-P3_a1.0": {
+  "frozen": 195,
+  "recovered": 5,
+  "union": 200,
+  "submitted": 200,
+  "residual_missing": 0
+ },
+ "pow-P1g_a1.0": {
+  "frozen": 199,
+  "recovered": 1,
+  "union": 200,
+  "submitted": 200,
+  "residual_missing": 0
+ },
+ "pow-P2g_a1.0": {
+  "frozen": 193,
+  "recovered": 7,
+  "union": 200,
+  "submitted": 200,
+  "residual_missing": 0
+ },
+ "pow-P3g_a1.0": {
+  "frozen": 172,
+  "recovered": 28,
+  "union": 200,
+  "submitted": 200,
+  "residual_missing": 0
+ }
+}
