@@ -4,7 +4,9 @@
 1. joint tests, frozen evaluation: replay vs expected/joint-evaluate.json (every p, k, B, decision, label, power);
 2. lost-seed resolution, reading (a) (report-only): replay vs expected/resolved-evaluate.json;
 3. W1 matched coarse projections (report-only): build reading (b), run W1 on (a) and (b), compare every claim
-   k, B, p and every criterion boolean with expected/W1-RESULT-20261006.json (reading labels are not compared).
+   k, B, p and every criterion boolean with expected/W1-RESULT-20261006.json (reading labels are not compared);
+4. (RC2) the article's Figs. 1-3: recompute every quoted number from data/figs/fig_arrays.npz against the printed
+   values in expected/values.tex, and regenerate the three figures.
 Run from the release root: python3 code/verify_rc.py
 """
 from __future__ import annotations
@@ -53,6 +55,17 @@ def main() -> int:
         print(f"[{'ok' if w1ok else 'FAIL'}] W1: {len(diffs)} claim differences, {len(crit)} criterion differences "
               f"(qualifying: {[k for k, v in a['criterion'].items() if v['joint_beyond_matched_coarse_projections']]})")
         ok &= w1ok
+    if (ROOT / "data/figs/fig_arrays.npz").exists():  # RC2: the article's Figs. 1-3 and their quoted numbers
+        r = run("code/figs/fig_numbers.py", "--npz", "data/figs/fig_arrays.npz", "--values", "expected/values.tex")
+        last = (r.stdout.strip().splitlines() or ["(no output)"])[-1]
+        print(f"[{'ok' if r.returncode == 0 else 'FAIL'}] Figs. 1-3 quoted numbers vs expected/values.tex: {last}")
+        ok &= r.returncode == 0
+        with tempfile.TemporaryDirectory() as td:
+            r = run("code/figs/make_figs.py", "--npz", "data/figs/fig_arrays.npz", "--outdir", td)
+            made = sorted(p.name for p in Path(td).glob("*.pdf"))
+            figok = r.returncode == 0 and len(made) >= 3
+            print(f"[{'ok' if figok else 'FAIL'}] Figs. 1-3 regenerated: {made}")
+            ok &= figok
     print("VERIFY:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 
