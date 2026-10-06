@@ -307,4 +307,4 @@ same seeds, and no other index was affected. The feeder now checks `squeue` inst
 FAIL-undercoverage by the interim futility rule at toys 1–100. Toys 101–200 were not run. The
 verdict, intervals, positive control, attribution and recomputation are in
 [`OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`](OUTCOME-20261005-2d-fixed-truth-coverage-fail.md)
-(ledger `VL168`).
+(ledger `VL169`).
