@@ -20,7 +20,7 @@
 | file | role |
 |---|---|
 | `export_fig_arrays.py` | Cluster exporter. It imports the committed producers' own loaders (`compare_to_paper_fullcov`, `compare_to_models`, `agreement_windows_receipt.bin_areas`, `overlay_eavailW_band`, `excess_eavail_W`, `xsec_nd`) from a clean clone, and refuses any other import origin (OI-136). |
-| `_data/fig_arrays.npz` (+ `.manifest.json`, `export.txt`) | The exported arrays, sha256 `72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8` (640 KB). Exported from clone `556d6dde`. |
+| `_data/fig_arrays.npz` (+ `.manifest.json`, `export.txt`) | The exported arrays, sha256 `72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8` (640 KB). Exported from clone `556d6dde`. **The npz is not committed: the repository ignores `*.npz`, and this lane did not force-add it.** Its manifest and export log are committed. The npz itself is at `/pscratch/sd/j/josephrb/pub-release-20261006/figs/fig_arrays.npz`, which is purgeable. Regenerate it with `export_fig_arrays.py` (about 10 s on a login node); its durable home is the RC2 package. |
 | `fig_numbers.py` | numpy only: recomputes every number the article quotes from Figs. 1–3 and checks each against its printed value, at half a unit of the last printed digit |
 | `make_figs.py` | numpy and matplotlib only: regenerates Figs. 1–3 (same quantities; not pixel-identical) |
 
