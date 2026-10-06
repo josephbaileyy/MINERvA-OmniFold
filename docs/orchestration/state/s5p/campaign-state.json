@@ -25,7 +25,7 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "Joseph's disposition recorded (certified, margin disclosed); Stage-7 deliverables in progress",
+ "phase": "TERMINAL (2026-10-06): delivered - DELIVERY-20261006-s5p-campaign-terminal.md",
  "phase_detail": "amendment 7 (production admission) FROZEN after the confirmation review and a mechanical re-check; V frozen (194 all-band pilot experiments, sha256 35979ef7...); pre-freeze residuals in null-T units and development power committed before any observed statistic; budget revision 5 (production 200 CPU node-h); production lanes: power first, then the five calibration lanes",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
@@ -48,7 +48,7 @@
  "jobs": [
   {
    "job": "production lanes (r3 2026-10-04T04:47Z; NuWro only: r4 2026-10-04T16:20Z, r5 2026-10-05T03:20Z, r6 2026-10-05T08:30Z)",
-   "state": "terminal (2026-10-05T20:32:39Z, s5p_terminal_run.sh check: TERMINAL: YES)",
+   "state": "terminal; no runner, job or reservation open (meter open concurrency 0, 2026-10-06T05:24Z)",
    "arrays": {
     "pow P1_a1.0": "59021632 (done, 193)",
     "pow P2_a1.0": "59076165 (done, 195)",
@@ -223,7 +223,7 @@
    "verdict": "READY WITH REQUIRED CHANGES (applied; freeze after V with a mechanical re-check)"
   }
  ],
- "next_action": "monitor production (runners are autonomous); when terminal (five <null>-final.json, pow queue done, no s5p-s5p_(cal|pow)_ job queued, meter open concurrency 0): evaluate, derive robust labels (s5p_robust_labels.py v2), notify the recompute lane for final verification, Stage 7 deliverables; see HANDOFF-20260929-s5p-campaign-cold-start.md",
+ "next_action": "none: the campaign is terminal; further work needs Joseph's separate authorization (DELIVERY section 6)",
  "concurrent_work_at_start": "josephrb GPU jobs pfd-chain/pfd-shr/pfd-fin (58893071-58903623, m3246_g) and other users' m3246_g jobs belong to other lanes (not touched); no m3246 CPU row; shared main checkout c496135f untouched",
  "remote_heads_at_start": {
   "canonical_origin_main": "b30752864c70c76da3a888136e52c3dea4b615b7",
@@ -605,6 +605,10 @@
   {
    "utc": "2026-10-06T15:45Z",
    "what": "STAGE 7 PROGRESS: (1) reproduction tier D made final by a bounded lane (branch s5p-stage7-reproduction-20261006, merged a12e2359; fresh-clone evaluate replay bitwise at recorded roots, 1e-12 relocated; 36 harness tests pass; HANDOFF-20261006-s5p-reproduction-tier-d.md); (2) Stage-7 note/primer text committed on branch docs/s5p-stage7-20261006 (34d69c05; note section 8.6 + Table 3, exec-summary item, summary TODO resolved, provenance joint-5d; build_all.sh exit 0, 0 unresolved references); independent wording review running; the note-organization session (minerva-omnifold-bf) has ended and could not be notified; (3) RELEASE-MANIFEST-20261006-s5p-joint-5d-inference.md written. Input digests measured 2026-10-06T15:44Z: data_b-_j- fb5cc6798b97b5902ad8f0fecbc49990271f7772f98d3063c1dc8596340e680c; mnvtune_v1_xsec5d bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c; genie_cv_xsec5d_full cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2; genie_mec_xsec5d_full c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f; nuwro_cv_xsec5d_full 475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070; gibuu_cv_xsec5d_fluxfix 48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18; V-s3v 35979ef7 (= frozen pin)."
+  },
+  {
+   "utc": "2026-10-06T16:04Z",
+   "what": "CAMPAIGN TERMINAL DELIVERY (DELIVERY-20261006-s5p-campaign-terminal.md): four final fields per CHECKLIST section 4 - campaign_disposition TERMINAL (measurement branch NOT ADMITTED; joint-5D inference executed, recorded after independent verification); reportable_uncertainty_scope no new reportable uncertainty (trunk 3d7465f6 unchanged, not re-qualified); joint_5d_inference_status all ten H0(G) rejected, robust, every lost draw recovered and observed (report-only), power as context, recompute AGREE; publication_readiness NOT READY. Stage-7: note/primer text merged cbd075e7 (reviewed, REVIEW-20261006); canonical fresh build at cbd075e7 build_all exit 0 RESULT PASS tree clean 122/9/5 pp, Overleaf output exit 0 5 pp 0 undefined; standalone synced to deeafae28441101a86925835b5c11e12bdd10e89 (ff from ea15aee; PET qualifier fix 304b8bf0 included; pdftotext identical); primary standalone checkout ff'd; release manifest RELEASE-MANIFEST-20261006; reproduction tier D final (a12e2359); paper-wide table reconciled (R16 closure met). Spend: envelope 288.277 of 376.52 CPU node-h; verification/repair 6.887 of 68.287. Publication-lane notified (events 1-4; DELIVERY follows)."
   }
  ],
  "findings": [
