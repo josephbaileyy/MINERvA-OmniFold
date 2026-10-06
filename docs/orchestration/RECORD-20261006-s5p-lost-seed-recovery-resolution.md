@@ -1,4 +1,4 @@
-# s5p (`OI-193`): resolution of the missing-seed sensitivity by the report-only recovery of the lost seeds (2026-10-06)
+# s5p (`OI-193`): resolution of the missing-seed sensitivity by the report-only recovery of the lost seeds (2026-10-06; independently cross-checked)
 
 **CITABLE FOR:**
 - the outcome of the report-only rerun of all 277 lost seeds;
@@ -9,7 +9,6 @@
 **NOT CITABLE FOR:**
 - **Any revised primary decision.** The primary decisions remain those of the frozen evaluation
   (`RECORD-20261005-s5p-joint-5d-inference-result.md`).
-- **Quotation before the recompute lane's independent cross-check** (PROCEDURE §6). Its status is in §7.
 - **The interpretation of this outcome in the claims**, which is Joseph's disposition.
 - **A measurement**, or publication readiness.
 
@@ -132,8 +131,33 @@ All under `state/s5p/recovery/phaseC/`; sha256 equal to the cluster files:
 
 The cluster also holds the recovered products, in `$NS/recovery/recovery/{cal,pow}/<lane>/`, and the union symlinks.
 
-## 7. Independent cross-check (PROCEDURE §6): PENDING
+## 7. Independent cross-check (PROCEDURE §6): CONFIRMED
 
-The recompute lane (`gbdt independent`) has agreed the frozen-S reading (2026-10-05). It will score each recovered
-draw against each null's frozen shift variants with its own code, and compare per-variant k_frozen and k_rec, the
-resolved claim p, and the Holm-with-determinacy decisions and labels. This record is not quoted until its report.
+- **Who and how:** the recompute lane (`gbdt independent`) used its own report-side script (`cc9ec91e…`). Every
+  statistic came from its reviewed evaluator at `02df81e6` (`81b879ae…`), and it did not read the campaign's
+  recovery tool. Its inputs were its own terminal record (`final-ext`, `550a95fc…`), its own seed disposition
+  (`eb780ffa…`), and the recovered and determinism products.
+- **Checks:**
+  - the recovered products are exactly its lost sets (224 calibration, 53 power), with no overlap with the retained
+    products;
+  - determinism, checked independently: 16/16 bitwise-equal `xsec_flat`, with equal `pseudo_seed` and `nuisance_draw`;
+  - every frozen per-variant count reproduces its terminal record, and retained-only power reproduces its terminal
+    power.
+- **Result:** k_rec = 0 in all 62 null × test × variant cells. The closest margins are 4.6, 49.8, 64.7 and 104.5,
+  the same as §2. The resolved Holm (B' 1400, NuWro 1800) has all ten rejected in the primary, replace and keep-both
+  families, with every ruled label robust.
+- **Side by side** with this record's `frozen-s.json` (`9f4d985e…`): **856 of 856 compared quantities agree, 0
+  differ.** They cover:
+  - per-variant k_frozen, k_rec, B, M, M_residual, T_obs and the largest recovered T;
+  - the complete-set claims;
+  - the decisions with thresholds and intervals for all three families;
+  - the labels;
+  - power, retained and complete.
+- **Its disclosure:** a first attempt imported numpy before the module, which voided its single-thread BLAS pin. That
+  attempt was stopped with no output, and the order was fixed before the reported run. It did not recompute the
+  union reading (a).
+- **Record:** `REPORT-20261006-s5p-recompute-recovery-crosscheck.md`, on branch `s5p-parallel-recompute-20260928`
+  (tip `00009056`). Outputs are in `state/s5p/recompute/recovery-xcheck/`: `crosscheck.json`, sha256 prefix
+  `6ace7e0824cf2ae1` (re-read by the campaign), and `xc-sidebyside.json`.
+
+This record may now be quoted. How its outcome enters the claims is Joseph's disposition.
