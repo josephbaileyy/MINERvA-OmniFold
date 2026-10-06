@@ -1,0 +1,503 @@
+[2026-10-06T05:21:49Z] start on login06: 249 items declared
+OK deploy-pet-amended-20260915.sh files=1 links=0 manifest=01807795bd960629
+[2026-10-06T05:21:49Z] progress: 1/249 verified
+OK deploy-pet-optimizer-20260915.sh files=1 links=0 manifest=93c6c245c2f8d79a
+[2026-10-06T05:21:49Z] progress: 2/249 verified
+OK MINERvA-OmniFold-gbdt-20260922 files=2312 links=1 manifest=25423bbfdbb1c290
+[2026-10-06T05:21:53Z] progress: 3/249 verified
+OK MINERvA-OmniFold-pet-packing-20260913 files=2312 links=1 manifest=3318399f09dc8b30
+[2026-10-06T05:21:57Z] progress: 4/249 verified
+OK MINERvA-OmniFold-pet-routing-20260911 files=2272 links=1 manifest=fc2756fe8827f46a
+[2026-10-06T05:22:01Z] progress: 5/249 verified
+OK MINERvA-OmniFold-pet-routing-retry1-20260911 files=2287 links=1 manifest=01b4bcdbaa8e6061
+[2026-10-06T05:22:05Z] progress: 6/249 verified
+OK pet-40g-output-20260920 files=9 links=0 manifest=d74b6aa2e3bbca48
+[2026-10-06T05:22:06Z] progress: 7/249 verified
+OK pet-a1-20260918.bundle files=1 links=0 manifest=2ef656b022afa8be
+[2026-10-06T05:22:07Z] progress: 8/249 verified
+OK pet-a1-exec-20260918 files=2645 links=1 manifest=43a62ac14cee301c
+[2026-10-06T05:22:16Z] progress: 9/249 verified
+OK pet-a1-fix-20260918.bundle files=1 links=0 manifest=4fc723b7b75a11d9
+[2026-10-06T05:22:16Z] progress: 10/249 verified
+OK pet-a1-output-20260918 files=6 links=0 manifest=ea038d408c9dd1e8
+[2026-10-06T05:22:16Z] progress: 11/249 verified
+OK pet-a3-20260918.bundle files=1 links=0 manifest=778343aeeefc3883
+[2026-10-06T05:22:16Z] progress: 12/249 verified
+OK pet-a3b-20260918.bundle files=1 links=0 manifest=57af9d743ae7c7c5
+[2026-10-06T05:22:16Z] progress: 13/249 verified
+OK pet-a3c-20260918.bundle files=1 links=0 manifest=58180a1361b1820c
+[2026-10-06T05:22:16Z] progress: 14/249 verified
+OK pet-a3-gate-20260918 files=5 links=0 manifest=4ea39fa3f775a549
+[2026-10-06T05:22:17Z] progress: 15/249 verified
+OK pet-a3-gate2-20260918 files=5 links=0 manifest=b9d586da814c0dcd
+[2026-10-06T05:22:17Z] progress: 16/249 verified
+OK pet-a3-output-20260918 files=5 links=0 manifest=4dfea5444ee6d931
+[2026-10-06T05:22:17Z] progress: 17/249 verified
+OK pet-amended-20260915.slurm.log files=1 links=0 manifest=905dea2978a05103
+[2026-10-06T05:22:17Z] progress: 18/249 verified
+OK pet-amended-20260916.bundle files=1 links=0 manifest=4119225d625eac55
+[2026-10-06T05:22:17Z] progress: 19/249 verified
+OK pet-amended-20260916.slurm.log files=1 links=0 manifest=b9483fd64704fe89
+[2026-10-06T05:22:18Z] progress: 20/249 verified
+OK pet-amended-commit-20260915.txt files=1 links=0 manifest=2b2400faebc7d677
+[2026-10-06T05:22:18Z] progress: 21/249 verified
+OK pet-amended-commit-20260916.txt files=1 links=0 manifest=7e4784a832691795
+[2026-10-06T05:22:18Z] progress: 22/249 verified
+OK pet-amended-exec-20260915 files=2451 links=1 manifest=34cfbd04764d8ed5
+[2026-10-06T05:22:29Z] progress: 23/249 verified
+OK pet-amended-exec-20260916 files=2480 links=1 manifest=832f2a12356c9e2b
+[2026-10-06T05:22:40Z] progress: 24/249 verified
+OK pet-amended-execution-20260915.bundle files=1 links=0 manifest=90872caf34fabb4c
+[2026-10-06T05:22:44Z] progress: 25/249 verified
+OK pet-amended-failure-20260915.tar.gz files=1 links=0 manifest=5f7ecd95febb60a4
+[2026-10-06T05:22:44Z] progress: 26/249 verified
+OK pet-amended-output-20260915 files=243 links=0 manifest=9acf22e04adafdbb
+[2026-10-06T05:22:45Z] progress: 27/249 verified
+OK pet-amended-output-20260916 files=419 links=0 manifest=2984f7fb12c43922
+[2026-10-06T05:22:46Z] progress: 28/249 verified
+OK pet-bench2.bundle files=1 links=0 manifest=473d4b141013c8b9
+[2026-10-06T05:22:46Z] progress: 29/249 verified
+OK pet-bench.bundle files=1 links=0 manifest=226139051933e714
+[2026-10-06T05:22:46Z] progress: 30/249 verified
+OK pet-bench-commit.txt files=1 links=0 manifest=7a50842d7f0d0de3
+[2026-10-06T05:22:46Z] progress: 31/249 verified
+OK pet-bench-exec-20260917 files=2504 links=1 manifest=4490025c02d89881
+[2026-10-06T05:23:01Z] progress: 32/249 verified
+OK pet-bench-exec-20260917b files=2502 links=1 manifest=99764174c6427187
+[2026-10-06T05:23:14Z] progress: 33/249 verified
+OK pet-cal-20260918.bundle files=1 links=0 manifest=c4c9411143123bb8
+[2026-10-06T05:23:14Z] progress: 34/249 verified
+OK pet-cal2.bundle files=1 links=0 manifest=631b70dc751f3956
+[2026-10-06T05:23:14Z] progress: 35/249 verified
+OK pet-cal3.bundle files=1 links=0 manifest=130743cdebb8400b
+[2026-10-06T05:23:14Z] progress: 36/249 verified
+OK pet-cal4.bundle files=1 links=0 manifest=d155161e8c94586e
+[2026-10-06T05:23:14Z] progress: 37/249 verified
+OK pet-cal-gpu-20260918 files=2639 links=1 manifest=475d6285e972ac56
+[2026-10-06T05:23:22Z] progress: 38/249 verified
+OK pet-calibration-20260916-full.tar.gz files=1 links=0 manifest=79da1e87ee395b35
+[2026-10-06T05:23:24Z] progress: 39/249 verified
+OK pet-calibration-20260916-receipts.tar.gz files=1 links=0 manifest=a74039c7bd633f6e
+[2026-10-06T05:23:24Z] progress: 40/249 verified
+OK pet-campaign.bundle files=1 links=0 manifest=523960d67e335da2
+[2026-10-06T05:23:27Z] progress: 41/249 verified
+OK pet-campaign-exec files=2784 links=1 manifest=a6f99a8fdb95d7b0
+[2026-10-06T05:23:37Z] progress: 42/249 verified
+OK pet-campaign-exec2 files=2791 links=1 manifest=fd760ae316a865d7
+[2026-10-06T05:23:48Z] progress: 43/249 verified
+OK pet-campaign-inc.bundle files=1 links=0 manifest=8a1f04a86024ae5c
+[2026-10-06T05:23:48Z] progress: 44/249 verified
+OK pet-checkpoints-20260919 files=7 links=0 manifest=3aad5b29a6b3fc9d
+[2026-10-06T05:23:58Z] progress: 45/249 verified
+OK pet-closeout.bundle files=1 links=0 manifest=047507819aab6f8a
+[2026-10-06T05:23:58Z] progress: 46/249 verified
+OK pet-closeout-exec-20260916 files=2491 links=1 manifest=2d6a7537031dc07a
+[2026-10-06T05:24:10Z] progress: 47/249 verified
+OK pet-cost-cal-20260918 files=10 links=0 manifest=0f8a9a724762efba
+[2026-10-06T05:24:10Z] progress: 48/249 verified
+OK pet-cost-recal-20260919 files=10 links=0 manifest=66b24cfcecacc833
+[2026-10-06T05:24:10Z] progress: 49/249 verified
+OK pet-cost-recal2-20260919 files=10 links=0 manifest=3deeaa825afb2454
+[2026-10-06T05:24:10Z] progress: 50/249 verified
+OK pet-deck.bundle files=1 links=0 manifest=e278dff54d6ceb05
+[2026-10-06T05:24:10Z] progress: 51/249 verified
+OK pet-deliver-exec files=2771 links=1 manifest=c72453a3a3f00f59
+[2026-10-06T05:24:21Z] progress: 52/249 verified
+OK pet-diagnose-20260920 files=4 links=0 manifest=37ed36ebcc6612ad
+[2026-10-06T05:24:21Z] progress: 53/249 verified
+OK pet-eavail-char-20260918 files=7 links=0 manifest=34542ef5d344aded
+[2026-10-06T05:24:21Z] progress: 54/249 verified
+OK pet-exec-20260919.bundle files=1 links=0 manifest=8c37758e5b392255
+[2026-10-06T05:24:21Z] progress: 55/249 verified
+OK pet-exec2-20260919.bundle files=1 links=0 manifest=9fe50706a3a63526
+[2026-10-06T05:24:21Z] progress: 56/249 verified
+OK pet-exec3.bundle files=1 links=0 manifest=cc6ffba155104b17
+[2026-10-06T05:24:21Z] progress: 57/249 verified
+OK pet-exec4.bundle files=1 links=0 manifest=7458c5e9195da101
+[2026-10-06T05:24:21Z] progress: 58/249 verified
+OK pet-fix2.bundle files=1 links=0 manifest=e01c58496c289661
+[2026-10-06T05:24:22Z] progress: 59/249 verified
+OK pet-fix3.bundle files=1 links=0 manifest=8663badff42572c6
+[2026-10-06T05:24:22Z] progress: 60/249 verified
+OK pet-fix4.bundle files=1 links=0 manifest=c201e9d7dad2fc96
+[2026-10-06T05:24:22Z] progress: 61/249 verified
+OK pet-fix5.bundle files=1 links=0 manifest=b9ca039622309e27
+[2026-10-06T05:24:22Z] progress: 62/249 verified
+OK pet-fix.bundle files=1 links=0 manifest=702141add47eb1a9
+[2026-10-06T05:24:22Z] progress: 63/249 verified
+OK pet-fp32-20260914.slurm.log files=1 links=0 manifest=486c8ee0bde11c30
+[2026-10-06T05:24:22Z] progress: 64/249 verified
+OK pet-fp32-20260920.bundle files=1 links=0 manifest=d4a0f547542f8a28
+[2026-10-06T05:24:25Z] progress: 65/249 verified
+OK pet-fp32-exec-20260914 files=2361 links=1 manifest=075c0eedac9b9dcb
+[2026-10-06T05:24:31Z] progress: 66/249 verified
+OK pet-fp32-exec-20260920 files=2631 links=1 manifest=24d9a21e6cf645af
+[2026-10-06T05:24:41Z] progress: 67/249 verified
+OK pet-fp32-execution.bundle files=1 links=0 manifest=f4dcef87e247e54e
+[2026-10-06T05:24:43Z] progress: 68/249 verified
+OK pet-fp32-output-20260914 files=14 links=0 manifest=ff874be09317e64b
+[2026-10-06T05:24:43Z] progress: 69/249 verified
+OK pet-fp32-sha256.txt files=1 links=0 manifest=4c57a2decd62382b
+[2026-10-06T05:24:43Z] progress: 70/249 verified
+OK pet-fp32-timing-20260920 files=12 links=0 manifest=e0c28740db10c987
+[2026-10-06T05:24:43Z] progress: 71/249 verified
+OK pet-fp32-validate-20260920 files=8 links=0 manifest=ab50f13fa5824723
+[2026-10-06T05:24:43Z] progress: 72/249 verified
+OK pet-gate-20260918.bundle files=1 links=0 manifest=0680b2615daf585b
+[2026-10-06T05:24:43Z] progress: 73/249 verified
+OK pet-inc2.bundle files=1 links=0 manifest=2aebf01a4a66f29d
+[2026-10-06T05:24:44Z] progress: 74/249 verified
+OK pet-inc3.bundle files=1 links=0 manifest=c00215ab4462463e
+[2026-10-06T05:24:44Z] progress: 75/249 verified
+OK pet-inc4.bundle files=1 links=0 manifest=a67f3930499913ed
+[2026-10-06T05:24:44Z] progress: 76/249 verified
+OK pet-inc5.bundle files=1 links=0 manifest=d05067678236c8c5
+[2026-10-06T05:24:44Z] progress: 77/249 verified
+OK pet-inc6.bundle files=1 links=0 manifest=c49dc4f44fe1269a
+[2026-10-06T05:24:44Z] progress: 78/249 verified
+OK pet-inc7.bundle files=1 links=0 manifest=a5e097012f6d806a
+[2026-10-06T05:24:44Z] progress: 79/249 verified
+OK pet-inc8.bundle files=1 links=0 manifest=1d9735bf7ff21b94
+[2026-10-06T05:24:44Z] progress: 80/249 verified
+OK pet-inc9.bundle files=1 links=0 manifest=a30bbb3a254d19c0
+[2026-10-06T05:24:44Z] progress: 81/249 verified
+OK pet-incA.bundle files=1 links=0 manifest=7e83a87b71e7d698
+[2026-10-06T05:24:44Z] progress: 82/249 verified
+OK pet-incB.bundle files=1 links=0 manifest=02687848181b944a
+[2026-10-06T05:24:44Z] progress: 83/249 verified
+OK pet-incC.bundle files=1 links=0 manifest=d2269dc806002e9d
+[2026-10-06T05:24:45Z] progress: 84/249 verified
+OK pet-incD.bundle files=1 links=0 manifest=0f2f71cee587d812
+[2026-10-06T05:24:45Z] progress: 85/249 verified
+OK pet-incE.bundle files=1 links=0 manifest=4da57d8e26f405a6
+[2026-10-06T05:24:45Z] progress: 86/249 verified
+OK pet-incF.bundle files=1 links=0 manifest=e1775a79a7052195
+[2026-10-06T05:24:45Z] progress: 87/249 verified
+OK pet-incG.bundle files=1 links=0 manifest=b397762bafa075c8
+[2026-10-06T05:24:45Z] progress: 88/249 verified
+OK pet-incH.bundle files=1 links=0 manifest=507a30f558612b51
+[2026-10-06T05:24:45Z] progress: 89/249 verified
+OK pet-incI.bundle files=1 links=0 manifest=f852bc10dbf0aedc
+[2026-10-06T05:24:45Z] progress: 90/249 verified
+OK pet-incJ.bundle files=1 links=0 manifest=f6154c7b94e0ad58
+[2026-10-06T05:24:45Z] progress: 91/249 verified
+OK pet-incK.bundle files=1 links=0 manifest=8d4786285dedf639
+[2026-10-06T05:24:45Z] progress: 92/249 verified
+OK pet-incL.bundle files=1 links=0 manifest=f9e627affde6e48b
+[2026-10-06T05:24:46Z] progress: 93/249 verified
+OK pet-incM.bundle files=1 links=0 manifest=a0e02a928fe92273
+[2026-10-06T05:24:46Z] progress: 94/249 verified
+OK pet-incN.bundle files=1 links=0 manifest=c82895a9d3f3b607
+[2026-10-06T05:24:46Z] progress: 95/249 verified
+OK pet-incO.bundle files=1 links=0 manifest=cae760503b74d329
+[2026-10-06T05:24:46Z] progress: 96/249 verified
+OK pet-incQ.bundle files=1 links=0 manifest=6aa239bd1d2db0cf
+[2026-10-06T05:24:46Z] progress: 97/249 verified
+OK pet-incR.bundle files=1 links=0 manifest=2e55cf0c52bfbe10
+[2026-10-06T05:24:46Z] progress: 98/249 verified
+OK pet-incS.bundle files=1 links=0 manifest=499ef74b5b6c8e10
+[2026-10-06T05:24:46Z] progress: 99/249 verified
+OK pet-incT.bundle files=1 links=0 manifest=cdcb48082b81bf47
+[2026-10-06T05:24:46Z] progress: 100/249 verified
+OK pet-incU.bundle files=1 links=0 manifest=effac2c354dee7ff
+[2026-10-06T05:24:46Z] progress: 101/249 verified
+OK pet-incV.bundle files=1 links=0 manifest=8fa9120b71d04264
+[2026-10-06T05:24:47Z] progress: 102/249 verified
+OK pet-incW.bundle files=1 links=0 manifest=9f4f130f1dffc504
+[2026-10-06T05:24:47Z] progress: 103/249 verified
+OK pet-incX.bundle files=1 links=0 manifest=65f4025f67d76b1b
+[2026-10-06T05:24:47Z] progress: 104/249 verified
+OK pet-incY.bundle files=1 links=0 manifest=056a7aa7db317561
+[2026-10-06T05:24:47Z] progress: 105/249 verified
+OK pet-incZ.bundle files=1 links=0 manifest=17eca3e2bf0219d3
+[2026-10-06T05:24:47Z] progress: 106/249 verified
+OK pet-inference-bench-20260917 files=4 links=0 manifest=5b93ffd9ac6598c2
+[2026-10-06T05:24:47Z] progress: 107/249 verified
+OK pet-inference-bench-20260917b files=6 links=0 manifest=e8ab0adec4a3b3f3
+[2026-10-06T05:24:47Z] progress: 108/249 verified
+OK pet-inference-bench-20260917.tar.gz files=1 links=0 manifest=27ddbdeef179fc09
+[2026-10-06T05:24:47Z] progress: 109/249 verified
+OK pet-inference-bench-58461843.log files=1 links=0 manifest=f62a1d5567cf0967
+[2026-10-06T05:24:47Z] progress: 110/249 verified
+OK pet-inference-bench-b-58467879.log files=1 links=0 manifest=bcc725e870cd5378
+[2026-10-06T05:24:48Z] progress: 111/249 verified
+OK pet-knn-20260920.bundle files=1 links=0 manifest=7c9b7c186c6bdc9c
+[2026-10-06T05:24:50Z] progress: 112/249 verified
+OK pet-knn-exec-20260920 files=2631 links=1 manifest=bff3700b536433b0
+[2026-10-06T05:25:10Z] progress: 113/249 verified
+OK pet-knn-output-20260920 files=4 links=0 manifest=176d63e56511fbb0
+[2026-10-06T05:25:11Z] progress: 114/249 verified
+OK pet-launch.bundle files=1 links=0 manifest=36d85b9795989529
+[2026-10-06T05:25:11Z] progress: 115/249 verified
+OK pet-matched-timing-20260919 files=5 links=0 manifest=6c13b47ffab9c084
+[2026-10-06T05:25:11Z] progress: 116/249 verified
+OK pet-matched-timing2-20260919 files=37 links=0 manifest=7078810436082e2d
+[2026-10-06T05:25:11Z] progress: 117/249 verified
+OK pet-matrix-20260916-58396676_0.log files=1 links=0 manifest=d54b5ad8f057294e
+[2026-10-06T05:25:11Z] progress: 118/249 verified
+OK pet-matrix-20260916.bundle files=1 links=0 manifest=badaa793bf733671
+[2026-10-06T05:25:11Z] progress: 119/249 verified
+OK pet-matrix-20260917-full.tar.gz files=1 links=0 manifest=4e02a6f7a3984cc9
+[2026-10-06T05:25:15Z] progress: 120/249 verified
+OK pet-matrix-20260917-receipts.tar.gz files=1 links=0 manifest=1f01ee776b879154
+[2026-10-06T05:25:15Z] progress: 121/249 verified
+OK pet-matrix2.bundle files=1 links=0 manifest=8e173dcfe2287c2c
+[2026-10-06T05:25:16Z] progress: 122/249 verified
+OK pet-matrix-b-58397664_0.log files=1 links=0 manifest=7ce7cf3bbe1b5b24
+[2026-10-06T05:25:16Z] progress: 123/249 verified
+OK pet-matrix-b-58397664_10.log files=1 links=0 manifest=fb3b9f7d1a675b3e
+[2026-10-06T05:25:16Z] progress: 124/249 verified
+OK pet-matrix-b-58397664_11.log files=1 links=0 manifest=51eab239ae6f9796
+[2026-10-06T05:25:16Z] progress: 125/249 verified
+OK pet-matrix-b-58397664_12.log files=1 links=0 manifest=3117eb640e98f719
+[2026-10-06T05:25:16Z] progress: 126/249 verified
+OK pet-matrix-b-58397664_13.log files=1 links=0 manifest=53311bd347647398
+[2026-10-06T05:25:16Z] progress: 127/249 verified
+OK pet-matrix-b-58397664_14.log files=1 links=0 manifest=d510dcf46bb72c3f
+[2026-10-06T05:25:17Z] progress: 128/249 verified
+OK pet-matrix-b-58397664_15.log files=1 links=0 manifest=71f26e216de49555
+[2026-10-06T05:25:17Z] progress: 129/249 verified
+OK pet-matrix-b-58397664_16.log files=1 links=0 manifest=c495e2daeaf58c7c
+[2026-10-06T05:25:17Z] progress: 130/249 verified
+OK pet-matrix-b-58397664_17.log files=1 links=0 manifest=75d0f0ff122b3f8c
+[2026-10-06T05:25:17Z] progress: 131/249 verified
+OK pet-matrix-b-58397664_18.log files=1 links=0 manifest=aa45e0f77112acd9
+[2026-10-06T05:25:17Z] progress: 132/249 verified
+OK pet-matrix-b-58397664_19.log files=1 links=0 manifest=69d254bbc7ef2930
+[2026-10-06T05:25:17Z] progress: 133/249 verified
+OK pet-matrix-b-58397664_1.log files=1 links=0 manifest=cf919760895aef5c
+[2026-10-06T05:25:17Z] progress: 134/249 verified
+OK pet-matrix-b-58397664_20.log files=1 links=0 manifest=b83e606669670c5d
+[2026-10-06T05:25:17Z] progress: 135/249 verified
+OK pet-matrix-b-58397664_21.log files=1 links=0 manifest=03a40615dd8df9fc
+[2026-10-06T05:25:17Z] progress: 136/249 verified
+OK pet-matrix-b-58397664_22.log files=1 links=0 manifest=7b323516c055c3b3
+[2026-10-06T05:25:18Z] progress: 137/249 verified
+OK pet-matrix-b-58397664_23.log files=1 links=0 manifest=e8df7b7ced0801ae
+[2026-10-06T05:25:18Z] progress: 138/249 verified
+OK pet-matrix-b-58397664_2.log files=1 links=0 manifest=e05d3e741da53b89
+[2026-10-06T05:25:18Z] progress: 139/249 verified
+OK pet-matrix-b-58397664_3.log files=1 links=0 manifest=3b7081e8492f3f19
+[2026-10-06T05:25:18Z] progress: 140/249 verified
+OK pet-matrix-b-58397664_4.log files=1 links=0 manifest=96086d7e89c278da
+[2026-10-06T05:25:18Z] progress: 141/249 verified
+OK pet-matrix-b-58397664_5.log files=1 links=0 manifest=860a0e8bf71e5320
+[2026-10-06T05:25:18Z] progress: 142/249 verified
+OK pet-matrix-b-58397664_6.log files=1 links=0 manifest=0ca33bcac2462791
+[2026-10-06T05:25:18Z] progress: 143/249 verified
+OK pet-matrix-b-58397664_7.log files=1 links=0 manifest=9097025035c54cc8
+[2026-10-06T05:25:18Z] progress: 144/249 verified
+OK pet-matrix-b-58397664_8.log files=1 links=0 manifest=50a6d20e54fe7b1a
+[2026-10-06T05:25:18Z] progress: 145/249 verified
+OK pet-matrix-b-58397664_9.log files=1 links=0 manifest=4367e707985899af
+[2026-10-06T05:25:19Z] progress: 146/249 verified
+OK pet-matrix-closeout-58398421.log files=1 links=0 manifest=95fa0b629e15985a
+[2026-10-06T05:25:19Z] progress: 147/249 verified
+OK pet-matrix-commit-20260916b.txt files=1 links=0 manifest=ca8a9dffd3076d69
+[2026-10-06T05:25:19Z] progress: 148/249 verified
+OK pet-matrix-commit-20260916.txt files=1 links=0 manifest=628d4f67ffb4bf19
+[2026-10-06T05:25:19Z] progress: 149/249 verified
+OK pet-matrix-exec-20260916 files=2477 links=1 manifest=bc0b63cf474cf450
+[2026-10-06T05:25:31Z] progress: 150/249 verified
+OK pet-matrix-exec-20260916b files=2491 links=1 manifest=8694a4a3d446a10b
+[2026-10-06T05:25:44Z] progress: 151/249 verified
+OK pet-matrix-output-20260916 files=4 links=0 manifest=ba23d9a4fc6e6290
+[2026-10-06T05:25:44Z] progress: 152/249 verified
+OK pet-matrix-output-20260916b files=312 links=0 manifest=fe2cdac6390aff8f
+[2026-10-06T05:25:51Z] progress: 153/249 verified
+OK pet-matrix-status-20260916 files=10 links=0 manifest=a8211b7a46393db9
+[2026-10-06T05:25:51Z] progress: 154/249 verified
+OK pet-numerical-20260914.slurm.log files=1 links=0 manifest=a6cef9157bc891f1
+[2026-10-06T05:25:52Z] progress: 155/249 verified
+OK pet-numerical-6298efc2.bundle files=1 links=0 manifest=c1effc6689a4c2d2
+[2026-10-06T05:25:53Z] progress: 156/249 verified
+OK pet-numerical-exec-20260914 files=2329 links=1 manifest=735016fa73e0e211
+[2026-10-06T05:26:04Z] progress: 157/249 verified
+OK pet-numerical-output-20260914 files=6257 links=0 manifest=a4ddab6d6d74704f
+[2026-10-06T05:26:13Z] progress: 158/249 verified
+OK pet-numerical-sha256.txt files=1 links=0 manifest=cb83929d7b2714ae
+[2026-10-06T05:26:13Z] progress: 159/249 verified
+OK pet-optimizer-20260915.slurm.log files=1 links=0 manifest=27b25a485f944732
+[2026-10-06T05:26:13Z] progress: 160/249 verified
+OK pet-optimizer-exec-20260915 files=2391 links=1 manifest=18f5f0f34b48a765
+[2026-10-06T05:26:24Z] progress: 161/249 verified
+OK pet-optimizer-execution-20260915.bundle files=1 links=0 manifest=fcbdd563b1015ad5
+[2026-10-06T05:26:26Z] progress: 162/249 verified
+OK pet-optimizer-incremental-20260915.bundle files=1 links=0 manifest=0d8fcabacd1b2646
+[2026-10-06T05:26:27Z] progress: 163/249 verified
+OK pet-optimizer-output-20260915 files=284 links=0 manifest=412b6edbb76d5c5d
+[2026-10-06T05:26:28Z] progress: 164/249 verified
+OK pet-packing-20260913.bundle files=1 links=0 manifest=60c6bc305911c8f1
+[2026-10-06T05:26:28Z] progress: 165/249 verified
+OK pet-packing-attempt-20260913 files=9 links=0 manifest=316851f615872ae4
+[2026-10-06T05:26:28Z] progress: 166/249 verified
+OK pet-packing-preallocation-20260913 files=15 links=0 manifest=a0c15da2dff3069e
+[2026-10-06T05:26:28Z] progress: 167/249 verified
+OK pet-packing-preservation-20260913 files=8 links=0 manifest=711ced862799d32c
+[2026-10-06T05:26:28Z] progress: 168/249 verified
+OK pet-port-20260919.bundle files=1 links=0 manifest=fc59e96f978823b4
+[2026-10-06T05:26:28Z] progress: 169/249 verified
+OK pet-port2-20260919.bundle files=1 links=0 manifest=9010f3f6cea2eb4d
+[2026-10-06T05:26:28Z] progress: 170/249 verified
+OK pet-profile-20260919.bundle files=1 links=0 manifest=58e903d91f9f162c
+[2026-10-06T05:26:31Z] progress: 171/249 verified
+OK pet-profile2-20260919.bundle files=1 links=0 manifest=ee852c8280634df9
+[2026-10-06T05:26:34Z] progress: 172/249 verified
+OK pet-profile2-exec-20260919 files=2602 links=1 manifest=78d281c193a6f1be
+[2026-10-06T05:26:46Z] progress: 173/249 verified
+OK pet-profile2-output-20260919 files=29 links=0 manifest=9240182d9963b889
+[2026-10-06T05:26:46Z] progress: 174/249 verified
+OK pet-profile3-20260919.bundle files=1 links=0 manifest=a397e61d7d04fa74
+[2026-10-06T05:26:49Z] progress: 175/249 verified
+OK pet-profile4-20260919.bundle files=1 links=0 manifest=412a42da7e44cff4
+[2026-10-06T05:26:51Z] progress: 176/249 verified
+OK pet-profile4-exec-20260919 files=2604 links=1 manifest=7b5787ae5b6bba6a
+[2026-10-06T05:27:01Z] progress: 177/249 verified
+OK pet-profile5-20260919.bundle files=1 links=0 manifest=8c0240bdeca9851e
+[2026-10-06T05:27:04Z] progress: 178/249 verified
+OK pet-profile5-exec-20260919 files=2605 links=1 manifest=ee3e1f3625ead1dc
+[2026-10-06T05:27:17Z] progress: 179/249 verified
+OK pet-profile5-output-20260919 files=39 links=0 manifest=e3d0b6801275af6d
+[2026-10-06T05:27:17Z] progress: 180/249 verified
+OK pet-profile6-20260919.bundle files=1 links=0 manifest=873b470815882962
+[2026-10-06T05:27:20Z] progress: 181/249 verified
+OK pet-profile6-exec-20260919 files=2610 links=1 manifest=15e3df4dbea4b679
+[2026-10-06T05:27:32Z] progress: 182/249 verified
+OK pet-profile6-output-20260919 files=19 links=0 manifest=34b03e0fcfb29617
+[2026-10-06T05:27:32Z] progress: 183/249 verified
+OK pet-profile-exec-20260919 files=2602 links=1 manifest=152427778bd15af9
+[2026-10-06T05:27:42Z] progress: 184/249 verified
+OK pet-region-census-20260919 files=7 links=0 manifest=b80db3c47de903ac
+[2026-10-06T05:27:42Z] progress: 185/249 verified
+OK pet-relaunch.bundle files=1 links=0 manifest=979dde35558320cb
+[2026-10-06T05:27:42Z] progress: 186/249 verified
+OK pet-reportcheck-20260920 files=49 links=0 manifest=62a65f68ccd765f7
+[2026-10-06T05:27:42Z] progress: 187/249 verified
+OK pet-roundoff-preparation-20260910 files=2149 links=1 manifest=4114bc16c241b23f
+[2026-10-06T05:27:51Z] progress: 188/249 verified
+OK pet-roundoff-validation-20260910 files=16912 links=0 manifest=397716dc2b2e707d
+[2026-10-06T05:28:24Z] progress: 189/249 verified
+OK pet-routing-campaign-20260911 files=13 links=0 manifest=3668e1546b4c4a0b
+[2026-10-06T05:28:25Z] progress: 190/249 verified
+OK pet-routing-execution-106ba9a8.bundle files=1 links=0 manifest=c492ec205608b1e2
+[2026-10-06T05:28:25Z] progress: 191/249 verified
+OK pet-routing-execution-74c149bb.bundle files=1 links=0 manifest=70e87c437bb543f8
+[2026-10-06T05:28:25Z] progress: 192/249 verified
+OK pet-routing-retry1-20260911 files=19 links=0 manifest=80eab1a79936b224
+[2026-10-06T05:28:25Z] progress: 193/249 verified
+OK pet-routing-retry1-46fe3d7c.bundle files=1 links=0 manifest=41bbc1608d8f8cc4
+[2026-10-06T05:28:25Z] progress: 194/249 verified
+OK pet-rowprofile.bundle files=1 links=0 manifest=16a9af65637d54c0
+[2026-10-06T05:28:28Z] progress: 195/249 verified
+OK pet-rp-exec files=2632 links=1 manifest=c403e5e534444bca
+[2026-10-06T05:28:41Z] progress: 196/249 verified
+OK pet-rp-output files=8 links=0 manifest=31ecf0f3771278de
+[2026-10-06T05:28:41Z] progress: 197/249 verified
+OK pet-runtime-live-state-20260910.md files=1 links=0 manifest=2782f2d6cb117760
+[2026-10-06T05:28:41Z] progress: 198/249 verified
+OK pet-runtime-numerics-20260910 files=2113 links=1 manifest=04445757b332e4b3
+[2026-10-06T05:28:45Z] progress: 199/249 verified
+OK pet-runtime-numerics-20260910.bundle files=1 links=0 manifest=9519e0acf458ac0d
+[2026-10-06T05:28:45Z] progress: 200/249 verified
+OK pet-runtime-numerics-validation-20260910 files=85 links=0 manifest=6d34cc27c3cfd2ad
+[2026-10-06T05:28:46Z] progress: 201/249 verified
+OK pet-runtime-synthetic-20260910 files=2113 links=1 manifest=bcbed193e435349e
+[2026-10-06T05:28:54Z] progress: 202/249 verified
+OK pet-runtime-synthetic-20260910.bundle files=1 links=0 manifest=d76f976cff976f95
+[2026-10-06T05:28:54Z] progress: 203/249 verified
+OK pet-runtime-validation-20260910 files=43 links=0 manifest=86ee531cf73e093f
+[2026-10-06T05:29:00Z] progress: 204/249 verified
+OK pet-smoke-20260920 files=19 links=0 manifest=a59199ba46c5ec18
+[2026-10-06T05:29:02Z] progress: 205/249 verified
+OK pet-smoke-keep files=1 links=0 manifest=38210be0402c370d
+[2026-10-06T05:29:02Z] progress: 206/249 verified
+OK pet-smoke-next files=1 links=0 manifest=aff9dc68c16b9d04
+[2026-10-06T05:29:03Z] progress: 207/249 verified
+OK pet-source-audit-repaired-exec-20260910 files=2182 links=1 manifest=48ec024ab5539e4f
+[2026-10-06T05:29:08Z] progress: 208/249 verified
+OK pet-tailval-a-20260918 files=5 links=0 manifest=bf8776b49779f789
+[2026-10-06T05:29:08Z] progress: 209/249 verified
+OK pet-tailval-b-20260918 files=6 links=0 manifest=b1b76f91de1eea2b
+[2026-10-06T05:29:08Z] progress: 210/249 verified
+OK pet-tailval-c-20260918 files=6 links=0 manifest=55edcd07b99ee186
+[2026-10-06T05:29:08Z] progress: 211/249 verified
+OK pet-tailval-final-20260918 files=6 links=0 manifest=5880504eec039a2a
+[2026-10-06T05:29:08Z] progress: 212/249 verified
+OK pet-tf32off.bundle files=1 links=0 manifest=9b6f6ce60aee6932
+[2026-10-06T05:29:11Z] progress: 213/249 verified
+OK pet-tf32off-exec files=2636 links=1 manifest=6e9a455e0616c8ee
+[2026-10-06T05:29:22Z] progress: 214/249 verified
+OK pet-tf32off-timing files=10 links=0 manifest=8cf927805029c1d5
+[2026-10-06T05:29:22Z] progress: 215/249 verified
+OK pet-tf32off-validate files=8 links=0 manifest=3c0428bfe1d78c13
+[2026-10-06T05:29:22Z] progress: 216/249 verified
+OK pet-typed-semantic-evidence-20260901-d8a59358 files=13 links=0 manifest=c07338de884e5ff5
+[2026-10-06T05:29:22Z] progress: 217/249 verified
+OK pet-v2-equivalence-retry1-run-20260826-9bbd26cc files=3 links=0 manifest=408a393c0883eb28
+[2026-10-06T05:29:23Z] progress: 218/249 verified
+OK pet-v2-equivalence-retry2-run-20260826-27df34af files=5 links=0 manifest=2533d71c118360cf
+[2026-10-06T05:29:23Z] progress: 219/249 verified
+OK pet-v2-equivalence-retry3-run-20260826-edccb728 files=106 links=0 manifest=dab6fe3990a01170
+[2026-10-06T05:29:50Z] progress: 220/249 verified
+OK pet-v2-equivalence-run-20260826-ed8244d3 files=3 links=0 manifest=8432e44ec93a7812
+[2026-10-06T05:29:50Z] progress: 221/249 verified
+OK pet-v2-source-audit-20260910 files=8 links=0 manifest=ee3a9403f793886c
+[2026-10-06T05:29:50Z] progress: 222/249 verified
+OK pet-v2-source-audit-20260910-preflight files=12 links=0 manifest=4d64d48cfd068363
+[2026-10-06T05:29:51Z] progress: 223/249 verified
+OK pet-v2-source-audit-58832843 files=2079 links=1 manifest=2d3812f4a0220ec8
+[2026-10-06T05:29:54Z] progress: 224/249 verified
+OK pet-v2-source-audit-repaired-20260910 files=16915 links=0 manifest=164b99cf9e7a8338
+[2026-10-06T05:31:14Z] progress: 225/249 verified
+OK pet-v2-source-audit-runtime files=17627 links=4 manifest=f69572322c720e19
+[2026-10-06T05:32:34Z] progress: 226/249 verified
+OK pet-val-20260918.bundle files=1 links=0 manifest=f296812ff6efe835
+[2026-10-06T05:32:34Z] progress: 227/249 verified
+OK pet-val2-20260918.bundle files=1 links=0 manifest=ea04a326477fbb13
+[2026-10-06T05:32:34Z] progress: 228/249 verified
+OK pet-val3-20260918.bundle files=1 links=0 manifest=a0df72b64b656365
+[2026-10-06T05:32:34Z] progress: 229/249 verified
+OK pet-validate-20260920.bundle files=1 links=0 manifest=fb2bfe8f9e3e3f29
+[2026-10-06T05:32:37Z] progress: 230/249 verified
+OK pet-validate2-20260920.bundle files=1 links=0 manifest=3a54d1ebac08f021
+[2026-10-06T05:32:40Z] progress: 231/249 verified
+OK pet-validate2-exec-20260920 files=2625 links=1 manifest=2192294f975d7016
+[2026-10-06T05:32:49Z] progress: 232/249 verified
+OK pet-validate2-output-20260920 files=8 links=0 manifest=65472ee01d7b0bf8
+[2026-10-06T05:32:49Z] progress: 233/249 verified
+OK pet-validate80-output-20260920 files=8 links=0 manifest=a1f7d39c9758e2d2
+[2026-10-06T05:32:49Z] progress: 234/249 verified
+OK pet-validate-exec-20260920 files=2624 links=1 manifest=d90980e91fb5594f
+[2026-10-06T05:33:01Z] progress: 235/249 verified
+OK pet-validate-output-20260920 files=8 links=0 manifest=60b0eb1b1daa129d
+[2026-10-06T05:33:01Z] progress: 236/249 verified
+OK pet-variance-exec-20260920 files=2814 links=1 manifest=7dbbf31f59cb40f5
+[2026-10-06T05:33:16Z] progress: 237/249 verified
+OK pet-variance-out-20260920 files=5 links=0 manifest=a9182bf7fcdb4fd9
+[2026-10-06T05:33:16Z] progress: 238/249 verified
+OK pet-width-bracket-20260918 files=5 links=0 manifest=a1f63a5c3e131358
+[2026-10-06T05:33:16Z] progress: 239/249 verified
+OK pet-width-gate-20260918 files=5 links=0 manifest=b46ba2aaa1591ba9
+[2026-10-06T05:33:16Z] progress: 240/249 verified
+OK preserve-pet-audit-20260911.py files=1 links=0 manifest=d503af73901dac88
+[2026-10-06T05:33:16Z] progress: 241/249 verified
+OK preserve-pet-fp32-20260914.py files=1 links=0 manifest=85aaab292d823c57
+[2026-10-06T05:33:16Z] progress: 242/249 verified
+OK preserve-pet-numerical-20260914.py files=1 links=0 manifest=a536941f86dc80ee
+[2026-10-06T05:33:16Z] progress: 243/249 verified
+OK preserve-pet-optimizer-20260915.py files=1 links=0 manifest=99ce0c7ce25c449d
+[2026-10-06T05:33:16Z] progress: 244/249 verified
+OK theirs_token_schema.py files=1 links=0 manifest=9b9c716388cb432b
+[2026-10-06T05:33:16Z] progress: 245/249 verified
+OK campaign-20260920 files=1083 links=0 manifest=491a748116b51e09
+[2026-10-06T05:35:25Z] progress: 246/249 verified
+OK pet-direct-token-runtime-20260911 files=35277 links=4 manifest=ce4d5c79d5a3de24
+[2026-10-06T05:37:57Z] progress: 247/249 verified
+OK pet-improvement-20260922 files=131248 links=44 manifest=97fa0811e47aebb2
+[2026-10-06T05:56:54Z] progress: 248/249 verified
+OK pet-final-design-20260925 files=338284 links=62 manifest=6b19c3cba4fedb1d
+[2026-10-06T07:59:31Z] progress: 249/249 verified
+[2026-10-06T07:59:31Z] done: 249/249 verified
+RESULT COPY_VERIFY_COMPLETE_PASS
+394G	/global/cfs/cdirs/m3246/josephrb/pet-studies-20261006
+NOTE: nothing was removed from pscratch.
