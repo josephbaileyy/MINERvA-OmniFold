@@ -222,6 +222,18 @@ class FrozenS(unittest.TestCase):
         with self.assertRaises(SystemExit):
             self.run_fs(w)
 
+    def test_the_self_validation_requires_matching_robust_labels(self):
+        w = World()
+        with self.assertRaises(SystemExit):  # omitted
+            R.main(["frozen-s", "--design", str(w.design_path), "--evaluate", str(w.tmp / "fe.json"),
+                    "--v", str(w.tmp / "V.npz"), "--manifest", str(w.tmp / "empty-man.json"), "--tables", str(w.tables),
+                    "--out", str(w.tmp / "x.json")])
+        rl = json.loads((w.tmp / "rl.json").read_text())
+        rl["evaluate_sha256"] = "0" * 64
+        (w.tmp / "rl.json").write_text(json.dumps(rl))
+        with self.assertRaises(SystemExit):  # derived from another evaluation
+            self.run_fs(w, man="empty-man.json")
+
     def test_a_tampered_frozen_value_fires(self):
         w = World()
         fe = json.loads((w.tmp / "fe.json").read_text())

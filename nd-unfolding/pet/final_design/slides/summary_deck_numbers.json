@@ -3,9 +3,11 @@
  "generator": "slides/make_final_deck.py",
  "deck": "ben",
  "root": "nd-unfolding/pet/final_design",
- "main_slides": 8,
+ "main_slides": 12,
  "sources": {
   "../configuration_comparison/campaign_report.json": "96955a10222b6c95c13a5db0e48c9af96717371045398a837b996ba3d17625c2",
+  "../gbdt_comparison/results/comparison.json": "8b504a2735e5a3854c096fe42e47b5f853217b489d5f8b01cb2251914f9a39af",
+  "../gbdt_comparison/results/costs.json": "5ed70a6e45a6daa92d4f546b74c22339e59fc48049659b515a72c665418203a9",
   "dev/SCREENS-20260927-3d.json": "79e676ef1d7a155ae3decbc1352546955eacaf712cbe57d116a1b58e4a185b27",
   "resources/cost_fb_look1-20260930.json": "09176ccda999ae1074aeec3207304b85c4f53c0065e5335e037d479b4f53fec7",
   "results/final/coverage_dev/coverage_H2S1T24K5.json": "1dda413c1512167405c2710ae485bdc3bd2da09f2dcc1fbd60d532b4bac21db5",
@@ -564,6 +566,62 @@
    ]
   },
   {
+   "id": "mean_u2m",
+   "op": "field",
+   "fmt": "1",
+   "value": 7.322306217473281,
+   "rendered": "7.3",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/costs.json",
+     "path": [
+      "data_scale_unfolding",
+      "H2",
+      "2M (historical full-event practice)",
+      "a100_hours"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mean_u2m_hi",
+   "op": "field",
+   "fmt": "1",
+   "value": 14.644612434946563,
+   "rendered": "14.6",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/costs.json",
+     "path": [
+      "data_scale_unfolding",
+      "H2",
+      "2M (historical full-event practice)",
+      "range",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mean_u2m_lo",
+   "op": "field",
+   "fmt": "1",
+   "value": 3.6611531087366407,
+   "rendered": "3.7",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/costs.json",
+     "path": [
+      "data_scale_unfolding",
+      "H2",
+      "2M (historical full-event practice)",
+      "range",
+      0
+     ]
+    }
+   ]
+  },
+  {
    "id": "of_mv_carry|truth4_species|k3",
    "op": "field",
    "fmt": "int",
@@ -703,6 +761,1243 @@
       "efficiency_corrected|truth4|k3",
       "omnifold",
       "worst_case_mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_gibuu_H2_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.20570631152781826,
+   "rendered": "\\ensuremath{-}0.206",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_gibuu",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_gibuu_H2_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.10669917077558554,
+   "rendered": "\\ensuremath{-}0.107",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_gibuu",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_gibuu_H2_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.304713452280051,
+   "rendered": "\\ensuremath{-}0.305",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_gibuu",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_gibuu_L1_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.12134286587396605,
+   "rendered": "\\ensuremath{-}0.121",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_gibuu",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_gibuu_L1_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.06541849329274144,
+   "rendered": "\\ensuremath{-}0.065",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_gibuu",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_gibuu_L1_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.17726723845519066,
+   "rendered": "\\ensuremath{-}0.177",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_gibuu",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_gibuu_n",
+   "op": "field",
+   "fmt": "int",
+   "value": 8,
+   "rendered": "8",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_gibuu",
+      "draws"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_nuwro_H2_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.24655378729256291,
+   "rendered": "\\ensuremath{-}0.247",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_nuwro",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_nuwro_H2_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.14831190476367473,
+   "rendered": "\\ensuremath{-}0.148",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_nuwro",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_nuwro_H2_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.3447956698214511,
+   "rendered": "\\ensuremath{-}0.345",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_nuwro",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_nuwro_L1_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.20794033577894855,
+   "rendered": "\\ensuremath{-}0.208",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_nuwro",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_nuwro_L1_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.09208984884542604,
+   "rendered": "\\ensuremath{-}0.092",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_nuwro",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_nuwro_L1_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.32379082271247106,
+   "rendered": "\\ensuremath{-}0.324",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_nuwro",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5_nuwro_n",
+   "op": "field",
+   "fmt": "int",
+   "value": 8,
+   "rendered": "8",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_nuwro",
+      "draws"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5p_nuwro_H2_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.21612892235823092,
+   "rendered": "\\ensuremath{-}0.216",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5p_nuwro",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5p_nuwro_H2_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.12954533410776659,
+   "rendered": "\\ensuremath{-}0.130",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5p_nuwro",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5p_nuwro_H2_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.30271251060869525,
+   "rendered": "\\ensuremath{-}0.303",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5p_nuwro",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5p_nuwro_L1_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.179701419720463,
+   "rendered": "\\ensuremath{-}0.180",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5p_nuwro",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5p_nuwro_L1_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.11806826229036715,
+   "rendered": "\\ensuremath{-}0.118",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5p_nuwro",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5p_nuwro_L1_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.24133457715055884,
+   "rendered": "\\ensuremath{-}0.241",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5p_nuwro",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_D5p_nuwro_n",
+   "op": "field",
+   "fmt": "int",
+   "value": 8,
+   "rendered": "8",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5p_nuwro",
+      "draws"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E0_H2_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.10187480512146298,
+   "rendered": "+0.102",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E0",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E0_H2_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.11938514937047931,
+   "rendered": "0.119",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E0",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E0_H2_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.08436446087244664,
+   "rendered": "0.084",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E0",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E0_L1_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.07004142284707626,
+   "rendered": "+0.070",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E0",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E0_L1_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.08913685518883298,
+   "rendered": "0.089",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E0",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E0_L1_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.05094599050531955,
+   "rendered": "0.051",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E0",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E0_n",
+   "op": "field",
+   "fmt": "int",
+   "value": 60,
+   "rendered": "60",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E0",
+      "summary",
+      "GBDT@k7",
+      "n"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E3_H2_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.0758492408201067,
+   "rendered": "+0.076",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E3",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E3_H2_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.09268072349885803,
+   "rendered": "0.093",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E3",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E3_H2_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.059017758141355375,
+   "rendered": "0.059",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E3",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E3_L1_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.07032199794751733,
+   "rendered": "+0.070",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E3",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E3_L1_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.08799763937373849,
+   "rendered": "0.088",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E3",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E3_L1_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.052646356521296164,
+   "rendered": "0.053",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E3",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E3_n",
+   "op": "field",
+   "fmt": "int",
+   "value": 60,
+   "rendered": "60",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E3",
+      "summary",
+      "GBDT@k7",
+      "n"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E4_H2_k10",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.008849338778824111,
+   "rendered": "+0.009",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E4",
+      "paired",
+      "H2S1T24K5 - GBDT@k10",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E4_H2_k10_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.029928404142933396,
+   "rendered": "0.030",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E4",
+      "paired",
+      "H2S1T24K5 - GBDT@k10",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E4_H2_k10_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.012229726585285174,
+   "rendered": "\\ensuremath{-}0.012",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E4",
+      "paired",
+      "H2S1T24K5 - GBDT@k10",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E4_H2_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.054972616122600335,
+   "rendered": "+0.055",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E4",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E4_H2_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.07531794985843453,
+   "rendered": "0.075",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E4",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E4_H2_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.03462728238676614,
+   "rendered": "0.035",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E4",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E4_L1_k10",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.03414845211170735,
+   "rendered": "\\ensuremath{-}0.034",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E4",
+      "paired",
+      "L128S1T24K4 - GBDT@k10",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E4_L1_k10_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.01459939345793123,
+   "rendered": "\\ensuremath{-}0.015",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E4",
+      "paired",
+      "L128S1T24K4 - GBDT@k10",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E4_L1_k10_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.053697510765483465,
+   "rendered": "\\ensuremath{-}0.054",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E4",
+      "paired",
+      "L128S1T24K4 - GBDT@k10",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E4_L1_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.011974825232068878,
+   "rendered": "+0.012",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E4",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E4_L1_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.03096437825653623,
+   "rendered": "0.031",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E4",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E4_L1_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.007014727792398477,
+   "rendered": "\\ensuremath{-}0.007",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E4",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E4_n",
+   "op": "field",
+   "fmt": "int",
+   "value": 40,
+   "rendered": "40",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E4",
+      "summary",
+      "GBDT@k7",
+      "n"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E5_H2_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.008801983163594665,
+   "rendered": "+0.009",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E5",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E5_H2_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.02649845221831494,
+   "rendered": "0.026",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E5",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E5_H2_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.008894485891125611,
+   "rendered": "\\ensuremath{-}0.009",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E5",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E5_L1_k7",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.012565480325154097,
+   "rendered": "+0.013",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E5",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E5_L1_k7_hi",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.029637746845110058,
+   "rendered": "0.030",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E5",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E5_L1_k7_lo",
+   "op": "field",
+   "fmt": "3",
+   "value": -0.004506786194801866,
+   "rendered": "\\ensuremath{-}0.005",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E5",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "ci95",
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_E5_n",
+   "op": "field",
+   "fmt": "int",
+   "value": 40,
+   "rendered": "40",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E5",
+      "summary",
+      "GBDT@k7",
+      "n"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_b2_GB",
+   "op": "field",
+   "fmt": "4",
+   "value": 0.0032975388923318005,
+   "rendered": "0.0033",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "rules",
+      "B2:D4d_n_down",
+      "summary",
+      "GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_b2_H2",
+   "op": "field",
+   "fmt": "4",
+   "value": 0.009704137017494677,
+   "rendered": "0.0097",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "rules",
+      "B2:D4d_n_down",
+      "summary",
+      "H2S1T24K5",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_b2_L1",
+   "op": "field",
+   "fmt": "4",
+   "value": 0.012221641505477736,
+   "rendered": "0.0122",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "rules",
+      "B2:D4d_n_down",
+      "summary",
+      "L128S1T24K4",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_mse_ratio_H2",
+   "op": "ratio",
+   "fmt": "x1",
+   "value": 2.9354433560996895,
+   "rendered": "2.9\\ensuremath{\\times}",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "per_bin",
+      "E0",
+      "methods",
+      "GBDT@k7",
+      "sum_mse"
+     ]
+    },
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "per_bin",
+      "E0",
+      "methods",
+      "H2S1T24K5",
+      "sum_mse"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_mse_ratio_L1",
+   "op": "ratio",
+   "fmt": "x1",
+   "value": 1.8606369629253225,
+   "rendered": "1.9\\ensuremath{\\times}",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "per_bin",
+      "E0",
+      "methods",
+      "GBDT@k7",
+      "sum_mse"
+     ]
+    },
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "per_bin",
+      "E0",
+      "methods",
+      "L128S1T24K4",
+      "sum_mse"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_wmax_GB",
+   "op": "field",
+   "fmt": "1",
+   "value": 5.569390296044472,
+   "rendered": "5.6",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "weights",
+      "GBDT@k7",
+      "max_push_over_completed_runs"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_wmax_H2",
+   "op": "field",
+   "fmt": "1",
+   "value": 90.19629669189453,
+   "rendered": "90.2",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "weights",
+      "H2S1T24K5",
+      "max_push_over_completed_runs"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "pgc_wmax_L1",
+   "op": "field",
+   "fmt": "1",
+   "value": 33.438270568847656,
+   "rendered": "33.4",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "weights",
+      "L128S1T24K4",
+      "max_push_over_completed_runs"
      ]
     }
    ]
@@ -1155,6 +2450,103 @@
    ]
   },
   {
+   "id": "start_floor",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.5559785254924289,
+   "rendered": "0.556",
+   "inputs": [
+    {
+     "file": "../configuration_comparison/campaign_report.json",
+     "path": [
+      "absolute_adequacy",
+      "floor"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "start_gap",
+   "op": "diff",
+   "fmt": "3",
+   "value": 0.11285171684823359,
+   "rendered": "0.113",
+   "inputs": [
+    {
+     "file": "../configuration_comparison/campaign_report.json",
+     "path": [
+      "absolute_adequacy",
+      "arms",
+      "theirs",
+      "mean_recovery"
+     ]
+    },
+    {
+     "file": "../configuration_comparison/campaign_report.json",
+     "path": [
+      "absolute_adequacy",
+      "arms",
+      "ours",
+      "mean_recovery"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "start_ours",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.30367486660122656,
+   "rendered": "0.304",
+   "inputs": [
+    {
+     "file": "../configuration_comparison/campaign_report.json",
+     "path": [
+      "absolute_adequacy",
+      "arms",
+      "ours",
+      "mean_recovery"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "start_seeds",
+   "op": "field",
+   "fmt": "int",
+   "value": 8,
+   "rendered": "8",
+   "inputs": [
+    {
+     "file": "../configuration_comparison/campaign_report.json",
+     "path": [
+      "absolute_adequacy",
+      "arms",
+      "theirs",
+      "n"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "start_theirs",
+   "op": "field",
+   "fmt": "3",
+   "value": 0.41652658344946014,
+   "rendered": "0.417",
+   "inputs": [
+    {
+     "file": "../configuration_comparison/campaign_report.json",
+     "path": [
+      "absolute_adequacy",
+      "arms",
+      "theirs",
+      "mean_recovery"
+     ]
+    }
+   ]
+  },
+  {
    "id": "sum_H2S1T24K5_U1_0_estimate",
    "op": "field",
    "fmt": "3",
@@ -1257,59 +2649,6 @@
    ]
   },
   {
-   "id": "sum_gbdt_k10",
-   "op": "field",
-   "fmt": "3",
-   "value": 0.8170625062198216,
-   "rendered": "0.817",
-   "inputs": [
-    {
-     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
-     "path": [
-      "per_case",
-      "dev",
-      "omnifold|efficiency_corrected|truth4@k10",
-      "mean_R"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "sum_gbdt_k3",
-   "op": "field",
-   "fmt": "3",
-   "value": 0.7833219997247297,
-   "rendered": "0.783",
-   "inputs": [
-    {
-     "file": "scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json",
-     "path": [
-      "per_case",
-      "dev",
-      "omnifold|efficiency_corrected|truth4@k3",
-      "mean_R"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "sum_h2t24_dev",
-   "op": "field",
-   "fmt": "3",
-   "value": 0.9042659915986735,
-   "rendered": "0.904",
-   "inputs": [
-    {
-     "file": "dev/SCREENS-20260927-3d.json",
-     "path": [
-      "designs",
-      "H2S1T24",
-      "dev_tilt_at_Kstar"
-     ]
-    }
-   ]
-  },
-  {
    "id": "sum_ibu_k3",
    "op": "field",
    "fmt": "3",
@@ -1323,6 +2662,82 @@
       "dev",
       "ibu|efficiency_corrected@k3",
       "mean_R"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_pgc_D5_gibuu_H2",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.20570631152781826,
+   "rendered": "\\ensuremath{-}0.206",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_gibuu",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_pgc_D5_nuwro_H2",
+   "op": "field",
+   "fmt": "+3",
+   "value": -0.24655378729256291,
+   "rendered": "\\ensuremath{-}0.247",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "library",
+      "D5_nuwro",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_pgc_E0_H2",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.10187480512146298,
+   "rendered": "+0.102",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E0",
+      "paired",
+      "H2S1T24K5 - GBDT@k7",
+      "mean"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "sum_pgc_E0_L1",
+   "op": "field",
+   "fmt": "+3",
+   "value": 0.07004142284707626,
+   "rendered": "+0.070",
+   "inputs": [
+    {
+     "file": "../gbdt_comparison/results/comparison.json",
+     "path": [
+      "endpoints",
+      "E0",
+      "paired",
+      "L128S1T24K4 - GBDT@k7",
+      "mean"
      ]
     }
    ]

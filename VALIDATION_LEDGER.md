@@ -1,5 +1,30 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-10-05 2D statistical band: pre-registered fixed-truth coverage test
+
+Record: [`OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`](docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md).
+Pre-registration: [`PREREG-20261005-2d-fixed-truth-coverage.md`](docs/orchestration/PREREG-20261005-2d-fixed-truth-coverage.md),
+with Amendment 1 (pilot) and Amendment 2 (operational). Receipts:
+[`state/coverage-2d-20261005/`](docs/orchestration/state/coverage-2d-20261005/). It replaces the
+withdrawn same-ensemble pull diagnostic (68.71%) as the 2D coverage statement, but only for the
+statistical band. Id: VL164–VL167 are the PET final-design rows below and VL168 is the PET-vs-GBDT
+row; this study's earlier commits called this row VL164, then VL168.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL169 | Coverage of the VL162 2D MEFHC statistical band (per-bin σ/mean × fixed truth) by fixed-truth closure toys. Each toy draws Poisson pseudo-data from the MC reco weights and the production MC bootstrap stream, and uses the unfluctuated MC truth as T. Scored at the interim look: toys 1–100, 205 bins, 99.5% toy-bootstrap intervals | C1 **0.6794** [0.6693, 0.6899] (window [0.6319, 0.7287], inside); C2 **0.9121** [0.9065, 0.9179] (window [0.9281, 0.9722], **below**); pull RMS 1.597, mean −0.034; positive control ×0.7 / ×1.3 detects both directions; replica-form secondary C1 0.833 above its window (FAIL-over); `interim_score.json` | **FAIL-undercoverage (futility)**: the study stopped at 100 toys under the pre-registered interim rule. Independently recomputed (fresh Opus 5.5 subagent, own code and RNG): points agree exactly, C1/C2 interval endpoints within 5.4e-4, all endpoints within 1.7e-3 (allowance 3e-3). Width, not bias. Per-bin calibration is uneven in both directions (post hoc): pull RMS < 0.9 in 82 bins, > 1.1 in 71. The 2σ deficit is concentrated at p_∥ ≥ 15 GeV/c, p_T < 0.55 GeV/c and in the highest-p_T row (35 bins with per-bin C2 < 0.85). Attributed by the Amendment-1 secondary (rule A1.8 written after the pilot pulls, before the full run) to the bootstrapped completeness in the replicas. The attribution is partial: the replica form still undercovers at p_∥ 40–60 GeV/c. 13.33 node-h. Does not change any quoted uncertainty. Not a test of systematic, total or 5D coverage, nor of the MC-stream bootstrap principle. `KNOWN_ISSUES.md` 84. |
+
+## 2026-10-05 PET finalists vs GBDT on existing outputs: exact-paired, exploratory
+
+Source: [report](nd-unfolding/pet/gbdt_comparison/REPORT-20261005.md).
+- Plan frozen at `5f9c5a99` before any fit.
+- PET operands at `bc356b0c`.
+- 352 new GBDT fits on the look-1 final-bank units, with local CPU 5.31 core-h charged.
+- Simulation only. PET stays diagnostic. `NO_ELIGIBLE_DESIGN` and every frozen verdict are unchanged.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL168 | Paired per FB draw on identical events, targets and scorer (look-1 units): PET finalists H2S1T24 K5 and L128S1T24 K4 against the matched study's scalar OmniFold (HGB h1, efficiency-corrected, `truth4_species`, k = 7 from DEV `kF0`). Exploratory, conditional on the banks, unadjusted 95 % t intervals | **E0:** H2 − GBDT +0.102 [0.084, 0.119]; L128 − GBDT +0.070 [0.051, 0.089] (n = 60). **E3:** +0.076, +0.070. **E4:** +0.055 [0.035, 0.075], +0.012 [−0.007, 0.031] (n = 40). **E5:** +0.009, +0.013 (level). **E0 ΣMSE ×10⁴:** 3.33 / 5.26 / 9.78. **Generator reweightings (D5 NuWro, NuWro′, GiBUU; n = 8):** PET worse by 0.12–0.25. **Moves-away units:** 2, 1, 0 of 224. **B2 D4d n down:** 0.0097 / 0.0122 / 0.0033 | **EXPLORATORY.** Not a ranking of the finalists, not an uncertainty or coverage comparison, not an adoption. Citable for: on these banks and at this scale, the point-estimate differences above against this GBDT. Not citable for: PET or GBDT being best, any real-data or uncertainty statement |
 
 ## 2026-10-05 PET final-design selection study — terminal NO_ELIGIBLE_DESIGN (diagnostic; simulation only; nothing adopted)
 

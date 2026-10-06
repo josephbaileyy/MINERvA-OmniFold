@@ -279,7 +279,7 @@ class ResolveResidualAndProvenance(unittest.TestCase):
             self.resolve(seed_states("cal-X", self.SS), union="r4", residual=[102])
 
     def test_the_real_split_key_path(self):
-        sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "nd-unfolding"))
+        sys.path.insert(0, str(Path(__file__).resolve().parents[5] / "nd-unfolding"))
         import s5c_pseudo
         R.split_key_for = _REAL_SPLIT_KEY_FOR
         try:

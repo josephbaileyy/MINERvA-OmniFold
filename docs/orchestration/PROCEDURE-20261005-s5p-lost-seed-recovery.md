@@ -13,7 +13,7 @@
 
 **Authority:** `DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md` §2.
 
-**Tool:** `state/s5p/recovery/s5p_recovery.py`, with 40 controls: 28 unit controls in `test_s5p_recovery.py` and 12
+**Tool:** `state/s5p/recovery/s5p_recovery.py`, with 41 controls: 28 unit controls in `test_s5p_recovery.py` and 13
 end-to-end controls in `test_s5p_recovery_world.py`.
 - The end-to-end controls run the real `s5p_joint.main evaluate` (with a power lane), `s5p_robust_labels`,
   `s5p_joint.test_null`, `s5p_seqstop.main` and `s5p_inference` on a synthetic two-cell world, with real controller
@@ -26,8 +26,10 @@ environment, and exact-float self-checks depend on it (the review measured 1-ulp
 another scipy):
 `cd $D && source ./setup_salloc_env.sh > /dev/null 2>&1 && export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4
 MKL_NUM_THREADS=4 && PYTHONPATH=nd-unfolding python3 …` (`stage7/s5p_terminal_run.sh` lines 86–87). It also makes the
-design's repo-relative paths resolve. A self-check mismatch under any other environment is not evidence of a defect;
-rerun it under this one.
+design's repo-relative paths resolve. Activation is verified before use: `python3 -V` must report 3.11.x, and
+`python3 -c 'import numpy, scipy; print(numpy.__version__, scipy.__version__)'` is recorded beside each output.
+`frozen-s` records the versions in its own `environment` field. A self-check mismatch under any other environment is
+not evidence of a defect; rerun it under this one.
 
 **Review history:** independent review 1 (2026-10-05, a fresh read-only agent in an isolated worktree, of
 `0a988bc4`) returned **NOT READY**, with 1 blocking and 7 should-fix findings. Independent review 2 (a fresh agent, of
@@ -289,3 +291,13 @@ controls. Review 3 exercised both in its own scratch controls. Revision 4 commit
 
 The review also noted two points that need no change. The §2.2 reference may postdate the power lanes' start, which
 makes the guard stricter, not weaker. The `-cnewer` test can fire on a ctime-only change, which is fail-safe.
+
+**Delta verification of revision 4** (by the review-3 reviewer, of `61cad10d`): READY WITH CHANGES. All nine findings
+were resolved. It found one new should-fix and three notes, applied in revision 5:
+- **N1:** the unit module's `nd-unfolding` path was one level too shallow, so it passed only alongside the world
+  module. Fixed (`parents[5]`); the module now passes on its own.
+- **N2:** an empty-manifest self-validation now requires `--robust-labels` and refuses an `evaluate_sha256` mismatch.
+  A control covers both.
+- **N3:** activation is verified, and the versions are recorded.
+- **N4:** the stopping world stops at the maximum rather than by the rule. Both paths run the same comparison, so
+  this is a coverage note, and it was left as is.
