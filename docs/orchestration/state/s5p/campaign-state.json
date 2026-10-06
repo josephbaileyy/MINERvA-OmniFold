@@ -25,7 +25,7 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "joint result RECORDED (RECORD-20261005-s5p-joint-5d-inference-result.md); lost-seed recovery Phase A running; Stage-7 deliverables next",
+ "phase": "lost-seed recovery: Phase A determinism PASS; Phase B parts 1-2 running, part 3 queued behind them; joint result recorded",
  "phase_detail": "amendment 7 (production admission) FROZEN after the confirmation review and a mechanical re-check; V frozen (194 all-band pilot experiments, sha256 35979ef7...); pre-freeze residuals in null-T units and development power committed before any observed statistic; budget revision 5 (production 200 CPU node-h); production lanes: power first, then the five calibration lanes",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
@@ -573,6 +573,10 @@
   {
    "utc": "2026-10-05T23:52Z",
    "what": "JOINT RESULT RECORDED (RECORD-20261005-s5p-joint-5d-inference-result.md) under DECISION-20261005 section 1 after the recompute lane's reviewed comparer extension returned AGREE: 1379/1379 rows, 0 discrepancies, 0 not located, 0 unresolved (reviewed code 02df81e6, REVIEW-20261005-s5p-recompute-comparer-extension.md APPROVE, nothing at MEDIUM or above; caveat disclosed by that review: its full test suite did not finish under load; compare.json 97e1666a re-read by the campaign on branch s5p-parallel-recompute-20260928 tip 466b427b: verdict AGREE). Result: all ten H0(G) tests rejected at familywise 0.05 (Holm with determinacy), all ruled robust to the sub-fine residual (kappa = 3 replace), every null stopped with 'rule met for both tests'; stated with the six amendment-7 conditions verbatim; missing-seed status 'can change', not certified, its report-only resolution in progress (DECISION section 2; Phase A 59397841). Not a measurement; publication NOT READY."
+  },
+  {
+   "utc": "2026-10-06T00:25Z",
+   "what": "RECOVERY PHASE A: DETERMINISM PASS 16/16 (array 59397841, all 16 tasks COMPLETED 0:0, 8-26 min each; determinism.json sha256 66036819..., sacct copy 22cad923...; copies in state/s5p/recovery/phaseA/). Under the criterion fixed in PROCEDURE section 3, every rerun product's non-meta arrays are bitwise identical to the original's, the meta is equal after removing exactly slurm_job/seconds_unfold/refinement.seconds, each rerun's slurm_job is a task id of 59397841 and differs from the original's (e.g. seed 1220000: original 59024594, rerun 59397843), and the files are distinct. So a rerun reproduces the lost draw exactly. Measured determinism charge 0.452 node-h. PHASE B SUBMITTED (2026-10-06T00:24Z, from deploy 51648245, stage verification_repair): part 1 JOB 59399952 (92 tasks, --throttle 8, reserve 23.0, stage after 23.452) and part 2 JOB 59399956 (92 tasks, --throttle 8, reserve 23.0, stage after 46.452); 16 slots = 2.0 nodes. Part 3 (93 tasks, reserve 23.25) is submitted by the campaign's watcher when one of them leaves the scheduler."
   }
  ],
  "findings": [

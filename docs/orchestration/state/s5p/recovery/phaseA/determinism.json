@@ -1,0 +1,135 @@
+{
+ "criterion": "every non-meta array bitwise identical; meta equal after removing exactly ['slurm_job', 'seconds_unfold'] and refinement.seconds; the rerun's slurm_job a determinism task id different from the original's; distinct files (fixed in advance)",
+ "n": 16,
+ "verdict": "PASS",
+ "seeds": {
+  "1220000": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_CV/cal_GENIE_2_12_10_CV_s1220000.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/cal/GENIE_2_12_10_CV/cal_GENIE_2_12_10_CV_s1220000.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59397843",
+   "orig_slurm_job": "59024594"
+  },
+  "1221205": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_CV/cal_GENIE_2_12_10_CV_s1221205.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/cal/GENIE_2_12_10_CV/cal_GENIE_2_12_10_CV_s1221205.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59397844",
+   "orig_slurm_job": "59334459"
+  },
+  "1240000": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240000.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1240000.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59397946",
+   "orig_slurm_job": "59024678"
+  },
+  "1241205": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1241205.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/cal/GENIE_2_12_10_MEC/cal_GENIE_2_12_10_MEC_s1241205.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59397947",
+   "orig_slurm_job": "59321592"
+  },
+  "1280000": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GiBUU_2019/cal_GiBUU_2019_s1280000.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/cal/GiBUU_2019/cal_GiBUU_2019_s1280000.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59398015",
+   "orig_slurm_job": "59024987"
+  },
+  "1281205": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GiBUU_2019/cal_GiBUU_2019_s1281205.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/cal/GiBUU_2019/cal_GiBUU_2019_s1281205.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59398180",
+   "orig_slurm_job": "59350077"
+  },
+  "1200000": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/MnvTune_v1/cal_MnvTune_v1_s1200000.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/cal/MnvTune_v1/cal_MnvTune_v1_s1200000.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59398196",
+   "orig_slurm_job": "59024166"
+  },
+  "1201205": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/MnvTune_v1/cal_MnvTune_v1_s1201205.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/cal/MnvTune_v1/cal_MnvTune_v1_s1201205.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59398197",
+   "orig_slurm_job": "59332190"
+  },
+  "1260000": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/NuWro_21_09/cal_NuWro_21_09_s1260000.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/cal/NuWro_21_09/cal_NuWro_21_09_s1260000.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59398461",
+   "orig_slurm_job": "59024889"
+  },
+  "1261605": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/NuWro_21_09/cal_NuWro_21_09_s1261605.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/cal/NuWro_21_09/cal_NuWro_21_09_s1261605.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59398489",
+   "orig_slurm_job": "59376504"
+  },
+  "1451005": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P1_a1.0/pow_P1_a1.0_s1451005.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/pow/P1_a1.0/pow_P1_a1.0_s1451005.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59398545",
+   "orig_slurm_job": "59021636"
+  },
+  "1481005": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P1g_a1.0/pow_P1g_a1.0_s1481005.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/pow/P1g_a1.0/pow_P1g_a1.0_s1481005.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59398656",
+   "orig_slurm_job": "59152872"
+  },
+  "1461005": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P2_a1.0/pow_P2_a1.0_s1461005.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/pow/P2_a1.0/pow_P2_a1.0_s1461005.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59398657",
+   "orig_slurm_job": "59078811"
+  },
+  "1491005": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P2g_a1.0/pow_P2g_a1.0_s1491005.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/pow/P2g_a1.0/pow_P2g_a1.0_s1491005.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59398751",
+   "orig_slurm_job": "59203937"
+  },
+  "1471005": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P3_a1.0/pow_P3_a1.0_s1471005.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/pow/P3_a1.0/pow_P3_a1.0_s1471005.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59398861",
+   "orig_slurm_job": "59122112"
+  },
+  "1501029": {
+   "orig": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/pow/P3g_a1.0/pow_P3g_a1.0_s1501029.npz",
+   "rerun": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/determinism/pow/P3g_a1.0/pow_P3g_a1.0_s1501029.npz",
+   "identical": true,
+   "diffs": [],
+   "rerun_slurm_job": "59397841",
+   "orig_slurm_job": "59286418"
+  }
+ }
+}
