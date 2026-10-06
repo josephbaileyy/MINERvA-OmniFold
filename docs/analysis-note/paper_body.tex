@@ -264,9 +264,25 @@ of the hadronic-response model for the $\Eavail$ and $W$ measurement.
 
 Two extensions lie outside this result.  Removing the published truth-level
 muon cuts gives a preliminary extended-fiducial central value, without a covariance, in which
-detector-supported and prior-dominated regions are reported separately.  A
-full-event point-cloud classifier could replace the scalar learner while
-preserving the two-step pairing; it remains diagnostic and method development because the
-nominal/statistical pairing was declined, coverage has not been demonstrated,
-and no point-cloud uncertainty product is adopted.  Both extensions are
-documented in the companion analysis note.
+detector-supported and prior-dominated regions are reported separately.  Full-event point-cloud (PET) studies remain diagnostic and method development:
+the historical nominal/statistical pairing was declined and no PET uncertainty
+product is adopted. An improvement study increased recovery but qualified
+no frozen ten-iteration candidate for coverage testing. The subsequent
+final-design study ended at \texttt{NO\_ELIGIBLE\_DESIGN}
+\cite{PETImprovement2026,PETFinalDesign2026}. Its two finalists recovered
+0.895 and 0.863 of an injected energy tilt, versus 0.306 for the historical
+PET control. One failed a frozen robustness point rule without a statistically
+resolved robustness ranking; its coverage was unmeasured. The other's
+six-member intervals over-covered in aggregate (68\% coverage 0.896) yet
+under-covered at low acceptance (0.257 at 68\%, 0.789 at 95\%), failing
+calibration. No design or default was selected.
+
+An exact-paired, exploratory simulation comparison with a development-chosen
+HistGradientBoosting OmniFold found tilt-recovery gains of 0.102 and 0.070
+for PET (unadjusted 95\% intervals [0.084,0.119] and [0.051,0.089],
+60 draws), but the tree method recovered all three tested generator
+reweightings better by 0.12--0.25~\cite{PETGBDT2026}. This comparator is
+distinct from production LightGBM; the results condition on finite banks
+and the study's event scale. They establish neither a general method
+ranking nor an uncertainty comparison, and leave the terminal PET outcome
+unchanged. The companion analysis note gives the detailed results and figures.

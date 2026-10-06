@@ -1,4 +1,4 @@
-\section{Recoil-point-cloud representation cross-check}
+\section{Point-cloud representation and PET method development}
 \label{sec:pet}
 
 \paragraph{Status: diagnostic and method development, not a publication
@@ -6,7 +6,7 @@ uncertainty product.}
 All results here are diagnostic and method development. No PET covariance,
 historical recoil-only or full-event, is adopted as a publication uncertainty
 product. The full-event central/statistical pairing was declined on 2026-08-20
-and remains unresolved. Reconsideration requires estimator-equivalence and
+and remains declined. Reconsideration requires estimator-equivalence and
 coverage evidence; no branch was chosen
 (App.~\ref{app:provenance}, \texttt{pet-pairing}).
 % Moved to sec_summary.tex (Outlook), which is its single home (lane 5 R12); kept here as the
@@ -190,8 +190,8 @@ The absolute path had two checks:
         omitted muon dependence at fixed recoil.
 \end{enumerate}
 
-\paragraph{No current PET--GBDT level of agreement is quoted.}
-The only comparison used two-iteration training, preceded the 2026-08-01
+\paragraph{No current real-data PET--GBDT level of agreement is quoted.}
+The historical real-data comparison used two-iteration training, preceded the 2026-08-01
 full-event schema change and lacked background subtraction. It has not been
 re-extracted under the pinned configuration. The legacy closure level and
 higher-epoch retrain response are withdrawn on the same grounds
@@ -201,6 +201,8 @@ Ordinary closure alone cannot uniquely attribute a data-side gap to training
 configuration. The recoil-only feature contract adds another difference:
 at fixed recoil, the conditional muon distribution is inherited from the prior.
 These structural limits survive the withdrawn numerical comparison.
+The later simulation-only comparison in \S\ref{sec:pet-gbdt-paired}
+does not revive it.
 
 \subsection{Statistical and training diagnostics of the recoil-only estimator}
 \label{sec:pet-syst}
@@ -394,6 +396,8 @@ No $C_{\rm ML}$ or full PET total covariance exists, and starting a PET
 ML-variance component is not authorized
 (App.~\ref{app:provenance}, \texttt{pet-gate6}). App.~\ref{app:cstatlimit}
 records the construction and limitations. None of these artifacts changes PET's diagnostic and method-development status.
+
+\input{sec_pet_campaigns}
 
 \subsection{Related representations and estimator-design outlook}
 \label{sec:pet-gregor}
