@@ -577,6 +577,10 @@
   {
    "utc": "2026-10-06T00:25Z",
    "what": "RECOVERY PHASE A: DETERMINISM PASS 16/16 (array 59397841, all 16 tasks COMPLETED 0:0, 8-26 min each; determinism.json sha256 66036819..., sacct copy 22cad923...; copies in state/s5p/recovery/phaseA/). Under the criterion fixed in PROCEDURE section 3, every rerun product's non-meta arrays are bitwise identical to the original's, the meta is equal after removing exactly slurm_job/seconds_unfold/refinement.seconds, each rerun's slurm_job is a task id of 59397841 and differs from the original's (e.g. seed 1220000: original 59024594, rerun 59397843), and the files are distinct. So a rerun reproduces the lost draw exactly. Measured determinism charge 0.452 node-h. PHASE B SUBMITTED (2026-10-06T00:24Z, from deploy 51648245, stage verification_repair): part 1 JOB 59399952 (92 tasks, --throttle 8, reserve 23.0, stage after 23.452) and part 2 JOB 59399956 (92 tasks, --throttle 8, reserve 23.0, stage after 46.452); 16 slots = 2.0 nodes. Part 3 (93 tasks, reserve 23.25) is submitted by the campaign's watcher when one of them leaves the scheduler."
+  },
+  {
+   "utc": "2026-10-06T02:49Z",
+   "what": "RECOVERY PHASE B: parts 1 (59399952) and 2 (59399956) left the scheduler by 2026-10-06T02:48Z with 92 + 92 tasks COMPLETED (no time-limit kill). Part 3 submitted by the watcher at 02:48:57Z: JOB 59404940, 93 tasks, --throttle 8, 'admitted: reserve 23.2500 cpu node-h; stage after 27.976' (so determinism + parts 1-2 measured about 4.73 node-h). Next: when part 3 leaves, 'missing' lists any recovery seed without a finished product (one retry at 4 h if any)."
   }
  ],
  "findings": [
