@@ -37,11 +37,15 @@ run model_comp_projections.png       2d-unfolding  python compare_to_models.py
 run tension_spectrum.png             2d-unfolding  python diagnose_tension.py
 
 echo "== 2D uncertainty =="
-UFLX="$REPO/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix"
-run universe_stage2_MEFHC_full_matcorr_fluxfix/MEFHC_fig6_7_uncertainty_pt.png  2d-unfolding/uq  python plot_uncertainty_fig6_7_style.py --universe-root "$UFLX/uq_universe_covariance_full_matcorr_fluxfix.root" --bootstrap-root "$REPO/2d-unfolding/uq/bootstrap_MEFHC_300/uq_covariance_boot300.root" --out-prefix "$UFLX/MEFHC_fig6_7_uncertainty"
+# 2026-10-06 (KNOWN_ISSUES 84, VL170/VL172): the adopted statistical band and the universe+bootstrap rollup
+# built from it live in the *_vl170 directories (2d-unfolding/uq/rollup_vl170_adoption.sh); the VL162-era
+# products stay at their sha-pinned paths. --paper-root and --include-ml always are the flags the note's
+# figure was drawn with (it shows the published total and ML); this line had dropped them.
+UFLX="$REPO/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170"
+run universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/MEFHC_fig6_7_uncertainty_pt.png  2d-unfolding/uq  python plot_uncertainty_fig6_7_style.py --universe-root "$UFLX/uq_universe_covariance_full_matcorr_fluxfix.root" --bootstrap-root "$REPO/2d-unfolding/uq/bootstrap_MEFHC_300_vl170/uq_covariance_boot300.root" --paper-root "$REPO/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root" --include-ml always --out-prefix "$UFLX/MEFHC_fig6_7_uncertainty"
 run nn_vs_gbdt_full.png  nd-unfolding  python plot_nn_vs_gbdt_full.py --gbdt res_lgbm_3d.npz --nn res_nn_3d.npz --out nn_vs_gbdt_full.png
 # bootstrap corr/spread: per-replica files were cleaned up; plot from the saved 300-replica product
-run bootstrap_MEFHC_300/uq_corr_2d.png  2d-unfolding/uq  python plot_bootstrap_figs.py --cov bootstrap_MEFHC_300/uq_covariance_boot300.root --outdir bootstrap_MEFHC_300
+run bootstrap_MEFHC_300_vl170/uq_corr_2d.png  2d-unfolding/uq  python plot_bootstrap_figs.py --cov bootstrap_MEFHC_300_vl170/uq_covariance_boot300.root --outdir bootstrap_MEFHC_300_vl170
 run seedscan_lgbm/seedscan_spread_2d.png  2d-unfolding  python seedscan/analyze_seedscan.py --glob "$REPO/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed*.root" --outdir "$REPO/2d-unfolding/seedscan_lgbm"
 
 echo "== 3D generators =="

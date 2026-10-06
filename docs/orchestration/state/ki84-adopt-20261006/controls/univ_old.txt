@@ -1,0 +1,112 @@
+[INFO] CV xsec loaded from uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root  shape=(14, 16)
+  [skip] cannot parse band/idx from uq/universe_sweep_fluxfix/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root
+
+[INFO] 188 universe ROOTs across 44 bands:
+  full_2p2h                      n=  3  idx=[0, 1, 2]
+  full_AGKYxF1pi                 n=  2  idx=[0, 1]
+  full_AhtBY                     n=  2  idx=[0, 1]
+  full_BeamAngleX                n=  2  idx=[0, 1]
+  full_BeamAngleY                n=  2  idx=[0, 1]
+  full_BhtBY                     n=  2  idx=[0, 1]
+  full_CCQEPauliSupViaKF         n=  2  idx=[0, 1]
+  full_CV1uBY                    n=  2  idx=[0, 1]
+  full_CV2uBY                    n=  2  idx=[0, 1]
+  full_EtaNCEL                   n=  2  idx=[0, 1]
+  full_Flux                      n=100  idx=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
+  full_FrAbs_N                   n=  2  idx=[0, 1]
+  full_FrAbs_pi                  n=  2  idx=[0, 1]
+  full_FrCEx_N                   n=  2  idx=[0, 1]
+  full_FrCEx_pi                  n=  2  idx=[0, 1]
+  full_FrElas_N                  n=  2  idx=[0, 1]
+  full_FrElas_pi                 n=  2  idx=[0, 1]
+  full_FrInel_N                  n=  2  idx=[0, 1]
+  full_FrPiProd_N                n=  2  idx=[0, 1]
+  full_FrPiProd_pi               n=  2  idx=[0, 1]
+  full_GEANT_Neutron             n=  2  idx=[0, 1]
+  full_GEANT_Pion                n=  2  idx=[0, 1]
+  full_GEANT_Proton              n=  2  idx=[0, 1]
+  full_HighQ2                    n=  2  idx=[0, 1]
+  full_LowQ2                     n=  2  idx=[0, 1]
+  full_MFP_N                     n=  2  idx=[0, 1]
+  full_MFP_pi                    n=  2  idx=[0, 1]
+  full_MaCCQE                    n=  2  idx=[0, 1]
+  full_MaNCEL                    n=  2  idx=[0, 1]
+  full_MaRES                     n=  2  idx=[0, 1]
+  full_MinosEfficiency           n=  2  idx=[0, 1]
+  full_MuonResolution            n=  2  idx=[0, 1]
+  full_Muon_Energy_MINERvA       n=  2  idx=[0, 1]
+  full_Muon_Energy_MINOS         n=  2  idx=[0, 1]
+  full_MvRES                     n=  2  idx=[0, 1]
+  full_NormDISCC                 n=  2  idx=[0, 1]
+  full_NormNCRES                 n=  2  idx=[0, 1]
+  full_RDecBR1gamma              n=  2  idx=[0, 1]
+  full_Rvn1pi                    n=  2  idx=[0, 1]
+  full_Rvn2pi                    n=  2  idx=[0, 1]
+  full_Rvp1pi                    n=  2  idx=[0, 1]
+  full_Rvp2pi                    n=  2  idx=[0, 1]
+  full_Theta_Delta2Npi           n=  2  idx=[0, 1]
+  full_VecFFCCQEshape            n=  2  idx=[0, 1]
+
+[INFO] n_reported = 205 bins
+  [band full_2p2h                 mat_mean_centered(N=3)] sqrt-trace = 1.076e-40, median rel = 0.298%, max rel = 1.826%
+  [band full_AGKYxF1pi            mat_mean_centered(N=2)] sqrt-trace = 5.756e-41, median rel = 0.107%, max rel = 1.355%
+  [band full_AhtBY                mat_mean_centered(N=2)] sqrt-trace = 5.263e-41, median rel = 0.139%, max rel = 2.677%
+  [band full_BeamAngleX           mat_mean_centered(N=2)] sqrt-trace = 7.649e-41, median rel = 0.149%, max rel = 0.875%
+  [band full_BeamAngleY           mat_mean_centered(N=2)] sqrt-trace = 4.042e-41, median rel = 0.111%, max rel = 0.956%
+  [band full_BhtBY                mat_mean_centered(N=2)] sqrt-trace = 9.106e-41, median rel = 0.197%, max rel = 2.288%
+  [band full_CCQEPauliSupViaKF    mat_mean_centered(N=2)] sqrt-trace = 1.022e-40, median rel = 0.221%, max rel = 4.406%
+  [band full_CV1uBY               mat_mean_centered(N=2)] sqrt-trace = 9.148e-41, median rel = 0.248%, max rel = 2.125%
+  [band full_CV2uBY               mat_mean_centered(N=2)] sqrt-trace = 8.409e-41, median rel = 0.211%, max rel = 1.313%
+  [band full_EtaNCEL              mat_mean_centered(N=2)] sqrt-trace = 1.167e-51, median rel = 0.000%, max rel = 0.000%
+  [band full_Flux                 mat_mean_centered(N=100)] sqrt-trace = 2.070e-39, median rel = 4.993%, max rel = 12.806%
+  [band full_FrAbs_N              mat_mean_centered(N=2)] sqrt-trace = 3.155e-41, median rel = 0.072%, max rel = 0.940%
+  [band full_FrAbs_pi             mat_mean_centered(N=2)] sqrt-trace = 3.114e-41, median rel = 0.105%, max rel = 2.001%
+  [band full_FrCEx_N              mat_mean_centered(N=2)] sqrt-trace = 4.264e-41, median rel = 0.096%, max rel = 1.629%
+  [band full_FrCEx_pi             mat_mean_centered(N=2)] sqrt-trace = 2.927e-41, median rel = 0.089%, max rel = 1.660%
+  [band full_FrElas_N             mat_mean_centered(N=2)] sqrt-trace = 4.352e-41, median rel = 0.094%, max rel = 1.337%
+  [band full_FrElas_pi            mat_mean_centered(N=2)] sqrt-trace = 3.143e-41, median rel = 0.078%, max rel = 0.789%
+  [band full_FrInel_N             mat_mean_centered(N=2)] sqrt-trace = 3.918e-41, median rel = 0.100%, max rel = 1.573%
+  [band full_FrPiProd_N           mat_mean_centered(N=2)] sqrt-trace = 2.644e-41, median rel = 0.069%, max rel = 1.917%
+  [band full_FrPiProd_pi          mat_mean_centered(N=2)] sqrt-trace = 3.860e-41, median rel = 0.079%, max rel = 0.853%
+  [band full_GEANT_Neutron        mat_mean_centered(N=2)] sqrt-trace = 4.974e-41, median rel = 0.126%, max rel = 1.532%
+  [band full_GEANT_Pion           mat_mean_centered(N=2)] sqrt-trace = 1.178e-40, median rel = 0.260%, max rel = 3.695%
+  [band full_GEANT_Proton         mat_mean_centered(N=2)] sqrt-trace = 3.168e-41, median rel = 0.089%, max rel = 0.803%
+  [band full_HighQ2               mat_mean_centered(N=2)] sqrt-trace = 5.182e-41, median rel = 0.162%, max rel = 1.508%
+  [band full_LowQ2                mat_mean_centered(N=2)] sqrt-trace = 8.158e-41, median rel = 0.198%, max rel = 3.924%
+  [band full_MFP_N                mat_mean_centered(N=2)] sqrt-trace = 5.406e-41, median rel = 0.148%, max rel = 1.848%
+  [band full_MFP_pi               mat_mean_centered(N=2)] sqrt-trace = 7.977e-41, median rel = 0.173%, max rel = 4.838%
+  [band full_MaCCQE               mat_mean_centered(N=2)] sqrt-trace = 1.254e-40, median rel = 0.357%, max rel = 5.503%
+  [band full_MaNCEL               mat_mean_centered(N=2)] sqrt-trace = 1.286e-51, median rel = 0.000%, max rel = 0.000%
+  [band full_MaRES                mat_mean_centered(N=2)] sqrt-trace = 2.100e-40, median rel = 0.548%, max rel = 7.180%
+  [band full_MinosEfficiency      mat_mean_centered(N=2)] sqrt-trace = 7.990e-40, median rel = 1.472%, max rel = 3.267%
+  [band full_MuonResolution       mat_mean_centered(N=2)] sqrt-trace = 8.420e-41, median rel = 0.110%, max rel = 0.929%
+  [band full_Muon_Energy_MINERvA  mat_mean_centered(N=2)] sqrt-trace = 1.953e-39, median rel = 1.285%, max rel = 19.979%
+  [band full_Muon_Energy_MINOS    mat_mean_centered(N=2)] sqrt-trace = 1.013e-39, median rel = 2.305%, max rel = 9.193%
+  [band full_MvRES                mat_mean_centered(N=2)] sqrt-trace = 1.411e-40, median rel = 0.377%, max rel = 5.216%
+  [band full_NormDISCC            mat_mean_centered(N=2)] sqrt-trace = 3.105e-41, median rel = 0.081%, max rel = 1.084%
+  [band full_NormNCRES            mat_mean_centered(N=2)] sqrt-trace = 1.108e-51, median rel = 0.000%, max rel = 0.000%
+  [band full_RDecBR1gamma         mat_mean_centered(N=2)] sqrt-trace = 3.666e-41, median rel = 0.070%, max rel = 0.884%
+  [band full_Rvn1pi               mat_mean_centered(N=2)] sqrt-trace = 4.329e-41, median rel = 0.101%, max rel = 1.162%
+  [band full_Rvn2pi               mat_mean_centered(N=2)] sqrt-trace = 7.692e-41, median rel = 0.212%, max rel = 1.522%
+  [band full_Rvp1pi               mat_mean_centered(N=2)] sqrt-trace = 4.329e-41, median rel = 0.101%, max rel = 1.162%
+  [band full_Rvp2pi               mat_mean_centered(N=2)] sqrt-trace = 7.364e-41, median rel = 0.200%, max rel = 3.669%
+  [band full_Theta_Delta2Npi      mat_mean_centered(N=2)] sqrt-trace = 5.970e-41, median rel = 0.157%, max rel = 2.249%
+  [band full_VecFFCCQEshape       mat_mean_centered(N=2)] sqrt-trace = 5.007e-41, median rel = 0.144%, max rel = 2.000%
+  [band __Normalization_flat      rank1_norm(sigma=0.0140)] sqrt-trace = 5.914e-40, median rel = 1.400%, max rel = 1.400%
+
+[TOTAL universe (sample)] sqrt-trace = 3.214e-39
+                            cond  = 1.655e+09, rank = 140/205
+[TOTAL universe] sqrt-trace = 3.214e-39
+                   median rel = 6.830%
+                   p84    rel = 9.169%
+                   max    rel = 21.823%
+
+[COMBINED universe + bootstrap]
+  median rel = 6.845%
+  p84    rel = 9.258%
+  max    rel = 21.837%
+
+[wrote] /pscratch/sd/j/josephrb/ki84-rebuild-20261006/adoption_controls/univ_old/uq_universe_covariance_full_matcorr_fluxfix.root
+[wrote] /pscratch/sd/j/josephrb/ki84-rebuild-20261006/adoption_controls/univ_old/uq_universe_band_pt.png
+[wrote] /pscratch/sd/j/josephrb/ki84-rebuild-20261006/adoption_controls/univ_old/uq_universe_band_pz.png
+[wrote] /pscratch/sd/j/josephrb/ki84-rebuild-20261006/adoption_controls/univ_old/uq_universe_summary.txt
