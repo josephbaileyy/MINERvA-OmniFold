@@ -87,3 +87,16 @@ Merged on Joseph's instruction of 2026-10-05, after the PET integration (#15), t
 `integrate/pet-gbdt-20261005`: a `--no-ff` merge of this branch at `4367030f`, then the ledger row appended as
 **VL168** (open item 1 is done; item 2 is done). The study's files are unchanged apart from this note and the
 appended-as note in `LEDGER_ROW-PENDING.md`. P0 remains not launched and unauthorized.
+
+## Owner decision on P0 (2026-10-06)
+
+**P0 is deferred until the PRD article is submitted.** Joseph replied "I agree with your recommendations for both" on
+2026-10-06. That answers two recommendations the PET lane gave him the same day:
+- "**Defer P0 until the article is submitted.** It doesn't serve this article; its natural time is when a PET-based
+  measurement becomes the next question."
+- "a CPU-only analysis of existing outputs to find why PET loses to GBDT by 0.12–0.25 on the NuWro and GiBUU generator
+  reweightings."
+
+The recommendation also noted that P0's two real-data PET nominals should be dropped or deferred while the article's
+numerical headline is on hold. P0's design (§8 of `REPORT-20261005.md`) is unchanged and not launched. The CPU-only
+diagnosis is in `nd-unfolding/pet/generator_diagnosis/`.
