@@ -37,6 +37,7 @@ Required reading via `AGENTS.md`; recommendations do not replace the governing a
 | the verdict, per-bin pattern, attribution, independent recomputation, cost (`VL169`, `KNOWN_ISSUES.md` 84) | [`OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`](OUTCOME-20261005-2d-fixed-truth-coverage-fail.md) |
 | KNOWN_ISSUES 84 fix and the rebuilt band (`VL170`, adopted 2026-10-06): per-bin σ_new/σ_old, launcher, comparison script, budget, and the post hoc rescoring of the VL169 toys | [`state/ki84-rebuild-20261006/`](state/ki84-rebuild-20261006/) |
 | VL170 adoption: rebuilt bootstrap and universe+bootstrap rollups, χ², budget recomputation with input sha256, figures, controls (`VL172`, `KNOWN_ISSUES.md` 85) | [`state/ki84-adopt-20261006/`](state/ki84-adopt-20261006/) |
+| KNOWN_ISSUES 85 bootstrap-on-one-toy diagnostic (arms B + T): decision rule committed before any run | [`DECISION-RULE-20261006-ki85-bootstrap-diagnostic.md`](DECISION-RULE-20261006-ki85-bootstrap-diagnostic.md) |
 
 ### Scalar-5D — the current entry route (compacted 2026-09-24)
 
