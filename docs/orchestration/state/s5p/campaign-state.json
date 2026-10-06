@@ -25,7 +25,7 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "lost-seed recovery: Phase B complete (277/277, no residual); Phase C resolution running",
+ "phase": "lost-seed recovery resolved by observation (report only), PENDING the recompute lane's cross-check; then Joseph's disposition; then Stage 7",
  "phase_detail": "amendment 7 (production admission) FROZEN after the confirmation review and a mechanical re-check; V frozen (194 all-band pilot experiments, sha256 35979ef7...); pre-freeze residuals in null-T units and development power committed before any observed statistic; budget revision 5 (production 200 CPU node-h); production lanes: power first, then the five calibration lanes",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
@@ -589,6 +589,10 @@
   {
    "utc": "2026-10-06T05:15Z",
    "what": "RECOVERY PHASE B COMPLETE: parts 59399952 (92), 59399956 (92) and 59404940 (93) all COMPLETED; 'missing' lists 0 recovery seeds without a finished product (the 277 recovered products exist; 0 partial files) at 2026-10-06T05:14Z. No retry is needed and there is no residual missing draw. PHASE C (resolution, report only) launched detached on login04 from deploy 51648245 in the frozen environment: resolve -> (a) frozen s5p_joint evaluate + s5p_robust_labels on the union design -> (b) frozen-s against the frozen shifts -> stopping at every frozen look."
+  },
+  {
+   "utc": "2026-10-06T05:25Z",
+   "what": "RECOVERY PHASE C RESOLUTION (RECORD-20261006-s5p-lost-seed-recovery-resolution.md; outputs in state/s5p/recovery/phaseC/, sha256 equal to the cluster): resolve rc 0 (every lane's union = its submitted set; provenance and split keys match); (a) union s5p_joint evaluate + s5p_robust_labels rc 0; (b) frozen-s rc 0; stopping rc 0. No recovered draw reaches the observed statistic in any test, claim or kappa = 3 variant (k_rec = 0 everywhere; closest margins: GENIE MEC shape 64.7 claim / 4.6 kappa=3 T units, GENIE CV shape 104.5 / 49.8). Every decision is unchanged and rejected, and labelled robust, under (a), under (b) and at the earliest complete-batch stops (B = 1200 for MnvTune, GENIE CV, MEC and GiBUU, one batch earlier than they did; 1800 for NuWro). PROCEDURE section 5.5 criterion met: 'can change' resolved by observation, report only, primary decisions unchanged. Power over the complete power sets reported. Cost (meter 05:24Z): verification_repair 6.887 of 68.287 (determinism 0.452, parts 2.083/2.191/2.161); envelope 288.277 of 376.52. PENDING: the recompute lane's section 5.11 cross-check, before quotation; then Joseph's disposition of how it enters the claims."
   }
  ],
  "findings": [
