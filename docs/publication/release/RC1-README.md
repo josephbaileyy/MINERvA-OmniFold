@@ -23,19 +23,34 @@ Run from this directory:
 python3 code/verify_rc.py        # exit 0 and "VERIFY: PASS" if every replay agrees
 ```
 
-or the individual steps:
+or the individual steps. The last two write only to a scratch directory, so the package tree keeps matching
+`SHA256SUMS`:
 
 ```
 python3 code/replay_inference.py --npz data/frozen/inference_sufficient.npz --compare expected/joint-evaluate.json
 python3 code/replay_inference.py --npz data/recovery-union/inference_sufficient.npz --compare expected/resolved-evaluate.json
+OUT=$(mktemp -d)
 python3 code/make_reading_b.py --frozen data/frozen/inference_sufficient.npz \
-    --union data/recovery-union/inference_sufficient.npz --out data/recovery-frozenS/inference_sufficient.npz
+    --union data/recovery-union/inference_sufficient.npz --out $OUT/recovery-frozenS/inference_sufficient.npz
 python3 code/w1_projected_tests.py --npz data/recovery-union/inference_sufficient.npz \
-    --npz data/recovery-frozenS/inference_sufficient.npz --recorded expected/joint-evaluate.json --out w1.json
+    --npz $OUT/recovery-frozenS/inference_sufficient.npz --recorded expected/joint-evaluate.json --out $OUT/w1.json
 ```
 
-**Tested with:** Python 3.11 / numpy 1.26.4 / scipy 1.16.3 (Linux) and Python 3 / numpy 1.26.4 / scipy 1.15.2
-(macOS).
+**How to check the W1 output** against `expected/W1-RESULT-20261006.json`:
+- every claim `k`, `B` and `p`, and every criterion boolean, must be equal (they are all `false`);
+- the reading labels (`group`, `reading`) and the `npz` paths are expected to differ, because they record where
+  and how the inputs were built.
+
+`verify_rc.py` performs exactly this comparison.
+
+**Runtime:** about 2–3 minutes for `verify_rc.py` on a laptop (numpy uses several threads). The individual replays
+take under a minute each.
+
+**Tested with:**
+- Python 3.11.14 / numpy 1.26.4 / scipy 1.16.3 (Linux);
+- numpy 1.26.4 / scipy 1.15.2 (macOS), with the system Python 3 and with Python 3.12.2 (conda-forge).
+
+The last was run by an independent outside-reader test from an empty directory.
 
 **Comparison tolerance:** relative 1e-12 on floats. Integers and decisions must match exactly.
 
@@ -49,6 +64,13 @@ python3 code/w1_projected_tests.py --npz data/recovery-union/inference_sufficien
 | `code/make_reading_b.py`, `code/w1_projected_tests.py` | The reading-(b) builder and the W1 projected tests |
 | `code/verify_rc.py` | Runs all of the above against `expected/` |
 | `expected/` | The frozen evaluator's outputs and the committed W1 result |
+
+**Absolute paths:** the `/pscratch/...` paths inside the manifests and `expected/` files record provenance only. No
+step reads them.
+
+**`jitters`:** the frozen evaluator used the 20 data rounding jitters to report the observed-p stability
+(`observed_jitter_p` in `expected/`). The replay does not recompute that field, and the array is included for
+completeness.
 
 ## What these tests are, and the conditions that travel with them
 
