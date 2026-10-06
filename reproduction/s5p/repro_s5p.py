@@ -1105,8 +1105,10 @@ class Harness:
             self.add("joint:replay-labels", D, st, BASIS_JOINT, diffs=diffs, regenerated=str(labels),
                      note="the label step run on the replayed evaluator output (its input path and digest are therefore "
                           "this run's; the committed labels' input digest is checked by joint:receipt-identities)")
-        mods = sorted({m for k in ("joint-evaluate", "joint-robust-labels")
-                       for m in self.provenance.get(k, {}).get("project_modules", [])})
+        # the two scripts run as __main__ (not in the import record) plus every project module they imported
+        mods = sorted({"nd-unfolding/s5p_joint.py", "nd-unfolding/s5p_robust_labels.py"}
+                      | {m for k in ("joint-evaluate", "joint-robust-labels")
+                         for m in self.provenance.get(k, {}).get("project_modules", [])})
         for rel in mods:
             if not rel.startswith("reproduction/"):
                 self._deploy_identity(f"joint:module:{rel}", D, rel, S.JOINT["evaluation_deploy_commit"],
