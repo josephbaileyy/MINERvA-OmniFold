@@ -23,6 +23,18 @@ Cluster scratch (mine only): `/pscratch/sd/j/josephrb/s5p-parallel-recompute/`.
   found defective (F1 MEDIUM).
 - **`4a772838` is a historical checkpoint, not the deployment target.**
 
+**LANE CLOSED (2026-10-06).** s5p is terminal and delivered: `DELIVERY-20261006-s5p-campaign-terminal.md`, origin/main
+`9984a5fd`. It cites this lane's verification, which was checked here for accuracy, as the basis of the recorded
+result. No further verification was requested.
+- Done:
+  - the AGREE 1379/1379 (below);
+  - the recovered-seed cross-check, 856/856 (§5.11);
+  - an exploratory W2 recoil check requested by the publication lane, AGREE on three copies with the control PASS
+    (`REPORT-20261006-s5p-recompute-w2-recoil-check.md`).
+- **Still owed, each under its own review round** (neither affects any result): §5.10 LOW 1 (move the
+  `CompareObservedLayout` class above `unittest.main()`) and LOW 2 (a k > 0 fixture).
+- Review worktrees left clean and detached: `../MINERvA-OmniFold-s5p-recompute-review-f4` and `-review-ext`.
+
 **STATUS (2026-10-05, updated): VERIFICATION AGREES.** The reviewed comparer mapping extension (`02df81e6`, review
 APPROVE) gives **AGREE, 1379/1379 rows**, on the unchanged production outputs (report §8; outputs in
 `state/s5p/recompute/final-ext/`). **The lost-seed recovery cross-check (§5.11) is done (2026-10-06):** all 277
