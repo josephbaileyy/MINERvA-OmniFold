@@ -32,7 +32,10 @@ from pathlib import Path
 import numpy as np
 
 _HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(_HERE.parent / "release"))
+for _p in (_HERE, _HERE.parent / "release"):  # release layout (same dir) or repository layout
+    if (_p / "replay_inference.py").exists():
+        sys.path.insert(0, str(_p))
+        break
 import replay_inference as rp  # noqa: E402
 
 GRID = (3, 3, 3, 3, 3)  # (pt, pz, eavail, q3, W): nd-unfolding/s5p_stage1_inspect.py J_EDGES, C order
