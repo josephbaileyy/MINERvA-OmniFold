@@ -1,5 +1,19 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-10-06 2D statistical band: KNOWN_ISSUES 84 fix and candidate replica rebuild
+
+Code: `bb4b0b6f` (`unfold_2d_omnifold_unbinned.py`; regression test
+`2d-unfolding/tests/test_bootstrap_completeness_ki84.py`, 2/8 fail before, 8/8 pass after).
+Receipts: [`state/ki84-rebuild-20261006/`](docs/orchestration/state/ki84-rebuild-20261006/).
+The 300 VL162 replicas were rerun with the fixed code and the production launcher's arguments
+into a new path; the VL162 files were only read. The rebuilt band is a CANDIDATE: it is not adopted,
+it changes no quoted uncertainty, and it is not a coverage re-test of `VL169`. A re-test needs its
+own pre-registration with non-circular MC.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL170 | Candidate 2D MEFHC statistical band from 300 rebuilt pure-Poisson replicas (boot1–boot300, `--seed 1`, fixed code), against VL162 per bin, `analyze_uq.py` definitions (mean, std ddof = 1, reported = mean > 0; 205 reported bins, the same set) | rebuilt completeness max \|c−1\| **1.6e-14** over 300 (VL162: 0.450–1.581); rebuilt hXSec2D = VL162 × its c to 5.8e-9; σ_new/σ_old median **1.179** (p16 1.051, p84 1.464, range 0.982–14.0), wider in 97.1% of bins, > 2 in 13; 35 bins with VL169 C2 < 0.85: median **1.814** (1.270–14.0); 14 bins with pull RMS > 2: median 2.493; p_∥ 40–60 column: median **1.942** (1.088–3.753); √tr C ratio 1.063; median relative spread 0.549% → 0.674%; mean shift median 1.000 (0.988–1.009); control: VL162 replicas reproduce the rollup covariance (sha256 f7c734b1) to 4e-16; `compare_full.json` | **CANDIDATE, not adopted.** Agrees with the prediction from VL162 (hXSec2D × its own c, `predict_from_vl162.json`) to every quoted digit. The unfolded hUnfold2D is not bit-identical to VL162's (max relative difference 5.8e-9 over 300; 3.2e-12 for seed 1 rerun on the regular lane VL162 used). 18.11 node-h (shared/regular, 303 jobs COMPLETED). Code reviewed by a different model (APPROVE). `KNOWN_ISSUES.md` 84. |
+
 ## 2026-10-05 2D statistical band: pre-registered fixed-truth coverage test
 
 Record: [`OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`](docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md).

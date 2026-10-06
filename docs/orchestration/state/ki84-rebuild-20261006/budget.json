@@ -1,0 +1,55 @@
+{
+ "study": "KNOWN_ISSUES 84 candidate rebuild of the VL162 2D statistical replicas",
+ "code_commit": "bb4b0b6fbb8a250f8961efa9a03750bd990bdc75",
+ "limit_node_h": 60,
+ "lanes_allowed": [
+  "regular",
+  "debug",
+  "shared"
+ ],
+ "premium_or_overrun_used": false,
+ "node_h_formula": "ElapsedRaw/3600 * billing/256, from sacct_all.txt",
+ "jobs": [
+  {
+   "job": "59409026",
+   "qos": "regular_1",
+   "tasks": 1,
+   "node_h": 0.216
+  },
+  {
+   "job": "59409027",
+   "qos": "shared",
+   "tasks": 2,
+   "node_h": 0.147
+  },
+  {
+   "job": "59410433",
+   "qos": "shared",
+   "tasks": 300,
+   "node_h": 17.744
+  }
+ ],
+ "node_h_used": 18.107,
+ "n_tasks": 303,
+ "states": {
+  "COMPLETED": 303
+ },
+ "projection_before_full_array": "about 22 node-h (at most 25) on shared, from the pilot",
+ "balance_iris_m3246": {
+  "before": {
+   "utc": "2026-10-06T04:41:51Z",
+   "charged_user": 2006.6,
+   "charged_project": 16900.1,
+   "allocated_project": 20000.0
+  },
+  "after": {
+   "utc": "2026-10-06T08:08:02Z",
+   "charged_user": 2024.5,
+   "charged_project": 16920.3,
+   "allocated_project": 20000.0
+  },
+  "delta_charged_user": 17.9,
+  "note": "iris charges are the account ledger and can lag sacct; the project delta includes other users"
+ },
+ "outputs": "/pscratch/sd/j/josephrb/ki84-rebuild-20261006/replicas/ (300 ROOT + .done, 18M); VL162 files under the production uq/ were only read"
+}
