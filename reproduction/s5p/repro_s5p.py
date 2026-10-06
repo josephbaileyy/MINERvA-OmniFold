@@ -3,8 +3,8 @@
 
 Scope (declared in ``scope.py``): the flux-repaired generator predictions and their input identities, the
 deliverable generator figures and numbers built from them (VL156-VL160), and the pre-freeze quantities of the
-joint-test design (F2, F4, M1, V, the null-T units, the development power, the study-P envelope). The final joint
-result is a declared slot (tier D) that stays PENDING until its terminal products exist.
+joint-test design (F2, F4, M1, V, the null-T units, the development power, the study-P envelope); and (tier D) the
+final joint result's committed outputs, replayed from the preserved calibration and power products.
 
 Tiers, never merged in the report:
 
@@ -15,7 +15,9 @@ Tiers, never merged in the report:
   the preserved inputs, and their outputs compared with the committed receipts, logs and figures.
 * **C, full scientific regeneration**: declared with its dependency and reported NOT_RUN (event generation,
   flux reweighting from events, production unfolding).
-* **D, final joint result**: PENDING until the terminal products are committed and independently verified.
+* **D, final joint result**: the frozen evaluator (``s5p_joint.py evaluate``) and the label step replayed from THIS
+  checkout on the lane-pinned calibration/power products and compared with the committed outputs; the identities the
+  joint receipts record; the independent recomputation's report recorded by digest (never graded).
 
 Every row carries a ``basis`` saying what its agreement rests on: a digest the producing campaign recorded
 (historical provenance), a digest this harness newly recorded (``pin``), a recomputation or a regeneration against
@@ -25,17 +27,18 @@ recorded and observed digests and are listed individually, apart from the exact 
 Usage::
 
     python3 reproduction/s5p/repro_s5p.py list
-    python3 reproduction/s5p/repro_s5p.py pin --config CONFIG --out PINS.json
+    python3 reproduction/s5p/repro_s5p.py pin --config CONFIG --out PINS.json [--extend OLD_PINS.json]
     python3 reproduction/s5p/repro_s5p.py stage --config CONFIG --pins PINS.json --to DIR
     python3 reproduction/s5p/repro_s5p.py run --config CONFIG [--tiers A,B,C,D] [--pins PINS.json]
     python3 reproduction/s5p/repro_s5p.py scan-trace --trace STRACE.txt --expect-prefix DIR
 
 Every input location comes from the config (``config.example.json``); recorded absolute paths are identities that
 are re-rooted, never read. The output directory must be new and outside the checkout, every configured root and
-every recorded root. Exit status of ``run``: 0 only if tiers A and B both ran and every A/B row reproduced
-(exactly, within tolerance, or as a declared difference); 1 on any MISMATCH or harness ERROR (in any tier); 2
-otherwise (an input, the environment, a pins file or a tier was missing: nothing is reported reproduced that was
-not measured).
+every recorded root. Exit status of ``run``: 0 only if tiers A, B and D all ran, every A/B row reproduced (exactly,
+within tolerance, or as a declared difference), the joint replay reproduced, and every other D row passed or is one
+of D's two declared non-grades (the independent report recorded as INFO, the not-yet-existing joint figures
+PENDING); 1 on any MISMATCH or harness ERROR (in any tier); 2 otherwise (an input, the environment, a pins file or a
+tier was missing: nothing is reported reproduced that was not measured).
 
 MEASURES: agreement of regenerated/replayed values with the committed ones. CANNOT AUTHORIZE: any physics claim,
 adoption or release; agreement verifies the calculation, not its scientific adequacy.
@@ -79,6 +82,9 @@ PENDING = "PENDING"
 INFO = "INFO"
 PASSING = {REPRODUCED, WITHIN_TOL, DECLARED}
 FAILING = {MISMATCH, ERROR}
+# Tier-D rows that are declared non-grades, never reproductions: the independent report is recorded (INFO), and the
+# joint figures do not exist yet (PENDING). Any other non-passing D row keeps the exit code from 0.
+D_NON_GRADES = {"joint:independent-verification": INFO, "joint:figures": PENDING}
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 
 # What a row's agreement rests on. Receipt-recorded digests are the producing campaign's historical provenance;
@@ -401,7 +407,7 @@ class Harness:
         (self.out / "logs").mkdir()
 
     # -- producers
-    def launch(self, name: str, producer: str, argv: list[str], cwd: Path, log: Path) -> int:
+    def launch(self, name: str, producer: str, argv: list[str], cwd: Path, log: Path, extra_env: dict | None = None) -> int:
         """Run a checkout producer through _launch.py (import provenance), stdout+stderr merged into ``log``
         the way a shell redirect does, with PYTHONPATH cleared so only the checkout's own layout resolves."""
         rec = self.out / "provenance" / f"{name}.json"
@@ -410,6 +416,7 @@ class Harness:
         env = {k: v for k, v in os.environ.items() if k not in ("PYTHONPATH", "PYTHONHOME", "PYTHONSTARTUP")}
         env["PYTHONDONTWRITEBYTECODE"] = "1"
         env["MPLBACKEND"] = "Agg"
+        env.update(extra_env or {})
         cmd = [self.python, str(HERE / "_launch.py"), "--record", str(rec), "--", str(REPO / producer), *argv]
         with open(log, "w") as fh:
             rc = subprocess.run(cmd, cwd=cwd, env=env, stdout=fh, stderr=subprocess.STDOUT).returncode
@@ -429,7 +436,8 @@ class Harness:
             elif not any(d in mp.parents for d in env_dirs):
                 foreign.append(m)
         self.provenance[name] = {"argv": cmd, "cwd": str(cwd), "returncode": rc, "project_modules": project,
-                                 "foreign_modules": foreign, "n_modules": len(info["modules"]), "log": str(log)}
+                                 "foreign_modules": foreign, "n_modules": len(info["modules"]), "log": str(log),
+                                 "extra_env": extra_env or {}}
         if foreign:
             self.add(f"provenance:{name}", B, MISMATCH, BASIS_PROVENANCE, foreign_modules=foreign,
                      why="the producer imported code from outside the checkout under test (OI-136)")
@@ -514,19 +522,19 @@ class Harness:
         for rel in sorted({run["producer"] for run in S.FIGURE_RUNS.values()}):
             self._deploy_identity(f"producer:{rel}", A, rel)
 
-    def _deploy_identity(self, check, tier, rel):
-        """A checkout file against the figures' deploy commit (the scratch export itself was removed)."""
-        if not git_has_commit(S.FIGURE_DEPLOY_COMMIT):
-            self.add(check, tier, INPUT_MISSING, BASIS_CODE, why=f"the checkout lacks commit {S.FIGURE_DEPLOY_COMMIT} (a shallow clone?)")
+    def _deploy_identity(self, check, tier, rel, commit=S.FIGURE_DEPLOY_COMMIT, what="the deploy the figures ran from"):
+        """A checkout file against the git blob of the deploy commit a recorded run used (its scratch export may be
+        gone; the commit is the identity)."""
+        if not git_has_commit(commit):
+            self.add(check, tier, INPUT_MISSING, BASIS_CODE, why=f"the checkout lacks commit {commit} (a shallow clone?)")
             return
-        want = git_blob_sha256(S.FIGURE_DEPLOY_COMMIT, rel)
+        want = git_blob_sha256(commit, rel)
         got = self.digest(REPO / rel)
         if want is None:
-            self.add(check, tier, MISMATCH, BASIS_CODE, observed=got,
-                     why=f"{rel} did not exist at {S.FIGURE_DEPLOY_COMMIT}, the deploy the figures ran from")
+            self.add(check, tier, MISMATCH, BASIS_CODE, observed=got, why=f"{rel} did not exist at {commit}, {what}")
             return
         self.add(check, tier, REPRODUCED if want == got else MISMATCH, BASIS_CODE, expected=want, observed=got,
-                 against=f"git blob at {S.FIGURE_DEPLOY_COMMIT}, the deploy the figures ran from")
+                 against=f"git blob at {commit[:8]}, {what}")
 
     def _producer(self, name, want, source):
         """REPRODUCED if the checkout's producer is the code that ran; DECLARED_DIFFERENCE only if scope.py declares
@@ -622,9 +630,11 @@ class Harness:
 
     def a_unrecorded_pins(self):
         if self.pins is None:
-            self.add("pins:unrecorded-inputs", A, NOT_RUN, BASIS_LANE, why="no --pins file given (see `pin`): 401 inputs unchecked")
+            self.add("pins:unrecorded-inputs", A, NOT_RUN, BASIS_LANE,
+                     why=f"no --pins file given (see `pin`; the committed one is {S.PINS_FILE}): the unrecorded inputs are unchecked")
             return
         for group, entries in self.pins["groups"].items():
+            utc = pin_measured_utc(self.pins, group)
             for spec, want in entries.items():
                 lp = self.roots.spec(spec)
                 if not lp.exists():
@@ -632,7 +642,7 @@ class Harness:
                     continue
                 got = self.digest(lp)
                 self.add(f"pin:{spec}", A, REPRODUCED if got == want["sha256"] else MISMATCH, BASIS_LANE, group=group,
-                         expected=want["sha256"], observed=got, pinned_utc=self.pins["measured_utc"])
+                         expected=want["sha256"], observed=got, pinned_utc=utc)
         for group, specs in S.UNRECORDED_INPUT_GLOBS.items():
             now_found = set(self._expand(specs))
             pinned = set(self.pins["groups"].get(group, {}))
@@ -648,9 +658,9 @@ class Harness:
                 if ".partial" not in Path(p).name:
                     yield f"{name}:{Path(p).relative_to(root)}"
 
-    def coverage(self, tier_b_ran: bool):
+    def coverage(self, tier_b_ran: bool, tier_d_ran: bool = True):
         """Every 64-hex value in the digest sources was compared: file digests by a digest row, the classified
-        non-file digests by the check scope.NON_FILE_DIGEST_KEYS names (run after tiers A and B)."""
+        non-file digests by the check scope.NON_FILE_DIGEST_KEYS names (run after tiers A, B and D)."""
         unclassified, uncompared = [], []
         for rel in S.DIGEST_SOURCES:
             for trail, v in all_hex(json.loads((REPO / rel).read_text())):
@@ -663,12 +673,12 @@ class Harness:
                 elif v not in self.compared[kinds[-1]]:
                     uncompared.append({"at": where, "kind": kinds[-1]})
         status = REPRODUCED if not unclassified and not uncompared else MISMATCH
-        if status == MISMATCH and not unclassified and not tier_b_ran:
-            status = NOT_RUN  # the remaining values are compared only by tier-B rows
+        if status == MISMATCH and not unclassified and not (tier_b_ran and tier_d_ran):
+            status = NOT_RUN  # the remaining values are compared only by tier-B or tier-D rows
         self.add("coverage:receipt-digests", A, status,
                  BASIS_COVERAGE, n_file_digests=len(getattr(self, "recorded_digests", ())),
                  unclassified=unclassified[:20], uncompared=uncompared[:20],
-                 note="tier-B design/V/stage1 comparisons count only when tier B ran")
+                 note="tier-B design/V/stage1 and tier-D design comparisons count only when that tier ran")
 
     # ------------------------------------------------------------------------------------------- tier B
     def tier_b(self):
@@ -958,41 +968,168 @@ class Harness:
         committed = REPO / S.JOINT["committed_result"]
         status_dir = self.roots.spec("s5p:runs/prod/status")
         finals = {n: (status_dir / f"{n}-final.json").exists() for n in S.JOINT["nulls"]}
-        indep = self.config.get("joint", {}).get("independent_compare")
         facts = {"committed_result_present": committed.exists(), "final_status_present": finals,
-                 "independent_compare": indep, "independent_compare_present": bool(indep) and Path(indep).exists(),
                  "terminal_condition": S.JOINT["terminal_condition"]}
-        if not committed.exists() or not all(finals.values()):
+        if not committed.exists():
             self.add("joint:final-result", D, PENDING, BASIS_JOINT, **facts,
-                     why="the terminal joint products do not exist yet; nothing about the joint result is reproduced")
+                     why="the committed joint result is absent from this checkout; nothing about it is reproduced")
             return
+        if not all(finals.values()):
+            self.add("joint:final-status", D, INPUT_MISSING, BASIS_JOINT, **facts, local=str(status_dir),
+                     why="a sequential-calibration final status the evaluator reads is missing")
+            return
+        for fn, check in ((self.d_receipt_identities, "joint:receipt-identities"),
+                          (self.d_seed_states_copy, "joint:seed-states-copy"),
+                          (self.d_frozen_code, "joint:frozen-module"),
+                          (self.d_replay, "joint:replay"),
+                          (self.d_independent, "joint:independent-verification")):
+            self.guarded(fn, check, D, BASIS_JOINT)
+        self.add("joint:figures", D, PENDING, BASIS_JOINT, figures=S.JOINT["figures"],
+                 why="no joint-result figure exists yet (the note's Stage-7 text is not written); FIGURE_RUNS has no "
+                     "joint entry, so no figure of the joint result is reproduced")
+
+    def _joint_docs(self) -> dict:
+        return {k: json.loads((REPO / S.JOINT[k]).read_text())
+                for k in ("committed_result", "robust_labels", "missing_sensitivity", "seed_states_copy")}
+
+    def d_receipt_identities(self):
+        """The design, V and evaluator-output digests every joint receipt and status file records, against the frozen
+        design, the frozen V and the committed evaluator output; and the final B of every null and the n of every
+        power set against the products the lane pins counted."""
+        ev_sha = S.RECEIPTS[S.JOINT["committed_result"]]
+        design_sha = S.RECEIPTS[S.JOINT["design"]]
+        v_sha = json.loads((REPO / S.JOINT["v_receipt"]).read_text())["sha256"]
+        docs = self._joint_docs()
+        ev, lab, sens, seeds = (docs[k] for k in ("committed_result", "robust_labels", "missing_sensitivity", "seed_states_copy"))
+        exp, obs = {}, {}
+
+        def pair(key, want, got):
+            exp[key], obs[key] = want, got
+        for name, doc, keys in (("joint-evaluate", ev, ("design_sha256", "v_sha256")),
+                                ("robust-labels", lab, ("design_sha256", "evaluate_sha256")),
+                                ("missing-sensitivity", sens, ("design_sha256", "evaluate_sha256")),
+                                ("seed-states", seeds, ("design_sha256", "v_sha256"))):
+            for k in keys:
+                pair(f"{name}.{k}", {"design_sha256": design_sha, "v_sha256": v_sha, "evaluate_sha256": ev_sha}[k], doc.get(k))
+        status_dir = self.roots.spec("s5p:runs/prod/status")
+        pinned = self.pins["groups"] if self.pins else {}
+        cal = pinned.get("joint calibration ensembles (final B; partials excluded)", {})
+        pow_ = pinned.get("joint power ensembles (partials excluded)", {})
+        for n in S.JOINT["nulls"]:
+            st = json.loads((status_dir / f"{n}-final.json").read_text())
+            pair(f"status:{n}.design_sha256", design_sha, st.get("design_sha256"))
+            pair(f"status:{n}.v_sha256", v_sha, st.get("v_sha256"))
+            pair(f"status:{n}.stop", True, st.get("stop"))
+            for side in ("total", "shape"):
+                pair(f"B:{n}:{side} (evaluated vs status)", st.get("B"), ev["decisions"][f"{n}:{side}"]["B"])
+            if self.pins:
+                pair(f"B:{n} (status vs lane-pinned products)", st.get("B"),
+                     sum(1 for s in cal if s.startswith(f"s5p:runs/prod/cal/{n}/")))
+        if self.pins:
+            for key, entry in ev["power"].items():
+                if key != "levels":
+                    pair(f"n:{key} (evaluated vs lane-pinned products)", entry.get("n"),
+                         sum(1 for s in pow_ if s.startswith(f"s5p:runs/prod/pow/{key}/")))
+        self.compared["design"].add(design_sha)
+        self.compared["V"].add(v_sha)
+        st, diffs = compare(exp, obs, 0.0)
+        self.add("joint:receipt-identities", D, st, BASIS_JOINT, n_compared=len(exp), diffs=diffs,
+                 counts_against_pins=bool(self.pins),
+                 note="identities only: equal digests and counts say which objects were used, not that the result is right")
+
+    def d_seed_states_copy(self):
+        """The committed seed-states copy, with its log prefix removed, must be the original whose sha256 the
+        missing-seed sensitivity records."""
+        raw = (REPO / S.JOINT["seed_states_copy"]).read_bytes()
+        prefix = b'"log": "' + S.JOINT["seed_states_log_prefix"].encode()
+        n = raw.count(prefix)
+        original = raw.replace(prefix, b'"log": "')
+        want = self._joint_docs()["missing_sensitivity"]["seed_states_sha256"]
+        got = hashlib.sha256(original).hexdigest()
+        n_tasks = len(json.loads(raw)["tasks"])
+        self.add("joint:seed-states-copy", D, REPRODUCED if got == want and n == n_tasks else MISMATCH, BASIS_RECOMPUTED,
+                 expected=want, observed=got, prefixed_values=n, tasks=n_tasks,
+                 against=f"{S.JOINT['missing_sensitivity']}:seed_states_sha256")
+
+    def d_frozen_code(self):
+        for rel in S.JOINT["frozen_modules"]:
+            self._deploy_identity(f"joint:frozen-module:{rel}", D, rel, S.FROZEN_ADMISSION_COMMIT,
+                                  "the frozen admission (the evaluation deploy verified byte identity to it)")
+
+    def d_replay(self):
+        """``s5p_joint.py evaluate`` from this checkout on the preserved products, then the label step
+        (``s5p_robust_labels.py``) on that output; both compared with the committed files at the same-code tolerance."""
         design = self._design(S.JOINT["design"])
+        dj = json.loads(design.read_text())
         vrec = json.loads((REPO / S.JOINT["v_receipt"]).read_text())
-        rec = json.loads(committed.read_text())
-        pins = {"design_sha256": S.RECEIPTS[S.JOINT["design"]], "v_sha256": vrec["sha256"]}
-        st0, d0 = compare(pins, {k: rec.get(k) for k in pins}, 0.0)
-        self.add("joint:pins", D, st0, BASIS_JOINT, diffs=d0)
+        V = self.local(vrec["path"])
+        globs = [n["calibration_glob"] for n in dj["nulls"].values()] + [p["glob"] for p in dj.get("power", {}).values()]
+        status = [n["calibration_n"]["sequential_status"] for n in dj["nulls"].values()
+                  if isinstance(n["calibration_n"], dict)]
+        miss = self._missing(self._design_inputs(dj) + [V] + status) + [g for g in globs if not glob.glob(g)]
+        if miss:
+            self.add("joint:replay", D, INPUT_MISSING, BASIS_JOINT, missing=miss[:10])
+            return
+        docs = self._joint_docs()
         run_dir = self.out / "joint"
         run_dir.mkdir(parents=True, exist_ok=True)
         out = run_dir / "joint-evaluate.json"
         rc = self.launch("joint-evaluate", "nd-unfolding/s5p_joint.py",
-                         ["evaluate", "--design", str(design), "--v", str(self.local(vrec["path"])), "--out", str(out)],
-                         REPO, run_dir / "evaluate.log")
+                         ["evaluate", "--design", str(design), "--v", str(V), "--out", str(out)],
+                         REPO, run_dir / "evaluate.log", extra_env=S.JOINT["thread_env"])
         if rc != 0 or not out.exists():
-            self.add("joint:replay", D, MISMATCH, BASIS_JOINT, returncode=rc, log=str(run_dir / "evaluate.log"), **facts)
+            self.add("joint:replay", D, MISMATCH, BASIS_JOINT, returncode=rc, log=str(run_dir / "evaluate.log"))
             return
-        expected = self.roots.rebase(rec)
-        if design != REPO / S.JOINT["design"]:
+        relocated = design != REPO / S.JOINT["design"]
+        expected = self.roots.rebase(docs["committed_result"])
+        if relocated:
             expected["design_sha256"] = sha256(design)
         st, diffs = compare(expected, json.loads(out.read_text()), S.TOL_SAME_CODE)
-        self.add("joint:replay", D, st, BASIS_JOINT, diffs=diffs, regenerated=str(out), **facts,
-                 note="a replay of the production evaluator; it verifies the committed file, not the statistics")
-        if not facts["independent_compare_present"]:
-            self.add("joint:independent-verification", D, PENDING, BASIS_JOINT, **facts,
-                     why="no independent recomputation report at the configured route")
+        got_sha = sha256(out)
+        self.add("joint:replay", D, st, BASIS_JOINT, diffs=diffs, regenerated=str(out), regenerated_sha256=got_sha,
+                 committed_sha256=S.RECEIPTS[S.JOINT["committed_result"]], tolerance=S.TOL_SAME_CODE,
+                 bitwise=got_sha == S.RECEIPTS[S.JOINT["committed_result"]], relocated_design=relocated,
+                 thread_env=S.JOINT["thread_env"],
+                 note="a replay of the frozen evaluator; it verifies the committed file, not the statistics")
+        labels = run_dir / "robust-labels.json"
+        rc = self.launch("joint-robust-labels", "nd-unfolding/s5p_robust_labels.py",
+                         ["--evaluate", str(out), "--design", str(design), "--out", str(labels)],
+                         REPO, run_dir / "robust-labels.log")
+        if rc != 0 or not labels.exists():
+            self.add("joint:replay-labels", D, MISMATCH, BASIS_JOINT, returncode=rc, log=str(run_dir / "robust-labels.log"))
         else:
-            self.add("joint:independent-verification", D, INFO, BASIS_JOINT, report=indep, sha256=sha256(indep),
-                     why="read and judge the independent lane's own report; this harness does not grade it")
+            exp_l = dict(docs["robust_labels"], evaluate=str(out), evaluate_sha256=got_sha)
+            if relocated:
+                exp_l["design_sha256"] = sha256(design)
+            st, diffs = compare(exp_l, json.loads(labels.read_text()), S.TOL_SAME_CODE)
+            self.add("joint:replay-labels", D, st, BASIS_JOINT, diffs=diffs, regenerated=str(labels),
+                     note="the label step run on the replayed evaluator output (its input path and digest are therefore "
+                          "this run's; the committed labels' input digest is checked by joint:receipt-identities)")
+        mods = sorted({m for k in ("joint-evaluate", "joint-robust-labels")
+                       for m in self.provenance.get(k, {}).get("project_modules", [])})
+        for rel in mods:
+            if not rel.startswith("reproduction/"):
+                self._deploy_identity(f"joint:module:{rel}", D, rel, S.JOINT["evaluation_deploy_commit"],
+                                      "the clean deploy the joint evaluation ran from")
+
+    def d_independent(self):
+        """Record the independent recomputation's report by digest. Its verdict is NOT read or graded here; the only
+        check is that it is the report the recording cites (a different report at the route is a MISMATCH)."""
+        indep = self.config.get("joint", {}).get("independent_compare")
+        want = S.JOINT["independent_compare_sha256"]
+        if not indep or not Path(indep).is_file():
+            self.add("joint:independent-verification", D, INPUT_MISSING, BASIS_JOINT, report=indep, cited_sha256=want,
+                     why="no independent recomputation report at the configured route (config joint.independent_compare)")
+            return
+        got = sha256(indep)
+        if got != want:
+            self.add("joint:independent-verification", D, MISMATCH, BASIS_JOINT, report=indep, sha256=got,
+                     cited_sha256=want, why=f"not the report {S.JOINT['independent_compare_cited_by']} cites")
+            return
+        self.add("joint:independent-verification", D, INFO, BASIS_JOINT, report=indep, sha256=got,
+                 cited_by=S.JOINT["independent_compare_cited_by"],
+                 why="recorded by digest (it is the report the recording cites); read and judge the independent "
+                     "lane's own report: this harness does not grade it")
 
     # ------------------------------------------------------------------------------------------- report
     def environment(self) -> dict:
@@ -1023,7 +1160,12 @@ class Harness:
         if any(r.status in FAILING for r in rows):
             return 1
         ab = [r for r in rows if r.tier in (A, B)]
-        if "A" not in tiers or "B" not in tiers or not ab or any(r.status not in PASSING for r in ab):
+        if not {"A", "B", "D"} <= set(tiers) or not ab or any(r.status not in PASSING for r in ab):
+            return 2
+        d = [r for r in rows if r.tier == D]
+        if not any(r.check == "joint:replay" and r.status in PASSING for r in d):
+            return 2
+        if any(r.status not in PASSING and D_NON_GRADES.get(r.check) != r.status for r in d):
             return 2
         return 0
 
@@ -1040,7 +1182,9 @@ class Harness:
             pins_info = {"path": str(self.pins_path) if self.pins_path else None,
                          "sha256": sha256(self.pins_path) if self.pins_path else None,
                          "measured_utc": self.pins.get("measured_utc"), "host": self.pins.get("host"),
-                         "n_files": sum(len(v) for v in self.pins["groups"].values())}
+                         "n_files": sum(len(v) for v in self.pins["groups"].values()),
+                         "group_measured_utc": {g: pin_measured_utc(self.pins, g) for g in self.pins["groups"]},
+                         "extends": self.pins.get("extends")}
         report = {"schema": "s5p-reproduction-report/2", "tiers_run": [{"A": A, "B": B, "C": C, "D": D}[t] for t in tiers],
                   "exit_code": code, "environment": self.environment(), "config": self.config, "pins_file": pins_info,
                   "relocated": not self.roots.identity(), "n_declared_expected": S.N_DECLARED,
@@ -1171,11 +1315,14 @@ def render_md(rep: dict) -> str:
              f"- {env['host']}, Python {env['python']}, numpy {env['numpy']}, ROOT {env['ROOT']}, matplotlib {env['matplotlib']}, {env['utc']}",
              f"- input roots: {json.dumps(rep['config']['roots'])} (relocated from the recorded locations: {rep['relocated']})",
              "- lane pins: " + (f"`{pins['path']}` sha256 `{pins['sha256']}`, {pins['n_files']} files, measured "
-                                 f"{pins['measured_utc']} on {pins['host']}" if pins else "none given"),
+                                 f"{pins['measured_utc']} on {pins['host']}" if pins else "none given")
+             + (f"; groups copied from `{pins['extends']['path']}` keep its measurement time "
+                f"{pins['extends']['measured_utc']}" if pins and pins.get("extends") else ""),
              f"- tiers run: {', '.join(rep['tiers_run'])}; exit code **{rep['exit_code']}** "
              "(0 = every tier-A/B row reproduced exactly, within tolerance, or as a declared difference)", "",
              "Tiers are separate claims: A replays preserved products, B regenerates derived products from the checkout, "
-             "C is NOT run, D (the final joint result) is PENDING until its terminal products exist.", "",
+             "C is NOT run, D replays the final joint result's frozen evaluator and label step from the checkout and "
+             "records the independent report by digest (it does not grade it).", "",
              "## Summary by tier and basis", "", "| tier and basis | status | count |", "|---|---|---|"]
     for key, cs in sorted(rep["summary_by_tier_and_basis"].items()):
         for st, n in sorted(cs.items()):
@@ -1231,7 +1378,10 @@ def cmd_list() -> int:
     print("tier C NOT run:")
     for k, v in S.NOT_REGENERATED.items():
         print(f"  {k}: {v['what']} -- {v['why_not_run']}")
-    print(f"tier D joint: PENDING until {S.JOINT['terminal_condition']}")
+    print(f"tier D joint: {len([k for k in S.RECEIPTS if '/stage7/joint/' in k])} committed joint outputs; replay of "
+          f"s5p_joint.py evaluate and s5p_robust_labels.py; receipt identities; frozen-module and deploy identity; "
+          f"the independent report recorded by digest; joint figures: {len(S.JOINT['figures'])} (none exist yet). "
+          f"Terminal: {S.JOINT['terminal_condition']}")
     print(f"\ndeclared differences ({S.N_DECLARED}):")
     for k, (rec, obs, why) in S.DECLARED_DIFFERENCES.items():
         print(f"  digest {k}: {rec[:8]} -> {obs[:8]}")
@@ -1242,22 +1392,50 @@ def cmd_list() -> int:
     return 0
 
 
-def cmd_pin(config: dict, out: Path) -> int:
+def pin_measured_utc(pins: dict, group: str) -> str | None:
+    """When a group's digests were measured: a group copied by ``pin --extend`` keeps its source file's time."""
+    ext = pins.get("extends")
+    if ext and group in ext.get("groups", []):
+        return ext.get("measured_utc")
+    return pins.get("measured_utc")
+
+
+def cmd_pin(config: dict, out: Path, extend: Path | None = None) -> int:
+    """Measure the sha256 of every file the scope's unrecorded-input globs name. With ``extend``, every group that
+    file already pins is copied verbatim (keeping that file's measurement time, recorded under ``extends``) and only
+    the groups it lacks are measured, so a constancy claim is never silently restarted."""
     if out.exists():
         raise SystemExit(f"refusing to overwrite {out}")
     roots = Roots(config["roots"])
     h = Harness(config, None)
-    groups = {}
+    old = json.loads(extend.read_text()) if extend else {"groups": {}}
+    stale = sorted(set(old["groups"]) - set(S.UNRECORDED_INPUT_GLOBS))
+    if stale:
+        raise SystemExit(f"{extend} pins groups the scope no longer declares: {stale}")
+    if old.get("extends"):
+        raise SystemExit(f"{extend} is itself an extension; extend its source instead")
+    groups, copied = {}, []
     for group, specs in S.UNRECORDED_INPUT_GLOBS.items():
+        if group in old["groups"]:
+            groups[group] = old["groups"][group]
+            copied.append(group)
+            continue
         groups[group] = {}
         for spec in h._expand(specs):
             p = roots.spec(spec)
             groups[group][spec] = {"sha256": sha256(p), "bytes": p.stat().st_size}
-    doc = {"schema": "s5p-reproduction-pins/1", "measured_utc": now(), "host": platform.node(),
+    doc = {"schema": "s5p-reproduction-pins/2" if extend else "s5p-reproduction-pins/1", "measured_utc": now(),
+           "host": platform.node(),
            "measured_by": "reproduction/s5p/repro_s5p.py pin (lane-measured; no producer recorded these digests)",
-           "roots": {k: str(v) for k, v in roots.local_roots.items()}, "groups": groups}
+           "roots": {k: str(v) for k, v in roots.local_roots.items()}}
+    if extend:
+        rel = extend.resolve()
+        doc["extends"] = {"path": str(rel.relative_to(REPO)) if REPO in rel.parents else str(rel),
+                          "sha256": sha256(extend), "measured_utc": old.get("measured_utc"), "host": old.get("host"),
+                          "groups": copied}
+    doc["groups"] = groups
     out.write_text(json.dumps(doc, indent=1) + "\n")
-    print(json.dumps({g: len(v) for g, v in groups.items()}))
+    print(json.dumps({g: len(v) for g, v in groups.items()} | {"copied_groups": len(copied)}))
     return 0
 
 
@@ -1337,6 +1515,7 @@ def main(argv=None) -> int:
     p = sub.add_parser("pin")
     p.add_argument("--config", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--extend", type=Path, default=None, help="copy the groups this pins file has; measure the rest")
     s = sub.add_parser("stage")
     s.add_argument("--config", type=Path, required=True)
     s.add_argument("--pins", type=Path, required=True)
@@ -1355,7 +1534,7 @@ def main(argv=None) -> int:
         return cmd_scan_trace(a.trace, a.expect_prefix)
     config = json.loads(a.config.read_text())
     if a.cmd == "pin":
-        return cmd_pin(config, a.out)
+        return cmd_pin(config, a.out, a.extend)
     if a.cmd == "stage":
         return cmd_stage(config, json.loads(a.pins.read_text()), a.to)
     tiers = [t.strip().upper() for t in a.tiers.split(",") if t.strip()]
@@ -1369,7 +1548,7 @@ def main(argv=None) -> int:
         if tier in tiers:
             fn()
     if "A" in tiers:
-        h.guarded(lambda: h.coverage("B" in tiers), "coverage:receipt-digests", A, BASIS_COVERAGE)
+        h.guarded(lambda: h.coverage("B" in tiers, "D" in tiers), "coverage:receipt-digests", A, BASIS_COVERAGE)
     return h.write_report(tiers)
 
 
