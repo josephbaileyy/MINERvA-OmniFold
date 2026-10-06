@@ -97,3 +97,39 @@ equals (shifted null-T median − unshifted null-T median) / the unshifted null-
 - The A16 clarification defines two descriptive quantities that the frozen text left without a formula. It feeds no
   p-value, decision, label or stopping rule, and changes no production output.
 - The recompute's own reading is still reported as a labelled alternative.
+
+## 5. Disposition: how the resolved missing-seed result enters the claims (Joseph, 2026-10-06, campaign session)
+
+The resolution (`RECORD-20261006-s5p-lost-seed-recovery-resolution.md`) and its independent cross-check
+(`REPORT-20261006-s5p-recompute-recovery-crosscheck.md`, 856/856 agree) were complete when the question was put.
+
+> **Question:** "All 277 lost draws were recovered by exact reruns (determinism 16/16), and the recompute lane
+> confirmed it independently (856/856). None reaches the observed statistic in any test or variant, and all ten
+> rejections are unchanged in every reading. The closest is GENIE MEC shape, 4.6 T units below in a κ=3 robustness
+> variant. How should this enter the claims?"
+>
+> **Selected:** "Certified, margin disclosed (Recommended)". State the ten rejections as holding with every submitted
+> draw observed: the lost draws were recovered by exact deterministic reruns, and none reaches T_obs, so no
+> missing-draw assignment changes any decision. Disclose the MEC-shape κ=3 margin (4.6) and that complete batches
+> would have stopped four nulls one batch earlier, with the same decisions. The recovery stays labelled report-only,
+> and the primary decisions remain the frozen ones.
+
+**Required disclosures beside the claim.** These follow from the disposition and from the scope of the checks. The
+publication lane's `RECOVERY-CLASSIFICATION-20261006.md` (`cd810761`) states the same scope.
+
+1. **The recovery is report-only.** The primary decisions are the frozen evaluation's, at the frozen B.
+2. **The lost draws were recovered by exact deterministic reruns.** Determinism 16/16 was fixed in advance, so each
+   recovered draw is the lost draw.
+3. **None reaches the observed statistic** in any test, claim variant or κ = 3 variant. The closest margin is 4.6 T
+   units (GENIE MEC shape, κ = 3 m1+3), next 49.8 (GENIE CV shape).
+4. **With complete batches**, the frozen rule would have stopped MnvTune, GENIE CV, GENIE MEC and GiBUU one batch
+   earlier (B = 1200), with the same decisions.
+5. **Scope of the independent checks:**
+   - the recompute lane's cross-check covers the frozen-shift reading (b);
+   - the union reading (a) is reproduced only by the publication lane's standalone replay of the same code, which is
+     a consistency check, not a fully independent recomputation;
+   - the earliest-stop decisions rest on the campaign's self-validated `stopping.json`.
+
+**What it changes:** the "can change (counterexample …)" qualifier no longer accompanies the rejections. In its place
+stands the statement that every submitted draw was observed, with the disclosures above. No statistic, decision, B or
+label changes.
