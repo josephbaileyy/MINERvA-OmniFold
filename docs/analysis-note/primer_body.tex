@@ -260,19 +260,22 @@ visible because we measured available energy and $W$ jointly.
 
 \subsection*{A joint test of five simulations}
 
-We also asked a sharper question: is each of five widely used simulations
-(MINERvA Tune~v1, GENIE with and without MEC, NuWro, GiBUU) statistically
-compatible with the full five-dimensional data, in overall rate and in shape?
-To answer it without leaning on approximations, we simulated well over a
-thousand pseudo-experiments under each simulation's own hypothesis, ran each
-through the whole unfolding chain, and counted how often a pseudo-experiment
-looked as discrepant as the data. At most one in over a thousand did, so all
-ten hypotheses are rejected at a combined 5\% error rate (analysis note,
-``Joint five-dimensional generator tests'').
-Some pseudo-experiments were cut off by computing time limits; rerunning
-exactly those reproduced them, and none changes the result. This is a test of
-the simulations, not a new measurement with new error bars.
+We also asked a sharper question: under stated modelling assumptions, is each
+of five widely used simulations (MINERvA Tune~v1, GENIE with and without MEC,
+NuWro, GiBUU) statistically compatible with the five-dimensional data, both
+overall (rate and shape together) and in shape alone? Rather than rely on a
+textbook formula for how the test statistic is distributed, we simulated about
+1,340 to 1,750 pseudo-experiments under each simulation's hypothesis, unfolded
+each one, and counted how often one looked as discrepant as the data. In each
+test at most one did, so all ten hypotheses are rejected, with at most a 5\%
+chance overall of wrongly rejecting a true one. Some pseudo-experiments were
+lost to computing time limits. In a check reported separately from the result,
+rerunning exactly those seeds recovered them; none looked as discrepant as the
+data, though in one robustness variant one came close. This is a test of the
+simulations under the assumptions listed in the analysis note (``Joint
+five-dimensional generator tests''), not a new measurement with new error bars.
 % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md; DECISION-20261005 section 5.
+% Stage-7 wording review: APPROVE WITH CHANGES, applied (replacement text from the review).
 
 \subsection*{Alternative representations and signal definitions}
 
