@@ -1,0 +1,28 @@
+{
+ "mode": "shifted",
+ "base": "/pscratch/sd/j/josephrb/w2-recoil-20261006/smoke/evloop/base_cv.root",
+ "shift": "/pscratch/sd/j/josephrb/w2-recoil-20261006/smoke/evloop/mod_rr1.root",
+ "scale": 1.04,
+ "stats": {
+  "mc_background": {
+   "passing_rows": 2616,
+   "eavail_max_rel_dev": 2.2195107776710908e-16,
+   "eavail_rows_failing": 0,
+   "q0_rows_checked": 2530,
+   "q0_rows_excluded_clipped_or_zero": 86,
+   "q0_max_abs_dev_gev": 2.842170943040401e-14,
+   "q0_rows_failing": 0
+  },
+  "mc_signal_reco": {
+   "passing_rows": 85166,
+   "eavail_max_rel_dev": 2.2755284471957563e-16,
+   "eavail_rows_failing": 0,
+   "q0_rows_checked": 83911,
+   "q0_rows_excluded_clipped_or_zero": 1255,
+   "q0_max_abs_dev_gev": 2.842170943040401e-14,
+   "q0_rows_failing": 0
+  }
+ },
+ "failures": [],
+ "verdict": "PASS"
+}

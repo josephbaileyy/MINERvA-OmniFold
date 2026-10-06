@@ -1,0 +1,14 @@
+{
+ "mode": "equal",
+ "a": "/pscratch/sd/j/josephrb/w2-recoil-20261006/smoke/evloop/base_cv.root",
+ "b": "/pscratch/sd/j/josephrb/w2-recoil-20261006/smoke/evloop/mod_rrzero.root",
+ "trees": {
+  "mc_truth_denom": 131346,
+  "mc_signal_reco": 131346,
+  "mc_background": 2616,
+  "data": 15055
+ },
+ "nonscalar_branches_not_compared": {},
+ "failures": [],
+ "verdict": "PASS"
+}

@@ -1,0 +1,12 @@
+# W2 compute ledger (publication packet W2; Joseph 2026-10-06 item 4). Separate from the s5p budget/meter.
+# Caps: W2a <= 1.0 CPU node-h; W2a + W2b <= 8.0 CPU node-h. Billed node-h = ElapsedRaw/3600 * billing/256 (s5c_meter convention).
+# Login-node builds/merges/evaluations are not billed and are listed for completeness with billed = 0.
+# step	jobid	what	state	elapsed_s	billing	billed_node_h
+W2a-build	login04	private builds base+mod (login node)	COMPLETED	0	0	0.00000
+W2a-smoke	59408104	base_cv, 1A 2 MC + 8 data files	COMPLETED	91	10	0.00099
+W2a-smoke	59408105	mod_cv	COMPLETED	63	10	0.00068
+W2a-smoke	59408106	mod_rr0 (x0.96)	COMPLETED	85	10	0.00092
+W2a-smoke	59408107	mod_rr1 (x1.04)	COMPLETED	72	10	0.00078
+W2a-smoke	59408108	mod_rrzero (delta 0)	COMPLETED	72	10	0.00078
+W2a-cost	59408361	mod_rr0 (x0.96), full 1A 41 MC + 253 data files	COMPLETED	3849	10	0.04176
+W2a-cost	59408363	mod_rr1 (x1.04), full 1A	COMPLETED	4842	10	0.05254
