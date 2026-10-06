@@ -100,6 +100,17 @@ KNOWN_PREEXISTING = {
     ("nd-unfolding/pet/evaluate_annealed_nominal_reproduction.py",
      "docs/orchestration/state/annealed-nominal-error-56563092.json",
      "077e43620fcfb1c12401b41e60f32e184ab0290b67a89bc55def0bfed2735149"),
+    # KNOWN_ISSUES #84, 2026-10-05: the MC-bootstrap replicas now divide by the central value's
+    # completeness, which changes this file's bytes. Neither pin is edited. The receipt records
+    # the bytes that produced the negweight products (`git show` recovers them). The Gate-2
+    # launcher guard keeps refusing a re-run, because its premise -- u2d unchanged since the
+    # hedge submission -- no longer holds; re-pinning it is that gate owner's decision.
+    ("2d-unfolding/unfold_2d_omnifold_unbinned.py",
+     "docs/orchestration/state/negweight-hpss-durability-20260821.json",
+     "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e"),
+    ("2d-unfolding/unfold_2d_omnifold_unbinned.py",
+     "nd-unfolding/pet/run_gate2_target_validator.sh",
+     "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e"),
 }
 
 # Minimum EXPECTED_*_SHA guards the shell collector must still resolve to files in

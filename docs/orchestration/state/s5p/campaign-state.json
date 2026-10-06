@@ -25,7 +25,7 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "lost-seed recovery resolved by observation (report only), PENDING the recompute lane's cross-check; then Joseph's disposition; then Stage 7",
+ "phase": "Joseph's disposition recorded (certified, margin disclosed); Stage-7 deliverables in progress",
  "phase_detail": "amendment 7 (production admission) FROZEN after the confirmation review and a mechanical re-check; V frozen (194 all-band pilot experiments, sha256 35979ef7...); pre-freeze residuals in null-T units and development power committed before any observed statistic; budget revision 5 (production 200 CPU node-h); production lanes: power first, then the five calibration lanes",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
@@ -593,6 +593,18 @@
   {
    "utc": "2026-10-06T05:25Z",
    "what": "RECOVERY PHASE C RESOLUTION (RECORD-20261006-s5p-lost-seed-recovery-resolution.md; outputs in state/s5p/recovery/phaseC/, sha256 equal to the cluster): resolve rc 0 (every lane's union = its submitted set; provenance and split keys match); (a) union s5p_joint evaluate + s5p_robust_labels rc 0; (b) frozen-s rc 0; stopping rc 0. No recovered draw reaches the observed statistic in any test, claim or kappa = 3 variant (k_rec = 0 everywhere; closest margins: GENIE MEC shape 64.7 claim / 4.6 kappa=3 T units, GENIE CV shape 104.5 / 49.8). Every decision is unchanged and rejected, and labelled robust, under (a), under (b) and at the earliest complete-batch stops (B = 1200 for MnvTune, GENIE CV, MEC and GiBUU, one batch earlier than they did; 1800 for NuWro). PROCEDURE section 5.5 criterion met: 'can change' resolved by observation, report only, primary decisions unchanged. Power over the complete power sets reported. Cost (meter 05:24Z): verification_repair 6.887 of 68.287 (determinism 0.452, parts 2.083/2.191/2.161); envelope 288.277 of 376.52. PENDING: the recompute lane's section 5.11 cross-check, before quotation; then Joseph's disposition of how it enters the claims."
+  },
+  {
+   "utc": "2026-10-06T09:25Z",
+   "what": "RECOVERY CROSS-CHECK CONFIRMED by the recompute lane (REPORT-20261006-s5p-recompute-recovery-crosscheck.md, branch s5p-parallel-recompute-20260928 tip 00009056; crosscheck.json 6ace7e0824cf2ae1 re-read by the campaign): own report-side script from its reviewed evaluator, own seed disposition; recovered = its lost sets exactly; determinism 16/16 independently; frozen counts and retained power reproduce its terminal record; k_rec = 0 in all 62 null x test x variant cells; closest margins identical (4.6/49.8/64.7/104.5); resolved Holm all ten rejected in primary/replace/keep-both; side by side with frozen-s.json 856/856 agree, 0 differ. Disclosed: a first attempt with a voided BLAS pin stopped without output; the union reading (a) not recomputed by it. RECORD-20261006 section 7 updated to CONFIRMED (now quotable); RECORD-20261005 updated (84-test author run; resolution complete). Next: Joseph's disposition (publication-lane event 3)."
+  },
+  {
+   "utc": "2026-10-06T15:37Z",
+   "what": "OWNER DISPOSITION (Joseph, campaign session; DECISION-20261005 section 5): 'Certified, margin disclosed (Recommended)' - the ten rejections are stated as holding with every submitted draw observed (lost draws recovered by exact deterministic reruns; none reaches T_obs; no missing-draw assignment changes any decision), disclosing the GENIE MEC shape kappa=3 margin (4.6 T units) and that complete batches would have stopped four nulls one batch earlier with the same decisions; the recovery stays report-only and the primary decisions remain the frozen ones. Required disclosures (section 5, consistent with the publication lane's RECOVERY-CLASSIFICATION-20261006.md cd810761): report-only; determinism; margins; earlier stops; check scope (cross-check covers reading (b); (a) a same-code consistency replay; earliest stops from the self-validated stopping.json). The 'can change' qualifier is replaced by these. Publication-lane event (3)."
+  },
+  {
+   "utc": "2026-10-06T15:45Z",
+   "what": "STAGE 7 PROGRESS: (1) reproduction tier D made final by a bounded lane (branch s5p-stage7-reproduction-20261006, merged a12e2359; fresh-clone evaluate replay bitwise at recorded roots, 1e-12 relocated; 36 harness tests pass; HANDOFF-20261006-s5p-reproduction-tier-d.md); (2) Stage-7 note/primer text committed on branch docs/s5p-stage7-20261006 (34d69c05; note section 8.6 + Table 3, exec-summary item, summary TODO resolved, provenance joint-5d; build_all.sh exit 0, 0 unresolved references); independent wording review running; the note-organization session (minerva-omnifold-bf) has ended and could not be notified; (3) RELEASE-MANIFEST-20261006-s5p-joint-5d-inference.md written. Input digests measured 2026-10-06T15:44Z: data_b-_j- fb5cc6798b97b5902ad8f0fecbc49990271f7772f98d3063c1dc8596340e680c; mnvtune_v1_xsec5d bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c; genie_cv_xsec5d_full cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2; genie_mec_xsec5d_full c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f; nuwro_cv_xsec5d_full 475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070; gibuu_cv_xsec5d_fluxfix 48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18; V-s3v 35979ef7 (= frozen pin)."
   }
  ],
  "findings": [

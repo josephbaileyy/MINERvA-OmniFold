@@ -1,0 +1,23 @@
+{
+ "stage": "pilot",
+ "seeds": [
+  1,
+  1
+ ],
+ "n": 1,
+ "new_dir": "/pscratch/sd/j/josephrb/ki84-rebuild-20261006/pilot",
+ "old_dir": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq",
+ "per_seed": [
+  {
+   "seed": 1,
+   "new_c_max_abs_dev_from_1": 1.5765166949677223e-14,
+   "old_c_range": [
+    0.9396491081106523,
+    1.0687353432437292
+   ],
+   "hUnfold2D_bit_identical_to_VL162": false,
+   "hUnfold2D_max_rel_diff": 3.2251978865360797e-12,
+   "xsec_ratio_over_old_c_max_abs_dev": 3.2240876635114546e-12
+  }
+ ]
+}

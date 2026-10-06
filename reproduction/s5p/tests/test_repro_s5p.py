@@ -281,18 +281,110 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(self.h.results[0].status, R.ERROR)
         self.assertEqual(self.h.exit_code(["A", "B"]), 1)
 
-    def test_joint_is_pending_and_never_reproduced_without_terminal_products(self):
-        self.h.tier_d()
+    def test_joint_is_pending_only_when_the_result_is_absent_from_the_checkout(self):
+        with mock.patch.dict(S.JOINT, {"committed_result": "docs/no-such-joint-evaluate.json"}):
+            self.h.tier_d()
         self.assertEqual([r.status for r in self.h.results], [R.PENDING])
         self.assertFalse(self.h.results[0].detail["committed_result_present"])
+
+    def test_joint_with_its_products_missing_is_input_missing_and_never_exit_0(self):
+        """The committed result is in this checkout; the temp roots have no status files or products."""
+        self.h.tier_d()
+        self.assertEqual([(r.check, r.status) for r in self.h.results], [("joint:final-status", R.INPUT_MISSING)])
+        self.h.add("x", R.A, R.REPRODUCED, R.BASIS_RECORDED)
+        self.h.add("y", R.B, R.REPRODUCED, R.BASIS_REGENERATED)
+        self.assertEqual(self.h.exit_code(["A", "B", "C", "D"]), 2)
+
+    def _status_files(self, B=None):
+        ev = json.loads((R.REPO / S.JOINT["committed_result"]).read_text())
+        v = json.loads((R.REPO / S.JOINT["v_receipt"]).read_text())["sha256"]
+        d = self.d / "s5p/runs/prod/status"
+        d.mkdir(parents=True)
+        for n in S.JOINT["nulls"]:
+            st = {"null": n, "B": (B or {}).get(n, ev["decisions"][f"{n}:total"]["B"]), "stop": True,
+                  "design_sha256": S.RECEIPTS[S.JOINT["design"]], "v_sha256": v}
+            (d / f"{n}-final.json").write_text(json.dumps(st))
+        return ev
+
+    def _counted_pins(self, ev, drop=0):
+        cal = {f"s5p:runs/prod/cal/{n}/cal_{n}_s{i}.npz": {} for n in S.JOINT["nulls"]
+               for i in range(ev["decisions"][f"{n}:total"]["B"])}
+        pw = {f"s5p:runs/prod/pow/{k}/pow_{k}_s{i}.npz": {} for k, e in ev["power"].items() if k != "levels"
+              for i in range(e["n"])}
+        for k in list(cal)[:drop]:
+            del cal[k]
+        return {"measured_utc": "t", "groups": {"joint calibration ensembles (final B; partials excluded)": cal,
+                                                "joint power ensembles (partials excluded)": pw}}
+
+    def test_receipt_identities_fire_on_a_wrong_count_and_are_silent_on_the_committed_ones(self):
+        ev = self._status_files()
+        self.h.pins = self._counted_pins(ev)
+        self.h.d_receipt_identities()
+        self.h.pins = self._counted_pins(ev, drop=1)  # one calibration product fewer than the final B
+        self.h.d_receipt_identities()
+        self.assertEqual([r.status for r in self.h.results], [R.REPRODUCED, R.MISMATCH])
+        self.assertEqual([d["at"] for d in self.h.results[1].detail["diffs"]],
+                         [f".B:{S.JOINT['nulls'][0]} (status vs lane-pinned products)"])
+        self.assertIn(S.RECEIPTS[S.JOINT["design"]], self.h.compared["design"])
+
+    def test_receipt_identities_fire_on_a_status_b_that_differs_from_the_evaluated_b(self):
+        self._status_files(B={"NuWro_21_09": 1750})
+        self.h.d_receipt_identities()
+        self.assertEqual(self.h.results[0].status, R.MISMATCH)
+
+    def test_seed_states_copy_reverts_to_the_recorded_original(self):
+        self.h.d_seed_states_copy()
+        with mock.patch.dict(S.JOINT, {"seed_states_log_prefix": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/"}):
+            self.h.d_seed_states_copy()
+        self.assertEqual([r.status for r in self.h.results], [R.REPRODUCED, R.MISMATCH])
+        self.assertEqual(self.h.results[0].detail["prefixed_values"], self.h.results[0].detail["tasks"])
+
+    def test_the_independent_report_is_recorded_by_identity_and_never_graded(self):
+        rep = self.d / "compare.json"
+        rep.write_text('{"verdict": "DISAGREE"}')  # the verdict is never read: only the identity is checked
+        self.h.config["joint"] = {"independent_compare": str(rep)}
+        with mock.patch.dict(S.JOINT, {"independent_compare_sha256": sha(rep.read_bytes())}):
+            self.h.d_independent()
+        self.h.d_independent()  # the real pinned digest: a different report at the route
+        self.h.config["joint"] = {"independent_compare": str(self.d / "absent.json")}
+        self.h.d_independent()
+        self.assertEqual([r.status for r in self.h.results], [R.INFO, R.MISMATCH, R.INPUT_MISSING])
+
+    def test_pin_extend_copies_the_old_groups_verbatim_and_measures_only_the_new(self):
+        (self.d / "s5p/old.npz").write_bytes(b"old bytes")
+        (self.d / "s5p/new.npz").write_bytes(b"new bytes")
+        old = self.d / "old-pins.json"
+        old.write_text(json.dumps({"measured_utc": "2026-09-28T00:00:00+00:00", "host": "h0",
+                                   "groups": {"old": {"s5p:old.npz": {"sha256": "f" * 64, "bytes": 1}}}}))
+        out = self.d / "new-pins.json"
+        with mock.patch.object(S, "UNRECORDED_INPUT_GLOBS", {"old": ["s5p:old.npz"], "new": ["s5p:new.npz"]}):
+            quiet(R.cmd_pin, self.h.config, out, old)
+            doc = json.loads(out.read_text())
+            self.assertEqual(doc["groups"]["old"], {"s5p:old.npz": {"sha256": "f" * 64, "bytes": 1}})  # not re-measured
+            self.assertEqual(doc["groups"]["new"]["s5p:new.npz"]["sha256"], sha(b"new bytes"))
+            self.assertEqual((doc["extends"]["groups"], doc["extends"]["sha256"]), (["old"], sha(old.read_bytes())))
+            self.assertEqual(R.pin_measured_utc(doc, "old"), "2026-09-28T00:00:00+00:00")
+            self.assertEqual(R.pin_measured_utc(doc, "new"), doc["measured_utc"])
+            with self.assertRaises(SystemExit):  # never extend an extension
+                quiet(R.cmd_pin, self.h.config, self.d / "third.json", out)
+        with mock.patch.object(S, "UNRECORDED_INPUT_GLOBS", {"new": ["s5p:new.npz"]}):
+            with self.assertRaises(SystemExit):  # the old file pins a group the scope no longer declares
+                quiet(R.cmd_pin, self.h.config, self.d / "stale.json", old)
 
     def test_exit_codes(self):
         h = self.h
         h.add("x", R.A, R.REPRODUCED, R.BASIS_RECORDED)
         h.add("y", R.B, R.REPRODUCED, R.BASIS_REGENERATED)
         h.add("dd", R.A, R.DECLARED, R.BASIS_RECORDED, expected="a", observed="b", why="w")
-        h.add("j", R.D, R.PENDING, R.BASIS_JOINT)
-        self.assertEqual(h.exit_code(["A", "B", "D"]), 0)
+        self.assertEqual(h.exit_code(["A", "B", "D"]), 2)    # tier D ran without a reproduced replay
+        h.add("joint:replay", R.D, R.REPRODUCED, R.BASIS_JOINT)
+        h.add("joint:independent-verification", R.D, R.INFO, R.BASIS_JOINT)
+        h.add("joint:figures", R.D, R.PENDING, R.BASIS_JOINT)
+        self.assertEqual(h.exit_code(["A", "B", "D"]), 0)     # D's two declared non-grades
+        self.assertEqual(h.exit_code(["A", "B"]), 2)          # D not run is not a pass
+        h.add("joint:replay-labels", R.D, R.PENDING, R.BASIS_JOINT)
+        self.assertEqual(h.exit_code(["A", "B", "D"]), 2)     # any other non-passing D row
+        h.results.pop()
         self.assertEqual(h.exit_code(["C", "D"]), 2)          # A and B not run is not a pass
         self.assertEqual(h.exit_code(["A"]), 2)
         h.add("n", R.A, R.NOT_RUN, R.BASIS_LANE)
@@ -356,6 +448,38 @@ class ScopeTests(unittest.TestCase):
         """Fires when a committed receipt changes under the harness (then scope.py must be re-pinned by review)."""
         for rel, want in S.RECEIPTS.items():
             self.assertEqual(R.sha256(R.REPO / rel), want, rel)
+
+    def test_the_joint_pin_groups_are_the_frozen_designs_inputs_and_exclude_the_recovery(self):
+        design = json.loads((R.REPO / S.JOINT["design"]).read_text())
+        r = R.Roots(dict(S.RECORDED_ROOTS))
+        as_spec = lambda p: ":".join(r.split(p))  # noqa: E731
+        groups = S.UNRECORDED_INPUT_GLOBS
+        self.assertEqual(sorted(groups["joint calibration ensembles (final B; partials excluded)"]),
+                         sorted(as_spec(n["calibration_glob"]) for n in design["nulls"].values()))
+        self.assertEqual(sorted(groups["joint power ensembles (partials excluded)"]),
+                         sorted(as_spec(p["glob"]) for p in design["power"].values()))
+        self.assertEqual(sorted(groups["joint sequential-calibration final status"]),
+                         sorted(as_spec(n["calibration_n"]["sequential_status"]) for n in design["nulls"].values()))
+        self.assertEqual([s for v in groups.values() for s in v if s.startswith("s5p:recovery")], [])
+
+    def test_the_committed_pins_extend_the_20260928_pins_verbatim_and_count_the_evaluated_ensembles(self):
+        pins = json.loads((R.REPO / S.PINS_FILE).read_text())
+        old_path = R.REPO / pins["extends"]["path"]
+        old = json.loads(old_path.read_text())
+        self.assertEqual(pins["extends"]["sha256"], R.sha256(old_path))
+        self.assertEqual(sorted(pins["extends"]["groups"]), sorted(old["groups"]))
+        for g in old["groups"]:
+            self.assertEqual(pins["groups"][g], old["groups"][g], g)
+        self.assertEqual(sorted(pins["groups"]), sorted(S.UNRECORDED_INPUT_GLOBS))
+        ev = json.loads((R.REPO / S.JOINT["committed_result"]).read_text())
+        cal = pins["groups"]["joint calibration ensembles (final B; partials excluded)"]
+        for n in S.JOINT["nulls"]:
+            self.assertEqual(sum(s.startswith(f"s5p:runs/prod/cal/{n}/") for s in cal), ev["decisions"][f"{n}:total"]["B"], n)
+        pw = pins["groups"]["joint power ensembles (partials excluded)"]
+        for k, e in ev["power"].items():
+            if k != "levels":
+                self.assertEqual(sum(s.startswith(f"s5p:runs/prod/pow/{k}/") for s in pw), e["n"], k)
+        self.assertFalse([s for g in pins["groups"].values() for s in g if ".partial" in s or s.startswith("s5p:recovery")])
 
     def test_exactly_seven_declared_differences_each_with_both_digests(self):
         self.assertEqual(S.N_DECLARED, 7)

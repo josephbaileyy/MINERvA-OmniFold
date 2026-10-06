@@ -227,9 +227,15 @@ pre-registered.
   - The raw run directories stay on Perlmutter scratch in `$B` (326 GB at 2026-10-05: `s4f` 65 G, `s4s` 70 G,
     `s5` 106 G, development stages ≈ 58 G, pinned `checkouts/` 16 G), alongside the predecessors'
     `/pscratch/sd/j/josephrb/pet-improvement-20260922` and `pet-direct-token-runtime-20260911`.
-  - **Scratch is purged after about eight weeks without access, and no preservation copy of these studies exists.**
-    The group's preservation destination is **CFS**, not HPSS (correction, 2026-10-05): copy to
-    `/global/cfs/cdirs/m3246/josephrb/` and digest-verify. Measured 2026-10-05 21:18Z: Joseph's CFS directory holds
-    1.1 T against his 3 TB rule (the three PET studies total ≈ 368 G); HPSS has ≈ 164 GiB free of 512, too little for
-    326 G. The copy is an owner decision and was not done here.
-- **Stopped.** No further PET work is authorized: no repair, candidate search, compute or adoption.
+  - **Preserved on CFS (2026-10-06, Joseph's instruction):** all three studies, the historical comparison's
+    `campaign-20260920`, and 245 smaller PET scratch items are copied to
+    `/global/cfs/cdirs/m3246/josephrb/pet-studies-20261006/` (394 G; CFS directory now 1.5 T, within the 3 TB rule).
+    Each file was digest-verified against a source manifest taken before the copy: 249/249 items, xfer job
+    59411014. The receipt is `resources/preservation-cfs-20261006/RECEIPT.md`. Nothing was removed from scratch.
+- **Stopped,** apart from what Joseph authorized on 2026-10-06 ("I agree with your recommendations for both"):
+  - **P0 is deferred** until the PRD article is submitted (`../gbdt_comparison/HANDOFF-20261005-pet-gbdt-result.md`).
+  - **A CPU-only diagnosis** of the finalists' weakness on generator-model reweightings, from existing outputs, is
+    authorized. It lives in its own directory, `nd-unfolding/pet/generator_diagnosis/`.
+    **Completed 2026-10-06 (VL171):** two located deficits, a detector-step under-fit and a weaker
+    extrapolation to non-reconstructed events; their causes are untested (`REPORT-20261006.md` there).
+  - No repair, candidate search, GPU compute or adoption is authorized.

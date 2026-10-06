@@ -93,7 +93,8 @@ Each decision above holds under all six:
 - **Review of the extension:** `REVIEW-20261005-s5p-recompute-comparer-extension.md`, APPROVE at `02df81e6`, with
   nothing at MEDIUM or above (4 LOW, 3 NOTE).
   - Caveat, as disclosed by that review: its full test suite did not finish under machine load, so it has no runner
-    summary line.
+    summary line. The extension's author ran the same code's full suite before the commit: 84 tests (73 + 11) passed
+    (REPORT-20261005 §8).
   - Two LOWs are owed, each with its own review; neither affects the verdict.
 - **Owner rulings applied:** A16, a report-only clarification of two descriptive fields, and allowed new output fields
   (DECISION-20261005 §4).
@@ -119,6 +120,9 @@ Each decision above holds under all six:
   - the Phase A determinism array `59397841` was submitted 2026-10-05T23:37Z.
 - **What the resolution will and will not do:** its outcome will be added to this record as a report-only resolution,
   with the recompute lane's cross-check. It will not change any primary decision above.
+- **Update 2026-10-06:** the resolution is complete and independently cross-checked
+  (`RECORD-20261006-s5p-lost-seed-recovery-resolution.md`). No recovered draw reaches the observed statistic, and every
+  decision is unchanged under all three readings. How this enters the claims awaits Joseph's disposition.
 
 ## 6. Power per null
 
