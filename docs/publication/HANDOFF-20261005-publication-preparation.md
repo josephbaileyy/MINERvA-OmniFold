@@ -163,5 +163,16 @@ Stage 7 starts after D2 and D3, on `docs/s5p-stage7-20261006`.
     after it AGREEs. Merge the W2 branch into the publication branch at integration.
 11. **D3** (Joseph's disposition of the recovery, class R1, `cd810761`) is requested. `gbdt worker` is asking with
     the same sentence. Then D4 (Stage-7 wording) follows.
-12. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
+12. **2D band (KI-84) adopted as VL170** (Joseph, confirmed in this session, `af24a101`). The 2D lane does the
+    ledger, rollup, χ² and figures. The article's 2D paragraph is on hold until three things are committed:
+    (i) the 2D lane's rebuilt rollup (median, combined χ²);
+    (ii) its descriptive VL169-toy rescoring (local `bba813c5` when last reported; cite only a merged sha);
+    (iii) its answer on whether the about 20% bulk overcoverage is the purity-weighted background fluctuation that
+    the signal-only toys omit.
+    Wording, per the reviewer:
+    - if (iii) is confirmed: "the residual overcoverage is the expected background contribution the toys omit";
+    - otherwise: "the rebuilt band appears conservative by about 20% against circular toys; it has not been
+      independently re-tested".
+    Either way: "the test failed; the main cause, a replica completeness bug, was found and fixed".
+13. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
    routes.
