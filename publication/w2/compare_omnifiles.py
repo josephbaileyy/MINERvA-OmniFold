@@ -8,8 +8,9 @@ without the W2 environment) and for the identity-scale lateral path (delta = 0).
 ``shifted BASE SHIFT --scale s``: SHIFT is a RecoilResponse universe at reco-recoil scale s. Rows must align
 one to one: same selection, truth, weights and event keys. Where a reco row passes selection:
   sim_eavail and sim_background_eavail are s times BASE (relative 1e-12);
-  the reco energy transfer, recovered without the muon energy from q3^2 + W^2 = (q0 + M)^2 (valid unless
-  the producer clipped Q^2 or W^2 at zero), is s times BASE's (absolute 1e-9 GeV + relative 1e-9);
+  the reco energy transfer, recovered without the muon energy from q3^2 + W^2 = (q0 + M)^2, is s times
+  BASE's (absolute 1e-9 GeV + relative 1e-9). The identity fails where the producer clipped W^2 < 0 to
+  W = 0, so rows with W = 0 in either file are excluded from this check and counted;
   every other branch is identical.
 The data tree must be identical, since the shift is applied to the simulation only.
 
@@ -113,7 +114,9 @@ def cmd_shifted(base_path: str, shift_path: str, s: float) -> dict:
         r_e = np.abs(eb[sel] - s * ea[sel]) / np.maximum(np.abs(s * ea[sel]), 1e-300)
         ok_e = r_e <= 1e-12
         q0a, q0b = recovered_q0(qa[sel], wa[sel]), recovered_q0(qb[sel], wb[sel])
-        valid = (q0a > 1e-6) & np.isfinite(q0a) & np.isfinite(q0b)
+        # The identity holds only where the producer did not clip W^2 < 0 to W = 0; scaling q0 can move a
+        # row across that clip, so a row clipped in EITHER file is excluded (and counted).
+        valid = (q0a > 1e-6) & np.isfinite(q0a) & np.isfinite(q0b) & (wa[sel] > 0) & (wb[sel] > 0)
         dq = np.abs(q0b[valid] - s * q0a[valid])
         ok_q = dq <= 1e-9 + 1e-9 * np.abs(s * q0a[valid])
         stats[t] = {"passing_rows": int(sel.sum()), "eavail_max_rel_dev": float(r_e.max()) if r_e.size else None,
