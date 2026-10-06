@@ -90,20 +90,54 @@ git merge-base --is-ancestor origin/study/2d-coverage-test-20261005 origin/main 
 - Notifications travel between live sessions only. If a peer session ends, its notification commitment ends with
   it, and the fallback becomes the only route.
 
-## 5. Next action
+## 5. State after Joseph's 2026-10-06 approvals (`DECISION-20261006-joseph-publication-approvals.md`)
 
-1. **Joseph:** answer packet §7 (one batch).
-2. **This lane, on notification of D1–D4:**
-   - re-measure the records;
-   - fill packet §5.2 and the claims-table rows I1–I4 from the **recorded** result, not the pending outputs;
-   - apply the D3 disposition to the wording;
-   - re-assess route A against W1 and W2 if those were authorized and run;
-   - finalize the headline.
-3. **If (1) and (6) are approved:**
-   - draft the article in an isolated branch from current main, coordinating with the note owners. The GBDT
-     model-dependence lane (`analysis/gbdt-model-dependence-20261003`) also edits the note;
-   - apply the corrections owed: `paper_body.tex:61` "coverage is untested", the open-data DOI and acknowledgment,
-     and the `app_release.tex:32–35` access sentence;
-   - build and synchronize both repositories per PLAN §8.
-4. **Discovery route:** when this branch is integrated into main, add a row for `docs/publication/` to the
-   `AGENTS.md` evidence routes. That front-door edit was not made here, because it is shared state.
+**Approved:**
+- items 1–4 and 6: PRD article working target, with a PRX assessment due with the finished manuscript;
+- the uncertainty-product prerequisite lifted for this article only;
+- the headline hold;
+- W1;
+- W2a, with W2b automatic inside the 8 node-hour ceiling if review and costing pass;
+- manuscript, figures, release preparation, builds and sync.
+
+**Deferred:** item 5, the collaborator question.
+
+**Done since then** (branch `docs/publication-decision-20261005`, pushed):
+
+| item | commit / path | state |
+|---|---|---|
+| Approvals recorded verbatim | `827627d0` | — |
+| Article draft 1 (PRD; paper sources converted from the Letter) | `ee9b8bee`: `docs/analysis-note/main_paper.tex`, `paper_body.tex`, new `values_inference.tex`, `publication.bib` | `build_all.sh` PASS (note 114 / primer 7 / article 7 pp), also from a cold tree. Six red `\pubhold{}` markers remain: abstract, results interpretation plus W1, lost seeds, W2, conclusions, data availability. |
+| Recovery interpretation framework (D3) | `RECOVERY-INTERPRETATION-20261006.md` (`078d1f9d`) | Fixed before any recovered outcome was seen. Classes R1–R4 and X, each with wording and a proposed disposition. |
+| Release tooling | `publication/release/` (`10f63ade`) | extract (frozen code) plus a standalone replay; 5 equivalence tests pass, and 2 mutations are caught. |
+| Release replay | `docs/publication/release/RECEIPT-20261006-inference-sufficient-frozen.json` (`02c7684b`) | The 7.1 MB npz (`7bd019c6…`, on `/pscratch/sd/j/josephrb/pub-release-20261006/frozen/`) replays `joint-evaluate.json` with **AGREE, 0 differences**, on the cluster and on macOS. |
+| W1 code (not run) | `publication/w1/` (`120ec68d`) | Runs after D1 and D2; the criterion is applied after D3. |
+| W2a | branch `study/w2-recoil-response-20261006`, worktree `../MINERvA-OmniFold-w2-recoil` | Forked implementation lane running. It returns a report (`docs/publication/w2/W2A-REPORT-20261006.md` on its branch). This lane then launches a **fresh independent reviewer**. |
+
+**Coordination agreed with `gbdt worker`** (recorded on main at `4e7c20bb`):
+- that lane owns the Stage-7 s5p text in the note and primer and the four fields;
+- this lane owns `main_paper.tex` and `paper_body.tex`;
+- shared files get new entries only, announced both ways;
+- the paper sync is this lane's; the note sync is coordinated;
+- before editing note sources outside the paper, tell the note-organization lane (`minerva-omnifold-bf`).
+
+Stage 7 starts after D2 and D3, on `docs/s5p-stage7-20261006`.
+
+## 6. Next action
+
+1. **On the W2a report:** check the cost gate, then launch one fresh read-only reviewer of the W2a code and report.
+   W2b proceeds only if the review clears **and** measured W2a + W2b ≤ 8 CPU node-hours, and only after D2.
+2. **On D2** (resolution report plus the recompute §6 cross-check):
+   - extract the recovery group(s) with `extract_inference_sufficient.py` (readings (a) and (b));
+   - classify with `RECOVERY-INTERPRETATION-20261006.md`;
+   - bring Joseph the class, the table, the wording and a one-sentence D3 proposal.
+3. **After D3:** run W1, then apply its criterion. Fill the article's holds from D2–D4 and W1/W2.
+4. **Then:**
+   - a release candidate with an independent empty-checkout replay;
+   - the PRX assessment;
+   - the standalone-repo paper sync, coordinated with `gbdt worker`;
+   - the submission package for Joseph.
+
+   Deposit, tag and submission stay unauthorized.
+5. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
+   routes.
