@@ -1,0 +1,6 @@
+start 2026-10-05T23:28:53Z login31 Python 3.11.14 1.26.4 1.16.3
+{"NuWro_21_09:total": "rejected", "GENIE_2_12_10_CV:total": "rejected", "GENIE_2_12_10_CV:shape": "rejected", "MnvTune_v1:total": "rejected", "MnvTune_v1:shape": "rejected", "GiBUU_2019:total": "rejected", "GiBUU_2019:shape": "rejected", "GENIE_2_12_10_MEC:total": "rejected", "GENIE_2_12_10_MEC:shape": "rejected", "NuWro_21_09:shape": "rejected"}
+frozen-s rc=0 23:31:00Z
+{"MnvTune_v1": [true, true, true, true, true, true, true], "GENIE_2_12_10_CV": [true, true, true, true, true, true, true], "GENIE_2_12_10_MEC": [true, true, true, true, true, true, true], "NuWro_21_09": [true, true, true, true, true, true, true, true, true], "GiBUU_2019": [true, true, true, true, true, true, true]}
+stopping rc=0 23:34:04Z
+done

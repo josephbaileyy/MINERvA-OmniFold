@@ -42,15 +42,57 @@
     1260000,
     1261605
    ]
+  },
+  "rec-determinism-pow-P1_a1.0.tsv": {
+   "lane": "pow-P1_a1.0",
+   "n": 1,
+   "seeds": [
+    1451005
+   ]
+  },
+  "rec-determinism-pow-P1g_a1.0.tsv": {
+   "lane": "pow-P1g_a1.0",
+   "n": 1,
+   "seeds": [
+    1481005
+   ]
+  },
+  "rec-determinism-pow-P2_a1.0.tsv": {
+   "lane": "pow-P2_a1.0",
+   "n": 1,
+   "seeds": [
+    1461005
+   ]
+  },
+  "rec-determinism-pow-P2g_a1.0.tsv": {
+   "lane": "pow-P2g_a1.0",
+   "n": 1,
+   "seeds": [
+    1491005
+   ]
+  },
+  "rec-determinism-pow-P3_a1.0.tsv": {
+   "lane": "pow-P3_a1.0",
+   "n": 1,
+   "seeds": [
+    1471005
+   ]
+  },
+  "rec-determinism-pow-P3g_a1.0.tsv": {
+   "lane": "pow-P3g_a1.0",
+   "n": 1,
+   "seeds": [
+    1501029
+   ]
   }
  },
- "n_seeds": 10,
+ "n_seeds": 16,
  "submission_parts": [
   {
    "table": "rec-determinism-part1.tsv",
-   "ntasks": 10,
+   "ntasks": 16,
    "first": "cal-GENIE_2_12_10_CV-b0_0-s1220000-rec",
-   "last": "cal-NuWro_21_09-b8_0-s1261605-rec"
+   "last": "pow-P3g_a1.0_4-s1501029-rec"
   }
  ]
 }
