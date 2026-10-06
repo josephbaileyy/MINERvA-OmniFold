@@ -1,0 +1,39 @@
+Execute HANDOFF-20261005-pet-gbdt-existing-outputs.md as a bounded existing-output
+analysis and cost assessment. Use Opus 5.5 as the owner. My objective is to decide
+whether and how to complete the unfolding with PET, not to replace this task with
+scalar publication work.
+
+Compare both H2S1T24 K5 and L128S1T24 K4 with the strongest defensible GBDT
+comparison available from saved products. Reuse PET outputs. Do not assume either
+finalist is best, equate old PET with GBDT, or combine incompatible studies into
+a ranking. Preserve NO_ELIGIBLE_DESIGN and the original failures and sample roles.
+
+I authorize read-only recovery of completed artifacts, modest local reductions,
+analysis code/tests, figures, the report, commits/pushes on an isolated branch
+and a draft PR. If exact GBDT outputs are missing, I authorize only a bounded
+CPU-only fill-in on existing matched samples: at most 8 CPU-core-hours of new
+GBDT fitting including retries, at most four fitting threads, no tuning search,
+and no cluster allocations. Stop before the ceiling; finish the existing-output
+report and cost any larger missing comparison instead. No new PET training,
+GPU runs, coverage ensembles or real-data unfolding is authorized by this goal.
+
+Price the next routes before recommending them. Distinguish a nominal real-data
+run, full matched uncertainties, validation and release. If an expensive
+comparison would cost about as much as the full useful PET unfolding, assess
+whether proceeding directly with staged production and embedded validation is
+more efficient. Do not automatically recommend thousand-hour comparisons.
+Do not omit necessary validation from the direct-production cost either.
+
+Respect current integration and campaign ownership. Do not change other jobs,
+budgets, checkouts, frozen rules, reserve-bank controls or publication scope.
+No PR merges, collaborator messages, scientific adoption or note/primer/paper
+edits are included. Preserve this goal and its handoff with the delivered work.
+
+I authorize one fresh read-only independent reviewer for consequential new
+results and the cost recommendation, with at most two focused review/repair
+cycles. Do not restart the closed PET selection review.
+
+Finish with the reproducible comparison, evidence limitations, measured and
+estimated costs, and one concrete next-step recommendation and resource request.
+An inconclusive comparison or a no-go is a valid terminal result. Do not launch
+the recommended follow-on campaign automatically.

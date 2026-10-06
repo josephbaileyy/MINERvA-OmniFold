@@ -1,0 +1,241 @@
+{
+ "control": "matched-repro",
+ "run": "dev3N-H2S1T24-F0",
+ "selection": "F0",
+ "case": "dev",
+ "seed": 1,
+ "input_checks": {
+  "prior_reco_matrix": true,
+  "prior_rows": true,
+  "prior_w_truth": true,
+  "prior_w_reco": true,
+  "prior_pass_reco": true,
+  "prior_pass_truth": true,
+  "prior_region": true,
+  "pseudo_reco_matrix": true,
+  "pseudo_rows": true,
+  "pseudo_w_truth": true,
+  "pseudo_w_reco": true,
+  "pseudo_pass_reco": true,
+  "pseudo_pass_truth": true,
+  "pseudo_region": true,
+  "truth_matrix_truth4": true,
+  "truth_matrix_truth4_species": true,
+  "distortion": true,
+  "oracle": true,
+  "w_data": true
+ },
+ "inputs_identical": true,
+ "R_committed": {
+  "1": 0.6551567896734725,
+  "2": 0.7480836133130102,
+  "3": 0.7635899963065355,
+  "4": 0.7679248378611705,
+  "5": 0.7707340010006594,
+  "6": 0.7855625296321088,
+  "7": 0.7860638171878875,
+  "8": 0.7813778188987373,
+  "9": 0.7802034510492373,
+  "10": 0.7809509074130354
+ },
+ "R_refit": {
+  "1": 0.6551567896734725,
+  "2": 0.7480836133130102,
+  "3": 0.7635899963065355,
+  "4": 0.7679248378611705,
+  "5": 0.7707340010006594,
+  "6": 0.7855625296321088,
+  "7": 0.7860638171878875,
+  "8": 0.7813778188987373,
+  "9": 0.7802034510492373,
+  "10": 0.7809509074130354
+ },
+ "abs_diff": {
+  "1": 0.0,
+  "2": 0.0,
+  "3": 0.0,
+  "4": 0.0,
+  "5": 0.0,
+  "6": 0.0,
+  "7": 0.0,
+  "8": 0.0,
+  "9": 0.0,
+  "10": 0.0
+ },
+ "max_abs_diff": 0.0,
+ "r_tolerance": 1e-06,
+ "pass": true,
+ "fit": {
+  "1": {
+   "step1": {
+    "n_iter": 31,
+    "val_logloss": 0.6833215562514444,
+    "seconds": 0.8826193329878151,
+    "saturated": 0
+   },
+   "step2": {
+    "n_iter": 30,
+    "val_logloss": 0.6845352529563373,
+    "seconds": 1.1759544580127113,
+    "saturated": 0
+   },
+   "seconds_iteration": 9.875617459008936
+  },
+  "2": {
+   "step1": {
+    "n_iter": 17,
+    "val_logloss": 0.6931684276464106,
+    "seconds": 0.45419587497599423,
+    "saturated": 0
+   },
+   "step2": {
+    "n_iter": 30,
+    "val_logloss": 0.6831242669736857,
+    "seconds": 1.2401117919944227,
+    "saturated": 0
+   },
+   "seconds_iteration": 2.0625111249973997
+  },
+  "3": {
+   "step1": {
+    "n_iter": 12,
+    "val_logloss": 0.6931782045726902,
+    "seconds": 0.3803144170087762,
+    "saturated": 0
+   },
+   "step2": {
+    "n_iter": 29,
+    "val_logloss": 0.6829918662205782,
+    "seconds": 1.154976915975567,
+    "saturated": 0
+   },
+   "seconds_iteration": 1.9154499999713153
+  },
+  "4": {
+   "step1": {
+    "n_iter": 13,
+    "val_logloss": 0.6932907685730888,
+    "seconds": 0.39058900001691654,
+    "saturated": 0
+   },
+   "step2": {
+    "n_iter": 28,
+    "val_logloss": 0.6829016708087163,
+    "seconds": 1.133126083004754,
+    "saturated": 0
+   },
+   "seconds_iteration": 1.904158000019379
+  },
+  "5": {
+   "step1": {
+    "n_iter": 12,
+    "val_logloss": 0.693258179209883,
+    "seconds": 0.4121813329984434,
+    "saturated": 0
+   },
+   "step2": {
+    "n_iter": 28,
+    "val_logloss": 0.6829827021883765,
+    "seconds": 1.079011875030119,
+    "saturated": 0
+   },
+   "seconds_iteration": 1.8773467079736292
+  },
+  "6": {
+   "step1": {
+    "n_iter": 13,
+    "val_logloss": 0.6933002890533984,
+    "seconds": 0.3626492499606684,
+    "saturated": 0
+   },
+   "step2": {
+    "n_iter": 29,
+    "val_logloss": 0.6830736671417439,
+    "seconds": 1.134415083040949,
+    "saturated": 0
+   },
+   "seconds_iteration": 1.867054125003051
+  },
+  "7": {
+   "step1": {
+    "n_iter": 12,
+    "val_logloss": 0.693206050341864,
+    "seconds": 0.37472129199886695,
+    "saturated": 0
+   },
+   "step2": {
+    "n_iter": 28,
+    "val_logloss": 0.6830433172905156,
+    "seconds": 1.0935590410372242,
+    "saturated": 0
+   },
+   "seconds_iteration": 1.8479544580332004
+  },
+  "8": {
+   "step1": {
+    "n_iter": 10,
+    "val_logloss": 0.6932708330600899,
+    "seconds": 0.3547994580003433,
+    "saturated": 0
+   },
+   "step2": {
+    "n_iter": 29,
+    "val_logloss": 0.6832914628002259,
+    "seconds": 1.1055395000148565,
+    "saturated": 0
+   },
+   "seconds_iteration": 1.844435542006977
+  },
+  "9": {
+   "step1": {
+    "n_iter": 12,
+    "val_logloss": 0.6932980334184995,
+    "seconds": 0.38635916699422523,
+    "saturated": 0
+   },
+   "step2": {
+    "n_iter": 28,
+    "val_logloss": 0.6831085059384572,
+    "seconds": 1.1317288750433363,
+    "saturated": 0
+   },
+   "seconds_iteration": 1.9021264999755658
+  },
+  "10": {
+   "step1": {
+    "n_iter": 13,
+    "val_logloss": 0.6933149273796744,
+    "seconds": 0.38620041694957763,
+    "saturated": 0
+   },
+   "step2": {
+    "n_iter": 28,
+    "val_logloss": 0.6829694479180293,
+    "seconds": 1.0777869580197148,
+    "saturated": 0
+   },
+   "seconds_iteration": 1.8398032080149278
+  }
+ },
+ "versions": {
+  "python": "3.12.2",
+  "numpy": "1.26.4",
+  "sklearn": "1.8.0"
+ },
+ "wall_seconds": 32.23443262500223,
+ "cpu_seconds": 40.974016999999996,
+ "threads": 2,
+ "pet_source": "bc356b0c0c5b56cb4877bdf2312d2d5dc6d1936d",
+ "pet_files_loaded": {
+  "nd-unfolding/pet/final_design/scalar/selection_data.py": "b681267009c82c11fb481cfcdd9f027ddfbf5914",
+  "nd-unfolding/pet/final_design/scalar/scalar_estimators.py": "650b0f13cfe8fea3f2ec8d58ff53f7742389fab1",
+  "nd-unfolding/pet/final_design/scalar/scalar_scoring.py": "0bdbb04b6e56beba63ad1bd6e12514027d154e82",
+  "nd-unfolding/pet/final_design/scalar/matched_design.py": "9099c2523a7c8b51d116b7d3916c94d9a259654b",
+  "nd-unfolding/pet/improvement_campaign/phase_b/scalar/scalar_omnifold.py": "34735c20f1b3e43bedf8beb3dfd0c2cccd23aec1",
+  "nd-unfolding/pet/improvement_campaign/phase_b/scalar/binned_unfolding.py": "4b253fc4063343ba21a12f3ada99f0abce9afca0",
+  "nd-unfolding/pet/improvement_campaign/phase_b/scalar/features.py": "23209eca2966aa96944fa39bbf766f58963af8b6",
+  "nd-unfolding/pet/improvement_campaign/phase_b/scalar/run_ibu.py": "5a998dec196b4cc4582cb08318ecb400e951cf8f",
+  "nd-unfolding/pet/improvement_campaign/phase_b/scalar/scalar_common.py": "e57d1d2c172cf5548500b05a6ac8e79c578f752a",
+  "nd-unfolding/pet/improvement_campaign/phase_e/common.py": "b427f2ac6a6601b065da7a60ab6d1e957342981d"
+ }
+}
