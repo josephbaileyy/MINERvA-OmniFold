@@ -46,3 +46,13 @@
 4. **R10(b):** a scope decision for the descriptive localization (batch item A).
 5. One fresh independent review of the frozen article, claim table and release (PLAN §7).
 6. The standalone note-repo sync of the article; coauthor review; then Joseph's separately authorized acts.
+
+## 3. Updates after this assessment (2026-10-06)
+
+- **2D paragraph:** done (`d31cdbb0`), from VL170/VL172. The article now has only the deposit-identifier hold.
+- **Figs. 1–3 release:** covered on branch `release/article-figures-20261006` (`e2bcca33`). Every quoted number
+  reproduces except `\uqPaper`, which is printed 6.86 and computed 6.8525. The 2D lane agrees it should be 6.85
+  (CSV-rounding artefact). Its fix, `8a50498a`, is unpushed and awaits Joseph's ruling in its session. The
+  article uses the macro and will print 6.85 after the merge.
+- **Not yet covered by the figures release:** the VL161 E_ν ≥ 20 GeV shares (they need per-E_ν predictions) and
+  R8 (Ascencio). Both are listed for RC2 or as release gaps.

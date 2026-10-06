@@ -79,7 +79,7 @@ Training-seed variation (ML) & Variance from random choices inside the GBDT opti
 Poisson bootstrap (stat) & Data- and MC-statistical variance, propagated coherently through the full pipeline &
   Per-event Poisson(1) factors from independent data (seeded from $k$) and MC (seeded from $k + 10^{7}$) sub-RNGs; one MC factor on both reco and truth copies of each event; $5$-iteration re-unfold with the GBDT seed pinned &
   $N=300$ (Stage-1: $N=50$) &
-  median $0.549\%$; Table~\ref{tab:combine} \\
+  median $0.674\%$; Table~\ref{tab:combine} \\
 Universes (syst) & Flux, detector and interaction-model uncertainty, by re-unfolding under reweighted MC &
   The event loop dumps truth and reco weights per (band $B$, universe $u$); each $(B,u)$ is re-unfolded with a fixed seed against a matched CV job (same omnifile, backend, seed, iteration count and flux, so ML noise cancels); MAT per-band covariance, Eq.~\eqref{eq:matcov}, plus a rank-1 normalization &
   $187$ universes, $44$ bands, $+$ norm &
@@ -91,7 +91,7 @@ MAT reference & How MINERvA builds its published covariance &
 Block sum & Total uncertainty covariance &
   Element-wise sum of the three independent blocks, Eq.~\eqref{eq:blocksum} &
   --- &
-  median $6.865\%$; Table~\ref{tab:combine} \\
+  median $6.871\%$; Table~\ref{tab:combine} \\
 \bottomrule
 \end{tabular}
 \caption{Variance-source procedures for the 2D measurement ($205$ reported bins).
@@ -115,7 +115,7 @@ For $n=10$ \texttt{lgbm} trials, the total-$\sigma$ relative spread is
 $\boxed{0.0055\%}$, the per-bin median relative spread $\boxed{0.166\%}$,
 and $\sqrt{\Tr\mathbf{C}^{\ML}} = 5.061\times10^{-41}$.
 ML noise is $\approx 2.4\%$ of the paper's per-bin total-uncertainty median
-of $6.86\%$, far below data-stat and systematics. Increasing $n=4$ to
+of \SI{\uqPaper}{\percent}, far below data-stat and systematics. Increasing $n=4$ to
 $n=10$ changed these values within rounding, so the envelope is converged.
 
 \subsubsection{Poisson bootstrap}
@@ -149,14 +149,16 @@ training-seed variation
 
 For pure-Poisson replicas (205 bins, MEFHC \texttt{lgbm}), increasing the first
 $50$ to all $300$ changes the total-$\sigma$ relative std
-$0.067\%\to\boxed{0.061\%}$, the per-bin median relative spread
-$0.541\%\to\boxed{0.549\%}$, and per-bin $p_{84}$ $1.194\%\to1.202\%$.
+$0.062\%\to\boxed{0.058\%}$, the per-bin median relative spread
+$0.644\%\to\boxed{0.674\%}$, and per-bin $p_{84}$ $1.543\%\to1.664\%$.
 The median is stable; $N=300$ is used for full rank.
-% Source: VALIDATION_LEDGER VL162, docs/orchestration/state/note-boot-20261003/. Printed here before
-% 2026-10-03, from the superseded set: total sigma 0.068 -> 0.061%, median 0.532 -> 0.564%, p84 1.235 -> 1.215%.
-The median is $\approx 3.3\times$ the training-seed value ($0.166\%$), as
+% Source: VALIDATION_LEDGER VL170/VL172, docs/orchestration/state/ki84-adopt-20261006/boot_spreads.json
+% (boot_spreads.py of state/note-boot-20261003/ on the rebuilt replicas). Superseded with VL162 (replicas that
+% divided by a bootstrapped completeness, KNOWN_ISSUES 84): 0.067 -> 0.061%, 0.541 -> 0.549%, p84 1.194 -> 1.202%.
+The median is $\approx 4.1\times$ the training-seed value ($0.166\%$), as
 expected for $\mathcal{O}(10^{6})$ data events. Playlist $1A$
-($\approx N/12$ of MEFHC) gives $1.46\%$, below the
+($\approx N/12$ of MEFHC) gave $1.46\%$ with the earlier replicas, which divided by a bootstrapped
+completeness (App.~\ref{app:history}) and were not rebuilt for this check; it was then below the
 $\sqrt{12}\times 0.55\% \approx 1.9\%$ of exact $\sqrt{N}$ scaling.
 
 \subsubsection{Multinomial $\to$ independent Poisson bootstrap limit}
@@ -274,7 +276,7 @@ relative $\sigma_{i}/X^{\CV}_{i}$ over the $205$ reported bins.}
 % Table tab:band-medians rollup: ...\_full\_matcorr\_fluxfix/uq\_universe\_summary.txt
 Grouped by category the medians are: Muon reconstruction $3.366\%$,
 Models $2.034\%$, Flux $4.993\%$, Hadronic response $0.758\%$,
-Statistical $0.549\%$, Normalization $0.081\%$. Muon energy scale
+Statistical $0.674\%$, Normalization $0.081\%$. Muon energy scale
 (MINOS$+$MINERvA) and the MINOS-efficiency band dominate; these are
 exactly the bands the Ruterbories paper flags as flux-correlated
 (\S\ref{sec:rank}).
@@ -412,11 +414,11 @@ in the headline but numerically negligible.
 Component & $\sqrt{\Tr\mathbf{C}}$ & Per-bin median rel.\ $\sigma$ \\
 \midrule
 ML noise (lgbm training-seed variation, $n=10$) & $5.061\times10^{-41}$ & $0.166\%$ \\
-Statistical (Poisson bootstrap, $N=300$) & $1.817\times10^{-40}$ & $0.549\%$ \\
+Statistical (Poisson bootstrap, $N=300$) & $1.931\times10^{-40}$ & $0.674\%$ \\
 Systematic (fluxfix sweep $+$ norm) & $3.214\times10^{-39}$ & $6.830\%$ \\
 \midrule
-\textbf{Combined (block sum)} & $3.220\times10^{-39}$ & $\boxed{6.865\%}$ \\
-Paper \texttt{TotalCov} (reference) & $2.676\times10^{-39}$ & $6.86\%$ \\
+\textbf{Combined (block sum)} & $3.220\times10^{-39}$ & $\boxed{6.871\%}$ \\
+Paper \texttt{TotalCov} (reference) & $2.676\times10^{-39}$ & $\uqPaper\%$ \\
 \bottomrule
 \end{tabular}
 \caption{Component traces and per-bin median relative spreads of the 2D
@@ -425,13 +427,14 @@ Table~\ref{tab:uq}.}
 \label{tab:combine}
 \end{table}
 The combined $\sqrt{\Tr\mathbf{C}}$ is the quadrature sum of the independent
-component traces. The per-bin median $6.865\%$ cannot be reconstructed by
+component traces. The per-bin median $6.871\%$ cannot be reconstructed by
 quadrature of component medians. Both combined entries are read values.
-The flux-fixed rollup also reports $6.845\%$ for universe $+$ bootstrap
+The flux-fixed rollup also reports $6.869\%$ for universe $+$ bootstrap
 before ML, again a read value rather than a combination of the printed medians.
-% Read from: the block-sum table in \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md},
-% \S``Stage-2 UQ envelope''; the 6.845% from [\texttt{...\_matcorr\_fluxfix/uq\_universe\_summary.txt}, line
-% ``\texttt{Combined (universe + bootstrap) median rel}''].
+% Recomputed from the covariance files, with the sha256 of each input, by
+% docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py (VL172); the 6.869% is also
+% [...\_matcorr\_fluxfix\_vl170/rollup.log, ``COMBINED universe + bootstrap'']. The same script
+% reproduces the superseded VL162 values 6.8646% (printed 6.865%) and 6.845%.
 
 Tables~\ref{tab:band-medians} and~\ref{tab:combine} quote the flux-fixed
 product (\S\ref{sec:systematics}). Their pre-flux-fix predecessors and
@@ -503,7 +506,7 @@ is specific to 2D and does not transfer to N-D covariances
 Metric (205 bins) & Paper & OmniFold (combined) \\
 \midrule
 Width-weighted total $\sigma$, $\sqrt{\mathbf{w}\T\mathbf{C}\,\mathbf{w}}/(\mathbf{w}\T\mathbf{x})$ & $4.61\%$ & $2.26\%$ \\
-Per-bin median relative $\sigma$ & $6.86\%$ & $6.865\%$ \\
+Per-bin median relative $\sigma$ & $\uqPaper\%$ & $6.871\%$ \\
 $\chi^{2}/\mathrm{ndf}$ & $3.661$ (paper-only) & $\boxed{\chiCombined}$ (paper$+$ours) \\
 Log-normal $\chi^{2}/\mathrm{ndf}$ & --- & $\chiCombinedLog$ \\
 \bottomrule
@@ -590,7 +593,7 @@ summarized by mean, RMS, a $14\times16$ heatmap and histogram.
 % (\texttt{compare\_to\_paper\_fullcov.py})
 The combined covariance (paper TotalCov $+$ flux-fixed matcorr universe $+$
 bootstrap-300 $+$ ML) gives mean $\boxed{0.051}$, centered on zero with no
-global offset, and RMS $\boxed{0.409}$ (flux-fixed pair,
+global offset, and RMS $\boxed{0.405}$ (flux-fixed pair,
 App.~\ref{app:history}).
 % Pair recorded in \texttt{VALIDATION\_LEDGER.md}.
 RMS $< 1$ is descriptive and does not establish conservatism: the summed
@@ -660,20 +663,23 @@ independent systematic directions. The statistical block
 ($\texttt{StatOnlyCov}$, rank $205$, near-diagonal) alone makes the paper's
 $V$ full-rank ($\mathrm{rank}=204$, $\mathrm{cond}=1.5\times10^{12}$).
 Our $300$-replica bootstrap similarly gives
-$\mathrm{rank}(\mathbf{C}^{\syst}+\mathbf{C}^{\boot})=201$,
-$\mathrm{cond}=3.8\times10^{14}$.
+$\mathrm{rank}(\mathbf{C}^{\syst}+\mathbf{C}^{\boot})=204$ (eigenvalues above
+$10^{-12}\lambda_{\max}$), $\mathrm{cond}=1.0\times10^{12}$.
+% VL172, controls/split_*.log and the rank check in state/ki84-adopt-20261006/. The VL162 band gives 199 and
+% 6.1e14 by the same convention; the earlier printed 201 / 3.8e14 does not reproduce from the current files.
 
 \paragraph{The real obstruction is statistical, not rank.}
 Even at rank $201$ a defensible single ours-only $\chi^{2}$ is out of
 reach, for a \emph{statistical-precision} reason. The bootstrap block is
-smaller in \emph{global scale} by a factor $2.55$ in
-square-root trace ($\sqrt{\Tr\mathbf{C}^{\boot}}=1.817\times10^{-40}$ vs
+smaller in \emph{global scale} by a factor $2.40$ in
+square-root trace ($\sqrt{\Tr\mathbf{C}^{\boot}}=1.931\times10^{-40}$ vs
 $\sqrt{\Tr\,\texttt{StatOnlyCov}}=4.639\times10^{-40}$), equivalently about
-$6.5$ in trace. The paper's full-rank, near-diagonal \texttt{StatOnlyCov} supplies a
+$5.8$ in trace. The paper's full-rank, near-diagonal \texttt{StatOnlyCov} supplies a
 variance floor in every reported eigendirection; because the covariance structures
-differ, this should \emph{not} be read as a uniform $6.5$-fold per-mode effect. The
-naive pseudo-inverse gives $\chi^{2}/\mathrm{ndf}=252$ for
-$\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$, dominated by poorly-determined
+differ, this should \emph{not} be read as a uniform $5.8$-fold per-mode effect. The
+naive pseudo-inverse gave $\chi^{2}/\mathrm{ndf}=252$ for
+$\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$ with the earlier bootstrap (App.~\ref{app:history}; not
+re-derived for the rebuilt one, whose direct inverse gives $24.4$), dominated by poorly-determined
 directions, against the paper's $3.66$ with its larger stat floor, so the lever
 toward an ours-only $\chi^{2}$ is the \emph{statistical} block, not more
 systematic bands. The gap is \emph{not} a missing MC-statistical term: our
@@ -693,20 +699,23 @@ data weights only (\texttt{boot\_data}) or the MC weights only (\texttt{boot\_mc
 with independent RNGs, so in expectation
 $\mathbf{C}^{\boot}=\mathbf{C}^{\boot}_{\mathrm{data}}+\mathbf{C}^{\boot}_{\mathrm{mc}}$.
 \begin{enumerate}[label=(\roman*),nosep]
-\item \emph{Closure holds:}
+\item \emph{Closure (no longer testable):}
 $\sqrt{\Tr(\mathbf{C}_{\mathrm{data}}+\mathbf{C}_{\mathrm{mc}})}/
-\sqrt{\Tr\mathbf{C}^{\boot}}=1.07$, with the variance split $77\%$ data /
-$23\%$ MC.
+\sqrt{\Tr\mathbf{C}^{\boot}}$ was $1.07$ against the earlier bootstrap, with the variance
+split $77\%$ data / $23\%$ MC. The MC-only stream was run before the completeness fix
+(App.~\ref{app:history}) and divides by a bootstrapped completeness, so it does not close against
+the rebuilt $\mathbf{C}^{\boot}$ ($0.95$); the split is a diagnostic, and only its data stream is current.
 \item The \emph{data stream alone} gives
 $\sqrt{\Tr\mathbf{C}_{\mathrm{data}}}/\sqrt{\Tr\,\texttt{StatOnly}}=0.356$
-($\mathbf{C}^{\boot}/\texttt{StatOnly}=0.392=1/2.55$): the $2.5\times$ deficit is
+($\mathbf{C}^{\boot}/\texttt{StatOnly}=0.416=1/2.40$): the $2.4\times$ deficit is
 present in the data-only stat error, so it is \emph{not} an MC-statistics
 omission.
 \item The \emph{structure} also
 differs: our stat block is correlated (mean
 $|{\rm off\text{-}diag}\,\rho|=0.108$, leading-eigenvector overlap with
 \texttt{StatOnly} $0.46$) whereas the paper's is near-diagonal ($0.009$); scaling
-our block to the paper trace still leaves $\chi^{2}/\mathrm{ndf}=76.7$, so the gap
+our block to the paper trace still left $\chi^{2}/\mathrm{ndf}=76.7$ with the earlier bootstrap
+(not re-derived), so the gap
 is shape as well as magnitude.
 \end{enumerate}
 \textbf{What (ii) does and does not license.} It locates the
@@ -762,8 +771,8 @@ Subtracting that block
 % (option \texttt{-{}-subtract-stat})
 uses $\texttt{TotalCov}-\texttt{StatOnlyCov}$ as baseline before our additions,
 changing $\chi^{2}/\mathrm{ndf}$ $\chiCombined\to \chiCombinedSubStat$.
-It over-corrects: our $\sqrt{\Tr\mathbf{C}^{\boot}}=1.817\times10^{-40}$ is
-$2.55\times$ smaller than the paper's
+It over-corrects: our $\sqrt{\Tr\mathbf{C}^{\boot}}=1.931\times10^{-40}$ is
+$2.40\times$ smaller than the paper's
 $\sqrt{\Tr\,\texttt{StatOnlyCov}}=4.639\times10^{-40}$, leaving no comparable
 replacement. We retain double-counted $\chiCombined$ as the well-defined
 ``what does OmniFold UQ add on top of the published $V$'' distance;
@@ -1133,7 +1142,7 @@ model variations of order $\pm 1\sigma$ GENIE and full PPFX flux universes.
 \label{sec:assemble}
 
 Across $205$ reported bins, combined OmniFold $+$ paper uncertainties give
-$\chi^{2}/\mathrm{ndf} = \chiCombined$ and pull mean/RMS $0.051/0.409$.
+$\chi^{2}/\mathrm{ndf} = \chiCombined$ and pull mean/RMS $0.051/0.405$.
 Shared data and unavailable cross-covariance make this an indicative distance,
 without calibrated goodness-of-fit. Same-ensemble toy pulls are approximately
 Gaussian; the $0.166\%$ ML floor is over an order below systematics.
@@ -1153,9 +1162,9 @@ $\mathbf{C}^{\stat}$ & \S\ref{sec:bootstrap} &
   Poisson bootstrap, $300$ replicas, Eq.~\eqref{eq:bootcov} \\
 $\mathbf{C}^{\ML}$ & \S\ref{sec:seedscan} & lgbm training-seed variation, $n=10$ trials \\
 $\mathbf{C}^{\paper}$ & \S\ref{sec:minerva} & Paper's published \texttt{TotalCovariance} \\
-Pull RMS $= 0.409$ & \S\ref{sec:pull} &
+Pull RMS $= 0.405$ & \S\ref{sec:pull} &
   Per-bin standardized residual on combined $\mathbf{C}$ \\
-Combined median rel.\ $= 6.865\%$ & \S\ref{sec:combine} &
+Combined median rel.\ $= 6.871\%$ & \S\ref{sec:combine} &
   $\sqrt{\diag\mathbf{C}^{\tot}}/\mathbf{X}^{\CV}$ \\
 Fixed-truth $C_2=\covTwoDCTwo$ (nominal $0.954$) & \S\ref{sec:coverage} &
   Statistical band vs.\ fixed truth, $N_{\text{toy}}=\covTwoDNtoy$: FAIL \\

@@ -110,15 +110,16 @@
 \newcommand{\pullFrac}{68.71}        % OLD 2D "coverage" = same-ensemble pull fraction (diagnostic)
 \newcommand{\pullMeanAbs}{0.794}\newcommand{\pullGauss}{0.798}  % <|r|> vs sqrt(2/pi)
 \newcommand{\chiPaper}{3.66}          % chi2/ndf vs paper covariance
-\newcommand{\chiCombined}{1.481}      % chi2/ndf vs combined (paper+ours) cov
-\newcommand{\chiCombinedLog}{1.468}   % log-normal chi2/ndf, combined (paper+ours)
-\newcommand{\chiCombinedSubStat}{11.56} % chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic)
+\newcommand{\chiCombined}{1.472}      % chi2/ndf vs combined (paper+ours) cov; VL172 (2026-10-06, VL170 band; was 1.481 with VL162)
+\newcommand{\chiCombinedLog}{1.455}   % log-normal chi2/ndf, combined (paper+ours); VL172 (was 1.468)
+\newcommand{\chiCombinedSubStat}{6.79} % chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic); VL172 (was 11.56)
 % All three recomputed 2026-07-16 (compare_to_paper_fullcov.py, flux-fix hCov_combined
 % [already incl. bootstrap] + ML). Supersede the pre-flux-fix appendix 1.699/1.688/23.96.
 
 % --- uncertainty budget ---
-\newcommand{\uqMedian}{6.87}          % our standalone combined median per-bin (%)
-\newcommand{\uqPaper}{6.86}           % published total median per-bin (%)
+\newcommand{\uqMedian}{6.87}          % our standalone combined median per-bin (%); 6.8707 with VL170 (VL172), 6.8646 with VL162
+\newcommand{\uqPaper}{6.85}           % published total median per-bin (%): 6.8525 from the full-precision ROOT release;
+% the 3-significant-figure CSV gives 6.859, the earlier printed 6.86. Producer: docs/orchestration/state/uqpaper-median-20261006/
 \newcommand{\fluxBand}{4.99}          % leading flux band (%)
 \newcommand{\rhoFluxMuon}{0.900}      % flux <-> muon-energy-scale correlation
 
