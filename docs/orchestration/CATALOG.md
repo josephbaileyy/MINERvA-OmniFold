@@ -29,6 +29,13 @@ Required reading via `AGENTS.md`; recommendations do not replace the governing a
 
 ## Current work
 
+### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
+
+| Subject | Record |
+|---|---|
+| fixed-truth coverage of the production 2D statistical band: design, verdict rule, positive control, amendments | [`PREREG-20261005-2d-fixed-truth-coverage.md`](PREREG-20261005-2d-fixed-truth-coverage.md) |
+| the verdict, per-bin pattern, attribution, independent recomputation, cost (`VL169`, `KNOWN_ISSUES.md` 84) | [`OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`](OUTCOME-20261005-2d-fixed-truth-coverage-fail.md) |
+
 ### Scalar-5D — the current entry route (compacted 2026-09-24)
 
 This section summarizes nothing. Each row names the record that governs its subject — open it, and

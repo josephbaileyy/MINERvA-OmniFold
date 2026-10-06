@@ -148,7 +148,7 @@ escape hatch, and the full rollup path are documented in
 
 ---
 
-## Validation (all closed)
+## Validation
 
 - **Closure** (1A lgbm 5-iter, thr = median |residual|): truth-reweight
   gauss_pt 0.046 %, tilt_pz 0.013 % (thr 1.5 %); hidden-var dpT
@@ -156,12 +156,16 @@ escape hatch, and the full rollup path are documented in
   alt-model MaCCQE:0 0.068 %, Flux:50 0.376 % (thr 2.0 %). Hidden-var
   axis `dpT = sim_pT − truth_pT` is a resolution variable (not in the
   feature set); alt-model target is `CV truth × (alt/cv in-acceptance)`.
-- **Coverage** (200 closure+bootstrap-seed MEFHC toys): mean 68.71 % vs
-  Gaussian 68.27 %; median 68.50 %; ⟨|res|/σ⟩ 0.794 vs √(2/π)=0.798;
-  signed mean +0.006 ± 0.082 σ. 97.6 % of 205 bins meet the 65 % target.
-  Audit note: the current checkout retains only the 20-toy stage-1
-  `uq/coverage/coverage_summary.txt` and no toy ROOTs, so restore the 200-toy
-  artifacts before independently regenerating this number from disk.
+- **Coverage of the statistical band: FAIL-undercoverage (2026-10-05, `VL169`).**
+  The test was pre-registered with fixed-truth closure toys, and the study stopped by the futility
+  rule at 100 toys, with an independent recomputation. C1 0.679 [0.669, 0.690] is nominal; C2
+  0.912 [0.907, 0.918] lies below its window [0.928, 0.972]; the pull RMS is 1.60. Per-bin
+  calibration is uneven in both directions. The 2σ deficit sits at high p∥ and low pT and in the
+  highest-pT row (post hoc). It is attributed, partially, to the bootstrapped completeness in the
+  VL162 replicas, by the Amendment-1 secondary. Quoted uncertainties are unchanged. Record:
+  `docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`; `KNOWN_ISSUES.md` 84.
+  The older 200 closure+bootstrap-seed toys (mean 68.71 % within ±1σ, measured against their own
+  fluctuating truth) are a Gaussianity diagnostic, not a coverage measurement.
 - **Completeness** c = 1.000000 exact by construction.
 - **Iteration**: 5-iter total σ within 0.026 % of 10-iter (per-bin shape
   RMS 1.54 %); HistGBT/exact-GBT agree on total σ to 0.04 %.
