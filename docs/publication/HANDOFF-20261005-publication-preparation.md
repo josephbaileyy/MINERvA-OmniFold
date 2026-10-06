@@ -178,7 +178,9 @@ Stage 7 starts after D2 and D3, on `docs/s5p-stage7-20261006`.
     residual over-width (bulk per-bin RMS 0.81) is not explained by background purity (median 0.975; predicted RMS
     0.993; correlation −0.09). It lies in the data-statistics stream (MC-dominated bins 0.975, data-dominated 0.71).
     So use the "conservative, not re-tested" wording, plus "the residual excess width lies in the data-statistics
-    component and is not explained by background purity". Still waiting on: the rollup and χ² shas (old 6.87%,
+    component and is not explained by background purity; the MC-statistics part matches by construction". Do NOT
+    attribute it to production over-scatter or to toy under-scatter, because that is untested. Cite the 2D lane's
+    committed state file for this check, which comes with its adoption PR. Still waiting on: the rollup and χ² shas (old 6.87%,
     combined 1.481; the paper-covariance χ²/ndf 3.66 is expected unchanged).
 13. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
    routes.
