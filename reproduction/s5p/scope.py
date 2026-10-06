@@ -8,9 +8,11 @@ CITABLE FOR: the harness's advertised scope and tolerances. NOT CITABLE FOR: any
 adoption; those live in the receipts and ``VALIDATION_LEDGER.md`` (VL156-VL160).
 """
 
-# The commit whose committed receipts this scope was written against (origin/main, 2026-09-28). The harness
-# refuses a checkout whose receipts differ from the pins below instead of silently comparing to new numbers.
-SOURCE_COMMIT = "129917715b2c7bbf29b4fd48e59a2eca6b8440cb"
+# The commit whose committed receipts this scope was written against. Tiers A-C were written against 129917715b2c
+# (origin/main, 2026-09-28); tier D's joint receipts were added against origin/main 2fb6f035 (2026-10-06), which
+# carries those receipts unchanged and the joint outputs committed in 0afd9ef5. The harness refuses a checkout whose
+# receipts differ from the pins below instead of silently comparing to new numbers.
+SOURCE_COMMIT = "2fb6f0353fbc2908cb01bac5f8bf67bacac1f16a"
 FROZEN_ADMISSION_COMMIT = "4f5a613f"
 
 # Absolute path prefixes the receipts RECORD. They are identities, never read directly: every recorded path
@@ -78,12 +80,22 @@ RECEIPTS = {
     "docs/analysis-note/figures/generators_vs_unfolded_band.pdf": "d60063bbeaed1383c33cc6c3bb77fe29903ff110fdcbdf521046c0f6e0bb4bf2",
     "docs/analysis-note/figures/mode_decomp_eavail.pdf": "27a4f879574ab226026469988f761cf3d7d598b06ddedde7371f8ce9a13a9d58",
     "docs/analysis-note/figures/paper_eavailW_generators.pdf": "db10ba4161c76839242241c124bea78f839551e4b4559cb2eb579f8e53ccf9ec",
+    # tier D: the four outputs of the frozen-procedure evaluation (RECORD-20261005-s5p-terminal-evaluation-pending-
+    # verification.md §2; the recorded joint result is RECORD-20261005-s5p-joint-5d-inference-result.md)
+    f"{S5P}/stage7/joint/joint-evaluate.json": "b9604502b1aa263508ba46f0be91846d7a2106f6f2fd0ba5c172b87ee256dd11",
+    f"{S5P}/stage7/joint/robust-labels.json": "206655f906bdffac636676f39ed86267f31eb9600ed9d45a335905fdaf7fde2a",
+    f"{S5P}/stage7/joint/missing-sensitivity.json": "f48e16ef351ea78c59b7e75f5bf653dc5742857457786e3d8fd1a067be8e2293",
+    f"{S5P}/stage7/joint/seed-states.abs-log-paths.json": "bd25f1ec03ac07a205aed533193fa291bef785525529b1e5bf54a45984eaf031",
 }
 
-# Receipts whose recorded (path, sha256) pairs are digest-checked in tier A. The J-partition definitions
-# (stage1_inspect.json, the s5c contract) are pinned above but record other campaigns' products, not inputs here.
-DIGEST_SOURCES = [p for p in RECEIPTS if p.endswith(".json")
-                  and p not in (f"{S5P}/stage1/stage1_inspect.json", "docs/orchestration/state/s5c/contract.json")]
+# Receipts whose recorded (path, sha256) pairs are digest-checked in tier A. Pinned above but NOT digest sources:
+# the J-partition definitions (stage1_inspect.json, the s5c contract), which record other campaigns' products; the
+# seed-states copy, which cites 1462 Slurm task logs that are inputs of nothing here; and the missing-seed
+# sensitivity, whose recorded inputs (the meter ledger, the original seed-states file) are not replayed (tier C).
+# The design/V/evaluate digests those two record are compared by tier D's `joint:receipt-identities` row.
+NOT_DIGEST_SOURCES = (f"{S5P}/stage1/stage1_inspect.json", "docs/orchestration/state/s5c/contract.json",
+                      f"{S5P}/stage7/joint/seed-states.abs-log-paths.json", f"{S5P}/stage7/joint/missing-sensitivity.json")
+DIGEST_SOURCES = [p for p in RECEIPTS if p.endswith(".json") and p not in NOT_DIGEST_SOURCES]
 
 # The SEVEN declared differences. Each is a recorded digest that is KNOWN not to hold for the preserved bytes,
 # declared with BOTH the recorded and the observed sha256 measured on 2026-09-28: it is reported as
@@ -159,6 +171,8 @@ PRODUCER_FILES = {
     "s5p_prefreeze.py": "nd-unfolding/s5p_prefreeze.py",
     "s5p_envelope.py": "nd-unfolding/s5p_envelope.py",
     "s5p_stage2_analyze.py": "nd-unfolding/s5p_stage2_analyze.py",
+    "s5p_robust_labels.py": "nd-unfolding/s5p_robust_labels.py",
+    "s5p_missing_sensitivity.py": "nd-unfolding/s5p_missing_sensitivity.py",
 }
 # Receipts that record a producer's sha256 without its path: (receipt glob, JSON key path, producer name).
 PRODUCER_SHA_FIELDS = [
@@ -170,6 +184,8 @@ PRODUCER_SHA_FIELDS = [
     (f"{S5P}/stage3/prefreeze/*.json", ("code_sha256",), "s5p_prefreeze.py"),
     (f"{S5P}/stage3/envelope-receipt.json", ("code_sha256", "s5p_envelope.py"), "s5p_envelope.py"),
     (f"{S5P}/stage3/envelope-receipt.json", ("code_sha256", "s5p_stage2_analyze.py"), "s5p_stage2_analyze.py"),
+    (f"{S5P}/stage7/joint/robust-labels.json", ("code_sha256",), "s5p_robust_labels.py"),
+    (f"{S5P}/stage7/joint/missing-sensitivity.json", ("code_sha256",), "s5p_missing_sensitivity.py"),
 ]
 
 # Inputs no s5p receipt records a digest for. They are pinned by the harness's own `pin` command
@@ -199,7 +215,22 @@ UNRECORDED_INPUT_GLOBS = {
     "M1 merged-x2 asimovs": ["s5p:runs/s3r/f2/s3v_m1_*_mid.npz"],
     "envelope d3 pseudo ensemble (s5e)": ["s5e:runs/cand/assess/W2/*.npz"],
     "MnvTune 5D prediction": ["s5p:gen5d/mnvtune_v1_xsec5d.npz"],
+    # tier D (pinned 2026-10-06): the frozen design's calibration and power globs and its sequential-status files.
+    # The evaluator counts every finished product a glob names (partials excluded, as here) and refuses a count that
+    # differs from the final B. The report-only recovered products under s5p:recovery/ are NOT inputs of the joint
+    # result and lie outside every glob.
+    "joint calibration ensembles (final B; partials excluded)": [
+        f"s5p:runs/prod/cal/{n}/cal_{n}_s*.npz"
+        for n in ("MnvTune_v1", "GENIE_2_12_10_CV", "GENIE_2_12_10_MEC", "NuWro_21_09", "GiBUU_2019")],
+    "joint power ensembles (partials excluded)": [
+        f"s5p:runs/prod/pow/{s}/pow_{s}_s*.npz" for s in ("P1_a1.0", "P2_a1.0", "P3_a1.0", "P1g_a1.0", "P2g_a1.0", "P3g_a1.0")],
+    "joint sequential-calibration final status": [
+        f"s5p:runs/prod/status/{n}-final.json"
+        for n in ("MnvTune_v1", "GENIE_2_12_10_CV", "GENIE_2_12_10_MEC", "NuWro_21_09", "GiBUU_2019")],
 }
+# The committed pins file a run uses. `pin --extend` made it: it copies the 2026-09-28 file's groups verbatim (with
+# their own measurement time) and measures only the groups that file lacks (the three tier-D groups above).
+PINS_FILE = "reproduction/s5p/pins/unrecorded-inputs-20261006.json"
 
 # Numerical tolerances (relative, |a - b| <= tol * max(|a|, |b|)).
 TOL_SAME_CODE = 1e-12   # same producer, same interpreter/numpy: bitwise expected; 1e-12 admits BLAS/summation order
@@ -275,6 +306,8 @@ FIGURE_RUNS = {
         "log": f"{GC}/mode_decomp_eavail_before-log.txt",
         "figures": {},
     },
+    # No joint-result figure exists yet (2026-10-06): the note's Stage-7 text is not written, so there is no producer
+    # to add here. Tier D reports this as its `joint:figures` PENDING row (JOINT["figures"]).
 }
 
 # Tier C: full scientific regeneration. Declared with its dependency; the harness never runs it. Each entry is
@@ -323,16 +356,52 @@ NOT_REGENERATED = {
         "needs": "pdfcrop (TeX Live), absent on Perlmutter login nodes",
         "why_not_run": "tool absent where the inputs are; the committed file's digest is checked in tier A",
     },
+    "joint-seed-states": {
+        "what": "s5p:stage7/joint/seed-states.json (the committed copy is seed-states.abs-log-paths.json)",
+        "producer": "docs/orchestration/state/s5p/diag/s5p_lost_seed_runtime_diagnostic.py --logs s5p:runs/prod/logs",
+        "needs": "the campaign's Slurm task logs (runs/prod/logs), which no receipt digests",
+        "why_not_run": "a classification of scheduler logs, not a computation from the products; tier D checks that the "
+                       "committed copy transforms back to the original's recorded sha256 (6823e701...)",
+    },
+    "joint-missing-sensitivity": {
+        "what": "s5p:stage7/joint/missing-sensitivity.json (the labelled, report-only missing-seed sensitivity)",
+        "producer": "nd-unfolding/s5p_missing_sensitivity.py",
+        "needs": "the meter ledger s5p:ledger/admissions.jsonl at its recorded sha256 7056145f..., the original "
+                 "seed-states.json and the frozen task tables",
+        "why_not_run": "the meter ledger is append-only and live: measured 2026-10-06 it hashes 52b4da9f... (mtime "
+                       "2026-10-05 19:48 PDT, after the 20:35Z sensitivity run), so the recorded input no longer exists; "
+                       "the committed output is pinned in tier A and its producer's identity is checked",
+    },
 }
 
-# Tier D: the final joint result. Reported PENDING until the terminal products exist and are committed.
+# Tier D: the final joint result (terminal 2026-10-05; recorded in RECORD-20261005-s5p-joint-5d-inference-result.md).
+# Tier D replays the frozen evaluator and the label step from this checkout on the preserved products and compares
+# them with the committed outputs. It does NOT grade the independent recomputation: it records that report by digest
+# and checks only that it is the report the recording cites.
 JOINT = {
     "committed_result": f"{S5P}/stage7/joint/joint-evaluate.json",
+    "robust_labels": f"{S5P}/stage7/joint/robust-labels.json",
+    "missing_sensitivity": f"{S5P}/stage7/joint/missing-sensitivity.json",
+    "seed_states_copy": f"{S5P}/stage7/joint/seed-states.abs-log-paths.json",
+    # the copy is the original with this prefix added to each of its 1462 `"log": "` values (RECORD-20261005 terminal
+    # evaluation §2); removing it must give the original's sha256, which missing-sensitivity.json records
+    "seed_states_log_prefix": "/pscratch/sd/j/josephrb/s5p-20260926/runs/prod/logs/",
     "design": f"{S5P}/prod/design.json",
     "v_receipt": f"{S5P}/stage3/V/V-receipt.json",
-    "terminal_condition": "all five s5p:runs/prod/status/<null>-final.json exist, no Slurm job named s5p-s5p_cal_* "
-                          "or s5p-s5p_pow_* is queued, the campaign has committed stage7/joint/joint-evaluate.json, and "
-                          "an independent recomputation (task 1 of HANDOFF-20260928-s5p-parallel-tasks.md) has "
-                          "reported agreement",
+    "terminal_condition": "met 2026-10-05 (s5p_terminal_run.sh check printed TERMINAL: YES at 20:32Z); the five "
+                          "s5p:runs/prod/status/<null>-final.json and the products they count are lane-pinned in tier A",
     "nulls": ["MnvTune_v1", "GENIE_2_12_10_CV", "GENIE_2_12_10_MEC", "NuWro_21_09", "GiBUU_2019"],
+    # the evaluation's clean deploy (origin/main e9372b75): every project module the replay imports must be its blob
+    "evaluation_deploy_commit": "e9372b757250e9607f52e471d9b0c447b08e65d5",
+    # the modules the admission froze (s5p_terminal_run.sh verify_deploy: byte-identical to FROZEN_ADMISSION_COMMIT)
+    "frozen_modules": ["nd-unfolding/s5p_joint.py", "nd-unfolding/s5p_inference.py", "nd-unfolding/s5p_seqstop.py"],
+    # the evaluation's thread settings (s5p_terminal_run.sh evaluate), applied to the replay
+    "thread_env": {"OMP_NUM_THREADS": "4", "OPENBLAS_NUM_THREADS": "4", "MKL_NUM_THREADS": "4"},
+    # the independent recomputation that permitted recording: the EXTENDED comparer's report (verdict AGREE), on
+    # branch s5p-parallel-recompute-20260928 (tip 466b427b) at state/s5p/recompute/final-ext/compare.json and on
+    # scratch at the config's joint.independent_compare. Recorded by digest; never graded here.
+    "independent_compare_sha256": "97e1666a7e5722b08fb7754653bbf2d273e14e74b966f1c1049fdc84fc3f09ec",
+    "independent_compare_cited_by": "docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md §4",
+    # deliverable joint figures: none yet (the note's Stage-7 text is not written); FIGURE_RUNS has no joint entry
+    "figures": {},
 }
