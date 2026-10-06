@@ -1,0 +1,48 @@
+# Readiness of the PRD article, assessed separately (2026-10-06)
+
+**CITABLE FOR:**
+- this article's readiness state against the paper-wide completion table
+  (`CAMPAIGN-s5c-20260924-paper-wide-table.md`, main `9984a5fd`), row by row for the rows the article retains;
+- what this lane re-measured;
+- what remains, and who owns it.
+
+**NOT CITABLE FOR:** s5p's `publication_readiness`, which stays NOT READY as recorded. Joseph's item 1 says
+"Assess this article's readiness separately".
+
+**Article state:**
+- Branch `docs/publication-decision-20261005` at `90727b17` (or later); `build_all.sh` PASS, article 8 pp.
+- Two `\pubhold` remain: the 2D-uncertainty paragraph (VL170 rebuild) and the deposit identifier.
+
+## 1. Rows the article retains
+
+| row | article content | paper-wide status (09-25, reconciled 10-06) | re-measured for the article | remaining for the article |
+|---|---|---|---|---|
+| R1 2D reproduction | Validation §, Fig. 1 | OPEN: operands untracked on purgeable scratch; no package object | unchanged | **package 2D operands with digests** (release) |
+| R2 2D uncertainty | 6.87% median, coverage text | OPEN | **superseded:** VL170 adopted (Joseph, `af24a101`); the rollup is pending from the 2D lane | the 2D lane's rollup → update the paragraph |
+| R3 Fig. 1 | Fig. 1 | OPEN: no figure digest or producing run | unchanged | figure digests and producing run (release) |
+| R4/R5 3D, low-E_avail, 2p2h | Central-values § | OPEN: E_avail-definition OIs (`OI-30`/`OI-31`); prediction digests | R21-7 (Tune v1 in the low-E_avail set) is consistent: VL159 is the 3D comparison and includes Tune v1 | prediction digests (release); the `OI-30`/`OI-31` dispositions are owner items |
+| R8 Ascencio "within 10%" | Central-values § | OPEN: CV level; the Ascencio file digest is not in the ledger | the article quotes only "within 10%" and no χ² | Ascencio digest in the release |
+| R9 5D central value | Validation § | OPEN: per-object provenance | unchanged | release provenance |
+| R10 localization map | Fig. 2 (descriptive) | OPEN: (a) comparator label; (b) response-mismatch closure not run; (c) R15 | **(a) fixed** (the caption names Tune v1). **(b) still not run** (`app_response_mismatch.tex:47-48`). The article states that the localization is descriptive and sits where the regularization bias is largest. | **(b) needs either the diagnostic or a recorded scope decision that the descriptive claim stands without it: a decision for Joseph (batch item A).** Comparator array in the release. |
+| R11 Fig. 3 generator band | Fig. 3 | OPEN: prediction digests; GENIE-CV total mismatch | **(a) resolved:** the repaired GENIE-CV total is 2.76e-38 in both 3D and 5D (VL157; `sec_3d.tex:260-262`). The s5p reproduction harness regenerates the generator figures (tier B). | prediction files with version, config, flux and sha256 in the release |
+| R12–R14 adopted covariance, seed statement | Uncertainty-status § | OPEN | R14(a) qualifier **present** ("products distinct from the adopted bytes") | none for the article text |
+| R15 hadronic response | Detector-response condition | BLOCKED-EXTERNAL (question unsent) | Joseph **deferred** sending it (item 5). Under the PM-1 ruling, silence does not block. The article states the condition and the W2 sensitivity. | none |
+| R16 joint inference | §VI, Table I, Fig. 4 | **closure met** (s5p delivery) | the article quotes the Stage-7 wording | none |
+| R18 PET | one sentence | — | checked by both PET lanes | none |
+| R20 release | Data availability | OPEN | **RC1 replays the joint tests, the recovery and W1 from an empty directory** (receipt `b2a54aa5`) | (i) extend the release to the article's other retained figures and numbers (Figs. 1–3; R1, R8–R11 operands); (ii) archive the ~2.3 GB of `/pscratch` products before purge; (iii) deposit and tag (separately authorized) |
+| R21 consistency, builds, sync | all | OPEN: nine defects | of the nine: **1 fixed** (comparator); **2 fixed** in the article (versions stated); **6 fixed** (qualifier); **7 consistent**; **8 resolved** (repair); **3, 4, 5, 9** are note-side (`app_release`, `sec_eavailw`), owned by the note owners and not in the article | the article's own sync to the standalone repo (after the final review); note-side items go to the note owners |
+
+## 2. Verdict
+
+**NOT YET READY to request submission.** The scientific content is complete except the 2D-uncertainty update.
+
+**Remaining before the submission package:**
+1. The 2D lane's VL170 rollup, then the 2D paragraph (in progress).
+2. **Release coverage of Figs. 1–3** and their numbers: operands, prediction files and comparator, each with a
+   digest, plus a regeneration test. This is packaging under item 6. No compute allocation is needed, and the s5p
+   harness already covers the generator figures.
+3. **Archive the `/pscratch` products** that the deeper reproduction level needs (the s5p delivery §6 lists
+   ~2.3 GB) before purge. This is a storage decision with an owner (see batch item B).
+4. **R10(b):** a scope decision for the descriptive localization (batch item A).
+5. One fresh independent review of the frozen article, claim table and release (PLAN §7).
+6. The standalone note-repo sync of the article; coauthor review; then Joseph's separately authorized acts.
