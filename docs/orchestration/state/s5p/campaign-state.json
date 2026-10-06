@@ -581,6 +581,10 @@
   {
    "utc": "2026-10-06T02:49Z",
    "what": "RECOVERY PHASE B: parts 1 (59399952) and 2 (59399956) left the scheduler by 2026-10-06T02:48Z with 92 + 92 tasks COMPLETED (no time-limit kill). Part 3 submitted by the watcher at 02:48:57Z: JOB 59404940, 93 tasks, --throttle 8, 'admitted: reserve 23.2500 cpu node-h; stage after 27.976' (so determinism + parts 1-2 measured about 4.73 node-h). Next: when part 3 leaves, 'missing' lists any recovery seed without a finished product (one retry at 4 h if any)."
+  },
+  {
+   "utc": "2026-10-06T04:08Z",
+   "what": "DELIVERABLE OWNERSHIP SPLIT agreed with the publication lane ('pub'), on the basis of Joseph's 2026-10-06 approvals as recorded verbatim in its commit 827627d0 (docs/publication/DECISION-20261006-joseph-publication-approvals.md; local to its worktree at reading, not yet on a remote ref; items 2 and 6: manuscript drafting/builds/source sync on coordinated branches; coordinate shared-source changes with their owners). The campaign owns: the s5p Stage-7 text in the note (sec_eavailw.tex section 8 / sec:val-fiveaxis, sec_summary.tex:87 TODO, app_provenance/app_history rows), the primer, and the four final fields. pub owns docs/analysis-note/main_paper.tex and paper_body.tex (converted to a PRD-class article on its branch) and the paper's standalone sync; the campaign will not edit those and sends any paper-side sentence to pub. Shared files (values.tex, technote.bib, build_all.sh, figures/): add-only, announced before change. Amendments: the campaign still BUILDS note, primer and paper read-only as a verification of its Stage-7 delivery; note structure stays coordinated with the note-organization lane (minerva-omnifold-bf). Stage-7 note/primer edits start after the recovery resolution, the recompute section 5.11 cross-check and Joseph's disposition, on a new branch docs/s5p-stage7-20261006 in an isolated worktree."
   }
  ],
  "findings": [
