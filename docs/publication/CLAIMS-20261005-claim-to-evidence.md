@@ -89,3 +89,18 @@ compared.
   response artefact.
 - The open question is mainly the five-dimensional **shape** content along the hadronic axes (I7; packet §5.4,
   W2).
+
+## D. Status update, 2026-10-06 (after D1–D4, W1, W2; supersedes the I-row statuses above)
+
+| # | status now | evidence |
+|---|---|---|
+| I1 | **DEMONSTRATED, under the stated conditions** | Recorded at `9b26b8c3`; independent recompute AGREE 1379/1379 (`466b427b`); lost-seed resolution certified per Joseph's D3, "Certified, margin disclosed" (`538739ff`), with all five disclosures; Stage-7 approved wording (`cbd075e7`, `sec:joint5d`) |
+| I2 | **DEMONSTRATED** | As I1. The finite-resolution p-values (k + 1)/(B + 1) are never zero. |
+| I3 | **DEMONSTRATED, report-only label** | Robust at κ = 3 in the frozen, (a) and (b) readings |
+| I4 | **DEMONSTRATED, context only** | Stage-7 power sentence |
+| I5 | **OMITTED, terminal** | W1 (`22a004e7`, reproduced `09718448`): no (G, t) qualifies |
+| I6 | **UNSUPPORTED, omitted** | Global statistics only |
+| I7 | **NARROWED: not removed by an exploratory ±4% variation; completeness not established** | W2 (`940d84aa`; independent check `9ffc4ddd`). The amendment-7 condition stands. |
+| I8 | **"To our knowledge, the first unbinned unfolding of neutrino data"**, with no priority claim for the test | Literature file §3 |
+| I9 | **NOT CLAIMED** | The article states "not a measured cross section" |
+| L2/L3 | **PENDING the VL170 rebuild** | Joseph adopted VL170 (`af24a101`). The rescoring is merged (`5aab2d6d`). The rollup is pending from the 2D lane. |
