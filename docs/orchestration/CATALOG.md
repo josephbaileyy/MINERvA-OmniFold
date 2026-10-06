@@ -35,6 +35,7 @@ Required reading via `AGENTS.md`; recommendations do not replace the governing a
 |---|---|
 | fixed-truth coverage of the production 2D statistical band: design, verdict rule, positive control, amendments | [`PREREG-20261005-2d-fixed-truth-coverage.md`](PREREG-20261005-2d-fixed-truth-coverage.md) |
 | the verdict, per-bin pattern, attribution, independent recomputation, cost (`VL169`, `KNOWN_ISSUES.md` 84) | [`OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`](OUTCOME-20261005-2d-fixed-truth-coverage-fail.md) |
+| KNOWN_ISSUES 84 fix and the CANDIDATE rebuilt band (not adopted): per-bin σ_new/σ_old, launcher, comparison script, budget (`VL170`) | [`state/ki84-rebuild-20261006/`](state/ki84-rebuild-20261006/) |
 
 ### Scalar-5D — the current entry route (compacted 2026-09-24)
 

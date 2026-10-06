@@ -1,0 +1,61 @@
+test_bootstrapped_completeness_is_bitwise_the_central_value (2d-unfolding.tests.test_bootstrap_completeness_ki84.BootstrapCompletenessMatchesCentral.test_bootstrapped_completeness_is_bitwise_the_central_value) ... FAIL
+test_bootstrapped_replica_has_unit_completeness_in_every_bin (2d-unfolding.tests.test_bootstrap_completeness_ki84.BootstrapCompletenessMatchesCentral.test_bootstrapped_replica_has_unit_completeness_in_every_bin) ... FAIL
+test_fixture_is_phase17_with_unit_central_completeness (2d-unfolding.tests.test_bootstrap_completeness_ki84.BootstrapCompletenessMatchesCentral.test_fixture_is_phase17_with_unit_central_completeness) ... ok
+test_replicas_still_resample_the_mc (2d-unfolding.tests.test_bootstrap_completeness_ki84.BootstrapCompletenessMatchesCentral.test_replicas_still_resample_the_mc) ... ok
+test_bootstrapped_unfold_is_unchanged (2d-unfolding.tests.test_bootstrap_completeness_ki84.PathsTheFixMustNotChange.test_bootstrapped_unfold_is_unchanged) ... ok
+test_central_value_is_bit_identical (2d-unfolding.tests.test_bootstrap_completeness_ki84.PathsTheFixMustNotChange.test_central_value_is_bit_identical) ... ok
+test_data_only_bootstrap_is_bit_identical (2d-unfolding.tests.test_bootstrap_completeness_ki84.PathsTheFixMustNotChange.test_data_only_bootstrap_is_bit_identical) ... ok
+test_legacy_input_bootstrap_is_unchanged (2d-unfolding.tests.test_bootstrap_completeness_ki84.PathsTheFixMustNotChange.test_legacy_input_bootstrap_is_unchanged) ... ok
+
+======================================================================
+FAIL: test_bootstrapped_completeness_is_bitwise_the_central_value (2d-unfolding.tests.test_bootstrap_completeness_ki84.BootstrapCompletenessMatchesCentral.test_bootstrapped_completeness_is_bitwise_the_central_value)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-ki84/2d-unfolding/tests/test_bootstrap_completeness_ki84.py", line 243, in test_bootstrapped_completeness_is_bitwise_the_central_value
+    np.testing.assert_array_equal(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        _read(self.out[tag], "hOFCompleteness2D"), c0, err_msg=tag)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.13/site-packages/numpy/testing/_private/utils.py", line 1121, in assert_array_equal
+    assert_array_compare(operator.__eq__, actual, desired, err_msg=err_msg,
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                         verbose=verbose, header='Arrays are not equal',
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                         strict=strict)
+                         ^^^^^^^^^^^^^^
+  File "/opt/homebrew/lib/python3.13/site-packages/numpy/testing/_private/utils.py", line 983, in assert_array_compare
+    raise AssertionError(msg)
+AssertionError: 
+Arrays are not equal
+boot7
+Mismatched elements: 186 / 224 (83%)
+First 5 mismatches are at indices:
+ [0, 0]: 0.8419755847090615 (ACTUAL), 1.0 (DESIRED)
+ [0, 1]: 0.3419688367290253 (ACTUAL), 1.0 (DESIRED)
+ [0, 2]: 0.813159670409725 (ACTUAL), 1.0 (DESIRED)
+ [0, 3]: 0.2232383800435858 (ACTUAL), 1.0 (DESIRED)
+ [0, 4]: 1.5095854537186257 (ACTUAL), 1.0 (DESIRED)
+Max absolute difference among violations: 2.47879056
+Max relative difference among violations: 2.47879056
+ ACTUAL: array([[0.841976, 0.341969, 0.81316 , 0.223238, 1.509585, 1.      ,
+        0.883169, 2.      , 0.      , 1.855724, 1.385309, 2.07211 ,
+        1.170581, 0.647999, 1.177809, 0.98021 ],...
+ DESIRED: array([[1., 1., 1., 1., 1., 1., 1., 1., 0., 1., 1., 1., 1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 0., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+       [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],...
+
+======================================================================
+FAIL: test_bootstrapped_replica_has_unit_completeness_in_every_bin (2d-unfolding.tests.test_bootstrap_completeness_ki84.BootstrapCompletenessMatchesCentral.test_bootstrapped_replica_has_unit_completeness_in_every_bin)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-ki84/2d-unfolding/tests/test_bootstrap_completeness_ki84.py", line 237, in test_bootstrapped_replica_has_unit_completeness_in_every_bin
+    self.assertLess(dev, 1e-12, f"{tag}: max |c-1| = {dev:.3g} over "
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    f"{int(sup.sum())} bins")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2.4787905599339988 not less than 1e-12 : boot7: max |c-1| = 2.48 over 198 bins
+
+----------------------------------------------------------------------
+Ran 8 tests in 18.206s
+
+FAILED (failures=2)

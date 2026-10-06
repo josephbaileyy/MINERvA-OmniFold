@@ -164,6 +164,8 @@ escape hatch, and the full rollup path are documented in
   highest-pT row (post hoc). It is attributed, partially, to the bootstrapped completeness in the
   VL162 replicas, by the Amendment-1 secondary. Quoted uncertainties are unchanged. Record:
   `docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`; `KNOWN_ISSUES.md` 84.
+  The replica completeness was fixed on 2026-10-06 (`bb4b0b6f`) and a CANDIDATE band rebuilt
+  (`VL170`, not adopted, not a coverage re-test).
   The older 200 closure+bootstrap-seed toys (mean 68.71 % within ±1σ, measured against their own
   fluctuating truth) are a Gaussianity diagnostic, not a coverage measurement.
 - **Completeness** c = 1.000000 exact by construction.
