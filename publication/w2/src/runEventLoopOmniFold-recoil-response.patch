@@ -1,0 +1,87 @@
+diff --git a/runEventLoopOmniFold.cpp b/runEventLoopOmniFold.cpp
+index b7e1edbc..1ad3b7f9 100644
+--- a/runEventLoopOmniFold.cpp
++++ b/runEventLoopOmniFold.cpp
+@@ -39,6 +39,7 @@ enum ErrorCodes
+ 
+ //Includes from this package
+ #include "event/CVUniverse.h"
++#include "event/RecoilResponseUniverse.h"
+ #include "event/MichelEvent.h"
+ #include "systematics/Systematics.h"
+ #include "cuts/MaxPzMu.h"
+@@ -147,6 +148,36 @@ inline bool ParseActiveUniverse(const char* envVal,
+   return true;
+ }
+ 
++// Parse MNV101_RECOIL_RESPONSE_DELTA (publication packet W2). Unset or empty:
++// no RecoilResponse band is constructed and the event loop is unchanged.
++// Otherwise it must be a finite, non-negative fraction below 1, e.g. "0.04".
++inline bool ParseRecoilResponseDelta(const char* envVal, bool& enabled,
++                                     double& delta, std::string& error)
++{
++  enabled = false;
++  delta = 0.0;
++  if(envVal == nullptr || std::string(envVal).empty()) return true;
++  const std::string text(envVal);
++  try
++  {
++    size_t used = 0;
++    const double parsed = std::stod(text, &used);
++    if(used != text.size() || !std::isfinite(parsed) || parsed < 0.0 || parsed >= 1.0)
++    {
++      error = "expected a finite fraction in [0, 1), got '" + text + "'";
++      return false;
++    }
++    enabled = true;
++    delta = parsed;
++  }
++  catch(const std::exception&)
++  {
++    error = "not a number: '" + text + "'";
++    return false;
++  }
++  return true;
++}
++
+ // Pack (mc_run, mc_subrun, mc_nthEvtInFile) into a unique 64-bit key for
+ // fast hash-set lookup of "is this truth event already represented on the
+ // reco/AnaTuple side?". Run ~5 digits, subrun ~3 digits, nth ~6 digits;
+@@ -1789,6 +1820,37 @@ int main(const int argc, const char** argv)
+   if(doSystematics) truth_bands = GetStandardSystematics(options.m_truth);
+   truth_bands["cv"] = {new CVUniverse(options.m_truth)};
+ 
++  // Exploratory recoil-response band (publication packet W2): index 0 = -delta,
++  // index 1 = +delta. Constructed only when MNV101_RECOIL_RESPONSE_DELTA is set.
++  bool recoilResponseEnabled = false;
++  double recoilResponseDelta = 0.0;
++  std::string recoilResponseError;
++  if(!ParseRecoilResponseDelta(getenv("MNV101_RECOIL_RESPONSE_DELTA"),
++                               recoilResponseEnabled, recoilResponseDelta,
++                               recoilResponseError))
++  {
++    std::cerr << "Invalid MNV101_RECOIL_RESPONSE_DELTA: " << recoilResponseError << "\n";
++    return badCmdLine;
++  }
++  if(recoilResponseEnabled)
++  {
++    if(!doSystematics)
++    {
++      std::cerr << "MNV101_RECOIL_RESPONSE_DELTA is incompatible with MNV101_SKIP_SYST.\n";
++      return badCmdLine;
++    }
++    error_bands["RecoilResponse"] = {
++        new RecoilResponseUniverse(options.m_mc, -1.0, recoilResponseDelta),
++        new RecoilResponseUniverse(options.m_mc, +1.0, recoilResponseDelta)};
++    truth_bands["RecoilResponse"] = {
++        new RecoilResponseUniverse(options.m_truth, -1.0, recoilResponseDelta),
++        new RecoilResponseUniverse(options.m_truth, +1.0, recoilResponseDelta)};
++    std::cout << "[RECOIL_RESPONSE] delta=" << recoilResponseDelta
++              << ": band RecoilResponse added (0: reco recoil x"
++              << (1.0 - recoilResponseDelta) << ", 1: x" << (1.0 + recoilResponseDelta)
++              << "); exploratory sensitivity only.\n";
++  }
++
+   // Diagnostic: print the GetStandardSystematics inventory once so a fresh
+   // dump-all rebuild documents which bands are present and which are lateral.
+   if(doSystematics)
