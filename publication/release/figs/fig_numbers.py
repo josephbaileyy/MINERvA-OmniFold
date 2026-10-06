@@ -77,7 +77,7 @@ CHECKS = [
     ("pullMean", "0.089", r"values.tex \pullMean"),
     ("pullRMS", "0.598", r"values.tex \pullRMS"),
     ("chiPaper", "3.66", r"values.tex \chiPaper"),
-    ("uqPaper_median_rel_pct", "6.86", r"values.tex \uqPaper"),
+    ("uqPaper_median_rel_pct", "6.85", r"values.tex \uqPaper"),
     ("chi2ndf_data_vs_tune", "33.04", "packet/claims (receipt_model_chi2_2d.json 33.039)"),
     ("chi2ndf_ours_vs_tune", "26.49", "receipt_model_chi2_2d.json 26.491"),
     ("data_total", "3.0699e-38", "VL157 data total"),
@@ -103,10 +103,28 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     ap.add_argument("--npz", type=Path, required=True)
     ap.add_argument("--json", type=Path, default=None)
+    ap.add_argument("--values", type=Path, default=None,
+                    help="values.tex to take macro-sourced printed values from (the authority); the built-in "
+                         "table is then only a cross-check and any drift is reported")
     a = ap.parse_args(argv)
     v = compute(np.load(a.npz, allow_pickle=False))
     rows, ok = [], True
-    for k, printed, src in CHECKS:
+    checks = list(CHECKS)
+    if a.values:
+        import re
+        macros = dict(re.findall(r"\\newcommand\{\\(\w+)\}\{([^}]*)\}", a.values.read_text()))
+        resolved = []
+        for k, printed, src in checks:
+            m = re.match(r"values\.tex \\(\w+)$", src)
+            if m and m.group(1) in macros:
+                if macros[m.group(1)] != printed:
+                    print(f"[drift] {src}: built-in {printed} -> values.tex {macros[m.group(1)]} (values.tex used)")
+                printed = macros[m.group(1)]
+            resolved.append((k, printed, src))
+        checks = resolved
+    else:
+        print("[note] no --values given: printed values come from the built-in table, which can drift from values.tex")
+    for k, printed, src in checks:
         good = abs(v[k] - float(printed)) <= half_ulp(printed)
         rows.append((k, v[k], printed, src, good)); ok &= good
     for k, printed, src in SINGLES:
