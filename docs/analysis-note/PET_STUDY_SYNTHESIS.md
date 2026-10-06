@@ -12,7 +12,8 @@ pass, with focused repairs for observed defects. No scientific compute or campai
 review is reopened.
 
 All evidence paths below are relative to the canonical repository at the pinned
-commit. The bibliography links the three principal reports at that snapshot, so the
+commit. The bibliography links the three principal records (the confirmatory results, the final-design
+decision record and the comparison report) at that snapshot, so the
 standalone manuscript retains an evidence route.
 
 | Manuscript content | Committed evidence | Required interpretation |
