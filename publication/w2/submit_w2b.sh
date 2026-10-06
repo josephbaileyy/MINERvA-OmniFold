@@ -110,15 +110,29 @@ evaluate)
   ${PY} "${W2}/w2b.py" design-copies --frozen "${D_EVAL}/docs/orchestration/state/s5p/prod/design.json" --ns "${NS}" --outdir "${DC}" > "${DC}/keydiff.log" \
     || { echo "[w2b] ABORT: design key-diff FAILED (see ${DC}/design-keydiff.json)"; exit 3; }
   cd "${D_EVAL}" && source ./setup_salloc_env.sh >/dev/null 2>&1
-  for v in rr0 rr1 rrzero; do
-    [[ -s "${NS}/w2b/unf/w2b_${v}_b-_j-.npz" ]] || { echo "[w2b] ABORT: no unfold product for ${v}"; exit 3; }
-    PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=nd-unfolding python3 nd-unfolding/s5p_joint.py evaluate --design "${DC}/design-w2b-${v}.json" \
-      --v "${S5P}/stage3/V/V-s3v.npz" --out "${NS}/w2b/eval/${v}-evaluate.json" > "${NS}/w2b/logs/evaluate_${v}.log" 2>&1 \
-      || { echo "[w2b] evaluate ${v} FAILED"; exit 5; }
-  done
-  PYTHONDONTWRITEBYTECODE=1 python3 "${W2}/w2b.py" decide --deploy "${D_EVAL}" --frozen-design "${D_EVAL}/docs/orchestration/state/s5p/prod/design.json" \
-    --frozen-evaluate "${FROZEN_EVAL}" --evaldir "${NS}/w2b/eval" \
-    --zero-product "${NS}/w2b/unf/w2b_rrzero_b-_j-.npz" --out "${NS}/w2b/eval/w2b-decision.json"; echo "[w2b] decide rc=$?" ;;
+  export PYTHONDONTWRITEBYTECODE=1
+  DEC=(--deploy "${D_EVAL}" --frozen-design "${D_EVAL}/docs/orchestration/state/s5p/prod/design.json"
+       --frozen-evaluate "${FROZEN_EVAL}" --evaldir "${NS}/w2b/eval" --zero-product "${NS}/w2b/unf/w2b_rrzero_b-_j-.npz")
+  run_copy () {   # frozen evaluate + frozen labels (as stage7) + manifest, for one design copy
+    local v="$1" C="${NS}/w2b/eval/$1"
+    [[ -s "${NS}/w2b/unf/w2b_${v}_b-_j-.npz" ]] || { echo "[w2b] ABORT: no unfold product for ${v}"; return 3; }
+    mkdir -p "${C}"
+    PYTHONPATH=nd-unfolding python3 nd-unfolding/s5p_joint.py evaluate --design "${DC}/design-w2b-${v}.json" \
+      --v "${S5P}/stage3/V/V-s3v.npz" --out "${C}/joint-evaluate.json" > "${C}/joint-evaluate.stdout" 2>&1 \
+      || { echo "[w2b] evaluate ${v} FAILED"; return 5; }
+    PYTHONPATH=nd-unfolding python3 nd-unfolding/s5p_robust_labels.py --evaluate "${C}/joint-evaluate.json" \
+      --design "${DC}/design-w2b-${v}.json" --out "${C}/robust-labels.json" > "${C}/robust-labels.stdout" 2>&1 \
+      || { echo "[w2b] labels ${v} FAILED"; return 5; }
+    python3 "${W2}/w2b.py" manifest --variant "${v}" --design-copy "${DC}/design-w2b-${v}.json" --copydir "${C}" \
+      --deploy-sha e9372b757250e9607f52e471d9b0c447b08e65d5 > /dev/null || return 5
+  }
+  run_copy rrzero || exit $?
+  python3 "${W2}/w2b.py" decide "${DEC[@]}" --control-only --out "${NS}/w2b/eval/w2b-control.json" > /dev/null
+  rc=$?; echo "[w2b] delta=0 control rc=${rc} ($(python3 -c "import json;print(json.load(open('${NS}/w2b/eval/w2b-control.json'))['verdict'])"))"
+  [[ ${rc} -eq 0 ]] || { echo "[w2b] STOP: the delta = 0 control did not PASS; the signs are not evaluated"; exit 1; }
+  run_copy rr0 || exit $?
+  run_copy rr1 || exit $?
+  python3 "${W2}/w2b.py" decide "${DEC[@]}" --out "${NS}/w2b/eval/w2b-decision.json" > /dev/null; echo "[w2b] decide rc=$?" ;;
 sync) ${PY} "${W2}/w2b.py" ledger-sync --ledger "${LEDGER}" --submitted "${SUBMITTED}" ;;
 *) echo "unknown stage ${STAGE}"; exit 2 ;;
 esac

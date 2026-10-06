@@ -219,6 +219,17 @@ def cmd_ledger_sync(a) -> int:
     return 0
 
 
+def cmd_manifest(a) -> int:
+    design = json.loads(a.design_copy.read_text())
+    items = {"design_copy": a.design_copy, "data_central": Path(design["data_central"]),
+             "joint_evaluate": a.copydir / "joint-evaluate.json", "robust_labels": a.copydir / "robust-labels.json"}
+    man = {"variant": a.variant, "deploy_sha": a.deploy_sha,
+           **{k: {"path": str(p), "sha256": sha256(p)} for k, p in items.items()}}
+    (a.copydir / "manifest.json").write_text(json.dumps(man, indent=1) + "\n")
+    print(json.dumps(man, indent=1))
+    return 0
+
+
 def claims_of(evaluate: dict) -> dict:
     out = {}
     for g, t in evaluate["tests"].items():
@@ -234,8 +245,9 @@ def cmd_decide(a) -> int:
     frozen = json.loads(a.frozen_evaluate.read_text())
     res = {"alpha_family": alpha, "signs": {}, "control": {}}
     dec = {}
-    for v in VARIANTS:
-        ev = json.loads((a.evaldir / f"{v}-evaluate.json").read_text())
+    order = ("rrzero",) if a.control_only else ("rrzero", "rr0", "rr1")   # the delta = 0 control first
+    for v in order:
+        ev = json.loads((a.evaldir / v / "joint-evaluate.json").read_text())
         mine = si.holm_determined(claims_of(ev), alpha)
         agree = {k: mine[k]["decision"] == ev["decisions"][k]["decision"] for k in mine}
         if not all(agree.values()):
@@ -266,6 +278,14 @@ def cmd_decide(a) -> int:
         ctrl["fallback"] = rows
         ctrl["verdict"] = "PASS" if ok else "FAIL"
     res["control"] = ctrl
+    if a.control_only:
+        res["verdict"] = f"CONTROL {ctrl['verdict']} (control only; the signs were not evaluated)"
+        res["signs"] = {"rrzero": res["signs"]["rrzero"]}
+        text = json.dumps(res, indent=1)
+        print(text)
+        if a.out:
+            a.out.write_text(text + "\n")
+        return 0 if ctrl["verdict"] == "PASS" else 1
     if ctrl["verdict"] != "PASS":
         res["verdict"] = "CONTROL FAIL: W2b stops; no robustness statement"
         print(json.dumps(res, indent=1))
@@ -313,9 +333,16 @@ def main(argv=None) -> int:
     e.add_argument("--evaldir", type=Path, required=True)
     e.add_argument("--zero-product", required=True)
     e.add_argument("--out", type=Path)
+    e.add_argument("--control-only", action="store_true", help="evaluate only the delta = 0 control")
+    m = sub.add_parser("manifest")
+    m.add_argument("--variant", choices=VARIANTS, required=True)
+    m.add_argument("--design-copy", type=Path, required=True)
+    m.add_argument("--copydir", type=Path, required=True)
+    m.add_argument("--deploy-sha", required=True)
     a = ap.parse_args(argv)
     return {"plan": cmd_plan, "check-budget": cmd_check_budget, "design-copies": cmd_design_copies,
-            "tables": cmd_tables, "ledger-sync": cmd_ledger_sync, "decide": cmd_decide}[a.cmd](a)
+            "tables": cmd_tables, "ledger-sync": cmd_ledger_sync, "decide": cmd_decide,
+            "manifest": cmd_manifest}[a.cmd](a)
 
 
 if __name__ == "__main__":
