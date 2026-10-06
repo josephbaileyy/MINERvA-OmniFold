@@ -236,4 +236,6 @@ pre-registered.
   - **P0 is deferred** until the PRD article is submitted (`../gbdt_comparison/HANDOFF-20261005-pet-gbdt-result.md`).
   - **A CPU-only diagnosis** of the finalists' weakness on generator-model reweightings, from existing outputs, is
     authorized. It lives in its own directory, `nd-unfolding/pet/generator_diagnosis/`.
+    **Completed 2026-10-06 (VL171):** two located deficits, a detector-step under-fit and a weaker
+    extrapolation to non-reconstructed events; their causes are untested (`REPORT-20261006.md` there).
   - No repair, candidate search, GPU compute or adoption is authorized.

@@ -1,5 +1,19 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-10-06 PET finalists' generator-reweighting weakness: diagnosis of existing outputs (exploratory)
+
+Source: [report](nd-unfolding/pet/generator_diagnosis/REPORT-20261006.md).
+- Plan frozen at `cb6f4644` before any new reduction.
+- One independent review cycle, ACCEPT WITH CHANGES, dispositioned in `REVIEW_DISPOSITION-20261006.md`.
+- Operands: 64 preserved PET final-bank runs read from the CFS copy, and the committed GBDT recipe reproduced
+  exactly on 32 units.
+- Cost: about 1.1 CPU core-h, 0 GPU.
+- Simulation only. PET stays diagnostic. `NO_ELIGIBLE_DESIGN` (VL167) and VL168 are unchanged.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL171 | Where the finalists (H2S1T24 K5, L128S1T24 K4) lose to the matched GBDT (HGB h1, efficiency-corrected, k = 7) on D5 NuWro, D5p NuWro′ and D5 GiBUU, 8 FB draws each. Step closures from the per-iteration (pull, push) of both methods, with identical weight semantics. Controls: all 64 PET re-scores ≤ 1e-9 with matching digests; GBDT reproduction max \|ΔR\| = 0 | **Oracle** E_avail R 0.96; movement fraction m: PET 0.18–0.46, GBDT 0.41–0.62. **Step 1, detector-level reco E_avail R:** PET 0.78–0.84, GBDT 0.93–0.94, oracle 0.92–0.93; dev tilt level, 0.95 vs 0.96. **Step-1 truth-space R, reconstructed rows:** PET 0.46–0.57, GBDT 0.61–0.67. **Final R, non-reconstructed rows:** PET −0.05 to 0.30, GBDT 0.24–0.44, oracle 0.92–0.93; PET's falls with k, the GBDT's rises | **EXPLORATORY.** Citable for: at study scale on these banks, the finalists' generator-reweighting loss has two located deficits: a detector-step under-fit present from k = 1, and a weaker extrapolation to non-reconstructed events. Not citable for: their causes (untested: step-1 training budget or optimization, step-2 truth inputs), additive shares of the gap, k > K, data-scale behaviour, or any ranking or adoption |
+
 ## 2026-10-06 2D statistical band: KNOWN_ISSUES 84 fix and candidate replica rebuild
 
 Code: `bb4b0b6f` (`unfold_2d_omnifold_unbinned.py`; regression test
