@@ -361,8 +361,10 @@ agrees with the production evaluation in all \jtRecompRows{} compared quantities
 
 \subsection{Conditions}
 
-Each decision below holds under the conditions of the declared model, stated
-here because they bound what the tests establish.  (i) Below the fine grid the
+These are statements about the simple hypotheses $H_{0}(G)$, not a measured
+cross section, and no new reportable uncertainty is produced.  Each decision
+below holds under the conditions of the declared model, stated here because they
+bound what the tests establish.  (i) Below the fine grid the
 null truth carries the Tune~v1's shapes; the fine-grid convergence check is not
 converged (successive refinements change the result by
 \jtMoneMin--\jtMoneMax{} of the previous change), and its effect enters as the
@@ -370,7 +372,7 @@ residual variants above.  (ii) The detector model is the simulation's, varied
 only by the drawn detector bands; the analysis has no band for the
 calorimetric recoil-energy response, so completeness of the hadronic-response
 model is not established (Sec.~\ref{sec:response}).  (iii) The interaction-model
-prior is the analysis's band set, with negative weights of two bands clipped per
+prior is the analysis's 34-band set, with negative weights of two bands clipped per
 universe.  (iv) The pseudo-experiments use half of the simulation and the data
 unfold all of it; the resulting shift is bounded by a declared variant.  (v)
 GiBUU lacks $E_{\nu}>\SI{20}{GeV}$, and its out-of-domain truth enters the
@@ -445,7 +447,16 @@ was specified before it was run but after the five-dimensional outcomes were kno
 it uses the same calibration ensembles, variants and claim rule, and its
 $p$ values were reproduced independently.
 % Source: docs/publication/w1/W1-RECORD-20261006.md (22a004e7, reproduction 09718448).
-\pubhold{interpretation paragraph, consuming the s5p Stage-7 approved wording (D4).}
+What the rejections establish is therefore narrow.  They are global statements
+about five specified predictions under the declared model; they do not identify a
+kinematic region or a nuclear mechanism, they say nothing about more recent
+generator versions, and each rejected test already has $p<0.05$ in at least one
+of the two matched coarse projections.  Power is context only, because every test rejects: at the Tune~v1
+null, two of three declared alternatives are detected in shape with power 1.0 at the
+0.005 level, and the third, a two-particle--two-hole-like shape, with 0.23; at the
+GENIE~2.12.10 null the shape powers are 0.74, 0.02 and 0.00.
+% Source: s5p Stage-7 approved wording, sec_eavailw.tex sec. 8.6 (sec:joint5d) at main cbd075e7;
+% REVIEW-20261006-s5p-stage7-note-wording.md (two rounds, findings resolved).
 
 \subsection{Lost pseudo-experiments}
 \label{sec:missing}
@@ -577,7 +588,15 @@ are reported with the results they affect, and they prevent a qualified
 five-dimensional measurement.  A joint test calibrated through the full chain
 provides a statement about specified predictions that does not require such a
 measurement.
-\pubhold{headline conclusion for the joint tests and what it constrains.}
+Frozen joint tests of five neutrino-interaction predictions against the
+five-dimensional data reject all ten simple hypotheses at familywise level 0.05
+under the stated conditions.  Every pseudo-experiment first lost to scheduler
+limits has been observed without changing a decision, an exploratory
+$\pm4\%$ recoil-response variation leaves every rejection in place, and each
+rejected test already has $p<0.05$ in at least one matched coarse projection, so
+no claim is made that the joint information adds discrimination.  These are statements about the
+specified predictions, not a measured cross section, and they add no new
+reportable uncertainty.
 A complete five-dimensional measurement release would additionally require a
 matched total uncertainty with validated coverage.
 
