@@ -380,7 +380,25 @@ metric and the simulated residuals.
 Table~\ref{tab:joint} lists the ten decisions as recorded.  Every test is
 rejected at familywise $\alpha=\jtAlpha$; nine have $k=0$, and NuWro's shape test
 has $k=1$.  Each rejection survives when the sub-fine-grid residual variants are
-enlarged from two to three times their estimate.
+enlarged from two to three times their estimate.  Figure~\ref{fig:joint-nulls} shows each null's
+calibrated distribution with the observed statistic.  The Tune~v1 null, the analysis
+simulation itself, is centred at small values, whereas the external nulls are
+displaced far upward by the estimator's pull toward its prior, which the
+calibration reproduces; the comparison of the data with each null is made against
+that displaced distribution.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=0.98\textwidth]{paper_joint_nulls}
+  \caption{Calibrated null distributions of the joint statistics (joint-test
+  estimator) for each prediction (columns), total statistic (top) and shape
+  statistic (bottom), shown for the declared claim variant whose null distribution
+  has the largest median; the vertical line is the observed statistic and $k/B$ is
+  as in Table~\ref{tab:joint}.  The horizontal axis is logarithmic.  Plotted from
+  the released sufficient inputs (Sec.~\ref{sec:data-availability}), which reproduce
+  every recorded $p$ value and decision.}
+  \label{fig:joint-nulls}
+\end{figure*}
 
 \begin{table}[t]
   \caption{Joint-test decisions as recorded (Tune~v1 null: the analysis
