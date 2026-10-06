@@ -154,22 +154,27 @@ independent measurements; no combined-covariance statistic is quoted.
 The standalone covariance combines matched-central-value systematic universes
 with statistical and training-seed blocks.  Its median relative uncertainty is
 \SI{\uqMedian}{\percent}, compared with \SI{\uqPaper}{\percent} for the
-publication.  \pubhold{2D statistical band adopted as VL170 (Joseph, 2026-10-06): update this
-paragraph from the 2D lane's committed rebuilt rollup (median, $\chi^2$) and its
-descriptive VL169-toy rescoring; until then the text below describes the superseded
-VL162 band.}  The coverage of this total is untested.  Its statistical block
-was tested against a fixed truth in \covTwoDNtoy{} pre-registered closure
-pseudo-experiments and undercovers in its tails:
-\SI{\covTwoDCTwoPctOne}{\percent} of standardized residuals fall within two
-standard deviations, against \SI{95.4}{\percent} nominal, while the one-standard-deviation
-fraction, $\covTwoDCOne$, is nominal.  The deficit is concentrated at high
-$\pPar$ and low $\pT$ and at the highest $\pT$, and the pull mean is consistent
-with zero.  A pre-registered secondary attributes it partly to a completeness
-division that the bootstrap replicas carry and the central value does not.  The
-central value and quoted uncertainties are unchanged; no corrected band has
-been built or tested.
+publication.  The coverage of this total is untested.  Its statistical block,
+as first built, was tested against a fixed truth in \covTwoDNtoy{} pre-registered
+closure pseudo-experiments and undercovered in its tails:
+\SI{\covTwoDCTwoPctOne}{\percent} of standardized residuals fell within two standard
+deviations, against \SI{95.4}{\percent} nominal, while the one-standard-deviation
+fraction, $\covTwoDCOne$, was nominal; the pull mean was consistent with zero.  The
+main cause, a completeness division that the bootstrap replicas carried and the
+central value does not, was found and removed.  The rebuilt statistical band, now
+the quoted one, has a median statistical uncertainty of \SI{0.674}{\percent} and
+leaves the total median at \SI{\uqMedian}{\percent}.
+Rescoring the same closure pseudo-experiments against the rebuilt band, which is
+post hoc and partly circular, removes the tail undercoverage
+(\SI{97.7}{\percent} within two standard deviations); the residual excess width
+lies in the data-statistics component and is not explained by background purity.
+The rebuilt band has not been independently re-tested.
 % Source: docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md;
-% VALIDATION_LEDGER VL169; KNOWN_ISSUES 84.
+% VALIDATION_LEDGER VL169 (test of the earlier band); VL170 (rebuilt band, adopted by Joseph
+% 2026-10-06, docs/publication/DECISION-20261006 addendum af24a101); VL172 (rebuilt products;
+% main 2c9939fe; the quoted 6.87% chain is 2d-unfolding/uq/rollup_vl170_adoption.sh /
+% recompute_2d_budget.py); rescoring 5aab2d6d (descriptive, post hoc); purity check receipt
+% purity_datastream_check.json; KNOWN_ISSUES 84, 85.
 
 \subsection{Higher-dimensional central values}
 
