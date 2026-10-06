@@ -1,0 +1,16 @@
+start 2026-10-06T05:15:11Z login04 Python 3.11.14 1.26.4 1.16.3
+{"cal-MnvTune_v1": {"frozen": 1365, "recovered": 35, "union": 1400, "submitted": 1400, "residual_missing": 0}, "cal-GENIE_2_12_10_CV": {"frozen": 1366, "recovered": 34, "union": 1400, "submitted": 1400, "residual_missing": 0}, "cal-GENIE_2_12_10_MEC": {"frozen": 1343, "recovered": 57, "union": 1400, "submitted": 1400, "residual_missing": 0}, "cal-NuWro_21_09": {"frozen": 1751, "recovered": 49, "union": 1800, "submitted": 1800, "residual_missing": 0}, "cal-GiBUU_2019": {"frozen": 1351, "recovered": 49, "union": 1400, "submitted": 1400, "residual_missing": 0}, "pow-P1_a1.0": {"frozen": 193, "recovered": 7, "union": 200, "submitted": 200, "residual_missing": 0}, "pow-P2_a1.0": {"frozen": 195, "recovered": 5, "union": 200, "submitted": 200, "residual_missing": 0}, "pow-P3_a1.0": {"frozen": 195, "recovered": 5, "union": 200, "submitted": 200, "residual_missing": 0}, "pow-P1g_a1.0": {"frozen": 199, "recovered": 1, "union": 200, "submitted": 200, "residual_missing": 0}, "pow-P2g_a1.0": {"frozen": 193, "recovered": 7, "union": 200, "submitted": 200, "residual_missing": 0}, "pow-P3g_a1.0": {"frozen": 172, "recovered": 28, "union": 200, "submitted": 200, "residual_missing": 0}}
+resolve rc=0 05:15:25Z
+(a) evaluate rc=0 05:16:27Z
+(a) labels rc=0 05:16:28Z
+{"NuWro_21_09:total": "rejected", "MnvTune_v1:total": "rejected", "MnvTune_v1:shape": "rejected", "GENIE_2_12_10_CV:total": "rejected", "GENIE_2_12_10_CV:shape": "rejected", "GENIE_2_12_10_MEC:total": "rejected", "GENIE_2_12_10_MEC:shape": "rejected", "GiBUU_2019:total": "rejected", "GiBUU_2019:shape": "rejected", "NuWro_21_09:shape": "rejected"}
+(b) frozen-s rc=0 05:18:29Z
+{"MnvTune_v1": [false, false, false, false, false, false, false], "GENIE_2_12_10_CV": [false, false, false, false, false, false, false], "GENIE_2_12_10_MEC": [false, false, false, false, false, false, false], "NuWro_21_09": [false, false, false, false, false, false, false, false, false], "GiBUU_2019": [false, false, false, false, false, false, false]}
+stopping rc=0 05:21:52Z
+f93bdb88d08316040a89ee983810b1ca19ab1d7367e769544587f45856dfafbe  /pscratch/sd/j/josephrb/s5p-20260926/recovery/resolution-design.json
+2a3f624b197405c5714784a8c5f5bfec8794c032ff66e785253fb404febac8ec  /pscratch/sd/j/josephrb/s5p-20260926/recovery/resolution-design.report.json
+8503eab8b4c0d19e0515bd591275bb7c177c46a52e59f86de91fa818716988fb  /pscratch/sd/j/josephrb/s5p-20260926/recovery/resolved-evaluate.json
+ea33242496cd826b90fee494acffaf431d6f5e6d203971eeee119619fcbdb480  /pscratch/sd/j/josephrb/s5p-20260926/recovery/resolved-robust-labels.json
+9f4d985e0f3e50ba8a9adc9cfd0346a92c63be7c86dcf1c1f89a5ec9db43947b  /pscratch/sd/j/josephrb/s5p-20260926/recovery/frozen-s.json
+c956beb76349b317452bcfb35f45635e7ef21cfd85554a2d1c4bdcd3cc7e532b  /pscratch/sd/j/josephrb/s5p-20260926/recovery/stopping.json
+done
