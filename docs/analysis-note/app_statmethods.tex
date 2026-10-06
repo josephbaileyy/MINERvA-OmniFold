@@ -115,7 +115,7 @@ For $n=10$ \texttt{lgbm} trials, the total-$\sigma$ relative spread is
 $\boxed{0.0055\%}$, the per-bin median relative spread $\boxed{0.166\%}$,
 and $\sqrt{\Tr\mathbf{C}^{\ML}} = 5.061\times10^{-41}$.
 ML noise is $\approx 2.4\%$ of the paper's per-bin total-uncertainty median
-of $6.86\%$, far below data-stat and systematics. Increasing $n=4$ to
+of \SI{\uqPaper}{\percent}, far below data-stat and systematics. Increasing $n=4$ to
 $n=10$ changed these values within rounding, so the envelope is converged.
 
 \subsubsection{Poisson bootstrap}
@@ -418,7 +418,7 @@ Statistical (Poisson bootstrap, $N=300$) & $1.931\times10^{-40}$ & $0.674\%$ \\
 Systematic (fluxfix sweep $+$ norm) & $3.214\times10^{-39}$ & $6.830\%$ \\
 \midrule
 \textbf{Combined (block sum)} & $3.220\times10^{-39}$ & $\boxed{6.871\%}$ \\
-Paper \texttt{TotalCov} (reference) & $2.676\times10^{-39}$ & $6.86\%$ \\
+Paper \texttt{TotalCov} (reference) & $2.676\times10^{-39}$ & $\uqPaper\%$ \\
 \bottomrule
 \end{tabular}
 \caption{Component traces and per-bin median relative spreads of the 2D
@@ -506,7 +506,7 @@ is specific to 2D and does not transfer to N-D covariances
 Metric (205 bins) & Paper & OmniFold (combined) \\
 \midrule
 Width-weighted total $\sigma$, $\sqrt{\mathbf{w}\T\mathbf{C}\,\mathbf{w}}/(\mathbf{w}\T\mathbf{x})$ & $4.61\%$ & $2.26\%$ \\
-Per-bin median relative $\sigma$ & $6.86\%$ & $6.871\%$ \\
+Per-bin median relative $\sigma$ & $\uqPaper\%$ & $6.871\%$ \\
 $\chi^{2}/\mathrm{ndf}$ & $3.661$ (paper-only) & $\boxed{\chiCombined}$ (paper$+$ours) \\
 Log-normal $\chi^{2}/\mathrm{ndf}$ & --- & $\chiCombinedLog$ \\
 \bottomrule

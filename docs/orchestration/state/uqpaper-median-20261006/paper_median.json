@@ -1,0 +1,28 @@
+{
+ "n_reported": 205,
+ "uqPaper_pct": 6.852482845312499,
+ "variants_pct": {
+  "csv_total_over_csv_xs": 6.858638743455497,
+  "root_sigma_over_csv_xs": 6.858556874145484,
+  "csv_total_over_root_xs": 6.859027055970857
+ },
+ "csv_vs_root_max_rel_diff": {
+  "xs": 0.003496968028010139,
+  "sigma": 0.0046451307749458826
+ },
+ "mean_pct": 7.429040048663975,
+ "inputs": {
+  "root": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+   "sha256": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3"
+  },
+  "csv_result": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/data_result_ptpl_2D_minerva_inclusive_6GeV.txt",
+   "sha256": "02153e7af054a98254ddfc42cce65fc7520f95032c544dbc33555ac60376c2f3"
+  },
+  "csv_bin_mapping": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/bin_mapping.txt",
+   "sha256": "d21a41eb746fea64e5c37a69b87bff93318e7997252686b8880e10b35bf4e12a"
+  }
+ }
+}
