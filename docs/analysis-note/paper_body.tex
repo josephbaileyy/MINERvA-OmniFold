@@ -404,8 +404,9 @@ that displaced distribution.
   \caption{Joint-test decisions as recorded (Tune~v1 null: the analysis
   simulation; $B$: final number of null pseudo-experiments; $p=(k+1)/(B+1)$;
   CP: 95\% Clopper--Pearson interval of $k/B$; all ten are robust to the
-  sub-fine residual at three times its estimate).  The missing-seed status of
-  every decision is ``can change'' (Sec.~\ref{sec:missing}).}
+  sub-fine residual at three times its estimate).  Every submitted
+  pseudo-experiment, including those first lost to time limits, has been observed;
+  none of the recovered ones reaches the observed statistic (Sec.~\ref{sec:missing}).}
   \label{tab:joint}
   \centering\footnotesize
   \begin{tabular}{@{}llrrlll@{}}
@@ -441,28 +442,38 @@ was specified before it was run but after the five-dimensional outcomes were kno
 it uses the same calibration ensembles, variants and claim rule, and its
 $p$ values were reproduced independently.
 % Source: docs/publication/w1/W1-RECORD-20261006.md (22a004e7, reproduction 09718448).
-\pubhold{interpretation paragraph, after Joseph's disposition of the
-missing-seed resolution and the Stage-7 wording.}
+\pubhold{interpretation paragraph, consuming the s5p Stage-7 approved wording (D4).}
 
 \subsection{Lost pseudo-experiments}
 \label{sec:missing}
 
 Scheduler time limits interrupted or prevented \jtLostCal{} of the submitted
 calibration pseudo-experiments (\jtLostInterrupted{} interrupted,
-\jtLostNever{} never started) and \jtLostPow{} power pseudo-experiments.  The
-decisions in Table~\ref{tab:joint} use the completed experiments.  A labelled
-sensitivity shows that every decision could change under a realizable assignment
-of the lost outcomes: if every interrupted experiment had exceeded the observed
-statistic, the $p$ values would be \jtWorstIntLo--\jtWorstIntHi{} and no test
-would be rejected.  Among completed experiments the runtime is not associated
-with the statistic ($|\rho|\le\jtRuntimeRho$), which supports but does not
-establish that the losses are uninformative.  The lost seeds are being rerun as
-a report-only resolution, under a procedure fixed and independently reviewed
-before the rerun; the decisions in Table~\ref{tab:joint} are not revised by it.
-\pubhold{resolution outcome, its independent cross-check, and Joseph's
-disposition of how it enters the claims.}
+\jtLostNever{} never started) and \jtLostPow{} power pseudo-experiments, so the
+decisions in Table~\ref{tab:joint} were first evaluated on the completed
+experiments only.  Before the lost outcomes were known, a sensitivity showed that
+every decision could change under a realizable assignment of them: if every
+interrupted experiment had exceeded the observed statistic, no test would have
+been rejected.  All lost pseudo-experiments were then rerun under a procedure that
+was fixed and independently reviewed beforehand, and that required a rerun of
+completed experiments to reproduce them exactly (16 of 16 did).  None of the
+recovered experiments reaches the observed statistic, in any test or declared
+variant, so every submitted pseudo-experiment has now been observed and no
+assignment of the lost outcomes changes any decision.  The closest approach is in
+a report-only robustness variant of the GENIE~+~MEC shape test, \num{4.6} below the
+observed statistic, against an observed value of \num{868.6}; with complete
+batches, the sequential rule would have stopped four of the nulls one batch earlier,
+with the same decisions.  This resolution is report-only: the decisions remain
+those of the frozen evaluation.  An independent recomputation confirms it against
+the frozen variant shifts; with the recovered experiments added to the
+calibration it was reproduced by our standalone replay of the frozen rules, and the
+earlier stopping points rest on the campaign's self-validated re-application of the
+sequential rule.
 % Source: RECORD-20261005-s5p-joint-5d-inference-result.md sec. 5;
-% missing-sensitivity.json f48e16ef...; PROCEDURE-20261005-s5p-lost-seed-recovery.md.
+% missing-sensitivity.json f48e16ef...; PROCEDURE-20261005-s5p-lost-seed-recovery.md;
+% RECORD-20261006-s5p-lost-seed-recovery-resolution.md (b354cdf7); cross-check 00009056;
+% Joseph's disposition DECISION-20261005-...-lost-seed-recovery.md sec. 5 (538739ff): "Certified,
+% margin disclosed", required disclosures 1-5 all stated above.
 
 \subsection{Detector-response condition}
 \label{sec:response}
