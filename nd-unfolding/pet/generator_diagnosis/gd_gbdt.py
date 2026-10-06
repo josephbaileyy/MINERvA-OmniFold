@@ -5,7 +5,7 @@ The fit is the comparison's own (`gbdt_comparison/pgc_run_fb._run_task`): the pi
 activated through `pgc_source`, `pgc_fb.build_problem`, `scalar_estimators.omnifold` with the frozen `h1` config,
 efficiency-corrected, `truth4_species`, seed = 1 + FB index, 10 iterations. The only difference is the callback,
 which also keeps `pull` (`run_omnifold`'s wrapper passes `push` only). A unit counts only if its E_avail R
-reproduces the committed `gbdt_fb_compact.jsonl.gz` value at every k = 1..10 (to <= 1e-12).
+reproduces the committed `gbdt_fb_compact.jsonl.gz` value at every k = 1..ITER (to <= 1e-12).
 
     <venv with sklearn 1.8.0>/python gd_gbdt.py --pet-source <checkout at bc356b0c> --raw <run copies> \
         --reco-scalars reco_scalars.npy --row-features row_features.npz --out results/gbdt_reproduction.json
@@ -32,7 +32,7 @@ PET = HERE.parent
 sys.path.insert(0, str(PET / "gbdt_comparison"))
 sys.path.insert(0, str(HERE))
 CASES = ("dev", "D5_nuwro", "D5p_nuwro", "D5_gibuu")
-ITER = 10
+ITER = 7          # review re-run: through the primary k = 7 (k = 8-10 R are the committed values)
 TOL = 1e-12
 
 
@@ -125,10 +125,10 @@ def main(argv=None) -> int:
            "recipe": "gbdt_comparison RECIPE (h1, efficiency_corrected, truth4_species, seed 1+FB, 10 iterations)",
            "versions": {"python": sys.version.split()[0], "numpy": np.__version__, "sklearn": sklearn.__version__},
            "units": units, "cost": {"wall_seconds": time.time() - t0,
-                                    "cpu_core_hours": sum(u["cpu_seconds"] for u in units) / 3600 * 2}}
+                                    "cpu_core_hours": sum(u["cpu_seconds"] for u in units) / 3600}}
     a.out.write_text(json.dumps(doc, indent=1, default=float) + "\n")
     bad = [u["unit"] for u in units if not u["control_c_c"]["pass"]]
-    print("C-c failures:", bad, "| charged core-h (2 threads/task):", round(doc["cost"]["cpu_core_hours"], 3))
+    print("C-c failures:", bad, "| CPU core-h (getrusage counts every thread once):", round(doc["cost"]["cpu_core_hours"], 3))
     return 0 if not bad else 2
 
 

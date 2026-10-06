@@ -42,3 +42,22 @@ def test_d5_bins_cover_and_overflow():
     assert 0 <= c["d5_3d"][0] < b.n
     assert c["d5_3d"][1] == b.n and c["d5_3d"][2] == b.n          # out of range / non-finite -> overflow
     assert c["pt"][1] == c["_n"]["pt"] - 1 and c["ppar"][2] == c["_n"]["ppar"] - 1
+
+
+def test_rec_def_applies_the_scorers_undefined_rule():
+    p = np.array([0.25, 0.25, 0.25, 0.25, 0.0, 0.0, 0.0])
+    tiny = p + np.array([0.002, -0.002, 0, 0, 0, 0, 0])                 # L1 0.004 < 0.012
+    big = p + np.array([0.05, -0.05, 0, 0, 0, 0, 0])
+    assert gd.rec_def(p, tiny, tiny) is None and gd.rec(p, tiny, tiny) == pytest.approx(1.0)
+    assert gd.rec_def(p, big, big) == pytest.approx(1.0)
+    assert gd.inj_ratio(p, tiny) < 1 < gd.inj_ratio(p, big)
+
+
+def test_weight_agreement_r_separates_noise_from_signal():
+    rng = np.random.default_rng(2)
+    o = np.exp(rng.normal(0, 0.5, 20000))
+    mask, base = np.ones(o.size, bool), np.ones(o.size)
+    clean = gd.weight_agreement(o, o, mask, base)
+    noisy = gd.weight_agreement(o * np.exp(rng.normal(0, 0.5, o.size)), o, mask, base)
+    assert clean["r"] == pytest.approx(1.0) and noisy["slope"] == pytest.approx(1.0, abs=0.05)
+    assert noisy["r"] < 0.8                                               # same slope, extra variance: lower r

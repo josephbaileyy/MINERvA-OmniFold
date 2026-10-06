@@ -71,7 +71,19 @@ def movement(prior: np.ndarray, unfolded: np.ndarray, target: np.ndarray) -> dic
 
 
 def rec(prior, unfolded, target) -> float | None:
+    """The raw recovery (C-a control and E_avail values; E_avail injections are all far above the floor)."""
     return sd.recovery_stats(prior, unfolded, target, keep_spectra=False)["recovery_raw"]
+
+
+def rec_def(prior, unfolded, target) -> float | None:
+    """The scorer's reported recovery: None (undefined) when the injected L1 < 0.012 x sqrt(nbins/7) (review 7)."""
+    return sd.recovery_stats(prior, unfolded, target, keep_spectra=False)["recovery"]
+
+
+def inj_ratio(prior, target) -> float:
+    """Injected L1 over the scorer's undefined-below floor for this histogram size."""
+    r = sd.recovery_stats(prior, prior * 1.0 + 0.0, target, keep_spectra=False)
+    return r["injected_l1"] / r["undefined_below"]
 
 
 def weight_agreement(w: np.ndarray, oracle: np.ndarray, mask: np.ndarray, base: np.ndarray) -> dict:
@@ -129,7 +141,10 @@ def reductions(A, pushes: dict, pulls: dict, bins: "D5Bins", K: int, k_op: int |
     target_e = sd.hist(eb_s, wt_s * dist, N)
     # Q1 (regions from the raw arrays too, for the movement fraction)
     reg_p, reg_s = np.asarray(A["prior_region"]), np.asarray(A["pseudo_region"])
-    q1 = {"eavail": movement(prior_e, sd.hist(eb_p, wt_p * pushes[k_op], N), target_e)}
+    unf_e = sd.hist(eb_p, wt_p * pushes[k_op], N)
+    q1 = {"eavail": {**movement(prior_e, unf_e, target_e),
+                     "signed_residual_per_bin": (unf_e / unf_e.sum() - target_e / target_e.sum()).tolist(),
+                     "injected_per_bin": (target_e / target_e.sum() - prior_e / prior_e.sum()).tolist()}}
     for rg in REGIONS:
         c = sd.REGION_CODES[rg]
         pe = sd.hist(np.where(reg_p == c, eb_p, -1), wt_p, N)
@@ -151,7 +166,8 @@ def reductions(A, pushes: dict, pulls: dict, bins: "D5Bins", K: int, k_op: int |
             pool = lambda a: np.append(a[dense], a[~dense].sum())
             pr, tg, un, orc = pool(pr), pool(tg), pool(un), pool(orc)
             q2["d5_3d_cells_used"] = int(dense.sum())
-        q2[h] = {"R": rec(pr, un, tg), "R_oracle": rec(pr, orc, tg), **movement(pr, un, tg)}
+        q2[h] = {"R": rec_def(pr, un, tg), "R_oracle": rec_def(pr, orc, tg), "injected_over_floor": inj_ratio(pr, tg),
+                 **movement(pr, un, tg)}
     q2["weights"] = weight_agreement(pushes[k_op], oracle, keep_p, wt_p)
     out["Q2"] = q2
     # Q3 / Q4: per iteration
@@ -176,6 +192,10 @@ def reductions(A, pushes: dict, pulls: dict, bins: "D5Bins", K: int, k_op: int |
             cps = np.where(cps < 0, nb, cps)
             pr_, tg_ = hist(cpr, wr_p, rp_p, nb + 1), hist(cps, wr_s * dist, rp_s, nb + 1)
             mu[v] = (cpr, pr_, tg_, nb + 1)
+    mm_p = keep_p & ~A["prior_pass_reco"].astype(bool)            # truth-passing, not reconstructed
+    mm_s = keep_s & ~A["pseudo_pass_reco"].astype(bool)
+    pr_m = sd.hist(np.where(mm_p, eb_p, -1), wt_p, N)
+    tg_m = sd.hist(np.where(mm_s, eb_s, -1), wt_s * dist, N)
     per_k = []
     for k in range(1, K + 1):
         per_k.append({
@@ -183,13 +203,19 @@ def reductions(A, pushes: dict, pulls: dict, bins: "D5Bins", K: int, k_op: int |
             "step2_R": rec(prior_e, sd.hist(eb_p, wt_p * pushes[k], N), target_e),
             "step1_truth_R": rec(pr1, sd.hist(np.where(rr_p, eb_p, -1), wt_p * pulls[k], N), tg1),
             "step1_reco_R": rec(prr, sd.hist(rb_p, wr_p * pulls[k], N), tgr),
-            **{f"step1_reco_{v}_R": rec(pr_, hist(cpr, wr_p * pulls[k], rp_p, nb), tg_)
+            **{f"step1_reco_{v}_R": rec_def(pr_, hist(cpr, wr_p * pulls[k], rp_p, nb), tg_)
                for v, (cpr, pr_, tg_, nb) in mu.items()},
             "step2_weights": weight_agreement(pushes[k], oracle, keep_p, wt_p),
+            "step2_R_accepted": rec(pr1, sd.hist(np.where(rr_p, eb_p, -1), wt_p * pushes[k], N), tg1),
+            "step2_R_missed": rec(pr_m, sd.hist(np.where(mm_p, eb_p, -1), wt_p * pushes[k], N), tg_m),
         })
     out["Q3"] = {"per_k": per_k, "oracle_step1_truth_R": rec(pr1, sd.hist(np.where(rr_p, eb_p, -1), wt_p * oracle, N), tg1),
                  "reco_muon_injected_l1": {v: float(np.abs(tg_ / tg_.sum() - pr_ / pr_.sum()).sum())
-                                           for v, (cpr, pr_, tg_, nb) in mu.items()}}
+                                           for v, (cpr, pr_, tg_, nb) in mu.items()},
+                 "reco_muon_injected_over_floor": {v: inj_ratio(pr_, tg_) for v, (cpr, pr_, tg_, nb) in mu.items()},
+                 "oracle_step1_reco_R": rec(prr, sd.hist(rb_p, wr_p * oracle, N), tgr),
+                 "oracle_step2_R_missed": rec(pr_m, sd.hist(np.where(mm_p, eb_p, -1), wt_p * oracle, N), tg_m),
+                 "oracle_step2_R_accepted": rec(pr1, sd.hist(np.where(rr_p, eb_p, -1), wt_p * oracle, N), tg1)}
     return out
 
 
@@ -285,7 +311,9 @@ def design_dependence() -> dict:
 # ----------------------------------------------------------------------------------------- summary
 def summarize(vals):
     v = [x for x in vals if x is not None]
-    return {"mean": st.fmean(v), "sd": st.stdev(v) if len(v) > 1 else None, "min": min(v), "max": max(v), "n": len(v)}
+    if not v:                                  # every draw undefined (below the scorer's floor)
+        return {"mean": None, "sd": None, "min": None, "max": None, "n": 0, "n_undefined": len(vals)}
+    return {"n_undefined": len(vals) - len(v), "mean": st.fmean(v), "sd": st.stdev(v) if len(v) > 1 else None, "min": min(v), "max": max(v), "n": len(v)}
 
 
 def main(argv=None) -> int:
@@ -333,7 +361,8 @@ def main(argv=None) -> int:
             K = FINALISTS[design]
             s["Q3"] = {k: {key: summarize([x["Q3"]["per_k"][k - 1][key] for x in rs])
                            for key in ("step2_R", "step1_truth_R", "step1_reco_R", "step1_reco_pt_R",
-                                       "step1_reco_ppar_R") if key in rs[0]["Q3"]["per_k"][0]}
+                                       "step1_reco_ppar_R", "step2_R_accepted", "step2_R_missed")
+                           if key in rs[0]["Q3"]["per_k"][0]}
                        for k in range(1, K + 1)}
             for k in range(1, K + 1):
                 s["Q3"][k]["step2_slope"] = summarize([x["Q3"]["per_k"][k - 1]["step2_weights"]["slope"] for x in rs])
