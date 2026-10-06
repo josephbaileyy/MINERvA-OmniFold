@@ -25,8 +25,11 @@ Cluster scratch (mine only): `/pscratch/sd/j/josephrb/s5p-parallel-recompute/`.
 
 **STATUS (2026-10-05, updated): VERIFICATION AGREES.** The reviewed comparer mapping extension (`02df81e6`, review
 APPROVE) gives **AGREE, 1379/1379 rows**, on the unchanged production outputs (report §8; outputs in
-`state/s5p/recompute/final-ext/`). The missing-experiment sensitivity is still uncertified, pending the lost-seed
-recovery cross-check (§5.11). The first run, below, is kept as it was:
+`state/s5p/recompute/final-ext/`). **The lost-seed recovery cross-check (§5.11) is done (2026-10-06):** all 277
+recovered draws have k_rec = 0 under frozen S, and every decision and ruled label is unchanged on the complete set
+(B' = 1400, NuWro 1800). It agrees with the campaign's frozen-s on 856 of 856 quantities
+([`REPORT-20261006-s5p-recompute-recovery-crosscheck.md`](REPORT-20261006-s5p-recompute-recovery-crosscheck.md)).
+The first run, below, is kept as it was:
 
 **FIRST RUN (2026-10-05): the reviewed comparer's verdict was INCOMPLETE, not AGREE.**
 - 712 of 712 compared rows agree, with 0 discrepancies. Twenty required items are not located (production layout
@@ -862,7 +865,7 @@ is fixed at `5a3beaf3…` with two regression tests; the first output is kept as
 - Owed, each with its own review round: LOW 1 (move the test class above `unittest.main()`) and LOW 2 (a k > 0
   fixture).
 
-**5.11 Recovered-seed cross-check (pending).** Agreed definitions with the campaign (2026-10-05):
+**5.11 Recovered-seed cross-check (DONE 2026-10-06; report `REPORT-20261006-s5p-recompute-recovery-crosscheck.md`).** Agreed definitions with the campaign (2026-10-05):
 - frozen S, from the retained ensemble;
 - per-variant k_frozen (which must reproduce the terminal run), k_rec (T ≥ T_obs), and k' over B + M;
 - the resolved claim p, the maximum over variants;
@@ -870,7 +873,9 @@ is fixed at `5a3beaf3…` with two regression tests; the first output is kept as
 - power against the retained null, over n + recovered;
 - a Holm re-run with determinacy on the resolved claims.
 
-It runs after the campaign's reviewed recovery procedure has produced its products.
+It ran after the campaign's reviewed recovery (procedure revision 5, `51648245`) had produced all 277 products.
+Result: identity, determinism (16/16 bitwise) and reproduction all pass; k_rec = 0 everywhere; nothing changes. It
+agrees with the campaign on 856 of 856 quantities. Outputs are in `state/s5p/recompute/recovery-xcheck/`.
 
 **Downstream reader.** The reproduction harness (branch `s5p-parallel-reproduction-20260928`, config key
 `joint.independent_compare`) records `/pscratch/sd/j/josephrb/s5p-parallel-recompute/final/compare.json` by sha256
