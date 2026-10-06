@@ -25,7 +25,7 @@
  "owning_worktree": "/Users/josephbailey/local-research/MINERvA-OmniFold-s5p",
  "branch": "campaign/s5p-precision-20260926",
  "cluster_namespace": "/pscratch/sd/j/josephrb/s5p-20260926/",
- "phase": "lost-seed recovery resolved by observation (report only), PENDING the recompute lane's cross-check; then Joseph's disposition; then Stage 7",
+ "phase": "recovery resolution independently cross-checked (CONFIRMED); awaiting Joseph's disposition of how it enters the claims; reproduction tier-D lane running",
  "phase_detail": "amendment 7 (production admission) FROZEN after the confirmation review and a mechanical re-check; V frozen (194 all-band pilot experiments, sha256 35979ef7...); pre-freeze residuals in null-T units and development power committed before any observed statistic; budget revision 5 (production 200 CPU node-h); production lanes: power first, then the five calibration lanes",
  "pinned": {
   "contract": "docs/orchestration/state/s5p/contract.json (frozen at the commit that first adds it)",
@@ -593,6 +593,10 @@
   {
    "utc": "2026-10-06T05:25Z",
    "what": "RECOVERY PHASE C RESOLUTION (RECORD-20261006-s5p-lost-seed-recovery-resolution.md; outputs in state/s5p/recovery/phaseC/, sha256 equal to the cluster): resolve rc 0 (every lane's union = its submitted set; provenance and split keys match); (a) union s5p_joint evaluate + s5p_robust_labels rc 0; (b) frozen-s rc 0; stopping rc 0. No recovered draw reaches the observed statistic in any test, claim or kappa = 3 variant (k_rec = 0 everywhere; closest margins: GENIE MEC shape 64.7 claim / 4.6 kappa=3 T units, GENIE CV shape 104.5 / 49.8). Every decision is unchanged and rejected, and labelled robust, under (a), under (b) and at the earliest complete-batch stops (B = 1200 for MnvTune, GENIE CV, MEC and GiBUU, one batch earlier than they did; 1800 for NuWro). PROCEDURE section 5.5 criterion met: 'can change' resolved by observation, report only, primary decisions unchanged. Power over the complete power sets reported. Cost (meter 05:24Z): verification_repair 6.887 of 68.287 (determinism 0.452, parts 2.083/2.191/2.161); envelope 288.277 of 376.52. PENDING: the recompute lane's section 5.11 cross-check, before quotation; then Joseph's disposition of how it enters the claims."
+  },
+  {
+   "utc": "2026-10-06T09:25Z",
+   "what": "RECOVERY CROSS-CHECK CONFIRMED by the recompute lane (REPORT-20261006-s5p-recompute-recovery-crosscheck.md, branch s5p-parallel-recompute-20260928 tip 00009056; crosscheck.json 6ace7e0824cf2ae1 re-read by the campaign): own report-side script from its reviewed evaluator, own seed disposition; recovered = its lost sets exactly; determinism 16/16 independently; frozen counts and retained power reproduce its terminal record; k_rec = 0 in all 62 null x test x variant cells; closest margins identical (4.6/49.8/64.7/104.5); resolved Holm all ten rejected in primary/replace/keep-both; side by side with frozen-s.json 856/856 agree, 0 differ. Disclosed: a first attempt with a voided BLAS pin stopped without output; the union reading (a) not recomputed by it. RECORD-20261006 section 7 updated to CONFIRMED (now quotable); RECORD-20261005 updated (84-test author run; resolution complete). Next: Joseph's disposition (publication-lane event 3)."
   }
  ],
  "findings": [
