@@ -139,5 +139,9 @@ Stage 7 starts after D2 and D3, on `docs/s5p-stage7-20261006`.
    - the submission package for Joseph.
 
    Deposit, tag and submission stay unauthorized.
-5. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
+5. **Standalone note-repo sync owed** (fold into the next sync coordinated with `gbdt worker`): this branch's
+   article sources, and main's PR #21 PET note corrections (`2fb6f035`; `sec_pet_campaigns.tex`,
+   `PET_STUDY_SYNTHESIS.md`, one `sec_execsummary.tex` phrase). The note-organization lane `minerva-omnifold-bf`
+   is no longer a live session, so PR bodies serve as its notice.
+6. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
    routes.
