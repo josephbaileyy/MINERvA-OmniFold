@@ -174,5 +174,11 @@ Stage 7 starts after D2 and D3, on `docs/s5p-stage7-20261006`.
     - otherwise: "the rebuilt band appears conservative by about 20% against circular toys; it has not been
       independently re-tested".
     Either way: "the test failed; the main cause, a replica completeness bug, was found and fixed".
+    **Update (2D lane, 2026-10-06):** the rescoring is merged (`5aab2d6d`). Check (iii) is answered **NO**: the
+    residual over-width (bulk per-bin RMS 0.81) is not explained by background purity (median 0.975; predicted RMS
+    0.993; correlation −0.09). It lies in the data-statistics stream (MC-dominated bins 0.975, data-dominated 0.71).
+    So use the "conservative, not re-tested" wording, plus "the residual excess width lies in the data-statistics
+    component and is not explained by background purity". Still waiting on: the rollup and χ² shas (old 6.87%,
+    combined 1.481; the paper-covariance χ²/ndf 3.66 is expected unchanged).
 13. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
    routes.
