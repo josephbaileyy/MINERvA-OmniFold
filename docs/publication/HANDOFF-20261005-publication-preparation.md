@@ -154,5 +154,14 @@ Stage 7 starts after D2 and D3, on `docs/s5p-stage7-20261006`.
    every decision unchanged under (a), (b) and the earliest stops; PENDING the recompute lane's §6 cross-check.
    This lane's replay of `resolved-evaluate.json` from the recovery-union extract AGREEs (receipt `000cd276`),
    which is a consistency check, not the §6 cross-check.
-9. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
+9. **W1 done** (`22a004e7`; independent reproduction 40/40 exact, `09718448`): no prediction qualifies; the
+   joint-information claim is omitted (terminal). The article states the outcome (`d91db17b`).
+10. **W2 done** (branch `study/w2-recoil-response-20261006` at `940d84aa`; report `publication/w2/W2B-REPORT-20261006.md`):
+    the δ = 0 control PASS via fallback (not bitwise); **all 10 rejections robust at ±4%** (NuWro shape k 1 → 3 at
+    +4%, p 0.0023 against 0.05); spend **1.9967 of 8.0** CPU node-h, no retries. The independent check by the
+    recompute lane (per-copy files sent, 12 digests verified) is PENDING. Fill the article's W2 `\pubhold` only
+    after it AGREEs. Merge the W2 branch into the publication branch at integration.
+11. **D3** (Joseph's disposition of the recovery, class R1, `cd810761`) is requested. `gbdt worker` is asking with
+    the same sentence. Then D4 (Stage-7 wording) follows.
+12. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
    routes.
