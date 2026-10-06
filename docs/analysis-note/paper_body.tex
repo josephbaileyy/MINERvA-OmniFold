@@ -573,7 +573,17 @@ matched total uncertainty with validated coverage.
 The input data and simulation are the MINERvA open-data AnaTuples, released under
 CC0~\cite{MINERvA:OpenData}; this analysis used an earlier production of that
 release whose file identities are recorded with the release.
-\pubhold{release contents, identities and access route: numerical results,
-inference definition and calibration statistics sufficient to replay the joint
-tests, and the reproduction path; to be stated once the release candidate passes
-an independent replay.}
+A release of sufficient inputs, of about \SI{16}{MB}, lets a reader recompute every
+$p$ value, decision, robustness label and power figure of the joint tests, the
+lost-seed resolution and the coarse-projection comparison with standard numerical
+libraries only.  It contains the per-pseudo-experiment cell values after the
+declared nuisance terms, their seeds, the predictions, the test domains, the
+variant shifts, the metric and the observed data vector, together with the digest
+of every source product.  An outside replay from an empty directory reproduced
+every recorded value.  Extraction from the pseudo-experiment products and the
+event-level processing are not reproducible from this release; they need the
+products on the analysis computing system and the open-data AnaTuples together
+with the generator samples produced for this analysis.
+\pubhold{deposit identifier and access route, after the separately authorized
+release decision.}
+% Source: docs/publication/release/RC1-README.md, RC1-REPLAY-RECEIPT-20261006.md (b2a54aa5).
