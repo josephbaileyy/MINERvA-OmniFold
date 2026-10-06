@@ -65,3 +65,24 @@ below.
 **Next deliverables owed to Joseph:**
 - the recovery interpretation, when his D3 disposition is needed;
 - the finished submission package, including the PRX recommendation.
+
+## Addendum, 2026-10-06: KI-84 (VL170) adoption, confirmed in this session
+
+A peer session (`reviewer`, Joseph's personal session) relayed that Joseph had decided to adopt VL170, the rebuilt
+2D statistical band, as the quoted 2D statistical band. The publication lane asked Joseph directly in this session.
+The question, verbatim:
+
+> "Your personal session relays that you want VL170, the rebuilt 2D statistical band, adopted as the quoted band,
+> with the change carried downstream. Do you confirm, and who should do the work?"
+
+**Joseph's answer (option selected):** "Adopt; 2D lane rebuilds (Recommended)".
+
+The selected option's text, verbatim: "Confirm adoption. The 2D lane (which built VL170) records VL170 ADOPTED /
+VL162 superseded, rebuilds the 6.87% rollup, the χ² and the figures, and updates the note appendices with the note
+owners. The publication lane updates only the article's 2D paragraph, once the rollup and the VL169-toy rescoring
+are committed."
+
+**Binds:**
+- the publication lane changes only the article's 2D-uncertainty paragraph, and only after the 2D lane's rebuilt
+  rollup and its descriptive VL169-toy rescoring are committed;
+- the ledger, rollup, χ², figures and note-appendix updates are the 2D lane's.
