@@ -143,5 +143,16 @@ Stage 7 starts after D2 and D3, on `docs/s5p-stage7-20261006`.
    article sources, and main's PR #21 PET note corrections (`2fb6f035`; `sec_pet_campaigns.tex`,
    `PET_STUDY_SYNTHESIS.md`, one `sec_execsummary.tex` phrase). The note-organization lane `minerva-omnifold-bf`
    is no longer a live session, so PR bodies serve as its notice.
-6. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
+6. **2D statistical band (KI-84):** a candidate rebuilt band exists (PR #22, main `fd64f737`, VL170). It is
+   **not adopted** and no quoted value changed; per-bin σ ratio median 1.179, √tr C ratio 1.063; no rollup or
+   coverage re-test. The article keeps the VL162/VL169 wording. If Joseph adopts the rebuilt band, update the
+   article's 2D-uncertainty paragraph (and the 6.87% median only if the rollup is rebuilt).
+7. **W2a** done (branch `study/w2-recoil-response-20261006` at `35241cbd`; measured 0.0985 node-h; projected
+   W2a+W2b 2.5-3.1, ≤ 6.2 with retry: cost gate GO). An independent read-only review (detached worktree
+   `../MINERvA-OmniFold-w2-review`) is running. W2b runs only if it CLEARS and after D2's cross-check.
+8. **D2 progress:** resolution recorded (`11a266c6`, `RECORD-20261006-s5p-lost-seed-recovery-resolution.md`):
+   every decision unchanged under (a), (b) and the earliest stops; PENDING the recompute lane's §6 cross-check.
+   This lane's replay of `resolved-evaluate.json` from the recovery-union extract AGREEs (receipt `000cd276`),
+   which is a consistency check, not the §6 cross-check.
+9. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
    routes.
