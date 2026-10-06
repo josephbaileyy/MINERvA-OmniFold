@@ -54,6 +54,8 @@ Tag & Cited at & Record \\
   comparator weights \texttt{w\_truth}) \\
 \texttt{z-adoption} & \S\ref{sec:eavailw-construction}, App.~\ref{app:release-audit} &
   see below \\
+\texttt{joint-5d} & \S\ref{sec:joint5d}, Table~\ref{tab:joint5d} &
+  see below \\
 \texttt{retracted-values} & \S\ref{sec:pet}, App.~\ref{app:history} &
   \repopath{docs/orchestration/INDEX-retracted-and-superseded-values.md} \\
 \texttt{pet-pairing} & \S\ref{sec:pet}, \S\ref{app:cstatlimit} &
@@ -132,6 +134,18 @@ column above, so they are given here at full width.
     Adoption recorded 2026-09-20; the predeclared magnitude criterion is \emph{cause~3}'s
     $M(\mathrm{ii})$ in the internal dependency register, computed by the 2026-09-20 campaign
     for the two companion products only.
+  \item[\texttt{joint-5d}.] The frozen design is amendment~7 at commit \texttt{4f5a613f}; the
+    result, with its six conditions verbatim, at
+    \repopath{docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md}; the evaluated
+    outputs at \repopath{docs/orchestration/state/s5p/stage7/joint/joint-evaluate.json}
+    (sha256 \texttt{b9604502}) and \texttt{robust-labels.json}; the independent recomputation
+    (verdict AGREE, 1379 of 1379 rows) on branch \texttt{s5p-parallel-recompute-20260928};
+    the lost-draw recovery at
+    \repopath{docs/orchestration/RECORD-20261006-s5p-lost-seed-recovery-resolution.md}, with its
+    independent cross-check (856 of 856 quantities); the owner's disposition at
+    \repopath{docs/orchestration/DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md}
+    \S5; and the fresh-checkout replay in \texttt{reproduction/s5p/} (tier~D). Open item
+    \texttt{OI-193}.
   \item[\texttt{pet-pairing}.] \texttt{OI-126} in \texttt{docs/OPEN\_ITEMS.md}.
     The 2026-08-20 ruling: the central/statistical pairing is declined, no PET
     total covariance is adopted for publication, PET remains a
