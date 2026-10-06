@@ -182,5 +182,9 @@ Stage 7 starts after D2 and D3, on `docs/s5p-stage7-20261006`.
     attribute it to production over-scatter or to toy under-scatter, because that is untested. Cite the 2D lane's
     committed state file for this check, which comes with its adoption PR. Still waiting on: the rollup and χ² shas (old 6.87%,
     combined 1.481; the paper-covariance χ²/ndf 3.66 is expected unchanged).
-13. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
+13. **Standalone note-repo sync:** the 2D lane reports that Joseph assigned it to run the sync **once**, after this
+    branch merges to main. That is a relay, so confirm it with Joseph. This lane stood down from syncing to keep a
+    single syncer. Sequence: final independent review (running on `a87e2888`) → fixes → PR of this branch to main →
+    send the merge sha to `2d` → `2d` syncs from it. The merge replaces the Letter with the PRD article on main.
+14. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
    routes.
