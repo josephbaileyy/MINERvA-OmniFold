@@ -116,8 +116,9 @@ pattern is a test of a chosen size, not a measured difference between generators
 that test typical cells come back about \SI{10}{\percent} off, and the
 highest-$W$ cells much more. Neither effect is in the quoted uncertainty yet.
 
-A follow-up study looked inside the unfolding to find out why. Letting it run six times
-longer helps only a little, and a larger machine-learning model does not help. For other
+A follow-up study looked inside the unfolding to find out why. The tested iteration
+and capacity changes do not remove the bias; their effects depend on the injected
+truth and the quantity reported. For other
 generators the effect is \SIrange{16}{31}{\percent} in the worst cell and smaller than the
 quoted uncertainty in about half of the $(\Eavail,W)$ cells. The study did find the source
 of the remaining background bias, a too-simple helper classifier, and a larger one removes
@@ -268,6 +269,50 @@ hadrons. The muon was withheld from both classifiers, so this is a recoil-only
 diagnostic, method-development cross-check, not a measurement of the whole event; it
 contributes no cross section or error bar. A later full-event version that adds the
 muon is also method development only; no point-cloud error bar is adopted.
+
+Completed simulation studies then improved PET's recovery of deliberately
+changed truth distributions. More iterations, detector summaries and a revised
+missed-event treatment helped, but none of the improvement study's frozen
+ten-iteration candidates qualified for coverage testing. A later final-design
+study raised the recovered fraction of an available-energy tilt to about
+90\% and 86\% for its two finalists, against 31\% for the historical PET
+control~\cite{PETImprovement2026,PETFinalDesign2026}.
+
+Better recovery did not yield a qualified design. The final outcome is
+\texttt{NO\_ELIGIBLE\_DESIGN}. One finalist failed a robustness threshold
+by the frozen point rule; the statistical comparison did not establish which
+finalist was more robust, and its coverage was never measured. The other
+passed the point-estimate rules but failed its six-member interval test:
+nominal 68\% intervals covered 90\% of the aggregate bin targets, yet only
+26\% in low-acceptance regions (79\% for nominal 95\% intervals there).
+It over-covers in aggregate and under-covers where acceptance is low.
+No design or default was selected, and no PET uncertainty was adopted.
+
+A subsequent exploratory comparison used exactly the same simulated events
+for PET and a scalar tree-based OmniFold~\cite{PETGBDT2026}. Figure~\ref{fig:primerpet}
+shows PET's advantage on the two energy tilts. The ordering changes across
+tests: the tree method does better on all three generator-model reweightings
+and the narrow energy bump, while the proton-topology gap shrinks with more
+tree-method iterations. A binned method already matches PET on the
+one-dimensional tilt in development tests, so this is not a general ranking
+of neural versus scalar unfolding. The comparator differs from the production
+LightGBM studied earlier. Its uncertainty was not tested here; no precision
+comparison or ranking of the PET finalists follows. All results condition
+on the study's finite simulation banks and event scale.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.90\textwidth]{pet_gbdt_paired_differences.pdf}
+  \caption{Exploratory simulation comparison: gain in recovered fraction for
+  each PET finalist relative to the matched tree method at its
+  development-chosen seven iterations. Positive is better recovery.
+  E0 and E3 are opposite energy tilts; E1 separates acceptance regions;
+  E4 tests proton content and E5 the joint energy--momentum-transfer
+  distribution. Bars are unadjusted 95\% intervals for paired differences
+  over 60 draws (E0, E1, E3) or 40 (E4, E5), conditional on the banks.
+  These are point-estimate comparisons, not validated uncertainty bands.}
+  \label{fig:primerpet}
+\end{figure}
 
 Separately, the published signal definition excludes about a third of the
 simulated interaction rate because of its muon kinematic cuts. This fraction
