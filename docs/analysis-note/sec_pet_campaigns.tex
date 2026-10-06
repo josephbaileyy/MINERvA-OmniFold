@@ -94,7 +94,7 @@ Both 95\% intervals cross the threshold, so the frozen point rule decides
 eligibility but the statistical comparison establishes neither a robustness
 ranking nor equivalence. The frozen B1 independence-based bound passes;
 within-draw dependence prevents establishing its intended per-unit failure
-probability bound. This also does not establish that the bound is exceeded.
+probability bound. Nor does it show that the per-unit failure probability exceeds 0.10.
 The compact design was not cheaper at the declared packing, so the
 cost-based preference for it did not apply.
 
@@ -123,7 +123,8 @@ Good acceptance & 0.929 & 0.998 \\
 pseudodata truth. Aggregate intervals over-cover: C1 fails decisively at
 68\% (lower bound 0.858, ceiling 0.80). C4 also fails: mean 95\% half-widths
 in six of seven bins are 1.32--1.72 times the allowed limit. Low acceptance
-under-covers, although that region is not gated by C3. C2 and C3 pass.}
+under-covers; no frozen rule gates that region (C3 covers only the moderate
+and good regions). C2 and C3 pass.}
 \label{tab:pet-final-coverage}
 \end{table}
 
@@ -132,7 +133,8 @@ final-bank population target. Its mechanism is not established; it is not
 uniform conservatism. The proton-topology coverage stage C5 was skipped
 after the decisive failure, and L128S1T24 coverage was never measured.
 The terminal outcome remains \texttt{NO\_ELIGIBLE\_DESIGN}: H2S1T24 fails
-interval calibration and L128S1T24 fails B2. Neither failure proves that the
+interval calibration and L128S1T24 fails B2 by the frozen point rule (statistically
+unresolved). Neither failure proves that the
 point estimator is unusable. No repair or reserve-bank revalidation forms
 part of these completed results.
 
@@ -153,13 +155,15 @@ distinct from the production scalar-5D LightGBM synthesis in
 
 PET recovers both $\Eavail$ tilts better than this GBDT
 (Fig.~\ref{fig:pet-gbdt-paired}). On the development tilt, paired gains in
-$R$ are $+0.102$ [0.084, 0.119] and $+0.070$ [0.051, 0.089] over 60
-draws. Summed per-bin mean squared residuals are
+$R$ are $+0.102$ [0.084, 0.119] for H2S1T24 and $+0.070$ [0.051, 0.089]
+for L128S1T24 over 60 draws. Summed per-bin mean squared residuals are
 $(3.33,5.26,9.78)\times10^{-4}$ for H2S1T24, L128S1T24 and GBDT.
 Residuals compare each estimate to its own draw's target; their spread is
 not unconditional estimator variance. On the proton-topology endpoint,
 H2S1T24's gain at GBDT $k=7$ is $+0.055$ [0.035, 0.075], but at
-$k=10$ it is $+0.009$ [$-0.012$, 0.030]. The $\Eavail\times q_3$
+$k=10$ it is $+0.009$ [$-0.012$, 0.030]; L128S1T24 is level at $k=7$
+($+0.012$ [$-0.007$, 0.031]) and below the GBDT at $k=10$ ($-0.034$
+[$-0.054$, $-0.015$]). The $\Eavail\times q_3$
 endpoint does not resolve a difference.
 
 \begin{figure}[htbp]
@@ -190,8 +194,8 @@ robustness rankings.
 \centering
 \includegraphics[width=0.94\linewidth]{pet_gbdt_library_paired.pdf}
 \caption{Paired recovery differences across the existing distortion library,
-GBDT at $k=7$. Each case uses its designated histogram; most have eight
-draws, with proton-up and the joint $\Eavail$--$q_3$ case using 40.
+GBDT at $k=7$. Each case uses its natural histogram; most have eight
+draws, with D4c proton-up and D3 $+0.35$ ($\Eavail\times q_3$) using 40.
 Intervals are unadjusted 95\% Student-$t$ intervals conditional on the
 banks. The response-plus-tilt rows include the tilt contribution and do
 not isolate detector-response sensitivity. The generator rows show that
@@ -201,9 +205,11 @@ PET's tilt advantage does not extend to every tested departure.}
 
 All contrasts are exploratory: the PET final-bank results had already been
 inspected, intervals are not adjusted for multiple comparisons, and inference
-conditions on the finite banks. On the matched development events, binned
-iterative Bayesian unfolding already matches PET's one-dimensional tilt
-performance; the observed lead is over this HGB OmniFold, not scalar
+conditions on the finite banks at study scale (about 600,000 pseudodata
+events per unfolding). On the two matched development draws (descriptive),
+binned iterative Bayesian unfolding and AUSSIE with kinematic truth inputs
+match or beat PET on the one-dimensional tilt but fail on hadron-content or
+generator cases; the observed lead is over this HGB OmniFold, not scalar
 unfolding in general. There is no GBDT interval procedure in this comparison,
 and the measured PET procedure failed calibration. Thus no uncertainty
 comparison, universal method ordering, finalist ranking or adoption follows.
