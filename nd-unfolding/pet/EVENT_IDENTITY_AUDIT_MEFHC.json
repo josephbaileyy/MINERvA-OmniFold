@@ -1,0 +1,2953 @@
+{
+ "contract_version": "event-identity-v1",
+ "cross_inventory_overlap": {
+  "1A": {
+   "mc_background|mc_signal_reco": {
+    "disjoint": true,
+    "n_a": 44900,
+    "n_b": 4073230,
+    "n_only_a": 44900,
+    "n_only_b": 4073230,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_background|mc_truth_denom": {
+    "disjoint": true,
+    "n_a": 44900,
+    "n_b": 4073230,
+    "n_only_a": 44900,
+    "n_only_b": 4073230,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_signal_reco|mc_truth_denom": {
+    "disjoint": false,
+    "n_a": 4073230,
+    "n_b": 4073230,
+    "n_only_a": 0,
+    "n_only_b": 0,
+    "n_shared": 4073230,
+    "sets_equal": true
+   }
+  },
+  "1B": {
+   "mc_background|mc_signal_reco": {
+    "disjoint": true,
+    "n_a": 12145,
+    "n_b": 1095679,
+    "n_only_a": 12145,
+    "n_only_b": 1095679,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_background|mc_truth_denom": {
+    "disjoint": true,
+    "n_a": 12145,
+    "n_b": 1095679,
+    "n_only_a": 12145,
+    "n_only_b": 1095679,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_signal_reco|mc_truth_denom": {
+    "disjoint": false,
+    "n_a": 1095679,
+    "n_b": 1095679,
+    "n_only_a": 0,
+    "n_only_b": 0,
+    "n_shared": 1095679,
+    "sets_equal": true
+   }
+  },
+  "1C": {
+   "mc_background|mc_signal_reco": {
+    "disjoint": true,
+    "n_a": 22949,
+    "n_b": 2090982,
+    "n_only_a": 22949,
+    "n_only_b": 2090982,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_background|mc_truth_denom": {
+    "disjoint": true,
+    "n_a": 22949,
+    "n_b": 2090982,
+    "n_only_a": 22949,
+    "n_only_b": 2090982,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_signal_reco|mc_truth_denom": {
+    "disjoint": false,
+    "n_a": 2090982,
+    "n_b": 2090982,
+    "n_only_a": 0,
+    "n_only_b": 0,
+    "n_shared": 2090982,
+    "sets_equal": true
+   }
+  },
+  "1D": {
+   "mc_background|mc_signal_reco": {
+    "disjoint": true,
+    "n_a": 67366,
+    "n_b": 6081602,
+    "n_only_a": 67366,
+    "n_only_b": 6081602,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_background|mc_truth_denom": {
+    "disjoint": true,
+    "n_a": 67366,
+    "n_b": 6081602,
+    "n_only_a": 67366,
+    "n_only_b": 6081602,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_signal_reco|mc_truth_denom": {
+    "disjoint": false,
+    "n_a": 6081602,
+    "n_b": 6081602,
+    "n_only_a": 0,
+    "n_only_b": 0,
+    "n_shared": 6081602,
+    "sets_equal": true
+   }
+  },
+  "1E": {
+   "mc_background|mc_signal_reco": {
+    "disjoint": true,
+    "n_a": 56394,
+    "n_b": 5090774,
+    "n_only_a": 56394,
+    "n_only_b": 5090774,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_background|mc_truth_denom": {
+    "disjoint": true,
+    "n_a": 56394,
+    "n_b": 5090774,
+    "n_only_a": 56394,
+    "n_only_b": 5090774,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_signal_reco|mc_truth_denom": {
+    "disjoint": false,
+    "n_a": 5090774,
+    "n_b": 5090774,
+    "n_only_a": 0,
+    "n_only_b": 0,
+    "n_shared": 5090774,
+    "sets_equal": true
+   }
+  },
+  "1F": {
+   "mc_background|mc_signal_reco": {
+    "disjoint": true,
+    "n_a": 78943,
+    "n_b": 7079651,
+    "n_only_a": 78943,
+    "n_only_b": 7079651,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_background|mc_truth_denom": {
+    "disjoint": true,
+    "n_a": 78943,
+    "n_b": 7079651,
+    "n_only_a": 78943,
+    "n_only_b": 7079651,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_signal_reco|mc_truth_denom": {
+    "disjoint": false,
+    "n_a": 7079651,
+    "n_b": 7079651,
+    "n_only_a": 0,
+    "n_only_b": 0,
+    "n_shared": 7079651,
+    "sets_equal": true
+   }
+  },
+  "1G": {
+   "mc_background|mc_signal_reco": {
+    "disjoint": true,
+    "n_a": 65529,
+    "n_b": 5960127,
+    "n_only_a": 65529,
+    "n_only_b": 5960127,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_background|mc_truth_denom": {
+    "disjoint": true,
+    "n_a": 65529,
+    "n_b": 5960127,
+    "n_only_a": 65529,
+    "n_only_b": 5960127,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_signal_reco|mc_truth_denom": {
+    "disjoint": false,
+    "n_a": 5960127,
+    "n_b": 5960127,
+    "n_only_a": 0,
+    "n_only_b": 0,
+    "n_shared": 5960127,
+    "sets_equal": true
+   }
+  },
+  "1L": {
+   "mc_background|mc_signal_reco": {
+    "disjoint": true,
+    "n_a": 6768,
+    "n_b": 583219,
+    "n_only_a": 6768,
+    "n_only_b": 583219,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_background|mc_truth_denom": {
+    "disjoint": true,
+    "n_a": 6768,
+    "n_b": 583219,
+    "n_only_a": 6768,
+    "n_only_b": 583219,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_signal_reco|mc_truth_denom": {
+    "disjoint": false,
+    "n_a": 583219,
+    "n_b": 583219,
+    "n_only_a": 0,
+    "n_only_b": 0,
+    "n_shared": 583219,
+    "sets_equal": true
+   }
+  },
+  "1M": {
+   "mc_background|mc_signal_reco": {
+    "disjoint": true,
+    "n_a": 104369,
+    "n_b": 8991233,
+    "n_only_a": 104369,
+    "n_only_b": 8991233,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_background|mc_truth_denom": {
+    "disjoint": true,
+    "n_a": 104369,
+    "n_b": 8991233,
+    "n_only_a": 104369,
+    "n_only_b": 8991233,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_signal_reco|mc_truth_denom": {
+    "disjoint": false,
+    "n_a": 8991233,
+    "n_b": 8991233,
+    "n_only_a": 0,
+    "n_only_b": 0,
+    "n_shared": 8991233,
+    "sets_equal": true
+   }
+  },
+  "1N": {
+   "mc_background|mc_signal_reco": {
+    "disjoint": true,
+    "n_a": 61653,
+    "n_b": 5189689,
+    "n_only_a": 61653,
+    "n_only_b": 5189689,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_background|mc_truth_denom": {
+    "disjoint": true,
+    "n_a": 61653,
+    "n_b": 5189689,
+    "n_only_a": 61653,
+    "n_only_b": 5189689,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_signal_reco|mc_truth_denom": {
+    "disjoint": false,
+    "n_a": 5189689,
+    "n_b": 5189689,
+    "n_only_a": 0,
+    "n_only_b": 0,
+    "n_shared": 5189689,
+    "sets_equal": true
+   }
+  },
+  "1O": {
+   "mc_background|mc_signal_reco": {
+    "disjoint": true,
+    "n_a": 19380,
+    "n_b": 1584425,
+    "n_only_a": 19380,
+    "n_only_b": 1584425,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_background|mc_truth_denom": {
+    "disjoint": true,
+    "n_a": 19380,
+    "n_b": 1584425,
+    "n_only_a": 19380,
+    "n_only_b": 1584425,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_signal_reco|mc_truth_denom": {
+    "disjoint": false,
+    "n_a": 1584425,
+    "n_b": 1584425,
+    "n_only_a": 0,
+    "n_only_b": 0,
+    "n_shared": 1584425,
+    "sets_equal": true
+   }
+  },
+  "1P": {
+   "mc_background|mc_signal_reco": {
+    "disjoint": true,
+    "n_a": 25640,
+    "n_b": 2085497,
+    "n_only_a": 25640,
+    "n_only_b": 2085497,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_background|mc_truth_denom": {
+    "disjoint": true,
+    "n_a": 25640,
+    "n_b": 2085497,
+    "n_only_a": 25640,
+    "n_only_b": 2085497,
+    "n_shared": 0,
+    "sets_equal": false
+   },
+   "mc_signal_reco|mc_truth_denom": {
+    "disjoint": false,
+    "n_a": 2085497,
+    "n_b": 2085497,
+    "n_only_a": 0,
+    "n_only_b": 0,
+    "n_shared": 2085497,
+    "sets_equal": true
+   }
+  }
+ },
+ "cross_source_overlap": {
+  "data": {
+   "disjoint": true,
+   "n_keys_in_more_than_one_source": 0,
+   "n_overlapping_pairs": 0,
+   "pairs": []
+  },
+  "mc_background": {
+   "disjoint": true,
+   "n_keys_in_more_than_one_source": 0,
+   "n_overlapping_pairs": 0,
+   "pairs": []
+  },
+  "mc_signal_reco": {
+   "disjoint": true,
+   "n_keys_in_more_than_one_source": 0,
+   "n_overlapping_pairs": 0,
+   "pairs": []
+  },
+  "mc_truth_denom": {
+   "disjoint": true,
+   "n_keys_in_more_than_one_source": 0,
+   "n_overlapping_pairs": 0,
+   "pairs": []
+  }
+ },
+ "max_entries": null,
+ "measured_utc": "2026-09-19T00:39:59.114208+00:00",
+ "merged": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/merged/runEventLoopOmniFold_G2_FPS_MEFHC.root",
+  "trees": {
+   "data": {
+    "component_ranges": {
+     "ev_gate": {
+      "max": 1499,
+      "min": 1
+     },
+     "ev_run": {
+      "max": 20839,
+      "min": 6038
+     },
+     "ev_subrun": {
+      "max": 91,
+      "min": 1
+     }
+    },
+    "concatenation_order_verified": true,
+    "counts_agree": true,
+    "cxx_wrapped_key": {
+     "collisions_beyond_exact": 0,
+     "n_distinct": 3899170,
+     "n_distinct_exact": 3899170
+    },
+    "n_entries": 4119797,
+    "per_source_counts": {
+     "1A": 360123,
+     "1B": 75192,
+     "1C": 173122,
+     "1D": 580834,
+     "1E": 408075,
+     "1F": 642737,
+     "1G": 538406,
+     "1L": 49872,
+     "1M": 591031,
+     "1N": 415928,
+     "1O": 110836,
+     "1P": 173641
+    },
+    "range_mismatch_sources": [],
+    "sum_of_sources": 4119797,
+    "uniqueness": {
+     "examples": [],
+     "examples_redacted": 5,
+     "is_unique": false,
+     "max_multiplicity": 5,
+     "n_distinct": 3899170,
+     "n_duplicated_keys": 212677,
+     "n_duplicated_rows": 433304,
+     "n_rows": 4119797
+    },
+    "uniqueness_with_source": {
+     "examples": [],
+     "examples_redacted": 5,
+     "is_unique": false,
+     "max_multiplicity": 5,
+     "n_distinct": 3899170,
+     "n_duplicated_keys": 212677,
+     "n_duplicated_rows": 433304,
+     "n_rows": 4119797
+    }
+   },
+   "mc_background": {
+    "component_ranges": {
+     "mc_nthEvtInFile": {
+      "max": 1243,
+      "min": 0
+     },
+     "mc_run": {
+      "max": 113390,
+      "min": 110000
+     },
+     "mc_subrun": {
+      "max": 850,
+      "min": 1
+     }
+    },
+    "concatenation_order_verified": true,
+    "counts_agree": true,
+    "cxx_wrapped_key": {
+     "collisions_beyond_exact": 0,
+     "n_distinct": 566036,
+     "n_distinct_exact": 566036
+    },
+    "n_entries": 566036,
+    "per_source_counts": {
+     "1A": 44900,
+     "1B": 12145,
+     "1C": 22949,
+     "1D": 67366,
+     "1E": 56394,
+     "1F": 78943,
+     "1G": 65529,
+     "1L": 6768,
+     "1M": 104369,
+     "1N": 61653,
+     "1O": 19380,
+     "1P": 25640
+    },
+    "range_mismatch_sources": [],
+    "sum_of_sources": 566036,
+    "uniqueness": {
+     "examples": [],
+     "is_unique": true,
+     "max_multiplicity": 1,
+     "n_distinct": 566036,
+     "n_duplicated_keys": 0,
+     "n_duplicated_rows": 0,
+     "n_rows": 566036
+    },
+    "uniqueness_with_source": {
+     "examples": [],
+     "is_unique": true,
+     "max_multiplicity": 1,
+     "n_distinct": 566036,
+     "n_duplicated_keys": 0,
+     "n_duplicated_rows": 0,
+     "n_rows": 566036
+    }
+   },
+   "mc_signal_reco": {
+    "component_ranges": {
+     "mc_nthEvtInFile": {
+      "max": 1276,
+      "min": 0
+     },
+     "mc_run": {
+      "max": 113390,
+      "min": 110000
+     },
+     "mc_subrun": {
+      "max": 850,
+      "min": 1
+     }
+    },
+    "concatenation_order_verified": true,
+    "counts_agree": true,
+    "cxx_wrapped_key": {
+     "collisions_beyond_exact": 0,
+     "n_distinct": 49906108,
+     "n_distinct_exact": 49906108
+    },
+    "n_entries": 49906108,
+    "per_source_counts": {
+     "1A": 4073230,
+     "1B": 1095679,
+     "1C": 2090982,
+     "1D": 6081602,
+     "1E": 5090774,
+     "1F": 7079651,
+     "1G": 5960127,
+     "1L": 583219,
+     "1M": 8991233,
+     "1N": 5189689,
+     "1O": 1584425,
+     "1P": 2085497
+    },
+    "range_mismatch_sources": [],
+    "sum_of_sources": 49906108,
+    "uniqueness": {
+     "examples": [],
+     "is_unique": true,
+     "max_multiplicity": 1,
+     "n_distinct": 49906108,
+     "n_duplicated_keys": 0,
+     "n_duplicated_rows": 0,
+     "n_rows": 49906108
+    },
+    "uniqueness_with_source": {
+     "examples": [],
+     "is_unique": true,
+     "max_multiplicity": 1,
+     "n_distinct": 49906108,
+     "n_duplicated_keys": 0,
+     "n_duplicated_rows": 0,
+     "n_rows": 49906108
+    }
+   },
+   "mc_truth_denom": {
+    "component_ranges": {
+     "mc_nthEvtInFile": {
+      "max": 1276,
+      "min": 0
+     },
+     "mc_run": {
+      "max": 113390,
+      "min": 110000
+     },
+     "mc_subrun": {
+      "max": 850,
+      "min": 1
+     }
+    },
+    "concatenation_order_verified": true,
+    "counts_agree": true,
+    "cxx_wrapped_key": {
+     "collisions_beyond_exact": 0,
+     "n_distinct": 49906108,
+     "n_distinct_exact": 49906108
+    },
+    "n_entries": 49906108,
+    "per_source_counts": {
+     "1A": 4073230,
+     "1B": 1095679,
+     "1C": 2090982,
+     "1D": 6081602,
+     "1E": 5090774,
+     "1F": 7079651,
+     "1G": 5960127,
+     "1L": 583219,
+     "1M": 8991233,
+     "1N": 5189689,
+     "1O": 1584425,
+     "1P": 2085497
+    },
+    "range_mismatch_sources": [],
+    "sum_of_sources": 49906108,
+    "uniqueness": {
+     "examples": [],
+     "is_unique": true,
+     "max_multiplicity": 1,
+     "n_distinct": 49906108,
+     "n_duplicated_keys": 0,
+     "n_duplicated_rows": 0,
+     "n_rows": 49906108
+    },
+    "uniqueness_with_source": {
+     "examples": [],
+     "is_unique": true,
+     "max_multiplicity": 1,
+     "n_distinct": 49906108,
+     "n_duplicated_keys": 0,
+     "n_duplicated_rows": 0,
+     "n_rows": 49906108
+    }
+   }
+  }
+ },
+ "per_source": {
+  "1A": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1A.root",
+   "trees": {
+    "data": {
+     "component_ranges": {
+      "ev_gate": {
+       "max": 1499,
+       "min": 1
+      },
+      "ev_run": {
+       "max": 10066,
+       "min": 6038
+      },
+      "ev_subrun": {
+       "max": 91,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 344340,
+      "n_distinct_exact": 344340
+     },
+     "duplicate_character": {
+      "n_blocks_all_identical": 0,
+      "n_blocks_with_difference": 15354,
+      "n_duplicated_keys": 15354,
+      "witness_branches": [
+       "measured",
+       "measured_pz",
+       "mu_reco_E",
+       "vtx_reco_z"
+      ]
+     },
+     "identity_fields": [
+      "ev_run",
+      "ev_subrun",
+      "ev_gate"
+     ],
+     "n_entries": 360123,
+     "occurrence": {
+      "max": 3,
+      "n_rows_needing_occurrence": 15783
+     },
+     "packable": true,
+     "tree": "data",
+     "uniqueness": {
+      "examples": [],
+      "examples_redacted": 5,
+      "is_unique": false,
+      "max_multiplicity": 4,
+      "n_distinct": 344340,
+      "n_duplicated_keys": 15354,
+      "n_duplicated_rows": 31137,
+      "n_rows": 360123
+     }
+    },
+    "mc_background": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1176,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 110040,
+       "min": 110000
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 44900,
+      "n_distinct_exact": 44900
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 44900,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_background",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 44900,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 44900
+     }
+    },
+    "mc_signal_reco": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1221,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 110040,
+       "min": 110000
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 4073230,
+      "n_distinct_exact": 4073230
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 4073230,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "rows_without_reco": {
+      "identity_populated": true,
+      "includes": "appended truth-only misses AND reco-loop rows failing the reco gate",
+      "n_rows_without_reco": 2328671,
+      "n_with_reco_with_zero_identity": 0,
+      "n_without_reco_with_zero_identity": 0
+     },
+     "tree": "mc_signal_reco",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 4073230,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 4073230
+     }
+    },
+    "mc_truth_denom": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1221,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 110040,
+       "min": 110000
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 4073230,
+      "n_distinct_exact": 4073230
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 4073230,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_truth_denom",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 4073230,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 4073230
+     }
+    }
+   }
+  },
+  "1B": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1B.root",
+   "trees": {
+    "data": {
+     "component_ranges": {
+      "ev_gate": {
+       "max": 1499,
+       "min": 1
+      },
+      "ev_run": {
+       "max": 10128,
+       "min": 10068
+      },
+      "ev_subrun": {
+       "max": 50,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 71929,
+      "n_distinct_exact": 71929
+     },
+     "duplicate_character": {
+      "n_blocks_all_identical": 0,
+      "n_blocks_with_difference": 3165,
+      "n_duplicated_keys": 3165,
+      "witness_branches": [
+       "measured",
+       "measured_pz",
+       "mu_reco_E",
+       "vtx_reco_z"
+      ]
+     },
+     "identity_fields": [
+      "ev_run",
+      "ev_subrun",
+      "ev_gate"
+     ],
+     "n_entries": 75192,
+     "occurrence": {
+      "max": 3,
+      "n_rows_needing_occurrence": 3263
+     },
+     "packable": true,
+     "tree": "data",
+     "uniqueness": {
+      "examples": [],
+      "examples_redacted": 5,
+      "is_unique": false,
+      "max_multiplicity": 4,
+      "n_distinct": 71929,
+      "n_duplicated_keys": 3165,
+      "n_duplicated_rows": 6428,
+      "n_rows": 75192
+     }
+    },
+    "mc_background": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1186,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111010,
+       "min": 111000
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 12145,
+      "n_distinct_exact": 12145
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 12145,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_background",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 12145,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 12145
+     }
+    },
+    "mc_signal_reco": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1213,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111010,
+       "min": 111000
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 1095679,
+      "n_distinct_exact": 1095679
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 1095679,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "rows_without_reco": {
+      "identity_populated": true,
+      "includes": "appended truth-only misses AND reco-loop rows failing the reco gate",
+      "n_rows_without_reco": 624558,
+      "n_with_reco_with_zero_identity": 0,
+      "n_without_reco_with_zero_identity": 0
+     },
+     "tree": "mc_signal_reco",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 1095679,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 1095679
+     }
+    },
+    "mc_truth_denom": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1213,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111010,
+       "min": 111000
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 1095679,
+      "n_distinct_exact": 1095679
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 1095679,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_truth_denom",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 1095679,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 1095679
+     }
+    }
+   }
+  },
+  "1C": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1C.root",
+   "trees": {
+    "data": {
+     "component_ranges": {
+      "ev_gate": {
+       "max": 1499,
+       "min": 1
+      },
+      "ev_run": {
+       "max": 10254,
+       "min": 10129
+      },
+      "ev_subrun": {
+       "max": 66,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 165779,
+      "n_distinct_exact": 165779
+     },
+     "duplicate_character": {
+      "n_blocks_all_identical": 0,
+      "n_blocks_with_difference": 7141,
+      "n_duplicated_keys": 7141,
+      "witness_branches": [
+       "measured",
+       "measured_pz",
+       "mu_reco_E",
+       "vtx_reco_z"
+      ]
+     },
+     "identity_fields": [
+      "ev_run",
+      "ev_subrun",
+      "ev_gate"
+     ],
+     "n_entries": 173122,
+     "occurrence": {
+      "max": 3,
+      "n_rows_needing_occurrence": 7343
+     },
+     "packable": true,
+     "tree": "data",
+     "uniqueness": {
+      "examples": [],
+      "examples_redacted": 5,
+      "is_unique": false,
+      "max_multiplicity": 4,
+      "n_distinct": 165779,
+      "n_duplicated_keys": 7141,
+      "n_duplicated_rows": 14484,
+      "n_rows": 173122
+     }
+    },
+    "mc_background": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1181,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111050,
+       "min": 111030
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 22949,
+      "n_distinct_exact": 22949
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 22949,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_background",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 22949,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 22949
+     }
+    },
+    "mc_signal_reco": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1237,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111050,
+       "min": 111030
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 2090982,
+      "n_distinct_exact": 2090982
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 2090982,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "rows_without_reco": {
+      "identity_populated": true,
+      "includes": "appended truth-only misses AND reco-loop rows failing the reco gate",
+      "n_rows_without_reco": 1193006,
+      "n_with_reco_with_zero_identity": 0,
+      "n_without_reco_with_zero_identity": 0
+     },
+     "tree": "mc_signal_reco",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 2090982,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 2090982
+     }
+    },
+    "mc_truth_denom": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1237,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111050,
+       "min": 111030
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 2090982,
+      "n_distinct_exact": 2090982
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 2090982,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_truth_denom",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 2090982,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 2090982
+     }
+    }
+   }
+  },
+  "1D": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1D.root",
+   "trees": {
+    "data": {
+     "component_ranges": {
+      "ev_gate": {
+       "max": 1499,
+       "min": 1
+      },
+      "ev_run": {
+       "max": 10662,
+       "min": 10255
+      },
+      "ev_subrun": {
+       "max": 84,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 555523,
+      "n_distinct_exact": 555523
+     },
+     "duplicate_character": {
+      "n_blocks_all_identical": 0,
+      "n_blocks_with_difference": 24608,
+      "n_duplicated_keys": 24608,
+      "witness_branches": [
+       "measured",
+       "measured_pz",
+       "mu_reco_E",
+       "vtx_reco_z"
+      ]
+     },
+     "identity_fields": [
+      "ev_run",
+      "ev_subrun",
+      "ev_gate"
+     ],
+     "n_entries": 580834,
+     "occurrence": {
+      "max": 3,
+      "n_rows_needing_occurrence": 25311
+     },
+     "packable": true,
+     "tree": "data",
+     "uniqueness": {
+      "examples": [],
+      "examples_redacted": 5,
+      "is_unique": false,
+      "max_multiplicity": 4,
+      "n_distinct": 555523,
+      "n_duplicated_keys": 24608,
+      "n_duplicated_rows": 49919,
+      "n_rows": 580834
+     }
+    },
+    "mc_background": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1217,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111160,
+       "min": 111100
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 67366,
+      "n_distinct_exact": 67366
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 67366,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_background",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 67366,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 67366
+     }
+    },
+    "mc_signal_reco": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1244,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111160,
+       "min": 111100
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 6081602,
+      "n_distinct_exact": 6081602
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 6081602,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "rows_without_reco": {
+      "identity_populated": true,
+      "includes": "appended truth-only misses AND reco-loop rows failing the reco gate",
+      "n_rows_without_reco": 3474893,
+      "n_with_reco_with_zero_identity": 0,
+      "n_without_reco_with_zero_identity": 0
+     },
+     "tree": "mc_signal_reco",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 6081602,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 6081602
+     }
+    },
+    "mc_truth_denom": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1244,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111160,
+       "min": 111100
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 6081602,
+      "n_distinct_exact": 6081602
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 6081602,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_truth_denom",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 6081602,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 6081602
+     }
+    }
+   }
+  },
+  "1E": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1E.root",
+   "trees": {
+    "data": {
+     "component_ranges": {
+      "ev_gate": {
+       "max": 1499,
+       "min": 1
+      },
+      "ev_run": {
+       "max": 16522,
+       "min": 16003
+      },
+      "ev_subrun": {
+       "max": 81,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 390181,
+      "n_distinct_exact": 390181
+     },
+     "duplicate_character": {
+      "n_blocks_all_identical": 0,
+      "n_blocks_with_difference": 17408,
+      "n_duplicated_keys": 17408,
+      "witness_branches": [
+       "measured",
+       "measured_pz",
+       "mu_reco_E",
+       "vtx_reco_z"
+      ]
+     },
+     "identity_fields": [
+      "ev_run",
+      "ev_subrun",
+      "ev_gate"
+     ],
+     "n_entries": 408075,
+     "occurrence": {
+      "max": 3,
+      "n_rows_needing_occurrence": 17894
+     },
+     "packable": true,
+     "tree": "data",
+     "uniqueness": {
+      "examples": [],
+      "examples_redacted": 5,
+      "is_unique": false,
+      "max_multiplicity": 4,
+      "n_distinct": 390181,
+      "n_duplicated_keys": 17408,
+      "n_duplicated_rows": 35302,
+      "n_rows": 408075
+     }
+    },
+    "mc_background": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1234,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111375,
+       "min": 111325
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 56394,
+      "n_distinct_exact": 56394
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 56394,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_background",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 56394,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 56394
+     }
+    },
+    "mc_signal_reco": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1255,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111375,
+       "min": 111325
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 5090774,
+      "n_distinct_exact": 5090774
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 5090774,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "rows_without_reco": {
+      "identity_populated": true,
+      "includes": "appended truth-only misses AND reco-loop rows failing the reco gate",
+      "n_rows_without_reco": 2915537,
+      "n_with_reco_with_zero_identity": 0,
+      "n_without_reco_with_zero_identity": 0
+     },
+     "tree": "mc_signal_reco",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 5090774,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 5090774
+     }
+    },
+    "mc_truth_denom": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1255,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111375,
+       "min": 111325
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 5090774,
+      "n_distinct_exact": 5090774
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 5090774,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_truth_denom",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 5090774,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 5090774
+     }
+    }
+   }
+  },
+  "1F": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1F.root",
+   "trees": {
+    "data": {
+     "component_ranges": {
+      "ev_gate": {
+       "max": 1499,
+       "min": 1
+      },
+      "ev_run": {
+       "max": 16843,
+       "min": 16523
+      },
+      "ev_subrun": {
+       "max": 73,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 609239,
+      "n_distinct_exact": 609239
+     },
+     "duplicate_character": {
+      "n_blocks_all_identical": 0,
+      "n_blocks_with_difference": 32392,
+      "n_duplicated_keys": 32392,
+      "witness_branches": [
+       "measured",
+       "measured_pz",
+       "mu_reco_E",
+       "vtx_reco_z"
+      ]
+     },
+     "identity_fields": [
+      "ev_run",
+      "ev_subrun",
+      "ev_gate"
+     ],
+     "n_entries": 642737,
+     "occurrence": {
+      "max": 4,
+      "n_rows_needing_occurrence": 33498
+     },
+     "packable": true,
+     "tree": "data",
+     "uniqueness": {
+      "examples": [],
+      "examples_redacted": 5,
+      "is_unique": false,
+      "max_multiplicity": 5,
+      "n_distinct": 609239,
+      "n_duplicated_keys": 32392,
+      "n_duplicated_rows": 65890,
+      "n_rows": 642737
+     }
+    },
+    "mc_background": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1243,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111560,
+       "min": 111490
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 78943,
+      "n_distinct_exact": 78943
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 78943,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_background",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 78943,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 78943
+     }
+    },
+    "mc_signal_reco": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1263,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111560,
+       "min": 111490
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 7079651,
+      "n_distinct_exact": 7079651
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 7079651,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "rows_without_reco": {
+      "identity_populated": true,
+      "includes": "appended truth-only misses AND reco-loop rows failing the reco gate",
+      "n_rows_without_reco": 4146676,
+      "n_with_reco_with_zero_identity": 0,
+      "n_without_reco_with_zero_identity": 0
+     },
+     "tree": "mc_signal_reco",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 7079651,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 7079651
+     }
+    },
+    "mc_truth_denom": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1263,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 111560,
+       "min": 111490
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 7079651,
+      "n_distinct_exact": 7079651
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 7079651,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_truth_denom",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 7079651,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 7079651
+     }
+    }
+   }
+  },
+  "1G": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1G.root",
+   "trees": {
+    "data": {
+     "component_ranges": {
+      "ev_gate": {
+       "max": 1499,
+       "min": 1
+      },
+      "ev_run": {
+       "max": 19167,
+       "min": 18668
+      },
+      "ev_subrun": {
+       "max": 73,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 511978,
+      "n_distinct_exact": 511978
+     },
+     "duplicate_character": {
+      "n_blocks_all_identical": 0,
+      "n_blocks_with_difference": 25562,
+      "n_duplicated_keys": 25562,
+      "witness_branches": [
+       "measured",
+       "measured_pz",
+       "mu_reco_E",
+       "vtx_reco_z"
+      ]
+     },
+     "identity_fields": [
+      "ev_run",
+      "ev_subrun",
+      "ev_gate"
+     ],
+     "n_entries": 538406,
+     "occurrence": {
+      "max": 4,
+      "n_rows_needing_occurrence": 26428
+     },
+     "packable": true,
+     "tree": "data",
+     "uniqueness": {
+      "examples": [],
+      "examples_redacted": 5,
+      "is_unique": false,
+      "max_multiplicity": 5,
+      "n_distinct": 511978,
+      "n_duplicated_keys": 25562,
+      "n_duplicated_rows": 51990,
+      "n_rows": 538406
+     }
+    },
+    "mc_background": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1186,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 110210,
+       "min": 110150
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 65529,
+      "n_distinct_exact": 65529
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 65529,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_background",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 65529,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 65529
+     }
+    },
+    "mc_signal_reco": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1239,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 110210,
+       "min": 110150
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 5960127,
+      "n_distinct_exact": 5960127
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 5960127,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "rows_without_reco": {
+      "identity_populated": true,
+      "includes": "appended truth-only misses AND reco-loop rows failing the reco gate",
+      "n_rows_without_reco": 3464717,
+      "n_with_reco_with_zero_identity": 0,
+      "n_without_reco_with_zero_identity": 0
+     },
+     "tree": "mc_signal_reco",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 5960127,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 5960127
+     }
+    },
+    "mc_truth_denom": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1239,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 110210,
+       "min": 110150
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 5960127,
+      "n_distinct_exact": 5960127
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 5960127,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_truth_denom",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 5960127,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 5960127
+     }
+    }
+   }
+  },
+  "1L": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1L.root",
+   "trees": {
+    "data": {
+     "component_ranges": {
+      "ev_gate": {
+       "max": 1499,
+       "min": 1
+      },
+      "ev_run": {
+       "max": 19184,
+       "min": 19168
+      },
+      "ev_subrun": {
+       "max": 40,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 46819,
+      "n_distinct_exact": 46819
+     },
+     "duplicate_character": {
+      "n_blocks_all_identical": 0,
+      "n_blocks_with_difference": 2934,
+      "n_duplicated_keys": 2934,
+      "witness_branches": [
+       "measured",
+       "measured_pz",
+       "mu_reco_E",
+       "vtx_reco_z"
+      ]
+     },
+     "identity_fields": [
+      "ev_run",
+      "ev_subrun",
+      "ev_gate"
+     ],
+     "n_entries": 49872,
+     "occurrence": {
+      "max": 3,
+      "n_rows_needing_occurrence": 3053
+     },
+     "packable": true,
+     "tree": "data",
+     "uniqueness": {
+      "examples": [],
+      "examples_redacted": 5,
+      "is_unique": false,
+      "max_multiplicity": 4,
+      "n_distinct": 46819,
+      "n_duplicated_keys": 2934,
+      "n_duplicated_rows": 5987,
+      "n_rows": 49872
+     }
+    },
+    "mc_background": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1233,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 113005,
+       "min": 113000
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 6768,
+      "n_distinct_exact": 6768
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 6768,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_background",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 6768,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 6768
+     }
+    },
+    "mc_signal_reco": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1252,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 113005,
+       "min": 113000
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 583219,
+      "n_distinct_exact": 583219
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 583219,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "rows_without_reco": {
+      "identity_populated": true,
+      "includes": "appended truth-only misses AND reco-loop rows failing the reco gate",
+      "n_rows_without_reco": 350044,
+      "n_with_reco_with_zero_identity": 0,
+      "n_without_reco_with_zero_identity": 0
+     },
+     "tree": "mc_signal_reco",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 583219,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 583219
+     }
+    },
+    "mc_truth_denom": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1252,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 113005,
+       "min": 113000
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 583219,
+      "n_distinct_exact": 583219
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 583219,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_truth_denom",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 583219,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 583219
+     }
+    }
+   }
+  },
+  "1M": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1M.root",
+   "trees": {
+    "data": {
+     "component_ranges": {
+      "ev_gate": {
+       "max": 1499,
+       "min": 1
+      },
+      "ev_run": {
+       "max": 19483,
+       "min": 19186
+      },
+      "ev_subrun": {
+       "max": 64,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 552372,
+      "n_distinct_exact": 552372
+     },
+     "duplicate_character": {
+      "n_blocks_all_identical": 0,
+      "n_blocks_with_difference": 37017,
+      "n_duplicated_keys": 37017,
+      "witness_branches": [
+       "measured",
+       "measured_pz",
+       "mu_reco_E",
+       "vtx_reco_z"
+      ]
+     },
+     "identity_fields": [
+      "ev_run",
+      "ev_subrun",
+      "ev_gate"
+     ],
+     "n_entries": 591031,
+     "occurrence": {
+      "max": 4,
+      "n_rows_needing_occurrence": 38659
+     },
+     "packable": true,
+     "tree": "data",
+     "uniqueness": {
+      "examples": [],
+      "examples_redacted": 5,
+      "is_unique": false,
+      "max_multiplicity": 5,
+      "n_distinct": 552372,
+      "n_duplicated_keys": 37017,
+      "n_duplicated_rows": 75676,
+      "n_rows": 591031
+     }
+    },
+    "mc_background": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1235,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 113137,
+       "min": 113020
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 104369,
+      "n_distinct_exact": 104369
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 104369,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_background",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 104369,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 104369
+     }
+    },
+    "mc_signal_reco": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1253,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 113137,
+       "min": 113020
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 8991233,
+      "n_distinct_exact": 8991233
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 8991233,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "rows_without_reco": {
+      "identity_populated": true,
+      "includes": "appended truth-only misses AND reco-loop rows failing the reco gate",
+      "n_rows_without_reco": 5391154,
+      "n_with_reco_with_zero_identity": 0,
+      "n_without_reco_with_zero_identity": 0
+     },
+     "tree": "mc_signal_reco",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 8991233,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 8991233
+     }
+    },
+    "mc_truth_denom": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1253,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 113137,
+       "min": 113020
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 8991233,
+      "n_distinct_exact": 8991233
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 8991233,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_truth_denom",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 8991233,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 8991233
+     }
+    }
+   }
+  },
+  "1N": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1N.root",
+   "trees": {
+    "data": {
+     "component_ranges": {
+      "ev_gate": {
+       "max": 1499,
+       "min": 1
+      },
+      "ev_run": {
+       "max": 20618,
+       "min": 20328
+      },
+      "ev_subrun": {
+       "max": 49,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 389469,
+      "n_distinct_exact": 389469
+     },
+     "duplicate_character": {
+      "n_blocks_all_identical": 0,
+      "n_blocks_with_difference": 25330,
+      "n_duplicated_keys": 25330,
+      "witness_branches": [
+       "measured",
+       "measured_pz",
+       "mu_reco_E",
+       "vtx_reco_z"
+      ]
+     },
+     "identity_fields": [
+      "ev_run",
+      "ev_subrun",
+      "ev_gate"
+     ],
+     "n_entries": 415928,
+     "occurrence": {
+      "max": 3,
+      "n_rows_needing_occurrence": 26459
+     },
+     "packable": true,
+     "tree": "data",
+     "uniqueness": {
+      "examples": [],
+      "examples_redacted": 5,
+      "is_unique": false,
+      "max_multiplicity": 4,
+      "n_distinct": 389469,
+      "n_duplicated_keys": 25330,
+      "n_duplicated_rows": 51789,
+      "n_rows": 415928
+     }
+    },
+    "mc_background": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1234,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 113300,
+       "min": 113270
+      },
+      "mc_subrun": {
+       "max": 850,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 61653,
+      "n_distinct_exact": 61653
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 61653,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_background",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 61653,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 61653
+     }
+    },
+    "mc_signal_reco": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1276,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 113300,
+       "min": 113270
+      },
+      "mc_subrun": {
+       "max": 850,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 5189689,
+      "n_distinct_exact": 5189689
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 5189689,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "rows_without_reco": {
+      "identity_populated": true,
+      "includes": "appended truth-only misses AND reco-loop rows failing the reco gate",
+      "n_rows_without_reco": 3138335,
+      "n_with_reco_with_zero_identity": 0,
+      "n_without_reco_with_zero_identity": 0
+     },
+     "tree": "mc_signal_reco",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 5189689,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 5189689
+     }
+    },
+    "mc_truth_denom": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1276,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 113300,
+       "min": 113270
+      },
+      "mc_subrun": {
+       "max": 850,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 5189689,
+      "n_distinct_exact": 5189689
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 5189689,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_truth_denom",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 5189689,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 5189689
+     }
+    }
+   }
+  },
+  "1O": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1O.root",
+   "trees": {
+    "data": {
+     "component_ranges": {
+      "ev_gate": {
+       "max": 1499,
+       "min": 1
+      },
+      "ev_run": {
+       "max": 20653,
+       "min": 20619
+      },
+      "ev_subrun": {
+       "max": 40,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 101887,
+      "n_distinct_exact": 101887
+     },
+     "duplicate_character": {
+      "n_blocks_all_identical": 0,
+      "n_blocks_with_difference": 8488,
+      "n_duplicated_keys": 8488,
+      "witness_branches": [
+       "measured",
+       "measured_pz",
+       "mu_reco_E",
+       "vtx_reco_z"
+      ]
+     },
+     "identity_fields": [
+      "ev_run",
+      "ev_subrun",
+      "ev_gate"
+     ],
+     "n_entries": 110836,
+     "occurrence": {
+      "max": 4,
+      "n_rows_needing_occurrence": 8949
+     },
+     "packable": true,
+     "tree": "data",
+     "uniqueness": {
+      "examples": [],
+      "examples_redacted": 5,
+      "is_unique": false,
+      "max_multiplicity": 5,
+      "n_distinct": 101887,
+      "n_duplicated_keys": 8488,
+      "n_duplicated_rows": 17437,
+      "n_rows": 110836
+     }
+    },
+    "mc_background": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1216,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 113390,
+       "min": 113375
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 19380,
+      "n_distinct_exact": 19380
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 19380,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_background",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 19380,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 19380
+     }
+    },
+    "mc_signal_reco": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1240,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 113390,
+       "min": 113375
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 1584425,
+      "n_distinct_exact": 1584425
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 1584425,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "rows_without_reco": {
+      "identity_populated": true,
+      "includes": "appended truth-only misses AND reco-loop rows failing the reco gate",
+      "n_rows_without_reco": 988408,
+      "n_with_reco_with_zero_identity": 0,
+      "n_without_reco_with_zero_identity": 0
+     },
+     "tree": "mc_signal_reco",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 1584425,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 1584425
+     }
+    },
+    "mc_truth_denom": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1240,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 113390,
+       "min": 113375
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 1584425,
+      "n_distinct_exact": 1584425
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 1584425,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_truth_denom",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 1584425,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 1584425
+     }
+    }
+   }
+  },
+  "1P": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/final/runEventLoopOmniFold_G2_FPS_1P.root",
+   "trees": {
+    "data": {
+     "component_ranges": {
+      "ev_gate": {
+       "max": 1499,
+       "min": 1
+      },
+      "ev_run": {
+       "max": 20839,
+       "min": 20800
+      },
+      "ev_subrun": {
+       "max": 66,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 159654,
+      "n_distinct_exact": 159654
+     },
+     "duplicate_character": {
+      "n_blocks_all_identical": 0,
+      "n_blocks_with_difference": 13278,
+      "n_duplicated_keys": 13278,
+      "witness_branches": [
+       "measured",
+       "measured_pz",
+       "mu_reco_E",
+       "vtx_reco_z"
+      ]
+     },
+     "identity_fields": [
+      "ev_run",
+      "ev_subrun",
+      "ev_gate"
+     ],
+     "n_entries": 173641,
+     "occurrence": {
+      "max": 3,
+      "n_rows_needing_occurrence": 13987
+     },
+     "packable": true,
+     "tree": "data",
+     "uniqueness": {
+      "examples": [],
+      "examples_redacted": 5,
+      "is_unique": false,
+      "max_multiplicity": 4,
+      "n_distinct": 159654,
+      "n_duplicated_keys": 13278,
+      "n_duplicated_rows": 27265,
+      "n_rows": 173641
+     }
+    },
+    "mc_background": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1221,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 112020,
+       "min": 112000
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 25640,
+      "n_distinct_exact": 25640
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 25640,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_background",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 25640,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 25640
+     }
+    },
+    "mc_signal_reco": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1254,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 112020,
+       "min": 112000
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 2085497,
+      "n_distinct_exact": 2085497
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 2085497,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "rows_without_reco": {
+      "identity_populated": true,
+      "includes": "appended truth-only misses AND reco-loop rows failing the reco gate",
+      "n_rows_without_reco": 1299905,
+      "n_with_reco_with_zero_identity": 0,
+      "n_without_reco_with_zero_identity": 0
+     },
+     "tree": "mc_signal_reco",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 2085497,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 2085497
+     }
+    },
+    "mc_truth_denom": {
+     "component_ranges": {
+      "mc_nthEvtInFile": {
+       "max": 1254,
+       "min": 0
+      },
+      "mc_run": {
+       "max": 112020,
+       "min": 112000
+      },
+      "mc_subrun": {
+       "max": 500,
+       "min": 1
+      }
+     },
+     "cxx_wrapped_key": {
+      "collisions_beyond_exact": 0,
+      "n_distinct": 2085497,
+      "n_distinct_exact": 2085497
+     },
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "n_entries": 2085497,
+     "occurrence": {
+      "max": 0,
+      "n_rows_needing_occurrence": 0
+     },
+     "packable": true,
+     "tree": "mc_truth_denom",
+     "uniqueness": {
+      "examples": [],
+      "is_unique": true,
+      "max_multiplicity": 1,
+      "n_distinct": 2085497,
+      "n_duplicated_keys": 0,
+      "n_duplicated_rows": 0,
+      "n_rows": 2085497
+     }
+    }
+   }
+  }
+ },
+ "redaction": {
+  "fields": "every `examples` list under a tree named `data` is replaced by [] and its length recorded in `examples_redacted`",
+  "original_commit": "6023b1b8f43354ef6ce88487939843f282eccb3f",
+  "original_preserved_at": "/global/cfs/cdirs/m3246/josephrb/pet-studies-20261006/_git-bundles/worktree-event-identity-export-6023b1b8.bundle (sha256 3bdc24cc72bff415aded9905a6952b9e6b0565611184e198d557e7db098ea4d4)",
+  "policy": "real MINERvA DATA event identities (run, subrun, event/gate) removed before publication; every count, multiplicity and verdict is unchanged (Joseph, 2026-10-06)"
+ },
+ "source_order": [
+  "1A",
+  "1B",
+  "1C",
+  "1D",
+  "1E",
+  "1F",
+  "1G",
+  "1L",
+  "1M",
+  "1N",
+  "1O",
+  "1P"
+ ],
+ "truncated_read": false,
+ "verdict_by_tree": {
+  "data": "not-unique",
+  "mc_background": "unique-without-source",
+  "mc_signal_reco": "unique-without-source",
+  "mc_truth_denom": "unique-without-source"
+ }
+}
