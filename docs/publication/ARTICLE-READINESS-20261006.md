@@ -75,3 +75,13 @@
   - The final review's cycle 2.
   - PR and merge, then the 2D lane's one standalone sync.
   - Coauthor review; Joseph's separately authorized acts.
+
+## 5. After the final review (2026-10-06)
+
+- **Final review:** cycle 2 READY WITH CHANGES, applied (`f5787b32`). RC4 `46f801bf…` gives VERIFY PASS.
+- **R10(b):** Joseph ruled that the Fig. 2 statement "Stands as written" (DECISION-20261006 addendum).
+- **No open scientific or provenance item remains for the article.** Next:
+  1. PR to main; the 2D lane's single standalone sync;
+  2. coauthor review (an external act; Joseph);
+  3. the submission package;
+  4. the deposit, tag and submission, which are separately authorized.

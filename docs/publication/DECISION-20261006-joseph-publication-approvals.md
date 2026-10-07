@@ -86,3 +86,21 @@ are committed."
 - the publication lane changes only the article's 2D-uncertainty paragraph, and only after the 2D lane's rebuilt
   rollup and its descriptive VL169-toy rescoring are committed;
 - the ledger, rollup, χ², figures and note-appendix updates are the 2D lane's.
+
+## Addendum, 2026-10-06: Fig. 2 scope without the response-mismatch closure (paper-wide R10(b)), asked in this session
+
+The question, verbatim:
+
+> "The article's joint (E_avail, W) central-value statement (Fig. 2) has no response-mismatch closure, which has never
+> been run (paper-wide row R10b). As now written it is descriptive only, has no significance, states that no closure
+> was run, names the region of largest regularization bias, and is out of the abstract. May it stand in the article
+> without the closure?"
+
+**Joseph's answer (option selected):** "Stands as written (Recommended)".
+
+The option's text: "Record: 'The descriptive (E_avail,W) statement and Fig. 2 stand in the article without the
+response-mismatch closure, as written at f5787b32: descriptive, no significance, the absent closure and the
+largest-bias region stated, not in the abstract.'"
+
+**Binds:** the article's Fig. 2 statement as written at `f5787b32`. Any strengthening (a significance, a
+localization claim, or the statement in the abstract) would need the closure or a new decision.
