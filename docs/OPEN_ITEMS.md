@@ -2,6 +2,10 @@
 
 Only genuinely open leaf actions belong here. Verified numbers, defects, decisions, and chronology live in their canonical homes. The August 2026 pre-restructure record is preserved verbatim in [the archive](OPEN_ITEMS-ARCHIVE-2026-08.md).
 
+> **Superseded entry route (note added 2026-10-07).** The handoff named below was the latest on 2026-08-20 and is now a
+> historical record. Start at `AGENTS.md`, then `docs/CURRENT_WORK.md` and the exact row here. The publication path now
+> runs through `docs/publication/` and `orchestration/DELIVERY-20261006-s5p-campaign-terminal.md`.
+>
 > **Starting a fresh session? Read the latest handoff first:**
 > [`orchestration/HANDOFF-20260820-2154Z-publication-closeout.md`](orchestration/HANDOFF-20260820-2154Z-publication-closeout.md)
 > — **THE LATEST (2026-08-20). The UNFINISHED ledger from the six-lane publication close-out.** Read §0

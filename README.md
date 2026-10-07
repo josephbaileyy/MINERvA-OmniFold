@@ -27,7 +27,14 @@ rebuilt. See [Setup](#setup).
 | Know what is being worked on now | `docs/CURRENT_WORK.md`, then the exact row in `docs/OPEN_ITEMS.md` |
 | Change code | `KNOWN_ISSUES.md`, the workstream's `*_STATUS.md`, and its callers/tests |
 | Run a workstream | that workstream's `*_STATUS.md` / `*_REFERENCE.md` (below) |
+| Find the record that governs a plan, decision, outcome or receipt | `docs/orchestration/CATALOG.md` (`## Current work`, `## Task routes`) |
+| See what reads what across workstreams | [How the workstreams connect](#how-the-workstreams-connect) |
+| Avoid repeating a closed study | [Closed approaches](#closed-approaches) |
+| Tell a current instruction from a historical record | [Current versus historical documents](#current-versus-historical-documents) |
 | Build the note, primer or paper | `docs/analysis-note/` and [Deliverables](#deliverables) |
+| Check the article and its release package | `docs/publication/submission/PACKAGE-MANIFEST-20261006.md`; code in `publication/` |
+| Reproduce the joint-5D generator inference | `reproduction/s5p/README.md` |
+| Find a local checkout, a disk-use record, or a file removed from this machine | `docs/LOCAL_CHECKOUTS_AND_STORAGE.md` |
 | Work here as an AI assistant | `CLAUDE.md` (bootstrap) → `AGENTS.md` (routes) |
 
 **This README deliberately quotes no scientific result.** Central values,
@@ -48,8 +55,10 @@ summaries of `AGENTS.md`; re-read the routed artifact before relying on one.
 |---|---|---|---|
 | **2D** `(p_T, p_∥)` | `2d-unfolding/` | `2D_OMNIFOLD_STUDY_STATUS.md`, `2D_OMNIFOLD_REFERENCE.md` | The production measurement and the reproduction of arXiv:2106.16210: central value, standalone uncertainty construction, closure and iteration controls. |
 | **3D** `+ E_avail` | `3d-unfolding/` | `3D_OMNIFOLD_STATUS.md`, `README.md` | Adds available energy as a third axis, `d³σ / (dp_T dp_∥ dE_avail)`. Marginal normalization recovers 2D; there is no published 3D reference to compare against. |
-| **Scalar 4D/5D** `+ q3, W` | `nd-unfolding/` | `ND_OMNIFOLD_STATUS.md` | Extends the scalar feature set through `q3` and `W`. Central values and closures are complete; the **publication uncertainty product is the adopted scalar-5D covariance**, and covariance candidates carry explicit quarantine states — read the ledger, not a summary. |
-| **Full-event: PET / FPS** | `nd-unfolding/pet/`, `nd-unfolding/uq_fps/` | `PET_UQ_REMEDIATION_STATUS.md` | Point-cloud (PET) and full-phase-space studies of low-level event representations. **Diagnostic and method-development work, not a publication uncertainty product** (ruled 2026-08-20). No full-event total covariance is adopted. |
+| **Scalar 4D/5D** `+ q3, W` | `nd-unfolding/` (launcher router: `nd-unfolding/MANIFEST.md`) | `ND_OMNIFOLD_STATUS.md` | Extends the scalar feature set through `q3` and `W`. Central values and closures are complete. One scalar-5D covariance is adopted **under exception**, and measurements travel with it that are not caveats. The other covariance candidates are quarantined. Read the `AGENTS.md` row and the ledger, not a summary. |
+| **Joint-5D generator inference** (s5p, `OI-193`) | `nd-unfolding/s5p_*.py`; generator predictions `3d-unfolding/genie/gen5d_*.py` | `docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md` | Tests five generator predictions against the 5D data, as hypothesis tests rather than as a measured cross section. The campaign is terminal. `reproduction/s5p/` replays it; `nd-unfolding/s5p_recompute.py` is the independent check. |
+| **Full-event: PET / FPS** | `nd-unfolding/pet/` (start at its `README.md`), `nd-unfolding/uq_fps/` | `PET_UQ_REMEDIATION_STATUS.md` (the legacy DAG), `nd-unfolding/pet/README.md` (where each campaign ends) | Point-cloud (PET) and full-phase-space studies of low-level event representations. **Diagnostic and method-development work, not a publication uncertainty product** (ruled 2026-08-20). No full-event total covariance is adopted. |
+| **Article and release** | `docs/analysis-note/main_paper.tex`, `publication/`, `docs/publication/` | `docs/publication/submission/PACKAGE-MANIFEST-20261006.md` | The PRD-class article, its release candidates, the replay and figure code, and the W1/W2 checks. Submission, deposit and tagging are Joseph's acts. |
 
 The 1D binned $p_T^\mu$ study is a closed equivalence/debug cross-check, not a
 publication result. Its workspace was retired from `main` on 2026-08-20 and is
@@ -58,6 +67,90 @@ recoverable in full from the pushed evidence tag:
 ```bash
 git show evidence/prepublication-2026-08-20-0b329e8a:2d-unfolding/binned_study/README.md
 ```
+
+---
+
+## How the workstreams connect
+
+The directories are not independent pipelines. A change to one of the hubs below reaches every
+consumer listed with it, so read the consumer's tests before editing a hub. This was measured with
+`git grep` over imports and `sys.path` insertions on 2026-10-07; re-run the grep rather than trusting
+the list.
+
+| Shared code | What it provides | Main consumers |
+|---|---|---|
+| `2d-unfolding/unfold_2d_omnifold_unbinned.py` | The OmniFold driver and helpers that the other drivers import (as `u2d`) | the 3D and N-D drivers, about 35 `nd-unfolding` scripts (including `s5c_*`, `s5p_input_dumps`, `project_cov_nd`), PET scripts, `2d-unfolding/uq/`, `docs/analysis-note` figure scripts |
+| `2d-unfolding/compare_to_paper_fullcov.py` | Comparison to the published 2D result | 2D diagnostics and receipts, the 3D anchor check, `publication/release/figs/` |
+| `3d-unfolding/xsec_3d.py`, `unfold_3d_omnifold_unbinned.py` | 3D extraction and projections | `3d-unfolding/genie/` (generator predictions) |
+| `nd-unfolding/unfold_nd_omnifold_unbinned.py`, `xsec_nd.py` | N-D unfolding and cross-section extraction | `nd-unfolding` scripts, `pet/`, tests, `publication/release/figs/export_fig_arrays.py`, the analysis note |
+| `nd-unfolding/s5p_joint.py`, `s5p_inference.py` (frozen at `4f5a613f`) | The joint-5D test statistic and inference | `publication/release/` (replay, extraction), `publication/w2/w2b.py`, `docs/publication/w1/repro/`, the s5p recovery records |
+| `nd-unfolding/p4_lib.py`, `uq_math.py` | The pinned production configuration and covariance algebra | `p4_*`, `z_*`, `project_cov_nd`, `s5c_assemble`, `uq_fps`, tests, `docs/orchestration` checks |
+| `nd-unfolding/omnifold_nn_core.py` | The scalar NN-vs-GBDT cross-check | `sweep_bank*`, `unified_throw*`, `s5c_unfold`, `s5e_trace`, `z_*_probe` |
+| `omnifold_nn/` | The vendored `omnifold` package, used as the PET engine | `nd-unfolding/pet/` (see its `README.md`) |
+| `unbinned_unfolding/python/omnifold.py` | The RooUnfold-fork reweighting loop | the 2D, 3D and N-D drivers, loaded from a hardcoded `/pscratch/...` path (the `OI-136` pattern; route new compute through `mnv_guarded_run.py`) |
+| `technote_style.py`, `lib/` | Plot style; shell resume and backfill guards | about 50 plotters in 2D, 3D and N-D; the `2d-unfolding/sbatch_*.sh` launchers |
+
+Products flow in one direction, and each arrow is a recorded anchor or a pinned input:
+
+```
+2D central ──anchor──▶ 3D marginal ──anchor──▶ 4D ──anchor──▶ 5D central
+5D trunk covariance 3d7465f6… ──projection──▶ (E_avail, W) 835828bf… (VL143); any quotable 3D/4D covariance must be projected from the trunk (AGENTS.md)
+5D omnifiles + 3d-unfolding/genie/gen5d_* predictions ──▶ s5p joint inference ──▶ publication/release ──▶ article
+tracked figures + values*.tex ──▶ docs/analysis-note/build_all.sh ──▶ note, primer, paper
+```
+
+`docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md` holds the older, more detailed invalidation rules. It
+predates the PET demotion and the s5 campaigns, so check a rule there against the current records
+before acting on it.
+
+---
+
+## Closed approaches
+
+These studies reached a terminal verdict. Each verdict is quoted from its own record, which is the
+authority; open that record before relying on a verdict, and do not restart a study without a new
+authorization. Failed approaches stay recorded because their measurements constrain the next design.
+
+| Approach | Verdict (record's own words) | Record |
+|---|---|---|
+| Scalar 5D, s5c (`OI-190`): coverage of candidate F2 | Tier-S coverage **FAIL (futility)**, independently reproduced | `docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md` |
+| s5c development finding | the purity background method biases the highest-W cells by about −4% at nominal truth (development-level, in pseudo-experiments; not a real-data bias or a corrected central value) | `docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md` |
+| s5n (`OI-191`): negweight-refined nominal | **STAGE1_FAIL** | `docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md` |
+| s5e (`OI-192`): candidate R | **A_FAIL** (A3, numerical reproducibility floor on data); campaign **CLOSED** | `docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md` |
+| s5p (`OI-193`): precision-measurement branch | **NOT ADMITTED** at the Stage-2 exit (amendment 4) | `docs/orchestration/RECORD-20260927-s5p-stage2-exit.md`; `DELIVERY-20261006-s5p-campaign-terminal.md` §1 |
+| Scalar-5D model dependence from existing outputs | no bias–variance tradeoff established (same-analyst synthesis, no fresh independent review); next measurement **DEFERRED**, with reconsideration criteria in its `PROPOSAL.md` | `nd-unfolding/gbdt_model_dependence/README.md` (VL163) |
+| Cause 3 two-member assessment (trunk `M1`, `s_proj`) | (B) ASSESSABLE **FAIL**, recorded once, no retry; cause 3 is **not** discharged and the seed sensitivity remains the principal open question (`AGENTS.md`) | `docs/orchestration/OUTCOME-20260920-cause3-two-member-assessable-FAIL.md` |
+| Mean-centered 5D covariance | disqualified and refused in code (`project_cov_nd.py --expect-variant`) | `AGENTS.md`, quarantined-candidates row |
+| PET central/statistical pairing (`OI-126`) | pairing **declined**; PET demoted to diagnostic (ruled 2026-08-20) | `docs/OPEN_ITEMS.md` `OI-126` |
+| PET routing / object representation | **NO_PASS**; "keep family pooling as the production default" — "a practical development choice under an inconclusive accuracy result, not a finding that pooling is better" | `nd-unfolding/pet/direct_token_comparison/RECOMMENDATION-20260918.md` |
+| PET final-design selection | **NO_ELIGIBLE_DESIGN**; nothing adopted (VL164–VL167) | `nd-unfolding/pet/final_design/DECISION_RECORD-pet-final-design.md` |
+| Other PET campaigns (configuration, improvement, PET vs GBDT, generator diagnosis) | diagnostic; see where each ends | `nd-unfolding/pet/README.md` |
+| Gregor PET2 / typed-object tokens (July) | retain the current estimator; **do not promote** (July assessment; typed-descriptor development continues, `nd-unfolding/pet/TYPED_DESCRIPTOR_STATUS.md`) | `git show evidence/gregor-pet2-rescued-delta-136889de:docs/GREGOR_PET2_OMNIFOLD_ASSESSMENT.md` |
+| 2D statistical band `VL162` | fixed-truth coverage **FAIL-undercoverage** (VL169). Its completeness defect is fixed (`KNOWN_ISSUES.md` 84) and the band is replaced by `VL170`, which has **not** been coverage re-tested (`KNOWN_ISSUES.md` 85) | `docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md` |
+| 1D binned `p_T` study | closed equivalence/debug cross-check | evidence tag, above |
+
+Process failures (review loops, coordinator-as-authority, trusting generated quotes) are in
+`docs/orchestration/CAMPAIGN-REVIEW-20260929.md` §4. Defects and traps live in `KNOWN_ISSUES.md`.
+
+---
+
+## Current versus historical documents
+
+Most Markdown in this tree is a dated record of something that already happened. Use this key before
+treating a document as an instruction.
+
+| Kind | Current or historical | How to tell |
+|---|---|---|
+| `AGENTS.md`, `docs/CURRENT_WORK.md`, `docs/orchestration/CATALOG.md`, this README | current routers | they route; they are not evidence |
+| `VALIDATION_LEDGER.md`, `KNOWN_ISSUES.md`, `docs/OPEN_ITEMS.md` | current authorities; order is not chronological | the row, not the file, is the unit |
+| `*_STATUS.md` | current, but banner-stacked by date | read the top banner and any correction note; older banners are history |
+| `docs/orchestration/*` dated records (`HANDOFF-`, `PLAN-`, `OUTCOME-`, `DECISION-`, `RECORD-`, …) | historical once their event concludes | `docs/orchestration/MANIFEST.tsv` gives `class` (`LIVE`/`ARCHIVAL`/`MACHINE`/`DEAD`) and `event_status`; see `CONVENTION-document-retention.md` |
+| `docs/orchestration/state/`, `runs/`, `receipts/` | machine records | open one exact file when a live document names it; never load wholesale |
+| `docs/orchestration/LIVE-STATE.md` | a generated view that can be stale | it prints its own generation time; check freshness before use |
+| Root `REMEDIATION_DELIVERABLES.md`, `REMEDIATION_META_PROMPTS.md` (July), `DESIGN-20260902-declarative-routing-register.md` | historical records kept at their cited paths | the REMEDIATION headers say "UNCOMMITTED working-tree" at HEAD `3e85589` (July); the DESIGN file is dated in its name |
+| `docs/PREPUB_READINESS.md`, `docs/PUBLICATION_COMPLETION_RUNBOOK.md`, `docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md` | retired (2026-06-09) or July-era instructions | the current publication path is in `docs/publication/` and the s5p records |
+| Paths removed from `main` | historical, recoverable | `docs/POST_PUBLICATION_REORG_PLAN.md` and `CATALOG.md` list each family with its `evidence/*` tag; recover with `git show <tag>:<path>` |
+| Local scratch, worktrees and out-of-repo archives | machine-local | `docs/LOCAL_CHECKOUTS_AND_STORAGE.md` |
 
 ---
 
@@ -70,8 +163,9 @@ MINERvA-OmniFold/
 ├── VALIDATION_LEDGER.md                   # every quotable number, with its evidence
 ├── KNOWN_ISSUES.md                        # read before changing code
 ├── LITERATURE_NOTES.md                    # external-paper notes
-├── REMEDIATION_DELIVERABLES.md            # remediation-campaign deliverables
-├── REMEDIATION_META_PROMPTS.md            #   and its prompt records
+├── REMEDIATION_DELIVERABLES.md            # historical (July) remediation record
+├── REMEDIATION_META_PROMPTS.md            #   and its prompt records (historical)
+├── DESIGN-20260902-declarative-routing-register.md  # historical control-plane design record
 │
 ├── 2d-unfolding/                          # 2D production measurement
 │   ├── unfold_2d_omnifold_unbinned.py     #   main 2D unfolding driver
@@ -98,6 +192,8 @@ MINERvA-OmniFold/
 ├── nd-unfolding/                          # scalar 4D/5D + full-event (PET/FPS)
 │   ├── mnv_guarded_run.py                 #   guarded entrypoint — route new compute here
 │   ├── p4_lib.py                          #   pinned production configuration
+│   ├── MANIFEST.md                        #   launcher router: current routes and retired launchers
+│   ├── s5p_*.py, s5c_*.py, s5n_*.py, s5e_*.py  # scalar-5D campaign code (s5p: joint-5D inference)
 │   ├── uq_4d/, uq_5d/, uq_fps/            #   uncertainty products per dimensionality
 │   ├── pet/                               #   point-cloud (PET) study
 │   ├── products/                          #   extracted products
@@ -109,24 +205,29 @@ MINERvA-OmniFold/
 │   ├── CURRENT_WORK.md, CURRENT_WORK_BACKLOG.md
 │   ├── OPEN_ITEMS.md                      #   the OI-* rows; the archive holds closed months
 │   ├── ESTIMATOR_REGISTRY.md, EAVAIL_DEFINITION.md, HIGHER_DIM_OMNIFOLD_DESIGN.md
-│   ├── PUBLICATION_COMPLETION_RUNBOOK.md, PREPUB_READINESS.md
+│   ├── PUBLICATION_COMPLETION_RUNBOOK.md, PREPUB_READINESS.md  # July-era / retired
+│   ├── publication/                       #   article decision, claims, reviews, release and submission records
+│   ├── LOCAL_CHECKOUTS_AND_STORAGE.md     #   local worktrees, scratch and out-of-repo archives
 │   ├── known-issues/, open-items/         #   long-form records behind the tables
 │   └── orchestration/                     #   process plane: PLAYBOOK.md, CATALOG.md,
 │                                          #   MANIFEST.tsv, LIVE-STATE.md, state/, receipts
 │
+├── publication/                           # article code: release replay/verify, figures, W1/W2 checks
+├── reproduction/s5p/                      # tiered replay of the joint-5D inference (README)
+├── tools/developer/                       # opt-in code navigation and test runner (README)
 ├── lib/                                   # shared shell/python helpers (resume guard, backfill)
 ├── omnifold_nn/                           # NN OmniFold implementation + examples
 ├── unbinned_unfolding/                    # RooUnfold fork (mostly upstream, gitignored)
 │   └── python/omnifold.py                 #   only the local edits are tracked
 ├── MINERvA101/                            # MINERvA 101 tutorial clones (mostly gitignored)
 │   ├── MINERvA-101-Cross-Section/         #   only the local edits are tracked, see below
-│   └── opt/                               #   installed binaries (runEventLoopOmniFold etc.)
+│   └── opt/                               #   installed binaries; local build only, absent in a clone
 │
 ├── setup_salloc_env.sh                    # self-locating env setup (repo root, not a subdir)
 ├── start_alloc.sh, alloc_run.sh           # interactive salloc helpers
 ├── technote_style.py                      # shared matplotlib style for note figures
 ├── .githooks/                             # pre-commit + commit-msg gates (enable per clone)
-├── .agents/                               # agent-side assets
+├── .agents/skills/                        # vendored agent skills (README)
 ├── orchestration -> docs/orchestration    # symlink, kept for older paths
 ├── LICENSE, THIRD_PARTY_LICENSES.md
 └── .gitignore, .gitattributes, .git-blame-ignore-revs
@@ -389,5 +490,6 @@ consequences, both deliberate:
    directory, a renamed deliverable, a retired workspace — and record what it
    was verified against.
 
-Last verified against `80eeb441` on 2026-08-21: every path named above exists
-at that commit, and the overlay tables match `git ls-files`.
+Last verified on 2026-10-07: every tracked path in the layout tree exists at `5770db3b`
+plus this change (`MINERvA101/opt/` is local-only by design); the overlay tables match
+`git ls-files`, and the shared-code table was re-measured with `git grep`.
