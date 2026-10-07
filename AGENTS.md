@@ -25,12 +25,14 @@ The controlled states below apply to result components, not whole workstreams. A
 | Result component | State | Safe current statement | Decisive qualification | Evidence route |
 |---|---|---|---|---|
 | 2D central value and Phase-18.2 pipeline | `VALIDATED` | The 5-iteration MEFHC result is frozen at `3.073e-38 cm2/nucleon`, 1.11% above the paper total; closure, completeness, and iteration controls pass. | The paper+ours combined-covariance chi-square double-counts shared systematics and is not the standalone validation claim. | `2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md`; `VALIDATION_LEDGER.md` |
-| 2D standalone uncertainty construction | `VALIDATED` | The MAT-conformant, flux-fixed 187-universe construction plus statistical and ML blocks gives a 6.87% median relative budget. | Quote only the committed matched-CV construction; predecessor covariance rollups are superseded. | 2D status; `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`; ledger |
+| 2D standalone uncertainty construction | `VALIDATED` | The MAT-conformant, flux-fixed 187-universe construction plus statistical and ML blocks gives a 6.87% median relative budget. | Quote only the committed matched-CV construction; predecessor covariance rollups are superseded. The statistical block is the `VL170` band, adopted 2026-10-06 and rebuilt in `VL172` (printed median unchanged). Its `VL162` predecessor failed fixed-truth coverage (`VL169`); `VL170` has **not** been coverage re-tested, and `KNOWN_ISSUES.md` 85 is open and deferred until after the publication package (a post-hoc diagnostic finds the band's data-statistics part about 1.6× wider than Poisson toys; descriptive). | 2D status; `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`; ledger `VL169`–`VL172`; `KNOWN_ISSUES.md` 84–85 |
 | 3D central value, marginal anchor, and closure | `VALIDATED` | The 3D `E_avail` result is complete; its marginal normalization recovers 2D and the injected-shape closure passes. | There is no published 3D reference; the anchor and closure validate the central result, not the old covariance-dependent significances. | `3d-unfolding/3D_OMNIFOLD_STATUS.md`; ledger |
 | Historical 3D covariance and generator significances | `QUARANTINED` | No historical rank-247 (λ > 1e-12·λ_max) block-sum covariance chi-square or significance is a publication number. | The quotable covariance must be projected from the adopted trunk `3d7465f6…` (row below), carrying that adoption's four measurements; no historical product is revived by its existence. | 3D status, “covariance-gate override” |
 | Scalar 4D/5D central values and closures | `VALIDATED` | The 4D and 5D central results pass their dimensional anchors and injected-variable closures. | This does not revive superseded unified covariance products or dependent significances. | `nd-unfolding/ND_OMNIFOLD_STATUS.md`; ledger |
 | **Adopted scalar-5D covariance (the publication trunk)** | `ADOPTED UNDER EXCEPTION` | One digest is adopted: `3d7465f6…` (`uq_5d/z_pilot_20260916_a5/z-cv.npz`, **890,500,272** B, `variant: "cv"`), Joseph 2026-09-20, as **publication-under-exception** under the executed, **byte-scoped** §6.4 amendment. Its `(E_avail,W)` projection `835828bf…` is built and its pairing verified by **digest identity**. | **FOUR MEASUREMENTS TRAVEL WITH IT AND ARE NOT CAVEATS** — read them at the adoption record §4 before quoting anything built from it; `M1` is `s_proj = 6.145%` against a `5%` bound, and `M3`'s *"lower bound"* wording is **WITHDRAWN**: the five seed-pinned bands are **unprobed in either direction**. The product's own fields stay `NON-PASSING` / `adoptable: false` and **do not become PASS labels because an adoption exists**. **Cause 3 is NOT discharged**: `M(i)` `UNRESOLVED` on `4c`, `C3` **predeclared and not computed** for this digest, and **no declared boundary was evaluated in production** (all seven `read_by_production: no`). Clause (c) is **disposed**, with the ordering defect **ratified, not cured**. The exception covers **these bytes and nothing else**. | `VALIDATION_LEDGER.md` `VL142`–`VL144`; `docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md`; `CORRECTION-20260920-lower-bound-inference-withdrawn.md`; `DECISION-20260920-joseph-rules-clause-c-disposition.md`; `OPERATIVE-SHEET-scalar5d.md` |
 | Other corrected scalar 5D covariance candidates | `QUARANTINED` | Background-aware corrected block-sum and unified-throw candidates exist, and **none of them is a publication uncertainty product**. | Their ledger values remain measurements, not adoption. **Nothing here is inherited from the adopted digest above** — the §6.4 exception attaches to BYTES and explicitly excludes `361090f9…` and `7e4636a3…`, which are graded, recorded and **not** adopted. Mean-centering alone is disqualified and enforced in code: `project_cov_nd.py --expect-variant` is required with no default, and `--run-class publication` from `variant: "mean"` is refused — the mean-centered `z-mean.npz` measures `√tr` **7.13%** below the CV-centered product while being structurally identical to it. | `VALIDATION_LEDGER.md`, corrected 5D UQ quarantine; exact `nd-unfolding/uq_5d/` receipts |
+| Joint-5D generator inference (s5p, `OI-193`) | `TERMINAL — EXECUTED, RECOMPUTED` | All ten simple hypotheses H0(G) (five predictions × total and shape) are rejected at familywise α = 0.05; the independent recomputation AGREEs on the calculation (not on the calibration's adequacy). | This is a statement about amendment 7's simple fine-grid hybrid null, **not a measured cross section**, and each claim carries the six stated conditions. The measurement branch was **NOT ADMITTED**, s5p adds **no reportable uncertainty**, and its own `publication_readiness` is **NOT READY**. The p-values are Monte Carlo calibrated, each floored at 1/(B+1); they are not the covariance-based generator significances, which stay unquoted (§ Principal unresolved question). Missing draws: "Certified, margin disclosed" (DELIVERY §1). | `docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md`; `RECORD-20261005-s5p-joint-5d-inference-result.md`; `reproduction/s5p/README.md` |
+| PRD-class article | `ASSEMBLED — NOT SUBMITTED` | The article sources are on `main` and the package is assembled for Joseph's review. | Nothing is submitted, deposited, tagged or sent; each of those acts and any coauthor contact needs Joseph's separate authorization. The article's readiness is assessed apart from s5p's. | `docs/publication/submission/PACKAGE-MANIFEST-20261006.md`; `docs/publication/DECISION-20261006-joseph-publication-approvals.md` |
 | Historical unified 4D/FPS and PET uncertainty products | `QUARANTINED` | Old unified 4D/FPS covariances, old PET precision comparisons, `(E_avail,W)` covariance, and dependent significances are unquotable. | No full-event PET total covariance is adopted. The corrected recoil-only PET budget is a legacy representation cross-check and cannot satisfy or feed the full-event DAG. | `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md`, “Legacy boundary”; `KNOWN_ISSUES.md` |
 | PET central/statistical pairing (`C_stat`) | `EXISTS — UNVERIFIED, PAIRING DECLINED` | A 50-member partial covariance artifact exists; it is not independently verified, and `OI-126` was RULED on 2026-08-20 to decline the pairing and demote the result. | The ruling is a fourth move, not a choice among the three refuted branches. Reconsideration needs estimator-equivalence **plus coverage**, and coverage is a different object from verifying the construction. | `VALIDATION_LEDGER.md` `VL132`; `docs/OPEN_ITEMS.md` `OI-126`; its exact rulings |
 | PET ML covariance / Gate 6 | `BLOCKED` | No `C_ML` is constructed and Gate 6 remains blocked. | Before any action read the exact `prohibitions_applied` keys in `docs/orchestration/state/gate6-member-trajectories-result-56847059.json`; do not paraphrase them. | Gate-6 receipt; N-D status |
@@ -38,44 +40,33 @@ The controlled states below apply to result components, not whole workstreams. A
 
 ## Quarantined and superseded traps
 
-- `OI-132` forbids quoting its historical divergence split until every member is reclassified with
-  `bootstrap_seed` present. Do not reproduce the prohibited values in summaries.
-- `C_stat` must never be shortened to “verified,” “adopted,” or “the statistical uncertainty.” Its
-  existence, digest, and ledger row do not supply the missing independent check or central pairing.
+- `OI-132` forbids quoting its historical divergence split until every member is reclassified with `bootstrap_seed` present. Do not reproduce the prohibited values in summaries.
+- `C_stat` must never be shortened to “verified,” “adopted,” or “the statistical uncertainty.” Its existence, digest, and ledger row do not supply the missing independent check or
+  central pairing.
 - Gate 6 is controlled by five exact receipt keys. Route to the receipt rather than translating them.
-- Legacy pre-MINOS-fix 1D outputs, pre-Phase-18 2D outputs, and superseded covariance families remain
-  diagnostic or historical only.
-- `OI-126`'s ruling does **not** invalidate the row's measurements. **CORRECTED 2026-08-20: the two
-  sentences that stood here were false, and their falsehood was a DROPPED QUALIFIER, not a typo.**
-  Joseph's ruling text, quoted verbatim at `docs/OPEN_ITEMS.md` `OI-126`, **does** contain the phrase
-  *"a large, spatially coherent bootstrap-centering/bias anomaly whose coverage has not been
-  validated"* — so it is his, it **is** part of the ruling, and a session told otherwise will
-  wrongly "correct" a faithful quotation. What may not be quoted as his is that phrase **as a
-  determined cause**: the row's own measured history refutes both mechanisms this campaign named, so
-  the MECHANISM is not established even though the WORDS are Joseph's. Read the operative content as
-  *a large, spatially coherent anomaly whose coverage has not been validated*, and never cite
-  "bootstrap-centering" as a settled mechanism. `live-state.json`'s blocker kept the
-  "as a determined cause" qualifier; this front door had dropped it, which is how a true caution
-  became a false claim about what Joseph said.
-- `OI-136`: a `.py` file that puts the hardcoded cluster root at `sys.path[0]` imports another
-  checkout's modules while deployment parity truthfully reports every pinned file `CURRENT`. This
-  cost 3 h 08 m of A100 on `57266000_0`. `PYTHONPATH` cannot outrank position 0 and a re-deploy does
-  not fix it. The fail-open set was 59, then 45; **36 were repaired under
-  `AUTHORIZATION-20260903-oi136-failopen-repair.md` and 9 remain** (three probe records, the
-  published 2D arm, five receipt-bound files) — re-measure with
-  `docs/orchestration/state/probe-oi136-sys-path-hijack-20260826.py`, never quote a count from here.
-  Route new compute through `nd-unfolding/mnv_guarded_run.py`.
+- Legacy pre-MINOS-fix 1D outputs, pre-Phase-18 2D outputs, and superseded covariance families remain diagnostic or historical only.
+- `OI-126`'s ruling does **not** invalidate the row's measurements. **CORRECTED 2026-08-20: the two sentences that stood here were false, and their falsehood was a DROPPED
+  QUALIFIER, not a typo.** Joseph's ruling text, quoted verbatim at `docs/OPEN_ITEMS.md` `OI-126`, **does** contain the phrase *"a large, spatially coherent
+  bootstrap-centering/bias anomaly whose coverage has not been validated"* — so it is his, it **is** part of the ruling, and a session told otherwise will wrongly "correct" a
+  faithful quotation. What may not be quoted as his is that phrase **as a determined cause**: the row's own measured history refutes both mechanisms this campaign named, so the
+  MECHANISM is not established even though the WORDS are Joseph's. Read the operative content as *a large, spatially coherent anomaly whose coverage has not been validated*, and
+  never cite "bootstrap-centering" as a settled mechanism. `live-state.json`'s blocker kept the "as a determined cause" qualifier; this front door had dropped it, which is how a
+  true caution became a false claim about what Joseph said.
+- `OI-136`: a `.py` file that puts the hardcoded cluster root at `sys.path[0]` imports another checkout's modules while deployment parity truthfully reports every pinned file
+  `CURRENT`. This cost 3 h 08 m of A100 on `57266000_0`. `PYTHONPATH` cannot outrank position 0 and a re-deploy does not fix it. The fail-open set was 59, then 45; **36 were
+  repaired under `AUTHORIZATION-20260903-oi136-failopen-repair.md` and 9 remain** (three probe records, the published 2D arm, five receipt-bound files) — re-measure with
+  `docs/orchestration/state/probe-oi136-sys-path-hijack-20260826.py`, never quote a count from here. Route new compute through `nd-unfolding/mnv_guarded_run.py`.
 
 ## Complete work that should not be repeated
 
-- The 2D Phase-18.2 production, closure, completeness, iteration, model-comparison, and literature
-  validation campaigns are complete. Reopen them only for new evidence or an explicit question.
-- The 3D framework, central unfold, marginal anchor, injected-shape closure, and generator comparison
-  are complete. The covariance override does not invalidate those components.
-- Scalar 4D/5D central-value anchors and closures are complete. Current uncertainty and adoption gates
-  are narrower than repeating those central campaigns.
-- The 1D binned study is a closed equivalence/debug cross-check, not a publication result; recover
-  its complete workspace at `evidence/prepublication-2026-08-20-0b329e8a:2d-unfolding/binned_study/`.
+- The 2D Phase-18.2 production, closure, completeness, iteration, model-comparison, and literature validation campaigns are complete. Reopen them only for new evidence or an
+  explicit question.
+- The 3D framework, central unfold, marginal anchor, injected-shape closure, and generator comparison are complete. The covariance override does not invalidate those components.
+- Scalar 4D/5D central-value anchors and closures are complete. Current uncertainty and adoption gates are narrower than repeating those central campaigns.
+- The 1D binned study is a closed equivalence/debug cross-check, not a publication result; recover its complete workspace at
+  `evidence/prepublication-2026-08-20-0b329e8a:2d-unfolding/binned_study/`.
+- The scalar campaigns s5c (`OI-190`), s5n (`OI-191`), s5e (`OI-192`) and s5p (`OI-193`), and the 2026-09 PET selection studies, are terminal. Their verdicts and ending records
+  are indexed under "Closed approaches" in `README.md`; restarting one needs a new authorization, not a resume.
 
 ## Principal unresolved scientific question
 
@@ -93,6 +84,8 @@ paper.** The `40`/`80` points are **nested subsets of one 160-throw ensemble at 
 [`CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md`](docs/orchestration/CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md). ⚠ It is
 **not** a licence to re-open the declined member campaign, the completed central-value studies, or PET (2026-09-19 §7 stopping rule), and it is **not** bounded below — the *"lower
 bound"* reading was **withdrawn 2026-09-20**. Read the routed `OI-*` end-state and `OPERATIVE-SHEET-scalar5d.md`, never an older paragraph or a generated summary.
+s5p (terminal 2026-10-06) leaves this unchanged: it adds no reportable uncertainty and does not re-qualify the trunk or its four measurements. The reviewed successor proposal
+([`PROPOSAL-20261005-scalar-measurement-successor.md`](docs/orchestration/PROPOSAL-20261005-scalar-measurement-successor.md)) is a **NO-GO for immediate new compute**; it recommends narrowing to the existing 2D estimator, which would need a publication-scope decision, and it carries no compute authority.
 
 ## Next-action discipline
 
@@ -136,12 +129,16 @@ There is no standing authorization here for a new scientific analysis. Read `doc
 | What is happening now? | `docs/orchestration/LIVE-STATE.md` (measurements and route health only; the authorized action lives in `docs/CURRENT_WORK.md`); on Perlmutter run `/usr/bin/python3.11 docs/orchestration/generate_live_state.py --check-freshness` from canonical main (task worktrees do not inherit main's regenerated view), then query the scheduler/source directly |
 | What should happen next? | `docs/CURRENT_WORK.md`, then the exact cited row in `docs/OPEN_ITEMS.md`; consult `docs/CURRENT_WORK_BACKLOG.md` when reprioritizing |
 | Quote a number | `VALIDATION_LEDGER.md`, then its exact product summary or receipt |
-| Assess a physics claim | `docs/orchestration/CLAIMS.md`, then the claim's original evidence and independent check |
+| Assess a physics claim | For the article, `docs/publication/CLAIMS-20261005-claim-to-evidence.md`; for the August full-event campaign (`CLM-*`), `docs/orchestration/CLAIMS.md`; then the claim's original evidence and independent check |
+| Find the record that governs a plan, decision, outcome or receipt | `docs/orchestration/CATALOG.md` (`## Current work`, `## Task routes`); a document's live/archival class is in `docs/orchestration/MANIFEST.tsv`, never in its path |
+| See entry points, how the workstreams share code and products, or what was tried and closed | `README.md` ("Workstreams", "How the workstreams connect", "Closed approaches", "Current versus historical documents") |
+| Prepare or check the article and its release | `docs/publication/submission/PACKAGE-MANIFEST-20261006.md`, then the routed `docs/publication/` record; code in `publication/`; article sources `docs/analysis-note/main_paper.tex` |
 | Change code | `KNOWN_ISSUES.md`, the relevant `*_STATUS.md` and reference, callers, tests, and hash bindings |
 | Run 2D/3D/N-D/PET | The relevant workstream status; `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`; for PET also `nd-unfolding/PET_UQ_REMEDIATION_STATUS.md`; the 2026-09 PET selection studies (configuration comparison → improvement campaign → final-design study) end in `nd-unfolding/pet/final_design/DECISION_RECORD-pet-final-design.md` (terminal `NO_ELIGIBLE_DESIGN`, no selected default; PET diagnostic, nothing adopted) |
 | Launch or monitor compute | Fresh live state, direct scheduler observation, the exact runbook/launcher receipt, and environment rules routed by the workstream reference |
 | Apply process rules | `docs/orchestration/PLAYBOOK.md`; open `FINDINGS.md` only by routed `BEN-*` id |
-| Understand or recover pre-freeze history | `evidence/prepublication-2026-08-20-0b329e8a`, then the old path; never load the orchestration directory wholesale |
+| Understand or recover pre-freeze history | `evidence/prepublication-2026-08-20-0b329e8a`, then the old path; never load the orchestration directory wholesale. Paths removed later (families A2, A3) are listed with their tags in `docs/POST_PUBLICATION_REORG_PLAN.md` |
+| Local checkouts, disk use, or a file removed from a local machine | `docs/LOCAL_CHECKOUTS_AND_STORAGE.md` (worktree conventions, out-of-repo evidence epochs, local archive records and recovery commands) |
 | Build deliverables | `docs/analysis-note/`; `build_all.sh` must build note, primer, and paper; then synchronize, build, commit, and push the standalone `MINERvA-OmniFold-Analysis-Note` repository |
 
 ## Deliverable synchronization

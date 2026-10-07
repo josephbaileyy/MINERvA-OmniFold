@@ -29,6 +29,9 @@ Required reading via `AGENTS.md`; recommendations do not replace the governing a
 
 ## Current work
 
+Article (PRD-class), assembled and not submitted: [`../publication/submission/PACKAGE-MANIFEST-20261006.md`](../publication/submission/PACKAGE-MANIFEST-20261006.md)
+and the `docs/publication/` records it names. Submission, deposit and tagging are Joseph's acts.
+
 Scalar measurement successor proposal (2026-10-05):
 [bounded 2D admission and resource request](PROPOSAL-20261005-scalar-measurement-successor.md).
 This is a proposal, not compute authority or a change to the current campaigns.
@@ -938,6 +941,11 @@ to drift. The five below are the subset that `docs/OPEN_ITEMS.md` rows actually 
   relative to the field**: `coverag` appears once in it, about detector acceptance.
 
 ### START HERE for the remaining publication work
+
+> **Superseded route (note added 2026-10-07).** The August entries below were the publication route before the s5
+> campaigns. The current article path is [`../publication/submission/PACKAGE-MANIFEST-20261006.md`](../publication/submission/PACKAGE-MANIFEST-20261006.md)
+> and the records it names, with [`DELIVERY-20261006-s5p-campaign-terminal.md`](DELIVERY-20261006-s5p-campaign-terminal.md) for the
+> scalar campaign's terminal state. The entries below are kept as history.
 
 - [`WALKDOWN-20260822-one-pass.md`](WALKDOWN-20260822-one-pass.md) — **the ORDER of everything left
   before publication, and which step blocks which.** Deliberately thin: it is a route, not a second

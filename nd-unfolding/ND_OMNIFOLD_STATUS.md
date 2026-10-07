@@ -147,6 +147,21 @@ instructions, not evidence that a run has occurred.
 
 ## Current quotable results
 
+> **⚠ Two rows below are superseded (routing note added 2026-10-07; no number changed).**
+> - **Corrected 5D GBDT covariance.** Its "adopted mean-centered" wording predates the 2026-09-20 adoption. The adopted
+>   scalar-5D covariance is the CV-centered trunk `3d7465f6…` (`uq_5d/z_pilot_20260916_a5/z-cv.npz`), adopted
+>   publication-under-exception with four travelling measurements (`VALIDATION_LEDGER.md` `VL142`–`VL144`;
+>   `docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md`). Mean-centering is disqualified,
+>   and the background-aware block-sum candidates are quarantined.
+> - **Corrected PET 5D budget.** PET is diagnostic, not a publication uncertainty product (ruled 2026-08-20). This budget
+>   is a legacy representation cross-check.
+>
+> The `AGENTS.md` scientific-picture table carries the current state of both. The s5p joint-5D inference (terminal
+> 2026-10-06) adds no row here: it is a hypothesis-test result, not a cross section or uncertainty
+> (`docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md`).
+> The runbook and rerun map routed in the paragraph above are July-era; the current article path is
+> `docs/publication/submission/PACKAGE-MANIFEST-20261006.md`.
+
 | Result | Current statement | Artifact |
 |---|---|---|
 | 4D central cross section | sigma=3.066e-38 cm2/nucleon; 4D/3D anchor 0.9960; closure PASS | `products/4d/xsec_4d_MEFHC_5iter_lgbm.root` |
