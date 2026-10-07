@@ -188,3 +188,27 @@ Stage 7 starts after D2 and D3, on `docs/s5p-stage7-20261006`.
     send the merge sha to `2d` → `2d` syncs from it. The merge replaces the Letter with the PRD article on main.
 14. **Discovery route:** when this branch is integrated, add a `docs/publication/` row to the `AGENTS.md` evidence
    routes.
+
+
+## 7. State at 2026-10-06 (end of the preparation effort)
+
+- **Article on main:** PR #29 is merged, main `4b21cef6`. It is the PRD article, 9 pp, `build_all` PASS.
+  - The headline follows the Stage-7 wording verbatim.
+  - D3 is applied ("Certified, margin disclosed").
+  - W1 (no joint-information claim) and W2 (robust at ±4%, exploratory) are stated.
+  - VL170 2D band; `\uqPaper` 6.85; the Fig. 2 statement descriptive (Joseph: "Stands as written").
+  - The only `\pubhold` is the deposit identifier.
+- **Final independent review:** two cycles (NOT READY, then READY WITH CHANGES); all findings applied
+  (`REVIEW-20261006-final-article.md`).
+- **Release:** RC4 `46f801bf…`, local, with `verify_rc.py` PASS. The product archive is on CFS (s5p lane).
+- **Submission package:** `docs/publication/submission/PACKAGE-MANIFEST-20261006.md`, with a draft cover letter and
+  a proposed AI-use disclosure (APS-required; the article has none yet).
+- **Standalone note-repo sync:** the 2D lane, once, from `4b21cef6`; heads pending.
+- **Worktrees of this lane:**
+  - `MINERvA-OmniFold-publication-20261005` (this branch);
+  - `MINERvA-OmniFold-w2-recoil` and `MINERvA-OmniFold-release-figs` (sub-branches, merged).
+  They can be removed after integration. Nothing is running on the cluster.
+
+**Next action:** Joseph answers the six author inputs in the package manifest §4 (AI disclosure, author metadata,
+coauthor review, deposit, tag and submission, cover-letter specifics). Then this lane fills the deposit identifier,
+adds the approved disclosure, rebuilds, and produces the final PDF for the authors' approval.
