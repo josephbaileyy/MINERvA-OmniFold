@@ -246,10 +246,10 @@ changes no scientific claim, grade, gate or publication source.
 **Authority.** Joseph's 2026-10-07 instruction to this session asked for a second simplification pass from
 `origin/main`. Its first priority is to reconcile stale current-work and lifecycle records against committed
 terminal outcomes. It authorizes reversible documentation improvements, and archival removals only after a proposal
-is approved. The retired register rows keep `migration-carried-forward` in their `authority` column: this
-instruction, recorded here, is the authority for the retirements. The prose owner of five of the rows is Joseph
-(OI-140, OI-141, OI-147, OI-149, OI-187). Each retirement is reversed by setting the row back to `active` and running
-`control_plane_lint.py --write`.
+is approved. The six retired backlog rows keep `migration-carried-forward` in their `authority` column, and `OI-193` keeps its
+authorization link. This instruction, recorded here, is the authority for all seven retirements. The prose owner of five of the rows is Joseph
+(OI-140, OI-141, OI-147, OI-149, OI-187). To reverse a retirement, restore the row from `e2cf8a4e`, with its queue, promotion and terminal criterion, and
+run `control_plane_lint.py --write`.
 
 **Lifecycle records reconciled with committed terminal outcomes.**
 - **Register.** `OI-193` is retired. Its terminal criterion, "campaign final-disposition record committed and
@@ -260,11 +260,12 @@ instruction, recorded here, is the authority for the retirements. The prose owne
   The views were regenerated with `control_plane_lint.py --write`, and the current-work list went from 14 rows to 13.
 - **Residuals that do not travel with the retired rows.**
   - `OI-145`: its remaining checker failure belongs to `OI-148`, which stays active.
-  - `OI-147` and `OI-149`: they hand their residual to clause (c), which
-    `DECISION-20260920-joseph-rules-clause-c-disposition.md` disposes of.
+  - `OI-147` and `OI-149`: they hand their residual to the B1 pause's *expiry* clause (c) and the B1 lift. Both
+    are routed to `DECISION-20260822-joseph-b1-lift-and-clause-c.md`. This is not the §6.4 clause (c) disposed of on
+    2026-09-20.
   - `OI-187`: its ruling has two halves. Half (a), "upgrade, not a submission blocker", is complete. Half (b) is a
     standing posture: *"keep the covariance work going"*. It was later amended conditionally (`R5`,
-    `DECISION-20260902`), then modified "for this article only" by item 1 of
+    `DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md`), then modified "for this article only" by item 1 of
     `docs/publication/DECISION-20261006-joseph-publication-approvals.md`. After retirement it lives in
     `DECISION-20260901-joseph-oi187-upgrade-not-blocker.md`, which stays LIVE and is routed from `CATALOG.md`, and
     in that 2026-10-06 decision. No active register row carries it.
@@ -322,7 +323,9 @@ authorization (Lane A closure, above).
   - The family is an *indirect reproduction input* for two dev summaries. After removal, both are rebuilt from the
     tag rather than from main:
     - `dev/summarize_dev.py --root` reads the dev directories and builds `dev/DEV_TABLES-*.json`. It also reads
-      `dev3N/` and `predecessor_posthoc/`, which both stay. The 2026-09-27 table is pinned in
+      `dev3N/` and the predecessor post-hoc files, which both stay. The script globs `posthoc2/` under `--root`,
+      but the committed files are in `predecessor_posthoc/`, so the rebuild needs a `--root` that maps one to the
+      other. Its `dev3X` source is not in the tree. The 2026-09-27 table is pinned in
       `slides/deck_numbers.json`. The review rebuilt it from the committed inputs at `e2cf8a4e`, with
       `--ks 2,3,4,5,6`. All 144 populated cells are identical, but the bytes differ (`62e226ae…` against the pinned
       `eb7a7eb6…`). The pinned file carries empty `L128H2E16` entries in four tables, and committed `dev2L/` holds

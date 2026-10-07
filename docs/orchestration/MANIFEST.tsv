@@ -81,7 +81,7 @@ docs/orchestration/COSTMODEL-20260911-z-pilot-and-scan.md	tracked	ARCHIVAL	docum
 docs/orchestration/CRITERIA-20260811-quarantine-causes-1-2-3-4-6.md	tracked	LIVE	document		20260811	open		route-only	docs/orchestration/state/probe-z-criteria-acceptance-mathematics-20260910.py;nd-unfolding/receipt_candidate_stamps_5d.py;nd-unfolding/receipt_cause1_endpoint_census_5d.py;nd-unfolding/receipt_construction_contract_5d.py;nd-unfolding/tests/test_uq_remediation.py	no	29	764	63419
 docs/orchestration/DECISION-20260804-B4-STEP3-RECEIPTS.md	tracked	ARCHIVAL	document		20260804	terminal		exact-path-only	docs/open-items/verify_open_items_restructure.py	yes	10	126	8226
 docs/orchestration/DECISION-20260815-joseph-oi6-oi8-oi126.md	tracked	ARCHIVAL	document		20260815	terminal		exact-path-only		yes	4	262	15435
-docs/orchestration/DECISION-20260822-joseph-b1-lift-and-clause-c.md	tracked	LIVE	document		20260822	open		route-only	nd-unfolding/bootstrap_nd.py;nd-unfolding/seedscan_split.py;nd-unfolding/sweep_bank_5d.py;nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py;nd-unfolding/unfold_nd_omnifold_unbinned.py;nd-unfolding/unified_throw_cov.py;nd-unfolding/unified_throw_cov_5d.py	no	28	655	42522
+docs/orchestration/DECISION-20260822-joseph-b1-lift-and-clause-c.md	tracked	LIVE	document		20260822	open		route-only	nd-unfolding/bootstrap_nd.py;nd-unfolding/seedscan_split.py;nd-unfolding/sweep_bank_5d.py;nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py;nd-unfolding/unfold_nd_omnifold_unbinned.py;nd-unfolding/unified_throw_cov.py;nd-unfolding/unified_throw_cov_5d.py	no	29	655	42522
 docs/orchestration/DECISION-20260823-joseph-a2f-does-not-substitute-for-a3.md	tracked	LIVE	document		20260823	open		route-only	nd-unfolding/tests/test_k0_launcher_two_roots.py	no	7	135	7799
 docs/orchestration/DECISION-20260824-joseph-deployment-freeze-until-f1b.md	tracked	LIVE	document		20260824	open		route-only		no	7	84	4948
 docs/orchestration/DECISION-20260824-joseph-eight-dispositions-and-mnv-repo-ownership.md	tracked	ARCHIVAL	document		20260824	terminal		exact-path-only	nd-unfolding/tests/test_mnv_guarded_run.py	yes	4	141	9283
@@ -101,7 +101,7 @@ docs/orchestration/DECISION-20260901-joseph-oi187-upgrade-not-blocker.md	tracked
 docs/orchestration/DECISION-20260901-joseph-ratifies-oi177-per-arm-ceilings.md	tracked	LIVE	document		20260901	terminal		route-only		no	5	107	6495
 docs/orchestration/DECISION-20260901-joseph-ratifies-oi185-invariants.md	tracked	LIVE	document		20260901	terminal		route-only	nd-unfolding/mnv_preflight_census.py	no	6	196	12169
 docs/orchestration/DECISION-20260902-joseph-applies-oi173-cause4-m.md	tracked	LIVE	document		20260902	open		route-only		no	10	118	7537
-docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md	tracked	LIVE	document		20260902	open		route-only	docs/orchestration/campaignctl.py;docs/orchestration/r5_meter.py;docs/orchestration/verify_hash_bindings.py	no	37	234	15997
+docs/orchestration/DECISION-20260902-joseph-rules-cause7-cause3-and-the-stop.md	tracked	LIVE	document		20260902	open		route-only	docs/orchestration/campaignctl.py;docs/orchestration/r5_meter.py;docs/orchestration/verify_hash_bindings.py	no	38	234	15997
 docs/orchestration/DECISION-20260902-joseph-rules-no-fourth-grade-token.md	tracked	LIVE	document		20260902	open		route-only		no	11	97	6399
 docs/orchestration/DECISION-20260902-joseph-rules-oi173-referent-is-the-candidate.md	tracked	LIVE	document		20260902	open		route-only		no	4	135	9332
 docs/orchestration/DECISION-20260902-two-lane-consensus-cause4-M-and-its-supersession.md	tracked	LIVE	document		20260902	open		route-only		no	3	227	15549
@@ -113,7 +113,7 @@ docs/orchestration/DECISION-20260919-joseph-R6-reverses-the-k1-decline.md	tracke
 docs/orchestration/DECISION-20260919-joseph-rules-pm1-cause7-and-completion.md	tracked	LIVE	document		20260919	open		route-only		no	13	123	10612
 docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md	tracked	LIVE	document		20260920	open		route-only	nd-unfolding/tests/test_draft_adoption_record.py;nd-unfolding/tests/test_run_m1_projection_refusals.py	no	23	127	8092
 docs/orchestration/DECISION-20260920-joseph-authorizes-typed-descriptor-audit-on-main.md	tracked	LIVE	document	z-two-member-campaign	20260920	open		route-only		no	2	102	9711
-docs/orchestration/DECISION-20260920-joseph-rules-clause-c-disposition.md	tracked	LIVE	document		20260920	open		route-only		no	9	153	10043
+docs/orchestration/DECISION-20260920-joseph-rules-clause-c-disposition.md	tracked	LIVE	document		20260920	open		route-only		no	8	153	10043
 docs/orchestration/DECISION-20261004-s5p-production-budget-extension.md	tracked	LIVE	document		20261004	open		route-only		no	8	85	5028
 docs/orchestration/DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md	tracked	LIVE	document		20261005	open		route-only	nd-unfolding/s5p_recompute.py;nd-unfolding/s5p_recompute_compare.py;nd-unfolding/tests/test_s5p_recompute.py	no	19	135	9255
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only		no	3	537	36540
