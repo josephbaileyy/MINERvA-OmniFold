@@ -59,6 +59,9 @@ Retain unless an exact later review proves otherwise:
 - exact receipts read by retained code or governing a live gate;
 - cluster-frozen worktrees and outputs used by live job `57266000_0`.
 
+*Superseded 2026-10-07 (see* Lane A closure and A2 *below): the job clause is stale
+(`orchestration/LIVE-STATE.md:34` records `57266000_[0-0]` FAILED), and the release surfaces are added.*
+
 The live job executes from `/pscratch/sd/j/josephrb/gate5-data-only-frozen-377c713`; compaction of local
 `main` must never rewrite or delete that frozen worktree or its `gate5-do-g2` outputs.
 
@@ -123,3 +126,97 @@ git grep '<identifier>' evidence/prepublication-2026-08-20-0b329e8a --
 
 This outcome is active-tree hygiene only. It creates no publication-results freeze and promotes no
 scientific result.
+
+## Lane A closure and A2, 2026-10-07
+
+**Decision (Joseph, 2026-10-07, verbatim):** "Close Lane A + do A2 (Recommended)". That option's text, as
+answered, was: "Record the target-unreachable completion, fix the plan's stale clauses, and remove the 27
+archival records (A2). They are already preserved under the 09-24 snapshot tag. Full checks and
+independent review. Then the paper pass." This admits the second epoch as A2's removal boundary.
+
+**Evidence epochs.** Two pushed epochs now exist. `evidence/prepublication-2026-08-20-0b329e8a`, above,
+is one. The other is **`evidence/preparation-2026-09-24-bf34a12c`**: tag object `6bb0af34…`, commit
+`bf34a12cff9a2f06f0a3f1c516628085565eef60`. Its bundle and recovery proofs are in
+[`orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md`](orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md).
+Only Joseph's 2026-09-24 authorization admitted it as a removal boundary, for the families reviewed
+then, and his 2026-10-07 decision does the same for A2. Any further family needs its own owner
+authorization, as does any material that neither epoch contains.
+
+**Family A2: 25 ARCHIVAL/terminal `docs/orchestration` records.** The read-only reassessment at
+`381dc8b7` proposed 27 records. Two left the family because surviving records cite them by short
+identifier:
+- `CHECK-20260911-…` at `CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md:189`;
+- `COSTMODEL-20260911-…` at `HANDOFF-20260921-gbdt-remaining.md:199`.
+
+The gate was run at `0a95bf87`:
+
+1. **Enumeration.** The list is exact. Each path is named in the 25-row discovery table in
+   [`orchestration/CATALOG.md`](orchestration/CATALOG.md), *Lane A family A2*.
+2. **Dependency scan.** `git grep -a` over every tracked file at `0a95bf87` (9,206 files) searched for
+   each full stem, each type-date prefix and distinctive fragments. Surviving references appear only in:
+   `MANIFEST.tsv` and `MANIFEST-overrides.tsv`; `CATALOG-ARCHIVE-scalar5d.md` (17 link rows); and the
+   hash-pinned historical `docs/sep-09-presentation/…/commit_inventory.json`. No file is a hash-pin
+   source or target. No path is read by code, a test or a publication build. Dirty worktrees, live
+   writers and queued jobs were not re-measured for these ARCHIVAL/terminal records.
+3. **Internal references.** One family member cites another (`VERDICT-20260820-lanec-remedy-a-FAIL.md:15`).
+4. **Present at the tags.** 21 paths are byte-identical at `bf34a12c` and 4 at `0b329e8a`, checked with
+   `git rev-parse <tag>:<path>` against the head blob. All 25 were restored with `git show` and matched
+   by sha256.
+5. **Surviving references resolve.** The 17 `CATALOG-ARCHIVE-scalar5d.md` rows now read
+   `` `git show <tag>:<path>` `` instead of a relative link. Override rows were removed and `MANIFEST.tsv`
+   regenerated. `commit_inventory.json` is a pinned per-commit inventory and stays as it was.
+6. **Discovery route.** The 25-row path→tag table in `CATALOG.md`.
+7. **Checks.** Pre-commit (13 checks), `generate_manifest.py --check`, `verify_hash_bindings.py`,
+   `control_plane_lint.py`, `live_doc_indexed.py --check --unrowed`, and the withdrawal-completeness
+   check with its self-test all pass. On main, `generate_manifest.py --check` was already OUT OF DATE
+   before the change.
+   - The `docs/orchestration` tests plus `test_hash_bindings.py` show the same pass/fail set before
+     and after: 981 passed and 23 failed, with an identical failure set. The failures are environment-bound tests (`test_wakerctl`,
+     `test_watch_slurm_array_resume`, `test_usagectl`, `test_deploy_oi135_watcher_swap`) that also fail
+     on main.
+   - `probe-20260922-seven-gates.sh` refuses outside the main checkout ("not on main"), so it was not
+     run.
+8. **Products unchanged.** `build_all.sh` was run from clean checkouts of `0a95bf87` and of the
+   removal commit. Both give PASS (containment strict; 0 of 29 struck literals) at 123 / 9 / 9 pages.
+   The `docs/analysis-note` source trees are identical, and the `pdftotext` digests of all three PDFs
+   match.
+9. **Independent review.** This is the publication lane's read-only reviewer, on the branch diff, before
+   any merge. See the PR.
+10. **Counts.**
+
+| | tracked files | Markdown files | Markdown lines |
+|---|---:|---:|---:|
+| before A2 (`0a95bf87`) | 9,206 | 824 | 206,497 |
+| after A2 | 9,181 | 799 | 201,819 |
+
+**Lane A completion: the targets cannot be reached safely.** This follows the completion clause above:
+"or a failed removal gate demonstrates why the target cannot safely be reached".
+- The read-only reassessment (`381dc8b7`) found the gate-passing families total about 1% of the tree.
+  A2 is one of them. The other, `nd-unfolding/pet/runtime_runs` (48 files), sits at no epoch and needs a
+  new one.
+- The PET study trees and all campaign state, s5p included, are read by code, tests, hash pins,
+  `reproduction/s5p` or the release candidates. They therefore fail step 2.
+- LIVE/open orchestration records alone total 297 Markdown files and 89,379 lines.
+- The realistic floor is therefore about 9,100 files, 785 Markdown files and 198,000 Markdown lines.
+- The 950 / 200 / 45,000 targets are retired as targets. File counts are diagnostics, not deletion
+  quotas (`orchestration/DRAFT-preservation-and-stabilization-session-prompts.md:246-247`).
+- Lane A is closed. A future family needs its own exact authorization and, if its paths are post-09-24,
+  a new evidence epoch.
+
+**Stale facts in this plan, corrected here; earlier text is kept as written:**
+- **The live job.** The "live job `57266000_0`" clause under *Protected active surface* is superseded.
+  The generated `orchestration/LIVE-STATE.md:34` records `57266000_[0-0]` as `ERROR: FAILED=1`, measured
+  2026-09-21T05:24:49Z on `login27`. That is a record citation; the scheduler was not queried for this
+  closure. The frozen worktree `/pscratch/sd/j/josephrb/gate5-data-only-frozen-377c713` and its outputs
+  are still not compaction targets.
+- **Bindings.** The 2026-08-20 outcome's "117 path/hash bindings at digest `7586d636…`" is now **144
+  receipt bindings, inventory sha256 `f9dab8dd…`** (`verify_hash_bindings.py`, ALL BINDINGS INTACT, at the
+  A2 commit).
+- **Markdown gates.** The 2026-08-20 outcome's "The Markdown gates are met" no longer holds: 799 files
+  and 201,819 lines after A2.
+- **Release surfaces.** These are added to the *Protected active surface*: `publication/`,
+  `docs/publication/`, `reproduction/s5p/`, and `publication/release/verify_rc.py` with the release
+  candidates it verifies.
+- **Lane B.** Its `publication-results-YYYY-MM-DD` tag is a reserved act. `DECISION-20261006`: "Public
+  deposit, release tagging, submission, and any additional scientific work remain separately
+  authorized." Lane B's rules are otherwise unchanged.
