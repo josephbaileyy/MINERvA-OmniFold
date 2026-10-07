@@ -1,0 +1,46 @@
+evloop: 36 tasks, reservation 6.2109 node-h
+   w2b_ev_rr0_1A	4.0 h	billing 10	0.1562
+   w2b_ev_rr0_1B	4.0 h	billing 10	0.1562
+   w2b_ev_rr0_1C	4.0 h	billing 10	0.1562
+   w2b_ev_rr0_1D	5.0 h	billing 10	0.1953
+   w2b_ev_rr0_1E	4.0 h	billing 10	0.1562
+   w2b_ev_rr0_1F	5.0 h	billing 10	0.1953
+   w2b_ev_rr0_1G	5.0 h	billing 10	0.1953
+   w2b_ev_rr0_1L	4.0 h	billing 10	0.1562
+   w2b_ev_rr0_1M	6.0 h	billing 10	0.2344
+   w2b_ev_rr0_1N	4.0 h	billing 10	0.1562
+   w2b_ev_rr0_1O	4.0 h	billing 10	0.1562
+   w2b_ev_rr0_1P	4.0 h	billing 10	0.1562
+   w2b_ev_rr1_1A	4.0 h	billing 10	0.1562
+   w2b_ev_rr1_1B	4.0 h	billing 10	0.1562
+   w2b_ev_rr1_1C	4.0 h	billing 10	0.1562
+   w2b_ev_rr1_1D	5.0 h	billing 10	0.1953
+   w2b_ev_rr1_1E	4.0 h	billing 10	0.1562
+   w2b_ev_rr1_1F	5.0 h	billing 10	0.1953
+   w2b_ev_rr1_1G	5.0 h	billing 10	0.1953
+   w2b_ev_rr1_1L	4.0 h	billing 10	0.1562
+   w2b_ev_rr1_1M	6.0 h	billing 10	0.2344
+   w2b_ev_rr1_1N	4.0 h	billing 10	0.1562
+   w2b_ev_rr1_1O	4.0 h	billing 10	0.1562
+   w2b_ev_rr1_1P	4.0 h	billing 10	0.1562
+   w2b_ev_rrzero_1A	4.0 h	billing 10	0.1562
+   w2b_ev_rrzero_1B	4.0 h	billing 10	0.1562
+   w2b_ev_rrzero_1C	4.0 h	billing 10	0.1562
+   w2b_ev_rrzero_1D	5.0 h	billing 10	0.1953
+   w2b_ev_rrzero_1E	4.0 h	billing 10	0.1562
+   w2b_ev_rrzero_1F	5.0 h	billing 10	0.1953
+   w2b_ev_rrzero_1G	5.0 h	billing 10	0.1953
+   w2b_ev_rrzero_1L	4.0 h	billing 10	0.1562
+   w2b_ev_rrzero_1M	6.0 h	billing 10	0.2344
+   w2b_ev_rrzero_1N	4.0 h	billing 10	0.1562
+   w2b_ev_rrzero_1O	4.0 h	billing 10	0.1562
+   w2b_ev_rrzero_1P	4.0 h	billing 10	0.1562
+dump: 3 tasks, reservation 0.7266 node-h
+   w2b_dump_rr0	1.0 h	billing 62	0.2422
+   w2b_dump_rr1	1.0 h	billing 62	0.2422
+   w2b_dump_rrzero	1.0 h	billing 62	0.2422
+unfold: 3 tasks, reservation 0.3750 node-h
+   w2b_unfold_rr0	1.0 h	billing 32	0.1250
+   w2b_unfold_rr1	1.0 h	billing 32	0.1250
+   w2b_unfold_rrzero	1.0 h	billing 32	0.1250
+W2b whole-plan worst case (every task at its limit): 7.3125 node-h

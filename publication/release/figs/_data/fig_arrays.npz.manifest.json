@@ -1,0 +1,113 @@
+{
+ "schema": "article-figs-arrays/1",
+ "code_root": "/pscratch/sd/j/josephrb/pub-release-20261006/figs/repo",
+ "code_commit": "556d6dde97c73d446f5d86d3ef31bd9db7ce83ab",
+ "producer_modules": {
+  "compare_to_paper_fullcov": {
+   "path": "2d-unfolding/compare_to_paper_fullcov.py",
+   "sha256": "05075acb54c0bbbad63d737fe8c049b19fb90fc17f92d99489bb6a156dc91215"
+  },
+  "compare_to_models": {
+   "path": "2d-unfolding/compare_to_models.py",
+   "sha256": "2b342f9eeb8a33aae2b3dd11f090873c25e22c1bf3a933d3cdc69689e41b5f78"
+  },
+  "agreement_windows_receipt": {
+   "path": "2d-unfolding/agreement_windows_receipt.py",
+   "sha256": "816588dc18807637625cace818f7803726eac42b51d67480447612333de255a8"
+  },
+  "overlay_eavailW_band": {
+   "path": "3d-unfolding/genie/overlay_eavailW_band.py",
+   "sha256": "c5bff4ecf3994f2e90fb3d056607360ac4a86cefd1830ab895f0f5c742323883"
+  },
+  "excess_eavail_W": {
+   "path": "nd-unfolding/excess_eavail_W.py",
+   "sha256": "2e0c44f3c7973dc6aa1c907833890356f1e9eab46bbaa7d52984dcb1ff041897"
+  },
+  "xsec_nd": {
+   "path": "nd-unfolding/xsec_nd.py",
+   "sha256": "454001f3c9ac3aa6485d184aadb8aba65dd71dba124816962b9c3b6344920fa5"
+  }
+ },
+ "sources": {
+  "ours_2d": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root",
+   "sha256": "142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5",
+   "bytes": 55513
+  },
+  "paper_cov": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+   "sha256": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3",
+   "bytes": 1272641
+  },
+  "tune_v1_txt": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt",
+   "sha256": "222317522662b7001e8d4fcc155c1ec0b28b85f2cd868ab10206a7e7f6bf8240",
+   "bytes": 3123
+  },
+  "excess_eavail_W": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/excess_eavail_W.root",
+   "sha256": "751bb859766adf684eb05f483800505cb5ee8160f31c8e93a4eec277d37f3058",
+   "bytes": 6166
+  },
+  "xsec_5d": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root",
+   "sha256": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8",
+   "bytes": 479553
+  },
+  "gen_GENIE-CV": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec_eavailW.root",
+   "sha256": "debaf83e66cb8918ab10ecbeeb0a34bec1be8f457ae3fe3ab29dd8399796a664",
+   "bytes": 5420
+  },
+  "gen_GENIE+MEC": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_xsec_eavailW.root",
+   "sha256": "1098e9124ddd6ee2e6845594ee65f486fc3c86679a1dde9a34c876638421e70d",
+   "bytes": 5434
+  },
+  "gen_NuWro": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/nuwro_cv_xsec_eavailW.root",
+   "sha256": "d7d46a0c547dfd83ccce7bba39a2f81eae80a597a32817bf7289b80729145d3c",
+   "bytes": 5421
+  },
+  "gen_GiBUU": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/gibuu_cv_xsec_eavailW.root",
+   "sha256": "b430ddc6c2f22568d1f3cfd4b997afda1860daa1422946ff5653adb53ca556d9",
+   "bytes": 5422
+  },
+  "mnvtune_5d": {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz",
+   "sha256": "bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c",
+   "bytes": 224713
+  }
+ },
+ "generators": [
+  "GENIE-CV",
+  "GENIE+MEC",
+  "NuWro",
+  "GiBUU"
+ ],
+ "units": {
+  "ours_v/paper_v/tune_v1_v": "d2sigma/(dpT dppar), cm^2/(GeV/c)^2/nucleon, 224 global bins gid=(ptbin-1)*16+(pzbin-1)",
+  "cov_*": "paper covariance on the 224 grid (cm^2/(GeV/c)^2/nucleon)^2",
+  "area_*": "bin area dpT*dppar (GeV/c)^2",
+  "hData2D/hGenCV2D/gen_*": "d2sigma/(dEavail dW), cm^2/GeV^2/nucleon, (7 Eavail x 6 W)",
+  "hExcess2D": "cell-integrated (data - comparator), cm^2/nucleon"
+ },
+ "comparator_note": "hGenCV2D is mc_truth_denom x w_truth = MINERvA Tune v1 (the OmniFold prior), labelled 'GENIE CV' in the producer",
+ "not_exported": "any 2D uncertainty band or rollup (VL162 superseded; VL170 rebuild pending)",
+ "cross_checks_report_only": {
+  "hData2D_vs_5d_product_projection": {
+   "max_rel_diff": 0.0,
+   "shape": [
+    7,
+    6
+   ]
+  },
+  "comparator_vs_s5p_mnvtune5d": {
+   "ratio_median": 1.0,
+   "ratio_min": 0.9999999999999998,
+   "ratio_max": 1.0000000000000004
+  }
+ },
+ "npz_sha256": "72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8"
+}

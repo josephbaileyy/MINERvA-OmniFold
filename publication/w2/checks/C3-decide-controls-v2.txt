@@ -1,0 +1,5 @@
+control-only pass rc=0 (CONTROL PASS (control only; the signs were not evaluated))
+full rc=0 robust=10/10
+control-only, p outside range: rc=1 (expect 1, or 2 if Holm disagreement is detected first)
+control-only with no sign files: rc=0 (expect 0)
+full with no sign files: rc=1 (expect nonzero)

@@ -1,0 +1,4 @@
+tests in claim: 40 in mine: 40 missing from claim: []
+claim fields compared: 120 variant p compared: 184 diffs: 0
+qualifying (G,t): []
+claimed criterion all false: True 10

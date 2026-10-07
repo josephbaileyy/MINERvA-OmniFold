@@ -1,9 +1,17 @@
 % ====================================================================
-% PRL-style paper draft. Build: latexmk -pdf main_paper.tex
+% Specialist-journal article (PRD working target; Joseph 2026-10-06,
+% docs/publication/DECISION-20261006-joseph-publication-approvals.md).
+% Build: latexmk -pdf main_paper.tex
 % The companion analysis note contains the complete validation record,
 % technical details, extended-fiducial study, and PET methodology.
+%
+% DRAFT STATE: text marked \pubhold{...} renders in red and waits on the
+% dependencies recorded in docs/publication/HANDOFF-20261005-publication-
+% preparation.md section 3 (lost-seed resolution and cross-check,
+% Joseph's disposition, Stage-7 wording). Do not submit a build that
+% renders any \pubhold.
 % ====================================================================
-\documentclass[aps,prl,reprint,superscriptaddress,nofootinbib]{revtex4-2}
+\documentclass[aps,prd,reprint,superscriptaddress,nofootinbib,floatfix]{revtex4-2}
 
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amssymb}
@@ -11,6 +19,7 @@
 \usepackage{microtype}
 \usepackage{siunitx}
 \usepackage{xcolor}
+\usepackage{booktabs}
 \usepackage[colorlinks=true,allcolors=blue!55!black]{hyperref}
 
 \graphicspath{{figures/}}
@@ -18,13 +27,15 @@
 \newcommand{\pT}{p_{T}}
 \newcommand{\pPar}{p_{\parallel}}
 \newcommand{\Eavail}{E_{\mathrm{avail}}}
+\newcommand{\pubhold}[1]{\textcolor{red}{[HOLD: #1]}}
 
 \input{values}
+\input{values_inference}
 
 \begin{document}
 
-\title{Unbinned Simultaneous Five-Observable Unfolding of MINERvA
-Charged-Current Neutrino Interactions}
+\title{Unbinned Five-Observable Unfolding of MINERvA Charged-Current
+Neutrino Data and Calibrated Joint Tests of Generator Predictions}
 
 \author{Joseph Bailey}
 \email{josephrb@stanford.edu}
@@ -38,18 +49,30 @@ Charged-Current Neutrino Interactions}
 
 \begin{abstract}
 We apply unbinned machine-learning unfolding to MINERvA medium-energy
-$\nu_{\mu}$ charged-current data. As a validation, a simultaneous
-two-observable unfold reproduces the published
-$d^{2}\sigma/(d\pT\,d\pPar)$ measurement and its uncertainty scale. We then
-unfold up to five observables by adding available energy, three-momentum
-transfer, and hadronic invariant mass without constructing an explicit
-five-dimensional response tensor. The higher-dimensional central values pass
-lower-dimensional marginal anchors and injected-shape closure tests. They
-recover the established low-recoil discrepancy and localize a deficit of the
-tuned simulation in the joint high-available-energy, high-mass region. The latter is a
-central-value result. A common five-dimensional covariance is now adopted,
-and no significance is quoted from it because the estimator-seed sensitivity of its construction
-exceeds the movement bound fixed before production.
+$\nu_{\mu}$ charged-current inclusive data from the MINERvA open-data release.
+To our knowledge this is the first unbinned unfolding of neutrino-scattering
+data. A simultaneous two-observable unfold reproduces the published
+$d^{2}\sigma/(d\pT\,d\pPar)$ measurement and its uncertainty scale; its
+statistical band as first built undercovered a fixed truth in its tails, and the
+rebuilt band has not been re-tested. We then
+unfold up to five observables, adding available energy, three-momentum
+transfer, and hadronic invariant mass, without an explicit five-dimensional
+response tensor. The higher-dimensional central values pass marginal anchors
+and injected-shape closure tests and recover the established low-recoil
+discrepancy. The estimator's measured
+model dependence prevents a qualified total uncertainty at useful precision,
+so no five-dimensional cross-section measurement with uncertainties is
+claimed. Instead, a joint test calibrated with pseudo-experiments that
+run the full analysis chain compares the five-dimensional result with five
+generator predictions under a declared nuisance model.
+Frozen joint tests of five neutrino-interaction predictions (MINERvA Tune~v1,
+GENIE~2.12.10 with and without MEC, NuWro~21.09, GiBUU~2019) against the
+five-dimensional data, in total (rate and shape together) and in shape alone,
+reject all ten simple hypotheses at familywise level 0.05 under the stated
+conditions.  Every pseudo-experiment lost to scheduler limits was recovered in a
+report-only rerun without changing a decision, and an exploratory $\pm4\%$ recoil-response
+variation leaves every rejection in place.  These are statements about the
+specified predictions, not a measured cross section.
 \end{abstract}
 
 \maketitle
@@ -57,11 +80,11 @@ exceeds the movement bound fixed before production.
 \input{paper_body}
 
 \begin{acknowledgments}
-We thank the MINERvA Collaboration for making the data products used in this
-study publicly available.
+The authors thank the MINERvA Collaboration for making their data, simulated
+data, and analysis tools available to the community~\cite{MINERvA:OpenData,MINERvA:2013zvz}.
 \end{acknowledgments}
 
 \bibliographystyle{apsrev4-2}
-\bibliography{technote}
+\bibliography{technote,publication}
 
 \end{document}

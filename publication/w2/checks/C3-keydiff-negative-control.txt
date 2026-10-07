@@ -1,0 +1,6 @@
+# C3 key-diff negative control (w2b.flatten, as design-copies uses)
+committed copy rr0 vs frozen: ['/data_central']
+copy + alpha_family changed: ['/alpha_family', '/data_central']
+copy + nested nulls/GiBUU_2019/domain changed: ['/data_central', '/nulls/GiBUU_2019/domain']
+copy + one data_jitters entry dropped: ['/data_central', '/data_jitters[19]']
+copy + an added key: ['/data_central', '/extra']
