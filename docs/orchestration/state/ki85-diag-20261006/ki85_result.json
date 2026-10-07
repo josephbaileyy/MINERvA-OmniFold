@@ -1,0 +1,49 @@
+{
+ "rule": "docs/orchestration/DECISION-RULE-20261006-ki85-bootstrap-diagnostic.md",
+ "n": {
+  "armB": 50,
+  "armT": 50,
+  "realboot": 200,
+  "bins": 205
+ },
+ "size_correction_sqrt_r_over_p": {
+  "median": 1.089546906426116,
+  "p16": 1.0223940018360538,
+  "p84": 1.1645083404126655
+ },
+ "sigma_B_over_sigma_T": {
+  "median": 1.0033585702807069,
+  "p16": 0.8046630543996215,
+  "p84": 1.2504014968064094,
+  "median_ci95": [
+   0.9554190804588718,
+   1.07292420687814
+  ]
+ },
+ "sigma_B_over_sigma_realboot_corrected": {
+  "median": 0.6630741787252934,
+  "p16": 0.4518458885787921,
+  "p84": 0.894651162289807,
+  "median_ci95": [
+   0.6053252807707317,
+   0.6766521393005229
+  ]
+ },
+ "sigma_T_over_sigma_realboot_corrected": {
+  "median": 0.6605358251954745,
+  "p16": 0.4775297317065597,
+  "p84": 0.8612781212495025,
+  "median_ci95": [
+   0.605253566103002,
+   0.6720216576171189
+  ]
+ },
+ "median_rel_spread_pct": {
+  "armB": 0.34045327866253383,
+  "armT": 0.33618420029803153,
+  "realboot": 0.4869623637052485
+ },
+ "outcome": "consistent with (b): the bootstrap is faithful on same-event pseudo-data",
+ "share_of_log_gap_attributed_to_a": 0.008085148807940335,
+ "statement": "No outcome changes the quoted band (VL170) or any printed number before publication."
+}
