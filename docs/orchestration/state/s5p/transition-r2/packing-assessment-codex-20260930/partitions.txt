@@ -1,0 +1,11 @@
+regular_milan_ss11|295|plnd
+regular_milan_ss11|2|drng$
+regular_milan_ss11|3|drain$
+regular_milan_ss11|4|alloc$
+regular_milan_ss11|31|down$
+regular_milan_ss11|24|comp
+regular_milan_ss11|9|resv
+regular_milan_ss11|2622|alloc
+regular_milan_ss11|12|idle
+shared_milan_ss11|12|mix
+shared_milan_ss11|58|alloc

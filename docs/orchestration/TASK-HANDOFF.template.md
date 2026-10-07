@@ -18,13 +18,17 @@ closeout fields.
 - Review class: `[ROUTINE|GATE]`
 - Required reviewer(s): `[D]` or `[D and Codex, independently]`
 - Current review state: `UNREVIEWED`
+- Campaign model/effort and owner/reviewer choice: `[brief rationale using CAMPAIGN-REVIEW-20260929.md;
+  distinguish project evidence from a prospective choice; preserve required reviewers]`
 
 ## 2. Required reading
 
+- `AGENTS.md`, then `docs/orchestration/CAMPAIGN-REVIEW-20260929.md` for campaign work.
+- `docs/CURRENT_WORK.md`, then the exact governing authorization and open item.
 - `docs/orchestration/LIVE-STATE.md` — verify `Observed:` and `Git:` against
   current state before relying on it.
-- `docs/orchestration/FINDINGS.md` — read in full.
-- Relevant `BEN-*` entries: `[list ids most likely to recur]`
+- `docs/orchestration/PLAYBOOK.md`, then only the routed `BEN-*` entries in `FINDINGS.md`:
+  `[list ids most likely to recur; do not load the casebook wholesale]`
 - `KNOWN_ISSUES.md`
 - Owning STATUS/RUN_LOG/reference files: `[exact paths]`
 - Owning open item/claim/ledger rows: `[OI/CLM/VL ids and exact paths]`
@@ -61,6 +65,10 @@ closeout fields.
 - Independent method/formalism: `[method]`
 - Acceptance tests and numerical tolerances: `[tests]`
 - Refutation test: `[observation that falsifies the proposition]`
+- Terminal outcomes: `[success, informative failure, inconclusive result, or infeasibility;
+  what each resolves and what it cannot authorize]`
+- Review/repair budget and reassessment point: `[use the governing contract; for a new campaign,
+  consider two repair/review cycles before explicitly choosing continue, redesign, or stop]`
 - Failure handling: `[diagnose, preserve evidence, propose repair; do not
   silently weaken the test]`
 - Exact reproduction commands: `[commands]`

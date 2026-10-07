@@ -1,0 +1,10 @@
+{"kind": "SYNTHETIC_RUNTIME_ONLY", "linux_resource_limits_enforced": true, "mapping": "FAIL", "peak_observed_rss_bytes": 744169472, "peak_observed_threads": 4, "source_execution_authorized": false, "terminal": "INCOMPLETE", "versions": {"ROOT": "6.28/12", "keras": "3.15.1", "numpy": "1.26.4", "scipy": "1.16.3", "tensorflow": "2.16.2"}}
+[oi136] inventory: checked=3860 repo_origin_count=6 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/pet-runtime-numerics-validation-20260910/onednn-0/guard.json
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 8   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/pet-runtime-numerics-20260910  (8) __main__, __mp_main__, atomic_write, launch_typed_descriptor_source_audit, typed_descriptor_keras, typed_descriptor_source_audit, typed_descriptor_source_smoke, typed_descriptors
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+srun: error: nid004142: task 0: Exited with exit code 1
+srun: Terminating StepId=58174544.1

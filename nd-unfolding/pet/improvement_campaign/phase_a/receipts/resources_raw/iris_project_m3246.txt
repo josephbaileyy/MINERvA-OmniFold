@@ -1,0 +1,7 @@
+$ iris project m3246
+# date_utc: 2026-09-22T08:14:16Z host: login16
+Project       Charged    Allocated
+---------  ----------  -----------
+m3246_g      120684.5     180000.0
+m3246         16533.5      20000.0
+# exit: 0

@@ -1,0 +1,13 @@
+cap 200.000 cost/batch 4.69 NuWro batches 7: terminal 10-07T19Z, production measured 192.3 | 10-05T02Z CV refused -> drain; 10-06T17Z CV retry admitted
+cap 200.000 cost/batch 4.69 NuWro batches 6: terminal 10-07T15Z, production measured 187.6 | 10-05T02Z CV refused -> drain; 10-06T13Z CV retry admitted
+cap 200.000 cost/batch 4.83 NuWro batches 7: terminal 10-07T12Z, production measured 191.5 | 10-04T12Z MnvTune refused -> drain; 10-05T13Z NuWro refused -> drain; 10-06T13Z MnvTune retry admitted; 10-07T12Z NuWro retry REFUSED -> terminal budget at 6 batches
+cap 200.000 cost/batch 4.83 NuWro batches 6: terminal 10-07T12Z, production measured 191.5 | 10-04T12Z MnvTune refused -> drain; 10-06T13Z MnvTune retry admitted
+cap 200.000 cost/batch 4.95 NuWro batches 7: terminal 10-07T17Z, production measured 194.9 | 10-04T12Z MnvTune refused -> drain; 10-05T09Z GiBUU refused -> drain; 10-06T17Z MnvTune retry admitted; 10-07T17Z GiBUU retry REFUSED -> terminal budget at 6 batches
+cap 200.000 cost/batch 4.95 NuWro batches 6: terminal 10-08T07Z, production measured 194.9 | 10-04T12Z MnvTune refused -> drain; 10-05T09Z GiBUU refused -> drain; 10-06T04Z MnvTune retry admitted; 10-07T04Z GiBUU retry admitted
+cap 209.647 cost/batch 4.69 NuWro batches 7: terminal 10-06T17Z, production measured 192.3 | no refusal
+cap 209.647 cost/batch 4.69 NuWro batches 6: terminal 10-06T13Z, production measured 187.6 | no refusal
+cap 209.647 cost/batch 4.83 NuWro batches 7: terminal 10-06T17Z, production measured 196.4 | no refusal
+cap 209.647 cost/batch 4.83 NuWro batches 6: terminal 10-06T13Z, production measured 191.5 | no refusal
+cap 209.647 cost/batch 4.95 NuWro batches 7: terminal 10-07T17Z, production measured 199.8 | 10-05T13Z NuWro refused -> drain; 10-06T13Z NuWro retry admitted
+cap 209.647 cost/batch 4.95 NuWro batches 6: terminal 10-06T13Z, production measured 194.9 | no refusal
+no cap binding: 10-06T17Z

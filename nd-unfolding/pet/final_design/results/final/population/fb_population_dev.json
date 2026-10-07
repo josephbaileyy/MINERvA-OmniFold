@@ -1,0 +1,99 @@
+{
+ "schema": "pet-final-design/population-target/1",
+ "bank": "FB",
+ "distortion": "dev",
+ "distortion_hash": "ae29d8b444e84ffb67747db56e8b1ee53d953f52353b846b8df6682d29ee0f5f",
+ "distortion_record": {
+  "name": "dev",
+  "form": "exp(A*clip((E-p50)/IQR, -Z, +Z)) / mean over the pseudodata's truth-passing rows",
+  "amplitude": 0.35,
+  "clip_z": 3.0,
+  "p50": 1.4653696417808533,
+  "iqr": 2.6336711198091507,
+  "historical_pre_normalization_mean": 1.1561864049708446,
+  "sources": {
+   "frozen_design": "nd-unfolding/pet/configuration_comparison/frozen_design.py:ENDPOINT",
+   "frozen_design_sha256": "aa9fa4ac3732fe5600b9f860a8d2d9d2e3e8af65ae3f2cc44081fb627657218d",
+   "tilt_spec": "nd-unfolding/pet/improvement_campaign/phase_b/scalar/results/populations.json:tilt_spec_half_A",
+   "tilt_spec_sha256": "98f5ec2d04bcd53e3bf094349aeeb76cb293b504e4a82c34830de16778944d2e"
+  }
+ },
+ "n_bank_rows": 2646891,
+ "n_scored_rows": 2646891,
+ "natural_histogram": "eavail",
+ "targets": {
+  "aggregate": [
+   0.03522583369519435,
+   0.03300135455179144,
+   0.06713788249627074,
+   0.10435202730370229,
+   0.12587178014918454,
+   0.2013926282445481,
+   0.4330184935593086
+  ],
+  "regions": {
+   "low_acceptance": [
+    0.011529194955567234,
+    0.005633596502801505,
+    0.01494767769947083,
+    0.037394783022566304,
+    0.07972788508801189,
+    0.21499736539271916,
+    0.6357694973388631
+   ],
+   "moderate": [
+    0.018886568521637132,
+    0.01604853273983969,
+    0.04317205606673574,
+    0.09160722521487451,
+    0.14669296321690772,
+    0.26743887561151736,
+    0.41615377862848785
+   ],
+   "good": [
+    0.06272573569672772,
+    0.06402957769874153,
+    0.1224460468088559,
+    0.16707703709924682,
+    0.15578141314566973,
+    0.15684240973747451,
+    0.27109777981328376
+   ]
+  },
+  "histograms": {}
+ },
+ "weight_check": {
+  "run": "/pscratch/sd/j/josephrb/pet-final-design-20260925/s4f/S4F-H2S1T24K5-FB0",
+  "rows": 600111,
+  "max_abs_diff": 0.0
+ },
+ "banks": {
+  "banks_npz": "/pscratch/sd/j/josephrb/pet-final-design-20260925/impl-runner/banks/banks.npz",
+  "banks_npz_sha256": "50b7697c0a282e25efa35ec6e815cdf6ee0103085a78c2e9843244b4cacfe110",
+  "bank_manifest": "/pscratch/sd/j/josephrb/pet-final-design-20260925/checkouts/ed686aae/nd-unfolding/pet/final_design/banks/BANK_MANIFEST.json",
+  "bank_manifest_sha256": "682e259fbe41cf37407b545c6acf1739b8e438f38ee0adfae8f16449bf8d5cb3",
+  "bank_manifest_code_commit": "728ce49436067ebbf132776bfa022d5348f2c8ae",
+  "counts": {
+   "DEV": 45089191,
+   "FB": 2646891,
+   "RB": 1414846
+  },
+  "identity_sidecar_sha256": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c"
+ },
+ "inputs_npz": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+ "inputs_npz_members": [
+  "truth_scalars",
+  "w_truth",
+  "pass_truth"
+ ],
+ "populations": "/pscratch/sd/j/josephrb/pet-improvement-20260922/phaseB1/prep/populations.npz",
+ "populations_sha256": "b2b55791a25523ef510a099cbbd0defcf3157ab59af2580c219fe088ccb96da1",
+ "row_features": "/pscratch/sd/j/josephrb/pet-final-design-20260925/rowfeatures/row_features.npz",
+ "scalar_cols": {
+  "pt": 0,
+  "pparallel": 1,
+  "eavail": 2,
+  "q3": 3
+ },
+ "code_commit": "ed686aae8957201c7eed9c4106c0a09259735742"
+}

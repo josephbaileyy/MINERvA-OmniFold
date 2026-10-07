@@ -1,35 +1,73 @@
 \section{Codebase layout and terminology}
 \label{app:codebase}
 
-The analysis is a chain of four components; the italicized names are used
-throughout the note.
+The analysis chain has four components, named in italics throughout the note.
 
 \begin{itemize}[itemsep=2pt]
   \item \emph{Event loop} (C++): \texttt{runEventLoopOmniFold}, built on the
         MINERvA Analysis Toolkit (MAT) and the MINERvA-101 framework. It
-        reads the production AnaTuples, applies the selection and the
-        systematic-universe machinery, and writes per-event ROOT trees.
-  \item \emph{Omnifiles}: the event-loop outputs --- per-event records for
+        reads production AnaTuples, applies selection and systematic-universe
+        machinery, and writes per-event ROOT trees.
+  \item \emph{Omnifiles}: event-loop outputs with per-event records for
         data, truth/reco-paired simulated signal, simulated background, and
-        the truth-level efficiency denominator, with POT bookkeeping; the
+        the truth-level efficiency denominator, plus POT bookkeeping. The
         \texttt{\_universes\_full} variants add per-universe weight and
         shifted-kinematics branches.
-  \item \emph{Driver} (Python): the per-analysis orchestration ---
+  \item \emph{Driver} (Python): per-analysis orchestration in
         \texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py} and its
         $N$-dimensional generalization
         \texttt{nd-unfolding/unfold\_nd\_omnifold\_unbinned.py}. The driver
-        assembles training arrays from the omnifiles, applies the
+        builds training arrays from omnifiles, applies
         purity-weight background subtraction (\S\ref{sec:method-algo}),
-        invokes the engine, and extracts the cross section.
+        runs the engine, and extracts the cross section.
   \item \emph{Engine} (Python):
-        \texttt{unbinned\_unfolding/python/omnifold.py} --- the OmniFold
-        iteration itself, agnostic to the learner backend (LightGBM in
-        production; sklearn \texttt{exact}/\texttt{hist} alternates; MLP and
+        \texttt{unbinned\_unfolding/python/omnifold.py} implements OmniFold
+        iteration independently of the learner backend (\texttt{exact} central
+        value, LightGBM uncertainty ensemble, \texttt{hist} alternate; MLP and
         point-cloud-transformer cross-checks).
 \end{itemize}
 
-The recoil-point-cloud cross-checks of \S\ref{sec:pet} replace the driver's
-scalar classifier features with the non-muon cluster and truth-hadron inputs
-of \texttt{nd-unfolding/pet/}, reusing the same omnifile and cross-section
-machinery. Muon scalars are retained for selection and binning but are not
-classifier inputs in these legacy PET products.
+The recoil-point-cloud cross-checks in \S\ref{sec:pet} use non-muon cluster
+and truth-hadron inputs from \texttt{nd-unfolding/pet/} in place of the driver's
+scalar classifier features, with the same omnifile and cross-section machinery.
+Muon scalars remain for selection and binning; these legacy PET classifiers
+exclude them.
+
+Scripts, figure files and stored artifacts call \emph{training-seed variation}
+\texttt{seedscan}, retaining the code name as provenance. Both names denote
+the same variance source.
+
+\paragraph{Code identifiers cited in the note.}
+\begin{itemize}[itemsep=1pt]
+  \item Event loop (\S\ref{sec:evloop}):
+        \repopath{MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp};
+        its four trees are \texttt{mc\_truth\_denom} (efficiency denominator),
+        \texttt{mc\_signal\_reco}, \texttt{mc\_background} and \texttt{data}; the
+        flux histogram is \texttt{pTmu\_reweightedflux\_integrated}.
+  \item Cross-section extraction (\S\ref{sec:method-xsec}):
+        \texttt{extract\_cross\_section\_2d} and its N-dimensional generalization
+        \texttt{xsec\_nd.py}.
+  \item Figures of \S\ref{sec:results}: \texttt{2d-unfolding/plot\_2d\_paper\_comparison.py}
+        builds the simulated-truth curve of Fig.~\ref{fig:ptslices} from
+        \texttt{hOFTruthDenom2D}; \texttt{2d-unfolding/compare\_to\_models.py}
+        draws Fig.~\ref{fig:modelmaps}.
+\end{itemize}
+
+\paragraph{Test-suite discipline: what the pipeline refuses to do.}
+The production scripts are written so that an unverifiable condition stops the run rather than
+being worked around, and the test suite encodes that discipline as five rules rather than as a
+list of cases. \textbf{(i)} A missing, absent or undeclared operand causes refusal, never a skip,
+default, derived substitute or warning. \textbf{(ii)} Guards precede the side
+effects they prevent; tests assert this ordering. The motivating module import
+above the argument parser once killed every subsequent check in that file.
+\textbf{(iii)} Refusal requires an exact exit code \emph{together with} its own
+message or structured receipt field. ``Non-zero'' cannot distinguish a crash
+from a refusal; three segmentation faults were once recorded as three refusals.
+\textbf{(iv)} Every guard has an accept arm that could have failed, distinguishing
+a check that can only refuse from one that always refuses. \textbf{(v)} An
+unevaluable condition has its own outcome and exit code, never pass or fail.
+Over a thousand tests name a refusal and share these five rules.
+
+\noindent These are properties of the implementation \emph{as tested}, not theorems about the
+method. A rule nobody encoded would not appear among them, and a green suite certifies the cases it
+contains rather than the absence of others.

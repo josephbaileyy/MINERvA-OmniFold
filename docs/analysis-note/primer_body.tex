@@ -64,7 +64,7 @@ section practical without removing the need to validate them.
 \section{What we found}
 
 The multi-quantity central values below pass the stated validation tests. A
-five-quantity uncertainty has now been adopted, and the two-quantity
+five-quantity uncertainty has now been adopted under a documented exception, and the two-quantity
 $(\Eavail,W)$ version of it has been built --- but the multi-quantity plots
 still show central values only, and we still do not assign statistical
 significance to their differences from the simulations. The reason is worth
@@ -116,15 +116,24 @@ pattern is a test of a chosen size, not a measured difference between generators
 that test typical cells come back about \SI{10}{\percent} off, and the
 highest-$W$ cells much more. Neither effect is in the quoted uncertainty yet.
 
-A follow-up study looked inside the unfolding to find out why. Letting it run six times
-longer helps only a little, and a larger machine-learning model does not help. For other
+A follow-up study looked inside the unfolding to find out why. The tested iteration
+and capacity changes do not remove the bias; their effects depend on the injected
+truth and the quantity reported. For other
 generators the effect is \SIrange{16}{31}{\percent} in the worst cell and smaller than the
 quoted uncertainty in about half of the $(\Eavail,W)$ cells. The study did find the source
 of the remaining background bias, a too-simple helper classifier, and a larger one removes
 it. But it also found that the result on the real data shifts by up to a few times its
-statistical uncertainty when the inputs are rounded differently. The generator dependence
-is not in the quoted uncertainty, whether the rounding effect is remains to be checked, and
-nothing was adopted.
+statistical uncertainty when the inputs are rounded differently. A later paired study
+found that the candidate's bootstrap already carries this rounding variability; this
+does not qualify the uncertainty attached to the published result or reverse the failed
+stability test. The truth dependence is not included in the quoted uncertainty. Longer
+runs sometimes improve recovery and sometimes leave a persistent residual, but their
+repeat variability was not measured at the same settings. We therefore have not
+established a tradeoff between bias and variability. Combining cells changes what is
+measured, and changing the starting model does not give a guaranteed error bound.
+The one direct test of whether five-quantity statistical error bars contain the truth as
+often as stated, made on a variant of the method, failed, so we claim no such coverage.
+Nothing new was adopted.
 
 The two-dimensional trust check is unaffected and retains its independently
 constructed uncertainty.
@@ -136,10 +145,18 @@ measurement. MINERvA already published this muon cross section using the
 traditional method. Our machine-learning result agrees with it closely: the
 overall interaction rate matches to about one percent (ratio $\ratioTot$), and
 \SI{\binsTen}{\percent} of the individual measurement cells agree within ten
-percent. Just as important, our \emph{uncertainties} --- worked out completely
+percent. Judged with the published correlations between cells, a shape difference
+remains along the peak of the distribution. Just as important, our \emph{uncertainties} --- worked out completely
 independently --- come out essentially the same size as the published ones
 (\SI{\uqMedian}{\percent} versus \SI{\uqPaper}{\percent} typical). The new method
-reproduces the old answer and its error bars.
+reproduces the old answer and the size of its error bars. We then tested whether the
+statistical part of those error bars contains a known truth as often as stated, using
+simulated repeats of the experiment. The answer is uneven. In many cells the bars are about
+right or even too wide. In a block of cells with large forward momentum, and in those with the
+largest sideways momentum, they are too narrow. Pooled over all cells, two-standard-deviation
+bars contain the truth \SI{\covTwoDCTwoPct}{\percent} of the time instead of
+\SI{95}{\percent}. The published numbers are
+unchanged by this check.
 
 \begin{figure}[H]
   \centering
@@ -171,15 +188,16 @@ out other changes to how particles move through the nucleus. Related MINERvA
 measurements with a different event selection show why proton and pion
 rescattering also matter~\cite{MINERvA:2026qeleme}. These comparisons support the
 two-nucleon contribution without uniquely establishing the cause. And
-where MINERvA has a dedicated published measurement of this region, ours agrees
-with it at central-value level on the maximal common grid.
+where MINERvA has a dedicated published measurement of this region, our central
+values lie \SI{9.2}{\percent} and \SI{6.3}{\percent} above it on the maximal common grid.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{eavailW_band}
   \caption{The unfolded central values (black points) compared to four tested
   simulation predictions --- GENIE's own untuned central configuration (version 2.12.10), the same GENIE
-  with the two-nucleon process added, NuWro (21.09) and GiBUU (2019). \emph{Left:} available
+  with the two-nucleon process added, NuWro (21.09) and GiBUU (2019); the GENIE and NuWro
+  predictions were rebuilt with a correctly sampled beam spectrum. \emph{Left:} available
   energy; all four fall below the data at low available energy (between about
   $0.1$ and $0.4$~GeV), the known
   ``low-recoil'' shortfall, here rediscovered by a different unfolding method.
@@ -205,14 +223,17 @@ would show it. The four other simulations also fall short of the data there,
 but three of them (the two GENIE versions and NuWro) fall short by roughly as
 much as they do everywhere: the data are \SIrange{14}{16}{\percent} above them
 in the corner and \SIrange{7}{15}{\percent} above them overall, so for them the
-corner is not a special place. Only GiBUU falls much further behind there (the
-data are \SI{61}{\percent} above it in the corner, \SI{39}{\percent} overall).
+corner is not a special place. GiBUU falls much further behind there (the
+data are \SI{61}{\percent} above it in the corner, \SI{39}{\percent} overall), but mostly
+because its simulated sample leaves out neutrinos above \SI{20}{GeV}, which in the other
+simulations make up about \SI{15}{\percent} of the corner and \SI{7}{\percent} of everything.
+With them supplied, GiBUU too falls short in the corner by about as much as overall.
 Its statistical significance is not assigned. The random seed described at the start of this section moves
 these central values as well, by at most \SI{\cvMoveOverSigmaMax}{\percent} of
 their own uncertainty; how far the corner's share of the excess could shift
 with it was not separately measured. This is the kind of localized discrepancy that
 points theorists toward what their models are missing --- and it was only
-visible because the unbinned method let us slice the data this finely.
+visible because we measured available energy and $W$ jointly.
 
 \begin{figure}[H]
   \centering
@@ -237,6 +258,25 @@ visible because the unbinned method let us slice the data this finely.
   \label{fig:primerjoint}
 \end{figure}
 
+\subsection*{A joint test of five simulations}
+
+We also asked a sharper question: under stated modelling assumptions, is each
+of five widely used simulations (MINERvA Tune~v1, GENIE with and without MEC,
+NuWro, GiBUU) statistically compatible with the five-dimensional data, both
+overall (rate and shape together) and in shape alone? Rather than rely on a
+textbook formula for how the test statistic is distributed, we simulated about
+1,340 to 1,750 pseudo-experiments under each simulation's hypothesis, unfolded
+each one, and counted how often one looked as discrepant as the data. In each
+test at most one did, so all ten hypotheses are rejected at a combined 5\%
+error level, as the test was designed. Some pseudo-experiments were
+lost to computing time limits. In a check reported separately from the result,
+rerunning exactly those seeds recovered them; none looked as discrepant as the
+data, though in one robustness variant one came close. This is a test of the
+simulations under the assumptions listed in the analysis note (``Joint
+five-dimensional generator tests''), not a new measurement with new error bars.
+% Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md; DECISION-20261005 section 5.
+% Wording review: docs/orchestration/REVIEW-20261006-s5p-stage7-note-wording.md.
+
 \subsection*{Alternative representations and signal definitions}
 
 Two studies test the method's limits rather than adding to the measurement.
@@ -245,9 +285,53 @@ We ran a ``point-cloud transformer'' on the raw detector deposits instead of
 the summary quantities. It shows that the machinery runs end to end on low-level
 detector data, pairing reconstructed recoil clusters with truth-side final-state
 hadrons. The muon was withheld from both classifiers, so this is a recoil-only
-method-development cross-check, not a measurement of the whole event; it
-contributes no cross section or error bar. A full-event version would supply the
-muon and test its added information directly.
+diagnostic, method-development cross-check, not a measurement of the whole event; it
+contributes no cross section or error bar. A later full-event version that adds the
+muon is also method development only; no point-cloud error bar is adopted.
+
+Completed simulation studies then improved PET's recovery of deliberately
+changed truth distributions. More iterations, detector summaries and a revised
+missed-event treatment helped, but none of the improvement study's frozen
+ten-iteration candidates qualified for coverage testing. A later final-design
+study raised the recovered fraction of an available-energy tilt to about
+90\% and 86\% for its two finalists, against 31\% for the historical PET
+control~\cite{PETImprovement2026,PETFinalDesign2026}.
+
+Better recovery did not yield a qualified design. The final outcome is
+\texttt{NO\_ELIGIBLE\_DESIGN}. One finalist failed a robustness threshold
+by the frozen point rule; the statistical comparison did not establish which
+finalist was more robust, and its coverage was never measured. The other
+passed the point-estimate rules but failed its six-member interval test:
+nominal 68\% intervals covered 90\% of the aggregate bin targets, yet only
+26\% in low-acceptance regions (79\% for nominal 95\% intervals there).
+It over-covers in aggregate and under-covers where acceptance is low.
+No design or default was selected, and no PET uncertainty was adopted.
+
+A subsequent exploratory comparison used exactly the same simulated events
+for PET and a scalar tree-based OmniFold~\cite{PETGBDT2026}. Figure~\ref{fig:primerpet}
+shows PET's advantage on the two energy tilts. The ordering changes across
+tests: the tree method does better on all three generator-model reweightings
+and the narrow energy bump, while the proton-topology gap shrinks with more
+tree-method iterations. A binned method already matches PET on the
+one-dimensional tilt in development tests, so this is not a general ranking
+of neural versus scalar unfolding. The comparator differs from the production
+LightGBM studied earlier. Its uncertainty was not tested here; no precision
+comparison or ranking of the PET finalists follows. All results condition
+on the study's finite simulation banks and event scale.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.90\textwidth]{pet_gbdt_paired_differences.pdf}
+  \caption{Exploratory simulation comparison: gain in recovered fraction for
+  each PET finalist relative to the matched tree method at its
+  development-chosen seven iterations. Positive is better recovery.
+  E0 and E3 are opposite energy tilts; E1 separates acceptance regions;
+  E4 tests proton content and E5 the joint energy--momentum-transfer
+  distribution. Bars are unadjusted 95\% intervals for paired differences
+  over 60 draws (E0, E1, E3) or 40 (E4, E5), conditional on the banks.
+  These are point-estimate comparisons, not validated uncertainty bands.}
+  \label{fig:primerpet}
+\end{figure}
 
 Separately, the published signal definition excludes about a third of the
 simulated interaction rate because of its muon kinematic cuts. This fraction

@@ -1,0 +1,98 @@
+{
+ "phase": "determinism",
+ "seed_states_sha256": "bd25f1ec03ac07a205aed533193fa291bef785525529b1e5bf54a45984eaf031",
+ "root": "/pscratch/sd/j/josephrb/s5p-20260926/recovery",
+ "tables": {
+  "rec-determinism-cal-GENIE_2_12_10_CV.tsv": {
+   "lane": "cal-GENIE_2_12_10_CV",
+   "n": 2,
+   "seeds": [
+    1220000,
+    1221205
+   ]
+  },
+  "rec-determinism-cal-GENIE_2_12_10_MEC.tsv": {
+   "lane": "cal-GENIE_2_12_10_MEC",
+   "n": 2,
+   "seeds": [
+    1240000,
+    1241205
+   ]
+  },
+  "rec-determinism-cal-GiBUU_2019.tsv": {
+   "lane": "cal-GiBUU_2019",
+   "n": 2,
+   "seeds": [
+    1280000,
+    1281205
+   ]
+  },
+  "rec-determinism-cal-MnvTune_v1.tsv": {
+   "lane": "cal-MnvTune_v1",
+   "n": 2,
+   "seeds": [
+    1200000,
+    1201205
+   ]
+  },
+  "rec-determinism-cal-NuWro_21_09.tsv": {
+   "lane": "cal-NuWro_21_09",
+   "n": 2,
+   "seeds": [
+    1260000,
+    1261605
+   ]
+  },
+  "rec-determinism-pow-P1_a1.0.tsv": {
+   "lane": "pow-P1_a1.0",
+   "n": 1,
+   "seeds": [
+    1451005
+   ]
+  },
+  "rec-determinism-pow-P1g_a1.0.tsv": {
+   "lane": "pow-P1g_a1.0",
+   "n": 1,
+   "seeds": [
+    1481005
+   ]
+  },
+  "rec-determinism-pow-P2_a1.0.tsv": {
+   "lane": "pow-P2_a1.0",
+   "n": 1,
+   "seeds": [
+    1461005
+   ]
+  },
+  "rec-determinism-pow-P2g_a1.0.tsv": {
+   "lane": "pow-P2g_a1.0",
+   "n": 1,
+   "seeds": [
+    1491005
+   ]
+  },
+  "rec-determinism-pow-P3_a1.0.tsv": {
+   "lane": "pow-P3_a1.0",
+   "n": 1,
+   "seeds": [
+    1471005
+   ]
+  },
+  "rec-determinism-pow-P3g_a1.0.tsv": {
+   "lane": "pow-P3g_a1.0",
+   "n": 1,
+   "seeds": [
+    1501029
+   ]
+  }
+ },
+ "n_seeds": 16,
+ "submission_parts": [
+  {
+   "table": "rec-determinism-part1.tsv",
+   "ntasks": 16,
+   "first": "cal-GENIE_2_12_10_CV-b0_0-s1220000-rec",
+   "last": "pow-P3g_a1.0_4-s1501029-rec"
+  }
+ ]
+}

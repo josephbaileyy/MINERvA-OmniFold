@@ -1,0 +1,46 @@
+{
+ "frozen_design": "/pscratch/sd/j/josephrb/w2-recoil-20261006/deploy/e9372b75/docs/orchestration/state/s5p/prod/design.json",
+ "frozen_sha256": "404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285",
+ "copies": {
+  "rr0": {
+   "file": "design-w2b-rr0.json",
+   "sha256": "c99ce6d831650e397d49b451f6e4ebf8fc179b603fae10a21d89c7edf5179fad",
+   "leaves_compared": 131,
+   "differing_leaves": [
+    {
+     "path": "/data_central",
+     "frozen": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz",
+     "copy": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr0_b-_j-.npz"
+    }
+   ],
+   "only_data_central_differs": true
+  },
+  "rr1": {
+   "file": "design-w2b-rr1.json",
+   "sha256": "bbd116b3f454d626376010eb61f1699ffaee0d29eb76311a0a571344444a553d",
+   "leaves_compared": 131,
+   "differing_leaves": [
+    {
+     "path": "/data_central",
+     "frozen": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz",
+     "copy": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr1_b-_j-.npz"
+    }
+   ],
+   "only_data_central_differs": true
+  },
+  "rrzero": {
+   "file": "design-w2b-rrzero.json",
+   "sha256": "92ae80c682e768b6ae9f2f33f2b2fd9865beaf5fa6183a346f2fb1522ddee7b2",
+   "leaves_compared": 131,
+   "differing_leaves": [
+    {
+     "path": "/data_central",
+     "frozen": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz",
+     "copy": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rrzero_b-_j-.npz"
+    }
+   ],
+   "only_data_central_differs": true
+  }
+ },
+ "verdict": "PASS"
+}

@@ -1,0 +1,25 @@
+{
+  "terminal": "COMPLETE_DIAGNOSTIC",
+  "device": "macOS arm64 CPU only",
+  "gpu_validated": false,
+  "unit_tests_passed": 9,
+  "regression_tests_passed": 60,
+  "regression_subtests_passed": 10,
+  "cells": 4,
+  "components_per_cpu_target_comparison": 5304,
+  "common_operand_components_per_cell": 4624,
+  "primitives_per_trace": 79,
+  "repeatability_comparisons": 20,
+  "repeatability_exact": true,
+  "maximum_cpu_target_absolute_error": 0,
+  "integrity_errors": [],
+  "source_sha256": {
+    "nd-unfolding/pet/direct_token_comparison/numerical_diagnostic.py": "daf5779bd370558e94c8a321513cdc4c6381f04e79b7e81fe830bff8bf7b1751",
+    "nd-unfolding/pet/direct_token_comparison/analyze_numerical_diagnostic.py": "10181fd6656abcc2b3128715241643141d7102ee140fc3d760d0234a05cf5d41",
+    "nd-unfolding/pet/direct_token_comparison/test_numerical_diagnostic.py": "0ad142dbf7255b837211102f7419be75c3667ec8b0fa6974a20e4f79f26219d1",
+    "nd-unfolding/pet/direct_token_comparison/run_numerical_diagnostic.sh": "997ca60aa4c99059b51dddc89a39bacf9524d34e18a9eb3281b2623de533a48a",
+    "nd-unfolding/pet/direct_token_comparison/sbatch_numerical_diagnostic.sh": "8edaae6c85de52283f76e6b6f8979ef22b41b972904cb46a7b274cf6c6d01674"
+  },
+  "local_cpu_time_separately_metered": false,
+  "calibration_authorized": false
+}

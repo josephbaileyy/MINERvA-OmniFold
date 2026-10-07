@@ -1,0 +1,2110 @@
+{
+  "scope": "tail validation of the four-arm execution path; no closure statistic",
+  "authorization": "Joseph, 2026-09-18; <=1.5 GPU-h, <=4 submissions",
+  "commit": "8828bc95e3ae511553e4cfb5d82766f691667f81",
+  "criteria_path": "nd-unfolding/pet/direct_token_comparison/VALIDATION_CRITERIA-20260918.json",
+  "criteria_sha256": "abccd88b4665f2093bd671691298c1a00e31511afdee4a239312f856012fae27",
+  "precision_policy": {
+    "tf32_enabled": false,
+    "determinism_enabled": true,
+    "mixed_precision_policy": "float32",
+    "floatx": "float32"
+  },
+  "gpu_devices": [
+    "/device:GPU:0"
+  ],
+  "steps_per_check": 4,
+  "rows": 1024,
+  "batch_size": 256,
+  "records": [
+    {
+      "arm": "A",
+      "width": [
+        0,
+        0,
+        1
+      ],
+      "typed_objects": 1,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "passed": true,
+          "objects_permuted": 0,
+          "note": "no family has more than one object here"
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 5.328688514798756e-05,
+          "max_relative": 0.0008445790646911092,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.20702117681503296,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.60523318263273e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.3178128188684468e-07
+            }
+          ],
+          "max_abs": 1.3178128188684468e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": true,
+              "max_abs": 9.5367431640625e-07,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 1.3113021850585938e-06,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": true,
+              "max_abs": 1.2516975402832031e-06,
+              "exemptible": true
+            }
+          },
+          "failed": [],
+          "non_exempt_failures": [],
+          "tier": 1,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": true,
+        "width": [
+          0,
+          0,
+          1
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 1
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 1,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "B",
+      "width": [
+        0,
+        0,
+        1
+      ],
+      "typed_objects": 1,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "passed": true,
+          "objects_permuted": 0,
+          "note": "no family has more than one object here"
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 8.649649244528315e-05,
+          "max_relative": 0.0012154866020111788,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.2069455236196518,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.613222325313473e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.259684170307196e-07
+            }
+          ],
+          "max_abs": 1.259684170307196e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": true,
+              "max_abs": 7.152557373046875e-07,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 1.2442469596862793e-06,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": true,
+              "max_abs": 1.0050913203940581e-06,
+              "exemptible": true
+            }
+          },
+          "failed": [],
+          "non_exempt_failures": [],
+          "tier": 1,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          0,
+          1
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 1
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 1,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "C",
+      "width": [
+        0,
+        0,
+        1
+      ],
+      "typed_objects": 1,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "passed": true,
+          "objects_permuted": 0,
+          "note": "no family has more than one object here"
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 8.649649244528315e-05,
+          "max_relative": 0.001215408836029107,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.2069455236196518,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.613222325313473e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.2595532261627795e-07
+            }
+          ],
+          "max_abs": 1.2595532261627795e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": true,
+              "max_abs": 7.152557373046875e-07,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 1.1622905731201172e-06,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": true,
+              "max_abs": 9.54804306729784e-07,
+              "exemptible": true
+            }
+          },
+          "failed": [],
+          "non_exempt_failures": [],
+          "tier": 1,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          0,
+          1
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 1
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 1,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "D",
+      "width": [
+        0,
+        0,
+        1
+      ],
+      "typed_objects": 1,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "passed": true,
+          "objects_permuted": 0,
+          "note": "no family has more than one object here"
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 6.852829164197757e-05,
+          "max_relative": 0.000901760450517046,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.20539292693138123,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.603734337140565e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.30657085373187e-07
+            }
+          ],
+          "max_abs": 1.30657085373187e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": true,
+              "max_abs": 1.5497207641601562e-06,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 1.5497207641601562e-06,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": true,
+              "max_abs": 1.3233503750598175e-06,
+              "exemptible": true
+            }
+          },
+          "failed": [],
+          "non_exempt_failures": [],
+          "tier": 1,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": true,
+        "width": [
+          0,
+          0,
+          1
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 1
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 1,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "B",
+      "width": [
+        0,
+        6,
+        2
+      ],
+      "typed_objects": 8,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "objects_permuted": 512,
+          "max_abs": 0.0,
+          "passed": true
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 2.5447119826503655e-05,
+          "max_relative": 0.0006686577155547715,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.058261383324861526,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.036130462128142e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.0713811238183268e-07
+            }
+          ],
+          "max_abs": 1.0713811238183268e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": true,
+              "max_abs": 1.0132789611816406e-06,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 9.5367431640625e-07,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": true,
+              "max_abs": 2.0176172256469727e-05,
+              "exemptible": true
+            }
+          },
+          "failed": [],
+          "non_exempt_failures": [],
+          "tier": 1,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          6,
+          2
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 8
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 1,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "C",
+      "width": [
+        0,
+        6,
+        2
+      ],
+      "typed_objects": 8,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "objects_permuted": 512,
+          "max_abs": 2.384185791015625e-07,
+          "passed": true
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 2.1846560446850353e-05,
+          "max_relative": 0.0009757368061189663,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.05671399086713791,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.010429376424042e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 9.540138146135746e-08
+            }
+          ],
+          "max_abs": 9.540138146135746e-08,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": true,
+              "max_abs": 1.0132789611816406e-06,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 7.152557373046875e-07,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": true,
+              "max_abs": 2.070516347885132e-05,
+              "exemptible": true
+            }
+          },
+          "failed": [],
+          "non_exempt_failures": [],
+          "tier": 1,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          6,
+          2
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 8
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 1,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "B",
+      "width": [
+        0,
+        12,
+        2
+      ],
+      "typed_objects": 14,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "objects_permuted": 896,
+          "max_abs": 0.0,
+          "passed": true
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 1.1478102473651695e-05,
+          "max_relative": 0.002496174514887986,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.06301046907901764,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.171826139045322e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.0859432508780742e-07
+            }
+          ],
+          "max_abs": 1.0859432508780742e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": true,
+              "max_abs": 3.5762786865234375e-06,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 7.748603820800781e-07,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": false,
+              "max_abs": 0.00011119246482849121,
+              "exemptible": true
+            }
+          },
+          "failed": [
+            "updated_weight_agreement"
+          ],
+          "non_exempt_failures": [],
+          "tier": 2,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          12,
+          2
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 14
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 2,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "C",
+      "width": [
+        0,
+        12,
+        2
+      ],
+      "typed_objects": 14,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "objects_permuted": 896,
+          "max_abs": 0.0,
+          "passed": true
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 1.9532762117310116e-05,
+          "max_relative": 0.0024058344644358807,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.061466965824365616,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.156326382011912e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.0483071410938294e-07
+            }
+          ],
+          "max_abs": 1.0483071410938294e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": true,
+              "max_abs": 3.3974647521972656e-06,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 8.344650268554688e-07,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": false,
+              "max_abs": 0.0001093447208404541,
+              "exemptible": true
+            }
+          },
+          "failed": [
+            "updated_weight_agreement"
+          ],
+          "non_exempt_failures": [],
+          "tier": 2,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          12,
+          2
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 14
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 2,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "B",
+      "width": [
+        0,
+        18,
+        2
+      ],
+      "typed_objects": 20,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "objects_permuted": 1280,
+          "max_abs": 0.0,
+          "passed": true
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 2.1015819642289138e-05,
+          "max_relative": 0.00047029067051678863,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.07837425172328949,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.609069735930007e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.0609148226592424e-07
+            }
+          ],
+          "max_abs": 1.0609148226592424e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": true,
+              "max_abs": 6.765127182006836e-06,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 9.5367431640625e-07,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": false,
+              "max_abs": 0.0003158152103424072,
+              "exemptible": true
+            }
+          },
+          "failed": [
+            "updated_weight_agreement"
+          ],
+          "non_exempt_failures": [],
+          "tier": 2,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          18,
+          2
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 20
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 2,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "C",
+      "width": [
+        0,
+        18,
+        2
+      ],
+      "typed_objects": 20,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "objects_permuted": 1280,
+          "max_abs": 2.384185791015625e-07,
+          "passed": true
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 1.558239217617818e-05,
+          "max_relative": 0.000825167494694897,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.07646818459033966,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.325719970057264e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.2346521072181815e-07
+            }
+          ],
+          "max_abs": 1.2346521072181815e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": true,
+              "max_abs": 6.407499313354492e-06,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 5.960464477539062e-07,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": false,
+              "max_abs": 0.00029137730598449707,
+              "exemptible": true
+            }
+          },
+          "failed": [
+            "updated_weight_agreement"
+          ],
+          "non_exempt_failures": [],
+          "tier": 2,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          18,
+          2
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 20
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 2,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "B",
+      "width": [
+        0,
+        24,
+        2
+      ],
+      "typed_objects": 26,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "objects_permuted": 1664,
+          "max_abs": 0.0,
+          "passed": true
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 1.092889497648917e-05,
+          "max_relative": 0.0008964555851052766,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.09918461740016937,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.342852887364359e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.1178905867659239e-07
+            }
+          ],
+          "max_abs": 1.1178905867659239e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": true,
+              "max_abs": 1.1444091796875e-05,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 8.940696716308594e-07,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": false,
+              "max_abs": 0.0004430413246154785,
+              "exemptible": true
+            }
+          },
+          "failed": [
+            "updated_weight_agreement"
+          ],
+          "non_exempt_failures": [],
+          "tier": 2,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          24,
+          2
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 26
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 2,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "C",
+      "width": [
+        0,
+        24,
+        2
+      ],
+      "typed_objects": 26,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "objects_permuted": 1664,
+          "max_abs": 0.0,
+          "passed": true
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 1.1761776148385625e-05,
+          "max_relative": 0.0007170743724807184,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.09657303988933563,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.322895873545065e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.1884885187107841e-07
+            }
+          ],
+          "max_abs": 1.1884885187107841e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": true,
+              "max_abs": 1.1265277862548828e-05,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 8.344650268554688e-07,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": false,
+              "max_abs": 0.0004895031452178955,
+              "exemptible": true
+            }
+          },
+          "failed": [
+            "updated_weight_agreement"
+          ],
+          "non_exempt_failures": [],
+          "tier": 2,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          24,
+          2
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 26
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 2,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "B",
+      "width": [
+        0,
+        32,
+        2
+      ],
+      "typed_objects": 34,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "objects_permuted": 2176,
+          "max_abs": 0.0,
+          "passed": true
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 2.7843288823026948e-05,
+          "max_relative": 0.0009514860003451961,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.13045933842658997,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.47710185486261e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.1390584342407806e-07
+            }
+          ],
+          "max_abs": 1.1390584342407806e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": false,
+              "max_abs": 2.0056962966918945e-05,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 8.940696716308594e-07,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": false,
+              "max_abs": 0.0006311237812042236,
+              "exemptible": true
+            }
+          },
+          "failed": [
+            "gradient_agreement",
+            "updated_weight_agreement"
+          ],
+          "non_exempt_failures": [],
+          "tier": 2,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          32,
+          2
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 34
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 2,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "C",
+      "width": [
+        0,
+        32,
+        2
+      ],
+      "typed_objects": 34,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "objects_permuted": 2176,
+          "max_abs": 0.0,
+          "passed": true
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 1.7987728384617143e-05,
+          "max_relative": 0.002310053915808084,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.12611635029315948,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.454924839083276e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.1614586603592159e-07
+            }
+          ],
+          "max_abs": 1.1614586603592159e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": false,
+              "max_abs": 1.9490718841552734e-05,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 7.152557373046875e-07,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": false,
+              "max_abs": 0.000617150217294693,
+              "exemptible": true
+            }
+          },
+          "failed": [
+            "gradient_agreement",
+            "updated_weight_agreement"
+          ],
+          "non_exempt_failures": [],
+          "tier": 2,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          32,
+          2
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 34
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 2,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "B",
+      "width": [
+        0,
+        48,
+        2
+      ],
+      "typed_objects": 50,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "objects_permuted": 3200,
+          "max_abs": 0.0,
+          "passed": true
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 1.099023842229769e-05,
+          "max_relative": 0.0004738895780760139,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.19052089750766754,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.547484709962248e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.1970208668721227e-07
+            }
+          ],
+          "max_abs": 1.1970208668721227e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": false,
+              "max_abs": 4.9561262130737305e-05,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 1.0132789611816406e-06,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": false,
+              "max_abs": 0.0017762929201126099,
+              "exemptible": true
+            }
+          },
+          "failed": [
+            "gradient_agreement",
+            "updated_weight_agreement"
+          ],
+          "non_exempt_failures": [],
+          "tier": 2,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          48,
+          2
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 50
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 2,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    },
+    {
+      "arm": "C",
+      "width": [
+        0,
+        48,
+        2
+      ],
+      "typed_objects": 50,
+      "checks": {
+        "V11": {
+          "check": "V11",
+          "failures": [],
+          "generic_masked_slots_tested": 0,
+          "note": "no inactive generic slot in this configuration",
+          "passed": true
+        },
+        "V7": {
+          "check": "V7",
+          "objects_permuted": 3200,
+          "max_abs": 2.384185791015625e-07,
+          "passed": true
+        },
+        "V5": {
+          "check": "V5",
+          "coordinates": 10,
+          "gradient_floor": 0.001,
+          "plateau_failures": 0,
+          "plateau_passed": true,
+          "median_relative": 1.9276433208226547e-05,
+          "max_relative": 0.0029740547787048084,
+          "limit": 0.005,
+          "accuracy_passed": true,
+          "passed": true
+        },
+        "V12": {
+          "check": "V12",
+          "nonfinite_weight_indices": [],
+          "losses_finite": true,
+          "final_loss": 0.18376991152763367,
+          "passed": true
+        },
+        "V10": {
+          "check": "V10",
+          "passed": true,
+          "max_abs": 0.0
+        },
+        "V1": {
+          "check": "V1",
+          "steps": 4,
+          "weights_compared": 42,
+          "mismatched_weight_indices": [],
+          "loss_identical": true,
+          "passed": true
+        },
+        "V13a": {
+          "check": "V13a",
+          "steps": 4,
+          "mismatched_weight_indices": [],
+          "loss_difference": 0.0,
+          "passed": true
+        },
+        "V4": {
+          "check": "V4",
+          "weights_compared": 42,
+          "per_step": [
+            {
+              "step": 1,
+              "max_abs": 6.643812922035863e-08
+            },
+            {
+              "step": 2,
+              "max_abs": 1.2924526315849505e-07
+            }
+          ],
+          "max_abs": 1.2924526315849505e-07,
+          "failures": [],
+          "failure_count": 0,
+          "passed": true
+        },
+        "V6": {
+          "check": "V6",
+          "subchecks": {
+            "initial_weight_identity": {
+              "passed": true,
+              "max_abs": 0.0,
+              "exemptible": false
+            },
+            "gradient_agreement": {
+              "passed": false,
+              "max_abs": 4.3839216232299805e-05,
+              "exemptible": true
+            },
+            "prediction_agreement": {
+              "passed": true,
+              "max_abs": 6.854534149169922e-07,
+              "exemptible": true
+            },
+            "updated_weight_agreement": {
+              "passed": false,
+              "max_abs": 0.0016820579767227173,
+              "exemptible": true
+            }
+          },
+          "failed": [
+            "gradient_agreement",
+            "updated_weight_agreement"
+          ],
+          "non_exempt_failures": [],
+          "tier": 2,
+          "passed": true
+        }
+      },
+      "geometry": {
+        "declared_disabled": false,
+        "width": [
+          0,
+          48,
+          2
+        ],
+        "padded_positions": 0,
+        "typed_tokens_per_row": 50
+      },
+      "buckets": 1,
+      "batches": 4,
+      "tier": 2,
+      "hard_failures": [],
+      "soft_failures": [],
+      "released": true
+    }
+  ],
+  "released_widths": [
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      6,
+      2
+    ],
+    [
+      0,
+      12,
+      2
+    ],
+    [
+      0,
+      18,
+      2
+    ],
+    [
+      0,
+      24,
+      2
+    ],
+    [
+      0,
+      32,
+      2
+    ],
+    [
+      0,
+      48,
+      2
+    ]
+  ],
+  "tier_by_width": {
+    "[0, 0, 1]": 1,
+    "[0, 6, 2]": 1,
+    "[0, 12, 2]": 2,
+    "[0, 18, 2]": 2,
+    "[0, 24, 2]": 2,
+    "[0, 32, 2]": 2,
+    "[0, 48, 2]": 2
+  },
+  "hard_stop_checks": [],
+  "complete": true,
+  "non_claim": "A released width means the execution path passed the frozen battery there. It is not a closure result and says nothing about which representation is better."
+}

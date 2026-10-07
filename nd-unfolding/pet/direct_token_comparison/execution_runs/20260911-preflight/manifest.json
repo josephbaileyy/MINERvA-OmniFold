@@ -1,0 +1,21 @@
+{
+  "scope": "Scheduler read-only preflight, runtime installation and local synthetic software tests; no allocation",
+  "files": {
+    "approved_profile.json": "bad631f8d147c1cd306b1fcf0de2daffcee23a4f1208949711459906e9a3913c",
+    "cpu_isolation_control.json": "f57e9ffd7db4b625a7b7f632ec2fb25e18bfede1bde5172a91009bbed3a84041",
+    "gpu-runtime-check.json": "d50f3bd4c9592ad6e84ccf1b5e3916ca2702ba346e24408e24ccffcd0b410121",
+    "gpu-runtime-lock.txt": "41b9cbdb473e604bd482f5de77bfe8cf3bb36084cb0ab7f27bcb3295c9299895",
+    "install-report.json.gz": "b42c9739aae307d39548a96097e6fe41f440d353b7ee6a066601ea6b5b4e76cc",
+    "install.log.gz": "e6c3af4acd0aa9072b2d4357c601db3a83ea9cc6239c0ad7583cae81a77d5060",
+    "local-full-tests-guard.jsonl.gz": "e75aa80c7176ca6be80e01896cc775cf71eef7e4d7a9622c6e1346ea9577e4d1",
+    "local-full-tests.log.gz": "a3161c0942596f82daad971128bc9b6be777de14f7ed9f44663b98ec1e31a734",
+    "local-model-tests-guard.jsonl.gz": "6151a84c955fdc664ab9cfc284ea7bc8600f6a7f6d3dccb0939e9079b89409fc",
+    "local-model-tests.log.gz": "11b07143701bd55898d2d730ebb18d44ac74d3d87a504b63df3a64d97eb01d0b",
+    "local-tests-scipy116-reload-failure.log.gz": "29e6b685f5cfb823bb04ba893fbd1780e7033d2786bb4a0f006495e3ea891a04",
+    "local-tests-scipy117-failure.log.gz": "5774a00dc2abf0a55836aaa63c8bc0c608d6ac307ccaff828392a1ed5e977f5e",
+    "local-validation.json": "810503415fa134831cf6aef8d5723b7cc5909b1a2e00252a0c85fdabf5d17491",
+    "partition_memory.json": "fa9651bbeb2dbf3c04d7440ad437c994f1a5c2217373da13d0c91029ef400d47",
+    "proposed_corrected_profile.json": "416adeb1873921052bc8e023079985840c1909797fda5aa7ef0c6e40665e704b",
+    "scheduler.json": "e7dcb4cab4ae5b60df9a30a741308ee972414744fcbcdc60524ccffbfa6eb71d"
+  }
+}

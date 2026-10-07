@@ -1,0 +1,5 @@
+# name	config	config_hash	selection	distortion	reference_run	extra_driver_args
+dev2L-L64H2-T1-D1_m0.350	../../../final_design/configs/dev2L/dev2L-L64H2-T1-D1_m0.350.json	c24f06df5adaeaf10b616d91787271a10fa40ee589bdeb6b07096141bf8c0adb	T:1	D1_m0.350	-	--step2-miss-mode efficiency_corrected
+dev2L-L128H2-T1-D1_m0.350	../../../final_design/configs/dev2L/dev2L-L128H2-T1-D1_m0.350.json	abfe90d369e53ec0e4bfdacc2ef692a37a12771504ca13d0e4f47fc55c59661a	T:1	D1_m0.350	-	--step2-miss-mode efficiency_corrected
+dev2L-L64H2-T1-D4d_n_up	../../../final_design/configs/dev2L/dev2L-L64H2-T1-D4d_n_up.json	4b91cc63af2ecbe2d0fb632069c938d33f8cc7eeac8210a5d9de7ef5f010921c	T:1	D4d_n_up	-	--step2-miss-mode efficiency_corrected
+dev2L-L128H2-T1-D4d_n_up	../../../final_design/configs/dev2L/dev2L-L128H2-T1-D4d_n_up.json	763074c64552e1e024e944e07a112c3a00a24f478dfb24d84812ee060522b7c4	T:1	D4d_n_up	-	--step2-miss-mode efficiency_corrected

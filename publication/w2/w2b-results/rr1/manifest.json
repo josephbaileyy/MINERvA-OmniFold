@@ -1,0 +1,20 @@
+{
+ "variant": "rr1",
+ "deploy_sha": "e9372b757250e9607f52e471d9b0c447b08e65d5",
+ "design_copy": {
+  "path": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/design/design-w2b-rr1.json",
+  "sha256": "bbd116b3f454d626376010eb61f1699ffaee0d29eb76311a0a571344444a553d"
+ },
+ "data_central": {
+  "path": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr1_b-_j-.npz",
+  "sha256": "36313201ecffa85183fa83d642c9b0b71dc67f9ed1743dba7184eb22c41356a8"
+ },
+ "joint_evaluate": {
+  "path": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/eval/rr1/joint-evaluate.json",
+  "sha256": "3cf9e3073e605d71e261d3915b809b2087c6b0a4ff8dbf45e91f456ff4b402a9"
+ },
+ "robust_labels": {
+  "path": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/eval/rr1/robust-labels.json",
+  "sha256": "915c6f1b8bfac8a67f066b7ed105f37e187e6e656bda317262d5fe45f34b596b"
+ }
+}

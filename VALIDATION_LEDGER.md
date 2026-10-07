@@ -1,5 +1,106 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-10-06 PET finalists' generator-reweighting weakness: diagnosis of existing outputs (exploratory)
+
+Source: [report](nd-unfolding/pet/generator_diagnosis/REPORT-20261006.md).
+- Plan frozen at `cb6f4644` before any new reduction.
+- One independent review cycle, ACCEPT WITH CHANGES, dispositioned in `REVIEW_DISPOSITION-20261006.md`.
+- Operands: 64 preserved PET final-bank runs read from the CFS copy, and the committed GBDT recipe reproduced
+  exactly on 32 units.
+- Cost: about 1.1 CPU core-h, 0 GPU.
+- Simulation only. PET stays diagnostic. `NO_ELIGIBLE_DESIGN` (VL167) and VL168 are unchanged.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL171 | Where the finalists (H2S1T24 K5, L128S1T24 K4) lose to the matched GBDT (HGB h1, efficiency-corrected, k = 7) on D5 NuWro, D5p NuWro′ and D5 GiBUU, 8 FB draws each. Step closures from the per-iteration (pull, push) of both methods, with identical weight semantics. Controls: all 64 PET re-scores ≤ 1e-9 with matching digests; GBDT reproduction max \|ΔR\| = 0 | **Oracle** E_avail R 0.96; movement fraction m: PET 0.18–0.46, GBDT 0.41–0.62. **Step 1, detector-level reco E_avail R:** PET 0.78–0.84, GBDT 0.93–0.94, oracle 0.92–0.93; dev tilt level, 0.95 vs 0.96. **Step-1 truth-space R, reconstructed rows:** PET 0.46–0.57, GBDT 0.61–0.67. **Final R, non-reconstructed rows:** PET −0.05 to 0.30, GBDT 0.24–0.44, oracle 0.92–0.93; PET's falls with k, the GBDT's rises | **EXPLORATORY.** Citable for: at study scale on these banks, the finalists' generator-reweighting loss has two located deficits: a detector-step under-fit present from k = 1, and a weaker extrapolation to non-reconstructed events. Not citable for: their causes (untested: step-1 training budget or optimization, step-2 truth inputs), additive shares of the gap, k > K, data-scale behaviour, or any ranking or adoption |
+
+## 2026-10-06 2D statistical band: VL170 adopted; rollup, chi2 and figures rebuilt
+
+Adopted by Joseph on 2026-10-06, in the 2D lane's session and, separately, in the publication lane's
+(`docs/publication/DECISION-20261006-joseph-publication-approvals.md`, addendum). VL162 is superseded.
+Driver: `2d-unfolding/uq/rollup_vl170_adoption.sh`, run on a Perlmutter login node. It writes only new
+directories, `uq/bootstrap_MEFHC_300_vl170/` and `uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/`, and
+leaves the VL162-era products at their sha-pinned paths. Receipts:
+[`state/ki84-adopt-20261006/`](docs/orchestration/state/ki84-adopt-20261006/) (controls, logs, product
+sha256, `recompute_2d_budget.{py,json}`, `boot_spreads.json`). The quoted chain is the ledger's "Active 2D
+Result" (fluxfix `hCov_combined` + ML), not `final_rollup_full.sh`, whose universe step predates the sweep.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL172 | The 2D uncertainty products rebuilt with the VL170 band: bootstrap covariance, universe + bootstrap `hCov_combined`, the combined χ² against the paper, the block-sum budget, the Fig. 6/7 projections and the bootstrap figures (205 bins) | bootstrap √tr C **1.931e-40**, per-bin median **0.674%** (p84 1.664%, max 18.2%; N = 50 → 300 total-σ 0.062 → 0.058%, median 0.644 → 0.674%); universe + bootstrap median **6.869%**; block sum (+ ML) median **6.8707%**, printed **6.87%** (unchanged), √tr 3.220e-39; combined χ²/ndf **1.472**, log-normal **1.455**, pull mean / RMS **0.051 / 0.405**; paper-covariance χ²/ndf 3.661 (unchanged); stat-subtracted diagnostic **6.79**; ours-only direct inverse 24.4 (cond 1.0e12, rank 204 at 1e-12); Fig. 6/7 Statistical median p∥ 0.253%, pT 0.249%, Total 5.900% / 6.220% | **ADOPTED with VL170.** Controls: the universe rollup rebuilt from the old bootstrap equals the stored `hCov_combined` bitwise, the universe block is bitwise unchanged, and the old inputs reproduce 1.481 / 1.468 / 0.051 / 0.409 / 11.56 / 3.661, the July Fig. 6/7 summary exactly, and 6.8646% / 6.845% / 0.549%. Superseded VL162 values: 0.549%, 1.817e-40, 6.865%, 6.845%, 1.481, 1.468, 0.409, 11.56. The split bootstrap is a diagnostic: its MC-only stream predates the fix and no longer closes (0.95). Not re-derived: the §rank pseudo-inverse 252 and the rescaled 76.7; the printed rank 201 / cond 3.8e14 does not reproduce from the current files (they give 199 / 6.1e14). `KNOWN_ISSUES.md` 84, 85. |
+
+## 2026-10-06 2D statistical band: KNOWN_ISSUES 84 fix and candidate replica rebuild
+
+Code: `bb4b0b6f` (`unfold_2d_omnifold_unbinned.py`; regression test
+`2d-unfolding/tests/test_bootstrap_completeness_ki84.py`, 2/8 fail before, 8/8 pass after).
+Receipts: [`state/ki84-rebuild-20261006/`](docs/orchestration/state/ki84-rebuild-20261006/).
+The 300 VL162 replicas were rerun with the fixed code and the production launcher's arguments
+into a new path; the VL162 files were only read. The rebuilt band is a CANDIDATE: it is not adopted,
+it changes no quoted uncertainty, and it is not a coverage re-test of `VL169`. A re-test needs its
+own pre-registration with non-circular MC.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL170 | Candidate 2D MEFHC statistical band from 300 rebuilt pure-Poisson replicas (boot1–boot300, `--seed 1`, fixed code), against VL162 per bin, `analyze_uq.py` definitions (mean, std ddof = 1, reported = mean > 0; 205 reported bins, the same set) | rebuilt completeness max \|c−1\| **1.6e-14** over 300 (VL162: 0.450–1.581); rebuilt hXSec2D = VL162 × its c to 5.8e-9; σ_new/σ_old median **1.179** (p16 1.051, p84 1.464, range 0.982–14.0), wider in 97.1% of bins, > 2 in 13; 35 bins with VL169 C2 < 0.85: median **1.814** (1.270–14.0); 14 bins with pull RMS > 2: median 2.493; p_∥ 40–60 column: median **1.942** (1.088–3.753); √tr C ratio 1.063; median relative spread 0.549% → 0.674%; mean shift median 1.000 (0.988–1.009); control: VL162 replicas reproduce the rollup covariance (sha256 f7c734b1) to 4e-16; `compare_full.json` | **ADOPTED 2026-10-06** (rollup `VL172`; candidate when first recorded). Agrees with the prediction from VL162 (hXSec2D × its own c, `predict_from_vl162.json`) to every quoted digit. The unfolded hUnfold2D is not bit-identical to VL162's (max relative difference 5.8e-9 over 300; 3.2e-12 for seed 1 rerun on the regular lane VL162 used). 18.11 node-h (shared/regular, 303 jobs COMPLETED). Code reviewed by a different model (APPROVE). `KNOWN_ISSUES.md` 84. |
+
+## 2026-10-05 2D statistical band: pre-registered fixed-truth coverage test
+
+Record: [`OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`](docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md).
+Pre-registration: [`PREREG-20261005-2d-fixed-truth-coverage.md`](docs/orchestration/PREREG-20261005-2d-fixed-truth-coverage.md),
+with Amendment 1 (pilot) and Amendment 2 (operational). Receipts:
+[`state/coverage-2d-20261005/`](docs/orchestration/state/coverage-2d-20261005/). It replaces the
+withdrawn same-ensemble pull diagnostic (68.71%) as the 2D coverage statement, but only for the
+statistical band. Id: VL164–VL167 are the PET final-design rows below and VL168 is the PET-vs-GBDT
+row; this study's earlier commits called this row VL164, then VL168.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL169 | Coverage of the VL162 2D MEFHC statistical band (per-bin σ/mean × fixed truth) by fixed-truth closure toys. Each toy draws Poisson pseudo-data from the MC reco weights and the production MC bootstrap stream, and uses the unfluctuated MC truth as T. Scored at the interim look: toys 1–100, 205 bins, 99.5% toy-bootstrap intervals | C1 **0.6794** [0.6693, 0.6899] (window [0.6319, 0.7287], inside); C2 **0.9121** [0.9065, 0.9179] (window [0.9281, 0.9722], **below**); pull RMS 1.597, mean −0.034; positive control ×0.7 / ×1.3 detects both directions; replica-form secondary C1 0.833 above its window (FAIL-over); `interim_score.json` | **FAIL-undercoverage (futility)**: the study stopped at 100 toys under the pre-registered interim rule. Independently recomputed (fresh Opus 5.5 subagent, own code and RNG): points agree exactly, C1/C2 interval endpoints within 5.4e-4, all endpoints within 1.7e-3 (allowance 3e-3). Width, not bias. Per-bin calibration is uneven in both directions (post hoc): pull RMS < 0.9 in 82 bins, > 1.1 in 71. The 2σ deficit is concentrated at p_∥ ≥ 15 GeV/c, p_T < 0.55 GeV/c and in the highest-p_T row (35 bins with per-bin C2 < 0.85). Attributed by the Amendment-1 secondary (rule A1.8 written after the pilot pulls, before the full run) to the bootstrapped completeness in the replicas. The attribution is partial: the replica form still undercovers at p_∥ 40–60 GeV/c. 13.33 node-h. Does not change any quoted uncertainty. Not a test of systematic, total or 5D coverage, nor of the MC-stream bootstrap principle. `KNOWN_ISSUES.md` 84. |
+
+## 2026-10-05 PET finalists vs GBDT on existing outputs: exact-paired, exploratory
+
+Source: [report](nd-unfolding/pet/gbdt_comparison/REPORT-20261005.md).
+- Plan frozen at `5f9c5a99` before any fit.
+- PET operands at `bc356b0c`.
+- 352 new GBDT fits on the look-1 final-bank units, with local CPU 5.31 core-h charged.
+- Simulation only. PET stays diagnostic. `NO_ELIGIBLE_DESIGN` and every frozen verdict are unchanged.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL168 | Paired per FB draw on identical events, targets and scorer (look-1 units): PET finalists H2S1T24 K5 and L128S1T24 K4 against the matched study's scalar OmniFold (HGB h1, efficiency-corrected, `truth4_species`, k = 7 from DEV `kF0`). Exploratory, conditional on the banks, unadjusted 95 % t intervals | **E0:** H2 − GBDT +0.102 [0.084, 0.119]; L128 − GBDT +0.070 [0.051, 0.089] (n = 60). **E3:** +0.076, +0.070. **E4:** +0.055 [0.035, 0.075], +0.012 [−0.007, 0.031] (n = 40). **E5:** +0.009, +0.013 (level). **E0 ΣMSE ×10⁴:** 3.33 / 5.26 / 9.78. **Generator reweightings (D5 NuWro, NuWro′, GiBUU; n = 8):** PET worse by 0.12–0.25. **Moves-away units:** 2, 1, 0 of 224. **B2 D4d n down:** 0.0097 / 0.0122 / 0.0033 | **EXPLORATORY.** Not a ranking of the finalists, not an uncertainty or coverage comparison, not an adoption. Citable for: on these banks and at this scale, the point-estimate differences above against this GBDT. Not citable for: PET or GBDT being best, any real-data or uncertainty statement |
+
+## 2026-10-05 PET final-design selection study — terminal NO_ELIGIBLE_DESIGN (diagnostic; simulation only; nothing adopted)
+
+**PET diagnostic, not a publication product.** Signal-only simulation of the ME-FHC inventory, conditional on the frozen
+banks of `nd-unfolding/pet/final_design/` (protocol `PROTOCOL-20260925.md`, frozen decision table §6 with prospective
+Amendments 1–6). IDs VL164–VL167 are the next dense ids after VL163 on `main` at `c64228da` (2026-10-05). On the study branch
+`pet-final-design-20260925` these rows were VL142–VL145 (dense on that branch); they were renumbered when the
+branch was integrated with `main`, and every reference was updated.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL164 | Look-1 eligibility of the frozen finalists on the final bank (944 rows; `results/final/decision_look1.json`) | H2S1T24 K5 passes every §6.1–6.3 rule (R_E0 **0.895**, simultaneous LB 0.876; +0.589 over CTL, LB 0.568); L128S1T24 K4 **INELIGIBLE on B2** (D4d n down, residual − injected L1 **0.0122**, 95 % 0.0064–0.0181, vs ≤ 0.010) | VERIFIED-NUMERIC 2026-10-05 (independent Astra High review, 2 cycles: `REVIEW_DISPOSITION-DECISION-20261005.md`); B2 is **point-decided, statistically unresolved** (H2S1T24's 0.0097 [0.0025, 0.0169] also crosses the limit): not evidence that either design is more robust or that they are equivalent |
+| VL165 | B1 under within-draw dependence (`results/final/b1_dependence_look1.json`) | frozen independence bound PASS (2/224, CP 0.032; 1/224, 0.025); common-panel FB0–7 any-failure 2/8 (CP 0.651) and 1/8 (0.527) | VERIFIED-NUMERIC 2026-10-05 (independent Astra High review, 2 cycles: `REVIEW_DISPOSITION-DECISION-20261005.md`); a dependence-aware per-unit failure probability ≤ 0.10 is **not established**, and this does not show it exceeds 0.10 |
+| VL166 | Coverage of H2S1T24 K5's §9 procedure (B = 6 Poisson-bootstrap members; 120 FB replicates; `results/final/coverage_dev/coverage_H2S1T24K5.json`) | C1 **FAIL** (pooled 68 % **0.896**, LB 0.858, vs ≤ 0.80; 95 % 0.990), C4 **FAIL** (half-widths 1.32–1.72 × the limit in bins 1–6), C2 and C3 PASS; low-acceptance region **under-covers** (68 % 0.257, 95 % 0.789; ungated) | VERIFIED-NUMERIC 2026-10-05 (independent Astra High review, 2 cycles: `REVIEW_DISPOSITION-DECISION-20261005.md`); same against the FB population target; mechanism not established |
+| VL167 | Terminal outcome of the study (`results/final/coverage_dev/decision_final.json`) | **NO_ELIGIBLE_DESIGN**: H2S1T24 K5 ineligible (C1, C4), L128S1T24 K4 ineligible (B2); no design selected, no default named; C5 skipped (3a.5) | VERIFIED-NUMERIC 2026-10-05 (independent Astra High review, 2 cycles: `REVIEW_DISPOSITION-DECISION-20261005.md`); the §11 repair (DEV-calibrated interval, RB revalidation, ≈ 3.2 k A100-h) is an owner decision. Study total 3,376.6 A100-h |
+
+## 2026-10-03 existing-data scalar-5D methodological synthesis
+
+Source: [reduction package](nd-unfolding/gbdt_model_dependence/README.md), with digest-checked
+projected operands, per-cell CSVs and reproducible PDF/SVG figures. Historical receipts and
+VL153–VL155 are preserved. The later amendment-6 corrections govern the initial Stage-2
+bound and calibration interpretations. No new unfold or allocation; no adopted product used.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL163 | Existing-data reductions of historical noise-free traces, candidate R assessment, paired rounding/bootstrap products and denominator-fixed prior variations | W3 J median absolute residual 5.573% at k=5, 6.573% at k=200 (maximum 32.904%→44.770%); R5 W3 EW29 mean relative residual +23.665%, repeat residual SD 0.558% (n=20); nominal EW41 historical fixed-σ interval hits 15/40, exact pointwise 95% coverage bounds [0.2273,0.5420]; J rounding SD median 0.228%, bootstrap SD 0.368%, consistency 1.018; W3 prior shift exceeds absolute residual in 70.6% J / 51.9% H2 / 53.8% EW supported cells | Same-analyst independent implementation reproduces original receipt values; new H2/interval-bound reductions and figures have no fresh independent reviewer. Diagnostic development reuse, historical truth ratios; no tradeoff established without matched variance across settings. Original A_FAIL / NOT ADMITTED preserved; no new uncertainty or adoption; publication NOT READY. |
+
+## 2026-10-03 analysis note: the 2D statistical bootstrap spreads on the quoted pure-Poisson set
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL162 | 2D MEFHC lgbm statistical bootstrap, pure-Poisson (`--seed 1`) replicas boot1–boot300, `analyze_uq.py` definitions, [`state/note-boot-20261003/`](docs/orchestration/state/note-boot-20261003/README.md) (`boot_spreads.json` `e0fa99d5…`) | N = 300: total-σ relative std **0.0606%**, per-bin median **0.5494%**, p84 **1.2025%**; first 50: 0.0674% / 0.5409% / 1.1945% | MEASURED 2026-10-03; control: the replicas reproduce `uq_covariance_boot300.root` (covariance to 4.1e-16, √tr 1.817e-40, median 0.549%); replaces App. A's superseded seed-varying values (0.068→0.061%, 0.532→0.564%, 1.235→1.215%); single lane, not independently reviewed; **SUPERSEDED 2026-10-06 by `VL170`** (the replicas divided by a bootstrapped completeness, `KNOWN_ISSUES.md` 84; spreads now 0.058% / 0.674% / 1.664%, `VL172`) |
+
 ## 2026-09-27 s5p (OI-193): the generator comparisons on the flux-repaired predictions (`KNOWN_ISSUES.md` 83)
 
 The GENIE 2.12.10 CV, GENIE+MEC and NuWro truth predictions were generated from a density-valued flux sampled by
@@ -19,6 +120,7 @@ covariance enters the corner ratio and no significance is claimed from it. Tune 
 | VL158 | dσ/dW at W ∈ [2.2, 3.0) GeV, data/generator, repaired | GENIE-CV 1.123, GENIE+MEC 1.111, NuWro 1.130, GiBUU 1.343 | VERIFIED-NUMERIC; supersedes the note's 1.30–1.35 |
 | VL159 | 3D integrated σ below the data (E_avail axis, catch bin dropped; `overlay_generators_band.py`), repaired | GENIE-CV -7.2% (1.3 σ_tot), Tune v1 -9.5% (1.8), NuWro -12.8% (2.4), GiBUU -22.2% (4.2) | VERIFIED-NUMERIC; the note's 7.2/9.5/15.3/21.9% become 7.2/9.5/12.8/22.2% (GENIE-CV's committed 3D was a different sample, so its unchanged −7.2% is not evidence the defect was absent) |
 | VL160 | GENIE Valencia 2p2h against the data's low-E_avail deficit (`compare_mec_eavail.py`), repaired | CV -7.2% → CV+MEC -2.6%; MEC adds **63%** of the integrated deficit and fills 52% of the E_avail ≤ 0.4 GeV gap | VERIFIED-NUMERIC; supersedes the note's −5.2%, 27% and 46%: the 27% was mostly an artifact of the committed CV and MEC files being different samples (measured from the MEC-only component it was 64% before the repair) |
+| VL161 | E_ν ≥ 20 GeV share of the flux-repaired (E_avail,W) corner and integrated σ in GENIE-CV, GENIE+MEC, NuWro (the part the GiBUU sample lacks, `KNOWN_ISSUES.md` 82); per-event rebuild with r·[E_ν<20], [`state/note-capgap-20261003/`](docs/orchestration/state/note-capgap-20261003/README.md) (`cap_share.json` `1e4f3f66…`) | corner **14.30 / 14.46 / 14.82%**, integrated 6.96 / 6.79 / 7.43%; on E_ν < 20 GeV their corner/integrated is 1.09–1.16 against GiBUU 1.16; GiBUU with their share ≈ 1.37–1.38 corner, 1.28–1.29 integrated (contrast 1.06–1.07, theirs 1.01–1.07) | MEASURED 2026-10-03; controls: the rebuild reproduces each < 50 GeV product bitwise and VL156/VL157 exactly; single lane, not independently reviewed. GiBUU's extra corner shortfall is its E_ν cap, not a corner-specific difference; central values only |
 
 *Review round 2 (L7):* VL159's σ_tot units rest on the historical 3D covariance (superseded and quarantined as a significance source); they are descriptive only. The GiBUU W-integrated data/generator in the E_avail tail is 1.59 ([0.8,1.5) GeV) and 1.37 ([1.5,3.0)) (`docs/orchestration/state/s5p/stage7/generator-context/eavail-marginal-ratios.json`).
 
@@ -1660,13 +1762,14 @@ artifacts on the login node. All PASS; no rerun required.
 - `compare_to_paper_fullcov.py` with the frozen 2D result and paper covariance:
   **PASS**. Recomputed paper full-covariance chi2/ndf is `3.661` on 205 bins.
 - Combined paper+ours check: **PASS** when using
-  `uq_universe_covariance_full_matcorr_fluxfix.root:hCov_combined` plus
-  `uq_covariance_ml.root:hCov2D_reported`. Recomputed combined chi2/ndf is
-  `1.481`; log-normal combined chi2/ndf is `1.468`; pull mean/RMS is
-  `0.051/0.409`.
+  `uq_universe_covariance_full_matcorr_fluxfix.root:hCov_combined` from
+  `uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/` plus
+  `uq_covariance_ml.root:hCov2D_reported`. Combined chi2/ndf is `1.472`; log-normal
+  combined chi2/ndf is `1.455`; pull mean/RMS is `0.051/0.405` (`VL172`, 2026-10-06, VL170 band).
+  With the superseded VL162 band they were `1.481`, `1.468` and `0.051/0.409`.
 - Covariance-file contract: `hCov_combined` already includes the bootstrap
   covariance. Adding `uq_covariance_boot300.root:hCov2D_reported` separately
-  double-counts bootstrap and changes the combined chi2/ndf to `1.341`.
+  double-counts bootstrap; with the VL162 band that gave `1.341` (not re-derived).
 - Comparison to GENIE MINERvA Tune v1 (paper `TotalCovariance`, 205 bins):
   data vs tune `33.039`, ours vs tune `26.491`. Both **VERIFIED-NUMERIC**
   2026-08-11 — see the dated entry at the top of this file and the ingredient

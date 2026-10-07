@@ -1,0 +1,1 @@
+{"stage": "eval", "groups": 160, "tasks_declared": 416, "tasks_written_this_run": 416, "tasks_skipped_existing": 0, "workers": 3, "threads_per_worker": 3, "seconds": 3448.626078667119, "host": "DNa1d666d.SUNet", "machine": "arm64", "python": "3.12.2", "commit": "b8acc0411a19a2e3c84c2ec39a0d916f68fc3dc0", "versions": {"sklearn": "1.8.0", "numpy": "1.26.4", "torch": "2.6.0"}}

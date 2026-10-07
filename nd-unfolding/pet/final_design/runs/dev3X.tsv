@@ -1,0 +1,17 @@
+# name	config	config_hash	selection	distortion	reference_run	extra_driver_args
+dev3X-H2S1X4-F0	../../../final_design/configs/dev3X/dev3X-H2S1X4-F0.json	d74f9045c24959d748726f6dd297c7c84d69bfc0fb078971eeb1ef468c133873	F:0	dev	-	--step2-miss-mode efficiency_corrected
+dev3X-L128S1X4-F0	../../../final_design/configs/dev3X/dev3X-L128S1X4-F0.json	f80ac97998bfba563843ef1e232f0a08b1e44af09a95e3b30cc447a484f3ce3d	F:0	dev	-	--step2-miss-mode efficiency_corrected
+dev3X-H2S1X4-F1	../../../final_design/configs/dev3X/dev3X-H2S1X4-F1.json	e41ea6f52bfb70009f4b0ba9de92422cc788af5fd515667959956f71c70ddd14	F:1	dev	-	--step2-miss-mode efficiency_corrected
+dev3X-L128S1X4-F1	../../../final_design/configs/dev3X/dev3X-L128S1X4-F1.json	17ad91bb68c369b8ee076b29113d8b1e319fd63942566a4167a1652a3e5a07d1	F:1	dev	-	--step2-miss-mode efficiency_corrected
+dev3X-H2S1X4-T0-D1_m0.350	../../../final_design/configs/dev3X/dev3X-H2S1X4-T0-D1_m0.350.json	9c594571e4325e6d108a39d3370b15123915770d2e27670da9d163271bb39404	T:0	D1_m0.350	-	--step2-miss-mode efficiency_corrected
+dev3X-L128S1X4-T0-D1_m0.350	../../../final_design/configs/dev3X/dev3X-L128S1X4-T0-D1_m0.350.json	5c95b681b09fe85dae6fb796cdb0a1b03af1a09ab430350f5edeab8ccae1477b	T:0	D1_m0.350	-	--step2-miss-mode efficiency_corrected
+dev3X-H2S1X4-T1-D1_m0.350	../../../final_design/configs/dev3X/dev3X-H2S1X4-T1-D1_m0.350.json	5b76004f88cd816f2f1266422e3ff2935b09bad0fa781a1d70724cb72f76588c	T:1	D1_m0.350	-	--step2-miss-mode efficiency_corrected
+dev3X-L128S1X4-T1-D1_m0.350	../../../final_design/configs/dev3X/dev3X-L128S1X4-T1-D1_m0.350.json	da388a549179912c1ec79963232b3a83ed44c2f911441ec1d245f466f4718c6e	T:1	D1_m0.350	-	--step2-miss-mode efficiency_corrected
+dev3X-H2S1X4-T0-D4c_p_up	../../../final_design/configs/dev3X/dev3X-H2S1X4-T0-D4c_p_up.json	1e4791581d69da0adf3844459dbc21d3ba54940a37060151721d4e94eaab5353	T:0	D4c_p_up	-	--step2-miss-mode efficiency_corrected
+dev3X-L128S1X4-T0-D4c_p_up	../../../final_design/configs/dev3X/dev3X-L128S1X4-T0-D4c_p_up.json	77525211532e648424a470f4bc6a3a3fbb1a92055d23da9f5d1e12e2ab79806c	T:0	D4c_p_up	-	--step2-miss-mode efficiency_corrected
+dev3X-H2S1X4-T1-D4c_p_up	../../../final_design/configs/dev3X/dev3X-H2S1X4-T1-D4c_p_up.json	bef4e86e29407b93b73f40cecec571cc55923ed72eff297a9e64099a44b381bb	T:1	D4c_p_up	-	--step2-miss-mode efficiency_corrected
+dev3X-L128S1X4-T1-D4c_p_up	../../../final_design/configs/dev3X/dev3X-L128S1X4-T1-D4c_p_up.json	5b59586c889cb102145dea7408ddafe71b69c14b18529d2ada3fa60f1d8aa0f6	T:1	D4c_p_up	-	--step2-miss-mode efficiency_corrected
+dev3X-H2S1X4-T0-D4d_n_up	../../../final_design/configs/dev3X/dev3X-H2S1X4-T0-D4d_n_up.json	6d492725dc01404ad84b03dff047051784db28a7a101fe3d27b61f205c08b29d	T:0	D4d_n_up	-	--step2-miss-mode efficiency_corrected
+dev3X-L128S1X4-T0-D4d_n_up	../../../final_design/configs/dev3X/dev3X-L128S1X4-T0-D4d_n_up.json	65bad43cdc810b865e9f2a99aa6fb321d4efbbc5734c0d2c3b672a879da45307	T:0	D4d_n_up	-	--step2-miss-mode efficiency_corrected
+dev3X-H2S1X4-T1-D4d_n_up	../../../final_design/configs/dev3X/dev3X-H2S1X4-T1-D4d_n_up.json	79308cc326a73453f5282f42a23e2111cd4ad526f7512283717c3e0b3411dd45	T:1	D4d_n_up	-	--step2-miss-mode efficiency_corrected
+dev3X-L128S1X4-T1-D4d_n_up	../../../final_design/configs/dev3X/dev3X-L128S1X4-T1-D4d_n_up.json	5144a4240fba09f32c85fd2c59df1c701b4806682b0c425cbf7d469393850db7	T:1	D4d_n_up	-	--step2-miss-mode efficiency_corrected

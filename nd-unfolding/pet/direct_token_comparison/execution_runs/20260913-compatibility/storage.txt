@@ -1,0 +1,14 @@
+5102652	/pscratch/sd/j/josephrb/pet-direct-token-runtime-20260911
+89724	/pscratch/sd/j/josephrb/MINERvA-OmniFold-pet-routing-20260911
+79508	/pscratch/sd/j/josephrb/MINERvA-OmniFold-pet-routing-retry1-20260911
+81484	/pscratch/sd/j/josephrb/MINERvA-OmniFold-pet-packing-20260913
+88	/pscratch/sd/j/josephrb/pet-routing-campaign-20260911
+556	/pscratch/sd/j/josephrb/pet-routing-retry1-20260911
+92	/pscratch/sd/j/josephrb/pet-packing-attempt-20260913
+64	/pscratch/sd/j/josephrb/pet-packing-preallocation-20260913
+52	/pscratch/sd/j/josephrb/pet-packing-preservation-20260913
+755	/global/cfs/cdirs/m3246/josephrb/pet-routing-comparison
+920	/pscratch/sd/j/josephrb/pet-packing-20260913.bundle
+9520	/pscratch/sd/j/josephrb/pet-routing-execution-74c149bb.bundle
+4	/pscratch/sd/j/josephrb/pet-routing-execution-106ba9a8.bundle
+36	/pscratch/sd/j/josephrb/pet-routing-retry1-46fe3d7c.bundle

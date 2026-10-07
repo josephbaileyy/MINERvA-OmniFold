@@ -1,0 +1,15 @@
+[hadd] target: /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/merged/runEventLoopOmniFold_5D_MEFHC_w2b_rr0.root.partial
+[hadd] max tree size: 300.0 GB
+[hadd] + /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0/runEventLoopOmniFold_5D_1A_w2b_rr0.root
+[hadd] + /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0/runEventLoopOmniFold_5D_1B_w2b_rr0.root
+[hadd] + /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0/runEventLoopOmniFold_5D_1C_w2b_rr0.root
+[hadd] + /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0/runEventLoopOmniFold_5D_1D_w2b_rr0.root
+[hadd] + /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0/runEventLoopOmniFold_5D_1E_w2b_rr0.root
+[hadd] + /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0/runEventLoopOmniFold_5D_1F_w2b_rr0.root
+[hadd] + /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0/runEventLoopOmniFold_5D_1G_w2b_rr0.root
+[hadd] + /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0/runEventLoopOmniFold_5D_1L_w2b_rr0.root
+[hadd] + /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0/runEventLoopOmniFold_5D_1M_w2b_rr0.root
+[hadd] + /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0/runEventLoopOmniFold_5D_1N_w2b_rr0.root
+[hadd] + /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0/runEventLoopOmniFold_5D_1O_w2b_rr0.root
+[hadd] + /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/evloop/rr0/runEventLoopOmniFold_5D_1P_w2b_rr0.root
+[hadd] merge complete in 0.3 min -> /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/merged/runEventLoopOmniFold_5D_MEFHC_w2b_rr0.root.partial

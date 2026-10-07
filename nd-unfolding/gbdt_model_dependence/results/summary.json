@@ -1,0 +1,33 @@
+{
+  "tradeoff_established": false,
+  "reason": "No matched repeat ensembles across iteration/capacity settings. Noise-free recovery is truth dependent; aggregation changes the functional.",
+  "groups": {
+    "J": {
+      "historical_prior_envelope_median_pct": 12.016143849389268,
+      "historical_without_D1_median_pct": 11.24503239441591,
+      "rounding_sd_median_pct": 0.22799277975053311,
+      "bootstrap_sd_median_pct": 0.3677332599947368,
+      "consistency_median": 1.018400860693649,
+      "variance_share_median": 0.3694144778115873,
+      "W3_prior_bounds_fraction": 0.7064220183486238
+    },
+    "H2": {
+      "historical_prior_envelope_median_pct": 9.603476245727066,
+      "historical_without_D1_median_pct": 4.277356686772173,
+      "rounding_sd_median_pct": 0.1762546152426654,
+      "bootstrap_sd_median_pct": 0.2905796332006259,
+      "consistency_median": 0.9614772879404262,
+      "variance_share_median": 0.3567520879478868,
+      "W3_prior_bounds_fraction": 0.5185185185185185
+    },
+    "EW": {
+      "historical_prior_envelope_median_pct": 13.43611077751321,
+      "historical_without_D1_median_pct": 9.899274505982964,
+      "rounding_sd_median_pct": 0.1521261352221262,
+      "bootstrap_sd_median_pct": 0.25367813655677646,
+      "consistency_median": 1.0462514858328242,
+      "variance_share_median": 0.28127411874751157,
+      "W3_prior_bounds_fraction": 0.5384615384615384
+    }
+  }
+}

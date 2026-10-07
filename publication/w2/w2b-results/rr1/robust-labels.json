@@ -1,0 +1,241 @@
+{
+ "schema": "s5p-robust-labels/2",
+ "ruling": "docs/orchestration/RULING-20260929-s5p-A7-robustness-flag.md",
+ "evaluate": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/eval/rr1/joint-evaluate.json",
+ "evaluate_sha256": "3cf9e3073e605d71e261d3915b809b2087c6b0a4ff8dbf45e91f456ff4b402a9",
+ "design_sha256": "bbd116b3f454d626376010eb61f1699ffaee0d29eb76311a0a571344444a553d",
+ "alpha_family": 0.05,
+ "code_sha256": "e08b76083b7abd0ad9169301af75e63947306871cd58fb9ea7e9b49cd6610193",
+ "kappa3_family": "replace: the process-shift variants c S and F +- kappa_robust delta_M1 (the F +- kappa delta_M1 members removed)",
+ "labels": {
+  "NuWro_21_09:total": "robust to the sub-fine residual",
+  "GENIE_2_12_10_CV:total": "robust to the sub-fine residual",
+  "GENIE_2_12_10_CV:shape": "robust to the sub-fine residual",
+  "MnvTune_v1:total": "robust to the sub-fine residual",
+  "MnvTune_v1:shape": "robust to the sub-fine residual",
+  "GiBUU_2019:total": "robust to the sub-fine residual",
+  "GiBUU_2019:shape": "robust to the sub-fine residual",
+  "GENIE_2_12_10_MEC:total": "robust to the sub-fine residual",
+  "GENIE_2_12_10_MEC:shape": "robust to the sub-fine residual",
+  "NuWro_21_09:shape": "robust to the sub-fine residual"
+ },
+ "decisions_kappa3_replace": {
+  "NuWro_21_09:total": {
+   "p": 0.0005707762557077625,
+   "k": 0,
+   "B": 1751,
+   "threshold": 0.005,
+   "interval": [
+    0.0,
+    0.002104509680141304
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_CV:total": {
+   "p": 0.000731528895391368,
+   "k": 0,
+   "B": 1366,
+   "threshold": 0.005555555555555556,
+   "interval": [
+    0.0,
+    0.0026968543411665684
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "MnvTune_v1:total": {
+   "p": 0.0007320644216691069,
+   "k": 0,
+   "B": 1365,
+   "threshold": 0.00625,
+   "interval": [
+    0.0,
+    0.0026988273901716433
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "MnvTune_v1:shape": {
+   "p": 0.0007320644216691069,
+   "k": 0,
+   "B": 1365,
+   "threshold": 0.0071428571428571435,
+   "interval": [
+    0.0,
+    0.0026988273901716433
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GiBUU_2019:total": {
+   "p": 0.0007396449704142012,
+   "k": 0,
+   "B": 1351,
+   "threshold": 0.008333333333333333,
+   "interval": [
+    0.0,
+    0.002726756349094244
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GiBUU_2019:shape": {
+   "p": 0.0007396449704142012,
+   "k": 0,
+   "B": 1351,
+   "threshold": 0.01,
+   "interval": [
+    0.0,
+    0.002726756349094244
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_MEC:total": {
+   "p": 0.000744047619047619,
+   "k": 0,
+   "B": 1343,
+   "threshold": 0.0125,
+   "interval": [
+    0.0,
+    0.0027429768299310243
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_CV:shape": {
+   "p": 0.001463057790782736,
+   "k": 1,
+   "B": 1366,
+   "threshold": 0.016666666666666666,
+   "interval": [
+    1.8534094701493215e-05,
+    0.004071983099790627
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_MEC:shape": {
+   "p": 0.002232142857142857,
+   "k": 2,
+   "B": 1343,
+   "threshold": 0.025,
+   "interval": [
+    0.00018040033424417985,
+    0.005369060443738319
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "NuWro_21_09:shape": {
+   "p": 0.00228310502283105,
+   "k": 3,
+   "B": 1751,
+   "threshold": 0.05,
+   "interval": [
+    0.0003534644885030359,
+    0.004998769303878526
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  }
+ },
+ "family_members": {
+  "MnvTune_v1:total": [
+   "0.0",
+   "0.5",
+   "1.0"
+  ],
+  "MnvTune_v1:shape": [
+   "0.0",
+   "0.5",
+   "1.0"
+  ],
+  "GENIE_2_12_10_CV:total": [
+   "0.0",
+   "0.5",
+   "1.0",
+   "m1+3",
+   "m1-3"
+  ],
+  "GENIE_2_12_10_CV:shape": [
+   "0.0",
+   "0.5",
+   "1.0",
+   "m1+3",
+   "m1-3"
+  ],
+  "GENIE_2_12_10_MEC:total": [
+   "0.0",
+   "0.5",
+   "1.0",
+   "m1+3",
+   "m1-3"
+  ],
+  "GENIE_2_12_10_MEC:shape": [
+   "0.0",
+   "0.5",
+   "1.0",
+   "m1+3",
+   "m1-3"
+  ],
+  "NuWro_21_09:total": [
+   "0.0",
+   "0.5",
+   "1.0",
+   "m1+3",
+   "m1-3"
+  ],
+  "NuWro_21_09:shape": [
+   "0.0",
+   "0.5",
+   "1.0",
+   "m1+3",
+   "m1-3"
+  ],
+  "GiBUU_2019:total": [
+   "0.0",
+   "0.5",
+   "1.0",
+   "m1+3",
+   "m1-3"
+  ],
+  "GiBUU_2019:shape": [
+   "0.0",
+   "0.5",
+   "1.0",
+   "m1+3",
+   "m1-3"
+  ]
+ },
+ "diagnostics": {
+  "frozen_boolean_robust_to_the_sub_fine_residual": {
+   "NuWro_21_09:total": true,
+   "GENIE_2_12_10_CV:total": true,
+   "GENIE_2_12_10_CV:shape": true,
+   "MnvTune_v1:total": true,
+   "MnvTune_v1:shape": true,
+   "GiBUU_2019:total": true,
+   "GiBUU_2019:shape": true,
+   "GENIE_2_12_10_MEC:total": true,
+   "GENIE_2_12_10_MEC:shape": true,
+   "NuWro_21_09:shape": true
+  },
+  "keep_both": {
+   "family": "claim variants union F +- kappa_robust delta_M1 (the frozen decisions_robust_kappa)",
+   "labels": {
+    "NuWro_21_09:total": "robust to the sub-fine residual",
+    "GENIE_2_12_10_CV:total": "robust to the sub-fine residual",
+    "GENIE_2_12_10_CV:shape": "robust to the sub-fine residual",
+    "MnvTune_v1:total": "robust to the sub-fine residual",
+    "MnvTune_v1:shape": "robust to the sub-fine residual",
+    "GiBUU_2019:total": "robust to the sub-fine residual",
+    "GiBUU_2019:shape": "robust to the sub-fine residual",
+    "GENIE_2_12_10_MEC:total": "robust to the sub-fine residual",
+    "GENIE_2_12_10_MEC:shape": "robust to the sub-fine residual",
+    "NuWro_21_09:shape": "robust to the sub-fine residual"
+   }
+  }
+ }
+}

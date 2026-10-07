@@ -1,0 +1,534 @@
+"""Where the ported arm's time and memory actually go, before optimising it further.
+
+`COST_UPDATE2-20260919.md` measured the Keras port at **23.9x** our incumbent per
+example in the same engine -- about 8.8x his own PyTorch for the same network --
+and put the campaign at ~933 GPU-h against a 600 ceiling. That number says the
+port is expensive. It does not say WHY, and three plausible causes have completely
+different remedies:
+
+* **the tape**, i.e. the backward pass materialising what an unfused forward left
+  behind -- fixed by fusing or by recomputation;
+* **the optimizer**, 176 separate variables through a Python-level clip and a
+  hand-written AdamW -- fixed by vectorising the update, and cheap to check;
+* **the local neighbourhood block**, which reshapes to ``(batch x tokens, K, dim)``
+  and runs two transformers there -- his architecture, not our engine, and if it
+  dominates then no amount of Keras work will close the gap.
+
+Guessing which one it is, and then optimising for the guess, is the failure this
+file exists to avoid. So it decomposes the step into forward / forward+backward /
+apply, and reports peak device memory for each, per cell.
+
+**And the first version of that decomposition was itself wrong**, which is why the
+folding control below is not optional. Returning ``loss + 0.0 * add_n(gradients)``
+from the backward section let Grappler fold the multiplication and prune the whole
+gradient subgraph: the section timed at 14.95 ms against a forward pass of
+14.49 ms, while the honest version cost 272 ms. That made the backward pass look
+free and pushed its entire cost into the apply, which a separate probe then put at
+6.06 ms for all 176 variables -- only 1.29x stock Keras Adam. So "the optimizer
+dominates" was an artifact of a pruned graph, and the control that would have
+caught it is now a measured section rather than a habit.
+
+It also measures three things the decomposition cannot settle on its own:
+
+* the **algebraic optimisations** already landed in `pet2_keras_port` (broadcast
+  centre, broadcast key mask), against the pre-optimisation path they replaced --
+  `test_port.OptimisationEquivalence` proves they are the same network bitwise, so
+  any difference here is cost alone;
+* **XLA**, which is the only fusion available to us in TF 2.15 -- there is no
+  `scaled_dot_product_attention` to call;
+* **gradient accumulation** at micro-batch 512, which is his own
+  ``--grad_accum_steps`` knob and the memory unblock that keeps the recipe.
+
+NOT CITABLE FOR any performance, recovery or adoption claim. This times and
+measures memory; it trains nothing to convergence, reads no real source and
+touches no matrix or validation receipt.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+import statistics
+import subprocess
+import sys
+import time
+import traceback
+from typing import Any
+
+WARMUP = 5
+REPEATS = 20
+
+# His complete arm, as `configuration_identity.THEIRS_COMPLETE` pins it: PID,
+# five auxiliary columns, sixteen globals. Costing the degraded arm would price a
+# model we do not intend to run.
+HIS_COMPLETE_SETTINGS = {
+    "input_dim": 4, "pid": True, "pid_dim": 8, "add_info": True, "add_dim": 5,
+    "conditional": True, "cond_dim": 16, "num_coord": 2, "K": 10, "num_classes": 1,
+}
+# Which rewrites each variant has. Named rather than derived from the variant
+# string, so that adding a rewrite forces a decision about every variant instead
+# of silently folding into whichever branch matched first.
+#
+# `baseline` is the port as it stood at 9f800ea3, i.e. the state the 23.9x was
+# measured on. `broadcast` adds the two BITWISE-exact local-block rewrites.
+# `optimised` adds the projection rewrite, which is round-off-level and not
+# bitwise -- it is separated for exactly that reason, so its cost and its
+# numerical price can be read off independently.
+VARIANT_PATHS = {
+    "baseline": {"materialise_pair_mask": True, "tile_centre": True,
+                 "flat_projection": False},
+    "broadcast": {"materialise_pair_mask": False, "tile_centre": False,
+                  "flat_projection": False},
+    "optimised": {"materialise_pair_mask": False, "tile_centre": False,
+                  "flat_projection": True},
+    "optimised_xla": {"materialise_pair_mask": False, "tile_centre": False,
+                      "flat_projection": True},
+    # einsum + XLA, and it decides something the others cannot: whether XLA
+    # alone lowers the einsum gradient to a GEMM. If it does, the projection
+    # rewrite -- the only change to his network that is NOT bitwise -- can be
+    # withdrawn and the port stays exact.
+    "broadcast_xla": {"materialise_pair_mask": False, "tile_centre": False,
+                      "flat_projection": False},
+    "accum4": {"materialise_pair_mask": False, "tile_centre": False,
+               "flat_projection": True},
+}
+VARIANTS = tuple(VARIANT_PATHS) + ("ours_incumbent",)
+MODES = ("forward", "train")
+
+
+def _summarise(times: list[float], batch: int) -> dict[str, Any]:
+    median = statistics.median(times)
+    return {
+        "repeats": len(times),
+        "step_seconds_median": median,
+        "step_seconds_min": min(times),
+        "step_seconds_max": max(times),
+        "coefficient_of_variation": (
+            statistics.stdev(times) / statistics.mean(times) if len(times) > 1 else 0.0
+        ),
+        "batch": batch,
+        "seconds_per_example": median / batch,
+        "microseconds_per_example": 1e6 * median / batch,
+    }
+
+
+def _time(step_fn: Any, batch: int, tf: Any, warmup: int = WARMUP,
+          repeats: int = REPEATS) -> dict[str, Any]:
+    """Warm up, then time, then read peak device memory for THIS measurement.
+
+    The peak counter is reset after warm-up so that graph construction and
+    autotuning scratch do not land in the number, and read after the timed passes
+    so it covers the steady state a real fit would sit in.
+
+    **The `float(value)` inside the timed region is load-bearing, and its absence
+    made an earlier version of this function report an impossibility.** GPU
+    execution is asynchronous: without forcing a host read, the clock measures the
+    launch and not the work. With hundreds of unfused ops the queue back-pressures
+    and the timing self-syncs -- job 58565265's unfused baseline of 935.5
+    µs/example agrees with independently synced job 58552755's 929.84 to 0.6 % --
+    but a single fused XLA kernel has no back-pressure, and the XLA forward cell
+    came out at 2.4 µs/example, i.e. **41.1 TFLOPS on a card whose float32 peak
+    without TF32 is 19.5**. A number faster than the hardware is not a small error
+    to correct later; it is the tell that the instrument was not measuring.
+    """
+    for _ in range(warmup):
+        value = step_fn()
+    try:
+        tf.config.experimental.reset_memory_stats("GPU:0")
+    except Exception:                                    # pragma: no cover - driver
+        pass
+    times = []
+    for _ in range(repeats):
+        start = time.perf_counter()
+        value = step_fn()
+        if value is not None:
+            float(value)                      # forces the device to finish
+        times.append(time.perf_counter() - start)
+    memory = {}
+    try:
+        info = tf.config.experimental.get_memory_info("GPU:0")
+        memory = {"peak_bytes": int(info["peak"]), "current_bytes": int(info["current"])}
+    except Exception:                                    # pragma: no cover - driver
+        memory = {"peak_bytes": None, "current_bytes": None}
+    out = _summarise(times, batch)
+    out["device_memory"] = memory
+    out["value"] = float(value) if value is not None else None
+    out["value_finite"] = bool(out["value"] is None or out["value"] == out["value"])
+    return out
+
+
+def _commit(repo: Path) -> str | None:
+    """The commit a cell was measured at.
+
+    A variant NAME is not stable across commits -- `optimised` meant
+    broadcast-only before the projection rewrite existed and means
+    broadcast-plus-projection after it. Without the commit in the receipt, two
+    files can disagree about what a label means and neither can be repaired.
+    """
+    try:
+        return subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
+                              capture_output=True, text=True, check=True,
+                              ).stdout.strip()
+    except Exception:                                    # pragma: no cover - driver
+        return None
+
+
+def _install(repo: Path) -> None:
+    root = repo / "nd-unfolding" / "pet" / "configuration_comparison"
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+
+
+def measure_cell(repo: Path, variant: str, tokens: int, batch: int, mode: str,
+                 micro_batch: int = 512, allow_cpu: bool = False,
+                 warmup: int = WARMUP, repeats: int = REPEATS) -> dict[str, Any]:
+    """One (variant, tokens, batch, mode) cell, decomposed.
+
+    `allow_cpu` exists for smoke-testing this file's own code paths off-cluster
+    and is recorded in the receipt, because a CPU reading of a GPU cost is not a
+    weaker measurement of the same thing -- it is a measurement of something
+    else, and nothing downstream may read it as a timing.
+    """
+    if variant not in VARIANTS:
+        raise ValueError(f"unknown variant {variant!r}")
+    if mode not in MODES:
+        raise ValueError(f"unknown mode {mode!r}")
+
+    _install(repo)
+    from keras_backend import (configure_production_precision, record_versions,
+                               select_keras_backend)
+
+    backend = select_keras_backend()
+    import numpy as np
+    import tensorflow as tf
+
+    # The frozen policy forbids TF32, and A100 TensorFlow enables it by default.
+    # Every earlier timing in this package ran without this line, so those numbers
+    # are TF32 numbers and are superseded by any receipt that carries
+    # `precision_policy_observed`.
+    precision = configure_production_precision(strict=not allow_cpu)
+
+    if variant == "ours_incumbent":
+        # `omnifold/omnifold.py` calls `set_memory_growth` and
+        # `set_visible_devices` AT IMPORT TIME, and TensorFlow refuses both once
+        # the device context exists. Any `tf.config.list_*` call initialises it,
+        # so this import must precede the fail-closed GPU check rather than
+        # follow it -- all eight `ours_incumbent` cells of job 58564110 died
+        # there with "Physical devices cannot be modified after being
+        # initialized", and the ordering is the whole bug.
+        omnifold_root = repo / "omnifold_nn"
+        if str(omnifold_root) not in sys.path:
+            sys.path.insert(0, str(omnifold_root))
+        import omnifold.net                                          # noqa: F401
+
+    gpus = tf.config.list_logical_devices("GPU")
+    if not gpus and not allow_cpu:
+        raise SystemExit("[profile] no GPU visible to TensorFlow (fail closed)")
+
+    import pet2_keras_port as port
+    import training_recipe as recipe
+
+    rng = np.random.RandomState(0)
+    record: dict[str, Any] = {
+        "variant": variant, "tokens": tokens, "batch": batch, "mode": mode,
+        "precision": "float32", "arm": "theirs_complete",
+        "precision_policy_observed": precision,
+        "precision_policy_enforced": True,
+        "configuration": dict(HIS_COMPLETE_SETTINGS),
+        "keras_backend_selection": backend,
+        "versions": record_versions(),
+        "framework": f"tensorflow {tf.__version__}",
+        "gpu": [d.name for d in gpus],
+        "warmup": warmup, "repeats": repeats,
+        "commit": _commit(repo),
+        "variant_means": VARIANT_PATHS.get(variant, "the vendored production PET"),
+    }
+    if not gpus:
+        record["NOT_A_TIMING"] = (
+            "run with --allow-cpu and no GPU present: this exercises the code path "
+            "and must never be read as a cost"
+        )
+
+    if variant == "ours_incumbent":
+        # The vendored production PET, through its own module, exactly as
+        # `calibrate_cost.time_ours_step` builds it: this is the promoted
+        # incumbent and not a candidate improvement on it.
+        import pet2_omnifold_adapter as adapter
+        omnifold_root = repo / "omnifold_nn"
+        if str(omnifold_root) not in sys.path:
+            sys.path.insert(0, str(omnifold_root))
+        from omnifold.net import PET, weighted_binary_crossentropy
+
+        schema = adapter.STEP_SCHEMAS["step2_gen"]
+        ours = PET(num_feat=schema["num_feat"], num_evt=schema["num_evt"],
+                   num_part=tokens, num_heads=2, num_transformer=2,
+                   projection_dim=32, local=True, K=3,
+                   coord_idx=schema["coord_idx"])
+        model = ours.model
+        part = tf.constant(np.abs(rng.rand(batch, tokens, schema["num_feat"])),
+                           tf.float32)
+        evt = tf.constant(rng.randn(batch, schema["num_evt"]), tf.float32)
+        labels = tf.constant(np.concatenate(
+            [rng.randint(0, 2, (batch, 1)), np.ones((batch, 1))], axis=1), tf.float32)
+
+        def call(training):
+            return model([part, evt], training=training)
+
+        def loss_of(predictions):
+            return weighted_binary_crossentropy(labels, predictions)
+
+        record["arm"] = "ours_incumbent"
+        record["configuration"] = {"architecture": "vendored omnifold.net.PET",
+                                   "step": "step2_gen", "K": 3, "heads": 2,
+                                   "transformers": 2, "projection_dim": 32}
+    else:
+        model = port.PET2Port(**HIS_COMPLETE_SETTINGS, **port.preset("small"))
+        paths = VARIANT_PATHS[variant]
+        touched = port.set_reference_paths(model, **paths)
+        record["paths"] = dict(paths)
+        record["layers_switched"] = touched
+        if touched["tile_centre"] != 1 or touched["flat_projection"] < 20:
+            raise ValueError(
+                f"variant {variant!r} reached {touched} layers; a switch that "
+                "reaches nothing would make this variant a copy of another one"
+            )
+        x = tf.constant(rng.randn(batch, tokens, 4).astype(np.float32))
+        pid = tf.constant(rng.randint(0, 8, (batch, tokens)).astype(np.int32))
+        add = tf.constant(rng.randn(batch, tokens, 5).astype(np.float32))
+        cond = tf.constant(rng.randn(batch, 16).astype(np.float32))
+        labels = tf.constant(rng.randint(0, 2, (batch, 1)).astype("float32"))
+
+        def call(training):
+            return model(x, cond, pid, add, training=training)
+
+        def loss_of(predictions):
+            return tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
+                labels=labels, logits=predictions))
+
+    jit = variant.endswith("_xla")
+    record["jit_compile"] = jit
+    function = (lambda fn: tf.function(fn, jit_compile=True)) if jit else tf.function
+
+    if mode == "forward":
+        record["sections"] = {
+            "forward": _time(function(lambda: tf.reduce_sum(call(False))), batch, tf,
+                            warmup, repeats)
+        }
+        record["trainable_parameters"] = int(
+            sum(int(np.prod(w.shape)) for w in model.trainable_variables))
+        return record
+
+    schedule = recipe.derive_schedule(batch, examples=batch * 1000)
+    sections: dict[str, Any] = {}
+
+    if variant == "accum4":
+        # His `-bs 512 --grad_accum_steps 4`. The per-example cost is charged
+        # against the VIRTUAL batch, because that is what one optimizer step
+        # presents and what the campaign budget counts.
+        micro = micro_batch
+        steps = recipe.accumulation_steps(batch, micro)
+        call(False)                        # build, so the accumulators are shaped
+        optimizer = recipe.build_optimizer("theirs", schedule=schedule)
+        accumulator = recipe.AccumulatingStep(
+            model, optimizer, lambda y, p: tf.reduce_mean(
+                tf.nn.sigmoid_cross_entropy_with_logits(labels=y, logits=p)),
+            steps, compile_step=True,
+            forward=lambda inputs, training: model(*inputs, training=training),
+        )
+
+        def one_virtual_batch():
+            last = None
+            for group in range(steps):
+                rows = slice(group * micro, (group + 1) * micro)
+                last = accumulator.micro_step(
+                    (x[rows], cond[rows], pid[rows], add[rows]), labels[rows])
+            return last
+
+        sections["virtual_batch_train"] = _time(one_virtual_batch, batch, tf, warmup, repeats)
+        sections["virtual_batch_train"].update(
+            accumulation_steps=steps, micro_batch=micro,
+            optimizer_applies=accumulator.applies,
+            pending_micro_batches=accumulator.pending,
+            charged_against="the virtual batch, one optimizer step",
+        )
+        record["sections"] = sections
+        record["trainable_parameters"] = int(
+            sum(int(np.prod(w.shape)) for w in model.trainable_variables))
+        return record
+
+    call(False)                                   # build, so variables exist
+    optimizer = recipe.build_optimizer("theirs", schedule=schedule)
+    variables = model.trainable_variables
+
+    @function
+    def forward_only():
+        return tf.reduce_sum(call(False))
+
+    @function
+    def forward_and_backward():
+        with tf.GradientTape() as tape:
+            loss = loss_of(call(True))
+        gradients = tape.gradient(loss, variables)
+        return tf.add_n([tf.reduce_sum(g) for g in gradients if g is not None])
+
+    @function
+    def folded_control():
+        """The trap, kept as a control: `loss + 0.0 * g` prunes the WHOLE backward.
+
+        This was the first version of the section above, and on CPU it timed at
+        14.95 ms against a forward pass of 14.49 ms and a real backward of 272 ms
+        -- Grappler folds `0.0 * x` to a constant and the gradient subgraph becomes
+        dead code. It is measured here rather than deleted, because a decomposition
+        whose backward section silently equals its forward section is a number I
+        would have quoted. If this control does NOT come out near `forward`, the
+        folding assumption has changed and the section above needs re-checking.
+        """
+        with tf.GradientTape() as tape:
+            loss = loss_of(call(True))
+        gradients = tape.gradient(loss, variables)
+        return loss + 0.0 * tf.add_n([tf.reduce_sum(g) for g in gradients
+                                      if g is not None])
+
+    @function
+    def reduction_probe():
+        """What `add_n(reduce_sum(...))` costs on its own: the contamination bound."""
+        return tf.add_n([tf.reduce_sum(tf.zeros_like(v)) for v in variables])
+
+    def sync_probe():
+        """What the forced host read costs on its own, so it can be subtracted.
+
+        Every timed section above pays one device-to-host scalar copy. It is small
+        and it is not free, and a reader should be able to see how small rather
+        than take my word for it.
+        """
+        return tf.reduce_sum(tf.zeros([1], dtype=tf.float32))
+
+    @function
+    def full_step():
+        with tf.GradientTape() as tape:
+            loss = loss_of(call(True))
+        optimizer.apply_gradients(zip(tape.gradient(loss, variables), variables))
+        return loss
+
+    sections["forward"] = _time(forward_only, batch, tf, warmup, repeats)
+    sections["forward_and_backward"] = _time(forward_and_backward, batch, tf, warmup, repeats)
+    sections["folded_backward_control"] = _time(folded_control, batch, tf, warmup, repeats)
+    sections["reduction_probe"] = _time(reduction_probe, batch, tf, warmup, repeats)
+    sections["sync_probe"] = _time(sync_probe, batch, tf, warmup, repeats)
+    sections["full_step"] = _time(full_step, batch, tf, warmup, repeats)
+    forward_median = sections["forward"]["step_seconds_median"]
+    folded = sections["folded_backward_control"]["step_seconds_median"]
+    real = sections["forward_and_backward"]["step_seconds_median"]
+    sections["folding_control"] = {
+        "folded_over_forward": folded / forward_median if forward_median else None,
+        "real_over_folded": real / folded if folded else None,
+        "reads": ("folded_over_forward near 1 means `0.0 * gradient` still prunes the "
+                  "backward pass, which is what makes the real section trustworthy; "
+                  "if it rises toward real_over_folded, this decomposition is wrong"),
+    }
+    # Apply is the remainder: timing it alone would need a second set of resident
+    # gradients, which is itself a memory change. Reported as a difference and
+    # labelled as one.
+    sections["apply_by_difference"] = {
+        "step_seconds_median": (sections["full_step"]["step_seconds_median"]
+                                - sections["forward_and_backward"]["step_seconds_median"]
+                                + sections["reduction_probe"]["step_seconds_median"]),
+        "note": ("full step minus forward+backward, with the gradient-reduction probe "
+                 "added back because that reduction is in the backward section and not "
+                 "in the full step; a difference of medians, not an independent "
+                 "measurement"),
+    }
+    record["sections"] = sections
+    record["trainable_parameters"] = int(
+        sum(int(np.prod(w.shape)) for w in model.trainable_variables))
+    record["optimizer_variables"] = len(variables)
+    return record
+
+
+def merge(cell_dir: Path, expected: list[str], note: str | None = None) -> dict[str, Any]:
+    """Collect the per-cell files and report what is MISSING rather than eliding it."""
+    cells, missing = {}, []
+    for key in expected:
+        path = cell_dir / (key.replace("|", "_") + ".json")
+        if path.exists():
+            cells[key] = json.loads(path.read_text())
+        else:
+            missing.append(key)
+    commits = sorted({c.get("commit") for c in cells.values() if c.get("commit")})
+    return {
+        "scope": ("decomposed cost and peak device memory for the PORTED arm and our "
+                  "incumbent; synthetic inputs at his widths; no learning claim"),
+        "commits": commits,
+        "variant_paths": VARIANT_PATHS,
+        "label_warning": ("a variant NAME is only meaningful with the commit beside "
+                          "it; `variant_means` on each cell records the switches "
+                          "that were actually set"),
+        "cells": cells,
+        "missing_cells": missing,
+        "missing_means": ("the cell's process did not write a receipt. Under a normal "
+                          "run that is itself a measurement, because a TensorFlow OOM "
+                          "can kill the interpreter before it writes -- but read "
+                          "`run_note` first, because a run that was stopped early has "
+                          "missing cells that were never attempted"),
+        "run_note": note,
+        "expected_cells": expected,
+    }
+
+
+def expected_cells() -> list[str]:
+    keys = []
+    for variant in ("baseline", "broadcast", "optimised", "optimised_xla",
+                    "broadcast_xla", "ours_incumbent"):
+        for tokens in (12, 33):
+            for batch in (512, 2048):
+                for mode in MODES:
+                    keys.append(f"{variant}|{tokens}|{batch}|{mode}")
+    for tokens in (12, 33):
+        keys.append(f"accum4|{tokens}|2048|train")
+    return keys
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--repo", type=Path, required=True)
+    parser.add_argument("--cell")
+    parser.add_argument("--cell-dir", type=Path)
+    parser.add_argument("--list-cells", action="store_true")
+    parser.add_argument("--micro-batch", type=int, default=512)
+    parser.add_argument("--warmup", type=int, default=WARMUP)
+    parser.add_argument("--repeats", type=int, default=REPEATS)
+    parser.add_argument("--note", help="what to say about missing cells")
+    parser.add_argument("--allow-cpu", action="store_true",
+                        help="smoke-test the code path off-cluster; NOT a timing")
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+
+    if args.list_cells:
+        print("\n".join(expected_cells()))
+        return
+    if args.cell:
+        variant, tokens, batch, mode = args.cell.split("|")
+        try:
+            record = measure_cell(args.repo, variant, int(tokens), int(batch), mode,
+                                  micro_batch=args.micro_batch,
+                                  allow_cpu=args.allow_cpu,
+                                  warmup=args.warmup, repeats=args.repeats)
+        except Exception as error:                       # noqa: BLE001 - recorded
+            record = {"variant": variant, "tokens": int(tokens), "batch": int(batch),
+                      "mode": mode, "failed": True, "error": repr(error),
+                      "traceback": traceback.format_exc()}
+        args.output.write_text(json.dumps(record, indent=2) + "\n")
+        print(json.dumps({k: v for k, v in record.items()
+                          if k in ("variant", "tokens", "batch", "mode", "failed")}))
+        return
+    if args.cell_dir:
+        args.output.write_text(
+            json.dumps(merge(args.cell_dir, expected_cells(), args.note),
+                       indent=2) + "\n")
+        return
+    parser.error("one of --cell, --cell-dir or --list-cells is required")
+
+
+if __name__ == "__main__":
+    main()

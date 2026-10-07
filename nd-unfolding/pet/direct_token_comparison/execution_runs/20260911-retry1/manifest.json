@@ -1,0 +1,37 @@
+{
+  "scope": "Second technical stop with partial pooled calibration artifacts; no paired learning result",
+  "files": {
+    "execution-revision-binding.json": {
+      "bytes": 1372,
+      "sha256": "23ed165890098b587aa4447418dfeb173ae0c46c0b05ff0920f6312377eb2487"
+    },
+    "partial-artifact-check.json": {
+      "bytes": 1135,
+      "sha256": "d887a02665e114ae125a1c35a1511f591910ed1fad5548965e6ca81c31d553e6"
+    },
+    "preserved/README.md": {
+      "bytes": 714,
+      "sha256": "701076e70f20dc208d6e72a09681e24f2d7383866a1d4f4d785571ebf2717407"
+    },
+    "preserved/payload.tar.gz": {
+      "bytes": 308965,
+      "sha256": "5af41fff63e8fe47eb7e6b66995bfa09aa50647857b835cdd8832f8b3827db6f"
+    },
+    "preserved/preservation.json": {
+      "bytes": 3297,
+      "sha256": "deb85248681dbc3c466eca0787f6f89bea996a4a3aef5f68c9ecd80ccbf0198a"
+    },
+    "storage-measurement.json": {
+      "bytes": 1561,
+      "sha256": "abaeddd64d791ca3776fe82fad4e0b9ad449ad33d33a5a815211da14275992c2"
+    },
+    "submission.json": {
+      "bytes": 783,
+      "sha256": "006523248f8fbda4a6492031d29d8e160386489776823ae383068486f453e379"
+    },
+    "terminal.json": {
+      "bytes": 3071,
+      "sha256": "d84db4fa667da326047a3ab21d40ae1ee8c4dea0f842c709607fbb117898f145"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+ "schema": "s5p-transition-plan/1",
+ "transition": "r5",
+ "observed_utc": "2026-10-05T03:20Z",
+ "source_dir": "queues-r4",
+ "target_dir": "queues-r5",
+ "rollback_dir": "queues-r5-rollback",
+ "lanes": {
+  "cal-NuWro_21_09.q": {
+   "lane": "NuWro_21_09",
+   "label": "s5p_cal_nuwro_21_09_b5",
+   "throttle": 8,
+   "rollback_throttle": 5,
+   "old_pid": 669349,
+   "old_log": "/pscratch/sd/j/josephrb/s5p-20260926/runs/queue-prod-r4-NuWro_21_09.log",
+   "new_log": "/pscratch/sd/j/josephrb/s5p-20260926/runs/queue-prod-r5-NuWro_21_09.log"
+  }
+ },
+ "budget_sha256_expected": "be29f2c3009e3c7f718d7c007d116f4686fa3dfab591b399ed51a28ffd9fce04",
+ "concurrency_check": "worst case at NuWro's next submission (b6): MnvTune 3 + GENIE CV 3 + GiBUU 2 + NuWro 8 = 16 slots x 1/8 node = 2.0 nodes (the cap); GENIE MEC final 2026-10-05T03:03:48Z (B 1343, rule met for both tests), its runner ended at queue done; pending NuWro b5 tasks wait on JobArrayTaskLimit (the throttle binds)"
+}

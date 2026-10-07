@@ -1,0 +1,1004 @@
+{
+ "study": "PREREG-20261005-2d-fixed-truth-coverage.md",
+ "cap_cpu_node_h": 60.0,
+ "account": "m3246",
+ "pool": "separate from s5p (docs/orchestration/state/s5p/budget.json is not read or written)",
+ "billing_rule": "CPU node-h = ElapsedRaw/3600 * billing/256 * qos_usage_factor (as the s5c/s5p rule); regular_1 usage factor 1.000000 (sacctmgr, 2026-10-05)",
+ "balance_before": {
+  "measured_utc": "2026-10-05T07:2x",
+  "host": "login09",
+  "tool": "iris",
+  "m3246_charged": 16863.6,
+  "m3246_allocated": 20000.0,
+  "user_charged": 1971.9,
+  "user_allocated": 10000.0
+ },
+ "jobs": [
+  {
+   "job": "59358992_9001",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 660,
+   "billing": 256,
+   "node_h": 0.1833
+  },
+  {
+   "job": "59358992_9002",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 750,
+   "billing": 256,
+   "node_h": 0.2083
+  },
+  {
+   "job": "59358992_9003",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 730,
+   "billing": 256,
+   "node_h": 0.2028
+  },
+  {
+   "job": "59358994_1",
+   "name": "cov2d_equiv",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 383,
+   "billing": 256,
+   "node_h": 0.1064
+  },
+  {
+   "job": "59358994_2",
+   "name": "cov2d_equiv",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 350,
+   "billing": 256,
+   "node_h": 0.0972
+  },
+  {
+   "job": "59366262_1",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 599,
+   "billing": 256,
+   "node_h": 0.1664
+  },
+  {
+   "job": "59366262_2",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 665,
+   "billing": 256,
+   "node_h": 0.1847
+  },
+  {
+   "job": "59366262_3",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 709,
+   "billing": 256,
+   "node_h": 0.1969
+  },
+  {
+   "job": "59366262_4",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 764,
+   "billing": 256,
+   "node_h": 0.2122
+  },
+  {
+   "job": "59366262_5",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 714,
+   "billing": 256,
+   "node_h": 0.1983
+  },
+  {
+   "job": "59366262_6",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 767,
+   "billing": 256,
+   "node_h": 0.2131
+  },
+  {
+   "job": "59366262_7",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 745,
+   "billing": 256,
+   "node_h": 0.2069
+  },
+  {
+   "job": "59366262_8",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 724,
+   "billing": 256,
+   "node_h": 0.2011
+  },
+  {
+   "job": "59366262_9",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 695,
+   "billing": 256,
+   "node_h": 0.1931
+  },
+  {
+   "job": "59366262_10",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 644,
+   "billing": 256,
+   "node_h": 0.1789
+  },
+  {
+   "job": "59366262_11",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 619,
+   "billing": 256,
+   "node_h": 0.1719
+  },
+  {
+   "job": "59366262_12",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 666,
+   "billing": 256,
+   "node_h": 0.185
+  },
+  {
+   "job": "59366262_13",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 726,
+   "billing": 256,
+   "node_h": 0.2017
+  },
+  {
+   "job": "59366262_14",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 814,
+   "billing": 256,
+   "node_h": 0.2261
+  },
+  {
+   "job": "59366262_15",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 735,
+   "billing": 256,
+   "node_h": 0.2042
+  },
+  {
+   "job": "59366262_16",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 743,
+   "billing": 256,
+   "node_h": 0.2064
+  },
+  {
+   "job": "59366262_18",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "regular_1",
+   "elapsed_raw_s": 744,
+   "billing": 256,
+   "node_h": 0.2067
+  },
+  {
+   "job": "59366262_67",
+   "name": "cov2d_fixedtruth",
+   "state": "CANCELLED by 112498",
+   "qos": "regular_1",
+   "elapsed_raw_s": 0,
+   "billing": 0,
+   "node_h": 0.0
+  },
+  {
+   "job": "59374208_100",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 778,
+   "billing": 256,
+   "node_h": 0.2161
+  },
+  {
+   "job": "59374248_99",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 770,
+   "billing": 256,
+   "node_h": 0.2139
+  },
+  {
+   "job": "59375125_98",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 816,
+   "billing": 256,
+   "node_h": 0.2267
+  },
+  {
+   "job": "59375216_97",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 633,
+   "billing": 256,
+   "node_h": 0.1758
+  },
+  {
+   "job": "59376083_96",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 720,
+   "billing": 256,
+   "node_h": 0.2
+  },
+  {
+   "job": "59376182_95",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 706,
+   "billing": 256,
+   "node_h": 0.1961
+  },
+  {
+   "job": "59376739_94",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 706,
+   "billing": 256,
+   "node_h": 0.1961
+  },
+  {
+   "job": "59376795_93",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 775,
+   "billing": 256,
+   "node_h": 0.2153
+  },
+  {
+   "job": "59377043_92",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 746,
+   "billing": 256,
+   "node_h": 0.2072
+  },
+  {
+   "job": "59377193_91",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 692,
+   "billing": 256,
+   "node_h": 0.1922
+  },
+  {
+   "job": "59377517_90",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 747,
+   "billing": 256,
+   "node_h": 0.2075
+  },
+  {
+   "job": "59377671_89",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 706,
+   "billing": 256,
+   "node_h": 0.1961
+  },
+  {
+   "job": "59378102_88",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 674,
+   "billing": 256,
+   "node_h": 0.1872
+  },
+  {
+   "job": "59378183_87",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 717,
+   "billing": 256,
+   "node_h": 0.1992
+  },
+  {
+   "job": "59378523_86",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 745,
+   "billing": 256,
+   "node_h": 0.2069
+  },
+  {
+   "job": "59378960_85",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 786,
+   "billing": 256,
+   "node_h": 0.2183
+  },
+  {
+   "job": "59379852_84",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 690,
+   "billing": 256,
+   "node_h": 0.1917
+  },
+  {
+   "job": "59380062_83",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 698,
+   "billing": 256,
+   "node_h": 0.1939
+  },
+  {
+   "job": "59384146_82",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 696,
+   "billing": 256,
+   "node_h": 0.1933
+  },
+  {
+   "job": "59384368_81",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 771,
+   "billing": 256,
+   "node_h": 0.2142
+  },
+  {
+   "job": "59384420_17",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 1091,
+   "billing": 64,
+   "node_h": 0.0758
+  },
+  {
+   "job": "59384642_80",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 758,
+   "billing": 256,
+   "node_h": 0.2106
+  },
+  {
+   "job": "59384917_79",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 739,
+   "billing": 256,
+   "node_h": 0.2053
+  },
+  {
+   "job": "59385147_78",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 737,
+   "billing": 256,
+   "node_h": 0.2047
+  },
+  {
+   "job": "59385162_19",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 771,
+   "billing": 64,
+   "node_h": 0.0535
+  },
+  {
+   "job": "59385170_20",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 577,
+   "billing": 64,
+   "node_h": 0.0401
+  },
+  {
+   "job": "59385228_21",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 997,
+   "billing": 64,
+   "node_h": 0.0692
+  },
+  {
+   "job": "59385240_22",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 497,
+   "billing": 64,
+   "node_h": 0.0345
+  },
+  {
+   "job": "59385247_23",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 622,
+   "billing": 64,
+   "node_h": 0.0432
+  },
+  {
+   "job": "59385258_24",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 780,
+   "billing": 64,
+   "node_h": 0.0542
+  },
+  {
+   "job": "59385269_25",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 754,
+   "billing": 64,
+   "node_h": 0.0524
+  },
+  {
+   "job": "59385277_26",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 571,
+   "billing": 64,
+   "node_h": 0.0397
+  },
+  {
+   "job": "59385288_27",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 582,
+   "billing": 64,
+   "node_h": 0.0404
+  },
+  {
+   "job": "59385297_28",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 605,
+   "billing": 64,
+   "node_h": 0.042
+  },
+  {
+   "job": "59385306_29",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 554,
+   "billing": 64,
+   "node_h": 0.0385
+  },
+  {
+   "job": "59385315_30",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 1635,
+   "billing": 64,
+   "node_h": 0.1135
+  },
+  {
+   "job": "59385437_77",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 721,
+   "billing": 256,
+   "node_h": 0.2003
+  },
+  {
+   "job": "59385546_31",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 671,
+   "billing": 64,
+   "node_h": 0.0466
+  },
+  {
+   "job": "59385557_32",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 973,
+   "billing": 64,
+   "node_h": 0.0676
+  },
+  {
+   "job": "59385594_76",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 652,
+   "billing": 256,
+   "node_h": 0.1811
+  },
+  {
+   "job": "59385611_33",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 743,
+   "billing": 64,
+   "node_h": 0.0516
+  },
+  {
+   "job": "59385740_34",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 684,
+   "billing": 64,
+   "node_h": 0.0475
+  },
+  {
+   "job": "59385841_35",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 738,
+   "billing": 64,
+   "node_h": 0.0512
+  },
+  {
+   "job": "59386003_36",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 739,
+   "billing": 64,
+   "node_h": 0.0513
+  },
+  {
+   "job": "59386010_75",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 672,
+   "billing": 256,
+   "node_h": 0.1867
+  },
+  {
+   "job": "59386054_37",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 1098,
+   "billing": 64,
+   "node_h": 0.0762
+  },
+  {
+   "job": "59386060_38",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 587,
+   "billing": 64,
+   "node_h": 0.0408
+  },
+  {
+   "job": "59386062_39",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 697,
+   "billing": 64,
+   "node_h": 0.0484
+  },
+  {
+   "job": "59386067_40",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 871,
+   "billing": 64,
+   "node_h": 0.0605
+  },
+  {
+   "job": "59386073_41",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 636,
+   "billing": 64,
+   "node_h": 0.0442
+  },
+  {
+   "job": "59386121_74",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 691,
+   "billing": 256,
+   "node_h": 0.1919
+  },
+  {
+   "job": "59386134_42",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 634,
+   "billing": 64,
+   "node_h": 0.044
+  },
+  {
+   "job": "59386187_43",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 573,
+   "billing": 64,
+   "node_h": 0.0398
+  },
+  {
+   "job": "59386221_44",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 809,
+   "billing": 64,
+   "node_h": 0.0562
+  },
+  {
+   "job": "59386254_45",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 907,
+   "billing": 64,
+   "node_h": 0.063
+  },
+  {
+   "job": "59386262_46",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 696,
+   "billing": 64,
+   "node_h": 0.0483
+  },
+  {
+   "job": "59386336_73",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 606,
+   "billing": 256,
+   "node_h": 0.1683
+  },
+  {
+   "job": "59386409_47",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 526,
+   "billing": 64,
+   "node_h": 0.0365
+  },
+  {
+   "job": "59386418_48",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 690,
+   "billing": 64,
+   "node_h": 0.0479
+  },
+  {
+   "job": "59386428_72",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 673,
+   "billing": 256,
+   "node_h": 0.1869
+  },
+  {
+   "job": "59386462_49",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 902,
+   "billing": 64,
+   "node_h": 0.0626
+  },
+  {
+   "job": "59386543_50",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 729,
+   "billing": 64,
+   "node_h": 0.0506
+  },
+  {
+   "job": "59386554_51",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 680,
+   "billing": 64,
+   "node_h": 0.0472
+  },
+  {
+   "job": "59386571_52",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 992,
+   "billing": 64,
+   "node_h": 0.0689
+  },
+  {
+   "job": "59386586_53",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 1390,
+   "billing": 64,
+   "node_h": 0.0965
+  },
+  {
+   "job": "59386657_71",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 660,
+   "billing": 256,
+   "node_h": 0.1833
+  },
+  {
+   "job": "59386672_54",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 812,
+   "billing": 64,
+   "node_h": 0.0564
+  },
+  {
+   "job": "59386678_55",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 633,
+   "billing": 64,
+   "node_h": 0.044
+  },
+  {
+   "job": "59386715_56",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 529,
+   "billing": 64,
+   "node_h": 0.0367
+  },
+  {
+   "job": "59386749_57",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 814,
+   "billing": 64,
+   "node_h": 0.0565
+  },
+  {
+   "job": "59386789_70",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 761,
+   "billing": 256,
+   "node_h": 0.2114
+  },
+  {
+   "job": "59386870_58",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 773,
+   "billing": 64,
+   "node_h": 0.0537
+  },
+  {
+   "job": "59386914_59",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 671,
+   "billing": 64,
+   "node_h": 0.0466
+  },
+  {
+   "job": "59387006_60",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 768,
+   "billing": 64,
+   "node_h": 0.0533
+  },
+  {
+   "job": "59387011_61",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 543,
+   "billing": 64,
+   "node_h": 0.0377
+  },
+  {
+   "job": "59387017_62",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 719,
+   "billing": 64,
+   "node_h": 0.0499
+  },
+  {
+   "job": "59387029_69",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 626,
+   "billing": 256,
+   "node_h": 0.1739
+  },
+  {
+   "job": "59387057_63",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 837,
+   "billing": 64,
+   "node_h": 0.0581
+  },
+  {
+   "job": "59387197_64",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 521,
+   "billing": 64,
+   "node_h": 0.0362
+  },
+  {
+   "job": "59387219_68",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "debug",
+   "elapsed_raw_s": 708,
+   "billing": 256,
+   "node_h": 0.1967
+  },
+  {
+   "job": "59387257_65",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 866,
+   "billing": 64,
+   "node_h": 0.0601
+  },
+  {
+   "job": "59387261_66",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 580,
+   "billing": 64,
+   "node_h": 0.0403
+  },
+  {
+   "job": "59387268_67",
+   "name": "cov2d_fixedtruth",
+   "state": "COMPLETED",
+   "qos": "shared",
+   "elapsed_raw_s": 730,
+   "billing": 64,
+   "node_h": 0.0507
+  }
+ ],
+ "charged_node_h": 13.325,
+ "projection_after_pilot": {
+  "per_toy_node_h": 0.19815,
+  "n_toys": 200,
+  "margin": 1.05,
+  "projected_total_node_h": 42.41
+ },
+ "by_stage": {
+  "pilot": {
+   "jobs": 3,
+   "node_h": 0.594
+  },
+  "equivalence": {
+   "jobs": 2,
+   "node_h": 0.204
+  },
+  "wave1": {
+   "jobs": 101,
+   "node_h": 12.527
+  }
+ },
+ "source": "sacct_all.txt (sacct -X, job names cov2d_fixedtruth and cov2d_equiv, since 2026-10-05T00:00 Pacific); node-h = ElapsedRaw/3600*billing/256*1.0",
+ "balance_after": {
+  "measured_utc": "2026-10-05T20:0x",
+  "host": "login (iris project/user)",
+  "m3246_charged": 16893.0,
+  "m3246_allocated": 20000.0,
+  "user_charged": 2000.7,
+  "user_allocated": 10000.0,
+  "note": "the account delta (+29.4) and user delta (+28.8) include s5p and other jobs run under the same account/user in the interval; this study's own charge is charged_node_h"
+ },
+ "stopped": "interim futility look (toys 1-100): FAIL-undercoverage; wave 2 (101-200) not run"
+}

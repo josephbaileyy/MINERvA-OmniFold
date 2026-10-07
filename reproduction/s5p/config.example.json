@@ -1,0 +1,12 @@
+{
+ "roots": {
+  "s5p": "/pscratch/sd/j/josephrb/s5p-20260926",
+  "analysis": "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+  "s5e": "/pscratch/sd/j/josephrb/s5e-20260925",
+  "cvmfs": "/cvmfs"
+ },
+ "out_dir": "/pscratch/sd/j/josephrb/s5p-parallel-reproduction/runs/CHANGE-ME",
+ "joint": {
+  "independent_compare": "/pscratch/sd/j/josephrb/s5p-parallel-recompute/final-ext/compare.json"
+ }
+}

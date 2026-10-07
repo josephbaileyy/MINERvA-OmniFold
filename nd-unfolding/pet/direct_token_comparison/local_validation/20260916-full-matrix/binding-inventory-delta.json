@@ -1,0 +1,17 @@
+{
+  "before_count": 123,
+  "before_sha256": "9c18673bdf772e1febcb1eee6c028daae47aefc35b7430dbcb3e38bd261d8138",
+  "after_count": 124,
+  "after_sha256": "68e976583d8c0feb4e4957d044c5ac96dcdcdf18cfa58757ae82b9a200606737",
+  "added_bindings": [
+    [
+      "nd-unfolding/pet/direct_token_comparison/sbatch_full_matrix.sh",
+      "c95cd5938cf69e0e8b78a5ab74de38816141958fa3fbdc4349b68cb54f7f772c"
+    ]
+  ],
+  "removed_bindings": [],
+  "owning_receipts": [
+    "nd-unfolding/pet/direct_token_comparison/amended-execution-authorization.json"
+  ],
+  "note": "Purely additive: the full-matrix launcher is now bound by digest before use, as the grant requires. No prior binding changed or was removed."
+}

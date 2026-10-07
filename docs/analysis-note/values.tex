@@ -83,19 +83,43 @@
 % stream, not the full adopted band. No aggregate binomial error is quoted.
 \newcommand{\covFPS}{68.67}
 \newcommand{\covNominal}{68.27}                              % Gaussian nominal
-\newcommand{\covFPSanalytic}{77.6}   % FPS variant-A (independent C_stat): conservatively over-covers
+\newcommand{\covFPSanalytic}{77.6}   % FPS variant-A (scalar uq_cov_stat_fps.root): conservatively over-covers
+% 2D statistical-band coverage, fixed-truth closure toys (2026-10-05; VALIDATION_LEDGER VL169;
+% docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md; receipt
+% docs/orchestration/state/coverage-2d-20261005/interim_score.json). Pre-registered interim look,
+% toys 1-100, 205 bins, 99.5% toy-bootstrap intervals; FAIL-undercoverage (futility). Independently
+% recomputed (points identical; C1/C2 endpoints within 5.4e-4, all endpoints within 1.7e-3). Fractions, not percent.
+\newcommand{\covTwoDNtoy}{100}
+\newcommand{\covTwoDCTwoPct}{91}  % C2 = 0.912 as a rounded percent (primer)
+\newcommand{\covTwoDCTwoPctOne}{91.2} % C2 in percent for the paper: the literal 0.912 collides with
+                                      % the struck \petRatio in build_all's paper containment check
+\newcommand{\covTwoDCOne}{0.679}\newcommand{\covTwoDCOneLo}{0.669}\newcommand{\covTwoDCOneHi}{0.690}     % 0.6794 [0.6693, 0.6899]
+\newcommand{\covTwoDCTwo}{0.912}\newcommand{\covTwoDCTwoLo}{0.907}\newcommand{\covTwoDCTwoHi}{0.918}     % 0.9121 [0.9065, 0.9179]
+\newcommand{\covTwoDWinOneLo}{0.632}\newcommand{\covTwoDWinOneHi}{0.729}   % erf(0.9/sqrt2), erf(1.1/sqrt2)
+\newcommand{\covTwoDWinTwoLo}{0.928}\newcommand{\covTwoDWinTwoHi}{0.972}   % erf(1.8/sqrt2), erf(2.2/sqrt2)
+\newcommand{\covTwoDPullRMS}{1.60}   % 1.597 [1.484, 1.723]; pull mean -0.034 [-0.082, +0.015]
+\newcommand{\covTwoDBinRMSmed}{0.97} % median per-bin pull RMS (descriptive)
+\newcommand{\covTwoDNedge}{14}       % bins with per-bin pull RMS > 2 (descriptive, post hoc); 72% of the C2 deficit
+\newcommand{\covTwoDDeficitShare}{72} % percent of the pooled C2 deficit carried by the 14 bins with RMS > 2 (post hoc)
+\newcommand{\covTwoDNlowCTwo}{35}    % bins with per-bin C2 < 0.85 (descriptive, post hoc)
+\newcommand{\covTwoDNwide}{82}\newcommand{\covTwoDNnarrow}{71} % per-bin pull RMS < 0.9 / > 1.1 (post hoc; 52 in between)
+\newcommand{\covTwoDRepCOne}{0.833}  % replica-form C1 [0.819, 0.846], above its window (the FAIL-over driver)
+\newcommand{\covTwoDCTwoLowCtl}{0.809}\newcommand{\covTwoDCTwoHighCtl}{0.955} % C2 with band x0.7 / x1.3
+\newcommand{\covTwoDRepCTwo}{0.974}  % replica-form secondary U*T/P: C2 0.974 [0.968, 0.979], straddles the upper window edge
+\newcommand{\covTwoDNodeH}{13.3}     % CPU node-h charged, pilot + equivalence + 100 toys
 \newcommand{\pullFrac}{68.71}        % OLD 2D "coverage" = same-ensemble pull fraction (diagnostic)
 \newcommand{\pullMeanAbs}{0.794}\newcommand{\pullGauss}{0.798}  % <|r|> vs sqrt(2/pi)
 \newcommand{\chiPaper}{3.66}          % chi2/ndf vs paper covariance
-\newcommand{\chiCombined}{1.481}      % chi2/ndf vs combined (paper+ours) cov
-\newcommand{\chiCombinedLog}{1.468}   % log-normal chi2/ndf, combined (paper+ours)
-\newcommand{\chiCombinedSubStat}{11.56} % chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic)
+\newcommand{\chiCombined}{1.472}      % chi2/ndf vs combined (paper+ours) cov; VL172 (2026-10-06, VL170 band; was 1.481 with VL162)
+\newcommand{\chiCombinedLog}{1.455}   % log-normal chi2/ndf, combined (paper+ours); VL172 (was 1.468)
+\newcommand{\chiCombinedSubStat}{6.79} % chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic); VL172 (was 11.56)
 % All three recomputed 2026-07-16 (compare_to_paper_fullcov.py, flux-fix hCov_combined
 % [already incl. bootstrap] + ML). Supersede the pre-flux-fix appendix 1.699/1.688/23.96.
 
 % --- uncertainty budget ---
-\newcommand{\uqMedian}{6.87}          % our standalone combined median per-bin (%)
-\newcommand{\uqPaper}{6.86}           % published total median per-bin (%)
+\newcommand{\uqMedian}{6.87}          % our standalone combined median per-bin (%); 6.8707 with VL170 (VL172), 6.8646 with VL162
+\newcommand{\uqPaper}{6.85}           % published total median per-bin (%): 6.8525 from the full-precision ROOT release;
+% the 3-significant-figure CSV gives 6.859, the earlier printed 6.86. Producer: docs/orchestration/state/uqpaper-median-20261006/
 \newcommand{\fluxBand}{4.99}          % leading flux band (%)
 \newcommand{\rhoFluxMuon}{0.900}      % flux <-> muon-energy-scale correlation
 
@@ -129,6 +153,8 @@
 % struck wherever printed. Grounds: niter=2 vs the pinned niter=3 (CLM-010/CLM-012),
 % the 2026-08-01 full-event estimator change, and J21 (no background subtraction).
 % See docs/orchestration/INDEX-retracted-and-superseded-values.md.
+% (2026-10-03: those struck sec_pet.tex uses were removed by 95d03169 on 2026-08-23; since
+% 2026-10-03 the two literals and \petRatio are struck in app_history.tex H.1 instead.)
 \newcommand{\petRatio}{0.912}         % PET/GBDT absolute total ratio; niter=2 LEGACY, struck at use
 \newcommand{\petClosure}{1}           % niter=2 LEGACY, struck at use; NOT QUOTABLE as a current value
 % RULED 2026-08-21 BY JOSEPH -- the OPEN QUESTION recorded here on 2026-08-20 is CLOSED.
@@ -145,9 +171,24 @@
 %   sec_pet.tex:112 (note build only) -- STRUCK as $\sim$\,\dead{\SI{\petClosure}{\percent}}
 %     with an explicit "struck: legacy two-iteration self-consistency diagnostic, not a
 %     current validation" label, matching \dead{\petRatio} in that same caption.
+%   (stale before 2026-10-03; was sec_pet.tex:112) There is no current location: commit
+%     95d03169 (2026-08-23) removed the struck \petClosure and \petRatio from sec_pet.tex
+%     rather than moving them, and app_history.tex does not carry them either. Measured
+%     2026-10-03: neither macro is used in any .tex file; only these definitions remain.
+%   CURRENT LOCATION, 2026-10-03 (later the same day): app_history.tex H.1
+%     (\label{app:history-errata}). The struck uses removed by 95d03169 are recovered there,
+%     as errata rows and as verbatim sentences from 95d03169^ in the H.1 context subsection:
+%     $\dead{\petRatio}$ (its row plus both recovered sentences that struck it),
+%     $\sim$\,\dead{\SI{\petClosure}{\percent}}
+%     and $\dead{\sim\SI{\petGbdtGap}{\percent}}$. The dated record above stands: these macros
+%     WERE unused from 2026-08-23 to 2026-10-03.
 %
 % THE MACRO IS MARKED, NOT RETIRED, AND THAT IS DELIBERATE: sec_pet.tex still references
-% it inside \dead{}, so deleting the definition would break the note build. Its comment
+% it inside \dead{}, so deleting the definition would break the note build. [Stale before
+% 2026-10-03, for the same reason: no file references it, so the build no longer needs
+% the definition. It is left in place; retiring it is a separate decision.] [True again
+% from 2026-10-03: app_history.tex H.1 references it inside \dead{}, so the note build
+% needs the definition. Unused 2026-08-23 to 2026-10-03.] Its comment
 % now carries the same "niter=2 LEGACY, struck at use" marking as its two siblings --
 % which is precisely the marking whose ABSENCE made its status undetermined before.
 %
@@ -239,7 +280,7 @@
 % UNBACKED STATUS (verified 2026-08-20): none of these artifacts is under version
 % control -- .gitignore:2 is a blanket `*.root`, and `git ls-files` returns ZERO
 % .root files anywhere under 2d-unfolding/, including all eight ROOTs in
-% HANDOFF_bkg_negweight/runs/ and the 51 bootstrap / 188 universe replicas under
+% HANDOFF_bkg_negweight/runs/ and the 51 bootstrap / 187+CV universe replicas under
 % uq/negweight_boot/ and uq/negweight_uni/ that back \nwSystRatio and \nwStatRatio.
 % No docs/orchestration/RUNS.tsv row and no VALIDATION_LEDGER.md row cites any of
 % the jobids above or any *_hist5.root / *_exact5.root path (the negweight rows in
@@ -325,7 +366,7 @@
 % These are MEASUREMENTS, not caveats, and Joseph required them to travel with every
 % deliverable built from the adopted digest. Each is quoted from a committed receipt,
 % named beside it, so a reader can re-derive rather than take it on trust.
-\newcommand{\zcvDigest}{3d7465f6}        % first 8 of sha256 3d7465f66fbe66b0fc...918c5
+\newcommand{\zcvDigest}{3d7465f6}        % first 8 of sha256 3d7465f66fbe66b0dfcf...918c5
 \newcommand{\zprojDigest}{835828bf}      % M1 (Eavail,W) publication product, 42 cells
 \newcommand{\zprojCells}{42}
 % (1) The cause-3 grade. GRADE-20260920-cause3-two-member.json, branch 5 NOT MET - PER-BIN,

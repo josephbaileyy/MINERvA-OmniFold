@@ -1,191 +1,174 @@
-\section{Validation}
+\section{Validation of the two-dimensional measurement}
 \label{sec:validation}
 
 \paragraph{Closure.}
-Three existing closure families were exercised (1A lgbm 5-iter; thresholds in parentheses):
+Three existing closure families used playlist 1A, LightGBM and five iterations
+(thresholds in parentheses).
+% (1A lgbm 5-iter)
 \begin{itemize}
-  \item \textbf{Truth-reweight} (multiply truth and reco weights by the same
-        factor): gaussian-$\pT$ residual \SI{0.046}{\percent}, tilt-$\pPar$
-        \SI{0.013}{\percent} (thr \SI{1.5}{\percent}) --- injected truth recovered.
+  \item \textbf{Truth-reweight} (same factor for truth and reco weights):
+        gaussian-$\pT$ residual \SI{0.046}{\percent}, tilt-$\pPar$
+        \SI{0.013}{\percent} (thr \SI{1.5}{\percent}). Injected truth recovered.
   \item \textbf{Hidden-variable} (bias on $\Delta\pT=\pT^{\mathrm{reco}}-\pT^{\mathrm{truth}}$,
-        a resolution variable not in the feature set): leakage linear in amplitude,
+        a resolution variable outside the feature set): leakage linear in amplitude,
         $A=0.05/0.10/0.30\to0.57/1.14/3.43\,\%$ (thr \SI{3.0}{\percent});
-        the first two amplitudes pass and the deliberately large $A=0.30$ arm exceeds
+        the first two amplitudes pass; the deliberately large $A=0.30$ arm exceeds
         the threshold.
   \item \textbf{Alt-model} (train on CV, pseudo-data from an alternative universe):
         MaCCQE \SI{0.068}{\percent}, Flux \SI{0.376}{\percent} (thr \SI{2.0}{\percent}).
 \end{itemize}
 
-\paragraph{Bottom-line test.}
-Following the unbinned-unfolding guide~\cite{unbinnedguide}, the unfolded result must
-recover the data's deviation from the prior with a residual far smaller than the feature
-itself (the unfolding cannot manufacture discriminating power). Using the closure runs,
-in the bins carrying the injected feature the unfolded result tracks the injected truth to
-$\approx10\times$ better than the feature size: 2D (gaussian-bump truth reweight) residual
-\SI{1.69}{\percent} vs injected \SI{17.2}{\percent} (ratio $0.098$); 3D (+\SI{30}{\percent}
-$\Eavail$ bump, $\Eavail$ projection) \SI{1.84}{\percent} vs \SI{18.1}{\percent} (ratio
-$0.102$). Both pass.
-(The naive data-vs-prior form---reco vs truth $\chi^2$---instead has truth$>$reco, as
-expected for a high-resolution measurement where detector smearing lowers the reco baseline
-and a stat-only diagonal omits the unfolding covariance; the proper full-covariance
-goodness-of-fit is the $\chi^2$-vs-paper of \S\ref{sec:results-tension} and the generator
-comparisons.)
+\paragraph{Injected-feature recovery.}
+The 2D gaussian-bump truth-reweight closure passes the unbinned-unfolding guide's
+recovery test~\cite{unbinnedguide}. In the feature bins, the residual from injected truth is
+\SI{1.69}{\percent} for an injected \SI{17.2}{\percent} feature
+(ratio $0.098$), or $\approx10\times$ smaller. Recovery of the data's deviation
+from the prior must leave a residual far smaller than the feature;
+unfolding cannot manufacture discriminating power (3D: \S\ref{sec:3d-closure}).
 
-These closure tests validate the estimator but are not used to assign a
-non-closure uncertainty. Such an uncertainty would require a predeclared suite
+The naive reco-vs-truth $\chi^2$ data-vs-prior test gives truth$>$reco.
+As expected at high resolution, detector smearing lowers the
+reco baseline and a stat-only diagonal omits unfolding covariance. The proper
+full-covariance goodness-of-fit uses the $\chi^2$-vs-paper of
+\S\ref{sec:results-tension} and the generator comparisons.
+
+These closure tests validate the estimator; they are not used to assign a non-closure
+uncertainty. Such an uncertainty would require a predeclared suite
 of injection shapes and amplitudes rather than calibration to a single
 Gaussian bump.
 
-They also do not test the distinct failure mode in which pseudo-data are
-generated with a detector response that disagrees with the response supplied
-to the unfold. Appendix~\ref{app:response-mismatch} defines a complementary
-record-only $\Eavail$ response-mismatch closure and a more complete
+They do not test pseudo-data with a detector response that disagrees
+with the unfolding response. Appendix~\ref{app:response-mismatch} defines a
+complementary record-only $\Eavail$ response-mismatch closure and a more complete
 leading-nucleon follow-up. No result from that test is claimed here.
+\S\ref{sec:val-fiveaxis} validates the five-axis estimator, including background
+subtraction.
 
-Nor do they exercise the background subtraction: every closure above reweights the
-simulated signal and unfolds it without background. End-to-end five-dimensional
-pseudo-experiments that add background-simulation events and rebuild the per-bin purity
-weights exactly as the measurement does (scalar-5D campaign, development study D1) return
-the highest-$W$ column of the $(\Eavail,W)$ projection \SIrange{3.5}{4.1}{\percent} low
-and the highest-$\Eavail$, highest-$W$ cell \SI{1.7}{\percent} high at nominal truth,
-while the same experiments without background close to \SI{0.22}{\percent}. Set against
-the quoted total uncertainty of those cells this is 0.36--1.07 standard deviations. The
-bias is a property of the purity footing (\S\ref{app:negweight}), is not in any quoted
-covariance, and its size on data is not established.
-% Sources: docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md,
-% docs/orchestration/state/s5c/d1/d1_summary.json, docs/orchestration/state/s5c/d1/bias_vs_adopted.json.
-
-\paragraph{Unbinned background treatment and generator-sized truth changes.}
-The same end-to-end experiments were repeated with the unbinned negative-weight
-treatment (\texttt{-{}-bkg-mode negweight-refined}): data and signed background
-simulation are refined to non-negative weights before the first OmniFold step, and the
-background simulation is split into an injection half and an independent subtraction
-half. Sixty experiments at nominal truth bring the highest-$W$ column to
-\SIrange{0.11}{0.24}{\percent} and the corner cell to \SI{0.24}{\percent}. A set of joint
-cells nevertheless remains \SIrange{0.7}{1.1}{\percent} high, up to 14 standard errors,
-against \SI{-0.2}{\percent} without background; the mechanism is not established.
-Experiments whose truth is reweighted by the GiBUU-to-GENIE $\Eavail$ shape ratio
-(0.70--1.33 per $\Eavail$ bin, total preserved) are not followed by the unfolding. (The
-ratio was built from a GENIE prediction later found to have been generated from a
-mis-sampled flux, \texttt{KNOWN\_ISSUES.md} row 83; it remains a valid known-truth
-deformation of this size but is not a measured GiBUU--GENIE difference.) The
-$(\Eavail,W)$ cells deviate from that truth by a median of \SI{9.7}{\percent}, up to
-\SI{74}{\percent} in the highest-$W$ column, and by several percent in the largest cells.
-A $q_3$ deformation that leaves the $(\Eavail,W)$ truth unchanged moves those cells by up
-to \SI{37}{\percent}. Signal-only experiments with the same seeds reproduce both results,
-so they are a property of the estimator (five iterations, the GBDT configuration of
-\S\ref{sec:method}), not of the background treatment. This regularization bias is not
-included in any quoted uncertainty. On the data, the two background treatments differ by
-a median of \SI{0.36}{\percent} and at most \SI{1.4}{\percent} over the reported
-functionals. This measures method sensitivity, not a bias. The negative-weight treatment
-is not adopted.
-% Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md (VL151, VL152);
-% KNOWN_ISSUES 75, 77; independently reproduced (state/s5n/stage1/review-round-1.md).
-
-\paragraph{Diagnosis of the departure response; a refinement-capacity candidate.}
-An instrumented rerun recorded every OmniFold iteration of these experiments. It
-reproduced the development results bitwise and repeated them through the unmodified
-driver, which shows the same response to the $\Eavail$ departure (highest-$W$ cell
-\SI{73.8}{\percent} against \SI{73.5}{\percent}).
-
-The two steps behave as intended. The first step matches the pseudo-data at reco level
-within statistical noise, and the second reproduces its truth-level weight sums to
-\SI{0.5}{\percent}. Yet the unfolded result folds back onto the data less well than the
-true model does. On noise-free pseudo-data it reproduces more than \SI{99}{\percent} of
-the departure's reco-level signal while the $(\Eavail,W)$ cells stay \SIrange{5}{11}{\percent}
-off in the median and up to \SI{74}{\percent} in the worst cell. The remaining reco-level
-imprint is small relative to the departure but still statistically significant at the
-analysis exposure.
-
-Thirty iterations reduce the $\Eavail$ residual by \SI{26}{\percent}, and it is still
-falling slowly; the $q_3$ residual grows with iterations. A larger classifier improves the
-reco-level fit without improving the $\Eavail$ truth residual, and removing the regression
-for events that fail reconstruction does not help it. No single cause is established, and
-no authorized estimator change passes its predeclared screen for the GiBUU-to-GENIE departure.
-
-The residual background bias has a named cause: the refinement classifier underfits.
-Raising its capacity (400 trees, 31 leaves) reduces the background-related bias by more
-than \SI{80}{\percent} in every affected cell. A candidate built on this passes the
-nominal background-inclusive closure on 40 fresh pseudo-experiments (largest deviation
-2.7 standard errors) and a calibration test of its statistical intervals (pull width 1.02).
-It fails the predeclared stability test on the data: perturbing the inputs within
-floating-point rounding moves the reported functionals by 0.8 statistical standard
-deviations in the median and 2.6 at most. The same instability, at most \SI{1.2}{\percent}, explains the
-difference between the driver and development pipelines on the data; whether the
-data-bootstrap uncertainty already absorbs it is not established. Under withheld
-generator shapes the unfolding-model dependence is \SIrange{2}{6}{\percent} in the median
-and \SIrange{16}{31}{\percent} at most. Nothing is adopted.
-% Source: docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md (VL153);
-% docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (VL154); KNOWN_ISSUES 75, 77, 79, 80;
-% independently reproduced (state/s5e/diag/review-round-1.md, state/s5e/cand/review-round-2.md).
+\subsection{Other validation diagnostics}
 
 \paragraph{Unbinned diagnostic (C2ST).}
-As a binning-free check that the unfold removes the data\,$\leftrightarrow$\,MC mismatch, we use
-a classifier two-sample test (C2ST): a classifier is trained to separate the data from the
+The classifier two-sample test (C2ST) AUC drops from $\approx0.535$ before
+unfolding to $\approx0.501$ after, indicating removal of the reconstructed
+data\,$\leftrightarrow$\,MC mismatch. A classifier is trained to separate the data from the
 (reweighted) simulation in the full unbinned feature space, and its held-out AUC/accuracy is
-compared to the chance value $0.5$. The discriminator AUC drops from $\approx0.535$ before
-unfolding to $\approx0.501$ after, indicating that the reweighting removes the reconstructed
-data--MC mismatch. We report this strictly as a \emph{descriptive} diagnostic and do \emph{not}
-quote a calibrated $p$-value: the C2ST as run trains and evaluates on the same sample without
-cross-fitting, and a valid null would require re-running the full (cross-fitted) OmniFold
-pipeline per pseudoexperiment. Calibrated unbinned goodness-of-fit remains an
-open problem~\cite{unbinnedguide}.
+compared to the chance value $0.5$. This binning-free check is strictly
+\emph{descriptive}; we do \emph{not} quote a calibrated $p$-value. The C2ST as run
+trains and evaluates on the same sample without cross-fitting. A valid null
+would require re-running the full cross-fitted OmniFold pipeline per
+pseudoexperiment. Calibrated unbinned goodness-of-fit remains
+open~\cite{unbinnedguide}.
 
-\paragraph{Toy residuals and coverage status.}
-The existing 200 2D closure toys fluctuate both the unfolded result and the
-stored \texttt{hTruthXSec2D} through the MC bootstrap. The stored truth varies
-in all 205 reported bins, so its all-toy mean is not an independent fixed truth
-for a split-sample coverage claim. We therefore quote no 2D coverage number
-from this ensemble. Its same-ensemble figures
-(\SI{\pullFrac}{\percent}, $\langle|r|\rangle=\pullMeanAbs$ vs
-$\sqrt{2/\pi}=\pullGauss$, and \SI{97.6}{\percent} of bins above
-\SI{65}{\percent}) are retained only as standardized-pull/Gaussianity
-diagnostics. A coverage test requires an independently stored unfluctuated
-truth reference (or a redesigned ensemble) and remains open.
+\paragraph{Coverage of the 2D statistical band against a fixed truth.}
+\label{sec:coverage}
+This test asks whether the production 2D statistical band (\S\ref{sec:bootstrap}) covers a
+\emph{fixed} truth at its nominal rate. Its design, criteria and positive control were
+pre-registered before any toy ran (App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}).
 
-\paragraph{Stability.}
-5-iter total $\sigma$ within \SI{0.026}{\percent} of 10-iter (per-bin shape RMS
+Each toy draws pseudo-data event by event as Poisson counts with means equal to the simulated
+reconstructed weights. It resamples the simulation with the production Poisson(1) bootstrap, and
+unfolds with the production estimator (lgbm, five iterations, fixed training seed). The reference
+$T$ is the unfluctuated simulated truth, identical in every toy. The no-fluctuation configuration
+reproduces both the production closure output and $T$ exactly.
+
+In reported bin $b$ of toy $t$, $z_{tb}=(U_{tb}-T_b)/(r_b T_b)$, where $r_b$ is the production
+band's relative spread. Coverage $C_k$ is the fraction of all (toy, bin) pairs with $|z|\le k$,
+with intervals from resampling whole toys. The band counts as nominal if its ratio to the true
+scatter lies in $[0.9,1.1]$, which gives the windows $C_1\in[\covTwoDWinOneLo,\covTwoDWinOneHi]$
+and $C_2\in[\covTwoDWinTwoLo,\covTwoDWinTwoHi]$. A FAIL at the interim look of 100 toys, with
+99.5\% intervals, stops the study.
+
+\textbf{The band fails: it undercovers in its tails.} At the interim look
+($N_{\text{toy}}=\covTwoDNtoy$, 205 bins):
+\begin{itemize}[nosep]
+  \item $C_1=\covTwoDCOne$ $[\covTwoDCOneLo,\covTwoDCOneHi]$ is nominal (Gaussian 0.683).
+  \item $C_2=\covTwoDCTwo$ $[\covTwoDCTwoLo,\covTwoDCTwoHi]$ lies entirely below its window
+        (Gaussian 0.954).
+  \item The pull RMS is $\covTwoDPullRMS$, and the mean pull is consistent with zero.
+\end{itemize}
+The pre-registered verdict is FAIL-undercoverage, and the study stopped by its futility rule. An
+independent recomputation with its own code reproduces the pooled coverages, their intervals, the
+controls and the secondary below.
+
+The positive control rescales the band on the same toys. At $\times0.7$ and $\times1.3$, $C_2$
+moves to $\covTwoDCTwoLowCtl$ and $\covTwoDCTwoHighCtl$, and both directions are flagged.
+
+The failure is one of width, not bias. The per-bin pattern below is descriptive and post hoc.
+\begin{itemize}[nosep]
+  \item \textbf{Uneven in both directions.} The band is too wide in $\covTwoDNwide$ bins (pull RMS
+        below 0.9) and too narrow in $\covTwoDNnarrow$ (above 1.1). The pooled $C_1$ is nominal
+        partly through this cancellation; the median bin's pull RMS is $\covTwoDBinRMSmed$.
+  \item \textbf{Where it is too narrow.} $\covTwoDNlowCTwo$ bins have a per-bin $C_2$ below 0.85.
+        Of these, 21 form a block at $\pPar\ge\SI{15}{GeV/c}$ and $\pT<\SI{0.55}{GeV/c}$. Six more
+        lie in the highest-$\pT$ row (\SIrange{2.5}{4.5}{GeV/c}) at $\pPar$
+        \SIrange{6}{20}{GeV/c}. The $\covTwoDNedge$ bins with pull RMS above~2 carry
+        \SI{\covTwoDDeficitShare}{\percent} of the $C_2$ deficit.
+\end{itemize}
+
+The band's replicas divide by a bootstrapped completeness that the central value (exactly~1)
+does not carry. A secondary, added by amendment after the pilot, applies that division to the toys.
+Scored against the same band, it overcovers: $C_1=\covTwoDRepCOne$, with its interval above the
+window. By the rule fixed before the full run (its undercoverage branch was written after the
+pilot pulls had been seen), the primary undercoverage is attributed to this term of the band's
+construction. The attribution is partial: in the replica form, the $\pPar$
+\SIrange{40}{60}{GeV/c} column still undercovers.
+That term was removed on 2026-10-06 and the band rebuilt; the rebuilt band is the quoted one
+(\texttt{KNOWN\_ISSUES.md} 84; App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}). This
+section's result is for the earlier band and was not re-tested.
+
+\textbf{Scope.} The result concerns the statistical band only.
+\begin{itemize}[nosep]
+  \item It changes no central value or quoted uncertainty.
+  \item It says nothing about systematic, total or five-dimensional coverage.
+  \item Its simulation-side scatter reuses the resampling that built the band, so only the
+        data-side fluctuation is tested by an independent mechanism.
+  \item Because $T$ equals the prior, it cannot detect regularization bias toward the prior.
+\end{itemize}
+
+\paragraph{Same-ensemble pull diagnostic (not a coverage test).}
+An earlier ensemble contains $N_{\text{toy}}=200$ 2D closure unfolds
+(App.~\ref{app:provenance}, \texttt{coverage-toys}),
+% (\texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}; rollup
+% \texttt{uq/coverage\_toys.py}, summary \texttt{uq/coverage/coverage\_summary.txt})
+with weighted MC reco pseudo-data and truth marginals stored in truth
+histograms. Each uses its own bootstrap seed $k$ and per-event Poisson(1) draws,
+as in production; seeds avoid collisions with production replicas.
+% CLI: \texttt{-{}-closure} with \texttt{-{}-bootstrap-seed $k$}; truth histogram \texttt{hTruthXSec2D}
+Toy seeds are independent; bins within a toy are correlated. The MC bootstrap
+multiplies the truth weight, fluctuating both the unfolded result and stored truth.
+% truth weight: \texttt{w\_truth}; stored truth: \texttt{hTruthXSec2D}
+Stored truth varies in all 205 reported bins, so its all-toy mean
+$\bar X^{\text{truth}}$ is not an independent fixed truth for a split-sample
+coverage claim; it only centers a same-ensemble diagnostic.
+
+In reported bin $i$ with $\bar X^{\text{truth}}_{i}>0$, define the across-toy
+standard deviation $\sigma_{i}$ (ddof $=1$) and standardized residual
+$r^{(t)}_{i}=(U^{(t)}_{i}-\bar X^{\text{truth}}_{i})/\sigma_{i}$.
+Compare the per-bin fraction $c_{i}$ of toys with $|r^{(t)}_{i}|\le1$ to the unit-normal
+$\Phi(1)-\Phi(-1)=\mathrm{erf}(1/\sqrt 2)\approx0.6827$ and the mean absolute
+pull $\langle|r|\rangle$ to $\sqrt{2/\pi}$. The fraction with $|r|\le1$ is
+\SI{\pullFrac}{\percent} (Gaussian reference $68.27\%$; $\Delta = +0.44\%$;
+median $68.50\%$); $\langle|r|\rangle=\pullMeanAbs$ vs
+$\sqrt{2/\pi}=\pullGauss$ (within $0.5\%$); the signed residual mean is
+$+0.006 \pm 0.082\,\sigma$ (no bias); and \SI{97.6}{\percent} of bins have a
+within-bin fraction above \SI{65}{\percent} (only $5$ of $205$ fall below).
+These show that the standardized toy residuals are approximately normal.
+
+With $\sigma_i$ estimated from the scored toys, these diagnostics are not a
+frequentist coverage measurement and do not certify the bootstrap band. The figures
+serve only as standardized-pull/Gaussianity diagnostics; no coverage number is quoted from
+this ensemble. The fixed-truth test above is the 2D coverage statement (App.~\ref{app:history}).
+
+\paragraph{Stability and efficiency.}
+The 5-iter total $\sigma$ is within \SI{0.026}{\percent} of 10-iter (per-bin shape RMS
 \SI{1.54}{\percent}); HistGBT and exact-GBT agree on total $\sigma$ to
 \SI{0.04}{\percent}. Efficiency (Fig.~\ref{fig:eff}) reproduces the published
 Fig.~5.
 
-\paragraph{Classifier choice (GBDT vs.\ NN).}
-Published OmniFold analyses use neural-network
-classifiers~\cite{Andreassen:2019cjw,unbinnedguide}; we use gradient-boosted decision
-trees, whose output must still be a calibrated posterior for $w=p/(1-p)$ to be valid.
-On the step-1 reco classifier (data vs.\ MC reco) the reliability curve is near-diagonal
-(Brier \(\approx0.25\) at AUC \(\approx0.537\): data and reco MC are nearly
-indistinguishable, so the reweight is a modest correction). A full scalar
-Keras-MLP OmniFold cross-check on the same weighted 3D inputs and five-iteration
-loop gives total ratio $1.0078$ versus the GBDT reference and median projection
-differences of \SIrange{0.7}{1.4}{\percent} (Fig.~\ref{fig:calibration}).
-The agreement in the populated bulk establishes that the scalar result is not
-specific to the production classifier family. A stronger family cross-check, on a
-low-level recoil point-cloud representation rather than the engineered scalars, is
-reported with the rest of that track in \S\ref{sec:pet-shape}.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.95\textwidth]{nn_vs_gbdt_full}
-  \caption{Full five-iteration scalar OmniFold cross-check using identical
-  weighted 3D inputs and extraction, with only the classifier family changed.
-  Top: absolutely normalized GBDT and Keras-MLP projections. Bottom: their
-  binwise ratio. The MLP/GBDT total-cross-section ratio is $1.0078$; median
-  absolute projection differences are \SI{1.20}{\percent} in $\pT$,
-  \SI{1.36}{\percent} in $\pPar$, and \SI{0.66}{\percent} in $\Eavail$.
-  The larger excursions are confined to the sparsely populated outermost
-  $\pT$ and $\pPar$ bins.}
-  \label{fig:calibration}
-\end{figure}
-
-
-
-
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.62\textwidth]{MEFHC_5iter_xsec_eff_heatmap}
-  \caption{Selection efficiency over the $(\pT,\pPar)$ truth grid. Efficiency is
-  diagnostic only --- OmniFold's miss treatment performs the acceptance
-  correction natively (\S\ref{sec:method-algo}).}
+  \caption{Selection efficiency on the $(\pT,\pPar)$ truth grid. Efficiency is
+  diagnostic only; OmniFold's miss treatment natively corrects acceptance
+  (\S\ref{sec:method-algo}).}
   \label{fig:eff}
 \end{figure}

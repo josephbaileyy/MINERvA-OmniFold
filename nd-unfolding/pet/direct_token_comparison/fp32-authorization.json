@@ -1,0 +1,35 @@
+{
+  "status": "AUTHORIZED",
+  "decision": "full-fp32-single-attempt",
+  "prior_jobs": [
+    "58198332",
+    "58201775",
+    "58240587",
+    "58277208"
+  ],
+  "prior_charged_seconds": 395,
+  "wall_seconds": 6600,
+  "preflight_seconds": 1200,
+  "calibration_seconds": 5400,
+  "profile": {
+    "gpus": 1,
+    "cpus": 32,
+    "memory_GiB": 56
+  },
+  "precision_policy": {
+    "tf32_enabled": false,
+    "determinism_enabled": true,
+    "mixed_precision_policy": "float32",
+    "floatx": "float32"
+  },
+  "total_gpu_hours": 290,
+  "total_cpu_core_hours": 9296,
+  "storage_GiB": 200,
+  "scope": "synthetic-only",
+  "automatic_retry": false,
+  "full_matrix": "Only after complete GPU preflight, paired calibration and unchanged integrity/20pct-headroom gates",
+  "precision_manifest_sha256": "7e467b05639ff0b83c1307ef3eaee8d13c8295c02e65ffb9437de5cf6f960380",
+  "user_instruction": "Okay I approve it",
+  "approval_date": "2026-09-14 Asia/Seoul",
+  "approved_preparation_commit": "d01edc058c23c5965cec5584ae391dac409892c6"
+}

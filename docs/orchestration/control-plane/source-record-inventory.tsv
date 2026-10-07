@@ -49,7 +49,7 @@ OI-3	active	BLOCKED-EXTERNAL	migration-carried-forward	9beffe579cee1bdcf03e096cb
 OI-4	active	BLOCKED-EXTERNAL	migration-carried-forward	063c2bfc4c2053134774e14f9b93293287a08503e6301379243a601419ff3b69	BLOCKED
 OI-5	retired	-	migration-carried-forward	81768a5cabbc5f3a442b62ac4058b697eaacd5406ad111342b58e4b04082ca77	DISCHARGED 2026-08-13 — the conflict was a scope collision, both statements are true
 OI-6	active	NOW	migration-carried-forward	777ebab79d9dff369ecf434e84574cdc22dc18a9fc2172e04a3f78e9b9c22de0	DECIDED 2026-08-15 (purity, reading (A)); the NOTE OBLIGATION IS DISCHARGED; the REVISIT OBLIGATION SURVIVES AS THE OPEN
-OI-7	active	BLOCKED-EXTERNAL	migration-carried-forward	3f0f19c0b4f3c4960a5e04d6fb9fba7e687fc564bd9aef05a211a342ad6827bf	BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S
+OI-7	active	BLOCKED-EXTERNAL	migration-carried-forward	7cb58f4d5b73854fc970c468fba745d5f9118adaabb74c8d40b84b79bb8c549c	BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S
 OI-8	retired	-	migration-carried-forward	2d549f64b9a7187ec6fd0d3a0add89acac6bdd6980505ae0c178eb77a3cc0250	CLOSED 2026-08-15 — ruled, corroboration MET, and the RULING'S BASIS WAS REFUTED WHILE ITS DISPOSITION HELD
 OI-9	active	NOW	migration-carried-forward	00e9f8796f268caab4914f3c9c5df07ec2c63a613d4f4ca1577216627e4c3eb9	OPEN
 OI-10	active	NOW	migration-carried-forward	1fff73e47df2038fcc4ff6a1df898ae153347e732447c037b81f262e221b468f	OPEN
@@ -125,7 +125,7 @@ OI-82	retired	-	migration-carried-forward	77adfc76dbf2041be324cb0fa68f4c3762114a
 OI-123	active	NOW	migration-carried-forward	46759cb1792e09a00b0868506e30078202e379c5a5f302eb156e8261d83e37f5	OPEN — a landmine armed by a change that has already landed, and the fix is not this lane's to make. Raised 2026-08-14 b
 OI-124	retired	-	migration-carried-forward	a9c664e26816376e8daca41caaebac8e084da5a0d61bfa84d81ccc7bccbe3f56	CLOSED 2026-08-15 by the OI-124 disposition lane (peer session C) — DISPOSITION (a) TAKEN: P4 RETIRED, the ordering argu
 OI-125	active	NOW	migration-carried-forward	a693e230d58e85de5f8ccbb9adc94f4d9dc1a81d6df6be5d6d052a3300907d39	STILL OPEN, AND NARROWED — 2026-08-15, after the instrument ran. The fix landed and it records the WRONG REDUCTION (BEN-
-OI-126	active	WAITING-JOSEPH	migration-carried-forward	8a42b104ceb11b464d81228aa4c4f8a1b9e32d0454e710120ac5a14a2eba5261	RULED BY JOSEPH 2026-08-20 — THIS ROW NO LONGER NEEDS A RULING AND IS NOT A LIVE SCIENTIFIC QUESTION. His decision, VERB
+OI-126	retired	-	migration-carried-forward	8a42b104ceb11b464d81228aa4c4f8a1b9e32d0454e710120ac5a14a2eba5261	RULED BY JOSEPH 2026-08-20 — THIS ROW NO LONGER NEEDS A RULING AND IS NOT A LIVE SCIENTIFIC QUESTION. His decision, VERB
 OI-127	active	NOW	migration-carried-forward	44f6a7db291cf9ce869e0becc6d675e0c412ed3c048691b79f10de87aa9223a8	OPEN — raised 2026-08-15 by the propagation-correction lane. THE INTEGRITY GUARD CANNOT SEE THE GATE-5 IMPLEMENTATION PI
 OI-128	active	NOW	migration-carried-forward	5939945e8ea185aac8d1eae495df4bcaca597c0ed3bf708bc17d084086d9f28e	NARROWED 2026-08-16 at 84d022b, NOT CLOSED — the receipt-side hole is shut; the execution-surface half is not. The adopt
 OI-129	active	NOW	migration-carried-forward	08d7f6ceda8ea7b82b965ee50208e1e7b3d37d1451bd7b15928dc6947b583123	OPEN — raised 2026-08-16 by lane A (N3/N4 repair lane) while adjudicating the real-product C4 = M C5 Mᵀ identity. THE PR

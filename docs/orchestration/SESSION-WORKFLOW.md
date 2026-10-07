@@ -1,5 +1,11 @@
 # Multi-session workflow
 
+**Read before campaign work:** [session and campaign review, 2026-09-29](CAMPAIGN-REVIEW-20260929.md).
+Use its evidence and limitations when choosing models, roles, session boundaries, and review budgets.
+Record that choice briefly in the existing plan or handoff. Historical role/account defaults below
+are not evidence that a particular model is best; explicit task instructions and campaign contracts
+still govern assignments, required reviews, and stopping conditions.
+
 **Status:** LIVE policy. **Review state:** UNREVIEWED. This document defines how Joseph, Claude Personal,
 Claude-school sessions A–D, and Codex divide work. It does not replace the
 scientific state in [`LIVE-STATE.md`](LIVE-STATE.md), the open-item ledger in

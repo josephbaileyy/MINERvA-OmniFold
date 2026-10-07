@@ -1,0 +1,14 @@
+wrote /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/tables/w2b-dump-tasks.tsv
+nothing to sync
+{
+ "stage": "dump",
+ "recorded_spend": 1.8221,
+ "inflight_jobs": 0,
+ "inflight_reservation": 0,
+ "new_tasks": 3,
+ "new_reservation": 0.7266,
+ "total": 2.5487,
+ "ceiling": 8.0,
+ "verdict": "PASS"
+}
+[w2b] dump -> 59427044

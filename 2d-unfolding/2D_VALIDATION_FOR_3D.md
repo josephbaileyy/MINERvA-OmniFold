@@ -16,7 +16,7 @@ item now tied to the running data/MC-split bootstrap campaign.
 - Covariance verified **byte-for-byte against MAT `MnvH1D::GetTotalErrorMatrix`**
   — max element-wise rel diff 5.5e-17 (`uq/matcorr_vs_mnvh1d.txt`).
 - Flux 1/Φ normalization bug fixed (Task #70): Flux band 1.0 %→**4.99 %**; our
-  standalone budget 6.87 % ≈ paper 6.86 %.
+  standalone budget 6.87 % ≈ paper 6.85 %.
 - Two benign notes: `EtaNCEL` is null (√tr ~1e-51 — NC-elastic, irrelevant to a
   νμ-CC sample); `FrInel_pi` is *correctly absent* (not in the MAT registry; we
   studied that dial separately and found it sub-percent on E_avail).

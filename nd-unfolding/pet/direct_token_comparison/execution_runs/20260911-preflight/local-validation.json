@@ -1,0 +1,69 @@
+{
+  "scope": "Local guarded synthetic validation; GPU runtime and Linux tests not yet executed",
+  "platform": "macOS arm64, Python 3.11.15",
+  "package_versions": {
+    "numpy": "1.26.4",
+    "tensorflow": "2.16.2",
+    "keras": "3.15.1",
+    "scipy": "1.16.3",
+    "pytest": "9.1.1"
+  },
+  "runtime_note": "Separate venv with pinned SciPy; remaining dependencies inherited via a .pth path from the existing local preparation runtime. Existing runtime unchanged.",
+  "full_suite": {
+    "exit_code": 0,
+    "passed": 62,
+    "subtests_passed": 10,
+    "seconds": 21.29,
+    "log": "local-full-tests.log.gz",
+    "guard": "local-full-tests-guard.jsonl.gz",
+    "extra_driver_flag": "--include-source-smoke-tests"
+  },
+  "cluster_scope_local_rehearsal": {
+    "exit_code": 0,
+    "passed": 49,
+    "subtests_passed": 10,
+    "seconds": 23.57,
+    "log": "local-model-tests.log.gz",
+    "guard": "local-model-tests-guard.jsonl.gz",
+    "foreign_cluster_search_paths": []
+  },
+  "checks": {
+    "ruff": "PASS",
+    "black": "PASS",
+    "mypy_strict_linux": "PASS",
+    "bash_syntax": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "prior_attempts": [
+    {
+      "scope": "SciPy 1.17.1, optional parent probe adapter",
+      "passed": 60,
+      "failed": 2,
+      "subtests_passed": 10,
+      "reason": "fresh children attempted optional lscpu probe"
+    },
+    {
+      "scope": "SciPy 1.16.3, optional parent probe adapter",
+      "passed": 61,
+      "failed": 1,
+      "subtests_passed": 10,
+      "reason": "existing reload test np.testing attempted optional lscpu probe"
+    }
+  ],
+  "frozen_scientific_files_unchanged": {
+    "nd-unfolding/pet/typed_token_comparison.py": "905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95",
+    "nd-unfolding/pet/run_typed_token_comparison.py": "7597d48826fe0b1913dc89bb6a15bf5a4befa773ac2970bd7b7e3525080e51fb",
+    "nd-unfolding/tests/test_typed_token_comparison.py": "7ec2b95c41b1c0fc4943fd00514611a1b981244a3913a634b4bf47385bf0c44d"
+  },
+  "files_sha256": {
+    "nd-unfolding/pet/typed_token_comparison.py": "905aac2dcad3eeb34dd4e21c2196af1ced6d2a58aaa68b7dc328ad737e332b95",
+    "nd-unfolding/pet/run_typed_token_comparison.py": "7597d48826fe0b1913dc89bb6a15bf5a4befa773ac2970bd7b7e3525080e51fb",
+    "nd-unfolding/tests/test_typed_token_comparison.py": "7ec2b95c41b1c0fc4943fd00514611a1b981244a3913a634b4bf47385bf0c44d",
+    "nd-unfolding/mnv_guarded_run.py": "30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b",
+    "nd-unfolding/pet/direct_token_comparison/calibration_measure.py": "505d5409bd7749cd1d7cd8f8d16a2ab3f88619437d23926e4afda3e0e9934951",
+    "nd-unfolding/pet/direct_token_comparison/sbatch_calibration.sh": "062001f712066923839c88e3674f6cfca171b2ea0b627951940af676eb4be6f7",
+    "nd-unfolding/tests/test_typed_descriptor_keras.py": "e7eb3940bac75009587e01ede1306a9d3cecaf8ea929368f0167720967484f8a"
+  },
+  "gpu_allocations_submitted": 0,
+  "gpu_hours_consumed": 0
+}

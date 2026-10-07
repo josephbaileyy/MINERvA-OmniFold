@@ -1,0 +1,10 @@
+{
+  "archive_sha256": "0c1d0944f970ba1d00c5eb55c6fc21923f18ae3d21dae867997ada7fa1db2337",
+  "files_verified": 284,
+  "bytes_verified": 41260480,
+  "exact_inventory_match": true,
+  "capture_receipt_match": true,
+  "slurm_log_hash_match": true,
+  "guard_records": 1,
+  "guard_outside_origins": 0
+}

@@ -1,0 +1,2 @@
+uuid, pci.bus_id, name
+GPU-b858ab0b-bf0b-7748-dfdb-cd4aa68a8e15, 00000000:03:00.0, NVIDIA A100-SXM4-80GB

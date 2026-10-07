@@ -1,0 +1,1105 @@
+{
+ "scope": "Phase A2 Part 2: the data path (scope section 5, A5)",
+ "inputs": {
+  "closure_npz": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12.npz",
+   "sha256": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+   "expected_by_report": "fa6b3463160242164a2c6506c787d09194d0715d2bd64e24dba771c8f2a29625",
+   "matches_pin": true
+  },
+  "identity_sidecar": {
+   "path": "/pscratch/sd/j/josephrb/event-identity-audit/G2_FPS_MEFHC_P12.identity.npz",
+   "sha256": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c",
+   "expected_by_frozen_design": "01e07412b253ff496c30025cc71a9185b166a00892b1e1b4c8bce714ddd5f95c",
+   "matches_pin": true
+  },
+  "inventory_receipt": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/g2_input/G2_FPS_MEFHC_P12_RECEIPT.json",
+   "sha256": "d466a0c18deaafa2ae645002c8dbc9b9879476adb45a40a85c0bae9e0129d25e",
+   "expected_by_frozen_design": "d466a0c18deaafa2ae645002c8dbc9b9879476adb45a40a85c0bae9e0129d25e",
+   "matches_pin": true
+  },
+  "theirs_join_sig_npz": {
+   "path": "/pscratch/sd/j/josephrb/campaign-20260920/join/join_sig.npz",
+   "sha256": "33709fa057d1443478f798112b1ca61905b3a2f9e55659e6f9726d15d55b48b6"
+  },
+  "theirs_join_sig_json": {
+   "path": "/pscratch/sd/j/josephrb/campaign-20260920/join/join_sig.json",
+   "sha256": "5e62198e216f2f6b0db0ba604fa561a66fc9c75e387d4d759594889310dbb770"
+  },
+  "theirs_cache_final": {
+   "path": "/pscratch/sd/j/josephrb/campaign-20260920/cache/theirs-final.npz",
+   "sha256": "cc88626bc44293a12e221c6e540476f7d29c718126daf1a090bcdf489d635045"
+  }
+ },
+ "checks": {
+  "identity_binding": {
+   "result": "PASS",
+   "claim": "the identity sidecar is bound to this inventory, row for row",
+   "evidence": {
+    "inventory_stored_sig_identity_hash": "5ade9c49a026cfa619ba71870087990fbbddc5dcad4c95f0f459c3c893783af1",
+    "recomputed_inventory_order_hash(w_truth,pass_truth)": "5ade9c49a026cfa619ba71870087990fbbddc5dcad4c95f0f459c3c893783af1",
+    "sidecar_sig_bound_identity_hash": "5ade9c49a026cfa619ba71870087990fbbddc5dcad4c95f0f459c3c893783af1",
+    "sidecar_rows": 49152885,
+    "inventory_rows": 49152885,
+    "identity_fields": [
+     "mc_run",
+     "mc_subrun",
+     "mc_nthEvtInFile"
+    ]
+   }
+  },
+  "identity_uniqueness": {
+   "result": "PASS",
+   "claim": "(mc_run, mc_subrun, mc_nthEvtInFile) identifies one inventory row; rows are events",
+   "evidence": {
+    "rows": 49152885,
+    "distinct_(run,subrun,nth)": 49152885,
+    "distinct_(run,subrun,nth,source)": 49152885,
+    "distinct_sig_event_key": 49152885,
+    "max_occurrence": 0,
+    "min_occurrence": 0,
+    "sources_present": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   }
+  },
+  "mc_subsample": {
+   "result": "PASS",
+   "claim": "every run's mc_indices equals sort(default_rng(0).choice(N, 2_000_000, replace=False)), the loader's subsample",
+   "evidence": {
+    "runs_checked": 56,
+    "all_equal": true,
+    "subsample_rows": 2000000,
+    "inventory_rows": 49152885,
+    "fraction_of_inventory": 0.04068937153943253,
+    "imc_sha256": "74c7a7606786a48f41e7f6020461fb37f57f0c52c6e0f0886099415db06b2725"
+   }
+  },
+  "split_isolation": {
+   "result": "PASS",
+   "claim": "tuning/pilot/final and halves A/B are pairwise disjoint BY EVENT IDENTITY; each stage's halves are re-derived bit-for-bit from the committed split code; every run in a stage used the same halves",
+   "evidence": {
+    "stage_split": {
+     "counts": {
+      "tuning": 399479,
+      "pilot": 400235,
+      "final": 1200286
+     }
+    },
+    "identity_overlap_counts": {
+     "tuning_a&tuning_b": 0,
+     "tuning_a&pilot_a": 0,
+     "tuning_a&pilot_b": 0,
+     "tuning_a&final_a": 0,
+     "tuning_a&final_b": 0,
+     "tuning_b&pilot_a": 0,
+     "tuning_b&pilot_b": 0,
+     "tuning_b&final_a": 0,
+     "tuning_b&final_b": 0,
+     "pilot_a&pilot_b": 0,
+     "pilot_a&final_a": 0,
+     "pilot_a&final_b": 0,
+     "pilot_b&final_a": 0,
+     "pilot_b&final_b": 0,
+     "final_a&final_b": 0
+    },
+    "halves_inside_own_stage": {
+     "tuning": true,
+     "pilot": true,
+     "final": true
+    },
+    "halves": {
+     "tuning": {
+      "rederived_equal_a": true,
+      "rederived_equal_b": true,
+      "distinct_half_pairs_across_runs": 1,
+      "half_size": 199739,
+      "stage_rows": 399479,
+      "stage_rows_left_out_of_both_halves": 1
+     },
+     "pilot": {
+      "rederived_equal_a": true,
+      "rederived_equal_b": true,
+      "distinct_half_pairs_across_runs": 1,
+      "half_size": 200117,
+      "stage_rows": 400235,
+      "stage_rows_left_out_of_both_halves": 1
+     },
+     "final": {
+      "rederived_equal_a": true,
+      "rederived_equal_b": true,
+      "distinct_half_pairs_across_runs": 1,
+      "half_size": 600143,
+      "stage_rows": 1200286,
+      "stage_rows_left_out_of_both_halves": 0
+     }
+    },
+    "stage_assignment": "stage_splits.assign(sig_event_id) = blake2b hash of (mc_run, mc_subrun, mc_nthEvtInFile) salted with split_seed 20260920",
+    "halves_assignment": "closure_powered_truth_reweight.deterministic_halves(stage rows, half=stage_rows//2, seed=20260920): one seeded permutation of the stage's POSITIONS, sliced twice -- a row split; it is an event split only because rows are unique events (identity_uniqueness)"
+   }
+  },
+  "selection_flags": {
+   "result": "PASS",
+   "claim": "flags partition the inventory into both / miss / fake with no 'neither' row; the report's half counts are the truth-passing rows of each half; !pass_reco rows carry the -9999 reco sentinel",
+   "evidence": {
+    "counts": {
+     "inventory": {
+      "rows": 49152885,
+      "pass_truth": 49150928,
+      "pass_reco": 20573521,
+      "both": 20571564,
+      "miss_truth_only": 28579364,
+      "fake_reco_only": 1957,
+      "neither": 0
+     },
+     "final_half_a": {
+      "rows": 600143,
+      "pass_truth": 600130,
+      "pass_reco": 250514,
+      "both": 250501,
+      "miss_truth_only": 349629,
+      "fake_reco_only": 13,
+      "neither": 0
+     },
+     "final_half_b": {
+      "rows": 600143,
+      "pass_truth": 600111,
+      "pass_reco": 251109,
+      "both": 251077,
+      "miss_truth_only": 349034,
+      "fake_reco_only": 32,
+      "neither": 0
+     },
+     "subsample": {
+      "rows": 2000000,
+      "pass_truth": 1999928,
+      "pass_reco": 837671,
+      "both": 837599,
+      "miss_truth_only": 1162329,
+      "fake_reco_only": 72,
+      "neither": 0
+     }
+    },
+    "reco_scalars_sentinel_on_every_not_pass_reco_row": true,
+    "how_each_enters (from run_arm_evaluation.evaluate, 68cf9d29)": {
+     "pseudodata_step1": "half A rows with pass_reco & pass_gen (fakes and misses excluded)",
+     "prior_step1": "half B, pass_reco := pass_reco & pass_gen (fakes excluded)",
+     "prior_step2": "half B, pass_gen (misses included, fakes excluded)",
+     "score_target": "half A pass_truth rows, w_truth * tilt (misses included)",
+     "score_prior_and_unfolded": "half B pass_truth rows, w_truth and w_truth * push",
+     "fakes": "enter nothing: not step 1 (either leg), not step 2, not the score"
+    }
+   }
+  },
+  "dual_leg_weights": {
+   "result": "PASS",
+   "claim": "w_truth and w_reco are finite, positive, row-aligned; their relation is measured",
+   "evidence": {
+    "w_truth": {
+     "min": 0.0012975225690752268,
+     "max": 18.33888816833496,
+     "mean": 0.8212611137387804
+    },
+    "w_reco": {
+     "min": 0.0012794173089787364,
+     "max": 18.128328323364258,
+     "mean": 0.807509948967814
+    },
+    "ratio_w_reco_over_w_truth_on_both": {
+     "min": 0.9311304866918044,
+     "max": 0.9976804174694939,
+     "mean": 0.9811735257348329,
+     "fraction_exactly_1": 0.0,
+     "quantiles_1_50_99": [
+      0.9339924238234981,
+      0.9855687291879807,
+      0.9909716860257413
+     ]
+    },
+    "miss_rows_w_reco_equals_w_truth": 0.69629457114581,
+    "fake_rows": 1957,
+    "where_each_enters": {
+     "w_reco": "step 1, both legs (pseudodata w_reco*tilt; prior weight_reco)",
+     "w_truth": "step 2 and every truth-space spectrum in the score",
+     "source": "runEventLoopOmniFold.cpp: w_reco = model.GetWeight(reco universe), w_truth = model.GetWeight(truth universe); misses carry w_reco := w_truth"
+    }
+   }
+  },
+  "pseudodata_tilt": {
+   "result": "PASS",
+   "claim": "the saved tilt is exp(0.35*clip((E_avail-p50)/IQR, -3, +3))/mean(...) over half A's truth-passing rows, re-derived bit-for-bit; 1 on non-truth rows",
+   "evidence": {
+    "formula": "exp(A*clip((pT-p50)/IQR, -Z, +Z)) / mean(...)  [keys named pt_* are E_avail quantiles in GeV]",
+    "standardisation_constants_gev": {
+     "pt_p25": 0.5318406671285629,
+     "pt_p50": 1.4653696417808533,
+     "pt_p75": 3.1655117869377136,
+     "pt_iqr": 2.6336711198091507
+    },
+    "pre_normalization_mean": 1.1561864049708446,
+    "clip_z": 3.0,
+    "amplitude": 0.35,
+    "raw_eavail_at_upper_clip_gev": 9.366383001208305,
+    "raw_eavail_at_lower_clip_gev": -6.435643717646599,
+    "fraction_rows_clipped_high": 0.02881875593621382,
+    "fraction_rows_clipped_low": 0.0,
+    "tilt_min": 0.7118654594756344,
+    "tilt_max": 2.4716179897784083,
+    "unweighted_mean_tilt_on_injected_rows": 0.9999999999999998,
+    "w_truth_weighted_mean_tilt_on_injected_rows": 1.0293403571942312,
+    "bit_identical_to_saved_tilt_a": true,
+    "receipt_spec_equals_rederived": true,
+    "census_tilt_constants_whole_population_differ": {
+     "pt_p25": 0.5308068245649338,
+     "pt_p50": 1.4587417840957642,
+     "pt_p75": 3.1600151658058167,
+     "pt_iqr": 2.629208341240883
+    },
+    "census_tilt_used_for": "region census and references only (report_campaign.build_endpoint); the SCORE target uses the saved half-A tilt"
+   }
+  },
+  "pseudodata_normalisation": {
+   "result": "OBSERVATION",
+   "claim": "both step-1 classes are normalised to 1e6: pdata sum(w_reco*tilt over s1_a) and prior sum(weight_reco over s1_b). The ratio the tilt would imply is discarded",
+   "evidence": {
+    "pdata_rows_s1_a": 250501,
+    "receipt_pdata_rows": 250501,
+    "prior_rows_half_b": 600143,
+    "prior_step1_rows_s1_b": 251077,
+    "w_reco_weighted_mean_tilt_over_s1_a": 0.9254389296497054,
+    "physical_class_ratio_sum_s1a_wreco_tilt_over_sum_s1b_wreco": 0.9249583318959653,
+    "class_ratio_used": 1.0,
+    "execution_evidence_lines_measured_in_the_run_logs": [
+     [
+      "INFO: Normalizing sum of weights to 1000000.0 ...",
+      "INFO: Normalizing sum of weights to 1000000 ...",
+      "INFO: Normalizing sum of weights to 1000000.0 ..."
+     ]
+    ],
+    "execution_evidence_runs_with_a_log": 16,
+    "consequence (INFERRED)": "step 1 reweights accepted rows by r(x)/R_phys relative to misses, whose pull weight stays 1; a shape-only closure. Its effect on recovery is not measured here (Phase B)"
+   }
+  },
+  "masks_and_padding": {
+   "result": "FAIL",
+   "claim": "pads are all-zero and trail the real tokens (mask = column 0 != 0, as PET reads it); !pass_reco rows carry no reco token",
+   "evidence": {
+    "rows_checked": 1200286,
+    "num_part_cap": 12,
+    "schema": "g2-fullevent-v1",
+    "reco_tokens_per_event_on_pass_reco": [
+     1000,
+     5513,
+     7343,
+     7738,
+     7434,
+     7119,
+     6822,
+     6609,
+     6413,
+     6400,
+     6190,
+     6243,
+     426799
+    ],
+    "reco_fraction_at_cap_on_pass_reco": 0.8508361857410844,
+    "reco_pass_rows_with_zero_tokens": 1000,
+    "reco_tokens_on_not_pass_reco_rows": 0,
+    "reco_energy_descending_within_event": true,
+    "reco_tokens_with_negative_energy": 0,
+    "gen_tokens_per_event_on_pass_truth": [
+     4,
+     42,
+     307533,
+     206431,
+     194786,
+     141308,
+     104140,
+     75999,
+     54110,
+     38266,
+     27257,
+     20226,
+     30139
+    ],
+    "gen_fraction_at_cap_on_pass_truth": 0.025110790249624867,
+    "gen_pass_truth_rows_with_zero_tokens": 4,
+    "gen_pdg_values_top": {
+     "-3122": 168,
+     "-2212": 855,
+     "-2112": 836,
+     "-321": 16339,
+     "-311": 10464,
+     "-211": 368442,
+     "-11": 1644,
+     "11": 493,
+     "22": 96603,
+     "111": 751479,
+     "130": 3340,
+     "211": 1088693,
+     "311": 31977,
+     "321": 51162,
+     "2112": 1186019,
+     "2212": 1711527,
+     "3122": 35365,
+     "3212": 34,
+     "3222": 18496,
+     "1000060096": 9672,
+     "1000070144": 6,
+     "1000080128": 242,
+     "1000130240": 11,
+     "1000140288": 14,
+     "1000170368": 1,
+     "1000220480": 52,
+     "2000000128": 127232
+    },
+    "view_values_on_real_tokens": {
+     "1": 2760185,
+     "2": 1397429,
+     "3": 1399390
+    },
+    "truncation": "dump_pointcloud_inputs._pad_tokens keeps the top num_part tokens by energy and DROPS the rest; no overflow summary is written"
+   }
+  },
+  "theirs_join_and_cache": {
+   "result": "FAIL",
+   "claim": "his tokens are joined by event identity: a random sample of half-B pass_reco rows resolves to shard rows carrying the SAME (run, subrun, nth); a fresh gather equals the cache the tasks read; the cache's rows equal the runs' halves",
+   "evidence": {
+    "join_report": {
+     "stream": "sig",
+     "identity_fields": [
+      "mc_run",
+      "mc_subrun",
+      "mc_nthEvtInFile"
+     ],
+     "inventory_rows": 49152885,
+     "built_rows": 91390364,
+     "built_files": 489,
+     "matched": 29253229,
+     "unmatched": 19899656,
+     "match_fraction": 0.5951477517545511,
+     "duplicate_built_keys": 111,
+     "positional_fallback": "never",
+     "reco_coverage": {
+      "pass_reco_rows": 20573521,
+      "pass_reco_matched": 20573521,
+      "pass_reco_unmatched": 0,
+      "pass_reco_fraction": 1.0,
+      "matched_without_reco": 8679708,
+      "unmatched_without_reco": 19899656,
+      "criterion": "every pass_reco row must have a built input. Rows without reco have no reconstructed object to build a token from and are zeroed for BOTH arms, exactly as the production loader zeroes ours"
+     }
+    },
+    "pass_reco_rows_with_a_built_input": 20573521,
+    "pass_reco_rows_total": 20573521,
+    "sample_rows": 4000,
+    "sample_identity_equal": 4000,
+    "fresh_gather_equals_cache_packed": true,
+    "fresh_gather_equals_cache_globals": true,
+    "cache_rows_equal_run_halves": true,
+    "cache_s1_a_equals_pass_reco_and_pass_gen": true,
+    "cache_key": "e6f40e9586e4b90dbc5b351263f6501e496aabfc21240e22f2f344581d3b4546"
+   }
+  },
+  "theirs_model_inputs": {
+   "result": "PASS",
+   "claim": "his step-1 inputs (as the tasks read them): !pass_reco rows all-zero; ranges measured",
+   "evidence": {
+    "prior_rows": 600143,
+    "cap": 33,
+    "tokens_per_event_pass_reco": [
+     0,
+     0,
+     3845,
+     18932,
+     17834,
+     15971,
+     14458,
+     12927,
+     11976,
+     10865,
+     9886,
+     9442,
+     8567,
+     8176,
+     7558,
+     6948,
+     6522,
+     6177,
+     5911,
+     5464,
+     5158,
+     4729,
+     4362,
+     4121,
+     3909,
+     3526,
+     3402,
+     3030,
+     2818,
+     2574,
+     2395,
+     2245,
+     12429,
+     14952
+    ],
+    "fraction_at_cap_pass_reco": 0.059543863421860625,
+    "fraction_with_aggregate_blob_pid6": 0.09286803738615501,
+    "fraction_with_aggregate_prong_pid7": 0.05161105336726282,
+    "pid_counts": {
+     "0": 251109,
+     "1": 114899,
+     "2": 2693268,
+     "3": 298518,
+     "4": 165437,
+     "6": 23320,
+     "7": 12960
+    },
+    "token_columns_on_real_tokens": {
+     "eta": {
+      "min": -5.934177398681641,
+      "p01": 0.0,
+      "median": 3.206573247909546,
+      "p99": 6.6711034774780265,
+      "max": 9.564336776733398
+     },
+     "phi": {
+      "min": -3.1415927410125732,
+      "p01": -3.00557861328125,
+      "median": 0.0,
+      "p99": 3.1415927410125732,
+      "max": 3.1415927410125732
+     },
+     "log_pT": {
+      "min": -13.815510749816895,
+      "p01": -13.815510749816895,
+      "median": 0.03937419876456261,
+      "p99": 7.327146530151367,
+      "max": 10.43375015258789
+     },
+     "log_E": {
+      "min": -6.907755374908447,
+      "p01": -6.907755374908447,
+      "median": 2.843775510787964,
+      "p99": 9.384356594085682,
+      "max": 11.694847106933594
+     },
+     "pid": {
+      "min": 0.0,
+      "p01": 0.0,
+      "median": 2.0,
+      "p99": 6.0,
+      "max": 7.0
+     },
+     "dedx_pre": {
+      "min": -2.3025851249694824,
+      "p01": -2.3025851249694824,
+      "median": -2.3025851249694824,
+      "p99": 2.2027001142501823,
+      "max": 4.606169700622559
+     },
+     "x/div": {
+      "min": -0.3396974205970764,
+      "p01": -0.09833192899823189,
+      "median": 0.0,
+      "p99": 0.09848139360547063,
+      "max": 0.3735973536968231
+     },
+     "y/div": {
+      "min": -0.3160223960876465,
+      "p01": -0.09132513403892517,
+      "median": 0.0,
+      "p99": 0.09132513403892517,
+      "max": 0.32514339685440063
+     },
+     "z/div": {
+      "min": 0.0,
+      "p01": 0.0,
+      "median": 0.7640012502670288,
+      "p99": 0.9017795920372009,
+      "max": 0.9038276076316833
+     },
+     "t/div": {
+      "min": 0.0,
+      "p01": 0.0,
+      "median": 0.46138519048690796,
+      "p99": 0.9790262401103973,
+      "max": 1.5983538627624512
+     }
+    },
+    "globals_on_pass_reco_rows": {
+     "0": {
+      "min": -11.512925148010254,
+      "median": 2.837296962738037,
+      "max": 9.96440315246582,
+      "fraction_zero": 0.0
+     },
+     "1": {
+      "min": -11.512925148010254,
+      "median": -11.512925148010254,
+      "max": 5.064663410186768,
+      "fraction_zero": 0.0
+     },
+     "2": {
+      "min": -11.512925148010254,
+      "median": 7.483208656311035,
+      "max": 12.185256958007812,
+      "fraction_zero": 0.0
+     },
+     "3": {
+      "min": -6.907755374908447,
+      "median": -2.67836856842041,
+      "max": 1.5562313795089722,
+      "fraction_zero": 0.0
+     },
+     "4": {
+      "min": -6.907755374908447,
+      "median": -5.862883567810059,
+      "max": 2.2449841499328613,
+      "fraction_zero": 0.0
+     },
+     "5": {
+      "min": -6.907755374908447,
+      "median": -2.461181163787842,
+      "max": 2.2517144680023193,
+      "fraction_zero": 0.0
+     },
+     "6": {
+      "min": 0.0,
+      "median": 0.0,
+      "max": 9.0,
+      "fraction_zero": 0.7573125614772868
+     },
+     "7": {
+      "min": 1.0,
+      "median": 1.0,
+      "max": 1.0,
+      "fraction_zero": 0.0
+     },
+     "8": {
+      "min": 0.0,
+      "median": 0.0,
+      "max": 7636.30712890625,
+      "fraction_zero": 0.7723339267011536
+     },
+     "9": {
+      "min": 0.0,
+      "median": 1.0,
+      "max": 5.0,
+      "fraction_zero": 0.43586649622275586
+     },
+     "10": {
+      "min": -6.907755374908447,
+      "median": 5.119464874267578,
+      "max": 8.82253360748291,
+      "fraction_zero": 0.0
+     },
+     "11": {
+      "min": -6.907755374908447,
+      "median": 8.514397621154785,
+      "max": 11.694847106933594,
+      "fraction_zero": 0.0
+     },
+     "12": {
+      "min": -6.907755374908447,
+      "median": 6.999850273132324,
+      "max": 8.854363441467285,
+      "fraction_zero": 0.0
+     },
+     "13": {
+      "min": -6.907755374908447,
+      "median": -6.907755374908447,
+      "max": -6.907755374908447,
+      "fraction_zero": 0.0
+     },
+     "14": {
+      "min": -6.907755374908447,
+      "median": -6.907755374908447,
+      "max": 7.2128190994262695,
+      "fraction_zero": 0.0
+     },
+     "15": {
+      "min": -6.907755374908447,
+      "median": -6.907755374908447,
+      "max": 11.69450855255127,
+      "fraction_zero": 0.0
+     }
+    },
+    "mask": "log E != 0 (column 3), per theirs_token_schema.convert_packed"
+   }
+  },
+  "feature_units_at_model_input": {
+   "result": "PASS",
+   "claim": "the executed loader (68cf9d29, bkg_mode='mc-only', max_events=2e6, seed 0) returns the same subsample and flags as the inventory; inputs are GeV/m/ns-scaled clouds and z-normalised event blocks; !pass_reco event rows are zero",
+   "evidence": {
+    "loader_imc_equals_rederived_imc": true,
+    "loader_flags_equal_inventory": true,
+    "reco_cloud": {
+     "columns": [
+      "E",
+      "pos",
+      "z",
+      "view",
+      "time"
+     ],
+     "units": [
+      "GeV (MeV/1000)",
+      "m (mm/1000)",
+      "m (mm/1000)",
+      "view code 1/2/3",
+      "ns/100"
+     ],
+     "coord_idx": [
+      1,
+      2
+     ],
+     "stats_on_real_tokens": {
+      "E": {
+       "min": 3.095534339081496e-05,
+       "p01": 0.0013727163895964622,
+       "median": 0.02031799592077732,
+       "p99": 0.14481399208307266,
+       "max": 1.0624464750289917,
+       "mean": 0.02788127027451992,
+       "std": 0.02951166033744812
+      },
+      "pos": {
+       "min": -1.0545318126678467,
+       "p01": -0.9936237931251526,
+       "median": 0.00990223791450262,
+       "p99": 0.9946097135543823,
+       "max": 1.0545318126678467,
+       "mean": 0.007250661496073008,
+       "std": 0.5022760629653931
+      },
+      "z": {
+       "min": 4.292957782745361,
+       "p01": 5.589298725128174,
+       "median": 7.775699615478516,
+       "p99": 9.561324119567871,
+       "max": 9.987317085266113,
+       "mean": 7.713133811950684,
+       "std": 0.8893803954124451
+      },
+      "view": {
+       "min": 1.0,
+       "p01": 1.0,
+       "median": 2.0,
+       "p99": 3.0,
+       "max": 3.0,
+       "mean": 1.754965901374817,
+       "std": 0.8297032713890076
+      },
+      "time": {
+       "min": 1.7875012159347534,
+       "p01": 3.4990336894989014,
+       "median": 47.34715270996094,
+       "p99": 97.90209197998047,
+       "max": 120.52429962158203,
+       "mean": 48.595054626464844,
+       "std": 28.078710556030273
+      }
+     }
+    },
+    "gen_cloud": {
+     "columns": [
+      "E_GeV",
+      "px_GeV",
+      "py_GeV",
+      "pz_GeV",
+      "pdg",
+      "theta",
+      "cos_phi",
+      "sin_phi"
+     ],
+     "coord_idx": [
+      5,
+      6,
+      7
+     ],
+     "stats_on_real_tokens": {
+      "E_GeV": {
+       "min": 0.0007654335349798203,
+       "p01": 0.02500000037252903,
+       "median": 1.01004159450531,
+       "p99": 5.8889246749878055,
+       "max": 60.50765609741211,
+       "mean": 1.2235641479492188,
+       "std": 1.2615134716033936
+      },
+      "px_GeV": {
+       "min": -3.4006850719451904,
+       "p01": -0.8285832673311233,
+       "median": 0.0,
+       "p99": 0.8285259413719195,
+       "max": 4.356648921966553,
+       "mean": -0.00027503896853886545,
+       "std": 0.3060467541217804
+      },
+      "py_GeV": {
+       "min": -4.9967169761657715,
+       "p01": -0.9641005706787109,
+       "median": -0.02196793258190155,
+       "p99": 0.734673149585725,
+       "max": 2.49593186378479,
+       "mean": -0.04282663017511368,
+       "std": 0.3143977224826813
+      },
+      "pz_GeV": {
+       "min": -1.2172662019729614,
+       "p01": -0.348564382493496,
+       "median": 0.3496922552585602,
+       "p99": 5.32056699275975,
+       "max": 60.33834457397461,
+       "mean": 0.7306408882141113,
+       "std": 1.273931860923767
+      },
+      "pdg": {
+       "min": -3122.0,
+       "p01": -211.0,
+       "median": 2112.0,
+       "p99": 2000000128.0,
+       "max": 2000000128.0,
+       "mean": 48097848.0,
+       "std": 303428704.0
+      },
+      "theta": {
+       "min": 0.0,
+       "p01": 0.04443657711148262,
+       "median": 0.6794117093086243,
+       "p99": 2.7355075502395634,
+       "max": 3.1415927410125732,
+       "mean": 0.8580568432807922,
+       "std": 0.6589359045028687
+      },
+      "cos_phi": {
+       "min": -1.0,
+       "p01": -0.9995994567871094,
+       "median": -0.0007945735706016421,
+       "p99": 0.999605752825737,
+       "max": 1.0,
+       "mean": -0.0004618901002686471,
+       "std": 0.7051953077316284
+      },
+      "sin_phi": {
+       "min": -1.0,
+       "p01": -0.9996371269226074,
+       "median": -0.14192329347133636,
+       "p99": 0.9993432760238647,
+       "max": 1.0,
+       "mean": -0.07287392765283585,
+       "std": 0.7052580714225769
+      }
+     }
+    },
+    "reco_evt": {
+     "names": [
+      "pt",
+      "pparallel",
+      "mu_px",
+      "mu_py",
+      "mu_pz",
+      "mu_E",
+      "mu_cos_phi",
+      "mu_sin_phi",
+      "mu_qp",
+      "mu_minos_ok",
+      "vtx_x",
+      "vtx_y",
+      "vtx_z"
+     ],
+     "stats_on_pass_reco": {
+      "0": {
+       "min": -1.08121657371521,
+       "p01": -0.9400648236274719,
+       "median": -0.15478603541851044,
+       "p99": 2.887222480773961,
+       "max": 42.556236267089844,
+       "mean": 8.350746611540671e-06,
+       "std": 1.000343680381775
+      },
+      "1": {
+       "min": -0.9041233062744141,
+       "p01": -0.7984052538871765,
+       "median": -0.22236502170562744,
+       "p99": 4.369651889801028,
+       "max": 20.81283950805664,
+       "mean": 8.364399036508985e-06,
+       "std": 1.0003623962402344
+      },
+      "2": {
+       "min": -34.42920684814453,
+       "p01": -2.1839730739593506,
+       "median": 0.0049272156320512295,
+       "p99": 2.1714883804321534,
+       "max": 40.85083770751953,
+       "mean": 2.1569246655417373e-07,
+       "std": 1.0002385377883911
+      },
+      "3": {
+       "min": -37.93608856201172,
+       "p01": -2.2005115509033204,
+       "median": 0.009893198497593403,
+       "p99": 2.184523439407349,
+       "max": 41.19993591308594,
+       "mean": -8.323222289163823e-08,
+       "std": 1.0002137422561646
+      },
+      "4": {
+       "min": -0.9041233062744141,
+       "p01": -0.7984052956104278,
+       "median": -0.22236502170562744,
+       "p99": 4.369651889801028,
+       "max": 20.812841415405273,
+       "mean": 8.364271707250737e-06,
+       "std": 1.0003623962402344
+      },
+      "5": {
+       "min": -0.9051478505134583,
+       "p01": -0.796453183889389,
+       "median": -0.2223384827375412,
+       "p99": 4.356493091583269,
+       "max": 21.16455841064453,
+       "mean": -1.436354978068266e-05,
+       "std": 1.000360369682312
+      },
+      "6": {
+       "min": -1.4901626110076904,
+       "p01": -1.4892311811447143,
+       "median": 0.04673665389418602,
+       "p99": 1.382062828540802,
+       "max": 1.382736086845398,
+       "mean": 1.5449033980985405e-06,
+       "std": 1.0001542568206787
+      },
+      "7": {
+       "min": -1.4422221183776855,
+       "p01": -1.4415491819381714,
+       "median": 0.05143994092941284,
+       "p99": 1.3503787517547607,
+       "max": 1.350917935371399,
+       "mean": 1.3101208651278284e-07,
+       "std": 1.000029444694519
+      },
+      "8": {
+       "min": -8.163407325744629,
+       "p01": -4.140248584747314,
+       "median": 0.259670227766037,
+       "p99": 1.2394117832183846,
+       "max": 1.3856605291366577,
+       "mean": -2.3703569240751676e-05,
+       "std": 1.000246286392212
+      },
+      "9": {
+       "min": 0.0,
+       "p01": 0.0,
+       "median": 0.0,
+       "p99": 0.0,
+       "max": 0.0,
+       "mean": 0.0,
+       "std": 0.0
+      },
+      "10": {
+       "min": -2.004955768585205,
+       "p01": -1.9228590726852417,
+       "median": 0.00544208288192749,
+       "p99": 1.8542803049087526,
+       "max": 1.9252852201461792,
+       "mean": 1.8657006251032726e-07,
+       "std": 1.0001626014709473
+      },
+      "11": {
+       "min": -2.3350884914398193,
+       "p01": -1.9954238414764405,
+       "median": 0.01667911559343338,
+       "p99": 1.9132002592086803,
+       "max": 2.202136993408203,
+       "mean": 4.7182385287669604e-07,
+       "std": 1.0001567602157593
+      },
+      "12": {
+       "min": -1.8575854301452637,
+       "p01": -1.8118507862091064,
+       "median": 0.047894030809402466,
+       "p99": 1.6202206373214725,
+       "max": 1.6597565412521362,
+       "mean": 0.0006946446374058723,
+       "std": 1.000283122062683
+      }
+     },
+     "zero_on_not_pass_reco": true
+    },
+    "gen_evt": {
+     "names": [
+      "pt",
+      "pparallel"
+     ],
+     "stats_on_pass_gen": {
+      "0": {
+       "min": -1.9726812839508057,
+       "p01": -1.6643583810329436,
+       "median": -0.12552474439144135,
+       "p99": 3.2283373022079465,
+       "max": 11.68510913848877,
+       "mean": 2.658668790900265e-06,
+       "std": 1.00072181224823
+      },
+      "1": {
+       "min": -0.9691485166549683,
+       "p01": -0.950472822189331,
+       "median": -0.1808038055896759,
+       "p99": 4.509077601432798,
+       "max": 20.68890380859375,
+       "mean": 0.0001914723834488541,
+       "std": 1.0010343790054321
+      }
+     }
+    },
+    "normalisation_meta": {
+     "reco_norm_mean": [
+      0.7346780300140381,
+      6.160727024078369,
+      0.029743222519755363,
+      0.025006964802742004,
+      6.160727024078369,
+      6.221825122833252,
+      0.03739306703209877,
+      0.03268870711326599,
+      -325.0896911621094,
+      1.0,
+      0.01723375916481018,
+      0.028993261978030205,
+      7.269678592681885
+     ],
+     "reco_norm_std": [
+      0.6787887215614319,
+      5.460695743560791,
+      0.7146509885787964,
+      0.6986719965934753,
+      5.460695743560791,
+      5.484170913696289,
+      0.6961609721183777,
+      0.7160400152206421,
+      234.60166931152344,
+      9.999999974752427e-07,
+      0.43254122138023376,
+      0.4319921135902405,
+      0.6942678689956665
+     ],
+     "truth_norm_mean": [
+      0.7399617433547974,
+      4.09384298324585
+     ],
+     "truth_norm_std": [
+      0.3748440444469452,
+      4.224154472351074
+     ],
+     "normalized_over": "pass_reco (reco/data) / pass_truth (truth); !pass rows zeroed"
+    },
+    "normalisation_statistic_rows": "reco: pass_reco rows of the WHOLE 2M subsample (all three stages, both halves); truth: pass_truth rows of the same -- a shared preprocessing constant",
+    "meta_keys": [
+     "bkg_mode",
+     "bootstrap",
+     "data_scalar_source",
+     "degenerate_reco_columns",
+     "degenerate_truth_columns",
+     "estimator_fingerprint",
+     "feature_names",
+     "input_identity_hashes",
+     "mc_only",
+     "n_evt",
+     "n_evt_reco",
+     "n_evt_truth",
+     "normalized_over",
+     "reco_cloud_cols",
+     "reco_norm_mean",
+     "reco_norm_std",
+     "target",
+     "token_view_time_read",
+     "truth_feature_names",
+     "truth_norm_mean",
+     "truth_norm_std"
+    ],
+    "weights": {
+     "sum_weight_reco_on_pass_reco": 1000000.1875,
+     "sum_weight_on_pass_reco": 1018863.6875
+    }
+   }
+  },
+  "engine_files_on_the_hardcoded_root": {
+   "result": "OBSERVATION",
+   "claim": "fullevent_fps_dataloader.py:57-60 and train_fullevent_nominal.py:36-39 insert the hardcoded /pscratch/.../MINERvA-OmniFold paths at sys.path[0]; by that order the historical tasks would resolve `omnifold` (MultiFold, DataLoader, PET) and `annealed_estimator` there, not in the pinned checkout. Which file actually loaded is NOT established (no runtime capture); this records whether it could matter",
+   "evidence": {
+    "files": {
+     "omnifold_nn/omnifold/__init__.py": {
+      "production": "bbec850924ca15162f370ee63837b88371bf336746425afebfc95e36d39a8eea",
+      "pinned_68cf9d29": "bbec850924ca15162f370ee63837b88371bf336746425afebfc95e36d39a8eea",
+      "production_mtime_utc": "2026-06-04T05:46:54Z",
+      "identical": true
+     },
+     "omnifold_nn/omnifold/omnifold.py": {
+      "production": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa",
+      "pinned_68cf9d29": "3a2022b0809fa457acb03bcc4c76fd97954061d3253c3f9d753316a3b54de9aa",
+      "production_mtime_utc": "2026-08-05T02:50:47Z",
+      "identical": true
+     },
+     "omnifold_nn/omnifold/dataloader.py": {
+      "production": "bed9e0b39df54b465cb7e2a2600ff819ffb09350665603359bf12a52fdbd734a",
+      "pinned_68cf9d29": "bed9e0b39df54b465cb7e2a2600ff819ffb09350665603359bf12a52fdbd734a",
+      "production_mtime_utc": "2026-08-05T02:50:47Z",
+      "identical": true
+     },
+     "omnifold_nn/omnifold/net.py": {
+      "production": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953",
+      "pinned_68cf9d29": "f793e53749d5754e11a7877a743ed6090b45e941c29c6162927fce74894cb953",
+      "production_mtime_utc": "2026-07-17T12:11:29Z",
+      "identical": true
+     },
+     "omnifold_nn/omnifold/utils.py": {
+      "production": "72b5fd01ce687624883e770210f654b1dbca48a358d6a9d6ea02e4aff8c7c83a",
+      "pinned_68cf9d29": "72b5fd01ce687624883e770210f654b1dbca48a358d6a9d6ea02e4aff8c7c83a",
+      "production_mtime_utc": "2026-08-29T20:56:08Z",
+      "identical": true
+     },
+     "nd-unfolding/pet/annealed_estimator.py": {
+      "production": "fdf6556ccd6d0c67883dbeb5d12235ade5625d842555870c92bfa51aaf90b1c2",
+      "pinned_68cf9d29": "fdf6556ccd6d0c67883dbeb5d12235ade5625d842555870c92bfa51aaf90b1c2",
+      "production_mtime_utc": "2026-08-16T21:40:41Z",
+      "identical": true
+     },
+     "nd-unfolding/pet/fullevent_fps_dataloader.py": {
+      "production": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1",
+      "pinned_68cf9d29": "e1402370cdb8bd6349419ba6fbefa68817b799b3699cc97b673933f1f0220ce1",
+      "production_mtime_utc": "2026-08-16T21:40:41Z",
+      "identical": true
+     },
+     "nd-unfolding/pet/train_fullevent_nominal.py": {
+      "production": "91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc",
+      "pinned_68cf9d29": "91144bee2ff89ae62497c8282174f0fc1c344f455945d6b52b7b8219ecb4e7bc",
+      "production_mtime_utc": "2026-08-16T21:40:42Z",
+      "identical": true
+     },
+     "nd-unfolding/pet/closure_powered_truth_reweight.py": {
+      "production": "a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48",
+      "pinned_68cf9d29": "a45fae7c3f978c34bf73f35ab56aac668439c5784a3968b4f09799ee6090fd48",
+      "production_mtime_utc": "2026-08-07T02:02:33Z",
+      "identical": true
+     }
+    }
+   }
+  }
+ },
+ "seconds": 421.8415877819061
+}

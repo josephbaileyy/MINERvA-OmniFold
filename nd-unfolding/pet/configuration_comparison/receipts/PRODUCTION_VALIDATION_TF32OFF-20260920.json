@@ -1,0 +1,175 @@
+{
+  "scope": "execution validation of the path we would run: XLA, GPU, float32, 33 tokens, effective batch 2048, initialized from the real pretrained checkpoint",
+  "step_schema": "step1_reco",
+  "tokens": 33,
+  "batch": 2048,
+  "reference_batch": 256,
+  "why_two_batches": "the eager reference does not fit at the production batch -- `optimised|33|2048|train` without XLA OOMs on an 80 GB A100 -- so the graph comparison runs at the reference batch and V7 proves the scale-up changes nothing per row",
+  "precision_policy_observed": {
+    "tf32_enabled": false,
+    "determinism_enabled": true,
+    "mixed_precision_policy": "float32",
+    "floatx": "float32"
+  },
+  "precision_policy_enforced": true,
+  "gpu": [
+    "/device:GPU:0"
+  ],
+  "keras_backend_selection": {
+    "tf_keras_shim_available": false,
+    "tf_use_legacy_keras": null,
+    "reason": "no tf_keras shim: assuming TensorFlow bundles Keras 2, which the vendored PET needs. If tf.keras turns out to be Keras 3 the model will fail to build and that is the documented, loud failure."
+  },
+  "versions": {
+    "tensorflow": "2.15.0",
+    "tf_keras_module": "keras.api._v2.keras",
+    "tf_keras_root": "keras",
+    "tf_keras_version": "2.15.0",
+    "standalone_keras": "2.15.0"
+  },
+  "limit_policy": {
+    "floor_slack": 2.0,
+    "mutant_must_exceed": 10.0,
+    "how": "each limit is FLOOR_SLACK x the eager path's own round-off floor, measured by permuting batch rows; no limit reads the quantity it judges, and every check has a mutant control"
+  },
+  "checks": {
+    "V0_pretrained_load": {
+      "held": true,
+      "criterion": "every variable covered and assigned EXACTLY; 0.0, not a tolerance",
+      "tensors_loaded": 176,
+      "parameters_loaded": 2758702,
+      "worst_absolute_difference_after_assign": 0.0,
+      "exact": true,
+      "state_npz_sha256": "2480f269064b4d69f323d8681acc776526cec20a89e7cea8c2338004551231b5",
+      "checkpoint_sha256": "7e8331b0953303502fcc64461e8e2332a7582184c8e3592db2e27d752612b1bc"
+    },
+    "V1_forward_xla_vs_eager": {
+      "measured": 0.0022569894790649414,
+      "reference_round_off_floor": 1.843528423250973e-07,
+      "limit": 3.687056846501946e-07,
+      "held": false,
+      "limit_source": "FLOOR_SLACK x the EAGER path's own floor; independent of the quantity being judged",
+      "row_profile": {
+        "rows": 256,
+        "rows_over_limit": 256,
+        "fraction_over_limit": 1.0,
+        "median_row_deviation": 0.0006907880306243896,
+        "p99_row_deviation": 0.0018862247467041015,
+        "max_row_deviation": 0.0022569894790649414,
+        "reads": "a few rows far over the limit with a median at round-off is a DISCRETE difference -- a k-NN tie resolving the other way -- not a precision difference"
+      },
+      "rows": 256,
+      "outputs_finite": true
+    },
+    "V1_mutant_control": {
+      "mutant": "body.in_blocks.0.attn.in_proj_weight scaled by 1 + 0.0001",
+      "deviation": 0.0022953152656555176,
+      "limit": 3.687056846501946e-07,
+      "ratio_to_limit": 6225.331914351069,
+      "held": true,
+      "criterion": "a real alteration must exceed the limit by 10.0x; if it does not, the limit is not discriminating and the check above proves nothing"
+    },
+    "V2_masking": {
+      "held": true,
+      "perturbed_columns": [
+        3
+      ],
+      "max_absolute_difference_content": 0.0,
+      "max_absolute_difference_pid_and_auxiliary": 0.0,
+      "criterion": "EXACT equality for padded-slot CONTENT, PID and auxiliary channels. These are multiplied by a zero mask, so any difference at all is a leak rather than round-off"
+    },
+    "V2_coordinate_diagnostic": {
+      "held": true,
+      "is_a_gate": false,
+      "max_absolute_difference": 0.0,
+      "forward_round_off_floor": 1.843528423250973e-07,
+      "reads": "moving a PADDED slot's coordinates reorders the k-NN among padded neighbours and changes the reduction order. Production zeroes padded slots, so this state does not occur; it is recorded so the round-off scale is visible rather than implied"
+    },
+    "V3_gradients_xla_vs_eager": {
+      "measured": 0.00026640482246875763,
+      "reference_round_off_floor": 7.82310962677002e-08,
+      "limit": 1.564621925354004e-07,
+      "held": false,
+      "limit_source": "FLOOR_SLACK x the EAGER path's own floor; independent of the quantity being judged",
+      "tensors": 176,
+      "all_finite": true,
+      "note": "the floor is the EAGER path's sensitivity to a row permutation. XLA fuses reductions differently from eager, so exceeding it is not by itself evidence of a wrong gradient -- read the mutant control beside this before concluding either way. The limit is NOT widened to accommodate the measurement"
+    },
+    "V3_mutant_control": {
+      "mutant": "body.in_blocks.0.attn.in_proj_weight scaled by 1 + 0.0001",
+      "deviation": 9.106472134590149e-05,
+      "limit": 1.564621925354004e-07,
+      "ratio_to_limit": 582.0238095238095,
+      "ratio_to_xla_deviation": 0.34182835168676806,
+      "held": true,
+      "criterion": "a 1e-4 relative weight error must exceed the limit by 10.0x. Its ratio to the XLA deviation is the number that says whether XLA's disagreement is near a real defect or far below one"
+    },
+    "V7_batch_invariance": {
+      "measured": 0.007325410842895508,
+      "reference_round_off_floor": 1.843528423250973e-07,
+      "limit": 3.687056846501946e-07,
+      "held": false,
+      "limit_source": "FLOOR_SLACK x the EAGER path's own floor; independent of the quantity being judged",
+      "row_profile": {
+        "rows": 256,
+        "rows_over_limit": 256,
+        "fraction_over_limit": 1.0,
+        "median_row_deviation": 0.002366960048675537,
+        "p99_row_deviation": 0.00702548623085022,
+        "max_row_deviation": 0.007325410842895508,
+        "reads": "a few rows far over the limit with a median at round-off is a DISCRETE difference -- a k-NN tie resolving the other way -- not a precision difference"
+      },
+      "reference_batch": 256,
+      "production_batch": 2048,
+      "compares": "XLA at the production batch against XLA at the reference batch, on the SAME rows, against the same floor"
+    },
+    "V4_optimizer_updates": {
+      "held": true,
+      "batch": 2048,
+      "steps": 10,
+      "steps_seen": 10,
+      "losses": [
+        0.7299299240112305,
+        0.7299299240112305,
+        0.7137577533721924,
+        0.7157214879989624,
+        0.694453239440918,
+        0.6898705959320068,
+        0.6883077621459961,
+        0.6850131154060364,
+        0.6817297339439392,
+        0.6785028576850891
+      ],
+      "loss_changed": true,
+      "max_weight_movement": 0.0007609501481056213,
+      "clip_events": 5,
+      "last_global_norm": 0.20458421111106873,
+      "learning_rate_by_step": null,
+      "schedule": {
+        "max_steps": 1000,
+        "warmup_steps": 4,
+        "examples_per_update": 2048
+      },
+      "criterion": "every loss finite, the weights actually move, and the optimizer takes exactly the steps it was asked for"
+    },
+    "V5_reload": {
+      "held": true,
+      "weight_transfer_worst": 0.0,
+      "clobbered_before_restore": true,
+      "forward_finite_after_reload": true,
+      "criterion": "EXACT. The weights are zeroed between save and restore, so a restore that quietly did nothing would fail this"
+    },
+    "V6_memory_and_timing": {
+      "held": true,
+      "batch": 2048,
+      "step_seconds_median": 0.8499131010030396,
+      "microseconds_per_example": 414.99663134914044,
+      "device_memory": {
+        "peak_bytes": 23291435008,
+        "peak_gib": 21.69183921813965
+      },
+      "synchronized": "float(train_step()) inside the timed region"
+    }
+  },
+  "all_held": false
+}

@@ -48,3 +48,19 @@ See the state file.
 
 - Stage 1 frozen: amendment 1 (use case, targets T1–T7, RD1/RD2/RD3), receipt `state/s5p/stage1/stage1_inspect.json`.
 - Stage 2: amendments 2–3 (studies N, C, K, P, I); exit [`RECORD-20260927-s5p-stage2-exit.md`](RECORD-20260927-s5p-stage2-exit.md) and amendment 4: `R` selected; measurement branch not admitted (T1/T2 unattainable); joint-test branch to Stage 3.
+- Stages 3–6: amendments 5–8 (joint-test design, repairs, production admission) and production under budget
+  revisions 1–7. Production became terminal on 2026-10-05T20:32Z: five finals, all "rule met for both tests".
+- Stage 6 verification: the independent recompute returned AGREE, 1379/1379, after a reviewed comparer extension
+  (DECISION-20261005 §1, §4).
+- Joint result recorded: [`RECORD-20261005-s5p-joint-5d-inference-result.md`](RECORD-20261005-s5p-joint-5d-inference-result.md),
+  all ten H0(G) rejected.
+- Lost-seed recovery, report-only, cross-checked 856/856:
+  [`RECORD-20261006-s5p-lost-seed-recovery-resolution.md`](RECORD-20261006-s5p-lost-seed-recovery-resolution.md).
+  Joseph's disposition is in DECISION-20261005 §5.
+- **Closeout 2026-10-06: TERMINAL.** The four final fields, paper-wide readiness, spend, heads and costed remaining
+  requirements are in [`DELIVERY-20261006-s5p-campaign-terminal.md`](DELIVERY-20261006-s5p-campaign-terminal.md).
+  - campaign: TERMINAL;
+  - measurement branch: NOT ADMITTED;
+  - reportable uncertainty: none new;
+  - joint-5D inference: executed, with all ten rejected;
+  - publication: NOT READY.

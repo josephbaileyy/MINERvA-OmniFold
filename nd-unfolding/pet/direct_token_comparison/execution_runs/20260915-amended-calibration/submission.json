@@ -1,0 +1,75 @@
+{
+  "decision": "amended-preflight-calibration-and-conditional-matrix",
+  "submitted_job_id": "58354898",
+  "submission_exit": 0,
+  "job_name": "pet-amended-calibration",
+  "state_at_submission": "PENDING (Priority)",
+  "time_limit": "01:40:00",
+  "admission_test": {
+    "mode": "sbatch --test-only",
+    "job_id": "58354802",
+    "predicted_start_utc": "2026-09-16T11:42:59",
+    "predicted_nodes": "nid001784",
+    "partition": "shared_gpu_ss11"
+  },
+  "execution_commit": "604337880b3e414db8a9f4dd49340e85e4db3705",
+  "checkout": "/pscratch/sd/j/josephrb/pet-amended-exec-20260915",
+  "runtime": "/pscratch/sd/j/josephrb/pet-direct-token-runtime-20260911",
+  "output": "/pscratch/sd/j/josephrb/pet-amended-output-20260915",
+  "launcher": "nd-unfolding/pet/direct_token_comparison/sbatch_amended_calibration.sh",
+  "authorization_sha256": "fc9dcb7dd5667701584de02adc62f3c30c48c00dd76c807e3667022f8030ca1a",
+  "manifest_sha256": "3f545110f11d6490f992196a06c53a603601e53ec421a499a4254b33901c6ed0",
+  "deployment": {
+    "exit": 0,
+    "source_clone_base": "98fde50e80958659045e385aad762f91ab0364c0",
+    "bundle_sha256": "494ad09af59166dfe6c3fbb4aee4e876c5d9cb7be376e5f7b992f79e635d6dcd",
+    "deploy_script_sha256": "3eb0d0c5d399b3f9cb122ab8d7276a77cbac123ad8c1ca2685227d96fd364a26",
+    "all_manifest_hashes_verified": true,
+    "checkout_KiB": 246917,
+    "bundle_KiB": 47820
+  },
+  "prior_charge_remeasured": {
+    "jobs": [
+      "58198332",
+      "58201775",
+      "58240587",
+      "58277208",
+      "58301971",
+      "58320923"
+    ],
+    "parent_elapsed_raw_seconds": [
+      79,
+      111,
+      95,
+      105,
+      128,
+      216
+    ],
+    "parent_total": 734,
+    "conservative_max_parent_or_step_seconds": [
+      79,
+      114,
+      97,
+      105,
+      128,
+      219
+    ],
+    "conservative_total": 742,
+    "method": "sacct -j <ids> with step rows included; per allocation the maximum of parent and step Elapsed",
+    "new_gpu_activity_since": "none",
+    "covering_sweep": "sacct -X -S 2026-09-01 gave 101 rows; exactly 6 carry gres/gpu and they are exactly the six bound jobids",
+    "non_pet_cpu_jobs_excluded": [
+      "58347943 z_pilot5d (CPU-only)",
+      "58354056 z_pilot5d (CPU-only)"
+    ]
+  },
+  "preconditions_at_submission": {
+    "commit_match": true,
+    "worktree_clean": true,
+    "output_absent": true,
+    "queue_rows_for_account": 0,
+    "runtime_lock_53_packages_match": true,
+    "live_state_freshness": "FRESH :: Git 32e403b8 == HEAD (rc=0); scheduler observed directly"
+  },
+  "non_claim": "A submission record is not a result. No terminal state, no calibration measurement, no gate verdict and no learning conclusion is asserted here."
+}

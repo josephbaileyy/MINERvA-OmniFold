@@ -1,0 +1,30 @@
+{
+  "action": "pet-v2-bounded-source-audit",
+  "allocation": {
+    "cpus_allocated": 6,
+    "job_id": "58164405",
+    "memory_gib": 8,
+    "step_cpus": 2,
+    "wall_minutes": 10
+  },
+  "authority_reference": "nd-unfolding/pet/SOURCE_AUDIT_EXECUTION-20260910.md",
+  "bindings_sha256": "58e3043b43c446a5b7e057815fc1bfbf8edec782335ce412b09da9f996f91b59",
+  "branch_count": 75,
+  "code_commit": "588328438e096680a2295bebc7cc93ad9fccc3ed",
+  "entry_interval": [
+    0,
+    4096
+  ],
+  "environment": {
+    "keras": "3.15.1",
+    "numpy": "1.26.4",
+    "python": "3.11.14",
+    "root_base": "root_6_28",
+    "tensorflow-cpu": "2.16.2"
+  },
+  "execution_authorized": true,
+  "source_roles": [
+    "data",
+    "mc"
+  ]
+}

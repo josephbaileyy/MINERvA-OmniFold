@@ -6,207 +6,158 @@
 
 OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk} unfolds by iterated
 reweighting with machine-learned likelihood ratios, operating on per-event
-observables rather than on a fixed histogram binning. Each iteration has two
-steps:
+observables rather than on a fixed histogram binning. Each iteration has two steps:
 \begin{enumerate}[itemsep=2pt]
-  \item \textbf{Step 1 (detector space).} A classifier is trained to separate
-        the measured data from the reconstructed simulation (the latter
-        weighted by the current push-weights). Its calibrated output $p$
-        yields the likelihood-ratio reweight $w = p/(1-p)$ on every
-        reconstructed simulated event. The weight is \emph{pulled back} to
-        truth level through the event pairing: each simulated event is a
-        (truth, reco) pair, so the reco-space weight attaches directly to the
-        truth record. Truth events with no reconstructed partner (the
-        ``misses'') receive a step-1 weight from a regressor trained on the
-        reconstructed subsample, $w(\mathrm{truth\ features})$ --- the native
-        OmniFold acceptance treatment, with no separate efficiency
-        correction.
-  \item \textbf{Step 2 (truth space).} A second classifier is trained to
-        separate the original truth-level simulation from the same sample
-        carrying the pulled-back step-1 weights, yielding a smooth truth-space
-        reweight that becomes the next iteration's push-weight.
+  \item \textbf{Step 1 (detector space).} A classifier separates measured
+        data from reconstructed simulation weighted by the current
+        push-weights. Its calibrated output $p$ gives the likelihood-ratio
+        reweight $w = p/(1-p)$ for each reconstructed simulated event.
+        Each simulated event is a (truth, reco) pair, allowing the weight to
+        be \emph{pulled back} directly to its truth record. Truth events
+        without a reconstructed partner (``misses'') receive step-1 weights
+        from a regressor trained on the reconstructed subsample,
+        $w(\mathrm{truth\ features})$. This native OmniFold acceptance
+        treatment requires no separate efficiency correction.
+  \item \textbf{Step 2 (truth space).} A second classifier separates the
+        original truth-level simulation from the same sample carrying the
+        pulled-back step-1 weights. Its smooth truth-space reweight becomes
+        the next iteration's push-weight.
 \end{enumerate}
-After $n$ iterations the push-weights define an efficiency-corrected,
-truth-level reweighted simulation ensemble; histogramming it (in any binning,
-chosen after the fact) gives the unfolded spectrum. The regularizer is the
-iteration count together with the model capacity of the learners.
+After $n$ iterations, the push-weights define an efficiency-corrected
+truth-level reweighted simulation ensemble. Histogramming this ensemble in any binning
+chosen afterwards gives the unfolded spectrum. The iteration count and
+learner capacity regularize the unfold.
 
 \paragraph{Background subtraction (the one binned step).}
-The measured sample entering step 1 is the full set of selected data events
---- none is discarded and no negative-weight events are injected. Backgrounds
-are instead removed by a per-reco-bin \emph{purity} weight, applied event by
-event: the POT-scaled
-background prediction (genuine backgrounds plus out-of-phase-space signal,
-\S\ref{sec:selection}) is binned on the reconstructed analysis grid, and each
-data event in reco bin $b$ is weighted by
+All selected data events enter step 1; none is discarded and no
+negative-weight events are injected. Each receives a reco-bin \emph{purity}
+weight. The POT-scaled background prediction includes genuine backgrounds
+and out-of-phase-space signal (\S\ref{sec:selection}) and is binned on the
+reconstructed analysis grid. A data event in reco bin $b$ receives
 \begin{equation*}
   w_{\mathrm{pur}}(b) \;=\;
   \max\!\bigl(0,\; N_{\mathrm{data}}(b) - N_{\mathrm{bkg}}(b)\bigr)
   \big/ N_{\mathrm{data}}(b),
 \end{equation*}
-the predicted signal purity of that bin (floored at zero in the rare bins
-where the prediction exceeds the data). The step-1 classifier still sees the
-full unbinned event kinematics; the analysis binning enters only through this
-multiplicative correction, an ${\sim}\SI{3}{\percent}$ effect overall that is
-largest where the background concentrates (\S\ref{sec:selection}).
+the predicted signal purity, floored at zero in the rare bins where the
+background prediction exceeds the data. The step-1 classifier retains the
+full unbinned kinematics. Binning enters only through this multiplicative
+correction, an ${\sim}\SI{3}{\percent}$ effect overall, largest where
+backgrounds concentrate (\S\ref{sec:selection}).
 
 This correction is, deliberately, the one place the analysis binning enters
-before the final histogramming. Early unbinned measurements used several
-background treatments: H1 cut backgrounds to a negligible
-level, LHCb corrected per track upstream of the unfold, and ATLAS left its
-less-than-\SI{0.25}{\percent} background in place and assigned it as an uncertainty,
-in its twenty-four-observable measurement, while identifying negatively-weighted simulated events as the natural
-in-method subtraction~\cite{ATLAS:2024jets,Andreassen:2021zzk};
-Ref.~\cite{unbinnedguide} recommends that route for nontrivial backgrounds.
-More recent methodological work explicitly treats backgrounds, fakes,
-acceptance, and inefficiency in OmniFold-HI~\cite{Falcao:2025backgrounds} and in
-generative unfolding~\cite{Butter:2025genfold}. These constructions address
-related problems but need not use the same subtraction prescription.
-The explicit per-reco-bin
-weight used here is a conservative middle ground at our sub-percent
-genuine-background scale. Its fully unbinned realization --- injecting the
-background simulation onto the measured side with negative weight, which
-targets the identical background-subtracted density $(D-B)/S$ and reproduces
-the binned correction to \SI{\nwPctTot}{\percent} on the total 2D cross
-section, and its systematic and statistical covariances to within
-\SI{2}{\percent} (App.~\ref{app:negweight}) --- removes the residual binning dependence
-and is the natural treatment for the extended-fiducial analysis, where
-backgrounds are larger.
-
-OmniFold has moved from method paper to production measurement over the last
-few years. H1 published the first real-data applications --- jet substructure
-in high-$Q^{2}$ deep-inelastic scattering, followed by a multi-differential
-eight-observable jet measurement~\cite{H1:2021wkz,H1:2023fzk}; LHCb unfolded
-identified-hadron distributions in $Z$-tagged jets~\cite{LHCb:2022rky}; and
-ATLAS performed a simultaneous unbinned measurement of twenty-four $Z+$jets
-observables~\cite{ATLAS:2024jets}. Ref.~\cite{unbinnedguide} collects these
-and other applications and distills cross-experiment practice; several of the
-practices audited there appear in our uncertainty budget (the ensemble-mean
-cross-check of the central value, the bootstrap statistical block, and the
-unified-throw covariance check of \S\ref{sec:uq-combine}).
-
-Closest to this analysis is the study of Huang \emph{et
-al.}~\cite{Huang:2024omnifold}, the first application of OmniFold to a
-neutrino cross section: a mock-data unfolding of muon kinematics on the
-public T2K near-detector simulated dataset, benchmarked against traditional
-binned approaches. Two of its findings shape expectations for neutrino
-applications. First, iteration count: Huang \emph{et al.} select 45
-iterations for the OmniFold-family methods (20 for their binned benchmark)
-by a binned $\chi^{2}$ against the known truth of their mock data --- a
-criterion they note is not feasible on real data. We do not adopt that
-recommendation, for two reasons. Their mock data injects a large
-prior--data \emph{shape} discrepancy (an RPA-modified quasielastic model)
-that many iterations must overcome, whereas our prior already describes the
-data shapes well (\S\ref{sec:controlplots}) and the data pull is dominantly
-a normalization; and cross-experiment production practice is few iterations
-(typically ${\sim}5$~\cite{unbinnedguide}). Our $n=5$ is instead justified
-empirically: doubling to $n=10$ moves the total cross section by
-\SI{0.026}{\percent} (\S\ref{sec:method-config}), and the unfold reproduces
-an independently published binned measurement of the same data
-(\S\ref{sec:results}). Second, an ensemble of reweighting trials with
-different train/test splits controls the ML stochastic component --- which we
-budget explicitly via the training-seed variation band (\S\ref{sec:systematics}). The
-present work differs in unfolding \emph{real} MINERvA data to an absolutely
-normalized cross section with a complete finalized 2D uncertainty budget, in using GBDT
-learners suited to a low-dimensional tabular feature set, and in validating
-the method directly against a published binned measurement of the same data
-(\S\ref{sec:results}).
-
+before the final histogramming. Other experiments' treatments are summarized in
+\S\ref{sec:intro}. Our per-reco-bin weight is a conservative middle ground
+at the sub-percent genuine-background scale. A fully unbinned alternative
+injects negatively weighted background simulation on the measured side,
+targeting the identical background-subtracted density $(D-B)/S$. It
+reproduces the binned correction to \SI{\nwPctTot}{\percent} on the total
+2D cross section and its systematic and statistical covariances to within
+\SI{2}{\percent} (App.~\ref{app:negweight}). It removes residual binning
+dependence and suits the extended-fiducial analysis, where backgrounds are
+larger. It is not adopted, and the quoted extended-fiducial value does not
+use it (App.~\ref{app:negweight}).
+% Background-practice survey (H1/LHCb/ATLAS, OmniFold-HI, generative unfolding),
+% production history and the Huang et al. comparison moved to sec_intro.tex
+% ("Prior OmniFold applications"); the n=5 rationale moved to "Hyperparameter
+% choice" below.
 
 \subsection{Estimators and configuration}
 \label{sec:method-config}
 
+Gradient-boosted decision trees (GBDTs) replace the original OmniFold neural
+networks for the scalar unfolds. With at most five high-level features per
+event, tree ensembles typically match or outperform neural
+networks~\cite{Grinsztajn:2022tabular} and train deterministically and far
+faster on CPU. Ref.~\cite{Milton:2025tools} demonstrates their effectiveness
+for unbinned unfolding with few high-level features, complementing deep
+models for low-level event representations. We use GBDTs for scalar unfolds
+and a point-cloud transformer for a recoil-cluster representation
+cross-check (\S\ref{sec:pet}). The PET cross-check omits the muon
+and is therefore not a full-event unfold. Calibration tests and
+MLP/transformer cross-checks test the implementation in
+\S\ref{sec:3d-classifier}.
 
-
-We use gradient-boosted decision trees (GBDTs) rather than the neural networks
-of the original OmniFold papers. The choice follows the character of the
-inputs: the scalar unfolds of this note use at most five high-level features
-per event, a tabular regime in which tree ensembles typically match or
-outperform neural networks~\cite{Grinsztajn:2022tabular} while training
-deterministically and far faster on CPU. Ref.~\cite{Milton:2025tools}
-demonstrates this regime specifically for unbinned unfolding --- boosted
-decision trees are effective with a small number of high-level features,
-complementing deep models that ingest low-level event representations --- and
-our own measurements follow the same division of labor: GBDTs for the scalar
-unfolds and a point-cloud transformer as a recoil-cluster representation
-cross-check (\S\ref{sec:pet}). The PET cross-check omits the muon and
-therefore is not a full-event unfold. \S\ref{sec:validation} tests the implementation with
-calibration tests and MLP/transformer cross-checks. The engine
-(\texttt{unbinned\_unfolding/python/omnifold.py}; component terminology in
-App.~\ref{app:codebase}) supports interchangeable
-backends. The published central value is produced with the \texttt{exact}
-backend (sklearn \texttt{GradientBoosting}, single-threaded exact-split CART):
-the production launcher passes no \texttt{-{}-estimator} flag and therefore takes
-the driver's default. The uncertainty ensemble --- the systematic universe sweep
+The engine supports interchangeable backends (component terminology and
+code paths in App.~\ref{app:codebase}). The published central value uses
+\texttt{exact}, sklearn \texttt{GradientBoosting} with single-threaded
+exact-split CART.
+% Provenance: the production launcher passes no \texttt{-{}-estimator} flag and therefore takes
+% the driver's default.
+The uncertainty ensemble --- the systematic universe sweep
 and the Poisson bootstrap --- is produced with \textbf{LightGBM} ($100$ trees,
 $8$ leaves, learning rate $0.1$; identical settings for the step-1 classifier,
 step-2 classifier, and miss regressor), which both of those launchers request
 explicitly. \emph{The central value and its covariance are therefore not
-estimator-matched}; the \texttt{lgbm} seed scan quantifies the resulting ML noise
-as the smallest component of the budget (App.~\ref{app:statmethods}). The third
-backend, \texttt{hist} (sklearn
-\texttt{HistGradientBoosting}, matched 8-leaf configuration), is retained for
-method-dependence studies
-(\S\ref{sec:results-tension}). The production iteration count is
-$n=5$; doubling to $10$ moves the total cross section by
-\SI{0.026}{\percent} (\S\ref{sec:validation}). The central value is a
-single-run unfold with pinned seeds; an ensemble-mean central value (averaging
-independent reweighting trials) agrees with it to \SI{0.28}{\percent}, and ML
-stochasticity is budgeted explicitly via the training-seed variation band
-(\S\ref{sec:systematics}).
+estimator-matched}. The \texttt{lgbm} seed scan measures \texttt{lgbm} seed
+noise, the smallest budget component (App.~\ref{app:statmethods}); it does
+not measure the backend difference. The third backend, \texttt{hist}
+(sklearn \texttt{HistGradientBoosting}, matched 8-leaf configuration), is
+retained for method-dependence studies (\S\ref{sec:results-tension}).
+
+The central value is a single-run unfold with pinned seeds (ensemble-mean
+cross-check and ML band: \S\ref{sec:uq-ml}).
 
 \paragraph{Hyperparameter choice.}
-The learner settings were fixed \emph{a priori} rather than tuned on data:
-100 trees, learning rate $0.1$, and depth-3 capacity are the sklearn
-\texttt{GradientBoosting} defaults, and the production LightGBM backend is
-configured to the matched capacity ($\texttt{num\_leaves}=8=2^{3}$) so that
-every backend shares the same, deliberately modest, model capacity ---
-capacity being one of OmniFold's regularizers (\S\ref{sec:method-algo}). No
-hyperparameter search was performed on data, avoiding any tuning-on-result
-loop. The configuration is instead validated after the fact: closure and
-classifier-calibration tests (\S\ref{sec:validation}), insensitivity to
-doubling the iteration count (quoted above), backend agreement in the
-method-dependence studies (\S\ref{sec:results-tension}), and an explicit
-training-seed variation band for residual ML stochasticity (\S\ref{sec:systematics}).
+The learner settings were fixed \emph{a priori} rather than tuned on data. They are the sklearn
+\texttt{GradientBoosting} defaults: 100 trees, learning rate $0.1$, and
+depth-3 capacity. The uncertainty-ensemble LightGBM backend uses matched capacity
+($\texttt{num\_leaves}=8=2^{3}$), giving every backend the same deliberately
+modest capacity, one of OmniFold's regularizers (\S\ref{sec:method-algo}).
+No hyperparameter search was performed on data, avoiding a tuning-on-result
+loop. The configuration is instead validated after the fact by closure and
+classifier-calibration tests (\S\ref{sec:validation},
+\S\ref{sec:3d-classifier}), insensitivity to doubling the iteration count
+(below), backend agreement in method-dependence studies
+(\S\ref{sec:results-tension}), and an explicit training-seed variation band
+for residual ML stochasticity (\S\ref{sec:systematics}).
 
+Production uses $n=5$ iterations. Huang \emph{et
+al.}~\cite{Huang:2024omnifold} select 45 iterations for OmniFold-family
+methods (20 for their binned benchmark) using a binned $\chi^{2}$ against
+known mock-data truth, a criterion they note is infeasible on real data.
+We do not adopt that recommendation. Their mock data injects a large
+prior--data \emph{shape} discrepancy through an RPA-modified quasielastic
+model, requiring many iterations. Our prior already describes the data
+shapes well (\S\ref{sec:controlplots}); the data pull is dominantly a
+normalization. Cross-experiment production also typically uses
+${\sim}5$ iterations~\cite{unbinnedguide}. Our $n=5$ is instead justified
+empirically: doubling it to $n=10$ moves the total cross section by
+\SI{0.026}{\percent} (\S\ref{sec:validation}), and the unfold reproduces
+an independently published binned measurement of the same data
+(\S\ref{sec:results}).
 
 \subsection{MINERvA driver and pipeline conventions}
 \label{sec:method-driver}
 
 
 
-The MINERvA driver is \texttt{2d-unfolding/unfold\_2d\_omnifold\_unbinned.py};
-the higher-dimensional driver
-(\texttt{nd-unfolding/unfold\_nd\_omnifold\_unbinned.py}) generalizes it to an
-axis list whose first two entries are always $(\pT,\pPar)$ (carrying the
-fiducial gate and the per-$\pT$ flux) and \texttt{import}s the same 2D
-helpers. The unfolded observables are the muon $(\pT,\pPar)$, extended by
-$\Eavail$, $q_{3}$, $W$ in the higher-dimensional runs; the phase space is
-that of \S\ref{sec:selection}. The following conventions hold in every
-production, universe-sweep, and closure run:
-
-
+The higher-dimensional MINERvA driver (App.~\ref{app:codebase}) extends the
+2D driver using an axis list and the same 2D helpers. The first two axes
+are always $(\pT,\pPar)$, carrying the fiducial gate and per-$\pT$ flux.
+Higher-dimensional runs extend the muon observables $(\pT,\pPar)$ with
+$\Eavail$, $q_{3}$, $W$ in the phase space of \S\ref{sec:selection}.
+Every production, universe-sweep, and closure run follows these conventions:
 \begin{itemize}[itemsep=2pt]
   \item \textbf{Reco-space masking.} The measured events entering step-1
         training are exactly those passing the reconstructed-level
         selection; nothing outside the reconstructed phase space reaches the
         classifier.
-  \item \textbf{Fake-free step-1 training.} The step-1 target is the
-        background-subtracted data of the purity-weight construction of
-        \S\ref{sec:method-algo}: genuine backgrounds \emph{and}
-        out-of-phase-space signal fakes are removed from the data side, and
-        the simulated reco sample contains no fakes by construction --- so
-        neither side of the step-1 training contains events whose truth lies
-        outside the measurement phase space.
-  \item \textbf{No double efficiency correction.} When the unfolded sample
-        is histogrammed, each simulated truth event carries the product of
-        its final OmniFold push-weight and its central-value simulation
-        weight (the MnvTune reweighting rides along). No additional
-        efficiency-histogram division is applied: the step-1 miss regression
-        already returns an efficiency-corrected truth spectrum, and dividing
-        again would double-correct --- a failure mode that occurred once in
-        development and was caught by the marginal self-validation gate
-        (\S\ref{sec:validation}).
+  \item \textbf{Fake-free step-1 training.} Step 1 targets the purity-weighted background-subtracted data of
+        \S\ref{sec:method-algo}. Genuine backgrounds \emph{and}
+        out-of-phase-space signal fakes are removed from the data side.
+        The simulated reco sample is fake-free by construction, so neither side of the step-1
+        training contains events whose truth lies outside the
+        measurement phase space.
+  \item At histogramming, each simulated truth event carries its final
+        OmniFold push-weight times its central-value simulation weight,
+        including MnvTune reweighting. No additional efficiency-histogram
+        division is applied. Step-1 miss regression already gives an
+        efficiency-corrected truth spectrum; dividing again would
+        double-correct.
+        % Development history: a failure mode that occurred once in
+        % development and was caught by the marginal self-validation gate
+        % (\S\ref{sec:validation}).
   \item \textbf{Closure mirrors production.} In closure tests the
         pseudo-data are simulated events passing both the reconstructed and
         truth selections, weighted identically to the production data path,
@@ -214,129 +165,103 @@ production, universe-sweep, and closure run:
         than an idealized shortcut.
 \end{itemize}
 
-\paragraph{What the pipeline refuses to do.}
-The production scripts are written so that an unverifiable condition stops the run rather than
-being worked around, and the test suite encodes that discipline as five rules rather than as a
-list of cases. \textbf{(i)} A missing, absent or undeclared operand produces a refusal --- never a
-skip, a default, a derived substitute or a warning. \textbf{(ii)} A guard executes before the side
-effect it prevents, and the ordering is itself asserted; the failure it exists for is a module
-import placed above the argument parser, which killed every subsequent check in that file.
-\textbf{(iii)} A refusal is identified by its exact exit code \emph{together with} its own message
-or a structured receipt field, never by ``non-zero'': otherwise a crash and a refusal are
-indistinguishable, and three segmentation faults were once recorded as three refusals.
-\textbf{(iv)} Every guard has an accept arm that could have failed, so a check that can only refuse
-is distinguishable from one that always refuses. \textbf{(v)} An inability to evaluate a condition
-is its own outcome with its own exit code, never folded into pass or fail. Over a thousand tests
-name a refusal, and these five rules are what they have in common.
-
-\noindent These are properties of the implementation \emph{as tested}, not theorems about the
-method. A rule nobody encoded would not appear among them, and a green suite certifies the cases it
-contains rather than the absence of others.
-
-\subsection{Related developments and estimator scope}
-Profile OmniFold~\cite{Zhu:2025profile} extends the classifier-based EM procedure
-to nuisance parameters in the forward model. It complements the earlier
-unbinned profiled unfolding approach~\cite{Chan:2023tbf} by providing a distinct
-algorithmic construction. Profiling nuisances using observed data is different
-from propagating an external nuisance ensemble through a fixed procedure; it
-would change the inference model used here. Neither a profiled estimator nor
-its uncertainty is adopted in this analysis.
-
-Alternative estimators include SPINUP, which learns a forward mapping
-\cite{Butter:2025spinup}, and AUSSIE, which replaces OmniFold's second step with
-a different loss and avoids its outer iteration~\cite{Ore:2026aussie}.
-They provide possible future cross-checks with different algorithmic
-assumptions. Reduced dependence on the simulation prior does not establish
-independence from the detector model, adequate phase-space support, or coverage
-for the present measurement. Such comparisons would require matched signal,
-selection, normalization, and uncertainty definitions.
+% "What the pipeline refuses to do" (test-suite discipline) moved to
+% app_codebase.tex.
 
 \subsection{Cross-section extraction}
 \label{sec:method-xsec}
-Unfolded truth-level counts are converted to the differential cross section
-via
+The differential cross section follows from unfolded truth-level counts:
 \begin{equation*}
   \frac{d^{n}\sigma}{d x_{1}\cdots d x_{n}}
   = \frac{U}{c\,\Phi\,N\,\mathrm{POT}\,\Delta x_{1}\cdots\Delta x_{n}}
     \times 10^{4},
 \end{equation*}
-where $U$ is the unfolded yield; $c$ is the per-bin \emph{completeness}, the
-fraction of the truth-level sample visible to the unfolding input. Because
-the event loop appends the truth-only misses explicitly, every truth event
-enters the unfolding and $c\equiv1$ bin-by-bin; the factor survives in the
-formula as a monitored self-check (a configuration that dropped the misses
-would surface as $c<1$). $\Phi$ is the per-$\pT$ flux
-integral (broadcast over the other axes), $N$ the fiducial nucleon count
+where $U$ is the unfolded yield and $c$ the per-bin \emph{completeness}, the
+fraction of truth events visible to the unfolding input. The event loop
+explicitly appends truth-only misses, so every truth event enters and
+$c\equiv1$ bin-by-bin. The factor remains a monitored self-check; dropping
+misses would give $c<1$. $\Phi$ is the per-$\pT$ flux integral, broadcast
+over other axes, $N$ the fiducial nucleon count
 ($3.2353\times10^{30}$), and POT the data exposure ($1.057\times10^{21}$).
-The factor $10^{4}$ converts the flux tabulation per square meter to the
-reported $\si{cm^2}$ ($\SI{1}{m^2}=10^{4}\,\si{cm^2}$), so the result
-carries the conventional units of $\si{cm^2}$ per axis unit per nucleon.  The implementation is
-\texttt{extract\_cross\_section\_2d} and its N-dimensional generalization
-\texttt{xsec\_nd.py} (self-tested to reproduce the frozen lower-dimensional
-extractions to $<10^{-12}$). The flux normalization enters as
-$\sigma\propto1/\Phi$, so $\Phi$ is itself varied per flux universe when
-the systematic covariance is built; this variation dominates the Flux band
+The factor $10^{4}$ converts flux tabulated per square meter to the reported
+$\si{cm^2}$ ($\SI{1}{m^2}=10^{4}\,\si{cm^2}$), giving units of
+$\si{cm^2}$ per axis unit per nucleon. The implementation
+(App.~\ref{app:codebase}) is self-tested to reproduce frozen
+lower-dimensional extractions to $<10^{-12}$. Since
+$\sigma\propto1/\Phi$, $\Phi$ varies per flux universe when building the
+systematic covariance. This variation dominates the Flux band
 (\S\ref{sec:systematics}).
 
 \subsection{Binning}
 \label{sec:method-binning}
-The reported 2D binning (14 $\pT$ $\times$ 16 $\pPar$ bins; 205 of 224
-reported) follows \texttt{minerva\_paper\_anc/bin\_mapping.txt}; the 19
-unreported diagonal cells have
+% The reported binning follows \texttt{minerva\_paper\_anc/bin\_mapping.txt} (cited below).
+The 2D grid has 14 $\pT$ $\times$ 16 $\pPar$ bins; 205 of 224 are
+reported. The 19 unreported diagonal cells have
 $\pT^{\mathrm{hi}}/\pPar^{\mathrm{lo}}>\tan20^{\circ}$. The extension axes use
 $\Eavail$: $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$;
 $q_{3}$: $[0,0.2,0.4,0.6,0.8,1.2,2.0,100]\,\si{GeV}$;
-$W$: $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$ --- each ending in a wide catch
-bin so the marginals capture the full CC-inclusive tails (a truncated top edge
-would break the marginalization anchors of \S\ref{sec:3d-anchor}). Because the
-binning is applied only after unfolding, these choices can be revisited
-without re-running the unfold. The full edge table and reported-bin mapping
-are given in App.~\ref{app:statmethods} (\S\ref{sec:205bins}).
+$W$: $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$.
+Each ends in a wide catch bin to capture the full CC-inclusive tails in
+marginals; truncating the top edge would break the marginalization anchors
+of \S\ref{sec:3d-anchor}. Binning after unfolding allows these choices to
+be revisited without re-running the unfold. App.~\ref{app:release}
+(\S\ref{app:release-identities}) gives all five axes' edges.
+\S\ref{sec:205bins} defines the 205 reported cells, with the authoritative
+mapping in \texttt{minerva\_paper\_anc/bin\_mapping.txt}.
 
 Neither underflow nor overflow appears in the reported product, by
-construction rather than by truncation. On the truth side, the muon-axis
-edges coincide with the measurement phase space itself
-(\S\ref{sec:selection}) --- beyond them there is no signal definition to
-measure --- and the hadronic axes span $[0,100]\,\si{GeV}$, the catch-bin
-edge sitting far beyond the kinematic reach at
-$\langle E_\nu\rangle\sim\SI{6}{GeV}$, so the truth grids are exhaustive. On
-the reco side, a selected event whose reconstructed kinematics fall outside
-the grid is treated as unaccepted: it is excluded from the measured sample
-by the masking convention of \S\ref{sec:method-driver}, and its
-in-phase-space truth content is recovered by the miss treatment exactly as
-for any other unreconstructed event. Because the unfold is unbinned, there
-is no response-matrix under/overflow to track --- the binning is applied
-once, at reporting, to events that all lie inside the grids. 
+construction rather than by truncation. Truth-level muon edges coincide with the
+measurement phase space (\S\ref{sec:selection}); no signal is defined
+beyond them. Hadronic axes span $[0,100]\,\si{GeV}$, with catch-bin edges
+far beyond the kinematic reach at
+$\langle E_\nu\rangle\sim\SI{6}{GeV}$, so the truth grids are exhaustive. A selected reco event outside the
+grid is treated as unaccepted and excluded from the measured sample by
+\S\ref{sec:method-driver}'s masking convention. Its in-phase-space truth
+content is recovered by the miss treatment, as for any unreconstructed
+event. The unbinned unfold has no response-matrix under/overflow to track;
+reporting bins are applied once to events that all lie inside the grids.
 
-Although OmniFold uses no response matrix, the detector smearing the unfold
-must undo is conveniently summarized by the truth$\to$reco migration on the
-analysis binning (Fig.~\ref{fig:migration}): the diagonal purity is
-$\sim0.6$ (median) on every axis, i.e.\ bin-to-bin migrations are
-substantial and a bin-by-bin correction would be badly biased --- the
-regime requiring unfolding.
+Truth$\to$reco migration on the analysis binning (Fig.~\ref{fig:migration})
+summarizes the smearing OmniFold must undo, although it uses no response
+matrix. Median diagonal purity is $\sim0.6$ on every axis. These substantial
+migrations require unfolding; a bin-by-bin correction would be badly biased.
 
 The structure differs qualitatively between the muon and hadron sides.
-The spectrometer muon measurement makes the $\pT$ and $\pPar$ maps nearly
-tridiagonal --- migrations rarely exceed one bin, and the purity dips
-(to ${\sim}0.45$--$0.5$ for $\pT$ and ${\sim}0.35$ for $\pPar$) occur
-where the binning is finest, recovering in the wide edge bins. The
-calorimetric axes are coarser-binned but relatively broader and visibly
-asymmetric: $\Eavail$ feeds preferentially \emph{downward} (energy carried
-by neutrons and other unresponsive particles is not collected), with the
-diagonal purity falling from $0.61$ in the lowest bins to $0.43$ in the
-highest; $q_{3}$, built from $\Eavail$ and the muon, inherits a milder
-version of the same pattern; and $W$, which compounds the $\Eavail$ and
-muon smearing, is the broadest, with two-bin migrations common in the
-resonance region while the lowest-$W$ (quasi-elastic) bin stays the purest
-at $0.71$.
+The spectrometer muon measurement makes the $\pT$ and $\pPar$ maps nearly tridiagonal, with
+migrations rarely exceeding one bin. Purity dips to
+${\sim}0.45$--$0.5$ for $\pT$ and ${\sim}0.35$ for $\pPar$ where bins
+are finest, recovering in wide edge bins. The calorimetric axes have
+coarser bins but relatively broader, visibly asymmetric migrations.
+$\Eavail$ preferentially migrates \emph{downward} because energy carried
+by neutrons and other unresponsive particles is not collected. Diagonal
+purity falls from $0.61$ in the lowest bins to $0.43$ in the highest.
+$q_{3}$, built from $\Eavail$ and the muon, inherits a milder version of the same pattern.
+$W$ compounds $\Eavail$ and muon smearing and has the broadest migrations;
+two-bin shifts are common in the resonance region. The lowest-$W$
+(quasi-elastic) bin remains purest at $0.71$.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{migration_resolution}
-  \caption{Truth$\to$reco migration of the simulated signal on the analysis
-  binning (top: column-normalized maps; bottom: diagonal purity per truth
-  bin) for the five observables. Median diagonal purity is
-  $0.58$--$0.61$ per axis. Shown for illustration only --- the unfold itself
-  is unbinned.}
+  \caption{Simulated signal truth$\to$reco migration on the analysis binning
+  for five observables. Top: column-normalized maps; bottom: diagonal purity
+  per truth bin. Median diagonal purity is $0.58$--$0.61$ per axis.
+  The figure is illustrative only; the unfold is unbinned.}
   \label{fig:migration}
 \end{figure}
+
+\subsection{Related developments and estimator scope}
+Profile OmniFold~\cite{Zhu:2025profile} extends classifier-based EM to
+forward-model nuisance parameters. Its distinct algorithmic construction
+complements earlier unbinned profiled unfolding~\cite{Chan:2023tbf}.
+Profiling nuisances with observed data would change our inference model,
+which propagates an external nuisance ensemble through a fixed procedure.
+Neither a profiled estimator nor its uncertainty is adopted here.
+
+SPINUP learns a forward mapping~\cite{Butter:2025spinup}; AUSSIE replaces
+OmniFold's second step with a different loss and avoids the outer
+iteration~\cite{Ore:2026aussie}. Both offer possible future cross-checks
+with different algorithmic assumptions. Reduced simulation-prior dependence
+does not establish detector-model independence, adequate phase-space
+support, or coverage for this measurement. Comparisons would require
+matched signal, selection, normalization, and uncertainty definitions.

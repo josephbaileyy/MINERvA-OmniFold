@@ -1,0 +1,2 @@
+{"tasks_declared": 352, "skipped_existing": 0, "written": 344, "stopped": null, "charged_core_hours_total": 5.213157903776672, "cpu_core_hours_total": 4.337793063055556, "workers": 2, "threads_per_worker": 2, "host": "DN0a256165.SUNet", "machine": "arm64", "utc": "2026-10-05T19:32:38Z"}
+{"tasks_declared": 352, "skipped_existing": 344, "written": 8, "stopped": null, "charged_core_hours_total": 5.306272957132767, "cpu_core_hours_total": 4.421504188611111, "workers": 2, "threads_per_worker": 2, "host": "DN0a256165.SUNet", "machine": "arm64", "utc": "2026-10-05T19:36:13Z"}

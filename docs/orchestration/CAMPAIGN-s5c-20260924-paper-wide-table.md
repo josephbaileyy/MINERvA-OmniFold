@@ -395,3 +395,19 @@ dependencies to these rows:
 | R16, R17 | not attempted (excluded by the successor's authorization) | s5n authorization §3 (S3 not carried) |
 | R20 | no new product qualified, so the release package is unchanged | — |
 | R21 | the three deliverables state the s5n findings (canonical `84f284ef`, standalone `a1027e64`); built fresh, containment PASS, 0 unresolved references; clean-tree paper build (`-jobname=output`) OK | s5n index closeout |
+
+## Reconciliation after the s5p precision-measurement campaign (`OI-193`, 2026-10-06)
+
+The campaign is TERMINAL (`DELIVERY-20261006-s5p-campaign-terminal.md`). The rows below change state or gain
+evidence. Every other row keeps its state, and s5p re-grades nothing.
+
+| row | change | governing record |
+|---|---|---|
+| R16 joint-5D generator inference | **Closure criterion met:** an executed, frozen plan (amendment 7 at `4f5a613f`), a frozen-statistic record and calibration receipts, independently recomputed (AGREE 1379/1379). All ten H0(G) are rejected, robust (κ = 3 replace), with the lost draws recovered report-only and observed (cross-check 856/856). The deliverables state it: N §8.6 and Table 3, the exec summary and the summary; Pr "A joint test of five simulations"; Pa by the publication lane, verbatim from N. **Readiness READY** as worded in N and Pr: committed evidence, an independent check and no open s5p dependency. The paper's statement is the publication lane's, under Joseph's 2026-10-06 approvals. | `RECORD-20261005-s5p-joint-5d-inference-result.md`; `RECORD-20261006-…-recovery-resolution.md`; `DECISION-20261005-…` §5; `REVIEW-20261006-s5p-stage7-note-wording.md` |
+| R17 projection and contrast inference | Unchanged: not computed, and s5p declared no projection contract. **OPEN.** | — |
+| R20 reproduction and release package | The inference family now has a release manifest with identities and digests, and a final tier-D reproduction (a fresh-clone replay of the frozen evaluator, bitwise). There is still no public package, deposit or tag, and the measurement-family package is unchanged. **OPEN.** | `RELEASE-MANIFEST-20261006-s5p-joint-5d-inference.md`; `HANDOFF-20261006-s5p-reproduction-tier-d.md` |
+| R21 note/primer/paper consistency, builds, sync | **Canonical** `cbd075e7` builds cleanly: `build_all.sh` exit 0, `RESULT :: PASS`, tree clean; note 122 / primer 9 / paper 5 pages; Overleaf `-jobname=output` exit 0, 5 pp, 0 undefined references. The **standalone** is synced to it (heads in the delivery record) with identical `pdftotext`. The nine consistency defects listed under R21 above are not re-examined by s5p. **OPEN** for those. | delivery record §5 |
+
+**`publication_readiness`** remains **NOT READY**: R1–R14, R17, R18c and R19–R21 are OPEN, and R15 is
+BLOCKED-EXTERNAL. The PRD-class
+article's readiness is assessed separately by the publication lane.

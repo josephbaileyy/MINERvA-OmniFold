@@ -1,0 +1,34 @@
+[oi136] inventory: checked=3871 repo_origin_count=5 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/pet-v2-source-audit-20260910-preflight/runtime-guard.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/pet-v2-source-audit-58832843  (6) __main__, atomic_write, launch_typed_descriptor_source_audit, typed_descriptor_source_audit, typed_descriptor_source_smoke, typed_descriptors
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{
+  "kind": "dependency_preflight_zero_source_opens",
+  "stages": [
+    {
+      "module": "ROOT",
+      "version": "6.28/12",
+      "threads": 1,
+      "rss": "\t  357416 kB",
+      "vmsize": "\t  878508 kB"
+    },
+    {
+      "module": "tensorflow",
+      "version": "2.16.2",
+      "threads": 1,
+      "rss": "\t  712456 kB",
+      "vmsize": "\t 1725636 kB"
+    },
+    {
+      "module": "keras",
+      "version": "3.15.1",
+      "threads": 1,
+      "rss": "\t  712456 kB",
+      "vmsize": "\t 1725636 kB"
+    }
+  ],
+  "result": "PASS"
+}

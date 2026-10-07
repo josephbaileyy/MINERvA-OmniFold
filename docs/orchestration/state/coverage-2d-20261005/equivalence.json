@@ -1,0 +1,15 @@
+{
+ "closure_bias_over_sigma": {
+  "frac_abs_gt_1": 0.0,
+  "max_abs": 0.0,
+  "mean": 0.0,
+  "median_abs": 0.0,
+  "rms": 0.0
+ },
+ "closure_max_rel_unfold_vs_truth": 0.0,
+ "fixed_truth_equals_production_truth": true,
+ "pass": true,
+ "prior_equals_production_truth": true,
+ "rel_tol": 1e-06,
+ "xsec_max_rel_diff": 0.0
+}

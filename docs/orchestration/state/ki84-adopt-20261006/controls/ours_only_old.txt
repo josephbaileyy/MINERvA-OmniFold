@@ -1,0 +1,7 @@
+[paper] reported bins: 205/224
+[diff] sum reported = 4.235e-39, max |.| = 5.501e-40
+[universe cov] shape=(205, 205), sqrt(trace)=3.214e-39
+[boot cov] shape=(205, 205), sqrt(trace)=1.817e-40
+[universe + bootstrap] cond=6.106e+14  rank(>1e-12*max)=199/205
+[universe + bootstrap] direct inverse: chi^2 = 53384.063,  ndf = 205,  chi^2/ndf = 260.410
+[universe + bootstrap] per-bin pull:  mean = 0.054,  rms = 0.601

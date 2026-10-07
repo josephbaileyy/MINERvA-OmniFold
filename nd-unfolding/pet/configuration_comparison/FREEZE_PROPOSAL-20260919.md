@@ -1,0 +1,200 @@
+# Freeze proposal
+
+**One ratification ask, not eleven.** Everything below is either already fixed by
+evidence, or is the single policy choice that remains. Reference values and pilot
+scatter are calculated or measured and are not on this list.
+
+**CITABLE FOR:** what is proposed to be frozen and what pins each item.
+**NOT CITABLE FOR:** any result. Nothing here is ratified until you say so.
+
+---
+
+## 1. What freezes, and what pins it
+
+| # | item | frozen value | pinned by |
+|---|---|---|---|
+| F1 | **his complete arm** | PET2-small, `use_int=False`, `local_int=False`, PID (8 classes), 5 auxiliary columns, 16 globals, `--zero-cond-feature 2`, cap 33, batch 2048, AdamW(1e-4, wd 0.01), warmup+cosine, global-norm clip 1.0, init `best_model_pretrain_s.pt` | `configuration_identity.THEIRS_COMPLETE`, enforced by `require_his_complete_arm` |
+| F2 | **our incumbent** | the promoted production PET: heads 2, transformers 2, `projection_dim` 32, `K` 3, cap 12, batch 512, engine Adam with the annealed policy | `configuration_identity.OURS_INCUMBENT`; exactly one arm may hold `PROMOTED_INCUMBENT` |
+| F3 | **candidates** | any change to F2 is a declared candidate with a parent and a rationale; it never silently becomes "ours" | `configuration_identity.declare_candidate` |
+| F4 | **injection** | truth `E_avail`, clipped exponential tilt, amplitude **0.35**, clip **3.0** | `CANDIDATE_ENDPOINT_CHOICES-20260918.json`, committed before measurement. **You have supported this.** |
+| F5 | **primary score** | 1-D `E_avail`, edges `[0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100]` GeV | same file; the axis predates the endpoint |
+| F6 | **regional safeguard** | regions on the **(pT, p‖) reporting cells** by cell acceptance; every scoreable region must clear **0.60 × its own reference**; an arm failing one is **ineligible**, and eligibility is asked of each arm alone | `selection_rule.regional_safeguard`, `characterize_regions.py` |
+| F7 | **fairness axis** | equal **example presentations** per fit; `max_steps` and warmup derived from it per arm | `training_recipe.derive_schedule` |
+| F8 | **decision rule** | the eight verdicts plus the regional gate, measured performance separated from preference | `selection_rule.py`, 39 tests |
+| F9 | **inference** | paired differences, t with n−1 df, `n` solved iteratively, sized on the **upper one-sided 80 % bound** on σ | proposal §7.4 |
+
+## 1.1 What the regional census found, and why it changes the ask
+
+Measured on the 285 `(pT, p‖)` reporting cells (`receipts/REGION_CENSUS-20260919.json`):
+
+| region | cells | truth mass | injected displacement | acceptance (mean, range) | reference at k=3 |
+|---|---:|---:|---:|---|---:|
+| low acceptance | 67 | **31.0 %** | **26.6 %** | 0.006 (0.000–0.047) | **0.014** |
+| poor | 10 | 6.8 % | 1.2 % | 0.148 (0.052–0.220) | 0.367 |
+| moderate | 23 | 13.9 % | 8.9 % | 0.386 (0.259–0.490) | 0.777 |
+| good | 185 | 48.3 % | 63.4 % | 0.795 (0.506–0.919) | 0.976 |
+
+**Nearly a third of the truth mass, and a quarter of the injected signal, sits in
+cells the detector barely accepts.** The seven-bin `E_avail` marginal reported *no
+bin* below 0.05 acceptance. This is precisely the failure marginalisation hides,
+and it is why you asked for regions defined on the cells.
+
+**Corrected 2026-09-20 on your instruction.** The band was named `unresolvable` and
+described as a limit on what any arm could achieve there. That asserted an
+impossibility this census cannot establish: acceptance is a property of the
+detector, the 0.014 figure is a property of the k=3 **reference model**, and
+neither is a bound on what an estimator can recover. The band is now
+`low_acceptance`, which is what was actually measured, and the earlier
+`G-unresolvable` gate is withdrawn.
+
+**These events stay in the analysis.** They are not down-weighted, excluded, or
+exempted from the comparison. What changes is that their mass, their injected
+displacement and **each arm's result within them** are reported separately, so a
+reader can see what the aggregate is averaging over:
+
+> **R-low.** Every quotation of the result states the truth mass (31.0 %) and
+> injected displacement (26.6 %) carried by cells with acceptance below 0.05, and
+> reports each arm's recovery there beside its aggregate. A recommendation that
+> cannot be supported in that band says so explicitly; it does not pass silently
+> on the strength of the other 73 %.
+
+The regional floor still applies there, at **0.60 × that region's own reference**
+rather than 0.60 × a global one — which is what "the applicable regional
+reference" means and what makes the floor comparable across bands with very
+different references.
+
+## 2. The one thing to ratify: the threshold policy
+
+Every number is translated into the quantity that can be judged — **truth mass left
+in the wrong bin.** The injection moves **13.67 %** of the truth mass
+(L1 displacement 0.2733); the calculated reference at k=3 is **0.7131**, which
+itself leaves **3.92 %** misplaced.
+
+| knob | proposed | what it permits |
+|---|---|---|
+| adequacy `f` | **0.80** of the reference ⇒ recovery ≥ **0.5705** | **5.87 %** of truth mass misplaced — 1.95 points worse than the reference |
+| non-inferiority `δ` | **0.02** of recovery | **0.27 %** additional misplaced mass |
+| switching `δ_switch` | **0.04** of recovery | **0.55 %** additional misplaced mass |
+| regional floor | **0.60 × each region's OWN reference** | looser than the global floor, deliberately, and per-region rather than global because a low-acceptance cell's reference is not the global one |
+| low-acceptance reporting (**R-low**) | **report separately, never exclude** | 31.0 % of truth mass and 26.6 % of displacement sit in cells with acceptance < 0.05; each arm's recovery there is quoted beside its aggregate. See §1.1 |
+
+**Why these, and what you are trading.**
+
+* **`f = 0.80`.** Adequacy has to be acceptance-aware, or a low-acceptance endpoint
+  fails for being hard rather than for being badly estimated — so it is a fraction
+  of the reference, not an absolute recovery. 0.80 demands recovering 57 % of a
+  13.67 % distortion. *Trade-off:* the reference is a model and not a bound, so
+  `f` inherits its uncertainty; the residual column is the reading that does not.
+  Lower `f` and an arm can pass while misplacing more mass; raise it and both arms
+  may fail on an endpoint that is simply hard.
+* **`δ = 0.02`.** This is the one genuinely scientific judgement here: it says we
+  will accept **0.27 % more of the truth mass in the wrong bin** to keep the
+  incumbent. I am not able to justify that against the measurement's systematic
+  budget, which I must not assume — that is what I am asking you to weigh.
+  *Trade-off:* δ enters the sample size roughly as `1/δ²`. Halving it to 0.01
+  costs about **four times the seeds**, so the 8-seed comparison becomes ~32.
+  **Re-priced on the repaired execution path**, a paired seed at the intended
+  configuration costs **20.41 GPU-h**, so 8 seeds are 163 and 32 are **653 —
+  over the ceiling on the final comparison alone.** δ = 0.02 is affordable;
+  δ = 0.01 still is not, and the repair did not change that conclusion.
+* **`δ_switch = 2δ`.** Adoption has a cost — a second framework's recipe, a
+  checkpoint dependency, and a per-example price that is 3.6× in his own engine
+  and, on the repaired path, **10.7×** in ours at the intended configuration
+  (23.9× was the unrepaired port and is withdrawn). Requiring twice the margin
+  before switching prices that. It is a policy about what we will pay, not a
+  property of either estimator. *Trade-off:* set it too high and a genuinely
+  better method is kept out; too low and we adopt on noise.
+* **regional `0.60`.** A region is a smaller sample and noisier, so holding it to
+  the global floor would block on scatter rather than on failure. *Trade-off:* a
+  looser regional floor is a weaker safeguard; the exempt-mass figure in the
+  census is the audit that it has not been loosened into uselessness.
+
+**Consequence of a regional failure, stated explicitly and CORRECTED 2026-09-20.**
+A failing arm is **ineligible**; the safeguard is applied to each arm on its own.
+
+* both eligible ⇒ the paired comparison decides;
+* exactly one eligible ⇒ **that arm is recommended**, and the report states that it
+  was licensed by eligibility rather than by the contest, naming which safeguard
+  the other arm failed;
+* neither eligible ⇒ `NO_SELECTION`.
+
+The previous rule returned `NO_SELECTION` whenever *either* arm failed. That let
+one arm's regional failure veto the other, which is not a property of the other
+arm. One arm failing still does not *license* the other — the other must clear the
+same floors itself — but once it has, their failure is not a reason to withhold it.
+`test_selection_rule.py` carries the overturned assertion's replacement and says
+what it used to require.
+
+## 2.1 The execution path: now costed, and one more thing to ratify
+
+`COST_UPDATE2`'s **≈933 GPU-h against a 600 ceiling** is superseded.
+`COST_UPDATE3-20260919.md` found the cause, and it was ours rather than his.
+
+**The 23.9× was one defect in our transcription.** Every dense projection was
+written `tf.einsum("...i,oi->...o")`, whose gradient materialises the per-example
+outer product instead of lowering to two GEMMs — 58 of 60 OOM tracebacks land in
+`einsum_op_impl.h`, at shapes up to 22.2 GB for a 32,768-number weight.
+
+**Repaired, the intended configuration runs and the campaign fits.**
+
+| | µs/example | peak | campaign |
+|---|---:|---:|---:|
+| baseline, 12 / 512 | 935.5 | 16.9 GiB | 924 ✗ |
+| + projection rewrite | 396.7 | 12.6 GiB | 418 ✓ |
+| + XLA | 156.6 | 2.1 GiB | 183 ✓ |
+| **his intended 33 / 2048, optimised + XLA** | **377.7** | **21.7 GiB** | **434 ✓** |
+
+Under the larger data leg the intended configuration is **≈547 against 600**, with
+≈18 already consumed. It fits, and it fits thinly enough that the fullevent data
+leg should be read before the final runs rather than after.
+
+**The port survived every repair.** P-1…P-6 re-run against upstream torch after the
+rewrites and again **under XLA**: all six hold each time, no verdict has ever moved,
+and under XLA no tensor exceeds its own round-off floor. The mutant controls are
+what carried that, exactly as they were built to.
+
+### F10, the one addition to the freeze
+
+> **F10. The execution path is `flat_projection` + `jit_compile=True` at 33 tokens,
+> batch 2048, on a 40 GB A100, with gradient accumulation available at micro-batch
+> 512 and not required.** Pinned by `receipts/PORT_PROFILE_80G-20260919.json` and
+> validated by `receipts/PORT_CHECKS_XLA-20260919.json`.
+
+Two caveats travel with F10 and are not decoration. 21.7 GiB on a 40 GB card is
+**inferred from a peak counter measured on an 80 GB card**, not run there — one cell
+and a few GPU-minutes would settle it. And the XLA validation covers XLA's
+**transformations on the CPU backend**, not **XLA-GPU's kernels**; no float64 check
+available to this lane can reach those.
+
+### The one thing in F10 that is yours rather than mine
+
+The projection rewrite is **the only change to his network that is not bitwise**. It
+reassociates a contraction: 1e-15 relative in float64, 6.5e-7 in float32, inside the
+port's own round-off floor, and P-1…P-6 hold with the cross-engine agreement
+slightly *improved*. But it is not the identity the other two rewrites are.
+
+**The bitwise-exact port is available, plus XLA, at 218.9 against 156.6 µs/example —
+a 40 % premium, and both fit the ceiling.** My recommendation is the rewritten
+version, because the deviation is below the floor the port already establishes
+against torch and the mutant margin is 10⁵; but a preference for exactness over 40 %
+of a campaign that fits either way is a legitimate one and it is yours.
+
+## 3. What does not freeze yet, and why
+
+| open | blocked on |
+|---|---|
+| the pretrained arm's **selected settings** | R2. Scratch tuning cannot supply them. |
+| the pretrained arm's **σ** and hence `n` | R2. Scratch variance is a different quantity. |
+| the **absolute** GPU-hour total | `n_data` for the **fullevent** schema. Narrowed to 4,091,707 rows on the 5-D point-cloud product (factor 1.2615), which is a neighbouring product; the ratio is unaffected |
+| ~~the **execution path's cost**~~ | **RESOLVED.** Diagnosed, repaired, re-checked against P-1…P-6 eager and under XLA, and re-measured on both a 40 GB and an 80 GB card. What remains is confirming 33 / 2048 on a 40 GB card — one cell — and your choice on F10's projection rewrite |
+| `pid`, auxiliary, globals, cap 33 for his arm | **R-1 is DELIVERED** (Agent A, 2026-09-19); what remains is R4 authorization to read the typed branches at scale, the globals enumeration, and the dump re-run at cap 33 |
+
+## 4. Stop conditions
+
+1. Any port check fails ⇒ stop; the arm is not his configuration.
+2. The regional safeguard fails for both arms ⇒ report `NO_SELECTION` and the
+   failing regions; do not re-bin.
+3. The pilot's σ demands more seeds than the ceiling allows ⇒ report that the
+   comparison is underpowered at the frozen δ. **Do not shrink δ after seeing σ.**
+4. `n_data` turns out to make the campaign exceed the ceiling ⇒ re-cost and return
+   here before launching.

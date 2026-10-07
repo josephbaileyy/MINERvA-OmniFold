@@ -1,0 +1,9 @@
+{
+  "measured_under": "NVIDIA_TF32_OVERRIDE=0 and TF tf32 disabled; job 58586480",
+  "per_example_microseconds": {
+    "optimised_xla|33|2048|forward": 49.012667240333485,
+    "optimised_xla|33|2048|train": 412.91009253541233,
+    "ours_incumbent|12|512|forward": 17.94628124685005,
+    "ours_incumbent|12|512|train": 35.82121385647952
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "environment": "/pscratch/sd/j/josephrb/pet-direct-token-runtime-20260911",
+  "pip_check_exit_code": 0,
+  "stdout": "No broken requirements found.\n",
+  "stderr": "",
+  "gpu_operation": "NOT_TESTED; requires an allocation"
+}

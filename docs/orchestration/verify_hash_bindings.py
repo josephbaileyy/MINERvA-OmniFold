@@ -100,6 +100,17 @@ KNOWN_PREEXISTING = {
     ("nd-unfolding/pet/evaluate_annealed_nominal_reproduction.py",
      "docs/orchestration/state/annealed-nominal-error-56563092.json",
      "077e43620fcfb1c12401b41e60f32e184ab0290b67a89bc55def0bfed2735149"),
+    # KNOWN_ISSUES #84, 2026-10-05: the MC-bootstrap replicas now divide by the central value's
+    # completeness, which changes this file's bytes. Neither pin is edited. The receipt records
+    # the bytes that produced the negweight products (`git show` recovers them). The Gate-2
+    # launcher guard keeps refusing a re-run, because its premise -- u2d unchanged since the
+    # hedge submission -- no longer holds; re-pinning it is that gate owner's decision.
+    ("2d-unfolding/unfold_2d_omnifold_unbinned.py",
+     "docs/orchestration/state/negweight-hpss-durability-20260821.json",
+     "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e"),
+    ("2d-unfolding/unfold_2d_omnifold_unbinned.py",
+     "nd-unfolding/pet/run_gate2_target_validator.sh",
+     "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e"),
 }
 
 # Minimum EXPECTED_*_SHA guards the shell collector must still resolve to files in
@@ -360,8 +371,72 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: Removing both entries reproduces 125 / cd584788 exactly; flipping the second pin's last hex digit
 #: makes this file report `MISMATCH docs/orchestration/state/s5p/gen5d/gen5d-fluxfix-2.json`, rc 1;
 #: then restored (cmp).
-RECEIPT_BINDING_COUNT = 127
-RECEIPT_BINDING_SHA256 = "e6313052886245651e40fdb8999fbd368fb9e54a2456545e29533e25ec7c1941"
+#: 127 -> 132, digest e6313052 -> aca9a776 (2026-10-03, GBDT evidence synthesis).
+#: The raw-product inventory newly binds five existing historical truth definitions:
+#: s5e/w2-genie-mec-over-cv-eavailW.json, s5e/w3-nuwro-over-genie-pt-pz-eavail.json,
+#: s5n/eavail-ratio-{gibuu,nuwro}-over-genie.json, and
+#: s5p/ratios/d5-nuwro-over-genie-q3-given-eavail-w.json (under orchestration/state).
+#: Excluding the synthesis package reproduces 127 / e6313052 exactly; no prior binding
+#: was removed or repointed. Exact added rows and the negative-control result are in
+#: nd-unfolding/gbdt_model_dependence/build_evidence.json.
+#: MERGE 2026-10-05 (integration of pet-direct-token-comparison, PR #3's base): that branch moved the inventory
+#: 120 -> 128 on its own line of history, independently of main's 120 -> 132 above. Its changelog follows verbatim;
+#: the merged constant below was measured on the merged tree and its delta enumerated (see the line after the log).
+#: 120 -> 121: the PET optimizer diagnostic guard pins its new script.
+#: Removing that receipt reproduces the prior 120-row digest exactly; see
+#: nd-unfolding/pet/direct_token_comparison/execution_runs/20260915-optimizer/binding-inventory-delta.json.
+#: 121 -> 122: the amended PET execution receipt binds its continuation grant.
+#: Exact added binding and unchanged prior inventory are recorded in
+#: nd-unfolding/pet/direct_token_comparison/local_validation/20260915-amended/binding-inventory-delta.json.
+#: 122 -> 123: the amended PET execution receipt binds the 2026-09-16 gate-scope
+#: decision that makes the variable stress case recorded rather than gating. Exact
+#: added binding and unchanged prior inventory are recorded in
+#: nd-unfolding/pet/direct_token_comparison/local_validation/20260916-stress-scope/binding-inventory-delta.json.
+#: 123 -> 124: the amended PET execution receipt binds the frozen full-matrix
+#: launcher by digest, so an unbound launcher cannot run the 24-job campaign.
+#: The count then stayed at 124 while the digest moved, because the launcher's
+#: storage-meter defect that killed 58396676_0 was repaired and re-bound: a
+#: CHANGED binding, not an added one. Both deltas are recorded in
+#: nd-unfolding/pet/direct_token_comparison/local_validation/20260916-full-matrix/.
+#: 124 -> 125: the receipt binds the durable matrix closeout launcher, so the
+#: scheduler-dependency route that verifies and reduces the matrix after this
+#: session ends cannot run from unbound bytes. Delta recorded in
+#: nd-unfolding/pet/direct_token_comparison/local_validation/20260916-full-matrix/binding-inventory-delta-closeout.json.
+#: 125 -> 126: the receipt binds the bounded inference-benchmark launcher, so the
+#: post-matrix cost measurement cannot run from unbound bytes. Delta recorded in
+#: nd-unfolding/pet/direct_token_comparison/local_validation/20260917-matrix/binding-inventory-delta-inference.json.
+#: 132 -> 140, digest aca9a776 -> 082b1a62 (2026-10-05, PET integration merge of pet-direct-token-comparison).
+#: The delta was enumerated before the constant moved, by dumping receipt_inventory() rows on origin/main
+#: (132), the branch tip 7090fcc1 (128) and the merged tree (140): merged = main's 132 + 8 branch-only ADDED
+#: bindings, all the comparison study's own pins, and NOTHING removed from main:
+#:   ADDED   nd-unfolding/pet/configuration_comparison/characterize_eavail_endpoint.py   011bc18b
+#:   ADDED   nd-unfolding/pet/direct_token_comparison/BEN_COMPARISON_AUTHORIZATION-20260915.md 5fce2195
+#:   ADDED   nd-unfolding/pet/direct_token_comparison/STRESS_SCOPE_AUTHORIZATION-20260916.md  09cebb72
+#:   ADDED   nd-unfolding/pet/direct_token_comparison/VALIDATION_CRITERIA-20260918.json      abccd88b
+#:   ADDED   nd-unfolding/pet/direct_token_comparison/optimizer_diagnostic.py                b4b5761a
+#:   ADDED   nd-unfolding/pet/direct_token_comparison/sbatch_full_matrix.sh                  bd628d28
+#:   ADDED   nd-unfolding/pet/direct_token_comparison/sbatch_inference_benchmark.sh          7cec619d
+#:   ADDED   nd-unfolding/pet/direct_token_comparison/sbatch_matrix_closeout.sh              68103810
+#: The branch's five older pins of files main had already repointed (annealed_estimator.py, train_fullevent_nominal.py,
+#: validate_gate5_training_artifacts.py, validate_pet_nominal_gate4.py, omnifold.py; ISSUE-55 and the 2026-09-23
+#: Gate-4 re-issue above) are superseded by main's repointed values, as the merge keeps main's receipts.
+#: MERGE 2026-10-05 (integration of pet-final-design-20260925, PR #4): that branch moved the inventory 128 -> 130 on
+#: its own line of history. Its entry, verbatim:
+#:   128 -> 130: the PET final-design study's bank build receipt binds its builder
+#:   (build_banks.py) and the predecessor's frozen C config (b2e4-M-K10-s1.json); receipt
+#:   nd-unfolding/pet/final_design/banks/BUILD_RECEIPT-58880785.json (2 added, 0 removed).
+#: 140 -> 142, digest 082b1a62 -> e835c705 (2026-10-05, PET integration merge of pet-final-design-20260925, PR #4).
+#: Enumerated before the constant moved (receipt_inventory() rows on the post-PR-#3 tree, the branch tip and the
+#: merged tree): exactly the final-design study's two declared additions, nothing removed:
+#:   ADDED   nd-unfolding/pet/final_design/banks/build_banks.py                                 6f43cb08
+#:   ADDED   nd-unfolding/pet/improvement_campaign/phase_b/pet/configs/b2e4-M-K10-s1.json        0afffb7d
+#: 142 -> 144, digest e835c705 -> f9dab8dd (2026-10-06, the \uqPaper producer). Enumerated before the constant
+#: moved (receipt_inventory() rows on origin/main 2c9939fe and on the branch): exactly the two CSV inputs that
+#: docs/orchestration/state/uqpaper-median-20261006/paper_median.json declares, nothing removed:
+#:   ADDED   2d-unfolding/minerva_paper_anc/bin_mapping.txt                                      d21a41eb
+#:   ADDED   2d-unfolding/minerva_paper_anc/data_result_ptpl_2D_minerva_inclusive_6GeV.txt       02153e7a
+RECEIPT_BINDING_COUNT = 144
+RECEIPT_BINDING_SHA256 = "f9dab8dd64af311296216d02878d28ab05a83062812def44d3cdc39830229cc0"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

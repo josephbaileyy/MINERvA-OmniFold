@@ -1,5 +1,16 @@
 # OmniFold orchestration kit
 
+## Campaign work in this repository: start here
+
+Read the shared [AGENTS.md](../../AGENTS.md), then the
+[session and campaign review](CAMPAIGN-REVIEW-20260929.md) before choosing a campaign strategy,
+model, or reviewer. Follow [CURRENT_WORK.md](../CURRENT_WORK.md) to the governing authorization.
+The review records both successful and unsuccessful examples and the limits of model comparisons.
+
+**The kit installation instructions and Fable role defaults below are historical setup guidance.**
+They do not replace this repository's current front door, campaign contract, or task-specific roles;
+do not overwrite the current root instructions with the templates.
+
 Unpack this directory into `docs/orchestration/` in the OmniFold repository.
 
 ## Start here
@@ -32,4 +43,3 @@ adapt it to the Perlmutter environment before use.
 - Treat these documents as a living, evidence-backed method. When a run reveals a reusable orchestration
   lesson, update the appropriate guide and `FINDINGS.md`, naming the episode and evidence. Keep OmniFold
   scientific conclusions in `CLAIMS.md`; do not generalize one anecdote into a method rule.
-

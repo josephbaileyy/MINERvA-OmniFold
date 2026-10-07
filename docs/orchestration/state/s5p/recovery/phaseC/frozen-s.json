@@ -1,0 +1,2631 @@
+{
+ "tests": {
+  "MnvTune_v1": {
+   "per_variant": {
+    "0.0": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1365,
+      "k_recovered": 0,
+      "M_recovered": 35,
+      "M_residual": 0,
+      "max_recovered_T": 90.04270273310438,
+      "T_obs": 2852.3045103570366
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1365,
+      "k_recovered": 0,
+      "M_recovered": 35,
+      "M_residual": 0,
+      "max_recovered_T": 96.16920457877266,
+      "T_obs": 630.8813753847966
+     }
+    },
+    "0.5": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1365,
+      "k_recovered": 0,
+      "M_recovered": 35,
+      "M_residual": 0,
+      "max_recovered_T": 90.05300616867929,
+      "T_obs": 2852.3045103570366
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1365,
+      "k_recovered": 0,
+      "M_recovered": 35,
+      "M_residual": 0,
+      "max_recovered_T": 96.20577100958172,
+      "T_obs": 630.8813753847966
+     }
+    },
+    "1.0": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1365,
+      "k_recovered": 0,
+      "M_recovered": 35,
+      "M_residual": 0,
+      "max_recovered_T": 90.06337079803528,
+      "T_obs": 2852.3045103570366
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1365,
+      "k_recovered": 0,
+      "M_recovered": 35,
+      "M_residual": 0,
+      "max_recovered_T": 96.24239731413688,
+      "T_obs": 630.8813753847966
+     }
+    }
+   },
+   "complete_set": {
+    "total": {
+     "claim": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_keep_both": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_replace": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "worst_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "best_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     }
+    },
+    "shape": {
+     "claim": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_keep_both": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_replace": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "worst_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "best_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     }
+    }
+   },
+   "frozen_reproduced": {
+    "total": [
+     0,
+     1365
+    ],
+    "shape": [
+     0,
+     1365
+    ]
+   }
+  },
+  "GENIE_2_12_10_CV": {
+   "per_variant": {
+    "0.0": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 740.9292326974952,
+      "T_obs": 1812.6600008919443
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 908.6955107914071,
+      "T_obs": 1086.1446376781357
+     }
+    },
+    "0.5": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 742.2769348823205,
+      "T_obs": 1812.6600008919443
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 910.1418483372548,
+      "T_obs": 1086.1446376781357
+     }
+    },
+    "1.0": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 743.626095419173,
+      "T_obs": 1812.6600008919443
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 911.5879450141056,
+      "T_obs": 1086.1446376781357
+     }
+    },
+    "m1+2": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 829.1754927094836,
+      "T_obs": 1812.6600008919443
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 981.6241324798532,
+      "T_obs": 1086.1446376781357
+     }
+    },
+    "m1-2": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 757.3041881132026,
+      "T_obs": 1812.6600008919443
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 911.4975382619621,
+      "T_obs": 1086.1446376781357
+     }
+    },
+    "m1+3": {
+     "group": "robust",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 912.5315785008645,
+      "T_obs": 1812.6600008919443
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 1036.322029999077,
+      "T_obs": 1086.1446376781357
+     }
+    },
+    "m1-3": {
+     "group": "robust",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 804.7246216064425,
+      "T_obs": 1812.6600008919443
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1366,
+      "k_recovered": 0,
+      "M_recovered": 34,
+      "M_residual": 0,
+      "max_recovered_T": 938.2956472490172,
+      "T_obs": 1086.1446376781357
+     }
+    }
+   },
+   "complete_set": {
+    "total": {
+     "claim": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_keep_both": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_replace": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "worst_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "best_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     }
+    },
+    "shape": {
+     "claim": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_keep_both": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_replace": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "worst_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "best_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     }
+    }
+   },
+   "frozen_reproduced": {
+    "total": [
+     0,
+     1366
+    ],
+    "shape": [
+     0,
+     1366
+    ]
+   }
+  },
+  "GENIE_2_12_10_MEC": {
+   "per_variant": {
+    "0.0": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 523.582345633255,
+      "T_obs": 1647.124349202422
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 710.6478517938721,
+      "T_obs": 868.5851244287276
+     }
+    },
+    "0.5": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 524.9292085173487,
+      "T_obs": 1647.124349202422
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 712.3330102604923,
+      "T_obs": 868.5851244287276
+     }
+    },
+    "1.0": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 526.2783230184647,
+      "T_obs": 1647.124349202422
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 714.0188591224182,
+      "T_obs": 868.5851244287276
+     }
+    },
+    "m1+2": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 610.6964336860145,
+      "T_obs": 1647.124349202422
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 803.8959530295076,
+      "T_obs": 868.5851244287276
+     }
+    },
+    "m1-2": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 520.3297766435303,
+      "T_obs": 1647.124349202422
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 673.3735426656889,
+      "T_obs": 868.5851244287276
+     }
+    },
+    "m1+3": {
+     "group": "robust",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 677.1757099806352,
+      "T_obs": 1647.124349202422
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 863.9651334083748,
+      "T_obs": 868.5851244287276
+     }
+    },
+    "m1-3": {
+     "group": "robust",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 550.1333335075104,
+      "T_obs": 1647.124349202422
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1343,
+      "k_recovered": 0,
+      "M_recovered": 57,
+      "M_residual": 0,
+      "max_recovered_T": 688.9043302241772,
+      "T_obs": 868.5851244287276
+     }
+    }
+   },
+   "complete_set": {
+    "total": {
+     "claim": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_keep_both": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_replace": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "worst_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "best_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     }
+    },
+    "shape": {
+     "claim": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_keep_both": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_replace": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "worst_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "best_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     }
+    }
+   },
+   "frozen_reproduced": {
+    "total": [
+     0,
+     1343
+    ],
+    "shape": [
+     0,
+     1343
+    ]
+   }
+  },
+  "NuWro_21_09": {
+   "per_variant": {
+    "0.0": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 6617.283255069278,
+      "T_obs": 7427.144348737543
+     },
+     "shape": {
+      "k_frozen": 1,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 8914.863843592186,
+      "T_obs": 9660.007441171016
+     }
+    },
+    "0.5": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 6617.283255069278,
+      "T_obs": 7427.144348737543
+     },
+     "shape": {
+      "k_frozen": 1,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 8914.863843592186,
+      "T_obs": 9660.007441171016
+     }
+    },
+    "1.0": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 6617.283255069278,
+      "T_obs": 7427.144348737543
+     },
+     "shape": {
+      "k_frozen": 1,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 8914.863843592186,
+      "T_obs": 9660.007441171016
+     }
+    },
+    "m1+2": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 6712.145871234433,
+      "T_obs": 7427.144348737543
+     },
+     "shape": {
+      "k_frozen": 1,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 9042.588961171876,
+      "T_obs": 9660.007441171016
+     }
+    },
+    "m1-2": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 6643.2819058756995,
+      "T_obs": 7427.144348737543
+     },
+     "shape": {
+      "k_frozen": 1,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 8923.517150027139,
+      "T_obs": 9660.007441171016
+     }
+    },
+    "m1+3": {
+     "group": "robust",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 6808.262092684539,
+      "T_obs": 7427.144348737543
+     },
+     "shape": {
+      "k_frozen": 2,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 9141.752982994924,
+      "T_obs": 9660.007441171016
+     }
+    },
+    "m1-3": {
+     "group": "robust",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 6708.161991729939,
+      "T_obs": 7427.144348737543
+     },
+     "shape": {
+      "k_frozen": 1,
+      "B_frozen": 1751,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 8989.214575428672,
+      "T_obs": 9660.007441171016
+     }
+    }
+   },
+   "complete_set": {
+    "total": {
+     "claim": {
+      "p": 0.000555247084952804,
+      "k": 0,
+      "B": 1800,
+      "variant": "0.0"
+     },
+     "robust_keep_both": {
+      "p": 0.000555247084952804,
+      "k": 0,
+      "B": 1800,
+      "variant": "0.0"
+     },
+     "robust_replace": {
+      "p": 0.000555247084952804,
+      "k": 0,
+      "B": 1800,
+      "variant": "0.0"
+     },
+     "worst_residual": {
+      "p": 0.000555247084952804,
+      "k": 0,
+      "B": 1800,
+      "variant": "0.0"
+     },
+     "best_residual": {
+      "p": 0.000555247084952804,
+      "k": 0,
+      "B": 1800,
+      "variant": "0.0"
+     }
+    },
+    "shape": {
+     "claim": {
+      "p": 0.001110494169905608,
+      "k": 1,
+      "B": 1800,
+      "variant": "0.0"
+     },
+     "robust_keep_both": {
+      "p": 0.001665741254858412,
+      "k": 2,
+      "B": 1800,
+      "variant": "m1+3"
+     },
+     "robust_replace": {
+      "p": 0.001665741254858412,
+      "k": 2,
+      "B": 1800,
+      "variant": "m1+3"
+     },
+     "worst_residual": {
+      "p": 0.001110494169905608,
+      "k": 1,
+      "B": 1800,
+      "variant": "0.0"
+     },
+     "best_residual": {
+      "p": 0.001110494169905608,
+      "k": 1,
+      "B": 1800,
+      "variant": "0.0"
+     }
+    }
+   },
+   "frozen_reproduced": {
+    "total": [
+     0,
+     1751
+    ],
+    "shape": [
+     1,
+     1751
+    ]
+   }
+  },
+  "GiBUU_2019": {
+   "per_variant": {
+    "0.0": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 1964.1906561840233,
+      "T_obs": 2866.95841380786
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 2509.532241787446,
+      "T_obs": 4013.3044476515465
+     }
+    },
+    "0.5": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 1965.4400285171682,
+      "T_obs": 2866.95841380786
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 2511.3159110062857,
+      "T_obs": 4013.3044476515465
+     }
+    },
+    "1.0": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 1966.6898118703562,
+      "T_obs": 2866.95841380786
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 2513.0991809861166,
+      "T_obs": 4013.3044476515465
+     }
+    },
+    "m1+2": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 2105.4997538543844,
+      "T_obs": 2866.95841380786
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 2698.9195250669327,
+      "T_obs": 4013.3044476515465
+     }
+    },
+    "m1-2": {
+     "group": "claim",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 1900.3847190867916,
+      "T_obs": 2866.95841380786
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 2406.9916073160402,
+      "T_obs": 4013.3044476515465
+     }
+    },
+    "m1+3": {
+     "group": "robust",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 2200.4767551970617,
+      "T_obs": 2866.95841380786
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 2813.075165890891,
+      "T_obs": 4013.3044476515465
+     }
+    },
+    "m1-3": {
+     "group": "robust",
+     "total": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 1893.7464907766102,
+      "T_obs": 2866.95841380786
+     },
+     "shape": {
+      "k_frozen": 0,
+      "B_frozen": 1351,
+      "k_recovered": 0,
+      "M_recovered": 49,
+      "M_residual": 0,
+      "max_recovered_T": 2391.0914889581027,
+      "T_obs": 4013.3044476515465
+     }
+    }
+   },
+   "complete_set": {
+    "total": {
+     "claim": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_keep_both": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_replace": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "worst_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "best_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     }
+    },
+    "shape": {
+     "claim": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_keep_both": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "robust_replace": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "worst_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     },
+     "best_residual": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "variant": "0.0"
+     }
+    }
+   },
+   "frozen_reproduced": {
+    "total": [
+     0,
+     1351
+    ],
+    "shape": [
+     0,
+     1351
+    ]
+   }
+  }
+ },
+ "decisions_complete_set": {
+  "NuWro_21_09:total": {
+   "p": 0.000555247084952804,
+   "k": 0,
+   "B": 1800,
+   "threshold": 0.005,
+   "interval": [
+    0.0,
+    0.0020472789343030334
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "MnvTune_v1:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.005555555555555556,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "MnvTune_v1:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.00625,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_CV:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.0071428571428571435,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_CV:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.008333333333333333,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_MEC:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.01,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_MEC:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.0125,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GiBUU_2019:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.016666666666666666,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GiBUU_2019:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.025,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "NuWro_21_09:shape": {
+   "p": 0.001110494169905608,
+   "k": 1,
+   "B": 1800,
+   "threshold": 0.05,
+   "interval": [
+    1.4065349962198728e-05,
+    0.003091429502047421
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  }
+ },
+ "decisions_complete_set_kappa3_keep_both": {
+  "NuWro_21_09:total": {
+   "p": 0.000555247084952804,
+   "k": 0,
+   "B": 1800,
+   "threshold": 0.005,
+   "interval": [
+    0.0,
+    0.0020472789343030334
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "MnvTune_v1:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.005555555555555556,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "MnvTune_v1:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.00625,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_CV:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.0071428571428571435,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_CV:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.008333333333333333,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_MEC:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.01,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_MEC:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.0125,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GiBUU_2019:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.016666666666666666,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GiBUU_2019:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.025,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "NuWro_21_09:shape": {
+   "p": 0.001665741254858412,
+   "k": 2,
+   "B": 1800,
+   "threshold": 0.05,
+   "interval": [
+    0.00013458904635969997,
+    0.004007894479329438
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  }
+ },
+ "decisions_complete_set_kappa3_replace": {
+  "NuWro_21_09:total": {
+   "p": 0.000555247084952804,
+   "k": 0,
+   "B": 1800,
+   "threshold": 0.005,
+   "interval": [
+    0.0,
+    0.0020472789343030334
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "MnvTune_v1:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.005555555555555556,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "MnvTune_v1:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.00625,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_CV:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.0071428571428571435,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_CV:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.008333333333333333,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_MEC:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.01,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_MEC:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.0125,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GiBUU_2019:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.016666666666666666,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GiBUU_2019:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.025,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "NuWro_21_09:shape": {
+   "p": 0.001665741254858412,
+   "k": 2,
+   "B": 1800,
+   "threshold": 0.05,
+   "interval": [
+    0.00013458904635969997,
+    0.004007894479329438
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  }
+ },
+ "labels_complete_set": {
+  "NuWro_21_09:total": "robust to the sub-fine residual",
+  "MnvTune_v1:total": "robust to the sub-fine residual",
+  "MnvTune_v1:shape": "robust to the sub-fine residual",
+  "GENIE_2_12_10_CV:total": "robust to the sub-fine residual",
+  "GENIE_2_12_10_CV:shape": "robust to the sub-fine residual",
+  "GENIE_2_12_10_MEC:total": "robust to the sub-fine residual",
+  "GENIE_2_12_10_MEC:shape": "robust to the sub-fine residual",
+  "GiBUU_2019:total": "robust to the sub-fine residual",
+  "GiBUU_2019:shape": "robust to the sub-fine residual",
+  "NuWro_21_09:shape": "robust to the sub-fine residual"
+ },
+ "power": {
+  "levels": [
+   0.05,
+   0.005
+  ],
+  "P1_a1.0": {
+   "null": "MnvTune_v1",
+   "frozen": {
+    "n": 193,
+    "total": {
+     "0.05": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 193
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 193,
+       "interval": [
+        0.9810681371027123,
+        1.0
+       ],
+       "alpha": 0.05,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 193
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 193,
+       "interval": [
+        0.9810681371027123,
+        1.0
+       ],
+       "alpha": 0.005,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    },
+    "shape": {
+     "0.05": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 193
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 193,
+       "interval": [
+        0.9810681371027123,
+        1.0
+       ],
+       "alpha": 0.05,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 193
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 193,
+       "interval": [
+        0.9810681371027123,
+        1.0
+       ],
+       "alpha": 0.005,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    }
+   },
+   "complete_set": {
+    "n": 200,
+    "total": {
+     "0.05": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 200,
+       "interval": [
+        0.9817246596448638,
+        1.0
+       ],
+       "alpha": 0.05,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 200,
+       "interval": [
+        0.9817246596448638,
+        1.0
+       ],
+       "alpha": 0.005,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    },
+    "shape": {
+     "0.05": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 200,
+       "interval": [
+        0.9817246596448638,
+        1.0
+       ],
+       "alpha": 0.05,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 200,
+       "interval": [
+        0.9817246596448638,
+        1.0
+       ],
+       "alpha": 0.005,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    }
+   },
+   "M_recovered": 7,
+   "M_residual": 0
+  },
+  "P2_a1.0": {
+   "null": "MnvTune_v1",
+   "frozen": {
+    "n": 195,
+    "total": {
+     "0.05": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 195
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 195,
+       "interval": [
+        0.981260479169714,
+        1.0
+       ],
+       "alpha": 0.05,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 195
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 195,
+       "interval": [
+        0.981260479169714,
+        1.0
+       ],
+       "alpha": 0.005,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    },
+    "shape": {
+     "0.05": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 195
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 195,
+       "interval": [
+        0.981260479169714,
+        1.0
+       ],
+       "alpha": 0.05,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 195
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 195,
+       "interval": [
+        0.981260479169714,
+        1.0
+       ],
+       "alpha": 0.005,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    }
+   },
+   "complete_set": {
+    "n": 200,
+    "total": {
+     "0.05": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 200,
+       "interval": [
+        0.9817246596448638,
+        1.0
+       ],
+       "alpha": 0.05,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 200,
+       "interval": [
+        0.9817246596448638,
+        1.0
+       ],
+       "alpha": 0.005,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    },
+    "shape": {
+     "0.05": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 200,
+       "interval": [
+        0.9817246596448638,
+        1.0
+       ],
+       "alpha": 0.05,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 200,
+       "interval": [
+        0.9817246596448638,
+        1.0
+       ],
+       "alpha": 0.005,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    }
+   },
+   "M_recovered": 5,
+   "M_residual": 0
+  },
+  "P3_a1.0": {
+   "null": "MnvTune_v1",
+   "frozen": {
+    "n": 195,
+    "total": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.9948717948717949,
+       "n": 195
+      },
+      "claim_rule_determined": {
+       "power": 0.9948717948717949,
+       "n": 195,
+       "interval": [
+        0.9717601619923176,
+        0.9998701735154476
+       ],
+       "alpha": 0.05,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.9384615384615385,
+       "n": 195
+      },
+      "claim_rule_determined": {
+       "power": 0.8615384615384616,
+       "n": 195,
+       "interval": [
+        0.8049740713928204,
+        0.9067291392801887
+       ],
+       "alpha": 0.005,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    },
+    "shape": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.9435897435897436,
+       "n": 195
+      },
+      "claim_rule_determined": {
+       "power": 0.9282051282051282,
+       "n": 195,
+       "interval": [
+        0.8824736799003717,
+        0.960195435597317
+       ],
+       "alpha": 0.05,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.6153846153846154,
+       "n": 195
+      },
+      "claim_rule_determined": {
+       "power": 0.23076923076923078,
+       "n": 195,
+       "interval": [
+        0.17358197958625676,
+        0.29633307878477183
+       ],
+       "alpha": 0.005,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    }
+   },
+   "complete_set": {
+    "n": 200,
+    "total": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.995,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.995,
+       "n": 200,
+       "interval": [
+        0.9724581015427943,
+        0.999873418972133
+       ],
+       "alpha": 0.05,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.94,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.865,
+       "n": 200,
+       "interval": [
+        0.8096908273166017,
+        0.9091128982451022
+       ],
+       "alpha": 0.005,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    },
+    "shape": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.945,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.93,
+       "n": 200,
+       "interval": [
+        0.8853402664628894,
+        0.9612044295704372
+       ],
+       "alpha": 0.05,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.625,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.225,
+       "n": 200,
+       "interval": [
+        0.16910254712982672,
+        0.2892396059687647
+       ],
+       "alpha": 0.005,
+       "B": 1365,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    }
+   },
+   "M_recovered": 5,
+   "M_residual": 0
+  },
+  "P1g_a1.0": {
+   "null": "GENIE_2_12_10_CV",
+   "frozen": {
+    "n": 199,
+    "total": {
+     "0.05": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 199
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 199,
+       "interval": [
+        0.9816336723055847,
+        1.0
+       ],
+       "alpha": 0.05,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 199
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 199,
+       "interval": [
+        0.9816336723055847,
+        1.0
+       ],
+       "alpha": 0.005,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    },
+    "shape": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.964824120603015,
+       "n": 199
+      },
+      "claim_rule_determined": {
+       "power": 0.9547738693467337,
+       "n": 199,
+       "interval": [
+        0.9158853629982651,
+        0.9791141061428094
+       ],
+       "alpha": 0.05,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.8140703517587939,
+       "n": 199
+      },
+      "claim_rule_determined": {
+       "power": 0.7386934673366834,
+       "n": 199,
+       "interval": [
+        0.6718572388734128,
+        0.7982702783408604
+       ],
+       "alpha": 0.005,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    }
+   },
+   "complete_set": {
+    "n": 200,
+    "total": {
+     "0.05": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 200,
+       "interval": [
+        0.9817246596448638,
+        1.0
+       ],
+       "alpha": 0.05,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 1.0,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 1.0,
+       "n": 200,
+       "interval": [
+        0.9817246596448638,
+        1.0
+       ],
+       "alpha": 0.005,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    },
+    "shape": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.965,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.955,
+       "n": 200,
+       "interval": [
+        0.916297311924146,
+        0.9792195777729956
+       ],
+       "alpha": 0.05,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.815,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.74,
+       "n": 200,
+       "interval": [
+        0.6734222463428603,
+        0.7993151451236595
+       ],
+       "alpha": 0.005,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    }
+   },
+   "M_recovered": 1,
+   "M_residual": 0
+  },
+  "P2g_a1.0": {
+   "null": "GENIE_2_12_10_CV",
+   "frozen": {
+    "n": 193,
+    "total": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.5803108808290155,
+       "n": 193
+      },
+      "claim_rule_determined": {
+       "power": 0.5284974093264249,
+       "n": 193,
+       "interval": [
+        0.4555140126944687,
+        0.6005920194891408
+       ],
+       "alpha": 0.05,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.14507772020725387,
+       "n": 193
+      },
+      "claim_rule_determined": {
+       "power": 0.08808290155440414,
+       "n": 193,
+       "interval": [
+        0.0521504943577818,
+        0.13728307505657136
+       ],
+       "alpha": 0.005,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    },
+    "shape": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.22279792746113988,
+       "n": 193
+      },
+      "claim_rule_determined": {
+       "power": 0.17098445595854922,
+       "n": 193,
+       "interval": [
+        0.12071690938907968,
+        0.23165956062677018
+       ],
+       "alpha": 0.05,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.046632124352331605,
+       "n": 193
+      },
+      "claim_rule_determined": {
+       "power": 0.02072538860103627,
+       "n": 193,
+       "interval": [
+        0.005675156249674827,
+        0.052212409308034835
+       ],
+       "alpha": 0.005,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    }
+   },
+   "complete_set": {
+    "n": 200,
+    "total": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.585,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.525,
+       "n": 200,
+       "interval": [
+        0.45336801747032385,
+        0.5958799665750214
+       ],
+       "alpha": 0.05,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.14,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.085,
+       "n": 200,
+       "interval": [
+        0.05029591863025729,
+        0.13260516582955234
+       ],
+       "alpha": 0.005,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    },
+    "shape": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.22,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.17,
+       "n": 200,
+       "interval": [
+        0.12069562323621741,
+        0.22937160039388627
+       ],
+       "alpha": 0.05,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.05,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.02,
+       "n": 200,
+       "interval": [
+        0.00547556587955645,
+        0.05041360908989629
+       ],
+       "alpha": 0.005,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    }
+   },
+   "M_recovered": 7,
+   "M_residual": 0
+  },
+  "P3g_a1.0": {
+   "null": "GENIE_2_12_10_CV",
+   "frozen": {
+    "n": 172,
+    "total": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.011627906976744186,
+       "n": 172
+      },
+      "claim_rule_determined": {
+       "power": 0.011627906976744186,
+       "n": 172,
+       "interval": [
+        0.0014113086530044333,
+        0.041370853136042135
+       ],
+       "alpha": 0.05,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.0,
+       "n": 172
+      },
+      "claim_rule_determined": {
+       "power": 0.0,
+       "n": 172,
+       "interval": [
+        0.0,
+        0.02121862262512599
+       ],
+       "alpha": 0.005,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    },
+    "shape": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.023255813953488372,
+       "n": 172
+      },
+      "claim_rule_determined": {
+       "power": 0.01744186046511628,
+       "n": 172,
+       "interval": [
+        0.003611476130416566,
+        0.05012416288661771
+       ],
+       "alpha": 0.05,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.0,
+       "n": 172
+      },
+      "claim_rule_determined": {
+       "power": 0.0,
+       "n": 172,
+       "interval": [
+        0.0,
+        0.02121862262512599
+       ],
+       "alpha": 0.005,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    }
+   },
+   "complete_set": {
+    "n": 200,
+    "total": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.01,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.01,
+       "n": 200,
+       "interval": [
+        0.001213349013736031,
+        0.035654668397239776
+       ],
+       "alpha": 0.05,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.0,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.0,
+       "n": 200,
+       "interval": [
+        0.0,
+        0.018275340355136237
+       ],
+       "alpha": 0.005,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    },
+    "shape": {
+     "0.05": {
+      "claim_rule": {
+       "power": 0.02,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.015,
+       "n": 200,
+       "interval": [
+        0.00310410762155351,
+        0.0432082819177126
+       ],
+       "alpha": 0.05,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     },
+     "0.005": {
+      "claim_rule": {
+       "power": 0.0,
+       "n": 200
+      },
+      "claim_rule_determined": {
+       "power": 0.0,
+       "n": 200,
+       "interval": [
+        0.0,
+        0.018275340355136237
+       ],
+       "alpha": 0.005,
+       "B": 1366,
+       "rule": "claim rule with determinacy"
+      }
+     }
+    }
+   },
+   "M_recovered": 28,
+   "M_residual": 0
+  }
+ },
+ "decisions_worst_residual": {
+  "NuWro_21_09:total": {
+   "p": 0.000555247084952804,
+   "k": 0,
+   "B": 1800,
+   "threshold": 0.005,
+   "interval": [
+    0.0,
+    0.0020472789343030334
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "MnvTune_v1:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.005555555555555556,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "MnvTune_v1:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.00625,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_CV:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.0071428571428571435,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_CV:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.008333333333333333,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_MEC:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.01,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_MEC:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.0125,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GiBUU_2019:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.016666666666666666,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GiBUU_2019:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.025,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "NuWro_21_09:shape": {
+   "p": 0.001110494169905608,
+   "k": 1,
+   "B": 1800,
+   "threshold": 0.05,
+   "interval": [
+    1.4065349962198728e-05,
+    0.003091429502047421
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  }
+ },
+ "decisions_best_residual": {
+  "NuWro_21_09:total": {
+   "p": 0.000555247084952804,
+   "k": 0,
+   "B": 1800,
+   "threshold": 0.005,
+   "interval": [
+    0.0,
+    0.0020472789343030334
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "MnvTune_v1:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.005555555555555556,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "MnvTune_v1:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.00625,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_CV:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.0071428571428571435,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_CV:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.008333333333333333,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_MEC:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.01,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GENIE_2_12_10_MEC:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.0125,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GiBUU_2019:total": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.016666666666666666,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "GiBUU_2019:shape": {
+   "p": 0.0007137758743754461,
+   "k": 0,
+   "B": 1400,
+   "threshold": 0.025,
+   "interval": [
+    0.0,
+    0.0026314455571032464
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  },
+  "NuWro_21_09:shape": {
+   "p": 0.001110494169905608,
+   "k": 1,
+   "B": 1800,
+   "threshold": 0.05,
+   "interval": [
+    1.4065349962198728e-05,
+    0.003091429502047421
+   ],
+   "level": 0.95,
+   "decision": "rejected"
+  }
+ },
+ "primary_decisions": {
+  "NuWro_21_09:total": "rejected",
+  "GENIE_2_12_10_CV:total": "rejected",
+  "GENIE_2_12_10_CV:shape": "rejected",
+  "MnvTune_v1:total": "rejected",
+  "MnvTune_v1:shape": "rejected",
+  "GiBUU_2019:total": "rejected",
+  "GiBUU_2019:shape": "rejected",
+  "GENIE_2_12_10_MEC:total": "rejected",
+  "GENIE_2_12_10_MEC:shape": "rejected",
+  "NuWro_21_09:shape": "rejected"
+ },
+ "label": "REPORT ONLY: the recovered draws scored against the FROZEN shift variants; the primary decisions are those of the frozen evaluation",
+ "environment": {
+  "python": "3.11.14",
+  "numpy": "1.26.4",
+  "scipy": "1.16.3"
+ }
+}

@@ -1,0 +1,58 @@
+{
+ "schema": "publication-release-receipt/1",
+ "what": "sufficient inputs of the s5p joint tests (frozen group), extracted with the frozen code and replayed by the standalone replay",
+ "citable_for": "the identity of the extract and that the standalone replay reproduces joint-evaluate.json exactly (rtol 1e-12) on two platforms",
+ "not_citable_for": "a release, a deposit, the calibration's adequacy, the lost-seed resolution",
+ "extract": {
+  "cluster_path": "/pscratch/sd/j/josephrb/pub-release-20261006/frozen/inference_sufficient.npz",
+  "npz_sha256": "7bd019c646b44c6e94fcefd6e0827f6891d96d7acc16f86d124aee94cb776387",
+  "npz_bytes": 7094074,
+  "manifest_sha256": "e8aedfe80ac1bdc97443b0cf61be8f0dadbfba2f2d1f6d5631a72ef362fef1c9",
+  "manifest_npz_sha256_field": "7bd019c646b44c6e94fcefd6e0827f6891d96d7acc16f86d124aee94cb776387",
+  "deploy": "/pscratch/sd/j/josephrb/s5p-20260926/deploy/e9372b75",
+  "s5p_joint_sha256": "2cd98235a4ad1c544cad7b3340b4b385c0904236351a04dc53d3f3c22e308bf9",
+  "s5p_inference_sha256": "55239135b2a729cca478b661f59ad9ca00deccf27f96d9bac5974616280cf62c",
+  "design_sha256": "404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285",
+  "v_sha256": "35979ef75ca1b0fb019c07a20e11a4bf0fe3b230e7cea495930fb572fe8e1c84",
+  "B": {
+   "MnvTune_v1": 1365,
+   "GENIE_2_12_10_CV": 1366,
+   "GENIE_2_12_10_MEC": 1343,
+   "NuWro_21_09": 1751,
+   "GiBUU_2019": 1351
+  },
+  "product_digests_recorded": {
+   "MnvTune_v1": 1365,
+   "GENIE_2_12_10_CV": 1366,
+   "GENIE_2_12_10_MEC": 1343,
+   "NuWro_21_09": 1751,
+   "GiBUU_2019": 1351
+  },
+  "power_sets": {
+   "P1_a1.0": 193,
+   "P2_a1.0": 195,
+   "P3_a1.0": 195,
+   "P1g_a1.0": 199,
+   "P2g_a1.0": 193,
+   "P3g_a1.0": 172
+  },
+  "tools": {
+   "extract_inference_sufficient.py": "6ff1d6df7a9a2e61a27b548af4ebf68e36bec6066ed330dcd910c17193c32aea",
+   "replay_inference.py": "41f4af05eed0c07ad74acad73900fd22474e8bbac0e58f2e54eb424dddcbd7a4"
+  },
+  "run": "login04, 2026-10-06 (UTC ~04:25), root_6_28 env (Python 3.11.14, numpy 1.26.4, scipy 1.16.3), OMP 4; wall 0:42, max RSS 203 MB; rc 0"
+ },
+ "replay": [
+  {
+   "host": "saul login node",
+   "against": "joint-evaluate.json sha256 b9604502b1aa263508ba46f0be91846d7a2106f6f2fd0ba5c172b87ee256dd11",
+   "result": "COMPARE: AGREE (0 differences)"
+  },
+  {
+   "host": "local macOS (numpy 1.26.4, scipy 1.15.2)",
+   "against": "repository copy of joint-evaluate.json (same sha256)",
+   "result": "COMPARE: AGREE (0 differences)"
+  }
+ ],
+ "durability": "the npz lives on /pscratch (purgeable); it is regenerable in under a minute from the frozen products while they exist; a durable copy belongs in the release deposit (separately authorized)"
+}
