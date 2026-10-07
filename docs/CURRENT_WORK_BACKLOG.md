@@ -8,7 +8,6 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | source record | derived queue | classification rule | source state prefix |
 |---|---|---|---|
 | OI-188 | NOW | migration-carried-forward | OPEN |
-| OI-187 | NOW | migration-carried-forward | RULED 2026-09-01 BY JOSEPH — (a) UPGRADE, NOT A SUBMISSION BLOCKER, and (b) THE DEPENDENCY IS RETAINED BY CHOICE — "keep |
 | OI-186 | NOW | migration-carried-forward | OPEN |
 | OI-184 | NOW | migration-carried-forward | OPEN |
 | OI-183 | NOW | migration-carried-forward | OPEN |
@@ -24,14 +23,9 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-152 | NOW | migration-carried-forward | OPEN |
 | OI-151 | NOW | migration-carried-forward | OPEN |
 | OI-150 | NOW | migration-carried-forward | OPEN |
-| OI-149 | NOW | migration-carried-forward | FIXED AND LANDED 2026-08-21 (89e0c62f) -- NO LONGER AWAITING A USER DECISION. Joseph ruled it and the code is in: assert |
-| OI-147 | NOW | migration-carried-forward | COMPLETE 2026-08-21. The seven configuration keys landed at aa989794, the eighth (hDiagCombinedOld, via the raw diagonal |
 | OI-148 | NOW | migration-carried-forward | OPEN — NARROWED 2026-08-21. The four rows are RECONSTRUCTED and the seven-column check PASSES; what stays open is that n |
-| OI-140 | WAITING-JOSEPH | migration-carried-forward | VERIFICATION LANDED 2026-08-21 (3cb46337) -- AND THE GATE IS STILL NOT PASSABLE; SEE OI-147. Route chosen: REAL in-file |
-| OI-141 | WAITING-JOSEPH | migration-carried-forward | FIXED AND LANDED 2026-08-21 (3cb46337). compare() returns ComparisonResult, a 2-long tuple subclass carrying .uncomparab |
 | OI-142 | NOW | migration-carried-forward | SHELL LIBRARY FIXED 2026-08-21; ONE RESIDUAL, NAMED AND NOT SILENTLY DROPPED. rg_is_complete now REFUSES a marker carryi |
 | OI-143 | WAITING-JOSEPH | migration-carried-forward | (a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out |
-| OI-145 | NOW | migration-carried-forward | REPINNED 2026-08-21 (ea1a3fd6) -- ACCEPTED AS A VERSIONED REPIN, NOT REVERTED AND NOT OVERWRITTEN. All 7 edits verified |
 | OI-74 | NOW | migration-carried-forward | CORRECTED AND NARROWED 2026-08-17 (lane E) — THE DRIFT IS GONE, THE TREE IS SYNCED AT 7ac36ac, AND EVERY QUANTITY IN THI |
 | OI-1 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED |
 | OI-2 | NOW | migration-carried-forward | 4D SUPERSEDED / scalar-FPS STILL OPEN — SPLIT VERDICT, codex audit 2026-08-13 |

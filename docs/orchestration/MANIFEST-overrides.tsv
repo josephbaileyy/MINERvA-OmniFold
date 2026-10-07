@@ -428,7 +428,7 @@ docs/orchestration/CAMPAIGN-s5c-20260924-paper-wide-table.md	LIVE	open
 docs/orchestration/FEASIBILITY-20260925-s5c-scalar5d-measurement-and-inference.md	LIVE	open	
 docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md	LIVE	open	
 docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md	LIVE	open	
-docs/orchestration/HANDOFF-20260925-negweight-refined-successor.md	LIVE	open	
+docs/orchestration/HANDOFF-20260925-negweight-refined-successor.md	ARCHIVAL	terminal	docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md
 docs/orchestration/GOAL-20260925-negweight-refined-successor.txt	LIVE	open	
 docs/orchestration/AUTHORIZATION-20260925-negweight-refined-successor.md	LIVE	open	
 docs/orchestration/state/s5n/contract.json	MACHINE	open	
@@ -448,7 +448,7 @@ docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md	LIVE	open
 docs/orchestration/state/s5e/contract-amendment-3-candidate-R-and-assessment.json	MACHINE	open	
 docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md	LIVE	open	
 docs/orchestration/GOAL-20260926-precision-measurement-completion.txt	LIVE	open	
-docs/orchestration/HANDOFF-20260926-precision-measurement-completion.md	LIVE	open	
+docs/orchestration/HANDOFF-20260926-precision-measurement-completion.md	ARCHIVAL	terminal	docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md
 docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md	LIVE	open	
 docs/orchestration/CAMPAIGN-s5p-20260926-index.md	LIVE	open	
 docs/orchestration/state/s5p/contract.json	MACHINE	open	
@@ -468,7 +468,7 @@ docs/orchestration/state/s5p/contract-amendment-8-review2-repairs.json	MACHINE	o
 docs/orchestration/EXCEPTION-20260927-s5p-pilot-negative-rate-resubmission.md	LIVE	open	
 docs/orchestration/REVIEW-20260927-s5p-admission-confirmation.md	LIVE	open	
 docs/orchestration/state/s5p/contract-amendment-7-production-admission.json	MACHINE	open	
-docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md	LIVE	open	
+docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md	ARCHIVAL	terminal	docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md
 docs/orchestration/HANDOFF-20260928-s5p-recompute.md	LIVE	open	
 docs/orchestration/ASSESSMENT-20260929-s5p-recompute-A6-A8.md	LIVE	open	
 docs/orchestration/RULING-20260929-s5p-A7-VS-kappa3-variant-set.md	LIVE	open	
@@ -482,9 +482,9 @@ docs/orchestration/CLARIFICATION-20260928-s5p-recompute-A6-A8.md	LIVE	open
 docs/orchestration/HANDOFF-20260928-s5p-analysis-note-sync.md	LIVE	open	
 docs/orchestration/RULING-20260929-s5p-A7-robustness-flag.md	LIVE	open	
 docs/orchestration/HANDOFF-20260928-s5p-reproduction-harness.md	LIVE	open	
-docs/orchestration/HANDOFF-20260929-s5p-campaign-cold-start.md	LIVE	open	
+docs/orchestration/HANDOFF-20260929-s5p-campaign-cold-start.md	ARCHIVAL	terminal	docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md
 docs/orchestration/GOAL-20260929-s5p-campaign-successor.txt	LIVE	open	
-docs/orchestration/HANDOFF-20260929-s5p-recompute-seed-gap-correction.md	LIVE	open	
+docs/orchestration/HANDOFF-20260929-s5p-recompute-seed-gap-correction.md	ARCHIVAL	terminal	docs/orchestration/HANDOFF-20260928-s5p-recompute.md
 docs/orchestration/RECORD-20260929-s5p-lost-seed-runtime-diagnostic.md	LIVE	open	
 docs/orchestration/REPORT-20260930-s5p-batch1-throughput-eta-cost.md	LIVE	open	
 docs/orchestration/RUNBOOK-20260930-s5p-transition-r2-budget-rev6.md	LIVE	open	
@@ -514,6 +514,6 @@ docs/orchestration/REVIEW-20261006-s5p-stage7-note-wording.md	LIVE	open
 docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md	LIVE	open	
 docs/orchestration/DECISION-RULE-20261006-ki85-bootstrap-diagnostic.md	LIVE	open	
 docs/orchestration/GOAL-20261005-2d-coverage-test.txt	LIVE	open	
-docs/orchestration/HANDOFF-20261005-2d-coverage-test.md	LIVE	open	
+docs/orchestration/HANDOFF-20261005-2d-coverage-test.md	ARCHIVAL	terminal	docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md
 docs/orchestration/HANDOFF-20260902-operational-baseline-snapshot.md	ARCHIVAL	terminal	""
 docs/orchestration/HANDOFF-20260902-k0-continuity.md	ARCHIVAL	terminal	""

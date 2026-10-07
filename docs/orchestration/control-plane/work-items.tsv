@@ -103,16 +103,16 @@ OI-136	OI-136	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	mi
 OI-137	OI-137	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-137`)	sha256:ae669609f4f20df72fc7e9f572a3c99c1d565fa74377c917887e12251abe6a5f
 OI-138	OI-138	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-138`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
 OI-139	OI-139	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-139`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
-OI-140	OI-140	active	WAITING-JOSEPH	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-140`)	sha256:3612d66a1377ad45d4a17cb261ea96c744d5d5c1138c7ea2e57de858cbe08dc8
-OI-141	OI-141	active	WAITING-JOSEPH	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-141`)	sha256:a3dd009ef466ac4a19936ea52e75133ad4c72a731a9f43c4dc89e748eb86144a
+OI-140	OI-140	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-140`)	sha256:3612d66a1377ad45d4a17cb261ea96c744d5d5c1138c7ea2e57de858cbe08dc8
+OI-141	OI-141	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-141`)	sha256:a3dd009ef466ac4a19936ea52e75133ad4c72a731a9f43c4dc89e748eb86144a
 OI-142	OI-142	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-142`)	sha256:5a86402216bdc49fcf7b7bd114b77559318ae6a0f161a640d5567faad94428fe
 OI-143	OI-143	active	WAITING-JOSEPH	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-143`)	sha256:d3ac9003c37b35cc7f57e0eb373471ee5eb46368ff763609b66c0fb1ca2bdb83
 OI-144	OI-144	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-144`)	sha256:fd30935d90f4852d77330781db5de2912ce8856f156dd5c7acb47bce27ad5606
-OI-145	OI-145	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-145`)	sha256:40c6beff81c1fb824b7566a1a7564714cf8978aab041d94074b58b53c508c291
+OI-145	OI-145	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-145`)	sha256:40c6beff81c1fb824b7566a1a7564714cf8978aab041d94074b58b53c508c291
 OI-146	OI-146	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-146`)	sha256:19dabef3f7ae460f6b8069f5e9210d1e97abb9dd53bb22c7e04f1f1962dd9b0c
-OI-147	OI-147	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-147`)	sha256:b0c05702905948a78bf4c3bcf3a982a7692840c8306a801fcc67bc2afad4ba3e
+OI-147	OI-147	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-147`)	sha256:b0c05702905948a78bf4c3bcf3a982a7692840c8306a801fcc67bc2afad4ba3e
 OI-148	OI-148	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-148`)	sha256:dd9126b317e17cbc96deaf909db7d141feb3ac0c6294c3d68413238811831c09
-OI-149	OI-149	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-149`)	sha256:0a3426e941d981acedec5b31f44e8a4a1b5b6d24e2a1bd297120ab7687a45734
+OI-149	OI-149	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-149`)	sha256:0a3426e941d981acedec5b31f44e8a4a1b5b6d24e2a1bd297120ab7687a45734
 OI-150	OI-150	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-150`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
 OI-151	OI-151	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-151`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
 OI-152	OI-152	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-152`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
@@ -136,10 +136,10 @@ OI-183	OI-183	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	mi
 OI-184	OI-184	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-184`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
 OI-185	OI-185	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-185`)	sha256:2a9d2c20903ee94c2659108987572756bb03db52baa4d361ebcb853049c10506
 OI-186	OI-186	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-186`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
-OI-187	OI-187	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-187`)	sha256:15c021747d88c0b42f5886fdcbae990ee1ee55f67a33a35ce82af1f5ff98a829
+OI-187	OI-187	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-187`)	sha256:15c021747d88c0b42f5886fdcbae990ee1ee55f67a33a35ce82af1f5ff98a829
 OI-188	OI-188	active	NOW	backlog	unassigned	-	-	-	-	migration-carried-forward	migration-carried-forward	docs/OPEN_ITEMS.md (`OI-188`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
 OI-189	OI-189	retired	-	-	unassigned	-	-	-	-	migration-carried-forward	-	docs/OPEN_ITEMS.md (`OI-189`)	sha256:6e10953f3e4ca159285c03a116d60c5086727c958dc25b31c39848ffea1dcdfe
 OI-190	OI-190	retired	-	-	scalar5d_campaign	-	-	-	-	docs/orchestration/AUTHORIZATION-20260924-scalar5d-campaign-activation.md#1-the-actual-authorization	-	docs/OPEN_ITEMS.md (`OI-190`)	-
 OI-191	OI-191	retired	-	-	scalar5d_campaign	-	-	-	-	docs/orchestration/AUTHORIZATION-20260925-negweight-refined-successor.md#1-the-actual-authorization	-	docs/OPEN_ITEMS.md (`OI-191`)	-
 OI-192	OI-192	retired	-	-	scalar5d_campaign	-	-	-	-	docs/orchestration/AUTHORIZATION-20260925-oi192-estimator-diagnosis.md#1-the-actual-authorization	-	docs/OPEN_ITEMS.md (`OI-192`)	-
-OI-193	OI-193	active	NOW	promoted	scalar5d_campaign	publication	P1	docs/orchestration/CAMPAIGN-s5p-20260926-index.md	Execute the scalar precision measurement completion handoff through its seven stages to a terminal disposition; commit ledger, run-log and status records with each result.	docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md#1-the-actual-authorization	commit: campaign final-disposition record committed and pushed	docs/OPEN_ITEMS.md (`OI-193`)	-
+OI-193	OI-193	retired	-	-	scalar5d_campaign	-	-	-	-	docs/orchestration/AUTHORIZATION-20260926-precision-measurement-completion.md#1-the-actual-authorization	-	docs/OPEN_ITEMS.md (`OI-193`)	-

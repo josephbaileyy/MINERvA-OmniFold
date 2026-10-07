@@ -2,9 +2,9 @@ source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
 OI-190	retired	-	declared	e214d52d14a140d0d82a31fd62930d02d508e67ba26293a2f7556450d2ed730b	CLOSED 2026-09-25
 OI-191	retired	-	declared	6c39adc76363598db781194ee7a5e33b1b8f7a8f13348fb79ede241ec84579d1	CLOSED 2026-09-25
 OI-192	retired	-	declared	fbebadf8c31f99a692d1538b286aa3824adf54939abf6a5d0bdbd21594b4d6c5	CLOSED 2026-09-26
-OI-193	active	NOW	declared	23b688f283542f22a21d688bb3a0a5d5a2946ad6c19e7864791102b5b7a6bcdd	OPEN
+OI-193	retired	-	declared	bfd6105d976b47886ab47d1d707dfa7d2b95aa3f3065ea5f5e7b590157f0f2c1	CLOSED 2026-10-06
 OI-188	active	NOW	migration-carried-forward	577c1bbba8cc1c763a60ebee78f9401dcb67c3698ae30f1b756af23fb5c8dfab	OPEN
-OI-187	active	NOW	migration-carried-forward	7b3861f98d5d918ada0bad05927a1516bcc4284569a372a3653c030b1671e041	RULED 2026-09-01 BY JOSEPH — (a) UPGRADE, NOT A SUBMISSION BLOCKER, and (b) THE DEPENDENCY IS RETAINED BY CHOICE — "keep
+OI-187	retired	-	migration-carried-forward	7b3861f98d5d918ada0bad05927a1516bcc4284569a372a3653c030b1671e041	RULED 2026-09-01 BY JOSEPH — (a) UPGRADE, NOT A SUBMISSION BLOCKER, and (b) THE DEPENDENCY IS RETAINED BY CHOICE — "keep
 OI-186	active	NOW	migration-carried-forward	2eee4f9d1140ecf106fed1cb3bf5c59f05a94247e67d02119f39991065753dd4	OPEN
 OI-185	retired	-	migration-carried-forward	6e212c982f2864fbc83fbe82ceddbfc129b93295cda51725b2976f6330d4acf6	DISCHARGED 2026-09-01 — RATIFIED AND RESTRUCTURED. Joseph ruled in his own turn: "Okay I like your recommendation for OI
 OI-184	active	NOW	migration-carried-forward	8f82ddd8abf0b2866b952d8cb5f46173e7aa8713203b8e6694dab8d2e13a442e	OPEN
@@ -27,15 +27,15 @@ OI-161	active	NOW	migration-carried-forward	7eccccc9904c9b45b75b20425baec05ae242
 OI-152	active	NOW	migration-carried-forward	542434ff88a929398905c5fa8ee5b9876ec37a0ed8da97323acbf84544a07065	OPEN
 OI-151	active	NOW	migration-carried-forward	f79832d5d1e92142a752a0410a5d356c0ffc8a32eef8e65fef12135b3c0ef003	OPEN
 OI-150	active	NOW	migration-carried-forward	de8ff9391fbfa6054bf0dcbe976bcdcf8287119bd7743cd0264b832d9847121a	OPEN
-OI-149	active	NOW	migration-carried-forward	d94c61d5e71df2f309e8dae79c14eedccbcdb73b9368ade67418db98379c58de	FIXED AND LANDED 2026-08-21 (89e0c62f) -- NO LONGER AWAITING A USER DECISION. Joseph ruled it and the code is in: assert
-OI-147	active	NOW	migration-carried-forward	087ed39c939011bd21f97a0705a67cfe6ab89edcebd3799471fb5ea2d7e6949e	COMPLETE 2026-08-21. The seven configuration keys landed at aa989794, the eighth (hDiagCombinedOld, via the raw diagonal
+OI-149	retired	-	migration-carried-forward	d94c61d5e71df2f309e8dae79c14eedccbcdb73b9368ade67418db98379c58de	FIXED AND LANDED 2026-08-21 (89e0c62f) -- NO LONGER AWAITING A USER DECISION. Joseph ruled it and the code is in: assert
+OI-147	retired	-	migration-carried-forward	087ed39c939011bd21f97a0705a67cfe6ab89edcebd3799471fb5ea2d7e6949e	COMPLETE 2026-08-21. The seven configuration keys landed at aa989794, the eighth (hDiagCombinedOld, via the raw diagonal
 OI-148	active	NOW	migration-carried-forward	99f0ca156a72b4a124ffea9065ed747c672fe9d39569f90ebd54c9d26c218c9e	OPEN — NARROWED 2026-08-21. The four rows are RECONSTRUCTED and the seven-column check PASSES; what stays open is that n
-OI-140	active	WAITING-JOSEPH	migration-carried-forward	1b42ec8fd6a971989a4e3ab9144ad28628711a80d446ba0de4fe3e7af962c6a6	VERIFICATION LANDED 2026-08-21 (3cb46337) -- AND THE GATE IS STILL NOT PASSABLE; SEE OI-147. Route chosen: REAL in-file
-OI-141	active	WAITING-JOSEPH	migration-carried-forward	182e2d52a1023ff49f33990f4e4fa01030216fce7661be86816983df1be1952d	FIXED AND LANDED 2026-08-21 (3cb46337). compare() returns ComparisonResult, a 2-long tuple subclass carrying .uncomparab
+OI-140	retired	-	migration-carried-forward	1b42ec8fd6a971989a4e3ab9144ad28628711a80d446ba0de4fe3e7af962c6a6	VERIFICATION LANDED 2026-08-21 (3cb46337) -- AND THE GATE IS STILL NOT PASSABLE; SEE OI-147. Route chosen: REAL in-file
+OI-141	retired	-	migration-carried-forward	182e2d52a1023ff49f33990f4e4fa01030216fce7661be86816983df1be1952d	FIXED AND LANDED 2026-08-21 (3cb46337). compare() returns ComparisonResult, a 2-long tuple subclass carrying .uncomparab
 OI-142	active	NOW	migration-carried-forward	a1e28d670068b62611450ada9480822611b53878a2a3f4c17ee94d9dcd5e34fa	SHELL LIBRARY FIXED 2026-08-21; ONE RESIDUAL, NAMED AND NOT SILENTLY DROPPED. rg_is_complete now REFUSES a marker carryi
 OI-143	active	WAITING-JOSEPH	migration-carried-forward	f8e601a791e4edb1acd364fcebda74c1c53c068df9dde1d36605d370ca4341f0	(a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out
 OI-144	retired	-	migration-carried-forward	e5928037f0366b68fc68e67e65a99f362b97fccbd2eedef0c25c1b7f55eb80b8	DISCHARGED 2026-08-21. The fix landed at e135a657/fc4293ef and the residual it was left open on is now closed by measure
-OI-145	active	NOW	migration-carried-forward	f8663be3ba263c3dec175e6d870c5fcddd79c7e3b2d369079d778c2442ad1739	REPINNED 2026-08-21 (ea1a3fd6) -- ACCEPTED AS A VERSIONED REPIN, NOT REVERTED AND NOT OVERWRITTEN. All 7 edits verified
+OI-145	retired	-	migration-carried-forward	f8663be3ba263c3dec175e6d870c5fcddd79c7e3b2d369079d778c2442ad1739	REPINNED 2026-08-21 (ea1a3fd6) -- ACCEPTED AS A VERSIONED REPIN, NOT REVERTED AND NOT OVERWRITTEN. All 7 edits verified
 OI-146	retired	-	migration-carried-forward	6f571478221b81d9eacb508c4988297ac9ef61b8629f3f9dc7a1113516f5ed6d	CLOSED 2026-08-21 (4fb0e3d4) -- GATED WITH THEIR PARENTS AND NOW DEFINED FROM THEM. The bare literals 1.4 % / 1.8 % beca
 OI-70	active	NOW	migration-carried-forward	57d9a4785f70ab57952f8567e8d2f3b8847892220e43ab34343b984fbae768e3	MECHANICAL HALF DISCHARGED 2026-08-15 from the MAIN CHECKOUT on Joseph's authorization (relayed by the mediator, grant c
 OI-71	active	WAITING-JOSEPH	migration-carried-forward	6bf07285524a7460c8b3cf2e1d2cbab687481a66bc037dd2902476de8f9d2540	WAITING-USER, AND NARROWER THAN THIS ROW SAID. CORRECTED 2026-08-15: the physics ground for quoting VL100 is MIS-TARGETE

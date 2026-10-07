@@ -3,6 +3,21 @@
 The TensorFlow/point-cloud OmniFold engine, kept separate from the dimension-agnostic
 GBDT/MLP N-D drivers at `nd-unfolding/` top level.
 
+**Completed PET campaigns — start here.** Each campaign directory holds many dated proposals, results and
+handoffs. The record named below is where each campaign ends; open it before quoting anything from that
+directory. These are diagnostic, simulation-only studies, and none of them adopts a product. How the
+deliverables use these records is mapped in
+[`docs/analysis-note/PET_STUDY_SYNTHESIS.md`](../../docs/analysis-note/PET_STUDY_SYNTHESIS.md).
+
+| campaign directory | where it ends |
+|---|---|
+| [`direct_token_comparison/`](direct_token_comparison/) | [`RECOMMENDATION-20260918.md`](direct_token_comparison/RECOMMENDATION-20260918.md); its pilot was not launched |
+| [`configuration_comparison/`](configuration_comparison/) | `campaign_report.json` (`verdict` / `recommendation` fields); read the directory's README first |
+| [`improvement_campaign/`](improvement_campaign/) | [`confirm/CONFIRM_RESULTS.md`](improvement_campaign/confirm/CONFIRM_RESULTS.md), then `REVIEW_DISPOSITION-ROUND2-20260925.md` |
+| [`final_design/`](final_design/) | [`DECISION_RECORD-pet-final-design.md`](final_design/DECISION_RECORD-pet-final-design.md) (status line: TERMINAL) |
+| [`gbdt_comparison/`](gbdt_comparison/) | [`REPORT-20261005.md`](gbdt_comparison/REPORT-20261005.md) and `REVIEW_DISPOSITION-20261005.md` |
+| [`generator_diagnosis/`](generator_diagnosis/) | [`REPORT-20261006.md`](generator_diagnosis/REPORT-20261006.md) and `REVIEW_DISPOSITION-20261006.md` |
+
 **Current typed-descriptor development:** PET remains diagnostic and
 method-development. Read [TYPED_DESCRIPTOR_STATUS.md](TYPED_DESCRIPTOR_STATUS.md)
 for the software state and next bounded task, and
