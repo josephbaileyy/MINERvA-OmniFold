@@ -103,4 +103,4 @@ compared.
 | I7 | **NARROWED: not removed by an exploratory ±4% variation; completeness not established** | W2 (`940d84aa`; independent check `9ffc4ddd`). The amendment-7 condition stands. |
 | I8 | **"To our knowledge, the first unbinned unfolding of neutrino data"**, with no priority claim for the test | Literature file §3 |
 | I9 | **NOT CLAIMED** | The article states "not a measured cross section" |
-| L2/L3 | **PENDING the VL170 rebuild** | Joseph adopted VL170 (`af24a101`). The rescoring is merged (`5aab2d6d`). The rollup is pending from the 2D lane. |
+| L2/L3 | **DEMONSTRATED with VL170** | Joseph adopted VL170 (`af24a101`). VL172 rebuilt the products (main `2c9939fe`; total median 6.87%, stat median 0.674%). The rescoring (`5aab2d6d`) is descriptive. The rebuilt band has not been re-tested (KNOWN_ISSUES 84, 85). `\uqPaper` = 6.85 (main `1e25adce`). |

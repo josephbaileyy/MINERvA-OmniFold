@@ -5,8 +5,8 @@
 2. lost-seed resolution, reading (a) (report-only): replay vs expected/resolved-evaluate.json;
 3. W1 matched coarse projections (report-only): build reading (b), run W1 on (a) and (b), compare every claim
    k, B, p and every criterion boolean with expected/W1-RESULT-20261006.json (reading labels are not compared);
-4. (RC2) the article's Figs. 1-3: recompute every quoted number from data/figs/fig_arrays.npz against the printed
-   values in expected/values.tex, and regenerate the three figures.
+4. (RC2+) the article's Figs. 1-3: recompute every quoted number from data/figs/fig_arrays.npz against the printed
+   values in expected/values.tex, and regenerate the three figures; regenerate Fig. 4 from the frozen inputs.
 Run from the release root: python3 code/verify_rc.py
 """
 from __future__ import annotations
@@ -66,6 +66,12 @@ def main() -> int:
             figok = r.returncode == 0 and len(made) >= 3
             print(f"[{'ok' if figok else 'FAIL'}] Figs. 1-3 regenerated: {made}")
             ok &= figok
+            f4 = Path(td) / "fig4_joint_nulls.pdf"
+            r = run("code/figs/plot_joint_null_distributions.py", "--npz", "data/frozen/inference_sufficient.npz",
+                    "--out", f4)
+            f4ok = r.returncode == 0 and f4.exists()
+            print(f"[{'ok' if f4ok else 'FAIL'}] Fig. 4 (calibrated null distributions) regenerated from the frozen inputs")
+            ok &= f4ok
     print("VERIFY:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 

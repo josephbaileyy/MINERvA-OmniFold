@@ -17,7 +17,11 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "release"))
+_HERE = Path(__file__).resolve().parent
+for _p in (_HERE.parent / "release", _HERE.parent, _HERE):  # repository layout, or release layout (code/figs -> code)
+    if (_p / "replay_inference.py").exists():
+        sys.path.insert(0, str(_p))
+        break
 import replay_inference as rp  # noqa: E402
 
 import matplotlib  # noqa: E402

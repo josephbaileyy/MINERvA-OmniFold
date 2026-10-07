@@ -21,7 +21,7 @@ collider data, for example eight observables in deep-inelastic scattering at
 H1~\cite{H1:2021wkz} and twenty-four $Z$+jets observables at
 ATLAS~\cite{ATLAS:2024jets}; see Ref.~\cite{Canelli:2025guide} for a survey.  In
 neutrino physics it has been demonstrated on a public simulated T2K near-detector
-sample~\cite{Huang:2024omnifold}.  We are not aware of an application to
+sample~\cite{Huang:2025omnifold}.  We are not aware of an application to
 neutrino-scattering data.
 
 We apply the method to MINERvA medium-energy forward-horn-current $\nu_{\mu}$
@@ -31,15 +31,15 @@ section in transverse and longitudinal muon momentum,
 $d^{2}\sigma/(d\pT\,d\pPar)$~\cite{MINERvA:2021owq}, then add available
 hadronic energy $\Eavail$, three-momentum transfer $q_{3}$, and hadronic
 invariant mass $W$ to obtain simultaneous three-, four-, and five-observable
-central values.  Published multi-differential neutrino measurements reach three
-dimensions~\cite{MINERvA:2022qe,MINERvA:2026qeleme,MicroBooNE:2023inc3d,NOvA:2026inc3d}.
+central values.  Multi-differential neutrino measurements on data reach three
+dimensions~\cite{MINERvA:2022qelike3d,MINERvA:2026qeleme,MicroBooNE:2023inc3d,NOvA:2026inc3d}.
 The five observables here are not five independent measurements: $\Eavail$,
 $q_{3}$ and $W$ are all built from reconstructed hadronic energy.
 
 The paper has two parts.  The first validates the unbinned construction against
 the published two-dimensional result and characterizes its higher-dimensional
 central values, including measured limitations: a fixed-truth undercoverage of
-the two-dimensional statistical band, a background-subtraction bias at high $W$,
+the two-dimensional statistical band as first built, a background-subtraction bias at high $W$,
 and a regularization bias under generator-sized shape changes.  Because the
 estimator's model dependence prevents a qualified total uncertainty at useful
 precision, we do not report a five-dimensional cross-section measurement with
@@ -59,7 +59,7 @@ that release; their identities are recorded for reproduction
 (Sec.~\ref{sec:data-availability}).  The signal definition, fiducial volume, flux
 treatment~\cite{MINERvA:2016iqn}, and reconstruction-level selection follow
 Ref.~\cite{MINERvA:2021owq}.  After selection, the sample contains $4.12$
-million data events and $32.8$ million simulated signal events, generated with
+million data events, and the simulation contains $32.8$ million true signal events, generated with
 GENIE~2.12.6 and the MINERvA Tune~v1, which reweights GENIE with a
 non-resonant pion reduction, the RPA correction and an empirical low-recoil
 two-particle--two-hole enhancement~\cite{MINERvA:2016lowrecoil}.
@@ -84,13 +84,18 @@ smooth reweighting to the next iteration.  Cross sections are formed by
 histogramming the reweighted truth events in a declared reporting binning and
 dividing by integrated flux, target count, and bin width.
 
-Three estimator configurations appear in this paper, and each result names the
+Four estimator configurations appear in this paper, and each result names the
 one it uses.
 \begin{itemize}
-\item \emph{Production central values} (Secs.~\ref{sec:validation}--\ref{sec:central}):
-five iterations of depth-three gradient-boosted decision trees with 100 trees,
-fitted with exact-split scikit-learn gradient boosting, and a purity-based
-background subtraction.
+\item \emph{Two-dimensional central value} (Sec.~\ref{sec:validation}): five
+iterations of depth-three gradient-boosted decision trees with 100 trees, fitted
+with exact-split scikit-learn gradient boosting, and a purity-based background
+subtraction.
+\item \emph{Three- to five-dimensional central values}
+(Secs.~\ref{sec:validation}--\ref{sec:central}, Figs.~\ref{fig:joint}
+and~\ref{fig:generator-context}): the same five-iteration configuration fitted
+with LightGBM at matched nominal capacity, with the purity-based background
+subtraction.
 \item \emph{Two-dimensional uncertainty ensembles}: the finalized systematic-universe
 and Poisson-bootstrap ensembles use LightGBM at matched nominal capacity, so
 the two-dimensional central value and its covariance are not estimator-matched.
@@ -166,8 +171,10 @@ the quoted one, has a median statistical uncertainty of \SI{0.674}{\percent} and
 leaves the total median at \SI{\uqMedian}{\percent}.
 Rescoring the same closure pseudo-experiments against the rebuilt band, which is
 post hoc and partly circular, removes the tail undercoverage
-(\SI{97.7}{\percent} within two standard deviations); the residual excess width
-lies in the data-statistics component and is not explained by background purity.
+(\SI{97.7}{\percent} within two standard deviations), while \SI{78.1}{\percent} fall
+within one standard deviation, above its nominal window, so the rebuilt band is
+wider than the toy scatter; the residual excess width lies in the data-statistics
+component and is not explained by background purity, and its cause is untested.
 The rebuilt band has not been independently re-tested.
 % Source: docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md;
 % VALIDATION_LEDGER VL169 (test of the earlier band); VL170 (rebuilt band, adopted by Joseph
@@ -236,16 +243,22 @@ dedicated published low-recoil measurement~\cite{MINERvA:2022incl}.
 
 The fifth observable, $W$, separates the remaining discrepancy from the
 low-mass enhancement.  Figure~\ref{fig:joint} shows the joint $(\Eavail,W)$
-projection relative to the MINERvA Tune~v1.  The positive central-value
-difference is concentrated where both $\Eavail$ and $W$ are large, rather than
-being distributed uniformly across either one-dimensional projection.  This
-localization is descriptive: no significance is assigned, and it lies in the
-region where the regularization bias of Sec.~\ref{sec:validation} is largest.
+projection relative to the MINERvA Tune~v1.  In cell-integrated terms, two
+thirds of the positive difference lies at $\Eavail\ge\SI{0.8}{GeV}$ and most of
+that at $W\ge\SI{1.8}{GeV}$, but a fifth of it sits in the single widest catch
+cell; in ratio, the data exceed Tune~v1 by \SIrange{12}{31}{\percent} in those
+cells and by \SIrange{23}{31}{\percent} at $W<\SI{1.1}{GeV}$ for every $\Eavail$,
+so the relative excess is not confined to high $W$.  These statements are
+descriptive: no significance is assigned, no response-mismatch closure has been run
+for this map, and the high-$\Eavail$, high-$W$ region is where the regularization
+bias of Sec.~\ref{sec:validation} is largest.
+% Source: shares 67%/83% (sec_eavailw.tex, cell-integrated) and the catch-cell 22% and ratio ranges
+% recomputed from the released figure arrays (fig_arrays.npz sha256 72394a2b..., release/article-figures-20261006).
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\columnwidth]{paper_joint_localization}
-  \caption{Joint $(\Eavail,W)$ central value (production estimator), on the
+  \caption{Joint $(\Eavail,W)$ central value (five-dimensional LightGBM production estimator), on the
   $7\times6$ reporting grid with $\Eavail$ edges
   $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ and $W$ edges
   $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$; axes are cell indices counting from
@@ -280,15 +293,18 @@ two-particle--two-hole component leaves that region unchanged because it
 primarily populates lower $W$.  The localization of Fig.~\ref{fig:joint} is thus
 a statement relative to the MINERvA Tune~v1.  Dedicated MINERvA
 shallow-inelastic measurements also report generator
-disagreements~\cite{MINERvA:2025sis}; their different selections preclude
+disagreements~\cite{MINERvA:2026sis}; their different selections preclude
 treating them as independent confirmation of this localized difference.
 % Sources: VL156-VL161; KNOWN_ISSUES 82.
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=0.84\textwidth]{paper_eavailW_generators}
+  \includegraphics[width=0.84\textwidth]{paper_eavailW_generators_ratio}
   \caption{Generator context for the unfolded $\Eavail$ (left) and $W$ (right)
-  central-value projections (production estimator).  GENIE-CV (untuned
+  central-value projections (five-dimensional LightGBM production estimator), in
+  \si{cm^2/GeV/nucleon}, with the data-to-prediction ratio below each; the wide catch
+  bins ($\Eavail>\SI{3}{GeV}$, $W>\SI{3}{GeV}$) are omitted from the display.  Drawn from
+  the released figure arrays (Sec.~\ref{sec:data-availability}).  GENIE-CV (untuned
   GENIE~2.12.10 on CH, with no two-particle--two-hole events), the same GENIE
   with the Valencia two-particle--two-hole contribution, NuWro~21.09, and
   GiBUU~2019 (both on carbon; GENIE and NuWro flux-repaired) all remain below the
@@ -338,7 +354,10 @@ estimator trained on the other half.  Every experiment also draws one of
 interaction-model uncertainty bands at one of its universes, the weight-based
 detector bands (MINOS efficiency and GEANT neutron, pion and proton interaction
 reweights), and the five muon and beam-angle lateral bands through a linear
-surrogate.  The data are unfolded once with the full simulation.  The Monte Carlo
+surrogate, together with a \SI{1.4}{\percent} normalization draw, the data's rounding
+noise taken from 20 real-data re-unfolds with rounding-level input changes, and the
+predictions' finite-sample residual.  The data are unfolded once with the full
+simulation.  The Monte Carlo
 $p$ value of a test is $(k+1)/(B+1)$, where $k$ of $B$ null pseudo-experiments
 reach the observed statistic; it is never zero.  The claim $p$ value is the
 largest over declared variants that move the null by an upper bound on the
@@ -358,7 +377,17 @@ Calibration proceeded in batches of \jtBatch{} pseudo-experiments per null, to
 at most \jtBcap{}, under a sequential rule that stopped a null once both of its
 decisions were determined.  The hypotheses, statistics, variants, multiplicity
 rule, stopping rule and every input were frozen before any production
-pseudo-experiment or observed statistic.  An independent recomputation of every
+pseudo-experiment or observed statistic.  Two data-informed elements are
+disclosed: the design reviewers had seen descriptive per-cell residuals before
+the freeze, and the controller's status files exposed observed claim $p$ values
+during production; a bounded extension of the production budget was decided
+while they were visible, to let the sequential rule reach its frozen stop rather
+than a budget stop.  No statistic, variant, threshold or stopping rule was changed,
+and the Monte Carlo $p$ values remain valid at the number of pseudo-experiments
+reached.
+% Source: amendment 7 data_informed_disclosure and calibration.sequential_rule;
+% DECISION-20261004-s5p-production-budget-extension.md (Joseph, 2026-10-04: "Keep all scientific
+% criteria unchanged").  An independent recomputation of every
 $p$ value and decision from the stored products, with separately written code,
 agrees with the production evaluation in all \jtRecompRows{} compared quantities.
 % Sources: amendment 7 claims.rejection, calibration.sequential_rule,
@@ -381,7 +410,7 @@ prior is the analysis's 34-band set, with negative weights of two bands clipped 
 universe.  (iv) The pseudo-experiments use half of the simulation and the data
 unfold all of it; the resulting shift is bounded by a declared variant.  (v)
 GiBUU lacks $E_{\nu}>\SI{20}{GeV}$, and its out-of-domain truth enters the
-migrations into its domain.  (vi) The predictions' own finite samples enter the
+migrations into its domain.  For all predictions $E_{\nu}>\SI{100}{GeV}$ is absent, which is negligible.  (vi) The predictions' own finite samples enter the
 metric and the simulated residuals.
 % Source: amendment 7 claims.conditions_stated_with_every_claim (all six).
 
@@ -412,13 +441,14 @@ that displaced distribution.
 
 \begin{table}[t]
   \caption{Joint-test decisions as recorded (Tune~v1 null: the analysis
-  simulation; $B$: final number of null pseudo-experiments; $p=(k+1)/(B+1)$;
+  simulation; $B$: null pseudo-experiments completed at the frozen stop, of
+  1400 submitted per null (1800 for NuWro); $p=(k+1)/(B+1)$;
   CP: 95\% Clopper--Pearson interval of $k/B$; all ten are robust to the
   sub-fine residual at three times its estimate).  Every submitted
   pseudo-experiment, including those first lost to time limits, has been observed;
   none of the recovered ones reaches the observed statistic (Sec.~\ref{sec:missing}).}
   \label{tab:joint}
-  \centering\footnotesize
+  \centering\scriptsize
   \begin{tabular}{@{}llrrlll@{}}
     \toprule
     $G$ & test & $B$ & $k$ & $p$ & Holm thr. & CP interval \\
@@ -445,8 +475,8 @@ are not by themselves a new statement that they fail.  What the joint tests
 add is a calibrated statement on the five-observable result that accounts for
 the estimator's own bias toward its prior and for the declared nuisances.
 Restricting the same calibrated tests to matched $3\times3$ coarse projections of
-the same cells, onto $(\pT,\pPar)$ and onto $(\Eavail,W)$, rejects every
-prediction in at least one of the two projections, so we make no claim that the
+the same cells, onto $(\pT,\pPar)$ and onto $(\Eavail,W)$, gives $p<0.05$ for
+every test in at least one of the two projections, so we make no claim that the
 joint five-observable information adds discrimination beyond them.  This comparison
 was specified before it was run but after the five-dimensional outcomes were known;
 it uses the same calibration ensembles, variants and claim rule, and its
@@ -458,7 +488,8 @@ kinematic region or a nuclear mechanism, they say nothing about more recent
 generator versions, and each rejected test already has $p<0.05$ in at least one
 of the two matched coarse projections.  Power is context only, because every test rejects: at the Tune~v1
 null, two of three declared alternatives are detected in shape with power 1.0 at the
-0.005 level, and the third, a MEC-like $(\Eavail,W)$ shape, with 0.23; at the
+0.005 level, and the third, a MEC-like $(\Eavail,W)$ shape, with 0.23 (each power set
+lost some of its 200 alternatives to time limits, retaining 172 to 199); at the
 GENIE~2.12.10 null the shape powers are 0.74, 0.02 and 0.00.
 % Source: s5p Stage-7 approved wording, sec_eavailw.tex sec. 8.6 (sec:joint5d) at main cbd075e7;
 % REVIEW-20261006-s5p-stage7-note-wording.md (two rounds, findings resolved).
@@ -480,14 +511,16 @@ recovered experiments reaches the observed statistic, in any test or declared
 variant, so every submitted pseudo-experiment has now been observed and no
 assignment of the lost outcomes changes any decision.  The closest approach is in
 a report-only robustness variant of the GENIE~+~MEC shape test, \num{4.6} below the
-observed statistic, against an observed value of \num{868.6}; with complete
-batches, the sequential rule would have stopped four of the nulls one batch earlier,
-with the same decisions.  This resolution is report-only: the decisions remain
-those of the frozen evaluation.  An independent recomputation confirms it against
-the frozen variant shifts; with the recovered experiments added to the
-calibration it was reproduced by our standalone replay of the frozen rules, and the
-earlier stopping points rest on the campaign's self-validated re-application of the
-sequential rule.
+observed statistic, against an observed value of \num{868.6}, and the next is
+\num{49.8} (GENIE CV shape, also a robustness variant).  With complete batches, the
+sequential rule would have stopped the Tune~v1, GENIE CV, GENIE~+~MEC and GiBUU
+nulls one batch earlier, at $B=1200$, with the same decisions.  This resolution is
+report-only: the decisions remain those of the frozen evaluation.  An independent
+recomputation confirms it against the frozen variant shifts.  The reading with the
+recovered experiments added to the calibration was reproduced only by a standalone
+replay of the same rules from inputs extracted with the frozen code, a consistency
+check rather than a fully independent recomputation, and the earlier stopping points
+rest on the campaign's self-validated re-application of the sequential rule.
 % Source: RECORD-20261005-s5p-joint-5d-inference-result.md sec. 5;
 % missing-sensitivity.json f48e16ef...; PROCEDURE-20261005-s5p-lost-seed-recovery.md;
 % RECORD-20261006-s5p-lost-seed-recovery-resolution.md (b354cdf7); cross-check 00009056;
@@ -504,7 +537,7 @@ declared nuisance model here includes the reweights but no calorimetric response
 band.  Such a band would act on all five nulls together, through the shared
 detector simulation and unfolding, and could move each statistic in either
 direction.  The published comparison in muon kinematics alone, whose
-observables do not use the reconstructed recoil energy, independently disfavours
+observables do not use the reconstructed recoil energy, also disfavours
 the same generator families~\cite{MINERvA:2021owq}, so the condition bears
 chiefly on the shape information along the hadronic axes.  As
 an exploratory sensitivity, not a validated uncertainty prescription, the data
@@ -518,9 +551,11 @@ variations.  At both $-4\%$ and $+4\%$ every one of the ten rejections holds: th
 observed statistics move by up to about \SI{11}{\percent} but remain far above
 their null distributions, and only NuWro's shape test changes its count, from
 $k=1$ to $k=3$ of $1751$ at $+4\%$ ($p=0.0023$, against a Holm threshold of
-$0.05$).  The variation moves the data and not the null calibration, so this
-shows that a coherent calorimetric response change of this size does not remove
-the rejections; it does not establish that the response model is complete.  The
+$0.05$).  The variation is applied to the data side after calibration, as a single
+coherent scale on the reconstructed available energy and recoil energy without
+per-particle response, and not to the null calibration, whose response to it is
+unmeasured: the rejections are not removed by this data-side variation, which does
+not establish that the response model is complete.  The
 evaluation was reproduced independently.
 % Source: publication/w2/W2B-REPORT-20261006.md (study/w2-recoil-response-20261006, 940d84aa);
 % independent check REPORT-20261006-s5p-recompute-w2-recoil-check.md (s5p-parallel-recompute-20260928, 9ffc4ddd):
@@ -558,7 +593,8 @@ moves the projected central values by at most
 
 A separate campaign designed to construct a five-dimensional measurement with
 qualified total uncertainties did not admit any reporting definition: none could
-meet its predeclared useful-precision targets within its budget.  The joint tests
+meet its predeclared useful-precision targets with any configuration its rules
+allowed, a scientific rather than a computational limitation.  The joint tests
 above were its remaining,
 separately admitted branch.  For the fallback definition, the
 bounded model-dependence component alone exceeded the total-width target.  Full-event point-cloud (PET) classifiers that
@@ -587,7 +623,8 @@ An unbinned event-weight unfolding reproduces the published two-dimensional
 MINERvA inclusive measurement and extends it to five simultaneous observables
 whose central values pass marginal anchors and closure tests and recover the
 known low-recoil behavior.  The measured limitations --- a fixed-truth
-undercoverage of the two-dimensional statistical band, a background bias at
+undercoverage of the two-dimensional statistical band as first built (the rebuilt
+band has not been re-tested), a background bias at
 high $W$, and a regularization bias under generator-sized shape changes ---
 are reported with the results they affect, and they prevent a qualified
 five-dimensional measurement.  A joint test calibrated through the full chain
@@ -596,7 +633,7 @@ measurement.
 Frozen joint tests of five neutrino-interaction predictions against the
 five-dimensional data reject all ten simple hypotheses at familywise level 0.05
 under the stated conditions.  Every pseudo-experiment first lost to scheduler
-limits has been observed without changing a decision, an exploratory
+limits has been observed in a report-only recovery without changing a decision, an exploratory
 $\pm4\%$ recoil-response variation leaves every rejection in place, and each
 rejected test already has $p<0.05$ in at least one matched coarse projection, so
 no claim is made that the joint information adds discrimination.  These are statements about the

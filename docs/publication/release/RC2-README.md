@@ -23,7 +23,9 @@ recompute, with numpy and scipy only:
      2D total and its ratio, bins within 10%, the residual mean and RMS, χ²/ndf against the published covariance,
      the published median uncertainty, and the Fig. 3 generator ratios and ranges.
    - `code/figs/make_figs.py` regenerates the three figures. They show the same quantities as the article but are
-     not pixel-identical.
+     not pixel-identical; the article's Fig. 3 itself is drawn by this script.
+   - `code/figs/plot_joint_null_distributions.py` regenerates Fig. 4 (the calibrated null distributions) from
+     `data/frozen/`.
 
 Run from this directory:
 
@@ -51,8 +53,9 @@ python3 code/w1_projected_tests.py --npz data/recovery-union/inference_sufficien
 
 `verify_rc.py` performs exactly this comparison.
 
-**Runtime:** about 2–3 minutes for `verify_rc.py` on a laptop (numpy uses several threads). The individual replays
-take under a minute each.
+**Runtime:** `verify_rc.py` took between about 2 and 11 minutes in the tests made so far, on laptops and a login
+node. numpy uses several threads, and the W1 and figure steps dominate. Each individual replay takes a few minutes or
+less.
 
 **Tested with:**
 - Python 3.11.14 / numpy 1.26.4 / scipy 1.16.3 (Linux);

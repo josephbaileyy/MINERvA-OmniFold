@@ -75,20 +75,35 @@ def fig2(z, out: Path):
     fig.tight_layout(); fig.savefig(out / "fig2_joint_localization.pdf"); plt.close(fig)
 
 
-def fig3(z, out: Path):
+def fig3(z, out: Path, name: str = "fig3_generator_context.pdf"):
+    """The article's Fig. 3: unfolded E_avail and W projections (catch bins omitted) with the four generator
+    predictions, and the data-to-prediction ratio below each, so the quoted 7-39% shortfalls are visible."""
     ee, we = z["eavail_edges"], z["W_edges"]
     dea, dw = np.diff(ee)[:, None], np.diff(we)[None, :]
-    fig, axs = plt.subplots(1, 2, figsize=(11, 4.2))
-    for ax, edges, proj, lab in ((axs[0], ee, lambda a: (a * dw).sum(1), r"$E_{avail}$ (GeV)"),
-                                 (axs[1], we, lambda a: (a * dea).sum(0), "W (GeV)")):
-        e = edges[:-1]
+    colors = {"GENIE-CV": "#2a78d6", "GENIE+MEC": "#eb6834", "NuWro": "#1baf7a", "GiBUU": "#4a3aa7"}
+    fig, axs = plt.subplots(2, 2, figsize=(7.0, 4.6), sharex="col",
+                            gridspec_kw={"height_ratios": [2.2, 1.0], "hspace": 0.06, "wspace": 0.42})
+    for j, (edges, proj, lab, ylab) in enumerate((
+            (ee, lambda a: (a * dw).sum(1), r"$E_{\mathrm{avail}}$ (GeV)",
+             r"$d\sigma/dE_{\mathrm{avail}}$ (cm$^2$/GeV/nucleon)"),
+            (we, lambda a: (a * dea).sum(0), r"$W$ (GeV)", r"$d\sigma/dW$ (cm$^2$/GeV/nucleon)"))):
+        e = edges[:-1]                      # bin edges without the catch bin
         c = 0.5 * (e[:-1] + e[1:])
-        ax.plot(c, proj(z["hData2D"])[:-1], "ko", label="data (unfolded)")
+        d = proj(z["hData2D"])[:-1]
+        top, bot = axs[0, j], axs[1, j]
         for g in GENS:
-            ax.step(c, proj(z[f"gen_{g}"])[:-1], where="mid", label=g)
-        ax.set_yscale("log"); ax.set_xlabel(lab); ax.legend(fontsize=8)
-    axs[0].set_ylabel(r"$d\sigma/dE_{avail}$"); axs[1].set_ylabel(r"$d\sigma/dW$")
-    fig.tight_layout(); fig.savefig(out / "fig3_generator_context.pdf"); plt.close(fig)
+            pg = proj(z[f"gen_{g}"])[:-1]
+            top.stairs(pg, e, lw=1.5, color=colors.get(g), label=g, baseline=None)
+            bot.stairs(d / pg, e, lw=1.5, color=colors.get(g), baseline=None)
+        top.plot(c, d, "o", color="#0b0b0b", ms=4, label="data (unfolded)", zorder=5)
+        bot.axhline(1.0, color="0.5", lw=0.8)
+        top.set_yscale("log"); top.set_ylabel(ylab, fontsize=8)
+        bot.set_ylabel("data / prediction", fontsize=8); bot.set_xlabel(lab, fontsize=9)
+        bot.set_ylim(0.8, 1.9)
+        for ax in (top, bot):
+            ax.tick_params(labelsize=7)
+    axs[0, 0].legend(fontsize=6.5, frameon=False)
+    fig.savefig(out / name, bbox_inches="tight"); plt.close(fig)
 
 
 def main(argv=None) -> int:
