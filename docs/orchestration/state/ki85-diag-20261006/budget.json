@@ -1,0 +1,12 @@
+{
+ "approval": "Joseph, 2026-10-06: arms B + T, 100 runs, at most 12 node-h, shared/regular, no premium",
+ "jobs": {"pilot": [59466329, 59466330], "armT_array": 59469539, "armB_array": 59469543},
+ "n_jobs_completed": 100,
+ "qos": "shared (all 100)",
+ "node_h_formula": "sum ElapsedRaw/3600 * billing/256 over sacct_ki85.txt",
+ "node_h": 7.076,
+ "iris_m3246_charged_user_before": 2027.9,
+ "iris_m3246_charged_user_after": 2034.3,
+ "iris_delta": 6.4,
+ "guard_note": "The local spend guard stopped reporting at 06:22 UTC (0.50 node-h) while jobs ran until 11:11 UTC, most likely because the host slept; the 12 node-h cap was not actively enforced for most of the run. Final spend 7.08 node-h, under the cap."
+}
