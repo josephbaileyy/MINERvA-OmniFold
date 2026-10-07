@@ -1,5 +1,6 @@
 """Controls for s5c_coverage: known-coverage synthetic experiments, the complete-population rule."""
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -24,6 +25,7 @@ def contract(n_exp, width):
 class Coverage(unittest.TestCase):
     def build(self, n_exp, inflate, drop=None):
         tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)  # each build writes up to ~1.75 GB
         rng = np.random.default_rng(0)
         n = 65856
         truth = rng.uniform(1.0, 2.0, n)
