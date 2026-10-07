@@ -152,8 +152,9 @@ objection.
 2. **External release of the inference family** (RELEASE-MANIFEST §7):
    - **package:** a sufficient-product package with an empty-checkout replay. This is analysis effort and a
      login-node test, with no allocation;
-   - **archive:** an archive of about 2.3 GB of `/pscratch` products before purge: calibration 1.3 GB, power 207 MB,
-     recovery 50 MB, predictions 0.78 GB, data and shift files about 7 MB;
+   - **archive: DONE 2026-10-07** under Joseph's authorization ("CFS copy + manifest"). 10,612 files (2.32 GB) are in
+     `/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/`, verified 0 failures, `SHA256SUMS` `1a72cb43…`
+     (RELEASE-MANIFEST §6);
    - **deposit and tag:** separately authorized acts.
 3. **Reproduction tier C** (end-to-end regeneration of the calibration pseudo-experiments) has not been run. Its cost
    is about the production's: about 208 billed CPU node-h for the frozen ensembles. It is not required by the

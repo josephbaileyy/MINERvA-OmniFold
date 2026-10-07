@@ -91,13 +91,24 @@ Here `$NS` = `/pscratch/sd/j/josephrb/s5p-20260926`.
 - **Analysis-produced products** (calibration, power, recovery, predictions, V, D16, M1, data on J cells): on
   purgeable `/pscratch`, releasable by the authors. Not yet deposited.
 - **Code and records:** the repository.
-- **Persistence risk:** `/pscratch` is purgeable. A deposit or archive of §2–§3 products needs a separate
-  authorization; Joseph's approvals item 6 reserves deposits.
+- **Persistence risk:** `/pscratch` is purgeable.
+- **Archive (Joseph, 2026-10-06, campaign session):** "CFS copy + manifest". The §2–§3 products were copied on
+  2026-10-07T03:50–03:51Z to the private group-only directory
+  `/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/` (mode `drwxr-s---`; not the project's `www`):
+  - 10,612 files, 2,317,487,385 bytes;
+  - every file hashed at the source and re-verified at the destination (`sha256sum -c`, 0 failures);
+  - checksum list `SHA256SUMS` (sha256 `1a72cb439120d910ee509fa0be7915924eb36b6a42fda8bda8006a0a92609935`), with a
+    copy at `state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt`.
+
+  Contents: the calibration, power, status and log products; the recovered and determinism products and logs; V,
+  D16 and M1; the stage-7 outputs; the ledger; the five predictions (the whole `gen5d_fluxfix/` and
+  `gen5d/mnvtune_v1_xsec5d*`); the J-cell data.
+- **Deposits** remain reserved (Joseph's approvals item 6).
 
 ## 7. Remaining for an external release (costed in the delivery record)
 
 1. A public sufficient-product package for the inference family: the J-cell data, predictions with Var(μ_G), V, D16
    and M1, the observed statistics, the calibration T arrays per variant, and the outputs. Add a standalone replay
    tested from an empty checkout.
-2. An archive of the `/pscratch` products before purge, under separate authorization.
+2. ~~An archive of the `/pscratch` products before purge~~: done 2026-10-07 under Joseph's authorization (§6).
 3. The deposit and the tag, under separate authorization.

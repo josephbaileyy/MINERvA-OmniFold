@@ -28,6 +28,11 @@ OLD_TOY_DATA_SEEDS = range(1001, 1201)
 OLD_TOY_MC_SEEDS = range(10_001_001, 10_001_201)
 
 
+# KNOWN_ISSUES 85 diagnostic (2026-10-06): data-only bootstrap replicas of one toy's pseudo-data.
+BOOT_SEED_BASE = 20_261_006_000_000
+MAX_BOOT_INDEX = 9_999
+
+
 def toy_seeds(toy_index):
     """Return ``(data_seed, mc_seed)`` for a toy index in ``1..MAX_TOY_INDEX``."""
     t = int(toy_index)
@@ -61,3 +66,24 @@ def compress_pseudo_data(reco_pt, reco_pz, counts):
     keep = np.asarray(counts) > 0
     return (np.asarray(reco_pt)[keep], np.asarray(reco_pz)[keep],
             np.asarray(counts, dtype=float)[keep])
+
+
+def bootstrap_seed(boot_index):
+    """Seed of data-only bootstrap replica ``boot_index`` in ``1..MAX_BOOT_INDEX``."""
+    b = int(boot_index)
+    if not 1 <= b <= MAX_BOOT_INDEX:
+        raise ValueError(f"bootstrap index must be in 1..{MAX_BOOT_INDEX}, got {boot_index!r}")
+    return BOOT_SEED_BASE + b
+
+
+def draw_data_bootstrap(counts, boot_seed):
+    """Per-event Poisson(1) bootstrap of pseudo-data held as per-event counts.
+
+    An event selected ``k`` times stands for ``k`` measured events, and the production
+    data bootstrap gives each measured event its own ``Poisson(1)`` multiplicity, so
+    the event's resampled count is their sum, ``Poisson(k)``, not ``k * Poisson(1)``.
+    """
+    k = np.asarray(counts, dtype=float)
+    if not np.all(np.isfinite(k)) or np.any(k < 0) or np.any(k != np.round(k)):
+        raise ValueError("pseudo-data counts must be finite non-negative integers")
+    return np.random.default_rng(boot_seed).poisson(k).astype(float)
