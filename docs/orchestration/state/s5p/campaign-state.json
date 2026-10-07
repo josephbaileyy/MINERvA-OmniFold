@@ -609,6 +609,10 @@
   {
    "utc": "2026-10-06T16:04Z",
    "what": "CAMPAIGN TERMINAL DELIVERY (DELIVERY-20261006-s5p-campaign-terminal.md): four final fields per CHECKLIST section 4 - campaign_disposition TERMINAL (measurement branch NOT ADMITTED; joint-5D inference executed, recorded after independent verification); reportable_uncertainty_scope no new reportable uncertainty (trunk 3d7465f6 unchanged, not re-qualified); joint_5d_inference_status all ten H0(G) rejected, robust, every lost draw recovered and observed (report-only), power as context, recompute AGREE; publication_readiness NOT READY. Stage-7: note/primer text merged cbd075e7 (reviewed, REVIEW-20261006); canonical fresh build at cbd075e7 build_all exit 0 RESULT PASS tree clean 122/9/5 pp, Overleaf output exit 0 5 pp 0 undefined; standalone synced to deeafae28441101a86925835b5c11e12bdd10e89 (ff from ea15aee; PET qualifier fix 304b8bf0 included; pdftotext identical); primary standalone checkout ff'd; release manifest RELEASE-MANIFEST-20261006; reproduction tier D final (a12e2359); paper-wide table reconciled (R16 closure met). Spend: envelope 288.277 of 376.52 CPU node-h; verification/repair 6.887 of 68.287. Publication-lane notified (events 1-4; DELIVERY follows)."
+  },
+  {
+   "utc": "2026-10-07T03:52Z",
+   "what": "ARCHIVE (Joseph's answer in the campaign session: 'CFS copy + manifest (Recommended)'): the s5p products copied 2026-10-07T03:50:17-03:51:09Z on login09 to /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/ (private, group-only drwxr-s---; not www): 10,612 files, 2,317,487,385 bytes; sha256 of every file at the source, rsync -a, sha256sum -c at the destination rc 0 with 0 failures; SHA256SUMS sha256 1a72cb439120d910ee509fa0be7915924eb36b6a42fda8bda8006a0a92609935, committed copy state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt. RELEASE-MANIFEST section 6/7 and DELIVERY section 6 item 2 updated. (An expired NERSC sshproxy certificate was renewed by Joseph first.)"
   }
  ],
  "findings": [
