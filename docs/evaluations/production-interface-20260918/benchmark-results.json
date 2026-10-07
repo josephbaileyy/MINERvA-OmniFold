@@ -1,0 +1,114 @@
+{
+  "main_revision": "ce72abbcf84793a5dc56b7c166aa9a9322266355",
+  "feature_revision": "7a2d9897a42c39d0413eef938cb90b6cae7239c0",
+  "python": "3.11.15",
+  "versions": {
+    "numpy": "2.4.6",
+    "lightgbm": "4.7.0",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.17.1",
+    "joblib": "1.6.0",
+    "threadpoolctl": "3.7.0"
+  },
+  "environment": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "LOKY_MAX_CPU_COUNT": "1"
+  },
+  "config": {
+    "backend": "cached-lgbm-v1",
+    "iterations": 2,
+    "iteration_policy": "fixed-final",
+    "estimator_seed": 42,
+    "seed_policy": "same-seed-for-both-classifiers-and-regressor",
+    "train_fraction": 1.0,
+    "split_seed": 0,
+    "model": {
+      "n_estimators": 100,
+      "num_leaves": 8,
+      "learning_rate": 0.1,
+      "verbose": -1
+    },
+    "normalization": "fixed-denominator-recomputed-completeness",
+    "features": [
+      "pt",
+      "pparallel"
+    ],
+    "selection": "synthetic-cuts-v1",
+    "background": "signal-only"
+  },
+  "fixture_seed": 17,
+  "mc_rows": 800,
+  "data_rows": 773,
+  "bootstrap_seed": 7,
+  "array_sha256": {
+    "MCgen": "0f07e73eaca244cb83790ff473fe89e680004f9cae322e4a968d693d31079dae",
+    "MCreco": "88a0acd07f2f6eb330f4b6ef6bd5eeda8e07405fc5cd0322f81a5cb44602011b",
+    "measured": "fe4bbb9e819376a8bb818f2843919009def4bf19fcb664e7de6f6ed713ca115c",
+    "w_truth": "2b8bc78341df1d53b44b19b3aea6c40c45f86b7bacf4007e025dff48e045db95",
+    "w_reco": "2b8bc78341df1d53b44b19b3aea6c40c45f86b7bacf4007e025dff48e045db95",
+    "measured_weights": "22f7386c68fc8070191ca18b0b1d1f417d555a5a692e4a4c5d907b114fea374c",
+    "pass_truth": "62fd2398c2b3a3dc49395fbdd924f0f0a4d677040d0dc1bf13d6577047193ae8",
+    "pass_reco": "0c6ace069448c31dfb2460c536483c6e251b8540f2ad13e8209dc8cfe048c081",
+    "meas_pass_reco": "b780354a4c293c8a27dca233fe6613ee4efe28cff387c1036d59b5332d96fc24",
+    "truth_id": "a5c12ea608c160e7cac7f21b04d10a28f1e1c6b3448daa018f2410b69b9901b3",
+    "reco_id": "a5c12ea608c160e7cac7f21b04d10a28f1e1c6b3448daa018f2410b69b9901b3",
+    "data_id": "b4331f58bff97c6ecb0a236003881265e301c12a6626ce180350e7a1e791438a",
+    "denom_nd": "1d72cc334ac845ac60ae0561037589639788331e9f407b830808dd45ac467d1b",
+    "flux": "3d28c2844ffaad29ee51c6136a2d12ecdbbf8f7f95209ddee823dc1d5bf69d00",
+    "data_pot": "a3f429bf2accf8686cdbe442c175b400cc7d686c3910b166358a5f5ee3cc5976",
+    "n_nucleons": "f5a37fe835452798331c661f522370a272234b73aa7786d4ec9b8888e12aa4ea"
+  },
+  "warmups_seconds": {
+    "retained": 1.0410931250080466,
+    "interface": 1.2511267089284956
+  },
+  "samples_seconds": {
+    "retained": [
+      1.0192525410093367,
+      1.0281473328359425,
+      1.1608914998359978,
+      1.2125050839968026,
+      1.039107833057642
+    ],
+    "interface": [
+      1.2511569161433727,
+      1.3072114998940378,
+      1.2503127499949187,
+      1.28668574988842,
+      1.270691332872957
+    ]
+  },
+  "median_seconds": {
+    "retained": 1.039107833057642,
+    "interface": 1.270691332872957
+  },
+  "range_seconds": {
+    "retained": [
+      1.0192525410093367,
+      1.2125050839968026
+    ],
+    "interface": [
+      1.2503127499949187,
+      1.3072114998940378
+    ]
+  },
+  "maximum_absolute_xsec_difference_each_pair": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "comparison": {
+    "rtol": 1e-12,
+    "atol": 0,
+    "pairs_passed": 6
+  },
+  "member_output_bytes": {
+    "retained": 1440,
+    "interface": 19473
+  },
+  "limitations": "Synthetic two-dimensional cached backend; warm filesystem, fresh processes; nominal setup excluded; outputs differ in provenance and intermediates; no production throughput or peak-memory claim."
+}

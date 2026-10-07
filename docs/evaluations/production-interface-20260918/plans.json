@@ -1,0 +1,82 @@
+[
+  {
+    "command": "python production/prepare_events --config production/examples/scalar_root.json --input /data/prepared/events.root --output /data/scalar_5d.npz",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/unfold_gbdt.py --config production/examples/nominal_5d.json --input /data/scalar_5d.npz --output /data/scalar_nominal",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/uncertainties.py run --source statistical --mode data-plus-mc --seeds 7 8 9 --config production/examples/nominal_5d.json --input /data/scalar_5d.npz --nominal /data/scalar_nominal --output /data/scalar_members",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/uncertainties.py combine --source statistical --mode data-plus-mc --seeds 7 8 9 --config production/examples/nominal_5d.json --input /data/scalar_members --nominal /data/scalar_nominal --output /data/scalar_covariance",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/project.py --config production/examples/project_5d.json --input /data/scalar_covariance --output /data/scalar_4d_projection",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/closure.py --config production/examples/nominal_5d.json --input /data/scalar_5d.npz --output /data/scalar_closure",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/unfold_gbdt.py --config production/examples/cached_split_5d.json --input /data/scalar_5d.npz --output /data/split_nominal",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/uncertainties.py run --source ml --seeds 7 8 9 --config production/examples/cached_split_5d.json --input /data/scalar_5d.npz --nominal /data/split_nominal --output /data/split_members",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/uncertainties.py combine --source ml --seeds 7 8 9 --config production/examples/cached_split_5d.json --input /data/split_members --nominal /data/split_nominal --output /data/split_covariance",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/uncertainties.py run --source systematic --inventory production/examples/systematic.json --config production/examples/nominal_5d.json --input /data/universes --nominal /data/scalar_nominal --output /data/systematic_members",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/uncertainties.py combine --source systematic --inventory production/examples/systematic.json --config production/examples/nominal_5d.json --input /data/systematic_members --nominal /data/scalar_nominal --output /data/systematic_covariance",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/project.py --config production/examples/project_5d.json --input /data/systematic_covariance --output /data/systematic_4d",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/prepare_events --config production/examples/prepare_root.json --input production/examples/playlists.json --output /data/prepared --plan",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/unfold_pet.py train --config production/examples/pet.json --input /data/full_event.npz --output /data/pet_diagnostic",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/unfold_pet.py infer --config production/examples/pet_infer.json --input /data/full_event.npz --output /data/pet_inference",
+    "exit": 0,
+    "status": "plan-only"
+  },
+  {
+    "command": "python production/unfold_pet.py extract --config production/examples/pet_extract.json --input /data/full_event.npz --output /data/pet_extraction",
+    "exit": 0,
+    "status": "plan-only"
+  }
+]
