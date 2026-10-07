@@ -124,6 +124,12 @@ MC trees (truth/signal/background): `mc_run,mc_subrun,mc_nthEvtInFile` (int).
 Data: `ev_run,ev_subrun,ev_gate` (int). Phase-18 appended miss rows carry cached
 `mc_*` identity + cached truth muon/vertex from `TruthDenomEntry`.
 
+**These branches were written but never exported.** The identity export, its measured
+uniqueness, and the rules for joining a per-row result back to its event are in
+[`EVENT_IDENTITY_JOIN_CONTRACT.md`](EVENT_IDENTITY_JOIN_CONTRACT.md) — read it before treating
+`(run, subrun, gate)` as an event key; on the `data` tree it is a GATE key and does not identify
+an event on its own.
+
 ## Native-miss handling
 Reco muon/vertex = constant −9999 sentinel; `mu_reco_minos_ok`=0;
 `part_reco_view/time` left EMPTY (like `part_reco_E/pos/z`); truth muon/vertex +
