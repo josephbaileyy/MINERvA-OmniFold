@@ -417,8 +417,8 @@ step was run against `fc97eaf9`, the pre-removal main:
 5. **Surviving references.**
    - The dated records keep their bytes.
    - New stub `nd-unfolding/pet/final_design/results/README.md` names the tag, the list and the recovery commands.
-   - `summarize_dev.py` and `n2_table.py` each gained one docstring line naming the tag. Neither file is hash- or
-     blob-pinned.
+   - `summarize_dev.py` and `n2_table.py` each gained a two-line docstring note naming the tag. Neither file is
+     hash- or blob-pinned.
 6. **Discovery.** The stub; the *Family A3* subsection of `CATALOG.md`; and this record.
 7. **Checks, on the removal tree against `fc97eaf9`.**
    - `verify_hash_bindings.py`: ALL BINDINGS INTACT, 144 receipt bindings at `f9dab8dd…`, the same as before.
@@ -427,7 +427,9 @@ step was run against `fc97eaf9`, the pre-removal main:
    - `generate_manifest.py` was regenerated. Its changes are line counts and inbound counts from the new stub and the
      CATALOG lines.
    - Pytest over `final_design`, `gbdt_comparison`, `generator_diagnosis` and `test_hash_bindings.py`: 308 passed,
-     9 skipped, 4 failed, both before (a clean worktree of the tag) and after, with an identical failure set.
+     9 skipped, 4 failed, both before (a clean worktree of the tag) and after, with an identical failure set. The
+     reviewer's environment gave 309 / 9 / 3 at both `fc97eaf9` and `0e55c19e`, with `test_pfd_build_evidence`
+     passing there; the invariance holds in both environments.
    - `docs/orchestration` tests: 948 passed and 23 failed, before and after, with an identical failure set. The
      failures are the environment-bound `test_wakerctl` (17), `test_deploy_oi135_watcher_swap` (3),
      `test_watch_slurm_array_resume` (2) and `test_usagectl` (1).
@@ -435,7 +437,24 @@ step was run against `fc97eaf9`, the pre-removal main:
 8. **Products unchanged.** Before: `build_all.sh` on a clean worktree of the tag gives PASS (strict containment,
    0 of 29 struck literals) at 123 / 9 / 9 pages. The `pdftotext` sha256 prefixes are note `56865a04…`, primer
    `11b21c1f…` and paper `dd521150…`. The first run hit the known biber PAR-cache failure on the pristine tree, and
-   purging the temp cache cleared it. The after-build is *pending at this commit*.
-9. **Independent review.** *Pending at this commit.*
-10. **Counts.** Before (`fc97eaf9`): 9,214 tracked files, 804 Markdown files, 203,328 Markdown lines, 452.63 MB.
-    The after-counts are *pending at this commit*.
+   purging the temp cache cleared it.
+
+   After: `build_all.sh` on a clean worktree of the removal commit `0e55c19e` gives PASS (strict, tree clean, 0 of
+   29 struck literals) at 123 / 9 / 9 pages, and all three `pdftotext` digests are identical. The
+   `docs/analysis-note` sources are byte-identical between `fc97eaf9` and `0e55c19e`.
+9. **Independent review.** One fresh read-only reviewer examined `0e55c19e` and returned **APPROVE WITH CHANGES**.
+   - It re-verified: the deleted set equals the list exactly; all 674 blobs match at the tag; the epoch checksums
+     pass locally and on NERSC; the bundle verifies; there is no surviving consumer; and the checks and discovery
+     links work.
+   - Nothing was blocking. It made one should-fix, to complete steps 8–10, and three notes: the environment-dependent
+     test counts, the placement and wording of the docstring note, and a recovery line for the CATALOG entry.
+   - All four were applied in the follow-up commit.
+10. **Counts.**
+
+| | tracked files | Markdown files | Markdown lines | tracked bytes |
+|---|---:|---:|---:|---:|
+| before A3 (`fc97eaf9`) | 9,214 | 804 | 203,328 | 452.63 MB |
+| after A3 (removal commit `0e55c19e`) | 8,541 | 805 | 203,426 | 405.14 MB |
+
+The removal is −674 files and −47.49 MB. The new stub adds one Markdown file. The record, the stub and the CATALOG
+lines add 98 Markdown lines, against an estimate of about 10 that counted only the stub.

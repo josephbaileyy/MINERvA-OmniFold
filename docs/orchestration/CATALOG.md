@@ -1342,6 +1342,8 @@ new evidence tag". The files are at `evidence/simplification-2026-10-07-fc97eaf9
 - Exact paths: [`../POST_PUBLICATION_REORG_A3_PATHS.txt`](../POST_PUBLICATION_REORG_A3_PATHS.txt).
 - Discovery stub: `nd-unfolding/pet/final_design/results/README.md`.
 - Gate record: [`../POST_PUBLICATION_REORG_PLAN.md`](../POST_PUBLICATION_REORG_PLAN.md), *Family A3 executed*.
+- Recover a file with `git show evidence/simplification-2026-10-07-fc97eaf9:<path>`. Fetch the tags first, as described
+  above.
 
 ## Regenerate
 
