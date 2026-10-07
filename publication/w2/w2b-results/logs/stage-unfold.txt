@@ -1,0 +1,15 @@
+wrote /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/tables/w2b-dump-tasks.tsv
+wrote /pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/tables/w2b-unfold-tasks.tsv
+appended 3 of 3 pending ledger rows
+{
+ "stage": "unfold",
+ "recorded_spend": 1.9022,
+ "inflight_jobs": 0,
+ "inflight_reservation": 0,
+ "new_tasks": 3,
+ "new_reservation": 0.375,
+ "total": 2.2772,
+ "ceiling": 8.0,
+ "verdict": "PASS"
+}
+[w2b] unfold -> 59427372

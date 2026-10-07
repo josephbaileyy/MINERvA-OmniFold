@@ -1,0 +1,33 @@
+{
+ "mode": "shifted",
+ "base": "/pscratch/sd/j/josephrb/w2-recoil-20261006/smoke/evloop/base_cv.root",
+ "shift": "/pscratch/sd/j/josephrb/w2-recoil-20261006/smoke/evloop/mod_rr1.root",
+ "scale": 1.0,
+ "stats": {
+  "mc_background": {
+   "passing_rows": 2616,
+   "eavail_max_rel_dev": 0.04000000000000033,
+   "eavail_rows_failing": 2616,
+   "q0_rows_checked": 2530,
+   "q0_rows_excluded_clipped_or_zero": 86,
+   "q0_max_abs_dev_gev": 3.1686011058938135,
+   "q0_rows_failing": 2530
+  },
+  "mc_signal_reco": {
+   "passing_rows": 85166,
+   "eavail_max_rel_dev": 0.04000000000000035,
+   "eavail_rows_failing": 85157,
+   "q0_rows_checked": 83911,
+   "q0_rows_excluded_clipped_or_zero": 1255,
+   "q0_max_abs_dev_gev": 3.297823507485191,
+   "q0_rows_failing": 83911
+  }
+ },
+ "failures": [
+  "mc_background: 2616 rows with E_avail not scaled by 1.0",
+  "mc_background: 2530 rows with q0 not scaled by 1.0",
+  "mc_signal_reco: 85157 rows with E_avail not scaled by 1.0",
+  "mc_signal_reco: 83911 rows with q0 not scaled by 1.0"
+ ],
+ "verdict": "FAIL"
+}

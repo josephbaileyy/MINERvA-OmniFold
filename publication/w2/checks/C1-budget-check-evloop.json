@@ -1,0 +1,11 @@
+{
+ "stage": "evloop",
+ "recorded_spend": 0.0985,
+ "inflight_jobs": 0,
+ "inflight_reservation": 0,
+ "new_tasks": 36,
+ "new_reservation": 6.2109,
+ "total": 6.3094,
+ "ceiling": 8.0,
+ "verdict": "PASS"
+}
