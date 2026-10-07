@@ -1,0 +1,44 @@
+{
+ "schema": "publication-release-receipt/1",
+ "what": "sufficient inputs of the s5p joint tests, recovery-union group = reading (a) of PROCEDURE-20261005 sec. 5 (frozen products + the 277 recovered seeds; S recomputed), REPORT-ONLY",
+ "citable_for": "the identity of the extract and that the standalone replay reproduces resolved-evaluate.json exactly on two platforms",
+ "not_citable_for": "the PROCEDURE sec. 6 independent cross-check (the recompute lane's), any revised primary decision, Joseph's disposition",
+ "extract": {
+  "cluster_path": "/pscratch/sd/j/josephrb/pub-release-20261006/union/inference_sufficient.npz",
+  "npz_sha256": "6ffed091fb433219c825e0b7cfc20c0642a92cda8af1c9aa3dce44b846293fbb",
+  "manifest_sha256": "757d39f8e3c332d221ce8ec80f4a4b4cc7dca1c25f07815acf9afb597119cfd4",
+  "manifest_npz_sha256_field": "6ffed091fb433219c825e0b7cfc20c0642a92cda8af1c9aa3dce44b846293fbb",
+  "deploy": "/pscratch/sd/j/josephrb/s5p-20260926/deploy/51648245",
+  "s5p_joint_sha256": "2cd98235a4ad1c544cad7b3340b4b385c0904236351a04dc53d3f3c22e308bf9",
+  "design": "/pscratch/sd/j/josephrb/s5p-20260926/recovery/resolution-design.json",
+  "design_sha256": "f93bdb88d08316040a89ee983810b1ca19ab1d7367e769544587f45856dfafbe",
+  "B": {
+   "MnvTune_v1": 1400,
+   "GENIE_2_12_10_CV": 1400,
+   "GENIE_2_12_10_MEC": 1400,
+   "NuWro_21_09": 1800,
+   "GiBUU_2019": 1400
+  },
+  "power_sets": {
+   "P1_a1.0": 200,
+   "P2_a1.0": 200,
+   "P3_a1.0": 200,
+   "P1g_a1.0": 200,
+   "P2g_a1.0": 200,
+   "P3g_a1.0": 200
+  }
+ },
+ "replay": [
+  {
+   "host": "saul login node",
+   "against": "recovery/resolved-evaluate.json sha256 8503eab8b4c0d19e0515bd591275bb7c177c46a52e59f86de91fa818716988fb",
+   "result": "COMPARE: AGREE (0 differences)"
+  },
+  {
+   "host": "local macOS",
+   "against": "origin/main state/s5p/recovery/phaseC/resolved-evaluate.json (same sha256)",
+   "result": "COMPARE: AGREE (0 differences)"
+  }
+ ],
+ "note": "the deploy 51648245's s5p_joint.py and s5p_inference.py are byte-identical to e9372b75's (checked on the cluster)"
+}

@@ -1,0 +1,18 @@
+{
+ "control": "pet-rescore",
+ "run": "S4F-H2S1T24K5-FB0",
+ "k": 5,
+ "iteration_file_sha256": "43131eeab6e12fdfb0e0bfd718d4cb2d20e2c194f7c9df1ed9ffee7edee0e4ba",
+ "iteration_file_matches_committed": true,
+ "n_values_compared": 952,
+ "max_abs_diff": 1.1102230246251565e-16,
+ "worst_path": "histograms.eavail_x_proton.overshoot_projection",
+ "tolerance": 1e-12,
+ "pass": true,
+ "pet_source": "bc356b0c0c5b56cb4877bdf2312d2d5dc6d1936d",
+ "pet_files_loaded": {
+  "nd-unfolding/pet/final_design/analysis/score_design.py": "551cc4039673114481b92767a307a87e37b6e0d2",
+  "nd-unfolding/pet/improvement_campaign/phase_b/scalar/scalar_common.py": "e57d1d2c172cf5548500b05a6ac8e79c578f752a",
+  "nd-unfolding/pet/improvement_campaign/phase_e/common.py": "b427f2ac6a6601b065da7a60ab6d1e957342981d"
+ }
+}

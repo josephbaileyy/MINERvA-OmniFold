@@ -56,6 +56,10 @@ medium-energy neutrino data.
   % covariance digests and digest-identity pairing: sec_eavailw.tex:171-176, 256-260;
   % the exception: sec_eavailw.tex:175-179.
 
+  \item \textbf{Joint five-dimensional generator tests.}
+  Frozen tests of five predictions (Tune~v1, GENIE with and without MEC, NuWro, GiBUU), in total and in shape, reject all ten simple hypotheses at familywise 0.05 under the stated conditions, each also robust to a larger sub-fine-grid residual; a report-only recovery observed every lost draw and changes no decision; they are hypothesis tests, not a measured uncertainty (\S\ref{sec:joint5d}).
+  % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md; DECISION-20261005 section 5.
+
   \item \textbf{A methodological finding.}
   The standard covariance sums single-source systematic matrices with all others nominal, omitting cross-source response terms; a corrected unified-throw test perturbs all reweightable sources together, reporting the joint mean shift separately (\S\ref{sec:uq-combine}).
   % Cut (lane 1 R12, lane 5 R4; the adoption sentence): kept under "Adopted covariance" below;
@@ -75,10 +79,13 @@ medium-energy neutrino data.
 \paragraph{What is not claimed:}
 \begin{itemize}[itemsep=2pt, parsep=0pt, topsep=2pt]
   \item \emph{Coverage.}
-  No 2D coverage number is quoted (\S\ref{sec:coverage}), and no frequentist coverage is claimed for any five-dimensional interval (\S\ref{sec:coverage-5d}).
-% Source: docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
-% Shortened (one-page summary): "the independent-truth test remains open" survives in the cited
-% section, sec_validation.tex:91-95; "The sole 5D independent-truth test used bias-corrected
+  The 2D statistical band undercovers a fixed truth in its tails ($C_2=\covTwoDCTwo$ vs.\ $0.954$; \S\ref{sec:coverage}); no frequentist coverage is claimed for any five-dimensional interval (\S\ref{sec:coverage-5d}).
+% Source (2D): docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md; VALIDATION_LEDGER VL169.
+% Source (5D): docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
+% Shortened (one-page summary): "pre-registered", the interval [0.907, 0.918], where the deficit sits,
+% the attribution to the bootstrapped completeness, "quoted uncertainties are unchanged" and
+% "statistical band only; no systematic, total or 5D coverage" survive in the cited section
+% (sec:coverage); "The sole 5D independent-truth test used bias-corrected
 % statistical intervals of a deterministic estimator variant and failed its predeclared futility
 % criterion" survives in the cited section, sec_eavailw.tex:590-594.
   \item \emph{Regularization bias.}
@@ -106,6 +113,9 @@ medium-energy neutrino data.
   \item \emph{Extended fiducial domain.}
   Tier~2 is separately reported prior-dominated extrapolation. No corrected extended-fiducial covariance exists (\S\ref{sec:fps}).
   \item \emph{PET.}
+  Completed simulation studies improve point recovery but select no eligible
+  design; the exploratory PET--GBDT comparison makes no uncertainty comparison
+  (\S\ref{sec:pet-campaigns}--\ref{sec:pet-gbdt-paired}).
   No PET covariance is adopted as a publication uncertainty product; full-event nominal and unverified $C_{\rm stat}$ artifacts lack an uncertainty budget, and their pairing was declined (\S\ref{sec:pet}).
 % Shortened: "with estimator-equivalence and coverage evidence the conditions for
 % reconsideration" survives in the cited section, sec_pet.tex:8-11.

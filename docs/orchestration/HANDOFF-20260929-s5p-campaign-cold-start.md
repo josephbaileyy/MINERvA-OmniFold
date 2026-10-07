@@ -353,3 +353,25 @@ This addendum is dated and does not edit the sections above.
 - **Remaining runners:** GiBUU 1047841 (r3, throttle 2) and NuWro 1100694 (r6).
 - **Rollback:** `prod/queues-r6-rollback/cal-NuWro_21_09.q` (throttle 8) via `transition-r6/runner_r6.sh`.
 - **Next:** NuWro 16 only if GiBUU is final before NuWro's b8 submission, after telling the recompute lane first.
+
+## Addendum 2026-10-06: the campaign is TERMINAL; nothing remains to run
+
+This addendum is dated and does not edit the sections above.
+- **Production:** terminal on 2026-10-05T20:32Z.
+- **Records:**
+  - the joint result: `RECORD-20261005-s5p-joint-5d-inference-result.md`, after the reviewed comparer's AGREE;
+  - the lost-seed recovery: `RECORD-20261006-…`, under `PROCEDURE-20261005-…` and cross-checked;
+  - Joseph's disposition: DECISION-20261005 §5;
+  - the Stage-7 note and primer text, merged at `cbd075e7` and reviewed;
+  - the release manifest;
+  - the reproduction tier D;
+  - the standalone sync at `deeafae`.
+- **Final fields and costs:** `DELIVERY-20261006-s5p-campaign-terminal.md`.
+- **Nothing remains to run:** no s5p runner, job or reservation is open (meter open concurrency 0).
+- **Do not:**
+  - restart any queue;
+  - resubmit seeds;
+  - edit the recorded result.
+- **Further work** (the costed remaining requirements in the delivery record §6) needs Joseph's separate
+  authorization.
+- **The paper (PRD-class article)** is the publication lane's, on branch `docs/publication-decision-20261005`.

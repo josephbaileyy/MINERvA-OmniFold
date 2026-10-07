@@ -1,0 +1,100 @@
+{
+ "inputs": {
+  "cv": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+   "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
+  },
+  "ml": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+   "sha256": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9"
+  },
+  "VL162": {
+   "universe": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root",
+    "sha256": "62590df75525d6095ce2c0cb96230c875112f0f9223d685c449665eb1936d4e9"
+   },
+   "boot": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/bootstrap_MEFHC_300/uq_covariance_boot300.root",
+    "sha256": "f7c734b1127e2cf75ccf2cc4241062b5dced2d55fcec785fa0d42ec861c10270"
+   }
+  },
+  "VL170": {
+   "universe": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/uq_universe_covariance_full_matcorr_fluxfix.root",
+    "sha256": "077912e3e7a53376c6df89ee1af4a2a504fe1f49423bab88780204beccd952f5"
+   },
+   "boot": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/bootstrap_MEFHC_300_vl170/uq_covariance_boot300.root",
+    "sha256": "71a75821ceeb658710adca30243e39e7184e33f868f58ea56cffe63ba8db0115"
+   }
+  }
+ },
+ "n_reported": 205,
+ "x": "matched full-universe CV hXSec2D",
+ "VL162": {
+  "universe": {
+   "median_pct": 6.82980281573948,
+   "p84_pct": 9.168740630822395,
+   "max_pct": 21.823401593000035,
+   "sqrt_trace": 3.214251493416753e-39
+  },
+  "boot": {
+   "median_pct": 0.5486733780343109,
+   "p84_pct": 1.2018792326733327,
+   "max_pct": 3.307840638250544,
+   "sqrt_trace": 1.8165263088526897e-40
+  },
+  "ml": {
+   "median_pct": 0.16634710180594114,
+   "p84_pct": 0.49533650958438824,
+   "max_pct": 1.3313922614582092,
+   "sqrt_trace": 5.060524519225612e-41
+  },
+  "universe_plus_boot": {
+   "median_pct": 6.844837168176811,
+   "p84_pct": 9.258075326389195,
+   "max_pct": 21.836849484727257,
+   "sqrt_trace": 3.21938042816306e-39
+  },
+  "block_sum": {
+   "median_pct": 6.864611144622922,
+   "p84_pct": 9.264837738741729,
+   "max_pct": 21.837182121556985,
+   "sqrt_trace": 3.219778133983821e-39
+  },
+  "hCov_combined_minus_universe_minus_boot_max_rel": 2.1900353297708832e-14
+ },
+ "VL170": {
+  "universe": {
+   "median_pct": 6.82980281573948,
+   "p84_pct": 9.168740630822395,
+   "max_pct": 21.823401593000035,
+   "sqrt_trace": 3.214251493416753e-39
+  },
+  "boot": {
+   "median_pct": 0.6738150183177408,
+   "p84_pct": 1.6581973760817776,
+   "max_pct": 17.927708271502187,
+   "sqrt_trace": 1.931166320776756e-40
+  },
+  "ml": {
+   "median_pct": 0.16634710180594114,
+   "p84_pct": 0.49533650958438824,
+   "max_pct": 1.3313922614582092,
+   "sqrt_trace": 5.060524519225612e-41
+  },
+  "universe_plus_boot": {
+   "median_pct": 6.869363168877044,
+   "p84_pct": 9.481846975331202,
+   "max_pct": 23.437754618239246,
+   "sqrt_trace": 3.2200476233305695e-39
+  },
+  "block_sum": {
+   "median_pct": 6.8706583503726995,
+   "p84_pct": 9.49688534640397,
+   "max_pct": 23.440775569348286,
+   "sqrt_trace": 3.2204452467566994e-39
+  },
+  "hCov_combined_minus_universe_minus_boot_max_rel": 7.159664325209985e-14
+ }
+}

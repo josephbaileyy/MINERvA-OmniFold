@@ -1,0 +1,29 @@
+[paper] opening: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+[paper] reported bins: 205 / 224
+[paper] cross-section sum (reported bins): 3.6892e-37
+
+[ours] opening: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root
+[ours] cross-section sum (all bins): 3.7315e-37
+
+=== chi^2 comparisons (ours vs paper) ===
+  stat only                       chi2 =      1405.01   ndf = 205   chi2/ndf =   6.854
+  flux only                       chi2 = 18108703870.18   ndf = 205   chi2/ndf = 88335140.830
+  muon E scale only               chi2 =         0.23   ndf = 205   chi2/ndf =   0.001
+  PAPER (stat+syst)               chi2 =       750.49   ndf = 205   chi2/ndf =   3.661
+
+=== adding OmniFold covariances ===
+  [omnifold-cov] /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root:hCov_combined  shape=(205, 205)  sqrt(trace)=3.219e-39
+  [omnifold-cov] /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root:hCov2D_reported  shape=(205, 205)  sqrt(trace)=5.061e-41
+  COMBINED (paper + hCov_combined + hCov2D_reported)  chi2 =       303.62   ndf = 205   chi2/ndf =   1.481
+
+wrote /pscratch/sd/j/josephrb/ki84-rebuild-20261006/adoption_controls/MEFHC_5iter_old_pull_full.png
+
+Summary for run log:
+  reported bins: 205
+  chi^2/ndf  stat only        : 6.854
+  chi^2/ndf  flux only        : 88335140.830
+  chi^2/ndf  muon E scale     : 0.001
+  chi^2/ndf  PAPER (full cov) : 3.661
+  chi^2/ndf  COMBINED         : 1.481   (added: hCov_combined, hCov2D_reported)
+  pull mean / rms             : 0.051 / 0.409

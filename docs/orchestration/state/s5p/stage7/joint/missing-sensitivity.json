@@ -1,0 +1,3020 @@
+{
+ "schema": "s5p-missing-sensitivity/1",
+ "label": "LABELLED SENSITIVITY (report only): bounds on the unobserved missing draws; the primary decisions stand",
+ "status": "COMPLETE",
+ "incomplete_reasons": [],
+ "evaluate_sha256": "b9604502b1aa263508ba46f0be91846d7a2106f6f2fd0ba5c172b87ee256dd11",
+ "design_sha256": "404446eb2a770dc4412012c5e182e57a77afa2edd332c75de399a9281f536285",
+ "seed_states_sha256": "6823e701064b5dfc1286015be88b6d660e8f64099dc5bf3bff99b783724e58a8",
+ "ledger_sha256": "7056145fda148fc6e1c55836ab3c54b00ba268a187d080101498058f030c6642",
+ "code_sha256": "34768e47c2bdcd2e00d336322f1818f29fb852ac2fd0d91847fb9c03b16081cc",
+ "classification": {
+  "cal:GENIE_2_12_10_CV": {
+   "by_batch": {
+    "0": {
+     "completed": 193,
+     "interrupted": 4,
+     "never started": 3
+    },
+    "1": {
+     "completed": 200
+    },
+    "2": {
+     "completed": 199,
+     "interrupted": 1
+    },
+    "3": {
+     "completed": 199,
+     "interrupted": 1
+    },
+    "4": {
+     "completed": 187,
+     "interrupted": 6,
+     "never started": 7
+    },
+    "5": {
+     "completed": 192,
+     "interrupted": 4,
+     "never started": 4
+    },
+    "6": {
+     "completed": 196,
+     "interrupted": 1,
+     "never started": 3
+    }
+   },
+   "not_submitted_batches": [
+    7,
+    8,
+    9
+   ],
+   "counts": {
+    "completed": 1366,
+    "interrupted": 17,
+    "never started": 17
+   },
+   "missing_seeds": {
+    "interrupted": [
+     1220005,
+     1220117,
+     1220136,
+     1220161,
+     1220453,
+     1220653,
+     1220810,
+     1220846,
+     1220858,
+     1220966,
+     1220970,
+     1220979,
+     1221011,
+     1221089,
+     1221092,
+     1221100,
+     1221226
+    ],
+    "never started": [
+     1220118,
+     1220119,
+     1220137,
+     1220811,
+     1220847,
+     1220859,
+     1220967,
+     1220971,
+     1220972,
+     1220973,
+     1221093,
+     1221094,
+     1221095,
+     1221101,
+     1221227,
+     1221228,
+     1221229
+    ]
+   }
+  },
+  "cal:GENIE_2_12_10_MEC": {
+   "by_batch": {
+    "0": {
+     "completed": 193,
+     "interrupted": 2,
+     "never started": 5
+    },
+    "1": {
+     "completed": 194,
+     "interrupted": 3,
+     "never started": 3
+    },
+    "2": {
+     "completed": 196,
+     "interrupted": 2,
+     "never started": 2
+    },
+    "3": {
+     "completed": 196,
+     "interrupted": 2,
+     "never started": 2
+    },
+    "4": {
+     "completed": 184,
+     "interrupted": 6,
+     "never started": 10
+    },
+    "5": {
+     "completed": 186,
+     "interrupted": 7,
+     "never started": 7
+    },
+    "6": {
+     "completed": 194,
+     "interrupted": 3,
+     "never started": 3
+    }
+   },
+   "not_submitted_batches": [
+    7,
+    8,
+    9
+   ],
+   "counts": {
+    "completed": 1343,
+    "interrupted": 25,
+    "never started": 32
+   },
+   "missing_seeds": {
+    "interrupted": [
+     1240139,
+     1240166,
+     1240265,
+     1240330,
+     1240377,
+     1240531,
+     1240559,
+     1240604,
+     1240640,
+     1240899,
+     1240934,
+     1240941,
+     1240948,
+     1240959,
+     1240991,
+     1241004,
+     1241017,
+     1241028,
+     1241038,
+     1241046,
+     1241179,
+     1241196,
+     1241217,
+     1241299,
+     1241312
+    ],
+    "never started": [
+     1240140,
+     1240141,
+     1240142,
+     1240143,
+     1240167,
+     1240331,
+     1240378,
+     1240379,
+     1240560,
+     1240561,
+     1240605,
+     1240641,
+     1240900,
+     1240901,
+     1240935,
+     1240936,
+     1240937,
+     1240942,
+     1240943,
+     1240949,
+     1240960,
+     1240961,
+     1241005,
+     1241029,
+     1241039,
+     1241040,
+     1241041,
+     1241047,
+     1241197,
+     1241300,
+     1241301,
+     1241313
+    ]
+   }
+  },
+  "cal:GiBUU_2019": {
+   "by_batch": {
+    "0": {
+     "completed": 195,
+     "interrupted": 3,
+     "never started": 2
+    },
+    "1": {
+     "completed": 200
+    },
+    "2": {
+     "completed": 198,
+     "interrupted": 1,
+     "never started": 1
+    },
+    "3": {
+     "completed": 195,
+     "interrupted": 3,
+     "never started": 2
+    },
+    "4": {
+     "completed": 165,
+     "interrupted": 12,
+     "never started": 23
+    },
+    "5": {
+     "completed": 198,
+     "interrupted": 1,
+     "never started": 1
+    },
+    "6": {
+     "completed": 200
+    }
+   },
+   "not_submitted_batches": [
+    7,
+    8,
+    9
+   ],
+   "counts": {
+    "completed": 1351,
+    "interrupted": 20,
+    "never started": 29
+   },
+   "missing_seeds": {
+    "interrupted": [
+     1280009,
+     1280077,
+     1280161,
+     1280422,
+     1280748,
+     1280767,
+     1280778,
+     1280825,
+     1280840,
+     1280859,
+     1280863,
+     1280875,
+     1280887,
+     1280893,
+     1280897,
+     1280936,
+     1280943,
+     1280946,
+     1280953,
+     1281046
+    ],
+    "never started": [
+     1280010,
+     1280011,
+     1280423,
+     1280749,
+     1280779,
+     1280826,
+     1280827,
+     1280828,
+     1280829,
+     1280841,
+     1280864,
+     1280865,
+     1280876,
+     1280877,
+     1280888,
+     1280889,
+     1280894,
+     1280895,
+     1280898,
+     1280899,
+     1280900,
+     1280901,
+     1280937,
+     1280947,
+     1280948,
+     1280949,
+     1280954,
+     1280955,
+     1281047
+    ]
+   }
+  },
+  "cal:MnvTune_v1": {
+   "by_batch": {
+    "0": {
+     "completed": 195,
+     "interrupted": 4,
+     "never started": 1
+    },
+    "1": {
+     "completed": 198,
+     "interrupted": 1,
+     "never started": 1
+    },
+    "2": {
+     "completed": 194,
+     "interrupted": 5,
+     "never started": 1
+    },
+    "3": {
+     "completed": 200
+    },
+    "4": {
+     "completed": 185,
+     "interrupted": 7,
+     "never started": 8
+    },
+    "5": {
+     "completed": 193,
+     "interrupted": 5,
+     "never started": 2
+    },
+    "6": {
+     "completed": 200
+    }
+   },
+   "not_submitted_batches": [
+    7,
+    8,
+    9
+   ],
+   "counts": {
+    "completed": 1365,
+    "interrupted": 22,
+    "never started": 13
+   },
+   "missing_seeds": {
+    "interrupted": [
+     1200011,
+     1200016,
+     1200131,
+     1200197,
+     1200246,
+     1200453,
+     1200471,
+     1200482,
+     1200489,
+     1200549,
+     1200841,
+     1200851,
+     1200889,
+     1200907,
+     1200918,
+     1200977,
+     1200982,
+     1201077,
+     1201094,
+     1201113,
+     1201131,
+     1201136
+    ],
+    "never started": [
+     1200017,
+     1200247,
+     1200483,
+     1200852,
+     1200853,
+     1200919,
+     1200978,
+     1200979,
+     1200983,
+     1200984,
+     1200985,
+     1201095,
+     1201137
+    ]
+   }
+  },
+  "cal:NuWro_21_09": {
+   "by_batch": {
+    "0": {
+     "completed": 197,
+     "interrupted": 3
+    },
+    "1": {
+     "completed": 200
+    },
+    "2": {
+     "completed": 190,
+     "interrupted": 5,
+     "never started": 5
+    },
+    "3": {
+     "completed": 192,
+     "interrupted": 6,
+     "never started": 2
+    },
+    "4": {
+     "completed": 178,
+     "interrupted": 10,
+     "never started": 12
+    },
+    "5": {
+     "completed": 195,
+     "interrupted": 2,
+     "never started": 3
+    },
+    "6": {
+     "completed": 199,
+     "interrupted": 1
+    },
+    "7": {
+     "completed": 200
+    },
+    "8": {
+     "completed": 200
+    }
+   },
+   "not_submitted_batches": [
+    9
+   ],
+   "counts": {
+    "completed": 1751,
+    "interrupted": 27,
+    "never started": 22
+   },
+   "missing_seeds": {
+    "interrupted": [
+     1260071,
+     1260161,
+     1260185,
+     1260431,
+     1260441,
+     1260446,
+     1260495,
+     1260507,
+     1260664,
+     1260670,
+     1260695,
+     1260749,
+     1260779,
+     1260785,
+     1260815,
+     1260839,
+     1260864,
+     1260875,
+     1260889,
+     1260905,
+     1260918,
+     1260925,
+     1260937,
+     1260971,
+     1261093,
+     1261142,
+     1261241
+    ],
+    "never started": [
+     1260432,
+     1260433,
+     1260434,
+     1260435,
+     1260447,
+     1260665,
+     1260671,
+     1260816,
+     1260817,
+     1260840,
+     1260841,
+     1260865,
+     1260876,
+     1260877,
+     1260906,
+     1260907,
+     1260919,
+     1260972,
+     1260973,
+     1261094,
+     1261095,
+     1261143
+    ]
+   }
+  },
+  "pow:P1_a1.0": {
+   "by_batch": {
+    "0": {
+     "completed": 193,
+     "interrupted": 4,
+     "never started": 3
+    }
+   },
+   "not_submitted_batches": [],
+   "counts": {
+    "completed": 193,
+    "interrupted": 4,
+    "never started": 3
+   },
+   "missing_seeds": {
+    "interrupted": [
+     1451071,
+     1451106,
+     1451117,
+     1451125
+    ],
+    "never started": [
+     1451107,
+     1451118,
+     1451119
+    ]
+   }
+  },
+  "pow:P1g_a1.0": {
+   "by_batch": {
+    "0": {
+     "completed": 199,
+     "interrupted": 1
+    }
+   },
+   "not_submitted_batches": [],
+   "counts": {
+    "completed": 199,
+    "interrupted": 1
+   },
+   "missing_seeds": {
+    "interrupted": [
+     1481179
+    ]
+   }
+  },
+  "pow:P2_a1.0": {
+   "by_batch": {
+    "0": {
+     "completed": 195,
+     "interrupted": 2,
+     "never started": 3
+    }
+   },
+   "not_submitted_batches": [],
+   "counts": {
+    "completed": 195,
+    "interrupted": 2,
+    "never started": 3
+   },
+   "missing_seeds": {
+    "interrupted": [
+     1461147,
+     1461178
+    ],
+    "never started": [
+     1461148,
+     1461149,
+     1461179
+    ]
+   }
+  },
+  "pow:P2g_a1.0": {
+   "by_batch": {
+    "0": {
+     "completed": 193,
+     "interrupted": 3,
+     "never started": 4
+    }
+   },
+   "not_submitted_batches": [],
+   "counts": {
+    "completed": 193,
+    "interrupted": 3,
+    "never started": 4
+   },
+   "missing_seeds": {
+    "interrupted": [
+     1491141,
+     1491147,
+     1491197
+    ],
+    "never started": [
+     1491142,
+     1491143,
+     1491148,
+     1491149
+    ]
+   }
+  },
+  "pow:P3_a1.0": {
+   "by_batch": {
+    "0": {
+     "completed": 195,
+     "interrupted": 4,
+     "never started": 1
+    }
+   },
+   "not_submitted_batches": [],
+   "counts": {
+    "completed": 195,
+    "interrupted": 4,
+    "never started": 1
+   },
+   "missing_seeds": {
+    "interrupted": [
+     1471047,
+     1471161,
+     1471173,
+     1471184
+    ],
+    "never started": [
+     1471185
+    ]
+   }
+  },
+  "pow:P3g_a1.0": {
+   "by_batch": {
+    "0": {
+     "completed": 172,
+     "interrupted": 12,
+     "never started": 16
+    }
+   },
+   "not_submitted_batches": [],
+   "counts": {
+    "completed": 172,
+    "interrupted": 12,
+    "never started": 16
+   },
+   "missing_seeds": {
+    "interrupted": [
+     1501005,
+     1501011,
+     1501014,
+     1501023,
+     1501040,
+     1501049,
+     1501058,
+     1501064,
+     1501069,
+     1501161,
+     1501184,
+     1501188
+    ],
+    "never started": [
+     1501015,
+     1501016,
+     1501017,
+     1501041,
+     1501050,
+     1501051,
+     1501052,
+     1501053,
+     1501059,
+     1501065,
+     1501070,
+     1501071,
+     1501185,
+     1501189,
+     1501190,
+     1501191
+    ]
+   }
+  }
+ },
+ "decisions": {
+  "missing_draws": {
+   "MnvTune_v1": {
+    "interrupted_or_unestablished": 22,
+    "unestablished": 0,
+    "all": 35
+   },
+   "GENIE_2_12_10_CV": {
+    "interrupted_or_unestablished": 17,
+    "unestablished": 0,
+    "all": 34
+   },
+   "GENIE_2_12_10_MEC": {
+    "interrupted_or_unestablished": 25,
+    "unestablished": 0,
+    "all": 57
+   },
+   "NuWro_21_09": {
+    "interrupted_or_unestablished": 27,
+    "unestablished": 0,
+    "all": 49
+   },
+   "GiBUU_2019": {
+    "interrupted_or_unestablished": 20,
+    "unestablished": 0,
+    "all": 49
+   }
+  },
+  "primary": {
+   "MnvTune_v1:total": "rejected",
+   "MnvTune_v1:shape": "rejected",
+   "GENIE_2_12_10_CV:total": "rejected",
+   "GENIE_2_12_10_CV:shape": "rejected",
+   "GENIE_2_12_10_MEC:total": "rejected",
+   "GENIE_2_12_10_MEC:shape": "rejected",
+   "NuWro_21_09:total": "rejected",
+   "NuWro_21_09:shape": "rejected",
+   "GiBUU_2019:total": "rejected",
+   "GiBUU_2019:shape": "rejected"
+  },
+  "scenarios": {
+   "worst_interrupted": {
+    "claims": {
+     "MnvTune_v1:total": {
+      "p": 0.016570605187319884,
+      "k": 22,
+      "B": 1387,
+      "decision": "not rejected"
+     },
+     "MnvTune_v1:shape": {
+      "p": 0.016570605187319884,
+      "k": 22,
+      "B": 1387,
+      "decision": "not rejected"
+     },
+     "GENIE_2_12_10_CV:total": {
+      "p": 0.01300578034682081,
+      "k": 17,
+      "B": 1383,
+      "decision": "not rejected"
+     },
+     "GENIE_2_12_10_CV:shape": {
+      "p": 0.01300578034682081,
+      "k": 17,
+      "B": 1383,
+      "decision": "not rejected"
+     },
+     "GENIE_2_12_10_MEC:total": {
+      "p": 0.018991964937910884,
+      "k": 25,
+      "B": 1368,
+      "decision": "not rejected"
+     },
+     "GENIE_2_12_10_MEC:shape": {
+      "p": 0.018991964937910884,
+      "k": 25,
+      "B": 1368,
+      "decision": "not rejected"
+     },
+     "NuWro_21_09:total": {
+      "p": 0.015739179314221474,
+      "k": 27,
+      "B": 1778,
+      "decision": "not rejected"
+     },
+     "NuWro_21_09:shape": {
+      "p": 0.016301292861157952,
+      "k": 28,
+      "B": 1778,
+      "decision": "not rejected"
+     },
+     "GiBUU_2019:total": {
+      "p": 0.015306122448979591,
+      "k": 20,
+      "B": 1371,
+      "decision": "not rejected"
+     },
+     "GiBUU_2019:shape": {
+      "p": 0.015306122448979591,
+      "k": 20,
+      "B": 1371,
+      "decision": "not rejected"
+     }
+    },
+    "survives": {
+     "MnvTune_v1:total": false,
+     "MnvTune_v1:shape": false,
+     "GENIE_2_12_10_CV:total": false,
+     "GENIE_2_12_10_CV:shape": false,
+     "GENIE_2_12_10_MEC:total": false,
+     "GENIE_2_12_10_MEC:shape": false,
+     "NuWro_21_09:total": false,
+     "NuWro_21_09:shape": false,
+     "GiBUU_2019:total": false,
+     "GiBUU_2019:shape": false
+    },
+    "robust_labels": {
+     "GENIE_2_12_10_CV:total": "not applicable",
+     "GENIE_2_12_10_CV:shape": "not applicable",
+     "GiBUU_2019:total": "not applicable",
+     "GiBUU_2019:shape": "not applicable",
+     "NuWro_21_09:total": "not applicable",
+     "NuWro_21_09:shape": "not applicable",
+     "MnvTune_v1:total": "not applicable",
+     "MnvTune_v1:shape": "not applicable",
+     "GENIE_2_12_10_MEC:total": "not applicable",
+     "GENIE_2_12_10_MEC:shape": "not applicable"
+    },
+    "extremal": "not proven (descriptive corner)"
+   },
+   "worst_all_missing": {
+    "claims": {
+     "MnvTune_v1:total": {
+      "p": 0.02569593147751606,
+      "k": 35,
+      "B": 1400,
+      "decision": "not rejected"
+     },
+     "MnvTune_v1:shape": {
+      "p": 0.02569593147751606,
+      "k": 35,
+      "B": 1400,
+      "decision": "not rejected"
+     },
+     "GENIE_2_12_10_CV:total": {
+      "p": 0.024982155603140613,
+      "k": 34,
+      "B": 1400,
+      "decision": "not rejected"
+     },
+     "GENIE_2_12_10_CV:shape": {
+      "p": 0.024982155603140613,
+      "k": 34,
+      "B": 1400,
+      "decision": "not rejected"
+     },
+     "GENIE_2_12_10_MEC:total": {
+      "p": 0.04139900071377588,
+      "k": 57,
+      "B": 1400,
+      "decision": "not rejected"
+     },
+     "GENIE_2_12_10_MEC:shape": {
+      "p": 0.04139900071377588,
+      "k": 57,
+      "B": 1400,
+      "decision": "not rejected"
+     },
+     "NuWro_21_09:total": {
+      "p": 0.0277623542476402,
+      "k": 49,
+      "B": 1800,
+      "decision": "not rejected"
+     },
+     "NuWro_21_09:shape": {
+      "p": 0.028317601332593003,
+      "k": 50,
+      "B": 1800,
+      "decision": "not rejected"
+     },
+     "GiBUU_2019:total": {
+      "p": 0.03568879371877231,
+      "k": 49,
+      "B": 1400,
+      "decision": "not rejected"
+     },
+     "GiBUU_2019:shape": {
+      "p": 0.03568879371877231,
+      "k": 49,
+      "B": 1400,
+      "decision": "not rejected"
+     }
+    },
+    "survives": {
+     "MnvTune_v1:total": false,
+     "MnvTune_v1:shape": false,
+     "GENIE_2_12_10_CV:total": false,
+     "GENIE_2_12_10_CV:shape": false,
+     "GENIE_2_12_10_MEC:total": false,
+     "GENIE_2_12_10_MEC:shape": false,
+     "NuWro_21_09:total": false,
+     "NuWro_21_09:shape": false,
+     "GiBUU_2019:total": false,
+     "GiBUU_2019:shape": false
+    },
+    "robust_labels": {
+     "GENIE_2_12_10_CV:total": "not applicable",
+     "GENIE_2_12_10_CV:shape": "not applicable",
+     "MnvTune_v1:total": "not applicable",
+     "MnvTune_v1:shape": "not applicable",
+     "NuWro_21_09:total": "not applicable",
+     "NuWro_21_09:shape": "not applicable",
+     "GiBUU_2019:total": "not applicable",
+     "GiBUU_2019:shape": "not applicable",
+     "GENIE_2_12_10_MEC:total": "not applicable",
+     "GENIE_2_12_10_MEC:shape": "not applicable"
+    },
+    "extremal": "not proven (descriptive corner)"
+   },
+   "best_all_missing": {
+    "claims": {
+     "MnvTune_v1:total": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "decision": "rejected"
+     },
+     "MnvTune_v1:shape": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "decision": "rejected"
+     },
+     "GENIE_2_12_10_CV:total": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "decision": "rejected"
+     },
+     "GENIE_2_12_10_CV:shape": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "decision": "rejected"
+     },
+     "GENIE_2_12_10_MEC:total": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "decision": "rejected"
+     },
+     "GENIE_2_12_10_MEC:shape": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "decision": "rejected"
+     },
+     "NuWro_21_09:total": {
+      "p": 0.000555247084952804,
+      "k": 0,
+      "B": 1800,
+      "decision": "rejected"
+     },
+     "NuWro_21_09:shape": {
+      "p": 0.001110494169905608,
+      "k": 1,
+      "B": 1800,
+      "decision": "rejected"
+     },
+     "GiBUU_2019:total": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "decision": "rejected"
+     },
+     "GiBUU_2019:shape": {
+      "p": 0.0007137758743754461,
+      "k": 0,
+      "B": 1400,
+      "decision": "rejected"
+     }
+    },
+    "survives": {
+     "MnvTune_v1:total": true,
+     "MnvTune_v1:shape": true,
+     "GENIE_2_12_10_CV:total": true,
+     "GENIE_2_12_10_CV:shape": true,
+     "GENIE_2_12_10_MEC:total": true,
+     "GENIE_2_12_10_MEC:shape": true,
+     "NuWro_21_09:total": true,
+     "NuWro_21_09:shape": true,
+     "GiBUU_2019:total": true,
+     "GiBUU_2019:shape": true
+    },
+    "robust_labels": {
+     "NuWro_21_09:total": "robust to the sub-fine residual",
+     "MnvTune_v1:total": "robust to the sub-fine residual",
+     "MnvTune_v1:shape": "robust to the sub-fine residual",
+     "GENIE_2_12_10_CV:total": "robust to the sub-fine residual",
+     "GENIE_2_12_10_CV:shape": "robust to the sub-fine residual",
+     "GENIE_2_12_10_MEC:total": "robust to the sub-fine residual",
+     "GENIE_2_12_10_MEC:shape": "robust to the sub-fine residual",
+     "GiBUU_2019:total": "robust to the sub-fine residual",
+     "GiBUU_2019:shape": "robust to the sub-fine residual",
+     "NuWro_21_09:shape": "robust to the sub-fine residual"
+    },
+    "extremal": "not proven (descriptive corner)"
+   }
+  },
+  "certificates": {
+   "interrupted_or_unestablished": {
+    "primary": {
+     "rejected_set": [
+      "GENIE_2_12_10_CV:shape",
+      "GENIE_2_12_10_CV:total",
+      "GENIE_2_12_10_MEC:shape",
+      "GENIE_2_12_10_MEC:total",
+      "GiBUU_2019:shape",
+      "GiBUU_2019:total",
+      "MnvTune_v1:shape",
+      "MnvTune_v1:total",
+      "NuWro_21_09:shape",
+      "NuWro_21_09:total"
+     ],
+     "missing_class": "interrupted_or_unestablished",
+     "alpha_over_m": 0.005,
+     "worst_cp_upper": {
+      "GENIE_2_12_10_MEC:shape": 0.026859736894518267,
+      "NuWro_21_09:shape": 0.022680377481071393,
+      "GENIE_2_12_10_CV:total": 0.01960813363443482,
+      "GiBUU_2019:total": 0.022440280473244666,
+      "GiBUU_2019:shape": 0.022440280473244666,
+      "GENIE_2_12_10_MEC:total": 0.026859736894518267,
+      "MnvTune_v1:total": 0.023916613416218296,
+      "MnvTune_v1:shape": 0.023916613416218296,
+      "NuWro_21_09:total": 0.022017833164537776,
+      "GENIE_2_12_10_CV:shape": 0.01960813363443482
+     },
+     "all_below_alpha_over_m": false,
+     "max_worst_p_in_R": 0.018991964937910884,
+     "min_best_p_outside_R": null,
+     "separated": true,
+     "certified": false
+    },
+    "kappa3_replace": {
+     "rejected_set": [
+      "GENIE_2_12_10_CV:shape",
+      "GENIE_2_12_10_CV:total",
+      "GENIE_2_12_10_MEC:shape",
+      "GENIE_2_12_10_MEC:total",
+      "GiBUU_2019:shape",
+      "GiBUU_2019:total",
+      "MnvTune_v1:shape",
+      "MnvTune_v1:total",
+      "NuWro_21_09:shape",
+      "NuWro_21_09:total"
+     ],
+     "missing_class": "interrupted_or_unestablished",
+     "alpha_over_m": 0.005,
+     "worst_cp_upper": {
+      "GENIE_2_12_10_MEC:shape": 0.026859736894518267,
+      "NuWro_21_09:shape": 0.023341095164601953,
+      "GENIE_2_12_10_CV:total": 0.01960813363443482,
+      "GiBUU_2019:total": 0.022440280473244666,
+      "GiBUU_2019:shape": 0.022440280473244666,
+      "GENIE_2_12_10_MEC:total": 0.026859736894518267,
+      "MnvTune_v1:total": 0.023916613416218296,
+      "MnvTune_v1:shape": 0.023916613416218296,
+      "NuWro_21_09:total": 0.022017833164537776,
+      "GENIE_2_12_10_CV:shape": 0.01960813363443482
+     },
+     "all_below_alpha_over_m": false,
+     "max_worst_p_in_R": 0.018991964937910884,
+     "min_best_p_outside_R": null,
+     "separated": true,
+     "certified": false
+    },
+    "certified_rejections": [],
+    "certified_robust_labels": []
+   },
+   "all": {
+    "primary": {
+     "rejected_set": [
+      "GENIE_2_12_10_CV:shape",
+      "GENIE_2_12_10_CV:total",
+      "GENIE_2_12_10_MEC:shape",
+      "GENIE_2_12_10_MEC:total",
+      "GiBUU_2019:shape",
+      "GiBUU_2019:total",
+      "MnvTune_v1:shape",
+      "MnvTune_v1:total",
+      "NuWro_21_09:shape",
+      "NuWro_21_09:total"
+     ],
+     "missing_class": "all",
+     "alpha_over_m": 0.005,
+     "worst_cp_upper": {
+      "GENIE_2_12_10_MEC:shape": 0.05243076155635734,
+      "NuWro_21_09:shape": 0.03645899093935767,
+      "GENIE_2_12_10_CV:total": 0.033772661571480865,
+      "GiBUU_2019:total": 0.04600984014841787,
+      "GiBUU_2019:shape": 0.04600984014841787,
+      "GENIE_2_12_10_MEC:total": 0.05243076155635734,
+      "MnvTune_v1:total": 0.03459865573771847,
+      "MnvTune_v1:shape": 0.03459865573771847,
+      "NuWro_21_09:total": 0.035830886157712794,
+      "GENIE_2_12_10_CV:shape": 0.033772661571480865
+     },
+     "all_below_alpha_over_m": false,
+     "max_worst_p_in_R": 0.04139900071377588,
+     "min_best_p_outside_R": null,
+     "separated": true,
+     "certified": false
+    },
+    "kappa3_replace": {
+     "rejected_set": [
+      "GENIE_2_12_10_CV:shape",
+      "GENIE_2_12_10_CV:total",
+      "GENIE_2_12_10_MEC:shape",
+      "GENIE_2_12_10_MEC:total",
+      "GiBUU_2019:shape",
+      "GiBUU_2019:total",
+      "MnvTune_v1:shape",
+      "MnvTune_v1:total",
+      "NuWro_21_09:shape",
+      "NuWro_21_09:total"
+     ],
+     "missing_class": "all",
+     "alpha_over_m": 0.005,
+     "worst_cp_upper": {
+      "GENIE_2_12_10_MEC:shape": 0.05243076155635734,
+      "NuWro_21_09:shape": 0.037086311555216356,
+      "GENIE_2_12_10_CV:total": 0.033772661571480865,
+      "GiBUU_2019:total": 0.04600984014841787,
+      "GiBUU_2019:shape": 0.04600984014841787,
+      "GENIE_2_12_10_MEC:total": 0.05243076155635734,
+      "MnvTune_v1:total": 0.03459865573771847,
+      "MnvTune_v1:shape": 0.03459865573771847,
+      "NuWro_21_09:total": 0.035830886157712794,
+      "GENIE_2_12_10_CV:shape": 0.033772661571480865
+     },
+     "all_below_alpha_over_m": false,
+     "max_worst_p_in_R": 0.04139900071377588,
+     "min_best_p_outside_R": null,
+     "separated": true,
+     "certified": false
+    },
+    "certified_rejections": [],
+    "certified_robust_labels": []
+   }
+  },
+  "per_test_status": {
+   "NuWro_21_09:total": "can change (counterexample: worst_interrupted, worst_all_missing)",
+   "GENIE_2_12_10_CV:total": "can change (counterexample: worst_interrupted, worst_all_missing)",
+   "GENIE_2_12_10_CV:shape": "can change (counterexample: worst_interrupted, worst_all_missing)",
+   "MnvTune_v1:total": "can change (counterexample: worst_interrupted, worst_all_missing)",
+   "MnvTune_v1:shape": "can change (counterexample: worst_interrupted, worst_all_missing)",
+   "GiBUU_2019:total": "can change (counterexample: worst_interrupted, worst_all_missing)",
+   "GiBUU_2019:shape": "can change (counterexample: worst_interrupted, worst_all_missing)",
+   "GENIE_2_12_10_MEC:total": "can change (counterexample: worst_interrupted, worst_all_missing)",
+   "GENIE_2_12_10_MEC:shape": "can change (counterexample: worst_interrupted, worst_all_missing)",
+   "NuWro_21_09:shape": "can change (counterexample: worst_interrupted, worst_all_missing)"
+  }
+ },
+ "stopping": {
+  "MnvTune_v1": {
+   "min_B": 1200,
+   "looks": [
+    {
+     "status": "MnvTune_v1-B0.json",
+     "B": 0,
+     "controller_stop": false,
+     "reason": "no calibration product yet",
+     "batches_before_look": 0
+    },
+    {
+     "status": "MnvTune_v1-B195.json",
+     "B": 195,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 1,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 4,
+       "unestablished": 0,
+       "all": 5
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 4,
+       "unestablished": 0,
+       "all": 5
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 4,
+       "unestablished": 0,
+       "all": 5
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "MnvTune_v1-B393.json",
+     "B": 393,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 2,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 5,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 5,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 5,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "MnvTune_v1-B587.json",
+     "B": 587,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 3,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 10,
+       "unestablished": 0,
+       "all": 13
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 10,
+       "unestablished": 0,
+       "all": 13
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 10,
+       "unestablished": 0,
+       "all": 13
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "MnvTune_v1-B787.json",
+     "B": 787,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 4,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 10,
+       "unestablished": 0,
+       "all": 13
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 10,
+       "unestablished": 0,
+       "all": 13
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 10,
+       "unestablished": 0,
+       "all": 13
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "MnvTune_v1-B972.json",
+     "B": 972,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 5,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 17,
+       "unestablished": 0,
+       "all": 28
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 17,
+       "unestablished": 0,
+       "all": 28
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 17,
+       "unestablished": 0,
+       "all": 28
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "MnvTune_v1-B1165.json",
+     "B": 1165,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 6,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 22,
+       "unestablished": 0,
+       "all": 35
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 22,
+       "unestablished": 0,
+       "all": 35
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 22,
+       "unestablished": 0,
+       "all": 35
+      },
+      "rule_stops": true
+     }
+    },
+    {
+     "status": "MnvTune_v1-B1365.json",
+     "B": 1365,
+     "controller_stop": true,
+     "reason": "rule met for both tests",
+     "batches_before_look": 7,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 22,
+       "unestablished": 0,
+       "all": 35
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 22,
+       "unestablished": 0,
+       "all": 35
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 22,
+       "unestablished": 0,
+       "all": 35
+      },
+      "rule_stops": true
+     }
+    }
+   ],
+   "all_looks_mapped": true,
+   "note": "re-applied rule under each corner; descriptive (not proven extremal)"
+  },
+  "GENIE_2_12_10_CV": {
+   "min_B": 1200,
+   "looks": [
+    {
+     "status": "GENIE_2_12_10_CV-B0.json",
+     "B": 0,
+     "controller_stop": false,
+     "reason": "no calibration product yet",
+     "batches_before_look": 0
+    },
+    {
+     "status": "GENIE_2_12_10_CV-B193.json",
+     "B": 193,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 1,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 4,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 4,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 4,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GENIE_2_12_10_CV-B393.json",
+     "B": 393,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 2,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 4,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 4,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 4,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GENIE_2_12_10_CV-B592.json",
+     "B": 592,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 3,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 5,
+       "unestablished": 0,
+       "all": 8
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 5,
+       "unestablished": 0,
+       "all": 8
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 5,
+       "unestablished": 0,
+       "all": 8
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GENIE_2_12_10_CV-B791.json",
+     "B": 791,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 4,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 6,
+       "unestablished": 0,
+       "all": 9
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 6,
+       "unestablished": 0,
+       "all": 9
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 6,
+       "unestablished": 0,
+       "all": 9
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GENIE_2_12_10_CV-B978.json",
+     "B": 978,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 5,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 12,
+       "unestablished": 0,
+       "all": 22
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 12,
+       "unestablished": 0,
+       "all": 22
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 12,
+       "unestablished": 0,
+       "all": 22
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GENIE_2_12_10_CV-B1170.json",
+     "B": 1170,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 6,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 16,
+       "unestablished": 0,
+       "all": 30
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 16,
+       "unestablished": 0,
+       "all": 30
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 16,
+       "unestablished": 0,
+       "all": 30
+      },
+      "rule_stops": true
+     }
+    },
+    {
+     "status": "GENIE_2_12_10_CV-B1366.json",
+     "B": 1366,
+     "controller_stop": true,
+     "reason": "rule met for both tests",
+     "batches_before_look": 7,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 17,
+       "unestablished": 0,
+       "all": 34
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 17,
+       "unestablished": 0,
+       "all": 34
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 17,
+       "unestablished": 0,
+       "all": 34
+      },
+      "rule_stops": true
+     }
+    }
+   ],
+   "all_looks_mapped": true,
+   "note": "re-applied rule under each corner; descriptive (not proven extremal)"
+  },
+  "GENIE_2_12_10_MEC": {
+   "min_B": 0,
+   "looks": [
+    {
+     "status": "GENIE_2_12_10_MEC-B0.json",
+     "B": 0,
+     "controller_stop": false,
+     "reason": "no calibration product yet",
+     "batches_before_look": 0
+    },
+    {
+     "status": "GENIE_2_12_10_MEC-B193.json",
+     "B": 193,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 1,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 2,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 2,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 2,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GENIE_2_12_10_MEC-B387.json",
+     "B": 387,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 2,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 5,
+       "unestablished": 0,
+       "all": 13
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 5,
+       "unestablished": 0,
+       "all": 13
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 5,
+       "unestablished": 0,
+       "all": 13
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GENIE_2_12_10_MEC-B583.json",
+     "B": 583,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 3,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 7,
+       "unestablished": 0,
+       "all": 17
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 7,
+       "unestablished": 0,
+       "all": 17
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 7,
+       "unestablished": 0,
+       "all": 17
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GENIE_2_12_10_MEC-B779.json",
+     "B": 779,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 4,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 9,
+       "unestablished": 0,
+       "all": 21
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 9,
+       "unestablished": 0,
+       "all": 21
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 9,
+       "unestablished": 0,
+       "all": 21
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GENIE_2_12_10_MEC-B963.json",
+     "B": 963,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 5,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 15,
+       "unestablished": 0,
+       "all": 37
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 15,
+       "unestablished": 0,
+       "all": 37
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 15,
+       "unestablished": 0,
+       "all": 37
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GENIE_2_12_10_MEC-B1149.json",
+     "B": 1149,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 6,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 22,
+       "unestablished": 0,
+       "all": 51
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 22,
+       "unestablished": 0,
+       "all": 51
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 22,
+       "unestablished": 0,
+       "all": 51
+      },
+      "rule_stops": true
+     }
+    },
+    {
+     "status": "GENIE_2_12_10_MEC-B1343.json",
+     "B": 1343,
+     "controller_stop": true,
+     "reason": "rule met for both tests",
+     "batches_before_look": 7,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 25,
+       "unestablished": 0,
+       "all": 57
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 25,
+       "unestablished": 0,
+       "all": 57
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 25,
+       "unestablished": 0,
+       "all": 57
+      },
+      "rule_stops": true
+     }
+    }
+   ],
+   "all_looks_mapped": true,
+   "note": "re-applied rule under each corner; descriptive (not proven extremal)"
+  },
+  "NuWro_21_09": {
+   "min_B": 0,
+   "looks": [
+    {
+     "status": "NuWro_21_09-B0.json",
+     "B": 0,
+     "controller_stop": false,
+     "reason": "no calibration product yet",
+     "batches_before_look": 0
+    },
+    {
+     "status": "NuWro_21_09-B197.json",
+     "B": 197,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 1,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 3,
+       "unestablished": 0,
+       "all": 3
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 3,
+       "unestablished": 0,
+       "all": 3
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 3,
+       "unestablished": 0,
+       "all": 3
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "NuWro_21_09-B397.json",
+     "B": 397,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 2,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 3,
+       "unestablished": 0,
+       "all": 3
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 3,
+       "unestablished": 0,
+       "all": 3
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 3,
+       "unestablished": 0,
+       "all": 3
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "NuWro_21_09-B587.json",
+     "B": 587,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 3,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 8,
+       "unestablished": 0,
+       "all": 13
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 8,
+       "unestablished": 0,
+       "all": 13
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 8,
+       "unestablished": 0,
+       "all": 13
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "NuWro_21_09-B779.json",
+     "B": 779,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 4,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 14,
+       "unestablished": 0,
+       "all": 21
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 14,
+       "unestablished": 0,
+       "all": 21
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 14,
+       "unestablished": 0,
+       "all": 21
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "NuWro_21_09-B957.json",
+     "B": 957,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 5,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 24,
+       "unestablished": 0,
+       "all": 43
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 24,
+       "unestablished": 0,
+       "all": 43
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 24,
+       "unestablished": 0,
+       "all": 43
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "NuWro_21_09-B1152.json",
+     "B": 1152,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 6,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 26,
+       "unestablished": 0,
+       "all": 48
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 26,
+       "unestablished": 0,
+       "all": 48
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 26,
+       "unestablished": 0,
+       "all": 48
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "NuWro_21_09-B1351.json",
+     "B": 1351,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 7,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 27,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 27,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 27,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "NuWro_21_09-B1551.json",
+     "B": 1551,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 8,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 27,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 27,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 27,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "NuWro_21_09-B1751.json",
+     "B": 1751,
+     "controller_stop": true,
+     "reason": "rule met for both tests",
+     "batches_before_look": 9,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 27,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 27,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 27,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": true
+     }
+    }
+   ],
+   "all_looks_mapped": true,
+   "note": "re-applied rule under each corner; descriptive (not proven extremal)"
+  },
+  "GiBUU_2019": {
+   "min_B": 0,
+   "looks": [
+    {
+     "status": "GiBUU_2019-B0.json",
+     "B": 0,
+     "controller_stop": false,
+     "reason": "no calibration product yet",
+     "batches_before_look": 0
+    },
+    {
+     "status": "GiBUU_2019-B195.json",
+     "B": 195,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 1,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 3,
+       "unestablished": 0,
+       "all": 5
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 3,
+       "unestablished": 0,
+       "all": 5
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 3,
+       "unestablished": 0,
+       "all": 5
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GiBUU_2019-B395.json",
+     "B": 395,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 2,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 3,
+       "unestablished": 0,
+       "all": 5
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 3,
+       "unestablished": 0,
+       "all": 5
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 3,
+       "unestablished": 0,
+       "all": 5
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GiBUU_2019-B593.json",
+     "B": 593,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 3,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 4,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 4,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 4,
+       "unestablished": 0,
+       "all": 7
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GiBUU_2019-B788.json",
+     "B": 788,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 4,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 7,
+       "unestablished": 0,
+       "all": 12
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 7,
+       "unestablished": 0,
+       "all": 12
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 7,
+       "unestablished": 0,
+       "all": 12
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GiBUU_2019-B953.json",
+     "B": 953,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 5,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 19,
+       "unestablished": 0,
+       "all": 47
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 19,
+       "unestablished": 0,
+       "all": 47
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 19,
+       "unestablished": 0,
+       "all": 47
+      },
+      "rule_stops": false
+     }
+    },
+    {
+     "status": "GiBUU_2019-B1151.json",
+     "B": 1151,
+     "controller_stop": false,
+     "reason": "continue",
+     "batches_before_look": 6,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 20,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 20,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 20,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": true
+     }
+    },
+    {
+     "status": "GiBUU_2019-B1351.json",
+     "B": 1351,
+     "controller_stop": true,
+     "reason": "rule met for both tests",
+     "batches_before_look": 7,
+     "worst_interrupted": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 20,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": false
+     },
+     "worst_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 20,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": false
+     },
+     "best_all_missing": {
+      "missing_by_look": {
+       "interrupted_or_unestablished": 20,
+       "unestablished": 0,
+       "all": 49
+      },
+      "rule_stops": true
+     }
+    }
+   ],
+   "all_looks_mapped": true,
+   "note": "re-applied rule under each corner; descriptive (not proven extremal)"
+  }
+ },
+ "power": {
+  "P1_a1.0": {
+   "total": {
+    "0.05": {
+     "unshifted": {
+      "power": 1.0,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.965,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 1.0,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.965,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 1.0,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.965,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    },
+    "0.005": {
+     "unshifted": {
+      "power": 1.0,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.965,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 1.0,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.965,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 1.0,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.965,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    }
+   },
+   "shape": {
+    "0.05": {
+     "unshifted": {
+      "power": 1.0,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.965,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 1.0,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.965,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 1.0,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.965,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    },
+    "0.005": {
+     "unshifted": {
+      "power": 1.0,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.965,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 1.0,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.965,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 1.0,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.965,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    }
+   }
+  },
+  "P2_a1.0": {
+   "total": {
+    "0.05": {
+     "unshifted": {
+      "power": 1.0,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.975,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 1.0,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.975,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 1.0,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.975,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    },
+    "0.005": {
+     "unshifted": {
+      "power": 1.0,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.975,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 1.0,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.975,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 1.0,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.975,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    }
+   },
+   "shape": {
+    "0.05": {
+     "unshifted": {
+      "power": 1.0,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.975,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 1.0,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.975,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 1.0,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.975,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    },
+    "0.005": {
+     "unshifted": {
+      "power": 1.0,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.975,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 1.0,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.975,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 1.0,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.975,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    }
+   }
+  },
+  "P3_a1.0": {
+   "total": {
+    "0.05": {
+     "unshifted": {
+      "power": 0.9948717948717949,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.97,
+      "upper_all_detected": 0.995,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.9948717948717949,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.97,
+      "upper_all_detected": 0.995,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.9948717948717949,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.97,
+      "upper_all_detected": 0.995,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    },
+    "0.005": {
+     "unshifted": {
+      "power": 0.9384615384615385,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.915,
+      "upper_all_detected": 0.94,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.9384615384615385,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.915,
+      "upper_all_detected": 0.94,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.8615384615384616,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.84,
+      "upper_all_detected": 0.865,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    }
+   },
+   "shape": {
+    "0.05": {
+     "unshifted": {
+      "power": 0.9435897435897436,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.92,
+      "upper_all_detected": 0.945,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.9435897435897436,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.92,
+      "upper_all_detected": 0.945,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.9282051282051282,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.905,
+      "upper_all_detected": 0.93,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    },
+    "0.005": {
+     "unshifted": {
+      "power": 0.6256410256410256,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.61,
+      "upper_all_detected": 0.635,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.6153846153846154,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.6,
+      "upper_all_detected": 0.625,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.23076923076923078,
+      "n": 195,
+      "missing": 5,
+      "lower_none_detected": 0.225,
+      "upper_all_detected": 0.25,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    }
+   }
+  },
+  "P1g_a1.0": {
+   "total": {
+    "0.05": {
+     "unshifted": {
+      "power": 1.0,
+      "n": 199,
+      "missing": 1,
+      "lower_none_detected": 0.995,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 1.0,
+      "n": 199,
+      "missing": 1,
+      "lower_none_detected": 0.995,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 1.0,
+      "n": 199,
+      "missing": 1,
+      "lower_none_detected": 0.995,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    },
+    "0.005": {
+     "unshifted": {
+      "power": 1.0,
+      "n": 199,
+      "missing": 1,
+      "lower_none_detected": 0.995,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 1.0,
+      "n": 199,
+      "missing": 1,
+      "lower_none_detected": 0.995,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 1.0,
+      "n": 199,
+      "missing": 1,
+      "lower_none_detected": 0.995,
+      "upper_all_detected": 1.0,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    }
+   },
+   "shape": {
+    "0.05": {
+     "unshifted": {
+      "power": 0.9849246231155779,
+      "n": 199,
+      "missing": 1,
+      "lower_none_detected": 0.98,
+      "upper_all_detected": 0.985,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.964824120603015,
+      "n": 199,
+      "missing": 1,
+      "lower_none_detected": 0.96,
+      "upper_all_detected": 0.965,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.9547738693467337,
+      "n": 199,
+      "missing": 1,
+      "lower_none_detected": 0.95,
+      "upper_all_detected": 0.955,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    },
+    "0.005": {
+     "unshifted": {
+      "power": 0.949748743718593,
+      "n": 199,
+      "missing": 1,
+      "lower_none_detected": 0.945,
+      "upper_all_detected": 0.95,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.8140703517587939,
+      "n": 199,
+      "missing": 1,
+      "lower_none_detected": 0.81,
+      "upper_all_detected": 0.815,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.7386934673366834,
+      "n": 199,
+      "missing": 1,
+      "lower_none_detected": 0.735,
+      "upper_all_detected": 0.74,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    }
+   }
+  },
+  "P2g_a1.0": {
+   "total": {
+    "0.05": {
+     "unshifted": {
+      "power": 0.9222797927461139,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.89,
+      "upper_all_detected": 0.925,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.5803108808290155,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.56,
+      "upper_all_detected": 0.595,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.5284974093264249,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.51,
+      "upper_all_detected": 0.545,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    },
+    "0.005": {
+     "unshifted": {
+      "power": 0.6839378238341969,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.66,
+      "upper_all_detected": 0.695,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.14507772020725387,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.14,
+      "upper_all_detected": 0.175,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.08808290155440414,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.085,
+      "upper_all_detected": 0.12,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    }
+   },
+   "shape": {
+    "0.05": {
+     "unshifted": {
+      "power": 0.45077720207253885,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.435,
+      "upper_all_detected": 0.47,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.22279792746113988,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.215,
+      "upper_all_detected": 0.25,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.17098445595854922,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.165,
+      "upper_all_detected": 0.2,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    },
+    "0.005": {
+     "unshifted": {
+      "power": 0.13471502590673576,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.13,
+      "upper_all_detected": 0.165,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.046632124352331605,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.045,
+      "upper_all_detected": 0.08,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.02072538860103627,
+      "n": 193,
+      "missing": 7,
+      "lower_none_detected": 0.02,
+      "upper_all_detected": 0.055,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    }
+   }
+  },
+  "P3g_a1.0": {
+   "total": {
+    "0.05": {
+     "unshifted": {
+      "power": 0.16279069767441862,
+      "n": 172,
+      "missing": 28,
+      "lower_none_detected": 0.14,
+      "upper_all_detected": 0.28,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.011627906976744186,
+      "n": 172,
+      "missing": 28,
+      "lower_none_detected": 0.01,
+      "upper_all_detected": 0.15,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.011627906976744186,
+      "n": 172,
+      "missing": 28,
+      "lower_none_detected": 0.01,
+      "upper_all_detected": 0.15,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    },
+    "0.005": {
+     "unshifted": {
+      "power": 0.011627906976744186,
+      "n": 172,
+      "missing": 28,
+      "lower_none_detected": 0.01,
+      "upper_all_detected": 0.15,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.0,
+      "n": 172,
+      "missing": 28,
+      "lower_none_detected": 0.0,
+      "upper_all_detected": 0.14,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.0,
+      "n": 172,
+      "missing": 28,
+      "lower_none_detected": 0.0,
+      "upper_all_detected": 0.14,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    }
+   },
+   "shape": {
+    "0.05": {
+     "unshifted": {
+      "power": 0.14534883720930233,
+      "n": 172,
+      "missing": 28,
+      "lower_none_detected": 0.125,
+      "upper_all_detected": 0.265,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.023255813953488372,
+      "n": 172,
+      "missing": 28,
+      "lower_none_detected": 0.02,
+      "upper_all_detected": 0.16,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.01744186046511628,
+      "n": 172,
+      "missing": 28,
+      "lower_none_detected": 0.015,
+      "upper_all_detected": 0.155,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    },
+    "0.005": {
+     "unshifted": {
+      "power": 0.011627906976744186,
+      "n": 172,
+      "missing": 28,
+      "lower_none_detected": 0.01,
+      "upper_all_detected": 0.15,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule": {
+      "power": 0.0,
+      "n": 172,
+      "missing": 28,
+      "lower_none_detected": 0.0,
+      "upper_all_detected": 0.14,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     },
+     "claim_rule_determined": {
+      "power": 0.0,
+      "n": 172,
+      "missing": 28,
+      "lower_none_detected": 0.0,
+      "upper_all_detected": 0.14,
+      "conditions_on": "the retained null calibration ensemble (its own lost draws not bounded)"
+     }
+    }
+   }
+  }
+ }
+}

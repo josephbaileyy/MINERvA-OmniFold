@@ -1,0 +1,116 @@
+# Review disposition: PET finalists vs GBDT on existing outputs
+
+**Reviewer.** One fresh, read-only, independent Claude subagent working under `REVIEW_BRIEF-20261005.md`. Cycle 1
+reviewed a clean detached worktree at `2b62c017`. The reviewer wrote only to a scratch directory outside every checkout,
+contacted no cluster, fitted nothing, and left both checkouts clean. Its output is restated here by the owner; numbers
+are quoted exactly.
+
+**Budget.** At most two focused cycles.
+
+## Cycle 1 verdict, quoted
+
+> The paired numbers reproduce exactly. Pairing, budget and scope are compliant. A repair is needed before the P0
+> recommendation is relied on: the comparator is described as stronger than the evidence shows, P0's cap and its run
+> order conflict, and the cost model has one formula error. Nothing found overturns the paired comparison.
+
+**Reproduced independently, all at |diff| = 0 against `comparison.json`, with the reviewer's own code:**
+
+- the E0, E4 and E5 means;
+- every paired difference at k = 3, 7 and 10, with n, the PET > GBDT counts and the bank-effect bounds;
+- B2, B3 and B4;
+- all 21 library cases;
+- the per-bin bias and MSE splits;
+- the weight statistics.
+
+**Also confirmed:**
+
+- all 352 replicate digests, and 14,784 injected per-bin vectors identical to PET's;
+- every run listed COMPLETE in the look-1 record, with no RB or S5 runs;
+- `kF0` = 7;
+- the control refit;
+- the ledger: 5.30627 charged and 4.42150 CPU core-h, never more than 2 concurrent tasks, plan order 352/352;
+- the goal and handoff byte-identical to their originals;
+- the diff confined to this directory.
+
+## Findings and dispositions
+
+| # | finding (operand at `2b62c017`) | disposition | evidence of the repair |
+|---|---|---|---|
+| 1 | P0's cap (125) conflicted with its stop (a) and its order. The NuWro closures that feed stop (d) ran last and would be cut first. | **Repaired.** New order: dev, then NuWro, then null closures, then the nominals, then an optional 10 M timing run. Stop (a) is now 1.5× the projection (11 A100-h), at which items 1–4 still fit. The cap is 165 A100-h. | REPORT §8 |
+| 2 | The comparator was described as stronger than the evidence shows. On the same DEV units, binned IBU (0.945 / 0.902) and AUSSIE λ = 0 (0.870 / 0.919) beat this GBDT on the 1D tilt, so PET's lead is over this HGB OmniFold. | **Accepted; repaired.** The wording is softened in §0, §3, §5 and §9. The IBU and AUSSIE DEV context is added, IBU is added to P0's matched baselines, and the GBDT is kept as the generator-robust reference. Running IBU on FB is not done: the goal authorizes only GBDT fitting. | REPORT §0, §3, §5, §8, §9 |
+| 3 | Every route was priced at a 2 M-row prior without saying so; at 10 M, costs are about 4× higher. | **Repaired.** The assumption is stated, the 10 M multiplier and totals are given, a 10 M timing unfolding is added to P0, and the prior size is made a P1 design input. | REPORT §7.2, §7.3, §8 |
+| 4 | The cost model's step-1 row count was wrong. It uses all MC prior rows plus the reco-passing data side (851,831 = 600,130 + 251,701). | **Repaired** in `pgc_costs.py` and rerun. At 2 M, H2 is 7.32 and L128 7.12 A100-h (the reviewer's values); every figure using u is updated. | `results/costs.json` |
+| 5 | The "muon-scale lead +0.135" mostly restated the tilt gain. | **Repaired.** R2 is reported as an E8 contrast, like R1: H2 − GBDT +0.016 [−0.005, 0.037], L128 − GBDT +0.028 [0.013, 0.043]. `pgc_compare` now computes E8 for every response case, with paired differences. | REPORT §0, §4.3, §6 |
+| 6 | P1's unfolding count was never derived. | **Repaired.** P1 is priced as R4's 720 u calibration ensemble. R5 is now ≈ 5.7–7.9 k against ≈ 8.1–9.7 k for comparison-first. The reviewer notes the skip-R1 argument holds either way. | REPORT §7.3 |
+| 7 | The "with a margin" bank-bound criterion was undeclared, and it was inconsistent with the E1-low wording. | **Repaired.** Every lower limit exceeds its bound except L128 E1 low; the two small margins are named. | REPORT §4.1 |
+| 8 | The six-member "summed RMS" was actually Σ RMS². | **Repaired:** relabelled as summed MSE. | REPORT §4.2 |
+| 9 | The D4d n-down label "injection near the floor" was wrong for its natural histogram. | **Repaired.** | REPORT §4.3 |
+| 10 | Overstated wording: "equals H2", "2.5×", "low-variance". | **Repaired** to "level with" plus the paired Δ, ratios of small R values, and "small residual and DEV seed spread". | REPORT |
+| 11 | Reproducing the study fit was presented as validating the cost model, but the check is circular. | **Repaired:** it is now called a consistency check. Job 56563761 is named as the one independent reference: the model gives ≈ 2.5 A100-h against ≈ 3 measured. | `pgc_costs.py`, REPORT §7.2 |
+| 12 | The frozen plan's p99.9 label ("of w_truth × push") was wrong: the value is p99.9 of the push. | **Erratum recorded.** The frozen plan is not edited; the report gives the correct label. | REPORT §4.3 |
+| 13 | Figure 3 mixed s.e. bars for the GBDT with 95 % bands for PET. | **Repaired:** both use 95 % t intervals. | `pgc_plots.py`, `results/figures/fig3_*` |
+| 14 | The runner commit `44d135c2` landed about 7 s after the first fit began, and the runlog does not record the runner commit. | **Recorded.** The executed bytes equal `44d135c2`. The reviewer checked that the R2 repair leaves non-R2 behaviour unchanged. | `RUN_LOG.md` |
+| 15 | The disposition file was missing, and the allocation number had no source. | **Repaired:** this file, plus the citation `resources/README.md:25` at `bc356b0c`. | REPORT §7.2, §10 |
+
+**Could not verify (reviewer).**
+
+- the push time of `5f9c5a99`, and the absence of fitting outside the ledger;
+- the uncommitted per-task outputs and the copied cluster files;
+- the PET-side R2 inputs, which are not stored;
+- the runtime of job 56563761 and the current allocation;
+- whether any collaborator message was sent;
+- the governance status of the proposed real-data nominals;
+- 15 of the 16 DEV re-scorings (one was spot-checked);
+- the test suite, which was not run to avoid writing into the worktree.
+
+**The owner states the following.** These are statements, not artifacts:
+
+- the push of `5f9c5a99` was seen in the push output at 18:12 UTC;
+- no collaborator message was sent;
+- the runner bytes executed were those of `44d135c2`.
+
+## Cycle 2
+
+The **same reviewer, resumed** to keep its context, read a clean detached worktree at `53471b6a`. The scope was fixed in
+advance:
+
+- the status of findings 1–15;
+- recomputing the corrected cost model, the route totals and the P0 arithmetic;
+- checking the new B4/R2 numbers and the IBU/AUSSIE context;
+- any new defect introduced by the repairs.
+
+**Verdict, quoted:**
+
+> 11 of the 15 findings are resolved and 4 are partial. Every repaired number reproduces exactly with my own code. One
+> claim in P0 is still unsupported and material: its closures are called "data-size" but have only about 0.42× the
+> data's reconstructed events.
+
+**Recomputed at |diff| = 0:**
+
+- the costs: H2 7.3223 / 29.0926 / 135.6388 and L128 7.1225 / 26.0693 / 118.7972 A100-h at 2 M / 10 M / full;
+- the route totals;
+- the P0 arithmetic (101.1 + 29.1; 14 × 11 = 154 ≤ 165);
+- every B4 E8 value, including R2: H2 − GBDT +0.0160 [−0.0053, 0.0373] and L128 − GBDT +0.0279 [0.0125, 0.0433];
+- the IBU and AUSSIE context against `SCALAR_AUSSIE_MATCHED-20260925.json`.
+
+| # | cycle-2 finding | disposition (applied after cycle 2, **not re-reviewed**: the budget is spent) |
+|---|---|---|
+| 2 (partial) | §6 "practical reading" was not updated. AUSSIE's truth set was not labelled. "IBU beats PET on the 1D tilt" is false on D1 −0.35 (IBU 0.835 against PET 0.841 / 0.850). "Neither tuned nor weakened" remained. | **Repaired.** The practical reading now says a binned unfolding already matches PET on the 1D tilt, and that PET's value is the tilt *with* the species structure. Both AUSSIE variants are labelled (`truth4_species`: dev 0.822 / 0.897, D4c +0.248, NuWro 0.272). The D1 −0.35 wording is corrected. The tuning scope is stated. |
+| 5 (partial) | The handoff reintroduced the muon-scale "lead". | **Repaired** in the handoff. |
+| 11 (note) | The P5A estimate used only H2's rates. | **Repaired:** 2.5 (H2) and 3.5 (L128) bracket the measured ≈ 3. |
+| 14 (partial) | Owner statements were presented as facts. | **Repaired:** labelled as owner statements here and in `RUN_LOG.md`. |
+| **A (material)** | P0's "data-size" closures of 4.12 M DEV truth rows hold only about 1.73 M reco events, against the data's 4.0 M signed signal events. The fresh rows are only about 0.42 of one data-size pseudo-experiment. | **Accepted; repaired.** P0's closures now use ≈ 9.6 M DEV truth rows (≈ 4.0 M reco-passing), and the cap is unchanged. The fresh-row and R4 wording is corrected, and "7×" is corrected to "≈ 16× the study's pseudodata". |
+| B | Item 5 had no kill guard, needs the bit-exact resume, and the elapsed time was understated. | **Repaired:** it starts only if ≥ 58 A100-h of the cap remain (its 2× bound), its Slurm time limit equals the remaining cap, it uses the resume, and elapsed is now about 4 days plus queue. |
+| C | Handoff muon-scale wording. | **Repaired** (same change as 5). |
+| D | AUSSIE variant not labelled. | **Repaired** (same change as 2). |
+| E | The R5 bounds were inconsistent about shared members. | **Repaired:** R5 ≈ 5.7–7.2 k, and ≈ 23–29 k at 10 M. The conclusion is unchanged. |
+| F | The signed paired E8 had no interpretation. | **Repaired:** the report states it is not a robustness ranking, and gives |E8| both ways. |
+
+**Remaining material disagreement: none.** The reviewer's only material finding, A, was accepted and repaired as the
+reviewer proposed. Because the two-cycle budget is spent, the post-cycle-2 edits are owner repairs and have not been
+independently re-checked. Every one of them is a wording or design-specification change; **no number in the paired
+comparison changed in either cycle.**
+
+**Could not verify (reviewer, cycle 2):** the owner statements above; the measured cost of job 56563761; whether a
+10 M-prior unfolding fits two per GPU. The test suite was not run by the reviewer; the owner ran it, 19 passed.
+**The review is closed.**

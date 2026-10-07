@@ -8,8 +8,8 @@ and its uncertainty scale (\S\ref{sec:execsummary}, \S\ref{sec:results}).
 A correlated shape difference follows the low-$\pT$ peak ridge
 ($\chi^{2}/\mathrm{ndf}=\chiPaper$ against the published covariance,
 \S\ref{sec:results-tension}). Closure, iteration, pull, calibration, and
-classifier-family checks pass; the existing 2D toys provide no independent-truth
-coverage test. Simultaneous \emph{unbinned}
+classifier-family checks pass; a pre-registered fixed-truth test finds the 2D
+statistical band undercovers in its tails (\S\ref{sec:coverage}). Simultaneous \emph{unbinned}
 three-, four- and five-observable unfolds of MINERvA data ($+\Eavail$,
 $+q_{3}$, $+W$) are validated against their lower-dimensional predecessors
 by projection anchors agreeing to $\approx$1--2\,\% (prior binned measurements
@@ -56,6 +56,10 @@ in App.~\ref{app:landscape}).
         established. The whole track is diagnostic and method development;
         no PET covariance is adopted as a publication uncertainty product
         (\S\ref{sec:pet}).
+        Completed simulation studies improve PET point estimates but end at
+        \texttt{NO\_ELIGIBLE\_DESIGN}; the later exploratory PET--GBDT
+        comparison changes neither that outcome nor uncertainty status
+        (\S\ref{sec:pet-campaigns}--\ref{sec:pet-gbdt-paired}).
         % Cut (lane 3 §11 #4, lane 5 R8); each survives in sec_pet.tex:
         % its ordinary closure survives only as a legacy two-iteration
         % self-consistency diagnostic, and no current closure level is quoted;
@@ -83,9 +87,13 @@ The publication critical path ran
 through the adoption of a selection-complete scalar five-dimensional
 covariance, which has happened under exception (\S\ref{sec:eavailw-adopted}) and never
 through PET; the path itself is not complete.
-% Demoted from a rendered \TODO (lane 5 R12):
-% TODO: Revise when the scalar-5D campaign (s5p, \texttt{OI-193}) closes. Adoption is not publication readiness: the s5e outcome records the publication objective as NOT READY.
-% Source: docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (publication_readiness); docs/OPEN_ITEMS.md OI-193.
+The scalar-5D campaign's frozen joint tests reject all ten simple generator
+hypotheses under the stated conditions (\S\ref{sec:joint5d}). They do not complete
+the precision-measurement objective: the measurement branch was not admitted, so
+no new uncertainty is reported and the publication objective remains not ready.
+% Resolves the demoted TODO (lane 5 R12) on the scalar-5D campaign (s5p, OI-193) closing.
+% Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md section 7 (NOT ADMITTED,
+% no new reportable uncertainty, NOT READY); CHECKLIST-20261001-s5p-terminal-and-claims.md section 4.
 Further refinements are a fifth generator, NEUT, and a finer 44-cell Ascencio
 comparison (maximal-common-grid comparison in \S\ref{sec:4d}).
 A paper-independent flux\,$\leftrightarrow$\,muon posterior from MAT-MINERvA

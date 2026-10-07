@@ -7,6 +7,6 @@
  },
  "out_dir": "/pscratch/sd/j/josephrb/s5p-parallel-reproduction/runs/CHANGE-ME",
  "joint": {
-  "independent_compare": "/pscratch/sd/j/josephrb/s5p-parallel-recompute/final/compare.json"
+  "independent_compare": "/pscratch/sd/j/josephrb/s5p-parallel-recompute/final-ext/compare.json"
  }
 }

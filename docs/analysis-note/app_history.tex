@@ -36,13 +36,20 @@ $\dead{1.008\%}$ & 2D \texttt{Flux} (PPFX) per-bin median relative $\sigma$, ban
 $\dead{4.783\%}$ & 2D systematic total per-bin median (Table~\ref{tab:band-medians}; provenance note, App.~\ref{app:history-combine}) & $6.830\%$ & Pre-flux-fix rollup, as above & \texttt{...\_matcorr\_fluxfix/uq\_universe\_summary.txt} \\
 $\dead{2.463\times10^{-39}}$ & 2D systematic $\sqrt{\Tr\mathbf{C}}$ (Table~\ref{tab:band-medians}; provenance note, App.~\ref{app:history-combine}) & $3.214\times10^{-39}$ & Pre-flux-fix rollup, as above & \texttt{...\_matcorr\_fluxfix/uq\_universe\_summary.txt} \\
 $\dead{2.470\times10^{-39}}$ & 2D combined (block-sum) $\sqrt{\Tr\mathbf{C}}$ (provenance note, App.~\ref{app:history-combine}) & $3.220\times10^{-39}$ & Pre-flux-fix rollup, as above & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, \S``Stage-2 UQ envelope'' \\
-$\dead{4.822\%}$ & 2D combined per-bin median relative $\sigma$ (provenance note, App.~\ref{app:history-combine}; worked example of \S\ref{sec:chisq}) & $6.865\%$ & Pre-flux-fix rollup, as above & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, \S``Stage-2 UQ envelope'' \\
-$\dead{\approx\!70\%}$ & OmniFold 2D envelope as a fraction of the paper's (provenance note, App.~\ref{app:history-combine}) & Not quoted; the envelope matches the paper ($6.865\%$ against $6.86\%$) & An inference drawn from the pre-flux-fix covariance, retracted with it & None given beyond the provenance note \\
+$\dead{4.822\%}$ & 2D combined per-bin median relative $\sigma$ (provenance note, App.~\ref{app:history-combine}; worked example of \S\ref{sec:chisq}) & $6.871\%$ & Pre-flux-fix rollup, as above & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, \S``Stage-2 UQ envelope'' \\
+$\dead{\approx\!70\%}$ & OmniFold 2D envelope as a fraction of the paper's (provenance note, App.~\ref{app:history-combine}) & Not quoted; the envelope matches the paper ($6.871\%$ against $\uqPaper\%$) & An inference drawn from the pre-flux-fix covariance, retracted with it & None given beyond the provenance note \\
 $\dead{0.069}$ & 2D pull mean, combined covariance (\S\ref{sec:pull}; provenance note, App.~\ref{app:history-combine}) & $0.051$ & Computed on the pre-flux-fix combined covariance & \texttt{VALIDATION\_LEDGER.md} \\
-$\dead{0.466}$ & 2D pull RMS, combined covariance (\S\ref{sec:pull}; provenance note, App.~\ref{app:history-combine}) & $0.409$ & Computed on the pre-flux-fix combined covariance & \texttt{VALIDATION\_LEDGER.md} \\
-$\dead{0.563\%}$ & 2D grouped \emph{Statistical} category median (\S\ref{sec:universes}) & $0.549\%$ & Re-quoted from the pure-Poisson $N=300$ bootstrap, which superseded a seed-varying set that leaked ML stochasticity into the statistical block & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29 \\
-$\dead{1.828\times10^{-40}}$ & 2D statistical $\sqrt{\Tr\mathbf{C}}$ (provenance note, App.~\ref{app:history-combine}) & $1.817\times10^{-40}$ & As above: superseded seed-varying bootstrap set & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29 \\
-$\dead{0.564\%}$ & 2D statistical per-bin median relative spread (\S\ref{sec:bootstrap}; provenance note, App.~\ref{app:history-combine}) & $0.549\%$ & As above: superseded seed-varying bootstrap set & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29; current spreads \texttt{VL162} \\
+$\dead{0.466}$ & 2D pull RMS, combined covariance (\S\ref{sec:pull}; provenance note, App.~\ref{app:history-combine}) & $0.405$ & Computed on the pre-flux-fix combined covariance & \texttt{VALIDATION\_LEDGER.md} \\
+$\dead{0.563\%}$ & 2D grouped \emph{Statistical} category median (\S\ref{sec:universes}) & $0.674\%$ & Re-quoted from the pure-Poisson $N=300$ bootstrap, which superseded a seed-varying set that leaked ML stochasticity into the statistical block; now $0.674\%$ (next rows) & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29 \\
+$\dead{1.828\times10^{-40}}$ & 2D statistical $\sqrt{\Tr\mathbf{C}}$ (provenance note, App.~\ref{app:history-combine}) & $1.931\times10^{-40}$ & As above: superseded seed-varying bootstrap set & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29 \\
+$\dead{0.564\%}$ & 2D statistical per-bin median relative spread (\S\ref{sec:bootstrap}; provenance note, App.~\ref{app:history-combine}) & $0.674\%$ & As above: superseded seed-varying bootstrap set; its successor $0.549\%$ (\texttt{VL162}) is struck in the next rows & \texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29; current spreads \texttt{VL170} \\
+$\dead{0.549\%}$ & 2D statistical per-bin median relative spread, and the grouped \emph{Statistical} category median (\S\ref{sec:bootstrap}, \S\ref{sec:universes}, Tables~\ref{tab:uq} and~\ref{tab:combine}) & $0.674\%$ & The \texttt{VL162} replicas divided by a bootstrapped completeness that the central value does not carry (\texttt{KNOWN\_ISSUES.md} 84); the 300 replicas were rebuilt without it (\texttt{VL170}, adopted 2026-10-06) & \texttt{VALIDATION\_LEDGER.md} \texttt{VL170}, \texttt{VL172} \\
+$\dead{1.817\times10^{-40}}$ & 2D statistical $\sqrt{\Tr\mathbf{C}}$ (Tables~\ref{tab:uq} and~\ref{tab:combine}; \S\ref{sec:rank}) & $1.931\times10^{-40}$ & As above (\texttt{VL162} replicas) & \texttt{VL172} \\
+$\dead{6.865\%}$ & 2D combined (block-sum) per-bin median relative $\sigma$ (Tables~\ref{tab:uq} and~\ref{tab:combine}); the printed \SI{\uqMedian}{\percent} is unchanged & $6.871\%$ & Its statistical block was \texttt{VL162} & \texttt{VL172}, \texttt{recompute\_2d\_budget.json} \\
+$\dead{6.845\%}$ & 2D universe $+$ bootstrap median before ML (\S\ref{sec:combine}) & $6.869\%$ & As above & \texttt{VL172} \\
+$\dead{1.481}$, $\dead{1.468}$, $\dead{0.409}$, $\dead{11.56}$ & 2D combined $\chi^{2}/\mathrm{ndf}$, its log-normal form, the combined pull RMS, and the stat-subtracted diagnostic & $1.472$, $1.455$, $0.405$, $6.79$ & As above; the paper-covariance $3.661$ and the pull mean $0.051$ do not move & \texttt{VL172}, \texttt{state/ki84-adopt-20261006/controls/} \\
+$\dead{6.86\%}$ & The published 2D total, as a per-bin median relative $\sigma$ (\S\ref{sec:results}, Tables~\ref{tab:uq} and~\ref{tab:combine}, and the article) & $\uqPaper\%$ & Computed from the CSV release, whose cross sections and uncertainties carry three significant figures; the median bin sits close enough to its neighbours that the rounding gives $6.859\%$. The full-precision ROOT release gives $6.8525\%$. Independent of the bootstrap & \texttt{state/uqpaper-median-20261006/} \\
+$\dead{2.55}$, $\dead{0.392}$, $\dead{201}$, $\dead{3.8\times10^{14}}$ & Our bootstrap against the paper's \texttt{StatOnlyCov} ($\sqrt{\Tr}$ ratio and its inverse), and $\mathrm{rank}$, $\mathrm{cond}$ of $\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$ (\S\ref{sec:rank}) & $2.40$, $0.416$, $204$, $1.0\times10^{12}$ & As above. The split bootstrap's closure ($1.07$) and the pseudo-inverse $252$ and rescaled $76.7$ are kept as earlier-bootstrap values, not re-derived; the first $201$/$3.8\times10^{14}$ did not reproduce from the files (they give $199$/$6.1\times10^{14}$) & \texttt{VL172} \\
 $\dead{5.0467}$ & Full-event $C_{\rm stat}$ family: nominal-to-member ratio of unfolded yield in $6<p_{\parallel}<\SI{20}{GeV/c}$ (App.~\ref{app:cstatlimit}) & $3.5969$ (family mean; s.d.\ $1.6091$) & A single member's value, a $70$th-percentile draw quoted as if typical & \texttt{state/probe-oi126-band-\allowbreak Rpush-sigma-20260815} (family spread) \\
 \midrule
 \multicolumn{5}{@{}l}{\emph{Removed from the body on 2026-08-23 by \texttt{95d03169}; text from its parent, \texttt{95d03169\^{}}}} \\
@@ -149,7 +156,7 @@ The median row read:
 \toprule
 Metric (205 bins) & Paper & OmniFold (combined) \\
 \midrule
-Per-bin median relative $\sigma$ & $6.86\%$ & $\dead{4.822\%} \to 6.865\%$ \\
+Per-bin median relative $\sigma$ & $\dead{6.86\%} \to \uqPaper\%$ & $\dead{4.822\%} \to 6.865\%$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -203,7 +210,8 @@ and inferred from it that the OmniFold envelope is $\dead{\approx\!70\%}$ of the
 paper's. Those four figures and that inference are \textbf{retracted}: they are
 artefacts of a superseded covariance, not of the measurement. The current budget
 agrees with \S\ref{sec:systematics}, where the envelope essentially
-\emph{matches} the paper ($6.865\%$ against $6.86\%$).
+\emph{matches} the paper ($6.871\%$ against $\uqPaper\%$; $6.865\%$ before the 2026-10-06
+bootstrap rebuild).
 
 The two rollups differ in \emph{exactly one band}. Comparing
 \texttt{2d-unfolding/uq/universe\_stage2\_MEFHC\_full\_matcorr/} against
@@ -215,7 +223,8 @@ universe total $4.783\% \rightarrow 6.830\%$ and the combined figure to
 $6.845\%$ before the ML block, which is the whole of the discrepancy. The pull
 widths of \S\ref{sec:pull} were affected identically:
 $\dead{0.069}/\dead{0.466}$ were computed on the same superseded covariance, and
-the flux-fixed values are $0.051/0.409$ (\texttt{VALIDATION\_LEDGER.md}).
+the flux-fixed values are $0.051/0.409$ (\texttt{VALIDATION\_LEDGER.md}), and $0.051/0.405$ since the
+2026-10-06 bootstrap rebuild.
 
 The statistical cell moved for an unrelated and earlier reason, recorded because
 it is a correction in its own right and \emph{not} because it changed the
@@ -223,7 +232,10 @@ headline: it is quoted from the pure-Poisson $N=300$ bootstrap
 ($\dead{1.828\times10^{-40}}$ / $\dead{0.564\%}$ $\to$
 $1.817\times10^{-40}$ / $0.549\%$), which superseded a seed-varying set that leaked
 ML stochasticity into the statistical block
-(\texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29).
+(\texttt{2d-unfolding/2D\_OMNIFOLD\_STUDY\_STATUS.md}, 2026-05-29). Those replicas were in turn
+rebuilt on 2026-10-06, because they divided by a bootstrapped completeness the central value does not
+carry ($\dead{1.817\times10^{-40}}$ / $\dead{0.549\%}$ $\to$ $1.931\times10^{-40}$ / $0.674\%$;
+\texttt{KNOWN\_ISSUES.md} 84, \texttt{VL170}).
 \textbf{It is not what moved the combined row.} The block sum rounds to
 $3.220\times10^{-39}$ with either statistical cell --- the change sits about two
 orders of magnitude below the printed precision --- and essentially the whole
@@ -335,6 +347,18 @@ name is corrected here.}
 The
 attempted 100/100 split-sample reinterpretation is also withdrawn because it
 used the all-toy mean of the fluctuated truth histograms.
+
+\textbf{Superseded 2026-10-05 by the fixed-truth test (\texttt{VL169}).} Until then the note
+said that no 2D coverage number is quoted, and that coverage testing ``remains open and requires
+an independently stored unfluctuated truth reference or a redesigned ensemble''
+(\S\ref{sec:coverage}). The executive summary said ``No 2D coverage number is quoted''. The
+summary said ``the existing 2D toys provide no independent-truth coverage test''.
+App.~\ref{app:statmethods} said ``The 2D toy ensemble provides no independent-truth coverage
+test'' and that such a test is one ``this analysis does not have''. The paper said
+of the standalone covariance only that ``its coverage is untested''. The primer said that whether
+the error bars ``contain the truth as often as stated has not yet been tested''. Each is replaced
+by the measured statement: the statistical band undercovers in its tails. The same-ensemble
+$\SI{\pullFrac}{\percent}$ remains a Gaussianity diagnostic, as before.
 
 \paragraph{From App.~\ref{app:negweight}, the extended-fiducial footing and the measured size of the choice.}
 \textbf{The $\sigma_{\mathrm{ext}}=\SI{\fpsSigma}{cm^2/nucleon}$ reported in

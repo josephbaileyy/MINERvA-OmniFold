@@ -1,0 +1,3 @@
+[wrote] /pscratch/sd/j/josephrb/ki84-rebuild-20261006/adoption_controls/fig67_old/MEFHC_fig6_7_uncertainty_pz.png
+[wrote] /pscratch/sd/j/josephrb/ki84-rebuild-20261006/adoption_controls/fig67_old/MEFHC_fig6_7_uncertainty_pt.png
+[wrote] /pscratch/sd/j/josephrb/ki84-rebuild-20261006/adoption_controls/fig67_old/MEFHC_fig6_7_uncertainty_summary.txt

@@ -421,6 +421,11 @@ Nothing is adopted.
 \subsubsection{Model dependence, variability and reporting resolution}
 \label{sec:gbdt-model-dependence}
 
+The scalar estimator here uses production LightGBM. The matched
+HistGradientBoosting comparator of \S\ref{sec:pet-gbdt-paired} uses
+different inputs, signal-only samples and reporting histograms; neither its
+recovery metric nor its residual spread supplies a missing operand here.
+
 These studies do not establish a bias--variance tradeoff across estimator settings.
 They establish truth-dependent responses to iterations and capacity, small repeat
 variability at one setting, and appreciable prior sensitivity. These are different quantities. Unfolding benchmarks
@@ -594,3 +599,113 @@ futility criterion at the nominal and the $\Eavail$-tilted truths, so no frequen
 claimed for any five-dimensional interval.
 
 % Source: docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
+
+\subsection{Joint five-dimensional generator tests}
+\label{sec:joint5d}
+
+A frozen test asks whether each of five predictions---MINERvA Tune~v1,
+GENIE~2.12.10 (default and with MEC), NuWro~21.09 and GiBUU~2019---is
+compatible with the five-dimensional data, in total (rate and shape together)
+and in shape alone: ten tests. Each null $H_0(G)$ is the simple hypothesis that
+the calibration simulates: the true cross section equals $G$ on the fine 5D
+grid, with Tune~v1's shape and $G$'s finite-MC fluctuations below it (for
+Tune~v1 this is $H_0$ exactly). The tests use the 109 supported joint cells (J;
+GiBUU: the 72 with $\pPar<\SI{6}{GeV/c}$). Each $p$-value is calibrated by
+pseudo-experiments simulated under its null through the unfolding (refinement
+refit and five iterations on half the simulation) and stopped by a frozen
+sequential rule. The claim $p$ is the largest over declared process-shift and
+sub-fine-grid variants, and the decisions use Holm's procedure with a
+determinacy rule at familywise level 0.05.
+
+All ten hypotheses are rejected (Table~\ref{tab:joint5d}). Each rejection is
+also labelled robust to a larger sub-fine-grid residual ($\kappa=3$, report
+only). An independent recomputation of every $p$-value and decision from the
+stored products, with the reviewer's own code, agrees on all 1379 compared
+rows.
+
+Scheduler time limits removed 224 calibration and 53 power draws, so the $B$ in
+Table~\ref{tab:joint5d} counts completed draws only. A report-only recovery
+reran exactly those seeds. A determinism check fixed in advance (16 of 16
+completed seeds rerun bitwise identically) shows that each recovered draw is
+the lost draw, so every submitted draw has now been observed. No recovered draw
+reaches the observed statistic in any test, claim variant or $\kappa=3$
+variant, so no assignment of the lost draws changes any decision. The closest
+margin is 4.6 units of $T$ (GENIE~2.12.10 + MEC shape, $\kappa=3$ variant;
+$T_{\rm obs}=868.6$); the next is 49.8 (GENIE~2.12.10 shape). With complete
+batches the frozen rule would have stopped Tune~v1, GENIE~2.12.10,
+GENIE~2.12.10 + MEC and GiBUU one batch earlier ($B=1200$), with the same
+decisions.
+
+The scope of the recovery's checks is narrower than that of the main
+recomputation:
+\begin{itemize}[itemsep=1pt, topsep=2pt]
+  \item its independent cross-check (856 of 856 quantities) covers only the
+        reading with the frozen process shifts;
+  \item the reading with the shift recomputed on all draws was reproduced only
+        by a standalone replay of the same code, a consistency check rather than
+        an independent recomputation;
+  \item the earlier-stop decisions rest on the campaign's self-validated
+        stopping replay.
+\end{itemize}
+The recovery is report-only: the primary decisions are those of the frozen
+evaluation, at the frozen $B$.
+
+Every test rejects, so power is context only. At the Tune~v1 null, two of the
+three declared alternatives are detected in shape with power 1.0 at the 0.005
+level; the third, a MEC-like shape, with 0.23. At the GENIE~2.12.10 null the
+shape powers at 0.005 are 0.74, 0.02 and 0.00. These come from the frozen sets
+(172--199 of 200 each). Against the frozen null ensembles, the complete recovered
+sets agree within 0.01; with the null recomputed on all draws, GENIE~2.12.10's
+first set moves to 0.72.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}lrrcccc@{}}
+    \toprule
+    Prediction $G$ & $B$ & \multicolumn{2}{c}{$k$ (total, shape)} & \multicolumn{2}{c}{claim $p$ (total, shape)} & Decision \\
+    \midrule
+    MINERvA Tune~v1       & 1365 & 0 & 0 & $1/1366$ & $1/1366$ & both rejected \\
+    GENIE~2.12.10         & 1366 & 0 & 0 & $1/1367$ & $1/1367$ & both rejected \\
+    GENIE~2.12.10 + MEC   & 1343 & 0 & 0 & $1/1344$ & $1/1344$ & both rejected \\
+    NuWro~21.09           & 1751 & 0 & 1 & $1/1752$ & $2/1752$ & both rejected \\
+    GiBUU~2019            & 1351 & 0 & 0 & $1/1352$ & $1/1352$ & both rejected \\
+    \bottomrule
+  \end{tabular}
+  \caption{Joint five-dimensional generator tests. $B$ is the number of completed
+  calibration pseudo-experiments at the frozen stop (1400 submitted per null,
+  NuWro 1800; the rest were lost to time limits and recovered report-only, see
+  text), and $k$ the number at least as extreme as the data; claim
+  $p=(k+1)/(B+1)$ is never zero. Holm thresholds run from 0.005 to 0.05; every
+  95\% Clopper--Pearson interval for $k/B$ lies below its threshold.}
+  \label{tab:joint5d}
+\end{table}
+
+These are statements about the simple hypotheses $H_0(G)$, not a measured
+cross section. They hold under the test's frozen conditions:
+\begin{itemize}[itemsep=1pt, topsep=2pt]
+  \item below the fine grid the null carries Tune~v1's shapes; the sub-fine-grid
+        check is not converged, and its effect enters as the declared variants
+        (the $\kappa=2$ claim variants);
+  \item the simulation's per-event detector response beyond the drawn detector
+        bands, and a linear surrogate for the five lateral bands; with no
+        recoil-energy-scale band, hadronic-response completeness is not established;
+  \item the interaction-model prior is the analysis's 34 bands, every band drawn
+        per experiment; negative weights in two of them (LowQ2\_1, HighQ2\_1) are
+        clipped per universe (at most 0.35\% of a band's shift);
+  \item pseudo-experiments unfolded with half the simulation, the data with all
+        of it; the resulting shift, at most about 0.05 null standard deviations
+        but not always consistent with zero, enters as the bias-aligned
+        upper-bound variant;
+  \item GiBUU's missing $E_\nu>\SI{20}{GeV}$ component, with its out-of-domain
+        truth entering migrations into the tested cells; for all generators,
+        $E_\nu>\SI{100}{GeV}$ is absent (negligible);
+  \item the predictions' own finite MC, entering the metric as
+        $\mathrm{diag}\,\mathrm{Var}(\mu_G)$ and as a drawn residual.
+\end{itemize}
+No new reportable uncertainty is produced (App.~\ref{app:provenance}, \texttt{joint-5d}).
+% Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md (decisions, B, k, p,
+% the six conditions verbatim); RECORD-20261006-s5p-lost-seed-recovery-resolution.md (recovery,
+% margins 4.6/49.8 T units, earlier stops, power over the complete sets); DECISION-20261005-s5p-
+% recompute-extension-and-lost-seed-recovery.md section 5 (Joseph's disposition: certified, margin
+% disclosed; the five required disclosures). Wording review: REVIEW-20261006-s5p-stage7-note-wording.md.

@@ -513,3 +513,19 @@ docs/orchestration/AMENDMENT-20261004-s5p-10pct-pool-limit-A2.md	LIVE	open
 docs/orchestration/PROPOSAL-20261005-scalar-measurement-successor.md	LIVE	open	""
 docs/orchestration/EVIDENCE-20261005-scalar-measurement-successor.md	ARCHIVAL	terminal	""
 docs/orchestration/REVIEW-20261005-scalar-measurement-successor.md	ARCHIVAL	terminal	""
+docs/orchestration/PREREG-20261005-2d-fixed-truth-coverage.md	LIVE	open	
+docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md	LIVE	open	
+docs/orchestration/RECORD-20261005-s5p-terminal-evaluation-pending-verification.md	LIVE	open	
+docs/orchestration/state/s5p/stage7/joint/joint-evaluate.json	MACHINE	open	
+docs/orchestration/state/s5p/stage7/joint/robust-labels.json	MACHINE	open	
+docs/orchestration/state/s5p/stage7/joint/seed-states.abs-log-paths.json	MACHINE	open	
+docs/orchestration/state/s5p/stage7/joint/missing-sensitivity.json	MACHINE	open	
+docs/orchestration/DECISION-20261005-s5p-recompute-extension-and-lost-seed-recovery.md	LIVE	open	
+docs/orchestration/PROCEDURE-20261005-s5p-lost-seed-recovery.md	LIVE	open	
+docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md	LIVE	open	
+docs/orchestration/RECORD-20261006-s5p-lost-seed-recovery-resolution.md	LIVE	open	
+docs/orchestration/HANDOFF-20261006-s5p-reproduction-tier-d.md	LIVE	open	
+docs/orchestration/RELEASE-MANIFEST-20261006-s5p-joint-5d-inference.md	LIVE	open	
+docs/orchestration/REVIEW-20261006-s5p-stage7-note-wording.md	LIVE	open	
+docs/orchestration/DELIVERY-20261006-s5p-campaign-terminal.md	LIVE	open	
+docs/orchestration/DECISION-RULE-20261006-ki85-bootstrap-diagnostic.md	LIVE	open	

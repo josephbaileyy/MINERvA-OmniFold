@@ -19,8 +19,8 @@ peak + a ~1-unit GBDT-estimator regularization band. Canonical uncertainty = mat
 pair case, + 1.4 % target-nucleon normalization rank-1; matches
 `MnvVertErrorBand::CalcCovMx`) with the per-universe 1/Φ flux
 normalization applied (Task #70, 2026-05-29). Our **standalone** combined
-budget is now **6.87 % median rel σ ≈ paper total 6.86 %**. Paper+OmniFold
-combined-cov χ²/ndf = **1.481** — but that comparison now *double-counts*
+budget is now **6.87 % median rel σ ≈ paper total 6.85 %** (6.86 % until 2026-10-06, from the rounded CSV release). Paper+OmniFold
+combined-cov χ²/ndf = **1.472** (1.481 before the 2026-10-06 VL170 band) — but that comparison now *double-counts*
 flux (we add our ~5 % flux on top of the paper's; see χ² caveats). The
 pre-fluxfix matcorr rollup (combined χ²/ndf 1.703, flux band 1 %) and the
 legacy CV-centered pair_sumsq rollup (1.473) are superseded.
@@ -51,10 +51,10 @@ OmniFold in place of D'Agostini IBU.
 | Median bin ratio (ours/paper) | 1.0064 |
 | Bins within 5 % / 10 % / 20 % of paper | 77.6 % / 94.1 % / 98.5 % |
 | Paper-cov-only χ²/ndf | **3.661** |
-| Combined-cov χ²/ndf (paper + fluxfix universe + boot N=300 + ML) | **1.481** |
-| Combined-cov log-normal χ²/ndf (Ruterbories Table I parity) | **1.468** |
-| Standalone ours-only combined median rel σ (≈ paper total 6.86 %) | **6.87 %** |
-| Pull mean / RMS (combined cov) | **0.051 / 0.409** |
+| Combined-cov χ²/ndf (paper + fluxfix universe + boot N=300 + ML) | **1.472** (VL172; VL162 band: 1.481) |
+| Combined-cov log-normal χ²/ndf (Ruterbories Table I parity) | **1.455** (VL162 band: 1.468) |
+| Standalone ours-only combined median rel σ (≈ paper total 6.85 %) | **6.87 %** |
+| Pull mean / RMS (combined cov) | **0.051 / 0.405** (VL162 band: 0.051 / 0.409) |
 | Pull mean / RMS (paper cov only) | 0.089 / 0.598 |
 | Shape-only χ²/ndf (205 bins, paper cov, unit-area Jacobian) | 3.596 |
 | Global OmniFold completeness c | 1.000000 (exact by construction) |
@@ -75,7 +75,7 @@ with the paper (flux / GENIE / RPA / 2P2H / MINOS), and the flux fix
 flux on top of the paper's 4 %, which is the main driver of the
 1.703→1.481 drop. So 1.481 is a paper+ours number that is *not* the
 beneficiary of the flux fix; the flux fix's real win is the standalone
-budget (6.87 % ≈ paper 6.86 %). `compare_to_paper_fullcov.py
+budget (6.87 % ≈ paper 6.85 %). `compare_to_paper_fullcov.py
 --subtract-stat` removes only the bootstrap/paper-stat overlap (not the
 flux overlap) → overcorrects there; treat it as a secondary diagnostic.
 (ii) Ours-only inverse-cov χ² is ill-conditioned — fluxfix
@@ -96,14 +96,14 @@ sqrt(trace) matches to 7 digits — report in `uq/matcorr_vs_mnvh1d.txt`.
 | Component | N | √tr(C) | Per-bin median rel σ |
 |---|---|---|---|
 | ML noise (lgbm seedscan) | 10 | 5.061e-41 | 0.166 % |
-| Statistical (Poisson bootstrap, pinned ML seed) | 300 | 1.817e-40 | 0.549 % |
+| Statistical (Poisson bootstrap, pinned ML seed; VL170 since 2026-10-06) | 300 | 1.931e-40 | 0.674 % |
 | Systematic (fluxfix universe sweep + 1.4% norm rank-1) | 187+1 | 3.214e-39 | 6.830 % |
-| **Combined (block sum)** | — | 3.220e-39 | 6.865 % |
-| Paper TotalCov (for reference) | — | 2.676e-39 | 6.86 % |
+| **Combined (block sum)** | — | 3.220e-39 | 6.871 % (6.865 % with VL162) |
+| Paper TotalCov (for reference) | — | 2.676e-39 | 6.85 % (6.8525 %, full-precision ROOT release; `state/uqpaper-median-20261006/`) |
 
 Block sum assumes independence (different RNGs / physics sources). The
 flux fix (Task #70) brings our standalone combined budget (6.865 %) into
-agreement with the paper total (6.86 %). Top systematic bands (median rel
+agreement with the paper total (6.85 %). Top systematic bands (median rel
 σ, fluxfix rollup): Flux 4.99 %, Muon_Energy_MINOS 2.31 %,
 Muon_Energy_MINERvA 1.29 %, MinosEfficiency 1.47 %,
 MaRES 0.55 %, MvRES 0.38 %, MaCCQE 0.36 %. 44 bands (6 lateral: BeamAngleX/Y,
@@ -125,7 +125,7 @@ flux integrals were already on disk in the per-playlist flux MnvH1Ds):
 `uq/build_flux_universe_band.py` POT-combines them, `uq/rescale_flux_universes.py`
 multiplies each Flux-universe cross section by Φ_CV(pT)/Φ_u(pT) — exact,
 no re-unfold. Flux band 1.01 %→**4.99 %** (flat, floor 4.78 %); standalone
-combined budget 4.82 %→**6.87 % ≈ paper 6.86 %**. PPFX index alignment
+combined budget 4.82 %→**6.87 % ≈ paper 6.85 %**. PPFX index alignment
 verified (Pearson 0.96). The driver now applies this natively —
 `--universe Flux:IDX` divides by `hFluxUniv[:,IDX]` via
 `--flux-universe-file` (no more post-hoc rescale for future runs).
@@ -139,7 +139,8 @@ RUN_LOG 2026-05-29.
 
 Canonical covariance ROOTs:
 - systematic (flux-fixed): `uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root`
-- bootstrap: `uq/bootstrap_MEFHC_300/uq_covariance_boot300.root`
+- bootstrap: `uq/bootstrap_MEFHC_300_vl170/uq_covariance_boot300.root` (VL170, adopted 2026-10-06; the VL162 file stays at `uq/bootstrap_MEFHC_300/`)
+- universe + bootstrap `hCov_combined`: `uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/` (VL172)
 - ML: `uq/seedscan_lgbm_ml/uq_covariance_ml.root`
 
 MAT-conformant formula, the 1.4 % norm rank-1, the legacy pair-formula
@@ -148,7 +149,7 @@ escape hatch, and the full rollup path are documented in
 
 ---
 
-## Validation (all closed)
+## Validation
 
 - **Closure** (1A lgbm 5-iter, thr = median |residual|): truth-reweight
   gauss_pt 0.046 %, tilt_pz 0.013 % (thr 1.5 %); hidden-var dpT
@@ -156,12 +157,18 @@ escape hatch, and the full rollup path are documented in
   alt-model MaCCQE:0 0.068 %, Flux:50 0.376 % (thr 2.0 %). Hidden-var
   axis `dpT = sim_pT − truth_pT` is a resolution variable (not in the
   feature set); alt-model target is `CV truth × (alt/cv in-acceptance)`.
-- **Coverage** (200 closure+bootstrap-seed MEFHC toys): mean 68.71 % vs
-  Gaussian 68.27 %; median 68.50 %; ⟨|res|/σ⟩ 0.794 vs √(2/π)=0.798;
-  signed mean +0.006 ± 0.082 σ. 97.6 % of 205 bins meet the 65 % target.
-  Audit note: the current checkout retains only the 20-toy stage-1
-  `uq/coverage/coverage_summary.txt` and no toy ROOTs, so restore the 200-toy
-  artifacts before independently regenerating this number from disk.
+- **Coverage of the statistical band: FAIL-undercoverage (2026-10-05, `VL169`).**
+  The test was pre-registered with fixed-truth closure toys, and the study stopped by the futility
+  rule at 100 toys, with an independent recomputation. C1 0.679 [0.669, 0.690] is nominal; C2
+  0.912 [0.907, 0.918] lies below its window [0.928, 0.972]; the pull RMS is 1.60. Per-bin
+  calibration is uneven in both directions. The 2σ deficit sits at high p∥ and low pT and in the
+  highest-pT row (post hoc). It is attributed, partially, to the bootstrapped completeness in the
+  VL162 replicas, by the Amendment-1 secondary. Quoted uncertainties are unchanged. Record:
+  `docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`; `KNOWN_ISSUES.md` 84.
+  The replica completeness was fixed on 2026-10-06 (`bb4b0b6f`) and the rebuilt band adopted
+  (`VL170`; rollup `VL172`; not a coverage re-test; open data-stream question `KNOWN_ISSUES.md` 85).
+  The older 200 closure+bootstrap-seed toys (mean 68.71 % within ±1σ, measured against their own
+  fluctuating truth) are a Gaussianity diagnostic, not a coverage measurement.
 - **Completeness** c = 1.000000 exact by construction.
 - **Iteration**: 5-iter total σ within 0.026 % of 10-iter (per-bin shape
   RMS 1.54 %); HistGBT/exact-GBT agree on total σ to 0.04 %.

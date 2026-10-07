@@ -14,7 +14,11 @@ Sources (relative to `nd-unfolding/pet/final_design/`):
   dev/DEV_TABLES-20260927.json (dev/summarize_dev.py), dev/SCREENS-20260927.json (dev/apply_finalist_rule.py
   --n2), sizing/n2_all-20260927.json (dev/n2_table.py), resources/cost_t24-20260927.json, sizing/sizing_*-20260927.json;
   scalar/results/SCALAR_AUSSIE_MATCHED-20260925.json; results/final/decision_look*.json and
-  results/final/coverage_*.json (rendered as "pending" while absent).
+  results/final/coverage_*.json (rendered as "pending" while absent); the exact-paired PET-vs-GBDT comparison
+  ../gbdt_comparison/results/comparison.json and costs.json.
+
+`--deck ben` builds the short summary deck, told in four parts (what was tried and how it relates to Gregor's
+work; how the measurement and decisions were set up; results; what they mean).
 
 Scope, first and last frames: PET is diagnostic method development; nothing here is a publication
 adoption, and no historical threshold, verdict or the predecessor's disposition changes.
@@ -55,6 +59,9 @@ CAMP = "../configuration_comparison/campaign_report.json"
 FBC = "resources/cost_fb_look1-20260930.json"
 COV = "results/final/coverage_dev/coverage_H2S1T24K5.json"
 FIN = "results/final/coverage_dev/decision_final.json"
+PGC = "../gbdt_comparison/results/comparison.json"
+PGCC = "../gbdt_comparison/results/costs.json"
+PGCR = "../gbdt_comparison/REPORT-20261005.md"
 CURVE_DESIGNS = ("C", "H1", "H2", "H2S1", "H2S1T24", "L128S1", "L128S1T24", "P2preA1", "P2scrS1")
 COLORS = {"C": "#009E73", "H1": "#999999", "H2": "#E69F00", "H2S1": "#0072B2", "H2S1E16": "#56B4E9",
           "L128S1": "#CC79A7", "L128S1E16": "#D55E00", "P2preS1": "#000000", "P2scrS1": "#8C564B",
@@ -76,10 +83,9 @@ def s_summary(d: Deck, n: Numbers) -> None:
     e = lambda c, rule, i, key="estimate", fmt="3": _v(n, f"sum_{c}_{rule}_{i}_{key}", DEC,
                                                        ["eligibility", c, "verdicts", rule, "parts", i, key], fmt)
     h = "H2S1T24K5"
-    gb3 = _v(n, "sum_gbdt_k3", AUS, ["per_case", "dev", "omnifold|efficiency_corrected|truth4@k3", "mean_R"])
-    gb10 = _v(n, "sum_gbdt_k10", AUS, ["per_case", "dev", "omnifold|efficiency_corrected|truth4@k10", "mean_R"])
+    pair = lambda ep, c: _v(n, f"sum_pgc_{ep}_{c[:2]}", PGC, ["endpoints", ep, "paired", f"{c} - GBDT@k7", "mean"], "+3")
+    gen = lambda case, c: _v(n, f"sum_pgc_{case}_{c[:2]}", PGC, ["library", case, "paired", f"{c} - GBDT@k7", "mean"], "+3")
     ibu = _v(n, "sum_ibu_k3", AUS, ["per_case", "dev", "ibu|efficiency_corrected@k3", "mean_R"])
-    pet = _v(n, "sum_h2t24_dev", SCR, ["designs", "H2S1T24", "dev_tilt_at_Kstar"])
     c68 = _v(n, "sum_cov68", COV, ["rules", "C1", "parts", 3, "estimate"])
     low = _v(n, "sum_cov68_low", COV, ["regions", "low_acceptance", "levels", "0.68", "pooled", "point"])
     rows = [
@@ -87,22 +93,24 @@ def s_summary(d: Deck, n: Numbers) -> None:
          r"\textbf{Yes, in this simulation test.} H2S1T24 $K{=}5$ passed every frozen point-estimator rule: "
          r"energy tilt " + e(h, "U1", 0) + ", proton topology " + e(h, "U4", 0) + r", energy $\times\,q_3$ "
          + e(h, "U5", 0) + "."],
-        ["Is it more accurate than current GBDT?",
-         r"\textbf{Suggestive, not decisive.} On the development tilt (DEV bank) scalar GBDT OmniFold reached "
-         + gb3 + r" ($k{=}3$) to " + gb10 + r" ($k{=}10$), H2S1T24 " + pet + r"; inputs, $k$ and events are not "
-         r"matched. Efficiency-corrected binned IBU reached " + ibu + " on the tilt but fails the proton case."],
+        ["Is it more accurate than GBDT OmniFold?",
+         r"\textbf{On energy shape, yes; on generator changes, no.} On the same final-bank events PET beats a tuned "
+         r"scalar GBDT OmniFold on the energy tilt (H2S1T24 " + pair("E0", "H2S1T24K5") + ", L128S1T24 "
+         + pair("E0", "L128S1T24K4") + r" in $R$) but is worse on every generator-model reweighting (NuWro "
+         + gen("D5_nuwro", "H2S1T24K5") + ", GiBUU " + gen("D5_gibuu", "H2S1T24K5") + r" for H2S1T24). Binned IBU "
+         r"(" + ibu + " on the development tilt) matches PET on the 1D tilt but fails the proton case."],
         ["Can it give tighter, reliable confidence intervals?",
          r"\textbf{Unestablished.} Its six-member bootstrap interval failed calibration: too wide overall "
          r"(68\,\% intervals cover " + c68 + r"), too narrow at low acceptance (" + low + ")."],
         ["Will it distinguish generators more strongly?",
          r"\textbf{Unestablished.} That needs calibrated inference including detector and model uncertainties; "
-         r"no tested procedure provides it."],
+         r"no tested procedure provides it, and PET recovers generator-model changes less well than GBDT."],
     ]
     body = table(["question", "what the evidence supports"], rows, RAG + r"p{0.30\linewidth}" + RAG + r"p{0.64\linewidth}",
                  r"\footnotesize") + (
         r"\par\vspace{0.15cm}\scriptsize Terminal outcome by the frozen rules: \textbf{NO\_ELIGIBLE\_DESIGN}, no "
         r"selected default. Signal-only simulation, conditional on the frozen event banks; PET is diagnostic.")
-    d.frame("What the evidence supports", body, [DEC, COV, SCR, AUS])
+    d.frame("What the evidence supports", body, [DEC, COV, PGC, AUS])
     d.claim("Summary", sorted(k for k in n.entries if k.startswith("sum_")))
 
 
@@ -457,26 +465,6 @@ def s_aussie(d: Deck, n: Numbers) -> None:
             [AUS, "scalar/SCALAR_AUSSIE_MATCHED-20260925.md"])
 
 
-def s_finalists(d: Deck, n: Numbers) -> None:
-    cs = n.f("cost_H2S1T24", COST, ["candidates", "H2S1T24", "median"], "2")
-    cl = n.f("cost_L128S1T24", COST, ["candidates", "L128S1T24", "median"], "2")
-    nf = n.f("n_F", SZF, ["n_F"], "int")
-    ne0 = n.f("n_E0_ni", SZF, ["contrasts", "6.5 E0 (H2S1T24 - L128S1T24)", "n_for_power"], "int")
-    nl = n.f("n_lib", SZL, ["n_F"], "int")
-    body = (r"\small\begin{itemize}"
-            r"\item Compact \textbf{H2S1T24} ($K{=}5$) and large \textbf{L128S1T24} ($K{=}4$): detector reco "
-            r"summaries, categorical truth PDG, constant rate, 24-epoch truth step; step-1 PET 47\,k vs 0.97\,M "
-            r"parameters. Anchors CTL and C at $k{=}3$."
-            r"\item Cost per unfolding (charged A100-h, declared packing): " + cs + r" (compact) vs " + cl +
-            r" (large): the smaller network is not cheaper, so the cost-based preference cannot apply."
-            r"\item Independent sizing: $n_F = " + nf + r"$ (capped; $E_0$ non-inferiority between the finalists "
-            r"would need " + ne0 + r" draws --- a quantified limit); D4c/D3 draws " + nl + r"."
-            r"\item Final bank: FINAL, 21-case library and coverage run blinded until the UNBLIND amendment."
-            r"\end{itemize}")
-    d.frame("Frozen finalists and final-stage design", body, [COST, SZF, SZL, "PROTOCOL-20260925.md (3c--3f)"])
-    d.claim("Finalists, cost and sizing", ["cost_H2S1T24", "cost_L128S1T24", "n_F", "n_E0_ni", "n_lib"])
-
-
 def _status(e: dict) -> str:
     """Eligibility status with the rules behind it: failed for INELIGIBLE, not yet assessed for INCOMPLETE."""
     why = e.get("failed") or e.get("incomplete") or []
@@ -684,6 +672,147 @@ def s_cannot(d: Deck) -> None:
     d.frame("What this study cannot authorize", body, ["docs/orchestration/AUTHORIZATION-20260925-pet-final-design.md"])
 
 
+class StoryDeck(Deck):
+    """The summary deck: each slide title carries the part of the story it belongs to."""
+    part = ""
+
+    def frame(self, title: str, body: str, evidence, options: str = "") -> None:
+        super().frame(f"{self.part}. {title}" if self.part and not self.in_appendix else title, body, evidence, options)
+
+
+def s_story(d: Deck) -> None:
+    body = r"""\small
+\textbf{Question.} Can a stronger PET --- borrowing parts of Gregor's PET2 work --- give an accurate, robust and
+calibrated unfolding of MINERvA $E_\mathrm{avail}$, and how does it compare with scalar GBDT OmniFold?
+\vspace{0.3cm}
+\begin{enumerate}
+\item \textbf{What we tried}, and how it relates to Gregor's work.
+\item \textbf{How we set it up}: what we measure, and the decision rules, fixed before the results.
+\item \textbf{Results}: development, the two finalists, uncertainty calibration, PET vs GBDT.
+\item \textbf{What the results mean} for the decisions.
+\end{enumerate}
+\vspace{0.3cm}\footnotesize Signal-only simulation throughout. PET is diagnostic method development, not a
+publication input."""
+    d.frame("The question, and how this talk is organized", body, ["PROTOCOL-20260925.md (1)"])
+
+
+def s_start(d: Deck, n: Numbers) -> None:
+    ours = _v(n, "start_ours", CAMP, ["absolute_adequacy", "arms", "ours", "mean_recovery"])
+    theirs = _v(n, "start_theirs", CAMP, ["absolute_adequacy", "arms", "theirs", "mean_recovery"])
+    floor = _v(n, "start_floor", CAMP, ["absolute_adequacy", "floor"])
+    seeds = _v(n, "start_seeds", CAMP, ["absolute_adequacy", "arms", "theirs", "n"], "int")
+    gap = n.add("start_gap", "diff", [(CAMP, ["absolute_adequacy", "arms", "theirs", "mean_recovery"]),
+                                      (CAMP, ["absolute_adequacy", "arms", "ours", "mean_recovery"])], "3")
+    body = (r"\small\begin{itemize}"
+            r"\item \textbf{Earlier comparison (September 2026).} Our production PET recipe and Gregor's PET2-small arm "
+            r"(his backbone, his 33-token typed inputs, his pretrained checkpoint, adapted to MINERvA) unfolded the same "
+            r"injected $E_\mathrm{avail}$ tilt, " + seeds + r" seeds each, 3 iterations."
+            r"\item \textbf{Result.} Recovery: Gregor's arm " + theirs + ", ours " + ours + " (his better by " + gap +
+            r"). Both fell below the absolute floor " + floor + r" (80\,\% of a pinned achievable-recovery ceiling): "
+            r"\textsc{neither eligible}, no selection."
+            r"\item \textbf{What that comparison said to borrow} from his setup: event-level energy sums with an overflow "
+            r"token, a particle-type embedding, one capacity step --- and, as whole designs, his backbone and checkpoint."
+            r"\item \textbf{This study:} build complete designs from those parts plus a stronger truth step of our own, "
+            r"and test them against rules fixed in advance."
+            r"\end{itemize}")
+    d.frame("Where we started: our PET and Gregor's PET2 on the same test", body, [CAMP, CMP])
+    d.claim("Starting point", sorted(k for k in n.entries if k.startswith("start_")))
+
+
+def s_considered(d: Deck) -> None:
+    rows = [[base.esc(c), change.replace(" (finalist)", ""), gregor] for c, change, gregor in ARCH]
+    body = table(["design", "what it changes", "from Gregor's work"], rows,
+                 "l" + RAG + r"p{0.36\linewidth}" + RAG + r"p{0.44\linewidth}", r"\scriptsize") + (
+        r"\par\vspace{0.1cm}\tiny Anchors, not selectable: CTL (historical production recipe), C (CTL with an "
+        r"efficiency-corrected truth step), B (predecessor's feature arm). Gregor-derived parts follow the pinned "
+        r"configuration comparison (cmp sections); the truth-step design is the study's own.")
+    d.frame("Designs tried, and what came from Gregor's work", body, ["DEVELOPMENT-20260926.md", CMP])
+
+
+def s_survival(d: Deck, n: Numbers) -> None:
+    scr = d.n.src.load(SCR)["designs"]
+    rows = []
+    for c, change, _ in ARCH:
+        why = _why_dev(n, c, scr[c])
+        if c in ("H2S1T24", "L128S1T24"):
+            why = r"\textbf{passed every development screen: finalist}"
+        rows.append([base.esc(c), why or "passed every development screen; not chosen by the finalist rule"])
+    body = table(["design", "development result (DEV bank)"], rows, "l" + RAG + r"p{0.75\linewidth}", r"\scriptsize") + (
+        r"\par\vspace{0.1cm}\tiny Screens: S-U1 tilt, S-U3 opposite tilt, S-U4 proton topology, S-B2 D4d residual; then "
+        r"S-N1 weight tail and S-N2 seed spread. The step-2 ensemble fallback (H2S1X4, L128S1X4) never met its entry "
+        r"condition. The finalists then went to the fresh final bank (next slides).")
+    d.frame("Development: which designs survived", body, [SCR, "DEVELOPMENT-20260926.md"])
+    d.claim("Development outcome", sorted(k for k in n.entries if k.startswith("arch_")))
+
+
+def s_gbdt(d: Deck, n: Numbers) -> None:
+    H, L = "H2S1T24K5", "L128S1T24K4"
+
+    def ci(tag, base_path, c, k=7):
+        key = f"{c} - GBDT@k{k}"
+        m = n.f(f"pgc_{tag}_{c[:2]}_k{k}", PGC, base_path + [key, "mean"], "+3")
+        lo = n.f(f"pgc_{tag}_{c[:2]}_k{k}_lo", PGC, base_path + [key, "ci95", 0], "3")
+        hi = n.f(f"pgc_{tag}_{c[:2]}_k{k}_hi", PGC, base_path + [key, "ci95", 1], "3")
+        return f"{m} [{lo}, {hi}]"
+
+    ep = lambda e, c, k=7: ci(e, ["endpoints", e, "paired"], c, k)
+    lib = lambda case, c: ci(case, ["library", case, "paired"], c)
+    nd = lambda e: n.f(f"pgc_{e}_n", PGC, ["endpoints", e, "summary", "GBDT@k7", "n"], "int")
+    nl = lambda case: n.f(f"pgc_{case}_n", PGC, ["library", case, "draws"], "int")
+    rows = [["energy tilt E0 (" + nd("E0") + " draws)", ep("E0", H), ep("E0", L)],
+            ["opposite tilt E3 (" + nd("E3") + ")", ep("E3", H), ep("E3", L)],
+            ["proton topology E4 (" + nd("E4") + ")", ep("E4", H), ep("E4", L)],
+            [r"\quad E4 against GBDT run to $k{=}10$", ep("E4", H, 10), ep("E4", L, 10)],
+            [r"energy $\times\,q_3$ E5 (" + nd("E5") + ")", ep("E5", H), ep("E5", L)],
+            ["generator reweighting: NuWro (" + nl("D5_nuwro") + ")", lib("D5_nuwro", H), lib("D5_nuwro", L)],
+            ["\\quad NuWro$'$ (" + nl("D5p_nuwro") + ")", lib("D5p_nuwro", H), lib("D5p_nuwro", L)],
+            ["\\quad GiBUU (" + nl("D5_gibuu") + ")", lib("D5_gibuu", H), lib("D5_gibuu", L)]]
+    t1 = table([r"paired difference in $R$, PET $-$ GBDT", "H2S1T24 $K{=}5$", "L128S1T24 $K{=}4$"], rows, "lll",
+               r"\scriptsize")
+    b2 = lambda m: n.f(f"pgc_b2_{m[:2]}", PGC, ["rules", "B2:D4d_n_down", "summary", m, "mean"], "4")
+    w = lambda m: n.f(f"pgc_wmax_{m[:2]}", PGC, ["weights", m, "max_push_over_completed_runs"], "1")
+    mse = lambda c: n.add(f"pgc_mse_ratio_{c[:2]}", "ratio", [(PGC, ["per_bin", "E0", "methods", "GBDT@k7", "sum_mse"]),
+                                                              (PGC, ["per_bin", "E0", "methods", c, "sum_mse"])], "x1")
+    rows2 = [[r"B2 residual, D4d n down (PET rule $\le 0.010$)", b2(H), b2(L), b2("GBDT@k7")],
+             ["largest truth weight", w(H), w(L), w("GBDT@k7")],
+             ["GBDT's E0 summed per-bin MSE relative to PET", mse(H), mse(L), "1"]]
+    t2 = table(["same draws", "H2S1T24", "L128S1T24", "GBDT"], rows2, "lrrr", r"\scriptsize")
+    body = (t1 + r"\par\vspace{0.12cm}" + t2 +
+            r"\par\vspace{0.1cm}\tiny GBDT = the matched study's tuned scalar OmniFold (HistGradientBoosting, "
+            r"efficiency-corrected, reco summaries + muon kinematics, truth with species counts, $k{=}7$ chosen on DEV), "
+            r"run on the same look-1 final-bank units with the same events, targets and scorer. Unadjusted 95\,\% "
+            r"intervals; exploratory. GBDT error is mostly systematic under-correction. No uncertainty comparison: this "
+            r"GBDT has no interval procedure here. On DEV, binned IBU and AUSSIE match PET on the 1D tilt and fail "
+            r"hadron or generator cases.")
+    d.frame("PET vs GBDT OmniFold on the same events", body, [PGC, PGCR])
+    d.claim("PET vs GBDT (exact paired)", sorted(k for k in n.entries if k.startswith("pgc_")))
+
+
+def s_meaning(d: Deck, n: Numbers) -> None:
+    fin = d.n.src.load(FIN)
+    u2 = ["data_scale_unfolding", "H2", "2M (historical full-event practice)"]
+    u = n.f("mean_u2m", PGCC, u2 + ["a100_hours"], "1")
+    ulo = n.f("mean_u2m_lo", PGCC, u2 + ["range", 0], "1")
+    uhi = n.f("mean_u2m_hi", PGCC, u2 + ["range", 1], "1")
+    body = (r"\small\begin{itemize}"
+            r"\item \textbf{Outcome by the frozen rules: " + base.esc(str(fin["ranking"].get("outcome"))) + r".} No PET "
+            r"design is selected and no default is named. PET stays diagnostic; the GBDT-based production analysis is unchanged."
+            r"\item \textbf{What PET would buy:} better energy-shape and hadron-species recovery than this GBDT on the "
+            r"same events. \textbf{Its main risk:} generator-model dependence, exactly what an uncertainty has to cover; "
+            r"and no calibrated interval exists yet."
+            r"\item \textbf{More study-scale comparison would not change the next decision:} ranking the two finalists "
+            r"picks between near-equal designs, and calibrating at study scale does not transfer to the data scale."
+            r"\item \textbf{If PET is pursued (owner decisions, none authorized):}"
+            r"\begin{itemize}\item[--] a data-scale readiness step (P0, capped at 165 A100-h): closures on the "
+            r"development tilt, NuWro and null with matched GBDT and IBU baselines, plus two diagnostic real-data runs; "
+            r"it stops with a no-go if PET does not beat GBDT there. Estimated cost of one data-scale unfolding: "
+            + u + " (" + ulo + "--" + uhi + r") A100-h at a 2\,M-event prior, scaled from the study;"
+            r"\item[--] or the study's own repair: an interval calibrated on DEV and re-validated on the sealed bank."
+            r"\end{itemize}\end{itemize}")
+    d.frame("What this means for the decisions", body, [FIN, PGCC, PGCR + " (6--8)", "DECISION_RECORD-pet-final-design.md"])
+    d.claim("Implications", ["mean_u2m", "mean_u2m_lo", "mean_u2m_hi"])
+
+
 PREAMBLE = base.PREAMBLE.replace(r"\usepackage{booktabs}", r"\usepackage{booktabs}\usepackage{array}", 1)
 RAG = r">{\raggedright\arraybackslash}"
 
@@ -714,6 +843,7 @@ def _slides_full(d: Deck, n: Numbers, out: Path) -> None:
     s_finalists(d, n)
     s_final(d, n)
     s_coverage(d, n)
+    s_gbdt(d, n)
     s_terminal(d, n)
     s_architectures(d, n)
     s_references(d, n)
@@ -721,17 +851,26 @@ def _slides_full(d: Deck, n: Numbers, out: Path) -> None:
 
 
 def _slides_summary(d: Deck, n: Numbers, out: Path) -> None:
-    """The short deck for a reader who knows Gregor's work but not this study."""
+    """The short deck for a reader who knows Gregor's work but not this study, told in four parts."""
     s_title(d)
-    s_summary(d, n)
-    s_reading(d)
+    s_story(d)
+    d.part = "1"
+    s_start(d, n)
     s_names(d)
+    s_considered(d)
+    d.part = "2"
+    s_reading(d)
     s_rules(d)
-    s_architectures(d, n)
+    d.part = "3"
+    s_survival(d, n)
     s_side_by_side(d, n)
     s_coverage(d, n)
-    s_references(d, n)
+    s_gbdt(d, n)
+    d.part = "4"
+    s_summary(d, n)
+    s_meaning(d, n)
     d.appendix()
+    s_references(d, n)
     s_aussie(d, n)
 
 
@@ -741,7 +880,7 @@ def build(out: Path, make_pdf: bool, deck: str = FULL) -> dict[str, Any]:
     (out / FIG_DIR).mkdir(exist_ok=True)
     src = Sources(STUDY)
     n = Numbers(src)
-    d = Deck(n)
+    d = Deck(n) if deck == FULL else StoryDeck(n)
     (_slides_full if deck == FULL else _slides_summary)(d, n, out)
     title = (r"\title{PET final-design selection study}" "\n"
              r"\subtitle{" + cfg["subtitle"] + "}\n"

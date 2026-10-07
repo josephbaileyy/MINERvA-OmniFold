@@ -1,0 +1,20 @@
+{
+ "variant": "rrzero",
+ "deploy_sha": "e9372b757250e9607f52e471d9b0c447b08e65d5",
+ "design_copy": {
+  "path": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/design/design-w2b-rrzero.json",
+  "sha256": "92ae80c682e768b6ae9f2f33f2b2fd9865beaf5fa6183a346f2fb1522ddee7b2"
+ },
+ "data_central": {
+  "path": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rrzero_b-_j-.npz",
+  "sha256": "ec5dc97d8554f008902a17428724e8482544d6e6de7db5ae1155d96d51dc4c4e"
+ },
+ "joint_evaluate": {
+  "path": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/eval/rrzero/joint-evaluate.json",
+  "sha256": "f811ad0759fc6279839802a3405d60207c8a24391e48bb1fe22ace1110fb20fe"
+ },
+ "robust_labels": {
+  "path": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/eval/rrzero/robust-labels.json",
+  "sha256": "fec6fb97e8062d5d6e0467b4c901ec1f02d79dd957a62f3343be82280b03038e"
+ }
+}

@@ -1,0 +1,20 @@
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+{
+ "out": "/pscratch/sd/j/josephrb/pub-release-20261006/figs/fig_arrays.npz",
+ "npz_sha256": "72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8",
+ "checks": {
+  "hData2D_vs_5d_product_projection": {
+   "max_rel_diff": 0.0,
+   "shape": [
+    7,
+    6
+   ]
+  },
+  "comparator_vs_s5p_mnvtune5d": {
+   "ratio_median": 1.0,
+   "ratio_min": 0.9999999999999998,
+   "ratio_max": 1.0000000000000004
+  }
+ }
+}
+wall 9.68 s maxrss 249528 KB

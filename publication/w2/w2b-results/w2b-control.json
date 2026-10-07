@@ -1,0 +1,177 @@
+{
+ "alpha_family": 0.05,
+ "signs": {
+  "rrzero": {
+   "NuWro_21_09:total": {
+    "p": 0.0005707762557077625,
+    "k": 0,
+    "B": 1751,
+    "threshold": 0.005,
+    "decision": "rejected"
+   },
+   "GENIE_2_12_10_CV:total": {
+    "p": 0.000731528895391368,
+    "k": 0,
+    "B": 1366,
+    "threshold": 0.005555555555555556,
+    "decision": "rejected"
+   },
+   "GENIE_2_12_10_CV:shape": {
+    "p": 0.000731528895391368,
+    "k": 0,
+    "B": 1366,
+    "threshold": 0.00625,
+    "decision": "rejected"
+   },
+   "MnvTune_v1:total": {
+    "p": 0.0007320644216691069,
+    "k": 0,
+    "B": 1365,
+    "threshold": 0.0071428571428571435,
+    "decision": "rejected"
+   },
+   "MnvTune_v1:shape": {
+    "p": 0.0007320644216691069,
+    "k": 0,
+    "B": 1365,
+    "threshold": 0.008333333333333333,
+    "decision": "rejected"
+   },
+   "GiBUU_2019:total": {
+    "p": 0.0007396449704142012,
+    "k": 0,
+    "B": 1351,
+    "threshold": 0.01,
+    "decision": "rejected"
+   },
+   "GiBUU_2019:shape": {
+    "p": 0.0007396449704142012,
+    "k": 0,
+    "B": 1351,
+    "threshold": 0.0125,
+    "decision": "rejected"
+   },
+   "GENIE_2_12_10_MEC:total": {
+    "p": 0.000744047619047619,
+    "k": 0,
+    "B": 1343,
+    "threshold": 0.016666666666666666,
+    "decision": "rejected"
+   },
+   "GENIE_2_12_10_MEC:shape": {
+    "p": 0.000744047619047619,
+    "k": 0,
+    "B": 1343,
+    "threshold": 0.025,
+    "decision": "rejected"
+   },
+   "NuWro_21_09:shape": {
+    "p": 0.001141552511415525,
+    "k": 1,
+    "B": 1751,
+    "threshold": 0.05,
+    "decision": "rejected"
+   }
+  }
+ },
+ "control": {
+  "product": "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rrzero_b-_j-.npz",
+  "sha256": "ec5dc97d8554f008902a17428724e8482544d6e6de7db5ae1155d96d51dc4c4e",
+  "frozen_sha256": "fb5cc6798b97b5902ad8f0fecbc49990271f7772f98d3063c1dc8596340e680c",
+  "bitwise_equal": false,
+  "fallback": {
+   "NuWro_21_09:total": {
+    "p": 0.0005707762557077625,
+    "jitter_min": 0.0005707762557077625,
+    "jitter_max": 0.0005707762557077625,
+    "p_in_range": true,
+    "decision": "rejected",
+    "frozen_decision": "rejected",
+    "decision_equal": true
+   },
+   "GENIE_2_12_10_CV:total": {
+    "p": 0.000731528895391368,
+    "jitter_min": 0.000731528895391368,
+    "jitter_max": 0.000731528895391368,
+    "p_in_range": true,
+    "decision": "rejected",
+    "frozen_decision": "rejected",
+    "decision_equal": true
+   },
+   "GENIE_2_12_10_CV:shape": {
+    "p": 0.000731528895391368,
+    "jitter_min": 0.000731528895391368,
+    "jitter_max": 0.000731528895391368,
+    "p_in_range": true,
+    "decision": "rejected",
+    "frozen_decision": "rejected",
+    "decision_equal": true
+   },
+   "MnvTune_v1:total": {
+    "p": 0.0007320644216691069,
+    "jitter_min": 0.0007320644216691069,
+    "jitter_max": 0.0007320644216691069,
+    "p_in_range": true,
+    "decision": "rejected",
+    "frozen_decision": "rejected",
+    "decision_equal": true
+   },
+   "MnvTune_v1:shape": {
+    "p": 0.0007320644216691069,
+    "jitter_min": 0.0007320644216691069,
+    "jitter_max": 0.0007320644216691069,
+    "p_in_range": true,
+    "decision": "rejected",
+    "frozen_decision": "rejected",
+    "decision_equal": true
+   },
+   "GiBUU_2019:total": {
+    "p": 0.0007396449704142012,
+    "jitter_min": 0.0007396449704142012,
+    "jitter_max": 0.0007396449704142012,
+    "p_in_range": true,
+    "decision": "rejected",
+    "frozen_decision": "rejected",
+    "decision_equal": true
+   },
+   "GiBUU_2019:shape": {
+    "p": 0.0007396449704142012,
+    "jitter_min": 0.0007396449704142012,
+    "jitter_max": 0.0007396449704142012,
+    "p_in_range": true,
+    "decision": "rejected",
+    "frozen_decision": "rejected",
+    "decision_equal": true
+   },
+   "GENIE_2_12_10_MEC:total": {
+    "p": 0.000744047619047619,
+    "jitter_min": 0.000744047619047619,
+    "jitter_max": 0.000744047619047619,
+    "p_in_range": true,
+    "decision": "rejected",
+    "frozen_decision": "rejected",
+    "decision_equal": true
+   },
+   "GENIE_2_12_10_MEC:shape": {
+    "p": 0.000744047619047619,
+    "jitter_min": 0.000744047619047619,
+    "jitter_max": 0.000744047619047619,
+    "p_in_range": true,
+    "decision": "rejected",
+    "frozen_decision": "rejected",
+    "decision_equal": true
+   },
+   "NuWro_21_09:shape": {
+    "p": 0.001141552511415525,
+    "jitter_min": 0.001141552511415525,
+    "jitter_max": 0.0017123287671232876,
+    "p_in_range": true,
+    "decision": "rejected",
+    "frozen_decision": "rejected",
+    "decision_equal": true
+   }
+  },
+  "verdict": "PASS"
+ },
+ "verdict": "CONTROL PASS (control only; the signs were not evaluated)"
+}

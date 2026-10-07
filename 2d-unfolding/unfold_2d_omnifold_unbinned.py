@@ -1600,6 +1600,9 @@ def main():
     # data-stat and MC-stat contribute jointly per replica (Practical Guide
     # 2507.09582 §5.1). Reseeded via np.random.default_rng so replicas are
     # reproducible. CV result is the unweighted unfold (flag omitted).
+    # w_truth_cv keeps the un-resampled MC truth weights for the completeness
+    # (KNOWN_ISSUES 84); it stays None on the central path.
+    w_truth_cv = None
     if args.bootstrap_seed is not None:
         rng_data = np.random.default_rng(args.bootstrap_seed)
         rng_mc = np.random.default_rng(args.bootstrap_seed + 10_000_000)
@@ -1617,6 +1620,7 @@ def main():
             # consistently up/down-weighted at both reco and truth level
             # (omnifold.py treats sig["w_truth"] and sig["w_reco"] as the same
             # event row).
+            w_truth_cv = sig["w_truth"]
             sig["w_truth"] = sig["w_truth"] * b_truth
             sig["w_reco"] = sig["w_reco"] * b_truth
         print(f"[INFO] Poisson bootstrap: seed={args.bootstrap_seed}, "
@@ -1860,9 +1864,23 @@ def main():
     print(f"[CHECK] hEffDen integral: {hEffDen.Integral():.6g}")
 
     if truth_denom is not None:
+        # KNOWN_ISSUES 84. On a Phase-17 input, mc_signal_reco holds every
+        # truth-passing event of mc_truth_denom, so the central value's c is 1
+        # to rounding. Resampling only the numerator (mc_truth_denom is never
+        # resampled) gave each MC-bootstrap replica its own c_b = sum(b*w)/sum(w)
+        # that the central value does not carry. Resampling both sides gives
+        # sum(b*w)/sum(b*w) = 1, so a replica takes the central value's c from
+        # the un-resampled weights, bit for bit. A pre-Phase-17 input is left
+        # as it was: its c ~ 0.745 covers events OmniFold never sees.
+        sig_c = sig
+        if w_truth_cv is not None and has_truth_only_misses:
+            sig_c = dict(sig, w_truth=w_truth_cv)
+            print("[INFO] Phase-17 MC bootstrap: completeness uses the "
+                  "un-resampled MC truth weights, as the central value does "
+                  "(KNOWN_ISSUES 84).")
         hCompleteness2D, hOFInputTruth2D, hOFTruthDenom2D = \
             compute_omnifold_completeness_2d(
-                sig, pt_edges, pz_edges, truth_denom)
+                sig_c, pt_edges, pz_edges, truth_denom)
         print(f"[CHECK] hOFInputTruth2D integral: {hOFInputTruth2D.Integral():.6g}")
         print(f"[CHECK] hOFTruthDenom2D integral: {hOFTruthDenom2D.Integral():.6g}")
         try:

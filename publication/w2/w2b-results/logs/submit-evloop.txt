@@ -1,0 +1,49 @@
+nothing to sync
+nothing to sync
+{
+ "stage": "evloop",
+ "recorded_spend": 0.0985,
+ "inflight_jobs": 0,
+ "inflight_reservation": 0,
+ "new_tasks": 36,
+ "new_reservation": 6.2109,
+ "total": 6.3094,
+ "ceiling": 8.0,
+ "verdict": "PASS"
+}
+[w2b] w2b_ev_rr0_1A -> 59421456
+[w2b] w2b_ev_rr0_1B -> 59421457
+[w2b] w2b_ev_rr0_1C -> 59421458
+[w2b] w2b_ev_rr0_1D -> 59421459
+[w2b] w2b_ev_rr0_1E -> 59421460
+[w2b] w2b_ev_rr0_1F -> 59421461
+[w2b] w2b_ev_rr0_1G -> 59421462
+[w2b] w2b_ev_rr0_1L -> 59421463
+[w2b] w2b_ev_rr0_1M -> 59421466
+[w2b] w2b_ev_rr0_1N -> 59421468
+[w2b] w2b_ev_rr0_1O -> 59421471
+[w2b] w2b_ev_rr0_1P -> 59421473
+[w2b] w2b_ev_rr1_1A -> 59421476
+[w2b] w2b_ev_rr1_1B -> 59421479
+[w2b] w2b_ev_rr1_1C -> 59421480
+[w2b] w2b_ev_rr1_1D -> 59421481
+[w2b] w2b_ev_rr1_1E -> 59421482
+[w2b] w2b_ev_rr1_1F -> 59421483
+[w2b] w2b_ev_rr1_1G -> 59421485
+[w2b] w2b_ev_rr1_1L -> 59421486
+[w2b] w2b_ev_rr1_1M -> 59421487
+[w2b] w2b_ev_rr1_1N -> 59421488
+[w2b] w2b_ev_rr1_1O -> 59421489
+[w2b] w2b_ev_rr1_1P -> 59421490
+[w2b] w2b_ev_rrzero_1A -> 59421491
+[w2b] w2b_ev_rrzero_1B -> 59421492
+[w2b] w2b_ev_rrzero_1C -> 59421493
+[w2b] w2b_ev_rrzero_1D -> 59421494
+[w2b] w2b_ev_rrzero_1E -> 59421495
+[w2b] w2b_ev_rrzero_1F -> 59421496
+[w2b] w2b_ev_rrzero_1G -> 59421497
+[w2b] w2b_ev_rrzero_1L -> 59421498
+[w2b] w2b_ev_rrzero_1M -> 59421499
+[w2b] w2b_ev_rrzero_1N -> 59421500
+[w2b] w2b_ev_rrzero_1O -> 59421501
+[w2b] w2b_ev_rrzero_1P -> 59421502

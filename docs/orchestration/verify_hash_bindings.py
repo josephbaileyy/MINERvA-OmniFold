@@ -100,6 +100,17 @@ KNOWN_PREEXISTING = {
     ("nd-unfolding/pet/evaluate_annealed_nominal_reproduction.py",
      "docs/orchestration/state/annealed-nominal-error-56563092.json",
      "077e43620fcfb1c12401b41e60f32e184ab0290b67a89bc55def0bfed2735149"),
+    # KNOWN_ISSUES #84, 2026-10-05: the MC-bootstrap replicas now divide by the central value's
+    # completeness, which changes this file's bytes. Neither pin is edited. The receipt records
+    # the bytes that produced the negweight products (`git show` recovers them). The Gate-2
+    # launcher guard keeps refusing a re-run, because its premise -- u2d unchanged since the
+    # hedge submission -- no longer holds; re-pinning it is that gate owner's decision.
+    ("2d-unfolding/unfold_2d_omnifold_unbinned.py",
+     "docs/orchestration/state/negweight-hpss-durability-20260821.json",
+     "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e"),
+    ("2d-unfolding/unfold_2d_omnifold_unbinned.py",
+     "nd-unfolding/pet/run_gate2_target_validator.sh",
+     "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e"),
 }
 
 # Minimum EXPECTED_*_SHA guards the shell collector must still resolve to files in
@@ -419,8 +430,13 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: merged tree): exactly the final-design study's two declared additions, nothing removed:
 #:   ADDED   nd-unfolding/pet/final_design/banks/build_banks.py                                 6f43cb08
 #:   ADDED   nd-unfolding/pet/improvement_campaign/phase_b/pet/configs/b2e4-M-K10-s1.json        0afffb7d
-RECEIPT_BINDING_COUNT = 142
-RECEIPT_BINDING_SHA256 = "e835c7059c291dac3385698a357693489a9dda3a041621d060a3307df7342ce7"
+#: 142 -> 144, digest e835c705 -> f9dab8dd (2026-10-06, the \uqPaper producer). Enumerated before the constant
+#: moved (receipt_inventory() rows on origin/main 2c9939fe and on the branch): exactly the two CSV inputs that
+#: docs/orchestration/state/uqpaper-median-20261006/paper_median.json declares, nothing removed:
+#:   ADDED   2d-unfolding/minerva_paper_anc/bin_mapping.txt                                      d21a41eb
+#:   ADDED   2d-unfolding/minerva_paper_anc/data_result_ptpl_2D_minerva_inclusive_6GeV.txt       02153e7a
+RECEIPT_BINDING_COUNT = 144
+RECEIPT_BINDING_SHA256 = "f9dab8dd64af311296216d02878d28ab05a83062812def44d3cdc39830229cc0"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

@@ -1,0 +1,5 @@
+# decide controls (2026-10-06T09:42:06Z); stand-ins: the frozen joint-evaluate.json for all three signs
+A (frozen as all signs, non-bitwise zero product): rc=0 control=PASS robust: 10 / 10
+B (delta-0 NuWro shape p moved outside jitter range): rc=1 (expect 1) FAIL ['NuWro_21_09:shape']
+C (+4% sign made non-rejecting): rc=0 robust=0 / 10
+D (evaluator's decision disagrees with re-run Holm): rc=2 (expect 2) {"verdict": "COULD_NOT_DECIDE", "why": "rr0: re-run Holm differs from the evaluator", "tests": ["NuWro_21_09:total"]}

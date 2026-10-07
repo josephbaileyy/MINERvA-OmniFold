@@ -1,0 +1,38 @@
+% ====================================================================
+% values_inference.tex -- numbers for the calibrated joint tests (s5p,
+% OI-193, amendment 7). Owned by the publication lane; read ONLY by the
+% article (main_paper.tex). Every value is transcribed from a committed
+% record, cited per line. Edit the record first, never this file alone.
+%
+% RECORD = docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md
+%          (origin/main 9b26b8c3), from joint-evaluate.json sha256 b9604502...
+% TERM   = docs/orchestration/RECORD-20261005-s5p-terminal-evaluation-pending-verification.md
+% A7     = docs/orchestration/state/s5p/contract-amendment-7-production-admission.json
+% ====================================================================
+\newcommand{\jtNtests}{10}          % RECORD sec. 1 (A7 claims.family)
+\newcommand{\jtAlpha}{0.05}         % RECORD sec. 1, familywise
+\newcommand{\jtNcells}{109}         % A7 claims.family: supported J cells
+\newcommand{\jtNcellsGiBUU}{72}     % A7 claims.family: GiBUU domain, p_par < 6 GeV/c
+\newcommand{\jtBmin}{1343}          % RECORD sec. 2: GENIE MEC final B
+\newcommand{\jtBmax}{1751}          % RECORD sec. 2: NuWro final B
+\newcommand{\jtBatch}{200}          % A7 calibration.sequential_rule
+\newcommand{\jtBcap}{1999}          % A7 calibration.sequential_rule
+\newcommand{\jtVn}{194}             % A7 metric_frozen.n
+\newcommand{\jtModelBands}{34}      % A7 conditions item 3
+\newcommand{\jtFluxUniverses}{100}  % A7 calibration.process (one PPFX universe of 100 per experiment)
+\newcommand{\jtLambdaMin}{318}      % A7 prefreeze summary: GENIE MEC lambda 317.7
+\newcommand{\jtLambdaMax}{6344}     % A7 prefreeze summary: NuWro lambda 6344
+\newcommand{\jtLostCal}{224}        % RECORD sec. 5
+\newcommand{\jtLostInterrupted}{111}% RECORD sec. 5
+\newcommand{\jtLostNever}{113}      % RECORD sec. 5
+\newcommand{\jtLostPow}{53}         % RECORD sec. 5
+\newcommand{\jtWorstIntLo}{0.013}   % RECORD sec. 5 / TERM sec. 3: worst_interrupted p range
+\newcommand{\jtWorstIntHi}{0.019}
+\newcommand{\jtWorstAllLo}{0.025}   % TERM sec. 3: worst_all_missing p range (0.0250-0.0414)
+\newcommand{\jtWorstAllHi}{0.041}
+\newcommand{\jtRecompRows}{1379}    % RECORD sec. 4: AGREE 1379/1379, 0 discrepancies
+\newcommand{\jtRuntimeRho}{0.06}    % RECORD sec. 5: |rho| <= 0.06 runtime vs statistic
+\newcommand{\jtMoneMin}{0.50}       % A7 conditions item 1: fine vs merged-x2 = 0.50-0.86 of coarse vs fine
+\newcommand{\jtMoneMax}{0.86}
+\newcommand{\jtPowPthree}{0.231}    % RECORD sec. 6: P3 shape power at 0.005, MnvTune null
+\newcommand{\jtPowPonegShape}{0.739}% RECORD sec. 6: P1g shape power at 0.005, GENIE CV null

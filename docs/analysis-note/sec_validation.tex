@@ -58,9 +58,74 @@ would require re-running the full cross-fitted OmniFold pipeline per
 pseudoexperiment. Calibrated unbinned goodness-of-fit remains
 open~\cite{unbinnedguide}.
 
-\paragraph{Pull diagnostics and the open 2D coverage test.}
+\paragraph{Coverage of the 2D statistical band against a fixed truth.}
 \label{sec:coverage}
-The ensemble contains $N_{\text{toy}}=200$ 2D closure unfolds
+This test asks whether the production 2D statistical band (\S\ref{sec:bootstrap}) covers a
+\emph{fixed} truth at its nominal rate. Its design, criteria and positive control were
+pre-registered before any toy ran (App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}).
+
+Each toy draws pseudo-data event by event as Poisson counts with means equal to the simulated
+reconstructed weights. It resamples the simulation with the production Poisson(1) bootstrap, and
+unfolds with the production estimator (lgbm, five iterations, fixed training seed). The reference
+$T$ is the unfluctuated simulated truth, identical in every toy. The no-fluctuation configuration
+reproduces both the production closure output and $T$ exactly.
+
+In reported bin $b$ of toy $t$, $z_{tb}=(U_{tb}-T_b)/(r_b T_b)$, where $r_b$ is the production
+band's relative spread. Coverage $C_k$ is the fraction of all (toy, bin) pairs with $|z|\le k$,
+with intervals from resampling whole toys. The band counts as nominal if its ratio to the true
+scatter lies in $[0.9,1.1]$, which gives the windows $C_1\in[\covTwoDWinOneLo,\covTwoDWinOneHi]$
+and $C_2\in[\covTwoDWinTwoLo,\covTwoDWinTwoHi]$. A FAIL at the interim look of 100 toys, with
+99.5\% intervals, stops the study.
+
+\textbf{The band fails: it undercovers in its tails.} At the interim look
+($N_{\text{toy}}=\covTwoDNtoy$, 205 bins):
+\begin{itemize}[nosep]
+  \item $C_1=\covTwoDCOne$ $[\covTwoDCOneLo,\covTwoDCOneHi]$ is nominal (Gaussian 0.683).
+  \item $C_2=\covTwoDCTwo$ $[\covTwoDCTwoLo,\covTwoDCTwoHi]$ lies entirely below its window
+        (Gaussian 0.954).
+  \item The pull RMS is $\covTwoDPullRMS$, and the mean pull is consistent with zero.
+\end{itemize}
+The pre-registered verdict is FAIL-undercoverage, and the study stopped by its futility rule. An
+independent recomputation with its own code reproduces the pooled coverages, their intervals, the
+controls and the secondary below.
+
+The positive control rescales the band on the same toys. At $\times0.7$ and $\times1.3$, $C_2$
+moves to $\covTwoDCTwoLowCtl$ and $\covTwoDCTwoHighCtl$, and both directions are flagged.
+
+The failure is one of width, not bias. The per-bin pattern below is descriptive and post hoc.
+\begin{itemize}[nosep]
+  \item \textbf{Uneven in both directions.} The band is too wide in $\covTwoDNwide$ bins (pull RMS
+        below 0.9) and too narrow in $\covTwoDNnarrow$ (above 1.1). The pooled $C_1$ is nominal
+        partly through this cancellation; the median bin's pull RMS is $\covTwoDBinRMSmed$.
+  \item \textbf{Where it is too narrow.} $\covTwoDNlowCTwo$ bins have a per-bin $C_2$ below 0.85.
+        Of these, 21 form a block at $\pPar\ge\SI{15}{GeV/c}$ and $\pT<\SI{0.55}{GeV/c}$. Six more
+        lie in the highest-$\pT$ row (\SIrange{2.5}{4.5}{GeV/c}) at $\pPar$
+        \SIrange{6}{20}{GeV/c}. The $\covTwoDNedge$ bins with pull RMS above~2 carry
+        \SI{\covTwoDDeficitShare}{\percent} of the $C_2$ deficit.
+\end{itemize}
+
+The band's replicas divide by a bootstrapped completeness that the central value (exactly~1)
+does not carry. A secondary, added by amendment after the pilot, applies that division to the toys.
+Scored against the same band, it overcovers: $C_1=\covTwoDRepCOne$, with its interval above the
+window. By the rule fixed before the full run (its undercoverage branch was written after the
+pilot pulls had been seen), the primary undercoverage is attributed to this term of the band's
+construction. The attribution is partial: in the replica form, the $\pPar$
+\SIrange{40}{60}{GeV/c} column still undercovers.
+That term was removed on 2026-10-06 and the band rebuilt; the rebuilt band is the quoted one
+(\texttt{KNOWN\_ISSUES.md} 84; App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}). This
+section's result is for the earlier band and was not re-tested.
+
+\textbf{Scope.} The result concerns the statistical band only.
+\begin{itemize}[nosep]
+  \item It changes no central value or quoted uncertainty.
+  \item It says nothing about systematic, total or five-dimensional coverage.
+  \item Its simulation-side scatter reuses the resampling that built the band, so only the
+        data-side fluctuation is tested by an independent mechanism.
+  \item Because $T$ equals the prior, it cannot detect regularization bias toward the prior.
+\end{itemize}
+
+\paragraph{Same-ensemble pull diagnostic (not a coverage test).}
+An earlier ensemble contains $N_{\text{toy}}=200$ 2D closure unfolds
 (App.~\ref{app:provenance}, \texttt{coverage-toys}),
 % (\texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}; rollup
 % \texttt{uq/coverage\_toys.py}, summary \texttt{uq/coverage/coverage\_summary.txt})
@@ -90,9 +155,8 @@ These show that the standardized toy residuals are approximately normal.
 
 With $\sigma_i$ estimated from the scored toys, these diagnostics are not a
 frequentist coverage measurement and do not certify the bootstrap band. The figures
-serve only as standardized-pull/Gaussianity diagnostics; no 2D coverage number is quoted from
-this ensemble (App.~\ref{app:history}). Coverage testing remains open and requires
-an independently stored unfluctuated truth reference or a redesigned ensemble.
+serve only as standardized-pull/Gaussianity diagnostics; no coverage number is quoted from
+this ensemble. The fixed-truth test above is the 2D coverage statement (App.~\ref{app:history}).
 
 \paragraph{Stability and efficiency.}
 The 5-iter total $\sigma$ is within \SI{0.026}{\percent} of 10-iter (per-bin shape RMS
