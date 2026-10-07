@@ -237,3 +237,102 @@ about 100 lines.
 - **Lane B.** Its `publication-results-YYYY-MM-DD` tag is a reserved act. `DECISION-20261006`: "Public
   deposit, release tagging, submission, and any additional scientific work remain separately
   authorized." Lane B's rules are otherwise unchanged.
+
+## Second simplification pass, 2026-10-07 (documentation only; one family proposed)
+
+Run from `origin/main` `e2cf8a4e` in an isolated worktree. Lane A stays closed, and this pass removes nothing. It
+changes no scientific claim, grade, gate or publication source.
+
+**Lifecycle records reconciled with committed terminal outcomes.**
+- **Register.** `OI-193` is retired. Its terminal criterion, "campaign final-disposition record committed and
+  pushed", is met by `DELIVERY-20261006-s5p-campaign-terminal.md` (`9984a5fd`). Its `OPEN_ITEMS.md` row now reads
+  CLOSED and routes to that record. Six unassigned backlog rows are also retired, each because its own record states
+  the outcome: `OI-140` ("VERIFICATION LANDED", with the remainder moved to `OI-147`), `OI-141` ("FIXED AND LANDED"),
+  `OI-145` ("REPINNED"), `OI-147` ("COMPLETE"), `OI-149` ("FIXED AND LANDED") and `OI-187` ("RULED … BY JOSEPH").
+  The views were regenerated with `control_plane_lint.py --write`, and the current-work list went from 14 rows to 13.
+- **Handoffs.** Six concluded orchestration handoffs are now `ARCHIVAL terminal` in `MANIFEST-overrides.tsv`, each
+  with a `canonical_successor`: 0925 negweight, 0926 precision completion, 0928 s5p parallel tasks, 0929 s5p cold
+  start, 0929 seed-gap correction and 1005 2D coverage. No document bytes changed.
+- **Kept LIVE.** Four handoffs stay `LIVE` because each still holds items tracked nowhere else: 0924 preparation
+  (D1–D11), 0928 s5p recompute (two LOWs owed), and the 0921/0922 GBDT pair (see the 2026-09-24 recovery
+  manifest). The remaining s5p harness, tier-D and note-sync handoffs are current.
+- **Router.** `CATALOG.md`'s scalar-5D "start here" row and its "what is authorized next" row had still routed to
+  the 2026-09-24 preparation handoff. Both now point to the terminal delivery and to `docs/CURRENT_WORK.md`.
+- **Left for owners.** These items are partly done, and their owners must decide them:
+  - `OI-127`, `OI-128`, `OI-129`, `OI-70`, `OI-73`, `OI-125`, `OI-173`;
+  - `OI-131(b)`: discharged by measurement on 2026-08-20, but the lint gives a leaf row no retirement except
+    deletion;
+  - `LIVE-STATE.md`, generated 2026-09-21, which has never routed `OI-193`; regenerating it is held under `OI-73`.
+
+**Compact entry points added.**
+- `nd-unfolding/pet/README.md`: one table that names where each of the six completed PET campaign directories ends.
+- `reproduction/s5p/README.md`: which of the five committed reports is current, which is history, and where each
+  is recorded. Two of them are 9,417 lines, the longest Markdown in the tree.
+
+**Size by dependency.** Tracked content totals 452.6 MB in 9,213 files. `nd-unfolding/pet` alone is 332.2 MB in
+6,003 files. A read-only classification of its campaign subtrees found:
+- **P (reproduction/publication):** none. No reproduction or publication build reads them. The two PET figures in
+  the note are byte copies.
+- **R/T (runtime readers and tests):** the code that reads them is PET's own, and none of it is outside
+  `nd-unfolding/pet`. Bank building and the decks read `final_design/results/final`, `predecessor_posthoc`,
+  `step2int`, `improvement_campaign/{confirm,phase_*}` and `gbdt_comparison/results`, and tests cover them. The
+  runners and a test that requires 500 or more committed configs matched to `runs/*.tsv` read `configs/*`. These
+  configs are regenerable by `freeze/make_stage_manifests.py`, but removing them is a test migration, not an
+  archival.
+- **H (hash bindings):** `configuration_comparison/receipts` and `direct_token_comparison/local_validation` are the
+  only sources of inventory rows in `verify_hash_bindings.py` (144 at `f9dab8dd…`).
+  `direct_token_comparison/execution_runs` is asserted by `test_hash_bindings.py`.
+- **C (citations only):** `final_design/results/{dev1,dev2S,dev2Q,dev2P,dev2L,dev2T,s3p,s3p_new}` (674 files),
+  `source_audit_runs` (64) and `runtime_runs/20260910` (48).
+
+None of these PET subtrees exists at either evidence epoch. Any removal therefore needs a new epoch and Joseph's
+authorization (Lane A closure, above).
+
+### Proposed family B1 — PET final-design development and sizing outputs (NOT authorized; not executed)
+
+- **Paths.** The exact list is [`POST_PUBLICATION_REORG_B1_PATHS.txt`](POST_PUBLICATION_REORG_B1_PATHS.txt): 674
+  paths, sha256 `149ee290…e2b9`, from `git ls-files` at `e2cf8a4e`. They are 668 JSON and 6 TXT files, 47.5 MB, and
+  no Markdown. By directory: dev1 273, dev2S 97, dev2Q 65, dev2P 65, dev2L 65, dev2T 33, s3p 44, s3p_new 32.
+- **What depends on them.**
+  - No runtime import, test, publication build, manifest row or hash-binding row.
+  - The family is an *indirect reproduction input* for two dev summaries. After removal, both are rebuilt from the
+    tag rather than from main:
+    - `dev/summarize_dev.py --root` reads the dev directories, with the predecessor post-hoc files, and builds
+      `dev/DEV_TABLES-*.json`. The 2026-09-27 table is pinned in `slides/deck_numbers.json`.
+    - `dev/n2_table.py --scores` reads the `S3P-*` score files, which are in `s3p/`, for the S-N2 screen in
+      `dev/SCREENS-*.json`.
+  - The prose citations are `final_design/DEVELOPMENT-20260926.md:9`, `PROTOCOL-20260925.md:320,596`,
+    `sizing/SIZING-20260926.md:5` and `HANDOFF-pet-final-design.md:115`. The last of these names a scratch path.
+- **Dry run.** A throwaway worktree at `e2cf8a4e` was checked with the 674 paths removed and again without the
+  removal. The results were identical:
+  - `verify_hash_bindings.py`: ALL BINDINGS INTACT.
+  - `verify_receipt_artifacts.py`: the same pinned inventory, `49916d28…`.
+  - `generate_manifest.py`: byte-identical output.
+  - pytest over `final_design`, `gbdt_comparison`, `generator_diagnosis` and `nd-unfolding/tests/test_hash_bindings.py`:
+    308 passed, 9 skipped, and the same 4 failures, which also fail on unmodified main.
+    The 4 are in `test_pfd_build_evidence`, `test_pfd_provenance_gate` and `test_step2_ensemble` (×2).
+  - None of the 40 local worktrees has a dirty edit under these directories.
+- **Preservation and recovery.**
+  1. Push an annotated tag `evidence/simplification-2026-10-07-<sha>` at the pre-removal main commit.
+  2. Write an all-ref bundle and its sha256 to both external epoch directories named at the top of this plan.
+  3. In a fresh clone, restore all 674 paths with `git show <tag>:<path>` and match each sha256.
+  4. From a checkout of the tag, rebuild `DEV_TABLES-20260927.json` and match its pinned digest `eb7a7eb6…`.
+     Then rebuild the S-N2 values in `SCREENS-20260927.json`. Record any input that does not resolve, rather than
+     proceeding.
+- **Consumer changes, in the removal commit.**
+  - Add one `final_design/results/README.md` stub, the old-path discovery route. It names the tag, the list file and
+    the `git show` command.
+  - Add one line to each of `summarize_dev.py`'s and `n2_table.py`'s usage docstrings naming the tag as the inputs'
+    source.
+  - The dated records keep their bytes.
+- **Expected reduction.** −674 tracked files and −47.5 MB. Markdown is unchanged apart from the one stub.
+- **Validation.**
+  - Run gate steps 1–10 above on the rebased head.
+  - Re-run the dry-run set and expect the same failure set.
+  - `build_all.sh`: the three `pdftotext` digests must not change.
+  - Run `squeue` to confirm that no queued job writes into the repository paths. PET jobs write to `$B` on scratch.
+  - Have one independent read-only reviewer check the family diff.
+
+The other two citation-only subtrees, `source_audit_runs` and `runtime_runs`, could join B1 under the same epoch.
+They are left out because `source_audit_runs` carries a manifest consumer row (`preserve.py`) and
+`reproduce_evidence.py` reads it at a pinned revision; each needs its own check.
