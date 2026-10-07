@@ -512,3 +512,10 @@ built all of these and is disqualified from grading them.
   which suppressed **all 19** M-1 findings as `EXPECTED-BY-RULING` with the suite green — the prior
   GRADE has **self-expired** (all three digests moved) and never examined that guard. **Authorizes
   nothing; it is NOT CITABLE FOR any Gate-2 PASS.**
+
+- **Two 2026-09-02 handoffs, tracked 2026-10-07 byte-identical to their untracked originals** (Joseph,
+  "Commit them to main"). Records already cite both by bare filename, which resolves in this directory:
+  [`HANDOFF-20260902-operational-baseline-snapshot.md`](HANDOFF-20260902-operational-baseline-snapshot.md)
+  (sha256 `bc9867ed…`, as cited in `INTEGRATION-20260903` and `PROPOSAL-20260903`; context, not authority) and
+  [`HANDOFF-20260902-k0-continuity.md`](HANDOFF-20260902-k0-continuity.md) (cited at `VOI-20260906:417`).
+  Both are archival; neither authorizes anything.
