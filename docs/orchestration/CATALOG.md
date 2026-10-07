@@ -37,6 +37,7 @@ This is a proposal, not compute authority or a change to the current campaigns.
 
 | Subject | Record |
 |---|---|
+| Joseph's launch authorization and the study handoff (the PREREG's `Authorization` line cites them) | [`GOAL-20261005-2d-coverage-test.txt`](GOAL-20261005-2d-coverage-test.txt), [`HANDOFF-20261005-2d-coverage-test.md`](HANDOFF-20261005-2d-coverage-test.md) |
 | fixed-truth coverage of the production 2D statistical band: design, verdict rule, positive control, amendments | [`PREREG-20261005-2d-fixed-truth-coverage.md`](PREREG-20261005-2d-fixed-truth-coverage.md) |
 | the verdict, per-bin pattern, attribution, independent recomputation, cost (`VL169`, `KNOWN_ISSUES.md` 84) | [`OUTCOME-20261005-2d-fixed-truth-coverage-fail.md`](OUTCOME-20261005-2d-fixed-truth-coverage-fail.md) |
 | KNOWN_ISSUES 84 fix and the rebuilt band (`VL170`, adopted 2026-10-06): per-bin σ_new/σ_old, launcher, comparison script, budget, and the post hoc rescoring of the VL169 toys | [`state/ki84-rebuild-20261006/`](state/ki84-rebuild-20261006/) |

@@ -1,0 +1,19 @@
+Execute the study in HANDOFF-20261005-2d-coverage-test.md at the MINERvA-OmniFold repository root. Read the complete handoff and the current canonical instructions (AGENTS.md and the routes the handoff lists) first. Work in an isolated worktree on a new branch from current origin/main.
+
+I authorize this study end to end:
+- implementation of the fixed-truth toy design and scorer, with tests;
+- a pre-registration record committed before launch, and dated amendments after the pilot and before the full run;
+- a 2–3 toy pilot, then the full 200-toy array on Perlmutter, with retries and re-runs;
+- independent read-only review on claude-school or with your own subagents;
+- ledger, STATUS and KNOWN_ISSUES records;
+- edits to the 2D coverage statements in the note, paper and primer;
+- commits, pushes, a PR, merging that PR into main once build_all.sh passes, all tests pass and an independent recomputation reproduces the headline numbers;
+- and the standalone note sync and push.
+
+The compute limit is 60 CPU node-hours on m3246 in total, including the pilot and retries, outside the s5p campaign's pool. Never use premium or overrun. Measure the account balance first. Routine work and amendments within this scope do not need repeated permission.
+
+The objective is a measured, pre-registered answer to whether the production 2D statistical band covers a fixed truth at its nominal rate, recorded honestly whether it passes or fails, with a positive control showing that the scorer detects miscoverage. A result cannot change the 2D central value, its estimator, or any adopted or quoted uncertainty, and it says nothing about systematic, total or 5D coverage.
+
+Do not touch the s5p campaign's worktree, jobs, state or budget, or any other session's checkout. Do not use codex. Stop and report instead of improvising if the cost estimate exceeds the limit, if the NERSC certificate expires, if the design would require changing production code that other results depend on, or if a check fails twice after repair.
+
+Finish with a report to me: the pre-registered criteria and the verdict against them; coverage at 1σ and 2σ with intervals; the positive-control result; node-hours used; commits, PR and both remote heads; and what the result does not license.
