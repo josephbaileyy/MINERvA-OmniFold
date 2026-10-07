@@ -494,6 +494,15 @@ docs/orchestration/EXCEPTION-20260927-s5p-pilot-negative-rate-resubmission.md	LI
 docs/orchestration/REVIEW-20260927-s5p-admission-confirmation.md	LIVE	open	
 docs/orchestration/state/s5p/contract-amendment-7-production-admission.json	MACHINE	open	
 docs/orchestration/HANDOFF-20260928-s5p-parallel-tasks.md	LIVE	open	
+docs/orchestration/HANDOFF-20260928-s5p-recompute.md	LIVE	open	
+docs/orchestration/ASSESSMENT-20260929-s5p-recompute-A6-A8.md	LIVE	open	
+docs/orchestration/RULING-20260929-s5p-A7-VS-kappa3-variant-set.md	LIVE	open	
+docs/orchestration/REVIEW-20260929-s5p-recompute-comparer.md	LIVE	open	
+docs/orchestration/REVIEW-20260929-s5p-recompute-f4-correction.md	LIVE	open	
+docs/orchestration/REPORT-20261005-s5p-recompute-final-verification.md	LIVE	open	
+docs/orchestration/REVIEW-20261005-s5p-recompute-comparer-extension.md	LIVE	open	
+docs/orchestration/REPORT-20261006-s5p-recompute-recovery-crosscheck.md	LIVE	open	
+docs/orchestration/REPORT-20261006-s5p-recompute-w2-recoil-check.md	LIVE	open	
 docs/orchestration/CLARIFICATION-20260928-s5p-recompute-A6-A8.md	LIVE	open	
 docs/orchestration/HANDOFF-20260928-s5p-analysis-note-sync.md	LIVE	open	
 docs/orchestration/RULING-20260929-s5p-A7-robustness-flag.md	LIVE	open	

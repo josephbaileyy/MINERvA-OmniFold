@@ -1,0 +1,166 @@
+{
+ "k_frozen": {
+  "agree": 62,
+  "differ": []
+ },
+ "k_recovered": {
+  "agree": 62,
+  "differ": []
+ },
+ "B_frozen": {
+  "agree": 62,
+  "differ": []
+ },
+ "M_recovered": {
+  "agree": 62,
+  "differ": []
+ },
+ "M_residual = 0": {
+  "agree": 62,
+  "differ": []
+ },
+ "T_obs": {
+  "agree": 62,
+  "differ": []
+ },
+ "max_recovered_T": {
+  "agree": 62,
+  "differ": []
+ },
+ "frozen_reproduced (k, B) vs terminal claim": {
+  "agree": 10,
+  "differ": []
+ },
+ "complete-set claim k/B/p (claim)": {
+  "agree": 10,
+  "differ": []
+ },
+ "complete-set claim p (claim)": {
+  "agree": 10,
+  "differ": []
+ },
+ "complete-set claim k/B/p (robust_keep_both)": {
+  "agree": 10,
+  "differ": []
+ },
+ "complete-set claim p (robust_keep_both)": {
+  "agree": 10,
+  "differ": []
+ },
+ "complete-set claim k/B/p (robust_replace)": {
+  "agree": 10,
+  "differ": []
+ },
+ "complete-set claim p (robust_replace)": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set decision": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set k": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set B": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set p": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set threshold": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set interval": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set_kappa3_replace decision": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set_kappa3_replace k": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set_kappa3_replace B": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set_kappa3_replace p": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set_kappa3_replace threshold": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set_kappa3_replace interval": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set_kappa3_keep_both decision": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set_kappa3_keep_both k": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set_kappa3_keep_both B": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set_kappa3_keep_both p": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set_kappa3_keep_both threshold": {
+  "agree": 10,
+  "differ": []
+ },
+ "decisions_complete_set_kappa3_keep_both interval": {
+  "agree": 10,
+  "differ": []
+ },
+ "labels_complete_set": {
+  "agree": 10,
+  "differ": []
+ },
+ "power n complete": {
+  "agree": 6,
+  "differ": []
+ },
+ "power n frozen": {
+  "agree": 6,
+  "differ": []
+ },
+ "power M_recovered": {
+  "agree": 6,
+  "differ": []
+ },
+ "power complete_set power": {
+  "agree": 48,
+  "differ": []
+ },
+ "power complete_set interval": {
+  "agree": 24,
+  "differ": []
+ },
+ "power frozen power": {
+  "agree": 48,
+  "differ": []
+ },
+ "power frozen interval": {
+  "agree": 24,
+  "differ": []
+ },
+ "total": {
+  "agree": 856,
+  "differ": 0
+ }
+}

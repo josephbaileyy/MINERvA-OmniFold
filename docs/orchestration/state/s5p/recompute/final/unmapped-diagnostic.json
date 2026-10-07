@@ -1,0 +1,123 @@
+{
+ "c=0 null T median": {
+  "agree": 10,
+  "disagree": 0,
+  "examples": []
+ },
+ "c=0 null T sd": {
+  "agree": 0,
+  "disagree": 10,
+  "examples": [
+   [
+    "MnvTune_v1/total",
+    13.55340758974711,
+    13.558374937390493
+   ],
+   [
+    "MnvTune_v1/shape",
+    14.690889047830849,
+    14.696273284422812
+   ],
+   [
+    "GENIE_2_12_10_CV/total",
+    58.434501884269295,
+    58.455902544896915
+   ]
+  ]
+ },
+ "claim CP95 interval": {
+  "agree": 20,
+  "disagree": 0,
+  "examples": []
+ },
+ "holm_point p_holm (classical)": {
+  "agree": 10,
+  "disagree": 0,
+  "examples": []
+ },
+ "holm_point p_raw": {
+  "agree": 10,
+  "disagree": 0,
+  "examples": []
+ },
+ "holm_point reject": {
+  "agree": 10,
+  "disagree": 0,
+  "examples": []
+ },
+ "power B": {
+  "agree": 24,
+  "disagree": 0,
+  "examples": []
+ },
+ "power alpha": {
+  "agree": 48,
+  "disagree": 0,
+  "examples": []
+ },
+ "power levels": {
+  "agree": 1,
+  "disagree": 0,
+  "examples": []
+ },
+ "power n": {
+  "agree": 72,
+  "disagree": 0,
+  "examples": []
+ },
+ "power set declared": {
+  "agree": 6,
+  "disagree": 0,
+  "examples": []
+ },
+ "power set incomplete": {
+  "agree": 6,
+  "disagree": 0,
+  "examples": []
+ },
+ "power set n": {
+  "agree": 6,
+  "disagree": 0,
+  "examples": []
+ },
+ "shift a": {
+  "agree": 5,
+  "disagree": 0,
+  "examples": []
+ },
+ "shift bias_norm_W": {
+  "agree": 5,
+  "disagree": 0,
+  "examples": []
+ },
+ "shift magnitude": {
+  "agree": 5,
+  "disagree": 0,
+  "examples": []
+ },
+ "shift n_pairs": {
+  "agree": 5,
+  "disagree": 0,
+  "examples": []
+ },
+ "shift se": {
+  "agree": 5,
+  "disagree": 0,
+  "examples": []
+ },
+ "variant B": {
+  "agree": 62,
+  "disagree": 0,
+  "examples": []
+ },
+ "variant CP95 interval": {
+  "agree": 62,
+  "disagree": 0,
+  "examples": []
+ },
+ "variant level": {
+  "agree": 62,
+  "disagree": 0,
+  "examples": []
+ }
+}
