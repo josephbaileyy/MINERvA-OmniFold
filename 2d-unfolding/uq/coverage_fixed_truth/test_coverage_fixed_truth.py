@@ -75,6 +75,37 @@ def test_compress_keeps_selected_events_and_total():
     assert cw.tolist() == [2, 1, 3] and cw.sum() == k.sum()
 
 
+def test_ki85_bootstrap_seeds_are_disjoint_from_every_toy_and_production_seed():
+    used = set()
+    for r in (td.PRODUCTION_DATA_SEEDS, td.PRODUCTION_MC_SEEDS,
+              td.OLD_TOY_DATA_SEEDS, td.OLD_TOY_MC_SEEDS):
+        used.update(r)
+    for t in range(1, td.MAX_TOY_INDEX + 1, 97):
+        used.update(td.toy_seeds(t))
+    used.update(td.toy_seeds(td.MAX_TOY_INDEX))
+    boot = {td.bootstrap_seed(b) for b in range(1, td.MAX_BOOT_INDEX + 1)}
+    assert len(boot) == td.MAX_BOOT_INDEX and not boot & used
+    assert min(boot) > td.MC_SEED_BASE + td.MAX_TOY_INDEX
+    with pytest.raises(ValueError):
+        td.bootstrap_seed(0)
+
+
+def test_ki85_data_bootstrap_is_per_event_poisson_of_the_counts():
+    k = np.repeat([0.0, 1.0, 3.0], 100_000)
+    r = td.draw_data_bootstrap(k, td.bootstrap_seed(1))
+    assert np.array_equal(r, td.draw_data_bootstrap(k, td.bootstrap_seed(1)))
+    assert not np.array_equal(r, td.draw_data_bootstrap(k, td.bootstrap_seed(2)))
+    assert np.all(r[k == 0] == 0)
+    for kk in (1.0, 3.0):
+        sel = r[k == kk]
+        # Poisson(k): mean k and variance k. k * Poisson(1) would have variance k^2.
+        assert abs(sel.mean() - kk) < 0.03 and abs(sel.var() - kk) < 0.06
+    with pytest.raises(ValueError):
+        td.draw_data_bootstrap(np.array([1.0, 0.5]), 1)
+    with pytest.raises(ValueError):
+        td.draw_data_bootstrap(np.array([1.0, -1.0]), 1)
+
+
 def test_windows_and_nominal():
     assert sc.NOMINAL[1] == pytest.approx(0.682689, abs=1e-6)
     assert sc.NOMINAL[2] == pytest.approx(0.954500, abs=1e-6)
@@ -172,3 +203,47 @@ def test_replica_form_divides_by_prior_over_truth(tmp_path):
              T=T, T_max_abs_diff=np.zeros(200), prod_mean=m, prod_sigma=s, reported=rep)
     res = sc.run(tmp_path / "x.npz", "final")
     assert res["secondary_replica_form"]["C1"] == res["result"]["C1"]
+
+
+import ki85_compare as kc  # noqa: E402
+
+
+def _arms(sB, sT, sR, n_bins=205, seed=0):
+    """Replica arrays with relative spreads sB, sT, sR (scalars) around a common mean."""
+    rng = np.random.default_rng(seed)
+    mean = rng.uniform(1.0, 3.0, n_bins)
+    arm = lambda n, s: mean * (1 + s * rng.standard_normal((n, n_bins)))
+    return arm(50, sB), arm(50, sT), arm(200, sR)
+
+
+def test_ki85_rho2_is_rho1_times_rhoT():
+    XB, XT, XR = _arms(0.01, 0.012, 0.02)
+    corr = np.full(205, 1.08)
+    r = kc.per_bin_ratios(XB, XT, XR, corr)
+    assert np.allclose(r["rho2"], r["rho1"] * r["rhoT"])
+
+
+def test_ki85_classify_branches():
+    assert kc.classify(1.0, [0.95, 1.05], 0.63, 0.63)[0].startswith("consistent with (b)")
+    assert kc.classify(1.6, [1.5, 1.7], 1.0, 0.63)[0].startswith("consistent with (a)")
+    assert kc.classify(1.25, [1.15, 1.35], 0.79, 0.63)[0] == "mixed"
+    assert kc.classify(1.0, [0.95, 1.05], 0.95, 0.95)[0] == "premise not reproduced"
+    # the share of the log-gap: all (a) when M1 = 1 / MT, none when M1 = 1
+    assert abs(kc.classify(1 / 0.63, [1.5, 1.7], 1.0, 0.63)[1] - 1.0) < 1e-12
+    assert abs(kc.classify(1.0, [0.95, 1.05], 0.63, 0.63)[1]) < 1e-12
+
+
+def test_ki85_end_to_end_synthetic_recovers_each_hypothesis():
+    corr = np.ones(205)
+    # (b): bootstrap on the toy reproduces the toy scatter; real data scatters 1.6x more
+    XB, XT, XR = _arms(0.010, 0.010, 0.016, seed=1)
+    r = kc.per_bin_ratios(XB, XT, XR, corr)
+    ci = kc.median_intervals(XB, XT, XR, corr, n=200)
+    M = {k: np.median(v) for k, v in r.items()}
+    assert kc.classify(M["rho1"], ci["rho1"], M["rho2"], M["rhoT"])[0].startswith("consistent with (b)")
+    # (a): the bootstrap scatters like real data, 1.6x the true toy scatter
+    XB, XT, XR = _arms(0.016, 0.010, 0.016, seed=2)
+    r = kc.per_bin_ratios(XB, XT, XR, corr)
+    ci = kc.median_intervals(XB, XT, XR, corr, n=200)
+    M = {k: np.median(v) for k, v in r.items()}
+    assert kc.classify(M["rho1"], ci["rho1"], M["rho2"], M["rhoT"])[0].startswith("consistent with (a)")

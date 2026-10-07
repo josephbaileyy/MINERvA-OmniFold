@@ -72,8 +72,17 @@ def main():
     ap.add_argument("--estimator", default="lgbm", choices=["exact", "hist", "xgb", "lgbm"])
     ap.add_argument("--seed", type=int, default=1, help="GBDT seed, as the production replicas")
     ap.add_argument("--device", default="cpu", choices=["cpu", "cuda"])
+    ap.add_argument("--no-mc-bootstrap", action="store_true",
+                    help="KNOWN_ISSUES 85 arms T and B: keep the MC unresampled (b = 1)")
+    ap.add_argument("--data-bootstrap", type=int, default=None, metavar="S",
+                    help="KNOWN_ISSUES 85 arm B: Poisson(k) per event on toy --toy's pseudo-data, "
+                         "seed toy_design.bootstrap_seed(S); requires --no-mc-bootstrap")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
+    if args.no_fluctuation and (args.no_mc_bootstrap or args.data_bootstrap is not None):
+        ap.error("--no-mc-bootstrap and --data-bootstrap need --toy")
+    if args.data_bootstrap is not None and not args.no_mc_bootstrap:
+        ap.error("--data-bootstrap is a data-only bootstrap: pass --no-mc-bootstrap")
 
     t0 = time.time()
     pt_edges, pz_edges = u2d.PT_EDGES, u2d.PZ_EDGES
@@ -125,13 +134,22 @@ def main():
     else:
         data_seed, mc_seed = toy_design.toy_seeds(args.toy)
         counts = toy_design.draw_pseudo_data_counts(w_reco_c, data_seed)
-        b = toy_design.draw_mc_bootstrap(sig["w_truth"].size, mc_seed)
-        sig["w_truth"] = sig["w_truth"] * b
-        sig["w_reco"] = sig["w_reco"] * b
+        meta.update({"toy": int(args.toy), "data_seed": data_seed, "sum_k_toy": float(counts.sum())})
+        if args.data_bootstrap is not None:
+            boot_seed = toy_design.bootstrap_seed(args.data_bootstrap)
+            counts = toy_design.draw_data_bootstrap(counts, boot_seed)
+            meta.update({"data_bootstrap": int(args.data_bootstrap), "boot_seed": boot_seed})
+        if args.no_mc_bootstrap:
+            meta.update({"mc_seed": None, "mc_bootstrap": False})
+        else:
+            b = toy_design.draw_mc_bootstrap(sig["w_truth"].size, mc_seed)
+            sig["w_truth"] = sig["w_truth"] * b
+            sig["w_reco"] = sig["w_reco"] * b
+            meta.update({"mc_seed": mc_seed, "mc_bootstrap": True,
+                         "sum_b": float(b.sum()), "n_b": int(b.size)})
         meas_pt, meas_pz, meas_w = toy_design.compress_pseudo_data(reco_pt_c, reco_pz_c, counts)
-        meta.update({"toy": int(args.toy), "data_seed": data_seed, "mc_seed": mc_seed,
-                     "sum_k": float(counts.sum()), "n_pseudo_rows": int(meas_w.size),
-                     "max_k": float(counts.max()), "sum_b": float(b.sum()), "n_b": int(b.size)})
+        meta.update({"sum_k": float(counts.sum()), "n_pseudo_rows": int(meas_w.size),
+                     "max_k": float(counts.max())})
     print("[INFO] " + json.dumps(meta))
 
     h_pseudo = fill_th2d("hPseudoReco2D", "Pseudo-data (reco)", meas_pt, meas_pz, meas_w)
