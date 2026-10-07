@@ -13,6 +13,9 @@ selections (F0-F11 development tilt; T0-T1 stress cases), and reports per iterat
 
     python summarize_dev.py --root <dir with posthoc2/ dev1/ dev2L/ ...> --ks 2,3,4,6 \
         --json out.json --markdown out.md
+
+The dev1/ and dev2*/ inputs left main on 2026-10-07 (family A3); they are at evidence/simplification-2026-10-07-fc97eaf9
+under results/. posthoc2/ is results/predecessor_posthoc/. See results/README.md.
 """
 from __future__ import annotations
 

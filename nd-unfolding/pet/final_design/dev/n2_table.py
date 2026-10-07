@@ -5,6 +5,9 @@ implementation). Development evidence only.
 
     python n2_table.py --scores <dir of S3P *.design_scores.json> --designs H2S1:5 L128S1:5 H2S1E16:4 \
         --out n2.json
+
+results/s3p/ left main on 2026-10-07 (family A3) and is at evidence/simplification-2026-10-07-fc97eaf9;
+results/s3n/ stays. See results/README.md.
 Run names: S3P-<CID>K<run K>-DEV<r>[-s<t>]; each score file must contain the requested k.
 """
 from __future__ import annotations
