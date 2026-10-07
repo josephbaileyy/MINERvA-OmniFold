@@ -11,7 +11,7 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
 | article PDF (local build of that tree) | `main_paper.pdf`, 9 pages, sha256 `d4f4ff2669a8727f81c2f367cc2280ece4adea7f359e14ac6e314903460319e5`; `build_all.sh` PASS, containment PASS |
 | release candidate | **RC4** `minerva-omnifold-article-release-rc4.tar.gz`, sha256 `46f801bf05bbd18d1fcfe8c8bf5b0e361cd8e352211de641b434547be1680e88`; `verify_rc.py` gives PASS (README `docs/publication/release/RC4-README.md`, checksums `RC4-SHA256SUMS.txt`). It is local only. |
 | product archive (internal) | `/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/`, 10,612 files, SHA256SUMS `1a72cb43…` (main `275b996d`) |
-| standalone note repo | assigned to the 2D lane; one sync from `4b21cef6`, heads pending |
+| standalone note repo | **synced** by the 2D lane from `4b21cef6`. `MINERvA-OmniFold-Analysis-Note` main is `cf449c30741ab31cb3f1ecafb840ed039801c793`; canonical main is `f46337701f14446f68ea0c1691e366ada92f0555`. Both were verified with `git ls-remote` by the publication lane, and the article sources are byte-equal to `4b21cef6`. Both repositories build PASS at 123 / 9 / 9 pp. |
 
 ## 2. Scientific and readiness record (internal; not for upload)
 
