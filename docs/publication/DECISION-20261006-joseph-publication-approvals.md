@@ -104,3 +104,18 @@ largest-bias region stated, not in the abstract.'"
 
 **Binds:** the article's Fig. 2 statement as written at `f5787b32`. Any strengthening (a significance, a
 localization claim, or the statement in the abstract) would need the closure or a new decision.
+
+## Addendum, 2026-10-06: package inputs 1 and 2 approved (this session, Joseph's own words)
+
+> "okay I agree with the AI use and author details but I want to work on pushing everything to main and doing the
+> reorg plan before doing another pass over the paper"
+
+**Binds:**
+- **The AI-use disclosure:** the text proposed in `docs/publication/submission/AI-DISCLOSURE-PROPOSED.md` is
+  approved, with placement in the Acknowledgments and a pointer from the method section, as proposed.
+- **The author details:** approved as currently in `main_paper.tex`: Joseph Bailey (Stanford Physics) and Benjamin
+  Nachman (Stanford Particle Physics and Astrophysics; SLAC). ORCIDs and funding were not supplied.
+- **Sequencing (Joseph):** the main push and the reorganization come first. The disclosure goes into the article in
+  the next paper pass, not before.
+
+Package inputs 3–6 (coauthor review, deposit, tag and submission, cover-letter specifics) remain open.
