@@ -1297,6 +1297,42 @@ population it measures — so "cited nowhere" needs a timestamp and a tree, like
 with no error. Measured: `nd-unfolding/mii_anchor_comparator.py` is blob `a7cb2d9b…` at both
 `ecee9ff1` and `f7ab02ff`, and `cbeac61d…` at HEAD.
 
+### Lane A family A2: 25 archival records off `main` since 2026-10-07
+
+These ARCHIVAL/terminal records had no consumer outside the routers. Each was byte-identical at the
+evidence tag named beside it when it left `main` (Joseph, 2026-10-07: "Close Lane A + do A2
+(Recommended)"). The gate record is in
+[`../POST_PUBLICATION_REORG_PLAN.md`](../POST_PUBLICATION_REORG_PLAN.md), *Lane A closure and A2*.
+Recover one with `git show <tag>:<path>`. Fetch the tags first, as described above.
+
+| path | evidence tag |
+|---|---|
+| `docs/orchestration/DECISION-BRIEF-20260819-oi71-recovery-evidence.md` | `evidence/prepublication-2026-08-20-0b329e8a` |
+| `docs/orchestration/VERDICT-20260820-lanec-remedy-a-FAIL.md` | `evidence/prepublication-2026-08-20-0b329e8a` |
+| `docs/orchestration/VERDICT-20260820-lanec-remedy-a-ROUND2-PASS-WITH-SCOPE.md` | `evidence/prepublication-2026-08-20-0b329e8a` |
+| `docs/orchestration/VERIFICATION-20260820-mediator-remedy-a-wrapper-mechanical.md` | `evidence/prepublication-2026-08-20-0b329e8a` |
+| `docs/orchestration/ASSESSMENT-20260911-endpoint-B-design-nine-claims.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/ASSESSMENT-20260911-scoped-letter-readiness.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/ASSESSMENT-20260915-epsilon-1e-9-and-B.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/FLAG-20260824-gregor-pet2-worktree-unpreserved.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/INVENTORY-20260919-scientific-acceptance-criteria-from-code.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/PREDECLARE-20260831-mvfinal-j-specification.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/PREREGISTER-20260915-epsilon-and-B-acceptance-requirements.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/READBACK-20260918-causes-5-and-7.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/READBACK-20260918-rank3-lineage-footing-components-completeness.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/READINESS-20260911-precursor-launch-six-dimensions.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/RECORD-20260910-z-assessor-receipt-of-relayed-findings.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/REVIEW-20260911-precursor-delta-10eb1bac.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/REVIEW-20260911-temp-file-repair-against-T1-T14.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/REVIEW-20260912-temp-repair-delta-41a64f02-and-consumer-list.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/REVIEW-20260914-clause7-race-fix-8b89ff36.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/REVIEW-20260914-final-clearance-e09513d8.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/REVIEW-20260914-per-task-recovery-79badb2f.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/REVIEW-20260914-premise-B-durability-68a3da8a.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/RUN-20260919-cause3-two-member-campaign-launch.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/TRAVEL-MODE-DEPLOYMENT-20260825.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+| `docs/orchestration/TRIAGE-20260821-open-items-vs-publication-path.md` | `evidence/preparation-2026-09-24-bf34a12c` |
+
 ## Regenerate
 
 ```bash

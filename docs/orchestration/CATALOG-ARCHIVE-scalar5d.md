@@ -406,7 +406,7 @@ record states its own scope and what superseded it. The router as it stood befor
   correlation-blindness finding, and Joseph's ruling (b) adding `s_proj`, is what caught it — and
   the required deliverable *is* a projection. The seed-pinned-band limitation **cannot explain it
   away, only understate it**. `r_null = 2.442e-13`, within `ε`. 68.17 CPU / 53.75 GPU actual.
-- [`RUN-20260919-cause3-two-member-campaign-launch.md`](RUN-20260919-cause3-two-member-campaign-launch.md)
+- `RUN-20260919-cause3-two-member-campaign-launch.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/RUN-20260919-cause3-two-member-campaign-launch.md`
   - **What was submitted**: 8 jobs, `337.00` CPU / `158.25` GPU reserved, admission `rc 0`
   re-measured before each submission. **Three clean deploys** — arms at `44e09fd8`, builder at the
   preregistered `d64257c3`, bridge at `a51f7917` — with the reason three rather than one, and the
@@ -447,7 +447,7 @@ record states its own scope and what superseded it. The router as it stood befor
   independent observations agreeing to **0.47%**, and its `n = 2` weakness is **stated, not dressed
   as a confidence interval** — what carries the argument is **4.4 orders of margin**, so `B ≤ 1e-9`
   survives a 22,000-fold increase. `ε = 1e-9` is the **pre-existing** proposal, not fitted now.
-- [`INVENTORY-20260919-scientific-acceptance-criteria-from-code.md`](INVENTORY-20260919-scientific-acceptance-criteria-from-code.md)
+- `INVENTORY-20260919-scientific-acceptance-criteria-from-code.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/INVENTORY-20260919-scientific-acceptance-criteria-from-code.md`
   - **⚠ `scientific_acceptance` IS NOT COMPUTED — it is the literal `"NON-PASSING"` at
   `z_build.py:608` and `:788`, with no branch producing `"PASS"` anywhere.** `outcome.assessable` is
   likewise the constant `False` at `:652`, and `z_validator.assess()` — the only source of
@@ -1246,7 +1246,7 @@ record states its own scope and what superseded it. The router as it stood befor
   instrument is `merge-base`. **Counter-offer in §3: a RECEIPT under its own identity** — what was
   relayed, by whom, what was re-measured and what explicitly was not — already live in Part J §J.2,
   Part N §N.5, Part O §O.7 and Part M §M.6.
-- [`REVIEW-20260914-final-clearance-e09513d8.md`](REVIEW-20260914-final-clearance-e09513d8.md)
+- `REVIEW-20260914-final-clearance-e09513d8.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/REVIEW-20260914-final-clearance-e09513d8.md`
   - **VERDICT: CLEAR on `68a3da8a..e09513d8`; no block. THREE FLAGS on the SUBMISSION step, which are
   not blocks on this delta.** ⚠ The authorization reached me **relayed** — this record is the review
   and clears; it is **not** the authorization. All four requested items hold: the two-state test
@@ -1261,7 +1261,7 @@ record states its own scope and what superseded it. The router as it stood befor
   300 s) reads as "no match" rather than "could not look"; (c) up to **four** `sbatch` invocations
   (`0-7`, `0-20%10`, `0-39%40`, combine) but the plan verifies one job id. Withheld: cross-client
   `O_EXCL`, `mkdir` EEXIST on Lustre, `JobRequeue`.
-- [`REVIEW-20260914-premise-B-durability-68a3da8a.md`](REVIEW-20260914-premise-B-durability-68a3da8a.md)
+- `REVIEW-20260914-premise-B-durability-68a3da8a.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/REVIEW-20260914-premise-B-durability-68a3da8a.md`
   - **My premise-(B) finding is CLOSED; ONE NEW FINDING: the stated cost of violating (B) is
   incomplete, and the omitted case is an AUTHORIZATION BYPASS rather than a refusal.** Eligible to
   review this — I named a two-disjunct requirement and declined a mechanism; the ordering recusal
@@ -1275,7 +1275,7 @@ record states its own scope and what superseded it. The router as it stood befor
   claim deleted + product PRESENT → refuses (as stated); claim deleted + product **ABSENT** →
   **ADMITTED**, a fresh attempt runs as a first attempt, bypassing `campaign-recover` and its
   per-retry approval — the exact act Joseph's prohibition names. Counts verified: 26 / 65 / 89 / 123.
-- [`REVIEW-20260914-clause7-race-fix-8b89ff36.md`](REVIEW-20260914-clause7-race-fix-8b89ff36.md)
+- `REVIEW-20260914-clause7-race-fix-8b89ff36.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/REVIEW-20260914-clause7-race-fix-8b89ff36.md`
   - **⚠ PARTIAL RECUSAL: I am NOT independent of the ordering choice** — I named the requirement but
   then pointed at `require_campaign_complete` as the exemplar, and that became the design rationale.
   Not certification of that slice; independent on the re-read, the premises, the tests and the
@@ -1294,7 +1294,7 @@ record states its own scope and what superseded it. The router as it stood befor
   pinned both ways). Premise (A) IS bound to the real producers via a source-text arm on
   `do_blockunits`/`do_throws`. Counts verified: 17 + 65 + 89 + 123 + 90 = **384 OK**. Withheld:
   cross-client `O_EXCL` and `mkdir` EEXIST on Lustre — cluster still dead.
-- [`REVIEW-20260914-per-task-recovery-79badb2f.md`](REVIEW-20260914-per-task-recovery-79badb2f.md)
+- `REVIEW-20260914-per-task-recovery-79badb2f.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/REVIEW-20260914-per-task-recovery-79badb2f.md`
   - **The delta does what it says; no NEW defect. One CARRIED-FORWARD defect: the clause-7 race
   persists at `79badb2f` and recovery RE-ENTERS it.** Kept separate from the `a71087e3` review per
   instruction. **Power question answered by execution:** the new subprocess arms, run against the
@@ -1333,7 +1333,7 @@ record states its own scope and what superseded it. The router as it stood befor
   **single-client**; the cross-client case is unmeasured and my own cleanup race destroyed the
   two-node attempt. Counts verified independently: 89 / 123 / 90 / 231 = **533 passed, 4 failed, 2
   skipped**. Launcher byte-identity confirmed by blob hash for all six.
-- [`REVIEW-20260912-temp-repair-delta-41a64f02-and-consumer-list.md`](REVIEW-20260912-temp-repair-delta-41a64f02-and-consumer-list.md)
+- `REVIEW-20260912-temp-repair-delta-41a64f02-and-consumer-list.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/REVIEW-20260912-temp-repair-delta-41a64f02-and-consumer-list.md`
   - **F1, F2 and F3 CLOSED; all four mutation controls independently reproduced; the asymmetry claim
   CONFIRMED and stronger than stated.** Coverage extends to `41a64f02` and no further. **⚠ The
   landing authorization in this round is RELAYED and unverified — this verdict is not an
@@ -1352,7 +1352,7 @@ record states its own scope and what superseded it. The router as it stood befor
   count as a test count. My "not live" pathlib verdict also rested on a sweep that omitted `os.walk`.
   `protect_throw_slabs` recorded OUT OF SCOPE per the relayed ruling, with its finding confirmed by
   execution first.
-- [`REVIEW-20260911-temp-file-repair-against-T1-T14.md`](REVIEW-20260911-temp-file-repair-against-T1-T14.md)
+- `REVIEW-20260911-temp-file-repair-against-T1-T14.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/REVIEW-20260911-temp-file-repair-against-T1-T14.md`
   - **VERDICT: 12 of 14 MET, four EXCEEDED; `T9` UNEVIDENCED, `T14` PARTIAL.** Subject `05cf2d00`
   against the yardstick committed at `e92d4a85` **before the work existed**. Authorizes no launch.
   `T1` exceeded because the repair is a **property** not an enumeration -- a leading-dot temp name,
@@ -1369,7 +1369,7 @@ record states its own scope and what superseded it. The router as it stood befor
   re-measurement. Also **corrects my own record**: the `-X` mechanism I published for the `MaxRSS`
   zero was not the one that produced it (a JobName filter alone suffices -- step rows are named
   `batch`), and my reachability flag is **withdrawn** (`10eb1bac` is contained in a remote ref).
-- [`REVIEW-20260911-precursor-delta-10eb1bac.md`](REVIEW-20260911-precursor-delta-10eb1bac.md)
+- `REVIEW-20260911-precursor-delta-10eb1bac.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/REVIEW-20260911-precursor-delta-10eb1bac.md`
   - **Extends the `P1`-`P18` review's coverage from `8111a951` to `10eb1bac`**, which `a51c6503` did
   NOT cover; the `P1`-`P18` verdict is unchanged (all MET, admission still REFUSES at `558.42`
   against `500`). Delta re-measured: 1 commit, 4 files, +218/-3. **FINDING: the new marker at
@@ -1449,7 +1449,7 @@ record states its own scope and what superseded it. The router as it stood befor
   (`P18`). **Donor question flagged:** `z_assembly.py` has no donor binding at all, so a donor appearing
   in code without a committed decision is a decision taken by implementation, and this lane will treat
   that as a finding while refusing to answer the question itself.
-- [`PREREGISTER-20260915-epsilon-and-B-acceptance-requirements.md`](PREREGISTER-20260915-epsilon-and-B-acceptance-requirements.md)
+- `PREREGISTER-20260915-epsilon-and-B-acceptance-requirements.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/PREREGISTER-20260915-epsilon-and-B-acceptance-requirements.md`
   - **`E1`-`E12` for `ε` and `B1`-`B9` for §3.7a's `B`, written and committed BEFORE this lane opened
   the proposal they assess.** Grades nothing, proposes no route, no threshold and no number; adopts
   nothing. Derived from `SPEC` rev. 21 **only** — every requirement carries a `SPEC` citation and none
@@ -1464,7 +1464,7 @@ record states its own scope and what superseded it. The router as it stood befor
   rev. 17's *"never taken as an endpoint"* is withdrawn (`:1764-1769`). **Naming hazard filed:** at
   least three live objects are called `B` (§3.7a's bound, publication **Endpoint B**, and the `lane_b`
   owner rows), two of them in one sentence of the routing record.
-- [`ASSESSMENT-20260915-epsilon-1e-9-and-B.md`](ASSESSMENT-20260915-epsilon-1e-9-and-B.md)
+- `ASSESSMENT-20260915-epsilon-1e-9-and-B.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/ASSESSMENT-20260915-epsilon-1e-9-and-B.md`
   - **`ε = 1e-9`: UNGRADEABLE AS AN `ε`. `B`: NOTHING TO GRADE.** Both are complete answers, neither
   is a block, and **`ε = 1e-9` is NOT refuted.** Graded against `E1`-`E12` / `B1`-`B9` committed at
   `923a321c` beforehand. **All three of `ε`'s steps confirmed**, step 1 in **exact rational
@@ -1608,7 +1608,7 @@ record states its own scope and what superseded it. The router as it stood befor
   **`I7`:** three citation corrections, one of which **withdraws a note of my own** — `z_contract.py`
   has **FORKED** (`G_FLOOR` at `:84` on main, `:126` on the pilot lane), so my "misaddressed" verdict
   was itself tree-less.
-- [`READBACK-20260918-rank3-lineage-footing-components-completeness.md`](READBACK-20260918-rank3-lineage-footing-components-completeness.md)
+- `READBACK-20260918-rank3-lineage-footing-components-completeness.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/READBACK-20260918-rank3-lineage-footing-components-completeness.md`
   - **Rank 3 of the designated audit (`ebba67ab`), four parts, four verdicts. Every product number
   MEASURED BY ME** via read-only login-node `uproot` — no `sbatch`/`srun`, `R5` untouched — so
   **nothing here is relayed.** Adopts nothing, grades no cell, infers no requirement to regenerate.
@@ -1699,7 +1699,7 @@ record states its own scope and what superseded it. The router as it stood befor
   **One error of mine recorded rather than deleted:** my probe compared grid indices against row
   indices and printed a spurious set mismatch — the same index-basis confusion I flagged elsewhere a
   day earlier.
-- [`READBACK-20260918-causes-5-and-7.md`](READBACK-20260918-causes-5-and-7.md)
+- `READBACK-20260918-causes-5-and-7.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/READBACK-20260918-causes-5-and-7.md`
   - **Causes 7 and 5 of the audit's seven-cause table. Issues NEITHER ruling** — not the `#16`
   publication-gate discharge (`X6`) nor cause 5's *"INAPPLICABLE, DISPOSED BY DECISION"* (`Y3`), both
   of which `SPEC` assigns to a decision. No compute; `C_Z − C_G` deliberately not computed.
@@ -1727,7 +1727,7 @@ record states its own scope and what superseded it. The router as it stood befor
   docstring citation — an over-broad pattern manufactures a finding as readily as a narrow one misses
   it. **And the trace's boundary is stated:** it does not audit the full upstream producer chain of
   every consumed byte, so it is a **bounded negative**, which is what the falsifier asked for.
-- [`READINESS-20260911-precursor-launch-six-dimensions.md`](READINESS-20260911-precursor-launch-six-dimensions.md)
+- `READINESS-20260911-precursor-launch-six-dimensions.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/READINESS-20260911-precursor-launch-six-dimensions.md`
   - **VERDICT: NOT READY.** Independent end-to-end launch-readiness check of the Z unified-throw
 - [`ASSESSMENT-20260918-causes-1-2-4-acceptance-criteria.md`](ASSESSMENT-20260918-causes-1-2-4-acceptance-criteria.md)
   - **The causes 1/2/4 packet (`230aecf7`). SOURCE ONLY — no payload, no compute. Approves nothing;
@@ -1849,7 +1849,7 @@ record states its own scope and what superseded it. The router as it stood befor
   four, positive control **3** on `eavailW_covariance.py`; `:368-372` computes `rep = x_cv > 0` and
   discards it — and because support is **strictly positive**, a pinned-zero bin is excluded from `rep`,
   so Joseph's *"a pinned-zero bin is not a null operand"* **names this line**.
-- [`ASSESSMENT-20260911-endpoint-B-design-nine-claims.md`](ASSESSMENT-20260911-endpoint-B-design-nine-claims.md)
+- `ASSESSMENT-20260911-endpoint-B-design-nine-claims.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/ASSESSMENT-20260911-endpoint-B-design-nine-claims.md`
   - **Pre-implementation assessment of `DESIGN-20260911-endpoint-B-generator-comparison-test.md`
   (`8a42f8ea`), designer recused; nine load-bearing claims.** Authorizes nothing; endpoint B stays
   **DEFERRED NOT PASSED**, Gate 2 FAIL, `cause3_corr` WITHHELD, `R4` suspended. **CONFIRMED (6):**
@@ -1914,7 +1914,7 @@ record states its own scope and what superseded it. The router as it stood befor
   job, and `PROVENANCE-20260822` pins no producing revision, so the caveat is **unresolvable in-tree**.
   **§7 records six method faults in this check, including a false mechanism withdrawn before it left the
   lane.** **Moves no gate, grades nothing, adopts nothing, authorizes no compute.**
-- [`ASSESSMENT-20260911-scoped-letter-readiness.md`](ASSESSMENT-20260911-scoped-letter-readiness.md)
+- `ASSESSMENT-20260911-scoped-letter-readiness.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/ASSESSMENT-20260911-scoped-letter-readiness.md`
   - **VERDICT: READY as a manuscript, NOT READY for external review, on ONE evidence fault.** Measured at
   `origin/main = 6f24fb00`, note repo `d0c3768e`; **no compute launched**, builds local in a disposable
   worktree. **(1) `build_all.sh` PASSES**, exit `0` — note 90pp / primer 5pp / paper 3pp, **all three
@@ -1938,7 +1938,7 @@ record states its own scope and what superseded it. The router as it stood befor
   question. **Method note: the first grep of the build log returned nothing for `PASS`, `FAIL` and
   `written by this run` alike** — *Non-ISO extended-ASCII*, so grep went binary-silent; the **positive
   control** caught it.
-- [`RECORD-20260910-z-assessor-receipt-of-relayed-findings.md`](RECORD-20260910-z-assessor-receipt-of-relayed-findings.md)
+- `RECORD-20260910-z-assessor-receipt-of-relayed-findings.md` — off `main` since 2026-10-07 (Lane A family A2); `git show evidence/preparation-2026-09-24-bf34a12c:docs/orchestration/RECORD-20260910-z-assessor-receipt-of-relayed-findings.md`
   - **RECEIPT, not a transcription** — this lane's own testimony about what was relayed to it, at two
   hops, with **no fidelity claim** on any item. Companion to the decline record. **§4 is the point:
   the NEGATIVE SPACE made discoverable without anyone signing for words they cannot check** — clause
