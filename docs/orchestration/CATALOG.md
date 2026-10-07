@@ -1334,6 +1334,17 @@ Recover one with `git show <tag>:<path>`. Fetch the tags first, as described abo
 | `docs/orchestration/TRAVEL-MODE-DEPLOYMENT-20260825.md` | `evidence/preparation-2026-09-24-bf34a12c` |
 | `docs/orchestration/TRIAGE-20260821-open-items-vs-publication-path.md` | `evidence/preparation-2026-09-24-bf34a12c` |
 
+### Family A3: 674 PET final-design development and sizing outputs off `main` since 2026-10-07
+
+Eight directories, `dev1`, `dev2S`, `dev2Q`, `dev2P`, `dev2L`, `dev2T`, `s3p` and `s3p_new`, left
+`nd-unfolding/pet/final_design/results/`. Joseph authorized it on 2026-10-07: "Merge PR #41, then execute A3 under a
+new evidence tag". The files are at `evidence/simplification-2026-10-07-fc97eaf9`.
+- Exact paths: [`../POST_PUBLICATION_REORG_A3_PATHS.txt`](../POST_PUBLICATION_REORG_A3_PATHS.txt).
+- Discovery stub: `nd-unfolding/pet/final_design/results/README.md`.
+- Gate record: [`../POST_PUBLICATION_REORG_PLAN.md`](../POST_PUBLICATION_REORG_PLAN.md), *Family A3 executed*.
+- Recover a file with `git show evidence/simplification-2026-10-07-fc97eaf9:<path>`. Fetch the tags first, as described
+  above.
+
 ## Regenerate
 
 ```bash

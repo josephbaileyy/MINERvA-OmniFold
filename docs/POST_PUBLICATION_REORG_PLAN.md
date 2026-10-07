@@ -309,6 +309,8 @@ authorization (Lane A closure, above).
 
 ### Proposed family A3 — PET final-design development and sizing outputs (NOT authorized; not executed)
 
+*Superseded 2026-10-07: authorized and executed the same day; see* Family A3 executed *below.*
+
 - **Paths.** The exact list is [`POST_PUBLICATION_REORG_A3_PATHS.txt`](POST_PUBLICATION_REORG_A3_PATHS.txt): 674
   paths, sha256 `149ee290…e2b9`, from `git ls-files` at `e2cf8a4e`. They are 668 JSON and 6 TXT files, 47.5 MB, and
   no Markdown. By directory: dev1 273, dev2S 97, dev2Q 65, dev2P 65, dev2L 65, dev2T 33, s3p 44, s3p_new 32.
@@ -377,3 +379,82 @@ authorization (Lane A closure, above).
 The other two citation-only subtrees, `source_audit_runs` and `runtime_runs`, could join A3 under the same epoch.
 They are left out because `source_audit_runs` carries a manifest consumer row (`preserve.py`) and
 `reproduce_evidence.py` reads it at a pinned revision; each needs its own check.
+
+### Family A3 executed, 2026-10-07
+
+**Decision (Joseph, 2026-10-07, verbatim):** "Merge PR #41, then execute A3 under a new evidence tag".
+
+PR #41 was merged at its reviewed head `1e377eaf` as `fc97eaf9`. The proposal above is the specification. Each gate
+step was run against `fc97eaf9`, the pre-removal main:
+
+1. **Enumeration.** At `fc97eaf9`, `git ls-tree` over the eight directories gives exactly the 674 paths in
+   [`POST_PUBLICATION_REORG_A3_PATHS.txt`](POST_PUBLICATION_REORG_A3_PATHS.txt), sha256 `149ee290…e2b9`. Nothing
+   under them changed between `e2cf8a4e` and `fc97eaf9`.
+2. **Dependencies.**
+   - No tracked or untracked edit under the eight directories in any of the 39 local worktrees.
+   - On NERSC (2026-10-07T21:11Z, `login07`), `squeue --me` returned 0 jobs.
+   - The five scratch checkouts that contain the tree are clean under these directories. No `harvest`, `keep_busy`
+     or `pfd` process was running on that login node; other login nodes were not inspected.
+   - The proposal's consumer classification stands: no code, test, manifest or hash-binding reader.
+3. **Internal references.** Only the producer `harvest.sh`, which stays.
+4. **Preservation.**
+   - **Tag.** Annotated tag `evidence/simplification-2026-10-07-fc97eaf9`, tag object `48a16c16…`, commit
+     `fc97eaf9`. It was pushed before the removal.
+   - **Bundle.** `repository-all.bundle` (289,789,560 B, `git bundle verify` okay) sits with ref and worktree
+     snapshots, `a3-blobs.tsv` (path, blob id and sha256 for all 674), `RECOVERY.md` and `SHA256SUMS`. They are in
+     new sibling directories `simplification-2026-10-07-fc97eaf9/`, under the local `evidence-epochs/` and under
+     NERSC `evidence/repository-epochs/`. The NERSC copy passes `sha256sum -c`. The earlier epoch directories were
+     not touched.
+   - **Recovery.** All 674 paths were restored with matching sha256 three ways: from the bundle alone (locally),
+     from the bundle alone on NERSC, and from a fresh clone of GitHub.
+   - **Derived rebuilds, from a clean worktree of the tag:**
+     - `DEV_TABLES-20260927.json`: every populated cell equal; the only differing leaves are the 65 known
+       `L128H2E16` placeholders.
+     - The S-N2 values in `SCREENS-20260927.json`: all seven numeric values reproduce exactly. H2S1 and L128S1 come
+       from `s3p/` at the tag; the other five come from `s3n/`, which stays.
+
+     Proofs: `derived-rebuild-proof.txt` in both epoch directories.
+5. **Surviving references.**
+   - The dated records keep their bytes.
+   - New stub `nd-unfolding/pet/final_design/results/README.md` names the tag, the list and the recovery commands.
+   - `summarize_dev.py` and `n2_table.py` each gained a two-line docstring note naming the tag. Neither file is
+     hash- or blob-pinned.
+6. **Discovery.** The stub; the *Family A3* subsection of `CATALOG.md`; and this record.
+7. **Checks, on the removal tree against `fc97eaf9`.**
+   - `verify_hash_bindings.py`: ALL BINDINGS INTACT, 144 receipt bindings at `f9dab8dd…`, the same as before.
+   - `verify_receipt_artifacts.py`: the same pinned inventory, `49916d28…`.
+   - `control_plane_lint.py` and `live_doc_indexed.py --check` pass, and so does the withdrawal-completeness check.
+   - `generate_manifest.py` was regenerated. Its changes are line counts and inbound counts from the new stub and the
+     CATALOG lines.
+   - Pytest over `final_design`, `gbdt_comparison`, `generator_diagnosis` and `test_hash_bindings.py`: 308 passed,
+     9 skipped, 4 failed, both before (a clean worktree of the tag) and after, with an identical failure set. The
+     reviewer's environment gave 309 / 9 / 3 at both `fc97eaf9` and `0e55c19e`, with `test_pfd_build_evidence`
+     passing there; the invariance holds in both environments.
+   - `docs/orchestration` tests: 948 passed and 23 failed, before and after, with an identical failure set. The
+     failures are the environment-bound `test_wakerctl` (17), `test_deploy_oi135_watcher_swap` (3),
+     `test_watch_slurm_array_resume` (2) and `test_usagectl` (1).
+   - Local macOS, Python 3.12.
+8. **Products unchanged.** Before: `build_all.sh` on a clean worktree of the tag gives PASS (strict containment,
+   0 of 29 struck literals) at 123 / 9 / 9 pages. The `pdftotext` sha256 prefixes are note `56865a04…`, primer
+   `11b21c1f…` and paper `dd521150…`. The first run hit the known biber PAR-cache failure on the pristine tree, and
+   purging the temp cache cleared it.
+
+   After: `build_all.sh` on a clean worktree of the removal commit `0e55c19e` gives PASS (strict, tree clean, 0 of
+   29 struck literals) at 123 / 9 / 9 pages, and all three `pdftotext` digests are identical. The
+   `docs/analysis-note` sources are byte-identical between `fc97eaf9` and `0e55c19e`.
+9. **Independent review.** One fresh read-only reviewer examined `0e55c19e` and returned **APPROVE WITH CHANGES**.
+   - It re-verified: the deleted set equals the list exactly; all 674 blobs match at the tag; the epoch checksums
+     pass locally and on NERSC; the bundle verifies; there is no surviving consumer; and the checks and discovery
+     links work.
+   - Nothing was blocking. It made one should-fix, to complete steps 8–10, and three notes: the environment-dependent
+     test counts, the placement and wording of the docstring note, and a recovery line for the CATALOG entry.
+   - All four were applied in the follow-up commit.
+10. **Counts.**
+
+| | tracked files | Markdown files | Markdown lines | tracked bytes |
+|---|---:|---:|---:|---:|
+| before A3 (`fc97eaf9`) | 9,214 | 804 | 203,328 | 452.63 MB |
+| after A3 (removal commit `0e55c19e`) | 8,541 | 805 | 203,426 | 405.14 MB |
+
+The removal is −674 files and −47.49 MB. The new stub adds one Markdown file. The record, the stub and the CATALOG
+lines add 98 Markdown lines, against an estimate of about 10 that counted only the stub.
