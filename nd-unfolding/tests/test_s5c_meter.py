@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import stat
 import subprocess
 import sys
@@ -31,6 +32,7 @@ def _budget(cpu_cap=10.0, cpu_stages=None, gpu_cap=5.0, gpu_stages=None) -> dict
 class MeterHarness(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp = Path(tempfile.mkdtemp(prefix="s5c-meter-"))
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         self.bin = self.tmp / "bin"
         self.bin.mkdir()
         self.budget = self.tmp / "budget.json"
