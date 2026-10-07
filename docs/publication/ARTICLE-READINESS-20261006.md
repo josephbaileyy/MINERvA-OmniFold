@@ -56,3 +56,22 @@
   article uses the macro and will print 6.85 after the merge.
 - **Not yet covered by the figures release:** the VL161 E_ν ≥ 20 GeV shares (they need per-E_ν predictions) and
   R8 (Ascencio). Both are listed for RC2 or as release gaps.
+
+## 4. After the final review's cycle 1 (2026-10-06)
+
+- **Final review cycle 1:** NOT READY (3 blocking, 10 should-fix, 9 notes). Everything was repaired at `f81120be`.
+  See `REVIEW-20261006-final-article.md`.
+- **RC3:** tarball `7999d0940ce7206925733ed3f2580348f603e1157509927fd99c1bba7638de09` (18 files). `verify_rc.py`
+  gives PASS: the joint tests, the recovery (a), W1, the Figs. 1–3 quoted numbers against `values.tex`, the
+  regeneration of Figs. 1–3, and the regeneration of Fig. 4 (6.5 min wall time).
+- **Product archive: DONE** by the s5p lane under Joseph's authorization ("CFS copy + manifest").
+  - Location: `/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/`.
+  - Contents: 10,612 files, 2,317,487,385 bytes.
+  - The SHA256SUMS digest is `1a72cb43…`, verified by this lane on main `275b996d`.
+  - Batch item B is resolved.
+- **Still open:**
+  - R10(b): the descriptive localization without a response-mismatch closure. This is batch item A for Joseph. The
+    article now states the claim descriptively, says no closure has been run, and has removed it from the abstract.
+  - The final review's cycle 2.
+  - PR and merge, then the 2D lane's one standalone sync.
+  - Coauthor review; Joseph's separately authorized acts.
