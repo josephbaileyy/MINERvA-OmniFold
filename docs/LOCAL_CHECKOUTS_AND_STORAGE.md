@@ -41,7 +41,9 @@ all of these hold, and record each measurement:
 1. `git status --porcelain --untracked-files=all` is empty.
 2. After `git fetch --prune origin`, `git rev-list HEAD --not --remotes=origin` is empty, and HEAD is an ancestor
    of a ref inside a stored, checksummed bundle. Local tags and stale remote-tracking refs are not proof.
-3. No process has it as cwd (`lsof -d cwd`), and no session that is still writing has used it. Search
+3. No process has it as cwd (`lsof -d cwd`), and no running session has used it. Liveness is a running
+   process: check the Claude Code pid files (`~/.claude*/sessions/<pid>.json`) with `ps -p`. A recent
+   transcript write is not proof, because idle sessions also write. Search
    session transcripts (`~/.claude*/projects/**/*.jsonl`, `~/.codex*/sessions/**/*.jsonl`) for `"cwd"`,
    `cd` or `git -C` with the path. A bare mention in `git worktree list`
    output is not a use.
@@ -59,8 +61,20 @@ directory once the run's logs are copied out.
 
 ## Local cleanup records
 
-### 2026-10-07 batch — state: PROPOSED, not executed
+### 2026-10-07 batch 1 — state: EXECUTED 2026-10-07T23:35Z
 
-What it covers, why each item is removable, the preserved bytes, the restoration proof and the recovery
-commands are in `evidence-epochs/housekeeping-20261007/RECOVERY.md` and `inventory.json`, local and NERSC
-copies. Change the state line above when the batch is executed (record the execution log) or declined.
+Joseph approved it on 2026-10-07. The guarded script removed all 33 items (24 worktrees, eight test
+TMPDIRs and `.developer-tooling-backup/`) with 0 refusals, and the measured free space rose by
+20,312,960 KiB (19.4 GiB), to 35 GiB (92% used). The scope, preserved bytes, restoration proof and
+recovery commands are in `evidence-epochs/housekeeping-20261007/RECOVERY.md` and `inventory.json`. The
+per-item log is `execution-log.txt` in the same directory. The archive has local and NERSC copies.
+
+### 2026-10-07 batch 2 — state: PROPOSED, not executed
+
+Batch 1 held back 15 worktrees as in use, because a session transcript using each one had been written in
+the last hour. Joseph pointed out that those sessions had stopped. The Claude Code pid files
+(`~/.claude*/sessions/<pid>.json`) confirmed that every one had exited, which makes a running process,
+not a recent transcript write, the better liveness test (removal rule 3). Batch 2 covers those 15. It
+includes the `scalar-successor` pair, whose local-only draft commit `eeeaad78` is bundled and was
+recovered independently. Scope and proofs are in `evidence-epochs/housekeeping-20261007-b/RECOVERY.md`.
+Change this state line when batch 2 is executed or declined.
