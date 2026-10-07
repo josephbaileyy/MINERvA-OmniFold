@@ -64,6 +64,12 @@ def compute(z) -> dict:
     v["note_share_hiEavail_pct"] = 100.0 * float(exc[hi][exc[hi] > 0].sum() / pos)
     eh = exc[hi][:, we[:-1] >= 1.8]
     v["note_share_hiW_of_hiEavail_pct"] = 100.0 * float(eh[eh > 0].sum() / exc[hi][exc[hi] > 0].sum())
+    ratio = z["hData2D"] / z["hGenCV2D"]
+    hihi = ratio[ee[:-1] >= 0.8][:, we[:-1] >= 1.8]
+    v["ratio_hihi_min_pct"], v["ratio_hihi_max_pct"] = 100 * (hihi.min() - 1), 100 * (hihi.max() - 1)
+    loww = ratio[:, we[:-1] < 1.1]
+    v["ratio_lowW_min_pct"], v["ratio_lowW_max_pct"] = 100 * (loww.min() - 1), 100 * (loww.max() - 1)
+    v["share_catch_cell_pct"] = 100.0 * float(max(exc[-1, -1], 0.0) / pos)
     v["fig2_excess_equals_data_minus_comparator_maxabs"] = float(np.max(np.abs(exc - (z["hData2D"] - z["hGenCV2D"]) * area)))
     return v
 
@@ -95,6 +101,15 @@ RANGES = [  # article ranges: every member must round into [lo, hi] at the print
 SINGLES = [("ratio_corner_GiBUU", "1.61", "paper_body.tex GiBUU corner"),
            ("ratio_total_GiBUU", "1.39", "paper_body.tex GiBUU overall")]
 BOUNDS = [("corner_over_total_max_dev_pct", 7.0, "paper_body.tex: within 7% of their integrated ratios")]
+# Fig. 2 statements (paper_body.tex, central-value results): two ranges at printed precision, and verbal shares
+# checked against explicit intervals stated here.
+RANGES += [(("ratio_hihi_min_pct", "ratio_hihi_max_pct"), "12", "30",
+            "paper_body.tex: ratio 12--30% in the high-Eavail, high-W cells"),
+           (("ratio_lowW_min_pct", "ratio_lowW_max_pct"), "23", "31",
+            "paper_body.tex: ratio 23--31% at W<1.1 GeV for every Eavail")]
+VERBAL = [("note_share_hiEavail_pct", 62.0, 71.0, "paper_body.tex: 'two thirds' of the positive cell-integrated difference at Eavail>=0.8"),
+          ("note_share_hiW_of_hiEavail_pct", 50.0, 100.0, "paper_body.tex: 'most of that' at W>=1.8"),
+          ("share_catch_cell_pct", 17.0, 23.0, "paper_body.tex: 'a fifth' in the single widest catch cell")]
 NOT_COVERED = ["paper_body.tex 'higher energies carry 14--15% of this region ... and 7% of the total' and "
                "'1.37 against 1.29': from VL161 (E_nu >= 20 GeV shares), not recomputable from these arrays"]
 
@@ -138,12 +153,13 @@ def main(argv=None) -> int:
     for k, bound, src in BOUNDS:
         good = v[k] <= bound
         rows.append((k, v[k], f"<= {bound}", src, good)); ok &= good
+    for k, lo, hi, src in VERBAL:
+        good = lo <= v[k] <= hi
+        rows.append((k, round(v[k], 3), f"[{lo}, {hi}]", src, good)); ok &= good
     good = v["n_reported"] == 205
     rows.append(("n_reported", v["n_reported"], "205", "205 reported bins", good)); ok &= good
     for k, val, printed, src, good in rows:
         print(f"[{'ok' if good else 'DISCREPANCY'}] {k}: computed {val} | printed {printed} | {src}")
-    print("descriptive (note-only, not in the article):",
-          {k: round(v[k], 3) for k in ("note_share_hiEavail_pct", "note_share_hiW_of_hiEavail_pct")})
     print("Fig. 2 consistency |hExcess2D - (data - comparator) x area| max:", v["fig2_excess_equals_data_minus_comparator_maxabs"])
     print("NOT COVERED:", NOT_COVERED)
     print("FIG NUMBERS:", "PASS" if ok else "DISCREPANCY")

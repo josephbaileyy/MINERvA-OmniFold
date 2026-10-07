@@ -195,7 +195,7 @@ reproduce the input at nominal truth except in the highest-$W$ cells, which are
 biased by up to \SI{4}{\percent} in simulation, about one quoted standard
 deviation in one $(\Eavail,W)$ cell; this bias is not included in the quoted
 uncertainties.  The unbinned negative-weight background treatment, as first
-measured with a deterministic variant of the production estimator, reduces it to
+measured with a deterministic variant of the five-dimensional LightGBM production estimator, reduces it to
 below \SI{0.3}{\percent}, leaving up to \SI{1}{\percent} in some joint cells; on
 data the two treatments differ by at most \SI{1.4}{\percent}.
 % Source: OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md; VL149,
@@ -246,7 +246,7 @@ low-mass enhancement.  Figure~\ref{fig:joint} shows the joint $(\Eavail,W)$
 projection relative to the MINERvA Tune~v1.  In cell-integrated terms, two
 thirds of the positive difference lies at $\Eavail\ge\SI{0.8}{GeV}$ and most of
 that at $W\ge\SI{1.8}{GeV}$, but a fifth of it sits in the single widest catch
-cell; in ratio, the data exceed Tune~v1 by \SIrange{12}{31}{\percent} in those
+cell; in ratio, the data exceed Tune~v1 by \SIrange{12}{30}{\percent} in those
 cells and by \SIrange{23}{31}{\percent} at $W<\SI{1.1}{GeV}$ for every $\Eavail$,
 so the relative excess is not confined to high $W$.  These statements are
 descriptive: no significance is assigned, no response-mismatch closure has been run
@@ -290,11 +290,11 @@ higher energies carry \SIrange{14}{15}{\percent} of this region's cross section
 and \SI{7}{\percent} of the total, and supplying that share gives GiBUU about the
 others' contrast ($1.37$ against $1.29$).  Turning on the Valencia
 two-particle--two-hole component leaves that region unchanged because it
-primarily populates lower $W$.  The localization of Fig.~\ref{fig:joint} is thus
+primarily populates lower $W$.  The high-$\Eavail$, high-$W$ difference of Fig.~\ref{fig:joint} is thus
 a statement relative to the MINERvA Tune~v1.  Dedicated MINERvA
 shallow-inelastic measurements also report generator
 disagreements~\cite{MINERvA:2026sis}; their different selections preclude
-treating them as independent confirmation of this localized difference.
+treating them as independent confirmation of this high-$\Eavail$, high-$W$ difference.
 % Sources: VL156-VL161; KNOWN_ISSUES 82.
 
 \begin{figure*}[t]
@@ -308,7 +308,8 @@ treating them as independent confirmation of this localized difference.
   GENIE~2.12.10 on CH, with no two-particle--two-hole events), the same GENIE
   with the Valencia two-particle--two-hole contribution, NuWro~21.09, and
   GiBUU~2019 (both on carbon; GENIE and NuWro flux-repaired) all remain below the
-  unfolded result overall and at high $W$; GENIE and NuWro by about their overall
+  unfolded result overall and at high $W$ (the two GENIE predictions lie slightly above it
+  at $1.4\le W<\SI{1.8}{GeV}$); GENIE and NuWro by about their overall
   normalization shortfall, GiBUU, whose sample stops at $E_\nu\approx\SI{20}{GeV}$,
   by more.  No significance is assigned.}
   \label{fig:generator-context}
@@ -551,7 +552,7 @@ variations.  At both $-4\%$ and $+4\%$ every one of the ten rejections holds: th
 observed statistics move by up to about \SI{11}{\percent} but remain far above
 their null distributions, and only NuWro's shape test changes its count, from
 $k=1$ to $k=3$ of $1751$ at $+4\%$ ($p=0.0023$, against a Holm threshold of
-$0.05$).  The variation is applied to the data side after calibration, as a single
+$0.05$).  The variation is applied to the data side after the energy calibration, as a single
 coherent scale on the reconstructed available energy and recoil energy without
 per-particle response, and not to the null calibration, whose response to it is
 unmeasured: the rejections are not removed by this data-side variation, which does
@@ -648,17 +649,26 @@ matched total uncertainty with validated coverage.
 The input data and simulation are the MINERvA open-data AnaTuples, released under
 CC0~\cite{MINERvA:OpenData}; this analysis used an earlier production of that
 release whose file identities are recorded with the release.
-A release of sufficient inputs, of about \SI{16}{MB}, lets a reader recompute every
-$p$ value, decision, robustness label and power figure of the joint tests, the
-lost-seed resolution and the coarse-projection comparison with standard numerical
-libraries only.  It contains the per-pseudo-experiment cell values after the
-declared nuisance terms, their seeds, the predictions, the test domains, the
-variant shifts, the metric and the observed data vector, together with the digest
-of every source product.  An outside replay from an empty directory reproduced
-every recorded value.  Extraction from the pseudo-experiment products and the
-event-level processing are not reproducible from this release; they need the
-products on the analysis computing system and the open-data AnaTuples together
+A release of about \SI{16}{MB} lets a reader, with standard numerical libraries
+only, recompute every $p$ value, decision, robustness label and power figure of the
+joint tests, the lost-seed resolution and the coarse-projection comparison;
+regenerate Figs.~\ref{fig:validation}--\ref{fig:joint-nulls}; and recompute the
+numbers quoted from Figs.~\ref{fig:validation}--\ref{fig:generator-context}.  It
+contains the per-pseudo-experiment cell values after the declared nuisance terms,
+their seeds, the predictions, the test domains, the variant shifts, the metric and
+the observed data vector, the arrays behind Figs.~\ref{fig:validation}--\ref{fig:generator-context},
+and the digest of every source product.  Replays of the packaged files reproduced
+every recorded value and every checked figure number, one of them by an outside
+reader from an empty directory.  The remaining quoted numbers (the
+two-dimensional uncertainty and coverage figures, the closure and bias studies,
+the low-recoil comparisons, the recoil-response sensitivity and the covariance-status
+measurements) are not recomputable from this release.
+Extraction from the pseudo-experiment products, which are archived
+(\SI{2.3}{GB}), and the event-level processing are not reproducible from it
+either; they need the archived products and the open-data AnaTuples together
 with the generator samples produced for this analysis.
 \pubhold{deposit identifier and access route, after the separately authorized
 release decision.}
-% Source: docs/publication/release/RC1-README.md, RC1-REPLAY-RECEIPT-20261006.md (b2a54aa5).
+% Source: docs/publication/release/RC3-README.md (RC3 7999d094..., VERIFY PASS); RC1-REPLAY-RECEIPT-20261006.md
+% (outside empty-directory replay); final review cycle 2 re-ran RC3 verify (PASS); product archive
+% /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/ (SHA256SUMS 1a72cb43..., main 275b996d).

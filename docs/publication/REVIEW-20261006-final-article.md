@@ -37,6 +37,25 @@ lane's checked restatement, not a verbatim transcript.
 | N8 | Claim table L2/L3 | Updated to VL170/VL172 |
 | N9 | "independently disfavours" | Now "also disfavours" (same data; independent of the recoil response only) |
 
-## Cycle 2
+## Cycle 2: focused re-check of `4794d201` plus RC3 (same reviewer)
 
-[Recorded after the focused re-check.]
+**Verdict: READY WITH CHANGES.**
+- **Cycle-1 items:** B1–B3, S1–S10 and N1–N9 are all resolved. N6 was deferred to the note owners, as intended.
+- **B2:** every new localization number was recomputed from RC3's arrays (67.2%, 83.2%, 21.9%, 1.124–1.305,
+  1.226–1.306).
+- **S8:** the four bib entries were confirmed on INSPIRE.
+- **RC3:** VERIFY PASS.
+- **No blocking defects.**
+
+| id | finding | resolution (owner; applied without a third review, because the two-cycle budget is used) |
+|---|---|---|
+| R1 | The data-availability section was out of date (it covered the inference only; its source was RC1) | Rewritten: the release regenerates Figs. 1–4 and recomputes the Fig. 1–3 numbers. The section lists the quoted numbers it does not reproduce, and mentions the 2.3 GB product archive. The source is RC3/RC4. |
+| R2 | "localization" survived at `:293` and `:297` | Both now read "the high-E_avail, high-W difference" |
+| R3 | The release check mislabelled the 67/83% shares and skipped the new numbers; the README's not-reproduced list was incomplete | `fig_numbers.py` now checks the two ratio ranges at printed precision, and checks "two thirds", "most" and "a fifth" against stated intervals (all PASS). The README lists every quoted number that is not reproduced. **RC4** `46f801bf…`: VERIFY PASS. |
+| N-a | "after calibration" was ambiguous | Now "after the energy calibration" |
+| N-b | "production estimator" was ambiguous | Now "the five-dimensional LightGBM production estimator" |
+| N-c | 31% should round to 30% | Now 12–30%. The new range check would have caught it. |
+| N-d | GENIE lies above the data at 1.4–1.8 GeV in W | Stated in the Fig. 3 caption |
+| N-e | Optional: the looks visible during the budget extension | Not added: the authors may choose to; the disclosure already states the budget decision and that no criterion changed |
+
+**Review budget: two cycles used. Further review needs a named reason (PLAN §7).**
