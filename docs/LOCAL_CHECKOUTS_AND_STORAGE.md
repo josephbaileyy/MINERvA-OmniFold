@@ -69,12 +69,18 @@ TMPDIRs and `.developer-tooling-backup/`) with 0 refusals, and the measured free
 recovery commands are in `evidence-epochs/housekeeping-20261007/RECOVERY.md` and `inventory.json`. The
 per-item log is `execution-log.txt` in the same directory. The archive has local and NERSC copies.
 
-### 2026-10-07 batch 2 — state: PROPOSED, not executed
+### 2026-10-07 batch 2 — state: EXECUTED 2026-10-07T23:45Z
 
 Batch 1 held back 15 worktrees as in use, because a session transcript using each one had been written in
-the last hour. Joseph pointed out that those sessions had stopped. The Claude Code pid files
-(`~/.claude*/sessions/<pid>.json`) confirmed that every one had exited, which makes a running process,
-not a recent transcript write, the better liveness test (removal rule 3). Batch 2 covers those 15. It
-includes the `scalar-successor` pair, whose local-only draft commit `eeeaad78` is bundled and was
-recovered independently. Scope and proofs are in `evidence-epochs/housekeeping-20261007-b/RECOVERY.md`.
-Change this state line when batch 2 is executed or declined.
+the last hour. Joseph pointed out that those sessions had stopped, and the Claude Code pid files confirmed
+that every one had exited. Joseph approved batch 2 on 2026-10-07.
+
+The guarded script removed 14 worktrees and freed 5,009,088 KiB (4.8 GiB), leaving 40 GiB free. It refused
+the 15th, this lane's own `MINERvA-OmniFold-navigation-20261007`, because its HEAD had moved to the
+PR #44 branch. That worktree was removed separately once its last commit was on `origin`.
+
+The `scalar-successor` draft commit `eeeaad78` remains on its local branch and in the archive bundle.
+Scope, proofs and recovery are in `evidence-epochs/housekeeping-20261007-b/RECOVERY.md` and its `execution-log.txt`.
+
+Together the two batches freed 24.2 GiB. The remaining linked worktrees are the harness worktrees of
+running sessions, if any.
