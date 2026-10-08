@@ -104,3 +104,11 @@ compared.
 | I8 | **"To our knowledge, the first unbinned unfolding of neutrino data"**, with no priority claim for the test | Literature file §3 |
 | I9 | **NOT CLAIMED** | The article states "not a measured cross section" |
 | L2/L3 | **DEMONSTRATED with VL170** | Joseph adopted VL170 (`af24a101`). VL172 rebuilt the products (main `2c9939fe`; total median 6.87%, stat median 0.674%). The rescoring (`5aab2d6d`) is descriptive. The rebuilt band has not been re-tested (KNOWN_ISSUES 84, 85). `\uqPaper` = 6.85 (main `1e25adce`). |
+
+## E. Status update, 2026-10-07 (paper-completion pass; supersedes §D where they differ)
+
+| # | status now | evidence |
+|---|---|---|
+| I3 | **DEMONSTRATED, report-only label.** It is now worded as the contract defines it: robust at κ = 3, i.e. ±3 δ_M1, with δ_M1 the last refinement step. The sub-fine residual is "unmeasured, potentially material", and the tolerance beyond κ = 3 is not evaluated. | amendment 7 `claims.rejection`; amendment 8 `M1_within_fine_cell_residual`; `campaign-state.json` m1 row; REVIEW-20261007 B2 |
+| I7 | **NARROWED further.** The ±4% is one coherent data-side scale at one magnitude. Untested: the null response, species, energy or resolution effects, and larger variations. The 4% source covers test-beam p, π and e at 0.35–2.0 GeV/c. The matched (p_T, p∥) projection does not reject GENIE 2.12.10 CV (post hoc), so the information that rejects it involves the hadronic axes. | W2B §1, §5, §7; PACKET W2 section; W1-RECORD §1; REVIEW-20261007 S2–S4 |
+| §C reading | The bullet "the published muon-kinematics comparison … independently disfavours the same families … partial evidence" stands only as partial evidence. W1 shows that this analysis's own calibrated (p_T, p∥) projection does not reject GENIE 2.12.10 CV. | W1-RECORD §1 |
