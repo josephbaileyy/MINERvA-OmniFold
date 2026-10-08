@@ -20,9 +20,41 @@ nothing to the cluster. It changed no scientific source or product, and it did n
 |---|---|
 | baseline | `origin/main` **`fec438db5d6e313f110879a749381bb189b2a384`**, fetched 2026-10-08 ≈ 07:40Z; isolated worktree `../MINERvA-OmniFold-prd-audit-20261008` on branch `audit/prd-release-repro-20261008` |
 | article sources | unchanged since `0e7d9b1b`; the last change is `bf4f1a29`; `git diff 0e7d9b1b fec438db -- docs/analysis-note publication` is empty |
-| documents read first | `AGENTS.md`; `docs/orchestration/CAMPAIGN-REVIEW-20260929.md`; `docs/publication/submission/PACKAGE-MANIFEST-20261006.md` §1b; `docs/publication/release/RC4-README.md`; `docs/publication/CLAIMS-20261005-claim-to-evidence.md`; `docs/publication/ARTICLE-READINESS-20261006.md`; `docs/publication/RELEASE-INVENTORY-20261005.md`; `VALIDATION_LEDGER.md` (the "Quote a number" route) |
+| documents read first | `AGENTS.md`; `docs/publication/submission/PACKAGE-MANIFEST-20261006.md` §1b; `docs/publication/release/RC4-README.md`; `docs/publication/CLAIMS-20261005-claim-to-evidence.md`; `docs/publication/ARTICLE-READINESS-20261006.md`; `docs/publication/RELEASE-INVENTORY-20261005.md`; `VALIDATION_LEDGER.md` (the "Quote a number" route) |
 | claim table | `CLAIM-TABLE-20261008.tsv` (this directory), 97 rows |
-| owner / reviewer | one audit session (this one) plus three read-only mapping agents, one per article-section group (rows labelled `A`, `B`, `C` in `mapped_by`). The lead re-measured every consequential finding before adopting it (§4.3). No producing lane reviewed its own work. |
+| campaign review | `docs/orchestration/CAMPAIGN-REVIEW-20260929.md` was **not** read before the audit work, contrary to `AGENTS.md` and an earlier revision of this table, which listed it as read first. It was read after the first commit (`37825e61`); its consequences are recorded in §0. |
+| owner / reviewer | one audit session (this one) plus three read-only mapping agents, one per article-section group (rows labelled `A`, `B`, `C` in `mapped_by`). The lead re-measured every consequential finding before adopting it (§4.3). No producing lane reviewed its own work. There is no independent reviewer (§0). |
+
+## 0. Campaign-review choice (CAMPAIGN-REVIEW-20260929 §1), recorded after the fact
+
+**Decision answered.** Can a reader reproduce the article's numbers from RC4, and can a maintainer recover the
+evidence behind every other number? A useful terminal outcome is a classified inventory with explicit gaps. A
+finding of "not reproducible" or "not preserved" counts as a successful result, not a failure of the audit.
+
+**Ownership and review.**
+- One owner: this Opus 5.5 session.
+- Three read-only mapping agents, also Opus 5.5, each covering a separable section group. They are helpers, not
+  independent reviewers. The review warns that "more participants do not create independence" and that agents of the
+  same model are not automatically independent origins.
+- The owner re-measured every consequential agent finding (§4.3). That is a check by the owner, not an independent
+  review.
+- The review's recommended independent reviewer, Astra High in a fresh read-only session, was **not used**. It was
+  not available in this session's tools, and the goal grants no external delegation. **This audit is therefore not
+  independently reviewed.** A fresh read-only review of the RC4 replay (§2–3) and of the six ME rows would be the
+  appropriate next step if the findings are to drive article changes.
+
+**Budget and stop.**
+- No cluster compute was used: only login-node reads, about 10 minutes of local CPU for the replays, and the agents'
+  inference.
+- The audit made one pass and no repair loop, in line with the goal's "no review-until-perfect loop" and the
+  review's §4. It stops when the inventory and the feasible checks are complete. This revision only corrects the
+  record of what was read.
+
+**Practices the review names, as applied here.**
+- Cheap discriminating checks came first: the empty-directory replay with only the documented dependencies, before
+  any deeper work.
+- The review's warning that a hash establishes identity, not validity, is why the claim table separates the receipt,
+  the independent check and preservation, rather than treating digest matches as validation.
 
 ## 1. Verdict
 
@@ -356,6 +388,8 @@ an external act, so they are his decision. The rest are maintenance any lane cou
   - whether macOS will clear the other session's `/private/tmp` scratchpad, and when.
 - **Atime-based purge dates are approximate.** This audit's reads reset the atimes it touched. The dates use the
   earliest pre-audit atimes recorded in the mapping notes.
+- **No independent review of this audit** (§0). The mapping agents and the owner are the same model family. A fresh
+  read-only reviewer has not checked the findings.
 - **Figure equality.** Figs. 1 and 2 in the article come from older producers. Their equality with the release arrays
   was checked visually, not numerically.
 
