@@ -13,11 +13,22 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
 > - **Done in this pass:** inputs 1 and 2 of §4. The AI disclosure is in the Acknowledgments, with a pointer from
 >   Sec. III. The author block is as approved.
 > - **Not changed:** RC4.
-> - **Standalone sync and both remote heads:** recorded in §1a after the merge.
+> - **Standalone sync and both remote heads:** recorded in §1a below.
 > - **Limitations stated in the article** are updated in §5.
 > - **One scientific decision is open:** REVIEW-20261007 §5.
 
-## 1. Exact versions (2026-10-06; superseded for the article by the update above)
+## 1a. Current versions and remote heads (2026-10-07, after PR #50)
+
+| component | identity |
+|---|---|
+| article sources | canonical **main `f9ca7de7`** (merge of PR #50; the article head is `94b0042a`). `docs/analysis-note/` is unchanged by the record-only commit that adds this section. |
+| local build at `f9ca7de7` (fresh detached worktree) | `build_all.sh` rc 0, `RESULT :: PASS … head=f9ca7de7 tree=clean`, note 123 / primer 9 / paper 10 pp; Overleaf target `latexmk -jobname=output main_paper.tex` rc 0, 10 pp, 0 undefined references. PDF digests include the build date and are not reproducible byte for byte. |
+| standalone note repo | **synced** from `f9ca7de7` by the publication lane. Standalone commit `c26bf4f`, 4 files (`main_paper.tex`, `paper_body.tex`, `publication.bib`, `values_inference.tex`). Before the copy, the standalone equalled canonical `4b21cef6` in every tracked file except its own `.gitignore` and `AGENTS.md`, checked file by file with `cmp`; afterwards it equals `f9ca7de7` the same way. Standalone `build_all.sh` rc 0 at 123 / 9 / 10 pp (containment PASS; `head=unknown` is the documented fallback); Overleaf target rc 0, 10 pp; `pdftotext` of all three PDFs identical to the canonical build. |
+| remote heads (`git ls-remote`, 2026-10-07) | `MINERvA-OmniFold-Analysis-Note` main = **`c26bf4fe04713b9e15bb3741e0b25a45b7dcfbe9`** (fast-forward from `cf449c30`); `MINERvA-OmniFold` main = **`f9ca7de7f82585c4ec48f0c44657d734243f372b`** before this record's own merge. |
+| pinned citation | `JointTestRecoil2026` pins `2926e39e`. After the merge it is an ancestor of main, and the GitHub URL returns HTTP 200 (REVIEW-20261007 N1 closed). |
+| release candidate | RC4 `46f801bf…`, unchanged |
+
+## 1. Exact versions (2026-10-06; superseded for the article by §1a)
 
 | component | identity |
 |---|---|
