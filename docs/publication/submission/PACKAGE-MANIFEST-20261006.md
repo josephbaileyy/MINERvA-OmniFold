@@ -86,7 +86,7 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
   - The κ = 2/3 variants rest on an assumed convergence rate in a proxy metric.
   - The tolerance beyond κ = 3 was evaluated report-only on 2026-10-08
     (`publication/kappa/RECORD-20261008-kappa-breakdown.md`): every decision holds up to κ ≈ 5.25. The article
-    does not yet say so; the proposed wording is in that record's §5 and awaits Joseph.
+    states this since 2026-10-08 (Sec. VI.C, report-only, as sensitivity along δ_M1 only).
 - The Fig. 2 statement is descriptive, without a response-mismatch closure (Joseph, "Stands as written").
 - The joint information adds no discrimination beyond matched coarse projections (W1).
 - The release does not reproduce the 2D uncertainty, closure, bias, low-recoil, W2 or covariance-status numbers

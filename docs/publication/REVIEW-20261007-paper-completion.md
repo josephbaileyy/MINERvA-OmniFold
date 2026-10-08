@@ -76,8 +76,8 @@ Neither changes the calorimetric-response condition, which remains unbounded by 
 > - The first loss is GENIE + MEC shape.
 > - GiBUU shape survives to κ = 12, and Tune v1 does not depend on κ.
 > - The result measures sensitivity along δ_M1 only; no frozen decision changes.
-> - The article wording that would quote it is proposed in that record's §5 and **not applied**, pending Joseph's
->   decision.
+> - **Article: applied 2026-10-08** with Joseph's shorter wording (scoped to the frozen ensembles; see that record's
+>   §5). The abstract is unchanged.
 
 ## 6. Versions
 

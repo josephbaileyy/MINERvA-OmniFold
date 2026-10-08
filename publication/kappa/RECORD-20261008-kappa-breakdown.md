@@ -116,7 +116,18 @@ The other thresholds are the same:
 - **Inputs:** the RC4 copy given to the reproducer had its four `code/*.py` files deliberately removed, for
   independence. Every data and expected file it used verifies against `RC4-SHA256SUMS`.
 
-## 5. Proposed article wording (NOT applied; Joseph's decision)
+## 5. Article wording
+
+> **Applied 2026-10-08.** Joseph approved incorporating the scan as a report-only sensitivity result, using his
+> shorter text. The publication lane made one change: "up to 5.25" is scoped to the frozen ensembles, because with
+> the recovered pseudo-experiments included determinacy is lost at about 5.17. The applied text names the sampled
+> brackets for both readings, says that the loss is a loss of determinacy and not a determinate failure to reject,
+> and keeps "unmeasured and potentially material". It is in `paper_body.tex` Sec. VI.C, citing this record pinned
+> at `fbf682f9`. The data-availability section says that the scan is recomputable from the released sufficient
+> inputs with this code but is not part of the release's own verification. The abstract is unchanged. The proposal
+> below is kept as it was written.
+
+### Original proposal (superseded by the applied text)
 
 The article (`paper_body.tex`, Sec. VI.C) currently says: "how far beyond that the decisions would hold has not been
 evaluated". Proposed replacement, with a new `@misc` citation to this record:
