@@ -234,7 +234,7 @@ storage commitment):
 | G6a norm description | **Fixed and verified.** "The L2 norm of the per-cell relative changes"; the producer is committed; RC5 and RC6 recompute 0.504–0.857 and check the printed range. | §3, §7 |
 | G6b 0.45–0.76 proxy rate | **Unresolved: provenance.** No recorded operand reproduces it; the reviewer's own printed proxy numbers do not match it. The article now discloses that its calculation is not recorded, and the κ scan is not presented as testing it. Blocker: the design review's computation was never committed and cannot be reconstructed from the record. Only its author, or a new pre-registered measurement (a new study, not authorized here), could resolve it. | §3 |
 | G7 "about 11%" unreceipted | **Fixed and verified.** W2B addendum and `w2b_statistic_shift.py`: 0.1095 against the frozen observed statistic (MnvTune total, +4 %, 2852.305 → 2539.914). | §3 |
-| G8 Ascencio caveat | **Fixed** (re-worded in the cycle-1 repair; the reviewer re-checks it in cycle 2, §10). The disclosure is in Sec. V. The cycle-1 wording placed the bin-1 migration in the common cells; that is corrected (B1, §3). Checked against `EAVAIL_DEFINITION.md` §2–§4, the code, and arXiv:2110.13372 Eq. 1. The underlying OI-59 question (the shift over bins 1–3) stays open, as before. | §3, §5 |
+| G8 Ascencio caveat | **Fixed and verified.** Re-worded in the cycle-1 repair; the reviewer verified the cycle-2 wording against the bin edges, `EAVAIL_DEFINITION.md`, the code and Eq. 1 (§10). The disclosure is in Sec. V. The cycle-1 wording placed the bin-1 migration in the common cells; that is corrected (B1, §3). Checked against `EAVAIL_DEFINITION.md` §2–§4, the code, and arXiv:2110.13372 Eq. 1. The underlying OI-59 question (the shift over bins 1–3) stays open, as before. | §3, §5 |
 | G9 single durable copies | **Partly fixed.** `z-cv.npz` (`3d7465f6…`) now has a CFS copy as well as the home epoch. **Unresolved:** the s5p archive (2.3 GB) still has one durable copy (CFS). An HPSS copy fits the 164 GiB free, but HPSS was not authorized; this is Joseph's decision. | §2 |
 | G10 citation routing | **Fixed.** Paper source comments (FSI and Ascencio routes, W2 and κ routes, "on main", RC5/RC4); RC5/RC6 READMEs route the covariance-status numbers to their JSON receipts and VL146; CLAIMS §F replaces §E's stale κ statement. `RC4-README.md` is left unchanged, because RC4 is preserved as it was. | §4 |
 | G11 retyped literals | **Partly fixed and verified.** Sec. V's generator and Fig. 2/3 ratios are `values.tex` macros that `fig_numbers.py --values` checks. From RC6, `verify_rc.py` carries a committed negative control: a perturbed `\gibuuCorner` must be rejected. The reviewer also confirmed four further perturbations by hand. **Unresolved:** Sec. IV's literals (0.674, 97.7, 78.1, 4, 0.3, 1, 1.4, 74, 16–31). Blocker: their producers are not in the release, so no release check can bind them. A build-time check against the committed receipts would be new tooling beyond this correction pass (proposed). | §4 |
@@ -299,7 +299,32 @@ What reproduced:
 | N9 test-count scopes | stated (§7) |
 | N10 independence | stated per session (§1) |
 
-**Cycle 2:** requested at the repair commit. Its outcome is recorded in the commit that follows it.
+**Cycle 2** (final) at `4b9bd88e650fec1d463b88da474ab08329883e78`: **READY**, with no blocking or should-fix findings.
+
+- B1 and S1–S6 are each verified resolved:
+  - B1 against the code's `EAVAIL_EDGES`, `EAVAIL_DEFINITION.md` and Eq. 1;
+  - S2 by re-running `agentC_checks.py` J13 on the extracted RC6 (10/10 match);
+  - S3 by a mutation test: with `fig_numbers.py` patched to always pass, the negative control fails and the result is
+    `VERIFY: FAIL`;
+  - S5 by rebuilding RC5 at `f82e6db7`;
+  - S6 with `generate_manifest.py --check` OK.
+- Reproduced:
+  - RC6 = `71e2b7a4…` at `4b9bd88e` and at `35146cc1`;
+  - RC6 `VERIFY: PASS` from an empty directory, with freeze equal to the lock file;
+  - every CFS digest (rc4, rc5, rc6, README, SHA256SUMS, inventory; 16,239 files; du 1,561 GiB);
+  - the standalone branch `e1af61e3` equals `4b9bd88e:docs/analysis-note`.
+- The reviewer's worktrees were clean afterwards (`git status --short --ignored` empty at both `df84868e` and
+  `4b9bd88e`). It wrote nothing on the cluster and pushed nothing.
+
+**Optional notes, recorded and not repaired** (the stop rule repairs only blocking items after cycle 2):
+- N-a: `build_rc.py --name …-rc5` at a later commit silently builds a different "RC5" (`cb685ebd…`). Proposed: have
+  the builder compare against `RC<N>-SHA256SUMS.txt` when it exists, and refuse on a mismatch.
+- N-b: the `name` loop variable in `collect()` shadows the parameter. It is harmless now.
+- N-c: RC6-README says "2,374 analysed open-data files"; the precise split, 2,307 AnaTuples plus 67 auxiliary
+  files, is in §6. Fix in the next RC.
+- N-d: the in-place relinking creates absolute links into the CFS directory; relative links would survive a move.
+
+The two review/repair cycles are used up; the review is closed.
 
 ## 11. Decisions that remain Joseph's
 
