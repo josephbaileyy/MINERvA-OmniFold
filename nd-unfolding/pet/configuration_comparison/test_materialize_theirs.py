@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -20,6 +21,7 @@ CAP, W, G = 4, 10, 16
 class Gather(unittest.TestCase):
     def setUp(self):
         self.dir = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.dir, ignore_errors=True)
         self.files = []
         for shard in range(3):
             tokens = np.full((2, CAP, 5), shard, dtype=np.float32)

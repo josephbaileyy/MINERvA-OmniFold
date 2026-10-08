@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -44,6 +45,7 @@ class Packing(unittest.TestCase):
 class Join(unittest.TestCase):
     def setUp(self):
         self.dir = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.dir, ignore_errors=True)
         # Built rows: a superset, deliberately out of inventory order.
         built = np.array([[7, 1, 3], [7, 1, 1], [7, 1, 9], [7, 1, 2]],
                          dtype=np.int32)

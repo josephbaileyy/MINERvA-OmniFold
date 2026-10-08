@@ -20,6 +20,7 @@ under test is the arithmetic that runs on the production artifact.
 """
 import json
 import os
+import shutil
 import sys
 import tempfile
 import unittest
@@ -67,6 +68,7 @@ def _manifest(tmp, *, schema=q.DIAGNOSTIC_SCHEMA, label=q.DIAGNOSTIC_LABEL, quar
 class QuarantineGate(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
 
     def _w(self, **kw):
         return _weights_npz(os.path.join(self.tmp, "w.npz"), **kw)

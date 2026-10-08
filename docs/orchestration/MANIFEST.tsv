@@ -1674,7 +1674,7 @@ docs/orchestration/test_fixtures_watch_report/train_57256638_0.out.txt	tracked	A
 docs/orchestration/test_generate_live_state.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	71	3637
 docs/orchestration/test_generate_live_state_carry_forward.py	tracked	MACHINE	test-script			generated		exact-path-only		no	3	438	22147
 docs/orchestration/test_generate_live_state_routes.py	tracked	MACHINE	test-script			generated		exact-path-only		no	1	364	15415
-docs/orchestration/test_generate_live_state_watch_health.py	tracked	MACHINE	test-script			generated		exact-path-only	docs/orchestration/test_generate_live_state.py	no	2	306	13656
+docs/orchestration/test_generate_live_state_watch_health.py	tracked	MACHINE	test-script			generated		exact-path-only	docs/orchestration/test_generate_live_state.py	no	2	309	13834
 docs/orchestration/test_loader_ordering_reco_before_truth_weight.py	tracked	MACHINE	test-script			generated		exact-path-only	docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py;docs/orchestration/test_probe_oi120c_p4_retirement.py	no	6	250	13048
 docs/orchestration/test_measure_m1_m6.py	tracked	MACHINE	test-script			generated		exact-path-only		no	14	269	13248
 docs/orchestration/test_notifyctl.py	tracked	MACHINE	test-script			generated		exact-path-only		no	3	106	4707

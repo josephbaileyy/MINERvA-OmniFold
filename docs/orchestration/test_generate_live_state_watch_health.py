@@ -14,6 +14,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import pathlib
+import shutil
 import subprocess
 import tempfile
 import os
@@ -85,6 +86,7 @@ def make_runner(*, missing=False):
 class WakeHealthRenderTests(unittest.TestCase):
     def ctx(self, *, watches=(), tick=None, missing=False, now=NOW):
         directory = pathlib.Path(tempfile.mkdtemp(prefix="waker-test-"))
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
         (directory / "watches").mkdir()
         for watch in watches:
             (directory / "watches" / f"{watch['watch_id']}.json").write_text(json.dumps(watch))
@@ -223,6 +225,7 @@ class WakeSectionEndToEndTests(unittest.TestCase):
 
     def dashboard(self, watch, tick, *, missing=False, now=NOW):
         helper = WakeHealthRenderTests("test_stale_tick_renders_LOUD_with_the_age")
+        self.addCleanup(helper.doCleanups)  # the helper never runs, so its cleanups run here
         ctx = helper.ctx(watches=[watch], tick=tick, missing=missing, now=now)
         config, sessions, usage, jobs = self.fixtures()
         wake_state = {

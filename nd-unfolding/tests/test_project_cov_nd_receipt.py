@@ -17,6 +17,7 @@ import hashlib
 import json
 import os
 import pickle
+import shutil
 import sys
 import tempfile
 import unittest
@@ -142,6 +143,7 @@ class ProjectCovNDReceipt(unittest.TestCase):
         self._real_verify = P._verify_canonical_edges
         P._verify_canonical_edges = lambda: None
         self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
 
     def tearDown(self):
         self.P._verify_canonical_edges = self._real_verify

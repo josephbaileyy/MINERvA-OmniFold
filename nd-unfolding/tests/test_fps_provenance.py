@@ -251,19 +251,19 @@ def test_pub_wrong_mask_rejected():
 
 def test_recompute_hashes_ok_and_mismatch():
     import tempfile
-    d = tempfile.mkdtemp()
-    m = make_pub_manifest()
-    for e in m["endpoints"]:
-        for hf, pf in fp.ENDPOINT_ARTIFACTS:
-            p = os.path.join(d, f"{e['band']}_{e['endpoint']}_{pf}")
-            with open(p, "w") as fh:
-                fh.write(f"{e['band']}{e['endpoint']}{pf}")
-            e[pf] = p
-            e[hf] = fp.sha256_file(p)
-    assert fp.require_recompute_hashes(m)                    # all recompute exactly
-    with open(m["endpoints"][0]["unfold_root"], "w") as fh:  # substitute one file
-        fh.write("TAMPERED")
-    assert _raises(lambda: fp.require_recompute_hashes(m))   # recompute mismatch
+    with tempfile.TemporaryDirectory() as d:
+        m = make_pub_manifest()
+        for e in m["endpoints"]:
+            for hf, pf in fp.ENDPOINT_ARTIFACTS:
+                p = os.path.join(d, f"{e['band']}_{e['endpoint']}_{pf}")
+                with open(p, "w") as fh:
+                    fh.write(f"{e['band']}{e['endpoint']}{pf}")
+                e[pf] = p
+                e[hf] = fp.sha256_file(p)
+        assert fp.require_recompute_hashes(m)                    # all recompute exactly
+        with open(m["endpoints"][0]["unfold_root"], "w") as fh:  # substitute one file
+            fh.write("TAMPERED")
+        assert _raises(lambda: fp.require_recompute_hashes(m))   # recompute mismatch
 
 
 def test_recompute_hashes_missing_path():

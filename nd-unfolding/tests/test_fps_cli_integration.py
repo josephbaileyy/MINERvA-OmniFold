@@ -72,78 +72,86 @@ def _assert(r, needle, case):
 
 # ---------------------------------------------------------------- gate-1 (manifest) via build_active
 def test_cli_non_hex_hash():
-    d = tempfile.mkdtemp(); man, mp, rp = make_env(d)
-    man["endpoints"][0]["unfold_sha256"] = "z" * 64
-    _write(mp, man)
-    _assert(_build(mp, rp, d), "not a lowercase 64-hex", "non_hex_hash")
+    with tempfile.TemporaryDirectory() as d:
+        man, mp, rp = make_env(d)
+        man["endpoints"][0]["unfold_sha256"] = "z" * 64
+        _write(mp, man)
+        _assert(_build(mp, rp, d), "not a lowercase 64-hex", "non_hex_hash")
 
 
 def test_cli_purity_label():
-    d = tempfile.mkdtemp(); man, mp, rp = make_env(d)
-    man["label"] = fp.CONTROL_LABEL; _write(mp, man)
-    _assert(_build(mp, rp, d), "label", "purity_label")
+    with tempfile.TemporaryDirectory() as d:
+        man, mp, rp = make_env(d)
+        man["label"] = fp.CONTROL_LABEL; _write(mp, man)
+        _assert(_build(mp, rp, d), "label", "purity_label")
 
 
 def test_cli_wrong_mask():
-    d = tempfile.mkdtemp(); man, mp, rp = make_env(d)
-    bad = "deadbeef" * 8
-    man["reported_mask_hash"] = bad
-    for e in man["endpoints"]:
-        e["reported_mask_hash"] = bad
-    _write(mp, man)
-    _assert(_build(mp, rp, d), "reported_mask_hash", "wrong_mask")
+    with tempfile.TemporaryDirectory() as d:
+        man, mp, rp = make_env(d)
+        bad = "deadbeef" * 8
+        man["reported_mask_hash"] = bad
+        for e in man["endpoints"]:
+            e["reported_mask_hash"] = bad
+        _write(mp, man)
+        _assert(_build(mp, rp, d), "reported_mask_hash", "wrong_mask")
 
 
 def test_cli_missing_path_field():
-    d = tempfile.mkdtemp(); man, mp, rp = make_env(d)
-    del man["endpoints"][0]["config_path"]; _write(mp, man)
-    _assert(_build(mp, rp, d), "config_path", "missing_path")
+    with tempfile.TemporaryDirectory() as d:
+        man, mp, rp = make_env(d)
+        del man["endpoints"][0]["config_path"]; _write(mp, man)
+        _assert(_build(mp, rp, d), "config_path", "missing_path")
 
 
 # ---------------------------------------------------------------- gate-2 (receipt) via build_active
 def test_cli_two_field_receipt():
-    d = tempfile.mkdtemp(); man, mp, rp = make_env(d)
-    _write(rp, {"result": "PASS", "manifest_sha256": fp.sha256_file(mp)})
-    _assert(_build(mp, rp, d), "two-field object rejected", "two_field_receipt")
+    with tempfile.TemporaryDirectory() as d:
+        man, mp, rp = make_env(d)
+        _write(rp, {"result": "PASS", "manifest_sha256": fp.sha256_file(mp)})
+        _assert(_build(mp, rp, d), "two-field object rejected", "two_field_receipt")
 
 
 # ---------------------------------------------------------------- gate-3 (recompute) via build_active
 def test_cli_recompute_mismatch():
-    d = tempfile.mkdtemp(); man, mp, rp = make_env(d)
-    # substitute the content of a referenced file without updating its hash
-    with open(man["endpoints"][0]["unfold_root"], "w") as fh:
-        fh.write("TAMPERED-SAME-CLASS")
-    _assert(_build(mp, rp, d), "recomputed", "recompute_mismatch")
+    with tempfile.TemporaryDirectory() as d:
+        man, mp, rp = make_env(d)
+        # substitute the content of a referenced file without updating its hash
+        with open(man["endpoints"][0]["unfold_root"], "w") as fh:
+            fh.write("TAMPERED-SAME-CLASS")
+        _assert(_build(mp, rp, d), "recomputed", "recompute_mismatch")
 
 
 def test_cli_recompute_missing_path():
-    d = tempfile.mkdtemp(); man, mp, rp = make_env(d)
-    os.remove(man["endpoints"][0]["source_path"])
-    _assert(_build(mp, rp, d), "path absent", "recompute_missing_path")
+    with tempfile.TemporaryDirectory() as d:
+        man, mp, rp = make_env(d)
+        os.remove(man["endpoints"][0]["source_path"])
+        _assert(_build(mp, rp, d), "path absent", "recompute_missing_path")
 
 
 # ---------------------------------------------------------------- gate-4 (transition receipt) via P4
 def test_cli_p4_bad_component_receipt():
-    d = tempfile.mkdtemp(); man, mp, rp = make_env(d)
-    active = os.path.join(d, "active.root")
-    with open(active, "w") as fh:
-        fh.write("active-cov")
-    badcb = _write(os.path.join(d, "cb.json"),
-                   {"schema": "WRONG.v1", "result": "PASS", "candidate_sha256": "a" * 64})
-    audit = _write(os.path.join(d, "audit.json"), {"result": "PASS"})
-    r = run([P4, "--manifest", mp, "--pass-receipt", rp, "--component-receipt", badcb,
-             "--active", active + ":hCov_universe4d_total", "--support", os.path.join(d, "sup.root"),
-             "--cv", os.path.join(d, "cv.root"), "--audit-json", audit,
-             "--out", os.path.join(d, "p4.json"), "--out-receipt", os.path.join(d, "p4r.json")])
-    _assert(r, "component_build receipt schema", "p4_bad_component_receipt")
+    with tempfile.TemporaryDirectory() as d:
+        man, mp, rp = make_env(d)
+        active = os.path.join(d, "active.root")
+        with open(active, "w") as fh:
+            fh.write("active-cov")
+        badcb = _write(os.path.join(d, "cb.json"),
+                       {"schema": "WRONG.v1", "result": "PASS", "candidate_sha256": "a" * 64})
+        audit = _write(os.path.join(d, "audit.json"), {"result": "PASS"})
+        r = run([P4, "--manifest", mp, "--pass-receipt", rp, "--component-receipt", badcb,
+                 "--active", active + ":hCov_universe4d_total", "--support", os.path.join(d, "sup.root"),
+                 "--cv", os.path.join(d, "cv.root"), "--audit-json", audit,
+                 "--out", os.path.join(d, "p4.json"), "--out-receipt", os.path.join(d, "p4r.json")])
+        _assert(r, "component_build receipt schema", "p4_bad_component_receipt")
 
 
 # ---------------------------------------------------------------- aggregate worker failures via builder
 def test_cli_pub_builder_aggregates_missing():
-    d = tempfile.mkdtemp()   # empty negweight dir -> all ten endpoints missing
-    r = run([PUB, "--negweight-dir", d, "--cv", os.path.join(d, "cv.root"), "--utc", "u",
-             "--out-manifest", os.path.join(d, "m.json"), "--out-receipt", os.path.join(d, "r.json")])
-    _assert(r, "negweight output missing", "pub_aggregate")
+    with tempfile.TemporaryDirectory() as d:   # empty negweight dir -> all ten endpoints missing
+        r = run([PUB, "--negweight-dir", d, "--cv", os.path.join(d, "cv.root"), "--utc", "u",
+                 "--out-manifest", os.path.join(d, "m.json"), "--out-receipt", os.path.join(d, "r.json")])
+        _assert(r, "negweight output missing", "pub_aggregate")
 
 
 def test_cli_pub_builder_receipt_gate_still_closes_when_endpoints_valid():
@@ -165,38 +173,38 @@ def test_cli_pub_builder_receipt_gate_still_closes_when_endpoints_valid():
     gate doing its job, so either message satisfies this test; what must hold on every
     platform is that no manifest is written and that aggregation did not short-circuit.
     """
-    d = tempfile.mkdtemp()
-    nw = os.path.join(d, "negweight"); os.makedirs(nw)
-    # Shape this EXACTLY as fps_endpoint_receipt.cmd_write emits it: the footing is a NESTED
-    # block, not five top-level keys. This fixture used to be flat, which is the only reason the
-    # 2026-08-07 producer/consumer mismatch survived -- the builder read the keys off the top
-    # level, the fixture put them there, and the test went green while no real receipt could ever
-    # pass. A fixture that does not match its producer tests nothing. Keep this in sync with
-    # fps_endpoint_receipt.SCHEMA.
-    cfg = {"schema": "fps_endpoint_receipt.v1", "result": "PASS",
-           "bkg_mode": fp.PUBLICATION_BKG_MODE,
-           "footing": {**fp.REQUIRED_FOOTING, "bkg_mode": fp.PUBLICATION_BKG_MODE}}
-    cfg["launcher"] = "sbatch_unfold_active_fps.sh"     # in KNOWN_LAUNCHERS and exists under cwd=ND
-    for b in fp.BANDS:
-        for ep in fp.ENDPOINTS:
-            out = os.path.join(nw, f"fps2d_xsec_MEFHC_5iter_lgbm_uni_full_{b}_{ep}.root")
-            with open(out, "w") as fh:
-                fh.write("placeholder")                 # never hashed; PASS 1 only checks existence
-            _write(out + ".config.json", cfg)
-    man = os.path.join(d, "m.json")
-    r = run([PUB, "--negweight-dir", nw, "--merged-dir", os.path.join(d, "merged"),
-             "--cv", os.path.join(d, "cv.root"), "--utc", "u",
-             "--out-manifest", man, "--out-receipt", os.path.join(d, "r.json")])
-    blob = (r.stdout or "") + (r.stderr or "")
-    assert r.returncode != 0, "pub_receipt_gate: expected nonzero exit, got 0"
-    assert any(n in blob for n in ("receipt: required file absent",
-                                  "merged input not in validated receipt")), \
-        f"pub_receipt_gate: expected a merged-input receipt gate message; got:\n{blob[-600:]}"
-    assert "negweight output missing" not in blob, \
-        "pub_receipt_gate: aggregation fired, so the ten endpoints were not actually valid -- " \
-        "this test no longer exercises the receipt gate"
-    assert not os.path.exists(man), \
-        "pub_receipt_gate: manifest emitted without a verified merged-input receipt"
+    with tempfile.TemporaryDirectory() as d:
+        nw = os.path.join(d, "negweight"); os.makedirs(nw)
+        # Shape this EXACTLY as fps_endpoint_receipt.cmd_write emits it: the footing is a NESTED
+        # block, not five top-level keys. This fixture used to be flat, which is the only reason the
+        # 2026-08-07 producer/consumer mismatch survived -- the builder read the keys off the top
+        # level, the fixture put them there, and the test went green while no real receipt could ever
+        # pass. A fixture that does not match its producer tests nothing. Keep this in sync with
+        # fps_endpoint_receipt.SCHEMA.
+        cfg = {"schema": "fps_endpoint_receipt.v1", "result": "PASS",
+               "bkg_mode": fp.PUBLICATION_BKG_MODE,
+               "footing": {**fp.REQUIRED_FOOTING, "bkg_mode": fp.PUBLICATION_BKG_MODE}}
+        cfg["launcher"] = "sbatch_unfold_active_fps.sh"     # in KNOWN_LAUNCHERS and exists under cwd=ND
+        for b in fp.BANDS:
+            for ep in fp.ENDPOINTS:
+                out = os.path.join(nw, f"fps2d_xsec_MEFHC_5iter_lgbm_uni_full_{b}_{ep}.root")
+                with open(out, "w") as fh:
+                    fh.write("placeholder")                 # never hashed; PASS 1 only checks existence
+                _write(out + ".config.json", cfg)
+        man = os.path.join(d, "m.json")
+        r = run([PUB, "--negweight-dir", nw, "--merged-dir", os.path.join(d, "merged"),
+                 "--cv", os.path.join(d, "cv.root"), "--utc", "u",
+                 "--out-manifest", man, "--out-receipt", os.path.join(d, "r.json")])
+        blob = (r.stdout or "") + (r.stderr or "")
+        assert r.returncode != 0, "pub_receipt_gate: expected nonzero exit, got 0"
+        assert any(n in blob for n in ("receipt: required file absent",
+                                      "merged input not in validated receipt")), \
+            f"pub_receipt_gate: expected a merged-input receipt gate message; got:\n{blob[-600:]}"
+        assert "negweight output missing" not in blob, \
+            "pub_receipt_gate: aggregation fired, so the ten endpoints were not actually valid -- " \
+            "this test no longer exercises the receipt gate"
+        assert not os.path.exists(man), \
+            "pub_receipt_gate: manifest emitted without a verified merged-input receipt"
 
 
 def _run_all():

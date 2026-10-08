@@ -38,6 +38,7 @@ import glob as globmod
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -962,7 +963,9 @@ class TheCodeBindingComposesWithTheLaunchersOwnPreflight(unittest.TestCase):
         producer did not already import. `mnv_source_manifest` is READ as JSON on the task path and
         IMPORTED only by `campaign_code_binding`, which runs at initialization.
         """
-        probe = Path(tempfile.mkdtemp(prefix="zcampaign-importset.")) / "probe.py"
+        holder = Path(tempfile.mkdtemp(prefix="zcampaign-importset."))
+        self.addCleanup(shutil.rmtree, holder, ignore_errors=True)
+        probe = holder / "probe.py"
         probe.write_text(
             "import sys\n"
             f"sys.path.insert(0, {str(ND)!r})\n"
@@ -1069,9 +1072,10 @@ class TheDeclarationsAreDerivedFromTheLaunchersOwnLines(unittest.TestCase):
                          ["block", "run"])
 
     def test_a_launcher_MISSING_from_the_code_root_refuses_rather_than_being_invented(self):
+        empty = tempfile.mkdtemp(prefix="zcampaign-empty.")
+        self.addCleanup(shutil.rmtree, empty, ignore_errors=True)
         with self.assertRaises(ZP.PrecursorError) as caught:
-            ZP.campaign_arm_table(str(Path(tempfile.mkdtemp(prefix="zcampaign-empty."))),
-                                  ["block"])
+            ZP.campaign_arm_table(empty, ["block"])
         self.assertIn("is absent from the code root", str(caught.exception))
 
 
