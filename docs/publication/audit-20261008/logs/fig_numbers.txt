@@ -1,0 +1,27 @@
+[ok] sigTwoD: computed 3.0733131599571655e-38 | printed 3.073e-38 | values.tex \sigTwoD
+[ok] sigTwoDpaper: computed 3.03901139455691e-38 | printed 3.039e-38 | values.tex \sigTwoDpaper
+[ok] ratioTot: computed 1.0112871460310062 | printed 1.011 | values.tex \ratioTot
+[ok] binsTen: computed 94.14634146341463 | printed 94.1 | values.tex \binsTen
+[ok] pullMean: computed 0.08894542701552118 | printed 0.089 | values.tex \pullMean
+[ok] pullRMS: computed 0.5981211651164514 | printed 0.598 | values.tex \pullRMS
+[ok] chiPaper: computed 3.6609406827395268 | printed 3.66 | values.tex \chiPaper
+[ok] uqPaper_median_rel_pct: computed 6.852482845312499 | printed 6.85 | values.tex \uqPaper
+[ok] chi2ndf_data_vs_tune: computed 33.03927965774954 | printed 33.04 | packet/claims (receipt_model_chi2_2d.json 33.039)
+[ok] chi2ndf_ours_vs_tune: computed 26.490912579045744 | printed 26.49 | receipt_model_chi2_2d.json 26.491
+[ok] data_total: computed 3.0699278941712995e-38 | printed 3.0699e-38 | VL157 data total
+[ok] ratio_corner_GiBUU: computed 1.6069788483884804 | printed 1.61 | paper_body.tex GiBUU corner
+[ok] ratio_total_GiBUU: computed 1.385875303783419 | printed 1.39 | paper_body.tex GiBUU overall
+[ok] ratio_total_GENIE-CV,ratio_total_GENIE+MEC,ratio_total_NuWro,ratio_total_GiBUU: computed (1.0675630230318531, 1.385875303783419) | printed 1.07--1.39 | paper_body.tex: integrated data-to-prediction ratios 1.07--1.39
+[ok] ratio_W2p2_GENIE-CV,ratio_W2p2_GENIE+MEC,ratio_W2p2_NuWro: computed (1.1107755943652458, 1.1298802687972591) | printed 1.11--1.13 | paper_body.tex: 2.2<=W<3.0 ratios 1.11--1.13 (GENIE, NuWro)
+[ok] ratio_total_GENIE-CV,ratio_total_GENIE+MEC,ratio_total_NuWro: computed (1.0675630230318531, 1.152907792178418) | printed 1.07--1.15 | paper_body.tex: 1.07--1.15 integrated (GENIE, NuWro)
+[ok] ratio_corner_GENIE-CV,ratio_corner_GENIE+MEC,ratio_corner_NuWro: computed (1.1385958270184497, 1.1601023889475972) | printed 1.14--1.16 | paper_body.tex: corner 1.14--1.16 (GENIE, NuWro)
+[ok] ratio_hihi_min_pct,ratio_hihi_max_pct: computed (12.351558951537145, 30.463217979730082) | printed 12--30 | paper_body.tex: ratio 12--30% in the high-Eavail, high-W cells
+[ok] ratio_lowW_min_pct,ratio_lowW_max_pct: computed (22.63673518747926, 30.577361533352708) | printed 23--31 | paper_body.tex: ratio 23--31% at W<1.1 GeV for every Eavail
+[ok] corner_over_total_max_dev_pct: computed 6.653734014209789 | printed <= 7.0 | paper_body.tex: within 7% of their integrated ratios
+[ok] note_share_hiEavail_pct: computed 67.215 | printed [62.0, 71.0] | paper_body.tex: 'two thirds' of the positive cell-integrated difference at Eavail>=0.8
+[ok] note_share_hiW_of_hiEavail_pct: computed 83.172 | printed [50.0, 100.0] | paper_body.tex: 'most of that' at W>=1.8
+[ok] share_catch_cell_pct: computed 21.947 | printed [17.0, 23.0] | paper_body.tex: 'a fifth' in the single widest catch cell
+[ok] n_reported: computed 205 | printed 205 | 205 reported bins
+Fig. 2 consistency |hExcess2D - (data - comparator) x area| max: 2.8548207047493545e-55
+NOT COVERED: ["paper_body.tex 'higher energies carry 14--15% of this region ... and 7% of the total' and '1.37 against 1.29': from VL161 (E_nu >= 20 GeV shares), not recomputable from these arrays"]
+FIG NUMBERS: PASS
