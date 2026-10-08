@@ -20,6 +20,12 @@
 
 ## 1. Campaign-review choice (`CAMPAIGN-REVIEW-20260929.md` §1)
 
+**When it was read.** `docs/orchestration/CAMPAIGN-REVIEW-20260929.md` (sha256 `a2ad85dc…`, identical at `fec438db`)
+was read in full in this session before this correction pass. It was then re-read (§1 and §6) in the fresh fix worktree,
+immediately after that worktree was created and before any finding was rechecked or any file or product was touched.
+The audit report `ea939701` separately records that, for the *audit*, the review was read only after its first commit;
+that note concerns the audit, not this pass.
+
 **Decision answered.** Which audit findings are real, and for each real one: is it fixed and verified, or what
 exactly blocks it? A finding that is disproved, or blocked with a concrete cause, is a valid terminal outcome.
 
