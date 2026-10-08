@@ -32,6 +32,7 @@ checkouts and frozen run worktrees on `/pscratch` are governed by their own run 
 | `housekeeping-20260929` | **no** (local only when checked 2026-10-07) | 23 retired worktrees (`retired-worktrees.jsonl`, `worktree-caches/*.tar.gz`), the primary checkout's untracked root files (`shared-files/`, `main-update.json`), and a pre-cleanup all-ref bundle | `main-update.json`, `retired-worktrees.jsonl` (no README) |
 | `simplification-2026-10-07-fc97eaf9` | yes | family A3 (674 PET final-design dev outputs) and an all-ref bundle for tag `evidence/simplification-2026-10-07-fc97eaf9` | its `RECOVERY.md` |
 | `housekeeping-20261007` | yes | every unique byte of the 2026-10-07 local cleanup batch (below), with manifests and a byte-level restoration proof | its `RECOVERY.md` |
+| `tmpdir-leaks-20261007` | yes | validation logs, measurement tools and a complete-history bundle for PR #48 (test temp-directory leaks), and the pre-removal tree listing of its retired worktree `MINERvA-OmniFold-tmpdir-leaks-20261007` | its `RECOVERY.md` |
 
 ## Before removing a local checkout or scratch directory
 
@@ -54,9 +55,11 @@ Then remove it with `git worktree remove <path>`. That deletes neither the branc
 use `git gc --prune=now` or `git stash drop` as cleanup: stashes and dangling objects are shared by every
 worktree, and a dangling commit can be another session's only copy.
 
-**Test scratch is the largest local consumer.** `nd-unfolding/tests/test_s5c_coverage.py` writes up to
-about 1.75 GB of synthetic NPZ per case into `TMPDIR` and does not delete it (`test_s5c_meter.py` also
-leaks `s5c-meter-*`). Twelve leaked cases held 14.1 GB on 2026-10-07. Run suites with `TMPDIR` set to a dated scratch directory, and delete that
+**Test scratch was the largest local consumer.** Until PR #46, `nd-unfolding/tests/test_s5c_coverage.py` left up to
+about 1.75 GB of synthetic NPZ per case in `TMPDIR` (twelve leaked cases held 14.1 GB on 2026-10-07). PR #46 and
+PR #48 made 18 test files remove their temp directories. Two known leaks remain, both small:
+`KNOWN_ISSUES.md` rows 86 (the frozen s5p recovery tests, 4.7 MiB per run) and 87 (`mnv_guarded_run.py`'s
+per-process tool directories). Still run suites with `TMPDIR` set to a dated scratch directory, and delete that
 directory once the run's logs are copied out.
 
 ## Local cleanup records

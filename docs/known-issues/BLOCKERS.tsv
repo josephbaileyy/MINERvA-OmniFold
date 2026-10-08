@@ -1,2 +1,4 @@
 # Blocker registry for KNOWN_ISSUES.md: one line per OPEN row, <id> TAB <D7|JOSEPH|OWNER> TAB <text>.
 # Checked by docs/orchestration/probes/probe-20260923-no-unowned-open-issue.py. A FIXED or CLOSED row has no line.
+86	OWNER	test-tmpdir-leaks lane (recorded 2026-10-07); bounded remedy and done-when in docs/known-issues/ISSUE-86-frozen-s5p-recovery-tests-leak-tmpdir.md; needs no decision
+87	OWNER	test-tmpdir-leaks lane (recorded 2026-10-07); test-only remedy first, production change only with its sha256 pins re-issued; docs/known-issues/ISSUE-87-guarded-run-tool-directories-outlive-exec.md
