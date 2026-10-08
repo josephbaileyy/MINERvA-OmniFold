@@ -478,8 +478,21 @@ Table~\ref{tab:joint} lists the ten decisions as recorded.  Every test is
 rejected at familywise $\alpha=\jtAlpha$; nine have $k=0$, and NuWro's shape test
 has $k=1$.  Each rejection also survives the robustness check with the residual
 variants at $\pm\jtMoneKappaRobust\,\delta_{\mathrm{M1}}$, the upper end of the
-extrapolation in condition~(i); how far beyond that the decisions would hold has
-not been evaluated.  Figure~\ref{fig:joint-nulls} shows each null's
+extrapolation in condition~(i).  A report-only scan along the frozen direction
+$\delta_{\mathrm{M1}}$~\cite{JointTestKappa2026} found all ten decisions to remain
+determinate rejections at every sampled multiplier up to 5.25 in the frozen
+ensembles.  Determinate rejection is first lost between the sampled multipliers
+5.2547 and 5.2563, near 5.26 (between 5.1688 and 5.1703, near 5.17, with the
+recovered pseudo-experiments included), by the GENIE~+~MEC shape test, whose
+interval then contains its Holm threshold, and, through the Holm step-down, by
+the GENIE CV shape test; neither is then a determinate failure to reject.  This
+tests sensitivity along one prescribed direction; it establishes neither
+convergence nor a bound on the actual residual, which remains unmeasured and
+potentially material.
+% Source: publication/kappa/RECORD-20261008-kappa-breakdown.md sec. 2 (fbf682f9; spec frozen b75af4f4; independent
+% reproduction AGREE). Frozen: last rejected sample 5.2546875, first undetermined 5.25625; union: 5.16875 / 5.1703125.
+% Wording: Joseph 2026-10-08 (shorter text), scoped to the frozen ensembles for "up to 5.25".
+Figure~\ref{fig:joint-nulls} shows each null's
 calibrated distribution with the observed statistic.  The Tune~v1 null, the analysis
 simulation itself, is centred at small values, whereas the external nulls are
 displaced far upward by the estimator's pull toward its prior, which the
@@ -750,7 +763,10 @@ reader from an empty directory.  The remaining quoted numbers (the
 two-dimensional uncertainty and coverage figures, the closure and bias studies,
 the low-recoil comparisons, the recoil-response sensitivity, the fine-grid
 convergence rates of condition~(i) and the covariance-status measurements) are not
-recomputable from this release.
+recomputable from this release.  The multiplier scan of Sec.~\ref{sec:joint} is
+recomputable from the released sufficient inputs with the scan code of
+Ref.~\cite{JointTestKappa2026}, but it is not part of the release's own
+verification.
 Extraction from the pseudo-experiment products, which are archived
 (\SI{2.3}{GB}), and the event-level processing are not reproducible from it
 either; they need the archived products and the open-data AnaTuples together
