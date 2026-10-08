@@ -10,6 +10,7 @@
 5. (RC5+) condition (i)'s fine-grid L2 ratios: recompute them from data/m1f2/ and check the printed range
    (macros jtMoneMin--jtMoneMax in expected/values_inference.tex); check that the released M1 shifts are the frozen
    evaluator's d1 vectors.
+6. (RC6+) a negative control: fig_numbers.py must reject a perturbed printed value.
 Run from the release root: python3 code/verify_rc.py
 """
 from __future__ import annotations
@@ -64,6 +65,22 @@ def main() -> int:
         last = (r.stdout.strip().splitlines() or ["(no output)"])[-1]
         print(f"[{'ok' if r.returncode == 0 else 'FAIL'}] Figs. 1-3 quoted numbers vs expected/values.tex: {last}")
         ok &= r.returncode == 0
+        # Negative control: the check must FAIL on a printed value it should reject. Perturb one Sec. V macro by one
+        # unit in its last digit and require fig_numbers.py to report a discrepancy.
+        vt = (ROOT / "expected/values.tex").read_text()
+        m = re.search(r"(\\newcommand\{\\gibuuCorner\}\{)([0-9.]+)(\})", vt)
+        if m:
+            bad = f"{float(m.group(2)) + 0.01:.2f}"
+            with tempfile.TemporaryDirectory() as td:
+                pv = Path(td) / "values-perturbed.tex"
+                pv.write_text(vt[:m.start(2)] + bad + vt[m.end(2):])
+                r = run("code/figs/fig_numbers.py", "--npz", "data/figs/fig_arrays.npz", "--values", pv)
+            ctl = r.returncode != 0 and "DISCREPANCY" in r.stdout
+            print(f"[{'ok' if ctl else 'FAIL'}] negative control: fig_numbers.py rejects \\gibuuCorner {m.group(2)} -> {bad}")
+            ok &= ctl
+        else:
+            print("[FAIL] negative control: \\gibuuCorner not found in expected/values.tex")
+            ok = False
         with tempfile.TemporaryDirectory() as td:
             r = run("code/figs/make_figs.py", "--npz", "data/figs/fig_arrays.npz", "--outdir", td,
                 "--values", "expected/values.tex")

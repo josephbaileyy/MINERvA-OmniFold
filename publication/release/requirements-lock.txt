@@ -1,0 +1,14 @@
+# Exact versions resolved by 'pip install -r requirements.txt' on 2026-10-08 (CPython 3.11.15, macOS arm64), from pip freeze.
+# requirements.txt pins only numpy, scipy and matplotlib; this lock file pins their dependencies too.
+contourpy==1.3.3
+cycler==0.12.1
+fonttools==4.66.1
+kiwisolver==1.5.1
+matplotlib==3.11.2
+numpy==1.26.4
+packaging==26.3
+pillow==12.3.0
+pyparsing==3.3.3
+python-dateutil==2.9.0.post0
+scipy==1.15.2
+six==1.17.0

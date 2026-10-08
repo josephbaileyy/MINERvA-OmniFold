@@ -2,7 +2,7 @@
 
 **CITABLE FOR:**
 - what this pass changed in the article, the note and the release, and why;
-- the RC5 identity and how it is built and verified;
+- the RC5 and RC6 identities, and how they are built and verified;
 - the CFS preservation of RC4 and of the audit's supporting products;
 - the AnaTuple inventory and its costed plan;
 - the disposition of each audit gap, G1–G13.
@@ -29,6 +29,8 @@ exactly blocks it? A finding that is disproved, or blocked with a concrete cause
   in a detached worktree at a fixed implementation commit, reproduces the consequential checks, and verifies the
   preservation receipts.
 - The review campaign's recommended Astra High reviewer is not available here. Joseph supplied the reviewer.
+- The reviewer runs the same model as the owner (Opus 5.5). Its independence is per session — fresh context, no
+  shared state, its own reproductions — not per model.
 
 **Budget and stop.**
 - No cluster jobs. The CFS copy and hashing ran on a data-transfer node; the builds and replays ran locally.
@@ -46,7 +48,8 @@ the recovery commands.
 |---|---|
 | capacity before | `du -s --block-size=1G /global/cfs/cdirs/m3246/josephrb` = **1,522 GiB** (1.63 TB, decimal; 2026-10-08 15:15 UTC), against the 3 TB rule; the copy adds 42.4 GB |
 | RC4 | `rc4/minerva-omnifold-article-release-rc4.tar.gz`, copied by `scp -p` from the publication session's scratchpad; `sha256sum -c` gives **`46f801bf05bbd18d1fcfe8c8bf5b0e361cd8e352211de641b434547be1680e88` OK**. RC4 is unchanged; its original also remains where it was. |
-| RC5 | `rc5/minerva-omnifold-article-release-rc5.tar.gz`, `67847088…` OK (§7) |
+| RC5 | `rc5/minerva-omnifold-article-release-rc5.tar.gz`, `67847088…` OK (§7); superseded by RC6 and kept |
+| RC6 | `rc6/minerva-omnifold-article-release-rc6.tar.gz`, `71e2b7a4…` OK (§7) |
 | inventory (source) | `preserve_prd_evidence_20261008.sh inventory` on `dtn01.nersc.gov`: **16,239 files, 42,395,379,463 bytes**, each hashed at the source. `SOURCE-INVENTORY.tsv` sha256 `9139cb1e…` (committed gzipped as `publication/release/preservation/SOURCE-INVENTORY.tsv.gz`); per-source counts in `SOURCE-SUMMARY.tsv` |
 | symlinks | 161 source symlinks, recorded in `SYMLINKS.tsv` (`903433b0…`) and not copied. 160 are the floor ensembles' slab links into `mii/member_k00{0000,1200}/uq_5d/uthrow_slabs_5d_sb/`, whose 80 targets are preserved; one is the relative `figs/repo/orchestration -> docs/orchestration`. The inventory refuses if any resolved target is not preserved. |
 | copy | `rsync -a --files-from=… /global/ $DEST/`, rc 0. Sources were only read. The first attempt used `/` as the transfer root; rsync's sender refused the symlinked `/pscratch` component for every file, and no data was transferred. The script now uses `/global/`. |
@@ -71,18 +74,22 @@ directory and the home epoch. The s5p archive still has one, on CFS.
 | J09 "unweighted (L2) norm" | `m1_f2_norm_ratio.py`, on the eight pair-difference products. Their digests match the committed receipts `state/s5p/stage3/{m1,f2}/*.json`. The relative L2, ‖D_M1/f_mid‖/‖D_F2/f_coarse‖, gives 0.759 / 0.857 / 0.542 / 0.504, which matches the recorded `campaign-state.json` m1 row (0.76 / 0.86 / 0.54 / 0.50). The raw L2 gives 0.784 / 0.576 / 0.346 / 0.496. | Confirmed. The text now reads "the L2 norm of the per-cell relative changes", and RC5 recomputes the range. |
 | J10 0.45–0.76 proxy rate | Its only sources are the A7 `claims.rejection` text and `REVIEW-20260927` item 4, whose own printed proxy numbers give 0.52, 0.875, ≈ 0 and 0.45–0.73. No recorded operand reproduces it. | Confirmed **unresolved provenance**. The article now calls it "a design-review value whose calculation is not recorded". No derivation was invented, and the κ scan is not presented as validating convergence. |
 | R05 "about 11%" | `publication/w2/w2b_statistic_shift.py`, on the committed evaluations: **0.1095**, MnvTune total at +4 %, T 2852.305 → 2539.914, baseline the frozen observed statistic. Against the unscaled re-unfold it is 0.0970. | Confirmed. The baseline is now recorded (W2B addendum), and the article says "from their frozen values". |
-| C04 Ascencio caveat | `VALIDATION_LEDGER.md` Ascencio entry (fourth caveat, OI-59 open); `docs/EAVAIL_DEFINITION.md` §2 (−10.99 % out of truth bin 1) and §4; our definition read from `CVUniverse.h:361-374`; Ascencio's Eq. 1 read in arXiv:2110.13372 | Confirmed. The disclosure was added to Sec. V. |
+| C04 Ascencio caveat | `VALIDATION_LEDGER.md` Ascencio entry (fourth caveat, OI-59 open); `docs/EAVAIL_DEFINITION.md` §2 (−10.99 % migration out of truth bin 1, E_avail < 0.1 GeV, only), §3 (the 135 MeV charged-pion mass, at most +1.049 % in a bin) and §4 (the common cells span bins 1–3, whose aggregate is measured nowhere); our definition read from `CVUniverse.h:361-374`; Ascencio's Eq. 1 read in arXiv:2110.13372 | Confirmed. Disclosed in Sec. V. **Cycle 1 corrected the first wording** (reviewer B1), which had placed the 11 % in the common cells and compared it to the residual. It now says: about 11 % of our lowest bin's population; the common cells span the three lowest bins, for which the shift is not computed; it has the residual's sign; it is not a correction and is not propagated. The pion-mass and strange-baryon clauses are included. |
 | V13 2σ window | `rescore_vl169_toys_vl170.json`: C2 0.9769 [0.9737, 0.9800], window [0.9281, 0.9722] | Confirmed. The text now says both fractions are above their windows. |
 | V14 "cause is untested" | `KNOWN_ISSUES.md` row 85: the 2026-10-07 diagnostic is descriptive, consistent with closure-toy under-scatter, and the held-out re-test is deferred | Partly confirmed. The text now says the cause is not established and names both the diagnostic and the missing test. |
 | V19 16–31 % scope | VL154 A4: candidate R (the joint-test estimator), the maximum over the 42 (E_avail,W) cells for the withheld shapes (16.4 % and 31.3 %), 20 of 42 cells within σ | Confirmed. The estimator and the cell set are now named. |
 | C14 "slightly above" | From the RC4 figure arrays: GENIE CV +9.4 %, GENIE+MEC +11.8 % at 1.4 ≤ W < 1.8 GeV | Confirmed. The text now reads "9–12 % above", bound to macros that `fig_numbers.py` checks. |
-| M03 "about fifteen-fold" | `negweight_bias_ratio.py`, on `d1_summary.json` and `dev_receipt.json`: the largest biases give 4.11 % → 0.241 % (**17.0×**); the per-cell ratios are 6.9–36.8 (the 6.9 is the catch cell, EW41) | Wording kept: it states the ratio of the maxima conservatively. The calculation is now committed. |
+| M03 "about fifteen-fold" | `negweight_bias_ratio.py`, on `d1_summary.json` and `dev_receipt.json`: the largest biases give 4.11 % → 0.241 % (**17.0×**); the per-cell ratios are 6.9–36.8 (the 6.9 is the catch cell, EW41); the endpoint ratio of the stated bounds is 3.5/0.24 = 14.6 | Wording kept. It is a rounded-down summary between the endpoint ratio (14.6) and the ratio of maxima (17.0); the per-cell spread (6.9–36.8) shows no single factor applies. The calculation is now committed. |
 | D03 ⟨E_ν⟩ ≈ 6 GeV | arXiv:2106.16210, title "at ⟨E_ν⟩∼6 GeV" | Confirmed. The citation was added. |
 | D02 1.057e21 POT (not an audit finding; checked while reading 2106.16210) | Published: 10.61×10²⁰. This analysis: 1.057394e21, from the analysed files' summed `dataPOTUsed`, with an independent hadd POT check (`AUDIT-FINDINGS-20260820`) | No change. The article quotes the exposure of the files it analysed (an earlier production). The 0.35 % difference is recorded here only. |
 | DA2 dependencies | RC4 replayed with exactly numpy + scipy: `VERIFY: FAIL` (no matplotlib) | Confirmed. Fixed in RC5 and in the article. |
 | DA3 outside-reader replay | `RC1-REPLAY-RECEIPT-20261006.md` covers RC1 only | Confirmed. The article now says a replay from an empty directory reproduces every value, and that an *earlier candidate* was replayed by an independent reader. |
-| DA6 "file identities recorded with the release" | RC4 contains no AnaTuple identities | Confirmed. RC5 ships names, sizes and mtimes, and the article now says "names and sizes, but not checksums". |
+| DA6 "file identities recorded with the release" | RC4 contains no AnaTuple identities | Confirmed. RC5/RC6 ship names, sizes and mtimes. The article says "names and sizes, but not checksums" in Sec. VIII and, since cycle 1 (reviewer S1), "their names and sizes are recorded" in Sec. II. |
 | L01, L02, R01, R03a literature | §5 | Confirmed verbatim against the original publications. |
+| J13 rounding jitter (2/1752 → 3/1752) | `observed_jitter_p` in `joint-evaluate.json`; recomputed from RC4's `jitters` by the audit's `checks/agentC_checks.py` (audit branch) and re-run by the owner on 2026-10-08: all 10 tests match at rtol 1e-12; NuWro shape k = 1–2 of 1751 | Confirmed. The replay still does not compare this field, and RC6's README now says so again (RC5's had dropped RC4's sentence; reviewer S2). Not added to `replay_inference.py`, whose sha256 `41f4af05…` the κ scan pins. |
+| R05 audit fix "add the shifted f_data to the RC" | — | **Not done.** The W2 unfolds are preserved on CFS (§2), and the statistic shift is recorded with its operands (W2B addendum). Adding them to the release is a release-scope change, left for the next RC (proposed). |
+| J10 frozen-V W-norm analogs (0.33–0.87; audit agent C) | `‖d1‖/‖D_F2‖` in the frozen V, 0.87 / 0.67 / 0.42 / 0.33 | Recorded only. They are not the design's proxy metric, so they neither reproduce nor refute 0.45–0.76 (G6b). |
+| J06/J11 audit fix "asimov J-vectors in the RC" | — | **Not done.** The λ and SD-scale inputs (`runs/s3r`, `runs/s3v`) are now preserved on CFS (§2). Shipping them is a release-scope change, left for the next RC (proposed). |
 | A7 internal inconsistencies (200 vs 194; ~0.05 vs 0.068) | `contract-amendment-7-production-admission.json` `calibration.metric` vs `metric_frozen.n`; condition 4 vs the pre-freeze summary | Confirmed. The contract is frozen and is not edited. The article follows the measured values (194; 0.07, from 0.068). Recorded here. |
 
 ## 4. What changed
@@ -115,6 +122,11 @@ directory and the home epoch. The s5p archive still has one, on CFS.
 
 **Note** (`sec_eavailw.tex`): the same redundant fitted exponent is removed. No other note or primer text changed.
 
+**Exponent sources** (cycle 1, reviewer S6): dated pointers were added, without editing the original text, at
+`docs/orchestration/EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md` (under the table, and at the
+"`p = 0.000`" sentence), at `CORRECTION-20260921-seed-effect-larger-ensemble-corollary-withdrawn.md` §3 and at
+`CATALOG-ARCHIVE-scalar5d.md`. All three are LIVE, non-immutable rows in `MANIFEST.tsv`, which was regenerated.
+
 **Records:**
 - the W2B report addendum (R05);
 - `CLAIMS-20261005-claim-to-evidence.md` §F;
@@ -130,6 +142,12 @@ directory and the home epoch. The s5p archive still has one, on CFS.
 - `make_figs.py`: the Fig. 1 label;
 - `RC5-README.md`, with corrected citation routes (the covariance-status JSONs, VL146, the FSI summaries);
 - `test_release_tools.py`.
+- **Cycle 1 (RC6):**
+  - `RC6-README.md`, which restores the `observed_jitter_p` disclosure and gives the payload-layout clause;
+  - `requirements-lock.txt`;
+  - a `verify_rc.py` negative control: `fig_numbers.py` must reject `\gibuuCorner` 1.61 → 1.62;
+  - `build_rc.py` chooses `RC<N>-README.md` by name and ships the lock file from RC6;
+  - a README-selection test.
 
 ## 5. Literature claims checked against the original publications
 
@@ -150,7 +168,7 @@ The PDF digests are `d50f142a…` (2110.13372) and `1914c811…` (1501.06431).
 ## 6. AnaTuple inventory and identity/preservation plan (G4)
 
 **Exact inventory** (metadata only, no reads of file contents): `anatuple-inventory-20261008.tsv` in this directory,
-also shipped in RC5 as `data/anatuple-inventory.tsv`.
+also shipped in RC5 and RC6 as `data/anatuple-inventory.tsv`.
 
 | part | files | bytes |
 |---|---:|---:|
@@ -185,37 +203,43 @@ storage commitment):
 
 **Recommendation:** A (data-only first, then full) and B now; then C or D, depending on the answer to D.
 
-## 7. RC5
+## 7. RC5 and RC6
+
+**RC6 is the reviewed candidate. RC5 is superseded, kept on CFS, and rebuildable from `f82e6db7`.**
+
 
 | | |
 |---|---|
-| identity | **`minerva-omnifold-article-release-rc5.tar.gz`**, sha256 **`6784708827e8337c7d3f7774e0fb727c24613ed7eb0db4cadf101fc6413124be`**, 15,741,965 B, 32 files (`docs/publication/release/RC5-SHA256SUMS.txt`, `RC5-README.md`) |
+| RC6 identity | **`minerva-omnifold-article-release-rc6.tar.gz`**, sha256 **`71e2b7a4fc952ecd3494f75d4454f7add7ee01eb08aeb77ade5bc62d45c1461e`**, 15,743,419 B, 33 files (`docs/publication/release/RC6-SHA256SUMS.txt`, `RC6-README.md`). Source commit: the cycle-1 repair commit, named in §9. |
+| RC6 empty-directory verification | fresh venv; `pip install -r requirements.txt`, whose `pip freeze` equals `requirements-lock.txt`; `env -i … python -I code/verify_rc.py`: **`VERIFY: PASS`, rc 0, 182 s**, including the new negative control (`\gibuuCorner` 1.61 → 1.62 rejected); all 33 checksums OK afterwards |
+| RC6 reproducibility | two builds `cmp` identical, `71e2b7a4…` |
+| RC5 identity | `minerva-omnifold-article-release-rc5.tar.gz`, sha256 `6784708827e8337c7d3f7774e0fb727c24613ed7eb0db4cadf101fc6413124be`, 15,741,965 B, 32 files (`RC5-SHA256SUMS.txt`, `RC5-README.md`); source commit **`f82e6db76f20119450e7364ec2d9919c23c67db7`** |
 | relation to RC4 | RC4 (`46f801bf…`) is unchanged and preserved on CFS. RC5 has a new identity. Its three data files are byte-identical to RC4's (checked against `RC4-SHA256SUMS.txt` by the builder); the code, README, requirements and expected macro files differ; `data/m1f2/` and `data/anatuple-inventory.tsv` are new. |
-| packaging command | `python3 publication/release/build_rc.py --payload <extracted RC4> --payload-sums docs/publication/release/RC4-SHA256SUMS.txt --name minerva-omnifold-article-release-rc5 --out <dir>`, run at this record's commit |
-| reproducibility | two independent builds gave the same sha256, `67847088…` (`cmp` identical) |
-| empty-directory verification | fresh `python3.11 -m venv` and `pip install -r requirements.txt` (numpy 1.26.4, scipy 1.15.2, matplotlib 3.11.2 and their pinned dependencies); `env -i … python -I code/verify_rc.py` from an empty directory: **`VERIFY: PASS`, rc 0, 177 s**. Every replay AGREE (0 differences); W1 0/0; FIG NUMBERS PASS; Figs. 1–4 regenerated (Fig. 1 prints "This work: 6.87%"); condition (i) ratios 0.504–0.857 against the printed 0.50–0.86; M1 shifts identical to the frozen d1, 4/4. Afterwards all 32 checksums are OK (the run adds only `code/__pycache__`). |
-| durable copy | `/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/rc5/` (`sha256sum -c` OK) |
-| tests | `publication/release/test_release_tools.py` (byte-reproducibility and normalization; relative vs raw norm; exponent fit) plus the existing replay and W1 tests: 12 passed |
+| packaging command | `python3 publication/release/build_rc.py --payload <extracted RC4> --payload-sums docs/publication/release/RC4-SHA256SUMS.txt --name minerva-omnifold-article-release-rc<N> --out <dir>`, run at the candidate's source commit: RC5 at `f82e6db7`, RC6 at the repair commit (§9). The digest depends on that exact commit, because the builder reads code, README and expected files from the repository. |
+| RC5 reproducibility | two builds on the owner's machine gave the same sha256, `67847088…`. A detached checkout of `f82e6db7` rebuilds it (§9). The reviewer also rebuilt it identically on CPython 3.9.6, 3.11.15, 3.12.2, 3.13.7 and 3.14.6, with zlib 1.2.12 and conda's 1.2.13, all on macOS. Linux was not tested. |
+| empty-directory verification | fresh `python3.11 -m venv` and `pip install -r requirements.txt` (numpy 1.26.4, scipy 1.15.2 and matplotlib 3.11.2 are pinned; pip resolved the dependencies to contourpy 1.3.3, pillow 12.3.0, fonttools 4.66.1, kiwisolver 1.5.1 and others, which RC6's `requirements-lock.txt` now pins); `env -i … python -I code/verify_rc.py` from an empty directory: **`VERIFY: PASS`, rc 0, 177 s**. Every replay AGREE (0 differences); W1 0/0; FIG NUMBERS PASS; Figs. 1–4 regenerated (Fig. 1 prints "This work: 6.87%"); condition (i) ratios 0.504–0.857 against the printed 0.50–0.86; M1 shifts identical to the frozen d1, 4/4. Afterwards all 32 checksums are OK (the run adds only `code/__pycache__`). |
+| durable copies | `/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/rc5/` and `rc6/` (`sha256sum -c` OK) |
+| tests | scopes: `publication/release/test_release_tools.py` alone, 5 tests (6 after cycle 1); with the existing replay and W1 tests, 12 (13); with `docs/analysis-note/test_build_all.py` as well, 50 (51) plus 3 subtests. The PR body's "50" is the last scope. |
 | a defect caught by this verification | the first RC5 build failed its Fig. 1–3 step, because a `\uqMedian` in `make_figs.py`'s docstring was read as a `\u` escape. It was fixed, and `verify_rc.py` now prints a failing figure step's error. |
 
 ## 8. Disposition of G1–G13
 
 | gap | disposition | evidence |
 |---|---|---|
-| G1 RC4 not durable; no reproducible packager | **Fixed and verified.** RC4 is on CFS with its original digest. A byte-reproducible packager now exists and was demonstrated by two identical builds. RC5 is on CFS. RC4 itself cannot be rebuilt byte for byte (it predates the packager); its exact bytes are preserved instead. | §2, §7 |
-| G2 undocumented matplotlib | **Fixed and verified.** RC5 README and `requirements.txt`; the article says "numpy, scipy and matplotlib"; RC5 passes from an empty directory with exactly `requirements.txt`. | §7; `paper_body.tex` Sec. VIII |
+| G1 RC4 not durable; no reproducible packager | **Fixed and verified.** RC4 is on CFS with its original digest. A byte-reproducible packager now exists, demonstrated by identical builds, a clean-checkout rebuild and the reviewer's cross-Python rebuilds. RC5 and RC6 are on CFS. RC4 itself cannot be rebuilt byte for byte (it predates the packager); its exact bytes are preserved instead. | §2, §7 |
+| G2 undocumented matplotlib | **Fixed and verified.** RC5/RC6 README, `requirements.txt` and, from RC6, `requirements-lock.txt`; the article says "numpy, scipy and matplotlib"; RC5 and RC6 pass from an empty directory with exactly `requirements.txt`; the reviewer confirmed that numpy + scipy alone still fails. | §7; `paper_body.tex` Sec. VIII |
 | G3 pscratch-only supporting products | **Fixed and verified** for the audit's identified set: 16,239 files, 42.4 GB, every destination file matched against its source hash. Excluded, and recorded in the README: the 32 GB of W2 shifted event-loop and lateral outputs. The receipts that name pscratch paths are not rewritten; the preservation README maps every source path to its CFS copy. | §2 |
 | G4 AnaTuples: no identities; pscratch-only | **Unresolved; blocked on Joseph's decision.** Done: the exact inventory (2,374 files, 11,523,656,218,592 B; names, sizes, UTC mtimes), shipped in RC5; the article now says "names and sizes, but not checksums"; costs measured. Blocked: the checksum sweep (about 3.2 h DTN, a full 11.5 TB read) and any durable copy (0.99 TB within the CFS rule, or 10.5 TB beyond both the rule and HPSS headroom) need Joseph's storage decision and, for C/D, an external request. | §6 |
-| G5 "fitted exponent 0.000" | **Fixed and verified.** Removed from the paper and the note; the calculation is committed (−0.0144) and tested. | §3; `seed_effect_exponent.py` |
-| G6a norm description | **Fixed and verified.** "The L2 norm of the per-cell relative changes"; the producer is committed; RC5 recomputes 0.504–0.857 and checks the printed range. | §3, §7 |
+| G5 "fitted exponent 0.000" | **Fixed and verified.** Removed from the paper and the note; the calculation is committed (−0.0144) and tested. The source documents (EVIDENCE, CORRECTION, CATALOG-ARCHIVE) carry dated pointers to it (cycle 1). | §3; `seed_effect_exponent.py` |
+| G6a norm description | **Fixed and verified.** "The L2 norm of the per-cell relative changes"; the producer is committed; RC5 and RC6 recompute 0.504–0.857 and check the printed range. | §3, §7 |
 | G6b 0.45–0.76 proxy rate | **Unresolved: provenance.** No recorded operand reproduces it; the reviewer's own printed proxy numbers do not match it. The article now discloses that its calculation is not recorded, and the κ scan is not presented as testing it. Blocker: the design review's computation was never committed and cannot be reconstructed from the record. Only its author, or a new pre-registered measurement (a new study, not authorized here), could resolve it. | §3 |
 | G7 "about 11%" unreceipted | **Fixed and verified.** W2B addendum and `w2b_statistic_shift.py`: 0.1095 against the frozen observed statistic (MnvTune total, +4 %, 2852.305 → 2539.914). | §3 |
-| G8 Ascencio caveat | **Fixed.** The disclosure is in Sec. V, checked against `EAVAIL_DEFINITION.md`, the code, and arXiv:2110.13372 Eq. 1. The underlying OI-59 question (what the definitions do to the comparison) stays open, as before. | §3, §5 |
+| G8 Ascencio caveat | **Fixed** (re-worded in the cycle-1 repair; the reviewer re-checks it in cycle 2, §10). The disclosure is in Sec. V. The cycle-1 wording placed the bin-1 migration in the common cells; that is corrected (B1, §3). Checked against `EAVAIL_DEFINITION.md` §2–§4, the code, and arXiv:2110.13372 Eq. 1. The underlying OI-59 question (the shift over bins 1–3) stays open, as before. | §3, §5 |
 | G9 single durable copies | **Partly fixed.** `z-cv.npz` (`3d7465f6…`) now has a CFS copy as well as the home epoch. **Unresolved:** the s5p archive (2.3 GB) still has one durable copy (CFS). An HPSS copy fits the 164 GiB free, but HPSS was not authorized; this is Joseph's decision. | §2 |
-| G10 citation routing | **Fixed.** Paper source comments (FSI and Ascencio routes, W2 and κ routes, "on main", RC5/RC4); RC5 README routes the covariance-status numbers to their JSON receipts and VL146; CLAIMS §F replaces §E's stale κ statement. `RC4-README.md` is left unchanged, because RC4 is preserved as it was. | §4 |
-| G11 retyped literals | **Partly fixed and verified.** Sec. V's generator and Fig. 2/3 ratios are `values.tex` macros that `fig_numbers.py --values` checks; a tamper test makes it fail. **Unresolved:** Sec. IV's literals (0.674, 97.7, 78.1, 4, 0.3, 1, 1.4, 74, 16–31). Blocker: their producers are not in the release, so no release check can bind them. A build-time check against the committed receipts would be new tooling beyond this correction pass (proposed). | §4 |
+| G10 citation routing | **Fixed.** Paper source comments (FSI and Ascencio routes, W2 and κ routes, "on main", RC5/RC4); RC5/RC6 READMEs route the covariance-status numbers to their JSON receipts and VL146; CLAIMS §F replaces §E's stale κ statement. `RC4-README.md` is left unchanged, because RC4 is preserved as it was. | §4 |
+| G11 retyped literals | **Partly fixed and verified.** Sec. V's generator and Fig. 2/3 ratios are `values.tex` macros that `fig_numbers.py --values` checks. From RC6, `verify_rc.py` carries a committed negative control: a perturbed `\gibuuCorner` must be rejected. The reviewer also confirmed four further perturbations by hand. **Unresolved:** Sec. IV's literals (0.674, 97.7, 78.1, 4, 0.3, 1, 1.4, 74, 16–31). Blocker: their producers are not in the release, so no release check can bind them. A build-time check against the committed receipts would be new tooling beyond this correction pass (proposed). | §4 |
 | G12 regeneration from durable storage untested | **Unresolved.** Blocker: the frozen extractor takes product paths from `design.json` and from receipts nested in the frozen code, across several `/pscratch` roots. Regenerating from CFS needs a path-remap layer in that frozen read path, which is a code change outside the authorized correction categories, plus a login-node run over about 7,000 products. What changed: every input it needs now exists durably (the s5p archive, plus the jitter, lateral and asimov inputs preserved in §2). | §2 |
-| G13 small items | **Fixed:** D03 citation; V13 both windows; V14 cause "not established", with diagnostic and missing test named; V19 estimator and cell set; C14 "9–12 % above" (bound and checked); W1 operand; Fig. 1 label; literature quotes verified verbatim (§5). **Receipt added, wording kept:** M03 (17.0× ratio of maxima). **Documented, not editable:** the two A7 internal inconsistencies (frozen contract; the article follows the measured values). | §3–§5 |
+| G13 small items | **Fixed:** D03 citation; V13 both windows; V14 cause "not established", with diagnostic and missing test named; V19 estimator and cell set; C14 "9–12 % above" (bound and checked); W1 operand; Fig. 1 label; literature quotes verified verbatim (§5); the J13 disclosure restored in RC6. **Receipt added, wording kept:** M03 (17.0× ratio of maxima). **Documented, not editable:** the two A7 internal inconsistencies (frozen contract; the article follows the measured values). | §3–§5 |
 
 This pass does **not** close `OI-130`. That item is the class of untracked artifacts behind published macros, repository-wide; only the article's evidence was preserved here.
 
@@ -227,12 +251,51 @@ This pass does **not** close `OI-130`. That item is the class of untracked artif
 | standalone before the copy | a fresh worktree of `MINERvA-OmniFold-Analysis-Note` at `origin/main` `2357c6ca4c3d5804dd22d409652128926abfa25d` equals canonical `fec438db` in all 117 tracked files except its own `.gitignore` and `AGENTS.md` (`cmp`, file by file) |
 | standalone sync | the three changed files (`paper_body.tex`, `sec_eavailw.tex`, `values.tex`) were copied from `f82e6db7` to the standalone branch **`sync-prd-release-corrections-20261008`**, commit **`43c07039cdbeff47d8124f51671cd1fb4e091750`**. Standalone `build_all.sh` rc 0 at 123/9/10 pp (`head=unknown` is the documented fallback); Overleaf target rc 0, 10 pp, 0 undefined; `pdftotext` of all three PDFs identical to the canonical build. |
 | why a branch, not standalone `main` | the canonical PR stays unmerged by instruction. Standalone `main` therefore stays at `2357c6ca`, equal to canonical `main`; the branch should merge together with the canonical PR. |
-| remote heads (`git ls-remote`, 2026-10-08) | `MINERvA-OmniFold`: main = `fec438db5d6e313f110879a749381bb189b2a384`, `fix/prd-release-audit-corrections-20261008` = {{CANON_HEAD}}. `MINERvA-OmniFold-Analysis-Note`: main = `2357c6ca4c3d5804dd22d409652128926abfa25d`, `sync-prd-release-corrections-20261008` = `43c07039cdbeff47d8124f51671cd1fb4e091750`. |
+| remote heads (`git ls-remote`, 2026-10-08) | `MINERvA-OmniFold`: main = `fec438db5d6e313f110879a749381bb189b2a384`, `fix/prd-release-audit-corrections-20261008` = `df84868e81ea3ee0e538e2d172c9c265a23a1bdc` (the cycle-1 review target; the later heads are in §10). `MINERvA-OmniFold-Analysis-Note`: main = `2357c6ca4c3d5804dd22d409652128926abfa25d`, `sync-prd-release-corrections-20261008` = `43c07039cdbeff47d8124f51671cd1fb4e091750`. |
 | RC5 from a clean checkout | a detached checkout of `f82e6db7` rebuilds RC5 to `6784708827e8337c7d3f7774e0fb727c24613ed7eb0db4cadf101fc6413124be` exactly |
 
 ## 10. Independent review
 
-{{REVIEW}}
+**Reviewer:** session "minerva-omnifold-f9", started by Joseph. It is read-only, and works in a detached worktree at
+the fixed commit; its `git status --short --ignored` was empty afterwards. On the cluster it read only, on dtn01, and
+it pushed nothing.
+
+**Cycle 1** at `df84868e`: **NOT READY**, with 1 blocking finding, 6 should-fix and 10 notes.
+
+What reproduced:
+- the RC5 identity: a clean rebuild, plus the cross-Python rebuilds;
+- RC5 `VERIFY: PASS` from an empty directory, with the numpy+scipy-only negative giving FAIL;
+- every CFS receipt:
+  - rc4/rc5 digests, inventory, SHA256SUMS, link targets;
+  - the destination equals the inventory, with 0 extra and 0 missing;
+  - 39 destination files re-hashed, including the 8 largest and z-cv;
+  - 15 sources unchanged;
+  - du 1,561 GiB;
+- the norm, exponent, W2 and literature checks;
+- no frozen decision or number changed;
+- the standalone branch equals `f82e6db7`.
+
+| finding | disposition in the repair |
+|---|---|
+| B1 Ascencio: the 11 % placed in the common cells and compared to the residual | re-worded (§3 C04), plus the pion-mass and strange-baryon clauses (N4); CLAIMS §F and the standalone mirrored |
+| S1 Sec. II "identities are recorded" | "names and sizes are recorded" |
+| S2 RC5 README dropped the `observed_jitter_p` disclosure | restored in RC6's README; J13 recomputed and recorded (§3); RC6 built, verified and preserved |
+| S3 "tamper test" with no artifact | a committed negative control in `verify_rc.py` (RC6); G11 re-worded |
+| S4 unrendered placeholders | filled |
+| S5 RC5 source commit named only by branch | `f82e6db7` named in the CFS README, RC5-SHA256SUMS, PACKAGE-MANIFEST §1c and §7; RC6's commit in §9 |
+| S6 the withdrawn exponent unannotated at its sources | dated pointers in EVIDENCE, CORRECTION and CATALOG-ARCHIVE; `MANIFEST.tsv` regenerated |
+| N1 fifteen-fold | the record's wording made precise (§3 M03); the article is unchanged |
+| N2 transitive versions unpinned | `requirements-lock.txt` |
+| N3 cross-Python reproduction | cited in §7 |
+| N4 pion mass, strange baryons | added to the disclosure |
+| N5 stale `\jtMoneMin` comment | fixed |
+| N6 CFS copy not usable in place; receipt typo; leftovers | README: the slab-link recreation inside the copy, the "copy: copy:" slip, the working lists; `SOURCE-SUMMARY.tsv` and the script are now on CFS too |
+| N7 payload layout | clause in RC6 README |
+| N8 audit row fixes with no disposition | J13, R05, J10, J06/J11 rows added (§3) |
+| N9 test-count scopes | stated (§7) |
+| N10 independence | stated per session (§1) |
+
+**Cycle 2:** requested at the repair commit. Its outcome is recorded in the commit that follows it.
 
 ## 11. Decisions that remain Joseph's
 
@@ -247,5 +310,10 @@ This pass does **not** close `OI-130`. That item is the class of untracked artif
    article's W2 numbers do not need them, but regenerating the shifted unfolds would.
 4. **The 0.45–0.76 proxy rate (G6b):** accept it as disclosed ("a design-review value whose calculation is not
    recorded"), or authorize a new pre-registered measurement of the refinement rate. That would be a new study.
-5. **Release acts** (unchanged): coauthor review of a PDF built from this commit; the deposit, which RC5 now
-   supersedes RC4 for; the tag; submission.
+5. **Release acts** (unchanged):
+   - coauthor review of a PDF built from the reviewed commit;
+   - the deposit, for which RC6 now supersedes RC4;
+   - the tag;
+   - submission.
+6. **The next release candidate:** add the W2 shifted data vectors and the asimov J-vectors (R05, J06/J11), and a
+   Sec. IV receipt check (G11), if wanted.

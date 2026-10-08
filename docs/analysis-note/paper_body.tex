@@ -65,7 +65,7 @@ $1.057\times10^{21}$ protons on target and an average neutrino energy near
 \SI{6}{GeV}~\cite{MINERvA:2021owq}, from the MINERvA open-data release of pre-selected
 AnaTuples~\cite{MINERvA:OpenData}; the detector is described in
 Ref.~\cite{MINERvA:2013zvz}.  The files analysed are an earlier production of
-that release; their identities are recorded for reproduction
+that release; their names and sizes are recorded for reproduction
 (Sec.~\ref{sec:data-availability}).  The signal definition, fiducial volume, flux
 treatment~\cite{MINERvA:2016iqn}, and reconstruction-level selection follow
 Ref.~\cite{MINERvA:2021owq}.  After selection, the sample contains $4.12$
@@ -257,19 +257,22 @@ the momentum-transfer dependence of this feature: on the maximal common
 $(\Eavail,q_{3})$ grid, the central value lies within \SI{10}{\percent} of the
 dedicated published low-recoil measurement~\cite{MINERvA:2022incl} (ratios $1.09$
 and $1.06$ in its two cells).  The two analyses define true $\Eavail$
-differently: this analysis sums the proton and charged-pion kinetic energies and
-the total energies of neutral pions and photons, whereas
-Ref.~\cite{MINERvA:2022incl} also counts every other final-state particle except
-neutrons.  In this analysis's simulation the broader definition moves
-\SI{11}{\percent} of the true population out of the lowest $\Eavail$ bin, where both
-common cells lie.  The comparison is therefore between differently defined
-observables; that population shift is comparable in size to the residual but is
-not a cross-section correction, and it has not been propagated.
+differently: this analysis sums the proton and charged-pion kinetic energies
+(the latter computed with the neutral-pion mass) and the total energies of
+neutral pions and photons, whereas Ref.~\cite{MINERvA:2022incl} also counts every
+other final-state particle except neutrons, less a nucleon mass for strange
+baryons.  In this analysis's simulation the broader definition moves about
+\SI{11}{\percent} of the population of our lowest true-$\Eavail$ bin
+($\Eavail<\SI{0.1}{GeV}$) out of it.  The two common cells span our three lowest
+bins ($\Eavail<\SI{0.4}{GeV}$), for which the shift has not been computed; it has
+the sign of the residual, but it is not a cross-section correction and has not
+been propagated, so the comparison is between differently defined observables.
 % Sources: VL159 (generator comparison at low E_avail), VL160 (2p2h fills 52%). Pion FSI < 1%:
 % 3d-unfolding/genie/genie_fsi_{FrAbs,FrInel}_pi_xsec3d_summary.txt (maxima 0.82%, 0.75%). Ascencio
 % cross-check: VALIDATION_LEDGER.md "Ascencio bin-identical cross-check (2026-06-10)" (ratios 1.092, 1.063;
-% no VL id) and its fourth caveat (OI-59, open). Definitions and the -10.99% migration out of truth bin 1:
-% docs/EAVAIL_DEFINITION.md sec. 2 and sec. 4; Ref. Eq. 1 checked against arXiv:2110.13372.
+% no VL id) and its fourth caveat (OI-59, open). Definitions and the -10.99% migration out of truth bin 1 only
+% (E_avail < 0.1 GeV; the common cells span bins 1-3, whose aggregate is measured nowhere): docs/EAVAIL_DEFINITION.md
+% sec. 2-4 (sec. 3: the 135 MeV charged-pion mass, at most +1.049% in one bin); Ref. Eq. 1 checked against arXiv:2110.13372.
 
 The fifth observable, $W$, separates the remaining discrepancy from the
 low-mass enhancement.  Figure~\ref{fig:joint} shows the joint $(\Eavail,W)$
@@ -799,7 +802,7 @@ either; they need the archived products and the open-data AnaTuples together
 with the generator samples produced for this analysis.
 \pubhold{deposit identifier and access route, after the separately authorized
 release decision.}
-% Source: docs/publication/release/RC5-README.md and docs/publication/corrections-20261008/ (RC5 identity, empty-
-% directory verification); RC1-REPLAY-RECEIPT-20261006.md (the earlier independent empty-directory replay, of RC1);
+% Source: docs/publication/release/RC6-README.md and docs/publication/corrections-20261008/ (RC6 identity, empty-
+% directory verification; RC5 superseded); RC1-REPLAY-RECEIPT-20261006.md (the earlier independent empty-directory replay, of RC1);
 % RC4 46f801bf... preserved unchanged at /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/; product archive
 % /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/ (SHA256SUMS 1a72cb43..., main 275b996d).

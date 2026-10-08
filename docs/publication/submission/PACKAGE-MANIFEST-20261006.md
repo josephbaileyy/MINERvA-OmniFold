@@ -22,7 +22,8 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
 | component | identity |
 |---|---|
 | corrections record | `docs/publication/corrections-20261008/RECORD-20261008-release-audit-corrections.md`: findings of audit `ea939701` rechecked, the article and note corrections, and the G1–G13 dispositions |
-| **release candidate** | **RC5** `minerva-omnifold-article-release-rc5.tar.gz`, sha256 `6784708827e8337c7d3f7774e0fb727c24613ed7eb0db4cadf101fc6413124be` (`docs/publication/release/RC5-README.md`, `RC5-SHA256SUMS.txt`). It is byte-reproducible with `publication/release/build_rc.py`, and gives `VERIFY: PASS` from an empty directory with its `requirements.txt`. Local, plus a durable CFS copy; not deposited, tagged or sent. |
+| **release candidate** | **RC6** `minerva-omnifold-article-release-rc6.tar.gz`, sha256 `71e2b7a4fc952ecd3494f75d4454f7add7ee01eb08aeb77ade5bc62d45c1461e` (`docs/publication/release/RC6-README.md`, `RC6-SHA256SUMS.txt`). It is byte-reproducible with `publication/release/build_rc.py` at its source commit (corrections record §9), and gives `VERIFY: PASS` from an empty directory with its `requirements.txt`. Local, plus a durable CFS copy; not deposited, tagged or sent. |
+| RC5 (superseded) | `6784708827e8337c7d3f7774e0fb727c24613ed7eb0db4cadf101fc6413124be`, rebuildable from source commit `f82e6db76f20119450e7364ec2d9919c23c67db7`; kept on CFS (`rc5/`) |
 | RC4 | unchanged, `46f801bf…`, preserved at `/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/rc4/` (verified) |
 | supporting products | the same CFS directory: 16,239 files, 42.4 GB, every destination file verified against its source hash |
 | article build and standalone sync | the corrections record §9 |

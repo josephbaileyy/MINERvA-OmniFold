@@ -9,8 +9,8 @@ Inputs:
   --payload DIR   a tree holding data/frozen/, data/recovery-union/ and data/figs/ (the sufficient inputs and the
                   figure arrays, e.g. an extracted RC4 or the preserved copy on CFS); every file is checked against
                   --payload-sums before use
-  --repo DIR      the repository checkout supplying code, README, requirements and expected outputs (default: this
-                  checkout)
+  --repo DIR      the repository checkout supplying code, README (RC<N>-README.md for -rc<N>), requirements and
+                  expected outputs (default: this checkout)
   --name NAME     the package directory and tarball stem, e.g. minerva-omnifold-article-release-rc5
   --out DIR       where to write NAME.tar.gz (refuses to overwrite)
 
@@ -31,7 +31,6 @@ EPOCH = 1_759_708_800  # 2025-10-06T00:00:00Z, fixed for every entry
 
 # (package path, source path relative to --repo). Code and expected outputs come from the repository.
 FROM_REPO = {
-    "README.md": "docs/publication/release/RC5-README.md",
     "requirements.txt": "publication/release/requirements.txt",
     "code/verify_rc.py": "publication/release/verify_rc.py",
     "code/replay_inference.py": "publication/release/replay_inference.py",
@@ -61,7 +60,18 @@ def sha256(b: bytes) -> str:
     return hashlib.sha256(b).hexdigest()
 
 
-def collect(payload: Path, sums: Path, repo: Path) -> dict[str, bytes]:
+LOCK = "publication/release/requirements-lock.txt"  # shipped from RC6 on; RC5 predates it
+
+
+def readme_for(name: str) -> str:
+    """docs/publication/release/RC<N>-README.md for a package named ...-rc<N>."""
+    rc = name.rsplit("-", 1)[-1]
+    if not (rc.startswith("rc") and rc[2:].isdigit()):
+        raise SystemExit(f"--name must end in -rc<N>, got {name}")
+    return f"docs/publication/release/{rc.upper()}-README.md"
+
+
+def collect(payload: Path, sums: Path, repo: Path, name: str) -> dict[str, bytes]:
     want = {}
     for line in sums.read_text().splitlines():
         h, p = line.split(None, 1)
@@ -74,6 +84,9 @@ def collect(payload: Path, sums: Path, repo: Path) -> dict[str, bytes]:
         files[rel] = b
     for rel, src in FROM_REPO.items():
         files[rel] = (repo / src).read_bytes()
+    files["README.md"] = (repo / readme_for(name)).read_bytes()
+    if int(name.rsplit("-rc", 1)[-1]) >= 6:
+        files["requirements-lock.txt"] = (repo / LOCK).read_bytes()
     for name in M1F2:
         files[f"data/m1f2/{name}"] = (repo / "publication/release/rc5-inputs/m1f2" / name).read_bytes()
     lines = [f"{sha256(b)}  ./{rel}" for rel, b in sorted(files.items()) if rel != "SHA256SUMS"]
@@ -119,7 +132,7 @@ def main(argv=None) -> int:
     out = a.out / f"{a.name}.tar.gz"
     if out.exists():
         raise SystemExit(f"{out} exists; refusing to overwrite")
-    files = collect(a.payload, a.payload_sums, a.repo)
+    files = collect(a.payload, a.payload_sums, a.repo, a.name)
     blob = build(files, a.name)
     a.out.mkdir(parents=True, exist_ok=True)
     out.write_bytes(blob)

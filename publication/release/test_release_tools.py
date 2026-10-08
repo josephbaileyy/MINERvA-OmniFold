@@ -81,3 +81,13 @@ def test_seed_exponent_on_the_committed_receipt():
     text = out.getvalue()
     assert '"lsq_exponent_three_means": -0.0144' in text
     assert '"two_point_exponent_40_to_80": 0.0003' in text
+
+
+def test_readme_follows_the_candidate_name():
+    assert build_rc.readme_for("minerva-omnifold-article-release-rc6") == "docs/publication/release/RC6-README.md"
+    try:
+        build_rc.readme_for("minerva-omnifold-article-release")
+    except SystemExit:
+        pass
+    else:
+        raise AssertionError("a name without -rc<N> must be refused")

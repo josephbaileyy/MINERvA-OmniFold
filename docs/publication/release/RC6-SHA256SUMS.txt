@@ -1,14 +1,14 @@
-# RC5 tarball (byte-reproducible; publication/release/build_rc.py at source commit f82e6db7; superseded by RC6)
-6784708827e8337c7d3f7774e0fb727c24613ed7eb0db4cadf101fc6413124be  minerva-omnifold-article-release-rc5.tar.gz
+# RC6 tarball (byte-reproducible; publication/release/build_rc.py)
+71e2b7a4fc952ecd3494f75d4454f7add7ee01eb08aeb77ade5bc62d45c1461e  minerva-omnifold-article-release-rc6.tar.gz
 # contents (the package's own SHA256SUMS)
-895984dcc82d5c523eec24961026aba75777f42164d6e988c9c781db576b3716  ./README.md
+dda8665745002e921660d6c96442a35bdb358e7494661d40204678f85fd4a4b0  ./README.md
 54f6d4f7415f628fc7f45b28ba57900122e7af6aa270447b57b2f76efa84726a  ./code/figs/fig_numbers.py
 b686886a2910664b190a1e5446603226bcde88f9b713dcdfd3f9b29b62570b2d  ./code/figs/make_figs.py
 f765eeaa309cdae4719f98997e5c3ef57124324b2926559ac1c10561e329590d  ./code/figs/plot_joint_null_distributions.py
 dc33d7af35b7ec7b142f70b014eec05e22aaadce4e7f80faec9e689316f07cbc  ./code/m1_f2_norm_ratio.py
 7207e73b1264a3aa1dce68e9ebe633d61ba46c73d3027eee25d97f2a188adf30  ./code/make_reading_b.py
 41f4af05eed0c07ad74acad73900fd22474e8bbac0e58f2e54eb424dddcbd7a4  ./code/replay_inference.py
-525673c1c71b1f178bf55281466ee137dde5e24411df9b85420bccba8c041966  ./code/verify_rc.py
+9379875f435ba6c3b876ed6253b9751f32ca19bdab41b5732b5017ed77968952  ./code/verify_rc.py
 ab5679d1fa0de6cf45f8c98446a3eadb4ad5c01cd306af28406bae80d7729fb6  ./code/w1_projected_tests.py
 ac3f5f5943f60d47c3202f8b4cc5f183b348992d15fcbfec1381cb78aa08f5ea  ./data/anatuple-inventory.tsv
 72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8  ./data/figs/fig_arrays.npz
@@ -30,5 +30,6 @@ d6d662ca3118981ce82f20626dfad66be39e095a3be49c1e0e572972b558637c  ./data/m1f2/de
 b9604502b1aa263508ba46f0be91846d7a2106f6f2fd0ba5c172b87ee256dd11  ./expected/joint-evaluate.json
 8503eab8b4c0d19e0515bd591275bb7c177c46a52e59f86de91fa818716988fb  ./expected/resolved-evaluate.json
 9d4c86c15040d435d8619df9edd9c3214057b4c3ee9539ae8a795c8e5bb9d0a8  ./expected/values.tex
-7a786528d6eb58c7b00b7eb8d976df6b6e9f4a7b766256e77862b4a37f0ad001  ./expected/values_inference.tex
+63aa985d0d14866f7e542e9c8dd8d71caa1e79bb6af7fb3ad79077c1fdcd50dd  ./expected/values_inference.tex
+ad50b6f30a7cd0dd0202c574a4b7a17f4dd03ffbf1b703cac839745fbcd1238d  ./requirements-lock.txt
 da0aad7ae607404406522464b78120f57d31571737d4d6b3a4f72501a45a65e5  ./requirements.txt

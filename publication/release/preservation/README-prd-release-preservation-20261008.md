@@ -16,12 +16,15 @@ before the copy. This directory adds 42.4 GB.
 | path | what |
 |---|---|
 | `rc4/minerva-omnifold-article-release-rc4.tar.gz` | The RC4 tarball, unchanged: sha256 `46f801bf05bbd18d1fcfe8c8bf5b0e361cd8e352211de641b434547be1680e88`, 15,696,060 B. It was copied by `scp -p` from the publication session's local scratchpad, and `rc4/RC4-TARBALL.sha256` checks it. |
-| `rc5/minerva-omnifold-article-release-rc5.tar.gz` | RC5, the corrected candidate: sha256 `6784708827e8337c7d3f7774e0fb727c24613ed7eb0db4cadf101fc6413124be`, checked by `rc5/RC5-TARBALL.sha256`. Its source is the repository branch `fix/prd-release-audit-corrections-20261008`. |
+| `rc5/minerva-omnifold-article-release-rc5.tar.gz` | RC5, the first corrected candidate, now superseded by RC6: sha256 `6784708827e8337c7d3f7774e0fb727c24613ed7eb0db4cadf101fc6413124be`, checked by `rc5/RC5-TARBALL.sha256`. It rebuilds byte for byte from repository commit **`f82e6db76f20119450e7364ec2d9919c23c67db7`**. |
+| `rc6/minerva-omnifold-article-release-rc6.tar.gz` | RC6, the reviewed candidate: sha256 `71e2b7a4fc952ecd3494f75d4454f7add7ee01eb08aeb77ade5bc62d45c1461e`, checked by `rc6/RC6-TARBALL.sha256`. Its source commit is recorded in the repository's `docs/publication/corrections-20261008/RECORD-20261008-release-audit-corrections.md` §7. |
 | `pscratch/sd/j/josephrb/...` | The supporting products, at their original absolute paths without the leading `/`. The source set is in the `SOURCES` list of `publication/release/preservation/preserve_prd_evidence_20261008.sh`. |
 | `SOURCE-INVENTORY.tsv` | One row per preserved file: sha256, bytes, mtime (UTC) and source path, hashed at the source before the copy |
 | `SHA256SUMS` | The same digests, in `sha256sum -c` form relative to this directory |
 | `SYMLINKS.tsv` | The source symlinks: link, target, resolved path. They are recorded, not copied. Every resolved target is itself preserved here (the inventory step refuses otherwise). |
-| `VERIFY-RECEIPT.txt` | The destination verification: command, time and result |
+| `VERIFY-RECEIPT.txt` | The destination verification: command, time and result. Its line 4 reads "copy: copy:"; the repetition is a formatting slip, and the receipt is left unedited. |
+| `SOURCE-SUMMARY.tsv`, `preserve_prd_evidence_20261008.sh` | Per-source file counts and bytes; the script that made the inventory, copy and verification (sha256 `36102352…`) |
+| `.files.txt`, `.rel.txt` | The script's working lists: absolute source paths, and the same paths relative to `/global/`. Kept as provenance. |
 
 **Source set, by claim** (rows of the audit's claim table):
 
@@ -58,12 +61,14 @@ cd $D && sha256sum --quiet -c SHA256SUMS && echo intact                 # re-ver
 (cd $D/rc4 && sha256sum -c RC4-TARBALL.sha256)                         # the RC4 tarball, original digest
 # restore one tree to /pscratch (run on a DTN; /pscratch is /global/pscratch there):
 rsync -a $D/pscratch/sd/j/josephrb/s5n-20260925/ /global/pscratch/sd/j/josephrb/s5n-20260925/
-# recreate a recorded symlink (fields: link, target, resolved):
-awk -F'\t' '{print "ln -s", $2, $1}' $D/SYMLINKS.tsv     # review, then run the lines needed
-# rebuild RC5 from the preserved RC4 (in a repository checkout at the RC5 source commit):
+# The CFS copy holds regular files only. The 12 z2m-floor subsets/*/slabs directories consisted only of symlinks, so they
+# do not exist here; their targets are preserved under mii/member_k00{0000,1200}/uq_5d/uthrow_slabs_5d_sb/. To use the
+# tree in place, recreate the links INSIDE this copy, mapping each target's /pscratch prefix to $D/pscratch:
+awk -F'\t' -v D="$D" '{l=$1; r=$3; sub("^/", D "/", l); sub("^/pscratch", D "/pscratch", r); print "mkdir -p \"$(dirname \"" l "\")\" && ln -s \"" r "\" \"" l "\""}' $D/SYMLINKS.tsv   # review, then run
+# rebuild RC5 (in a repository checkout at f82e6db7) or RC6 (at its source commit, record section 7) from the preserved RC4:
 T=$(mktemp -d) && tar -xzf $D/rc4/minerva-omnifold-article-release-rc4.tar.gz -C $T
 python3 publication/release/build_rc.py --payload $T/minerva-omnifold-article-release-rc4 \
-    --payload-sums docs/publication/release/RC4-SHA256SUMS.txt --name minerva-omnifold-article-release-rc5 --out $T/out
+    --payload-sums docs/publication/release/RC4-SHA256SUMS.txt --name minerva-omnifold-article-release-rc6 --out $T/out
 ```
 
 - The RC4 payload paths inside `pub-release-20261006/` are `frozen/inference_sufficient.npz*`,

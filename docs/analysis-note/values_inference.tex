@@ -32,7 +32,8 @@
 \newcommand{\jtWorstAllHi}{0.041}
 \newcommand{\jtRecompRows}{1379}    % RECORD sec. 4: AGREE 1379/1379, 0 discrepancies
 \newcommand{\jtRuntimeRho}{0.06}    % RECORD sec. 5: |rho| <= 0.06 runtime vs statistic
-\newcommand{\jtMoneMin}{0.50}       % A7 conditions item 1: |fine - merged-x2| / |fine - coarse| in L2 = 0.50-0.86 (campaign-state.json m1 row)
+\newcommand{\jtMoneMin}{0.50}       % A7 conditions item 1: ||(fine - merged-x2)/f_mid|| / ||(fine - coarse)/f_coarse||, the L2 norm of per-cell RELATIVE
+                                    % changes = 0.50-0.86 (campaign-state.json m1 row; corrections-20261008/m1_f2_norm_ratio.py)
 \newcommand{\jtMoneMax}{0.86}
 \newcommand{\jtMoneWnormMin}{0.45}  % A7 claims.rejection: "the W-norm step between resolutions shrinks by 0.45-0.76
 \newcommand{\jtMoneWnormMax}{0.76}  %   per halving, so the residual below the fine grid is ~1-3 times the last step;
