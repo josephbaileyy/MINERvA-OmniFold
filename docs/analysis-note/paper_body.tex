@@ -62,7 +62,7 @@ uncertainty.
 
 The analysis uses the twelve MINERvA medium-energy playlists, corresponding to
 $1.057\times10^{21}$ protons on target and an average neutrino energy near
-\SI{6}{GeV}, from the MINERvA open-data release of pre-selected
+\SI{6}{GeV}~\cite{MINERvA:2021owq}, from the MINERvA open-data release of pre-selected
 AnaTuples~\cite{MINERvA:OpenData}; the detector is described in
 Ref.~\cite{MINERvA:2013zvz}.  The files analysed are an earlier production of
 that release; their identities are recorded for reproduction
@@ -181,18 +181,22 @@ central value does not, was found and removed.  The rebuilt statistical band, no
 the quoted one, has a median statistical uncertainty of \SI{0.674}{\percent} and
 leaves the total median at \SI{\uqMedian}{\percent}.
 Rescoring the same closure pseudo-experiments against the rebuilt band, which is
-post hoc and partly circular, removes the tail undercoverage
-(\SI{97.7}{\percent} within two standard deviations), while \SI{78.1}{\percent} fall
-within one standard deviation, above its nominal window, so the rebuilt band is
-wider than the toy scatter; the residual excess width lies in the data-statistics
-component and is not explained by background purity, and its cause is untested.
+post hoc and partly circular, removes the tail undercoverage: \SI{97.7}{\percent}
+fall within two standard deviations and \SI{78.1}{\percent} within one, both above
+their nominal windows, so the rebuilt band is wider than the toy scatter.  The
+residual excess width lies in the data-statistics component and is not explained
+by background purity.  Its cause is not established: a post hoc diagnostic is
+consistent with the closure pseudo-experiments under-scattering rather than the
+data bootstrap over-scattering, but the decisive held-out test has not been run.
 The rebuilt band has not been independently re-tested.
 % Source: docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md;
 % VALIDATION_LEDGER VL169 (test of the earlier band); VL170 (rebuilt band, adopted by Joseph
 % 2026-10-06, docs/publication/DECISION-20261006 addendum af24a101); VL172 (rebuilt products;
 % main 2c9939fe; the quoted 6.87% chain is 2d-unfolding/uq/rollup_vl170_adoption.sh /
 % recompute_2d_budget.py); rescoring 5aab2d6d (descriptive, post hoc); purity check receipt
-% purity_datastream_check.json; KNOWN_ISSUES 84, 85.
+% purity_datastream_check.json; KNOWN_ISSUES 84, 85 (85: the 2026-10-07 bootstrap diagnostic, 8eb40e5f,
+% descriptive, consistent with closure-toy under-scatter; held-out re-test deferred). Rescored C2 0.977
+% [0.974, 0.980] vs window [0.928, 0.972]: state/ki84-rebuild-20261006/rescore_vl169_toys_vl170.json.
 
 \subsection{Higher-dimensional central values}
 
@@ -220,9 +224,9 @@ have been generated from a mis-sampled flux), the $(\Eavail,W)$ cells deviate
 from it by several percent in the largest cells and by up to \SI{74}{\percent}
 at high $W$, with or without background.  This regularization bias is not in
 the quoted uncertainties.  The tested iteration and capacity scans do not
-remove it; for other fixed generator shapes it is \SIrange{16}{31}{\percent} in
-the most affected cell and within the quoted total uncertainty in about half of
-the $(\Eavail,W)$ cells.  The unfolded values on data also move by up to a few
+remove it; for other fixed generator shapes, measured with the joint-test
+estimator, it is \SIrange{16}{31}{\percent} in the most affected $(\Eavail,W)$ cell
+and within the quoted total uncertainty in about half of those cells.  The unfolded values on data also move by up to a few
 statistical standard deviations under input changes at the level of
 floating-point rounding; a later measurement found this spread already inside
 the tested candidate's data-bootstrap statistical uncertainty, which refits
@@ -234,6 +238,8 @@ predeclared criterion at nominal truth and under an $\Eavail$ tilt.
 % Sources: OUTCOME-20260925-s5n-stage1-development-fail.md (VL151, VL152);
 % OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (VL153, VL154);
 % RECORD-20260927-s5p-stage2-exit.md (VL155); OUTCOME-20260925-s5c-tier-s-futility-fail.md (VL150).
+% 16-31%: VL154 A4, candidate R (refinement 400/31 = the joint-test estimator), max over the 42 (E_avail,W)
+% cells for W2/W1 (16.4/31.3%); 20/42 cells within the adopted sigma. The 74% is the F2/N estimator (VL151).
 
 \section{Central-value results}
 \label{sec:central}
@@ -249,16 +255,29 @@ data--GENIE gap below $\Eavail=\SI{0.4}{GeV}$.  These tests constrain the chosen
 pion-FSI variations, not all nuclear-transport models.  Adding $q_{3}$ resolves
 the momentum-transfer dependence of this feature: on the maximal common
 $(\Eavail,q_{3})$ grid, the central value lies within \SI{10}{\percent} of the
-dedicated published low-recoil measurement~\cite{MINERvA:2022incl}.
-% Sources: VL159, VL160.
+dedicated published low-recoil measurement~\cite{MINERvA:2022incl} (ratios $1.09$
+and $1.06$ in its two cells).  The two analyses define true $\Eavail$
+differently: this analysis sums the proton and charged-pion kinetic energies and
+the total energies of neutral pions and photons, whereas
+Ref.~\cite{MINERvA:2022incl} also counts every other final-state particle except
+neutrons.  In this analysis's simulation the broader definition moves
+\SI{11}{\percent} of the true population out of the lowest $\Eavail$ bin, where both
+common cells lie.  The comparison is therefore between differently defined
+observables; that population shift is comparable in size to the residual but is
+not a cross-section correction, and it has not been propagated.
+% Sources: VL159 (generator comparison at low E_avail), VL160 (2p2h fills 52%). Pion FSI < 1%:
+% 3d-unfolding/genie/genie_fsi_{FrAbs,FrInel}_pi_xsec3d_summary.txt (maxima 0.82%, 0.75%). Ascencio
+% cross-check: VALIDATION_LEDGER.md "Ascencio bin-identical cross-check (2026-06-10)" (ratios 1.092, 1.063;
+% no VL id) and its fourth caveat (OI-59, open). Definitions and the -10.99% migration out of truth bin 1:
+% docs/EAVAIL_DEFINITION.md sec. 2 and sec. 4; Ref. Eq. 1 checked against arXiv:2110.13372.
 
 The fifth observable, $W$, separates the remaining discrepancy from the
 low-mass enhancement.  Figure~\ref{fig:joint} shows the joint $(\Eavail,W)$
 projection relative to the MINERvA Tune~v1.  In cell-integrated terms, two
 thirds of the positive difference lies at $\Eavail\ge\SI{0.8}{GeV}$ and most of
 that at $W\ge\SI{1.8}{GeV}$, but a fifth of it sits in the single widest catch
-cell; in ratio, the data exceed Tune~v1 by \SIrange{12}{30}{\percent} in those
-cells and by \SIrange{23}{31}{\percent} at $W<\SI{1.1}{GeV}$ for every $\Eavail$,
+cell; in ratio, the data exceed Tune~v1 by \SIrange{\figTwoHiHiLo}{\figTwoHiHiHi}{\percent} in those
+cells and by \SIrange{\figTwoLowWLo}{\figTwoLowWHi}{\percent} at $W<\SI{1.1}{GeV}$ for every $\Eavail$,
 so the relative excess is not confined to high $W$.  These statements are
 descriptive: no significance is assigned, no response-mismatch closure has been run
 for this map, and the high-$\Eavail$, high-$W$ region is where the regularization
@@ -290,12 +309,12 @@ The one-dimensional projections in Fig.~\ref{fig:generator-context} compare the
 same central result with four external predictions: GENIE's own central value,
 the same GENIE with the Valencia two-particle--two-hole component, NuWro, and
 GiBUU.  All four lie below the data overall (integrated data-to-prediction
-ratios $1.07$--$1.39$) and at high $W$.  For GENIE and NuWro the high-$W$
-shortfall is about their overall one (ratios $1.11$--$1.13$ for
-$2.2\le W<\SI{3.0}{GeV}$, against $1.07$--$1.15$ integrated), and in the joint
+ratios $\genRatioTotLo$--$\genRatioTotHi$) and at high $W$.  For GENIE and NuWro the high-$W$
+shortfall is about their overall one (ratios $\genRatioWhiLo$--$\genRatioWhiHi$ for
+$2.2\le W<\SI{3.0}{GeV}$, against $\genRatioTotGNLo$--$\genRatioTotGNHi$ integrated), and in the joint
 high-$\Eavail$, high-$W$ region ($\Eavail\ge\SI{0.8}{GeV}$, $W\ge\SI{1.8}{GeV}$)
-it is $1.14$--$1.16$, within \SI{7}{\percent} of their integrated ratios.
-GiBUU, the most deficient, falls furthest behind there ($1.61$, against $1.39$
+it is $\genRatioCornerLo$--$\genRatioCornerHi$, within \SI{\genCornerDevMax}{\percent} of their integrated ratios.
+GiBUU, the most deficient, falls furthest behind there ($\gibuuCorner$, against $\gibuuTotal$
 overall), but its sample stops at $E_\nu\approx\SI{20}{GeV}$: in GENIE and NuWro
 higher energies carry \SIrange{14}{15}{\percent} of this region's cross section
 and \SI{7}{\percent} of the total, and supplying that share gives GiBUU about the
@@ -319,7 +338,7 @@ treating them as independent confirmation of this high-$\Eavail$, high-$W$ diffe
   GENIE~2.12.10 on CH, with no two-particle--two-hole events), the same GENIE
   with the Valencia two-particle--two-hole contribution, NuWro~21.09, and
   GiBUU~2019 (both on carbon; GENIE and NuWro flux-repaired) all remain below the
-  unfolded result overall and at high $W$ (the two GENIE predictions lie slightly above it
+  unfolded result overall and at high $W$ (the two GENIE predictions lie \SIrange{\genieWmidLo}{\genieWmidHi}{\percent} above it
   at $1.4\le W<\SI{1.8}{GeV}$); GENIE and NuWro by about their overall
   normalization shortfall, GiBUU, whose sample stops at $E_\nu\approx\SI{20}{GeV}$,
   by more.  No significance is assigned.}
@@ -425,16 +444,17 @@ address differently, and none is converted into an uncertainty on the decisions.
 the Tune~v1's shapes, and the fine-grid convergence check is not converged: the
 last refinement, from a twofold-merged grid to the fine grid, is
 \jtMoneMin--\jtMoneMax{} of the whole change from the coarse test grid to the
-fine grid in an unweighted ($L_{2}$) norm, so in that norm the steps are not
+fine grid in the $L_{2}$ norm of the per-cell relative changes, so in that norm the steps are not
 shown to shrink, and the residual below the fine grid is unmeasured and
 potentially material.  The frozen design takes the step in a proxy of the test
-metric to shrink by \jtMoneWnormMin--\jtMoneWnormMax{} per halving; if it kept
+metric to shrink by \jtMoneWnormMin--\jtMoneWnormMax{} per halving, a design-review
+value whose calculation is not recorded; if it kept
 shrinking geometrically at that rate, the residual would be about one to three
 times the last step, which sets the claim variants at
 $\pm\jtMoneKappa\,\delta_{\mathrm{M1}}$ and the robustness check, which is
 report-only and does not enter the decisions, at
 $\pm\jtMoneKappaRobust\,\delta_{\mathrm{M1}}$.  This extrapolation is an
-assumption, not a demonstrated convergence; a slower rate, which the unweighted
+assumption, not a demonstrated convergence; a slower rate, which the $L_{2}$
 ratios do not exclude, would imply a larger residual.  Measured before any
 observed statistic, the claim variants move the external nulls by
 \jtMoneClaimSdMin--\jtMoneClaimSdMax{} null standard deviations and the
@@ -471,6 +491,11 @@ this kind.
 % W-norm rate 0.45-0.76 per halving, "residual ... ~1-3 times the last step; kappa = 2 is its central
 % value"; kappa_robust 3); validation_and_assurance (iv)-(v); RECORD-20261005 sec. 2 (jitter) and
 % sec. 4 (scope of the recomputation: "does not establish the calibration's adequacy").
+% Norm (audit ea939701, J09): 0.50-0.86 = ||D_M1/f_mid|| / ||D_F2/f_coarse|| over the 109 supported cells, each
+% difference relative to its own reference asimov: 0.759 (GENIE CV), 0.857 (MEC), 0.542 (NuWro), 0.504 (GiBUU),
+% = campaign-state.json m1 row; producer docs/publication/corrections-20261008/m1_f2_norm_ratio.py, recomputable
+% from the release (data/m1f2/). The 0.45-0.76 proxy rate (REVIEW-20260927 item 4) is NOT reproducible from any
+% recorded number; its provenance is an open issue (corrections record, G6). The kappa scan does not test it.
 
 \subsection{Results}
 
@@ -552,7 +577,8 @@ the same cells, onto $(\pT,\pPar)$ and onto $(\Eavail,W)$, gives $p<0.05$ for
 every test in at least one of the two projections, so we make no claim that the
 joint five-observable information adds discrimination beyond them.  This comparison
 was specified before it was run but after the five-dimensional outcomes were known;
-it uses the same calibration ensembles, variants and claim rule, and its
+it uses the same calibration ensembles, with the recovered pseudo-experiments
+included, and the same variants and claim rule, and its
 $p$ values were reproduced independently.
 % Source: docs/publication/w1/W1-RECORD-20261006.md (22a004e7, reproduction 09718448).
 What the rejections establish is therefore narrow.  They are global statements
@@ -636,7 +662,7 @@ higher-momentum hadrons, which matter at high $W$, lie outside that sample.  A
 re-unfold with unscaled recoil reproduces the frozen decisions, with every claim
 $p$ value inside the range spanned by the data's rounding variations.  At both
 $-4\%$ and $+4\%$ every one of the ten rejections holds: the observed statistics
-move by up to about \SI{11}{\percent}, nine tests keep $k=0$, and NuWro's shape
+move by up to about \SI{11}{\percent} from their frozen values, nine tests keep $k=0$, and NuWro's shape
 test, the closest to its null, changes from $k=1$ to $k=3$ of $1751$ at $+4\%$
 ($p=0.0023$, against a Holm threshold of $0.05$).  The evaluation was
 reproduced independently.
@@ -651,8 +677,9 @@ the size of this omission is unmeasured for these strongly non-central nulls;
 difference applied before calibration; and (c) larger variations.  The
 rejections are therefore conditional on the simulation's hadronic response, and
 the response model is not shown to be complete.
-% Source: publication/w2/W2B-REPORT-20261006.md (study/w2-recoil-response-20261006, 940d84aa);
-% independent check REPORT-20261006-s5p-recompute-w2-recoil-check.md (s5p-parallel-recompute-20260928, 9ffc4ddd):
+% Source: publication/w2/W2B-REPORT-20261006.md (940d84aa, on main) and its 2026-10-08 addendum (the "about 11%":
+% max |T_shifted/T_frozen - 1| = 0.1095, MnvTune total at +4%, 2852.305 -> 2539.914; 0.0970 against the unscaled
+% re-unfold); independent check REPORT-20261006-s5p-recompute-w2-recoil-check.md (9ffc4ddd, on main):
 % AGREE 1379/1379 on all three copies, control PASS (fallback), 150/150 per-sign fields.
 
 \section{Uncertainty status}
@@ -669,8 +696,7 @@ seed moves the projected uncertainty by \SI{\sprojMeasured}{\percent}, against a
 did not fall with ensemble size over the range tested:
 \SI{\seedEffectNforty}{\percent} averaged over four disjoint 40-throw subsets,
 \SI{\seedEffectNeighty}{\percent} over the two 80-throw halves, and
-\SI{\sprojMeasured}{\percent} on the full 160-throw ensemble, fitted exponent
-$\seedEffectExponent$.  A same-seed resampling floor, measured at $N=40$ and
+\SI{\sprojMeasured}{\percent} on the full 160-throw ensemble.  A same-seed resampling floor, measured at $N=40$ and
 $N=80$, falls steeply over that step --- \SI{\floorNforty}{\percent} to
 \SI{\floorNeighty}{\percent}, two-point exponent $\floorExponent$.  The comparison
 is a single seed pair and the 40- and 80-throw points are nested subsets of the
@@ -748,21 +774,21 @@ uncertainty with validated coverage.
 
 The input data and simulation are the MINERvA open-data AnaTuples, released under
 CC0~\cite{MINERvA:OpenData}; this analysis used an earlier production of that
-release whose file identities are recorded with the release.
-A release of about \SI{16}{MB} lets a reader, with standard numerical libraries
+release whose file names and sizes, but not checksums, are recorded with the release.
+A release of about \SI{16}{MB} lets a reader, with numpy, scipy and matplotlib
 only, recompute every $p$ value, decision, robustness label and power figure of the
-joint tests, the lost-seed resolution and the coarse-projection comparison;
-regenerate Figs.~\ref{fig:validation}--\ref{fig:joint-nulls}; and recompute the
+joint tests, the lost-seed resolution, the coarse-projection comparison and the
+fine-grid $L_{2}$ ratios of condition~(i); regenerate Figs.~\ref{fig:validation}--\ref{fig:joint-nulls}; and recompute the
 numbers quoted from Figs.~\ref{fig:validation}--\ref{fig:generator-context}.  It
 contains the per-pseudo-experiment cell values after the declared nuisance terms,
 their seeds, the predictions, the test domains, the variant shifts, the metric and
 the observed data vector, the arrays behind Figs.~\ref{fig:validation}--\ref{fig:generator-context},
-and the digest of every source product.  Replays of the packaged files reproduced
-every recorded value and every checked figure number, one of them by an outside
-reader from an empty directory.  The remaining quoted numbers (the
+and the digest of every source product.  A replay of the packaged files from an
+empty directory reproduces every recorded value and every checked figure number;
+an earlier candidate of the release was also replayed by an independent reader.  The remaining quoted numbers (the
 two-dimensional uncertainty and coverage figures, the closure and bias studies,
-the low-recoil comparisons, the recoil-response sensitivity, the fine-grid
-convergence rates of condition~(i) and the covariance-status measurements) are not
+the low-recoil comparisons, the recoil-response sensitivity, the proxy
+convergence rate of condition~(i) and the covariance-status measurements) are not
 recomputable from this release.  The multiplier scan of Sec.~\ref{sec:joint} is
 recomputable from the released sufficient inputs with the scan code of
 Ref.~\cite{JointTestKappa2026}, but it is not part of the release's own
@@ -773,6 +799,7 @@ either; they need the archived products and the open-data AnaTuples together
 with the generator samples produced for this analysis.
 \pubhold{deposit identifier and access route, after the separately authorized
 release decision.}
-% Source: docs/publication/release/RC3-README.md (RC3 7999d094..., VERIFY PASS); RC1-REPLAY-RECEIPT-20261006.md
-% (outside empty-directory replay); final review cycle 2 re-ran RC3 verify (PASS); product archive
+% Source: docs/publication/release/RC5-README.md and docs/publication/corrections-20261008/ (RC5 identity, empty-
+% directory verification); RC1-REPLAY-RECEIPT-20261006.md (the earlier independent empty-directory replay, of RC1);
+% RC4 46f801bf... preserved unchanged at /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/; product archive
 % /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/ (SHA256SUMS 1a72cb43..., main 275b996d).

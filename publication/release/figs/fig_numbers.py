@@ -57,6 +57,9 @@ def compute(z) -> dict:
         v[f"ratio_corner_{g}"] = float(data[corner].sum() / gs[corner].sum())
         v[f"ratio_W2p2_{g}"] = float(data[:, jW].sum() / gs[:, jW].sum())
     gn = ("GENIE-CV", "GENIE+MEC", "NuWro")
+    jWm = int(np.where(np.isclose(we[:-1], 1.4))[0][0])
+    for g in ("GENIE-CV", "GENIE+MEC"):  # prediction above the data at 1.4 <= W < 1.8 GeV, in percent
+        v[f"pred_over_data_Wmid_pct_{g}"] = 100.0 * float((z[f"gen_{g}"] * area)[:, jWm].sum() / data[:, jWm].sum() - 1.0)
     v["corner_over_total_max_dev_pct"] = 100.0 * max(abs(v[f"ratio_corner_{g}"] / v[f"ratio_total_{g}"] - 1) for g in gn)
     exc = z["hExcess2D"]
     pos = exc[exc > 0].sum()
@@ -88,25 +91,29 @@ CHECKS = [
     ("chi2ndf_ours_vs_tune", "26.49", "receipt_model_chi2_2d.json 26.491"),
     ("data_total", "3.0699e-38", "VL157 data total"),
 ]
+# Sec. V and Fig. 2/3 statements. Since 2026-10-08 the article prints these through values.tex macros (named in
+# each source field); with --values the printed value is taken from the macro, and the built-in value is only a
+# cross-check whose drift is reported.
 RANGES = [  # article ranges: every member must round into [lo, hi] at the printed precision
     (["ratio_total_GENIE-CV", "ratio_total_GENIE+MEC", "ratio_total_NuWro", "ratio_total_GiBUU"], "1.07", "1.39",
-     "paper_body.tex: integrated data-to-prediction ratios 1.07--1.39"),
+     r"values.tex \genRatioTotLo,\genRatioTotHi (integrated data/prediction, all four)"),
     (["ratio_W2p2_GENIE-CV", "ratio_W2p2_GENIE+MEC", "ratio_W2p2_NuWro"], "1.11", "1.13",
-     "paper_body.tex: 2.2<=W<3.0 ratios 1.11--1.13 (GENIE, NuWro)"),
+     r"values.tex \genRatioWhiLo,\genRatioWhiHi (2.2<=W<3.0, GENIE, NuWro)"),
     (["ratio_total_GENIE-CV", "ratio_total_GENIE+MEC", "ratio_total_NuWro"], "1.07", "1.15",
-     "paper_body.tex: 1.07--1.15 integrated (GENIE, NuWro)"),
+     r"values.tex \genRatioTotGNLo,\genRatioTotGNHi (integrated, GENIE, NuWro)"),
     (["ratio_corner_GENIE-CV", "ratio_corner_GENIE+MEC", "ratio_corner_NuWro"], "1.14", "1.16",
-     "paper_body.tex: corner 1.14--1.16 (GENIE, NuWro)"),
+     r"values.tex \genRatioCornerLo,\genRatioCornerHi (corner, GENIE, NuWro)"),
+    (["pred_over_data_Wmid_pct_GENIE-CV", "pred_over_data_Wmid_pct_GENIE+MEC"], "9", "12",
+     r"values.tex \genieWmidLo,\genieWmidHi (GENIE above the data at 1.4<=W<1.8, percent; Fig. 3 caption)"),
+    (("ratio_hihi_min_pct", "ratio_hihi_max_pct"), "12", "30",
+     r"values.tex \figTwoHiHiLo,\figTwoHiHiHi (Fig. 2 ratio, high-Eavail high-W cells, percent)"),
+    (("ratio_lowW_min_pct", "ratio_lowW_max_pct"), "23", "31",
+     r"values.tex \figTwoLowWLo,\figTwoLowWHi (Fig. 2 ratio, W<1.1 GeV, percent)"),
 ]
-SINGLES = [("ratio_corner_GiBUU", "1.61", "paper_body.tex GiBUU corner"),
-           ("ratio_total_GiBUU", "1.39", "paper_body.tex GiBUU overall")]
-BOUNDS = [("corner_over_total_max_dev_pct", 7.0, "paper_body.tex: within 7% of their integrated ratios")]
-# Fig. 2 statements (paper_body.tex, central-value results): two ranges at printed precision, and verbal shares
-# checked against explicit intervals stated here.
-RANGES += [(("ratio_hihi_min_pct", "ratio_hihi_max_pct"), "12", "30",
-            "paper_body.tex: ratio 12--30% in the high-Eavail, high-W cells"),
-           (("ratio_lowW_min_pct", "ratio_lowW_max_pct"), "23", "31",
-            "paper_body.tex: ratio 23--31% at W<1.1 GeV for every Eavail")]
+SINGLES = [("ratio_corner_GiBUU", "1.61", r"values.tex \gibuuCorner"),
+           ("ratio_total_GiBUU", "1.39", r"values.tex \gibuuTotal")]
+BOUNDS = [("corner_over_total_max_dev_pct", "7", r"values.tex \genCornerDevMax (within this % of the integrated ratio)")]
+# Verbal shares (Fig. 2) are checked against explicit intervals stated here.
 VERBAL = [("note_share_hiEavail_pct", 62.0, 71.0, "paper_body.tex: 'two thirds' of the positive cell-integrated difference at Eavail>=0.8"),
           ("note_share_hiW_of_hiEavail_pct", 50.0, 100.0, "paper_body.tex: 'most of that' at W>=1.8"),
           ("share_catch_cell_pct", 17.0, 23.0, "paper_body.tex: 'a fifth' in the single widest catch cell")]
@@ -137,6 +144,18 @@ def main(argv=None) -> int:
                 printed = macros[m.group(1)]
             resolved.append((k, printed, src))
         checks = resolved
+
+        def macro_values(src, builtin):
+            names = re.findall(r"\\(\w+)", src.split(" (")[0])
+            got = [macros.get(n) for n in names]
+            if not names or None in got:
+                raise SystemExit(f"values.tex lacks a macro named in: {src}")
+            if list(builtin) != got:
+                print(f"[drift] {src}: built-in {builtin} -> values.tex {got} (values.tex used)")
+            return got
+        SINGLES[:] = [(k, macro_values(src, [pr])[0], src) for k, pr, src in SINGLES]
+        RANGES[:] = [(keys, *macro_values(src, [lo, hi]), src) for keys, lo, hi, src in RANGES]
+        BOUNDS[:] = [(k, macro_values(src, [b])[0], src) for k, b, src in BOUNDS]
     else:
         print("[note] no --values given: printed values come from the built-in table, which can drift from values.tex")
     for k, printed, src in checks:
@@ -151,7 +170,7 @@ def main(argv=None) -> int:
             and abs(min(vals) - float(lo)) <= half_ulp(lo) and abs(max(vals) - float(hi)) <= half_ulp(hi)
         rows.append((",".join(keys), (min(vals), max(vals)), f"{lo}--{hi}", src, good)); ok &= good
     for k, bound, src in BOUNDS:
-        good = v[k] <= bound
+        good = v[k] <= float(bound)
         rows.append((k, v[k], f"<= {bound}", src, good)); ok &= good
     for k, lo, hi, src in VERBAL:
         good = lo <= v[k] <= hi

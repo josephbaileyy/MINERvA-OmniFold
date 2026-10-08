@@ -3,14 +3,16 @@
 
 Same quantities as the committed producers (2d-unfolding/compare_to_models.py, compare_to_paper_fullcov.py,
 nd-unfolding/excess_eavail_W.py, 3d-unfolding/genie/overlay_eavailW_band.py); not pixel-identical.
-The 2D uncertainty-band number in Fig. 1's inset ("This work" median) is NOT drawn: the 2D statistical band is
-being rebuilt (VL170 adopted 2026-10-06; rollup pending), so it is printed as "pending VL170".
+Fig. 1's inset prints two median relative uncertainties. "Published" is recomputed from the arrays. "This work"
+(the VL170/VL172 2D budget) is not in the arrays, so it is read from the article's values.tex (macro uqMedian) when
+--values is given and labelled as the printed value; without --values the inset says it is not in the arrays.
 
-  python3 make_figs.py --npz fig_arrays.npz --outdir figs_out
+  python3 make_figs.py --npz fig_arrays.npz --outdir figs_out [--values values.tex]
 """
 from __future__ import annotations
 
 import argparse
+import re
 from pathlib import Path
 
 import numpy as np
@@ -34,7 +36,7 @@ def projections(vec, mask, pt_e, pz_e):
     return (g * np.diff(pz_e)[None, :]).sum(1), (g * np.diff(pt_e)[:, None]).sum(0)
 
 
-def fig1(z, out: Path):
+def fig1(z, out: Path, uq_median: str | None = None):
     m = z["mask_reported"].astype(bool)
     pt_e, pz_e = z["pt_edges"], z["pz_edges"]
     fig = plt.figure(figsize=(11, 8))
@@ -54,7 +56,9 @@ def fig1(z, out: Path):
     ax.set_xlabel(r"$p_T$ bin"); ax.set_ylabel(r"$p_\parallel$ bin"); fig.colorbar(im, ax=ax, label="(OmniFold - published)/sigma_pub")
     ax = fig.add_subplot(2, 2, 4); ax.axis("off")
     p = pull[m]
-    ax.text(0.05, 0.6, "Median relative uncertainty\n  This work: pending VL170\n"
+    pub = 100.0 * float(np.median(np.sqrt(np.diag(z["cov_total"])[m]) / z["paper_v"][m]))
+    ours = f"{uq_median}% (printed value, values.tex)" if uq_median else "not in these arrays"
+    ax.text(0.05, 0.6, f"Median relative uncertainty\n  This work: {ours}\n  Published: {pub:.2f}%\n"
             f"Published-sigma standardized residuals\n  mean = {p.mean():.3f}, RMS = {p.std():.3f}", fontsize=10)
     fig.tight_layout(); fig.savefig(out / "fig1_validation.pdf"); plt.close(fig)
 
@@ -110,10 +114,15 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     ap.add_argument("--npz", type=Path, required=True)
     ap.add_argument("--outdir", type=Path, required=True)
+    ap.add_argument("--values", type=Path, default=None, help="values.tex, for the printed \\uqMedian in Fig. 1")
     a = ap.parse_args(argv)
+    uq = None
+    if a.values:
+        m = re.search(r"\\newcommand\{\\uqMedian\}\{([^}]*)\}", a.values.read_text())
+        uq = m.group(1) if m else None
     a.outdir.mkdir(parents=True, exist_ok=True)
     z = np.load(a.npz, allow_pickle=False)
-    fig1(z, a.outdir); fig2(z, a.outdir); fig3(z, a.outdir)
+    fig1(z, a.outdir, uq); fig2(z, a.outdir); fig3(z, a.outdir)
     print("wrote", sorted(p.name for p in a.outdir.glob("fig*.pdf")))
     return 0
 

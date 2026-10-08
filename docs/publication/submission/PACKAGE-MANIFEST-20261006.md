@@ -17,6 +17,17 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
 > - **Limitations stated in the article** are updated in §5.
 > - **One scientific decision is open:** REVIEW-20261007 §5.
 
+## 1c. Release-audit corrections (2026-10-08; branch `fix/prd-release-audit-corrections-20261008`, PR unmerged; supersedes §1b for the release candidate)
+
+| component | identity |
+|---|---|
+| corrections record | `docs/publication/corrections-20261008/RECORD-20261008-release-audit-corrections.md`: findings of audit `ea939701` rechecked, the article and note corrections, and the G1–G13 dispositions |
+| **release candidate** | **RC5** `minerva-omnifold-article-release-rc5.tar.gz`, sha256 `6784708827e8337c7d3f7774e0fb727c24613ed7eb0db4cadf101fc6413124be` (`docs/publication/release/RC5-README.md`, `RC5-SHA256SUMS.txt`). It is byte-reproducible with `publication/release/build_rc.py`, and gives `VERIFY: PASS` from an empty directory with its `requirements.txt`. Local, plus a durable CFS copy; not deposited, tagged or sent. |
+| RC4 | unchanged, `46f801bf…`, preserved at `/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/rc4/` (verified) |
+| supporting products | the same CFS directory: 16,239 files, 42.4 GB, every destination file verified against its source hash |
+| article build and standalone sync | the corrections record §9 |
+| coauthor-review PDF | the `0e7d9b1b` PDF in §1b predates these corrections. A PDF for coauthor review should be built from the corrections commit once Joseph accepts it. |
+
 ## 1b. Current versions and remote heads (2026-10-08, after PR #53; supersedes §1a)
 
 | component | identity |

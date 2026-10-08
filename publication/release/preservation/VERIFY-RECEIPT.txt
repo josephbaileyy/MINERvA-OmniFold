@@ -1,0 +1,6 @@
+verify run on dtn01.nersc.gov by josephrb, finished before 2026-10-08T15:47:52Z
+command: bash preserve_prd_evidence_20261008.sh verify  (script sha256 36102352cbaf16a660e1effd8a995b87071a9bef949068a2b449a1789c9ef000)
+result: verify: all 16239 destination files match the source inventory
+copy: copy: rsync rc 0
+files: 16239; bytes: 42395379463
+RC4: minerva-omnifold-article-release-rc4.tar.gz: OK
