@@ -221,7 +221,14 @@ This pass does **not** close `OI-130`. That item is the class of untracked artif
 
 ## 9. Builds, standalone sync and remote heads
 
-{{BUILDS}}
+| | |
+|---|---|
+| canonical build at `f82e6db7` (clean tree) | `build_all.sh` rc 0, `RESULT :: PASS … head=f82e6db76f20119450e7364ec2d9919c23c67db7 tree=clean`; note 123, primer 9, paper 10 pp. Overleaf target `latexmk -pdf -jobname=output main_paper.tex` rc 0, 10 pp, 0 undefined references. The PDF digests include the build date. |
+| standalone before the copy | a fresh worktree of `MINERvA-OmniFold-Analysis-Note` at `origin/main` `2357c6ca4c3d5804dd22d409652128926abfa25d` equals canonical `fec438db` in all 117 tracked files except its own `.gitignore` and `AGENTS.md` (`cmp`, file by file) |
+| standalone sync | the three changed files (`paper_body.tex`, `sec_eavailw.tex`, `values.tex`) were copied from `f82e6db7` to the standalone branch **`sync-prd-release-corrections-20261008`**, commit **`43c07039cdbeff47d8124f51671cd1fb4e091750`**. Standalone `build_all.sh` rc 0 at 123/9/10 pp (`head=unknown` is the documented fallback); Overleaf target rc 0, 10 pp, 0 undefined; `pdftotext` of all three PDFs identical to the canonical build. |
+| why a branch, not standalone `main` | the canonical PR stays unmerged by instruction. Standalone `main` therefore stays at `2357c6ca`, equal to canonical `main`; the branch should merge together with the canonical PR. |
+| remote heads (`git ls-remote`, 2026-10-08) | `MINERvA-OmniFold`: main = `fec438db5d6e313f110879a749381bb189b2a384`, `fix/prd-release-audit-corrections-20261008` = {{CANON_HEAD}}. `MINERvA-OmniFold-Analysis-Note`: main = `2357c6ca4c3d5804dd22d409652128926abfa25d`, `sync-prd-release-corrections-20261008` = `43c07039cdbeff47d8124f51671cd1fb4e091750`. |
+| RC5 from a clean checkout | a detached checkout of `f82e6db7` rebuilds RC5 to `6784708827e8337c7d3f7774e0fb727c24613ed7eb0db4cadf101fc6413124be` exactly |
 
 ## 10. Independent review
 
