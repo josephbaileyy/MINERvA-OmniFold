@@ -335,7 +335,8 @@ For each of five predictions $G$ --- the MINERvA Tune~v1, GENIE~2.12.10 without
 and with the Valencia two-particle--two-hole component, NuWro~21.09 and
 GiBUU~2019 --- the null hypothesis $H_{0}(G)$ is that the true cross section equals
 $G$ on a fine five-dimensional grid, with the MINERvA Tune~v1's shape and $G$'s
-finite-sample fluctuations below that grid.  For the Tune~v1, the analysis
+finite-sample fluctuations below that grid.  We call this the hybrid null: it is
+the hypothesis the calibration simulates.  For the Tune~v1, the analysis
 simulation itself, this is $H_{0}$ exactly.  The tests are evaluated on a coarse
 $3^{5}$ grid in $(\pT,\pPar,\Eavail,q_{3},W)$ with edges
 $\pT\in[0,0.55,0.85,4.5]\,\si{GeV/c}$, $\pPar\in[1.5,3.5,6,60]\,\si{GeV/c}$,
@@ -421,26 +422,34 @@ bound what the tests establish.  They are of three kinds, which the tests
 address differently, and none is converted into an uncertainty on the decisions.
 
 \emph{Numerical convergence.}  (i) Below the fine grid the null truth carries
-the Tune~v1's shapes, and the fine-grid convergence check is not converged:
-successive refinements change the result by \jtMoneMin--\jtMoneMax{} of the
-previous change in an unweighted ($L_{2}$) norm, and by
-\jtMoneWnormMin--\jtMoneWnormMax{} in the test metric $W$.  If the steps kept
-shrinking geometrically at the latter rate, the residual below the fine grid
-would be about one to three times the last step; this sets the claim variants
-at $\pm\jtMoneKappa\,\delta_{\mathrm{M1}}$ and the robustness check at
-$\pm\jtMoneKappaRobust\,\delta_{\mathrm{M1}}$.  The geometric extrapolation is
-an assumption, not a demonstrated convergence, and a slower rate, such as the
-largest unweighted one, would imply a larger residual.  For the hybrid null as
-simulated the residual plays no role; the variants are what carry the rejections
-over to a prediction whose own shape below the fine grid differs from the
-Tune~v1's by up to the extrapolated residual.  (vi) The predictions' own finite
-samples enter the metric and the simulated residuals.
+the Tune~v1's shapes, and the fine-grid convergence check is not converged: the
+last refinement, from a twofold-merged grid to the fine grid, is
+\jtMoneMin--\jtMoneMax{} of the whole change from the coarse test grid to the
+fine grid in an unweighted ($L_{2}$) norm, so in that norm the steps are not
+shown to shrink, and the residual below the fine grid is unmeasured and
+potentially material.  The frozen design takes the step in a proxy of the test
+metric to shrink by \jtMoneWnormMin--\jtMoneWnormMax{} per halving; if it kept
+shrinking geometrically at that rate, the residual would be about one to three
+times the last step, which sets the claim variants at
+$\pm\jtMoneKappa\,\delta_{\mathrm{M1}}$ and the robustness check, which is
+report-only and does not enter the decisions, at
+$\pm\jtMoneKappaRobust\,\delta_{\mathrm{M1}}$.  This extrapolation is an
+assumption, not a demonstrated convergence; a slower rate, which the unweighted
+ratios do not exclude, would imply a larger residual.  Measured before any
+observed statistic, the claim variants move the external nulls by
+\jtMoneClaimSdMin--\jtMoneClaimSdMax{} null standard deviations and the
+robustness variants by \jtMoneRobSdMin--\jtMoneRobSdMax{}.  For the hybrid null
+as simulated the residual plays no role; the variants carry the rejections over
+to $G$ itself only if replacing the Tune~v1's shape below the fine grid by
+$G$'s moves the noise-free unfolded result by no more than
+$\pm\jtMoneKappa\,\delta_{\mathrm{M1}}$ along $\delta_{\mathrm{M1}}$.  (vi) The
+predictions' own finite samples enter the metric and the simulated residuals.
 
 \emph{Calibration validity.}  The Monte Carlo $p$ values are exact for the
 simulated null to the extent that the pseudo-experiment chain reproduces the
 analysis applied to the data.  Two known departures are bounded.  (iv) The
 pseudo-experiments use half of the simulation and the data unfold all of it;
-the resulting shift, at most about 0.05 null standard deviations but not always
+the resulting shift, at most about 0.07 null standard deviations but not always
 consistent with zero, enters as the declared upper-bound variant.  The data
 unfold's rounding-level nondeterminism, measured over the 20 re-unfolds, leaves
 every observed $p$ value unchanged except NuWro's shape test (2/1752 to 3/1752).
@@ -559,9 +568,9 @@ A sensitivity computed before the lost outcomes were known showed that every
 decision could change under a realizable assignment of them: had every
 interrupted experiment exceeded the observed statistic, no test would have been
 rejected.  The lost seeds were therefore rerun, report-only, under a procedure
-fixed and reviewed beforehand~\cite{JointTestRecovery2026}; a rerun of 16
-completed seeds reproduced them exactly, so each recovered experiment is the
-lost one.  None reaches the observed statistic in any test, claim variant or
+fixed and independently reviewed beforehand~\cite{JointTestRecovery2026}, which
+required a rerun of 16 completed seeds to reproduce them exactly (all did), so
+each recovered experiment is the lost one.  None reaches the observed statistic in any test, claim variant or
 robustness variant, so every submitted pseudo-experiment has now been observed
 and no assignment of the lost outcomes changes any decision.  The closest
 approach is \num{4.6} below the observed value of \num{868.6}, in the
@@ -574,7 +583,7 @@ independent recomputation confirms the resolution against the frozen variant
 shifts; the reading with the recovered experiments added to the calibration was
 reproduced only by a replay of the same rules, a consistency check rather than
 an independent recomputation, and the earlier stopping points rest on the
-campaign's own re-application of the sequential rule.
+campaign's self-validated re-application of the sequential rule.
 % Source: RECORD-20261005-s5p-joint-5d-inference-result.md sec. 5;
 % missing-sensitivity.json f48e16ef...; PROCEDURE-20261005-s5p-lost-seed-recovery.md;
 % RECORD-20261006-s5p-lost-seed-recovery-resolution.md (b354cdf7); cross-check 00009056;
@@ -591,7 +600,9 @@ low-recoil measurement the resulting hadronic-energy uncertainty rises to
 \SI{10}{\percent} at its highest three-momentum transfers, $0.9<q_{3}<\SI{1.2}{GeV}$~\cite{MINERvA:2022incl}.  The declared nuisance model
 here includes the reweights but no calorimetric response band.  Such a band
 would act on all five nulls together, through the shared detector simulation and
-unfolding, and could move each statistic in either direction.  The published
+unfolding: a response mismodelling could move each observed statistic in either
+direction, and a band drawn in the calibration would also broaden and could shift
+each null distribution; the net effect on each $p$ value is unmeasured.  The published
 comparison in muon kinematics alone, whose observables do not use the
 reconstructed recoil energy, also disfavours the same generator
 families~\cite{MINERvA:2021owq}; this is partial evidence that the disagreement
@@ -599,8 +610,8 @@ is not purely a response effect, but it is not a test of these hypotheses.
 Within this analysis, the same calibrated tests restricted to the matched
 $(\pT,\pPar)$ projection do not reject GENIE~2.12.10 CV ($p=\woneGcvPtTot$ in total,
 $\woneGcvPtShape$ in shape; a post hoc observation)~\cite{JointTestProjections2026},
-whereas its $(\Eavail,W)$ projection does.  Its two rejections therefore rest
-on the hadronic axes, on which a response band would act.
+whereas its $(\Eavail,W)$ projection does, so the information that rejects it
+involves the hadronic axes, on which a response band would act.
 
 As an exploratory sensitivity, not an uncertainty estimate, the data are
 re-unfolded with the simulation's reconstructed recoil energy scaled by
@@ -708,11 +719,11 @@ decision, and each rejected test already has $p<0.05$ in at least one matched
 coarse projection, so no claim is made that the joint information adds
 discrimination.  The rejections are conditional: the calibration has no
 calorimetric recoil-response uncertainty, and its fine-grid null is not
-numerically converged, with the residual below the grid entering through
-variants set by an assumed convergence rate.  An exploratory $\pm4\%$
-recoil-response variation of the data unfold leaves every rejection in place,
-but it neither varies the null distributions nor represents a complete response
-uncertainty.  These are statements about the specified predictions, not a
+numerically converged, with the unmeasured residual below the grid entering
+through variants set by an assumed convergence rate.  An exploratory $\pm4\%$
+coherent scale of the reconstructed recoil energy, applied to the data unfold
+only, removes no rejection; it is not an uncertainty estimate, and the null
+distributions were not varied with it.  These are statements about the specified predictions, not a
 measured cross section, and they add no new reportable uncertainty.
 Removing these two conditions would need a calorimetric response band drawn in
 the calibration and a demonstrated bound on the sub-fine-grid residual; a complete
