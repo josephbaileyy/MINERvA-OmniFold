@@ -69,6 +69,16 @@ The smallest decision is one of:
 
 Neither changes the calorimetric-response condition, which remains unbounded by any validated uncertainty.
 
+> **Update 2026-10-08:** Joseph chose **(b)** on 2026-10-07. Result: `publication/kappa/RECORD-20261008-kappa-breakdown.md`
+> (spec frozen at `b75af4f4`; independently reproduced).
+> - All ten decisions remain determinate rejections for κ ≤ 5.2547 (frozen reading) or 5.1688 (with the recovered
+>   draws).
+> - The first loss is GENIE + MEC shape.
+> - GiBUU shape survives to κ = 12, and Tune v1 does not depend on κ.
+> - The result measures sensitivity along δ_M1 only; no frozen decision changes.
+> - The article wording that would quote it is proposed in that record's §5 and **not applied**, pending Joseph's
+>   decision.
+
 ## 6. Versions
 
 | object | identity |
