@@ -34,5 +34,12 @@
 \newcommand{\jtRuntimeRho}{0.06}    % RECORD sec. 5: |rho| <= 0.06 runtime vs statistic
 \newcommand{\jtMoneMin}{0.50}       % A7 conditions item 1: fine vs merged-x2 = 0.50-0.86 of coarse vs fine
 \newcommand{\jtMoneMax}{0.86}
+\newcommand{\jtMoneWnormMin}{0.45}  % A7 claims.rejection: the W-norm step shrinks by 0.45-0.76 per halving,
+\newcommand{\jtMoneWnormMax}{0.76}  %   so the sub-fine residual is ~1-3 times the last step; kappa = 2 central
+\newcommand{\jtMoneKappa}{2}        % A7 claims.rejection: claim variants F +- 2 delta_M1
+\newcommand{\jtMoneKappaRobust}{3}  % A7 claims.rejection / calibration.m1_shift: kappa_robust 3 (report only)
 \newcommand{\jtPowPthree}{0.231}    % RECORD sec. 6: P3 shape power at 0.005, MnvTune null
 \newcommand{\jtPowPonegShape}{0.739}% RECORD sec. 6: P1g shape power at 0.005, GENIE CV null
+% W1 = docs/publication/w1/W1-RECORD-20261006.md (22a004e7; independent reproduction 09718448), sec. 1
+\newcommand{\woneGcvPtTot}{0.48}    % W1 sec. 1: GENIE CV total, (p_T, p_par) projection, claim p 0.483 (676/1400)
+\newcommand{\woneGcvPtShape}{0.63}  % W1 sec. 1: GENIE CV shape, (p_T, p_par) projection, claim p 0.629 (880/1400)
