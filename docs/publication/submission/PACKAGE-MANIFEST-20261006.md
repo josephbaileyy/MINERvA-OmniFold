@@ -17,7 +17,19 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
 > - **Limitations stated in the article** are updated in §5.
 > - **One scientific decision is open:** REVIEW-20261007 §5.
 
-## 1a. Current versions and remote heads (2026-10-07, after PR #50)
+## 1b. Current versions and remote heads (2026-10-08, after PR #53; supersedes §1a)
+
+| component | identity |
+|---|---|
+| article sources | canonical **main `0e7d9b1b`** (merge of PR #53, which adds the report-only κ-scan sentence and its citation to Sec. VI.C) |
+| canonical build at `0e7d9b1b` (detached worktree, clean tree) | `build_all.sh` rc 0, `RESULT :: PASS … head=0e7d9b1b tree=clean`, note 123 / primer 9 / paper 10 pp; Overleaf target rc 0, 10 pp, 0 undefined references. One `\pubhold` (deposit identifier). |
+| **PDF for coauthor review** (local only; NOT sent) | `../MINERvA-OmniFold-coauthor-review-20261008/MINERvA-OmniFold-PRD-article-0e7d9b1b.pdf`, 10 pp, sha256 `20b2f77410e1499d3eacd5c47270ae43083e289f8202cf6b8535065222d015c0` (the canonical build above; the digest includes the build date). It shows the one red `[HOLD: …]` for the deposit identifier. Sending it is an external act for Joseph (input 3). |
+| standalone note repo | synced from `0e7d9b1b`: standalone commit `2357c6c`, 2 files (`paper_body.tex`, `publication.bib`). The standalone equalled canonical `f9ca7de7` before the copy and equals `0e7d9b1b` after it, in every tracked file except `.gitignore` and `AGENTS.md` (checked with `cmp`). `build_all.sh` rc 0 at 123 / 9 / 10 pp; Overleaf target rc 0; `pdftotext` of all three PDFs identical to the canonical build. |
+| remote heads (`git ls-remote`, 2026-10-08) | `MINERvA-OmniFold-Analysis-Note` main = **`2357c6ca4c3d5804dd22d409652128926abfa25d`** (fast-forward from `c26bf4fe`); `MINERvA-OmniFold` main = **`0e7d9b1b43e562470b76166cc3e5063c3589b90c`** before this record's own merge |
+| pinned citations | `JointTestKappa2026` → `fbf682f9`, `JointTestRecoil2026` → `2926e39e`; both on main and both return HTTP 200 |
+| release candidate | RC4 `46f801bf…`, unchanged. The κ-scan is recomputable from RC4's sufficient inputs with `publication/kappa/kappa_breakdown.py`, but it is not part of `verify_rc.py`; the article says so. |
+
+## 1a. Versions and remote heads (2026-10-07, after PR #50; superseded by §1b)
 
 | component | identity |
 |---|---|
