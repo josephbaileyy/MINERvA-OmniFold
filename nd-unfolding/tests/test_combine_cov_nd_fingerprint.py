@@ -18,6 +18,7 @@ ROOT is stubbed because no interpreter here has it and the gap is entirely on th
 import json
 import os
 import pickle
+import shutil
 import sys
 import tempfile
 import unittest
@@ -93,6 +94,7 @@ class CombineCovFingerprint(unittest.TestCase):
         import combine_cov_nd
         self.M = combine_cov_nd
         self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         rng = np.random.default_rng(11)
         self.cv = np.zeros(self.N_BINS); self.cv[5:33] = rng.uniform(1e-39, 1e-38, 28)
         _STORE[os.path.join(self.tmp, "cv.root")] = {}

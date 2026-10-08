@@ -2,6 +2,7 @@
 a band's block is the CV-centred mean outer product of its universe shifts, the bounded component is the
 scaled maximum |prior shift| and never enters C_prob, and a missing universe fails closed."""
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -23,6 +24,7 @@ def save(path, x):
 class Tests(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp(prefix="s5p-assemble-"))
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         rng = np.random.default_rng(1)
         self.cv = rng.uniform(1.0, 2.0, N)
         save(self.tmp / "central.npz", self.cv)

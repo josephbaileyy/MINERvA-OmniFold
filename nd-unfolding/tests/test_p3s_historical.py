@@ -42,13 +42,15 @@ def test_interface_md5_absent():
 
 
 def test_interface_md5_parsed():
-    d = tempfile.mkdtemp(); p = os.path.join(d, "i.md"); open(p, "w").write(f"md5 `{MD5}`\n")
-    assert P.parse_interface_md5(p) == MD5
+    with tempfile.TemporaryDirectory() as d:
+        p = os.path.join(d, "i.md"); open(p, "w").write(f"md5 `{MD5}`\n")
+        assert P.parse_interface_md5(p) == MD5
 
 
 def test_interface_md5_missing_in_file():
-    d = tempfile.mkdtemp(); p = os.path.join(d, "i.md"); open(p, "w").write("nothing\n")
-    assert _raises(lambda: P.parse_interface_md5(p))
+    with tempfile.TemporaryDirectory() as d:
+        p = os.path.join(d, "i.md"); open(p, "w").write("nothing\n")
+        assert _raises(lambda: P.parse_interface_md5(p))
 
 
 # ---- strict log-name parse (underscore split is wrong) ----
@@ -80,51 +82,57 @@ def _index_with(d):
 
 
 def test_index_excludes_skip_and_nonallowlisted():
-    d = tempfile.mkdtemp(); idx, root = _index_with(d)
-    assert os.path.realpath(root) in idx
-    assert all("99999999" not in r["producer_job"] for recs in idx.values() for r in recs)
-    assert "/x/.../1A.root" not in idx and os.path.realpath("/x/.../1A.root") not in idx
+    with tempfile.TemporaryDirectory() as d:
+        idx, root = _index_with(d)
+        assert os.path.realpath(root) in idx
+        assert all("99999999" not in r["producer_job"] for recs in idx.values() for r in recs)
+        assert "/x/.../1A.root" not in idx and os.path.realpath("/x/.../1A.root") not in idx
 
 
 def test_bind_producer_ok():
-    d = tempfile.mkdtemp(); idx, root = _index_with(d)
-    b = P.bind_producer(root, "BeamAngleX", 0, "1B", idx, MD5)
-    assert b["producer_job"] == "55972324" and b["producer_task"] == 1
+    with tempfile.TemporaryDirectory() as d:
+        idx, root = _index_with(d)
+        b = P.bind_producer(root, "BeamAngleX", 0, "1B", idx, MD5)
+        assert b["producer_job"] == "55972324" and b["producer_task"] == 1
 
 
 def test_bind_missing_producer():
-    d = tempfile.mkdtemp(); idx, root = _index_with(d)
-    assert _raises(lambda: P.bind_producer("/x/nope.root", "BeamAngleX", 0, "1A", idx, MD5))
+    with tempfile.TemporaryDirectory() as d:
+        idx, root = _index_with(d)
+        assert _raises(lambda: P.bind_producer("/x/nope.root", "BeamAngleX", 0, "1A", idx, MD5))
 
 
 def test_bind_duplicate_producer():
-    d = tempfile.mkdtemp()
-    root = "/x/dup_1B_BeamAngleX_0.root"
-    _mk_producer_log(d, "55972324", "1", [root])
-    _mk_producer_log(d, "55961845", "1", [root])       # two producers for same path
-    idx = P.index_producers(d)
-    assert _raises(lambda: P.bind_producer(root, "BeamAngleX", 0, "1B", idx, MD5))
+    with tempfile.TemporaryDirectory() as d:
+        root = "/x/dup_1B_BeamAngleX_0.root"
+        _mk_producer_log(d, "55972324", "1", [root])
+        _mk_producer_log(d, "55961845", "1", [root])       # two producers for same path
+        idx = P.index_producers(d)
+        assert _raises(lambda: P.bind_producer(root, "BeamAngleX", 0, "1B", idx, MD5))
 
 
 def test_bind_wrong_md5():
-    d = tempfile.mkdtemp(); root = "/x/r_1B.root"
-    _mk_producer_log(d, "55972324", "1", [root], md5="0" * 32)
-    idx = P.index_producers(d)
-    assert _raises(lambda: P.bind_producer(root, "BeamAngleX", 0, "1B", idx, MD5))
+    with tempfile.TemporaryDirectory() as d:
+        root = "/x/r_1B.root"
+        _mk_producer_log(d, "55972324", "1", [root], md5="0" * 32)
+        idx = P.index_producers(d)
+        assert _raises(lambda: P.bind_producer(root, "BeamAngleX", 0, "1B", idx, MD5))
 
 
 def test_bind_absent_fps_message():
-    d = tempfile.mkdtemp(); root = "/x/r_1B.root"
-    _mk_producer_log(d, "55972324", "1", [root], fps=False)
-    idx = P.index_producers(d)
-    assert _raises(lambda: P.bind_producer(root, "BeamAngleX", 0, "1B", idx, MD5))
+    with tempfile.TemporaryDirectory() as d:
+        root = "/x/r_1B.root"
+        _mk_producer_log(d, "55972324", "1", [root], fps=False)
+        idx = P.index_producers(d)
+        assert _raises(lambda: P.bind_producer(root, "BeamAngleX", 0, "1B", idx, MD5))
 
 
 def test_bind_wrong_task_mapping():
-    d = tempfile.mkdtemp(); root = "/x/r_1B.root"
-    _mk_producer_log(d, "55972324", "7", [root])       # task 7 != expected 1 for 1B
-    idx = P.index_producers(d)
-    assert _raises(lambda: P.bind_producer(root, "BeamAngleX", 0, "1B", idx, MD5))
+    with tempfile.TemporaryDirectory() as d:
+        root = "/x/r_1B.root"
+        _mk_producer_log(d, "55972324", "7", [root])       # task 7 != expected 1 for 1B
+        idx = P.index_producers(d)
+        assert _raises(lambda: P.bind_producer(root, "BeamAngleX", 0, "1B", idx, MD5))
 
 
 # ---- accounting ----
@@ -157,21 +165,22 @@ def test_require_terminal_returns_receipt_fields():
 
 # ---- exact inventory / extras ----
 def test_no_extra_files_detects_extra():
-    d = tempfile.mkdtemp()
-    ep = os.path.join(d, "BeamAngleX_0"); os.makedirs(ep)
-    open(os.path.join(ep, "runEventLoopOmniFold_5D_1A_active_BeamAngleX_0.root"), "w").write("x")
-    open(os.path.join(ep, "runEventLoopOmniFold_5D_ZZ_active_BeamAngleX_0.root"), "w").write("x")  # extra
-    extras = P.require_no_extra_files(d)
-    assert any("ZZ" in e for e in extras)
+    with tempfile.TemporaryDirectory() as d:
+        ep = os.path.join(d, "BeamAngleX_0"); os.makedirs(ep)
+        open(os.path.join(ep, "runEventLoopOmniFold_5D_1A_active_BeamAngleX_0.root"), "w").write("x")
+        open(os.path.join(ep, "runEventLoopOmniFold_5D_ZZ_active_BeamAngleX_0.root"), "w").write("x")  # extra
+        extras = P.require_no_extra_files(d)
+        assert any("ZZ" in e for e in extras)
 
 
 # ---- launcher observation-only ----
 def test_launcher_is_observation_only():
-    d = tempfile.mkdtemp(); iface = os.path.join(d, "i.md"); open(iface, "w").write(f"md5 {MD5}\n")
-    prod, obs, md5 = P.build_historical_provenance(os.path.dirname(ND), "fps", iface)
-    assert prod["production_launcher_content"].startswith("unknown")
-    assert prod["production_launcher_source_commit"] is None
-    assert "observation_launcher_candidate" in obs and md5 == MD5
+    with tempfile.TemporaryDirectory() as d:
+        iface = os.path.join(d, "i.md"); open(iface, "w").write(f"md5 {MD5}\n")
+        prod, obs, md5 = P.build_historical_provenance(os.path.dirname(ND), "fps", iface)
+        assert prod["production_launcher_content"].startswith("unknown")
+        assert prod["production_launcher_source_commit"] is None
+        assert "observation_launcher_candidate" in obs and md5 == MD5
 
 
 # ---- canonical / preflight output protection ----
@@ -193,22 +202,25 @@ def test_resolve_out_accepts_preflight():
 
 # ---- no-clobber fsync publish ----
 def test_publish_noclobber_writes_and_no_temp():
-    d = tempfile.mkdtemp(); p = os.path.join(d, "sub", "m.json")
-    P.publish_receipt_noclobber(p, {"ok": True})
-    assert json.load(open(p))["ok"] is True
-    assert not any(x.startswith(".p3s_") for x in os.listdir(os.path.dirname(p)))
+    with tempfile.TemporaryDirectory() as d:
+        p = os.path.join(d, "sub", "m.json")
+        P.publish_receipt_noclobber(p, {"ok": True})
+        assert json.load(open(p))["ok"] is True
+        assert not any(x.startswith(".p3s_") for x in os.listdir(os.path.dirname(p)))
 
 
 def test_publish_noclobber_refuses_existing():
-    d = tempfile.mkdtemp(); p = os.path.join(d, "m.json"); open(p, "w").write("{}")
-    assert _raises(lambda: P.publish_receipt_noclobber(p, {"ok": True}))
+    with tempfile.TemporaryDirectory() as d:
+        p = os.path.join(d, "m.json"); open(p, "w").write("{}")
+        assert _raises(lambda: P.publish_receipt_noclobber(p, {"ok": True}))
 
 
 def test_publish_noclobber_refuses_broken_symlink():
-    d = tempfile.mkdtemp(); p = os.path.join(d, "m.json")
-    os.symlink(os.path.join(d, "absent-target"), p)
-    assert os.path.lexists(p) and not os.path.exists(p)
-    assert _raises(lambda: P.publish_receipt_noclobber(p, {"ok": True}))
+    with tempfile.TemporaryDirectory() as d:
+        p = os.path.join(d, "m.json")
+        os.symlink(os.path.join(d, "absent-target"), p)
+        assert os.path.lexists(p) and not os.path.exists(p)
+        assert _raises(lambda: P.publish_receipt_noclobber(p, {"ok": True}))
 
 
 # ---- inventory completeness (missing/extra/failing) ----

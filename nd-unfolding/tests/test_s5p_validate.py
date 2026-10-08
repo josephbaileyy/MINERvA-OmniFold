@@ -1,6 +1,7 @@
 """Controls for s5p_validate: correctly sized Gaussian errors pass T4/T5, an understated sigma fails T5 in the
 direction it acts, a bias beyond the bounded component fails T4, and a missing experiment is INCOMPLETE."""
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -17,6 +18,7 @@ N = 65856
 class Tests(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp(prefix="s5p-val-"))
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         U = np.zeros((3, N))
         U[0, :10], U[1, 10:20], U[2, :20] = 1.0, 1.0, 1.0
         self.U = U

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -33,6 +34,7 @@ class Coverage(unittest.TestCase):
 
     def setUp(self):
         self.dir = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.dir, ignore_errors=True)
         self.model = port.PET2Port(**SETTINGS, dtype="float32", **PRESET)
         rng = np.random.RandomState(4)
         self.arrays = {

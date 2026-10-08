@@ -23,9 +23,11 @@ unmodified source.
 """
 
 import ast
+import atexit
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -213,6 +215,8 @@ def source_manifest_record():
         import mnv_source_manifest as srcman
 
         holder = tempfile.mkdtemp(prefix="zcampaign-srcman.")
+        # Shared by every test in this process, so it is removed at interpreter exit.
+        atexit.register(shutil.rmtree, holder, ignore_errors=True)
         path = Path(holder) / "source-manifest.json"
         path.write_text(json.dumps(srcman.build(str(REPO)), indent=2), encoding="utf-8")
         _SOURCE_MANIFEST = str(path)

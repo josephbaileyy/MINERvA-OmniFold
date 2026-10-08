@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import stat
 import subprocess
 import tempfile
@@ -26,6 +27,7 @@ def _exe(path: Path, body: str) -> None:
 class Harness(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp = Path(tempfile.mkdtemp(prefix="s5c-queue-"))
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
         self.bin = self.tmp / "bin"
         self.bin.mkdir()
         (self.tmp / "ns" / "runs").mkdir(parents=True)

@@ -13,6 +13,7 @@ precursor receipt's own `extra.bank_cv_sha256`, so the probe and the receipt can
 without the probe refusing.
 """
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -129,6 +130,7 @@ class TheTapIsCaptureOnly(unittest.TestCase):
 class TheBankMustBeVerified(unittest.TestCase):
     def setUp(self):
         self.t = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.t, ignore_errors=True)
 
     def test_a_missing_cv_npz_refuses_and_says_bank_is_a_directory(self):
         r = subprocess.run([sys.executable, str(PROBE), "--bank", str(self.t),
