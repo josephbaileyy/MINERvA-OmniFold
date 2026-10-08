@@ -1,0 +1,10 @@
+{
+ "frozen": {
+  "n_compared": 92,
+  "max_rel_diff": 2.0612598560420897e-14
+ },
+ "union": {
+  "n_compared": 92,
+  "max_rel_diff": 2.0093245360772322e-14
+ }
+}
