@@ -1,6 +1,8 @@
 # Proposed AI-use disclosure (APS policy): FOR THE AUTHORS TO APPROVE OR REWRITE
 
-**Status:** proposed text only; the article contains no AI disclosure yet.
+**Status:** approved by Joseph on 2026-10-06 (DECISION-20261006, last addendum). In the article verbatim since
+2026-10-07: Acknowledgments, with a pointer from the method section (REVIEW-20261007-paper-completion.md §4). The
+text below is unchanged.
 
 **The APS policy** (journals.aps.org/authors/appropriate-use-ai-tools, fetched 2026-10-06):
 - authors must disclose "AI tool name and version," "How the AI assisted," and "How the authors directed and

@@ -32,7 +32,21 @@
 \newcommand{\jtWorstAllHi}{0.041}
 \newcommand{\jtRecompRows}{1379}    % RECORD sec. 4: AGREE 1379/1379, 0 discrepancies
 \newcommand{\jtRuntimeRho}{0.06}    % RECORD sec. 5: |rho| <= 0.06 runtime vs statistic
-\newcommand{\jtMoneMin}{0.50}       % A7 conditions item 1: fine vs merged-x2 = 0.50-0.86 of coarse vs fine
+\newcommand{\jtMoneMin}{0.50}       % A7 conditions item 1: |fine - merged-x2| / |fine - coarse| in L2 = 0.50-0.86 (campaign-state.json m1 row)
 \newcommand{\jtMoneMax}{0.86}
+\newcommand{\jtMoneWnormMin}{0.45}  % A7 claims.rejection: "the W-norm step between resolutions shrinks by 0.45-0.76
+\newcommand{\jtMoneWnormMax}{0.76}  %   per halving, so the residual below the fine grid is ~1-3 times the last step;
+                                    %   kappa = 2 is its central value". Origin: REVIEW-20260927-s5p-admission-
+                                    %   confirmation.md item 4, computed with a PROXY metric (22 pilot products or
+                                    %   diagonal), not the frozen V; how the ratio was formed is not recorded.
+\newcommand{\jtMoneClaimSdMin}{0.55}% A7 prefreeze_measurements.summary: M1 claim variant in null SD (external nulls)
+\newcommand{\jtMoneClaimSdMax}{2.0}
+\newcommand{\jtMoneRobSdMin}{1.07}  % A7 prefreeze_measurements.summary: M1 robust variant in null SD
+\newcommand{\jtMoneRobSdMax}{3.6}
+\newcommand{\jtMoneKappa}{2}        % A7 claims.rejection: claim variants F +- 2 delta_M1
+\newcommand{\jtMoneKappaRobust}{3}  % A7 claims.rejection / calibration.m1_shift: kappa_robust 3 (report only)
 \newcommand{\jtPowPthree}{0.231}    % RECORD sec. 6: P3 shape power at 0.005, MnvTune null
 \newcommand{\jtPowPonegShape}{0.739}% RECORD sec. 6: P1g shape power at 0.005, GENIE CV null
+% W1 = docs/publication/w1/W1-RECORD-20261006.md (22a004e7; independent reproduction 09718448), sec. 1
+\newcommand{\woneGcvPtTot}{0.48}    % W1 sec. 1: GENIE CV total, (p_T, p_par) projection, claim p 0.483 (676/1400)
+\newcommand{\woneGcvPtShape}{0.63}  % W1 sec. 1: GENIE CV shape, (p_T, p_par) projection, claim p 0.629 (880/1400)

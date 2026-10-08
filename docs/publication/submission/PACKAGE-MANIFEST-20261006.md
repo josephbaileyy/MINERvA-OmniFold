@@ -3,7 +3,21 @@
 **Status:** the package is assembled for Joseph's review. **Nothing has been submitted, deposited, tagged or sent.**
 Those acts, and any message to coauthors, need Joseph's separate authorization (DECISION-20261006 item 6).
 
-## 1. Exact versions
+> **Update 2026-10-07 (paper-completion pass; `docs/publication/REVIEW-20261007-paper-completion.md`).**
+> - **The article has changed since the versions in the table below.** The current sources are branch
+>   `docs/prd-paper-completion-20261007` head `94b0042a`, delivered to main by the pass's PR.
+> - **Local build:** `build_all.sh` PASS. Note 123 pp, primer 9 pp, paper 10 pp. `main_paper.pdf` sha256
+>   `ce9ecf5b…`, one `\pubhold`.
+> - **Review:** one fresh, read-only reviewer, two cycles, verdict READY WITH CHANGES. Every finding was applied
+>   or recorded.
+> - **Done in this pass:** inputs 1 and 2 of §4. The AI disclosure is in the Acknowledgments, with a pointer from
+>   Sec. III. The author block is as approved.
+> - **Not changed:** RC4.
+> - **Standalone sync and both remote heads:** recorded in §1a after the merge.
+> - **Limitations stated in the article** are updated in §5.
+> - **One scientific decision is open:** REVIEW-20261007 §5.
+
+## 1. Exact versions (2026-10-06; superseded for the article by the update above)
 
 | component | identity |
 |---|---|
@@ -27,13 +41,18 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
 ## 3. Drafted for the authors
 
 - `COVER-LETTER-DRAFT.md`.
-- `AI-DISCLOSURE-PROPOSED.md`. **This is required by APS policy, and the article has none yet.**
+- `AI-DISCLOSURE-PROPOSED.md`. Required by APS policy. **Approved 2026-10-06 and in the article since 2026-10-07**
+  (Acknowledgments, with a pointer from the method section).
 
 ## 4. Inputs only the authors can supply (blocking for submission, not for review)
 
-> **Status (note added 2026-10-08).** Inputs 1 and 2 were approved on 2026-10-06. The record is the last addendum of
-> `docs/publication/DECISION-20261006-joseph-publication-approvals.md`. Per Joseph's sequencing, the disclosure goes
-> into the article in the next paper pass, which has not happened. Inputs 3–6 remain open.
+> **Status (note added 2026-10-08; updated 2026-10-07 by the paper-completion pass).** Inputs 1 and 2 were approved
+> on 2026-10-06 (last addendum of `docs/publication/DECISION-20261006-joseph-publication-approvals.md`) and are now
+> **done in the article**:
+> - the disclosure text verbatim, in the Acknowledgments, with a pointer from Sec. III;
+> - the author block unchanged, as approved.
+>
+> ORCIDs and funding were not supplied; add them if wanted. Inputs 3–6 remain open.
 
 1. **The AI-use disclosure:** approve or rewrite the proposed text, and choose its placement in the article.
 2. **Authors and metadata:** the author list (currently Bailey, Nachman), affiliations, ORCIDs, funding and any
@@ -49,7 +68,12 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
 
 - No five-dimensional measurement with uncertainties.
 - The rebuilt 2D statistical band has not been re-tested (KNOWN_ISSUES 84, 85).
-- No recoil-response band in the calibration; the W2 sensitivity is exploratory.
+- No recoil-response band in the calibration. The W2 sensitivity is exploratory and data-side only: the null was
+  not varied, and species, energy and resolution effects and larger variations are untested. The matched
+  (p_T, p∥) projection does not reject GENIE 2.12.10 CV (W1, post hoc).
+- The sub-fine-grid residual is "unmeasured, potentially material" (amendment 8's frozen rule).
+  - The κ = 2/3 variants rest on an assumed convergence rate in a proxy metric.
+  - The tolerance beyond κ = 3 is not evaluated (REVIEW-20261007 §5).
 - The Fig. 2 statement is descriptive, without a response-mismatch closure (Joseph, "Stands as written").
 - The joint information adds no discrimination beyond matched coarse projections (W1).
 - The release does not reproduce the 2D uncertainty, closure, bias, low-recoil, W2 or covariance-status numbers

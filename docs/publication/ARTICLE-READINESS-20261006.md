@@ -10,6 +10,16 @@
 >   `DECISION-20261006-joseph-publication-approvals.md`. The disclosure enters the article in the next paper pass,
 >   which has not happened.
 >
+> - **2026-10-07, paper-completion pass** (`REVIEW-20261007-paper-completion.md`):
+>   - the disclosure and author metadata are in the article;
+>   - the joint-test conditions are scoped to the calibration model: the sub-fine residual is "unmeasured,
+>     potentially material", and the ±4% is data-side only;
+>   - the abstract and introduction are rewritten;
+>   - one fresh review, two cycles, READY WITH CHANGES, all applied.
+>
+>   One scientific decision is open (that record's §5: accept as conditional, or authorize a report-only
+>   κ-breakdown).
+>
 > What remains is package inputs 3–6: coauthor review, the deposit, the tag and submission, and the cover-letter
 > specifics. Each needs Joseph's separate authorization.
 
