@@ -307,7 +307,9 @@ run `control_plane_lint.py --write`.
 None of these PET subtrees exists at either evidence epoch. Any removal therefore needs a new epoch and Joseph's
 authorization (Lane A closure, above).
 
-### Proposed family A3 — PET final-design development and sizing outputs (NOT authorized; not executed)
+### HISTORICAL, SUPERSEDED — the A3 proposal as written before authorization; executed 2026-10-07, see *Family A3 executed*
+
+Original heading, preserved: *Proposed family A3 — PET final-design development and sizing outputs (NOT authorized; not executed)*
 
 *Superseded 2026-10-07: authorized and executed the same day; see* Family A3 executed *below.*
 

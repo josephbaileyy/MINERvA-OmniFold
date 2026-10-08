@@ -31,6 +31,10 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
 
 ## 4. Inputs only the authors can supply (blocking for submission, not for review)
 
+> **Status (note added 2026-10-08).** Inputs 1 and 2 were approved on 2026-10-06. The record is the last addendum of
+> `docs/publication/DECISION-20261006-joseph-publication-approvals.md`. Per Joseph's sequencing, the disclosure goes
+> into the article in the next paper pass, which has not happened. Inputs 3–6 remain open.
+
 1. **The AI-use disclosure:** approve or rewrite the proposed text, and choose its placement in the article.
 2. **Authors and metadata:** the author list (currently Bailey, Nachman), affiliations, ORCIDs, funding and any
    additional acknowledgments.

@@ -1,5 +1,18 @@
 # Readiness of the PRD article, assessed separately (2026-10-06)
 
+> **Current status (pointer added 2026-10-08; this record's text below is unchanged).** §5 is this record's latest
+> state; the earlier sections are superseded where they disagree with it. Since §5:
+> - the PR to main (`4b21cef6`, PR #29) and the standalone note sync are done, and the submission package is
+>   assembled, per `submission/PACKAGE-MANIFEST-20261006.md` §1;
+> - the 2D paragraph (`d31cdbb0`) and the `\uqPaper` fix (`8a50498a`) are on main, so the article has one `\pubhold`,
+>   the deposit identifier;
+> - Joseph approved package inputs 1–2 (the AI-use disclosure and the author details) in the last addendum of
+>   `DECISION-20261006-joseph-publication-approvals.md`. The disclosure enters the article in the next paper pass,
+>   which has not happened.
+>
+> What remains is package inputs 3–6: coauthor review, the deposit, the tag and submission, and the cover-letter
+> specifics. Each needs Joseph's separate authorization.
+
 **CITABLE FOR:**
 - this article's readiness state against the paper-wide completion table
   (`CAMPAIGN-s5c-20260924-paper-wide-table.md`, main `9984a5fd`), row by row for the rows the article retains;

@@ -79,7 +79,7 @@ the list.
 
 | Shared code | What it provides | Main consumers |
 |---|---|---|
-| `2d-unfolding/unfold_2d_omnifold_unbinned.py` | The OmniFold driver and helpers that the other drivers import (as `u2d`) | the 3D and N-D drivers, about 35 `nd-unfolding` scripts (including `s5c_*`, `s5p_input_dumps`, `project_cov_nd`), PET scripts, `2d-unfolding/uq/`, `docs/analysis-note` figure scripts |
+| `2d-unfolding/unfold_2d_omnifold_unbinned.py` | The OmniFold driver and helpers that the other drivers import (as `u2d`) | the 3D and N-D drivers, about 35 `nd-unfolding` scripts (including `s5c_*`, `s5p_input_dumps`, `project_cov_nd`), PET scripts, `2d-unfolding/uq/`, one `docs/analysis-note` figure script (`redraw_central_only.py`) |
 | `2d-unfolding/compare_to_paper_fullcov.py` | Comparison to the published 2D result | 2D diagnostics and receipts, the 3D anchor check, `publication/release/figs/` |
 | `3d-unfolding/xsec_3d.py`, `unfold_3d_omnifold_unbinned.py` | 3D extraction and projections | `3d-unfolding/genie/` (generator predictions) |
 | `nd-unfolding/unfold_nd_omnifold_unbinned.py`, `xsec_nd.py` | N-D unfolding and cross-section extraction | `nd-unfolding` scripts, `pet/`, tests, `publication/release/figs/export_fig_arrays.py`, the analysis note |
@@ -89,6 +89,25 @@ the list.
 | `omnifold_nn/` | The vendored `omnifold` package, used as the PET engine | `nd-unfolding/pet/` (see its `README.md`) |
 | `unbinned_unfolding/python/omnifold.py` | The RooUnfold-fork reweighting loop | the 2D, 3D and N-D drivers, loaded from a hardcoded `/pscratch/...` path (the `OI-136` pattern; route new compute through `mnv_guarded_run.py`) |
 | `technote_style.py`, `lib/` | Plot style; shell resume and backfill guards | about 50 plotters in 2D, 3D and N-D; the `2d-unfolding/sbatch_*.sh` launchers |
+
+**Before changing the 2D driver.** One recorded ruling governs this file. Joseph ruled on 2026-08-23 to
+leave its rooted `sys.path` insert (the `OI-136` hazard) unrepaired; the record is
+`docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md:41`. The ruling rests on two conditions:
+- the insert stays inside `main()`;
+- `unbinned_unfolding/python/omnifold.py` keeps its digest.
+
+`nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py` fails if either condition breaks, and the test says
+the decision then goes back to Joseph.
+
+The driver's sha256 pins (`docs/orchestration/verify_hash_bindings.py`, the Gate-2 launcher,
+`docs/orchestration/state/s5p/gen5d/gen5d-build.json`) record the bytes that earlier runs executed. They are not an approval rule.
+- The file was last edited by the `KNOWN_ISSUES.md` 84 fix (`bb4b0b6f`, 2026-10-05). `verify_hash_bindings.py`
+  lists the receipt and launcher pins in `KNOWN_PREEXISTING` and edits neither. `gen5d-build.json` is a run
+  record that this verifier does not check.
+- After that edit the Gate-2 launcher refuses to run until it is re-pinned, and re-pinning it is that gate
+  owner's decision (the comment above the driver's rows).
+
+Otherwise follow the `AGENTS.md` "Change code" route.
 
 Products flow in one direction, and each arrow is a recorded anchor or a pinned input:
 
@@ -364,9 +383,8 @@ Three audience-tiered PDFs are built from one shared LaTeX source set in
 | Primer | `main_primer.tex` | short orientation |
 | External paper | `main_paper.tex` | a distillation, not an extract |
 
-The [publication source map and completion plan](docs/analysis-note/README.md) identifies work that
-can proceed while the scalar-5D covariance and response-robustness paths are active, without
-pre-committing their scientific outcome.
+Build instructions are in [`docs/analysis-note/README.md`](docs/analysis-note/README.md). The article's
+state and remaining author actions are in `docs/publication/submission/PACKAGE-MANIFEST-20261006.md`.
 
 ```bash
 cd docs/analysis-note && bash build_all.sh     # needs pdflatex + biber + python3
