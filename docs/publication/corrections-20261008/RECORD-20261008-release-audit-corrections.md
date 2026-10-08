@@ -210,7 +210,7 @@ storage commitment):
 
 | | |
 |---|---|
-| RC6 identity | **`minerva-omnifold-article-release-rc6.tar.gz`**, sha256 **`71e2b7a4fc952ecd3494f75d4454f7add7ee01eb08aeb77ade5bc62d45c1461e`**, 15,743,419 B, 33 files (`docs/publication/release/RC6-SHA256SUMS.txt`, `RC6-README.md`). Source commit: the cycle-1 repair commit, named in §9. |
+| RC6 identity | **`minerva-omnifold-article-release-rc6.tar.gz`**, sha256 **`71e2b7a4fc952ecd3494f75d4454f7add7ee01eb08aeb77ade5bc62d45c1461e`**, 15,743,419 B, 33 files (`docs/publication/release/RC6-SHA256SUMS.txt`, `RC6-README.md`). Source commit: **`35146cc19f574679be9115adb522ee0425cfd499`** (§9). |
 | RC6 empty-directory verification | fresh venv; `pip install -r requirements.txt`, whose `pip freeze` equals `requirements-lock.txt`; `env -i … python -I code/verify_rc.py`: **`VERIFY: PASS`, rc 0, 182 s**, including the new negative control (`\gibuuCorner` 1.61 → 1.62 rejected); all 33 checksums OK afterwards |
 | RC6 reproducibility | two builds `cmp` identical, `71e2b7a4…` |
 | RC5 identity | `minerva-omnifold-article-release-rc5.tar.gz`, sha256 `6784708827e8337c7d3f7774e0fb727c24613ed7eb0db4cadf101fc6413124be`, 15,741,965 B, 32 files (`RC5-SHA256SUMS.txt`, `RC5-README.md`); source commit **`f82e6db76f20119450e7364ec2d9919c23c67db7`** |
@@ -253,6 +253,10 @@ This pass does **not** close `OI-130`. That item is the class of untracked artif
 | why a branch, not standalone `main` | the canonical PR stays unmerged by instruction. Standalone `main` therefore stays at `2357c6ca`, equal to canonical `main`; the branch should merge together with the canonical PR. |
 | remote heads (`git ls-remote`, 2026-10-08) | `MINERvA-OmniFold`: main = `fec438db5d6e313f110879a749381bb189b2a384`, `fix/prd-release-audit-corrections-20261008` = `df84868e81ea3ee0e538e2d172c9c265a23a1bdc` (the cycle-1 review target; the later heads are in §10). `MINERvA-OmniFold-Analysis-Note`: main = `2357c6ca4c3d5804dd22d409652128926abfa25d`, `sync-prd-release-corrections-20261008` = `43c07039cdbeff47d8124f51671cd1fb4e091750`. |
 | RC5 from a clean checkout | a detached checkout of `f82e6db7` rebuilds RC5 to `6784708827e8337c7d3f7774e0fb727c24613ed7eb0db4cadf101fc6413124be` exactly |
+| **cycle-1 repair commit = RC6 source commit** | **`35146cc19f574679be9115adb522ee0425cfd499`**. A detached checkout of it rebuilds RC6 to `71e2b7a4fc952ecd3494f75d4454f7add7ee01eb08aeb77ade5bc62d45c1461e` exactly. |
+| canonical build at `35146cc1` (clean tree) | `build_all.sh` rc 0, `RESULT :: PASS … head=35146cc19f574679be9115adb522ee0425cfd499 tree=clean`; 123 / 9 / 10 pp. Overleaf target rc 0, 10 pp, 0 undefined. |
+| standalone re-sync | `paper_body.tex` and `values_inference.tex` copied from `35146cc1`; standalone branch commit **`e1af61e3cc5d571be97e10f5e759ccf9afdabfd2`**. Every tracked file equals canonical `35146cc1` `docs/analysis-note` (`cmp`). Standalone `build_all.sh` rc 0 at 123 / 9 / 10 pp; Overleaf target rc 0, 10 pp, 0 undefined; `pdftotext` of all three PDFs identical to the canonical build. |
+| remote heads after the cycle-1 repair (`git ls-remote`) | `MINERvA-OmniFold` main = `fec438db5d6e313f110879a749381bb189b2a384` (unchanged); the PR branch head is this record's commit, which follows `35146cc1`. `MINERvA-OmniFold-Analysis-Note` main = `2357c6ca4c3d5804dd22d409652128926abfa25d` (unchanged); `sync-prd-release-corrections-20261008` = `e1af61e3cc5d571be97e10f5e759ccf9afdabfd2`. |
 
 ## 10. Independent review
 
