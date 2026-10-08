@@ -352,3 +352,21 @@ The two review/repair cycles are used up; the review is closed.
    - submission.
 6. **The next release candidate:** add the W2 shifted data vectors and the asimov J-vectors (R05, J06/J11), and a
    Sec. IV receipt check (G11), if wanted.
+
+## 12. Closeout (`CAMPAIGN-REVIEW-20260929.md` §6 item 7)
+
+**Read-order note.** For this pass, §1 and §6 of the campaign review were re-read in the fix worktree before any work
+(§1 above). The full document was re-read again after the work, and that full read is what prompted this closeout.
+
+| item | value |
+|---|---|
+| owner | Claude Opus 5.5 (`claude-opus-5-5`); session `6e06d528-32eb-429a-90a8-0526889c281c`; the effort setting is not exposed to the session |
+| reviewer | Claude Opus 5.5, a separate fresh session (`dc029611-c177-4987-a971-84b33e6999d7`, named "reviewer"), started by Joseph; read-only |
+| input commits | `origin/main` `fec438db`; findings `ea939701`; standalone `2357c6ca` |
+| output commits | PR #55 branch: `f82e6db7` (implementation, RC5 source) → `df84868e` (review cycle 1 target) → `35146cc1` (repairs, RC6 source) → `4b9bd88e` (review cycle 2 target, READY) → record-only commits after it. Standalone branch: `43c07039` → `e1af61e3`. |
+| measured compute | no Slurm job. On `dtn01.nersc.gov`, single-stream: hashing 42.4 GB at the source, rsync of 42.4 GB, re-hashing at the destination; the end-to-end copy and verify took about 27 min of wall time, from 15:20 to 15:47 UTC. Local macOS: RC5/RC6 builds (seconds each); empty-directory `verify_rc.py` runs of about 3 min each (RC5 ×2, RC6 ×1, plus the reviewer's); three canonical and two standalone `build_all.sh` runs. |
+| inference cost | unavailable |
+| storage committed | 42.4 GB of the supporting set plus 47 MB of tarballs on CFS; usage 1,522 → 1,561 GiB |
+| accepted consequential findings | audit: U03, J09, J10, R05, C04, DA2, DA3, DA6 (§3); review: B1 and S1–S6 (§10) |
+| residual defects | G4, G6b and G12 unresolved (§8); G9 and G11 partly fixed; the reviewer's optional notes N-a–N-d (§10) |
+| decision resolved | which audit findings are real, and the disposition of each (§8); RC6 is the verified candidate. The decisions listed in §11 remain Joseph's. |
