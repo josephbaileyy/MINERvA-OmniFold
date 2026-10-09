@@ -57,6 +57,10 @@ RUNNER = textwrap.dedent("""
 
     def _omnifold(MCgen, MCreco, measured, pass_reco, pass_truth, meas_pass,
                   iters, **kw):
+        # Mid-run edits, after the helper import and before the output is written.
+        for path in filter(None, os.environ.get("U2D_STUB_MUTATE", "").split(os.pathsep)):
+            with open(path, "a") as fh:
+                fh.write("# edited during the run\\n")
         return (np.ones(int(np.count_nonzero(pass_reco))),
                 np.ones(int(np.count_nonzero(pass_truth))))
 
@@ -157,12 +161,15 @@ def _write_inputs(tmp, phase17=True, n_sig=6000, seed=20261005):
     return path, flux
 
 
-def _run(script, omni, flux, out, extra=(), helper_file=None):
+def _run(script, omni, flux, out, extra=(), helper_file=None, mutate=()):
     env = dict(os.environ)
     env["OMP_NUM_THREADS"] = "1"
     env.pop("U2D_STUB_HELPER_FILE", None)
+    env.pop("U2D_STUB_MUTATE", None)
     if helper_file:
         env["U2D_STUB_HELPER_FILE"] = helper_file
+    if mutate:
+        env["U2D_STUB_MUTATE"] = os.pathsep.join(mutate)
     cmd = [sys.executable, "-c", RUNNER, str(script), "--omnifile", omni,
            "--mcfile", flux, "--out", out, "--iters", "1", "--use-weights",
            "--seed", "1", *extra]
@@ -332,7 +339,7 @@ class RunProvenanceIsRecorded(unittest.TestCase):
         cls.helper = os.path.join(cls.tmp, "omnifold_stand_in.py")
         with open(cls.helper, "w") as fh:
             fh.write("# stand-in for unbinned_unfolding/python/omnifold.py\n")
-        cls.helper_sha = hashlib.sha256(open(cls.helper, "rb").read()).hexdigest()
+        cls.helper_sha = hashlib.sha256(Path(cls.helper).read_bytes()).hexdigest()
         cls.script_sha = hashlib.sha256(SCRIPT.read_bytes()).hexdigest()
         cls.out = {}
         for tag, extra, helper in (
@@ -343,6 +350,14 @@ class RunProvenanceIsRecorded(unittest.TestCase):
             out = os.path.join(cls.tmp, f"{tag}.root")
             _run(SCRIPT, cls.omni, cls.flux, out, extra, helper_file=helper)
             cls.out[tag] = out
+        # A driver copy and a second helper that the stub edits mid-run.
+        cls.driver_copy = os.path.join(cls.tmp, "driver_copy.py")
+        shutil.copyfile(SCRIPT, cls.driver_copy)
+        cls.helper_mut = os.path.join(cls.tmp, "omnifold_edited_mid_run.py")
+        shutil.copyfile(cls.helper, cls.helper_mut)
+        cls.out["mutated"] = os.path.join(cls.tmp, "mutated.root")
+        _run(cls.driver_copy, cls.omni, cls.flux, cls.out["mutated"], (),
+             helper_file=cls.helper_mut, mutate=(cls.driver_copy, cls.helper_mut))
 
     @classmethod
     def tearDownClass(cls):
@@ -372,6 +387,16 @@ class RunProvenanceIsRecorded(unittest.TestCase):
         self.assertEqual(_named(self.out["central"], "omnifoldHelperFile"),
                          os.path.abspath(self.helper))
         self.assertEqual(_named(self.out["central"], "omnifoldHelperSha256"), self.helper_sha)
+
+    def test_digests_are_of_the_bytes_loaded_not_of_later_edits(self):
+        import hashlib
+        cur = {p: hashlib.sha256(Path(p).read_bytes()).hexdigest()
+               for p in (self.driver_copy, self.helper_mut)}
+        # Premise: both files really changed during the run.
+        self.assertNotEqual(cur[self.driver_copy], self.script_sha)
+        self.assertNotEqual(cur[self.helper_mut], self.helper_sha)
+        self.assertEqual(_named(self.out["mutated"], "driverSha256"), self.script_sha)
+        self.assertEqual(_named(self.out["mutated"], "omnifoldHelperSha256"), self.helper_sha)
 
     def test_a_helper_without_a_file_is_reported_unavailable_not_guessed(self):
         self.assertEqual(_named(self.out["no_helper_file"], "omnifoldHelperFile"), "unavailable")
