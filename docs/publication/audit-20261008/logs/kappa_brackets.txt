@@ -1,0 +1,5 @@
+frozen kappa=5.25: all rejected=True; non-rejected={}; MEC shape k=22 own=below
+frozen kappa=5.2546875: all rejected=True; non-rejected={}; MEC shape k=22 own=below
+frozen kappa=5.25625: all rejected=False; non-rejected={'GENIE_2_12_10_MEC:shape': ('undetermined', 23, 'straddles'), 'GENIE_2_12_10_CV:shape': ('undetermined', 27, 'below')}; MEC shape k=23 own=straddles
+union kappa=5.16875: all rejected=True; non-rejected={}; MEC shape k=23 own=below
+union kappa=5.1703125: all rejected=False; non-rejected={'GENIE_2_12_10_MEC:shape': ('undetermined', 24, 'straddles'), 'GENIE_2_12_10_CV:shape': ('undetermined', 26, 'below')}; MEC shape k=24 own=straddles

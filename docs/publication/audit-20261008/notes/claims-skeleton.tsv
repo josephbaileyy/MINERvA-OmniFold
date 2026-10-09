@@ -1,0 +1,97 @@
+id	section	location	claim (as printed)	printed value(s)
+A01	Abstract	main_paper.tex:57-70	ten simple hypotheses from five predictions rejected at familywise level 0.05	10; 5; 0.05
+A02	Abstract	main_paper.tex:72-73	exploratory +-4% recoil-response variation of the data unfold removes no rejection	4%
+L01	I Intro	paper_body.tex:20-22	H1 unfolded eight observables; ATLAS 24 Z+jets observables (literature)	8; 24
+L02	I Intro	paper_body.tex:34-35	multi-differential neutrino measurements on data reach three dimensions (literature)	3
+D01	II Data	paper_body.tex:63	twelve MINERvA ME playlists	12
+D02	II Data	paper_body.tex:64	1.057e21 protons on target	1.057e21 POT
+D03	II Data	paper_body.tex:64-65	average neutrino energy near 6 GeV	6 GeV
+D04	II Data	paper_body.tex:71-72	4.12 million data events after selection	4.12 M
+D05	II Data	paper_body.tex:72	32.8 million true signal events in simulation	32.8 M
+D06	II Data	paper_body.tex:73,81-84	generator versions: GENIE 2.12.6 + MnvTune v1; GENIE 2.12.10; NuWro 21.09; GiBUU 2019; GiBUU stops at E_nu ~ 20 GeV	versions; 20 GeV
+M01	III Method	paper_body.tex:100-103	2D central value: 5 iterations, depth-3 GBDT, 100 trees, exact-split sklearn	5; 3; 100
+M02	III Method	paper_body.tex:112-114	joint-test estimator: 5 iterations; refinement classifier 400 trees, 31 leaves	5; 400; 31
+M03	III Method	paper_body.tex:115-117	negative-weight treatment reduces purity method's highest-W nominal-truth bias about fifteen-fold	~15x
+V01	IV.A 2D	paper_body.tex:128 (\sigTwoD)	integrated 2D cross section	3.073e-38 cm2/nucleon
+V02	IV.A 2D	paper_body.tex:129 (\sigTwoDpaper)	published integrated cross section	3.039e-38
+V03	IV.A 2D	paper_body.tex:129-130 (\ratioTot)	ratio ours/published	1.011
+V04	IV.A 2D	paper_body.tex:130	205 reported bins	205
+V05	IV.A 2D	paper_body.tex:130-131 (\binsTen)	bins agreeing within 10%	94.1%
+V06	IV.A 2D	paper_body.tex:132,154 (\pullRMS,\pullMean)	published-sigma standardized residual RMS and mean	0.598; 0.089
+V07	IV.A 2D	paper_body.tex:133 (\chiPaper)	chi2/ndf against full published covariance	3.66
+V08	IV.B 2D unc	paper_body.tex:150,172 (\uqMedian)	standalone median relative uncertainty	6.87%
+V09	IV.B 2D unc	paper_body.tex:151,172 (\uqPaper)	published median relative uncertainty	6.85%
+V10	IV.B 2D unc	paper_body.tex:174 (\covTwoDNtoy)	pre-registered fixed-truth closure pseudo-experiments	100
+V11	IV.B 2D unc	paper_body.tex:176-178 (\covTwoDCTwoPctOne,\covTwoDCOne)	first-built stat band: within-2sigma fraction; 1sigma fraction nominal; pull mean consistent with 0	91.2% (vs 95.4% nominal); 0.679
+V12	IV.B 2D unc	paper_body.tex:181	rebuilt statistical band median	0.674%
+V13	IV.B 2D unc	paper_body.tex:185-186	rescoring vs rebuilt band: within 2sigma; within 1sigma	97.7%; 78.1%
+V14	IV.B 2D unc	paper_body.tex:187-188	residual excess width lies in data-statistics component, not explained by purity	qualitative (receipt purity_datastream_check.json)
+V15	IV.C ND	paper_body.tex:200-202	3/4/5-observable marginal normalizations agree at ~1-2%; closure recovers injected E_avail distortion	1-2%
+V16	IV.C ND	paper_body.tex:205-208	purity-based background subtraction: highest-W cells biased up to 4% in simulation, ~1 quoted sigma in one (E_avail,W) cell	4%; ~1 sigma
+V17	IV.C ND	paper_body.tex:208-211	negative-weight treatment: below 0.3%, up to 1% in some joint cells; on data the treatments differ by at most 1.4%	0.3%; 1%; 1.4%
+V18	IV.C ND	paper_body.tex:216-221	regularization bias under GiBUU-to-GENIE reweight: several percent in largest cells, up to 74% at high W	74%
+V19	IV.C ND	paper_body.tex:223-225	for other fixed generator shapes 16-31% in most affected cell; within total uncertainty in about half the (E_avail,W) cells	16-31%; ~half
+V20	IV.C ND	paper_body.tex:225-230	unfolded values move up to a few stat SDs under rounding-level input changes; spread inside data-bootstrap stat uncertainty	few SD
+V21	IV.C ND	paper_body.tex:230-233	end-to-end test of bias-corrected stat intervals failed predeclared criterion at nominal truth and under E_avail tilt	FAIL
+C01	V Central	paper_body.tex:243-245	GENIE, Tune v1, NuWro, GiBUU all underpredict at low E_avail	qualitative
+C02	V Central	paper_body.tex:245-246	pion FSI variations change dsigma/dEavail by less than 1%	<1%
+C03	V Central	paper_body.tex:247-248	Valencia 2p2h fills 52% of data-GENIE gap below E_avail=0.4 GeV	52%; 0.4 GeV
+C04	V Central	paper_body.tex:250-252	on maximal common (E_avail,q3) grid central value within 10% of published low-recoil measurement	10%
+C05	V Central	paper_body.tex:257-259	two thirds of positive cell-integrated difference at E_avail>=0.8 GeV; most of that at W>=1.8; a fifth in single widest catch cell	~67%; most (~83%); ~22%
+C06	V Central	paper_body.tex:260-261	data exceed Tune v1 by 12-30% in those cells and 23-31% at W<1.1 GeV for every E_avail	12-30%; 23-31%
+C07	V Central	paper_body.tex:272-276	Fig. 2 7x6 grid edges	edges
+C08	V Central	paper_body.tex:292-293	all four generators below data overall: integrated ratios	1.07-1.39
+C09	V Central	paper_body.tex:294-295	GENIE/NuWro ratios for 2.2<=W<3.0 vs integrated	1.11-1.13; 1.07-1.15
+C10	V Central	paper_body.tex:296-297	joint high-E_avail high-W region ratios, within 7% of integrated	1.14-1.16; 7%
+C11	V Central	paper_body.tex:298	GiBUU high-E high-W vs overall	1.61; 1.39
+C12	V Central	paper_body.tex:299-302	E_nu>=20 GeV carries 14-15% of region and 7% of total in GENIE/NuWro; supplying share gives GiBUU 1.37 vs 1.29	14-15%; 7%; 1.37; 1.29
+C13	V Central	paper_body.tex:302-304	Valencia 2p2h leaves the high region unchanged	qualitative
+C14	V Central	paper_body.tex:322-323 (Fig.3 caption)	two GENIE predictions lie slightly above data at 1.4<=W<1.8 GeV	qualitative
+J01	VI.A	paper_body.tex:341-344	coarse 3^5 test grid and edges	edges
+J02	VI.A	paper_body.tex:344-346 (\jtNcells,\jtNcellsGiBUU)	supported cells; GiBUU domain cells	109; 72
+J03	VI.A	paper_body.tex:355 (\jtVn)	V from pilot pseudo-experiments at Tune null	194
+J04	VI.A	paper_body.tex:366-372 (\jtFluxUniverses,\jtModelBands)	flux universes; model bands; five lateral bands; 1.4% normalization; 20 real-data re-unfolds	100; 34; 5; 1.4%; 20
+J05	VI.A	paper_body.tex:378-382 (\jtMoneKappa)	claim variants at +-2 delta_M1	2
+J06	VI.A	paper_body.tex:383-385 (\jtLambdaMin/Max)	non-centralities of external nulls	318-6344
+J07	VI.A	paper_body.tex:389-395 (\jtAlpha,\jtBatch,\jtBcap)	Holm at alpha 0.05, 95% CP determinacy; batches of 200 to at most 1999	0.05; 95%; 200; 1999
+J08	VI.A	paper_body.tex:408-410 (\jtRecompRows)	independent recomputation agrees in all compared quantities	1379
+J09	VI.B	paper_body.tex:427-430 (\jtMoneMin/Max)	last refinement is 0.50-0.86 of whole change in L2 norm	0.50-0.86
+J10	VI.B	paper_body.tex:431-436 (\jtMoneWnormMin/Max,\jtMoneKappaRobust)	proxy metric step shrinks 0.45-0.76 per halving; residual ~1-3x last step; robustness at +-3	0.45-0.76; 1-3x; 3
+J11	VI.B	paper_body.tex:439-441 (\jtMoneClaimSd*,\jtMoneRobSd*)	claim variants move external nulls 0.55-2.0 null SD; robustness 1.07-3.6	0.55-2.0; 1.07-3.6
+J12	VI.B	paper_body.tex:451-453	half-MC process shift at most ~0.07 null SD	0.07
+J13	VI.B	paper_body.tex:453-455	rounding nondeterminism over 20 re-unfolds changes only NuWro shape (2/1752 to 3/1752)	2/1752; 3/1752
+J14	VI.B	paper_body.tex:463-467	34-band set, two bands' negative weights clipped; E_nu>100 GeV absent, negligible	34; 2; 100 GeV
+J15	VI.C	paper_body.tex:526-539 (Table I)	ten rows: B, k, p, Holm threshold, CP interval	table
+J16	VI.C	paper_body.tex:478-479	nine tests k=0, NuWro shape k=1	9; 1
+J17	VI.C	paper_body.tex:479-481,519-520	all ten survive robustness at +-3 delta_M1	10
+J18	VI.C	paper_body.tex:481-484	kappa scan: all ten determinate rejections at every sampled multiplier up to 5.25 (frozen)	5.25
+J19	VI.C	paper_body.tex:484-488	first loss between 5.2547 and 5.2563 (frozen) / 5.1688 and 5.1703 (union) by GENIE+MEC shape own, GENIE CV shape via Holm	5.2547; 5.2563; 5.1688; 5.1703
+J20	VI.C	paper_body.tex:495-513 (Fig. 4)	calibrated null distributions with observed statistic	figure
+J21	VI.C	paper_body.tex:518	1400 submitted per null (1800 for NuWro)	1400; 1800
+J22	VI.C	paper_body.tex:550-556	matched 3x3 coarse projections give p<0.05 for every test in at least one projection; reproduced independently	0.05
+J23	VI.C	paper_body.tex:565-569	power: two of three alternatives power 1.0 at 0.005; third 0.23; 172-199 of 200 retained; GENIE null shape powers 0.74, 0.02, 0.00	1.0; 0.23; 172-199; 200; 0.74; 0.02; 0.00
+J24	VI.D	paper_body.tex:576-579 (\jtLost*)	lost calibration pseudo-experiments (interrupted, never started); lost power	224 (111, 113); 53
+J25	VI.D	paper_body.tex:580-583	pre-recovery sensitivity: every decision could change; worst case no test rejected	qualitative (missing-sensitivity.json)
+J26	VI.D	paper_body.tex:585-586	rerun of 16 completed seeds reproduced exactly	16
+J27	VI.D	paper_body.tex:586-591	no recovered draw reaches observed statistic; closest 4.6 below 868.6 (GENIE+MEC shape, kappa=3 robust); next 49.8 (GENIE CV shape)	4.6; 868.6; 49.8
+J28	VI.D	paper_body.tex:592-594	with complete batches sequential rule would stop four nulls at B=1200 with same decisions	1200
+J29	VI.D	paper_body.tex:594-599	independent recomputation confirms resolution vs frozen variant shifts; union reading replay-only	qualitative
+R01	VI.E	paper_body.tex:612-613	low-recoil hadronic-energy uncertainty rises to 10% at 0.9<q3<1.2 GeV (literature)	10%; 0.9-1.2 GeV
+R02	VI.E	paper_body.tex:623-627 (\woneGcvPtTot,\woneGcvPtShape)	matched (pT,ppar) projection does not reject GENIE CV: p total, shape	0.48; 0.63
+R03	VI.E	paper_body.tex:629-635	+-4% recoil scale; size = test-beam agreement for p, pi, e of 0.35-2.0 GeV/c (literature)	4%; 0.35-2.0 GeV/c
+R04	VI.E	paper_body.tex:636-637	unscaled re-unfold reproduces frozen decisions, claim p inside rounding range	qualitative
+R05	VI.E	paper_body.tex:638-642	at +-4% all ten hold; statistics move up to ~11%; nine keep k=0; NuWro shape k=1 to k=3 of 1751 at +4% (p=0.0023 vs 0.05); reproduced independently	11%; 9; 3/1751; 0.0023; 0.05
+U01	VII	paper_body.tex:661-662 (\zprojCells)	adopted covariance (E_avail,W) projection cells	42
+U02	VII	paper_body.tex:667-668 (\sprojMeasured,\sprojBound)	seed moves projected uncertainty; bound fixed before production	6.145%; 5%
+U03	VII	paper_body.tex:669-673 (\seedEffectNforty,\seedEffectNeighty,\seedEffectExponent)	N=40 (four disjoint subsets), N=80 (two halves), N=160; fitted exponent	6.02%; 6.02%; 6.145%; 0.000
+U04	VII	paper_body.tex:673-675 (\floorNforty,\floorNeighty,\floorExponent)	same-seed resampling floor N=40 to N=80; two-point exponent	20.91%; 7.57%; 1.467
+U05	VII	paper_body.tex:680-683 (\pinnedBandsSqrtTr)	five of 45 bands seed-pinned, carrying share of sqrt(Tr C)	5; 45; 26.0%
+U06	VII	paper_body.tex:684-686 (\cvMoveOverSigmaMax,\cvMoveOverSigmaMed)	seed moves projected central values by at most / median of own quoted uncertainty	6.02%; 1.06%
+U07	VII	paper_body.tex:688-694	measurement campaign admitted no reporting definition; fallback model-dependence component alone exceeded total-width target	qualitative
+U08	VII	paper_body.tex:694-704	PET: pairing declined, no product adopted, improvement study no candidate, final design no eligible design; PET vs HistGBDT: PET better on tilt, tree better on all three generator reweightings	3
+DA1	VIII DataAvail	paper_body.tex:752	release of about 16 MB	16 MB
+DA2	VIII DataAvail	paper_body.tex:752-756	with standard numerical libraries only, recompute every p, decision, robustness label, power of joint tests, lost-seed resolution and coarse-projection comparison; regenerate Figs. 1-4; recompute numbers quoted from Figs. 1-3	scope
+DA3	VIII DataAvail	paper_body.tex:760-762	replays reproduced every recorded value and checked figure number, one by an outside reader from an empty directory	scope
+DA4	VIII DataAvail	paper_body.tex:766-769	multiplier scan recomputable from released inputs with scan code, not part of release verification	scope
+DA5	VIII DataAvail	paper_body.tex:770-773	pseudo-experiment products archived (2.3 GB)	2.3 GB
+DA6	VIII DataAvail	paper_body.tex:749-751	earlier production of open data; file identities recorded with the release	scope
