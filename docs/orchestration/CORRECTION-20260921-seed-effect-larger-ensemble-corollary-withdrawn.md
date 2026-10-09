@@ -85,6 +85,8 @@ bullet and on the fact that the bound was fixed before production, not on the fi
 > nested subsets of the same 160 throws at one seed pair, so the behaviour at much larger `N` and
 > the width of the seed-pair distribution are both unmeasured.
 
+⚠ **ANNOTATED 2026-10-08 (PRD release audit `ea939701`, U03/G5; the quoted wording above is preserved as it was used).** The seed-effect exponent `0.000` does **not** reproduce as a fit over `N = 40, 80, 160`. A least-squares fit of log s on log N to the three means gives **p = −0.0144**, or −0.0130 over all seven points. `0.000` is the two-point 40→80 value (0.0003). Calculation: `docs/publication/corrections-20261008/seed_effect_exponent.py`. The conclusion that the seed effect does not fall with N over the tested range stands (p ≤ 0), but the printed value and "flat to three decimal places" do not. The article and the note no longer print the exponent (`docs/publication/corrections-20261008/RECORD-20261008-release-audit-corrections.md`, G5).
+
 ## 4. Every site reached
 
 | # | site | what it said | disposition |

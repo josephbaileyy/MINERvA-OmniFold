@@ -403,7 +403,11 @@
 \newcommand{\seedEffectNeighty}{6.02}    % percent, mean of the TWO N=80 halves:
                                          % (6.28872+5.75774)/2 = 6.0232
 \newcommand{\seedEffectScatter}{0.39}    % percent, subset scatter at ONE seed pair
-\newcommand{\seedEffectExponent}{0.000}  % s ~ N^-p over N = 40, 80, 160 (nested subsets): FLAT
+\newcommand{\seedEffectExponent}{0.000}  % RETIRED FROM PROSE 2026-10-08 (PRD release audit ea939701, U03/G5): printed as a
+                                         % "fitted exponent" over N = 40, 80, 160, but a least-squares fit of log s on log N
+                                         % to the three means gives p = -0.0144 (-0.0130 on all seven points); 0.000 is the
+                                         % two-point 40->80 value. Calculation: docs/publication/corrections-20261008/
+                                         % seed_effect_exponent.py. Kept defined only so older builds resolve; no tex file uses it.
 \newcommand{\floorExponent}{1.467}       % the resampling floor, N = 40 -> 80 ONLY: two-point
 \newcommand{\floorNforty}{20.91}         % percent, 12 disjoint pairs
 \newcommand{\floorNeighty}{7.57}         % percent, 2 pairs
@@ -435,3 +439,29 @@
 \newcommand{\latRatioTopMin}{0.687}      % SAME ratio, top 1% of bins by support variance
 \newcommand{\latRatioTopMax}{1.153}
 \newcommand{\latTopVarShare}{74.11}      % percent of total support variance in that top 1%
+
+% =====================================================================================
+% GENERATOR-CONTEXT AND FIG. 2 RATIOS (paper Sec. V), 2026-10-08 (PRD release audit ea939701, G11).
+% These were literals in paper_body.tex that the release check (fig_numbers.py) compared only against its
+% own hard-coded copy. They are macros now, and fig_numbers.py --values reads them from this file, so an
+% edit here is checked against the released figure arrays. Values unchanged; computed values in the release
+% log (fig_numbers.py): integrated data/prediction 1.0676-1.3859; 2.2<=W<3.0 1.1108-1.1299; corner
+% 1.1386-1.1601; max corner/total deviation 6.65%; GiBUU 1.6070 / 1.3859; Fig. 2 ratios 12.35-30.46% and
+% 22.64-30.58%; GENIE at 1.4<=W<1.8 above the data by 9.4% (CV) and 11.8% (+MEC).
+\newcommand{\genRatioTotLo}{1.07}     % integrated data/prediction, all four generators
+\newcommand{\genRatioTotHi}{1.39}
+\newcommand{\genRatioWhiLo}{1.11}     % 2.2 <= W < 3.0 GeV, GENIE CV, GENIE+MEC, NuWro
+\newcommand{\genRatioWhiHi}{1.13}
+\newcommand{\genRatioTotGNLo}{1.07}   % integrated, GENIE CV, GENIE+MEC, NuWro
+\newcommand{\genRatioTotGNHi}{1.15}
+\newcommand{\genRatioCornerLo}{1.14}  % E_avail >= 0.8, W >= 1.8 GeV, GENIE CV, GENIE+MEC, NuWro
+\newcommand{\genRatioCornerHi}{1.16}
+\newcommand{\genCornerDevMax}{7}      % percent: corner within this of the integrated ratio (bound)
+\newcommand{\gibuuCorner}{1.61}
+\newcommand{\gibuuTotal}{1.39}
+\newcommand{\genieWmidLo}{9}          % percent: GENIE CV / GENIE+MEC above the data at 1.4 <= W < 1.8 GeV
+\newcommand{\genieWmidHi}{12}
+\newcommand{\figTwoHiHiLo}{12}        % percent: data over Tune v1, E_avail >= 0.8, W >= 1.8 GeV cells
+\newcommand{\figTwoHiHiHi}{30}
+\newcommand{\figTwoLowWLo}{23}        % percent: data over Tune v1, W < 1.1 GeV, every E_avail
+\newcommand{\figTwoLowWHi}{31}

@@ -1,0 +1,135 @@
+{
+ "schema": "rc5-m1f2/1",
+ "what": "s5p pair-difference products behind condition (i)'s fine-grid L2 ratios (0.50-0.86): D_J and f_B_mean on the 109 supported J cells",
+ "files": {
+  "delta-genie_cv.npz": {
+   "sha256": "4fed1dc6c2e0e603e98f9e28bbfb1348f6dbc30d816e5eb87addba3a0ca3c51e",
+   "bytes": 6468,
+   "receipt": "docs/orchestration/state/s5p/stage3/f2/delta-genie_cv.json",
+   "receipt_out_sha256_match": true,
+   "cluster_path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f2/delta-genie_cv.npz",
+   "inputs": [
+    {
+     "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_genie_cv_fine.npz",
+     "a_sha256": "84e2d224ed775c8b8a3ebd7bdcc68239d4e60a8658a9614638296af4203db4a9",
+     "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_genie_cv_coarse.npz",
+     "b_sha256": "4b2d31c2a51c61ea93d6ff406895b659d996af11edc65c3a2f4fc487bac5a3f0"
+    }
+   ],
+   "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+  },
+  "delta-genie_mec.npz": {
+   "sha256": "0058ae586f471cc6565cdf0c0018ef4fe8c8d7551bcc557ab288fb9d48aa02cf",
+   "bytes": 6468,
+   "receipt": "docs/orchestration/state/s5p/stage3/f2/delta-genie_mec.json",
+   "receipt_out_sha256_match": true,
+   "cluster_path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f2/delta-genie_mec.npz",
+   "inputs": [
+    {
+     "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_genie_mec_fine.npz",
+     "a_sha256": "d6b24d6f2350498d6577b8af2646ca3a5f4ff9245f21d28dc22b095f030eb68f",
+     "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_genie_mec_coarse.npz",
+     "b_sha256": "84c08dd65f252d64706cc81569287ad1b3055a31d673c4a5ceb5c292528981ac"
+    }
+   ],
+   "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+  },
+  "delta-gibuu_cv.npz": {
+   "sha256": "5e2b14337a3efefcba46046a89458607d6dc042605dc03c9f2c952757802056e",
+   "bytes": 6468,
+   "receipt": "docs/orchestration/state/s5p/stage3/f2/delta-gibuu_cv.json",
+   "receipt_out_sha256_match": true,
+   "cluster_path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f2/delta-gibuu_cv.npz",
+   "inputs": [
+    {
+     "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_gibuu_cv_fine.npz",
+     "a_sha256": "6bc6c640e68967833e02019748d7e77da2567f0e28d93eab3d05a4b1d3a14f3f",
+     "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_gibuu_cv_coarse.npz",
+     "b_sha256": "40bfa421bed64a65b37a38324d490657cfebe5737fc986d18fe7243b4cff3bfd"
+    }
+   ],
+   "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+  },
+  "delta-nuwro_cv.npz": {
+   "sha256": "d6d662ca3118981ce82f20626dfad66be39e095a3be49c1e0e572972b558637c",
+   "bytes": 6468,
+   "receipt": "docs/orchestration/state/s5p/stage3/f2/delta-nuwro_cv.json",
+   "receipt_out_sha256_match": true,
+   "cluster_path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/f2/delta-nuwro_cv.npz",
+   "inputs": [
+    {
+     "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_nuwro_cv_fine.npz",
+     "a_sha256": "42dbc87f4905d3ab6bcd4d900ae128668a2c0aa1bd708f1ebe65a1b6a9af6235",
+     "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_nuwro_cv_coarse.npz",
+     "b_sha256": "b1795746da69b0a7c18896f6df3ef2dfc97b24e4699a06c9c7e635bc2c688db2"
+    }
+   ],
+   "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+  },
+  "fine-minus-mid-genie_cv.npz": {
+   "sha256": "40d9aa1c3c84a6f019ea03524b465f5223b85bc75cea82357087e8850e8aaa51",
+   "bytes": 6468,
+   "receipt": "docs/orchestration/state/s5p/stage3/m1/fine-minus-mid-genie_cv.json",
+   "receipt_out_sha256_match": true,
+   "cluster_path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/m1/fine-minus-mid-genie_cv.npz",
+   "inputs": [
+    {
+     "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_genie_cv_fine.npz",
+     "a_sha256": "84e2d224ed775c8b8a3ebd7bdcc68239d4e60a8658a9614638296af4203db4a9",
+     "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3v_m1_genie_cv_mid.npz",
+     "b_sha256": "6d41207c5c4b159be3da0ce5c757efa92ece240d21e1ec268aaa25d2e13a43d8"
+    }
+   ],
+   "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+  },
+  "fine-minus-mid-genie_mec.npz": {
+   "sha256": "5e6aa8a6397a2fd7e688dc0f2249e1cae2b80e66f6d01378b077bdb2ab25d122",
+   "bytes": 6468,
+   "receipt": "docs/orchestration/state/s5p/stage3/m1/fine-minus-mid-genie_mec.json",
+   "receipt_out_sha256_match": true,
+   "cluster_path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/m1/fine-minus-mid-genie_mec.npz",
+   "inputs": [
+    {
+     "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_genie_mec_fine.npz",
+     "a_sha256": "d6b24d6f2350498d6577b8af2646ca3a5f4ff9245f21d28dc22b095f030eb68f",
+     "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3v_m1_genie_mec_mid.npz",
+     "b_sha256": "b5580883b0c45168a78c217046803de1a4ecca22d594b7f40545330b50514bce"
+    }
+   ],
+   "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+  },
+  "fine-minus-mid-gibuu_cv.npz": {
+   "sha256": "6fbfc786f76e66d58e6bf190dc5c6a075786c8b4a02f8f0d1e4821d0f701b73b",
+   "bytes": 6468,
+   "receipt": "docs/orchestration/state/s5p/stage3/m1/fine-minus-mid-gibuu_cv.json",
+   "receipt_out_sha256_match": true,
+   "cluster_path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/m1/fine-minus-mid-gibuu_cv.npz",
+   "inputs": [
+    {
+     "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_gibuu_cv_fine.npz",
+     "a_sha256": "6bc6c640e68967833e02019748d7e77da2567f0e28d93eab3d05a4b1d3a14f3f",
+     "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3v_m1_gibuu_cv_mid.npz",
+     "b_sha256": "a64fc91dbd6ccfb96324e05d09dae65c18b16905b4ad9cc02a86cf5ee2a61a59"
+    }
+   ],
+   "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+  },
+  "fine-minus-mid-nuwro_cv.npz": {
+   "sha256": "706b87d4437ddf91a9c2f6867ce118631469c738b215a3d26d8f48fc556548d0",
+   "bytes": 6468,
+   "receipt": "docs/orchestration/state/s5p/stage3/m1/fine-minus-mid-nuwro_cv.json",
+   "receipt_out_sha256_match": true,
+   "cluster_path": "/pscratch/sd/j/josephrb/s5p-20260926/stage3/m1/fine-minus-mid-nuwro_cv.npz",
+   "inputs": [
+    {
+     "a": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3r_f2_nuwro_cv_fine.npz",
+     "a_sha256": "42dbc87f4905d3ab6bcd4d900ae128668a2c0aa1bd708f1ebe65a1b6a9af6235",
+     "b": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s3r/f2/s3v_m1_nuwro_cv_mid.npz",
+     "b_sha256": "f023df0f67d143554155c77741772380cf71cb472124e0f5317a57f3e1d412c1"
+    }
+   ],
+   "code_sha256": "dd17d970b4cc2b7c541ef9623349ee3f546e3a8a817b982df491e0b9d00f9ef8"
+  }
+ },
+ "note": "fine-minus-mid D_J equals the frozen release's d1__ (checked by verify_rc.py); the delta (F2) files are in the CFS preservation directory under pscratch/sd/j/josephrb/s5p-20260926/stage3/f2/ and the m1 files in the s5p archive stage3/m1/"
+}

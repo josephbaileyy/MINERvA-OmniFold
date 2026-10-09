@@ -343,6 +343,8 @@ record states its own scope and what superseded it. The router as it stood befor
   nested subsets of the same 160 throws at one seed pair, so the behaviour at much larger `N` and
   the width of the seed-pair distribution are both unmeasured."* ⚠ **The fitted exponent `0.000` is
   the exponent `p` in `s ∝ N^-p`, NOT a p-value**, and must never be read as a significance.
+  ⚠ **2026-10-08:** that `0.000` is the two-point 40→80 value, not a fit over 40/80/160 (fit: −0.0144); see the
+  annotation in `EVIDENCE-20260920-sproj-resolution-floor-and-seed-effect.md` §1 and `docs/publication/corrections-20261008/seed_effect_exponent.py`.
   ⚠ *"a larger ensemble would not reduce it"* is **WITHDRAWN** — what the correction withdraws is
   the claim quantified over ALL `N`, not a claim scoped to the range measured.
   ⚠ **AN EARLIER REVISION OF THIS BULLET OVERREACHED AND IS WITHDRAWN.** It said the scoped form

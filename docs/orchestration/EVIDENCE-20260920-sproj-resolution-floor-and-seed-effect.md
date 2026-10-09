@@ -25,6 +25,8 @@ estimator seed changed. It gave `6.04% ± 0.39%` every time, and it does not cha
 factor `2.76` for a factor `2` in `N` — and the seed effect is flat to three decimal places in the
 exponent. They are two different things and the measurement separates them.
 
+> ⚠ **ANNOTATED 2026-10-08 (PRD release audit `ea939701`, U03/G5; nothing above is edited).** The seed-effect exponent `0.000` does **not** reproduce as a fit over `N = 40, 80, 160`. A least-squares fit of log s on log N to the three means gives **p = −0.0144**, or −0.0130 over all seven points. `0.000` is the two-point 40→80 value (0.0003). Calculation: `docs/publication/corrections-20261008/seed_effect_exponent.py`. The conclusion that the seed effect does not fall with N over the tested range stands (p ≤ 0), but the printed value and "flat to three decimal places" do not. The article and the note no longer print the exponent (`docs/publication/corrections-20261008/RECORD-20261008-release-audit-corrections.md`, G5).
+
 > ## ⚠ THE `± 0.39%` IS NOT AN UNCERTAINTY ON THE SEED EFFECT. READ THIS BEFORE QUOTING THE NUMBER.
 >
 > Every seed-effect measurement here is between **ONE seed pair**: `1000` and `2200`, i.e. offsets
@@ -57,6 +59,8 @@ the seed effect would look like noise. **The magnitude comparison is the wrong t
 measures a fluctuation the seed comparison does not contain — and the discriminator that does not
 depend on that judgement is the **`N`-dependence**, which is unambiguous: `p = 0.000` against
 `p = 1.467`.
+(**2026-10-08:** the `0.000` is the two-point 40→80 value; the fit over 40/80/160 gives −0.0144. The contrast with
+`1.467` stands; see the annotation under the table above.)
 
 ## 3. Method, and every control
 
