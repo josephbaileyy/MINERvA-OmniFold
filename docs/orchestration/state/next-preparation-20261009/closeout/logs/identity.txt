@@ -1,0 +1,30 @@
+# closeout delta 901f0088..HEAD at db76069a
+ .../ASSESSMENT-20261008-2d-estimator-pairing.md    |  12 +-
+ ...NT-20261008-2d-total-uncertainty-feasibility.md |  20 +-
+ docs/orchestration/CATALOG.md                      |  16 ++
+ .../DELIVERY-20261008-uncertainty-preparation.md   |  55 ++++--
+ ...261008-2d-independent-statistical-validation.md |  39 +++-
+ docs/orchestration/MANIFEST-overrides.tsv          |   7 +
+ docs/orchestration/MANIFEST.tsv                    |  74 ++++----
+ .../state/next-preparation-20261009/DISPATCH.md    | 128 +++++++++++++
+ .../closeout/GOALS-20261009-as-dispatched.md       | 206 +++++++++++++++++++++
+ 9 files changed, 483 insertions(+), 74 deletions(-)
+
+# lane/upstream identity against HEAD
+A tip cc9eed27: 32 lane-touched files; differ at HEAD: ['docs/orchestration/ASSESSMENT-20261008-2d-estimator-pairing.md']
+B tip c783d9c3: 7 lane-touched files; differ at HEAD: ['docs/orchestration/DESIGN-20261008-2d-independent-statistical-validation.md']
+C tip 57f6dd30: 4 lane-touched files; differ at HEAD: ['docs/orchestration/ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md']
+D tip ecb52dde: 11 lane-touched files; differ at HEAD: none
+upstream ad2716d8..33811d7d: 65 files; differ at HEAD: ['docs/orchestration/MANIFEST.tsv']
+upstream ad2716d8..460631d1: 87 files; differ at HEAD: ['docs/orchestration/MANIFEST.tsv']
+
+# identity against 901f0088 (expected: none differ except MANIFEST.tsv upstream)
+A tip cc9eed27: 32 lane-touched files; differ at 901f0088: none
+B tip c783d9c3: 7 lane-touched files; differ at 901f0088: none
+C tip 57f6dd30: 4 lane-touched files; differ at 901f0088: none
+D tip ecb52dde: 11 lane-touched files; differ at 901f0088: none
+upstream ad2716d8..33811d7d: 65 files; differ at 901f0088: ['docs/orchestration/MANIFEST.tsv']
+upstream ad2716d8..460631d1: 87 files; differ at 901f0088: ['docs/orchestration/MANIFEST.tsv']
+
+# positive control: identity against ee61fb22 (must report the audit files)
+upstream ad2716d8..460631d1: 87 files; differ at ee61fb22: ['docs/orchestration/MANIFEST.tsv', 'docs/publication/audit-20261008/CLAIM-TABLE-20261008.tsv', 'docs/publication/audit-20261008/REPORT-20261

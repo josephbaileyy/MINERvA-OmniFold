@@ -1,0 +1,47 @@
+test_the_shim_does_not_reimplement_the_f3_transform (nd-unfolding.tests.test_fullevent_extract.EngineReweighterShim.test_the_shim_does_not_reimplement_the_f3_transform)
+CLM-008 F3: one shared implementation, or training and extraction disagree in the ... ok
+test_the_shim_supplies_every_attribute_reweight_reads (nd-unfolding.tests.test_fullevent_extract.EngineReweighterShim.test_the_shim_supplies_every_attribute_reweight_reads) ... /Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_fullevent_extract.py:203: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/omnifold_nn/omnifold/omnifold.py' mode='r' encoding='UTF-8'>
+  src = open(src_path).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_a_non_fps_grid_is_refused (nd-unfolding.tests.test_fullevent_extract.ExtractionArithmetic.test_a_non_fps_grid_is_refused) ... ok
+test_an_empty_denominator_leaves_the_cell_at_zero (nd-unfolding.tests.test_fullevent_extract.ExtractionArithmetic.test_an_empty_denominator_leaves_the_cell_at_zero) ... ok
+test_completeness_helper_still_computes_the_reco_fraction_as_a_DIAGNOSTIC (nd-unfolding.tests.test_fullevent_extract.ExtractionArithmetic.test_completeness_helper_still_computes_the_reco_fraction_as_a_DIAGNOSTIC)
+`completeness_2d` still returns the reco efficiency -- but it is NO LONGER A DIVISOR. ... ok
+test_misaligned_push_is_refused (nd-unfolding.tests.test_fullevent_extract.ExtractionArithmetic.test_misaligned_push_is_refused) ... ok
+test_the_extended_pt_bin_gets_a_flux_not_a_silent_one (nd-unfolding.tests.test_fullevent_extract.ExtractionArithmetic.test_the_extended_pt_bin_gets_a_flux_not_a_silent_one)
+J29's failure mode, on the CV side: the [4.5,30] FPS bin has no reference flux bin of ... ok
+test_total_xsec_is_the_bin_volume_weighted_sum (nd-unfolding.tests.test_fullevent_extract.ExtractionArithmetic.test_total_xsec_is_the_bin_volume_weighted_sum) ... ok
+test_xsec_is_NOT_divided_by_the_reco_efficiency (nd-unfolding.tests.test_fullevent_extract.ExtractionArithmetic.test_xsec_is_NOT_divided_by_the_reco_efficiency)
+The cross section must NOT carry a 1/acceptance factor, and this test has power. ... ok
+test_zero_acceptance_cells_are_not_reported (nd-unfolding.tests.test_fullevent_extract.ExtractionArithmetic.test_zero_acceptance_cells_are_not_reported)
+A cell with fiducial truth but zero reco-accepted events must stay 0. ... ok
+test_a_bootstrap_replica_is_refused (nd-unfolding.tests.test_fullevent_extract.InferenceContract.test_a_bootstrap_replica_is_refused) ... ok
+test_a_contract_missing_the_normalization_is_refused (nd-unfolding.tests.test_fullevent_extract.InferenceContract.test_a_contract_missing_the_normalization_is_refused) ... ok
+test_a_different_dump_is_refused (nd-unfolding.tests.test_fullevent_extract.InferenceContract.test_a_different_dump_is_refused) ... ok
+test_a_pre_j01_artifact_is_refused_by_name (nd-unfolding.tests.test_fullevent_extract.InferenceContract.test_a_pre_j01_artifact_is_refused_by_name) ... ok
+test_a_reduced_schema_result_is_refused (nd-unfolding.tests.test_fullevent_extract.InferenceContract.test_a_reduced_schema_result_is_refused) ... ok
+test_a_wrong_fingerprint_is_refused (nd-unfolding.tests.test_fullevent_extract.InferenceContract.test_a_wrong_fingerprint_is_refused) ... ok
+test_a_full_but_unordered_index_is_rejected (nd-unfolding.tests.test_fullevent_extract.PushCoverage.test_a_full_but_unordered_index_is_rejected)
+Same length, same set, wrong order -- the one a length check cannot see, and the one ... ok
+test_a_training_subsample_is_rejected (nd-unfolding.tests.test_fullevent_extract.PushCoverage.test_a_training_subsample_is_rejected) ... ok
+test_nonfinite_and_negative_are_rejected (nd-unfolding.tests.test_fullevent_extract.PushCoverage.test_nonfinite_and_negative_are_rejected) ... ok
+test_ordered_full_range_passes (nd-unfolding.tests.test_fullevent_extract.PushCoverage.test_ordered_full_range_passes) ... ok
+test_mmap_mode_is_not_relied_on (nd-unfolding.tests.test_fullevent_extract.RowStream.test_mmap_mode_is_not_relied_on)
+Documenting the trap in an executable form: np.load(mmap_mode=...) on an npz returns an ... ok
+test_off_acceptance_rows_are_pinned_to_one_like_runstep2 (nd-unfolding.tests.test_fullevent_extract.RowStream.test_off_acceptance_rows_are_pinned_to_one_like_runstep2)
+FINDING-20260802-extractor-pass-truth-mask: the full-inventory pass must pin ... ok
+test_reading_past_the_end_fails_closed (nd-unfolding.tests.test_fullevent_extract.RowStream.test_reading_past_the_end_fails_closed)
+A silently short final chunk would leave the tail of w_push at whatever np.empty gave ... ok
+test_sequential_reads_reconstruct_the_member_exactly (nd-unfolding.tests.test_fullevent_extract.RowStream.test_sequential_reads_reconstruct_the_member_exactly) ... ok
+test_the_pin_reports_whether_it_was_vacuous (nd-unfolding.tests.test_fullevent_extract.RowStream.test_the_pin_reports_whether_it_was_vacuous)
+A guard that cannot distinguish "no off-acceptance rows existed" from "they all agreed" ... ok
+test_a_real_disagreement_fails_closed (nd-unfolding.tests.test_fullevent_extract.SubsampleAgreement.test_a_real_disagreement_fails_closed)
+This is the guard that makes the whole reweight-all pass falsifiable: without it, a ... ok
+test_absent_reference_is_reported_not_silently_skipped (nd-unfolding.tests.test_fullevent_extract.SubsampleAgreement.test_absent_reference_is_reported_not_silently_skipped) ... ok
+test_agreement_passes_within_the_nondeterminism_floor (nd-unfolding.tests.test_fullevent_extract.SubsampleAgreement.test_agreement_passes_within_the_nondeterminism_floor) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 0.038s
+
+OK

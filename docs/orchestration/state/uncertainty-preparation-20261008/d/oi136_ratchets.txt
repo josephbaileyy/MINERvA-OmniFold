@@ -1,0 +1,93 @@
+...F........F....                                                        [100%]
+=================================== FAILURES ===================================
+_ TheCanonicalRootMustNotReachPositionZero.test_no_file_outside_the_named_set_feeds_a_rooted_insert _
+
+self = <test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero testMethod=test_no_file_outside_the_named_set_feeds_a_rooted_insert>
+
+    def test_no_file_outside_the_named_set_feeds_a_rooted_insert(self):
+        """FIRES on a new instance. This is the ratchet."""
+        new = [f for f in self.found if f not in KNOWN_UNREPAIRED]
+>       self.assertEqual(new, [], "a NEW rooted sys.path.insert(0, ...) appeared:\n  " +
+                         "\n  ".join(new) + "\nDerive the root from __file__; do not add it here.")
+E       AssertionError: Lists differ: ['2d-unfolding/uq/coverage_fixed_truth/fix[554 chars].py'] != []
+E       
+E       First list contains 9 additional elements.
+E       First extra element 0:
+E       '2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py'
+E       
+E       + []
+E       - ['2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py',
+E       -  '2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py',
+E       -  'docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py',
+E       -  'docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py',
+E       -  'docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py',
+E       -  'docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py',
+E       -  'docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py',
+E       -  'docs/orchestration/state/note-boot-20261003/boot_spreads.py',
+E       -  'docs/orchestration/state/uqpaper-median-20261006/paper_median.py'] : a NEW rooted sys.path.insert(0, ...) appeared:
+E         2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py
+E         2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py
+E         docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py
+E         docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py
+E         docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py
+E         docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py
+E         docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py
+E         docs/orchestration/state/note-boot-20261003/boot_spreads.py
+E         docs/orchestration/state/uqpaper-median-20261006/paper_median.py
+E       Derive the root from __file__; do not add it here.
+
+nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py:315: AssertionError
+__ TheInventoryIsARatchet.test_the_fail_open_set_is_EXACTLY_the_recorded_one ___
+
+self = <test_oi136_failopen_inventory_ratchet.TheInventoryIsARatchet testMethod=test_the_fail_open_set_is_EXACTLY_the_recorded_one>
+
+    def test_the_fail_open_set_is_EXACTLY_the_recorded_one(self):
+        p = run_probe()
+        rels = failopen_set(p.stdout)
+        digest = hashlib.sha256("".join(r + "\n" for r in rels).encode()).hexdigest()
+>       self.assertEqual(
+            (len(rels), digest), (FAILOPEN_COUNT, FAILOPEN_SHA256),
+            "The OI-136 fail-open inventory MOVED.\n"
+            f"  recorded: {FAILOPEN_COUNT} files / {FAILOPEN_SHA256}\n"
+            f"  measured: {len(rels)} files / {digest}\n"
+            "A NEW site is a regression: an absolute insert(0, <cluster root>) executes that "
+            "tree's modules whichever checkout launched the entrypoint, PYTHONPATH cannot "
+            "outrank position 0, and a re-deploy does not fix it. A REPAIRED site is welcome "
+            "and still red: update both constants above in the same commit, naming the site.\n"
+            f"  measured set:\n    " + "\n    ".join(rels))
+E       AssertionError: Tuples differ: (18, '04357e1a11b49bb5a7f7a65a1502d101d5828052bf07e6a10d7d3bb43e4930e0') != (9, '0939e1595e1bf5ed7896436d2ca1e090c47525258880bac20f7b3eb5f312a350')
+E       
+E       First differing element 0:
+E       18
+E       9
+E       
+E       - (18, '04357e1a11b49bb5a7f7a65a1502d101d5828052bf07e6a10d7d3bb43e4930e0')
+E       + (9, '0939e1595e1bf5ed7896436d2ca1e090c47525258880bac20f7b3eb5f312a350') : The OI-136 fail-open inventory MOVED.
+E         recorded: 9 files / 0939e1595e1bf5ed7896436d2ca1e090c47525258880bac20f7b3eb5f312a350
+E         measured: 18 files / 04357e1a11b49bb5a7f7a65a1502d101d5828052bf07e6a10d7d3bb43e4930e0
+E       A NEW site is a regression: an absolute insert(0, <cluster root>) executes that tree's modules whichever checkout launched the entrypoint, PYTHONPATH cannot outrank position 0, and a re-deploy does not fix it. A REPAIRED site is welcome and still red: update both constants above in the same commit, naming the site.
+E         measured set:
+E           ./2d-unfolding/unfold_2d_omnifold_unbinned.py
+E           ./2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py
+E           ./2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py
+E           ./docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py
+E           ./docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py
+E           ./docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py
+E           ./docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py
+E           ./docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py
+E           ./docs/orchestration/state/note-boot-20261003/boot_spreads.py
+E           ./docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py
+E           ./docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py
+E           ./docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py
+E           ./docs/orchestration/state/uqpaper-median-20261006/paper_median.py
+E           ./nd-unfolding/adopt_unified_5d.py
+E           ./nd-unfolding/pet/dump_pointcloud_inputs.py
+E           ./nd-unfolding/pet/fullevent_fps_dataloader.py
+E           ./nd-unfolding/pet/train_fullevent_nominal.py
+E           ./nd-unfolding/pet/validate_pet_nominal_gate4.py
+
+nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py:353: AssertionError
+=========================== short test summary info ============================
+FAILED nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py::TheCanonicalRootMustNotReachPositionZero::test_no_file_outside_the_named_set_feeds_a_rooted_insert
+FAILED nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py::TheInventoryIsARatchet::test_the_fail_open_set_is_EXACTLY_the_recorded_one
+2 failed, 15 passed in 57.66s

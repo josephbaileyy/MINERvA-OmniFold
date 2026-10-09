@@ -1,0 +1,774 @@
+{
+ "schema": "uncertainty-preparation-20261008/b/assurance v1",
+ "status": "DRAFT -- NOT REGISTERED, NOT AUTHORIZED; design arithmetic, no data",
+ "operands": {
+  "data_pot": {
+   "value": 1.057394261158926e+21,
+   "source": "dataPOTUsed of the production 2D omnifile, read 2026-10-09 (TParameter); equals toy_metadata data_pot in docs/orchestration/state/coverage-2d-20261005/interim.npz.manifest.json"
+  },
+  "mc_pot": {
+   "value": 4.978198462880827e+21,
+   "source": "mcPOTUsed of the production 2D omnifile, read 2026-10-09 (TParameter)"
+  },
+  "n_signal_rows": {
+   "value": 32849103,
+   "source": "mc_signal_reco entries, production 2D omnifile, read 2026-10-09"
+  },
+  "n_truth_only_misses": {
+   "value": 8999007,
+   "source": "nTruthOnlyMisses TParameter (sum over 12 playlists), read 2026-10-09"
+  },
+  "n_background_rows": {
+   "value": 658227,
+   "source": "mc_background entries, production 2D omnifile, read 2026-10-09"
+  },
+  "n_data_rows": {
+   "value": 4119797,
+   "source": "data tree entries, production 2D omnifile, read 2026-10-09"
+  },
+  "n_closure_events": {
+   "value": 20404292,
+   "source": "pass_reco & pass_truth, toy_metadata n_closure in docs/orchestration/state/coverage-2d-20261005/interim.npz.manifest.json"
+  },
+  "sum_w_reco_closure_data_equiv": {
+   "value": 3533843.462254312,
+   "source": "toy_metadata sum_w_reco_closure (POT-scaled) in docs/orchestration/state/coverage-2d-20261005/interim.npz.manifest.json"
+  },
+  "n_reported_bins": {
+   "value": 205,
+   "source": "mean_vl170 > 0 on the 14 x 16 grid in docs/orchestration/state/ki84-rebuild-20261006/vl170_band.json (populations.tsv mask row)"
+  },
+  "vl170_rebuild_node_h": {
+   "value": 17.744,
+   "source": "docs/orchestration/state/ki84-rebuild-20261006/budget.json job 59410433, 300 tasks, shared 64 CPU, full MC, both bootstrap streams (sacct ElapsedRaw x billing/256)"
+  },
+  "vl170_rebuild_tasks": {
+   "value": 300,
+   "source": "same job"
+  },
+  "vl170_pilot_regular_node_h": {
+   "value": 0.216,
+   "source": "docs/orchestration/state/ki84-rebuild-20261006/budget.json job 59409026, 1 task, regular"
+  },
+  "ki85_node_h": {
+   "value": 7.076,
+   "source": "docs/orchestration/state/ki85-diag-20261006/budget.json, 100 shared runs, MC unresampled"
+  },
+  "ki85_runs": {
+   "value": 100,
+   "source": "same"
+  },
+  "prereg_toy_regular_node_h": {
+   "value": 0.198,
+   "source": "docs/orchestration/PREREG-20261005-2d-fixed-truth-coverage.md A1.7 P6: mean of three regular pilot toys"
+  },
+  "r0_cv_only_node_h_range": {
+   "value": [
+    0.4,
+    2.3
+   ],
+   "source": "lane C reconciliation d07a3d33 (ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md setup notes): CV-only identity-carrying event-loop rebuild, 12 playlists, billing ASSUMED"
+  },
+  "m3246_allocated_node_h": {
+   "value": 20000.0,
+   "source": "iris on login05, 2026-10-09T06:15:10Z, project m3246 CPU"
+  },
+  "m3246_charged_node_h": {
+   "value": 16959.4,
+   "source": "iris on login05, 2026-10-09T06:15:10Z, project m3246 CPU (all users)"
+  },
+  "ki85_realboot_median_rel_pct": {
+   "value": 0.4869623637052485,
+   "source": "docs/orchestration/state/ki85-diag-20261006/ki85_result.json median_rel_spread_pct.realboot (200 data-only real-data replicas)"
+  },
+  "vl170_total_median_rel_pct": {
+   "value": 6.8706583503726995,
+   "source": "docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.json VL170.block_sum.median_pct"
+  },
+  "vl170_median_rel_pct": {
+   "value": 0.6738150183177408,
+   "source": "docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.json VL170.boot.median_pct"
+  }
+ },
+ "design_constants_PROPOSED": {
+  "levels": {
+   "I68": {
+    "z": 1.0
+   },
+   "I95": {
+    "z": null
+   }
+  },
+  "kappa_tolerance": [
+   0.8,
+   1.25
+  ],
+  "n_functionals": 206,
+  "alpha_total": 0.05,
+  "alpha_split": {
+   "coverage": 0.04,
+   "bias": 0.01
+  },
+  "beta_per_functional": 0.1,
+  "bias_tolerance_sigma": 0.2,
+  "b_inner_production": 300,
+  "stability_window": 100,
+  "retry_allowance": 0.05
+ },
+ "levels": {
+  "I68": {
+   "z": 1.0,
+   "nominal": 0.6826894921370859
+  },
+  "I95": {
+   "z": 1.9599639845400532,
+   "nominal": 0.95
+  }
+ },
+ "mc_over_data_exposure": 4.707987025978955,
+ "coverage_edges_exact_sigma": {
+  "I68": {
+   "p_low_edge": 0.5762892028332067,
+   "p_high_edge": 0.7887004526662895
+  },
+  "I95": {
+   "p_low_edge": 0.8831121433775095,
+   "p_high_edge": 0.9857125923023451
+  }
+ },
+ "coverage_edges_b300": {
+  "I68": {
+   "p_low_edge": 0.5756540731561591,
+   "p_high_edge": 0.7877229877713922
+  },
+  "I95": {
+   "p_low_edge": 0.8820544837722509,
+   "p_high_edge": 0.9851393538439037
+  }
+ },
+ "coverage_at_kappa1_b300": {
+  "I68": 0.6818809025211156,
+  "I95": 0.9490714177541469
+ },
+ "per_test_alpha_two_sided": 9.70873786407767e-05,
+ "n_coverage_tests": 412,
+ "N_required": 719,
+ "at_N_required": {
+  "I68": {
+   "accept_hits": [
+    441,
+    539
+   ],
+   "p_pass_at_low_edge": 0.022002271020383907,
+   "p_pass_at_high_edge": 0.007960424298470202,
+   "p_fail_at_nominal": 7.063941950080643e-05
+  },
+  "I95": {
+   "accept_hits": [
+    658,
+    703
+   ],
+   "p_pass_at_low_edge": 0.0025493553626633227,
+   "p_pass_at_high_edge": 0.07522265882760129,
+   "p_fail_at_nominal": 7.866648338639148e-05
+  }
+ },
+ "familywise_pass_lower_bound_at_nominal": 0.9692429840052372,
+ "familywise_pass_lower_bound_at_kappa1_b300": 0.9680845224305998,
+ "per_test_fail_at_nominal": {
+  "I68": 7.063941950080643e-05,
+  "I95": 7.866648338639148e-05
+ },
+ "per_test_fail_at_kappa1_b300": {
+  "I68": 7.241177394468057e-05,
+  "I95": 8.25177288193979e-05
+ },
+ "oc_curve_at_N_required": [
+  {
+   "kappa": 0.6,
+   "I68": {
+    "true_coverage": 0.9033721686376635,
+    "p_pass_one_functional": 8.80491263342753e-33
+   },
+   "I95": {
+    "true_coverage": 0.9987849091565584,
+    "p_pass_one_functional": 2.084098447074185e-15
+   }
+  },
+  {
+   "kappa": 0.7,
+   "I68": {
+    "true_coverage": 0.8458287732691049,
+    "p_pass_one_functional": 1.6973261557642656e-11
+   },
+   "I95": {
+    "true_coverage": 0.9945562581584735,
+    "p_pass_one_functional": 3.3986611313018206e-06
+   }
+  },
+  {
+   "kappa": 0.75,
+   "I68": {
+    "true_coverage": 0.8165626416114002,
+    "p_pass_one_functional": 5.092352235234815e-06
+   },
+   "I95": {
+    "true_coverage": 0.990578746986366,
+    "p_pass_one_functional": 0.0016517269581536368
+   }
+  },
+  {
+   "kappa": 0.8,
+   "I68": {
+    "true_coverage": 0.7877229877713922,
+    "p_pass_one_functional": 0.007960424298470202
+   },
+   "I95": {
+    "true_coverage": 0.9851393538439037,
+    "p_pass_one_functional": 0.07522265882760129
+   }
+  },
+  {
+   "kappa": 0.85,
+   "I68": {
+    "true_coverage": 0.7596573473556231,
+    "p_pass_one_functional": 0.2778808428234663
+   },
+   "I95": {
+    "true_coverage": 0.9781963406778756,
+    "p_pass_one_functional": 0.5016516187486808
+   }
+  },
+  {
+   "kappa": 0.9,
+   "I68": {
+    "true_coverage": 0.7325868017985538,
+    "p_pass_one_functional": 0.8592884615669683
+   },
+   "I95": {
+    "true_coverage": 0.969792978212501,
+    "p_pass_one_functional": 0.9177788606117897
+   }
+  },
+  {
+   "kappa": 0.95,
+   "I68": {
+    "true_coverage": 0.7066401954644186,
+    "p_pass_one_functional": 0.9954598007949144
+   },
+   "I95": {
+    "true_coverage": 0.9600356712492606,
+    "p_pass_one_functional": 0.9967525416278442
+   }
+  },
+  {
+   "kappa": 1.0,
+   "I68": {
+    "true_coverage": 0.6818809025211156,
+    "p_pass_one_functional": 0.9999275882260553
+   },
+   "I95": {
+    "true_coverage": 0.9490714177541469,
+    "p_pass_one_functional": 0.9999174822711806
+   }
+  },
+  {
+   "kappa": 1.05,
+   "I68": {
+    "true_coverage": 0.6583269353084303,
+    "p_pass_one_functional": 0.994779068785514
+   },
+   "I95": {
+    "true_coverage": 0.9370683792725634,
+    "p_pass_one_functional": 0.991698742280962
+   }
+  },
+  {
+   "kappa": 1.1,
+   "I68": {
+    "true_coverage": 0.6359656695866026,
+    "p_pass_one_functional": 0.9026364147927658
+   },
+   "I95": {
+    "true_coverage": 0.9242009339996795,
+    "p_pass_one_functional": 0.8382961185445784
+   }
+  },
+  {
+   "kappa": 1.15,
+   "I68": {
+    "true_coverage": 0.6147644389590328,
+    "p_pass_one_functional": 0.547373296251067
+   },
+   "I95": {
+    "true_coverage": 0.9106391851226998,
+    "p_pass_one_functional": 0.3654834815829016
+   }
+  },
+  {
+   "kappa": 1.2,
+   "I68": {
+    "true_coverage": 0.5946780538358529,
+    "p_pass_one_functional": 0.16309081357927993
+   },
+   "I95": {
+    "true_coverage": 0.8965422520738575,
+    "p_pass_one_functional": 0.05427637090208857
+   }
+  },
+  {
+   "kappa": 1.25,
+   "I68": {
+    "true_coverage": 0.5756540731561591,
+    "p_pass_one_functional": 0.022002271020383907
+   },
+   "I95": {
+    "true_coverage": 0.8820544837722509,
+    "p_pass_one_functional": 0.0025493553626633227
+   }
+  },
+  {
+   "kappa": 1.3,
+   "I68": {
+    "true_coverage": 0.5576364540908364,
+    "p_pass_one_functional": 0.0014195849150694152
+   },
+   "I95": {
+    "true_coverage": 0.8673037769395002,
+    "p_pass_one_functional": 4.1284737652851094e-05
+   }
+  },
+  {
+   "kappa": 1.4,
+   "I68": {
+    "true_coverage": 0.5243922298737033,
+    "p_pass_one_functional": 9.471764219506246e-07
+   },
+   "I95": {
+    "true_coverage": 0.8374422449783896,
+    "p_pass_one_functional": 7.384628933813234e-10
+   }
+  },
+  {
+   "kappa": 1.6,
+   "I68": {
+    "true_coverage": 0.46755226850119025,
+    "p_pass_one_functional": 2.995560675826261e-15
+   },
+   "I95": {
+    "true_coverage": 0.7784521569051719,
+    "p_pass_one_functional": 1.2315101300393645e-22
+   }
+  }
+ ],
+ "N_sensitivity": [
+  {
+   "kappa_tolerance": [
+    0.8695652173913044,
+    1.15
+   ],
+   "N_required_I68_and_I95": 1632,
+   "N_required_I68_only": 1248
+  },
+  {
+   "kappa_tolerance": [
+    0.8333333333333334,
+    1.2
+   ],
+   "N_required_I68_and_I95": 1030,
+   "N_required_I68_only": 755
+  },
+  {
+   "kappa_tolerance": [
+    0.8,
+    1.25
+   ],
+   "N_required_I68_and_I95": 719,
+   "N_required_I68_only": 519
+  },
+  {
+   "kappa_tolerance": [
+    0.75,
+    1.3333333333333333
+   ],
+   "N_required_I68_and_I95": 504,
+   "N_required_I68_only": 322
+  },
+  {
+   "kappa_tolerance": [
+    0.6666666666666666,
+    1.5
+   ],
+   "N_required_I68_and_I95": 329,
+   "N_required_I68_only": 172
+  }
+ ],
+ "median_bin_stat_variance_share": 0.00961799764163352,
+ "median_bin_total_sigma_change_at_tolerance_edges": {
+  "0.8": -0.0017327407707834475,
+  "1.25": 0.0027014130205555986
+ },
+ "N_design": 1116,
+ "N_design_rule": "max(N_required for coverage, bias N at the high tolerance edge)",
+ "at_N_design": {
+  "I68": {
+   "accept_hits": [
+    700,
+    822
+   ],
+   "p_pass_at_low_edge": 0.00025411205417993454,
+   "p_pass_at_high_edge": 2.652653241163735e-05,
+   "p_fail_at_nominal": 7.485336611623428e-05
+  },
+  "I95": {
+   "accept_hits": [
+    1030,
+    1086
+   ],
+   "p_pass_at_low_edge": 4.906136716127016e-06,
+   "p_pass_at_high_edge": 0.0017661566936390796,
+   "p_fail_at_nominal": 8.373562879904206e-05
+  }
+ },
+ "familywise_pass_lower_bound_at_nominal_N_design": 0.9673306670474531,
+ "bias": {
+  "tolerance_sigma": 0.2,
+  "alpha_family": 0.01,
+  "z_critical": 4.062530083406658,
+  "power_at_N_required_kappa1": 0.9032517703682414,
+  "power_at_N_required_kappa_high": 0.5900750252699541,
+  "power_at_N_design_kappa_high": 0.9001705025781052,
+  "coverage_effect_of_a_tolerance_sized_bias": {
+   "I68": {
+    "coverage_at_bias_tolerance": 0.673074931194895,
+    "nominal": 0.6826894921370859
+   },
+   "I95": {
+    "coverage_at_bias_tolerance": 0.9454053144727245,
+    "nominal": 0.95
+   }
+  },
+  "N_required_kappa1": 714,
+  "N_required_kappa_tolerance_high": 1116,
+  "se_mean_pull_at_N_required_kappa1": 0.03729370703141007
+ },
+ "finite_reference_offset_N1": [
+  {
+   "rho": 0.3,
+   "smearing_share": 0.25,
+   "f_data": 0.5222872458385377,
+   "tau_ref_pull_units": 0.30405101572932874,
+   "expected_coverage_failures_at_exact_calibration": 33.36845774937806,
+   "expected_bias_failures_at_exact_calibration": 127.9036125010341
+  },
+  {
+   "rho": 0.3,
+   "smearing_share": 0.5,
+   "f_data": 0.5222872458385377,
+   "tau_ref_pull_units": 0.42999307009773197,
+   "expected_coverage_failures_at_exact_calibration": 86.26571046270766,
+   "expected_bias_failures_at_exact_calibration": 149.46667215040728
+  },
+  {
+   "rho": 0.3,
+   "smearing_share": 1.0,
+   "f_data": 0.5222872458385377,
+   "tau_ref_pull_units": 0.6081020314586575,
+   "expected_coverage_failures_at_exact_calibration": 152.2396623133647,
+   "expected_bias_failures_at_exact_calibration": 165.5433464247713
+  },
+  {
+   "rho": 0.5,
+   "smearing_share": 0.25,
+   "f_data": 0.5222872458385377,
+   "tau_ref_pull_units": 0.2355169040634279,
+   "expected_coverage_failures_at_exact_calibration": 11.425722517485426,
+   "expected_bias_failures_at_exact_calibration": 108.18742729066452
+  },
+  {
+   "rho": 0.5,
+   "smearing_share": 0.5,
+   "f_data": 0.5222872458385377,
+   "tau_ref_pull_units": 0.33307119989462286,
+   "expected_coverage_failures_at_exact_calibration": 44.96592850558463,
+   "expected_bias_failures_at_exact_calibration": 134.15350867741668
+  },
+  {
+   "rho": 0.5,
+   "smearing_share": 1.0,
+   "f_data": 0.5222872458385377,
+   "tau_ref_pull_units": 0.4710338081268558,
+   "expected_coverage_failures_at_exact_calibration": 103.19712117797096,
+   "expected_bias_failures_at_exact_calibration": 154.18691923173716
+  },
+  {
+   "rho": 0.7,
+   "smearing_share": 0.25,
+   "f_data": 0.5222872458385377,
+   "tau_ref_pull_units": 0.19904811352969395,
+   "expected_coverage_failures_at_exact_calibration": 4.526743871711776,
+   "expected_bias_failures_at_exact_calibration": 93.60156086448549
+  },
+  {
+   "rho": 0.7,
+   "smearing_share": 0.5,
+   "f_data": 0.5222872458385377,
+   "tau_ref_pull_units": 0.28149654171847277,
+   "expected_coverage_failures_at_exact_calibration": 25.10565482402286,
+   "expected_bias_failures_at_exact_calibration": 122.29150717741739
+  },
+  {
+   "rho": 0.7,
+   "smearing_share": 1.0,
+   "f_data": 0.5222872458385377,
+   "tau_ref_pull_units": 0.3980962270593879,
+   "expected_coverage_failures_at_exact_calibration": 72.69454500223125,
+   "expected_bias_failures_at_exact_calibration": 145.17804599141732
+  }
+ ],
+ "population_frontier": [
+  {
+   "reservoir_fraction_rho": 0.1,
+   "training_bank_mc_over_data": 4.237188323381059,
+   "production_mc_over_data": 4.707987025978955,
+   "mc_stat_variance_inflation_vs_production": 1.1111111111111112,
+   "reservoir_exposure_over_data": 0.4707987025978955,
+   "tau2_ref_upper_bound_data_units": 2.1240500334472885,
+   "production_equivalent": false
+  },
+  {
+   "reservoir_fraction_rho": 0.2,
+   "training_bank_mc_over_data": 3.766389620783164,
+   "production_mc_over_data": 4.707987025978955,
+   "mc_stat_variance_inflation_vs_production": 1.25,
+   "reservoir_exposure_over_data": 0.941597405195791,
+   "tau2_ref_upper_bound_data_units": 1.0620250167236442,
+   "production_equivalent": false
+  },
+  {
+   "reservoir_fraction_rho": 0.3,
+   "training_bank_mc_over_data": 3.2955909181852685,
+   "production_mc_over_data": 4.707987025978955,
+   "mc_stat_variance_inflation_vs_production": 1.4285714285714286,
+   "reservoir_exposure_over_data": 1.4123961077936864,
+   "tau2_ref_upper_bound_data_units": 0.7080166778157629,
+   "production_equivalent": false
+  },
+  {
+   "reservoir_fraction_rho": 0.4,
+   "training_bank_mc_over_data": 2.824792215587373,
+   "production_mc_over_data": 4.707987025978955,
+   "mc_stat_variance_inflation_vs_production": 1.6666666666666667,
+   "reservoir_exposure_over_data": 1.883194810391582,
+   "tau2_ref_upper_bound_data_units": 0.5310125083618221,
+   "production_equivalent": false
+  },
+  {
+   "reservoir_fraction_rho": 0.5,
+   "training_bank_mc_over_data": 2.3539935129894776,
+   "production_mc_over_data": 4.707987025978955,
+   "mc_stat_variance_inflation_vs_production": 2.0,
+   "reservoir_exposure_over_data": 2.3539935129894776,
+   "tau2_ref_upper_bound_data_units": 0.4248100066894577,
+   "production_equivalent": false
+  },
+  {
+   "reservoir_fraction_rho": 0.6,
+   "training_bank_mc_over_data": 1.883194810391582,
+   "production_mc_over_data": 4.707987025978955,
+   "mc_stat_variance_inflation_vs_production": 2.5,
+   "reservoir_exposure_over_data": 2.824792215587373,
+   "tau2_ref_upper_bound_data_units": 0.35400833890788147,
+   "production_equivalent": false
+  },
+  {
+   "reservoir_fraction_rho": 0.7,
+   "training_bank_mc_over_data": 1.4123961077936869,
+   "production_mc_over_data": 4.707987025978955,
+   "mc_stat_variance_inflation_vs_production": 3.333333333333333,
+   "reservoir_exposure_over_data": 3.2955909181852685,
+   "tau2_ref_upper_bound_data_units": 0.3034357190638984,
+   "production_equivalent": false
+  },
+  {
+   "reservoir_fraction_rho": 0.8,
+   "training_bank_mc_over_data": 0.9415974051957908,
+   "production_mc_over_data": 4.707987025978955,
+   "mc_stat_variance_inflation_vs_production": 5.000000000000001,
+   "reservoir_exposure_over_data": 3.766389620783164,
+   "tau2_ref_upper_bound_data_units": 0.26550625418091106,
+   "production_equivalent": false
+  },
+  {
+   "reservoir_fraction_rho": 0.9,
+   "training_bank_mc_over_data": 0.4707987025978954,
+   "production_mc_over_data": 4.707987025978955,
+   "mc_stat_variance_inflation_vs_production": 10.000000000000002,
+   "reservoir_exposure_over_data": 4.237188323381059,
+   "tau2_ref_upper_bound_data_units": 0.23600555927192096,
+   "production_equivalent": false
+  }
+ ],
+ "max_disjoint_production_size_sets": 0,
+ "seed_namespaces": {
+  "existing": {
+   "production_data (VL162/VL170 bootstrap 1..300)": [
+    1,
+    300
+   ],
+   "production_mc": [
+    10000001,
+    10000300
+   ],
+   "old_toys_data (1001..1200)": [
+    1001,
+    1200
+   ],
+   "old_toys_mc": [
+    10001001,
+    10001200
+   ],
+   "prereg_20261005_data": [
+    20261005000001,
+    20261005099999
+   ],
+   "prereg_20261005_mc": [
+    20261005500001,
+    20261005599999
+   ],
+   "ki85_boot_data": [
+    20261006000001,
+    20261006009999
+   ],
+   "ki85_boot_mc_if_driver_seeded": [
+    20261016000001,
+    20261016009999
+   ]
+  },
+  "proposed": {
+   "outer_pseudo_data": [
+    20261008000001,
+    20261008001999
+   ],
+   "inner_data_stream": [
+    20261008201001,
+    20261010199999
+   ],
+   "inner_mc_stream": [
+    20261018201001,
+    20261020199999
+   ]
+  },
+  "collisions": []
+ },
+ "costs": {
+  "per_run_node_h": {
+   "full_mc_both_streams_shared_measured": 0.05914666666666667,
+   "pseudo_data_mc_unresampled_shared_measured": 0.07075999999999999,
+   "full_mc_regular_measured": 0.216,
+   "half_mc_shared_EXTRAPOLATED_linear_in_rows": 0.029573333333333333
+  },
+  "m3246_remaining_node_h_all_users": 3040.5999999999985,
+  "options": [
+   {
+    "option": "P: primary, production-size bank, B=300",
+    "experiments": 719,
+    "inner_replicas": 300,
+    "runs": 216419,
+    "per_run_node_h": 0.05914666666666667,
+    "per_run_basis": "measured",
+    "node_h_with_retry_allowance": 13440.485576000001,
+    "fraction_of_remaining_allocation": 4.420339925014802
+   },
+   {
+    "option": "P-floor: primary at the loosest scanned tolerance [0.667, 1.5], I68 only, B=300",
+    "experiments": 172,
+    "inner_replicas": 300,
+    "runs": 51772,
+    "per_run_node_h": 0.05914666666666667,
+    "per_run_basis": "measured",
+    "node_h_with_retry_allowance": 3215.2482880000002,
+    "fraction_of_remaining_allocation": 1.0574387581398415
+   },
+   {
+    "option": "P-B50: production-size bank, B=50 inner replicas (a separate procedure)",
+    "experiments": 719,
+    "inner_replicas": 50,
+    "runs": 36669,
+    "per_run_node_h": 0.05914666666666667,
+    "per_run_basis": "measured",
+    "node_h_with_retry_allowance": 2277.291576,
+    "fraction_of_remaining_allocation": 0.7489612497533386
+   },
+   {
+    "option": "N1: conditional held-out, half-MC bank, B=300",
+    "experiments": 719,
+    "inner_replicas": 300,
+    "runs": 216419,
+    "per_run_node_h": 0.029573333333333333,
+    "per_run_basis": "extrapolated",
+    "node_h_with_retry_allowance": 6720.2427880000005,
+    "fraction_of_remaining_allocation": 2.210169962507401
+   },
+   {
+    "option": "N1-B50: conditional held-out, half-MC bank, B=50 (a separate procedure)",
+    "experiments": 719,
+    "inner_replicas": 50,
+    "runs": 36669,
+    "per_run_node_h": 0.029573333333333333,
+    "per_run_basis": "extrapolated",
+    "node_h_with_retry_allowance": 1138.645788,
+    "fraction_of_remaining_allocation": 0.3744806248766693
+   },
+   {
+    "option": "P at N_design (coverage + bias power at the tolerance edge), B=300",
+    "experiments": 1116,
+    "inner_replicas": 300,
+    "runs": 335916,
+    "per_run_node_h": 0.05914666666666667,
+    "per_run_basis": "measured",
+    "node_h_with_retry_allowance": 20861.727264,
+    "fraction_of_remaining_allocation": 6.861056128395715
+   },
+   {
+    "option": "S: fixed-band transfer secondary, production-size bank, no inner bootstrap",
+    "experiments": 719,
+    "inner_replicas": 0,
+    "runs": 719,
+    "per_run_node_h": 0.05914666666666667,
+    "per_run_basis": "measured",
+    "node_h_with_retry_allowance": 44.652776,
+    "fraction_of_remaining_allocation": 0.014685514701045854
+   },
+   {
+    "option": "N2: held-out data-stream variance calibration, arms T+B (50 + 50 runs)",
+    "experiments": 100,
+    "inner_replicas": 0,
+    "runs": 100,
+    "per_run_node_h": 0.07075999999999999,
+    "per_run_basis": "measured (KI-85 arms, full MC; a half-MC bank is expected to be cheaper)",
+    "node_h_with_retry_allowance": 7.429799999999999,
+    "fraction_of_remaining_allocation": 0.0024435308820627516
+   }
+  ],
+  "r0_identity_rebuild_node_h_range": [
+   0.4,
+   2.3
+  ],
+  "n2_total_with_r0_node_h_range": [
+   7.8298,
+   9.7298
+  ],
+  "protected_reserve_fraction": 0.2,
+  "n2_total_with_r0_and_reserve_node_h_range": [
+   9.787249999999998,
+   12.162249999999998
+  ],
+  "m3246_annual_cpu_allocation_node_h": 20000.0,
+  "primary_over_annual_allocation": [
+   0.6720242788,
+   1.0430863632
+  ],
+  "note": "per-run charges are sacct ElapsedRaw x billing/256; option rows exclude the identity-carrying rebuild R0, which every independent-population option needs once (r0_identity_rebuild_node_h_range, priced by lane C with billing assumed)"
+ }
+}

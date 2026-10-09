@@ -27,6 +27,7 @@ rebuilt. See [Setup](#setup).
 | Know what is being worked on now | `docs/CURRENT_WORK.md`, then the exact row in `docs/OPEN_ITEMS.md` |
 | Change code | `KNOWN_ISSUES.md`, the workstream's `*_STATUS.md`, and its callers/tests |
 | Run a workstream | that workstream's `*_STATUS.md` / `*_REFERENCE.md` (below) |
+| Find the script that produced a quoted 2D uncertainty (statistical replicas, universes, combined rollup) | `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`, "Which script produced the quoted 2D uncertainty" |
 | Find the record that governs a plan, decision, outcome or receipt | `docs/orchestration/CATALOG.md` (`## Current work`, `## Task routes`) |
 | See what reads what across workstreams | [How the workstreams connect](#how-the-workstreams-connect) |
 | Avoid repeating a closed study | [Closed approaches](#closed-approaches) |
@@ -79,7 +80,8 @@ the list.
 
 | Shared code | What it provides | Main consumers |
 |---|---|---|
-| `2d-unfolding/unfold_2d_omnifold_unbinned.py` | The OmniFold driver and helpers that the other drivers import (as `u2d`) | the 3D and N-D drivers, about 35 `nd-unfolding` scripts (including `s5c_*`, `s5p_input_dumps`, `project_cov_nd`), PET scripts, `2d-unfolding/uq/`, one `docs/analysis-note` figure script (`redraw_central_only.py`) |
+| `2d-unfolding/unfold_2d_omnifold_unbinned.py` | The OmniFold driver and helpers that the other drivers import (as `u2d`) | the 3D and N-D drivers, about 35 `nd-unfolding` scripts (including `s5c_*`, `s5p_input_dumps`, `project_cov_nd`), PET scripts, `2d-unfolding/uq/`, one `docs/analysis-note` figure script (`redraw_central_only.py`); list them with `git grep -l -e 'import unfold_2d_omnifold_unbinned' -e 'from unfold_2d_omnifold_unbinned import' -- '*.py'` |
+| `2d-unfolding/uq/analyze_uq.py`, `uq/analyze_universes.py` | 2D bootstrap and universe covariances (different conventions: sample `1/(N-1)` versus MAT `1/N`) | the 2D rollups (`uq/rollup_vl170_adoption.sh` is the current one), whose products the 2D Fig. 6/7 plot reads; the 3D universe launcher runs the 2D `analyze_universes.py` on the `E_avail` marginal; `3d-unfolding/uq_3d/` keeps its own 3D analogues with the same two conventions |
 | `2d-unfolding/compare_to_paper_fullcov.py` | Comparison to the published 2D result | 2D diagnostics and receipts, the 3D anchor check, `publication/release/figs/` |
 | `3d-unfolding/xsec_3d.py`, `unfold_3d_omnifold_unbinned.py` | 3D extraction and projections | `3d-unfolding/genie/` (generator predictions) |
 | `nd-unfolding/unfold_nd_omnifold_unbinned.py`, `xsec_nd.py` | N-D unfolding and cross-section extraction | `nd-unfolding` scripts, `pet/`, tests, `publication/release/figs/export_fig_arrays.py`, the analysis note |
@@ -91,13 +93,18 @@ the list.
 | `technote_style.py`, `lib/` | Plot style; shell resume and backfill guards | about 50 plotters in 2D, 3D and N-D; the `2d-unfolding/sbatch_*.sh` launchers |
 
 **Before changing the 2D driver.** One recorded ruling governs this file. Joseph ruled on 2026-08-23 to
-leave its rooted `sys.path` insert (the `OI-136` hazard) unrepaired; the record is
-`docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md:41`. The ruling rests on two conditions:
-- the insert stays inside `main()`;
-- `unbinned_unfolding/python/omnifold.py` keeps its digest.
+leave its rooted `sys.path` insert (the `OI-136` hazard) unrepaired. The ruling rests on two conditions:
+- the insert stays inside `main()`. The ruling's record,
+  `docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md:41`, names this condition and
+  the driver's sha ("pinned in three places");
+- `unbinned_unfolding/python/omnifold.py` keeps its digest. That row does not state this condition. It is
+  stated in `nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py:266-274` (`OMNIFOLD_SHA256`) and in
+  `docs/orchestration/PLAN-20261008-uncertainty-investigation-preparation.md:18`.
 
 `nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py` fails if either condition breaks, and the test says
-the decision then goes back to Joseph.
+the decision then goes back to Joseph. Both `OI-136` ratchet suites are already red at `ad2716d8` for an
+unrelated reason: nine unlisted October rooted-insert sites (`KNOWN_ISSUES.md` 89). The driver's two condition
+tests pass, so read which test fails rather than the suite's exit code.
 
 The driver's sha256 pins (`docs/orchestration/verify_hash_bindings.py`, the Gate-2 launcher,
 `docs/orchestration/state/s5p/gen5d/gen5d-build.json`) record the bytes that earlier runs executed. They are not an approval rule.
@@ -168,7 +175,7 @@ treating a document as an instruction.
 | `docs/orchestration/LIVE-STATE.md` | a generated view that can be stale | it prints its own generation time; check freshness before use |
 | Root `REMEDIATION_DELIVERABLES.md`, `REMEDIATION_META_PROMPTS.md` (July), `DESIGN-20260902-declarative-routing-register.md` | historical records kept at their cited paths | the REMEDIATION headers say "UNCOMMITTED working-tree" at HEAD `3e85589` (July); the DESIGN file is dated in its name |
 | `docs/PREPUB_READINESS.md`, `docs/PUBLICATION_COMPLETION_RUNBOOK.md`, `docs/RESULT_DEPENDENCY_AND_RERUN_MAP.md` | retired (2026-06-09) or July-era instructions | the current publication path is in `docs/publication/` and the s5p records |
-| Paths removed from `main` | historical, recoverable | `docs/POST_PUBLICATION_REORG_PLAN.md` and `CATALOG.md` list each family with its `evidence/*` tag; recover with `git show <tag>:<path>` |
+| Paths removed from `main` | historical, recoverable | `docs/POST_PUBLICATION_REORG_PLAN.md` and `CATALOG.md` list each family with its `evidence/*` tag; recover with `git show <tag>:<path>`. Three tags are removal boundaries: `evidence/prepublication-2026-08-20-0b329e8a` (the 2026-08-20 compaction), `evidence/preparation-2026-09-24-bf34a12c` (admitted 2026-09-24; most of A2) and `evidence/simplification-2026-10-07-fc97eaf9` (A3, the PET final-design results). Use the tag that the path's discovery table names; at any other tag the same `git show` can fail with `fatal: path '<path>' does not exist in '<tag>'` |
 | Local scratch, worktrees and out-of-repo archives | machine-local | `docs/LOCAL_CHECKOUTS_AND_STORAGE.md` |
 
 ---
@@ -205,7 +212,7 @@ MINERvA-OmniFold/
 │   ├── build_bootstrap_band_3d.py, plot_*.py
 │   ├── sbatch_*_3d*.sh                    #   3D event loop / unfold / hadd / bootstrap
 │   ├── uq_3d/                             #   3D uncertainty products
-│   ├── genie/                             #   generator comparison inputs
+│   ├── genie/                             #   generator comparison inputs; gen5d_* are the s5p 5D predictions
 │   └── 3D_OMNIFOLD_STATUS.md, 3D_OMNIFOLD_RUN_LOG.md, 3D_SYSTEMATIC_UQ_PLAN.md, README.md
 │
 ├── nd-unfolding/                          # scalar 4D/5D + full-event (PET/FPS)
@@ -361,6 +368,11 @@ To rebuild the analysis environment from a fresh clone:
    ```
    See `2d-unfolding/2D_OMNIFOLD_REFERENCE.md` for the invariants that apply to
    every run (it covers 3D as well) and each `*_STATUS.md` for the running log.
+   These commands are not the whole route to the quoted 2D uncertainty. Its
+   statistical replicas, the flux-universe rescaling and the combined rollup
+   (`2d-unfolding/uq/rollup_vl170_adoption.sh`) are frozen reproductions,
+   listed in the reference's "Which script produced the quoted 2D
+   uncertainty".
 
 7. **For 4D/5D and full-event work**, route new compute through the guarded
    entrypoint rather than calling drivers directly:
@@ -510,4 +522,7 @@ consequences, both deliberate:
 
 Last verified on 2026-10-07: every tracked path in the layout tree exists at `5770db3b`
 plus this change (`MINERvA101/opt/` is local-only by design); the overlay tables match
-`git ls-files`, and the shared-code table was re-measured with `git grep`.
+`git ls-files`, and the shared-code table was re-measured with `git grep`. On 2026-10-09
+(uncertainty preparation, lane D, base `f8e2bf85`) the 2D rows of the shared-code table,
+the recovery tags and the 2D uncertainty routes were re-checked against the scripts; the
+measurements are in `docs/orchestration/state/uncertainty-preparation-20261008/d/`.

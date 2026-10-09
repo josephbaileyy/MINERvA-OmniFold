@@ -1,0 +1,49 @@
+{
+ "f_data": 0.5222872458385377,
+ "mc_over_data": 4.707773784755059,
+ "kappa": {
+  "N1_half_mc": {
+   "bank_mc_over_data": 2.3538868923775293,
+   "mc_var_inflation": 2.0,
+   "data_share": 0.3534430114159182,
+   "kappa": 0.5945107328012827
+  },
+  "N2_48pct": {
+   "bank_mc_over_data": 2.259731416682428,
+   "mc_var_inflation": 2.0833333333333335,
+   "data_share": 0.3441710855561313,
+   "kappa": 0.586660963040947
+  }
+ },
+ "n1_bank_offset": {
+  "offset_rms_over_sigma_both_stream": 0.8040876746873328,
+  "pooled_i68_both_stream": 0.6826894921370859,
+  "offset_rms_over_sigma_data_only": 1.3525200308807577,
+  "mean_i68_data_only": 0.44782943408787723,
+  "over_cover_edge_d": 0.7141823765597636,
+  "over_cover_fraction": 0.6255612723283948
+ },
+ "p05": {
+  "universe_cv_ratio": 2.238805970149254,
+  "cv_rate": 127.84,
+  "ratio_convention": 285.3665671641792
+ },
+ "transfer_totals": {
+  "34": {
+   "cv_rate": 168.64000000000001,
+   "ratio": 326.1665671641792
+  },
+  "39": {
+   "cv_rate": 173.64000000000001,
+   "ratio": 331.1665671641792
+  },
+  "205": {
+   "cv_rate": 339.64000000000004,
+   "ratio": 497.1665671641792
+  },
+  "215": {
+   "cv_rate": 349.64000000000004,
+   "ratio": 507.1665671641792
+  }
+ }
+}

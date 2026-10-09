@@ -1,0 +1,58 @@
+test_every_listed_file_carries_a_reason (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_every_listed_file_carries_a_reason) ... ok
+test_no_file_outside_the_named_set_feeds_a_rooted_insert (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_no_file_outside_the_named_set_feeds_a_rooted_insert)
+FIRES on a new instance. This is the ratchet. ... FAIL
+test_the_known_set_only_shrinks (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_the_known_set_only_shrinks)
+FIRES when a listed file is repaired but not delisted — so the list cannot rot into an ... ok
+test_the_scanner_FIRES_on_a_synthetic_rooted_insert (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_the_scanner_FIRES_on_a_synthetic_rooted_insert)
+Power. Without this the two arms above pass on a scanner that returns [] for everything. ... ok
+test_the_scanner_FIRES_through_a_CALL_argument (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_the_scanner_FIRES_through_a_CALL_argument)
+The exact shape the first version of this scanner missed, which made 15 look like 9. ... ok
+test_the_scanner_is_SILENT_on_a_SIBLING_repository (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_the_scanner_is_SILENT_on_a_SIBLING_repository)
+Over-broad is not the safe direction: it would report a hazard in a tree that has none. ... ok
+test_the_scanner_is_SILENT_on_a_derived_root (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_the_scanner_is_SILENT_on_a_derived_root)
+The repair's own shape. If this fires, the fix reports as the defect. ... ok
+test_the_scanner_is_SILENT_on_a_rooted_literal_that_never_reaches_an_insert (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_the_scanner_is_SILENT_on_a_rooted_literal_that_never_reaches_an_insert)
+The 61-vs-15 distinction. A literal used as an OUTPUT path is not this hazard, and ... ok
+test_the_2D_driver_still_confines_its_insert_to_a_function (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheLatencyOfTheUnrepaired2DArmIsAsserted.test_the_2D_driver_still_confines_its_insert_to_a_function)
+The other half. If the insert reaches module level, every importer is exposed and the ... ok
+test_the_omnifold_helper_has_not_moved (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheLatencyOfTheUnrepaired2DArmIsAsserted.test_the_omnifold_helper_has_not_moved)
+FIRES when omnifold.py changes -- which converts the 2D hazard from latent to real. ... ok
+
+======================================================================
+FAIL: test_no_file_outside_the_named_set_feeds_a_rooted_insert (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_no_file_outside_the_named_set_feeds_a_rooted_insert)
+FIRES on a new instance. This is the ratchet.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py", line 315, in test_no_file_outside_the_named_set_feeds_a_rooted_insert
+    self.assertEqual(new, [], "a NEW rooted sys.path.insert(0, ...) appeared:\n  " +
+AssertionError: Lists differ: ['2d-unfolding/uq/coverage_fixed_truth/fix[554 chars].py'] != []
+
+First list contains 9 additional elements.
+First extra element 0:
+'2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py'
+
++ []
+- ['2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py',
+-  '2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py',
+-  'docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py',
+-  'docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py',
+-  'docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py',
+-  'docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py',
+-  'docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py',
+-  'docs/orchestration/state/note-boot-20261003/boot_spreads.py',
+-  'docs/orchestration/state/uqpaper-median-20261006/paper_median.py'] : a NEW rooted sys.path.insert(0, ...) appeared:
+  2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py
+  2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py
+  docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py
+  docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py
+  docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py
+  docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py
+  docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py
+  docs/orchestration/state/note-boot-20261003/boot_spreads.py
+  docs/orchestration/state/uqpaper-median-20261006/paper_median.py
+Derive the root from __file__; do not add it here.
+
+----------------------------------------------------------------------
+Ran 10 tests in 54.105s
+
+FAILED (failures=1)

@@ -1,0 +1,30 @@
+# Lane B remote reads, 2026-10-09 UTC (Perlmutter, via `ssh saul.nersc.gov`, landed on login05).
+# Read-only metadata: no event loop, no analysis workload, no job. Outputs copied verbatim.
+
+## 1. ROOT 6.28 tree/parameter listing of the production 2D omnifile (~06:15Z)
+# env: conda activate $HOME/.conda/envs/root_6_28 (by full prefix, as setup_salloc_env.sh does)
+# python: TFile.Open(".../2d-unfolding/runEventLoopOmniFold_MEFHC.root"); for each key print
+#         TREE name entries [branches] | PAR name value
+PAR mcPOTUsed 4.978198462880827e+21
+PAR dataPOTUsed 1.057394261158926e+21
+TREE mc_truth_denom 32849103 ['MC', 'MC_pz', 'w_truth']
+TREE mc_signal_reco 32849103 ['sim', 'sim_pz', 'sim_pass', 'w_reco', 'MC', 'MC_pz', 'w_truth']
+PAR hasTruthOnlyMisses 12
+PAR nTruthOnlyMisses 8999007
+TREE mc_background 658227 ['sim_background', 'sim_background_pz', 'sim_background_pass', 'w_bkg']
+TREE data 4119797 ['measured', 'measured_pz', 'measured_pass']
+# (tail -30 of the output; the lines above are all TREE/PAR lines printed)
+
+## 2. iris (2026-10-09T06:15:10Z)
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+m3246               2035.0            10000.0     16959.4      20000.0
+m3246_g             1295.8            90000.0    124893.0     180000.0
+
+## 3. digests and stat (2026-10-09T06:23:07Z), cwd /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding
+# nice -n 19 sha256sum ...; stat -c "%n %s %y" ...
+43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df  runEventLoopOmniFold_MEFHC.root
+d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316  baseline_flux/runEventLoopMC_MEFHC.root
+71a75821ceeb658710adca30243e39e7184e33f868f58ea56cffe63ba8db0115  uq/bootstrap_MEFHC_300_vl170/uq_covariance_boot300.root
+runEventLoopOmniFold_MEFHC.root 2144008221 2026-05-18 01:52:14.000000000 -0700
+baseline_flux/runEventLoopMC_MEFHC.root 5143 2026-04-23 21:05:03.000000000 -0700
+uq/bootstrap_MEFHC_300_vl170/uq_covariance_boot300.root 319929 2026-10-06 09:00:52.000000000 -0700

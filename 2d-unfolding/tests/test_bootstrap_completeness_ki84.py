@@ -52,11 +52,15 @@ TAN20 = math.tan(math.radians(20.0))
 # Runs main() with the OmniFold classifier stubbed out. argv[1] is the script to load
 # (the current one or the pre-fix blob); the rest is passed to main().
 RUNNER = textwrap.dedent("""
-    import importlib.util, sys, types
+    import importlib.util, os, sys, types
     import numpy as np
 
     def _omnifold(MCgen, MCreco, measured, pass_reco, pass_truth, meas_pass,
                   iters, **kw):
+        # Mid-run edits, after the helper import and before the output is written.
+        for path in filter(None, os.environ.get("U2D_STUB_MUTATE", "").split(os.pathsep)):
+            with open(path, "a") as fh:
+                fh.write("# edited during the run\\n")
         return (np.ones(int(np.count_nonzero(pass_reco))),
                 np.ones(int(np.count_nonzero(pass_truth))))
 
@@ -65,6 +69,8 @@ RUNNER = textwrap.dedent("""
     pkg = types.ModuleType("omnifold")
     pkg.OmniFold_helper_functions = ohf
     pkg.__path__ = []
+    if os.environ.get("U2D_STUB_HELPER_FILE"):
+        pkg.__file__ = os.environ["U2D_STUB_HELPER_FILE"]
     sys.modules["omnifold"] = pkg
     sys.modules["omnifold.OmniFold_helper_functions"] = ohf
 
@@ -155,9 +161,15 @@ def _write_inputs(tmp, phase17=True, n_sig=6000, seed=20261005):
     return path, flux
 
 
-def _run(script, omni, flux, out, extra=()):
+def _run(script, omni, flux, out, extra=(), helper_file=None, mutate=()):
     env = dict(os.environ)
     env["OMP_NUM_THREADS"] = "1"
+    env.pop("U2D_STUB_HELPER_FILE", None)
+    env.pop("U2D_STUB_MUTATE", None)
+    if helper_file:
+        env["U2D_STUB_HELPER_FILE"] = helper_file
+    if mutate:
+        env["U2D_STUB_MUTATE"] = os.pathsep.join(mutate)
     cmd = [sys.executable, "-c", RUNNER, str(script), "--omnifile", omni,
            "--mcfile", flux, "--out", out, "--iters", "1", "--use-weights",
            "--seed", "1", *extra]
@@ -298,6 +310,101 @@ class PathsTheFixMustNotChange(unittest.TestCase):
         # The fix changes only the divisor; the resampled unfolded counts stay as they were.
         self._same(self.p17, ("--bootstrap-seed", "7"), "boot_unfold",
                    hists=("hUnfold2D", "hOFTruthDenom2D", "hEff2D"))
+
+
+def _named(out, name):
+    import ROOT
+    f = ROOT.TFile.Open(out)
+    obj = f.Get(name)
+    title = obj.GetTitle() if obj else None
+    f.Close()
+    return title
+
+
+@unittest.skipUnless(HAVE_ROOT, "PyROOT not importable")
+class RunProvenanceIsRecorded(unittest.TestCase):
+    """Each output names its effective settings and the OmniFold helper that ran.
+
+    Placed here because this file is the end-to-end harness for main(). The 2026-10-08
+    pairing audit could not tell from the products which backend, seed or helper made
+    them: the central value omits --estimator, so its backend was only the launcher's
+    absence of a flag, and the helper arrives through the rooted insert in main().
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        import hashlib
+        cls.tmp = tempfile.mkdtemp(prefix="u2d_prov_")
+        cls.omni, cls.flux = _write_inputs(cls.tmp, phase17=True)
+        cls.helper = os.path.join(cls.tmp, "omnifold_stand_in.py")
+        with open(cls.helper, "w") as fh:
+            fh.write("# stand-in for unbinned_unfolding/python/omnifold.py\n")
+        cls.helper_sha = hashlib.sha256(Path(cls.helper).read_bytes()).hexdigest()
+        cls.script_sha = hashlib.sha256(SCRIPT.read_bytes()).hexdigest()
+        cls.out = {}
+        for tag, extra, helper in (
+                ("central", (), cls.helper),
+                ("boot7_mc", ("--bootstrap-seed", "7", "--bootstrap-streams", "mc",
+                              "--estimator", "lgbm"), cls.helper),
+                ("no_helper_file", (), None)):
+            out = os.path.join(cls.tmp, f"{tag}.root")
+            _run(SCRIPT, cls.omni, cls.flux, out, extra, helper_file=helper)
+            cls.out[tag] = out
+        # A driver copy and a second helper that the stub edits mid-run.
+        cls.driver_copy = os.path.join(cls.tmp, "driver_copy.py")
+        shutil.copyfile(SCRIPT, cls.driver_copy)
+        cls.helper_mut = os.path.join(cls.tmp, "omnifold_edited_mid_run.py")
+        shutil.copyfile(cls.helper, cls.helper_mut)
+        cls.out["mutated"] = os.path.join(cls.tmp, "mutated.root")
+        _run(cls.driver_copy, cls.omni, cls.flux, cls.out["mutated"], (),
+             helper_file=cls.helper_mut, mutate=(cls.driver_copy, cls.helper_mut))
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def test_an_omitted_flag_is_recorded_by_its_effective_value(self):
+        import json
+        cfg = json.loads(_named(self.out["central"], "runConfig"))
+        self.assertEqual(cfg["estimator"], "exact")
+        self.assertEqual(cfg["seed"], 1)
+        self.assertIsNone(cfg["bootstrap_seed"])
+        self.assertEqual(cfg["bkg_mode"], "purity")
+
+    def test_bootstrap_settings_are_recorded(self):
+        import json
+        cfg = json.loads(_named(self.out["boot7_mc"], "runConfig"))
+        self.assertEqual((cfg["estimator"], cfg["bootstrap_seed"], cfg["bootstrap_streams"]),
+                         ("lgbm", 7, "mc"))
+        argv = json.loads(_named(self.out["boot7_mc"], "runArgv"))
+        self.assertIn("--bootstrap-streams", argv)
+
+    def test_driver_bytes_are_identified(self):
+        self.assertEqual(_named(self.out["central"], "driverSha256"), self.script_sha)
+        self.assertEqual(_named(self.out["central"], "driverFile"), str(SCRIPT))
+
+    def test_the_imported_helper_is_identified_by_path_and_digest(self):
+        self.assertEqual(_named(self.out["central"], "omnifoldHelperFile"),
+                         os.path.abspath(self.helper))
+        self.assertEqual(_named(self.out["central"], "omnifoldHelperSha256"), self.helper_sha)
+
+    def test_digests_are_of_the_bytes_loaded_not_of_later_edits(self):
+        import hashlib
+        cur = {p: hashlib.sha256(Path(p).read_bytes()).hexdigest()
+               for p in (self.driver_copy, self.helper_mut)}
+        # Premise: both files really changed during the run.
+        self.assertNotEqual(cur[self.driver_copy], self.script_sha)
+        self.assertNotEqual(cur[self.helper_mut], self.helper_sha)
+        self.assertEqual(_named(self.out["mutated"], "driverSha256"), self.script_sha)
+        self.assertEqual(_named(self.out["mutated"], "omnifoldHelperSha256"), self.helper_sha)
+
+    def test_a_helper_without_a_file_is_reported_unavailable_not_guessed(self):
+        self.assertEqual(_named(self.out["no_helper_file"], "omnifoldHelperFile"), "unavailable")
+        self.assertEqual(_named(self.out["no_helper_file"], "omnifoldHelperSha256"), "unavailable")
+
+    def test_recording_provenance_leaves_the_histograms_alone(self):
+        np.testing.assert_array_equal(_read(self.out["central"], "hXSec2D"),
+                                      _read(self.out["no_helper_file"], "hXSec2D"))
 
 
 if __name__ == "__main__":

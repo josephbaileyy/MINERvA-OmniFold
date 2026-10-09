@@ -1,0 +1,19 @@
+$ python3 docs/orchestration/verify_hash_bindings.py
+
+ALL BINDINGS INTACT
+exit=0
+$ python3 docs/orchestration/verify_receipt_artifacts.py
+  bare-filename citations: TRACKED 9, MISSING 0, OFF-AREA 29, BY-PATH 7, UNRESOLVED 66
+  NOT GREEN: 66 citation(s) UNRESOLVED -- NOT CHECKED (pinned inventory, UNCHANGED); sha256 49916d283274. `--list-unresolved` names them.
+exit=0
+$ python3 docs/orchestration/live_doc_indexed.py --check
+LIVE-INDEX :: nothing newly LIVE in this commit.  (whole tree: every LIVE doc is indexed)  (whole tree: 0 tracked doc(s) have NO overrides row, enforced by the hook via --unrowed; list them with --unrowed)
+exit=0
+$ python3 docs/orchestration/live_doc_indexed.py --unrowed
+tracked docs under docs/orchestration/ with NO overrides row: 0
+exit=0
+$ python3 docs/orchestration/control_plane_lint.py
+CONTROL-PLANE PASS: 13 selected; 0 overflow; 85 backlog; 142 source records; 25 playbook rules; 3 state cells changed since declaration; 132815 prose / 67129 instrument lines over 1795 tracked files
+exit=0
+$ python3 docs/orchestration/generate_manifest.py --check
+(recorded in the commit message that adds this log: a manifest check written into a file the manifest inventories cannot describe itself)

@@ -1,0 +1,314 @@
+{
+  "schema": "uncertainty-preparation-20261008/e/integration v1",
+  "phase": "FINAL — integration and independent review complete; terminal recorded in DELIVERY-20261008-uncertainty-preparation.md",
+  "plan": {
+    "repo_path": "docs/orchestration/PLAN-20261008-uncertainty-investigation-preparation.md",
+    "git_blob": "fbbc0d656c4ef4793496d215dd5a65aae1a7b1b6",
+    "content_sha256": "1917a1949d7d973fedb55e6e30faf2eb721338f8abe2fca3df5fbbbcd26a0ad0",
+    "identity_note": "identified by git blob, deliberately not as a path+sha256 receipt binding: this record is coordination state, not a receipt, and must not enter verify_hash_bindings.py's pinned inventory",
+    "provenance": "authored by the planning session and left untracked in this worktree (mtime 2026-10-09T05:48:12Z); committed here byte-for-byte, unedited, so every lane reads the same plan from a ref"
+  },
+  "baseline": {
+    "plan_pin": "ad2716d8b7ac826c5c06690a5b7459ef04fa701b",
+    "remote_main_check": {
+      "at_utc": "2026-10-09T05:51:13Z",
+      "command": "git fetch origin && git ls-remote origin refs/heads/main",
+      "observed": "ad2716d8b7ac826c5c06690a5b7459ef04fa701b",
+      "delta_from_pin": "none",
+      "note": "checked once, per the plan; lanes do not track moving main independently"
+    },
+    "previously_inspected_delta": {
+      "range": "dd0515fe..ad2716d8",
+      "commits": [
+        "e778575b",
+        "ad2716d8 (merge of PR #57)"
+      ],
+      "paths": [
+        "docs/publication/EDITORIAL-20261008-prd-presentation-pass.md",
+        "docs/publication/submission/PACKAGE-MANIFEST-20261006.md"
+      ],
+      "relevance": "publication records only; no governing scientific route changes, so no input reconciliation is required"
+    },
+    "open_pull_requests_at_check": 0,
+    "hook_baseline_at_pin": {
+      "where": "this worktree at ad2716d8, TMPDIR in session scratch, python3 3.12.2",
+      "result": "13 of the 13 pre-commit check commands exit 0",
+      "hook_source": "core.hooksPath = /Users/josephbailey/local-research/MINERvA-OmniFold/.githooks (the shared checkout's working tree); pre-commit and commit-msg are byte-identical to ad2716d8's .githooks"
+    }
+  },
+  "dispatch_base": {
+    "definition": "commit f8e2bf85 on prep/uncertainty-e-20261008, the commit that first added this file",
+    "content_relative_to_pin": "adds the plan, five MANIFEST-overrides.tsv rows, one CATALOG.md section and this file; no scientific source, product, receipt or governing record differs from ad2716d8",
+    "why_lanes_base_here_not_on_the_pin": "the pre-commit 'every doc has an overrides row' and 'LIVE doc indexed' checks refuse a new docs/orchestration/*.md without an overrides row and a CATALOG.md basename. Those two files are E's surfaces, so E pre-registers A, B, C and E's documents here and the lanes never touch them",
+    "commit": "f8e2bf8535a90d7ed1315530cff3b80860ef9f9c"
+  },
+  "ownership_snapshot": {
+    "at_utc": "2026-10-09T05:52Z..05:56Z",
+    "caveat": "read-only observation. Process liveness and a clean worktree do not establish exclusive ownership, and isolated worktrees do not prevent conflicting future merges. No peer was messaged.",
+    "worktrees": [
+      {
+        "path": "MINERvA-OmniFold",
+        "head": "5f4ec13a",
+        "branch": "main",
+        "note": "shared checkout; 40 commits behind origin/main; 11 untracked paths, none an A–E surface; left untouched"
+      },
+      {
+        "path": "MINERvA-OmniFold-kappa-20261007",
+        "head": "69242646",
+        "branch": "study/kappa-breakdown-20261007",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-kappa-repro-20261008",
+        "head": "b75af4f4",
+        "branch": "(detached)",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-prd-audit-20261008",
+        "head": "ea939701",
+        "branch": "audit/prd-release-repro-20261008",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-prd-editorial-20261008",
+        "head": "e778575b",
+        "branch": "docs/prd-editorial-merge-record-20261008",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-prd-fix-20261008",
+        "head": "49990f82",
+        "branch": "fix/prd-release-audit-corrections-20261008",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-prd-followup-20261008",
+        "head": "ebf17439",
+        "branch": "followup/prd-release-g11-g12-20261008",
+        "dirty_paths": 5,
+        "dirty": [
+          "docs/publication/corrections-20261008/DRAFT-20261008-anatuple-preservation-requests.md",
+          "docs/publication/corrections-20261008/RECORD-20261008-followups-g11-g12-preservation.md",
+          "publication/release/preservation/README-prd-release-preservation-20261008.md",
+          "publication/release/preservation/anatuple_checksum_sweep_20261008.sh",
+          "publication/release/preservation/w2-addition/W2-SHA256SUMS (untracked)"
+        ]
+      },
+      {
+        "path": "MINERvA-OmniFold-prd-paper-20261007",
+        "head": "a3af2af3",
+        "branch": "docs/prd-kappa-sync-record-20261008",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-prd-review-20261007",
+        "head": "49990f82",
+        "branch": "(detached)",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-uncertainty-planner-20261008",
+        "head": "ad2716d8",
+        "branch": "prep/uncertainty-e-20261008",
+        "note": "this session (E)"
+      }
+    ],
+    "live_cli_sessions": {
+      "observed": "three `claude` and two `codex` CLI processes; four report the shared checkout as cwd, so cwd does not attribute them to a worktree",
+      "transcript_attribution": [
+        "a Claude transcript last written 05:45Z references the prd-followup, prd-fix and prd-audit worktrees (the publication follow-up)",
+        "a Claude transcript last written 05:51Z references the prd-editorial worktree",
+        "a Codex rollout last written 05:48Z references this worktree (the planning session)"
+      ]
+    },
+    "publication_follow_up_owns": [
+      "docs/analysis-note/ build and receipt checks (build_all.sh, check_sec4_receipts.py and their tests, on followup/prd-release-g11-g12-20261008)",
+      "publication/release/ preservation and reproduction work",
+      "docs/publication/corrections-20261008/ records",
+      "docs/orchestration/MANIFEST.tsv (changed on followup/prd-release-g11-g12-20261008, which is based on b612ee3a, not on the pin)"
+    ],
+    "a_to_e_surfaces": {
+      "uncommitted_edits_in_any_worktree": "none",
+      "unmerged_branch_deltas_touching_them": "none live. docs/scalar-measurement-successor-20261005 is patch-equivalent upstream (`git cherry` '-'); worktree-agent-a9f1caf5558f759ee's 2D_OMNIFOLD_REFERENCE.md blob equals the pin's; the remaining hits are September branches touching only MANIFEST*, CATALOG.md, VALIDATION_LEDGER.md or the OI-136 ratchet tests and are inert",
+      "a_conditional_2d_files": "no live edit and no unmerged delta on any of the five paths; recheck done at dispatch as the plan requires"
+    },
+    "untracked_successor_bundle": {
+      "path": "MINERvA-OmniFold/scalar-successor-delivery-20261005/ (shared checkout, untracked, 7 files, written 2026-10-05)",
+      "finding": "its PROPOSAL-20261005-scalar-measurement-successor.md hashes to git blob 0d14337d, which matches no committed version reachable from the pin (the pin's is 313b0522)",
+      "disposition": "not an input. E reconciles the committed proposal in place at integration; the bundle is left untouched"
+    }
+  },
+  "observed_constraints": [
+    {
+      "id": "E-C1",
+      "what": "docs/orchestration/MANIFEST.tsv is already OUT OF DATE at the pin",
+      "evidence": "python3 docs/orchestration/generate_manifest.py --check --at-sha ad2716d8b7ac826c5c06690a5b7459ef04fa701b -> exit 1, rows=1707 overrides=518",
+      "owner": "publication follow-up holds a pending MANIFEST.tsv change; E integrates retention metadata serially at final integration by regenerating from source after refreshing upstream",
+      "lane_instruction": "no lane regenerates or edits MANIFEST.tsv; the pre-commit hook does not check it"
+    },
+    {
+      "id": "E-C2",
+      "what": "free disk on the local volume",
+      "evidence": "df -h: 45 GiB free of 460 GiB (90% used) at 05:52Z; one checkout is 0.40 GiB",
+      "lane_instruction": "re-measure before `git worktree add`; never delete another session's files"
+    }
+  ],
+  "write_ownership": {
+    "P": "docs/orchestration/state/uncertainty-preparation-20261008/",
+    "A": {
+      "branch": "prep/uncertainty-a-pairing-20261008",
+      "worktree": "MINERvA-OmniFold-uncprep-a-20261008",
+      "owns": [
+        "docs/orchestration/ASSESSMENT-20261008-2d-estimator-pairing.md",
+        "P/a/pairings.tsv",
+        "P/a/verification.md"
+      ],
+      "conditional_narrow_edits": [
+        "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+        "2d-unfolding/uq/analyze_uq.py",
+        "2d-unfolding/uq/analyze_universes.py",
+        "2d-unfolding/uq/rollup_vl170_adoption.sh",
+        "2d-unfolding/tests/test_bootstrap_completeness_ki84.py"
+      ],
+      "release_rule": "released once D's inventory commit is pushed and it claims none of them; a path D claims is deferred and raised to E, and the other paths stay released"
+    },
+    "B": {
+      "branch": "prep/uncertainty-b-statval-20261008",
+      "worktree": "MINERvA-OmniFold-uncprep-b-20261008",
+      "owns": [
+        "docs/orchestration/DESIGN-20261008-2d-independent-statistical-validation.md",
+        "P/b/populations.tsv",
+        "P/b/assurance.py",
+        "P/b/assurance.json",
+        "any additional operand fixture under P/b/, listed in B's report"
+      ]
+    },
+    "C": {
+      "branch": "prep/uncertainty-c-total-20261008",
+      "worktree": "MINERvA-OmniFold-uncprep-c-20261008",
+      "owns": [
+        "docs/orchestration/ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md",
+        "P/c/components.tsv",
+        "P/c/costs.json",
+        "P/c/costs.py"
+      ]
+    },
+    "D": {
+      "branch": "prep/uncertainty-d-navigation-20261008",
+      "worktree": "MINERvA-OmniFold-uncprep-d-20261008",
+      "owns": [
+        "README.md",
+        "2d-unfolding/2D_OMNIFOLD_REFERENCE.md",
+        "docs/POST_PUBLICATION_REORG_PLAN.md",
+        "P/d/dependencies.tsv",
+        "P/d/disposition.md",
+        "one existing workstream README, named in P/d/disposition.md before editing"
+      ],
+      "conditional": "at most two existing non-frozen source files, each only after an exact ownership transfer from A recorded in both P/d/disposition.md and P/a/verification.md"
+    },
+    "E": {
+      "branch": "prep/uncertainty-e-20261008",
+      "worktree": "MINERvA-OmniFold-uncertainty-planner-20261008",
+      "owns": [
+        "docs/orchestration/PROPOSAL-20261005-scalar-measurement-successor.md",
+        "docs/orchestration/DELIVERY-20261008-uncertainty-preparation.md",
+        "P/e/",
+        "KNOWN_ISSUES.md index entries, 2d-unfolding/2D_OMNIFOLD_STUDY_STATUS.md, 2d-unfolding/2D_OMNIFOLD_RUN_LOG.md, docs/orchestration/CATALOG.md and retention metadata (MANIFEST-overrides.tsv; MANIFEST.tsv only by serial regeneration at integration)",
+        "VALIDATION_LEDGER.md only if a qualifying measured result needs a row"
+      ]
+    },
+    "nobody_edits": [
+      "AGENTS.md, CLAUDE.md, policy, existing OI rulings, frozen receipts, queue state",
+      "docs/CURRENT_WORK.md (generated)",
+      "docs/analysis-note/ (out of scope)",
+      "the publication follow-up's surfaces listed above"
+    ]
+  },
+  "session_setup": {
+    "E": {
+      "model": "claude-opus-5-5 (Opus 5.5), Claude Code",
+      "effort": "not exposed to the session; record at closeout",
+      "role_now": "baseline and ownership coordination only; not a second scientific implementation lane",
+      "reviewer": "not yet chosen. At integration, one fresh read-only context with no A–D authorship, in a detached worktree at a fixed integrated commit; CAMPAIGN-REVIEW-20260929 §5 suggests Astra High where available (advisory)"
+    },
+    "A_to_D": "chosen by Joseph at launch; each session records its actual model, effort and session id in its terminal report"
+  },
+  "budget_consumed_by_E": {
+    "active_time": "about 1.1 h of 8 h, plus the reviewer's 0.7 h",
+    "local_cpu_core_hours": "below 0.3 of 4",
+    "cluster_node_hours": 0,
+    "gpu_hours": 0,
+    "new_output": "about 0.5 MiB committed under P/e plus E's document edits"
+  },
+  "not_authorized_by_this_record": "any compute, any experiment, a peer message or intervention, a merge to main, a MANIFEST.tsv regeneration ahead of integration, or any change to a scientific gate, adoption or publication scope",
+  "dispatch_packets": {
+    "generator": "docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/make_dispatch.py (reads the plan blob from the base with git show and refuses any other blob; --check regenerates and compares)",
+    "verbatim_check": "every plan section in each packet is a byte-identical substring of the plan blob (independent re-split, 6 sections per packet)",
+    "packets": [
+      {
+        "lane": "A",
+        "packet": "docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/DISPATCH-A.md",
+        "git_blob": "674a6cd6912913e49e2ddd357eb55ecba0727836"
+      },
+      {
+        "lane": "B",
+        "packet": "docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/DISPATCH-B.md",
+        "git_blob": "2052133de2d7b7274eae2af24eff74b3c758e819"
+      },
+      {
+        "lane": "C",
+        "packet": "docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/DISPATCH-C.md",
+        "git_blob": "937203ee359819332256d93511c57b51f5352ed7"
+      },
+      {
+        "lane": "D",
+        "packet": "docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/DISPATCH-D.md",
+        "git_blob": "ddc704be11fca4ce315e3c0ee403f1bbbdd9dd47"
+      }
+    ],
+    "handoff_markers": [
+      "[uncprep-D] INVENTORY",
+      "[uncprep-A] CONTRACT",
+      "[uncprep-B] PROVISIONAL",
+      "[uncprep-C] PROVISIONAL",
+      "[uncprep-<lane>] FREEZE"
+    ],
+    "launch": "Joseph launches A-D by pasting a packet; E launches none of them and sends no peer message"
+  },
+  "final_integration": {
+    "upstream_main_at_integration": "33811d7db15f08fb0d83b6a8de18ffdb6a2e7b32 (PR #58; publication files and MANIFEST.tsv only; merged 8219eca4)",
+    "frozen_lane_tips_verified_utc": "2026-10-09T07:10:23Z",
+    "frozen_lane_tips": {
+      "A": "f762749d16f5bb55ac2228dd765aea1ca357ab78",
+      "B": "00f7cff16c173b7c80c97797635818f6e5f74543",
+      "C": "803f1dcc677124f0f51dc586f7f89921dcce0552",
+      "D": "3fde202e49fc2c9e5c951de2b1d3f468d22c809d"
+    },
+    "initial_review_commit": "cd0da20240059ec884f8855614eddab32bcf2ec8",
+    "repair_cycle_1_tips": {
+      "A": "cc9eed2709344a9fbb542a2e3ecceb63ded4829f (behavior 355174fe)",
+      "B": "c783d9c3e144a213763d676ce819663c8fa3110b",
+      "C": "57f6dd30753683a2821cb5d49401ddb067b52a71",
+      "D": "ecb52ddecc9881512c0e58e439aa3cd638c7f385"
+    },
+    "focused_review_commit": "ee61fb223668252dc571327af7678d40c3d47aee",
+    "review_cycles_used": "initial + 1 focused of 2; no new material finding in cycle 1",
+    "blob_identity_check": "every integrated lane file equals its repaired lane tip; every upstream file equals 33811d7d",
+    "manifest": "regenerated from source with generate_manifest.py --committed-only after staging; --check exit 0",
+    "terminal": {
+      "named_experiment": "INFEASIBLE UNDER STATED CONSTRAINTS (populations; cost supporting)",
+      "total_uncertainty": "NO-GO (lane C)",
+      "N2": "NOT READY (scope choice, KI-85 lift, OI-136/guarded harness, registration and review)",
+      "quoted_central_uncertainty_claims": "nothing ready; transfer unmeasured"
+    },
+    "next_decision": "Joseph: how the quoted 2D central is paired with its uncertainty — keep and disclose (0 node-h, recommended), measure the transfer (34–39 node-h for P03; 170–510 for all three), or re-quote the LightGBM central (0 node-h central; 6–94 node-h for systematics)",
+    "known_issues_rows_added": [
+      88,
+      89,
+      90,
+      91
+    ],
+    "not_done": "no merge to main, no PR, no tag, no compute, no adoption, no publication edit"
+  }
+}

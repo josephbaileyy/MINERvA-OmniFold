@@ -36,6 +36,40 @@ Scalar measurement successor proposal (2026-10-05):
 [bounded 2D admission and resource request](PROPOSAL-20261005-scalar-measurement-successor.md).
 This is a proposal, not compute authority or a change to the current campaigns.
 
+### Uncertainty-investigation preparation (sessions A–E), 2026-10-08/09 — integrated
+
+Preparation only. It launched no compute and authorizes no experiment; each proposed experiment
+needs its own authorization. **Start with the integrated conclusion and Joseph's next decision:**
+[`DELIVERY-20261008-uncertainty-preparation.md`](DELIVERY-20261008-uncertainty-preparation.md).
+Plan, common contract, write ownership and budgets:
+[`PLAN-20261008-uncertainty-investigation-preparation.md`](PLAN-20261008-uncertainty-investigation-preparation.md).
+Evidence, one subdirectory per session: [`state/uncertainty-preparation-20261008/`](state/uncertainty-preparation-20261008/)
+(`e/` holds the dispatch record, the integration record, the independent review and its recomputation).
+
+| session | deliverable |
+|---|---|
+| A — 2D estimator pairing (FAIL: the quoted central and its uncertainty blocks are different estimators; transfer unmeasured) | [`ASSESSMENT-20261008-2d-estimator-pairing.md`](ASSESSMENT-20261008-2d-estimator-pairing.md) |
+| B — independent statistical-validation design (a draft, not registered or authorized; NO-GO) | [`DESIGN-20261008-2d-independent-statistical-validation.md`](DESIGN-20261008-2d-independent-statistical-validation.md) |
+| C — total-uncertainty feasibility (NO-GO) | [`ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md`](ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md) |
+| D — navigation (PASS, documentation only) | [`state/uncertainty-preparation-20261008/d/disposition.md`](state/uncertainty-preparation-20261008/d/disposition.md) |
+| E — integration and independent review | [`DELIVERY-20261008-uncertainty-preparation.md`](DELIVERY-20261008-uncertainty-preparation.md) |
+
+### Next preparation (sessions 1–6), dispatched 2026-10-09
+
+Closeout of the A–E preparation, plus bounded engineering and successor-design lanes. It launches no
+compute and authorizes no experiment. Common base, writer table and report metadata:
+[`state/next-preparation-20261009/DISPATCH.md`](state/next-preparation-20261009/DISPATCH.md).
+Each report is written only by its lane, on its own branch, and is absent until pushed.
+
+| session | report |
+|---|---|
+| 1 — preparation closeout | `state/next-preparation-20261009/closeout/REPORT.md` |
+| 2 — import safeguards and unlaunched N2 harness | `state/next-preparation-20261009/guard/REPORT.md` |
+| 3 — targeted repository consolidation | `state/next-preparation-20261009/structure/REPORT.md` |
+| 4 — performance feasibility | `state/next-preparation-20261009/speed/REPORT.md` |
+| 5 — 5D GBDT successor design | `state/next-preparation-20261009/gbdt/REPORT.md` |
+| 6 — PET saved-output diagnosis | `state/next-preparation-20261009/pet/REPORT.md` |
+
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
 | Subject | Record |
