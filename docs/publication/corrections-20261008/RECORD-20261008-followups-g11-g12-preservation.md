@@ -305,19 +305,52 @@ copy, or MINERvA's answer, can be checked file by file.
 
 ## 8. Builds and standalone sync for this branch
 
-All builds are at the branch head after `origin/main` `ad2716d8` was merged in: PR #56, the editorial pass, which
+`origin/main` `ad2716d8` was merged into this branch as `56752a4d`. It brought PR #56, the editorial pass, which
 another session merged during this work, and its record PR #57. They share no files with this branch.
-- The merge commit is `56752a4d`.
-- The G11 check also passes on the editorial pass's reworded article.
+- Since then, Joseph has pushed four article-wording commits to both `main`s, ending at `91517331` / `8ecda9e`. They
+  touch only `main_paper.tex` and `paper_body.tex`, which this branch does not change, so they were not merged in.
+- The G11 checker passes on that newest article text: 14/14, self-test 17.
 
 | check | result |
 |---|---|
-| canonical `build_all.sh` at `56752a4d` | **`RESULT :: PASS`**, `tree=clean`, `mode=strict`; **`SEC4-RECEIPTS :: PASS (14/14)`**, `SELF-TEST :: PASS (16 perturbations rejected)`; 123 / 9 / 11 pages (the paper is now 11 pages, after PR #56) |
-| tests | `test_check_sec4_receipts.py` and `test_build_all.py`: **45 passed** |
-| `generate_manifest.py --check` | OK after regeneration (this commit) |
-| standalone `MINERvA-OmniFold-Analysis-Note` | branch **`sync-prd-followup-g11-20261008`** = **`0bc07fa9645c08e347eb65c6aba6782d8a911e76`**, on its `main` `657d5bd3`. It adds the 4 G11 files. Every tracked file equals canonical `docs/analysis-note` at `56752a4d`, apart from `.gitignore` and `AGENTS.md` (`diff -rq`). `build_all.sh`: rc 0, 123 / 9 / 11 pages, with the SEC4 stage reporting SKIP (no receipts there, by design). 38 tests passed, 7 skipped (the receipt tests). The `pdftotext` output of all 3 PDFs equals the canonical build's. **Not merged into the standalone `main`.** |
-| preservation script digests (this commit) | `anatuple_checksum_sweep_20261008.sh` `d18fc276…`; `hpss_second_copy_20261008.sh` `a14883f1…`; `verify_tar_stream.py` `64a29996…`. The same bytes are in the CFS directory. The CFS `README.md` = `50950e66…`, the committed README. |
+| canonical `build_all.sh` at `fc0b6e32` (review cycle 1) | **`RESULT :: PASS`**, `tree=clean`, `mode=strict`; **`SEC4-RECEIPTS :: PASS (14/14)`**, `SELF-TEST :: PASS (17 perturbations rejected)`; 123 / 9 / 11 pages. Earlier, at `56752a4d`, it also passed (self-test 16, before cycle 1). |
+| tests at `fc0b6e32` | `test_compare_sufficient.py`, `test_check_sec4_receipts.py` and `test_build_all.py`: **63 passed** |
+| `generate_manifest.py --at-sha <head> --check` | OK |
+| standalone `MINERvA-OmniFold-Analysis-Note` | branch **`sync-prd-followup-g11-20261008`** = **`2f4a6eeff20eadfe70d6f66549c093c8ce4e19e4`**: `0bc07fa9` adds the 4 G11 files on `main` `657d5bd3`, and `2f4a6eef` syncs cycle 1. Every tracked file equals canonical `fc0b6e32` `docs/analysis-note`, apart from `.gitignore` and `AGENTS.md` (`diff -rq`). `build_all.sh`: rc 0, 123 / 9 / 11 pages, with the SEC4 stage reporting SKIP (no receipts there, by design). 43 tests passed, 9 skipped (the receipt tests). The `pdftotext` output of all 3 PDFs equals the canonical build's. **Not merged into the standalone `main`.** |
+| preservation script digests | `anatuple_checksum_sweep_20261008.sh` `a5c386dc…` (committed, and in the CFS directory); `preserve_w2_outputs_20261008.sh` `8ce7eba7…` committed (the run used `9ed7954f…`, kept in CFS); `hpss_second_copy_20261008.sh` `a14883f1…`; `verify_tar_stream.py` `64a29996…`. The CFS `README.md` = `50950e66…`, the committed README. |
 
 ## 9. Independent review
 
-{{REVIEW}}
+**Reviewer:** one fresh, read-only subagent (Opus 5.5; independent by session, not by model). It worked in a
+detached worktree at the fixed commit and could make cluster reads only, writing nothing outside its own home
+scratch directory. Its worktree was clean afterwards (`git status --short` empty).
+
+**Cycle 1, at `e90afb31`: `VERDICT: READY`** (no blocker, no major).
+- **Independently reproduced:**
+  - G11: the checker, self-test and tests. Five or more of the printed values were re-derived from the receipts with
+    the reviewer's own code, including C1/C2 from the raw toys. A wrong value fails the build.
+  - G12: all compares re-run on the cluster, matching the committed outputs; the 8 BLAS digests; the sandbox
+    masking (all 8,600 link targets under bound durable paths).
+  - Preservation: 4 AnaTuple and 3 W2 spot re-hashes match. The committed manifest equals the CFS copy. Inventory
+    minus manifest is exactly the 7 OST-61 rows. `verify.txt` matches. The HPSS arithmetic is exact.
+  - The drafts are not sent, G6b stays unresolved, and nothing claims byte identity.
+- **9 minor findings, all fixed in `fc0b6e32`:**
+  1. the `compare_sufficient` last-bits verdict was too permissive;
+  2. the SKIP in the canonical layout without receipts;
+  3. LaTeX comments were not stripped;
+  4. a loose "below" bound passed;
+  5. a failed read was recordable as hashed (sweep and W2 scripts);
+  6. the TiB slip;
+  7. the run-3 count was off by one;
+  8. the 4-thread result had no artifact;
+  9. the run-time-check wording.
+- **6 notes, handled:**
+  - the garbled replay summary was re-run;
+  - "reproduces" was made exact with a `replay.json` leaf diff;
+  - a build test now covers a failing SEC4 stage;
+  - the `RESULT :: PASS` ordering is noted in §5;
+  - the stale `.w.*` files are noted, not deleted;
+  - there are no receipts for the `du` readings and D-state observations. Their outputs are quoted in this record
+    and the HPSS arithmetic checks; this stays a limitation.
+
+{{REVIEW_CYCLE2}}
