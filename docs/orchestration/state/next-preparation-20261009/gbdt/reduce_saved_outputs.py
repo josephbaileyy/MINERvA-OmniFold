@@ -423,9 +423,13 @@ def diagnostic_cost() -> dict[str, Any]:
     convergence_s = weight_sets * 1e5 * (grid["T1"]["ibu_seconds_per_iteration"]
                                          + grid["T2"]["ibu_seconds_per_iteration"])
     threads = 2  # the timing ran with two BLAS threads; CPU = wall x threads
-    eigh_cpu_s = weight_sets * roles * threads * (grid["T2"]["eigh_s"] + grid["T2"]["fisher_build_s"])
+    # Fisher at T2: same-sample only, for both response weightings.
+    eigh_cpu_s = weight_sets * weightings * threads * (grid["T2"]["eigh_s"]
+                                                       + grid["T2"]["fisher_build_s"])
+    # Exactness control: T1, same-sample, departure-weighted response, to 1e5 iterations.
+    exactness_s = weight_sets * 1e5 * grid["T1"]["ibu_seconds_per_iteration"]
     binning_s = 360.0  # allowance: file load plus 108 bincount passes over 20.4 M rows
-    subtotal_h = (trajectories_s + convergence_s + eigh_cpu_s + binning_s) / 3600
+    subtotal_h = (trajectories_s + convergence_s + exactness_s + eigh_cpu_s + binning_s) / 3600
     verification_h = 1.0
     denser = 2.0  # real responses may hold up to twice the assumed nonzeros
     return {
@@ -434,8 +438,10 @@ def diagnostic_cost() -> dict[str, Any]:
         "event_file_GiB": 1_548_438_020 / 2**30,
         "runs": {"weight_sets": weight_sets, "sample_roles": roles, "response_weightings": weightings,
                  "trajectory_runs_K200": weight_sets * roles * weightings * 3,
-                 "convergence_runs_1e5": weight_sets * 2, "fisher_eigh_T2": weight_sets * roles},
+                 "convergence_runs_1e5": weight_sets * 2, "exactness_runs_T1_1e5": weight_sets,
+                 "fisher_eigh_T2_same_sample": weight_sets * weightings},
         "cpu_core_hours": {"trajectories": trajectories_s / 3600, "convergence": convergence_s / 3600,
+                           "exactness_T1": exactness_s / 3600,
                            "fisher_eigh_T2_two_threads": eigh_cpu_s / 3600,
                            "binning": binning_s / 3600, "subtotal_assumed_nnz": subtotal_h,
                            "subtotal_denser": subtotal_h * denser},

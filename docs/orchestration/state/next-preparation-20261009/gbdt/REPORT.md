@@ -13,14 +13,14 @@ measurement objective is **not** achieved by this lane.
 |---|---|
 | `Lane` | Session 5, gbdt |
 | `Decision` | What new evidence could distinguish repairable estimator bias from weakly constrained truth directions, and is one small successor development experiment justified? |
-| `Branch` / `Base` / `Head` | `prep/next-gbdt-20261009` / `5ac9706a21e8a5ac8863a65fd7623d8ab8d22269` (the common merged baseline; it supersedes `901f0088`/`8eafd357` by the dispatch override; `origin/main` was equal to it at 2026-10-09T19:59Z) / the commit that adds this file; the frozen reviewed commit is named in `Review` |
-| `Owned files` | `docs/orchestration/state/next-preparation-20261009/gbdt/REPORT.md`, `reduce_saved_outputs.py`, `results.json`, `comparator.py`, `test_comparator.py`, `synthetic_timing.py`, `synthetic_timing.json`, `review-round-1.md` (all in that directory; nothing else written) |
+| `Branch` / `Base` / `Head` | `prep/next-gbdt-20261009` / `5ac9706a21e8a5ac8863a65fd7623d8ab8d22269` (the common merged baseline; it supersedes `901f0088`/`8eafd357` by the dispatch override; `origin/main` was equal to it at 2026-10-09T19:59Z) / the final commit of this branch (the one adding this version of the file). Reviewed commits: `df0923aa` (round 1) and `31517ad7` (round 2); edits after `31517ad7` are listed in §11 and are unreviewed |
+| `Owned files` | `docs/orchestration/state/next-preparation-20261009/gbdt/REPORT.md`, `reduce_saved_outputs.py`, `results.json`, `comparator.py`, `test_comparator.py`, `synthetic_timing.py`, `synthetic_timing.json`, `review-round-1.md`, `review-round-2.md` (all in that directory; nothing else written) |
 | `Pinned inputs` | §2 table (sha256 prefixes; full digests in `results.json` `integrity`) |
-| `Resources` | §12: elapsed and CPU measured; scratch < 5 MiB; tracked ≈ 0.12 MiB; **cluster 0, GPU 0, training 0** (one read-only `ls` on a login node, §2) |
-| `Review` | §11 |
+| `Resources` | §12: wall 12:59:45–≈16:40 PDT (≈ 3 h 40 m, including an idle usage-limit pause of ≈ 2 h 40 m; active ≈ 1 h), local CPU ≈ 0.25 core-hours (partly estimated), scratch peak ≈ 0.42 GiB (a review checkout), tracked ≈ 0.17 MiB; **cluster 0, GPU 0, training 0** (one read-only `ls` on a login node, §2) |
+| `Review` | §11: one fresh read-only reviewer (Claude Opus 5.5, as it reported). Round 1 at `df0923aa`: 6 MATERIAL + 8 MINOR, all repaired in one batch. Round 2 at `31517ad7`: 12 resolved, 2 partial, 1 new MATERIAL (N1); verdicts D1 ACCEPT-WITH-REPAIRS, D2 ACCEPT, D3 ACCEPT. N1 and the two partials were then repaired as the reviewer prescribed, **unreviewed** (budget exhausted) |
 | `Model / effort` | Owner: Claude Opus 5.5 (`claude-opus-5-5`), the identity this session reports; effort not observable. Reviewer: §11 |
-| `Disposition` | §13: **D1 PASS** (D-ID designed and ready for a resource decision); **D2 FAIL** for the old ~70-node-hour panel as the next step; **D3 FAIL against the proposed targets** for the present estimator and the frozen-procedure validation route; overall objective **unmet** |
-| `Next action` | §14: Joseph's resource decision on D-ID (4.78–8.30 local CPU core-hours admitted, 1.44 GiB read-only copy of one existing file, 0 GPU, 0 training), plus the endpoint-scope question in §10.3 |
+| `Disposition` | §13: **D1 PASS** for D-ID's design (its branch-B downstream route, repaired after the last review, is **INCONCLUSIVE for independent review**); **D2 FAIL** for the old ~70-node-hour panel as the next step; **D3 FAIL against the proposed targets** for the present estimator and the frozen-procedure validation route; overall objective **unmet** |
+| `Next action` | §14: Joseph's resource decision on D-ID (5.02–8.80 local CPU core-hours admitted, 1.44 GiB read-only copy of one existing file, 0 GPU, 0 training), plus the endpoint-scope question in §10.3 |
 
 ## 0. Setup (campaign-review choice)
 
@@ -244,7 +244,8 @@ is the rank-3 object itself, so it is measured by `missed_concentration` rather 
 2. IBU to convergence at T1 and T2, same-sample, nominal-weight response only (relative truth change
    < 1e-10, or 10⁵ iterations, whichever comes first). Non-convergence is recorded, never truncated
    silently.
-3. Fisher `F = Rᵀ diag(1/y) R` at T1 and T2. Per-functional CR width with explicit null-space
+3. Fisher `F = Rᵀ diag(1/y) R` at T1 and T2, **same-sample only**, for both response weightings
+   (18 at T2). Per-functional CR width with explicit null-space
    detection (`comparator.cr_width`).
 4. The invisible share of the GBDT final-K residual aggregated to T1/T2 (`comparator.invisible_share`;
    a mode is invisible when its own noise-free χ² contribution is < 1).
@@ -300,7 +301,10 @@ iterate, is flagged, and cannot count toward branch B.
 re-gridding after results. Work proceeds in priority order: (1) admission checks and controls; (2) T1
 everything; (3) T2 same-sample Fisher, labels and K ≤ 200 trajectories; (4) T2 convergence runs;
 (5) split-half and departure-weighted variants. If the cap is reached, stop and report the completed
-stages. A branch is declared only if (1)–(3) completed; otherwise the outcome is INCONCLUSIVE.
+stages. A branch is declared only if (1)–(3) completed; otherwise the outcome is INCONCLUSIVE. If
+the cap falls during (4), branch B is reported as **undeclarable** and its candidate functionals are
+listed; they are not folded silently into "mixed". When two branch shares tie at ≥ 50%, the code's
+order C, then A, then B applies, and the tie is reported.
 
 **Interpretation of the outcomes.**
 
@@ -312,10 +316,20 @@ stages. A branch is declared only if (1)–(3) completed; otherwise the outcome 
 - **Branch A:** the functionals are identified and the GBDT leaves avoidable error. I1 becomes the
   justified next experiment.
 - **Branch B:** the functionals are identified and the exact iteration removes the residual only
-  when run to convergence. The question is the iteration count or regularization. It routes to the
-  noise-free convergence study already costed in the s5e next design (item 3, ≈ 4–6 node-hours),
-  restricted to the branch-B functionals. That study is not one of this lane's two interventions.
-- **Mixed:** I1, I2 and the convergence study apply to their own labelled functional sets. If all
+  when run to convergence. The question is the iteration count or regularization. **The GBDT side of
+  this question already ran.** s5e next-design item 3 was executed as s5p study K: nominal and W3 to
+  K = 200, GiBUU/W1/q3 to K = 40/40/30, capacity to K = 10 (`RECORD-20260927-s5p-stage2-exit.md`). s5p
+  is terminal. Branch B is therefore first answered inside D-ID, by comparing exact IBU against those
+  existing traces at matched K. For W3, whose GBDT residual worsens to K = 200, that comparison is
+  complete. Extending the partial GBDT traces would re-run terminal s5p study K and needs its own
+  authorization. From the **measured** 31,954.207 s per 200-iteration trace, five truths × 31,954.207 /
+  28,800 = 5.55 node-hours, ×1.25 = 6.93, /0.8 ≈ **8.7 node-hours admitted** (the reviewer's
+  conservative count; only the three partial traces need extending, which gives 5.20). The cluster
+  partial files already hold 100/125/100 iterations (synthesis README), but the synthesis excluded
+  iterations beyond the receipt because their provenance is unverified; admitting them is part of that
+  separate decision; the s5e record's ≈ 4–6
+  node-hours is an **old forecast**. This is not one of this lane's two interventions.
+- **Mixed:** I1, I2 and the branch-B comparison apply to their own labelled functional sets. If all
   three sets are small, record INCONCLUSIVE with the shares.
 - **Any outcome** is simulation-only and conditional on the fixed detector response, the signal-only
   IBU and the departure family.
@@ -330,9 +344,9 @@ T1/T2/T3):
 
 Run count: 9 weight sets (nominal, GiBUU, W1, W3, q3, W2, P1r, P2r, P3r) × 2 sample roles × 2 response
 weightings × 3 grids = 108 trajectories to K = 200 (0.05 core-h); 18 convergence runs of up to 10⁵
-iterations at T1/T2 (2.0 core-h); 18 T2 Fisher+eigh at two threads (0.66 core-h); binning and loading
-(0.1 core-h). The subtotal is 2.82 core-h at the assumed sparsity and 5.64 if the real responses are
-twice as dense. Adding 1 core-hour of independent recomputation gives **4.78–8.30 local CPU
+iterations at T1/T2 (2.0 core-h); 9 T1 exactness-control runs of up to 10⁵ iterations (0.20 core-h);
+18 same-sample T2 Fisher+eigh at two threads (0.66 core-h); binning and loading (0.1 core-h). The
+subtotal is 3.02 core-h at the assumed sparsity and 6.04 if the real responses are twice as dense. Adding 1 core-hour of independent recomputation gives **5.02–8.80 local CPU
 core-hours admitted** (/0.8). Other limits: ≤ 2 GiB scratch, ≤ 8 GiB RAM, two threads, 0 GPU, 0
 training, 0 Slurm. Data movement: one read-only copy of the 1.44 GiB event file, or the 14 needed
 float32 columns (≈ 1.06 GiB), into dated scratch, deleted after the run. Running instead on a login
@@ -431,7 +445,7 @@ changed method.
 
 | stage | evidence available | missing populations / identities / variations | admission criteria (proposed) | price | stop | gate class |
 |---|---|---|---|---|---|---|
-| S0 D-ID | E1–E8; named inputs present (2026-10-09 `ls`) | none for the diagnostic itself; the event-file digest is to be re-measured | §6 admission checks | 4.78–8.30 CPU core-h, 1.44 GiB read | §6 | Now (after authorization) |
+| S0 D-ID | E1–E8; named inputs present (2026-10-09 `ls`) | none for the diagnostic itself; the event-file digest is to be re-measured | §6 admission checks | 5.02–8.80 CPU core-h, 1.44 GiB read | §6 | Now (after authorization) |
 | S1 point-estimator confirmation | development truths only: historical GiBUU/W1–W3/q3; corrected P1r–P3r (already inspected in s5p) | **an untouched physical departure**: interaction-knob / FSI / MnvTune-component reweights or response variations. The loader reads no such weights; whether the file carries any is unobserved (one key listing) | a frozen I1 or I2 estimator; bias on the untouched departure within the frozen allowance; no sign reversal on identified functionals | I1 noise-free 7.6 node-h; untouched-departure inputs **unpriced** (event-loop production if weights are absent) | stop if no untouched departure exists: **NO UNTOUCHED VALIDATION DOMAIN** | P (inputs), M (if I2) |
 | S2 matched total-UQ construction | R's 100-replica data bootstrap (refits everything) and the numerical floor (s5e A3); the adopted `C_EW` covers a different estimator | per-universe 5D inputs (flux/detector/interaction) for the same estimator; background-template statistics; a joint nuisance law | same estimator, domain and centering for every block; the allowance B from S1 enters once | data construction 288 × 648.0 s ≈ 6.5 node-h subtotal ×1.25/0.8 ≈ 10.1 node-h after inputs exist; inputs **unpriced** | stop if universes cannot be produced for this estimator | P |
 | S3 calibration / coverage | none qualifying (fixed-σ coverage is historical) | independent pseudo-data populations at production size, per experiment, with each experiment's own interval | §9 sizing on the frozen functional set | §9: 281 to 80,916 node-h under the present method | **no-go under the present method** (§9) unless a cheap per-experiment interval is first validated | M |
@@ -490,7 +504,7 @@ be labelled that way.
 | 4 | MATERIAL | fixed: branch C scoped to binned estimators at this reco binning and T2 resolution (§4, §6) |
 | 5 | MATERIAL | fixed: the q3 claim rests on λ_5D; J/H2 effects quoted as small; I1's tie restated (§3 E6, §4, §7) |
 | 6 | MATERIAL | fixed: "about 14–240× the largest (s5p) pool"; D3 is unchanged on those numbers (§9) |
-| 7 | MINOR | fixed: run count, synthetic timings at the T1/T2/T3 shapes (`synthetic_timing.json`), cap-priority rule; `results.json` now carries the same 4.78–8.30 core-h (§6) |
+| 7 | MINOR | fixed: run count, synthetic timings at the T1/T2/T3 shapes (`synthetic_timing.json`), cap-priority rule; `results.json` now carries the same 5.02–8.80 core-h (§6) |
 | 8 | MINOR | fixed: the exactness control is at T1 within 0.01 σ_c; T2 non-convergence is flagged and excluded from branch B (§6) |
 | 9 | MINOR | fixed: the slope wording now says the data shift overstates the closure residual (§3 E5) |
 | 10 | MINOR | fixed: the measured |bias|/SD medians (11.7–23.5) are quoted (§5, §13) |
@@ -499,7 +513,25 @@ be labelled that way.
 | 13 | MINOR | fixed: branch and resolution-sensitivity rules coded and tested; tautological tests labelled |
 | 14 | MINOR | fixed: second paper example added; "answer exactly" softened (§8) |
 
-  The review could not verify the login-node `ls` (it was barred from ssh), which stays a single-owner
+- **Round 2** (same reviewer, its one focused re-review, at `31517ad7`; record
+  [`review-round-2.md`](review-round-2.md)). 12 findings were resolved and #7 and #8 were partial. One
+  new MATERIAL finding, N1: branch B had been routed to a convergence study that terminal s5p had
+  already executed (study K), priced from an old forecast. Verdicts: D1 ACCEPT-WITH-REPAIRS, D2 ACCEPT,
+  D3 ACCEPT.
+- **Post-review edits (unreviewed; the review budget is exhausted).** Each follows the reviewer's
+  prescribed repair. The owner checked the N1 citation in the source record and costs.csv.
+  - N1: branch B is first read from D-ID's matched-K comparison against the existing s5p study-K
+    traces. Extending them is a re-run of terminal s5p study K that needs its own authorization,
+    priced from the measured 31,954.207 s trace (≈ 8.7 admitted for five truths, 5.20 for the three
+    partial ones). The 4–6 figure is labelled an old forecast (§6, §14).
+  - #7: Fisher is same-sample only for both weightings, and the T1 exactness runs are priced (+0.20
+    core-h). `results.json` is regenerated, and only `diagnostic_cost` changed. The admitted range is
+    now 5.02–8.80 core-h.
+  - #8: branch B is undeclarable if the cap falls in stage 4, and the tie order is documented.
+
+  The 2/3 concentration rule has no null calibration; the reviewer's fixtures give a ≈ 5–7% false
+  positive rate. It is reported beside the branch, not as one.
+- The review could not verify the login-node `ls` (it was barred from ssh), which stays a single-owner
   observation.
 
 ## 12. Commands and resources
@@ -511,37 +543,47 @@ python3 -I docs/orchestration/state/next-preparation-20261009/gbdt/reduce_saved_
 python3 -m pytest -q -p no:cacheprovider docs/orchestration/state/next-preparation-20261009/gbdt/test_comparator.py
 ```
 
-Environment: macOS, Python 3 with NumPy 1.26.4, SciPy 1.15.2. Elapsed so far: from 12:59:45 PDT; the
-final figure is in §13. Local CPU: reductions ≈ 0.02 core-hours (two runs, 21.2 s and 29.5 s user),
-tests < 0.01; the total with the review is in §13. Scratch: < 5 MiB (the paper PDF 4 MiB, logs), removed
-at delivery. Tracked: the eight files (≈ 0.15 MiB). Cluster: one `ls` (no job, no compute). GPU and
+Environment: macOS, Python 3 with NumPy 1.26.4, SciPy 1.15.2.
+
+- **Elapsed:** 12:59:45 to ≈ 16:40 PDT wall time. This includes an idle usage-limit pause from ≈ 13:40
+  to 16:20, so active effort is ≈ 1 h 20 m, within the 6 h cap.
+- **Local CPU, measured** with `time`: four reduction runs (≈ 30 s user each, the first 21 s), synthetic
+  timing 125 s (two threads), tests ≈ 10 s, manifest checks ≈ 32 s each (×6), reviewer ≈ 1.5
+  core-minutes.
+- **Local CPU, not timed:** pre-commit hooks (five commits) and miscellaneous reads, estimated ≤ 0.1
+  core-hours.
+- **Total CPU ≈ 0.25 core-hours**, against a cap of 2. Commands used one or two threads.
+- **Scratch:** peak ≈ 0.42 GiB, almost all the reviewer's checkout of the tree. Plus ≈ 5 MiB of paper
+  text and logs. All of it is removed at delivery.
+- **Tracked:** nine files (≈ 0.17 MiB). Cluster: one `ls` (no job, no compute). GPU and
 training: 0.
 
 ## 13. Disposition
 
 | decision | verdict | reason |
 |---|---|---|
-| D1: what evidence discriminates repairable bias from weak identifiability, and is one small experiment justified? | **PASS** (pending §11 review) | D-ID has a defensible purpose (E6/E7 show the split is departure dependent and unresolved from saved outputs). Its inputs exist, observed 2026-10-09. The design, rules, tolerances, stopping and price are complete, with tested reference reductions. It needs no training and 4.78–8.30 CPU core-hours |
-| D2: run the old ~70-node-hour bias–variance panel next? | **FAIL** | E1/E2: the median |bias|/SD over J is 11.7–23.5 for the strong departures (bias share of MSE ≥ 0.99), and noise-free runs measure the bias. The panel measures the axis that cannot change a decision |
-| D3: can the present estimator plus frozen-procedure validation reach the endpoint at useful precision? | **FAIL against proposed targets** | E8: allowance median 14.7% (J) against a proposed 5%. §9: validation 8,710–80,916 admitted node-hours. These targets are not ratified; a changed method is not excluded |
+| D1: what evidence discriminates repairable bias from weak identifiability, and is one small experiment justified? | **PASS** for D-ID's measurement design (reviewer: ACCEPT-WITH-REPAIRS at `31517ad7`, "otherwise complete and each branch reachable"); the post-review branch-B route repair (N1) is **INCONCLUSIVE for independent review** | D-ID has a defensible purpose (E6/E7 show the split is departure dependent and unresolved from saved outputs). Its inputs exist, observed 2026-10-09. The design, rules, tolerances, stopping and price are complete, with tested reference reductions. It needs no training and 5.02–8.80 CPU core-hours |
+| D2: run the old ~70-node-hour bias–variance panel next? | **FAIL** (reviewer: ACCEPT) | E1/E2: the median |bias|/SD over J is 11.7–23.5 for the strong departures (bias share of MSE ≥ 0.99), and noise-free runs measure the bias. The panel measures the axis that cannot change a decision |
+| D3: can the present estimator plus frozen-procedure validation reach the endpoint at useful precision? | **FAIL against proposed targets** (reviewer: ACCEPT) | E8: allowance median 14.7% (J) against a proposed 5%. §9: validation 8,710–80,916 admitted node-hours. These targets are not ratified; a changed method is not excluded |
 | overall publication-ready objective | **not achieved** | this lane designs a diagnostic |
 
 ## 14. Next action
 
 **Decision for Joseph:** authorize D-ID as specified in §6. That means a ≤ 1.44 GiB read-only copy of
-`of_inputs_5d.npz` (or a 14-column extract) and the digested departure/comparator products, 4.78–8.30
+`of_inputs_5d.npz` (or a 14-column extract) and the digested departure/comparator products, 5.02–8.80
 local CPU core-hours, 0 GPU, 0 training, 0 Slurm, one owner and one fresh reviewer. Its outcome selects the next step: branch A leads to I1 (7.62 node-hours,
-noise-free); branch B leads to the s5e convergence study restricted to the branch-B functionals (≈ 4–6
-node-hours, per that record); branch C leads to I2 (an endpoint change that needs his scope decision);
+noise-free); branch B is first read from D-ID's matched-K comparison against the
+existing s5p study-K traces. Extending the partial traces is a re-run of terminal s5p study K, with its
+own authorization: ≈ 8.7 node-hours admitted from the measured timing; branch C leads to I2 (an endpoint change that needs his scope decision);
 mixed leads to each on its own functional set. **Separately**, any S1 confirmation needs an untouched departure that does
 not exist in current inputs (§10). No S3 is affordable under the present method (§9).
 
 **Integration request (for the dispatch/catalog owner; not done here).** Measured:
 `generate_manifest.py --check` is **OK at the base `5ac9706a`** (1,809 rows) and **OUT OF DATE on this
-branch** (1,817 rows) only because of this lane's eight files. Regenerating from source adds eight
-rows: `REPORT.md` as `MACHINE open` through its pre-registered override, and the other seven as
+branch** (1,818 rows) only because of this lane's nine files. Regenerating from source adds nine
+rows: `REPORT.md` as `MACHINE open` through its pre-registered override, and the other eight as
 defaults, `MACHINE generated`, immutable. It also changes the `inbound_count`/`consumer` columns of about 20
-existing rows that these files cite. No override row is strictly required; whether the seven
+existing rows that these files cite. No override row is strictly required; whether the eight
 supporting files should be `open` rather than the default is the owner's choice. The lane did not edit
 `MANIFEST-overrides.tsv`, `MANIFEST.tsv` or `CATALOG.md`, and it did not change the generator or the
 checker. The required action is one regeneration at integration. This is not a regression, and it is
