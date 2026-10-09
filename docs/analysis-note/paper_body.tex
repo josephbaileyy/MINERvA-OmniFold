@@ -409,8 +409,10 @@ reproduces the estimator's pull toward its prior.
 % prefreeze_measurements.summary.
 
 The ten tests (two per prediction) are controlled at a familywise level
-$\alpha=\jtAlpha$ by the Holm procedure~\cite{Holm:1979}, with a determinacy
-requirement: a step rejects only when the 95\% Clopper--Pearson
+$\alpha=\jtAlpha$ by the Holm procedure~\cite{Holm:1979}.  Under the testing
+assumptions, this limits the probability of falsely rejecting at least one true
+hypothesis among the ten tests to 5\%.  A determinacy requirement also applies:
+a step rejects only when the 95\% Clopper--Pearson
 interval~\cite{Clopper:1934} of $k/B$ lies entirely below its Holm threshold.
 Calibration proceeded in batches of \jtBatch{} pseudo-experiments per null, to
 at most \jtBcap{}, under a sequential rule that stopped a null once both of its
