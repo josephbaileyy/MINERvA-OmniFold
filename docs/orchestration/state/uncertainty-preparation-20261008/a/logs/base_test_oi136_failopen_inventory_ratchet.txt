@@ -1,0 +1,53 @@
+test_the_fail_open_set_is_EXACTLY_the_recorded_one (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheInventoryIsARatchet.test_the_fail_open_set_is_EXACTLY_the_recorded_one) ... FAIL
+test_this_ratchet_cannot_pass_over_an_empty_set (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheInventoryIsARatchet.test_this_ratchet_cannot_pass_over_an_empty_set)
+Non-vacuity, asserted here rather than inherited from the probe's exit code. ... ok
+test_both_data_only_launchers_still_invoke_it_with_the_mandatory_split (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheMitigationIsStillDeployed.test_both_data_only_launchers_still_invoke_it_with_the_mandatory_split) ... ok
+test_the_guard_file_exists (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheMitigationIsStillDeployed.test_the_guard_file_exists) ... ok
+test_the_guard_is_itself_parity_checked_by_those_launchers (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheMitigationIsStillDeployed.test_the_guard_is_itself_parity_checked_by_those_launchers)
+A guard imported from the tree it polices is theatre; the launchers say so. ... ok
+test_it_exits_0_which_means_BOTH_its_controls_held (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheProbeStillMeasures.test_it_exits_0_which_means_BOTH_its_controls_held)
+Exit 2 is 'cannot check'. Reading that as a clean tree is the failure mode. ... ok
+test_its_negative_control_still_rejects_something (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheProbeStillMeasures.test_its_negative_control_still_rejects_something)
+A classifier that rejects nothing has not been shown to discriminate. ... ok
+
+======================================================================
+FAIL: test_the_fail_open_set_is_EXACTLY_the_recorded_one (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheInventoryIsARatchet.test_the_fail_open_set_is_EXACTLY_the_recorded_one)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_oi136_failopen_inventory_ratchet.py", line 353, in test_the_fail_open_set_is_EXACTLY_the_recorded_one
+    self.assertEqual(
+AssertionError: Tuples differ: (18, '04357e1a11b49bb5a7f7a65a1502d101d5828052bf07e6a10d7d3bb43e4930e0') != (9, '0939e1595e1bf5ed7896436d2ca1e090c47525258880bac20f7b3eb5f312a350')
+
+First differing element 0:
+18
+9
+
+- (18, '04357e1a11b49bb5a7f7a65a1502d101d5828052bf07e6a10d7d3bb43e4930e0')
++ (9, '0939e1595e1bf5ed7896436d2ca1e090c47525258880bac20f7b3eb5f312a350') : The OI-136 fail-open inventory MOVED.
+  recorded: 9 files / 0939e1595e1bf5ed7896436d2ca1e090c47525258880bac20f7b3eb5f312a350
+  measured: 18 files / 04357e1a11b49bb5a7f7a65a1502d101d5828052bf07e6a10d7d3bb43e4930e0
+A NEW site is a regression: an absolute insert(0, <cluster root>) executes that tree's modules whichever checkout launched the entrypoint, PYTHONPATH cannot outrank position 0, and a re-deploy does not fix it. A REPAIRED site is welcome and still red: update both constants above in the same commit, naming the site.
+  measured set:
+    ./2d-unfolding/unfold_2d_omnifold_unbinned.py
+    ./2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py
+    ./2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py
+    ./docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py
+    ./docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py
+    ./docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py
+    ./docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py
+    ./docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py
+    ./docs/orchestration/state/note-boot-20261003/boot_spreads.py
+    ./docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py
+    ./docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py
+    ./docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py
+    ./docs/orchestration/state/uqpaper-median-20261006/paper_median.py
+    ./nd-unfolding/adopt_unified_5d.py
+    ./nd-unfolding/pet/dump_pointcloud_inputs.py
+    ./nd-unfolding/pet/fullevent_fps_dataloader.py
+    ./nd-unfolding/pet/train_fullevent_nominal.py
+    ./nd-unfolding/pet/validate_pet_nominal_gate4.py
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.789s
+
+FAILED (failures=1)

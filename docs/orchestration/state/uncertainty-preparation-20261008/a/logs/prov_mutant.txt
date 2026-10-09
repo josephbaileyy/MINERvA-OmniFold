@@ -1,0 +1,65 @@
+/private/tmp/minerva-uncprep-a-20261008/tmp/mutctl/2d-unfolding/tests/test_bootstrap_completeness_ki84.py:335: ResourceWarning: unclosed file <_io.BufferedReader name='/private/tmp/minerva-uncprep-a-20261008/tmp/u2d_prov_y9xcm63m/omnifold_stand_in.py'>
+  cls.helper_sha = hashlib.sha256(open(cls.helper, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+test_a_helper_without_a_file_is_reported_unavailable_not_guessed (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_a_helper_without_a_file_is_reported_unavailable_not_guessed) ... FAIL
+test_an_omitted_flag_is_recorded_by_its_effective_value (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_an_omitted_flag_is_recorded_by_its_effective_value) ... ERROR
+test_bootstrap_settings_are_recorded (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_bootstrap_settings_are_recorded) ... ERROR
+test_driver_bytes_are_identified (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_driver_bytes_are_identified) ... FAIL
+test_recording_provenance_leaves_the_histograms_alone (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_recording_provenance_leaves_the_histograms_alone) ... ok
+test_the_imported_helper_is_identified_by_path_and_digest (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_the_imported_helper_is_identified_by_path_and_digest) ... FAIL
+
+======================================================================
+ERROR: test_an_omitted_flag_is_recorded_by_its_effective_value (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_an_omitted_flag_is_recorded_by_its_effective_value)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/minerva-uncprep-a-20261008/tmp/mutctl/2d-unfolding/tests/test_bootstrap_completeness_ki84.py", line 353, in test_an_omitted_flag_is_recorded_by_its_effective_value
+    cfg = json.loads(_named(self.out["central"], "runConfig"))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/__init__.py", line 339, in loads
+    raise TypeError(f'the JSON object must be str, bytes or bytearray, '
+                    f'not {s.__class__.__name__}')
+TypeError: the JSON object must be str, bytes or bytearray, not NoneType
+
+======================================================================
+ERROR: test_bootstrap_settings_are_recorded (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_bootstrap_settings_are_recorded)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/minerva-uncprep-a-20261008/tmp/mutctl/2d-unfolding/tests/test_bootstrap_completeness_ki84.py", line 361, in test_bootstrap_settings_are_recorded
+    cfg = json.loads(_named(self.out["boot7_mc"], "runConfig"))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/json/__init__.py", line 339, in loads
+    raise TypeError(f'the JSON object must be str, bytes or bytearray, '
+                    f'not {s.__class__.__name__}')
+TypeError: the JSON object must be str, bytes or bytearray, not NoneType
+
+======================================================================
+FAIL: test_a_helper_without_a_file_is_reported_unavailable_not_guessed (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_a_helper_without_a_file_is_reported_unavailable_not_guessed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/minerva-uncprep-a-20261008/tmp/mutctl/2d-unfolding/tests/test_bootstrap_completeness_ki84.py", line 377, in test_a_helper_without_a_file_is_reported_unavailable_not_guessed
+    self.assertEqual(_named(self.out["no_helper_file"], "omnifoldHelperFile"), "unavailable")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: None != 'unavailable'
+
+======================================================================
+FAIL: test_driver_bytes_are_identified (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_driver_bytes_are_identified)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/minerva-uncprep-a-20261008/tmp/mutctl/2d-unfolding/tests/test_bootstrap_completeness_ki84.py", line 368, in test_driver_bytes_are_identified
+    self.assertEqual(_named(self.out["central"], "driverSha256"), self.script_sha)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: None != '57602f2ea208ba744da46d4e3ee02c825c98ebfa6e2b4c54d8db58c4fc82ea76'
+
+======================================================================
+FAIL: test_the_imported_helper_is_identified_by_path_and_digest (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_the_imported_helper_is_identified_by_path_and_digest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/minerva-uncprep-a-20261008/tmp/mutctl/2d-unfolding/tests/test_bootstrap_completeness_ki84.py", line 372, in test_the_imported_helper_is_identified_by_path_and_digest
+    self.assertEqual(_named(self.out["central"], "omnifoldHelperFile"),
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     os.path.abspath(self.helper))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: None != '/private/tmp/minerva-uncprep-a-20261008/[38 chars]n.py'
+
+----------------------------------------------------------------------
+Ran 6 tests in 3.063s
+
+FAILED (failures=3, errors=2)

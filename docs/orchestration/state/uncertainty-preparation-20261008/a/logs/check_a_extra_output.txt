@@ -1,0 +1,15 @@
+{
+ "paper_cov_chi2_per_ndf_th2d": 3.6609406827395268,
+ "combined_chi2_per_ndf_th2d": 1.471607577274372,
+ "combined_lognormal_chi2_per_ndf_th2d": 1.4547908551799766,
+ "combined_pull_mean_rms": [
+  0.05144863976857889,
+  0.40549994611145074
+ ],
+ "fig67_pz_Statistical_median_pct": 0.252709021777035,
+ "fig67_pz_Total_median_pct": 5.899981096864125,
+ "fig67_pz_ML_median_pct": 0.04411520805275875,
+ "fig67_pt_Statistical_median_pct": 0.24910246203163067,
+ "fig67_pt_Total_median_pct": 6.2203204799963,
+ "fig67_pt_ML_median_pct": 0.04212617817127808
+}
