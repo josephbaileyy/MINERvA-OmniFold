@@ -54,7 +54,7 @@ We apply unbinned machine-learning unfolding to MINERvA open data on
 medium-energy $\nu_{\mu}$ charged-current inclusive interactions, first
 reproducing the published
 double-differential cross section in muon kinematics.  Adding available energy,
-three-momentum transfer and hadronic invariant mass gives central values that
+three-momentum transfer, and hadronic invariant mass gives central values that
 pass marginal-normalization checks and injected-shape closure tests, but the
 estimator's measured model dependence prevents a qualified total uncertainty at
 useful precision: no five-dimensional cross section with uncertainties is
@@ -80,11 +80,11 @@ claim no discrimination beyond matched coarse projections.
 The authors thank the MINERvA Collaboration for making their data, simulated
 data, and analysis tools available to the community~\cite{MINERvA:OpenData,MINERvA:2013zvz}.
 The analysis code, statistical procedures, computing campaigns, independent
-recomputations and reviews, figures and manuscript drafts were produced with
+recomputations and reviews, figures, and manuscript drafts were produced with
 substantial assistance from AI language-model tools, used through the Claude
-Code and OpenAI Codex command-line agents: Anthropic Claude (Opus 4.7, 4.8, 5
+Code and OpenAI Codex command-line agents: Anthropic Claude (Opus 4.7, 4.8, 5,
 and 5.5; Fable 5 and 5.1) and OpenAI GPT models (GPT-5.5, GPT-5.6 Sol and Luna,
-GPT-6 Astra and GPT-6.1), including those used for independent review.  The authors directed this work through written
+GPT-6 Astra, and GPT-6.1), including those used for independent review.  The authors directed this work through written
 specifications fixed before each study.  Results were accepted only after
 verification against committed evidence: predeclared criteria, independent
 recomputation by separately written code (for example, the joint-test
@@ -111,20 +111,20 @@ The input data and simulation are the MINERvA open-data AnaTuples, released unde
 CC0~\cite{MINERvA:OpenData}; this analysis used an earlier production of that
 release, whose file names and sizes, but not checksums, are recorded with the
 release described here.
-A release of about \SI{16}{MB} lets a reader, with numpy, scipy and matplotlib
-only, recompute every $p$ value, decision, robustness label and power figure of the
-joint tests, the lost-seed resolution, the coarse-projection comparison and the
+A release of about \SI{16}{MB} lets a reader, with numpy, scipy, and matplotlib
+only, recompute every $p$ value, decision, robustness label, and power figure of the
+joint tests, the lost-seed resolution, the coarse-projection comparison, and the
 fine-grid $L_{2}$ ratios of condition~(i); regenerate Figs.~\ref{fig:validation}--\ref{fig:joint-nulls}; and recompute the
 numbers quoted from Figs.~\ref{fig:validation}--\ref{fig:generator-context}.  It
 contains the per-pseudo-experiment cell values after the declared nuisance terms,
-their seeds, the predictions, the test domains, the variant shifts, the metric and
+their seeds, the predictions, the test domains, the variant shifts, the metric,
 the observed data vector, the arrays behind Figs.~\ref{fig:validation}--\ref{fig:generator-context},
 and the digest of every source product.  A replay of the packaged files from an
 empty directory reproduces every recorded value and every checked figure number;
 an earlier version of the release was also replayed by an independent reader.  The remaining quoted numbers (the
 two-dimensional uncertainty and coverage figures, the closure and bias studies,
 the low-recoil comparisons, the recoil-response sensitivity, the proxy
-convergence rate of condition~(i) and the covariance-status measurements) are not
+convergence rate of condition~(i), and the covariance-status measurements) are not
 recomputable from this release.  The multiplier scan of Sec.~\ref{sec:joint} is
 recomputable from the released sufficient inputs with the scan code of
 Ref.~\cite{JointTestKappa2026}, but it is not part of the release's own

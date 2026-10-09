@@ -35,7 +35,7 @@ invariant mass $W$ to obtain simultaneous three-, four-, and five-observable
 central values.  Multi-differential neutrino measurements on data reach three
 dimensions~\cite{MINERvA:2022qelike3d,MINERvA:2026qeleme,MicroBooNE:2023inc3d,NOvA:2026inc3d}.
 The five observables here are not five independent measurements: $\Eavail$,
-$q_{3}$ and $W$ are all built from reconstructed hadronic energy.
+$q_{3}$, and $W$ are all built from reconstructed hadronic energy.
 
 The paper makes two contributions.  First, the unbinned construction is
 validated against the published two-dimensional result, and its
@@ -61,7 +61,7 @@ values, Sec.~\ref{sec:joint} the joint tests and their conditions, and
 Sec.~\ref{sec:uncertainty-status} the status of a five-dimensional
 uncertainty.
 
-\section{Data, signal and simulation}
+\section{Data, signal, and simulation}
 \label{sec:data}
 
 The analysis uses the twelve MINERvA medium-energy, forward-horn-current
@@ -78,17 +78,17 @@ Ref.~\cite{MINERvA:2021owq}.  After selection, the sample contains $4.12$
 million data events, and the simulation contains $32.8$ million true signal
 events, generated with GENIE~2.12.6~\cite{Andreopoulos:2009rq} and the MINERvA
 Tune~v1, which reweights GENIE with a non-resonant pion reduction, a
-random-phase-approximation correction and an empirical low-recoil
+random-phase-approximation correction, and an empirical low-recoil
 two-particle--two-hole (2p2h) enhancement~\cite{MINERvA:2016lowrecoil}.
 
 Reconstructed $\Eavail$ is the calorimetric recoil energy in the tracker and
 electromagnetic calorimeter after removal of the muon's energy deposits; the
 reconstructed energy transfer $q_{0}$ is the calorimetric recoil energy, from
-which $Q^{2}$, $q_{3}$ and $W$ follow with the muon kinematics.  The external
+which $Q^{2}$, $q_{3}$, and $W$ follow with the muon kinematics.  The external
 generator predictions compared below are GENIE~2.12.10 on CH without (``GENIE
 CV'') and with (``GENIE + MEC'') the Valencia 2p2h
 component~\cite{Nieves:2011pp}, which models meson-exchange currents (MEC),
-NuWro~21.09~\cite{Golan:2012wx} and GiBUU~2019~\cite{Buss:2011mx} on carbon.
+NuWro~21.09~\cite{Golan:2012wx}, and GiBUU~2019~\cite{Buss:2011mx} on carbon.
 The GENIE and NuWro predictions use a corrected flux sampling (an exact event-by-event
 reweighting to the analysis flux, with added 50--\SI{100}{GeV} samples);
 the GiBUU sample stops at $E_{\nu}\approx\SI{20}{GeV}$.
@@ -309,7 +309,7 @@ bias of Sec.~\ref{sec:validation} is largest.
 
 The one-dimensional projections in Fig.~\ref{fig:generator-context} compare the
 same central result with the four external predictions: GENIE CV, GENIE + MEC,
-NuWro and GiBUU.  All four lie below the data overall (integrated data-to-prediction
+NuWro, and GiBUU.  All four lie below the data overall (integrated data-to-prediction
 ratios $\genRatioTotLo$--$\genRatioTotHi$) and at high $W$.  For GENIE and NuWro the high-$W$
 shortfall is about their overall one (ratios $\genRatioWhiLo$--$\genRatioWhiHi$ for
 $2.2\le W<\SI{3.0}{GeV}$, against $\genRatioTotGNLo$--$\genRatioTotGNHi$ integrated), and in the joint
@@ -351,10 +351,10 @@ treating them as independent confirmation of this high-$\Eavail$, high-$W$ diffe
 \section{Calibrated joint tests of generator predictions}
 \label{sec:joint}
 
-\subsection{Hypotheses, statistics and calibration}
+\subsection{Hypotheses, statistics, and calibration}
 
 For each of five predictions $G$ (the MINERvA Tune~v1, GENIE CV, GENIE + MEC,
-NuWro~21.09 and GiBUU~2019), the null hypothesis $H_{0}(G)$ is that the true cross section equals
+NuWro~21.09, and GiBUU~2019), the null hypothesis $H_{0}(G)$ is that the true cross section equals
 $G$ on a fine five-dimensional grid, with the MINERvA Tune~v1's shape and $G$'s
 finite-sample fluctuations below that grid.  We call this the hybrid null: it is
 the hypothesis the calibration simulates.  For the Tune~v1, the analysis
@@ -388,7 +388,7 @@ estimator trained on the other half.  Every experiment also draws one of
 \jtFluxUniverses{} flux universes and every one of the \jtModelBands{}
 interaction-model uncertainty bands at one of its universes.  It further draws the weight-based
 detector bands (MINOS muon-matching efficiency and GEANT4~\cite{GEANT4:2002zbu}
-neutron, pion and proton interaction reweights), and the five muon and beam-angle lateral bands through a linear
+neutron, pion, and proton interaction reweights), and the five muon and beam-angle lateral bands through a linear
 surrogate, together with a \SI{1.4}{\percent} normalization draw, the data's rounding
 noise taken from 20 real-data re-unfolds with rounding-level input changes, and the
 predictions' finite-sample residual.  The data are unfolded once with the full
@@ -417,14 +417,14 @@ interval~\cite{Clopper:1934} of $k/B$ lies entirely below its Holm threshold.
 Calibration proceeded in batches of \jtBatch{} pseudo-experiments per null, to
 at most \jtBcap{}, under a sequential rule that stopped a null once both of its
 decisions were determined.  The hypotheses, statistics, variants, multiplicity
-rule, stopping rule and every input were frozen before any production
+rule, stopping rule, and every input were frozen before any production
 pseudo-experiment or observed statistic.  Two data-informed elements are
 disclosed.  Reviewers of the design had seen descriptive per-cell residuals
 before it was frozen, and the status outputs of the job controller exposed
 observed claim $p$ values during production.  A bounded extension of the production
 budget was decided
 while they were visible, to let the sequential rule reach its frozen stop rather
-than a budget stop.  No statistic, variant, threshold or stopping rule was changed,
+than a budget stop.  No statistic, variant, threshold, or stopping rule was changed,
 and the Monte Carlo $p$ values remain valid at the number of pseudo-experiments
 reached.
 % Source: amendment 7 data_informed_disclosure and calibration.sequential_rule;
@@ -598,7 +598,7 @@ validated uncertainty.  Power is context only, because every test rejects.  At t
 null, two of three declared alternatives are detected in shape with power 1.0 at the
 0.005 level, and the third, a MEC-like $(\Eavail,W)$ shape, with 0.23 (each power set
 lost some of its 200 alternatives to time limits, retaining 172 to 199).  At the
-GENIE~2.12.10 null the shape powers are 0.74, 0.02 and 0.00.
+GENIE~2.12.10 null the shape powers are 0.74, 0.02, and 0.00.
 % Source: s5p Stage-7 approved wording, sec_eavailw.tex sec. 8.6 (sec:joint5d) at main cbd075e7;
 % REVIEW-20261006-s5p-stage7-note-wording.md (two rounds, findings resolved).
 
@@ -616,13 +616,13 @@ rerun, report-only, under a procedure fixed and independently reviewed
 beforehand~\cite{JointTestRecovery2026}.  That procedure required a rerun of 16
 completed seeds to reproduce them exactly, and all did, so each recovered
 experiment is the lost one.  None reaches the observed statistic in any test,
-claim variant or robustness variant: every submitted pseudo-experiment has now
+claim variant, or robustness variant: every submitted pseudo-experiment has now
 been observed, and no assignment of the lost outcomes changes any decision.
 The closest approach is \num{4.6} below the observed value of \num{868.6}
 (GENIE~+~MEC shape, $\pm\jtMoneKappaRobust\,\delta_{\mathrm{M1}}$ robustness
 variant); the next is \num{49.8} (GENIE CV shape, same variant).
 With complete batches the sequential rule would have stopped the Tune~v1,
-GENIE CV, GENIE~+~MEC and GiBUU nulls one batch earlier, at $B=1200$, with the
+GENIE CV, GENIE~+~MEC, and GiBUU nulls one batch earlier, at $B=1200$, with the
 same decisions.  The decisions remain those of the frozen evaluation.  An
 independent recomputation confirms the resolution against the frozen variant
 shifts; the reading with the recovered experiments added to the calibration was
@@ -662,7 +662,7 @@ As an exploratory sensitivity, not an uncertainty estimate, the data are
 re-unfolded with the simulation's reconstructed recoil energy scaled by
 $\pm\SI{4}{\percent}$, and the frozen tests are re-evaluated against the frozen
 null distributions~\cite{JointTestRecoil2026}.  The size is the level of
-data--simulation agreement reported for test-beam protons, pions and electrons
+data--simulation agreement reported for test-beam protons, pions, and electrons
 of 0.35--\SI{2.0}{GeV/c}~\cite{MINERvA:2015testbeam}; neutrons and
 higher-momentum hadrons, which matter at high $W$, lie outside that sample.  A
 re-unfold with unscaled recoil reproduces the frozen decisions, with every claim
@@ -679,7 +679,7 @@ calibration at a single magnitude, removes no rejection.  It leaves untested
 (a) the response of the null distributions, which were not regenerated with
 the variation although they are simulated through the same detector model, so
 the size of this omission is unmeasured for these strongly non-central nulls;
-(b) particle-species, energy-dependent or resolution effects, and a response
+(b) particle-species, energy-dependent, or resolution effects, and a response
 difference applied before calibration; and (c) larger variations.  The
 rejections are therefore conditional on the simulation's hadronic response, and
 the response model is not shown to be complete.
@@ -739,7 +739,7 @@ MINERvA inclusive measurement and extends it to five simultaneous observables
 whose central values pass marginal anchors and closure tests and recover the
 known low-recoil behavior.  Its measured limitations, a fixed-truth undercoverage of the two-dimensional
 statistical band as first built (the rebuilt band has not been re-tested), a
-background bias at high $W$ and a regularization bias under generator-sized
+background bias at high $W$, and a regularization bias under generator-sized
 shape changes, are reported with the results they affect and prevent a
 qualified five-dimensional measurement.
 
