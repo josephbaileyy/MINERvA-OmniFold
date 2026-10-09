@@ -1,0 +1,36 @@
+# checks/real_operands.py at the head that adds it; --prod = read-only scp copies (2026-10-09T20:3xZ) of the eight saul.nersc.gov:/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/ products named in its docstring.
+# sha256 of each copy equals the recorded digest (ki84-adopt-20261006/sha256sums_2d-unfolding_uq.txt; recompute_2d_budget.json; 142a45b0 central):
+142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5  ./2d_crossSection_omnifold_MEFHC_5iter.root
+6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3  ./minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c  ./uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root
+71a75821ceeb658710adca30243e39e7184e33f868f58ea56cffe63ba8db0115  ./uq/bootstrap_MEFHC_300_vl170/uq_covariance_boot300.root
+f7c734b1127e2cf75ccf2cc4241062b5dced2d55fcec785fa0d42ec861c10270  ./uq/bootstrap_MEFHC_300/uq_covariance_boot300.root
+3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9  ./uq/seedscan_lgbm_ml/uq_covariance_ml.root
+077912e3e7a53376c6df89ee1af4a2a504fe1f49423bab88780204beccd952f5  ./uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/uq_universe_covariance_full_matcorr_fluxfix.root
+62590df75525d6095ce2c0cb96230c875112f0f9223d685c449665eb1936d4e9  ./uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root
+
+part 1: reported-cell sets (n, equal to paper StatOnly cell by cell)
+  paper StatOnly diag > 0 (ROOT)                          n=205  equal=True
+  paper StatOnly diag > 0 (tracked txt)                   n=205  equal=True
+  VL170 hMean2D > 0 (analyze_uq rule)                     n=205  equal=True
+  VL162 hMean2D > 0 (analyze_uq rule)                     n=205  equal=True
+  ML seedscan hMean2D > 0 (analyze_uq rule)               n=205  equal=True
+  matched CV hXSec2D > 0 (analyze_universes rule)         n=205  equal=True
+  frozen central hXSec2D > 0 (Fig. 6/7 rule)              n=205  equal=True
+  VL172 universe hSigma_universe_total > 0 (proxy)        n=205  equal=True
+  VL162 universe hSigma_universe_total > 0 (proxy)        n=205  equal=True
+  analyze_universes guard on the adopted inputs (CV vs VL170/VL162 bootstrap): accepts
+part 2: _ours_only_chi2.py on the VL172 universe file and the VL170 bootstrap
+  [old] rc=0
+  [new] rc=0
+  lines only in new: ['[WARN] <PROD>/uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/uq_universe_covariance_full_matcorr_fluxfix.root stores no hReportedCells; its cells are checked by count only']
+  lines only in old: []
+  new stdout:
+    [paper] reported bins: 205/224
+    [diff] sum reported = 4.235e-39, max |.| = 5.501e-40
+    [WARN] <PROD>/uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/uq_universe_covariance_full_matcorr_fluxfix.root stores no hReportedCells; its cells are checked by count only
+    [universe cov] shape=(205, 205), sqrt(trace)=3.214e-39
+    [boot cov] shape=(205, 205), sqrt(trace)=1.931e-40
+    [universe + bootstrap] cond=1.043e+12  rank(>1e-12*max)=204/205
+    [universe + bootstrap] direct inverse: chi^2 = 5001.909,  ndf = 205,  chi^2/ndf = 24.400
+    [universe + bootstrap] per-bin pull:  mean = 0.056,  rms = 0.582
