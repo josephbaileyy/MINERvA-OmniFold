@@ -452,8 +452,13 @@ A, branch C or mixed) selects between I1 (7.62 node-hours, noise-free) and I2 (a
 needs his scope decision). **Separately**, any S1 confirmation needs an untouched departure that does
 not exist in current inputs (§10). No S3 is affordable under the present method (§9).
 
-**Integration request (for the dispatch/catalog owner; not done here).** `generate_manifest.py` will
-need rows for the four non-`REPORT.md` files in `Q/gbdt/`. Their class is this owner's choice; the
-lane suggests `MACHINE open` like `REPORT.md`. The lane did not edit `MANIFEST-overrides.tsv`,
-`MANIFEST.tsv` or `CATALOG.md`. If the manifest-freshness check reports these paths as missing, that is
-this integration requirement, not a regression.
+**Integration request (for the dispatch/catalog owner; not done here).** Measured:
+`generate_manifest.py --check` is **OK at the base `5ac9706a`** (1,809 rows) and **OUT OF DATE on this
+branch** (1,814 rows) only because of this lane's five files. Regenerating from source adds five rows:
+`REPORT.md` as `MACHINE open` through its pre-registered override, and the other four as defaults,
+`MACHINE generated`, immutable. It also changes the `inbound_count`/`consumer` columns of about 20
+existing rows that these files cite. No override row is strictly required; whether the four
+supporting files should be `open` rather than the default is the owner's choice. The lane did not edit
+`MANIFEST-overrides.tsv`, `MANIFEST.tsv` or `CATALOG.md`, and it did not change the generator or the
+checker. The required action is one regeneration at integration. This is not a regression, and it is
+not reported as PASS of that check.
