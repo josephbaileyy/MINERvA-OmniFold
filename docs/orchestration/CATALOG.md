@@ -69,6 +69,7 @@ Each report is written only by its lane, on its own branch, and is absent until 
 | 4 — performance feasibility | `state/next-preparation-20261009/speed/REPORT.md` |
 | 5 — 5D GBDT successor design | `state/next-preparation-20261009/gbdt/REPORT.md` |
 | 6 — PET saved-output diagnosis | `state/next-preparation-20261009/pet/REPORT.md` |
+| publication correction (keep and disclose; assigned after Session 1 §11) | `state/next-preparation-20261009/publication/REPORT.md` |
 
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
