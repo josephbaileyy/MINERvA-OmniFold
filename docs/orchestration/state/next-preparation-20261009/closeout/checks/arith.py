@@ -20,6 +20,23 @@ for label, bank in (("N1_half_mc", mc_over_data / 2), ("N2_48pct", 0.48 * mc_ove
     out["kappa"][label] = {"bank_mc_over_data": bank, "mc_var_inflation": inflation,
                            "data_share": share, "kappa": math.sqrt(share)}
 
+# Fixed-bank offset (closeout review F1): the bank's MC realization is a per-functional offset
+# against T_R of rms sqrt(1 - share) sigma-hat; coverage is the Gaussian average over that offset.
+from statistics import NormalDist
+_n = NormalDist()
+def _mean_i68(offset_rms, noise_sd):
+    # E_o[P(|o + noise| < 1)] with o ~ N(0, offset_rms^2): equals P(|N(0, total)| < 1)
+    total = math.sqrt(offset_rms ** 2 + noise_sd ** 2)
+    return _n.cdf(1 / total) - _n.cdf(-1 / total)
+share = out["kappa"]["N1_half_mc"]["data_share"]
+o = math.sqrt(1 - share)
+out["n1_bank_offset"] = {
+    "offset_rms_over_sigma_both_stream": o,
+    "pooled_i68_both_stream": _mean_i68(o, math.sqrt(share)),
+    "offset_rms_over_sigma_data_only": o / math.sqrt(share),
+    "mean_i68_data_only": _mean_i68(o / math.sqrt(share), 1.0),
+}
+
 # Correction 3: P05 under A's and C's conventions; documented walls (not receipts).
 packed = 0.68  # A's memory-packed node-h per exact unfold (extrapolated)
 ratio = 0.5 / (804 / 3600)  # ~30 min universe task / 13 min 24 s CV, full node

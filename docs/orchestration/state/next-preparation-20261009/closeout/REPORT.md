@@ -39,7 +39,7 @@ the handoff.
 ## 2. Delta inspected: `ee61fb22` → `901f0088`
 
 - **`287f25f5`, E's freeze.** It edits DELIVERY, `2D_OMNIFOLD_STUDY_STATUS.md` (one label, `P01`–`P09b`),
-  the proposal's §0 citation, `e/integration.json` and `e/recompute/README.md`. It adds
+  the proposal's §0 citation, `e/integration.json`, `e/recompute/README.md` and `MANIFEST.tsv`. It adds
   `e/review-cycle1.md`, the reviewer's `rc_c_exact.py` and `rc_sens.py`, and three cycle-1 logs.
 - **`901f0088`, the integration of upstream `460631d1`.** That is PR #59, which adds
   `docs/publication/audit-20261008/` (22 files) and regenerates `MANIFEST.tsv`. It touches no reviewed
@@ -79,15 +79,23 @@ the handoff.
 - **Result.** MC-stream variance × 2.000, data share 0.3534, **κ = 0.594**; at 48 %, × 2.083, 0.344,
   **κ = 0.587**. Both are below the 0.80 edge (`checks/arith.py`, `logs/arith.txt`).
 - **Mismatch.**
-  - The fixed bank means the outer scatter carries only the data-stream term.
-  - The both-stream inner bootstrap puts the MC-stream term into σ̂.
-  - So an exactly calibrated bootstrap over-covers. This holds whatever the reference, so it disposes
-    of the reference-aware variant as well as the truth-free one.
+  - The fixed bank means the outer scatter carries only the data-stream term, while the both-stream
+    inner bootstrap puts the MC-stream term into σ̂. So κ ≈ 0.59 for the truth-free width test.
+  - The bank's own MC realization is a per-functional offset against `T_R`, rms √(1 − 0.353) =
+    0.80 σ̂. With the both-stream bootstrap, pooled I68 coverage is exactly nominal (0.6827), but per
+    functional it is mixed: about 62 % over-cover in my simulation, and the bias test fails in most
+    functionals. With a data-only stream the offset is 1.35 σ̂ and mean I68 coverage is 0.448
+    (`checks/arith.py` `n1_bank_offset`).
+  - The first committed version of this correction (`9b64588f`) called it "over-coverage" and said
+    a data-only stream would also make the reference-aware form a data-stream test. The closeout
+    review's F1 showed both were wrong, and `265efc2f` repairs them.
 - **Change needed.**
-  - Use a data-only inner stream (`--bootstrap-streams data`, as N2's arm B does).
-  - The truth-free form then becomes a per-experiment, data-only width diagnostic of N2's kind. It is
-    conditional on `S` and `R`, covers no MC stream, no coverage of truth and no total, and is
-    unpriced.
+  - The reference-aware variant is not open with either inner stream: its `τ_ref` model covers the
+    reservoir, not the bank offset.
+  - Only the truth-free width form survives, where `Ū` cancels the offset, and only with a data-only
+    inner stream (`--bootstrap-streams data`, as N2's arm B uses). It is then a per-experiment,
+    data-only diagnostic of N2's kind. It is conditional on `S` and `R`, covers no MC stream, no
+    coverage of truth and no total, and is unpriced.
   - N2 is **not** upgraded to coverage validation.
 - **Edited.** DESIGN §7, the §16 N1 row, §17 and §18.
 - **Limits.** `f_data` is a ratio of medians. The 1/(bank) scaling of the MC-stream variance is B's own
@@ -170,9 +178,9 @@ Proposed:
 \SI{\uqPaper}{\percent} for the publication.":
 
 > These ensembles use the LightGBM estimator rather than the exact-split estimator of the quoted
-> central value (Sec.~\ref{sec:method}).  The two central values differ by a median of
-> \SI{0.97}{\percent} per bin, 1.3 times the statistical uncertainty, a difference that no block of
-> the covariance carries, and the transfer of the covariance to the exact-split central value has not
+> central value (Sec.~\ref{sec:method}).  The LightGBM and exact-split central values differ by a
+> median of \SI{0.97}{\percent} per bin, and by a per-bin median of 1.3 times the statistical
+> uncertainty, a difference that no block of the covariance carries, and the transfer of the covariance to the exact-split central value has not
 > been measured.
 
 Optional, if the owner wants the denominator stated: "(\SI{6.83}{\percent} relative to the exact-split
@@ -183,11 +191,11 @@ central value)". `P14` gives 6.8269, and the reviewer reproduced it.
 | statement | evidence | origins |
 |---|---|---|
 | central = exact-split sklearn GBT; universe, bootstrap and seed blocks = LightGBM | `a/pairings.tsv` `P01`, `P02`, `P04`, `P08`, `P09a`; A §2.1 | A; reviewer re-read sacct and revision (`review.md` §2) |
-| median 0.97 % per bin, 1.30 σ_stat (p84 2.76, max 8.32 σ_stat, 12.5 %) | A §3; `a/verification.md:100`; `e/recompute/rc_pairing.json.txt` `cmp` "seed1 vs exact": 0.966 %, 1.2995 | A and reviewer, independently coded |
+| median 0.97 % per bin; per-bin median 1.30 σ_stat (p84 2.76, max 8.32 σ_stat, 12.5 %); LightGBM seed 1 vs exact (CV42 vs exact: 0.98 %, 1.32) | A §3; `a/verification.md:100`; `e/recompute/rc_pairing.json.txt` `cmp` "seed1 vs exact": 0.966 %, 1.2995 | A and reviewer, independently coded |
 | "no block carries it" | A §5 item 3 | A |
 | transfer unmeasured | `P03`, `P05`, `P07`, `P09b` UNRESOLVED; KNOWN_ISSUES 88 | A; reviewer confirmed the labels |
 | 6.83 % against `E_C` | `P14`; `rc_pairing.json.txt` `blocksum_median_rel_pct_den_exact_central` 6.8269 | A and reviewer |
-| integrated ratio 0.9999 (not used in the wording) | `a/logs/check_a_output.txt:134` | **A only**; the reviewer did not recompute it, so the wording leaves it out |
+| integrated ratio 0.9999 (not used in the wording) | `a/logs/check_a_output.txt:80` (seed 1 vs exact, 0.999899; `:134` is CV42 vs exact, 0.999906) | **A only**; the reviewer did not recompute it, so the wording leaves it out |
 
 **For the publication owner's consistency sweep (observed, not exhaustive, not edited):**
 
@@ -216,8 +224,9 @@ These are engineering and record-integrity checks. None is a scientific validati
 
 ## 6. Limitations
 
-- κ ≈ 0.59 is a median-bin statement from a ratio of medians, and it assumes an exactly calibrated
-  bootstrap. It shows that N1's variants cannot pass as specified. It measures nothing about the
+- κ ≈ 0.59 and the 0.80 σ̂ bank offset are median-bin statements from a ratio of medians, and they
+  assume an exactly calibrated bootstrap. The 62 % over-cover fraction is my simulation; the bias-test
+  count (about 188 of 206) is the closeout reviewer's figure and was not re-derived here. It shows that N1's variants cannot pass as specified. It measures nothing about the
   production band.
 - The two `P05` figures are forecasts. A third, additive-overhead convention would fall between them;
   it is not priced here.
