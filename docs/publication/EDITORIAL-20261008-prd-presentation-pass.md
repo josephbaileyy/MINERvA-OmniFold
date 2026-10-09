@@ -100,7 +100,7 @@ Before = baseline `b612ee3a`; after = this branch after review cycle 1 (§8).
 | abstract words (PDF / texcount) | 234 / 233 | **185 / 187** | 8 → 6 sentences; the rhetorical question is removed; no undefined acronym ("MEC" removed). The implementation reached 182; review cycle 1 restored "report-only" and "principal" and split "checks" from "closure tests" (§8). The remaining 5 words over the 180 aim are required qualifications. |
 | abstract qualifications | conditional (principal limitations named); no 5D cross section; recovery report-only; ±4% not an uncertainty; not a measured cross section; no added discrimination | **all retained**, plus the disposition's "with every submitted pseudo-experiment observed" | Joseph's lost-seed disposition says the rejections are stated "as holding with every submitted draw observed"; disclosure 1 (report-only) stays beside it |
 | body text words (texcount, incl. DAS) | 5,220 | 5,275 | +1.1%. The definitions, generator and software citations and motivating sentence offset the condensation (§4) |
-| caption words (texcount) | 417 | 425 | the Fig. 2 color-scale offset and the Fig. 3 legend labels are now explained |
+| caption words (texcount) | 417 | 425 | the Fig. 2 color-scale units ($10^{-40}$ cm²/nucleon) and the Fig. 3 legend labels are now explained |
 | pages | 10 | **11** | the extra page is reference titles only (PRD guidance, §2a); the text pages are unchanged |
 | floats | 4 figures, 1 table | unchanged | about 1.5 page-equivalents, estimated from the rendered page images (Fig. 1 ≈ 0.44, Fig. 2 ≈ 0.15, Fig. 3 ≈ 0.47, Fig. 4 ≈ 0.35, Table I ≈ 0.10) |
 | body sentences (PDF) | 203; mean 32.0 words | 212; mean 29.8 | measured to the Acknowledgments in both builds, so the after column excludes the moved DAS |
@@ -279,3 +279,11 @@ pages, reference count, abstract words, body words and caption words, and all ag
 | N2 | the opening "more completely than one-dimensional projections" sits against "no added discrimination" | softened to a statement without a comparison |
 | N3 | LightGBM pages; empty year in Ref. [8]; 0.7 pt overfull (pre-existing) | not changed: the pages and the release year are not verified from a primary source this session |
 | not verified by the reviewer | the power-retention clause now covered the GENIE null as well; "admitted separately under its own criteria" added words | both restored to the baseline's scope and wording (the clause sits with the Tune v1 alternatives; "the study's remaining, separately admitted branch") |
+
+### 8c. Review cycle 2 (target `f4669b07`): READY
+
+All cycle-1 findings were resolved, with no new error. The reviewer re-measured: 11 pp; abstract 186 words (`pdftotext`;
+this record's 185 is the same one-token gap as in cycle 1); body 5,273 against this record's 5,275 (the same +2 gap);
+captions 425. Build: 0 undefined, 0 BibTeX errors, the same five pre-existing BibTeX warnings. Its one note (R1: the
+caption row still said "offset") is fixed in this record. `git status --short` was empty in the reviewer worktree
+after both cycles. The review budget (two cycles) is spent.
