@@ -367,3 +367,9 @@ macro files are unchanged. Its identity, reproducibility and verification are re
 | printed figures | `make_figs.py` run from the extracted package reproduces the article's three figure files byte for byte (`938c4fc9…`, `57f3cc60…`, `e9d1bb01…`) |
 | location | local: `../MINERvA-OmniFold-prd-editorial-pdf-20261008/`. Not copied to CFS. RC6 stays the preserved candidate on CFS until Joseph decides. |
 | review | **not independently reviewed.** The two authorized review cycles (§8) covered the editorial diff before §9–§10. |
+
+**Standalone re-sync after §9–§10:** `main_paper.tex`, `paper_body.tex` and the three new figure files copied from
+`eff6a8b3` to `sync-prd-editorial-pass-20261008`, commit **`41eb42d780843f0d1e5041bd9bef2a76cd1a6514`**. Every
+canonical `docs/analysis-note` file equals the standalone copy (`cmp`). Standalone `build_all.sh` rc 0 at
+123 / 9 / 11 pp, and `pdftotext` of all three PDFs is identical to the canonical build. Standalone `main` is unchanged
+at `e1af61e3`. The revised PDF is `../MINERvA-OmniFold-prd-editorial-pdf-20261008/MINERvA-OmniFold-PRD-article-editorial-8fa79cb1.pdf`.
