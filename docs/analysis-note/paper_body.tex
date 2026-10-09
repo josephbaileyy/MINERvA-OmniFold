@@ -9,10 +9,12 @@
 
 \section{Introduction}
 
-Differential neutrino cross sections require correcting observed event samples
+Cross sections measured in several kinematic variables at once test the
+neutrino-interaction generators used by oscillation experiments more completely
+than one-dimensional projections, but each added variable must be corrected
 for detector response.  Iterative Bayesian unfolding on a binned migration
-matrix is widely used, but the response tensor grows rapidly when additional
-observables are reported.  OmniFold instead learns event weights in an unbinned
+matrix~\cite{DAgostini:1994fjx} is widely used, but the response tensor grows
+rapidly when additional observables are reported.  OmniFold instead learns event weights in an unbinned
 feature space through classifier-based density-ratio estimation
 \cite{Andreassen:2019cjw,Andreassen:2021zzk}.  This makes simultaneous
 higher-dimensional unfolding possible without specifying a separate binned
@@ -24,8 +26,8 @@ neutrino physics it has been demonstrated on a public simulated T2K near-detecto
 sample~\cite{Huang:2025omnifold}.  We are not aware of an application to
 neutrino-scattering data.
 
-We apply the method to MINERvA medium-energy forward-horn-current $\nu_{\mu}$
-data from the MINERvA open-data release~\cite{MINERvA:OpenData}.  We first
+We apply the method to MINERvA medium-energy $\nu_{\mu}$ data from the
+MINERvA open-data release~\cite{MINERvA:OpenData}.  We first
 reproduce the published double-differential charged-current inclusive cross
 section in transverse and longitudinal muon momentum,
 $d^{2}\sigma/(d\pT\,d\pPar)$~\cite{MINERvA:2021owq}, then add available
@@ -36,52 +38,60 @@ dimensions~\cite{MINERvA:2022qelike3d,MINERvA:2026qeleme,MicroBooNE:2023inc3d,NO
 The five observables here are not five independent measurements: $\Eavail$,
 $q_{3}$ and $W$ are all built from reconstructed hadronic energy.
 
-The contribution is twofold.  First, the unbinned construction is validated
-against the published two-dimensional result, and its higher-dimensional
-central values are characterized with their measured limitations: a fixed-truth undercoverage of the two-dimensional
-statistical band as first built, a background-subtraction bias at high $W$, and
-a regularization bias under generator-sized shape changes.  Because the
-estimator's model dependence prevents a qualified total uncertainty at useful
-precision, no five-dimensional cross section with uncertainties is reported.
-Second, specified generator predictions are nevertheless tested on the
-five-dimensional result: a joint statistic is calibrated by
-pseudo-experiments that rerun the full analysis chain, so that the estimator's
-pull toward its prior enters each null distribution (Sec.~\ref{sec:joint}).
-The resulting rejections are conditional on the declared calibration model,
-whose principal limitations, an absent calorimetric recoil-response uncertainty
-and a fine-grid null that is not numerically converged, are stated with the
-result (Secs.~\ref{sec:conditions} and~\ref{sec:response}).  After the data and
-estimators (Secs.~\ref{sec:data} and~\ref{sec:method}), Sec.~\ref{sec:validation}
-gives the validation, Sec.~\ref{sec:central} the central values,
-Sec.~\ref{sec:joint} the joint tests and their conditions, and
-Sec.~\ref{sec:uncertainty-status} the status of the five-dimensional
+The paper makes two contributions.  First, the unbinned construction is
+validated against the published two-dimensional result, and its
+higher-dimensional central values are characterized with their measured
+limitations, chiefly a background-subtraction bias at high $W$ and a
+regularization bias under generator-sized shape changes
+(Sec.~\ref{sec:validation}).  Because the estimator's model dependence prevents
+a qualified total uncertainty at useful precision, no five-dimensional cross
+section with uncertainties is reported (Sec.~\ref{sec:uncertainty-status}).
+Second, specified generator predictions are tested jointly on the
+five-observable result.  The published comparison in muon kinematics already
+disfavours these generator families~\cite{MINERvA:2021owq}; the new element is
+a statistic calibrated by pseudo-experiments that rerun the full analysis
+chain, so that the estimator's pull toward its prior enters each null
+distribution (Sec.~\ref{sec:joint}).  The resulting rejections are conditional
+on the declared calibration model, whose principal limitations, an absent
+calorimetric recoil-response uncertainty and a fine-grid null that is not
+numerically converged, are stated with the result
+(Secs.~\ref{sec:conditions} and~\ref{sec:response}).
+Sections~\ref{sec:data} and~\ref{sec:method} describe the data and estimators,
+Sec.~\ref{sec:validation} the validation, Sec.~\ref{sec:central} the central
+values, Sec.~\ref{sec:joint} the joint tests and their conditions, and
+Sec.~\ref{sec:uncertainty-status} the status of a five-dimensional
 uncertainty.
 
 \section{Data, signal and simulation}
 \label{sec:data}
 
-The analysis uses the twelve MINERvA medium-energy playlists, corresponding to
-$1.057\times10^{21}$ protons on target and an average neutrino energy near
-\SI{6}{GeV}~\cite{MINERvA:2021owq}, from the MINERvA open-data release of pre-selected
-AnaTuples~\cite{MINERvA:OpenData}; the detector is described in
+The analysis uses the twelve MINERvA medium-energy, forward-horn-current
+run periods, corresponding to $1.057\times10^{21}$ protons on target and an
+average neutrino energy near \SI{6}{GeV}~\cite{MINERvA:2021owq}, from the
+MINERvA open-data release of pre-selected analysis ntuples
+(AnaTuples)~\cite{MINERvA:OpenData}.  The detector, including the downstream
+MINOS near detector that serves as its muon spectrometer, is described in
 Ref.~\cite{MINERvA:2013zvz}.  The files analysed are an earlier production of
 that release; their names and sizes are recorded for reproduction
-(Sec.~\ref{sec:data-availability}).  The signal definition, fiducial volume, flux
+(see Data availability).  The signal definition, fiducial volume, flux
 treatment~\cite{MINERvA:2016iqn}, and reconstruction-level selection follow
 Ref.~\cite{MINERvA:2021owq}.  After selection, the sample contains $4.12$
-million data events, and the simulation contains $32.8$ million true signal events, generated with
-GENIE~2.12.6 and the MINERvA Tune~v1, which reweights GENIE with a
-non-resonant pion reduction, the RPA correction and an empirical low-recoil
-two-particle--two-hole enhancement~\cite{MINERvA:2016lowrecoil}.
+million data events, and the simulation contains $32.8$ million true signal
+events, generated with GENIE~2.12.6~\cite{Andreopoulos:2009rq} and the MINERvA
+Tune~v1, which reweights GENIE with a non-resonant pion reduction, a
+random-phase-approximation correction and an empirical low-recoil
+two-particle--two-hole (2p2h) enhancement~\cite{MINERvA:2016lowrecoil}.
 
 Reconstructed $\Eavail$ is the calorimetric recoil energy in the tracker and
 electromagnetic calorimeter after removal of the muon's energy deposits; the
 reconstructed energy transfer $q_{0}$ is the calorimetric recoil energy, from
 which $Q^{2}$, $q_{3}$ and $W$ follow with the muon kinematics.  The external
-generator predictions compared below are GENIE~2.12.10 on CH without and with
-the Valencia two-particle--two-hole component, NuWro~21.09 and GiBUU~2019 on
-carbon.  The GENIE and NuWro predictions use a repaired flux sampling; the GiBUU
-sample stops at $E_{\nu}\approx\SI{20}{GeV}$.
+generator predictions compared below are GENIE~2.12.10 on CH without (``GENIE
+CV'') and with (``GENIE + MEC'') the Valencia 2p2h
+component~\cite{Nieves:2011pp}, which models meson-exchange currents (MEC),
+NuWro~21.09~\cite{Golan:2012wx} and GiBUU~2019~\cite{Buss:2011mx} on carbon.
+The GENIE and NuWro predictions were generated with a corrected flux sampling;
+the GiBUU sample stops at $E_{\nu}\approx\SI{20}{GeV}$.
 
 \section{Unbinned unfolding}
 \label{sec:method}
@@ -99,13 +109,13 @@ one it uses.
 \begin{itemize}
 \item \emph{Two-dimensional central value} (Sec.~\ref{sec:validation}): five
 iterations of depth-three gradient-boosted decision trees with 100 trees, fitted
-with exact-split scikit-learn gradient boosting, and a purity-based background
-subtraction.
+with exact-split scikit-learn~\cite{Pedregosa:2011sklearn} gradient boosting, and a
+purity-based background subtraction.
 \item \emph{Three- to five-dimensional central values}
 (Secs.~\ref{sec:validation}--\ref{sec:central}, Figs.~\ref{fig:joint}
 and~\ref{fig:generator-context}): the same five-iteration configuration fitted
-with LightGBM at matched nominal capacity, with the purity-based background
-subtraction.
+with LightGBM~\cite{Ke:2017lightgbm} at matched nominal capacity, with the
+purity-based background subtraction.
 \item \emph{Two-dimensional uncertainty ensembles}: the finalized systematic-universe
 and Poisson-bootstrap ensembles use LightGBM at matched nominal capacity, so
 the two-dimensional central value and its covariance are not estimator-matched.
@@ -217,10 +227,10 @@ data the two treatments differ by at most \SI{1.4}{\percent}.
 % VL151, VL152; KNOWN_ISSUES 75.
 
 The same pseudo-experiments show that the unfolding follows a generator-sized
-change of the $\Eavail$ shape only partly.  When the true shape is reweighted
-by the GiBUU-to-GENIE ratio (a test deformation of that size rather than a
-measured generator difference: the GENIE prediction it used was later found to
-have been generated from a mis-sampled flux), the $(\Eavail,W)$ cells deviate
+change of the $\Eavail$ shape only partly.  In a test, the true shape is reweighted
+by the GiBUU-to-GENIE ratio, a deformation of generator size but not a measured
+generator difference, because the GENIE prediction used to form it had a
+flux-sampling error.  The $(\Eavail,W)$ cells then deviate
 from it by several percent in the largest cells and by up to \SI{74}{\percent}
 at high $W$, with or without background.  This regularization bias is not in
 the quoted uncertainties.  The tested iteration and capacity scans do not
@@ -228,10 +238,10 @@ remove it; for other fixed generator shapes, measured with the joint-test
 estimator, it is \SIrange{16}{31}{\percent} in the most affected $(\Eavail,W)$ cell
 and within the quoted total uncertainty in about half of those cells.  The unfolded values on data also move by up to a few
 statistical standard deviations under input changes at the level of
-floating-point rounding; a later measurement found this spread already inside
-the tested candidate's data-bootstrap statistical uncertainty, which refits
-every replica, and well below the total uncertainty, but it limits how exactly
-the central values can be reproduced.  No frequentist coverage is claimed for
+floating-point rounding.  For the joint-test estimator this spread lies inside
+the data-bootstrap statistical uncertainty, which refits every replica, and
+well below the total uncertainty, but it limits how exactly the central values
+can be reproduced.  No frequentist coverage is claimed for
 the five-dimensional intervals: an end-to-end test of bias-corrected
 statistical intervals from a deterministic variant of the estimator failed its
 predeclared criterion at nominal truth and under an $\Eavail$ tilt.
@@ -248,9 +258,9 @@ The $\Eavail$ dimension provides an independent view of the established
 low-recoil discrepancy~\cite{MINERvA:2016lowrecoil,MINERvA:2022incl}.  GENIE,
 the MINERvA Tune~v1, NuWro, and GiBUU all underpredict the unfolded central
 value at low $\Eavail$, between the quasielastic and $\Delta$ peaks.  Pion
-final-state-interaction variations (same-sample ratios on pre-repair GENIE)
-change $d\sigma/d\Eavail$ by less than one percent, whereas the empirical
-Valencia two-particle--two-hole contribution fills \SI{52}{\percent} of the
+final-state-interaction (FSI) variations (same-sample ratios computed with GENIE
+before its flux correction) change $d\sigma/d\Eavail$ by less than one percent, whereas the empirical
+Valencia 2p2h contribution fills \SI{52}{\percent} of the
 data--GENIE gap below $\Eavail=\SI{0.4}{GeV}$.  These tests constrain the chosen
 pion-FSI variations, not all nuclear-transport models.  Adding $q_{3}$ resolves
 the momentum-transfer dependence of this feature: on the maximal common
@@ -278,8 +288,8 @@ The fifth observable, $W$, separates the remaining discrepancy from the
 low-mass enhancement.  Figure~\ref{fig:joint} shows the joint $(\Eavail,W)$
 projection relative to the MINERvA Tune~v1.  In cell-integrated terms, two
 thirds of the positive difference lies at $\Eavail\ge\SI{0.8}{GeV}$ and most of
-that at $W\ge\SI{1.8}{GeV}$, but a fifth of it sits in the single widest catch
-cell; in ratio, the data exceed Tune~v1 by \SIrange{\figTwoHiHiLo}{\figTwoHiHiHi}{\percent} in those
+that at $W\ge\SI{1.8}{GeV}$, but a fifth of it sits in the single widest overflow
+cell.  In ratio, the data exceed Tune~v1 by \SIrange{\figTwoHiHiLo}{\figTwoHiHiHi}{\percent} in those
 cells and by \SIrange{\figTwoLowWLo}{\figTwoLowWHi}{\percent} at $W<\SI{1.1}{GeV}$ for every $\Eavail$,
 so the relative excess is not confined to high $W$.  These statements are
 descriptive: no significance is assigned, no response-mismatch closure has been run
@@ -295,12 +305,12 @@ bias of Sec.~\ref{sec:validation} is largest.
   $7\times6$ reporting grid with $\Eavail$ edges
   $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ and $W$ edges
   $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$; axes are cell indices counting from
-  zero, so index~6 in $\Eavail$ and index~5 in $W$ are wide catch bins.  Left:
-  the unfolded-to-Tune~v1 ratio per cell, dimensionless, on a $0.5$--$1.5$
+  zero, so index~6 in $\Eavail$ and index~5 in $W$ are wide overflow bins.
+  Left: the unfolded-to-Tune~v1 ratio per cell, on a $0.5$--$1.5$ color
   scale.  Right: the unfolded-minus-Tune~v1 difference as a
-  \emph{cell-integrated} cross section in \si{cm^2/nucleon}, i.e.\ the
-  density difference multiplied by that cell's
-  $\Delta\Eavail\,\Delta W$; the catch-bin cells therefore carry their large
+  \emph{cell-integrated} cross section in \si{cm^2/nucleon} (the color-scale
+  offset is $10^{-40}$), i.e.\ the density difference multiplied by that cell's
+  $\Delta\Eavail\,\Delta W$; the overflow cells therefore carry their large
   widths and appear larger here than the ratio panel alone would suggest.  No
   significance is assigned.  The comparator is the MINERvA Tune~v1 (GENIE~2.12.6
   with the analysis tune weights), not the untuned GENIE central value of
@@ -309,9 +319,8 @@ bias of Sec.~\ref{sec:validation} is largest.
 \end{figure}
 
 The one-dimensional projections in Fig.~\ref{fig:generator-context} compare the
-same central result with four external predictions: GENIE's own central value,
-the same GENIE with the Valencia two-particle--two-hole component, NuWro, and
-GiBUU.  All four lie below the data overall (integrated data-to-prediction
+same central result with the four external predictions: GENIE CV, GENIE + MEC,
+NuWro and GiBUU.  All four lie below the data overall (integrated data-to-prediction
 ratios $\genRatioTotLo$--$\genRatioTotHi$) and at high $W$.  For GENIE and NuWro the high-$W$
 shortfall is about their overall one (ratios $\genRatioWhiLo$--$\genRatioWhiHi$ for
 $2.2\le W<\SI{3.0}{GeV}$, against $\genRatioTotGNLo$--$\genRatioTotGNHi$ integrated), and in the joint
@@ -321,9 +330,9 @@ GiBUU, the most deficient, falls furthest behind there ($\gibuuCorner$, against 
 overall), but its sample stops at $E_\nu\approx\SI{20}{GeV}$: in GENIE and NuWro
 higher energies carry \SIrange{14}{15}{\percent} of this region's cross section
 and \SI{7}{\percent} of the total, and supplying that share gives GiBUU about the
-others' contrast ($1.37$ against $1.29$).  Turning on the Valencia
-two-particle--two-hole component leaves that region unchanged because it
-primarily populates lower $W$.  The high-$\Eavail$, high-$W$ difference of Fig.~\ref{fig:joint} is thus
+others' contrast ($1.37$ against $1.29$).  Adding the Valencia
+2p2h component leaves that region unchanged because it primarily populates
+lower $W$.  The high-$\Eavail$, high-$W$ difference of Fig.~\ref{fig:joint} is thus
 a statement relative to the MINERvA Tune~v1.  Dedicated MINERvA
 shallow-inelastic measurements also report generator
 disagreements~\cite{MINERvA:2026sis}; their different selections preclude
@@ -335,16 +344,18 @@ treating them as independent confirmation of this high-$\Eavail$, high-$W$ diffe
   \includegraphics[width=0.84\textwidth]{paper_eavailW_generators_ratio}
   \caption{Generator context for the unfolded $\Eavail$ (left) and $W$ (right)
   central-value projections (five-dimensional LightGBM production estimator), in
-  \si{cm^2/GeV/nucleon}, with the data-to-prediction ratio below each; the wide catch
-  bins ($\Eavail>\SI{3}{GeV}$, $W>\SI{3}{GeV}$) are omitted from the display.  Drawn from
-  the released figure arrays (Sec.~\ref{sec:data-availability}).  GENIE-CV (untuned
-  GENIE~2.12.10 on CH, with no two-particle--two-hole events), the same GENIE
-  with the Valencia two-particle--two-hole contribution, NuWro~21.09, and
-  GiBUU~2019 (both on carbon; GENIE and NuWro flux-repaired) all remain below the
-  unfolded result overall and at high $W$ (the two GENIE predictions lie \SIrange{\genieWmidLo}{\genieWmidHi}{\percent} above it
-  at $1.4\le W<\SI{1.8}{GeV}$); GENIE and NuWro by about their overall
-  normalization shortfall, GiBUU, whose sample stops at $E_\nu\approx\SI{20}{GeV}$,
-  by more.  No significance is assigned.}
+  $\mathrm{cm^{2}\,GeV^{-1}\,nucleon^{-1}}$, with the data-to-prediction ratio
+  below each; the wide overflow bins ($\Eavail>\SI{3}{GeV}$, $W>\SI{3}{GeV}$) are
+  omitted from the display.  Drawn from the released figure arrays (see Data
+  availability).  GENIE-CV (untuned GENIE~2.12.10 on CH, with no 2p2h events),
+  GENIE+MEC (the same GENIE with the Valencia 2p2h contribution), NuWro~21.09,
+  and GiBUU~2019 (both on carbon; GENIE and NuWro with corrected flux sampling)
+  all remain below the
+  unfolded result overall and at high $W$, GENIE and NuWro by about their overall
+  normalization shortfall and GiBUU, whose sample stops at
+  $E_\nu\approx\SI{20}{GeV}$, by more.  The two GENIE predictions lie
+  \SIrange{\genieWmidLo}{\genieWmidHi}{\percent} above it at
+  $1.4\le W<\SI{1.8}{GeV}$.  No significance is assigned.}
   \label{fig:generator-context}
 \end{figure*}
 
@@ -353,9 +364,8 @@ treating them as independent confirmation of this high-$\Eavail$, high-$W$ diffe
 
 \subsection{Hypotheses, statistics and calibration}
 
-For each of five predictions $G$ --- the MINERvA Tune~v1, GENIE~2.12.10 without
-and with the Valencia two-particle--two-hole component, NuWro~21.09 and
-GiBUU~2019 --- the null hypothesis $H_{0}(G)$ is that the true cross section equals
+For each of five predictions $G$ (the MINERvA Tune~v1, GENIE CV, GENIE + MEC,
+NuWro~21.09 and GiBUU~2019), the null hypothesis $H_{0}(G)$ is that the true cross section equals
 $G$ on a fine five-dimensional grid, with the MINERvA Tune~v1's shape and $G$'s
 finite-sample fluctuations below that grid.  We call this the hybrid null: it is
 the hypothesis the calibration simulates.  For the Tune~v1, the analysis
@@ -369,10 +379,11 @@ for GiBUU, whose sample lacks high-energy neutrinos, the domain is the
 % Source: amendment 7 claims.family; nd-unfolding/s5p_stage1_inspect.py:45 (J_EDGES).
 
 Two statistics are formed from the unfolded cell values $F$ and the prediction
-$\mu_{G}$: a total statistic $T_{\mathrm{tot}}=r^{\top}W^{-1}r$ with
+$\mu_{G}$: a total statistic $T_{\mathrm{tot}}=r^{\top}\mathcal{W}^{-1}r$ with
 $r=F-\mu_{G}$, and a shape statistic $T_{\mathrm{sh}}$ of the same form on the
-normalized cell fractions, with the normalization Jacobian applied to $W$ and one
-cell dropped.  The metric $W=V+\mathrm{diag}\,\mathrm{Var}(\mu_{G})$ adds the
+normalized cell fractions, with the normalization Jacobian applied to $\mathcal{W}$
+and one cell dropped.  The metric
+$\mathcal{W}=V+\mathrm{diag}\,\mathrm{Var}(\mu_{G})$ adds the
 prediction's own finite-sample variance to $V$, a Ledoit--Wolf-shrunk
 covariance~\cite{LedoitWolf:2004} of \jtVn{} pilot pseudo-experiments at the
 Tune~v1 null.  $V$ sets the power of the test, not its size; it is not a
@@ -385,10 +396,10 @@ run the full analysis chain at the null truth.  Each draws Poisson pseudo-data
 from one half of the simulation together with an independent background source,
 refits the background-refinement classifier, and unfolds with the joint-test
 estimator trained on the other half.  Every experiment also draws one of
-\jtFluxUniverses{} flux universes, every one of the \jtModelBands{}
-interaction-model uncertainty bands at one of its universes, the weight-based
-detector bands (MINOS efficiency and GEANT neutron, pion and proton interaction
-reweights), and the five muon and beam-angle lateral bands through a linear
+\jtFluxUniverses{} flux universes and every one of the \jtModelBands{}
+interaction-model uncertainty bands at one of its universes.  It further draws the weight-based
+detector bands (MINOS muon-matching efficiency and GEANT4~\cite{GEANT4:2002zbu}
+neutron, pion and proton interaction reweights), and the five muon and beam-angle lateral bands through a linear
 surrogate, together with a \SI{1.4}{\percent} normalization draw, the data's rounding
 noise taken from 20 real-data re-unfolds with rounding-level input changes, and the
 predictions' finite-sample residual.  The data are unfolded once with the full
@@ -397,11 +408,11 @@ $p$ value of a test is $(k+1)/(B+1)$, where $k$ of $B$ null pseudo-experiments
 reach the observed statistic; it is never zero.  The claim $p$ value is the
 largest over declared variants that move the null by an upper bound on the
 simulation-size difference between the pseudo-experiments and the data unfold
-and by $\pm\jtMoneKappa\,\delta_{\mathrm{M1}}$, where $\delta_{\mathrm{M1}}$, the last
-refinement step, is the change of the noise-free unfolded result when the null
-truth is refined from a twofold-merged grid to the fine grid, so
-that $\jtMoneKappa\,\delta_{\mathrm{M1}}$ is the central extrapolated estimate of
-the residual below the fine grid (Sec.~\ref{sec:conditions}).  The
+and by $\pm\jtMoneKappa\,\delta_{\mathrm{M1}}$.  Here $\delta_{\mathrm{M1}}$, the
+last refinement step, is the change of the noise-free unfolded result when the
+null truth is refined from a twofold-merged grid to the fine grid, and
+$\jtMoneKappa\,\delta_{\mathrm{M1}}$ is the central extrapolated estimate of the
+residual below the fine grid (Sec.~\ref{sec:conditions}).  The
 external nulls are strongly non-central, with non-centralities $\lambda$ of
 \jtLambdaMin{}--\jtLambdaMax{} in these units, because the calibration
 reproduces the estimator's pull toward its prior.
@@ -417,9 +428,10 @@ at most \jtBcap{}, under a sequential rule that stopped a null once both of its
 decisions were determined.  The hypotheses, statistics, variants, multiplicity
 rule, stopping rule and every input were frozen before any production
 pseudo-experiment or observed statistic.  Two data-informed elements are
-disclosed: the design reviewers had seen descriptive per-cell residuals before
-the freeze, and the controller's status files exposed observed claim $p$ values
-during production; a bounded extension of the production budget was decided
+disclosed.  Reviewers of the design had seen descriptive per-cell residuals
+before it was frozen, and the status outputs of the job controller exposed
+observed claim $p$ values during production.  A bounded extension of the production
+budget was decided
 while they were visible, to let the sequential rule reach its frozen stop rather
 than a budget stop.  No statistic, variant, threshold or stopping rule was changed,
 and the Monte Carlo $p$ values remain valid at the number of pseudo-experiments
@@ -440,18 +452,19 @@ result are in Ref.~\cite{JointTestRecord2026}.
 These are statements about the simple hypotheses $H_{0}(G)$, not a measured
 cross section, and no new reportable uncertainty is produced.  Each decision
 below holds under six conditions of the declared model, stated here because they
-bound what the tests establish.  They are of three kinds, which the tests
-address differently, and none is converted into an uncertainty on the decisions.
+bound what the tests establish.  They are numbered as in the frozen contract~\cite{JointTestRecord2026}
+and grouped here by kind; none is converted into an uncertainty on the
+decisions.
 
 \emph{Numerical convergence.}  (i) Below the fine grid the null truth carries
-the Tune~v1's shapes, and the fine-grid convergence check is not converged: the
-last refinement, from a twofold-merged grid to the fine grid, is
-\jtMoneMin--\jtMoneMax{} of the whole change from the coarse test grid to the
-fine grid in the $L_{2}$ norm of the per-cell relative changes, so in that norm the steps are not
-shown to shrink, and the residual below the fine grid is unmeasured and
-potentially material.  The frozen design takes the step in a proxy of the test
-metric to shrink by \jtMoneWnormMin--\jtMoneWnormMax{} per halving, a design-review
-value whose calculation is not recorded; if it kept
+the Tune~v1's shapes, and the fine-grid convergence check is not converged.  In
+the $L_{2}$ norm of the per-cell relative changes, the last refinement, from a
+twofold-merged grid to the fine grid, is \jtMoneMin--\jtMoneMax{} of the whole
+change from the coarse test grid to the fine grid.  In that norm the steps are
+therefore not shown to shrink, and the residual below the fine grid is
+unmeasured and potentially material.  The frozen design takes the step in a
+proxy of the test metric to shrink by \jtMoneWnormMin--\jtMoneWnormMax{} per
+halving, a design-review value whose calculation is not recorded.  If it kept
 shrinking geometrically at that rate, the residual would be about one to three
 times the last step, which sets the claim variants at
 $\pm\jtMoneKappa\,\delta_{\mathrm{M1}}$ and the robustness check, which is
@@ -535,7 +548,7 @@ that displaced distribution.
   statistic (bottom), shown for the declared claim variant whose null distribution
   has the largest median; the vertical line is the observed statistic and $k/B$ is
   as in Table~\ref{tab:joint}.  The horizontal axis is logarithmic.  Plotted from
-  the released sufficient inputs (Sec.~\ref{sec:data-availability}), which reproduce
+  the released sufficient inputs (see Data availability), which reproduce
   every recorded $p$ value and decision.}
   \label{fig:joint-nulls}
 \end{figure*}
@@ -587,52 +600,51 @@ $p$ values were reproduced independently.
 What the rejections establish is therefore narrow.  They are global statements
 about five specified predictions under the declared model; they do not identify a
 kinematic region or a nuclear mechanism, they say nothing about more recent
-generator versions, each rejected test already has $p<0.05$ in at least one
-of the two matched coarse projections, and they inherit the conditions of
+generator versions, and they inherit the conditions of
 Sec.~\ref{sec:conditions}, of which the hadronic response
 (Sec.~\ref{sec:response}) and the sub-fine-grid residual are not bounded by any
-validated uncertainty.  Power is context only, because every test rejects: at the Tune~v1
+validated uncertainty.  Power is context only, because every test rejects.  At the Tune~v1
 null, two of three declared alternatives are detected in shape with power 1.0 at the
-0.005 level, and the third, a MEC-like $(\Eavail,W)$ shape, with 0.23 (each power set
-lost some of its 200 alternatives to time limits, retaining 172 to 199); at the
-GENIE~2.12.10 null the shape powers are 0.74, 0.02 and 0.00.
+0.005 level, and the third, a MEC-like $(\Eavail,W)$ shape, with 0.23; at the
+GENIE~2.12.10 null the shape powers are 0.74, 0.02 and 0.00.  Each power set
+lost some of its 200 alternatives to time limits, retaining 172 to 199.
 % Source: s5p Stage-7 approved wording, sec_eavailw.tex sec. 8.6 (sec:joint5d) at main cbd075e7;
 % REVIEW-20261006-s5p-stage7-note-wording.md (two rounds, findings resolved).
 
 \subsection{Lost pseudo-experiments}
 \label{sec:missing}
 
-Scheduler time limits interrupted or prevented \jtLostCal{} of the submitted
+Computing-job time limits interrupted or prevented \jtLostCal{} of the submitted
 calibration pseudo-experiments (\jtLostInterrupted{} interrupted,
 \jtLostNever{} never started) and \jtLostPow{} power pseudo-experiments, so the
 decisions in Table~\ref{tab:joint} were evaluated on the completed experiments.
 A sensitivity computed before the lost outcomes were known showed that every
-decision could change under a realizable assignment of them: had every
-interrupted experiment exceeded the observed statistic, no test would have been
-rejected.  The lost seeds were therefore rerun, report-only, under a procedure
-fixed and independently reviewed beforehand~\cite{JointTestRecovery2026}, which
-required a rerun of 16 completed seeds to reproduce them exactly (all did), so
-each recovered experiment is the lost one.  None reaches the observed statistic in any test, claim variant or
-robustness variant, so every submitted pseudo-experiment has now been observed
-and no assignment of the lost outcomes changes any decision.  The closest
-approach is \num{4.6} below the observed value of \num{868.6}, in the
-$\pm\jtMoneKappaRobust\,\delta_{\mathrm{M1}}$ robustness variant of the
-GENIE~+~MEC shape test; the next is \num{49.8} (GENIE CV shape, same variant).
+decision could change: had every interrupted experiment exceeded the observed
+statistic, no test would have been rejected.  The lost seeds were therefore
+rerun, report-only, under a procedure fixed and independently reviewed
+beforehand~\cite{JointTestRecovery2026}.  That procedure required a rerun of 16
+completed seeds to reproduce them exactly, and all did, so each recovered
+experiment is the lost one.  None reaches the observed statistic in any test,
+claim variant or robustness variant: every submitted pseudo-experiment has now
+been observed, and no assignment of the lost outcomes changes any decision.
+The closest approach is \num{4.6} below the observed value of \num{868.6}
+(GENIE~+~MEC shape, $\pm\jtMoneKappaRobust\,\delta_{\mathrm{M1}}$ robustness
+variant); the next is \num{49.8} (GENIE CV shape, same variant).
 With complete batches the sequential rule would have stopped the Tune~v1,
 GENIE CV, GENIE~+~MEC and GiBUU nulls one batch earlier, at $B=1200$, with the
 same decisions.  The decisions remain those of the frozen evaluation.  An
 independent recomputation confirms the resolution against the frozen variant
 shifts; the reading with the recovered experiments added to the calibration was
 reproduced only by a replay of the same rules, a consistency check rather than
-an independent recomputation, and the earlier stopping points rest on the
-campaign's self-validated re-application of the sequential rule.
+an independent recomputation, and the earlier stopping points rest on a
+re-application of the sequential rule checked only within the analysis.
 % Source: RECORD-20261005-s5p-joint-5d-inference-result.md sec. 5;
 % missing-sensitivity.json f48e16ef...; PROCEDURE-20261005-s5p-lost-seed-recovery.md;
 % RECORD-20261006-s5p-lost-seed-recovery-resolution.md (b354cdf7); cross-check 00009056;
 % Joseph's disposition DECISION-20261005-...-lost-seed-recovery.md sec. 5 (538739ff): "Certified,
 % margin disclosed", required disclosures 1-5 all stated above.
 
-\subsection{Detector-response condition}
+\subsection{Hadronic-response condition and recoil-energy sensitivity}
 \label{sec:response}
 
 MINERvA's recoil-energy analyses assign a hadronic-energy response uncertainty
@@ -664,7 +676,7 @@ of 0.35--\SI{2.0}{GeV/c}~\cite{MINERvA:2015testbeam}; neutrons and
 higher-momentum hadrons, which matter at high $W$, lie outside that sample.  A
 re-unfold with unscaled recoil reproduces the frozen decisions, with every claim
 $p$ value inside the range spanned by the data's rounding variations.  At both
-$-4\%$ and $+4\%$ every one of the ten rejections holds: the observed statistics
+$-4\%$ and $+4\%$ every one of the ten rejections holds.  The observed statistics
 move by up to about \SI{11}{\percent} from their frozen values, nine tests keep $k=0$, and NuWro's shape
 test, the closest to its null, changes from $k=1$ to $k=3$ of $1751$ at $+4\%$
 ($p=0.0023$, against a Holm threshold of $0.05$).  The evaluation was
@@ -685,15 +697,16 @@ the response model is not shown to be complete.
 % re-unfold); independent check REPORT-20261006-s5p-recompute-w2-recoil-check.md (9ffc4ddd, on main):
 % AGREE 1379/1379 on all three copies, control PASS (fallback), 150/150 per-sign fields.
 
-\section{Uncertainty status}
+\section{Status of a five-dimensional uncertainty}
 \label{sec:uncertainty-status}
 
-A scalar five-dimensional covariance is adopted under a digest-bound exception,
-and its \zprojCells-cell $(\Eavail,W)$ projection is built; no superseded or
-historical covariance is used here, and the joint tests do not use it.  We quote
-no significance from it, and the reason is measured rather than precautionary.
-In a dedicated campaign of two companion covariances built at two
-estimator-seed settings (products distinct from the adopted bytes), varying the
+One scalar five-dimensional covariance has been adopted under a documented
+exception that covers that product alone, and its \zprojCells-cell
+$(\Eavail,W)$ projection has been built; the joint tests do not use it, and no
+superseded or historical covariance is used here.  We quote no significance
+from it, for a measured reason rather than as a precaution.  In a dedicated
+study of two companion covariances built at two estimator-seed settings
+(products distinct from the adopted one), varying the
 seed moves the projected uncertainty by \SI{\sprojMeasured}{\percent}, against a
 \SI{\sprojBound}{\percent} movement limit fixed before production.  That movement
 did not fall with ensemble size over the range tested:
@@ -714,22 +727,24 @@ moves the projected central values by at most
 \SI{\cvMoveOverSigmaMax}{\percent} of their own quoted uncertainty (median
 \SI{\cvMoveOverSigmaMed}{\percent}).
 
-A separate campaign designed to construct a five-dimensional measurement with
-qualified total uncertainties did not admit any reporting definition: none could
-meet its predeclared useful-precision targets with any configuration its rules
-allowed, a scientific rather than a computational limitation.  The joint tests
-above were its remaining,
-separately admitted branch.  For the fallback definition, the
-bounded model-dependence component alone exceeded the total-width target.  Full-event point-cloud (PET) classifiers that
-could replace the scalar learner remain diagnostic and method development: the
-historical nominal/statistical pairing was declined, no PET uncertainty product
-is adopted, a subsequent improvement study adopted no candidate, and a
+A separate study designed to construct a five-dimensional measurement with
+qualified total uncertainties admitted no reporting definition: none could meet
+its predeclared useful-precision targets with any configuration its rules
+allowed, a scientific rather than a computational limitation.  For its fallback
+definition, the bounded model-dependence component alone exceeded the
+total-width target.  The joint tests above were the study's other branch,
+admitted separately under its own criteria.
+
+Full-event point-cloud (PET) classifiers that could replace the scalar learner
+remain diagnostic and method development: an earlier pairing of a PET central
+value with a bootstrap statistical-covariance estimate was declined, no PET
+uncertainty product is adopted, a subsequent improvement study adopted no candidate, and a
 final-design study found no eligible design~\cite{PETImprovement2026,PETFinalDesign2026}.  An exploratory,
 exact-paired simulation comparison with a HistGradientBoosting OmniFold (distinct
 from the production LightGBM) found better recovery of an injected energy tilt
-for PET than for that tree method (a binned unfolding of the same bins matched PET
-on the tilt) but better recovery of all three tested generator reweightings for the
-tree method~\cite{PETGBDT2026}; it establishes neither a general method ranking
+for PET than for that tree method, which a binned unfolding of the same bins
+matched, but better recovery of all three tested generator reweightings for the
+tree method~\cite{PETGBDT2026}.  It establishes neither a general method ranking
 nor an uncertainty comparison.
 % Condensed from main's paper_body.tex at 30942b49 (PR #20, e55f6e9f); PET sources: VL164-VL167
 % (final design, NO_ELIGIBLE_DESIGN), VL168 (PET vs GBDT), improvement REPORT-20260922.md sec. 12;
@@ -745,21 +760,20 @@ nor an uncertainty comparison.
 An unbinned event-weight unfolding reproduces the published two-dimensional
 MINERvA inclusive measurement and extends it to five simultaneous observables
 whose central values pass marginal anchors and closure tests and recover the
-known low-recoil behavior.  The measured limitations --- a fixed-truth
-undercoverage of the two-dimensional statistical band as first built (the rebuilt
-band has not been re-tested), a background bias at
-high $W$, and a regularization bias under generator-sized shape changes ---
-are reported with the results they affect, and they prevent a qualified
-five-dimensional measurement.  A joint test calibrated through the full chain
-provides a statement about specified predictions that does not require such a
-measurement.
-Frozen joint tests of five neutrino-interaction predictions against the
-five-dimensional data reject all ten simple hypotheses at familywise level 0.05
-under the declared calibration model.  Every pseudo-experiment first lost to
-scheduler limits has been observed in a report-only recovery without changing a
-decision, and each rejected test already has $p<0.05$ in at least one matched
-coarse projection, so no claim is made that the joint information adds
-discrimination.  The rejections are conditional: the calibration has no
+known low-recoil behavior.  Its measured limitations, a fixed-truth undercoverage of the two-dimensional
+statistical band as first built (the rebuilt band has not been re-tested), a
+background bias at high $W$ and a regularization bias under generator-sized
+shape changes, are reported with the results they affect and prevent a
+qualified five-dimensional measurement.
+
+A joint test calibrated through the full chain gives a statement about
+specified predictions that does not require such a measurement.  Under the
+declared calibration model, frozen joint tests of five neutrino-interaction
+predictions against the five-dimensional result reject all ten simple
+hypotheses at familywise level 0.05, and a report-only recovery of every
+pseudo-experiment first lost to time limits changes no decision.  Each rejected
+test already has $p<0.05$ in at least one matched coarse projection, so no
+claim is made that the joint information adds discrimination.  The rejections are conditional: the calibration has no
 calorimetric recoil-response uncertainty, and its fine-grid null is not
 numerically converged, with the unmeasured residual below the grid entering
 through variants set by an assumed convergence rate.  An exploratory $\pm4\%$
@@ -771,38 +785,3 @@ Removing these two conditions would need a calorimetric response band drawn in
 the calibration and a demonstrated bound on the sub-fine-grid residual; a complete
 five-dimensional measurement release would additionally require a matched total
 uncertainty with validated coverage.
-
-\section{Data availability}
-\label{sec:data-availability}
-
-The input data and simulation are the MINERvA open-data AnaTuples, released under
-CC0~\cite{MINERvA:OpenData}; this analysis used an earlier production of that
-release whose file names and sizes, but not checksums, are recorded with the release.
-A release of about \SI{16}{MB} lets a reader, with numpy, scipy and matplotlib
-only, recompute every $p$ value, decision, robustness label and power figure of the
-joint tests, the lost-seed resolution, the coarse-projection comparison and the
-fine-grid $L_{2}$ ratios of condition~(i); regenerate Figs.~\ref{fig:validation}--\ref{fig:joint-nulls}; and recompute the
-numbers quoted from Figs.~\ref{fig:validation}--\ref{fig:generator-context}.  It
-contains the per-pseudo-experiment cell values after the declared nuisance terms,
-their seeds, the predictions, the test domains, the variant shifts, the metric and
-the observed data vector, the arrays behind Figs.~\ref{fig:validation}--\ref{fig:generator-context},
-and the digest of every source product.  A replay of the packaged files from an
-empty directory reproduces every recorded value and every checked figure number;
-an earlier candidate of the release was also replayed by an independent reader.  The remaining quoted numbers (the
-two-dimensional uncertainty and coverage figures, the closure and bias studies,
-the low-recoil comparisons, the recoil-response sensitivity, the proxy
-convergence rate of condition~(i) and the covariance-status measurements) are not
-recomputable from this release.  The multiplier scan of Sec.~\ref{sec:joint} is
-recomputable from the released sufficient inputs with the scan code of
-Ref.~\cite{JointTestKappa2026}, but it is not part of the release's own
-verification.
-Extraction from the pseudo-experiment products, which are archived
-(\SI{2.3}{GB}), and the event-level processing are not reproducible from it
-either; they need the archived products and the open-data AnaTuples together
-with the generator samples produced for this analysis.
-\pubhold{deposit identifier and access route, after the separately authorized
-release decision.}
-% Source: docs/publication/release/RC6-README.md and docs/publication/corrections-20261008/ (RC6 identity, empty-
-% directory verification; RC5 superseded); RC1-REPLAY-RECEIPT-20261006.md (the earlier independent empty-directory replay, of RC1);
-% RC4 46f801bf... preserved unchanged at /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/; product archive
-% /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/ (SHA256SUMS 1a72cb43..., main 275b996d).

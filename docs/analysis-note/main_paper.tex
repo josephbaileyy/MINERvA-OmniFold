@@ -11,7 +11,7 @@
 % Joseph's disposition, Stage-7 wording). Do not submit a build that
 % renders any \pubhold.
 % ====================================================================
-\documentclass[aps,prd,reprint,superscriptaddress,nofootinbib,floatfix]{revtex4-2}
+\documentclass[aps,prd,reprint,superscriptaddress,nofootinbib,floatfix,longbibliography]{revtex4-2}
 
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amssymb}
@@ -36,8 +36,8 @@
 \begin{document}
 \raggedbottom % reprint-mode layout: avoid stretched inter-paragraph gaps (cosmetic; the journal re-typesets)
 
-\title{Unbinned Five-Observable Unfolding of MINERvA Charged-Current
-Neutrino Data and Calibrated Joint Tests of Generator Predictions}
+\title{Unbinned five-observable unfolding of MINERvA inclusive charged-current
+neutrino data and calibrated joint tests of generator predictions}
 
 \author{Joseph Bailey}
 \email{josephrb@stanford.edu}
@@ -50,32 +50,26 @@ Neutrino Data and Calibrated Joint Tests of Generator Predictions}
 \date{\today}
 
 \begin{abstract}
-Can neutrino-interaction generators be tested jointly in five observables when
-no qualified five-dimensional cross-section uncertainty exists?  We apply
-unbinned machine-learning unfolding, to our knowledge for the first time on
-neutrino-scattering data, to MINERvA medium-energy $\nu_{\mu}$ charged-current
-inclusive data from the MINERvA open-data release.  A simultaneous
-two-observable unfold reproduces the published
-$d^{2}\sigma/(d\pT\,d\pPar)$ measurement.  Adding available energy,
-three-momentum transfer and hadronic invariant mass, without an explicit
-five-dimensional response tensor, gives central values that pass marginal
-anchors and injected-shape closure tests; the estimator's measured model
-dependence prevents a qualified total uncertainty at useful precision, so no
-five-dimensional cross
-section with uncertainties is reported.  Joint total and shape
-statistics on the five-dimensional result are calibrated with pseudo-experiments
-that rerun the full unfolding under a declared nuisance model.  Under that
-model, all ten simple hypotheses formed from five predictions (MINERvA
-Tune~v1, GENIE~2.12.10 with and without MEC, NuWro~21.09, GiBUU~2019) are
-rejected at familywise level 0.05; pseudo-experiments first lost to scheduler
-limits were recovered, report-only, without changing a decision.  The
-rejections are conditional on the declared model, whose principal limitations
-are the absence of a calorimetric recoil-response uncertainty and an
-unconverged fine-grid null; an exploratory $\pm4\%$ recoil-response variation
-of the data unfold, not an uncertainty estimate, removes no rejection.  They
-are statements about the specified predictions, not a measured cross section,
-and no claim is made that the joint information adds discrimination beyond
-matched coarse projections.
+We apply unbinned machine-learning unfolding, to our knowledge for the first
+time on neutrino data, to MINERvA open data on medium-energy
+$\nu_{\mu}$ charged-current inclusive interactions, first reproducing the
+published cross section in muon transverse and longitudinal momentum.  Adding
+available energy, three-momentum transfer and hadronic invariant mass gives
+central values that pass marginal-normalization and injected-shape closure
+tests, but the estimator's measured model dependence prevents a qualified
+total uncertainty at useful precision: no five-dimensional cross section with
+uncertainties is reported.  Instead, joint total and shape statistics,
+calibrated with pseudo-experiments that rerun the full unfolding under a
+declared nuisance model, reject all ten simple hypotheses for five
+predictions (MINERvA Tune~v1, GENIE~2.12.10 with and without a
+two-particle--two-hole component, NuWro~21.09, GiBUU~2019) at familywise level
+0.05, with every submitted pseudo-experiment observed.  The rejections are
+conditional on that model, which lacks a calorimetric recoil-response
+uncertainty and whose fine-grid null is not converged.  An exploratory
+$\pm4\%$ recoil-energy scaling of the data, not an uncertainty estimate,
+removes no rejection.  The tests concern the specified predictions, not a
+measured cross section, and claim no discrimination beyond matched coarse
+projections.
 \end{abstract}
 
 \maketitle
@@ -100,7 +94,46 @@ tools are not authors.  The authors take responsibility for the content.
 % proposed text docs/publication/submission/AI-DISCLOSURE-PROPOSED.md, transcribed verbatim).
 \end{acknowledgments}
 
-\bibliographystyle{apsrev4-2}
+% Data Availability Statement: APS places it after the Acknowledgments and before the references
+% (APS Journals Style Guide for Authors, Feb. 2026; required for PRD since 2024-09-04).
+\section*{Data availability}
+\label{sec:data-availability}
+
+The input data and simulation are the MINERvA open-data AnaTuples, released under
+CC0~\cite{MINERvA:OpenData}; this analysis used an earlier production of that
+release, whose file names and sizes, but not checksums, are recorded with the
+release described here.
+A release of about \SI{16}{MB} lets a reader, with numpy, scipy and matplotlib
+only, recompute every $p$ value, decision, robustness label and power figure of the
+joint tests, the lost-seed resolution, the coarse-projection comparison and the
+fine-grid $L_{2}$ ratios of condition~(i); regenerate Figs.~\ref{fig:validation}--\ref{fig:joint-nulls}; and recompute the
+numbers quoted from Figs.~\ref{fig:validation}--\ref{fig:generator-context}.  It
+contains the per-pseudo-experiment cell values after the declared nuisance terms,
+their seeds, the predictions, the test domains, the variant shifts, the metric and
+the observed data vector, the arrays behind Figs.~\ref{fig:validation}--\ref{fig:generator-context},
+and the digest of every source product.  A replay of the packaged files from an
+empty directory reproduces every recorded value and every checked figure number;
+an earlier version of the release was also replayed by an independent reader.  The remaining quoted numbers (the
+two-dimensional uncertainty and coverage figures, the closure and bias studies,
+the low-recoil comparisons, the recoil-response sensitivity, the proxy
+convergence rate of condition~(i) and the covariance-status measurements) are not
+recomputable from this release.  The multiplier scan of Sec.~\ref{sec:joint} is
+recomputable from the released sufficient inputs with the scan code of
+Ref.~\cite{JointTestKappa2026}, but it is not part of the release's own
+verification.
+Extraction from the pseudo-experiment products, which are archived
+(\SI{2.3}{GB}), and the event-level processing are not reproducible from it
+either; they need the archived products and the open-data AnaTuples together
+with the generator samples produced for this analysis.
+\pubhold{deposit identifier and access route, after the separately authorized
+release decision.}
+% Source: docs/publication/release/RC6-README.md and docs/publication/corrections-20261008/ (RC6 identity, empty-
+% directory verification; RC5 superseded); RC1-REPLAY-RECEIPT-20261006.md (the earlier independent empty-directory replay, of RC1);
+% RC4 46f801bf... preserved unchanged at /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/; product archive
+% /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/ (SHA256SUMS 1a72cb43..., main 275b996d).
+
+% Style: revtex4-2 with aps,prd selects apsrev4-2 itself; an explicit \bibliographystyle would bypass
+% the class's control entry, which longbibliography needs to print article titles.
 \bibliography{technote,publication}
 
 \end{document}
