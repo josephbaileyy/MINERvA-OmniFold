@@ -287,3 +287,28 @@ this record's 185 is the same one-token gap as in cycle 1); body 5,273 against t
 captions 425. Build: 0 undefined, 0 BibTeX errors, the same five pre-existing BibTeX warnings. Its one note (R1: the
 caption row still said "offset") is fixed in this record. `git status --short` was empty in the reviewer worktree
 after both cycles. The review budget (two cycles) is spent.
+
+### 8d. Final builds, revised PDF, standalone sync and remote heads
+
+| | |
+|---|---|
+| canonical build at `f4669b07` (clean tree; `docs/analysis-note` is identical at the record-only commits after it) | `build_all.sh` rc 0, `RESULT :: PASS … head=f4669b07… tree=clean`; note 123 / primer 9 / paper 11 pp; 0 BibTeX errors |
+| revised PDF (local; not sent) | `../MINERvA-OmniFold-prd-editorial-pdf-20261008/MINERvA-OmniFold-PRD-article-editorial-f4669b07.pdf`, 11 pp, sha256 `6d81cfea…` (the digest includes the build date). The baseline build for comparison is beside it (`…-baseline-b612ee3a.pdf`, `0f62fc7f…`). It shows the one red `[HOLD: …]` for the deposit identifier. |
+| standalone before the copy | a fresh worktree of `MINERvA-OmniFold-Analysis-Note` `origin/main` `e1af61e3` equalled canonical `b612ee3a` `docs/analysis-note` in all 115 shared tracked files (`cmp`); only its own `.gitignore` and `AGENTS.md` differ |
+| standalone sync | `main_paper.tex`, `paper_body.tex` and `publication.bib` copied from `f4669b07` to the standalone branch **`sync-prd-editorial-pass-20261008`**, commit **`687b48ab345ca2cfa39af85e3d087978e6472c01`**. Afterwards every tracked file equals canonical (`cmp`). Standalone `build_all.sh` rc 0 at 123 / 9 / 11 pp (`head=unknown` is the documented fallback); Overleaf target rc 0, 11 pp, 0 undefined. `pdftotext` of all three PDFs is identical to the canonical build. |
+| why a branch | the canonical PR stays unmerged by instruction, so standalone `main` stays equal to canonical `main`. The branch should merge together with the canonical PR. |
+| remote heads (`git ls-remote`, 2026-10-08) | `MINERvA-OmniFold`: main = `b612ee3ac9b517c56e1153223576b7c3f5dcd32a`, `docs/prd-editorial-pass-20261008` = `f4669b07…` before this record's commits. `MINERvA-OmniFold-Analysis-Note`: main = `e1af61e3cc5d571be97e10f5e759ccf9afdabfd2`, `sync-prd-editorial-pass-20261008` = `687b48ab345ca2cfa39af85e3d087978e6472c01`. |
+
+### 8e. Closeout (`CAMPAIGN-REVIEW-20260929.md` §6 item 7)
+
+| item | value |
+|---|---|
+| owner | Claude Opus 5.5 (`claude-opus-5-5`), session `3df6bbfa-2fb6-47ba-a147-f5d566eb0e92`; the effort setting is not exposed to the session |
+| helpers | one research agent (web, read-only) for §2; one fresh read-only reviewer for §8b–§8c |
+| input commits | canonical `b612ee3a`; standalone `e1af61e3` |
+| output commits | canonical `da4ce85d` (implementation) → `f4669b07` (cycle-1 repairs) → record-only commits; standalone `687b48ab` |
+| compute | none (local LaTeX builds only) |
+| inference cost | unavailable |
+| accepted consequential findings | B1–B3 (§8b) |
+| residual issues | §6; the scope decisions in §7 |
+| decision resolved | the article is presentation-ready for Joseph's readthrough, with the §7 decisions his |

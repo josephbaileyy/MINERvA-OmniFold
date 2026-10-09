@@ -122,3 +122,11 @@ compared.
 | I7 | Unchanged. The "about 11%" is now recorded with its baseline: 0.1095 against the frozen observed statistic, MnvTune total at +4%. | `publication/w2/W2B-REPORT-20261006.md`, addendum 2026-10-08 |
 | L7 / Ascencio | **Disclosure added.** The two analyses define true E_avail differently. In this analysis's simulation the broader definition moves about 11% of the population of our lowest truth bin (E_avail < 0.1 GeV) out of it. The two common cells span our three lowest bins, for which the shift has not been computed; it has the residual's sign, but it is not a correction and is not propagated (OI-59, open). | corrections record, G8; `docs/EAVAIL_DEFINITION.md` §2, §4 |
 | L10 (seed sensitivity) | **Redundant exponent removed.** "Fitted exponent 0.000" did not reproduce as a fit (−0.014); the three tabulated values carry the statement. | corrections record, G5 |
+
+## G. Status update, 2026-10-08 (editorial and presentation pass; no status changes)
+
+The article's wording was revised for presentation (`EDITORIAL-20261008-prd-presentation-pass.md`, branch
+`docs/prd-editorial-pass-20261008`). **No row's status changes.** The rows above quote article line numbers from
+earlier versions; those locations moved. One factual correction to the article's wording came out of this pass's
+review: the GENIE and NuWro predictions are described as reweighted to the analysis flux, with added 50–100 GeV
+samples, rather than "repaired" (`KNOWN_ISSUES.md` 83). Rows L7 and L9 are unaffected.
