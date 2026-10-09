@@ -116,8 +116,8 @@ one it uses.
 \begin{itemize}
 \item \emph{Two-dimensional central value} (Sec.~\ref{sec:validation}): five
 iterations of depth-three gradient-boosted decision trees with 100 trees, fitted
-with exact-split scikit-learn~\cite{Pedregosa:2011sklearn} gradient boosting, and a
-purity-based background subtraction.
+with exact-split scikit-learn~\cite{Pedregosa:2011sklearn} gradient boosting with an
+unpinned seed, and a purity-based background subtraction.
 \item \emph{Three- to five-dimensional central values}
 (Secs.~\ref{sec:validation}--\ref{sec:central}, Figs.~\ref{fig:joint}
 and~\ref{fig:generator-context}): the same five-iteration configuration fitted

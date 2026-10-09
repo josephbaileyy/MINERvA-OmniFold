@@ -37,6 +37,7 @@ Canonical repository, this branch:
 - `docs/analysis-note/sec_intro.tex`
 - `docs/analysis-note/sec_summary.tex`
 - `docs/analysis-note/app_statmethods.tex`
+- `docs/analysis-note/main_note.tex` (abstract only; added 2026-10-09T20:35Z, before editing, for review finding F1)
 - `KNOWN_ISSUES.md`, row 88 only
 - `docs/publication/CLAIMS-20261005-claim-to-evidence.md` (a dated status section only)
 - `docs/publication/submission/PACKAGE-MANIFEST-20261006.md` (a dated status note only)

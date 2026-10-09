@@ -82,8 +82,8 @@ The engine supports interchangeable backends (component terminology and
 code paths in App.~\ref{app:codebase}). The published central value uses
 \texttt{exact}, sklearn \texttt{GradientBoosting} with single-threaded
 exact-split CART.
-% Provenance: the production launcher passes no \texttt{-{}-estimator} flag and therefore takes
-% the driver's default.
+% Provenance: the production launcher passed no \texttt{-{}-estimator} flag; the driver revision it ran
+% (d1bc8813) had no estimator option and always used the exact backend.
 The uncertainty ensemble --- the systematic universe sweep
 and the Poisson bootstrap --- is produced with \textbf{LightGBM} ($100$ trees,
 $8$ leaves, learning rate $0.1$; identical settings for the step-1 classifier,
@@ -109,7 +109,9 @@ retained for method-dependence studies (\S\ref{sec:results-tension}).
 
 The central value is a single exact-split run whose seed was not pinned: its
 production launcher passed no seed, and the driver revision it ran had no seed
-option, so scikit-learn's \texttt{random\_state} was \texttt{None}. The run-to-run
+option, so scikit-learn's \texttt{random\_state} was \texttt{None}. (This follows from
+the launcher and driver revision; the run's own log was not found, and the
+product records no seed.) The run-to-run
 variation of this estimator has not been measured. The seeds are pinned only in
 the LightGBM ensembles: seed~1 for the Poisson bootstrap, seed~42 for the
 universe sweep and its matched central value, and seeds 1--10 for the ML band
