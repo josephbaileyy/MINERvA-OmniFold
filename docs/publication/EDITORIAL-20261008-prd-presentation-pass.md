@@ -373,3 +373,35 @@ macro files are unchanged. Its identity, reproducibility and verification are re
 canonical `docs/analysis-note` file equals the standalone copy (`cmp`). Standalone `build_all.sh` rc 0 at
 123 / 9 / 11 pp, and `pdftotext` of all three PDFs is identical to the canonical build. Standalone `main` is unchanged
 at `e1af61e3`. The revised PDF is `../MINERvA-OmniFold-prd-editorial-pdf-20261008/MINERvA-OmniFold-PRD-article-editorial-8fa79cb1.pdf`.
+
+## 11. PET removed from the article; paragraph lengths (Joseph, 2026-10-08)
+
+**PET.** Joseph: "yes drop PET from the letter" (the article). This supersedes §7 item 4.
+- The Sec. VII paragraph on full-event point-cloud (PET) classifiers, with its three references, is removed.
+- No result, figure or conclusion of the article depended on it. The claim map allows dropping it (row L12), and
+  the 2026-08-20 ruling requires only that PET read as diagnostic wherever it appears.
+- The companion note keeps the PET record.
+- The three PET references were also the ones printing without a locator (§6 item 4), so that issue is gone.
+- Measured after the removal:
+  - body text (texcount) 5,000 → 4,884 words;
+  - references 37 → 34;
+  - "PET" occurs 0 times in the rendered article;
+  - 11 pp.
+
+**Paragraph lengths.** The table counts the five comparable papers' arXiv HTML (LaTeXML `ltx_para`) and this
+article's source. Both columns count words, with each inline math expression as one word, and exclude the abstract,
+captions, lists, acknowledgments, appendices and references. The methods are equivalent but not identical. LaTeXML can
+split a paragraph at a displayed equation.
+
+| paper | paragraphs | median | mean | p90 | max | > 150 words |
+|---|---:|---:|---:|---:|---:|---:|
+| Ruterbories et al. (MINERvA), PRD 104, 092007 | 41 | 110 | 119 | 198 | 262 | 27% |
+| Abe et al. (T2K), PRD 103, 112009 | 62 | 130 | 140 | 230 | 612 | 35% |
+| Acero et al. (NOvA), PRD 107, 052011 | 44 | 131 | 153 | 222 | 400 | 43% |
+| Huang et al. (T2K OmniFold), PRD 112, 012008 | 39 | 144 | 162 | 256 | 363 | 49% |
+| Abratenko et al. (MicroBooNE), PRD 110, 013006 | 151 | 148 | 156 | 227 | 319 | 47% |
+| **this article** (after §11) | 37 | **133** | 144 | 256 | 288 | 41% |
+| this article at the baseline `b612ee3a` | 36 | 140 | 150 | 258 | 299 | 44% |
+
+The article's paragraphs are within the range of the comparison set: the median is mid-range and the 90th percentile
+equals the T2K OmniFold paper's.
