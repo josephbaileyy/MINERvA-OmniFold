@@ -213,3 +213,23 @@ conclusion.
 | New scratch/output | the worktree (0.4 GiB of checkout files) plus a TMPDIR under 1 MiB; committed records under 0.1 MiB | 1 GiB |
 | Cluster node-hours, GPU-hours, training, toys | 0 | 0 |
 | Implemented improvements / source files / repairs | 3 / 0 / 0 | 3 / 2 / 2 |
+
+## Repair 1 (E finding F13, cycle 1 of 2)
+
+E's independent review reproduced the four navigation tasks at the integrated commit and found one
+citation-precision defect in `2D_OMNIFOLD_REFERENCE.md`, "Import constraint". The fix is in this
+commit; the source checks were made in this session.
+
+- **Citation.** D's text attributed both conditions to `AUTHORIZATION-20260903-oi136-failopen-repair.md:41`.
+  That row names the in-`main()` insert and the driver's sha ("pinned in three places"). It does not
+  name the helper digest. The helper-digest condition is now cited to
+  `nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py:266-274` (`OMNIFOLD_SHA256`) and to
+  `PLAN-20261008-uncertainty-investigation-preparation.md:18`. Both were checked.
+- **Caveat added.** Both `OI-136` ratchet suites fail already on a tree whose `.py` files equal
+  `ad2716d8` (`git diff --stat ad2716d8 HEAD -- '*.py'` is empty). Measured: 2 failed, 15 passed
+  ([`oi136_ratchets.txt`](oi136_ratchets.txt)). The two failing tests are the set-membership checks,
+  which flag nine October rooted-insert sites; E records these as `KNOWN_ISSUES.md` 89, which was not
+  yet on E's pushed branch when D checked. The driver's two condition tests pass.
+- **Not changed.** `README.md` "Before changing the 2D driver" carries the same two-condition
+  attribution to `:41`. That is base text and outside F13. It is left for E's decision; repairing it
+  would use D's second and last repair.

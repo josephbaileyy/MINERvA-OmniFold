@@ -121,11 +121,29 @@ OmniFold extraction path.
 
 **Import constraint (before editing the driver).** The driver loads
 `unbinned_unfolding/python/omnifold.py` through a rooted `sys.path` insert,
-the `OI-136` pattern. Joseph ruled to leave it under two conditions: the
-insert stays inside `main()`, and `omnifold.py` keeps its digest. The
-record is `docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md:41`.
-`nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py` fails if either
-condition breaks. The 3D and N-D drivers, PET and a note figure script
+the `OI-136` pattern. Joseph ruled on 2026-08-23 to leave it. The ruling
+is recorded at `docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md:41`,
+whose row names a dormant insert inside `main()` and the *driver's* sha,
+"pinned in three places". The second condition, that `omnifold.py` keeps
+its digest, is not stated on that row. It is stated in the ratchet test,
+`nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py:266-274` (constant
+`OMNIFOLD_SHA256`), and in
+`docs/orchestration/PLAN-20261008-uncertainty-investigation-preparation.md:18`.
+That test fails if the insert leaves `main()` or the helper's digest
+changes, and it says the decision then returns to Joseph.
+
+*Caveat:* both `OI-136` ratchet suites already fail on the base, before any
+edit to the driver. Those suites are `test_oi136_rooted_insert_ratchet.py`
+and `test_oi136_failopen_inventory_ratchet.py`. Their failing tests are
+`test_no_file_outside_the_named_set_feeds_a_rooted_insert` and
+`test_the_fail_open_set_is_EXACTLY_the_recorded_one`, and the cause is
+unrelated to the driver: nine October rooted-insert sites outside the
+recorded set (recorded by the uncertainty-preparation integration as
+`KNOWN_ISSUES.md` 89). This was measured on 2026-10-09 on a tree whose `.py`
+files equal `ad2716d8`: 2 failed, 15 passed. The two tests of the driver's
+conditions, `test_the_2D_driver_still_confines_its_insert_to_a_function`
+and `test_the_omnifold_helper_has_not_moved`, pass. Read which test fails
+rather than the suite's exit code. The 3D and N-D drivers, PET and a note figure script
 import the driver as `u2d`, and receipts and a launcher record its bytes.
 See `README.md`, "How the workstreams connect" and "Before changing the 2D
 driver", and re-run the `git grep` there rather than trusting a count. New N-D/PET compute
