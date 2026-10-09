@@ -305,8 +305,18 @@ PROBE = os.path.join("docs", "orchestration", "state",
 #     2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py
 # Superseded pair, retained as an as-of referent:
 #   2026-09-03 repair   9 / 0939e1595e1bf5ed7896436d2ca1e090c47525258880bac20f7b3eb5f312a350
-FAILOPEN_COUNT = 18
-FAILOPEN_SHA256 = "04357e1a11b49bb5a7f7a65a1502d101d5828052bf07e6a10d7d3bb43e4930e0"
+#
+# ===== 18 -> 16 on 2026-10-09: THE TWO LIVE OCTOBER PRODUCERS REPAIRED =====
+# Same authority. Each now derives its import root from `__file__` and executes its repository
+# modules from hashed bytes of that checkout (`2d-unfolding/uq/coverage_fixed_truth/n2/execution.py`):
+#   2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py  OMNIFOLD_PY = parents[2]/unbinned_unfolding/python
+#                                                            (the literal leaves the file: candidates 144 -> 143)
+#   2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py     UQ = parent (2d-unfolding/uq); REALBOOT stays a
+#                                                            DATA root, so the file moves to insert-but-not-rooted (66 -> 67)
+# On the canonical checkout each derived path equals the literal it replaced. Superseded pair:
+#   2026-10-09 classification   18 / 04357e1a11b49bb5a7f7a65a1502d101d5828052bf07e6a10d7d3bb43e4930e0
+FAILOPEN_COUNT = 16
+FAILOPEN_SHA256 = "7aa2943198612b5e904d37c2d75f3ac9b0fe33cabeb69bcddd7a7e87fc334aa9"
 
 # The probe's own positive controls, restated here so this file does not inherit its blind
 # spots. Relative to the repo root, as the probe prints them.
