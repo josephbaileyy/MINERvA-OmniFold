@@ -8,7 +8,7 @@
 | `Owned files` | Only `docs/orchestration/state/next-preparation-20261009/pet/`: `REPORT.md`, `reduce_saved.py`, `check_independent.py`, `design_cost.py`, `test_pet_q.py`, `results/saved_reductions.json`, `results/design_cost.json` and `results/operands.tsv`. No other path was written. |
 | `Pinned inputs` | Read at `5ac9706a`. The operands are 956 committed score files plus 2 completeness records, each listed with its sha256 in `results/operands.tsv`; the digest of that list is `bb809717…1324e7`. The governing records are: `nd-unfolding/pet/final_design/DECISION_RECORD-pet-final-design.md`; `PROTOCOL-20260925.md` (§§2, 3, 4, 6.4, 8, 9, 11; Amendments 2c, 5, 5b, 6); `freeze/COMPLETENESS-s5c_a5_H2S1T24.tsv` (sha256 `6d2a25a7…`); `freeze/COMPLETENESS-look1.tsv`; `nd-unfolding/pet/generator_diagnosis/REPORT-20261006.md`; `nd-unfolding/pet/gbdt_comparison/REPORT-20261005.md`; the Gate-6 receipt `docs/orchestration/state/gate6-member-trajectories-result-56847059.json` (sha256 `8f40541f…b6a5`); and `closeout/REPORT.md` §11. |
 | `Resources` | See §12. Local CPU: < 0.05 core-hours for the author, plus about 1 core-minute for the reviewer, all single-threaded, with peak RSS ≤ 100 MB. New scratch/data: 0 bytes from the author (nothing was copied) and < 1 MB from the reviewer. Tracked bytes added: ≈ 0.40 MB. Cluster/GPU: **0**. Training: **0**. |
-| `Review` | One fresh read-only reviewer: cycle 1 at `a1de6d14`, with 8 MATERIAL and 7 MINOR findings, all repaired in one batch (§11); the focused re-review is recorded in §11. |
+| `Review` | One fresh read-only reviewer. Cycle 1 at `a1de6d14`: 8 MATERIAL and 7 MINOR findings, repaired in one batch (`815d6329`, `7658ad80`). Cycle 2, the focused re-review at `7658ad80`: **all 15 RESOLVED**, no new material finding, and 2 new MINOR findings. Those were applied as post-review text edits and were not re-reviewed (§11). The review budget is spent. |
 | `Model / effort` | Author: Claude Opus 5.5 (`claude-opus-5-5`), as the session context states. Reviewer: a fresh Claude subagent of the same model family; this is not cross-provider independence. Effort: not observable. |
 | `Disposition` | **(1) Saved-output diagnosis.** **PASS** for the components identified at study scale on the development tilt, aggregate and by region (§4.2–4.4): internal member variance, between-experiment variance of the estimate and of its error, bias, coverage and asymmetry. **INCONCLUSIVE** for: the P×T interaction; σ_T² in the Poisson-weighted regime (two instruments 2× apart); member-mean bias and coverage outside the development tilt; and every data-scale term (§4.5). **(2) Interval question and discriminating experiment: PASS, conditional on a prior scope decision.** The 192-unfold pilot is not the smallest experiment for the binding question. E1 is designed, calibrated and priced (§§6–7). Its result changes a later spend only if Joseph first accepts a conditional-on-DEV validation scope or funds new simulation, because (3) holds otherwise. **(3) Complete procedure: FAIL** at the declared full-domain endpoint with independent inputs. Independent events would need ≈ 100–130× the inventory under per-decision sizing, or ≈ 225× under joint sizing (PROTOCOL §2: no further same-model simulation exists). The GPU cost is 63–67 % of the last recorded allocation at a 2 M-row prior under per-decision sizing, and 1.06–1.09× under joint sizing (§8). The publication-ready objective is **not** achieved. |
 | `Next action` | **First, Joseph's scope decision:** whether a PET coverage claim conditional on the inspected DEV bank (held-out cases, not held-out events) would be acceptable, or whether new simulation would be funded. If neither, no further PET interval experiment is justified, PET stays diagnostic, and the reopening conditions of §9 apply. **If yes, the next request is E1 look 1** (§7). That is 60 data-scale unfoldings of H2S1T24 K5, ≈ 575 A100-h including the 20 % reserve (forecast band 291–1,150), against P0's 165 A100-h, which cannot test interval coverage. |
@@ -190,7 +190,7 @@ The error-variance interval is mean ± t₅ √(W_r/6 + σ̂_De²), with σ̂_De
   - The six-member mean was never scored against those rules or the library. Its development-tilt E0 is 0.943 (sd 0.033, 120 replicates).
 - **The two estimators' expected histograms differ.**
   - E[mean] − E[single] is −0.11, −0.48, −1.14, −1.85, −1.79, −1.19 and +6.54 × 10⁻³ in aggregate bins 0–6, with z = −0.5 to −4.3 in bins 0–5 and +3.9 in bin 6.
-  - **The member mean is less biased in 6 of 7 aggregate bins, 6/7 low-acceptance and 5/7 moderate, but in only 1 of 7 good-region bins** (z of the difference −3.1 to −5.6 there).
+  - **The member mean is less biased in 6 of 7 aggregate bins, 6/7 low-acceptance and 5/7 moderate, but in only 1 of 7 good-region bins** (|z| of the difference 2.2–5.6 in the six bins where it is more biased).
   - The bootstrap bias correction 2 × single − mean(members) **increases** |bias| relative to the single fit in 7/7 aggregate, 6/7 low-acceptance, 5/7 moderate and 7/7 good bins. In aggregate bin 6 the bias goes to −17.6 × 10⁻³.
 - **The generator-diagnosis deficits are measured on single fits.**
   - The detector step under-fits the generator-reweighted pseudodata: detector-level R is 0.78–0.84 for PET against 0.93–0.94 for the GBDT.
@@ -319,14 +319,15 @@ Pricing is units × 1.05 (assumed failures) × u, divided by 0.8. u = 7.3 A100-h
 
   | E per case | k_crit | size at p = 0.63 | P(no-go) at p = 0.26 (study-scale) | p = 0.45 | p = 0.55 | p = 0.68 |
   |---|---|---|---|---|---|---|
-  | 2 | 2 | 0.012 | 0.37 | 0.09 | 0.03 | 0.006 |
+  | 2 | 1 † | 0.004 † | 0.22 † | — | — | — |
   | 3 | 5 | 0.012 | 0.54 | 0.13 | 0.04 | 0.006 |
   | **4 (look 1)** | 8 | 0.011 | **0.66** | 0.15 | 0.04 | 0.004 |
   | **8 (look 2)** | 22 | 0.011 | **0.94** | 0.32 | 0.07 | 0.002 |
 
   - These powers are per case.
+  - † The E = 2 row is the reviewer's exact beta-binomial convolution. The simulation picked k_crit = 2, whose exact size is 0.01258 > 0.0125. For E = 3, 4 and 8 the exact convolution agrees with the simulation (sizes 0.0125, 0.0106 and 0.0110; powers 0.539, 0.657 and 0.939). `design_cost.calibrated_futility` still reports the simulated E = 2 row; an admitted E1 must compute k_crit by exact convolution.
   - The Wilson-bound version in the first draft was anti-conservative at the boundary (0.021 at E = 4 against 0.0125) and is superseded.
-  - **Why E = 4 per case at look 1, not fewer.** Power is 0.66 at E = 4, against 0.54 at E = 3 and 0.37 at E = 2. The marginal 12 unfoldings per case buy about 0.12–0.29 power.
+  - **Why E = 4 per case at look 1, not fewer.** Power is 0.66 at E = 4, against 0.54 at E = 3 and 0.22 at E = 2 (exact). The marginal 12 unfoldings per case buy about 0.12–0.32 power.
 - **Scope of a fired no-go.**
   - For a fixed centre, coverage is monotone in half-width, so the no-go excludes **every interval centred on the six-member mean that is no wider than §9 in each low-acceptance bin**. That is all variance-only repairs, including S-II with Δ_bias = 0.
   - It does **not** exclude S-II with a bias allowance, S-I if it is wider than §9, a different centre (single fit, model-based correction) or a new estimator.
@@ -414,7 +415,7 @@ Figures are in `results/design_cost.json`, `costs`. They include 5 % failures, a
   - These need the 564,591 negative-weight background rows, a flux normalization, and a universe treatment. No per-event universe weights are known for the PET inventory; check this via `EVENT_IDENTITY_JOIN_CONTRACT.md`.
   - A total PET uncertainty also needs the joint correlation construction and `C_ML` (gbdt_comparison R3). The Gate-6 receipt's `do_not_construct_C_ML` applies to that family, so a new PET covariance would be a new, separately authorized family.
 
-**Conclusion.** The complete procedure at the declared full-domain endpoint with genuinely independent inputs is **infeasible with the existing simulation**: the events bind. Under joint sizing it also exceeds the recorded allocation at either prior size. This is the FAIL of disposition (3). It does not show that a conditional-scope or fiducial PET result is impossible; those are different endpoints.
+**Conclusion.** The complete procedure at the declared full-domain endpoint with genuinely independent inputs is **infeasible with the existing simulation**: the events bind. Under joint sizing (an independent-decisions bound; positively correlated decisions would need fewer replicates) it also exceeds the recorded allocation at either prior size. This is the FAIL of disposition (3). It does not show that a conditional-scope or fiducial PET result is impossible; those are different endpoints.
 
 ## 9. Staged route to the declared endpoint: admission and terminal no-go per stage
 
@@ -495,14 +496,33 @@ python3 -m pytest test_pet_q.py -q -p no:cacheprovider            # 14 passed
 | 14 | S-II sampling term defined on the estimate, not the error (MINOR) | redefined as Var(θ̂ − t) − W/6. The diagnostic interval was recomputed with it (aggregate 0.554/0.896; low acceptance 0.082/0.312) |
 | 15 | monotone test tautological; S4F check untested; file count (MINOR) | test renamed and its limit stated; `check_s4f_receipts` factored out and negative-tested; counts corrected (956 + 2) |
 
-**Focused re-review.** Recorded below once completed.
+**Focused re-review (cycle 2, at `7658ad80`).**
+- Findings 1–15 are all **RESOLVED**.
+- The reviewer independently recomputed the following, and all of it matches:
+  - the error-based interval: 0.5536/0.8964 aggregate and 0.0821/0.3119 low-acceptance;
+  - the regional g;
+  - the 21-case library maxima;
+  - the bias-reversal counts (bootstrap correction worse in 25/28 bins);
+  - the joint sizing;
+  - the full-procedure totals: per-decision 0.634–0.668, joint 1.060–1.094 of the allocation;
+  - the calibrated futility, by exact convolution and by resampling the actual study-scale replicates (0.671 at E = 4 and 0.941 at E = 8).
+- The author's pipeline reproduced byte-for-byte. The review worktree was clean afterwards. Both cycles together used ≈ 1.5 core-minutes.
+
+**New MINOR findings, applied after the re-review and not re-reviewed:**
+- **A.** The simulated E = 2 critical count is slightly anti-conservative. The table now shows the exact row: k_crit 1, size 0.004, power 0.22. This only strengthens the case for E = 4.
+- **B.** Two wording fixes: the good-region |z| range, now 2.2–5.6; and the qualifier "independent-decisions bound" on the joint-sizing allocation statement.
+
+No review cycles remain.
 
 ## 12. Resources and limitations
 
 **Time.**
 
-- **Wall clock.** The worktree was created at 13:00:09 PDT. The review completed at about 13:45, and the repair batch began at 16:22 after an idle wait for usage-limit reset.
-- **Active effort.** About 1 h 50 min to the end of the repair batch, including the review. The idle wait is excluded and stated, not hidden.
+- **Wall clock.** The worktree was created at 13:00:09 PDT, and the lane closed at about 16:32 PDT, which is ≈ 3 h 32 min. Even counted in full, that is under the 6 h cap and before its final-quarter boundary at 4 h 30 min.
+- **Idle wait.** The span from about 13:50 to 16:20 was an idle wait for a usage-limit reset, with no work in progress.
+- **Active effort.** ≈ 1 h 05 min, including both review cycles (cycle 1 ≈ 12 min, cycle 2 ≈ 2 min).
+- **CPU.** The author used < 0.05 core-hours and the reviewer ≈ 1.5 core-minutes, against a cap of 3 core-hours.
+- **Data.** Tracked bytes added: ≈ 0.40 MB, against a cap of 10 MiB. New scratch/data: < 1 MB, against a cap of 2 GiB.
 
 **Limitations.**
 
