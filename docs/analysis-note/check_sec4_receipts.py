@@ -3,15 +3,17 @@
 
 Each check finds one printed value in paper_body.tex (or values.tex), recomputes it from the committed receipt that
 backs it, and compares at the printed precision: |computed - printed| <= half a unit in the printed last digit
-("round"), or computed < printed ("below", for "below X%"). A value that cannot be located, or a receipt key that
-is missing, is a failure. Release-reproducible values are checked by publication/release/figs/fig_numbers.py
+("round"), or printed - one unit <= computed < printed ("below", for "below X%": true, and tight to one unit). LaTeX
+comments are removed first, so a sentence kept only in a comment is not found. A value that cannot be located, or a
+receipt key that is missing, is a failure. Release-reproducible values are checked by publication/release/figs/fig_numbers.py
 instead; this covers the Sec. IV values the release cannot recompute.
 
   python3 check_sec4_receipts.py              # exit 0 only if every check passes
   python3 check_sec4_receipts.py --self-test  # each printed value perturbed by one unit must be rejected
 
-The receipts live in the canonical repository (docs/orchestration/state/). In a checkout without them (the standalone
-note repository) the check reports SKIP and exits 0; the canonical build_all.sh is where it is enforced.
+The receipts live in the canonical repository (docs/orchestration/state/). In the canonical layout
+(<repo>/docs/analysis-note/) a missing receipts directory is a FAILURE. Anywhere else (the standalone note repository,
+where this file sits at the repository root) the check reports SKIP and exits 0; the canonical build enforces it.
 """
 from __future__ import annotations
 
@@ -22,10 +24,11 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-# Only the canonical layout <repo>/docs/analysis-note/ has receipts at <repo>/docs/orchestration/state/; anywhere else
-# (the standalone note repository) there is nothing to check, and no unrelated directory may be picked up instead.
-STATE = (HERE.parents[1] / "docs/orchestration/state" if HERE.name == "analysis-note" and HERE.parent.name == "docs"
-         else HERE / ".no-receipts-outside-the-canonical-layout")
+# Only the canonical layout <repo>/docs/analysis-note/ has receipts at <repo>/docs/orchestration/state/, and there they
+# are required. Anywhere else (the standalone note repository) there is nothing to check, and no unrelated directory may
+# be picked up instead.
+CANONICAL = HERE.name == "analysis-note" and HERE.parent.name == "docs"
+STATE = HERE.parents[1] / "docs/orchestration/state" if CANONICAL else HERE / ".no-receipts-outside-the-canonical-layout"
 
 
 def receipt(rel: str) -> dict:
@@ -132,7 +135,8 @@ def half_ulp(printed: str) -> float:
 
 
 def text(name: str, sources: dict[str, str]) -> str:
-    return re.sub(r"\s+", " ", sources[name])
+    """The source with LaTeX comments (an unescaped % to the end of the line) removed and whitespace collapsed."""
+    return re.sub(r"\s+", " ", re.sub(r"(?<!\\)%[^\n]*", "", sources[name]))
 
 
 def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
@@ -147,8 +151,8 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
         comp = comp if isinstance(comp, tuple) else (comp,)
         if mode == "round":
             good = all(abs(c - float(p)) <= half_ulp(p) for c, p in zip(comp, printed))
-        else:  # below
-            good = all(c < float(p) for c, p in zip(comp, printed))
+        else:  # below: true, and no looser than one unit of the printed precision
+            good = all(float(p) - 2 * half_ulp(p) <= c < float(p) for c, p in zip(comp, printed))
         rows.append((label, good, f"printed {'/'.join(printed)} | receipt {'/'.join(f'{c:.6g}' for c in comp)} | {mode}"))
     for label, src, pat, fn, lo, hi in VERBAL:
         found = len(re.findall(pat, text(src, sources))) == 1
@@ -172,20 +176,22 @@ def self_test() -> int:
         for gi in range(1, (m.lastindex or 0) + 1):
             p = m.group(gi)
             step = 2 * half_ulp(p)
-            bad = p
-            for k in (1, 2, 5, 10, 50):  # smallest perturbation that leaves the tolerance (or crosses "below")
-                cand = float(p) - k * step if mode == "below" else float(p) + k * step
-                bad = f"{cand:.{len(p.split('.')[1]) if '.' in p else 0}f}"
-                trial = dict(base)
-                trial[src] = s[:m.start(gi)] + bad + s[m.end(gi):]
-                if not dict((r[0], r[1]) for r in evaluate(trial))[label]:
-                    break
-            else:
-                print(f"  NOT CAUGHT  {label}: {p} -> {bad}")
-                ok = False
-                continue
-            caught += 1
-            print(f"  caught      {label}: {p} -> {bad}")
+            # "round" fails one way at least; "below" must fail both ways (untrue, and looser than one unit)
+            for sign in ((-1, +1) if mode == "below" else (+1,)):
+                bad = p
+                for k in (1, 2, 5, 10, 50):  # the smallest perturbation that leaves the tolerance
+                    cand = float(p) + sign * k * step
+                    bad = f"{cand:.{len(p.split('.')[1]) if '.' in p else 0}f}"
+                    trial = dict(base)
+                    trial[src] = s[:m.start(gi)] + bad + s[m.end(gi):]
+                    if not dict((r[0], r[1]) for r in evaluate(trial))[label]:
+                        break
+                else:
+                    print(f"  NOT CAUGHT  {label}: {p} -> {bad}")
+                    ok = False
+                    continue
+                caught += 1
+                print(f"  caught      {label}: {p} -> {bad}")
     trial = dict(base)
     trial["paper_body.tex"] = text("paper_body.tex", base).replace("about half of those cells", "about a third of those cells")
     if dict((r[0], r[1]) for r in evaluate(trial))[VERBAL[0][0]]:
@@ -198,6 +204,9 @@ def self_test() -> int:
 
 def main(argv: list[str]) -> int:
     if not STATE.is_dir():
+        if CANONICAL:
+            print(f"SEC4-RECEIPTS :: FAIL -- the canonical layout has no receipts at {STATE}")
+            return 1
         print(f"SEC4-RECEIPTS :: SKIP -- no receipts at {STATE} (standalone checkout); enforced by the canonical build")
         return 0
     if "--self-test" in argv:

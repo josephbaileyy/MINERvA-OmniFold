@@ -57,7 +57,9 @@ case "${1:-}" in
     done < "$DEST/W2-SYMLINKS.tsv"
     printf 'sha256\tbytes\tmtime_utc\tsource_path\n' > "$DEST/W2-SOURCE-INVENTORY.tsv.part"
     while IFS= read -r f; do
-      printf '%s\t%s\t%s\t%s\n' "$(sha256sum "$f" | cut -d' ' -f1)" "$(stat -c %s "$f")" \
+      h=$(sha256sum "$f" | cut -d' ' -f1)   # pipefail (set above) makes a failed read fail here
+      [[ $h =~ ^[0-9a-f]{64}$ ]] || { echo "no valid sha256 for $f" >&2; exit 6; }
+      printf '%s\t%s\t%s\t%s\n' "$h" "$(stat -c %s "$f")" \
         "$(date -u -d @"$(stat -c %Y "$f")" +%Y-%m-%dT%H:%M:%SZ)" "$f"
     done < "$DEST/.w2-files.txt" >> "$DEST/W2-SOURCE-INVENTORY.tsv.part"
     mv "$DEST/W2-SOURCE-INVENTORY.tsv.part" "$DEST/W2-SOURCE-INVENTORY.tsv"
@@ -73,7 +75,7 @@ case "${1:-}" in
     ;;
   verify)
     tail -n +2 "$DEST/W2-SOURCE-INVENTORY.tsv" | awk -F'\t' '{sub("^/","",$4); print $1"  "$4}' > "$DEST/W2-SHA256SUMS"
-    ( cd "$DEST" && sha256sum --quiet -c W2-SHA256SUMS ) && echo "verify: all $(wc -l < "$DEST/W2-SHA256SUMS") destination files match the source inventory"
+    ( cd "$DEST" && sha256sum --quiet --strict -c W2-SHA256SUMS ) && echo "verify: all $(wc -l < "$DEST/W2-SHA256SUMS") destination files match the source inventory"
     ;;
   *) echo "usage: $0 inventory|copy|verify" >&2; exit 2 ;;
 esac

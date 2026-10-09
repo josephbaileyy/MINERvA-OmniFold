@@ -6,8 +6,8 @@
 #
 # <inventory.tsv> is docs/publication/corrections-20261008/anatuple-inventory-20261008.tsv (header + rows of
 # path-under-BASE, bytes, mtime_utc). For each file the size and mtime are checked against the inventory before
-# AND after hashing; any difference is written to <outdir>/MISMATCH.tsv and the file gets no checksum. I/O is
-# controlled: two concurrent streams (STREAMS), each under nice -n 19 and ionice idle class. A watchdog bounds each
+# AND after hashing; any difference, or a read that yields no valid digest, is written to <outdir>/MISMATCH.tsv and the
+# file gets no checksum. I/O is controlled: two concurrent streams (STREAMS), each under nice -n 19 and ionice idle class. A watchdog bounds each
 # file: if its stat/hash does not finish in WATCHDOG_BASE + bytes/WATCHDOG_RATE seconds (Lustre objects on pscratch hung
 # intermittently on 2026-10-09), the file goes to <outdir>/DEFERRED.tsv unhashed and the worker moves on; a later
 # resume retries every file that is not yet hashed. SKIP=<file of paths> defers known-hung files without trying them.
@@ -31,6 +31,9 @@ one() {  # one inventory row -> one line in SHA256.part, MISMATCH.tsv or DEFERRE
       printf 'M\t%s\tbefore\t%s\t%s\t%s\t%s\n' "$rel" "$bytes" "$s0" "$mtime" "$m0" > "$tmp.res"; exit 0
     fi
     h=$(nice -n 19 ionice -c3 sha256sum "$f" | cut -d' ' -f1)
+    if ! [[ $h =~ ^[0-9a-f]{64}$ ]]; then  # `one` runs under bash -c, without -e or pipefail: a failed read gives ""
+      printf 'M\t%s\tread_failed\t%s\t%s\t%s\t%s\n' "$rel" "$bytes" "$s0" "$mtime" "$m0" > "$tmp.res"; exit 0
+    fi
     s1=$(stat -c %s "$f"); m1=$(TZ=UTC date -u -d @"$(stat -c %Y "$f")" +%Y-%m-%dT%H:%M:%SZ)
     if [ "$s1" != "$s0" ] || [ "$m1" != "$m0" ]; then
       printf 'M\t%s\tduring\t%s\t%s\t%s\t%s\n' "$rel" "$s0" "$s1" "$m0" "$m1" > "$tmp.res"; exit 0

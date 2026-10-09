@@ -1,0 +1,24 @@
+{"out": "/global/u2/j/josephrb/g12-20261008/out/frozen-blas4/inference_sufficient.npz", "npz_sha256": "5612b55d3c8a11a63d831a897d03d7eb319a7878dc59ede8316eb92e20fc5d3a", "B": {"MnvTune_v1": 1365, "GENIE_2_12_10_CV": 1366, "GENIE_2_12_10_MEC": 1343, "NuWro_21_09": 1751, "GiBUU_2019": 1351}}
+	Command being timed: "/global/u2/j/josephrb/g12-20261008/venv/bin/python /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/pub-release-20261006/tools/extract_inference_sufficient.py --deploy /pscratch/sd/j/josephrb/s5p-20260926/deploy/e9372b75 --design docs/orchestration/state/s5p/prod/design.json --v /pscratch/sd/j/josephrb/s5p-20260926/stage3/V/V-s3v.npz --out /global/u2/j/josephrb/g12-20261008/out/frozen-blas4/inference_sufficient.npz --group frozen"
+	User time (seconds): 52.25
+	System time (seconds): 40.75
+	Percent of CPU this job got: 294%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:31.60
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 210440
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 257777
+	Voluntary context switches: 33526
+	Involuntary context switches: 140854
+	Swaps: 0
+	File system inputs: 64
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

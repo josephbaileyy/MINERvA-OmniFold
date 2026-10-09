@@ -56,11 +56,13 @@ The review was read in full in this session before this follow-up began.
 
 **Capacity, re-measured first:**
 - CFS: `du -s --block-size=1G /global/cfs/cdirs/m3246/josephrb` = **1,561 GiB** (2026-10-09 00:08 UTC). The W2
-  addition adds 33.8 GB, so about 1.59 TiB, under the 3 TB rule.
+  addition adds 33.8 GB, so about 1,593 GiB (1.56 TiB, 1.71 TB), under the 3 TB rule.
 - HPSS: `hsi du` = 373,553,509,414 B (347.9 GiB, 54 files) against a 512 GiB quota. `hpssquota` failed on two login
   nodes (an `lfs quota` subprocess error), so the quota figure is the 2026-10-08 15:33 UTC `hpssquota` reading.
 
-**W2 outputs to CFS** (`publication/release/preservation/preserve_w2_outputs_20261008.sh`, sha256 `9ed7954f…`):
+**W2 outputs to CFS** (`publication/release/preservation/preserve_w2_outputs_20261008.sh`). The run used `9ed7954f…`,
+the copy in the CFS directory. Review cycle 1 then added a 64-hex digest check and `sha256sum --strict`, giving
+`8ce7eba7…`, the committed version. The committed `W2-SHA256SUMS` lines are all well formed, 53 of 53:
 - sources: `w2-recoil-20261006/w2b/{evloop,lateral,merged}`, the 32 GB the first pass excluded, plus the two small W2
   directories it had missed (`tables`, `unfold-run`);
 - inventory, copy (`rsync -a`, root `/global/`) and destination re-hash: **53 files, 33,779,505,923 bytes; all 53
@@ -88,7 +90,14 @@ exist on the login node's Python 3.6. It was made compatible and re-run. The CFS
   an mtime of 01:17:34 UTC, 19 s before run 3 started.
 - Runs 1 and 2 ran earlier, uncommitted versions. Run 2's added `SKIP`. The nearest committed version is
   `8c92c184`'s (`45592de6…`), committed at 01:13 UTC, after both had started.
-- The version committed now (`d18fc276…`) differs from `cfb8fe01` only by the `LC_ALL=C` line.
+- After the runs, two changes were made:
+  - `d18fc276…` added the `LC_ALL=C` line;
+  - review cycle 1 made a read that yields no valid 64-hex digest go to `MISMATCH.tsv` (`read_failed`) instead of
+    being recorded as hashed. That gives `a5c386dc…`, the committed version and the copy now in the CFS directory.
+- The fix was tested on a login node with a `sha256sum` shim that fails for one file. That file went to
+  `MISMATCH.tsv`, the other hashed correctly, and a resume retried and hashed it.
+- The committed manifest was not affected by the defect: all 2,367 digests are valid 64-hex, and 7 were re-hashed
+  independently by the reviewer.
 
 The sweep read the exact committed inventory, `anatuple-inventory-20261008.tsv` (2,374 files,
 11,523,656,218,592 B). It only READ the AnaTuples on `/pscratch/sd/j/josephrb/minerva/minerva_large_files`.
@@ -130,6 +139,10 @@ with a copy in the CFS directory `anatuple-checksums-20261008/`.
     `login05` at 05:06–05:53 UTC. The login node is a different Lustre client.
 - **Nothing was forced.** The watchdog put each timed-out file in `DEFERRED.tsv` (`timeout_<s>s`) and moved on.
   Hung children are left in place (they cannot be killed); a late result from them is ignored.
+  - At about 06:10 UTC, 17 such `stat` processes remained on `dtn01` (wait channel `cl_sync_io_wait`), every one on an
+    OST-61 file. `login05` could not be reached to check.
+  - The CFS directory holds 20 empty `.w.*` worker files from the timed-out files. Nothing was deleted (deletion is
+    not authorized). They are harmless to a resume, which reads only `SHA256.part`.
 
 **Run history** (all logs are in `anatuple-checksums/`):
 
@@ -148,7 +161,8 @@ with a copy in the CFS directory `anatuple-checksums-20261008/`.
 - **A locale mismatch on the login node.** `join` there ran under a UTF-8 locale while `sort` used `C`, and printed
   "not sorted" warnings. The to-do set was still correct: 7 files, the same 7. The script now exports `LC_ALL=C`
   for the whole run. The DTN runs were under the POSIX locale, so unaffected.
-- **Throughput:** run 3 hashed 1,457 files, 11.12 TB, in 2 h 56 min: about 1.05 GB/s aggregate over 2 streams. That is no
+- **Throughput:** run 3 hashed 1,456 files, 11.12 TB, in 2 h 56 min (1,462 to hash, less 6 deferred; the run-2
+  late hash of 16532 landed in the same span): about 1.05 GB/s aggregate over 2 streams. That is no
   faster than the single stream the corrections record measured (§6: about 0.85–1.1 GB/s). Why the second stream
   added nothing was not measured.
 
@@ -179,11 +193,26 @@ with a copy in the CFS directory `anatuple-checksums-20261008/`.
     git-derived deploys.
 - The union reading's `recovery/union` was a directory of 8,600 links. It is rebuilt verbatim from the link list
   captured from the original (`recovery-union-links.tsv.gz`); every target lies in the archive's layout.
-- The frozen design, code and receipt bytes are untouched, and their hashes are checked at run time.
+- The frozen design, code and receipt bytes are untouched.
+  - Before running, the script checks the extractor (`6ff1d6df…`) and the union design (`f93bdb88…`) digests, and
+    refuses on a mismatch.
+  - The code and design digests (`2cd98235…`, `55239135…`, `404446eb…`) are not checked before the run. The
+    extractor records them in the output manifest, and the comparison finds them equal to the release manifest's.
 - Environment: Python 3.11 venv with numpy 1.26.4 and scipy 1.16.3 (the RC4-tested Linux versions). The original
   user-site numpy is no longer present on the login nodes.
 
-**Results** (`publication/release/g12/results/`: the run logs, `compare-*.txt`, `replay-summary.txt`, `blas-thread-digests.txt`, `venv-freeze.txt`):
+**Results** (`publication/release/g12/results/`: the run logs, `compare-*.txt`, `replay-summary.txt`,
+`blas-thread-digests.txt`, `replay-json-diff-frozen.txt`, `venv-freeze.txt`):
+- **The comparison tool was fixed in review cycle 1** (`compare_sufficient.py` `5c369d30…`). Its "last bits" verdict
+  had tolerated integer, boolean and shape differences and changed counts. It now requires every differing array to be
+  float, with equal dtype and shape and a relative difference below 1e-9, and every other manifest difference to be a
+  `/nulls/*/shift/*` float within the same bound. `test_compare_sufficient.py` fails on the old tool for 6 such cases
+  and passes on the new one.
+- **The fixed tool was re-run on the cluster outputs.** Its `compare-frozen.txt`, `compare-union.txt` and
+  `compare-figs.txt` are byte-identical to the first run's.
+- **`replay-summary.txt` was re-run in cycle 1** (login23, 06:27 UTC; all three replays `AGREE (0 differences)`). The
+  first run's third block was garbled, for a reason not determined. `blas-thread-digests.txt` was rewritten with
+  labels: its first version ended with an unlabeled CPU line from the default run.
 
 | product | regenerated sha256 | release sha256 | arrays | manifest | replay against the recorded evaluation |
 |---|---|---|---|---|---|
@@ -196,12 +225,17 @@ with a copy in the CFS directory `anatuple-checksums-20261008/`.
   fixed 1980 timestamps.
 - **The cause is BLAS summation order.** The same extraction, repeated with `OPENBLAS_NUM_THREADS` = 1, 2, 3, 4, 5,
   6 and 8 and the default, gave **eight different digests**.
-  - The closest, at 4 threads, has 50 of 52 arrays exactly equal and a worst relative difference of 1.8e-14.
+  - The closest, at 4 threads, has 50 of 52 arrays exactly equal and a worst relative difference of 1.81e-14
+    (`results/compare-frozen-blas4.txt`; every thread count is compared in `compare-frozen-blas*.txt`).
   - Two regenerations with different thread counts also differ from each other.
 - The original run's thread configuration is not recorded (its log shows 238 % CPU), so byte identity is not
   achievable from the record.
-- **Byte identity is therefore not claimed.** The numerical payloads agree to ≤ 3e-12 relative, and every recorded
-  result reproduces exactly from the regenerated inputs.
+- **Byte identity is therefore not claimed.** The numerical payloads agree to ≤ 3e-12 relative.
+- **What "reproduces" means here.** The replay comparator (relative tolerance 1e-12) reports 0 differences.
+  - Leaf by leaf, the regenerated frozen `replay.json` equals the release's in 623 of 632 leaves: every p-value, k, B,
+    decision, label and power figure.
+  - The other 9 are the observed test statistics `T_shape_obs` and `T_total_obs`, which differ by ≤ 5.1e-15 relative
+    (`results/replay-json-diff-frozen.txt`, made by `replay_json_diff.py`).
 
 ## 5. G11: a build-time check of the Sec. IV printed values
 
@@ -215,11 +249,24 @@ The receipts are `ki84-adopt-20261006/recompute_2d_budget.json`, `coverage-2d-20
 `ki84-rebuild-20261006/rescore_vl169_toys_vl170.json`, `s5c/d1/d1_summary.json`, `s5n/stage1/dev_receipt.json` and
 `s5e/cand/assess_receipt.json`.
 
-- **Fails closed:** a value that cannot be located, or a missing receipt key, fails.
-- **Self-test:** each printed value is moved by one unit in its last digit, in the direction that must fail, and every
-  perturbation is rejected (16, including the verbal phrase).
-- **Tests:** `test_check_sec4_receipts.py` adds specific wrong values (0.664, 96.7, "below 0.2", 16–33) and a missing
-  value; all are rejected. `test_build_all.py` stubs the stage the way it stubs containment.
+- **Fails closed:**
+  - a value that cannot be located, or a missing receipt key, fails;
+  - LaTeX comments are removed before matching (review cycle 1), so a sentence kept only in a `%` comment counts as
+    missing;
+  - in the canonical layout, a missing receipts directory is a FAIL, not a SKIP (review cycle 1);
+  - a "below X" value must be true and tight to one unit (review cycle 1), so "below 0.9" for 0.24 fails.
+- **Self-test:** each printed value is moved by one unit in its last digit, in the direction that must fail (both
+  directions for "below"), and every perturbation is rejected: 17, including the verbal phrase. There were 16
+  before review cycle 1 added the upward "below" case.
+- **Tests:**
+  - `test_check_sec4_receipts.py` adds specific wrong values (0.664, 96.7, "below 0.2", "below 0.9", 16–33), a
+    missing value and a commented-out value, and all are rejected. It also runs the checker in a canonical layout
+    without receipts (FAIL) and in a standalone layout (SKIP).
+  - `test_build_all.py` stubs the stage the way it stubs containment. Since review cycle 1 it also proves that a
+    failing check or self-test stops the build before the page counts: a mutant `build_all.sh` that ignores the
+    check's exit status fails that test.
+- **Log reading:** the containment stage prints its `RESULT :: PASS` line before this stage runs. A build's verdict
+  is its exit status, not that line.
 - **Scope:** Sec. IV only. This is not a general framework. Sec. V's release-recomputable values are checked by
   `fig_numbers.py`.
 - **Standalone repository:** it has no receipts, so the checker reports SKIP there; the canonical build enforces it.
@@ -231,7 +278,7 @@ The receipts are `ki84-adopt-20261006/recompute_2d_budget.json`, `coverage-2d-20
 | G4 AnaTuples | **identity: 2,367 of 2,374 files sha256-identified, 0 mismatches; 7 (all on pscratch OST 61) blocked by hung storage objects**; durable copy **not done (not authorized)**; recommendation and drafts in §7 | §3a, §7 |
 | G9 single durable copies | **Fixed and verified.** The s5p archive and `z-cv.npz` now have HPSS copies, verified by stream read-back. | §3 |
 | G11 Sec. IV literals | **Fixed and verified.** A build-time check, a self-test and tests. | §5 |
-| G12 regeneration from durable storage | **Fixed and verified, with a precisely stated limit.** The inference inputs regenerate from durable copies with the unchanged extractor and reproduce every recorded result exactly; they are numerically equivalent (≤ 3e-12 relative), **not byte-identical** (BLAS thread order). The figure arrays are byte-identical. | §4 |
+| G12 regeneration from durable storage | **Fixed and verified, with a precisely stated limit.** The inference inputs regenerate from durable copies with the unchanged extractor and reproduce every recorded p-value, B, decision and power figure exactly (9 observed statistics differ by ≤ 5.1e-15 relative); they are numerically equivalent (≤ 3e-12 relative), **not byte-identical** (BLAS thread order). The figure arrays are byte-identical. | §4 |
 | G6b proxy rate | **Unchanged: unresolved provenance.** No study run, no convergence claim. | — |
 
 ## 7. Remaining storage decision

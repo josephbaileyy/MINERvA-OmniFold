@@ -128,7 +128,8 @@ FAKE_SEC4 = r"""#!/usr/bin/env python3
 import os, sys
 with open(os.environ["BUILD_TEST_LOG"], "a") as fh:
     fh.write("sec4: reached with args %r\n" % (sys.argv[1:],))
-sys.exit(0)
+mode = "self" if "--self-test" in sys.argv[1:] else "check"
+sys.exit(1 if os.environ.get("BUILD_TEST_SEC4_FAIL") == mode else 0)
 """
 
 
@@ -172,7 +173,7 @@ class BuildAllHarness(unittest.TestCase):
             lg.write_text("stale clean log\n")
             os.utime(str(lg), (old, old))
 
-    def run_build(self, mode, containment_rc="0", drop_latexmk=False):
+    def run_build(self, mode, containment_rc="0", drop_latexmk=False, sec4_fail=""):
         env = dict(os.environ)
         # NERSC exports `module` as a Bash function and recreates it through
         # BASH_ENV.  If either reaches the fixture shell, build_all.sh loads the
@@ -185,6 +186,7 @@ class BuildAllHarness(unittest.TestCase):
         env["BUILD_TEST_MODE"] = mode
         env["BUILD_TEST_LOG"] = str(self.log)
         env["BUILD_TEST_CONTAINMENT_RC"] = containment_rc
+        env["BUILD_TEST_SEC4_FAIL"] = sec4_fail   # "check" or "self": that sec4 invocation exits 1
         # A minimal PATH plus the shim dir, so the fake latexmk is the only one reachable.
         base = "/usr/bin:/bin:/usr/sbin:/sbin"
         env["PATH"] = base if drop_latexmk else "%s:%s" % (self.bin, base)
@@ -279,6 +281,21 @@ class TestTheHappyPath(BuildAllHarness):
         proc = self.run_build("build", containment_rc="1")
         self.assertNotEqual(0, proc.returncode, proc.stdout)
         self.assertIn("containment: reached", self.calls)
+
+    def test_a_failing_sec4_check_fails_the_build_before_page_counts(self):
+        """G11: a printed Sec. IV value that disagrees with its receipt must stop the build."""
+        for which in ("check", "self"):
+            with self.subTest(sec4_fails=which):
+                self.log.write_text("")
+                proc = self.run_build("build", sec4_fail=which)
+                self.assertNotEqual(0, proc.returncode, proc.stdout)
+                self.assertIn("sec4: reached", self.calls)
+                self.assertNotIn("page counts", proc.stdout)
+
+    def test_the_sec4_self_test_runs_before_its_verdict(self):
+        self.run_build("build")
+        self.assertLess(self.calls.index("sec4: reached with args ['--self-test']"),
+                        self.calls.index("sec4: reached with args []"))
 
     def test_the_self_test_runs_before_the_verdict(self):
         self.run_build("build")
