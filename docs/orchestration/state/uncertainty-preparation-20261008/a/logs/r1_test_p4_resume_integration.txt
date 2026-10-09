@@ -1,0 +1,83 @@
+test_bkg_mode_is_explicit_and_stamped (nd-unfolding.tests.test_p4_resume_integration.LauncherWiring.test_bkg_mode_is_explicit_and_stamped) ... ok
+test_done_cannot_be_printed_without_a_published_receipt (nd-unfolding.tests.test_p4_resume_integration.LauncherWiring.test_done_cannot_be_printed_without_a_published_receipt) ... ok
+test_every_receipt_is_produced_by_this_launcher (nd-unfolding.tests.test_p4_resume_integration.LauncherWiring.test_every_receipt_is_produced_by_this_launcher)
+The replacement for the deleted guard: only one receipt mode can be written. ... ok
+test_header_no_longer_claims_byte_reproducibility (nd-unfolding.tests.test_p4_resume_integration.LauncherWiring.test_header_no_longer_claims_byte_reproducibility)
+The header asserted produced ROOTs 'must hash identically to the 2026-07-18 ones'. ... ok
+test_inventory_rejects_extras (nd-unfolding.tests.test_p4_resume_integration.LauncherWiring.test_inventory_rejects_extras) ... ok
+test_launcher_aborts_on_a_degenerate_closure (nd-unfolding.tests.test_p4_resume_integration.LauncherWiring.test_launcher_aborts_on_a_degenerate_closure)
+An empty map would bind a receipt to nothing while looking fully populated. ... ok
+test_launcher_stamps_the_closure_and_schema_into_every_receipt (nd-unfolding.tests.test_p4_resume_integration.LauncherWiring.test_launcher_stamps_the_closure_and_schema_into_every_receipt) ... ok
+test_legacy_attest_path_is_GONE_not_guarded (nd-unfolding.tests.test_p4_resume_integration.LauncherWiring.test_legacy_attest_path_is_GONE_not_guarded)
+REPAIR-6. The path stamped CURRENT provenance onto ROOTs an older driver produced. ... ok
+test_no_skip_is_reachable_without_the_gate (nd-unfolding.tests.test_p4_resume_integration.LauncherWiring.test_no_skip_is_reachable_without_the_gate)
+Structural, and stated as a reachability claim rather than a substring one: EVERY ... ok
+test_skip_path_calls_the_gate (nd-unfolding.tests.test_p4_resume_integration.LauncherWiring.test_skip_path_calls_the_gate) ... ok
+test_stale_receipt_is_removed_so_it_cannot_be_reused (nd-unfolding.tests.test_p4_resume_integration.LauncherWiring.test_stale_receipt_is_removed_so_it_cannot_be_reused) ... ok
+test_the_closure_is_derived_not_duplicated (nd-unfolding.tests.test_p4_resume_integration.LauncherWiring.test_the_closure_is_derived_not_duplicated)
+A path list written out in the launcher would be a second copy to keep in sync with ... ok
+test_a_misstated_schema_is_rejected_not_grandfathered (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_a_misstated_schema_is_rejected_not_grandfathered) ... ok
+test_both_fields_null_is_rejected_not_grandfathered (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_both_fields_null_is_rejected_not_grandfathered)
+The shape closest to a legacy receipt in `.get()` terms and furthest from one in ... ok
+test_central_drift_rejected_with_reason (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_central_drift_rejected_with_reason) ... ok
+test_config_drift_rejected_with_reason (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_config_drift_rejected_with_reason) ... ok
+test_current_schema_receipt_without_the_record_is_rejected_not_grandfathered (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_current_schema_receipt_without_the_record_is_rejected_not_grandfathered)
+The bound: absence of the field stopped meaning "old" the moment the launcher began ... ok
+test_direct_omnifold_change_stales_the_endpoint (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_direct_omnifold_change_stales_the_endpoint)
+`unbinned_unfolding/python/omnifold.py` — imported directly by the unfold driver and ... ok
+test_empty_and_malformed_receipts_rejected (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_empty_and_malformed_receipts_rejected) ... ok
+test_footing_drift_rejected_with_reason (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_footing_drift_rejected_with_reason) ... ok
+test_genuinely_legacy_receipt_is_grandfathered (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_genuinely_legacy_receipt_is_grandfathered)
+A receipt from BEFORE the binding existed: no schema, no record. Built by removing ... ok
+test_incomplete_legacy_receipt_rejected (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_incomplete_legacy_receipt_rejected)
+The exact pre-repair shape: no merged/central provenance. ... ok
+test_launcher_emits_exactly_the_six_producing_paths (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_launcher_emits_exactly_the_six_producing_paths)
+The record the launcher actually writes, not a list restated in a test. ... ok
+test_non_producing_module_change_is_still_accepted (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_non_producing_module_change_is_still_accepted)
+`p4_project_4d.py` cannot execute while an endpoint is unfolded, so a change to it is ... ok
+test_null_is_distinguished_from_absent_at_the_helper (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_null_is_distinguished_from_absent_at_the_helper)
+The two shapes that `.get()` collapsed, asserted as a pair so a future refactor back ... ok
+test_null_schema_is_rejected_not_grandfathered (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_null_schema_is_rejected_not_grandfathered) ... ok
+test_null_schema_with_a_valid_map_is_rejected (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_null_schema_with_a_valid_map_is_rejected)
+The one that did not merely grandfather -- it was ACCEPTED. A null schema skipped ... ok
+test_null_surface_record_is_rejected_not_grandfathered (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_null_surface_record_is_rejected_not_grandfathered) ... ok
+test_omitted_xsec_nd_stales_the_endpoint (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_omitted_xsec_nd_stales_the_endpoint)
+Omission, not mutation: a receipt cannot narrow the check by listing fewer paths, ... ok
+test_receipt_carries_the_closure_and_a_declared_schema (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_receipt_carries_the_closure_and_a_declared_schema) ... ok
+test_receipt_for_a_different_endpoint_rejected (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_receipt_for_a_different_endpoint_rejected) ... ok
+test_receipt_without_source_identity_rejected (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_receipt_without_source_identity_rejected)
+The pre-repair-5 receipt shape (no unfold_blob) must not validate. ... ok
+test_root_drift_rejected_with_reason (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_root_drift_rejected_with_reason) ... ok
+test_stale_code_rev_rejected_with_reason (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_stale_code_rev_rejected_with_reason)
+REPAIR-5 self-guard for D2, updated by repair-6b: a code_rev that is not in this ... ok
+test_stale_unfold_blob_rejected_with_reason (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_stale_unfold_blob_rejected_with_reason)
+REPAIR-5 self-guard for D2. An endpoint produced by a CHANGED unfold driver must not ... ok
+test_transitive_nn_core_change_stales_the_endpoint (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_transitive_nn_core_change_stales_the_endpoint)
+`nd-unfolding/omnifold_nn_core.py` is reachable only at depth 2. A one-level check ... ok
+test_unexpected_error_reads_as_reject_not_pass (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_unexpected_error_reads_as_reject_not_pass)
+A gate must never let an unexpected exception look like success. ... ok
+test_valid_receipt_is_accepted (nd-unfolding.tests.test_p4_resume_integration.PB2ProducingClosureResume.test_valid_receipt_is_accepted)
+A gate that has never returned OK on real input is unverified in the direction that ... ok
+test_central_drift_rejected_with_reason (nd-unfolding.tests.test_p4_resume_integration.ReceiptGateIntegration.test_central_drift_rejected_with_reason) ... ok
+test_config_drift_rejected_with_reason (nd-unfolding.tests.test_p4_resume_integration.ReceiptGateIntegration.test_config_drift_rejected_with_reason) ... ok
+test_empty_and_malformed_receipts_rejected (nd-unfolding.tests.test_p4_resume_integration.ReceiptGateIntegration.test_empty_and_malformed_receipts_rejected) ... ok
+test_footing_drift_rejected_with_reason (nd-unfolding.tests.test_p4_resume_integration.ReceiptGateIntegration.test_footing_drift_rejected_with_reason) ... ok
+test_incomplete_legacy_receipt_rejected (nd-unfolding.tests.test_p4_resume_integration.ReceiptGateIntegration.test_incomplete_legacy_receipt_rejected)
+The exact pre-repair shape: no merged/central provenance. ... ok
+test_receipt_for_a_different_endpoint_rejected (nd-unfolding.tests.test_p4_resume_integration.ReceiptGateIntegration.test_receipt_for_a_different_endpoint_rejected) ... ok
+test_receipt_without_source_identity_rejected (nd-unfolding.tests.test_p4_resume_integration.ReceiptGateIntegration.test_receipt_without_source_identity_rejected)
+The pre-repair-5 receipt shape (no unfold_blob) must not validate. ... ok
+test_root_drift_rejected_with_reason (nd-unfolding.tests.test_p4_resume_integration.ReceiptGateIntegration.test_root_drift_rejected_with_reason) ... ok
+test_stale_code_rev_rejected_with_reason (nd-unfolding.tests.test_p4_resume_integration.ReceiptGateIntegration.test_stale_code_rev_rejected_with_reason)
+REPAIR-5 self-guard for D2, updated by repair-6b: a code_rev that is not in this ... ok
+test_stale_unfold_blob_rejected_with_reason (nd-unfolding.tests.test_p4_resume_integration.ReceiptGateIntegration.test_stale_unfold_blob_rejected_with_reason)
+REPAIR-5 self-guard for D2. An endpoint produced by a CHANGED unfold driver must not ... ok
+test_unexpected_error_reads_as_reject_not_pass (nd-unfolding.tests.test_p4_resume_integration.ReceiptGateIntegration.test_unexpected_error_reads_as_reject_not_pass)
+A gate must never let an unexpected exception look like success. ... ok
+test_valid_receipt_is_accepted (nd-unfolding.tests.test_p4_resume_integration.ReceiptGateIntegration.test_valid_receipt_is_accepted)
+A gate that has never returned OK on real input is unverified in the direction that ... ok
+
+----------------------------------------------------------------------
+Ran 50 tests in 21.707s
+
+OK

@@ -114,7 +114,12 @@ effect between `E_C`'s revision and today (`git diff d3239355 HEAD` only wraps i
 One row per pairing in `P/a/pairings.tsv` (23 columns: digests, command, population, masks,
 normalization, completeness, backend, seeds, sampling law, covariance centre and denominator,
 consumer, measurement, consequence, missing operand, price). The outcomes are mixed and are not
-collapsed into one grade: **10 VERIFIED, 4 DISPROVED, 3 UNRESOLVED.**
+collapsed into one grade: **10 VERIFIED, 4 DISPROVED, 4 UNRESOLVED** (18 rows).
+
+**Changed in REPAIR 1 (2026-10-09, E's review F10).** The FREEZE tally was 10/4/3 over 17 rows. The
+former P09 ("ML block as `E_C`'s ML uncertainty: DISPROVED") joined two propositions. It is now split.
+P09a, the same-estimator and "conservative cross-estimator proxy" readings, stays DISPROVED. P09b,
+transfer of the seed-noise term to `E_C`, is UNRESOLVED, because `E_C`'s seed noise was never measured.
 
 | id | pairing | outcome | consequence |
 |---|---|---|---|
@@ -126,7 +131,8 @@ collapsed into one grade: **10 VERIFIED, 4 DISPROVED, 3 UNRESOLVED.**
 | P06 | universes ↔ matched CV | VERIFIED | internally matched. Background frozen at CV in all 87 non-Flux universes |
 | P07 | seed-1 statistics ↔ seed-42 systematics summed | **UNRESOLVED** | consistent at the central level (median 0.30 σ_S). Covariance level unmeasured |
 | P08 | ML block ↔ LightGBM family | VERIFIED | it is LightGBM seed noise |
-| P09 | ML block as `E_C`'s ML uncertainty | **DISPROVED** | `E_C` sits 5.1 σ_ML (median) from the LightGBM seed mean. Its own seed noise is unmeasured |
+| P09a | ML block as `E_C`'s ML uncertainty: same estimator, or a conservative proxy? | **DISPROVED** | `E_C` sits 5.1 σ_ML (median) from the LightGBM seed mean, so `C_ML` does not cover the backend difference |
+| P09b | ML block transfers as `E_C`'s seed-noise term | **UNRESOLVED** | `E_C`'s seed noise is unmeasured. A static reading of sklearn (`subsample = 1.0`, `max_features = None`; only split tie-breaking is random) suggests it may be near zero |
 | P10 | statistical covariance ↔ its 300 replicas | VERIFIED | reproduced to 4e-16; completeness 1.6e-14 |
 | P11 | band centre ↔ `E_S` nominal | VERIFIED | 0.23 σ_S median offset |
 | P12 | combined covariance ↔ paper bins | VERIFIED | five masks identical; ordinal alignment correct for these bytes |
@@ -167,6 +173,12 @@ Details, commands and exit codes: `P/a/verification.md` §1.
   and the rooted insert can load another checkout's helper. No histogram, weight or estimator
   changes. The pre-fix bit-identity tests pass, and deleting the write loop fails 5 of the 6 new
   tests. Existing products do not gain the records.
+  *REPAIR 1 (`355174fe`, E's review F12):* the driver is now hashed as `main()` starts and the helper
+  right after its import, not at write time, so an edit during a long run is not recorded as the
+  executed bytes. A new test edits both files mid-run and requires the pre-edit digests. Restoring
+  write-time hashing fails exactly that test. The suite is 15/15. The records are written only by
+  the driver's `main()`. `fixed_truth_toy.py` calls `ohf.omnifold` directly, so toy outputs do not
+  carry them (E's review F4); a successor toy producer needs its own records.
 - **`OI-136`.** The driver's insert stays inside `main()` and `omnifold.py` keeps digest
   `e96234124a31…`. Both 2D-arm assertions pass. Both ratchet suites are **red at the base**: nine
   October 2D sites, one of them the coverage toy producer, are unlisted. Raised to E as an observed
@@ -192,7 +204,7 @@ Details, commands and exit codes: `P/a/verification.md` §1.
      unmeasured); a dominant-band subset is cheaper.
    - P07, seed transfer: LightGBM replicas at seed 42 cost 0.059 node-h each on shared (VL170
      measured): N = 100 is about 6 node-h and N = 300 about 18 node-h.
-   - P09, exact seed noise: 10 exact unfolds, about 7 node-h packed.
+   - P09b, exact seed noise: 10 exact unfolds, about 7 node-h packed.
    - Background-aware systematics: comparing the existing July sweep (`uq/purity_newomni/`) with
      `C_U` is a read-only reduction, 0 node-h.
 3. **A component in no block.** The exact-vs-LightGBM difference (median 0.97 %, p84 2.7 %, max
@@ -203,17 +215,18 @@ Details, commands and exit codes: `P/a/verification.md` §1.
 ## 6. Comparisons that remain unmeasured
 
 Any covariance of `E_C` (statistical, systematic or ML); `E_C` at a pinned `random_state`; `C_S` at
-seed 42 or `C_U` at seed 1; separability of `C_S` and `C_ML`; the product-level Flux rescale factor;
+seed 42 or `C_U` at seed 1; separability of `C_S` and `C_ML`;
 background-aware 2D systematics against `C_U`; a coverage test of `VL170`; the held-out-MC re-test
 (deferred by Joseph, unregistered); the executed bytes of the central, systematic, matched-CV and ML
 runs and of any historical OmniFold helper.
 
 ## 7. Terminal disposition
 
-**FAIL**, by the plan's definition: pairings P02, P04 and P09 are disproved. The quoted central value
+**FAIL**, by the plan's definition: pairings P02, P04 and P09a are disproved. The quoted central value
 and its quoted uncertainty describe different estimators. P17, also disproved, restates the input
-correction that `VL169` does not grade `VL170`. Mixed rows: 10 VERIFIED, 3 UNRESOLVED (P03, P05,
-P07, each with a missing operand and a price). Engineering: the completeness repair and
+correction that `VL169` does not grade `VL170`. Mixed rows: 10 VERIFIED, 4 UNRESOLVED (P03, P05,
+P07, P09b, each with a missing operand and a price); the tally changed in REPAIR 1 (§3). The
+disposition did not change. Engineering: the completeness repair and
 its negative control pass. The provenance gap is fixed going forward. One necessary check is red and
 outside A's paths: the `OI-136` ratchets, which include the coverage toy producer. Even a validation
 scoped to `E_S` therefore has an engineering item open with its owner.
@@ -238,8 +251,10 @@ measured.
 Owner: lane A, a single session; the independent review is E's (`CAMPAIGN-REVIEW-20260929` §1). No
 reviewer or worker agent was spawned. Model: Claude Opus 5.5 (`claude-opus-5-5`), reasoning-effort
 setting 15 (harness). Session id `edb72d69-5a74-49f8-9124-1db2071391ec`. Base `f8e2bf85`; outputs
-`acb338a2` (CONTRACT), `971fc00c` (behavior fix), and the FREEZE commit that carries this section.
-Resources against A's row (6 h, 4 core-h, 8 GiB, 2 GiB): active time about 0.9 h (06:05–06:57Z on 2026-10-09); local CPU
+`acb338a2` (CONTRACT), `971fc00c` (behavior fix), the FREEZE commits `9fab26e8` and `f762749d`, and
+REPAIR 1 (E's cycle 1 of 2): `355174fe` (import-time hashing, behavior) plus the documentation
+commit that carries this sentence.
+Resources against A's row (6 h, 4 core-h, 8 GiB, 2 GiB): active time about 0.9 h (06:05–06:57Z on 2026-10-09) plus about 0.4 h for REPAIR 1 (to 07:50Z); local CPU
 well under 0.2 core-h (the largest single check, the hash-binding suite, took 83 s wall); peak RAM
 under 1 GiB; scratch 34 MB of byte-copied products plus logs. The cited logs were copied to `P/a/logs/`, then the
 scratch directory was deleted. Cluster: 0 node-h, 0 GPU-h, no training, no toys.

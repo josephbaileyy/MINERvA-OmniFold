@@ -6,7 +6,8 @@ no compute and changes no gate, band, adoption or publication scope.
 - **Base:** `f8e2bf8535a90d7ed1315530cff3b80860ef9f9c`. Branch `prep/uncertainty-a-pairing-20261008`,
   worktree `MINERvA-OmniFold-uncprep-a-20261008` (created 2026-10-09T06:09Z; 44 GiB free before).
 - **Commits:** `acb338a2` (`[uncprep-A] CONTRACT`), `971fc00c` (driver provenance records, behavior
-  fix), then the FREEZE commit that adds this file.
+  fix), FREEZE `9fab26e8` and `f762749d`, then REPAIR 1 (E's cycle 1 of 2): `355174fe`
+  (import-time hashing, behavior) and the documentation commit that adds rows R1–R3 here.
 - **Local environment:** macOS Darwin 25.6.0. `python3` 3.12.2 (conda; numpy 1.26.4, uproot 5.6.2,
   pytest 8.3.4) for the independent checks and the `nd-unfolding` tests. `python3.13` 3.13.7
   (Homebrew; ROOT 6.36.000, numpy 2.4.4) with `PYTHONPATH=$(root-config --libdir)` for the PyROOT
@@ -40,6 +41,9 @@ input. The others are AST scans, synthetic fixtures, or local subprocess shims.
 | 12 | full-event extractor (stubs the driver module) | `python3 -m unittest nd-unfolding/tests/test_fullevent_extract.py -v` | 0 | 28/28 after |
 | 13 | pre-commit hook | on each commit | 0 | `13 checks passed` (both commits) |
 | 14 | independent recomputation | `python3 -I $TMPDIR/check_a.py $TMPDIR/ops 2d-unfolding/minerva_paper_anc` (script in §6) | 0 | §3; wall 1.7 s, peak RSS 74 MB |
+| R1 | REPAIR 1 (`355174fe`): KI-84 + provenance suite | `PYTHONPATH=$(root-config --libdir) python3.13 -W error::ResourceWarning -m unittest 2d-unfolding/tests/test_bootstrap_completeness_ki84.py -v` | 0 | 15/15, 0 skipped (`logs/r1_ki84.txt`) |
+| R2 | REPAIR 1 mutation: write-time hashing restored (`for name, value in run_provenance(args, …, file_sha256(__file__))`) | scratch tree `$TMPDIR/mutctl2`, `-m unittest …RunProvenanceIsRecorded` | 1 | exactly `test_digests_are_of_the_bytes_loaded_not_of_later_edits` fails; the other 6 pass (`logs/r1_prov_mutant.txt`) |
+| R3 | REPAIR 1 shared checks: #5, #6, #8, #9, #10, #12, verifier | as above | 1, 1, 0, 0, 0, 0, 0 | 4/4, 51/51, 50/50, 28/28, `ALL BINDINGS INTACT`; the two ratchet failure lists are byte-identical to `logs/base_*` |
 
 `unittest` with `test_hash_bindings.py` collects 0 tests (`NO TESTS RAN`, exit 5) because the file is
 written for pytest. That run is **not** counted; #11 is the real run.
@@ -498,6 +502,8 @@ print(json.dumps(_extra(), indent=1))
 |---|---|---|---|
 | `2d-unfolding/unfold_2d_omnifold_unbinned.py` | `971fc00c` | new module-level `run_provenance(args, helper_module)`; `main()` writes six `TNamed` records after `fluxSource` and prints the driver/helper lines. sha256 `d17638ef…` → `d6434d03c4a86b1ce4ff429d8fe7804abcf7fb4c7ae9a6d99ad4f96c324cf4f7` | 47 importers use only existing module names (D's inventory); no existing name, signature or histogram changed. Tests #8–#12 pass. Pre-fix bit-identity (#3, `PathsTheFixMustNotChange`) holds for `hXSec2D`, `hUnfold2D`, completeness, efficiency |
 | `2d-unfolding/tests/test_bootstrap_completeness_ki84.py` | `971fc00c` | stub may carry a `__file__` (env `U2D_STUB_HELPER_FILE`); new class `RunProvenanceIsRecorded` (6 tests). sha256 → `615f5f538841eb111b47598f6c1efe35684392dfb2674320613a13e8404d89f5` | the file's existing 8 tests unchanged and passing |
+| `2d-unfolding/unfold_2d_omnifold_unbinned.py` | `355174fe` (REPAIR 1) | new module-level `file_sha256(path)`; `main()` hashes the driver at its start and calls `run_provenance(args, helper, driver_sha256)` right after the helper import; the end-of-run loop writes those values. sha256 → `3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933` | no importer uses either name (`git grep`); #8–#12 pass |
+| `2d-unfolding/tests/test_bootstrap_completeness_ki84.py` | `355174fe` (REPAIR 1) | stub can edit named files mid-run (env `U2D_STUB_MUTATE`); new `test_digests_are_of_the_bytes_loaded_not_of_later_edits`; `read_bytes` instead of unclosed `open`. sha256 → `63e4f136e18185a2eeb5843465f06d7946772a55b2eb0fb55018a01aa88a5094` | 15/15 |
 
 Not changed: `uq/analyze_uq.py`, `uq/analyze_universes.py`, `uq/rollup_vl170_adoption.sh` (no defect
 found; "For E" item 4 is a cross-owner proposal). `omnifold.py`, every receipt, every product and
@@ -515,5 +521,17 @@ runs write them.
 - The local PyROOT is 6.36.000 on Python 3.13. The production environment is `root_6_28`. The KI-84
   test exercises extraction logic with a stubbed classifier, not scientific coverage.
 - The independent check reads the products on disk on 2026-10-09. Their digests match the receipts.
-- The universe Flux rescale (Φ_CV/Φ_u) was not re-derived at product level. Only its synthetic
-  tests (#9) ran.
+- **Closed by external verification (REPAIR 1).** A did not re-derive the product-level Flux rescale
+  (Φ_CV/Φ_u); only its synthetic tests (#9) ran here. E's independent reviewer re-derived it from the
+  100 unscaled Flux universes and the flux band: max relative deviation 0.0 over 100 universes, and
+  `hFluxCV` equals `E_C`'s `hFlux_pt` to 2e-16. Source: E's review §2, row "Flux rescale at product
+  level" (`docs/orchestration/state/uncertainty-preparation-20261008/e/review.md` on
+  `prep/uncertainty-e-20261008`). That is E's measurement, cited, not repeated.
+- **Provenance records, residual window (E's review F12, after REPAIR 1).** The driver digest is taken
+  when `main()` starts. Python reads the script a moment earlier, and the ROOT and numpy imports run
+  in between, so an edit in those seconds would go unrecorded. The helper digest is of the `.py`
+  source right after the import. Python may execute a cached `.pyc` compiled from that source, which
+  it validates by the source's mtime and size, not its content.
+- **Toy outputs carry no provenance records (E's review F4).** `uq/coverage_fixed_truth/fixed_truth_toy.py`
+  calls `ohf.omnifold` directly and never runs the driver's `main()`. It writes its own metadata
+  (estimator, seed, iterations, bootstrap seeds), but not the driver and helper digests.

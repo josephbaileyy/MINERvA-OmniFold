@@ -1,0 +1,33 @@
+/private/tmp/minerva-uncprep-a-20261008/tmp/mutctl2/2d-unfolding/tests/test_bootstrap_completeness_ki84.py:342: ResourceWarning: unclosed file <_io.BufferedReader name='/private/tmp/minerva-uncprep-a-20261008/tmp/u2d_prov_p3z0eail/omnifold_stand_in.py'>
+  cls.helper_sha = hashlib.sha256(open(cls.helper, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+test_a_helper_without_a_file_is_reported_unavailable_not_guessed (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_a_helper_without_a_file_is_reported_unavailable_not_guessed) ... ok
+test_an_omitted_flag_is_recorded_by_its_effective_value (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_an_omitted_flag_is_recorded_by_its_effective_value) ... ok
+test_bootstrap_settings_are_recorded (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_bootstrap_settings_are_recorded) ... ok
+test_digests_are_of_the_bytes_loaded_not_of_later_edits (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_digests_are_of_the_bytes_loaded_not_of_later_edits) ... /private/tmp/minerva-uncprep-a-20261008/tmp/mutctl2/2d-unfolding/tests/test_bootstrap_completeness_ki84.py:393: ResourceWarning: unclosed file <_io.BufferedReader name='/private/tmp/minerva-uncprep-a-20261008/tmp/u2d_prov_p3z0eail/driver_copy.py'>
+  cur = {p: hashlib.sha256(open(p, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/private/tmp/minerva-uncprep-a-20261008/tmp/mutctl2/2d-unfolding/tests/test_bootstrap_completeness_ki84.py:393: ResourceWarning: unclosed file <_io.BufferedReader name='/private/tmp/minerva-uncprep-a-20261008/tmp/u2d_prov_p3z0eail/omnifold_edited_mid_run.py'>
+  cur = {p: hashlib.sha256(open(p, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+FAIL
+test_driver_bytes_are_identified (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_driver_bytes_are_identified) ... ok
+test_recording_provenance_leaves_the_histograms_alone (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_recording_provenance_leaves_the_histograms_alone) ... ok
+test_the_imported_helper_is_identified_by_path_and_digest (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_the_imported_helper_is_identified_by_path_and_digest) ... ok
+
+======================================================================
+FAIL: test_digests_are_of_the_bytes_loaded_not_of_later_edits (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_digests_are_of_the_bytes_loaded_not_of_later_edits)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/minerva-uncprep-a-20261008/tmp/mutctl2/2d-unfolding/tests/test_bootstrap_completeness_ki84.py", line 398, in test_digests_are_of_the_bytes_loaded_not_of_later_edits
+    self.assertEqual(_named(self.out["mutated"], "driverSha256"), self.script_sha)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '054417e176dedca335389373d192f95c0dd5a7e99eb080736867025950f1cc29' != 'ace5bdefbbd3c180fd5981f9aab85860a5946389e4060000fed7821a410fad06'
+- 054417e176dedca335389373d192f95c0dd5a7e99eb080736867025950f1cc29
++ ace5bdefbbd3c180fd5981f9aab85860a5946389e4060000fed7821a410fad06
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 4.053s
+
+FAILED (failures=1)
