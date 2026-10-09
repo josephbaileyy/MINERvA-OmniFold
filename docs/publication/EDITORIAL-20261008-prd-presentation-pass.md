@@ -332,7 +332,7 @@ figures." This answers §7 items 1 and 6. §6 item 1 and §7 items 1 and 6 are s
   - `gpt-5.5` in the idea-rate benchmark (`FINDINGS-ARCHIVE-2026-08.md`);
   - `codex-cli` (commit messages).
 
-  Joseph should confirm that it is complete.
+  **Confirmed by Joseph, 2026-10-08, in this session: "The AI list is correct."**
 
 **Figures 1–3 redrawn** from the released figure arrays (`fig_arrays.npz`, sha256 `72394a2b…`, the RC4/RC6 file), with
 `publication/release/figs/make_figs.py`. The article now prints that script's output, so the release regenerates the
