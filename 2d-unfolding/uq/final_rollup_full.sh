@@ -1,5 +1,17 @@
 #!/bin/bash
-# Stage-2 publication-grade final rollup. Run AFTER:
+# SUPERSEDED Stage-2 rollup, kept as the record of how the VL162-era products
+# were made. It is not the production chain behind the quoted 2D uncertainty:
+# that is uq/rollup_vl170_adoption.sh (VL172; 2D_OMNIFOLD_REFERENCE.md, "Which
+# script produced the quoted 2D uncertainty"). Step (c) below predates the
+# matcorr/fluxfix sweep.
+#
+# Steps (a) and (b) write two sha-pinned products in place:
+#   uq/seedscan_lgbm_ml/uq_covariance_ml.root        (an input of the adopted VL172 rollup)
+#   uq/bootstrap_MEFHC_300/uq_covariance_boot300.root (the VL162 band)
+# (docs/orchestration/state/ki84-adopt-20261006/sha256sums_2d-unfolding_uq.txt).
+# The script refuses to run while either exists.
+#
+# Original preconditions. Run AFTER:
 #   1. runEventLoopOmniFold_MEFHC_universes_full.root is on disk
 #      (sbatch_hadd_MEFHC_universes_full.sh has completed).
 #   2. sbatch_unfold_2d_MEFHC_5iter_universes_full.sh array has drained
@@ -22,8 +34,7 @@
 #        - bootstrap cov (N=300)
 #        - ML-noise cov (lgbm seedscan n=10)
 #
-# Writes a fresh combined-cov log; the chi^2/ndf is the publication-grade
-# headline.
+# Writes a fresh combined-cov log. Its chi^2/ndf is not the quoted one.
 
 set -eo pipefail
 cd "$(dirname "$0")/.."  # 2d-unfolding/
@@ -41,6 +52,14 @@ UNIV_OUTDIR="uq/universe_stage2_MEFHC_full"
 BOOT_OUTDIR="uq/bootstrap_MEFHC_300"
 ML_OUTDIR="uq/seedscan_lgbm_ml"
 LOG_OUT="${UNIV_OUTDIR}/compare_to_paper_combined_cov_full.log"
+
+for pinned in "${ML_OUTDIR}/uq_covariance_ml.root" "${BOOT_OUTDIR}/uq_covariance_boot300.root"; do
+  if [[ -e "${pinned}" ]]; then
+    echo "FAIL: ${pinned} exists and is a sha-pinned product; refusing to overwrite it."
+    echo "The quoted 2D rollup is uq/rollup_vl170_adoption.sh, which writes new directories."
+    exit 2
+  fi
+done
 
 # --- preconditions
 [[ -s "${OMNIFILE_FULL}" ]] || { echo "FAIL: missing ${OMNIFILE_FULL}"; exit 2; }
