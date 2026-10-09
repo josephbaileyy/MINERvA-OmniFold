@@ -209,11 +209,26 @@ Per-event Poisson(1) weight bootstrap on data + MC jointly. Invariants:
    intentionally breaks the strict closure identity. Use this only for
    pseudo-experiment coverage calibration, not for deterministic closure
    tests.
-4. **Pin the GBT random_state too.** Each replica should pass both
-   `--bootstrap-seed N` and `--seed N` so ML stochasticity is removed
-   from the per-replica variance. The bootstrap variance and the
-   seedscan variance are *separable* uncorrelated components only when
-   each replica's GBT seed is pinned.
+4. **Hold the GBT random_state fixed across replicas; vary only the
+   bootstrap seed.** Every statistical-band replica launcher passes
+   `--bootstrap-seed N` with the same fixed `--seed 1`:
+   `sbatch_unfold_2d_MEFHC_5iter_bootstrap_scaleup.sh` (N = 1…300,
+   `VL162`), its `VL170` rebuild
+   `docs/orchestration/state/ki84-rebuild-20261006/sbatch_ki84_replicas.sh`,
+   the legacy 1–50 launcher, the negweight and bootsplit variants, and
+   `uq/run_bootstrap_interactive.sh`. Their headers describe seed 1 as
+   matching seedscan trial 1. A fixed seed removes ML stochasticity from
+   the per-replica variance. The bootstrap variance and the seedscan
+   variance are *separable* uncorrelated components only under that
+   condition. Do **not** pass `--seed N`: an earlier submission (Slurm
+   `53327775`) varied `--seed` together with `--bootstrap-seed`,
+   double-counted ML stochasticity, and was redone (scaleup launcher
+   header). The replicas' estimator seed (1) is not the matched universe
+   CV's (`--seed 42`). The central-value launcher `sbatch_unfold_2d_MEFHC.sh`
+   passes neither `--seed` nor `--estimator`. The older coverage-toy
+   launchers `sbatch_coverage_toys_MEFHC{,_200}.sh` (`--closure`, item 3)
+   do pass `--seed` equal to the toy's bootstrap seed. They do not produce
+   the band.
 5. **CV unfold = omit the flag.** Don't pass `--bootstrap-seed 0` and
    call it the CV; seed=0 is a valid replica with a non-trivial Poisson
    draw. The CV is the unflagged run.
