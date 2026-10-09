@@ -91,6 +91,11 @@ OPERANDS = {
         "value": 0.198,
         "source": "docs/orchestration/PREREG-20261005-2d-fixed-truth-coverage.md A1.7 P6: mean of three regular pilot toys",
     },
+    "r0_cv_only_node_h_range": {
+        "value": [0.4, 2.3],
+        "source": "lane C reconciliation d07a3d33 (ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md "
+                  "setup notes): CV-only identity-carrying event-loop rebuild, 12 playlists, billing ASSUMED",
+    },
     "m3246_allocated_node_h": {
         "value": 20000.0,
         "source": "iris on login05, 2026-10-09T06:15:10Z, project m3246 CPU",
@@ -557,9 +562,13 @@ def compute():
         per_full_shared, "measured")
     add("N2: held-out data-stream variance calibration, arms T+B (50 + 50 runs)", 100, 0,
         per_ki85_shared, "measured (KI-85 arms, full MC; a half-MC bank is expected to be cheaper)")
-    costs["note"] = ("per-run charges are sacct ElapsedRaw x billing/256; the identity-carrying "
-                     "omnifile rebuild every independent-population option needs is NOT included "
-                     "(unpriced here; see the design's cost section)")
+    r0 = v("r0_cv_only_node_h_range")
+    costs["r0_identity_rebuild_node_h_range"] = r0
+    costs["n2_total_with_r0_node_h_range"] = [costs["options"][-1]["node_h_with_retry_allowance"] + r0[0],
+                                              costs["options"][-1]["node_h_with_retry_allowance"] + r0[1]]
+    costs["note"] = ("per-run charges are sacct ElapsedRaw x billing/256; option rows exclude the "
+                     "identity-carrying rebuild R0, which every independent-population option needs "
+                     "once (r0_identity_rebuild_node_h_range, priced by lane C with billing assumed)")
 
     out = {
         "schema": "uncertainty-preparation-20261008/b/assurance v1",

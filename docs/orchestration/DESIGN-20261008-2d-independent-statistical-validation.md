@@ -5,8 +5,9 @@ It registers nothing, authorizes no compute and admits no experiment. Every tole
 **proposed** and needs admission before execution. Nothing here lifts the `KNOWN_ISSUES.md` 85
 deferral, establishes real-data or total coverage, admits a pilot, or spends a historical allocation.
 
-**State: PROVISIONAL** (pushed for the one B↔C exchange at `f19084f4`; the estimator specification is
-now frozen against A's `[uncprep-A] CONTRACT` `acb338a2`; the final reconciliation with C follows A's FREEZE).
+**State: FINAL (lane-B FREEZE).** Provisional exchange with C at `f19084f4`; the estimator specification is
+frozen against A's `[uncprep-A] CONTRACT` `acb338a2` and checked against A's FREEZE `9fab26e8`/`f762749d`;
+reconciled once with C's `d07a3d33` (§14).
 
 **CITABLE FOR:** the specification of the named experiment; the measured population inventory
 ([`populations.tsv`](state/uncertainty-preparation-20261008/b/populations.tsv)); the deterministic
@@ -31,13 +32,14 @@ calibrated, any change to a quoted number, the total uncertainty (lane C), or au
   `state/ki84-rebuild-20261006/` and `state/ki84-adopt-20261006/`;
   `2d-unfolding/uq/coverage_fixed_truth/{fixed_truth_toy,toy_design,score_coverage}.py`; the 2D status and
   reference; the production driver; the October 5 successor proposal (§5 criteria, which are **not**
-  reused); C's provisional assessment at `origin/prep/uncertainty-c-total-20261008` `9204a390`.
+  reused); C's assessment at `origin/prep/uncertainty-c-total-20261008` (`9204a390`, reconciled
+  `d07a3d33`); A's assessment at `origin/prep/uncertainty-a-pairing-20261008` (`acb338a2`, `f762749d`).
   All historical toys and the KI-85 diagnostic are **development evidence**.
 - **Measured for this design** (read-only, 2026-10-09 UTC, Perlmutter `login05`, no event loop): the
   production 2D omnifile's tree and branch lists and POT parameters (ROOT 6.28), three file digests
   (`sha256sum`), and the `m3246` balance (`iris`). Details are in `populations.tsv`.
 
-## 1. Disposition (provisional; the final verdict is in §17)
+## 1. Disposition (the full verdict is in §17)
 
 **NO-GO** for the dispatched experiment, on two independent grounds, either of which suffices:
 
@@ -88,10 +90,13 @@ the producers do not do that. A and this lane agree on every row below.
    the sklearn exact-split `GradientBoosting` backend with an unpinned `random_state`. `E_C` and
    `E_S` differ by a median 1.3 statistical σ per bin. This design therefore validates *the `E_S`
    interval-producing procedure with an `E_S` central*. It does **not** validate the uncertainty
-   attached to the quoted central value. That needs either A's pairing `P02` (an `E_S`→`E_C` transfer
-   with a declared observable and tolerance, unmeasured) or Joseph's decision to change the quoted
-   central estimator. Using `E_C` as the per-experiment central instead would multiply the central's
-   cost by 88–321 (C, `9204a390` §6: about 19 h per exact-GBT unfold), and `E_C`'s own seed
+   attached to the quoted central value. A's FREEZE records `P02` (`E_C` and the band are the same
+   estimator) as **DISPROVED** and `P03` (the band applies to `E_C`) as **UNRESOLVED**: no exact-backend
+   bootstrap exists (A prices 50 exact replicas at about 34–39 node-h packed). Covering `E_C` needs `P03`
+   resolved or Joseph's decision to change the quoted central estimator. Using `E_C` as the
+   per-experiment central instead costs one exact unfold per experiment (69,523 s single-threaded,
+   MaxRSS 16.8 GB: about 0.7 node-h packed by memory, 19.3 node-h unpacked; A `f762749d` §5); C puts
+   the cheapest `E_C`-keeping validation at 152,000–259,000 node-h (`d07a3d33`). `E_C`'s own seed
    variation has never been measured, so it could not be fixed estimator randomness.
 2. **Purity is re-estimated per experiment, on purpose.** The procedure computes purity from the data
    it is given, so in the outer experiment it is computed from each pseudo-data set. The inner band
@@ -355,9 +360,14 @@ E reproduces the consequential numbers independently from the raw operands at th
 - **Custody.** Validation outputs go to a path the scorer reads only after the full manifest exists and
   the scorer's code and digest are committed. No validation output informs any recipe choice.
 - **Release conditions.** Joseph's admission (which for N2 also lifts the KI-85 deferral); A's frozen
-  estimator identity at a commit; pinned driver blob, OmniFold helper digest (the rooted import stays
-  inside `main()`, `AUTHORIZATION-20260903-oi136-failopen-repair.md` §2), lgbm build, environment and
-  thread count; the rebuilt omnifile and split-manifest digests; a named reviewer.
+  estimator identity at a commit; a driver at or after A's behavior fix `971fc00c`, so that every
+  output records its effective `runConfig`, argv, driver sha256 and the sha256 of the OmniFold helper
+  actually imported (A §4; the fix changes no histogram, weight or estimator); the helper digest
+  (`e96234124a31…` at A's check; the rooted import stays inside `main()`,
+  `AUTHORIZATION-20260903-oi136-failopen-repair.md` §2); the lgbm build, environment and thread count;
+  the rebuilt omnifile and split-manifest digests; a named reviewer. The two `OI-136` ratchet suites are
+  red at the base on nine unlisted October 2D sites, one of them the coverage toy producer (A raised
+  this to E); a harness built on that producer inherits the finding.
 
 ## 13. Command templates, output schema and scorer (not built, not run)
 
@@ -416,8 +426,14 @@ regular full-node replica. Every figure below adds a 5 % retry allowance and exc
   primary at N = 719 is about 46,800 node-h.
 - Half-MC per-run cost is **extrapolated** (linear in training rows), not measured.
 - Storage: 0.06 MB per output (C's measurement), so 216,419 runs need about 13 GB.
-- **R0 is unpriced.** Its event-loop cost is not in any committed receipt read here. It is needed by
-  every independent-population option and does not change the verdict.
+- **R0, priced by C** (`d07a3d33`, setup item S-r, billing ASSUMED): a CV-only identity-carrying
+  rebuild is 0.4–2.3 node-h; with universe columns 2.8–27.0. It is needed once by every
+  independent-population option and does not change the verdict.
+- **Reconciliation with C (one, after A's FREEZE).** C reproduces this design's 719 / 1,116 at 206
+  functionals and the primary's 13,440 node-h (`costs.json` `cross_check_B_primary`, 13,440.6). C's
+  own counts size the same criteria for a 4-case total-uncertainty family (824 functionals: N 823,
+  design N 1,250 per case); that family is C's, not this statistical-only design's. No assumption
+  differs between the lanes; the only difference is the family size, which is stated.
 
 ## 15. Secondary: fixed-band transfer (comparison only)
 
@@ -433,7 +449,7 @@ cost comparison and is **not** a substitute for the primary.
 | Route | Claim it could support | Status |
 |---|---|---|
 | **N1** held-out conditional per-experiment intervals (fixed bank `S`, reservoir `R`, reference `T_R`) | conditional on `S` and `R`, at MC/data 2.35 | **Not defensible**: fails by construction from the finite reference (§7); also 6,720 node-h |
-| **N2** held-out data-stream variance calibration: arm T, 50 pseudo-data sets from `R` unfolded with a fixed half-MC `S` and the MC stream held; arm B, 50 data-only bootstrap replicas of one of them; per-bin `σ_B/σ_T` and its median, as in the KI-85 rule | whether the production data bootstrap is faithful when the pseudo-data do **not** sit on the training events: the KI-85 (a)/(b) question with held-out MC | Specifiable at ~7.4 node-h plus R0; it **is** the deferred KI-85 held-out re-test, so it needs Joseph to lift the deferral; it validates no interval, no MC stream and no truth coverage |
+| **N2** held-out data-stream variance calibration: arm T, 50 pseudo-data sets from `R` unfolded with a fixed half-MC `S` and the MC stream held; arm B, 50 data-only bootstrap replicas of one of them; per-bin `σ_B/σ_T` and its median, as in the KI-85 rule | whether the production data bootstrap is faithful when the pseudo-data do **not** sit on the training events: the KI-85 (a)/(b) question with held-out MC | Specified (§16.1) at 7.8–9.7 node-h including R0; it **is** the deferred KI-85 held-out re-test, so it needs Joseph to lift the deferral; it validates no interval, no MC stream and no truth coverage |
 | **G** surrogate world: truth from an independent generator run and reco from a smearing/efficiency law in `(p_T, p_∥)`, fit on the development fold and validated against the reservoir, so that both banks and pseudo-data can be redrawn | calibration of the procedure in the surrogate world, transferred to the real MC only as far as the surrogate's validity check reaches | NOT READY: the law, its validity criterion and the truth generation are undeveloped and unpriced; the nested cost (§14, P) still applies |
 
 ### 16.1 N2 specification (PROPOSED; it needs Joseph to lift the KI-85 deferral)
@@ -457,7 +473,8 @@ cost comparison and is **not** a substitute for the primary.
   sit on the training events. It is conditional on one bank and one base pseudo-data set, it does not
   test the MC stream, and it is not a coverage test.
 - **Cost.** 100 runs, 7.4 node-h at the measured KI-85 rate (full MC; a 48 % bank should be cheaper),
-  plus R0.
+  plus R0 (0.4–2.3 node-h, C): **7.8–9.7 node-h** (`assurance.json` `n2_total_with_r0_node_h_range`).
+  Pre-execution items: the per-bin ESS reduction on the rebuilt file and the C1–C7 tests.
 
 ## 17. Verdict
 
@@ -470,15 +487,16 @@ the populations and resources that exist:
   `m3246` allocation (§14).
 - *Held-out conditional alternative* — fails by construction against its only available reference (§7).
 - *Claim reach* — even a PASS would validate A's `E_S` procedure, not the uncertainty of the quoted
-  `E_C` central value, until pairing `P02` is measured or Joseph changes the quoted estimator (§2).
+  `E_C` central value, until A's pairing `P03` is resolved or Joseph changes the quoted estimator (§2).
 
 What would change it: (1) an identity-carrying rebuild (R0); **and** (2) either a second
 production-size MC production or a validated generative law (G); **and** (3) about 13,000–21,000
 node-h, or a validated cheaper inner procedure (e.g. B = 50, a separate procedure, 2,277 node-h).
 
 **Next decision (Joseph) and its cost.** Whether to lift the KI-85 deferral for N2, the narrow held-out
-data-stream question: about 7.4 node-h plus an unpriced R0 rebuild, labeled as not validating the
-adopted construction. Otherwise nothing further is ready to admit.
+data-stream question: about 7.8–9.7 node-h including the R0 rebuild, labeled as not validating the
+adopted construction, `E_C`'s uncertainty or real-data calibration. N2 is specified to admission level
+(§16.1) but not admitted. Otherwise nothing further is ready to admit.
 
 **Cannot authorize.** Any compute, a pilot, a lift of the KI-85 deferral, a statement about the
 coverage or calibration of VL170 or of real data, a change to the band, the estimator, the
@@ -486,7 +504,8 @@ uncertainty model or the publication scope.
 
 ## 18. Limitations
 
-- ESS per bin, the smearing share `s` and the R0 cost are not measured; each is named where it is used.
+- ESS per bin and the smearing share `s` are not measured, and R0's price is C's with billing assumed;
+  each is named where it is used.
 - `f_data` = 0.52 is a ratio of medians from development evidence and only sizes the §7 offset.
 - Bonferroni is conservative under positive dependence; the stated N is an upper bound for the
   requirement as written.
@@ -496,6 +515,33 @@ uncertainty model or the publication scope.
 
 ## For E
 
-- Pending: A's FREEZE (pairing outcomes and engineering checks) and the one C reconciliation after it.
+- C's `d07a3d33` cites the `E_S`→`E_C` transfer as `P02`; A's FREEZE numbers it `P03` (`P02` is the
+  DISPROVED same-estimator row). The substance agrees; the label differs.
+- A's two red `OI-136` ratchet suites (A's "For E" item 1) bind any harness built on
+  `fixed_truth_toy.py`.
 - If E wants the `populations.tsv` digests as verified receipt bindings, that is E's call; they are
   recorded as TSV on purpose.
+
+## Session record (lane B)
+
+- **Model and effort.** Claude Opus 5.5 (`claude-opus-5-5`) in Claude Code; effort level not exposed to
+  the session. Session id `c84d0399-39b1-4d30-a196-4ba43821f816`. Owner only; no reviewer or worker agent.
+- **Commits.** Base `f8e2bf85`; PROVISIONAL `f19084f4`; contract freeze `ea6a154e`; this FREEZE is the
+  commit that carries this section, on `prep/uncertainty-b-statval-20261008`.
+- **Commands** (exit 0 unless stated): `python3 assurance.py --self-test` (44 checks);
+  `python3 assurance.py --write assurance.json` (about 10 s); `python3 xcheck_scipy.py` (scipy 1.15.2,
+  numpy 1.26.4; reproduces N, acceptance regions, bias N and the reference-offset failures); the first
+  `--self-test` failed on a Student-t case with 1 degree of freedom, which exposed an inaccurate
+  quadrature there; it is now refused below 3 degrees of freedom and tested. Pre-commit: 13 checks
+  passed on each commit; the first PROVISIONAL attempt was refused for a bare-filename citation in
+  `assurance.json`, fixed by full repo paths. Remote reads: `remote-reads-20261009.txt`. No test was
+  skipped; no test that trains or reads validation samples exists in or was run by this lane.
+- **Environment.** macOS, Python 3.12.2 (miniconda), `TMPDIR=/private/tmp/minerva-uncprep-b-20261008/tmp`,
+  four-thread caps; Perlmutter `login05` via `ssh saul.nersc.gov` for the metadata reads (ROOT 6.28).
+- **Resources against B's budget row** (6 h, 2 core-h, 4 GiB, 0.5 GiB): about 0.9 h active
+  (06:09Z–07:02Z); under 0.05 local core-h; peak RAM under 0.3 GiB; new output under 0.2 MiB plus a
+  0.4 GiB checkout; zero cluster node-hours, zero GPU-hours, no training, no toys. Login-node use: one
+  ROOT key listing, three `sha256sum` reads (2.1 GB total) and one `iris` query.
+- **Additional operand fixtures under `P/b/`:** `remote-reads-20261009.txt`, `xcheck_scipy.py`,
+  `xcheck_scipy_output.txt`.
+

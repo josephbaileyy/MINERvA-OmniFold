@@ -62,6 +62,13 @@
    "value": 0.198,
    "source": "docs/orchestration/PREREG-20261005-2d-fixed-truth-coverage.md A1.7 P6: mean of three regular pilot toys"
   },
+  "r0_cv_only_node_h_range": {
+   "value": [
+    0.4,
+    2.3
+   ],
+   "source": "lane C reconciliation d07a3d33 (ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md setup notes): CV-only identity-carrying event-loop rebuild, 12 playlists, billing ASSUMED"
+  },
   "m3246_allocated_node_h": {
    "value": 20000.0,
    "source": "iris on login05, 2026-10-09T06:15:10Z, project m3246 CPU"
@@ -744,6 +751,14 @@
     "fraction_of_remaining_allocation": 0.0024435308820627516
    }
   ],
-  "note": "per-run charges are sacct ElapsedRaw x billing/256; the identity-carrying omnifile rebuild every independent-population option needs is NOT included (unpriced here; see the design's cost section)"
+  "r0_identity_rebuild_node_h_range": [
+   0.4,
+   2.3
+  ],
+  "n2_total_with_r0_node_h_range": [
+   7.8298,
+   9.7298
+  ],
+  "note": "per-run charges are sacct ElapsedRaw x billing/256; option rows exclude the identity-carrying rebuild R0, which every independent-population option needs once (r0_identity_rebuild_node_h_range, priced by lane C with billing assumed)"
  }
 }
