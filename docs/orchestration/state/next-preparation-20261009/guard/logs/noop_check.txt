@@ -1,0 +1,2 @@
+fixed_truth_toy OMNIFOLD_PY: derived == replaced literal: True
+ki85_compare UQ: derived == replaced literal: True

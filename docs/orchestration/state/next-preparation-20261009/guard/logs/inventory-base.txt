@@ -1,0 +1,17 @@
+head: 5ac9706a21e8a5ac8863a65fd7623d8ab8d22269
+dirty_tracked: False
+ast_sites_n: 19
+probe_counts: {'candidates': 144, 'failopen': 18, 'insert_not_rooted': 66, 'no_insert': 60}
+rooted_listed_n: 10
+failopen_recorded: [9, '0939e1595e1bf5ed7896436d2ca1e090c47525258880bac20f7b3eb5f312a350']
+ast_unlisted: ['2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py', '2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py', 'docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py', 'docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py', 'docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py', 'docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py', 'docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py', 'docs/orchestration/state/note-boot-20261003/boot_spreads.py', 'docs/orchestration/state/uqpaper-median-20261006/paper_median.py']
+ast_listed_but_clean: []
+ast_only: ['nd-unfolding/pet/gate2_target_runtime.py']
+probe_only: []
+union_n: 19
+insert_call_sites_n: 21
+probe_failopen_digest_as_ratchet_digests_it: 04357e1a11b49bb5a7f7a65a1502d101d5828052bf07e6a10d7d3bb43e4930e0
+adjacent_shapes: 0 files
+real 23.78
+user 21.84
+sys 0.65

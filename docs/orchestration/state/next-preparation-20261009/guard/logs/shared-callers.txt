@@ -1,0 +1,28 @@
+### test_k0_5ab_separated_roots
+Ran 4 tests in 0.536s
+
+OK
+exit=0
+### test_flux_universe_fix
+Ran 51 tests in 0.415s
+
+OK
+exit=0
+### test_p4_resume_integration
+Ran 50 tests in 30.649s
+
+OK
+exit=0
+### test_fullevent_extract
+Ran 28 tests in 0.068s
+
+OK
+exit=0
+### test_hash_bindings (pytest)
+.................................                                        [100%]
+33 passed in 117.96s (0:01:57)
+### test_coverage_fixed_truth (pytest)
+....................                                                     [100%]
+20 passed in 0.99s
+### verify_hash_bindings
+ALL BINDINGS INTACT
