@@ -28,6 +28,11 @@
    "node_h": 2.83031746031746,
    "p": 7
   },
+  "universe_now_p90": {
+   "basis": "p90 RSS; the top decile would still risk OOM",
+   "node_h": 4.953055555555555,
+   "p": 4
+  },
   "universe_now_safe": {
    "basis": "RSS of the identical loader on the universe file (LightGBM tasks, max); packing must budget the max",
    "node_h": 9.90611111111111,
@@ -246,9 +251,9 @@
      "P3_shortcut_S1_S2": 84485.78459999998
     },
     "p1_p2_fullnode": {
-     "P1_reconstructed_full": 486661.46129999997,
-     "P2_fixed_band": 2092.1987999999997,
-     "P3_shortcut_S1_S2": 46020.7188
+     "P1_reconstructed_full": 659899.8873,
+     "P2_fixed_band": 2724.7623,
+     "P3_shortcut_S1_S2": 64018.0548
     }
    },
    "optimistic": {
@@ -322,6 +327,7 @@
   "exact_transfer_measurement": {
    "P05_waves_at_30_nodes": {
     "universe_now_median": 1,
+    "universe_now_p90": 2,
     "universe_now_safe": 4,
     "universe_p1": 1
    },
@@ -346,6 +352,13 @@
     "P09b": 6.6592911877394645,
     "admitted_with_5pct_retry_10pct_verif_reserve": 819.2183719040776,
     "sum": 569.8910413245758
+   },
+   "now_p90_packing_N50": {
+    "P03": 33.29645593869732,
+    "P05": 926.8873180076629,
+    "P09b": 6.6592911877394645,
+    "admitted_with_5pct_retry_10pct_verif_reserve": 1389.836906130268,
+    "sum": 966.8430651340997
    },
    "now_safe_packing_N300": {
     "P03": 199.77873563218392,
@@ -479,7 +492,7 @@
    "C_optimistic_assumed": 0.132419,
    "now_fullnode_measured": 0.7075,
    "now_shared64": null,
-   "now_shared64_note": "14 of 187 tasks peaked above the 121.9 GB shared-64 allocation",
+   "now_shared64_note": "14 of 187 tasks peaked above the 121,920 MiB (127.8 GB) shared-64 allocation",
    "p1_fullnode": 0.2502784580410933,
    "p1_p2_shared64": [
     0.04016135212653793,

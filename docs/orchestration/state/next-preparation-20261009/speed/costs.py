@@ -209,7 +209,7 @@ def main():
             "now_fullnode_measured": e_uni_full / 3600,
             "now_shared64": None,
             "now_shared64_note": f"{uni_sweep['tasks_rss_over_shared64_alloc_gb']} of 187 tasks "
-                                 "peaked above the 121.9 GB shared-64 allocation",
+                                 "peaked above the 121,920 MiB (127.8 GB) shared-64 allocation",
             "p1_fullnode": e_uni_p1_full / 3600,
             "p1_shared64": e_uni_p1_shared * 64 / 256 / 3600,
             "p1_p2_shared64": [(e_cv_shared * a_hi + resid * excess) * 64 / 256 / 3600,
@@ -234,6 +234,9 @@ def main():
                               "node_h": (e_exact + excess) / 3600 / pack(uni_rss["max"]),
                               "basis": "RSS of the identical loader on the universe file "
                                        "(LightGBM tasks, max); packing must budget the max"},
+        "universe_now_p90": {"p": pack(uni_rss["p90"]),
+                             "node_h": (e_exact + excess) / 3600 / pack(uni_rss["p90"]),
+                             "basis": "p90 RSS; the top decile would still risk OOM"},
         "universe_now_median": {"p": pack(uni_rss["median"]),
                                 "node_h": (e_exact + excess) / 3600 / pack(uni_rss["median"]),
                                 "basis": "median RSS; OOM risk for the high tasks"},
@@ -261,6 +264,7 @@ def main():
         "lane_C_ratio_N50": transfer(0.68, 0.68 * 0.5 / (804 / 3600), 50),
         "now_safe_packing_N50": transfer(cvp, exact_rates["universe_now_safe"]["node_h"], 50),
         "now_median_packing_N50": transfer(cvp, exact_rates["universe_now_median"]["node_h"], 50),
+        "now_p90_packing_N50": transfer(cvp, exact_rates["universe_now_p90"]["node_h"], 50),
         "p1_N50": transfer(cvp, exact_rates["universe_p1"]["node_h"], 50),
         "p1_p2_N50": transfer(exact_rates["cv_packed_p2"]["node_h"],
                               exact_rates["universe_p1_p2"]["node_h"], 50),
@@ -269,7 +273,8 @@ def main():
         "wall_h_one_wave": exact_rates["wall_per_exact_unfold_h"],
         # P05's 188 tasks at C's 30-node concurrency cap: waves x ~19.5 h per exact unfold
         "P05_waves_at_30_nodes": {k: math.ceil(188 / (30 * exact_rates[k]["p"]))
-                                  for k in ("universe_now_safe", "universe_now_median", "universe_p1")},
+                                  for k in ("universe_now_safe", "universe_now_p90",
+                                            "universe_now_median", "universe_p1")},
         # category 2 (a faster exact implementation is not bitwise E_C; needs P09b first)
         "p1_N50_native_s_category2": {s: transfer(cvp * amdahl(0.994, s),
                                                   exact_rates["universe_p1"]["node_h"] * amdahl(0.994, s),
@@ -314,7 +319,8 @@ def main():
         if cons:
             scen["measured_universe_rate"] = (cv_now, ru["now_fullnode_measured"])
             scen["p1_fullnode"] = (cv_now, ru["p1_fullnode"])
-            scen["p1_p2_fullnode"] = (cv_now * a_hi, (e_cv_full * a_hi + resid * excess) / 3600)
+            # conservative column: the smaller loop fraction (review F14)
+            scen["p1_p2_fullnode"] = (cv_now * a_lo, (e_cv_full * a_lo + resid * excess) / 3600)
         else:
             scen["p1_shared64"] = (cv_now, ru["p1_shared64"])
             scen["p1_p2_shared64"] = (cv_now * a_hi, ru["p1_p2_shared64"][0])

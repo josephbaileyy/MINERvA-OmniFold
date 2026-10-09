@@ -138,6 +138,10 @@ class NegativeControls(unittest.TestCase):
         BS.restrict_active_branches(u, [n for n in names if n != "w_reco"])
         got = DRV.collect_signal_arrays_2d(u, *LO_HI, POT, use_weights=True)
         self.assertIn("w_reco", diff_keys(self.ref, got))     # the silent defect is real
+        # and it leaves nothing to inspect afterwards: no status, and no address recorded
+        self.assertFalse(u.GetBranchStatus("w_reco"))
+        self.assertTrue(ROOT.gInterpreter.ProcessLine(
+            f"((TTree*){ROOT.addressof(u)})->GetBranch(\"w_reco\")->GetAddress() == nullptr;"))
         with self.assertRaises(RuntimeError):                  # and the guard refuses it
             DRV.collect_signal_arrays_2d(BS.ActiveOnlyTree(u), *LO_HI, POT, use_weights=True)
         g.Close()
@@ -149,8 +153,6 @@ class NegativeControls(unittest.TestCase):
     def test_sim_pass_equals_one_is_caught(self):
         self._assert_mutant_caught("passed = raw != 0", "passed = raw == 1")
 
-    def test_bool_view_of_sim_pass_is_caught(self):
-        self._assert_mutant_caught("raw = raw.view(np.uint8)", "raw = raw.astype(np.uint8) * 0")
 
     def test_weight_window_edge_is_caught(self):
         self._assert_mutant_caught("(wt < 1e4)", "(wt <= 1e4)")
@@ -164,8 +166,15 @@ class NegativeControls(unittest.TestCase):
                                    'np.where(pass_reco, rec_pt, -999.0)')
 
 
-class Atan2Guard(unittest.TestCase):
-    """Records whether NumPy's arctan2 alone would already have matched (not a pass criterion)."""
+class DefensiveGuards(unittest.TestCase):
+    """Record whether each defensive guard was needed on this platform (not pass criteria)."""
+
+    def test_report_bool_view_difference(self):
+        # Review F12: drop the byte view and test AsNumpy's non-canonical bool array directly.
+        path = next(p for p in TREES if "extra192" in p)
+        got = columnar(path, True, None, module=mutant("raw = raw.view(np.uint8)", "pass"))
+        print(f"\n[bool-view] without the byte view, keys differing: "
+              f"{diff_keys(reference(path, True, None), got)}", file=sys.stderr)
 
     def test_report_unguarded_difference(self):
         path = next(p for p in TREES if "extra192" in p)
