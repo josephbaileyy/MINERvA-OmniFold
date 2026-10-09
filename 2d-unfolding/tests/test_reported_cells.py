@@ -225,6 +225,10 @@ class ScriptGuardTest(unittest.TestCase):
         diag = (0.01 * cv.ravel()[cls.cells]) ** 2
         cls.write_boot(d / "boot.root", diag, cls.cells)
         cls.write_boot(d / "boot_perm.root", diag, cls.perm)
+        cls.write_boot(d / "boot_omit.root", diag[:-1], cls.cells[:-1])
+        cls.write_boot(d / "boot_noid.root", diag, None)
+        # A legacy analyze_uq output: no hReportedCells, cells carried by hMean2D > 0.
+        cls.write_boot(d / "boot_legacy.root", diag, None, mean=cv)
         f = ROOT.TFile.Open(str(d / "cov_ptpl_minerva_inclusive_6GeV.root"), "RECREATE")
         h = ROOT.TH2D("pt_pl_cross_section", "", 14, rc.PT_EDGES, 16, rc.PZ_EDGES)
         for i in cls.cells:
@@ -251,14 +255,21 @@ class ScriptGuardTest(unittest.TestCase):
         f.Close()
 
     @staticmethod
-    def write_boot(path, diag, cells):
+    def write_boot(path, diag, cells, mean=None):
         f = ROOT.TFile.Open(str(path), "RECREATE")
         n = len(diag)
         h = ROOT.TH2D("hCov2D_reported", "", n, 0, n, n, 0, n)
         for i in range(n):
             h.SetBinContent(i + 1, i + 1, float(diag[i]))
         h.Write()
-        rc.identity_hist(cells).Write()
+        if cells is not None:
+            rc.identity_hist(cells).Write()
+        if mean is not None:
+            hm = ROOT.TH2D("hMean2D", "", 14, rc.PT_EDGES, 16, rc.PZ_EDGES)
+            for ix in range(14):
+                for iy in range(16):
+                    hm.SetBinContent(ix + 1, iy + 1, float(mean[ix, iy]))
+            hm.Write()
         f.Close()
 
     def run_script(self, argv):
@@ -290,11 +301,26 @@ class ScriptGuardTest(unittest.TestCase):
             self.read_cov(out, "hCov_universe_total")
             + self.read_cov(self.dir / "boot.root", "hCov2D_reported"))
 
-    def test_permuted_bootstrap_is_refused(self):
-        p = self.universes("u_perm", "boot_perm.root")
-        self.assertNotEqual(p.returncode, 0)
-        self.assertIn("refusing to block-sum", p.stderr)
-        self.assertFalse((self.dir / "u_perm" / "uq_universe_covariance.root").exists())
+    def test_legacy_bootstrap_is_block_summed(self):
+        p = self.universes("u_legacy", "boot_legacy.root")
+        self.assertEqual(p.returncode, 0, p.stderr[-2000:])
+        out = self.dir / "u_legacy" / "uq_universe_covariance.root"
+        np.testing.assert_array_equal(
+            self.read_cov(out, "hCov_combined"),
+            self.read_cov(out, "hCov_universe_total")
+            + self.read_cov(self.dir / "boot_legacy.root", "hCov2D_reported"))
+
+    def test_mismatched_bootstraps_are_refused(self):
+        for boot, text in (("boot_perm.root", "refusing to block-sum"),
+                           ("boot_omit.root", "refusing to block-sum"),
+                           ("boot_noid.root", "reported cells are unknown")):
+            with self.subTest(boot=boot):
+                outdir = "u_" + boot.replace(".root", "")
+                p = self.universes(outdir, boot)
+                self.assertNotEqual(p.returncode, 0)
+                self.assertIn(text, p.stderr)
+                self.assertEqual(list((self.dir / outdir).iterdir()), [],
+                                 "a refused run wrote an output file")
 
     def ours_only(self, universe_root, boot):
         code = ("import sys; sys.path.insert(0, sys.argv[1]); import _ours_only_chi2 as oo; "
@@ -313,6 +339,30 @@ class ScriptGuardTest(unittest.TestCase):
         bad = self.ours_only(uni, "boot_perm.root")
         self.assertNotEqual(bad.returncode, 0)
         self.assertIn("reported cells differ", bad.stderr)
+
+    def test_ours_only_refuses_a_permuted_universe_and_warns_on_a_legacy_one(self):
+        def write_universe(path, cells):
+            f = ROOT.TFile.Open(str(path), "RECREATE")
+            n = self.cells.size
+            h = ROOT.TH2D("hCov_universe_total", "", n, 0, n, n, 0, n)
+            for i in range(n):
+                h.SetBinContent(i + 1, i + 1, 1e-80)
+            h.Write()
+            if cells is not None:
+                rc.identity_hist(cells).Write()
+            f.Close()
+
+        perm = self.dir / "perm_universe.root"
+        write_universe(perm, self.perm)
+        bad = self.ours_only(perm, "boot.root")
+        self.assertNotEqual(bad.returncode, 0)
+        self.assertIn("reported cells differ", bad.stderr)
+        self.assertIn("universe", bad.stderr)
+        legacy = self.dir / "legacy_universe.root"
+        write_universe(legacy, None)
+        ok = self.ours_only(legacy, "boot.root")
+        self.assertEqual(ok.returncode, 0, ok.stderr[-2000:])
+        self.assertIn("checked by count only", ok.stdout)
 
 
 if __name__ == "__main__":

@@ -68,10 +68,14 @@ class FinalRollupRefusalTest(unittest.TestCase):
                 self.place_pinned()
                 other = next(r for r in PINNED if r != keep)
                 (self.u2d / other).unlink()
+                archived = self.u2d / "uq/universe_stage2_MEFHC_full/uq_universe_covariance_full.root"
+                archived.parent.mkdir(parents=True, exist_ok=True)
+                archived.write_text("previous rollup")
                 p = self.run_script(SCRIPT.read_text())
                 self.assertEqual(p.returncode, 2, p.stdout + p.stderr)
                 self.assertIn("refusing to overwrite", p.stdout)
                 self.assertFalse(self.calls.exists(), "a step ran before the refusal")
+                self.assertTrue(archived.exists(), "the archive step moved files before the refusal")
                 self.assertEqual((self.u2d / keep).read_bytes(), b"pinned " + keep.encode())
 
     def test_runs_when_no_pinned_product_exists(self):
