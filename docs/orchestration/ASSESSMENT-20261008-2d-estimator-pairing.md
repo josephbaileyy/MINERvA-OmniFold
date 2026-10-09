@@ -239,7 +239,7 @@ Owner: lane A, a single session; the independent review is E's (`CAMPAIGN-REVIEW
 reviewer or worker agent was spawned. Model: Claude Opus 5.5 (`claude-opus-5-5`), reasoning-effort
 setting 15 (harness). Session id `edb72d69-5a74-49f8-9124-1db2071391ec`. Base `f8e2bf85`; outputs
 `acb338a2` (CONTRACT), `971fc00c` (behavior fix), and the FREEZE commit that carries this section.
-Resources against A's row (6 h, 4 core-h, 8 GiB, 2 GiB): active time about 1.5 h by FREEZE; local CPU
+Resources against A's row (6 h, 4 core-h, 8 GiB, 2 GiB): active time about 0.9 h (06:05–06:57Z on 2026-10-09); local CPU
 well under 0.2 core-h (the largest single check, the hash-binding suite, took 83 s wall); peak RAM
 under 1 GiB; scratch 34 MB of byte-copied products plus logs. The cited logs were copied to `P/a/logs/`, then the
 scratch directory was deleted. Cluster: 0 node-h, 0 GPU-h, no training, no toys.
