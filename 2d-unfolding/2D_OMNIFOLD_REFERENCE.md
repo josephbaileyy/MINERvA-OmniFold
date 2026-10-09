@@ -222,7 +222,8 @@ check only the count. They are publication and note producers, and their
 patch is specified in
 `docs/orchestration/state/next-preparation-20261009/structure/REPORT.md`. On
 the adopted inputs, all nine operands' sets were measured equal cell by cell
-(same record).
+(same record; the two universe files through their `hSigma_universe_total > 0`
+maps).
 
 Superseded routes, kept as records:
 - `sbatch_final_rollup_full.sh` / `uq/final_rollup_full.sh`. Its universe

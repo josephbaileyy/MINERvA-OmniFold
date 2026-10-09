@@ -19,9 +19,19 @@ here re-quotes, adopts, changes a gate, measures transfer or validates coverage.
 
 ## 1. Pre-edit claim: exact files and caller analysis
 
-Pushed as `53e4f7fa` before any implementation file was edited. It is kept here unchanged except for
-this line. The two new tests, `test_final_rollup_full_refusal.py` and the census, navigation and
-operand scripts, are the "small relevant tests" and lane-subtree evidence the claim allows.
+Pushed as `53e4f7fa` before any implementation file was edited; the review confirmed that from the
+origin reflog. The claim is kept below unchanged, with three later corrections:
+- **A test the claim did not name.** `2d-unfolding/tests/test_final_rollup_full_refusal.py` is a second
+  "small relevant test", for family 2. The census, navigation and operand scripts are lane-subtree
+  evidence.
+- **Two derivations of the same set.** "Derive `reported` through the contract" was implemented as a
+  second derivation (`cells = reported_indices(mean > 0)` beside the unchanged boolean mask, and
+  likewise `cv > 0`). The two are equal by construction, but each producer computes its selection rule
+  twice.
+- **A missed caller.** The 3D `E_avail`-marginal rollup also runs the 2D `analyze_universes.py`
+  (`3d-unfolding/sbatch_unfold_3d_MEFHC_5iter_universes_full.sh:26-27`). It uses the same 14×16 grid
+  and no `--bootstrap-cov`, so its only change is the added `hReportedCells`. An off-grid input fails
+  in both versions: the pinned one in plotting, the edited one at `reported_indices`.
 
 Measured at `5ac9706a` (= `origin/main` at 2026-10-09T19:59Z, 0 commits ahead). Ownership recheck at
 20:03Z: no local or `origin` branch has commits since its merge base with `5ac9706a` that touch any
@@ -114,7 +124,7 @@ to `hMean2D > 0`, which is the rule that selected their cells.
 |---|---|---|
 | `88e7e4cd` | structural | Adds the contract; `analyze_uq.py`/`analyze_universes.py` import `PT_EDGES`/`PZ_EDGES` from it. Arrays bitwise and dtype-equal; `au.th2_to_array`, `th1_to_array`, `PT_EDGES`, `PZ_EDGES` kept for the seven importers. |
 | `82448140` | additive output | Both producers also write `hReportedCells`. The selection rules are unchanged. |
-| `40330351` | **behavior change, defective inputs only** | `analyze_universes.py --bootstrap-cov` exits before any write unless the bootstrap's set equals the CV's. This replaces a silent misaligned sum on an equal-count permutation, and a warn-and-omit on a count mismatch. `_ours_only_chi2.py` requires the bootstrap's set, and the universe file's when it is stored, to equal the paper's. A universe file with no stored set gets a printed count-only warning. |
+| `40330351` | **behavior change, defective inputs only** | `analyze_universes.py --bootstrap-cov` exits before writing any output file (it has already created `--outdir`) unless the bootstrap's set equals the CV's. This replaces a silent misaligned sum on an equal-count permutation, and a warn-and-omit on a count mismatch. `_ours_only_chi2.py` requires the bootstrap's set, and the universe file's when it is stored, to equal the paper's. A universe file with no stored set gets a printed count-only warning. |
 
 ### 3.1 Equivalence on synthetic operands (pinned scripts against edited ones)
 
@@ -134,17 +144,21 @@ stamps the wall clock).
 
 | Input | Pinned scripts (`5ac9706a`) | Edited scripts |
 |---|---|---|
-| bootstrap with one reported cell moved to an unreported cell (205 = 205) | `analyze_universes` rc 0, **writes a misaligned `hCov_combined`** | rc 1, cells named (`100(pt7,pz5)` vs `144(pt10,pz1)`), nothing written |
-| bootstrap with one cell omitted (204) | rc 0, warns, silently omits `hCov_combined` | rc 1, nothing written |
+| bootstrap with one reported cell moved to an unreported cell (205 = 205) | `analyze_universes` rc 0, **writes a misaligned `hCov_combined`** | rc 1, cells named (`100(pt7,pz5)` vs `144(pt10,pz1)`), no output file written (only the empty `--outdir`) |
+| bootstrap with one cell omitted (204) | rc 0, warns, silently omits `hCov_combined` | rc 1, no output file written |
 | bootstrap file with neither `hReportedCells` nor `hMean2D` | rc 0, combined | rc 1, "reported cells are unknown" |
 | `_ours_only_chi2` with a permuted bootstrap, or a permuted stored universe set | rc 0, χ² printed | rc 1, cells named |
 | `_ours_only_chi2` with a legacy universe file | rc 0 | rc 0, identical numbers plus one `[WARN] … checked by count only` line |
 
-The tests in `2d-unfolding/tests/test_reported_cells.py` (16; 8 need no ROOT) cover the contract and
-the scripts. **They reject the defect.** A count-only mutant of `require_same_cells` fails
+The tests in `2d-unfolding/tests/test_reported_cells.py` (18; 8 need no ROOT) cover the contract and
+the scripts. The two added in the repair batch, `e083c5ca`, cover a legacy bootstrap, the omission and
+no-identity refusals, and a permuted or legacy universe in `_ours_only_chi2`. **They reject the defect.** A count-only mutant of `require_same_cells` fails
 `test_equal_count_permutation_is_refused`. With the pinned `analyze_universes.py` and
 `_ours_only_chi2.py` swapped in, both script-level refusal tests fail (rc 0 instead of a refusal), and
-the matched-input test passes on both versions (`logs/guard-tests-against-pinned-scripts.txt`). The
+the matched-input test passes on both versions (`logs/guard-tests-against-pinned-scripts.txt`).
+After the repair, mutants that drop `_ours_only_chi2`'s universe check, drop `analyze_universes`'s
+`hMean2D` fallback, or move the rollup refusal below its archive step each fail a test
+(`logs/review-repair-mutants.txt`). The
 grid test compares the contract with two copies it is not derived from: the driver's literal, read
 with `ast`, and `minerva_paper_anc/bin_mapping.txt`.
 
@@ -265,6 +279,9 @@ check above.
 4. The status headline's backend label for the central value (D's D06). A, B and E's routing
    decision.
 5. `MANIFEST.tsv` regeneration at merge (§13).
+6. Review finding 5. `PT_EDGES` and `PZ_EDGES` are now one array object shared by three modules, where
+   the pin had separate copies. No importer mutates them. Marking them read-only was not applied: PyROOT
+   passes them as `const double*` buffers to `TH2D`, and a read-only buffer was not tested there.
 
 No broad reorganization, historical removal, publication change or scientific claim follows.
 
@@ -273,7 +290,7 @@ No broad reorganization, historical removal, publication change or scientific cl
 | Check | Result |
 |---|---|
 | pre-commit (shared `.githooks`) on every commit of the branch | 13 checks passed, every commit. In one rejected attempt, the receipt-artifact check read a `.json` log citing scratch `.root` outputs as receipts; the logs are now JSON content in `.txt` files, and the outputs stayed in scratch (stated in `88e7e4cd`'s message). |
-| `test_reported_cells.py` | 16 passed with ROOT and matplotlib; with the system `python3` (no ROOT), 16 run and 8 skipped |
+| `test_reported_cells.py` | 18 passed with ROOT and matplotlib; with the system `python3` (no ROOT), 18 run and 10 skipped |
 | `test_final_rollup_full_refusal.py` | 3 passed |
 | `python3 docs/orchestration/verify_hash_bindings.py` | rc 0, ALL BINDINGS INTACT |
 | `pytest nd-unfolding/tests/test_hash_bindings.py` (inspected: verifier subprocesses and synthetic temp repos) | 33 passed |
@@ -298,16 +315,39 @@ No broad reorganization, historical removal, publication change or scientific cl
 
 ## 10. Independent review
 
-Pending at the freeze commit; filled in after the review.
+- **Reviewer.** One fresh, read-only general-purpose subagent, the only one spawned. It worked in a
+  clean detached worktree at the freeze `f0deb0be31bcd52d7aa666c8993d542cff6ca868`. Its first attempt
+  stopped on an API usage limit before writing anything. It was resumed once in the same context,
+  which was still its one initial review. It used about 40 minutes and 0.1 core-h. The review worktree
+  was left clean (`status --short` and `--ignored` both empty).
+- **Report.** Preserved verbatim at [`review/review-cycle1.md`](review/review-cycle1.md). Verdict:
+  **ACCEPT WITH MINOR FINDINGS**, with no material finding and no scope violation.
+- **What it verified independently.**
+  - Its own synthetic fixture (seed 99173, 196 reported cells): equivalence holds, and the pinned
+    scripts silently sum a permuted bootstrap.
+  - The eight digests match their records, and all nine cell sets are equal (read with its own reader).
+  - The edited `_ours_only_chi2.py` reproduces `ours_only_chi2.txt` with one added warning.
+  - The Fig. 6/7 summary reproduces.
+  - Scope, the hash bindings and the pre-edit push order are as reported.
+
+| # | Finding | Disposition |
+|---|---|---|
+| 1 | Two guard paths had no test: `_ours_only_chi2`'s universe check, and `analyze_universes`'s `hMean2D` fallback, whose loss would refuse every adopted bootstrap. Omission, no-identity and archive ordering were untested. | **Fixed** in `e083c5ca`: the new cases, and all three mutants now fail (§3.2) |
+| 2 | "Nothing written" overstates the refusal: `--outdir` is created first. | **Fixed** in wording (§3, §3.2). No code change: the empty directory is harmless, and moving `makedirs` would change ordering for no gain. The text of commit `40330351` cannot be amended; this row corrects it. |
+| 3 | Wording: "four junctions" in §12; the dropped proxy qualifier in the reference and §13; a garbled §1 line; and "derive through the contract" was implemented as a parallel derivation. | **Fixed** (§1 note, §12, §13, `2D_OMNIFOLD_REFERENCE.md`) |
+| 4 | The 3D `E_avail`-marginal caller of `analyze_universes.py` was missing from §1. | **Fixed** (§1 note). No behavior effect beyond the added object. |
+| 5 | The edge arrays are now one shared writable object. | **Deferred** (§7 item 6) |
+
+The focused re-review of this repair batch is recorded below it.
 
 ## 11. Resources
 
 | Resource | Used | Cap |
 |---|---|---|
-| Active elapsed | 19:59Z → delivery; about 0.6 h before the review | 6 h |
-| Local CPU | under 0.5 core-h. Largest steps: 3 harness runs at about 70 s user each, the hash-binding tests at 87 s, the OI-136 ratchets at about 80 s, the guard tests at about 25 s ×2. Every command was capped at 2 threads. | 3 core-h |
+| Active elapsed | Wall clock 19:59Z → about 00:00Z (≈4.0 h). Of that, 20:41–23:20Z (≈2.6 h) was an idle stall: the API usage limit stopped the reviewer, and no work ran. Active work ≈1.4 h, including the review and the repair. | 6 h |
+| Local CPU | under 0.5 core-h for the author, plus about 0.1 core-h for the reviewer (its estimate). Largest steps: 3 harness runs at about 70 s user each, the hash-binding tests at 87 s, the OI-136 ratchets at about 80 s, the guard tests at about 25 s ×2. Every command was capped at 2 threads. | 3 core-h |
 | Peak RAM | under 0.5 GiB (harness max RSS 0.49 GB) | 8 GiB |
-| Scratch | 0.20 GiB (venv 84 MB, product copies 29 MB, harness work dirs) | 1 GiB |
+| Scratch | 0.22 GiB peak (venv 84 MB, product copies 29 MB, harness and review work dirs) | 1 GiB |
 | Tracked bytes added | about 0.12 MiB net | 10 MiB |
 | Cluster node-hours, GPU, training, toys | 0. Cluster contact: one `ls`/`sha256sum` and eight `scp` reads of named products. | 0 |
 | Families / existing implementation files edited | 2 / 4 | 2 / 6 |
@@ -316,8 +356,11 @@ Pending at the freeze commit; filled in after the review.
 
 **PASS** for the decision, within these limits:
 - Two small structural changes measurably simplify and protect supported reproduction:
-  - the reported-cell identity contract, which turns four count-only junctions into explicit,
-    tested identity checks in the adopted UQ chain;
+  - the reported-cell identity contract. It turns the three count-only junctions inside the adopted
+    chain's UQ producers into tested identity checks: bootstrap against CV in `analyze_universes.py`,
+    and universe and bootstrap against the paper in `_ours_only_chi2.py`. The junctions behind the
+    quoted χ² and Fig. 6/7 (`compare_to_paper_fullcov.py`, `plot_uncertainty_fig6_7_style.py`) stay
+    count-only until §5 lands;
   - the superseded rollup's refusal, which closes the one route that could overwrite an input of the
     adopted budget.
 - Both are proven equivalent on matching inputs. Synthetic inputs show bitwise equality. Real inputs
@@ -345,5 +388,6 @@ It does not establish:
    the builds. Its acceptance criterion is §5's behavior contract.
 4. **Shared-register owner.** No `KNOWN_ISSUES`/`OPEN_ITEMS` row is required. Optional one-line text for
    the 2D status, if wanted: *"2026-10-09: the adopted 2D chain's reported cells were measured equal,
-   cell by cell, across all nine operands (`state/next-preparation-20261009/structure/REPORT.md` §3.4);
+   cell by cell, across all nine operands (the two universe files through their
+   `hSigma_universe_total > 0` maps) (`state/next-preparation-20261009/structure/REPORT.md` §3.4);
    `analyze_universes.py` now refuses a cell mismatch."*
