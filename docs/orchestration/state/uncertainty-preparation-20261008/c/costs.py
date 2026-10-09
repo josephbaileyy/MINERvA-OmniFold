@@ -476,8 +476,13 @@ def build(n_per_case: int, n_cases: int, n_inner: int) -> dict:
             "why": "exact sklearn GBT, the quoted central's backend"}
         # Branch X (A's CONTRACT sec. 2.4(2): the quoted central E_C is exact GBT): the matched
         # sweep (187 universes + CV) and an exact-backend seed scan (10) are rebuilt at ~19 h each.
-        extra_setup = (N_UNIVERSES + 1 + N_SEEDS) * exact
-        p2x = total("P2_fixed_band", s2, n_exp, n_inner, False)
+        # The exact sweep REPLACES the LightGBM matched sweep S-a (pairing_established=True drops
+        # it), and exact universe unfolds carry the same documented universe/CV wall ratio as the
+        # LightGBM ones. For a compute-bound single-threaded job a multiplicative ratio is an
+        # upper-side choice; an additive I/O overhead would be smaller.
+        io_ratio = DOC_UNIVERSE_WALL_FULLNODE_H / DOC_LGBM_CV_WALL_FULLNODE_H
+        extra_setup = N_UNIVERSES * exact * io_ratio + (1 + N_SEEDS) * exact
+        p2x = total("P2_fixed_band", s2, n_exp, n_inner, True)
         exact_backend[name] = {
             "P2_fixed_band_per_experiment_central_only": p2x["admitted_total_node_h"],
             "exact_unfold_node_h": round(exact, 4),
