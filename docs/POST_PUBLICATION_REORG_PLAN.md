@@ -460,3 +460,91 @@ step was run against `fc97eaf9`, the pre-removal main:
 
 The removal is −674 files and −47.49 MB. The new stub adds one Markdown file. The record, the stub and the CATALOG
 lines add 98 Markdown lines, against an estimate of about 10 that counted only the stub.
+
+## Uncertainty preparation, lane D, 2026-10-09 (deferred designs only; nothing moved or removed)
+
+This section was written from base `f8e2bf85` under the uncertainty-preparation plan
+(`orchestration/PLAN-20261008-uncertainty-investigation-preparation.md`). It moves nothing, removes
+nothing and asks for no authorization. Lane C (layout moves only after the publication freeze) and the
+family-specific authority rule under *Lane A closure and A2* still govern. Lane D's measurements and
+dispositions are in `orchestration/state/uncertainty-preparation-20261008/d/`.
+
+### Deferred move design: the s5p generator-prediction family in `3d-unfolding/genie/`
+
+**Why it is a navigation problem.** These files compute the 5D generator predictions for s5p
+(`OI-193`, terminal). They live in a 3D directory, beside 3D generator code with similar names.
+`README.md` now says what they are. That routing is the improvement made now; the move stays deferred.
+
+**Exact paths.** These five, all added on or after 2026-09-27 (`e13caf87`):
+`3d-unfolding/genie/gen5d_flux_reweight.py`, `gen5d_flux_supplement.py`, `gen5d_mode_components.py`,
+`gen5d_to_rootpreds.py` and `run_gen5d_supplement.sh`. The `gen5d_*` glob misses the fifth.
+
+**Consumers in `main` at `f8e2bf85`.**
+- *Runtime and reproduction.*
+  - `reproduction/s5p/scope.py` `PRODUCER_FILES` requires all five to be byte-identical at these
+    checkout paths to the copies that ran.
+  - `reproduction/s5p/repro_s5p.py` launches `3d-unfolding/genie/gen5d_to_rootpreds.py` by path (line 719).
+    It also imports that file after inserting `3d-unfolding/genie` on `sys.path` (lines 561-562).
+- *Imports within the family.* `gen5d_flux_supplement` and `gen5d_mode_components` import
+  `gen5d_flux_reweight`. `gen5d_mode_components` also imports `gen5d_flux_supplement` and
+  `gen5d_to_rootpreds`.
+- *Other importer.* The frozen record `orchestration/state/note-capgap-20261003/cap_share.py`.
+- *Tests.* `reproduction/s5p/tests/test_repro_s5p.py`.
+- *Recorded digests (receipts; never edited).* These record the five files' digests:
+  - `state/s5p/gen5d/gen5d-fluxfix{,-2,-3}.json`;
+  - `state/s5p/stage7/generator-context/*`;
+  - `state/s5p/archive/SHA256SUMS-s5p-archive-20261006.txt`;
+  - the committed `reproduction/s5p/reports/*`.
+  None of these files is in `verify_hash_bindings.py`'s inventory: ALL BINDINGS INTACT, with no
+  `gen5d` binding.
+- *Publication.* `docs/analysis-note/redraw_central_only.py` cites the family in comments and
+  reads its receipts. Nothing under `publication/` names any of the five code paths, but
+  `publication/release/figs/export_fig_arrays.py` and `publication/w2/design/*.json` read the
+  family's cluster products (`/pscratch/.../s5p-20260926/gen5d*/*.npz`). A code move does not
+  change those paths.
+
+**Evidence epochs.** All five are absent at `evidence/prepublication-2026-08-20-0b329e8a` and
+`evidence/preparation-2026-09-24-bf34a12c`. All five are byte-identical at
+`evidence/simplification-2026-10-07-fc97eaf9` (`git rev-parse <tag>:<path>` against `HEAD`). That
+tag was admitted as a removal boundary **for A3 only**, and that authority does not transfer.
+
+**Intended destination, if a move is ever authorized.** `nd-unfolding/gen5d/`, keeping the five
+basenames so that the family's own imports survive unchanged.
+
+**Compatibility contract.** A wrapper left at the old path would change the bytes there, which
+`scope.py` compares to the recorded copies. So no wrapper can keep both the old path and its bytes.
+Any move must instead:
+- repoint `scope.py`'s `PRODUCER_FILES` and `repro_s5p.py`'s two references in the same commit;
+- leave every receipt's recorded path as a historical citation, recoverable with `git show <tag>:<path>`;
+- keep a discovery row from each old path to its new path.
+
+**Preconditions.**
+- The publication-results freeze (Lane B), because `reproduction/s5p/` is a protected release surface.
+- A new pushed evidence epoch containing the five paths, or Joseph's explicit admission of an existing
+  epoch for this family.
+- Joseph's family-specific authorization.
+- The s5p reproduction tiers that `reproduction/s5p/README.md` names as current, re-run from a clean
+  checkout before and after, with an identical report verdict.
+- All three document builds, with unchanged `pdftotext` digests.
+
+**Migration sequence, each step reviewable on its own.**
+1. Record the authorization and the epoch, and restore the five paths from the tag by sha256.
+2. In one commit, move the five files and update `scope.py`, `repro_s5p.py` and its test. Change no
+   other bytes. Run the s5p harness and its tests before and after.
+3. Add the discovery row (here and in `CATALOG.md`) and update `README.md`'s layout line.
+4. Have one read-only reviewer check the family diff.
+
+**Recommendation now: do not move.** The README route already removes the misdirection. A move costs
+a reproduction re-run and a protected-surface edit, and it buys only a better location.
+
+### Not a removal candidate: `2d-unfolding/sbatch_final_rollup_full.sh`, `2d-unfolding/uq/final_rollup_full.sh`
+
+These are no longer the route to the quoted 2D combined covariance; `uq/rollup_vl170_adoption.sh`
+is (`2d-unfolding/2D_OMNIFOLD_REFERENCE.md`, "Which script produced the quoted 2D uncertainty"). They
+stay for two reasons:
+- step (a) of `final_rollup_full.sh` produced the ML covariance
+  `uq/seedscan_lgbm_ml/uq_covariance_ml.root`, which the current rollup reads;
+- its step (c) and (d) outputs in `uq/universe_stage2_MEFHC_full/` are untracked cluster files
+  that `2d-unfolding/PLOT_GUIDE.md` still cites.
+
+Documentation now marks them superseded. No removal is proposed.
