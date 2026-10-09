@@ -23,7 +23,7 @@ medium-energy neutrino data.
 \paragraph{Results overview:}
 \begin{itemize}[itemsep=2pt, parsep=0pt, topsep=2pt]
   \item \textbf{Reproduction.}
-  Unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published result~\cite{MINERvA:2021owq} bin by bin: total cross-section ratio $\ratioTot$, \SI{\binsTen}{\percent} of bins within \SI{10}{\percent}, and a separately reconstructed median per-bin uncertainty (\SI{\uqMedian}{\percent}) matching the published \SI{\uqPaper}{\percent} (\S\ref{sec:results}). Against the full published covariance $\chi^{2}/\mathrm{ndf}=\chiPaper$: a correlated shape difference on the low-$\pT$ peak ridge (\S\ref{sec:results-tension}).
+  Unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published result~\cite{MINERvA:2021owq} bin by bin: total cross-section ratio $\ratioTot$, \SI{\binsTen}{\percent} of bins within \SI{10}{\percent}, and a separately reconstructed median per-bin uncertainty (\SI{\uqMedian}{\percent}) matching the published \SI{\uqPaper}{\percent} (\S\ref{sec:results}). That uncertainty is computed with LightGBM ensembles, not with the exact-split estimator of the quoted central value, and whether it describes that central value has not been measured (\S\ref{sec:method-config}). Against the full published covariance $\chi^{2}/\mathrm{ndf}=\chiPaper$: a correlated shape difference on the low-$\pT$ peak ridge (\S\ref{sec:results-tension}).
   % Pointers \S\ref{sec:systematics} and Fig.~\ref{fig:xsec} dropped (one-page summary): both are
   % cited from the results section this item points to (sec_results.tex:13, 136).
   % Cut (one-page summary): "per-bin standardized differences sub-$1\sigma$": sec_results.tex:68-70, 89-90;

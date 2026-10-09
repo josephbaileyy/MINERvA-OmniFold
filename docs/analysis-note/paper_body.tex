@@ -123,10 +123,11 @@ purity-based background subtraction.
 and~\ref{fig:generator-context}): the same five-iteration configuration fitted
 with LightGBM~\cite{Ke:2017lightgbm} at matched nominal capacity, with the
 purity-based background subtraction.
-\item \emph{Two-dimensional uncertainty ensembles}: the finalized systematic-universe
-and Poisson-bootstrap ensembles use LightGBM at matched nominal capacity, so
-the uncertainty ensembles use a different implementation from the
-two-dimensional central-value estimator.
+\item \emph{Two-dimensional uncertainty ensembles}: the finalized systematic-universe,
+Poisson-bootstrap, and training-seed ensembles use LightGBM at matched nominal
+capacity.  The covariance therefore belongs to a different estimator from the
+exact-split central value, and whether it also describes that central value has
+not been measured (Sec.~\ref{sec:validation}).
 \item \emph{Joint-test estimator} (Sec.~\ref{sec:joint}): a deterministic
 LightGBM OmniFold, five iterations, with an unbinned negative-weight background
 treatment whose refinement classifier uses 400 trees and 31 leaves.  The
@@ -175,10 +176,16 @@ estimates.
 
 \subsection{Two-dimensional uncertainty and its coverage}
 
-The standalone covariance combines matched-central-value systematic universes
-with statistical and training-seed blocks.  Its median relative uncertainty is
+The standalone covariance combines systematic-universe, statistical, and
+training-seed blocks.  Its median relative uncertainty is
 \SI{\uqMedian}{\percent}, compared with \SI{\uqPaper}{\percent} for the
-publication.  Coverage of this total remains untested.  Its statistical block,
+publication.  These ensembles use LightGBM, not the exact-split estimator of
+the quoted central value (Sec.~\ref{sec:method}).  The LightGBM central value
+at the statistical ensemble's training seed differs from the exact-split one by
+a per-bin median of \SI{0.97}{\percent}, or 1.3 times the per-bin standard
+deviation of the statistical block; no block of the covariance carries this
+difference, and whether the covariance describes the exact-split central value
+has not been measured.  Coverage of this total remains untested.  Its statistical block,
 as first built, was tested against a fixed truth in \covTwoDNtoy{} pre-registered
 closure pseudo-experiments and undercovered in its tails:
 \SI{\covTwoDCTwoPctOne}{\percent} of standardized residuals fell within two standard
@@ -193,9 +200,12 @@ post hoc and partly circular, removes the tail undercoverage: \SI{97.7}{\percent
 fall within two standard deviations and \SI{78.1}{\percent} within one, both above
 their nominal windows, so the rebuilt band is wider than the toy scatter.  The
 residual excess width lies in the data-statistics component and is not explained
-by background purity.  Its cause is not established: a post hoc diagnostic is
-consistent with the closure pseudo-experiments under-scattering rather than the
-data bootstrap over-scattering, but the decisive held-out test has not been run.
+by background purity.  Its cause is not established: a post hoc diagnostic on
+pseudo-data drawn from the same simulated events is consistent with the closure
+pseudo-experiments under-scattering rather than the data bootstrap
+over-scattering; it is neither an independent-population coverage test nor a
+real-data calibration, and the held-out test that would separate the two has
+not been run.
 The rebuilt band has not been independently re-tested.
 % Source: docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md;
 % VALIDATION_LEDGER VL169 (test of the earlier band); VL170 (rebuilt band, adopted by Joseph
@@ -205,6 +215,10 @@ The rebuilt band has not been independently re-tested.
 % purity_datastream_check.json; KNOWN_ISSUES 84, 85 (85: the 2026-10-07 bootstrap diagnostic, 8eb40e5f,
 % descriptive, consistent with closure-toy under-scatter; held-out re-test deferred). Rescored C2 0.977
 % [0.974, 0.980] vs window [0.928, 0.972]: state/ki84-rebuild-20261006/rescore_vl169_toys_vl170.json.
+% Estimator pairing (keep and disclose, Joseph 2026-10-09; state/next-preparation-20261009/closeout/REPORT.md
+% sec. 4 and 11): ASSESSMENT-20261008-2d-estimator-pairing.md P01-P09b; state/uncertainty-preparation-20261008/
+% a/verification.md (lgbm seed 1 vs E_C: 0.97% / 1.30 sigma_S, sigma_S = sqrt diag C_S of VL170) and
+% e/recompute/rc_pairing.json.txt "seed1 vs exact" 0.966 / 1.2995; KNOWN_ISSUES 88. Transfer UNRESOLVED.
 
 \subsection{Higher-dimensional central values}
 
@@ -772,7 +786,8 @@ refinement classifier reduce, while regularization bias persists under the
 tested generator-sized shape changes.  Statistical-coverage
 and estimator-seed studies expose further limits on uncertainty construction;
 the rebuilt two-dimensional statistical band still awaits an independent
-coverage test.  These measured outcomes provide practical checks for future
+coverage test, and the transfer of the LightGBM two-dimensional covariance to the
+exact-split central value is unmeasured.  These measured outcomes provide practical checks for future
 multidimensional neutrino unfolding analyses.
 
 The generator comparisons illustrate calibration through the full analysis
