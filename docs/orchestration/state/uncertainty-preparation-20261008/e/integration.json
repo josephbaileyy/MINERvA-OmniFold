@@ -19,7 +19,10 @@
     },
     "previously_inspected_delta": {
       "range": "dd0515fe..ad2716d8",
-      "commits": ["e778575b", "ad2716d8 (merge of PR #57)"],
+      "commits": [
+        "e778575b",
+        "ad2716d8 (merge of PR #57)"
+      ],
       "paths": [
         "docs/publication/EDITORIAL-20261008-prd-presentation-pass.md",
         "docs/publication/submission/PACKAGE-MANIFEST-20261006.md"
@@ -34,31 +37,82 @@
     }
   },
   "dispatch_base": {
-    "definition": "the commit on branch prep/uncertainty-e-20261008 that adds this file; its sha is recorded in the dispatch packets and in this file's next revision",
+    "definition": "commit f8e2bf85 on prep/uncertainty-e-20261008, the commit that first added this file",
     "content_relative_to_pin": "adds the plan, five MANIFEST-overrides.tsv rows, one CATALOG.md section and this file; no scientific source, product, receipt or governing record differs from ad2716d8",
-    "why_lanes_base_here_not_on_the_pin": "the pre-commit 'every doc has an overrides row' and 'LIVE doc indexed' checks refuse a new docs/orchestration/*.md without an overrides row and a CATALOG.md basename. Those two files are E's surfaces, so E pre-registers A, B, C and E's documents here and the lanes never touch them"
+    "why_lanes_base_here_not_on_the_pin": "the pre-commit 'every doc has an overrides row' and 'LIVE doc indexed' checks refuse a new docs/orchestration/*.md without an overrides row and a CATALOG.md basename. Those two files are E's surfaces, so E pre-registers A, B, C and E's documents here and the lanes never touch them",
+    "commit": "f8e2bf8535a90d7ed1315530cff3b80860ef9f9c"
   },
   "ownership_snapshot": {
     "at_utc": "2026-10-09T05:52Z..05:56Z",
     "caveat": "read-only observation. Process liveness and a clean worktree do not establish exclusive ownership, and isolated worktrees do not prevent conflicting future merges. No peer was messaged.",
     "worktrees": [
-      {"path": "MINERvA-OmniFold", "head": "5f4ec13a", "branch": "main", "note": "shared checkout; 40 commits behind origin/main; 11 untracked paths, none an A–E surface; left untouched"},
-      {"path": "MINERvA-OmniFold-kappa-20261007", "head": "69242646", "branch": "study/kappa-breakdown-20261007", "dirty_paths": 0},
-      {"path": "MINERvA-OmniFold-kappa-repro-20261008", "head": "b75af4f4", "branch": "(detached)", "dirty_paths": 0},
-      {"path": "MINERvA-OmniFold-prd-audit-20261008", "head": "ea939701", "branch": "audit/prd-release-repro-20261008", "dirty_paths": 0},
-      {"path": "MINERvA-OmniFold-prd-editorial-20261008", "head": "e778575b", "branch": "docs/prd-editorial-merge-record-20261008", "dirty_paths": 0},
-      {"path": "MINERvA-OmniFold-prd-fix-20261008", "head": "49990f82", "branch": "fix/prd-release-audit-corrections-20261008", "dirty_paths": 0},
-      {"path": "MINERvA-OmniFold-prd-followup-20261008", "head": "ebf17439", "branch": "followup/prd-release-g11-g12-20261008", "dirty_paths": 5,
-       "dirty": [
-         "docs/publication/corrections-20261008/DRAFT-20261008-anatuple-preservation-requests.md",
-         "docs/publication/corrections-20261008/RECORD-20261008-followups-g11-g12-preservation.md",
-         "publication/release/preservation/README-prd-release-preservation-20261008.md",
-         "publication/release/preservation/anatuple_checksum_sweep_20261008.sh",
-         "publication/release/preservation/w2-addition/W2-SHA256SUMS (untracked)"
-       ]},
-      {"path": "MINERvA-OmniFold-prd-paper-20261007", "head": "a3af2af3", "branch": "docs/prd-kappa-sync-record-20261008", "dirty_paths": 0},
-      {"path": "MINERvA-OmniFold-prd-review-20261007", "head": "49990f82", "branch": "(detached)", "dirty_paths": 0},
-      {"path": "MINERvA-OmniFold-uncertainty-planner-20261008", "head": "ad2716d8", "branch": "prep/uncertainty-e-20261008", "note": "this session (E)"}
+      {
+        "path": "MINERvA-OmniFold",
+        "head": "5f4ec13a",
+        "branch": "main",
+        "note": "shared checkout; 40 commits behind origin/main; 11 untracked paths, none an A–E surface; left untouched"
+      },
+      {
+        "path": "MINERvA-OmniFold-kappa-20261007",
+        "head": "69242646",
+        "branch": "study/kappa-breakdown-20261007",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-kappa-repro-20261008",
+        "head": "b75af4f4",
+        "branch": "(detached)",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-prd-audit-20261008",
+        "head": "ea939701",
+        "branch": "audit/prd-release-repro-20261008",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-prd-editorial-20261008",
+        "head": "e778575b",
+        "branch": "docs/prd-editorial-merge-record-20261008",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-prd-fix-20261008",
+        "head": "49990f82",
+        "branch": "fix/prd-release-audit-corrections-20261008",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-prd-followup-20261008",
+        "head": "ebf17439",
+        "branch": "followup/prd-release-g11-g12-20261008",
+        "dirty_paths": 5,
+        "dirty": [
+          "docs/publication/corrections-20261008/DRAFT-20261008-anatuple-preservation-requests.md",
+          "docs/publication/corrections-20261008/RECORD-20261008-followups-g11-g12-preservation.md",
+          "publication/release/preservation/README-prd-release-preservation-20261008.md",
+          "publication/release/preservation/anatuple_checksum_sweep_20261008.sh",
+          "publication/release/preservation/w2-addition/W2-SHA256SUMS (untracked)"
+        ]
+      },
+      {
+        "path": "MINERvA-OmniFold-prd-paper-20261007",
+        "head": "a3af2af3",
+        "branch": "docs/prd-kappa-sync-record-20261008",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-prd-review-20261007",
+        "head": "49990f82",
+        "branch": "(detached)",
+        "dirty_paths": 0
+      },
+      {
+        "path": "MINERvA-OmniFold-uncertainty-planner-20261008",
+        "head": "ad2716d8",
+        "branch": "prep/uncertainty-e-20261008",
+        "note": "this session (E)"
+      }
     ],
     "live_cli_sessions": {
       "observed": "three `claude` and two `codex` CLI processes; four report the shared checkout as cwd, so cwd does not attribute them to a worktree",
@@ -181,11 +235,45 @@
     "A_to_D": "chosen by Joseph at launch; each session records its actual model, effort and session id in its terminal report"
   },
   "budget_consumed_by_E": {
-    "active_time": "about 0.2 h of 8 h (05:50Z start)",
+    "active_time": "about 0.2 h of 8 h at dispatch (05:50Z to 06:02Z)",
     "local_cpu_core_hours": "below 0.05 of 4 (git and the pre-commit checks only)",
     "cluster_node_hours": 0,
     "gpu_hours": 0,
-    "new_output": "this file, the CATALOG section, five overrides rows and the plan (< 1 MiB)"
+    "new_output": "the plan, this file, the CATALOG section, five overrides rows, the generator and four packets (< 1 MiB)"
   },
-  "not_authorized_by_this_record": "any compute, any experiment, a peer message or intervention, a merge to main, a MANIFEST.tsv regeneration ahead of integration, or any change to a scientific gate, adoption or publication scope"
+  "not_authorized_by_this_record": "any compute, any experiment, a peer message or intervention, a merge to main, a MANIFEST.tsv regeneration ahead of integration, or any change to a scientific gate, adoption or publication scope",
+  "dispatch_packets": {
+    "generator": "docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/make_dispatch.py (reads the plan blob from the base with git show and refuses any other blob; --check regenerates and compares)",
+    "verbatim_check": "every plan section in each packet is a byte-identical substring of the plan blob (independent re-split, 6 sections per packet)",
+    "packets": [
+      {
+        "lane": "A",
+        "packet": "docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/DISPATCH-A.md",
+        "git_blob": "674a6cd6912913e49e2ddd357eb55ecba0727836"
+      },
+      {
+        "lane": "B",
+        "packet": "docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/DISPATCH-B.md",
+        "git_blob": "2052133de2d7b7274eae2af24eff74b3c758e819"
+      },
+      {
+        "lane": "C",
+        "packet": "docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/DISPATCH-C.md",
+        "git_blob": "937203ee359819332256d93511c57b51f5352ed7"
+      },
+      {
+        "lane": "D",
+        "packet": "docs/orchestration/state/uncertainty-preparation-20261008/e/dispatch/DISPATCH-D.md",
+        "git_blob": "ddc704be11fca4ce315e3c0ee403f1bbbdd9dd47"
+      }
+    ],
+    "handoff_markers": [
+      "[uncprep-D] INVENTORY",
+      "[uncprep-A] CONTRACT",
+      "[uncprep-B] PROVISIONAL",
+      "[uncprep-C] PROVISIONAL",
+      "[uncprep-<lane>] FREEZE"
+    ],
+    "launch": "Joseph launches A-D by pasting a packet; E launches none of them and sends no peer message"
+  }
 }
