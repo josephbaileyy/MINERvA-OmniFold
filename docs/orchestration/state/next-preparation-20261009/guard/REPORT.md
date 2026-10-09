@@ -323,7 +323,10 @@ pin** and **OUT OF DATE at this branch's head**. The difference is:
 
 No LIVE/ARCHIVAL class changes. The integration owner must regenerate `MANIFEST.tsv` from source
 after merging. This lane does not edit it, and does not change the generator or checker. The exact
-delta at the final head is in [`logs/manifest-delta.txt`](logs/manifest-delta.txt).
+delta, measured at `a5bb866d`, is in [`logs/manifest-delta.txt`](logs/manifest-delta.txt):
+21 rows added (every one a `Q/guard/` file), 59 changed and 0 removed. Of the changed rows, 42
+differ in `consumer` and 59 in `inbound_count`, plus the manifest's own size row. No class
+column changes. Each later commit on this branch adds only its own `Q/guard/` rows.
 
 **Guard core.** No change is needed or proposed. The guard ran unmodified in every test. The one
 interaction found (it refuses a `git` child while `$GIT_EDITOR` is set) is handled in the caller by
