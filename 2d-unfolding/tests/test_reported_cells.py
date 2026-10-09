@@ -14,6 +14,8 @@ unavailable. Locally:
 """
 import ast
 import csv
+import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -186,6 +188,131 @@ class RootIdentityTest(unittest.TestCase):
         self.write(h)
         with self.assertRaises(rc.CellIdentityError):
             self.read()
+
+
+def _has_matplotlib():
+    try:
+        import matplotlib  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+@unittest.skipIf(ROOT is None or not _has_matplotlib(), "PyROOT or matplotlib unavailable")
+class ScriptGuardTest(unittest.TestCase):
+    """analyze_universes.py and _ours_only_chi2.py refuse a cell mismatch.
+
+    Each script runs as a subprocess on small synthetic files. The permuted
+    inputs keep the count (205) and move one reported cell to an unreported
+    one, which the scripts at 5ac9706a combined without complaint.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        d = cls.dir = Path(cls.tmp.name)
+        rng = np.random.default_rng(7)
+        paper = paper_stat_mask().reshape(rc.GRID_SHAPE)
+        cls.cells = rc.reported_indices(paper)
+        unreported = np.setdiff1d(np.arange(rc.N_CELLS), cls.cells)
+        cls.perm = np.sort(np.append(np.delete(cls.cells, 100), unreported[0]))
+        cv = np.where(paper, rng.lognormal(-88.5, 1.0, rc.GRID_SHAPE), 0.0)
+        cls.write_xsec(d / "cv.root", cv)
+        for band in ("Flux", "GENIE_MaCCQE"):
+            for k in range(3):
+                cls.write_xsec(d / f"x_uni_{band}_{k}.root",
+                               cv * (1 + 0.02 * rng.standard_normal(rc.GRID_SHAPE)))
+        diag = (0.01 * cv.ravel()[cls.cells]) ** 2
+        cls.write_boot(d / "boot.root", diag, cls.cells)
+        cls.write_boot(d / "boot_perm.root", diag, cls.perm)
+        f = ROOT.TFile.Open(str(d / "cov_ptpl_minerva_inclusive_6GeV.root"), "RECREATE")
+        h = ROOT.TH2D("pt_pl_cross_section", "", 14, rc.PT_EDGES, 16, rc.PZ_EDGES)
+        for i in cls.cells:
+            h.SetBinContent(int(i) // 16 + 1, int(i) % 16 + 1, 1.01 * cv.ravel()[i])
+        h.Write()
+        m = ROOT.TMatrixD(rc.N_CELLS, rc.N_CELLS)
+        for k, i in enumerate(cls.cells):
+            m[int(i)][int(i)] = float(4 * diag[k])
+        m.Write("StatOnlyCovariance")
+        f.Close()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    @staticmethod
+    def write_xsec(path, a):
+        f = ROOT.TFile.Open(str(path), "RECREATE")
+        h = ROOT.TH2D("hXSec2D", "", 14, rc.PT_EDGES, 16, rc.PZ_EDGES)
+        for ix in range(14):
+            for iy in range(16):
+                h.SetBinContent(ix + 1, iy + 1, float(a[ix, iy]))
+        h.Write()
+        f.Close()
+
+    @staticmethod
+    def write_boot(path, diag, cells):
+        f = ROOT.TFile.Open(str(path), "RECREATE")
+        n = len(diag)
+        h = ROOT.TH2D("hCov2D_reported", "", n, 0, n, n, 0, n)
+        for i in range(n):
+            h.SetBinContent(i + 1, i + 1, float(diag[i]))
+        h.Write()
+        rc.identity_hist(cells).Write()
+        f.Close()
+
+    def run_script(self, argv):
+        env = dict(os.environ, MPLCONFIGDIR=str(self.dir / "mpl"))
+        return subprocess.run([sys.executable] + argv, cwd=self.dir, env=env,
+                              capture_output=True, text=True)
+
+    def universes(self, outdir, boot=None):
+        argv = [str(UQ_DIR / "analyze_universes.py"), "--cv", str(self.dir / "cv.root"),
+                "--glob", str(self.dir / "x_uni_*.root"), "--outdir", str(self.dir / outdir)]
+        if boot:
+            argv += ["--bootstrap-cov", str(self.dir / boot)]
+        return self.run_script(argv)
+
+    def read_cov(self, path, name):
+        f = ROOT.TFile.Open(str(path))
+        h = f.Get(name)
+        n = h.GetNbinsX()
+        a = np.array([[h.GetBinContent(i + 1, j + 1) for j in range(n)] for i in range(n)])
+        f.Close()
+        return a
+
+    def test_matched_bootstrap_is_block_summed(self):
+        p = self.universes("u_ok", "boot.root")
+        self.assertEqual(p.returncode, 0, p.stderr[-2000:])
+        out = self.dir / "u_ok" / "uq_universe_covariance.root"
+        np.testing.assert_array_equal(
+            self.read_cov(out, "hCov_combined"),
+            self.read_cov(out, "hCov_universe_total")
+            + self.read_cov(self.dir / "boot.root", "hCov2D_reported"))
+
+    def test_permuted_bootstrap_is_refused(self):
+        p = self.universes("u_perm", "boot_perm.root")
+        self.assertNotEqual(p.returncode, 0)
+        self.assertIn("refusing to block-sum", p.stderr)
+        self.assertFalse((self.dir / "u_perm" / "uq_universe_covariance.root").exists())
+
+    def ours_only(self, universe_root, boot):
+        code = ("import sys; sys.path.insert(0, sys.argv[1]); import _ours_only_chi2 as oo; "
+                "oo.ANC = sys.argv[2]; sys.argv = ['_ours_only_chi2.py'] + sys.argv[3:]; oo.main()")
+        return self.run_script(["-c", code, str(UQ_DIR), str(self.dir), "--ours",
+                                str(self.dir / "cv.root"), "--universe-cov", str(universe_root),
+                                "--bootstrap-cov", str(self.dir / boot)])
+
+    def test_ours_only_refuses_a_permuted_bootstrap(self):
+        uni = self.dir / "oo_u" / "uq_universe_covariance.root"
+        if not uni.exists():
+            self.assertEqual(self.universes("oo_u").returncode, 0)
+        ok = self.ours_only(uni, "boot.root")
+        self.assertEqual(ok.returncode, 0, ok.stderr[-2000:])
+        self.assertIn("direct inverse: chi^2", ok.stdout)
+        bad = self.ours_only(uni, "boot_perm.root")
+        self.assertNotEqual(bad.returncode, 0)
+        self.assertIn("reported cells differ", bad.stderr)
 
 
 if __name__ == "__main__":

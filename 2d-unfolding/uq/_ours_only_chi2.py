@@ -17,6 +17,9 @@ import argparse
 import numpy as np
 import ROOT
 
+from reported_cells import (GRID_SHAPE, CellIdentityError, read_cells, reported_indices,
+                            require_same_cells)
+
 
 ANC = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc"
 OURS_DEFAULT = ("/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/"
@@ -86,6 +89,9 @@ def main():
     mask = np.diag(cov_stat) > 0
     n_rep = int(mask.sum())
     print(f"[paper] reported bins: {n_rep}/224")
+    # Both covariances are indexed by their own reported cells and are used here
+    # on the paper's; they must be the same cells, not just the same count.
+    paper_cells = reported_indices(mask.reshape(GRID_SHAPE))
 
     fo = ROOT.TFile.Open(args.ours)
     h_ours = fo.Get("hXSec2D")
@@ -101,6 +107,16 @@ def main():
         raise SystemExit(f"missing {args.universe_hist} in {args.universe_cov}")
     Cu = cov_th2_to_numpy(hu)
     assert Cu.shape == (n_rep, n_rep), f"cov shape {Cu.shape} != ({n_rep},{n_rep})"
+    try:
+        u_cells, u_source = read_cells(fu)
+        if u_cells is None:
+            print(f"[WARN] {args.universe_cov} stores no hReportedCells; "
+                  "its cells are checked by count only")
+        else:
+            require_same_cells(paper_cells, u_cells, "paper StatOnly",
+                               f"universe {args.universe_cov} ({u_source})")
+    except CellIdentityError as e:
+        raise SystemExit(f"[FAIL] {e}")
     print(f"[universe cov] shape={Cu.shape}, sqrt(trace)={np.sqrt(Cu.trace()):.3e}")
 
     C = Cu.copy()
@@ -111,6 +127,15 @@ def main():
         if not hb:
             raise SystemExit(f"missing {args.bootstrap_hist} in {args.bootstrap_cov}")
         Cb = cov_th2_to_numpy(hb)
+        try:
+            b_cells, b_source = read_cells(fb, mean_fallback="hMean2D")
+            if b_cells is None:
+                raise SystemExit(f"[FAIL] {args.bootstrap_cov} has neither hReportedCells nor "
+                                 "hMean2D, so its reported cells are unknown")
+            require_same_cells(paper_cells, b_cells, "paper StatOnly",
+                               f"bootstrap {args.bootstrap_cov} ({b_source})")
+        except CellIdentityError as e:
+            raise SystemExit(f"[FAIL] {e}")
         if Cb.shape != Cu.shape:
             raise SystemExit(f"shape mismatch: boot {Cb.shape} vs uni {Cu.shape}")
         print(f"[boot cov] shape={Cb.shape}, sqrt(trace)={np.sqrt(Cb.trace()):.3e}")
