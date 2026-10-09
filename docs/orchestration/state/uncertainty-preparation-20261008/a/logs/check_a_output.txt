@@ -1,0 +1,309 @@
+{
+ "edges_match_paper_binning": true,
+ "shape": [
+  14,
+  16
+ ],
+ "central_total_xsec_cm2_per_nucleon": 3.0733131599571655e-38,
+ "cv42_total_xsec_cm2_per_nucleon": 3.0730230563866027e-38,
+ "paper_set_xs_gt0_equals_statdiag_gt0": true,
+ "n_paper_reported": 205,
+ "paper_th2d_shape": [
+  16,
+  14
+ ],
+ "paper_root_th2d_vs_csv_max_rel": 0.0035092397271386066,
+ "paper_root_statdiag_set_equals_csv_set": true,
+ "n_vl170_replicas": 300,
+ "vl170_replica_seed_set_is_1_to_300": true,
+ "vl170_replica_max_abs_c_minus_1_over_truthdenom_bins": 1.5765166949677223e-14,
+ "central_max_abs_c_minus_1": 1.5765166949677223e-14,
+ "mask_equal_to_paper_set": {
+  "central_exact_gt0": true,
+  "cv42_lgbm_gt0": true,
+  "vl170_replica_mean_gt0": true,
+  "seedscan_mean_gt0": true,
+  "paper_statdiag_gt0": true
+ },
+ "mask_counts": {
+  "central_exact_gt0": 205,
+  "cv42_lgbm_gt0": 205,
+  "vl170_replica_mean_gt0": 205,
+  "seedscan_mean_gt0": 205,
+  "paper_statdiag_gt0": 205
+ },
+ "boot_vl170_recomputed_vs_stored_max_abs_over_max": 3.968771798896887e-16,
+ "boot_vl170_sqrt_trace": 1.931166320776756e-40,
+ "ml_recomputed_vs_stored_max_abs_over_max": 3.3053608555328057e-16,
+ "ml_sqrt_trace": 5.060524519225612e-41,
+ "universe_files_skipped_by_pattern": [
+  "2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root"
+ ],
+ "universe_n_bands": 44,
+ "universe_n_universes": 187,
+ "universe_recomputed_vs_stored_max_abs_over_max": 0.0,
+ "combined_minus_universe_minus_boot_max_abs_over_max_boot": 7.159664325209985e-14,
+ "sweep_dir_cv_equals_uq_cv_hXSec2D": true,
+ "block_sum_median_rel_pct_denominator_cv42": 6.8706583503726995,
+ "block_sum_median_rel_pct_denominator_exact_central": 6.826879607228182,
+ "boot_median_rel_pct_den_cv42": 0.6738150183177408,
+ "boot_median_rel_pct_den_exact_central": 0.6848058119610745,
+ "boot_median_rel_pct_den_replica_mean": 0.6739472616537893,
+ "combined_chi2_per_ndf_recomputed": 1.4716274258964472,
+ "paper_cov_chi2_per_ndf_recomputed": 3.6645104665566053,
+ "cmp": [
+  {
+   "label": "lgbm seed1 (CV omnifile, stat-block training seed) vs exact central",
+   "abs_rel_diff_pct": {
+    "median": 0.9659572752966186,
+    "p16": 0.2899788423925855,
+    "p84": 2.668324294826245,
+    "max": 12.496860313856503,
+    "min": 0.008434067849122026
+   },
+   "signed_diff_over_sigma_boot": {
+    "median": 0.026853867980415107,
+    "p16": -1.765140238787194,
+    "p84": 1.9209826887362216,
+    "max": 5.4921389840270995,
+    "min": -8.322701096475427
+   },
+   "abs_diff_over_sigma_boot": {
+    "median": 1.299521044183621,
+    "p16": 0.4387748447203009,
+    "p84": 2.7581238142700957,
+    "max": 8.322701096475427,
+    "min": 0.021849677726903133
+   },
+   "n_bins_abs_diff_gt_1_sigma_boot": 126,
+   "n_bins_abs_diff_gt_2_sigma_boot": 62,
+   "total_ratio": 0.9998991990415935
+  },
+  {
+   "label": "lgbm seedscan mean (n=10) vs exact central",
+   "abs_rel_diff_pct": {
+    "median": 0.9872889502615202,
+    "p16": 0.3019504375601439,
+    "p84": 2.7377462817268654,
+    "max": 12.19989046864048,
+    "min": 0.0035136700540989918
+   },
+   "signed_diff_over_sigma_boot": {
+    "median": -0.03432982668006871,
+    "p16": -1.8413398070153781,
+    "p84": 2.0157697903256895,
+    "max": 5.34624042008648,
+    "min": -8.345123843555998
+   },
+   "abs_diff_over_sigma_boot": {
+    "median": 1.3338923618614564,
+    "p16": 0.46844732508136916,
+    "p84": 2.8119092779132377,
+    "max": 8.345123843555998,
+    "min": 0.008490230470135963
+   },
+   "n_bins_abs_diff_gt_1_sigma_boot": 130,
+   "n_bins_abs_diff_gt_2_sigma_boot": 62,
+   "total_ratio": 0.9998986754882709
+  },
+  {
+   "label": "lgbm seed42 full-omnifile CV (systematic baseline) vs exact central",
+   "abs_rel_diff_pct": {
+    "median": 0.9830594710522934,
+    "p16": 0.3068139828211253,
+    "p84": 2.8547662491941983,
+    "max": 12.183693685645695,
+    "min": 9.455550312145217e-06
+   },
+   "signed_diff_over_sigma_boot": {
+    "median": 0.04173803442035439,
+    "p16": -1.931208390583053,
+    "p84": 2.0125408070201734,
+    "max": 5.206904123385129,
+    "min": -8.382440444259492
+   },
+   "abs_diff_over_sigma_boot": {
+    "median": 1.3235349994975683,
+    "p16": 0.49774498551755886,
+    "p84": 2.704375781159097,
+    "max": 8.382440444259492,
+    "min": 5.589695461230427e-06
+   },
+   "n_bins_abs_diff_gt_1_sigma_boot": 132,
+   "n_bins_abs_diff_gt_2_sigma_boot": 66,
+   "total_ratio": 0.9999056055938776
+  },
+  {
+   "label": "lgbm seed42 full-omnifile CV vs lgbm seed1 CV omnifile",
+   "abs_rel_diff_pct": {
+    "median": 0.18340469148767205,
+    "p16": 0.07040483899771915,
+    "p84": 0.505258596176558,
+    "max": 1.7893588429479654,
+    "min": 0.0015237001598134342
+   },
+   "signed_diff_over_sigma_boot": {
+    "median": 0.06740193127632005,
+    "p16": -0.40098310059944137,
+    "p84": 0.44101394299987823,
+    "max": 0.8604465974963443,
+    "min": -1.2783951464334253
+   },
+   "abs_diff_over_sigma_boot": {
+    "median": 0.29536091855705915,
+    "p16": 0.10301166583928412,
+    "p84": 0.5329022793901594,
+    "max": 1.2783951464334253,
+    "min": 0.0028217082039886463
+   },
+   "n_bins_abs_diff_gt_1_sigma_boot": 3,
+   "n_bins_abs_diff_gt_2_sigma_boot": 0,
+   "total_ratio": 1.0000064071981358
+  },
+  {
+   "label": "VL170 replica mean vs lgbm seed1 unbootstrapped",
+   "abs_rel_diff_pct": {
+    "median": 0.13755613468216724,
+    "p16": 0.04625674281487187,
+    "p84": 0.4804820481663622,
+    "max": 3.3670341579013976,
+    "min": 0.003507862472859134
+   },
+   "signed_diff_over_sigma_boot": {
+    "median": 0.021632728002377484,
+    "p16": -0.34378620661796333,
+    "p84": 0.4179434347762397,
+    "max": 1.3631453461939165,
+    "min": -1.0686853789170656
+   },
+   "abs_diff_over_sigma_boot": {
+    "median": 0.2306157846178014,
+    "p16": 0.06347439605639914,
+    "p84": 0.522298263151818,
+    "max": 1.3631453461939165,
+    "min": 0.005205133587988527
+   },
+   "n_bins_abs_diff_gt_1_sigma_boot": 3,
+   "n_bins_abs_diff_gt_2_sigma_boot": 0,
+   "total_ratio": 1.000102191487276
+  },
+  {
+   "label": "VL170 replica mean vs exact central",
+   "abs_rel_diff_pct": {
+    "median": 0.9276212484786504,
+    "p16": 0.25415732074525904,
+    "p84": 2.6533247996434906,
+    "max": 12.603373504134726,
+    "min": 0.005456536603051066
+   },
+   "signed_diff_over_sigma_boot": {
+    "median": 0.10596923575082046,
+    "p16": -1.7451933898943548,
+    "p84": 1.9065094304112888,
+    "max": 5.3275326730350425,
+    "min": -8.4818768260759
+   },
+   "abs_diff_over_sigma_boot": {
+    "median": 1.3391068897373088,
+    "p16": 0.43047577219908717,
+    "p84": 2.78041839213214,
+    "max": 8.4818768260759,
+    "min": 0.006460912293607935
+   },
+   "n_bins_abs_diff_gt_1_sigma_boot": 131,
+   "n_bins_abs_diff_gt_2_sigma_boot": 60,
+   "total_ratio": 1.0000013802278698
+  }
+ ],
+ "ml_sigma_over_boot_sigma": {
+  "median": 0.2599223650826933,
+  "p16": 0.16379592592369682,
+  "p84": 0.41849954897818287,
+  "max": 0.7260567850957139,
+  "min": 0.020991045262293277
+ },
+ "cv42_minus_seedscan_mean_over_sigma_ml": {
+  "median": 0.825481840313496,
+  "p16": 0.23737511548841345,
+  "p84": 1.7832343128398096,
+  "max": 4.455689742564253,
+  "min": 0.00023162304942413845
+ },
+ "exact_minus_seedscan_mean_over_sigma_ml": {
+  "median": 5.1472034952053365,
+  "p16": 1.7740712946220105,
+  "p84": 11.953750532044259,
+  "max": 31.347239639791784,
+  "min": 0.02783713956857644
+ },
+ "central_vs_cv42_deterministic_inputs": {
+  "hDataReco2D": {
+   "identical": true,
+   "max_rel": 0.0
+  },
+  "hBkgReco2D": {
+   "identical": true,
+   "max_rel": 0.0
+  },
+  "hTruth2D": {
+   "identical": true,
+   "max_rel": 0.0
+  },
+  "hEffDen": {
+   "identical": true,
+   "max_rel": 0.0
+  },
+  "hOFTruthDenom2D": {
+   "identical": true,
+   "max_rel": 0.0
+  },
+  "hOFInputTruth2D": {
+   "identical": true,
+   "max_rel": 0.0
+  },
+  "hFlux_pt": {
+   "identical": true,
+   "max_rel": 0.0
+  },
+  "dataPOT": {
+   "central": 1.057394261158926e+21,
+   "cv42": 1.057394261158926e+21,
+   "identical": true
+  },
+  "mcPOT": {
+   "central": 4.978198462880827e+21,
+   "cv42": 4.978198462880827e+21,
+   "identical": true
+  },
+  "potScale": {
+   "central": 0.21240500334472884,
+   "cv42": 0.21240500334472884,
+   "identical": true
+  },
+  "nNucleons": {
+   "central": 3.2352943296224835e+30,
+   "cv42": 3.2352943296224835e+30,
+   "identical": true
+  },
+  "fluxIntegral_m2_per_POT": {
+   "central": 0.008740680727591705,
+   "cv42": 0.008740680727591705,
+   "identical": true
+  },
+  "nIterations": {
+   "central": 5,
+   "cv42": 5,
+   "identical": true
+  },
+  "fluxSource": {
+   "central": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEHFC.root:pTmu_reweightedflux_integrated",
+   "cv42": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEHFC.root:pTmu_reweightedflux_integrated"
+  }
+ },
+ "replica1_vs_central_inputs_identical": {
+  "hBkgReco2D": true,
+  "hOFTruthDenom2D": true,
+  "hFlux_pt": true,
+  "hOFInputTruth2D_equals_central": true
+ }
+}

@@ -20,15 +20,16 @@ The quoted 2D central value and the quoted 2D uncertainty come from **two differ
 The central value (`3.073e-38 cm²/nucleon`, product sha256 `142a45b0…`) was produced by the
 sklearn exact-split `GradientBoosting` backend with an unpinned `random_state`. Every uncertainty
 block (statistical `VL170`, systematic universes, ML seed noise) was produced by the LightGBM backend
-with a pinned seed: seed 1 for the statistical band and the ML scan's first trial, seed 42 for the
-systematic sweep and its matched CV. The two backends' central values differ by a median **1.3** (p84
-2.8, max 8.3) statistical-band σ per bin, and by a median **5.1** LightGBM seed σ, so the difference is
-not LightGBM seed noise. The exact backend's own seed variation has never been measured. Whether the LightGBM covariances describe the exact estimator's uncertainty
-has never been measured. Section 2 states that as the contract; §3 gives the row outcomes.
+with pinned seeds: seed 1 for the statistical band, seed 42 for the systematic sweep and its matched
+CV, seeds 1–10 for the ML scan. The two backends' central values differ by a median **1.3** (p84 2.8,
+max 8.3) statistical-band σ per bin, and by a median **5.1** LightGBM seed σ, so the difference is not
+LightGBM seed noise. Neither the exact backend's own seed variation nor whether the LightGBM
+covariances describe the exact estimator's uncertainty has been measured. Section 2 states this as
+the contract; §3 gives the row outcomes.
 
 Within the LightGBM family the blocks are mutually consistent at every level that can be checked
 from existing bytes: identical deterministic inputs, identical 205-bin masks and order, identical
-normalization, and covariances that reproduce independently to ≤4e-16 (§4). The seed-1/seed-42
+normalization, and covariances that reproduce independently to ≤4e-16 (`P/a/verification.md` §3). The seed-1/seed-42
 split is unmeasured at the covariance level.
 
 ## 2. Frozen estimator contract (for B and C)
@@ -110,8 +111,135 @@ effect between `E_C`'s revision and today (`git diff d3239355 HEAD` only wraps i
 
 ## 3. Pairing outcomes
 
-_Completed in the FREEZE commit; see `P/a/pairings.tsv`._
+One row per pairing in `P/a/pairings.tsv` (23 columns: digests, command, population, masks,
+normalization, completeness, backend, seeds, sampling law, covariance centre and denominator,
+consumer, measurement, consequence, missing operand, price). The outcomes are mixed and are not
+collapsed into one grade: **10 VERIFIED, 4 DISPROVED, 3 UNRESOLVED.**
+
+| id | pairing | outcome | consequence |
+|---|---|---|---|
+| P01 | quoted central ↔ producing estimator | VERIFIED | `E_C` is exact GBT, unseeded. Executed-bytes origin unavailable. STATUS headline "lgbm" is wrong for this product |
+| P02 | `E_C` ↔ statistical band: same estimator? | **DISPROVED** | the adopted band was computed for LightGBM seed 1 |
+| P03 | statistical band applies to `E_C` | **UNRESOLVED** | no exact-backend bootstrap exists. Missing operand and price in the table |
+| P04 | `E_C` ↔ systematic covariance: same estimator? | **DISPROVED** | the sweep and its CV are LightGBM seed 42 |
+| P05 | systematic covariance applies to `E_C` | **UNRESOLVED** | the dominant block's transfer is assumed, not measured |
+| P06 | universes ↔ matched CV | VERIFIED | internally matched. Background frozen at CV in all 87 non-Flux universes |
+| P07 | seed-1 statistics ↔ seed-42 systematics summed | **UNRESOLVED** | consistent at the central level (median 0.30 σ_S). Covariance level unmeasured |
+| P08 | ML block ↔ LightGBM family | VERIFIED | it is LightGBM seed noise |
+| P09 | ML block as `E_C`'s ML uncertainty | **DISPROVED** | `E_C` sits 5.1 σ_ML (median) from the LightGBM seed mean. Its own seed noise is unmeasured |
+| P10 | statistical covariance ↔ its 300 replicas | VERIFIED | reproduced to 4e-16; completeness 1.6e-14 |
+| P11 | band centre ↔ `E_S` nominal | VERIFIED | 0.23 σ_S median offset |
+| P12 | combined covariance ↔ paper bins | VERIFIED | five masks identical; ordinal alignment correct for these bytes |
+| P13 | combined χ² ↔ operands | VERIFIED | 1.4716 / 1.4548 / 0.051 / 0.405 reproduced. Meaning inherits P03, P05 |
+| P14 | 6.87 % budget ↔ denominator | VERIFIED | divides by CV42. With `E_C` as denominator it is 6.83 % |
+| P15 | Fig. 6/7 ↔ operands | VERIFIED | reproduced. Divides by `E_C`, unlike P14 |
+| P16 | normalization band ↔ central | VERIFIED | scaled by CV42; ≤0.17 pp effect |
+| P17 | coverage evidence ↔ adopted band | **DISPROVED** | no coverage measurement of `VL170` exists (`VL169` graded `VL162`) |
+
+**Labels resolved against producers, not by majority vote.** The backend has three labels in the
+documents. STATUS "Headline (MEFHC 5-iter lgbm)" is wrong for the central product. STATUS "Phase
+18.2 pipeline … exact GBT" and the frozen run log's "exact-GBT production" are right. "lgbm" is
+correct for every uncertainty block. The reference's bootstrap item 4 (`--seed N`) contradicted every
+producer, which all pass `--seed 1`. D's correction `00803510` is factually right
+(`verification.md` §5).
+
+**Historical filename, launcher text, executed bytes.** The central product was written as
+`2d_crossSection_omnifold_MEHFC_5iter.root` by `sbatch_unfold_2d_MEHFC.sh` at `d1bc8813`. Both were
+renamed `MEFHC` on 2026-05-28 (`c7ae2206`), and products made before that date record the flux file
+as `runEventLoopMC_MEHFC.root`. Today's launcher text is therefore evidence of intent, not of the
+command that ran. Only the VL170 replicas have executed-bytes evidence for the driver (HEAD-checked
+launcher, logs). For the OmniFold helper, no product has it.
 
 ## 4. Engineering checks
 
-_Completed in the FREEZE commit; see `P/a/verification.md`._
+Details, commands and exit codes: `P/a/verification.md` §1.
+
+- **The repaired completeness path holds.** `test_bootstrap_completeness_ki84.py`: 8/8 at the base.
+  The pre-fix negative control fails exactly the two expected tests (boot7 max |c−1| = 2.48 over 198
+  bins, the recorded value), so those failures are old-code failures, not regressions. The
+  production operands agree: all 300 replicas and `E_C` have max |c−1| = 1.6e-14, and replica 1's
+  truth-denominator, input-truth, background and flux histograms are bitwise `E_C`'s. The test stubs
+  the classifier, so it verifies extraction, not coverage.
+- **One behavior fix** (`971fc00c`, driver + test, no structural change). Every output now records
+  `runConfig` (all effective arguments, defaults included), `runArgv`, the driver's path and sha256,
+  and the path and sha256 of the OmniFold helper module that was actually imported. This was the
+  defect behind four "unavailable" runtime origins above: an omitted `--estimator` left no trace,
+  and the rooted insert can load another checkout's helper. No histogram, weight or estimator
+  changes. The pre-fix bit-identity tests pass, and deleting the write loop fails 5 of the 6 new
+  tests. Existing products do not gain the records.
+- **`OI-136`.** The driver's insert stays inside `main()` and `omnifold.py` keeps digest
+  `e96234124a31…`. Both 2D-arm assertions pass. Both ratchet suites are **red at the base**: nine
+  October 2D sites, one of them the coverage toy producer, are unlisted. Raised to E as an observed
+  constraint with an owner (`verification.md` "For E", item 1). They are byte-identical after A's edit.
+- **Shared callers.** k=0 separated roots 4/4, flux-universe 51/51, P4 resume closure 50/50, hash
+  bindings 33/33 with `ALL BINDINGS INTACT`, full-event extractor 28/28. No Gate-2 pin was advanced
+  and no receipt was edited.
+- **No change** to `analyze_uq.py`, `analyze_universes.py` or `rollup_vl170_adoption.sh`. Their
+  outputs reproduce independently, and the latent count-only mask alignment spans a file outside
+  A's set. Proposed to E as a cross-owner design (`verification.md` "For E", item 4).
+
+## 5. Consequences for B and C
+
+1. **B must choose the estimator a statistical validation targets, and say so.** A validation scoped
+   to `E_S` can rest on established pairings (P10, P11, contract §2). Its PASS would describe the
+   LightGBM-seed-1 band, not the uncertainty attached to the quoted central value. Covering `E_C`
+   needs P03 resolved first, or a decision by Joseph to change the quoted central estimator.
+2. **Prices for C** (from `pairings.tsv`; node-h on Perlmutter CPU; nothing here authorizes them):
+   - P03, exact-backend replicas: one exact unfold is 69,523 s wall, single-threaded, MaxRSS 16.8 GB.
+     Packed by memory, N = 50 costs about 34–39 node-h and N = 300 about 205–215 node-h. Unpacked as
+     originally run, it is 19.3 node-h per replica.
+   - P05, exact-backend universes: about 128 node-h for all 187 plus CV (memory on the 119 GB omnifile
+     unmeasured); a dominant-band subset is cheaper.
+   - P07, seed transfer: LightGBM replicas at seed 42 cost 0.059 node-h each on shared (VL170
+     measured): N = 100 is about 6 node-h and N = 300 about 18 node-h.
+   - P09, exact seed noise: 10 exact unfolds, about 7 node-h packed.
+   - Background-aware systematics: comparing the existing July sweep (`uq/purity_newomni/`) with
+     `C_U` is a read-only reduction, 0 node-h.
+3. **A component in no block.** The exact-vs-LightGBM difference (median 0.97 %, p84 2.7 %, max
+   12.5 % per bin) is carried by no covariance. STATUS records it qualitatively as a "~1 χ²-unit
+   GBDT-estimator regularization band". Whether it is an uncertainty, a bias or a choice is C's and
+   then Joseph's question. This assessment only measures it.
+
+## 6. Comparisons that remain unmeasured
+
+Any covariance of `E_C` (statistical, systematic or ML); `E_C` at a pinned `random_state`; `C_S` at
+seed 42 or `C_U` at seed 1; separability of `C_S` and `C_ML`; the product-level Flux rescale factor;
+background-aware 2D systematics against `C_U`; a coverage test of `VL170`; the held-out-MC re-test
+(deferred by Joseph, unregistered); the executed bytes of the central, systematic, matched-CV and ML
+runs and of any historical OmniFold helper.
+
+## 7. Terminal disposition
+
+**FAIL**, by the plan's definition: pairings P02, P04 and P09 are disproved. The quoted central value
+and its quoted uncertainty describe different estimators. P17, also disproved, restates the input
+correction that `VL169` does not grade `VL170`. Mixed rows: 10 VERIFIED, 3 UNRESOLVED (P03, P05,
+P07, each with a missing operand and a price). Engineering: the completeness repair and
+its negative control pass. The provenance gap is fixed going forward. One necessary check is red and
+outside A's paths: the `OI-136` ratchets, which include the coverage toy producer. Even a validation
+scoped to `E_S` therefore has an engineering item open with its owner.
+
+**Next decision (Joseph, routed by E):** which estimator a statistical validation targets. (a) `E_S`
+only, stated as not covering the quoted central value: no new compute for pairing. (b) Resolve P03
+with exact-backend replicas: about 34–39 node-h for N = 50, needing its own authorization. (c) Change
+the quoted central estimator to the LightGBM family: a publication-scope and estimator decision,
+with zero compute for the seed-1 central product (it exists, `seedscan_lgbm/…seed1.root`) but
+re-derived comparisons and figures.
+
+## 8. What this cannot authorize
+
+No seed or backend transfer, no change to the frozen central estimator or to any quoted number, no
+production rerun, no band replacement, no coverage or calibration claim, no compute, and no lifting
+of the held-out-test deferral. A disproved pairing is a measured fact about existing products. It
+does not show that the quoted uncertainty is numerically wrong for `E_C`, only that this has not been
+measured.
+
+## 9. Session record
+
+Owner: lane A, a single session; the independent review is E's (`CAMPAIGN-REVIEW-20260929` §1). No
+reviewer or worker agent was spawned. Model: Claude Opus 5.5 (`claude-opus-5-5`), reasoning-effort
+setting 15 (harness). Session id `edb72d69-5a74-49f8-9124-1db2071391ec`. Base `f8e2bf85`; outputs
+`acb338a2` (CONTRACT), `971fc00c` (behavior fix), and the FREEZE commit that carries this section.
+Resources against A's row (6 h, 4 core-h, 8 GiB, 2 GiB): active time about 1.5 h by FREEZE; local CPU
+well under 0.2 core-h (the largest single check, the hash-binding suite, took 83 s wall); peak RAM
+under 1 GiB; scratch 34 MB of byte-copied products plus logs. The cited logs were copied to `P/a/logs/`, then the
+scratch directory was deleted. Cluster: 0 node-h, 0 GPU-h, no training, no toys.

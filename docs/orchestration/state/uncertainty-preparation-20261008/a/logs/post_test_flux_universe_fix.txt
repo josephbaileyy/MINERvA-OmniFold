@@ -1,0 +1,136 @@
+test_predicate_accepts_only_a_stamped_slab (nd-unfolding.tests.test_flux_universe_fix.CombineRefusesUnstampedSlabs.test_predicate_accepts_only_a_stamped_slab) ... /Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:575: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/unified_throw_cov.py' mode='r' encoding='UTF-8'>
+  src = open(os.path.join(ND, "unified_throw_cov.py")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:740: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/eavailW_covariance.py' mode='r' encoding='UTF-8'>
+  cls.src = open(os.path.join(ND, cls.FNAME)).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+test_cv_flux_is_only_a_fallback (nd-unfolding.tests.test_flux_universe_fix.EavailWFluxBlockIsPerUniverse.test_cv_flux_is_only_a_fallback) ... ok
+test_flux_universes_resolve_their_own_integral (nd-unfolding.tests.test_flux_universe_fix.EavailWFluxBlockIsPerUniverse.test_flux_universes_resolve_their_own_integral) ... ok
+test_kernel_takes_a_flux_override (nd-unfolding.tests.test_flux_universe_fix.EavailWFluxBlockIsPerUniverse.test_kernel_takes_a_flux_override) ... ok
+test_no_cv_fallback_is_silent (nd-unfolding.tests.test_flux_universe_fix.EavailWFluxBlockIsPerUniverse.test_no_cv_fallback_is_silent)
+The diagnostic that reproduces the defect must be opt-in and must say so. ... ok
+test_the_prefix_source_would_fail (nd-unfolding.tests.test_flux_universe_fix.EavailWFluxBlockIsPerUniverse.test_the_prefix_source_would_fail)
+Power proof: reconstruct the pre-fix source and require each guard to fire. ... ok
+test_bank_builder_no_longer_defaults_the_ratio_to_one (nd-unfolding.tests.test_flux_universe_fix.KernelsTakeAFluxOverride.test_bank_builder_no_longer_defaults_the_ratio_to_one) ... /Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:700: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/unified_throw.py' mode='r' encoding='UTF-8'>
+  src = open(os.path.join(ND, "unified_throw.py")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_kernels_accept_and_honour_a_flux_override (nd-unfolding.tests.test_flux_universe_fix.KernelsTakeAFluxOverride.test_kernels_accept_and_honour_a_flux_override) ... /Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:616: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/compare_unified_throw.py' mode='r' encoding='UTF-8'>
+  tree = ast.parse(open(os.path.join(ND, fname)).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:616: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/unified_throw_cov_5d.py' mode='r' encoding='UTF-8'>
+  tree = ast.parse(open(os.path.join(ND, fname)).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_nd_driver_uses_the_shared_remap_for_the_universe (nd-unfolding.tests.test_flux_universe_fix.KernelsTakeAFluxOverride.test_nd_driver_uses_the_shared_remap_for_the_universe)
+J29: the universe must go through flux_universe_bins with the CV's own ... /Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:682: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/unfold_nd_omnifold_unbinned.py' mode='r' encoding='UTF-8'>
+  src = open(os.path.join(ND, "unfold_nd_omnifold_unbinned.py")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_pet_5d_kernel_accepts_a_flux_override (nd-unfolding.tests.test_flux_universe_fix.KernelsTakeAFluxOverride.test_pet_5d_kernel_accepts_a_flux_override) ... /Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:616: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/pet_systematics_5d.py' mode='r' encoding='UTF-8'>
+  tree = ast.parse(open(os.path.join(ND, fname)).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:696: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/pet_unified_throw_5d.py' mode='r' encoding='UTF-8'>
+  src = open(os.path.join(ND, "pet_unified_throw_5d.py")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_ref_edges_match_the_2d_grid (nd-unfolding.tests.test_flux_universe_fix.KernelsTakeAFluxOverride.test_ref_edges_match_the_2d_grid)
+Keep the hard-coded fixture grid honest against 2d-unfolding. ... /Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:707: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/2d-unfolding/unfold_2d_omnifold_unbinned.py' mode='r' encoding='UTF-8'>
+  "unfold_2d_omnifold_unbinned.py")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_sweep_runners_resolve_a_flux_universe (nd-unfolding.tests.test_flux_universe_fix.KernelsTakeAFluxOverride.test_sweep_runners_resolve_a_flux_universe) ... /Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:616: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/sweep_bank_5d.py' mode='r' encoding='UTF-8'>
+  tree = ast.parse(open(os.path.join(ND, fname)).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:616: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/sweep_bank.py' mode='r' encoding='UTF-8'>
+  tree = ast.parse(open(os.path.join(ND, fname)).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_throw_driver_passes_phi_u_for_every_flux_universe (nd-unfolding.tests.test_flux_universe_fix.KernelsTakeAFluxOverride.test_throw_driver_passes_phi_u_for_every_flux_universe) ... /Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:665: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/unified_throw_cov.py' mode='r' encoding='UTF-8'>
+  tree = ast.parse(open(os.path.join(ND, "unified_throw_cov.py")).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_all_ones_table_is_refused_as_the_bug_itself (nd-unfolding.tests.test_flux_universe_fix.RatioTable.test_all_ones_table_is_refused_as_the_bug_itself) ... ok
+test_banked_table_is_preferred_over_the_file (nd-unfolding.tests.test_flux_universe_fix.RatioTable.test_banked_table_is_preferred_over_the_file) ... ok
+test_falls_back_to_the_file_when_the_bank_has_no_table (nd-unfolding.tests.test_flux_universe_fix.RatioTable.test_falls_back_to_the_file_when_the_bank_has_no_table) ... ok
+test_no_bank_and_no_file_fails_closed (nd-unfolding.tests.test_flux_universe_fix.RatioTable.test_no_bank_and_no_file_fails_closed) ... ok
+test_table_matches_per_universe_ratios (nd-unfolding.tests.test_flux_universe_fix.RatioTable.test_table_matches_per_universe_ratios) ... ok
+test_table_on_the_fps_grid_carries_the_extended_bin (nd-unfolding.tests.test_flux_universe_fix.RatioTable.test_table_on_the_fps_grid_carries_the_extended_bin) ... ok
+test_wrong_pt_binning_in_the_bank_is_refused (nd-unfolding.tests.test_flux_universe_fix.RatioTable.test_wrong_pt_binning_in_the_bank_is_refused) ... ok
+test_missing_file_fails_closed (nd-unfolding.tests.test_flux_universe_fix.ReadTable.test_missing_file_fails_closed) ... ok
+test_missing_histogram_fails_closed (nd-unfolding.tests.test_flux_universe_fix.ReadTable.test_missing_histogram_fails_closed) ... ok
+test_npz_round_trip_is_universe_major (nd-unfolding.tests.test_flux_universe_fix.ReadTable.test_npz_round_trip_is_universe_major) ... ok
+test_fps_extended_bin_takes_the_last_reference_bin (nd-unfolding.tests.test_flux_universe_fix.RefGridRemap.test_fps_extended_bin_takes_the_last_reference_bin)
+J29: the 15th bin must inherit reference bin 13, not stay at CV. ... ok
+test_identity_when_grids_agree (nd-unfolding.tests.test_flux_universe_fix.RefGridRemap.test_identity_when_grids_agree) ... ok
+test_missing_ref_edges_fails_closed_on_a_length_mismatch (nd-unfolding.tests.test_flux_universe_fix.RefGridRemap.test_missing_ref_edges_fails_closed_on_a_length_mismatch) ... ok
+test_ref_edges_inconsistent_with_the_values_is_refused (nd-unfolding.tests.test_flux_universe_fix.RefGridRemap.test_ref_edges_inconsistent_with_the_values_is_refused) ... ok
+test_remap_is_a_centre_lookup_not_a_clipped_bin_index (nd-unfolding.tests.test_flux_universe_fix.RefGridRemap.test_remap_is_a_centre_lookup_not_a_clipped_bin_index)
+On the FPS grid `clip(arange(15), 0, 13)` happens to equal the centre ... ok
+test_dividing_by_r_u_reproduces_the_phi_u_extraction (nd-unfolding.tests.test_flux_universe_fix.RescaleIsExact.test_dividing_by_r_u_reproduces_the_phi_u_extraction)
+Exact in exact arithmetic; in floating point the two routes differ only ... ok
+test_divisor_is_constant_within_a_pt_slice (nd-unfolding.tests.test_flux_universe_fix.RescaleIsExact.test_divisor_is_constant_within_a_pt_slice) ... ok
+test_divisor_rejects_a_mismatched_or_invalid_ratio (nd-unfolding.tests.test_flux_universe_fix.RescaleIsExact.test_divisor_rejects_a_mismatched_or_invalid_ratio) ... ok
+test_a_throw_with_no_flux_universe_is_left_alone (nd-unfolding.tests.test_flux_universe_fix.RescaleTool.test_a_throw_with_no_flux_universe_is_left_alone) ... ok
+test_block_flux_units_corrected_and_knob_endpoints_untouched (nd-unfolding.tests.test_flux_universe_fix.RescaleTool.test_block_flux_units_corrected_and_knob_endpoints_untouched) ... ok
+test_cli_refuses_slabs_that_cite_no_flux_universe (nd-unfolding.tests.test_flux_universe_fix.RescaleTool.test_cli_refuses_slabs_that_cite_no_flux_universe) ... ok
+test_cli_summary_reports_before_and_after_from_the_same_estimators (nd-unfolding.tests.test_flux_universe_fix.RescaleTool.test_cli_summary_reports_before_and_after_from_the_same_estimators) ... ok
+test_covariances_match_the_combine_estimators (nd-unfolding.tests.test_flux_universe_fix.RescaleTool.test_covariances_match_the_combine_estimators) ... ok
+test_cv_centered_g_adds_the_mean_shift (nd-unfolding.tests.test_flux_universe_fix.RescaleTool.test_cv_centered_g_adds_the_mean_shift) ... ok
+test_end_to_end_cli_writes_stamped_exact_slabs (nd-unfolding.tests.test_flux_universe_fix.RescaleTool.test_end_to_end_cli_writes_stamped_exact_slabs) ... ok
+test_inflation_g_matches_the_adopt_construction (nd-unfolding.tests.test_flux_universe_fix.RescaleTool.test_inflation_g_matches_the_adopt_construction) ... ok
+test_rescaling_twice_would_double_correct_so_the_stamp_refuses_it (nd-unfolding.tests.test_flux_universe_fix.RescaleTool.test_rescaling_twice_would_double_correct_so_the_stamp_refuses_it) ... ok
+test_throw_rows_recover_the_correctly_normalized_xsec (nd-unfolding.tests.test_flux_universe_fix.RescaleTool.test_throw_rows_recover_the_correctly_normalized_xsec) ... ok
+test_unknown_flux_id_fails_closed (nd-unfolding.tests.test_flux_universe_fix.RescaleTool.test_unknown_flux_id_fails_closed) ... ok
+test_zero_block_variance_bin_keeps_g_at_one (nd-unfolding.tests.test_flux_universe_fix.RescaleTool.test_zero_block_variance_bin_keeps_g_at_one) ... ok
+test_all_touched_files_compile (nd-unfolding.tests.test_flux_universe_fix.SyntaxOfTouchedFiles.test_all_touched_files_compile) ... /Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/flux_universe.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/rescale_flux_universes.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/unified_throw_cov.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/unified_throw_cov_5d.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/compare_unified_throw.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/sweep_bank.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/sweep_bank_5d.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/unified_throw.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/unfold_nd_omnifold_unbinned.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/pet_systematics_5d.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/pet_unified_throw_5d.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-uncprep-a-20261008/nd-unfolding/eavailW_covariance.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_rescale_tool_cli_help_runs (nd-unfolding.tests.test_flux_universe_fix.SyntaxOfTouchedFiles.test_rescale_tool_cli_help_runs) ... ok
+test_cv_from_a_different_flux_production_is_refused (nd-unfolding.tests.test_flux_universe_fix.UniverseBins.test_cv_from_a_different_flux_production_is_refused) ... ok
+test_fps_grid_scales_every_bin_including_the_extended_one (nd-unfolding.tests.test_flux_universe_fix.UniverseBins.test_fps_grid_scales_every_bin_including_the_extended_one)
+J29 regression: the fixed path and the pre-fix loop must disagree, and ... ok
+test_returns_the_universes_own_integral (nd-unfolding.tests.test_flux_universe_fix.UniverseBins.test_returns_the_universes_own_integral) ... ok
+test_tiny_cv_drift_within_tolerance_is_accepted (nd-unfolding.tests.test_flux_universe_fix.UniverseBins.test_tiny_cv_drift_within_tolerance_is_accepted) ... ok
+test_universe_index_out_of_range (nd-unfolding.tests.test_flux_universe_fix.UniverseBins.test_universe_index_out_of_range) ... ok
+test_zero_universe_integral_fails_closed (nd-unfolding.tests.test_flux_universe_fix.UniverseBins.test_zero_universe_integral_fails_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 51 tests in 0.319s
+
+OK

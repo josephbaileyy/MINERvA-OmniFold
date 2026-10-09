@@ -1,0 +1,12 @@
+test_every_repository_origin_import_resolves_beneath_the_code_root (nd-unfolding.tests.test_k0_5ab_separated_roots.SeparatedRoots.test_every_repository_origin_import_resolves_beneath_the_code_root) ... ok
+test_the_2D_arms_insert_is_NOT_executed_by_the_k0_route (nd-unfolding.tests.test_k0_5ab_separated_roots.SeparatedRoots.test_the_2D_arms_insert_is_NOT_executed_by_the_k0_route)
+Joseph ruled 2d-unfolding/unfold_2d_omnifold_unbinned.py may stay unrepaired because its ... ok
+test_the_arm_FIRES_against_the_unrepaired_hardcode (nd-unfolding.tests.test_k0_5ab_separated_roots.SeparatedRoots.test_the_arm_FIRES_against_the_unrepaired_hardcode)
+Restores exactly what the repair removed, pointed at the POPULATED decoy. If this ever ... ok
+test_the_dormancy_arm_can_detect_a_NON_dormant_2D_import (nd-unfolding.tests.test_k0_5ab_separated_roots.SeparatedRoots.test_the_dormancy_arm_can_detect_a_NON_dormant_2D_import)
+Negative control for the arm above: if the chain DID import it, the arm must notice. ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.480s
+
+OK
