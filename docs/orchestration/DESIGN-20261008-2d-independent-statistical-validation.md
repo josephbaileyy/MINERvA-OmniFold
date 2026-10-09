@@ -269,12 +269,28 @@ them.
 - **Consequence, computed** (`assurance.json` `finite_reference_offset_N1`): at ρ = 0.5 and N = 719,
   an *exactly calibrated* procedure is expected to fail the coverage test in 11–103 of 206 functionals
   (`s` = 0.25–1) and the bias test in 108–154. **N1 fails as specified** — with `T_R` treated as an
-  exact reference and the 0.2 σ bias test — with the MC that exists. Two variants are not ruled out
-  and are **unpriced**: a *reference-aware* scorer that carries a per-functional model of `τ_ref` (which
-  needs the unmeasured smearing share and ESS), and a *truth-free* scorer that compares the sd of
-  `U_e − Ū` over experiments with `σ̂` (a width-calibration test with no coverage-of-truth claim, the
-  per-experiment analogue of N2). VL169 avoided this only by making the reservoir the
-  training bank (A1.3), which is the circularity KI-85 (b) names.
+  exact reference and the 0.2 σ bias test — with the MC that exists. VL169 avoided this only by
+  making the reservoir the training bank (A1.3), which is the circularity KI-85 (b) names.
+- **A second reason, independent of the reference** (closeout correction 2026-10-09; focused
+  review N1). N1 holds the bank `S` fixed over the outer experiments, so the outer scatter of `U_e`
+  contains only the data-stream term. Its inner bootstrap resamples both streams (§16), so `σ̂` also
+  contains the MC-stream term. For an exactly calibrated bootstrap the outer sd over `σ̂` is therefore
+  κ ≈ √(data-stream share of `σ̂²` at N1's bank). With `f_data` = 0.52 at the production bank and the
+  MC-stream variance scaled by 4.708/2.354 = 2.0 for the half-MC bank, that share is
+  0.52/(0.52 + 0.48 × 2.0) ≈ 0.35, so κ ≈ 0.59 at the median bin (0.59 also at N2's 48 % bank). That is
+  below the 0.80 edge. It fails N1's coverage test, as over-coverage, and any truth-free
+  sd(`U_e − Ū`)/`σ̂` test, whatever the reference.
+- **So neither variant is open with the production inner bootstrap.** An earlier version of this
+  section called two variants "not ruled out". The *reference-aware* scorer (a per-functional model of
+  `τ_ref`, which needs the unmeasured smearing share and ESS) repairs only the first reason. The
+  *truth-free* scorer, which compares the sd of `U_e − Ū` over experiments with `σ̂`, repairs neither.
+  Either one needs a data-only inner stream (`--bootstrap-streams data`, as N2's arm B uses), so that
+  `σ̂` and the outer scatter measure the same term.
+- With that change the truth-free form becomes a per-experiment, data-only width diagnostic of N2's
+  kind. It is conditional on `S` and `R`. It tests whether the data bootstrap matches the outer
+  data-stream scatter, and nothing else: no MC stream, no coverage of truth, no total. It is a
+  different procedure from the production band and is unpriced. The reference-aware form would also
+  become a data-stream-only conditional test, and it stays unpriced.
 
 ## 8. Reporting, intervals and failures inside an experiment
 
@@ -464,7 +480,7 @@ cost comparison and is **not** a substitute for the primary.
 
 | Route | Claim it could support | Status |
 |---|---|---|
-| **N1** held-out conditional per-experiment intervals (fixed bank `S`, reservoir `R`, reference `T_R`; inner bootstrap **both streams**, the production procedure, since a data-only inner stream would be a different procedure) | conditional on `S` and `R`, at MC/data 2.35 | **Fails as specified** (`T_R` treated as exact, with the 0.2 σ bias test; §7); also 6,720 node-h. The reference-aware and truth-free variants (§7) are unpriced |
+| **N1** held-out conditional per-experiment intervals (fixed bank `S`, reservoir `R`, reference `T_R`; inner bootstrap **both streams**, the production procedure, since a data-only inner stream would be a different procedure) | conditional on `S` and `R`, at MC/data 2.35 | **Fails as specified**, for two reasons (§7): `T_R` is treated as exact, with the 0.2 σ bias test; and the fixed bank with a both-stream inner bootstrap leaves the outer scatter without the MC-stream term (κ ≈ 0.59 for an exactly calibrated bootstrap). It would also cost 6,720 node-h. Neither variant is open with this inner bootstrap. With a data-only inner stream each becomes a different, data-stream-only procedure (§7), unpriced |
 | **N2** held-out data-stream variance calibration: arm T, 50 pseudo-data sets from `R` unfolded with a fixed half-MC `S` and the MC stream held; arm B, 50 data-only bootstrap replicas of one of them; per-bin `σ_B/σ_T` and its median, as in the KI-85 rule | whether the production data bootstrap is faithful when the pseudo-data do **not** sit on the training events: the KI-85 (a)/(b) question with held-out MC | Specified (§16.1) at 7.8–9.7 node-h including R0; it **is** the deferred KI-85 held-out re-test, so it needs Joseph to lift the deferral; it validates no interval, no MC stream and no truth coverage |
 | **G** surrogate world: truth from an independent generator run and reco from a smearing/efficiency law in `(p_T, p_∥)`, fit on the development fold and validated against the reservoir, so that both banks and pseudo-data can be redrawn | calibration of the procedure in the surrogate world, transferred to the real MC only as far as the surrogate's validity check reaches | NOT READY: the law, its validity criterion and the truth generation are undeveloped and unpriced; the nested cost (§14, P) still applies |
 
@@ -502,8 +518,10 @@ the populations and resources that exist:
   the production omnifile has no event identity (§4).
 - *Feasibility (supporting)* — nested reconstruction at the required N is priced at 13,440–20,862
   node-h: 0.67–1.04 × `m3246`'s annual CPU allocation and 4.4–6.9 × its 2026-10-09 balance (§14).
-- *Held-out conditional alternative* — N1 fails as specified against its only available reference
-  (§7); its reference-aware and truth-free variants are unpriced.
+- *Held-out conditional alternative* — N1 fails as specified (§7), for two reasons: its only available
+  reference is finite, and its fixed bank with a both-stream inner bootstrap leaves the outer scatter
+  without the MC-stream term. A variant needs a data-only inner stream, which makes it a data-stream
+  diagnostic of N2's kind, unpriced.
 - *Claim reach* — even a PASS would validate A's `E_S` procedure, not the uncertainty of the quoted
   `E_C` central value, until A's pairing `P03` is resolved or Joseph changes the quoted estimator (§2).
 
@@ -530,7 +548,8 @@ uncertainty model or the publication scope.
 
 - ESS per bin and the smearing share `s` are not measured, and R0's price is C's with billing assumed;
   each is named where it is used.
-- `f_data` = 0.52 is a ratio of medians from development evidence and only sizes the §7 offset.
+- `f_data` = 0.52 is a ratio of medians from development evidence. It only sizes the §7 offset and
+  the §7 κ ≈ 0.59 mismatch, both at the median bin.
 - Bonferroni is conservative under positive dependence; the stated N is an upper bound for the
   requirement as written.
 - The coverage edges assume Gaussian `U − T`; non-Gaussian tails change the exact coverages, not the
