@@ -1,0 +1,9 @@
+host login23 2026-10-09T06:27:18Z
+replay_inference.py sha256 41f4af05eed0c07ad74acad73900fd22474e8bbac0e58f2e54eb424dddcbd7a4
+== frozen regenerated (default threads) vs recorded joint-evaluate.json b9604502b1aa2635
+COMPARE: AGREE (0 differences)
+== recovery-union regenerated vs recorded resolved-evaluate.json 8503eab8b4c0d19e
+COMPARE: AGREE (0 differences)
+== frozen regenerated (OPENBLAS_NUM_THREADS=4) vs recorded
+COMPARE: AGREE (0 differences)
+done 2026-10-09T06:30:43Z

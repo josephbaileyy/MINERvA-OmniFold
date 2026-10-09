@@ -1,0 +1,7 @@
+W2 addition: copy and verify run on dtn01 by josephrb, finished before 2026-10-09T01:06:20Z
+script: preserve_w2_outputs_20261008.sh sha256 9ed7954fa930d216dc30e2d61b339e15952c0d99801aa0fef0ebc533201ec41c
+inventory: 53 files, 33779505923 bytes
+copy: rsync rc 0
+verify: all 53 destination files match the source inventory
+W2-SOURCE-INVENTORY.tsv sha256 0e5c0d1da2c120b309a2b97c383758c39147e623ec7fd1a633febb7f3f04f2d5
+W2-SHA256SUMS sha256 a41a773c943db6c2a7a2d100e588acbd9e373ef00411e874e40b7735d1b945a3

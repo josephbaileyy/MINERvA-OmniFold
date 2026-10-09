@@ -1,0 +1,18 @@
+npz sha256: regenerated 5612b55d3c8a11a63d831a897d03d7eb319a7878dc59ede8316eb92e20fc5d3a | preserved 7bd019c646b44c6e94fcefd6e0827f6891d96d7acc16f86d124aee94cb776387 | DIFFERENT
+ARRAY DIFFERS S__GiBUU_2019: dtype float64/float64 shape (109,)/(109,) max|diff| 1.56e-57 (relative to max|value| 1.81e-14; max ULP distance 162)
+ARRAY DIFFERS S__MnvTune_v1: dtype float64/float64 shape (109,)/(109,) max|diff| 6.37e-57 (relative to max|value| 4.19e-15; max ULP distance 38)
+arrays: 50 of 52 exactly equal (dtype, shape, values); worst relative difference 1.81e-14, worst ULP distance 162
+manifest: 12 differing field(s); npz_sha256 only: 1; input-location fields: 0; other: 11
+  MANIFEST /nulls/GENIE_2_12_10_CV/shift/a: -0.02673985688090948 vs -0.026739856880909473
+  MANIFEST /nulls/GENIE_2_12_10_MEC/shift/a: 0.013183149874765512 vs 0.013183149874765508
+  MANIFEST /nulls/GENIE_2_12_10_MEC/shift/se: 0.026961495131394543 vs 0.026961495131394547
+  MANIFEST /nulls/GiBUU_2019/shift/a: -0.051325156462566725 vs -0.051325156462566184
+  MANIFEST /nulls/GiBUU_2019/shift/bias_norm_W: 41.603183406676095 vs 41.60318340667611
+  MANIFEST /nulls/GiBUU_2019/shift/magnitude: 0.028671241468215876 vs 0.028671241468216403
+  MANIFEST /nulls/GiBUU_2019/shift/se: 0.0399981989653913 vs 0.03999819896539129
+  MANIFEST /nulls/MnvTune_v1/shift/a: -0.038352471930581215 vs -0.03835247193058118
+  MANIFEST /nulls/MnvTune_v1/shift/bias_norm_W: 2.0244170775136574 vs 2.024417077513658
+  MANIFEST /nulls/MnvTune_v1/shift/magnitude: 0.011062891223633055 vs 0.011062891223633103
+  MANIFEST /nulls/MnvTune_v1/shift/se: 0.024707681577107135 vs 0.024707681577107142
+manifest sha256 DIFFERENT
+VERDICT: NOT BIT-IDENTICAL -- 2 array(s) differ in the last bits (worst relative difference 1.8e-14); the manifests differ only in floating-point statistics derived from them
