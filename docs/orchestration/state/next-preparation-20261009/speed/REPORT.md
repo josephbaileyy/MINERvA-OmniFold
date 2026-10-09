@@ -14,11 +14,11 @@ achieved.
 | `Decision` | *Could an implementation change substantially reduce the cost of a specifically named future uncertainty procedure while preserving its estimator, and what is the smallest credible acceleration experiment?* |
 | `Branch` / `Base` / `Head` | `prep/next-speed-20261009` / `5ac9706a21e8a5ac8863a65fd7623d8ab8d22269` (PR #61 merge; supersedes `901f0088`/`8eafd357` per the session prompt) / the commit that last changed this file; the reviewed freeze is named in `Review` |
 | `Owned files` | everything under `docs/orchestration/state/next-preparation-20261009/speed/`, exactly: `REPORT.md`; `profile_from_sacct.py`, `costs.py`, `check_headlines.py`; `bench/make_synthetic_trees.py`, `bench/pinned.py`, `bench/test_prototypes.py`, `bench/bench_loader.py`, `bench/run_benchmarks.sh`; `proto/branch_status.py`, `proto/vector_loader.py`; `operands/sacct_59410433_steps.psv`, `operands/sacct_universe_sweeps_batch.psv`, `operands/sacct_exact_pilots_ki85_steps.psv`, `operands/perlmutter_env_and_inputs.txt`; `results/profile.json`, `results/costs.json`, `results/bench_loader_fill.jsonl`, `results/synthetic_trees.jsonl`, `results/test_prototypes.txt`, `results/startup_imports_local.txt`, `results/check_headlines.txt`, `results/review/` (reviewer output, if any). No other path in the repository was written |
-| `Pinned inputs` | driver `2d-unfolding/unfold_2d_omnifold_unbinned.py` blob `e19aeb6d3c242a21a67fa1b4e4573ddf72729206` at the base (checked by `bench/pinned.py` before every import); `unbinned_unfolding/python/omnifold.py` at the base; A `ASSESSMENT-20261008-2d-estimator-pairing.md`, B `DESIGN-20261008-2d-independent-statistical-validation.md`, C `ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md` and `state/uncertainty-preparation-20261008/c/costs.json`, all at the base; `state/ki84-rebuild-20261006/sacct_all.txt`; PET `nd-unfolding/pet/final_design/resources/cost_fb_look1-20260930.json` and `DECISION_RECORD-pet-final-design.md` at the base (sha256 prefixes at the base: A `d9c8160e40835a5b`, B `815509e025a381a4`, C `742151c1d957e89d`, C `costs.json` `9cffd84f667fdbfd`, `sacct_all.txt` `ae806c618fa61250`, PET cost `09176ccda999ae10`, PET decision `dbd5e7a38183429c`, `omnifold.py` `e96234124a31edd7`); read-only `sacct` of completed jobs `59410433`, `59409026`, `59409027`, `53116554`, `59466329`, `59466330`, `59469539`, `55677842`–`55677845` (2026-10-09, `operands/`); production file sizes, tree entries/branches and library versions read on a login node (`operands/perlmutter_env_and_inputs.txt`, §2) |
-| `Resources` | §14: elapsed from 2026-10-09T19:59Z (cap 6 h); local CPU (cap 4 core-h); scratch peak 0.9 GB (cap 2 GiB); tracked ≈ 0.4 MB (cap 10 MiB); cluster 0 node-h, GPU 0, training 0, toys 0 (read-only `ssh` sessions ran `sacct`, `ls`, a log `grep` and one ROOT file open on a login node) |
+| `Pinned inputs` | driver `2d-unfolding/unfold_2d_omnifold_unbinned.py` blob `e19aeb6d3c242a21a67fa1b4e4573ddf72729206` at the base (checked by `bench/pinned.py` before every import); `unbinned_unfolding/python/omnifold.py` at the base; A `ASSESSMENT-20261008-2d-estimator-pairing.md`, B `DESIGN-20261008-2d-independent-statistical-validation.md`, C `ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md` and `state/uncertainty-preparation-20261008/c/costs.json`, all at the base; `state/ki84-rebuild-20261006/sacct_all.txt`; PET `nd-unfolding/pet/final_design/resources/cost_fb_look1-20260930.json` and `DECISION_RECORD-pet-final-design.md` at the base (sha256 prefixes at the base: A `d9c8160e40835a5b`, B `815509e025a381a4`, C `742151c1d957e89d`, C `costs.json` `9cffd84f667fdbfd`, `sacct_all.txt` `ae806c618fa61250`, PET cost `09176ccda999ae10`, PET decision `dbd5e7a38183429c`, `omnifold.py` `e96234124a31edd7`, `2d-unfolding/uq/universes_full_list.txt` `9a05b38f1cf0031c`); read-only `sacct` of completed jobs `59410433`, `59409026`, `59409027`, `53116554`, `59466329`, `59466330`, `59469539`, `55677842`–`55677845` (2026-10-09, `operands/`); production file sizes, tree entries/branches and library versions read on a login node (`operands/perlmutter_env_and_inputs.txt`, §2) |
+| `Resources` | elapsed 19:59Z → ≈ 23:55Z wall, of which ≈ 2 h 40 min was an API usage-limit outage with no work, so ≈ 1 h 20 min active (cap 6 h); local CPU ≈ 0.35 core-h including the reviewer (cap 4); scratch peak 1.1 GB, own scratch deleted at delivery (cap 2 GiB); tracked ≈ 0.5 MB (cap 10 MiB); cluster 0 node-h, GPU 0, training 0, toys 0 (read-only `ssh` sessions ran `sacct`, `ls`, a log `grep` and one ROOT file open on a login node) |
 | `Review` | one fresh read-only reviewer (Claude Opus 5.5 subagent) at freeze `1e4e6f46`: 3 MATERIAL, 8 MINOR, 5 NOTE; all numbers independently reproduced; repaired in one batch (§11); focused re-review: see §11 |
 | `Model / effort` | Claude Opus 5.5 (`claude-opus-5-5`), Claude Code; reasoning effort not observable to the session |
-| `Disposition` | four decisions, §10: **D1 PASS, bounded to full-node LightGBM universe-file unfolds** (the exact-backend `P05` price and shared-64 billing are forecasts that depend on SB1); **D2 INCONCLUSIVE** (CV-file LightGBM procedures; fraction bracketed, not phase-profiled); **D3 INCONCLUSIVE** for PET GPU training, **FAIL** for any wrapper/I/O/transpilation route; **D4 FAIL** — no implementation gain makes an infeasible procedure feasible once populations and estimator matching are reapplied |
+| `Disposition` | four decisions, §10: **D1 PASS, bounded to full-node LightGBM universe-file unfolds** (the exact-backend `P05` price and shared-64 billing are forecasts that depend on SB1); **D2 INCONCLUSIVE** (CV-file LightGBM procedures; fraction bracketed, not phase-profiled); **D3 INCONCLUSIVE** for PET GPU training (including per-step host overhead), **FAIL** only for rewriting the load phase (ceiling 1.017×); **D4 FAIL** — no implementation gain makes an infeasible procedure feasible once populations and estimator matching are reapplied |
 | `Next action` | Joseph decides whether to authorize benchmark **SB1** (§9): expected ≈ 1.3, cap 2.0 CPU node-h (two regular full-node jobs and one shared-64 replica), ≈ 1–2 h wall, no training beyond the three production-argument unfolds it repeats. It only matters if option (b) "measure the transfer" or option (c)'s matched seed-1 sweep is to be priced; it changes nothing for keep-and-disclose or N2 |
 
 ## 0. Session setup (campaign review §1)
@@ -111,7 +111,7 @@ What this decomposes into:
   sweeps (`max_rss_gb_by_band`), so they are not universe-specific. 14 (purity) and 17 (negweight)
   of 187 tasks exceeded the 121,920 MiB (127.8 GB) shared-64 allocation, so C's optimistic "universe unfold on shared
   64 CPUs" rate is not executable as-is. Median RSS excess per byte of file = 0.31. 162 of 187 purity
-  tasks (87 %; 165 negweight, 88 %) peaked at ≤ 72.5 GB; the spike mechanism is unknown and was seen only in 128-thread
+  tasks (87 %; 164 negweight, 88 %) peaked at ≤ 72.5 GB; the spike mechanism is unknown and was seen only in 128-thread
   LightGBM jobs.
 - **PET (H2S1T24, n = 352 FB runs).** Load 1.15 % median (max 1.63 %) of an unfolding's A100 time;
   iterations ≈ 2,520 s each at 2 runs per GPU. A committed step-2 receipt shows ≈ 29–35 ms per optimizer
@@ -133,9 +133,10 @@ universe columns (zlib-1, like production). Nothing is trained or fitted.
 **Prototype 1 — `proto/branch_status.py`.** `SetBranchStatus("*", 0)`, then exactly the loader's
 branches; the pinned `collect_signal_arrays_2d` runs unchanged. It found one real hazard and guards
 it: `TBranch::SetAddress` is a no-op on a disabled branch, so a forgotten activation leaves the value
-at its initial buffer for every row **and leaves no address behind to detect**. An after-the-fact
-address check is therefore vacuous (asserted in `test_missing_activation_is_caught`), so `ActiveOnlyTree` refuses `SetBranchAddress` on an inactive
-branch at call time.
+at its initial buffer for every row **and leaves no address behind** (asserted in `test_missing_activation_is_caught`). So a search for
+addressed-but-inactive branches finds nothing. A check that every branch the loader *intends* to read
+has a non-null address would catch it (review cycle 1, N2), but it needs that intended list anyway.
+`ActiveOnlyTree` instead refuses `SetBranchAddress` on an inactive branch at call time.
 
 **Prototype 2 — `proto/vector_loader.py`.** `RDataFrame.AsNumpy` (single-threaded, tree order) plus
 array masks, replacing the per-row loop. Two guards, both defensive rather than shown necessary on
@@ -214,7 +215,7 @@ exact-universe figure is a forecast: no exact universe unfold has run.
 | named procedure (estimator) | as priced by A–C | at measured current rates | prototype 1 | prototypes 1 + 2 | wall-time effect |
 |---|---|---|---|---|---|
 | **exact-backend transfer**, `P03` N = 50 + `P05` + `P09b` (`E_C`) | 168.6 (A) / 326.2 (C ratio); admitted 242 / 469 | forecast by packing: median 569.9 (P05 529.9) / p90 966.8 (926.9) / worst 1,893.1 (1,853.1); admitted 819 / 1,390 / 2,721 (0.27–0.89 × remaining CPU) | **165.4** (P05 125.4); admitted 238 | 79.9 (analytical); admitted 115 | 19.3–19.8 h per exact unfold in every column. P05 at 30 nodes: 1 / 2 / 4 waves today, 1 with P1 |
-| same at `P03` N = 300 | 205–215 for P03 (A) | 2,059.5; admitted 2,961 | 331.9; admitted 477 | — | as above |
+| same at `P03` N = 300 | 205–215 for P03 (A) | worst-RSS packing only: 2,059.5; admitted 2,961 | 331.9; admitted 477 | — | as above |
 | **LightGBM matched sweep S-a** (`E_S` seed, 187 + CV) | 24.8 / 93.7 (C) | **132.5** | 47.0 full node / 12.6 shared (forecast, 64 threads) | 7.6–9.9 (forecast) | 42.5 min → ≈ 15–16 min per task |
 | **N2** (`E_S`; 100 runs + R0, 20 % reserve) | 9.8–12.2 (B) | same | — | 5.5–9.9; saving ≤ 4.3 | — |
 | **B primary** N = 719 (`E_S`) | 13,440.6 | same | — | 7,285–10,165; loops at zero cost 6,371–9,679 = 2.1–3.2 × remaining | — |
@@ -390,7 +391,25 @@ matched uncertainty and supporting validation — is **not** met by this stage.
     659,900; P2 2,092 → 2,725; P3 46,021 → 64,018).
   - F15 NOTE, the address check: **repaired**; it is now asserted in a committed test (§4).
   - F16 NOTE, concurrent reads: **disclosed** (§12).
-- **Focused re-review:** *(see below)*
+- **Focused re-review (cycle 1, the only one).** Same reviewer at `ce224e7f`, worktree empty at start
+  and end, no `sacct` queries. `review-cycle1.md` sha256 prefix `e7d9dc782be10b3f`, in
+  `results/review/`. No MATERIAL finding remains, and the narrowed D1 PASS and the revised SB1 are
+  supported.
+  - F1–F9, F11b, F13, F14 and F16: RESOLVED.
+  - F12: RESOLVED in the owner's favour. The reviewer retracts its cycle-0 probe, which had passed
+    the wrong weight branches; a corrected probe changes 0 keys.
+  - Every moved number was recomputed: P05 529.9 / 926.9 / 1,853.1, admitted 819.2 / 1,389.8 /
+    2,721.3; conservative C totals 659,900 / 2,725 / 64,018.
+  - Left for delivery, as record corrections only, **not re-reviewed** (the repair allowance is
+    spent):
+    - F10's header wording, aligned with §10;
+    - F11a, the resources measured in the header and §14, and the universe-list pin;
+    - N1, 164 not 165 negweight tasks (the owner's ad hoc `awk` count had read three MiB-suffixed
+      `MaxRSS` values as KiB; the committed reductions parse units correctly);
+    - N2, the address-check wording in §4;
+    - N4, the N = 300 row labelled as worst-RSS packing.
+  - N3 (NOTE): SB1 needs prototype-1 branch lists for the truth, background and data loaders, with
+    local equality tests, before submission. It is carried into the next-action specification below.
 
 ## 12. Limitations
 
@@ -436,4 +455,32 @@ matched uncertainty and supporting validation — is **not** met by this stage.
 
 ## 14. Resources
 
-*(final figures filled in at delivery)*
+| item | value | cap |
+|---|---|---|
+| wall elapsed | 2026-10-09T19:59Z → ≈ 23:55Z | — |
+| active effort | ≈ 1 h 20 min (≈ 2 h 40 min of the wall was an API usage-limit outage during the initial review, with no work by either party) | 6 h |
+| local CPU | ≈ 0.30 core-h owner + ≈ 0.05 reviewer (sums of measured per-command user+sys; hooks included); one thread per command | 4 core-h |
+| peak RAM per command | ≤ 1.1 GB | 8 GiB |
+| scratch | peak ≈ 1.1 GB (synthetic trees, logs; reviewer's trees); deleted at delivery | 2 GiB |
+| tracked evidence | ≈ 0.5 MB in `Q/speed/` | 10 MiB |
+| cluster / GPU / training / toys | 0 / 0 / 0 / 0; read-only `ssh` to a login node: `sacct` of completed jobs, `ls`, a log `grep`, one ROOT open of two files for entry counts and versions | 0 |
+
+## 15. Next action (full specification)
+
+**Decision for Joseph:** whether to authorize SB1 (§9). It is worth asking only if option (b)
+"measure the transfer" or option (c)'s matched seed-1 sweep is to be priced for a decision. For
+keep-and-disclose, N2 or anything blocked on populations it changes nothing.
+
+- **Before SB1:** write prototype-1 branch lists for the truth, background and data loaders, with
+  local byte-equality tests like `bench/test_prototypes.py` (review N3). This is local work, within a
+  new preparation dispatch.
+- **SB1 itself:** expected ≈ 1.3 CPU node-h, cap 2.0; inputs, tolerances, abort rule and success
+  threshold in §9.
+- **What SB1 can then justify:** a production change to the 2D driver's loaders by that file's owner
+  (claimed by no current lane), with its own review and hash-binding record. Separately, it would
+  give a re-priced design for option (b) or (c).
+- **What it cannot justify:** the transfer, a re-quote, KI-85, N2, a gate or adoption, all of which
+  stay Joseph's decisions.
+
+PET: only a profiled host-bound result (§9 request, ≤ 1 A100-h) would open a category-1 candidate;
+PET's terminal ruling stands either way.
