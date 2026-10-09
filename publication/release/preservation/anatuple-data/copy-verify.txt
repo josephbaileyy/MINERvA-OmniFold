@@ -1,0 +1,6 @@
+copy start 2026-10-09T07:19:27Z on dtn01.nersc.gov
+copy: rsync rc 0
+copy end 2026-10-09T07:58:14Z rc=0
+verify start 2026-10-09T07:58:14Z
+verify: all 1879 destination files match the checksum manifest
+verify end 2026-10-09T08:24:09Z rc=0

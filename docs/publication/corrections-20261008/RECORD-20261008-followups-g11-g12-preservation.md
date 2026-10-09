@@ -285,6 +285,11 @@ The receipts are `ki84-adopt-20261006/recompute_2d_budget.json`, `coverage-2d-20
 
 ## 7. Remaining storage decision
 
+> **Update 2026-10-09:** Joseph approved the data copy recommended below, and it is done and verified: 1,879 files,
+> 986,660,122,993 B, every file matching `ANATUPLE-SHA256.tsv`. CFS now holds 2,512 GiB. The 6 OST-61 data files are
+> excluded until they can be read; a retry is scheduled before any ticket. See
+> `RECORD-20261009-anatuple-data-cfs-copy.md`. The text below is as written on 2026-10-09 before that decision.
+
 **Measured capacity:**
 - CFS `du` = **1,593 GiB** (1.71 TB, decimal) at 2026-10-09 01:26 UTC after the W2 addition, and the same at
   05:55–06:00 UTC after the sweep, against the 3 TB rule.
