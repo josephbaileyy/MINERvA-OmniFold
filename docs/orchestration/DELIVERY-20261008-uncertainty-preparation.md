@@ -44,15 +44,22 @@ or changes publication scope.
 |---|---|
 | plan pin / dispatch base | `ad2716d8` / `f8e2bf85` (adds the plan, overrides rows, catalog route, E's baseline) |
 | upstream `main` at integration | `33811d7d` (PR #58; publication files and `MANIFEST.tsv` only; merged in `8219eca4`) |
+| final upstream `main` | `460631d1` (PR #59: the read-only publication audit under `docs/publication/audit-20261008/` and `MANIFEST.tsv` only; merged in `901f0088`, touching no reviewed file) |
 | frozen lane tips (Joseph's list, verified 2026-10-09T07:10Z) | A `f762749d`, B `00f7cff1`, C `803f1dcc`, D `3fde202e` |
 | integrated commit reviewed in the initial review | `cd0da202` |
 | repair cycle 1 (final lane tips) | A `355174fe` (behavior) + `cc9eed27` (documentation); B `8ac300fa` + `c783d9c3`; C `57f6dd30`; D `926956d2` + `ecb52dde` |
 | integrated commit of the focused review (cycle 1) | `ee61fb22` |
-| final delivery commit | the commit that carries this file on `prep/uncertainty-e-20261008` |
+| E's freeze after the focused review | `287f25f5` (this file, STATUS, the proposal's §0, `integration.json`, `review-cycle1.md` and its recompute files) |
+| final delivery commit | `901f0088` on `prep/uncertainty-e-20261008` (the freeze plus the `460631d1` integration) |
+| closeout corrections | `prep/next-closeout-20261009`, from `901f0088`: §8 below; the record is `state/next-preparation-20261009/closeout/REPORT.md` |
 
-Every integrated lane file is byte-identical to its lane tip, and every upstream file to `33811d7d`.
-`MANIFEST.tsv` was regenerated from source after the upstream merge (`generate_manifest.py --check`
-exit 0). No merge to `main` was made.
+At `901f0088` every file a lane commit touched is byte-identical to its final lane tip (A `cc9eed27`,
+B `c783d9c3`, C `57f6dd30`, D `ecb52dde`). Every file changed upstream since the pin is
+byte-identical to `460631d1`, except `MANIFEST.tsv`, which was regenerated from source
+(`generate_manifest.py --check` exit 0). The closeout branch then changes A's, B's and C's documents
+only by the corrections listed in §8. `integration.json` keeps the identity statement as of the
+freeze (against `33811d7d`), because it is an immutable record; this paragraph supersedes it. No merge
+to `main` was made. (Re-measured at the closeout, 2026-10-09.)
 
 ## 3. Reconciled contract
 
@@ -116,7 +123,7 @@ nine sites. Recorded as `KNOWN_ISSUES.md` 89. No lane edits them.
 **How the quoted 2D result pairs its central value with its uncertainty.** This decision needs no
 compute. Every other next step depends on it, including whether N2 is ever relevant. The article
 already says the uncertainty ensembles use a different implementation from the central
-(`docs/analysis-note/paper_body.tex:116-129`). It does not say that the transfer is unmeasured, or
+(`docs/analysis-note/paper_body.tex:126-129`, in the estimator list at 114-137). It does not say that the transfer is unmeasured, or
 how far apart the two centrals are.
 
 | choice (A §7 label) | what it means | cost | what it permits next |
@@ -150,7 +157,7 @@ admit compute.
 | feasibility | Primary priced, not admitted. N2 priced with reserve; the identity rebuild's billing is assumed |
 | total-uncertainty boundary | C's component dispositions: P1 INFEASIBLE, P2 INCONCLUSIVE, unscoped bounds have no method. Anything statistical stays labelled statistical-only |
 | supported workflow and preservation | **PASS** (D): four navigation tasks reproduced by the review; paths resolve; hash bindings intact; no frozen file edited |
-| independent review and delivery | Initial review at `cd0da202`; material findings F1–F3 repaired by their owners and confirmed RESOLVED in the focused review at `ee61fb22`; F4 is routed (§5), and it binds N2 and any new producer, which are NOT READY, not the zero-compute decision in §6. No new material finding; cycle 2 was not needed (§8) |
+| independent review and delivery | Initial review at `cd0da202`; material findings F1–F3 repaired by their owners and confirmed RESOLVED in the focused review at `ee61fb22`; F4 is routed (§5), and it binds N2 and any new producer, which are NOT READY, not the zero-compute decision in §6. No new material finding; cycle 2 was not used (§8) |
 
 ## 8. Review and repair record
 
@@ -182,15 +189,25 @@ admit compute.
   conventions in §6), N3 (the proposal's §0 now cites the focused review), N4 (`P09b` labels in §6 and
   STATUS) and N5 (the §6 rationale marked as E's judgement). These wording repairs were not
   re-reviewed. Cycle 2 was not used.
-- **Residual minor findings (no lane repair left, or not worth a cycle).**
-  - Cycle-1 N1: B's DESIGN still calls N1's truth-free variant "not ruled out". With N1's fixed bank and
-    both-stream inner bootstrap, the outer scatter lacks the MC-stream term, so an exactly calibrated
-    bootstrap gives κ ≈ √(data share) ≈ 0.59, below the 0.80 edge. A truth-free variant therefore needs
-    a data-only inner stream, which makes it N2's shape. B has used both repairs; recorded here (§9).
-  - Cycle-1 N4: C's assessment still uses unsplit `P09` labels in five places (`P09a`/`P09b` intended).
-  - Cycle-1 N2: A's `P05` price (≈128 node-h) uses the CV rate; §6 quotes both conventions.
-  - Cycle-1 F12 note: the new test cannot distinguish hashing at `main()` start from hashing at helper
-    import, and a helper imported before `main()` by a caller would be hashed from the current file.
+- **Residual minor findings, and their closeout (2026-10-09).** E left three to the lanes, which had no
+  repair left. Joseph authorized a narrowly scoped closeout correction of their text, which does not
+  reopen any lane's design. It is on `prep/next-closeout-20261009`, and its record is
+  `state/next-preparation-20261009/closeout/REPORT.md`.
+  - Cycle-1 N1, **corrected in B's DESIGN §7, §16, §17 and §18.** The DESIGN called N1's truth-free
+    variant "not ruled out". N1 fixes the bank but bootstraps both streams, so the outer scatter lacks
+    the MC-stream term. An exactly calibrated bootstrap then gives κ ≈ √(data share) ≈ 0.59 (0.594 at
+    N1's half-MC bank, 0.587 at N2's 48 % bank), below the 0.80 edge. That also fails N1's own coverage
+    test, so the reference-aware variant is not open either. Either variant needs a data-only inner
+    stream, which makes it a data-stream diagnostic of N2's kind. It is unpriced, and it is not a
+    coverage test.
+  - Cycle-1 N4, **corrected in C's assessment.** The five unsplit `P09` labels now read `P09a`
+    (estimator identity) or `P09b` (transfer).
+  - Cycle-1 N2, **labelled in A's and C's price lists.** A's `P05` price (about 128 node-h) assumes that
+    an exact universe unfold costs what the exact CV unfold does. C's universe/CV ratio gives about
+    285 node-h. Both are forecasts, and §6 quotes both conventions.
+  - Cycle-1 F12 note, open (A's engineering; nothing in the closeout's scope). The new test cannot
+    distinguish hashing at `main()` start from hashing at helper import. A helper imported before
+    `main()` by a caller would be hashed from the current file.
 
 ## 9. The five scrutiny questions
 
@@ -204,8 +221,10 @@ admit compute.
    MC/data 4.708, disjoint production-size sets number ⌊4.708/5.708⌋ = 0. The held-out alternative N1
    "fails as specified" for two reasons: its finite reference is treated as exact, and its fixed bank
    with a both-stream inner bootstrap leaves the outer scatter without the MC-stream term (κ ≈ 0.59 for
-   an exactly calibrated bootstrap; review cycle 1, N1). Its reference-aware variant is unpriced. A
-   truth-free variant needs a data-only inner stream, which is N2's shape.
+   an exactly calibrated bootstrap; review cycle 1, N1). The second reason applies to N1's coverage
+   test as well, so neither variant is open with that inner bootstrap. With a data-only inner stream
+   either one becomes a data-stream-only diagnostic of N2's kind, unpriced (B DESIGN §7, closeout
+   correction).
 3. **Costs of the specified designs versus all designs.** No lane now claims infeasibility for an
    unpriced design. Cheaper inner procedures (B = 50), smaller families and looser tolerances are
    priced as separate procedures. None is validated, so none contributes admitted savings. The
