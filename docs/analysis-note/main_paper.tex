@@ -5,11 +5,9 @@
 % The companion analysis note contains the complete validation record,
 % technical details, extended-fiducial study, and the PET (diagnostic) record.
 %
-% DRAFT STATE: text marked \pubhold{...} renders in red and waits on the
-% dependencies recorded in docs/publication/HANDOFF-20261005-publication-
-% preparation.md section 3 (lost-seed resolution and cross-check,
-% Joseph's disposition, Stage-7 wording). Do not submit a build that
-% renders any \pubhold.
+% DRAFT STATE: \pubhold{...} marks the pending deposit identifier and access
+% route recorded in docs/publication/submission/PACKAGE-MANIFEST-20261006.md.
+% Do not submit a build that renders any \pubhold.
 % ====================================================================
 \documentclass[aps,prd,reprint,superscriptaddress,nofootinbib,floatfix,longbibliography]{revtex4-2}
 
@@ -36,8 +34,8 @@
 \begin{document}
 \raggedbottom % reprint-mode layout: avoid stretched inter-paragraph gaps (cosmetic; the journal re-typesets)
 
-\title{Unbinned five-observable unfolding of MINERvA inclusive charged-current
-neutrino data and calibrated joint tests of generator predictions}
+\title{Multidimensional unbinned unfolding of MINERvA inclusive charged-current
+neutrino data: validation and calibrated model tests}
 
 \author{Joseph Bailey}
 \email{josephrb@stanford.edu}
@@ -50,26 +48,28 @@ neutrino data and calibrated joint tests of generator predictions}
 \date{\today}
 
 \begin{abstract}
-We apply unbinned machine-learning unfolding to MINERvA open data on
-medium-energy $\nu_{\mu}$ charged-current inclusive interactions, first
-reproducing the published
-double-differential cross section in muon kinematics.  Adding available energy,
-three-momentum transfer, and hadronic invariant mass gives central values that
-pass marginal-normalization checks and injected-shape closure tests, but the
-estimator's measured model dependence prevents a qualified total uncertainty at
-useful precision: no five-dimensional cross section with uncertainties is
-reported.  Joint total and shape statistics, calibrated with pseudo-experiments
-that rerun the full unfolding under a declared nuisance model, reject all ten
-simple hypotheses for five predictions (MINERvA Tune~v1, GENIE~2.12.10 with and
-without a two-particle--two-hole component, NuWro~21.09, GiBUU~2019) at the
-5\% significance level after correction for multiple testing, with every
-submitted pseudo-experiment observed after a report-only recovery.  The rejections are
-conditional on that model, whose
-principal limitations are a missing calorimetric recoil-response uncertainty
-and an unconverged fine-grid null.  An exploratory $\pm4\%$ recoil-energy
-scaling of the data, not an uncertainty estimate, removes no rejection.  The
-tests concern the specified predictions, not a measured cross section, and
-claim no discrimination beyond matched coarse projections.
+We study the validation and practical limits of multidimensional unbinned
+unfolding with OmniFold using MINERvA open data on medium-energy $\nu_{\mu}$
+charged-current inclusive interactions.  The analysis reproduces the published
+double-differential cross section in muon kinematics and extends the unfolding
+to five simultaneous observables by adding available energy, three-momentum
+transfer, and hadronic invariant mass.  The higher-dimensional central values
+pass marginal-normalization checks and injected-shape closure tests.
+Background-inclusive tests expose biases that depend on the background
+treatment and the imposed truth shape, while uncertainty studies reveal
+statistical-coverage and estimator-seed limitations.  The measured model
+dependence prevents a qualified five-dimensional cross-section measurement with
+total uncertainties at useful precision.  To assess specified generator
+predictions, we use an estimator with unbinned background refinement and
+calibrate joint rate-and-shape and shape-only statistics with pseudo-experiments
+that rerun the full analysis chain under a declared nuisance model.  All ten hypotheses for five predictions
+(MINERvA Tune~v1, GENIE~2.12.10 with and without a two-particle--two-hole
+component, NuWro~21.09, GiBUU~2019) are rejected at the 5\% significance level
+after correction for multiple testing.  These conditional comparisons recover
+established generator discrepancies; the tested joint information provides no
+demonstrated discrimination beyond matched coarse projections.  Their physical
+interpretation remains limited by an omitted calorimetric recoil-response
+uncertainty and unresolved fine-grid convergence.
 \end{abstract}
 
 \maketitle
