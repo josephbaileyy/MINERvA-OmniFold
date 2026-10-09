@@ -56,11 +56,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import ROOT
 
-
-PT_EDGES = np.array([0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55,
-                     0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50])
-PZ_EDGES = np.array([1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
-                     6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0])
+from reported_cells import PT_EDGES, PZ_EDGES
 
 # Filename pattern: 2d_xsec_<DSET>_<...>_uni_<BAND>_<IDX>.root
 UNI_RE = re.compile(r".*_uni_(?P<band>[A-Za-z0-9_]+?)_(?P<idx>\d+)\.root$")
