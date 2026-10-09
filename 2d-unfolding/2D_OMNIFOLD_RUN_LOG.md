@@ -19,8 +19,9 @@ Append only committed post-2026-08-20 events here; keep the current-state summar
 
 - **Code.** `unfold_2d_omnifold_unbinned.py` now writes, into every output, `runConfig` (every
   effective argument, defaults included), `runArgv`, the driver's path and sha256, and the path and
-  sha256 of the OmniFold helper module actually imported (lane A behavior commit `971fc00c`, with six
-  new tests in `tests/test_bootstrap_completeness_ki84.py`). No histogram, weight or estimator changes;
+  sha256 of the OmniFold helper module actually imported (lane A behavior commits `971fc00c` and
+  `355174fe`; the digests are taken when `main()` starts and right after the helper import, not at
+  write time; seven new tests in `tests/test_bootstrap_completeness_ki84.py`). No histogram, weight or estimator changes;
   the rooted insert stays inside `main()` and `omnifold.py` keeps its digest. Existing products do not
   gain the records. Only future runs write them.
 - **Findings recorded, not acted on.** The quoted central product `142a45b0…` is exact-split GBT
