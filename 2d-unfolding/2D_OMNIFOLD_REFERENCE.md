@@ -228,7 +228,11 @@ Per-event Poisson(1) weight bootstrap on data + MC jointly. Invariants:
    double-counted ML stochasticity, and was redone (scaleup launcher
    header). The replicas' estimator seed (1) is not the matched universe
    CV's (`--seed 42`). The central-value launcher `sbatch_unfold_2d_MEFHC.sh`
-   passes neither `--seed` nor `--estimator`. The older coverage-toy
+   passes neither `--seed` nor `--estimator`. The frozen central value
+   was therefore made with the driver's default exact-split sklearn
+   backend and an unpinned `random_state`, not with LightGBM. Read
+   `docs/orchestration/ASSESSMENT-20261008-2d-estimator-pairing.md`
+   (`E_C` against `E_S`/`E_U`/`E_ML`) before pairing it with any block. The older coverage-toy
    launchers `sbatch_coverage_toys_MEFHC{,_200}.sh` (`--closure`, item 3)
    do pass `--seed` equal to the toy's bootstrap seed. They do not produce
    the band.

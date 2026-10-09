@@ -74,8 +74,8 @@ reproduction, and by the strength of the evidence. There are five, the maximum.
 | # | Obstacle | Evidence | Disposition |
 |---|---|---|---|
 | O1 | The 2D reference sent readers to superseded uncertainty producers. Its rollup bullet named `sbatch_final_rollup_full.sh`, whose universe step reads the pre-fluxfix sweep. Its Fig. 6/7 path named that route's output directory. Its "Driver" was the interactive script. It never mentioned `VL170`, the replica record or `uq/rollup_vl170_adoption.sh` (0 hits). | rows N06, N07, N11; `rollup_vl170_adoption.sh:6-7`; `nav-before.txt` T1/T2 | **IMPLEMENTED** (I1 `abc1e6f7`, I3 `bd738973`). The reference has a producer table that says what each row reads and writes, that every row is a record of how a pinned product was made rather than a prospective command, and how each row guards against overwriting, and the old route is marked superseded. README routes there from "Where to start" and Setup step 6. |
-| O2 | The reference's bootstrap item 4 told each replica to pass `--seed N`. Every band producer passes a fixed `--seed 1`, and the scaleup header records that varying both double-counted ML stochasticity. | row D05; six launchers measured; `scaleup.sh:18-19` | **IMPLEMENTED** (I2 `00803510`). **A's factual check: PENDING** (see "For A"). |
-| O3 | The frozen central value's backend is labeled inconsistently. The status headline says "MEFHC 5-iter lgbm", but the launcher that writes the frozen path passes no `--estimator` (driver default `exact`). `final_rollup_full.sh` (c) comments "using the exact-GBT production CV here". | row D06 | **DEFERRED to A** (estimator identity) and to E (status routing). D wrote no backend label, so the producer table names the launcher and not a backend. Least costly resolution: read the backend from the product's own metadata or its run log. That is A's read-only check. |
+| O2 | The reference's bootstrap item 4 told each replica to pass `--seed N`. Every band producer passes a fixed `--seed 1`, and the scaleup header records that varying both double-counted ML stochasticity. | row D05; six launchers measured; `scaleup.sh:18-19` | **IMPLEMENTED** (I2 `00803510`). **Confirmed by A's CONTRACT** (`acb338a2`, ASSESSMENT rows `E_S`, `E_U`, `E_ML`): `VL170` is LightGBM with `--seed 1` and `--bootstrap-seed b`, b = 1…300; the universes use `--seed 42`. |
+| O3 | The frozen central value's backend is labeled inconsistently. The status headline says "MEFHC 5-iter lgbm", but the launcher that writes the frozen path passes no `--estimator` (driver default `exact`). `final_rollup_full.sh` (c) comments "using the exact-GBT production CV here". | row D06 | **RESOLVED by A for D's purposes.** A's CONTRACT (`acb338a2`, row `E_C`) records sklearn exact-split `GradientBoosting` with `random_state=None` for `142a45b0…`, by launcher, revision and wall-time signature. A notes that the executed-bytes origin is unavailable. The reference now states this and routes to A's assessment (the FREEZE commit). **For E:** the status headline's "MEFHC 5-iter lgbm" label is E's to correct. |
 | O4 | The 205-bin reported mask is computed four ways from four operands (`analyze_uq.py`: ensemble mean > 0; `analyze_universes.py`: CV > 0; `compare_to_paper_fullcov.py`: paper diagonal > 0; Fig. 6/7: central > 0). The comparison aligns the matrices by ordinal position and checks only the count. Today the cells coincide, so no number is wrong. A future ensemble with one zero-mean reported bin and one extra nonzero cell would misalign every element silently. The 3D analogue `build_bootstrap_cov_3d.py` already takes its mask from the CV, the same operand as its universe rollup. | row D01; `compare_to_paper_fullcov.py:148-159`; `build_bootstrap_cov_3d.py:11-13,84` | **DEFERRED patch design** (below). Two of the files are A's conditional paths and the third is a publication figure producer, so D edits none of them. |
 | O5 | `3d-unfolding/genie/gen5d_*` and `run_gen5d_supplement.sh` are the s5p 5D predictor family, in a 3D directory beside 3D generator code. | row N14; `reproduction/s5p/scope.py` `PRODUCER_FILES` | **Routing IMPLEMENTED** in README (I3). **Move DEFERRED**, with a full design in `docs/POST_PUBLICATION_REORG_PLAN.md`, "Uncertainty preparation, lane D". The recommendation is not to move. |
 
@@ -138,25 +138,78 @@ The `final_rollup_full.sh`, rollup and driver statements in the reference were e
 the script text at the base (line citations in `dependencies.tsv`). No product was opened. The
 products are on Perlmutter, and D read none of them.
 
-## For A — factual-check requests (D remains the writer)
+## For A — factual-check requests and their answers
 
-Please answer in `P/a/verification.md`. D's wording is on this branch.
-1. **I2, bootstrap item 4** (`2d-unfolding/2D_OMNIFOLD_REFERENCE.md`, "Bootstrap-replica workflow").
-   Confirm that the `VL162` and `VL170` replicas used a fixed estimator seed `--seed 1` with varying
-   `--bootstrap-seed N`. Confirm, or correct, the statement that the replicas' estimator seed differs
-   from the matched universe CV's `--seed 42`, and that the central launcher passes neither flag.
-2. **I1, the producer table** ("Which script produced the quoted 2D uncertainty"). Confirm that
-   `uq/rollup_vl170_adoption.sh` is the actual active `VL172` rollup route, and that its ML covariance
-   input came from step (a) of `final_rollup_full.sh`.
-3. **O3.** Which backend produced `2d_crossSection_omnifold_MEFHC_5iter.root` (`142a45b0…`)? D will
-   not write a label until A records one.
+D's three requests are answered by A's CONTRACT commit `acb338a2`
+(`docs/orchestration/ASSESSMENT-20261008-2d-estimator-pairing.md`) and read at
+`origin/prep/uncertainty-a-pairing-20261008` (`971fc00c`), 2026-10-09T06:56Z. `P/a/verification.md`
+did not exist there yet. D polled for it for 30 minutes (06:25–06:55Z) and then used the assessment.
+1. I2, the bootstrap seeds: **confirmed** (rows `E_S`, `E_U`). A also reads the pilot log, which prints
+   `Pinned GBDT seeds: 1/2/3` at checkout `bb4b0b6f`.
+2. I1, the producer table: the replica launcher, the `uq/universe_sweep_fluxfix/` sweep, the matched CV
+   and `uq/seedscan_lgbm_ml/uq_covariance_ml.root` (LightGBM, seeds 1…10) are **confirmed**. A's
+   assessment does not name the rollup script. That `uq/rollup_vl170_adoption.sh` is the active
+   `VL172` route rests on D's evidence: its header, its output directories, and the ledger's
+   "Active 2D Result" product path. E's reviewer should re-read that header.
+3. O3, the backend: answered (`E_C`), see O3.
 
 ## For E
 
-- Integrate commits `d126a115` (INVENTORY), `abc1e6f7`, `00803510`, `bd738973`, `3a95fc71` and this
-  record's FREEZE commit. All are documentation. Nothing touches `MANIFEST*`, `CATALOG.md` or a hash-bound file.
+- Integrate D's branch through its FREEZE commit (`d126a115` INVENTORY, then `abc1e6f7`, `00803510`,
+  `bd738973`, `3a95fc71`, `c986779b`, `e4883157`, `3848b1ce`, FREEZE). All are documentation. Nothing touches `MANIFEST*`, `CATALOG.md` or a hash-bound file.
 - O3 needs a status-routing decision, after A's answer, about the 2D status headline's backend label.
-- If A's check (above) is still pending at integration, I2's wording stands only on the launcher
-  evidence D measured. E's reviewer should re-read the six launchers named in item 4.
+- A's later `P/a/verification.md`, if it disagrees with any D wording, supersedes D's reading. D's
+  edits are documentation, so reverting one restores its base text.
+- The reference cites A's assessment path, which exists only on A's branch until integration.
 - `README.md`'s shared-code row and the reference's producer table contain no numbers. They will need
   a refresh only if the rollup route changes.
+
+## Terminal record
+
+**Decision.** Three structural defects materially obstruct estimator tracing, validation design and
+supported reproduction in the 2D lane:
+- the reference routed the quoted uncertainty to superseded producers (O1);
+- the reference's seed instruction contradicted every producer (O2);
+- the frozen central value's backend was mislabeled (O3, now answered by A).
+
+All three were safely improved now, in documentation. Two further defects need code or protected-surface
+changes and are deferred with designs: the reported-bin mask alignment (O4) and the gen5d location (O5).
+
+**Disposition: PASS.** The four navigation tasks are demonstrably shorter and point at the correct
+artifacts (before/after logs). All five prioritized findings have an implemented or a justified
+deferred disposition. No source file changed, so no behavior could regress. The hash bindings,
+the hash-binding tests and the pre-commit checks pass.
+
+PASS here does **not** validate coverage, change adoption, grant compute, authorize any move or
+removal, advance a pin, or reopen a campaign. The backend finding (O3) is A's measurement. Whether
+the LightGBM blocks describe the exact-GBT central value is A's, B's and E's question, not a D
+conclusion.
+
+**Unresolved and consequential.**
+- The status headline's "lgbm" label for the central value (E, status routing).
+- The O4 patch, which needs a Perlmutter equivalence run of the rollup controls (A, or the
+  publication owner for `compare_to_paper_fullcov.py`; about minutes of CPU on frozen inputs,
+  with Joseph's or the owner's go-ahead).
+- `P/a/verification.md`, which was absent when D froze.
+
+**Session.**
+
+| Field | Value |
+|---|---|
+| Model | Claude Opus 5.5 (`claude-opus-5-5`), Claude Code |
+| Effort | not exposed to the session |
+| Session id | `0b2adcf5-295f-4aa8-bd36-f6cbc2f1fc9d` |
+| Owner / reviewer | D owned the lane; no reviewer or worker agent was spawned; the single independent review is E's |
+| Base | `f8e2bf8535a90d7ed1315530cff3b80860ef9f9c` |
+| Output commits | `d126a115` … FREEZE, on `prep/uncertainty-d-navigation-20261008` |
+
+**Resources against D's budget row.**
+
+| Resource | Used | Ceiling |
+|---|---|---|
+| Active time | about 0.9 h (06:08–07:00Z, including the 30-minute bounded wait for A) | 6 h |
+| Local CPU | under 0.1 core-h (git, greps, one 91 s pytest run, the verifier) | 3 core-h |
+| Peak RAM | under 1 GiB | 8 GiB |
+| New scratch/output | the worktree (0.4 GiB of checkout files) plus a TMPDIR under 1 MiB; committed records under 0.1 MiB | 1 GiB |
+| Cluster node-hours, GPU-hours, training, toys | 0 | 0 |
+| Implemented improvements / source files / repairs | 3 / 0 / 0 | 3 / 2 / 2 |
