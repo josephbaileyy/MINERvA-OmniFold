@@ -83,9 +83,15 @@ exist on the login node's Python 3.6. It was made compatible and re-run. The CFS
 
 ### 3a. AnaTuple checksum sweep (G4 identity)
 
-**Script:** `publication/release/preservation/anatuple_checksum_sweep_20261008.sh` (sha256 at this commit in §8). It
-read the exact committed inventory, `anatuple-inventory-20261008.tsv` (2,374 files, 11,523,656,218,592 B), and only
-READ the AnaTuples on `/pscratch/sd/j/josephrb/minerva/minerva_large_files`.
+**Script:** `publication/release/preservation/anatuple_checksum_sweep_20261008.sh`.
+- Run 3 and both retries ran `cfb8fe01…`, the version committed in `ebf17439`. Its `dtn01` copy has that digest and
+  an mtime of 01:17:34 UTC, 19 s before run 3 started.
+- Runs 1 and 2 ran earlier, uncommitted versions. Run 2's added `SKIP`. The nearest committed version is
+  `8c92c184`'s (`45592de6…`), committed at 01:13 UTC, after both had started.
+- The version committed now (`d18fc276…`) differs from `cfb8fe01` only by the `LC_ALL=C` line.
+
+The sweep read the exact committed inventory, `anatuple-inventory-20261008.tsv` (2,374 files,
+11,523,656,218,592 B). It only READ the AnaTuples on `/pscratch/sd/j/josephrb/minerva/minerva_large_files`.
 - I/O control: two concurrent streams, each `nice -n 19 ionice -c3`.
 - No Slurm job, and no scientific computation.
 - Each file's size and mtime were checked against the inventory before and after hashing.
@@ -141,7 +147,7 @@ with a copy in the CFS directory `anatuple-checksums-20261008/`.
   04:17 UTC). The digest matched, `8056f9dd…`, so the manifest entry is kept.
 - **A locale mismatch on the login node.** `join` there ran under a UTF-8 locale while `sort` used `C`, and printed
   "not sorted" warnings. The to-do set was still correct: 7 files, the same 7. The script now exports `LC_ALL=C`
-  for the whole run (sha256 in §8). The DTN runs were under the POSIX locale, so unaffected.
+  for the whole run. The DTN runs were under the POSIX locale, so unaffected.
 - **Throughput:** run 3 hashed 1,457 files, 11.12 TB, in 2 h 56 min: about 1.05 GB/s aggregate over 2 streams. That is no
   faster than the single stream the corrections record measured (§6: about 0.85–1.1 GB/s). Why the second stream
   added nothing was not measured.
@@ -231,7 +237,8 @@ The receipts are `ki84-adopt-20261006/recompute_2d_budget.json`, `coverage-2d-20
 ## 7. Remaining storage decision
 
 **Measured capacity:**
-- CFS `du` = **1,593 GiB** (1.71 TB, decimal) at 2026-10-09 01:26 UTC, after the W2 addition, against the 3 TB rule.
+- CFS `du` = **1,593 GiB** (1.71 TB, decimal) at 2026-10-09 01:26 UTC after the W2 addition, and the same at
+  05:55–06:00 UTC after the sweep, against the 3 TB rule.
 - HPSS `hsi du` = **376,773,649,398 B** (350.9 GiB, 57 files) at 04:19 UTC after the second copies, and unchanged at
   05:55 UTC, against a 512 GiB quota: about 161 GiB free.
 
@@ -251,7 +258,18 @@ copy, or MINERvA's answer, can be checked file by file.
 
 ## 8. Builds and standalone sync for this branch
 
-{{BUILDS}}
+All builds are at the branch head after `origin/main` `ad2716d8` was merged in: PR #56, the editorial pass, which
+another session merged during this work, and its record PR #57. They share no files with this branch.
+- The merge commit is `56752a4d`.
+- The G11 check also passes on the editorial pass's reworded article.
+
+| check | result |
+|---|---|
+| canonical `build_all.sh` at `56752a4d` | **`RESULT :: PASS`**, `tree=clean`, `mode=strict`; **`SEC4-RECEIPTS :: PASS (14/14)`**, `SELF-TEST :: PASS (16 perturbations rejected)`; 123 / 9 / 11 pages (the paper is now 11 pages, after PR #56) |
+| tests | `test_check_sec4_receipts.py` and `test_build_all.py`: **45 passed** |
+| `generate_manifest.py --check` | OK after regeneration (this commit) |
+| standalone `MINERvA-OmniFold-Analysis-Note` | branch **`sync-prd-followup-g11-20261008`** = **`0bc07fa9645c08e347eb65c6aba6782d8a911e76`**, on its `main` `657d5bd3`. It adds the 4 G11 files. Every tracked file equals canonical `docs/analysis-note` at `56752a4d`, apart from `.gitignore` and `AGENTS.md` (`diff -rq`). `build_all.sh`: rc 0, 123 / 9 / 11 pages, with the SEC4 stage reporting SKIP (no receipts there, by design). 38 tests passed, 7 skipped (the receipt tests). The `pdftotext` output of all 3 PDFs equals the canonical build's. **Not merged into the standalone `main`.** |
+| preservation script digests (this commit) | `anatuple_checksum_sweep_20261008.sh` `d18fc276…`; `hpss_second_copy_20261008.sh` `a14883f1…`; `verify_tar_stream.py` `64a29996…`. The same bytes are in the CFS directory. The CFS `README.md` = `50950e66…`, the committed README. |
 
 ## 9. Independent review
 
