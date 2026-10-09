@@ -22,7 +22,10 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-STATE = HERE.parents[1] / "docs/orchestration/state"
+# Only the canonical layout <repo>/docs/analysis-note/ has receipts at <repo>/docs/orchestration/state/; anywhere else
+# (the standalone note repository) there is nothing to check, and no unrelated directory may be picked up instead.
+STATE = (HERE.parents[1] / "docs/orchestration/state" if HERE.name == "analysis-note" and HERE.parent.name == "docs"
+         else HERE / ".no-receipts-outside-the-canonical-layout")
 
 
 def receipt(rel: str) -> dict:
