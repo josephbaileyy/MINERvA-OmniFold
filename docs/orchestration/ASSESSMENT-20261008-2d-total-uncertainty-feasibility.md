@@ -39,9 +39,10 @@ and validated at defensible cost? What specifically prevents it today?
    - The two centrals differ by a median 1.3 σ_stat per bin.
    - The transfers to `E_C` and the seed 1 ↔ seed 42 relation are unmeasured. Pairing ids below are A's FREEZE
      numbering; A's CONTRACT text used earlier ids.
-   - A's FREEZE records 4 of 17 pairings DISPROVED and 3 UNRESOLVED:
-     - the band, the systematics and the ML block were produced by LightGBM, not by `E_C` (`P02`, `P04`, `P09`);
-     - their transfer to `E_C` is unmeasured (`P03`, `P05`), and so is the seed 1 ↔ seed 42 relation (`P07`).
+   - A's FREEZE recorded 4 of 17 pairings DISPROVED and 3 UNRESOLVED. A's REPAIR 1 (`cc9eed27`) split `P09` into
+     `P09a` and `P09b`, giving 4 of 18 DISPROVED and 4 UNRESOLVED:
+     - the band, the systematics and the ML block were produced by LightGBM, not by `E_C` (`P02`, `P04`, `P09a`);
+     - their transfer to `E_C` is unmeasured (`P03`, `P05`, `P09b`), and so is the seed 1 ↔ seed 42 relation (`P07`).
      So validating the LightGBM band does not, by itself, validate the uncertainty attached to the quoted
      central.
    - The cost consequence: a validation that keeps `E_C` must also run a single-threaded exact unfold in every
@@ -49,7 +50,7 @@ and validated at defensible cost? What specifically prevents it today?
      if A's memory packing at about 0.68 node-h holds (contention unmeasured), and 268,936 if the jobs run as the
      central did.
    - A defined route exists only after one of two things:
-     - measured transfers to `E_C` (A's `P03`, `P05` and `P09` operands);
+     - measured transfers to `E_C` (A's `P03`, `P05` and `P09b` operands);
      - Joseph's decision to make a LightGBM-class estimator the quoted central. That is a change of central
        estimator, which A §2.4(2) and this assessment cannot make.
 2. **Independent populations do not exist** (B, PROVISIONAL §1, §17).
@@ -135,7 +136,7 @@ covariance convention, correlation partners, required evidence, disposition and 
 | UNRESOLVED | C08 (exact-backend seed variation and backend definition), C10, X01 |
 
 Every MATCHING NEEDED row inherits A's finding that no block was produced by `E_C`. The rows stay MATCHING NEEDED,
-not UNRESOLVED, because the route to matching is defined: either measured transfers (`P03`, `P05`, `P09`), or Joseph's choice of central followed by
+not UNRESOLVED, because the route to matching is defined: either measured transfers (`P03`, `P05`, `P09b`), or Joseph's choice of central followed by
 setup item S-a.
 
 **Audit 1 — target normalization is counted once: CONFIRMED for the standalone construction.**
@@ -362,7 +363,7 @@ Admitted node-h at 4 × 1,250 = 5,000 experiments, with pairing not established 
   - A's own prices for the missing transfer operands (`price_for_C`):
     - `P03`, an exact bootstrap: N = 50 about 34–39 node-h; N = 300 about 205–215;
     - `P05`, the exact universes: about 128 node-h;
-    - `P09`, the exact seed scan: about 7 node-h packed, or 193 unpacked.
+    - `P09b`, the exact seed scan: about 7 node-h packed, or 193 unpacked.
 - **Pairing.** With a LightGBM central, pairing established versus not changes P2 by 33–141 node-h.
 
 **Range.**
@@ -409,7 +410,7 @@ Admitted node-h at 4 × 1,250 = 5,000 experiments, with pairing not established 
 
 | Stage | Admission evidence | Authority | Budget | Terminal stop |
 |---|---|---|---|---|
-| 0. Central estimator | Either measured transfers `E_S → E_C` with declared observables and tolerances (A's `P03`, `P05`, `P09`), or a recorded change of the quoted central estimator | Joseph: a change of central estimator is reserved to him; the transfer measurements need compute admission | transfers: about 170–350 node-h at A's packed prices (`P03` at N = 50 or 300, plus `P05` and `P09`); the change of estimator costs none | without one of them, no claim about the uncertainty attached to the quoted central (`E_C`), or about the total, is admissible: **stop** for those claims. Work explicitly labelled as about `E_S` (the LightGBM band itself), such as B's N2 diagnostic, does not need stage 0; it needs Joseph's choice to pursue `E_S`-scoped work plus the KI-85 lift |
+| 0. Central estimator | Either measured transfers `E_S → E_C` with declared observables and tolerances (A's `P03`, `P05`, `P09b`), or a recorded change of the quoted central estimator | Joseph: a change of central estimator is reserved to him; the transfer measurements need compute admission | transfers: about 170–350 node-h at A's packed prices (`P03` at N = 50 or 300, plus `P05` and `P09b`); the change of estimator costs none | without one of them, no claim about the uncertainty attached to the quoted central (`E_C`), or about the total, is admissible: **stop** for those claims. Work explicitly labelled as about `E_S` (the LightGBM band itself), such as B's N2 diagnostic, does not need stage 0; it needs Joseph's choice to pursue `E_S`-scoped work plus the KI-85 lift |
 | 1. Matching | A's FREEZE row outcomes; Audit 2 identity proof; matched sweep at the chosen central (S-a) | none for reads; Joseph for S-a compute | 0 node-h locally; S-a 25–94 node-h (LightGBM) | PAIRING NOT ESTABLISHED, which carries S-a into every later stage |
 | 2. Statistical validation | B's frozen design; R0; independent populations (a second production or a validated route G); KI 85 deferral lifted | Joseph | B's figures (13,440–20,862 node-h primary; 7.4 node-h plus R0 for N2) | B's terminal states. A PASS stays statistical-only. NO-GO while obstacle 2 stands |
 | 3. Missing-source and method qualification | Constructions for C03 (bound or stream), C05a (selection-complete laterals), M1 generator, X01 (joint throws or cross term), X02/X03 (factorial or bound), C09 development truths | Joseph for compute; A for code under its ownership | setup 79–469 node-h, plus 20% reserve | INCONCLUSIVE if any construction fails its own closure; NO-GO if C05a support cannot be made selection-complete |
