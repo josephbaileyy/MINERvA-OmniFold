@@ -1,0 +1,53 @@
+== C reproduction (mine vs C published)
+  optimistic   P1: mine   288792.599  C   288792.599
+  optimistic   P2: mine      575.239  C      575.239
+  optimistic   P3: mine    20352.517  C    20352.517
+  conservative P1: mine  1207226.027  C  1207226.027
+  conservative P2: mine     3517.952  C     3517.952
+  conservative P3: mine    84559.577  C    84559.577
+
+reads 109.3 s fills 125.8 s loops 235.1 s after 30.4 s s_loop 7.734
+f_loop [0.2799, 0.5260]  resid 0.0683 s_io 14.64  bytes ratio 67.6  f_io 0.6945
+  S[io] measured 2.834  2/5/10/100 1.532 2.250 2.667 3.201  ceil 3.274
+  S[loop_lo] measured 1.322  2/5/10/100 1.163 1.288 1.337 1.383  ceil 1.389
+  S[loop_hi] measured 1.845  2/5/10/100 1.357 1.726 1.899 2.086  ceil 2.110
+  exact loops f 0.0034-0.0064; exact io f 0.0253 ceil 1.0259
+
+pack exact 29 (rss 17.19), uni max 2, uni med 7, p2 rss 8.52 -> 60
+  A 0.68   unit 0.6800 P05    127.84 sum    168.64 admitted     242.4  N300 sum    338.64 adm    486.8
+  C ratio  unit 1.5224 P05    285.37 sum    326.17 admitted     468.9  N300 sum    496.17 adm    713.2
+  safe     unit 9.9061 P05   1853.11 sum   1893.06 admitted    2721.3  N300 sum   2059.55 adm   2960.6
+  median   unit 2.8303 P05    529.94 sum    569.89 admitted     819.2  N300 sum    736.37 adm   1058.5
+  p1       unit 0.6671 P05    125.41 sum    165.37 admitted     237.7  N300 sum    331.85 adm    477.0
+  p1+p2    unit 0.3224 P05     60.62 sum     79.93 admitted     114.9  N300 sum    160.40 adm    230.6
+  billing ratio safe/p1 14.85; waves at 30 nodes: safe 4, p1 1
+
+uni rate now 0.7075 p1 full 0.2503 p1 shared 0.0669; billing gain 2.83 / 10.58
+S-a now 132.52  p1 full 47.02  p1 sh 12.56
+S-a p1+p2 shared [7.57, 9.91]
+
+== accelerated C rows (mine; cons_setup explicit | C's own coupling uni==0.5)
+  cons measured_universe_rate  P1: mine    1498306.1  C-coupled    1498117.4  lane    1498306.1
+  cons measured_universe_rate  P2: mine       3579.3  C-coupled       3390.6  lane       3579.3
+  cons measured_universe_rate  P3: mine      84620.9  C-coupled      84432.2  lane      84620.9
+  cons p1_fullnode             P1: mine     856917.8  C-coupled     856729.1  lane     856917.8
+  cons p1_fullnode             P2: mine       3444.2  C-coupled       3255.5  lane       3444.2
+  cons p1_fullnode             P3: mine      84485.8  C-coupled      84297.1  lane      84485.8
+  cons p1_p2_fullnode          P1: mine     486661.5  C-coupled     486517.3  lane     486661.5
+  cons p1_p2_fullnode          P2: mine       2092.2  C-coupled       1948.1  lane       2092.2
+  cons p1_p2_fullnode          P3: mine      46020.7  C-coupled      45876.6  lane      46020.7
+  opt p1_shared64              P1: mine     206808.7  C-coupled     206808.7  lane     206808.7
+  opt p1_shared64              P2: mine        558.0  C-coupled        558.0  lane        558.0
+  opt p1_shared64              P3: mine      20335.2  C-coupled      20335.2  lane      20335.2
+  opt p1_p2_shared64           P1: mine     117030.4  C-coupled     117030.4  lane     117030.4
+  opt p1_p2_shared64           P2: mine        340.6  C-coupled        340.6  lane        340.6
+  opt p1_p2_shared64           P3: mine      11060.8  C-coupled      11060.8  lane      11060.8
+  all unfolds x100 optimistic: P1 2968 P2 86 P3 284
+  all unfolds x100 conservative: P1 12549 P2 512 P3 1323
+
+N2 now 9.79-12.17; p2 5.54-9.90; saving 4.26
+B primary 13440.6; p2 7285-10165; zero loops 6371-9679 = 2.10-3.18 x remaining
+B N1116 20861.8; p2 11308-15778
+
+P1 verif 0.868 saving/uni-full 0.457 shared 0.641 exact 9.24; payback 1.90 unfolds
+P2 verif 0.350 savings [0.026713817533485954, 0.014214747041930322] payback [13.101833894061475, 24.622316455409184]

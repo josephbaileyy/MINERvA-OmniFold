@@ -1,0 +1,2 @@
+AsNumpy sim_pass dtype bool byte==2 rows 666
+keys differing WITHOUT the view: ['truth_pt', 'truth_pz', 'reco_pt', 'reco_pz', 'pass_reco', 'pass_truth', 'w_truth', 'w_reco']
