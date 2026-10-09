@@ -991,34 +991,39 @@ def project_xsec_1d(hXSec2D, axis, pt_edges, pz_edges):
         raise ValueError(f"Unknown axis: {axis}")
 
 
-def run_provenance(args, helper_module):
+def file_sha256(path):
+    """sha256 of a file's current bytes, or "unavailable"."""
+    import hashlib
+    try:
+        with open(path, "rb") as fh:
+            return hashlib.sha256(fh.read()).hexdigest()
+    except (OSError, TypeError):
+        return "unavailable"
+
+
+def run_provenance(args, helper_module, driver_sha256):
     """(name, value) records that identify the settings and code behind an output.
 
     `runConfig` holds every effective argument, defaults included, so an omitted flag
     such as `--estimator` is recorded by its value rather than by its absence. The
     OmniFold helper is identified by the module object that was imported: the insert
-    in main() can load it from a different checkout than this script's.
+    in main() can load it from a different checkout than this script's. Call this
+    right after that import, so the helper's digest is of the bytes on disk when it
+    was loaded, not when the output is written; `driver_sha256` is taken by the caller
+    when main() starts.
     """
-    import hashlib
     import json
     import os
     import sys
-
-    def sha256(path):
-        try:
-            with open(path, "rb") as fh:
-                return hashlib.sha256(fh.read()).hexdigest()
-        except (OSError, TypeError):
-            return "unavailable"
 
     helper_file = getattr(helper_module, "__file__", None)
     return [
         ("runConfig", json.dumps(vars(args), sort_keys=True)),
         ("runArgv", json.dumps(sys.argv)),
         ("driverFile", os.path.abspath(__file__)),
-        ("driverSha256", sha256(__file__)),
+        ("driverSha256", driver_sha256),
         ("omnifoldHelperFile", os.path.abspath(helper_file) if helper_file else "unavailable"),
-        ("omnifoldHelperSha256", sha256(helper_file)),
+        ("omnifoldHelperSha256", file_sha256(helper_file)),
     ]
 
 
@@ -1026,6 +1031,7 @@ def run_provenance(args, helper_module):
 # Main
 # ---------------------------------------------------------------------------
 def main():
+    driver_sha256 = file_sha256(__file__)
     ap = argparse.ArgumentParser(
         description="2D unbinned OmniFold unfolding for MINERvA CC inclusive (p_T, p_||).")
     ap.add_argument("--omnifile", default="runEventLoopOmniFold.root",
@@ -1715,6 +1721,7 @@ def main():
     if _OF_PY not in sys.path:
         sys.path.insert(0, _OF_PY)
     from omnifold import OmniFold_helper_functions as ohf
+    provenance = run_provenance(args, sys.modules.get("omnifold"), driver_sha256)
 
     print(f"[INFO] Running 2D OmniFold with {args.iters} iterations...")
     print(f"[INFO] MC events: {sig['truth_pt'].shape[0]}, "
@@ -2014,7 +2021,7 @@ def main():
     ROOT.TParameter("double")("fluxIntegral_cm2_per_POT", flux_total_cm2).Write()
     ROOT.TParameter("double")("nNucleons", n_nucleons).Write()
     ROOT.TNamed("fluxSource", flux_source).Write()
-    for name, value in run_provenance(args, sys.modules.get("omnifold")):
+    for name, value in provenance:
         ROOT.TNamed(name, value).Write()
         if name.startswith(("driver", "omnifoldHelper")):
             print(f"[INFO] {name}: {value}")
