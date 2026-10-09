@@ -173,6 +173,10 @@ def self_test() -> int:
     for idx, (label, src, pat, fn, mode) in enumerate(CHECKS):
         s = text(src, base)
         m = re.search(pat, s)
+        if m is None:  # nothing to perturb: the plain check already fails on this; say so instead of crashing
+            print(f"  NOT FOUND   {label}: the printed value is not in {src}")
+            ok = False
+            continue
         for gi in range(1, (m.lastindex or 0) + 1):
             p = m.group(gi)
             step = 2 * half_ulp(p)

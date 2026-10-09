@@ -105,3 +105,32 @@ def test_the_container_really_differs_in_the_serialization_case():
         np.savez_compressed(b, **BASE)
         assert a.read_bytes() != b.read_bytes()
         assert zipfile.ZipFile(b).infolist()[0].compress_type == zipfile.ZIP_DEFLATED
+
+
+def test_a_large_change_in_one_small_element_is_not_called_last_bits():
+    """Review cycle 2: relative to the array maximum this is 2.5e-13, but the element itself moved by 50 %."""
+    f = BASE["f"].copy()
+    f[0] = 1e-12
+    old = arrays(f=f)
+    g = f.copy()
+    g[0] = 1.5e-12
+    with tempfile.TemporaryDirectory() as tmp:
+        o, n = Path(tmp) / "old.npz", Path(tmp) / "new.npz"
+        np.savez(o, **old)
+        np.savez(n, **arrays(f=g))
+        for p in (o, n):
+            Path(str(p) + ".manifest.json").write_text(json.dumps(MANIFEST))
+        cmp.DIFFS.clear()  # as verdict() does, so a tool that keeps state cannot pass on an earlier test's leftovers
+        out = io.StringIO()
+        with redirect_stdout(out):
+            rc = cmp.main([str(n), str(o)])
+    assert rc == 1 and "VERDICT: NOT REPRODUCED" in out.getvalue(), out.getvalue()
+
+
+def test_a_path_key_present_in_only_one_manifest_is_not_a_location_difference():
+    f = BASE["f"].copy()
+    f[3] = np.nextafter(f[3], 2.0)
+    m = copy.deepcopy(MANIFEST)
+    m["nulls"]["M"]["shift"]["path"] = "/somewhere"
+    rc, v = verdict(arrays(f=f), m)
+    assert rc == 1 and "NOT REPRODUCED" in v, v

@@ -6,7 +6,8 @@ Reports, separately: (1) file digests; (2) every array: key set, dtype, shape, e
 serialization only when every array is exactly equal and the manifests differ only in fields that record the npz
 digest itself. A last-bit difference is reported as NOT BIT-IDENTICAL, never as identity, and only when every
 differing array is floating point with the same dtype and shape and a finite relative difference below 1e-9, and
-every other manifest difference is a floating-point `/nulls/*/shift/*` statistic within the same bound. Anything
+every other manifest difference is a floating-point `/nulls/*/shift/*` statistic within the same bound; no element
+may change sign or move more than MAX_ULP units in the last place. Anything
 else (an integer, boolean or shape difference, a changed count or digest) is NOT REPRODUCED. Exit 0 only if every array is exactly equal and every manifest difference is so attributed.
 
   python3 compare_sufficient.py <regenerated.npz> <preserved.npz>
@@ -26,6 +27,7 @@ def sha(p: Path) -> str:
 
 
 LAST_BITS = 1e-9  # relative bound for "differs in the last bits"
+MAX_ULP = 10**6   # and an element-wise bound: no element may move more than this many ULPs, or change sign
 DIFFS: list[tuple[str, object, object]] = []  # (path, regenerated, preserved) for every differing JSON leaf
 
 
@@ -64,6 +66,7 @@ def diff_json(a, b, path="") -> list[str]:
 
 
 def main(argv) -> int:
+    DIFFS.clear()
     new, old = Path(argv[0]), Path(argv[1])
     dn, do = sha(new), sha(old)
     print(f"npz sha256: regenerated {dn} | preserved {do} | {'IDENTICAL' if dn == do else 'DIFFERENT'}")
@@ -90,7 +93,8 @@ def main(argv) -> int:
                 ai, bi = a.view(np.int64), b.view(np.int64)      # ULP distance (same-sign float64)
                 ulp = int(np.max(np.abs(ai - bi)[np.sign(a) == np.sign(b)])) if np.any(np.sign(a) == np.sign(b)) else -1
                 worst_rel, worst_ulp = max(worst_rel, rel), max(worst_ulp, ulp)
-                if not (np.isfinite(rel) and rel < LAST_BITS and np.array_equal(np.isnan(a), np.isnan(b))):
+                if not (np.isfinite(rel) and rel < LAST_BITS and np.array_equal(np.isnan(a), np.isnan(b))
+                        and np.array_equal(np.sign(a), np.sign(b)) and 0 <= ulp <= MAX_ULP):
                     all_float_last_bits = False
             print(f"ARRAY DIFFERS {k}: dtype {a.dtype}/{b.dtype} shape {a.shape}/{b.shape} max|diff| {md:.3g} "
                   f"(relative to max|value| {rel:.3g}; max ULP distance {ulp})")
@@ -101,7 +105,8 @@ def main(argv) -> int:
     d = diff_json(mn, mo)
     digest_only = [x for x in d if x.startswith("/npz_sha256:")]
     # fields that record WHERE inputs were read from (paths, the code root), not what they contained
-    layout = [x for x in d if x not in digest_only and (x.split(":")[0].endswith("/path") or x.startswith("/code_root:"))]
+    layout = [x for x in d if x not in digest_only and not x.endswith(": present in only one")
+              and (x.split(":")[0].endswith("/path") or x.startswith("/code_root:"))]
     other = [x for x in d if x not in digest_only and x not in layout]
     print(f"manifest: {len(d)} differing field(s); npz_sha256 only: {len(digest_only)}; input-location fields: "
           f"{len(layout)}; other: {len(other)}")
@@ -118,7 +123,7 @@ def main(argv) -> int:
         print("VERDICT: npz byte-identical" + where)
     elif (kn == ko and all_float_last_bits and
           all(last_bits_stat(p, x, y) for p, x, y in DIFFS if p != "/npz_sha256" and not
-              (p.endswith("/path") or p == "/code_root"))):
+              ((p.endswith("/path") or p == "/code_root") and None not in (x, y)))):
         print(f"VERDICT: NOT BIT-IDENTICAL -- {len(kn & ko) - n_exact} array(s) differ in the last bits (worst relative "
               f"difference {worst_rel:.2g}); the manifests differ only in floating-point statistics derived from them")
     else:

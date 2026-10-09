@@ -84,3 +84,13 @@ def test_the_canonical_layout_without_receipts_fails():
 def test_a_standalone_layout_skips():
     proc = _run_copy("MINERvA-OmniFold-Analysis-Note")
     assert proc.returncode == 0 and "SEC4-RECEIPTS :: SKIP" in proc.stdout, proc.stdout
+
+
+@needs_receipts
+def test_the_self_test_fails_cleanly_when_a_printed_value_is_missing(monkeypatch, capsys):
+    """Review cycle 2: it crashed (AttributeError) on a missing value; it must report it and fail."""
+    original = chk.load()
+    original["paper_body.tex"] = original["paper_body.tex"].replace("differ by at most", "differ by roughly")
+    monkeypatch.setattr(chk, "load", lambda: dict(original))
+    assert chk.self_test() == 1
+    assert "NOT FOUND   treatments on data (VL152)" in capsys.readouterr().out

@@ -96,8 +96,8 @@ exist on the login node's Python 3.6. It was made compatible and re-run. The CFS
     being recorded as hashed. That gives `a5c386dc…`, the committed version and the copy now in the CFS directory.
 - The fix was tested on a login node with a `sha256sum` shim that fails for one file. That file went to
   `MISMATCH.tsv`, the other hashed correctly, and a resume retried and hashed it.
-- The committed manifest was not affected by the defect: all 2,367 digests are valid 64-hex, and 7 were re-hashed
-  independently by the reviewer.
+- The committed manifest was not affected by the defect: all 2,367 digests are valid 64-hex, and the reviewer re-hashed
+  4 of the AnaTuples independently (plus 3 W2 files, which are not in this manifest).
 
 The sweep read the exact committed inventory, `anatuple-inventory-20261008.tsv` (2,374 files,
 11,523,656,218,592 B). It only READ the AnaTuples on `/pscratch/sd/j/josephrb/minerva/minerva_large_files`.
@@ -203,13 +203,15 @@ with a copy in the CFS directory `anatuple-checksums-20261008/`.
 
 **Results** (`publication/release/g12/results/`: the run logs, `compare-*.txt`, `replay-summary.txt`,
 `blas-thread-digests.txt`, `replay-json-diff-frozen.txt`, `venv-freeze.txt`):
-- **The comparison tool was fixed in review cycle 1** (`compare_sufficient.py` `5c369d30…`). Its "last bits" verdict
+- **The comparison tool was fixed in review cycle 1** (`compare_sufficient.py`: `5c369d30…` after cycle 1, `e0c1d636…` after cycle 2). Its "last bits" verdict
   had tolerated integer, boolean and shape differences and changed counts. It now requires every differing array to be
   float, with equal dtype and shape and a relative difference below 1e-9, and every other manifest difference to be a
   `/nulls/*/shift/*` float within the same bound. `test_compare_sufficient.py` fails on the old tool for 6 such cases
   and passes on the new one.
 - **The fixed tool was re-run on the cluster outputs.** Its `compare-frozen.txt`, `compare-union.txt` and
   `compare-figs.txt` are byte-identical to the first run's.
+- **After review cycle 2 an element-wise bound was added** (no sign change, at most 10⁶ ULP per element). A second
+  re-run gave byte-identical outputs again (§9).
 - **`replay-summary.txt` was re-run in cycle 1** (login23, 06:27 UTC; all three replays `AGREE (0 differences)`). The
   first run's third block was garbled, for a reason not determined. `blas-thread-digests.txt` was rewritten with
   labels: its first version ended with an unlabeled CPU line from the default run.
@@ -353,4 +355,31 @@ scratch directory. Its worktree was clean afterwards (`git status --short` empty
   - there are no receipts for the `du` readings and D-state observations. Their outputs are quoted in this record
     and the HPSS arithmetic checks; this stays a limitation.
 
-{{REVIEW_CYCLE2}}
+**Cycle 2, at `d3f0cc39`, focused on the repairs: `VERDICT: READY`** (no blocker, no major).
+- **The reviewer re-ran its cycle-1 probes and confirmed all 9 fixes.**
+  - The integer, shape, boolean and count fixtures now give `NOT REPRODUCED`.
+  - The old tool fails exactly 6 of the new tests.
+  - The re-run compare outputs are byte-equal to the committed ones.
+  - The canonical layout without receipts fails; a commented-out value and a "below 0.9/0.4/0.2" value fail.
+  - The current and newest (`91517331`) article text passes, 14/14 with self-test 17.
+  - The failing-shim probe and `--strict` behave as stated.
+  - `replay-summary.txt` and `replay-json-diff-frozen.txt` reproduce byte for byte.
+  - The standalone equality and the manifest check are confirmed.
+- **2 new minor findings, fixed after cycle 2. These final repairs were not re-reviewed: the two cycles were used.**
+  1. **`compare_sufficient.py`:** the last-bits test was relative to the array maximum. A 50 % change in one small
+     element could still be called "last bits".
+     - Now no element may change sign or move more than 10⁶ ULP; the real data's worst is 25,757.
+     - A `/path` key present in only one manifest no longer counts as a location difference.
+     - `main()` clears its difference list.
+     - Two new tests fail on the cycle-1 tool and pass on the new one.
+     - Re-run on the cluster outputs (`r2-compare-*.txt`), every compare output, the 3 products and 7 thread
+       counts, is byte-identical to the committed one. So the G12 verdicts are unchanged.
+  2. **The record** said 7 AnaTuples were re-hashed by the reviewer. It was 4, plus 3 W2 files; corrected in §3a.
+- **Notes:**
+  - The self-test crashed on a missing value. It now reports `NOT FOUND` and fails, and a test covers this.
+  - The comment regex does not treat `\\%` (a line break followed by a comment) as a comment. This is rare and
+    errs toward failing; left as is.
+  - After a resume hashes a file that earlier failed to read, its `read_failed` row stays in `MISMATCH.tsv`. It is an
+    audit trail; the manifest is authoritative.
+  - The reviewer could not check the 17 hung `stat` processes (`ps` was outside its permitted reads).
+- The reviewer's worktree was clean after both cycles.
