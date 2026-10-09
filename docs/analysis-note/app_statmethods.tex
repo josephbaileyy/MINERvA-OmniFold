@@ -392,8 +392,8 @@ full-rank; its systematic-only rank is $120<140$ (\S\ref{sec:rank}).
 \subsubsection{Block-sum combination}
 \label{sec:combine}
 The bootstrap varies events through distinct data and MC sub-RNGs; universes
-vary model weights at a pinned GBDT seed; training-seed trials vary that seed
-at fixed weights. These three Monte Carlos are independent by construction.
+vary model weights at a pinned GBDT seed; training-seed trials vary the GBDT seed
+(seeds 1--10) at fixed weights. These three Monte Carlos are independent by construction.
 They use different LightGBM seeds (1 for the bootstrap, 42 for the universes),
 and whether their covariances are consistent across that seed difference has
 not been measured. The block sum is
