@@ -1,6 +1,6 @@
 # Assessment — 2D total-uncertainty feasibility (uncertainty preparation, lane C)
 
-**Status: FINAL (lane C FREEZE).** Reconciled once after A's FREEZE (`9fab26e8`, `f762749d`). Also reconciled with
+**Status: FINAL (lane C FREEZE, plus E's repair 1).** Reconciled once after A's FREEZE (`9fab26e8`, `f762749d`). Also reconciled with
 A's CONTRACT (`acb338a2`), and with B's PROVISIONAL and its later estimator-specification commit (`f19084f4`,
 `ea6a154e`; B's counts unchanged: 719 / 1,116). B's final document was not available at this freeze.
 
@@ -40,12 +40,13 @@ and validated at defensible cost? What specifically prevents it today?
    - The transfers to `E_C` and the seed 1 ↔ seed 42 relation are unmeasured. Pairing ids below are A's FREEZE
      numbering; A's CONTRACT text used earlier ids.
    - A's FREEZE records 4 of 17 pairings DISPROVED and 3 UNRESOLVED:
-     - the band, the systematics and the ML block do not describe `E_C` (`P02`, `P04`, `P09`);
-     - their transfer to `E_C` is unmeasured (`P03`, `P05`, `P07`).
-     So validating the LightGBM band does not validate the uncertainty attached to the quoted central.
+     - the band, the systematics and the ML block were produced by LightGBM, not by `E_C` (`P02`, `P04`, `P09`);
+     - their transfer to `E_C` is unmeasured (`P03`, `P05`), and so is the seed 1 ↔ seed 42 relation (`P07`).
+     So validating the LightGBM band does not, by itself, validate the uncertainty attached to the quoted
+     central.
    - The cost consequence: a validation that keeps `E_C` must also run a single-threaded exact unfold in every
-     experiment. A measured that unfold at 69,523 s and MaxRSS 16.8 GB. The cheapest route then costs 5,566 node-h
-     if A's memory packing at about 0.68 node-h holds (contention unmeasured), and 263,513 if the jobs run as the
+     experiment. A measured that unfold at 69,523 s and MaxRSS 16.8 GB. The cheapest route then costs 5,728 node-h
+     if A's memory packing at about 0.68 node-h holds (contention unmeasured), and 268,936 if the jobs run as the
      central did.
    - A defined route exists only after one of two things:
      - measured transfers to `E_C` (A's `P03`, `P05` and `P09` operands);
@@ -346,12 +347,17 @@ Admitted node-h at 4 × 1,250 = 5,000 experiments, with pairing not established 
 
 - **Central-estimator branch** (A §2.4(2); exact unfold from A's FREEZE).
   - Keeping `E_C` adds one exact unfold per experiment, plus a one-time exact rebuild of the matched sweep, its CV
-    and a 10-seed exact scan:
+    and a 10-seed exact scan. The exact sweep replaces the LightGBM S-a, which is dropped from this branch's setup.
 
 | | Per exact unfold | One-time rebuild | P2 admitted |
 |---|---:|---:|---:|
-| Optimistic: A's memory-packed extrapolation | 0.68 | 135 | 5,566 |
-| Conservative: as run | 19.31 | 3,824 | 263,513 |
+| Optimistic: A's memory-packed extrapolation | 0.68 | 292 | 5,728 |
+| Conservative: as run | 19.31 | 8,298 | 268,936 |
+
+  - Exact universe unfolds carry the same documented universe/CV wall ratio (2.24) as the LightGBM ones. For a
+    compute-bound single-threaded job that multiplicative ratio is an upper-side choice; an additive I/O overhead
+    of about 0.28 h per unfold would be smaller. (Repair 1, E finding F9: the freeze had 135 / 3,824 and
+    5,566 / 263,513, which double-counted S-a and priced exact universes at the CV rate.)
 
   - A's own prices for the missing transfer operands (`price_for_C`):
     - `P03`, an exact bootstrap: N = 50 about 34–39 node-h; N = 300 about 205–215;
@@ -403,7 +409,7 @@ Admitted node-h at 4 × 1,250 = 5,000 experiments, with pairing not established 
 
 | Stage | Admission evidence | Authority | Budget | Terminal stop |
 |---|---|---|---|---|
-| 0. Central estimator | Either measured transfers `E_S → E_C` with declared observables and tolerances (A's `P03`, `P05`, `P09`), or a recorded change of the quoted central estimator | Joseph: a change of central estimator is reserved to him; the transfer measurements need compute admission | transfers: about 170–350 node-h at A's packed prices (`P03` at N = 50 or 300, plus `P05` and `P09`); the change of estimator costs none | without one of them, the uncertainty attached to the quoted central is unvalidated whatever B and C run: **stop** |
+| 0. Central estimator | Either measured transfers `E_S → E_C` with declared observables and tolerances (A's `P03`, `P05`, `P09`), or a recorded change of the quoted central estimator | Joseph: a change of central estimator is reserved to him; the transfer measurements need compute admission | transfers: about 170–350 node-h at A's packed prices (`P03` at N = 50 or 300, plus `P05` and `P09`); the change of estimator costs none | without one of them, no claim about the uncertainty attached to the quoted central (`E_C`), or about the total, is admissible: **stop** for those claims. Work explicitly labelled as about `E_S` (the LightGBM band itself), such as B's N2 diagnostic, does not need stage 0; it needs Joseph's choice to pursue `E_S`-scoped work plus the KI-85 lift |
 | 1. Matching | A's FREEZE row outcomes; Audit 2 identity proof; matched sweep at the chosen central (S-a) | none for reads; Joseph for S-a compute | 0 node-h locally; S-a 25–94 node-h (LightGBM) | PAIRING NOT ESTABLISHED, which carries S-a into every later stage |
 | 2. Statistical validation | B's frozen design; R0; independent populations (a second production or a validated route G); KI 85 deferral lifted | Joseph | B's figures (13,440–20,862 node-h primary; 7.4 node-h plus R0 for N2) | B's terminal states. A PASS stays statistical-only. NO-GO while obstacle 2 stands |
 | 3. Missing-source and method qualification | Constructions for C03 (bound or stream), C05a (selection-complete laterals), M1 generator, X01 (joint throws or cross term), X02/X03 (factorial or bound), C09 development truths | Joseph for compute; A for code under its ownership | setup 79–469 node-h, plus 20% reserve | INCONCLUSIVE if any construction fails its own closure; NO-GO if C05a support cannot be made selection-complete |
@@ -442,7 +448,7 @@ per experiment, with no nuisance overhead (`costs.json` `for_B_statistical_per_e
 | From | Item | Effect on C |
 |---|---|---|
 | A | FREEZE (`9fab26e8`) | **Reconciled**: §2 unchanged; rows `P06`, `P14` and `P17` incorporated; the exact-unfold timing is adopted with its evidence class |
-| B | Final | Not available at this freeze. B's later commit `ea6a154e` leaves its counts unchanged. If B's final changes its counts or criteria, `costs.py --n-per-case/--n-cases/--n-inner` recomputes every total; E integrates the final pair |
+| B | Final (`00f7cff1`, read at repair 1) | **No C row changes.** B's counts (719 / 1,116) and criteria are unchanged. B adds N2 (§16.1: 100 runs, 7.4 node-h) and uses C's CV-only R0 price (0.4–2.3 node-h), for 7.8–9.7 node-h in total. N2 is `E_S`-scoped and statistical-only. It enters no C component and no total |
 
 ## 11. Reproduction
 
@@ -528,5 +534,7 @@ Each item below stays deferred. C continues with the rest.
    - "PPFX index alignment verified (Pearson 0.96)" has no committed receipt (Audit 2).
 3. **No governing record is proposed by C.** C supplies no receipt binding, and none of its digests is a
    path+sha256 pair. The receipt digests in `costs.json` are `sha256:`-prefixed strings under a `digest` key.
-4. **The next decision belongs to Joseph and is the same for B and C:** the central estimator (stage 0). Nothing
-   downstream is admissible before it.
+4. **Joseph's next decision for any claim about the quoted central's uncertainty, or about the total:** the
+   central estimator (stage 0). No such claim is admissible before it. An `E_S`-labelled statistical diagnostic
+   (B's N2) does not wait on stage 0; it needs Joseph's choice of `E_S`-scoped work plus the KI-85 lift. E composes
+   the single next decision.
