@@ -19,6 +19,31 @@ certify a measurement or its total uncertainties. Narrowing to 2D would leave
 the original joint-5D measurement objective unmet; it requires a publication
 scope decision and is not a retrospective pass for that objective.
 
+## 0. Reconciliation, 2026-10-09 (uncertainty preparation, session E)
+
+This section and the notes marked *Reconciled 2026-10-09* were added by the
+integration owner of the
+[uncertainty preparation](PLAN-20261008-uncertainty-investigation-preparation.md).
+The October 5 text below is otherwise unchanged. **The October 5 independent
+review accepted the October 5 text only.** This reconciliation does not inherit
+that acceptance; it was reviewed separately, in the preparation's own review
+(`state/uncertainty-preparation-20261008/e/review.md`). Nothing here admits
+compute, changes an adoption or changes the publication scope. The integrated
+conclusion is [`DELIVERY-20261008-uncertainty-preparation.md`](DELIVERY-20261008-uncertainty-preparation.md).
+
+| October 5 statement | Status on 2026-10-09 | Evidence |
+|---|---|---|
+| §1: the scalar joint inference and the 2D coverage study are active campaigns | Both are terminal. s5p is terminal, adds no reportable measurement uncertainty, and its measurement branch was not admitted. The 2D coverage study ended FAIL-undercoverage for the superseded `VL162` band | [s5p terminal delivery](DELIVERY-20261006-s5p-campaign-terminal.md), `OI-193`; [coverage outcome](OUTCOME-20261005-2d-fixed-truth-coverage-fail.md), `VL169` |
+| §2: the quoted 2D central value is the "five-iteration LightGBM result" | **Incorrect.** The quoted central (`142a45b0…`, `3.073e-38 cm²/nucleon`) was produced by exact-split scikit-learn gradient boosting with an unpinned seed. Every 2D uncertainty block is LightGBM: seed 1 for the statistical band, seed 42 for the systematic sweep and its matched CV, seeds 1–10 for the ML block. Same-estimator pairing of the central with each block is DISPROVED. Whether the blocks nevertheless describe the central's uncertainty (the transfer) is UNMEASURED, not shown false | [estimator-pairing assessment](ASSESSMENT-20261008-2d-estimator-pairing.md) §1–§3, rows `P01`–`P09` |
+| §2: the statistical band is `VL162` (median relative spread 0.5494%) | Superseded. `KNOWN_ISSUES.md` 84 was fixed in code and the band rebuilt from 300 replicas (`VL170`), adopted 2026-10-06, with the rollup rebuilt (`VL172`). `VL170` has not been coverage-tested. `KNOWN_ISSUES.md` 85 is open and deferred by Joseph until after the publication package; its same-event diagnostic was consistent with explanation (b) | `VALIDATION_LEDGER.md` `VL170`, `VL172`; `KNOWN_ISSUES.md` 84–85 |
+| §3: first test the algebraic completeness repair `X_match` from saved histograms | Overtaken. The completeness defect was repaired in the driver and the replicas were rebuilt, so no algebraic rescale is needed or proposed. The repaired path and its negative control pass | `KNOWN_ISSUES.md` 84; assessment §4 |
+| §3: candidate successor central = LightGBM seed 1 | The candidate's statistical band now exists and is matched to it (the `VL170` estimator, rows `P10`, `P11` VERIFIED). Its seed-1 central product exists. The systematic sweep is still seed 42, so this proposal's own rule gives **PAIRING NOT ESTABLISHED** for systematics (`P07` UNRESOLVED). Re-quoting that central is a change of quoted central estimator and is reserved to Joseph | assessment §2.4, §7; [total-uncertainty feasibility](ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md) §6, setup item S-a |
+| §5: N = 2400 per case, windows [0.60, 0.80] and [0.90, 0.99] | **Not carried forward.** The preparation's statistical design sizes its own proposed tolerances (N = 719, or 1,116 with the bias test at its tolerance edge, for one case). The total-uncertainty assessment applies those criteria to a four-case family (1,250 per case). N = 2400 survives only as a sensitivity row. None of these criteria is registered or admitted | [statistical-validation design](DESIGN-20261008-2d-independent-statistical-validation.md) §9–§10; feasibility assessment §5–§6 |
+| §6 Stage A: existing-product admission | Done, by the preparation. Outcome: PAIRING NOT ESTABLISHED for the quoted central, and TOTAL DESIGN NOT ADMITTED (no route has both a defined method and a costed evidence path) | assessment §7; feasibility assessment §1 |
+| §6 Stage B: conditional 8-node-hour, 24-unfold pilot | **Not released and not retained as an approved plan.** Its own release conditions (Stage A passes; an affordable total-interval design exists) are both unmet | this table; feasibility assessment §8 |
+| §6 Stage C cost illustrations (1,902 node-h for one unfold per experiment; about 1.48 million node-h naive) | Superseded by the feasibility assessment's executable cost model, which prices the same procedures from committed accounting | feasibility assessment §5–§6, `state/uncertainty-preparation-20261008/c/costs.json` |
+| §7: recommend a 2D-only publication scope and zero new compute now | The zero-compute recommendation stands. Any change of publication scope remains Joseph's decision. The next decision this preparation identifies is how the quoted 2D central is paired with its uncertainty | DELIVERY §6 |
+
 ## 1. Decision, authority, ownership, and current evidence
 
 This proposal answers whether existing evidence supports a small next action
@@ -66,7 +91,7 @@ with those owners. No operational message or instruction was sent to them.
 
 | Component | Supported claim | What prevents a stronger measurement claim |
 |---|---|---|
-| 2D central value | Phase-18.2 five-iteration LightGBM result, 205 paper-reported bins, integrated cross section `3.073e-38 cm2/nucleon`; established reproduction and extraction checks | Those checks do not measure total-interval coverage or robustness to an arbitrary truth/response |
+| 2D central value | *Reconciled 2026-10-09: the quoted central is exact-split GBT, not LightGBM; see §0.* Phase-18.2 five-iteration LightGBM result, 205 paper-reported bins, integrated cross section `3.073e-38 cm2/nucleon`; established reproduction and extraction checks | Those checks do not measure total-interval coverage or robustness to an arbitrary truth/response |
 | 2D uncertainty construction | Internally matched-CV, flux-fixed 187-universe systematic construction plus statistical and ML blocks; recorded median relative combined standard deviation 6.87% | MAT agreement verifies a covariance recipe. It does not establish coverage, independence of all blocks, or a model-bias bound. Systematic and statistical launchers use different estimator seeds; the coverage study identifies a further normalization question below |
 | 2D statistical band | VL162 reproduces the 300-replica rollup: median relative spread 0.5494%, fixed estimator seed, data and signal-MC Poisson streams | The ongoing study tests a transferred statistical band at prior-equals-truth, with same-population MC and closure background limitations. Even a verified PASS would not cover systematics, model dependence, 5D, or total intervals |
 | 3D/4D/5D central components | Existing central results, dimensional anchors, and injected-variable closure records support their stated finite tests | Central closure cannot qualify quarantined historical covariances or guarantee response to other departures |
@@ -350,7 +375,7 @@ restarts either current worker's campaign automatically.
 | Stage | Concrete work and ceiling | Release / stop |
 |---|---|---|
 | A: existing-product admission | **0 new cluster node-hours, 0 GPUs, 0 training.** At most 2 local CPU-hours, 8 GiB RAM and 2 GiB derivative storage for inventory, matching algebra, covariance/row-map checks and design costing; reserve 0.5 CPU-hour for independent numerical checks. Raw event inputs stay at their original routes | Use stable copies; final worker records are required before acting on their result. Stop on missing completeness operands, inconsistent event identity or no affordable total recipe. No change to a quoted covariance |
-| B: conditional development pilot | **8 billed CPU node-hours total, zero GPUs, at most one CPU node, 10 GiB new products.** Of this, <=6 node-hours for the 24-run pilot and >=2 node-hours held for verification/diagnosed repair | A passes, both campaigns finish their required terminal verification, separate authorization, frozen executable design, and available resources remeasured. The present recommendation does not release B |
+| B: conditional development pilot | *Reconciled 2026-10-09: not released; its release conditions are unmet (§0).* **8 billed CPU node-hours total, zero GPUs, at most one CPU node, 10 GiB new products.** Of this, <=6 node-hours for the 24-run pilot and >=2 node-hours held for verification/diagnosed repair | A passes, both campaigns finish their required terminal verification, separate authorization, frozen executable design, and available resources remeasured. The present recommendation does not release B |
 | C: total construction and untouched validation | **No allocation requested or admitted.** The N=2400, four-case design alone entails 9600 complete experimental procedures | Require a costed implementation of the entire recipe, adequate accuracy power and complete funding with >=20% verification reserve before releasing any untouched sample. If unaffordable, stop or seek a newly scoped publication decision |
 
 Measured timing basis for B is the 2D owner's committed pilot accounting:

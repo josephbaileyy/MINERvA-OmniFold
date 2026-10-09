@@ -42,7 +42,16 @@ OmniFold in place of D'Agostini IBU.
 
 ---
 
-## Headline (MEFHC 5-iter lgbm, 205 paper-reported bins)
+## Headline (MEFHC 5-iter, 205 paper-reported bins; exact-GBT central, LightGBM uncertainty blocks)
+
+*Corrected 2026-10-09 (uncertainty preparation, E).* This heading said "lgbm". The quoted central
+product (`142a45b0…`) was produced by exact-split scikit-learn gradient boosting with an unpinned seed,
+as "Phase 18.2 pipeline" below says. The statistical (`VL170`, seed 1), systematic (seed 42, with its
+matched CV) and ML (seeds 1–10) blocks are LightGBM. Same-estimator pairing of the central with each
+block is disproved; whether the blocks describe the central's uncertainty is unmeasured
+([estimator-pairing assessment](../docs/orchestration/ASSESSMENT-20261008-2d-estimator-pairing.md)
+`P01`–`P09`; `KNOWN_ISSUES.md` 88). The 6.87 % budget divides by the LightGBM seed-42 CV; with the
+quoted central as denominator the same covariance gives 6.83 % (`P14`).
 
 | Quantity | Value |
 |---|---|
@@ -106,9 +115,11 @@ flux fix (Task #70) brings our standalone combined budget (6.865 %) into
 agreement with the paper total (6.85 %). Top systematic bands (median rel
 σ, fluxfix rollup): Flux 4.99 %, Muon_Energy_MINOS 2.31 %,
 Muon_Energy_MINERvA 1.29 %, MinosEfficiency 1.47 %,
-MaRES 0.55 %, MvRES 0.38 %, MaCCQE 0.36 %. 44 bands (6 lateral: BeamAngleX/Y,
-MuonResolution, GEANT_{Neutron,Pion,Proton}, Muon_Energy_MINERvA;
-38 vertical). **Bootstrap status (2026-05-29)**: the N=300 cov is now the
+MaRES 0.55 %, MvRES 0.38 %, MaCCQE 0.36 %. 44 bands (5 lateral: BeamAngleX/Y,
+MuonResolution, Muon_Energy_MINERvA/MINOS; the other 39, including
+GEANT_{Neutron,Pion,Proton}, are weight-only. *Corrected 2026-10-09:* this said
+"6 lateral" and listed GEANT; the producer classes GEANT as vertical,
+`MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp:238-244`). **Bootstrap status (2026-05-29)**: the N=300 cov is now the
 pure-Poisson replacement — all 300 replicas pin `--seed 1` and vary only
 `--bootstrap-seed` (sbatch 53489662, complete). It supersedes the earlier
 seed-varying set that leaked ML stochasticity into the stat block. The
@@ -126,7 +137,9 @@ flux integrals were already on disk in the per-playlist flux MnvH1Ds):
 multiplies each Flux-universe cross section by Φ_CV(pT)/Φ_u(pT) — exact,
 no re-unfold. Flux band 1.01 %→**4.99 %** (flat, floor 4.78 %); standalone
 combined budget 4.82 %→**6.87 % ≈ paper 6.85 %**. PPFX index alignment
-verified (Pearson 0.96). The driver now applies this natively —
+verified (Pearson 0.96; *qualified 2026-10-09:* no committed receipt carries this computation, and a
+correlation is evidence of alignment, not an identity proof; see the
+[total-uncertainty feasibility assessment](../docs/orchestration/ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md) §3, Audit 2). The driver now applies this natively —
 `--universe Flux:IDX` divides by `hFluxUniv[:,IDX]` via
 `--flux-universe-file` (no more post-hoc rescale for future runs).
 **Normalization is not a gap**: the paper states (Ruterbories §VII) the

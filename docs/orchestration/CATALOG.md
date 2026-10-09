@@ -36,21 +36,23 @@ Scalar measurement successor proposal (2026-10-05):
 [bounded 2D admission and resource request](PROPOSAL-20261005-scalar-measurement-successor.md).
 This is a proposal, not compute authority or a change to the current campaigns.
 
-### Uncertainty-investigation preparation (sessions A–E), dispatched 2026-10-08
+### Uncertainty-investigation preparation (sessions A–E), 2026-10-08/09 — integrated
 
-Preparation only. It launches no compute and authorizes no experiment; each proposed experiment
-needs its own authorization. The plan, common contract, write-ownership table and budgets:
+Preparation only. It launched no compute and authorizes no experiment; each proposed experiment
+needs its own authorization. **Start with the integrated conclusion and Joseph's next decision:**
+[`DELIVERY-20261008-uncertainty-preparation.md`](DELIVERY-20261008-uncertainty-preparation.md).
+Plan, common contract, write ownership and budgets:
 [`PLAN-20261008-uncertainty-investigation-preparation.md`](PLAN-20261008-uncertainty-investigation-preparation.md).
-E's baseline, ownership snapshot and the A–D dispatch packets:
-[`state/uncertainty-preparation-20261008/e/`](state/uncertainty-preparation-20261008/e/).
-Each deliverable below is written only by its owner on its own branch, and is absent until pushed.
+Evidence, one subdirectory per session: [`state/uncertainty-preparation-20261008/`](state/uncertainty-preparation-20261008/)
+(`e/` holds the dispatch record, the integration record, the independent review and its recomputation).
 
 | session | deliverable |
 |---|---|
-| A — 2D estimator pairing | `ASSESSMENT-20261008-2d-estimator-pairing.md` |
-| B — independent statistical-validation design (a draft, not registered or authorized) | `DESIGN-20261008-2d-independent-statistical-validation.md` |
-| C — total-uncertainty feasibility | `ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md` |
-| E — integration and independent review | `DELIVERY-20261008-uncertainty-preparation.md` |
+| A — 2D estimator pairing (FAIL: the quoted central and its uncertainty blocks are different estimators; transfer unmeasured) | [`ASSESSMENT-20261008-2d-estimator-pairing.md`](ASSESSMENT-20261008-2d-estimator-pairing.md) |
+| B — independent statistical-validation design (a draft, not registered or authorized; NO-GO) | [`DESIGN-20261008-2d-independent-statistical-validation.md`](DESIGN-20261008-2d-independent-statistical-validation.md) |
+| C — total-uncertainty feasibility (NO-GO) | [`ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md`](ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md) |
+| D — navigation (PASS, documentation only) | [`state/uncertainty-preparation-20261008/d/disposition.md`](state/uncertainty-preparation-20261008/d/disposition.md) |
+| E — integration and independent review | [`DELIVERY-20261008-uncertainty-preparation.md`](DELIVERY-20261008-uncertainty-preparation.md) |
 
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
