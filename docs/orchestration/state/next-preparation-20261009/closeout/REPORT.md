@@ -318,3 +318,50 @@ These are Joseph's decisions. Nothing here is decided for him.
 **Reopening this closeout** needs a demonstrated error in a corrected statement's operands, or a new
 upstream delta that touches a reviewed file. Either would require a new bounded dispatch, because
 this session's review budget is spent.
+
+## 11. Joseph's ruling and merge authorization, 2026-10-09 (after this report's review)
+
+Joseph authorized this session to integrate `main` after PR #60 and to merge PR #61, subject to the
+integration checks in §12. He gave this scientific direction, quoted verbatim:
+
+> - I choose "keep and disclose" as the immediate disposition of the existing 2D result.
+> - This is an interim documentation decision, not acceptance of unresolved uncertainty transfer as a
+>   publication-ready endpoint.
+> - My intended endpoint is a publication-ready measurement with a reproducible central estimator,
+>   matched uncertainty construction, and validation supporting the claims actually made.
+> - The publication correction must disclose the unmeasured transfer and correct the inaccurate
+>   "pinned seeds" statement. Leave implementation of those changes to a separately assigned
+>   publication owner; this merge does not authorize submission.
+> - Do not re-quote the LightGBM central, launch transfer measurements or N2, lift KI-85, change
+>   scientific gates, or reopen terminal campaigns.
+>
+> A justified no-go remains a valid completed outcome for an individual investigation. It does not
+> mean the overall publication-ready objective has been achieved.
+
+**What follows from it, and what does not.**
+
+- The §4 wording is now the input for a separately assigned publication owner. It is not applied here.
+- That owner's correction must do two things: disclose the unmeasured transfer, and correct
+  `sec_method.tex:98` ("pinned seeds"; `P01` records `random_state=None`). It then needs the three
+  builds and the standalone synchronization.
+- Submission is not authorized.
+- Decision 2 in §10 is settled for the interim. Decision 3 (N2), the transfer measurement, the
+  LightGBM re-quote and the KNOWN_ISSUES 85 lift are not authorized. The overall publication-ready
+  objective is **not** achieved.
+- **Proposed text for the shared registers' owners.** This session does not edit them. KNOWN_ISSUES
+  row 88 could record: *"Interim disposition 2026-10-09 (Joseph): keep and disclose; the transfer stays
+  unmeasured and is not accepted as a publication-ready endpoint; the publication correction (transfer
+  disclosure and the `sec_method.tex:98` seed statement) is assigned to a separate publication owner;
+  route: `state/next-preparation-20261009/closeout/REPORT.md` §11."*
+
+## 12. Integration with `main` before merge
+
+- **Merge.** `origin/main` `a0c26bd1` (PR #60, merged 2026-10-09T19:20:44Z) was merged into this
+  branch as merge commit `93e29d18` (parents `d40f5bbc`, `a0c26bd1`). There was no squash or rebase,
+  so every pinned commit stays reachable.
+- **Conflict.** The only conflict was `MANIFEST.tsv`, resolved by regenerating it from source.
+- **Integration effects.** Against `d40f5bbc`, the manifest differs in 16 rows, only in their
+  `inbound_count` and `consumer` columns, plus the manifest's own byte count. The six PR #60 files are
+  blob-identical to `a0c26bd1`. Every file this branch changed since `901f0088` is blob-identical to
+  `d40f5bbc`. The merged tree differs from `main` only in this branch's files.
+- **Checks on the final head:** see `logs/integration.txt`.
