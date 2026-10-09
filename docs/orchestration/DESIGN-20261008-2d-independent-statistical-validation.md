@@ -5,8 +5,8 @@ It registers nothing, authorizes no compute and admits no experiment. Every tole
 **proposed** and needs admission before execution. Nothing here lifts the `KNOWN_ISSUES.md` 85
 deferral, establishes real-data or total coverage, admits a pilot, or spends a historical allocation.
 
-**State: PROVISIONAL** (pushed for the one B↔C exchange; the estimator specification is frozen
-against A's `[uncprep-A] CONTRACT` before the final version).
+**State: PROVISIONAL** (pushed for the one B↔C exchange at `f19084f4`; the estimator specification is
+now frozen against A's `[uncprep-A] CONTRACT` `acb338a2`; the final reconciliation with C follows A's FREEZE).
 
 **CITABLE FOR:** the specification of the named experiment; the measured population inventory
 ([`populations.tsv`](state/uncertainty-preparation-20261008/b/populations.tsv)); the deterministic
@@ -62,28 +62,49 @@ construction, and the cheapest informative one is the deferred `KNOWN_ISSUES.md`
 
 ## 2. The object under test (estimator specification)
 
-**Provisional target, frozen against A's contract before FREEZE.** Measured from the producers, not
-from document labels (the reference's bootstrap item 4 says *"`--bootstrap-seed N` and `--seed N`"*;
-the producers do not do that):
+**Frozen against A's `[uncprep-A] CONTRACT` (`acb338a2`, §2 of
+`ASSESSMENT-20261008-2d-estimator-pairing.md`).** The object under test is A's estimator **`E_S`**,
+the one that generates the adopted `VL170` band. It was measured from the producers, not from
+document labels: the reference's bootstrap item 4 says *"`--bootstrap-seed N` and `--seed N`"*, and
+the producers do not do that. A and this lane agree on every row below.
 
 | Element | Value | Producer evidence |
 |---|---|---|
-| Driver | `2d-unfolding/unfold_2d_omnifold_unbinned.py`, blob `56c3b6c9` (identical at `bb4b0b6f` and at the base) | `git rev-parse` at both commits |
-| Replica arguments | `--iters 5 --use-weights --estimator lgbm --bootstrap-seed r --seed 1`; `--bkg-mode purity` and `--bootstrap-streams both` by default | `state/ki84-rebuild-20261006/sbatch_ki84_replicas.sh` (VL170), repeating `sbatch_unfold_2d_MEFHC_5iter_bootstrap_scaleup.sh` |
-| Estimator randomness | fixed: `--seed 1` in every replica (not `--seed r`) | same; PREREG §2 |
-| Thread count | VL170 replicas ran on the shared lane, 64 CPUs (`OMP_NUM_THREADS` = CPUs) | `ki84-rebuild-20261006/budget.json` job `59410433`; PREREG A2.2 shows lgbm is not bit-identical across thread counts |
-| Inner bootstrap | per data row `Poisson(1)` from `default_rng(r)`; per signal-MC row one `Poisson(1)` from `default_rng(r + 10_000_000)` multiplying both `w_truth` and `w_reco`; background MC not resampled | driver lines 1606–1630 |
-| Completeness | from the un-resampled MC truth weights (KI-84 fix), so replica c equals the central value's c ≡ 1 | `KNOWN_ISSUES.md` 84; driver `w_truth_cv` |
-| Purity | per reco bin `max(0, (N_data − N_bkg)/N_data)` from the central data and the POT-scaled background template, applied before the bootstrap and fixed across replicas | driver lines 1450–1501 |
-| Covariance | sample covariance, `ddof = 1`, over 300 replicas of `hXSec2D`, 205 reported bins | `uq/analyze_uq.py`; `vl170_band.json` |
-| Central | the unflagged run (no `--bootstrap-seed`) | reference bootstrap item 5 |
+| Driver | `2d-unfolding/unfold_2d_omnifold_unbinned.py`, blob `56c3b6c9` (identical at `bb4b0b6f` and at the base) | `git rev-parse` at both commits; A: pilot log prints HEAD `bb4b0b6f` |
+| Backend and settings | LightGBM (`n_estimators 100, num_leaves 8, learning_rate 0.1`), `--iters 5 --use-weights`, `--bkg-mode purity`, `--bootstrap-streams both`, CPU | `state/ki84-rebuild-20261006/sbatch_ki84_replicas.sh`; A §2.1 |
+| Estimator randomness | fixed: `--seed 1` (step-1/step-2/regressor `random_state` 1/2/3) in every replica, not `--seed r` | same; A §2.1 |
+| Thread count | the 300 replicas ran on the shared lane, 64 CPUs (`OMP_NUM_THREADS` = CPUs) | array `59410433`; PREREG A2.2 shows lgbm is not bit-identical across thread counts |
+| Data stream | one `Poisson(1)` per data row in the phase space (4,091,707 rows) from `default_rng(r)`, multiplying the purity-weighted measured weights | driver 1606–1630; A §2.3 |
+| MC stream | one `Poisson(1)` per `mc_signal_reco` row (32,849,103, including 8,999,007 misses) from `default_rng(r + 10_000_000)`, on `w_truth` and `w_reco` of the same row; `mc_truth_denom` and `mc_background` not resampled | same |
+| Completeness | from the un-resampled MC truth weights (KI-84 fix): max \|c − 1\| = 1.6e-14 over 300 replicas | `KNOWN_ISSUES.md` 84; A §2.3 |
+| Purity | per reco bin `max(0, (D − B)/D)`, computed once from the observed data, fixed across replicas | driver 1450–1501; A §2.3 |
+| Covariance | sample covariance, `ddof = 1`, 300 replicas of `hXSec2D`, 205 bins in row-major `(p_T, p_∥)` order (the paper's GlobalID order restricted to the set) | `uq/analyze_uq.py`; A §2.2 |
+| Normalization | data POT 1.0574e21, MC POT 4.9782e21, nucleons 3.2352943e30, flux integral 8.7407e-3 m⁻²/POT | A §2.2 |
+| Central (in this design) | the unflagged `E_S` run on the same inputs (no `--bootstrap-seed`) | reference bootstrap item 5 |
 
-**Admission items, not resolved here.** (i) Whether the adopted central value is produced with the
-same backend, seed and thread count as the VL170 replicas. The status file names the headline
-"5-iter lgbm" but calls the paper-χ² production "exact-GBT"; that is A's question. If they differ, the
-claim of this design is about *the VL170 replica-generating procedure with a central computed under the
-same settings*, and the mismatch is an admission item. (ii) The thread count belongs to the estimator
-specification; the design pins 64 threads for every run of every experiment.
+**What the claim is about, and the admission items this creates.**
+
+1. **The quoted central is not `E_S`.** A establishes that the quoted `3.073e-38` comes from `E_C`,
+   the sklearn exact-split `GradientBoosting` backend with an unpinned `random_state`. `E_C` and
+   `E_S` differ by a median 1.3 statistical σ per bin. This design therefore validates *the `E_S`
+   interval-producing procedure with an `E_S` central*. It does **not** validate the uncertainty
+   attached to the quoted central value. That needs either A's pairing `P02` (an `E_S`→`E_C` transfer
+   with a declared observable and tolerance, unmeasured) or Joseph's decision to change the quoted
+   central estimator. Using `E_C` as the per-experiment central instead would multiply the central's
+   cost by 88–321 (C, `9204a390` §6: about 19 h per exact-GBT unfold), and `E_C`'s own seed
+   variation has never been measured, so it could not be fixed estimator randomness.
+2. **Purity is re-estimated per experiment, on purpose.** The procedure computes purity from the data
+   it is given, so in the outer experiment it is computed from each pseudo-data set. The inner band
+   holds it fixed (A §2.4 item 5). The outer scatter therefore contains a purity-fluctuation term that
+   the band omits by construction (median purity 0.975, so expected to be small). That is part of what
+   is tested, not a defect of the design.
+3. **Thread count is part of the estimator.** Every run of every experiment is pinned to 64 threads.
+4. **Helper origin.** The driver imports `omnifold.py` through its rooted `sys.path` insert inside
+   `main()`, so the executed helper comes from the canonical cluster checkout, not from the launching
+   tree (A §2.1; `fixed_truth_toy.py` is one of the new `OI-136` rooted-insert sites). The rooted
+   import ruling (`AUTHORIZATION-20260903-oi136-failopen-repair.md` §2) is not changed here. Any future
+   harness must record the helper's digest at run time and launch through
+   `nd-unfolding/mnv_guarded_run.py`.
 
 ## 3. The stochastic experiment
 
@@ -415,6 +436,29 @@ cost comparison and is **not** a substitute for the primary.
 | **N2** held-out data-stream variance calibration: arm T, 50 pseudo-data sets from `R` unfolded with a fixed half-MC `S` and the MC stream held; arm B, 50 data-only bootstrap replicas of one of them; per-bin `σ_B/σ_T` and its median, as in the KI-85 rule | whether the production data bootstrap is faithful when the pseudo-data do **not** sit on the training events: the KI-85 (a)/(b) question with held-out MC | Specifiable at ~7.4 node-h plus R0; it **is** the deferred KI-85 held-out re-test, so it needs Joseph to lift the deferral; it validates no interval, no MC stream and no truth coverage |
 | **G** surrogate world: truth from an independent generator run and reco from a smearing/efficiency law in `(p_T, p_∥)`, fit on the development fold and validated against the reservoir, so that both banks and pseudo-data can be redrawn | calibration of the procedure in the surrogate world, transferred to the real MC only as far as the surrogate's validity check reaches | NOT READY: the law, its validity criterion and the truth generation are undeveloped and unpriced; the nested cost (§14, P) still applies |
 
+### 16.1 N2 specification (PROPOSED; it needs Joseph to lift the KI-85 deferral)
+
+- **Populations.** The §4 folds after R0: development 2 %, reservoir ρ = 0.5, training bank the
+  remaining 48 % (MC/data 2.26). Pseudo-data from the reservoir, with background, as in §3 step 1.
+- **Arm T.** 50 pseudo-data sets (outer seeds `20_261_008_000_000 + e`, `e = 1..50`), each unfolded
+  once with the fixed bank, central only. `σ_T,b` = sd (`ddof = 1`) over the 50.
+- **Arm B.** 50 data-only bootstrap replicas (`--bootstrap-streams data`, inner seeds of `e = 1`) of
+  arm T's first pseudo-data set. `σ_B,b` = sd over the 50.
+- **Statistic.** `ρ_b = σ_B,b / σ_T,b` over the 205 bins; median `M` with a 95 % interval from 2,000
+  resamples of replicas within each arm (the KI-85 construction). No truth is used, so §7 does not
+  apply.
+- **Rule.** Faithful if the interval of `M` lies inside [0.80, 1.25] (the §9 tolerance); over-scatter
+  if it lies entirely above 1.25; under-scatter if entirely below 0.80; otherwise INCONCLUSIVE.
+  Per-bin `ρ_b` and the comparison with the same-event KI-85 result (`M₁` 1.003, [0.955, 1.073]) are
+  descriptive.
+- **Precision.** The KI-85 diagnostic resolved its median to about ±6 % with these arm sizes
+  (development evidence), well inside the tolerance.
+- **What it answers.** Whether the production data bootstrap is faithful when the pseudo-data do not
+  sit on the training events. It is conditional on one bank and one base pseudo-data set, it does not
+  test the MC stream, and it is not a coverage test.
+- **Cost.** 100 runs, 7.4 node-h at the measured KI-85 rate (full MC; a 48 % bank should be cheaper),
+  plus R0.
+
 ## 17. Verdict
 
 **NO-GO** for "2D repaired-bootstrap independent-population per-experiment interval validation" with
@@ -425,6 +469,8 @@ the populations and resources that exist:
 - *Feasibility* — nested reconstruction at the required N costs 4.4–6.9 times the whole remaining
   `m3246` allocation (§14).
 - *Held-out conditional alternative* — fails by construction against its only available reference (§7).
+- *Claim reach* — even a PASS would validate A's `E_S` procedure, not the uncertainty of the quoted
+  `E_C` central value, until pairing `P02` is measured or Joseph changes the quoted estimator (§2).
 
 What would change it: (1) an identity-carrying rebuild (R0); **and** (2) either a second
 production-size MC production or a validated generative law (G); **and** (3) about 13,000–21,000
@@ -450,6 +496,6 @@ uncertainty model or the publication scope.
 
 ## For E
 
-- Pending inputs at this provisional push: A's CONTRACT and FREEZE (estimator identity, §2).
+- Pending: A's FREEZE (pairing outcomes and engineering checks) and the one C reconciliation after it.
 - If E wants the `populations.tsv` digests as verified receipt bindings, that is E's call; they are
   recorded as TSV on purpose.
