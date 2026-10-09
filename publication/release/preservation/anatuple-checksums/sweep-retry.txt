@@ -1,0 +1,2 @@
+start 2026-10-09T04:17:08Z: 9 to hash, 2365 already done, 2 streams
+end 2026-10-09T05:04:29Z: 2367 hashed, 0 mismatches, 13 deferral records

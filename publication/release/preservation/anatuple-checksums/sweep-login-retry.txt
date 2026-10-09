@@ -1,0 +1,5 @@
+join: -:1822: is not sorted: MATFluxAndReweightFiles/flux/CVS/Entries	10750	2023-07-21T16:01:41Z
+join: /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-checksums-20261008/.done:1816: is not sorted: MATFluxAndReweightFiles/flux/CVS/Entries
+join: input is not in sorted order
+start 2026-10-09T05:06:14Z: 7 to hash, 2367 already done, 2 streams
+end 2026-10-09T05:53:31Z: 2367 hashed, 0 mismatches, 20 deferral records

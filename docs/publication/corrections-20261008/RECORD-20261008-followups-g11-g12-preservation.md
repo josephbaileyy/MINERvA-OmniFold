@@ -81,7 +81,79 @@ exist on the login node's Python 3.6. It was made compatible and re-run. The CFS
 
 **AnaTuple checksum sweep:** §3a.
 
-{{SWEEP}}
+### 3a. AnaTuple checksum sweep (G4 identity)
+
+**Script:** `publication/release/preservation/anatuple_checksum_sweep_20261008.sh` (sha256 at this commit in §8). It
+read the exact committed inventory, `anatuple-inventory-20261008.tsv` (2,374 files, 11,523,656,218,592 B), and only
+READ the AnaTuples on `/pscratch/sd/j/josephrb/minerva/minerva_large_files`.
+- I/O control: two concurrent streams, each `nice -n 19 ionice -c3`.
+- No Slurm job, and no scientific computation.
+- Each file's size and mtime were checked against the inventory before and after hashing.
+
+**Result:** **2,367 of 2,374 files hashed (11,500,206,670,698 B); 0 size/mtime mismatches; 0 duplicate paths.**
+The manifest is `publication/release/preservation/anatuple-checksums/ANATUPLE-SHA256.tsv` (sha256 `a2188312df17480033d8fd21f46d88ae381d672a39cfbc2262a650299db85175`),
+with a copy in the CFS directory `anatuple-checksums-20261008/`.
+
+**7 files remain unhashed: every one has its first stripe on OST 61 of pscratch.**
+
+| file | bytes |
+|---|---:|
+| `Data/Playlist1E/MasterAnaDev_data_AnaTuple_run00016140_Playlist.root` | 374,633,636 |
+| `Data/Playlist1F/MasterAnaDev_data_AnaTuple_run00016588_Playlist.root` | 537,535,407 |
+| `Data/Playlist1F/MasterAnaDev_data_AnaTuple_run00016758_Playlist.root` | 806,358,789 |
+| `Data/Playlist1G/MasterAnaDev_data_AnaTuple_run00018720_Playlist.root` | 474,453,796 |
+| `Data/Playlist1G/MasterAnaDev_data_AnaTuple_run00019158_Playlist.root` | 281,673,869 |
+| `Data/Playlist1M/MasterAnaDev_data_AnaTuple_run00019215_Playlist.root` | 561,298,681 |
+| `MC/StandardMC/Playlist1O/MasterAnaDev_mc_AnaTuple_run00113376_Playlist.root` | 20,413,593,716 |
+| **7 files (6 data, 1 simulation)** | **23,449,547,894** |
+
+- **These 7 are all of the inventory's OST-61 files.** `lfs getstripe -i`, a metadata-only query, put the first
+  stripe of each of the 2,374 files on an OST (`anatuple-ost.tsv`). Exactly 7 start on OST 61; 0 of them hashed.
+  Every file on every other OST hashed.
+- **The reads hang in the kernel, not in the script.**
+  - The `stat` or the first read blocks in uninterruptible I/O (D state, wait channel `cl_sync_io_wait`), and
+    `kill -9` does not end it.
+  - A one-file probe per OST (`ostprobe.tsv`) ran a `stat` on one inventory file per first-stripe OST, 366 OSTs in
+    all, at 2026-10-09 01:02 UTC.
+    - Every probe returned at once, except two.
+    - OST 61's never returned.
+    - OST 60's returned only at 04:03 UTC. Its 3 files are hashed.
+- **It is not one client.**
+  - During runs 1–3 on `dtn01`, these files hung, or were skipped as known-hung.
+  - All 7 then hung past their watchdogs in two dedicated retries: on `dtn01` at 04:17–05:04 UTC, and on login node
+    `login05` at 05:06–05:53 UTC. The login node is a different Lustre client.
+- **Nothing was forced.** The watchdog put each timed-out file in `DEFERRED.tsv` (`timeout_<s>s`) and moved on.
+  Hung children are left in place (they cannot be killed); a late result from them is ignored.
+
+**Run history** (all logs are in `anatuple-checksums/`):
+
+| run | where | window (UTC, 2026-10-09) | outcome |
+|---|---|---|---|
+| 1 | `dtn01` | 00:08:04 → stalled | 800 hashed, then both streams blocked on hung objects. There was no watchdog yet. |
+| 2 | `dtn01` | 01:04:34 → killed | 2 known-hung files skipped (`SKIP`); stalled again on another hung file. I stopped it and added the per-file watchdog. |
+| 3 | `dtn01` | 01:17:53 → 04:13:38 | watchdog, 4 skipped files: 2,365 hashed, 0 mismatches, 6 deferral records |
+| retry | `dtn01` | 04:17:08 → 05:04:29 | the 9 unhashed files: 2 more hashed (2,367); 7 timed out again |
+| login retry | `login05` | 05:06:14 → 05:53:31 | the 7: all 7 timed out again (deferral records 14–20); 2,367 hashed, 0 mismatches |
+
+- **Run 2 left a late hash.** Run 2's killed workers left a child that finished hashing
+  `Data/Playlist1F/…run00016532…` after run 3 had placed that file on its skip list, so its digest entered the
+  manifest without passing through run 3. It was re-hashed independently (`sha256sum` on `dtn01`, 2026-10-09
+  04:17 UTC). The digest matched, `8056f9dd…`, so the manifest entry is kept.
+- **A locale mismatch on the login node.** `join` there ran under a UTF-8 locale while `sort` used `C`, and printed
+  "not sorted" warnings. The to-do set was still correct: 7 files, the same 7. The script now exports `LC_ALL=C`
+  for the whole run (sha256 in §8). The DTN runs were under the POSIX locale, so unaffected.
+- **Throughput:** run 3 hashed 1,457 files, 11.12 TB, in 2 h 56 min: about 1.05 GB/s aggregate over 2 streams. That is no
+  faster than the single stream the corrections record measured (§6: about 0.85–1.1 GB/s). Why the second stream
+  added nothing was not measured.
+
+**What this does and does not establish.**
+- It identifies 2,367 files of the analysed older production byte for byte. Any later copy, or a file MINERvA
+  confirms it retains, can be checked against the manifest.
+- It is **not** a copy. The files are still on purgeable scratch only (§7).
+- The release (RC6) does not contain the manifest. The article's statement that the release records "names and
+  sizes, but not checksums" therefore stays accurate, and is left unchanged; no new release is authorized.
+- The 7 OST-61 files have names, sizes and mtimes (from the inventory) but no checksum. Hashing them needs OST 61 to
+  serve reads again. A help-ticket draft is in the drafts file (C), not sent.
 
 ## 4. G12: the release inputs regenerated from durable storage
 
@@ -150,7 +222,7 @@ The receipts are `ki84-adopt-20261006/recompute_2d_budget.json`, `coverage-2d-20
 
 | gap | now | evidence |
 |---|---|---|
-| G4 AnaTuples | **identity: {{G4_IDENTITY}}**; durable copy **not done (not authorized)**; recommendation and drafts in §7 | §3a, §7 |
+| G4 AnaTuples | **identity: 2,367 of 2,374 files sha256-identified, 0 mismatches; 7 (all on pscratch OST 61) blocked by hung storage objects**; durable copy **not done (not authorized)**; recommendation and drafts in §7 | §3a, §7 |
 | G9 single durable copies | **Fixed and verified.** The s5p archive and `z-cv.npz` now have HPSS copies, verified by stream read-back. | §3 |
 | G11 Sec. IV literals | **Fixed and verified.** A build-time check, a self-test and tests. | §5 |
 | G12 regeneration from durable storage | **Fixed and verified, with a precisely stated limit.** The inference inputs regenerate from durable copies with the unchanged extractor and reproduce every recorded result exactly; they are numerically equivalent (≤ 3e-12 relative), **not byte-identical** (BLAS thread order). The figure arrays are byte-identical. | §4 |
@@ -158,7 +230,24 @@ The receipts are `ki84-adopt-20261006/recompute_2d_budget.json`, `coverage-2d-20
 
 ## 7. Remaining storage decision
 
-{{STORAGE}}
+**Measured capacity:**
+- CFS `du` = **1,593 GiB** (1.71 TB, decimal) at 2026-10-09 01:26 UTC, after the W2 addition, against the 3 TB rule.
+- HPSS `hsi du` = **376,773,649,398 B** (350.9 GiB, 57 files) at 04:19 UTC after the second copies, and unchanged at
+  05:55 UTC, against a 512 GiB quota: about 161 GiB free.
+
+| part | size | fits where, today | recommendation |
+|---|---|---|---|
+| data AnaTuples + flux/parameter files (1,885 files) | 0.99 TB | CFS: 1.71 → 2.70 TB, under the 3 TB rule with about 0.3 TB left. HPSS: no (161 GiB free) | **Copy to CFS now**, verified against `ANATUPLE-SHA256.tsv`. It is the smaller, irreplaceable half of the event-level inputs and fits the existing rule. Today the copy could cover 1,879 of the 1,885 files: the 6 OST-61 data files (3.04 GB) cannot be read until NERSC repairs OST 61 (draft C), and they would be added then. **Not done: Joseph's go-ahead is required** ("Do not copy the ~0.99 TB data AnaTuples yet"). |
+| simulation AnaTuples (489 files) | 10.53 TB | neither: it exceeds the CFS rule, and needs about 10 TiB more HPSS | **First ask MINERvA** whether this earlier production is retained under a version tag (draft B). If not, **request about 11 TiB of HPSS** (draft A) and archive with htar. Until then the MC remains purge-exposed. |
+
+The drafts are in `DRAFT-20261008-anatuple-preservation-requests.md`. **None has been sent.**
+- A: the HPSS request to NERSC.
+- B: the retention question to MINERvA.
+- C: a NERSC help ticket about the 7 unreadable OST-61 files. It is needed in every case: without it, no copy and no
+  checksum can include those files.
+
+The checksum manifest (§3a) is useful in every case. It identifies the analysed production exactly, so any future
+copy, or MINERvA's answer, can be checked file by file.
 
 ## 8. Builds and standalone sync for this branch
 

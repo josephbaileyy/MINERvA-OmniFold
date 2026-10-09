@@ -12,6 +12,7 @@
 # intermittently on 2026-10-09), the file goes to <outdir>/DEFERRED.tsv unhashed and the worker moves on; a later
 # resume retries every file that is not yet hashed. SKIP=<file of paths> defers known-hung files without trying them.
 set -euo pipefail
+export LC_ALL=C   # sort and join must collate alike (a login node's UTF-8 locale made join warn "not sorted")
 INV=$1; OUT=$2
 BASE=${BASE:-/pscratch/sd/j/josephrb/minerva/minerva_large_files}   # overridable for tests only
 STREAMS=${STREAMS:-2}
