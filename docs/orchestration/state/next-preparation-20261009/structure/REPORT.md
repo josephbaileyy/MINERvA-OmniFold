@@ -4,13 +4,13 @@
 |---|---|
 | `Lane` | Session 3, structure |
 | `Decision` | Which small structural changes materially simplify supported development and reproduction without changing scientific behavior or destroying independent verification? |
-| `Branch` / `Base` / `Head` | `prep/next-structure-20261009` / `5ac9706a21e8a5ac8863a65fd7623d8ab8d22269` (merged PR #61; the session prompt makes it supersede dispatch `8eafd357`) / the head that adds the final review record (§10); the reviewed freeze is named there |
+| `Branch` / `Base` / `Head` | `prep/next-structure-20261009` / `5ac9706a21e8a5ac8863a65fd7623d8ab8d22269` (merged PR #61; the session prompt makes it supersede dispatch `8eafd357`) / the commit that adds this final record, child of the re-reviewed `90788f5f`. Initial review at freeze `f0deb0be`. Draft PR #66. |
 | `Owned files` | Code: `2d-unfolding/uq/reported_cells.py` (new), `2d-unfolding/uq/analyze_uq.py`, `2d-unfolding/uq/analyze_universes.py`, `2d-unfolding/uq/_ours_only_chi2.py`, `2d-unfolding/uq/final_rollup_full.sh`, `2d-unfolding/tests/test_reported_cells.py` (new), `2d-unfolding/tests/test_final_rollup_full_refusal.py` (new). Docs: `README.md`, `docs/POST_PUBLICATION_REORG_PLAN.md`, `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`. Lane subtree: `Q/structure/` (this report, `census-*.tsv`, `checks/{equivalence,real_operands,census}.py`, `checks/nav.sh`, `logs/*`). |
 | `Pinned inputs` | Code and records at `5ac9706a`. D's `disposition.md`/`dependencies.tsv` at `5ac9706a`. Read-only copies of eight adopted 2D products, each sha256-matched to its recorded digest (§3.4). Paper ancillary text `minerva_paper_anc/*.txt` (tracked). |
 | `Resources` | §11 (final figures there). Cluster/GPU **0**: one read-only `ssh`/`scp` of eight named files, no job. |
-| `Review` | §10 |
+| `Review` | One fresh read-only reviewer. Cycle 1 at `f0deb0be`: ACCEPT WITH MINOR FINDINGS (5 minor, 0 material). One repair batch. Cycle 2 at `90788f5f`: **ACCEPT**. §10. |
 | `Model / effort` | Claude Opus 5.5 (`claude-opus-5-5`), Claude Code; effort not observable |
-| `Disposition` | **PASS** for the structural decision, with the scope limits in §12. Reviewer verdict in §10. |
+| `Disposition` | **PASS** for the structural decision, with the scope limits in §12. Independent review: ACCEPT after one repair batch. The overall publication-ready objective is **not** met by this lane. |
 | `Next action` | §13: the publication owner's identity patch for two count-only consumers (specified in §5), with its prerequisites; and regenerating `MANIFEST.tsv` at merge. |
 
 The overall objective (a publication-ready measurement with a reproducible central estimator, matched
@@ -151,7 +151,7 @@ stamps the wall clock).
 | `_ours_only_chi2` with a legacy universe file | rc 0 | rc 0, identical numbers plus one `[WARN] … checked by count only` line |
 
 The tests in `2d-unfolding/tests/test_reported_cells.py` (18; 8 need no ROOT) cover the contract and
-the scripts. The two added in the repair batch, `e083c5ca`, cover a legacy bootstrap, the omission and
+the scripts. The repair batch, `e083c5ca`, added three tests and folded the permutation test into subtests (16 → 18). The new cases cover a legacy bootstrap, the omission and
 no-identity refusals, and a permuted or legacy universe in `_ours_only_chi2`. **They reject the defect.** A count-only mutant of `require_same_cells` fails
 `test_equal_count_permutation_is_refused`. With the pinned `analyze_universes.py` and
 `_ours_only_chi2.py` swapped in, both script-level refusal tests fail (rc 0 instead of a refusal), and
@@ -338,16 +338,31 @@ No broad reorganization, historical removal, publication change or scientific cl
 | 4 | The 3D `E_avail`-marginal caller of `analyze_universes.py` was missing from §1. | **Fixed** (§1 note). No behavior effect beyond the added object. |
 | 5 | The edge arrays are now one shared writable object. | **Deferred** (§7 item 6) |
 
-The focused re-review of this repair batch is recorded below it.
+**Focused re-review** (the one allowed). The same reviewer reviewed the repair batch
+`f0deb0be..90788f5f`, preserved at [`review/review-cycle2.md`](review/review-cycle2.md). Verdict:
+**ACCEPT**.
+- All five dispositions are correct.
+- It re-applied the three previously uncaught mutants itself, and each now fails a test.
+- No non-test source changed; all five scripts are byte-identical to `f0deb0be`.
+- It used about 15 minutes and under 0.05 core-h.
+
+Its three trivial notes:
+- the loose "two added" count, corrected above (16 → 18, three added, one folded);
+- the M1–M3 labels in `logs/review-repair-mutants.txt`, which are this repair batch's own mutants (the
+  stray `1` line is the `grep -c` confirming that the M2 mutation applied);
+- the empty-`--outdir` assertion would need updating if the refusal is ever moved above
+  `os.makedirs`.
+
+No unresolved material finding remains.
 
 ## 11. Resources
 
 | Resource | Used | Cap |
 |---|---|---|
-| Active elapsed | Wall clock 19:59Z → about 00:00Z (≈4.0 h). Of that, 20:41–23:20Z (≈2.6 h) was an idle stall: the API usage limit stopped the reviewer, and no work ran. Active work ≈1.4 h, including the review and the repair. | 6 h |
-| Local CPU | under 0.5 core-h for the author, plus about 0.1 core-h for the reviewer (its estimate). Largest steps: 3 harness runs at about 70 s user each, the hash-binding tests at 87 s, the OI-136 ratchets at about 80 s, the guard tests at about 25 s ×2. Every command was capped at 2 threads. | 3 core-h |
+| Active elapsed | Wall clock 19:59Z → 23:50Z (≈3.85 h). Of that, 20:41–23:20Z (≈2.65 h) was an idle stall: the API usage limit stopped the reviewer, and no work ran. Active work ≈1.2 h, including both review cycles and the repair. | 6 h |
+| Local CPU | under 0.5 core-h for the author, plus about 0.15 core-h for the reviewer (its estimates for both cycles). Largest steps: 3 harness runs at about 70 s user each, the hash-binding tests at 87 s, the OI-136 ratchets at about 80 s, the guard tests at about 25 s ×2. Every command was capped at 2 threads. | 3 core-h |
 | Peak RAM | under 0.5 GiB (harness max RSS 0.49 GB) | 8 GiB |
-| Scratch | 0.22 GiB peak (venv 84 MB, product copies 29 MB, harness and review work dirs) | 1 GiB |
+| Scratch | 0.23 GiB peak (venv 84 MB, product copies 29 MB, harness and review work dirs); removed at delivery | 1 GiB |
 | Tracked bytes added | about 0.12 MiB net | 10 MiB |
 | Cluster node-hours, GPU, training, toys | 0. Cluster contact: one `ls`/`sha256sum` and eight `scp` reads of named products. | 0 |
 | Families / existing implementation files edited | 2 / 4 | 2 / 6 |
