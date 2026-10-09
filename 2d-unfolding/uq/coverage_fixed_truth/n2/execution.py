@@ -167,7 +167,8 @@ def git_identity(root, records):
                               text=True, check=True, env=env).stdout.strip()
         listing = subprocess.run(["git", "-C", root, "ls-tree", "-z", "HEAD", "--"] +
                                  [r["relpath"] for r in records],
-                                 capture_output=True, text=True, check=True, env=env).stdout
+                                 capture_output=True, text=True, check=True,
+                                 env=env).stdout if records else ""
     except (OSError, subprocess.CalledProcessError) as exc:
         return {"status": f"unavailable: {exc}", "commit": None, "mismatched": None}
     at_head = {}
