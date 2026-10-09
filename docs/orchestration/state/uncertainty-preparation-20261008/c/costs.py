@@ -157,6 +157,12 @@ DOC_UNIVERSE_WALL_FULLNODE_H = 0.5    # "Per-task wall ~30 min on a full Milan n
 DOC_LGBM_CV_WALL_FULLNODE_H = 804 / 3600   # "5-iter MEFHC unfold, lgbm | 128 CPU | 13m24s",
                                            # 2D_OMNIFOLD_STUDY_STATUS.md runtime table
 DOC_EXACT_GBT_WALL_FULLNODE_H = 19.0  # "5-iter MEFHC unfold, exact GBT | regular, 128 CPU | ~19 h"
+# Lane A FREEZE (9fab26e8, a/verification.md and a/pairings.tsv P03): the quoted central's job
+# 53116554 ran 69,523 s on regular_1 at billing 256 (MEASURED by A from sacct) with batch MaxRSS
+# 16.8 GB and one busy core (sklearn exact is single-threaded). A extrapolates ~0.68 node-h per
+# exact unfold when packed by memory on shared nodes; packing contention is unmeasured.
+EXACT_AS_RUN_NODE_H = 69523 / 3600
+EXACT_PACKED_NODE_H = 0.68
 
 
 def scenarios(m: dict) -> dict:
@@ -462,15 +468,20 @@ def build(n_per_case: int, n_cases: int, n_inner: int) -> dict:
     exact_backend = {}
     for name, s in sc.items():
         s2 = json.loads(json.dumps(s))
-        s2["c_cv_unfold"] = {"value": DOC_EXACT_GBT_WALL_FULLNODE_H, "basis": "DOCUMENTED",
-                             "why": "exact sklearn GBT production backend, ~19 h full node"}
+        exact = EXACT_PACKED_NODE_H if name == "optimistic" else EXACT_AS_RUN_NODE_H
+        s2["c_cv_unfold"] = {
+            "value": exact,
+            "basis": "EXTRAPOLATED (lane A, memory-packed)" if name == "optimistic"
+                     else "MEASURED (lane A, job 53116554 as run)",
+            "why": "exact sklearn GBT, the quoted central's backend"}
         # Branch X (A's CONTRACT sec. 2.4(2): the quoted central E_C is exact GBT): the matched
         # sweep (187 universes + CV) and an exact-backend seed scan (10) are rebuilt at ~19 h each.
-        extra_setup = (N_UNIVERSES + 1 + N_SEEDS) * DOC_EXACT_GBT_WALL_FULLNODE_H
+        extra_setup = (N_UNIVERSES + 1 + N_SEEDS) * exact
         p2x = total("P2_fixed_band", s2, n_exp, n_inner, False)
         exact_backend[name] = {
             "P2_fixed_band_per_experiment_central_only": p2x["admitted_total_node_h"],
-            "extra_one_time_exact_matched_sweep_and_seedscan_node_h": extra_setup,
+            "exact_unfold_node_h": round(exact, 4),
+            "extra_one_time_exact_matched_sweep_and_seedscan_node_h": round(extra_setup, 3),
             "P2_fixed_band_with_exact_setup_admitted": round(
                 p2x["admitted_total_node_h"] + extra_setup / (1.0 - RESERVE_FRACTION), 3)}
     pairing = {name: {"pairing_established": total("P2_fixed_band", s, n_exp, n_inner, True)[

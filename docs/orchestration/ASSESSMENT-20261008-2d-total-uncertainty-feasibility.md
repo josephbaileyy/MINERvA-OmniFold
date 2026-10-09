@@ -1,7 +1,8 @@
 # Assessment — 2D total-uncertainty feasibility (uncertainty preparation, lane C)
 
-**Status: RECONCILED** with B's PROVISIONAL (`f19084f4`) and A's CONTRACT (`acb338a2`). One final reconciliation
-follows A's FREEZE.
+**Status: FINAL (lane C FREEZE).** Reconciled once after A's FREEZE (`9fab26e8`, `f762749d`). Also reconciled with
+A's CONTRACT (`acb338a2`), and with B's PROVISIONAL and its later estimator-specification commit (`f19084f4`,
+`ea6a154e`; B's counts unchanged: 719 / 1,116). B's final document was not available at this freeze.
 
 **CITABLE FOR:**
 - the component inventory and dispositions in `state/uncertainty-preparation-20261008/c/components.tsv`;
@@ -36,12 +37,19 @@ and validated at defensible cost? What specifically prevents it today?
      - `E_U`, seed 42, the systematic universes and their matched CV;
      - `E_ML`, seeds 1–10, the ML block.
    - The two centrals differ by a median 1.3 σ_stat per bin.
-   - The transfer `E_S → E_C` (A's `P02`) and the seed 1 ↔ seed 42 relation (`P04`) are unmeasured.
-   - The consequence for cost: any validation that keeps `E_C` must run an exact-GBT unfold, about 19 node-h, in
-     every experiment. Even the cheapest route then costs **152,000–259,000 node-h**.
-   - An affordable route exists only after one of two things:
-     - a measured `P02` transfer;
-     - Joseph's decision to make an LightGBM-class estimator the quoted central. That is a change of central
+   - The transfers to `E_C` and the seed 1 ↔ seed 42 relation are unmeasured. Pairing ids below are A's FREEZE
+     numbering; A's CONTRACT text used earlier ids.
+   - A's FREEZE records 4 of 17 pairings DISPROVED and 3 UNRESOLVED:
+     - the band, the systematics and the ML block do not describe `E_C` (`P02`, `P04`, `P09`);
+     - their transfer to `E_C` is unmeasured (`P03`, `P05`, `P07`).
+     So validating the LightGBM band does not validate the uncertainty attached to the quoted central.
+   - The cost consequence: a validation that keeps `E_C` must also run a single-threaded exact unfold in every
+     experiment. A measured that unfold at 69,523 s and MaxRSS 16.8 GB. The cheapest route then costs 5,566 node-h
+     if A's memory packing at about 0.68 node-h holds (contention unmeasured), and 263,513 if the jobs run as the
+     central did.
+   - A defined route exists only after one of two things:
+     - measured transfers to `E_C` (A's `P03`, `P05` and `P09` operands);
+     - Joseph's decision to make a LightGBM-class estimator the quoted central. That is a change of central
        estimator, which A §2.4(2) and this assessment cannot make.
 2. **Independent populations do not exist** (B, PROVISIONAL §1, §17).
    - The production omnifile carries no event identity, so an event-loop rebuild (R0) is needed.
@@ -126,7 +134,7 @@ covariance convention, correlation partners, required evidence, disposition and 
 | UNRESOLVED | C08 (exact-backend seed variation and backend definition), C10, X01 |
 
 Every MATCHING NEEDED row inherits A's finding that no block was produced by `E_C`. The rows stay MATCHING NEEDED,
-not UNRESOLVED, because the route to matching is defined: either `P02`, or Joseph's choice of central followed by
+not UNRESOLVED, because the route to matching is defined: either measured transfers (`P03`, `P05`, `P09`), or Joseph's choice of central followed by
 setup item S-a.
 
 **Audit 1 — target normalization is counted once: CONFIRMED for the standalone construction.**
@@ -192,6 +200,16 @@ settled by A.
 - The seed-42 CV and the seed-1 run differ by a median 0.30 σ_S (max 1.28).
 - The exact backend's own seed variation has never been measured. That is why C08 is UNRESOLVED for `E_C`.
 
+**A's FREEZE row outcomes that change C's rows** (`a/pairings.tsv`: 10 VERIFIED, 4 DISPROVED, 3 UNRESOLVED):
+- `P06`: the background template is bitwise frozen at CV in all 87 non-Flux universes. Background-model variation
+  is therefore absent from the systematic block. This is added to C06, and a zero-compute comparison with the
+  background-aware sweep (`uq/purity_newomni/`) is listed.
+- `P14`: the printed 6.87% budget divides by the LightGBM seed-42 CV. With `E_C` as the denominator, the same
+  covariance gives 6.83%. The §3 overlap medians use 6.87% and are illustrative either way.
+- `P17`: no coverage measurement of `VL170` exists. That agrees with `KNOWN_ISSUES.md` 84.
+- A's 2D-driver edit (`971fc00c`) only writes provenance records (`runConfig`, driver and helper digests). It
+  changes no workload, so no timing operand moves.
+
 ## 4. Dependence and joint propagation
 
 The adopted total is a block sum. The status says it "assumes independence (different RNGs / physics sources)".
@@ -230,7 +248,7 @@ Counts follow B's criteria (`f19084f4` `assurance.py`: κ ∈ [0.80, 1.25], β =
 | P2, fixed band: one unfold of nuisance-drawn pseudo-data | 1 | 0.069 | 0.374 |
 | P3, shortcut S1+S2: central + 50 inner replicas; systematic and ML blocks transferred | 51 | 3.03 | 11.2 |
 
-All three assume an LightGBM-class central; §6 gives the `E_C` branch. A nested 300-replica experiment is not
+All three assume a LightGBM-class central; §6 gives the `E_C` branch. A nested 300-replica experiment is not
 priced as one unfold.
 
 **Measured operands** (`costs.json` `measured`, from committed sacct receipts):
@@ -326,12 +344,20 @@ Admitted node-h at 4 × 1,250 = 5,000 experiments, with pairing not established 
 | 100 | 209,683 / 883,060 | 40,130 / 165,601 |
 | 300 | 288,793 / 1,207,226 | 119,239 / 489,768 |
 
-- **Central-estimator branch** (A §2.4(2)). Keeping `E_C` costs about 19 node-h per central unfold in every
-  experiment. On top of that comes a one-time exact rebuild of the matched sweep, its CV and a 10-seed exact scan:
-  3,762 node-h. P2 then costs **152,389–259,267**.
-  A measured `P02` transfer would avoid the per-experiment exact unfold. Its own design and cost are A's and
-  Joseph's to set; they are not priced here.
-- **Pairing.** With an LightGBM central, pairing established versus not changes P2 by 33–141 node-h.
+- **Central-estimator branch** (A §2.4(2); exact unfold from A's FREEZE).
+  - Keeping `E_C` adds one exact unfold per experiment, plus a one-time exact rebuild of the matched sweep, its CV
+    and a 10-seed exact scan:
+
+| | Per exact unfold | One-time rebuild | P2 admitted |
+|---|---:|---:|---:|
+| Optimistic: A's memory-packed extrapolation | 0.68 | 135 | 5,566 |
+| Conservative: as run | 19.31 | 3,824 | 263,513 |
+
+  - A's own prices for the missing transfer operands (`price_for_C`):
+    - `P03`, an exact bootstrap: N = 50 about 34–39 node-h; N = 300 about 205–215;
+    - `P05`, the exact universes: about 128 node-h;
+    - `P09`, the exact seed scan: about 7 node-h packed, or 193 unpacked.
+- **Pairing.** With a LightGBM central, pairing established versus not changes P2 by 33–141 node-h.
 
 **Range.**
 - P1 has a finite range, and it is unaffordable.
@@ -377,7 +403,7 @@ Admitted node-h at 4 × 1,250 = 5,000 experiments, with pairing not established 
 
 | Stage | Admission evidence | Authority | Budget | Terminal stop |
 |---|---|---|---|---|
-| 0. Central estimator | Either a measured `P02` transfer `E_S → E_C` with a declared observable and tolerance, or a recorded change of the quoted central estimator | Joseph (a change of central estimator), or A plus Joseph for a `P02` measurement design | not priced here | without one of them, every total validation needs exact-GBT unfolds (≥ 152,000 node-h): **stop** |
+| 0. Central estimator | Either measured transfers `E_S → E_C` with declared observables and tolerances (A's `P03`, `P05`, `P09`), or a recorded change of the quoted central estimator | Joseph: a change of central estimator is reserved to him; the transfer measurements need compute admission | transfers: about 170–350 node-h at A's packed prices (`P03` at N = 50 or 300, plus `P05` and `P09`); the change of estimator costs none | without one of them, the uncertainty attached to the quoted central is unvalidated whatever B and C run: **stop** |
 | 1. Matching | A's FREEZE row outcomes; Audit 2 identity proof; matched sweep at the chosen central (S-a) | none for reads; Joseph for S-a compute | 0 node-h locally; S-a 25–94 node-h (LightGBM) | PAIRING NOT ESTABLISHED, which carries S-a into every later stage |
 | 2. Statistical validation | B's frozen design; R0; independent populations (a second production or a validated route G); KI 85 deferral lifted | Joseph | B's figures (13,440–20,862 node-h primary; 7.4 node-h plus R0 for N2) | B's terminal states. A PASS stays statistical-only. NO-GO while obstacle 2 stands |
 | 3. Missing-source and method qualification | Constructions for C03 (bound or stream), C05a (selection-complete laterals), M1 generator, X01 (joint throws or cross term), X02/X03 (factorial or bound), C09 development truths | Joseph for compute; A for code under its ownership | setup 79–469 node-h, plus 20% reserve | INCONCLUSIVE if any construction fails its own closure; NO-GO if C05a support cannot be made selection-complete |
@@ -415,8 +441,8 @@ per experiment, with no nuisance overhead (`costs.json` `for_B_statistical_per_e
 
 | From | Item | Effect on C |
 |---|---|---|
-| A | FREEZE: the row outcomes (`P/a/pairings.tsv`) and engineering checks | Matching-row citations. The CONTRACT already fixes the estimator facts used here. If FREEZE changes §2, C reconciles once |
-| B | Final | B's counts or criteria; C reruns `costs.py --n-per-case` |
+| A | FREEZE (`9fab26e8`) | **Reconciled**: §2 unchanged; rows `P06`, `P14` and `P17` incorporated; the exact-unfold timing is adopted with its evidence class |
+| B | Final | Not available at this freeze. B's later commit `ea6a154e` leaves its counts unchanged. If B's final changes its counts or criteria, `costs.py --n-per-case/--n-cases/--n-inner` recomputes every total; E integrates the final pair |
 
 ## 11. Reproduction
 
@@ -433,6 +459,59 @@ python3 docs/orchestration/state/uncertainty-preparation-20261008/c/costs.py --n
 - **Four-case family sizing.** B's `assurance.py` at `f19084f4` was copied to scratch and imported. Its own
   functions (`levels`, `per_test_alpha`, `edges`, `required_n`, `bias_sizing`) were run with
   `DESIGN["n_functionals"]` set to 206 and to 824. B's file was not edited.
+
+## 12. Session record
+
+**Session.**
+- Owner model: Claude Opus 5.5 (`claude-opus-5-5`) in Claude Code. Its effort level is not exposed to the session
+  as a named level.
+- Session id: `17a03aa3-50b8-473b-9903-18bb9b949544`.
+- Setup: one owner. No reviewer or worker agent was spawned. The single independent review is in E
+  (CAMPAIGN-REVIEW-20260929 §1).
+
+**Commits.**
+- Base: `f8e2bf8535a90d7ed1315530cff3b80860ef9f9c`.
+- Outputs:
+  - `9204a390`, `[uncprep-C] PROVISIONAL`;
+  - `d07a3d33`, reconciled with B's PROVISIONAL and A's CONTRACT;
+  - this `[uncprep-C] FREEZE` commit.
+- Worktree: `MINERvA-OmniFold-uncprep-c-20261008`.
+- Branch: `prep/uncertainty-c-total-20261008`, pushed without force, with no PR and no merge.
+
+**Commands and exit codes.**
+
+| Command | Exit | Note |
+|---|---|---|
+| `costs.py` (writes `costs.json`) | 0 | |
+| `costs.py --check` | 0 | before each commit |
+| scipy cross-check of the S1/S2 analytics | 0 | max difference 3.0e-5 |
+| scratch import of B's `assurance.py` at 206 and 824 functionals | 0 | |
+| pre-commit hook on each commit | 0 | 13 of 13 checks passed |
+
+No test suite was run, because C changed no tested code; no skipped test is counted as a pass.
+
+**Environment.** Python 3.12.2 (miniconda, macOS), numpy 1.26.4 and scipy 1.15.2 (the latter only for the
+cross-check). `TMPDIR=/private/tmp/minerva-uncprep-c-20261008/tmp`, with the thread cap at 4.
+
+**Resources against C's budget row.**
+
+| Resource | Used | Budget |
+|---|---:|---:|
+| Active time (06:09Z → 07:00Z, including two waits on peer handoffs) | about 0.9 h | 4 h |
+| Local CPU core-hours | < 0.02 | 1 |
+| Peak RAM | < 0.2 GiB | 4 GiB |
+| New output (C files 132 KB, scratch 84 KB) | < 0.25 MB | 0.5 GiB |
+| Cluster node-h, GPU-h, training, toys | 0 | 0 |
+
+- Free disk: 45 GiB at dispatch, 41 GiB at freeze. The volume is shared with other sessions.
+- Repair allowance used: 0 of 2.
+
+**Limitations.**
+- No ROOT product was read. Per-bin values (the overlaps, `C_U` against the background-aware sweep, flux index
+  identity) are specified, not measured.
+- Universe-unfold timing is DOCUMENTED, not receipted. Memory packing of exact unfolds is A's extrapolation.
+- The R0 billing is ASSUMED.
+- The development effort for M1 (analyst time) is not costed.
 
 ## For E
 
