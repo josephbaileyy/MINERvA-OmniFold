@@ -1,0 +1,3 @@
+inventory: 53 files, 33779505923 bytes
+copy: rsync rc 0
+verify: all 53 destination files match the source inventory

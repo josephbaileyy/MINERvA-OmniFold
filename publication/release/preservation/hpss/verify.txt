@@ -1,0 +1,14 @@
+login07
+2026-10-09T00:19:15Z
+a14883f136cedc70a4af7740bb1009d356a0ce22c8a49bfc21f5c80ec9619c98  hpss_second_copy_20261008.sh
+64a29996d1f352cb148ca0bafd17f035c443ed54cb75b037808b9297eb12e54c  verify_tar_stream.py
+get  '<stdout>' : '/home/j/josephrb/prd-release-preservation-20261008/z-cv.npz' (2026/10/08 17:18:02 890500272 bytes, 218142.9 KBS )
+z-cv.npz: read-back sha256 3d7465f66fbe66b0dfcf09b6fc51249f227fb33e97ae40bc78dda90275e918c5 OK
+get  '<stdout>' : '/home/j/josephrb/prd-release-preservation-20261008/s5p-archive-20261006.tar' (2026/10/08 17:17:57 2324167680 bytes, 393586.8 KBS )
+members 10614; listed 10614; missing 0; digest mismatches 0; unlisted 0; duplicates 0; htar check members 1
+rc=0
+
+/home/j/josephrb/prd-release-preservation-20261008:
+-rw-r-----    1 josephrb  josephrb  2324167680 Oct  8 17:17 s5p-archive-20261006.tar
+-rw-r-----    1 josephrb  josephrb     5472032 Oct  8 17:17 s5p-archive-20261006.tar.idx
+-rw-------    1 josephrb  josephrb   890500272 Oct  8 17:18 z-cv.npz

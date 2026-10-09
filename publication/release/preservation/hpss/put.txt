@@ -1,0 +1,7 @@
+mkdir: /home/j/josephrb/prd-release-preservation-20261008
+put  '/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/z-cv.npz' : '/home/j/josephrb/prd-release-preservation-20261008/z-cv.npz' ( 890500272 bytes, 931290.9 KBS (cos=4))
+
+/home/j/josephrb/prd-release-preservation-20261008:
+-rw-r-----    1 josephrb  josephrb  2324167680 Oct  8 17:17 s5p-archive-20261006.tar
+-rw-r-----    1 josephrb  josephrb     5472032 Oct  8 17:17 s5p-archive-20261006.tar.idx
+-rw-------    1 josephrb  josephrb   890500272 Oct  8 17:18 z-cv.npz

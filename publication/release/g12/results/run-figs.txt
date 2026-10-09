@@ -1,0 +1,42 @@
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+{
+ "out": "/global/u2/j/josephrb/g12-20261008/out/figs/fig_arrays.npz",
+ "npz_sha256": "72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8",
+ "checks": {
+  "hData2D_vs_5d_product_projection": {
+   "max_rel_diff": 0.0,
+   "shape": [
+    7,
+    6
+   ]
+  },
+  "comparator_vs_s5p_mnvtune5d": {
+   "ratio_median": 1.0,
+   "ratio_min": 0.9999999999999998,
+   "ratio_max": 1.0000000000000004
+  }
+ }
+}
+	Command being timed: "python3 publication/release/figs/export_fig_arrays.py --code-root /global/u2/j/josephrb/g12-20261008/figrepo --analysis-root /global/u2/j/josephrb/g12-20261008/fig-analysis-root --genfig /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/stage7/genfig/3d-unfolding/genie --mnvtune5d /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/gen5d/mnvtune_v1_xsec5d.npz --out /global/u2/j/josephrb/g12-20261008/out/figs/fig_arrays.npz"
+	User time (seconds): 9.35
+	System time (seconds): 1.42
+	Percent of CPU this job got: 126%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:08.50
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 331548
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 150767
+	Voluntary context switches: 20154
+	Involuntary context switches: 11104
+	Swaps: 0
+	File system inputs: 208
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

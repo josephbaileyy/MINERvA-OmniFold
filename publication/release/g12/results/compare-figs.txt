@@ -1,0 +1,16 @@
+npz sha256: regenerated 72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8 | preserved 72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8 | IDENTICAL
+arrays: 19 of 19 exactly equal (dtype, shape, values); worst relative difference 0, worst ULP distance 0
+manifest: 11 differing field(s); npz_sha256 only: 0; input-location fields: 11; other: 0
+  LOCATION /code_root: '/global/u2/j/josephrb/g12-20261008/figrepo' vs '/pscratch/sd/j/josephrb/pub-release-20261006/figs/repo'
+  LOCATION /sources/excess_eavail_W/path: '/global/u2/j/josephrb/g12-20261008/fig-analysis-root/nd-unfolding/products/5d/excess_eavail_W.root' vs '/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/excess_eavail_W.root'
+  LOCATION /sources/gen_GENIE+MEC/path: '/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/stage7/genfig/3d-unfolding/genie/genie_mec_xsec_eavailW.root' vs '/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_mec_xsec_eavailW.root'
+  LOCATION /sources/gen_GENIE-CV/path: '/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/stage7/genfig/3d-unfolding/genie/genie_cv_xsec_eavailW.root' vs '/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/genie_cv_xsec_eavailW.root'
+  LOCATION /sources/gen_GiBUU/path: '/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/stage7/genfig/3d-unfolding/genie/gibuu_cv_xsec_eavailW.root' vs '/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/gibuu_cv_xsec_eavailW.root'
+  LOCATION /sources/gen_NuWro/path: '/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/stage7/genfig/3d-unfolding/genie/nuwro_cv_xsec_eavailW.root' vs '/pscratch/sd/j/josephrb/s5p-20260926/stage7/genfig/3d-unfolding/genie/nuwro_cv_xsec_eavailW.root'
+  LOCATION /sources/mnvtune_5d/path: '/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/gen5d/mnvtune_v1_xsec5d.npz' vs '/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz'
+  LOCATION /sources/ours_2d/path: '/global/u2/j/josephrb/g12-20261008/fig-analysis-root/2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root' vs '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root'
+  LOCATION /sources/paper_cov/path: '/global/u2/j/josephrb/g12-20261008/fig-analysis-root/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root' vs '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root'
+  LOCATION /sources/tune_v1_txt/path: '/global/u2/j/josephrb/g12-20261008/fig-analysis-root/2d-unfolding/minerva_paper_anc/model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt' vs '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt'
+  LOCATION /sources/xsec_5d/path: '/global/u2/j/josephrb/g12-20261008/fig-analysis-root/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root' vs '/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root'
+manifest sha256 DIFFERENT
+VERDICT: npz byte-identical (the manifest differs only in where the inputs were read from)

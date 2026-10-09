@@ -122,6 +122,16 @@ sys.exit(int(os.environ.get("BUILD_TEST_CONTAINMENT_RC", "0")))
 """
 
 
+# The Sec. IV receipt check (check_sec4_receipts.py, G11) reads receipts that the sandbox does not have; it is
+# stubbed like the containment checker and its own behaviour is tested in test_check_sec4_receipts.py.
+FAKE_SEC4 = r"""#!/usr/bin/env python3
+import os, sys
+with open(os.environ["BUILD_TEST_LOG"], "a") as fh:
+    fh.write("sec4: reached with args %r\n" % (sys.argv[1:],))
+sys.exit(0)
+"""
+
+
 class BuildAllHarness(unittest.TestCase):
     maxDiff = None
 
@@ -143,6 +153,7 @@ class BuildAllHarness(unittest.TestCase):
 
         self._install(self.bin / "latexmk", FAKE_LATEXMK)
         self._install(self.sandbox / "check_dead_containment.py", FAKE_CHECKER)
+        self._install(self.sandbox / "check_sec4_receipts.py", FAKE_SEC4)
 
     def _install(self, path, body):
         path.write_text(body)
