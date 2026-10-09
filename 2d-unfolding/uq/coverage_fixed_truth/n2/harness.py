@@ -177,6 +177,10 @@ def member_checker(adm, folds):
                 and prov.get("git", {}).get("commit") == adm["code"]["commit"]
                 and prov.get("git", {}).get("mismatched") == []):
             raise mb.MemberError(f"{member['id']}: provenance is not strict on the admitted commit")
+        threads = prov.get("environment", {}).get("threads", {}).get("OMP_NUM_THREADS")
+        if not adm["synthetic"] and threads != str(member["estimator"]["threads"]):
+            raise mb.MemberError(f"{member['id']}: ran with OMP_NUM_THREADS={threads!r}, the "
+                                 f"design fixes {member['estimator']['threads']}")
         try:
             identity.check_c6_sidecar(folds, rec.get("sidecar", {}), design.INTENDED_FOLDS)
         except identity.IdentityError as exc:

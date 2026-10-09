@@ -391,6 +391,19 @@ class Harness(unittest.TestCase):
         self.assertEqual(by["B007"]["detail"]["status"], 1)
         self.assertEqual(by["T005"]["state"], "missing")
 
+    def test_a_real_member_must_record_the_frozen_thread_count(self):
+        from n2 import harness
+        member = design.members()[0]
+        head = git(self.root, "rev-parse", "HEAD")
+        rec = {"estimator": design.FROZEN_ESTIMATOR, "values": [1.0] * design.N_REPORTED_BINS,
+               "sidecar": {}, "provenance": {
+                   "strict": True, "guard": {"expect_root": str(harness.REPO)},
+                   "git": {"commit": head, "mismatched": []},
+                   "environment": {"threads": {"OMP_NUM_THREADS": "32"}}}}
+        check = harness.member_checker({"synthetic": False, "code": {"commit": head}}, {})
+        with self.assertRaisesRegex(mb.MemberError, "OMP_NUM_THREADS"):
+            check(member, rec)
+
     def test_an_edited_plan_is_refused(self):
         adm = self.admission("edited", {"mean_seed": 1, "sigma_T": 0.01, "b_over_t": 1.0})
         plan = json.loads(self.plan.read_text())
