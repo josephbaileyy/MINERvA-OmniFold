@@ -354,3 +354,16 @@ printed figures and not only their quantities.
 
 **Release candidate 7** (README `docs/publication/release/RC7-README.md`): RC6 with the new figure code. Its data and
 macro files are unchanged. Its identity, reproducibility and verification are recorded in §10.
+
+## 10. RC7: identity, reproducibility and verification (local; not deposited, tagged or sent)
+
+| | |
+|---|---|
+| tarball | `minerva-omnifold-article-release-rc7.tar.gz`, 15,745,698 bytes, 33 files, sha256 **`27f0caba53c4bbf75310f6d94145ea872ebe77c6a6f55ef48298d95cbcee566e`** (`docs/publication/release/RC7-SHA256SUMS.txt`) |
+| source commit | `8fa79cb1`; payload = the RC6 data files, checked against `RC4-SHA256SUMS.txt` |
+| byte-reproducible | yes: two builds from a detached clean checkout of `8fa79cb1` gave the same sha256 |
+| difference from RC6 | `code/figs/make_figs.py` and `README.md` only. Every `data/` and `expected/` file is identical (checksum lists compared). |
+| verification | from an empty directory with the `requirements-lock.txt` versions: `shasum -c SHA256SUMS` OK; `verify_rc.py` rc 0, **`VERIFY: PASS`** (frozen and union replays AGREE with 0 differences; W1 0 differences; figure numbers PASS; negative control OK; Figs. 1–4 regenerated; condition (i) 4/4), 407 s |
+| printed figures | `make_figs.py` run from the extracted package reproduces the article's three figure files byte for byte (`938c4fc9…`, `57f3cc60…`, `e9d1bb01…`) |
+| location | local: `../MINERvA-OmniFold-prd-editorial-pdf-20261008/`. Not copied to CFS. RC6 stays the preserved candidate on CFS until Joseph decides. |
+| review | **not independently reviewed.** The two authorized review cycles (§8) covered the editorial diff before §9–§10. |

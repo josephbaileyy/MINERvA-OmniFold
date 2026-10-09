@@ -25,6 +25,8 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
 | article sources | the branch at `f4669b07`. No claim, number or approved wording changed; the release candidate (RC6) is unaffected. |
 | revised PDF (local; not sent) | `../MINERvA-OmniFold-prd-editorial-pdf-20261008/MINERvA-OmniFold-PRD-article-editorial-f4669b07.pdf`, 11 pp, one `\pubhold` |
 | standalone note repo | branch `sync-prd-editorial-pass-20261008` at `687b48ab`; standalone `main` unchanged at `e1af61e3` |
+| follow-up (Joseph, 2026-10-08) | Figs. 1–3 redrawn by `make_figs.py` from the released arrays; AI disclosure names Claude Code, the Codex CLI and the model versions (record §9) |
+| **release candidate** | **RC7** `27f0caba53c4bbf75310f6d94145ea872ebe77c6a6f55ef48298d95cbcee566e` (`docs/publication/release/RC7-README.md`, `RC7-SHA256SUMS.txt`): RC6 plus the new figure code; byte-reproducible from `8fa79cb1`; `VERIFY: PASS` from an empty directory; regenerates the printed figures byte for byte. Local only; not on CFS, not deposited, tagged or sent (record §10). |
 
 ## 1c. Release-audit corrections (2026-10-08; branch `fix/prd-release-audit-corrections-20261008`, PR unmerged; supersedes §1b for the release candidate)
 
