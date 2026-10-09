@@ -364,18 +364,18 @@
  "N_sensitivity": [
   {
    "kappa_tolerance": [
-    0.87,
+    0.8695652173913044,
     1.15
    ],
-   "N_required_I68_and_I95": 1657,
+   "N_required_I68_and_I95": 1632,
    "N_required_I68_only": 1248
   },
   {
    "kappa_tolerance": [
-    0.83,
+    0.8333333333333334,
     1.2
    ],
-   "N_required_I68_and_I95": 975,
+   "N_required_I68_and_I95": 1030,
    "N_required_I68_only": 755
   },
   {
@@ -389,14 +389,14 @@
   {
    "kappa_tolerance": [
     0.75,
-    1.33
+    1.3333333333333333
    ],
    "N_required_I68_and_I95": 504,
-   "N_required_I68_only": 330
+   "N_required_I68_only": 322
   },
   {
    "kappa_tolerance": [
-    0.667,
+    0.6666666666666666,
     1.5
    ],
    "N_required_I68_and_I95": 329,
@@ -758,6 +758,16 @@
   "n2_total_with_r0_node_h_range": [
    7.8298,
    9.7298
+  ],
+  "protected_reserve_fraction": 0.2,
+  "n2_total_with_r0_and_reserve_node_h_range": [
+   9.787249999999998,
+   12.162249999999998
+  ],
+  "m3246_annual_cpu_allocation_node_h": 20000.0,
+  "primary_over_annual_allocation": [
+   0.6720242788,
+   1.0430863632
   ],
   "note": "per-run charges are sacct ElapsedRaw x billing/256; option rows exclude the identity-carrying rebuild R0, which every independent-population option needs once (r0_identity_rebuild_node_h_range, priced by lane C with billing assumed)"
  }

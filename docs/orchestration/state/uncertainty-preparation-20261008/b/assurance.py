@@ -468,7 +468,8 @@ def compute():
 
     # Sensitivity of N to the tolerance and to the family
     sens = []
-    for tol in ([0.87, 1.15], [0.83, 1.20], [0.80, 1.25], [0.75, 1.33], [0.667, 1.50]):
+    for x in (1.15, 1.20, 1.25, 4.0 / 3.0, 1.50):
+        tol = [1.0 / x, x]  # exact reciprocals (the design tolerance is [0.80, 1.25] = [1/1.25, 1.25])
         saved = DESIGN["kappa_tolerance"]
         DESIGN["kappa_tolerance"] = tol
         e = edges(lv, b_prod)
@@ -566,6 +567,14 @@ def compute():
     costs["r0_identity_rebuild_node_h_range"] = r0
     costs["n2_total_with_r0_node_h_range"] = [costs["options"][-1]["node_h_with_retry_allowance"] + r0[0],
                                               costs["options"][-1]["node_h_with_retry_allowance"] + r0[1]]
+    reserve = 0.20
+    costs["protected_reserve_fraction"] = reserve
+    costs["n2_total_with_r0_and_reserve_node_h_range"] = [
+        x / (1.0 - reserve) for x in costs["n2_total_with_r0_node_h_range"]]
+    costs["m3246_annual_cpu_allocation_node_h"] = v("m3246_allocated_node_h")
+    costs["primary_over_annual_allocation"] = [
+        o["node_h_with_retry_allowance"] / v("m3246_allocated_node_h") for o in costs["options"]
+        if o["option"].startswith("P: ") or o["option"].startswith("P at N_design")]
     costs["note"] = ("per-run charges are sacct ElapsedRaw x billing/256; option rows exclude the "
                      "identity-carrying rebuild R0, which every independent-population option needs "
                      "once (r0_identity_rebuild_node_h_range, priced by lane C with billing assumed)")
