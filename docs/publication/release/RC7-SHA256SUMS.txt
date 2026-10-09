@@ -1,0 +1,35 @@
+# RC7 tarball (byte-reproducible; publication/release/build_rc.py at source commit 8fa79cb1)
+27f0caba53c4bbf75310f6d94145ea872ebe77c6a6f55ef48298d95cbcee566e  minerva-omnifold-article-release-rc7.tar.gz
+# contents (the package's own SHA256SUMS)
+94476d683d19ca0bb765d8fe85d004f68a237b7ebf048c139372c030db7a5ac4  ./README.md
+54f6d4f7415f628fc7f45b28ba57900122e7af6aa270447b57b2f76efa84726a  ./code/figs/fig_numbers.py
+99243ac4532c4f36eb72e4e5e949cc18256bc266b9fda0973dda35fc9c73e95f  ./code/figs/make_figs.py
+f765eeaa309cdae4719f98997e5c3ef57124324b2926559ac1c10561e329590d  ./code/figs/plot_joint_null_distributions.py
+dc33d7af35b7ec7b142f70b014eec05e22aaadce4e7f80faec9e689316f07cbc  ./code/m1_f2_norm_ratio.py
+7207e73b1264a3aa1dce68e9ebe633d61ba46c73d3027eee25d97f2a188adf30  ./code/make_reading_b.py
+41f4af05eed0c07ad74acad73900fd22474e8bbac0e58f2e54eb424dddcbd7a4  ./code/replay_inference.py
+9379875f435ba6c3b876ed6253b9751f32ca19bdab41b5732b5017ed77968952  ./code/verify_rc.py
+ab5679d1fa0de6cf45f8c98446a3eadb4ad5c01cd306af28406bae80d7729fb6  ./code/w1_projected_tests.py
+ac3f5f5943f60d47c3202f8b4cc5f183b348992d15fcbfec1381cb78aa08f5ea  ./data/anatuple-inventory.tsv
+72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8  ./data/figs/fig_arrays.npz
+eea9b26b6537d753d9190fc3c65f7f847add9f819b067b34674f54b9d7b009f2  ./data/figs/fig_arrays.npz.manifest.json
+7bd019c646b44c6e94fcefd6e0827f6891d96d7acc16f86d124aee94cb776387  ./data/frozen/inference_sufficient.npz
+e8aedfe80ac1bdc97443b0cf61be8f0dadbfba2f2d1f6d5631a72ef362fef1c9  ./data/frozen/inference_sufficient.npz.manifest.json
+de5b80ac93f20fa86857823925875b934bda64c6e93833d61175629aa4d45c1c  ./data/m1f2/MANIFEST.json
+4fed1dc6c2e0e603e98f9e28bbfb1348f6dbc30d816e5eb87addba3a0ca3c51e  ./data/m1f2/delta-genie_cv.npz
+0058ae586f471cc6565cdf0c0018ef4fe8c8d7551bcc557ab288fb9d48aa02cf  ./data/m1f2/delta-genie_mec.npz
+5e2b14337a3efefcba46046a89458607d6dc042605dc03c9f2c952757802056e  ./data/m1f2/delta-gibuu_cv.npz
+d6d662ca3118981ce82f20626dfad66be39e095a3be49c1e0e572972b558637c  ./data/m1f2/delta-nuwro_cv.npz
+40d9aa1c3c84a6f019ea03524b465f5223b85bc75cea82357087e8850e8aaa51  ./data/m1f2/fine-minus-mid-genie_cv.npz
+5e6aa8a6397a2fd7e688dc0f2249e1cae2b80e66f6d01378b077bdb2ab25d122  ./data/m1f2/fine-minus-mid-genie_mec.npz
+6fbfc786f76e66d58e6bf190dc5c6a075786c8b4a02f8f0d1e4821d0f701b73b  ./data/m1f2/fine-minus-mid-gibuu_cv.npz
+706b87d4437ddf91a9c2f6867ce118631469c738b215a3d26d8f48fc556548d0  ./data/m1f2/fine-minus-mid-nuwro_cv.npz
+6ffed091fb433219c825e0b7cfc20c0642a92cda8af1c9aa3dce44b846293fbb  ./data/recovery-union/inference_sufficient.npz
+757d39f8e3c332d221ce8ec80f4a4b4cc7dca1c25f07815acf9afb597119cfd4  ./data/recovery-union/inference_sufficient.npz.manifest.json
+770fdfa61f6b2ffc4bd33adb0f75db96b8d3aad35eda5dbda6cd369413fabaee  ./expected/W1-RESULT-20261006.json
+b9604502b1aa263508ba46f0be91846d7a2106f6f2fd0ba5c172b87ee256dd11  ./expected/joint-evaluate.json
+8503eab8b4c0d19e0515bd591275bb7c177c46a52e59f86de91fa818716988fb  ./expected/resolved-evaluate.json
+9d4c86c15040d435d8619df9edd9c3214057b4c3ee9539ae8a795c8e5bb9d0a8  ./expected/values.tex
+63aa985d0d14866f7e542e9c8dd8d71caa1e79bb6af7fb3ad79077c1fdcd50dd  ./expected/values_inference.tex
+ad50b6f30a7cd0dd0202c574a4b7a17f4dd03ffbf1b703cac839745fbcd1238d  ./requirements-lock.txt
+da0aad7ae607404406522464b78120f57d31571737d4d6b3a4f72501a45a65e5  ./requirements.txt

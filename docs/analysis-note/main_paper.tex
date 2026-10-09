@@ -3,7 +3,7 @@
 % docs/publication/DECISION-20261006-joseph-publication-approvals.md).
 % Build: latexmk -pdf main_paper.tex
 % The companion analysis note contains the complete validation record,
-% technical details, extended-fiducial study, and PET methodology.
+% technical details, extended-fiducial study, and the PET (diagnostic) record.
 %
 % DRAFT STATE: text marked \pubhold{...} renders in red and waits on the
 % dependencies recorded in docs/publication/HANDOFF-20261005-publication-
@@ -11,7 +11,7 @@
 % Joseph's disposition, Stage-7 wording). Do not submit a build that
 % renders any \pubhold.
 % ====================================================================
-\documentclass[aps,prd,reprint,superscriptaddress,nofootinbib,floatfix]{revtex4-2}
+\documentclass[aps,prd,reprint,superscriptaddress,nofootinbib,floatfix,longbibliography]{revtex4-2}
 
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amssymb}
@@ -36,8 +36,8 @@
 \begin{document}
 \raggedbottom % reprint-mode layout: avoid stretched inter-paragraph gaps (cosmetic; the journal re-typesets)
 
-\title{Unbinned Five-Observable Unfolding of MINERvA Charged-Current
-Neutrino Data and Calibrated Joint Tests of Generator Predictions}
+\title{Unbinned five-observable unfolding of MINERvA inclusive charged-current
+neutrino data and calibrated joint tests of generator predictions}
 
 \author{Joseph Bailey}
 \email{josephrb@stanford.edu}
@@ -50,32 +50,25 @@ Neutrino Data and Calibrated Joint Tests of Generator Predictions}
 \date{\today}
 
 \begin{abstract}
-Can neutrino-interaction generators be tested jointly in five observables when
-no qualified five-dimensional cross-section uncertainty exists?  We apply
-unbinned machine-learning unfolding, to our knowledge for the first time on
-neutrino-scattering data, to MINERvA medium-energy $\nu_{\mu}$ charged-current
-inclusive data from the MINERvA open-data release.  A simultaneous
-two-observable unfold reproduces the published
-$d^{2}\sigma/(d\pT\,d\pPar)$ measurement.  Adding available energy,
-three-momentum transfer and hadronic invariant mass, without an explicit
-five-dimensional response tensor, gives central values that pass marginal
-anchors and injected-shape closure tests; the estimator's measured model
-dependence prevents a qualified total uncertainty at useful precision, so no
-five-dimensional cross
-section with uncertainties is reported.  Joint total and shape
-statistics on the five-dimensional result are calibrated with pseudo-experiments
-that rerun the full unfolding under a declared nuisance model.  Under that
-model, all ten simple hypotheses formed from five predictions (MINERvA
-Tune~v1, GENIE~2.12.10 with and without MEC, NuWro~21.09, GiBUU~2019) are
-rejected at familywise level 0.05; pseudo-experiments first lost to scheduler
-limits were recovered, report-only, without changing a decision.  The
-rejections are conditional on the declared model, whose principal limitations
-are the absence of a calorimetric recoil-response uncertainty and an
-unconverged fine-grid null; an exploratory $\pm4\%$ recoil-response variation
-of the data unfold, not an uncertainty estimate, removes no rejection.  They
-are statements about the specified predictions, not a measured cross section,
-and no claim is made that the joint information adds discrimination beyond
-matched coarse projections.
+We apply unbinned machine-learning unfolding, to our knowledge for the first
+time on neutrino data, to MINERvA open data on medium-energy $\nu_{\mu}$
+charged-current inclusive interactions, first reproducing the published
+double-differential cross section in muon kinematics.  Adding available energy,
+three-momentum transfer and hadronic invariant mass gives central values that
+pass marginal-normalization checks and injected-shape closure tests, but the
+estimator's measured model dependence prevents a qualified total uncertainty at
+useful precision: no five-dimensional cross section with uncertainties is
+reported.  Joint total and shape statistics, calibrated with pseudo-experiments
+that rerun the full unfolding under a declared nuisance model, reject all ten
+simple hypotheses for five predictions (MINERvA Tune~v1, GENIE~2.12.10 with and
+without a two-particle--two-hole component, NuWro~21.09, GiBUU~2019) at
+familywise level 0.05, with every submitted pseudo-experiment observed after a
+report-only recovery.  The rejections are conditional on that model, whose
+principal limitations are a missing calorimetric recoil-response uncertainty
+and an unconverged fine-grid null.  An exploratory $\pm4\%$ recoil-energy
+scaling of the data, not an uncertainty estimate, removes no rejection.  The
+tests concern the specified predictions, not a measured cross section, and
+claim no discrimination beyond matched coarse projections.
 \end{abstract}
 
 \maketitle
@@ -87,20 +80,68 @@ The authors thank the MINERvA Collaboration for making their data, simulated
 data, and analysis tools available to the community~\cite{MINERvA:OpenData,MINERvA:2013zvz}.
 The analysis code, statistical procedures, computing campaigns, independent
 recomputations and reviews, figures and manuscript drafts were produced with
-substantial assistance from AI language-model tools: Anthropic Claude (Opus 4.7,
-4.8, 5 and 5.5; Fable 5 and 5.1) and OpenAI Codex models, including those used
-for independent review.  The authors directed this work through written
+substantial assistance from AI language-model tools, used through the Claude
+Code and OpenAI Codex command-line agents: Anthropic Claude (Opus 4.7, 4.8, 5
+and 5.5; Fable 5 and 5.1) and OpenAI GPT models (GPT-5.5, GPT-5.6 Sol and Luna,
+GPT-6 Astra and GPT-6.1), including those used for independent review.  The authors directed this work through written
 specifications fixed before each study.  Results were accepted only after
 verification against committed evidence: predeclared criteria, independent
 recomputation by separately written code (for example, the joint-test
-evaluation and the lost-seed recovery), and independent read-only reviews.  AI
-tools are not authors.  The authors take responsibility for the content.
+evaluation and the lost-seed recovery), and independent read-only reviews.  The
+figures were drawn by plotting code from the analysis outputs; no image was
+generated or edited by a generative-AI image tool.  AI tools are not authors.  The authors take responsibility for the content.
 % AI-use disclosure: text and placement approved by Joseph Bailey, 2026-10-06
 % (docs/publication/DECISION-20261006-joseph-publication-approvals.md, last addendum;
 % proposed text docs/publication/submission/AI-DISCLOSURE-PROPOSED.md, transcribed verbatim).
+% 2026-10-08: Joseph asked that Claude Code be named and agreed that the tool versions be given (APS requires "AI
+% tool name and version"). The agents and the OpenAI model list come from repository records (the campaign review's
+% gpt-6-astra reviewers; commit messages naming gpt-5.6-sol, gpt-5.6-luna, GPT-6.1 and codex-cli; the gpt-5.5
+% benchmark); that census is incomplete by construction; Joseph confirmed the list on 2026-10-08. See docs/publication/EDITORIAL-20261008-prd-presentation-pass.md sec. 9.
+% 2026-10-08: the figure sentence added at Joseph's instruction (APS Style Guide bars images "generated or modified by
+% generative AI or AI-assisted tools"; the APS AI policy allows AI help with data visualizations). Record sec. 12.
 \end{acknowledgments}
 
-\bibliographystyle{apsrev4-2}
+% Data Availability Statement: APS places it after the Acknowledgments and before the references
+% (APS Journals Style Guide for Authors, Feb. 2026; required for PRD since 2024-09-04).
+\section*{Data availability}
+\label{sec:data-availability}
+
+The input data and simulation are the MINERvA open-data AnaTuples, released under
+CC0~\cite{MINERvA:OpenData}; this analysis used an earlier production of that
+release, whose file names and sizes, but not checksums, are recorded with the
+release described here.
+A release of about \SI{16}{MB} lets a reader, with numpy, scipy and matplotlib
+only, recompute every $p$ value, decision, robustness label and power figure of the
+joint tests, the lost-seed resolution, the coarse-projection comparison and the
+fine-grid $L_{2}$ ratios of condition~(i); regenerate Figs.~\ref{fig:validation}--\ref{fig:joint-nulls}; and recompute the
+numbers quoted from Figs.~\ref{fig:validation}--\ref{fig:generator-context}.  It
+contains the per-pseudo-experiment cell values after the declared nuisance terms,
+their seeds, the predictions, the test domains, the variant shifts, the metric and
+the observed data vector, the arrays behind Figs.~\ref{fig:validation}--\ref{fig:generator-context},
+and the digest of every source product.  A replay of the packaged files from an
+empty directory reproduces every recorded value and every checked figure number;
+an earlier version of the release was also replayed by an independent reader.  The remaining quoted numbers (the
+two-dimensional uncertainty and coverage figures, the closure and bias studies,
+the low-recoil comparisons, the recoil-response sensitivity, the proxy
+convergence rate of condition~(i) and the covariance-status measurements) are not
+recomputable from this release.  The multiplier scan of Sec.~\ref{sec:joint} is
+recomputable from the released sufficient inputs with the scan code of
+Ref.~\cite{JointTestKappa2026}, but it is not part of the release's own
+verification.
+Extraction from the pseudo-experiment products, which are archived
+(\SI{2.3}{GB}), and the event-level processing are not reproducible from it
+either; they need the archived products and the open-data AnaTuples together
+with the generator samples produced for this analysis.
+\pubhold{deposit identifier and access route, after the separately authorized
+release decision.}
+% Source: docs/publication/release/RC7-README.md (RC7: the figure code that draws Figs. 1-3 as printed; data as RC6),
+% docs/publication/release/RC6-README.md and docs/publication/corrections-20261008/ (RC6 identity, empty-
+% directory verification; RC5 superseded); RC1-REPLAY-RECEIPT-20261006.md (the earlier independent empty-directory replay, of RC1);
+% RC4 46f801bf... preserved unchanged at /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/; product archive
+% /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/ (SHA256SUMS 1a72cb43..., main 275b996d).
+
+% Style: revtex4-2 with aps,prd selects apsrev4-2 itself; an explicit \bibliographystyle would bypass
+% the class's control entry, which longbibliography needs to print article titles.
 \bibliography{technote,publication}
 
 \end{document}
