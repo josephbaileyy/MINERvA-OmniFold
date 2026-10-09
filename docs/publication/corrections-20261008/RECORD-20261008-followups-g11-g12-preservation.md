@@ -315,10 +315,10 @@ another session merged during this work, and its record PR #57. They share no fi
 
 | check | result |
 |---|---|
-| canonical `build_all.sh` at `fc0b6e32` (review cycle 1) | **`RESULT :: PASS`**, `tree=clean`, `mode=strict`; **`SEC4-RECEIPTS :: PASS (14/14)`**, `SELF-TEST :: PASS (17 perturbations rejected)`; 123 / 9 / 11 pages. Earlier, at `56752a4d`, it also passed (self-test 16, before cycle 1). |
-| tests at `fc0b6e32` | `test_compare_sufficient.py`, `test_check_sec4_receipts.py` and `test_build_all.py`: **63 passed** |
+| canonical `build_all.sh` at `09230ecf` (after review cycle 2) | **`RESULT :: PASS`**, `tree=clean`, `mode=strict`; **`SEC4-RECEIPTS :: PASS (14/14)`**, `SELF-TEST :: PASS (17 perturbations rejected)`; 123 / 9 / 11 pages. It also passed at `fc0b6e32` (cycle 1) and at `56752a4d` (self-test 16, before cycle 1). The commit after `09230ecf` changes only this record. |
+| tests at `09230ecf` | `test_compare_sufficient.py`, `test_check_sec4_receipts.py` and `test_build_all.py`: **66 passed** |
 | `generate_manifest.py --at-sha <head> --check` | OK |
-| standalone `MINERvA-OmniFold-Analysis-Note` | branch **`sync-prd-followup-g11-20261008`** = **`2f4a6eeff20eadfe70d6f66549c093c8ce4e19e4`**: `0bc07fa9` adds the 4 G11 files on `main` `657d5bd3`, and `2f4a6eef` syncs cycle 1. Every tracked file equals canonical `fc0b6e32` `docs/analysis-note`, apart from `.gitignore` and `AGENTS.md` (`diff -rq`). `build_all.sh`: rc 0, 123 / 9 / 11 pages, with the SEC4 stage reporting SKIP (no receipts there, by design). 43 tests passed, 9 skipped (the receipt tests). The `pdftotext` output of all 3 PDFs equals the canonical build's. **Not merged into the standalone `main`.** |
+| standalone `MINERvA-OmniFold-Analysis-Note` | branch **`sync-prd-followup-g11-20261008`** = **`de1461a08ef85a7cdb393a154197dc7c527205fb`**: `0bc07fa9` adds the 4 G11 files on `main` `657d5bd3`, `2f4a6eef` syncs cycle 1, and `de1461a0` syncs cycle 2. Every tracked file equals canonical `09230ecf` `docs/analysis-note`, apart from `.gitignore` and `AGENTS.md` (`diff -rq`). `build_all.sh`: rc 0, 123 / 9 / 11 pages, with the SEC4 stage reporting SKIP (no receipts there, by design). 43 tests passed, 10 skipped (the receipt tests). The `pdftotext` output of all 3 PDFs equals the canonical build's. **Not merged into the standalone `main`.** |
 | preservation script digests | `anatuple_checksum_sweep_20261008.sh` `a5c386dc…` (committed, and in the CFS directory); `preserve_w2_outputs_20261008.sh` `8ce7eba7…` committed (the run used `9ed7954f…`, kept in CFS); `hpss_second_copy_20261008.sh` `a14883f1…`; `verify_tar_stream.py` `64a29996…`. The CFS `README.md` = `50950e66…`, the committed README. |
 
 ## 9. Independent review
