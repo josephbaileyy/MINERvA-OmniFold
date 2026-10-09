@@ -410,3 +410,14 @@ equals the T2K OmniFold paper's.
 `sync-prd-editorial-pass-20261008` = **`63d3cd1cbce3bc5e0b29d95e703138e6b9b5b449`**. Every tracked file equals canonical (`cmp`);
 standalone `build_all.sh` rc 0 at 123 / 9 / 11 pp; `pdftotext` of all three PDFs identical to the canonical build. Standalone
 `main` unchanged at `e1af61e3`; canonical `main` unchanged at `b612ee3a`.
+
+## 12. Image sentence added; title kept (Joseph, 2026-10-08)
+
+Joseph: "add the image sentence, use the current title". This closes §7 items 2 and 5. **No §7 item remains open.**
+- **Disclosure (Acknowledgments):** added "The figures were drawn by plotting code from the analysis outputs; no
+  image was generated or edited by a generative-AI image tool."
+  - It answers the APS Style Guide's bar on images "generated or modified by generative AI or AI-assisted tools",
+    beside the APS AI policy's allowance for AI help with data visualizations (§2a).
+  - The rest of the disclosure is as in §9 (tool list confirmed by Joseph).
+- **Title:** unchanged, "Unbinned five-observable unfolding of MINERvA inclusive charged-current neutrino data and
+  calibrated joint tests of generator predictions".
