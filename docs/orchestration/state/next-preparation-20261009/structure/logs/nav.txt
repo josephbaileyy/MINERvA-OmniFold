@@ -23,6 +23,6 @@ T4 | docs/POST_PUBLICATION_REORG_PLAN.md:560:### Move constraint: the 2D covaria
 T4 | README.md:60:| **Joint-5D generator inference** (s5p, `OI-193`) | `nd-unfolding/s5p_*.py`; generator predictions `3d-unfolding/genie/gen5d_*.py` | `docs/orchestration/DEL
 rc=0
 
-# negative control: the same hop function on a string absent from README.md
-bash: hop: command not found
-fail=0
+# negative control: nav.sh's own hop function on a string absent from README.md
+TX | MISSING in README.md: no such route 7f3c
+fail=1
