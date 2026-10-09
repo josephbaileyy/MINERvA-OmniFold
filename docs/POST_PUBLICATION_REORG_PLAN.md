@@ -548,3 +548,80 @@ stay for two reasons:
   that `2d-unfolding/PLOT_GUIDE.md` still cites.
 
 Documentation now marks them superseded. No removal is proposed.
+
+## Next preparation, Session 3 (structure), 2026-10-09 (move constraints and one removal candidate; nothing moved or removed)
+
+This section is written from base `5ac9706a`. It moves nothing, removes nothing and asks for no
+authorization. Lane C (layout moves only after the publication freeze) and the family-specific
+authority rule under *Lane A closure and A2* still govern. The session's code changes, measurements and
+deferred code patches are in `orchestration/state/next-preparation-20261009/structure/REPORT.md`. Lane
+D's s5p `gen5d` design above is unchanged and remains the discovery route for that family.
+
+### Move constraint: the 2D covariance modules in `2d-unfolding/uq/`
+
+**Exact paths.** `2d-unfolding/uq/analyze_uq.py`, `uq/analyze_universes.py`, `uq/_ours_only_chi2.py`
+and, from this session, `uq/reported_cells.py`. The first three import the fourth as a sibling.
+
+**Inbound imports that a move breaks.** Each of these puts `2d-unfolding/uq` (on Perlmutter, the
+hardcoded `/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq`) at `sys.path[0]` and imports
+by module name:
+- `analyze_uq`, for `th2_to_array`, `th1_to_array`, `PT_EDGES` and `PZ_EDGES`, from six frozen
+  records: `state/ki84-adopt-20261006/{purity_datastream_check,recompute_2d_budget}.py`,
+  `state/ki84-rebuild-20261006/{boot_spreads_vl170,compare_ki84_band,predict_ki84}.py` and
+  `state/note-boot-20261003/boot_spreads.py`. The live
+  `uq/coverage_fixed_truth/ki85_compare.py` imports it the same way.
+- `_ours_only_chi2`, for `flatten_paper` and `tmatrix_to_numpy`, from the frozen
+  `state/uqpaper-median-20261006/paper_median.py`.
+- `analyze_universes`, for `CATEGORY_ORDER` and `category_for_band`, from
+  `uq/plot_uncertainty_fig6_7_style.py`, a note figure producer.
+
+**Launchers that name the paths.** `uq/rollup_vl170_adoption.sh` (the adopted VL172 chain),
+`uq/final_rollup_full.sh`, `sbatch_analyze_MEFHC_{final,universes}.sh`, `uq/run_split_analysis.sh`
+and `HANDOFF_bkg_negweight/run_negweight_covariance_analysis.sh`.
+
+**Hash and reproduction constraints.** No current-bytes digest of these files is verifier-checked.
+`analyze_universes.py` is pinned at revision `901f2c64` by `nd-unfolding/tests/test_hash_bindings.py`,
+which a move does not break. The frozen records are byte-frozen (Goal 2 of the next-preparation
+dispatch), so they cannot be repointed. Their imports must keep resolving at the old directory.
+
+**Compatibility contract, if Lane C ever moves `uq/`.** No byte-scope applies to these modules, so a
+re-exporting wrapper at each old path is possible. Each of the four old paths keeps a module that
+re-exports every name listed above, and `reported_cells.py` stays importable as a sibling of all
+three.
+
+**Recovery test.** In a clean checkout at the post-move commit, for each frozen record, import its
+module from the old directory with that directory at `sys.path[0]` and resolve every attribute the
+record uses. `2d-unfolding/tests/test_reported_cells.py`
+(`test_producers_keep_the_names_their_importers_use`) is the static form of this check; extend it to
+the wrappers.
+
+**Migration sequence.**
+1. Authorization and the evidence epoch.
+2. Move plus wrappers in one commit.
+3. The recovery test, plus `test_reported_cells.py` and `test_final_rollup_full_refusal.py`.
+4. One read-only review.
+
+**Recommendation: do not move.** The directory is the de facto import contract of seven frozen
+records.
+
+### Removal candidate, not proposed: the Stage-1-era 2D analysis launchers
+
+**Exact paths.** `2d-unfolding/sbatch_analyze_MEFHC_final.sh` and
+`2d-unfolding/sbatch_analyze_MEFHC_universes.sh`.
+
+**Why they are a hazard.**
+- Their universe glob `uq/2d_xsec_MEFHC_5iter_lgbm_uni_*.root` also matches the later full sweep's
+  `uni_full_*` files, so the two sweeps mix whenever both are on disk.
+- They write `uq/uq_covariance.root` and `uq/universe_stage2_MEFHC/` in place, without a refusal.
+- Neither output is a quoted or sha-pinned product
+  (`state/ki84-adopt-20261006/sha256sums_2d-unfolding_uq.txt` lists neither).
+
+**Inbound references.** No code calls either script. They are cited only by
+`orchestration/AUDIT-FINDINGS-20260731.md:654` and the Sep-09 talk's `commit_inventory.json`.
+
+**Disposition.**
+- Keep both files; removal needs family-specific authority and an evidence epoch.
+- They are not edited in this session: the lane's file allowance went to the two families recorded in
+  its report.
+- A prospective guard would be the same refusal as `uq/final_rollup_full.sh`'s. It is listed in that
+  report's backlog.

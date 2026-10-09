@@ -194,7 +194,7 @@ needs its own authorization, a new output directory, and the launcher's
 |---|---|---|---|
 | Statistical replicas (`VL170`) | `docs/orchestration/state/ki84-rebuild-20261006/sbatch_ki84_replicas.sh` (a record; it repeats `sbatch_unfold_2d_MEFHC_5iter_bootstrap_scaleup.sh` argument for argument, on the fixed code) | merged MEFHC omnifile, baseline flux, a frozen code checkout at `KI84_EXPECT_HEAD` | 300 replica ROOTs under `/pscratch/.../ki84-rebuild-20261006/replicas/` |
 | Systematic universes | `sbatch_unfold_2d_MEFHC_5iter_universes_full.sh` and its matched CV `..._full_CV.sh`; then `uq/rescale_flux_universes.py` applies the flux-universe 1/Φ fix analytically | universe omnifile | `uq/universe_sweep_fluxfix/` (100 rescaled Flux universes, symlinks to the 87 others, and the CV) |
-| ML-noise covariance | step (a) of `uq/final_rollup_full.sh`: `uq/analyze_uq.py` over the lgbm seedscan (`seedscan_lgbm/`) | 10 seedscan ROOTs | `uq/seedscan_lgbm_ml/uq_covariance_ml.root` |
+| ML-noise covariance | step (a) of `uq/final_rollup_full.sh`: `uq/analyze_uq.py` over the lgbm seedscan (`seedscan_lgbm/`); the script now refuses to run while this product exists | 10 seedscan ROOTs | `uq/seedscan_lgbm_ml/uq_covariance_ml.root` |
 | **Combined rollup (`VL172`)** | **`uq/rollup_vl170_adoption.sh`**: `analyze_uq.py` on the replicas → `analyze_universes.py --add-norm 0.014 --bootstrap-cov` → `compare_to_paper_fullcov.py` with `hCov_combined` plus the ML covariance (normal and `--log-normal`) → `_ours_only_chi2.py` → figures | the three rows above | `uq/bootstrap_MEFHC_300_vl170/`, `uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/`; digests in `docs/orchestration/state/ki84-adopt-20261006/sha256sums_2d-unfolding_uq.txt` |
 
 The rollup refuses to overwrite its output directories. It first re-runs
@@ -202,11 +202,37 @@ the `VL162` commands on the old inputs as controls. `hCov_combined` already
 contains the bootstrap block; adding `uq_covariance_boot300.root` to it a
 second time double-counts the bootstrap (ledger "Active 2D Result").
 
+**Reported-cell identity.** Every 205×205 matrix above is ordered by its own
+reported cells. Each producer picks them from a different operand:
+`analyze_uq.py` uses the replica mean > 0, `analyze_universes.py` the matched
+CV > 0, and `compare_to_paper_fullcov.py` and `_ours_only_chi2.py` the paper's
+StatOnly diagonal > 0. A matrix can be added to another, or placed on the
+224-cell grid, only when the two cell sets are equal; an equal count is not
+enough. `uq/reported_cells.py` defines the cell (flat index = the paper's
+`GlobalID`) and the comparison:
+- `analyze_uq.py` and `analyze_universes.py` store their set as
+  `hReportedCells`;
+- `analyze_universes.py --bootstrap-cov` refuses a bootstrap whose set
+  (`hReportedCells`, or `hMean2D > 0` for older files) differs from the CV's;
+- `_ours_only_chi2.py` refuses either input whose stored set differs from the
+  paper's.
+
+`compare_to_paper_fullcov.py` and `uq/plot_uncertainty_fig6_7_style.py` still
+check only the count. They are publication and note producers, and their
+patch is specified in
+`docs/orchestration/state/next-preparation-20261009/structure/REPORT.md`. On
+the adopted inputs, all nine operands' sets were measured equal cell by cell
+(same record).
+
 Superseded routes, kept as records:
 - `sbatch_final_rollup_full.sh` / `uq/final_rollup_full.sh`. Its universe
   step (c) reads the pre-fluxfix sweep in `uq/` and writes
   `uq/universe_stage2_MEFHC_full/`, which is not the quoted product. Only its
-  step (a), the ML covariance, feeds the current chain.
+  step (a), the ML covariance, feeds the current chain. Steps (a) and (b)
+  write two sha-pinned products in place
+  (`uq/seedscan_lgbm_ml/uq_covariance_ml.root`,
+  `uq/bootstrap_MEFHC_300/uq_covariance_boot300.root`), so the script exits
+  before any write while either exists.
 - `uq/bootstrap_MEFHC_300/` and `uq/universe_stage2_MEFHC_full_matcorr_fluxfix/`
   hold the `VL162` band. They stay at their sha-pinned paths, but they
   are not the adopted band.

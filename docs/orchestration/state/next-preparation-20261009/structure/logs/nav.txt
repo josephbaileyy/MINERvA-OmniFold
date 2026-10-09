@@ -1,0 +1,28 @@
+# bash docs/orchestration/state/next-preparation-20261009/structure/checks/nav.sh at the docs commit
+T1 | README.md:365:   sbatch 2d-unfolding/sbatch_unfold_2d_MEFHC.sh                    # 2D central unfold
+T1 | README.md:30:| Find the script that produced a quoted 2D uncertainty (statistical replicas, universes, combined rollup) | `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`, "Which 
+T1 | 2d-unfolding/2D_OMNIFOLD_REFERENCE.md:274:   CV's (`--seed 42`). The central-value launcher `sbatch_unfold_2d_MEFHC.sh`
+T1 | target exists: 2d-unfolding/sbatch_unfold_2d_MEFHC.sh
+T2 | README.md:30:| Find the script that produced a quoted 2D uncertainty (statistical replicas, universes, combined rollup) | `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`, "Which 
+T2 | 2d-unfolding/2D_OMNIFOLD_REFERENCE.md:175:## Which script produced the quoted 2D uncertainty
+T2 | 2d-unfolding/2D_OMNIFOLD_REFERENCE.md:195:| Statistical replicas (`VL170`) | `docs/orchestration/state/ki84-rebuild-20261006/sbatch_ki84_replicas.sh` (a record; it repeats `sbatch_unfold_2d_MEFHC_5i
+T2 | 2d-unfolding/2D_OMNIFOLD_REFERENCE.md:198:| **Combined rollup (`VL172`)** | **`uq/rollup_vl170_adoption.sh`**: `analyze_uq.py` on the replicas → `analyze_universes.py --add-norm 0.014 --bootstrap-co
+T2 | 2d-unfolding/2D_OMNIFOLD_REFERENCE.md:205:**Reported-cell identity.** Every 205×205 matrix above is ordered by its own
+T2 | 2d-unfolding/2D_OMNIFOLD_REFERENCE.md:223:`docs/orchestration/state/next-preparation-20261009/structure/REPORT.md`. On
+T2 | target exists: docs/orchestration/state/ki84-rebuild-20261006/sbatch_ki84_replicas.sh
+T2 | target exists: 2d-unfolding/uq/rollup_vl170_adoption.sh
+T2 | target exists: 2d-unfolding/uq/reported_cells.py
+T3 | 2d-unfolding/2D_OMNIFOLD_REFERENCE.md:189:the rollup refuses to overwrite its output directories. A prospective run
+T3 | README.md:377:7. **For 4D/5D and full-event work**, route new compute through the guarded
+T3 | README.md:380:   python3 nd-unfolding/mnv_guarded_run.py …
+T3 | target exists: nd-unfolding/mnv_guarded_run.py
+T4 | README.md:178:| Paths removed from `main` | historical, recoverable | `docs/POST_PUBLICATION_REORG_PLAN.md` and `CATALOG.md` list each family with its `evidence/*` tag; r
+T4 | docs/POST_PUBLICATION_REORG_PLAN.md:10:`evidence/prepublication-2026-08-20-0b329e8a`
+T4 | docs/POST_PUBLICATION_REORG_PLAN.md:472:### Deferred move design: the s5p generator-prediction family in `3d-unfolding/genie/`
+T4 | docs/POST_PUBLICATION_REORG_PLAN.md:560:### Move constraint: the 2D covariance modules in `2d-unfolding/uq/`
+T4 | README.md:60:| **Joint-5D generator inference** (s5p, `OI-193`) | `nd-unfolding/s5p_*.py`; generator predictions `3d-unfolding/genie/gen5d_*.py` | `docs/orchestration/DEL
+rc=0
+
+# negative control: the same hop function on a string absent from README.md
+bash: hop: command not found
+fail=0
