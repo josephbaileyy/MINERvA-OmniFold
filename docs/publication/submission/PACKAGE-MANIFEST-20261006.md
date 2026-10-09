@@ -17,7 +17,7 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
 > - **Limitations stated in the article** are updated in §5.
 > - **One scientific decision is open:** REVIEW-20261007 §5.
 
-## 1d. Editorial and presentation pass (2026-10-08; branch `docs/prd-editorial-pass-20261008`, PR unmerged; supersedes §1c for the article text)
+## 1d. Editorial and presentation pass (2026-10-08; PR #56, merged: main `dd0515fe`; Analysis-Note main `657d5bd3`; supersedes §1c for the article text)
 
 | component | identity |
 |---|---|
