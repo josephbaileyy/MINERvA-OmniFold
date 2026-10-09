@@ -421,3 +421,24 @@ Joseph: "add the image sentence, use the current title". This closes §7 items 2
   - The rest of the disclosure is as in §9 (tool list confirmed by Joseph).
 - **Title:** unchanged, "Unbinned five-observable unfolding of MINERvA inclusive charged-current neutrino data and
   calibrated joint tests of generator predictions".
+
+## 13. Merged to both mains (Joseph, 2026-10-08)
+
+Joseph: "coordinate with the implementer session to merge everything onto main and the analysis note only repo".
+
+**Coordination.** The implementer session replied with no objection to this lane's merge. It holds its own branches:
+- `followup/prd-release-g11-g12-20261008` is in progress. Joseph told that session directly to deliver it as a
+  reviewed, unmerged PR, so it is not merged.
+- The read-only audit branch `audit/prd-release-repro-20261008` had no merge authorization. Merging it is Joseph's
+  call.
+- `analysis/gbdt-model-dependence-20261003` in the note repository is neither lane's.
+
+The implementer's G11 checker passes 14/14 on this article's text.
+
+| | |
+|---|---|
+| `MINERvA-OmniFold` | PR #56 merged with a merge commit: main = **`dd0515feeb5fee51972bc124e4ef1d3a7d7ed0bf`** (parents `b612ee3a`, `31f55222`) |
+| `MINERvA-OmniFold-Analysis-Note` | main fast-forwarded `e1af61e3` → **`657d5bd3c841a65750e7f45471db9cf32d22e7a5`** (= `sync-prd-editorial-pass-20261008`) |
+| post-merge check | `build_all.sh` at `dd0515fe` in a fresh detached worktree: rc 0, `RESULT :: PASS … tree=clean`, 123 / 9 / 11 pp. All 117 tracked `docs/analysis-note` files at `dd0515fe` equal Analysis-Note main `657d5bd3` (`cmp`). |
+| final article PDF (local; not sent) | `../MINERvA-OmniFold-prd-editorial-pdf-20261008/MINERvA-OmniFold-PRD-article-editorial-31f55222.pdf` (the article sources at `dd0515fe` are those of `31f55222`) |
+| release | RC7 `27f0caba…` stays local; RC6 stays the preserved candidate on CFS. Nothing was deposited, tagged, submitted or sent. |
