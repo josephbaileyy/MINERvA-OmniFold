@@ -1,0 +1,43 @@
+# BEFORE navigation check at d126a115 (docs identical to f8e2bf85), 2026-10-09T06:15:34Z
+## T1 adopted statistical producer (VL170 replicas -> analyze_uq.py)
+$ grep -cE 'VL170|ki84|sbatch_ki84_replicas|rollup_vl170' README.md 2d-unfolding/2D_OMNIFOLD_REFERENCE.md
+2d-unfolding/2D_OMNIFOLD_REFERENCE.md:0
+README.md:1
+$ grep -n 'Driver:' 2d-unfolding/2D_OMNIFOLD_REFERENCE.md
+171:Driver: `uq/run_bootstrap_interactive.sh` runs N replicas inside an
+$ git grep -l 'sbatch_ki84_replicas' -- '*.md'
+docs/orchestration/state/uncertainty-preparation-20261008/d/disposition.md
+## T2 active combined rollup (uq/rollup_vl170_adoption.sh)
+$ grep -n 'final_rollup_full\|rollup_vl170' 2d-unfolding/2D_OMNIFOLD_REFERENCE.md README.md
+2d-unfolding/2D_OMNIFOLD_REFERENCE.md:206:  `sbatch_final_rollup_full.sh`, whose driver
+2d-unfolding/2D_OMNIFOLD_REFERENCE.md:207:  `uq/final_rollup_full.sh` refuses to run without the matched full-CV
+$ git grep -l 'rollup_vl170_adoption' -- '*.md'
+VALIDATION_LEDGER.md
+docs/orchestration/PLAN-20261008-uncertainty-investigation-preparation.md
+docs/orchestration/state/uncertainty-preparation-20261008/d/disposition.md
+## T3 supported import constraints (OI-136 ruling, ratchet, guarded door)
+$ grep -n 'AUTHORIZATION-20260903-oi136\|test_oi136_rooted_insert_ratchet\|mnv_guarded_run' README.md 2d-unfolding/2D_OMNIFOLD_REFERENCE.md
+README.md:90:| `unbinned_unfolding/python/omnifold.py` | The RooUnfold-fork reweighting loop | the 2D, 3D and N-D drivers, loaded from a hardcoded `/pscratch/...` path (the `OI-136` pattern; route new compute through `mnv_guarded_run.py`) |
+README.md:95:`docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md:41`. The ruling rests on two conditions:
+README.md:99:`nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py` fails if either condition breaks, and the test says
+README.md:212:│   ├── mnv_guarded_run.py                 #   guarded entrypoint — route new compute here
+README.md:368:   python3 nd-unfolding/mnv_guarded_run.py …
+$ sed -n 41p docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md | cut -c1-120
+| `2d-unfolding/unfold_2d_omnifold_unbinned.py` | the published 2D arm; **Joseph ruled 2026-08-23 to leave it** (dormant
+## T4 recover historical evidence paths through their tags
+$ git show evidence/prepublication-2026-08-20-0b329e8a:2d-unfolding/2D_OMNIFOLD_RUN_LOG_ARCHIVE.md | sed -n 441p
+## Phase 16 — Truth-shape attribution: efficiency denominator bug found and fixed (2026-05-08)
+rc=0
+$ grep -n 'evidence/' README.md | cut -c1-140
+68:git show evidence/prepublication-2026-08-20-0b329e8a:2d-unfolding/binned_study/README.md
+147:| Gregor PET2 / typed-object tokens (July) | retain the current estimator; **do not promote** (July assessment; typed-descriptor develop
+171:| Paths removed from `main` | historical, recoverable | `docs/POST_PUBLICATION_REORG_PLAN.md` and `CATALOG.md` list each family with its
+415:  pushed `evidence/*` tags rather than deleted, so history stays recoverable.
+$ git show evidence/simplification-2026-10-07-fc97eaf9:nd-unfolding/pet/final_design/results/dev1/INCOMPLETE.txt | shasum -a 256  (first A3 path; HEAD lacks it: absent)
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  -
+$ git show evidence/prepublication-2026-08-20-0b329e8a:nd-unfolding/pet/final_design/results/dev1/INCOMPLETE.txt (wrong epoch)
+rc=128
+$ git show evidence/simplification-2026-10-07-fc97eaf9:nd-unfolding/pet/final_design/results/dev1/dev1-CS1-F0.posthoc.json | shasum -a 256  vs external a3-blobs.tsv
+restored: d6d09e6feeac22b14e70c193736e7826aeda8041bd5687dfdeed0956ec23c083
+expected: d6d09e6feeac22b14e70c193736e7826aeda8041bd5687dfdeed0956ec23c083
+(INCOMPLETE.txt above is a genuinely empty file: a3-blobs.tsv lists blob e69de29b, sha256 e3b0c442)

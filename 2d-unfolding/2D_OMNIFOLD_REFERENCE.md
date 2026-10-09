@@ -117,7 +117,21 @@ in the past.
 ## 2D Python unfolding contract
 
 `2d-unfolding/unfold_2d_omnifold_unbinned.py` is the authoritative 2D unbinned
-OmniFold extraction path. Required invariants:
+OmniFold extraction path.
+
+**Import constraint (before editing the driver).** The driver loads
+`unbinned_unfolding/python/omnifold.py` through a rooted `sys.path` insert,
+the `OI-136` pattern. Joseph ruled to leave it under two conditions: the
+insert stays inside `main()`, and `omnifold.py` keeps its digest. The
+record is `docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md:41`.
+`nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py` fails if either
+condition breaks. The 3D and N-D drivers, PET and a note figure script
+import the driver as `u2d`, and receipts and a launcher record its bytes.
+See `README.md`, "How the workstreams connect" and "Before changing the 2D
+driver", and re-run the `git grep` there rather than trusting a count. New N-D/PET compute
+goes through `nd-unfolding/mnv_guarded_run.py`.
+
+Required invariants:
 
 1. **Mask measured data to phase space** (0 ≤ p_T ≤ 4.5, 1.5 ≤ p_|| ≤ 60)
    before step-1 training.
@@ -140,6 +154,45 @@ OmniFold extraction path. Required invariants:
 7. **Full-stats sbatch must pass `--use-weights`.** The 1A validation runs
    use it; the production path must match.
 
+## Which script produced the quoted 2D uncertainty
+
+The quoted 2D statistical, systematic and combined products come from the
+chain below. The workflow sections that follow describe how each piece
+works. Their launchers also include older routes, so start from this table
+when you need the script that made a quoted product. Numbers live in
+`VALIDATION_LEDGER.md` ("Active 2D Result", `VL170`–`VL172`) and in
+`2D_OMNIFOLD_STUDY_STATUS.md`, not here.
+
+Each row records how a pinned product was made. None is a prospective
+command. The rows run on Perlmutter from the hardcoded
+`/pscratch/sd/j/josephrb/...` paths they name, and they write to paths that
+already hold the pinned products. The replica record and the universe
+launchers skip outputs that are already complete (`rg_skip_if_complete`), and
+the rollup refuses to overwrite its output directories. A prospective run
+needs its own authorization, a new output directory, and the launcher's
+`--estimator`/`--seed` settings carried over unchanged.
+
+| Step | Entry point | Reads | Writes |
+|---|---|---|---|
+| Statistical replicas (`VL170`) | `docs/orchestration/state/ki84-rebuild-20261006/sbatch_ki84_replicas.sh` (a record; it repeats `sbatch_unfold_2d_MEFHC_5iter_bootstrap_scaleup.sh` argument for argument, on the fixed code) | merged MEFHC omnifile, baseline flux, a frozen code checkout at `KI84_EXPECT_HEAD` | 300 replica ROOTs under `/pscratch/.../ki84-rebuild-20261006/replicas/` |
+| Systematic universes | `sbatch_unfold_2d_MEFHC_5iter_universes_full.sh` and its matched CV `..._full_CV.sh`; then `uq/rescale_flux_universes.py` applies the flux-universe 1/Φ fix analytically | universe omnifile | `uq/universe_sweep_fluxfix/` (100 rescaled Flux universes, symlinks to the 87 others, and the CV) |
+| ML-noise covariance | step (a) of `uq/final_rollup_full.sh`: `uq/analyze_uq.py` over the lgbm seedscan (`seedscan_lgbm/`) | 10 seedscan ROOTs | `uq/seedscan_lgbm_ml/uq_covariance_ml.root` |
+| **Combined rollup (`VL172`)** | **`uq/rollup_vl170_adoption.sh`**: `analyze_uq.py` on the replicas → `analyze_universes.py --add-norm 0.014 --bootstrap-cov` → `compare_to_paper_fullcov.py` with `hCov_combined` plus the ML covariance (normal and `--log-normal`) → `_ours_only_chi2.py` → figures | the three rows above | `uq/bootstrap_MEFHC_300_vl170/`, `uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/`; digests in `docs/orchestration/state/ki84-adopt-20261006/sha256sums_2d-unfolding_uq.txt` |
+
+The rollup refuses to overwrite its output directories. It first re-runs
+the `VL162` commands on the old inputs as controls. `hCov_combined` already
+contains the bootstrap block; adding `uq_covariance_boot300.root` to it a
+second time double-counts the bootstrap (ledger "Active 2D Result").
+
+Superseded routes, kept as records:
+- `sbatch_final_rollup_full.sh` / `uq/final_rollup_full.sh`. Its universe
+  step (c) reads the pre-fluxfix sweep in `uq/` and writes
+  `uq/universe_stage2_MEFHC_full/`, which is not the quoted product. Only its
+  step (a), the ML covariance, feeds the current chain.
+- `uq/bootstrap_MEFHC_300/` and `uq/universe_stage2_MEFHC_full_matcorr_fluxfix/`
+  hold the `VL162` band. They stay at their sha-pinned paths, but they
+  are not the adopted band.
+
 ## Bootstrap-replica workflow (`--bootstrap-seed N`)
 
 Per-event Poisson(1) weight bootstrap on data + MC jointly. Invariants:
@@ -159,17 +212,38 @@ Per-event Poisson(1) weight bootstrap on data + MC jointly. Invariants:
    intentionally breaks the strict closure identity. Use this only for
    pseudo-experiment coverage calibration, not for deterministic closure
    tests.
-4. **Pin the GBT random_state too.** Each replica should pass both
-   `--bootstrap-seed N` and `--seed N` so ML stochasticity is removed
-   from the per-replica variance. The bootstrap variance and the
-   seedscan variance are *separable* uncorrelated components only when
-   each replica's GBT seed is pinned.
+4. **Hold the GBT random_state fixed across replicas; vary only the
+   bootstrap seed.** Every statistical-band replica launcher passes
+   `--bootstrap-seed N` with the same fixed `--seed 1`:
+   `sbatch_unfold_2d_MEFHC_5iter_bootstrap_scaleup.sh` (N = 1…300,
+   `VL162`), its `VL170` rebuild
+   `docs/orchestration/state/ki84-rebuild-20261006/sbatch_ki84_replicas.sh`,
+   the legacy 1–50 launcher, the negweight and bootsplit variants, and
+   `uq/run_bootstrap_interactive.sh`. Their headers describe seed 1 as
+   matching seedscan trial 1. A fixed seed removes ML stochasticity from
+   the per-replica variance. The bootstrap variance and the seedscan
+   variance are *separable* uncorrelated components only under that
+   condition. Do **not** pass `--seed N`: an earlier submission (Slurm
+   `53327775`) varied `--seed` together with `--bootstrap-seed`,
+   double-counted ML stochasticity, and was redone (scaleup launcher
+   header). The replicas' estimator seed (1) is not the matched universe
+   CV's (`--seed 42`). The central-value launcher `sbatch_unfold_2d_MEFHC.sh`
+   passes neither `--seed` nor `--estimator`. The frozen central value
+   was therefore made with the driver's default exact-split sklearn
+   backend and an unpinned `random_state`, not with LightGBM. Read
+   `docs/orchestration/ASSESSMENT-20261008-2d-estimator-pairing.md`
+   (`E_C` against `E_S`/`E_U`/`E_ML`) before pairing it with any block. The older coverage-toy
+   launchers `sbatch_coverage_toys_MEFHC{,_200}.sh` (`--closure`, item 3)
+   do pass `--seed` equal to the toy's bootstrap seed. They do not produce
+   the band.
 5. **CV unfold = omit the flag.** Don't pass `--bootstrap-seed 0` and
    call it the CV; seed=0 is a valid replica with a non-trivial Poisson
    draw. The CV is the unflagged run.
 
-Driver: `uq/run_bootstrap_interactive.sh` runs N replicas inside an
-existing interactive allocation, batched WIDTH-wide ×
+Interactive driver: `uq/run_bootstrap_interactive.sh` runs N replicas inside an
+existing interactive allocation. The quoted replicas came from the sbatch
+arrays named in "Which script produced the quoted 2D uncertainty", not from
+this driver. Replicas run batched WIDTH-wide ×
 (128/WIDTH)-threads. **Use WIDTH=1 on Perlmutter single-node interactive
 allocations.** The 2026-05-19 contention lesson (sklearn HistGBT
 bandwidth-bound at WIDTH≥2) has not been re-benchmarked for lgbm; even
@@ -202,11 +276,13 @@ For the full lateral+vertical MEFHC sweep:
 - Matched CV:
   `sbatch_unfold_2d_MEFHC_5iter_universes_full_CV.sh` →
   `uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root`.
-- Rollup:
-  `sbatch_final_rollup_full.sh`, whose driver
-  `uq/final_rollup_full.sh` refuses to run without the matched full-CV
-  ROOT and archives any superseded baseline-mismatched full-rollup
-  artifacts before writing replacements.
+- Rollup: the quoted product comes from `uq/rollup_vl170_adoption.sh`,
+  run over the flux-fixed sweep in `uq/universe_sweep_fluxfix/` (see
+  "Which script produced the quoted 2D uncertainty"). The older
+  `sbatch_final_rollup_full.sh` → `uq/final_rollup_full.sh` route refuses
+  to run without the matched full-CV ROOT, but its universe step predates
+  the flux fix and writes `uq/universe_stage2_MEFHC_full/`, which is not
+  the quoted product.
 - Plots:
   `uq_universe_band_pt.png` and `uq_universe_band_pz.png` show grouped
   categories, not one line per universe band. Categories are Flux,
@@ -218,8 +294,10 @@ For the full lateral+vertical MEFHC sweep:
   diagnostic in `analyze_universes.py`, this script projects the full
   205x205 covariance exactly, `C_1D = P C_2D P^T`, before dividing by
   the reported-bin 1D central value. It writes
-  `uq/universe_stage2_MEFHC_full/MEFHC_fig6_7_uncertainty_{pz,pt}.png`
-  and a numeric summary text file. ML covariance is included in the
+  `<out-prefix>_{pz,pt}.png` and a numeric summary text file. The adopted
+  figures are under `uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/`,
+  written by step (5) of `uq/rollup_vl170_adoption.sh`, which also records
+  the flags used. ML covariance is included in the
   total when available, but is drawn only when it exceeds the configured
   visibility threshold.
 
