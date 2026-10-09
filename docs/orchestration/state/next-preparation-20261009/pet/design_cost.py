@@ -137,9 +137,13 @@ def validation_sizing(deff: float) -> dict:
                          (32, "four cases x four regions x two levels")):
             for level, lb in tols:
                 n = n_for_assurance(level, lb, m, deff)
+                # joint: every one of the m decisions passes with probability >= 0.9 if independent
+                nj = n_for_assurance(level, lb, m, deff, target=0.9 ** (1 / m))
                 out["rows"].append({"tolerances": tol_label, "m": m, "family": label, "level": level,
                                     "lower_bound": lb, "replicates_per_case": n,
-                                    "check_assurance_at_n": assurance(n, level, lb, m, deff)})
+                                    "check_assurance_at_n": assurance(n, level, lb, m, deff),
+                                    "joint_pass_prob_at_n_if_independent": assurance(n, level, lb, m, deff) ** m,
+                                    "replicates_per_case_joint": nj})
     return out
 
 
@@ -163,6 +167,27 @@ def futility_power(E: int, true_p: float, deff: float, rng, tol: float = 0.63, m
     k = rng.binomial(nbins, p).sum(axis=1)
     ub = np.array([wilson_ub(x / (E * nbins) * n_eff, n_eff, z) for x in k])
     return float((ub < tol).mean())
+
+
+def sim_hits(E: int, true_p: float, deff: float, rng, n: int, nbins: int = 7) -> np.ndarray:
+    """Total 68 % hits over E experiments x nbins, beta-binomial per experiment with the intra-experiment
+    correlation implied by `deff` (overlap BETWEEN experiments is ignored)."""
+    rho = (deff - 1) / (nbins - 1)
+    a, b = true_p * (1 / rho - 1), (1 - true_p) * (1 / rho - 1)
+    return rng.binomial(nbins, rng.beta(a, b, (n, E))).sum(axis=1)
+
+
+def calibrated_futility(E: int, deff: float, rng, tol: float = 0.63, alpha: float = 0.0125,
+                        n: int = 200000) -> dict:
+    """Critical hit count k_c, calibrated by simulation AT THE BOUNDARY p = tol: no-go iff hits <= k_c, with
+    P(hits <= k_c | p = tol) <= alpha (per case and look; 2 cases x 2 looks Bonferroni -> 0.05)."""
+    k0 = sim_hits(E, tol, deff, rng, n)
+    cdf = np.cumsum(np.bincount(k0, minlength=7 * E + 1)) / n
+    ok = np.nonzero(cdf <= alpha)[0]
+    kc = int(ok.max()) if ok.size else -1
+    return {"E": E, "k_crit": kc, "size_at_boundary": float(cdf[kc]) if kc >= 0 else 0.0,
+            "power": {str(p): float((sim_hits(E, p, deff, rng, n // 4) <= kc).mean())
+                      for p in (0.26, 0.45, 0.55, 0.68)}}
 
 
 # ---- 3. pilot precision ----------------------------------------------------------------------- #
@@ -276,18 +301,23 @@ def main(argv=None) -> int:
         "rows": [{"E": E, "true_abs_bias_over_sd": z, **bias_decisions(E, z, tol, alpha, rng)}
                  for E in (4, 8, 12, 24, 48) for z in (0.0, 0.3, 1.0, 2.0, 3.0)]}
 
+    deff_low = red["histograms"]["eavail@low_acceptance"]["coverage_section9_own"]["0.68"]["design_effect"]
+    out["futility_rule_calibrated"] = [calibrated_futility(E, deff_low, rng) for E in (2, 3, 4, 8)]
     out["futility_rule"] = {
-        "statistic": "pooled 68 % coverage of the frozen section-9 interval in the low-acceptance region, per case "
-                     "(dev tilt, D5 NuWro), Wilson UB at one-sided 0.05/4 (two cases x two looks) on n_eff = 7 E / deff",
-        "no_go_if": "UB < 0.63 in either case",
-        "logic": "for a fixed centre, coverage is monotone in half-width; the section-9 interval is the widest "
-                 "member-based construction considered, so a narrower repair cannot cover more",
+        "statistic": "pooled 68 % hits of the frozen section-9 interval in the low-acceptance region, per case "
+                     "(dev tilt, D5 NuWro); critical count calibrated by simulation at p = 0.63 to one-sided "
+                     "0.0125 per case and look (two cases x two looks, Bonferroni 0.05); see futility_rule_calibrated",
+        "no_go_if": "hits <= k_crit in either case",
+        "scope": "excludes every interval with the six-member-mean centre that is no wider than section 9 in each "
+                 "low-acceptance bin (all variance-only repairs); does NOT exclude a wider bias-allowance interval "
+                 "(S-II with Delta_bias), a different centre, or a new estimator",
+        "rows_wilson_rule_reference": "uncalibrated Wilson-bound version, kept for comparison",
         "study_scale_value": red["histograms"]["eavail@low_acceptance"]["coverage_section9_own"]["0.68"]["pooled"],
         "deff_low_acceptance": red["histograms"]["eavail@low_acceptance"]["coverage_section9_own"]["0.68"]["design_effect"],
         "rows": [{"E": E, "true_coverage": tp,
                   "P_no_go": futility_power(E, tp, red["histograms"]["eavail@low_acceptance"]
                                             ["coverage_section9_own"]["0.68"]["design_effect"], rng)}
-                 for E in (4, 8) for tp in (0.26, 0.45, 0.68, 0.8)]}
+                 for E in (2, 3, 4, 8) for tp in (0.26, 0.45, 0.63, 0.68)]}
 
     # 4. events
     per_exp = v("data_size_pseudo_truth_rows") + v("prior_rows_2M")
@@ -297,15 +327,15 @@ def main(argv=None) -> int:
         "never_drawn_rows_over_one_experiment": v("never_drawn_rows") / per_exp,
         "pseudodata_sampling_fraction_in_DEV": v("data_size_pseudo_truth_rows") / v("dev_bank_truth_rows"),
         "finite_population_variance_factor": 1 - v("data_size_pseudo_truth_rows") / v("dev_bank_truth_rows"),
-        "rows_for_independent_validation": {str(n): n * per_exp for n in (24, 120, 300, 500)},
+        "rows_for_independent_validation": {str(n): n * per_exp for n in (24, 120, 300, 428, 500, 539, 955)},
         "inventory_multiples_for_independent_validation": {str(n): n * per_exp / v("inventory_rows")
-                                                           for n in (24, 120, 300, 500)},
+                                                           for n in (24, 120, 300, 428, 500, 539, 955)},
     }
 
     # 5. costs
-    n_val = {r["level"]: r["replicates_per_case"] for r in out["validation_sizing"]["rows"]
-             if r["m"] == 32 and r["tolerances"].startswith("proposed")}
-    nv = max(n_val.values())
+    rows32 = [r for r in out["validation_sizing"]["rows"] if r["m"] == 32 and r["tolerances"].startswith("proposed")]
+    nv = max(r["replicates_per_case"] for r in rows32)
+    nvj = max(r["replicates_per_case_joint"] for r in rows32)
     stages = {
         "dispatch_192_pilot": 192,
         "E1_look1": DESIGNS["E1_look1_4x6_two_cases_plus_2_partner_sets"]["units"],
@@ -316,16 +346,28 @@ def main(argv=None) -> int:
         "strategyA_validation_120_experiments_O50": 120 * B * (1 + 50),
         "strategyB_calibration_60x6_three_cases": 60 * B * 3,
         "strategyB_final_validation_four_cases": nv * B * 4,
+        "strategyB_final_validation_four_cases_joint": nvj * B * 4,
+        "strategyI_benchmark_2_experiments": 2 * B * (1 + 50),
+        "strategyI_benchmark_4_experiments": 4 * B * (1 + 50),
+        "study_scale_partner_only_crossing_8x6": 8 * B,
         "physical_systematics_R3_low": v("r3_systematics_units", "low"),
         "physical_systematics_R3_high": v("r3_systematics_units", "high"),
     }
-    stages["full_procedure_strategyB_low"] = (stages["E1_through_look2"] + stages["strategyB_calibration_60x6_three_cases"]
+    common = stages["E1_through_look2"] + stages["strategyB_calibration_60x6_three_cases"]
+    stages["full_procedure_strategyB_low"] = (common + stages["strategyI_benchmark_2_experiments"]
                                               + stages["strategyB_final_validation_four_cases"]
                                               + stages["physical_systematics_R3_low"])
-    stages["full_procedure_strategyB_high"] = (stages["E1_through_look2"] + stages["strategyB_calibration_60x6_three_cases"]
+    stages["full_procedure_strategyB_high"] = (common + stages["strategyI_benchmark_4_experiments"]
                                                + stages["strategyB_final_validation_four_cases"]
                                                + stages["physical_systematics_R3_high"])
+    stages["full_procedure_strategyB_joint_low"] = (common + stages["strategyI_benchmark_2_experiments"]
+                                                    + stages["strategyB_final_validation_four_cases_joint"]
+                                                    + stages["physical_systematics_R3_low"])
+    stages["full_procedure_strategyB_joint_high"] = (common + stages["strategyI_benchmark_4_experiments"]
+                                                     + stages["strategyB_final_validation_four_cases_joint"]
+                                                     + stages["physical_systematics_R3_high"])
     out["validation_replicates_per_case_used"] = nv
+    out["validation_replicates_per_case_used_joint"] = nvj
     out["costs"] = {k: priced(u) for k, u in stages.items()}
     f = v("train_share_of_unfolding")
     out["speedup_sensitivity"] = {
@@ -338,7 +380,7 @@ def main(argv=None) -> int:
                   ["a100h_total_with_reserve"] / amdahl(f, s)}
                  for s in (2, 5, 10, 100)]}
     a.out.write_text(json.dumps(out, indent=1) + "\n")
-    print(json.dumps({"fT": fT_meas, "g": g_meas, "deff": deff, "n_val": n_val}, indent=0))
+    print(json.dumps({"fT": fT_meas, "g": g_meas, "deff": deff, "n_val": nv, "n_val_joint": nvj}, indent=0))
     return 0
 
 

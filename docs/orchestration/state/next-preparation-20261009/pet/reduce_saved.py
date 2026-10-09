@@ -56,8 +56,10 @@ HISTS = ("eavail", "eavail@low_acceptance", "eavail@moderate", "eavail@good")
 LEVELS = (0.68, 0.95)
 N_BOOT = 2000
 BOOT_SEED = 20261009
-LIBRARY_CASES = ("D1_p0.350", "D1_p0.175", "D1_m0.700", "D2_bump_c0.3", "D2_bump_c1.0",
-                 "D5_nuwro", "D5p_nuwro", "D5_gibuu", "null")
+LIBRARY_CASES = ("null", "D1_p0.175", "D1_p0.350", "D1_m0.700", "D1_p0.350XD4c_p_up", "D2_bump_c0.3",
+                 "D2_bump_c1.0", "D3_p0.35", "D3_m0.35", "D4a_pipm_up", "D4b_pi0_up", "D4c_p_up", "D4c_p_down",
+                 "D4d_n_up", "D4d_n_down", "D5_nuwro", "D5p_nuwro", "D5_gibuu", "R1_x1.05_D1_p0.350",
+                 "R1_x0.95_D1_p0.350", "R2_x1.01_D1_p0.350")
 
 
 def sha256(path: Path) -> str:
@@ -174,6 +176,13 @@ def load_single(led: Ledger, stem: str, reps: list[int], subdir: str) -> dict:
     if len(set(seeds)) != len(seeds):
         raise SystemExit(f"{stem}: config hashes (seeds) repeat")
     return {h: {k: np.asarray(v, np.float64) for k, v in out[h].items()} for h in HISTS}
+
+
+def check_s4f_receipts(reps: list[int], look1: dict[str, str]) -> None:
+    for r in reps:
+        p = FD / f"results/final/scored_fb/S4F-{CAND}-FB{r}.design_scores.json"
+        if json.loads(p.read_text())["provenance"]["receipt_sha256"] != look1[f"S4F-{CAND}-FB{r}"]:
+            raise SystemExit(f"S4F FB{r}: receipt digest differs from completeness record")
 
 
 def load_sn2(led: Ledger) -> dict:
@@ -331,16 +340,19 @@ def reduce_hist(h: str, s5: dict, s4f: dict, sn2: np.ndarray, rng: np.random.Gen
     for label, sT2 in (("s4f_derived", comp["sT2"]), ("sn2_dev", sT2_sn2)):
         var = W_r * (1 + 1 / B) - np.clip(sT2, 0, None)[None, :]
         res[f"coverage_diag_minus_sT2_{label}_own"] = coverage(mem, t, var)
-    # diagnostic (in-sample: s_D^2 is estimated from these same replicates): the member-mean error
-    # variance the components model predicts, W_r / B + s_D^2, with no bias term.
-    res["coverage_diag_components_insample_own"] = coverage(
-        mem, t, W_r / B + np.clip(comp["sD2"], 0, None)[None, :])
+    # diagnostic (in-sample: the sampling term is estimated from these same replicates): the error variance
+    # the components model predicts, W_r / B + s_De^2, with s_De^2 = Var(estimate - own truth) - W/B (the
+    # ERROR's event-sample term, not the estimate's), and no bias term.
+    sDe2 = e_own.var(axis=0, ddof=1) - comp["W"] / B
+    res["sD2_error_own"] = sDe2.tolist()
+    res["coverage_diag_components_insample_own"] = coverage(mem, t, W_r / B + np.clip(sDe2, 0, None)[None, :])
     return res
 
 
 def library_bias(led: Ledger, s5_eav: dict) -> dict:
-    """Mean signed residual (single fit - own truth) of each S4S case over its eight FB draws, against
-    the dev-tilt section-9 68 % half-width (mean over S5 replicates)."""
+    """Mean signed residual (SINGLE fit - own truth) of every S4S case over FB draws 0-7, on the aggregate
+    E_avail histogram (not each case's natural histogram), against the dev-tilt section-9 68 % half-width
+    of the six-member mean (mean over S5 replicates). Single-fit bias is not member-mean bias."""
     mem = s5_eav["members"]
     hw68 = (tq(0.68, B - 1) * mem.std(axis=1, ddof=1) * math.sqrt(1 + 1 / B)).mean(axis=0)
     out = {"dev_tilt_section9_mean_half_width_68": hw68.tolist(), "cases": {}}
@@ -370,11 +382,8 @@ def main(argv=None) -> int:
     s4f_reps = sorted(int(m[1]) for n in look1 if (m := re.match(rf"^S4F-{CAND}-FB(\d+)$", n)))
     if s4f_reps != list(range(60)):
         raise SystemExit(f"S4F replicates {s4f_reps[:5]}... ({len(s4f_reps)})")
+    check_s4f_receipts(s4f_reps, look1)
     s4f = load_single(led, f"S4F-{CAND}-FB{{r}}", s4f_reps, "scored_fb")
-    for r in s4f_reps:
-        p = FD / f"results/final/scored_fb/S4F-{CAND}-FB{r}.design_scores.json"
-        if json.loads(p.read_text())["provenance"]["receipt_sha256"] != look1[f"S4F-{CAND}-FB{r}"]:
-            raise SystemExit(f"S4F FB{r}: receipt digest differs from completeness record")
     sn2 = load_sn2(led)
     out = {"schema": "next-prep-pet/saved-reductions/1", "candidate": CAND, "k": K, "B": B,
            "n_boot": N_BOOT, "boot_seed": BOOT_SEED,

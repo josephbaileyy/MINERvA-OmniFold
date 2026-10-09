@@ -81,7 +81,14 @@ def check_design(dc: dict, close) -> None:
         close(f"{key} 2M A100-h", c["data_2M_forecast"]["value"]["a100h_total_with_reserve"], units * 1.05 * 7.3 / 0.8)
         close(f"{key} 10M A100-h", c["data_10M_forecast"]["value"]["a100h_total_with_reserve"], units * 1.05 * 29 / 0.8)
     nv = dc["validation_replicates_per_case_used"]
-    full = 108 + 60 * 6 * 3 + nv * 6 * 4 + 121
+    full = 108 + 60 * 6 * 3 + 2 * 6 * 51 + nv * 6 * 4 + 121
+    nvj = dc["validation_replicates_per_case_used_joint"]
+    fullj = 108 + 60 * 6 * 3 + 4 * 6 * 51 + nvj * 6 * 4 + 308
+    close("full procedure joint high units", dc["costs"]["full_procedure_strategyB_joint_high"]["study_scale"]["units"],
+          fullj, rel=0)
+    close("full procedure joint high 2M A100-h",
+          dc["costs"]["full_procedure_strategyB_joint_high"]["data_2M_forecast"]["value"]["a100h_total_with_reserve"],
+          fullj * 1.05 * 7.3 / 0.8)
     close("full procedure low units", dc["costs"]["full_procedure_strategyB_low"]["study_scale"]["units"], full, rel=0)
     close("full procedure low 2M A100-h",
           dc["costs"]["full_procedure_strategyB_low"]["data_2M_forecast"]["value"]["a100h_total_with_reserve"],
@@ -111,6 +118,9 @@ def check_design(dc: dict, close) -> None:
         n = row["replicates_per_case"]
         if not (ass(n) >= 0.9 > ass(n - 1)):
             close(f"N minimal m={row['m']} {row['level']} {row['tolerances']}", ass(n), 0.9, rel=0)
+        nj, tj = row["replicates_per_case_joint"], 0.9 ** (1 / row["m"])
+        if not (ass(nj) >= tj > ass(nj - 1)):
+            close(f"joint N minimal m={row['m']} {row['level']} {row['tolerances']}", ass(nj), tj, rel=0)
     print("design arithmetic: checked")
 
 

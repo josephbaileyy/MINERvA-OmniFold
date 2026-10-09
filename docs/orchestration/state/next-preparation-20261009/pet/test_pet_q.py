@@ -64,8 +64,9 @@ def test_bias_defeats_a_variance_correct_interval():
     assert cc["0.68"]["miss_high_pooled"] > 10 * cc["0.68"]["miss_low_pooled"]
 
 
-def test_coverage_is_monotone_in_half_width():
-    """The futility rule rests on this: same centre, wider interval, coverage cannot fall."""
+def test_coverage_function_is_monotone_in_half_width():
+    """Checks the coverage FUNCTION (same centre, scaled half-width). The futility rule's scope, "no wider
+    than section 9 with the same centre", is a statement of scope, not something this test proves."""
     mem, t, _ = synth(2000, 0.3, 1.0, 1.0, bias=0.8, seed=4)
     base = mem.var(axis=1, ddof=1) * (1 + 1 / B)
     covs = [rs.coverage(mem, t, base * f)["0.68"]["pooled"] for f in (0.25, 0.5, 1.0, 2.0)]
@@ -97,6 +98,14 @@ def test_loader_refuses_a_missing_member(monkeypatch):
         rs.load_s5(rs.Ledger())
 
 
+def test_s4f_receipt_check_refuses_a_mismatch():
+    look1 = rs.completeness(rs.FD / "freeze/COMPLETENESS-look1.tsv")
+    rs.check_s4f_receipts([0, 1], look1)
+    look1["S4F-H2S1T24K5-FB1"] = "0" * 64
+    with pytest.raises(SystemExit, match="S4F FB1"):
+        rs.check_s4f_receipts([0, 1], look1)
+
+
 def test_completeness_parser_refuses_an_incomplete_row(tmp_path):
     p = tmp_path / "c.tsv"
     p.write_text("# manifest\trow\tstatus\treceipt_sha256\nm\tS5-X-FB0-b1\tRUNNING\tabc\n")
@@ -116,10 +125,21 @@ def test_price_reserve_is_t_over_0p8_not_1p2_t():
     assert p["a100h_total_with_reserve"] != pytest.approx(100 * 1.05 * 1.2)
 
 
-def test_futility_rule_controls_false_no_go():
+def test_calibrated_futility_size_at_the_boundary():
+    """The calibrated critical count holds the no-go rate at p = 0.63 (the boundary) to <= 0.0125 per case
+    and look, re-measured on fresh simulation; and has power > 0.9 at E = 8 for the study-scale 0.26."""
     rng = np.random.default_rng(5)
-    assert dc.futility_power(4, 0.68, 2.2, rng) < 0.03
-    assert dc.futility_power(8, 0.26, 2.2, rng) > 0.9
+    for E in (4, 8):
+        r = dc.calibrated_futility(E, 2.23, rng)
+        fresh = (dc.sim_hits(E, 0.63, 2.23, rng, 200000) <= r["k_crit"]).mean()
+        assert fresh <= 0.0125 + 0.0015
+    assert dc.calibrated_futility(8, 2.23, rng)["power"]["0.26"] > 0.9
+
+
+def test_wilson_futility_is_anticonservative_at_the_boundary():
+    """Records why the Wilson version was replaced: its boundary rate exceeds the nominal 0.0125."""
+    rng = np.random.default_rng(6)
+    assert dc.futility_power(4, 0.63, 2.23, rng) > 0.0125
 
 
 @pytest.mark.parametrize("which", ["reductions", "design"])
