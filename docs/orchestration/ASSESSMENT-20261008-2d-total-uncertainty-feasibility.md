@@ -362,7 +362,10 @@ Admitted node-h at 4 × 1,250 = 5,000 experiments, with pairing not established 
 
   - A's own prices for the missing transfer operands (`price_for_C`):
     - `P03`, an exact bootstrap: N = 50 about 34–39 node-h; N = 300 about 205–215;
-    - `P05`, the exact universes: about 128 node-h;
+    - `P05`, the exact universes: about 128 node-h if each exact universe unfold costs what the exact CV unfold
+      does. At this assessment's universe/CV ratio (2.24, as in the branch above) it is about 285 node-h
+      (187 × 0.68 × 2.24 + 0.68). Both are forecasts on A's 0.68 node-h packed extrapolation; no exact
+      universe unfold has run (closeout correction 2026-10-09, focused review N2);
     - `P09b`, the exact seed scan: about 7 node-h packed, or 193 unpacked.
 - **Pairing.** With a LightGBM central, pairing established versus not changes P2 by 33–141 node-h.
 
@@ -410,7 +413,7 @@ Admitted node-h at 4 × 1,250 = 5,000 experiments, with pairing not established 
 
 | Stage | Admission evidence | Authority | Budget | Terminal stop |
 |---|---|---|---|---|
-| 0. Central estimator | Either measured transfers `E_S → E_C` with declared observables and tolerances (A's `P03`, `P05`, `P09b`), or a recorded change of the quoted central estimator | Joseph: a change of central estimator is reserved to him; the transfer measurements need compute admission | transfers: about 170–350 node-h at A's packed prices (`P03` at N = 50 or 300, plus `P05` and `P09b`); the change of estimator costs none | without one of them, no claim about the uncertainty attached to the quoted central (`E_C`), or about the total, is admissible: **stop** for those claims. Work explicitly labelled as about `E_S` (the LightGBM band itself), such as B's N2 diagnostic, does not need stage 0; it needs Joseph's choice to pursue `E_S`-scoped work plus the KI-85 lift |
+| 0. Central estimator | Either measured transfers `E_S → E_C` with declared observables and tolerances (A's `P03`, `P05`, `P09b`), or a recorded change of the quoted central estimator | Joseph: a change of central estimator is reserved to him; the transfer measurements need compute admission | transfers: about 170–350 node-h at A's packed prices with exact universes at the CV rate, or about 330–510 node-h with them at this assessment's universe/CV ratio (`P03` at N = 50 or 300, plus `P05` and `P09b`; forecasts, not timings); the change of estimator costs none | without one of them, no claim about the uncertainty attached to the quoted central (`E_C`), or about the total, is admissible: **stop** for those claims. Work explicitly labelled as about `E_S` (the LightGBM band itself), such as B's N2 diagnostic, does not need stage 0; it needs Joseph's choice to pursue `E_S`-scoped work plus the KI-85 lift |
 | 1. Matching | A's FREEZE row outcomes; Audit 2 identity proof; matched sweep at the chosen central (S-a) | none for reads; Joseph for S-a compute | 0 node-h locally; S-a 25–94 node-h (LightGBM) | PAIRING NOT ESTABLISHED, which carries S-a into every later stage |
 | 2. Statistical validation | B's frozen design; R0; independent populations (a second production or a validated route G); KI 85 deferral lifted | Joseph | B's figures (13,440–20,862 node-h primary; 7.4 node-h plus R0 for N2) | B's terminal states. A PASS stays statistical-only. NO-GO while obstacle 2 stands |
 | 3. Missing-source and method qualification | Constructions for C03 (bound or stream), C05a (selection-complete laterals), M1 generator, X01 (joint throws or cross term), X02/X03 (factorial or bound), C09 development truths | Joseph for compute; A for code under its ownership | setup 79–469 node-h, plus 20% reserve | INCONCLUSIVE if any construction fails its own closure; NO-GO if C05a support cannot be made selection-complete |

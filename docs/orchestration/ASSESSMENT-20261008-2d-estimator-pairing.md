@@ -200,8 +200,16 @@ Details, commands and exit codes: `P/a/verification.md` §1.
    - P03, exact-backend replicas: one exact unfold is 69,523 s wall, single-threaded, MaxRSS 16.8 GB.
      Packed by memory, N = 50 costs about 34–39 node-h and N = 300 about 205–215 node-h. Unpacked as
      originally run, it is 19.3 node-h per replica.
-   - P05, exact-backend universes: about 128 node-h for all 187 plus CV (memory on the 119 GB omnifile
-     unmeasured); a dominant-band subset is cheaper.
+   - P05, exact-backend universes: about 128 node-h for all 187 plus CV, **if each exact universe
+     unfold costs what the exact CV unfold does** (188 × 0.68). This is a forecast, not a timing:
+     0.68 node-h per exact unfold is the memory-packed extrapolation from the one measured exact
+     run (as for P03). No exact universe unfold has run, and memory on the 119 GB omnifile is
+     unmeasured. C's assessment prices the same sweep at about
+     285 node-h (187 × 0.68 × 2.24 + 0.68). It applies the documented LightGBM universe/CV wall ratio
+     (about 30 min per universe task against 13 min 24 s for the CV, both on a full node, neither a
+     receipt). C notes that this multiplicative ratio is an upper-side choice for a compute-bound
+     single-threaded job. Neither figure is measured. A dominant-band subset is cheaper under either.
+     (Closeout correction 2026-10-09, focused review N2.)
    - P07, seed transfer: LightGBM replicas at seed 42 cost 0.059 node-h each on shared (VL170
      measured): N = 100 is about 6 node-h and N = 300 about 18 node-h.
    - P09b, exact seed noise: 10 exact unfolds, about 7 node-h packed.
