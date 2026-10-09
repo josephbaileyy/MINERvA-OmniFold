@@ -54,6 +54,22 @@ Evidence, one subdirectory per session: [`state/uncertainty-preparation-20261008
 | D — navigation (PASS, documentation only) | [`state/uncertainty-preparation-20261008/d/disposition.md`](state/uncertainty-preparation-20261008/d/disposition.md) |
 | E — integration and independent review | [`DELIVERY-20261008-uncertainty-preparation.md`](DELIVERY-20261008-uncertainty-preparation.md) |
 
+### Next preparation (sessions 1–6), dispatched 2026-10-09
+
+Closeout of the A–E preparation, plus bounded engineering and successor-design lanes. It launches no
+compute and authorizes no experiment. Common base, writer table and report metadata:
+[`state/next-preparation-20261009/DISPATCH.md`](state/next-preparation-20261009/DISPATCH.md).
+Each report is written only by its lane, on its own branch, and is absent until pushed.
+
+| session | report |
+|---|---|
+| 1 — preparation closeout | `state/next-preparation-20261009/closeout/REPORT.md` |
+| 2 — import safeguards and unlaunched N2 harness | `state/next-preparation-20261009/guard/REPORT.md` |
+| 3 — targeted repository consolidation | `state/next-preparation-20261009/structure/REPORT.md` |
+| 4 — performance feasibility | `state/next-preparation-20261009/speed/REPORT.md` |
+| 5 — 5D GBDT successor design | `state/next-preparation-20261009/gbdt/REPORT.md` |
+| 6 — PET saved-output diagnosis | `state/next-preparation-20261009/pet/REPORT.md` |
+
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
 | Subject | Record |
