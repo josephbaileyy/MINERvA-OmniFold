@@ -163,10 +163,13 @@ when you need the script that made a quoted product. Numbers live in
 `VALIDATION_LEDGER.md` ("Active 2D Result", `VL170`–`VL172`) and in
 `2D_OMNIFOLD_STUDY_STATUS.md`, not here.
 
-Every row is a **frozen reproduction**: it re-derives products that are
-already pinned, and it runs on Perlmutter from the hardcoded
-`/pscratch/sd/j/josephrb/...` paths it names. A prospective run needs its
-own authorization, a new output directory, and the launcher's
+Each row records how a pinned product was made. None is a prospective
+command. The rows run on Perlmutter from the hardcoded
+`/pscratch/sd/j/josephrb/...` paths they name, and they write to paths that
+already hold the pinned products. The replica record and the universe
+launchers skip outputs that are already complete (`rg_skip_if_complete`), and
+the rollup refuses to overwrite its output directories. A prospective run
+needs its own authorization, a new output directory, and the launcher's
 `--estimator`/`--seed` settings carried over unchanged.
 
 | Step | Entry point | Reads | Writes |
