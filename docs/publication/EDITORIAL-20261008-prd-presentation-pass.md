@@ -405,3 +405,8 @@ split a paragraph at a displayed equation.
 
 The article's paragraphs are within the range of the comparison set: the median is mid-range and the 90th percentile
 equals the T2K OmniFold paper's.
+
+**Standalone re-sync after §11:** `main_paper.tex` and `paper_body.tex` copied from `72998cdd`; standalone branch
+`sync-prd-editorial-pass-20261008` = **`63d3cd1cbce3bc5e0b29d95e703138e6b9b5b449`**. Every tracked file equals canonical (`cmp`);
+standalone `build_all.sh` rc 0 at 123 / 9 / 11 pp; `pdftotext` of all three PDFs identical to the canonical build. Standalone
+`main` unchanged at `e1af61e3`; canonical `main` unchanged at `b612ee3a`.
