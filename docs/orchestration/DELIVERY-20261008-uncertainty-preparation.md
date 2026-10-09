@@ -47,7 +47,7 @@ or changes publication scope.
 | frozen lane tips (Joseph's list, verified 2026-10-09T07:10Z) | A `f762749d`, B `00f7cff1`, C `803f1dcc`, D `3fde202e` |
 | integrated commit reviewed in the initial review | `cd0da202` |
 | repair cycle 1 (final lane tips) | A `355174fe` (behavior) + `cc9eed27` (documentation); B `8ac300fa` + `c783d9c3`; C `57f6dd30`; D `926956d2` + `ecb52dde` |
-| integrated commit of the focused review | `REVIEW2_COMMIT` |
+| integrated commit of the focused review (cycle 1) | `ee61fb22` |
 | final delivery commit | the commit that carries this file on `prep/uncertainty-e-20261008` |
 
 Every integrated lane file is byte-identical to its lane tip, and every upstream file to `33811d7d`.
@@ -122,11 +122,12 @@ how far apart the two centrals are.
 | choice (A §7 label) | what it means | cost | what it permits next |
 |---|---|---|---|
 | **Keep and disclose** (A "(a)") — *recommended* | Keep the exact-GBT central. State that its uncertainty was computed for the LightGBM implementation, and that the transfer is unmeasured (centrals differ by a median 0.97 % per bin, 1.3 σ_stat; total ratio 0.9999). Any statistical validation then targets the LightGBM estimator only, explicitly not the quoted central | **0 node-h.** If the deliverables are to say so, that is a wording change by the publication owner, with the three-build and standalone synchronization | N2 becomes a candidate (below) |
-| **Measure the transfer** (A "(b)") | Run the exact backend for the missing operands: `P03` (50 exact bootstrap replicas), `P05` (exact universes) and `P09` (exact seed scan) | about 34–39 node-h for `P03` at N = 50, if A's memory packing holds (contention unmeasured); about 170–350 node-h for all three. No observable or tolerance has been predeclared, so it needs a design and its own authorization | a transfer verdict for the quoted central |
+| **Measure the transfer** (A "(b)") | Run the exact backend for the missing operands: `P03` (50 exact bootstrap replicas), `P05` (exact universes) and `P09b` (exact seed scan) | about 34–39 node-h for `P03` at N = 50, if A's memory packing holds (contention unmeasured). For all three, about 170–350 node-h with exact universes at the CV rate (A's `P05` price), or about 330–510 node-h with C's repaired universe/CV ratio (review cycle 1, N2). No observable or tolerance has been predeclared, so it needs a design and its own authorization | a transfer verdict for the quoted central |
 | **Re-quote the LightGBM central** (A "(c)") | Make the seed-1 LightGBM product (it exists) the quoted central, matched to the `VL170` band | 0 node-h for the central and its statistical band. Systematics stay seed 42 (`P07`): a seed-transfer measurement is 6–18 node-h, a matched seed-1 sweep 25–94 node-h. This is an estimator and publication-scope decision, and the comparisons and figures are re-derived | N2 then tests the quoted central's statistical estimator |
 
-**Recommendation: keep and disclose, now.** It costs nothing, any of the three needs it settled
-before the package is submitted, and the other two need new admission artifacts. If Joseph chooses
+**Recommendation: keep and disclose, now.** E's rationale, a judgement rather than a measured fact:
+it costs nothing; a pairing statement of some kind is needed in the assembled package whichever choice
+is made; and the other two choices need new admission artifacts first. If Joseph chooses
 keep-and-disclose or re-quote, then, after the publication package (his `KNOWN_ISSUES.md` 85 ruling),
 N2 is the one statistical experiment specified to admission level: 9.8–12.2 node-h with reserve. It
 would still need a registered design, a guarded harness (§5), the identity rebuild with its
@@ -149,7 +150,7 @@ admit compute.
 | feasibility | Primary priced, not admitted. N2 priced with reserve; the identity rebuild's billing is assumed |
 | total-uncertainty boundary | C's component dispositions: P1 INFEASIBLE, P2 INCONCLUSIVE, unscoped bounds have no method. Anything statistical stays labelled statistical-only |
 | supported workflow and preservation | **PASS** (D): four navigation tasks reproduced by the review; paths resolve; hash bindings intact; no frozen file edited |
-| independent review and delivery | Initial review at `cd0da202`; material findings F1–F3 repaired by their owners, F4 routed as above; focused review at `REVIEW2_COMMIT` (§8) |
+| independent review and delivery | Initial review at `cd0da202`; material findings F1–F3 repaired by their owners and confirmed RESOLVED in the focused review at `ee61fb22`; F4 is routed (§5), and it binds N2 and any new producer, which are NOT READY, not the zero-compute decision in §6. No new material finding; cycle 2 was not needed (§8) |
 
 ## 8. Review and repair record
 
@@ -169,7 +170,27 @@ admit compute.
   [`recompute/`](state/uncertainty-preparation-20261008/e/recompute/).
 - **Findings.** Four material (F1–F4), four minor (F5–F8), five notes (F9–F13). The owners repaired
   F1–F3 and F5–F13 on their own branches in cycle 1 (§4). F4 has no lane owner and is routed (§5).
-- **Focused review (cycle 1 of 2).** `FOCUSED_REVIEW_RESULT`
+- **Focused review (cycle 1 of 2).** Same reviewer, resumed at `ee61fb22`; worktree empty at start
+  and end; preserved at [`review-cycle1.md`](state/uncertainty-preparation-20261008/e/review-cycle1.md).
+  F1–F3 and F6–F13 RESOLVED; F5 PARTIAL; F4 routed, still open. A's `355174fe` verified: KI-84 15/15
+  with the bit-identity class, insert inside `main()`, bindings intact, and the new test fails on
+  write-time mutants of either digest. Moved numbers reproduced: C's exact-central branch
+  5,728.5 / 268,936.4 and rebuild 292.17 / 8,297.51; N2 with reserve 9.787–12.162; B's sensitivity
+  row. The integrated terminal labels and the §6 decision were judged supported, neither overstated
+  nor understated, with §6 the smallest available decision. **No new material finding.**
+- **After cycle 1** E repaired its own surfaces for the cycle's minor findings: N2 (both universe-rate
+  conventions in §6), N3 (the proposal's §0 now cites the focused review), N4 (`P09b` labels in §6 and
+  STATUS) and N5 (the §6 rationale marked as E's judgement). These wording repairs were not
+  re-reviewed. Cycle 2 was not used.
+- **Residual minor findings (no lane repair left, or not worth a cycle).**
+  - Cycle-1 N1: B's DESIGN still calls N1's truth-free variant "not ruled out". With N1's fixed bank and
+    both-stream inner bootstrap, the outer scatter lacks the MC-stream term, so an exactly calibrated
+    bootstrap gives κ ≈ √(data share) ≈ 0.59, below the 0.80 edge. A truth-free variant therefore needs
+    a data-only inner stream, which makes it N2's shape. B has used both repairs; recorded here (§9).
+  - Cycle-1 N4: C's assessment still uses unsplit `P09` labels in five places (`P09a`/`P09b` intended).
+  - Cycle-1 N2: A's `P05` price (≈128 node-h) uses the CV rate; §6 quotes both conventions.
+  - Cycle-1 F12 note: the new test cannot distinguish hashing at `main()` start from hashing at helper
+    import, and a helper imported before `main()` by a caller would be hashed from the current file.
 
 ## 9. The five scrutiny questions
 
@@ -180,9 +201,11 @@ admit compute.
    uncertainty is numerically wrong.
 2. **Do B's population requirements justify its no-go?** Yes. They come from the plan's own text and
    from the statistics: outer MC variability cannot be the same bootstrap of the same bank. With
-   MC/data 4.708, disjoint production-size sets number ⌊4.708/5.708⌋ = 0. The held-out alternative
-   "fails as specified" (finite reference treated as exact). Its reference-aware and truth-free
-   variants are named and unpriced, not ruled out.
+   MC/data 4.708, disjoint production-size sets number ⌊4.708/5.708⌋ = 0. The held-out alternative N1
+   "fails as specified" for two reasons: its finite reference is treated as exact, and its fixed bank
+   with a both-stream inner bootstrap leaves the outer scatter without the MC-stream term (κ ≈ 0.59 for
+   an exactly calibrated bootstrap; review cycle 1, N1). Its reference-aware variant is unpriced. A
+   truth-free variant needs a data-only inner stream, which is N2's shape.
 3. **Costs of the specified designs versus all designs.** No lane now claims infeasibility for an
    unpriced design. Cheaper inner procedures (B = 50), smaller families and looser tolerances are
    priced as separate procedures. None is validated, so none contributes admitted savings. The
@@ -213,7 +236,7 @@ admit compute.
 | B | about 0.9 h + 2 repairs | < 0.05 core-h | login-node metadata reads only |
 | C | about 0.9 h + 1 repair | < 0.02 core-h | |
 | D | about 0.9 h + 2 repairs | < 0.1 core-h | |
-| E, including reviewer | `E_ACTIVE` | < 0.2 core-h | reviewer: 0.4 h wall, 46 MB copied, scratch 1.3 GB then deleted |
+| E, including reviewer | about 1.1 h (05:50–06:02, 07:10–07:52, 09:50–10:05Z) plus the reviewer's 0.7 h (0.4 h initial, 0.3 h focused) | < 0.3 core-h | reviewer: 46 MB copied and checked against remote sha256, scratch peak 1.3 GB, deleted after preservation |
 
 Total well inside the plan's 30 h / 14 core-h ceilings. No allocation, idle allocation or campaign
 budget was used.

@@ -1,6 +1,6 @@
 {
   "schema": "uncertainty-preparation-20261008/e/integration v1",
-  "phase": "DISPATCH — baseline and ownership setup only; final integration and the independent review have NOT begun",
+  "phase": "FINAL — integration and independent review complete; terminal recorded in DELIVERY-20261008-uncertainty-preparation.md",
   "plan": {
     "repo_path": "docs/orchestration/PLAN-20261008-uncertainty-investigation-preparation.md",
     "git_blob": "fbbc0d656c4ef4793496d215dd5a65aae1a7b1b6",
@@ -235,11 +235,11 @@
     "A_to_D": "chosen by Joseph at launch; each session records its actual model, effort and session id in its terminal report"
   },
   "budget_consumed_by_E": {
-    "active_time": "about 0.2 h of 8 h at dispatch (05:50Z to 06:02Z)",
-    "local_cpu_core_hours": "below 0.05 of 4 (git and the pre-commit checks only)",
+    "active_time": "about 1.1 h of 8 h, plus the reviewer's 0.7 h",
+    "local_cpu_core_hours": "below 0.3 of 4",
     "cluster_node_hours": 0,
     "gpu_hours": 0,
-    "new_output": "the plan, this file, the CATALOG section, five overrides rows, the generator and four packets (< 1 MiB)"
+    "new_output": "about 0.5 MiB committed under P/e plus E's document edits"
   },
   "not_authorized_by_this_record": "any compute, any experiment, a peer message or intervention, a merge to main, a MANIFEST.tsv regeneration ahead of integration, or any change to a scientific gate, adoption or publication scope",
   "dispatch_packets": {
@@ -275,5 +275,40 @@
       "[uncprep-<lane>] FREEZE"
     ],
     "launch": "Joseph launches A-D by pasting a packet; E launches none of them and sends no peer message"
+  },
+  "final_integration": {
+    "upstream_main_at_integration": "33811d7db15f08fb0d83b6a8de18ffdb6a2e7b32 (PR #58; publication files and MANIFEST.tsv only; merged 8219eca4)",
+    "frozen_lane_tips_verified_utc": "2026-10-09T07:10:23Z",
+    "frozen_lane_tips": {
+      "A": "f762749d16f5bb55ac2228dd765aea1ca357ab78",
+      "B": "00f7cff16c173b7c80c97797635818f6e5f74543",
+      "C": "803f1dcc677124f0f51dc586f7f89921dcce0552",
+      "D": "3fde202e49fc2c9e5c951de2b1d3f468d22c809d"
+    },
+    "initial_review_commit": "cd0da20240059ec884f8855614eddab32bcf2ec8",
+    "repair_cycle_1_tips": {
+      "A": "cc9eed2709344a9fbb542a2e3ecceb63ded4829f (behavior 355174fe)",
+      "B": "c783d9c3e144a213763d676ce819663c8fa3110b",
+      "C": "57f6dd30753683a2821cb5d49401ddb067b52a71",
+      "D": "ecb52ddecc9881512c0e58e439aa3cd638c7f385"
+    },
+    "focused_review_commit": "ee61fb223668252dc571327af7678d40c3d47aee",
+    "review_cycles_used": "initial + 1 focused of 2; no new material finding in cycle 1",
+    "blob_identity_check": "every integrated lane file equals its repaired lane tip; every upstream file equals 33811d7d",
+    "manifest": "regenerated from source with generate_manifest.py --committed-only after staging; --check exit 0",
+    "terminal": {
+      "named_experiment": "INFEASIBLE UNDER STATED CONSTRAINTS (populations; cost supporting)",
+      "total_uncertainty": "NO-GO (lane C)",
+      "N2": "NOT READY (scope choice, KI-85 lift, OI-136/guarded harness, registration and review)",
+      "quoted_central_uncertainty_claims": "nothing ready; transfer unmeasured"
+    },
+    "next_decision": "Joseph: how the quoted 2D central is paired with its uncertainty — keep and disclose (0 node-h, recommended), measure the transfer (34–39 node-h for P03; 170–510 for all three), or re-quote the LightGBM central (0 node-h central; 6–94 node-h for systematics)",
+    "known_issues_rows_added": [
+      88,
+      89,
+      90,
+      91
+    ],
+    "not_done": "no merge to main, no PR, no tag, no compute, no adoption, no publication edit"
   }
 }

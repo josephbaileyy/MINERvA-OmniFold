@@ -50,7 +50,7 @@ as "Phase 18.2 pipeline" below says. The statistical (`VL170`, seed 1), systemat
 matched CV) and ML (seeds 1–10) blocks are LightGBM. Same-estimator pairing of the central with each
 block is disproved; whether the blocks describe the central's uncertainty is unmeasured
 ([estimator-pairing assessment](../docs/orchestration/ASSESSMENT-20261008-2d-estimator-pairing.md)
-`P01`–`P09`; `KNOWN_ISSUES.md` 88). The 6.87 % budget divides by the LightGBM seed-42 CV; with the
+`P01`–`P09b`; `KNOWN_ISSUES.md` 88). The 6.87 % budget divides by the LightGBM seed-42 CV; with the
 quoted central as denominator the same covariance gives 6.83 % (`P14`).
 
 | Quantity | Value |

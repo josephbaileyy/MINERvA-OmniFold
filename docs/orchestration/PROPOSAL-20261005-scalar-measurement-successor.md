@@ -26,8 +26,8 @@ integration owner of the
 [uncertainty preparation](PLAN-20261008-uncertainty-investigation-preparation.md).
 The October 5 text below is otherwise unchanged. **The October 5 independent
 review accepted the October 5 text only.** This reconciliation does not inherit
-that acceptance; it was reviewed separately, in the preparation's own review
-(`state/uncertainty-preparation-20261008/e/review.md`). Nothing here admits
+that acceptance; it was reviewed separately, in the preparation's focused review cycle
+(`state/uncertainty-preparation-20261008/e/review-cycle1.md`, at `ee61fb22`). Nothing here admits
 compute, changes an adoption or changes the publication scope. The integrated
 conclusion is [`DELIVERY-20261008-uncertainty-preparation.md`](DELIVERY-20261008-uncertainty-preparation.md).
 
