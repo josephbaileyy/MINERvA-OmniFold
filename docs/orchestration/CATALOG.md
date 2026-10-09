@@ -36,6 +36,22 @@ Scalar measurement successor proposal (2026-10-05):
 [bounded 2D admission and resource request](PROPOSAL-20261005-scalar-measurement-successor.md).
 This is a proposal, not compute authority or a change to the current campaigns.
 
+### Uncertainty-investigation preparation (sessions A–E), dispatched 2026-10-08
+
+Preparation only. It launches no compute and authorizes no experiment; each proposed experiment
+needs its own authorization. The plan, common contract, write-ownership table and budgets:
+[`PLAN-20261008-uncertainty-investigation-preparation.md`](PLAN-20261008-uncertainty-investigation-preparation.md).
+E's baseline, ownership snapshot and the A–D dispatch packets:
+[`state/uncertainty-preparation-20261008/e/`](state/uncertainty-preparation-20261008/e/).
+Each deliverable below is written only by its owner on its own branch, and is absent until pushed.
+
+| session | deliverable |
+|---|---|
+| A — 2D estimator pairing | `ASSESSMENT-20261008-2d-estimator-pairing.md` |
+| B — independent statistical-validation design (a draft, not registered or authorized) | `DESIGN-20261008-2d-independent-statistical-validation.md` |
+| C — total-uncertainty feasibility | `ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md` |
+| E — integration and independent review | `DELIVERY-20261008-uncertainty-preparation.md` |
+
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
 | Subject | Record |
