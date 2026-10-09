@@ -21,6 +21,8 @@ Writes summary numbers to stdout and renders:
 Also writes a ROOT file uq_covariance.root with:
   - hMean2D, hStd2D, hRel2D (TH2D)
   - hCov2D_reported (TH2D, N_reported x N_reported)
+  - hReportedCells (TH2D on the pT/pz grid, 1 = reported): the identity
+    of hCov2D_reported's rows (see reported_cells.py)
 """
 
 
@@ -41,7 +43,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import ROOT
 
-from reported_cells import PT_EDGES, PZ_EDGES  # noqa: F401  (au.PT_EDGES is used by importers)
+from reported_cells import PT_EDGES, PZ_EDGES, identity_hist, reported_indices
 
 
 def th2_to_array(h):
@@ -112,6 +114,7 @@ def main():
     # so the covariance index ordering is reproducible.
     reported = (mean > 0).ravel(order="C")
     n_reported = int(reported.sum())
+    cells = reported_indices(mean > 0)
 
     pt_w = np.diff(PT_EDGES)
     pz_w = np.diff(PZ_EDGES)
@@ -290,6 +293,7 @@ def main():
             for j in range(n_reported):
                 hCov.SetBinContent(i + 1, j + 1, float(cov[i, j]))
         hCov.Write()
+    identity_hist(cells).Write()
     rf_out.Close()
     print()
     print(f"[wrote] {os.path.join(args.outdir, 'uq_spread_2d.png')}")

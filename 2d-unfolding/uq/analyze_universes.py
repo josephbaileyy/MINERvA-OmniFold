@@ -26,7 +26,9 @@ Outputs (under --outdir):
   - uq_universe_band_pz.png     pz projection of grouped uncertainty sigma
   - uq_universe_covariance.root containing hCov_universe_total +
         hCov_universe_<band> for each band, plus hSigma_universe_total
-        (TH2D of per-bin sqrt(diag) of total universe cov).
+        (TH2D of per-bin sqrt(diag) of total universe cov), and
+        hReportedCells (TH2D on the pT/pz grid, 1 = reported): the identity
+        of every covariance's rows (see reported_cells.py).
 
 Usage:
   python uq/analyze_universes.py \
@@ -56,7 +58,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import ROOT
 
-from reported_cells import PT_EDGES, PZ_EDGES
+from reported_cells import PT_EDGES, PZ_EDGES, identity_hist, reported_indices
 
 # Filename pattern: 2d_xsec_<DSET>_<...>_uni_<BAND>_<IDX>.root
 UNI_RE = re.compile(r".*_uni_(?P<band>[A-Za-z0-9_]+?)_(?P<idx>\d+)\.root$")
@@ -204,6 +206,7 @@ def main():
     reported_mask_2d = cv > 0
     reported_flat = reported_mask_2d.ravel(order="C")
     n_reported = int(reported_flat.sum())
+    cells = reported_indices(reported_mask_2d)
     print(f"\n[INFO] n_reported = {n_reported} bins")
 
     band_cov = {}
@@ -345,6 +348,7 @@ def main():
         make_sigma_th2d("hSigma_combined",
                         "Combined sqrt(diag) over reported bins",
                         np.sqrt(np.maximum(np.diag(combined_cov), 0)))
+    identity_hist(cells).Write()
     rf_out.Close()
     print(f"\n[wrote] {out_root}")
 

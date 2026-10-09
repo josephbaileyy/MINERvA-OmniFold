@@ -1,0 +1,14 @@
+UNI matched_new_boot     old rc=0 combined=True | new rc=0 root=True combined=True 
+UNI matched_legacy_boot  old rc=0 combined=True | new rc=0 root=True combined=True 
+UNI no_boot              old rc=0 combined=False | new rc=0 root=True combined=False 
+UNI perm_boot            old rc=0 combined=True | new rc=0 root=True combined=True 
+UNI omit_boot            old rc=0 combined=False | new rc=0 root=True combined=False 
+UNI noid_boot            old rc=0 combined=True | new rc=0 root=True combined=True 
+UNI perm_cv_no_boot      old rc=0 combined=False | new rc=0 root=True combined=False 
+OO  matched_stored_identity  rc old=0 new=0 stdout_equal=True new_only=[] err=
+OO  matched_legacy_universe  rc old=0 new=0 stdout_equal=True new_only=[] err=
+OO  perm_boot_vs_paper       rc old=0 new=0 stdout_equal=True new_only=[] err=
+OO  perm_universe_vs_paper   rc old=0 new=0 stdout_equal=True new_only=[] err=
+OO  noid_boot                rc old=0 new=0 stdout_equal=True new_only=[] err=
+extra objects (new only): [('uni', 'uq_universe_covariance.root', 'hReportedCells'), ('uq', 'uq_covariance.root', 'hReportedCells')]
+differences other than extra objects: []
