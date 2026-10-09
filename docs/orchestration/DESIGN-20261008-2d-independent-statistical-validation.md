@@ -99,9 +99,10 @@ the producers do not do that. A and this lane agree on every row below.
    resolved or Joseph's decision to change the quoted central estimator. Using `E_C` as the
    per-experiment central instead costs one exact unfold per experiment (69,523 s single-threaded,
    MaxRSS 16.8 GB: about 0.7 node-h packed by memory, 19.3 node-h unpacked; A `f762749d` §5). C's
-   FREEZE (`803f1dcc` §6) prices its cheapest `E_C`-keeping route, the 4-case fixed-band P2, at
-   5,566 node-h admitted if A's memory packing (0.68 node-h per exact unfold) holds, and 263,513 if the
-   exact unfolds run as the central did. `E_C`'s own seed
+   REPAIR 1 (`57f6dd30` §6) prices its cheapest `E_C`-keeping route, the 4-case fixed-band P2, at
+   5,728 node-h admitted if A's memory packing (0.68 node-h per exact unfold, contention unmeasured)
+   holds, and 268,936 if the exact unfolds run as the central did, including a one-time exact rebuild
+   of 292 / 8,298 node-h. `E_C`'s own seed
    variation has never been measured, so it could not be fixed estimator randomness.
 2. **Purity is re-estimated per experiment, on purpose.** The procedure computes purity from the data
    it is given, so in the outer experiment it is computed from each pseudo-data set. The inner band
