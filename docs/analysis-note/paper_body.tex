@@ -148,30 +148,20 @@ independent measurements; no combined-covariance statistic is quoted.
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=0.78\textwidth]{model_comp_projections}\\[-0.4em]
-  \begin{minipage}[c]{0.31\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{paper_validation_residual}
-  \end{minipage}\hspace{1.2em}
-  \begin{minipage}[c]{0.30\textwidth}
-    \centering\footnotesize
-    \textbf{Median relative uncertainty}\\[0.35em]
-    \begin{tabular}{@{}lr@{}}
-      This work & \SI{\uqMedian}{\percent} \\
-      Published & \SI{\uqPaper}{\percent}
-    \end{tabular}\\[0.8em]
-    \textbf{Published-$\sigma$ standardized residuals}\\[0.35em]
-    mean $=\pullMean$, RMS $=\pullRMS$
-  \end{minipage}
+  \includegraphics[width=\textwidth]{paper_fig1_validation}
   \caption{End-to-end validation against the published binned result
   \cite{MINERvA:2021owq}.  Top: $\pT$ and $\pPar$ projections of the published
-  result, the five-iteration OmniFold result, and the MINERvA Tune~v1.  The two
-  measurements use the same data, so their overlay validates the estimator
-  rather than comparing independent results.
-  Bottom left: $(\mathrm{OmniFold}-\mathrm{published})/\sigma_{\mathrm{published}}$
-  on the reported two-dimensional grid; it is a descriptive shared-data
-  residual, not an independent-result pull.  Bottom right: the independently
-  reconstructed and published median relative uncertainties.}
+  result with its $\pm1\sigma$ band (from the published covariance), the
+  five-iteration OmniFold result, and the MINERvA Tune~v1, with each curve's
+  ratio to the published projection below.  The two measurements use the same
+  data, so their overlay validates the estimator rather than comparing
+  independent results.  Bottom left:
+  $(\mathrm{OmniFold}-\mathrm{published})/\sigma_{\mathrm{published}}$ on the
+  reported two-dimensional grid, drawn as equal-size cells labelled by their bin
+  edges (grey: not reported); it is a descriptive shared-data residual, not an
+  independent-result pull.  Bottom right: the independently reconstructed and
+  published median relative uncertainties, and the mean and RMS of the residuals.
+  Generated from the released figure arrays (see Data availability).}
   \label{fig:validation}
 \end{figure*}
 
@@ -300,21 +290,20 @@ bias of Sec.~\ref{sec:validation} is largest.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\columnwidth]{paper_joint_localization}
-  \caption{Joint $(\Eavail,W)$ central value (five-dimensional LightGBM production estimator), on the
-  $7\times6$ reporting grid with $\Eavail$ edges
-  $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ and $W$ edges
-  $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$; axes are cell indices counting from
-  zero, so index~6 in $\Eavail$ and index~5 in $W$ are wide overflow bins.
-  Left: the unfolded-to-Tune~v1 ratio per cell, on a $0.5$--$1.5$ color
-  scale.  Right: the unfolded-minus-Tune~v1 difference as a
-  \emph{cell-integrated} cross section, with color-scale values in units of
-  $10^{-40}\,\si{cm^2/nucleon}$, i.e.\ the density difference multiplied by that cell's
-  $\Delta\Eavail\,\Delta W$; the overflow cells therefore carry their large
-  widths and appear larger here than the ratio panel alone would suggest.  No
-  significance is assigned.  The comparator is the MINERvA Tune~v1 (GENIE~2.12.6
-  with the analysis tune weights), not the untuned GENIE central value of
-  Fig.~\ref{fig:generator-context}.}
+  \includegraphics[width=\columnwidth]{paper_fig2_joint}
+  \caption{Joint $(\Eavail,W)$ central value (five-dimensional LightGBM
+  production estimator) relative to the MINERvA Tune~v1 (GENIE~2.12.6 with the
+  analysis tune weights, not the untuned GENIE CV of
+  Fig.~\ref{fig:generator-context}), on the $7\times6$ reporting grid.  Cells
+  are drawn with equal size and labelled by their bin edges; the last row and
+  column are wide overflow bins that extend to \SI{100}{GeV}.  Top: the
+  unfolded-to-Tune~v1 ratio in each cell, with its value printed.  Bottom: the
+  unfolded-minus-Tune~v1 difference as a \emph{cell-integrated} cross section in
+  units of $10^{-40}\,\si{cm^2/nucleon}$, i.e.\ the density difference
+  multiplied by that cell's $\Delta\Eavail\,\Delta W$; the overflow cells
+  therefore carry their large widths and appear larger here than in the ratio
+  panel.  No significance is assigned.  Generated from the released figure
+  arrays.}
   \label{fig:joint}
 \end{figure}
 
@@ -341,14 +330,14 @@ treating them as independent confirmation of this high-$\Eavail$, high-$W$ diffe
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=0.84\textwidth]{paper_eavailW_generators_ratio}
+  \includegraphics[width=0.84\textwidth]{paper_fig3_generators}
   \caption{Generator context for the unfolded $\Eavail$ (left) and $W$ (right)
   central-value projections (five-dimensional LightGBM production estimator), in
   $\mathrm{cm^{2}\,GeV^{-1}\,nucleon^{-1}}$, with the data-to-prediction ratio
   below each; the wide overflow bins ($\Eavail>\SI{3}{GeV}$, $W>\SI{3}{GeV}$) are
   omitted from the display.  Drawn from the released figure arrays (see Data
-  availability).  GENIE-CV (untuned GENIE~2.12.10 on CH, with no 2p2h events),
-  GENIE+MEC (the same GENIE with the Valencia 2p2h contribution), NuWro~21.09,
+  availability).  GENIE CV (untuned GENIE~2.12.10 on CH, with no 2p2h events),
+  GENIE + MEC (the same GENIE with the Valencia 2p2h contribution), NuWro~21.09,
   and GiBUU~2019 (both on carbon; GENIE and NuWro with corrected flux sampling)
   all remain below the
   unfolded result overall and at high $W$, GENIE and NuWro by about their overall

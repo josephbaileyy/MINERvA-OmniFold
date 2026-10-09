@@ -312,3 +312,45 @@ after both cycles. The review budget (two cycles) is spent.
 | accepted consequential findings | B1–B3 (§8b) |
 | residual issues | §6; the scope decisions in §7 |
 | decision resolved | the article is presentation-ready for Joseph's readthrough, with the §7 decisions his |
+
+## 9. Joseph's follow-up (2026-10-08, this session) and what it changed
+
+**His words:** "Sure, there should be mention of claude code too. I am willing to fix rerun to fix the hard to read
+figures." This answers §7 items 1 and 6. §6 item 1 and §7 items 1 and 6 are superseded by this section. Items 2–5 of
+§7 stay open: images policy, Supplemental Material, PET paragraph, title.
+
+**AI-use disclosure (Acknowledgments).**
+- It now names the agents and gives model versions, as APS requires ("AI tool name and version"): "…used through the
+  Claude Code and OpenAI Codex command-line agents: Anthropic Claude (Opus 4.7, 4.8, 5 and 5.5; Fable 5 and 5.1) and
+  OpenAI GPT models (GPT-5.5, GPT-5.6 Sol and Luna, GPT-6 Astra and GPT-6.1), including those used for independent
+  review."
+- The rest of the approved text is unchanged, and so is its placement.
+- **The OpenAI list comes from the repository's records, which are incomplete by construction:**
+  - `gpt-6-astra` reviewers (campaign review §3, runtime metadata checked there);
+  - `gpt-5.6-sol` and `gpt-5.6-luna` Codex lanes (commit messages, e.g. `9413a8cb`);
+  - GPT-6.1 rewriting note sections (`76e8d90e`);
+  - `gpt-5.5` in the idea-rate benchmark (`FINDINGS-ARCHIVE-2026-08.md`);
+  - `codex-cli` (commit messages).
+
+  Joseph should confirm that it is complete.
+
+**Figures 1–3 redrawn** from the released figure arrays (`fig_arrays.npz`, sha256 `72394a2b…`, the RC4/RC6 file), with
+`publication/release/figs/make_figs.py`. The article now prints that script's output, so the release regenerates the
+printed figures and not only their quantities.
+
+| figure | change |
+|---|---|
+| Fig. 1 | full width; journal-size type; ratio panels to the published projection with its ±1σ band (from the published covariance in the arrays); residual map with bin-edge labels; the inset numbers drawn in the figure (they reproduce the printed 6.87 % / 6.85 %, 0.089 / 0.598) |
+| Fig. 2 | one column with the two panels stacked; bin-edge axes; labelled colour bars (ratio; difference in units of $10^{-40}$ cm²/nucleon); each cell's value printed (the printed ranges 12–30 % and 23–31 % can now be read off the figure) |
+| Fig. 3 | units without multiple slashes; legend labels as in the text (GENIE CV, GENIE + MEC, NuWro 21.09, GiBUU 2019); larger type |
+
+- **Unchanged:** the numbers the figures show and every printed value. `fig_numbers.py` still binds them to
+  `values.tex`.
+- The PDFs carry no timestamp. Two runs with the `requirements-lock.txt` versions (matplotlib 3.11.2, numpy 1.26.4,
+  scipy 1.15.2, CPython 3.11.15) give identical bytes: Fig. 1 `938c4fc9…`, Fig. 2 `57f3cc60…`, Fig. 3 `e9d1bb01…`.
+- The note and primer keep their own figure files (`model_comp_projections`, `paper_joint_localization`), so they are
+  unchanged.
+- The page count is unchanged (11). Fig. 1 now takes about two-thirds of a page.
+
+**Release candidate 7** (README `docs/publication/release/RC7-README.md`): RC6 with the new figure code. Its data and
+macro files are unchanged. Its identity, reproducibility and verification are recorded in §10.
