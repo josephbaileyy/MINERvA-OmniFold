@@ -92,21 +92,21 @@ is assumed here.
 
 Counts: "texcount" is `texcount -nc` on the source (words outside math and macros; values printed through macros are
 not counted); "PDF" is a `pdftotext` word count of the rendered article. The body includes the DAS in both columns.
-Before = baseline `b612ee3a`; after = this branch's implementation commit.
+Before = baseline `b612ee3a`; after = this branch after review cycle 1 (§8).
 
 | item | before | after | note |
 |---|---|---|---|
 | title | "Unbinned Five-Observable Unfolding of MINERvA Charged-Current Neutrino Data and Calibrated Joint Tests of Generator Predictions" | "Unbinned five-observable unfolding of MINERvA inclusive charged-current neutrino data and calibrated joint tests of generator predictions" | sentence case (as in the published PRD titles of §2b); "inclusive" names the signal |
-| abstract words (PDF / texcount) | 234 / 233 | **182 / 184** | 8 → 6 sentences; the rhetorical question is removed; no undefined acronym ("MEC" removed) |
-| abstract qualifications | conditional; no 5D cross section; ±4% not an uncertainty; not a measured cross section; no added discrimination | **all retained**, plus the disposition's "with every submitted pseudo-experiment observed" | Joseph's lost-seed disposition says the rejections are stated "as holding with every submitted draw observed" |
-| body text words (texcount, incl. DAS) | 5,220 | 5,261 | +0.8%. The definitions, generator and software citations and motivating sentence offset the condensation (§5) |
+| abstract words (PDF / texcount) | 234 / 233 | **185 / 187** | 8 → 6 sentences; the rhetorical question is removed; no undefined acronym ("MEC" removed). The implementation reached 182; review cycle 1 restored "report-only" and "principal" and split "checks" from "closure tests" (§8). The remaining 5 words over the 180 aim are required qualifications. |
+| abstract qualifications | conditional (principal limitations named); no 5D cross section; recovery report-only; ±4% not an uncertainty; not a measured cross section; no added discrimination | **all retained**, plus the disposition's "with every submitted pseudo-experiment observed" | Joseph's lost-seed disposition says the rejections are stated "as holding with every submitted draw observed"; disclosure 1 (report-only) stays beside it |
+| body text words (texcount, incl. DAS) | 5,220 | 5,275 | +1.1%. The definitions, generator and software citations and motivating sentence offset the condensation (§4) |
 | caption words (texcount) | 417 | 425 | the Fig. 2 color-scale offset and the Fig. 3 legend labels are now explained |
 | pages | 10 | **11** | the extra page is reference titles only (PRD guidance, §2a); the text pages are unchanged |
 | floats | 4 figures, 1 table | unchanged | about 1.5 page-equivalents, estimated from the rendered page images (Fig. 1 ≈ 0.44, Fig. 2 ≈ 0.15, Fig. 3 ≈ 0.47, Fig. 4 ≈ 0.35, Table I ≈ 0.10) |
-| body sentences (PDF) | 203; mean 32.0 words | 213; mean 29.5 | |
-| sentences > 60 words (PDF) | 16 | **7** | the remainder are mostly frozen-contract conditions (Sec. VI B) and figure-text artefacts of the extraction |
-| sentences > 40 words (PDF) | 58 | 53 | |
-| internal/chronology tokens (PDF): "digest", "bytes", "catch", "scheduler", "design review", "pre-repair", "mis-sampled", "later found", "later measurement" | 2, 1, 4, 2, 1, 1, 1, 1, 1 | **0 for each** | "campaign" 3 → 1; "replay" 3 → 1; "candidate" 3 → 1 |
+| body sentences (PDF) | 203; mean 32.0 words | 212; mean 29.8 | measured to the Acknowledgments in both builds, so the after column excludes the moved DAS |
+| sentences > 60 words (PDF) | 16 | **8** | the remainder are mostly frozen-contract conditions (Sec. VI B) and figure-text artefacts of the extraction |
+| sentences > 40 words (PDF) | 58 | 52 | |
+| internal/chronology tokens (PDF, body and DAS, Acknowledgments excluded, case-insensitive) | digest 2, bytes 1, catch 4, scheduler 2, design review 1, pre-repair 1, mis-sampled 1, later found 1, later measurement 1, campaign 3, self-validated 1, candidate 3, replay 3 | digest 1, bytes 0, catch 0, scheduler 0, design review 0, pre-repair 0, mis-sampled 0, later found 0, later measurement 0, campaign 0, self-validated 0, candidate 1, replay 3 | corrected after review E5: the first tally stopped at the Acknowledgments and so missed the moved DAS. "digest" ("the digest of every source product") and "replay" stay in the DAS, where they are the precise terms; "design-review value" stays in Sec. VI B (the contract's provenance statement). The reviewer's alternative tokenization gave campaign 4 and scheduler 3 before. |
 | undefined acronyms at first use | RPA, MEC, FSI, MINOS, GEANT, 2p2h (spelled out each time) | defined or spelled out once (Sec. II; FSI in Sec. V; MINOS in Sec. II) | |
 | notation clash | `W` was both the hadronic invariant mass and the test metric | metric is $\mathcal{W}$ | |
 | references | 29; titles only on the `@misc` records; no generator, D'Agostini or ML-software citations; open-data DOI not printed | 37; **titles in all**; GENIE, Valencia 2p2h, NuWro, GiBUU, GEANT4, D'Agostini, scikit-learn and LightGBM cited; DOI printed | the new entries reuse the checked `technote.bib` records; scikit-learn and LightGBM were checked against arXiv:1201.0490 and the NeurIPS 2017 proceedings page |
@@ -120,7 +120,7 @@ Before = baseline `b612ee3a`; after = this branch's implementation commit.
   → result → conditions → scope), with every qualification kept (§3).
 - **Introduction:**
   - a motivating first sentence;
-  - the D'Agostini citation;
+  - the D'Agostini citation, and the opening sentence states the motivation without a comparative claim (softened in review cycle 1, N2);
   - the contribution restated with section pointers, and the specific advance stated against the published
     muon-kinematics comparison (as Sec. VI C already says);
   - the 2D statistical-band coverage item moved out of the list of *higher-dimensional* limitations, where it did not
@@ -130,14 +130,14 @@ Before = baseline `b612ee3a`; after = this branch's implementation commit.
   - RPA and 2p2h spelled out;
   - the labels "GENIE CV" and "GENIE + MEC" defined;
   - generator citations;
-  - "repaired" → "corrected flux sampling".
+  - "repaired flux sampling" → "corrected flux sampling (an exact event-by-event reweighting to the analysis flux, with added 50–100 GeV samples)", per `KNOWN_ISSUES.md` 83 (review cycle 1, B1: the predictions were reweighted, not regenerated).
 - **Sec. III:** scikit-learn and LightGBM cited.
 - **Sec. IV C:**
   - the mis-sampled-flux parenthesis rewritten without chronology;
   - "the tested candidate" named as the joint-test estimator (VL155 is candidate R, the joint-test estimator).
 - **Sec. V:** FSI defined; "pre-repair GENIE" → "GENIE before its flux correction"; "catch" → "overflow"; generator
   labels used.
-- **Fig. 2 caption:** the color scales and the right panel's $10^{-40}$ offset named; "overflow".
+- **Fig. 2 caption:** the color scales named; the right panel's values stated in units of $10^{-40}$ cm²/nucleon (a multiplier; review cycle 1, B3); "overflow".
 - **Fig. 3 caption:** units without multiple slashes; legend labels explained; the long sentence split.
 - **Sec. VI A:**
   - metric renamed $\mathcal{W}$;
@@ -251,4 +251,31 @@ Before = baseline `b612ee3a`; after = this branch's implementation commit.
 
 ## 8. Builds, independent review, standalone sync
 
-Recorded below by the owner after each step.
+### 8a. Implementation (`da4ce85d`)
+
+`build_all.sh` at `da4ce85d` on a clean tree: rc 0, `RESULT :: PASS … head=da4ce85d… tree=clean`, note 123 / primer 9 /
+paper 11 pp, 0 BibTeX errors. The Overleaf target (`latexmk -pdf -jobname=output main_paper.tex`, separate outdir)
+gave rc 0, 11 pp, 0 undefined. `test_build_all.py`: 38 passed. Pre-commit: 13 checks passed.
+
+### 8b. Review cycle 1 (target `da4ce85d`): NOT READY, 3 blocking, 5 editorial, 3 notes
+
+The reviewer was one fresh, read-only agent (Claude Opus 5.5, no authoring history) in the detached worktree
+`MINERvA-OmniFold-prd-editorial-review-20261008`. It built only into a temporary directory, and `git status --short`
+was empty afterwards. It confirmed: the rewordings in Sec. IV C, V, VI D and VII; the citations; the complete
+$\mathcal{W}$ rename; the DAS placement; the verbatim AI disclosure; and no forbidden phrasing. It re-measured
+pages, reference count, abstract words, body words and caption words, and all agreed.
+
+| id | finding | disposition |
+|---|---|---|
+| B1 | "were generated with a corrected flux sampling" is false: the predictions were reweighted per event, not regenerated (`KNOWN_ISSUES.md` 83, 2026-10-03 update) | fixed: "use a corrected flux sampling (an exact event-by-event reweighting to the analysis flux, with added 50–100 GeV samples)" |
+| B2 | the abstract dropped "report-only" (disposition §5, disclosure 1, "beside the claim") | fixed: "with every submitted pseudo-experiment observed after a report-only recovery" |
+| B3 | Fig. 2 "offset $10^{-40}$" is a multiplier on the colour bar | fixed: "color-scale values in units of $10^{-40}$ cm²/nucleon" |
+| E1 | the PET sentence's antecedent was reversed by the split | fixed: the baseline parenthesis restored |
+| E2 | the abstract dropped "principal" (there are six conditions) | fixed |
+| E3 | "marginal-normalization and injected-shape closure tests" made the normalization a closure | fixed: "marginal-normalization checks and injected-shape closure tests" |
+| E4 | Fig. 3 caption: "above it" lacked an antecedent | fixed: "above the unfolded result" |
+| E5 | the record's token counts were inaccurate | fixed (§3; recounted with the DAS included) |
+| N1 | "under a realizable assignment of them" dropped | restored |
+| N2 | the opening "more completely than one-dimensional projections" sits against "no added discrimination" | softened to a statement without a comparison |
+| N3 | LightGBM pages; empty year in Ref. [8]; 0.7 pt overfull (pre-existing) | not changed: the pages and the release year are not verified from a primary source this session |
+| not verified by the reviewer | the power-retention clause now covered the GENIE null as well; "admitted separately under its own criteria" added words | both restored to the baseline's scope and wording (the clause sits with the Tune v1 alternatives; "the study's remaining, separately admitted branch") |

@@ -9,10 +9,9 @@
 
 \section{Introduction}
 
-Cross sections measured in several kinematic variables at once test the
-neutrino-interaction generators used by oscillation experiments more completely
-than one-dimensional projections, but each added variable must be corrected
-for detector response.  Iterative Bayesian unfolding on a binned migration
+The neutrino-interaction generators used by oscillation experiments are tested
+against cross sections measured in one or more kinematic variables, and each
+measured variable must be corrected for detector response.  Iterative Bayesian unfolding on a binned migration
 matrix~\cite{DAgostini:1994fjx} is widely used, but the response tensor grows
 rapidly when additional observables are reported.  OmniFold instead learns event weights in an unbinned
 feature space through classifier-based density-ratio estimation
@@ -90,7 +89,8 @@ generator predictions compared below are GENIE~2.12.10 on CH without (``GENIE
 CV'') and with (``GENIE + MEC'') the Valencia 2p2h
 component~\cite{Nieves:2011pp}, which models meson-exchange currents (MEC),
 NuWro~21.09~\cite{Golan:2012wx} and GiBUU~2019~\cite{Buss:2011mx} on carbon.
-The GENIE and NuWro predictions were generated with a corrected flux sampling;
+The GENIE and NuWro predictions use a corrected flux sampling (an exact event-by-event
+reweighting to the analysis flux, with added 50--\SI{100}{GeV} samples);
 the GiBUU sample stops at $E_{\nu}\approx\SI{20}{GeV}$.
 
 \section{Unbinned unfolding}
@@ -308,8 +308,8 @@ bias of Sec.~\ref{sec:validation} is largest.
   zero, so index~6 in $\Eavail$ and index~5 in $W$ are wide overflow bins.
   Left: the unfolded-to-Tune~v1 ratio per cell, on a $0.5$--$1.5$ color
   scale.  Right: the unfolded-minus-Tune~v1 difference as a
-  \emph{cell-integrated} cross section in \si{cm^2/nucleon} (the color-scale
-  offset is $10^{-40}$), i.e.\ the density difference multiplied by that cell's
+  \emph{cell-integrated} cross section, with color-scale values in units of
+  $10^{-40}\,\si{cm^2/nucleon}$, i.e.\ the density difference multiplied by that cell's
   $\Delta\Eavail\,\Delta W$; the overflow cells therefore carry their large
   widths and appear larger here than the ratio panel alone would suggest.  No
   significance is assigned.  The comparator is the MINERvA Tune~v1 (GENIE~2.12.6
@@ -354,7 +354,7 @@ treating them as independent confirmation of this high-$\Eavail$, high-$W$ diffe
   unfolded result overall and at high $W$, GENIE and NuWro by about their overall
   normalization shortfall and GiBUU, whose sample stops at
   $E_\nu\approx\SI{20}{GeV}$, by more.  The two GENIE predictions lie
-  \SIrange{\genieWmidLo}{\genieWmidHi}{\percent} above it at
+  \SIrange{\genieWmidLo}{\genieWmidHi}{\percent} above the unfolded result at
   $1.4\le W<\SI{1.8}{GeV}$.  No significance is assigned.}
   \label{fig:generator-context}
 \end{figure*}
@@ -605,9 +605,9 @@ Sec.~\ref{sec:conditions}, of which the hadronic response
 (Sec.~\ref{sec:response}) and the sub-fine-grid residual are not bounded by any
 validated uncertainty.  Power is context only, because every test rejects.  At the Tune~v1
 null, two of three declared alternatives are detected in shape with power 1.0 at the
-0.005 level, and the third, a MEC-like $(\Eavail,W)$ shape, with 0.23; at the
-GENIE~2.12.10 null the shape powers are 0.74, 0.02 and 0.00.  Each power set
-lost some of its 200 alternatives to time limits, retaining 172 to 199.
+0.005 level, and the third, a MEC-like $(\Eavail,W)$ shape, with 0.23 (each power set
+lost some of its 200 alternatives to time limits, retaining 172 to 199).  At the
+GENIE~2.12.10 null the shape powers are 0.74, 0.02 and 0.00.
 % Source: s5p Stage-7 approved wording, sec_eavailw.tex sec. 8.6 (sec:joint5d) at main cbd075e7;
 % REVIEW-20261006-s5p-stage7-note-wording.md (two rounds, findings resolved).
 
@@ -619,7 +619,7 @@ calibration pseudo-experiments (\jtLostInterrupted{} interrupted,
 \jtLostNever{} never started) and \jtLostPow{} power pseudo-experiments, so the
 decisions in Table~\ref{tab:joint} were evaluated on the completed experiments.
 A sensitivity computed before the lost outcomes were known showed that every
-decision could change: had every interrupted experiment exceeded the observed
+decision could change under a realizable assignment of them: had every interrupted experiment exceeded the observed
 statistic, no test would have been rejected.  The lost seeds were therefore
 rerun, report-only, under a procedure fixed and independently reviewed
 beforehand~\cite{JointTestRecovery2026}.  That procedure required a rerun of 16
@@ -732,8 +732,8 @@ qualified total uncertainties admitted no reporting definition: none could meet
 its predeclared useful-precision targets with any configuration its rules
 allowed, a scientific rather than a computational limitation.  For its fallback
 definition, the bounded model-dependence component alone exceeded the
-total-width target.  The joint tests above were the study's other branch,
-admitted separately under its own criteria.
+total-width target.  The joint tests above were the study's remaining,
+separately admitted branch.
 
 Full-event point-cloud (PET) classifiers that could replace the scalar learner
 remain diagnostic and method development: an earlier pairing of a PET central
@@ -742,8 +742,8 @@ uncertainty product is adopted, a subsequent improvement study adopted no candid
 final-design study found no eligible design~\cite{PETImprovement2026,PETFinalDesign2026}.  An exploratory,
 exact-paired simulation comparison with a HistGradientBoosting OmniFold (distinct
 from the production LightGBM) found better recovery of an injected energy tilt
-for PET than for that tree method, which a binned unfolding of the same bins
-matched, but better recovery of all three tested generator reweightings for the
+for PET than for that tree method (a binned unfolding of the same bins matched
+PET on the tilt), but better recovery of all three tested generator reweightings for the
 tree method~\cite{PETGBDT2026}.  It establishes neither a general method ranking
 nor an uncertainty comparison.
 % Condensed from main's paper_body.tex at 30942b49 (PR #20, e55f6e9f); PET sources: VL164-VL167
