@@ -105,7 +105,7 @@ def test_classify_labels_both_directions():
 
 
 def test_linear_prior_pull_identity():
-    """For f(y; p) = A y + (I - A R) p the closure residual equals minus the prior-swap shift."""
+    """Documents the algebra behind E5 (an identity of an affine estimator, not a lane-code test)."""
     rng, response, prior, truth = _fixture()
     a = np.linalg.pinv(response) * 0.6  # a deliberately regularized linear unfolding
     kernel = a @ response
@@ -118,7 +118,7 @@ def test_linear_prior_pull_identity():
 
 
 def test_recovered_fraction_detects_cross_talk():
-    """A non-diagonal kernel makes some cells move against their own departure (rho < 0)."""
+    """Documents the E3 reading (no lane code): cross-talk gives rho < 0, a diagonal kernel never."""
     kernel = np.array([[0.6, 0.5], [0.5, 0.6]])
     departure = np.array([1.0, -0.4])
     rho = (kernel @ departure) / departure
@@ -135,3 +135,41 @@ def test_lower_bound_design_against_brute_force():
     smaller = n - 1
     h2 = reductions.min_hits_for_lower(smaller, alpha, 0.63)
     assert 1 - 4 * stats.binom.cdf(h2 - 1, smaller, 0.682689492137) < 0.80
+
+
+def _labels(spec):
+    return [{"iteration": i, "identifiability": d} for i, d in spec]
+
+
+def test_branch_outcome_reaches_every_branch():
+    weak, ident = "weakly-identified", "identified-at-target"
+    approx, faithful = "approximation-dominated", "iteration-faithful"
+    r = np.full(4, 0.10)
+    none = np.zeros(4, bool)
+    c = comparator.branch_outcome(_labels([(faithful, weak)] * 3 + [(approx, ident)]), r,
+                                  np.full(4, 0.09), none)
+    a = comparator.branch_outcome(_labels([(approx, ident)] * 3 + [(faithful, weak)]), r,
+                                  np.full(4, 0.09), none)
+    b = comparator.branch_outcome(_labels([(faithful, ident)] * 4), r, np.full(4, 0.01), none)
+    not_b = comparator.branch_outcome(_labels([(faithful, ident)] * 4), r, np.full(4, 0.09), none)
+    mixed = comparator.branch_outcome(
+        _labels([(faithful, weak), (approx, ident), (faithful, ident), ("mixed", "intermediate")]),
+        r, np.array([0.09, 0.09, 0.01, 0.09]), none)
+    assert (c["branch"], a["branch"], b["branch"], not_b["branch"], mixed["branch"]) == (
+        "C", "A", "B", "mixed", "mixed")
+    small = comparator.branch_outcome(_labels([(approx, ident)] * 4), np.full(4, 0.01),
+                                      np.zeros(4), none)
+    assert small["branch"] == "no-eligible-functional"
+    flagged = comparator.branch_outcome(_labels([(approx, ident)] * 4), r, np.zeros(4),
+                                        np.array([True, True, True, False]))
+    assert flagged["n_eligible"] == 1 and flagged["branch"] == "A"
+
+
+def test_missed_concentration_both_directions():
+    rng = np.random.default_rng(7)
+    missed = rng.uniform(0, 0.5, 300)
+    concentrated = np.where(missed >= np.quantile(missed, 2 / 3), 0.1, 0.005)
+    unrelated = rng.normal(0, 0.05, 300)
+    assert comparator.missed_concentration(concentrated, missed)["bookkeeping_implicated"]
+    out = comparator.missed_concentration(unrelated, missed)
+    assert not out["bookkeeping_implicated"] and 0.2 < out["share_top_tercile"] < 0.5

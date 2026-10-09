@@ -14,13 +14,13 @@ measurement objective is **not** achieved by this lane.
 | `Lane` | Session 5, gbdt |
 | `Decision` | What new evidence could distinguish repairable estimator bias from weakly constrained truth directions, and is one small successor development experiment justified? |
 | `Branch` / `Base` / `Head` | `prep/next-gbdt-20261009` / `5ac9706a21e8a5ac8863a65fd7623d8ab8d22269` (the common merged baseline; it supersedes `901f0088`/`8eafd357` by the dispatch override; `origin/main` was equal to it at 2026-10-09T19:59Z) / the commit that adds this file; the frozen reviewed commit is named in `Review` |
-| `Owned files` | `docs/orchestration/state/next-preparation-20261009/gbdt/REPORT.md`, `reduce_saved_outputs.py`, `results.json`, `comparator.py`, `test_comparator.py` (all in that directory; nothing else written) |
+| `Owned files` | `docs/orchestration/state/next-preparation-20261009/gbdt/REPORT.md`, `reduce_saved_outputs.py`, `results.json`, `comparator.py`, `test_comparator.py`, `synthetic_timing.py`, `synthetic_timing.json`, `review-round-1.md` (all in that directory; nothing else written) |
 | `Pinned inputs` | §2 table (sha256 prefixes; full digests in `results.json` `integrity`) |
 | `Resources` | §12: elapsed and CPU measured; scratch < 5 MiB; tracked ≈ 0.12 MiB; **cluster 0, GPU 0, training 0** (one read-only `ls` on a login node, §2) |
 | `Review` | §11 |
 | `Model / effort` | Owner: Claude Opus 5.5 (`claude-opus-5-5`), the identity this session reports; effort not observable. Reviewer: §11 |
 | `Disposition` | §13: **D1 PASS** (D-ID designed and ready for a resource decision); **D2 FAIL** for the old ~70-node-hour panel as the next step; **D3 FAIL against the proposed targets** for the present estimator and the frozen-procedure validation route; overall objective **unmet** |
-| `Next action` | §14: Joseph's resource decision on D-ID (≤ 6.25 local CPU core-hours admitted, 1.44 GiB read-only copy of one existing file, 0 GPU, 0 training), plus the endpoint-scope question in §10.3 |
+| `Next action` | §14: Joseph's resource decision on D-ID (4.78–8.30 local CPU core-hours admitted, 1.44 GiB read-only copy of one existing file, 0 GPU, 0 training), plus the endpoint-scope question in §10.3 |
 
 ## 0. Setup (campaign-review choice)
 
@@ -60,9 +60,12 @@ messages. This follows the review's bounded-artifact pattern
 (max 32.904% → 44.770%, H2 3.421% → 3.680%); W3 assessment EW29 bias +23.665%, SD 0.558%; EW7 −6.812%,
 0.299%; nominal EW41 15/40 hits at fixed σ. Each matches the synthesis README.
 
-**Ratio identity, from inventory metadata.** The same file feeds the K = 5 assessment ensemble, the
-noise-free trace and the data prior: W3 = `3455daf3…` = prior d4; W2 = `80e16f95…` = d3; GiBUU
-E_avail = `45cc3e0a…` = d1; W1 = `2a208df9…` = d2. These pairings make E2 and E5 below well defined.
+**Ratio identity.** The same file feeds the K = 5 assessment ensemble, the noise-free trace and the
+data prior: W3 = `3455daf3…` = prior d4; W2 = `80e16f95…` = d3; GiBUU E_avail = `45cc3e0a…` = d1;
+W1 = `2a208df9…` = d2. For the assessment ensembles, the priors, the complete W3 trace and the cap10
+GiBUU trace this is read from inventory metadata. The partial `k_b0_{gibuu,w1,q3}` files carry no
+metadata, so their pairing is **routed** through the synthesis's frozen task tables and receipt, not
+read from the file. These pairings make E2 and E5 below well defined.
 **These are historical ratios** (pre flux repair); the corrected P1r–P3r were used in s5p power runs,
 so they are development truths too.
 
@@ -95,7 +98,7 @@ discriminating diagnostic can be noise-free.
 take ρ = (f̂ − f_nom)/(f_true − f_nom) at K = 5. Pure shrinkage would give ρ ∈ [0, 1]. In J, ρ < 0 (the
 estimate moves *against* the cell's own departure) in 32% (GiBUU), 37% (W1), 28% (W3) and 11% (q3) of
 cells. ρ > 1 in 5–33%. At the largest available K these fractions are 25%, 30%, 29% and 11%. More
-iterations do not repair the sign errors. Example: GiBUU EW29 has a −30.3% departure and a +74%
+iterations only partly reduce the sign errors (GiBUU and W1), and not at all for W3 or q3. Example: GiBUU EW29 has a −30.3% departure and a +73.5%
 residual, above the +43% that staying at the prior would give. The reco departure is reproduced by
 moving weight between truth cells.
 
@@ -118,8 +121,9 @@ same ratio file:
 | W2 (d3) | 0.191 / 0.558 / 0.726 | 0.871 / 0.895 / 0.936 | −0.818 / 0.394 / 0.775 |
 
 For the three strong departures, 69–84% of the J/EW residual sum of squares is a deterministic function
-of the prior–truth difference that persists on real data. The slope below 1 means the data shift
-underestimates the closure residual by 11–28%. The relation is a sensitivity, **not a bound**. W2's
+of the prior–truth difference that persists on real data. The slope of r on −s is 0.72–0.89, so along its
+own direction the data shift **overstates** the closure residual (|r|/|s| = 0.75–0.98; reverse slopes
+1.11–1.27 in J, per the review). The relation is a sensitivity, **not a bound**. W2's
 residual is small and noisy relative to it.
 
 **E6. Fold misfit: the two departures behave differently** (s5e D4/D5 noise-free χ² of the unfolded
@@ -135,8 +139,11 @@ fold against the truth fold, 5D reco binning of 10,499 cells, analysis exposure)
 
 These are asimov_same constructions, so an exact solution, the truth itself, exists. Exact EM keeps
 reducing a visible misfit. **For q3, B0 has a fixed point the data reject** (λ_5D ≈ 985, an omnibus
-excess of ≈ 6σ). Capacity removes the stall and halves the median residual (6.16% → 3.14% at K = 15).
-This identifies **classifier approximation as a material contributor for q3**. **For E_avail, capacity
+excess of ≈ 6σ), and capacity removes the stall (λ_5D 1031.0 → 174.4 at K = 15). That is evidence of
+**classifier approximation in the reco-level fit for q3**. Its effect on the endpoint maps is small:
+the q3 stress preserves the EW marginal (no EW cell departs by > 1%), so the EW medians in the table
+are not departure recovery. At K = 10, capacity moves the q3 J median only 4.10% → 3.52% (−14%) and H2
+5.15% → 5.01% (−3%), and the q3 maximum is unchanged (s5e). **For E_avail, capacity
 halves the visible misfit (237.8 → 123.8 at K = 15) while the truth residual does not improve
 (9.16% → 10.29%).** Fitting the visible directions better does not move the truth error, which is the
 signature of **weakly constrained directions** for E_avail.
@@ -159,16 +166,16 @@ plausible size of the data's departure from the model. This is a failure against
 and a finite development set, not a ratified FAIL.
 
 **Capacity at K = 10 (noise-free, three truths)** moves the J median 5.55% → 4.41% (W3), 9.22% → 8.67%
-(GiBUU) and 4.10% → 3.52% (q3); H2 for W3 moves 3.68% → 1.01%. The approximation component is real and
-truth dependent.
+(GiBUU) and 4.10% → 3.52% (q3); H2 for W3 moves 3.68% → 1.01%. The approximation component is real,
+truth dependent and, at the endpoint maps, modest except for W3 H2.
 
 ## 4. Three explanations, ranked, with a discriminating observation for each
 
 | rank | explanation | saved evidence for / against | discriminating observation (in D-ID) | if the observation is positive | if negative |
 |---|---|---|---|---|---|
-| 1 | **Weak identifiability of the reporting functionals** (truth directions with near-null response at analysis exposure, plus within-cell ambiguity) | For: E6 E_avail (misfit falls, truth error does not), E7 (14× lower visibility), E3 (sign errors persist), E4. Against: λ > 0 at K = 30, so part of the residual is visible | Per-functional Cramér–Rao width σ_c of the binned exact-response problem at the analysis exposure (truth grids T1/T2), and the share of the GBDT residual in Fisher modes whose own χ² contribution is < 1 | Functional c is **weakly identified** (σ_c > 10%): no estimator meets the proposed target there without prior information. Change the functional (§7, I2) or carry a large declared allowance | σ_c ≤ 2.5% and the residual is mostly visible: the data determine c, so the GBDT bias is an estimator defect (rank 2 or 3), in principle repairable |
-| 2 | **Classifier ratio approximation / iteration error** | For: E6 q3 (stall, non-monotone, removed by capacity), capacity on W3 H2. Against: E_avail is insensitive to capacity | Binned exact-response IBU from the same prior and pseudo-data, compared with the saved GBDT trajectory at matched K (1…30, and 200 for W3) | **approximation-dominated** (|r_IBU| ≤ 0.5 |r_GBDT|): the GBDT does not execute the iteration it approximates. Specify I1 | **iteration-faithful** (|r_IBU − r_GBDT| ≤ 0.3 |r_GBDT|): the GBDT does what exact IBU would. The residual is iterative regularization, and its removability is decided by rank 1 |
-| 3 | **Propagation / acceptance / background bookkeeping** | Against: signal-only reproduces the departure failure, the MC split and driver path are excluded, step 2 reproduces step-1 truth sums to 0.11% (s5e). Partial: the missed-event treatment changes q3 by 13–15% | Exact-efficiency binned IBU against GBDT, split by the missed-event fraction of each truth cell; and a same-response vs split-half response comparison | The GBDT excess over exact IBU concentrates where the missed fraction is large: bookkeeping (missed-event extrapolation) is implicated, and the regressor needs its own design | No concentration: bookkeeping is not material at the tested departures |
+| 1 | **Weak identifiability of the reporting functionals** (truth directions with near-null response at analysis exposure, plus within-cell ambiguity) | For: E6 E_avail (misfit falls, truth error does not), E7 (14× lower visibility), E3 (sign errors persist), W3/q3 in E4. Against: λ > 0 at K = 30, so part of the residual is visible; E4 GiBUU (J 9.47% → 4.90%, K = 5 → 40) and W1 (5.41% → 4.09%) are being removed by iteration | Per-functional Cramér–Rao width σ_c of the binned exact-response problem at the analysis exposure (truth grids T1/T2), and the share of the GBDT residual in Fisher modes whose own χ² contribution is < 1 | Functional c is **weakly identified for binned estimators** at this reco binning and truth resolution (σ_c > 10%). Binned estimators cannot meet the proposed target there without prior information; unbinned information is not bounded by this. Change the functional (§7, I2) or carry a large declared allowance | σ_c ≤ 2.5% and the residual is mostly visible: the data determine c, so the GBDT bias is an estimator defect (rank 2 or 3), in principle repairable |
+| 2 | **Classifier ratio approximation / iteration error** | For: E6 q3 (reco-level stall removed by capacity, λ_5D 1031 → 174), capacity on W3 H2 (3.68% → 1.01%). Against: E_avail truth residual is insensitive to capacity; q3 J/H2 change only 14%/3% | Binned exact-response IBU from the same prior and pseudo-data, compared with the saved GBDT trajectory at matched K (1…30, and 200 for W3) | **approximation-dominated** (|r_IBU| ≤ 0.5 |r_GBDT|): the GBDT does not execute the iteration it approximates. Specify I1 | **iteration-faithful** (|r_IBU − r_GBDT| ≤ 0.3 |r_GBDT|): the GBDT does what exact IBU would. The residual is iterative regularization. If exact IBU run to convergence removes it (|r_IBU(∞)| ≤ 0.5 |r_GBDT|), this is **branch B**, a convergence question; otherwise removability is decided by rank 1 |
+| 3 | **Propagation / acceptance / background bookkeeping** | Against: signal-only reproduces the departure failure, the MC split and driver path are excluded, step 2 reproduces step-1 truth sums to 0.11% (s5e). Partial: the missed-event treatment changes q3 by 13–15% | Exact-efficiency binned IBU against GBDT. The excess |r_GBDT − r_IBU| is split by each functional's missed-event fraction (`comparator.missed_concentration`: bookkeeping is implicated if ≥ 2/3 of the summed excess sits in the top tercile, against ≈ 1/3 if unrelated). A secondary comparator is the s5e missed-at-unity GBDT variant | Concentrated: bookkeeping (missed-event extrapolation) is implicated, and the regressor needs its own design | Not concentrated: bookkeeping is not material at the tested departures |
 
 A finite unsuccessful search cannot prove identifiability. A binned Fisher width bounds what *this
 binning* of the data can see. Unbinned data can carry more information, so σ_c is conservative in the
@@ -182,7 +189,8 @@ with 160 repeats per truth. E1 and E2 remove its rationale as the *next* step. V
 against biases of 5–15%, so the MSE is bias to within 1%. The bias is measured by a single noise-free
 run to about 0.2 pp. The panel's own capacity and K contrasts are available noise-free at roughly 1/160
 of the repeat cost, and E6 already shows that their effect depends on the departure. A variance axis
-cannot change any decision while the bias is 20–50 times larger. **Disposition D2: FAIL as the next
+cannot change any decision while the median |bias|/SD over J is 11.7–23.5 for the four strong
+departures (bias share of MSE ≥ 0.99). **Disposition D2: FAIL as the next
 step** (the existing evidence rejects its premise). It could only become relevant after a repair brings
 the bias near the statistical scale.
 
@@ -203,95 +211,141 @@ as a measurement, and nothing in it validates an interval.
 |---|---|---|
 | events | `of_inputs_5d.npz`, keys read by `s5c_unfold.load_inputs` (`510d749a…`): `MCgen`, `MCreco`, `pass_reco`, `pass_truth`, `w_truth`, `w_reco`, edges | sha256 must equal `07fccc1a…` (stage-1/inventory record); otherwise stop |
 | departure weights | GiBUU `45cc3e0a…`, W1 `2a208df9…`, W2 `80e16f95…`, W3 `3455daf3…`, q3 (s5e amplitude 0.3 construction), corrected P1r/P2r/P3r (§2) | each digest equal to the record. Weights built by the committed `s5e_deform` path (sha pinned at admission), never re-derived by hand |
-| GBDT comparators | s5p `runs/s2/conv/k_b0_{nominal,w3}.npz`, `k_cap10_*.npz`, the partial `k_b0_{gibuu,w1,q3}` prefixes (as the synthesis truncated them), and s5e `runs/diag/{asimov,trace}` products (`fn_push` per iteration, final `xsec_flat`, `reco5d_push_it*`) | digests equal to `inventory.json` and to the diag receipt's inputs. Partial files are truncated to the synthesis's included iterations |
+| GBDT comparators | **Traced departures (branch population):** GiBUU, W1, W3, q3, from s5p `runs/s2/conv/k_b0_{w3}.npz` (complete) and the partial `k_b0_{gibuu,w1,q3}` prefixes (truncated as the synthesis did), plus nominal `k_b0_nominal.npz`. These are asimov_same, background-inclusive (`no_background: False`) runs with the missed-event regressor. **W2:** no noise-free trace exists, so its comparator is the R K = 5 ensemble mean (justified by E2), at K = 5 only. **P1r–P3r:** no GBDT product is in the inventory, so they get σ_c and r_IBU only and count toward no branch. **Secondaries:** s5e `runs/diag/{trace,asimov}` signal-only traced runs (`D3 *_sig`, four seeds, K ≤ 20) and the missed-at-unity and capacity variants (`D5`) for E_avail and q3 | digests equal to `inventory.json` and to the diag receipt's inputs |
 | reco binning | the s5e tracer's 5D reco cells (10,499) | **admission check:** the comparator's S_dep must reproduce the receipt's 92,363.63 (GiBUU) and 92,244.78 (q3) within 0.1%, and the GBDT fold λ_5D within 2% at K = 5, 15, 30 |
 | reporting maps | `definition.json` EW/J/H2 maps and reported masks (39/109/27) | unchanged |
 
-**Sample roles and event identity.** (i) *Same-sample oracle:* response and pseudo-data from all MC
-rows. This is exact for asimov_same, so any residual is the iteration's or the identifiability's.
-(ii) *Split-half:* response from the unfolding half and pseudo-data from the other half by the
-existing split key. Disjointness is checked by row index, and both halves' row counts and weight sums
-are recorded. Rows are MC events within one file. **No independent data population is involved or
-claimed.** The data file is not read. Row index is the identity, and `(run, subrun, gate)` is not an
-event key. If the split key cannot be reproduced bitwise from the record, run (i) only and label (ii)
-missing.
+**Sample roles and event identity.** (i) *Same-sample oracle (primary):* response and pseudo-data
+from all MC rows, which is the same sample role as the asimov_same GBDT comparators. (ii) *Split-half
+(secondary):* response from the unfolding half and pseudo-data from the other half by the existing
+split key. It measures the finite-MC response effect and is never used to label. Disjointness is
+checked by row index, and both halves' row counts and weight sums are recorded. Rows are MC events
+within one file. **No independent data population is involved or claimed.** The data file is not read.
+Row index is the identity, and `(run, subrun, gate)` is not an event key. If the split key cannot be
+reproduced bitwise from the record, run (i) only and label (ii) missing.
 
 **Construction (fixed in advance).** Truth grids: T1 = J cells (243, of which 109 are supported); T2 =
 each J edge split at the fine edge nearest its midpoint (≤ 7,776 cells, empty cells dropped and
 listed). T3 = the fine grid (65,856) is used **only** for the IBU trajectory (sparse), never for dense
 algebra. Response `R[reco, truth]` = reco-passing weight / truth-passing weight per truth cell, built
 twice: with nominal weights and with each departure's weights. The difference is the within-cell
-(binning) bias, reported as its own number. Background: signal-only (s5e showed signal-only reproduces
-the departure failure). The background-inclusive variant is out of scope and is recorded as such.
+(binning) bias, reported as its own number. The IBU is signal-only with exact efficiency.
 
-**Computations.** For each departure × grid × response variant:
+**Declared confounds of the primary comparison.** (a) *Background:* the GBDT comparators are
+background-inclusive and the IBU is signal-only. s5e D3 bounds this for E_avail (signal-only 10.5% /
+74.1% against background-inclusive 10.7% / 74.5% median/max at K = 5). D-ID also reports the
+signal-only traced GBDT runs for E_avail and q3 as a secondary comparator. (b) *Missed events:* the
+GBDT extrapolates missed events with a regressor while the IBU uses exact efficiency. That difference
+is the rank-3 object itself, so it is measured by `missed_concentration` rather than removed.
 
-1. IBU from the nominal prior, K = 1…30 (and 200 for W3), reported on the 175 functionals.
-2. IBU run to convergence (relative truth change < 1e-10, or 10⁵ iterations, whichever comes first);
-   non-convergence is recorded, never truncated silently.
+**Computations.** For each weight set × grid × sample role × response weighting:
+
+1. IBU from the nominal prior, K = 1…200, reported on the 175 functionals.
+2. IBU to convergence at T1 and T2, same-sample, nominal-weight response only (relative truth change
+   < 1e-10, or 10⁵ iterations, whichever comes first). Non-convergence is recorded, never truncated
+   silently.
 3. Fisher `F = Rᵀ diag(1/y) R` at T1 and T2. Per-functional CR width with explicit null-space
    detection (`comparator.cr_width`).
 4. The invisible share of the GBDT final-K residual aggregated to T1/T2 (`comparator.invisible_share`;
    a mode is invisible when its own noise-free χ² contribution is < 1).
-5. Labels from `comparator.classify`.
+5. Labels (`comparator.classify`), the branch aggregation (`comparator.branch_outcome`) and the
+   missed-event concentration (`comparator.missed_concentration`).
 
-Reference implementations are in `comparator.py`, tested on synthetic fixtures (§11).
+Reference implementations of 1 and 3–5 are in `comparator.py`, tested on synthetic fixtures (§11).
 
-**Metrics.** Per functional: r_GBDT(K), r_IBU(K), r_IBU(∞), relative σ_c, invisible share, and the
-binning bias. Per map: medians, 90th percentiles, maxima and full per-cell tables. No cell selection.
+**Metrics.** Per functional: r_GBDT(K), r_IBU(K), r_IBU(∞), relative σ_c, invisible share, the binning
+bias and the missed-event fraction. Per map: medians, 90th percentiles, maxima and full per-cell
+tables. No cell selection.
 
-**Predeclared decision rules** (thresholds frozen in `comparator.py`; the primary is T2 with the
-split-half response at K = 5):
+**Predeclared decision rules** (thresholds and the aggregation are coded in `comparator.py`; primary:
+T2, same-sample response, nominal weighting, K = 5):
 
 - *iteration*: approximation-dominated if |r_IBU| ≤ 0.5|r_GBDT|; iteration-faithful if
   |r_IBU − r_GBDT| ≤ 0.3|r_GBDT|; otherwise mixed;
 - *identifiability*: identified-at-target if σ_c ≤ 2.5%; weakly identified if σ_c > 10%; otherwise
   intermediate;
-- *branch outcome* (per map, over the five historical departures and P1r–P3r): **branch C** if ≥ 50% of
-  functionals with |r_GBDT| > 2% are weakly identified; **branch A** if ≥ 50% are
-  approximation-dominated and identified-at-target; **mixed** otherwise. Label shares are always
-  reported with their per-departure breakdown;
-- a functional whose label changes between T1 and T2, or between the response variants, is reported
-  as **resolution-sensitive** and counts toward neither branch.
+- *branch outcome*, per map, pooled over the branch population (GiBUU, W1, W3, q3, and W2 at K = 5),
+  counting only functionals with |r_GBDT| > 2% that are not resolution-sensitive:
+  - **branch C** if ≥ 50% are weakly identified;
+  - **branch A** if ≥ 50% are approximation-dominated and identified-at-target;
+  - **branch B** if ≥ 50% are iteration-faithful, identified-at-target and |r_IBU(∞)| ≤ 0.5|r_GBDT|;
+  - **mixed** otherwise.
 
-**Numerical tolerances.** The noise-free nominal must return r_IBU ≤ 1e-8 at every K (implementation
-control). The same-sample oracle with the departure-weighted response must converge to its own binned
-truth within 1e-6 relative on identified functionals (exactness control). If either fails, the run is
-INCONCLUSIVE and is not tuned.
+  Shares are always reported with their per-departure breakdown, and P1r–P3r are reported beside
+  them;
+- *resolution-sensitive*: a functional whose label changes between T1 and T2, or between nominal- and
+  departure-weighted responses, counts toward no branch;
+- *bookkeeping*: rank 3 is implicated for a departure if `missed_concentration` returns ≥ 2/3; this is
+  reported alongside the branch and does not replace it.
 
-**Missing-result rules.** A departure whose weight file fails its digest is excluded and listed; it is
-never replaced. A failed admission check stops everything after it. The grid T2 is dropped only if its
-Fisher matrix exceeds 6 GiB, and that is recorded. No result is dropped for its value.
+**Numerical tolerances.**
 
-**Stopping.** One pass at the frozen settings; no extension, re-thresholding or re-gridding after
-results. Stop at the cap below.
+- *Implementation control:* same-sample nominal (y = R·t_nom) must return |r_IBU| ≤ 1e-8 at every K.
+- *Exactness control:* at T1, same-sample with the departure-weighted response, IBU(∞) must reach its
+  own binned truth within 0.01 σ_c on identified-at-target functionals.
 
-**Interpretation of both outcomes.**
+Either failure makes the run INCONCLUSIVE, and nothing is tuned. At T2 the exactness control is
+reported, not gating. A T2 functional that has not converged by 10⁵ iterations keeps its last
+iterate, is flagged, and cannot count toward branch B.
 
-- **Branch C:** the J-grid joint functionals are weakly identified at the analysis exposure. The
-  present endpoint (J-cell joint 5D at ≤ 10% width) is out of reach for *any* estimator using these data
-  and this response without prior information. This is a quantified no-go for that endpoint, and the
-  route moves to I2, an endpoint change that needs Joseph's scope decision.
+**Missing-result rules.**
+
+- A departure whose weight file fails its digest is excluded and listed; it is never replaced.
+- A departure without a GBDT comparator gets σ_c and r_IBU only and counts toward no branch.
+- A failed admission check stops everything after it.
+- The grid T2 is dropped only if its Fisher matrix exceeds 6 GiB, and that is recorded.
+- No result is dropped for its value.
+
+**Stopping and the cap.** One pass at the frozen settings: no extension, re-thresholding or
+re-gridding after results. Work proceeds in priority order: (1) admission checks and controls; (2) T1
+everything; (3) T2 same-sample Fisher, labels and K ≤ 200 trajectories; (4) T2 convergence runs;
+(5) split-half and departure-weighted variants. If the cap is reached, stop and report the completed
+stages. A branch is declared only if (1)–(3) completed; otherwise the outcome is INCONCLUSIVE.
+
+**Interpretation of the outcomes.**
+
+- **Branch C:** the J-grid joint functionals are weakly identified **for binned estimators at this
+  reco binning and T2 resolution**, signal-only, at the analysis exposure. Unbinned information is not
+  bounded by this, so it is not a theorem about every estimator. It is a quantified no-go for the
+  present binned-precision expectation at J, and the route moves to I2, an endpoint change that needs
+  Joseph's scope decision.
 - **Branch A:** the functionals are identified and the GBDT leaves avoidable error. I1 becomes the
   justified next experiment.
-- **Mixed:** I1 and I2 apply to their own labelled functional sets. If both sets are small, record
-  INCONCLUSIVE with the shares.
+- **Branch B:** the functionals are identified and the exact iteration removes the residual only
+  when run to convergence. The question is the iteration count or regularization. It routes to the
+  noise-free convergence study already costed in the s5e next design (item 3, ≈ 4–6 node-hours),
+  restricted to the branch-B functionals. That study is not one of this lane's two interventions.
+- **Mixed:** I1, I2 and the convergence study apply to their own labelled functional sets. If all
+  three sets are small, record INCONCLUSIVE with the shares.
 - **Any outcome** is simulation-only and conditional on the fixed detector response, the signal-only
-  model and the departure family.
+  IBU and the departure family.
 
-**Price (forecast, not measured).** Data movement: one read-only copy of the 1.44 GiB event file, or
-the 14 needed float32 columns (≈ 1.06 GiB), into a dated scratch; deleted after the run. Compute:
-binning passes over 20.4 M rows; dense eigendecomposition at ≤ 7,776 (≈ 0.48 GiB per matrix); sparse
-IBU at T3. Planning 1–4 CPU core-hours, plus 1 hour of independent recomputation of the label shares
-from the per-cell table, giving 5 / 0.8 = **6.25 local CPU core-hours admitted**, ≤ 2 GiB scratch,
-≤ 8 GiB RAM, two threads, 0 GPU, 0 training, 0 Slurm. Running instead on a login node is a cluster-use
-decision for Joseph and is not priced as node-hours. Development, review and verification of the full
-driver: ≈ 1 owner-day and one fresh review, not included above.
+**Price (derived; `results.json` `diagnostic_cost`, from `synthetic_timing.json`).** Synthetic
+kernels at the real shapes (10,499 reco cells; two BLAS threads; assumed nonzeros 0.4 M, 3 M and 8 M for
+T1/T2/T3):
+
+- sparse IBU 0.79 ms, 7.2 ms and 18.7 ms per iteration;
+- T2 Fisher build 3.3 s and dense eigendecomposition 63 s (0.48 GiB);
+- peak RSS 1.4 GB.
+
+Run count: 9 weight sets (nominal, GiBUU, W1, W3, q3, W2, P1r, P2r, P3r) × 2 sample roles × 2 response
+weightings × 3 grids = 108 trajectories to K = 200 (0.05 core-h); 18 convergence runs of up to 10⁵
+iterations at T1/T2 (2.0 core-h); 18 T2 Fisher+eigh at two threads (0.66 core-h); binning and loading
+(0.1 core-h). The subtotal is 2.82 core-h at the assumed sparsity and 5.64 if the real responses are
+twice as dense. Adding 1 core-hour of independent recomputation gives **4.78–8.30 local CPU
+core-hours admitted** (/0.8). Other limits: ≤ 2 GiB scratch, ≤ 8 GiB RAM, two threads, 0 GPU, 0
+training, 0 Slurm. Data movement: one read-only copy of the 1.44 GiB event file, or the 14 needed
+float32 columns (≈ 1.06 GiB), into dated scratch, deleted after the run. Running instead on a login
+node is a cluster-use decision for Joseph and is not priced as node-hours. Development and review of
+the full driver (≈ 1 owner-day plus one fresh review) are not included.
 
 ## 7. Two conditional interventions (specified, not executed)
 
 **I1 — capacity-raised OmniFold estimators, noise-free first** (justified only under branch A). It is
-tied to E6 (the q3 stall that capacity removes) and to the capacity effect at K = 10. Setting: the s5e
+tied to E6's measured failure: B0's reco-level fit stalls for q3 (λ_5D ≈ 985) and capacity removes the
+stall (174 at K = 15). It is also tied to the capacity effect at K = 10, which is large only for W3 H2
+(3.68% → 1.01%) and small on the q3 J/H2 maps (−14%/−3%). I1 therefore has a measured motivation for
+the reco-level approximation; its benefit on endpoint functionals is open. Setting: the s5e
 D5 capacity probe (400 trees / 31 leaves on the three OmniFold estimators). The R refinement (400/31)
 and all other settings are unchanged. No other setting is scanned. Truths: the five historical
 departures plus P1r/P2r/P3r, all development. Run asimov_same to K = 30. Primary metric: the share of
@@ -327,10 +381,11 @@ prior-optimized confidence intervals*, DOI 10.1088/1748-0221/17/10/P10013.
 | constraints Aλ ≤ b (non-negativity; monotone/convex options) | non-negativity holds; shape constraints are physics choices | any constraint beyond non-negativity is a model assumption to be declared |
 | OSB: min/max hᵀλ s.t. ‖y − Kλ‖² ≤ z²₁₋α/₂ + s², Aλ ≤ b; coverage proved (Tenorio et al.) when h is in the row space of K; **empirical only** in rank-deficient cases; one-at-a-time | the 5D problem is rank-deficient at T2/T3; there are 175 functionals | use as a benchmark, not a validated procedure. Simultaneous claims need the SSB variant or multiplicity control, which is wider |
 | PO intervals: provable frequentist coverage for fixed dual parameters, with the prior used only to optimize expected length | same | the same response-uncertainty gap applies |
-| no background in the paper's main examples; 1D examples with m = 40 smeared and n = 10/40/80 true bins | signal plus a refined negative-weight background | add the background with its own uncertainty to the forward model; scale the computation (m ≈ 10⁴, n ≈ 10³–10⁵) |
+| no background in the paper's main examples ("without the uniform background"); 1D examples: a Gaussian-mixture deconvolution with m = 40 smeared and n = 10/40/80 true bins, and a steeply falling inclusive-jet spectrum (30 smeared / 60 true bins, per the review's check of the text) | signal plus a refined negative-weight background | add the background with its own uncertainty to the forward model; scale the computation (m ≈ 10⁴, n ≈ 10³–10⁵) |
 
-**Conclusion.** Strict bounds answer exactly the identifiability question here, because the interval
-width is the data-consistent range of the functional. That makes them the natural I2 benchmark.
+**Conclusion.** Strict bounds address the identifiability question directly: the interval width is
+the data-consistent range of the functional, *given the declared constraints and the slack s²*, so it
+moves with those choices. That makes them the natural I2 benchmark.
 Response MC noise, backgrounds and 5D scale are unaddressed, and the coverage is empirical in our
 rank-deficient regime. **They are not a validated rescue of the GBDT.**
 
@@ -357,12 +412,13 @@ Cost at the measured 293.973 s per K = 5 pseudo unfold (32 threads; 423 receipts
 These exclude sample construction, identity work, the I1/I2 confirmation, retries and review. Speed
 sensitivity for the 288-unfold recipe (Amdahl, accelerated fraction f unknown and labelled; no Session-4
 result had been pushed when this was written): f = 0.8, s = 10 gives 22,656 admitted; f = 0.95,
-s = 100 gives 4,815. Earlier pools for comparison: the s5p CPU pool was 341 node-hours, and s5e used
-10.4.
+s = 100 gives 4,815. Earlier pools for comparison: the largest, the s5p CPU pool, was 341
+node-hours; s5e used 10.4.
 
 **Feasibility conclusion.** Validating a GBDT bootstrap-plus-universe total interval in 5D by frozen
-per-experiment reconstruction costs 10²–10³ times any pool this project has used, even under optimistic
-speedups. Even the statistical-only interval with 30 replicas is ≈ 8,700 node-hours. **This is a
+per-experiment reconstruction costs about 14–240 times the largest pool this project has used (s5p,
+341 node-hours): 80,916 admitted is 237×, 28,377 is 83×, and the optimistic f = 0.95, s = 100 case
+(4,815) is 14×. Even the statistical-only interval with 30 replicas (8,710) is 25×. **This is a
 quantified no-go for that validation route under the present method** (D3). It does not prove every
 alternative infeasible. A procedure whose per-experiment interval costs seconds (a binned or linearized
 propagation, strict bounds) changes the count by about 300×, but it is a **different interval
@@ -375,7 +431,7 @@ changed method.
 
 | stage | evidence available | missing populations / identities / variations | admission criteria (proposed) | price | stop | gate class |
 |---|---|---|---|---|---|---|
-| S0 D-ID | E1–E8; named inputs present (2026-10-09 `ls`) | none for the diagnostic itself; the event-file digest is to be re-measured | §6 admission checks | ≤ 6.25 CPU core-h, 1.44 GiB read | §6 | Now (after authorization) |
+| S0 D-ID | E1–E8; named inputs present (2026-10-09 `ls`) | none for the diagnostic itself; the event-file digest is to be re-measured | §6 admission checks | 4.78–8.30 CPU core-h, 1.44 GiB read | §6 | Now (after authorization) |
 | S1 point-estimator confirmation | development truths only: historical GiBUU/W1–W3/q3; corrected P1r–P3r (already inspected in s5p) | **an untouched physical departure**: interaction-knob / FSI / MnvTune-component reweights or response variations. The loader reads no such weights; whether the file carries any is unobserved (one key listing) | a frozen I1 or I2 estimator; bias on the untouched departure within the frozen allowance; no sign reversal on identified functionals | I1 noise-free 7.6 node-h; untouched-departure inputs **unpriced** (event-loop production if weights are absent) | stop if no untouched departure exists: **NO UNTOUCHED VALIDATION DOMAIN** | P (inputs), M (if I2) |
 | S2 matched total-UQ construction | R's 100-replica data bootstrap (refits everything) and the numerical floor (s5e A3); the adopted `C_EW` covers a different estimator | per-universe 5D inputs (flux/detector/interaction) for the same estimator; background-template statistics; a joint nuisance law | same estimator, domain and centering for every block; the allowance B from S1 enters once | data construction 288 × 648.0 s ≈ 6.5 node-h subtotal ×1.25/0.8 ≈ 10.1 node-h after inputs exist; inputs **unpriced** | stop if universes cannot be produced for this estimator | P |
 | S3 calibration / coverage | none qualifying (fixed-σ coverage is historical) | independent pseudo-data populations at production size, per experiment, with each experiment's own interval | §9 sizing on the frozen functional set | §9: 281 to 80,916 node-h under the present method | **no-go under the present method** (§9) unless a cheap per-experiment interval is first validated | M |
@@ -401,7 +457,7 @@ be labelled that way.
 - **Independent numerical checks.** The ensemble statistics are re-derived from raw arrays and match
   the s5e receipt to ≤ 1.2e-15. All README headline numbers reproduce (§2). The reducer imports no
   repository module and checks the operand digest.
-- **Synthetic controls (`test_comparator.py`, 8 tests, pass).** Positive and negative controls:
+- **Synthetic controls (`test_comparator.py`, 10 tests, pass).** Positive and negative controls:
   - exact IBU misfit is monotone and falls by > 10³; an approximate (over-smoothing) step stalls at
     > 100× the exact misfit (the E6 discriminant fires on the defect and stays silent on the exact
     case);
@@ -409,15 +465,42 @@ be labelled that way.
     sum stays finite, and the clean response is finite everywhere;
   - the invisible share is 1 for a weak mode and 0 for a strong mode;
   - classification labels fire in both directions;
-  - the linear prior-pull identity r = −s holds exactly;
-  - a non-diagonal kernel produces ρ < 0 and a diagonal one does not;
-  - the Clopper–Pearson sizing is minimal, by brute force.
+  - the branch aggregation reaches C, A, B, mixed and no-eligible, and excludes resolution-sensitive
+    and sub-2% functionals;
+  - the missed-event concentration fires on a concentrated excess and not on an unrelated one;
+  - the Clopper–Pearson sizing is minimal, by brute force;
+  - two further tests only document the algebra behind E3 and E5 (an affine-estimator identity and a
+    kernel example) and exercise no lane code; the review called them tautological, and they are
+    labelled as such.
 - **Consequential arithmetic recomputed by hand.** I1: 8 × 30 × 489.5386 = 117,489 s; /28,800 = 4.080;
   ×1.25 = 5.099; +1 = 6.099; /0.8 = 7.62. §9: 293.973/28,800 × 1.25 = 0.012759 node-h per unfold;
   × 4 × 4,404 × 288 = 64,733; /0.8 = 80,916. A normal-approximation check of N for J/4 cases,
   (z₁₋₅.₇ₑ₋₅ + z₁₋₂.₃ₑ₋₄)² p(1−p)/0.0527² ≈ (3.86 + 3.50)² × 0.2166 / 0.002777 ≈ 4,225, agrees with
   the exact 4,404.
-- **Fresh reviewer:** recorded below after the review.
+- **Fresh reviewer, round 1** (Claude Opus 5.5 as reported by the reviewer; fresh context, read-only,
+  clean detached worktree at `df0923aa`; ≈ 1.3 CPU core-minutes; worktree clean afterwards). Record:
+  [`review-round-1.md`](review-round-1.md). All consequential numbers reproduced independently. It
+  raised 6 MATERIAL and 8 MINOR findings, all disposed in one repair batch:
+
+| # | severity | disposition |
+|---|---|---|
+| 1 | MATERIAL | fixed: branch population = traced GiBUU/W1/W3/q3, plus W2 at K = 5 via its ensemble mean; P1r–P3r get σ_c/r_IBU only; missing-comparator rule added (§6) |
+| 2 | MATERIAL | fixed: branch B added and coded; r_IBU(∞) now enters a rule; rank-3 concentration rule coded (`missed_concentration`); E4 GiBUU/W1 moved to rank-1 "against" (§4, §6) |
+| 3 | MATERIAL | fixed: primary = same-sample response against asimov_same GBDT; split-half secondary and never used to label; background and missed-event confounds declared; the 1e-8 control is restricted to same-sample (§6) |
+| 4 | MATERIAL | fixed: branch C scoped to binned estimators at this reco binning and T2 resolution (§4, §6) |
+| 5 | MATERIAL | fixed: the q3 claim rests on λ_5D; J/H2 effects quoted as small; I1's tie restated (§3 E6, §4, §7) |
+| 6 | MATERIAL | fixed: "about 14–240× the largest (s5p) pool"; D3 is unchanged on those numbers (§9) |
+| 7 | MINOR | fixed: run count, synthetic timings at the T1/T2/T3 shapes (`synthetic_timing.json`), cap-priority rule; `results.json` now carries the same 4.78–8.30 core-h (§6) |
+| 8 | MINOR | fixed: the exactness control is at T1 within 0.01 σ_c; T2 non-convergence is flagged and excluded from branch B (§6) |
+| 9 | MINOR | fixed: the slope wording now says the data shift overstates the closure residual (§3 E5) |
+| 10 | MINOR | fixed: the measured |bias|/SD medians (11.7–23.5) are quoted (§5, §13) |
+| 11 | MINOR | fixed: "only partly reduce" (§3 E3) |
+| 12 | MINOR | fixed: partial-trace pairing labelled as routed, not read from metadata (§2) |
+| 13 | MINOR | fixed: branch and resolution-sensitivity rules coded and tested; tautological tests labelled |
+| 14 | MINOR | fixed: second paper example added; "answer exactly" softened (§8) |
+
+  The review could not verify the login-node `ls` (it was barred from ssh), which stays a single-owner
+  observation.
 
 ## 12. Commands and resources
 
@@ -431,33 +514,34 @@ python3 -m pytest -q -p no:cacheprovider docs/orchestration/state/next-preparati
 Environment: macOS, Python 3 with NumPy 1.26.4, SciPy 1.15.2. Elapsed so far: from 12:59:45 PDT; the
 final figure is in §13. Local CPU: reductions ≈ 0.02 core-hours (two runs, 21.2 s and 29.5 s user),
 tests < 0.01; the total with the review is in §13. Scratch: < 5 MiB (the paper PDF 4 MiB, logs), removed
-at delivery. Tracked: the five files (≈ 116 KiB). Cluster: one `ls` (no job, no compute). GPU and
+at delivery. Tracked: the eight files (≈ 0.15 MiB). Cluster: one `ls` (no job, no compute). GPU and
 training: 0.
 
 ## 13. Disposition
 
 | decision | verdict | reason |
 |---|---|---|
-| D1: what evidence discriminates repairable bias from weak identifiability, and is one small experiment justified? | **PASS** (pending §11 review) | D-ID has a defensible purpose (E6/E7 show the split is departure dependent and unresolved from saved outputs). Its inputs exist, observed 2026-10-09. The design, rules, tolerances, stopping and price are complete, with tested reference reductions. It needs no training and ≤ 6.25 CPU core-hours |
-| D2: run the old ~70-node-hour bias–variance panel next? | **FAIL** | E1/E2: variance is 1/20–1/50 of bias, and noise-free runs measure the bias. The panel measures the axis that cannot change a decision |
+| D1: what evidence discriminates repairable bias from weak identifiability, and is one small experiment justified? | **PASS** (pending §11 review) | D-ID has a defensible purpose (E6/E7 show the split is departure dependent and unresolved from saved outputs). Its inputs exist, observed 2026-10-09. The design, rules, tolerances, stopping and price are complete, with tested reference reductions. It needs no training and 4.78–8.30 CPU core-hours |
+| D2: run the old ~70-node-hour bias–variance panel next? | **FAIL** | E1/E2: the median |bias|/SD over J is 11.7–23.5 for the strong departures (bias share of MSE ≥ 0.99), and noise-free runs measure the bias. The panel measures the axis that cannot change a decision |
 | D3: can the present estimator plus frozen-procedure validation reach the endpoint at useful precision? | **FAIL against proposed targets** | E8: allowance median 14.7% (J) against a proposed 5%. §9: validation 8,710–80,916 admitted node-hours. These targets are not ratified; a changed method is not excluded |
 | overall publication-ready objective | **not achieved** | this lane designs a diagnostic |
 
 ## 14. Next action
 
 **Decision for Joseph:** authorize D-ID as specified in §6. That means a ≤ 1.44 GiB read-only copy of
-`of_inputs_5d.npz` (or a 14-column extract) and the digested departure/comparator products, ≤ 6.25
-local CPU core-hours, 0 GPU, 0 training, 0 Slurm, one owner and one fresh reviewer. Its outcome (branch
-A, branch C or mixed) selects between I1 (7.62 node-hours, noise-free) and I2 (an endpoint change that
-needs his scope decision). **Separately**, any S1 confirmation needs an untouched departure that does
+`of_inputs_5d.npz` (or a 14-column extract) and the digested departure/comparator products, 4.78–8.30
+local CPU core-hours, 0 GPU, 0 training, 0 Slurm, one owner and one fresh reviewer. Its outcome selects the next step: branch A leads to I1 (7.62 node-hours,
+noise-free); branch B leads to the s5e convergence study restricted to the branch-B functionals (≈ 4–6
+node-hours, per that record); branch C leads to I2 (an endpoint change that needs his scope decision);
+mixed leads to each on its own functional set. **Separately**, any S1 confirmation needs an untouched departure that does
 not exist in current inputs (§10). No S3 is affordable under the present method (§9).
 
 **Integration request (for the dispatch/catalog owner; not done here).** Measured:
 `generate_manifest.py --check` is **OK at the base `5ac9706a`** (1,809 rows) and **OUT OF DATE on this
-branch** (1,814 rows) only because of this lane's five files. Regenerating from source adds five rows:
-`REPORT.md` as `MACHINE open` through its pre-registered override, and the other four as defaults,
-`MACHINE generated`, immutable. It also changes the `inbound_count`/`consumer` columns of about 20
-existing rows that these files cite. No override row is strictly required; whether the four
+branch** (1,817 rows) only because of this lane's eight files. Regenerating from source adds eight
+rows: `REPORT.md` as `MACHINE open` through its pre-registered override, and the other seven as
+defaults, `MACHINE generated`, immutable. It also changes the `inbound_count`/`consumer` columns of about 20
+existing rows that these files cite. No override row is strictly required; whether the seven
 supporting files should be `open` rather than the default is the owner's choice. The lane did not edit
 `MANIFEST-overrides.tsv`, `MANIFEST.tsv` or `CATALOG.md`, and it did not change the generator or the
 checker. The required action is one regeneration at integration. This is not a regression, and it is

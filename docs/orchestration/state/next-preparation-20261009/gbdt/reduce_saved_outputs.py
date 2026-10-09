@@ -411,20 +411,39 @@ def design(costs: dict[str, float]) -> dict[str, Any]:
 
 
 def diagnostic_cost() -> dict[str, Any]:
-    """Price of the proposed exact-response comparator (no GBDT fit; linear algebra only)."""
+    """Price of D-ID from its run count and the synthetic kernel timings (synthetic_timing.json)."""
+    timing = json.loads((Path(__file__).resolve().parent / "synthetic_timing.json").read_text())
+    grid = timing["per_grid"]
     rows = 20_402_110  # s5e geometry receipt rows_eligible for input npz 07fccc1a...
     columns = 5 + 5 + 4  # truth axes, reco axes, pass flags/weight/split key
-    extract_bytes = rows * columns * 4
+    weight_sets = 9  # nominal control, GiBUU, W1, W3, q3, W2, P1r, P2r, P3r
+    roles, weightings = 2, 2  # same-sample/split-half; nominal-/departure-weighted response
+    per_iteration = sum(grid[g]["ibu_seconds_per_iteration"] for g in ("T1", "T2", "T3"))
+    trajectories_s = weight_sets * roles * weightings * 200 * per_iteration
+    convergence_s = weight_sets * 1e5 * (grid["T1"]["ibu_seconds_per_iteration"]
+                                         + grid["T2"]["ibu_seconds_per_iteration"])
+    threads = 2  # the timing ran with two BLAS threads; CPU = wall x threads
+    eigh_cpu_s = weight_sets * roles * threads * (grid["T2"]["eigh_s"] + grid["T2"]["fisher_build_s"])
+    binning_s = 360.0  # allowance: file load plus 108 bincount passes over 20.4 M rows
+    subtotal_h = (trajectories_s + convergence_s + eigh_cpu_s + binning_s) / 3600
+    verification_h = 1.0
+    denser = 2.0  # real responses may hold up to twice the assumed nonzeros
     return {
         "event_rows": rows,
-        "columns_float32": columns,
-        "column_extract_bytes": extract_bytes,
-        "column_extract_GiB": extract_bytes / 2**30,
-        "binning_passes": "one pass per truth resolution (3) x weight set (nominal + 5 departures)",
-        "dense_fisher_7776_bytes": 7776**2 * 8,
-        "planning_cpu_core_hours": [1.0, 4.0],
+        "column_extract_GiB": rows * columns * 4 / 2**30,
+        "event_file_GiB": 1_548_438_020 / 2**30,
+        "runs": {"weight_sets": weight_sets, "sample_roles": roles, "response_weightings": weightings,
+                 "trajectory_runs_K200": weight_sets * roles * weightings * 3,
+                 "convergence_runs_1e5": weight_sets * 2, "fisher_eigh_T2": weight_sets * roles},
+        "cpu_core_hours": {"trajectories": trajectories_s / 3600, "convergence": convergence_s / 3600,
+                           "fisher_eigh_T2_two_threads": eigh_cpu_s / 3600,
+                           "binning": binning_s / 3600, "subtotal_assumed_nnz": subtotal_h,
+                           "subtotal_denser": subtotal_h * denser},
+        "verification_core_hours": verification_h,
+        "admitted_core_hours_range": [(subtotal_h + verification_h) / 0.8,
+                                      (subtotal_h * denser + verification_h) / 0.8],
+        "peak_rss_bytes_synthetic": timing["max_rss_bytes"],
         "reserve_rule": "admitted = subtotal / 0.8",
-        "admitted_cpu_core_hours_upper": 4.0 / 0.8,
     }
 
 

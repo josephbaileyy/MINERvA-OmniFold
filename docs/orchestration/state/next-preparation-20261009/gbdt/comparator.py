@@ -17,6 +17,11 @@ APPROXIMATION_RATIO = 0.5  # |r_IBU| <= 0.5 |r_GBDT|: the exact-response iterati
 FAITHFUL_TOLERANCE = 0.3  # |r_IBU - r_GBDT| <= 0.3 |r_GBDT|: the GBDT behaves like exact IBU
 IDENTIFIED_SIGMA = 0.025  # relative CR width at or below half the proposed 5% allowance
 WEAK_SIGMA = 0.10  # relative CR width above the proposed 10% total half-width
+ELIGIBLE_RESIDUAL = 0.02  # only functionals with |r_GBDT| > 2% enter the branch shares
+BRANCH_SHARE = 0.5  # a branch is declared when at least half of the eligible functionals carry it
+CONVERGED_RATIO = 0.5  # branch B needs |r_IBU(inf)| <= 0.5 |r_GBDT|
+MISSED_QUANTILE = 2.0 / 3.0  # top tercile of missed-event fraction
+MISSED_SHARE = 2.0 / 3.0  # bookkeeping implicated if >= 2/3 of the excess sits in that tercile
 
 
 def ibu(response: np.ndarray, data: np.ndarray, prior: np.ndarray, iterations: int) -> np.ndarray:
@@ -100,3 +105,42 @@ def classify(r_gbdt: np.ndarray, r_ibu: np.ndarray, sigma_rel: np.ndarray) -> li
             ident = "intermediate"
         labels.append({"iteration": iteration, "identifiability": ident})
     return labels
+
+
+def branch_outcome(labels: list[dict[str, str]], r_gbdt: np.ndarray, r_ibu_inf: np.ndarray,
+                   sensitive: np.ndarray) -> dict[str, object]:
+    """Predeclared aggregation over one map: branch C, A, B or mixed (REPORT.md section 6).
+
+    C: weakly identified. A: approximation-dominated and identified. B: iteration-faithful,
+    identified, and removed by running the exact iteration to convergence. Functionals flagged
+    resolution-sensitive, or with |r_GBDT| <= 2%, count toward no branch.
+    """
+    eligible = (np.abs(r_gbdt) > ELIGIBLE_RESIDUAL) & ~sensitive
+    n = int(eligible.sum())
+    counts = {"C": 0, "A": 0, "B": 0}
+    for i in np.flatnonzero(eligible):
+        lab = labels[i]
+        if lab["identifiability"] == "weakly-identified":
+            counts["C"] += 1
+        elif lab["identifiability"] == "identified-at-target":
+            if lab["iteration"] == "approximation-dominated":
+                counts["A"] += 1
+            elif (lab["iteration"] == "iteration-faithful"
+                  and abs(r_ibu_inf[i]) <= CONVERGED_RATIO * abs(r_gbdt[i])):
+                counts["B"] += 1
+    shares = {k: (v / n if n else 0.0) for k, v in counts.items()}
+    branch = next((k for k in ("C", "A", "B") if n and shares[k] >= BRANCH_SHARE), "mixed")
+    return {"n_eligible": n, "shares": shares, "branch": branch if n else "no-eligible-functional"}
+
+
+def missed_concentration(excess: np.ndarray, missed_fraction: np.ndarray) -> dict[str, object]:
+    """Share of the summed |r_GBDT - r_IBU| carried by functionals in the top missed-event tercile.
+
+    Expected about 1/3 if the excess is unrelated to missed events; bookkeeping (missed-event
+    extrapolation) is implicated when the share is at least 2/3.
+    """
+    cut = np.quantile(missed_fraction, MISSED_QUANTILE)
+    top = missed_fraction >= cut
+    total = float(np.sum(np.abs(excess)))
+    share = float(np.sum(np.abs(excess[top])) / total) if total > 0 else 0.0
+    return {"share_top_tercile": share, "bookkeeping_implicated": share >= MISSED_SHARE}
