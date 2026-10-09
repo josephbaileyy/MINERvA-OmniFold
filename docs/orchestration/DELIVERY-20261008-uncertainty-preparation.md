@@ -49,7 +49,7 @@ or changes publication scope.
 | integrated commit reviewed in the initial review | `cd0da202` |
 | repair cycle 1 (final lane tips) | A `355174fe` (behavior) + `cc9eed27` (documentation); B `8ac300fa` + `c783d9c3`; C `57f6dd30`; D `926956d2` + `ecb52dde` |
 | integrated commit of the focused review (cycle 1) | `ee61fb22` |
-| E's freeze after the focused review | `287f25f5` (this file, STATUS, the proposal's §0, `integration.json`, `review-cycle1.md` and its recompute files) |
+| E's freeze after the focused review | `287f25f5` (this file, STATUS, the proposal's §0, `integration.json`, `review-cycle1.md` and its recompute files, `MANIFEST.tsv`) |
 | final delivery commit | `901f0088` on `prep/uncertainty-e-20261008` (the freeze plus the `460631d1` integration) |
 | closeout corrections | `prep/next-closeout-20261009`, from `901f0088`: §8 below; the record is `state/next-preparation-20261009/closeout/REPORT.md` |
 
@@ -196,11 +196,13 @@ admit compute.
   - Cycle-1 N1, **corrected in B's DESIGN §7, §16, §17 and §18.** The DESIGN called N1's truth-free
     variant "not ruled out". N1 fixes the bank but bootstraps both streams, so the outer scatter lacks
     the MC-stream term. An exactly calibrated bootstrap then gives κ ≈ √(data share) ≈ 0.59 (0.594 at
-    N1's half-MC bank, 0.587 at N2's 48 % bank), below the 0.80 edge. That also fails N1's own coverage
-    test, so the reference-aware variant is not open either. Either variant needs a data-only inner
-    stream, which makes it a data-stream diagnostic of N2's kind. It is unpriced, and it is not a
-    coverage test.
-  - Cycle-1 N4, **corrected in C's assessment.** The five unsplit `P09` labels now read `P09a`
+    N1's half-MC bank, 0.587 at N2's 48 % bank), below the 0.80 edge. The bank's MC realization is also
+    a fixed offset against `T_R` (rms about 0.80 `σ̂`). Coverage of `T_R` is mixed rather than nominal
+    per functional, and the bias test fails in most functionals, so the reference-aware variant is not
+    open with either inner stream (closeout review F1). Only the truth-free width form survives, and
+    only with a data-only inner stream, as a data-stream diagnostic of N2's kind. It is unpriced, and
+    it is not a coverage test.
+  - Cycle-1 N4, **corrected in C's assessment.** The six unsplit `P09` occurrences (on five lines) now read `P09a`
     (estimator identity) or `P09b` (transfer).
   - Cycle-1 N2, **labelled in A's and C's price lists.** A's `P05` price (about 128 node-h) assumes that
     an exact universe unfold costs what the exact CV unfold does. C's universe/CV ratio gives about
@@ -221,10 +223,10 @@ admit compute.
    MC/data 4.708, disjoint production-size sets number ⌊4.708/5.708⌋ = 0. The held-out alternative N1
    "fails as specified" for two reasons: its finite reference is treated as exact, and its fixed bank
    with a both-stream inner bootstrap leaves the outer scatter without the MC-stream term (κ ≈ 0.59 for
-   an exactly calibrated bootstrap; review cycle 1, N1). The second reason applies to N1's coverage
-   test as well, so neither variant is open with that inner bootstrap. With a data-only inner stream
-   either one becomes a data-stream-only diagnostic of N2's kind, unpriced (B DESIGN §7, closeout
-   correction).
+   an exactly calibrated bootstrap; review cycle 1, N1), while the bank's MC realization stays a fixed
+   offset against the reference. The reference-aware variant is therefore not open. Only the
+   truth-free width form, with a data-only inner stream, survives, as a data-stream-only diagnostic
+   of N2's kind, unpriced (B DESIGN §7, closeout correction).
 3. **Costs of the specified designs versus all designs.** No lane now claims infeasibility for an
    unpriced design. Cheaper inner procedures (B = 50), smaller families and looser tolerances are
    priced as separate procedures. None is validated, so none contributes admitted savings. The

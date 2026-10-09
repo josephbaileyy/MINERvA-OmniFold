@@ -38,7 +38,7 @@ and validated at defensible cost? What specifically prevents it today?
      - `E_ML`, seeds 1–10, the ML block.
    - The two centrals differ by a median 1.3 σ_stat per bin.
    - The transfers to `E_C` and the seed 1 ↔ seed 42 relation are unmeasured. Pairing ids below are A's FREEZE
-     numbering; A's CONTRACT text used earlier ids.
+     numbering, with `P09` split into `P09a`/`P09b` by A's REPAIR 1; A's CONTRACT text used earlier ids.
    - A's FREEZE recorded 4 of 17 pairings DISPROVED and 3 UNRESOLVED. A's REPAIR 1 (`cc9eed27`) split `P09` into
      `P09a` and `P09b`, giving 4 of 18 DISPROVED and 4 UNRESOLVED:
      - the band, the systematics and the ML block were produced by LightGBM, not by `E_C` (`P02`, `P04`, `P09a`);
