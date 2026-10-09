@@ -42,14 +42,27 @@ before the copy. This directory adds 42.4 GB.
 | `MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz` | the 5D unfolding input |
 | `MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5/`, `z2m-products/PROJ/` | the adopted trunk `z-cv.npz` (`3d7465f6…`) and its projection (`835828bf…`) (U01, Sec. VII; G9) |
 
+**Added 2026-10-08/09** (Joseph's follow-up authorization; repository record
+`docs/publication/corrections-20261008/RECORD-20261008-followups-g11-g12-preservation.md` §3):
+
+| path | what |
+|---|---|
+| `pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/{evloop,lateral,merged,tables,unfold-run}` | The W2 shifted event-loop, lateral and merged outputs the first pass excluded, plus two small W2 directories it had missed: 53 files, 33,779,505,923 B |
+| `W2-SOURCE-INVENTORY.tsv`, `W2-SHA256SUMS`, `W2-SYMLINKS.tsv` (empty), `W2-VERIFY-RECEIPT.txt`, `preserve_w2_outputs_20261008.sh`, `.w2-files.txt`, `.w2-rel.txt` | The same method as the first pass: hashed at the source, copied, every destination file re-hashed (53 of 53 match) |
+| `anatuple-checksums-20261008/ANATUPLE-SHA256.tsv` | sha256, bytes and mtime of the analysed older-production AnaTuples on `/pscratch/sd/j/josephrb/minerva/minerva_large_files` (corrections record G4). It identifies the files; it is **not** a copy of them. `DEFERRED.tsv` lists the files a watchdog skipped because their Lustre objects hung; the record §3a names the ones still unhashed. `MISMATCH.tsv` (empty) would list any file whose size or mtime differed from the inventory. |
+| `anatuple-checksums-20261008/anatuple_checksum_sweep_20261008.sh`, `hpss_second_copy_20261008.sh`, `verify_tar_stream.py` | The sweep script (resumable: re-running it hashes only the missing files), and the HPSS copy script with its stream verifier (below) |
+
+**HPSS second copies** (G9; `hpss_second_copy_20261008.sh`), verified by streaming each back and re-hashing:
+- `/home/j/josephrb/prd-release-preservation-20261008/s5p-archive-20261006.tar` (+ `.idx`): an htar archive of
+  `/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/`, 10,614 of 10,614 listed members matching;
+- `/home/j/josephrb/prd-release-preservation-20261008/z-cv.npz`: sha256 `3d7465f6…` (VL142).
+
 **Not preserved here (excluded, with sizes):**
-- `w2-recoil-20261006/w2b/{evloop,lateral,merged}`, about 32 GB of W2 shifted event-loop and lateral outputs. The
-  article's W2 numbers are reproducible from the preserved `w2b/unf` vectors and the committed evaluations;
-  regenerating the shifted unfolds would need these, or the event loop. This is a separate storage choice.
 - `w2-recoil-20261006/{deploy,repo,build,cost1A,smoke}`: code snapshots, held in git, plus test runs.
 - The s5p calibration products: already archived at `/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/`
   (SHA256SUMS `1a72cb43…`).
-- The analysed AnaTuples (11.52 TB): see the corrections record, G4.
+- The analysed AnaTuples (11.52 TB): only their checksums are here (above). Copying them needs Joseph's decision;
+  see the follow-up record §7.
 
 ## Recovery
 
@@ -58,6 +71,10 @@ Read the files in place, or copy them back to their original paths:
 ```
 D=/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008
 cd $D && sha256sum --quiet -c SHA256SUMS && echo intact                 # re-verify every file
+cd $D && sha256sum --quiet -c W2-SHA256SUMS && echo intact              # the W2 addition
+# recover the HPSS second copies (on a login node; DTNs have no hsi):
+htar -xvf /home/j/josephrb/prd-release-preservation-20261008/s5p-archive-20261006.tar   # recreates s5p-archive-20261006/ here
+hsi get z-cv.npz : /home/j/josephrb/prd-release-preservation-20261008/z-cv.npz && sha256sum z-cv.npz
 (cd $D/rc4 && sha256sum -c RC4-TARBALL.sha256)                         # the RC4 tarball, original digest
 # restore one tree to /pscratch (run on a DTN; /pscratch is /global/pscratch there):
 rsync -a $D/pscratch/sd/j/josephrb/s5n-20260925/ /global/pscratch/sd/j/josephrb/s5n-20260925/

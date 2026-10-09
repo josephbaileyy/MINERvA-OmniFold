@@ -1,0 +1,3 @@
+deferred: 4 file(s) listed in /global/homes/j/josephrb/anatuple-skip.txt
+start 2026-10-09T01:17:53Z: 1462 to hash, 908 already done, 2 streams
+end 2026-10-09T04:13:38Z: 2365 hashed, 0 mismatches, 6 deferral records

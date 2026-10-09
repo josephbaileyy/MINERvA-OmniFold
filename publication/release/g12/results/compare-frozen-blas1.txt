@@ -1,0 +1,49 @@
+npz sha256: regenerated 78010caf47107be4b3de578701b5c8fc9aed1483f621f06bab19ae4ba08eb648 | preserved 7bd019c646b44c6e94fcefd6e0827f6891d96d7acc16f86d124aee94cb776387 | DIFFERENT
+ARRAY DIFFERS F__GENIE_2_12_10_CV: dtype float64/float64 shape (1366, 109)/(1366, 109) max|diff| 6.53e-55 (relative to max|value| 2.25e-16; max ULP distance 7)
+ARRAY DIFFERS F__GENIE_2_12_10_MEC: dtype float64/float64 shape (1343, 109)/(1343, 109) max|diff| 6.53e-55 (relative to max|value| 2.17e-16; max ULP distance 9)
+ARRAY DIFFERS F__GiBUU_2019: dtype float64/float64 shape (1351, 109)/(1351, 109) max|diff| 5.71e-55 (relative to max|value| 2.93e-16; max ULP distance 7)
+ARRAY DIFFERS F__MnvTune_v1: dtype float64/float64 shape (1365, 109)/(1365, 109) max|diff| 6.53e-55 (relative to max|value| 2.21e-16; max ULP distance 7)
+ARRAY DIFFERS F__NuWro_21_09: dtype float64/float64 shape (1751, 109)/(1751, 109) max|diff| 6.53e-55 (relative to max|value| 2.18e-16; max ULP distance 8)
+ARRAY DIFFERS Fpow__P1_a1.0: dtype float64/float64 shape (193, 109)/(193, 109) max|diff| 6.53e-55 (relative to max|value| 2.27e-16; max ULP distance 5)
+ARRAY DIFFERS Fpow__P1g_a1.0: dtype float64/float64 shape (199, 109)/(199, 109) max|diff| 6.53e-55 (relative to max|value| 2.31e-16; max ULP distance 9)
+ARRAY DIFFERS Fpow__P2_a1.0: dtype float64/float64 shape (195, 109)/(195, 109) max|diff| 6.53e-55 (relative to max|value| 2.34e-16; max ULP distance 7)
+ARRAY DIFFERS Fpow__P2g_a1.0: dtype float64/float64 shape (193, 109)/(193, 109) max|diff| 4.89e-55 (relative to max|value| 1.72e-16; max ULP distance 8)
+ARRAY DIFFERS Fpow__P3_a1.0: dtype float64/float64 shape (195, 109)/(195, 109) max|diff| 4.89e-55 (relative to max|value| 1.8e-16; max ULP distance 5)
+ARRAY DIFFERS Fpow__P3g_a1.0: dtype float64/float64 shape (172, 109)/(172, 109) max|diff| 4.89e-55 (relative to max|value| 1.83e-16; max ULP distance 5)
+ARRAY DIFFERS S__GENIE_2_12_10_CV: dtype float64/float64 shape (109,)/(109,) max|diff| 5.74e-57 (relative to max|value| 7.73e-15; max ULP distance 145)
+ARRAY DIFFERS S__GENIE_2_12_10_MEC: dtype float64/float64 shape (109,)/(109,) max|diff| 7.97e-57 (relative to max|value| 7.5e-15; max ULP distance 67)
+ARRAY DIFFERS S__GiBUU_2019: dtype float64/float64 shape (109,)/(109,) max|diff| 1.59e-58 (relative to max|value| 1.85e-15; max ULP distance 17)
+ARRAY DIFFERS S__MnvTune_v1: dtype float64/float64 shape (109,)/(109,) max|diff| 2.64e-54 (relative to max|value| 1.73e-12; max ULP distance 15496)
+ARRAY DIFFERS f_data: dtype float64/float64 shape (109,)/(109,) max|diff| 1.63e-55 (relative to max|value| 6.53e-17; max ULP distance 1)
+ARRAY DIFFERS jitters: dtype float64/float64 shape (20, 109)/(20, 109) max|diff| 1.63e-55 (relative to max|value| 6.52e-17; max ULP distance 2)
+ARRAY DIFFERS mu__GENIE_2_12_10_CV: dtype float64/float64 shape (109,)/(109,) max|diff| 1.63e-55 (relative to max|value| 8.77e-17; max ULP distance 1)
+ARRAY DIFFERS mu__GENIE_2_12_10_MEC: dtype float64/float64 shape (109,)/(109,) max|diff| 1.02e-56 (relative to max|value| 5.28e-18; max ULP distance 1)
+ARRAY DIFFERS mu__GiBUU_2019: dtype float64/float64 shape (109,)/(109,) max|diff| 8.16e-56 (relative to max|value| 5.1e-17; max ULP distance 1)
+ARRAY DIFFERS mu__MnvTune_v1: dtype float64/float64 shape (109,)/(109,) max|diff| 1.63e-55 (relative to max|value| 8.54e-17; max ULP distance 1)
+ARRAY DIFFERS mu__NuWro_21_09: dtype float64/float64 shape (109,)/(109,) max|diff| 1.02e-56 (relative to max|value| 5.71e-18; max ULP distance 1)
+ARRAY DIFFERS var__GENIE_2_12_10_CV: dtype float64/float64 shape (109,)/(109,) max|diff| 3.66e-99 (relative to max|value| 2.94e-18; max ULP distance 2)
+ARRAY DIFFERS var__GENIE_2_12_10_MEC: dtype float64/float64 shape (109,)/(109,) max|diff| 1.46e-98 (relative to max|value| 1.09e-17; max ULP distance 1)
+ARRAY DIFFERS var__GiBUU_2019: dtype float64/float64 shape (109,)/(109,) max|diff| 2.93e-98 (relative to max|value| 1.14e-17; max ULP distance 1)
+ARRAY DIFFERS var__MnvTune_v1: dtype float64/float64 shape (109,)/(109,) max|diff| 1.14e-100 (relative to max|value| 4.92e-17; max ULP distance 2)
+ARRAY DIFFERS var__NuWro_21_09: dtype float64/float64 shape (109,)/(109,) max|diff| 1.83e-99 (relative to max|value| 1.95e-18; max ULP distance 1)
+arrays: 25 of 52 exactly equal (dtype, shape, values); worst relative difference 1.73e-12, worst ULP distance 15496
+manifest: 18 differing field(s); npz_sha256 only: 1; input-location fields: 0; other: 17
+  MANIFEST /nulls/GENIE_2_12_10_CV/shift/a: -0.026739856880910177 vs -0.026739856880909473
+  MANIFEST /nulls/GENIE_2_12_10_CV/shift/bias_norm_W: 20.714261252344702 vs 20.71426125234466
+  MANIFEST /nulls/GENIE_2_12_10_CV/shift/magnitude: 0.05400651863085621 vs 0.05400651863085651
+  MANIFEST /nulls/GENIE_2_12_10_CV/shift/se: 0.040373187755883194 vs 0.04037318775588299
+  MANIFEST /nulls/GENIE_2_12_10_MEC/shift/a: 0.013183149874766362 vs 0.013183149874765508
+  MANIFEST /nulls/GENIE_2_12_10_MEC/shift/bias_norm_W: 17.668215473798508 vs 17.668215473798494
+  MANIFEST /nulls/GENIE_2_12_10_MEC/shift/magnitude: 0.06710614013755516 vs 0.0671061401375546
+  MANIFEST /nulls/GENIE_2_12_10_MEC/shift/se: 0.026961495131394397 vs 0.026961495131394547
+  MANIFEST /nulls/GiBUU_2019/shift/a: -0.05132515646256624 vs -0.051325156462566184
+  MANIFEST /nulls/GiBUU_2019/shift/magnitude: 0.028671241468216348 vs 0.028671241468216403
+  MANIFEST /nulls/MnvTune_v1/shift/a: -0.03835247193056037 vs -0.03835247193058118
+  MANIFEST /nulls/MnvTune_v1/shift/bias_norm_W: 2.024417077513656 vs 2.024417077513658
+  MANIFEST /nulls/MnvTune_v1/shift/magnitude: 0.011062891223652262 vs 0.011062891223633103
+  MANIFEST /nulls/MnvTune_v1/shift/se: 0.024707681577106316 vs 0.024707681577107142
+  MANIFEST /nulls/NuWro_21_09/shift/a: -0.07150089486004349 vs -0.07150089486004291
+  MANIFEST /nulls/NuWro_21_09/shift/bias_norm_W: 78.84641294575428 vs 78.84641294575408
+  MANIFEST /nulls/NuWro_21_09/shift/se: 0.030141955500963484 vs 0.030141955500962832
+manifest sha256 DIFFERENT
+VERDICT: NOT BIT-IDENTICAL -- 27 array(s) differ in the last bits (worst relative difference 1.7e-12); the manifests differ only in floating-point statistics derived from them

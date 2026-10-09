@@ -157,6 +157,14 @@ python3 check_dead_containment.py --self-test   # the regex's power test, before
 python3 check_dead_containment.py
 
 echo
+echo "=== Sec. IV printed values vs committed receipts ==="
+# PRD release audit ea939701, G11 (2026-10-08): the Sec. IV percentages the release cannot recompute are tied to
+# their receipts in docs/orchestration/state/. The self-test first proves every printed value, moved by one unit,
+# is rejected. In the standalone note repository (no receipts) the checker reports SKIP; the canonical build enforces it.
+python3 check_sec4_receipts.py --self-test
+python3 check_sec4_receipts.py
+
+echo
 echo "=== page counts ==="
 for t in "${targets[@]}"; do
   # `|| true` on each pipeline: under `set -o pipefail` a missing or unreadable tool here

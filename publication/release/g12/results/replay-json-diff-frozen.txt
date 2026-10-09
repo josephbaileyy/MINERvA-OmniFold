@@ -1,0 +1,11 @@
+regenerated out/frozen/replay.json | preserved /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/pscratch/sd/j/josephrb/pub-release-20261006/frozen/replay.json
+leaves 632 differing 9
+  ('/tests/GENIE_2_12_10_CV/T_shape_obs', 'float', 4.1868028908063564e-16)
+  ('/tests/GENIE_2_12_10_CV/T_total_obs', 'float', 5.017458879907975e-16)
+  ('/tests/GENIE_2_12_10_MEC/T_shape_obs', 'float', 1.0470990996663755e-15)
+  ('/tests/GENIE_2_12_10_MEC/T_total_obs', 'float', 1.380428111291852e-16)
+  ('/tests/GiBUU_2019/T_shape_obs', 'float', 7.931696928868606e-16)
+  ('/tests/MnvTune_v1/T_shape_obs', 'float', 1.8020319216473056e-16)
+  ('/tests/MnvTune_v1/T_total_obs', 'float', 5.101809843769212e-15)
+  ('/tests/NuWro_21_09/T_shape_obs', 'float', 2.824515531623671e-15)
+  ('/tests/NuWro_21_09/T_total_obs', 'float', 3.5512096053307588e-15)
