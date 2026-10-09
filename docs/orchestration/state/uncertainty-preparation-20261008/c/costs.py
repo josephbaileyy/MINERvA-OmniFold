@@ -242,6 +242,14 @@ def setup_items(s: dict, pairing_established: bool) -> list[dict]:
     cv, uni = v(s, "c_cv_unfold"), v(s, "c_universe_unfold")
     cons = uni == DOC_UNIVERSE_WALL_FULLNODE_H
     items = [
+        {"id": "S-r", "what": "identity-carrying event-loop rebuild with universe columns (B's R0, "
+                              "needed by every independent-population option): 12 playlists at the "
+                              "full-universe loop's 8 CPU / 48G request (billing 24 ASSUMED); "
+                              "optimistic 2.5 h per task (documented vertical-universe maximum), "
+                              "conservative the 24 h time limit",
+         "node_h": 12 * (24.0 if cons else 2.5) * 24 / NODE_BILLING, "basis": "EXTRAPOLATED",
+         "reusable_because": "event identity and universe weights do not depend on any experiment",
+         "conditional_on": "B: populations"},
         {"id": "S-a", "what": "matched systematic sweep at the central estimator's seed/backend "
                               "(187 universes + matched CV)",
          "node_h": 0.0 if pairing_established else N_UNIVERSES * uni + cv,
@@ -411,6 +419,14 @@ def overlap_bounds() -> dict:
     }
 
 
+def b_primary_check(m: dict) -> dict:
+    """Reproduce B's primary figure (f19084f4 sec. 14): 719 x 301 runs x 0.0591 x 1.05."""
+    rate = m["unfold_shared64_bootstrap_node_h"]["value"]
+    val = 719 * 301 * rate * 1.05
+    return {"B_quoted_node_h": 13440, "C_recomputed_node_h": round(val, 1),
+            "agrees_to_1_node_h": abs(val - 13440) < 1.0}
+
+
 def s1_establishment(s: dict, n_cmp_per_case: int, n_cases: int) -> float:
     """Full recomputation of the systematic block on development experiments to validate S1."""
     return round(n_cmp_per_case * n_cases * (N_UNIVERSES * v(s, "c_universe_unfold")
@@ -431,7 +447,7 @@ def build(n_per_case: int, n_cases: int, n_inner: int) -> dict:
     sens_n = {}
     for name, s in sc.items():
         sens_n[name] = {}
-        for npc in (300, 1000, 2400):
+        for npc in (300, 719, 1116, 1250, 2400):
             ne = npc * n_cases
             sens_n[name][f"N_per_case={npc}"] = {
                 p: total(p, s, ne, N_BOOT_CURRENT if p == "P1_reconstructed_full" else n_inner,
@@ -448,9 +464,15 @@ def build(n_per_case: int, n_cases: int, n_inner: int) -> dict:
         s2 = json.loads(json.dumps(s))
         s2["c_cv_unfold"] = {"value": DOC_EXACT_GBT_WALL_FULLNODE_H, "basis": "DOCUMENTED",
                              "why": "exact sklearn GBT production backend, ~19 h full node"}
+        # Branch X (A's CONTRACT sec. 2.4(2): the quoted central E_C is exact GBT): the matched
+        # sweep (187 universes + CV) and an exact-backend seed scan (10) are rebuilt at ~19 h each.
+        extra_setup = (N_UNIVERSES + 1 + N_SEEDS) * DOC_EXACT_GBT_WALL_FULLNODE_H
+        p2x = total("P2_fixed_band", s2, n_exp, n_inner, False)
         exact_backend[name] = {
-            "P2_fixed_band": total("P2_fixed_band", s2, n_exp, n_inner, False)[
-                "admitted_total_node_h"]}
+            "P2_fixed_band_per_experiment_central_only": p2x["admitted_total_node_h"],
+            "extra_one_time_exact_matched_sweep_and_seedscan_node_h": extra_setup,
+            "P2_fixed_band_with_exact_setup_admitted": round(
+                p2x["admitted_total_node_h"] + extra_setup / (1.0 - RESERVE_FRACTION), 3)}
     pairing = {name: {"pairing_established": total("P2_fixed_band", s, n_exp, n_inner, True)[
         "admitted_total_node_h"], "pairing_not_established": total(
         "P2_fixed_band", s, n_exp, n_inner, False)["admitted_total_node_h"]}
@@ -475,8 +497,11 @@ def build(n_per_case: int, n_cases: int, n_inner: int) -> dict:
         "inputs": {"n_per_case": n_per_case, "n_cases": n_cases, "n_experiments": n_exp,
                    "n_inner_for_P3": n_inner, "n_inner_for_P1": N_BOOT_CURRENT,
                    "n_universes": N_UNIVERSES, "n_ml_seeds": N_SEEDS,
-                   "provenance_of_counts": "provisional default = successor proposal sec. 5 "
-                                           "(N=2400 per case, 4 cases); replace with B's counts"},
+                   "provenance_of_counts": "B's assurance.py criteria (f19084f4: kappa [0.80, 1.25], "
+                                           "beta 0.10, alpha 0.04 coverage / 0.01 bias) rerun by C "
+                                           "with n_functionals = 4 x 206 = 824: N_required 823, "
+                                           "N_design 1250 per case; B's single-case values 719 / "
+                                           "1116 reproduce at 206"},
         "receipts": receipts,
         "measured": m,
         "retry_evidence": {"completed": m_completed,
@@ -498,12 +523,13 @@ def build(n_per_case: int, n_cases: int, n_inner: int) -> dict:
                                     for name, s in sc.items()},
         "for_B_statistical_per_experiment_node_h": for_b_per_experiment(sc),
         "overlap_bounds": overlap_bounds(),
+        "cross_check_B_primary": b_primary_check(m),
     }
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("--n-per-case", type=int, default=2400)
+    ap.add_argument("--n-per-case", type=int, default=1250)
     ap.add_argument("--n-cases", type=int, default=4)
     ap.add_argument("--n-inner", type=int, default=50)
     ap.add_argument("--out", type=Path, default=HERE / "costs.json")

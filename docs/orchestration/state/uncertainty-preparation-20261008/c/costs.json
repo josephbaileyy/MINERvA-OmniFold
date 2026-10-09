@@ -3,14 +3,14 @@
  "not_authorized": "no allocation is requested or released; no compute is launched; historical allocation balances are not carried forward",
  "formula": "total = setup + development + N_experiments * per_experiment + independent_verification + retry_allowance; admitted = total / (1 - 0.20)",
  "inputs": {
-  "n_per_case": 2400,
+  "n_per_case": 1250,
   "n_cases": 4,
-  "n_experiments": 9600,
+  "n_experiments": 5000,
   "n_inner_for_P3": 50,
   "n_inner_for_P1": 300,
   "n_universes": 187,
   "n_ml_seeds": 10,
-  "provenance_of_counts": "provisional default = successor proposal sec. 5 (N=2400 per case, 4 cases); replace with B's counts"
+  "provenance_of_counts": "B's assurance.py criteria (f19084f4: kappa [0.80, 1.25], beta 0.10, alpha 0.04 coverage / 0.01 bias) rerun by C with n_functionals = 4 x 206 = 824: N_required 823, N_design 1250 per case; B's single-case values 719 / 1116 reproduce at 206"
  },
  "receipts": {
   "ki84_rebuild": {
@@ -1471,6 +1471,14 @@
  "setup_items": {
   "optimistic": [
    {
+    "id": "S-r",
+    "what": "identity-carrying event-loop rebuild with universe columns (B's R0, needed by every independent-population option): 12 playlists at the full-universe loop's 8 CPU / 48G request (billing 24 ASSUMED); optimistic 2.5 h per task (documented vertical-universe maximum), conservative the 24 h time limit",
+    "node_h": 2.8125,
+    "basis": "EXTRAPOLATED",
+    "reusable_because": "event identity and universe weights do not depend on any experiment",
+    "conditional_on": "B: populations"
+   },
+   {
     "id": "S-a",
     "what": "matched systematic sweep at the central estimator's seed/backend (187 universes + matched CV)",
     "node_h": 24.8215,
@@ -1520,6 +1528,14 @@
    }
   ],
   "conservative": [
+   {
+    "id": "S-r",
+    "what": "identity-carrying event-loop rebuild with universe columns (B's R0, needed by every independent-population option): 12 playlists at the full-universe loop's 8 CPU / 48G request (billing 24 ASSUMED); optimistic 2.5 h per task (documented vertical-universe maximum), conservative the 24 h time limit",
+    "node_h": 27.0,
+    "basis": "EXTRAPOLATED",
+    "reusable_because": "event identity and universe weights do not depend on any experiment",
+    "conditional_on": "B: populations"
+   },
    {
     "id": "S-a",
     "what": "matched systematic sweep at the central estimator's seed/backend (187 universes + matched CV)",
@@ -1574,7 +1590,7 @@
   "optimistic": {
    "P1_reconstructed_full": {
     "procedure": "P1_reconstructed_full",
-    "n_experiments": 9600,
+    "n_experiments": 5000,
     "n_inner": 300,
     "per_experiment": {
      "unfolds": {
@@ -1587,20 +1603,20 @@
      "node_h": 43.16707,
      "storage_gb": 0.02918
     },
-    "setup_node_h": 75.818,
+    "setup_node_h": 78.631,
     "development_node_h": 6.0,
-    "production_node_h": 414403.872,
-    "verification_node_h": 20723.985,
-    "retry_node_h": 8289.714,
-    "subtotal_node_h": 443499.389,
-    "protected_reserve_node_h": 110874.847,
-    "admitted_total_node_h": 554374.236,
-    "storage_gb_all_experiments": 280.128,
-    "unfold_count": 4780800
+    "production_node_h": 215835.35,
+    "verification_node_h": 10795.699,
+    "retry_node_h": 4318.4,
+    "subtotal_node_h": 231034.079,
+    "protected_reserve_node_h": 57758.52,
+    "admitted_total_node_h": 288792.599,
+    "storage_gb_all_experiments": 145.9,
+    "unfold_count": 2490000
    },
    "P2_fixed_band": {
     "procedure": "P2_fixed_band",
-    "n_experiments": 9600,
+    "n_experiments": 5000,
     "n_inner": 50,
     "per_experiment": {
      "unfolds": {
@@ -1613,20 +1629,20 @@
      "node_h": 0.069147,
      "storage_gb": 5.9e-05
     },
-    "setup_node_h": 75.818,
+    "setup_node_h": 78.631,
     "development_node_h": 6.0,
-    "production_node_h": 663.811,
-    "verification_node_h": 36.981,
-    "retry_node_h": 14.913,
-    "subtotal_node_h": 797.523,
-    "protected_reserve_node_h": 199.381,
-    "admitted_total_node_h": 996.904,
-    "storage_gb_all_experiments": 0.566,
-    "unfold_count": 9600
+    "production_node_h": 345.735,
+    "verification_node_h": 21.218,
+    "retry_node_h": 8.607,
+    "subtotal_node_h": 460.191,
+    "protected_reserve_node_h": 115.048,
+    "admitted_total_node_h": 575.239,
+    "storage_gb_all_experiments": 0.295,
+    "unfold_count": 5000
    },
    "P3_shortcut_S1_S2": {
     "procedure": "P3_shortcut_S1_S2",
-    "n_experiments": 9600,
+    "n_experiments": 5000,
     "n_inner": 50,
     "per_experiment": {
      "unfolds": {
@@ -1639,22 +1655,22 @@
      "node_h": 3.026497,
      "storage_gb": 0.002988
     },
-    "setup_node_h": 75.818,
+    "setup_node_h": 78.631,
     "development_node_h": 6.0,
-    "production_node_h": 29054.371,
-    "verification_node_h": 1456.509,
-    "retry_node_h": 582.724,
-    "subtotal_node_h": 31175.423,
-    "protected_reserve_node_h": 7793.856,
-    "admitted_total_node_h": 38969.278,
-    "storage_gb_all_experiments": 28.685,
-    "unfold_count": 489600
+    "production_node_h": 15132.485,
+    "verification_node_h": 760.556,
+    "retry_node_h": 304.342,
+    "subtotal_node_h": 16282.014,
+    "protected_reserve_node_h": 4070.503,
+    "admitted_total_node_h": 20352.517,
+    "storage_gb_all_experiments": 14.94,
+    "unfold_count": 255000
    }
   },
   "conservative": {
    "P1_reconstructed_full": {
     "procedure": "P1_reconstructed_full",
-    "n_experiments": 9600,
+    "n_experiments": 5000,
     "n_inner": 300,
     "per_experiment": {
      "unfolds": {
@@ -1667,20 +1683,20 @@
      "node_h": 160.868577,
      "storage_gb": 0.02918
     },
-    "setup_node_h": 441.966,
+    "setup_node_h": 468.966,
     "development_node_h": 6.0,
-    "production_node_h": 1544338.339,
-    "verification_node_h": 154478.031,
-    "retry_node_h": 154478.631,
-    "subtotal_node_h": 1853742.967,
-    "protected_reserve_node_h": 463435.742,
-    "admitted_total_node_h": 2317178.709,
-    "storage_gb_all_experiments": 280.128,
-    "unfold_count": 4780800
+    "production_node_h": 804342.885,
+    "verification_node_h": 80481.185,
+    "retry_node_h": 80481.785,
+    "subtotal_node_h": 965780.822,
+    "protected_reserve_node_h": 241445.205,
+    "admitted_total_node_h": 1207226.027,
+    "storage_gb_all_experiments": 145.9,
+    "unfold_count": 2490000
    },
    "P2_fixed_band": {
     "procedure": "P2_fixed_band",
-    "n_experiments": 9600,
+    "n_experiments": 5000,
     "n_inner": 50,
     "per_experiment": {
      "unfolds": {
@@ -1693,20 +1709,20 @@
      "node_h": 0.374167,
      "storage_gb": 5.9e-05
     },
-    "setup_node_h": 441.966,
+    "setup_node_h": 468.966,
     "development_node_h": 6.0,
-    "production_node_h": 3592.003,
-    "verification_node_h": 403.397,
-    "retry_node_h": 403.997,
-    "subtotal_node_h": 4847.364,
-    "protected_reserve_node_h": 1211.841,
-    "admitted_total_node_h": 6059.205,
-    "storage_gb_all_experiments": 0.566,
-    "unfold_count": 9600
+    "production_node_h": 1870.835,
+    "verification_node_h": 233.98,
+    "retry_node_h": 234.58,
+    "subtotal_node_h": 2814.362,
+    "protected_reserve_node_h": 703.59,
+    "admitted_total_node_h": 3517.952,
+    "storage_gb_all_experiments": 0.295,
+    "unfold_count": 5000
    },
    "P3_shortcut_S1_S2": {
     "procedure": "P3_shortcut_S1_S2",
-    "n_experiments": 9600,
+    "n_experiments": 5000,
     "n_inner": 50,
     "per_experiment": {
      "unfolds": {
@@ -1719,101 +1735,125 @@
      "node_h": 11.179717,
      "storage_gb": 0.002988
     },
-    "setup_node_h": 441.966,
+    "setup_node_h": 468.966,
     "development_node_h": 6.0,
-    "production_node_h": 107325.283,
-    "verification_node_h": 10776.725,
-    "retry_node_h": 10777.325,
-    "subtotal_node_h": 129327.3,
-    "protected_reserve_node_h": 32331.825,
-    "admitted_total_node_h": 161659.125,
-    "storage_gb_all_experiments": 28.685,
-    "unfold_count": 489600
+    "production_node_h": 55898.585,
+    "verification_node_h": 5636.755,
+    "retry_node_h": 5637.355,
+    "subtotal_node_h": 67647.662,
+    "protected_reserve_node_h": 16911.915,
+    "admitted_total_node_h": 84559.577,
+    "storage_gb_all_experiments": 14.94,
+    "unfold_count": 255000
    }
   }
  },
  "sensitivity_n_per_case": {
   "optimistic": {
    "N_per_case=300": {
-    "P1_reconstructed_full": 69392.204,
-    "P2_fixed_band": 220.038,
-    "P3_shortcut_S1_S2": 4966.585
+    "P1_reconstructed_full": 69395.966,
+    "P2_fixed_band": 223.799,
+    "P3_shortcut_S1_S2": 4970.346
    },
-   "N_per_case=1000": {
-    "P1_reconstructed_full": 231052.881,
-    "P2_fixed_band": 478.993,
-    "P3_shortcut_S1_S2": 16300.816
+   "N_per_case=719": {
+    "P1_reconstructed_full": 166161.428,
+    "P2_fixed_band": 378.803,
+    "P3_shortcut_S1_S2": 11754.693
+   },
+   "N_per_case=1116": {
+    "P1_reconstructed_full": 257846.127,
+    "P2_fixed_band": 525.668,
+    "P3_shortcut_S1_S2": 18182.822
+   },
+   "N_per_case=1250": {
+    "P1_reconstructed_full": 288792.599,
+    "P2_fixed_band": 575.239,
+    "P3_shortcut_S1_S2": 20352.517
    },
    "N_per_case=2400": {
-    "P1_reconstructed_full": 554374.236,
-    "P2_fixed_band": 996.904,
-    "P3_shortcut_S1_S2": 38969.278
+    "P1_reconstructed_full": 554377.997,
+    "P2_fixed_band": 1000.666,
+    "P3_shortcut_S1_S2": 38973.04
    }
   },
   "conservative": {
    "N_per_case=300": {
-    "P1_reconstructed_full": 290234.638,
-    "P2_fixed_band": 1344.7,
-    "P3_shortcut_S1_S2": 20794.69
+    "P1_reconstructed_full": 290275.138,
+    "P2_fixed_band": 1385.2,
+    "P3_shortcut_S1_S2": 20835.19
    },
-   "N_per_case=1000": {
-    "P1_reconstructed_full": 965882.662,
-    "P2_fixed_band": 2916.202,
-    "P3_shortcut_S1_S2": 67749.502
+   "N_per_case=719": {
+    "P1_reconstructed_full": 694698.741,
+    "P2_fixed_band": 2325.856,
+    "P3_shortcut_S1_S2": 48940.999
+   },
+   "N_per_case=1116": {
+    "P1_reconstructed_full": 1077887.691,
+    "P2_fixed_band": 3217.122,
+    "P3_shortcut_S1_S2": 75571.085
+   },
+   "N_per_case=1250": {
+    "P1_reconstructed_full": 1207226.027,
+    "P2_fixed_band": 3517.952,
+    "P3_shortcut_S1_S2": 84559.577
    },
    "N_per_case=2400": {
-    "P1_reconstructed_full": 2317178.709,
-    "P2_fixed_band": 6059.205,
-    "P3_shortcut_S1_S2": 161659.125
+    "P1_reconstructed_full": 2317219.209,
+    "P2_fixed_band": 6099.705,
+    "P3_shortcut_S1_S2": 161699.625
    }
   }
  },
  "sensitivity_n_inner": {
   "optimistic": {
    "n_inner=50": {
-    "P1_reconstructed_full": 364512.366,
-    "P3_shortcut_S1_S2": 38969.278
+    "P1_reconstructed_full": 189906.209,
+    "P3_shortcut_S1_S2": 20352.517
    },
    "n_inner=100": {
-    "P1_reconstructed_full": 402484.74,
-    "P3_shortcut_S1_S2": 76941.652
+    "P1_reconstructed_full": 209683.487,
+    "P3_shortcut_S1_S2": 40129.795
    },
    "n_inner=300": {
-    "P1_reconstructed_full": 554374.236,
-    "P3_shortcut_S1_S2": 228831.148
+    "P1_reconstructed_full": 288792.599,
+    "P3_shortcut_S1_S2": 119238.908
    }
   },
   "conservative": {
    "n_inner=50": {
-    "P1_reconstructed_full": 1539179.109,
-    "P3_shortcut_S1_S2": 161659.125
+    "P1_reconstructed_full": 802017.902,
+    "P3_shortcut_S1_S2": 84559.577
    },
    "n_inner=100": {
-    "P1_reconstructed_full": 1694779.029,
-    "P3_shortcut_S1_S2": 317259.045
+    "P1_reconstructed_full": 883059.527,
+    "P3_shortcut_S1_S2": 165601.202
    },
    "n_inner=300": {
-    "P1_reconstructed_full": 2317178.709,
-    "P3_shortcut_S1_S2": 939658.71
+    "P1_reconstructed_full": 1207226.027,
+    "P3_shortcut_S1_S2": 489767.695
    }
   }
  },
  "sensitivity_exact_gbt_central": {
   "optimistic": {
-   "P2_fixed_band": 264641.503
+   "P2_fixed_band_per_experiment_central_only": 147686.24,
+   "extra_one_time_exact_matched_sweep_and_seedscan_node_h": 3762.0,
+   "P2_fixed_band_with_exact_setup_admitted": 152388.74
   },
   "conservative": {
-   "P2_fixed_band": 451519.125
+   "P2_fixed_band_per_experiment_central_only": 254564.625,
+   "extra_one_time_exact_matched_sweep_and_seedscan_node_h": 3762.0,
+   "P2_fixed_band_with_exact_setup_admitted": 259267.125
   }
  },
  "sensitivity_pairing": {
   "optimistic": {
-   "pairing_established": 963.706,
-   "pairing_not_established": 996.904
+   "pairing_established": 542.04,
+   "pairing_not_established": 575.239
   },
   "conservative": {
-   "pairing_established": 5918.63,
-   "pairing_not_established": 6059.205
+   "pairing_established": 3377.378,
+   "pairing_not_established": 3517.952
   }
  },
  "concurrency": {
@@ -1821,30 +1861,30 @@
   "wall_days": {
    "optimistic": {
     "P1_reconstructed_full": {
-     "at_7.5_node_eq": 3079.9,
-     "at_30_node_eq": 770.0
+     "at_7.5_node_eq": 1604.4,
+     "at_30_node_eq": 401.1
     },
     "P2_fixed_band": {
-     "at_7.5_node_eq": 5.5,
-     "at_30_node_eq": 1.4
+     "at_7.5_node_eq": 3.2,
+     "at_30_node_eq": 0.8
     },
     "P3_shortcut_S1_S2": {
-     "at_7.5_node_eq": 216.5,
-     "at_30_node_eq": 54.1
+     "at_7.5_node_eq": 113.1,
+     "at_30_node_eq": 28.3
     }
    },
    "conservative": {
     "P1_reconstructed_full": {
-     "at_7.5_node_eq": 12873.2,
-     "at_30_node_eq": 3218.3
+     "at_7.5_node_eq": 6706.8,
+     "at_30_node_eq": 1676.7
     },
     "P2_fixed_band": {
-     "at_7.5_node_eq": 33.7,
-     "at_30_node_eq": 8.4
+     "at_7.5_node_eq": 19.5,
+     "at_30_node_eq": 4.9
     },
     "P3_shortcut_S1_S2": {
-     "at_7.5_node_eq": 898.1,
-     "at_30_node_eq": 224.5
+     "at_7.5_node_eq": 469.8,
+     "at_30_node_eq": 117.4
     }
    }
   },
@@ -1957,5 +1997,10 @@
    "syst_without_noise_pct": 6.7841,
    "change_pct_points": 0.0459
   }
+ },
+ "cross_check_B_primary": {
+  "B_quoted_node_h": 13440,
+  "C_recomputed_node_h": 13440.6,
+  "agrees_to_1_node_h": true
  }
 }

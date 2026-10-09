@@ -1,7 +1,7 @@
 # Assessment — 2D total-uncertainty feasibility (uncertainty preparation, lane C)
 
-**Status: PROVISIONAL.** It is pushed for the one B↔C exchange. The A-dependent and B-dependent cells are
-marked and get reconciled once, after A freezes.
+**Status: RECONCILED** with B's PROVISIONAL (`f19084f4`) and A's CONTRACT (`acb338a2`). One final reconciliation
+follows A's FREEZE.
 
 **CITABLE FOR:**
 - the component inventory and dispositions in `state/uncertainty-preparation-20261008/c/components.tsv`;
@@ -12,7 +12,7 @@ marked and get reconciled once, after A freezes.
 
 **NOT CITABLE FOR:**
 - any uncertainty value, coverage result or adoption;
-- a change to the quoted 2D construction (`VL170`/`VL172`);
+- a change to the quoted 2D construction (`VL170`/`VL172`) or to the quoted central estimator;
 - any compute request or release;
 - a publication-scope decision;
 - lifting the `KNOWN_ISSUES.md` 85 deferral;
@@ -28,37 +28,55 @@ A statistical PASS from lane B cannot become a total-uncertainty claim.
 **Decision asked.** Beyond the proposed statistical test, can a complete, matched uncertainty procedure be built
 and validated at defensible cost? What specifically prevents it today?
 
-**Disposition: NO-GO today.** There are two independent reasons.
+**Disposition: NO-GO.** Four independent obstacles stand today. Each one alone blocks a validated total.
 
-1. **Missing methods and constructions.** These are named in §3–§4 and in the TSV:
+1. **The quoted central and its uncertainty come from two different estimators** (A, CONTRACT §1–2).
+   - The central is exact-split GBT, `E_C`. Every uncertainty block is LightGBM:
+     - `E_S`, seed 1, the statistical band;
+     - `E_U`, seed 42, the systematic universes and their matched CV;
+     - `E_ML`, seeds 1–10, the ML block.
+   - The two centrals differ by a median 1.3 σ_stat per bin.
+   - The transfer `E_S → E_C` (A's `P02`) and the seed 1 ↔ seed 42 relation (`P04`) are unmeasured.
+   - The consequence for cost: any validation that keeps `E_C` must run an exact-GBT unfold, about 19 node-h, in
+     every experiment. Even the cheapest route then costs **152,000–259,000 node-h**.
+   - An affordable route exists only after one of two things:
+     - a measured `P02` transfer;
+     - Joseph's decision to make an LightGBM-class estimator the quoted central. That is a change of central
+       estimator, which A §2.4(2) and this assessment cannot make.
+2. **Independent populations do not exist** (B, PROVISIONAL §1, §17).
+   - The production omnifile carries no event identity, so an event-loop rebuild (R0) is needed.
+   - The one MC production (MC/data 4.708) yields zero disjoint pairs of a production-size bank and a data-size
+     reservoir.
+   - This binds every total procedure below, not only B's test. Pseudo-data drawn on the training MC under-scatter
+     (`KNOWN_ISSUES.md` 85, and B's §3).
+   - A second production cannot be priced by this project. B's generative-law route G is undeveloped and unpriced.
+3. **Missing methods and constructions.**
    - background-template statistics are not propagated at all (C03);
    - the 2D lateral detector bands have CV-selected support only (C05a), and no continuous-shift generator exists
      for nuisance-drawn pseudo-data (M1);
    - the flux × muon-energy cross block is omitted from the adopted sum (X01);
    - response departures outside the simulated family have no method (C10);
    - model dependence can only be given a finite-set allowance, never a guaranteed bound (C09).
-2. **Resource.** Validating the procedure as it is actually performed costs **0.55–2.3 million billed CPU
-   node-hours** at the provisional experiment count, with every data-dependent width recomputed in every
-   experiment (P1 in §5). That is unaffordable by orders of magnitude. For scale, the 2D accounting receipts read
-   here record 18.1 (`VL170`), 13.3 (`VL169`) and 7.1 (`KNOWN_ISSUES.md` 85) node-h, and the whole s5p pool used
-   253 node-h.
+4. **Resource.** Admitted totals at 4 cases × 1,250 experiments include a protected 20% reserve (§6). The counts
+   are B's criteria, sized for a 4-case family.
+   - **P1**, validating the procedure as performed, with every data-dependent width recomputed per experiment:
+     **0.29–1.21 million node-h**.
+   - **P3**, with two unvalidated shortcuts: 20,000–85,000.
+   - **P2**, calibrating the quoted band as a fixed band: 575–3,518.
+   - Scale: B measured 3,040.6 node-h remaining on `m3246` for all users (iris, 2026-10-09T06:15Z). That is B's
+     same-day measurement, not a resource C carries forward or requests.
+   - The 2D accounting receipts read here record 18.1 (`VL170`), 13.3 (`VL169`) and 7.1 (`KNOWN_ISSUES.md` 85)
+     node-h. The whole s5p pool used 253.
 
-**A finite, defined, scoped route does exist (P2).** It calibrates the quoted total band as a fixed band:
-- pseudo-data are drawn under a declared nuisance law at declared truths, scored against a covariance and
-  model allowance frozen beforehand;
-- its admitted total is **1.0–6.1 thousand node-h**, including a protected 20% reserve, at 4 × 2400
-  experiments;
-- it is **NOT FEASIBLE today**, because its inputs are the missing constructions above. Their one-time compute
-  is small: 76–442 node-h in total. Their method development is not yet done.
+**Classification.**
 
-P2 validates a narrower claim than P1. That claim is spelled out in §2.
+| Route | Disposition | Why |
+|---|---|---|
+| P1 | **INFEASIBLE** | demonstrated unaffordability |
+| P2 | **INCONCLUSIVE** | finite and modest in compute, but an operand is unavailable: obstacle 2 has no priced population construction, and obstacles 1 and 3 are prerequisites |
+| P3 | admits no savings | its shortcuts are unvalidated (§7) |
 
-The total disposition is **provisional on A and B**:
-- A's pairing decides whether a matched systematic sweep must be rebuilt (setup item S-a);
-- B's counts replace the provisional 4 × 2400.
-
-Neither input can turn the P1 conclusion into FEASIBLE: P1 stays above 69,000 node-h even at 300 experiments per
-case.
+No route is FEASIBLE: none has both a defined method and a costed evidence path.
 
 ## 2. What "total uncertainty" would mean here
 
@@ -68,41 +86,48 @@ assessment makes the claim explicit, so that validation tests a stated propositi
 - **Probabilistic part: nuisance-averaged frequentist calibration.**
   - Nuisances θ are flux, detector and interaction-model universes. They are drawn from a *declared* law. The MAT
     convention treats ±1σ endpoints as the σ of an implicit Gaussian, and PPFX universes as draws.
-  - Data and MC fluctuate by Poisson draws on independent populations (B's design).
+  - Data and MC fluctuate by Poisson draws on independent populations (B).
   - The claim is that the interval covers the fixed truth at the nominal rate, **averaged over θ under that law**.
-    It is not coverage conditional on the actual θ, which no construction here can supply.
+    It is not coverage conditional on the actual θ.
   - It is also not a probability statement about the cross section.
 - **Model allowance: a sensitivity envelope.** B∓ is the cellwise maximum signed bias, with simultaneous upper
   confidence limits, over a finite, declared development truth set at the fixed simulated response.
   - It is not a probability.
   - It is not a guaranteed bias bound over a truth hull.
   - It is not a bound at the actual data truth.
-  - Prior variations remain sensitivity diagnostics and never become a covariance.
+  - Prior variations stay sensitivity diagnostics and never become a covariance.
 - **Response departures** outside the universe parametrization are an explicit, stated assumption (C10). Repeated
   truths under one response do not test them.
 - **Two validation claims, of different strength.**
 
 | | P1: reconstructed-interval coverage | P2: fixed-band calibration |
 |---|---|---|
-| Per experiment | central fit, inner replicas, seeds and all universes are recomputed on the pseudo-data | one unfold; scored against a band frozen before validation |
-| What it validates | the procedure | the quoted band, at those truths and under that law |
-| Does not validate | — | that the procedure gives correct widths for other data |
+| Per experiment | central fit, inner replicas, seeds and all universes are recomputed on the pseudo-data | one unfold; scored against a band and B∓ frozen before validation |
+| What it validates | the procedure | the quoted band, at the declared truths and under the declared law |
+| Does not validate | — | that the procedure gives correct widths for other data, or the band's bytes (B §15) |
 
   P2 must declare whether the frozen band is transferred in absolute or relative form. `VL169` used per-bin
-  σ/mean × fixed truth and disclosed the band-transfer ratio.
+  σ/mean × fixed truth and disclosed the transfer ratio.
+- **Conditioning differences.** A procedure that recomputes purity per experiment, or resamples background MC,
+  measures a different conditional variance from the adopted band's (A §2.4(5)). The fixed purity and the
+  unresampled background are recorded as conditioning (C01, C03); they are not silently absorbed.
 
 ## 3. Component inventory and the four audits
 
-`c/components.tsv` has 14 rows: ten components (C01–C10, with C05 split into a and b) and four dependence rows
-(X01–X03 and C05's split). Each row records estimand, conditioning, source law, existing bytes, matching CV,
-support limitations, covariance convention, correlation partners, required evidence, disposition and evidence.
+`c/components.tsv` has 14 rows: ten components (C01–C10, with C05 split into a and b) and three dependence rows
+(X01–X03). Each row records estimand, conditioning, source law, existing bytes, matching CV, support limitations,
+covariance convention, correlation partners, required evidence, disposition and evidence.
 
 | Disposition | Rows |
 |---|---|
 | REUSABLE | C07 |
 | MATCHING NEEDED | C01, C02, C04, C05b, C06, C08 (seed), X02, X03 |
 | NEW CONSTRUCTION | C03, C05a, C09 (scope-limited) |
-| UNRESOLVED | C08 (backend definition, pending A), C10, X01 |
+| UNRESOLVED | C08 (exact-backend seed variation and backend definition), C10, X01 |
+
+Every MATCHING NEEDED row inherits A's finding that no block was produced by `E_C`. The rows stay MATCHING NEEDED,
+not UNRESOLVED, because the route to matching is defined: either `P02`, or Joseph's choice of central followed by
+setup item S-a.
 
 **Audit 1 — target normalization is counted once: CONFIRMED for the standalone construction.**
 - The 1.4% rank-1 band is added at one site: `--add-norm 0.014` in `uq/rollup_vl170_adoption.sh:38,48`, built in
@@ -110,6 +135,7 @@ support limitations, covariance convention, correlation partners, required evide
 - None of the 44 bands in `uq/universes_full_list.txt` is a target or normalization band. `NormDISCC` and
   `NormNCRES` are GENIE interaction normalizations.
 - Neither the bootstrap nor the ML block adds it.
+- The nucleon count 3.2352943e30 is one constant (A §2.2; D `D07`).
 - It is entered twice only in the paper+ours combined-covariance χ², which is already documented as
   double-counting.
 
@@ -136,38 +162,35 @@ support limitations, covariance convention, correlation partners, required evide
   needs a selection and phase-space equality check that has not been done.
 
 **Audit 4 — bootstrap/ML overlap: PRESENT; bounded small on medians.**
-- Each VL170 replica retrains its classifiers at the pinned seed 1 on resampled weights. Each universe unfold
-  retrains at seed 42.
+- Each VL170 replica retrains at the pinned seed 1 on resampled weights. Each universe unfold retrains at seed 42.
 - GBDT retraining noise is therefore inside the statistical block (X02) and inside every universe delta (X03).
   The separate ML block (C08) adds it again.
 - Different RNG streams do not establish independence of these sources.
 - Order-of-magnitude bounds (`costs.json` `overlap_bounds`), assuming iid retraining noise at the seedscan median
   of 0.166%:
   - removing C08 entirely moves the median total from 6.8707% to 6.8687%;
-  - the retraining noise implied inside the systematic median is about 0.79% in quadrature, which moves 6.830% to
-    6.784%.
-- These are illustrative medians, not per-bin values. Neither overlap can explain a material change in the total.
-  Both need either a measured factorial (setup S-f) or a written argument carrying this bound.
+  - the noise implied inside the systematic median is about 0.79% in quadrature, which moves 6.830% to 6.784%.
+- These are illustrative medians, not per-bin values. A measures σ_ML/σ_S per bin as median 0.26, p84 0.42 and
+  max 0.73 (CONTRACT §2.4(4)). So in the bins where ML noise is largest, the overlap is a larger share of the
+  statistical block, but still small against the total.
 - The 2026-05-29 seed-varying → pinned-seed bootstrap swap moved √tr C_boot from 1.828e-40 to 1.817e-40, a
   ratio of 1.006. Independent addition of the ML block (√tr 5.061e-41) would predict about 1.038. The observed
   ratio is consistent with overlap. Its sampling resolution, which depends on whether the two sets shared
   bootstrap seeds, was not computed here, so this does not establish the overlap.
 
-**Matching (depends on A).** The quoted blocks come from three estimator configurations:
+**Estimator identity (from A; not re-derived here).** These cells were provisional at `9204a390` and are now
+settled by A.
 
-| Block | Producer | Estimator configuration |
+| Block | Estimator | Configuration |
 |---|---|---|
-| Frozen central | `sbatch_unfold_2d_MEFHC.sh` | no `--estimator`, no `--seed`; driver default `exact` (sklearn GBT, ~19 h per unfold) |
-| Statistical replicas | ki84 rebuild | lgbm, `--seed 1` |
-| Systematic sweep and its matched CV | `sbatch_unfold_2d_MEFHC_5iter_universes_full{,_CV}.sh` | lgbm, `--seed 42` |
-| ML block | `seedscan_lgbm/run_seedscan_lgbm_interactive.sh` | lgbm, seeds 1–10 |
+| Quoted central | `E_C` | exact GBT, `random_state=None`, ~19 h per unfold, product `142a45b0…` |
+| Statistical band | `E_S` | lgbm, seed 1 (`VL170` replicas) |
+| Systematic sweep and matched CV | `E_U` | lgbm, seed 42 |
+| ML block | `E_ML` | lgbm, seeds 1–10 (`seedscan_lgbm/run_seedscan_lgbm_interactive.sh`; not the `--estimator hist` sbatch launcher beside it) |
 
-- The ML block's producer is not the `--estimator hist` sbatch launcher that sits beside it.
-- D's inventory records the same facts (`d/dependencies.tsv` N09, N12, N13, D05, D06).
-- The status headline's "MEFHC 5-iter lgbm" label conflicts with the central launcher. This assessment does not
-  pick a label. A's pairing decides which matching cells become REUSABLE.
-- Backend choice moves the paper-covariance χ² by about one unit (status, "Methodological band"). It is therefore
-  either a definitional choice of the estimator or an unresolved component. Seed scatter does not cover it.
+- All four share the 205-bin mask, order and normalization.
+- The seed-42 CV and the seed-1 run differ by a median 0.30 σ_S (max 1.28).
+- The exact backend's own seed variation has never been measured. That is why C08 is UNRESOLVED for `E_C`.
 
 ## 4. Dependence and joint propagation
 
@@ -181,21 +204,25 @@ Where blocks depend, this assessment proposes the following instead of a sum:
     generator.
   - Fallback: a rank-2 cross term from the paper-derived correlation, scaled to our own band vectors
     (`rederive_flux_muonE_cross.py` route B), with its transfer assumption stated.
-  - This is a missing method in the adopted construction. It is not a negligible-by-assertion term.
+  - This is a missing method in the adopted construction, not a negligible-by-assertion term.
 - **X02/X03, retraining noise.**
   - Measured route: a factorial, either 50 replicas × 4 seeds or a band subset repeated at two seeds (S-f).
   - Bounded route: carry the §3 bound.
 - **C06 × C09.** The interaction knobs reweight MC truth and reco together. Each knob's delta therefore mixes a
   response/background change with a prior change. It is part of C06 and is not a substitute for the C09 allowance.
 - **Statistical × systematic.** Universe deltas are differences at fixed data, so data-statistical noise cancels
-  to first order. In P1 each experiment recomputes them, so no separate cross term is needed. In P2 the band is
-  frozen, so the frozen deltas' own statistical noise is part of what P2 calibrates.
+  to first order. P1 recomputes them per experiment. P2 freezes them, so their own statistical noise is part of
+  what P2 calibrates.
 
 ## 5. Procedures priced per experiment
 
-The successor proposal's §5 design is 4 cases × 2400 experiments, giving 206 functionals × 4 cases × 2 intervals.
-Those are the provisional counts until B's arrive. Costs are billed CPU node-hours, computed as
-elapsed × billing/256.
+Counts follow B's criteria (`f19084f4` `assurance.py`: κ ∈ [0.80, 1.25], β = 0.10, α = 0.04 for coverage and
+0.01 for bias).
+- C reran B's own functions with the family set to 4 cases × 206 functionals = 824.
+- The result is N_required 823 and N_design 1,250 per case.
+- At 206 functionals B's 719 / 1,116 reproduce exactly.
+- The four cases are the successor proposal's: nominal, two perturbations, one combined.
+- Costs are billed CPU node-h, computed as elapsed × billing/256.
 
 | Procedure | Unfolds per experiment | Optimistic node-h per experiment | Conservative node-h per experiment |
 |---|---:|---:|---:|
@@ -203,7 +230,8 @@ elapsed × billing/256.
 | P2, fixed band: one unfold of nuisance-drawn pseudo-data | 1 | 0.069 | 0.374 |
 | P3, shortcut S1+S2: central + 50 inner replicas; systematic and ML blocks transferred | 51 | 3.03 | 11.2 |
 
-- These are complete-procedure counts. A nested 300-replica experiment is not priced as one unfold.
+All three assume an LightGBM-class central; §6 gives the `E_C` branch. A nested 300-replica experiment is not
+priced as one unfold.
 
 **Measured operands** (`costs.json` `measured`, from committed sacct receipts):
 
@@ -216,6 +244,9 @@ elapsed × billing/256.
 
 Across all three receipts there are 508 completed jobs and no billed failures. The 95% Clopper–Pearson upper bound
 on the failure rate is 0.59%.
+
+**Cross-lane check.** C's model reproduces B's primary figure: 719 × 301 runs × 0.0591 × 1.05 gives 13,440.6
+against B's 13,440 (`costs.json` `cross_check_B_primary`).
 
 **Documented, not accounting:**
 - a universe unfold is "~30 min on a full Milan node", which is 0.5 node-h (2D run-log archive, 2026-05-26, at the
@@ -234,8 +265,8 @@ workloads:
 | Retry rate | 2% | 10% |
 | Independent re-run fraction for verification | 5% | 10% |
 
-Storage is 0.06 MB per unfold output (measured: 300 outputs = 18 MB). P1 at 9600 experiments therefore needs
-280 GB; P2 needs 0.6 GB.
+Storage is 0.06 MB per unfold output (measured: 300 outputs = 18 MB). At 5,000 experiments P1 needs 146 GB, P3
+15 GB and P2 0.3 GB.
 
 **Memory.** The receipts record only allocated memory: 121,920 MB at 64 CPUs and 487,802 MB at 128. MaxRSS is not
 in any receipt, so no peak-memory figure is claimed. Concurrency is set by the historical `%30` array caps: 7.5
@@ -247,50 +278,65 @@ node-equivalents on shared, 30 on regular.
 then `admitted = total / 0.8`. The quoted production figures contain no margin; the 20% protected reserve is
 applied to the whole total.
 
-Admitted node-h at 4 × 2400, with pairing not established (S-a included):
+Admitted node-h at 4 × 1,250 = 5,000 experiments, with pairing not established (S-a included):
 
 | | P1 | P2 | P3 |
 |---|---:|---:|---:|
-| Optimistic | 554,374 | 997 | 38,969 |
-| Conservative | 2,317,179 | 6,059 | 161,659 |
-| Wall days at 30 node-eq (optimistic / conservative) | 770 / 3,218 | 1.4 / 8.4 | 54 / 225 |
+| Optimistic | 288,793 | 575 | 20,353 |
+| Conservative | 1,207,226 | 3,518 | 84,560 |
+| Wall days at 30 node-eq (optimistic / conservative) | 401 / 1,677 | 0.8 / 4.9 | 28 / 117 |
 
 **One-time setup** (`costs.json` `setup_items`):
 
 | Item | What | node-h (optimistic / conservative) |
 |---|---|---:|
-| S-a | Matched sweep, if A finds the pairing not established | 24.8 / 93.7 |
+| S-r | B's identity-carrying R0, with universe columns, priced here because B left it unpriced: 12 playlists × 2.5 h or the 24 h limit × billing 24/256 (billing ASSUMED) | 2.8 / 27.0 |
+| S-a | Matched LightGBM sweep at the central's seed | 24.8 / 93.7 |
 | S-b | Selection-complete laterals | 1.3 / 23.8 |
 | S-d | M1 generator (ASSUMED) | 2 / 20 |
 | S-e | Background statistics | 0 / 64.8 |
 | S-f | Overlap factorial | 11.8 / 43.2 |
 | S-j | Model-allowance calibration: 3 truths × 202 runs | 35.8 / 196.4 |
-| | **Sum** | **75.8 / 442.0** |
+| | **Sum** | **78.6 / 469.0** |
+
+- A CV-only R0, without universe columns, at the CV loop's 2 CPU / 8 GB request is 0.4–2.3 node-h.
+- None of these items includes the population construction of obstacle 2, which is unpriced.
 
 **Why setup reuse is valid.**
 - For P2 and P3 the systematic deltas, event-level support, template statistics and B∓ do not depend on any one
   validation experiment's data draw, once the central recipe is frozen.
-- For P1 the universes are deliberately recomputed per experiment, because the reported procedure recomputes them.
+- P1 recomputes them per experiment, because the reported procedure does.
 - Development is the successor proposal's stage-B pilot, at most 6 node-h of work.
 
 **Sensitivities** (admitted node-h, optimistic / conservative):
 
 | Experiments per case | P1 | P2 | P3 |
 |---|---:|---:|---:|
-| 300 | 69,392 / 290,235 | 220 / 1,345 | 4,967 / 20,795 |
-| 1000 | 231,053 / 965,883 | 479 / 2,916 | 16,301 / 67,750 |
-| 2400 | 554,374 / 2,317,179 | 997 / 6,059 | 38,969 / 161,659 |
+| 300 | 69,396 / 290,275 | 224 / 1,385 | 4,970 / 20,835 |
+| 719 (B, 1 case's family) | 166,161 / 694,699 | 379 / 2,326 | 11,755 / 48,941 |
+| 1,116 (B's N_design) | 257,846 / 1,077,888 | 526 / 3,217 | 18,183 / 75,571 |
+| 1,250 (4-case family) | 288,793 / 1,207,226 | 575 / 3,518 | 20,353 / 84,560 |
+| 2,400 (successor proposal) | 554,378 / 2,317,219 | 1,001 / 6,100 | 38,973 / 161,700 |
 
-- **Inner replicas.** P1 at 50 / 100 / 300 costs 364,512 / 402,485 / 554,374 optimistic. P3 at 100 costs
-  76,942 / 317,259.
-- **Central backend.** If the central must be the exact-GBT backend (~19 h per unfold), even P2 costs
-  264,642–451,519 node-h. Only an lgbm-class central makes any validation affordable.
-- **Pairing.** Pairing established versus not changes P2 by 33–141 node-h.
+- **Inner replicas.**
+
+| Inner replicas | P1 optimistic / conservative | P3 optimistic / conservative |
+|---:|---:|---:|
+| 50 | 189,906 / 802,018 | 20,353 / 84,560 |
+| 100 | 209,683 / 883,060 | 40,130 / 165,601 |
+| 300 | 288,793 / 1,207,226 | 119,239 / 489,768 |
+
+- **Central-estimator branch** (A §2.4(2)). Keeping `E_C` costs about 19 node-h per central unfold in every
+  experiment. On top of that comes a one-time exact rebuild of the matched sweep, its CV and a 10-seed exact scan:
+  3,762 node-h. P2 then costs **152,389–259,267**.
+  A measured `P02` transfer would avoid the per-experiment exact unfold. Its own design and cost are A's and
+  Joseph's to set; they are not priced here.
+- **Pairing.** With an LightGBM central, pairing established versus not changes P2 by 33–141 node-h.
 
 **Range.**
 - P1 has a finite range, and it is unaffordable.
-- P2 has a finite range, *conditional on* M1, C03 and X01 being constructed, and on accepting the §2 scoped claim.
-  The development effort for M1 is a bounded engineering item, but it is not costed as analyst time here.
+- P2 has a finite compute range, but its preconditions are not all priced: obstacle 2's population construction
+  (a second production or route G) is not. So its total is INCONCLUSIVE.
 - No range exists for an unscoped claim. A guaranteed model-dependence bound (C09) or a response-departure guarantee
   outside the simulated family (C10) has no method, so no finite computation prices it.
 
@@ -317,28 +363,31 @@ Admitted node-h at 4 × 2400, with pairing not established (S-a included):
 - *Proposal.* For σ̂ estimated from N replicas, Gaussian multipliers lose coverage. At N = 50:
   - I68 coverage falls to 0.6778 and I95 to 0.9443;
   - z = 1.0103 and z = 2.0096 restore nominal under normal replicas.
-  These are exact integrals over χ²_{N−1}, in `costs.py`.
+  These are exact integrals over χ²_{N−1}, in `costs.py`. They equal the Student-t results 2F_t(z; N−1) − 1
+  and t-quantiles, which scipy 1.15.2 reproduces to within 3e-5 in a local check.
 - *Populations and comparison.* The replica normality and χ² scaling must be checked on development replica sets.
   The existing VL170 replicas are a zero-compute candidate.
 - *Covariance effect.* A 50-replica covariance has rank ≤ 49. Only per-functional intervals are valid with it, not
   inverse-covariance statistics.
 - *Scope.* Data-statistical interval width only. It does not repair the `KNOWN_ISSUES.md` 85 question.
+- *Relation to B.* B prices a 50-replica variant as a separate procedure (P-B50, 2,277 node-h).
 - *Admitted savings.* Zero until the check is committed.
 
 ## 8. Staged route
 
 | Stage | Admission evidence | Authority | Budget | Terminal stop |
 |---|---|---|---|---|
-| 1. Matching | A's FREEZE: central backend and seed, the pairings and row maps for C01–C08; Audit 2 identity proof; reported-mask equality across producers (D01) | none beyond this preparation | 0 node-h; local only | PAIRING NOT ESTABLISHED, which adds S-a to every later stage |
-| 2. Statistical validation | B's frozen design; independent populations; KI 85 deferral lifted | Joseph (lifts the KI 85 deferral; admits B's experiment and resources) | B's own figure, using `for_B_statistical_per_experiment_node_h` | B's terminal states. A PASS stays statistical-only |
-| 3. Missing-source and method qualification | Constructions for C03 (bound or stream), C05a (selection-complete laterals), M1 generator, X01 (joint throws or cross term), X02/X03 (factorial or bound), C09 development truths | Joseph for compute; A for code under its ownership | setup 76–442 node-h, plus 20% reserve | INCONCLUSIVE if any construction fails its own closure; NO-GO if C05a support cannot be made selection-complete |
-| 4. Total-procedure development | Frozen nuisance law, frozen band and B∓, the 24-run pilot, and S1/S2 checks if claimed | Joseph | ≤ 8 node-h pilot (6 work + 2 reserve), or S1's 2–7.7k node-h if pursued | pilot failure terminates; no automatic repair |
-| 5. Untouched total validation | Custodian-frozen cases, independent populations, seed manifest, ≥ 20% reserve funded | Joseph (an allocation decision) | P2: 1.0–6.1k node-h at 4 × 2400; P1 not admissible | one final look; validation failure consumes the samples |
+| 0. Central estimator | Either a measured `P02` transfer `E_S → E_C` with a declared observable and tolerance, or a recorded change of the quoted central estimator | Joseph (a change of central estimator), or A plus Joseph for a `P02` measurement design | not priced here | without one of them, every total validation needs exact-GBT unfolds (≥ 152,000 node-h): **stop** |
+| 1. Matching | A's FREEZE row outcomes; Audit 2 identity proof; matched sweep at the chosen central (S-a) | none for reads; Joseph for S-a compute | 0 node-h locally; S-a 25–94 node-h (LightGBM) | PAIRING NOT ESTABLISHED, which carries S-a into every later stage |
+| 2. Statistical validation | B's frozen design; R0; independent populations (a second production or a validated route G); KI 85 deferral lifted | Joseph | B's figures (13,440–20,862 node-h primary; 7.4 node-h plus R0 for N2) | B's terminal states. A PASS stays statistical-only. NO-GO while obstacle 2 stands |
+| 3. Missing-source and method qualification | Constructions for C03 (bound or stream), C05a (selection-complete laterals), M1 generator, X01 (joint throws or cross term), X02/X03 (factorial or bound), C09 development truths | Joseph for compute; A for code under its ownership | setup 79–469 node-h, plus 20% reserve | INCONCLUSIVE if any construction fails its own closure; NO-GO if C05a support cannot be made selection-complete |
+| 4. Total-procedure development | Frozen nuisance law, frozen band and B∓, the 24-run pilot, and S1/S2 checks if claimed | Joseph | ≤ 8 node-h pilot (6 work + 2 reserve), or S1's 2,000–7,700 node-h if pursued | pilot failure terminates; no automatic repair |
+| 5. Untouched total validation | Custodian-frozen cases, independent populations, seed manifest, ≥ 20% reserve funded | Joseph (an allocation decision) | P2: 575–3,518 node-h at 4 × 1,250, plus the unpriced population construction; P1 not admissible | one final look; validation failure consumes the samples |
 
-## 9. Provisional table for B (the one exchange)
+## 9. The B↔C exchange
 
-These are the per-experiment costs B can price its statistical-only experiment against. They carry no nuisance
-overhead (`costs.json` `for_B_statistical_per_experiment_node_h`).
+This is the table C supplied at `9204a390`. B adopted the same rates in its §14. These are statistical-only costs
+per experiment, with no nuisance overhead (`costs.json` `for_B_statistical_per_experiment_node_h`).
 
 | Per experiment | Optimistic node-h | Conservative node-h |
 |---|---:|---:|
@@ -347,20 +396,27 @@ overhead (`costs.json` `for_B_statistical_per_experiment_node_h`).
 | Reconstructed, 1 + 100 unfolds | 5.98 | 21.9 |
 | Reconstructed, 1 + 300 unfolds | 17.8 | 65.1 |
 
-- **Consequence.** At 2400 experiments per case and 4 cases, a reconstructed 300-replica statistical test alone
-  costs 171,000–625,000 node-h before margins. A fixed-band statistical test costs 660–2,550 node-h.
-- **C's procedure assumptions.**
-  - The central is lgbm-class. Exact GBT (~19 h per unfold) multiplies every row by 88–321.
-  - Pseudo-data are generated in-process, as in `fixed_truth_toy.py`.
-  - 206 functionals.
-- **Reconciliation.** Run `costs.py --n-per-case N --n-cases K --n-inner R` with B's counts.
+**Agreement.**
+- B's 13,440 node-h primary reproduces in C's model.
+- Both lanes use 0.0591 node-h per production run as the measured optimistic rate.
+- Both exclude background-template statistics from the statistical claim. B conditions them out; C carries them
+  as C03.
+
+**Differing assumptions, exposed rather than merged:**
+1. **Retry and reserve.** B adds a 5% retry and no reserve. C adds a 2–10% retry, 5–10% verification and a
+   20% reserve. B's figures are therefore lower bounds on C's admitted totals.
+2. **Rate.** B prices at the optimistic rate only. B quotes C's conservative per-experiment figure, which is
+   3.7× higher.
+3. **Family size.** B sizes for one case (206 functionals). C's total design is four cases, which raises N per
+   case from 719 / 1,116 to 823 / 1,250 under B's own criteria.
+4. **R0.** C prices it here (S-r). It does not change either verdict.
 
 ## 10. Inputs still pending
 
-| From | Item | Used for | If it does not arrive within budget |
-|---|---|---|---|
-| A | CONTRACT, then FREEZE: central backend and seed; pairing verdict | C01–C08 matching cells; S-a | Close the matching cells as UNRESOLVED. The P1 NO-GO is unaffected |
-| B | PROVISIONAL, then final: procedure, counts and populations | N, the inner replica count, the populations | Keep the successor-proposal counts and label the totals provisional |
+| From | Item | Effect on C |
+|---|---|---|
+| A | FREEZE: the row outcomes (`P/a/pairings.tsv`) and engineering checks | Matching-row citations. The CONTRACT already fixes the estimator facts used here. If FREEZE changes §2, C reconciles once |
+| B | Final | B's counts or criteria; C reruns `costs.py --n-per-case` |
 
 ## 11. Reproduction
 
@@ -368,9 +424,30 @@ overhead (`costs.json` `for_B_statistical_per_experiment_node_h`).
 cd <repo root at this branch>
 export TMPDIR=/private/tmp/minerva-uncprep-c-20261008/tmp OMP_NUM_THREADS=4
 python3 docs/orchestration/state/uncertainty-preparation-20261008/c/costs.py --check   # exit 0
-python3 docs/orchestration/state/uncertainty-preparation-20261008/c/costs.py --n-per-case 1000 --out /tmp/x.json
+python3 docs/orchestration/state/uncertainty-preparation-20261008/c/costs.py --n-per-case 1116 --n-cases 1 --out /tmp/x.json
 ```
 
 - **Environment.** Python 3.12.2 (miniconda), standard library only. It ran in about 5 s on one core.
 - **Inputs read.** The three sacct receipts, whose sha256 digests are in `costs.json` `receipts.*.digest`.
 - **Not read.** No ROOT product and no cluster resource.
+- **Four-case family sizing.** B's `assurance.py` at `f19084f4` was copied to scratch and imported. Its own
+  functions (`levels`, `per_test_alpha`, `edges`, `required_n`, `bias_sizing`) were run with
+  `DESIGN["n_functionals"]` set to 206 and to 824. B's file was not edited.
+
+## For E
+
+Each item below stays deferred. C continues with the rest.
+
+1. **Arithmetic check.** Independently recompute `costs.json`:
+   - run `costs.py --check`;
+   - re-derive at least one P1, one P2 and one setup row by hand from the receipts;
+   - rerun B's `assurance.py` with 824 functionals.
+2. **Status wording conflicts** (E routes them; C changes nothing):
+   - the 2D status headline says "MEFHC 5-iter lgbm", while the quoted central is `E_C`, exact GBT (A's CONTRACT;
+     D's D06);
+   - the status lists GEANT among "6 lateral" bands, while the reference calls GEANT weight-only (row C05b);
+   - "PPFX index alignment verified (Pearson 0.96)" has no committed receipt (Audit 2).
+3. **No governing record is proposed by C.** C supplies no receipt binding, and none of its digests is a
+   path+sha256 pair. The receipt digests in `costs.json` are `sha256:`-prefixed strings under a `digest` key.
+4. **The next decision belongs to Joseph and is the same for B and C:** the central estimator (stage 0). Nothing
+   downstream is admissible before it.
