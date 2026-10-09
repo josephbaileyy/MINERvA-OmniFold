@@ -233,3 +233,12 @@ commit; the source checks were made in this session.
 - **Not changed.** `README.md` "Before changing the 2D driver" carries the same two-condition
   attribution to `:41`. That is base text and outside F13. It is left for E's decision; repairing it
   would use D's second and last repair.
+
+## Repair 2 (E's follow-up to F13, cycle 2 of 2; D's last repair)
+
+At E's request, `README.md` "Before changing the 2D driver" gets the same treatment as Repair 1. The
+`:41` row is cited only for the in-`main()` insert and the driver's sha. The helper-digest condition
+is cited to `test_oi136_rooted_insert_ratchet.py:266-274` and `PLAN-20261008-…:18`. A one-line
+red-at-pin caveat cites `KNOWN_ISSUES.md` 89, which is on `origin/prep/uncertainty-e-20261008` at
+`40b78569` (verified by D). The measurement behind the caveat is the one recorded in Repair 1
+(`oi136_ratchets.txt`).
