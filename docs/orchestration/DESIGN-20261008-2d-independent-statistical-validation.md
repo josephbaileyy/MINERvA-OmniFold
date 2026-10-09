@@ -281,10 +281,11 @@ them.
   the 0.80 edge.
 - **The bank's own MC realization is a fixed offset.** No outer redraw averages it, so it enters
   `U_e − T_R` as a per-functional offset of rms ≈ √(1 − 0.35) ≈ 0.80 `σ̂`.
-  - With the both-stream inner bootstrap, the total spread equals `σ̂`, so pooled I68 coverage of `T_R`
-    is nominal (0.68). Per functional it is mixed: about 62 % over-cover and the rest under-cover. The
-    bias test fails in most functionals (about 188 of 206 by the closeout review's computation). This
-    holds whatever the reference.
+  - With the both-stream inner bootstrap, the total spread equals `σ̂`. If `T_R` is treated as exact,
+    pooled I68 coverage of `T_R` is therefore nominal (0.68); the reservoir offset above adds to it.
+    Per functional it is mixed: about 63 % over-cover and the rest under-cover. The bias test fails in
+    most functionals: about 188 of 206 by the closeout review's computation, preserved in
+    `state/next-preparation-20261009/closeout/review/`. This holds whatever the reference.
   - With a data-only inner stream, the offset is about 1.35 `σ̂` and mean I68 coverage of `T_R` is
     about 0.45.
 - **So the only variant open is the truth-free one, and only with a data-only inner stream.** An

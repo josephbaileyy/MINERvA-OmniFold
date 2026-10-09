@@ -37,6 +37,17 @@ out["n1_bank_offset"] = {
     "mean_i68_data_only": _mean_i68(o / math.sqrt(share), 1.0),
 }
 
+# Fraction of functionals that over-cover with the both-stream bootstrap: a functional with offset d
+# over-covers when P(|d + noise| < 1) > 0.682689; that coverage falls in |d|, so solve for the edge d*.
+_noise = math.sqrt(share)
+_cov = lambda d: _n.cdf((1 - d) / _noise) - _n.cdf((-1 - d) / _noise)
+lo, hi = 0.0, 1.0
+for _ in range(100):
+    mid = (lo + hi) / 2
+    lo, hi = (mid, hi) if _cov(mid) > 0.6826894921370859 else (lo, mid)
+out["n1_bank_offset"]["over_cover_edge_d"] = lo
+out["n1_bank_offset"]["over_cover_fraction"] = 2 * _n.cdf(lo / o) - 1
+
 # Correction 3: P05 under A's and C's conventions; documented walls (not receipts).
 packed = 0.68  # A's memory-packed node-h per exact unfold (extrapolated)
 ratio = 0.5 / (804 / 3600)  # ~30 min universe task / 13 min 24 s CV, full node

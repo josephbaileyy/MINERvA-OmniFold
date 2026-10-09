@@ -83,8 +83,8 @@ the handoff.
     inner bootstrap puts the MC-stream term into σ̂. So κ ≈ 0.59 for the truth-free width test.
   - The bank's own MC realization is a per-functional offset against `T_R`, rms √(1 − 0.353) =
     0.80 σ̂. With the both-stream bootstrap, pooled I68 coverage is exactly nominal (0.6827), but per
-    functional it is mixed: about 62 % over-cover in my simulation, and the bias test fails in most
-    functionals. With a data-only stream the offset is 1.35 σ̂ and mean I68 coverage is 0.448
+    functional it is mixed: 62.6 % over-cover (exact edge d* = 0.714 σ̂), and the bias test fails in
+    most functionals (about 188 of 206, the reviewer's figure; `review/review-cycle1.md`). With a data-only stream the offset is 1.35 σ̂ and mean I68 coverage is 0.448
     (`checks/arith.py` `n1_bank_offset`).
   - The first committed version of this correction (`9b64588f`) called it "over-coverage" and said
     a data-only stream would also make the reference-aware form a data-stream test. The closeout
@@ -225,9 +225,10 @@ These are engineering and record-integrity checks. None is a scientific validati
 ## 6. Limitations
 
 - κ ≈ 0.59 and the 0.80 σ̂ bank offset are median-bin statements from a ratio of medians, and they
-  assume an exactly calibrated bootstrap. The 62 % over-cover fraction is my simulation; the bias-test
-  count (about 188 of 206) is the closeout reviewer's figure and was not re-derived here. It shows that N1's variants cannot pass as specified. It measures nothing about the
-  production band.
+  assume an exactly calibrated bootstrap. The 62.6 % over-cover fraction is in `checks/arith.py`. The
+  bias-test count (about 188 of 206) is the closeout reviewer's figure, preserved in `review/`; the
+  owner did not re-derive it. κ and the offset show that N1's variants cannot pass as specified; they
+  measure nothing about the production band.
 - The two `P05` figures are forecasts. A third, additive-overhead convention would fall between them;
   it is not priced here.
 - The proposed wording's 0.97 % / 1.3 σ_stat comes from two independent codings of the same operands,
@@ -236,16 +237,84 @@ These are engineering and record-integrity checks. None is a scientific validati
 
 ## 7. Independent review
 
-Pending at the time of this revision.
+- **Reviewer.** One fresh read-only context: a Claude Code general-purpose subagent with no authorship
+  of A–E or of this closeout. Its model inherits the owner's (Opus 5.5); its effort is not observable.
+  CAMPAIGN-REVIEW §5 suggests Astra High, which this session cannot reach.
+- **Setup.** A detached clean worktree. Writes only to external scratch, and its own code for every
+  number. Its reports and scripts are preserved verbatim with digests in [`review/`](review/).
+- **Budget.** One initial review and one focused re-review, both used.
+
+| cycle | fixed commit | status start/end | findings |
+|---|---|---|---|
+| initial (18:52–19:00Z) | `3a9c84b8` | empty / empty | **F1 MATERIAL**: the N1 correction misstated the second failure mode ("over-coverage") and said a data-only stream would open the reference-aware variant. F2 MINOR (wording of 0.97 % / 1.3 σ). F3–F6 NOTE. Items 2–4, 7 and scope PASS, all numbers reproduced with its own code |
+| focused re-review (19:05–19:06Z) | `e87d8df8` | empty / empty | F1–F5 **RESOLVED**; F6 deferred to this revision. New: R1 MINOR (two numbers not re-runnable in the tree), R2 MINOR (§§7–10 pending, a dangling "It"), R3 NOTE (62 → 63 %), R4 NOTE (the pooled-nominal statement needs "if `T_R` is treated as exact") |
+
+**After the final review** the owner applied R1–R4:
+
+- R1: `checks/arith.py` now computes the exact over-cover fraction, 0.6256 (edge 0.7142, equal to the
+  reviewer's independent root), and the review files are preserved for the bias count;
+- R2: these sections, and the dangling "It";
+- R3: "about 63 %";
+- R4: the qualifier in DESIGN §7.
+
+**These last edits are not independently reviewed.** No further review cycle is permitted.
 
 ## 8. Resources
 
-Pending final measurement.
+| item | measured |
+|---|---|
+| active elapsed time | about 0.75 h (18:26Z → about 19:12Z), including review; cap 4 h |
+| local CPU | under 0.1 core-h. The largest step was the two OI-136 suites (61 s user). The reviewer reported under 0.02 core-h in total. Every command ran at 2 threads or fewer; cap 2 core-h |
+| scratch | about 0.5 MiB in the session scratchpad, plus a 409 MiB detached review checkout in `/private/tmp`, removed at closeout; cap 1 GiB |
+| tracked evidence added under `Q/` | about 0.17 MiB; cap 10 MiB |
+| cluster / GPU / training / toys | 0 / 0 / none / none |
 
 ## 9. Disposition
 
-Pending review.
+| decision | disposition | reason |
+|---|---|---|
+| dispatch base and writer table published within 30 min | **PASS** | `8eafd357`, about 10 min in; pushed; no live conflict withheld a surface |
+| the A–E record is accurate and merge-ready within its existing scientific limits | **PASS** | Items 1–4 are corrected against first operands. The diff is limited to the declared fixes and the registration surfaces. Hooks, hash bindings, the manifest and routes pass. The one material review finding is RESOLVED. The minor post-review edits R1–R4 are disclosed as unreviewed |
+| proposed "keep and disclose" wording prepared | **PASS (proposal only)** | §4. It states both the distinct estimators and the unmeasured transfer, each with evidence and origin count. It is not applied and not a readiness claim |
+| independent review | **PASS** | Two cycles, as budgeted (§7) |
+
+**Preserved, not changed:** the named primary is INFEASIBLE UNDER STATED CONSTRAINTS; total
+uncertainty is NO-GO; N2 is NOT READY; nothing is ready for a claim about the quoted central's
+uncertainty; transfer is UNRESOLVED; VL170 is not coverage re-tested; KNOWN_ISSUES 85 is deferred;
+s5c, s5n, s5e, s5p and PET are terminal.
+
+**Open items carried, not hidden:**
+
+- the OI-136 ratchets are still red (KNOWN_ISSUES 89; the `OI-136` route and Session 2);
+- the cycle-1 F12 test note;
+- `e/integration.json`'s freeze-time identity field (superseded by DELIVERY §2);
+- `pairings.tsv`'s single P05 price;
+- `sec_method.tex:98` "pinned seeds" against `P01`, for the publication owner.
 
 ## 10. Next action and decision list
 
-Pending review.
+These are Joseph's decisions. Nothing here is decided for him.
+
+1. **Merge.**
+   - What: whether to merge `prep/next-closeout-20261009`, which carries the A–E preparation and this
+     closeout, into `main`.
+   - Inputs: this report and DELIVERY.
+   - Cost: 0 compute.
+   - Note: open PR #60 also changes the generated `MANIFEST.tsv`. Whichever merges second regenerates
+     it with `generate_manifest.py`.
+2. **Pairing (KNOWN_ISSUES 88; DELIVERY §6).** One of:
+   - **keep and disclose:** 0 node-h; the publication owner then applies §4's wording with the three
+     builds and standalone synchronization;
+   - **measure the transfer:** `P03` 34–39 node-h at N = 50; all three about 170–350 or 330–510
+     node-h (forecasts on a 0.68 node-h packing extrapolation); needs a design with declared
+     observables and tolerances, and its own authorization;
+   - **re-quote the LightGBM central:** 0 node-h for the central; an estimator and publication-scope
+     change.
+3. **N2.** Only if decision 2 makes the LightGBM estimator the target. It needs Joseph's lift of the
+   KNOWN_ISSUES 85 deferral (after the publication package), a guarded provenance-recording harness
+   (Session 2's report), its own registration and review, and 9.8–12.2 node-h with a 20 % reserve.
+   It is a data-stream diagnostic, not coverage validation.
+
+**Reopening this closeout** needs a demonstrated error in a corrected statement's operands, or a new
+upstream delta that touches a reviewed file. Either would require a new bounded dispatch, because
+this session's review budget is spent.

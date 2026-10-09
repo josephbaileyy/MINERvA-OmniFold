@@ -19,7 +19,9 @@
   "offset_rms_over_sigma_both_stream": 0.8040876746873328,
   "pooled_i68_both_stream": 0.6826894921370859,
   "offset_rms_over_sigma_data_only": 1.3525200308807577,
-  "mean_i68_data_only": 0.44782943408787723
+  "mean_i68_data_only": 0.44782943408787723,
+  "over_cover_edge_d": 0.7141823765597636,
+  "over_cover_fraction": 0.6255612723283948
  },
  "p05": {
   "universe_cv_ratio": 2.238805970149254,
