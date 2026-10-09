@@ -371,12 +371,16 @@ class TheKi85Producer(Checkouts):
         self.assertIn(str(self.b), cp.stderr)
         self.assertFalse(out.exists())
 
-    def test_a_changed_analyzer_refuses(self):
+    def test_a_changed_analyzer_refuses_before_its_body_runs(self):
         exp = self.tmp / "exp.json"
-        exp.write_text(json.dumps({"modules": {ANALYZE: "0" * 64}}))
+        exp.write_text(json.dumps({"modules": {ANALYZE: sha(self.a / ANALYZE)}}))
+        with open(self.a / ANALYZE, "a") as fh:
+            fh.write("open(__file__ + '.executed', 'w').close()\n")
         cp = run([self.a / KI85, "--out", self.tmp / "k.json", "--expect", exp])
         self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr[-3000:])
         self.assertIn("analyze_uq", cp.stderr)
+        self.assertFalse(Path(str(self.a / ANALYZE) + ".executed").exists(),
+                         "the mismatched analyzer's module body ran before the refusal")
 
     def test_strict_mode_refuses_unguarded(self):
         cp = run([self.a / KI85, "--out", self.tmp / "k.json", "--require-provenance"])
