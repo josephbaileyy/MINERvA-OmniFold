@@ -1,0 +1,37 @@
+# AFTER navigation check at 3a95fc71, 2026-10-09T06:21:43Z
+## T1 adopted statistical producer
+$ grep -n 'Find the script that produced' README.md
+30:| Find the script that produced a quoted 2D uncertainty (statistical replicas, universes, combined rollup) | `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`, "Which script produced the quoted 2D uncertaint
+$ grep -n 'sbatch_ki84_replicas\|Statistical replicas' 2d-unfolding/2D_OMNIFOLD_REFERENCE.md
+174:| Statistical replicas (`VL170`) | `docs/orchestration/state/ki84-rebuild-20261006/sbatch_ki84_replicas.sh` (a record; it repeats `sbatch_unfold_2d_MEFHC_5iter_bootstrap_scaleup.sh` argument for a
+217:   `docs/orchestration/state/ki84-rebuild-20261006/sbatch_ki84_replicas.sh`,
+$ test -f docs/orchestration/state/ki84-rebuild-20261006/sbatch_ki84_replicas.sh && grep -c -- '--seed            1' it
+1
+## T2 active combined rollup
+$ grep -n 'rollup_vl170_adoption\|final_rollup_full' 2d-unfolding/2D_OMNIFOLD_REFERENCE.md README.md
+README.md:84:| `2d-unfolding/uq/analyze_uq.py`, `uq/analyze_universes.py` | 2D bootstrap and universe covariances (different conventions: sample `1/(N-1)` versus MAT `1/N
+README.md:368:   (`2d-unfolding/uq/rollup_vl170_adoption.sh`) are frozen reproductions,
+2d-unfolding/2D_OMNIFOLD_REFERENCE.md:176:| ML-noise covariance | step (a) of `uq/final_rollup_full.sh`: `uq/analyze_uq.py` over the lgbm seedscan (`seedscan_lgbm/`) | 10
+2d-unfolding/2D_OMNIFOLD_REFERENCE.md:177:| **Combined rollup (`VL172`)** | **`uq/rollup_vl170_adoption.sh`**: `analyze_uq.py` on the replicas → `analyze_universes.py --a
+2d-unfolding/2D_OMNIFOLD_REFERENCE.md:185:- `sbatch_final_rollup_full.sh` / `uq/final_rollup_full.sh`. Its universe
+2d-unfolding/2D_OMNIFOLD_REFERENCE.md:272:- Rollup: the quoted product comes from `uq/rollup_vl170_adoption.sh`,
+2d-unfolding/2D_OMNIFOLD_REFERENCE.md:275:  `sbatch_final_rollup_full.sh` → `uq/final_rollup_full.sh` route refuses
+2d-unfolding/2D_OMNIFOLD_REFERENCE.md:292:  written by step (5) of `uq/rollup_vl170_adoption.sh`, which also records
+$ sed -n 6,7p 2d-unfolding/uq/rollup_vl170_adoption.sh
+# This is the production chain behind the quoted 6.87 % and 1.481 (ledger "Active 2D Result"), not
+# final_rollup_full.sh, whose universe step predates the matcorr/fluxfix sweep:
+## T3 supported import constraints
+$ grep -n 'Import constraint\|AUTHORIZATION-20260903-oi136\|test_oi136_rooted_insert_ratchet\|mnv_guarded_run' 2d-unfolding/2D_OMNIFOLD_REFERENCE.md
+122:**Import constraint (before editing the driver).** The driver loads
+126:record is `docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md:41`.
+127:`nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py` fails if either
+132:goes through `nd-unfolding/mnv_guarded_run.py`.
+## T4 historical recovery through the correct tag
+$ grep -n 'Three tags are removal boundaries' README.md
+1
+tag evidence/prepublication-2026-08-20-0b329e8a -> 0b329e8a
+tag evidence/preparation-2026-09-24-bf34a12c -> bf34a12c
+tag evidence/simplification-2026-10-07-fc97eaf9 -> fc97eaf9
+$ git show evidence/simplification-2026-10-07-fc97eaf9:nd-unfolding/pet/final_design/results/dev1/dev1-CS1-F0.posthoc.json | shasum -a 256
+d6d09e6feeac22b14e70c193736e7826aeda8041bd5687dfdeed0956ec23c083  -
+expected (external a3-blobs.tsv): d6d09e6feeac22b14e70c193736e7826aeda8041bd5687dfdeed0956ec23c083

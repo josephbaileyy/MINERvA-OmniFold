@@ -73,7 +73,7 @@ reproduction, and by the strength of the evidence. There are five, the maximum.
 
 | # | Obstacle | Evidence | Disposition |
 |---|---|---|---|
-| O1 | The 2D reference sent readers to superseded uncertainty producers. Its rollup bullet named `sbatch_final_rollup_full.sh`, whose universe step reads the pre-fluxfix sweep. Its Fig. 6/7 path named that route's output directory. Its "Driver" was the interactive script. It never mentioned `VL170`, the replica record or `uq/rollup_vl170_adoption.sh` (0 hits). | rows N06, N07, N11; `rollup_vl170_adoption.sh:6-7`; `nav-before.log` T1/T2 | **IMPLEMENTED** (I1 `abc1e6f7`, I3 `bd738973`). The reference has a producer table, frozen reproduction or not, with what each row reads and writes, and the old route is marked superseded. README routes there from "Where to start" and Setup step 6. |
+| O1 | The 2D reference sent readers to superseded uncertainty producers. Its rollup bullet named `sbatch_final_rollup_full.sh`, whose universe step reads the pre-fluxfix sweep. Its Fig. 6/7 path named that route's output directory. Its "Driver" was the interactive script. It never mentioned `VL170`, the replica record or `uq/rollup_vl170_adoption.sh` (0 hits). | rows N06, N07, N11; `rollup_vl170_adoption.sh:6-7`; `nav-before.txt` T1/T2 | **IMPLEMENTED** (I1 `abc1e6f7`, I3 `bd738973`). The reference has a producer table, frozen reproduction or not, with what each row reads and writes, and the old route is marked superseded. README routes there from "Where to start" and Setup step 6. |
 | O2 | The reference's bootstrap item 4 told each replica to pass `--seed N`. Every band producer passes a fixed `--seed 1`, and the scaleup header records that varying both double-counted ML stochasticity. | row D05; six launchers measured; `scaleup.sh:18-19` | **IMPLEMENTED** (I2 `00803510`). **A's factual check: PENDING** (see "For A"). |
 | O3 | The frozen central value's backend is labeled inconsistently. The status headline says "MEFHC 5-iter lgbm", but the launcher that writes the frozen path passes no `--estimator` (driver default `exact`). `final_rollup_full.sh` (c) comments "using the exact-GBT production CV here". | row D06 | **DEFERRED to A** (estimator identity) and to E (status routing). D wrote no backend label, so the producer table names the launcher and not a backend. Least costly resolution: read the backend from the product's own metadata or its run log. That is A's read-only check. |
 | O4 | The 205-bin reported mask is computed four ways from four operands (`analyze_uq.py`: ensemble mean > 0; `analyze_universes.py`: CV > 0; `compare_to_paper_fullcov.py`: paper diagonal > 0; Fig. 6/7: central > 0). The comparison aligns the matrices by ordinal position and checks only the count. Today the cells coincide, so no number is wrong. A future ensemble with one zero-mean reported bin and one extra nonzero cell would misalign every element silently. The 3D analogue `build_bootstrap_cov_3d.py` already takes its mask from the CV, the same operand as its universe rollup. | row D01; `compare_to_paper_fullcov.py:148-159`; `build_bootstrap_cov_3d.py:11-13,84` | **DEFERRED patch design** (below). Two of the files are A's conditional paths and the third is a publication figure producer, so D edits none of them. |
@@ -109,7 +109,7 @@ so D's two-file structural allowance is unused and no ownership transfer happene
 
 ## Before and after: the four navigation tasks
 
-Logs: [`nav-before.log`](nav-before.log) (base docs) and [`nav-after.log`](nav-after.log) (head docs).
+Logs: [`nav-before.txt`](nav-before.txt) (base docs) and [`nav-after.txt`](nav-after.txt) (head docs).
 A reader starts from `README.md`.
 
 | Task | Before (`f8e2bf85`) | After |
@@ -127,9 +127,9 @@ and a four-thread cap.
 | Check | Result |
 |---|---|
 | pre-commit hook (shared `.githooks`) on each of D's commits | 13 checks passed, every commit |
-| `python3 docs/orchestration/verify_hash_bindings.py` at D's head | rc 0, ALL BINDINGS INTACT ([`verify_hash_bindings.log`](verify_hash_bindings.log)) |
-| `python3 -m pytest -q nd-unfolding/tests/test_hash_bindings.py` (inspected first: verifier subprocesses and synthetic temp repos only) | 33 passed, 0 skipped ([`test_hash_bindings.log`](test_hash_bindings.log)). It pins `2D_OMNIFOLD_REFERENCE.md` and `analyze_universes.py` at revision `901f2c64`, not at current bytes |
-| Paths in D's added lines resolve | 68 resolved. The 26 unresolved occurrences are bare basenames of files named in full nearby, untracked cluster product directories (by design), two formulas, and the proposed destination `nd-unfolding/gen5d` ([`pathcheck.log`](pathcheck.log)) |
+| `python3 docs/orchestration/verify_hash_bindings.py` at D's head | rc 0, ALL BINDINGS INTACT ([`verify_hash_bindings.txt`](verify_hash_bindings.txt)) |
+| `python3 -m pytest -q nd-unfolding/tests/test_hash_bindings.py` (inspected first: verifier subprocesses and synthetic temp repos only) | 33 passed, 0 skipped ([`test_hash_bindings.txt`](test_hash_bindings.txt)). It pins `2D_OMNIFOLD_REFERENCE.md` and `analyze_universes.py` at revision `901f2c64`, not at current bytes |
+| Paths in D's added lines resolve | 68 resolved. The 26 unresolved occurrences are bare basenames of files named in full nearby, untracked cluster product directories (by design), two formulas, and the proposed destination `nd-unfolding/gen5d` ([`pathcheck.txt`](pathcheck.txt)) |
 | `generate_manifest.py --check` | not run: already OUT OF DATE at the pin (E-C1). No lane regenerates it, and D's three paths are not in `MANIFEST.tsv` rows that D may touch |
 | Code equivalence | not applicable: no source file changed |
 | Document builds | not applicable: no `docs/analysis-note/` input changed |
