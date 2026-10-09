@@ -93,13 +93,18 @@ the list.
 | `technote_style.py`, `lib/` | Plot style; shell resume and backfill guards | about 50 plotters in 2D, 3D and N-D; the `2d-unfolding/sbatch_*.sh` launchers |
 
 **Before changing the 2D driver.** One recorded ruling governs this file. Joseph ruled on 2026-08-23 to
-leave its rooted `sys.path` insert (the `OI-136` hazard) unrepaired; the record is
-`docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md:41`. The ruling rests on two conditions:
-- the insert stays inside `main()`;
-- `unbinned_unfolding/python/omnifold.py` keeps its digest.
+leave its rooted `sys.path` insert (the `OI-136` hazard) unrepaired. The ruling rests on two conditions:
+- the insert stays inside `main()`. The ruling's record,
+  `docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md:41`, names this condition and
+  the driver's sha ("pinned in three places");
+- `unbinned_unfolding/python/omnifold.py` keeps its digest. That row does not state this condition. It is
+  stated in `nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py:266-274` (`OMNIFOLD_SHA256`) and in
+  `docs/orchestration/PLAN-20261008-uncertainty-investigation-preparation.md:18`.
 
 `nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py` fails if either condition breaks, and the test says
-the decision then goes back to Joseph.
+the decision then goes back to Joseph. Both `OI-136` ratchet suites are already red at `ad2716d8` for an
+unrelated reason: nine unlisted October rooted-insert sites (`KNOWN_ISSUES.md` 89). The driver's two condition
+tests pass, so read which test fails rather than the suite's exit code.
 
 The driver's sha256 pins (`docs/orchestration/verify_hash_bindings.py`, the Gate-2 launcher,
 `docs/orchestration/state/s5p/gen5d/gen5d-build.json`) record the bytes that earlier runs executed. They are not an approval rule.
