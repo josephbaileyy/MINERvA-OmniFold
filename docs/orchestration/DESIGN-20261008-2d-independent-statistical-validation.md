@@ -41,7 +41,7 @@ calibrated, any change to a quoted number, the total uncertainty (lane C), or au
 
 ## 1. Disposition (the full verdict is in §17)
 
-**NO-GO** for the dispatched experiment, on two independent grounds, either of which suffices:
+**NO-GO** for the dispatched experiment. Ground 1 decides it; ground 2 is a supporting constraint:
 
 1. **Production-equivalent independent populations do not exist.** The production statistical
    construction trains on the *entire* available signal MC (`mc_signal_reco`, 32,849,103 rows;
@@ -52,12 +52,15 @@ calibrated, any change to a quoted number, the total uncertainty (lane C), or au
    No second reconstruction-level ME-FHC MC production is held, and acquiring one is a MINERvA
    collaboration production that this project cannot price. In addition, the production omnifile
    carries **no event identity** on any tree, so even a held-out split needs an event-loop rebuild.
-2. **Nested reconstruction is unaffordable at the resource ceiling.** The coverage family needs
+2. **Nested reconstruction is priced high (supporting constraint).** The coverage family needs
    N = 719 independent experiments (N = 1,116 to also give the bias test its power at the tolerance
    edge). With the measured 0.0591 node-h per production run, 719 × 301 runs cost **13,440 node-h**
-   (1,116 experiments: 20,862 node-h), against **3,040.6 node-h** remaining on `m3246` for *all*
-   users (iris, 2026-10-09T06:15Z). Even the loosest scanned tolerance with I68 only (N = 172) costs
-   3,215 node-h, more than the whole remainder. C's conservative per-experiment figure is 3.7× larger.
+   (1,116 experiments: 20,862 node-h). Against named comparators, that is **0.67–1.04 ×** `m3246`'s
+   annual CPU allocation (20,000 node-h) and **4.4–6.9 ×** its CPU balance on 2026-10-09 (3,040.6
+   node-h, all users, iris 06:15Z; a point-in-time balance of an allocation-year pool, not a ceiling —
+   the same reading shows 55,107 GPU node-h remaining on `m3246_g`, and the plan defines no ceiling).
+   The loosest scanned tolerance with I68 only (N = 172) is 3,215 node-h. These are at C's optimistic
+   rate with a 5 % retry and no reserve; C's conservative per-experiment figure is 3.7× larger.
 
 The narrower designs that remain specifiable are in §16. None of them validates the adopted
 construction, and the cheapest informative one is the deferred `KNOWN_ISSUES.md` 85 held-out re-test.
@@ -95,8 +98,10 @@ the producers do not do that. A and this lane agree on every row below.
    bootstrap exists (A prices 50 exact replicas at about 34–39 node-h packed). Covering `E_C` needs `P03`
    resolved or Joseph's decision to change the quoted central estimator. Using `E_C` as the
    per-experiment central instead costs one exact unfold per experiment (69,523 s single-threaded,
-   MaxRSS 16.8 GB: about 0.7 node-h packed by memory, 19.3 node-h unpacked; A `f762749d` §5); C puts
-   the cheapest `E_C`-keeping validation at 152,000–259,000 node-h (`d07a3d33`). `E_C`'s own seed
+   MaxRSS 16.8 GB: about 0.7 node-h packed by memory, 19.3 node-h unpacked; A `f762749d` §5). C's
+   FREEZE (`803f1dcc` §6) prices its cheapest `E_C`-keeping route, the 4-case fixed-band P2, at
+   5,566 node-h admitted if A's memory packing (0.68 node-h per exact unfold) holds, and 263,513 if the
+   exact unfolds run as the central did. `E_C`'s own seed
    variation has never been measured, so it could not be fixed estimator randomness.
 2. **Purity is re-estimated per experiment, on purpose.** The procedure computes purity from the data
    it is given, so in the outer experiment it is computed from each pseudo-data set. The inner band
@@ -262,8 +267,12 @@ them.
   (0.52 from the KI-85 operands; median ratio, approximate).
 - **Consequence, computed** (`assurance.json` `finite_reference_offset_N1`): at ρ = 0.5 and N = 719,
   an *exactly calibrated* procedure is expected to fail the coverage test in 11–103 of 206 functionals
-  (`s` = 0.25–1) and the bias test in 108–154. **A held-out per-experiment coverage test against `T_R`
-  fails by construction** with the MC that exists. VL169 avoided this only by making the reservoir the
+  (`s` = 0.25–1) and the bias test in 108–154. **N1 fails as specified** — with `T_R` treated as an
+  exact reference and the 0.2 σ bias test — with the MC that exists. Two variants are not ruled out
+  and are **unpriced**: a *reference-aware* scorer that carries a per-functional model of `τ_ref` (which
+  needs the unmeasured smearing share and ESS), and a *truth-free* scorer that compares the sd of
+  `U_e − Ū` over experiments with `σ̂` (a width-calibration test with no coverage-of-truth claim, the
+  per-experiment analogue of N2). VL169 avoided this only by making the reservoir the
   training bank (A1.3), which is the circularity KI-85 (b) names.
 
 ## 8. Reporting, intervals and failures inside an experiment
@@ -324,7 +333,7 @@ whose true κ is at a tolerance edge.
 | Bias power at N = 719 | 0.90 at κ = 1; 0.59 at κ = 1.25 |
 | **Design N** = max(coverage, bias at the edge) | **1,116**; acceptance I68 [700, 822], I95 [1030, 1086]; familywise ≥ 0.967 |
 | Mean-pull standard error at N = 719 | 0.037 |
-| N sensitivity, κ ∈ [1/x, x] (I68+I95 / I68 only) | x = 1.15: 1,657 / 1,248; 1.20: 975 / 755; 1.25: 719 / 519; 1.33: 504 / 330; 1.5: 329 / 172 |
+| N sensitivity, κ ∈ [1/x, x] exactly (I68+I95 / I68 only) | x = 1.15: 1,632 / 1,248; 1.20: 1,030 / 755; 1.25: 719 / 519; 4/3: 504 / 322; 1.5: 329 / 172 |
 
 The operating characteristic (pass probability of one functional against its true κ) is in
 `assurance.json` `oc_curve_at_N_required`: above 0.99 for κ in [0.95, 1.05]; at κ = 0.9 and 1.1 it is
@@ -412,7 +421,7 @@ regular full-node replica. Every figure below adds a 5 % retry allowance and exc
 |---|---:|---:|---:|---:|
 | P, primary, B = 300 | 719 | 216,419 | 13,440 | 4.42 |
 | P at design N (coverage + bias at edge) | 1,116 | 335,916 | 20,862 | 6.86 |
-| P-floor: κ ∈ [0.667, 1.5], I68 only | 172 | 51,772 | 3,215 | 1.06 |
+| P-floor: κ ∈ [2/3, 1.5], I68 only | 172 | 51,772 | 3,215 | 1.06 |
 | P-B50 (a separate procedure) | 719 | 36,669 | 2,277 | 0.75 |
 | N1, half-MC bank, B = 300 (extrapolated) | 719 | 216,419 | 6,720 | 2.21 |
 | N1-B50 (extrapolated; separate procedure) | 719 | 36,669 | 1,139 | 0.37 |
@@ -420,7 +429,9 @@ regular full-node replica. Every figure below adds a 5 % retry allowance and exc
 | N2, held-out data-stream variance calibration | — | 100 | 7.4 | 0.002 |
 
 - `m3246` remaining: 20,000.0 − 16,959.4 = **3,040.6 node-h** for all users (iris, 2026-10-09T06:15:10Z).
-  That is an upper bound on what any admission could give, not a grant.
+  It is a point-in-time balance of an allocation-year CPU pool, not a ceiling and not a grant; the
+  annual allocation is 20,000 node-h (the primary is 0.67–1.04 × that), and the same iris reading shows
+  55,107 GPU node-h remaining on `m3246_g`. The plan defines no ceiling for this experiment.
 - C's provisional per-experiment figures (`9204a390` §9): reconstructed 1 + 300 = 17.8 (optimistic) to
   65.1 (conservative) node-h; mine is 18.7 with the retry allowance. At C's conservative rate the
   primary at N = 719 is about 46,800 node-h.
@@ -432,8 +443,12 @@ regular full-node replica. Every figure below adds a 5 % retry allowance and exc
 - **Reconciliation with C (one, after A's FREEZE).** C reproduces this design's 719 / 1,116 at 206
   functionals and the primary's 13,440 node-h (`costs.json` `cross_check_B_primary`, 13,440.6). C's
   own counts size the same criteria for a 4-case total-uncertainty family (824 functionals: N 823,
-  design N 1,250 per case); that family is C's, not this statistical-only design's. No assumption
-  differs between the lanes; the only difference is the family size, which is stated.
+  design N 1,250 per case); that family is C's, not this statistical-only design's. The differences
+  C's FREEZE (`803f1dcc` §9) lists, exposed rather than merged: (1) retry and reserve — this design adds
+  a 5 % retry and no reserve, C adds 2–10 % retry, 5–10 % verification and a 20 % protected reserve, so
+  these figures are lower bounds on C's admitted totals; (2) rate — this design prices at the
+  optimistic measured rate only; (3) family size — one case (206 functionals) here, four in C;
+  (4) R0 — priced by C, verdict-neutral for both.
 
 ## 15. Secondary: fixed-band transfer (comparison only)
 
@@ -448,7 +463,7 @@ cost comparison and is **not** a substitute for the primary.
 
 | Route | Claim it could support | Status |
 |---|---|---|
-| **N1** held-out conditional per-experiment intervals (fixed bank `S`, reservoir `R`, reference `T_R`) | conditional on `S` and `R`, at MC/data 2.35 | **Not defensible**: fails by construction from the finite reference (§7); also 6,720 node-h |
+| **N1** held-out conditional per-experiment intervals (fixed bank `S`, reservoir `R`, reference `T_R`; inner bootstrap **both streams**, the production procedure, since a data-only inner stream would be a different procedure) | conditional on `S` and `R`, at MC/data 2.35 | **Fails as specified** (`T_R` treated as exact, with the 0.2 σ bias test; §7); also 6,720 node-h. The reference-aware and truth-free variants (§7) are unpriced |
 | **N2** held-out data-stream variance calibration: arm T, 50 pseudo-data sets from `R` unfolded with a fixed half-MC `S` and the MC stream held; arm B, 50 data-only bootstrap replicas of one of them; per-bin `σ_B/σ_T` and its median, as in the KI-85 rule | whether the production data bootstrap is faithful when the pseudo-data do **not** sit on the training events: the KI-85 (a)/(b) question with held-out MC | Specified (§16.1) at 7.8–9.7 node-h including R0; it **is** the deferred KI-85 held-out re-test, so it needs Joseph to lift the deferral; it validates no interval, no MC stream and no truth coverage |
 | **G** surrogate world: truth from an independent generator run and reco from a smearing/efficiency law in `(p_T, p_∥)`, fit on the development fold and validated against the reservoir, so that both banks and pseudo-data can be redrawn | calibration of the procedure in the surrogate world, transferred to the real MC only as far as the surrogate's validity check reaches | NOT READY: the law, its validity criterion and the truth generation are undeveloped and unpriced; the nested cost (§14, P) still applies |
 
@@ -473,7 +488,8 @@ cost comparison and is **not** a substitute for the primary.
   sit on the training events. It is conditional on one bank and one base pseudo-data set, it does not
   test the MC stream, and it is not a coverage test.
 - **Cost.** 100 runs, 7.4 node-h at the measured KI-85 rate (full MC; a 48 % bank should be cheaper),
-  plus R0 (0.4–2.3 node-h, C): **7.8–9.7 node-h** (`assurance.json` `n2_total_with_r0_node_h_range`).
+  plus R0 (0.4–2.3 node-h, C): 7.8–9.7 node-h, or **9.8–12.2 node-h with a 20 % protected reserve**
+  (`assurance.json` `n2_total_with_r0_node_h_range`, `n2_total_with_r0_and_reserve_node_h_range`).
   Pre-execution items: the per-bin ESS reduction on the rebuilt file and the C1–C7 tests.
 
 ## 17. Verdict
@@ -483,9 +499,10 @@ the populations and resources that exist:
 
 - *Population independence* — production-equivalent independent populations are unavailable (§1, §5);
   the production omnifile has no event identity (§4).
-- *Feasibility* — nested reconstruction at the required N costs 4.4–6.9 times the whole remaining
-  `m3246` allocation (§14).
-- *Held-out conditional alternative* — fails by construction against its only available reference (§7).
+- *Feasibility (supporting)* — nested reconstruction at the required N is priced at 13,440–20,862
+  node-h: 0.67–1.04 × `m3246`'s annual CPU allocation and 4.4–6.9 × its 2026-10-09 balance (§14).
+- *Held-out conditional alternative* — N1 fails as specified against its only available reference
+  (§7); its reference-aware and truth-free variants are unpriced.
 - *Claim reach* — even a PASS would validate A's `E_S` procedure, not the uncertainty of the quoted
   `E_C` central value, until A's pairing `P03` is resolved or Joseph changes the quoted estimator (§2).
 
@@ -493,10 +510,16 @@ What would change it: (1) an identity-carrying rebuild (R0); **and** (2) either 
 production-size MC production or a validated generative law (G); **and** (3) about 13,000–21,000
 node-h, or a validated cheaper inner procedure (e.g. B = 50, a separate procedure, 2,277 node-h).
 
-**Next decision (Joseph) and its cost.** Whether to lift the KI-85 deferral for N2, the narrow held-out
-data-stream question: about 7.8–9.7 node-h including the R0 rebuild, labeled as not validating the
-adopted construction, `E_C`'s uncertainty or real-data calibration. N2 is specified to admission level
-(§16.1) but not admitted. Otherwise nothing further is ready to admit.
+**Next decision (Joseph) and its cost.** N2 is defined on `E_S`, so it presupposes a stage-0 scope
+choice among A's options (`f762749d` "Next decision"): (a) validate `E_S` only, stated as explicitly not
+covering the quoted central value; (b) resolve `P03` with exact-backend replicas; (c) change the quoted
+central to the LightGBM family. N2 fits (a) as a test of `E_S` alone; under (c) its `E_S` scope would
+also be the quoted central's; under (b) it reaches `E_C` only through a resolved `P03`. E composes the
+single next decision: the scope choice first, then — only if it makes `E_S` the target — whether to
+lift the KI-85 deferral for N2, the narrow held-out data-stream question, at about 9.8–12.2 node-h
+including R0 and a 20 % reserve (7.8–9.7 without the reserve). N2 validates no interval, not the
+adopted construction, not `E_C`'s uncertainty and not real-data calibration. It is specified to
+admission level (§16.1) but not admitted. Otherwise nothing further is ready to admit.
 
 **Cannot authorize.** Any compute, a pilot, a lift of the KI-85 deferral, a statement about the
 coverage or calibration of VL170 or of real data, a change to the band, the estimator, the
@@ -542,6 +565,12 @@ uncertainty model or the publication scope.
   (06:09Z–07:02Z); under 0.05 local core-h; peak RAM under 0.3 GiB; new output under 0.2 MiB plus a
   0.4 GiB checkout; zero cluster node-hours, zero GPU-hours, no training, no toys. Login-node use: one
   ROOT key listing, three `sha256sum` reads (2.1 GB total) and one `iris` query.
+- **Repair 1 (E-requested, cycle 1 of 2).** Wording repairs for E's review findings F1, F2, F3, F5, F6
+  and F7: the `E_C` cost now cites C's FREEZE; the `m3246` balance is a named comparator, not a
+  ceiling, and cost is a supporting constraint; N2's scope premise is named; C's listed differences
+  are carried; N1 is "fails as specified", with its variants and inner stream named; the sensitivity
+  scan uses exact reciprocals (1,632 and 1,030; x = 4/3 I68-only 330 → 322). No verdict change and
+  no compute.
 - **Additional operand fixtures under `P/b/`:** `remote-reads-20261009.txt`, `xcheck_scipy.py`,
   `xcheck_scipy_output.txt`.
 
