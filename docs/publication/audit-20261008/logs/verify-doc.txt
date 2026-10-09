@@ -1,0 +1,11 @@
+[ok] data/frozen/inference_sufficient.npz vs expected/joint-evaluate.json: COMPARE: AGREE (0 differences)
+[ok] data/recovery-union/inference_sufficient.npz vs expected/resolved-evaluate.json: COMPARE: AGREE (0 differences)
+[ok] W1: 0 claim differences, 0 criterion differences (qualifying: [])
+[ok] Figs. 1-3 quoted numbers vs expected/values.tex: FIG NUMBERS: PASS
+[FAIL] Figs. 1-3 regenerated: []
+[FAIL] Fig. 4 (calibrated null distributions) regenerated from the frozen inputs
+VERIFY: FAIL
+real 138.06
+user 702.41
+sys 60.35
+rc=1
