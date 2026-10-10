@@ -17,7 +17,11 @@ is read:
 4. the output and receipt are ``<outroot>/<RUN>/a<attempt>/``: the path must be lexically equal to
    its realpath (no symlink anywhere), outside the checkout and the canonical cluster tree, not a
    frozen reference product, and new (created exclusively);
-5. both inputs are hashed and must equal the frozen digests.
+5. both inputs are hashed and must equal the frozen digests;
+6. the admission must name the outroot frozen in ``runs.json``.
+
+Before any fit, the interpreter, ROOT and package versions must equal ``runs.json``'s frozen
+environment (exit 6); the imported modules' origins and threadpoolctl's pools are recorded.
 
 During the run, every ``fit`` of the four GBDT classes is recorded with its class and
 ``random_state``. A fit of a class the run does not expect, or a wrong ``random_state``, stops the
@@ -114,6 +118,26 @@ def load_code(run, expect):
     return helper, driver, records
 
 
+def check_environment(want):
+    """Refuse (before any fit) an interpreter, ROOT or package version other than the frozen one."""
+    import importlib
+    import platform
+    import ROOT
+    import threadpoolctl
+    have = {"python": platform.python_version(), "root": str(ROOT.gROOT.GetVersion()), "packages": {}, "origins": {}}
+    for name in want["packages"]:
+        mod = importlib.import_module(name)
+        have["packages"][name] = mod.__version__
+        have["origins"][name] = getattr(mod, "__file__", None)
+    have["origins"]["ROOT"] = getattr(ROOT, "__file__", None)
+    bad = [k for k in ("python", "root") if have[k] != want[k]]
+    bad += [n for n, v in want["packages"].items() if have["packages"][n] != v]
+    if bad:
+        raise BackendRefusal(f"environment differs from the frozen one in {bad}: {have}")
+    have["threadpools"] = threadpoolctl.threadpool_info()
+    return have
+
+
 def physical_cores():
     """The node's physical-core count without starting a child process, and how it was read.
 
@@ -203,8 +227,8 @@ class FitRecorder:
         it = self.backend["iterations"]
         n_c = sum(1 for f in self.fits if self.want[f["class"]] == "classifier")
         n_r = sum(1 for f in self.fits if self.want[f["class"]] == "regressor")
-        if n_c != 2 * it or n_r not in (0, it):
-            raise BackendRefusal(f"{n_c} classifier and {n_r} regressor fits; expected {2 * it} and {it} (or 0)")
+        if n_c != 2 * it or n_r != it:
+            raise BackendRefusal(f"{n_c} classifier and {n_r} regressor fits; expected {2 * it} and {it}")
         return {"classifier_fits": n_c, "regressor_fits": n_r}
 
 
@@ -252,6 +276,8 @@ def main(argv=None):
         if gx.sha256_hex(runs_bytes) != adm["runs_sha256"] or gx.sha256_hex(refs_bytes) != adm["references_sha256"]:
             raise gx.ProvenanceRefusal("runs.json or references.json differs from the admitted digest")
         runs, refs = json.loads(runs_bytes), json.loads(refs_bytes)
+        if adm["outroot"] != runs["outroot"]:
+            raise gx.ProvenanceRefusal(f"admission outroot {adm['outroot']} is not the frozen {runs['outroot']}")
         if a.run not in runs["runs"]:
             raise gx.ProvenanceRefusal(f"unknown run {a.run!r}")
         run = runs["runs"][a.run]
@@ -292,7 +318,7 @@ def main(argv=None):
                                                       "SLURM_MEM_PER_NODE", "SLURMD_NODENAME")},
                cwd=str(Path.cwd()), uname=list(os.uname()),
                affinity_cpus=len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None)
-    receipt = {"schema": "xr-receipt/1", "run": a.run, "attempt": a.attempt, "kind": run["kind"],
+    receipt = {"schema": "xr-receipt/2", "run": a.run, "attempt": a.attempt, "kind": run["kind"],
                "admission": {"path": str(Path(a.admission).resolve()), "sha256": sha256_file(a.admission)},
                "driver": run["driver"], "driver_argv": driver_argv, "backend_expected": run["backend"],
                "started_utc": utc(), "status": "running", "identity": identity, "inputs_start": inputs,
@@ -308,6 +334,7 @@ def main(argv=None):
     rec = FitRecorder(run["backend"])
     status, code, error = "complete", 0, None
     try:
+        receipt["environment_checked"] = check_environment(runs["environment"])
         receipt["cpu_count"] = seed_loky_cache()
         rec.install()
         sys.argv = [str(REPO / run["driver"]), *driver_argv]

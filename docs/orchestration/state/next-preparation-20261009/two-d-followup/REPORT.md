@@ -87,7 +87,9 @@ the half estimates
 
 The factor 2 is the POT/2 normalization. Every row is retained with zero weight, so the bin mappers
 and LightGBM's row-count constraints are those of the full input (`T` §3.3, synthetic). Purity is
-fixed at its full-data value.
+MC-derived and is held at its full-bank value in both halves. The production MC bootstrap must hold
+it fixed in the same way: if a replica recomputed purity while SM held it fixed, the two would
+target different conditional variances and their ratio would not test the bootstrap.
 
 **For a linear statistic** T(w) = Σ w_i x_i, with x fixed by the mappers and purity
 (`methods/analytic_checks.py`, all 2^12 masks enumerated, exact):
@@ -97,12 +99,21 @@ fixed at its full-data value.
 2. Var_m(U_A | D) = Σ w² x² = −Cov_m(U_A, U_B | D). **Given D the two halves are perfectly
    anticorrelated** (corr −1): they are not two experiments.
 3. The masked Poisson(1) bootstrap of a half has the same target, 2 Σ w² x². So **κ = 1 identically**
-   for any linear statistic, and the test has power only against the estimator's non-linear
-   response: tree splits, the instability of A4 item 3, iteration.
-4. Over **new productions** (a Poisson process) the halves are independent by thinning, each with
-   variance 2·E[Σ w² x²]. The split's expectation over productions is therefore the true
+   for any linear statistic. For a correctly implemented bootstrap the test therefore has power only
+   against the estimator's non-linear response: tree splits, the instability of A4 item 3,
+   iteration. It also detects implementation defects, such as a stream left unresampled or
+   correlated replicas.
+4. Over **new productions drawn as a Poisson process** the halves are independent by thinning,
+   each with variance 2·E[Σ w² x²]. The split's expectation over productions is therefore the true
    half-exposure variance at fixed mappers. This was checked by Monte Carlo against the known
    answer.
+   - **The production model matters.** A fixed-N MC bank (multinomial) gives anticorrelated halves,
+     Cov(U_A, U_B) = −Nμ² with μ the per-event mean of w·x (Cov(T_A, T_B) = −Nμ²/4 before the
+     factor 2). For a non-normalized linear statistic the split target then
+     overstates the half variance: the reviewer measured E[split]/true = 1.508 (theory 1.500).
+   - MC-scale-invariant functionals, such as the shape cells after the per-replica normalization,
+     are unaffected at first order. Normalization-sensitive functionals, such as the integral, are
+     not. Data are Poisson; the MC bank's production model must be stated for SM.
 
 **What more splits cannot remove.** As R → ∞ the split statistic converges to 2 Σ w² x² for the
 observed D (and to the corresponding function of S for SM), not to its expectation over productions.
@@ -131,12 +142,13 @@ repeated-sampling width of the production estimator, and still less coverage.
 
 | statement | status | basis |
 |---|---|---|
-| halves of a new production are independent; SD's expectation over productions is the half-exposure variance at fixed mappers (linear T) | **proven** | thinning; `analytic_checks.py` |
+| halves of a new production are independent; SD's expectation over productions is the half-exposure variance at fixed mappers (linear T) | **proven for a Poisson production** (data); for a fixed-N MC bank, false for normalization-sensitive functionals (split/true 1.5 for a non-normalized sum) | thinning; `analytic_checks.py`; review A-1 |
 | given D, corr(U_A, U_B) = −1 and κ ≡ 1 for linear T | **proven** | exact enumeration |
 | the masked design's conditioning equals the fixed-seed bootstrap's | **proven for the toy; synthetic evidence for LightGBM** (weights do not move bin mappers, `T` §3.3) | — |
-| the SE formula for ln κ̂ with R splits and M replicas, including the finite-sample term | **empirically controlled (toy)** | A3 C5 |
+| the SE formula for ln κ̂ with R splits and M replicas: its split (R) and replica (M) χ² terms | **empirically controlled (toy)** | A3 C5 |
+| the finite-sample error of the one data set or bank (the term more splits cannot remove) | **not tested.** It cancels in ln κ̂, because split and bootstrap target the same D-dependent quantity; the formula has no such term (γ = 0) | derivation above; review A-2 |
 | κ̂ is unbiased when the bootstrap is right | **empirically controlled (toy)** | A3 C3, C5 |
-| half-to-full scaling by a factor 2 | **not supported as exact** (toy 1.78 data / 1.88 MC, ±0.2) | A3 C4 |
+| half-to-full scaling by a factor 2 | **not established as exact**, by the analytic argument that the binning component does not scale with exposure. The toy's precision cannot resolve it (1.62–2.01, each ±0.23) | A2; A3 C4 |
 | bootstrap + `C_ML` ≈ repeated-sampling variance of the fixed-seed estimator | **assumed** (toy: consistent within ±8 %; A3 C1, C1B) | — |
 | toy behaviour transfers to 5-iteration LightGBM OmniFold on production inputs | **assumed** | none available |
 | SD/SM agreement implies calibrated repeated-sampling widths or coverage | **false as an inference** | derivation above |
@@ -169,9 +181,9 @@ All four identities of A2 hold.
 | C1: bootstrap (data + MC) / true repeated-sampling variance | 0.931 | 0.907 | the fixed-row bootstrap misses part of the variance, more when binning matters, within the ±8 % precision |
 | C1: (bootstrap + seed block) / true | 0.943 | 0.948 | the seed block moves toward closing the gap (seed share 1.2 % and 4.1 % of the true variance). **Consistent, not established** |
 | C3: κ̂ of masked split against masked bootstrap, data / MC | 1.008 / 0.994 | 1.006 / 0.996 | the two estimate the same conditional variance, as derived |
-| C4: half / full variance, data stream | 1.78 | 1.88 | not a clean factor 2 (±0.23) |
-| C4: half / full variance, MC stream | 1.88 | 1.62 | below 2 by up to ≈ 2σ: **the half-to-full extrapolation is a source of error, not an identity** |
-| C5: sd over productions of ln κ̂ (R = 40, M = 60), data / MC, against the formula 0.145 | 0.149 / 0.146 | 0.150 / 0.141 | the SE formula, *including* the finite-sample term, holds within ≈ 4 % |
+| C4: half / full variance, data stream | 1.78 | 1.88 | each ≈ ±0.23, within 1–1.7σ of 2 |
+| C4: half / full variance, MC stream | 1.88 | 1.62 | the same. A and B share production seeds, so they are not independent, and the reviewer's 60-production subset gives MC 2.01. **The toy cannot resolve a departure from 2.** That the factor is not exact rests on the analytic argument (A2) |
+| C5: sd over productions of ln κ̂ (R = 40, M = 60), data / MC, against the formula 0.145 | 0.149 / 0.146 | 0.150 / 0.141 | the formula's split and replica terms hold within ≈ 4 %. The finite-sample term cancels in ln κ̂ and is **not** tested here (A2 table) |
 | C6: corr of the halves over splits, given the production | −1.0 | −1.0 | the halves are anticorrelated given the data, as derived (exact here because the toy is linear in the data weights) |
 
 **Limits.**
@@ -211,11 +223,14 @@ All reads are login-node reads of saved products, with no event loop, unfold or 
      6.3 %, maximum 37 %.
    - EtaNCEL is a no-op knob: in the current file `w_truth_EtaNCEL_*` equals `w_truth` exactly. So
      the May universe path did not reproduce the CV's truth input.
-   - EtaNCEL_0 and MaNCEL_0 are identical to each other (2.6e-12) and both differ from CV42 by
-     median ≈ 1 σ_ML (max 1.8 % per cell).
-   - That common offset correlates 0.68 with the common mode of all 37 vertical pair displacements.
-     It cancels in the band-mean-centred MAT variance to first order, but the adopted CV is not the
-     universes' zero point.
+   - EtaNCEL_0 and MaNCEL_0 are identical to each other (2.6e-12; their pair displacements differ by
+     at most 2.9e-10 σ_ML) and both differ from CV42 by median 0.98 σ_ML (max 1.8 % per cell).
+   - That common offset correlates 0.68 with the common mode (cell-wise mean) of all 37 vertical pair
+     displacements, and 0.64 with the mean of the other 35. In the July sweep the same correlation is
+     0.13. It cancels in the band-mean-centred MAT variance to first order, but the adopted CV is not
+     the universes' zero point.
+   - Producer: `methods/a4_pair_offsets.py` → `methods/results/a4_pair_offsets.json`, from the
+     immutable `T/operands/remote_reduce{,_pairs,_pn}.json` (digests recorded in the output).
    - The July sweep does not have this defect: its EtaNCEL_0 reproduces its CV to 3.0e-7. The May
      file and code revision are unavailable, so the cause cannot be pinned further.
 3. **The cross-sweep pair changes are, in large part, an instability of the fixed-seed trainer under
@@ -223,10 +238,12 @@ All reads are login-node reads of saved products, with no event loop, unfold or 
    - In the July sweep, EtaNCEL changes the background by 7.9e-6 and the training input by 8.9e-7,
      and moves the output by 3.0e-7: a smooth response.
    - NormNCRES changes only the background, by 2.6e-4 (the training input by 6.3e-5), and moves the
-     output by up to 1.47 % (median |A| 0.76 σ_ML).
+     output by up to 1.47 % (median |A| 0.76 σ_ML; `results/a4_pair_offsets.json`).
    - The response therefore has a threshold: once split choices flip, an output change of seed-noise
-     size follows. Together with item 2's common offset, this explains the non-reproducible part of
-     the 36 small pair bands (`T` §3.6) without a background-model effect.
+     size follows. Together with item 2's common offset, this is **consistent with**, for the two
+     universes examined (EtaNCEL, NormNCRES), the non-reproducible part of the 36 small pair bands
+     (`T` §3.6) arising without a background-model effect. It does not establish that for the other
+     bands.
    - It is evidence, not a proof of mechanism. Its consequence for the construction is that small
      `C_U` bands carry trainer-instability variance of the same order as `C_ML`. That is a modelling
      question for the uncertainty owner, not a number to subtract.
@@ -270,14 +287,14 @@ input mismatch and `P06`'s omission.
 | repeated-sampling coverage of the statistical intervals | **no route** with current inputs | — | independent MC productions (for the MC stream and the binning component), or a validated generative law | a collaboration-level resource decision |
 | total-interval coverage (205 cells, integral, projections) | **no route**: circular in the declared law; the M1 continuous-throw generator is unbuilt; no production-size independent populations (`T` §7) | — | new populations, an M1 generator, and a coverage design sized for 236 functionals × 2 levels | the same, plus the method development |
 | systematic propagation as a convention (MAT, nuisance-averaged) | the construction exists, with the defects of A4 listed | law adequacy and linearity: 6 bands carry reproducible one-sided displacements (median 0.13 σ_tot), omitted by the convention | A4 items 1–5; reporting A beside the variance | Joseph: whether a convention-level total claim is acceptable (a proposal) |
-| model / regularization bias | development closures only | the unknown truth lies within the development set's behaviour | **no untouched domain**: truth-level samples from independent generators (new simulation) | Joseph: whether to commission it |
+| model / regularization bias | development closures only | the unknown truth lies within the development set's behaviour | **no untouched domain**: truth-level samples from independent generators (new simulation). A partial, same-generator-family route: truth warps of the current bank, pre-registered and never used in development | Joseph: whether to commission it |
 | χ² / simultaneous use | conditional on the convention and on `C_U`'s rank | the same as the two rows above | K3 statistics at the declared tier (descriptive) | follows the above |
 
 **The original objective has no feasible route under current inputs.** The three components that
 validation must support beyond the convention are repeated-sampling coverage, total coverage and the
 model-bias allowance. Each needs evidence the current inputs cannot produce: independent productions
 or a validated generative law, an M1 throw generator, and independent-generator truths.
-**Disclosure does not discharge them.** The narrowest change that would reopen it is named in §E.
+**Disclosure does not discharge them.** The narrowest change that would reopen it is named in §E.2.
 
 **A proposal for Joseph, not an endpoint.** A scientifically defensible *additional* claim is
 available, and it narrows nothing. It would state:
@@ -296,14 +313,14 @@ and nothing here relies on it.
 
 | file | role |
 |---|---|
-| `xr_run.py` | the guarded wrapper. It runs one frozen run name only. Code is loaded from hashed bytes (`n2/execution.py`), the helper registered as `sys.modules["omnifold"]` **before** the driver, so the driver's rooted `sys.path` insert of the canonical tree never resolves an import. The production driver and the helper are not edited, and the 2026-09-03 ruling stands. Strict provenance, under the OI-136 guard, on the admitted commit. The working directory must be `<checkout>/2d-unfolding`. Outputs are `<outroot>/<RUN>/a<n>/`: lexically equal to their realpath, outside the checkout, the canonical tree and the input directories, not a frozen reference product, and created exclusively. Inputs are hashed at start and end. Every GBDT `fit` is recorded with class and `random_state`, and a wrong class or seed stops the run before training (exit 6). Fit counts, normalization (7 parameters) and the reported cells are checked against the frozen references afterwards |
+| `xr_run.py` | the guarded wrapper. It runs one frozen run name only. Code is loaded from hashed bytes (`n2/execution.py`), the helper registered as `sys.modules["omnifold"]` **before** the driver, so the driver's rooted `sys.path` insert of the canonical tree never resolves an import. The production driver and the helper are not edited, and the 2026-09-03 ruling stands. Strict provenance, under the OI-136 guard, on the admitted commit. The working directory must be `<checkout>/2d-unfolding`. Outputs are `<outroot>/<RUN>/a<n>/`: lexically equal to their realpath, outside the checkout, the canonical tree and the input directories, not a frozen reference product, and created exclusively. Inputs are hashed at start and end. The admission must name the outroot frozen in `runs.json`. Before any fit, the interpreter, ROOT and six package versions must equal `runs.json`'s frozen environment (exit 6); module origins and threadpoolctl's pools are recorded. Every GBDT `fit` is recorded with class and `random_state`, and a wrong class or seed stops the run before training (exit 6). Afterwards: exactly 10 classifier and 5 regressor fits, the normalization (7 parameters) and the reported cells against the frozen references |
 | `record/unfold_2d_omnifold_unbinned_d1bc8813.py.record` | the historical driver, byte-identical to `d1bc8813` (git blob `0f87330b`, sha256 `447288e2…`). It is stored with a non-`.py` suffix because it is a record, not an importable module: `xr_run.py` compiles it from verified bytes, with the helper pre-registered and under the guard. As a `.py` it registered as a new OI-136 fail-open site (inventory 16 → 17, both ratchets red); with the suffix, both ratchets pass (10 and 7 tests). **For the OI-136 owner:** classify execution-only record copies explicitly, rather than rely on the suffix |
-| `manifest/runs.json` | the frozen runs: driver, driver digest, argv template, backend, seeds and iterations per run; the inputs (path, size, sha256); the kinds (QOS, CPUs, memory, time, billing cap, attempt cap); the comparisons and the negative control; the 1e-8 criterion |
+| `manifest/runs.json` | the frozen runs: driver, driver digest, argv template, backend, seeds and iterations per run; the inputs (path, size, sha256); the kinds (QOS, CPUs, memory, time, billing cap, attempt cap); the comparisons and the negative control; the 1e-8 criterion; the **outroot** `/pscratch/sd/j/josephrb/xr-two-d-followup-20261010` (independent of HEAD); the grant date; the **environment** (Python 3.11.14, ROOT 6.28/12, numpy 1.26.4, scikit-learn 1.8.0, LightGBM 4.6.0, joblib 1.5.3, threadpoolctl 3.6.0, scipy 1.16.3) and the five nested setup scripts |
 | `manifest/references.json` | the four frozen reference products (path, sha256, normalization parameters, the 205 reported GlobalIDs) |
 | `manifest/expected-code.json` | sha256 of every package file, the four executed repository modules, the guard and its shim (`xr_admit.py manifest`) |
-| `xr_admit.py` | `manifest`; `check` (the authorization binding: repository-relative, not a symlink, committed, names the package commit (40 hex) and the manifest digest (64 hex) in full; the package unchanged since; clean tree); `draft`; `verify`; `jobcheck` (inside a job: QOS, CPUs, billing and time limit read from `scontrol`, against the frozen caps); `next-attempt` (counts every attempt directory per kind, so failures and cancellations count; refuses a rerun of a completed run); `ledger` (charged node-h from `sacct` plus the ceilings of unfinished jobs, against 6.4) |
-| `xr_compare.py` | the comparisons: the receipt is complete; the output and reference digests match; the reported-cell sets equal the frozen 205; max \|x_new/x_ref − 1\| over the 205 cells and the area-weighted integral ≤ 1e-8. Every exceeding cell is listed, with the maximum, the median and the integral difference |
-| `launch/xr_job.sbatch`, `launch/xr_submit.sh` | one job per run and attempt. The allocation is checked before anything else; the environment-setup digest is checked, then the setup sourced; the wrapper runs under the guard. The submit script takes every `#SBATCH` value from `runs.json`, refuses queued duplicates, appends `submissions.jsonl`, and cancels this invocation's jobs if `sbatch` fails |
+| `xr_admit.py` | standard library only and Python 3.6-compatible (the launch scripts run it under the cluster's `/usr/bin/python3`, 3.6.15). `manifest`; `check` (the authorization binding: repository-relative, not a symlink, committed, names the package commit (40 hex) and the manifest digest (64 hex) in full; the package unchanged since; clean tree); `draft` (creates the frozen outroot **exclusively** and writes `admission.json` in it, so a second admission for the grant is refused; binds the setup script and its five nested scripts by sha256); `verify` (re-runs `check`, and re-hashes the setup and nested scripts; the admission must be the outroot's own); `jobcheck` (inside a job: QOS, CPUs, billing and time limit read from `scontrol`, against the frozen caps); `next-attempt` (attempts per kind over the grant = the largest of the attempt directories, `submissions.jsonl`, and every `xr_*` job `sacct` lists since the grant date, so failures and cancellations count; refuses a rerun of a completed run, a submission after the stop, and one whose time limit could end past it; prints the stop as Slurm's `--deadline`); `ledger` (charged node-h from `sacct` plus the ceilings of unfinished jobs, against 6.4; flags billing above a cap and unfinished jobs past the stop) |
+| `xr_compare.py` | the comparisons: the receipt is complete, names its run, and cites the outroot's own `admission.json` by path and sha256; the output and reference digests match; the histogram axes (bin counts and edges) are equal; the reported-cell sets equal the frozen 205; max \|x_new/x_ref − 1\| over the 205 cells and the area-weighted integral ≤ 1e-8. Every exceeding cell is listed, with the maximum, the median and the integral difference |
+| `launch/xr_job.sbatch`, `launch/xr_submit.sh` | one job per run and attempt. The allocation is checked before anything else; the admission is re-verified (binding, clean HEAD, setup and nested digests); the setup is sourced; the wrapper runs under the guard. The submit script takes every `#SBATCH` value from `runs.json`, passes the stop as `--deadline` (Slurm never starts a job that cannot end before it), refuses queued duplicates, appends `submissions.jsonl`, and cancels this invocation's jobs if `sbatch` fails |
 
 **Two wrapper-side measures that change no estimator setting:**
 - **LightGBM's core count.** LightGBM's default `n_jobs` asks joblib/loky for a physical-core count,
@@ -314,6 +331,15 @@ and nothing here relies on it.
     and seeds loky's own cache with it. loky's rule is unchanged: the affinity count when it is
     below the OS count, which is the shared-64 case, else the physical count. The receipt records
     the values.
+  - On shared-64 the seed is a **no-op**: joblib 1.5.3 returns the affinity count (64 < 256) before
+    any physical-core query (the reviewer read `cpu_count`'s source on the cluster). So it changes no
+    estimator setting and no thread count relative to an unguarded run.
+  - **Threads differ from the references.** L0 and L1 run with 64 threads; CV42, SEED1 and PN_CV ran
+    with 128 (a full regular node, or `srun --cpus-per-task=128`). That is §10's hardware choice, not
+    the wrapper's. The only measured thread effect is ≤ 5.8e-9 (VL170 against VL162), close to 1e-8.
+    **Pre-registered:** an L-arm FAIL is first examined for a thread-count cause, by its cell pattern
+    against that 5.8e-9 prior. It is not attributed to the driver revision without that check, and
+    the criterion does not change.
   - **For other owners:** any LightGBM run under the guard without such a seed would be refused when
     loky queries physical cores. That includes SB1's C job, if loky reaches the physical-core query
     there. It is recorded here and not acted on.
@@ -333,24 +359,61 @@ and nothing here relies on it.
 - **Billing rule.** `shared_milan_ss11` uses CR_CORE_MEMORY with DefMemPerCPU = MaxMemPerCPU =
   1,905 MB, and billing equals allocated CPUs (the reference job `59410433_1`: cpu = 64, mem =
   121,920M, billing = 64).
-  - Exact kind: `--cpus-per-task=12 --mem=22860M`, i.e. 12 × 1,905 MB, billing 12/256, for a measured
-    exact peak of 17.2 GB.
-  - LightGBM kind: 64 CPUs and 121,920M, billing 64/256, for a measured peak of 14.4–17.2 GB.
+  - Exact kind: `--cpus-per-task=12 --mem=22860M`, i.e. 12 × 1,905 MB, billing 12/256. The measured
+    exact peak is MaxRSS 16,786,760K = 17.2 GB (`E_C`'s job `53116554.batch`,
+    `Q/speed/operands/sacct_exact_pilots_ki85_steps.psv` line 3; `Q/speed/REPORT.md` §3).
+    - **Deviation from §10, recorded.** §10's literal `-c 2 --mem 24G` would bill 13–14 CPUs under
+      CR_CORE_MEMORY with MaxMemPerCPU 1,905 MB (1.52–1.64 node-h per 30-h attempt), and four
+      attempts would exceed 6.4. Twelve CPUs at the per-CPU maximum bill exactly what the memory
+      needs. The exact backend is single-threaded, so the extra CPUs change nothing in the estimator.
+  - LightGBM kind: 64 CPUs and 121,920M, billing 64/256. The measured peak of CV-file LightGBM
+    replicas on shared-64 is 14.4–17.2 GB (`59410433`, `Q/speed/REPORT.md` §3).
   - `jobcheck` refuses a job whose actual `scontrol` QOS, CPU count, billing or time limit exceeds
     the kind's frozen value, before any input is read.
 - **Ceiling, from these settings.** 4 exact attempts × 30 h × 12/256 = 5.625, plus 3 LightGBM
-  attempts × 1 h × 64/256 = 0.75, gives **6.375 ≤ 6.4** node-h. `next-attempt` enforces "one extra
-  exact attempt across all exact arms, one extra LightGBM attempt across both", counting failures and
-  cancellations. There is no full-node path: the submit script has no QOS other than the kind's.
+  attempts × 1 h × 64/256 = 0.75, gives **6.375 ≤ 6.4** node-h.
+  - **What enforces it.** One admission per grant: the outroot is frozen in `runs.json`, and `draft`
+    creates it exclusively, so a second admission (and with it a fresh attempt count) is refused.
+    Within it, `next-attempt` counts attempts per kind as the largest of three independent records
+    (attempt directories, `submissions.jsonl`, and `sacct`'s `xr_*` jobs since the grant date). So
+    "one extra exact attempt across all exact arms, one extra LightGBM attempt across both" holds
+    even if a directory or the submissions record is lost. Failures and cancellations count.
+  - Each attempt is capped by `jobcheck` in the job (billing and time limit), so its charge is at
+    most its kind's ceiling. There is no full-node path: the submit script has no QOS other than
+    the kind's.
+  - **Residual:** a submission made outside `xr_submit.sh`, by hand, is outside this enforcement.
+    The operator does not do that; `ledger` would show it.
+- **The stop.** `next-attempt` refuses any submission after 72 h from the first, and any whose time
+  limit could end past that point. Slurm gets the same point as `--deadline`, so a job still pending
+  when it can no longer finish is never started. Running jobs past the stop are cancelled by
+  verified id (`ledger` flags them).
+- **Runtime headroom.** `E_C` took 69,523 s = 19.3 h on a full regular node (one busy core). The
+  exact limit is 30 h. A slower shared node could time out, and one TIMEOUT uses the only spare
+  exact attempt.
 - **The CV input is protected.** One verified CFS copy, 2,144,008,221 B, sha256 `43f8cc16…` equal to
   the source and to B's digest, mode 0440:
-  `/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/`. XR reads that copy. The flux
-  input (5,143 B, `d40aea69…`) is read in place and not copied (not authorized).
+  `/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/`. XR reads that copy.
+  - Group write was removed from the copy's two directories (`drwxr-s---`, 2026-10-10T21:52Z;
+    review B-8). The parent `/global/cfs/cdirs/m3246/josephrb` is group-writable, so the group
+    could still rename the directory. A missing or substituted file is refused by the start and end
+    hashes.
+  - The flux input (5,143 B, `d40aea69…`) is read in place and not copied (not authorized).
+    `E_C`, `CV42` and `SEED1` record `baseline_flux/runEventLoopMC_MEHFC.root`, the name before the
+    rename in `c7ae2206` (2026-05-28); that file no longer exists. The reviewer compared its content
+    on the cluster: `pTmu_reweightedflux_integrated` in the MEFHC file against `hFlux_pt` in all four
+    references, 14 bins, max relative difference 0.0 (review B-7).
 - **Deployment.**
   - The canonical checkout is not clean (733 status lines), so it **cannot** be moved and is not
     used.
-  - XR runs from a new detached worktree at the authorization commit, with the helper pre-registered
-    (the reviewed SB1 technique). No checkout is moved.
+  - XR runs from a new detached worktree at the authorization commit,
+    `/pscratch/sd/j/josephrb/MINERvA-OmniFold-xr-<sha8>` (a sibling, not nested under the canonical
+    tree, which the guard and `check_out_path` treat as foreign), with the helper pre-registered (the
+    reviewed SB1 technique). No checkout is moved.
+  - The environment is the canonical checkout's `setup_salloc_env.sh` (sha256 `ea3c6998…`). It
+    sources `unbinned_unfolding/build/setup.sh`, which prepends the canonical build directory to
+    `PYTHONPATH`. That directory holds `RooUnfold/omnifold.py`, a package submodule, and no top-level
+    `omnifold.py`; the helper is pre-registered regardless. The setup and its five nested scripts are
+    hashed into the admission and re-hashed in every job.
   - SB1's session runs in its own detached worktree (`MINERvA-OmniFold-sb1-2b35ba52`) and reads the
     universe omnifile. XR reads the CFS CV copy and the flux file, and writes `/pscratch/…/xr-<head>`.
   - There is no shared mutable resource, so concurrent running is safe and no serialization is
@@ -362,7 +425,8 @@ and nothing here relies on it.
 Environment: Homebrew Python 3.13.7 with PyROOT 6.36.000, numpy 2.4.6, scikit-learn 1.8.0 and LightGBM
 4.6.0 (the cluster's two ML versions), in a scratch venv. `OMP_NUM_THREADS=1`, scratch `TMPDIR`.
 
-- **`xr/tests/test_xr.py`: 24 tests OK, 0 skipped** (`logs/xr-tests.txt`).
+- **`xr/tests/test_xr.py`: 32 tests OK, 0 skipped** after the repair batch (`logs/xr-tests.txt`;
+  24 at `8378ec23`).
   - All five runs complete under the real guard, in strict mode, with the real driver, the real
     helper and the `d1bc8813` record copy. Each fits its frozen classes with its frozen seeds
     (10 classifier and 5 regressor fits). Normalization and cells equal the references. The X0′
@@ -380,19 +444,33 @@ Environment: Homebrew Python 3.13.7 with PyROOT 6.36.000, numpy 2.4.6, scikit-le
     - an unknown run, or an attempt over the cap;
     - a non-admitted admission, or one whose `runs.json` digest differs;
     - a changed driver or helper;
-    - an input with other bytes (refused before the receipt is written).
-  - **Refusals (exit 6):** a backend other than the frozen one and a wrong seed (both before any
-    fit); a normalization that differs from the reference.
+    - an input with other bytes (refused before the receipt is written);
+    - an admission naming another outroot (its attempt directory exists and stays empty);
+    - a second `draft` for the grant (the first admission is unchanged);
+    - `verify` with a changed untracked nested setup script, or with a copied admission.
+  - **Refusals (exit 6):** a backend other than the frozen one, a wrong seed, and a package or
+    interpreter version other than the frozen one (all before any fit); a normalization that
+    differs from the reference; a regressor fit count other than 5.
   - **The binding:** an abbreviated commit, another manifest digest, an absolute path, a path outside
     `docs/orchestration/`, `..`, an uncommitted record, a symlinked record, and a package change
     after the package commit are all refused.
   - **Fake Slurm:** the submit script uses only `--qos=shared` with the frozen CPUs, memory and time.
-    It allows exactly 4 exact and 3 LightGBM attempts in total and refuses the next. A failed second
-    `sbatch` cancels the first job.
+    It allows exactly 4 exact and 3 LightGBM attempts in total and refuses the next, queries `sacct`
+    from the grant date, and passes `--deadline`. A failed second `sbatch` cancels the first job.
+  - **`next-attempt`**: four exact `xr_*` jobs in `sacct` (steps and other jobs ignored) exhaust the
+    exact cap with no directory; an exact submission at exactly 42 h (42 + 30 = 72) is allowed and
+    one second later refused; a LightGBM submission is refused after the stop. The printed deadline
+    is the stop in local time.
+  - **The comparator**: a receipt naming another run, another admission digest or path, or another
+    output digest is not used; different histogram edges are INCONCLUSIVE.
+  - **Python 3.6**: `xr_admit.py` parses under `ast.parse(feature_version=(3, 6))` and uses no 3.7+
+    `subprocess` keyword.
   - **`jobcheck`** refuses billing 14 at 14 CPUs, billing 13 at 12 CPUs, a regular QOS, a 31 h limit
     and 16 CPUs.
-  - **`ledger`** computes the charge exactly and flags a billing above the cap.
-- **OI-136 ratchets** on the staged tree: rooted-insert 10 passed, fail-open inventory 7 passed.
+  - **`ledger`** computes the charge exactly, and flags a billing above the cap and an unfinished
+    job past the stop.
+- **OI-136 ratchets** after the repair batch: 17 passed (rooted-insert 10, fail-open inventory 7).
+  `verify_hash_bindings.py`: ALL BINDINGS INTACT.
 - **The receipt-binding inventory.** The first commit attempt was refused by the pre-commit
   hash-binding gate: the inventory moved from 144 to 146. `runs.json`'s repository-relative `driver` /
   `driver_sha256` pairs had the shape the verifier harvests as live receipt bindings.
@@ -400,15 +478,59 @@ Environment: Homebrew Python 3.13.7 with PyROOT 6.36.000, numpy 2.4.6, scikit-le
     The inventory's constants belong to another owner and say not to be updated to pass.
   - So the key is `driver_digest`. `verify_hash_bindings.py` then reports ALL BINDINGS INTACT.
   - The suite (24 OK) and the `driver-pin-unchecked` mutant (caught) were re-run after the rename.
-- **Mutation controls**, measured before the record copy's rename, which touched no mutated anchor (`xr/tests/mutation.py`; `logs/xr-mutation-results.json`, rerun
-  `-rerun2.json`).
-  - The first run caught **17 of 19**. Two mutants survived, and both exposed weak tests:
-    - `input-digest-unchecked`: the end-of-run re-hash still refused, but only after training on the
-      wrong bytes;
-    - `billing-unchecked`: the only billing case also tripped the CPU check.
-  - Both tests were strengthened: the receipt must still be empty at the refusal, and a billing-only
-    case was added. A rerun of those two caught **2 of 2**.
-  - So every one of the 19 mutants is caught by its targeted test, the two survivors by the
-    strengthened tests.
+- **Mutation controls** (`xr/tests/mutation.py`).
+  - At `8378ec23` the first run caught 17 of 19. `input-digest-unchecked` (the end-of-run re-hash
+    still refused, but only after training on the wrong bytes) and `billing-unchecked` (the only
+    billing case also tripped the CPU check) exposed weak tests. Both were strengthened, and a rerun
+    caught 2 of 2.
+  - **After the repair batch, all 29 mutants** (19 old and 10 new: sacct count, stop, deadline,
+    outroot reuse, nested setup, environment, outroot binding, regressor count, receipt binding,
+    axes) were run in one pass (`logs/xr-mutation-results.json`, 28:31 wall). **28 of 29 caught.**
+    `outroot-unchecked` survived: its test's other outroot had no attempt directory, so the run was
+    refused by the directory check instead. The test now creates that directory and requires the
+    frozen-outroot message. A rerun caught 1 of 1 (`logs/xr-mutation-results-rerun-outroot.json`),
+    and the full suite passed again (32 OK).
 
-(B4–B8 below)
+## B4. Admission review (use 1 of 3)
+
+The fresh read-only reviewer reviewed the method and the frozen package at `8378ec23`. The review is
+preserved verbatim in `review/admission-review-8378ec23.md`.
+
+- **XR: ADMIT WITH CHANGES.** Four MATERIAL findings:
+  - B-1: `xr_admit.py` used Python 3.7 `subprocess` arguments, while the cluster's `/usr/bin/python3`
+    is 3.6.15;
+  - B-2/B-4: the outroot depended on HEAD, so a second admission would reset the attempt count, and
+    the 72-h stop was not enforced;
+  - B-3: package versions were not frozen, and the nested setup scripts were unbound.
+- **Method: PASS WITH CHANGES.** Eight MINOR or NOTE findings (A-1 to A-8), all wording, scope or
+  provenance. None changes a conclusion.
+- The reviewer reproduced the suite (24 OK), three mutants, the analytic identities, a 60-production
+  synthetic rerun, the A4 numbers from the probe outputs, and the cluster facts (environment, billing
+  rule, CFS copy, SB1 queue, flux-file content).
+
+## B5. The repair batch (the one allowed)
+
+Every finding was repaired in one batch; the re-review covers all of them.
+
+| finding | repair |
+|---|---|
+| B-1 | `xr_admit.py` uses only 3.6 `subprocess` arguments and `str.format`. A test parses it with `ast.parse(feature_version=(3, 6))` and refuses 3.7+ keywords. The cluster run of `manifest --check`, `jobcheck` outside a job, `draft` and `verify` under `/usr/bin/python3` is recorded in B7 |
+| B-2, B-4 | outroot frozen in `runs.json`; `draft` creates it exclusively (a second draft is refused, tested); `--outroot-base` removed; `next-attempt` counts `sacct`'s `xr_*` jobs since the grant date and refuses past the stop or a limit ending past it (tested at the boundary); `--deadline` passed to Slurm; `xr_run.py` refuses an admission naming another outroot; B2 restated |
+| B-3 | interpreter, ROOT and six package versions frozen; `xr_run.py` refuses (exit 6) before any fit on a mismatch (tested for a package and the interpreter); module origins and threadpoolctl info recorded; the setup and five nested scripts hashed into the admission and re-hashed by `verify` in every job (tested with an untracked nested script) |
+| B-5 | B1: the 64-vs-128-thread difference, the ≤ 5.8e-9 prior, and the pre-registered thread-cause check |
+| B-6 | B2: the deviation from §10's `-c 2 --mem 24G` and its reason; MaxRSS sources cited |
+| B-7 | B2: the MEHFC/MEFHC name and the reviewer's content check |
+| B-8 | `chmod g-w` on both CFS directories; the parent's group write disclosed |
+| B-9 | B2: the worktree path and the TIMEOUT risk |
+| B-10 | the comparator checks the receipt's run, admission path and sha256, and equal axes (tested) |
+| B-11 | exactly 5 regressor fits (tested) |
+| A-1 | A2 item 4 and the status table: the production model, the fixed-N counterexample |
+| A-2 | the status table: the R/M terms are controlled; the finite-sample term is untested; C5 relabelled |
+| A-3 | the scaling statement rests on the analytic argument; C4 relabelled |
+| A-4 | `methods/a4_pair_offsets.py` → `results/a4_pair_offsets.json`. It reproduces 0.68 (0.64 without the two offset universes), 0.98 and 0.76 σ_ML; "explains" scoped to the two universes examined |
+| A-5 | §B6–§E written |
+| A-6 | the purity wording and the bootstrap's matching condition |
+| A-7 | the model-bias row mentions pre-registered truth warps |
+| A-8 | the defect-detection wording |
+
+(B6–B8, C, D, E below)

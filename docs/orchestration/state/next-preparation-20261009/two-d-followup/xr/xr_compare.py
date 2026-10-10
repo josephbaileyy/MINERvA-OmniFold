@@ -4,8 +4,9 @@
     xr_compare.py --outroot OUTROOT --out RESULT.json [--refs-dir DIR]
 
 For each comparison in ``manifest/runs.json`` (and its negative control) it uses the newest
-complete attempt of the new run (its receipt must be ``complete``, its output digest must match
-the receipt) and the reference: a frozen product from ``manifest/references.json`` (its sha256 must
+complete attempt of the new run (its receipt must be ``complete``, name that run, cite the
+outroot's own ``admission.json`` by path and sha256, and its output digest must match the receipt)
+and the reference: a frozen product from ``manifest/references.json`` (its sha256 must
 match) or another XR run's output. ``--refs-dir`` replaces the reference products' directory
 (tests only); the digests are still enforced.
 
@@ -14,7 +15,8 @@ Verdict per comparison:
   max |x_new / x_ref - 1| <= 1e-8 over every cell and over the area-weighted integral;
 * FAIL: the same cell sets, and the maximum exceeds 1e-8. The maximum, the integral difference and
   every exceeding cell (GlobalID, relative difference) are reported;
-* INCONCLUSIVE: a missing or incomplete run, a digest mismatch, or different cell sets.
+* INCONCLUSIVE: a missing or incomplete run, a receipt or digest mismatch, different histogram
+  axes (bin counts or edges), or different cell sets.
 A control expected to differ is MET when its verdict is FAIL.
 
 Reads small ROOT products only (PyROOT); writes one JSON.
@@ -42,13 +44,17 @@ def read(path):
     x = np.array([[h.GetBinContent(i + 1, j + 1) for j in range(ny)] for i in range(nx)])
     w = np.array([[h.GetXaxis().GetBinWidth(i + 1) * h.GetYaxis().GetBinWidth(j + 1) for j in range(ny)]
                   for i in range(nx)])
+    edges = ([h.GetXaxis().GetBinLowEdge(i + 1) for i in range(nx + 1)],
+             [h.GetYaxis().GetBinLowEdge(j + 1) for j in range(ny + 1)])
     f.Close()
-    return x, w
+    return x, w, edges
 
 
 def newest_complete(outroot, run):
     best = None
-    for d in sorted(Path(outroot, run).glob("a*")):
+    adm_path = Path(outroot, "admission.json")
+    adm_sha = sha(adm_path) if adm_path.is_file() else None
+    for d in sorted(Path(outroot, run).glob("a*"), key=lambda d: int(d.name[1:]) if d.name[1:].isdigit() else -1):
         rec = d / "receipt.json"
         if rec.is_file() and rec.stat().st_size:
             r = json.loads(rec.read_text())
@@ -57,6 +63,9 @@ def newest_complete(outroot, run):
     if best is None:
         return None, f"no complete attempt of {run}"
     r, d = best
+    if r.get("run") != run or r.get("admission", {}).get("sha256") != adm_sha \
+            or Path(r.get("admission", {}).get("path", "")) != adm_path.resolve():
+        return None, f"{run}: the receipt names another run or admission than {adm_path}"
     out = Path(r["output"]["path"])
     if not out.is_file() or sha(out) != r["output"]["sha256"]:
         return None, f"{run}: output missing or differs from its receipt digest"
@@ -65,8 +74,11 @@ def newest_complete(outroot, run):
 
 def compare(new, ref, cells):
     import numpy as np
-    xn, w = read(new)
-    xr, _ = read(ref)
+    xn, w, en = read(new)
+    xr, _, er = read(ref)
+    if xn.shape != xr.shape or en != er:
+        return {"verdict": "INCONCLUSIVE", "why": "histogram axes differ", "shape_new": list(xn.shape),
+                "shape_ref": list(xr.shape)}
     gid = lambda x: [int(i * 16 + j) for i, j in np.argwhere(x > 0)]
     if gid(xn) != cells or gid(xr) != cells:
         return {"verdict": "INCONCLUSIVE", "why": "reported-cell sets differ from the frozen 205",

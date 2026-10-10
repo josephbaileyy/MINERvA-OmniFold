@@ -72,7 +72,18 @@ def ref_record(path):
             "fluxSource": None, "reported_globalid": [int(i * 16 + j) for i, j in np.argwhere(x > 0)]}
 
 
+def local_environment():
+    """The running interpreter's versions, frozen into the fixture runs.json like the cluster's."""
+    import importlib
+    import platform
+    import ROOT
+    pk = ("numpy", "sklearn", "lightgbm", "joblib", "threadpoolctl", "scipy")
+    return {"python": platform.python_version(), "root": str(ROOT.gROOT.GetVersion()),
+            "packages": {n: importlib.import_module(n).__version__ for n in pk}, "nested_setup": ["nested/one.sh"]}
+
+
 def make_checkout(base, name, omni, flux, refs, mutate=None):
+    """A throwaway checkout whose frozen outroot is ``base/out-<name>``."""
     root = base / name
     (root / "nd-unfolding").mkdir(parents=True)
     (root / "VALIDATION_LEDGER.md").write_text("# fixture ledger\n")
@@ -86,13 +97,19 @@ def make_checkout(base, name, omni, flux, refs, mutate=None):
     runs = json.loads(runs_p.read_text())
     runs["inputs"]["omnifile"].update(path=str(omni), sha256=sha(omni), size=omni.stat().st_size)
     runs["inputs"]["mcfile"].update(path=str(flux), sha256=sha(flux), size=flux.stat().st_size)
+    runs["outroot"] = str(base / f"out-{name}")
+    runs["environment"] = local_environment()
     if mutate:
         mutate(root, runs, refs)
     runs_p.write_text(json.dumps(runs, indent=1, sort_keys=True) + "\n")
     (root / PKG_REL / "manifest/references.json").write_text(
         json.dumps({"schema": "xr-references/1", "references": refs}, indent=1, sort_keys=True) + "\n")
-    (root / "setup_env.sh").write_text("# fixture environment setup\n")
+    (root / "setup_env.sh").write_text("# fixture environment setup\nsource nested/one.sh\n")
+    (root / "nested").mkdir()
+    (root / "nested/one.sh").write_text("# fixture nested setup\n")
     git(root, "init", "-q")
+    # the nested setup is untracked, as the cluster's build and MINERvA101 setups are
+    (root / ".git/info/exclude").write_text("nested/\n")
     git(root, "add", "-A")
     git(root, "commit", "-q", "-m", "package")
     r = py([root / PKG_REL / "xr_admit.py", "manifest"])
@@ -108,12 +125,15 @@ def make_checkout(base, name, omni, flux, refs, mutate=None):
     return root, pkg_commit, man_sha
 
 
+def draft_cmd(root, pkg_commit, man_sha):
+    return py([root / PKG_REL / "xr_admit.py", "draft", "--authorization", "docs/orchestration/AUTHORIZATION-20261010-xr.md",
+               "--package-commit", pkg_commit, "--manifest-sha", man_sha, "--setup", root / "setup_env.sh"])
+
+
 def draft(root, pkg_commit, man_sha, base, tag):
-    adm = base / f"admission-{tag}.json"
-    r = py([root / PKG_REL / "xr_admit.py", "draft", "--authorization", "docs/orchestration/AUTHORIZATION-20261010-xr.md",
-            "--package-commit", pkg_commit, "--manifest-sha", man_sha, "--setup", root / "setup_env.sh",
-            "--out", adm, "--outroot-base", base / f"out-{tag}"])
+    r = draft_cmd(root, pkg_commit, man_sha)
     assert r.returncode == 0, r.stderr + r.stdout
+    adm = base / f"out-{tag}" / "admission.json"
     return adm, json.loads(adm.read_text())
 
 
@@ -263,24 +283,23 @@ class XR(unittest.TestCase):
 
     def test_an_output_that_is_a_frozen_reference_path_is_refused(self):
         def mutate(root, runs, refs):
-            refs["E_C"] = dict(refs["E_C"], path=str(self.tmp / "out-F" / "aliasroot" / "X0" / "a1" / "XR-X0.root"))
+            refs["E_C"] = dict(refs["E_C"], path=str(self.tmp / "out-F" / "X0" / "a1" / "XR-X0.root"))
         root, pc, ms = make_checkout(self.tmp, "F", self.omni, self.flux, dict(self.refs), mutate)
         adm, admj = draft(root, pc, ms, self.tmp, "F")
-        ad = json.loads(adm.read_text())
-        ad["outroot"] = str(self.tmp / "out-F" / "aliasroot")
-        adm.write_text(json.dumps(ad))
-        Path(ad["outroot"], "X0", "a1").mkdir(parents=True)
+        Path(admj["outroot"], "X0", "a1").mkdir(parents=True)
         r = run_xr(root, adm, "X0")
         self.assertEqual(r.returncode, 3, r.stderr)
         self.assertIn("frozen reference", r.stderr)
 
     def test_an_outroot_inside_the_checkout_is_refused(self):
-        ad = json.loads(self.adm.read_text())
-        ad["outroot"] = str(self.root / "inside")
-        p = self.tmp / "adm-inside.json"
-        p.write_text(json.dumps(ad))
-        Path(ad["outroot"], "L0", "a1").mkdir(parents=True)
-        r = run_xr(self.root, p, "L0")
+        def mutate(root, runs, refs):
+            runs["outroot"] = str(root / "inside")
+        root, pc, ms = make_checkout(self.tmp, "IN", self.omni, self.flux, dict(self.refs), mutate)
+        r = draft_cmd(root, pc, ms)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        p = root / "inside" / "admission.json"
+        Path(root, "inside", "L0", "a1").mkdir(parents=True)
+        r = run_xr(root, p, "L0")
         self.assertEqual(r.returncode, 3, r.stderr)
         self.assertIn("inside", r.stderr)
 
@@ -297,14 +316,19 @@ class XR(unittest.TestCase):
         self.assertEqual(r.returncode, 3, r.stderr)
 
     def test_an_admission_that_is_not_admitted_or_has_other_runs_is_refused(self):
-        for key, val in (("status", "PROPOSAL"), ("runs_sha256", "0" * 64)):
+        for key, val in (("status", "PROPOSAL"), ("runs_sha256", "0" * 64), ("outroot", str(self.tmp / "other-outroot"))):
             ad = json.loads(self.adm.read_text())
             ad[key] = val
             p = self.tmp / f"adm-{key}.json"
             p.write_text(json.dumps(ad))
             self.fresh_attempt("L0", 4)
+            if key == "outroot":    # an attempt directory exists there, so only the frozen-outroot check refuses
+                Path(val, "L0", "a4").mkdir(parents=True, exist_ok=True)
             r = run_xr(self.root, p, "L0", attempt=4)
             self.assertEqual(r.returncode, 3, f"{key}: {r.stderr}")
+            if key == "outroot":
+                self.assertIn("is not the frozen", r.stderr)
+                self.assertEqual(list(Path(val, "L0", "a4").iterdir()), [])
 
     def test_a_changed_driver_or_helper_is_refused(self):
         for rel in (DRIVER, HELPER):
@@ -361,6 +385,30 @@ class XR(unittest.TestCase):
         self.assertEqual(r.returncode, 6, r.stderr)
         self.assertIn("random_state=1", receipt(admj, "L1")["error"])
 
+    def test_an_environment_other_than_the_frozen_one_stops_before_training(self):
+        for tag, field in (("EV", "package"), ("EP", "python")):
+            def mutate(root, runs, refs, field=field):
+                if field == "package":
+                    runs["environment"]["packages"]["numpy"] = "0.0.0"
+                else:
+                    runs["environment"]["python"] = "3.0.0"
+            root, pc, ms = make_checkout(self.tmp, tag, self.omni, self.flux, dict(self.refs), mutate)
+            adm, admj = draft(root, pc, ms, self.tmp, tag)
+            Path(admj["outroot"], "L1", "a1").mkdir(parents=True)
+            r = run_xr(root, adm, "L1")
+            self.assertEqual(r.returncode, 6, r.stderr)
+            rec = receipt(admj, "L1")
+            self.assertEqual(rec["status"], "backend-refused")
+            self.assertIn("environment differs", rec["error"])
+            self.assertEqual(rec["fits"], [])
+
+    def test_the_environment_and_module_origins_are_recorded(self):
+        rec = receipt(self.admj, "L0")
+        env = rec["environment_checked"]
+        self.assertEqual(env["packages"], local_environment()["packages"])
+        self.assertTrue(env["origins"]["lightgbm"].endswith("__init__.py"))
+        self.assertIsInstance(env["threadpools"], list)
+
     def test_a_normalization_differing_from_the_reference_is_refused(self):
         refs = json.loads(json.dumps(self.refs))
         refs["E_C"]["params"]["nNucleons"] *= 1.000001
@@ -387,6 +435,73 @@ class XR(unittest.TestCase):
         for why, (a, c, m) in cases.items():
             r = self.check(self.root, a, c, m)
             self.assertEqual(r.returncode, 3, f"{why}: {r.stdout} {r.stderr}")
+
+    def test_a_second_draft_for_the_same_grant_is_refused(self):
+        r = draft_cmd(self.root, self.pkg, self.man)
+        self.assertEqual(r.returncode, 3, r.stderr)
+        self.assertIn("one admission per grant", r.stderr)
+        self.assertEqual(json.loads(self.adm.read_text())["drafted_utc"], self.admj["drafted_utc"])
+
+    def test_verify_refuses_a_changed_nested_setup_or_a_copied_admission(self):
+        root, pc, ms = make_checkout(self.tmp, "V", self.omni, self.flux, dict(self.refs))
+        adm, admj = draft(root, pc, ms, self.tmp, "V")
+        verify = lambda a: py([root / PKG_REL / "xr_admit.py", "verify", "--admission", a])
+        self.assertEqual(verify(adm).returncode, 0, verify(adm).stderr)
+        copy = self.tmp / "adm-V-copy.json"
+        shutil.copy2(adm, copy)
+        self.assertEqual(verify(copy).returncode, 3)
+        self.assertEqual(git(root, "status", "--porcelain"), "")
+        with open(root / "nested/one.sh", "a") as fh:       # an untracked file: only its digest sees it
+            fh.write("export X=1\n")
+        self.assertEqual(git(root, "status", "--porcelain"), "")
+        r = verify(adm)
+        self.assertEqual(r.returncode, 3, r.stderr)
+        self.assertIn("changed since admission", r.stderr)
+
+    def next_attempt(self, adm, run, sacct_text, now=None):
+        psv = self.tmp / "na-sacct.psv"
+        psv.write_text(sacct_text)
+        cmd = [self.tmp / "T" / PKG_REL / "xr_admit.py", "next-attempt", "--admission", adm, "--run", run,
+               "--sacct", psv]
+        return py(cmd + (["--now", now] if now else []))
+
+    def test_next_attempt_counts_sacct_jobs_and_enforces_the_stop(self):
+        root, pc, ms = make_checkout(self.tmp, "T", self.omni, self.flux, dict(self.refs))
+        adm, admj = draft(root, pc, ms, self.tmp, "T")
+        r = self.next_attempt(adm, "X0", "")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        att, deadline = r.stdout.split()
+        self.assertEqual(att, "1")
+        # four exact xr_ jobs in sacct (steps and other jobs ignored) exhaust the exact cap with no directory
+        rows = "".join(f"{100 + i}|xr_X{i % 2}_a{i}|FAILED\n{100 + i}.batch|batch|FAILED\n" for i in range(4))
+        r = self.next_attempt(adm, "X1", rows + "200|sb1_UL|PENDING\n")
+        self.assertEqual(r.returncode, 3, r.stderr)
+        self.assertIn("attempts already used", r.stderr)
+        self.assertEqual(self.next_attempt(adm, "L0", rows).returncode, 0)
+        # the stop: 72 h after the first submission
+        Path(admj["outroot"], "submissions.jsonl").write_text(json.dumps(
+            {"run": "X0", "kind": "exact", "attempt": 1, "job_id": 1, "submitted_utc": "2026-10-10T00:00:00Z"}) + "\n")
+        r = self.next_attempt(adm, "X1", "", now="2026-10-11T18:00:00Z")      # 42 h + 30 h = 72 h: allowed
+        self.assertEqual(r.returncode, 0, r.stderr)
+        import datetime
+        want = datetime.datetime.fromtimestamp(datetime.datetime(2026, 10, 13, tzinfo=datetime.timezone.utc).timestamp())
+        self.assertEqual(r.stdout.split()[1], want.strftime("%Y-%m-%dT%H:%M:%S"))
+        r = self.next_attempt(adm, "X1", "", now="2026-10-11T18:00:01Z")      # could end past the stop
+        self.assertEqual(r.returncode, 3)
+        self.assertIn("past the stop", r.stderr)
+        self.assertEqual(self.next_attempt(adm, "L1", "", now="2026-10-12T22:59:00Z").returncode, 0)
+        r = self.next_attempt(adm, "L1", "", now="2026-10-13T00:00:01Z")
+        self.assertEqual(r.returncode, 3)
+
+    def test_admission_tool_is_python36_syntax_and_api(self):
+        """The launch scripts run xr_admit.py under the cluster's /usr/bin/python3 (3.6.15)."""
+        import ast
+        src = (PKG / "xr_admit.py").read_text()
+        tree = ast.parse(src, feature_version=(3, 6))
+        kws = {k.arg for n in ast.walk(tree) if isinstance(n, ast.Call) for k in n.keywords}
+        self.assertFalse(kws & {"capture_output", "text"}, "subprocess.run arguments added in 3.7")
+        attrs = {n.attr for n in ast.walk(tree) if isinstance(n, ast.Attribute)}
+        self.assertFalse(attrs & {"fromisoformat", "isascii", "breakpointhook"}, "3.7+ API")
 
     def test_a_package_change_after_the_package_commit_is_refused(self):
         root, pc, ms = make_checkout(self.tmp, "P", self.omni, self.flux, dict(self.refs))
@@ -424,8 +539,9 @@ echo $((1000 + n))
 """)
         (d / "scancel").write_text(f"#!/bin/bash\necho \"scancel $*\" >> {log}\n")
         (d / "squeue").write_text("#!/bin/bash\nexit 0\n")
+        (d / "sacct").write_text(f"#!/bin/bash\necho \"sacct $*\" >> {log}\n")
         (d / "scontrol").write_text(f"#!/bin/bash\necho 'JobId=1 QOS={qos} NumCPUs={ncpu} TimeLimit={limit} TRES={tres}'\n")
-        for f in ("sbatch", "scancel", "squeue", "scontrol"):
+        for f in ("sbatch", "scancel", "squeue", "scontrol", "sacct"):
             (d / f).chmod(0o755)
         return log
 
@@ -465,6 +581,9 @@ echo $((1000 + n))
         self.assertIn("--cpus-per-task=64", calls)
         self.assertIn("--time=01:00:00", calls)
         self.assertNotIn("regular", calls)
+        self.assertIn("--deadline=", calls)
+        self.assertIn("sacct -u", calls)
+        self.assertIn("-S 2026-10-10", calls)
         # a failure at the second sbatch cancels the first
         root2, pc2, ms2 = make_checkout(self.tmp, "Q2", self.omni, self.flux, dict(self.refs))
         adm2, admj2 = draft(root2, pc2, ms2, self.tmp, "Q2")
@@ -498,23 +617,31 @@ echo $((1000 + n))
         adm["outroot"] = str(out)
         p = self.tmp / "adm-ledger.json"
         p.write_text(json.dumps(adm))
-        subs = [{"run": "X0", "kind": "exact", "attempt": 1, "job_id": 11}, {"run": "L0", "kind": "lgbm", "attempt": 1, "job_id": 12},
-                {"run": "X1", "kind": "exact", "attempt": 1, "job_id": 13}]
+        subs = [{"run": "X0", "kind": "exact", "attempt": 1, "job_id": 11, "submitted_utc": "2026-10-10T00:00:00Z"},
+                {"run": "L0", "kind": "lgbm", "attempt": 1, "job_id": 12, "submitted_utc": "2026-10-10T00:00:05Z"},
+                {"run": "X1", "kind": "exact", "attempt": 1, "job_id": 13, "submitted_utc": "2026-10-10T00:00:09Z"}]
         (out / "submissions.jsonl").write_text("".join(json.dumps(s) + "\n" for s in subs))
         psv = self.tmp / "sacct.psv"
         psv.write_text("JobID|JobName|State|ElapsedRaw|AllocTRES|Timelimit\n"
                        "11|xr_X0_a1|COMPLETED|72000|billing=12,cpu=12,mem=22860M,node=1|1-06:00:00\n"
                        "12|xr_L0_a1|COMPLETED|900|billing=64,cpu=64,mem=121920M,node=1|01:00:00\n"
                        "13|xr_X1_a1|RUNNING|3600|billing=12,cpu=12,mem=22860M,node=1|1-06:00:00\n")
-        r = py([self.root / PKG_REL / "xr_admit.py", "ledger", "--admission", p, "--sacct", psv])
+        ledger = lambda now: py([self.root / PKG_REL / "xr_admit.py", "ledger", "--admission", p, "--sacct", psv,
+                                 "--now", now])
+        r = ledger("2026-10-11T00:00:00Z")
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         led = json.loads(r.stdout)
+        self.assertAlmostEqual(led["hours_since_first_submission"], 24.0, places=9)
         self.assertAlmostEqual(led["charged_node_h"], 12 / 256 * 20 + 64 / 256 * 0.25 + 12 / 256 * 1, places=9)
         self.assertAlmostEqual(led["unfinished_ceiling_node_h"], 1.40625, places=9)
+        r = ledger("2026-10-13T00:00:01Z")       # past the stop with job 13 still running
+        self.assertEqual(r.returncode, 6, r.stdout)
+        self.assertIn("cancel them", r.stdout)
         psv.write_text(psv.read_text().replace("billing=12,cpu=12,mem=22860M,node=1|1-06:00:00\n12",
                                                "billing=24,cpu=24,mem=45720M,node=1|1-06:00:00\n12"))
-        r = py([self.root / PKG_REL / "xr_admit.py", "ledger", "--admission", p, "--sacct", psv])
+        r = ledger("2026-10-11T00:00:00Z")
         self.assertEqual(r.returncode, 6, r.stdout)
+        self.assertIn("billing 24 > 12", r.stdout)
 
 
 class Comparator(unittest.TestCase):
@@ -527,11 +654,11 @@ class Comparator(unittest.TestCase):
     def tearDown(self):
         self._tmp.cleanup()
 
-    def product(self, path, scale_cell=None, factor=1.0, zero_cell=None):
+    def product(self, path, scale_cell=None, factor=1.0, zero_cell=None, ymax=16):
         import ROOT
         import numpy as np
         f = ROOT.TFile.Open(str(path), "RECREATE")
-        h = ROOT.TH2D("hXSec2D", "", 14, 0, 14, 16, 0, 16)
+        h = ROOT.TH2D("hXSec2D", "", 14, 0, 14, 16, 0, ymax)
         rng = np.random.default_rng(3)
         for i in range(14):
             for j in range(16):
@@ -564,6 +691,55 @@ class Comparator(unittest.TestCase):
         self.assertEqual(c["verdict"], "PASS")
         c = xc.compare(self.product(self.tmp / "e.root", zero_cell=cells[0]), a, cells)
         self.assertEqual(c["verdict"], "INCONCLUSIVE")
+        c = xc.compare(self.product(self.tmp / "f.root", ymax=32), a, cells)    # same contents, other edges
+        self.assertEqual(c["verdict"], "INCONCLUSIVE")
+        self.assertIn("axes", c["why"])
+
+    def test_receipts_must_name_their_run_and_admission(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("xr_compare", PKG / "xr_compare.py")
+        xc = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(xc)
+        root = self.tmp / "outroot"
+        (root / "X0" / "a1").mkdir(parents=True)
+        adm = root / "admission.json"
+        adm.write_text('{"status": "ADMITTED"}\n')
+        prod = self.product(root / "X0" / "a1" / "XR-X0.root")
+
+        def receipt(**upd):
+            r = {"run": "X0", "attempt": 1, "status": "complete",
+                 "admission": {"path": str(adm.resolve()), "sha256": xc.sha(adm)},
+                 "output": {"path": str(prod), "sha256": xc.sha(prod)}}
+            r.update(upd)
+            (root / "X0" / "a1" / "receipt.json").write_text(json.dumps(r))
+        receipt()
+        self.assertIsNone(xc.newest_complete(root, "X0")[1])
+        for why, upd in (("run", {"run": "X1"}),
+                         ("admission digest", {"admission": {"path": str(adm.resolve()), "sha256": "0" * 64}}),
+                         ("admission path", {"admission": {"path": str(self.tmp / "admission.json"), "sha256": xc.sha(adm)}}),
+                         ("output digest", {"output": {"path": str(prod), "sha256": "0" * 64}})):
+            receipt(**upd)
+            new, err = xc.newest_complete(root, "X0")
+            self.assertIsNone(new, why)
+            self.assertTrue(err, why)
+
+
+class FitCounts(unittest.TestCase):
+    def test_the_regressor_must_fit_every_iteration(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("xr_run_unit", PKG / "xr_run.py")
+        xr = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(xr)
+        backend = {"estimator": "exact", "random_state": {"step1": None, "step2": None, "regressor": None},
+                   "iterations": 5}
+        for n_reg, ok in ((5, True), (0, False), (4, False), (6, False)):
+            rec = xr.FitRecorder(backend)
+            rec.fits = [{"class": "GradientBoostingClassifier"}] * 10 + [{"class": "GradientBoostingRegressor"}] * n_reg
+            if ok:
+                self.assertEqual(rec.verify_counts(), {"classifier_fits": 10, "regressor_fits": 5})
+            else:
+                with self.assertRaises(xr.BackendRefusal):
+                    rec.verify_counts()
 
 
 if __name__ == "__main__":

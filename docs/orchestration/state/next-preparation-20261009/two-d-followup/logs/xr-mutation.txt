@@ -6,18 +6,26 @@ seed-unchecked: caught
 class-unchecked: caught
 normalization-unchecked: caught
 driver-pin-unchecked: caught
-input-digest-unchecked: NOT CAUGHT
+input-digest-unchecked: caught
 cwd-unchecked: caught
 no-loky-seed: caught
 abbreviated-commit-accepted: caught
 package-drift-accepted: caught
 attempt-cap-off-by-one: caught
-billing-unchecked: NOT CAUGHT
+billing-unchecked: caught
 ledger-billing-unflagged: caught
 loose-tolerance: caught
 cell-identity-unchecked: caught
+sacct-uncounted: caught
+stop-unchecked: caught
+no-slurm-deadline: caught
+outroot-reuse-allowed: caught
+nested-setup-unbound: caught
+environment-unchecked: caught
+outroot-unchecked: NOT CAUGHT
+regressor-count-loose: caught
+receipt-admission-unchecked: caught
+axes-unchecked: caught
 submit-no-cancel: caught
-17 of 19 caught
-real 1283.58
-user 876.96
-sys 470.17
+28 of 29 caught
+TMPDIR=$T/tmp PYTHONPATH=$(root-config --libdir) $T/venv313/bin/python  --out  1222.86s user 641.42s system 108% cpu 28:31.26 total

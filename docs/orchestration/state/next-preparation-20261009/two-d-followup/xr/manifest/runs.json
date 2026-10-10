@@ -1,5 +1,16 @@
 {
- "schema": "xr-runs/1",
+ "schema": "xr-runs/2",
+ "grant_date": "2026-10-10",
+ "outroot": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010",
+ "outroot_note": "Frozen, independent of the checkout's HEAD. xr_admit.py draft creates it exclusively (one admission per grant) and writes admission.json inside it; xr_run.py refuses an admission naming another outroot.",
+ "environment": {
+  "note": "Measured on login23 2026-10-10T21:40Z after sourcing the canonical checkout's setup_salloc_env.sh (sha256 ea3c6998...). xr_run.py refuses (exit 6) before any fit if the interpreter, ROOT or a package version differs; module origins and threadpoolctl info are recorded. nested_setup paths are relative to the setup script's directory and are hashed into the admission; draft and verify refuse if one is missing or changed.",
+  "python": "3.11.14",
+  "root": "6.28/12",
+  "packages": {"numpy": "1.26.4", "sklearn": "1.8.0", "lightgbm": "4.6.0", "joblib": "1.5.3", "threadpoolctl": "3.6.0", "scipy": "1.16.3"},
+  "nested_setup": ["unbinned_unfolding/build/setup.sh", "MINERvA101/opt/bin/setup.sh", "MINERvA101/opt/bin/setup_MAT.sh",
+                   "MINERvA101/opt/bin/setup_MAT-MINERvA.sh", "MINERvA101/opt/bin/setup_UnfoldUtils.sh"]
+ },
  "note": "Frozen before submission. xr_run.py executes exactly these argv templates; {omnifile}, {mcfile} and {out} are the only substitutions, from the inputs below and the admitted outroot. Two-d-path REPORT section 10 defines the runs.",
  "criterion": {
   "max_abs_rel_diff": 1e-08,

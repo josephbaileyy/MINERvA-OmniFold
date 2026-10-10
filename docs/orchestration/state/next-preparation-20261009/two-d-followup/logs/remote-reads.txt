@@ -32,3 +32,21 @@ MaRES_0   integral ratio 0.830399 median|r| 0.1157 p84 0.2051 max 0.3825 cells>1
 ## Background-template statistics, July CV hBkgReco2D bin errors (Sumw2 present), 205 reco bins
 eB/sqrt(D): median 0.0722 p84 0.1247 p99 0.2524 max 0.3024 n>0.1 60 n>0.3 1
 eB/(D-B):  median 7.70e-04 p84 2.36e-03 max 1.08e-01
+
+== 2026-10-10T21:40:25Z login23: environment (review B-3), after sourcing the canonical setup_salloc_env.sh
+/usr/bin/python3 -V -> Python 3.6.15; setup_salloc_env.sh ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+python 3.11.14 (root_6_28 env), ROOT 6.28/12, numpy 1.26.4, sklearn 1.8.0, lightgbm 4.6.0, joblib 1.5.3, threadpoolctl 3.6.0, scipy 1.16.3
+unbinned_unfolding/build/setup.sh 40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598 (prepends the canonical build dir to PATH, PYTHONPATH, LD_LIBRARY_PATH; it holds RooUnfold/omnifold.py, a package submodule, no top-level omnifold.py)
+MINERvA101/opt/bin/setup.sh e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6 (sources setup_MAT.sh, setup_MAT-MINERvA.sh, setup_UnfoldUtils.sh)
+squeue --me: 5 sb1_* jobs PENDING, WORK_DIR /pscratch/sd/j/josephrb/sb1-2b35ba52; /pscratch/sd/j/josephrb/xr-two-d-followup-20261010 absent
+
+== review B-8: chmod g-w on the CFS copy directories
+2026-10-10T21:52:33Z
+drwxrws--- 3 josephrb m3246 4096 Oct 10 13:12 /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010
+drwxrws--- 2 josephrb m3246 4096 Oct 10 13:13 /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input
+drwxr-s--- 3 josephrb m3246 4096 Oct 10 13:12 /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010
+drwxr-s--- 2 josephrb m3246 4096 Oct 10 13:13 /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input
+total 2093761
+-r--r----- 1 josephrb m3246 2144008221 May 18 01:52 runEventLoopOmniFold_MEFHC.root
+-r--r----- 1 josephrb m3246         98 Oct 10 13:13 SHA256SUMS
+drwxrws--- 14 josephrb m3246 4096 Oct 10 13:12 /global/cfs/cdirs/m3246/josephrb

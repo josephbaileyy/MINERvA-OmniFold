@@ -1,6 +1,6 @@
 {
- "n": 19,
- "caught": 17,
+ "n": 29,
+ "caught": 28,
  "results": [
   {
    "mutant": "overwrite-allowed",
@@ -80,8 +80,8 @@
    "tests": [
     "test_xr.XR.test_an_input_with_other_bytes_is_refused"
    ],
-   "caught": false,
-   "tail": "OK"
+   "caught": true,
+   "tail": "FAILED (failures=1)"
   },
   {
    "mutant": "cwd-unchecked",
@@ -134,8 +134,8 @@
    "tests": [
     "test_xr.XR.test_jobcheck_refuses_an_allocation_outside_the_caps"
    ],
-   "caught": false,
-   "tail": "OK"
+   "caught": true,
+   "tail": "FAILED (failures=1)"
   },
   {
    "mutant": "ledger-billing-unflagged",
@@ -157,6 +157,96 @@
   },
   {
    "mutant": "cell-identity-unchecked",
+   "file": "xr_compare.py",
+   "tests": [
+    "test_xr.Comparator.test_tolerance_cells_and_digests"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "sacct-uncounted",
+   "file": "xr_admit.py",
+   "tests": [
+    "test_xr.XR.test_next_attempt_counts_sacct_jobs_and_enforces_the_stop"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "stop-unchecked",
+   "file": "xr_admit.py",
+   "tests": [
+    "test_xr.XR.test_next_attempt_counts_sacct_jobs_and_enforces_the_stop"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "no-slurm-deadline",
+   "file": "launch/xr_submit.sh",
+   "tests": [
+    "test_xr.XR.test_submit_counts_attempts_per_kind_and_cancels_on_a_failed_sbatch"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "outroot-reuse-allowed",
+   "file": "xr_admit.py",
+   "tests": [
+    "test_xr.XR.test_a_second_draft_for_the_same_grant_is_refused"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "nested-setup-unbound",
+   "file": "xr_admit.py",
+   "tests": [
+    "test_xr.XR.test_verify_refuses_a_changed_nested_setup_or_a_copied_admission"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "environment-unchecked",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_an_environment_other_than_the_frozen_one_stops_before_training"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "outroot-unchecked",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_an_admission_that_is_not_admitted_or_has_other_runs_is_refused"
+   ],
+   "caught": false,
+   "tail": "OK"
+  },
+  {
+   "mutant": "regressor-count-loose",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.FitCounts.test_the_regressor_must_fit_every_iteration"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "receipt-admission-unchecked",
+   "file": "xr_compare.py",
+   "tests": [
+    "test_xr.Comparator.test_receipts_must_name_their_run_and_admission"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "axes-unchecked",
    "file": "xr_compare.py",
    "tests": [
     "test_xr.Comparator.test_tolerance_cells_and_digests"
