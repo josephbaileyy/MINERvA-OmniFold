@@ -18,6 +18,16 @@ measured weights). Two modes:
     the same estimator and ``--seed`` this must reproduce
     ``unfold_2d_omnifold_unbinned.py --closure --use-weights`` (``hXSec2D`` and
     ``hTruthXSec2D``); it is the check that this file repeats the production path.
+
+Provenance (``n2/execution.py``). The toy design, the driver's helpers and the OmniFold helper are
+executed from hashed bytes of the checkout this file is in, before any input is read; a module of
+the same name imported from elsewhere is refused (exit 3). The output records every executed file's
+path, sha256 and git blob, HEAD, the guard's state, the effective estimator arguments, the
+environment and the inputs (``producerProvenance``, plus the driver's ``runConfig``,
+``omnifoldHelperFile`` and ``omnifoldHelperSha256``). ``--expect`` refuses on any contradiction;
+``--require-provenance`` also refuses on anything unknown and reserves ``--out`` exclusively
+(an existing one is refused). Without it,
+an existing ``--out`` is recreated as before, for the resume-guarded launchers.
 """
 
 import argparse
@@ -27,19 +37,50 @@ import sys
 import time
 from pathlib import Path
 
-import numpy as np
+_SELF_BYTES = Path(__file__).read_bytes()
+
+import numpy as np  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 DRIVER_DIR = HERE.parents[1]
+REPO = HERE.parents[2]
+# The OmniFold backend of THIS checkout: the production driver's main() inserts the same relative
+# path of the canonical checkout, so on that checkout the two are equal. Deriving it is the OI-136
+# repair; a hardcoded root here executed the canonical checkout's helper from every tree.
+OMNIFOLD_PY = REPO / "unbinned_unfolding" / "python"
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(DRIVER_DIR))
 
-import toy_design  # noqa: E402
-import unfold_2d_omnifold_unbinned as u2d  # noqa: E402
+from n2 import execution as gx  # noqa: E402
 
-ROOT = u2d.ROOT
-# The production driver's OmniFold backend path (unfold_2d_omnifold_unbinned.py main()).
-OMNIFOLD_PY = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/python"
+# Loaded by load_code() from hashed bytes, before any input is read.
+toy_design = u2d = ROOT = ohf = None
+CODE = (("toy_design", HERE / "toy_design.py"),
+        ("unfold_2d_omnifold_unbinned", DRIVER_DIR / "unfold_2d_omnifold_unbinned.py"),
+        ("omnifold", OMNIFOLD_PY / "omnifold.py"))
+INPUTS = ("omnifile", "mcfile")
+
+
+def load_code(expectations):
+    """Execute the toy's repository code from verified bytes; return the executed-file records."""
+    global toy_design, u2d, ROOT, ohf
+    records = [gx.file_record(__file__, _SELF_BYTES, REPO),
+               gx.bootstrap_record(sys.modules["n2"], REPO), gx.bootstrap_record(gx, REPO)]
+    loaded = {}
+    for name, path in CODE:
+        try:
+            rel = path.resolve().relative_to(REPO).as_posix()
+        except ValueError:
+            raise gx.ProvenanceRefusal(f"{name}: {path} resolves outside the admitted checkout "
+                                       f"{REPO}") from None
+        loaded[name], rec = gx.load_verified(name, path, REPO, expectations["modules"].get(rel))
+        records.append(rec)
+    toy_design, u2d = loaded["toy_design"], loaded["unfold_2d_omnifold_unbinned"]
+    ROOT = u2d.ROOT
+    if str(OMNIFOLD_PY) not in sys.path:
+        sys.path.insert(0, str(OMNIFOLD_PY))
+    ohf = loaded["omnifold"].OmniFold_helper_functions
+    return records
 
 
 def fill_th2d(name, title, pt, pz, w):
@@ -78,11 +119,37 @@ def main():
                     help="KNOWN_ISSUES 85 arm B: Poisson(k) per event on toy --toy's pseudo-data, "
                          "seed toy_design.bootstrap_seed(S); requires --no-mc-bootstrap")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--expect", metavar="JSON",
+                    help="expected commit, module digests (by repo-relative path) and input "
+                         "digests (keys omnifile, mcfile); any mismatch refuses before output")
+    ap.add_argument("--require-provenance", action="store_true",
+                    help="refuse unless run under mnv_guarded_run.py on this checkout, with every "
+                         "executed file at HEAD, every digest stated by --expect, and --out new")
+    ap.add_argument("--hash-inputs", action="store_true",
+                    help="record the sha256 of the input files even when --expect states none")
     args = ap.parse_args()
     if args.no_fluctuation and (args.no_mc_bootstrap or args.data_bootstrap is not None):
         ap.error("--no-mc-bootstrap and --data-bootstrap need --toy")
     if args.data_bootstrap is not None and not args.no_mc_bootstrap:
         ap.error("--data-bootstrap is a data-only bootstrap: pass --no-mc-bootstrap")
+
+    try:
+        expectations = gx.load_expectations(args.expect)
+        identity = gx.finalize(REPO, load_code(expectations), expectations,
+                               args.require_provenance)
+        if args.require_provenance:
+            missing = [k for k in INPUTS if k not in expectations["inputs"]]
+            if missing:
+                raise gx.ProvenanceRefusal(f"strict provenance needs input digests for {missing}")
+        inputs = {k: gx.input_record(getattr(args, k), expectations["inputs"].get(k),
+                                     args.hash_inputs) for k in INPUTS}
+        if args.require_provenance:
+            gx.reserve_output(args.out)
+    except gx.ProvenanceRefusal as exc:
+        print(f"[REFUSED] {exc}", file=sys.stderr)
+        sys.exit(gx.REFUSAL_EXIT)
+    helper = next(r for r in identity["executed"] if r["relpath"].endswith("python/omnifold.py"))
+    print(f"[INFO] omnifold helper {helper['path']} sha256 {helper['sha256']}")
 
     t0 = time.time()
     pt_edges, pz_edges = u2d.PT_EDGES, u2d.PZ_EDGES
@@ -154,10 +221,6 @@ def main():
 
     h_pseudo = fill_th2d("hPseudoReco2D", "Pseudo-data (reco)", meas_pt, meas_pz, meas_w)
 
-    if OMNIFOLD_PY not in sys.path:
-        sys.path.insert(0, OMNIFOLD_PY)
-    from omnifold import OmniFold_helper_functions as ohf
-
     c1 = {"random_state": int(args.seed)}
     c2 = {"random_state": int(args.seed) + 1}
     rg = {"random_state": int(args.seed) + 2}
@@ -187,6 +250,11 @@ def main():
     h_prior_xs.SetName("hTruthXSec2D")
     h_prior_xs.SetTitle("MC truth prior cross section (fluctuates with the MC bootstrap)")
     meta["wall_s"] = time.time() - t0
+    try:
+        identity = gx.recheck(REPO, identity)
+    except gx.ProvenanceRefusal as exc:
+        print(f"[REFUSED] {exc}", file=sys.stderr)
+        sys.exit(gx.REFUSAL_EXIT)
 
     f_out = ROOT.TFile.Open(args.out, "RECREATE")
     if not f_out or f_out.IsZombie():
@@ -195,6 +263,17 @@ def main():
               h_pseudo, h_flux):
         h.Write()
     ROOT.TNamed("toyMetadata", json.dumps(meta, sort_keys=True)).Write()
+    provenance = dict(identity, inputs=inputs, environment=gx.environment_record(),
+                      run_config=vars(args),
+                      estimator={"estimator": args.estimator, "device": args.device,
+                                 "iters": int(args.iters), "classifier1_params": c1,
+                                 "classifier2_params": c2, "regressor_params": rg,
+                                 "parameter_format": "dict"})
+    for name, value in (("runConfig", json.dumps(vars(args), sort_keys=True)),
+                        ("omnifoldHelperFile", helper["path"]),
+                        ("omnifoldHelperSha256", helper["sha256"]),
+                        ("producerProvenance", json.dumps(provenance, sort_keys=True))):
+        ROOT.TNamed(name, value).Write()
     f_out.Close()
     print(f"[OK] wrote {args.out} in {meta['wall_s']:.0f} s")
 

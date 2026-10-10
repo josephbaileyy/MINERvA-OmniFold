@@ -82,21 +82,43 @@ The engine supports interchangeable backends (component terminology and
 code paths in App.~\ref{app:codebase}). The published central value uses
 \texttt{exact}, sklearn \texttt{GradientBoosting} with single-threaded
 exact-split CART.
-% Provenance: the production launcher passes no \texttt{-{}-estimator} flag and therefore takes
-% the driver's default.
+% Provenance: the production launcher passed no \texttt{-{}-estimator} flag; the driver revision it ran
+% (d1bc8813) had no estimator option and always used the exact backend.
 The uncertainty ensemble --- the systematic universe sweep
 and the Poisson bootstrap --- is produced with \textbf{LightGBM} ($100$ trees,
 $8$ leaves, learning rate $0.1$; identical settings for the step-1 classifier,
 step-2 classifier, and miss regressor), which both of those launchers request
-explicitly. \emph{The central value and its covariance are therefore not
-estimator-matched}. The \texttt{lgbm} seed scan measures \texttt{lgbm} seed
+explicitly; so is the training-seed scan. \emph{The central value and its
+covariance are therefore not estimator-matched}, and whether the LightGBM
+covariance describes the uncertainty of the exact-split central value has not
+been measured: no exact-split bootstrap, universe sweep or seed scan exists.
+This is an unmeasured transfer, not a demonstration that the quoted
+uncertainty is wrong. The LightGBM central value at the bootstrap's training
+seed (seed~1) and the exact-split central value differ by a median of
+\SI{0.97}{\percent} per bin (maximum \SI{12.5}{\percent}), a per-bin median of
+$1.3$ times the per-bin standard deviation of the statistical bootstrap block,
+and no covariance block carries this difference. The \texttt{lgbm} seed scan measures \texttt{lgbm} seed
 noise, the smallest budget component (App.~\ref{app:statmethods}); it does
-not measure the backend difference. The third backend, \texttt{hist}
+not measure the backend difference.
+% Source: ASSESSMENT-20261008-2d-estimator-pairing.md sec. 2.1, 3 (P01-P09b); state/uncertainty-preparation-
+% 20261008/a/pairings.tsv P02 and a/verification.md (seed 1 vs E_C: 0.97/2.67/12.50 %, 1.30/2.76/8.32 sigma_S);
+% reviewer recompute e/recompute/rc_pairing.json.txt; KNOWN_ISSUES 88.
+The third backend, \texttt{hist}
 (sklearn \texttt{HistGradientBoosting}, matched 8-leaf configuration), is
 retained for method-dependence studies (\S\ref{sec:results-tension}).
 
-The central value is a single-run unfold with pinned seeds (ensemble-mean
-cross-check and ML band: \S\ref{sec:uq-ml}).
+The central value is a single exact-split run whose seed was not pinned: its
+production launcher passed no seed, and the driver revision it ran had no seed
+option, so scikit-learn's \texttt{random\_state} was \texttt{None}. (This follows from
+the launcher and driver revision; the run's own log was not found, and the
+product records no seed.) The run-to-run
+variation of this estimator has not been measured. The seeds are pinned only in
+the LightGBM ensembles: seed~1 for the Poisson bootstrap, seed~42 for the
+universe sweep and its matched central value, and seeds 1--10 for the ML band
+(\S\ref{sec:uq-ml}).
+% Source: ASSESSMENT-20261008-2d-estimator-pairing.md sec. 2.1 and P01 (revision d1bc8813, launcher
+% sbatch_unfold_2d_MEHFC.sh, job 53116554; executed-bytes log not found); P09b (E_C seed noise unmeasured).
+% Later driver revisions add --seed and --estimator options; their defaults do not describe this run.
 
 \paragraph{Hyperparameter choice.}
 The learner settings were fixed \emph{a priori} rather than tuned on data. They are the sklearn

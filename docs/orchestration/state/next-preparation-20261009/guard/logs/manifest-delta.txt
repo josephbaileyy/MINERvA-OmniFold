@@ -1,0 +1,85 @@
+generate_manifest.py --at-sha a5bb866df0688a8b78f7692cc62230ffdd5977ae vs committed docs/orchestration/MANIFEST.tsv
+rows added 21, removed 0, changed 59, class (column 3) changed 0
+changed column indices (0-based) and row counts: {9: 42, 11: 59, 12: 1, 13: 1}
+added:
+  docs/orchestration/state/next-preparation-20261009/guard/REPORT.md	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/inventory-base-5ac9706a.json	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/inventory-final.json	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/inventory.py	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/logs/bindings-base.txt	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/logs/harness-final.txt	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/logs/inventory-base.txt	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/logs/inventory-final.txt	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/logs/ki84.txt	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/logs/mutation-run1.txt	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/logs/mutation.txt	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/logs/noop_check.txt	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/logs/producer-final.txt	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/logs/ratchets-commitA.txt	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/logs/ratchets-commitB.txt	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/logs/ratchets-final.txt	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/logs/shared-callers.txt	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/mutation-results-run1.json	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/mutation-results.json	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/mutation.py	tracked	MACHINE
+  docs/orchestration/state/next-preparation-20261009/guard/noop_check.py	tracked	MACHINE
+changed:
+  docs/orchestration/AUTHORIZATION-20260903-oi136-failopen-repair.md
+  docs/orchestration/DESIGN-20261008-2d-independent-statistical-validation.md
+  docs/orchestration/MANIFEST.tsv
+  docs/orchestration/README.md
+  docs/orchestration/generate_manifest.py
+  docs/orchestration/runs/retired-worktree-archive-20260824/README.md
+  docs/orchestration/state/annealed-nominal-error-56563092.json
+  docs/orchestration/state/coverage-2d-20261005/budget.json
+  docs/orchestration/state/coverage-2d-20261005/interim.npz
+  docs/orchestration/state/g2-dump-submit-20260719.json
+  docs/orchestration/state/gate6-floor-replication-partial-56863958.json
+  docs/orchestration/state/ki84-adopt-20261006/boot_spreads.json
+  docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.json
+  docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py
+  docs/orchestration/state/ki84-adopt-20261006/purity_fdata.json
+  docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.json
+  docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py
+  docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py
+  docs/orchestration/state/ki84-rebuild-20261006/budget.json
+  docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py
+  docs/orchestration/state/ki84-rebuild-20261006/predict_from_vl162.json
+  docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py
+  docs/orchestration/state/ki85-diag-20261006/budget.json
+  docs/orchestration/state/merged-input-hashes/p4-merged-20260718/COMPLETE
+  docs/orchestration/state/negweight-hpss-20260821/README.md
+  docs/orchestration/state/negweight-hpss-durability-20260821.json
+  docs/orchestration/state/next-preparation-20261009/DISPATCH.md
+  docs/orchestration/state/next-preparation-20261009/closeout/GOALS-20261009-as-dispatched.md
+  docs/orchestration/state/next-preparation-20261009/closeout/REPORT.md
+  docs/orchestration/state/next-preparation-20261009/closeout/checks/identity.py
+  docs/orchestration/state/next-preparation-20261009/closeout/logs/integration.txt
+  docs/orchestration/state/next-preparation-20261009/closeout/logs/oi136_ratchets.txt
+  docs/orchestration/state/next-preparation-20261009/closeout/review/README.md
+  docs/orchestration/state/note-boot-20261003/README.md
+  docs/orchestration/state/note-boot-20261003/boot_spreads.json
+  docs/orchestration/state/note-boot-20261003/boot_spreads.py
+  docs/orchestration/state/note-capgap-20261003/README.md
+  docs/orchestration/state/preflight-20260906-r5/README.md
+  docs/orchestration/state/preflight-20260907-r5-followup/README.md
+  docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py
+  docs/orchestration/state/probe-oi136-sys-path-hijack-20260826.py
+  docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py
+  docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py
+  docs/orchestration/state/s5c/budget.json
+  docs/orchestration/state/s5e/budget.json
+  docs/orchestration/state/s5n/budget.json
+  docs/orchestration/state/s5p/budget.json
+  docs/orchestration/state/s5p/transition-r3/plan.json
+  docs/orchestration/state/s5p/transition-r4/plan.json
+  docs/orchestration/state/s5p/transition-r5/plan.json
+  docs/orchestration/state/s5p/transition-r6/plan.json
+  docs/orchestration/state/transport-probe-20260908/README.md
+  docs/orchestration/state/uncertainty-preparation-20261008/a/verification.md
+  docs/orchestration/state/uncertainty-preparation-20261008/d/oi136_ratchets.txt
+  docs/orchestration/state/uncertainty-preparation-20261008/e/recompute/README.md
+  docs/orchestration/state/uqpaper-median-20261006/paper_median.json
+  docs/orchestration/state/uqpaper-median-20261006/paper_median.py
+  docs/orchestration/test_fixtures_watch_report/README.md
+  docs/orchestration/verify_hash_bindings.py

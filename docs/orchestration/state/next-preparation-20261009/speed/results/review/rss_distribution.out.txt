@@ -1,0 +1,14 @@
+units ['K', 'M']
+n 374 min 64.51 max 186.64
+p50 71.3
+p75 71.7
+p90 120.3
+p95 183.0
+p99 186.6
+2/node needs <= 255.7 GB: tasks above = 0 of 374
+3/node needs <= 170.5 GB: tasks above = 21 of 374
+4/node needs <= 127.9 GB: tasks above = 31 of 374
+5/node needs <= 102.3 GB: tasks above = 42 of 374
+6/node needs <= 85.2 GB: tasks above = 43 of 374
+7/node needs <= 73.1 GB: tasks above = 48 of 374
+[(60, 55), (70, 275), (80, 1), (90, 1), (100, 1), (110, 2), (120, 9), (140, 2), (150, 1), (160, 6), (170, 2), (180, 19)]

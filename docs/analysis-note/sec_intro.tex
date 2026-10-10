@@ -69,7 +69,8 @@ applications: its iteration count, which we do not adopt
 different train/test splits that controls the ML stochastic component --- which we
 budget explicitly via the training-seed variation band (\S\ref{sec:systematics}). The
 present work differs in unfolding \emph{real} MINERvA data to an absolutely
-normalized cross section with a complete finalized 2D uncertainty budget, in using GBDT
+normalized cross section with a finalized 2D uncertainty budget (computed with
+a different GBDT implementation from the central value, \S\ref{sec:method-config}), in using GBDT
 learners suited to a low-dimensional tabular feature set, and in validating
 the method directly against a published binned measurement of the same data
 (\S\ref{sec:results}).
@@ -93,7 +94,7 @@ the method directly against a published binned measurement of the same data
 
 \paragraph{Analysis strategy.}
 The published 2D cross section provides quantitative validation of unbinned
-OmniFold and its uncertainty budget on MINERvA data
+OmniFold on MINERvA data, and a size comparison for its uncertainty budget
 (\S\S\ref{sec:experiment}--\ref{sec:validation}). The validated pipeline
 adds $\Eavail$, $q_{3}$ (\S\ref{sec:3d}) and $W$ (\S\ref{sec:eavailw}) as
 classifier inputs. Tests include marginalization to each lower-dimensional

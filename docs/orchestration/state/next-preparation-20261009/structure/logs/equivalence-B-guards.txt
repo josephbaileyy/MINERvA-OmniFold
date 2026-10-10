@@ -1,0 +1,317 @@
+{
+ "fixture": {
+  "seed": 20261009,
+  "p0": 100,
+  "u0": 144,
+  "reported": 205
+ },
+ "analyze_uq": {
+  "boot": {
+   "rc_old": 0,
+   "rc_new": 0,
+   "stdout_equal_modulo_paths": true,
+   "files": {
+    "uq_band_pt.pdf": "bytes_equal_except_CreationDate",
+    "uq_band_pt.png": "bytes_equal",
+    "uq_band_pz.pdf": "bytes_equal_except_CreationDate",
+    "uq_band_pz.png": "bytes_equal",
+    "uq_corr_2d.pdf": "bytes_equal_except_CreationDate",
+    "uq_corr_2d.png": "bytes_equal",
+    "uq_covariance.root": {
+     "common": 4,
+     "only_old": [],
+     "only_new": [
+      "hReportedCells"
+     ],
+     "differ": []
+    },
+    "uq_spread_2d.pdf": "bytes_equal_except_CreationDate",
+    "uq_spread_2d.png": "bytes_equal"
+   }
+  },
+  "boot_perm": {
+   "rc_old": 0,
+   "rc_new": 0,
+   "stdout_equal_modulo_paths": true,
+   "files": {
+    "uq_band_pt.pdf": "bytes_equal_except_CreationDate",
+    "uq_band_pt.png": "bytes_equal",
+    "uq_band_pz.pdf": "bytes_equal_except_CreationDate",
+    "uq_band_pz.png": "bytes_equal",
+    "uq_corr_2d.pdf": "bytes_equal_except_CreationDate",
+    "uq_corr_2d.png": "bytes_equal",
+    "uq_covariance.root": {
+     "common": 4,
+     "only_old": [],
+     "only_new": [
+      "hReportedCells"
+     ],
+     "differ": []
+    },
+    "uq_spread_2d.pdf": "bytes_equal_except_CreationDate",
+    "uq_spread_2d.png": "bytes_equal"
+   }
+  },
+  "boot_omit": {
+   "rc_old": 0,
+   "rc_new": 0,
+   "stdout_equal_modulo_paths": true,
+   "files": {
+    "uq_band_pt.pdf": "bytes_equal_except_CreationDate",
+    "uq_band_pt.png": "bytes_equal",
+    "uq_band_pz.pdf": "bytes_equal_except_CreationDate",
+    "uq_band_pz.png": "bytes_equal",
+    "uq_corr_2d.pdf": "bytes_equal_except_CreationDate",
+    "uq_corr_2d.png": "bytes_equal",
+    "uq_covariance.root": {
+     "common": 4,
+     "only_old": [],
+     "only_new": [
+      "hReportedCells"
+     ],
+     "differ": []
+    },
+    "uq_spread_2d.pdf": "bytes_equal_except_CreationDate",
+    "uq_spread_2d.png": "bytes_equal"
+   }
+  }
+ },
+ "analyze_universes": {
+  "matched_new_boot": {
+   "old": {
+    "rc": 0,
+    "root_written": true,
+    "hCov_combined": true,
+    "stderr_tail": []
+   },
+   "new": {
+    "rc": 0,
+    "root_written": true,
+    "hCov_combined": true,
+    "stderr_tail": []
+   },
+   "compare": {
+    "stdout_equal_modulo_paths": true,
+    "files": {
+     "uq_universe_band_pt.pdf": "bytes_equal_except_CreationDate",
+     "uq_universe_band_pt.png": "bytes_equal",
+     "uq_universe_band_pz.pdf": "bytes_equal_except_CreationDate",
+     "uq_universe_band_pz.png": "bytes_equal",
+     "uq_universe_covariance.root": {
+      "common": 8,
+      "only_old": [],
+      "only_new": [
+       "hReportedCells"
+      ],
+      "differ": []
+     },
+     "uq_universe_summary.txt": "text_equal"
+    }
+   }
+  },
+  "matched_legacy_boot": {
+   "old": {
+    "rc": 0,
+    "root_written": true,
+    "hCov_combined": true,
+    "stderr_tail": []
+   },
+   "new": {
+    "rc": 0,
+    "root_written": true,
+    "hCov_combined": true,
+    "stderr_tail": []
+   },
+   "compare": {
+    "stdout_equal_modulo_paths": true,
+    "files": {
+     "uq_universe_band_pt.pdf": "bytes_equal_except_CreationDate",
+     "uq_universe_band_pt.png": "bytes_equal",
+     "uq_universe_band_pz.pdf": "bytes_equal_except_CreationDate",
+     "uq_universe_band_pz.png": "bytes_equal",
+     "uq_universe_covariance.root": {
+      "common": 8,
+      "only_old": [],
+      "only_new": [
+       "hReportedCells"
+      ],
+      "differ": []
+     },
+     "uq_universe_summary.txt": "text_equal"
+    }
+   }
+  },
+  "no_boot": {
+   "old": {
+    "rc": 0,
+    "root_written": true,
+    "hCov_combined": false,
+    "stderr_tail": []
+   },
+   "new": {
+    "rc": 0,
+    "root_written": true,
+    "hCov_combined": false,
+    "stderr_tail": []
+   },
+   "compare": {
+    "stdout_equal_modulo_paths": true,
+    "files": {
+     "uq_universe_band_pt.pdf": "bytes_equal_except_CreationDate",
+     "uq_universe_band_pt.png": "bytes_equal",
+     "uq_universe_band_pz.pdf": "bytes_equal_except_CreationDate",
+     "uq_universe_band_pz.png": "bytes_equal",
+     "uq_universe_covariance.root": {
+      "common": 6,
+      "only_old": [],
+      "only_new": [
+       "hReportedCells"
+      ],
+      "differ": []
+     },
+     "uq_universe_summary.txt": "text_equal"
+    }
+   }
+  },
+  "perm_boot": {
+   "old": {
+    "rc": 0,
+    "root_written": true,
+    "hCov_combined": true,
+    "stderr_tail": []
+   },
+   "new": {
+    "rc": 1,
+    "root_written": false,
+    "hCov_combined": false,
+    "stderr_tail": [
+     "[FAIL] reported cells differ: CV $SCRATCH/eq_B/sweep/2d_xsec_TEST_5iter_lgbm_uni_full_CV.root has 205, bootstrap $SCRATCH/eq_B/uq_new_boot_perm/uq_covariance.root (hReportedCells) has 205; only in CV $SCRATCH/eq_B/sweep/2d_xsec_TEST_5iter_lgbm_uni_full_CV.root: 100(pt7,pz5); only in bootstrap $SCRATCH/eq_B/uq_new_boot_perm/uq_covariance.root (hReportedCells): 144(pt10,pz1); refusing to block-sum."
+    ]
+   }
+  },
+  "omit_boot": {
+   "old": {
+    "rc": 0,
+    "root_written": true,
+    "hCov_combined": false,
+    "stderr_tail": []
+   },
+   "new": {
+    "rc": 1,
+    "root_written": false,
+    "hCov_combined": false,
+    "stderr_tail": [
+     "[FAIL] reported cells differ: CV $SCRATCH/eq_B/sweep/2d_xsec_TEST_5iter_lgbm_uni_full_CV.root has 205, bootstrap $SCRATCH/eq_B/uq_new_boot_omit/uq_covariance.root (hReportedCells) has 204; only in CV $SCRATCH/eq_B/sweep/2d_xsec_TEST_5iter_lgbm_uni_full_CV.root: 100(pt7,pz5); only in bootstrap $SCRATCH/eq_B/uq_new_boot_omit/uq_covariance.root (hReportedCells): none; refusing to block-sum."
+    ]
+   }
+  },
+  "noid_boot": {
+   "old": {
+    "rc": 0,
+    "root_written": true,
+    "hCov_combined": true,
+    "stderr_tail": []
+   },
+   "new": {
+    "rc": 1,
+    "root_written": false,
+    "hCov_combined": false,
+    "stderr_tail": [
+     "[FAIL] $SCRATCH/eq_B/boot_noid.root has neither hReportedCells nor hMean2D, so its reported cells are unknown; refusing to block-sum it."
+    ]
+   }
+  },
+  "perm_cv_no_boot": {
+   "old": {
+    "rc": 0,
+    "root_written": true,
+    "hCov_combined": false,
+    "stderr_tail": []
+   },
+   "new": {
+    "rc": 0,
+    "root_written": true,
+    "hCov_combined": false,
+    "stderr_tail": []
+   },
+   "compare": {
+    "stdout_equal_modulo_paths": true,
+    "files": {
+     "uq_universe_band_pt.pdf": "bytes_equal_except_CreationDate",
+     "uq_universe_band_pt.png": "bytes_equal",
+     "uq_universe_band_pz.pdf": "bytes_equal_except_CreationDate",
+     "uq_universe_band_pz.png": "bytes_equal",
+     "uq_universe_covariance.root": {
+      "common": 6,
+      "only_old": [],
+      "only_new": [
+       "hReportedCells"
+      ],
+      "differ": []
+     },
+     "uq_universe_summary.txt": "text_equal"
+    }
+   }
+  }
+ },
+ "ours_only_chi2": {
+  "matched_stored_identity": {
+   "rc_old": 0,
+   "rc_new": 0,
+   "stdout_equal": true,
+   "new_only_lines": [],
+   "old_last": [
+    "[universe + bootstrap] per-bin pull:  mean = -0.174,  rms = 0.020"
+   ],
+   "new_err": []
+  },
+  "matched_legacy_universe": {
+   "rc_old": 0,
+   "rc_new": 0,
+   "stdout_equal": false,
+   "new_only_lines": [
+    "[WARN] $SCRATCH/eq_B/uni_old_no_boot/uq_universe_covariance.root stores no hReportedCells; its cells are checked by count only"
+   ],
+   "old_last": [
+    "[universe + bootstrap] per-bin pull:  mean = -0.174,  rms = 0.020"
+   ],
+   "new_err": []
+  },
+  "perm_boot_vs_paper": {
+   "rc_old": 0,
+   "rc_new": 1,
+   "stdout_equal": false,
+   "new_only_lines": [],
+   "old_last": [
+    "[universe + bootstrap] per-bin pull:  mean = -0.176,  rms = 0.062"
+   ],
+   "new_err": [
+    "[FAIL] reported cells differ: paper StatOnly has 205, bootstrap $SCRATCH/eq_B/uq_new_boot_perm/uq_covariance.root (hReportedCells) has 205; only in paper StatOnly: 100(pt7,pz5); only in bootstrap $SCRATCH/eq_B/uq_new_boot_perm/uq_covariance.root (hReportedCells): 144(pt10,pz1)"
+   ]
+  },
+  "perm_universe_vs_paper": {
+   "rc_old": 0,
+   "rc_new": 1,
+   "stdout_equal": false,
+   "new_only_lines": [],
+   "old_last": [
+    "[universe + bootstrap] per-bin pull:  mean = -0.167,  rms = 0.038"
+   ],
+   "new_err": [
+    "[FAIL] reported cells differ: paper StatOnly has 205, universe $SCRATCH/eq_B/uni_new_perm_cv_no_boot/uq_universe_covariance.root (hReportedCells) has 205; only in paper StatOnly: 100(pt7,pz5); only in universe $SCRATCH/eq_B/uni_new_perm_cv_no_boot/uq_universe_covariance.root (hReportedCells): 144(pt10,pz1)"
+   ]
+  },
+  "noid_boot": {
+   "rc_old": 0,
+   "rc_new": 1,
+   "stdout_equal": false,
+   "new_only_lines": [],
+   "old_last": [
+    "[universe + bootstrap] per-bin pull:  mean = -0.229,  rms = 0.100"
+   ],
+   "new_err": [
+    "[FAIL] $SCRATCH/eq_B/boot_noid.root has neither hReportedCells nor hMean2D, so its reported cells are unknown"
+   ]
+  }
+ }
+}

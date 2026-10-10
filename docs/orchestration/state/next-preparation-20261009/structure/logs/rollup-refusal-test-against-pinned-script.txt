@@ -1,0 +1,5 @@
+# test_final_rollup_full_refusal.py run with the pinned (5ac9706a) final_rollup_full.sh swapped in, then restored (cmp-verified).
+FAIL: test_refuses_while_a_pinned_product_exists (2d-unfolding.tests.test_final_rollup_full_refusal.FinalRollupRefusalTest.test_refuses_while_a_pinned_product_exists) (present='uq/seedscan_lgbm_ml/uq_covariance_ml.root')
+FAIL: test_refuses_while_a_pinned_product_exists (2d-unfolding.tests.test_final_rollup_full_refusal.FinalRollupRefusalTest.test_refuses_while_a_pinned_product_exists) (present='uq/bootstrap_MEFHC_300/uq_covariance_boot300.root')
+Ran 3 tests in 0.934s
+FAILED (failures=2)

@@ -1,0 +1,7 @@
+rerun: python3 -I <Q>/gbdt/reduce_saved_outputs.py --out <scratch>/gbdt-results-rerun.json (OMP/OPENBLAS/VECLIB threads 1)
+real 24.64
+user 23.66
+sys 0.24
+sha256 rerun     483ca82791eb7f7a4e7e16c1e72da4fd05a5085a35b3ddcac97f220d0f81a443
+sha256 committed 483ca82791eb7f7a4e7e16c1e72da4fd05a5085a35b3ddcac97f220d0f81a443
+cmp: IDENTICAL

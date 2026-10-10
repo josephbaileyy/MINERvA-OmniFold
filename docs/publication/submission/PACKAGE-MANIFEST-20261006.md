@@ -3,6 +3,16 @@
 **Status:** the package is assembled for Joseph's review. **Nothing has been submitted, deposited, tagged or sent.**
 Those acts, and any message to coauthors, need Joseph's separate authorization (DECISION-20261006 item 6).
 
+> **Update 2026-10-09 (keep-and-disclose correction; branch `prep/next-publication-20261009`, PR unmerged when written;
+> record `docs/orchestration/state/next-preparation-20261009/publication/REPORT.md`).**
+> - **Superseded for readiness:** §2's "No scientific or provenance item remains open" (from ARTICLE-READINESS-20261006)
+>   no longer holds. `KNOWN_ISSUES.md` 88 is open: the quoted 2D central value (exact-split scikit-learn) and every
+>   block of its uncertainty (LightGBM) are different estimators, and the transfer is unmeasured.
+> - Joseph chose "keep and disclose" on 2026-10-09 as an interim documentation disposition, **not** as acceptance
+>   of the unmeasured transfer as a publication-ready endpoint (closeout REPORT §11). The article, note and primer
+>   now disclose it; that disclosure does not make the package publication-ready.
+> - Added to §5's limitations below. Nothing is submitted, deposited, tagged or sent.
+
 > **Update 2026-10-07 (paper-completion pass; `docs/publication/REVIEW-20261007-paper-completion.md`).**
 > - **The article has changed since the versions in the table below.** The current sources are branch
 >   `docs/prd-paper-completion-20261007` head `94b0042a`, delivered to main by the pass's PR.
@@ -114,6 +124,8 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
 
 - No five-dimensional measurement with uncertainties.
 - The rebuilt 2D statistical band has not been re-tested (KNOWN_ISSUES 84, 85).
+- The 2D covariance is computed with LightGBM ensembles; whether it describes the exact-split quoted central value is
+  unmeasured (KNOWN_ISSUES 88; interim keep-and-disclose, 2026-10-09, not a publication-ready endpoint).
 - No recoil-response band in the calibration. The W2 sensitivity is exploratory and data-side only: the null was
   not varied, and species, energy and resolution effects and larger variations are untested. The matched
   (p_T, p∥) projection does not reject GENIE 2.12.10 CV (W1, post hoc).

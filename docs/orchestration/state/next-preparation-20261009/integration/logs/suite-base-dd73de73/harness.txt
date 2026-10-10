@@ -1,0 +1,30 @@
+test_any_departure_from_the_frozen_plan_is_refused (test_n2_harness.Design.test_any_departure_from_the_frozen_plan_is_refused) ... ok
+test_records_need_the_frozen_estimator_and_finite_values (test_n2_harness.Design.test_records_need_the_frozen_estimator_and_finite_values) ... ok
+test_the_plan_streams_seeds_and_estimator (test_n2_harness.Design.test_the_plan_streams_seeds_and_estimator) ... ok
+test_the_statistic_recovers_the_known_ratio_and_the_rule (test_n2_harness.Design.test_the_statistic_recovers_the_known_ratio_and_the_rule) ... ok
+test_a_real_member_must_record_the_frozen_thread_count (test_n2_harness.Harness.test_a_real_member_must_record_the_frozen_thread_count) ... ok
+test_a_synthetic_campaign_runs_guarded_and_recovers_the_known_answer (test_n2_harness.Harness.test_a_synthetic_campaign_runs_guarded_and_recovers_the_known_answer)
+Positive control: 100 guarded members, strict provenance, verdict 'faithful'. ... ok
+test_an_edited_plan_is_refused (test_n2_harness.Harness.test_an_edited_plan_is_refused) ... ok
+test_failed_contaminated_and_missing_members_are_reported_not_dropped (test_n2_harness.Harness.test_failed_contaminated_and_missing_members_are_reported_not_dropped) ... ok
+test_no_or_incomplete_admission_refuses_a_launch (test_n2_harness.Harness.test_no_or_incomplete_admission_refuses_a_launch) ... ok
+test_a_repeated_identity_is_a_stop_condition (test_n2_harness.Identity.test_a_repeated_identity_is_a_stop_condition) ... ok
+test_c1_fires_when_a_reservoir_key_is_moved_into_training (test_n2_harness.Identity.test_c1_fires_when_a_reservoir_key_is_moved_into_training) ... ok
+test_c2_fires_when_a_truth_denominator_row_is_dropped (test_n2_harness.Identity.test_c2_fires_when_a_truth_denominator_row_is_dropped) ... ok
+test_c3_fires_on_a_key_in_signal_and_background (test_n2_harness.Identity.test_c3_fires_on_a_key_in_signal_and_background) ... ok
+test_c4_fires_on_one_perturbed_value (test_n2_harness.Identity.test_c4_fires_on_one_perturbed_value) ... ok
+test_c5_fires_on_a_biased_threshold (test_n2_harness.Identity.test_c5_fires_on_a_biased_threshold) ... ok
+test_c6_fires_on_a_reservoir_row_in_the_bank (test_n2_harness.Identity.test_c6_fires_on_a_reservoir_row_in_the_bank) ... ok
+test_missing_ids_are_refused (test_n2_harness.Identity.test_missing_ids_are_refused) ... ok
+test_positive_control_all_table_checks_hold (test_n2_harness.Identity.test_positive_control_all_table_checks_hold) ... ok
+test_the_manifest_binds_the_materialized_folds (test_n2_harness.Identity.test_the_manifest_binds_the_materialized_folds) ... ok
+test_the_ledger_keeps_every_declared_member (test_n2_harness.Members.test_the_ledger_keeps_every_declared_member) ... ok
+test_write_new_never_overwrites (test_n2_harness.Members.test_write_new_never_overwrites) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 97.225s
+
+OK
+real 97.45
+user 55.59
+sys 16.72

@@ -1,0 +1,135 @@
+{
+ "head": "c829c1ea128f0d0f234c59224736d2887723e583",
+ "control": {
+  "r1": {
+   "rc": 0,
+   "summary": [
+    "Ran 1 test in 1.338s",
+    "OK"
+   ],
+   "wall_s": 3.0,
+   "skipped": false
+  },
+  "r2": {
+   "rc": 0,
+   "summary": [
+    "Ran 1 test in 1.134s",
+    "OK"
+   ],
+   "wall_s": 1.3,
+   "skipped": false
+  },
+  "deps": {
+   "rc": 0,
+   "summary": [
+    "Ran 5 tests in 14.576s",
+    "OK"
+   ],
+   "wall_s": 15.2,
+   "skipped": false
+  }
+ },
+ "mutants": [
+  {
+   "rc": 1,
+   "summary": [
+    "Ran 1 test in 1.290s",
+    "FAILED (failures=3)"
+   ],
+   "wall_s": 1.8,
+   "skipped": false,
+   "id": "R1-revert",
+   "file": "2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py",
+   "test": "r1",
+   "applied": true,
+   "caught": true
+  },
+  {
+   "rc": 1,
+   "summary": [
+    "Ran 1 test in 1.324s",
+    "FAILED (failures=3)"
+   ],
+   "wall_s": 1.5,
+   "skipped": false,
+   "id": "R2-revert",
+   "file": "2d-unfolding/uq/coverage_fixed_truth/n2/harness.py",
+   "test": "r2",
+   "applied": true,
+   "caught": true
+  },
+  {
+   "rc": 1,
+   "summary": [
+    "Ran 1 test in 1.452s",
+    "FAILED (failures=2)"
+   ],
+   "wall_s": 1.6,
+   "skipped": false,
+   "id": "R2-first-version",
+   "file": "2d-unfolding/uq/coverage_fixed_truth/n2/harness.py",
+   "test": "r2",
+   "applied": true,
+   "caught": true
+  },
+  {
+   "rc": 1,
+   "summary": [
+    "Ran 5 tests in 12.373s",
+    "FAILED (failures=7)"
+   ],
+   "wall_s": 14.1,
+   "skipped": false,
+   "id": "no-import-sweep",
+   "file": "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+   "test": "deps",
+   "applied": true,
+   "caught": true
+  },
+  {
+   "rc": 1,
+   "summary": [
+    "Ran 5 tests in 14.061s",
+    "FAILED (failures=3)"
+   ],
+   "wall_s": 14.7,
+   "skipped": false,
+   "id": "strict-ignores-unstated",
+   "file": "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+   "test": "deps",
+   "applied": true,
+   "caught": true
+  },
+  {
+   "rc": 1,
+   "summary": [
+    "Ran 5 tests in 15.221s",
+    "FAILED (failures=1)"
+   ],
+   "wall_s": 15.9,
+   "skipped": false,
+   "id": "strict-ignores-head-drift",
+   "file": "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+   "test": "deps",
+   "applied": true,
+   "caught": true
+  },
+  {
+   "rc": 1,
+   "summary": [
+    "Ran 5 tests in 14.896s",
+    "FAILED (failures=1)"
+   ],
+   "wall_s": 15.5,
+   "skipped": false,
+   "id": "commit-unchecked",
+   "file": "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+   "test": "deps",
+   "applied": true,
+   "caught": true
+  }
+ ],
+ "all_controls_pass": true,
+ "caught": 7,
+ "n": 7
+}

@@ -1,0 +1,33 @@
+{
+ "max_rss_bytes": 1412186112,
+ "n_reco": 10499,
+ "nnz_assumed": {
+  "T1": 400000,
+  "T2": 3000000,
+  "T3": 8000000
+ },
+ "numpy": "1.26.4",
+ "per_grid": {
+  "T1": {
+   "eigh_s": 0.006857209024019539,
+   "fisher_build_s": 0.031807249994017184,
+   "fisher_bytes": 472392,
+   "ibu_seconds_per_iteration": 0.0007851641601882875,
+   "n_truth": 243
+  },
+  "T2": {
+   "eigh_s": 63.14244120800868,
+   "fisher_build_s": 3.251079124980606,
+   "fisher_bytes": 483729408,
+   "ibu_seconds_per_iteration": 0.007232809159904719,
+   "n_truth": 7776
+  },
+  "T3": {
+   "ibu_seconds_per_iteration": 0.018667649179697036,
+   "n_truth": 65856
+  }
+ },
+ "platform": "macOS-26.6.2-arm64-arm-64bit",
+ "process_cpu_s": 125.44811200000001,
+ "scipy": "1.15.2"
+}

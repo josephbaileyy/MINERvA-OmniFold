@@ -26,7 +26,9 @@ Outputs (under --outdir):
   - uq_universe_band_pz.png     pz projection of grouped uncertainty sigma
   - uq_universe_covariance.root containing hCov_universe_total +
         hCov_universe_<band> for each band, plus hSigma_universe_total
-        (TH2D of per-bin sqrt(diag) of total universe cov).
+        (TH2D of per-bin sqrt(diag) of total universe cov), and
+        hReportedCells (TH2D on the pT/pz grid, 1 = reported): the identity
+        of every covariance's rows (see reported_cells.py).
 
 Usage:
   python uq/analyze_universes.py \
@@ -56,11 +58,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import ROOT
 
-
-PT_EDGES = np.array([0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55,
-                     0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50])
-PZ_EDGES = np.array([1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
-                     6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0])
+from reported_cells import (PT_EDGES, PZ_EDGES, CellIdentityError, identity_hist,
+                            read_cells, reported_indices, require_same_cells)
 
 # Filename pattern: 2d_xsec_<DSET>_<...>_uni_<BAND>_<IDX>.root
 UNI_RE = re.compile(r".*_uni_(?P<band>[A-Za-z0-9_]+?)_(?P<idx>\d+)\.root$")
@@ -142,6 +141,19 @@ def load_bootstrap_cov(path):
     return cov
 
 
+def load_bootstrap_cells(path):
+    """Reported cells of an analyze_uq.py output, and the object they came from."""
+    rf = ROOT.TFile.Open(path)
+    if not rf or rf.IsZombie():
+        sys.exit(f"[FAIL] cannot open bootstrap cov {path}")
+    try:
+        return read_cells(rf, mean_fallback="hMean2D")
+    except CellIdentityError as e:
+        sys.exit(f"[FAIL] {path}: {e}")
+    finally:
+        rf.Close()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--cv", required=True, help="CV unfold ROOT (no --universe).")
@@ -208,7 +220,21 @@ def main():
     reported_mask_2d = cv > 0
     reported_flat = reported_mask_2d.ravel(order="C")
     n_reported = int(reported_flat.sum())
+    cells = reported_indices(reported_mask_2d)
     print(f"\n[INFO] n_reported = {n_reported} bins")
+
+    # The block sum below adds two matrices element by element, so both must
+    # be ordered by the same cells; an equal count is not enough.
+    if args.bootstrap_cov:
+        boot_cells, boot_source = load_bootstrap_cells(args.bootstrap_cov)
+        if boot_cells is None:
+            sys.exit(f"[FAIL] {args.bootstrap_cov} has neither hReportedCells nor hMean2D, "
+                     "so its reported cells are unknown; refusing to block-sum it.")
+        try:
+            require_same_cells(cells, boot_cells, f"CV {args.cv}",
+                               f"bootstrap {args.bootstrap_cov} ({boot_source})")
+        except CellIdentityError as e:
+            sys.exit(f"[FAIL] {e}; refusing to block-sum.")
 
     band_cov = {}
     total_cov = np.zeros((n_reported, n_reported))
@@ -298,18 +324,16 @@ def main():
     if args.bootstrap_cov:
         boot_cov = load_bootstrap_cov(args.bootstrap_cov)
         if boot_cov.shape != total_cov.shape:
-            print(f"[WARN] bootstrap cov shape {boot_cov.shape} != "
-                  f"universe cov shape {total_cov.shape}; not combining.")
-            boot_cov = None
-        else:
-            combined_cov = total_cov + boot_cov
-            comb_diag = np.sqrt(np.maximum(np.diag(combined_cov), 0))
-            with np.errstate(divide="ignore", invalid="ignore"):
-                comb_rel = np.where(cv_rep > 0, comb_diag / cv_rep, 0)
-            print("\n[COMBINED universe + bootstrap]")
-            print(f"  median rel = {100*np.median(comb_rel):.3f}%")
-            print(f"  p84    rel = {100*np.percentile(comb_rel, 84):.3f}%")
-            print(f"  max    rel = {100*np.max(comb_rel):.3f}%")
+            sys.exit(f"[FAIL] bootstrap cov shape {boot_cov.shape} does not match its own "
+                     f"{boot_source} ({boot_cells.size} cells); refusing to block-sum.")
+        combined_cov = total_cov + boot_cov
+        comb_diag = np.sqrt(np.maximum(np.diag(combined_cov), 0))
+        with np.errstate(divide="ignore", invalid="ignore"):
+            comb_rel = np.where(cv_rep > 0, comb_diag / cv_rep, 0)
+        print("\n[COMBINED universe + bootstrap]")
+        print(f"  median rel = {100*np.median(comb_rel):.3f}%")
+        print(f"  p84    rel = {100*np.percentile(comb_rel, 84):.3f}%")
+        print(f"  max    rel = {100*np.max(comb_rel):.3f}%")
 
     # --- ROOT outputs ---
     out_root = os.path.join(args.outdir, args.out_root)
@@ -349,6 +373,7 @@ def main():
         make_sigma_th2d("hSigma_combined",
                         "Combined sqrt(diag) over reported bins",
                         np.sqrt(np.maximum(np.diag(combined_cov), 0)))
+    identity_hist(cells).Write()
     rf_out.Close()
     print(f"\n[wrote] {out_root}")
 

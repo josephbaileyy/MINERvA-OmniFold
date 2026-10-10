@@ -1,0 +1,19 @@
+{"path": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/1d1b2071-0263-4bd8-8af4-2999537a0c19/scratchpad/review/trees/synth_rows200000_extra0.root", "rows": 200000, "extra_branches": 0, "adversarial_rows": 2000, "seed": 20261009, "bytes": 8244555, "compression_settings": 101, "root": "6.36.000"}
+        4.23 real         3.96 user         0.19 sys
+           704741376  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               46593  page reclaims
+                  89  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                 490  voluntary context switches
+                 592  involuntary context switches
+         31621565162  instructions retired
+         12713810292  cycles elapsed
+           381568224  peak memory footprint

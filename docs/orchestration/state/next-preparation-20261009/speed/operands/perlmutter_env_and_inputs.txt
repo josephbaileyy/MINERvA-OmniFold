@@ -1,0 +1,37 @@
+# Perlmutter env root_6_28 (setup_salloc_env.sh), read 2026-10-09 from ~/.conda/envs/root_6_28 (conda-meta and site-packages dist-info names)
+libgomp-15.2.0-he0feb66_16.json
+libopenblas-0.3.30-pthreads_h94d23a6_4.json
+numpy-1.26.4-py311h64a7726_0.json
+_openmp_mutex-4.5-2_gnu.json
+python-3.11.14-hd63d673_2_cpython.json
+root-6.28.12-py311h320fe9a_0.json
+root_base-6.28.12-py311h1329b8c_0.json
+lightgbm-4.6.0.dist-info
+scikit_learn-1.8.0.dist-info
+threadpoolctl-3.6.0.dist-info
+xgboost-3.2.0.dist-info
+# input sizes (ls -l)
+-rw-r----- 1 josephrb josephrb   2144008221 May 18 01:52 /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root
+-rw-r----- 1 josephrb josephrb 171117087867 Jul  8 08:08 /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root
+# universe-sweep array identity (first log lines; sacct -X JobName counts)
+== 55677842 /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/unfold_MEFHC_uni_full_100_55677842.out
+[sbatch] node=nid005038 jobid=55784613 array_task=100
+[sbatch] xsec out: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/negweight_uni/2d_xsec_MEFHC_5iter_lgbm_nw_uni_Flux_78.root
+[INFO] bkg-mode=negweight: prepared 621547 injected background reco events (bkg-MC 621547 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+== 55677843 /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/unfold_MEFHC_uni_full_100_55677843.out
+[sbatch] node=nid005707 jobid=55783839 array_task=100
+[sbatch] xsec out: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_Flux_78.root
+[INFO] bkg-mode=purity: binned per-reco-bin purity down-weight (default, headline path).
+== 55677844 /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/unfold_MEFHC_uni_full_CV_55677844.out
+[sbatch] node=nid004508 jobid=55677844
+[sbatch] xsec out: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/negweight_uni/2d_xsec_MEFHC_5iter_lgbm_nw_uni_CV.root
+[INFO] bkg-mode=negweight: prepared 621547 injected background reco events (bkg-MC 621547 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+== 55677845 /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/unfold_MEFHC_uni_full_CV_55677845.out
+[sbatch] node=nid006671 jobid=55677845
+[sbatch] xsec out: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_CV.root
+[INFO] bkg-mode=purity: binned per-reco-bin purity down-weight (default, headline path).
+      1 JobName
+    400 unfold_MEFHC_uni_nw
+    400 unfold_MEFHC_uni_pn
+      1 unfold_uni_nw_CV
+      1 unfold_uni_pn_CV

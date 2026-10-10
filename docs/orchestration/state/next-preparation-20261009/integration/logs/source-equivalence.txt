@@ -1,0 +1,11 @@
+canonical HEAD docs/analysis-note files:      120; standalone 6a7fa2f20c3404695623a77279ca1ab3c5867003 files:      122
+identical paths:      120
+differing or one-sided paths:        2
+DIFF	.gitignore	MISSING	95a338fe5e579e0cd06d44a29fba9ff54e0f3de0
+DIFF	AGENTS.md	MISSING	253fe47532a0b1bb0bf37ba048c079dab737b0e3
+--- control: base pair
+canonical 5ac9706a docs/analysis-note files:      120; standalone ad3fb8000a8d373a796856bdbc4c050b9970fc30 files:      122
+identical paths:      120
+differing or one-sided paths:        2
+DIFF	.gitignore	MISSING	95a338fe5e579e0cd06d44a29fba9ff54e0f3de0
+DIFF	AGENTS.md	MISSING	253fe47532a0b1bb0bf37ba048c079dab737b0e3

@@ -69,6 +69,20 @@ Each report is written only by its lane, on its own branch, and is absent until 
 | 4 — performance feasibility | `state/next-preparation-20261009/speed/REPORT.md` |
 | 5 — 5D GBDT successor design | `state/next-preparation-20261009/gbdt/REPORT.md` |
 | 6 — PET saved-output diagnosis | `state/next-preparation-20261009/pet/REPORT.md` |
+| publication correction (keep and disclose; assigned after Session 1 §11) | `state/next-preparation-20261009/publication/REPORT.md` |
+| integration of the six lanes above, with the guard minors R1/R2 and the shared-register dispositions (start here for the combined state) | `state/next-preparation-20261009/integration/REPORT.md` |
+
+**Next sessions, registered 2026-10-09 by the integration (not launched).** Each report path is
+pre-registered and absent until its session pushes it. Each subtree has exactly one owner, the session
+dispatched to it, and that session writes only its own subtree. Registration grants no compute,
+experiment or adoption authority; scope and budget come from each session's own dispatch, and their
+later integration is a separate bounded action. Inputs and open preconditions: integration REPORT §7.
+
+| next session | report |
+|---|---|
+| 2D publication path: the `KNOWN_ISSUES.md` 88 pairing after keep-and-disclose (the 2026-10-09 ruling's prohibitions stand) | `state/next-preparation-20261009/two-d-path/REPORT.md` |
+| SB1 preparation: the selective-read loaders and their local equality tests (speed REPORT §9, §15; SB1 itself needs Joseph's authorization) | `state/next-preparation-20261009/sb1-prep/REPORT.md` |
+| D-ID: the 5D GBDT discriminating diagnostic (gbdt REPORT §6, §14; not admitted; its branch-B route is unreviewed) | `state/next-preparation-20261009/d-id/REPORT.md` |
 
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 

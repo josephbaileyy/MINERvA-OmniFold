@@ -135,8 +135,9 @@ The one direct test of whether five-quantity statistical error bars contain the 
 often as stated, made on a variant of the method, failed, so we claim no such coverage.
 Nothing new was adopted.
 
-The two-dimensional trust check is unaffected and retains its independently
-constructed uncertainty.
+The two-dimensional trust check is unaffected by these five-quantity findings
+and retains its independently constructed uncertainty, with the qualification
+about learner implementations explained below.
 
 \subsection*{First, a trust check: reproduce a known result}
 
@@ -149,13 +150,20 @@ percent. Judged with the published correlations between cells, a shape differenc
 remains along the peak of the distribution. Just as important, our \emph{uncertainties} --- worked out completely
 independently --- come out essentially the same size as the published ones
 (\SI{\uqMedian}{\percent} versus \SI{\uqPaper}{\percent} typical). The new method
-reproduces the old answer and the size of its error bars. We then tested whether the
+reproduces the old answer and the size of its error bars. One qualification: the
+quoted result comes from one implementation of the tree learner, while every error-bar
+ingredient was computed with a second, faster implementation. The two implementations' answers
+differ by about one percent in a typical cell, and nobody has yet measured whether
+the faster implementation's error bars also describe the quoted result. They are not known
+to be wrong; the check simply has not been done. We then tested whether the
 statistical part of those error bars contains a known truth as often as stated, using
 simulated repeats of the experiment. The answer is uneven. In many cells the bars are about
 right or even too wide. In a block of cells with large forward momentum, and in those with the
 largest sideways momentum, they are too narrow. Pooled over all cells, two-standard-deviation
 bars contain the truth \SI{\covTwoDCTwoPct}{\percent} of the time instead of
-\SI{95}{\percent}. The published numbers are
+\SI{95}{\percent}. That test was of the statistical error bars as first built;
+the main cause was found and removed, and the rebuilt bars, which are the ones
+quoted, have not been re-tested. The published numbers are
 unchanged by this check.
 
 \begin{figure}[H]

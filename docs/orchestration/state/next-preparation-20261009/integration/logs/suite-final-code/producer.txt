@@ -1,0 +1,48 @@
+test_a_changed_dependency_is_refused (test_producer_final_dependencies.TheRealAnalyzer.test_a_changed_dependency_is_refused) ... ok
+test_a_commit_before_the_final_implementation_is_refused (test_producer_final_dependencies.TheRealAnalyzer.test_a_commit_before_the_final_implementation_is_refused) ... ok
+test_a_dependency_added_later_is_discovered_without_being_named (test_producer_final_dependencies.TheRealAnalyzer.test_a_dependency_added_later_is_discovered_without_being_named)
+Discovery is a sweep of the imported modules, not a list of known import patterns. ... ok
+test_an_unstated_dependency_is_refused (test_producer_final_dependencies.TheRealAnalyzer.test_an_unstated_dependency_is_refused) ... ok
+test_strict_run_with_the_final_dependency_set_runs_and_records_it (test_producer_final_dependencies.TheRealAnalyzer.test_strict_run_with_the_final_dependency_set_runs_and_records_it)
+Positive control: every executed repository file is stated, at HEAD, and recorded. ... ok
+test_a_changed_analyzer_refuses_before_its_body_runs (test_producer_provenance.TheKi85Producer.test_a_changed_analyzer_refuses_before_its_body_runs) ... ok
+test_a_pre_imported_analyzer_from_another_checkout_refuses (test_producer_provenance.TheKi85Producer.test_a_pre_imported_analyzer_from_another_checkout_refuses) ... ok
+test_guarded_run_reads_through_this_checkouts_analyzer (test_producer_provenance.TheKi85Producer.test_guarded_run_reads_through_this_checkouts_analyzer)
+Positive control: A's analyzer (x2) runs, and the result equals the pure functions'. ... ok
+test_strict_mode_records_and_head_checks_the_analyzers_own_imports (test_producer_provenance.TheKi85Producer.test_strict_mode_records_and_head_checks_the_analyzers_own_imports)
+analyze_uq imports technote_style normally: strict mode must see it (review M2). ... ok
+test_strict_mode_refuses_unguarded (test_producer_provenance.TheKi85Producer.test_strict_mode_refuses_unguarded) ... ok
+test_a_file_outside_the_root_is_a_refusal_not_a_crash (test_producer_provenance.TheLoader.test_a_file_outside_the_root_is_a_refusal_not_a_crash) ... ok
+test_a_repository_module_imported_after_the_check_is_caught (test_producer_provenance.TheLoader.test_a_repository_module_imported_after_the_check_is_caught) ... ok
+test_executes_the_hashed_bytes_and_records_them (test_producer_provenance.TheLoader.test_executes_the_hashed_bytes_and_records_them) ... ok
+test_git_blob_matches_git (test_producer_provenance.TheLoader.test_git_blob_matches_git) ... ok
+test_git_identity_ignores_a_GIT_DIR_naming_another_repository (test_producer_provenance.TheLoader.test_git_identity_ignores_a_GIT_DIR_naming_another_repository) ... ok
+test_refuses_a_digest_mismatch_without_executing (test_producer_provenance.TheLoader.test_refuses_a_digest_mismatch_without_executing) ... ok
+test_refuses_a_module_imported_by_anything_else (test_producer_provenance.TheLoader.test_refuses_a_module_imported_by_anything_else) ... ok
+test_refuses_outside_the_root (test_producer_provenance.TheLoader.test_refuses_outside_the_root) ... ok
+test_require_guard_refuses_absent_wrong_and_widened_guards (test_producer_provenance.TheLoader.test_require_guard_refuses_absent_wrong_and_widened_guards) ... ok
+test_reserve_output_is_exclusive (test_producer_provenance.TheLoader.test_reserve_output_is_exclusive) ... ok
+test_a_conflicting_checkout_first_on_the_path_does_not_change_what_runs (test_producer_provenance.TheToyProducer.test_a_conflicting_checkout_first_on_the_path_does_not_change_what_runs)
+B's helper directory at the front of PYTHONPATH: A's helper still executes. ... ok
+test_a_module_symlinked_outside_the_checkout_is_a_refusal_not_a_crash (test_producer_provenance.TheToyProducer.test_a_module_symlinked_outside_the_checkout_is_a_refusal_not_a_crash)
+Review R1: the toy's own relative-path step exits 3 like every other refusal. ... ok
+test_a_pre_imported_helper_from_another_checkout_refuses_before_output (test_producer_provenance.TheToyProducer.test_a_pre_imported_helper_from_another_checkout_refuses_before_output) ... ok
+test_changed_helper_bytes_refuse_before_the_helper_runs (test_producer_provenance.TheToyProducer.test_changed_helper_bytes_refuse_before_the_helper_runs) ... ok
+test_control_the_pre_repair_toy_executes_the_other_checkouts_helper (test_producer_provenance.TheToyProducer.test_control_the_pre_repair_toy_executes_the_other_checkouts_helper)
+The fixture really hijacks: the toy as of 5ac9706a runs B's helper (factor 3) from A. ... ok
+test_strict_guarded_run_executes_this_checkouts_helper_and_records_it (test_producer_provenance.TheToyProducer.test_strict_guarded_run_executes_this_checkouts_helper_and_records_it)
+Positive control: exit 0, the A helper's factor 2 in the output, every file at HEAD. ... ok
+test_strict_mode_refuses_a_committed_helper_edited_since_head (test_producer_provenance.TheToyProducer.test_strict_mode_refuses_a_committed_helper_edited_since_head)
+No --expect digest for the helper: strict still refuses bytes that are not HEAD's. ... ok
+test_strict_mode_refuses_missing_provenance (test_producer_provenance.TheToyProducer.test_strict_mode_refuses_missing_provenance) ... ok
+test_strict_mode_refuses_to_overwrite_and_leaves_the_file_untouched (test_producer_provenance.TheToyProducer.test_strict_mode_refuses_to_overwrite_and_leaves_the_file_untouched) ... ok
+test_strict_mode_refuses_without_git_identity (test_producer_provenance.TheToyProducer.test_strict_mode_refuses_without_git_identity) ... ok
+test_the_guard_refuses_a_script_from_another_checkout (test_producer_provenance.TheToyProducer.test_the_guard_refuses_a_script_from_another_checkout) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 36.809s
+
+OK
+real 38.72
+user 19.66
+sys 8.56

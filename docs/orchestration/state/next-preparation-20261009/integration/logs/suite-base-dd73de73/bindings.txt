@@ -1,0 +1,25 @@
+resolved 167 bindings (9439 unresolvable: data files, off-repo artifacts, binaries)
+  30977 receipt hash keys are UNPAIRED across 2489 receipts -- a `<role>_sha256` with no sibling path key, so they name no file, are in NEITHER cell above, and were never compared against anything
+    103 of those, across 61 receipts, carry a role name that denotes repo CODE: driver_sha256, engine_net_sha256, generator_sha256, launcher_sha256, loader_sha256, script_sha256, tool_sha256, tool_under_audit_sha256, validator_launcher_sha256, validator_sha256
+    this is COVERAGE, not drift: no binding is shown broken. Resolving a role key needs a RECEIPT-SIDE declared mapping, never one inferred here (BEN-312)
+  29 pair(s) across 7 receipt(s) carry a `revision` and were NOT compared against the worktree: they pin a git object, which `git show <revision>:<path>` reads and the checkout cannot contradict
+  162 OK
+  20 of them from EXPECTED_*_SHA guards in *.sh (27 pins seen, floor 20; 14 defined but unpaired, declared 14)
+  3 of them from 64-hex pin constants in *.py (4 pins seen, floor 3; 60 module-level 64-hex constants compared to no file digest -- printed, not gated)
+  144 of them from receipt bindings (inventory 144 tracked, sha256 f9dab8dd64af311296216d02878d28ab05a83062812def44d3cdc39830229cc0)
+44 canonical-namespace FIELD pins verified (floor 30) over 17 of 22 RECORD-FROZEN JSON receipts -- these pin a POINTER, not bytes; green says the receipts still point where they pointed
+  5 known pre-existing drift (submit-time provenance):
+      nd-unfolding/pet/gate6_floor_statistics.py  <- gate6-floor-replication-partial-56863958.json
+      2d-unfolding/unfold_2d_omnifold_unbinned.py  <- negweight-hpss-durability-20260821.json
+      nd-unfolding/pet/sbatch_dump_g2_mefhc.sh  <- g2-dump-submit-20260719.json
+      nd-unfolding/pet/evaluate_annealed_nominal_reproduction.py  <- annealed-nominal-error-56563092.json
+      2d-unfolding/unfold_2d_omnifold_unbinned.py  <- run_gate2_target_validator.sh
+
+24 binding(s) in 12 SELF-DECLARED fixture(s) held out of the production verdict (semantic `_fixture` marker, not a path rule)
+  fixture-set integrity digest: 36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed52a1e1
+  these pin values the world may CONTRADICT on purpose; their integrity is the set and each file's own sha256, never a match against a live artifact
+
+ALL BINDINGS INTACT
+real 6.57
+user 5.02
+sys 0.45

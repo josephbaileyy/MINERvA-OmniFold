@@ -1,0 +1,39 @@
+convention	metric	count	detail
+# rev 1cc3d5d9916d9d4f5646f42f96c7d998f59d8290
+bin edges (2D pT/p_par)	files defining a top-level literal	22	handoff=1 historical=1 live=18 test=2
+bin edges (2D pT/p_par)	literals whose values differ from the driver	6	2d-unfolding/ibu_1d_projection/build_1d_ibu_inputs.py:PT_EDGES 2d-unfolding/ibu_omnifold_paired_cdelta.py:PT_EDGES nd-unfolding/fps_provenance.py:PT_EDGES nd-unfolding/fps_provenance.py:PZ_EDGES nd-unfolding/pet/validate_gate2_target_receipt.py:PT_EDGES nd-unfolding/tests/test_pointcloud_projection_completeness.py:PT_EDGES
+bin edges (2D pT/p_par)	files importing the reported-cell contract	3	2d-unfolding/uq/_ours_only_chi2.py 2d-unfolding/uq/analyze_universes.py 2d-unfolding/uq/analyze_uq.py
+reported-cell selection (2D)	'> 0' mask assignments in live 2D code	27	2d-unfolding/agreement_windows_receipt.py:132:    mask = np.diag(cov_stat) > 0 | 2d-unfolding/compare_to_models.py:100:    mask = np.diag(cov_stat) > 0 | 2d-unfolding/compare_to_paper_fullcov.py:98:    mask = diag > 0 | 2d-unfolding/compare_to_paper_fullcov.py:118:    mask = (diag > 0) & (ours_v > 0) & (paper_v > 0) | 2d-unfolding/compare_to_paper_fullcov.py:205:    n_reported = int((np.diag(cov_stat) > 0).sum()) | 2d-unfolding/diagnose_tension.py:107:    mask = np.diag(cov_stat) > 0           # 205 reported bins | 2d-unfolding/ibu_1d_projection/plot_ibu_1d_proj_vs_omnifold.py:92:    mask = den_v > 0 | 2d-unfolding/plot_2d_paper_comparison.py:48:    mask = (truth > 0) & (errs > 0) | 2d-unfolding/plot_2d_paper_comparison_shape.py:78:    mask = (diag > 0) & np.isfinite(s_o) & np.isfinite(s_p) | 2d-unfolding/receipt_model_chi2_2d.py:189:    mask = np.diag(cov_stat) > 0 | 2d-unfolding/receipt_model_chi2_2d.py:201:    mask_agrees_with_csv = bool(np.array_equal(mask, data_csv_v > 0)) | 2d-unfolding/receipt_model_chi2_2d.py:427:    line(f"bin-mapping control : mask==csv(xs>0): {mask_agrees_with_csv}; " | 2d-unfolding/seedscan/analyze_seedscan.py:115:    reported = mean > 0 | 2d-unfolding/strip_ratio_receipt.py:153:    reported = np.diag(cov_stat) > 0 | 2d-unfolding/uq/_ours_only_chi2.py:89:    mask = np.diag(cov_stat) > 0 | 2d-unfolding/uq/analyze_universes.py:220:    reported_mask_2d = cv > 0 | 2d-unfolding/uq/analyze_uq.py:115:    reported = (mean > 0).ravel(order="C") | 2d-unfolding/uq/bottom_line_test.py:140:    mask = (ref > 0) & (nom > 0) | 2d-unfolding/uq/bottom_line_test.py:194:    cvmask = D_truth > 0 | 2d-unfolding/uq/closure/closure_alt_model.py:155:    reported = (ref > 0) | 2d-unfolding/uq/closure/closure_hidden_var.py:135:    reported = (ref > 0) | 2d-unfolding/uq/closure/closure_truth_reweight.py:121:    reported = (ref > 0) | 2d-unfolding/uq/compare_split_bootstrap.py:56:    mask = np.diag(C) > 0 | 2d-unfolding/uq/coverage_fixed_truth/extract_toys.py:71:    reported = mean > 0 | 2d-unfolding/uq/coverage_toys.py:88:    reported = (truth_mean > 0) | 2d-unfolding/uq/plot_uncertainty_fig6_7_style.py:106:    reported = xsec > 0 | 2d-unfolding/uq/verify_matcorr_vs_mnvh1d.py:78:    reported_2d = cv2d > 0
+reported-cell selection (2D)	mask operand: a covariance diagonal	4	
+reported-cell selection (2D)	mask operand: central cross section	1	
+reported-cell selection (2D)	mask operand: matched CV	2	
+reported-cell selection (2D)	mask operand: other (closure/diagnostic reference)	9	
+reported-cell selection (2D)	mask operand: paper StatOnly diagonal	7	
+reported-cell selection (2D)	mask operand: replica-ensemble mean	4	
+reported-cell selection (2D)	files that compare cell identity (not only count)	4	2d-unfolding/tests/test_reported_cells.py 2d-unfolding/uq/_ours_only_chi2.py 2d-unfolding/uq/analyze_universes.py 2d-unfolding/uq/reported_cells.py
+covariance normalization	live files using np.cov (1/(N-1), bootstrap)	10	2d-unfolding/ibu_omnifold_paired_cdelta.py 2d-unfolding/uq/analyze_uq.py 3d-unfolding/uq_3d/build_bootstrap_cov_3d.py nd-unfolding/pet/push_vs_acceptance.py nd-unfolding/pet_systematics.py nd-unfolding/pet_systematics_5d.py nd-unfolding/s5c_coverage.py nd-unfolding/s5e_analyze_candidate.py nd-unfolding/s5p_assemble.py nd-unfolding/s5p_stage2_analyze.py
+covariance normalization	live files using a MAT 1/N mean-centered sum	2	2d-unfolding/uq/analyze_universes.py 3d-unfolding/uq_3d/analyze_universes_3d.py
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_1A_5iter_universes.sh	1	estimator=lgbm seed=42 bootstrap_seed=no
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_MEFHC.sh	1	estimator=(default exact) seed=(default None) bootstrap_seed=no
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_MEFHC_5iter_bootsplit.sh	1	estimator=lgbm seed=1 bootstrap_seed=yes
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_MEFHC_5iter_bootstrap.sh	1	estimator=lgbm seed=1 bootstrap_seed=yes
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_MEFHC_5iter_bootstrap_negweight.sh	1	estimator=lgbm seed=1 bootstrap_seed=yes
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_MEFHC_5iter_bootstrap_scaleup.sh	1	estimator=lgbm seed=1 bootstrap_seed=yes
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_MEFHC_5iter_seedscan.sh	1	estimator=hist seed=${SEED} bootstrap_seed=no
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_MEFHC_5iter_universes.sh	1	estimator=lgbm seed=42 bootstrap_seed=no
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_MEFHC_5iter_universes_CV.sh	1	estimator=lgbm seed=42 bootstrap_seed=no
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_MEFHC_5iter_universes_full.sh	1	estimator=lgbm seed=42 bootstrap_seed=no
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_MEFHC_5iter_universes_full_CV.sh	1	estimator=lgbm seed=42 bootstrap_seed=no
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_MEFHC_5iter_universes_full_negweight.sh	1	estimator=lgbm seed=42 bootstrap_seed=no
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_MEFHC_5iter_universes_full_puritynew.sh	1	estimator=lgbm seed=42 bootstrap_seed=no
+2D launcher arguments	2d-unfolding/sbatch_unfold_2d_MEFHC_8iter.sh	1	estimator=hist seed=1 bootstrap_seed=no
+hardcoded checkout root	tracked .py/.sh naming /pscratch/sd/j/josephrb/MINERvA-OmniFold	459	handoff=5 historical=74 live=360 publication=9 test=11
+hardcoded checkout root	live files by top directory	360	2d-unfolding=81 3d-unfolding=15 nd-unfolding=264
+dimensional cross-imports	files importing the 2D driver	47	2d-unfolding/live=2 3d-unfolding/live=1 docs/historical=1 docs/publication=1 nd-unfolding/live=41 nd-unfolding/test=1
+dimensional cross-imports	files importing the 3D driver	14	3d-unfolding
+generator code location	5D (s5p) predictor files under 3d-unfolding/	5	3d-unfolding/genie/gen5d_flux_reweight.py 3d-unfolding/genie/gen5d_flux_supplement.py 3d-unfolding/genie/gen5d_mode_components.py 3d-unfolding/genie/gen5d_to_rootpreds.py 3d-unfolding/genie/run_gen5d_supplement.sh
+ROOT reader helpers	files defining th2_to_array()	11	live=11
+ROOT reader helpers	files defining tmatrix_to_numpy()	4	live=4
+ROOT reader helpers	files defining flatten_ours()	3	live=3
+ROOT reader helpers	files defining flatten_paper()	1	live=1
+normalization constant	live .py with a literal tracker-nucleon count	0	

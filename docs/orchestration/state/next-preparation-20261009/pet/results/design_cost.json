@@ -1,0 +1,2090 @@
+{
+ "schema": "next-prep-pet/design-cost/1",
+ "inputs": {
+  "u_study_a100h": {
+   "value": 1.768,
+   "label": "MEASURED",
+   "source": "nd-unfolding/pet/final_design/resources/cost_fb_look1-20260930.json (H2S1T24 K5 FB median, packing 2, n = 352)"
+  },
+  "u_study_realized_a100h": {
+   "value": 1.7916666666666667,
+   "label": "MEASURED (realized, includes scoring and 24 stopped D4c members)",
+   "source": "final_design/resources/README.md 2026-10-05 snapshot: coverage stage ~1.29 k A100-h for 720 complete members"
+  },
+  "u_data_2M_a100h": {
+   "value": 7.3,
+   "low": 3.7,
+   "high": 14.6,
+   "label": "FORECAST",
+   "source": "nd-unfolding/pet/gbdt_comparison/REPORT-20261005.md section 7.2 (scaled; 0.5-2x band)"
+  },
+  "u_data_10M_a100h": {
+   "value": 29.0,
+   "low": 15.0,
+   "high": 58.0,
+   "label": "FORECAST",
+   "source": "gbdt_comparison/REPORT-20261005.md section 7.2"
+  },
+  "throughput_a100h_per_day": {
+   "value": 288.0,
+   "label": "MEASURED (study average, ~12 concurrent A100)",
+   "source": "gbdt_comparison/REPORT-20261005.md section 7.2"
+  },
+  "a100h_per_gpu_node_hour": {
+   "value": 4.0,
+   "label": "MEASURED (iris charging)",
+   "source": "final_design/resources/README.md"
+  },
+  "allocation_remaining_gpu_node_h": {
+   "value": 56132.0,
+   "label": "MEASURED 2026-10-05, NOT re-measured",
+   "source": "final_design/resources/README.md (2026-10-05 13:26Z)"
+  },
+  "train_share_of_unfolding": {
+   "value": 0.9807692307692307,
+   "label": "MEASURED (fit time / receipt median)",
+   "source": "gbdt_comparison/REPORT-20261005.md section 7.2"
+  },
+  "failed_member_allowance": {
+   "value": 0.05,
+   "label": "ASSUMPTION (study excluded none; 622 runs needed bit-exact resume across jobs)",
+   "source": "DECISION_RECORD look-1 row"
+  },
+  "dev_bank_truth_rows": {
+   "value": 45087969,
+   "label": "MEASURED",
+   "source": "q3 quartile provenance n_used"
+  },
+  "fb_rows": {
+   "value": 2646891,
+   "label": "MEASURED",
+   "source": "PROTOCOL section 3"
+  },
+  "rb_rows_sealed": {
+   "value": 1414846,
+   "label": "MEASURED",
+   "source": "PROTOCOL section 3"
+  },
+  "never_drawn_rows": {
+   "value": 4061737,
+   "label": "MEASURED",
+   "source": "PROTOCOL section 2"
+  },
+  "inventory_rows": {
+   "value": 49152885,
+   "label": "MEASURED",
+   "source": "PROTOCOL section 2"
+  },
+  "data_size_pseudo_truth_rows": {
+   "value": 9600000.0,
+   "label": "FORECAST (matches 4.0 M reco-passing data)",
+   "source": "gbdt_comparison/REPORT-20261005.md section 8"
+  },
+  "prior_rows_2M": {
+   "value": 2000000.0,
+   "label": "ASSUMPTION (historical full-event practice)",
+   "source": "gbdt_comparison/REPORT-20261005.md section 7.2"
+  },
+  "r3_systematics_units": {
+   "low": 121,
+   "high": 308,
+   "label": "FORECAST (unit counts are pricing assumptions)",
+   "source": "gbdt_comparison/REPORT-20261005.md section 7.3 R3"
+  },
+  "reserve_fraction_of_total": {
+   "value": 0.2,
+   "label": "RULE (T / 0.8)",
+   "source": "Goal 6 / shared contract"
+  }
+ },
+ "sim": {
+  "n": 4000,
+  "seed": 20261009
+ },
+ "measured_ratios_study_scale": {
+  "fT_median_bins1_5": 0.5697425972399547,
+  "g_median_bins1_5": 0.2096069537306783,
+  "fT_definition": "s_T^2 / W (nominal-seed training variance / member variance)",
+  "g_definition": "s_D^2 / (W / B) (event-sample variance / internal-randomness variance of the member mean)"
+ },
+ "bias_tolerance": {
+  "0.68": {
+   "proposed_lower_bound": 0.63,
+   "max_abs_bias_over_sd": 0.4627803856205076,
+   "coverage_at_bias_0.5sd": 0.6219805870956082,
+   "coverage_at_bias_1sd": 0.47473800748232936,
+   "coverage_at_bias_2sd": 0.15594327492094812
+  },
+  "0.95": {
+   "proposed_lower_bound": 0.92,
+   "max_abs_bias_over_sd": 0.5075832614552139,
+   "coverage_at_bias_0.5sd": 0.9209024658394035,
+   "coverage_at_bias_1sd": 0.8299249542469125,
+   "coverage_at_bias_2sd": 0.4839947260238252
+  }
+ },
+ "validation_sizing": {
+  "design_effect": 2.3005745779559255,
+  "nbins": 7,
+  "alpha_familywise": 0.05,
+  "assurance_target_per_decision": 0.9,
+  "rows": [
+   {
+    "tolerances": "proposed 0.63/0.92",
+    "m": 2,
+    "family": "one case, aggregate only, both levels",
+    "level": 0.68,
+    "lower_bound": 0.63,
+    "replicates_per_case": 314,
+    "check_assurance_at_n": 0.9005241573300944,
+    "joint_pass_prob_at_n_if_independent": 0.8109437579350766,
+    "replicates_per_case_joint": 384
+   },
+   {
+    "tolerances": "proposed 0.63/0.92",
+    "m": 2,
+    "family": "one case, aggregate only, both levels",
+    "level": 0.95,
+    "lower_bound": 0.92,
+    "replicates_per_case": 241,
+    "check_assurance_at_n": 0.9010828125466126,
+    "joint_pass_prob_at_n_if_independent": 0.8119502350669138,
+    "replicates_per_case_joint": 288
+   },
+   {
+    "tolerances": "proposed 0.63/0.92",
+    "m": 8,
+    "family": "one case, aggregate + 3 regions, both levels",
+    "level": 0.68,
+    "lower_bound": 0.63,
+    "replicates_per_case": 428,
+    "check_assurance_at_n": 0.9002413080961575,
+    "joint_pass_prob_at_n_if_independent": 0.4313914122561631,
+    "replicates_per_case_joint": 662
+   },
+   {
+    "tolerances": "proposed 0.63/0.92",
+    "m": 8,
+    "family": "one case, aggregate + 3 regions, both levels",
+    "level": 0.95,
+    "lower_bound": 0.92,
+    "replicates_per_case": 335,
+    "check_assurance_at_n": 0.9007076721077186,
+    "joint_pass_prob_at_n_if_independent": 0.4331824928088824,
+    "replicates_per_case_joint": 494
+   },
+   {
+    "tolerances": "proposed 0.63/0.92",
+    "m": 32,
+    "family": "four cases x four regions x two levels",
+    "level": 0.68,
+    "lower_bound": 0.63,
+    "replicates_per_case": 539,
+    "check_assurance_at_n": 0.9001055369480254,
+    "joint_pass_prob_at_n_if_independent": 0.034465919070390004,
+    "replicates_per_case_joint": 955
+   },
+   {
+    "tolerances": "proposed 0.63/0.92",
+    "m": 32,
+    "family": "four cases x four regions x two levels",
+    "level": 0.95,
+    "lower_bound": 0.92,
+    "replicates_per_case": 427,
+    "check_assurance_at_n": 0.9002615090677282,
+    "joint_pass_prob_at_n_if_independent": 0.03465754765737513,
+    "replicates_per_case_joint": 710
+   },
+   {
+    "tolerances": "study C1 form 0.60/0.90",
+    "m": 2,
+    "family": "one case, aggregate only, both levels",
+    "level": 0.68,
+    "lower_bound": 0.6,
+    "replicates_per_case": 125,
+    "check_assurance_at_n": 0.9008209060162979,
+    "joint_pass_prob_at_n_if_independent": 0.8114783047160239,
+    "replicates_per_case_joint": 153
+   },
+   {
+    "tolerances": "study C1 form 0.60/0.90",
+    "m": 2,
+    "family": "one case, aggregate only, both levels",
+    "level": 0.95,
+    "lower_bound": 0.9,
+    "replicates_per_case": 99,
+    "check_assurance_at_n": 0.9004026343769391,
+    "joint_pass_prob_at_n_if_independent": 0.810724903992932,
+    "replicates_per_case_joint": 118
+   },
+   {
+    "tolerances": "study C1 form 0.60/0.90",
+    "m": 8,
+    "family": "one case, aggregate + 3 regions, both levels",
+    "level": 0.68,
+    "lower_bound": 0.6,
+    "replicates_per_case": 171,
+    "check_assurance_at_n": 0.9012661897836935,
+    "joint_pass_prob_at_n_if_independent": 0.43533605115002516,
+    "replicates_per_case_joint": 263
+   },
+   {
+    "tolerances": "study C1 form 0.60/0.90",
+    "m": 8,
+    "family": "one case, aggregate + 3 regions, both levels",
+    "level": 0.95,
+    "lower_bound": 0.9,
+    "replicates_per_case": 140,
+    "check_assurance_at_n": 0.9026674827072376,
+    "joint_pass_prob_at_n_if_independent": 0.4407805102210869,
+    "replicates_per_case_joint": 201
+   },
+   {
+    "tolerances": "study C1 form 0.60/0.90",
+    "m": 32,
+    "family": "four cases x four regions x two levels",
+    "level": 0.68,
+    "lower_bound": 0.6,
+    "replicates_per_case": 215,
+    "check_assurance_at_n": 0.9002326387679107,
+    "joint_pass_prob_at_n_if_independent": 0.034621999707284995,
+    "replicates_per_case_joint": 379
+   },
+   {
+    "tolerances": "study C1 form 0.60/0.90",
+    "m": 32,
+    "family": "four cases x four regions x two levels",
+    "level": 0.95,
+    "lower_bound": 0.9,
+    "replicates_per_case": 179,
+    "check_assurance_at_n": 0.9008232414342205,
+    "joint_pass_prob_at_n_if_independent": 0.03535628625223632,
+    "replicates_per_case_joint": 288
+   }
+  ]
+ },
+ "pilot_precision": {
+  "study_scale_measured": {
+   "saved_120x6_plus_60_single": {
+    "fT_hat": {
+     "p2.5": 0.3631439064510424,
+     "p16": 0.4561966919816571,
+     "p50": 0.5647675112760049,
+     "p84": 0.6874828297574405,
+     "p97.5": 0.8158310283212811
+    },
+    "g_hat": {
+     "p2.5": -0.09716081111645289,
+     "p16": 0.0388874615861222,
+     "p50": 0.20343397445765388,
+     "p84": 0.38365762209687765,
+     "p97.5": 0.5836936291623323
+    },
+    "bias_se_over_member_mean_error_sd": 0.09128709291752768
+   },
+   "dispatch_192_24x6_plus_8_repeats": {
+    "fT_hat": {
+     "p2.5": 0.3563924497798851,
+     "p16": 0.4524126735973289,
+     "p50": 0.56303904077635,
+     "p84": 0.6966805429351783,
+     "p97.5": 0.8604949983749188
+    },
+    "g_hat": {
+     "p2.5": -0.4203898156188187,
+     "p16": -0.15503332273794546,
+     "p50": 0.17441483387198503,
+     "p84": 0.6041967821406686,
+     "p97.5": 1.1231040056862185
+    },
+    "bias_se_over_member_mean_error_sd": 0.20412414523193154
+   },
+   "E1_look1_4x6_two_cases_plus_2_partner_sets": {
+    "fT_hat": {
+     "p2.5": 0.19433129249565229,
+     "p16": 0.33682186482036847,
+     "p50": 0.5527323634611669,
+     "p84": 0.8736565435881599,
+     "p97.5": 1.3572356020620047
+    },
+    "g_hat": {
+     "p2.5": -0.910739224368549,
+     "p16": -0.6596750101844993,
+     "p50": -0.008802236331516753,
+     "p84": 1.4228097048099688,
+     "p97.5": 3.7978361429722733
+    },
+    "bias_se_over_member_mean_error_sd": 0.5
+   },
+   "E1_look2_8x6_two_cases": {
+    "fT_hat": {
+     "p2.5": 0.20835272332334945,
+     "p16": 0.3426530974585584,
+     "p50": 0.5477671242258433,
+     "p84": 0.8373229150690757,
+     "p97.5": 1.2493392171389288
+    },
+    "g_hat": {
+     "p2.5": -0.7086940451476416,
+     "p16": -0.41447468435950974,
+     "p50": 0.10359944971949617,
+     "p84": 0.9333076556089815,
+     "p97.5": 2.11006092430106
+    },
+    "bias_se_over_member_mean_error_sd": 0.35355339059327373
+   },
+   "E1_look3_24x6_two_cases": {
+    "fT_hat": {
+     "p2.5": 0.28520298507498937,
+     "p16": 0.40227776689716005,
+     "p50": 0.5527914081565343,
+     "p84": 0.7472710524437544,
+     "p97.5": 0.9699691209846006
+    },
+    "g_hat": {
+     "p2.5": -0.393697065613635,
+     "p16": -0.14695087483220187,
+     "p50": 0.18625881149551918,
+     "p84": 0.6121753523408754,
+     "p97.5": 1.1508495976137685
+    },
+    "bias_se_over_member_mean_error_sd": 0.20412414523193154
+   }
+  },
+  "data_scale_sD2_over_16": {
+   "saved_120x6_plus_60_single": {
+    "fT_hat": {
+     "p2.5": 0.3724037878224561,
+     "p16": 0.46224552690233855,
+     "p50": 0.5651406161038371,
+     "p84": 0.6836027674908353,
+     "p97.5": 0.8096588171278428
+    },
+    "g_hat": {
+     "p2.5": -0.24955134249394142,
+     "p16": -0.125246964116853,
+     "p50": 0.00731475520933733,
+     "p84": 0.15806939065320424,
+     "p97.5": 0.3237480781471291
+    },
+    "bias_se_over_member_mean_error_sd": 0.09128709291752768
+   },
+   "dispatch_192_24x6_plus_8_repeats": {
+    "fT_hat": {
+     "p2.5": 0.35067663202312493,
+     "p16": 0.44390206543489125,
+     "p50": 0.5626405823998211,
+     "p84": 0.700727740922041,
+     "p97.5": 0.86240243876223
+    },
+    "g_hat": {
+     "p2.5": -0.4984458637443454,
+     "p16": -0.28734702657250355,
+     "p50": -0.006921454093644446,
+     "p84": 0.3527383506330283,
+     "p97.5": 0.7830691806391379
+    },
+    "bias_se_over_member_mean_error_sd": 0.20412414523193154
+   },
+   "E1_look1_4x6_two_cases_plus_2_partner_sets": {
+    "fT_hat": {
+     "p2.5": 0.21270346780610142,
+     "p16": 0.34722490749673357,
+     "p50": 0.5573854807117247,
+     "p84": 0.8729423387801547,
+     "p97.5": 1.3836646747409016
+    },
+    "g_hat": {
+     "p2.5": -0.9186287489805159,
+     "p16": -0.7220827215065675,
+     "p50": -0.1644677425836909,
+     "p84": 0.914385346757612,
+     "p97.5": 2.900094388406289
+    },
+    "bias_se_over_member_mean_error_sd": 0.5
+   },
+   "E1_look2_8x6_two_cases": {
+    "fT_hat": {
+     "p2.5": 0.20112442945267758,
+     "p16": 0.3362231122678801,
+     "p50": 0.548985123768388,
+     "p84": 0.833675288220236,
+     "p97.5": 1.2297317260427798
+    },
+    "g_hat": {
+     "p2.5": -0.7692110241182863,
+     "p16": -0.5059492461358125,
+     "p50": -0.06205234071353874,
+     "p84": 0.6163105801651263,
+     "p97.5": 1.6512691882558546
+    },
+    "bias_se_over_member_mean_error_sd": 0.35355339059327373
+   },
+   "E1_look3_24x6_two_cases": {
+    "fT_hat": {
+     "p2.5": 0.2815613982241714,
+     "p16": 0.40379123743367057,
+     "p50": 0.5581561858654693,
+     "p84": 0.7401065114153903,
+     "p97.5": 0.9742981571327131
+    },
+    "g_hat": {
+     "p2.5": -0.5137832479036374,
+     "p16": -0.2965005371411711,
+     "p50": -0.013061222915571881,
+     "p84": 0.34605214825042774,
+     "p97.5": 0.7961450827920705
+    },
+    "bias_se_over_member_mean_error_sd": 0.20412414523193154
+   }
+  },
+  "data_scale_g_unchanged": {
+   "saved_120x6_plus_60_single": {
+    "fT_hat": {
+     "p2.5": 0.3735863114389711,
+     "p16": 0.4567778137229165,
+     "p50": 0.5601418681601924,
+     "p84": 0.6842554438107179,
+     "p97.5": 0.8121163743374986
+    },
+    "g_hat": {
+     "p2.5": -0.10124559794105573,
+     "p16": 0.04226527007546995,
+     "p50": 0.20289834550033117,
+     "p84": 0.3742566713961674,
+     "p97.5": 0.5667054407922467
+    },
+    "bias_se_over_member_mean_error_sd": 0.09128709291752768
+   },
+   "dispatch_192_24x6_plus_8_repeats": {
+    "fT_hat": {
+     "p2.5": 0.3586191108346824,
+     "p16": 0.45511771630787184,
+     "p50": 0.5677896392057551,
+     "p84": 0.7072821676235919,
+     "p97.5": 0.8742589063683824
+    },
+    "g_hat": {
+     "p2.5": -0.41037738907542015,
+     "p16": -0.1563622383349106,
+     "p50": 0.17951368836174758,
+     "p84": 0.6030997234689937,
+     "p97.5": 1.1534599758228514
+    },
+    "bias_se_over_member_mean_error_sd": 0.20412414523193154
+   },
+   "E1_look1_4x6_two_cases_plus_2_partner_sets": {
+    "fT_hat": {
+     "p2.5": 0.20352326273325522,
+     "p16": 0.33743909084629564,
+     "p50": 0.5597644001950743,
+     "p84": 0.8877921795791566,
+     "p97.5": 1.365601105899968
+    },
+    "g_hat": {
+     "p2.5": -0.9172930463849812,
+     "p16": -0.64998983472286,
+     "p50": 0.012093463836296076,
+     "p84": 1.4192957894892126,
+     "p97.5": 3.766538229907031
+    },
+    "bias_se_over_member_mean_error_sd": 0.5
+   },
+   "E1_look2_8x6_two_cases": {
+    "fT_hat": {
+     "p2.5": 0.20564336142525655,
+     "p16": 0.34475211717097437,
+     "p50": 0.5467360673109263,
+     "p84": 0.8551778280817082,
+     "p97.5": 1.2622398512254718
+    },
+    "g_hat": {
+     "p2.5": -0.7156949296635242,
+     "p16": -0.4106235802357068,
+     "p50": 0.11677772484794746,
+     "p84": 0.9397181538312271,
+     "p97.5": 2.049130429959138
+    },
+    "bias_se_over_member_mean_error_sd": 0.35355339059327373
+   },
+   "E1_look3_24x6_two_cases": {
+    "fT_hat": {
+     "p2.5": 0.28827549116755474,
+     "p16": 0.4081792916353608,
+     "p50": 0.5563082035512316,
+     "p84": 0.7418009392332822,
+     "p97.5": 0.9830730953974771
+    },
+    "g_hat": {
+     "p2.5": -0.41444266411518044,
+     "p16": -0.1601570860091851,
+     "p50": 0.18711884423494185,
+     "p84": 0.6081390533229761,
+     "p97.5": 1.1408269023062079
+    },
+    "bias_se_over_member_mean_error_sd": 0.20412414523193154
+   }
+  }
+ },
+ "designs": {
+  "saved_120x6_plus_60_single": {
+   "E": 120,
+   "singles": 60,
+   "units": 0,
+   "note": "already exists (S5 + S4F); study scale only"
+  },
+  "dispatch_192_24x6_plus_8_repeats": {
+   "E": 24,
+   "pairs": 8,
+   "units": 192,
+   "note": "24 six-member experiments + 8 repeated ensembles (same events and Poisson weights, new seeds)"
+  },
+  "E1_look1_4x6_two_cases_plus_2_partner_sets": {
+   "E": 4,
+   "pairs": 2,
+   "units": 60,
+   "note": "per case; two cases (dev tilt, D5 NuWro) on the same four draws; partners only on dev tilt"
+  },
+  "E1_look2_8x6_two_cases": {
+   "E": 8,
+   "pairs": 2,
+   "units": 108,
+   "note": "cumulative"
+  },
+  "E1_look3_24x6_two_cases": {
+   "E": 24,
+   "pairs": 4,
+   "units": 312,
+   "note": "cumulative; optional bias-estimation extension beyond E1"
+  }
+ },
+ "bias_decision_power": {
+  "tolerance_abs_bias_over_sd": 0.4627803856205076,
+  "alpha_one_sided_per_bin": 0.0008928571428571429,
+  "rows": [
+   {
+    "E": 4,
+    "true_abs_bias_over_sd": 0.0,
+    "P_inadequate": 0.00025,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 4,
+    "true_abs_bias_over_sd": 0.3,
+    "P_inadequate": 0.00075,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 4,
+    "true_abs_bias_over_sd": 1.0,
+    "P_inadequate": 0.00775,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 4,
+    "true_abs_bias_over_sd": 2.0,
+    "P_inadequate": 0.03825,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 4,
+    "true_abs_bias_over_sd": 3.0,
+    "P_inadequate": 0.12525,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 8,
+    "true_abs_bias_over_sd": 0.0,
+    "P_inadequate": 0.0,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 8,
+    "true_abs_bias_over_sd": 0.3,
+    "P_inadequate": 0.0005,
+    "P_adequate": 0.00025
+   },
+   {
+    "E": 8,
+    "true_abs_bias_over_sd": 1.0,
+    "P_inadequate": 0.02175,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 8,
+    "true_abs_bias_over_sd": 2.0,
+    "P_inadequate": 0.4145,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 8,
+    "true_abs_bias_over_sd": 3.0,
+    "P_inadequate": 0.929,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 12,
+    "true_abs_bias_over_sd": 0.0,
+    "P_inadequate": 0.0,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 12,
+    "true_abs_bias_over_sd": 0.3,
+    "P_inadequate": 0.0,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 12,
+    "true_abs_bias_over_sd": 1.0,
+    "P_inadequate": 0.0525,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 12,
+    "true_abs_bias_over_sd": 2.0,
+    "P_inadequate": 0.844,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 12,
+    "true_abs_bias_over_sd": 3.0,
+    "P_inadequate": 1.0,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 24,
+    "true_abs_bias_over_sd": 0.0,
+    "P_inadequate": 0.0,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 24,
+    "true_abs_bias_over_sd": 0.3,
+    "P_inadequate": 0.0,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 24,
+    "true_abs_bias_over_sd": 1.0,
+    "P_inadequate": 0.218,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 24,
+    "true_abs_bias_over_sd": 2.0,
+    "P_inadequate": 1.0,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 24,
+    "true_abs_bias_over_sd": 3.0,
+    "P_inadequate": 1.0,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 48,
+    "true_abs_bias_over_sd": 0.0,
+    "P_inadequate": 0.0,
+    "P_adequate": 0.07225
+   },
+   {
+    "E": 48,
+    "true_abs_bias_over_sd": 0.3,
+    "P_inadequate": 0.0,
+    "P_adequate": 0.00975
+   },
+   {
+    "E": 48,
+    "true_abs_bias_over_sd": 1.0,
+    "P_inadequate": 0.666,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 48,
+    "true_abs_bias_over_sd": 2.0,
+    "P_inadequate": 1.0,
+    "P_adequate": 0.0
+   },
+   {
+    "E": 48,
+    "true_abs_bias_over_sd": 3.0,
+    "P_inadequate": 1.0,
+    "P_adequate": 0.0
+   }
+  ]
+ },
+ "futility_rule_calibrated": [
+  {
+   "E": 2,
+   "k_crit": 2,
+   "size_at_boundary": 0.012395,
+   "power": {
+    "0.26": 0.3737,
+    "0.45": 0.08992,
+    "0.55": 0.03156,
+    "0.68": 0.00626
+   }
+  },
+  {
+   "E": 3,
+   "k_crit": 5,
+   "size_at_boundary": 0.012355,
+   "power": {
+    "0.26": 0.53622,
+    "0.45": 0.1289,
+    "0.55": 0.04104,
+    "0.68": 0.00588
+   }
+  },
+  {
+   "E": 4,
+   "k_crit": 8,
+   "size_at_boundary": 0.010735,
+   "power": {
+    "0.26": 0.65588,
+    "0.45": 0.15304,
+    "0.55": 0.04356,
+    "0.68": 0.004
+   }
+  },
+  {
+   "E": 8,
+   "k_crit": 22,
+   "size_at_boundary": 0.011145,
+   "power": {
+    "0.26": 0.9407,
+    "0.45": 0.32156,
+    "0.55": 0.07036,
+    "0.68": 0.00228
+   }
+  }
+ ],
+ "futility_rule": {
+  "statistic": "pooled 68 % hits of the frozen section-9 interval in the low-acceptance region, per case (dev tilt, D5 NuWro); critical count calibrated by simulation at p = 0.63 to one-sided 0.0125 per case and look (two cases x two looks, Bonferroni 0.05); see futility_rule_calibrated",
+  "no_go_if": "hits <= k_crit in either case",
+  "scope": "excludes every interval with the six-member-mean centre that is no wider than section 9 in each low-acceptance bin (all variance-only repairs); does NOT exclude a wider bias-allowance interval (S-II with Delta_bias), a different centre, or a new estimator",
+  "rows_wilson_rule_reference": "uncalibrated Wilson-bound version, kept for comparison",
+  "study_scale_value": 0.2571428571428571,
+  "deff_low_acceptance": 2.232277526395174,
+  "rows": [
+   {
+    "E": 2,
+    "true_coverage": 0.26,
+    "P_no_go": 0.38075
+   },
+   {
+    "E": 2,
+    "true_coverage": 0.45,
+    "P_no_go": 0.08325
+   },
+   {
+    "E": 2,
+    "true_coverage": 0.63,
+    "P_no_go": 0.0115
+   },
+   {
+    "E": 2,
+    "true_coverage": 0.68,
+    "P_no_go": 0.0055
+   },
+   {
+    "E": 3,
+    "true_coverage": 0.26,
+    "P_no_go": 0.5355
+   },
+   {
+    "E": 3,
+    "true_coverage": 0.45,
+    "P_no_go": 0.13475
+   },
+   {
+    "E": 3,
+    "true_coverage": 0.63,
+    "P_no_go": 0.0105
+   },
+   {
+    "E": 3,
+    "true_coverage": 0.68,
+    "P_no_go": 0.00425
+   },
+   {
+    "E": 4,
+    "true_coverage": 0.26,
+    "P_no_go": 0.74425
+   },
+   {
+    "E": 4,
+    "true_coverage": 0.45,
+    "P_no_go": 0.234
+   },
+   {
+    "E": 4,
+    "true_coverage": 0.63,
+    "P_no_go": 0.0205
+   },
+   {
+    "E": 4,
+    "true_coverage": 0.68,
+    "P_no_go": 0.00825
+   },
+   {
+    "E": 8,
+    "true_coverage": 0.26,
+    "P_no_go": 0.9605
+   },
+   {
+    "E": 8,
+    "true_coverage": 0.45,
+    "P_no_go": 0.38825
+   },
+   {
+    "E": 8,
+    "true_coverage": 0.63,
+    "P_no_go": 0.01625
+   },
+   {
+    "E": 8,
+    "true_coverage": 0.68,
+    "P_no_go": 0.00325
+   }
+  ]
+ },
+ "events": {
+  "rows_per_data_size_experiment_2M_prior": 11600000.0,
+  "disjoint_data_size_experiments_in_DEV": 3,
+  "never_drawn_rows_over_one_experiment": 0.3501497413793103,
+  "pseudodata_sampling_fraction_in_DEV": 0.21291710877462677,
+  "finite_population_variance_factor": 0.7870828912253732,
+  "rows_for_independent_validation": {
+   "24": 278400000.0,
+   "120": 1392000000.0,
+   "300": 3480000000.0,
+   "428": 4964800000.0,
+   "500": 5800000000.0,
+   "539": 6252400000.0,
+   "955": 11078000000.0
+  },
+  "inventory_multiples_for_independent_validation": {
+   "24": 5.663960518289008,
+   "120": 28.31980259144504,
+   "300": 70.7995064786126,
+   "428": 101.00729590948731,
+   "500": 117.99917746435433,
+   "539": 127.20311330657397,
+   "955": 225.37842895691676
+  }
+ },
+ "validation_replicates_per_case_used": 539,
+ "validation_replicates_per_case_used_joint": 955,
+ "costs": {
+  "dispatch_192_pilot": {
+   "study_scale": {
+    "units": 192,
+    "a100h_subtotal_incl_failures": 356.4288,
+    "a100h_total_with_reserve": 445.536,
+    "gpu_node_h": 111.384,
+    "gpu_days_at_study_throughput": 1.547,
+    "share_of_recorded_allocation": 0.0019843226679968646
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 192,
+     "a100h_subtotal_incl_failures": 745.9200000000001,
+     "a100h_total_with_reserve": 932.4000000000001,
+     "gpu_node_h": 233.10000000000002,
+     "gpu_days_at_study_throughput": 3.2375000000000003,
+     "share_of_recorded_allocation": 0.0041527114658305424
+    },
+    "value": {
+     "units": 192,
+     "a100h_subtotal_incl_failures": 1471.68,
+     "a100h_total_with_reserve": 1839.6,
+     "gpu_node_h": 459.9,
+     "gpu_days_at_study_throughput": 6.387499999999999,
+     "share_of_recorded_allocation": 0.008193187486638637
+    },
+    "high": {
+     "units": 192,
+     "a100h_subtotal_incl_failures": 2943.36,
+     "a100h_total_with_reserve": 3679.2,
+     "gpu_node_h": 919.8,
+     "gpu_days_at_study_throughput": 12.774999999999999,
+     "share_of_recorded_allocation": 0.016386374973277273
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 192,
+     "a100h_subtotal_incl_failures": 3024.0000000000005,
+     "a100h_total_with_reserve": 3780.0000000000005,
+     "gpu_node_h": 945.0000000000001,
+     "gpu_days_at_study_throughput": 13.125000000000002,
+     "share_of_recorded_allocation": 0.016835316753367066
+    },
+    "value": {
+     "units": 192,
+     "a100h_subtotal_incl_failures": 5846.400000000001,
+     "a100h_total_with_reserve": 7308.0,
+     "gpu_node_h": 1827.0,
+     "gpu_days_at_study_throughput": 25.375,
+     "share_of_recorded_allocation": 0.03254827905650966
+    },
+    "high": {
+     "units": 192,
+     "a100h_subtotal_incl_failures": 11692.800000000001,
+     "a100h_total_with_reserve": 14616.0,
+     "gpu_node_h": 3654.0,
+     "gpu_days_at_study_throughput": 50.75,
+     "share_of_recorded_allocation": 0.06509655811301931
+    }
+   }
+  },
+  "E1_look1": {
+   "study_scale": {
+    "units": 60,
+    "a100h_subtotal_incl_failures": 111.384,
+    "a100h_total_with_reserve": 139.23,
+    "gpu_node_h": 34.8075,
+    "gpu_days_at_study_throughput": 0.48343749999999996,
+    "share_of_recorded_allocation": 0.0006201008337490201
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 60,
+     "a100h_subtotal_incl_failures": 233.10000000000002,
+     "a100h_total_with_reserve": 291.375,
+     "gpu_node_h": 72.84375,
+     "gpu_days_at_study_throughput": 1.01171875,
+     "share_of_recorded_allocation": 0.0012977223330720444
+    },
+    "value": {
+     "units": 60,
+     "a100h_subtotal_incl_failures": 459.9,
+     "a100h_total_with_reserve": 574.8749999999999,
+     "gpu_node_h": 143.71874999999997,
+     "gpu_days_at_study_throughput": 1.9960937499999996,
+     "share_of_recorded_allocation": 0.0025603710895745735
+    },
+    "high": {
+     "units": 60,
+     "a100h_subtotal_incl_failures": 919.8,
+     "a100h_total_with_reserve": 1149.7499999999998,
+     "gpu_node_h": 287.43749999999994,
+     "gpu_days_at_study_throughput": 3.992187499999999,
+     "share_of_recorded_allocation": 0.005120742179149147
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 60,
+     "a100h_subtotal_incl_failures": 945.0,
+     "a100h_total_with_reserve": 1181.25,
+     "gpu_node_h": 295.3125,
+     "gpu_days_at_study_throughput": 4.1015625,
+     "share_of_recorded_allocation": 0.005261036485427207
+    },
+    "value": {
+     "units": 60,
+     "a100h_subtotal_incl_failures": 1827.0,
+     "a100h_total_with_reserve": 2283.75,
+     "gpu_node_h": 570.9375,
+     "gpu_days_at_study_throughput": 7.9296875,
+     "share_of_recorded_allocation": 0.010171337205159267
+    },
+    "high": {
+     "units": 60,
+     "a100h_subtotal_incl_failures": 3654.0,
+     "a100h_total_with_reserve": 4567.5,
+     "gpu_node_h": 1141.875,
+     "gpu_days_at_study_throughput": 15.859375,
+     "share_of_recorded_allocation": 0.020342674410318534
+    }
+   }
+  },
+  "E1_through_look2": {
+   "study_scale": {
+    "units": 108,
+    "a100h_subtotal_incl_failures": 200.49120000000002,
+    "a100h_total_with_reserve": 250.614,
+    "gpu_node_h": 62.6535,
+    "gpu_days_at_study_throughput": 0.8701875,
+    "share_of_recorded_allocation": 0.0011161815007482362
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 108,
+     "a100h_subtotal_incl_failures": 419.58000000000004,
+     "a100h_total_with_reserve": 524.475,
+     "gpu_node_h": 131.11875,
+     "gpu_days_at_study_throughput": 1.8210937500000002,
+     "share_of_recorded_allocation": 0.0023359001995296802
+    },
+    "value": {
+     "units": 108,
+     "a100h_subtotal_incl_failures": 827.82,
+     "a100h_total_with_reserve": 1034.775,
+     "gpu_node_h": 258.69375,
+     "gpu_days_at_study_throughput": 3.5929687500000003,
+     "share_of_recorded_allocation": 0.004608667961234234
+    },
+    "high": {
+     "units": 108,
+     "a100h_subtotal_incl_failures": 1655.64,
+     "a100h_total_with_reserve": 2069.55,
+     "gpu_node_h": 517.3875,
+     "gpu_days_at_study_throughput": 7.1859375000000005,
+     "share_of_recorded_allocation": 0.009217335922468468
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 108,
+     "a100h_subtotal_incl_failures": 1701.0,
+     "a100h_total_with_reserve": 2126.25,
+     "gpu_node_h": 531.5625,
+     "gpu_days_at_study_throughput": 7.3828125,
+     "share_of_recorded_allocation": 0.009469865673768974
+    },
+    "value": {
+     "units": 108,
+     "a100h_subtotal_incl_failures": 3288.6000000000004,
+     "a100h_total_with_reserve": 4110.75,
+     "gpu_node_h": 1027.6875,
+     "gpu_days_at_study_throughput": 14.2734375,
+     "share_of_recorded_allocation": 0.01830840696928668
+    },
+    "high": {
+     "units": 108,
+     "a100h_subtotal_incl_failures": 6577.200000000001,
+     "a100h_total_with_reserve": 8221.5,
+     "gpu_node_h": 2055.375,
+     "gpu_days_at_study_throughput": 28.546875,
+     "share_of_recorded_allocation": 0.03661681393857336
+    }
+   }
+  },
+  "E1_through_look3": {
+   "study_scale": {
+    "units": 312,
+    "a100h_subtotal_incl_failures": 579.1968,
+    "a100h_total_with_reserve": 723.996,
+    "gpu_node_h": 180.999,
+    "gpu_days_at_study_throughput": 2.513875,
+    "share_of_recorded_allocation": 0.0032245243354949047
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 312,
+     "a100h_subtotal_incl_failures": 1212.1200000000001,
+     "a100h_total_with_reserve": 1515.15,
+     "gpu_node_h": 378.7875,
+     "gpu_days_at_study_throughput": 5.260937500000001,
+     "share_of_recorded_allocation": 0.006748156131974632
+    },
+    "value": {
+     "units": 312,
+     "a100h_subtotal_incl_failures": 2391.48,
+     "a100h_total_with_reserve": 2989.35,
+     "gpu_node_h": 747.3375,
+     "gpu_days_at_study_throughput": 10.3796875,
+     "share_of_recorded_allocation": 0.013313929665787785
+    },
+    "high": {
+     "units": 312,
+     "a100h_subtotal_incl_failures": 4782.96,
+     "a100h_total_with_reserve": 5978.7,
+     "gpu_node_h": 1494.675,
+     "gpu_days_at_study_throughput": 20.759375,
+     "share_of_recorded_allocation": 0.02662785933157557
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 312,
+     "a100h_subtotal_incl_failures": 4914.0,
+     "a100h_total_with_reserve": 6142.5,
+     "gpu_node_h": 1535.625,
+     "gpu_days_at_study_throughput": 21.328125,
+     "share_of_recorded_allocation": 0.027357389724221477
+    },
+    "value": {
+     "units": 312,
+     "a100h_subtotal_incl_failures": 9500.400000000001,
+     "a100h_total_with_reserve": 11875.500000000002,
+     "gpu_node_h": 2968.8750000000005,
+     "gpu_days_at_study_throughput": 41.23437500000001,
+     "share_of_recorded_allocation": 0.0528909534668282
+    },
+    "high": {
+     "units": 312,
+     "a100h_subtotal_incl_failures": 19000.800000000003,
+     "a100h_total_with_reserve": 23751.000000000004,
+     "gpu_node_h": 5937.750000000001,
+     "gpu_days_at_study_throughput": 82.46875000000001,
+     "share_of_recorded_allocation": 0.1057819069336564
+    }
+   }
+  },
+  "strategyA_whole_bootstrap_per_experiment_O50": {
+   "study_scale": {
+    "units": 306,
+    "a100h_subtotal_incl_failures": 568.0584,
+    "a100h_total_with_reserve": 710.073,
+    "gpu_node_h": 177.51825,
+    "gpu_days_at_study_throughput": 2.4655312499999997,
+    "share_of_recorded_allocation": 0.0031625142521200028
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 306,
+     "a100h_subtotal_incl_failures": 1188.8100000000002,
+     "a100h_total_with_reserve": 1486.0125,
+     "gpu_node_h": 371.503125,
+     "gpu_days_at_study_throughput": 5.159765625,
+     "share_of_recorded_allocation": 0.006618383898667427
+    },
+    "value": {
+     "units": 306,
+     "a100h_subtotal_incl_failures": 2345.4900000000002,
+     "a100h_total_with_reserve": 2931.8625,
+     "gpu_node_h": 732.965625,
+     "gpu_days_at_study_throughput": 10.180078125000001,
+     "share_of_recorded_allocation": 0.01305789255683033
+    },
+    "high": {
+     "units": 306,
+     "a100h_subtotal_incl_failures": 4690.9800000000005,
+     "a100h_total_with_reserve": 5863.725,
+     "gpu_node_h": 1465.93125,
+     "gpu_days_at_study_throughput": 20.360156250000003,
+     "share_of_recorded_allocation": 0.02611578511366066
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 306,
+     "a100h_subtotal_incl_failures": 4819.5,
+     "a100h_total_with_reserve": 6024.375,
+     "gpu_node_h": 1506.09375,
+     "gpu_days_at_study_throughput": 20.91796875,
+     "share_of_recorded_allocation": 0.026831286075678758
+    },
+    "value": {
+     "units": 306,
+     "a100h_subtotal_incl_failures": 9317.7,
+     "a100h_total_with_reserve": 11647.125,
+     "gpu_node_h": 2911.78125,
+     "gpu_days_at_study_throughput": 40.44140625,
+     "share_of_recorded_allocation": 0.051873819746312264
+    },
+    "high": {
+     "units": 306,
+     "a100h_subtotal_incl_failures": 18635.4,
+     "a100h_total_with_reserve": 23294.25,
+     "gpu_node_h": 5823.5625,
+     "gpu_days_at_study_throughput": 80.8828125,
+     "share_of_recorded_allocation": 0.10374763949262453
+    }
+   }
+  },
+  "strategyA_whole_bootstrap_per_experiment_O200": {
+   "study_scale": {
+    "units": 1206,
+    "a100h_subtotal_incl_failures": 2238.8184,
+    "a100h_total_with_reserve": 2798.523,
+    "gpu_node_h": 699.63075,
+    "gpu_days_at_study_throughput": 9.71709375,
+    "share_of_recorded_allocation": 0.012464026758355305
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 1206,
+     "a100h_subtotal_incl_failures": 4685.31,
+     "a100h_total_with_reserve": 5856.6375,
+     "gpu_node_h": 1464.159375,
+     "gpu_days_at_study_throughput": 20.335546875,
+     "share_of_recorded_allocation": 0.026084218894748094
+    },
+    "value": {
+     "units": 1206,
+     "a100h_subtotal_incl_failures": 9243.99,
+     "a100h_total_with_reserve": 11554.9875,
+     "gpu_node_h": 2888.746875,
+     "gpu_days_at_study_throughput": 40.121484374999994,
+     "share_of_recorded_allocation": 0.05146345890044894
+    },
+    "high": {
+     "units": 1206,
+     "a100h_subtotal_incl_failures": 18487.98,
+     "a100h_total_with_reserve": 23109.975,
+     "gpu_node_h": 5777.49375,
+     "gpu_days_at_study_throughput": 80.24296874999999,
+     "share_of_recorded_allocation": 0.10292691780089788
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 1206,
+     "a100h_subtotal_incl_failures": 18994.5,
+     "a100h_total_with_reserve": 23743.125,
+     "gpu_node_h": 5935.78125,
+     "gpu_days_at_study_throughput": 82.44140625,
+     "share_of_recorded_allocation": 0.10574683335708687
+    },
+    "value": {
+     "units": 1206,
+     "a100h_subtotal_incl_failures": 36722.7,
+     "a100h_total_with_reserve": 45903.37499999999,
+     "gpu_node_h": 11475.843749999998,
+     "gpu_days_at_study_throughput": 159.38671874999997,
+     "share_of_recorded_allocation": 0.20444387782370124
+    },
+    "high": {
+     "units": 1206,
+     "a100h_subtotal_incl_failures": 73445.4,
+     "a100h_total_with_reserve": 91806.74999999999,
+     "gpu_node_h": 22951.687499999996,
+     "gpu_days_at_study_throughput": 318.77343749999994,
+     "share_of_recorded_allocation": 0.4088877556474025
+    }
+   }
+  },
+  "strategyA_validation_120_experiments_O50": {
+   "study_scale": {
+    "units": 36720,
+    "a100h_subtotal_incl_failures": 68167.008,
+    "a100h_total_with_reserve": 85208.76,
+    "gpu_node_h": 21302.19,
+    "gpu_days_at_study_throughput": 295.86375,
+    "share_of_recorded_allocation": 0.3795017102544003
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 36720,
+     "a100h_subtotal_incl_failures": 142657.2,
+     "a100h_total_with_reserve": 178321.5,
+     "gpu_node_h": 44580.375,
+     "gpu_days_at_study_throughput": 619.171875,
+     "share_of_recorded_allocation": 0.7942060678400912
+    },
+    "value": {
+     "units": 36720,
+     "a100h_subtotal_incl_failures": 281458.8,
+     "a100h_total_with_reserve": 351823.49999999994,
+     "gpu_node_h": 87955.87499999999,
+     "gpu_days_at_study_throughput": 1221.6093749999998,
+     "share_of_recorded_allocation": 1.5669471068196392
+    },
+    "high": {
+     "units": 36720,
+     "a100h_subtotal_incl_failures": 562917.6,
+     "a100h_total_with_reserve": 703646.9999999999,
+     "gpu_node_h": 175911.74999999997,
+     "gpu_days_at_study_throughput": 2443.2187499999995,
+     "share_of_recorded_allocation": 3.1338942136392784
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 36720,
+     "a100h_subtotal_incl_failures": 578340.0,
+     "a100h_total_with_reserve": 722925.0,
+     "gpu_node_h": 180731.25,
+     "gpu_days_at_study_throughput": 2510.15625,
+     "share_of_recorded_allocation": 3.219754329081451
+    },
+    "value": {
+     "units": 36720,
+     "a100h_subtotal_incl_failures": 1118124.0,
+     "a100h_total_with_reserve": 1397655.0,
+     "gpu_node_h": 349413.75,
+     "gpu_days_at_study_throughput": 4852.96875,
+     "share_of_recorded_allocation": 6.224858369557472
+    },
+    "high": {
+     "units": 36720,
+     "a100h_subtotal_incl_failures": 2236248.0,
+     "a100h_total_with_reserve": 2795310.0,
+     "gpu_node_h": 698827.5,
+     "gpu_days_at_study_throughput": 9705.9375,
+     "share_of_recorded_allocation": 12.449716739114944
+    }
+   }
+  },
+  "strategyB_calibration_60x6_three_cases": {
+   "study_scale": {
+    "units": 1080,
+    "a100h_subtotal_incl_failures": 2004.912,
+    "a100h_total_with_reserve": 2506.14,
+    "gpu_node_h": 626.535,
+    "gpu_days_at_study_throughput": 8.701875,
+    "share_of_recorded_allocation": 0.011161815007482362
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 1080,
+     "a100h_subtotal_incl_failures": 4195.8,
+     "a100h_total_with_reserve": 5244.75,
+     "gpu_node_h": 1311.1875,
+     "gpu_days_at_study_throughput": 18.2109375,
+     "share_of_recorded_allocation": 0.0233590019952968
+    },
+    "value": {
+     "units": 1080,
+     "a100h_subtotal_incl_failures": 8278.199999999999,
+     "a100h_total_with_reserve": 10347.749999999998,
+     "gpu_node_h": 2586.9374999999995,
+     "gpu_days_at_study_throughput": 35.92968749999999,
+     "share_of_recorded_allocation": 0.04608667961234233
+    },
+    "high": {
+     "units": 1080,
+     "a100h_subtotal_incl_failures": 16556.399999999998,
+     "a100h_total_with_reserve": 20695.499999999996,
+     "gpu_node_h": 5173.874999999999,
+     "gpu_days_at_study_throughput": 71.85937499999999,
+     "share_of_recorded_allocation": 0.09217335922468466
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 1080,
+     "a100h_subtotal_incl_failures": 17010.0,
+     "a100h_total_with_reserve": 21262.5,
+     "gpu_node_h": 5315.625,
+     "gpu_days_at_study_throughput": 73.828125,
+     "share_of_recorded_allocation": 0.09469865673768973
+    },
+    "value": {
+     "units": 1080,
+     "a100h_subtotal_incl_failures": 32886.0,
+     "a100h_total_with_reserve": 41107.5,
+     "gpu_node_h": 10276.875,
+     "gpu_days_at_study_throughput": 142.734375,
+     "share_of_recorded_allocation": 0.1830840696928668
+    },
+    "high": {
+     "units": 1080,
+     "a100h_subtotal_incl_failures": 65772.0,
+     "a100h_total_with_reserve": 82215.0,
+     "gpu_node_h": 20553.75,
+     "gpu_days_at_study_throughput": 285.46875,
+     "share_of_recorded_allocation": 0.3661681393857336
+    }
+   }
+  },
+  "strategyB_final_validation_four_cases": {
+   "study_scale": {
+    "units": 12936,
+    "a100h_subtotal_incl_failures": 24014.390400000004,
+    "a100h_total_with_reserve": 30017.988000000005,
+    "gpu_node_h": 7504.497000000001,
+    "gpu_days_at_study_throughput": 104.22912500000001,
+    "share_of_recorded_allocation": 0.13369373975628876
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 12936,
+     "a100h_subtotal_incl_failures": 50256.36000000001,
+     "a100h_total_with_reserve": 62820.450000000004,
+     "gpu_node_h": 15705.112500000001,
+     "gpu_days_at_study_throughput": 218.1265625,
+     "share_of_recorded_allocation": 0.2797889350103328
+    },
+    "value": {
+     "units": 12936,
+     "a100h_subtotal_incl_failures": 99154.44,
+     "a100h_total_with_reserve": 123943.05,
+     "gpu_node_h": 30985.7625,
+     "gpu_days_at_study_throughput": 430.3578125,
+     "share_of_recorded_allocation": 0.5520160069122783
+    },
+    "high": {
+     "units": 12936,
+     "a100h_subtotal_incl_failures": 198308.88,
+     "a100h_total_with_reserve": 247886.1,
+     "gpu_node_h": 61971.525,
+     "gpu_days_at_study_throughput": 860.715625,
+     "share_of_recorded_allocation": 1.1040320138245565
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 12936,
+     "a100h_subtotal_incl_failures": 203742.00000000003,
+     "a100h_total_with_reserve": 254677.50000000003,
+     "gpu_node_h": 63669.37500000001,
+     "gpu_days_at_study_throughput": 884.2968750000001,
+     "share_of_recorded_allocation": 1.134279466258106
+    },
+    "value": {
+     "units": 12936,
+     "a100h_subtotal_incl_failures": 393901.2,
+     "a100h_total_with_reserve": 492376.5,
+     "gpu_node_h": 123094.125,
+     "gpu_days_at_study_throughput": 1709.640625,
+     "share_of_recorded_allocation": 2.192940301432338
+    },
+    "high": {
+     "units": 12936,
+     "a100h_subtotal_incl_failures": 787802.4,
+     "a100h_total_with_reserve": 984753.0,
+     "gpu_node_h": 246188.25,
+     "gpu_days_at_study_throughput": 3419.28125,
+     "share_of_recorded_allocation": 4.385880602864676
+    }
+   }
+  },
+  "strategyB_final_validation_four_cases_joint": {
+   "study_scale": {
+    "units": 22920,
+    "a100h_subtotal_incl_failures": 42548.688,
+    "a100h_total_with_reserve": 53185.86,
+    "gpu_node_h": 13296.465,
+    "gpu_days_at_study_throughput": 184.673125,
+    "share_of_recorded_allocation": 0.2368785184921257
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 22920,
+     "a100h_subtotal_incl_failures": 89044.2,
+     "a100h_total_with_reserve": 111305.24999999999,
+     "gpu_node_h": 27826.312499999996,
+     "gpu_days_at_study_throughput": 386.47656249999994,
+     "share_of_recorded_allocation": 0.49572993123352094
+    },
+    "value": {
+     "units": 22920,
+     "a100h_subtotal_incl_failures": 175681.8,
+     "a100h_total_with_reserve": 219602.24999999997,
+     "gpu_node_h": 54900.56249999999,
+     "gpu_days_at_study_throughput": 762.5078124999999,
+     "share_of_recorded_allocation": 0.9780617562174873
+    },
+    "high": {
+     "units": 22920,
+     "a100h_subtotal_incl_failures": 351363.6,
+     "a100h_total_with_reserve": 439204.49999999994,
+     "gpu_node_h": 109801.12499999999,
+     "gpu_days_at_study_throughput": 1525.0156249999998,
+     "share_of_recorded_allocation": 1.9561235124349745
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 22920,
+     "a100h_subtotal_incl_failures": 360990.0,
+     "a100h_total_with_reserve": 451237.5,
+     "gpu_node_h": 112809.375,
+     "gpu_days_at_study_throughput": 1566.796875,
+     "share_of_recorded_allocation": 2.009715937433193
+    },
+    "value": {
+     "units": 22920,
+     "a100h_subtotal_incl_failures": 697914.0,
+     "a100h_total_with_reserve": 872392.5,
+     "gpu_node_h": 218098.125,
+     "gpu_days_at_study_throughput": 3029.140625,
+     "share_of_recorded_allocation": 3.88545081237084
+    },
+    "high": {
+     "units": 22920,
+     "a100h_subtotal_incl_failures": 1395828.0,
+     "a100h_total_with_reserve": 1744785.0,
+     "gpu_node_h": 436196.25,
+     "gpu_days_at_study_throughput": 6058.28125,
+     "share_of_recorded_allocation": 7.77090162474168
+    }
+   }
+  },
+  "strategyI_benchmark_2_experiments": {
+   "study_scale": {
+    "units": 612,
+    "a100h_subtotal_incl_failures": 1136.1168,
+    "a100h_total_with_reserve": 1420.146,
+    "gpu_node_h": 355.0365,
+    "gpu_days_at_study_throughput": 4.9310624999999995,
+    "share_of_recorded_allocation": 0.0063250285042400056
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 612,
+     "a100h_subtotal_incl_failures": 2377.6200000000003,
+     "a100h_total_with_reserve": 2972.025,
+     "gpu_node_h": 743.00625,
+     "gpu_days_at_study_throughput": 10.31953125,
+     "share_of_recorded_allocation": 0.013236767797334854
+    },
+    "value": {
+     "units": 612,
+     "a100h_subtotal_incl_failures": 4690.9800000000005,
+     "a100h_total_with_reserve": 5863.725,
+     "gpu_node_h": 1465.93125,
+     "gpu_days_at_study_throughput": 20.360156250000003,
+     "share_of_recorded_allocation": 0.02611578511366066
+    },
+    "high": {
+     "units": 612,
+     "a100h_subtotal_incl_failures": 9381.960000000001,
+     "a100h_total_with_reserve": 11727.45,
+     "gpu_node_h": 2931.8625,
+     "gpu_days_at_study_throughput": 40.720312500000006,
+     "share_of_recorded_allocation": 0.05223157022732132
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 612,
+     "a100h_subtotal_incl_failures": 9639.0,
+     "a100h_total_with_reserve": 12048.75,
+     "gpu_node_h": 3012.1875,
+     "gpu_days_at_study_throughput": 41.8359375,
+     "share_of_recorded_allocation": 0.053662572151357515
+    },
+    "value": {
+     "units": 612,
+     "a100h_subtotal_incl_failures": 18635.4,
+     "a100h_total_with_reserve": 23294.25,
+     "gpu_node_h": 5823.5625,
+     "gpu_days_at_study_throughput": 80.8828125,
+     "share_of_recorded_allocation": 0.10374763949262453
+    },
+    "high": {
+     "units": 612,
+     "a100h_subtotal_incl_failures": 37270.8,
+     "a100h_total_with_reserve": 46588.5,
+     "gpu_node_h": 11647.125,
+     "gpu_days_at_study_throughput": 161.765625,
+     "share_of_recorded_allocation": 0.20749527898524905
+    }
+   }
+  },
+  "strategyI_benchmark_4_experiments": {
+   "study_scale": {
+    "units": 1224,
+    "a100h_subtotal_incl_failures": 2272.2336,
+    "a100h_total_with_reserve": 2840.292,
+    "gpu_node_h": 710.073,
+    "gpu_days_at_study_throughput": 9.862124999999999,
+    "share_of_recorded_allocation": 0.012650057008480011
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 1224,
+     "a100h_subtotal_incl_failures": 4755.240000000001,
+     "a100h_total_with_reserve": 5944.05,
+     "gpu_node_h": 1486.0125,
+     "gpu_days_at_study_throughput": 20.6390625,
+     "share_of_recorded_allocation": 0.02647353559466971
+    },
+    "value": {
+     "units": 1224,
+     "a100h_subtotal_incl_failures": 9381.960000000001,
+     "a100h_total_with_reserve": 11727.45,
+     "gpu_node_h": 2931.8625,
+     "gpu_days_at_study_throughput": 40.720312500000006,
+     "share_of_recorded_allocation": 0.05223157022732132
+    },
+    "high": {
+     "units": 1224,
+     "a100h_subtotal_incl_failures": 18763.920000000002,
+     "a100h_total_with_reserve": 23454.9,
+     "gpu_node_h": 5863.725,
+     "gpu_days_at_study_throughput": 81.44062500000001,
+     "share_of_recorded_allocation": 0.10446314045464264
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 1224,
+     "a100h_subtotal_incl_failures": 19278.0,
+     "a100h_total_with_reserve": 24097.5,
+     "gpu_node_h": 6024.375,
+     "gpu_days_at_study_throughput": 83.671875,
+     "share_of_recorded_allocation": 0.10732514430271503
+    },
+    "value": {
+     "units": 1224,
+     "a100h_subtotal_incl_failures": 37270.8,
+     "a100h_total_with_reserve": 46588.5,
+     "gpu_node_h": 11647.125,
+     "gpu_days_at_study_throughput": 161.765625,
+     "share_of_recorded_allocation": 0.20749527898524905
+    },
+    "high": {
+     "units": 1224,
+     "a100h_subtotal_incl_failures": 74541.6,
+     "a100h_total_with_reserve": 93177.0,
+     "gpu_node_h": 23294.25,
+     "gpu_days_at_study_throughput": 323.53125,
+     "share_of_recorded_allocation": 0.4149905579704981
+    }
+   }
+  },
+  "study_scale_partner_only_crossing_8x6": {
+   "study_scale": {
+    "units": 48,
+    "a100h_subtotal_incl_failures": 89.1072,
+    "a100h_total_with_reserve": 111.384,
+    "gpu_node_h": 27.846,
+    "gpu_days_at_study_throughput": 0.38675,
+    "share_of_recorded_allocation": 0.0004960806669992161
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 48,
+     "a100h_subtotal_incl_failures": 186.48000000000002,
+     "a100h_total_with_reserve": 233.10000000000002,
+     "gpu_node_h": 58.275000000000006,
+     "gpu_days_at_study_throughput": 0.8093750000000001,
+     "share_of_recorded_allocation": 0.0010381778664576356
+    },
+    "value": {
+     "units": 48,
+     "a100h_subtotal_incl_failures": 367.92,
+     "a100h_total_with_reserve": 459.9,
+     "gpu_node_h": 114.975,
+     "gpu_days_at_study_throughput": 1.5968749999999998,
+     "share_of_recorded_allocation": 0.002048296871659659
+    },
+    "high": {
+     "units": 48,
+     "a100h_subtotal_incl_failures": 735.84,
+     "a100h_total_with_reserve": 919.8,
+     "gpu_node_h": 229.95,
+     "gpu_days_at_study_throughput": 3.1937499999999996,
+     "share_of_recorded_allocation": 0.004096593743319318
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 48,
+     "a100h_subtotal_incl_failures": 756.0000000000001,
+     "a100h_total_with_reserve": 945.0000000000001,
+     "gpu_node_h": 236.25000000000003,
+     "gpu_days_at_study_throughput": 3.2812500000000004,
+     "share_of_recorded_allocation": 0.0042088291883417665
+    },
+    "value": {
+     "units": 48,
+     "a100h_subtotal_incl_failures": 1461.6000000000001,
+     "a100h_total_with_reserve": 1827.0,
+     "gpu_node_h": 456.75,
+     "gpu_days_at_study_throughput": 6.34375,
+     "share_of_recorded_allocation": 0.008137069764127414
+    },
+    "high": {
+     "units": 48,
+     "a100h_subtotal_incl_failures": 2923.2000000000003,
+     "a100h_total_with_reserve": 3654.0,
+     "gpu_node_h": 913.5,
+     "gpu_days_at_study_throughput": 12.6875,
+     "share_of_recorded_allocation": 0.01627413952825483
+    }
+   }
+  },
+  "physical_systematics_R3_low": {
+   "study_scale": {
+    "units": 121.0,
+    "a100h_subtotal_incl_failures": 224.6244,
+    "a100h_total_with_reserve": 280.7805,
+    "gpu_node_h": 70.195125,
+    "gpu_days_at_study_throughput": 0.9749322916666667,
+    "share_of_recorded_allocation": 0.0012505366813938574
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 121.0,
+     "a100h_subtotal_incl_failures": 470.08500000000004,
+     "a100h_total_with_reserve": 587.60625,
+     "gpu_node_h": 146.9015625,
+     "gpu_days_at_study_throughput": 2.040299479166667,
+     "share_of_recorded_allocation": 0.0026170733716952897
+    },
+    "value": {
+     "units": 121.0,
+     "a100h_subtotal_incl_failures": 927.465,
+     "a100h_total_with_reserve": 1159.33125,
+     "gpu_node_h": 289.8328125,
+     "gpu_days_at_study_throughput": 4.025455729166667,
+     "share_of_recorded_allocation": 0.005163415030642058
+    },
+    "high": {
+     "units": 121.0,
+     "a100h_subtotal_incl_failures": 1854.93,
+     "a100h_total_with_reserve": 2318.6625,
+     "gpu_node_h": 579.665625,
+     "gpu_days_at_study_throughput": 8.050911458333333,
+     "share_of_recorded_allocation": 0.010326830061284115
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 121.0,
+     "a100h_subtotal_incl_failures": 1905.7500000000002,
+     "a100h_total_with_reserve": 2382.1875,
+     "gpu_node_h": 595.546875,
+     "gpu_days_at_study_throughput": 8.271484375,
+     "share_of_recorded_allocation": 0.0106097569122782
+    },
+    "value": {
+     "units": 121.0,
+     "a100h_subtotal_incl_failures": 3684.4500000000003,
+     "a100h_total_with_reserve": 4605.5625,
+     "gpu_node_h": 1151.390625,
+     "gpu_days_at_study_throughput": 15.991536458333334,
+     "share_of_recorded_allocation": 0.02051219669707119
+    },
+    "high": {
+     "units": 121.0,
+     "a100h_subtotal_incl_failures": 7368.900000000001,
+     "a100h_total_with_reserve": 9211.125,
+     "gpu_node_h": 2302.78125,
+     "gpu_days_at_study_throughput": 31.983072916666668,
+     "share_of_recorded_allocation": 0.04102439339414238
+    }
+   }
+  },
+  "physical_systematics_R3_high": {
+   "study_scale": {
+    "units": 308.0,
+    "a100h_subtotal_incl_failures": 571.7712,
+    "a100h_total_with_reserve": 714.7139999999999,
+    "gpu_node_h": 178.67849999999999,
+    "gpu_days_at_study_throughput": 2.4816458333333333,
+    "share_of_recorded_allocation": 0.0031831842799116368
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 308.0,
+     "a100h_subtotal_incl_failures": 1196.5800000000002,
+     "a100h_total_with_reserve": 1495.7250000000001,
+     "gpu_node_h": 373.93125000000003,
+     "gpu_days_at_study_throughput": 5.193489583333334,
+     "share_of_recorded_allocation": 0.006661641309769829
+    },
+    "value": {
+     "units": 308.0,
+     "a100h_subtotal_incl_failures": 2360.82,
+     "a100h_total_with_reserve": 2951.025,
+     "gpu_node_h": 737.75625,
+     "gpu_days_at_study_throughput": 10.246614583333333,
+     "share_of_recorded_allocation": 0.013143238259816148
+    },
+    "high": {
+     "units": 308.0,
+     "a100h_subtotal_incl_failures": 4721.64,
+     "a100h_total_with_reserve": 5902.05,
+     "gpu_node_h": 1475.5125,
+     "gpu_days_at_study_throughput": 20.493229166666666,
+     "share_of_recorded_allocation": 0.026286476519632295
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 308.0,
+     "a100h_subtotal_incl_failures": 4851.000000000001,
+     "a100h_total_with_reserve": 6063.750000000001,
+     "gpu_node_h": 1515.9375000000002,
+     "gpu_days_at_study_throughput": 21.054687500000004,
+     "share_of_recorded_allocation": 0.027006653958526333
+    },
+    "value": {
+     "units": 308.0,
+     "a100h_subtotal_incl_failures": 9378.6,
+     "a100h_total_with_reserve": 11723.25,
+     "gpu_node_h": 2930.8125,
+     "gpu_days_at_study_throughput": 40.705729166666664,
+     "share_of_recorded_allocation": 0.05221286431981757
+    },
+    "high": {
+     "units": 308.0,
+     "a100h_subtotal_incl_failures": 18757.2,
+     "a100h_total_with_reserve": 23446.5,
+     "gpu_node_h": 5861.625,
+     "gpu_days_at_study_throughput": 81.41145833333333,
+     "share_of_recorded_allocation": 0.10442572863963515
+    }
+   }
+  },
+  "full_procedure_strategyB_low": {
+   "study_scale": {
+    "units": 14857.0,
+    "a100h_subtotal_incl_failures": 27580.5348,
+    "a100h_total_with_reserve": 34475.6685,
+    "gpu_node_h": 8618.917125,
+    "gpu_days_at_study_throughput": 119.70718229166667,
+    "share_of_recorded_allocation": 0.15354730145015322
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 14857.0,
+     "a100h_subtotal_incl_failures": 57719.44500000001,
+     "a100h_total_with_reserve": 72149.30625000001,
+     "gpu_node_h": 18037.326562500002,
+     "gpu_days_at_study_throughput": 250.5184244791667,
+     "share_of_recorded_allocation": 0.3213376783741895
+    },
+    "value": {
+     "units": 14857.0,
+     "a100h_subtotal_incl_failures": 113878.905,
+     "a100h_total_with_reserve": 142348.63124999998,
+     "gpu_node_h": 35587.157812499994,
+     "gpu_days_at_study_throughput": 494.26608072916656,
+     "share_of_recorded_allocation": 0.6339905546301574
+    },
+    "high": {
+     "units": 14857.0,
+     "a100h_subtotal_incl_failures": 227757.81,
+     "a100h_total_with_reserve": 284697.26249999995,
+     "gpu_node_h": 71174.31562499999,
+     "gpu_days_at_study_throughput": 988.5321614583331,
+     "share_of_recorded_allocation": 1.2679811092603148
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 14857.0,
+     "a100h_subtotal_incl_failures": 233997.75,
+     "a100h_total_with_reserve": 292497.1875,
+     "gpu_node_h": 73124.296875,
+     "gpu_days_at_study_throughput": 1015.615234375,
+     "share_of_recorded_allocation": 1.3027203177332003
+    },
+    "value": {
+     "units": 14857.0,
+     "a100h_subtotal_incl_failures": 452395.65,
+     "a100h_total_with_reserve": 565494.5625,
+     "gpu_node_h": 141373.640625,
+     "gpu_days_at_study_throughput": 1963.5227864583333,
+     "share_of_recorded_allocation": 2.5185926142841875
+    },
+    "high": {
+     "units": 14857.0,
+     "a100h_subtotal_incl_failures": 904791.3,
+     "a100h_total_with_reserve": 1130989.125,
+     "gpu_node_h": 282747.28125,
+     "gpu_days_at_study_throughput": 3927.0455729166665,
+     "share_of_recorded_allocation": 5.037185228568375
+    }
+   }
+  },
+  "full_procedure_strategyB_high": {
+   "study_scale": {
+    "units": 15656.0,
+    "a100h_subtotal_incl_failures": 29063.7984,
+    "a100h_total_with_reserve": 36329.748,
+    "gpu_node_h": 9082.437,
+    "gpu_days_at_study_throughput": 126.14495833333334,
+    "share_of_recorded_allocation": 0.16180497755291098
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 15656.0,
+     "a100h_subtotal_incl_failures": 60823.56,
+     "a100h_total_with_reserve": 76029.45,
+     "gpu_node_h": 19007.3625,
+     "gpu_days_at_study_throughput": 263.99114583333335,
+     "share_of_recorded_allocation": 0.33861901410959877
+    },
+    "value": {
+     "units": 15656.0,
+     "a100h_subtotal_incl_failures": 120003.23999999999,
+     "a100h_total_with_reserve": 150004.05,
+     "gpu_node_h": 37501.0125,
+     "gpu_days_at_study_throughput": 520.8473958333333,
+     "share_of_recorded_allocation": 0.6680861629729922
+    },
+    "high": {
+     "units": 15656.0,
+     "a100h_subtotal_incl_failures": 240006.47999999998,
+     "a100h_total_with_reserve": 300008.1,
+     "gpu_node_h": 75002.025,
+     "gpu_days_at_study_throughput": 1041.6947916666666,
+     "share_of_recorded_allocation": 1.3361723259459843
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 15656.0,
+     "a100h_subtotal_incl_failures": 246582.0,
+     "a100h_total_with_reserve": 308227.5,
+     "gpu_node_h": 77056.875,
+     "gpu_days_at_study_throughput": 1070.234375,
+     "share_of_recorded_allocation": 1.372779786930806
+    },
+    "value": {
+     "units": 15656.0,
+     "a100h_subtotal_incl_failures": 476725.19999999995,
+     "a100h_total_with_reserve": 595906.4999999999,
+     "gpu_node_h": 148976.62499999997,
+     "gpu_days_at_study_throughput": 2069.119791666666,
+     "share_of_recorded_allocation": 2.6540409213995577
+    },
+    "high": {
+     "units": 15656.0,
+     "a100h_subtotal_incl_failures": 953450.3999999999,
+     "a100h_total_with_reserve": 1191812.9999999998,
+     "gpu_node_h": 297953.24999999994,
+     "gpu_days_at_study_throughput": 4138.239583333332,
+     "share_of_recorded_allocation": 5.308081842799115
+    }
+   }
+  },
+  "full_procedure_strategyB_joint_low": {
+   "study_scale": {
+    "units": 24841.0,
+    "a100h_subtotal_incl_failures": 46114.83240000001,
+    "a100h_total_with_reserve": 57643.5405,
+    "gpu_node_h": 14410.885125,
+    "gpu_days_at_study_throughput": 200.1511822916667,
+    "share_of_recorded_allocation": 0.2567320801859902
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 24841.0,
+     "a100h_subtotal_incl_failures": 96507.28500000002,
+     "a100h_total_with_reserve": 120634.10625000001,
+     "gpu_node_h": 30158.526562500003,
+     "gpu_days_at_study_throughput": 418.8684244791667,
+     "share_of_recorded_allocation": 0.5372786745973777
+    },
+    "value": {
+     "units": 24841.0,
+     "a100h_subtotal_incl_failures": 190406.265,
+     "a100h_total_with_reserve": 238007.83125000002,
+     "gpu_node_h": 59501.957812500004,
+     "gpu_days_at_study_throughput": 826.4160807291668,
+     "share_of_recorded_allocation": 1.0600363039353666
+    },
+    "high": {
+     "units": 24841.0,
+     "a100h_subtotal_incl_failures": 380812.53,
+     "a100h_total_with_reserve": 476015.66250000003,
+     "gpu_node_h": 119003.91562500001,
+     "gpu_days_at_study_throughput": 1652.8321614583335,
+     "share_of_recorded_allocation": 2.1200726078707333
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 24841.0,
+     "a100h_subtotal_incl_failures": 391245.75000000006,
+     "a100h_total_with_reserve": 489057.18750000006,
+     "gpu_node_h": 122264.29687500001,
+     "gpu_days_at_study_throughput": 1698.1152343750002,
+     "share_of_recorded_allocation": 2.178156788908288
+    },
+    "value": {
+     "units": 24841.0,
+     "a100h_subtotal_incl_failures": 756408.4500000001,
+     "a100h_total_with_reserve": 945510.5625,
+     "gpu_node_h": 236377.640625,
+     "gpu_days_at_study_throughput": 3283.0227864583335,
+     "share_of_recorded_allocation": 4.21110312522269
+    },
+    "high": {
+     "units": 24841.0,
+     "a100h_subtotal_incl_failures": 1512816.9000000001,
+     "a100h_total_with_reserve": 1891021.125,
+     "gpu_node_h": 472755.28125,
+     "gpu_days_at_study_throughput": 6566.045572916667,
+     "share_of_recorded_allocation": 8.42220625044538
+    }
+   }
+  },
+  "full_procedure_strategyB_joint_high": {
+   "study_scale": {
+    "units": 25640.0,
+    "a100h_subtotal_incl_failures": 47598.096,
+    "a100h_total_with_reserve": 59497.619999999995,
+    "gpu_node_h": 14874.404999999999,
+    "gpu_days_at_study_throughput": 206.58895833333332,
+    "share_of_recorded_allocation": 0.26498975628874794
+   },
+   "data_2M_forecast": {
+    "low": {
+     "units": 25640.0,
+     "a100h_subtotal_incl_failures": 99611.40000000001,
+     "a100h_total_with_reserve": 124514.25,
+     "gpu_node_h": 31128.5625,
+     "gpu_days_at_study_throughput": 432.3411458333333,
+     "share_of_recorded_allocation": 0.554560010332787
+    },
+    "value": {
+     "units": 25640.0,
+     "a100h_subtotal_incl_failures": 196530.6,
+     "a100h_total_with_reserve": 245663.25,
+     "gpu_node_h": 61415.8125,
+     "gpu_days_at_study_throughput": 852.9973958333334,
+     "share_of_recorded_allocation": 1.0941319122782014
+    },
+    "high": {
+     "units": 25640.0,
+     "a100h_subtotal_incl_failures": 393061.2,
+     "a100h_total_with_reserve": 491326.5,
+     "gpu_node_h": 122831.625,
+     "gpu_days_at_study_throughput": 1705.9947916666667,
+     "share_of_recorded_allocation": 2.188263824556403
+    }
+   },
+   "data_10M_forecast": {
+    "low": {
+     "units": 25640.0,
+     "a100h_subtotal_incl_failures": 403830.0,
+     "a100h_total_with_reserve": 504787.5,
+     "gpu_node_h": 126196.875,
+     "gpu_days_at_study_throughput": 1752.734375,
+     "share_of_recorded_allocation": 2.2482162581058933
+    },
+    "value": {
+     "units": 25640.0,
+     "a100h_subtotal_incl_failures": 780738.0,
+     "a100h_total_with_reserve": 975922.5,
+     "gpu_node_h": 243980.625,
+     "gpu_days_at_study_throughput": 3388.6197916666665,
+     "share_of_recorded_allocation": 4.34655143233806
+    },
+    "high": {
+     "units": 25640.0,
+     "a100h_subtotal_incl_failures": 1561476.0,
+     "a100h_total_with_reserve": 1951845.0,
+     "gpu_node_h": 487961.25,
+     "gpu_days_at_study_throughput": 6777.239583333333,
+     "share_of_recorded_allocation": 8.69310286467612
+    }
+   }
+  }
+ },
+ "speedup_sensitivity": {
+  "accelerated_fraction_f": 0.9807692307692307,
+  "label": "f = training share of one unfolding (measured at study scale); speed-ups are hypothetical (no Session-4 result pushed)",
+  "rows": [
+   {
+    "s": 2,
+    "amdahl_end_to_end": 1.9622641509433965,
+    "full_procedure_strategyB_low_data_2M_a100h": 72543.05246394228,
+    "E1_look1_data_2M_a100h": 292.9651442307691
+   },
+   {
+    "s": 5,
+    "amdahl_end_to_end": 4.642857142857142,
+    "full_procedure_strategyB_low_data_2M_a100h": 30659.70519230769,
+    "E1_look1_data_2M_a100h": 123.81923076923076
+   },
+   {
+    "s": 10,
+    "amdahl_end_to_end": 8.524590163934423,
+    "full_procedure_strategyB_low_data_2M_a100h": 16698.589435096157,
+    "E1_look1_data_2M_a100h": 67.43725961538462
+   },
+   {
+    "s": 100,
+    "amdahl_end_to_end": 34.43708609271518,
+    "full_procedure_strategyB_low_data_2M_a100h": 4133.5852536057755,
+    "E1_look1_data_2M_a100h": 16.6934855769231
+   }
+  ]
+ }
+}
