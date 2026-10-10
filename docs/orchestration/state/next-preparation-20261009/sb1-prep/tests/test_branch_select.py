@@ -164,6 +164,8 @@ class Equality(unittest.TestCase):
                     self.assertEqual(ref["digests"], got["digests"])
                     self.assertEqual(ref["digests"], also["digests"])
                     self.assertGreater(max(ref["sizes"].values()), 0)
+                    if tree in ("data", "mc_background"):          # the histogram it fills
+                        self.assertIn("histogram", got["digests"])
                     self.assertTrue(got["verified_before_first_read"])
                     self.assertLess(len(got["branches"]), got["n_branches_in_tree"])
                     n += 1
