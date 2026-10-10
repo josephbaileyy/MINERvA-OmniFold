@@ -96,6 +96,7 @@ owner. Registration grants no compute, experiment, adoption or claim-scope autho
 |---|---|
 | 2D methodology and XR owner | `state/next-preparation-20261009/two-d-followup/REPORT.md` |
 | SB1 execution owner (runs only under a committed `AUTHORIZATION-` record naming the package pin) | `state/next-preparation-20261009/sb1-run/REPORT.md` |
+| SB1 execution authorization — **AUTHORIZED 2026-10-10** by Joseph: the six-job package once, ≤ 2.0 charged CPU node-h, zero GPU, no retries; names package commit `d4335d3b` and manifest `f060df81…` in full | [`AUTHORIZATION-20261010-sb1.md`](AUTHORIZATION-20261010-sb1.md) |
 
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
