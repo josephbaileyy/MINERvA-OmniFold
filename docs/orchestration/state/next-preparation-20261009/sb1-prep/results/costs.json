@@ -40,9 +40,9 @@
    "billing_cpus": 64,
    "ceiling_node_h": 0.1875,
    "cpus_per_task": 64,
-   "expected_elapsed_s": 1677.5,
-   "expected_node_h": 0.11649068020533607,
-   "expected_source": "signal tree 112.1 GB x 10.33 s/GB + 100 s (parallel with truth and background), + 3 x 120 s selective, + 60 s controls: an estimate",
+   "expected_elapsed_s": 1797.5,
+   "expected_node_h": 0.1248240135386694,
+   "expected_source": "signal tree 112.1 GB x 10.33 s/GB + 100 s (four parallel processes; signal is the longest), + 4 x 120 s selective, + 60 s controls: an estimate",
    "id": "J1",
    "qos": "shared",
    "time_limit_s": 2700
@@ -73,36 +73,11 @@
  "peak_memory_per_job": {
   "C": "59410433_1: 16,296,360 KiB = 16.7 GB; allocation 127.8 GB",
   "H0/H1": "< 1 GB",
-  "J1": "estimate ~70 GB for three parallel all-branch loader processes (0.26-0.31 x bytes read, speed \u00a74, plus Python lists); allocation 121,920 MiB = 127.8 GB",
+  "J1": "estimate ~70 GB for four parallel all-branch loader processes (0.26-0.31 x bytes read, speed \u00a74, plus Python lists; data and background add < 1 GB); allocation 121,920 MiB = 127.8 GB",
   "SL": "success bound 30 GB; local evidence only",
   "UL": "64.5-186.6 GB observed on 374 universe tasks (55677843_166: 69,191,672 KiB = 70.85 GB); full node 487,802 MiB"
  },
- "retry_admissibility": {
-  "C": {
-   "admissible_from_ceiling_slack_alone": true,
-   "ceiling_node_h": 0.16666666666666666
-  },
-  "H0": {
-   "admissible_from_ceiling_slack_alone": true,
-   "ceiling_node_h": 0.005859375
-  },
-  "H1": {
-   "admissible_from_ceiling_slack_alone": true,
-   "ceiling_node_h": 0.005859375
-  },
-  "J1": {
-   "admissible_from_ceiling_slack_alone": true,
-   "ceiling_node_h": 0.1875
-  },
-  "SL": {
-   "admissible_from_ceiling_slack_alone": false,
-   "ceiling_node_h": 0.5
-  },
-  "UL": {
-   "admissible_from_ceiling_slack_alone": false,
-   "ceiling_node_h": 0.8333333333333334
-  }
- },
+ "retries": "none under an admission (launch-spec retry_rule): the charge cannot exceed the sum of the six ceilings, and the slack is not spent",
  "schema": "sb1-costs/1",
  "selected_bytes": {
   "CV (CV file)": {
@@ -242,8 +217,9 @@
   }
  },
  "simultaneous": "jobs are serialized by afterok/afterany, so peak simultaneous memory across SB1 is one job's",
+ "sl_timeout": "an SL TIMEOUT ends SB1 INCONCLUSIVE (afterok cancels J1 and C, so S1 is incomplete); it is not retried under the admission",
  "total_ceiling_node_h": 1.6992187500000002,
- "total_expected_node_h": 1.1780412438486039,
+ "total_expected_node_h": 1.1863745771819372,
  "universe_file_reads_by_sb1_gb": {
   "H0": 171.117087867,
   "H1": 171.117087867,
@@ -251,9 +227,5 @@
   "J1_selective": 2.145486968,
   "SL": 2.180613134,
   "UL": 171.117087867
- },
- "worst_case_sl_reaches_its_limit": {
-  "note": "SL at its 1,800 s limit means elapsed >= 0.69 x UL's reference: the elapsed criterion (<= 0.5 x UL) has failed, so SL needs no retry for a verdict",
-  "sl_limit_over_ul_reference": 0.6878104700038211
  }
 }

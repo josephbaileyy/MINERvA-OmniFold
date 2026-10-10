@@ -19,22 +19,22 @@
   "nd-unfolding/mnv_guarded_run.py": "30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b"
  },
  "launch": {
-  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/launch-spec.json": "a69121631e08b1b5b0f7b59ee5af423a986ca003b8f7a13bffb3706ff93082fc",
-  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_cv.sbatch": "6dcf8695df625df90b293b0bc0dc877e8ab897b1a0e5e026d2fe81379c156df6",
-  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_hash.sbatch": "cc859944372545791bced8ab3be3034ee5aa300de5503d4b52ff971f429166ed",
-  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_identity.sbatch": "7ecd3fae42692005cf6939c3115e8a498190e0fdeeb023f562fe93240c269697",
-  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_submit.sh": "3343568b54228cfb3325f33286ce5ef3017a6e78a9c46dfb48aabf7bff4b9796",
-  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_unfold.sbatch": "6e28fa99c074df3ad245bfaa230a54e4e80e002000da0f9bc82a84bbab0ada9c",
-  "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_admit.py": "e82b8405dc0e85d035b21865e60b7dc30317f08bcd00a608e948f0bfcb5c0c88",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/launch-spec.json": "fb9a1947ab944d0f1cf41f1630732ad73cd84132a94dc6e4800b27d28cd730c6",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_cv.sbatch": "e22e79ebe2019d4e97d35ab3f73122d67095b4b1ef4c3f85435e4907fff13af3",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_hash.sbatch": "4f18559114ecc79cbc0a2f89800c55000df89b7dc789dae838233e9c34caffc4",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_identity.sbatch": "d1b38936f4c5915491a1ec76c52a3a28d460e96e59f1fa6b25d121962798f34d",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_submit.sh": "9b15d7707fbbd8992886be1b064fdf8da11cc5a60a976c873a40a12bf91ae20c",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_unfold.sbatch": "f4439dff6ddc2a380e7f840cbd078ef6c81f660ef5f2d6ec971ffdbd55fb9fef",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_admit.py": "6135d1b3a0fa0cea0f6a53aba6fb39db5679783775f43b89cd78f3a6d368e98e",
   "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_hash.py": "2101f73d82c11d5d1c2209547b0971783a9a5a3a8067747e33b040a56288b510",
-  "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_verify.py": "fbd829262a027a720cae6e6febb168c110965f99f7aaf609e1acd51e0cd2e6c2"
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_verify.py": "79789761d711f530a59ec061a13fccc190022866ce85865fa3c0aeee95ece8a5"
  },
  "modules": {
   "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
   "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
   "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
   "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py": "ce001cb96a416fa208bdbc0f2e3467521dcddfb198c22d7f9b3a222b51afb60d",
-  "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py": "d7d8699c0675d35e9c03e3e3a718b6f8a1b47e5d3925e996c4b143d8fbd69103",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py": "17a4a5f6bb6583b7c784eb9940cc2c353f1c310e486705c4fca7bd9b94bea7eb",
   "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
  },
  "note": "contents only; the admission record names the commit (sb1_admit.py)",

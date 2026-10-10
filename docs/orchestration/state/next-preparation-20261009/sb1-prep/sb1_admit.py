@@ -20,8 +20,12 @@ at the start of every job. Both refuse (exit 3) unless:
   ``docs/orchestration/`` by a repository-relative, normalized, non-symlinked path, with that
   record's sha256 (the rule of ``n2/harness.py`` ``check_admission`` lines 94-109, R2/F4 of the
   integration, restated here because it is inline in an N2-specific function);
-* ``checkout`` is this repository, HEAD is ``code.commit``, tracked files are unmodified, and
-  ``code.package_commit`` is an ancestor of HEAD;
+* ``checkout`` is this repository, HEAD is ``code.commit``, tracked files are unmodified,
+  ``code.package_commit`` is an ancestor of HEAD, and nothing under this package, the executed
+  modules or the guard differs between ``code.package_commit`` and HEAD (so the bytes that run are
+  the bytes that were reviewed, not whatever a later commit regenerated the manifest for);
+* the authorization record's text names ``code.package_commit`` and the sha256 of
+  ``manifest/expected-code.json`` in full;
 * every file of ``manifest/expected-code.json`` (the executed modules, the guard and its shim,
   the launch scripts) has the stated sha256 at HEAD, and ``code.modules`` equals the manifest's;
 * ``launch_spec_sha256`` is ``launch/launch-spec.json``'s, and every job's ceiling equals
@@ -121,11 +125,21 @@ def check(adm_path):
         raise AdmissionError(f"admitted commit {adm['code'].get('commit')} is not HEAD {head}")
     if git("status", "--porcelain", "--untracked-files=no").strip():
         raise AdmissionError("tracked files differ from HEAD")
+    pkg = adm["code"]["package_commit"]
     try:
-        git("merge-base", "--is-ancestor", adm["code"]["package_commit"], head)
+        git("merge-base", "--is-ancestor", pkg, head)
     except subprocess.CalledProcessError:
         raise AdmissionError("the package commit is not an ancestor of HEAD") from None
     manifest = json.loads((HERE / "manifest" / "expected-code.json").read_text())
+    bound = sorted({PKG_REL, *manifest["modules"], *manifest["guard"]})
+    changed = git("diff", "--name-only", pkg, head, "--", *bound).split()
+    if changed:
+        raise AdmissionError(f"files bound to the package changed after {pkg[:12]}: {changed}")
+    manifest_sha = sha_file(HERE / "manifest" / "expected-code.json")
+    auth_text = auth.read_text()
+    if pkg not in auth_text or manifest_sha not in auth_text:
+        raise AdmissionError("the authorization record does not name the package commit and the "
+                             "manifest's sha256 in full")
     for rel, want in {**manifest["modules"], **manifest["guard"], **manifest["launch"]}.items():
         if blob_sha256_at_head(rel) != want or sha_file(REPO / rel) != want:
             raise AdmissionError(f"{rel} is not the manifest's {want[:12]}")

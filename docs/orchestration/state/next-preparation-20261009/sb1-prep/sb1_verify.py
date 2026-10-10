@@ -3,7 +3,7 @@
 
     sb1_verify.py verdict --outroot DIR --admission ADM --sacct SACCT.psv [--reference-product F]
                           [--cv-reference-product F] [--out VERDICT.json]
-    sb1_verify.py ledger  --admission ADM --sacct SACCT.psv [--retry JOB]
+    sb1_verify.py ledger  --admission ADM --sacct SACCT.psv
 
 ``SACCT.psv`` is ``sacct -P --units=K -j <every SB1 job id> -o JobID,JobName,State,ElapsedRaw,
 MaxRSS,MaxDiskRead,AllocTRES,ExitCode`` (``launch/sb1_hash.sbatch`` writes it). The verifier
@@ -166,7 +166,11 @@ def compare_loaders(a, b):
     for tree in sorted(set(ra) | set(rb)):
         x, y = ra.get(tree), rb.get(tree)
         if x is None or y is None:
-            diffs.append(f"{tree}: present in one arm only")
+            # only two complete receipts make an absent tree a difference; a killed or refused run
+            # (running, error, driver-exit, input-mismatch) is missing evidence, not a byte difference
+            whole = a.get("status") == "complete" and b.get("status") == "complete"
+            diffs.append(f"{tree}: present in one arm only" if whole else
+                         f"{tree}: missing (an arm stopped early)")
             continue
         if x["digests"] != y["digests"]:
             diffs.append(f"{tree}: digests differ in "
@@ -277,6 +281,10 @@ def verdict(a):
         problems = check_receipt(r, adm, h0)
         if problems:
             prov[key] = problems
+    setups = {(r or {}).get("environment", {}).get("sb1_env_setup_sha256")
+              for r in list(rec.values()) + list(controls.values()) if r}
+    if len(setups) != 1 or None in setups:
+        prov["env_setup"] = [f"environment setup digests {sorted(map(str, setups))}"]
     for k, r in controls.items():
         problems = check_receipt(r, adm, h0, want_status="selection-refused")
         if problems:
@@ -299,8 +307,8 @@ def verdict(a):
                   arm_checks(rec["C_all"], "all") + arm_checks(rec["C_sel"], "selective") +
                   sum((arm_checks(rec[f"J1_all_{t}"], "all") + arm_checks(rec[f"J1_sel_{t}"], "selective")
                        for t in ("data", "mc_background", "mc_signal_reco", "mc_truth_denom")), []))
+    differs = [k for k, d in s1.items() if any("missing" not in x for x in d)]
     missing = [k for k, d in s1.items() if any("missing" in x for x in d)]
-    differs = [k for k, d in s1.items() if d and k not in missing]
     v.set("S1", "FAIL" if differs else ("INCONCLUSIVE" if missing else "PASS"), detail=s1)
 
     # NC: activation controls refused before any loader returned
@@ -383,6 +391,7 @@ def verdict(a):
 
 
 def ledger(a):
+    """Charged node-h (sacct billing x ElapsedRaw) plus the ceilings of jobs not yet finished."""
     adm = json.loads(Path(a.admission).read_text())
     rows = read_sacct(a.sacct)
     sub = load(Path(adm["outroot"]) / "submission.json") or {}
@@ -397,13 +406,10 @@ def ledger(a):
         else:
             pending += job["ceiling_node_h"]
             lines.append(f"{job['id']} not finished: ceiling {job['ceiling_node_h']:.4f}")
-    retry = 0.0
-    if a.retry:
-        retry = next(j["ceiling_node_h"] for j in adm["jobs"] if j["id"] == a.retry)
-    total = spent + pending + retry
+    total = spent + pending
     print("\n".join(lines))
-    print(f"charged {spent:.4f} + unfinished ceilings {pending:.4f} + retry {retry:.4f} = "
-          f"{total:.4f} of {adm['ceiling_node_h']} node-h")
+    print(f"charged {spent:.4f} + unfinished ceilings {pending:.4f} = {total:.4f} of "
+          f"{adm['ceiling_node_h']} node-h (no retries under an admission)")
     return 0 if total <= adm["ceiling_node_h"] else 6
 
 
@@ -421,7 +427,6 @@ def main(argv=None):
     q = sp.add_parser("ledger")
     q.add_argument("--admission", required=True)
     q.add_argument("--sacct", required=True)
-    q.add_argument("--retry")
     a = ap.parse_args(argv)
     return verdict(a) if a.cmd == "verdict" else ledger(a)
 

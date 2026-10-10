@@ -14,7 +14,7 @@ set -eo pipefail
 source "${SB1_RUN_ENV:?submit with sb1_submit.sh}"
 D="${SB1_OUT}/C"
 mkdir "${D}"
-source "${SB1_ENV_SETUP}"
+sb1_source_env
 export PYTHONUNBUFFERED=1
 cd "${D}"
 echo "[sb1] C job=${SLURM_JOB_ID:-} node=$(hostname) start $(date -u +%FT%TZ)"

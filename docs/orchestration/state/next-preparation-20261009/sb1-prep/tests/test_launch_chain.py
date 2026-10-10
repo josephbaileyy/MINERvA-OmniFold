@@ -93,13 +93,18 @@ class Chain(unittest.TestCase):
                           "mcfile": str(cls.mc)}
         spec["unmatched_references"].update(UL_SL="", C="")
         spec_path.write_text(json.dumps(spec, indent=1) + "\n")
-        (root / AUTH).parent.mkdir(parents=True, exist_ok=True)
-        (root / AUTH).write_text("# FIXTURE authorization for the launch-chain test only\n")
         subprocess.run([sys.executable, root / PKG_REL / "make_manifest.py"], check=True,
                        capture_output=True)
         git(root, "init", "-q")
         git(root, "add", "-A")
-        git(root, "commit", "-q", "-m", "fixture")
+        git(root, "commit", "-q", "-m", "fixture package")
+        cls.pkg_commit = git(root, "rev-parse", "HEAD")
+        manifest_sha = sha(root / PKG_REL / "manifest" / "expected-code.json")
+        (root / AUTH).parent.mkdir(parents=True, exist_ok=True)
+        (root / AUTH).write_text("# FIXTURE authorization for the launch-chain test only\n"
+                                 f"package commit {cls.pkg_commit}\nmanifest sha256 {manifest_sha}\n")
+        git(root, "add", "-A")
+        git(root, "commit", "-q", "-m", "fixture authorization")
         return root
 
     @classmethod
@@ -110,7 +115,7 @@ class Chain(unittest.TestCase):
         adm = {"schema": "sb1-admission/1", "status": "ADMITTED",
                "decision": "FIXTURE: run the fixed SB1 package under its cap",
                "authorization": {"path": AUTH, "sha256": sha(root / AUTH)},
-               "checkout": str(root), "code": {"commit": head, "package_commit": head,
+               "checkout": str(root), "code": {"commit": head, "package_commit": cls.pkg_commit,
                                                "modules": manifest["modules"]},
                "launch_spec_sha256": sha(root / PKG_REL / "launch" / "launch-spec.json"),
                "inputs_observed": {str(p): stat(p) for p in (cls.uni, cls.cv, cls.mc)},
@@ -250,17 +255,18 @@ class Chain(unittest.TestCase):
         self.assertEqual(v["criteria"]["P"]["verdict"], "FAIL")
         self.assertIn("guard_inventories", v["criteria"]["P"]["problems"])
 
-    def test_the_ledger_adds_charges_and_a_retry(self):
+    def test_the_ledger_adds_charges_and_unfinished_ceilings(self):
         r = subprocess.run([sys.executable, self.root / PKG_REL / "sb1_verify.py", "ledger",
                             "--admission", self.out / "admission.json",
-                            "--sacct", self.out / "H1" / "sacct.psv", "--retry", "UL"],
+                            "--sacct", self.out / "H1" / "sacct.psv"],
                            capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         last = r.stdout.strip().splitlines()[-1]
         st = json.loads((self.tmp / "chain.json").read_text())
         el = {j["opts"]["job-name"]: j["elapsed"] for j in st["jobs"].values()}
         # H1 is still running when its own sacct is taken, so it counts at its ceiling
         want = (2600 + 900) / 3600 + 64 / 256 * (el["sb1_J1"] + el["sb1_C"]) / 3600 \
-            + 64 / 256 * el["sb1_H0"] / 3600 + CEILINGS["H1"] + CEILINGS["UL"]
+            + 64 / 256 * el["sb1_H0"] / 3600 + CEILINGS["H1"]
         got = float(last.split("=")[1].split()[0])
         self.assertAlmostEqual(got, want, places=3, msg=r.stdout)
 
@@ -298,6 +304,141 @@ class Chain(unittest.TestCase):
                             adm["code"]["package_commit"], "--out", self.tmp / "again.json"],
                            capture_output=True, text=True)
         self.assertEqual(r.returncode, 3, "an admitted record is not a proposal")
+
+    def admit(self, adm, root=None):
+        root = root or self.root
+        r = subprocess.run([sys.executable, root / PKG_REL / "sb1_admit.py", "check",
+                            "--admission", adm], capture_output=True, text=True)
+        return r.returncode, r.stderr
+
+    def test_the_good_admission_holds(self):
+        self.assertEqual(self.admit(self.admission(self.tmp / "out-good"))[0], 0)
+
+    def test_each_admission_guard_refuses(self):
+        cases = {
+            "checkout": dict(checkout=str(self.tmp)),
+            "ancestry": dict(code={**json.loads(self.adm.read_text())["code"],
+                                   "package_commit": "0" * 40}),
+            "spec": dict(launch_spec_sha256="0" * 64),
+            "ceilings": dict(jobs=[{"id": k, "ceiling_node_h": v * (1.1 if k == "UL" else 1)}
+                                   for k, v in CEILINGS.items()]),
+            "input-stat": dict(inputs_observed={
+                p: {**st, "mtime_ns": st["mtime_ns"] + 1}
+                for p, st in json.loads(self.adm.read_text())["inputs_observed"].items()}),
+            "commit": dict(code={**json.loads(self.adm.read_text())["code"], "commit": "1" * 40}),
+        }
+        why = {"checkout": "admitted checkout", "ancestry": "not an ancestor",
+               "spec": "launch spec differs", "ceilings": "job ceilings",
+               "input-stat": "no longer has", "commit": "is not HEAD"}
+        for name, over in cases.items():
+            with self.subTest(guard=name):
+                rc, err = self.admit(self.admission(self.tmp / f"out-{name}", **over))
+                self.assertEqual(rc, 3, err)
+                self.assertIn(why[name], err)           # refused by this guard, not a later one
+
+    def clone(self, name):
+        dst = self.tmp / name
+        subprocess.run(["git", "clone", "-q", str(self.root), str(dst)], check=True)
+        return dst
+
+    def admission_for(self, root, name, pkg_commit):
+        adm = json.loads(self.admission(self.tmp / f"out-{name}").read_text())
+        adm["checkout"] = str(root)
+        adm["code"].update(commit=git(root, "rev-parse", "HEAD"), package_commit=pkg_commit)
+        adm["authorization"]["sha256"] = sha(root / AUTH)
+        path = self.tmp / f"admission-{name}-clone.json"
+        path.write_text(json.dumps(adm))
+        return path
+
+    def test_a_dirty_tree_is_refused(self):
+        root = self.clone("dirty-clone")
+        with open(root / PKG_REL / "sb1_hash.py", "a") as fh:
+            fh.write("# dirty\n")
+        rc, err = self.admit(self.admission_for(root, "dirty", self.pkg_commit), root)
+        self.assertEqual(rc, 3)
+        self.assertIn("tracked files differ", err)
+
+    def test_a_package_changed_after_its_commit_is_refused(self):
+        # review c0 finding 1: change the package, regenerate the manifest, commit on top
+        root = self.clone("changed-clone")
+        with open(root / PKG_REL / "branch_select.py", "a") as fh:
+            fh.write("# later edit\n")
+        subprocess.run([sys.executable, root / PKG_REL / "make_manifest.py"], check=True,
+                       capture_output=True)
+        git(root, "commit", "-qam", "later edit")
+        rc, err = self.admit(self.admission_for(root, "changed", self.pkg_commit), root)
+        self.assertEqual(rc, 3)
+        self.assertIn("changed after", err)
+
+    def test_an_authorization_that_does_not_name_the_package_is_refused(self):
+        root = self.clone("auth-clone")
+        (root / AUTH).write_text("# FIXTURE authorization naming nothing\n")
+        git(root, "commit", "-qam", "vague authorization")
+        rc, err = self.admit(self.admission_for(root, "vague", self.pkg_commit), root)
+        self.assertEqual(rc, 3)
+        self.assertIn("does not name the package commit", err)
+
+    def test_an_unadmitted_executed_module_is_not_a_pass(self):
+        def edit(rec):
+            rec["identity"]["executed"].append({"relpath": "elsewhere.py", "sha256": "3" * 64})
+        v = self.verdict(*self.mutated("extra-mod", receipt_edit={"UL/receipt.json": edit}))
+        self.assertEqual(v["criteria"]["P"]["verdict"], "FAIL")
+
+    def test_a_receipt_input_stat_unlike_h0_is_not_a_pass(self):
+        def edit(rec):
+            k = next(iter(rec["inputs_end"]))
+            rec["inputs_end"][k]["ino"] += 1
+        v = self.verdict(*self.mutated("rstat", receipt_edit={"C/receipt.json": edit}))
+        self.assertEqual(v["criteria"]["P"]["verdict"], "FAIL")
+
+    def test_a_control_that_returned_a_loader_fails_nc(self):
+        def edit(rec):
+            rec["loaders"] = [{"tree": "mc_signal_reco"}]
+        v = self.verdict(*self.mutated("nc", receipt_edit={"J1/control_omit.json": edit}))
+        self.assertEqual((v["criteria"]["NC"]["verdict"], v["overall"]), ("FAIL", "FAIL"))
+
+    def test_a_killed_selective_arm_is_inconclusive_not_fail(self):
+        # review c0 finding 3: a node failure mid-loaders is missing evidence, not a difference
+        def edit(rec):
+            rec["status"], rec["loaders"] = "running", rec["loaders"][:2]
+        v = self.verdict(*self.mutated("killed", receipt_edit={"SL/receipt.json": edit}))
+        self.assertEqual((v["criteria"]["S1"]["verdict"], v["overall"]),
+                         ("INCONCLUSIVE", "INCONCLUSIVE"))
+
+    def test_a_real_difference_still_fails_when_later_trees_are_missing(self):
+        def edit(rec):
+            rec["status"], rec["loaders"] = "input-mismatch", rec["loaders"][:3]
+            rec["loaders"][2]["digests"]["w_reco"] = "4" * 64
+        v = self.verdict(*self.mutated("mismatch", receipt_edit={"SL/receipt.json": edit}))
+        self.assertEqual((v["criteria"]["S1"]["verdict"], v["overall"]), ("FAIL", "FAIL"))
+
+    def test_receipts_from_different_environments_are_not_a_pass(self):
+        def edit(rec):
+            rec["environment"]["sb1_env_setup_sha256"] = "5" * 64
+        v = self.verdict(*self.mutated("envsha", receipt_edit={"SL/receipt.json": edit}))
+        self.assertEqual(v["criteria"]["P"]["verdict"], "FAIL")
+        self.assertIn("env_setup", v["criteria"]["P"]["problems"])
+
+    def test_an_environment_changed_after_submission_stops_the_chain(self):
+        env_sh = self.tmp / "env.sh"
+        before = env_sh.read_text()
+        adm = self.admission(self.tmp / "out-envchange")
+        env = self.env("envchange", GOOD)
+        sub = subprocess.run(["bash", self.root / PKG_REL / "launch" / "sb1_submit.sh", adm],
+                             env=env, capture_output=True, text=True)
+        self.assertEqual(sub.returncode, 0, sub.stderr[-2000:])
+        try:
+            env_sh.write_text(before + "# changed after submission\n")
+            subprocess.run([sys.executable, HERE / "fake_slurm.py", "drain"], env=env, check=True)
+        finally:
+            env_sh.write_text(before)
+        st = json.loads((self.tmp / "envchange.json").read_text())
+        states = {j["opts"]["job-name"]: j["state"] for j in st["jobs"].values()}
+        self.assertEqual(states["sb1_H0"], "FAILED")
+        self.assertEqual({states[k] for k in ("sb1_UL", "sb1_SL", "sb1_J1", "sb1_C")},
+                         {"CANCELLED"})
+        err = next((self.tmp / "out-envchange").glob("sb1_H0_*.err")).read_text()
+        self.assertIn("changed since submission", err)
 
     def test_hostile_authorization_paths_are_refused(self):
         for bad in ("/abs/docs/orchestration/AUTHORIZATION-x.md",

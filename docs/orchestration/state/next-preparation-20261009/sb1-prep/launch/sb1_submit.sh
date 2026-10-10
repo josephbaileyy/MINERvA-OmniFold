@@ -21,7 +21,7 @@ mkdir "${OUT}"
 cp "${ADM}" "${OUT}/admission.json"
 "${PY}" - "${CODE}/${PKG}/launch/launch-spec.json" "${OUT}" "${CODE}" "${PKG}" "${SB1_ENV_SETUP}" \
   "${PY}" > "${OUT}/run.env" <<'PYEOF'
-import json, shlex, sys
+import hashlib, json, shlex, sys
 spec, out, code, pkg, setup, py = sys.argv[1:7]
 s = json.load(open(spec))
 env = {"SB1_CODE": code, "SB1_PKG": pkg, "SB1_OUT": out, "SB1_ADMISSION": f"{out}/admission.json",
@@ -29,14 +29,30 @@ env = {"SB1_CODE": code, "SB1_PKG": pkg, "SB1_OUT": out, "SB1_ADMISSION": f"{out
        "SB1_CV": s["inputs"]["omnifile_cv"], "SB1_MC": s["inputs"]["mcfile"],
        "SB1_LATERAL": s["universes"]["lateral"], "SB1_VERTICAL": s["universes"]["vertical"],
        "SB1_REF_UL": s["unmatched_references"]["UL_SL"], "SB1_REF_C": s["unmatched_references"]["C"]}
+env["SB1_ENV_SETUP_SHA256"] = hashlib.sha256(open(setup, "rb").read()).hexdigest()
 for k, v in env.items():
-    print(f"{k}={shlex.quote(v)}")
+    print(f"export {k}={shlex.quote(v)}")
+# Every job sources the environment setup through this function: refuse if it changed after
+# submission, so the two arms cannot run under different environments unrecorded.
+print("""sb1_source_env() {
+  local h
+  h="$( (sha256sum "${SB1_ENV_SETUP}" 2>/dev/null || shasum -a 256 "${SB1_ENV_SETUP}") | cut -d' ' -f1)"
+  if [[ "${h}" != "${SB1_ENV_SETUP_SHA256}" ]]; then
+    echo "[sb1] REFUSED: ${SB1_ENV_SETUP} changed since submission" >&2
+    return 3
+  fi
+  source "${SB1_ENV_SETUP}"
+}""")
 PYEOF
 L="${CODE}/${PKG}/launch"
 E="ALL,SB1_RUN_ENV=${OUT}/run.env"
 S=("${SBATCH}" --parsable --kill-on-invalid-dep=yes --chdir="${OUT}"
    --output="${OUT}/%x_%j.out" --error="${OUT}/%x_%j.err")
-trap 'echo "[sb1] submission stopped; submitted so far: H0=${H0:-} UL=${UL:-} SL=${SL:-} J1=${J1:-} C=${C:-} H1=${H1:-}" >&2' ERR
+on_error() {   # a partial submission must not leave charged jobs queued without H1
+  echo "[sb1] submission stopped; cancelling: H0=${H0:-} UL=${UL:-} SL=${SL:-} J1=${J1:-} C=${C:-} H1=${H1:-}" >&2
+  for id in ${H0:-} ${UL:-} ${SL:-} ${J1:-} ${C:-} ${H1:-}; do "${SB1_SCANCEL:-scancel}" "${id}" || true; done
+}
+trap on_error ERR
 submit() { local id; id="$("${S[@]}" "$@")"; echo "${id%%;*}"; }   # --parsable: "id[;cluster]"
 H0=$(submit --job-name=sb1_H0 --time=00:45:00 --export="${E},SB1_STAGE=H0" "${L}/sb1_hash.sbatch")
 UL=$(submit --job-name=sb1_UL --time=00:50:00 --dependency="afterok:${H0}" \

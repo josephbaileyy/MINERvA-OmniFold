@@ -110,7 +110,7 @@
    "dependency_type": "afterok",
    "universe": "Flux:0",
    "omnifile": "{omnifile_universe}",
-   "does": "vertical-pattern loader identity: three --arm all loader processes in parallel, then --arm selective per tree with --compare-digests, then two activation negative controls (exit 5 required)"
+   "does": "vertical-pattern loader identity: four --arm all loader processes in parallel (one per tree), then --arm selective per tree with --compare-digests, then two activation negative controls (exit 5 required)"
   },
   {
    "id": "C",
@@ -164,7 +164,7 @@
   }
  ],
  "serial_order_reason": "every job that reads the universe file runs alone, so no filesystem contention between SB1 jobs enters a timing; afterok stops the chain on the first failure (--kill-on-invalid-dep=yes cancels dependents)",
- "retry_rule": "no automatic retry (--no-requeue). One manual resubmission per job, only after OOM, NODE_FAIL or TIMEOUT (never after exit 3, 4 or 5), only under the same admission, and only if node-h charged so far (sacct billing) + the remaining jobs' ceilings + the retried job's ceiling <= 2.0 (sb1_verify.py ledger).",
+ "retry_rule": "no retries under an admission (--no-requeue; every job directory and output path is created exclusively). Any job that fails, times out, runs out of memory or is cancelled ends SB1 INCONCLUSIVE unless a frozen rule already decides it (sb1_verify.py). A rerun needs a new authorization, admission and outroot, and its request must count the node-h this admission already charged against the same 2.0 node-h SB1 total.",
  "unmatched_references": {
   "UL_SL": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_Muon_Energy_MINOS_0.root",
   "C": "/pscratch/sd/j/josephrb/ki84-rebuild-20261006/replicas/2d_xsec_MEFHC_5iter_lgbm_boot1.root",

@@ -90,7 +90,7 @@ def main():
     tru_gb = tree_bytes(uni, "mc_truth_denom") / 1e9
     bkg_gb = (tree_bytes(uni, "mc_background") + tree_bytes(uni, "data")) / 1e9
     j1_all_s = max(sig_gb, tru_gb, bkg_gb) * EXCESS_S_PER_GB + 100.0   # parallel processes
-    j1_sel_s = 3 * 120.0                                             # cached small reads, assumed
+    j1_sel_s = 4 * 120.0                                             # cached small reads, assumed
     uni_bytes = 171117087867
     cv_bytes = 2144008221
     hash_s = (uni_bytes + cv_bytes) / 1e9 / HASH_GB_PER_S + 30.0
@@ -102,8 +102,9 @@ def main():
                f"S={amdahl(S_IO_LOCAL):.3f}; analytic s={S_IO_ANALYTIC} gives "
                f"{U_REF_TASK_S / amdahl(S_IO_ANALYTIC):.0f} s"),
         "J1": (j1_all_s + j1_sel_s + 60.0,
-               f"signal tree {sig_gb:.1f} GB x {EXCESS_S_PER_GB:.2f} s/GB + 100 s (parallel with "
-               f"truth and background), + 3 x 120 s selective, + 60 s controls: an estimate"),
+               f"signal tree {sig_gb:.1f} GB x {EXCESS_S_PER_GB:.2f} s/GB + 100 s (four parallel "
+               f"processes; signal is the longest), + 4 x 120 s selective, + 60 s controls: an "
+               f"estimate"),
         "C": (CV_REPLICA_S[1] + 2 * 130.0,
               "59410433 median 840 s + two CV-file loader passes of ~130 s (speed §3 per-row cost)"),
         "H1": (hash_s + 120.0, "as H0, + 120 s for sb1_verify.py"),
@@ -122,9 +123,6 @@ def main():
         tot_expected += rec["expected_node_h"]
         jobs.append(rec)
     slack = CEILING - tot_ceiling
-    retry = {j["id"]: {"ceiling_node_h": j["ceiling_node_h"],
-                       "admissible_from_ceiling_slack_alone": j["ceiling_node_h"] <= slack}
-             for j in jobs}
     out = {
         "schema": "sb1-costs/1",
         "charge_rule": SPEC["cluster"]["charge_rule"],
@@ -133,11 +131,10 @@ def main():
         "total_ceiling_node_h": tot_ceiling,
         "total_expected_node_h": tot_expected,
         "ceiling_slack_node_h": slack,
-        "retry_admissibility": retry,
-        "worst_case_sl_reaches_its_limit": {
-            "note": "SL at its 1,800 s limit means elapsed >= 0.69 x UL's reference: the elapsed "
-                    "criterion (<= 0.5 x UL) has failed, so SL needs no retry for a verdict",
-            "sl_limit_over_ul_reference": seconds("00:30:00") / U_REF_TASK_S},
+        "retries": "none under an admission (launch-spec retry_rule): the charge cannot exceed the "
+                   "sum of the six ceilings, and the slack is not spent",
+        "sl_timeout": "an SL TIMEOUT ends SB1 INCONCLUSIVE (afterok cancels J1 and C, so S1 is "
+                      "incomplete); it is not retried under the admission",
         "selected_bytes": patterns,
         "universe_file_reads_by_sb1_gb": {
             "UL": uni_bytes / 1e9, "SL": patterns["lateral " + SPEC["universes"]["lateral"]]
@@ -151,8 +148,9 @@ def main():
             "UL": "64.5-186.6 GB observed on 374 universe tasks (55677843_166: 69,191,672 KiB = "
                   "70.85 GB); full node 487,802 MiB",
             "SL": "success bound 30 GB; local evidence only",
-            "J1": "estimate ~70 GB for three parallel all-branch loader processes (0.26-0.31 x "
-                  "bytes read, speed §4, plus Python lists); allocation 121,920 MiB = 127.8 GB",
+            "J1": "estimate ~70 GB for four parallel all-branch loader processes (0.26-0.31 x "
+                  "bytes read, speed §4, plus Python lists; data and background add < 1 GB); "
+                  "allocation 121,920 MiB = 127.8 GB",
             "C": "59410433_1: 16,296,360 KiB = 16.7 GB; allocation 127.8 GB",
             "H0/H1": "< 1 GB"},
         "simultaneous": "jobs are serialized by afterok/afterany, so peak simultaneous memory "

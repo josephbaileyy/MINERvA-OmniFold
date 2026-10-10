@@ -19,7 +19,7 @@ package is a proposal. It authorizes nothing, and nothing in it has been execute
 | `Resources` | §14. Cluster compute, GPU, training, classifier fits: **0** |
 | `Review` | §11 |
 | `Model / effort` | owner: Claude Opus 5.5 (`claude-opus-5-5`), Claude Code; effort not observable to the session |
-| `Disposition` | §15: **PASS** for the preparation — a complete, reviewed package ready for a named resource authorization. It is not a result about prototype 1 on Perlmutter |
+| `Disposition` | §15 |
 | `Next action` | §16: Joseph decides whether to permit running this fixed package under its 2.0 node-h cap |
 
 `Q` = `docs/orchestration/state/next-preparation-20261009`; `P` = `Q/sb1-prep`.
@@ -40,7 +40,8 @@ package is a proposal. It authorizes nothing, and nothing in it has been execute
 
 - **Yes, with one honest change to the specified comparison.** The package measures, on Perlmutter,
   exactly the question asked, at matched settings, inside the 2.0 node-h ceiling: planned ceilings
-  sum to **1.699 node-h** (expected ≈ 1.18), and every verification is inside it.
+  sum to **1.699 node-h** (expected ≈ 1.19), and every verification is inside it. There are no
+  retries under an admission; any failure ends SB1 INCONCLUSIVE.
 - **The change.** Speed §9 compared two prototype-1 unfolds with the existing `purity_newomni`
   products. Those products were made by the July driver revision, so by this assignment's rule they
   cannot be a matched comparison. SB1 therefore runs its two 128-thread LightGBM universe unfolds as
@@ -141,8 +142,9 @@ on all three MC trees. Its reference product is `55677843_166`: 2,617 s, MaxRSS 
 (70.85 GB), MaxDiskRead 167,271,319 KiB (171.29 GB).
 
 **A limit of the real-file identity check.** The shifted truth kinematics equal CV in every sampled
-row, so on real data a loader that read `MC` instead of `pT_truth_<b>` would return identical bytes.
-Real-data equality cannot detect that substitution. Two other checks guard it: the derived branch
+row, and so do `MC_<b>`/`MC_pz_<b>` on `mc_signal_reco` (100 % equal in the sample). On real data a
+loader that read `MC` instead of `pT_truth_<b>` or `MC_<b>` would return identical bytes, so
+real-data equality cannot detect either substitution. Two other checks guard it: the derived branch
 names (the selective arm activates exactly the names the pinned loader addresses, so a substitution
 is impossible by construction), and the synthetic fixture, whose truth-lateral values differ from
 CV (`test_a_wrong_rule_and_access_that_agree_are_caught_by_the_bytes`).
@@ -221,7 +223,7 @@ weaken the equality tests.
 |---|---|---|
 | `tests/test_branch_select.py` | prototype 1 against the pinned loaders. Byte equality in 15 loader × pattern cases: CV with and without weights, two vertical universes, the lateral one. The exact lateral and vertical branch lists. Restored statuses and addresses on a reused tree, including a partial entry state. Discovery reads nothing. Negative controls: the silent defect is real without the guard; **every** omitted activation (17, across the four loaders) and an extra one in each tree are refused before the first read; a loader reading another branch is refused by the rule; a wrong rule that agrees with a wrong loader is caught by the bytes; an unmodelled access is refused; digest sensitivity to sign, dtype, shape, one ulp and one fill | 16 OK |
 | `tests/test_sb1_guarded.py` | the wrapper end to end, running the real driver's `main()` under the real `mnv_guarded_run.py` with `--require-provenance` in a throwaway checkout (stub helper, so nothing is trained). Positive: both arms complete; loader digests and settings are equal; all histograms are byte-identical; the helper executed is the checkout's own. Refused before any input is read (exit 3): no guard, a wrong helper digest, a changed driver even when committed and stated, an uncommitted executed file, an input touched after hashing, a wrong input digest, a reference from other arguments. Refused before training (exit 4): a reference whose bytes differ. Refused before the first read on the wrapper path (exit 5): omit and extra controls | 10 OK |
-| `tests/test_launch_chain.py` | the unmodified `sb1_submit.sh` and all six batch scripts against a throwaway checkout, with `fake_slurm.py`. Covers dependency order, time limits and ids. The verifier passes the good run and rejects: an SL byte difference (S1 FAIL), 10.5 GiB read (S2 FAIL), a MiB value (S3; MiB is not read as KiB), elapsed 0.5004 × UL (S4 FAIL), a missing receipt (INCONCLUSIVE), H1 ≠ H0, a wrong executed digest, and a guard record with an outside origin (P FAIL). Also: the ledger arithmetic; a proposal cannot be submitted; hostile authorization paths, including a symlink; `draft` fills only mechanical fields | 13 OK |
+| `tests/test_launch_chain.py` | the unmodified `sb1_submit.sh` and all six batch scripts against a throwaway checkout, with `fake_slurm.py`. Covers dependency order, time limits and ids. The verifier passes the good run and rejects: an SL byte difference (S1 FAIL), 10.5 GiB read (S2 FAIL), a MiB value (S3; MiB is not read as KiB), elapsed 0.5004 × UL (S4 FAIL), a missing receipt (INCONCLUSIVE), H1 ≠ H0, a wrong executed digest, and a guard record with an outside origin (P FAIL). Added in the repair batch (review c0): a killed selective arm is INCONCLUSIVE, not FAIL, while a real difference with later trees missing still FAILs; an unadmitted executed module, a receipt stat unlike H0's, receipts from different environment setups (P FAIL); a control that returned a loader (NC FAIL); each admission guard refuses for its own stated reason (checkout, commit, ancestry, launch spec, ceilings, input stat now), as do a dirty tree, a package changed after its commit, and an authorization that does not name the package commit and manifest digest; an environment setup changed after submission stops the chain at H0. Also: the ledger arithmetic; a proposal cannot be submitted; hostile authorization paths, including a symlink; `draft` fills only mechanical fields | 25 OK |
 | `tests/test_package_consistency.py` | `#SBATCH` lines, submit-time `--time` and dependencies equal the launch spec; the argv equals 55677843's; `results/costs.json` is current and its ceiling equals the literal sum; the manifest is current; the committed proposal cannot admit; the schema's required fields equal `sb1_admit.py`'s | 7 OK |
 
 Environment: Homebrew Python 3.13.7 with PyROOT 6.36.000 from `root-config --libdir`, numpy 2.4.4.
@@ -266,7 +268,7 @@ guard-inventory mutant was added with the verifier's inventory check.
 
 | key | criterion | evidence |
 |---|---|---|
-| P | every receipt is strict, guarded, at the admitted commit with exactly the admitted module digests. Each input's size, mtime and inode equal H0's at every job's start and end. H1 equals H0. Every guard record shows the guard installed on the admitted checkout alone, with the manifest's shim | receipts, `H0/H1/hashes.json`, `inventory*.jsonl` |
+| P | every receipt is strict, guarded, at the admitted commit with exactly the admitted module digests, all carrying the one environment-setup digest bound at submission. Each input's size, mtime and inode equal H0's at every job's start and end. H1 equals H0. Every guard record shows the guard installed on the admitted checkout alone, with the manifest's shim | receipts, `H0/H1/hashes.json`, `inventory*.jsonl` |
 | **S1** (mandatory) | every loader's arrays and histogram are byte-identical between arms, with equal settings, in the lateral (UL vs SL), vertical (J1) and CV (C) patterns. Also C's unfold-time loaders equal its loader pass. The selective arm verified before its first read; the production arm entered with every branch active | receipts |
 | NC | both J1 activation controls were refused (exit 5) before any loader returned | control receipts |
 | S2 | SL `MaxDiskRead` ≤ 10 GB **and** ≤ 0.1 × UL's | `sacct` batch step |
@@ -284,13 +286,15 @@ and they are taken against the matched UL, not against 2,547 s.
 
 - **Exit 3** (provenance or input refusal) or **exit 4** (a loader byte difference, which stops SL
   before training) or **exit 5** (selection refused outside a control) fails the job.
-  `afterok` with `--kill-on-invalid-dep=yes` then cancels every later job except H1. A job refused
-  by exit 3, 4 or 5 is never retried under this admission.
-- SL's time limit is 1,800 s. Reaching it means SL elapsed ≥ 0.69 × UL's reference, which fails S4.
-  No retry is needed for a verdict.
-- OOM, NODE_FAIL and TIMEOUT: at most one manual resubmission per job, under the same admission,
-  only when `sb1_verify.py ledger --retry <job>` shows charged + unfinished ceilings + the retry's
-  ceiling ≤ 2.0 node-h (§7.4). There is no automatic retry (`--no-requeue`).
+  `afterok` with `--kill-on-invalid-dep=yes` then cancels every later job except H1.
+- **No retries under an admission** (`--no-requeue`; every job directory, receipt and output is
+  created exclusively). An OOM, NODE_FAIL, TIMEOUT or cancellation ends SB1 INCONCLUSIVE, unless a
+  frozen rule already decides it (an exit-4 difference is S1 FAIL). An SL TIMEOUT at 1,800 s is
+  INCONCLUSIVE too: `afterok` cancels J1 and C, so S1 is incomplete. A rerun needs a new
+  authorization, admission and outroot, and its request must count the node-h already charged
+  against the same 2.0 node-h SB1 total (§7.4).
+- A run killed partway is missing evidence, not a difference. A tree present in only one arm counts
+  against S1 only when both receipts are complete (`sb1_verify.py` `compare_loaders`).
 
 ### 6.3 Trainer nondeterminism
 
@@ -326,16 +330,17 @@ job's **ceiling** is `billing / 256 × time limit`.
 | H0 | `sb1_hash.py` on the three inputs, before everything | shared, 2, 2 | 1 | 45 min | 0.0059 | 0.0008 (0.5 GB/s assumed) |
 | UL | `sb1_run.py unfold --arm all`, the 55677843 argv on `Muon_Energy_MINOS:0` | regular, 128, 256 | 128 | 50 min | 0.8333 | 0.7269 (2,617 s, `55677843_166`) |
 | SL | same with `--arm selective --compare-digests UL` | regular, 128, 256 | 128 | 30 min | 0.5000 | 0.2563 (Amdahl: `f_io` 0.695 measured, `s_io` 14.6 laptop → 923 s) |
-| J1 | `Flux:0` loader identity: four production loader processes in parallel, four selective ones, two controls | shared, 64, 64 | 1 each | 45 min | 0.1875 | 0.1165 (estimate, §8) |
+| J1 | `Flux:0` loader identity: four production loader processes in parallel, four selective ones, two controls | shared, 64, 64 | 1 each | 45 min | 0.1875 | 0.1248 (estimate, §8) |
 | C | CV replica as `59410433_1` (`--bootstrap-seed 1 --seed 1`) with phase timers, then the CV loader identity | shared, 64, 64 | 64, then 1 | 40 min | 0.1667 | 0.0764 (840 s median + 2 × 130 s) |
 | H1 | `sb1_hash.py` after everything, `sacct`, `sb1_verify.py verdict` | shared, 2, 2 | 1 | 45 min | 0.0059 | 0.0011 |
-| | | | | | **1.6992** | **1.178** |
+| | | | | | **1.6992** | **1.186** |
 
 Every job that reads the universe file runs alone (`afterok` chain H0 → UL → SL → J1 → C; H1
 `afterany` on all five). So there is no contention between SB1 jobs, and the peak simultaneous
 memory is one job's:
 
-- UL: 64.5–186.6 GB observed on 374 tasks, against 487,802 MiB on the node.
+- UL: 64.5–186.6 GB observed on 374 tasks (speed §3; not re-measured here), against 487,802 MiB on
+  the node.
 - SL: the 30 GB success bound.
 - J1: about 70 GB estimated, against 121,920 MiB.
 - C: 16.7 GB observed in `59410433_1`.
@@ -352,7 +357,9 @@ memory is one job's:
 ### 7.2 Exact commands (after admission only)
 
 On Perlmutter, from the canonical checkout, after this branch is merged and Joseph's decision is
-committed as `docs/orchestration/AUTHORIZATION-<date>-sb1.md`:
+committed as `docs/orchestration/AUTHORIZATION-<date>-sb1.md`. That record must quote the package
+commit (the reviewed commit that last changed `P`) and the sha256 of `P/manifest/expected-code.json`
+at that commit, both in full:
 
 ```bash
 C=<the commit that carries that AUTHORIZATION record>
@@ -371,7 +378,11 @@ bash "$P/launch/sb1_submit.sh" "$SCRATCH/sb1-admission-${C:0:8}.json"
 - `draft` sets only the status, the authorization's path and digest, HEAD, the checkout and
   `outroot = /pscratch/sd/j/josephrb/sb1-<HEAD[:8]>`, then runs `check`. `sb1_submit.sh` runs
   `check` again, creates `outroot` (refusing an existing one), writes `run.env` and
-  `submission.json`, and submits the six jobs.
+  `submission.json`, and submits the six jobs. `check` also refuses if anything under `P`, an
+  executed module or the guard differs between the package commit and HEAD.
+- `run.env` binds the environment setup's sha256 at submission. Every job verifies it before
+  sourcing the setup and refuses (exit 3) if it changed, and every receipt records it.
+- If `sbatch` fails partway, the submit script cancels the jobs it already queued.
 - A new detached worktree moves no deployed checkout, so it cannot disturb a pending job of another
   lane.
 - Monitor with `squeue --me` and `sacct -j <ids>`.
@@ -398,16 +409,16 @@ Universe-file bytes read by SB1, from `results/costs.json`:
 
 about 690 GB in total, all serialized.
 
-### 7.4 Retries and the ledger
+### 7.4 No retries; the ledger
 
-The ceilings sum to 1.699, leaving 0.301 node-h for retries.
-
-- **From the ceiling slack alone:** one retry of H0, H1, J1 or C is admissible.
-- **From measured underspend only:** an SL retry (0.5) or a UL retry (0.833).
+- **No retries under an admission.** The charge cannot exceed the six ceilings, 1.699 node-h.
+  The 0.301 node-h below the cap is not spent.
 - `sb1_verify.py ledger` adds charged node-h (`sacct` billing × ElapsedRaw) to the ceilings of every
-  unfinished job and the proposed retry. It exits 6 above 2.0.
-- If J1 is killed for memory, the only admissible rerun shape is `--cpus-per-task=128` (ceiling
-  0.375). It needs 0.074 node-h of measured underspend and a new admission, because the spec changes.
+  unfinished job, and exits 6 above 2.0.
+- A rerun after a failure is a new authorization with its own admission and outroot. Its request
+  must count what this admission charged against the 2.0 node-h SB1 total. A J1 rerun at
+  `--cpus-per-task=128` (ceiling 0.375) changes the spec, so it falls outside the six authorized
+  jobs and needs a new authorization, not only a new admission.
 
 ### 7.5 What the cap does not cover, and the exact revised request
 
@@ -433,8 +444,8 @@ matched vertical timing is wanted.
   - SL: speed's Amdahl estimate, `1 / ((1 − 0.695) + 0.695 / 14.6)` = 2.836, so 2,617 / 2.836 =
     923 s. The analytical `s_io` = 68 would give 825 s.
   - J1: the universe-file excess per GB, (2,547 − 778) / 171.29 = 10.33 s/GB. Applied to the signal
-    tree's 112.1 GB that gives 1,157 s, plus 100 s of row work, plus 3 × 120 s for the selective
-    loaders and 60 s for the controls: 1,678 s.
+    tree's 112.1 GB that gives 1,157 s, plus 100 s of row work (the four parallel processes end with
+    the signal tree), plus 4 × 120 s for the selective loaders and 60 s for the controls: 1,798 s.
   - C: the replica median 840 s plus two loader passes of about 130 s.
   - Hash rate 0.5 GB/s, assumed.
   - None of these is a Perlmutter measurement of prototype 1.
@@ -495,8 +506,10 @@ matched vertical timing is wanted.
 - **The decision needed from Joseph, exactly:** *permission to run the fixed SB1 package — the
   commit that freezes `P`, whose files `manifest/expected-code.json` pins — on Perlmutter CPU under
   account m3246, as the six jobs of `launch/launch-spec.json`, with at most 2.0 node-h charged in
-  total (planned ceilings 1.699, expected ≈ 1.18), retries only under its retry rule, and no other
-  compute, GPU or training.* This session does not issue that permission.
+  total (planned ceilings 1.699, expected ≈ 1.19), no retries under the admission, and no other
+  compute, GPU or training.* This session does not issue that permission. The authorization record
+  must name the package commit and the sha256 of `manifest/expected-code.json` in full;
+  `sb1_admit.py` refuses one that does not.
 - **What it cannot authorize** (also listed in the proposal):
   - a change to the production driver or the pinned helper;
   - replacing or changing an estimator;
@@ -515,15 +528,51 @@ matched vertical timing is wanted.
 
 ## 11. Independent review
 
-*Pending: the frozen package goes to one fresh read-only reviewer. This section is completed after that review and the single repair batch.*
+- **Reviewer.** One fresh, read-only Claude Code subagent, explicitly authorized. It has no
+  authorship of this package. It is the same model family as the owner, so the review is not
+  cross-provider independent.
+- **Initial review** at the fixed commit `9889b378`, 05:35Z → about 05:50Z, ≈ 0.07 core-h.
+  - It worked in its own detached worktree, whose status was empty at start and end, and removed it.
+  - It probed mutations only in `git archive` copies.
+  - It made two read-only `ssh` queries (`sacct` of the four reference jobs, `stat` of the inputs
+    and references).
+  - Preserved verbatim: [`review/review.md`](review/review.md), sha256 `41f62d7aa2df2d23…`.
+- **Verdict: PASS WITH CHANGES**: 4 MATERIAL, 5 MINOR, 3 NOTE.
+- **What it reproduced independently:** every unit conversion and charge (A); every ceiling and
+  expected value (B); the four suites, 0 skipped, plus two mutations of its own (C); the branch
+  rules against the driver, the 10 lateral universes, the selected bytes (D); the matching of UL/SL
+  (E); the input stat and the references' existence (F); scope (G).
+
+| # | severity | finding | disposition (single repair batch) |
+|---|---|---|---|
+| 1 | MATERIAL | admission bound the run to `package_commit` only by ancestry, so a later edit plus a regenerated manifest passed | **fixed**: `check` refuses any difference under `P`, the executed modules or the guard between the package commit and HEAD, and requires the authorization's text to name the package commit and the manifest's sha256 in full. Tests: `test_a_package_changed_after_its_commit_is_refused` (the reviewer's probe), `test_an_authorization_that_does_not_name_the_package_is_refused` |
+| 2 | MATERIAL | the retry rule could not be executed as written (exclusive directories, no retry command), and the ledger under-counted retried charges | **fixed by removal**: no retries under an admission. Any failure ends SB1 INCONCLUSIVE, and a rerun needs a new authorization that counts what was charged. `ledger` is plain accounting (§6.2, §7.4, spec `retry_rule`) |
+| 3 | MATERIAL | a selective arm killed mid-loaders scored S1 FAIL | **fixed**: an absent tree is a difference only between two complete receipts; otherwise it is missing (INCONCLUSIVE). A real difference with later trees missing still FAILs. Tests for both |
+| 4 | MATERIAL | §6.2's "SL timeout fails S4" contradicted the verifier | **fixed**: an SL TIMEOUT ends SB1 INCONCLUSIVE (§6.2, `costs.json`) |
+| 5 | MINOR | nine admission/verifier guards had no red test | **fixed**: a refusal test per guard, each asserting its own reason, and a mutant per guard (§5.3) |
+| 6 | MINOR | J1 was described as three processes in places | **fixed**: four everywhere; forecast recomputed (1,798 s, 0.1248 node-h; total expected 1.186) |
+| 7 | MINOR | the header claimed a reviewed PASS while review was pending | **fixed** (header points to §15) |
+| 8 | MINOR | the environment setup was sourced by every job but bound by nothing | **fixed**: `run.env` binds its sha256 at submission; each job verifies it before sourcing; receipts record it; P requires one digest across receipts. Tests: `test_an_environment_changed_after_submission_stops_the_chain`, `test_receipts_from_different_environments_are_not_a_pass` |
+| 9 | MINOR | a partial submission left charged jobs queued | **fixed**: the ERR trap cancels every id already queued |
+| 10 | NOTE | `MC_<b>`/`MC_pz_<b>` are also CV-equal on the real file | **fixed** in §3.2 |
+| 11 | NOTE | the reference operands were measured under array contention | **disclosed** in §12 |
+| 12 | NOTE | a J1 rerun at 128 CPUs needs a new authorization; the 374-task RSS range is speed's | **fixed** (§7.4; §7.1 cites speed §3) |
+
+**Focused re-review:** pending (the one allowed).
 
 ## 12. Limitations and residual risks
 
 - Every local result is synthetic and laptop-side (ROOT 6.36, Python 3.13). Perlmutter runs
   ROOT 6.28, Python 3.11 and numpy 1.26. The selection uses only long-standing `TTree`/`TBranch`
   calls, but equality on the real file is exactly what SB1 must measure.
-- The J1 memory estimate (about 70 GB for three parallel production loaders) rests on speed's local
-  RSS-per-byte factor. An OOM ends J1 INCONCLUSIVE; the rerun shape is in §7.4.
+- The J1 memory estimate (about 70 GB for four parallel production loaders) rests on speed's local
+  RSS-per-byte factor. An OOM ends SB1 INCONCLUSIVE (§6.2, §7.4).
+- The forecasts' operands were measured under contention. `55677843` ran as `--array=1-400%30`
+  against a single-stripe file (`operands/input_stat_20261010.psv`: stripe count 1), so up to 29
+  concurrent readers shared it. SB1 runs every universe-file reader alone, so UL may be faster and
+  its I/O fraction smaller than the 2,617 s and `f_io` 0.695 suggest, which would make S4 harder to
+  pass than the 0.35 forecast ratio. UL runs right after H0's full read. Any server-side cache
+  effect therefore favours UL, which is conservative for S4.
 - The hash rate is assumed. A hash job that times out leaves P INCONCLUSIVE. Its limit (45 min)
   allows 64 MB/s.
 - `S6` attributes the driver's inline fill loops (`hTruth2D`, `hUnfold2D`) and the bootstrap draws

@@ -392,6 +392,8 @@ def main(argv=None):
     env = gx.environment_record()
     env.update(slurm={k: os.environ.get(k) for k in SLURM_ENV},
                omp={k: os.environ.get(k) for k in OMP_ENV},
+               sb1_env_setup=os.environ.get("SB1_ENV_SETUP"),
+               sb1_env_setup_sha256=os.environ.get("SB1_ENV_SETUP_SHA256"),
                affinity_cpus=len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity")
                else None, os_cpu_count=os.cpu_count(), uname=list(os.uname()))
     receipt = Receipt(a.receipt, {
