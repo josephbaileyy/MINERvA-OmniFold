@@ -661,8 +661,15 @@ only unreviewed delta: one shell function, one admission check, tests and record
 **Requests** (exact patches, for their owners):
 
 1. **Manifest.** `REPORT.md` is pre-registered (`MANIFEST-overrides.tsv:535`, `MACHINE open`; routed
-   from `CATALOG.md:84`). If `generate_manifest.py --check` reports this subtree, regenerate
-   `MANIFEST.tsv` at integration, as for the other lanes. No override row is needed.
+   from `CATALOG.md:84`). Measured at `df7c1536` on a clean tree:
+   - `generate_manifest.py --check` exits 1, OUT OF DATE.
+   - `generate_manifest.py --at-sha HEAD` differs from the committed `MANIFEST.tsv` by the new rows
+     for `P`'s files and by the inbound-reference counts of documents `P` cites (for example
+     `CAMPAIGN-REVIEW-20260929.md` 31 → 32, `CATALOG.md`).
+   - `live_doc_indexed.py --unrowed` reports 0.
+
+   Regenerate `MANIFEST.tsv` once at integration, as for the other lanes. No override row is
+   needed, and this lane does not touch the generated file.
 2. **`KNOWN_ISSUES.md`** (owner's choice). Speed §13's proposed row, with one sentence appended:
    *"Preparation for the confirmation benchmark, with a matched production arm, is in
    `state/next-preparation-20261009/sb1-prep/REPORT.md`; not run."*
