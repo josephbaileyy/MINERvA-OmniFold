@@ -69,6 +69,10 @@ so other m3246 members cannot read them. They were left as copied; changing that
 
 ## 3. What remains
 
+> **Update 2026-10-10:** the retry hashed all 7 OST-61 files, and the 6 data files were added to this copy and
+> verified (`RECORD-20261010-ost61-hashed-and-data-addition.md`). Draft C is withdrawn, unsent. The list below is as
+> written on 2026-10-09.
+
 - **The 6 data files on OST 61** (3.04 GB) and the 1 simulation file there.
   - A retry of the checksum sweep is scheduled for about 2026-10-10 09:07 local time, as a session-only job. The
     sweep resumes and tries only those 7 files.

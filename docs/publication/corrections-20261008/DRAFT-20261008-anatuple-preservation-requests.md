@@ -16,8 +16,8 @@ needs Joseph's explicit decision (goal 2026-10-08: "Do not send it or request a 
 >
 > The files now sit only on Perlmutter scratch. They are an earlier production of the public MINERvA release, and the
 > current public files of the same names differ, so a fresh download would not reproduce the analysis inputs. We have
-> sha256 checksums for 2,367 of the 2,374 files (computed 2026-10-08/09; the other 7 could not be read because of a
-> storage fault on scratch) and would verify the archive against them after transfer.
+> sha256 checksums for all 2,374 files (computed 2026-10-08/10) and would verify the archive against them after
+> transfer.
 >
 > Current use: 350.9 GiB of a 512 GiB quota (2026-10-09). The copy would be written once with htar, then left untouched.
 
@@ -30,9 +30,13 @@ needs Joseph's explicit decision (goal 2026-10-08: "Do not send it or request a 
 > published analysis reproducible, we would like to know whether that earlier production is retained, and under what
 > version tag or path, so that we can cite it rather than archive our own copy.
 >
-> We can supply a list of the 2,374 file names and sizes we used, with sha256 checksums for 2,367 of them.
+> We can supply a list of the 2,374 file names and sizes we used, with a sha256 checksum for each.
 
 ## C. To NERSC (help ticket: unreadable files on pscratch OST 61)
+
+**Withdrawn 2026-10-10: not needed, never sent.** The hung reads all completed on 2026-10-09 at about 18:31 UTC, and
+on 2026-10-10 all 7 files hashed normally (`RECORD-20261010-ost61-hashed-and-data-addition.md`). The text is kept as
+drafted.
 
 > **Subject:** Reads hang on pscratch files whose first stripe is on OST 61 (user josephrb)
 >
@@ -60,4 +64,5 @@ needs Joseph's explicit decision (goal 2026-10-08: "Do not send it or request a 
 - **B answers yes, with a stable location:** cite it, and keep only the checksum manifest. A and the CFS data copy
   become optional.
 - **Neither:** the event-level reproduction chain depends on purgeable scratch. Record that as a known limitation.
-- **C fixed:** re-run the sweep script (it resumes, hashing only the missing files) to complete the manifest.
+- **C fixed:** re-run the sweep script (it resumes, hashing only the missing files) to complete the manifest. (Done
+  2026-10-10 without a ticket: the storage recovered on its own.)

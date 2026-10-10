@@ -1,0 +1,15 @@
+host dtn01.nersc.gov  script bfa95102b79c5e65d3e2dee12b9e53712125d6202b2711470aad2c7665e84c65  manifest 913e004d538c6d47932ba5a343d382d2a599be1c6f143ab64f49ccbd40bdf7b1
+du before start 2026-10-10T20:01:05Z
+2512	/global/cfs/cdirs/m3246/josephrb
+du before end 2026-10-10T20:07:40Z
+add-list 2026-10-10T20:07:40Z
+add-list: 6 files, 3035954178 bytes -> /global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-data-20261009/DATA-SHA256SUMS-ADD-20261010
+add-copy 2026-10-10T20:07:40Z
+add-copy: rsync rc 0
+add-verify 2026-10-10T20:07:53Z
+add-verify: all 6 added destination files match the checksum manifest
+original verify skipped (unchanged files; the drift guard checked its rows against the manifest)
+done 2026-10-10T20:07:57Z
+du after start 2026-10-10T20:07:57Z
+2514	/global/cfs/cdirs/m3246/josephrb
+du after end 2026-10-10T20:13:38Z
