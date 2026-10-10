@@ -332,11 +332,27 @@ launches none of them and does not wait for them. Their later integration is a s
 | F6 | NOTE | §4.2 named the test-only `b19b5e91` as the code requirement | **fixed**: `21c97390` |
 | F7 | NOTE | `test_build_all.py` mode 100755 (canonical) vs 100644 (standalone), present at the base, contents identical | **recorded, no change**. Out of scope; the standalone merge carries the existing state |
 
-**Focused re-review** of the repair batch: see below.
+**Focused re-review** (the one allowed): the same reviewer, at fixed commit
+`51e0d98beff994faafcbe6a9336eb97bbe484d55`, from 04:01Z to 04:05Z, using ≈ 0.07 core-h. Its worktree
+was clean at start and end, and it was removed afterwards. Preserved verbatim:
+[`review/review-cycle1.md`](review/review-cycle1.md), sha256 `b50a6fba…`.
+
+**Verdict: PASS.** F1–F7 are all RESOLVED.
+- It re-measured the net tracked bytes at 172,963 B.
+- For the tightened R2 it checked legitimate variants, and each still admits: `./`, a double or
+  trailing slash, an inner `sub/../` that stays inside, and a `DECISION-` record in a subdirectory.
+- It checked hostile variants, and each is refused: absolute, symlink, a `..` elsewhere, empty, and
+  backslashes. There are 0 tracked symlinks under `docs/`, so no legitimate record is wrongly refused.
+- It restored the first R2 version itself and saw the two expected failures.
+- Harness 22 OK, ratchets 17 OK, hash bindings intact; manifest, lint and unrowed checks pass.
+- It confirmed its preserved first review is byte-identical (`f67d51cc…`).
+
+One new NOTE, N1: §10 gave this report as ≈ 27 kB, and it was ≈ 30 kB. That is corrected after the
+re-review, in the commit carrying this paragraph, and is **not re-reviewed**. No review cycles remain.
 
 ## 9. Delivery
 
-**Pending review.** The plan follows Joseph's authorization in the integration prompt:
+**Review passed (§8); delivery follows Joseph's authorization in the integration prompt:**
 
 1. Refresh `origin/main`, and reconcile any new delta before merging.
 2. Merge this branch into canonical `main` through a PR, using a merge commit.
@@ -345,8 +361,10 @@ launches none of them and does not wait for them. Their later integration is a s
 4. Close superseded lane PRs #62–#67 only once their exact heads are reachable from `main`, with a
    reference to the integration PR.
 
-No force-push, and no evidence branch or tag deletion. The resulting remote heads are recorded on the
-merged PR and in the session's final report.
+No force-push, and no evidence branch or tag deletion. The resulting remote heads are recorded in a
+comment on the merged canonical PR and in the session's final report, not here: a commit recording
+them would itself move `main`. This section therefore describes the plan, and the PR comment is the
+record of what happened.
 
 ## 10. Resources
 
@@ -358,17 +376,17 @@ merged PR and in the session's final report.
 | threads | one per test command; two for the build | 2 |
 | peak RAM | build ≈ 0.14 GB max RSS; tests below 0.5 GB | 8 GiB |
 | scratch | peak ≈ 0.6 GB (`venv313` 83 MB, the reviewer's worktree ≈ 0.4 GB while it existed, logs; test temp directories removed per run) | 3 GiB |
-| tracked bytes, net, against the merged tree `dd73de73` | ≈ 170 kB: `MANIFEST.tsv` growth ≈ 40 kB, this report ≈ 27 kB, the preserved review ≈ 17 kB, the new test ≈ 9 kB, logs and checks the rest. Re-measured after the repair batch (review F1) | 10 MiB |
+| tracked bytes, net, against the merged tree `dd73de73` | ≈ 175 kB (the re-review measured 172,963 B at `51e0d98b`): `MANIFEST.tsv` growth ≈ 40 kB, this report ≈ 33 kB, the preserved review ≈ 17 kB, the new test ≈ 9 kB, logs and checks the rest. Re-measured after the repair batch (review F1) | 10 MiB |
 | cluster / GPU / training / toys / event loops | 0 / 0 / 0 / 0 / 0 | 0 |
 
-## 11. Disposition (proposed, before review)
+## 11. Disposition
 
 | decision | proposed | reason |
 |---|---|---|
-| six lanes integrated without regressions | PASS, if the review finds no material defect | disjoint changes, byte identity, all suites green with 0 skips on the final code, the cross-lane gap closed by a test, 7/7 mutants caught |
+| six lanes integrated without regressions | PASS | disjoint changes, byte identity, all suites green with 0 skips on the final code, the cross-lane gap closed by a test, 7/7 mutants caught; independent review PASS WITH CHANGES, then PASS on re-review |
 | guard R1 and R2 | PASS | both repaired in scope, R2 tightened for review F4; each has a negative control that a revert turns red (7/7 mutants) |
 | shared records correct | PASS | KI-89, KI-90 and OI-136 carry re-measured counts and exact routes; OI-136 is not solved, and KI-90 is not closed |
-| publication sources synchronized | PASS, if delivery succeeds | 120/120 files blob-identical; three builds PASS; rendered passages checked |
+| publication sources synchronized | PASS for source equivalence and builds; the remote merge state is in §9 | 120/120 files blob-identical; three builds PASS; rendered passages checked |
 | publication-ready measurement | **NOT ACHIEVED** | KI-88's transfer is unmeasured; VL170 coverage is not re-tested (KI-85 deferred); this integration changes no scientific product |
 
 ## 12. Next action
