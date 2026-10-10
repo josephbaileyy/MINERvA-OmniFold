@@ -1,0 +1,14 @@
+{
+ "all_identities_hold": true,
+ "corr_halves_given_data": -1.0,
+ "masked_bootstrap_target_over_2sum": 1.0,
+ "n_masks": 4096,
+ "poisson_process": {
+  "corr_halves_over_productions": 0.003781892845151615,
+  "productions": 20000,
+  "se_corr": 0.007071067811865475,
+  "var_half_over_known": 0.9898159499260847
+ },
+ "split_target_over_2sum": 0.9999999999999998,
+ "var_half_over_sum": 0.9999999999999998
+}

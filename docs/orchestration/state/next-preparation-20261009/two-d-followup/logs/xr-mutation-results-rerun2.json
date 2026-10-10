@@ -1,0 +1,24 @@
+{
+ "n": 2,
+ "caught": 2,
+ "results": [
+  {
+   "mutant": "input-digest-unchecked",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_an_input_with_other_bytes_is_refused"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "billing-unchecked",
+   "file": "xr_admit.py",
+   "tests": [
+    "test_xr.XR.test_jobcheck_refuses_an_allocation_outside_the_caps"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  }
+ ]
+}

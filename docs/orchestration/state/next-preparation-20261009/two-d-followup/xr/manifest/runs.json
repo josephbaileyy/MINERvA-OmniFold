@@ -1,0 +1,68 @@
+{
+ "schema": "xr-runs/1",
+ "note": "Frozen before submission. xr_run.py executes exactly these argv templates; {omnifile}, {mcfile} and {out} are the only substitutions, from the inputs below and the admitted outroot. Two-d-path REPORT section 10 defines the runs.",
+ "criterion": {
+  "max_abs_rel_diff": 1e-08,
+  "functionals": "every reported cell (the reference E_C's hXSec2D > 0: 205 paper GlobalIDs, references.json) and the area-weighted integral over them",
+  "cell_identity": "the output's hXSec2D > 0 GlobalID set must equal the reference's; otherwise the comparison is INCONCLUSIVE (cell mismatch), never a pass"
+ },
+ "inputs": {
+  "omnifile": {"path": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+               "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df", "size": 2144008221,
+               "provenance": "verified CFS copy (mode 0440) of /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root, made 2026-10-10T20:12:53Z; equal to B populations.tsv 43f8cc16"},
+  "mcfile": {"path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+             "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316", "size": 5143,
+             "provenance": "the flux file both central launchers pass; read in place (not copied: only the CV omnifile copy is authorized)"}
+ },
+ "kinds": {
+  "exact": {"qos": "shared", "constraint": "cpu", "cpus_per_task": 12, "mem_mb": 22860, "time": "30:00:00",
+            "time_limit_s_max": 108000, "billing_max": 12, "omp_threads": 12, "max_attempts_total": 4,
+            "ceiling_node_h_per_attempt": 1.40625},
+  "lgbm": {"qos": "shared", "constraint": "cpu", "cpus_per_task": 64, "mem_mb": 121920, "time": "01:00:00",
+           "time_limit_s_max": 3600, "billing_max": 64, "omp_threads": 64, "max_attempts_total": 3,
+           "ceiling_node_h_per_attempt": 0.25}
+ },
+ "cap_node_h": 6.4,
+ "ceiling_node_h_total": 6.375,
+ "stop_after_hours_from_first_submission": 72,
+ "runs": {
+  "X0": {"kind": "exact", "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+         "driver_digest": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+         "argv": ["--omnifile", "{omnifile}", "--mcfile", "{mcfile}", "--iters", "5", "--use-weights", "--out", "{out}"],
+         "backend": {"estimator": "exact", "classifier": "GradientBoostingClassifier", "regressor": "GradientBoostingRegressor",
+                     "random_state": {"step1": null, "step2": null, "regressor": null}, "iterations": 5}},
+  "X0p": {"kind": "exact", "driver": "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/record/unfold_2d_omnifold_unbinned_d1bc8813.py.record",
+          "driver_digest": "447288e2c61d30cdd46c88077093ec0d78ac08ae63144bb2fe57525e7144ea34",
+          "driver_git_blob_at_d1bc8813": "0f87330b3fe6e61d8922fafaefd0c17165f752b1",
+          "argv": ["--omnifile", "{omnifile}", "--mcfile", "{mcfile}", "--iters", "5", "--use-weights", "--out", "{out}"],
+          "backend": {"estimator": "exact", "classifier": "GradientBoostingClassifier", "regressor": "GradientBoostingRegressor",
+                      "random_state": {"step1": null, "step2": null, "regressor": null}, "iterations": 5}},
+  "X1": {"kind": "exact", "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+         "driver_digest": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+         "argv": ["--omnifile", "{omnifile}", "--mcfile", "{mcfile}", "--iters", "5", "--use-weights", "--seed", "1", "--out", "{out}"],
+         "backend": {"estimator": "exact", "classifier": "GradientBoostingClassifier", "regressor": "GradientBoostingRegressor",
+                     "random_state": {"step1": 1, "step2": 2, "regressor": 3}, "iterations": 5}},
+  "L0": {"kind": "lgbm", "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+         "driver_digest": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+         "argv": ["--omnifile", "{omnifile}", "--mcfile", "{mcfile}", "--iters", "5", "--use-weights", "--estimator", "lgbm", "--seed", "42", "--out", "{out}"],
+         "backend": {"estimator": "lgbm", "classifier": "LGBMClassifier", "regressor": "LGBMRegressor",
+                     "random_state": {"step1": 42, "step2": 43, "regressor": 44}, "iterations": 5}},
+  "L1": {"kind": "lgbm", "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+         "driver_digest": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+         "argv": ["--omnifile", "{omnifile}", "--mcfile", "{mcfile}", "--iters", "5", "--use-weights", "--estimator", "lgbm", "--seed", "1", "--out", "{out}"],
+         "backend": {"estimator": "lgbm", "classifier": "LGBMClassifier", "regressor": "LGBMRegressor",
+                     "random_state": {"step1": 1, "step2": 2, "regressor": 3}, "iterations": 5}}
+ },
+ "comparisons": [
+  {"id": "X0_vs_E_C", "new": "X0", "ref": "E_C", "question": "today's driver regenerates the quoted exact central"},
+  {"id": "X0p_vs_E_C", "new": "X0p", "ref": "E_C", "question": "the d1bc8813 driver (with today's helper) regenerates the quoted exact central"},
+  {"id": "X1_vs_X0", "new": "X1", "ref": "X0", "question": "one-seed P09b: random_state 1/2/3 against random_state=None, today's driver"},
+  {"id": "L0_vs_CV42", "new": "L0", "ref": "CV42", "question": "a CV-file seed-42 run reproduces the seed-42 realization of the adopted sweep's CV"},
+  {"id": "L0_vs_PN_CV", "new": "L0", "ref": "PN_CV", "question": "the same against the July background-aware sweep's CV"},
+  {"id": "L1_vs_SEED1", "new": "L1", "ref": "SEED1", "question": "a seed-1 run reproduces the seedscan seed-1 central"}
+ ],
+ "controls": [
+  {"id": "NC_X0_vs_CV42", "new": "X0", "ref": "CV42", "expect": "differ",
+   "why": "different estimators (exact vs LightGBM; median 0.99 % per bin): the comparator must report FAIL here, or it is not discriminating"}
+ ]
+}

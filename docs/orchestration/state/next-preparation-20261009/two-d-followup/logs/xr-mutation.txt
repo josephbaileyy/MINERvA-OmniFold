@@ -1,0 +1,23 @@
+overwrite-allowed: caught
+symlink-allowed: caught
+frozen-path-allowed: caught
+checkout-outroot-allowed: caught
+seed-unchecked: caught
+class-unchecked: caught
+normalization-unchecked: caught
+driver-pin-unchecked: caught
+input-digest-unchecked: NOT CAUGHT
+cwd-unchecked: caught
+no-loky-seed: caught
+abbreviated-commit-accepted: caught
+package-drift-accepted: caught
+attempt-cap-off-by-one: caught
+billing-unchecked: NOT CAUGHT
+ledger-billing-unflagged: caught
+loose-tolerance: caught
+cell-identity-unchecked: caught
+submit-no-cancel: caught
+17 of 19 caught
+real 1283.58
+user 876.96
+sys 470.17

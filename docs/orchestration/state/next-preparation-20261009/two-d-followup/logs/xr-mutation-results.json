@@ -1,0 +1,177 @@
+{
+ "n": 19,
+ "caught": 17,
+ "results": [
+  {
+   "mutant": "overwrite-allowed",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_an_existing_output_is_never_overwritten"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "symlink-allowed",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_a_symlinked_attempt_directory_is_refused"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "frozen-path-allowed",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_an_output_that_is_a_frozen_reference_path_is_refused"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "checkout-outroot-allowed",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_an_outroot_inside_the_checkout_is_refused"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "seed-unchecked",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_a_wrong_seed_stops_before_training"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "class-unchecked",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_a_backend_other_than_the_frozen_one_stops_before_training"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "normalization-unchecked",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_a_normalization_differing_from_the_reference_is_refused"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "driver-pin-unchecked",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_a_changed_driver_or_helper_is_refused"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "input-digest-unchecked",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_an_input_with_other_bytes_is_refused"
+   ],
+   "caught": false,
+   "tail": "OK"
+  },
+  {
+   "mutant": "cwd-unchecked",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_the_wrong_working_directory_is_refused"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "no-loky-seed",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_lightgbm_ran_with_a_child_free_core_count"
+   ],
+   "caught": true,
+   "tail": "FAILED (errors=1)"
+  },
+  {
+   "mutant": "abbreviated-commit-accepted",
+   "file": "xr_admit.py",
+   "tests": [
+    "test_xr.XR.test_the_authorization_binding"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "package-drift-accepted",
+   "file": "xr_admit.py",
+   "tests": [
+    "test_xr.XR.test_a_package_change_after_the_package_commit_is_refused"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "attempt-cap-off-by-one",
+   "file": "xr_admit.py",
+   "tests": [
+    "test_xr.XR.test_submit_counts_attempts_per_kind_and_cancels_on_a_failed_sbatch"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "billing-unchecked",
+   "file": "xr_admit.py",
+   "tests": [
+    "test_xr.XR.test_jobcheck_refuses_an_allocation_outside_the_caps"
+   ],
+   "caught": false,
+   "tail": "OK"
+  },
+  {
+   "mutant": "ledger-billing-unflagged",
+   "file": "xr_admit.py",
+   "tests": [
+    "test_xr.XR.test_ledger_charges_and_flags"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "loose-tolerance",
+   "file": "xr_compare.py",
+   "tests": [
+    "test_xr.Comparator.test_tolerance_cells_and_digests"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "cell-identity-unchecked",
+   "file": "xr_compare.py",
+   "tests": [
+    "test_xr.Comparator.test_tolerance_cells_and_digests"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  },
+  {
+   "mutant": "submit-no-cancel",
+   "file": "launch/xr_submit.sh",
+   "tests": [
+    "test_xr.XR.test_submit_counts_attempts_per_kind_and_cancels_on_a_failed_sbatch"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  }
+ ]
+}
