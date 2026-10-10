@@ -1,0 +1,15 @@
+# Repair-batch mutants (review cycle 1, finding 1), each applied in place, tests run, then restored (cmp-verified).
+M1 (no universe check in _ours_only_chi2):
+FAIL: test_ours_only_refuses_a_permuted_universe_and_warns_on_a_legacy_one (2d-unfolding.tests.test_reported_cells.ScriptGuardTest.test_ours_only_refuses_a_permuted_universe_and_warns_on_a_legacy_one)
+Ran 5 tests in 24.194s
+FAILED (failures=1)
+1
+M2 (no legacy fallback in analyze_universes):
+FAIL: test_legacy_bootstrap_is_block_summed (2d-unfolding.tests.test_reported_cells.ScriptGuardTest.test_legacy_bootstrap_is_block_summed)
+Ran 5 tests in 24.542s
+FAILED (failures=1)
+M3 (refusal after the archive step):
+FAIL: test_refuses_while_a_pinned_product_exists (2d-unfolding.tests.test_final_rollup_full_refusal.FinalRollupRefusalTest.test_refuses_while_a_pinned_product_exists) (present='uq/seedscan_lgbm_ml/uq_covariance_ml.root')
+FAIL: test_refuses_while_a_pinned_product_exists (2d-unfolding.tests.test_final_rollup_full_refusal.FinalRollupRefusalTest.test_refuses_while_a_pinned_product_exists) (present='uq/bootstrap_MEFHC_300/uq_covariance_boot300.root')
+Ran 3 tests in 0.689s
+FAILED (failures=2)

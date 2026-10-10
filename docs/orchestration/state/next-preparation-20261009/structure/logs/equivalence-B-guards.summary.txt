@@ -1,0 +1,14 @@
+UNI matched_new_boot     old rc=0 combined=True | new rc=0 root=True combined=True 
+UNI matched_legacy_boot  old rc=0 combined=True | new rc=0 root=True combined=True 
+UNI no_boot              old rc=0 combined=False | new rc=0 root=True combined=False 
+UNI perm_boot            old rc=0 combined=True | new rc=1 root=False combined=False ['[FAIL] reported cells differ: CV $SCRATCH/eq_B/sweep/2d_xsec_TEST_5iter_lgbm_uni_full_CV.root has 205, bootstrap $SCRATCH/eq_B/uq_new_boot_perm/uq_covariance.root (hReportedCells) has 205; only in CV $SCRATCH/eq_B/sweep/2d_xsec_TEST_5iter_lgbm_uni_full_CV.root: 100(pt7,pz5); only in bootstrap $SCRATCH/eq_B/uq_new_boot_perm/uq_covariance.root (hReportedCells): 144(pt10,pz1); refusing to block-sum.']
+UNI omit_boot            old rc=0 combined=False | new rc=1 root=False combined=False ['[FAIL] reported cells differ: CV $SCRATCH/eq_B/sweep/2d_xsec_TEST_5iter_lgbm_uni_full_CV.root has 205, bootstrap $SCRATCH/eq_B/uq_new_boot_omit/uq_covariance.root (hReportedCells) has 204; only in CV $SCRATCH/eq_B/sweep/2d_xsec_TEST_5iter_lgbm_uni_full_CV.root: 100(pt7,pz5); only in bootstrap $SCRATCH/eq_B/uq_new_boot_omit/uq_covariance.root (hReportedCells): none; refusing to block-sum.']
+UNI noid_boot            old rc=0 combined=True | new rc=1 root=False combined=False ['[FAIL] $SCRATCH/eq_B/boot_noid.root has neither hReportedCells nor hMean2D, so its reported cells are unknown; refusing to block-sum it.']
+UNI perm_cv_no_boot      old rc=0 combined=False | new rc=0 root=True combined=False 
+OO  matched_stored_identity  rc old=0 new=0 stdout_equal=True new_only=[] err=
+OO  matched_legacy_universe  rc old=0 new=0 stdout_equal=False new_only=['[WARN] $SCRATCH/eq_B/uni_old_no_boot/uq_universe_covariance.root stores no hReportedCells; its cells are checked by count only'] err=
+OO  perm_boot_vs_paper       rc old=0 new=1 stdout_equal=False new_only=[] err=['[FAIL] reported cells differ: paper StatOnly has 205, bootstrap $SCRATCH/eq_B/uq_new_boot_perm/uq_covariance.root (hReportedCells) has 205; only in paper StatOnly: 100(pt7,pz5); only in bootstrap $SCRATCH/eq_B/uq_new_boot_perm/uq_covariance.root (hReportedCells): 144(pt10,pz1)']
+OO  perm_universe_vs_paper   rc old=0 new=1 stdout_equal=False new_only=[] err=['[FAIL] reported cells differ: paper StatOnly has 205, universe $SCRATCH/eq_B/uni_new_perm_cv_no_boot/uq_universe_covariance.root (hReportedCells) has 205; only in paper StatOnly: 100(pt7,pz5); only in universe $SCRATCH/eq_B/uni_new_perm_cv_no_boot/uq_universe_covariance.root (hReportedCells): 144(pt10,pz1)']
+OO  noid_boot                rc old=0 new=1 stdout_equal=False new_only=[] err=['[FAIL] $SCRATCH/eq_B/boot_noid.root has neither hReportedCells nor hMean2D, so its reported cells are unknown']
+extra objects (new only): [('uni', 'uq_universe_covariance.root', 'hReportedCells'), ('uq', 'uq_covariance.root', 'hReportedCells')]
+differences other than extra objects: []

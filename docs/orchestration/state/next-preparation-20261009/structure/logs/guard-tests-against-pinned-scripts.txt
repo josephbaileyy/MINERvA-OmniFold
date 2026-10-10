@@ -1,0 +1,5 @@
+# ScriptGuardTest run with the pinned (5ac9706a) analyze_universes.py and _ours_only_chi2.py swapped into 2d-unfolding/uq/, then restored (cmp-verified).
+FAIL: test_ours_only_refuses_a_permuted_bootstrap (2d-unfolding.tests.test_reported_cells.ScriptGuardTest.test_ours_only_refuses_a_permuted_bootstrap)
+FAIL: test_permuted_bootstrap_is_refused (2d-unfolding.tests.test_reported_cells.ScriptGuardTest.test_permuted_bootstrap_is_refused)
+Ran 3 tests in 24.687s
+FAILED (failures=2)
