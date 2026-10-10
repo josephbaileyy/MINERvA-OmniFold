@@ -1,0 +1,57 @@
+# Review round 1 — fresh read-only reviewer, fixed commit `df0923aa`
+
+Recorded by the lane owner. The reviewer's final message is reproduced below with its formatting condensed; findings, quoted phrases, numbers and verdicts are unchanged. The
+reviewer worked in a clean detached worktree at
+`df0923aacb88228bf971de74c2506879738e889d`, which was checked clean (`status --porcelain --ignored`
+empty) after the review. The reviewer's own scratch code (`chk1.py`–`chk6.py`) stayed in the owner's
+session scratch and is not tracked. Dispositions of the findings are in `REPORT.md` §11.
+
+---
+
+Verdict: ACCEPT-WITH-REPAIRS on D1/D2/D3. Numbers largely reproduce from independent code, but the D-ID design has gaps that would make it INCONCLUSIVE or uninterpretable as written, and two interpretations plus one pool comparison overclaim.
+
+## (a) Fixed commit reviewed
+`df0923aacb88228bf971de74c2506879738e889d` (worktree `/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/dae5497b-2215-4ebd-82ac-d6b47645a5d8/scratchpad/gbdt-20261009/review-df0923aa`). Lane files: `docs/orchestration/state/next-preparation-20261009/gbdt/{REPORT.md, comparator.py, test_comparator.py, reduce_saved_outputs.py, results.json}`. I read GOALS Goal 5 + Shared contract. Independent recomputation used my own NumPy/SciPy code on raw operands (reduce_saved_outputs.py was read only for definitions, never run). Scratch: `.../scratchpad/gbdt-20261009/reviewer-scratch/`; paper PDF at `.../reviewer-paper/` (sha256 `b8588756…`, matches the report's cited digest).
+
+## (b) Findings
+
+**1. MATERIAL — §6 decision rules: GBDT comparator missing for departures in the branch population.** "branch outcome (per map, over the five historical departures and P1r–P3r)" needs r_GBDT, used by `classify`. The §6 comparator table lists noise-free GBDT products only for nominal/W3/GiBUU/W1/q3 (`k_b0_*`, `k_cap10_*`); operands have no noise-free W2 trace and no GBDT product for P1r/P2r/P3r is named. The missing-result rules cover a failed weight-file digest, not a missing comparator. Repair: restrict the branch population to the four traced departures (or name W2's K=5 R-ensemble mean as comparator, justified by E2, or drop W2), treat P1r–P3r as σ_c/r_IBU-only cells that count toward neither branch, and add a missing-comparator rule.
+
+**2. MATERIAL — §6 rules: no branch for "identified but iteration-limited".** A functional that is iteration-faithful **and** identified (σ_c ≤ 2.5%) counts toward neither branch C nor A, so I1 and I2 sets are both empty and the rules record INCONCLUSIVE — a plausible outcome given E4 (I recomputed: GiBUU J median 9.47→4.90% K5→40, W1 5.41→4.09%), which is iteration-removal and is cited in rank 1 as evidence *for* weak identifiability but not listed as evidence against. The computed r_IBU(∞), invisible share and binning bias enter no rule; the rank-3 observation ("split by the missed-event fraction of each truth cell") appears nowhere in §6 computations 1–5, `comparator.py`, or any threshold. Repair: add a predeclared branch B (identified + iteration-faithful + r_IBU(∞) ≤ 0.5|r_GBDT|) with its named route (a convergence/regularization study); implement the missed-fraction split with a frozen concentration threshold or remove the "(in D-ID)" claim for rank 3; move E4 GiBUU/W1 into rank-1 "against".
+
+**3. MATERIAL — §6 comparison is not like-for-like.** The primary is "T2 with the split-half response at K = 5", but the GBDT comparators are asimov_same (inventory metadata: `construction: asimov_same`, `no_background: False`, `missed: regress`), while IBU is signal-only with exact efficiency. So r_IBU − r_GBDT confounds sample role, background treatment and missed-event handling with approximation, which the 0.3/0.5 thresholds then label. Also the "noise-free nominal must return r_IBU ≤ 1e-8" control holds only for the same-sample response; under split-half it would fail, making the run INCONCLUSIVE by its own rule. Repair: classify on the same-sample variant vs asimov_same GBDT; name signal-only GBDT comparators if they exist (s5e diag has `trace_*_sig_*`) or declare the background confound; restrict the 1e-8 control to same-sample.
+
+**4. MATERIAL — §6 "Interpretation" Branch C overclaims.** "out of reach for *any* estimator using these data and this response without prior information … a quantified no-go" — σ_c is a binned (10,499-reco-cell, T2) Cramér–Rao width that the report's own §4 says is "conservative in the reco direction" (unbinned carries more information) and "optimistic in the truth direction"; it is also signal-only (no background noise). Repair: scope to "weakly identified for binned estimators at this reco binning and T2 resolution"; unbinned information is not bounded by it.
+
+**5. MATERIAL — §3 E6 / §4 rank 2: q3 capacity evidence is quoted on a map where q3 does not depart.** "Capacity removes the stall and halves the median residual (6.16% → 3.14% at K = 15). This identifies classifier approximation as a material contributor for q3." The 6.16→3.14 is the EW median; the q3 stress preserves the EW marginal (I found 0 EW cells with |departure| > 1%). On endpoint maps capacity moves q3 only modestly: J 4.10→3.52% (−14%), H2 5.15→5.01% (−3%) at K=10; s5e notes q3 max unchanged. The λ_5D evidence (B0 plateau ≈985 vs capacity 174 at K=15) is valid. Repair: base the q3 claim on λ_5D and state the J/H2 effect is small; restate I1's tie to a measured failure accordingly.
+
+**6. MATERIAL — §9 "Feasibility conclusion": overstated ratio.** "costs 10²–10³ times any pool this project has used, even under optimistic speedups". Against the largest pool (s5p 341 node-h): 8,710→25×, 80,916→237×, optimistic 4,815→14×. Repair: "≈14–240× the largest (s5p) pool"; the no-go judgement for D3 can stand re-argued on those numbers.
+
+**7. MINOR — §6 Price: no derivation, and inconsistent with results.json.** Report: 1–4 core-h +1 = 5 → 6.25 admitted; `results.json` `diagnostic_cost.admitted_cpu_core_hours_upper` = 5.0 (4/0.8). No run count is given; I estimate ≈ 9 truths × 2 response weightings × 2 sample roles × T1/T2 plus a convergence run of up to 10^5 iterations each — a dense T2 response is ~0.61 GiB (≈1.3 GB memory traffic per iteration), so 10^5 iterations could be hours per run unless sparsity is used; eigendecompositions at n=7,776 are minutes each. No cap-exhaustion rule. Repair: give the run count, a synthetic timing at T2/T3 shapes, a cap-exhaustion rule, and reconcile results.json.
+
+**8. MINOR — §6 Numerical tolerances: 1e-6 exactness control may be unreachable.** IBU along weakly constrained modes converges sublinearly; 1e-6 within 10^5 iterations at T2 may not be met even on "identified" functionals → INCONCLUSIVE "and is not tuned". Repair: tie the tolerance to σ_c (e.g. ≤ 0.01 σ_c) or apply it at T1, and record non-convergence separately.
+
+**9. MINOR — §3 E5 slope interpretation reversed.** "The slope below 1 means the data shift underestimates the closure residual by 11–28%." Slope of r on −s = 0.72–0.89 means |r| < |s|; I get |r|/|s| = 0.75–0.98 and reverse slopes 1.11–1.27 (J). Repair: "the data shift overstates the closure residual along its own direction".
+
+**10. MINOR — §5/§13 D2 quantitative misstatement.** "bias is 20–50 times larger" / "variance is 1/20–1/50 of bias". Measured median |bias|/SD (J): 23.5 GiBUU, 12.6 q3, 14.6 W1, 11.7 W3, 1.9 W2; ratio of medians 11–27. Repair: quote the measured range; D2's verdict is unaffected (bias share of MSE ≥0.99).
+
+**11. MINOR — §3 E3 "More iterations do not repair the sign errors."** ρ<0 falls 32→25% (GiBUU) and 37→30% (W1); W3 28→29%. Repair: "only partly reduce".
+
+**12. MINOR — §2 identity claim.** "from inventory metadata … the noise-free trace": partial `k_b0_{gibuu,w1,q3}` files have no metadata; their ratio pairing is routed, not metadata-read (W3 and cap10_gibuu do carry `eavail_ratio_sha256`). Repair: say so.
+
+**13. MINOR — §6 "thresholds frozen in comparator.py" partly untrue; two tests tautological.** The 50% branch rule and resolution-sensitivity rule are not coded/tested. `test_linear_prior_pull_identity` checks an algebraic identity of an affine estimator; `test_recovered_fraction_detects_cross_talk` uses no lane code. The other six tests do exercise both directions (stall vs exact, null-space vs clean, weak vs strong mode, label directions, Clopper–Pearson brute force). Repair: code and test the branch aggregation with fixtures reaching each branch (including a new B).
+
+**14. MINOR — §8 paper mapping.** Faithful to the paper text (I verified §2.1.1 Gaussian approx and "Kλ known", eq. 2.10 MC noise "negligible", Tenorio row-space proof with empirical-only coverage when rank-deficient, PO frequentist with prior only for length, SSB, and no background — "without the uniform background"). It omits the second example (steeply falling jet spectrum, 30 smeared/60 true bins), and "Strict bounds answer exactly the identifiability question" is too strong since the width depends on declared constraints and the slack s².
+
+Not verifiable by me: the §2 login-node `ls` result (ssh barred).
+
+## (c) Independently reproduced numbers that AGREE
+Integrity (operand sha = inventory; receipt means/SDs ≤1.22e-15 on 151/153 shared). Headline: W3 J 5.573→6.573%, max 32.90→44.77, H2 3.421→3.680; EW29 +23.665%/0.558%; EW7 −6.812/0.299; EW41 15/40. E1: J median |bias| 9.36/4.47/5.99/0.56/5.40%, SD 0.26–0.43%, bias share 0.993–0.998 (W2 0.787), |t|>3.6 81–99%, nominal max 0.098%. E2: Pearson ≥0.998, slope 0.990–1.009, median diff 0.064–0.207 pp, 0.98–2.89 SE. E3: J ρ<0 32.1/37.3/27.5/11.4% at K5 and 24.8/30.4/29.4/11.4% at Kmax; EW29 dep −30.3%, residual +73.5%, prior-stay +43.4%. E4 all medians/max and 66% worse-at-200. E5 all R²/slopes/Pearson in the table. E6 λ series, monotonicity, q3 EW rises at 8/29 steps, λ30/λ15 = 0.957, λ15/λ8 = 0.74. E7 6.3%/88%, 11.7%/44%, 1.11σ, 12.8σ, 6.25σ. E8 medians 14.71/19.02/9.81, 19.3%/29.6% ≤5%, leave-one-out minima 9.98 (J)/5.84 (H2). Capacity K10: W3 5.55→4.41, H2 3.68→1.01; GiBUU 9.22→8.67; q3 4.10→3.52. Clopper–Pearson N (exact search): 4-case 3,562/4,404/4,698; 1-case 2,726/3,565/3,845. §9 costs 281/8,710/28,377/80,916; speedup 22,656 and 4,815. I1 117,489 s → 4.08 → 5.10 → 6.10 → 7.62. S2 6.48 → 10.13. Extract 1.064 GiB; event file 1.442 GiB. P1r 101/1,568 clipped, P2r 3/294, P3r 0; flux-fix receipts contain the cited digests. comparator.py `cr_width` matches hᵀF⁻¹h to 1.3e-15; IBU exactness/nominal controls behave as claimed on a well-conditioned fixture. Diff touches only the five gbdt/ files (≈116 KiB).
+
+## (d) Verdicts
+- D1 (D-ID PASS): **ACCEPT-WITH-REPAIRS** — findings 1–4 required before "complete design" holds; 5, 7, 8, 13 should be repaired. Unrepaired, D1 is INCONCLUSIVE.
+- D2 (old panel FAIL): **ACCEPT-WITH-REPAIRS** (finding 10, wording only).
+- D3 (FAIL against proposed targets): **ACCEPT-WITH-REPAIRS** (finding 6); targets are correctly labelled as proposals throughout.
+
+## (e) Resources and worktree status
+CPU ≈ 1.3 core-minutes total (largest: Clopper–Pearson search 53 s user; rest <10 s); one thread per command; no ssh/cluster/GPU/training. Running the prescribed pytest (8 passed) and once my own `-I` import of comparator.py created gitignored `__pycache__/` in gbdt/; I deleted the directory I created both times. Final `git -C <worktree> status --porcelain` (and `--ignored`) is empty. Model: Claude Opus 5.5 (`claude-opus-5-5`); effort not observable.
