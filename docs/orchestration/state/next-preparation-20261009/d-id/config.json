@@ -1,0 +1,487 @@
+{
+ "schema": "d-id-config/1",
+ "design": "docs/orchestration/state/next-preparation-20261009/gbdt/REPORT.md section 6, amended prospectively by d-id/REPORT.md section 3",
+ "baseline_main": "a16d578646936a0cc6eca41e3e0350e756ee0dca",
+ "code": {
+  "comparator.py": "f5374fe05b2ef2b366881e39a286519a35166aa83e6bcceb75167ba769b1187b",
+  "nd-unfolding": {
+   "s5n_pseudo.py": "8981f97b96b418cfe46f1e940cb120f174053d7d3429f3b0b01a229c6c02ee6c",
+   "s5c_pseudo.py": "d81d4f46fb55f25fdf7ce2e4b9a9a63bf876beaf754bdc250eee974579e11f5d",
+   "s5c_unfold.py": "510d749a2e82fa448de6172753ae2adc9ebd81a89d4f18bf76beb5faa8bb3968",
+   "s5e_deform.py": "6726ff99c7787d1ee6dff7fa5d08df88f9df76285d98c4c462f964ac6164779f",
+   "s5e_trace.py": "c47e9dd3feef9eab323e40f4e0da770ad67e86431a1ce95f99a10007decc66c1",
+   "s5p_converge.py": "5fe2320aeaf6af8b4a170d339993b5f3eba806d89b96c9530c42a33237db7546",
+   "s5p_truths.py": "40b6506d441d379e8915506d6d6cd4390b8d86bf704dfccb82fff2df86cf3913",
+   "xsec_nd.py": "454001f3c9ac3aa6485d184aadb8aba65dd71dba124816962b9c3b6344920fa5",
+   "s5c_coverage.py": "e47f0d8f5677f53fe80f8d9d44b461788e0677992574877922b462d0e25ce37c",
+   "project_cov_nd.py": "c70319c06907d2e099cca908b012025b6343b5d52cf380444a2fcacb594ab976",
+   "omnifold_nn_core.py": "24f87f119073c4f125c2f753310507d4375b6f8a1b7751e59d3615dd50e90582",
+   "uq_math.py": "dde84d0a36b9bb7b2b747b27f3d6b3aa86e9bc004003d20a9f3ac0c0d6bb4977",
+   "s5c_samplesize.py": "3e0b3975c0893f1e7506359b1ea956d2beadc0025bc494afca4b4ba8d4c0b6df",
+   "s5e_geometry.py": "e2ed023af53d48cfd37f72bd79196736ec1948529945e939127dbf59af99b20e"
+  }
+ },
+ "events": {
+  "file": "nd-unfolding/of_inputs_5d.npz",
+  "bytes": 1548438020,
+  "cluster_path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "pair_rows_expected": 20402110,
+  "pair_rows_source": "docs/orchestration/state/s5e/diag/diag_receipt.json D6.geometry.rows_eligible (s5e_geometry.py: pass_reco & pass_truth & truth and reco in grid)",
+  "expect_sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f"
+ },
+ "s5c_contract": "docs/orchestration/state/s5c/contract.json",
+ "operands": {
+  "path": "nd-unfolding/gbdt_model_dependence/inputs/operands.npz",
+  "expect_sha256": "61c32477cdaa4c43dce20fa9c62370fbc3f53f7af36efcd64179a6ad00d4cbc2"
+ },
+ "records": {
+  "stage2_receipt": {
+   "path": "docs/orchestration/state/s5p/stage2/stage2_receipt.json",
+   "expect_sha256": "0daa7cd8a677a38a9a489d033f5052e5a78d05b52abc3e968228131d462c2846"
+  },
+  "diag_receipt": {
+   "path": "docs/orchestration/state/s5e/diag/diag_receipt.json",
+   "targets": {
+    "asimov_b0_eavail": {
+     "S_dep": 92363.62732713955,
+     "lambda_5d": {
+      "5": 367.68704499162504,
+      "15": 237.8235207219524,
+      "30": 163.68600740520628
+     }
+    },
+    "asimov_b0_q3": {
+     "S_dep": 92244.77978309871,
+     "lambda_5d": {
+      "5": 1260.2874037378508,
+      "15": 1031.0254929900793,
+      "30": 987.0396179597193
+     }
+    }
+   },
+   "expect_sha256": "f08807257df15b440fc1b4737296cda07eeead4dcf1bbee0b10de0a24d8d490c"
+  },
+  "inventory": {
+   "path": "nd-unfolding/gbdt_model_dependence/inputs/inventory.json",
+   "expect_sha256": "e3f3289b064bc54ea0ef5b6de19fee69ae6a6a8c8d03b72339b96d765053c5e4"
+  },
+  "definition": {
+   "path": "nd-unfolding/gbdt_model_dependence/definition.json",
+   "expect_sha256": "7022958ba1e4d991cdf7fe59b88505538791a3a3a415767af0dd5b21bbe46cb9"
+  }
+ },
+ "fine_edges": {
+  "pt": [
+   0.0,
+   0.07,
+   0.15,
+   0.25,
+   0.33,
+   0.4,
+   0.47,
+   0.55,
+   0.7,
+   0.85,
+   1.0,
+   1.25,
+   1.5,
+   2.5,
+   4.5
+  ],
+  "pz": [
+   1.5,
+   2.0,
+   2.5,
+   3.0,
+   3.5,
+   4.0,
+   4.5,
+   5.0,
+   6.0,
+   7.0,
+   8.0,
+   9.0,
+   10.0,
+   15.0,
+   20.0,
+   40.0,
+   60.0
+  ],
+  "eavail": [
+   0.0,
+   0.1,
+   0.2,
+   0.4,
+   0.8,
+   1.5,
+   3.0,
+   100.0
+  ],
+  "q3": [
+   0.0,
+   0.2,
+   0.4,
+   0.6,
+   0.8,
+   1.2,
+   2.0,
+   100.0
+  ],
+  "W": [
+   0.0,
+   1.1,
+   1.4,
+   1.8,
+   2.2,
+   3.0,
+   100.0
+  ]
+ },
+ "J_edges": {
+  "pt": [
+   0.0,
+   0.55,
+   0.85,
+   4.5
+  ],
+  "pz": [
+   1.5,
+   3.5,
+   6.0,
+   60.0
+  ],
+  "eavail": [
+   0.0,
+   0.4,
+   1.5,
+   100.0
+  ],
+  "q3": [
+   0.0,
+   1.2,
+   2.0,
+   100.0
+  ],
+  "W": [
+   0.0,
+   1.4,
+   2.2,
+   100.0
+  ]
+ },
+ "reco_cells_expected": 10499,
+ "weight_sets": [
+  {
+   "name": "nominal",
+   "truth": "nominal",
+   "amplitude": 0.0,
+   "ratio": null,
+   "comparator": "trace",
+   "ratio_expect_sha256": null
+  },
+  {
+   "name": "gibuu",
+   "truth": "eavail_shape",
+   "amplitude": 1.0,
+   "ratio": "docs/orchestration/state/s5n/eavail-ratio-gibuu-over-genie.json",
+   "comparator": "trace",
+   "ratio_expect_sha256": "45cc3e0abfe0dfae985113137e54b1d3f3961e86f4d29c454e08a0aa9f1f08a2"
+  },
+  {
+   "name": "w1",
+   "truth": "eavail_shape",
+   "amplitude": 1.0,
+   "ratio": "docs/orchestration/state/s5n/eavail-ratio-nuwro-over-genie.json",
+   "comparator": "trace",
+   "ratio_expect_sha256": "2a208df97fcd63937587d67098feb542c5e7e6759693bcc0609f0eb5fa0ff767"
+  },
+  {
+   "name": "w3",
+   "truth": "ratio_nd",
+   "amplitude": 1.0,
+   "ratio": "docs/orchestration/state/s5e/w3-nuwro-over-genie-pt-pz-eavail.json",
+   "comparator": "trace",
+   "ratio_expect_sha256": "3455daf3ab5321a33314ca9ab51644c34134443cc49168c3be5c06a41d0e87bb"
+  },
+  {
+   "name": "q3",
+   "truth": "q3_given_eavail_w",
+   "amplitude": 0.3,
+   "ratio": null,
+   "comparator": "trace",
+   "ratio_expect_sha256": null
+  },
+  {
+   "name": "w2",
+   "truth": "ratio_nd",
+   "amplitude": 1.0,
+   "ratio": "docs/orchestration/state/s5e/w2-genie-mec-over-cv-eavailW.json",
+   "comparator": "ensemble",
+   "ratio_expect_sha256": "80e16f95702266d0e61b7529c8b5d36a5e4b140cfcde04640606b408c2b1e19b"
+  },
+  {
+   "name": "p1r",
+   "truth": "ratio_nd",
+   "amplitude": 1.0,
+   "ratio": "docs/orchestration/state/s5p/ratios/altR/p1r-w3-nuwro-over-genie-pt-pz-eavail.json",
+   "comparator": "none",
+   "ratio_expect_sha256": "9240e4b3e419bbf5d62093bd246964ba8c507816d64d50db645acacf35ede19f"
+  },
+  {
+   "name": "p2r",
+   "truth": "cond_ratio",
+   "amplitude": 1.0,
+   "ratio": "docs/orchestration/state/s5p/ratios/altR/p2r-d5-nuwro-over-genie-q3-given-eavail-w.json",
+   "comparator": "none",
+   "ratio_expect_sha256": "6a36c9bc0320339f7fe2c5a0c421ca8b3f4a0374f9e27d57952bcd6bf8729737"
+  },
+  {
+   "name": "p3r",
+   "truth": "ratio_nd",
+   "amplitude": 1.0,
+   "ratio": "docs/orchestration/state/s5p/ratios/altR/p3r-w2-genie-mec-over-cv-eavailW.json",
+   "comparator": "none",
+   "ratio_expect_sha256": "b3108969ced1fe552d5e1af5943da068214bdbd5738488562a5d8cc5cfd1efba"
+  }
+ ],
+ "comparators": {
+  "traces": {
+   "k_b0_nominal": {
+    "file": "s5p/conv/k_b0_nominal.npz",
+    "family": "b0",
+    "receipt_run": "nominal",
+    "weight_set": "nominal",
+    "expect_sha256": "963cf328d4bb0018e0d55e570c2a1113209594086eac4a7d9e9c537ccca84d6a"
+   },
+   "k_b0_w3": {
+    "file": "s5p/conv/k_b0_w3.npz",
+    "family": "b0",
+    "receipt_run": "w3",
+    "weight_set": "w3",
+    "expect_sha256": "7e8e87f44d9cef195698e73cd641ca3c182b36fed0c729e51882150f5b38e161"
+   },
+   "k_b0_gibuu": {
+    "file": "s5p/conv/k_b0_gibuu.npz.partial.npz",
+    "family": "b0",
+    "receipt_run": "gibuu",
+    "weight_set": "gibuu",
+    "expect_sha256": "1fbbdf95dbca3c08a01348707ab759b653a14dcc5ccca70f818dc437157702c0"
+   },
+   "k_b0_q3": {
+    "file": "s5p/conv/k_b0_q3.npz.partial.npz",
+    "family": "b0",
+    "receipt_run": "q3",
+    "weight_set": "q3",
+    "expect_sha256": "6e89edea832432e0baf5294c891e7cbb15fde37caa51809f8d576b39f48d75c1"
+   },
+   "k_b0_w1": {
+    "file": "s5p/conv/k_b0_w1.npz.partial.npz",
+    "family": "b0",
+    "receipt_run": "w1",
+    "weight_set": "w1",
+    "expect_sha256": "d06c46a19232c520e26d4a572143cab4aced09b9b31fd891b67c854b38185eea"
+   },
+   "k_cap10_gibuu": {
+    "file": "s5p/conv/k_cap10_gibuu.npz",
+    "family": "cap10",
+    "receipt_run": "gibuu",
+    "weight_set": "gibuu",
+    "expect_sha256": "931297280a9d6da19c5a84b8fc4c4a8f8195e20245349545ee3c81c0696f783d"
+   },
+   "k_cap10_q3": {
+    "file": "s5p/conv/k_cap10_q3.npz",
+    "family": "cap10",
+    "receipt_run": "q3",
+    "weight_set": "q3",
+    "expect_sha256": "26c9a860ecfa92afd07af478675faf2f39a347c8b5679cf2720d9a55eb871fcb"
+   },
+   "k_cap10_w3": {
+    "file": "s5p/conv/k_cap10_w3.npz",
+    "family": "cap10",
+    "receipt_run": "w3",
+    "weight_set": "w3",
+    "expect_sha256": "06818f4bd87843238f4f53236f319e8d8d5c5a493035d4d9813add931c6414d4"
+   }
+  },
+  "primary": {
+   "nominal": {
+    "source": "trace",
+    "name": "k_b0_nominal"
+   },
+   "gibuu": {
+    "source": "trace",
+    "name": "k_b0_gibuu"
+   },
+   "w1": {
+    "source": "trace",
+    "name": "k_b0_w1"
+   },
+   "w3": {
+    "source": "trace",
+    "name": "k_b0_w3"
+   },
+   "q3": {
+    "source": "trace",
+    "name": "k_b0_q3"
+   },
+   "w2": {
+    "source": "ensemble",
+    "name": "W2"
+   }
+  },
+  "ensemble": {
+   "W2": {
+    "estimate": "assessment_W2",
+    "truth": "assessment_W2_truth",
+    "K": 5
+   }
+  },
+  "invisible_operand": {
+   "nominal": {
+    "source": "trace",
+    "name": "k_b0_nominal"
+   },
+   "w3": {
+    "source": "trace",
+    "name": "k_b0_w3"
+   },
+   "gibuu": {
+    "source": "s5e",
+    "name": "asimov_b0_eavail"
+   },
+   "q3": {
+    "source": "s5e",
+    "name": "asimov_b0_q3"
+   }
+  },
+  "s5e": {
+   "asimov_b0_eavail": {
+    "file": "s5e/diag/asimov/asimov_b0_eavail.npz",
+    "construction": "asimov_same",
+    "weight_set": "gibuu"
+   },
+   "asimov_b0_q3": {
+    "file": "s5e/diag/asimov/asimov_b0_q3.npz",
+    "construction": "asimov_same",
+    "weight_set": "q3"
+   },
+   "asimov_b0_nominal": {
+    "file": "s5e/diag/asimov/asimov_b0_nominal.npz",
+    "construction": "asimov_same",
+    "weight_set": "nominal"
+   },
+   "asimov_cap_eavail": {
+    "file": "s5e/diag/asimov/asimov_cap_eavail.npz",
+    "construction": "asimov_same",
+    "weight_set": "gibuu"
+   },
+   "asimov_cap_q3": {
+    "file": "s5e/diag/asimov/asimov_cap_q3.npz",
+    "construction": "asimov_same",
+    "weight_set": "q3"
+   },
+   "asimov_unity_eavail": {
+    "file": "s5e/diag/asimov/asimov_unity_eavail.npz",
+    "construction": "asimov_same",
+    "weight_set": "gibuu"
+   },
+   "asimov_unity_q3": {
+    "file": "s5e/diag/asimov/asimov_unity_q3.npz",
+    "construction": "asimov_same",
+    "weight_set": "q3"
+   }
+  },
+  "d3_sig": {
+   "eavail": {
+    "files": [
+     "s5e/diag/trace/trace_eavail_sig_s301000.npz",
+     "s5e/diag/trace/trace_eavail_sig_s301001.npz",
+     "s5e/diag/trace/trace_eavail_sig_s301002.npz",
+     "s5e/diag/trace/trace_eavail_sig_s301003.npz"
+    ]
+   },
+   "q3": {
+    "files": [
+     "s5e/diag/trace/trace_q3_sig_s302000.npz",
+     "s5e/diag/trace/trace_q3_sig_s302001.npz",
+     "s5e/diag/trace/trace_q3_sig_s302002.npz",
+     "s5e/diag/trace/trace_q3_sig_s302003.npz"
+    ]
+   },
+   "nominal": {
+    "files": [
+     "s5e/diag/trace/trace_nominal_sig_s300000.npz",
+     "s5e/diag/trace/trace_nominal_sig_s300001.npz",
+     "s5e/diag/trace/trace_nominal_sig_s300002.npz",
+     "s5e/diag/trace/trace_nominal_sig_s300003.npz"
+    ]
+   }
+  }
+ },
+ "split": {
+  "seed": 301000,
+  "key": 798985164084644,
+  "product": "eavail",
+  "convention": "s5c_pseudo.half_mask(n_rows, key): True = half B (pseudo-data source); A = response/unfolding half; both x2 (s5n)"
+ },
+ "iterations": {
+  "trajectory": 200,
+  "record_subset": [
+   1,
+   2,
+   3,
+   5,
+   8,
+   10,
+   15,
+   20,
+   25,
+   30,
+   40,
+   50,
+   75,
+   100,
+   125,
+   150,
+   175,
+   200
+  ],
+  "convergence_tol": 1e-10,
+  "convergence_max": 100000
+ },
+ "tolerances": {
+  "nominal_control": 1e-08,
+  "exactness_sigma_fraction": 0.01,
+  "truth_rtol": 1e-09,
+  "receipt_series_rtol": 1e-09,
+  "s_dep_rtol": 0.001,
+  "lambda_rtol": 0.02
+ },
+ "limits": {
+  "threads": 2,
+  "ram_bytes": 8589934592,
+  "scratch_bytes": 2147483648,
+  "tracked_bytes": 10485760,
+  "t2_fisher_max_bytes": 6442450944,
+  "owner_cpu_core_hours": 7.04,
+  "owner_cpu_core_hours_note": "8.8 real-diagnostic+verification cap minus max(20% = 1.76, the priced 1.0 verification); failed attempts count via --spent-before-s"
+ },
+ "price_s": {
+  "weights_and_histograms": 120,
+  "trajectory_T1": 5,
+  "trajectory_T2": 20,
+  "trajectory_T3": 60,
+  "convergence_T1": 120,
+  "convergence_T2": 1500,
+  "fisher_T1": 2,
+  "fisher_T2": 120
+ },
+ "priority": [
+  "1 admission checks and controls",
+  "2 T1 everything (same-sample both weightings: K<=200, Fisher, labels, convergence, exactness)",
+  "3 T2 same-sample both weightings: Fisher, labels, K<=200",
+  "4 T2 convergence (nominal weighting)",
+  "5 T3 same-sample and all split-half trajectories; T2 exactness (reported)"
+ ],
+ "digest_field_convention": "expected digests are stored as expect_sha256 / ratio_expect_sha256 with no sibling path key, so the repository binding collector counts them as unpaired and this lane does not change the pinned receipt-binding inventory (a shared guard it does not own); did.py verifies every one at run time (A1-A4)"
+}

@@ -1,0 +1,15 @@
+test_dependencies_in_the_submit_script_follow_the_spec (test_package_consistency.Plan.test_dependencies_in_the_submit_script_follow_the_spec) ... ok
+test_every_job_script_requests_what_the_spec_says (test_package_consistency.Plan.test_every_job_script_requests_what_the_spec_says) ... ok
+test_the_committed_costs_are_current_and_within_the_ceiling (test_package_consistency.Plan.test_the_committed_costs_are_current_and_within_the_ceiling) ... ok
+test_the_committed_proposal_cannot_admit (test_package_consistency.Plan.test_the_committed_proposal_cannot_admit) ... ok
+test_the_manifest_is_current (test_package_consistency.Plan.test_the_manifest_is_current) ... ok
+test_the_schema_names_every_field_the_admission_check_requires (test_package_consistency.Plan.test_the_schema_names_every_field_the_admission_check_requires) ... ok
+test_the_unfold_argv_in_the_scripts_is_the_spec_argv (test_package_consistency.Plan.test_the_unfold_argv_in_the_scripts_is_the_spec_argv) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.126s
+
+OK
+real 0.18
+user 0.12
+sys 0.03

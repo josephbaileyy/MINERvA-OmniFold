@@ -1,0 +1,8 @@
+# remote_reduce.py on Perlmutter login05, read-only; final digest-only version (no data values emitted)
+2026-10-10T05:11:13Z
+exit=0
+2026-10-10T05:13:40Z
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:23.91
+	Maximum resident set size (kbytes): 1391276
+	Exit status: 0
+# earlier runs of earlier versions: remote_reduce 04:44:32Z (exit 1) and 04:45:37Z; remote_reduce_pn 04:52Z, 05:01Z, 05:02Z. Their extra fields (data-tree values and sums; one reco-cell count) were not committed. Every retained field is identical to this run's.

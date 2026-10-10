@@ -1,0 +1,17 @@
+head: dcae1a3a3a61dcbd17814ee70fff9724adb4371b
+dirty_tracked: False
+ast_sites_n: 17
+probe_counts: {'candidates': 144, 'failopen': 16, 'insert_not_rooted': 67, 'no_insert': 61}
+rooted_listed_n: 17
+failopen_recorded: [16, '7aa2943198612b5e904d37c2d75f3ac9b0fe33cabeb69bcddd7a7e87fc334aa9']
+ast_unlisted: []
+ast_listed_but_clean: []
+ast_only: ['nd-unfolding/pet/gate2_target_runtime.py']
+probe_only: []
+union_n: 17
+insert_call_sites_n: 19
+probe_failopen_digest_as_ratchet_digests_it: 7aa2943198612b5e904d37c2d75f3ac9b0fe33cabeb69bcddd7a7e87fc334aa9
+adjacent_shapes: 0 files
+real 18.64
+user 17.97
+sys 0.43

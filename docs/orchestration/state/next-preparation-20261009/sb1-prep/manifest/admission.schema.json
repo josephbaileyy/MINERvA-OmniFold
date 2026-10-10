@@ -1,0 +1,33 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "sb1-admission/1",
+ "title": "SB1 admission record (checked by sb1_admit.py; the JSON Schema states shape only)",
+ "type": "object",
+ "required": ["schema", "status", "decision", "authorization", "checkout", "code",
+              "launch_spec_sha256", "inputs_observed", "outroot", "ceiling_node_h", "jobs",
+              "cannot_authorize"],
+ "properties": {
+  "schema": {"const": "sb1-admission/1"},
+  "status": {"enum": ["ADMITTED", "PROPOSAL-NOT-AN-AUTHORIZATION"],
+             "description": "sb1_admit.py launches only ADMITTED"},
+  "decision": {"type": "string", "description": "the decision text the authorization grants"},
+  "authorization": {"type": "object", "required": ["path", "sha256"],
+   "properties": {"path": {"type": ["string", "null"],
+                           "description": "repository-relative docs/orchestration/AUTHORIZATION-*.md or DECISION-*.md, committed at HEAD, not a symlink"},
+                  "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}}},
+  "checkout": {"type": ["string", "null"], "description": "absolute path of the admitted checkout on Perlmutter"},
+  "code": {"type": "object", "required": ["commit", "package_commit", "modules"],
+   "properties": {"commit": {"type": ["string", "null"], "description": "HEAD of the checkout; carries the authorization record"},
+                  "package_commit": {"type": ["string", "null"], "description": "the commit that froze this package; an ancestor of commit"},
+                  "modules": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                              "description": "exactly manifest/expected-code.json modules"}}},
+  "launch_spec_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+  "inputs_observed": {"type": "object", "additionalProperties": {"type": "object",
+   "required": ["size", "mtime_ns", "ino"], "properties": {"size": {"type": "integer"},
+   "mtime_ns": {"type": "integer"}, "ino": {"type": "integer"}}}},
+  "outroot": {"type": ["string", "null"], "description": "absolute; must not exist at submission"},
+  "ceiling_node_h": {"const": 2.0},
+  "jobs": {"type": "array", "items": {"type": "object", "required": ["id", "ceiling_node_h"]}},
+  "cannot_authorize": {"type": "array", "items": {"type": "string"}}
+ }
+}

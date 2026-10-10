@@ -1,0 +1,18 @@
+test_a_changed_driver_is_refused_even_when_committed_and_stated (test_sb1_guarded.Guarded.test_a_changed_driver_is_refused_even_when_committed_and_stated) ... ok
+test_a_reference_from_other_arguments_is_refused (test_sb1_guarded.Guarded.test_a_reference_from_other_arguments_is_refused) ... ok
+test_a_reference_with_different_bytes_stops_before_training (test_sb1_guarded.Guarded.test_a_reference_with_different_bytes_stops_before_training) ... ok
+test_a_wrong_helper_digest_is_refused (test_sb1_guarded.Guarded.test_a_wrong_helper_digest_is_refused) ... ok
+test_a_wrong_input_digest_is_refused (test_sb1_guarded.Guarded.test_a_wrong_input_digest_is_refused) ... ok
+test_activation_controls_are_refused_on_the_wrapper_path (test_sb1_guarded.Guarded.test_activation_controls_are_refused_on_the_wrapper_path) ... ok
+test_an_input_changed_after_hashing_is_refused (test_sb1_guarded.Guarded.test_an_input_changed_after_hashing_is_refused) ... ok
+test_an_uncommitted_executed_file_is_refused (test_sb1_guarded.Guarded.test_an_uncommitted_executed_file_is_refused) ... ok
+test_both_arms_strict_and_identical (test_sb1_guarded.Guarded.test_both_arms_strict_and_identical) ... ok
+test_strict_without_the_guard_is_refused (test_sb1_guarded.Guarded.test_strict_without_the_guard_is_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 27.532s
+
+OK
+real 27.74
+user 20.47
+sys 3.53

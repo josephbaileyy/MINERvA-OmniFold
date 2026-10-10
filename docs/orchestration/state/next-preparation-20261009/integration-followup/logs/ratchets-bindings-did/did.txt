@@ -1,0 +1,40 @@
+.............................                                            [100%]
+=============================== warnings summary ===============================
+docs/orchestration/state/next-preparation-20261009/d-id/test_did.py::test_end_to_end_binning_bias_makes_functionals_resolution_sensitive
+docs/orchestration/state/next-preparation-20261009/d-id/test_did.py::test_end_to_end_no_within_cell_freedom_means_no_binning_bias
+docs/orchestration/state/next-preparation-20261009/d-id/test_did.py::test_end_to_end_approximate_estimator_reaches_branch_a
+docs/orchestration/state/next-preparation-20261009/d-id/test_did.py::test_end_to_end_weak_exposure_reaches_branch_c
+docs/orchestration/state/next-preparation-20261009/d-id/test_did.py::test_cap_during_stage4_leaves_branch_b_undeclarable
+docs/orchestration/state/next-preparation-20261009/d-id/test_did.py::test_an_error_in_a_late_stage_keeps_the_earlier_results
+  <worktree>/docs/orchestration/state/next-preparation-20261009/d-id/did.py:734: RuntimeWarning: invalid value encountered in divide
+    self.w2_r5 = np.mean(est / tru - 1.0, axis=0)
+
+docs/orchestration/state/next-preparation-20261009/d-id/test_did.py::test_end_to_end_binning_bias_makes_functionals_resolution_sensitive
+docs/orchestration/state/next-preparation-20261009/d-id/test_did.py::test_end_to_end_no_within_cell_freedom_means_no_binning_bias
+docs/orchestration/state/next-preparation-20261009/d-id/test_did.py::test_end_to_end_approximate_estimator_reaches_branch_a
+docs/orchestration/state/next-preparation-20261009/d-id/test_did.py::test_end_to_end_weak_exposure_reaches_branch_c
+docs/orchestration/state/next-preparation-20261009/d-id/test_did.py::test_cap_during_stage4_leaves_branch_b_undeclarable
+docs/orchestration/state/next-preparation-20261009/d-id/test_did.py::test_an_error_in_a_late_stage_keeps_the_earlier_results
+  <worktree>/docs/orchestration/state/next-preparation-20261009/d-id/did.py:1121: RuntimeWarning: invalid value encountered in divide
+    arrays[f"missed_fraction/{name}"] = ((self.U_kappa @ u["u_miss"]) / (self.U_kappa @ u["u"]))[self.f183]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+29 passed, 12 warnings in 54.59s
+       55.59 real        50.63 user         3.45 sys
+           548634624  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              216185  page reclaims
+                1810  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                2807  voluntary context switches
+               22005  involuntary context switches
+        485393136160  instructions retired
+        168562798031  cycles elapsed
+           294667368  peak memory footprint

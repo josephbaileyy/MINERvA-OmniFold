@@ -1,0 +1,175 @@
+{
+ "schema": "sb1-launch-spec/1",
+ "status": "PROPOSAL - frozen plan; not an authorization and not executed",
+ "cluster": {
+  "system": "Perlmutter CPU",
+  "account": "m3246",
+  "constraint": "cpu",
+  "billing_cpus_per_node": 256,
+  "ceiling_node_h": 2.0,
+  "charge_rule": "node_h = billing_cpus / 256 * elapsed_s / 3600 (sacct AllocTRES billing; regular full node bills 256, shared bills its cpus-per-task)"
+ },
+ "inputs": {
+  "omnifile_universe": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "omnifile_cv": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root",
+  "mcfile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root"
+ },
+ "universes": {
+  "lateral": "Muon_Energy_MINOS:0",
+  "vertical": "Flux:0"
+ },
+ "jobs": [
+  {
+   "id": "H0",
+   "script": "sb1_hash.sbatch",
+   "qos": "shared",
+   "nodes": 1,
+   "cpus_per_task": 2,
+   "time": "00:45:00",
+   "omp_num_threads": 1,
+   "depends": [],
+   "dependency_type": null,
+   "does": "sha256 + stat of the three inputs before any benchmark job"
+  },
+  {
+   "id": "UL",
+   "script": "sb1_unfold.sbatch",
+   "arm": "all",
+   "qos": "regular",
+   "nodes": 1,
+   "cpus_per_task": 128,
+   "time": "00:50:00",
+   "omp_num_threads": 128,
+   "depends": [
+    "H0"
+   ],
+   "dependency_type": "afterok",
+   "driver_argv": [
+    "--omnifile",
+    "{omnifile_universe}",
+    "--mcfile",
+    "{mcfile}",
+    "--iters",
+    "5",
+    "--use-weights",
+    "--estimator",
+    "lgbm",
+    "--universe",
+    "Muon_Energy_MINOS:0",
+    "--seed",
+    "42",
+    "--out",
+    "{outroot}/UL/2d_xsec_UL.root"
+   ],
+   "does": "production loaders (every branch active), full 128-thread LightGBM universe unfold"
+  },
+  {
+   "id": "SL",
+   "script": "sb1_unfold.sbatch",
+   "arm": "selective",
+   "qos": "regular",
+   "nodes": 1,
+   "cpus_per_task": 128,
+   "time": "00:30:00",
+   "omp_num_threads": 128,
+   "depends": [
+    "UL"
+   ],
+   "dependency_type": "afterok",
+   "compare_digests": "{outroot}/UL/receipt.json",
+   "driver_argv": [
+    "--omnifile",
+    "{omnifile_universe}",
+    "--mcfile",
+    "{mcfile}",
+    "--iters",
+    "5",
+    "--use-weights",
+    "--estimator",
+    "lgbm",
+    "--universe",
+    "Muon_Energy_MINOS:0",
+    "--seed",
+    "42",
+    "--out",
+    "{outroot}/SL/2d_xsec_SL.root"
+   ],
+   "does": "prototype 1, same argv and node shape; stops before training on any loader byte difference"
+  },
+  {
+   "id": "J1",
+   "script": "sb1_identity.sbatch",
+   "qos": "shared",
+   "nodes": 1,
+   "cpus_per_task": 64,
+   "time": "00:45:00",
+   "omp_num_threads": 1,
+   "depends": [
+    "SL"
+   ],
+   "dependency_type": "afterok",
+   "universe": "Flux:0",
+   "omnifile": "{omnifile_universe}",
+   "does": "vertical-pattern loader identity: four --arm all loader processes in parallel (one per tree), then --arm selective per tree with --compare-digests, then two activation negative controls (exit 5 required)"
+  },
+  {
+   "id": "C",
+   "script": "sb1_cv.sbatch",
+   "qos": "shared",
+   "nodes": 1,
+   "cpus_per_task": 64,
+   "time": "00:40:00",
+   "omp_num_threads": 64,
+   "depends": [
+    "J1"
+   ],
+   "dependency_type": "afterok",
+   "driver_argv": [
+    "--omnifile",
+    "{omnifile_cv}",
+    "--mcfile",
+    "{mcfile}",
+    "--iters",
+    "5",
+    "--use-weights",
+    "--estimator",
+    "lgbm",
+    "--bootstrap-seed",
+    "1",
+    "--seed",
+    "1",
+    "--out",
+    "{outroot}/C/2d_xsec_C.root"
+   ],
+   "does": "one shared-64 CV-file replica (as 59410433_1) with the phase profile, then CV-pattern loader identity (--arm all, then --arm selective --compare-digests)"
+  },
+  {
+   "id": "H1",
+   "script": "sb1_hash.sbatch",
+   "qos": "shared",
+   "nodes": 1,
+   "cpus_per_task": 2,
+   "time": "00:45:00",
+   "omp_num_threads": 1,
+   "depends": [
+    "H0",
+    "UL",
+    "SL",
+    "J1",
+    "C"
+   ],
+   "dependency_type": "afterany",
+   "verify": true,
+   "does": "sha256 + stat of the inputs after every benchmark job, then sb1_verify.py"
+  }
+ ],
+ "serial_order_reason": "every job that reads the universe file runs alone, so no filesystem contention between SB1 jobs enters a timing; afterok stops the chain on the first failure (--kill-on-invalid-dep=yes cancels dependents)",
+ "retry_rule": "no retries under an admission (--no-requeue; every job directory and output path is created exclusively). Any job that fails, times out, runs out of memory or is cancelled ends SB1 INCONCLUSIVE unless a frozen rule already decides it (sb1_verify.py). A rerun needs a new authorization, admission and outroot, and its request must count the node-h this admission already charged against the same 2.0 node-h SB1 total.",
+ "unmatched_references": {
+  "UL_SL": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_Muon_Energy_MINOS_0.root",
+  "C": "/pscratch/sd/j/josephrb/ki84-rebuild-20261006/replicas/2d_xsec_MEFHC_5iter_lgbm_boot1.root",
+  "status": "descriptive only: produced by other driver revisions (55677843_166, July; 59410433_1, KI-84 commit), so never a matched comparison and never a criterion"
+ },
+ "env_setup": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh",
+ "env_setup_note": "environment only (root_6_28 activation, as the KI-84 rebuild used it); every repository import is enforced to the admitted checkout by mnv_guarded_run.py"
+}

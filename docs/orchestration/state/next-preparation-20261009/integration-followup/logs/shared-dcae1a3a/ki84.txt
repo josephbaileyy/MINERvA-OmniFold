@@ -1,0 +1,23 @@
+test_bootstrapped_completeness_is_bitwise_the_central_value (2d-unfolding.tests.test_bootstrap_completeness_ki84.BootstrapCompletenessMatchesCentral.test_bootstrapped_completeness_is_bitwise_the_central_value) ... ok
+test_bootstrapped_replica_has_unit_completeness_in_every_bin (2d-unfolding.tests.test_bootstrap_completeness_ki84.BootstrapCompletenessMatchesCentral.test_bootstrapped_replica_has_unit_completeness_in_every_bin) ... ok
+test_fixture_is_phase17_with_unit_central_completeness (2d-unfolding.tests.test_bootstrap_completeness_ki84.BootstrapCompletenessMatchesCentral.test_fixture_is_phase17_with_unit_central_completeness) ... ok
+test_replicas_still_resample_the_mc (2d-unfolding.tests.test_bootstrap_completeness_ki84.BootstrapCompletenessMatchesCentral.test_replicas_still_resample_the_mc) ... ok
+test_bootstrapped_unfold_is_unchanged (2d-unfolding.tests.test_bootstrap_completeness_ki84.PathsTheFixMustNotChange.test_bootstrapped_unfold_is_unchanged) ... ok
+test_central_value_is_bit_identical (2d-unfolding.tests.test_bootstrap_completeness_ki84.PathsTheFixMustNotChange.test_central_value_is_bit_identical) ... ok
+test_data_only_bootstrap_is_bit_identical (2d-unfolding.tests.test_bootstrap_completeness_ki84.PathsTheFixMustNotChange.test_data_only_bootstrap_is_bit_identical) ... ok
+test_legacy_input_bootstrap_is_unchanged (2d-unfolding.tests.test_bootstrap_completeness_ki84.PathsTheFixMustNotChange.test_legacy_input_bootstrap_is_unchanged) ... ok
+test_a_helper_without_a_file_is_reported_unavailable_not_guessed (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_a_helper_without_a_file_is_reported_unavailable_not_guessed) ... ok
+test_an_omitted_flag_is_recorded_by_its_effective_value (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_an_omitted_flag_is_recorded_by_its_effective_value) ... ok
+test_bootstrap_settings_are_recorded (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_bootstrap_settings_are_recorded) ... ok
+test_digests_are_of_the_bytes_loaded_not_of_later_edits (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_digests_are_of_the_bytes_loaded_not_of_later_edits) ... ok
+test_driver_bytes_are_identified (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_driver_bytes_are_identified) ... ok
+test_recording_provenance_leaves_the_histograms_alone (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_recording_provenance_leaves_the_histograms_alone) ... ok
+test_the_imported_helper_is_identified_by_path_and_digest (2d-unfolding.tests.test_bootstrap_completeness_ki84.RunProvenanceIsRecorded.test_the_imported_helper_is_identified_by_path_and_digest) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 15.011s
+
+OK
+real 15.50
+user 13.19
+sys 2.07
