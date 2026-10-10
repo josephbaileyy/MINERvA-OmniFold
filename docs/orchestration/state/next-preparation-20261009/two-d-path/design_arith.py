@@ -242,19 +242,22 @@ def costs(speed):
                         "admitted_packed_replicas_today_driver": [xb["opt"]["admitted"] + xs["median"]["admitted"],
                                                                   xb["opt"]["admitted"] + xs["cons"]["admitted"]]}
     t_univ = {"opt": stage(16, rate["exact_universe_p1_forecast"]), "cons": stage(16, rate["exact_universe_now_safe_forecast"])}
-    t_boot = {"opt": stage(50, rate["exact_cv_packed_forecast"]), "cons": stage(50, rate["exact_cv_shared_mem24G"])}
-    out["XR_stage_T"] = {"universes": t_univ, "boot50": t_boot,
-                         "admitted_range": [t_boot["opt"]["admitted"] + t_univ["opt"]["admitted"],
-                                            t_boot["cons"]["admitted"] + t_univ["cons"]["admitted"]]}
+    # Stage T is the systematic arm only (16 universe unfolds); the 50-replica statistical arm was
+    # dropped because it cannot resolve a width transfer (stage_T_assurance), so it is not priced.
+    out["XR_stage_T"] = {"universes": t_univ,
+                         "admitted_range": [t_univ["opt"]["admitted"], t_univ["cons"]["admitted"]]}
     return out
 
 
 def stage_T_assurance(per_cell, gamma):
-    """XR stage T. T-syst replaces the tested bands' widths by exact ones; both backends are
-    deterministic at fixed inputs, so a perfect transfer gives eta = 0 exactly (false-fail 0).
-    T-stat compares 50 exact against 300 LightGBM replicas with the regional rule."""
+    """XR stage T. T-syst replaces the tested bands' widths by exact ones. Only if the two
+    estimators' deltas were identical universe by universe would eta be exactly 0; under the
+    decision-relevant null (widths transfer within tolerance) eta carries between-estimator scatter
+    from 10 throws and 3 pairs, and its false-fail rate is not quantified. T-stat (50 exact against
+    300 LightGBM replicas, regional rule) is shown only to explain why it was dropped."""
     z = N01.inv_cdf(1 - 0.05 / (2 * 2))  # two regions, one stream (both streams together)
-    out = {"T_syst_false_fail_if_transfer_exact": 0.0}
+    out = {"T_syst_false_fail_if_deltas_identical_universe_by_universe": 0.0,
+           "T_syst_false_fail_under_width_equivalence_null": "not quantified"}
     se_cell = 0.5 * math.sqrt((2 / 49) * (1 + gamma / 2) + (2 / 299) * (1 + gamma / 2))
     out["T_stat_se_cell_log"] = se_cell
     for name, n_eff in (("F", 3), ("rest", 5)):
@@ -323,7 +326,8 @@ def pair_structure(rr, pn, pairs):
         "corr_signed_A_range_nonreproducible": [min(corr[k] for k in noise_like), max(corr[k] for k in noise_like)],
         "corr_h_median_nonreproducible": float(np.median([hcorr[k] for k in noise_like])),
         "nonrep_share_of_total_variance": {"median": float(np.median(s)), "p84": float(np.percentile(s, 84)),
-                                           "n_cells_ge_1": int((~ok).sum())},
+                                           "n_cells_ge_1": int((~ok).sum()),
+                                           "cells_ge_1_reported_index_and_bins": [[int(i)] + list(rr["cells"][i]) for i in np.where(~ok)[0]]},
         "total_sigma_inflation_if_nonrep_is_additive_inside_total": {
             "formula": "1/sqrt(1-s) - 1, cells with s < 1", "median": float(np.median(infl)),
             "p84": float(np.percentile(infl, 84))},

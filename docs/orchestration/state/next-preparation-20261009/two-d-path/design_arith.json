@@ -66,23 +66,9 @@
   },
   "XR_stage_T": {
    "admitted_range": [
-    63.20712338434678,
-    292.9052121310764
+    15.343467972469375,
+    227.84055555555557
    ],
-   "boot50": {
-    "cons": {
-     "admitted": 65.06465657552084,
-     "rate": 0.9052473958333334,
-     "runs": 50,
-     "subtotal": 52.05172526041668
-    },
-    "opt": {
-     "admitted": 47.8636554118774,
-     "rate": 0.6659291187739464,
-     "runs": 50,
-     "subtotal": 38.29092432950193
-    }
-   },
    "universes": {
     "cons": {
      "admitted": 227.84055555555557,
@@ -355,6 +341,13 @@
   "n_bands_nonreproducible_lt_0.75": 36,
   "n_bands_reproducible_A_ge_0.75": 6,
   "nonrep_share_of_total_variance": {
+   "cells_ge_1_reported_index_and_bins": [
+    [
+     126,
+     7,
+     14
+    ]
+   ],
    "median": 0.02515252390089229,
    "n_cells_ge_1": 1,
    "p84": 0.06276778295498266
@@ -758,7 +751,8 @@
    "n_eff_assumed": 5
   },
   "T_stat_se_cell_log": 0.10963357666114364,
-  "T_syst_false_fail_if_transfer_exact": 0.0
+  "T_syst_false_fail_if_deltas_identical_universe_by_universe": 0.0,
+  "T_syst_false_fail_under_width_equivalence_null": "not quantified"
  },
  "toy_kurtosis_dev": {
   "max": 5.782490053925782,

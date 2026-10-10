@@ -25,10 +25,10 @@ Publication readiness is **not achieved** by this design.
 | `Owned files` | `docs/orchestration/state/next-preparation-20261009/two-d-path/` only: this report; `design_arith.py`, `design_arith.json`; `seed_mechanism_check.py`; `remote_reduce.py`, `remote_reduce_pn.py`, `remote_reduce_pairs.py`; `operands/` (four JSON files); `logs/`; `review/` (the reviewer's documents, verbatim) |
 | `Pinned inputs` | §1 |
 | `Resources` | §14. Cluster jobs, GPU, training on production data, toys and event loops: **0**. Read-only login-node reductions: ≈ 5.6 CPU-min |
-| `Review` | §12: initial review **FAIL** (9 MATERIAL, 14 MINOR/NOTE); one repair batch; focused re-review result recorded there |
+| `Review` | §12: initial review **FAIL** (9 MATERIAL); one repair batch; focused re-review **PASS WITH CHANGES** (N1, N2 MATERIAL, text only). The post-review edits for N1–N7 are not re-reviewed |
 | `Model / effort` | owner Claude Opus 5.5 (`claude-opus-5-5`), Claude Code; effort not observable to the session |
 | `Disposition` | §15: **PASS** — route L42 is a complete design for the claims declared in §2, priced at the declared-family tier. **INCONCLUSIVE** — the exact-central route X: its decisive inputs are unmeasured, and on current forecasts it costs 12–90× more. **NO-GO** — an empirical total-interval coverage claim, and the model-allowance validation stage. **PASS** — the specification of the next experiment XR |
-| `Next action` | §16: Joseph decides on the claim scope (§2), and on XR (≤ 6.4 CPU node-h hard cap, 2.8 expected, 0 GPU, ≈ 20–30 h wall). That includes an explicit ruling on XR's one-seed `P09b` arm |
+| `Next action` | §16: Joseph decides on the claim scope (§2), and on XR (≤ 6.4 CPU node-h hard cap, 2.8 expected, 0 GPU, ≈ 20–30 h wall). That includes an explicit ruling on XR's one-seed `P09b` arm and the deployment of the canonical checkout |
 
 `Q` = `docs/orchestration/state/next-preparation-20261009`; `P` = this directory.
 
@@ -147,7 +147,9 @@ to regional. It is not the PASS basis.
      `baa0a76f`, landed the same day.
    - Both the E_C-era driver and today's insert the canonical cluster checkout's
      `unbinned_unfolding/python` at `sys.path[0]` (`unfold_2d_omnifold_unbinned.py` at `d1bc8813`, lines
-     820–822). Every run of either driver therefore imports that checkout's helper.
+     820–822), so a run of either driver is expected to import that checkout's helper.
+   - The insert is conditional, and another `omnifold` package exists in the repository. The guard
+     inventory's resolved origin is therefore the evidence of which helper ran, not this reading.
 5. **A background-aware seed-42 sweep exists** (`uq/purity_newomni/`, July, current file;
    `operands/remote_reduce_pn.json`).
    - It is complete: 187 of 187 universes.
@@ -157,6 +159,9 @@ to regional. It is not the PASS basis.
      That comparison is confounded in the same way as §3.6 and validates nothing by itself.
    - One Flux universe moves the background by up to 62 % of the CV's largest cell. `Flux_0` moves that
      cell by +7.3 %. This is unexplained and must be inspected before use.
+   - **Frozen fallback.** If the inspection shows a defect, the systematic block reverts to the adopted
+     flux-fixed seed-42 sweep, with the background-model omission (`P06`) disclosed. That sweep shares the
+     same CV realization.
 6. **±1σ pair bands across the two seed-42 sweeps** (`operands/remote_reduce_pairs.json`;
    `pair_structure`). Descriptive and post hoc.
    - **What separates the sweeps.** They share one CV realization, but they differ in background
@@ -173,7 +178,7 @@ to regional. It is not the PASS basis.
      - Their half-differences correlate with median 0.60. The three dominant pair bands are the exception:
        Muon_Energy_MINOS 0.983, MinosEfficiency 0.997, Muon_Energy_MINERvA 0.972.
      - The non-reproducible variance is median 2.5 % of a cell's total (p84 6.3 %), and exceeds it in one
-       cell.
+       cell: reported index 126, bins (7, 14).
      - If it were additive inside the total, σ_tot would be inflated by median 1.27 % (p84 3.25 %). It is
        unbounded in that one cell.
      - **The mechanism is unknown.** By §3.3, fixed-seed weight-only runs share bin mappers and LightGBM
@@ -261,6 +266,9 @@ A fully nested validation would repeat all of this inside every pseudo-experimen
      - Both halves use the full-data purity per reco bin, again the band's conditioning.
      - Over R random splits, mean (U_A − U_B)²/2 measures the half-exposure sampling variance with no
        resampling model, truth or reservoir.
+     - It does so *conditional on* bin mappers and row-count constraints shared through the retained
+       zero-weight rows. That is the same conditioning as the fixed-seed bootstrap, so the estimates of
+       the two halves are not fully independent, even though their samples are.
      - It is compared with M data-only bootstrap replicas of one half.
    - **SM.** The same for the signal MC: a 0/1 mask on `mc_signal_reco` rows (MC/data 2.354 per half,
      MC POT/2), with `--bootstrap-streams mc` on one half and the real data in both arms. In split mode,
@@ -269,6 +277,15 @@ A fully nested validation would repeat all of this inside every pseudo-experimen
    - **What it validates.** The width of each stream at half size, on the real operating point. It does
      not test bias or truth coverage. Both streams' claims extend to full size by the bootstrap's 1/n
      scaling, which is an assumption.
+   - **Exposure, per role (to be bound in the equivalence test).**
+     - SD: data-side normalization and the final division use data POT/2; the signal-MC and background
+       scaling use the production `pot_scale` recomputed with data POT/2; purity is computed once from
+       the full, unmasked data and background.
+     - SM: the signal-MC scaling uses MC POT/2; the background template and purity keep full exposure and
+       are computed before masking; completeness is c ≡ 1 from the masked `mc_signal_reco` truth; the
+       final division uses the full data POT.
+     - The helper does not normalize class totals (`reweight` = p/(1 − p)). Each choice above must
+       therefore be checked against the driver's `get_pot_scales` and `fill_bkg_reco_2d` paths.
    - **Implementation.** Two driver options (`--data-split`, `--mc-split`), byte-identical when unset,
      with an equivalence test. The driver is claimed by no lane; its owner and the
      `verify_hash_bindings.py` exception are needed.
@@ -412,24 +429,29 @@ the subtotal, then a protected 20 % reserve.
 **Launch.**
 - Every run uses the canonical checkout `/pscratch/sd/j/josephrb/MINERvA-OmniFold`, whose helper both
   drivers import (§3.4).
-- Before the move, `squeue` must show no pending job on that tree (moving a deployed checkout kills
-  pending jobs).
-- The checkout is then moved to the pinned XR commit and verified clean (`git status --porcelain` empty,
-  `git rev-parse HEAD` recorded).
+- The checkout is moved to the pinned XR commit only after the checks under "Before the move" below.
+  `git rev-parse HEAD` is recorded.
 - Each run is
   `python3 nd-unfolding/mnv_guarded_run.py --expect-root /pscratch/sd/j/josephrb/MINERvA-OmniFold --inventory <record>/inventory.jsonl --label XR-<run> -- <driver> <args>`
   (the guard's flags are `--expect-root`, `--allow`, `--inventory`, `--label`, then `--`).
-- X0′'s driver is the `d1bc8813` blob, committed as a record file under the XR record directory and run
-  from there. It imports today's helper, so X0′ isolates driver drift only. Helper drift remains A's
-  static argument ("unchanged in effect").
+- X0′'s driver is the `d1bc8813` blob, committed as a record file under the XR record directory. It imports
+  today's helper, so X0′ isolates driver drift only. Helper drift remains A's static argument ("unchanged
+  in effect").
+- **Working directory and paths.** Every run uses `2d-unfolding/` as its working directory, so the
+  relative `--mcfile baseline_flux/…` resolves. Drivers are given by absolute path.
+- **Outputs.** Each run writes to an explicit, distinct `--out <record>/XR-<run>.root`. The central
+  launcher's own `--out` is *not* reused: it is the quoted product `E_C`. A pre-run check refuses any run
+  whose `--out` resolves to an existing file or to `2d-unfolding/2d_crossSection_omnifold_MEFHC_5iter.root`.
+- **Before the move.** `squeue` shows no pending **or running** job using the canonical tree, and its
+  `git status --porcelain` is empty. Both are recorded, then checked again after the move.
 
 | run | driver and arguments | hardware | reference |
 |---|---|---|---|
-| X0 | today's driver, the central launcher's arguments unchanged (`--omnifile <CV> --mcfile baseline_flux/runEventLoopMC_MEFHC.root --iters 5 --use-weights`; no `--estimator`, no `--seed`) | shared, `-c 2`, `--mem 24G`, 30 h limit | `E_C` `142a45b0…` |
-| X0′ | the `d1bc8813` driver, same arguments | same | `E_C` |
-| X1 | X0 plus `--seed 1`: **a one-seed `P09b`** | same | X0 |
-| L0 | today's driver, `--estimator lgbm --seed 42`, CV file | shared 64, 1 h limit | `4f5a1b6d…` and the `purity_newomni` CV |
-| L1 | today's driver, `--estimator lgbm --seed 1`, CV file | shared 64, 1 h limit | seedscan seed 1 `d7fe901f…` |
+| X0 | today's driver, the central launcher's estimator arguments (`--omnifile <CV> --mcfile baseline_flux/runEventLoopMC_MEFHC.root --iters 5 --use-weights`; no `--estimator`, no `--seed`), with `--out <record>/XR-X0.root` | shared, `-c 2`, `--mem 24G`, 30 h limit | `E_C` `142a45b0…` |
+| X0′ | the `d1bc8813` driver, same arguments, `--out <record>/XR-X0p.root` | same | `E_C` |
+| X1 | X0 plus `--seed 1`, `--out <record>/XR-X1.root`: **a one-seed `P09b`** | same | X0 |
+| L0 | today's driver, `--estimator lgbm --seed 42`, CV file, `--out <record>/XR-L0.root` | shared 64, 1 h limit | `4f5a1b6d…` and the `purity_newomni` CV |
+| L1 | today's driver, `--estimator lgbm --seed 1`, CV file, `--out <record>/XR-L1.root` | shared 64, 1 h limit | seedscan seed 1 `d7fe901f…` |
 
 **Manifest.**
 - Before submission the record pins: the commit; the CV omnifile `43f8cc16…` and its CFS copy; the flux
@@ -451,8 +473,8 @@ cell sets. The maximum absolute difference is always reported.
 
 | outcome | meaning | decision |
 |---|---|---|
-| X0 pass | today's code and environment regenerate `E_C` | X keeps a reproducible central. With X1 below, Joseph chooses L42 (re-quote; 303–1,131 to completion) or stage T (15–228) to see whether X can borrow L42's systematic block. The keep-and-disclose text may say the quoted central is reproducible |
-| X0 fail, X0′ pass | today's driver changed the exact path | `E_C` is reproducible at its own driver revision. X remains possible, pinned to `d1bc8813`, and the drift is diagnosed before any X construction |
+| X0 pass | today's code and environment regenerate `E_C` | X keeps a reproducible central. With X1 below, Joseph chooses L42 (re-quote; 303–1,131 to completion) or stage T (15–228) to see whether X can borrow L42's systematic block, once stage T's assurance is computed (N1). The keep-and-disclose text may say the quoted central is reproducible |
+| X0 fail, X0′ pass | today's driver changed the exact path | `E_C` is reproducible at its own driver revision. X remains possible, pinned to `d1bc8813`, and the drift is diagnosed before any X construction. `P09b` for that pinned path stays open: the `d1bc8813` driver has no `--seed` option, and X1 runs today's driver |
 | X0 fail, X0′ fail | not reproducible by any available code path. The cause lies in helper drift, environment drift or unrecorded run conditions, and cannot be separated | route X **FAILS** the "reproducible central" requirement with the available means; recommend L42. The interim text must say the quoted central could not be regenerated |
 | X1 fail (X0 pass) | the exact backend is seed-dependent; `E_C` is one unrecorded draw | X needs a seed policy and a 10-seed exact scan (9.6–13.0 admitted): X dominated, recommend L42 |
 | L0 fail | contradicts §3.1–§3.2 | stop and diagnose the driver revision before building the seed-42 band. The fallbacks are that band on the universe file (305.1) or L1 |
@@ -467,14 +489,21 @@ and only after X0 or X0′ passes.
 - **Tolerance, declared before any transfer quantity exists.**
   - Replace the tested bands' widths in `C_tot` by the exact ones: pair half-differences, and the Flux
     width scaled by the paired ratio √(Σδ_X²/Σδ_L²) over the 10 throws.
-  - **PASS** iff the relative change η in σ_tot satisfies max |η| ≤ 0.05 and median |η| ≤ 0.02. That keeps
-    I68 coverage within 0.659–0.707 and I95 within 0.938–0.961.
-  - **INCONCLUSIVE** if a leave-one-throw-out jackknife's 98.75 % interval for the Flux ratio straddles
-    the tolerance edge in any cell.
-  - **FAIL** otherwise.
-- **Assurance.** Both backends are deterministic at fixed inputs (XR establishes this for the exact one),
-  so a perfect transfer gives η = 0 exactly and the false-fail probability is 0. The power against a
-  non-proportional Flux transfer is not quantified; the jackknife branch carries that case.
+  - Evaluated in this order:
+    1. **INCONCLUSIVE** if a leave-one-throw-out jackknife's 98.75 % interval for the Flux ratio straddles
+       the tolerance edge in any cell, whatever η is;
+    2. otherwise **PASS** iff max |η| ≤ 0.05 and median |η| ≤ 0.02, which keeps I68 coverage within
+       0.659–0.707 and I95 within 0.938–0.961;
+    3. otherwise **FAIL**.
+- **Assurance: not quantified.** η = 0 holds only if the two estimators' deltas were identical universe by
+  universe. Two different estimators cannot meet that null: their centrals already differ by median
+  0.136 σ_tot.
+  - Under the decision-relevant null (the widths transfer within tolerance), η carries between-estimator
+    scatter from 10 throws and 3 single pairs. §3.6 shows such scatter exists. Its false-fail rate is not
+    quantified, and neither is the power.
+  - XR does not establish the determinism of exact universe-file runs.
+  - Stage T is therefore not preregistration-ready for a verdict. Its assurance must be computed, for
+    example from a model of the per-universe scatter, before stage T is offered as a decision option.
 - **Coverage of the test.** The tested bands carry median 86 % of a cell's variance (min 24 %). A PASS
   covers the rest only by assumption, and that must be disclosed.
 - **The statistical block is not in stage T.** With 50 exact against 300 LightGBM replicas, the regional
@@ -567,7 +596,29 @@ adoption or a changed gate.
   | F22 | CV42 dispersion and the cost-based seed choice disclosed |
   | F23 | none |
 
-- **Focused re-review.** Pending; recorded here when complete.
+- **Focused re-review** (the one allowed). Same reviewer, at `0a2e0f41`, 05:41–05:47Z, worktree empty at
+  start and end. Preserved verbatim: `review/review-cycle1.md` (sha256 `8788f23c…`).
+  - **Verdict PASS WITH CHANGES.** F1–F23: 20 RESOLVED; F2, F5 and F6 PARTIAL; none UNRESOLVED. Every
+    moved number reproduced.
+  - **New findings.** Two are MATERIAL:
+    - N1: stage T's "false-fail 0" holds only under a degenerate null;
+    - N2: XR's manifest reused the central launcher's `--out`, which would overwrite `E_C`; it had no
+      distinct outputs or working directory, and no running-job check.
+  - Five are MINOR or NOTE:
+    - N3: dependence through shared mappers;
+    - N4: exposure per role;
+    - N5: stale JSON field;
+    - N6: `P09b` open for the pinned path;
+    - N7: the helper-origin evidence.
+  - The owner's byte comparison confirms the preserved initial review is identical to the reviewer's
+    returned text, which settles the one item the reviewer could only check by reading.
+- **Post-review edits.** These are **not re-reviewed**; no cycles remain.
+  - N1: stage T's assurance is withdrawn and the verdict precedence fixed. Stage T is not
+    preregistration-ready for a verdict.
+  - N2: distinct outputs, a refusal check, the working directory and pre-move checks.
+  - N3–N7: one sentence each. N5: the JSON range now prices the universe arm only, 15.3–227.8.
+  - Residuals of F1 (the s ≥ 1 cell identified) and F13 (a frozen fallback for the systematic block).
+  - No number moved except the N5 field.
 
 ## 13. Limitations
 
@@ -601,7 +652,7 @@ adoption or a changed gate.
 | exact-central route X | **INCONCLUSIVE** | `E_C`'s reproducibility, its seed dependence and the exact-universe memory are unmeasured. On current forecasts its matched construction costs 467–11,005 admitted node-h and its completion 3,576–101,147. XR retires X or keeps it |
 | empirical total-interval coverage | **NO-GO** | §7: circular in the declared law; no production-size independent populations for the MC stream; only a partial linearity measurement remains |
 | model-dependence validation stage | **NO-GO** | no untouched domain (§7); B± is a development envelope |
-| next experiment | **PASS: XR** | preregistration-ready (§10); every outcome changes a named decision; ≤ 6.4 node-h; its X1 arm needs a specific ruling |
+| next experiment | **PASS: XR** | preregistration-ready (§10) after the N2 manifest repair, which is not re-reviewed; every outcome changes a named decision; ≤ 6.4 node-h; its X1 arm needs a specific ruling. Stage T is **not** preregistration-ready for a verdict (N1) |
 | publication-ready measurement | **NOT ACHIEVED** | nothing here is executed or adopted |
 
 ## 16. Next action
@@ -615,8 +666,8 @@ Joseph decides three things. None needs compute until he authorizes it.
      law exist.
 2. **XR.** ≤ 6.4 CPU node-h, guarded, with a deployment of the canonical checkout, and a specific ruling
    on its one-seed `P09b` arm.
-3. **After XR.** Route L42 (a re-quote, then completion), or stage T (15–228 admitted) if keeping the
-   quoted central is worth its price.
+3. **After XR.** Route L42 (a re-quote, then completion), or, if keeping the quoted central is worth its
+   price, stage T (15–228 admitted) once its assurance is computed (N1).
 
 The integration owner applies §11 if it is accepted. The 2D lane owns KI-91, the background bound, the
 62 % Flux-universe change, the §3.6 pair-band question and Rvn1pi/Rvp1pi.
