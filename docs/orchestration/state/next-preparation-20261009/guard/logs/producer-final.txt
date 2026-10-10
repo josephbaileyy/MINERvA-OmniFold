@@ -1,15 +1,21 @@
-head df21dea7bb165b27f46c4a26a09b91d0054d3aa7
+head 3075258f9fc5a7912ba1a2593c60b69d951fd596
 test_a_changed_analyzer_refuses_before_its_body_runs (test_producer_provenance.TheKi85Producer.test_a_changed_analyzer_refuses_before_its_body_runs) ... ok
 test_a_pre_imported_analyzer_from_another_checkout_refuses (test_producer_provenance.TheKi85Producer.test_a_pre_imported_analyzer_from_another_checkout_refuses) ... ok
 test_guarded_run_reads_through_this_checkouts_analyzer (test_producer_provenance.TheKi85Producer.test_guarded_run_reads_through_this_checkouts_analyzer)
 Positive control: A's analyzer (x2) runs, and the result equals the pure functions'. ... ok
+test_strict_mode_records_and_head_checks_the_analyzers_own_imports (test_producer_provenance.TheKi85Producer.test_strict_mode_records_and_head_checks_the_analyzers_own_imports)
+analyze_uq imports technote_style normally: strict mode must see it (review M2). ... ok
 test_strict_mode_refuses_unguarded (test_producer_provenance.TheKi85Producer.test_strict_mode_refuses_unguarded) ... ok
+test_a_file_outside_the_root_is_a_refusal_not_a_crash (test_producer_provenance.TheLoader.test_a_file_outside_the_root_is_a_refusal_not_a_crash) ... ok
+test_a_repository_module_imported_after_the_check_is_caught (test_producer_provenance.TheLoader.test_a_repository_module_imported_after_the_check_is_caught) ... ok
 test_executes_the_hashed_bytes_and_records_them (test_producer_provenance.TheLoader.test_executes_the_hashed_bytes_and_records_them) ... ok
 test_git_blob_matches_git (test_producer_provenance.TheLoader.test_git_blob_matches_git) ... ok
+test_git_identity_ignores_a_GIT_DIR_naming_another_repository (test_producer_provenance.TheLoader.test_git_identity_ignores_a_GIT_DIR_naming_another_repository) ... ok
 test_refuses_a_digest_mismatch_without_executing (test_producer_provenance.TheLoader.test_refuses_a_digest_mismatch_without_executing) ... ok
 test_refuses_a_module_imported_by_anything_else (test_producer_provenance.TheLoader.test_refuses_a_module_imported_by_anything_else) ... ok
 test_refuses_outside_the_root (test_producer_provenance.TheLoader.test_refuses_outside_the_root) ... ok
 test_require_guard_refuses_absent_wrong_and_widened_guards (test_producer_provenance.TheLoader.test_require_guard_refuses_absent_wrong_and_widened_guards) ... ok
+test_reserve_output_is_exclusive (test_producer_provenance.TheLoader.test_reserve_output_is_exclusive) ... ok
 test_a_conflicting_checkout_first_on_the_path_does_not_change_what_runs (test_producer_provenance.TheToyProducer.test_a_conflicting_checkout_first_on_the_path_does_not_change_what_runs)
 B's helper directory at the front of PYTHONPATH: A's helper still executes. ... ok
 test_a_pre_imported_helper_from_another_checkout_refuses_before_output (test_producer_provenance.TheToyProducer.test_a_pre_imported_helper_from_another_checkout_refuses_before_output) ... ok
@@ -26,9 +32,9 @@ test_strict_mode_refuses_without_git_identity (test_producer_provenance.TheToyPr
 test_the_guard_refuses_a_script_from_another_checkout (test_producer_provenance.TheToyProducer.test_the_guard_refuses_a_script_from_another_checkout) ... ok
 
 ----------------------------------------------------------------------
-Ran 20 tests in 18.136s
+Ran 25 tests in 21.008s
 
 OK
-real 18.68
-user 9.81
-sys 4.58
+real 21.52
+user 11.25
+sys 5.47

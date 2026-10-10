@@ -47,7 +47,10 @@
 | `65c543eb` | behaviour | `2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py`, `…/ki85_compare.py`, new `…/n2/{__init__,execution,test_producer_provenance}.py`; fail-open constants 18 → 16 **in the same commit as the repair**, both sites named |
 | `6e8ff685` | new subtree | `…/n2/{identity,members,design,harness,synthetic_producer,test_n2_harness}.py`, `…/n2/README.md`; one-line `execution.git_identity` change |
 | `732b75dd` | test strength | `…/n2/test_producer_provenance.py` (§6.2, a mutant the old test missed) |
-| later (§11) | behaviour + record | `…/n2/harness.py` and its test (a real member must record the frozen thread count); this report and `Q/guard/` evidence |
+| `df21dea7` | behaviour | `…/n2/harness.py` and its test (a real member must record the frozen thread count) |
+| `a5bb866d`, `4c8bf886` | record | this report and the `Q/guard/` evidence; `4c8bf886` is the commit the independent review read |
+| `3075258f` | behaviour (the one repair batch, §9) | `fixed_truth_toy.py`, `ki85_compare.py`, `…/n2/{execution,harness,synthetic_producer}.py` and both n2 test files |
+| later (§11) | record | this report, the third mutation run and the re-review record |
 
 `2d-unfolding/uq/coverage_fixed_truth/test_coverage_fixed_truth.py` was **not** changed. Its 20
 tests pass unchanged against the repaired `ki85_compare.py`.
@@ -127,8 +130,16 @@ which would make 21. So "20 site paths" counts sites plus test files in a log. I
   - not under `mnv_guarded_run.py` on exactly this checkout, with no `--allow`;
   - git unavailable;
   - an executed file that is not HEAD's;
-  - a module or input with no stated digest;
-  - an existing `--out`.
+  - a module or input with no stated digest (KI-85's replica files excepted: they are hashed and
+    recorded as read, not stated in advance);
+  - an existing `--out`. Strict mode reserves `--out` with `O_EXCL` after every other check, so no
+    window opens between check and write. A refused strict run leaves no reservation; a run that
+    fails later leaves an empty one, and a strict rerun to that name is refused.
+- **Repository modules imported normally** (since `3075258f`, review M2): `analyze_uq.py` imports the
+  repo-root `technote_style.py` through the ordinary import system. `finalize` now records every
+  imported module whose file is inside the checkout, with its digest and HEAD check, so strict mode
+  needs each one stated and committed. `recheck` runs just before output: strict mode refuses a
+  repository module imported after the check, and the default mode records it.
 - `git` runs with every `GIT_*` variable removed. `GIT_DIR` would answer for another repository, and
   this shell's `GIT_EDITOR` was correctly refused by the guard at first.
 - **Compatibility.** Without the strict flag an existing `--out` is recreated as before. The
@@ -172,6 +183,11 @@ the real-launch path and the missing pieces.
   - the split manifest digest;
   - an absolute output root;
   - for a real run, the authorization record by digest and the identity-carrying rebuild by digest.
+    Since `3075258f` (review M1), the rebuild is hashed and a missing file or wrong digest is
+    refused. The authorization must be an `AUTHORIZATION-` or `DECISION-` record under
+    `docs/orchestration/`, committed at HEAD with the stated digest. Every stated input digest is
+    forwarded into the producer's `--expect`. The name rule is a convention that blocks citing an
+    arbitrary file; it is not proof of Joseph's authority, which only the record's content carries.
   
   A synthetic admission runs only `synthetic_producer.py`, and that producer refuses a real
   admission. **No real admission exists, and no real N2 producer exists (§8).**
@@ -210,12 +226,12 @@ via `PYTHONPATH=$(root-config --libdir)`.
 | ratchets at the pin | `inventory.py` plus the closeout log | 2 of 17 red, failure lists as recorded | [`logs/inventory-base.txt`](logs/inventory-base.txt) |
 | ratchets after classification (`5e5f742b`) | `python3 -m unittest <both suites>` | exactly 1 red: the forward arm naming the two live producers | [`logs/ratchets-commitA.txt`](logs/ratchets-commitA.txt) |
 | ratchets after the repair (`65c543eb`) | same | **17/17 OK**, exit 0 | [`logs/ratchets-commitB.txt`](logs/ratchets-commitB.txt) |
-| ratchets at code head `df21dea7` | same, `-v` | **17/17 OK** | [`logs/ratchets-final.txt`](logs/ratchets-final.txt) |
-| producer provenance | `python3.13 -m unittest discover -s …/n2 -p 'test_producer*.py' -v` | **20/20** with ROOT at `df21dea7`, 0 skipped; 9 pass + 11 skipped without ROOT | [`logs/producer-final.txt`](logs/producer-final.txt) |
-| N2 harness | `python3 -m unittest discover -s …/n2 -p 'test_n2*.py' -v` | **21/21** at `df21dea7`, including a 100-member guarded synthetic campaign | [`logs/harness-final.txt`](logs/harness-final.txt) |
+| ratchets at the repair head `3075258f` | same, `-v` | **17/17 OK** | [`logs/ratchets-final.txt`](logs/ratchets-final.txt) |
+| producer provenance | `python3.13 -m unittest discover -s …/n2 -p 'test_producer*.py' -v` | **25/25** with ROOT at `3075258f`, 0 skipped (20/20 at `df21dea7`, before the repair batch added 5) | [`logs/producer-final.txt`](logs/producer-final.txt) |
+| N2 harness | `python3 -m unittest discover -s …/n2 -p 'test_n2*.py' -v` | **21/21** at `3075258f` (new admission cases are subtests), including a 100-member guarded synthetic campaign | [`logs/harness-final.txt`](logs/harness-final.txt) |
 | KI-84 regression | `python3.13 -W error::ResourceWarning -m unittest 2d-unfolding/tests/test_bootstrap_completeness_ki84.py -v` | **15/15**, 0 skipped (lane A's post-repair count) | [`logs/ki84.txt`](logs/ki84.txt) |
 | shared callers | `test_k0_5ab_separated_roots`, `test_flux_universe_fix`, `test_p4_resume_integration`, `test_fullevent_extract`, `pytest test_hash_bindings.py`, `pytest test_coverage_fixed_truth.py` | 4/4, 51/51, 50/50, 28/28, 33 passed, 20 passed. The `exit=` lines in that log are `tail`'s status; the `OK`/`passed` lines are the evidence | [`logs/shared-callers.txt`](logs/shared-callers.txt) |
-| bindings, before and after | `python3 docs/orchestration/verify_hash_bindings.py` | `ALL BINDINGS INTACT` at the pin and at the head. Neither live file's digest appears anywhere in the tree, so neither is newly bound | [`logs/bindings-base.txt`](logs/bindings-base.txt), [`logs/shared-callers.txt`](logs/shared-callers.txt) |
+| bindings, before and after | `python3 docs/orchestration/verify_hash_bindings.py` | `ALL BINDINGS INTACT` at the pin and at `3075258f` ([`logs/bindings-final.txt`](logs/bindings-final.txt)). Neither live file's digest appears anywhere in the tree, so neither is newly bound | [`logs/bindings-base.txt`](logs/bindings-base.txt), [`logs/shared-callers.txt`](logs/shared-callers.txt) |
 | pre-commit hook | every commit | `13 checks passed` | — |
 
 **What the producer tests show.** The tests use throwaway checkouts holding the real producer,
@@ -270,11 +286,28 @@ The known-ratio unit tests separately give faithful / over-scatter / under-scatt
 ### 6.2 Negative controls by mutation ([`mutation.py`](mutation.py))
 
 Each mutant is applied in a fresh `git clone --shared` of the head. The unmutated clone must pass the
-same commands first, and did. Run 1 ([`mutation-results-run1.json`](mutation-results-run1.json))
-caught 18 of 19. The miss was `loader-skips-digest`: the KI-85 test still saw exit 3, but only
-because `finalize` re-checked the digest **after** the mismatched analyzer body had run. The test was
-strengthened (`732b75dd`), and run 2 ([`mutation-results.json`](mutation-results.json),
-[`logs/mutation.txt`](logs/mutation.txt)) is the record: **19 of 19 caught**, unmutated baseline green, 326 s wall, 266 s CPU.
+same commands first, and did in every run. Counts are read from each run's JSON:
+
+| run | head | mutants | caught | record |
+|---|---|---:|---:|---|
+| 1 | `6e8ff685` | 18 | **17** | [`mutation-results-run1.json`](mutation-results-run1.json), [`logs/mutation-run1.txt`](logs/mutation-run1.txt) |
+| 2 | `732b75dd` | 18 | **18** | [`mutation-results-run2.json`](mutation-results-run2.json), [`logs/mutation-run2.txt`](logs/mutation-run2.txt) |
+| 3 (aborted) | `3075258f` | 24 of 25 run | 24 | [`logs/mutation-run3-aborted.txt`](logs/mutation-run3-aborted.txt): the last mutant's anchor no longer existed after the repair, so the script stopped before writing its JSON |
+| 3 | `3075258f` | 25 | **25** | [`mutation-results.json`](mutation-results.json), [`logs/mutation.txt`](logs/mutation.txt); 441 s wall, 345 s CPU |
+
+- **Run 1's miss** was `loader-skips-digest`. The KI-85 test still saw exit 3, but only because
+  `finalize` re-checked the digest **after** the mismatched analyzer body had run. The test was
+  strengthened in `732b75dd`.
+- **Run 3** adds seven mutants for the review findings. Each one disables a fix from the repair:
+  - the rebuild digest;
+  - the authorization rule;
+  - input-digest forwarding;
+  - the imported-module sweep;
+  - the late-import recheck;
+  - the stated-commit rule;
+  - the `GIT_*` stripping.
+- **Correction.** Commit message `a5bb866d` and the first PR description said "19 of 19". That is a
+  miscount by this lane: run 2 had 18 mutants. The JSON was always right.
 
 | mutant | must turn red |
 |---|---|
@@ -288,6 +321,10 @@ strengthened (`732b75dd`), and run 2 ([`mutation-results.json`](mutation-results
 | ledger drops `missing`; `write_new` overwrites | ledger, broken campaign, overwrite tests |
 | arm B's MC stream resampled | the plan test |
 | a real admission without authorization | the admission test |
+| *(run 3)* rebuild digest unchecked; any file accepted as authorization | the admission test (absent rebuild, wrong digest, not a record) |
+| *(run 3)* input digests not forwarded | the synthetic campaign (strict members refuse without the split-manifest digest) |
+| *(run 3)* imported repository modules not swept; late imports not rechecked | the KI-85 `technote_style` test; the loader's late-import test |
+| *(run 3)* strict mode without a stated commit; `GIT_*` passed to git | the `no commit` case; the `GIT_DIR` test |
 
 ## 7. Proposed patches for shared-document owners (not applied here)
 
@@ -350,7 +387,14 @@ removing `GIT_*` from git's environment.
   - Third-party libraries (ROOT, numpy, LightGBM, scikit-learn) are identified by version, not by
     digest.
   - Inputs are hashed only when a digest is stated or `--hash-inputs` is given. Under the strict
-    flag both producer inputs need stated digests.
+    flag both toy inputs and KI-85's two small inputs need stated digests; KI-85's replica files are
+    hashed as they are read.
+  - A repository module imported normally (such as `technote_style.py`) executes before it is
+    checked. Strict mode refuses it before any output, not before it runs. Only the modules that
+    `load_verified` loads are refused before their bodies execute.
+  - The guard and its shim are not among the recorded modules. The test runs show that none of them
+    appears in `sys.modules` from inside the checkout, but the guard's own digest is recorded only
+    in the guard's inventory, not in the producer's provenance.
 - **Platform.** All tests ran on macOS with local Python. The production `root_6_28` environment,
   Perlmutter filesystems (hard links for `write_new`) and Slurm were not exercised.
 - **Not touched:** the `sbatch_*.sh` launchers, the 10 older exceptions, the `.sh` and `MNV_REPO`
@@ -358,7 +402,29 @@ removing `GIT_*` from git's environment.
 
 ## 9. Independent review
 
-See §11.
+One fresh read-only reviewer read the fixed commit `4c8bf886` in a clean detached worktree. It took
+about 25 min and 0.25–0.3 core-h. It wrote its own AST scanner and its own statistic, and ran its
+own mutations. **Verdict: FAIL as delivered, on M1 and M2.** It confirmed:
+
+- every pass criterion of the dispatch;
+- the scope (36 changed paths, all allocated; forbidden paths byte-identical);
+- the commit roles;
+- the producers' numerical invariance;
+- the counts 19 → 17 and 21 → 19, and the 18 → 16 fail-open set;
+- the reconstruction of the "20";
+- `design.py` against §16.1, matching to ≤4.4e-16 on four synthetic cases.
+
+| # | severity | finding | disposition in `3075258f` |
+|---|---|---|---|
+| M1 | material | a real admission passed with a non-existent rebuild, any file could be the authorization, and input digests never reached the producer | **fixed**: the rebuild is hashed, the authorization must be a committed record, and input digests are forwarded. New controls cover an absent rebuild, a wrong rebuild digest and an authorization that is not a record |
+| M2 | material | strict KI-85 executed `technote_style.py`, imported by `analyze_uq`, without recording or checking it | **fixed**: imported repository modules are recorded and HEAD-checked, with `recheck` before output. New control: an edited dependency is refused before output, and an unstated one is refused. Residual in §8 |
+| m3 | minor | strict mode's "stated commit" rule was untested | **fixed**: a `no commit` case was added |
+| m4 | minor | the `GIT_*` stripping was untested | **fixed**: a `GIT_DIR` naming another repository is ignored, tested in-process |
+| m5 | minor | KI-85's 300 replicas need no stated digest, which REPORT §4 overstated | **wording corrected** in §4 and §8, and in `ki85_compare.py`'s docstring |
+| m6 | minor | strict no-overwrite was check-then-write | **fixed**: `O_EXCL` reservation after every other check |
+| n7 | note | a symlink resolving outside the checkout raised `ValueError` (exit 1); §2 lumped three commits together; `ddof` cancels in the ratio | the symlink case is now a refusal (exit 3) and §2 is split; the `ddof` point is noted, no change |
+
+The focused re-review of the repair batch is recorded in §11.
 
 ## 10. Resources
 

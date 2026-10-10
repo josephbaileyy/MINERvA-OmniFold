@@ -1,4 +1,4 @@
-head df21dea7bb165b27f46c4a26a09b91d0054d3aa7
+head 3075258f9fc5a7912ba1a2593c60b69d951fd596
 test_any_departure_from_the_frozen_plan_is_refused (test_n2_harness.Design.test_any_departure_from_the_frozen_plan_is_refused) ... ok
 test_records_need_the_frozen_estimator_and_finite_values (test_n2_harness.Design.test_records_need_the_frozen_estimator_and_finite_values) ... ok
 test_the_plan_streams_seeds_and_estimator (test_n2_harness.Design.test_the_plan_streams_seeds_and_estimator) ... ok
@@ -23,9 +23,9 @@ test_the_ledger_keeps_every_declared_member (test_n2_harness.Members.test_the_le
 test_write_new_never_overwrites (test_n2_harness.Members.test_write_new_never_overwrites) ... ok
 
 ----------------------------------------------------------------------
-Ran 21 tests in 97.310s
+Ran 21 tests in 98.246s
 
 OK
-real 97.50
-user 52.43
-sys 16.03
+real 98.35
+user 56.71
+sys 17.02

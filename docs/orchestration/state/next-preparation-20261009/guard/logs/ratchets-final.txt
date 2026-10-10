@@ -1,4 +1,4 @@
-head df21dea7bb165b27f46c4a26a09b91d0054d3aa7
+head 3075258f9fc5a7912ba1a2593c60b69d951fd596
 test_every_listed_file_carries_a_reason (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_every_listed_file_carries_a_reason) ... ok
 test_no_file_outside_the_named_set_feeds_a_rooted_insert (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_no_file_outside_the_named_set_feeds_a_rooted_insert)
 FIRES on a new instance. This is the ratchet. ... ok
@@ -31,9 +31,9 @@ test_its_negative_control_still_rejects_something (nd-unfolding.tests.test_oi136
 A classifier that rejects nothing has not been shown to discriminate. ... ok
 
 ----------------------------------------------------------------------
-Ran 17 tests in 57.255s
+Ran 17 tests in 57.329s
 
 OK
-real 57.32
-user 54.00
-sys 1.36
+real 57.39
+user 54.51
+sys 1.45
