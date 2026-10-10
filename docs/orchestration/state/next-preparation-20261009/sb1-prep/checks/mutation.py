@@ -89,6 +89,11 @@ MUTANTS = [
     ("symlinked-authorization", ADM,
      ' or (top / norm).resolve() != top / norm:\n', ':\n', T_C,
      "test_hostile_authorization_paths_are_refused"),
+    ("unfold-env-unchecked", f"{PKG}/launch/sb1_unfold.sbatch", "sb1_check_env\n", "", T_C,
+     "test_every_job_refuses_an_environment_changed_after_submission"),
+    ("submit-accepts-non-numeric-id", f"{PKG}/launch/sb1_submit.sh",
+     '  [[ "${id}" =~ ^[0-9]+$ ]] || return 1\n', "", T_C,
+     "test_a_failed_first_or_last_sbatch_or_a_non_numeric_id_stops_the_submission"),
 ]
 
 

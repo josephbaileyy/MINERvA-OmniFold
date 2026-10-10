@@ -402,6 +402,29 @@ class Chain(unittest.TestCase):
         self.assertEqual(len(st["jobs"]), 2)
         self.assertFalse((self.tmp / "out-sbatchfail" / "submission.json").exists())
 
+    def test_a_failed_first_or_last_sbatch_or_a_non_numeric_id_stops_the_submission(self):
+        for label, fail_at, queued in (("first", 1, 0), ("last", 6, 5)):
+            with self.subTest(label):
+                out = self.tmp / f"out-sbatchfail-{label}"
+                env = dict(self.env(f"sbatchfail-{label}", GOOD), FAKE_SLURM_FAIL_AT=str(fail_at))
+                sub = subprocess.run(["bash", self.root / PKG_REL / "launch" / "sb1_submit.sh",
+                                      self.admission(out)], env=env, capture_output=True, text=True)
+                self.assertNotEqual(sub.returncode, 0, sub.stdout)
+                st = json.loads((self.tmp / f"sbatchfail-{label}.json").read_text())
+                self.assertEqual((st["calls"], len(st["jobs"])), (fail_at, queued))
+                self.assertEqual(sorted(st.get("cancelled", [])), sorted(st["jobs"]))
+                self.assertFalse((out / "submission.json").exists())
+        with self.subTest("non-numeric id"):
+            fake = self.tmp / "sbatch-garbage"
+            fake.write_text("#!/bin/bash\necho 'Submitted batch job'\n")
+            fake.chmod(0o755)
+            out = self.tmp / "out-sbatch-garbage"
+            env = dict(self.env("sbatch-garbage", GOOD), SB1_SBATCH=str(fake))
+            sub = subprocess.run(["bash", self.root / PKG_REL / "launch" / "sb1_submit.sh",
+                                  self.admission(out)], env=env, capture_output=True, text=True)
+            self.assertNotEqual(sub.returncode, 0, sub.stdout)
+            self.assertFalse((out / "submission.json").exists())
+
     def test_an_unadmitted_executed_module_is_not_a_pass(self):
         def edit(rec):
             rec["identity"]["executed"].append({"relpath": "elsewhere.py", "sha256": "3" * 64})
@@ -463,6 +486,36 @@ class Chain(unittest.TestCase):
                          {"CANCELLED"})
         err = next((self.tmp / "out-envchange").glob("sb1_H0_*.err")).read_text()
         self.assertIn("changed since submission", err)
+
+    def test_every_job_refuses_an_environment_changed_after_submission(self):
+        # Each batch script checks the setup's digest itself (review c1 N5). Run every queued job
+        # directly, so that a later job's check is exercised even though H0 would stop the chain.
+        env_sh = self.tmp / "env.sh"
+        before = env_sh.read_text()
+        out = self.tmp / "out-envchange-each"
+        env = self.env("envchange-each", GOOD)
+        sub = subprocess.run(["bash", self.root / PKG_REL / "launch" / "sb1_submit.sh",
+                              self.admission(out)], env=env, capture_output=True, text=True)
+        self.assertEqual(sub.returncode, 0, sub.stderr[-2000:])
+        jobs = json.loads((self.tmp / "envchange-each.json").read_text())["jobs"]
+        self.assertEqual(len(jobs), 6)
+        try:
+            env_sh.write_text(before + "# changed after submission\n")
+            for jid, job in sorted(jobs.items(), key=lambda kv: int(kv[0])):
+                name = job["opts"]["job-name"]
+                with self.subTest(name):
+                    job_env = dict(env, SLURM_JOB_ID=jid)
+                    for item in job["opts"]["export"].split(",")[1:]:
+                        k, v = item.split("=", 1)
+                        job_env[k] = v
+                    r = subprocess.run(["bash", job["script"]], env=job_env,
+                                       cwd=job["opts"]["chdir"], capture_output=True, text=True)
+                    self.assertEqual(r.returncode, 3, r.stderr[-2000:])
+                    self.assertIn("changed since submission", r.stderr)
+                    stage = name.removeprefix("sb1_")
+                    self.assertEqual(list((out / stage).iterdir()), [], stage)
+        finally:
+            env_sh.write_text(before)
 
     def test_hostile_authorization_paths_are_refused(self):
         for bad in ("/abs/docs/orchestration/AUTHORIZATION-x.md",
