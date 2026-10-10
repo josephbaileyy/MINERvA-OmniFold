@@ -27,7 +27,8 @@ from test_sb1_guarded import (DRIVER, GUARD, HELPER, N2, PKG_REL, REPO, STUB_HEL
                               git)
 
 PKG_FILES = ("sb1_run.py", "branch_select.py", "sb1_hash.py", "sb1_admit.py", "sb1_verify.py",
-             "make_manifest.py", "launch/launch-spec.json", "launch/sb1_submit.sh",
+             "make_manifest.py", "results/costs.json", "launch/ADMISSION-PROPOSAL.json",
+             "launch/launch-spec.json", "launch/sb1_submit.sh",
              "launch/sb1_hash.sbatch", "launch/sb1_unfold.sbatch", "launch/sb1_identity.sbatch",
              "launch/sb1_cv.sbatch")
 #: Literal ceilings (billing / 256 x limit), stated independently of the code that checks them.
