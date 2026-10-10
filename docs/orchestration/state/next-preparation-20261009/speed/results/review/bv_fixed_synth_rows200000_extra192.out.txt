@@ -1,0 +1,4 @@
+branch tuple passed ('MC', 'MC_pz', 'sim', 'sim_pz', 'w_truth', 'w_reco')  (cycle-0 probe passed ('MC', 'MC_pz', 'sim', 'sim_pz', 'sim_pass', 'w_truth') )
+keys differing for UNMUTATED prototype (control): []
+AsNumpy sim_pass dtype bool byte==2 rows 666
+keys differing WITHOUT the view: []

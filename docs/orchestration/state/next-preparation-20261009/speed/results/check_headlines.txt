@@ -1,0 +1,11 @@
+OK  replica_mean_node_h    independent=0.0591468 costs.json=0.059147 rel=4.07e-06
+OK  uni_median_node_h      independent=0.7075 costs.json=0.7075 rel=0.00e+00
+OK  uni_read_GB            independent=171.286 costs.json=171.286 rel=4.22e-07
+OK  excess_s               independent=1801 costs.json=1801 rel=0.00e+00
+OK  f_io                   independent=0.694543 costs.json=0.694543 rel=0.00e+00
+OK  P05_now_safe           independent=1853.11 costs.json=1853.11 rel=0.00e+00
+OK  P05_p1                 independent=125.415 costs.json=125.415 rel=0.00e+00
+OK  S-a_now                independent=132.519 costs.json=132.519 rel=0.00e+00
+OK  N2_hi                  independent=12.1675 costs.json=12.1675 rel=0.00e+00
+OK  B_primary              independent=13440.6 costs.json=13440.6 rel=0.00e+00
+OK  pet_f_load_median      independent=0.0114821 costs.json=0.0114821 rel=0.00e+00

@@ -1,0 +1,4 @@
+numpy 2.4.4 raw!=0 -> [False  True  True  True] [0 1 1 1]
+passed & rec_ok -> [False  True  True False] [0 1 1 0]
+raw & rec_ok (no !=0) -> [0 1 1 0]
+tobytes of raw!=0 b'\x00\x01\x01\x01'
