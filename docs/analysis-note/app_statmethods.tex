@@ -73,7 +73,7 @@ and Table~\ref{tab:uq} gives the 2D budget.
 Source & What it estimates & Procedure & Ensemble & Value / where reported \\
 \midrule
 Training-seed variation (ML) & Variance from random choices inside the GBDT optimizer at fixed inputs (the ``ML noise floor'') &
-  Full $5$-iteration MEFHC \texttt{lgbm} unfolds (backend-matched to production), varying only the GBDT \texttt{random\_state}; seeds $(N,N{+}1,N{+}2)$ for (step-1 classifier, step-2 classifier, miss regressor), $N \in \{1,\dots,10\}$ &
+  Full $5$-iteration MEFHC \texttt{lgbm} unfolds (the backend of the bootstrap and universe ensembles, not of the exact-split central value), varying only the GBDT \texttt{random\_state}; seeds $(N,N{+}1,N{+}2)$ for (step-1 classifier, step-2 classifier, miss regressor), $N \in \{1,\dots,10\}$ &
   $n=10$ &
   median $0.166\%$; Table~\ref{tab:combine} \\
 Poisson bootstrap (stat) & Data- and MC-statistical variance, propagated coherently through the full pipeline &
@@ -392,9 +392,11 @@ full-rank; its systematic-only rank is $120<140$ (\S\ref{sec:rank}).
 \subsubsection{Block-sum combination}
 \label{sec:combine}
 The bootstrap varies events through distinct data and MC sub-RNGs; universes
-vary model weights at a pinned GBDT seed; training-seed trials vary that seed
-at fixed weights. These three Monte Carlos are independent by construction,
-giving
+vary model weights at a pinned GBDT seed; training-seed trials vary the GBDT seed
+(seeds 1--10) at fixed weights. These three Monte Carlos are independent by construction.
+They use different LightGBM seeds (1 for the bootstrap, 42 for the universes),
+and whether their covariances are consistent across that seed difference has
+not been measured. The block sum is
 \begin{equation}
 \mathbf{C}^{\tot}
 \;=\;
@@ -429,6 +431,11 @@ Table~\ref{tab:uq}.}
 The combined $\sqrt{\Tr\mathbf{C}}$ is the quadrature sum of the independent
 component traces. The per-bin median $6.871\%$ cannot be reconstructed by
 quadrature of component medians. Both combined entries are read values.
+The relative entries divide by the LightGBM seed-42 central value of the
+universe sweep; dividing the combined covariance by the quoted exact-split
+central value instead gives a combined median of \SI{6.827}{\percent}. All three blocks are LightGBM ensembles, and whether
+their sum describes the exact-split central value has not been measured
+(\S\ref{sec:method-config}).
 The flux-fixed rollup also reports $6.869\%$ for universe $+$ bootstrap
 before ML, again a read value rather than a combination of the printed medians.
 % Recomputed from the covariance files, with the sha256 of each input, by
@@ -537,7 +544,9 @@ uncertainties; one at $1.5$ alone is not evidence against them (App.~\ref{app:hi
 
 \emph{(iii) The coverage question is untouched by it.} The only 2D coverage test,
 the fixed-truth test of \S\ref{sec:coverage}, covers the statistical band alone and finds it
-undercovers in its tails. Nothing here validates the interval this covariance implies. Agreement claims use per-bin standardized differences and ratios
+undercovers in its tails. Nothing here validates the interval this covariance implies. The
+covariance is also that of the LightGBM ensembles, while this distance uses the exact-split central
+value, and whether the covariance describes that central value has not been measured. Agreement claims use per-bin standardized differences and ratios
 (\S\ref{sec:pull}); this scalar is only a distance and ratio to the paper.
 The log-normal variant, matching the paper's Table I correlated-flux
 normalization treatment, gives essentially identical $\chiCombinedLog$.
@@ -1022,8 +1031,10 @@ unaffected at the $14$--$30\times$ level.}
 
 \paragraph{A methodological component (estimator and iteration).}
 Changing the GBDT backend on the same data and normalization
-($\Sigma\sigma$ within $0.1\%$) shifts paper-cov $\chi^{2}$ by $\sim1$ unit
-with little central-value change. Iteration-count effects are negligible,
+($\Sigma\sigma$ within $0.1\%$) shifts paper-cov $\chi^{2}$ by $\sim1$ unit.
+The integrated agreement does not mean the bins agree: the LightGBM seed-1 and
+exact-split central values differ by a median of \SI{0.97}{\percent} per bin,
+$1.3$ statistical standard deviations (\S\ref{sec:method-config}). Iteration-count effects are negligible,
 \begin{center}
 \begin{tabular}{@{}lcc@{}}
 \toprule
@@ -1165,7 +1176,7 @@ $\mathbf{C}^{\paper}$ & \S\ref{sec:minerva} & Paper's published \texttt{TotalCov
 Pull RMS $= 0.405$ & \S\ref{sec:pull} &
   Per-bin standardized residual on combined $\mathbf{C}$ \\
 Combined median rel.\ $= 6.871\%$ & \S\ref{sec:combine} &
-  $\sqrt{\diag\mathbf{C}^{\tot}}/\mathbf{X}^{\CV}$ \\
+  $\sqrt{\diag\mathbf{C}^{\tot}}/\mathbf{X}^{\CV}$, $\mathbf{X}^{\CV}$ the LightGBM seed-42 central value \\
 Fixed-truth $C_2=\covTwoDCTwo$ (nominal $0.954$) & \S\ref{sec:coverage} &
   Statistical band vs.\ fixed truth, $N_{\text{toy}}=\covTwoDNtoy$: FAIL \\
 Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:coverage} &

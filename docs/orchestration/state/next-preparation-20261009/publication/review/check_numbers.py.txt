@@ -1,0 +1,27 @@
+"""Cross-check the correction's quoted numbers against the reviewer JSON and the A tables."""
+import csv, json, re, sys
+wt = sys.argv[1]
+P = wt + "/docs/orchestration/state/uncertainty-preparation-20261008/"
+rc = json.load(open(P + "e/recompute/rc_pairing.json.txt"))
+cmp = {c["label"]: c for c in rc["cmp"] if "rel_pct" in c}
+ver = open(P + "a/verification.md").read()
+rows = {r["id"]: r for r in csv.DictReader(open(P + "a/pairings.tsv"), delimiter="\t")}
+def vrow(label):
+    m = re.search(r"^\| " + re.escape(label) + r" \|(.*)$", ver, re.M)
+    return m.group(1) if m else None
+claims = [
+    ("0.97 % median, seed1 vs exact (|d|/E_C)", 0.97, cmp["seed1 vs exact"]["rel_pct"]["median"], 2),
+    ("12.5 % max, seed1 vs exact", 12.5, cmp["seed1 vs exact"]["rel_pct"]["max"], 1),
+    ("1.3 sigma_S median, seed1 vs exact", 1.3, cmp["seed1 vs exact"]["over_sigS"]["median"], 1),
+    ("0.99 % median, seedmean vs exact", 0.99, cmp["seedmean vs exact"]["rel_pct"]["median"], 2),
+    ("'about five' sigma_ML, seedmean vs exact", 5, cmp["seedmean vs exact"]["over_sigML"]["median"], 0),
+    ("6.83 % block sum / E_C", 6.83, rc["blocksum_median_rel_pct_den_exact_central"], 2),
+    ("6.871 % block sum / CV42", 6.871, rc["blocksum_median_rel_pct_den_cv42"], 3),
+]
+for name, quoted, val, nd in claims:
+    print(f"{name:45s} quoted {quoted:<7} source {val:.4f} rounds-to {round(val, nd)} -> {'OK' if round(val, nd) == quoted else 'MISMATCH'}")
+print("A table seed1 row :", vrow("lgbm seed 1 (CV omnifile) vs `E_C`"))
+print("A table seedmean  :", vrow("lgbm 10-seed mean vs `E_C`"))
+print("A table CV42 row  :", vrow("CV42 vs `E_C`"))
+for k in ("P01", "P02", "P04", "P07", "P09a", "P09b", "P14"):
+    print(k, rows[k]["outcome"], "|", rows[k]["backend_and_hyperparameters"][:90], "|", rows[k]["iter_seed_threads"][:60])

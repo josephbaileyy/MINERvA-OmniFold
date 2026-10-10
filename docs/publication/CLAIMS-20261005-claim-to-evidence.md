@@ -130,3 +130,17 @@ The article's wording was revised for presentation (`EDITORIAL-20261008-prd-pres
 earlier versions; those locations moved. One factual correction to the article's wording came out of this pass's
 review: the GENIE and NuWro predictions are described as reweighted to the analysis flux, with added 50–100 GeV
 samples, rather than "repaired" (`KNOWN_ISSUES.md` 83). Rows L7 and L9 are unaffected.
+
+## H. Status update, 2026-10-09 (keep-and-disclose correction; supersedes §§B, D where they differ)
+
+Joseph chose "keep and disclose" for the quoted 2D result as an **interim** documentation disposition,
+not as acceptance of the unmeasured transfer as a publication-ready endpoint
+(`docs/orchestration/state/next-preparation-20261009/closeout/REPORT.md` §11; `KNOWN_ISSUES.md` 88). The
+article, note and primer wording is corrected on branch `prep/next-publication-20261009` (record
+`docs/orchestration/state/next-preparation-20261009/publication/REPORT.md`; PR unmerged when written).
+
+| # | status now | evidence |
+|---|---|---|
+| L2 | **DEMONSTRATED as a construction for the LightGBM estimator.** The 6.87 % median divides by the LightGBM seed-42 central value (6.83 % against the quoted exact-split central). Whether the covariance describes the quoted central value is **UNRESOLVED**, and the article now says so. The VL170 band remains not re-tested (KNOWN_ISSUES 85, deferred); the 2026-10-07 diagnostic is a same-event diagnostic, not independent-population coverage or a real-data calibration. | `ASSESSMENT-20261008-2d-estimator-pairing.md` `P14`, `P17`; `KNOWN_ISSUES.md` 85, 88 |
+| L4 | **DEMONSTRATED disclosure.** The article states the estimators, the unpinned central seed and the unmeasured transfer; the note also records the seed provenance (`random_state=None`, from the launcher and driver revision; the run log was not found) and that the exact-split seed noise is unmeasured. The central value is exact-split scikit-learn gradient boosting; the bootstrap, universe and training-seed ensembles are LightGBM (seeds 1, 42 and 1–10). Different estimators are **established**; the transfer of the covariance to the central value is **unmeasured**, not shown false. The two centrals differ by a median 0.97 % per bin (LightGBM seed 1 vs exact; 1.3 times the per-bin σ of the VL170 statistical block), which no block carries. The note's "pinned seeds" sentence is corrected. | `ASSESSMENT-20261008-2d-estimator-pairing.md` `P01`–`P09b`; `state/uncertainty-preparation-20261008/a/verification.md`; reviewer recompute `e/recompute/rc_pairing.json.txt` |
+| readiness | **Not publication-ready.** The disclosure does not resolve the pairing. Joseph's stated endpoint is *"a publication-ready measurement with a reproducible central estimator, matched uncertainty construction, and validation supporting the claims actually made."* No LightGBM re-quote, transfer measurement, N2 or KI-85 lift is authorized. | closeout REPORT §11 |

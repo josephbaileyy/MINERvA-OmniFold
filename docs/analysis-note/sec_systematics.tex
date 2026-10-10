@@ -3,7 +3,10 @@
 
 The uncertainty budget sums three blocks from systematic universes, statistical
 bootstraps, and ML training-seed variation, assuming independence based on
-distinct RNGs and physics sources. The historical 3D budget uses the analogous 3D grid construction
+distinct RNGs and physics sources. All three 2D blocks are computed with the
+LightGBM estimator, not with the exact-split estimator of the quoted 2D central
+value (\S\ref{sec:method-config}). Whether the resulting covariance describes
+that central value has not been measured. The historical 3D budget uses the analogous 3D grid construction
 (\S\ref{sec:3d-syst}); no 4D uncertainty magnitude is reported (\S\ref{sec:4d}).
 App.~\ref{app:statmethods} gives the full mathematics and worked examples using
 the reported numbers. The resulting budget and its agreement with the published
@@ -13,7 +16,9 @@ total appear in \S\ref{sec:results-uq}.
 \label{sec:uq-universes}
 Detector and model systematics use MAT-MINERvA's 44 error bands and 187
 universes, identical to the published analysis's \texttt{GetStandardSystematics}
-set. Each universe is re-unfolded with the central estimator seed.
+set. Each universe is re-unfolded with LightGBM at a fixed seed (seed~42),
+against a matched central-value unfold with the same estimator and seed;
+this matched central value is not the quoted exact-split one.
 Per-band covariances follow MAT's universe-mean centering and biased $1/N$.
 For a $\pm1\sigma$ pair, the covariance is the half-difference outer product,
 excluding any common endpoint displacement from CV. The 100 PPFX universes
@@ -86,8 +91,16 @@ estimator seeds at fixed data and universe (Fig.~\ref{fig:seedscan}). It is
 the smallest block, with median \SI{0.166}{\percent} per bin. Two refinements harden it: a
 \emph{train/test-split} variant also re-draws the internal training split
 and gives a band $1.24\times$ the pure-seed band used in the 2D budget of
-Table~\ref{tab:uq}. The seed-ensemble mean central value agrees with the
-production single-run CV to \SI{0.28}{\percent}.
+Table~\ref{tab:uq}. The block measures LightGBM seed noise only: the
+ten-seed LightGBM mean differs from the exact-split quoted central value by a
+median of \SI{0.99}{\percent} per bin, a median of about five times this
+block's per-bin standard deviation, so the block does not cover the backend
+difference (\S\ref{sec:method-config}). The seed noise of the exact-split
+estimator itself has not been measured.
+% Source: ASSESSMENT-20261008-2d-estimator-pairing.md P09a/P09b; state/uncertainty-preparation-20261008/
+% a/verification.md (lgbm 10-seed mean vs E_C: 0.99 % rel., 5.15 sigma_ML); reviewer recompute
+% e/recompute/rc_pairing.json.txt "seedmean vs exact" 0.987 % / 5.147. The 0.28 % figure that stood here was not
+% traced to an operand by the 2026-10-09 correction, and it did not name which central value it compared.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.49\textwidth]{seedscan_spread_2d}

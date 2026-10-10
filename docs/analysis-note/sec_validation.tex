@@ -66,7 +66,8 @@ pre-registered before any toy ran (App.~\ref{app:provenance}, \texttt{coverage-f
 
 Each toy draws pseudo-data event by event as Poisson counts with means equal to the simulated
 reconstructed weights. It resamples the simulation with the production Poisson(1) bootstrap, and
-unfolds with the production estimator (lgbm, five iterations, fixed training seed). The reference
+unfolds with the statistical band's estimator (lgbm, five iterations, fixed training seed), which is
+not the exact-split estimator of the quoted central value (\S\ref{sec:method-config}). The reference
 $T$ is the unfluctuated simulated truth, identical in every toy. The no-fluctuation configuration
 reproduces both the production closure output and $T$ exactly.
 
@@ -118,6 +119,8 @@ section's result is for the earlier band and was not re-tested.
 \textbf{Scope.} The result concerns the statistical band only.
 \begin{itemize}[nosep]
   \item It changes no central value or quoted uncertainty.
+  \item It tests the LightGBM statistical estimator, not the uncertainty of the exact-split quoted
+        central value.
   \item It says nothing about systematic, total or five-dimensional coverage.
   \item Its simulation-side scatter reuses the resampling that built the band, so only the
         data-side fluctuation is tested by an independent mechanism.

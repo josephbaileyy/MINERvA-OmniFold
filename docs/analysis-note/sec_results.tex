@@ -138,7 +138,15 @@ the published total in size --- median per-bin \SI{\uqMedian}{\percent} against 
 published \SI{\uqPaper}{\percent} --- and is flux-dominated as in the publication
 (Fig.~\ref{fig:uqbands}). The
 systematic block dominates; statistical and ML blocks together contribute
-under a tenth of the combined $\sqrt{\mathrm{Tr}\,C}$.
+under a tenth of the combined $\sqrt{\mathrm{Tr}\,C}$. Every block is computed
+with the LightGBM estimator, while the quoted central value is the exact-split
+one (\S\ref{sec:method-config}). The relative uncertainties divide by the
+LightGBM seed-42 central value of the universe sweep; against the quoted
+exact-split central value the same combined covariance gives a combined median
+of \SI{6.827}{\percent} (against the \SI{6.871}{\percent} of the table). Whether this covariance describes the exact-split central
+value has not been measured.
+% Source: ASSESSMENT-20261008-2d-estimator-pairing.md P14 (6.8707 % vs CV42, 6.8269 % vs E_C), reproduced
+% by the review (e/recompute/rc_pairing.json.txt blocksum_median_rel_pct_den_exact_central); KNOWN_ISSUES 88.
 
 \begin{table}[H]
   \centering
