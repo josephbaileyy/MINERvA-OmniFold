@@ -157,7 +157,7 @@ Every `sbatch`, `scancel`, `sacct` and `squeue` resolved either to `tests/fake_s
 tripwire stub, which recorded **0** calls. No real Slurm client exists on this machine (`which`: not
 found).
 
-| suite (`venv313`: Python 3.13.7, PyROOT 6.36.000, numpy 2.4.4) | merged tree `7184e436` | package pin `d4335d3b` tree | skips |
+| suite (`venv313`: Python 3.13.7, PyROOT 6.36.000, numpy 2.4.4) | merged tree `7184e436` | tree `dcae1a3a` (`P` identical to the pin `d4335d3b`) | skips |
 |---|---|---|---|
 | `tests/test_branch_select.py` | 16 OK | 16 OK | 0 |
 | `tests/test_sb1_guarded.py` | 10 OK | 10 OK | 0 |
@@ -173,7 +173,35 @@ is `d4335d3b9bc2502002f93390f9555d07e134855f`, which records the repairs in SB1'
 the package commit in its §7.2. Nothing under `P`, the executed modules or the guard changes after it
 on this branch: `git diff --name-only d4335d3b HEAD` over those paths is empty (§6).
 
-### 4.4 Relevance, as Joseph stated it on 2026-10-09
+### 4.4 Residual risks the review found, disclosed rather than repaired (pin unchanged)
+
+These are disclosed here and in the dispatch table (§8), not in `P`, so the reviewed pin stays valid. A
+code fix would move the pin and need its own re-pin record.
+
+- **An orphaned job after a queued-then-unparseable `sbatch` reply (review F3).** If `sbatch` queues a
+  job and then prints a reply that `submit()` cannot parse, or exits non-zero after queuing (for example
+  on a socket timeout), that job's id is never set, so `on_error` cannot cancel it.
+  - The reviewer measured this with a wrapper that queues and then prints garbage: exit 1, the job left
+    `PENDING`, nothing cancelled.
+  - At calls 2–5, `--kill-on-invalid-dep=yes` removes the orphan, because its dependency names an id
+    that does not exist. At call 1 (H0) or call 6 (H1) a lone hash job may run. That costs at most one
+    hash job's ceiling (0.0059 node-h), inside the cap but charged.
+  - Operator rule: after **any** non-zero exit of `sb1_submit.sh`, run
+    `squeue --me --name=sb1_H0,sb1_UL,sb1_SL,sb1_J1,sb1_C,sb1_H1` and cancel what remains. Count its
+    charge against the 2.0 node-h.
+  - §4.2's non-numeric subtest uses an `sbatch` that queues nothing, so it cannot see this case.
+- **Two stale route lines in SB1's record (F4).** `sb1-prep/REPORT.md` §7.2's opening ("after this
+  branch is merged") and §16's "the PR's final comment names the package commit" predate the
+  integration. The pin and digest are the ones in §8 here. Quoting the lane head `b7c951b3` fails
+  closed: `check` refuses it.
+- **The binding is looser than "the last commit" (F5).** `check` accepts any ancestor of HEAD whose
+  `P`, executed modules and guard are byte-equal to HEAD's. After a `--no-ff` merge that includes the
+  merge commit. An authorization should still quote `d4335d3b` as §8 states. Nothing unsafe follows.
+- **Environment check scope (F6).** There is a negligible window between the digest check and the
+  `source`. The digest covers only the top-level setup file, not files it sources, and receipts record
+  the submission-time digest.
+
+### 4.5 Relevance, as Joseph stated it on 2026-10-09
 
 SB1's own §10 and §16 say it matters "only if option (b) … or option (c)'s matched seed-1 sweep is to
 be priced". Joseph's statement is broader: SB1's potential value includes pricing a prospective
@@ -290,6 +318,8 @@ changed.
 | SB1 package pin | `d4335d3b9bc2502002f93390f9555d07e134855f` |
 | SB1 manifest digest | sha256 of `P/manifest/expected-code.json` = `f060df81338b17069a31a0a2cc7a3430ed81c91ce64de6d6f3d54b80e08eb15a` |
 | SB1 authority | none yet. A run needs a committed `docs/orchestration/AUTHORIZATION-<date>-sb1.md` that names both values above in full (SB1 §7.2, §10). Cap 2.0 node-h; ceilings 1.699; no retries |
+| SB1 relevance | Joseph, 2026-10-09: its potential value includes pricing a prospective matched LightGBM measurement procedure, not only a transfer campaign. Only preparation was dispatched; the cluster benchmark is unauthorized |
+| SB1 operator caveats | §4.4. After any non-zero exit of `sb1_submit.sh`, check `squeue --me --name=sb1_H0,sb1_UL,sb1_SL,sb1_J1,sb1_C,sb1_H1` and cancel any orphan. The record's older pin wording (SB1 §7.2 opening, §16) is superseded by this table |
 | `Q/two-d-followup/REPORT.md` | owner: the 2D methodology and XR owner. Writes only `Q/two-d-followup/`. May compare routes and specify XR. May not run XR, measure the transfer, re-quote, adopt, narrow the claims, or lift KI-85 without Joseph's separate rulings |
 | `Q/sb1-run/REPORT.md` | owner: the SB1 execution owner. Writes only `Q/sb1-run/` plus the run's own `outroot`. Runs only under that authorization, from a fresh detached cluster worktree at its commit, and must not edit `P`, which would break the pin |
 | shared records | `KNOWN_ISSUES.md`, `docs/OPEN_ITEMS.md`, `CATALOG.md`, `MANIFEST-overrides.tsv`, generated `MANIFEST.tsv` and the control plane stay with the integration owner. A next owner proposes text in its own report |
@@ -297,7 +327,36 @@ changed.
 
 ## 9. Independent review
 
-**Pending.** One fresh read-only reviewer on a fixed commit of this branch: one initial review of the combined integration and the post-review changes, then at most one focused re-review after a single repair batch.
+- **Reviewer.** One fresh read-only Claude Code subagent (it reported itself as Claude Opus 5.5).
+  It is the same model family as the owner, so the review is not cross-provider independent.
+- **Setup.** Fixed commit `ae0bfb76bafb8aea03a8a611ddf0e8e1031516e7`, 17:46Z → 18:05Z, ≈ 0.15
+  core-h, one thread per command. Its own worktree was clean at start; at the end it held only ignored
+  `__pycache__` from its runs, and it was removed. The Slurm tripwire recorded 0 calls.
+- **Preserved verbatim:** [`review/review.md`](review/review.md), sha256 `9c490054…`.
+- **Independent checks.**
+  - It reproduced stage T (15.343 / 227.84) and L42 (302.88 / 1,130.78; regional 149.45 / 570.02) by
+    its own arithmetic.
+  - It ran all the suites: SB1 16 / 10 / 29 / 7, D-ID 29, ratchets 17 and n2 producer 31, each with 0
+    skips.
+  - It reproduced both new SB1 negative controls itself.
+  - It verified the pin and digest, the byte identity and scope, and every D-ID quotation.
+
+**Initial verdict: PASS WITH CHANGES.** 0 MATERIAL, 3 MINOR, 6 NOTE. The single repair batch is the
+commit that carries this section.
+
+| # | severity | finding | disposition |
+|---|---|---|---|
+| F1 | MINOR | the D-ID CATALOG row named "branch C" without its limits, against §7's "no branch outcome enters a shared status surface" | **fixed**: the row now names the diagnostic's kind and limits and routes to its report; no outcome label |
+| F2 | MINOR | the two-d-path correction said later conclusions do not rest on the invalid sentence, while the next bullet calls §3.6 "between-estimator scatter" | **fixed**: the dated correction adds that §3.6 is LightGBM-to-LightGBM and no between-estimator scatter is measured |
+| F3 | MINOR | a queued-then-unparseable `sbatch` reply leaves an uncancelled job | **disclosed** (§4.4, §8) with an operator `squeue` check; the pin is kept |
+| F4 | NOTE | two stale pin-route lines in SB1's record | **disclosed** (§4.4); superseded by §8; fails closed |
+| F5 | NOTE | `check` accepts any byte-equivalent ancestor | **disclosed** (§4.4) |
+| F6 | NOTE | check-to-source window; digest covers only the top-level setup | **disclosed** (§4.4) |
+| F7 | NOTE | "changes both centrals equally" was ambiguous | **fixed**: states x_u^X = x_u^L + c |
+| F8 | NOTE | "landed on `main`" before the merge; 303–1,131 without its tier | **fixed** in CATALOG and KI-88 ("declared tier", with 149–570 regional) |
+| F9 | NOTE | §4.3's pin column was backed by `dcae1a3a` logs | **fixed**: the column names `dcae1a3a`, where `P` equals the pin |
+
+**Focused re-review:** pending.
 
 ## 10. Delivery
 
@@ -314,8 +373,8 @@ force-push, and no deletion of evidence.
 
 | item | measured (to the review freeze) | cap |
 |---|---|---|
-| active time | 2026-10-10T17:03Z → about 17:45Z | 6 h |
-| local CPU | ≈ 0.55 core-h. SB1 mutation run 5: 1,013 s. SB1 suites, three passes: ≈ 120 s each. Manual mutants, three runs: ≈ 65 s each. Shared suites: ≈ 300 s. D-ID controls: 54 s. Ratchets: 2 × 60 s. Hash bindings, manifest and lint: ≈ 100 s. | 3 core-h |
+| active time | 2026-10-10T17:03Z → about 18:15Z at the repair batch, including the review | 6 h |
+| local CPU | owner ≈ 0.55 core-h, plus the reviewer ≈ 0.15 (its own estimate). SB1 mutation run 5: 1,013 s. SB1 suites, three passes: ≈ 120 s each. Manual mutants, three runs: ≈ 65 s each. Shared suites: ≈ 300 s. D-ID controls: 54 s. Ratchets: 2 × 60 s. Hash bindings, manifest and lint: ≈ 100 s. | 3 core-h |
 | threads | one per command; at most two commands at once | 2 |
 | peak RAM | ≈ 0.55 GB (D-ID controls) | 8 GiB |
 | new scratch | < 0.5 GB (the mutation clones were removed per mutant) | 3 GiB |

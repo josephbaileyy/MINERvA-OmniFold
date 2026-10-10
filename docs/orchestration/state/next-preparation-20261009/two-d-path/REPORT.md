@@ -501,9 +501,12 @@ and only after X0 or X0′ passes.
     either review. This bullet continued: "Two different estimators cannot meet that null: their centrals
     already differ by median 0.136 σ_tot." That inference, carried over from the re-review's N1 rationale, is
     invalid. A difference of central values does not imply different nuisance deltas: a constant additive
-    offset between the estimators changes both centrals equally and cancels in every delta δ_u = x_u − x_CV.
+    offset c between the estimators (x_u^X = x_u^L + c for every universe and the CV) shifts both centrals
+    apart by c and cancels in every delta δ_u = x_u − x_CV.
     The 0.136 σ_tot is therefore no evidence about the deltas in either direction. The conclusions below do
-    not rest on it: the transfer stays unmeasured, and stage T's assurance stays unestablished.*
+    not rest on it: the transfer stays unmeasured, and stage T's assurance stays unestablished. In the next
+    bullet, §3.6 compares two LightGBM sweeps. It shows that cross-sweep delta scatter exists for LightGBM;
+    no between-estimator scatter has been measured (follow-up review F2).*
   - Under the decision-relevant null (the widths transfer within tolerance), η carries between-estimator
     scatter from 10 throws and 3 single pairs. §3.6 shows such scatter exists. Its false-fail rate is not
     quantified, and neither is the power.
