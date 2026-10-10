@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """Write ``manifest/expected-code.json``: the sha256 of every file an SB1 launch depends on.
 
-    python3 make_manifest.py            # writes the manifest from the working tree
-    python3 make_manifest.py --check    # exit 1 unless the committed manifest is current
+    python3 make_manifest.py            # writes the manifest (and the proposal's derived fields)
+    python3 make_manifest.py --check    # exit 1 unless both committed files are current
 
 Three groups, all checked at HEAD by ``sb1_admit.py``: ``modules``, exactly the files
 ``sb1_run.py`` executes (and strict mode requires ``--expect`` to state); ``guard``, the OI-136
 wrapper and its shim; ``launch``, the scripts and the frozen plan. The manifest names contents,
 not a commit, so the package commit that carries it can be named by the admission record.
+
+It also refreshes the fields of ``launch/ADMISSION-PROPOSAL.json`` that are derived from files
+(``code.modules``, ``launch_spec_sha256``, the job ceilings from ``results/costs.json``), so the
+proposal cannot carry a stale digest; every other field of the proposal is left as written.
 """
 
 import hashlib
@@ -42,17 +46,30 @@ def build():
             "launch": digests(LAUNCH)}
 
 
+def proposal(manifest):
+    path = HERE / "launch" / "ADMISSION-PROPOSAL.json"
+    prop = json.loads(path.read_text())
+    costs = json.loads((HERE / "results" / "costs.json").read_text())
+    prop["code"]["modules"] = manifest["modules"]
+    prop["launch_spec_sha256"] = manifest["launch"][f"{PKG}/launch/launch-spec.json"]
+    prop["jobs"] = [{"id": j["id"], "ceiling_node_h": j["ceiling_node_h"]} for j in costs["jobs"]]
+    return path, json.dumps(prop, indent=1) + "\n"
+
+
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
     out = HERE / "manifest" / "expected-code.json"
-    text = json.dumps(build(), indent=1, sort_keys=True) + "\n"
+    manifest = build()
+    text = json.dumps(manifest, indent=1, sort_keys=True) + "\n"
+    ppath, ptext = proposal(manifest)
     if "--check" in argv:
-        current = out.read_text() if out.exists() else ""
-        print("manifest current" if current == text else "manifest OUT OF DATE")
-        return 0 if current == text else 1
+        ok = (out.read_text() if out.exists() else "") == text and ppath.read_text() == ptext
+        print("manifest current" if ok else "manifest or proposal OUT OF DATE")
+        return 0 if ok else 1
     out.parent.mkdir(exist_ok=True)
     out.write_text(text)
-    print(f"wrote {out.relative_to(REPO)}")
+    ppath.write_text(ptext)
+    print(f"wrote {out.relative_to(REPO)} and {ppath.relative_to(REPO)}")
     return 0
 
 
