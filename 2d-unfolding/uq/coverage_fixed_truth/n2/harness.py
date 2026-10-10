@@ -91,9 +91,15 @@ def check_admission(path, root=REPO):
                              f"checkout's HEAD {head['commit']}")
     if not adm["synthetic"]:
         rel = str(adm["authorization"].get("path", ""))
-        auth = Path(root) / rel
-        if not (rel.startswith("docs/orchestration/") and
-                Path(rel).name.startswith(("AUTHORIZATION-", "DECISION-"))):
+        # Test the prefix on the normalized path: a ".." can otherwise pass the string test.
+        top = Path(root).resolve()
+        try:
+            norm = (top / rel).resolve().relative_to(top).as_posix()
+        except ValueError:
+            norm = ""
+        auth = top / norm
+        if not (norm.startswith("docs/orchestration/") and
+                Path(norm).name.startswith(("AUTHORIZATION-", "DECISION-"))):
             raise AdmissionError(f"the authorization {rel!r} is not an AUTHORIZATION- or "
                                  "DECISION- record under docs/orchestration/")
         if not auth.is_file() or sha_file(auth) != adm["authorization"].get("sha256"):

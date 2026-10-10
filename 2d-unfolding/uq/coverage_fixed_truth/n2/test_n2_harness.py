@@ -27,6 +27,8 @@ N2_FILES = ("__init__.py", "execution.py", "design.py", "identity.py", "members.
             "synthetic_producer.py")
 N2_DIR = "2d-unfolding/uq/coverage_fixed_truth/n2"
 AUTH = "docs/orchestration/AUTHORIZATION-20991231-fixture.md"
+#: A committed record with the right name, outside docs/orchestration/ (review R2).
+AUTH_ELSEWHERE = "elsewhere/AUTHORIZATION-20991231-outside.md"
 
 
 def tables(n=6000, n_bkg=800, seed=3):
@@ -259,6 +261,8 @@ class Harness(unittest.TestCase):
             shutil.copy2(REPO / N2_DIR / f, root / N2_DIR / f)
         (root / "docs/orchestration").mkdir(parents=True)
         (root / AUTH).write_text("# fixture authorization\n")
+        (root / AUTH_ELSEWHERE).parent.mkdir()
+        (root / AUTH_ELSEWHERE).write_text("# not a docs/orchestration record\n")
         git(root, "init", "-q")
         git(root, "add", "-A")
         git(root, "commit", "-q", "-m", "fixture")
@@ -369,6 +373,32 @@ class Harness(unittest.TestCase):
                 self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr)
                 self.assertIn(needle, cp.stderr)
                 self.assertFalse((self.base / json.loads(adm.read_text())["outroot"]).exists())
+
+    def test_the_authorization_path_is_normalized_before_its_prefix_test(self):
+        """Review R2: only the normalized path counts, so a ".." cannot reach a record elsewhere."""
+        world = {"mean_seed": 1, "sigma_T": 0.01, "b_over_t": 1.0}
+        rebuilt = self.base / "rebuilt-r2.root"
+        rebuilt.write_bytes(b"synthetic stand-in for the identity-carrying rebuild\n")
+        outside = self.base / "AUTHORIZATION-20991231-beyond.md"
+        outside.write_text("# outside the checkout\n")
+        extra = {"rebuilt_omnifile": {"path": str(rebuilt),
+                                      "sha256": gx.sha256_hex(rebuilt.read_bytes())}}
+        code = {"commit": git(self.root, "rev-parse", "HEAD"), "modules": {"x.py": "0" * 64}}
+        for i, (label, rel, target, rc, needle) in enumerate((
+                ("the canonical record", AUTH, self.root / AUTH, 0, "admission holds"),
+                ("a record elsewhere, through ..", "docs/orchestration/../../" + AUTH_ELSEWHERE,
+                 self.root / AUTH_ELSEWHERE, gx.REFUSAL_EXIT, "not an AUTHORIZATION-"),
+                ("a record outside the checkout, through ..",
+                 "docs/orchestration/../../../" + outside.name, outside, gx.REFUSAL_EXIT,
+                 "not an AUTHORIZATION-"))):
+            with self.subTest(label):
+                auth = {"path": rel, "sha256": gx.sha256_hex(target.read_bytes())}
+                adm = self.admission(f"r2-{i}", world, extra_inputs=extra,
+                                     synthetic=False, producer="x.py", authorization=auth,
+                                     code=code)
+                cp = self.run_harness("admit", "--admission", adm)
+                self.assertEqual(cp.returncode, rc, cp.stdout + cp.stderr)
+                self.assertIn(needle, cp.stdout + cp.stderr)
 
     def test_a_synthetic_campaign_runs_guarded_and_recovers_the_known_answer(self):
         """Positive control: 100 guarded members, strict provenance, verdict 'faithful'."""
