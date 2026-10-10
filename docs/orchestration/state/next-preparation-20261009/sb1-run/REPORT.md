@@ -94,17 +94,28 @@ price, any estimator, uncertainty, coverage or adoption claim, or authority for 
   | H1 | 0.005859375 |
   | **total** | **1.69921875 ≤ 2.0** |
 
-  The final verification runs inside H1's ceiling. A possible orphan hash job (integration §4.4) is
-  bounded by 0.0059.
+  The final verification runs inside H1's ceiling. An orphan from a failed submission can be any of
+  the six jobs, not only a hash job. Every job a single `sb1_submit.sh` call can create is one of its
+  six `sbatch` calls, each with a fixed shape and time limit, so the worst case stays the sum of the
+  six ceilings, 1.69921875 ≤ 2.0 (admission review finding 3; the earlier "≤ 0.0059" wording was too
+  narrow).
 
 ## 2. Deployment (frozen before submission)
 
 - **Isolated checkout.** `/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52` was created by
   `git -C <canonical> fetch github run/sb1-20261010` and `git worktree add --detach … 2b35ba52`.
-  Its status is 0 lines, and its manifest hashes to `f060df81…`.
+  Its manifest hashes to `f060df81…`. `git status --porcelain` printed 0 lines. With `--ignored` it
+  showed one `tests/__pycache__/` file that my login-node test wrote (admission review finding 1).
+  I removed it at 20:31Z, after which `--ignored` also printed 0 lines. The run never imports
+  `tests/`.
 - **The canonical checkout is not moved.** It stays at `32e403b8`, with its two pre-existing
-  modifications to live-state files untouched. The run reads only three things from it: the inputs,
-  the environment setup it sources, and the two reference products. No XR or other dependent job is
+  modifications to live-state files untouched. The run reads these from it:
+  - the inputs and the two reference products;
+  - the environment setup `setup_salloc_env.sh`;
+  - the two files that setup itself sources, `unbinned_unfolding/build/setup.sh` and
+    `MINERvA101/opt/bin/setup.sh`.
+
+  Each job checks only the top-level setup's digest (integration F6, admission review finding 4). No XR or other dependent job is
   pending or running.
 - **Helper preload.** `sb1_run.py` loads the frozen checkout's verified helper as
   `sys.modules["omnifold"]` before the driver's `sys.path` insert (sb1-prep §9). The OI-136 guard
@@ -181,9 +192,59 @@ uses only the standard library.
 
 ## 5. Admission review
 
-ADMISSION_REVIEW_PLACEHOLDER
+- **Reviewer.** One fresh, read-only reviewer, explicitly authorized. It is a Claude subagent of the
+  owner's model family, so the review is not cross-provider independent.
+- **Scope and setup.** It reviewed the fixed commit `f7135d31` (run commit `2b35ba52`), 20:13Z →
+  20:29Z, ≈ 0.04 core-h.
+  - Its own detached worktree was clean at start. At the end it held only an ignored
+    `__pycache__` that its own probe wrote; the worktree was then removed.
+  - On the cluster it made read-only queries only: no `sbatch`, `srun`, `salloc` or `scancel`, and it
+    created no file there.
+  - Preserved verbatim: [`review/admission-review.md`](review/admission-review.md), sha256
+    `73425af791503eab…`.
+- **Verdict: ADMIT WITH CONDITIONS**, no blocker.
+- **What it re-did itself:**
+  - the unreviewed delta `b7c951b3..d4335d3b` (tests, mutants and record only; nothing executed);
+  - the four-path run commit;
+  - byte identity of `P` (tree `7db17678…` at all four commits) and of all 32 manifest files;
+  - the grant quote (`cmp`-identical, sha256 `dec02013…`);
+  - the binding of the record's digest to the admission;
+  - `sb1_admit.py check` on the cluster (holds);
+  - the admission's fields, a re-stat of the inputs and the outroot's absence;
+  - the suites at `f7135d31`: 16 / 10 / 29 / 7 OK and the operator's 5 OK, 0 skipped;
+  - the operator wrapper's bytes on the cluster (`f626997f…`, mode 444) and its logic;
+  - the ceilings and the charge accounting;
+  - the ROOT 6.28 finding, confirmed confined to a test.
+
+| # | severity | finding | disposition |
+|---|---|---|---|
+| 1 | MINOR | the frozen checkout held an ignored `tests/__pycache__` file from the owner's login-node test; "status 0 lines" held only without `--ignored` | **fixed**: file removed before submission (20:31Z; `--ignored` 0 lines, admission re-checked); §2 corrected |
+| 2 | MINOR | the operator's `ACTIVE` set omits `STOPPED`, `SIGNALING`, `STAGE_OUT`, `REQUEUE_HOLD`, `RESV_DEL_HOLD` and `SPECIAL_EXIT`, so `cleanup` could report clean while such a job lived | **condition C1, applied**: after any `status` or `cleanup`, `squeue --me -t all` must list no job whose WorkDir is the outroot, in any state; anything listed is named and handled under the INCONCLUSIVE rule. The mode-444 wrapper is not changed |
+| 3 | MINOR | §1's orphan bound (≤ 0.0059) was narrower than the grant | **fixed** (§1): any orphan is one of the six calls, so the total stays ≤ 1.69921875 |
+| 4 | NOTE | the setup sources two more canonical files, which the digest check does not cover | **fixed** (§2 lists them) |
+| 5 | NOTE | ROOT 6.28 finding confined to the test; `sb1_verify.py` is unexercised on 6.28 | recorded; the final verification is independent |
+| 6 | NOTE | hash throughput is assumed (≥ 64 MB/s needed) | recorded |
+| 7 | NOTE | the grant's provenance traces to the owner's saved copy | recorded |
 
 ## 6. Submission and scheduler record
+
+- **Submission.** One call through the operator wrapper, `submit` at 2026-10-10T20:31:26Z →
+  20:31:43Z UTC. `sb1_submit.sh` exited 0, and its `check` reported "admission holds".
+  `identify` at 20:31:48Z matched six jobs by user, window and WorkDir = outroot, with 0 ambiguous,
+  agreeing with `submission.json`:
+
+  | job | id | dependency |
+  |---|---|---|
+  | H0 | `59645299` | none |
+  | UL | `59645300` | afterok H0 |
+  | SL | `59645301` | afterok UL |
+  | J1 | `59645302` | afterok SL |
+  | C | `59645304` | afterok J1 |
+  | H1 | `59645305` | afterany on all five |
+
+- **Outroot.** `/pscratch/sd/j/josephrb/sb1-2b35ba52`; the operator record is
+  `/pscratch/sd/j/josephrb/sb1-operator-2b35ba52/record/`.
+- **24-hour stop.** The stop deadline is 2026-10-11T20:31:26Z.
 
 SUBMISSION_PLACEHOLDER
 

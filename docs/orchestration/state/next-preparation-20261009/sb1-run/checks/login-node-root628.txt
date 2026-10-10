@@ -1,6 +1,7 @@
 # Perlmutter login23, 2026-10-10T20:06-20:12Z, root_6_28 (Python 3.11.14, numpy 1.26.4, lightgbm 4.6.0,
 # scikit-learn 1.8.0, ROOT 6.28/12), checkout /pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52 at 2b35ba52.
-# TMPDIR=$SCRATCH/tmp/sb1-login-test-*, removed afterwards; worktree status 0 lines before and after. No Slurm call.
+# TMPDIR=$SCRATCH/tmp/sb1-login-test-*, removed afterwards. Worktree `git status --porcelain` 0 lines before and after;
+# with --ignored the test left tests/__pycache__/make_fixture_omnifile.cpython-311.pyc (removed 2026-10-10T20:31Z). No Slurm call.
 
 ## python -m unittest -v test_branch_select   (the package's own suite, unmodified)
 Ran 16 tests in 18.409s
