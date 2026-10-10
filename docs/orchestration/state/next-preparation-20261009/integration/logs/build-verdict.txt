@@ -1,0 +1,11 @@
+  OK   main_note.pdf written by this run; no unresolved references in main_note.log after 1 latexmk invocation(s):
+  OK   main_primer.pdf written by this run; no unresolved references in main_primer.log after 1 latexmk invocation(s):
+  OK   main_paper.pdf written by this run; no unresolved references in main_paper.log after 1 latexmk invocation(s):
+SELF-TEST :: PASS
+RESULT :: PASS :: head=b19b5e91f3bd04b9f3892305bd55b43f3d2383ec tree=clean scope=docs/analysis-note mode=strict products=main_note.pdf@sha256:de28f184866a1c571b574f850dc308fbec33fa18402c43b87e79d693413c31f5(fresh),main_paper.pdf@sha256:bddfa6075050fb513ee8ffa64a6a48cac977bbf2d7f1b6245d08443cf4b95af3(fresh),main_primer.pdf@sha256:1c6702b83d87f6d13bd1731cabcbb369fe0ec221dac599c2e8f71c5d32447693(fresh)
+SELF-TEST :: PASS (17 perturbations rejected)
+SEC4-RECEIPTS :: PASS (14/14)
+=== page counts ===
+  main_note.pdf  123 pp
+  main_primer.pdf 9 pp
+  main_paper.pdf 11 pp

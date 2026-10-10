@@ -1,0 +1,52 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.7, pytest-8.3.4, pluggy-1.6.0 -- <scratch>/venv313/bin/python
+rootdir: <worktree>
+collecting ... collected 18 items
+
+2d-unfolding/tests/test_reported_cells.py::GridTest::test_edges_equal_the_driver_literal PASSED [  5%]
+2d-unfolding/tests/test_reported_cells.py::GridTest::test_flat_index_is_the_paper_global_id PASSED [ 11%]
+2d-unfolding/tests/test_reported_cells.py::GridTest::test_producers_keep_the_names_their_importers_use PASSED [ 16%]
+2d-unfolding/tests/test_reported_cells.py::ContractTest::test_equal_count_permutation_is_refused PASSED [ 22%]
+2d-unfolding/tests/test_reported_cells.py::ContractTest::test_identical_sets_pass PASSED [ 27%]
+2d-unfolding/tests/test_reported_cells.py::ContractTest::test_omission_is_refused PASSED [ 33%]
+2d-unfolding/tests/test_reported_cells.py::ContractTest::test_paper_reports_205_cells PASSED [ 38%]
+2d-unfolding/tests/test_reported_cells.py::ContractTest::test_transposed_grid_is_refused PASSED [ 44%]
+2d-unfolding/tests/test_reported_cells.py::RootIdentityTest::test_identity_round_trip PASSED [ 50%]
+2d-unfolding/tests/test_reported_cells.py::RootIdentityTest::test_legacy_mean_fallback PASSED [ 55%]
+2d-unfolding/tests/test_reported_cells.py::RootIdentityTest::test_non_binary_identity_is_refused PASSED [ 61%]
+2d-unfolding/tests/test_reported_cells.py::RootIdentityTest::test_transposed_identity_is_refused PASSED [ 66%]
+2d-unfolding/tests/test_reported_cells.py::RootIdentityTest::test_wrong_edges_are_refused PASSED [ 72%]
+2d-unfolding/tests/test_reported_cells.py::ScriptGuardTest::test_legacy_bootstrap_is_block_summed PASSED [ 77%]
+2d-unfolding/tests/test_reported_cells.py::ScriptGuardTest::test_matched_bootstrap_is_block_summed PASSED [ 83%]
+2d-unfolding/tests/test_reported_cells.py::ScriptGuardTest::test_mismatched_bootstraps_are_refused PASSED [ 88%]
+2d-unfolding/tests/test_reported_cells.py::ScriptGuardTest::test_ours_only_refuses_a_permuted_bootstrap PASSED [ 94%]
+2d-unfolding/tests/test_reported_cells.py::ScriptGuardTest::test_ours_only_refuses_a_permuted_universe_and_warns_on_a_legacy_one PASSED [100%]
+
+=============================== warnings summary ===============================
+../../../..<scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:64
+  <scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:64: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+    prop = Group((name + Suppress("=") + comma_separated(value)) | oneOf(_CONSTANTS))
+
+../../../..<scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:85
+../../../..<scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:85
+../../../..<scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:85
+../../../..<scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:85
+../../../..<scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:85
+../../../..<scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:85
+  <scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:85: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+../../../..<scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:89
+../../../..<scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:89
+../../../..<scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:89
+../../../..<scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:89
+../../../..<scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:89
+../../../..<scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:89
+  <scratch>/venv313/lib/python3.13/site-packages/matplotlib/_fontconfig_pattern.py:89: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 18 passed, 13 warnings in 26.94s =======================
+real 27.22
+user 22.35
+sys 2.48

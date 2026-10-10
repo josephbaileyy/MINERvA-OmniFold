@@ -1,0 +1,38 @@
+test_every_listed_file_carries_a_reason (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_every_listed_file_carries_a_reason) ... ok
+test_no_file_outside_the_named_set_feeds_a_rooted_insert (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_no_file_outside_the_named_set_feeds_a_rooted_insert)
+FIRES on a new instance. This is the ratchet. ... ok
+test_the_known_set_only_shrinks (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_the_known_set_only_shrinks)
+FIRES when a listed file is repaired but not delisted — so the list cannot rot into an ... ok
+test_the_scanner_FIRES_on_a_synthetic_rooted_insert (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_the_scanner_FIRES_on_a_synthetic_rooted_insert)
+Power. Without this the two arms above pass on a scanner that returns [] for everything. ... ok
+test_the_scanner_FIRES_through_a_CALL_argument (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_the_scanner_FIRES_through_a_CALL_argument)
+The exact shape the first version of this scanner missed, which made 15 look like 9. ... ok
+test_the_scanner_is_SILENT_on_a_SIBLING_repository (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_the_scanner_is_SILENT_on_a_SIBLING_repository)
+Over-broad is not the safe direction: it would report a hazard in a tree that has none. ... ok
+test_the_scanner_is_SILENT_on_a_derived_root (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_the_scanner_is_SILENT_on_a_derived_root)
+The repair's own shape. If this fires, the fix reports as the defect. ... ok
+test_the_scanner_is_SILENT_on_a_rooted_literal_that_never_reaches_an_insert (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_the_scanner_is_SILENT_on_a_rooted_literal_that_never_reaches_an_insert)
+The 61-vs-15 distinction. A literal used as an OUTPUT path is not this hazard, and ... ok
+test_the_2D_driver_still_confines_its_insert_to_a_function (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheLatencyOfTheUnrepaired2DArmIsAsserted.test_the_2D_driver_still_confines_its_insert_to_a_function)
+The other half. If the insert reaches module level, every importer is exposed and the ... ok
+test_the_omnifold_helper_has_not_moved (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheLatencyOfTheUnrepaired2DArmIsAsserted.test_the_omnifold_helper_has_not_moved)
+FIRES when omnifold.py changes -- which converts the 2D hazard from latent to real. ... ok
+test_the_fail_open_set_is_EXACTLY_the_recorded_one (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheInventoryIsARatchet.test_the_fail_open_set_is_EXACTLY_the_recorded_one) ... ok
+test_this_ratchet_cannot_pass_over_an_empty_set (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheInventoryIsARatchet.test_this_ratchet_cannot_pass_over_an_empty_set)
+Non-vacuity, asserted here rather than inherited from the probe's exit code. ... ok
+test_both_data_only_launchers_still_invoke_it_with_the_mandatory_split (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheMitigationIsStillDeployed.test_both_data_only_launchers_still_invoke_it_with_the_mandatory_split) ... ok
+test_the_guard_file_exists (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheMitigationIsStillDeployed.test_the_guard_file_exists) ... ok
+test_the_guard_is_itself_parity_checked_by_those_launchers (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheMitigationIsStillDeployed.test_the_guard_is_itself_parity_checked_by_those_launchers)
+A guard imported from the tree it polices is theatre; the launchers say so. ... ok
+test_it_exits_0_which_means_BOTH_its_controls_held (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheProbeStillMeasures.test_it_exits_0_which_means_BOTH_its_controls_held)
+Exit 2 is 'cannot check'. Reading that as a clean tree is the failure mode. ... ok
+test_its_negative_control_still_rejects_something (nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheProbeStillMeasures.test_its_negative_control_still_rejects_something)
+A classifier that rejects nothing has not been shown to discriminate. ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 56.414s
+
+OK
+real 56.46
+user 53.45
+sys 1.34
