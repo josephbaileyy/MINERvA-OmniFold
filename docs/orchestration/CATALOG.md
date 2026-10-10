@@ -80,9 +80,22 @@ later integration is a separate bounded action. Inputs and open preconditions: i
 
 | next session | report |
 |---|---|
-| 2D publication path: the `KNOWN_ISSUES.md` 88 pairing after keep-and-disclose (the 2026-10-09 ruling's prohibitions stand) | `state/next-preparation-20261009/two-d-path/REPORT.md` |
-| SB1 preparation: the selective-read loaders and their local equality tests (speed REPORT §9, §15; SB1 itself needs Joseph's authorization) | `state/next-preparation-20261009/sb1-prep/REPORT.md` |
-| D-ID: the 5D GBDT discriminating diagnostic (gbdt REPORT §6, §14; not admitted; its branch-B route is unreviewed) | `state/next-preparation-20261009/d-id/REPORT.md` |
+| 2D publication path: the `KNOWN_ISSUES.md` 88 pairing after keep-and-disclose. Delivered 2026-10-10 as a design only: route L42 is proposed for claims Joseph has not accepted, and the transfer stays unmeasured. The 2026-10-09 ruling's prohibitions stand | `state/next-preparation-20261009/two-d-path/REPORT.md` |
+| SB1 preparation: the selective-read loaders and their local equality tests (speed REPORT §9, §15). Delivered 2026-10-10 as a package that has not been run; the package pin and its manifest digest are in the follow-up integration's dispatch table. Running SB1 needs Joseph's authorization | `state/next-preparation-20261009/sb1-prep/REPORT.md` |
+| D-ID: the 5D GBDT discriminating diagnostic (gbdt REPORT §6, §14). Run 2026-10-10 under Joseph's D-ID prompt after its admission review: branch C, binned, signal-only, simulation-only; H2 uninformative | `state/next-preparation-20261009/d-id/REPORT.md` |
+
+**Follow-up integration, 2026-10-10.** The three reports above landed on `main` together, with a correction
+to the two-d-path stage-T argument and two SB1 test repairs. Combined state, the scope of each record, and
+the dispatch table: [`state/next-preparation-20261009/integration-followup/REPORT.md`](state/next-preparation-20261009/integration-followup/REPORT.md).
+
+**Next owned reports, registered 2026-10-10 (not launched).** Each path is absent until its owner pushes
+it. The owner writes only its own subtree. Shared status and routing surfaces stay with the integration
+owner. Registration grants no compute, experiment, adoption or claim-scope authority.
+
+| owner | report |
+|---|---|
+| 2D methodology and XR owner | `state/next-preparation-20261009/two-d-followup/REPORT.md` |
+| SB1 execution owner (runs only under a committed `AUTHORIZATION-` record naming the package pin) | `state/next-preparation-20261009/sb1-run/REPORT.md` |
 
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
