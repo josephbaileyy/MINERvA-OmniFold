@@ -1,0 +1,17 @@
+{
+ "L1_rows_400k_seed1_vs_seed2_max_abs_dprob": 0.15100791159402083,
+ "L2_rows_400k_allrow_binning_seed1_vs_seed2_max_abs_dprob": 0.0,
+ "L3_rows_120k_seed1_vs_seed2_max_abs_dprob": 0.0,
+ "L4_control_seed1_vs_seed2_same_bin_mappers": false,
+ "L4_fixed_seed_bootstrap_weights_same_bin_mappers": true,
+ "L5_seed1_threads1_vs_threads2_max_abs_dprob": 0.0,
+ "L6_rerun_identical_args_max_abs_dprob": 0.0,
+ "X1_exact_seed1_vs_None_max_abs_dprob": 0.0,
+ "X1_exact_seed1_vs_seed2_max_abs_dprob": 0.0,
+ "X2_exact_rounded_features_seed1_vs_seed2_max_abs_dprob": 0.0,
+ "versions": {
+  "lightgbm": "4.6.0",
+  "numpy": "1.26.4",
+  "sklearn": "1.6.1"
+ }
+}
