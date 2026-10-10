@@ -238,6 +238,17 @@ class Chain(unittest.TestCase):
         self.assertEqual(v["criteria"]["P"]["verdict"], "FAIL")
         self.assertNotEqual(v["overall"], "PASS")
 
+    def test_a_guard_record_from_another_root_is_not_a_pass(self):
+        dst = self.tmp / "mut-inventory"
+        shutil.copytree(self.out, dst)
+        p = dst / "SL" / "inventory.jsonl"
+        recs = [json.loads(line) for line in p.read_text().splitlines()]
+        recs[0]["repo_origins_outside_expect_root"] = 1
+        p.write_text("\n".join(json.dumps(r) for r in recs) + "\n")
+        v = self.verdict(dst, self.out / "H1" / "sacct.psv")
+        self.assertEqual(v["criteria"]["P"]["verdict"], "FAIL")
+        self.assertIn("guard_inventories", v["criteria"]["P"]["problems"])
+
     def test_the_ledger_adds_charges_and_a_retry(self):
         r = subprocess.run([sys.executable, self.root / PKG_REL / "sb1_verify.py", "ledger",
                             "--admission", self.out / "admission.json",
@@ -306,6 +317,8 @@ class Chain(unittest.TestCase):
             r = subprocess.run([sys.executable, self.root / PKG_REL / "sb1_admit.py", "check",
                                 "--admission", adm], capture_output=True, text=True)
             self.assertEqual(r.returncode, 3, r.stderr)
+            # refused by the path rule itself, not only by the later commit check
+            self.assertIn("is not an AUTHORIZATION- or DECISION- record", r.stderr)
         finally:
             link.unlink()
 

@@ -1,0 +1,316 @@
+{
+ "commit": "200bbde5",
+ "baseline": {
+  "test_branch_select": {
+   "returncode": 0,
+   "seconds": 14.7,
+   "ran": "Ran 7 tests in 12.956s",
+   "skipped": false,
+   "tail": [
+    "test_every_omitted_activation_is_refused_before_the_first_read (test_branch_select.NegativeControls.test_every_omitted_activation_is_refused_before_the_first_read) ... ok",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 7 tests in 12.956s",
+    "",
+    "OK"
+   ]
+  },
+  "test_sb1_guarded": {
+   "returncode": 0,
+   "seconds": 18.8,
+   "ran": "Ran 3 tests in 18.452s",
+   "skipped": false,
+   "tail": [
+    "test_an_input_changed_after_hashing_is_refused (test_sb1_guarded.Guarded.test_an_input_changed_after_hashing_is_refused) ... ok",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 3 tests in 18.452s",
+    "",
+    "OK"
+   ]
+  },
+  "test_launch_chain": {
+   "returncode": 0,
+   "seconds": 46.0,
+   "ran": "Ran 5 tests in 45.772s",
+   "skipped": false,
+   "tail": [
+    "test_too_many_bytes_read_fails_s2 (test_launch_chain.Chain.test_too_many_bytes_read_fails_s2) ... ok",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 5 tests in 45.772s",
+    "",
+    "OK"
+   ]
+  }
+ },
+ "mutants": [
+  {
+   "name": "restore-addresses-dropped",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py",
+   "test": "test_a_reused_tree_is_restored_and_reads_identically_afterwards",
+   "caught": true,
+   "returncode": 129,
+   "seconds": 11.7,
+   "ran": null,
+   "skipped": null,
+   "tail": [
+    "test_a_reused_tree_is_restored_and_reads_identically_afterwards (test_branch_select.Equality.test_a_reused_tree_is_restored_and_reads_identically_afterwards) ...  *** Break *** segmentation violation",
+    " *** Break *** segmentation violation"
+   ]
+  },
+  {
+   "name": "inactive-address-allowed",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py",
+   "test": "test_every_omitted_activation_is_refused_before_the_first_read",
+   "caught": true,
+   "returncode": 1,
+   "seconds": 11.6,
+   "ran": "Ran 1 test in 11.011s",
+   "skipped": false,
+   "tail": [
+    "AssertionError: \"inactive\" does not match \"mc_truth_denom: active ['pT_truth_Muon_Energy_MINOS_0', 'pz_truth_Muon_Energy_MINOS_0'] != derived ['pT_truth_Muon_Energy_MINOS_0', 'pz_truth_Muon_Energy_MINOS_0', 'w_truth_Muon_Energy_MINOS_0']\"",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 11.011s",
+    "",
+    "FAILED (failures=17)"
+   ]
+  },
+  {
+   "name": "active-set-unchecked",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py",
+   "test": "test_an_extra_activation_is_refused_before_the_first_read",
+   "caught": true,
+   "returncode": 1,
+   "seconds": 12.6,
+   "ran": "Ran 1 test in 11.973s",
+   "skipped": false,
+   "tail": [
+    "AssertionError: SelectionError not raised",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 11.973s",
+    "",
+    "FAILED (failures=4)"
+   ]
+  },
+  {
+   "name": "rule-unchecked",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py",
+   "test": "test_a_loader_that_reads_another_branch_is_refused_by_the_rule",
+   "caught": true,
+   "returncode": 1,
+   "seconds": 12.6,
+   "ran": "Ran 1 test in 11.902s",
+   "skipped": false,
+   "tail": [
+    "AssertionError: \"rule\" does not match \"mc_signal_reco: no address on ['sim_eavail']\"",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 11.902s",
+    "",
+    "FAILED (failures=1)"
+   ]
+  },
+  {
+   "name": "discovery-forwards-addresses",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py",
+   "test": "test_discovery_reads_no_entry_and_leaves_no_address",
+   "caught": true,
+   "returncode": 1,
+   "seconds": 12.7,
+   "ran": "Ran 1 test in 12.095s",
+   "skipped": false,
+   "tail": [
+    "AssertionError: True is not false",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 12.095s",
+    "",
+    "FAILED (failures=1)"
+   ]
+  },
+  {
+   "name": "all-arm-entry-unchecked",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py",
+   "test": "test_a_partial_entry_state_is_restored_exactly",
+   "caught": true,
+   "returncode": 1,
+   "seconds": 12.6,
+   "ran": "Ran 1 test in 11.956s",
+   "skipped": false,
+   "tail": [
+    "AssertionError: SelectionError not raised",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 11.956s",
+    "",
+    "FAILED (failures=1)"
+   ]
+  },
+  {
+   "name": "histogram-not-digested",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py",
+   "test": "test_selective_is_byte_identical_to_the_pinned_loaders",
+   "caught": true,
+   "returncode": 1,
+   "seconds": 12.2,
+   "ran": "Ran 1 test in 11.591s",
+   "skipped": false,
+   "tail": [
+    "AssertionError: 10 != 15",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 11.591s",
+    "",
+    "FAILED (failures=6)"
+   ]
+  },
+  {
+   "name": "reference-not-compared",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+   "test": "test_a_reference_with_different_bytes_stops_before_training",
+   "caught": true,
+   "returncode": 1,
+   "seconds": 16.1,
+   "ran": "Ran 1 test in 15.891s",
+   "skipped": false,
+   "tail": [
+    "",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 15.891s",
+    "",
+    "FAILED (failures=1)"
+   ]
+  },
+  {
+   "name": "input-stat-unchecked",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+   "test": "test_an_input_changed_after_hashing_is_refused",
+   "caught": true,
+   "returncode": 1,
+   "seconds": 14.6,
+   "ran": "Ran 1 test in 14.373s",
+   "skipped": false,
+   "tail": [
+    "",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 14.373s",
+    "",
+    "FAILED (failures=1)"
+   ]
+  },
+  {
+   "name": "driver-pin-unchecked",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+   "test": "test_a_changed_driver_is_refused_even_when_committed_and_stated",
+   "caught": true,
+   "returncode": 1,
+   "seconds": 16.2,
+   "ran": "Ran 1 test in 15.966s",
+   "skipped": false,
+   "tail": [
+    "",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 15.966s",
+    "",
+    "FAILED (failures=1)"
+   ]
+  },
+  {
+   "name": "mib-read-as-1000",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_verify.py",
+   "test": "test_a_mib_value_is_not_read_as_kib",
+   "caught": true,
+   "returncode": 1,
+   "seconds": 45.7,
+   "ran": "Ran 1 test in 45.437s",
+   "skipped": false,
+   "tail": [
+    "AssertionError: 31.0 != 32.505856 within 6 places (1.5058560000000014 difference)",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 45.437s",
+    "",
+    "FAILED (failures=1)"
+   ]
+  },
+  {
+   "name": "s2-bound-loosened",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_verify.py",
+   "test": "test_too_many_bytes_read_fails_s2",
+   "caught": true,
+   "returncode": 1,
+   "seconds": 42.4,
+   "ran": "Ran 1 test in 42.232s",
+   "skipped": false,
+   "tail": [
+    "+ ('FAIL', 'FAIL')",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 42.232s",
+    "",
+    "FAILED (failures=1)"
+   ]
+  },
+  {
+   "name": "s4-bound-loosened",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_verify.py",
+   "test": "test_slow_selective_arm_fails_s4",
+   "caught": true,
+   "returncode": 1,
+   "seconds": 45.9,
+   "ran": "Ran 1 test in 45.627s",
+   "skipped": false,
+   "tail": [
+    "+ ('FAIL', 'FAIL')",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 45.627s",
+    "",
+    "FAILED (failures=1)"
+   ]
+  },
+  {
+   "name": "proposal-admitted",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_admit.py",
+   "test": "test_a_proposal_cannot_be_submitted",
+   "caught": true,
+   "returncode": 1,
+   "seconds": 64.1,
+   "ran": "Ran 1 test in 63.836s",
+   "skipped": false,
+   "tail": [
+    "AssertionError: 0 == 0",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 63.836s",
+    "",
+    "FAILED (failures=1)"
+   ]
+  },
+  {
+   "name": "symlinked-authorization",
+   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_admit.py",
+   "test": "test_hostile_authorization_paths_are_refused",
+   "caught": false,
+   "returncode": 0,
+   "seconds": 40.3,
+   "ran": "Ran 1 test in 40.132s",
+   "skipped": false,
+   "tail": [
+    "test_hostile_authorization_paths_are_refused (test_launch_chain.Chain.test_hostile_authorization_paths_are_refused) ... ok",
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 40.132s",
+    "",
+    "OK"
+   ]
+  }
+ ],
+ "verdict": "14 of 15 caught"
+}

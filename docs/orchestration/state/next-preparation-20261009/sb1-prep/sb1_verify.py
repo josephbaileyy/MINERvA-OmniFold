@@ -11,7 +11,9 @@ shares no code with the wrapper beyond reading its receipts, so it re-derives ev
 from recorded values. Criteria (REPORT §6, frozen before any run):
 
 * P   provenance: every receipt strict, guarded, at the admitted commit with the admitted module
-      digests; each input's stat equal to H0's at every job's start and end; H0 and H1 equal.
+      digests; each input's stat equal to H0's at every job's start and end; H0 and H1 equal; and
+      every guard inventory record shows the guard installed on the admitted checkout alone (no
+      ``--allow``, no origin outside it) with the manifest's shim.
 * S1  input preservation (mandatory): every loader's arrays and histogram byte-identical between
       arms in the lateral (UL vs SL), vertical (J1) and CV (C) patterns, with equal settings; the
       selective arm verified before its first read; the all arm entered with every branch active.
@@ -122,6 +124,35 @@ def check_receipt(rec, adm, h0, want_status="complete"):
                     bad.append(f"{phase} {key} differs from H0")
         if not rec.get("inputs_end"):
             bad.append("no end-of-run input check")
+    return bad
+
+
+#: Guarded runs per job: UL 1, SL 1, J1 4 + 4 + 2 controls, C 3.
+INVENTORIES = {"UL": ("inventory.jsonl",), "SL": ("inventory.jsonl",),
+               "J1": tuple(f"inventory_{a}_{t}.jsonl" for a in ("all", "selective")
+                           for t in ("data", "mc_background", "mc_signal_reco", "mc_truth_denom"))
+               + ("inventory_control_omit.jsonl", "inventory_control_extra.jsonl"),
+               "C": ("inventory_unfold.jsonl", "inventory_loaders_all.jsonl",
+                     "inventory_loaders_selective.jsonl")}
+
+
+def check_inventories(outroot, adm, shim_sha256):
+    """What the OI-136 guard itself recorded about every guarded run (empty list: no problem)."""
+    bad = []
+    for job, names in INVENTORIES.items():
+        for name in names:
+            path = Path(outroot) / job / name
+            recs = [json.loads(line) for line in path.read_text().splitlines()] \
+                if path.is_file() else []
+            if not recs:
+                bad.append(f"{job}/{name}: missing")
+            for r in recs:
+                if not (r.get("guard_installed") and r.get("expect_root") == adm["checkout"]
+                        and r.get("allow_is_empty") and r.get("repo_origins_outside_expect_root") == 0
+                        and r.get("script_checkout_root") == adm["checkout"]
+                        and r.get("shim_sha256") == shim_sha256 and r.get("violation") is None):
+                    bad.append(f"{job}/{name}: guard record {r.get('label')!r} does not show an "
+                               "installed guard on the admitted checkout alone")
     return bad
 
 
@@ -250,6 +281,11 @@ def verdict(a):
         problems = check_receipt(r, adm, h0, want_status="selection-refused")
         if problems:
             prov[f"control_{k}"] = problems
+    manifest = json.loads((Path(__file__).resolve().parent / "manifest" /
+                           "expected-code.json").read_text())
+    inv = check_inventories(out, adm, manifest["guard"]["nd-unfolding/mnv_guard_shim/sitecustomize.py"])
+    if inv:
+        prov["guard_inventories"] = inv
     v.set("P", "PASS" if not prov else ("INCONCLUSIVE" if any("missing" in str(p) for p in prov.values())
                                         else "FAIL"), problems=prov)
 
