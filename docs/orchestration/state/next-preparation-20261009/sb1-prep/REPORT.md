@@ -381,9 +381,11 @@ On Perlmutter, from the canonical checkout, after this branch is merged and Jose
 committed as `docs/orchestration/AUTHORIZATION-<date>-sb1.md`. That record must quote two things in
 full:
 
-- the **package commit**: the last commit on `prep/sb1-ready-20261009` that changes `P`. That is the
-  PR head at merge, named in the PR's final comment. It cannot be an earlier commit, because `check`
-  refuses any later difference under `P`;
+- the **package commit**: the last commit that changes `P`. That was the last commit on
+  `prep/sb1-ready-20261009` until the 2026-10-10 follow-up integration, which changed `P` (below,
+  "Integration repairs"). It is now the commit that adds that subsection, named in full in
+  `Q/integration-followup/REPORT.md` §8. It cannot be an earlier commit, because `check` refuses
+  any later difference under `P`;
 - the sha256 of `P/manifest/expected-code.json` at that commit.
 
 ```bash
@@ -617,6 +619,28 @@ record commit that carries this paragraph are outside both reviews:
 
 Whoever drafts the admission should read the `1ac7cec3..<package commit>` diff of `P`. It is the
 only unreviewed delta: one shell function, one admission check, tests and record text.
+
+**Integration repairs, 2026-10-10.** These were made by the follow-up integration, outside both
+reviews. They are tests and mutants only: no script, module, launch spec or manifest changed, and
+`manifest/expected-code.json` keeps sha256 `f060df81…`. Its record is
+`Q/integration-followup/REPORT.md` §4.
+
+- **Each job's environment check.** N5 moved the environment-digest check into every batch script.
+  The chain test above changes the setup before H0, so H0 refuses and `afterok` cancels the rest.
+  Removing the check from `sb1_unfold.sbatch` (UL, SL) left all 27 chain tests green.
+  `test_every_job_refuses_an_environment_changed_after_submission` now runs each of the six queued jobs
+  directly after the change. Each must exit 3 with the refusal message and an empty job directory.
+- **More `sbatch` failures.** `test_a_failed_first_or_last_sbatch_or_a_non_numeric_id_stops_the_submission`
+  extends N1's control to call 1, call 6 and a non-numeric reply. The numeric-id check had no control
+  before.
+- **Mutants and results.** The new mutants are `unfold-env-unchecked` and
+  `submit-accepts-non-numeric-id`. Results at `62e55530`:
+  - `test_launch_chain` 29 OK; the other three suites are unchanged (16, 10 and 7 OK); 0 skipped;
+  - mutation run 5 caught **29 of 29** (`logs/mutation-results-run5-62e55530.json`);
+  - every `sbatch`, `scancel`, `sacct` and `squeue` was a fake or a tripwire, with 0 real calls.
+- **Relevance.** Joseph's 2026-10-09 statement widens §10's: SB1's potential value includes pricing a
+  prospective matched LightGBM measurement procedure, not only a transfer campaign. Only this
+  preparation was dispatched, and the cluster benchmark remains unauthorized.
 
 ## 12. Limitations and residual risks
 
