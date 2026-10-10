@@ -55,6 +55,14 @@ class CapReached(RuntimeError):
     """The CPU cap would be exceeded by the next unit of work: stop, keep completed stages."""
 
 
+def by_chunks(fn, coords: np.ndarray, edges: list, rows: np.ndarray | None = None, chunk: int = 2_000_000):
+    """A row-wise committed function (``flat_index``, ``in_grid``) applied in row chunks: identical
+    output, bounded temporaries (review M3)."""
+    idx = np.arange(coords.shape[0]) if rows is None else rows
+    return np.concatenate([fn(coords[idx[i:i + chunk]], edges) for i in range(0, idx.size, chunk)]) \
+        if idx.size else fn(coords[idx], edges)
+
+
 def sha256(path: Path, chunk: int = 1 << 24) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as fh:
@@ -86,6 +94,7 @@ class Committed:
     s5c_coverage: object
     s5p_converge: object
     xsec_nd: object
+    s5e_geometry: object
 
 
 def load_committed(expect: dict[str, str]) -> Committed:
@@ -96,18 +105,29 @@ def load_committed(expect: dict[str, str]) -> Committed:
     if str(nd) not in sys.path:
         sys.path.insert(0, str(nd))
     import s5c_coverage  # noqa: E402
+    import s5e_geometry  # noqa: E402
     import s5e_trace  # noqa: E402
     import s5n_pseudo  # noqa: E402
     import s5p_converge  # noqa: E402
     import s5p_truths  # noqa: E402
     import xsec_nd  # noqa: E402
 
-    for module in (s5c_coverage, s5e_trace, s5n_pseudo, s5p_converge, s5p_truths, xsec_nd):
+    for module in (s5c_coverage, s5e_geometry, s5e_trace, s5n_pseudo, s5p_converge, s5p_truths, xsec_nd):
         if Path(module.__file__).resolve().parent != nd.resolve():
             raise AdmissionFailure(f"{module.__name__} resolved outside this checkout: {module.__file__}")
-    s5p_converge.install()  # study K's dispatch: ratio_nd (s5e_deform) on top of the s5n truths
+    s5p_converge.install()  # study K's dispatch: ratio_nd (s5e_deform), and the H2 rows appended
     s5p_truths.install(s5n_pseudo)  # adds cond_ratio (P2r) without touching the others
-    return Committed(s5n_pseudo, s5e_trace, s5c_coverage, s5p_converge, xsec_nd)
+    return Committed(s5n_pseudo, s5e_trace, s5c_coverage, s5p_converge, xsec_nd, s5e_geometry)
+
+
+def expected_names(operand_names) -> list[str]:
+    """The 185 study-K functional names, built from the committed operand names alone (M1): the 42 EW
+    cells, EW_all_ones, the 109 supported J cells, total_integrated, then the 32 H2 cells."""
+    names = [str(x) for x in operand_names]
+    ew = [x for x in names if x.startswith("EW")]
+    j = [x for x in names if x.startswith("J")]
+    h2 = [x for x in names if x.startswith("H2_")]
+    return ew + ["EW_all_ones"] + j + ["total_integrated"] + h2
 
 
 # ------------------------------------------------------------------------------------ budget
@@ -116,8 +136,9 @@ def load_committed(expect: dict[str, str]) -> Committed:
 class Budget:
     """Aggregate process CPU (all threads, plus any children) against the owner's cap (AM-16)."""
 
-    def __init__(self, cap_core_hours: float, spent_before_s: float = 0.0):
+    def __init__(self, cap_core_hours: float, spent_before_s: float = 0.0, ram_bytes: float = np.inf):
         self.cap_s = 3600.0 * cap_core_hours
+        self.ram_bytes = ram_bytes
         self.before = spent_before_s
         self.t0 = time.time()
 
@@ -133,6 +154,8 @@ class Budget:
     def check(self, upcoming_s: float = 0.0) -> None:
         if self.used_s() + upcoming_s > self.cap_s:
             raise CapReached(f"used {self.used_s():.0f} s + next {upcoming_s:.0f} s > cap {self.cap_s:.0f} s")
+        if self.peak_rss_bytes() > self.ram_bytes:  # M3: a peak cannot be pre-empted; stop at the first check
+            raise CapReached(f"peak RSS {self.peak_rss_bytes()} B above the {self.ram_bytes:.0f} B cap")
 
     def peak_rss_bytes(self) -> int:
         rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
@@ -243,6 +266,7 @@ def functional_matrix(rows_kappa: sparse.csr_matrix, grid: Grid, u_fine: np.ndar
 @dataclass
 class IBUResult:
     final: np.ndarray
+    previous: np.ndarray  # the iterate before the last update
     iterations: int
     converged: bool | None
     last_rel_change: float
@@ -264,6 +288,7 @@ def ibu(r: sparse.csr_matrix, y: np.ndarray, b: np.ndarray, prior: np.ndarray, n
     rt = r.T.tocsr()
     t = np.asarray(prior, float).copy()
     rec = sorted(set(record or ()))
+    prev = t
     traj = np.empty((len(rec), maps.shape[0])) if (maps is not None and rec) else None
     slot = {k: i for i, k in enumerate(rec)}
     change = np.inf
@@ -274,14 +299,23 @@ def ibu(r: sparse.csr_matrix, y: np.ndarray, b: np.ndarray, prior: np.ndarray, n
         new[active] = t[active] * (rt @ ratio)[active] / eff[active]
         moving = active & (t > 0)
         change = float(np.max(np.abs(new[moving] - t[moving]) / t[moving])) if moving.any() else 0.0
-        t = new
+        t, prev = new, t
         if traj is not None and k in slot:
             traj[slot[k]] = maps @ t
         if tol is not None and change < tol:
-            return IBUResult(t, k, True, change, traj)
+            return IBUResult(t, prev, k, True, change, traj)
         if budget is not None and k % check_every == 0:
             budget.check()
-    return IBUResult(t, n_iter, False if tol is not None else None, change, traj)
+    return IBUResult(t, prev, n_iter, False if tol is not None else None, change, traj)
+
+
+def functional_convergence(maps: np.ndarray, res: IBUResult, tol: float) -> tuple[np.ndarray, np.ndarray]:
+    """AM-26 (review M2): a functional has converged when its own last-step relative change is below
+    ``tol`` (or the whole run met the AM-18 rule). gbdt section 6 says "a T2 *functional* that has not
+    converged", so one slow cell outside a functional must not remove it from branch B."""
+    f, f_prev = maps @ res.final, maps @ res.previous
+    step = np.divide(np.abs(f - f_prev), np.abs(f), out=np.full_like(f, np.inf), where=np.abs(f) > 0)
+    return step, bool(res.converged) | (step < tol)
 
 
 def fisher(r: sparse.csr_matrix, t: np.ndarray, b: np.ndarray) -> np.ndarray:
@@ -367,9 +401,12 @@ def declare(cmp, labels: list[dict], r_gbdt: np.ndarray, r_inf: np.ndarray | Non
         cands = [i for i in range(n) if (abs(r_gbdt[i]) > cmp.ELIGIBLE_RESIDUAL and not sensitive[i]
                                           and labels[i]["iteration"] == "iteration-faithful"
                                           and labels[i]["identifiability"] == "identified-at-target")]
-        if out["branch"] == "mixed":
-            out["branch"] = "B-undeclarable"
         out["b_candidates"] = cands
+        out["b_candidate_share"] = len(cands) / out["n_eligible"] if out["n_eligible"] else 0.0
+        # m2: B needs its share of candidates; below it B is unreachable whatever stage 4 would give
+        out["b_reachable"] = bool(out["n_eligible"] and out["b_candidate_share"] >= cmp.BRANCH_SHARE)
+        if out["branch"] == "mixed" and out["b_reachable"]:
+            out["branch"] = "B-undeclarable"
         out["stage4"] = "missing"
         return out
     r_eff = np.where(converged, r_inf, np.inf) if converged is not None else np.asarray(r_inf, float)
@@ -437,7 +474,6 @@ class Run:
         self.sets = [WeightSet(**w) for w in cfg["weight_sets"]]
         self.out: dict = {"schema": "d-id-results/1", "stages": {}, "admission": {}, "controls": {},
                           "missing": [], "excluded": [], "timing": {}}
-        self.traj: dict[str, np.ndarray] = {}
 
     # ---------------------------------------------------------------- bookkeeping
     def stage_mark(self, name: str, status: str, note: str = "") -> None:
@@ -498,18 +534,22 @@ class Run:
         pr = np.asarray(d["pass_reco"], bool) & m
         rows = {"n_rows": int(n), "pass_truth": int(m.sum()), "pass_truth_and_reco": int(pr.sum())}
         self.m_idx = np.flatnonzero(m)
-        gen_m = d["MCgen"][m]
-        self.tf = com.s5e_trace.flat_index(gen_m, self.edges).astype(np.int32)
+        self.tf = by_chunks(com.s5e_trace.flat_index, d["MCgen"], self.edges, self.m_idx).astype(np.int32)
         self.pr = np.asarray(d["pass_reco"], bool)[m]
         rf = -np.ones(self.m_idx.size, dtype=np.int32)
-        rf[self.pr] = com.s5e_trace.flat_index(d["MCreco"][self.m_idx[self.pr]], self.edges)
+        rf[self.pr] = by_chunks(com.s5e_trace.flat_index, d["MCreco"], self.edges, self.m_idx[self.pr])
         self.rf_fine = rf
-        del d["MCreco"]  # binned; only the truth coordinates are needed again (for the reweights)
         self.wt = np.asarray(d["w_truth"], float)[m]
         self.wr = np.asarray(d["w_reco"], float)[m]
+        # A8 is counted with the producer's own rule (s5e_geometry.in_grid, upper edge excluded, m1)
+        geo = (np.asarray(d["pass_reco"], bool) & m & by_chunks(com.s5e_geometry.in_grid, d["MCgen"], self.edges)
+               & by_chunks(com.s5e_geometry.in_grid, d["MCreco"], self.edges))
+        rows["rows_eligible_s5e_rule"] = int(geo.sum())
+        del geo, d["MCreco"]  # reco is binned; only the truth coordinates are needed again (reweights)
         rows.update({"truth_outside_grid": int((self.tf < 0).sum()),
                      "reco_outside_grid_of_reco_passing": int(((rf < 0) & self.pr).sum()),
-                     "sentinel_rows": int(np.any(gen_m < -9000, axis=1).sum()),
+                     "sentinel_rows": int(sum(np.any(d["MCgen"][self.m_idx[i:i + 2_000_000]] < -9000, axis=1).sum()
+                                              for i in range(0, self.m_idx.size, 2_000_000))),
                      "negative_w_truth": int((self.wt < 0).sum()), "negative_w_reco": int((self.wr < 0).sum())})
         self.out["events"] = rows
         # completeness and kappa through the committed extraction (xsec per unit count, AM-4)
@@ -521,12 +561,17 @@ class Run:
             np.ones(self.shape), comp.reshape(self.shape), d["flux"], float(d["data_pot"]),
             float(d["n_nucleons"]), self.edges)
         self.kappa = kappa.ravel(order="C")
+        # M1: after s5p_converge.install() the committed function already returns the 185 study-K rows
+        # (s5c's 153, then the 32 H2 cells); they are used as they come and their names are checked
+        # against a list built independently from the committed operands
         U, names = com.s5c_coverage.reported_functionals(json.loads((REPO / self.cfg["s5c_contract"]).read_text()))
-        H, hn = com.s5p_converge.h2_rows()
-        self.U = sparse.csr_matrix(np.vstack([U, H]))
-        self.names = list(names) + list(hn)
-        self.U_kappa = (self.U @ sparse.diags(self.kappa)).tocsr()
         op = np.load(REPO / self.cfg["operands"]["path"], allow_pickle=False)
+        self.names = list(names)
+        expected = expected_names(op["names"])
+        self.admit("A4_functional_rows", self.names == expected and U.shape == (185, self.n_fine),
+                   {"n_rows": int(U.shape[0]), "equal_to_expected": self.names == expected})
+        self.U = sparse.csr_matrix(U)
+        self.U_kappa = (self.U @ sparse.diags(self.kappa)).tocsr()
         self.f183 = [self.names.index(x) for x in op["names"]]
         self.groups = np.asarray(op["groups"])
         self.reported = np.asarray(op["reported"], bool)
@@ -552,9 +597,10 @@ class Run:
         sig_reco = self.pr & (self.rf_fine >= 0)
         pair_rows = sig_reco & in_t
         bkg_rows = sig_reco & ~in_t
-        # A8: the signal pair rows are s5e geometry's "rows_eligible" (pass_reco & pass_truth & both in grid)
+        # A8: s5e geometry's "rows_eligible", by its own rule; the pair-row count (edges closed) beside it
         self.out["events"]["pair_rows"] = int(pair_rows.sum())
-        self.admit("A8_rows", int(pair_rows.sum()) == cfg["events"]["pair_rows_expected"], self.out["events"])
+        self.admit("A8_rows", self.out["events"]["rows_eligible_s5e_rule"] == cfg["events"]["pair_rows_expected"],
+                   self.out["events"])
         self.pairs = Pairs.build(self.rf_fine[pair_rows], self.tf[pair_rows], self.n_fine)
         # split (secondary): half B is the pseudo-data source, A the unfolding MC (s5n convention)
         key = int(cfg["split"]["key"])
@@ -585,6 +631,8 @@ class Run:
                 "P_a": 2.0 * self.pairs_a.sums(wrr[pair_rows & a]),
             }
             self.h[ws.name] = h
+            self.admit(f"A11_reweight_is_one_outside_grid_{ws.name}", h["r_outside_grid_max_dev"] == 0.0,
+                       {"max_abs_dev": h["r_outside_grid_max_dev"]})  # AM-2 rests on it (m4)
         halves = {"n_a": int((~is_b).sum()), "n_b": int(is_b.sum()), "disjoint_by_row_index": True,
                   "w_truth_sum_a": float(self.wt[~is_b].sum()), "w_truth_sum_b": float(self.wt[is_b].sum()),
                   "key": key, "key_from_seed": int(derived), "seed": cfg["split"]["seed"]}
@@ -605,9 +653,10 @@ class Run:
                 h[key2] = h[key2][self.reco_cells]
             for key2 in ("y_b", "b_a"):
                 h["split"][key2] = h["split"][key2][self.reco_cells]
-        # free the row arrays: everything downstream is binned
-        del self.d["MCgen"]
-        del self.tf, self.rf_fine, self.wt, self.wr, self.pr
+        # free the row arrays: everything downstream is binned (M3)
+        for k in ("MCgen", "pass_reco", "pass_truth", "w_truth", "w_reco", "denom_nd"):
+            self.d.pop(k, None)
+        del self.tf, self.rf_fine, self.wt, self.wr, self.pr, self.m_idx
 
     def f_true(self, u: np.ndarray) -> np.ndarray:
         return self.U_kappa @ u
@@ -770,9 +819,7 @@ class Run:
         res = ibu(pb["R"], pb["y"], pb["b"], pb["prior"], n_iter, maps=pb["maps"], record=tuple(record))
         rec_k = sorted(set(record))
         r_k = np.vstack([rel(row, pb["truth_f"]) for row in res.trajectory])
-        tag = f"{grid}/{role}/{weighting}/{ws}"
-        self.traj[tag] = (np.asarray(rec_k), r_k)
-        return {"pb": pb, "K": rec_k, "r": r_k, "final": res.final}
+        return {"K": rec_k, "r": r_k}  # M3: no operands are retained
 
     def converge(self, grid: str, ws: str, weighting: str) -> dict:
         self.budget.check(self.cfg["price_s"][f"convergence_{grid}"])
@@ -781,8 +828,10 @@ class Run:
         res = ibu(pb["R"], pb["y"], pb["b"], pb["prior"], it["convergence_max"], tol=it["convergence_tol"],
                   budget=self.budget)
         f = pb["maps"] @ res.final
+        step, fconv = functional_convergence(pb["maps"], res, it["convergence_tol"])
         return {"pb": pb, "f": f, "r": rel(f, pb["truth_f"]), "iterations": res.iterations,
-                "converged": bool(res.converged), "last_rel_change": res.last_rel_change, "final": res.final}
+                "converged": bool(res.converged), "last_rel_change": res.last_rel_change,
+                "functional_step": step, "functional_converged": fconv}
 
     def widths(self, grid: str, ws: str, weighting: str, residual_counts: np.ndarray | None = None) -> dict:
         self.budget.check(self.cfg["price_s"][f"fisher_{grid}"])
@@ -796,7 +845,10 @@ class Run:
         sigma[ok], null[ok] = widths_from_eig(values, vectors, pb["maps"][ok])
         value = pb["maps"] @ pb["t_bin"]
         sig_rel = np.divide(sigma, np.abs(value), out=np.full_like(sigma, np.nan), where=np.abs(value) > 0)
-        out = {"sigma_abs": sigma, "sigma_rel": sig_rel, "null_fraction": null,
+        eff = np.asarray(pb["R"].sum(axis=0)).ravel()
+        hole = np.abs(pb["maps"][:, eff <= 0]).sum(axis=1) > 0  # m6: weight on a zero-efficiency cell
+        out = {"sigma_abs": sigma, "sigma_rel": sig_rel, "null_fraction": null, "acceptance_hole": hole,
+               "n_zero_efficiency_cells": int(np.sum(eff <= 0)),
                "n_null_modes": int(np.sum(values <= 1e-12 * values.max())), "eig_min": float(values.min()),
                "eig_max": float(values.max())}
         if residual_counts is not None:
@@ -985,7 +1037,7 @@ class Diagnostic(Run):
                 sens = sensitive_flags(primary, self.labels("T1", "nom", ws, idx), self.labels("T2", "dep", ws, idx))
                 inf = t2.get(ws, {}).get("inf_nom")
                 r_inf = inf["r"][idx] if (inf is not None and done["4"]) else None
-                conv = np.full(idx.size, bool(inf["converged"])) if (inf is not None and done["4"]) else None
+                conv = np.asarray(inf["functional_converged"])[idx] if (inf is not None and done["4"]) else None
                 one = declare(cmp, primary, g5[idx], r_inf, sens, conv)
                 dec["per_departure"].setdefault(ws, {})[grp] = one
                 t1 = self.labels("T1", "nom", ws, idx)
@@ -993,7 +1045,9 @@ class Diagnostic(Run):
                 dec.setdefault("labels", {}).setdefault(ws, {})[grp] = [
                     {"functional": self.names[i], "r_gbdt_K5": float(g5[i]), "T2_nom": primary[n],
                      "T1_nom": t1[n] if t1 else None, "T2_dep": t2d[n] if t2d else None,
-                     "sensitive": bool(sens[n]), "eligible": bool(abs(g5[i]) > cmp.ELIGIBLE_RESIDUAL and not sens[n])}
+                     "sensitive": bool(sens[n]), "eligible": bool(abs(g5[i]) > cmp.ELIGIBLE_RESIDUAL and not sens[n]),
+                     "acceptance_hole_T2": bool(self.out["per_grid"]["T2"][ws]["widths_nom"]["acceptance_hole"][i]),
+                     "converged_T2": None if conv is None else bool(conv[n])}
                     for n, i in enumerate(idx)]
                 pooled["labels"] += primary
                 pooled["r_gbdt"] += list(g5[idx])
@@ -1037,8 +1091,15 @@ class Diagnostic(Run):
                                                  for c in ("tracks", "departs", "untraced")}
             else:
                 out["b_candidates"] = [pooled["who"][i] for i in out.get("b_candidates", [])]
-            small = out["n_eligible"] and all(v < 1.0 / 3.0 for v in out["shares"].values())
-            out["all_three_sets_small"] = bool(small)  # AM-20
+            b_bound = out["shares"]["B"] if r_inf is not None else out.get("b_candidate_share", 0.0)
+            small = out["n_eligible"] and max(out["shares"]["C"], out["shares"]["A"], b_bound) < 1.0 / 3.0
+            out["all_three_sets_small"] = bool(small)  # AM-20; without stage 4, B's candidate share bounds it
+            keep = np.array([w != "w2" for w, _ in pooled["who"]])  # m3: W2 is an R-ensemble comparator
+            if keep.any():
+                lab = [x for x, k in zip(pooled["labels"], keep) if k]
+                alt = declare(cmp, lab, r_g[keep], r_inf[keep] if r_inf is not None else None, sens[keep],
+                              conv[keep] if conv is not None else None)
+                out["without_w2"] = {k: alt[k] for k in ("branch", "n_eligible", "shares")}
             dec["maps"][grp] = out
         self.out["decision"] = dec
 
@@ -1061,11 +1122,14 @@ class Diagnostic(Run):
             for grid, res in self.out.get("per_grid", {}).items():
                 for kind, w in res.get(name, {}).items():
                     if kind.startswith("widths_"):
-                        for q in ("sigma_rel", "sigma_abs", "null_fraction", "invisible_share"):
+                        for q in ("sigma_rel", "sigma_abs", "null_fraction", "invisible_share", "acceptance_hole"):
                             if q in w:
                                 arrays[f"{grid}/{name}/{kind}/{q}"] = np.asarray(w[q])[self.f183]
                     elif kind.startswith("inf_"):
                         arrays[f"{grid}/{name}/{kind}/r"] = np.asarray(w["r"])[self.f183]
+                        arrays[f"{grid}/{name}/{kind}/functional_step"] = np.asarray(w["functional_step"])[self.f183]
+                        arrays[f"{grid}/{name}/{kind}/functional_converged"] = np.asarray(
+                            w["functional_converged"])[self.f183]
         for name, rec in self.g.items():
             if rec["family"] == "cap10":
                 for k in (5, 10):
@@ -1166,7 +1230,7 @@ def run(cfg: dict, inputs: Path, outdir: Path, operands_out: Path | None, spent_
         if os.environ.get(var) is None or int(os.environ[var]) > cfg["limits"]["threads"]:
             print(f"refusing: {var} must be set to at most {cfg['limits']['threads']}", file=sys.stderr)
             return 2
-    budget = Budget(cfg["limits"]["owner_cpu_core_hours"], spent_before_s)
+    budget = Budget(cfg["limits"]["owner_cpu_core_hours"], spent_before_s, cfg["limits"]["ram_bytes"])
     cmp = load_comparator(cfg["code"]["comparator.py"])
     com = load_committed(cfg["code"]["nd-unfolding"])
     diag = Diagnostic(cfg, inputs, outdir, budget, cmp, com)
@@ -1192,6 +1256,12 @@ def run(cfg: dict, inputs: Path, outdir: Path, operands_out: Path | None, spent_
             for later, _ in plan[plan.index((name, fn)) + 1:]:
                 diag.stage_mark(later, "not-started", "an admission check or control failed")
             rc = 4
+            break
+        except Exception as exc:  # noqa: BLE001  M3: record the failure, keep completed stages' results
+            diag.stage_mark(name, "error", f"{type(exc).__name__}: {exc}")
+            for later, _ in plan[plan.index((name, fn)) + 1:]:
+                diag.stage_mark(later, "not-started", "an earlier stage raised")
+            rc = 6
             break
         diag.stage_mark(name, "complete")
     if "1" in diag.out["stages"] and diag.out["stages"]["1"]["status"] == "complete":
@@ -1221,7 +1291,8 @@ def main(argv=None) -> int:
 
 def slim(conv: dict) -> dict:
     """A convergence result without its operands (they are rebuilt on demand)."""
-    return {k: conv[k] for k in ("f", "r", "iterations", "converged", "last_rel_change")}
+    return {k: conv[k] for k in ("f", "r", "iterations", "converged", "last_rel_change", "functional_step",
+                                 "functional_converged")}
 
 
 def _jsonable(x):

@@ -79,6 +79,18 @@ def test_sparse_response_and_same_sample_identity():
     assert did.make_grid("G", coarse, 5, u2).dropped == [3]
 
 
+def test_chunked_row_functions_equal_the_unchunked_ones():
+    rng = np.random.default_rng(9)
+    fine = [np.asarray(CFG["fine_edges"][a], float) for a in AXES]
+    x = np.column_stack([rng.uniform(e[0] - 0.1, e[-1] * 1.01, 10_001) for e in fine]).astype(np.float32)
+    x[:5] = [e[-1] for e in fine]  # upper edges: the two rules differ here, by design
+    rows = np.sort(rng.choice(10_001, 6_000, replace=False))
+    for fn in (com.s5e_trace.flat_index, com.s5e_geometry.in_grid):
+        np.testing.assert_array_equal(did.by_chunks(fn, x, fine, rows, chunk=777), fn(x[rows], fine))
+        np.testing.assert_array_equal(did.by_chunks(fn, x, fine, chunk=1000), fn(x, fine))
+    assert (com.s5e_trace.flat_index(x[:5], fine) >= 0).all() and not com.s5e_geometry.in_grid(x[:5], fine).any()
+
+
 def test_split_edges_rule_on_the_real_grid():
     fine = [CFG["fine_edges"][a] for a in AXES]
     j = [CFG["J_edges"][a] for a in AXES]
@@ -231,6 +243,35 @@ def test_b_counted_agrees_with_the_reference_aggregation():
         assert got.size == round(ref["shares"]["B"] * ref["n_eligible"])
 
 
+def test_b_unreachable_without_stage4_is_mixed_not_undeclarable():
+    """m2: with fewer than half of the eligible functionals B candidates, B cannot be reached."""
+    r = np.full(4, 0.10)
+    out = did.declare(cmp, _labels([(F, I), (AP, W), ("mixed", I), (F, "intermediate")]), r, None,
+                      np.zeros(4, bool), None)
+    assert out["branch"] == "mixed" and out["b_reachable"] is False and out["b_candidates"] == [0]
+
+
+def test_functional_convergence_ignores_a_slow_cell_outside_the_functionals():
+    """M2: a slow, decoupled block outside two functionals stalls the run, not those functionals; a
+    functional on the slow block is still not converged."""
+    from scipy.linalg import block_diag
+    r = block_diag(_smearing(8, 12, 0.06), np.array([[0.5, 0.47], [0.2, 0.23]]))  # cells 8, 9: nearly degenerate
+    prior = np.full(10, 1e4)
+    truth = prior * (1 + 0.3 * np.cos(np.linspace(0, 6, 10)))
+    maps = np.zeros((3, 10))
+    maps[0, :4] = maps[1, 4:8] = 1.0
+    maps[2, 9] = 1.0
+    res = did.ibu(sparse.csr_matrix(r), r @ truth, np.zeros(14), prior, 3000, tol=1e-10)
+    step, conv = did.functional_convergence(maps, res, 1e-10)
+    assert res.converged is False and res.last_rel_change > 1e-8
+    assert conv.tolist() == [True, True, False] and np.all(step[:2] < 1e-12)
+
+
+def test_ram_guard_stops_at_the_next_check():
+    with pytest.raises(did.CapReached):
+        did.Budget(cap_core_hours=10.0, ram_bytes=1.0).check()
+
+
 def test_sensitive_flags_and_trace_reading():
     a = _labels([(F, I), (AP, I), (F, W)])
     b = _labels([(F, I), (F, I), (F, W)])
@@ -252,6 +293,23 @@ def test_budget_cap_stops_before_and_inside_long_work():
 
 
 # ------------------------------------------------------------------------- end-to-end world
+
+
+def _study_k_names() -> list[str]:
+    """The 185 study-K functional names, written out here independently of did.py (review M1)."""
+    op = np.load(did.REPO / CFG["operands"]["path"])
+    names = [str(x) for x in op["names"]]
+    return ([x for x in names if x[:2] == "EW"] + ["EW_all_ones"] + [x for x in names if x[0] == "J"]
+            + ["total_integrated"] + [x for x in names if x[:3] == "H2_"])
+
+
+def test_functional_rows_are_the_185_study_k_rows():
+    """M1: after install() the committed rows already carry H2; nothing is stacked twice."""
+    u, names = com.s5c_coverage.reported_functionals(json.loads((did.REPO / CFG["s5c_contract"]).read_text()))
+    h, _ = com.s5p_converge.h2_rows()
+    assert u.shape == (185, 65856) and names == _study_k_names() and len(set(names)) == 185
+    np.testing.assert_array_equal(u[153:], h)
+    assert did.expected_names(np.load(did.REPO / CFG["operands"]["path"])["names"]) == _study_k_names()
 
 
 def _sha(path: Path) -> str:
@@ -302,7 +360,8 @@ def _probe(root: Path, cfg: dict):
 def _write_products(root: Path, d, cfg: dict, factor: float) -> dict:
     """GBDT stand-ins: functional residual = factor x the exact T2 nominal-weighted IBU residual at every K
     (factor 1: iteration-faithful by construction; factor 3: approximation-dominated)."""
-    names = d.names
+    names = _study_k_names()  # the real 185-column layout, not the driver's own list (M1)
+    assert d.names == names
     receipt = {"study_K": {"b0": {"runs": {}}, "cap10": {"runs": {}}}}
     traces = {}
     for name, spec in cfg["comparators"]["traces"].items():
@@ -406,7 +465,8 @@ def _ready_world(tmp_path: Path, factor: float, scale: float = 1e3, coarse: bool
     d.load_events()
     d.build_rows()
     sig = d.pr & (d.rf_fine >= 0)
-    cfg["events"]["pair_rows_expected"] = int(np.sum(sig & (d.tf >= 0)))
+    cfg["events"]["pair_rows_expected"] = d.out["events"]["rows_eligible_s5e_rule"]
+    assert d.out["events"]["rows_eligible_s5e_rule"] == int(np.sum(sig & (d.tf >= 0)))  # no row on an upper edge
     y = np.bincount(d.rf_fine[sig], weights=d.wr[sig], minlength=d.n_fine)
     cfg["reco_cells_expected"] = int(np.sum(y > 0))
     d = _probe(tmp_path, cfg)
@@ -521,6 +581,31 @@ def test_cap_during_stage4_leaves_branch_b_undeclarable(faithful_world, monkeypa
     for res in out["decision"]["maps"].values():
         assert res["branch"] in ("C", "A", "B-undeclarable", "no-eligible-functional"), res
         assert res.get("stage4") in ("missing", None)
+
+
+def test_an_error_in_a_late_stage_keeps_the_earlier_results(faithful_world, monkeypatch):
+    """M3: a generic exception marks its stage, later stages are not started, and the decision and
+    tables of the completed stages are still written."""
+    root, cfg = faithful_world
+    _env(monkeypatch)
+
+    def boom(self):
+        raise ValueError("injected")
+
+    monkeypatch.setattr(did.Diagnostic, "stage4", boom)
+    rc, out = _run(cfg, root, "run_error4")
+    assert rc == 6 and out["stages"]["4"]["status"] == "error" and "injected" in out["stages"]["4"]["note"]
+    assert out["stages"]["5"]["status"] == "not-started"
+    assert (root / "run_error4" / "tables.npz").exists()
+    for res in out["decision"]["maps"].values():
+        assert res["branch"] in ("C", "A", "mixed", "B-undeclarable", "no-eligible-functional")
+
+
+def test_stored_trajectories_keep_no_operands(faithful_world):
+    root, cfg = faithful_world
+    d = _probe(root, cfg)
+    tr = d.run_trajectory("T2", "gibuu", "same", "nom", keep_all=False)
+    assert set(tr) == {"K", "r"}
 
 
 def test_cap_during_stage1_declares_nothing(faithful_world, monkeypatch):

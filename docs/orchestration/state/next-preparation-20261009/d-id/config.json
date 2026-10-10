@@ -17,7 +17,8 @@
    "project_cov_nd.py": "c70319c06907d2e099cca908b012025b6343b5d52cf380444a2fcacb594ab976",
    "omnifold_nn_core.py": "24f87f119073c4f125c2f753310507d4375b6f8a1b7751e59d3615dd50e90582",
    "uq_math.py": "dde84d0a36b9bb7b2b747b27f3d6b3aa86e9bc004003d20a9f3ac0c0d6bb4977",
-   "s5c_samplesize.py": "3e0b3975c0893f1e7506359b1ea956d2beadc0025bc494afca4b4ba8d4c0b6df"
+   "s5c_samplesize.py": "3e0b3975c0893f1e7506359b1ea956d2beadc0025bc494afca4b4ba8d4c0b6df",
+   "s5e_geometry.py": "e2ed023af53d48cfd37f72bd79196736ec1948529945e939127dbf59af99b20e"
   }
  },
  "events": {
