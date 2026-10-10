@@ -1,0 +1,20 @@
+{
+ "schema": "d-id-run-record/1",
+ "command": "OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 VECLIB_MAXIMUM_THREADS=2 /usr/bin/time -l python3 -I docs/orchestration/state/next-preparation-20261009/d-id/did.py --inputs <scratch>/did-inputs-20261010 --out docs/orchestration/state/next-preparation-20261009/d-id/outputs",
+ "driver_commit": "0e32c0180c2981bfa817fed1e0980c1fef000868",
+ "start_utc": "2026-10-10T05:44:48Z",
+ "end_utc": "2026-10-10T06:34:27Z",
+ "exit_code": 0,
+ "time_l": {
+  "real": 2978.74,
+  "user": 2851.36,
+  "sys": 49.32
+ },
+ "max_rss_bytes": 4650434560,
+ "cpu_core_hours": 0.8057444444444445,
+ "attempts": 1,
+ "runtime_warnings_distinct": [
+  "divide by zero encountered in divide",
+  "invalid value encountered in divide"
+ ]
+}
