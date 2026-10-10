@@ -619,6 +619,18 @@ adoption or a changed gate.
   - N3–N7: one sentence each. N5: the JSON range now prices the universe arm only, 15.3–227.8.
   - Residuals of F1 (the s ≥ 1 cell identified) and F13 (a frozen fallback for the systematic block).
   - No number moved except the N5 field.
+- **Commits.**
+  - `ebcba79c`: freeze, initial review.
+  - `0a2e0f41`: repair batch, re-review.
+  - `b38c909c`: post-review edits and the preserved re-review. Its message is malformed ("Checks: 13
+    passed", no trailer) because the owner omitted the message body. It is left as pushed, not rewritten
+    (no force-push); this note is its description.
+  - The commit carrying this line: the delivery record.
+- **Gates.**
+  - The pre-commit hook passed (13 checks) on every commit.
+  - `generate_manifest.py --check` is OUT OF DATE only because of this lane's new files: it is OK at the
+    base `a16d5786`. The integration owner regenerates the manifest (DISPATCH rule).
+- **Delivery.** Draft PR #69.
 
 ## 13. Limitations
 
@@ -635,9 +647,9 @@ adoption or a changed gate.
 
 | item | measured | cap |
 |---|---|---|
-| active time | 2026-10-10, first tool call ≈ 04:20Z (worktree created 04:33:53Z); the delivery time is in the PR comment | 8 h |
+| active time | 2026-10-10, first tool call ≈ 04:20Z (worktree created 04:33:53Z) → delivery ≈ 2026-10-10T05:51Z, about 2 h including both reviews | 8 h |
 | local CPU | ≈ 0.03 core-h (seed check 24 s user; arithmetic < 1 s per run; git and hooks) | 3 core-h |
-| reviewer CPU | < 0.01 core-h (its own figure) | (included) |
+| reviewer CPU | < 0.02 core-h over both cycles (its own figures; 05:17–05:33Z and 05:41–05:47Z) | (included) |
 | threads | 2 | 2 |
 | peak RAM | 0.34 GB | 8 GiB |
 | scratch | ≈ 25 MB (LightGBM venv 23 MB, JSON copies; reviewer 32 KB) | 2 GiB |
