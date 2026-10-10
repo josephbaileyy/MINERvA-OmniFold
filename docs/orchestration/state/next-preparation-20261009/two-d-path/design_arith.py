@@ -1,10 +1,10 @@
 """Design arithmetic for the 2D publication-path report (REPORT.md in this directory).
 
 Deterministic; numpy and the standard library only; no cluster access. Operands are read from
-committed files and named at the top of `operands()`. Every printed figure in REPORT.md §6–§8 is
-a field of the JSON this script writes.
+committed files in `operands()`. Every number REPORT.md quotes from §3.6 onward is a field of the
+JSON this script writes, unless the report names another committed source.
 
-    python3 design_arith.py --self-test
+    python3 design_arith.py --self-test      # arithmetic and internal-consistency checks only
     python3 design_arith.py --write design_arith.json
 """
 import argparse
@@ -19,18 +19,20 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, *[".."] * 5))
 N01 = NormalDist()
-RESERVE = 0.8  # admitted = subtotal / 0.8 (a protected 20 % reserve of the admitted total)
+RESERVE = 0.8      # admitted = subtotal / 0.8 (a protected 20 % reserve of the admitted total)
+RETRY, VERIF = 0.05, 0.10
+LO, HI = 0.8, 1.25  # proposed width tolerance on kappa = true / claimed sd (B §9)
+N_FUNCTIONALS = 205 + 1 + 14 + 16  # cells, reported-domain integral, p_T and p_parallel projections
 
 
 def operands():
-    with open(os.path.join(HERE, "operands", "remote_reduce.json")) as f:
-        rr = json.load(f)
-    with open(os.path.join(HERE, "operands", "remote_reduce_pn.json")) as f:
-        pn = json.load(f)
-    with open(os.path.join(HERE, "operands", "remote_reduce_pairs.json")) as f:
-        pairs = json.load(f)
-    with open(os.path.join(REPO, "docs/orchestration/state/next-preparation-20261009/speed/results/costs.json")) as f:
-        speed = json.load(f)
+    def load(*p):
+        with open(os.path.join(*p)) as f:
+            return json.load(f)
+    rr = load(HERE, "operands", "remote_reduce.json")
+    pn = load(HERE, "operands", "remote_reduce_pn.json")
+    pairs = load(HERE, "operands", "remote_reduce_pairs.json")
+    speed = load(REPO, "docs/orchestration/state/next-preparation-20261009/speed/results/costs.json")
     toys = np.load(os.path.join(REPO, "docs/orchestration/state/coverage-2d-20261005/interim.npz"))
     return rr, pn, pairs, speed, toys
 
@@ -41,7 +43,6 @@ def coverage(z, kappa):
 
 
 def kappa_for_coverage(z, cov):
-    """Inverse of coverage(): the true/claimed sd ratio at which the interval covers `cov`."""
     return z / N01.inv_cdf((1.0 + cov) / 2.0)
 
 
@@ -54,11 +55,17 @@ def admitted(subtotal):
     return subtotal / RESERVE
 
 
-def per_cell_operands(rr, pn):
+# --------------------------------------------------------------------------- per-cell operands
+def blocks(rr, pn):
     sS = np.array(rr["sigma_abs"]["boot_vl170"])
-    sU = np.array(rr["sigma_abs"]["universe"])
     sM = np.array(rr["sigma_abs"]["ml"])
+    sU = np.array(rr["sigma_abs"]["universe"])
     sUp = np.array(pn["sigma_universe_total_abs"])
+    return sS, sM, sU, sUp
+
+
+def per_cell_operands(rr, pn):
+    sS, sM, sU, sUp = blocks(rr, pn)
     x1 = np.array(rr["central"]["seed1"])
     x42 = np.array(rr["central"]["CV42_universe_file"])
     xc = np.array(rr["central"]["E_C"])
@@ -66,12 +73,19 @@ def per_cell_operands(rr, pn):
     tot = np.sqrt(sS ** 2 + sU ** 2 + sM ** 2)
     totp = np.sqrt(sS ** 2 + sUp ** 2 + sM ** 2)
     f_s = sS ** 2 / tot ** 2
+    f_s_pn = sS ** 2 / totp ** 2
     seeds = np.array([rr["central"][f"seed{i}"] for i in range(1, 11)])
+    cells = rr["cells"]
     q = lambda a: {p: float(np.percentile(a, p)) for p in (0, 16, 50, 84, 90, 100)}
+    fam = [i * 16 + j for (i, j), f in zip(cells, f_s_pn) if f >= 0.05]  # paper GlobalID, 0-based bins
+    z = (x42 - seeds.mean(axis=0)) / (seeds.std(axis=0, ddof=1) * math.sqrt(1 + 1 / 10))
     return {
         "n_cells": int(len(sS)),
         "f_s_percentiles": q(f_s),
         "n_cells_f_s_ge": {str(t): int((f_s >= t).sum()) for t in (0.02, 0.05, 0.1, 0.25, 0.5)},
+        "f_s_pn_percentiles": q(f_s_pn),
+        "frozen_family_F": {"rule": "f_s >= 0.05 with VL170 C_S, purity_newomni C_U and C_ML",
+                            "globalid_0based": fam, "size": len(fam)},
         "f_s": f_s.tolist(),
         "rel_tot_pct_percentiles_adopted": q(100 * tot / x42),
         "rel_tot_pct_percentiles_pn": q(100 * totp / xpn),
@@ -83,13 +97,15 @@ def per_cell_operands(rr, pn):
             "seed1_minus_CV42": {"median": float(np.median(np.abs(x1 - x42) / tot)), "max": float(np.max(np.abs(x1 - x42) / tot))},
             "pn_CV_minus_CV42_max_rel": float(np.max(np.abs(xpn / x42 - 1))),
         },
+        "E_C_minus_CV42_median_rel_pct": float(np.median(np.abs(xc / x42 - 1)) * 100),
         "central_diffs_in_sigma_stat": {
             "E_C_minus_seed1_median": float(np.median(np.abs(xc - x1) / sS)),
             "seed1_minus_CV42_median": float(np.median(np.abs(x1 - x42) / sS)),
         },
+        "ml_over_stat_percentiles": q(sM / sS),
         "seedscan_sd_matches_ml_block_max_rel": float(np.max(np.abs(seeds.std(axis=0, ddof=1) / sM - 1))),
-        "CV42_vs_seedscan_z": (lambda z: {"rms": float(np.sqrt(np.mean(z ** 2))), "max_abs": float(np.max(np.abs(z)))})(
-            (x42 - seeds.mean(axis=0)) / (seeds.std(axis=0, ddof=1) * math.sqrt(1 + 1 / 10))),
+        "CV42_vs_seedscan_z": {"rms": float(np.sqrt(np.mean(z ** 2))), "max_abs": float(np.max(np.abs(z))),
+                               "t9_rms_expected": math.sqrt(9 / 7)},
     }
 
 
@@ -97,128 +113,155 @@ def toy_kurtosis(toys):
     """Development operand: per-cell excess kurtosis of the 100 VL169 closure-toy centrals."""
     U = toys["U"][:, toys["reported"]]
     m = U.mean(axis=0)
-    c2 = ((U - m) ** 2).mean(axis=0)
-    c4 = ((U - m) ** 4).mean(axis=0)
-    g = c4 / c2 ** 2 - 3.0
+    g = ((U - m) ** 4).mean(axis=0) / ((U - m) ** 2).mean(axis=0) ** 2 - 3.0
     return {"n_toys": int(U.shape[0]), "median": float(np.median(g)), "p84": float(np.percentile(g, 84)),
             "max": float(np.max(g))}
 
 
+# --------------------------------------------------------------------------- split-sample assurance
 def log_ratio_se(R, M, gamma):
-    """SE of ln(kappa_hat) for the split-sample width test.
+    """SE of ln(kappa_hat), kappa_hat^2 = v_split / s_boot^2.
 
-    kappa_hat^2 = v_split / s_boot^2; v_split = mean over R random half-splits of (U_A - U_B)^2 / 2;
-    s_boot^2 from M bootstrap replicas on one half. Under Gaussian U each split contributes one
-    chi^2_1 degree of freedom; excess kurtosis gamma inflates the variance of a variance estimate
-    by (1 + gamma/2) per degree of freedom. Random splits are treated as independent draws,
-    which holds for a linear statistic (signs independent across splits, given the data).
+    v_split = mean over R random half-splits of (U_A - U_B)^2 / 2; each split contributes one
+    degree of freedom. The half-difference has excess kurtosis gamma/2, so its variance-of-variance
+    factor is (1 + gamma/4); the bootstrap variance over M replicas has (1 + gamma/2). Random splits
+    are treated as independent draws, which holds for a linear statistic and is an assumption here.
     """
-    var_ln_v = (2.0 / R) * (1.0 + gamma / 2.0)
+    var_ln_v = (2.0 / R) * (1.0 + gamma / 4.0)
     var_ln_s2 = (2.0 / (M - 1)) * (1.0 + gamma / 2.0)
     return 0.5 * math.sqrt(var_ln_v + var_ln_s2)
 
 
-def per_cell_design(m_tests, lo=0.8, hi=1.25, alpha=0.05, beta=0.10, gamma=0.0, R_eq_M=True):
-    """Smallest R (= M) such that a per-cell two-sided width test at familywise alpha over m_tests
-    passes an exactly calibrated cell with prob >= 1 - alpha/m (Bonferroni) and passes a cell at
-    either tolerance edge with prob <= beta. Acceptance: |ln kappa_hat| <= c."""
+def per_functional_design(m_tests, alpha=0.05, beta=0.10, gamma=0.0):
+    """Smallest R = M such that a per-functional width test (accept |ln kappa_hat| <= c) passes an
+    exactly calibrated functional with prob >= 1 - alpha/m and either tolerance edge with prob <= beta."""
     z_a = N01.inv_cdf(1 - alpha / (2 * m_tests))
     z_b = N01.inv_cdf(1 - beta)
-    edge = min(math.log(hi), -math.log(lo))
+    edge = min(math.log(HI), -math.log(LO))
     for R in range(10, 20001):
         se = log_ratio_se(R, R, gamma)
-        c = z_a * se
-        if c + z_b * se <= edge:
-            return {"R": R, "M": R, "se_log": se, "accept_abs_log_le": c, "z_alpha": z_a, "m_tests": m_tests}
+        if (z_a + z_b) * se <= edge:
+            return {"R": R, "M": R, "se_log": se, "accept_abs_log_le": z_a * se, "z_alpha": z_a, "m_tests": m_tests}
     return None
 
 
-def global_tier(R, M, gamma, n_eff):
-    """95 % interval half-width of the median ln kappa over cells, treating the cells as n_eff
-    independent values (a proposed, conservative stand-in for the unmeasured cell correlation)."""
-    se = log_ratio_se(R, M, gamma) * 1.2533 / math.sqrt(n_eff)  # median of normals: sqrt(pi/2)
-    return {"R": R, "M": M, "n_eff_assumed": n_eff, "half_width_95_log": 1.96 * se,
-            "inside_[0.8,1.25]_if_true_kappa_1": 1.96 * se < math.log(1.25)}
+def regional_probs(se_med, z, kappa):
+    """Verdict probabilities of the regional rule for a median estimate ~ N(ln kappa, se_med):
+    FAITHFUL iff the interval est +/- z se_med lies inside [ln LO, ln HI]; FAIL-low / FAIL-high iff
+    it lies entirely below / above that range; otherwise INCONCLUSIVE."""
+    lk = math.log(kappa)
+    lo, hi = math.log(LO), math.log(HI)
+    p_f = max(0.0, N01.cdf((hi - z * se_med - lk) / se_med) - N01.cdf((lo + z * se_med - lk) / se_med))
+    p_low = N01.cdf((lo - z * se_med - lk) / se_med)
+    p_high = 1 - N01.cdf((hi + z * se_med - lk) / se_med)
+    return {"faithful": p_f, "fail_low": p_low, "fail_high": p_high, "inconclusive": max(0.0, 1 - p_f - p_low - p_high)}
 
 
+def regional_tier(gamma, regions, n_tests=4, alpha=0.05, target=0.95, R_fixed=None):
+    """Size R = M for the regional rule at its declared Bonferroni level. `regions` maps a region
+    name to the assumed effective number of independent cells (capped at the region size)."""
+    z = N01.inv_cdf(1 - alpha / (2 * n_tests))
+
+    def probs(R):
+        out = {}
+        for name, n_eff in regions.items():
+            se_med = log_ratio_se(R, R, gamma) * math.sqrt(math.pi / 2) / math.sqrt(n_eff)
+            out[name] = {"n_eff_assumed": n_eff, "se_median_log": se_med,
+                         **{f"kappa_{k}": regional_probs(se_med, z, k) for k in (1.0, LO, HI, 0.63)}}
+        return out
+
+    if R_fixed is None:
+        R = 10
+        while True:
+            p = probs(R)
+            all4 = math.prod(v["kappa_1.0"]["faithful"] for v in p.values()) ** 2  # two streams
+            if all4 >= target:
+                break
+            R += 1
+    else:
+        R = R_fixed
+        p = probs(R)
+        all4 = math.prod(v["kappa_1.0"]["faithful"] for v in p.values()) ** 2
+    return {"R": R, "M": R, "z_bonferroni": z, "P_all_four_faithful_at_kappa_1": all4, "regions": p}
+
+
+# --------------------------------------------------------------------------- prices
 def costs(speed):
     u = speed["exact_backend_unit_rates"]
     rate = {
-        "lgbm_cv_shared64_measured": 0.0591,       # 300 VL170 replicas, array 59410433 (mean)
-        "lgbm_cv_fullnode_measured": 0.216,        # 59409026_1, one regular full-node replica
-        "lgbm_universe_fullnode_measured": 0.7075,  # median of 374 universe tasks (speed §3)
+        "lgbm_cv_shared64_measured": 0.0591,         # 300 VL170 replicas, array 59410433 (mean)
+        "lgbm_cv_fullnode_measured": 0.216,          # 59409026_1, one regular full-node replica
+        "lgbm_universe_fullnode_measured": 0.7075,   # median of 374 universe tasks (speed §3)
         "lgbm_universe_p1_fullnode_forecast": speed["unit_rates_node_h"]["lgbm_universe"]["p1_fullnode"],
         "exact_cv_as_run": u["cv_as_run"]["node_h"],
-        "exact_cv_shared_mem24G": u["cv_as_run"]["node_h"] * 12 / 256,  # XR request: --mem 24G of 512 GB
+        "exact_cv_shared_mem24G": u["cv_as_run"]["node_h"] * 12 / 256,  # XR: --mem 24G of 512 GB
         "exact_cv_packed_forecast": u["cv_packed_now"]["node_h"],
         "exact_universe_now_median_forecast": u["universe_now_median"]["node_h"],
         "exact_universe_now_p90_forecast": u["universe_now_p90"]["node_h"],
         "exact_universe_now_safe_forecast": u["universe_now_safe"]["node_h"],
         "exact_universe_p1_forecast": u["universe_p1"]["node_h"],
     }
-    retry, verif = 0.05, 0.10
-    out = {"rates_node_h": rate, "retry": retry, "verification_rerun_fraction": verif, "reserve_divisor": RESERVE}
+    ov = 1 + RETRY + VERIF
+    out = {"rates_node_h": rate, "retry": RETRY, "verification_rerun_fraction": VERIF, "reserve_divisor": RESERVE,
+           "convention": "admitted = runs x rate x 1.15 / 0.8 unless stated", "core_h_per_node_h": 128}
 
     def stage(runs, r):
-        sub = runs * r * (1 + retry + verif)
+        sub = runs * r * ov
         return {"runs": runs, "rate": r, "subtotal": sub, "admitted": admitted(sub)}
 
-    # Next experiment XR (§8): reproduction of both candidate centrals.
-    xr_runs_exact, xr_runs_lgbm = 2, 2
-    xr = {
-        "exact_shared_mem24G": stage(xr_runs_exact, rate["exact_cv_shared_mem24G"]),
-        "exact_packed": stage(xr_runs_exact, rate["exact_cv_packed_forecast"]),
-        "exact_unpacked": stage(xr_runs_exact, rate["exact_cv_as_run"]),
-        "lgbm": stage(xr_runs_lgbm, rate["lgbm_cv_shared64_measured"]),
+    # XR: five single runs, no fractional retry; one rerun of each kind inside the hard cap.
+    exact_job_cap = 30 * 12 / 256   # 30 h limit at 12/256 billing
+    lgbm_job_cap = 1 * 64 / 256     # 1 h limit at 64/256 billing
+    exp_sub = 3 * rate["exact_cv_shared_mem24G"] + 2 * rate["lgbm_cv_shared64_measured"]
+    out["XR"] = {
+        "runs": {"exact": 3, "lgbm": 2},
+        "expected_subtotal": exp_sub,
+        "expected_over_0.8": admitted(exp_sub),
+        "expected_if_exact_on_full_nodes": 3 * rate["exact_cv_as_run"] + 2 * rate["lgbm_cv_shared64_measured"],
+        "cap_by_job_limits_incl_one_rerun_each_kind": 4 * exact_job_cap + 3 * lgbm_job_cap,
+        "exact_job_cap": exact_job_cap, "lgbm_job_cap": lgbm_job_cap,
+        "wall_h_measured_full_node": u["wall_per_exact_unfold_h"]["cv"],
     }
-    xr["admitted_mem24G_total"] = xr["exact_shared_mem24G"]["admitted"] + xr["lgbm"]["admitted"]
-    xr["admitted_packed_total"] = xr["exact_packed"]["admitted"] + xr["lgbm"]["admitted"]
-    # hard per-job limits: exact 26 h x 12/256; LightGBM 1 h x 64/256
-    xr["cap_by_job_limits"] = 2 * 26 * 12 / 256 + 2 * 1 * 64 / 256
-    xr["admitted_unpacked_total"] = xr["exact_unpacked"]["admitted"] + xr["lgbm"]["admitted"]
-    xr["cap_node_h"] = 3.0
-    xr["wall_h"] = u["wall_per_exact_unfold_h"]["cv"]
-    out["XR"] = xr
 
-    # Route L42 (§6): matched seed-42 statistical band; laterals; split-sample validation; B±.
-    m_band = stage(300, rate["lgbm_cv_shared64_measured"])
-    m_band_cons = stage(300, rate["lgbm_cv_fullnode_measured"])
-    lat = {"setup_S_b_lane_C": [1.3, 23.8], "lateral_unfolds": stage(10, rate["lgbm_cv_fullnode_measured"])}
-    bpm = stage(6, rate["lgbm_cv_fullnode_measured"])
-    out["L42"] = {"M_band_opt": m_band, "M_band_cons": m_band_cons, "V_lat": lat, "V_Bpm": bpm}
-
-    # Route L1 (alternative): seed-1 sweep on the universe file (lane C's S-a), VL170 reused.
+    m_band = {"opt": stage(300, rate["lgbm_cv_shared64_measured"]), "cons": stage(300, rate["lgbm_cv_fullnode_measured"])}
+    out["L42"] = {"M_band": m_band, "V_Bpm": stage(6, rate["lgbm_cv_fullnode_measured"]),
+                  "S_b_lane_C_subtotal": {"opt": 1.3, "cons": 23.8, "note": "includes its 10 lateral unfolds"}}
+    out["L42_band_on_universe_file"] = stage(300, rate["lgbm_universe_fullnode_measured"])
+    out["exact_10_seed_scan"] = {"packed": stage(10, rate["exact_cv_packed_forecast"]),
+                                 "mem24G": stage(10, rate["exact_cv_shared_mem24G"])}
     out["L1"] = {"S_a_now": stage(188, rate["lgbm_universe_fullnode_measured"]),
                  "S_a_p1_forecast": stage(188, rate["lgbm_universe_p1_fullnode_forecast"])}
 
-    # Route X, matched exact construction (§6): 300 exact replicas + 188 exact universe-file unfolds.
-    xb = stage(300, rate["exact_cv_packed_forecast"])
-    xs = {k: stage(188, rate[k]) for k in ("exact_universe_p1_forecast", "exact_universe_now_median_forecast",
-                                           "exact_universe_now_p90_forecast", "exact_universe_now_safe_forecast")}
+    xb = {"opt": stage(300, rate["exact_cv_packed_forecast"]), "cons": stage(300, rate["exact_cv_as_run"])}
+    xs = {"opt": stage(188, rate["exact_universe_p1_forecast"]),
+          "median": stage(188, rate["exact_universe_now_median_forecast"]),
+          "cons": stage(188, rate["exact_universe_now_safe_forecast"])}
     out["X_matched"] = {"boot300": xb, "sweep": xs,
-                        "admitted_range": [xb["admitted"] + xs["exact_universe_p1_forecast"]["admitted"],
-                                           xb["admitted"] + xs["exact_universe_now_safe_forecast"]["admitted"]]}
-    # Route X via a demonstrated transfer (XR stage T): 10 Flux throws + 3 pair bands (6) exact, 50 exact replicas.
-    t_univ = {k: stage(16, rate[k]) for k in ("exact_universe_p1_forecast", "exact_universe_now_median_forecast",
-                                              "exact_universe_now_safe_forecast")}
-    t_boot = stage(50, rate["exact_cv_packed_forecast"])
+                        "admitted_range": [xb["opt"]["admitted"] + xs["opt"]["admitted"],
+                                           xb["cons"]["admitted"] + xs["cons"]["admitted"]],
+                        "admitted_packed_replicas_today_driver": [xb["opt"]["admitted"] + xs["median"]["admitted"],
+                                                                  xb["opt"]["admitted"] + xs["cons"]["admitted"]]}
+    t_univ = {"opt": stage(16, rate["exact_universe_p1_forecast"]), "cons": stage(16, rate["exact_universe_now_safe_forecast"])}
+    t_boot = {"opt": stage(50, rate["exact_cv_packed_forecast"]), "cons": stage(50, rate["exact_cv_shared_mem24G"])}
     out["XR_stage_T"] = {"universes": t_univ, "boot50": t_boot,
-                         "admitted_range": [t_boot["admitted"] + t_univ["exact_universe_p1_forecast"]["admitted"],
-                                            t_boot["admitted"] + t_univ["exact_universe_now_safe_forecast"]["admitted"]]}
+                         "admitted_range": [t_boot["opt"]["admitted"] + t_univ["opt"]["admitted"],
+                                            t_boot["cons"]["admitted"] + t_univ["cons"]["admitted"]]}
     return out
 
 
-def split_sample(per_cell, gamma_dev):
-    f_s = np.array(per_cell["f_s"])
-    fam = {str(t): int((f_s >= t).sum()) for t in (0.05, 0.1)}
-    gam = max(0.0, gamma_dev)
-    res = {"gamma_used": gam, "family_sizes": fam}
-    for t, n in fam.items():
-        res[f"per_cell_f_s_ge_{t}"] = per_cell_design(m_tests=2 * n, gamma=gam)  # two streams
-    res["per_cell_all_205"] = per_cell_design(m_tests=2 * 205, gamma=gam)
-    res["global_R100_M100_neff20"] = global_tier(100, 100, gam, 20)
-    res["global_R100_M100_neff5"] = global_tier(100, 100, gam, 5)
-    return res
+def stage_T_assurance(per_cell, gamma):
+    """XR stage T. T-syst replaces the tested bands' widths by exact ones; both backends are
+    deterministic at fixed inputs, so a perfect transfer gives eta = 0 exactly (false-fail 0).
+    T-stat compares 50 exact against 300 LightGBM replicas with the regional rule."""
+    z = N01.inv_cdf(1 - 0.05 / (2 * 2))  # two regions, one stream (both streams together)
+    out = {"T_syst_false_fail_if_transfer_exact": 0.0}
+    se_cell = 0.5 * math.sqrt((2 / 49) * (1 + gamma / 2) + (2 / 299) * (1 + gamma / 2))
+    out["T_stat_se_cell_log"] = se_cell
+    for name, n_eff in (("F", 3), ("rest", 5)):
+        se_med = se_cell * math.sqrt(math.pi / 2) / math.sqrt(n_eff)
+        out[f"T_stat_{name}"] = {"n_eff_assumed": n_eff,
+                                 **{f"kappa_{k}": regional_probs(se_med, z, k) for k in (1.0, LO, HI)}}
+    return out
 
 
 def mappings(per_cell):
@@ -227,10 +270,7 @@ def mappings(per_cell):
     out = {
         "kappa_at_0.63_I68": kappa_for_coverage(z68, 0.63),
         "kappa_at_0.92_I95": kappa_for_coverage(z95, 0.92),
-        "coverage_at_kappa_1.25": {"I68": coverage(z68, 1.25), "I95": coverage(z95, 1.25)},
-        "coverage_at_kappa_0.8": {"I68": coverage(z68, 0.8), "I95": coverage(z95, 0.8)},
-        "coverage_at_kappa_1.05": {"I68": coverage(z68, 1.05), "I95": coverage(z95, 1.05)},
-        "coverage_at_kappa_0.95": {"I68": coverage(z68, 0.95), "I95": coverage(z95, 0.95)},
+        **{f"coverage_at_kappa_{k}": {"I68": coverage(z68, k), "I95": coverage(z95, k)} for k in (0.8, 0.95, 1.05, 1.25)},
     }
     for ks in (0.63, 0.8, 1.25, 1.6):
         r = np.array([total_sigma_ratio(f, ks) for f in f_s])
@@ -240,7 +280,65 @@ def mappings(per_cell):
     return out
 
 
+def pair_structure(rr, pn, pairs):
+    """Zero-compute comparison of the +/-1 sigma pair bands of the two seed-42 sweeps.
+
+    The sweeps share one CV realization (1.4e-11) but differ in background treatment, in the
+    universe omnifile (regenerated 2026-07-08 after the adopted sweep ran; its universe-weight
+    columns were not compared) and in the driver revision. So A_adopted - A_pn has the CV term
+    cancelled, and its square measures cross-sweep non-reproducibility of a band's delta, of
+    unknown mechanism. It is NOT an estimate of seed noise.
+    """
+    sS, sM, _, sUp = blocks(rr, pn)
+    tot = np.sqrt(sS ** 2 + sUp ** 2 + sM ** 2)
+    a = pairs["sweeps"]["adopted_fluxfix"]["pairs"]
+    b = pairs["sweeps"]["purity_newomni"]["pairs"]
+    corr, hcorr, nonrep, det_A2 = {}, {}, np.zeros_like(tot), np.zeros_like(tot)
+    for k in sorted(a):
+        A1, A2 = np.array(a[k]["A_signed"]), np.array(b[k]["A_signed"])
+        if np.allclose(A1, 0, atol=1e-50) and np.allclose(A2, 0, atol=1e-50):
+            continue
+        corr[k] = float(np.corrcoef(A1, A2)[0, 1])
+        hcorr[k] = float(np.corrcoef(np.array(a[k]["h_abs"]), np.array(b[k]["h_abs"]))[0, 1])
+        if corr[k] >= 0.75:
+            det_A2 += A2 ** 2
+        else:
+            nonrep += (A1 - A2) ** 2 / 2
+    s = nonrep / tot ** 2
+    ok = s < 1
+    q = lambda v: {"median": float(np.median(v)), "p84": float(np.percentile(v, 84)), "max": float(np.max(v))}
+    noise_like = [k for k, v in corr.items() if v < 0.75]
+    bs = pn["band_sigma_abs"]
+    tested = ["Flux", "Muon_Energy_MINOS", "MinosEfficiency", "Muon_Energy_MINERvA"]
+    share = sum(np.array(bs[t]) ** 2 for t in tested) / tot ** 2
+    x = np.array(pn["pn_cv_xsec"])
+    rv = {k: float(np.max(np.abs(np.array(sw["pairs"]["Rvn1pi"]["h_abs"]) / np.array(sw["pairs"]["Rvp1pi"]["h_abs"]) - 1)))
+          for k, sw in pairs["sweeps"].items()}
+    infl = 1 / np.sqrt(1 - s[ok]) - 1
+    return {
+        "corr_signed_A_by_band": corr,
+        "corr_h_by_band": hcorr,
+        "n_bands_reproducible_A_ge_0.75": int(sum(1 for v in corr.values() if v >= 0.75)),
+        "n_bands_nonreproducible_lt_0.75": len(noise_like),
+        "corr_signed_A_range_nonreproducible": [min(corr[k] for k in noise_like), max(corr[k] for k in noise_like)],
+        "corr_h_median_nonreproducible": float(np.median([hcorr[k] for k in noise_like])),
+        "nonrep_share_of_total_variance": {"median": float(np.median(s)), "p84": float(np.percentile(s, 84)),
+                                           "n_cells_ge_1": int((~ok).sum())},
+        "total_sigma_inflation_if_nonrep_is_additive_inside_total": {
+            "formula": "1/sqrt(1-s) - 1, cells with s < 1", "median": float(np.median(infl)),
+            "p84": float(np.percentile(infl, 84))},
+        "omitted_reproducible_displacement_over_tot": q(np.sqrt(det_A2) / tot),
+        "total_sigma_change_if_displacement_added_in_quadrature": q(np.sqrt(1 + det_A2 / tot ** 2) - 1),
+        "xr_stage_T_tested_bands": tested,
+        "xr_stage_T_tested_share_of_total_variance": {"median": float(np.median(share)), "min": float(share.min())},
+        "Rvn1pi_vs_Rvp1pi_max_rel_h_diff_by_sweep": rv,
+        "Rvn1pi_median_rel_sigma_pct_pn": float(np.median(np.array(bs["Rvn1pi"]) / x) * 100),
+    }
+
+
 def self_test():
+    """Arithmetic and internal-consistency checks. They do not test the modelling premises
+    (e.g. that random half-splits behave as independent draws)."""
     fails = []
 
     def check(name, ok):
@@ -255,23 +353,20 @@ def self_test():
     check("total ratio f_s=1", abs(total_sigma_ratio(1.0, 1.3) - 1.3) < 1e-12)
     check("reserve", abs(admitted(80.0) - 100.0) < 1e-12)
     check("reserve is not x1.2", abs(admitted(80.0) - 96.0) > 1)
-    se_small = log_ratio_se(1000, 1000, 0.0)
-    se_big = log_ratio_se(100, 100, 0.0)
-    check("se shrinks with R", se_small < se_big)
-    check("kurtosis inflates se", log_ratio_se(100, 100, 2.0) > se_big)
-    d = per_cell_design(10)
-    check("design meets power", d is not None and d["accept_abs_log_le"] + N01.inv_cdf(0.9) * d["se_log"] <= math.log(1.25) + 1e-12)
-    d_more = per_cell_design(410)
-    check("more tests need more R", d_more["R"] > d["R"])
-    # negative control: a looser tolerance must need fewer splits
-    check("looser tolerance fewer R", per_cell_design(10, lo=2 / 3, hi=1.5)["R"] < d["R"])
-    # simulation check of log_ratio_se on Gaussian linear statistic (seeded)
+    check("se shrinks with R", log_ratio_se(1000, 1000, 0.0) < log_ratio_se(100, 100, 0.0))
+    check("kurtosis inflates se", log_ratio_se(100, 100, 2.0) > log_ratio_se(100, 100, 0.0))
+    d = per_functional_design(10)
+    check("design meets power", d["accept_abs_log_le"] + N01.inv_cdf(0.9) * d["se_log"] <= math.log(HI) + 1e-12)
+    check("more tests need more R", per_functional_design(410)["R"] > d["R"])
+    p1 = regional_probs(0.05, 2.5, 1.0)
+    check("regional probs sum to 1", abs(sum(p1.values()) - 1) < 1e-12)
+    check("regional: KI-85 size mostly fails low", regional_probs(0.03, 2.5, 0.63)["fail_low"] > 0.9)
+    check("regional: more precision, more faithful", regional_probs(0.03, 2.5, 1.0)["faithful"] > p1["faithful"])
     rng = np.random.default_rng(7)
     R, M, reps = 60, 60, 4000
-    v = rng.chisquare(1, size=(reps, R)).mean(axis=1)            # split part, true variance 1
-    s2 = rng.chisquare(M - 1, size=reps) / (M - 1)              # bootstrap part
-    k = 0.5 * np.log(v / s2)
-    check("se formula vs simulation (10%)", abs(k.std() / log_ratio_se(R, M, 0.0) - 1) < 0.10)
+    v = rng.chisquare(1, size=(reps, R)).mean(axis=1)
+    s2 = rng.chisquare(M - 1, size=reps) / (M - 1)
+    check("se formula vs simulation of its own model (10%)", abs((0.5 * np.log(v / s2)).std() / log_ratio_se(R, M, 0.0) - 1) < 0.10)
     return fails
 
 
@@ -287,91 +382,51 @@ def main():
     rr, pn, pairs, speed, toys = operands()
     pc = per_cell_operands(rr, pn)
     kt = toy_kurtosis(toys)
+    gam = max(0.0, kt["median"])
+    F = pc["frozen_family_F"]["size"]
+    regions = {"F": min(3, F), "rest": min(5, 205 - F)}
+    split = {
+        "gamma_used": gam,
+        "declared_family_per_functional": per_functional_design(2 * N_FUNCTIONALS, gamma=gam),
+        "stat_relevant_per_cell_F": per_functional_design(2 * F, gamma=gam),
+        "regional_sized": regional_tier(gam, regions),
+        "regional_at_R100": regional_tier(gam, regions, R_fixed=100),
+        "regional_at_R100_optimistic_neff": regional_tier(gam, {"F": min(10, F), "rest": 20}, R_fixed=100),
+    }
+    c = costs(speed)
+    r = c["rates_node_h"]
+    ov = 1 + RETRY + VERIF
+    tiers = {"declared_family": split["declared_family_per_functional"]["R"],
+             "regional": split["regional_sized"]["R"]}
+    c["SD_SM_runs"] = {t: 2 * (2 * R + R) for t, R in tiers.items()}  # 2 streams x (2R halves + M = R replicas)
+    full = {}
+    for route in ("L42", "X"):
+        for tier, runs in c["SD_SM_runs"].items():
+            for case in ("opt", "cons"):
+                if route == "L42":
+                    unit = r["lgbm_cv_shared64_measured"] if case == "opt" else r["lgbm_cv_fullnode_measured"]
+                    match = c["L42"]["M_band"][case]["subtotal"]
+                else:
+                    unit = r["exact_cv_packed_forecast"] if case == "opt" else r["exact_cv_as_run"]
+                    match = c["X_matched"]["boot300"][case]["subtotal"] + c["X_matched"]["sweep"][case]["subtotal"]
+                s_b = c["L42"]["S_b_lane_C_subtotal"][case]  # includes the lateral unfolds
+                sub = match + s_b + (6 + runs) * unit * ov    # + 6 B± unfolds + split-sample runs
+                full[f"{route}|{tier}|{case}"] = {"subtotal": sub, "admitted": admitted(sub)}
+    c["full_route_admitted"] = full
     out = {
         "per_cell": {k: v for k, v in pc.items() if k != "f_s"},
         "toy_kurtosis_dev": kt,
         "mappings": mappings(pc),
-        "split_sample": split_sample(pc, kt["median"]),
-        "costs": costs(speed),
+        "split_sample": split,
+        "stage_T": stage_T_assurance(pc, gam),
+        "costs": c,
         "pair_structure": pair_structure(rr, pn, pairs),
     }
-    c = out["costs"]
-    r = c["rates_node_h"]
-    ov = 1 + c["retry"] + c["verification_rerun_fraction"]
-    tiers = {"regional_R100": 100, "per_cell_fs_ge_0.05": out["split_sample"]["per_cell_f_s_ge_0.05"]["R"]}
-    # Two streams; each needs 2R half-sample unfolds and M = R bootstrap replicas on one half.
-    sdsm_runs = {t: 2 * (2 * R + R) for t, R in tiers.items()}
-    c["SD_SM_runs"] = sdsm_runs
-    s_b = {"opt": 1.3, "cons": 23.8}  # lane C setup item S-b (selection-complete laterals), node-h
-    full = {}
-    for route in ("L42", "X"):
-        for tier, runs in sdsm_runs.items():
-            for case in ("opt", "cons"):
-                if route == "L42":
-                    unit = r["lgbm_cv_shared64_measured"] if case == "opt" else r["lgbm_cv_fullnode_measured"]
-                    match = c["L42"]["M_band_opt" if case == "opt" else "M_band_cons"]["subtotal"]
-                else:
-                    unit = r["exact_cv_packed_forecast"] if case == "opt" else r["exact_cv_as_run"]
-                    sweep = "exact_universe_p1_forecast" if case == "opt" else "exact_universe_now_safe_forecast"
-                    boot = c["X_matched"]["boot300"]["subtotal"] if case == "opt" else 300 * r["exact_cv_as_run"] * ov
-                    match = boot + c["X_matched"]["sweep"][sweep]["subtotal"]
-                sub = match + s_b[case] + (10 + 6 + runs) * unit * ov  # laterals, B±, split-sample
-                full[f"{route}|{tier}|{case}"] = {"subtotal": sub, "admitted": admitted(sub)}
-    c["full_route_admitted"] = full
-    c["core_h_per_node_h"] = 128  # Perlmutter CPU node: 2 x 64-core EPYC 7763; billing 256 threads
     if a.write:
         with open(a.write, "w") as f:
             json.dump(out, f, indent=1, sort_keys=True)
             f.write("\n")
     print(json.dumps(out, indent=1, sort_keys=True))
-
-
-def pair_structure(rr, pn, pairs):
-    """Zero-compute decomposition of the +/-1 sigma pair bands of the two seed-42 sweeps.
-
-    The two sweeps share one CV realization (pn CV = CV42 to 1.4e-11) and differ only in the
-    background treatment, so for a band the difference of the signed common displacements,
-    A_adopted - A_pn, has the CV term cancelled; its square estimates the per-run estimator
-    perturbation variance sigma_eps^2 (an upper bound where the background treatment matters).
-    Under a noise reading each pair's MAT variance term h^2 carries sigma_eps^2 / 2.
-    """
-    sS = np.array(rr["sigma_abs"]["boot_vl170"])
-    sM = np.array(rr["sigma_abs"]["ml"])
-    tot = np.sqrt(sS ** 2 + np.array(pn["sigma_universe_total_abs"]) ** 2 + sM ** 2)
-    a = pairs["sweeps"]["adopted_fluxfix"]["pairs"]
-    b = pairs["sweeps"]["purity_newomni"]["pairs"]
-    corr, hcorr, noise_var, det_A2 = {}, {}, np.zeros_like(tot), np.zeros_like(tot)
-    for k in sorted(a):
-        A1, A2 = np.array(a[k]["A_signed"]), np.array(b[k]["A_signed"])
-        if np.allclose(A1, 0, atol=1e-50) and np.allclose(A2, 0, atol=1e-50):
-            continue
-        r = float(np.corrcoef(A1, A2)[0, 1])
-        corr[k] = r
-        hcorr[k] = float(np.corrcoef(np.array(a[k]["h_abs"]), np.array(b[k]["h_abs"]))[0, 1])
-        if r >= 0.75:
-            det_A2 += A2 ** 2          # reproducible displacement omitted by the pair convention
-        else:
-            noise_var += (A1 - A2) ** 2 / 2  # sigma_eps^2 / 2 per pair, the noise in h^2
-    q = lambda v: {"median": float(np.median(v)), "p84": float(np.percentile(v, 84)), "max": float(np.max(v))}
-    noise_like = [k for k, v in corr.items() if v < 0.75]
-    x = np.array(pn["pn_cv_xsec"])
-    bs = pn["band_sigma_abs"]
-    tested = ["Flux", "Muon_Energy_MINOS", "MinosEfficiency", "Muon_Energy_MINERvA"]
-    share = sum(np.array(bs[t]) ** 2 for t in tested) / tot ** 2
-    return {
-        "corr_signed_A_by_band": corr,
-        "corr_h_by_band": hcorr,
-        "corr_signed_A_range_noise_like": [min(corr[k] for k in noise_like), max(corr[k] for k in noise_like)],
-        "corr_h_median_noise_like": float(np.median([hcorr[k] for k in noise_like])),
-        "xr_stage_T_tested_bands": tested,
-        "xr_stage_T_tested_share_of_total_variance": {"median": float(np.median(share)), "min": float(share.min())},
-        "n_bands_reproducible_A_ge_0.75": int(sum(1 for v in corr.values() if v >= 0.75)),
-        "n_bands_noise_like_lt_0.75": int(sum(1 for v in corr.values() if v < 0.75)),
-        "noise_share_of_total_variance": q(noise_var / tot ** 2),
-        "total_sigma_inflation_from_noise": q(np.sqrt(1 + noise_var / tot ** 2) - 1),
-        "omitted_reproducible_displacement_over_tot": q(np.sqrt(det_A2) / tot),
-        "total_sigma_change_if_displacement_added_in_quadrature": q(np.sqrt(1 + det_A2 / tot ** 2) - 1),
-    }
 
 
 if __name__ == "__main__":
