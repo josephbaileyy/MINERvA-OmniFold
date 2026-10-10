@@ -53,6 +53,8 @@ MUTANTS = [
      "sl[\"maxdiskread_bytes\"] <= 12 * GB", T_C, "test_too_many_bytes_read_fails_s2"),
     ("s4-bound-loosened", VER, "sl[\"elapsed_s\"] <= 0.5 * ul[\"elapsed_s\"]",
      "sl[\"elapsed_s\"] <= 0.51 * ul[\"elapsed_s\"]", T_C, "test_slow_selective_arm_fails_s4"),
+    ("guard-inventory-unchecked", VER, "    if inv:\n", "    if False:\n", T_C,
+     "test_a_guard_record_from_another_root_is_not_a_pass"),
     ("proposal-admitted", ADM, '    if adm["status"] != "ADMITTED":\n', "    if False:\n", T_C,
      "test_a_proposal_cannot_be_submitted"),
     ("symlinked-authorization", ADM,
