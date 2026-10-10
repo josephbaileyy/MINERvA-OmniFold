@@ -40,6 +40,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -126,6 +127,8 @@ def check(adm_path):
     if git("status", "--porcelain", "--untracked-files=no").strip():
         raise AdmissionError("tracked files differ from HEAD")
     pkg = adm["code"]["package_commit"]
+    if not re.fullmatch(r"[0-9a-f]{40}", str(pkg)):
+        raise AdmissionError("code.package_commit must be a full 40-character commit id")
     try:
         git("merge-base", "--is-ancestor", pkg, head)
     except subprocess.CalledProcessError:

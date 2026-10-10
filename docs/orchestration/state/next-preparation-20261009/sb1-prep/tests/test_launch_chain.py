@@ -62,7 +62,7 @@ class Chain(unittest.TestCase):
         cls.root = cls.make_checkout(t / "code")
         cls.bin = t / "bin"
         cls.bin.mkdir()
-        for tool in ("sbatch", "sacct"):
+        for tool in ("sbatch", "sacct", "scancel"):
             p = cls.bin / tool
             p.write_text(f'#!/bin/sh\nexec "{sys.executable}" "{HERE / "fake_slurm.py"}" {tool} "$@"\n')
             p.chmod(0o755)
@@ -371,12 +371,36 @@ class Chain(unittest.TestCase):
         self.assertIn("changed after", err)
 
     def test_an_authorization_that_does_not_name_the_package_is_refused(self):
-        root = self.clone("auth-clone")
-        (root / AUTH).write_text("# FIXTURE authorization naming nothing\n")
-        git(root, "commit", "-qam", "vague authorization")
-        rc, err = self.admit(self.admission_for(root, "vague", self.pkg_commit), root)
+        manifest_sha = sha(self.root / PKG_REL / "manifest" / "expected-code.json")
+        for name, text in (("vague", "naming nothing"), ("commit-only", self.pkg_commit),
+                           ("manifest-only", manifest_sha)):
+            with self.subTest(record=name):
+                root = self.clone(f"auth-{name}")
+                (root / AUTH).write_text(f"# FIXTURE authorization: {text}\n")
+                git(root, "commit", "-qam", f"authorization {name}")
+                rc, err = self.admit(self.admission_for(root, name, self.pkg_commit), root)
+                self.assertEqual(rc, 3)
+                self.assertIn("does not name the package commit", err)
+
+    def test_an_abbreviated_package_commit_is_refused(self):
+        adm = json.loads(self.adm.read_text())
+        rc, err = self.admit(self.admission(
+            self.tmp / "out-short", code={**adm["code"], "package_commit": self.pkg_commit[:12]}))
         self.assertEqual(rc, 3)
-        self.assertIn("does not name the package commit", err)
+        self.assertIn("full 40-character", err)
+
+    def test_a_failed_sbatch_cancels_what_was_queued_and_fails(self):
+        # review c1 N1: errexit does not reach inside $(...); the third sbatch fails here
+        adm = self.admission(self.tmp / "out-sbatchfail")
+        env = dict(self.env("sbatchfail", GOOD), FAKE_SLURM_FAIL_AT="3")
+        sub = subprocess.run(["bash", self.root / PKG_REL / "launch" / "sb1_submit.sh", adm],
+                             env=env, capture_output=True, text=True)
+        self.assertNotEqual(sub.returncode, 0, sub.stdout)
+        st = json.loads((self.tmp / "sbatchfail.json").read_text())
+        self.assertEqual(st["calls"], 3)                      # nothing submitted after the failure
+        self.assertEqual(sorted(st["cancelled"]), sorted(st["jobs"]))   # both queued jobs cancelled
+        self.assertEqual(len(st["jobs"]), 2)
+        self.assertFalse((self.tmp / "out-sbatchfail" / "submission.json").exists())
 
     def test_an_unadmitted_executed_module_is_not_a_pass(self):
         def edit(rec):

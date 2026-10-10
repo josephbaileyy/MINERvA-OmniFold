@@ -3,6 +3,8 @@
     fake_slurm.py sbatch [sbatch options] SCRIPT    queue a job; print its id
     fake_slurm.py drain                             run queued jobs in id order
     fake_slurm.py sacct -j IDS -o FIELDS [...]      print accounting rows
+    fake_slurm.py scancel ID [...]                  record and cancel (FAKE_SLURM_FAIL_AT=N fails
+                                                    the Nth sbatch call)
 
 State lives in ``$FAKE_SLURM_STATE`` (a JSON file). ``drain`` runs each job's script with ``bash``,
 the ``--export`` variables, ``SLURM_JOB_ID`` and the ``--chdir``/``--output``/``--error`` it was
@@ -45,11 +47,25 @@ def sbatch(args):
             script = a
         i += 1
     st = load()
+    st["calls"] = st.get("calls", 0) + 1
+    if st["calls"] == int(os.environ.get("FAKE_SLURM_FAIL_AT", "0")):
+        save(st)
+        print("sbatch: error: Batch job submission failed (fake)", file=sys.stderr)
+        sys.exit(1)
     jid = str(st["next"])
     st["next"] += 1
     st["jobs"][jid] = {"opts": opts, "script": script, "state": "PENDING"}
     save(st)
     print(jid)
+
+
+def scancel(args):
+    st = load()
+    st.setdefault("cancelled", []).extend(args)
+    for jid in args:
+        if jid in st["jobs"]:
+            st["jobs"][jid]["state"] = "CANCELLED"
+    save(st)
 
 
 def parse_export(spec):
@@ -110,4 +126,4 @@ def sacct(args):
 
 if __name__ == "__main__":
     cmd, rest = sys.argv[1], sys.argv[2:]
-    {"sbatch": sbatch, "drain": lambda _: drain(), "sacct": sacct}[cmd](rest)
+    {"sbatch": sbatch, "drain": lambda _: drain(), "sacct": sacct, "scancel": scancel}[cmd](rest)

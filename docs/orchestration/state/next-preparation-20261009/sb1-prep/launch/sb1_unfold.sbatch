@@ -18,7 +18,8 @@ JOB="${SB1_JOB:?UL or SL}"
 ARM="${SB1_ARM:?all or selective}"
 D="${SB1_OUT}/${JOB}"
 mkdir "${D}"
-sb1_source_env
+sb1_check_env
+source "${SB1_ENV_SETUP}"
 export OMP_NUM_THREADS=128 PYTHONUNBUFFERED=1
 cd "${D}"
 echo "[sb1] ${JOB} arm=${ARM} job=${SLURM_JOB_ID:-} node=$(hostname) start $(date -u +%FT%TZ)"

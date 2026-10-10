@@ -5,8 +5,8 @@
 # record is ADMITTED, its authorization is committed, HEAD and every manifest digest match, and the
 # inputs still have the admitted size, mtime and inode. Creates the record's outroot (refusing an
 # existing one), writes run.env and submission.json there, and submits H0 -> UL -> SL -> J1 -> C
-# (afterok, --kill-on-invalid-dep=yes) and H1 (afterany on all five). Retries are manual: see the
-# launch spec's retry_rule and `sb1_verify.py ledger`.
+# (afterok, --kill-on-invalid-dep=yes) and H1 (afterany on all five). No retries under an
+# admission (launch-spec retry_rule); `sb1_verify.py ledger` accounts the charge.
 set -eo pipefail
 ADM_IN="${1:?usage: sb1_submit.sh ADMISSION.json}"
 PKG="docs/orchestration/state/next-preparation-20261009/sb1-prep"
@@ -32,16 +32,16 @@ env = {"SB1_CODE": code, "SB1_PKG": pkg, "SB1_OUT": out, "SB1_ADMISSION": f"{out
 env["SB1_ENV_SETUP_SHA256"] = hashlib.sha256(open(setup, "rb").read()).hexdigest()
 for k, v in env.items():
     print(f"export {k}={shlex.quote(v)}")
-# Every job sources the environment setup through this function: refuse if it changed after
-# submission, so the two arms cannot run under different environments unrecorded.
-print("""sb1_source_env() {
+# Every job runs this check and then sources the setup at top level (not inside a function, so
+# the setup's own variables keep their scope): refuse if it changed after submission, so the two
+# arms cannot run under different environments unrecorded.
+print("""sb1_check_env() {
   local h
   h="$( (sha256sum "${SB1_ENV_SETUP}" 2>/dev/null || shasum -a 256 "${SB1_ENV_SETUP}") | cut -d' ' -f1)"
   if [[ "${h}" != "${SB1_ENV_SETUP_SHA256}" ]]; then
     echo "[sb1] REFUSED: ${SB1_ENV_SETUP} changed since submission" >&2
     return 3
   fi
-  source "${SB1_ENV_SETUP}"
 }""")
 PYEOF
 L="${CODE}/${PKG}/launch"
@@ -53,7 +53,15 @@ on_error() {   # a partial submission must not leave charged jobs queued without
   for id in ${H0:-} ${UL:-} ${SL:-} ${J1:-} ${C:-} ${H1:-}; do "${SB1_SCANCEL:-scancel}" "${id}" || true; done
 }
 trap on_error ERR
-submit() { local id; id="$("${S[@]}" "$@")"; echo "${id%%;*}"; }   # --parsable: "id[;cluster]"
+# A failed sbatch must stop the submission: errexit does not reach inside $(...), so submit()
+# returns non-zero itself, the assignment in this shell then fails, and set -e runs on_error.
+submit() {
+  local id
+  id="$("${S[@]}" "$@")" || return 1
+  id="${id%%;*}"                       # --parsable prints "id[;cluster]"
+  [[ "${id}" =~ ^[0-9]+$ ]] || return 1
+  echo "${id}"
+}
 H0=$(submit --job-name=sb1_H0 --time=00:45:00 --export="${E},SB1_STAGE=H0" "${L}/sb1_hash.sbatch")
 UL=$(submit --job-name=sb1_UL --time=00:50:00 --dependency="afterok:${H0}" \
      --export="${E},SB1_JOB=UL,SB1_ARM=all" "${L}/sb1_unfold.sbatch")

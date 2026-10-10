@@ -16,7 +16,8 @@ source "${SB1_RUN_ENV:?submit with sb1_submit.sh}"
 STAGE="${SB1_STAGE:?H0 or H1}"
 D="${SB1_OUT}/${STAGE}"
 mkdir "${D}"
-sb1_source_env
+sb1_check_env
+source "${SB1_ENV_SETUP}"
 export OMP_NUM_THREADS=1 PYTHONUNBUFFERED=1
 echo "[sb1] ${STAGE} job=${SLURM_JOB_ID:-} node=$(hostname) start $(date -u +%FT%TZ)"
 "${SB1_PY}" "${SB1_CODE}/${SB1_PKG}/sb1_hash.py" --out "${D}/hashes.json" \
