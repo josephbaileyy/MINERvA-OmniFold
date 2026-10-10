@@ -8,9 +8,9 @@
 | `Owned files` | §2 lists every path, by commit |
 | `Pinned inputs` | §1 |
 | `Resources` | §10. Cluster/GPU/training: **0** |
-| `Review` | §9 |
+| `Review` | One fresh read-only reviewer (§9). Initial review of `4c8bf886`: **FAIL** (M1, M2 material). One repair batch, `3075258f`. Focused re-review of `a778f67a`: **PASS**, with two minors left open (R1, R2) |
 | `Model / effort` | Claude Opus 5.5 (`claude-opus-5-5`), as stated by the session environment; effort not observable |
-| `Disposition` | **PASS** for the engineering decision, with the limits in §8. This is not a scientific validation. N2 is not admitted, and the publication-ready measurement is **not** achieved by this lane (§12) |
+| `Disposition` | **PASS** for the engineering decision (independent re-review: PASS, two minors open), with the limits in §8. This is not a scientific validation. N2 is not admitted, and the publication-ready measurement is **not** achieved by this lane (§12) |
 | `Next action` | §13 |
 
 ## 1. Baseline and pinned inputs
@@ -422,9 +422,26 @@ own mutations. **Verdict: FAIL as delivered, on M1 and M2.** It confirmed:
 | m4 | minor | the `GIT_*` stripping was untested | **fixed**: a `GIT_DIR` naming another repository is ignored, tested in-process |
 | m5 | minor | KI-85's 300 replicas need no stated digest, which REPORT §4 overstated | **wording corrected** in §4 and §8, and in `ki85_compare.py`'s docstring |
 | m6 | minor | strict no-overwrite was check-then-write | **fixed**: `O_EXCL` reservation after every other check |
-| n7 | note | a symlink resolving outside the checkout raised `ValueError` (exit 1); §2 lumped three commits together; `ddof` cancels in the ratio | the symlink case is now a refusal (exit 3) and §2 is split; the `ddof` point is noted, no change |
+| n7 | note | a symlink resolving outside the checkout raised `ValueError` (exit 1); §2 lumped three commits together; `ddof` cancels in the ratio | **partly closed**: `file_record` / `load_verified` now refuse with exit 3. The toy's own path computation at `fixed_truth_toy.py:71` still raises `ValueError` (exit 1, no output), so it still fails closed but with the wrong exit code (open as R1). §2 is split. The `ddof` point is noted, no change |
 
-The focused re-review of the repair batch is recorded in §11.
+**Focused re-review of `a778f67a`** (about 9 min, about 0.07 core-h): **PASS**.
+
+- **M1, M2, m3, m4, m5 and m6 are closed.** The reviewer re-ran its own reproductions. It also
+  showed that each new test fails on the pre-repair code (4 FAIL and 4 ERROR out of 46) and caught
+  three spot mutants. It confirmed the self-corrected mutation counts against the JSON, and noted
+  that its own first report had repeated the "19 of 19" without checking.
+- **No regression and no new bypass** of what runs or what is written.
+- **Two minor items remain open.** The review budget is spent, so they are left unfixed rather than
+  repaired without review:
+  - **R1 (n7 remainder).** `fixed_truth_toy.py:71` computes `path.resolve().relative_to(REPO)`
+    itself, so a symlinked module that resolves outside the checkout exits 1 with `ValueError`
+    rather than 3. It still fails closed with no output. Fix: compute `rel` inside `try`, or take it
+    from `load_verified`'s record. One line plus a test.
+  - **R2.** `n2/harness.py:95-96` tests the authorization path's `docs/orchestration/` prefix as a
+    string. A committed `AUTHORIZATION-` file elsewhere in the checkout, reached through `..`,
+    passes. It must still be committed, carry the name and match the stated digest, and a `..` that
+    leaves the checkout is refused. Fix: normalize (`Path(rel)` with no `..`, or a resolved path
+    relative to the root) before the prefix test, and add a `..` case to the admission test.
 
 ## 10. Resources
 
@@ -438,11 +455,38 @@ The focused re-review of the repair batch is recorded in §11.
 
 ## 11. Final head, review and measured totals
 
-To be completed at delivery.
+- **Heads.**
+  - Reviewed: `4c8bf886` (initial) and `a778f67a` (re-review).
+  - Repair: `3075258f`.
+  - Delivered head: the commit that adds this section, pushed to `origin/prep/next-guard-20261009`.
+    It changes only this report.
+- **Draft PR:** https://github.com/josephbaileyy/MINERvA-OmniFold/pull/67, base `main`. Not merged.
+- **Final suite counts at `3075258f`:**
+  - ratchets 17/17;
+  - producer 25/25 (PyROOT, 0 skipped);
+  - harness 21/21;
+  - `test_coverage_fixed_truth.py` 20 passed;
+  - `ALL BINDINGS INTACT`;
+  - inventory 17 AST / 16 fail-open, 0 unlisted;
+  - mutation run 3: 25 of 25.
+- **Elapsed.** 2026-10-09 19:55Z – 2026-10-10 00:30Z is 4 h 35 min of wall clock. That includes
+  about 2.5 h of idle time during a usage-limit pause (about 20:50Z – 23:20Z), so active effort is
+  about 2 h. Cap: 8 h.
+- **CPU.** 1,541 s `user+sys` measured over the timed, logged commands. About 800 s more is
+  estimated for untimed development runs. The lane's own total is therefore about 0.65 core-h. With
+  the reviewer's about 0.35 core-h, the total is about 1.0 of the 4 core-h cap. Every command used
+  one thread.
+- **Scratch.** 419 MiB at the end, almost all the reviewer's detached worktree, which is removed at
+  delivery. Mutation clones are deleted per mutant. Cap: 2 GiB.
+- **Tracked.** 336,126 bytes in the two new subtrees, and 5,422 lines added over 41 files in total.
+  Cap: 10 MiB.
+- **Cluster / GPU / training:** 0.
 
 ## 12. Disposition
 
-**PASS** for the engineering decision. With the producers run as §13 specifies, a future 2D
+**PASS** for the engineering decision. The independent re-review agrees, with two minor findings
+open (R1, R2 in §9); neither is a bypass of what runs or what is written. With the producers run as
+§13 specifies, a future 2D
 diagnostic built on `fixed_truth_toy.py`, `ki85_compare.py` or the N2 harness:
 
 - executes the checkout it was launched from;
@@ -464,6 +508,9 @@ The overall publication-ready measurement remains unmet.
 
 ## 13. Next action
 
+0. **Open minors R1 and R2 (§9).** Each is a one-line fix plus a test. Either goes into a later
+   reviewed change by whoever next owns these files, or is accepted as recorded. Neither blocks the
+   integration decision below.
 1. **Integration decision (Joseph, then the integration owner).**
    - Merge or decline this branch.
    - On merge, regenerate `MANIFEST.tsv` and apply §7's KI-89/OI-136 text.
