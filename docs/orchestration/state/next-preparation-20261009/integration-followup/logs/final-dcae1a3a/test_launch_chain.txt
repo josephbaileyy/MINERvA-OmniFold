@@ -1,0 +1,37 @@
+test_a_control_that_returned_a_loader_fails_nc (test_launch_chain.Chain.test_a_control_that_returned_a_loader_fails_nc) ... ok
+test_a_dirty_tree_is_refused (test_launch_chain.Chain.test_a_dirty_tree_is_refused) ... ok
+test_a_failed_first_or_last_sbatch_or_a_non_numeric_id_stops_the_submission (test_launch_chain.Chain.test_a_failed_first_or_last_sbatch_or_a_non_numeric_id_stops_the_submission) ... ok
+test_a_failed_sbatch_cancels_what_was_queued_and_fails (test_launch_chain.Chain.test_a_failed_sbatch_cancels_what_was_queued_and_fails) ... ok
+test_a_guard_record_from_another_root_is_not_a_pass (test_launch_chain.Chain.test_a_guard_record_from_another_root_is_not_a_pass) ... ok
+test_a_killed_selective_arm_is_inconclusive_not_fail (test_launch_chain.Chain.test_a_killed_selective_arm_is_inconclusive_not_fail) ... ok
+test_a_loader_byte_difference_fails_s1 (test_launch_chain.Chain.test_a_loader_byte_difference_fails_s1) ... ok
+test_a_mib_value_is_not_read_as_kib (test_launch_chain.Chain.test_a_mib_value_is_not_read_as_kib) ... ok
+test_a_missing_receipt_is_inconclusive_not_pass (test_launch_chain.Chain.test_a_missing_receipt_is_inconclusive_not_pass) ... ok
+test_a_package_changed_after_its_commit_is_refused (test_launch_chain.Chain.test_a_package_changed_after_its_commit_is_refused) ... ok
+test_a_proposal_cannot_be_submitted (test_launch_chain.Chain.test_a_proposal_cannot_be_submitted) ... ok
+test_a_real_difference_still_fails_when_later_trees_are_missing (test_launch_chain.Chain.test_a_real_difference_still_fails_when_later_trees_are_missing) ... ok
+test_a_receipt_input_stat_unlike_h0_is_not_a_pass (test_launch_chain.Chain.test_a_receipt_input_stat_unlike_h0_is_not_a_pass) ... ok
+test_a_wrong_executed_digest_is_not_a_pass (test_launch_chain.Chain.test_a_wrong_executed_digest_is_not_a_pass) ... ok
+test_an_abbreviated_package_commit_is_refused (test_launch_chain.Chain.test_an_abbreviated_package_commit_is_refused) ... ok
+test_an_authorization_that_does_not_name_the_package_is_refused (test_launch_chain.Chain.test_an_authorization_that_does_not_name_the_package_is_refused) ... ok
+test_an_environment_changed_after_submission_stops_the_chain (test_launch_chain.Chain.test_an_environment_changed_after_submission_stops_the_chain) ... ok
+test_an_input_changed_between_h0_and_h1_is_not_a_pass (test_launch_chain.Chain.test_an_input_changed_between_h0_and_h1_is_not_a_pass) ... ok
+test_an_unadmitted_executed_module_is_not_a_pass (test_launch_chain.Chain.test_an_unadmitted_executed_module_is_not_a_pass) ... ok
+test_draft_fills_only_mechanical_fields_and_checks (test_launch_chain.Chain.test_draft_fills_only_mechanical_fields_and_checks) ... ok
+test_each_admission_guard_refuses (test_launch_chain.Chain.test_each_admission_guard_refuses) ... ok
+test_every_job_refuses_an_environment_changed_after_submission (test_launch_chain.Chain.test_every_job_refuses_an_environment_changed_after_submission) ... ok
+test_hostile_authorization_paths_are_refused (test_launch_chain.Chain.test_hostile_authorization_paths_are_refused) ... ok
+test_receipts_from_different_environments_are_not_a_pass (test_launch_chain.Chain.test_receipts_from_different_environments_are_not_a_pass) ... ok
+test_slow_selective_arm_fails_s4 (test_launch_chain.Chain.test_slow_selective_arm_fails_s4) ... ok
+test_the_chain_runs_and_the_verifier_passes_it (test_launch_chain.Chain.test_the_chain_runs_and_the_verifier_passes_it) ... ok
+test_the_good_admission_holds (test_launch_chain.Chain.test_the_good_admission_holds) ... ok
+test_the_ledger_adds_charges_and_unfinished_ceilings (test_launch_chain.Chain.test_the_ledger_adds_charges_and_unfinished_ceilings) ... ok
+test_too_many_bytes_read_fails_s2 (test_launch_chain.Chain.test_too_many_bytes_read_fails_s2) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 61.785s
+
+OK
+real 62.00
+user 46.58
+sys 12.55
