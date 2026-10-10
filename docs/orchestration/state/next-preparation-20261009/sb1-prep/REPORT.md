@@ -234,9 +234,9 @@ between the two (no `set -u`, no associative arrays).
 
 ### 5.3 Mutation controls (`checks/mutation.py`, `logs/mutation-results.json`)
 
-Each mutant is applied in a fresh `git clone --shared` of commit `864ecaba`, after the unmutated
-clone passed every targeted test (7 + 3 + 6 tests, no skips). **16 of 16 caught**
-(`logs/mutation-results.json`).
+Each mutant is applied in a fresh `git clone --shared` of commit `9fa3fed7` (the repair batch),
+after the unmutated clone passed every targeted test (7 + 3 + 14 tests, no skips). **25 of 25
+caught.**
 
 | mutant | file | targeted test | result |
 |---|---|---|---|
@@ -254,13 +254,26 @@ clone passed every targeted test (7 + 3 + 6 tests, no skips). **16 of 16 caught*
 | `s2-bound-loosened` | `sb1_verify.py` | `test_too_many_bytes_read_fails_s2` | caught (exit 1) |
 | `s4-bound-loosened` | `sb1_verify.py` | `test_slow_selective_arm_fails_s4` | caught (exit 1) |
 | `guard-inventory-unchecked` | `sb1_verify.py` | `test_a_guard_record_from_another_root_is_not_a_pass` | caught (exit 1) |
+| `checkout-unchecked` | `sb1_admit.py` | `test_each_admission_guard_refuses` | caught (exit 1) |
+| `dirty-tree-allowed` | `sb1_admit.py` | `test_a_dirty_tree_is_refused` | caught (exit 1) |
+| `package-binding-unchecked` | `sb1_admit.py` | `test_a_package_changed_after_its_commit_is_refused` | caught (exit 1) |
+| `authorization-text-unchecked` | `sb1_admit.py` | `test_an_authorization_that_does_not_name_the_package_is_refused` | caught (exit 1) |
+| `input-stat-now-unchecked` | `sb1_admit.py` | `test_each_admission_guard_refuses` | caught (exit 1) |
+| `unadmitted-module-allowed` | `sb1_verify.py` | `test_an_unadmitted_executed_module_is_not_a_pass` | caught (exit 1) |
+| `partial-receipt-is-difference` | `sb1_verify.py` | `test_a_killed_selective_arm_is_inconclusive_not_fail` | caught (exit 1) |
+| `env-setup-unchecked` | `sb1_verify.py` | `test_receipts_from_different_environments_are_not_a_pass` | caught (exit 1) |
+| `nc-ignores-loaders` | `sb1_verify.py` | `test_a_control_that_returned_a_loader_fails_nc` | caught (exit 1) |
 | `proposal-admitted` | `sb1_admit.py` | `test_a_proposal_cannot_be_submitted` | caught (exit 1) |
 | `symlinked-authorization` | `sb1_admit.py` | `test_hostile_authorization_paths_are_refused` | caught (exit 1) |
 
-The first run, at `200bbde5` (`logs/mutation-results-run1-200bbde5.json`), caught 14 of 15. The
-survivor, `symlinked-authorization`, was refused anyway by the later commit-blob check, so the test
-never isolated the path rule. It now asserts the path rule's own refusal reason. The
-guard-inventory mutant was added with the verifier's inventory check.
+Earlier runs, kept in `logs/`:
+
+- Run 1, at `200bbde5`, caught 14 of 15. The survivor, `symlinked-authorization`, was refused anyway
+  by the later commit-blob check, so the test never isolated the path rule. The test now asserts the
+  rule's own reason.
+- Run 2, at `864ecaba`, caught 16 of 16.
+- The nine guards that review c0 found untested got a mutant each in run 3. So did the
+  partial-receipt and environment checks added in the repair.
 
 ## 6. Frozen rules (before any run)
 

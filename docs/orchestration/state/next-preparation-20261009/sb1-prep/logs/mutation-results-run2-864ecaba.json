@@ -1,44 +1,44 @@
 {
- "commit": "9fa3fed7",
+ "commit": "864ecaba",
  "baseline": {
   "test_branch_select": {
    "returncode": 0,
-   "seconds": 15.0,
-   "ran": "Ran 7 tests in 13.033s",
+   "seconds": 12.2,
+   "ran": "Ran 7 tests in 11.593s",
    "skipped": false,
    "tail": [
     "test_every_omitted_activation_is_refused_before_the_first_read (test_branch_select.NegativeControls.test_every_omitted_activation_is_refused_before_the_first_read) ... ok",
     "",
     "----------------------------------------------------------------------",
-    "Ran 7 tests in 13.033s",
+    "Ran 7 tests in 11.593s",
     "",
     "OK"
    ]
   },
   "test_sb1_guarded": {
    "returncode": 0,
-   "seconds": 17.6,
-   "ran": "Ran 3 tests in 17.403s",
+   "seconds": 16.9,
+   "ran": "Ran 3 tests in 16.688s",
    "skipped": false,
    "tail": [
     "test_an_input_changed_after_hashing_is_refused (test_sb1_guarded.Guarded.test_an_input_changed_after_hashing_is_refused) ... ok",
     "",
     "----------------------------------------------------------------------",
-    "Ran 3 tests in 17.403s",
+    "Ran 3 tests in 16.688s",
     "",
     "OK"
    ]
   },
   "test_launch_chain": {
    "returncode": 0,
-   "seconds": 55.9,
-   "ran": "Ran 14 tests in 55.618s",
+   "seconds": 48.6,
+   "ran": "Ran 6 tests in 48.356s",
    "skipped": false,
    "tail": [
     "test_too_many_bytes_read_fails_s2 (test_launch_chain.Chain.test_too_many_bytes_read_fails_s2) ... ok",
     "",
     "----------------------------------------------------------------------",
-    "Ran 14 tests in 55.618s",
+    "Ran 6 tests in 48.356s",
     "",
     "OK"
    ]
@@ -51,7 +51,7 @@
    "test": "test_a_reused_tree_is_restored_and_reads_identically_afterwards",
    "caught": true,
    "returncode": 129,
-   "seconds": 12.2,
+   "seconds": 11.8,
    "ran": null,
    "skipped": null,
    "tail": [
@@ -65,14 +65,14 @@
    "test": "test_every_omitted_activation_is_refused_before_the_first_read",
    "caught": true,
    "returncode": 1,
-   "seconds": 12.1,
-   "ran": "Ran 1 test in 11.367s",
+   "seconds": 11.0,
+   "ran": "Ran 1 test in 10.429s",
    "skipped": false,
    "tail": [
     "AssertionError: \"inactive\" does not match \"mc_truth_denom: active ['pT_truth_Muon_Energy_MINOS_0', 'pz_truth_Muon_Energy_MINOS_0'] != derived ['pT_truth_Muon_Energy_MINOS_0', 'pz_truth_Muon_Energy_MINOS_0', 'w_truth_Muon_Energy_MINOS_0']\"",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 11.367s",
+    "Ran 1 test in 10.429s",
     "",
     "FAILED (failures=17)"
    ]
@@ -83,14 +83,14 @@
    "test": "test_an_extra_activation_is_refused_before_the_first_read",
    "caught": true,
    "returncode": 1,
-   "seconds": 11.0,
-   "ran": "Ran 1 test in 10.319s",
+   "seconds": 11.2,
+   "ran": "Ran 1 test in 10.568s",
    "skipped": false,
    "tail": [
     "AssertionError: SelectionError not raised",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 10.319s",
+    "Ran 1 test in 10.568s",
     "",
     "FAILED (failures=4)"
    ]
@@ -101,14 +101,14 @@
    "test": "test_a_loader_that_reads_another_branch_is_refused_by_the_rule",
    "caught": true,
    "returncode": 1,
-   "seconds": 12.6,
-   "ran": "Ran 1 test in 11.885s",
+   "seconds": 11.6,
+   "ran": "Ran 1 test in 10.942s",
    "skipped": false,
    "tail": [
     "AssertionError: \"rule\" does not match \"mc_signal_reco: no address on ['sim_eavail']\"",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 11.885s",
+    "Ran 1 test in 10.942s",
     "",
     "FAILED (failures=1)"
    ]
@@ -119,14 +119,14 @@
    "test": "test_discovery_reads_no_entry_and_leaves_no_address",
    "caught": true,
    "returncode": 1,
-   "seconds": 12.0,
-   "ran": "Ran 1 test in 11.310s",
+   "seconds": 11.7,
+   "ran": "Ran 1 test in 11.023s",
    "skipped": false,
    "tail": [
     "AssertionError: True is not false",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 11.310s",
+    "Ran 1 test in 11.023s",
     "",
     "FAILED (failures=1)"
    ]
@@ -137,14 +137,14 @@
    "test": "test_a_partial_entry_state_is_restored_exactly",
    "caught": true,
    "returncode": 1,
-   "seconds": 12.4,
-   "ran": "Ran 1 test in 11.753s",
+   "seconds": 12.3,
+   "ran": "Ran 1 test in 11.643s",
    "skipped": false,
    "tail": [
     "AssertionError: SelectionError not raised",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 11.753s",
+    "Ran 1 test in 11.643s",
     "",
     "FAILED (failures=1)"
    ]
@@ -155,14 +155,14 @@
    "test": "test_selective_is_byte_identical_to_the_pinned_loaders",
    "caught": true,
    "returncode": 1,
-   "seconds": 12.4,
-   "ran": "Ran 1 test in 11.722s",
+   "seconds": 12.1,
+   "ran": "Ran 1 test in 11.472s",
    "skipped": false,
    "tail": [
     "AssertionError: 10 != 15",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 11.722s",
+    "Ran 1 test in 11.472s",
     "",
     "FAILED (failures=6)"
    ]
@@ -173,14 +173,14 @@
    "test": "test_a_reference_with_different_bytes_stops_before_training",
    "caught": true,
    "returncode": 1,
-   "seconds": 17.0,
-   "ran": "Ran 1 test in 16.756s",
+   "seconds": 15.0,
+   "ran": "Ran 1 test in 14.832s",
    "skipped": false,
    "tail": [
     "",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 16.756s",
+    "Ran 1 test in 14.832s",
     "",
     "FAILED (failures=1)"
    ]
@@ -191,14 +191,14 @@
    "test": "test_an_input_changed_after_hashing_is_refused",
    "caught": true,
    "returncode": 1,
-   "seconds": 16.2,
-   "ran": "Ran 1 test in 15.721s",
+   "seconds": 13.4,
+   "ran": "Ran 1 test in 13.266s",
    "skipped": false,
    "tail": [
     "",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 15.721s",
+    "Ran 1 test in 13.266s",
     "",
     "FAILED (failures=1)"
    ]
@@ -209,14 +209,14 @@
    "test": "test_a_changed_driver_is_refused_even_when_committed_and_stated",
    "caught": true,
    "returncode": 1,
-   "seconds": 16.1,
-   "ran": "Ran 1 test in 15.821s",
+   "seconds": 13.2,
+   "ran": "Ran 1 test in 13.056s",
    "skipped": false,
    "tail": [
     "",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 15.821s",
+    "Ran 1 test in 13.056s",
     "",
     "FAILED (failures=1)"
    ]
@@ -227,14 +227,14 @@
    "test": "test_a_mib_value_is_not_read_as_kib",
    "caught": true,
    "returncode": 1,
-   "seconds": 47.3,
-   "ran": "Ran 1 test in 47.035s",
+   "seconds": 43.9,
+   "ran": "Ran 1 test in 43.654s",
    "skipped": false,
    "tail": [
     "AssertionError: 31.0 != 32.505856 within 6 places (1.5058560000000014 difference)",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 47.035s",
+    "Ran 1 test in 43.654s",
     "",
     "FAILED (failures=1)"
    ]
@@ -245,14 +245,14 @@
    "test": "test_too_many_bytes_read_fails_s2",
    "caught": true,
    "returncode": 1,
-   "seconds": 55.3,
-   "ran": "Ran 1 test in 54.996s",
+   "seconds": 45.6,
+   "ran": "Ran 1 test in 45.234s",
    "skipped": false,
    "tail": [
     "+ ('FAIL', 'FAIL')",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 54.996s",
+    "Ran 1 test in 45.234s",
     "",
     "FAILED (failures=1)"
    ]
@@ -263,14 +263,14 @@
    "test": "test_slow_selective_arm_fails_s4",
    "caught": true,
    "returncode": 1,
-   "seconds": 50.2,
-   "ran": "Ran 1 test in 49.909s",
+   "seconds": 46.8,
+   "ran": "Ran 1 test in 46.504s",
    "skipped": false,
    "tail": [
     "+ ('FAIL', 'FAIL')",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 49.909s",
+    "Ran 1 test in 46.504s",
     "",
     "FAILED (failures=1)"
    ]
@@ -281,176 +281,14 @@
    "test": "test_a_guard_record_from_another_root_is_not_a_pass",
    "caught": true,
    "returncode": 1,
-   "seconds": 49.8,
-   "ran": "Ran 1 test in 49.547s",
+   "seconds": 42.7,
+   "ran": "Ran 1 test in 42.435s",
    "skipped": false,
    "tail": [
     "",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 49.547s",
-    "",
-    "FAILED (failures=1)"
-   ]
-  },
-  {
-   "name": "checkout-unchecked",
-   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_admit.py",
-   "test": "test_each_admission_guard_refuses",
-   "caught": true,
-   "returncode": 1,
-   "seconds": 49.6,
-   "ran": "Ran 1 test in 49.352s",
-   "skipped": false,
-   "tail": [
-    "AssertionError: 0 != 3 : ",
-    "",
-    "----------------------------------------------------------------------",
-    "Ran 1 test in 49.352s",
-    "",
-    "FAILED (failures=1)"
-   ]
-  },
-  {
-   "name": "dirty-tree-allowed",
-   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_admit.py",
-   "test": "test_a_dirty_tree_is_refused",
-   "caught": true,
-   "returncode": 1,
-   "seconds": 47.2,
-   "ran": "Ran 1 test in 46.817s",
-   "skipped": false,
-   "tail": [
-    "AssertionError: 'tracked files differ' not found in \"[REFUSED] AdmissionError: docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_hash.py is not the manifest's 2101f73d82c1\\n\"",
-    "",
-    "----------------------------------------------------------------------",
-    "Ran 1 test in 46.817s",
-    "",
-    "FAILED (failures=1)"
-   ]
-  },
-  {
-   "name": "package-binding-unchecked",
-   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_admit.py",
-   "test": "test_a_package_changed_after_its_commit_is_refused",
-   "caught": true,
-   "returncode": 1,
-   "seconds": 54.2,
-   "ran": "Ran 1 test in 53.965s",
-   "skipped": false,
-   "tail": [
-    "AssertionError: 'changed after' not found in \"[REFUSED] AdmissionError: the authorization record does not name the package commit and the manifest's sha256 in full\\n\"",
-    "",
-    "----------------------------------------------------------------------",
-    "Ran 1 test in 53.965s",
-    "",
-    "FAILED (failures=1)"
-   ]
-  },
-  {
-   "name": "authorization-text-unchecked",
-   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_admit.py",
-   "test": "test_an_authorization_that_does_not_name_the_package_is_refused",
-   "caught": true,
-   "returncode": 1,
-   "seconds": 47.5,
-   "ran": "Ran 1 test in 47.206s",
-   "skipped": false,
-   "tail": [
-    "AssertionError: 0 != 3",
-    "",
-    "----------------------------------------------------------------------",
-    "Ran 1 test in 47.206s",
-    "",
-    "FAILED (failures=1)"
-   ]
-  },
-  {
-   "name": "input-stat-now-unchecked",
-   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_admit.py",
-   "test": "test_each_admission_guard_refuses",
-   "caught": true,
-   "returncode": 1,
-   "seconds": 53.6,
-   "ran": "Ran 1 test in 53.290s",
-   "skipped": false,
-   "tail": [
-    "AssertionError: 0 != 3 : ",
-    "",
-    "----------------------------------------------------------------------",
-    "Ran 1 test in 53.290s",
-    "",
-    "FAILED (failures=1)"
-   ]
-  },
-  {
-   "name": "unadmitted-module-allowed",
-   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_verify.py",
-   "test": "test_an_unadmitted_executed_module_is_not_a_pass",
-   "caught": true,
-   "returncode": 1,
-   "seconds": 46.8,
-   "ran": "Ran 1 test in 46.574s",
-   "skipped": false,
-   "tail": [
-    "",
-    "",
-    "----------------------------------------------------------------------",
-    "Ran 1 test in 46.574s",
-    "",
-    "FAILED (failures=1)"
-   ]
-  },
-  {
-   "name": "partial-receipt-is-difference",
-   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_verify.py",
-   "test": "test_a_killed_selective_arm_is_inconclusive_not_fail",
-   "caught": true,
-   "returncode": 1,
-   "seconds": 48.9,
-   "ran": "Ran 1 test in 48.590s",
-   "skipped": false,
-   "tail": [
-    "+ ('INCONCLUSIVE', 'INCONCLUSIVE')",
-    "",
-    "----------------------------------------------------------------------",
-    "Ran 1 test in 48.590s",
-    "",
-    "FAILED (failures=1)"
-   ]
-  },
-  {
-   "name": "env-setup-unchecked",
-   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_verify.py",
-   "test": "test_receipts_from_different_environments_are_not_a_pass",
-   "caught": true,
-   "returncode": 1,
-   "seconds": 66.4,
-   "ran": "Ran 1 test in 66.095s",
-   "skipped": false,
-   "tail": [
-    "",
-    "",
-    "----------------------------------------------------------------------",
-    "Ran 1 test in 66.095s",
-    "",
-    "FAILED (failures=1)"
-   ]
-  },
-  {
-   "name": "nc-ignores-loaders",
-   "file": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_verify.py",
-   "test": "test_a_control_that_returned_a_loader_fails_nc",
-   "caught": true,
-   "returncode": 1,
-   "seconds": 53.2,
-   "ran": "Ran 1 test in 52.917s",
-   "skipped": false,
-   "tail": [
-    "+ ('FAIL', 'FAIL')",
-    "",
-    "----------------------------------------------------------------------",
-    "Ran 1 test in 52.917s",
+    "Ran 1 test in 42.435s",
     "",
     "FAILED (failures=1)"
    ]
@@ -461,14 +299,14 @@
    "test": "test_a_proposal_cannot_be_submitted",
    "caught": true,
    "returncode": 1,
-   "seconds": 75.3,
-   "ran": "Ran 1 test in 75.028s",
+   "seconds": 65.7,
+   "ran": "Ran 1 test in 65.488s",
    "skipped": false,
    "tail": [
     "AssertionError: 0 == 0",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 75.028s",
+    "Ran 1 test in 65.488s",
     "",
     "FAILED (failures=1)"
    ]
@@ -479,18 +317,18 @@
    "test": "test_hostile_authorization_paths_are_refused",
    "caught": true,
    "returncode": 1,
-   "seconds": 50.1,
-   "ran": "Ran 1 test in 49.847s",
+   "seconds": 42.4,
+   "ran": "Ran 1 test in 42.126s",
    "skipped": false,
    "tail": [
-    "AssertionError: 'is not an AUTHORIZATION- or DECISION- record' not found in \"[REFUSED] CalledProcessError: Command '['git', '-C', '/private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp3ldt5a31/code', 'show', 'HEAD:docs/orchestration/AUTHORIZATION-link.md']' returned non-zero exit status 128.\\n\"",
+    "AssertionError: 'is not an AUTHORIZATION- or DECISION- record' not found in \"[REFUSED] CalledProcessError: Command '['git', '-C', '/private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp4q5jnr41/code', 'show', 'HEAD:docs/orchestration/AUTHORIZATION-link.md']' returned non-zero exit status 128.\\n\"",
     "",
     "----------------------------------------------------------------------",
-    "Ran 1 test in 49.847s",
+    "Ran 1 test in 42.126s",
     "",
     "FAILED (failures=1)"
    ]
   }
  ],
- "verdict": "25 of 25 caught"
+ "verdict": "16 of 16 caught"
 }
