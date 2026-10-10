@@ -1,0 +1,32 @@
+[unmutated] ["plain", ["-m", "unittest", "nd-unfolding.tests.test_oi136_rooted_ins exit=0 ran=2 skipped=0
+[unmutated] ["root", ["-m", "unittest", "test_producer_provenance.TheLoader", "tes exit=0 ran=20 skipped=0
+[unmutated] ["root", ["-m", "unittest", "test_producer_provenance.TheKi85Producer" exit=0 ran=14 skipped=0
+[unmutated] ["root", ["-m", "unittest", "test_producer_provenance.TheToyProducer"] exit=0 ran=10 skipped=0
+[unmutated] ["plain", ["-m", "unittest", "test_n2_harness.Identity"], "2d-unfoldin exit=0 ran=10 skipped=0
+[unmutated] ["plain", ["-m", "unittest", "test_n2_harness.Identity.test_c6_fires_o exit=0 ran=2 skipped=0
+[unmutated] ["plain", ["-m", "unittest", "test_n2_harness.Members", "test_n2_harne exit=0 ran=3 skipped=0
+[unmutated] ["plain", ["-m", "unittest", "test_n2_harness.Members"], "2d-unfolding exit=0 ran=2 skipped=0
+[unmutated] ["plain", ["-m", "unittest", "test_n2_harness.Design"], "2d-unfolding/ exit=0 ran=4 skipped=0
+[unmutated] ["plain", ["-m", "unittest", "test_n2_harness.Harness.test_no_or_incom exit=0 ran=1 skipped=0
+[CAUGHT] new-tracked-live-site: exit=1 red=['test_no_file_outside_the_named_set_feeds_a_rooted_insert', 'test_the_fail_open_set_is_EXACTLY_the_recorded_one'] ran=2 9.6s
+[CAUGHT] new-untracked-live-site: exit=1 red=['test_the_fail_open_set_is_EXACTLY_the_recorded_one'] ran=2 9.7s
+[CAUGHT] toy-literal-replanted: exit=1 red=['test_no_file_outside_the_named_set_feeds_a_rooted_insert', 'test_the_fail_open_set_is_EXACTLY_the_recorded_one'] ran=2 9.6s
+[CAUGHT] ki85-literal-replanted: exit=1 red=['test_no_file_outside_the_named_set_feeds_a_rooted_insert', 'test_the_fail_open_set_is_EXACTLY_the_recorded_one'] ran=2 9.4s
+[CAUGHT] toy-literal-replanted-as-path: exit=1 red=['test_no_file_outside_the_named_set_feeds_a_rooted_insert'] ran=2 8.4s
+[CAUGHT] loader-accepts-pre-imported: exit=1 red=['test_a_pre_imported_analyzer_from_another_checkout_refuses', 'test_a_pre_imported_helper_from_another_checkout_refuses_before_output', 'test_executes_the_hashed_bytes_and_records_them', 'test_refuses_a_module_imported_by_anything_else'] ran=20 24.6s
+[CAUGHT] loader-skips-digest: exit=1 red=['test_a_changed_analyzer_refuses_before_its_body_runs', 'test_changed_helper_bytes_refuse_before_the_helper_runs', 'test_refuses_a_digest_mismatch_without_executing'] ran=20 22.6s
+[CAUGHT] strict-skips-guard: exit=1 red=['test_strict_mode_refuses_missing_provenance', 'test_strict_mode_refuses_unguarded'] ran=14 21.9s
+[CAUGHT] strict-ignores-head-drift: exit=1 red=['test_strict_mode_refuses_a_committed_helper_edited_since_head'] ran=10 17.8s
+[CAUGHT] output-overwrite-allowed: exit=1 red=['test_strict_mode_refuses_to_overwrite_and_leaves_the_file_untouched'] ran=10 19.7s
+[CAUGHT] ids-allow-duplicates: exit=1 red=['test_a_repeated_identity_is_a_stop_condition'] ran=10 1.5s
+[CAUGHT] ids-allow-missing: exit=1 red=['test_missing_ids_are_refused'] ran=10 1.2s
+[CAUGHT] c1-disabled: exit=1 red=['test_c1_fires_when_a_reservoir_key_is_moved_into_training'] ran=10 1.5s
+[CAUGHT] c6-disabled: exit=1 red=['test_c6_fires_on_a_reservoir_row_in_the_bank', 'test_failed_contaminated_and_missing_members_are_reported_not_dropped'] ran=2 7.2s
+[CAUGHT] ledger-drops-missing: exit=1 red=['test_failed_contaminated_and_missing_members_are_reported_not_dropped', 'test_the_ledger_keeps_every_declared_member'] ran=3 6.6s
+[CAUGHT] write-new-overwrites: exit=1 red=['test_write_new_never_overwrites'] ran=2 0.1s
+[CAUGHT] mc-stream-resampled: exit=1 red=['test_the_plan_streams_seeds_and_estimator'] ran=4 0.7s
+[CAUGHT] real-admission-without-authorization: exit=1 red=['test_no_or_incomplete_admission_refuses_a_launch'] ran=1 2.2s
+unmutated all green: True; all mutants caught: True
+real 326.33
+user 177.02
+sys 88.61

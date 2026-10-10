@@ -1,0 +1,28 @@
+.F...............
+======================================================================
+FAIL: test_no_file_outside_the_named_set_feeds_a_rooted_insert (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_no_file_outside_the_named_set_feeds_a_rooted_insert)
+FIRES on a new instance. This is the ratchet.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<worktree>/nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py", line 344, in test_no_file_outside_the_named_set_feeds_a_rooted_insert
+    self.assertEqual(new, [], "a NEW rooted sys.path.insert(0, ...) appeared:\n  " +
+AssertionError: Lists differ: ['2d-unfolding/uq/coverage_fixed_truth/fix[68 chars].py'] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+'2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py'
+
++ []
+- ['2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py',
+-  '2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py'] : a NEW rooted sys.path.insert(0, ...) appeared:
+  2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py
+  2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py
+Derive the root from __file__; do not add it here.
+
+----------------------------------------------------------------------
+Ran 17 tests in 67.365s
+
+FAILED (failures=1)
+real 67.44
+user 63.61
+sys 1.62

@@ -283,8 +283,40 @@ PROBE = os.path.join("docs", "orchestration", "state",
 #
 # BOTH VALUES BELOW WERE TAKEN FROM THE PROBE'S OWN OUTPUT, digested exactly as
 # `test_the_fail_open_set_is_EXACTLY_the_recorded_one` digests it, never computed by hand.
-FAILOPEN_COUNT = 9
-FAILOPEN_SHA256 = "0939e1595e1bf5ed7896436d2ca1e090c47525258880bac20f7b3eb5f312a350"
+#
+# ===== 9 -> 18 on 2026-10-09: NINE OCTOBER SITES, RECORDED (KNOWN_ISSUES 89) =====
+# Nine `.py` added 2026-10-03..06 put the canonical root at sys.path[0] and were recorded on
+# neither list, so this test had been red since they landed (measured at ad2716d8, 33811d7d and
+# 5ac9706a, failure lists byte-identical). Authority: the next-preparation Goal 2 dispatch
+# (`docs/orchestration/state/next-preparation-20261009/closeout/GOALS-20261009-as-dispatched.md`),
+# which names all nine and assigns their disposition. This commit CLASSIFIES; it repairs nothing,
+# so the set is pinned exactly as measured:
+#   frozen analysis records, preserved byte-for-byte (rooted ratchet class `frozen_record`):
+#     docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py
+#     docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py
+#     docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py
+#     docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py
+#     docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py
+#     docs/orchestration/state/note-boot-20261003/boot_spreads.py
+#     docs/orchestration/state/uqpaper-median-20261006/paper_median.py
+#   live producers, still fail-open in this commit and repaired in the next one, which moves
+#   these constants again:
+#     2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py
+#     2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py
+# Superseded pair, retained as an as-of referent:
+#   2026-09-03 repair   9 / 0939e1595e1bf5ed7896436d2ca1e090c47525258880bac20f7b3eb5f312a350
+#
+# ===== 18 -> 16 on 2026-10-09: THE TWO LIVE OCTOBER PRODUCERS REPAIRED =====
+# Same authority. Each now derives its import root from `__file__` and executes its repository
+# modules from hashed bytes of that checkout (`2d-unfolding/uq/coverage_fixed_truth/n2/execution.py`):
+#   2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py  OMNIFOLD_PY = parents[2]/unbinned_unfolding/python
+#                                                            (the literal leaves the file: candidates 144 -> 143)
+#   2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py     UQ = parent (2d-unfolding/uq); REALBOOT stays a
+#                                                            DATA root, so the file moves to insert-but-not-rooted (66 -> 67)
+# On the canonical checkout each derived path equals the literal it replaced. Superseded pair:
+#   2026-10-09 classification   18 / 04357e1a11b49bb5a7f7a65a1502d101d5828052bf07e6a10d7d3bb43e4930e0
+FAILOPEN_COUNT = 16
+FAILOPEN_SHA256 = "7aa2943198612b5e904d37c2d75f3ac9b0fe33cabeb69bcddd7a7e87fc334aa9"
 
 # The probe's own positive controls, restated here so this file does not inherit its blind
 # spots. Relative to the repo root, as the probe prints them.

@@ -1,0 +1,509 @@
+{
+ "repo_head": "3075258f9fc5a7912ba1a2593c60b69d951fd596",
+ "mutants": [
+  {
+   "name": "new-tracked-live-site",
+   "expected_red": [
+    "test_no_file_outside_the_named_set_feeds_a_rooted_insert",
+    "test_the_fail_open_set_is_EXACTLY_the_recorded_one"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_no_file_outside_the_named_set_feeds_a_rooted_insert",
+    "test_the_fail_open_set_is_EXACTLY_the_recorded_one"
+   ],
+   "ran": 2,
+   "skipped": 0,
+   "wall_s": 7.2,
+   "tail": "ssion: an absolute insert(0, <cluster root>) executes that tree's modules whichever checkout launched the entrypoint, PYTHONPATH cannot outrank position 0, and a re-deploy does not fix it. A REPAIRED site is welcome and still red: update both constants above in the same commit, naming the site.\n  measured set:\n    ./2d-unfolding/unfold_2d_omnifold_unbinned.py\n    ./2d-unfolding/uq/new_live_site.py\n    ./docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py\n    ./docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py\n    ./docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py\n    ./docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py\n    ./docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py\n    ./docs/orchestration/state/note-boot-20261003/boot_spreads.py\n    ./docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py\n    ./docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py\n    ./docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py\n    ./docs/orchestration/state/uqpaper-median-20261006/paper_median.py\n    ./nd-unfolding/adopt_unified_5d.py\n    ./nd-unfolding/pet/dump_pointcloud_inputs.py\n    ./nd-unfolding/pet/fullevent_fps_dataloader.py\n    ./nd-unfolding/pet/train_fullevent_nominal.py\n    ./nd-unfolding/pet/validate_pet_nominal_gate4.py\n\n----------------------------------------------------------------------\nRan 2 tests in 7.157s\n\nFAILED (failures=2)\n"
+  },
+  {
+   "name": "new-untracked-live-site",
+   "expected_red": [
+    "test_the_fail_open_set_is_EXACTLY_the_recorded_one"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_the_fail_open_set_is_EXACTLY_the_recorded_one"
+   ],
+   "ran": 2,
+   "skipped": 0,
+   "wall_s": 7.4,
+   "tail": "ssion: an absolute insert(0, <cluster root>) executes that tree's modules whichever checkout launched the entrypoint, PYTHONPATH cannot outrank position 0, and a re-deploy does not fix it. A REPAIRED site is welcome and still red: update both constants above in the same commit, naming the site.\n  measured set:\n    ./2d-unfolding/unfold_2d_omnifold_unbinned.py\n    ./2d-unfolding/uq/new_live_site.py\n    ./docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py\n    ./docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py\n    ./docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py\n    ./docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py\n    ./docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py\n    ./docs/orchestration/state/note-boot-20261003/boot_spreads.py\n    ./docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py\n    ./docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py\n    ./docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py\n    ./docs/orchestration/state/uqpaper-median-20261006/paper_median.py\n    ./nd-unfolding/adopt_unified_5d.py\n    ./nd-unfolding/pet/dump_pointcloud_inputs.py\n    ./nd-unfolding/pet/fullevent_fps_dataloader.py\n    ./nd-unfolding/pet/train_fullevent_nominal.py\n    ./nd-unfolding/pet/validate_pet_nominal_gate4.py\n\n----------------------------------------------------------------------\nRan 2 tests in 7.299s\n\nFAILED (failures=1)\n"
+  },
+  {
+   "name": "toy-literal-replanted",
+   "expected_red": [
+    "test_no_file_outside_the_named_set_feeds_a_rooted_insert",
+    "test_the_fail_open_set_is_EXACTLY_the_recorded_one"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_no_file_outside_the_named_set_feeds_a_rooted_insert",
+    "test_the_fail_open_set_is_EXACTLY_the_recorded_one"
+   ],
+   "ran": 2,
+   "skipped": 0,
+   "wall_s": 7.1,
+   "tail": "rt(0, <cluster root>) executes that tree's modules whichever checkout launched the entrypoint, PYTHONPATH cannot outrank position 0, and a re-deploy does not fix it. A REPAIRED site is welcome and still red: update both constants above in the same commit, naming the site.\n  measured set:\n    ./2d-unfolding/unfold_2d_omnifold_unbinned.py\n    ./2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py\n    ./docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py\n    ./docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py\n    ./docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py\n    ./docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py\n    ./docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py\n    ./docs/orchestration/state/note-boot-20261003/boot_spreads.py\n    ./docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py\n    ./docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py\n    ./docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py\n    ./docs/orchestration/state/uqpaper-median-20261006/paper_median.py\n    ./nd-unfolding/adopt_unified_5d.py\n    ./nd-unfolding/pet/dump_pointcloud_inputs.py\n    ./nd-unfolding/pet/fullevent_fps_dataloader.py\n    ./nd-unfolding/pet/train_fullevent_nominal.py\n    ./nd-unfolding/pet/validate_pet_nominal_gate4.py\n\n----------------------------------------------------------------------\nRan 2 tests in 7.004s\n\nFAILED (failures=2)\n"
+  },
+  {
+   "name": "ki85-literal-replanted",
+   "expected_red": [
+    "test_no_file_outside_the_named_set_feeds_a_rooted_insert",
+    "test_the_fail_open_set_is_EXACTLY_the_recorded_one"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_no_file_outside_the_named_set_feeds_a_rooted_insert",
+    "test_the_fail_open_set_is_EXACTLY_the_recorded_one"
+   ],
+   "ran": 2,
+   "skipped": 0,
+   "wall_s": 6.8,
+   "tail": "nsert(0, <cluster root>) executes that tree's modules whichever checkout launched the entrypoint, PYTHONPATH cannot outrank position 0, and a re-deploy does not fix it. A REPAIRED site is welcome and still red: update both constants above in the same commit, naming the site.\n  measured set:\n    ./2d-unfolding/unfold_2d_omnifold_unbinned.py\n    ./2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py\n    ./docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py\n    ./docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py\n    ./docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py\n    ./docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py\n    ./docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py\n    ./docs/orchestration/state/note-boot-20261003/boot_spreads.py\n    ./docs/orchestration/state/probe-oi120c-loader-purity-perturbation-20260814.py\n    ./docs/orchestration/state/probe-oi22-leakage-real-input-20260814.py\n    ./docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py\n    ./docs/orchestration/state/uqpaper-median-20261006/paper_median.py\n    ./nd-unfolding/adopt_unified_5d.py\n    ./nd-unfolding/pet/dump_pointcloud_inputs.py\n    ./nd-unfolding/pet/fullevent_fps_dataloader.py\n    ./nd-unfolding/pet/train_fullevent_nominal.py\n    ./nd-unfolding/pet/validate_pet_nominal_gate4.py\n\n----------------------------------------------------------------------\nRan 2 tests in 6.791s\n\nFAILED (failures=2)\n"
+  },
+  {
+   "name": "toy-literal-replanted-as-path",
+   "expected_red": [
+    "test_no_file_outside_the_named_set_feeds_a_rooted_insert"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_no_file_outside_the_named_set_feeds_a_rooted_insert"
+   ],
+   "ran": 2,
+   "skipped": 0,
+   "wall_s": 7.0,
+   "tail": "F.\n======================================================================\nFAIL: test_no_file_outside_the_named_set_feeds_a_rooted_insert (nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_no_file_outside_the_named_set_feeds_a_rooted_insert)\nFIRES on a new instance. This is the ratchet.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/toy-literal-replanted-as-path/nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py\", line 344, in test_no_file_outside_the_named_set_feeds_a_rooted_insert\n    self.assertEqual(new, [], \"a NEW rooted sys.path.insert(0, ...) appeared:\\n  \" +\nAssertionError: Lists differ: ['2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py'\n\n- ['2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py']\n+ [] : a NEW rooted sys.path.insert(0, ...) appeared:\n  2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py\nDerive the root from __file__; do not add it here.\n\n----------------------------------------------------------------------\nRan 2 tests in 6.907s\n\nFAILED (failures=1)\n"
+  },
+  {
+   "name": "loader-accepts-pre-imported",
+   "expected_red": [
+    "test_refuses_a_module_imported_by_anything_else",
+    "test_a_pre_imported_analyzer_from_another_checkout_refuses",
+    "test_a_pre_imported_helper_from_another_checkout_refuses_before_output"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_a_pre_imported_analyzer_from_another_checkout_refuses",
+    "test_a_pre_imported_helper_from_another_checkout_refuses_before_output",
+    "test_executes_the_hashed_bytes_and_records_them",
+    "test_refuses_a_module_imported_by_anything_else"
+   ],
+   "ran": 25,
+   "skipped": 0,
+   "wall_s": 25.8,
+   "tail": "h.stat()\n  File \"/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py\", line 515, in stat\n    return os.stat(self, follow_symlinks=follow_symlinks)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '<scratch>/tmp/tmphxr2dxru/A/docs/orchestration/state/coverage-2d-20261005/interim.npz'\n\n\n======================================================================\nFAIL: test_a_pre_imported_helper_from_another_checkout_refuses_before_output (test_producer_provenance.TheToyProducer.test_a_pre_imported_helper_from_another_checkout_refuses_before_output)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/loader-accepts-pre-imported/2d-unfolding/uq/coverage_fixed_truth/n2/test_producer_provenance.py\", line 296, in test_a_pre_imported_helper_from_another_checkout_refuses_before_output\n    self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr[-3000:])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 0 != 3 : \n\n----------------------------------------------------------------------\nRan 25 tests in 24.076s\n\nFAILED (failures=4)\n"
+  },
+  {
+   "name": "loader-skips-digest",
+   "expected_red": [
+    "test_refuses_a_digest_mismatch_without_executing",
+    "test_a_changed_analyzer_refuses_before_its_body_runs",
+    "test_changed_helper_bytes_refuse_before_the_helper_runs"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_a_changed_analyzer_refuses_before_its_body_runs",
+    "test_changed_helper_bytes_refuse_before_the_helper_runs",
+    "test_refuses_a_digest_mismatch_without_executing"
+   ],
+   "ran": 25,
+   "skipped": 0,
+   "wall_s": 22.2,
+   "tail": "~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                     \"the mismatched analyzer's module body ran before the refusal\")\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: True is not false : the mismatched analyzer's module body ran before the refusal\n\n======================================================================\nFAIL: test_changed_helper_bytes_refuse_before_the_helper_runs (test_producer_provenance.TheToyProducer.test_changed_helper_bytes_refuse_before_the_helper_runs)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/loader-skips-digest/2d-unfolding/uq/coverage_fixed_truth/n2/test_producer_provenance.py\", line 310, in test_changed_helper_bytes_refuse_before_the_helper_runs\n    self.assertFalse(Path(str(self.a / HELPER) + \".executed\").exists(),\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                     \"the mismatched helper's module body ran before the refusal\")\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: True is not false : the mismatched helper's module body ran before the refusal\n\n----------------------------------------------------------------------\nRan 25 tests in 21.655s\n\nFAILED (failures=2, errors=1)\n"
+  },
+  {
+   "name": "strict-skips-guard",
+   "expected_red": [
+    "test_strict_mode_refuses_unguarded",
+    "test_strict_mode_refuses_missing_provenance"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_strict_mode_refuses_missing_provenance",
+    "test_strict_mode_refuses_unguarded"
+   ],
+   "ran": 15,
+   "skipped": 0,
+   "wall_s": 22.4,
+   "tail": "t-skips-guard/2d-unfolding/uq/coverage_fixed_truth/n2/test_producer_provenance.py\", line 427, in test_strict_mode_refuses_unguarded\n    self.assertIn(\"not running under\", cp.stderr)\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'not running under' not found in \"[REFUSED] strict provenance needs a stated commit and a digest for every executed module; missing ['2d-unfolding/uq/analyze_uq.py', '2d-unfolding/uq/coverage_fixed_truth/ki85_compare.py', '2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py', '2d-unfolding/uq/coverage_fixed_truth/n2/execution.py', 'technote_style.py']\\n\"\n\n======================================================================\nFAIL: test_strict_mode_refuses_missing_provenance (test_producer_provenance.TheToyProducer.test_strict_mode_refuses_missing_provenance) [unguarded]\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/strict-skips-guard/2d-unfolding/uq/coverage_fixed_truth/n2/test_producer_provenance.py\", line 342, in test_strict_mode_refuses_missing_provenance\n    self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr[-3000:])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 0 != 3 : \n\n----------------------------------------------------------------------\nRan 15 tests in 21.830s\n\nFAILED (failures=2)\n"
+  },
+  {
+   "name": "strict-ignores-head-drift",
+   "expected_red": [
+    "test_strict_mode_refuses_a_committed_helper_edited_since_head"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_strict_mode_refuses_a_committed_helper_edited_since_head"
+   ],
+   "ran": 10,
+   "skipped": 0,
+   "wall_s": 16.2,
+   "tail": "e2-a292-68e1aed560d7/scratchpad/mut/strict-ignores-head-drift/2d-unfolding/uq/coverage_fixed_truth/n2/test_producer_provenance.py\", line 320, in test_strict_mode_refuses_a_committed_helper_edited_since_head\n    self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr[-3000:])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 0 != 3 : [oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.\n[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1\n[oi136-inv] MNV_REPO resolution=ABSENT  value=None\n[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from\n[oi136-inv]   [expect-root,this-guard] <scratch>/tmp/tmp_9stoc8l/A  (6) __main__, n2, n2.execution, omnifold, toy_design, unfold_2d_omnifold_unbinned\n[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.\n\n\n----------------------------------------------------------------------\nRan 10 tests in 15.648s\n\nFAILED (failures=1)\n"
+  },
+  {
+   "name": "output-overwrite-allowed",
+   "expected_red": [
+    "test_strict_mode_refuses_to_overwrite_and_leaves_the_file_untouched"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_strict_mode_refuses_to_overwrite_and_leaves_the_file_untouched"
+   ],
+   "ran": 10,
+   "skipped": 0,
+   "wall_s": 16.2,
+   "tail": "92-68e1aed560d7/scratchpad/mut/output-overwrite-allowed/2d-unfolding/uq/coverage_fixed_truth/n2/test_producer_provenance.py\", line 367, in test_strict_mode_refuses_to_overwrite_and_leaves_the_file_untouched\n    self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr[-3000:])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 0 != 3 : [oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.\n[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1\n[oi136-inv] MNV_REPO resolution=ABSENT  value=None\n[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from\n[oi136-inv]   [expect-root,this-guard] <scratch>/tmp/tmpbu5l2gnq/A  (6) __main__, n2, n2.execution, omnifold, toy_design, unfold_2d_omnifold_unbinned\n[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.\n\n\n----------------------------------------------------------------------\nRan 10 tests in 15.694s\n\nFAILED (failures=1)\n"
+  },
+  {
+   "name": "admission-ignores-rebuild-digest",
+   "expected_red": [
+    "test_no_or_incomplete_admission_refuses_a_launch"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_no_or_incomplete_admission_refuses_a_launch"
+   ],
+   "ran": 1,
+   "skipped": 0,
+   "wall_s": 2.4,
+   "tail": "=========================\nFAIL: test_no_or_incomplete_admission_refuses_a_launch (test_n2_harness.Harness.test_no_or_incomplete_admission_refuses_a_launch) [real, absent rebuild]\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/admission-ignores-rebuild-digest/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 340, in test_no_or_incomplete_admission_refuses_a_launch\n    self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr)\nAssertionError: 0 != 3 : \n\n======================================================================\nFAIL: test_no_or_incomplete_admission_refuses_a_launch (test_n2_harness.Harness.test_no_or_incomplete_admission_refuses_a_launch) [real, wrong rebuild digest]\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/admission-ignores-rebuild-digest/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 340, in test_no_or_incomplete_admission_refuses_a_launch\n    self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr)\nAssertionError: 0 != 3 : \n\n----------------------------------------------------------------------\nRan 1 test in 2.166s\n\nFAILED (failures=2)\n"
+  },
+  {
+   "name": "admission-accepts-any-authorization",
+   "expected_red": [
+    "test_no_or_incomplete_admission_refuses_a_launch"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_no_or_incomplete_admission_refuses_a_launch"
+   ],
+   "ran": 1,
+   "skipped": 0,
+   "wall_s": 2.3,
+   "tail": "F\n======================================================================\nFAIL: test_no_or_incomplete_admission_refuses_a_launch (test_n2_harness.Harness.test_no_or_incomplete_admission_refuses_a_launch) [real, authorization not a record]\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/admission-accepts-any-authorization/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 341, in test_no_or_incomplete_admission_refuses_a_launch\n    self.assertIn(needle, cp.stderr)\nAssertionError: 'not an AUTHORIZATION-' not found in '[REFUSED] a real admission names the identity-carrying rebuild and its digest\\n'\n\n----------------------------------------------------------------------\nRan 1 test in 2.220s\n\nFAILED (failures=1)\n"
+  },
+  {
+   "name": "input-digests-not-forwarded",
+   "expected_red": [
+    "test_a_synthetic_campaign_runs_guarded_and_recovers_the_known_answer"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_a_synthetic_campaign_runs_guarded_and_recovers_the_known_answer"
+   ],
+   "ran": 1,
+   "skipped": 0,
+   "wall_s": 1.8,
+   "tail": "F\n======================================================================\nFAIL: test_a_synthetic_campaign_runs_guarded_and_recovers_the_known_answer (test_n2_harness.Harness.test_a_synthetic_campaign_runs_guarded_and_recovers_the_known_answer)\nPositive control: 100 guarded members, strict provenance, verdict 'faithful'.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/input-digests-not-forwarded/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 380, in test_a_synthetic_campaign_runs_guarded_and_recovers_the_known_answer\n    self.assertEqual(cp.returncode, 0, f\"{m['id']}: {cp.stderr[-2000:]}\")\nAssertionError: 1 != 0 : T001: \n\n----------------------------------------------------------------------\nRan 1 test in 1.669s\n\nFAILED (failures=1)\n"
+  },
+  {
+   "name": "imported-repo-modules-ignored",
+   "expected_red": [
+    "test_strict_mode_records_and_head_checks_the_analyzers_own_imports"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_strict_mode_records_and_head_checks_the_analyzers_own_imports"
+   ],
+   "ran": 5,
+   "skipped": 0,
+   "wall_s": 6.4,
+   "tail": "po-modules-ignored/2d-unfolding/uq/coverage_fixed_truth/n2/test_producer_provenance.py\", line 415, in test_strict_mode_records_and_head_checks_the_analyzers_own_imports\n    self.assertIn(\"technote_style.py\", cp.stderr)\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'technote_style.py' not found in \"[REFUSED] strict provenance needs input digests for ['interim', 'purity']\\n[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.\\n[oi136-inv] modules loaded from inside a checkout: 5   distinct checkout roots: 1\\n[oi136-inv] MNV_REPO resolution=ABSENT  value=None\\n[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from\\n[oi136-inv]   [expect-root,this-guard] <scratch>/tmp/tmpljhn7htw/A  (5) __main__, analyze_uq, n2, n2.execution, technote_style\\n[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.\\n\"\n\n----------------------------------------------------------------------\nRan 5 tests in 4.678s\n\nFAILED (failures=1)\n"
+  },
+  {
+   "name": "late-imports-ignored",
+   "expected_red": [
+    "test_a_repository_module_imported_after_the_check_is_caught"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_a_repository_module_imported_after_the_check_is_caught"
+   ],
+   "ran": 10,
+   "skipped": 0,
+   "wall_s": 0.8,
+   "tail": ".F........\n======================================================================\nFAIL: test_a_repository_module_imported_after_the_check_is_caught (test_producer_provenance.TheLoader.test_a_repository_module_imported_after_the_check_is_caught)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/late-imports-ignored/2d-unfolding/uq/coverage_fixed_truth/n2/test_producer_provenance.py\", line 558, in test_a_repository_module_imported_after_the_check_is_caught\n    with self.assertRaisesRegex(gx.ProvenanceRefusal, \"late_mod_n2\"):\n         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ProvenanceRefusal not raised\n\n----------------------------------------------------------------------\nRan 10 tests in 0.297s\n\nFAILED (failures=1)\n"
+  },
+  {
+   "name": "strict-without-commit",
+   "expected_red": [
+    "test_strict_mode_refuses_missing_provenance"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_strict_mode_refuses_missing_provenance"
+   ],
+   "ran": 10,
+   "skipped": 0,
+   "wall_s": 17.3,
+   "tail": "iFold/64865779-b4d9-4ee2-a292-68e1aed560d7/scratchpad/mut/strict-without-commit/2d-unfolding/uq/coverage_fixed_truth/n2/test_producer_provenance.py\", line 342, in test_strict_mode_refuses_missing_provenance\n    self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr[-3000:])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 0 != 3 : [oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.\n[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1\n[oi136-inv] MNV_REPO resolution=ABSENT  value=None\n[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from\n[oi136-inv]   [expect-root,this-guard] <scratch>/tmp/tmpwfa3wzh2/A  (6) __main__, n2, n2.execution, omnifold, toy_design, unfold_2d_omnifold_unbinned\n[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.\n\n\n----------------------------------------------------------------------\nRan 10 tests in 15.698s\n\nFAILED (failures=1)\n"
+  },
+  {
+   "name": "git-env-not-sanitized",
+   "expected_red": [
+    "test_git_identity_ignores_a_GIT_DIR_naming_another_repository"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_git_identity_ignores_a_GIT_DIR_naming_another_repository"
+   ],
+   "ran": 10,
+   "skipped": 0,
+   "wall_s": 1.3,
+   "tail": "....F.....\n======================================================================\nFAIL: test_git_identity_ignores_a_GIT_DIR_naming_another_repository (test_producer_provenance.TheLoader.test_git_identity_ignores_a_GIT_DIR_naming_another_repository)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/git-env-not-sanitized/2d-unfolding/uq/coverage_fixed_truth/n2/test_producer_provenance.py\", line 584, in test_git_identity_ignores_a_GIT_DIR_naming_another_repository\n    self.assertEqual(got[\"commit\"], heads[\"this\"])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: '219556a22c31457fafdfec3a78ffc8b67ba091e5' != '225b331617fe44d97e5b9b8bf95c1cee8b292872'\n- 219556a22c31457fafdfec3a78ffc8b67ba091e5\n+ 225b331617fe44d97e5b9b8bf95c1cee8b292872\n\n\n----------------------------------------------------------------------\nRan 10 tests in 0.324s\n\nFAILED (failures=1)\n"
+  },
+  {
+   "name": "ids-allow-duplicates",
+   "expected_red": [
+    "test_a_repeated_identity_is_a_stop_condition"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_a_repeated_identity_is_a_stop_condition"
+   ],
+   "ran": 10,
+   "skipped": 0,
+   "wall_s": 1.2,
+   "tail": "F.........\n======================================================================\nFAIL: test_a_repeated_identity_is_a_stop_condition (test_n2_harness.Identity.test_a_repeated_identity_is_a_stop_condition)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/ids-allow-duplicates/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 84, in test_a_repeated_identity_is_a_stop_condition\n    with self.assertRaisesRegex(identity.IdentityError, \"stop condition\"):\nAssertionError: IdentityError not raised\n\n----------------------------------------------------------------------\nRan 10 tests in 1.028s\n\nFAILED (failures=1)\n"
+  },
+  {
+   "name": "ids-allow-missing",
+   "expected_red": [
+    "test_missing_ids_are_refused"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_missing_ids_are_refused"
+   ],
+   "ran": 10,
+   "skipped": 0,
+   "wall_s": 0.9,
+   "tail": "identity.py\", line 33, in keys\n    n = {len(table[c]) for c in KEY}\n             ~~~~~^^^\nKeyError: 'mc_subrun'\n\n======================================================================\nFAIL: test_missing_ids_are_refused (test_n2_harness.Identity.test_missing_ids_are_refused) [negative]\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/ids-allow-missing/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 76, in test_missing_ids_are_refused\n    with self.assertRaises(identity.IdentityError):\nAssertionError: IdentityError not raised\n\n======================================================================\nFAIL: test_missing_ids_are_refused (test_n2_harness.Identity.test_missing_ids_are_refused) [empty source]\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/ids-allow-missing/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 76, in test_missing_ids_are_refused\n    with self.assertRaises(identity.IdentityError):\nAssertionError: IdentityError not raised\n\n----------------------------------------------------------------------\nRan 10 tests in 0.782s\n\nFAILED (failures=2, errors=1)\n"
+  },
+  {
+   "name": "c1-disabled",
+   "expected_red": [
+    "test_c1_fires_when_a_reservoir_key_is_moved_into_training"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_c1_fires_when_a_reservoir_key_is_moved_into_training"
+   ],
+   "ran": 10,
+   "skipped": 0,
+   "wall_s": 1.1,
+   "tail": ".F........\n======================================================================\nFAIL: test_c1_fires_when_a_reservoir_key_is_moved_into_training (test_n2_harness.Identity.test_c1_fires_when_a_reservoir_key_is_moved_into_training)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/c1-disabled/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 89, in test_c1_fires_when_a_reservoir_key_is_moved_into_training\n    with self.assertRaisesRegex(identity.IdentityError, \"C1\"):\nAssertionError: IdentityError not raised\n\n----------------------------------------------------------------------\nRan 10 tests in 0.995s\n\nFAILED (failures=1)\n"
+  },
+  {
+   "name": "c6-disabled",
+   "expected_red": [
+    "test_c6_fires_on_a_reservoir_row_in_the_bank",
+    "test_failed_contaminated_and_missing_members_are_reported_not_dropped"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_c6_fires_on_a_reservoir_row_in_the_bank",
+    "test_failed_contaminated_and_missing_members_are_reported_not_dropped"
+   ],
+   "ran": 2,
+   "skipped": 0,
+   "wall_s": 6.1,
+   "tail": "ceback (most recent call last):\n  File \"<scratch>/mut/c6-disabled/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 132, in test_c6_fires_on_a_reservoir_row_in_the_bank\n    with self.assertRaisesRegex(identity.IdentityError, \"C6\"):\nAssertionError: IdentityError not raised\n\n======================================================================\nFAIL: test_failed_contaminated_and_missing_members_are_reported_not_dropped (test_n2_harness.Harness.test_failed_contaminated_and_missing_members_are_reported_not_dropped)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/c6-disabled/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 420, in test_failed_contaminated_and_missing_members_are_reported_not_dropped\n    self.assertEqual(res[\"ledger\"][\"counts\"], {\"ok\": 4, \"failed\": 2, \"missing\": 94})\nAssertionError: {'failed': 1, 'missing': 94, 'ok': 5} != {'ok': 4, 'failed': 2, 'missing': 94}\n- {'failed': 1, 'missing': 94, 'ok': 5}\n?            ^                       ^\n\n+ {'failed': 2, 'missing': 94, 'ok': 4}\n?            ^                       ^\n\n\n----------------------------------------------------------------------\nRan 2 tests in 5.936s\n\nFAILED (failures=2)\n"
+  },
+  {
+   "name": "ledger-drops-missing",
+   "expected_red": [
+    "test_the_ledger_keeps_every_declared_member",
+    "test_failed_contaminated_and_missing_members_are_reported_not_dropped"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_failed_contaminated_and_missing_members_are_reported_not_dropped",
+    "test_the_ledger_keeps_every_declared_member"
+   ],
+   "ran": 3,
+   "skipped": 0,
+   "wall_s": 6.3,
+   "tail": "y\", line 231, in test_the_ledger_keeps_every_declared_member\n    self.assertEqual(states, [\"ok\", \"failed\", \"failed\", \"missing\"])\nAssertionError: Lists differ: ['ok', 'failed', 'failed'] != ['ok', 'failed', 'failed', 'missing']\n\nSecond list contains 1 additional elements.\nFirst extra element 3:\n'missing'\n\n- ['ok', 'failed', 'failed']\n+ ['ok', 'failed', 'failed', 'missing']\n?                          +++++++++++\n\n\n======================================================================\nFAIL: test_failed_contaminated_and_missing_members_are_reported_not_dropped (test_n2_harness.Harness.test_failed_contaminated_and_missing_members_are_reported_not_dropped)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/ledger-drops-missing/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 420, in test_failed_contaminated_and_missing_members_are_reported_not_dropped\n    self.assertEqual(res[\"ledger\"][\"counts\"], {\"ok\": 4, \"failed\": 2, \"missing\": 94})\nAssertionError: {'failed': 2, 'missing': 0, 'ok': 4} != {'ok': 4, 'failed': 2, 'missing': 94}\n- {'failed': 2, 'missing': 0, 'ok': 4}\n?                          ^\n\n+ {'failed': 2, 'missing': 94, 'ok': 4}\n?                          ^^\n\n\n----------------------------------------------------------------------\nRan 3 tests in 6.150s\n\nFAILED (failures=2)\n"
+  },
+  {
+   "name": "write-new-overwrites",
+   "expected_red": [
+    "test_write_new_never_overwrites"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_write_new_never_overwrites"
+   ],
+   "ran": 2,
+   "skipped": 0,
+   "wall_s": 0.2,
+   "tail": ".F\n======================================================================\nFAIL: test_write_new_never_overwrites (test_n2_harness.Members.test_write_new_never_overwrites)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/write-new-overwrites/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 217, in test_write_new_never_overwrites\n    with self.assertRaisesRegex(mb.MemberError, \"refusing to overwrite\"):\nAssertionError: MemberError not raised\n\n----------------------------------------------------------------------\nRan 2 tests in 0.004s\n\nFAILED (failures=1)\n"
+  },
+  {
+   "name": "mc-stream-resampled",
+   "expected_red": [
+    "test_the_plan_streams_seeds_and_estimator"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_the_plan_streams_seeds_and_estimator"
+   ],
+   "ran": 4,
+   "skipped": 0,
+   "wall_s": 0.5,
+   "tail": "..E.\n======================================================================\nERROR: test_the_plan_streams_seeds_and_estimator (test_n2_harness.Design.test_the_plan_streams_seeds_and_estimator)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/mc-stream-resampled/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 148, in test_the_plan_streams_seeds_and_estimator\n    plan = design.validate_plan(design.members())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<scratch>/mut/mc-stream-resampled/2d-unfolding/uq/coverage_fixed_truth/n2/design.py\", line 95, in validate_plan\n    raise DesignError(f\"{m['id']}: N2 holds the MC stream; {m['mc_stream']!r} is a \"\nn2.design.DesignError: B001: N2 holds the MC stream; 'bootstrap' is a different procedure\n\n----------------------------------------------------------------------\nRan 4 tests in 0.389s\n\nFAILED (errors=1)\n"
+  },
+  {
+   "name": "real-admission-without-authorization",
+   "expected_red": [
+    "test_no_or_incomplete_admission_refuses_a_launch"
+   ],
+   "caught": true,
+   "exit": 1,
+   "red": [
+    "test_no_or_incomplete_admission_refuses_a_launch"
+   ],
+   "ran": 1,
+   "skipped": 0,
+   "wall_s": 2.3,
+   "tail": "===============\nFAIL: test_no_or_incomplete_admission_refuses_a_launch (test_n2_harness.Harness.test_no_or_incomplete_admission_refuses_a_launch) [real, no rebuild]\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/real-admission-without-authorization/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 369, in test_no_or_incomplete_admission_refuses_a_launch\n    self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr)\nAssertionError: 1 != 3 : \n\n======================================================================\nFAIL: test_no_or_incomplete_admission_refuses_a_launch (test_n2_harness.Harness.test_no_or_incomplete_admission_refuses_a_launch) [real, wrong authorization digest]\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<scratch>/mut/real-admission-without-authorization/2d-unfolding/uq/coverage_fixed_truth/n2/test_n2_harness.py\", line 369, in test_no_or_incomplete_admission_refuses_a_launch\n    self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr)\nAssertionError: 1 != 3 : \n\n----------------------------------------------------------------------\nRan 1 test in 2.189s\n\nFAILED (failures=6)\n"
+  }
+ ],
+ "unmutated": {
+  "[\"plain\", [\"-m\", \"unittest\", \"nd-unfolding.tests.test_oi136_rooted_insert_ratchet.TheCanonicalRootMustNotReachPositionZero.test_no_file_outside_the_named_set_feeds_a_rooted_insert\", \"nd-unfolding.tests.test_oi136_failopen_inventory_ratchet.TheInventoryIsARatchet.test_the_fail_open_set_is_EXACTLY_the_recorded_one\"]]": {
+   "exit": 0,
+   "red": [],
+   "ran": 2,
+   "skipped": 0,
+   "wall_s": 6.8,
+   "tail": "..\n----------------------------------------------------------------------\nRan 2 tests in 6.768s\n\nOK\n"
+  },
+  "[\"root\", [\"-m\", \"unittest\", \"test_producer_provenance.TheLoader\", \"test_producer_provenance.TheKi85Producer\", \"test_producer_provenance.TheToyProducer\"], \"2d-unfolding/uq/coverage_fixed_truth/n2\"]": {
+   "exit": 0,
+   "red": [],
+   "ran": 25,
+   "skipped": 0,
+   "wall_s": 23.0,
+   "tail": ".........................\n----------------------------------------------------------------------\nRan 25 tests in 21.213s\n\nOK\n"
+  },
+  "[\"root\", [\"-m\", \"unittest\", \"test_producer_provenance.TheKi85Producer\", \"test_producer_provenance.TheToyProducer\"], \"2d-unfolding/uq/coverage_fixed_truth/n2\"]": {
+   "exit": 0,
+   "red": [],
+   "ran": 15,
+   "skipped": 0,
+   "wall_s": 21.0,
+   "tail": "...............\n----------------------------------------------------------------------\nRan 15 tests in 20.453s\n\nOK\n"
+  },
+  "[\"root\", [\"-m\", \"unittest\", \"test_producer_provenance.TheToyProducer\"], \"2d-unfolding/uq/coverage_fixed_truth/n2\"]": {
+   "exit": 0,
+   "red": [],
+   "ran": 10,
+   "skipped": 0,
+   "wall_s": 15.7,
+   "tail": "..........\n----------------------------------------------------------------------\nRan 10 tests in 15.206s\n\nOK\n"
+  },
+  "[\"plain\", [\"-m\", \"unittest\", \"test_n2_harness.Harness.test_no_or_incomplete_admission_refuses_a_launch\"], \"2d-unfolding/uq/coverage_fixed_truth/n2\"]": {
+   "exit": 0,
+   "red": [],
+   "ran": 1,
+   "skipped": 0,
+   "wall_s": 2.6,
+   "tail": ".\n----------------------------------------------------------------------\nRan 1 test in 2.440s\n\nOK\n"
+  },
+  "[\"plain\", [\"-m\", \"unittest\", \"test_n2_harness.Harness.test_a_synthetic_campaign_runs_guarded_and_recovers_the_known_answer\"], \"2d-unfolding/uq/coverage_fixed_truth/n2\"]": {
+   "exit": 0,
+   "red": [],
+   "ran": 1,
+   "skipped": 0,
+   "wall_s": 88.7,
+   "tail": ".\n----------------------------------------------------------------------\nRan 1 test in 88.604s\n\nOK\n"
+  },
+  "[\"root\", [\"-m\", \"unittest\", \"test_producer_provenance.TheKi85Producer\"], \"2d-unfolding/uq/coverage_fixed_truth/n2\"]": {
+   "exit": 0,
+   "red": [],
+   "ran": 5,
+   "skipped": 0,
+   "wall_s": 7.2,
+   "tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 5.626s\n\nOK\n"
+  },
+  "[\"root\", [\"-m\", \"unittest\", \"test_producer_provenance.TheLoader\"], \"2d-unfolding/uq/coverage_fixed_truth/n2\"]": {
+   "exit": 0,
+   "red": [],
+   "ran": 10,
+   "skipped": 0,
+   "wall_s": 0.8,
+   "tail": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.326s\n\nOK\n"
+  },
+  "[\"plain\", [\"-m\", \"unittest\", \"test_n2_harness.Identity\"], \"2d-unfolding/uq/coverage_fixed_truth/n2\"]": {
+   "exit": 0,
+   "red": [],
+   "ran": 10,
+   "skipped": 0,
+   "wall_s": 1.2,
+   "tail": "..........\n----------------------------------------------------------------------\nRan 10 tests in 1.044s\n\nOK\n"
+  },
+  "[\"plain\", [\"-m\", \"unittest\", \"test_n2_harness.Identity.test_c6_fires_on_a_reservoir_row_in_the_bank\", \"test_n2_harness.Harness.test_failed_contaminated_and_missing_members_are_reported_not_dropped\"], \"2d-unfolding/uq/coverage_fixed_truth/n2\"]": {
+   "exit": 0,
+   "red": [],
+   "ran": 2,
+   "skipped": 0,
+   "wall_s": 6.0,
+   "tail": "..\n----------------------------------------------------------------------\nRan 2 tests in 5.924s\n\nOK\n"
+  },
+  "[\"plain\", [\"-m\", \"unittest\", \"test_n2_harness.Members\", \"test_n2_harness.Harness.test_failed_contaminated_and_missing_members_are_reported_not_dropped\"], \"2d-unfolding/uq/coverage_fixed_truth/n2\"]": {
+   "exit": 0,
+   "red": [],
+   "ran": 3,
+   "skipped": 0,
+   "wall_s": 6.6,
+   "tail": "...\n----------------------------------------------------------------------\nRan 3 tests in 6.462s\n\nOK\n"
+  },
+  "[\"plain\", [\"-m\", \"unittest\", \"test_n2_harness.Members\"], \"2d-unfolding/uq/coverage_fixed_truth/n2\"]": {
+   "exit": 0,
+   "red": [],
+   "ran": 2,
+   "skipped": 0,
+   "wall_s": 0.1,
+   "tail": "..\n----------------------------------------------------------------------\nRan 2 tests in 0.005s\n\nOK\n"
+  },
+  "[\"plain\", [\"-m\", \"unittest\", \"test_n2_harness.Design\"], \"2d-unfolding/uq/coverage_fixed_truth/n2\"]": {
+   "exit": 0,
+   "red": [],
+   "ran": 4,
+   "skipped": 0,
+   "wall_s": 0.5,
+   "tail": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.399s\n\nOK\n"
+  }
+ },
+ "all_caught": true,
+ "unmutated_all_green": true
+}

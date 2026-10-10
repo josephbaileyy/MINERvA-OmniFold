@@ -81,6 +81,10 @@ _R = {
         'OFF THE k=0 IMPORT CLOSURE. Real, unrepaired, and NEITHER REPAIRED NOR AUTHORIZED -- listed so the count is honest, not because anyone has decided about them. Fixing them was explicitly not authorised on 2026-08-23; the authorisation covered the one file the k=0 route actually executes.',
     'receipt_bound':
         "receipt-bound: verify_hash_bindings.py pins its bytes; needs the binding owner's process. MEASURED, not inferred: editing any one of these five turns that checker's verdict to BINDINGS BROKEN, and the pre-commit hook runs it -- so a repair here cannot land as a code change at all. Joseph's 2026-09-03 authorization covered 36 named sites and deliberately excluded these; advancing a pinned digest is the owning gate's act, not a commit's.",
+    # ADDED 2026-10-09 under the next-preparation Goal 2 dispatch, which names exactly these seven
+    # files and orders them preserved byte-for-byte. Classification only: no file below changed.
+    'frozen_record':
+        "FROZEN ANALYSIS RECORD (2026-10-03..06). A one-off script committed beside the JSON it produced, as the record of a finished analysis; editing it falsifies that record, so it is classified, never patched. Nothing imports or launches it (measured 2026-10-09). Its insert puts the canonical checkout's 2d-unfolding/uq at sys.path[0], so a re-run from another tree imports the canonical analyzers: a re-run must go through nd-unfolding/mnv_guarded_run.py, which refuses that import.",
 }
 
 KNOWN_UNREPAIRED = {
@@ -163,6 +167,31 @@ KNOWN_UNREPAIRED = {
         _R['probe'],
     'docs/orchestration/state/probe-oi22-schema-parity-real-input-20260814.py':
         _R['probe'],
+    # --- frozen_record: the seven October analysis records Goal 2 names, with the JSON each one's
+    # source writes (read from the source, 2026-10-09):
+    #   ki84-adopt-20261006/purity_datastream_check.py  purity_fdata.json, purity_datastream_check.json
+    #   ki84-adopt-20261006/recompute_2d_budget.py      recompute_2d_budget.json
+    #   ki84-rebuild-20261006/boot_spreads_vl170.py     boot_spreads.json (in its scratch OUTDIR)
+    #   ki84-rebuild-20261006/compare_ki84_band.py      compare_<stage>.json
+    #   ki84-rebuild-20261006/predict_ki84.py           predict_from_vl162.json
+    #   note-boot-20261003/boot_spreads.py              boot_spreads.json (in its scratch OUTDIR)
+    #   uqpaper-median-20261006/paper_median.py         paper_median.json
+    # The two LIVE October sites (coverage_fixed_truth/fixed_truth_toy.py, ki85_compare.py) are
+    # NOT listed: they are repaired, not classified.
+    'docs/orchestration/state/ki84-adopt-20261006/purity_datastream_check.py':
+        _R['frozen_record'],
+    'docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py':
+        _R['frozen_record'],
+    'docs/orchestration/state/ki84-rebuild-20261006/boot_spreads_vl170.py':
+        _R['frozen_record'],
+    'docs/orchestration/state/ki84-rebuild-20261006/compare_ki84_band.py':
+        _R['frozen_record'],
+    'docs/orchestration/state/ki84-rebuild-20261006/predict_ki84.py':
+        _R['frozen_record'],
+    'docs/orchestration/state/note-boot-20261003/boot_spreads.py':
+        _R['frozen_record'],
+    'docs/orchestration/state/uqpaper-median-20261006/paper_median.py':
+        _R['frozen_record'],
 }
 
 def _canonical_form(value):
