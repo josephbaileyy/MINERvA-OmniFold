@@ -21,11 +21,11 @@ publication-ready measurement.
 | `Owned files` | `docs/orchestration/state/next-preparation-20261009/d-id/` only: this report, `did.py`, `config.json`, `test_did.py`, `outputs/` (numerical outputs and manifests) and the preserved review records |
 | `Immutable inputs` | the `gbdt/` subtree (design, `comparator.py`, reviews, `results.json`); the committed nd-unfolding code, ratio files, receipts and synthesis operands named in `config.json`; the cluster products in §1 |
 | `Authority` | Joseph's D-ID prompt (2026-10-09): implementation, one admission review, then (on PASS) the named local calculation. No training, no s5p extension, no Slurm/GPU/login-node computation |
-| `Resources` | §7 |
-| `Review` | §0; records in §8 and §10 |
+| `Resources` | §7.1: ≈ 3.0 active h; ≈ 1.5 local core-h in all (owner run 0.81, verification 0.23); peak RSS 4.65 GB; scratch ≤ 1.9 GiB; tracked outputs 7.0 MB; cluster: listings and read-only copies only |
+| `Review` | one fresh reviewer (Claude Opus 5.5 subagent, read-only): admission ADMIT-WITH-REPAIRS → one focused re-review ADMIT ([`review-admission.md`](review-admission.md), §8); final numerical verification PASS ([`verification.md`](verification.md), §10). Budget used exactly, no further review |
 | `Model / effort` | owner: Claude Opus 5.5 (`claude-opus-5-5`), Claude Code; effort not observable to the session |
-| `Disposition` | §11 |
-| `Next action` | §12 |
+| `Disposition` | §11: implementation **PASS**, admission **PASS**, numerical verification **PASS**, discriminating question **PASS**. Branch **C** in J, EW and H2; J carries it, while H2 is uninformative. It is scoped to binned estimators and to the resolution-stable functionals |
+| `Next action` | §12: one decision for Joseph, the endpoint-scope question (gbdt §10.3). Should the scalar-5D endpoint move from J cells to identified functionals (I2's MC-only selection), or stop at a recorded binned no-go for J? |
 
 `Q` = `docs/orchestration/state/next-preparation-20261009`. "§6" alone means gbdt REPORT §6.
 
@@ -291,6 +291,22 @@ Resources of the full suite: 79 s CPU (≈ 0.02 core-h), peak RSS 0.59 GB, two t
   would need login-node computation, so it is not used.
 - **If a cap is reached:** the frozen stage rule of §4/§6 applies. Nothing is retuned.
 
+### 7.1 Actual use
+
+| item | measured | cap |
+|---|---|---|
+| active time | 04:34–06:50Z and 09:32–≈10:20Z, ≈ 3.0 h. An idle usage-limit pause from 06:50 to 09:32Z is excluded | 10 h |
+| preparation and synthetic CPU (owner) | ≈ 0.35 core-h (timed test runs ≈ 0.2, memory measurements ≈ 0.07, hooks/verifiers/smoke ≈ 0.08; partly estimated) | 2 core-h |
+| admission reviews (reviewer) | ≈ 0.10 core-h (its own estimates over two rounds) | — |
+| real diagnostic (owner) | **0.806 core-h measured** (one attempt, `/usr/bin/time -l` user+sys, 2 threads); input manifest and reading of the outputs ≈ 0.01 | 7.04 core-h |
+| numerical verification (reviewer) | ≈ 0.23 core-h (including one crashed attempt) | ≥ 1 protected; 8.8 with the run |
+| combined | ≈ 1.5 core-h | 10.8 core-h |
+| peak RSS | 4.65 GB (run); 4.15 GB (verification) | 8 GiB |
+| threads | 2 | 2 |
+| scratch beyond worktrees | peak ≈ 1.88 GiB (inputs 1.59 GB plus reviewer scratch); deleted at delivery | 2 GiB |
+| tracked numerical evidence | `outputs/` 7.0 MB | 10 MiB |
+| cluster | two `ls` listings and `scp -p` read-only copies; no job, no login-node computation, no GPU, no training, no Slurm | — |
+
 ## 8. Admission review
 
 **Verdict at `9203add1`: ADMIT-WITH-REPAIRS** (record: [`review-admission.md`](review-admission.md)).
@@ -330,28 +346,240 @@ The session's one focused re-review is used on this batch.
 
 ## 9. Stage B results
 
-*Pending: Stage B is not released.*
+**Released** by the admission re-review (ADMIT at `0e32c018`). The inputs and the resource checks
+were verified, so no further permission was needed.
+
+- **Inputs:**
+  - one read-only `scp -p` copy (2026-10-10T05:41:59–05:44:21Z) into dated scratch, of the event
+    file plus 27 comparator products;
+  - digests, sources and the MC members' array headers are in
+    [`outputs/input-manifest.json`](outputs/input-manifest.json);
+  - the real-data members were never opened.
+- **Run:** one attempt of the driver at `0e32c018`, local, two threads (record:
+  [`outputs/run-record.json`](outputs/run-record.json)).
+  - 2026-10-10T05:44:48–06:34:27Z, exit 0, all five stages complete.
+  - **2,900.7 CPU-s = 0.806 core-h**, peak RSS **4.65 GB**.
+- **Outputs (result commit `d03a2c72`):**
+  - [`outputs/results.json`](outputs/results.json): admission, controls, convergence, the decision
+    with per-functional labels, and summaries;
+  - [`outputs/tables.npz`](outputs/tables.npz): every per-functional array — trajectories, widths,
+    null fractions, acceptance holes, invisible shares, missed fractions, r_IBU(∞) with
+    per-functional convergence, and the secondaries.
+  - No cell is selected; the decision uses all 175 reported functionals.
+
+### 9.1 Admission and controls (all passed)
+
+The events file has 32,849,103 MC rows, all truth-passing. 20,402,110 signal pair rows equal s5e
+`rows_eligible`. The 2,801 out-of-grid truth rows are exactly the −9999 sentinels, and every reweight
+is exactly 1 on them (A11).
+
+| check | result |
+|---|---|
+| A1 event digest | `07fccc1a…` |
+| A2 records, A3 ratio files, A4 traces / names / inputs | equal to config |
+| A5 committed reweights vs each comparator's own truths (15 products) | ≤ 3.6e-15 relative |
+| A6 receipt-limited prefixes vs the stage-2 per-K medians (8 traces) | deviation 0, 0 NaN medians; K = 40/30/40/200 of 100/100/125/200 present |
+| A7 reco cells; S_dep; GBDT fold λ_5D | 10,499; 92,363.627 / 92,244.780; λ_5D at K = 5/15/30 = 367.69/237.82/163.69 (GiBUU) and 1260.29/1031.03/987.04 (q3), equal to the receipt; my fold equals the s5e file exactly |
+| A9 edges | exact |
+| C1 nominal control, T1/T2/T3 | max \|r_IBU\| 1.7e-13 / 9.8e-14 / 7.7e-14 |
+| C2 exactness at T1 (gating), nine weight sets | all pass; worst error 1.5e-8 σ_c on 54–56 identified functionals (q3 at 10⁵ iterations without run-level convergence, within tolerance) |
+| C2 at T2 (reported) | every identified functional (10–12 per set) within 0.0012 σ_c |
+| split key (AM-11) | reproduced bitwise; halves 16,429,553 / 16,419,550 rows |
+
+**Grids actually occupied:** T1 has 134 non-empty J cells, T2 1,383 (of ≤ 5,184) and T3 10,694 fine
+cells. T2 has 12 zero-efficiency cells (acceptance holes).
+
+### 9.2 The frozen outcome
+
+Primary setting: T2, same-sample, nominal-weighted, K = 5, pooled over GiBUU, W1, W3, q3 and W2.
+
+| map | functionals with \|r_GBDT\| > 2% | resolution-sensitive (excluded) | eligible | C | A | B | outcome | without W2 (AM-30) |
+|---|---:|---:|---:|---:|---:|---:|---|---|
+| J | 376 | 232 | 144 | 0.840 | 0.014 | 0.000 | **C** | C (134; C 0.828, A 0.015) |
+| EW | 152 | 129 | 23 | 0.870 | 0.000 | 0.130 | **C** | C (19; C 0.895, B 0.105) |
+| H2 | 66 | 63 | 3 | 1.000 | 0 | 0 | **C** | C (3) |
+
+- Every departure, taken alone, also gives C wherever it has an eligible functional; H2 has none for
+  W1, W2 or W3. No tie occurred.
+- `all_three_sets_small` is false. No B candidate was blocked by non-convergence.
+- EW's three B-counted functionals are GiBUU EW40 and W1 EW40, both reading `tracks`
+  (r_GBDT/r_IBU at K = 40: −7.2/−6.7% and −3.3/−3.0%), and W2 EW19 (`untraced`).
+- **Bookkeeping (missed-event concentration) is implicated for no departure or map:** the top-tercile
+  share is 0.16–0.61 against the 2/3 rule. This is descriptive (§5).
+
+### 9.3 What the frozen outcome rests on (descriptive reading of the full tables)
+
+- **Population.** The branch shares cover only the *resolution-stable* functionals:
+  - J keeps 38% of its > 2% residual population, EW 15% and H2 5%.
+  - The rest change label between T1 and T2, mostly, or between weightings, and count toward no
+    branch. Nothing is claimed about them.
+  - H2's C rests on 3 functionals, 2 of them acceptance holes, so it is **effectively
+    uninformative**. EW's rests on 23, 4 of them acceptance holes. **J carries the result:** 121
+    C-counted functionals, 4 of them acceptance holes.
+- **Identifiability of the C-counted J functionals.** Their binned CR width at the analysis exposure
+  has a median of **31% at T1** (minimum 10.5%) and **58% at T2**, against a median |r_GBDT(5)| of
+  14%.
+  - Because the label is stable across T1 and T2 and across both weightings, the width exceeds 10%
+    even at the coarser, optimistic truth resolution.
+  - For all reported J functionals the T1 median is 11–13%. The T2 median is 24–26%, and EW and H2
+    widen from ≈ 2.5–3.5% at T1 to ≈ 20–30% at T2: the coarse grid hides within-cell freedom.
+  - Leaving out the acceptance-hole (σ = ∞) functionals, the C share is J 0.812, EW 0.696 and H2
+    0.333 (verification). J and EW stay C on finite widths alone. H2 does not, so its C is an
+    acceptance gap.
+- **Iteration behaviour.**
+  - Of the 144 eligible J functionals, 104 are iteration-faithful at K = 5, 15 are
+    approximation-dominated (2 of them identified, the A share) and 25 mixed.
+  - The J medians of |r| at K = 5 agree:
+
+    | | GiBUU | W1 | W3 | q3 |
+    |---|---:|---:|---:|---:|
+    | GBDT | 9.5% | 5.4% | 5.6% | 4.3% |
+    | exact T2 IBU | 8.3% | 5.4% | 4.9% | 5.3% |
+    | fine-grid IBU | 8.6% | 5.6% | 5.0% | 4.0% |
+
+  - At K = 5 the GBDT leaves about the residual an exact binned response iteration leaves.
+- **Longer exact iteration (noise-free, nominal-weighted T2).** The J median |r_IBU| at K = 200 and
+  after 10⁵ iterations:
+
+  | | K = 200 | 10⁵ iterations |
+  |---|---:|---:|
+  | GiBUU | 3.3% | 0.8% |
+  | W1 | 3.3% | 2.8% |
+  | W3 | 4.4% | 8.9% |
+  | q3 | 6.6% | 6.7% |
+
+  - For W3 and q3, the within-cell binning bias grows with K (median 2.8% and 4.2% at K = 200).
+  - Among the C-counted J functionals, |r_IBU(10⁵)|/|r_GBDT(5)| has a median of 0.35 (70 of 121 at
+    or below 0.5), but only 12 of them meet the per-functional convergence criterion.
+  - The T2 runs reach 10⁵ iterations with a run-level change of 2e-4 to 7e-3 per step. The
+    signature is cells driven toward zero, a maximum on the boundary of the positive orthant.
+- **Visibility.** Where a fine-grid GBDT estimate exists (GiBUU and q3 at K = 30, W3 at K = 200), the
+  median invisible share of the C-counted J functionals' GBDT residual is 0.61. EW gives 0.98, but
+  on only 13.
+- **Secondaries.** Signal-only pseudo-experiments (D3) and capacity 400/31 are close to the B0 traces;
+  missed events at w = 1 is worse:
+
+  | J median at K = 5 | GiBUU (E_avail) | q3 | W3 |
+  |---|---:|---:|---:|
+  | D3 signal-only pseudo | 9.2% | 4.4% | — |
+  | B0 noise-free trace | 9.5% | 4.3% | — |
+  | capacity 400/31 at K = 5 / 10 | 9.2 / 8.7% | 3.9 / 3.5% | 5.0 / 4.4% |
+  | missed events at w = 1 | 10.5% | — | — |
+
+- **P1r–P3r** (no vote) look like their historical counterparts:
+  - P1r is like W3: J median r_IBU at T2, K = 5 is 5.5%, binning bias 1.1%;
+  - P3r is like W2: 0.6%;
+  - P2r: 2.5%;
+  - their T1 J widths are 11.4–13.0%.
 
 ## 10. Final numerical verification
 
-*Pending.*
+**PASS** (record: [`verification.md`](verification.md)). The same fresh reviewer, read-only, worked
+from the real inputs at the result commit `d03a2c72` with its own code. It imported only the committed
+reweight/extraction/functional code and `comparator.py`, never `did.py`.
+
+Reproduced:
+
+- the row and cell counts, S_dep and the nominal control;
+- r_IBU per functional at T2 for K = 5 (all six sets, ≤ 3.1e-15) and K = 40 (GiBUU, 1e-14);
+- the CR widths at T1 and T2 for both weightings (≤ 1.7e-11), with identical infinity and
+  acceptance-hole patterns;
+- r_GBDT(5) exactly;
+- every label and sensitivity flag (0 mismatches);
+- r_IBU(∞) (≤ 1.2e-12) and the per-functional convergence flags (0 mismatches);
+- the EW B set and its trace readings;
+- the three pooled branch outcomes, with and without W2, exactly.
+
+Not reproduced: T3 and split-half trajectories, invisible shares, missed-event concentration, the T1
+exactness control and P1r–P3r. None of these decides a branch.
+
+Its interpretive points are carried into §9.3 and §11:
+
+- the resolution-sensitive exclusions;
+- the acceptance-hole share of C, which makes H2 uninformative;
+- an H2 rounding nit.
+
+It used ≈ 0.23 core-h, ≤ 2 threads and a peak RSS of 4.15 GB. It was interrupted once by an API
+session limit and resumed from its own scratch.
 
 ## 11. Disposition
 
-*Pending.* Verdict definitions, fixed now:
+| decision | verdict | reason |
+|---|---|---|
+| implementation | **PASS** | §6 implemented as a digest-pinned driver that reuses the committed code. 29 synthetic controls pass. The three material defects the admission review found (one would have stopped the run at A4) were repaired before any real input was opened. The one run completed every stage, and verification found no defect |
+| admission | **PASS** | ADMIT-WITH-REPAIRS at `9203add1`, then ADMIT at `0e32c018` on the session's one focused re-review |
+| numerical verification | **PASS** | §10: the consequential reductions and all branch outcomes were reproduced independently with no disagreement |
+| discriminating question | **PASS**, within the scope below | stages 1–3 complete, every gate passed, and J returns a declared branch: **C** |
 
-- **Implementation:** PASS when the frozen driver passes its synthetic controls and runs the admitted
-  stages without a defect found by review.
-- **Admission:** the reviewer's verdict on the frozen commit.
-- **Numerical verification:** PASS when the reviewer's separately implemented recomputation agrees
-  with the consequential reductions and branch outcomes; FAIL on a demonstrated disagreement;
-  INCONCLUSIVE if it could not be done.
-- **Discriminating question:** PASS when stages 1–3 complete with the gates passed and the J map (the
-  joint endpoint at issue) returns C, A, B, or mixed with at least one share ≥ 1/3. Otherwise
-  INCONCLUSIVE (failed gate, incomplete stages, `B-undeclarable` without C/A, no eligible functional,
-  or all shares < 1/3). FAIL is not reachable under §6 (control failures are INCONCLUSIVE); EW and
-  H2 are reported beside J.
+**Supported diagnostic outcome (frozen rules): branch C in J, EW and H2.**
+
+- **J** (121 of 144 eligible; 117 with finite widths): the label-stable residuals sit in functionals
+  that are weakly identified **for binned estimators**. At this reco binning and the analysis exposure
+  their CR widths are > 10% at both truth resolutions (median 31% at T1, 58% at T2), signal-only.
+- **EW**: the same on 23 eligible.
+- **H2**: an acceptance gap on 3 functionals, not evidence of a weak response.
+
+**What the evidence says about the three mechanisms.**
+
+- **Finite-iteration regularization: consistent, and dominant at K = 5.** On the J map 72% of the
+  eligible functionals are iteration-faithful, and the GBDT's median residual equals exact binned and
+  fine-grid IBU's at K = 5. Noise-free, longer exact iteration removes much of it for GiBUU and W1.
+  The functionals concerned carry > 10% binned CR widths, so the regularization trades a large
+  variance for the bias observed. This is consistent with E1, where the GBDT's repeat SD was
+  0.26–0.43%.
+- **GBDT approximation or bookkeeping: not supported as the main cause.** It is approximation-dominated
+  for 15 of 144 eligible J functionals, and only 2 of them are identified, which is the A share of
+  0.014. Missed-event concentration is never implicated (descriptive). This does not contradict E6's
+  reco-level q3 stall: that is a fold-χ² statement, and its effect on the reported functionals was
+  already small.
+- **Weakly constrained response directions: supported for the label-stable J and EW functionals,**
+  within the scope below.
+- **Inconclusive by construction for the rest.** 62% of J's > 2% residuals, 85% of EW's and 95% of
+  H2's are resolution-sensitive, so the frozen rules assign no mechanism to them. The widths roughly
+  double between T1 and T2, so the identifiability of those functionals depends on the truth
+  resolution, which is exactly why they are excluded.
+- **Branch B: not supported in J** (share 0, and no candidate was blocked by non-convergence). In EW
+  the share is 0.13, and the existing traces read `tracks` for GiBUU and W1 EW40. This permits no
+  further claim and is not an instruction to iterate.
+
+**Limits that travel with this outcome.**
+
+- **Fisher widths.** They are local, binned, model- and grid-dependent and signal-only (optimistic:
+  no background variance). Unbinned information is not bounded by them. Neither T1 nor T2 bounds the
+  truth.
+- **What C means.** C is a quantified no-go for the *present binned-precision expectation* on the
+  label-stable J functionals. It is not an impossibility theorem, and it does not exclude estimators
+  that use prior information.
+- **Convergence.** The T2 runs do not converge at run level: cells are driven toward zero. Per
+  functional only 9–34 of 109 J functionals converge for the traced departures. So "exact iteration
+  removes the residual noise-free" statements rest on last iterates.
+- **Inputs and comparators.**
+  - The departures are historical development truths, with no untouched departure. P1r–P3r have no
+    comparator.
+  - W2's comparator is the R ensemble, but the outcome is unchanged without it.
+  - The GBDT comparators are B0 capacity, receipt-limited prefixes, and were not extended.
+- **Review independence.** The reviewer was a Claude subagent of the same model family; there was no
+  cross-provider review.
+- **Simulation only.** The outcome is conditional on the fixed detector response. It does not validate
+  an interval, does not address the 2D pairing problem, and does not make the joint-5D measurement
+  publication-ready.
 
 ## 12. Next decision
 
-*Pending.*
+**Exactly one, for Joseph: the endpoint-scope decision of gbdt §10.3.** Should the scalar-5D
+endpoint move from J cells to identified functionals? That would authorize I2's first, MC-only stage:
+select and freeze, before any data result, functionals or response-derived combinations with
+σ_c ≤ 2.5% at T2, then evaluate the existing GBDT products on them as a local reduction (gbdt §7,
+2–10 CPU core-h). The alternative is to record the J-cell joint endpoint as a binned no-go and stop.
+
+- **Inputs to the decision.**
+  - At T2 only 5 of 109 J, 3 of 39 EW and 2 of 27 H2 functionals are identified at target (T1: 22–24
+    J), so I2 would need wide combinations, not the present maps.
+  - The strict-bounds benchmark has an unpriced solver dependency (gbdt §7).
+  - Any outcome stays simulation-only.
+- **What branch C does not authorize.** It motivates this decision; it authorizes nothing. I1 (branch
+  A) is not justified. Branch-B extension of s5p study K is not indicated, and would in any case need
+  its own authorization.
+- **Integration (not done here).** `generate_manifest.py` must regenerate once at integration for this
+  directory's new files (`REPORT.md` has its pre-registered override row). `verify_hash_bindings.py`'s
+  pinned inventory is unchanged by design (AM-25).
