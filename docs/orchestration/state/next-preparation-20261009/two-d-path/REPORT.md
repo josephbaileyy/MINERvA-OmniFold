@@ -496,8 +496,14 @@ and only after X0 or X0′ passes.
        0.659–0.707 and I95 within 0.938–0.961;
     3. otherwise **FAIL**.
 - **Assurance: not quantified.** η = 0 holds only if the two estimators' deltas were identical universe by
-  universe. Two different estimators cannot meet that null: their centrals already differ by median
-  0.136 σ_tot.
+  universe. Whether they are is unmeasured: no exact universe unfold has been run.
+  - *Corrected 2026-10-10 by the follow-up integration (`integration-followup/REPORT.md` §3), and not part of
+    either review. This bullet continued: "Two different estimators cannot meet that null: their centrals
+    already differ by median 0.136 σ_tot." That inference, carried over from the re-review's N1 rationale, is
+    invalid. A difference of central values does not imply different nuisance deltas: a constant additive
+    offset between the estimators changes both centrals equally and cancels in every delta δ_u = x_u − x_CV.
+    The 0.136 σ_tot is therefore no evidence about the deltas in either direction. The conclusions below do
+    not rest on it: the transfer stays unmeasured, and stage T's assurance stays unestablished.*
   - Under the decision-relevant null (the widths transfer within tolerance), η carries between-estimator
     scatter from 10 throws and 3 single pairs. §3.6 shows such scatter exists. Its false-fail rate is not
     quantified, and neither is the power.
