@@ -25,7 +25,8 @@ the same name imported from elsewhere is refused (exit 3). The output records ev
 path, sha256 and git blob, HEAD, the guard's state, the effective estimator arguments, the
 environment and the inputs (``producerProvenance``, plus the driver's ``runConfig``,
 ``omnifoldHelperFile`` and ``omnifoldHelperSha256``). ``--expect`` refuses on any contradiction;
-``--require-provenance`` also refuses on anything unknown and on an existing ``--out``. Without it,
+``--require-provenance`` also refuses on anything unknown and reserves ``--out`` exclusively
+(an existing one is refused). Without it,
 an existing ``--out`` is recreated as before, for the resume-guarded launchers.
 """
 
@@ -133,12 +134,13 @@ def main():
         identity = gx.finalize(REPO, load_code(expectations), expectations,
                                args.require_provenance)
         if args.require_provenance:
-            gx.refuse_existing(args.out)
             missing = [k for k in INPUTS if k not in expectations["inputs"]]
             if missing:
                 raise gx.ProvenanceRefusal(f"strict provenance needs input digests for {missing}")
         inputs = {k: gx.input_record(getattr(args, k), expectations["inputs"].get(k),
                                      args.hash_inputs) for k in INPUTS}
+        if args.require_provenance:
+            gx.reserve_output(args.out)
     except gx.ProvenanceRefusal as exc:
         print(f"[REFUSED] {exc}", file=sys.stderr)
         sys.exit(gx.REFUSAL_EXIT)
@@ -244,6 +246,11 @@ def main():
     h_prior_xs.SetName("hTruthXSec2D")
     h_prior_xs.SetTitle("MC truth prior cross section (fluctuates with the MC bootstrap)")
     meta["wall_s"] = time.time() - t0
+    try:
+        identity = gx.recheck(REPO, identity)
+    except gx.ProvenanceRefusal as exc:
+        print(f"[REFUSED] {exc}", file=sys.stderr)
+        sys.exit(gx.REFUSAL_EXIT)
 
     f_out = ROOT.TFile.Open(args.out, "RECREATE")
     if not f_out or f_out.IsZombie():

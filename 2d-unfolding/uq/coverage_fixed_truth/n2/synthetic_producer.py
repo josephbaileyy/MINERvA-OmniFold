@@ -52,6 +52,10 @@ def main():
         adm = harness.check_admission(a.admission)
         if not adm["synthetic"]:
             raise gx.ProvenanceRefusal("the synthetic producer refuses a real admission")
+        if a.require_provenance and "split_manifest" not in exp["inputs"]:
+            raise gx.ProvenanceRefusal("strict provenance needs the split manifest's digest")
+        inputs = {"split_manifest": gx.input_record(adm["inputs"]["split_manifest"]["path"],
+                                                    exp["inputs"].get("split_manifest"))}
         gx.refuse_existing(a.out)
     except (gx.ProvenanceRefusal, harness.AdmissionError) as exc:
         print(f"[REFUSED] {exc}", file=sys.stderr)
@@ -71,7 +75,8 @@ def main():
     mb.write_new(a.out, json.dumps({
         "member": member["id"], "plan_sha256": a.plan_sha256, "spec": member,
         "estimator": member["estimator"], "values": values(world, member).tolist(),
-        "sidecar": sidecar, "provenance": dict(prov, environment=gx.environment_record())}))
+        "sidecar": sidecar, "provenance": dict(gx.recheck(REPO, prov), inputs=inputs,
+                                               environment=gx.environment_record())}))
 
 
 if __name__ == "__main__":

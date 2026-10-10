@@ -8,7 +8,8 @@ The statistics and the rule are the pure functions below; main() only reads the 
 main() executes ``analyze_uq.py`` from hashed bytes of the checkout this file is in (never the
 canonical checkout's copy), refuses a contradicting ``--expect`` before reading any replica, and
 writes a ``provenance`` block: executed files, HEAD, guard state, input digests and every replica
-file read. ``--require-provenance`` also refuses on anything unknown and on an existing ``--out``.
+file read. ``--require-provenance`` also refuses on anything unknown and reserves ``--out`` exclusively.
+The replica files are hashed and recorded as they are read; they need no stated digest.
 """
 import argparse, glob, json, math, re, sys
 from pathlib import Path
@@ -86,12 +87,13 @@ def main():
                                    exp["modules"].get("2d-unfolding/uq/analyze_uq.py"))
         identity = gx.finalize(REPO, records + [rec], exp, a.require_provenance)
         if a.require_provenance:
-            gx.refuse_existing(a.out)
             missing = [k for k in ("interim", "purity") if k not in exp["inputs"]]
             if missing:
                 raise gx.ProvenanceRefusal(f"strict provenance needs input digests for {missing}")
         inputs = {k: gx.input_record(path, exp["inputs"].get(k), hash_bytes=True)
                   for k, path in (("interim", INTERIM), ("purity", PURITY))}
+        if a.require_provenance:
+            gx.reserve_output(a.out)
     except gx.ProvenanceRefusal as exc:
         print(f"[REFUSED] {exc}", file=sys.stderr)
         sys.exit(gx.REFUSAL_EXIT)
@@ -132,6 +134,11 @@ def main():
                                      "realboot": float(100 * np.median(rel_spread(XR)))},
            "outcome": outcome, "share_of_log_gap_attributed_to_a": share,
            "statement": "No outcome changes the quoted band (VL170) or any printed number before publication."}
+    try:
+        identity = gx.recheck(REPO, identity)
+    except gx.ProvenanceRefusal as exc:
+        print(f"[REFUSED] {exc}", file=sys.stderr)
+        sys.exit(gx.REFUSAL_EXIT)
     out["provenance"] = dict(identity, inputs=inputs, environment=gx.environment_record(),
                              replicas={arm: [gx.input_record(p, hash_bytes=True) for p in fs]
                                        for arm, fs in (("armB", fb), ("armT", ft), ("realboot", fr))})

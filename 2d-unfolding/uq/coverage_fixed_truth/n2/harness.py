@@ -90,19 +90,38 @@ def check_admission(path, root=REPO):
         raise AdmissionError(f"admitted commit {adm['code'].get('commit')} is not this "
                              f"checkout's HEAD {head['commit']}")
     if not adm["synthetic"]:
-        auth = Path(root) / adm["authorization"]["path"]
+        rel = str(adm["authorization"].get("path", ""))
+        auth = Path(root) / rel
+        if not (rel.startswith("docs/orchestration/") and
+                Path(rel).name.startswith(("AUTHORIZATION-", "DECISION-"))):
+            raise AdmissionError(f"the authorization {rel!r} is not an AUTHORIZATION- or "
+                                 "DECISION- record under docs/orchestration/")
         if not auth.is_file() or sha_file(auth) != adm["authorization"].get("sha256"):
             raise AdmissionError("the authorization record is absent or its digest differs")
+        tracked = gx.git_identity(root, [gx.file_record(auth, auth.read_bytes(), root)])
+        if tracked["mismatched"] != []:
+            raise AdmissionError("the authorization record is not committed at HEAD as stated")
         omni = adm["inputs"].get("rebuilt_omnifile", {})
         if not omni.get("path") or not omni.get("sha256"):
             raise AdmissionError("a real admission names the identity-carrying rebuild and its "
                                  "digest")
+        try:
+            gx.input_record(omni["path"], omni["sha256"])
+        except (OSError, gx.ProvenanceRefusal) as exc:
+            raise AdmissionError(f"the identity-carrying rebuild is absent or its digest "
+                                 f"differs: {exc}") from None
     split = adm["inputs"].get("split_manifest", {})
     if not split.get("path") or sha_file(split["path"]) != split.get("sha256"):
         raise AdmissionError("the split manifest is absent or its digest differs")
     if not Path(adm["outroot"]).is_absolute():
         raise AdmissionError("outroot must be absolute")
     return adm
+
+
+def input_digests(adm):
+    """Every input digest the admission states, forwarded to the producer's ``--expect``."""
+    return {k: v["sha256"] for k, v in adm["inputs"].items()
+            if isinstance(v, dict) and v.get("sha256")}
 
 
 def load_plan(path, adm):
@@ -152,7 +171,7 @@ def cmd_run_member(a):
         if p.exists():
             raise mb.MemberError(f"{p} exists; a member runs once and is never overwritten")
     exp = Path(adm["outroot"]) / "expect" / f"{member['id']}.json"
-    mb.write_new(exp, json.dumps(adm["code"]))
+    mb.write_new(exp, json.dumps(dict(adm["code"], inputs=input_digests(adm))))
     inventory = Path(adm["outroot"]) / "inventory" / f"{member['id']}.jsonl"
     inventory.parent.mkdir(parents=True, exist_ok=True)
     cmd = [sys.executable, str(REPO / GUARD), "--expect-root", str(REPO), "--inventory",

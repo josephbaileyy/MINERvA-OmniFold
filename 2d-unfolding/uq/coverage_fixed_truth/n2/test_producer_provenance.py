@@ -67,6 +67,11 @@ STUB_HELPER = textwrap.dedent('''\
                     np.full(int(np.count_nonzero(pass_truth)), float(FACTOR)))
     ''')
 STUB_ANALYZE = textwrap.dedent('''\
+    import sys as _sys, pathlib as _pathlib
+    for _a in _pathlib.Path(__file__).resolve().parents:
+        if (_a / "technote_style.py").exists():
+            _sys.path.insert(0, str(_a)); break
+    import technote_style  # noqa: F401  (the real analyze_uq.py:27-31 shape)
     import numpy as np
     FACTOR = {factor}
 
@@ -95,7 +100,8 @@ def make_checkout(base, name, factor, commit=True):
         shutil.copy2(REPO / rel, root / rel)
     shutil.copytree(REPO / "nd-unfolding/mnv_guard_shim", root / "nd-unfolding/mnv_guard_shim",
                     ignore=shutil.ignore_patterns("__pycache__"))
-    for rel, text in ((HELPER, STUB_HELPER), (ANALYZE, STUB_ANALYZE)):
+    for rel, text in ((HELPER, STUB_HELPER), (ANALYZE, STUB_ANALYZE),
+                      ("technote_style.py", "STYLE = {factor}\n")):
         (root / rel).parent.mkdir(parents=True, exist_ok=True)
         (root / rel).write_text(text.format(factor=factor))
     if commit:
@@ -322,6 +328,9 @@ class TheToyProducer(Checkouts):
                           "not running under"),
             "no expectations": (lambda out: self.guarded(self.a, out, ["--require-provenance"]),
                                 "stated commit"),
+            "no commit": (lambda out: self.guarded(
+                self.a, out, ["--expect", self.write_exp(dict(exp, commit=None), "e3.json"),
+                              "--require-provenance"]), "stated commit"),
             "no input digest": (lambda out: self.guarded(
                 self.a, out, ["--expect", self.write_exp(dict(exp, inputs={}), "e2.json"),
                               "--require-provenance"]), "input digests"),
@@ -381,6 +390,36 @@ class TheKi85Producer(Checkouts):
         self.assertIn("analyze_uq", cp.stderr)
         self.assertFalse(Path(str(self.a / ANALYZE) + ".executed").exists(),
                          "the mismatched analyzer's module body ran before the refusal")
+
+    def ki85_strict(self, exp):
+        path = self.tmp / "kexp.json"
+        path.write_text(json.dumps(exp))
+        out = self.tmp / "k.json"
+        cp = run([self.a / "nd-unfolding/mnv_guarded_run.py", "--expect-root", self.a, "--",
+                  self.a / KI85, "--out", out, "--expect", path, "--require-provenance"])
+        return cp, out
+
+    def ki85_modules(self, root):
+        return {rel: sha(root / rel) for rel in (
+            KI85, ANALYZE, "technote_style.py",
+            "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
+            "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py")}
+
+    def test_strict_mode_records_and_head_checks_the_analyzers_own_imports(self):
+        """analyze_uq imports technote_style normally: strict mode must see it (review M2)."""
+        exp = {"commit": git(self.a, "rev-parse", "HEAD"), "modules": self.ki85_modules(self.a),
+               "inputs": {}}
+        del exp["modules"]["technote_style.py"]
+        cp, out = self.ki85_strict(exp)
+        self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr[-3000:])
+        self.assertIn("technote_style.py", cp.stderr)
+        (self.a / "technote_style.py").write_text("STYLE = 'edited after the commit'\n")
+        exp["modules"] = self.ki85_modules(self.a)
+        cp, out = self.ki85_strict(exp)
+        self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr[-3000:])
+        self.assertIn("differ from HEAD", cp.stderr)
+        self.assertIn("technote_style.py", cp.stderr)
+        self.assertFalse(out.exists())
 
     def test_strict_mode_refuses_unguarded(self):
         cp = run([self.a / KI85, "--out", self.tmp / "k.json", "--require-provenance"])
@@ -498,6 +537,51 @@ class TheLoader(unittest.TestCase):
                 with self.assertRaisesRegex(gx.ProvenanceRefusal, needle):
                     gx.require_guard(root, state)
         gx.require_guard(root, {"installed": True, "expect_root": root, "allowed": [root]})
+
+    def test_a_file_outside_the_root_is_a_refusal_not_a_crash(self):
+        with self.assertRaises(gx.ProvenanceRefusal):
+            gx.file_record(self.mod, b"", self.root / "pkg" / "elsewhere")
+
+    def test_reserve_output_is_exclusive(self):
+        out = self.root / "out.root"
+        gx.reserve_output(out)
+        with self.assertRaisesRegex(gx.ProvenanceRefusal, "refusing to overwrite"):
+            gx.reserve_output(out)
+
+    def test_a_repository_module_imported_after_the_check_is_caught(self):
+        late = self.root / "pkg" / "late_mod_n2.py"
+        late.write_text("X = 1\n")
+        sys.path.insert(0, str(late.parent))
+        self.addCleanup(sys.path.remove, str(late.parent))
+        self.addCleanup(sys.modules.pop, "late_mod_n2", None)
+        import late_mod_n2  # noqa: F401
+        with self.assertRaisesRegex(gx.ProvenanceRefusal, "late_mod_n2"):
+            gx.recheck(self.root, {"executed": [], "strict": True})
+        ident = gx.recheck(self.root, {"executed": [], "strict": False})
+        self.assertIn("pkg/late_mod_n2.py", {r["relpath"] for r in ident["executed"]})
+
+    def test_git_identity_ignores_a_GIT_DIR_naming_another_repository(self):
+        if shutil.which("git") is None:
+            self.skipTest("no git")
+        heads = {}
+        for name in ("this", "other"):
+            r = self.root / name
+            r.mkdir()
+            (r / "f.txt").write_text(name)
+            git(r, "init", "-q")
+            git(r, "add", "-A")
+            git(r, "commit", "-q", "-m", name)
+            heads[name] = git(r, "rev-parse", "HEAD")
+        old = os.environ.get("GIT_DIR")
+        os.environ["GIT_DIR"] = str(self.root / "other" / ".git")
+        try:
+            got = gx.git_identity(self.root / "this", [])
+        finally:
+            if old is None:
+                os.environ.pop("GIT_DIR")
+            else:
+                os.environ["GIT_DIR"] = old
+        self.assertEqual(got["commit"], heads["this"])
 
     def test_git_blob_matches_git(self):
         if shutil.which("git") is None:

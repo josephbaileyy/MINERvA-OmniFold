@@ -62,8 +62,12 @@ def _inside(path, root):
 
 def file_record(path, data, root):
     path = Path(path).resolve()
-    return {"path": str(path), "relpath": path.relative_to(Path(root).resolve()).as_posix(),
-            "sha256": sha256_hex(data), "git_blob": git_blob_sha1(data)}
+    try:
+        rel = path.relative_to(Path(root).resolve()).as_posix()
+    except ValueError:
+        raise ProvenanceRefusal(f"{path} is outside the admitted checkout {root}") from None
+    return {"path": str(path), "relpath": rel, "sha256": sha256_hex(data),
+            "git_blob": git_blob_sha1(data)}
 
 
 def self_record(path, root):
@@ -122,6 +126,53 @@ def bootstrap_record(module, root):
     """Record a module that had to be imported normally (this one, before it could verify)."""
     require_inside(root, {module.__name__: module})
     return file_record(module.__file__, Path(module.__file__).read_bytes(), root)
+
+
+def unrecorded_repo_modules(root, records):
+    """``[(name, path)]`` of imported modules whose file is inside ``root`` and in no record.
+
+    These ran through the ordinary import system (a dependency such as ``analyze_uq``'s
+    ``technote_style``), so their record is a digest of the file after the import, not proof of the
+    executed bytes; strict mode still requires them at HEAD and stated.
+    """
+    have = {r["path"] for r in records}
+    out = set()
+    for name, mod in list(sys.modules.items()):
+        try:
+            origin = getattr(mod, "__file__", None)
+        except Exception:
+            origin = None
+        if isinstance(origin, str) and origin and _inside(origin, root):
+            path = str(Path(origin).resolve())
+            if path not in have:
+                out.add((name, path))
+    return sorted(out)
+
+
+def _imported_records(root, found, loader):
+    return [dict(file_record(path, Path(path).read_bytes(), root), loader=loader, module=name)
+            for name, path in found]
+
+
+def reserve_output(path):
+    """Create ``path`` empty and exclusively, refusing if anything is there: the strict mode's
+    no-overwrite rule with no window between the check and the write. A failed run leaves the
+    empty reservation, so a strict rerun to the same name is refused too."""
+    try:
+        os.close(os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644))
+    except FileExistsError:
+        raise ProvenanceRefusal(f"output {path} already exists; refusing to overwrite it") from None
+
+
+def recheck(root, identity):
+    """Call just before writing output: a repository module imported since ``finalize`` is
+    refused in strict mode and recorded otherwise."""
+    late = unrecorded_repo_modules(root, identity["executed"])
+    if late and identity["strict"]:
+        raise ProvenanceRefusal("repository modules were imported after the provenance check: "
+                                f"{[n for n, _ in late]}")
+    identity["executed"] = identity["executed"] + _imported_records(root, late, "import-late")
+    return identity
 
 
 def guard_state():
@@ -236,6 +287,7 @@ def finalize(root, records, expectations, strict):
     ``strict`` mode it also refuses when something is merely unknown: no guard, git unavailable,
     an executed file that is not HEAD's blob, or an executed module with no stated digest.
     """
+    records = records + _imported_records(root, unrecorded_repo_modules(root, records), "import")
     ident = git_identity(root, records)
     by_rel = {r["relpath"]: r for r in records}
     for rel, want in expectations["modules"].items():

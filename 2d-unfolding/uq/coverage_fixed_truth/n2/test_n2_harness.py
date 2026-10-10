@@ -26,6 +26,7 @@ THRESH = {"development": 0.02, "reservoir": 0.5}
 N2_FILES = ("__init__.py", "execution.py", "design.py", "identity.py", "members.py", "harness.py",
             "synthetic_producer.py")
 N2_DIR = "2d-unfolding/uq/coverage_fixed_truth/n2"
+AUTH = "docs/orchestration/AUTHORIZATION-20991231-fixture.md"
 
 
 def tables(n=6000, n_bkg=800, seed=3):
@@ -256,6 +257,8 @@ class Harness(unittest.TestCase):
         (root / N2_DIR).mkdir(parents=True)
         for f in N2_FILES:
             shutil.copy2(REPO / N2_DIR / f, root / N2_DIR / f)
+        (root / "docs/orchestration").mkdir(parents=True)
+        (root / AUTH).write_text("# fixture authorization\n")
         git(root, "init", "-q")
         git(root, "add", "-A")
         git(root, "commit", "-q", "-m", "fixture")
@@ -283,7 +286,7 @@ class Harness(unittest.TestCase):
         return subprocess.run([sys.executable, str(cls.harness), *map(str, args)],
                               capture_output=True, text=True, env=env)
 
-    def admission(self, name, world, **override):
+    def admission(self, name, world, extra_inputs=None, **override):
         code = {"commit": git(self.root, "rev-parse", "HEAD"),
                 "modules": {f"{N2_DIR}/{f}": gx.sha256_hex((self.root / N2_DIR / f).read_bytes())
                             for f in N2_FILES}}
@@ -295,7 +298,7 @@ class Harness(unittest.TestCase):
                "inputs": {"split_manifest": {"path": str(self.split),
                                              "sha256": gx.sha256_hex(self.split.read_bytes())},
                           "fold_tables": {"path": str(self.inputs / "folds")},
-                          "synthetic_world": {"path": str(wpath)}},
+                          "synthetic_world": {"path": str(wpath)}, **(extra_inputs or {})},
                "outroot": str(self.base / name)}
         adm.update(override)
         path = self.base / f"{name}.admission.json"
@@ -303,8 +306,7 @@ class Harness(unittest.TestCase):
         return path
 
     def auth(self):
-        return {"path": "VALIDATION_LEDGER.md",
-                "sha256": gx.sha256_hex((self.root / "VALIDATION_LEDGER.md").read_bytes())}
+        return {"path": AUTH, "sha256": gx.sha256_hex((self.root / AUTH).read_bytes())}
 
     def test_no_or_incomplete_admission_refuses_a_launch(self):
         cp = self.run_harness("run-member", "--admission", self.base / "absent.json",
@@ -312,6 +314,32 @@ class Harness(unittest.TestCase):
         self.assertEqual(cp.returncode, gx.REFUSAL_EXIT)
         self.assertIn("not admitted", cp.stderr)
         world = {"mean_seed": 1, "sigma_T": 0.01, "b_over_t": 1.0}
+        real = {"synthetic": False, "producer": "x.py", "authorization": None,
+                "code": {"commit": git(self.root, "rev-parse", "HEAD"),
+                         "modules": {"x.py": "0" * 64}}}
+        real["authorization"] = self.auth()
+        rebuilt = self.base / "rebuilt.root"
+        rebuilt.write_bytes(b"synthetic stand-in for the identity-carrying rebuild\n")
+        for label, extra, override, needle in (
+                ("real, authorization not a record", None,
+                 dict(real, authorization={"path": "VALIDATION_LEDGER.md", "sha256": gx.sha256_hex(
+                     (self.root / "VALIDATION_LEDGER.md").read_bytes())}), "not an AUTHORIZATION-"),
+                ("real, absent rebuild",
+                 {"rebuilt_omnifile": {"path": str(self.base / "absent.root"), "sha256": "f" * 64}},
+                 real, "rebuild is absent"),
+                ("real, wrong rebuild digest",
+                 {"rebuilt_omnifile": {"path": str(rebuilt), "sha256": "f" * 64}},
+                 real, "rebuild is absent or its digest differs")):
+            with self.subTest(label):
+                adm = self.admission(f"refuse-{label.replace(' ', '_').replace(',', '')}",
+                                     world, extra_inputs=extra, **override)
+                for cmd in (["admit", "--admission", adm],
+                            ["run-member", "--admission", adm, "--plan", self.plan, "--member",
+                             "T001"]):
+                    cp = self.run_harness(*cmd)
+                    self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr)
+                    self.assertIn(needle, cp.stderr)
+                self.assertFalse(Path(json.loads(adm.read_text())["outroot"]).exists())
         for label, override, needle in (
                 ("real, synthetic producer", {"synthetic": False, "authorization": {
                     "path": "VALIDATION_LEDGER.md", "sha256": "0"}}, "synthetic producer"),
@@ -359,6 +387,10 @@ class Harness(unittest.TestCase):
         self.assertAlmostEqual(res["M"], 1.0, delta=0.08)
         rec = json.loads(mb.result_path(self.base / "faithful", "B007").read_text())
         self.assertTrue(rec["provenance"]["strict"])
+        split_sha = gx.sha256_hex(self.split.read_bytes())
+        self.assertEqual(json.loads((self.base / "faithful/expect/B007.json").read_text())
+                         ["inputs"]["split_manifest"], split_sha)
+        self.assertEqual(rec["provenance"]["inputs"]["split_manifest"]["sha256"], split_sha)
         self.assertEqual(rec["provenance"]["guard"]["expect_root"], str(self.root))
         inv = (self.base / "faithful" / "inventory" / "B007.jsonl").read_text()
         self.assertIn("N2 B007", inv)
