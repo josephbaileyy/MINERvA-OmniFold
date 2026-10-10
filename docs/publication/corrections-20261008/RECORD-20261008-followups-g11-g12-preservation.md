@@ -85,6 +85,11 @@ exist on the login node's Python 3.6. It was made compatible and re-run. The CFS
 
 ### 3a. AnaTuple checksum sweep (G4 identity)
 
+> **Update 2026-10-10:** the 7 OST-61 files below are now hashed, so the manifest covers **2,374 of 2,374 files**
+> (sha256 `913e004d…`), with 0 mismatches. The hung reads completed on their own on 2026-10-09 at about 18:31 UTC;
+> a resumed sweep and a direct re-hash on 2026-10-10 agree. No ticket was sent. See
+> `RECORD-20261010-ost61-hashed-and-data-addition.md`. The text below is as written on 2026-10-09.
+
 **Script:** `publication/release/preservation/anatuple_checksum_sweep_20261008.sh`.
 - Run 3 and both retries ran `cfb8fe01…`, the version committed in `ebf17439`. Its `dtn01` copy has that digest and
   an mtime of 01:17:34 UTC, 19 s before run 3 started.
@@ -277,7 +282,7 @@ The receipts are `ki84-adopt-20261006/recompute_2d_budget.json`, `coverage-2d-20
 
 | gap | now | evidence |
 |---|---|---|
-| G4 AnaTuples | **identity: 2,367 of 2,374 files sha256-identified, 0 mismatches; 7 (all on pscratch OST 61) blocked by hung storage objects**; durable copy **not done (not authorized)**; recommendation and drafts in §7 | §3a, §7 |
+| G4 AnaTuples | **identity: 2,367 of 2,374 files sha256-identified, 0 mismatches; 7 (all on pscratch OST 61) blocked by hung storage objects**; durable copy **not done (not authorized)**; recommendation and drafts in §7. **Update 2026-10-10:** identity 2,374 of 2,374; all 1,885 data, flux and parameter files on CFS and verified; the simulation AnaTuples are still only identified (`RECORD-20261010-ost61-hashed-and-data-addition.md`). | §3a, §7 |
 | G9 single durable copies | **Fixed and verified.** The s5p archive and `z-cv.npz` now have HPSS copies, verified by stream read-back. | §3 |
 | G11 Sec. IV literals | **Fixed and verified.** A build-time check, a self-test and tests. | §5 |
 | G12 regeneration from durable storage | **Fixed and verified, with a precisely stated limit.** The inference inputs regenerate from durable copies with the unchanged extractor and reproduce every recorded p-value, B, decision and power figure exactly (9 observed statistics differ by ≤ 5.1e-15 relative); they are numerically equivalent (≤ 3e-12 relative), **not byte-identical** (BLAS thread order). The figure arrays are byte-identical. | §4 |
@@ -289,6 +294,10 @@ The receipts are `ki84-adopt-20261006/recompute_2d_budget.json`, `coverage-2d-20
 > 986,660,122,993 B, every file matching `ANATUPLE-SHA256.tsv`. CFS now holds 2,512 GiB. The 6 OST-61 data files are
 > excluded until they can be read; a retry is scheduled before any ticket. See
 > `RECORD-20261009-anatuple-data-cfs-copy.md`. The text below is as written on 2026-10-09 before that decision.
+>
+> **Update 2026-10-10:** the retry found OST 61 readable again. The 6 data files were hashed and added to the CFS
+> copy, so it now holds all 1,885 data, flux and parameter files. Draft C is withdrawn, unsent. See
+> `RECORD-20261010-ost61-hashed-and-data-addition.md`.
 
 **Measured capacity:**
 - CFS `du` = **1,593 GiB** (1.71 TB, decimal) at 2026-10-09 01:26 UTC after the W2 addition, and the same at

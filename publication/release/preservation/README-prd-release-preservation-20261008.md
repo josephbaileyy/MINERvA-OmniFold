@@ -49,17 +49,17 @@ before the copy. This directory adds 42.4 GB.
 |---|---|
 | `pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/{evloop,lateral,merged,tables,unfold-run}` | The W2 shifted event-loop, lateral and merged outputs the first pass excluded, plus two small W2 directories it had missed: 53 files, 33,779,505,923 B |
 | `W2-SOURCE-INVENTORY.tsv`, `W2-SHA256SUMS`, `W2-SYMLINKS.tsv` (empty), `W2-VERIFY-RECEIPT.txt`, `preserve_w2_outputs_20261008.sh`, `.w2-files.txt`, `.w2-rel.txt` | The same method as the first pass: hashed at the source, copied, every destination file re-hashed (53 of 53 match) |
-| `anatuple-checksums-20261008/ANATUPLE-SHA256.tsv` | sha256, bytes and mtime of the analysed older-production AnaTuples on `/pscratch/sd/j/josephrb/minerva/minerva_large_files` (corrections record G4). It identifies the files; it is **not** a copy of them. `DEFERRED.tsv` lists the files a watchdog skipped because their Lustre objects hung; the record §3a names the ones still unhashed. `MISMATCH.tsv` (empty) would list any file whose size or mtime differed from the inventory. |
+| `anatuple-checksums-20261008/ANATUPLE-SHA256.tsv` | sha256, bytes and mtime of the analysed older-production AnaTuples on `/pscratch/sd/j/josephrb/minerva/minerva_large_files` (corrections record G4). It identifies the files; it is **not** a copy of them. `DEFERRED.tsv` lists the files a watchdog skipped because their Lustre objects hung; since 2026-10-10 every one of them is hashed, so the manifest covers all 2,374 files. `MISMATCH.tsv` (empty) would list any file whose size or mtime differed from the inventory. |
 | `anatuple-checksums-20261008/anatuple_checksum_sweep_20261008.sh`, `hpss_second_copy_20261008.sh`, `verify_tar_stream.py` | The sweep script (resumable: re-running it hashes only the missing files), and the HPSS copy script with its stream verifier (below) |
 
-**Added 2026-10-09: the analysed data AnaTuples** (Joseph approved the copy; repository record
+**Added 2026-10-09 and 2026-10-10: the analysed data AnaTuples** (Joseph approved the copy; repository record
 `docs/publication/corrections-20261008/RECORD-20261009-anatuple-data-cfs-copy.md`):
 
 | path | what |
 |---|---|
-| `anatuple-data-20261009/{Data,MATFluxAndReweightFiles,MParamFiles}/` | Every file of those three trees that has a checksum in `ANATUPLE-SHA256.tsv`: 1,879 files, 986,660,122,993 B, at their paths under the original `/pscratch/sd/j/josephrb/minerva/minerva_large_files/`. The 6 data files on pscratch OST 61 are not here, because they could not be read. The simulation AnaTuples (`MC/`, 10.5 TB) are not copied. |
-| `anatuple-data-20261009/DATA-SHA256SUMS` | The manifest's digests for those files, in `sha256sum -c` form relative to `anatuple-data-20261009/`. Every destination file was verified against it. |
-| `anatuple-checksums-20261008/copy_anatuple_data_20261009.sh` | The script that selected, copied and verified them |
+| `anatuple-data-20261009/{Data,MATFluxAndReweightFiles,MParamFiles}/` | Every file of those three trees: 1,885 files, 989,696,077,171 B, at their paths under the original `/pscratch/sd/j/josephrb/minerva/minerva_large_files/`. 1,879 were copied on 2026-10-09; the 6 data files on pscratch OST 61 were added on 2026-10-10, once they could be read and hashed (repository record `docs/publication/corrections-20261008/RECORD-20261010-ost61-hashed-and-data-addition.md`). The simulation AnaTuples (`MC/`, 10.5 TB) are not copied. |
+| `anatuple-data-20261009/DATA-SHA256SUMS`, `anatuple-data-20261009/DATA-SHA256SUMS-ADD-20261010` | The manifest's digests for the 1,879 and the 6 files, in `sha256sum -c` form relative to `anatuple-data-20261009/`. Every destination file was verified against its list. |
+| `anatuple-checksums-20261008/copy_anatuple_data_20261009.sh` | The script that selected, copied and verified them (the `add-*` steps made the 2026-10-10 list). The version that made the 2026-10-09 list is kept beside it as `copy_anatuple_data_20261009.sh.b6b765d5`. |
 
 **HPSS second copies** (G9; `hpss_second_copy_20261008.sh`), verified by streaming each back and re-hashing:
 - `/home/j/josephrb/prd-release-preservation-20261008/s5p-archive-20261006.tar` (+ `.idx`): an htar archive of
@@ -70,8 +70,8 @@ before the copy. This directory adds 42.4 GB.
 - `w2-recoil-20261006/{deploy,repo,build,cost1A,smoke}`: code snapshots, held in git, plus test runs.
 - The s5p calibration products: already archived at `/global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/`
   (SHA256SUMS `1a72cb43…`).
-- The simulation AnaTuples (`MC/`, 10.5 TB) and the 7 OST-61 files: only checksums (or, for the 7, names and sizes)
-  are recorded. See the follow-up record §7 and the 2026-10-09 copy record.
+- The simulation AnaTuples (`MC/`, 10.5 TB): only checksums are recorded. See the follow-up record §7 and the
+  2026-10-09 and 2026-10-10 records.
 
 ## Recovery
 
@@ -82,6 +82,7 @@ D=/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008
 cd $D && sha256sum --quiet -c SHA256SUMS && echo intact                 # re-verify every file
 cd $D && sha256sum --quiet -c W2-SHA256SUMS && echo intact              # the W2 addition
 cd $D/anatuple-data-20261009 && sha256sum --quiet --strict -c DATA-SHA256SUMS && echo intact   # the data AnaTuples
+cd $D/anatuple-data-20261009 && sha256sum --quiet --strict -c DATA-SHA256SUMS-ADD-20261010 && echo intact   # the 6 added
 # recover the HPSS second copies (on a login node; DTNs have no hsi):
 htar -xvf /home/j/josephrb/prd-release-preservation-20261008/s5p-archive-20261006.tar   # recreates s5p-archive-20261006/ here
 hsi get z-cv.npz : /home/j/josephrb/prd-release-preservation-20261008/z-cv.npz && sha256sum z-cv.npz
