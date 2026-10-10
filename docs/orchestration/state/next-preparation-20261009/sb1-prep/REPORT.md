@@ -223,7 +223,7 @@ weaken the equality tests.
 |---|---|---|
 | `tests/test_branch_select.py` | prototype 1 against the pinned loaders. Byte equality in 15 loader × pattern cases: CV with and without weights, two vertical universes, the lateral one. The exact lateral and vertical branch lists. Restored statuses and addresses on a reused tree, including a partial entry state. Discovery reads nothing. Negative controls: the silent defect is real without the guard; **every** omitted activation (17, across the four loaders) and an extra one in each tree are refused before the first read; a loader reading another branch is refused by the rule; a wrong rule that agrees with a wrong loader is caught by the bytes; an unmodelled access is refused; digest sensitivity to sign, dtype, shape, one ulp and one fill | 16 OK |
 | `tests/test_sb1_guarded.py` | the wrapper end to end, running the real driver's `main()` under the real `mnv_guarded_run.py` with `--require-provenance` in a throwaway checkout (stub helper, so nothing is trained). Positive: both arms complete; loader digests and settings are equal; all histograms are byte-identical; the helper executed is the checkout's own. Refused before any input is read (exit 3): no guard, a wrong helper digest, a changed driver even when committed and stated, an uncommitted executed file, an input touched after hashing, a wrong input digest, a reference from other arguments. Refused before training (exit 4): a reference whose bytes differ. Refused before the first read on the wrapper path (exit 5): omit and extra controls | 10 OK |
-| `tests/test_launch_chain.py` | the unmodified `sb1_submit.sh` and all six batch scripts against a throwaway checkout, with `fake_slurm.py`. Covers dependency order, time limits and ids. The verifier passes the good run and rejects: an SL byte difference (S1 FAIL), 10.5 GiB read (S2 FAIL), a MiB value (S3; MiB is not read as KiB), elapsed 0.5004 × UL (S4 FAIL), a missing receipt (INCONCLUSIVE), H1 ≠ H0, a wrong executed digest, and a guard record with an outside origin (P FAIL). Added in the repair batch (review c0): a killed selective arm is INCONCLUSIVE, not FAIL, while a real difference with later trees missing still FAILs; an unadmitted executed module, a receipt stat unlike H0's, receipts from different environment setups (P FAIL); a control that returned a loader (NC FAIL); each admission guard refuses for its own stated reason (checkout, commit, ancestry, launch spec, ceilings, input stat now), as do a dirty tree, a package changed after its commit, and an authorization that does not name the package commit and manifest digest; an environment setup changed after submission stops the chain at H0. Also: the ledger arithmetic; a proposal cannot be submitted; hostile authorization paths, including a symlink; `draft` fills only mechanical fields | 25 OK |
+| `tests/test_launch_chain.py` | the unmodified `sb1_submit.sh` and all six batch scripts against a throwaway checkout, with `fake_slurm.py`. Covers dependency order, time limits and ids. The verifier passes the good run and rejects: an SL byte difference (S1 FAIL), 10.5 GiB read (S2 FAIL), a MiB value (S3; MiB is not read as KiB), elapsed 0.5004 × UL (S4 FAIL), a missing receipt (INCONCLUSIVE), H1 ≠ H0, a wrong executed digest, and a guard record with an outside origin (P FAIL). Added in the repair batch (review c0): a killed selective arm is INCONCLUSIVE, not FAIL, while a real difference with later trees missing still FAILs; an unadmitted executed module, a receipt stat unlike H0's, receipts from different environment setups (P FAIL); a control that returned a loader (NC FAIL); each admission guard refuses for its own stated reason (checkout, commit, ancestry, launch spec, ceilings, input stat now), as do a dirty tree, a package changed after its commit, and an authorization that does not name the package commit and manifest digest; an environment setup changed after submission stops the chain at H0. Added after the re-review (c1 N1, N2): a failed third `sbatch` cancels the two queued jobs and exits non-zero; an authorization naming only the commit or only the manifest digest, and an abbreviated package commit, are refused. Also: the ledger arithmetic; a proposal cannot be submitted; hostile authorization paths, including a symlink; `draft` fills only mechanical fields | 27 OK |
 | `tests/test_package_consistency.py` | `#SBATCH` lines, submit-time `--time` and dependencies equal the launch spec; the argv equals 55677843's; `results/costs.json` is current and its ceiling equals the literal sum; the manifest is current; the committed proposal cannot admit; the schema's required fields equal `sb1_admit.py`'s | 7 OK |
 
 Environment: Homebrew Python 3.13.7 with PyROOT 6.36.000 from `root-config --libdir`, numpy 2.4.4.
@@ -234,9 +234,9 @@ between the two (no `set -u`, no associative arrays).
 
 ### 5.3 Mutation controls (`checks/mutation.py`, `logs/mutation-results.json`)
 
-Each mutant is applied in a fresh `git clone --shared` of commit `9fa3fed7` (the repair batch),
-after the unmutated clone passed every targeted test (7 + 3 + 14 tests, no skips). **25 of 25
-caught.**
+Each mutant is applied in a fresh `git clone --shared` of commit `4aa6ca79` (the post-re-review
+corrections), after the unmutated clone passed every targeted test (7 + 3 + 15 tests, no skips).
+**27 of 27 caught.**
 
 | mutant | file | targeted test | result |
 |---|---|---|---|
@@ -263,6 +263,8 @@ caught.**
 | `partial-receipt-is-difference` | `sb1_verify.py` | `test_a_killed_selective_arm_is_inconclusive_not_fail` | caught (exit 1) |
 | `env-setup-unchecked` | `sb1_verify.py` | `test_receipts_from_different_environments_are_not_a_pass` | caught (exit 1) |
 | `nc-ignores-loaders` | `sb1_verify.py` | `test_a_control_that_returned_a_loader_fails_nc` | caught (exit 1) |
+| `submit-ignores-failed-sbatch` | `sb1_submit.sh` | `test_a_failed_sbatch_cancels_what_was_queued_and_fails` | caught (exit 1) |
+| `authorization-needs-only-one-value` | `sb1_admit.py` | `test_an_authorization_that_does_not_name_the_package_is_refused` | caught (exit 1) |
 | `proposal-admitted` | `sb1_admit.py` | `test_a_proposal_cannot_be_submitted` | caught (exit 1) |
 | `symlinked-authorization` | `sb1_admit.py` | `test_hostile_authorization_paths_are_refused` | caught (exit 1) |
 
@@ -272,8 +274,9 @@ Earlier runs, kept in `logs/`:
   by the later commit-blob check, so the test never isolated the path rule. The test now asserts the
   rule's own reason.
 - Run 2, at `864ecaba`, caught 16 of 16.
-- The nine guards that review c0 found untested got a mutant each in run 3. So did the
-  partial-receipt and environment checks added in the repair.
+- Run 3, at the repair batch `9fa3fed7`, caught 25 of 25. It added a mutant for each guard review c0
+  found untested, and for the partial-receipt and environment checks.
+- Run 4 adds the N1 and N2 mutants.
 
 ## 6. Frozen rules (before any run)
 
@@ -308,6 +311,11 @@ and they are taken against the matched UL, not against 2,547 s.
   against the same 2.0 node-h SB1 total (§7.4).
 - A run killed partway is missing evidence, not a difference. A tree present in only one arm counts
   against S1 only when both receipts are complete (`sb1_verify.py` `compare_loaders`).
+- **A selection refusal (exit 5) outside a control is INCONCLUSIVE.** The verifier's S1 shows the
+  missing trees, and the receipt's `status: selection-refused` and `error` name the refusal; it is
+  reported as "prototype 1 refused on the real file". It means the derived rule and the real loader's accesses
+  disagree there, so prototype 1 is not ready for that file. It returned no bytes, so it is not an
+  S1 difference. It blocks any PASS.
 
 ### 6.3 Trainer nondeterminism
 
@@ -370,9 +378,13 @@ memory is one job's:
 ### 7.2 Exact commands (after admission only)
 
 On Perlmutter, from the canonical checkout, after this branch is merged and Joseph's decision is
-committed as `docs/orchestration/AUTHORIZATION-<date>-sb1.md`. That record must quote the package
-commit (the reviewed commit that last changed `P`) and the sha256 of `P/manifest/expected-code.json`
-at that commit, both in full:
+committed as `docs/orchestration/AUTHORIZATION-<date>-sb1.md`. That record must quote two things in
+full:
+
+- the **package commit**: the last commit on `prep/sb1-ready-20261009` that changes `P`. That is the
+  PR head at merge, named in the PR's final comment. It cannot be an earlier commit, because `check`
+  refuses any later difference under `P`;
+- the sha256 of `P/manifest/expected-code.json` at that commit.
 
 ```bash
 C=<the commit that carries that AUTHORIZATION record>
@@ -395,7 +407,8 @@ bash "$P/launch/sb1_submit.sh" "$SCRATCH/sb1-admission-${C:0:8}.json"
   executed module or the guard differs between the package commit and HEAD.
 - `run.env` binds the environment setup's sha256 at submission. Every job verifies it before
   sourcing the setup and refuses (exit 3) if it changed, and every receipt records it.
-- If `sbatch` fails partway, the submit script cancels the jobs it already queued.
+- If `sbatch` fails partway, the submit script cancels the jobs it already queued and exits
+  non-zero (`test_a_failed_sbatch_cancels_what_was_queued_and_fails`).
 - A new detached worktree moves no deployed checkout, so it cannot disturb a pending job of another
   lane.
 - Monitor with `squeue --me` and `sacct -j <ids>`.
@@ -571,7 +584,39 @@ matched vertical timing is wanted.
 | 11 | NOTE | the reference operands were measured under array contention | **disclosed** in §12 |
 | 12 | NOTE | a J1 rerun at 128 CPUs needs a new authorization; the 374-task RSS range is speed's | **fixed** (§7.4; §7.1 cites speed §3) |
 
-**Focused re-review:** pending (the one allowed).
+**Focused re-review** (the one allowed): the same reviewer at fixed commit `1ac7cec3` (the repair
+batch `9fa3fed7` plus mutation run 3), 06:14Z → 06:20Z, ≈ 0.06 core-h.
+
+- Own detached worktree, removed afterwards; mutations only in `git archive` copies.
+- `git status --porcelain --ignored` showed one line at the end. The reviewer attributes it to an
+  ignored `__pycache__` entry written by its own `costs.py` run, not to a tracked-file edit.
+- One read-only `stat` of the inputs, unchanged.
+- Preserved verbatim: [`review/review-cycle1.md`](review/review-cycle1.md), sha256
+  `f1555448dcb30c94…`.
+
+**Verdict: PASS WITH CHANGES.**
+
+- Findings 1–4 (MATERIAL) are **RESOLVED**. The reviewer re-ran its own probes (package binding,
+  no-retry consistency, partial receipts) and its own mutants on the new guards.
+- 5–8 and 10–12 are resolved or disclosed.
+- **9 was NOT RESOLVED.** Errexit does not reach inside `$(…)`, so a failed `sbatch` left the queued
+  jobs, recorded an empty id and exited 0. The trap never fired.
+- New: N1 (= 9, MINOR), N2 (MINOR: the "both values" rule had no pinning test), N3–N6 (NOTE).
+
+**Post-re-review corrections: NOT re-reviewed.** The review allowance is spent. `4aa6ca79` and the
+record commit that carries this paragraph are outside both reviews:
+
+| item | correction | evidence |
+|---|---|---|
+| N1 | `submit()` returns non-zero on a failed or non-numeric `sbatch` result, so `set -e` runs the trap that cancels the queued ids | `test_a_failed_sbatch_cancels_what_was_queued_and_fails` (third `sbatch` fails: 2 jobs queued, both cancelled, no further call, no `submission.json`, non-zero exit); mutant `submit-ignores-failed-sbatch` |
+| N2 | authorization must name both values; `package_commit` must be a full 40-character id | subtests for commit-only and manifest-only records, `test_an_abbreviated_package_commit_is_refused`; mutant `authorization-needs-only-one-value` |
+| N3 | submit-script header states the no-retry rule | text |
+| N4 | §6.2 states that a selection refusal outside a control is INCONCLUSIVE, reported as "prototype 1 refused on the real file" | text |
+| N5 | the env-setup digest is checked in `sb1_check_env`; the setup is sourced at top level in each job | chain suite (27 OK) |
+| N6 | §7.2 defines the package commit as the last commit on this branch that changes `P` | text |
+
+Whoever drafts the admission should read the `1ac7cec3..<package commit>` diff of `P`. It is the
+only unreviewed delta: one shell function, one admission check, tests and record text.
 
 ## 12. Limitations and residual risks
 
@@ -634,22 +679,26 @@ matched vertical timing is wanted.
 
 ## 14. Resources
 
-*Provisional, measured at the freeze for review (2026-10-10T05:31Z); final figures follow the review.*
-
 | item | measured | cap |
 |---|---|---|
-| active time | 04:34Z → 05:31Z, ≈ 1 h | 6 h |
-| local CPU (owner) | ≈ 0.45 core-h of timed commands: two mutation runs (user + sys ≈ 430 s and ≈ 450 s), four full-suite passes (≈ 95 s each), development runs and fixtures (≈ 0.1 core-h) | 3 core-h (owner + reviewer) |
-| threads | one per command; at most two commands at once | 2 |
+| active time | 2026-10-10T04:34Z → ≈ 06:50Z, ≈ 2 h 15 min including both reviews | 6 h |
+| local CPU | owner ≈ 1.2 core-h: four mutation runs (user + sys 430, ≈ 450, 926 and 984 s), six full-suite passes (≈ 120 s each), development runs and fixtures (≈ 0.25 core-h). Reviewer ≈ 0.07 + 0.06 core-h (its own figures). Total ≈ 1.35 core-h | 3 core-h |
+| threads | one per command; at most two commands at once (owner and reviewer included) | 2 |
 | peak RAM | ≈ 0.8 GB (fixture writer, test interpreters) | 8 GiB |
-| scratch | ≈ 13 MB session scratch; each mutation clone (≈ 0.4 GB) and test temporary directory removed when its command ended | 2 GiB |
-| tracked bytes | ≈ 0.42 MB in `P/` | 10 MiB |
-| cluster | 0 node-h. Read-only `ssh` to a login node: two TTree header listings, one 20,000-entry branch read, `sacct` of four completed jobs, `stat`/`ls` of five files | 0 compute |
+| scratch | ≈ 13 MB session scratch. Each mutation clone (≈ 0.4 GB), each test temporary directory and the reviewer's worktrees were removed when their command ended | 2 GiB |
+| tracked bytes | ≈ 0.5 MB in `P/` | 10 MiB |
+| cluster | 0 node-h. Read-only `ssh` to a login node, owner: two TTree header listings, one 20,000-entry branch read, `sacct` of four completed jobs, `stat`/`ls` of five files. Reviewer: `sacct` and `stat` of the same evidence | 0 compute |
 | GPU / training / fits | 0 / 0 / 0 | 0 |
 
 ## 15. Disposition
 
-*Pending review. The owner's proposed disposition before review is PASS: a complete package whose correctness and cost requirements are met locally and fit the 2.0 node-h ceiling.*
+| decision | disposition | reason |
+|---|---|---|
+| Is SB1 ready to measure the decision's question at matched settings? | **PASS** | A complete package: prototype 1 for all four loaders and the three patterns; a matched UL/SL pair; frozen success, abort and nondeterminism rules; exact commands; an admission bound to reviewed bytes; ceilings 1.699 of 2.0 node-h with every verification inside, and no retries. It is locally verified (60 tests, 0 skipped; 27 of 27 mutants). Every MATERIAL finding was resolved on re-review. The post-re-review delta (N1–N6, §11) is tested and mutation-checked but **not re-reviewed** |
+| Prototype 1 preserves the production inputs on the real file | **not measured** | SB1 S1 would measure it; local equality is synthetic |
+| Prototype 1 materially reduces I/O, memory and elapsed time on Perlmutter | **not measured** | SB1 S2–S4 would measure it; every figure here is a forecast |
+| Matched comparison as specified by speed §9 | **changed, honestly shrunk** | the historical products are unmatched by rule. The two unfolds are a matched UL/SL pair on one lateral universe; `Flux:0` gets identity only. Measuring both universes as matched pairs is a revised request of ≈ 2.85 node-h (§7.5), not made here |
+| Any production change, speedup claim, estimator change, N2, KI-85, transfer, sweep, adoption or publication | **not authorized** | nothing here authorizes any of them |
 
 ## 16. Next action
 
@@ -659,4 +708,5 @@ matched vertical timing is wanted.
   Then an independent reviewer re-runs `sb1_verify.py` from a fresh `sacct` and records the verdict.
   Its result may justify only a driver-owner proposal for a production loader change, with its own
   review and hash-binding record.
-- **Integration owner:** §13 items 1–4.
+- **Integration owner:** §13 items 1–4. The PR's final comment names the package commit and the
+  manifest's sha256 that an authorization must quote (§7.2).
