@@ -183,8 +183,9 @@ code fix would move the pin and need its own re-pin record.
   on a socket timeout), that job's id is never set, so `on_error` cannot cancel it.
   - The reviewer measured this with a wrapper that queues and then prints garbage: exit 1, the job left
     `PENDING`, nothing cancelled.
-  - At calls 2–5, `--kill-on-invalid-dep=yes` removes the orphan, because its dependency names an id
-    that does not exist. At call 1 (H0) or call 6 (H1) a lone hash job may run. That costs at most one
+  - At calls 2–5, `--kill-on-invalid-dep=yes` removes the orphan, because `on_error` cancels the job
+    its `afterok` names, so the dependency can never be satisfied (wording corrected after the
+    re-review, its note R1, not re-reviewed). At call 1 (H0) or call 6 (H1) a lone hash job may run. That costs at most one
     hash job's ceiling (0.0059 node-h), inside the cap but charged.
   - Operator rule: after **any** non-zero exit of `sb1_submit.sh`, run
     `squeue --me --name=sb1_H0,sb1_UL,sb1_SL,sb1_J1,sb1_C,sb1_H1` and cancel what remains. Count its
@@ -356,11 +357,25 @@ commit that carries this section.
 | F8 | NOTE | "landed on `main`" before the merge; 303–1,131 without its tier | **fixed** in CATALOG and KI-88 ("declared tier", with 149–570 regional) |
 | F9 | NOTE | §4.3's pin column was backed by `dcae1a3a` logs | **fixed**: the column names `dcae1a3a`, where `P` equals the pin |
 
-**Focused re-review:** pending.
+**Focused re-review** (the one allowed): the same reviewer at fixed commit
+`1a7ef7bc0594e4411c084993a91096b843bd18bf`, 18:08Z → 18:12Z, ≈ 0.01 core-h. Its worktree was clean at
+start and end (only ignored `__pycache__`) and was then removed; the tripwire recorded 0 calls.
+Preserved verbatim: [`review/review-cycle1.md`](review/review-cycle1.md), sha256 `f1397930…`.
+
+**Verdict: PASS.** F1–F9 are all RESOLVED.
+- It confirmed the 0.0059 node-h orphan bound three ways, and that the ceilings plus one orphan stay
+  under 2.0.
+- The pin and the manifest digest stand.
+- Its preserved first review is byte-identical.
+- The shared checks pass, and the scope is unchanged.
+
+One new NOTE, R1: §4.4 gave the wrong reason why an orphan at calls 2–5 is removed. It is fixed after
+the re-review in the commit carrying this paragraph, using the reviewer's suggested wording, and is
+**not re-reviewed**. No review cycles remain.
 
 ## 10. Delivery
 
-**Pending review.**
+**Review passed (§9).** Delivery follows the integration prompt's authorization:
 1. Refresh `origin/main` and inspect any intervening delta.
 2. Merge this branch into canonical `main` through a PR, with a merge commit.
 3. Record the resulting head in the PR's delivery comment.
@@ -382,9 +397,9 @@ force-push, and no deletion of evidence.
 
 ## 12. Disposition
 
-| decision | proposed (before review) | reason |
+| decision | disposition | reason |
 |---|---|---|
-| the three records land without design completion being treated as admission | PASS, if review finds no material defect | every record is scoped in §3–§5, shared surfaces carry no PASS, adoption or narrowed-claim label, and no publication objective changed |
+| the three records land without design completion being treated as admission | PASS | every record is scoped in §3–§5, shared surfaces carry no PASS, adoption or narrowed-claim label, and no publication objective changed |
 | two-d-path correction | PASS | invalid inference corrected with a dated note; conclusions unchanged; reviews verbatim |
 | SB1 package ready, pinned and locally verified | PASS | three post-review changes checked; two missing controls added (29 of 29 mutants); pin `d4335d3b`, manifest `f060df81…`; fake Slurm only |
 | D-ID numbers and limits preserved | PASS | outputs byte-identical; outcome matches the verification; two narrative overstatements recorded |
