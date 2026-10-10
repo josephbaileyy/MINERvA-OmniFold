@@ -68,7 +68,11 @@ def load_code(expectations):
                gx.bootstrap_record(sys.modules["n2"], REPO), gx.bootstrap_record(gx, REPO)]
     loaded = {}
     for name, path in CODE:
-        rel = path.resolve().relative_to(REPO).as_posix()
+        try:
+            rel = path.resolve().relative_to(REPO).as_posix()
+        except ValueError:
+            raise gx.ProvenanceRefusal(f"{name}: {path} resolves outside the admitted checkout "
+                                       f"{REPO}") from None
         loaded[name], rec = gx.load_verified(name, path, REPO, expectations["modules"].get(rel))
         records.append(rec)
     toy_design, u2d = loaded["toy_design"], loaded["unfold_2d_omnifold_unbinned"]

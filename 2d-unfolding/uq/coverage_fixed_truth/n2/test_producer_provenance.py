@@ -310,6 +310,25 @@ class TheToyProducer(Checkouts):
         self.assertFalse(Path(str(self.a / HELPER) + ".executed").exists(),
                          "the mismatched helper's module body ran before the refusal")
 
+    def test_a_module_symlinked_outside_the_checkout_is_a_refusal_not_a_crash(self):
+        """Review R1: the toy's own relative-path step exits 3 like every other refusal."""
+        out = self.tmp / "a.root"
+        for rel in ("2d-unfolding/uq/coverage_fixed_truth/toy_design.py",
+                    "2d-unfolding/unfold_2d_omnifold_unbinned.py", HELPER):
+            with self.subTest(rel):
+                kept = (self.a / rel).read_bytes()
+                (self.a / rel).unlink()
+                (self.a / rel).symlink_to(self.b / rel)
+                try:
+                    cp = run([self.a / TOY, *self.base, "--out", out])
+                finally:
+                    (self.a / rel).unlink()
+                    (self.a / rel).write_bytes(kept)
+                self.assertEqual(cp.returncode, gx.REFUSAL_EXIT, cp.stderr[-3000:])
+                self.assertIn("resolves outside the admitted checkout", cp.stderr)
+                self.assertNotIn("Traceback", cp.stderr)
+                self.assertFalse(out.exists())
+
     def test_strict_mode_refuses_a_committed_helper_edited_since_head(self):
         """No --expect digest for the helper: strict still refuses bytes that are not HEAD's."""
         exp = expectations(self.a, self.inputs)
