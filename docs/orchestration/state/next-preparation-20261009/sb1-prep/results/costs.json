@@ -1,0 +1,259 @@
+{
+ "ceiling_node_h": 2.0,
+ "ceiling_slack_node_h": 0.3007812499999998,
+ "charge_rule": "node_h = billing_cpus / 256 * elapsed_s / 3600 (sacct AllocTRES billing; regular full node bills 256, shared bills its cpus-per-task)",
+ "jobs": [
+  {
+   "billing_cpus": 2,
+   "ceiling_node_h": 0.005859375,
+   "cpus_per_task": 2,
+   "expected_elapsed_s": 376.5,
+   "expected_node_h": 0.0008171054517708332,
+   "expected_source": "0.5 GB/s assumed sha256 rate over 173.3 GB, +30 s start",
+   "id": "H0",
+   "qos": "shared",
+   "time_limit_s": 2700
+  },
+  {
+   "billing_cpus": 256,
+   "ceiling_node_h": 0.8333333333333334,
+   "cpus_per_task": 128,
+   "expected_elapsed_s": 2617,
+   "expected_node_h": 0.7269444444444444,
+   "expected_source": "55677843_166 elapsed (same universe, argv and node shape; July driver)",
+   "id": "UL",
+   "qos": "regular",
+   "time_limit_s": 3000
+  },
+  {
+   "billing_cpus": 256,
+   "ceiling_node_h": 0.5,
+   "cpus_per_task": 128,
+   "expected_elapsed_s": 922.8,
+   "expected_node_h": 0.25632260273972607,
+   "expected_source": "Amdahl, f_io=0.695 (Perlmutter), s_io=14.6 (laptop): S=2.836; analytic s=68.0 gives 825 s",
+   "id": "SL",
+   "qos": "regular",
+   "time_limit_s": 1800
+  },
+  {
+   "billing_cpus": 64,
+   "ceiling_node_h": 0.1875,
+   "cpus_per_task": 64,
+   "expected_elapsed_s": 1677.5,
+   "expected_node_h": 0.11649068020533607,
+   "expected_source": "signal tree 112.1 GB x 10.33 s/GB + 100 s (parallel with truth and background), + 3 x 120 s selective, + 60 s controls: an estimate",
+   "id": "J1",
+   "qos": "shared",
+   "time_limit_s": 2700
+  },
+  {
+   "billing_cpus": 64,
+   "ceiling_node_h": 0.16666666666666666,
+   "cpus_per_task": 64,
+   "expected_elapsed_s": 1100.0,
+   "expected_node_h": 0.0763888888888889,
+   "expected_source": "59410433 median 840 s + two CV-file loader passes of ~130 s (speed \u00a73 per-row cost)",
+   "id": "C",
+   "qos": "shared",
+   "time_limit_s": 2400
+  },
+  {
+   "billing_cpus": 2,
+   "ceiling_node_h": 0.005859375,
+   "cpus_per_task": 2,
+   "expected_elapsed_s": 496.5,
+   "expected_node_h": 0.0010775221184374999,
+   "expected_source": "as H0, + 120 s for sb1_verify.py",
+   "id": "H1",
+   "qos": "shared",
+   "time_limit_s": 2700
+  }
+ ],
+ "peak_memory_per_job": {
+  "C": "59410433_1: 16,296,360 KiB = 16.7 GB; allocation 127.8 GB",
+  "H0/H1": "< 1 GB",
+  "J1": "estimate ~70 GB for three parallel all-branch loader processes (0.26-0.31 x bytes read, speed \u00a74, plus Python lists); allocation 121,920 MiB = 127.8 GB",
+  "SL": "success bound 30 GB; local evidence only",
+  "UL": "64.5-186.6 GB observed on 374 universe tasks (55677843_166: 69,191,672 KiB = 70.85 GB); full node 487,802 MiB"
+ },
+ "retry_admissibility": {
+  "C": {
+   "admissible_from_ceiling_slack_alone": true,
+   "ceiling_node_h": 0.16666666666666666
+  },
+  "H0": {
+   "admissible_from_ceiling_slack_alone": true,
+   "ceiling_node_h": 0.005859375
+  },
+  "H1": {
+   "admissible_from_ceiling_slack_alone": true,
+   "ceiling_node_h": 0.005859375
+  },
+  "J1": {
+   "admissible_from_ceiling_slack_alone": true,
+   "ceiling_node_h": 0.1875
+  },
+  "SL": {
+   "admissible_from_ceiling_slack_alone": false,
+   "ceiling_node_h": 0.5
+  },
+  "UL": {
+   "admissible_from_ceiling_slack_alone": false,
+   "ceiling_node_h": 0.8333333333333334
+  }
+ },
+ "schema": "sb1-costs/1",
+ "selected_bytes": {
+  "CV (CV file)": {
+   "data": {
+    "branches": [
+     "measured",
+     "measured_pz",
+     "measured_pass"
+    ],
+    "tree_zip_bytes": 62832784,
+    "zip_bytes": 62832784
+   },
+   "mc_background": {
+    "branches": [
+     "sim_background",
+     "sim_background_pz",
+     "sim_background_pass",
+     "w_bkg"
+    ],
+    "tree_zip_bytes": 15045794,
+    "zip_bytes": 15045794
+   },
+   "mc_signal_reco": {
+    "branches": [
+     "MC",
+     "MC_pz",
+     "sim",
+     "sim_pz",
+     "sim_pass",
+     "w_truth",
+     "w_reco"
+    ],
+    "tree_zip_bytes": 1320504071,
+    "zip_bytes": 1320504071
+   },
+   "mc_truth_denom": {
+    "branches": [
+     "MC",
+     "MC_pz",
+     "w_truth"
+    ],
+    "tree_zip_bytes": 745369088,
+    "zip_bytes": 745369088
+   },
+   "total_file_tree_zip_bytes": 2143751737,
+   "total_selected_zip_bytes": 2143751737
+  },
+  "lateral Muon_Energy_MINOS:0": {
+   "data": {
+    "branches": [
+     "measured",
+     "measured_pz",
+     "measured_pass"
+    ],
+    "tree_zip_bytes": 157562867,
+    "zip_bytes": 62832784
+   },
+   "mc_background": {
+    "branches": [
+     "sim_background_Muon_Energy_MINOS_0",
+     "sim_background_pz_Muon_Energy_MINOS_0",
+     "sim_background_pass",
+     "w_bkg_Muon_Energy_MINOS_0"
+    ],
+    "tree_zip_bytes": 1172882753,
+    "zip_bytes": 15026399
+   },
+   "mc_signal_reco": {
+    "branches": [
+     "MC_Muon_Energy_MINOS_0",
+     "MC_pz_Muon_Energy_MINOS_0",
+     "sim_Muon_Energy_MINOS_0",
+     "sim_pz_Muon_Energy_MINOS_0",
+     "sim_pass",
+     "w_truth_Muon_Energy_MINOS_0",
+     "w_reco_Muon_Energy_MINOS_0"
+    ],
+    "tree_zip_bytes": 112075927653,
+    "zip_bytes": 1359136255
+   },
+   "mc_truth_denom": {
+    "branches": [
+     "pT_truth_Muon_Energy_MINOS_0",
+     "pz_truth_Muon_Energy_MINOS_0",
+     "w_truth_Muon_Energy_MINOS_0"
+    ],
+    "tree_zip_bytes": 57692111239,
+    "zip_bytes": 743617696
+   },
+   "total_file_tree_zip_bytes": 171098484512,
+   "total_selected_zip_bytes": 2180613134
+  },
+  "vertical Flux:0": {
+   "data": {
+    "branches": [
+     "measured",
+     "measured_pz",
+     "measured_pass"
+    ],
+    "tree_zip_bytes": 157562867,
+    "zip_bytes": 62832784
+   },
+   "mc_background": {
+    "branches": [
+     "sim_background",
+     "sim_background_pz",
+     "sim_background_pass",
+     "w_bkg_Flux_0"
+    ],
+    "tree_zip_bytes": 1172882753,
+    "zip_bytes": 15037048
+   },
+   "mc_signal_reco": {
+    "branches": [
+     "MC",
+     "MC_pz",
+     "sim",
+     "sim_pz",
+     "sim_pass",
+     "w_truth_Flux_0",
+     "w_reco_Flux_0"
+    ],
+    "tree_zip_bytes": 112075927653,
+    "zip_bytes": 1322099802
+   },
+   "mc_truth_denom": {
+    "branches": [
+     "MC",
+     "MC_pz",
+     "w_truth_Flux_0"
+    ],
+    "tree_zip_bytes": 57692111239,
+    "zip_bytes": 745517334
+   },
+   "total_file_tree_zip_bytes": 171098484512,
+   "total_selected_zip_bytes": 2145486968
+  }
+ },
+ "simultaneous": "jobs are serialized by afterok/afterany, so peak simultaneous memory across SB1 is one job's",
+ "total_ceiling_node_h": 1.6992187500000002,
+ "total_expected_node_h": 1.1780412438486039,
+ "universe_file_reads_by_sb1_gb": {
+  "H0": 171.117087867,
+  "H1": 171.117087867,
+  "J1_all": 171.098484512,
+  "J1_selective": 2.145486968,
+  "SL": 2.180613134,
+  "UL": 171.117087867
+ },
+ "worst_case_sl_reaches_its_limit": {
+  "note": "SL at its 1,800 s limit means elapsed >= 0.69 x UL's reference: the elapsed criterion (<= 0.5 x UL) has failed, so SL needs no retry for a verdict",
+  "sl_limit_over_ul_reference": 0.6878104700038211
+ }
+}

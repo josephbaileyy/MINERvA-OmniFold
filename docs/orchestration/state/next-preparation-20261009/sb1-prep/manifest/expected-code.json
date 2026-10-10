@@ -1,0 +1,42 @@
+{
+ "guard": {
+  "nd-unfolding/mnv_guard_shim/bin/_wrapper_body": "0ff2d42d488edb6a1b397fb3aade650b402473fe283eb297478515e12e9d983b",
+  "nd-unfolding/mnv_guard_shim/bin/bash": "597f566d9843315b011ec0ec209b6fa00b60efdf4c720b8eae3361fac799abf1",
+  "nd-unfolding/mnv_guard_shim/bin/git": "725dceda55d566d9e2181bce981ae9e90fe4bc4a535477d344613a73c51a9759",
+  "nd-unfolding/mnv_guard_shim/bin/python": "d26f5cda8fbe4b8c358b53f173cebf76eaacfae8b5f8b261ea655dfb9fc478b6",
+  "nd-unfolding/mnv_guard_shim/bin/python3": "6df1003ffa566dc37fe3e38ef98548a7417b70c4b353b09472eac574eac09b48",
+  "nd-unfolding/mnv_guard_shim/bin/sacct": "65fcd4f0d29b975b653a88ee23a67b7aad12e3f64781bd64fc5a970ca9684061",
+  "nd-unfolding/mnv_guard_shim/bin/sbatch": "b3fee851854a4e49812b6f460833398e355b33a4be5e1556d5475f5ced770f51",
+  "nd-unfolding/mnv_guard_shim/bin/scancel": "72abe8f3a1a3fbdbb23c68b757b5607807f952d25acb56f950c35445b3806b61",
+  "nd-unfolding/mnv_guard_shim/bin/sh": "8ac23d3a93eed00551954ca6a8eae3c4b24df61a879714342f8641f9661dc61b",
+  "nd-unfolding/mnv_guard_shim/bin/sinfo": "c8907ce28c9af482db8835996e877735140a8da2fe99210a90b3823b388fb1aa",
+  "nd-unfolding/mnv_guard_shim/bin/squeue": "ee4995d54c5ec9f73ec5f62dc0c7bb5d20962ffcc9b5daa9850e87fbbd3f0f68",
+  "nd-unfolding/mnv_guard_shim/bin/srun": "9c1cb283ae2ec00ac4fc3eddd0c01c7677db5621dfc9bed3ddf36ae23ae26708",
+  "nd-unfolding/mnv_guard_shim/bin/sstat": "6490ce56c8cd0e4f6573ecead996f34810563829a21c89654d382f7e00cd3cd3",
+  "nd-unfolding/mnv_guard_shim/scan_argv.py": "bd6499f0621a76518a6c3652681cedc902908dfea2348d1587d0f1bade5d1868",
+  "nd-unfolding/mnv_guard_shim/sitecustomize.py": "b7f78a7250f012b90a9699073973c138925ed27474dcad6772d5fcb6565315e6",
+  "nd-unfolding/mnv_guard_shim/wrapper_exec.py": "9585602404fccd1ca879283852d3c124916d995ba4f59ef97a18e8f767c9bd22",
+  "nd-unfolding/mnv_guarded_run.py": "30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b"
+ },
+ "launch": {
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/launch-spec.json": "a69121631e08b1b5b0f7b59ee5af423a986ca003b8f7a13bffb3706ff93082fc",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_cv.sbatch": "6dcf8695df625df90b293b0bc0dc877e8ab897b1a0e5e026d2fe81379c156df6",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_hash.sbatch": "cc859944372545791bced8ab3be3034ee5aa300de5503d4b52ff971f429166ed",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_identity.sbatch": "7ecd3fae42692005cf6939c3115e8a498190e0fdeeb023f562fe93240c269697",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_submit.sh": "3343568b54228cfb3325f33286ce5ef3017a6e78a9c46dfb48aabf7bff4b9796",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/launch/sb1_unfold.sbatch": "6e28fa99c074df3ad245bfaa230a54e4e80e002000da0f9bc82a84bbab0ada9c",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_admit.py": "e82b8405dc0e85d035b21865e60b7dc30317f08bcd00a608e948f0bfcb5c0c88",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_hash.py": "2101f73d82c11d5d1c2209547b0971783a9a5a3a8067747e33b040a56288b510",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_verify.py": "34d93019f356b0ea993e26d3bf85bdceffa101bc1eed2c46b76b26982aec6972"
+ },
+ "modules": {
+  "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+  "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+  "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py": "ce001cb96a416fa208bdbc0f2e3467521dcddfb198c22d7f9b3a222b51afb60d",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py": "d7d8699c0675d35e9c03e3e3a718b6f8a1b47e5d3925e996c4b143d8fbd69103",
+  "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+ },
+ "note": "contents only; the admission record names the commit (sb1_admit.py)",
+ "schema": "sb1-expected-code/1"
+}

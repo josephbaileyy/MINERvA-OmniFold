@@ -1,0 +1,82 @@
+{
+ "schema": "sb1-admission/1",
+ "status": "PROPOSAL-NOT-AN-AUTHORIZATION",
+ "decision": "Permission to run the fixed SB1 package (the package commit named in code.package_commit, whose files manifest/expected-code.json pins) on Perlmutter CPU under account m3246, as the six jobs of launch/launch-spec.json, with at most 2.0 node-h charged in total (planned ceilings 1.699 node-h; expected about 1.18), retries only under the spec's retry_rule, no other compute, GPU or training.",
+ "authorization": {
+  "path": null,
+  "sha256": null
+ },
+ "checkout": null,
+ "code": {
+  "commit": null,
+  "package_commit": null,
+  "modules": {
+   "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+   "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+   "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+   "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py": "ce001cb96a416fa208bdbc0f2e3467521dcddfb198c22d7f9b3a222b51afb60d",
+   "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py": "170690da76763f7ec355af80f988592bca3ef2a68f161dda4650575db80bcf89",
+   "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+  }
+ },
+ "launch_spec_sha256": "a69121631e08b1b5b0f7b59ee5af423a986ca003b8f7a13bffb3706ff93082fc",
+ "inputs_observed": {
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root": {
+   "size": 171117087867,
+   "mtime_ns": 1783523295000000000,
+   "ino": 882725391507234642
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root": {
+   "size": 2144008221,
+   "mtime_ns": 1779094334000000000,
+   "ino": 882724772125893981
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root": {
+   "size": 5143,
+   "mtime_ns": 1777003503000000000,
+   "ino": 882724771874215681
+  }
+ },
+ "outroot": null,
+ "ceiling_node_h": 2.0,
+ "jobs": [
+  {
+   "id": "H0",
+   "ceiling_node_h": 0.005859375
+  },
+  {
+   "id": "UL",
+   "ceiling_node_h": 0.8333333333333334
+  },
+  {
+   "id": "SL",
+   "ceiling_node_h": 0.5
+  },
+  {
+   "id": "J1",
+   "ceiling_node_h": 0.1875
+  },
+  {
+   "id": "C",
+   "ceiling_node_h": 0.16666666666666666
+  },
+  {
+   "id": "H1",
+   "ceiling_node_h": 0.005859375
+  }
+ ],
+ "cannot_authorize": [
+  "a change to the production 2D driver or the pinned OmniFold helper",
+  "replacing or changing any estimator",
+  "claiming a production speedup",
+  "the transfer measurement (option (b))",
+  "a matched sweep (option (c))",
+  "N2",
+  "lifting KI-85",
+  "adoption, a changed gate or any quoted number",
+  "publication or any external communication",
+  "a Rust/C++ rewrite",
+  "any compute beyond these six jobs"
+ ],
+ "how_to_admit": "Only after Joseph's decision is recorded as a committed docs/orchestration/AUTHORIZATION-*.md: on the admitted Perlmutter checkout run `sb1_admit.py draft --proposal launch/ADMISSION-PROPOSAL.json --authorization <that record> --package-commit <package commit> --out <admission.json>`, then `sb1_admit.py check` and `launch/sb1_submit.sh <admission.json>`. This file itself can never launch anything."
+}
