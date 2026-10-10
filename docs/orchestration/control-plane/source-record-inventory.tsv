@@ -135,7 +135,7 @@ OI-132	active	NOW	migration-carried-forward	de13b6579dd187b6f84bbab7c5ed8e66a391
 OI-133	active	NOW	migration-carried-forward	cd0cfeeb6947403f799be81d7ff9aff35e9f8a3b9dad870e5ac6fbe62e16eed1	OPEN — filed 2026-08-19 by lane E with BEN-477. NOTHING BINDS A CHECKPOINT TO THE RUN THAT WROTE IT, so a member's check
 OI-134	retired	-	migration-carried-forward	9f3018a7e1255cef48a068da6d14de467b7d7f6b2c18dded8c0b4fb3adf29d0f	BOTH ACTIONS EXECUTED 2026-08-19T12:40Z — and the authorised one FAILED, so the second was reached by a different route.
 OI-135	active	BLOCKED-EXTERNAL	migration-carried-forward	1ed9c80297a40e8c5836fd2071d48b55d4e33e549b4dc40a91226400a1b74dd1	BLOCKED ON maintenance_20260819 — every remaining step needs the cluster, and ssh exits 255 since 2026-08-19T13:00Z. Fil
-OI-136	active	NOW	migration-carried-forward	cd2c348e5157a96fa89981535233b40dcbd4c934a8abf0c6a57d094f262d64ca	OPEN — the hardcoded cluster root is the FAIL-OPEN twin of OI-123, and today's fast-forward made it harmless-for-now rat
+OI-136	active	NOW	migration-carried-forward	505c0cdb659f06396ec59e2563a4c0a45e22b676758b7990d803143b0ac9f999	OPEN — the hardcoded cluster root is the FAIL-OPEN twin of OI-123, and today's fast-forward made it harmless-for-now rat
 OI-137	active	NOW	migration-carried-forward	85713f9290390b74f9b9fb7aa554c903713857f122fdb656423681849e200b30	OPEN — filed 2026-08-20 by the close-out orchestrator. A HAZARD THAT IS PRESENTLY UNOWNED ON THE PUBLICATION CRITICAL PA
 OI-138	active	NOW	migration-carried-forward	9b39ee77565bf276cd001004b359ecbad16542c287ac90e807662678a3cae7c8	OPEN
 OI-139	active	NOW	migration-carried-forward	1ccc6f28d6820f5e7b5b83821c7f2e22ad677dd069e2348a6296d55b3b656262	OPEN
