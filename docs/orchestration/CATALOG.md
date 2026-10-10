@@ -80,9 +80,9 @@ later integration is a separate bounded action. Inputs and open preconditions: i
 
 | next session | report |
 |---|---|
-| 2D publication path: the `KNOWN_ISSUES.md` 88 pairing after keep-and-disclose | `state/next-preparation-20261009/two-d-path/REPORT.md` |
-| SB1 preparation: the selective-read loaders and their local equality tests (speed REPORT §9, §15) | `state/next-preparation-20261009/sb1-prep/REPORT.md` |
-| D-ID: the 5D GBDT discriminating diagnostic (gbdt REPORT §6, §14) | `state/next-preparation-20261009/d-id/REPORT.md` |
+| 2D publication path: the `KNOWN_ISSUES.md` 88 pairing after keep-and-disclose (the 2026-10-09 ruling's prohibitions stand) | `state/next-preparation-20261009/two-d-path/REPORT.md` |
+| SB1 preparation: the selective-read loaders and their local equality tests (speed REPORT §9, §15; SB1 itself needs Joseph's authorization) | `state/next-preparation-20261009/sb1-prep/REPORT.md` |
+| D-ID: the 5D GBDT discriminating diagnostic (gbdt REPORT §6, §14; not admitted; its branch-B route is unreviewed) | `state/next-preparation-20261009/d-id/REPORT.md` |
 
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 

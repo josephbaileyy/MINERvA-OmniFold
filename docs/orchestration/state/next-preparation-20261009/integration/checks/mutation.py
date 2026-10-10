@@ -14,12 +14,19 @@ TESTS = {
     "r2": (["python3", "-m", "unittest", "discover", "-k", "normalized", "-s", N2, "-p", "test_n2*.py"], False),
     "deps": ([PYR, "-m", "unittest", "discover", "-s", N2, "-p", "test_producer_final*.py"], True),
 }
+R2_NOW = ("        norm = \"\" if Path(rel).is_absolute() else os.path.normpath(rel).replace(os.sep, \"/\")\n"
+          "        if norm.startswith(\"../\") or norm in (\"\", \".\", \"..\") or "
+          "(top / norm).resolve() != top / norm:\n"
+          "            norm = \"\"\n")
+R2_FIRST = ("        try:\n            norm = (top / rel).resolve().relative_to(top).as_posix()\n"
+            "        except ValueError:\n            norm = \"\"\n")
 MUTANTS = [  # (id, file, old, new, test)
     ("R1-revert", TOY, "        try:\n            rel = path.resolve().relative_to(REPO).as_posix()\n"
      "        except ValueError:\n            raise gx.ProvenanceRefusal(f\"{name}: {path} resolves outside the admitted checkout \"\n"
      "                                       f\"{REPO}\") from None\n",
      "        rel = path.resolve().relative_to(REPO).as_posix()\n", "r1"),
-    ("R2-revert", HAR, "norm = (top / rel).resolve().relative_to(top).as_posix()", "norm = rel", "r2"),
+    ("R2-revert", HAR, R2_NOW, "        norm = rel\n", "r2"),
+    ("R2-first-version", HAR, R2_NOW, R2_FIRST, "r2"),
     ("no-import-sweep", EXE, '    have = {r["path"] for r in records}\n', "    return []\n", "deps"),
     ("strict-ignores-unstated", EXE, 'if expectations["commit"] is None or missing:',
      'if expectations["commit"] is None:', "deps"),

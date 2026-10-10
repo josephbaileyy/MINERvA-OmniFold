@@ -1,31 +1,31 @@
 {
- "head": "c829c1ea128f0d0f234c59224736d2887723e583",
+ "head": "b19b5e91f3bd04b9f3892305bd55b43f3d2383ec",
  "control": {
   "r1": {
    "rc": 0,
    "summary": [
-    "Ran 1 test in 1.338s",
+    "Ran 1 test in 1.407s",
     "OK"
    ],
-   "wall_s": 3.0,
+   "wall_s": 3.2,
    "skipped": false
   },
   "r2": {
    "rc": 0,
    "summary": [
-    "Ran 1 test in 1.134s",
+    "Ran 1 test in 0.915s",
     "OK"
    ],
-   "wall_s": 1.3,
+   "wall_s": 1.9,
    "skipped": false
   },
   "deps": {
    "rc": 0,
    "summary": [
-    "Ran 5 tests in 14.576s",
+    "Ran 5 tests in 14.761s",
     "OK"
    ],
-   "wall_s": 15.2,
+   "wall_s": 15.5,
    "skipped": false
   }
  },
@@ -33,7 +33,7 @@
   {
    "rc": 1,
    "summary": [
-    "Ran 1 test in 1.290s",
+    "Ran 1 test in 1.225s",
     "FAILED (failures=3)"
    ],
    "wall_s": 1.8,
@@ -47,10 +47,10 @@
   {
    "rc": 1,
    "summary": [
-    "Ran 1 test in 1.324s",
-    "FAILED (failures=3)"
+    "Ran 1 test in 0.982s",
+    "FAILED (failures=2)"
    ],
-   "wall_s": 1.5,
+   "wall_s": 1.2,
    "skipped": false,
    "id": "R2-revert",
    "file": "2d-unfolding/uq/coverage_fixed_truth/n2/harness.py",
@@ -61,24 +61,10 @@
   {
    "rc": 1,
    "summary": [
-    "Ran 1 test in 1.452s",
-    "FAILED (failures=2)"
-   ],
-   "wall_s": 1.6,
-   "skipped": false,
-   "id": "R2-first-version",
-   "file": "2d-unfolding/uq/coverage_fixed_truth/n2/harness.py",
-   "test": "r2",
-   "applied": true,
-   "caught": true
-  },
-  {
-   "rc": 1,
-   "summary": [
-    "Ran 5 tests in 12.373s",
+    "Ran 5 tests in 11.804s",
     "FAILED (failures=7)"
    ],
-   "wall_s": 14.1,
+   "wall_s": 12.4,
    "skipped": false,
    "id": "no-import-sweep",
    "file": "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
@@ -89,10 +75,10 @@
   {
    "rc": 1,
    "summary": [
-    "Ran 5 tests in 14.061s",
+    "Ran 5 tests in 13.645s",
     "FAILED (failures=3)"
    ],
-   "wall_s": 14.7,
+   "wall_s": 14.2,
    "skipped": false,
    "id": "strict-ignores-unstated",
    "file": "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
@@ -103,10 +89,10 @@
   {
    "rc": 1,
    "summary": [
-    "Ran 5 tests in 15.221s",
+    "Ran 5 tests in 15.191s",
     "FAILED (failures=1)"
    ],
-   "wall_s": 15.9,
+   "wall_s": 16.0,
    "skipped": false,
    "id": "strict-ignores-head-drift",
    "file": "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
@@ -117,7 +103,7 @@
   {
    "rc": 1,
    "summary": [
-    "Ran 5 tests in 14.896s",
+    "Ran 5 tests in 14.939s",
     "FAILED (failures=1)"
    ],
    "wall_s": 15.5,
@@ -130,6 +116,6 @@
   }
  ],
  "all_controls_pass": true,
- "caught": 7,
- "n": 7
+ "caught": 6,
+ "n": 6
 }

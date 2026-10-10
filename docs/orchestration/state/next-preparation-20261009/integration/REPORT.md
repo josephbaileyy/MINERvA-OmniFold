@@ -84,7 +84,7 @@ designs** (everything that would need a new authorization).
 | guard | producer repair, provenance guards, ratchets 17/17, a synthetic-only N2 harness | none in code | N2 itself, and any real admission |
 | structure | reported-cell identity in the UQ producers; superseded rollup refused; the adopted chain's cells equal | none in code | §5 patch for two publication consumers; P1–P3 |
 | speed | where the cost goes; D1 PASS bounded to full-node LightGBM universe unfolds; D2/D3 INCONCLUSIVE; D4 FAIL | F10 header, F11a, N1, N2, N4 (record corrections) | SB1; every exact-backend price is a forecast |
-| gbdt | saved-output reductions E1–E8; D2 FAIL; D3 FAIL against proposed targets | **the branch-B downstream route (N1) and the cost repairs (#7, #8)** | D-ID; I1; I2 |
+| gbdt | saved-output reductions E1–E8; D2 FAIL; D3 FAIL against proposed targets | **the branch-B downstream route (N1, #8) and the cost repair (#7)** | D-ID; I1; I2 |
 | pet | saved-output diagnosis at study scale; (3) FAIL at the declared endpoint | minors A, B (wording and one table row) | E1; S1–S6 |
 
 **Three distinctions the combined record must keep.**
@@ -92,8 +92,9 @@ designs** (everything that would need a new authorization).
 1. **GBDT branch B is unreviewed, and integrating the record admits nothing.** D-ID's measurement design
    is reviewed (ACCEPT-WITH-REPAIRS at `31517ad7`). The route that a branch-B outcome would take
    (read from the existing s5p study-K traces; extending them is a re-run of terminal s5p study K at
-   ≈ 8.7 admitted node-h) was repaired after that review and has had no independent review. The lane
-   itself labels it INCONCLUSIVE for review (gbdt REPORT §13). The cost repair is checked here
+   ≈ 8.7 admitted node-h) was repaired after that review (N1, with the stage-4 undeclarability rule #8) and has had no
+   independent review. The lane itself labels it INCONCLUSIVE for review (gbdt REPORT §13). The
+   post-review cost repair (#7: same-sample Fisher, priced T1 exactness runs) is checked here
    arithmetically. The subtotal is 0.053 + 2.004 + 0.196 + 0.664 + 0.1 = 3.018 core-h, so the admitted
    range is (3.018 + 1)/0.8 = 5.02 to (6.036 + 1)/0.8 = 8.80 core-h. The committed
    `reduce_saved_outputs.py` reproduces `results.json` byte for byte (24 s, one thread). **D-ID is not
@@ -110,8 +111,8 @@ designs** (everything that would need a new authorization).
    - 11.6 M rows per data-size experiment, which is 9.6 M pseudo-truth plus a 2 M-row prior that
      `design_cost.json` labels an assumption.
 
-   The lane's own table shows the dependence. At 24, 120 or 300 replicates per case the multiple is
-   5.7×, 28× or 71×. A different estimator, interval, tolerance, endpoint (fiducial, or conditional on
+   The lane's `results/design_cost.json` (`events.inventory_multiples_for_independent_validation`)
+   shows the dependence. At 24, 120 or 300 replicates per case the multiple is 5.7×, 28× or 71×. A different estimator, interval, tolerance, endpoint (fiducial, or conditional on
    the DEV bank) or prior size changes the count. These numbers are not a statement about the scalar
    or 2D programs, or about what any other PET design would need.
 3. **Speed's PET figure prices a different procedure from the PET lane's.**
@@ -139,7 +140,7 @@ Also carried, not re-litigated:
 | item | commit | change | negative control |
 |---|---|---|---|
 | R1 | `21c97390` | `fixed_truth_toy.py` `load_code`: a module path that resolves outside the checkout raises `ProvenanceRefusal` (exit 3) instead of `ValueError` (exit 1) | `test_a_module_symlinked_outside_the_checkout_is_a_refusal_not_a_crash`: toy design, driver and helper each replaced by a symlink into checkout B → exit 3, the refusal message, no traceback, no output |
-| R2 | `98382f86` | `n2/harness.py` `check_admission`: the authorization path is resolved against the checkout root, and the `docs/orchestration/` prefix and name rules apply to the normalized path | `test_the_authorization_path_is_normalized_before_its_prefix_test`: the canonical record still admits ("admission holds"); a committed `AUTHORIZATION-` file outside `docs/orchestration/` reached through `..`, and one outside the checkout, are refused. All three state the file's true digest |
+| R2 | `98382f86`, tightened in `c829c1ea` (review F4) | `n2/harness.py` `check_admission`: the authorization path must be repository-relative; it is normalized lexically, must stay inside the checkout and must name the record itself (not a symlink); the `docs/orchestration/` prefix and name rules apply to the normalized path | `test_the_authorization_path_is_normalized_before_its_prefix_test`: the canonical record still admits ("admission holds"). Refused: a committed `AUTHORIZATION-` file outside `docs/orchestration/` reached through `..`; one outside the checkout; the canonical record as an absolute path; a committed symlink to it. Every case states the target file's true digest |
 
 No change to `nd-unfolding/mnv_guarded_run.py`, `n2/execution.py`, the probe, the 2D driver, the pinned
 `omnifold.py` or any receipt-bound file. Neither repair found a binding that blocked it.
@@ -167,7 +168,8 @@ shows this on the real files. The fixture holds the real `analyze_uq.py`, `repor
     that module runs, so the check is a sweep, not a list of known import patterns.
 
 **Strict expectations at this integration** (sha256 of the committed bytes; `commit` must be the
-admitted checkout's HEAD, which must contain `b19b5e91`):
+admitted checkout's HEAD, which must contain the R1 code commit `21c97390`; `b19b5e91` adds only the
+test):
 
 | producer | executed repository modules | sha256 |
 |---|---|---|
@@ -185,19 +187,21 @@ A real run also states its input digests (toy: `omnifile`, `mcfile`; KI-85: `int
 ### 4.3 Mutation controls
 
 [`checks/mutation.py`](checks/mutation.py) applies each mutant in a fresh `git clone --shared` of
-`b19b5e91`. The unmutated clone passed every targeted command first, with no skips. Record:
-[`logs/mutation-results.json`](logs/mutation-results.json).
+the repaired head `c829c1ea` (the first run, at `b19b5e91`, caught 6 of 6 before the F4 mutant existed). The unmutated clone passed every targeted command first, with no skips. Record:
+[`logs/mutation-results.json`](logs/mutation-results.json); the first run is
+[`logs/mutation-results-run1-b19b5e91.json`](logs/mutation-results-run1-b19b5e91.json).
 
 | mutant | targeted test | result |
 |---|---|---|
 | R1 reverted (bare `relative_to`) | R1 test | red (3 subtest failures) |
-| R2 reverted (string prefix) | R2 test | red (2 subtest failures) |
+| R2 reverted (string prefix) | R2 test | red (3 subtest failures) |
+| R2 restored to its first, `resolve()`-based version | R2 test | red (2: the absolute and symlinked cases, review F4) |
 | `unrecorded_repo_modules` returns `[]` | dependency tests | red (7 failures) |
 | strict mode ignores unstated modules | dependency tests | red (3) |
 | strict mode ignores bytes not at HEAD | dependency tests | red (1) |
 | stated commit not compared | dependency tests | red (1) |
 
-**6 of 6 caught.**
+**7 of 7 caught.**
 
 ### 4.4 Test results (every count from the runner's own output; skips counted)
 
@@ -218,6 +222,10 @@ Environment: `python3` is conda 3.12.2 (numpy 1.26.4, no PyROOT, which fails to 
 | `verify_hash_bindings.py` | python3 | ALL BINDINGS INTACT | ALL BINDINGS INTACT | — |
 | `test_hash_bindings.py` | python3 | 33 passed | 33 passed | 0 |
 | OI-136 inventory (`guard/inventory.py`) | python3 | — | AST 17 listed, fail-open 16 `7aa29431…`, 0 unlisted, 0 adjacent | — |
+
+After the review's repair batch (`c829c1ea`, `harness.py` and its test only), the harness suite
+(22 OK, the R2 test now with five subtests), both ratchets (17 OK) and `verify_hash_bindings.py`
+(ALL BINDINGS INTACT) were re-run; no other code changed.
 
 The reported-cell suite was run with PyROOT and matplotlib, so none of its ten ROOT-gated script tests
 skipped. Run without them it skips ten (structure REPORT §8), and that count is not used here. The
@@ -289,17 +297,42 @@ launches none of them and does not wait for them. Their later integration is a s
 
 | report path | subject | inputs | preconditions it cannot waive |
 |---|---|---|---|
-| `Q/two-d-path/REPORT.md` | the 2D publication path after keep-and-disclose: the `KNOWN_ISSUES.md` 88 pairing | closeout §11 (Joseph's ruling); publication REPORT §8; `DELIVERY-20261008-uncertainty-preparation.md` §6; A's pairing assessment; speed §6–§7 for the forecast prices | measuring the transfer, a LightGBM re-quote, a changed central estimator, N2 and a KI-85 lift are each Joseph's decision; speed's exact-backend prices are forecasts until SB1 |
-| `Q/sb1-prep/REPORT.md` | preparation for speed's SB1: prototype-1 branch lists for the truth, background and data loaders, with local byte-equality tests (speed review N3) | speed REPORT §4, §9, §15, `speed/proto/`, `speed/bench/` | local only; the 2D driver is claimed by no lane and stays unedited; running SB1 (≈ 1.3, cap 2.0 CPU node-h) needs Joseph's authorization |
-| `Q/d-id/REPORT.md` | the 5D GBDT diagnostic D-ID | gbdt REPORT §6, §10, §14, `results.json`, `comparator.py` | Joseph's resource decision (5.02–8.80 local core-h, a ≤ 1.44 GiB read-only copy whose digest is to be re-measured, 0 GPU, 0 training); an independent review of the post-review branch-B route (N1, #7, #8) before a branch-B outcome is acted on; extending s5p study K needs its own authorization |
+| `Q/two-d-path/REPORT.md` | the 2D publication path after keep-and-disclose: the `KNOWN_ISSUES.md` 88 pairing | closeout §11 (Joseph's ruling); publication REPORT §8; `DELIVERY-20261008-uncertainty-preparation.md` §6; A's pairing assessment; speed §6–§7 for the forecast prices Joseph's 2026-10-09 ruling: measuring the transfer, N2, a LightGBM re-quote, a KI-85 lift, changed scientific gates and reopening terminal campaigns are **not authorized**; a changed central estimator is reserved to Joseph (`AGENTS.md`); speed's exact-backend prices are forecasts until SB1 |
+| `Q/sb1-prep/REPORT.md` | preparation for speed's SB1: prototype-1 branch lists for the truth, background and data loaders, with local byte-equality tests (speed review N3) | speed REPORT §4, §9, §15, `speed/proto/`, `speed/bench/` local only; the 2D driver is claimed by no lane and stays unedited; running SB1 (≈ 1.3, cap 2.0 CPU node-h) needs Joseph's authorization, and SB1 matters only if option (b) "measure the transfer" or option (c)'s matched seed-1 sweep is to be priced (speed §15), neither of which the 2026-10-09 ruling authorizes |
+| `Q/d-id/REPORT.md` | the 5D GBDT diagnostic D-ID | gbdt REPORT §6, §10, §14, `results.json`, `comparator.py` Joseph's resource decision (5.02–8.80 local core-h, a ≤ 1.44 GiB read-only copy whose digest is to be re-measured, 0 GPU, 0 training, 0 Slurm, one owner and one fresh reviewer; gbdt §14); an independent review of the post-review branch-B route (N1, #8) and cost repair (#7) before a branch-B outcome is acted on; extending s5p study K needs its own authorization; the endpoint-scope question of gbdt §10.3 is Joseph's, and any S0–S1 success is simulation-only and conditional |
 
 ## 8. Independent review
 
-**Pending.** One fresh read-only reviewer on a fixed commit of this branch. It gets one initial review,
-and one focused re-review if a repair batch is needed. Its scope is the integration delta and
-cross-lane behaviour, not a restart of the six completed reviews. Numerical checks inspect operands and
-independently reproduce the consequential changed calculations. This section is completed after the
-review, with the reviewed commit, findings and dispositions.
+- **Reviewer.** One fresh read-only Claude Code subagent (it reported itself as Claude Opus 5.5).
+  It has no authorship of this integration or of any lane. It is the same model family as the owner,
+  so the review is not cross-provider independent.
+- **Setup.** It worked in its own detached worktree at the fixed commit
+  `2a394cd1fff0dd6033086fd986f83b44a123cdbb`, from 03:36Z to 03:50Z, using about 0.15 core-h and at
+  most 2 threads. Its worktree status was clean at start and end (`--ignored`: caches and LaTeX build
+  output only), and it removed the worktree.
+- **Preserved verbatim:** [`review/review.md`](review/review.md), sha256 `f67d51cc…`.
+- **Independent checks.** It re-did every check of §2 and §4–§7 with its own commands:
+  - assembly and byte identity, and the manifest and lint;
+  - R1/R2 reverts, and the 10 module digests;
+  - every suite (counts equal to §4.4, 0 skips), and the inventory;
+  - the GBDT range and the byte-identical re-run of the reduction;
+  - the PET and speed figures against their JSON;
+  - source equivalence, and its own build (PASS, 123/9/11, no `??`, no "pinned seeds").
+
+**Initial verdict: PASS WITH CHANGES.** There was no material finding. The single repair batch is
+`c829c1ea` (code) plus the record commit that carries this section.
+
+| # | severity | finding | disposition |
+|---|---|---|---|
+| F1 | MINOR | §10 understated tracked bytes (≈ 40 KiB claimed; ≈ 144 KiB measured) | **fixed**: re-measured in §10 |
+| F2 | MINOR | KNOWN_ISSUES 89/90 said "landed on `main`" while the branch was unmerged | **fixed**: "delivered on `integrate/next-preparation-20261009` for merge to `main`" |
+| F3 | MINOR | §7 and its CATALOG rows dropped source conditions: SB1's "only if option (b) or (c) is priced"; the ruling's "not authorized" for the transfer, re-quote, N2 and KI-85 lift, plus changed gates and reopened terminal campaigns; D-ID's 0 Slurm, one owner and one reviewer, and the §10.3 scope question | **fixed** in §7; each CATALOG row now carries a short pointer |
+| F4 | NOTE | R2's `resolve()` followed symlinks and accepted absolute paths, so the stated path could differ from the file checked | **fixed** in `c829c1ea`: repository-relative, lexically normalized, non-symlinked paths only. Two refused cases were added; the first R2 version fails exactly those two (mutation `R2-first-version`) |
+| F5 | NOTE | GBDT #8 is a branch-B rule, not a cost repair; the 5.7×/28×/71× figures come from `design_cost.json`, not from a report table | **fixed** (§3) |
+| F6 | NOTE | §4.2 named the test-only `b19b5e91` as the code requirement | **fixed**: `21c97390` |
+| F7 | NOTE | `test_build_all.py` mode 100755 (canonical) vs 100644 (standalone), present at the base, contents identical | **recorded, no change**. Out of scope; the standalone merge carries the existing state |
+
+**Focused re-review** of the repair batch: see below.
 
 ## 9. Delivery
 
@@ -315,24 +348,25 @@ review, with the reviewed commit, findings and dispositions.
 No force-push, and no evidence branch or tag deletion. The resulting remote heads are recorded on the
 merged PR and in the session's final report.
 
-## 10. Resources (to the review freeze)
+## 10. Resources
 
 | item | measured | cap |
 |---|---|---|
-| active time | 2026-10-10T02:58Z → freeze (§8); about 0.5 h before the review | 6 h |
-| local CPU | ≈ 0.15 core-h of timed commands (baseline suites 270 s, mutation run 77 s, build 34 s, inventory 19 s, GBDT re-run 24 s, dependency tests 12 s, manifest check ≈ 60 s), plus ≈ 0.05 untimed (hooks, git) | 3 core-h |
-| threads | one per test command; two for the build (`OMP_NUM_THREADS=2`) | 2 |
+| active time | 2026-10-10T02:58Z → about 04:00Z at the repair batch, including the review; delivery time is added in the final report | 6 h |
+| local CPU, owner | ≈ 0.3 core-h of timed commands. Two full suite runs ≈ 270 s and ≈ 290 s; two mutation runs 77 s and 82 s; harness re-runs ≈ 75 s; build 34 s; inventory 2 × 19 s; GBDT re-run 24 s; manifest checks ≈ 60 s each. Plus ≈ 0.05 untimed (hooks, git) | 3 core-h (owner + reviewer) |
+| local CPU, reviewer | ≈ 0.15 core-h (its own estimate) | (included above) |
+| threads | one per test command; two for the build | 2 |
 | peak RAM | build ≈ 0.14 GB max RSS; tests below 0.5 GB | 8 GiB |
-| scratch | ≈ 0.1 GB (`venv313` 83 MB, logs, test temp directories removed per run) | 3 GiB |
-| tracked bytes added by this session | ≈ 40 KiB (this report, `checks/`, `logs/`, two tests, the generated manifest rows) | — |
+| scratch | peak ≈ 0.6 GB (`venv313` 83 MB, the reviewer's worktree ≈ 0.4 GB while it existed, logs; test temp directories removed per run) | 3 GiB |
+| tracked bytes, net, against the merged tree `dd73de73` | ≈ 170 kB: `MANIFEST.tsv` growth ≈ 40 kB, this report ≈ 27 kB, the preserved review ≈ 17 kB, the new test ≈ 9 kB, logs and checks the rest. Re-measured after the repair batch (review F1) | 10 MiB |
 | cluster / GPU / training / toys / event loops | 0 / 0 / 0 / 0 / 0 | 0 |
 
 ## 11. Disposition (proposed, before review)
 
 | decision | proposed | reason |
 |---|---|---|
-| six lanes integrated without regressions | PASS, if the review finds no material defect | disjoint changes, byte identity, all suites green with 0 skips on the final code, the cross-lane gap closed by a test, 6/6 mutants caught |
-| guard R1 and R2 | PASS | both repaired in scope, each with a negative control that a revert turns red |
+| six lanes integrated without regressions | PASS, if the review finds no material defect | disjoint changes, byte identity, all suites green with 0 skips on the final code, the cross-lane gap closed by a test, 7/7 mutants caught |
+| guard R1 and R2 | PASS | both repaired in scope, R2 tightened for review F4; each has a negative control that a revert turns red (7/7 mutants) |
 | shared records correct | PASS | KI-89, KI-90 and OI-136 carry re-measured counts and exact routes; OI-136 is not solved, and KI-90 is not closed |
 | publication sources synchronized | PASS, if delivery succeeds | 120/120 files blob-identical; three builds PASS; rendered passages checked |
 | publication-ready measurement | **NOT ACHIEVED** | KI-88's transfer is unmeasured; VL170 coverage is not re-tested (KI-85 deferred); this integration changes no scientific product |
