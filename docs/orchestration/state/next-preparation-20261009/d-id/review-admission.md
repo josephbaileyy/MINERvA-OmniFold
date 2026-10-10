@@ -45,7 +45,7 @@ Checked and correct: AM-1 (asimov_same measures `pass_reco & pass_truth` signal 
 - Owner suite: 22 passed (46.9 s wall, 77 s CPU, peak RSS 0.78 GB).
 - Cost: `did.ibu` 6.4 ms/iteration at 2.9 M nnz, 13.6 ms at 5.7 M (T2 shape) ⇒ stage 4 worst case 1.6–3.4 core-h; whole run ~4–8 core-h worst case (stage 5 may hit the cap). The 7.04 core-h CPU cap is credible: the guard measures all threads via getrusage self+children, prices each unit before starting and checks every 1,000 iterations inside convergence (overrun ≤ ~14 s). The 8 GiB RAM cap is not credible until M3 is repaired.
 
-No numerical disagreement; the one functional defect found is M1.
+No numerical disagreement; the one defect found is M1.
 
 ## (d) Verdict
 

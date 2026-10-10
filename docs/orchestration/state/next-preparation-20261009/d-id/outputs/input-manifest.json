@@ -1,0 +1,269 @@
+{
+ "schema": "d-id-input-manifest/1",
+ "copied_utc": "2026-10-10T05:41:59Z..05:44:21Z (scp -p, read-only source)",
+ "files": {
+  "nd-unfolding/of_inputs_5d.npz": {
+   "observed_sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+   "bytes": 1548438020,
+   "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz"
+  },
+  "s5e/diag/asimov/asimov_b0_eavail.npz": {
+   "observed_sha256": "982a4ec54f28388abe05ee64dd09e62334f48c200a2bc438ae794d536de0cde0",
+   "bytes": 1774973,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/asimov/asimov_b0_eavail.npz"
+  },
+  "s5e/diag/asimov/asimov_b0_nominal.npz": {
+   "observed_sha256": "45fd1f1bdd70554bba227f2eee8a0e76c498142c3cebcbcb19960f6616574c93",
+   "bytes": 1738802,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/asimov/asimov_b0_nominal.npz"
+  },
+  "s5e/diag/asimov/asimov_b0_q3.npz": {
+   "observed_sha256": "06d52b0e19d5f55b094fcbccb0d52a4a62ff49ca8f6f9eb07de0df06ed159049",
+   "bytes": 1775764,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/asimov/asimov_b0_q3.npz"
+  },
+  "s5e/diag/asimov/asimov_cap_eavail.npz": {
+   "observed_sha256": "cd1eeaaeb865b48e7378fb38d4cde5a71e49f681510c865c7b894e03d6bd869c",
+   "bytes": 1410742,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/asimov/asimov_cap_eavail.npz"
+  },
+  "s5e/diag/asimov/asimov_cap_q3.npz": {
+   "observed_sha256": "c722774813f55c27dfa3371523f4612ea097427b0aa6c076467e43e7601dc298",
+   "bytes": 1411286,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/asimov/asimov_cap_q3.npz"
+  },
+  "s5e/diag/asimov/asimov_unity_eavail.npz": {
+   "observed_sha256": "73e349dbc141cbff8306fb51401d69ee69cba160cb09f54d4762a8479fa77761",
+   "bytes": 1766560,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/asimov/asimov_unity_eavail.npz"
+  },
+  "s5e/diag/asimov/asimov_unity_q3.npz": {
+   "observed_sha256": "30f0b1f7da0d7e71a26b673e47a5f6d5b2e3130b2df13a744f87debfb1917046",
+   "bytes": 1766780,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/asimov/asimov_unity_q3.npz"
+  },
+  "s5e/diag/trace/trace_eavail_sig_s301000.npz": {
+   "observed_sha256": "682d70121e15846ec17880f20bdf8f1919d4a7aca6244af805a33c9f3c030d29",
+   "bytes": 1375570,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/trace/trace_eavail_sig_s301000.npz"
+  },
+  "s5e/diag/trace/trace_eavail_sig_s301001.npz": {
+   "observed_sha256": "7877008aa21ed241df46f833d5ccd8aa05882a46bad1db919819d9ff10abecea",
+   "bytes": 1374075,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/trace/trace_eavail_sig_s301001.npz"
+  },
+  "s5e/diag/trace/trace_eavail_sig_s301002.npz": {
+   "observed_sha256": "84528fa54ae4d539e5dd9a9b7558a76fb382f9bec8436f48ea68ed1ead99cca6",
+   "bytes": 1374239,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/trace/trace_eavail_sig_s301002.npz"
+  },
+  "s5e/diag/trace/trace_eavail_sig_s301003.npz": {
+   "observed_sha256": "bc1db7d32df262afabb4b3accc8d8d3ccc5fb8fbb6cb9a517698c66a446d0693",
+   "bytes": 1376076,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/trace/trace_eavail_sig_s301003.npz"
+  },
+  "s5e/diag/trace/trace_nominal_sig_s300000.npz": {
+   "observed_sha256": "f0bfd7acdce7b22ea034996acd922c2c7302819d6c32e758ffbeee14be64e383",
+   "bytes": 1368162,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/trace/trace_nominal_sig_s300000.npz"
+  },
+  "s5e/diag/trace/trace_nominal_sig_s300001.npz": {
+   "observed_sha256": "23ab1ef1d84db3b56242eb75abe1212d016db202950380f8409267f8420ff3e8",
+   "bytes": 1370789,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/trace/trace_nominal_sig_s300001.npz"
+  },
+  "s5e/diag/trace/trace_nominal_sig_s300002.npz": {
+   "observed_sha256": "6c7ad65befa39e71689901fd083946a288a3e2b8a9c4c76dfe1d4becf6a98711",
+   "bytes": 1370857,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/trace/trace_nominal_sig_s300002.npz"
+  },
+  "s5e/diag/trace/trace_nominal_sig_s300003.npz": {
+   "observed_sha256": "70c66662d4d919dc7f731d1544ca40f9ed50974b06c764d9d559c08504a4d4c3",
+   "bytes": 1370332,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/trace/trace_nominal_sig_s300003.npz"
+  },
+  "s5e/diag/trace/trace_q3_sig_s302000.npz": {
+   "observed_sha256": "3433266c4821cc5f4278ff2ae52a2ec832909201997c46ac584fe6ea510e125d",
+   "bytes": 1374682,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/trace/trace_q3_sig_s302000.npz"
+  },
+  "s5e/diag/trace/trace_q3_sig_s302001.npz": {
+   "observed_sha256": "ebcb0a2c2ae875d9cdef8826697e45a9ab3080baa10e18e2ad12581106070d85",
+   "bytes": 1375783,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/trace/trace_q3_sig_s302001.npz"
+  },
+  "s5e/diag/trace/trace_q3_sig_s302002.npz": {
+   "observed_sha256": "486cbc368fb017bdefff2bb4582ab5cf069d9f1fb97ef2d964bbd064f882663e",
+   "bytes": 1375017,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/trace/trace_q3_sig_s302002.npz"
+  },
+  "s5e/diag/trace/trace_q3_sig_s302003.npz": {
+   "observed_sha256": "b87ab8e4a47be34acf0e1a0a83049ef900621ebea6cc3ed34e141b88e1a4093c",
+   "bytes": 1372562,
+   "source": "/pscratch/sd/j/josephrb/s5e-20260925/runs/diag/trace/trace_q3_sig_s302003.npz"
+  },
+  "s5p/conv/k_b0_gibuu.npz.partial.npz": {
+   "observed_sha256": "1fbbdf95dbca3c08a01348707ab759b653a14dcc5ccca70f818dc437157702c0",
+   "bytes": 1387734,
+   "source": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/conv/k_b0_gibuu.npz.partial.npz"
+  },
+  "s5p/conv/k_b0_nominal.npz": {
+   "observed_sha256": "963cf328d4bb0018e0d55e570c2a1113209594086eac4a7d9e9c537ccca84d6a",
+   "bytes": 3098122,
+   "source": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/conv/k_b0_nominal.npz"
+  },
+  "s5p/conv/k_b0_q3.npz.partial.npz": {
+   "observed_sha256": "6e89edea832432e0baf5294c891e7cbb15fde37caa51809f8d576b39f48d75c1",
+   "bytes": 1387734,
+   "source": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/conv/k_b0_q3.npz.partial.npz"
+  },
+  "s5p/conv/k_b0_w1.npz.partial.npz": {
+   "observed_sha256": "d06c46a19232c520e26d4a572143cab4aced09b9b31fd891b67c854b38185eea",
+   "bytes": 1470134,
+   "source": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/conv/k_b0_w1.npz.partial.npz"
+  },
+  "s5p/conv/k_b0_w3.npz": {
+   "observed_sha256": "7e8e87f44d9cef195698e73cd641ca3c182b36fed0c729e51882150f5b38e161",
+   "bytes": 3363672,
+   "source": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/conv/k_b0_w3.npz"
+  },
+  "s5p/conv/k_cap10_gibuu.npz": {
+   "observed_sha256": "931297280a9d6da19c5a84b8fc4c4a8f8195e20245349545ee3c81c0696f783d",
+   "bytes": 1294617,
+   "source": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/conv/k_cap10_gibuu.npz"
+  },
+  "s5p/conv/k_cap10_q3.npz": {
+   "observed_sha256": "26c9a860ecfa92afd07af478675faf2f39a347c8b5679cf2720d9a55eb871fcb",
+   "bytes": 1295060,
+   "source": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/conv/k_cap10_q3.npz"
+  },
+  "s5p/conv/k_cap10_w3.npz": {
+   "observed_sha256": "06818f4bd87843238f4f53236f319e8d8d5c5a493035d4d9813add931c6414d4",
+   "bytes": 1295010,
+   "source": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/conv/k_cap10_w3.npz"
+  }
+ },
+ "event_file_members": [
+  "axes",
+  "MCgen",
+  "MCreco",
+  "measured",
+  "pass_reco",
+  "pass_truth",
+  "w_truth",
+  "w_reco",
+  "measured_weights",
+  "denom_nd",
+  "flux",
+  "data_pot",
+  "n_nucleons",
+  "edges_0",
+  "edges_1",
+  "edges_2",
+  "edges_3",
+  "edges_4",
+  "nedges"
+ ],
+ "event_file_mc_headers_only": {
+  "MCgen": {
+   "shape": [
+    32849103,
+    5
+   ],
+   "dtype": "float32"
+  },
+  "MCreco": {
+   "shape": [
+    32849103,
+    5
+   ],
+   "dtype": "float32"
+  },
+  "pass_reco": {
+   "shape": [
+    32849103
+   ],
+   "dtype": "bool"
+  },
+  "pass_truth": {
+   "shape": [
+    32849103
+   ],
+   "dtype": "bool"
+  },
+  "w_truth": {
+   "shape": [
+    32849103
+   ],
+   "dtype": "float64"
+  },
+  "w_reco": {
+   "shape": [
+    32849103
+   ],
+   "dtype": "float64"
+  },
+  "denom_nd": {
+   "shape": [
+    14,
+    16,
+    7,
+    7,
+    6
+   ],
+   "dtype": "float64"
+  },
+  "flux": {
+   "shape": [
+    14
+   ],
+   "dtype": "float64"
+  },
+  "data_pot": {
+   "shape": [],
+   "dtype": "float64"
+  },
+  "n_nucleons": {
+   "shape": [],
+   "dtype": "float64"
+  },
+  "nedges": {
+   "shape": [],
+   "dtype": "int64"
+  },
+  "edges_0": {
+   "shape": [
+    15
+   ],
+   "dtype": "float64"
+  },
+  "edges_1": {
+   "shape": [
+    17
+   ],
+   "dtype": "float64"
+  },
+  "edges_2": {
+   "shape": [
+    8
+   ],
+   "dtype": "float64"
+  },
+  "edges_3": {
+   "shape": [
+    8
+   ],
+   "dtype": "float64"
+  },
+  "edges_4": {
+   "shape": [
+    7
+   ],
+   "dtype": "float64"
+  }
+ },
+ "real_data_members_not_opened": [
+  "measured",
+  "measured_weights"
+ ]
+}
