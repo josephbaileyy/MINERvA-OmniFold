@@ -1,0 +1,57 @@
+== test_branch_select at 21df9541 2026-10-10T05:30:08Z
+test_a_partial_entry_state_is_restored_exactly (test_branch_select.Equality.test_a_partial_entry_state_is_restored_exactly) ... ok
+test_a_reused_tree_is_restored_and_reads_identically_afterwards (test_branch_select.Equality.test_a_reused_tree_is_restored_and_reads_identically_afterwards) ... ok
+test_discovery_reads_no_entry_and_leaves_no_address (test_branch_select.Equality.test_discovery_reads_no_entry_and_leaves_no_address) ... ok
+test_selective_is_byte_identical_to_the_pinned_loaders (test_branch_select.Equality.test_selective_is_byte_identical_to_the_pinned_loaders) ... ok
+test_the_lateral_selection_names_every_shifted_branch (test_branch_select.Equality.test_the_lateral_selection_names_every_shifted_branch) ... ok
+test_the_vertical_selection_keeps_cv_kinematics (test_branch_select.Equality.test_the_vertical_selection_keeps_cv_kinematics) ... ok
+test_a_loader_that_reads_another_branch_is_refused_by_the_rule (test_branch_select.NegativeControls.test_a_loader_that_reads_another_branch_is_refused_by_the_rule) ... ok
+test_a_wrong_rule_and_access_that_agree_are_caught_by_the_bytes (test_branch_select.NegativeControls.test_a_wrong_rule_and_access_that_agree_are_caught_by_the_bytes) ... ok
+test_an_extra_activation_is_refused_before_the_first_read (test_branch_select.NegativeControls.test_an_extra_activation_is_refused_before_the_first_read) ... ok
+test_an_unmodelled_tree_access_is_refused (test_branch_select.NegativeControls.test_an_unmodelled_tree_access_is_refused) ... ok
+test_every_omitted_activation_is_refused_before_the_first_read (test_branch_select.NegativeControls.test_every_omitted_activation_is_refused_before_the_first_read) ... ok
+test_the_digest_sees_sign_dtype_shape_and_one_ulp (test_branch_select.NegativeControls.test_the_digest_sees_sign_dtype_shape_and_one_ulp) ... ok
+test_the_histogram_digest_sees_one_fill (test_branch_select.NegativeControls.test_the_histogram_digest_sees_one_fill) ... ok
+test_the_silent_defect_is_real_without_the_guard (test_branch_select.NegativeControls.test_the_silent_defect_is_real_without_the_guard) ... ok
+test_boundaries_present (test_branch_select.TheFixture.test_boundaries_present) ... ok
+test_lateral_branches_differ_from_cv_and_vertical_have_none (test_branch_select.TheFixture.test_lateral_branches_differ_from_cv_and_vertical_have_none) ... ok
+Ran 16 tests in 13.501s
+OK
+real 15.33
+user 13.13
+sys 0.67
+== test_sb1_guarded at 21df9541 2026-10-10T05:30:24Z
+test_a_changed_driver_is_refused_even_when_committed_and_stated (test_sb1_guarded.Guarded.test_a_changed_driver_is_refused_even_when_committed_and_stated) ... ok
+test_a_reference_from_other_arguments_is_refused (test_sb1_guarded.Guarded.test_a_reference_from_other_arguments_is_refused) ... ok
+test_a_reference_with_different_bytes_stops_before_training (test_sb1_guarded.Guarded.test_a_reference_with_different_bytes_stops_before_training) ... ok
+test_a_wrong_helper_digest_is_refused (test_sb1_guarded.Guarded.test_a_wrong_helper_digest_is_refused) ... ok
+test_a_wrong_input_digest_is_refused (test_sb1_guarded.Guarded.test_a_wrong_input_digest_is_refused) ... ok
+test_activation_controls_are_refused_on_the_wrapper_path (test_sb1_guarded.Guarded.test_activation_controls_are_refused_on_the_wrapper_path) ... ok
+test_an_input_changed_after_hashing_is_refused (test_sb1_guarded.Guarded.test_an_input_changed_after_hashing_is_refused) ... ok
+test_an_uncommitted_executed_file_is_refused (test_sb1_guarded.Guarded.test_an_uncommitted_executed_file_is_refused) ... ok
+test_both_arms_strict_and_identical (test_sb1_guarded.Guarded.test_both_arms_strict_and_identical) ... ok
+test_strict_without_the_guard_is_refused (test_sb1_guarded.Guarded.test_strict_without_the_guard_is_refused) ... ok
+Ran 10 tests in 31.933s
+OK
+real 32.13
+user 21.14
+sys 3.61
+== test_launch_chain at 21df9541 2026-10-10T05:30:56Z
+Ran 0 tests in 18.985s
+FAILED (errors=1)
+real 19.18
+user 18.58
+sys 0.48
+== test_package_consistency at 21df9541 2026-10-10T05:31:15Z
+test_dependencies_in_the_submit_script_follow_the_spec (test_package_consistency.Plan.test_dependencies_in_the_submit_script_follow_the_spec) ... ok
+test_every_job_script_requests_what_the_spec_says (test_package_consistency.Plan.test_every_job_script_requests_what_the_spec_says) ... ok
+test_the_committed_costs_are_current_and_within_the_ceiling (test_package_consistency.Plan.test_the_committed_costs_are_current_and_within_the_ceiling) ... ok
+test_the_committed_proposal_cannot_admit (test_package_consistency.Plan.test_the_committed_proposal_cannot_admit) ... ok
+test_the_manifest_is_current (test_package_consistency.Plan.test_the_manifest_is_current) ... ok
+test_the_schema_names_every_field_the_admission_check_requires (test_package_consistency.Plan.test_the_schema_names_every_field_the_admission_check_requires) ... ok
+test_the_unfold_argv_in_the_scripts_is_the_spec_argv (test_package_consistency.Plan.test_the_unfold_argv_in_the_scripts_is_the_spec_argv) ... ok
+Ran 7 tests in 0.142s
+OK
+real 0.20
+user 0.13
+sys 0.04
