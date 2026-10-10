@@ -1,0 +1,50 @@
+## date
+2026-10-10T20:00:42Z
+login23
+## iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2035.0            10000.0     16976.9      20000.0
+m3246_g             1295.8            90000.0    125296.1     180000.0
+## squeue --me (all states)
+             JOBID         NAME PARTITION    STATE       TIME TIME_LIMIT  NODES NODELIST(REASON) WORK_DIR
+## sacct since 2026-10-09 (allocations)
+JobID|JobName|State|Submit|Start|End|ElapsedRaw|AllocTRES
+## showquota / myquota
++-------------+------------+-------------+----------------+------------+-------------+----------------+
+| File system | Space used | Space quota | Space used (%) | Inode used | Inode quota | Inode used (%) |
++-------------+------------+-------------+----------------+------------+-------------+----------------+
+|        home |   24.35GiB |    40.00GiB |          60.9% |    272.61K |       1.00M |          27.3% |
+|    pscratch |   16.76TiB |    20.00TiB |          83.8% |      1.28M |      10.00M |          12.8% |
++-------------+------------+-------------+----------------+------------+-------------+----------------+
+## df scratch
+Filesystem                                    Size  Used Avail Use% Mounted on
+2158@kfi,2091@kfi:2283@kfi,2219@kfi:/scratch   44P   30P   14P  69% /pscratch
+## canonical checkout
+32e403b84e9e8f9d9bc435028749f896653c7a43
+ M docs/orchestration/LIVE-STATE.md
+ M docs/orchestration/state/live-state-last-known.json
+/pscratch/sd/j/josephrb/MINERvA-OmniFold-ki84-20261006         62115adcb (detached HEAD)
+/pscratch/sd/j/josephrb/MINERvA-OmniFold-l2-20260921           384c2eb17 (detached HEAD)
+/pscratch/sd/j/josephrb/MINERvA-OmniFold-production-interface  7a2d9897a [feat/production-interface]
+/pscratch/sd/j/josephrb/MINERvA-OmniFold-zdet-20260918         7e4e5e133 (detached HEAD)
+/pscratch/sd/j/josephrb/pet-roundoff-preparation-20260910      ca34a03a9 (detached HEAD)
+/pscratch/sd/j/josephrb/pet-runtime-numerics-20260910          10deb7147 (detached HEAD)
+/pscratch/sd/j/josephrb/pet-runtime-synthetic-20260910         f59d81707 (detached HEAD)
+/pscratch/sd/j/josephrb/pet-v2-source-audit-58832843           588328438 (detached HEAD)
+## env setup
+ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48  /pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh 1407 1783685589 882725528459544610
+## inputs
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root 171117087867 1783523295000000000 882725391507234642
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root 2144008221 1779094334000000000 882724772125893981
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root 5143 1777003503000000000 882724771874215681
+## references
+-rw-r----- 1 josephrb josephrb 55484 Oct  5 22:21 /pscratch/sd/j/josephrb/ki84-rebuild-20261006/replicas/2d_xsec_MEFHC_5iter_lgbm_boot1.root
+-rw-r----- 1 josephrb josephrb 56509 Jul 10 22:52 /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_Muon_Energy_MINOS_0.root
+## sb1 outroots
+ls: cannot access '/pscratch/sd/j/josephrb/sb1-*': No such file or directory
+ls: cannot access '/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-*': No such file or directory
+## two-d-followup / XR
+ls: cannot access '/pscratch/sd/j/josephrb/*xr*': No such file or directory
+ls: cannot access '/pscratch/sd/j/josephrb/*XR*': No such file or directory

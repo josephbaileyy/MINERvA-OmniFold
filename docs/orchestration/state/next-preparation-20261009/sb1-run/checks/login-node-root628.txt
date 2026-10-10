@@ -1,0 +1,22 @@
+# Perlmutter login23, 2026-10-10T20:06-20:12Z, root_6_28 (Python 3.11.14, numpy 1.26.4, lightgbm 4.6.0,
+# scikit-learn 1.8.0, ROOT 6.28/12), checkout /pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52 at 2b35ba52.
+# TMPDIR=$SCRATCH/tmp/sb1-login-test-*, removed afterwards; worktree status 0 lines before and after. No Slurm call.
+
+## python -m unittest -v test_branch_select   (the package's own suite, unmodified)
+Ran 16 tests in 18.409s
+FAILED (errors=1)
+  15 OK, including test_selective_is_byte_identical_to_the_pinned_loaders (15 loader x pattern cases),
+  every negative control, the reuse/restore and discovery tests.
+  ERROR test_boundaries_present (TheFixture), test_branch_select.py:128:
+      np.asarray(c["sim_pass"]).view(np.uint8)
+      TypeError: Cannot change data-type for object array.
+  Cause: ROOT 6.28's RDataFrame.AsNumpy returns the UChar_t column as an object array of Python str
+  (6.36 returns a bool/uint8 array). The error is in the fixture-sanity test only; no SB1 run-path file
+  (sb1_run.py, branch_select.py, sb1_verify.py, the driver) calls AsNumpy or RDataFrame.
+
+## python checks/fixture_probe.py <package tests dir>   (sb1-run probe, sha256 9456aba2...)
+sim_pass dtype from AsNumpy: object str
+{'near_20deg_rows': 116, 'sim_pass_eq_2': 62, 'sim_pass_values': [0, 1, 2], 'w_truth': {'eq_1e4': 3, 'eq_below_1e4': 3, 'nonfinite': 12, 'negative': 13}, 'w_reco': {'eq_1e4': 3, 'eq_below_1e4': 3, 'nonfinite': 12, 'negative': 13}, 'neg_zero_MC': 4, 'w_bkg_1e6_edges': 2, 'data_abs_gt_1e3': 15}
+ROOT 6.28/12 numpy 1.26.4 BOUNDARIES PRESENT
+  The fixture the 15 equality cases ran on, written by ROOT 6.28 with the suite's parameters, reaches every
+  boundary test_boundaries_present asserts (pass flags read per row, as the pinned loader reads them).
