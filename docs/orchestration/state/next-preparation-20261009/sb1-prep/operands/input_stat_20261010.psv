@@ -1,0 +1,6 @@
+# read-only `stat` on Perlmutter login05, 2026-10-10T05:0xZ (python os.stat for mtime_ns/ino); no file content read
+path|size_bytes|mtime_ns|mtime_local|ino
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root|171117087867|1783523295000000000|2026-07-08 08:08:15.000000000 -0700|882725391507234642
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root|2144008221|1779094334000000000|2026-05-18 01:52:14.000000000 -0700|882724772125893981
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root|5143|1777003503000000000|2026-04-23 21:05:03.000000000 -0700|882724771874215681
+# lfs getstripe -c of the universe omnifile: 1 (single OST stripe)

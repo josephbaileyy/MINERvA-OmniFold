@@ -1,0 +1,298 @@
+{
+"BeamAngleX_0/mc_truth_denom/pT_truth_BeamAngleX_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"BeamAngleX_0/mc_truth_denom/pz_truth_BeamAngleX_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"BeamAngleX_0/mc_truth_denom/w_truth_BeamAngleX_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"BeamAngleX_0/mc_signal_reco/MC_BeamAngleX_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"BeamAngleX_0/mc_signal_reco/MC_pz_BeamAngleX_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"BeamAngleX_0/mc_signal_reco/sim_BeamAngleX_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.0054992825301614055
+},
+"BeamAngleX_0/mc_signal_reco/sim_pz_BeamAngleX_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 8.44440261219331e-05
+},
+"BeamAngleX_0/mc_signal_reco/w_truth_BeamAngleX_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"BeamAngleX_0/mc_signal_reco/w_reco_BeamAngleX_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"BeamAngleX_0/mc_background/sim_background_BeamAngleX_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.004067104609823395
+},
+"BeamAngleX_0/mc_background/sim_background_pz_BeamAngleX_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 8.051693033490057e-05
+},
+"BeamAngleX_0/mc_background/w_bkg_BeamAngleX_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"MuonResolution_0/mc_truth_denom/pT_truth_MuonResolution_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"MuonResolution_0/mc_truth_denom/pz_truth_MuonResolution_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"MuonResolution_0/mc_truth_denom/w_truth_MuonResolution_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"MuonResolution_0/mc_signal_reco/MC_MuonResolution_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"MuonResolution_0/mc_signal_reco/MC_pz_MuonResolution_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"MuonResolution_0/mc_signal_reco/sim_MuonResolution_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.000257786864674886
+},
+"MuonResolution_0/mc_signal_reco/sim_pz_MuonResolution_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.0002577868646747869
+},
+"MuonResolution_0/mc_signal_reco/w_truth_MuonResolution_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"MuonResolution_0/mc_signal_reco/w_reco_MuonResolution_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"MuonResolution_0/mc_background/sim_background_MuonResolution_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.00028746233341361436
+},
+"MuonResolution_0/mc_background/sim_background_pz_MuonResolution_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.00028746233341358693
+},
+"MuonResolution_0/mc_background/w_bkg_MuonResolution_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"Muon_Energy_MINOS_0/mc_truth_denom/pT_truth_Muon_Energy_MINOS_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"Muon_Energy_MINOS_0/mc_truth_denom/pz_truth_Muon_Energy_MINOS_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"Muon_Energy_MINOS_0/mc_truth_denom/w_truth_Muon_Energy_MINOS_0": {
+"n": 20000,
+"frac_differs": 0.9235,
+"median_rel": 0.01637693155774698
+},
+"Muon_Energy_MINOS_0/mc_signal_reco/MC_Muon_Energy_MINOS_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"Muon_Energy_MINOS_0/mc_signal_reco/MC_pz_Muon_Energy_MINOS_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"Muon_Energy_MINOS_0/mc_signal_reco/sim_Muon_Energy_MINOS_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.008725806435691104
+},
+"Muon_Energy_MINOS_0/mc_signal_reco/sim_pz_Muon_Energy_MINOS_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.008725806435691107
+},
+"Muon_Energy_MINOS_0/mc_signal_reco/w_truth_Muon_Energy_MINOS_0": {
+"n": 20000,
+"frac_differs": 0.91375,
+"median_rel": 0.01634943853092522
+},
+"Muon_Energy_MINOS_0/mc_signal_reco/w_reco_Muon_Energy_MINOS_0": {
+"n": 20000,
+"frac_differs": 0.92005,
+"median_rel": 0.016223695967534563
+},
+"Muon_Energy_MINOS_0/mc_background/sim_background_Muon_Energy_MINOS_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.008143925636200186
+},
+"Muon_Energy_MINOS_0/mc_background/sim_background_pz_Muon_Energy_MINOS_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.008143925636200089
+},
+"Muon_Energy_MINOS_0/mc_background/w_bkg_Muon_Energy_MINOS_0": {
+"n": 20000,
+"frac_differs": 0.69795,
+"median_rel": 0.010619818643916076
+},
+"Muon_Energy_MINERvA_0/mc_truth_denom/pT_truth_Muon_Energy_MINERvA_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"Muon_Energy_MINERvA_0/mc_truth_denom/pz_truth_Muon_Energy_MINERvA_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"Muon_Energy_MINERvA_0/mc_truth_denom/w_truth_Muon_Energy_MINERvA_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"Muon_Energy_MINERvA_0/mc_signal_reco/MC_Muon_Energy_MINERvA_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"Muon_Energy_MINERvA_0/mc_signal_reco/MC_pz_Muon_Energy_MINERvA_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"Muon_Energy_MINERvA_0/mc_signal_reco/sim_Muon_Energy_MINERvA_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.006965193982251074
+},
+"Muon_Energy_MINERvA_0/mc_signal_reco/sim_pz_Muon_Energy_MINERvA_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.006965193982251016
+},
+"Muon_Energy_MINERvA_0/mc_signal_reco/w_truth_Muon_Energy_MINERvA_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"Muon_Energy_MINERvA_0/mc_signal_reco/w_reco_Muon_Energy_MINERvA_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"Muon_Energy_MINERvA_0/mc_background/sim_background_Muon_Energy_MINERvA_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.006553659808037001
+},
+"Muon_Energy_MINERvA_0/mc_background/sim_background_pz_Muon_Energy_MINERvA_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.006553659808037019
+},
+"Muon_Energy_MINERvA_0/mc_background/w_bkg_Muon_Energy_MINERvA_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"Flux_0/mc_truth_denom/pT_truth_Flux_0": "absent",
+"Flux_0/mc_truth_denom/pz_truth_Flux_0": "absent",
+"Flux_0/mc_truth_denom/w_truth_Flux_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.020950792055921895
+},
+"Flux_0/mc_signal_reco/MC_Flux_0": "absent",
+"Flux_0/mc_signal_reco/MC_pz_Flux_0": "absent",
+"Flux_0/mc_signal_reco/sim_Flux_0": "absent",
+"Flux_0/mc_signal_reco/sim_pz_Flux_0": "absent",
+"Flux_0/mc_signal_reco/w_truth_Flux_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.021919640701279476
+},
+"Flux_0/mc_signal_reco/w_reco_Flux_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.02191964070127948
+},
+"Flux_0/mc_background/sim_background_Flux_0": "absent",
+"Flux_0/mc_background/sim_background_pz_Flux_0": "absent",
+"Flux_0/mc_background/w_bkg_Flux_0": {
+"n": 20000,
+"frac_differs": 1.0,
+"median_rel": 0.03311723773142716
+},
+"GEANT_Neutron_0/mc_truth_denom/pT_truth_GEANT_Neutron_0": "absent",
+"GEANT_Neutron_0/mc_truth_denom/pz_truth_GEANT_Neutron_0": "absent",
+"GEANT_Neutron_0/mc_truth_denom/w_truth_GEANT_Neutron_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"GEANT_Neutron_0/mc_signal_reco/MC_GEANT_Neutron_0": "absent",
+"GEANT_Neutron_0/mc_signal_reco/MC_pz_GEANT_Neutron_0": "absent",
+"GEANT_Neutron_0/mc_signal_reco/sim_GEANT_Neutron_0": "absent",
+"GEANT_Neutron_0/mc_signal_reco/sim_pz_GEANT_Neutron_0": "absent",
+"GEANT_Neutron_0/mc_signal_reco/w_truth_GEANT_Neutron_0": {
+"n": 20000,
+"frac_differs": 0.0,
+"median_rel": 0.0
+},
+"GEANT_Neutron_0/mc_signal_reco/w_reco_GEANT_Neutron_0": {
+"n": 20000,
+"frac_differs": 0.51845,
+"median_rel": 0.004212198850573782
+},
+"GEANT_Neutron_0/mc_background/sim_background_GEANT_Neutron_0": "absent",
+"GEANT_Neutron_0/mc_background/sim_background_pz_GEANT_Neutron_0": "absent",
+"GEANT_Neutron_0/mc_background/w_bkg_GEANT_Neutron_0": {
+"n": 20000,
+"frac_differs": 0.5951,
+"median_rel": 0.005725857154592834
+}
+}
