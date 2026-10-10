@@ -28,6 +28,7 @@ exists: N2 is not admitted (``design.py``).
 import argparse
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -91,11 +92,11 @@ def check_admission(path, root=REPO):
                              f"checkout's HEAD {head['commit']}")
     if not adm["synthetic"]:
         rel = str(adm["authorization"].get("path", ""))
-        # Test the prefix on the normalized path: a ".." can otherwise pass the string test.
+        # Test the prefix on the normalized path: a ".." can otherwise pass the string test. The
+        # path must be repository-relative and must name the record itself, not a symlink to it.
         top = Path(root).resolve()
-        try:
-            norm = (top / rel).resolve().relative_to(top).as_posix()
-        except ValueError:
+        norm = "" if Path(rel).is_absolute() else os.path.normpath(rel).replace(os.sep, "/")
+        if norm.startswith("../") or norm in ("", ".", "..") or (top / norm).resolve() != top / norm:
             norm = ""
         auth = top / norm
         if not (norm.startswith("docs/orchestration/") and

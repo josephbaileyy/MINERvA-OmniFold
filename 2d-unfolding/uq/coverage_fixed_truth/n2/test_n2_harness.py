@@ -29,6 +29,8 @@ N2_DIR = "2d-unfolding/uq/coverage_fixed_truth/n2"
 AUTH = "docs/orchestration/AUTHORIZATION-20991231-fixture.md"
 #: A committed record with the right name, outside docs/orchestration/ (review R2).
 AUTH_ELSEWHERE = "elsewhere/AUTHORIZATION-20991231-outside.md"
+#: A committed symlink, with a record's name, to the canonical fixture record (review F4).
+AUTH_LINK = "docs/orchestration/AUTHORIZATION-20991231-link.md"
 
 
 def tables(n=6000, n_bkg=800, seed=3):
@@ -263,6 +265,7 @@ class Harness(unittest.TestCase):
         (root / AUTH).write_text("# fixture authorization\n")
         (root / AUTH_ELSEWHERE).parent.mkdir()
         (root / AUTH_ELSEWHERE).write_text("# not a docs/orchestration record\n")
+        (root / AUTH_LINK).symlink_to(Path(AUTH).name)
         git(root, "init", "-q")
         git(root, "add", "-A")
         git(root, "commit", "-q", "-m", "fixture")
@@ -375,7 +378,7 @@ class Harness(unittest.TestCase):
                 self.assertFalse((self.base / json.loads(adm.read_text())["outroot"]).exists())
 
     def test_the_authorization_path_is_normalized_before_its_prefix_test(self):
-        """Review R2: only the normalized path counts, so a ".." cannot reach a record elsewhere."""
+        """Review R2: only the normalized, repository-relative path of the record itself counts."""
         world = {"mean_seed": 1, "sigma_T": 0.01, "b_over_t": 1.0}
         rebuilt = self.base / "rebuilt-r2.root"
         rebuilt.write_bytes(b"synthetic stand-in for the identity-carrying rebuild\n")
@@ -390,7 +393,11 @@ class Harness(unittest.TestCase):
                  self.root / AUTH_ELSEWHERE, gx.REFUSAL_EXIT, "not an AUTHORIZATION-"),
                 ("a record outside the checkout, through ..",
                  "docs/orchestration/../../../" + outside.name, outside, gx.REFUSAL_EXIT,
-                 "not an AUTHORIZATION-"))):
+                 "not an AUTHORIZATION-"),
+                ("the canonical record, as an absolute path", str(self.root / AUTH),
+                 self.root / AUTH, gx.REFUSAL_EXIT, "not an AUTHORIZATION-"),
+                ("a symlink to the canonical record", AUTH_LINK, self.root / AUTH,
+                 gx.REFUSAL_EXIT, "not an AUTHORIZATION-"))):
             with self.subTest(label):
                 auth = {"path": rel, "sha256": gx.sha256_hex(target.read_bytes())}
                 adm = self.admission(f"r2-{i}", world, extra_inputs=extra,
