@@ -1,0 +1,99 @@
+# The L0 job's Slurm logs (the repository ignores *.out/*.err); originals in /pscratch/sd/j/josephrb/xr-linux-20261011/L0/a1/
+== slurm-59660487.out sha256 cb066c5f88966e4f64a8dfadab02de83ec1c5d785b8331c1cf87984b4f68803e
+[xr-job] run=L0 kind=lgbm attempt=1 job=59660487 node=nid004128 start=2026-10-11T08:24:45Z
+[xr-admit] admission verified
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1.057e+21, mc=4.978e+21, scale=0.212405
+[INFO] Phase-17 mode: mc_signal_reco contains 8999007 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.00062433 0.00062433 0.00062433 0.00062433 0.00062433 0.00062433
+ 0.00062433 0.00062433 0.00062433 0.00062433 0.00062433 0.00062433
+ 0.00062433 0.00062433]
+[INFO] Flux sum = 0.008741 m^-2/POT = 8.741e-07 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 32849103
+[INFO]   sum(w_truth) = 5.77954e+06
+[INFO] Data reco entries: 4091707
+[INFO] hDataReco2D integral: 4.09171e+06
+[INFO] hBkgReco2D integral (incl. fakes): 119132
+[INFO] hMeasSub2D integral: 3.97257e+06
+[INFO] hMeasTrain2D integral: 3.97257e+06
+[INFO] bkg-mode=purity: binned per-reco-bin purity down-weight (default, headline path).
+[INFO] Running 2D OmniFold with 5 iterations...
+[INFO] MC events: 32849103, pass_truth: 32849103, pass_reco: 20404292
+[INFO] Measured events: 4091707, effective training sum=3.97257e+06
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+Starting iteration 2
+Starting iteration 3
+Starting iteration 4
+[INFO] OmniFold complete. step1 weights: 32849103, step2 weights: 32849103
+[INFO] step2 sum=3.718e+07, mean=1.1318, min=0.7400, max=1.7433
+[CHECK] hTruth2D integral: 5.77954e+06
+[CHECK] hUnfold2D integral: 6.56347e+06
+[CHECK] hMeasSub2D integral: 3.97257e+06
+[CHECK] hMeasTrain2D integral: 3.97257e+06
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 3.53384e+06
+[CHECK] hEffDen integral: 5.77954e+06
+[CHECK] hOFInputTruth2D integral: 5.77954e+06
+[CHECK] hOFTruthDenom2D integral: 5.77954e+06
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 3.073e-38 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 3.073e-38 cm^2/nucleon
+[INFO] driverFile: /pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/2d-unfolding/unfold_2d_omnifold_unbinned.py
+[INFO] driverSha256: 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933
+[INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /pscratch/sd/j/josephrb/xr-linux-20261011/L0/a1/XR-L0.root
+[xr-job] end=2026-10-11T08:38:36Z rc=0
+== slurm-59660487.err sha256 cc9a1ce40472e3a2687bbbdbd32262aee8a32baf774b4d04372cecb6f054482e
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMRegressor was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMRegressor was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMRegressor was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMRegressor was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMRegressor was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+[oi136] inventory: checked=1172 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/xr-linux-20261011/L0/a1/inventory.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.

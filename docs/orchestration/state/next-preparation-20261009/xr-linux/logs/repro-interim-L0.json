@@ -1,0 +1,52 @@
+{
+ "L0_vs_CV42": {
+  "axes_equal": true,
+  "cells_new_equal_frozen": true,
+  "cells_ref_equal_frozen": true,
+  "exactly_equal_cells": 0,
+  "formed": true,
+  "integral_rel_diff": 7.02105040772949e-13,
+  "max_rel_diff_cells": 1.3751444427612114e-11,
+  "median_rel_diff_cells": 5.88462611972318e-12,
+  "n_cells": 205,
+  "n_cells_over_1e-8": 0,
+  "new": "/pscratch/sd/j/josephrb/xr-linux-20261011/L0/a1/XR-L0.root",
+  "new_attempt": 1,
+  "ref": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root"
+ },
+ "L0_vs_PN_CV": {
+  "axes_equal": true,
+  "cells_new_equal_frozen": true,
+  "cells_ref_equal_frozen": true,
+  "exactly_equal_cells": 0,
+  "formed": true,
+  "integral_rel_diff": 1.3100631690576847e-14,
+  "max_rel_diff_cells": 9.812151091637134e-13,
+  "median_rel_diff_cells": 2.1760371282653068e-14,
+  "n_cells": 205,
+  "n_cells_over_1e-8": 0,
+  "new": "/pscratch/sd/j/josephrb/xr-linux-20261011/L0/a1/XR-L0.root",
+  "new_attempt": 1,
+  "ref": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_CV.root"
+ },
+ "L1_vs_SEED1": {
+  "formed": false,
+  "why": "no complete attempt"
+ },
+ "NC_X0_vs_CV42": {
+  "formed": false,
+  "why": "no complete attempt"
+ },
+ "X0_vs_E_C": {
+  "formed": false,
+  "why": "no complete attempt"
+ },
+ "X0p_vs_E_C": {
+  "formed": false,
+  "why": "no complete attempt"
+ },
+ "X1_vs_X0": {
+  "formed": false,
+  "why": "no complete attempt"
+ }
+}

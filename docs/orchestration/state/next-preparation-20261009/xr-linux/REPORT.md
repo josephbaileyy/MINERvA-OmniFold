@@ -53,6 +53,73 @@ _DRAFT — results sections are filled in as the assignment proceeds._
   A selective-I/O merge on `main` therefore cannot reach these runs; it would only make this package's
   at-HEAD `manifest --check` report OUT OF DATE on a later `main` (integration §8 item 3).
 
+## 3. The package (`P`, package commit `60bd68c0`, manifest `5d2f5955…`)
+
+A new package, built from `07428e5d`'s and changed only where the grant's six repair items require.
+Each item, with what was done:
+
+1. **The environment inspection that launched `ldconfig` is gone, and the guard is unchanged.**
+   `check_environment` keeps the frozen version check and the module origins. It no longer calls
+   `threadpoolctl.threadpool_info()`, whose `ctypes.util.find_library("c")` runs `/sbin/ldconfig -p`
+   on Linux. In its place, `runtime_record()` lists the loaded OpenMP, BLAS and LightGBM libraries from
+   `/proc/self/maps` and calls each library's own thread getter through `ctypes.CDLL(<absolute path>,
+   RTLD_NOLOAD)` — no `find_library`, no child. That record is labelled supporting evidence only. A
+   unit test fails if `threadpool_info` or a write to loky's private cache reappears in `xr_run.py`, or
+   if `find_library` appears outside the deliberate launch control.
+2. **Effective threading, established before any fit and checked at every fit and prediction; no
+   estimator setting changed.**
+   - `thread_plan(kind)`: `OMP_NUM_THREADS` equals the kind's; on Linux `LOKY_MAX_CPU_COUNT` is unset
+     (the job script unsets it), the CPU affinity equals the kind's CPUs and is below the node's count,
+     and `joblib.cpu_count(only_physical_cores=True)` — what LightGBM's default `n_jobs` resolves to —
+     equals the kind's CPUs. Below the node's count joblib returns the affinity count without querying
+     physical cores, so the guard-refused `lscpu` (and its undercounting `/proc/cpuinfo` fallback, SB1
+     §7.6) is never reached. A full-node allocation is refused rather than seeded.
+   - The loky cache seed of the earlier packages is removed: nothing writes joblib's private state.
+   - `FitRecorder`: before each LightGBM fit, the count LightGBM resolves (`_process_n_jobs`) must equal
+     the plan; after it, the booster's `num_threads` must equal that count (an alias override is
+     caught); every `LGBMModel.predict` is recorded and checked the same way. The exact sklearn
+     backend has no thread parameter and builds trees serially; the receipt records 1 thread, from
+     the source.
+   - On the frozen configuration this is the pre-registered one: L0/L1 on shared-64 train with 64
+     LightGBM threads (the references used 128; two-d-followup B1's thread-cause check stands), the
+     exact arms serially.
+3. **A launch window.** From the environment check to the end of the fit path, `LaunchSpy` replaces
+   `subprocess.Popen` and the `os` launch primitives; any attempt is refused and recorded, and
+   `require_no_launch` fails the run even when a library caught the refusal (loky does). It only
+   narrows what may run; the OI-136 guard and its leaf table are untouched.
+4. **The preflight exercises the whole Linux path in the allocation, including fits.** Through the
+   real `xr_job.sbatch`: allocation parsing (`jobcheck` on the real `scontrol` line), admission
+   `verify`, the setup sourced, then two job controls (this allocation checked against the lgbm kind
+   must be refused; a guarded child calling `threadpool_info` must be refused by the guard), then
+   `xr_run.py --run PF` under the guard: helper and all drivers from verified bytes, strict identity,
+   both production inputs hashed, the environment check, the thread plan, the identity and input
+   rechecks — no fit on production inputs — and then the **fixture stage**: SB1's frozen fixture
+   writer (executed by digest) writes a 3,000-row synthetic omnifile in the attempt directory, and the
+   five configurations run end to end in-process with their own drivers, argv templates, backends and
+   seeds (fits and predictions; 10 classifier and 5 regressor fits each), plus an L0 repeat (frozen
+   1e-8 criterion), the comparator both ways (repeat PASS, X0 vs L0 FAIL), refusal controls (wrong
+   seed, wrong backend, wrong LightGBM thread count — each before training) and the launch-window
+   controls (`find_library("c")` and loky's physical-core query must be refused). The fixture
+   products are synthetic, live only in `PF/a<N>/fixture/`, and no comparison can read them.
+5. **Scheduler formats and the ledger header.** Real Perlmutter captures: the preflight's own RUNNING
+   `scontrol` line, the current `sacct -X -n -P` and ledger-format output, and seven historical rows
+   chosen by state (`CANCELLED by <uid>`, TIMEOUT, array ids, PREEMPTED, gres items). Every parser is
+   tested on them. The ledger now refuses (exit 6, printed reason) a header lacking any required
+   column before reading a row — recovery review N-1.
+6. **Frozen anew.** Package `60bd68c0`, manifest `5d2f5955…`, outroot
+   `/pscratch/sd/j/josephrb/xr-linux-20261011`, job names `xrl_<RUN>_a<N>`. The five runs, their argv,
+   backends and seeds, the inputs, the frozen environment, `references.json` (byte-identical), the
+   comparator (byte-identical), the comparisons, the negative control, the 1e-8 criterion, cell
+   identity and missing-result rules are those of `07428e5d` (admission review B-1).
+
+**Accounting and release** (`xr_admit.py`). Both earlier grants' six jobs are prior and must appear in
+sacct exactly; their charge, 2132/921600 = 0.002313368055555556 node-h, is recomputed by every ledger
+and enters every planned ceiling. Caps: 2 preflight, 4 exact, 3 LightGBM attempts in total; a run's
+second attempt needs a stated `--diagnosis`, recorded in `submissions.jsonl`. The release gate
+requires the PF job's own bound receipt with the fixture verdict PASS, every check and control met,
+no launch recorded, and a clean guard inventory; then L0 alone; then the rest once L0 has a complete,
+comparable receipt. The 72-h stop is passed to Slurm as `--deadline`.
+
 ## Pre-registered before the first preflight submission (2026-10-11)
 
 - **A fixture L0-repeat FAIL** (the in-allocation L0 fixture run repeated in the same process does not
