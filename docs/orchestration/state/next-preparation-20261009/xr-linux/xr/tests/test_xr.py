@@ -257,7 +257,7 @@ def write_preflight_pass(admj, attempt=1, job=None, line=None, record=True, inve
          "environment": {"slurm": {"SLURM_JOB_ID": job}},
          "admission": {"path": str(adm.resolve()), "sha256": sha(adm)},
          "fixture": {"verdict": "PASS", "runs": {r_: {"status": "complete"} for r_ in RUNS + ("L0-repeat",)},
-                     "checks": {"all_complete": True, "repeat_reproduces_exactly": True},
+                     "checks": {"all_complete": True, "repeat_reproduces_to_the_criterion": True},
                      "controls": {"wrong_seed": {"met": True}, "launch_window": {"met": True}}},
          "controls": {"jobcheck_other_kind": {"met": True}, "guard_refuses_launch": {"met": True}}}
     if record:
@@ -838,7 +838,7 @@ class Launch(unittest.TestCase):
                    "fixture FAIL": bad_fx(verdict="FAIL"),
                    "a fixture run missing": bad_fx(runs={r: {"status": "complete"} for r in RUNS[:-1]}),
                    "a fixture run errored": bad_fx(runs=dict({r: {"status": "complete"} for r in RUNS}, L1={"status": "error"})),
-                   "a fixture check false": bad_fx(checks={"all_complete": True, "repeat_reproduces_exactly": False}),
+                   "a fixture check false": bad_fx(checks={"all_complete": True, "repeat_reproduces_to_the_criterion": False}),
                    "a fixture control unmet": bad_fx(controls={"wrong_seed": {"met": False}}),
                    "no fixture controls": bad_fx(controls={}),
                    "a job control unmet": dict(controls={"jobcheck_other_kind": {"met": True},
@@ -1434,6 +1434,20 @@ class Units(unittest.TestCase):
         self.assertTrue(spy.calls)
         with self.assertRaises(self.xr.LaunchRefusal):
             self.xr.require_no_launch(spy)
+
+    def test_launch_controls_are_unmet_when_a_probe_launches_nothing(self):
+        import ctypes.util
+        from joblib.externals.loky.backend import context as loky_context
+        self.assertTrue(self.xr.launch_controls()["met"])
+        saved = (loky_context._count_physical_cores_linux, loky_context._count_physical_cores_darwin, ctypes.util.find_library)
+        try:
+            loky_context._count_physical_cores_linux = loky_context._count_physical_cores_darwin = lambda: 8
+            ctypes.util.find_library = lambda name: None
+            res = self.xr.launch_controls()
+        finally:
+            loky_context._count_physical_cores_linux, loky_context._count_physical_cores_darwin, ctypes.util.find_library = saved
+        self.assertFalse(res["met"])
+        self.assertEqual(res["probes"]["loky_physical_cores"], {"outcome": "returned", "launches": []})
 
     def plan(self, platform, affinity, os_count, env, kind=None, joblib_count=None):
         kind = kind or {"cpus_per_task": 64, "omp_threads": 64}

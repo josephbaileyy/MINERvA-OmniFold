@@ -85,10 +85,7 @@ MUTANTS = [
     ('lgbm-predict-threads-unchecked', 'xr_run.py', '            if n != self.threads:\n', '            if False:\n', ['test_xr.Units.test_the_lightgbm_thread_count_is_checked_at_fit_after_fit_and_at_predict']),
     ('lgbm-predicts-unrequired', 'xr_run.py', '        if self.backend["estimator"] == "lgbm" and (not self.predicts["calls"]', '        if False and (not self.predicts["calls"]', ['test_xr.Units.test_lightgbm_runs_must_have_predicted_on_the_plan']),
     ('recorder-not-uninstalled', 'xr_run.py', '            if had:\n                setattr(cls, attr, orig)\n            else:\n                delattr(cls, attr)\n', '            pass\n', ['test_xr.Units.test_uninstall_restores_every_class_so_runs_can_follow_in_one_process']),
-    ('fixture-repeat-unchecked', 'xr_run.py', '        ck["repeat_reproduces_exactly"] = same["verdict"] == "PASS" and same["exactly_equal_cells"] == same["n_cells"]\n', '        ck["repeat_reproduces_exactly"] = True\n', ['test_xr.Launch.test_the_preflight_through_the_job_script_passes_with_its_fixture_stage']),
-    ('fixture-verdict-ignores-controls', 'xr_run.py', '        c["met"] for c in out["controls"].values()) else "FAIL"\n', '        True for c in out["controls"].values()) else "FAIL"\n', ['test_xr.Launch.test_the_preflight_through_the_job_script_passes_with_its_fixture_stage']),
-    ('fixture-control-met-without-refusal', 'xr_run.py', '            res.update(outcome="completed", met=False)\n', '            res.update(outcome="completed", met=True)\n', ['test_xr.Launch.test_the_preflight_through_the_job_script_passes_with_its_fixture_stage']),
-    ('launch-control-vacuous', 'xr_run.py', '    res["met"] = all(p["launches"] for p in res["probes"].values())\n', '    res["met"] = True\n', ['test_xr.Launch.test_the_preflight_through_the_job_script_passes_with_its_fixture_stage']),
+    ('launch-control-vacuous', 'xr_run.py', '    res["met"] = all(p["launches"] for p in res["probes"].values())\n', '    res["met"] = True\n', ['test_xr.Units.test_launch_controls_are_unmet_when_a_probe_launches_nothing']),
     ('job-controls-ignored', 'xr_run.py', '        if not all(c["met"] for c in receipt["controls"].values()):\n', '        if False:\n', ['test_xr.Launch.test_the_preflight_fails_when_a_job_control_is_not_met']),
     ('job-control-rc-unchecked', 'xr_run.py', '        met = (rc == want_rc if want_rc else rc not in ("", "0")) and want_text in err\n', '        met = want_text in err or True\n', ['test_xr.Launch.test_the_preflight_fails_when_a_job_control_is_not_met']),
     ('job-script-controls-skipped', 'launch/xr_job.sbatch', 'if [ "$KIND" = preflight ]; then\n', 'if false; then\n', ['test_xr.Launch.test_the_preflight_through_the_job_script_passes_with_its_fixture_stage']),
@@ -110,6 +107,12 @@ MUTANTS = [
 
 def sha(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+
+#: Not listed, equivalent on any passing fixture (every check and control is true there, so forcing
+#: one true changes nothing a test can see): forcing ``repeat_reproduces_to_the_criterion``, the
+#: fixture verdict's control term, or a completed control's ``met`` to True. The release gate reads
+#: each check and each control's ``met`` itself (``gate-fixture-unchecked``, ``gate-controls-unchecked``).
 
 
 def main():

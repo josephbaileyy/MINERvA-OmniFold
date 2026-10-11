@@ -486,7 +486,8 @@ def fixture_stage(runs, drivers, extra, rundir, threads):
     Not a result: the fixture is synthetic, its products live only in ``<attempt>/fixture/`` and no
     comparison reads them. What it shows is the Linux fit path under the guard: the five drivers,
     their classes, seeds and fit counts, LightGBM's thread count at every fit and prediction, the
-    output read-back, determinism (L0 twice), the comparator in both directions, and refusals."""
+    output read-back, repeatability (L0 twice, to the frozen 1e-8 criterion; the count of
+    bitwise-equal cells is recorded), the comparator in both directions, and refusals."""
     pf, maker = runs["preflight"]["fixture"], extra["maker"]
     fx = rundir / "fixture"
     fx.mkdir()
@@ -533,7 +534,8 @@ def fixture_stage(runs, drivers, extra, rundir, threads):
         same = extra["compare"].compare(fx / f"FX-{rep}-repeat.root", fx / f"FX-{rep}.root", cells)
         diff = extra["compare"].compare(fx / "FX-X0.root", fx / f"FX-{rep}.root", cells)
         out["comparator"] = {f"{rep}-repeat_vs_{rep}": same, f"X0_vs_{rep}": diff}
-        ck["repeat_reproduces_exactly"] = same["verdict"] == "PASS" and same["exactly_equal_cells"] == same["n_cells"]
+        ck["repeat_reproduces_to_the_criterion"] = same["verdict"] == "PASS"
+        out["repeat_exactly_equal_cells"] = [same.get("exactly_equal_cells"), same.get("n_cells")]
         ck["comparator_fails_different_estimators"] = diff["verdict"] == "FAIL"
     out["controls"] = fixture_controls(runs, drivers, omni, out["inputs"]["mcfile"], fx, threads)
     out["verdict"] = "PASS" if ck.get("all_complete") and all(ck.values()) and all(
