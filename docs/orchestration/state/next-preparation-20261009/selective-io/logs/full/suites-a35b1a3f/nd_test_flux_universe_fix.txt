@@ -1,0 +1,77 @@
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:575: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/unified_throw_cov.py' mode='r' encoding='UTF-8'>
+  src = open(os.path.join(ND, "unified_throw_cov.py")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:740: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/eavailW_covariance.py' mode='r' encoding='UTF-8'>
+  cls.src = open(os.path.join(ND, cls.FNAME)).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+...../Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:700: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/unified_throw.py' mode='r' encoding='UTF-8'>
+  src = open(os.path.join(ND, "unified_throw.py")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:616: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/compare_unified_throw.py' mode='r' encoding='UTF-8'>
+  tree = ast.parse(open(os.path.join(ND, fname)).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:616: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/unified_throw_cov_5d.py' mode='r' encoding='UTF-8'>
+  tree = ast.parse(open(os.path.join(ND, fname)).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:682: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/unfold_nd_omnifold_unbinned.py' mode='r' encoding='UTF-8'>
+  src = open(os.path.join(ND, "unfold_nd_omnifold_unbinned.py")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:616: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/pet_systematics_5d.py' mode='r' encoding='UTF-8'>
+  tree = ast.parse(open(os.path.join(ND, fname)).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:696: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/pet_unified_throw_5d.py' mode='r' encoding='UTF-8'>
+  src = open(os.path.join(ND, "pet_unified_throw_5d.py")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:707: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/2d-unfolding/unfold_2d_omnifold_unbinned.py' mode='r' encoding='UTF-8'>
+  "unfold_2d_omnifold_unbinned.py")).read()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:616: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/sweep_bank_5d.py' mode='r' encoding='UTF-8'>
+  tree = ast.parse(open(os.path.join(ND, fname)).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:616: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/sweep_bank.py' mode='r' encoding='UTF-8'>
+  tree = ast.parse(open(os.path.join(ND, fname)).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+./Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:665: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/unified_throw_cov.py' mode='r' encoding='UTF-8'>
+  tree = ast.parse(open(os.path.join(ND, "unified_throw_cov.py")).read())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.............................../Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/flux_universe.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/rescale_flux_universes.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/unified_throw_cov.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/unified_throw_cov_5d.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/compare_unified_throw.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/sweep_bank.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/sweep_bank_5d.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/unified_throw.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/unfold_nd_omnifold_unbinned.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/pet_systematics_5d.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/pet_unified_throw_5d.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/tests/test_flux_universe_fix.py:835: ResourceWarning: unclosed file <_io.TextIOWrapper name='/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/nd-unfolding/eavailW_covariance.py' mode='r' encoding='UTF-8'>
+  compile(open(path).read(), path, "exec")
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+........
+----------------------------------------------------------------------
+Ran 51 tests in 0.324s
+
+OK

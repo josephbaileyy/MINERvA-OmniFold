@@ -1,0 +1,51 @@
+tree /Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010 head a35b1a3fc2a711a6955c1cf7d25edf41ca8b509f driver-sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257 dirty-files 1
+git diff --quiet d4335d3b HEAD on its package: identical
+git diff --quiet 07428e5d HEAD on its package: identical
+sb1-prep/test_package_consistency | rc=1 | 1s | Ran 7 tests in 0.186s FAILED (failures=1) 
+    FAIL: test_the_manifest_is_current (test_package_consistency.Plan.test_the_manifest_is_current)
+    AssertionError: 1 != 0 : manifest or proposal OUT OF DATE
+sb1-prep/test_branch_select | rc=1 | 0s | Ran 1 test in 0.000s FAILED (errors=1) 
+    ERROR: test_branch_select (unittest.loader._FailedTest.test_branch_select)
+        raise ProvenanceRefusal(f"{name}: {path} has sha256 {record['sha256']}, "
+    n2.execution.ProvenanceRefusal: unfold_2d_omnifold_unbinned: /Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257, expected 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933
+sb1-prep/test_sb1_guarded | rc=1 | 19s | Ran 10 tests in 18.886s FAILED (failures=7, errors=2) 
+    ERROR: test_activation_controls_are_refused_on_the_wrapper_path (test_sb1_guarded.Guarded.test_activation_controls_are_refused_on_the_wrapper_path) (control='omit:w_reco_Muon_Energy_MINOS_0')
+      File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_sb1_guarded.py", line 266, in test_activation_controls_are_refused_on_the_wrapper_path
+    ERROR: test_activation_controls_are_refused_on_the_wrapper_path (test_sb1_guarded.Guarded.test_activation_controls_are_refused_on_the_wrapper_path) (control='extra:w_truth')
+      File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_sb1_guarded.py", line 266, in test_activation_controls_are_refused_on_the_wrapper_path
+    FAIL: test_a_reference_from_other_arguments_is_refused (test_sb1_guarded.Guarded.test_a_reference_from_other_arguments_is_refused)
+      File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_sb1_guarded.py", line 237, in test_a_reference_from_other_arguments_is_refused
+    [oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+    FAIL: test_a_reference_with_different_bytes_stops_before_training (test_sb1_guarded.Guarded.test_a_reference_with_different_bytes_stops_before_training)
+      File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_sb1_guarded.py", line 244, in test_a_reference_with_different_bytes_stops_before_training
+    [oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+    FAIL: test_a_wrong_input_digest_is_refused (test_sb1_guarded.Guarded.test_a_wrong_input_digest_is_refused)
+      File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_sb1_guarded.py", line 233, in test_a_wrong_input_digest_is_refused
+sb1-prep/test_launch_chain | rc=1 | 40s | Ran 29 tests in 39.056s FAILED (failures=4, errors=11) 
+    ERROR: test_a_control_that_returned_a_loader_fails_nc (test_launch_chain.Chain.test_a_control_that_returned_a_loader_fails_nc)
+    ERROR: test_a_guard_record_from_another_root_is_not_a_pass (test_launch_chain.Chain.test_a_guard_record_from_another_root_is_not_a_pass)
+    ERROR: test_a_killed_selective_arm_is_inconclusive_not_fail (test_launch_chain.Chain.test_a_killed_selective_arm_is_inconclusive_not_fail)
+    ERROR: test_a_loader_byte_difference_fails_s1 (test_launch_chain.Chain.test_a_loader_byte_difference_fails_s1)
+      File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 225, in test_a_loader_byte_difference_fails_s1
+    ERROR: test_a_missing_receipt_is_inconclusive_not_pass (test_launch_chain.Chain.test_a_missing_receipt_is_inconclusive_not_pass)
+    ERROR: test_a_real_difference_still_fails_when_later_trees_are_missing (test_launch_chain.Chain.test_a_real_difference_still_fails_when_later_trees_are_missing)
+      File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 459, in test_a_real_difference_still_fails_when_later_trees_are_missing
+    ERROR: test_a_receipt_input_stat_unlike_h0_is_not_a_pass (test_launch_chain.Chain.test_a_receipt_input_stat_unlike_h0_is_not_a_pass)
+    ERROR: test_a_wrong_executed_digest_is_not_a_pass (test_launch_chain.Chain.test_a_wrong_executed_digest_is_not_a_pass)
+    ERROR: test_an_unadmitted_executed_module_is_not_a_pass (test_launch_chain.Chain.test_an_unadmitted_executed_module_is_not_a_pass)
+    ERROR: test_receipts_from_different_environments_are_not_a_pass (test_launch_chain.Chain.test_receipts_from_different_environments_are_not_a_pass)
+xr manifest --check | rc=3 | 0s | 
+    [xr-admit] manifest/expected-code.json is OUT OF DATE
+xr tests/test_xr.py | rc=1 | 137s | Ran 42 tests in 136.601s FAILED (failures=15, errors=2) 
+    ERROR: test_lightgbm_ran_with_a_child_free_core_count (test_xr.XR.test_lightgbm_ran_with_a_child_free_core_count)
+    ERROR: test_the_environment_and_module_origins_are_recorded (test_xr.XR.test_the_environment_and_module_origins_are_recorded)
+    FAIL: test_a_preflight_run_by_hand_outside_the_job_releases_nothing (test_xr.Launch.test_a_preflight_run_by_hand_outside_the_job_releases_nothing)
+    [oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+    FAIL: test_the_preflight_refuses_the_wrong_thread_count (test_xr.Launch.test_the_preflight_refuses_the_wrong_thread_count)
+      File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 939, in test_the_preflight_refuses_the_wrong_thread_count
+    [oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+    FAIL: test_the_preflight_through_the_job_script_passes_without_a_fit (test_xr.Launch.test_the_preflight_through_the_job_script_passes_without_a_fit)
+    [oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+    FAIL: test_a_backend_other_than_the_frozen_one_stops_before_training (test_xr.XR.test_a_backend_other_than_the_frozen_one_stops_before_training)
+    [oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+    FAIL: test_a_normalization_differing_from_the_reference_is_refused (test_xr.XR.test_a_normalization_differing_from_the_reference_is_refused)

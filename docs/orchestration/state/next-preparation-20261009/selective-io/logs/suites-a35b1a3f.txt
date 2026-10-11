@@ -1,0 +1,14 @@
+tree /Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010 head a35b1a3fc2a711a6955c1cf7d25edf41ca8b509f driver-sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257 dirty-files        1
+2d-unfolding/tests/test_selective_io.py | rc=0 | 43s | Ran 27 tests in 41.577s OK 
+2d-unfolding/tests/test_bootstrap_completeness_ki84.py | rc=0 | 16s | Ran 15 tests in 15.798s OK 
+2d-unfolding/tests/test_reported_cells.py | rc=0 | 1s | Ran 18 tests in 0.317s OK (skipped=5) 
+2d-unfolding/tests/test_final_rollup_full_refusal.py | rc=0 | 1s | Ran 3 tests in 0.758s OK 
+n2/test_producer_provenance | rc=0 | 23s | Ran 26 tests in 22.746s OK 
+n2/test_n2_harness | rc=0 | 97s | Ran 22 tests in 97.248s OK 
+n2/test_producer_final_dependencies | rc=0 | 2s | Ran 5 tests in 0.000s OK (skipped=5) 
+nd/test_oi136_rooted_insert_ratchet | rc=0 | 53s | Ran 10 tests in 52.602s OK 
+nd/test_oi136_failopen_inventory_ratchet | rc=0 | 1s | Ran 7 tests in 1.675s OK 
+nd/test_flux_universe_fix | rc=0 | 1s | Ran 51 tests in 0.324s OK 
+nd/test_hash_bindings | rc=0 | 86s | 33 passed in 85.47s (0:01:25) 
+verify_hash_bindings | rc=0 | 6s | 
+verify_receipt_artifacts | rc=0 | 1s | 

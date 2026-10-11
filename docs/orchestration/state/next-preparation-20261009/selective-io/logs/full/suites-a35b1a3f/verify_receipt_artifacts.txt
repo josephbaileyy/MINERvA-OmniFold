@@ -1,0 +1,3 @@
+RECEIPT-ARTIFACTS :: 481 receipts scanned at working tree, 14 deliverable-area artifact path(s), 0 missing
+  bare-filename citations: TRACKED 9, MISSING 0, OFF-AREA 28, BY-PATH 7, UNRESOLVED 66
+  NOT GREEN: 66 citation(s) UNRESOLVED -- NOT CHECKED (pinned inventory, UNCHANGED); sha256 49916d283274. `--list-unresolved` names them.

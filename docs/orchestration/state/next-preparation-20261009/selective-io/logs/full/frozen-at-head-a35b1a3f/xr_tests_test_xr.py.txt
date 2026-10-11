@@ -1,0 +1,228 @@
+....F.......FF...F.F..FF.F.FFFF..FEF..EF..
+======================================================================
+ERROR: test_lightgbm_ran_with_a_child_free_core_count (test_xr.XR.test_lightgbm_ran_with_a_child_free_core_count)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 337, in test_lightgbm_ran_with_a_child_free_core_count
+    cc = receipt(self.admj, run)["cpu_count"]
+         ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_the_environment_and_module_origins_are_recorded (test_xr.XR.test_the_environment_and_module_origins_are_recorded)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 496, in test_the_environment_and_module_origins_are_recorded
+    env = rec["environment_checked"]
+          ~~~^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+FAIL: test_a_preflight_run_by_hand_outside_the_job_releases_nothing (test_xr.Launch.test_a_preflight_run_by_hand_outside_the_job_releases_nothing)
+Admission F-1: a passing preflight receipt made outside the PF job (no allocation record,
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 959, in test_a_preflight_run_by_hand_outside_the_job_releases_nothing
+    self.assertEqual(r.returncode, 0, r.stderr[-2000:])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 3 != 0 : [REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933
+[oi136] inventory: checked=1142 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpr21o5li9/out-PH/inv-PH.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpr21o5li9/PH  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+
+
+======================================================================
+FAIL: test_the_preflight_refuses_the_wrong_thread_count (test_xr.Launch.test_the_preflight_refuses_the_wrong_thread_count)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 939, in test_the_preflight_refuses_the_wrong_thread_count
+    self.assertEqual(r.returncode, 6, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 3 != 6 : [REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933
+[oi136] inventory: checked=1142 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpr21o5li9/out-PT/inv-PF-1.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpr21o5li9/PT  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+
+
+======================================================================
+FAIL: test_the_preflight_through_the_job_script_passes_without_a_fit (test_xr.Launch.test_the_preflight_through_the_job_script_passes_without_a_fit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 904, in test_the_preflight_through_the_job_script_passes_without_a_fit
+    self.assertEqual(self.pf.returncode, 0, self.pf.stdout[-2000:] + self.pf.stderr[-3000:])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 3 != 0 : [xr-job] run=PF attempt=1 job=59645304 node=DNa1d666d.SUNet start=2026-10-11T05:57:38Z
+[xr-admit] admission verified
+[xr-job] end=2026-10-11T05:57:42Z rc=3
+[REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933
+[oi136] inventory: checked=1142 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpr21o5li9/out-A/PF/a1/inventory.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpr21o5li9/A  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+
+
+======================================================================
+FAIL: test_a_backend_other_than_the_frozen_one_stops_before_training (test_xr.XR.test_a_backend_other_than_the_frozen_one_stops_before_training)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 462, in test_a_backend_other_than_the_frozen_one_stops_before_training
+    self.assertEqual(r.returncode, 6, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 3 != 6 : [REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933
+[oi136] inventory: checked=1142 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/out-B/inv-X0-1.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/B  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+
+
+======================================================================
+FAIL: test_a_normalization_differing_from_the_reference_is_refused (test_xr.XR.test_a_normalization_differing_from_the_reference_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 508, in test_a_normalization_differing_from_the_reference_is_refused
+    self.assertEqual(r.returncode, 6, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 3 != 6 : [REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933
+[oi136] inventory: checked=1142 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/out-N/inv-L1-1.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/N  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+
+
+======================================================================
+FAIL: test_a_symlinked_attempt_directory_is_refused (test_xr.XR.test_a_symlinked_attempt_directory_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 370, in test_a_symlinked_attempt_directory_is_refused
+    self.assertIn("symlink", r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'symlink' not found in "[REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933\n[oi136] inventory: checked=1142 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/out-A/inv-L0-2.jsonl\n[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.\n[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1\n[oi136-inv] MNV_REPO resolution=ABSENT  value=None\n[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from\n[oi136-inv]   [expect-root,this-guard] /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/A  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned\n[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.\n"
+
+======================================================================
+FAIL: test_a_wrong_seed_stops_before_training (test_xr.XR.test_a_wrong_seed_stops_before_training)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 474, in test_a_wrong_seed_stops_before_training
+    self.assertEqual(r.returncode, 6, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 3 != 6 : [REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933
+[oi136] inventory: checked=1142 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/out-S/inv-L1-1.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/S  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+
+
+======================================================================
+FAIL: test_all_five_runs_complete_strict_with_their_intended_backend_and_seeds (test_xr.XR.test_all_five_runs_complete_strict_with_their_intended_backend_and_seeds)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 282, in test_all_five_runs_complete_strict_with_their_intended_backend_and_seeds
+    self.assertEqual(r.returncode, 0, f"{run}: {r.stderr[-2000:]}")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 3 != 0 : X0: [REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933
+[oi136] inventory: checked=1142 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/out-A/inv-X0-1.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/A  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+
+
+======================================================================
+FAIL: test_an_environment_other_than_the_frozen_one_stops_before_training (test_xr.XR.test_an_environment_other_than_the_frozen_one_stops_before_training)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 488, in test_an_environment_other_than_the_frozen_one_stops_before_training
+    self.assertEqual(r.returncode, 6, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 3 != 6 : [REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933
+[oi136] inventory: checked=1142 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/out-EV/inv-L1-1.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/EV  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+
+
+======================================================================
+FAIL: test_an_existing_output_is_never_overwritten (test_xr.XR.test_an_existing_output_is_never_overwritten)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 360, in test_an_existing_output_is_never_overwritten
+    self.assertIn("already exists", r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'already exists' not found in "[REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933\n[oi136] inventory: checked=1142 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/out-A/inv-L1-3.jsonl\n[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.\n[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1\n[oi136-inv] MNV_REPO resolution=ABSENT  value=None\n[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from\n[oi136-inv]   [expect-root,this-guard] /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/A  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned\n[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.\n"
+
+======================================================================
+FAIL: test_an_input_with_other_bytes_is_refused (test_xr.XR.test_an_input_with_other_bytes_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 448, in test_an_input_with_other_bytes_is_refused
+    self.assertIn("input omnifile", r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'input omnifile' not found in "[REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933\n[oi136] inventory: checked=1142 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/out-I/inv-L0-1.jsonl\n[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.\n[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1\n[oi136-inv] MNV_REPO resolution=ABSENT  value=None\n[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from\n[oi136-inv]   [expect-root,this-guard] /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/I  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned\n[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.\n"
+
+======================================================================
+FAIL: test_an_output_that_is_a_frozen_reference_path_is_refused (test_xr.XR.test_an_output_that_is_a_frozen_reference_path_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 381, in test_an_output_that_is_a_frozen_reference_path_is_refused
+    self.assertIn("frozen reference", r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'frozen reference' not found in "[REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933\n[oi136] inventory: checked=1142 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/out-F/inv-X0-1.jsonl\n[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.\n[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1\n[oi136-inv] MNV_REPO resolution=ABSENT  value=None\n[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from\n[oi136-inv]   [expect-root,this-guard] /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/F  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned\n[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.\n"
+
+======================================================================
+FAIL: test_comparator_on_the_fixture (test_xr.XR.test_comparator_on_the_fixture)
+Deterministic arms reproduce their fixture references to 1e-8. The unseeded exact arms
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 315, in test_comparator_on_the_fixture
+    self.assertIn(c["X0_vs_E_C"]["verdict"], ("PASS", "FAIL"))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'INCONCLUSIVE' not found in ('PASS', 'FAIL')
+
+======================================================================
+FAIL: test_strict_without_the_guard_is_refused (test_xr.XR.test_strict_without_the_guard_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 353, in test_strict_without_the_guard_is_refused
+    self.assertIn("mnv_guarded_run", r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'mnv_guarded_run' not found in '[REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933\n'
+
+======================================================================
+FAIL: test_the_wrong_working_directory_is_refused (test_xr.XR.test_the_wrong_working_directory_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/tests/test_xr.py", line 399, in test_the_wrong_working_directory_is_refused
+    self.assertIn("working directory", r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'working directory' not found in "[REFUSED] 2d-unfolding/unfold_2d_omnifold_unbinned.py has sha256 6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257; the run pins 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933\n[oi136] inventory: checked=1142 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/out-A/inv-L0-3.jsonl\n[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.\n[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1\n[oi136-inv] MNV_REPO resolution=ABSENT  value=None\n[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from\n[oi136-inv]   [expect-root,this-guard] /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmpkvwl_77n/A  (6) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned\n[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.\n"
+
+----------------------------------------------------------------------
+Ran 42 tests in 136.601s
+
+FAILED (failures=15, errors=2)
+1 2026-10-13T17:00:00
