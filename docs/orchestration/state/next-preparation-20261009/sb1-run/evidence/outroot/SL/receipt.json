@@ -1,0 +1,822 @@
+{
+ "argv": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+  "unfold",
+  "--arm",
+  "selective",
+  "--receipt",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/SL/receipt.json",
+  "--label",
+  "sb1-SL",
+  "--expect",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/SL/expect.json",
+  "--require-provenance",
+  "--input-hashes",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/H0/hashes.json",
+  "--compare-digests",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/UL/receipt.json",
+  "--",
+  "--omnifile",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "--mcfile",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+  "--iters",
+  "5",
+  "--use-weights",
+  "--estimator",
+  "lgbm",
+  "--universe",
+  "Muon_Energy_MINOS:0",
+  "--seed",
+  "42",
+  "--out",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/SL/2d_xsec_SL.root"
+ ],
+ "arm": "selective",
+ "compare_digests": "/pscratch/sd/j/josephrb/sb1-2b35ba52/UL/receipt.json",
+ "comparison_key": {
+  "driver_argv_without_out": [
+   "--omnifile",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "--mcfile",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "--iters",
+   "5",
+   "--use-weights",
+   "--estimator",
+   "lgbm",
+   "--universe",
+   "Muon_Energy_MINOS:0",
+   "--seed",
+   "42"
+  ],
+  "mode": "unfold"
+ },
+ "driver_argv": [
+  "--omnifile",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "--mcfile",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+  "--iters",
+  "5",
+  "--use-weights",
+  "--estimator",
+  "lgbm",
+  "--universe",
+  "Muon_Energy_MINOS:0",
+  "--seed",
+  "42",
+  "--out",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/SL/2d_xsec_SL.root"
+ ],
+ "ended_utc": "2026-10-10T22:58:18.505475Z",
+ "environment": {
+  "affinity_cpus": 256,
+  "argv": [
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+   "unfold",
+   "--arm",
+   "selective",
+   "--receipt",
+   "/pscratch/sd/j/josephrb/sb1-2b35ba52/SL/receipt.json",
+   "--label",
+   "sb1-SL",
+   "--expect",
+   "/pscratch/sd/j/josephrb/sb1-2b35ba52/SL/expect.json",
+   "--require-provenance",
+   "--input-hashes",
+   "/pscratch/sd/j/josephrb/sb1-2b35ba52/H0/hashes.json",
+   "--compare-digests",
+   "/pscratch/sd/j/josephrb/sb1-2b35ba52/UL/receipt.json",
+   "--",
+   "--omnifile",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "--mcfile",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "--iters",
+   "5",
+   "--use-weights",
+   "--estimator",
+   "lgbm",
+   "--universe",
+   "Muon_Energy_MINOS:0",
+   "--seed",
+   "42",
+   "--out",
+   "/pscratch/sd/j/josephrb/sb1-2b35ba52/SL/2d_xsec_SL.root"
+  ],
+  "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python",
+  "host": "nid007102",
+  "omp": {
+   "GOMP_SPINCOUNT": null,
+   "OMP_PLACES": null,
+   "OMP_PROC_BIND": null,
+   "OMP_WAIT_POLICY": null
+  },
+  "os_cpu_count": 256,
+  "packages": {
+   "lightgbm": null,
+   "numpy": null,
+   "scikit-learn": null,
+   "scipy": null,
+   "xgboost": null
+  },
+  "python": "3.11.14",
+  "root_version": "6.28/12",
+  "sb1_env_setup": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh",
+  "sb1_env_setup_sha256": "ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48",
+  "slurm": {
+   "SLURMD_NODENAME": "nid007102",
+   "SLURM_ARRAY_JOB_ID": null,
+   "SLURM_ARRAY_TASK_ID": null,
+   "SLURM_CPUS_ON_NODE": "256",
+   "SLURM_CPUS_PER_TASK": "128",
+   "SLURM_JOB_ID": "59645301",
+   "SLURM_JOB_PARTITION": "regular_milan_ss11",
+   "SLURM_JOB_QOS": "regular_1",
+   "SLURM_MEM_PER_CPU": null,
+   "SLURM_MEM_PER_NODE": null
+  },
+  "threads": {
+   "MKL_NUM_THREADS": null,
+   "NUMEXPR_NUM_THREADS": null,
+   "OMP_NUM_THREADS": "128",
+   "OPENBLAS_NUM_THREADS": null,
+   "SLURM_CPUS_PER_TASK": "128"
+  },
+  "uname": [
+   "Linux",
+   "nid007102",
+   "6.4.0-150600.23.125_15.0.29-cray_shasta_c",
+   "#1 SMP Mon 21 Sep 2026 11:10:49 PDT (f9f1fdc)",
+   "x86_64"
+  ]
+ },
+ "error": null,
+ "exit_code": 0,
+ "identity": {
+  "executed": [
+   {
+    "git_blob": "0f864615c0180a6e1e49421a0940932fc050a015",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+    "relpath": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+    "sha256": "17a4a5f6bb6583b7c784eb9940cc2c353f1c310e486705c4fca7bd9b94bea7eb"
+   },
+   {
+    "git_blob": "6509b94a5f324ee5edcc44e539b7b5a0ef290151",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
+    "relpath": "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
+    "sha256": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef"
+   },
+   {
+    "git_blob": "1ea941f390bb3ce36925a9e8f2fbad675d88cada",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+    "relpath": "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+    "sha256": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856"
+   },
+   {
+    "git_blob": "e47bc942a0fd42d031b51515016c50547065f57f",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py",
+    "relpath": "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py",
+    "sha256": "ce001cb96a416fa208bdbc0f2e3467521dcddfb198c22d7f9b3a222b51afb60d"
+   },
+   {
+    "git_blob": "e19aeb6d3c242a21a67fa1b4e4573ddf72729206",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "relpath": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "sha256": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933"
+   },
+   {
+    "git_blob": "5966663bfe88809fd245d4dd2edb472eb6514480",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/unbinned_unfolding/python/omnifold.py",
+    "relpath": "unbinned_unfolding/python/omnifold.py",
+    "sha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  ],
+  "git": {
+   "commit": "2b35ba520e1dd98a162f82ac6a9e4f8cd63a86ac",
+   "mismatched": [],
+   "status": "ok"
+  },
+  "guard": {
+   "allowed": [
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52"
+   ],
+   "depth": 0,
+   "expect_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52",
+   "installed": true,
+   "propagation": "armed"
+  },
+  "strict": true
+ },
+ "inputs_end": {
+  "mcfile": {
+   "ino": 882724771874215681,
+   "key": "mcfile",
+   "mtime_ns": 1777003503000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256_hashed": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "sha256_stated": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "size": 5143
+  },
+  "omnifile": {
+   "ino": 882725391507234642,
+   "key": "omnifile",
+   "mtime_ns": 1783523295000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "sha256_hashed": "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418",
+   "sha256_stated": "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418",
+   "size": 171117087867
+  }
+ },
+ "inputs_start": {
+  "mcfile": {
+   "ino": 882724771874215681,
+   "key": "mcfile",
+   "mtime_ns": 1777003503000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256_hashed": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "sha256_stated": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "size": 5143
+  },
+  "omnifile": {
+   "ino": 882725391507234642,
+   "key": "omnifile",
+   "mtime_ns": 1783523295000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "sha256_hashed": "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418",
+   "sha256_stated": "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418",
+   "size": 171117087867
+  }
+ },
+ "io_end": {
+  "cancelled_write_bytes": 0,
+  "rchar": 2327632432,
+  "read_bytes": 2331556864,
+  "syscr": 14219,
+  "syscw": 1321,
+  "wchar": 653212,
+  "write_bytes": 393216
+ },
+ "label": "sb1-SL",
+ "loaders": [
+  {
+   "branches": [
+    "measured",
+    "measured_pz",
+    "measured_pass"
+   ],
+   "digests": {
+    "[0]": "0b090a797c39ca468a417e9aa8e963f032a226e772e604ec21e4db9204d8849f",
+    "[1]": "56d80b464d69817f03b47316ee5f20f61e0e522ae052cd3a536947c84edf7dbf",
+    "histogram": "873bf73ed39bb1faaa7dfe9cb1f372f1be3f36325afbee9cdf02fff0e7c8d612"
+   },
+   "entries": 4119797,
+   "loader": "fill_data_reco_2d",
+   "mode": "selective",
+   "n_active_on_entry": 6,
+   "n_branches_in_tree": 6,
+   "settings": {
+    "guard_max": 1000.0,
+    "pt_hi": 4.5,
+    "pt_lo": 0,
+    "pz_hi": 60.0,
+    "pz_lo": 1.5,
+    "verbose": false
+   },
+   "sizes": {
+    "[0]": 4091707,
+    "[1]": 4091707
+   },
+   "tree": "data",
+   "verified_before_first_read": true
+  },
+  {
+   "branches": [
+    "sim_background_Muon_Energy_MINOS_0",
+    "sim_background_pz_Muon_Energy_MINOS_0",
+    "sim_background_pass",
+    "w_bkg_Muon_Energy_MINOS_0"
+   ],
+   "digests": {
+    "[0]": "07a837bb4f7834b05637fa68575652efa5aa0cfd99e92dfc498014fbd0a5b919",
+    "[1]": "039ad5c7fd3173cef187c44cb20c4a7670c3c704b1ea1865d9f024e1d644b4d2",
+    "[2]": "9dfbc62f8a7072c93b4068116bd0237ed56119ce04e0d8ed0865e1277d39a813",
+    "histogram": "c3c4212e11a3cd82270d1ce13f83eff57d8ffe248d4525d03ff16613005eedb8"
+   },
+   "entries": 658227,
+   "loader": "fill_bkg_reco_2d",
+   "mode": "selective",
+   "n_active_on_entry": 240,
+   "n_branches_in_tree": 240,
+   "settings": {
+    "guard_max": 1000.0,
+    "pot_scale": 0.21240500334472884,
+    "pt_hi": 4.5,
+    "pt_lo": 0,
+    "pz_hi": 60.0,
+    "pz_lo": 1.5,
+    "universe_branch": [
+     "Muon_Energy_MINOS",
+     0
+    ],
+    "verbose": false
+   },
+   "sizes": {
+    "[0]": 621036,
+    "[1]": 621036,
+    "[2]": 621036
+   },
+   "tree": "mc_background",
+   "verified_before_first_read": true
+  },
+  {
+   "branches": [
+    "MC_Muon_Energy_MINOS_0",
+    "MC_pz_Muon_Energy_MINOS_0",
+    "sim_Muon_Energy_MINOS_0",
+    "sim_pz_Muon_Energy_MINOS_0",
+    "sim_pass",
+    "w_truth_Muon_Energy_MINOS_0",
+    "w_reco_Muon_Energy_MINOS_0"
+   ],
+   "digests": {
+    "pass_reco": "a6b7b35c96cc377a8d2a7dfb035313f0a6a2fdac6bfa27b2b6472da82d041318",
+    "pass_truth": "7e4bb3951407f05182e19bfa28cbf184fcbab840c4f2a1512c197387be2b61ab",
+    "reco_pt": "48a7a1ab299fdbd45e86513658aca1cbb0024f42eb1111e979d2695b56f78d06",
+    "reco_pz": "896b579afd9e1ac1ebb5f4a160f7d0c5625c045f5a6a16f5db072bd21e2c042f",
+    "truth_pt": "d60a6181a262695ec637f680352fea1efa2bdab2da3f2f4081511ddfda67596c",
+    "truth_pz": "51735be90332c5eeb9391e2ad23a6caa4a365953ec96a7bbdc886c54f2aabf70",
+    "w_reco": "fa18c4a0628895e1c7f94ae5dc6198c6710d4e739e9ce1d0e9cbecb52e6815c4",
+    "w_truth": "9a9494d475ec9beb9bdafc8a65dafeef1f2de53425fb18b1d41421b55d3840de"
+   },
+   "entries": 32849103,
+   "loader": "collect_signal_arrays_2d",
+   "mode": "selective",
+   "n_active_on_entry": 470,
+   "n_branches_in_tree": 470,
+   "settings": {
+    "alt_universe_branch": null,
+    "pot_scale": 0.21240500334472884,
+    "pt_hi": 4.5,
+    "pt_lo": 0,
+    "pz_hi": 60.0,
+    "pz_lo": 1.5,
+    "universe_branch": [
+     "Muon_Energy_MINOS",
+     0
+    ],
+    "use_weights": true,
+    "verbose": false
+   },
+   "sizes": {
+    "pass_reco": 32849103,
+    "pass_truth": 32849103,
+    "reco_pt": 32849103,
+    "reco_pz": 32849103,
+    "truth_pt": 32849103,
+    "truth_pz": 32849103,
+    "w_reco": 32849103,
+    "w_truth": 32849103
+   },
+   "tree": "mc_signal_reco",
+   "verified_before_first_read": true
+  },
+  {
+   "branches": [
+    "pT_truth_Muon_Energy_MINOS_0",
+    "pz_truth_Muon_Energy_MINOS_0",
+    "w_truth_Muon_Energy_MINOS_0"
+   ],
+   "digests": {
+    "truth_pt": "856a71a9464e36d396e5040d7bc02abd169a44acea4cc9b28a2ff8c69a6f1181",
+    "truth_pz": "4de3bd674e826b24d8b9002ace18bcbe9e7976a2ec0c0965faec8e4a813c3ed1",
+    "w_truth": "b0e7562afd3063cfa73863fbb0f9fc6e49824ff206fdeb1c9e0802d075e0cd37"
+   },
+   "entries": 32849103,
+   "loader": "collect_truth_denom_arrays",
+   "mode": "selective",
+   "n_active_on_entry": 236,
+   "n_branches_in_tree": 236,
+   "settings": {
+    "pot_scale": 0.21240500334472884,
+    "pt_hi": 4.5,
+    "pt_lo": 0,
+    "pz_hi": 60.0,
+    "pz_lo": 1.5,
+    "universe_branch": [
+     "Muon_Energy_MINOS",
+     0
+    ],
+    "use_weights": true,
+    "verbose": false
+   },
+   "sizes": {
+    "truth_pt": 32849103,
+    "truth_pz": 32849103,
+    "w_truth": 32849103
+   },
+   "tree": "mc_truth_denom",
+   "verified_before_first_read": true
+  }
+ ],
+ "maxrss_bytes": 14104760320,
+ "mode": "unfold",
+ "negative_control": null,
+ "output": {
+  "mtime_ns": 1791673091000000000,
+  "path": "/pscratch/sd/j/josephrb/sb1-2b35ba52/SL/2d_xsec_SL.root",
+  "sha256": "99b11bd1091407655d825a49751c2cb357bfca5de916305bdd69fc6da71b5c7c",
+  "size": 61643
+ },
+ "phases": [
+  {
+   "end_s": 850.8882990819984,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2327569581,
+    "read_bytes": 2331556864,
+    "syscr": 14212,
+    "syscw": 1321,
+    "wchar": 653212,
+    "write_bytes": 393216
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 32223865,
+    "read_bytes": 1378304,
+    "syscr": 3959,
+    "syscw": 1027,
+    "wchar": 95993,
+    "write_bytes": 176128
+   },
+   "maxrss_end_bytes": 14104760320,
+   "name": "driver:main",
+   "start_s": 28.567745931009995
+  },
+  {
+   "end_s": 34.51342603901867,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 161801181,
+    "read_bytes": 133154816,
+    "syscr": 4785,
+    "syscw": 1059,
+    "wchar": 97675,
+    "write_bytes": 176128
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 51548400,
+    "read_bytes": 20160512,
+    "syscr": 4260,
+    "syscw": 1059,
+    "wchar": 97675,
+    "write_bytes": 176128
+   },
+   "maxrss_end_bytes": 967094272,
+   "name": "load:fill_data_reco_2d",
+   "start_s": 30.531261494004866
+  },
+  {
+   "end_s": 34.58627852101927,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 161801423,
+    "read_bytes": 133154816,
+    "syscr": 4789,
+    "syscw": 1059,
+    "wchar": 97675,
+    "write_bytes": 176128
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 161801302,
+    "read_bytes": 133154816,
+    "syscr": 4787,
+    "syscw": 1059,
+    "wchar": 97675,
+    "write_bytes": 176128
+   },
+   "maxrss_end_bytes": 967094272,
+   "name": "digest:fill_data_reco_2d",
+   "start_s": 34.513825414003804
+  },
+  {
+   "end_s": 35.953646219015354,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 176895741,
+    "read_bytes": 149059584,
+    "syscr": 4997,
+    "syscw": 1060,
+    "wchar": 107603,
+    "write_bytes": 188416
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 161801544,
+    "read_bytes": 133154816,
+    "syscr": 4791,
+    "syscw": 1060,
+    "wchar": 107603,
+    "write_bytes": 188416
+   },
+   "maxrss_end_bytes": 967094272,
+   "name": "load:fill_bkg_reco_2d",
+   "start_s": 34.5900894520164
+  },
+  {
+   "end_s": 35.96387429401511,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 176895985,
+    "read_bytes": 149059584,
+    "syscr": 5001,
+    "syscw": 1060,
+    "wchar": 107603,
+    "write_bytes": 188416
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 176895863,
+    "read_bytes": 149059584,
+    "syscr": 4999,
+    "syscw": 1060,
+    "wchar": 107603,
+    "write_bytes": 188416
+   },
+   "maxrss_end_bytes": 967094272,
+   "name": "digest:fill_bkg_reco_2d",
+   "start_s": 35.953802532021655
+  },
+  {
+   "end_s": 156.709118571016,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 1579112205,
+    "read_bytes": 1580779520,
+    "syscr": 11842,
+    "syscw": 1061,
+    "wchar": 119630,
+    "write_bytes": 200704
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 176896107,
+    "read_bytes": 149059584,
+    "syscr": 5003,
+    "syscw": 1061,
+    "wchar": 119630,
+    "write_bytes": 200704
+   },
+   "maxrss_end_bytes": 10132168704,
+   "name": "load:collect_signal_arrays_2d",
+   "start_s": 35.96676942901104
+  },
+  {
+   "end_s": 158.0422910549969,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 1579112455,
+    "read_bytes": 1580779520,
+    "syscr": 11846,
+    "syscw": 1061,
+    "wchar": 119630,
+    "write_bytes": 200704
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 1579112330,
+    "read_bytes": 1580779520,
+    "syscr": 11844,
+    "syscw": 1061,
+    "wchar": 119630,
+    "write_bytes": 200704
+   },
+   "maxrss_end_bytes": 10132168704,
+   "name": "digest:collect_signal_arrays_2d",
+   "start_s": 156.70937387499725
+  },
+  {
+   "end_s": 212.67566632802482,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2322730401,
+    "read_bytes": 2331531264,
+    "syscr": 13564,
+    "syscw": 1062,
+    "wchar": 134391,
+    "write_bytes": 217088
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 1579112580,
+    "read_bytes": 1580779520,
+    "syscr": 11848,
+    "syscw": 1062,
+    "wchar": 134391,
+    "write_bytes": 217088
+   },
+   "maxrss_end_bytes": 10132168704,
+   "name": "load:collect_truth_denom_arrays",
+   "start_s": 158.04591732501285
+  },
+  {
+   "end_s": 213.34183457001927,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2322730651,
+    "read_bytes": 2331531264,
+    "syscr": 13568,
+    "syscw": 1062,
+    "wchar": 134391,
+    "write_bytes": 217088
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2322730526,
+    "read_bytes": 2331531264,
+    "syscr": 13566,
+    "syscw": 1062,
+    "wchar": 134391,
+    "write_bytes": 217088
+   },
+   "maxrss_end_bytes": 10132168704,
+   "name": "digest:collect_truth_denom_arrays",
+   "start_s": 212.67592276399955
+  },
+  {
+   "end_s": 218.29861081202398,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2322730901,
+    "read_bytes": 2331535360,
+    "syscr": 13572,
+    "syscw": 1067,
+    "wchar": 151302,
+    "write_bytes": 241664
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2322730776,
+    "read_bytes": 2331535360,
+    "syscr": 13570,
+    "syscw": 1067,
+    "wchar": 151302,
+    "write_bytes": 241664
+   },
+   "maxrss_end_bytes": 10132168704,
+   "name": "build_measured_training_2d",
+   "start_s": 213.41482949000783
+  },
+  {
+   "end_s": 782.2170369900123,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2327437150,
+    "read_bytes": 2331556864,
+    "syscr": 14174,
+    "syscw": 1245,
+    "wchar": 590227,
+    "write_bytes": 311296
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2322751669,
+    "read_bytes": 2331535360,
+    "syscr": 13576,
+    "syscw": 1089,
+    "wchar": 151883,
+    "write_bytes": 241664
+   },
+   "maxrss_end_bytes": 14104760320,
+   "name": "omnifold",
+   "start_s": 218.50454049301334
+  },
+  {
+   "end_s": 829.0007089830178,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2327437400,
+    "read_bytes": 2331556864,
+    "syscr": 14178,
+    "syscw": 1257,
+    "wchar": 590529,
+    "write_bytes": 315392
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2327437275,
+    "read_bytes": 2331556864,
+    "syscr": 14176,
+    "syscw": 1257,
+    "wchar": 590529,
+    "write_bytes": 315392
+   },
+   "maxrss_end_bytes": 14104760320,
+   "name": "compute_efficiency_2d",
+   "start_s": 808.5649260189966
+  },
+  {
+   "end_s": 850.5763638450007,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2327437650,
+    "read_bytes": 2331556864,
+    "syscr": 14182,
+    "syscw": 1263,
+    "wchar": 590678,
+    "write_bytes": 319488
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2327437525,
+    "read_bytes": 2331556864,
+    "syscr": 14180,
+    "syscw": 1263,
+    "wchar": 590678,
+    "write_bytes": 319488
+   },
+   "maxrss_end_bytes": 14104760320,
+   "name": "compute_omnifold_completeness_2d",
+   "start_s": 829.0011882620165
+  },
+  {
+   "end_s": 850.5889943910006,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2327437900,
+    "read_bytes": 2331556864,
+    "syscr": 14186,
+    "syscw": 1269,
+    "wchar": 590873,
+    "write_bytes": 323584
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2327437775,
+    "read_bytes": 2331556864,
+    "syscr": 14184,
+    "syscw": 1269,
+    "wchar": 590873,
+    "write_bytes": 323584
+   },
+   "maxrss_end_bytes": 14104760320,
+   "name": "extract_cross_section_2d",
+   "start_s": 850.5767403150094
+  },
+  {
+   "end_s": 850.5916067250073,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2327438150,
+    "read_bytes": 2331556864,
+    "syscr": 14190,
+    "syscw": 1269,
+    "wchar": 590873,
+    "write_bytes": 323584
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2327438025,
+    "read_bytes": 2331556864,
+    "syscr": 14188,
+    "syscw": 1269,
+    "wchar": 590873,
+    "write_bytes": 323584
+   },
+   "maxrss_end_bytes": 14104760320,
+   "name": "project_xsec_1d",
+   "start_s": 850.589100666024
+  },
+  {
+   "end_s": 850.5919683660031,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2327438400,
+    "read_bytes": 2331556864,
+    "syscr": 14194,
+    "syscw": 1269,
+    "wchar": 590873,
+    "write_bytes": 323584
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2327438275,
+    "read_bytes": 2331556864,
+    "syscr": 14192,
+    "syscw": 1269,
+    "wchar": 590873,
+    "write_bytes": 323584
+   },
+   "maxrss_end_bytes": 14104760320,
+   "name": "project_xsec_1d",
+   "start_s": 850.5916784639994
+  }
+ ],
+ "schema": "sb1-receipt/1",
+ "started_utc": "2026-10-10T22:44:00.964440Z",
+ "status": "complete",
+ "wall_s": 857.5410552899993
+}

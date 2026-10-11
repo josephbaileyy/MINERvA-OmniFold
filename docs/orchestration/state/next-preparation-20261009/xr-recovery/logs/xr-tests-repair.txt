@@ -1,0 +1,53 @@
+test_receipts_must_name_their_run_and_admission (test_xr.Comparator.test_receipts_must_name_their_run_and_admission) ... ok
+test_tolerance_cells_and_digests (test_xr.Comparator.test_tolerance_cells_and_digests) ... ok
+test_the_preflight_recorder_refuses_every_fit (test_xr.FitCounts.test_the_preflight_recorder_refuses_every_fit) ... ok
+test_the_regressor_must_fit_every_iteration (test_xr.FitCounts.test_the_regressor_must_fit_every_iteration) ... ok
+test_a_preflight_run_by_hand_outside_the_job_releases_nothing (test_xr.Launch.test_a_preflight_run_by_hand_outside_the_job_releases_nothing)
+Admission F-1: a passing preflight receipt made outside the PF job (no allocation record, ... ok
+test_draft_refuses_the_prior_grants_outroot (test_xr.Launch.test_draft_refuses_the_prior_grants_outroot) ... ok
+test_jobcheck_on_real_format_allocations (test_xr.Launch.test_jobcheck_on_real_format_allocations) ... ok
+test_ledger_is_cumulative_over_the_prior_grant_and_flags (test_xr.Launch.test_ledger_is_cumulative_over_the_prior_grant_and_flags) ... ok
+test_next_attempt_counts_only_this_amendment_and_enforces_order_and_the_stop (test_xr.Launch.test_next_attempt_counts_only_this_amendment_and_enforces_order_and_the_stop) ... ok
+test_submit_releases_in_order_counts_attempts_and_cancels_on_a_failed_sbatch (test_xr.Launch.test_submit_releases_in_order_counts_attempts_and_cancels_on_a_failed_sbatch) ... ok
+test_the_planned_cumulative_ceiling_includes_the_prior_charge (test_xr.Launch.test_the_planned_cumulative_ceiling_includes_the_prior_charge) ... ok
+test_the_preflight_gate_requires_the_pf_jobs_own_bound_receipt (test_xr.Launch.test_the_preflight_gate_requires_the_pf_jobs_own_bound_receipt) ... ok
+test_the_preflight_refuses_the_wrong_thread_count (test_xr.Launch.test_the_preflight_refuses_the_wrong_thread_count) ... ok
+test_the_preflight_through_the_job_script_passes_without_a_fit (test_xr.Launch.test_the_preflight_through_the_job_script_passes_without_a_fit) ... ok
+test_billing_is_read_from_AllocTRES_explicitly (test_xr.Scheduler.test_billing_is_read_from_AllocTRES_explicitly) ... ok
+test_the_captured_format_has_AllocTRES_and_no_TRES_field (test_xr.Scheduler.test_the_captured_format_has_AllocTRES_and_no_TRES_field) ... ok
+test_the_sacct_parsers_on_captured_output (test_xr.Scheduler.test_the_sacct_parsers_on_captured_output) ... ok
+test_a_backend_other_than_the_frozen_one_stops_before_training (test_xr.XR.test_a_backend_other_than_the_frozen_one_stops_before_training) ... ok
+test_a_changed_driver_or_helper_is_refused (test_xr.XR.test_a_changed_driver_or_helper_is_refused) ... ok
+test_a_normalization_differing_from_the_reference_is_refused (test_xr.XR.test_a_normalization_differing_from_the_reference_is_refused) ... ok
+test_a_package_change_after_the_package_commit_is_refused (test_xr.XR.test_a_package_change_after_the_package_commit_is_refused) ... ok
+test_a_second_draft_for_the_same_grant_is_refused (test_xr.XR.test_a_second_draft_for_the_same_grant_is_refused) ... ok
+test_a_symlinked_attempt_directory_is_refused (test_xr.XR.test_a_symlinked_attempt_directory_is_refused) ... ok
+test_a_wrong_seed_stops_before_training (test_xr.XR.test_a_wrong_seed_stops_before_training) ... ok
+test_admission_tool_is_python36_syntax_and_api (test_xr.XR.test_admission_tool_is_python36_syntax_and_api)
+The launch scripts run xr_admit.py under the cluster's /usr/bin/python3 (3.6.15). ... ok
+test_all_five_runs_complete_strict_with_their_intended_backend_and_seeds (test_xr.XR.test_all_five_runs_complete_strict_with_their_intended_backend_and_seeds) ... ok
+test_an_admission_that_is_not_admitted_or_has_other_runs_is_refused (test_xr.XR.test_an_admission_that_is_not_admitted_or_has_other_runs_is_refused) ... ok
+test_an_environment_other_than_the_frozen_one_stops_before_training (test_xr.XR.test_an_environment_other_than_the_frozen_one_stops_before_training) ... ok
+test_an_existing_output_is_never_overwritten (test_xr.XR.test_an_existing_output_is_never_overwritten) ... ok
+test_an_input_with_other_bytes_is_refused (test_xr.XR.test_an_input_with_other_bytes_is_refused) ... ok
+test_an_output_that_is_a_frozen_reference_path_is_refused (test_xr.XR.test_an_output_that_is_a_frozen_reference_path_is_refused) ... ok
+test_an_outroot_inside_the_checkout_is_refused (test_xr.XR.test_an_outroot_inside_the_checkout_is_refused) ... ok
+test_an_uncommitted_or_symlinked_authorization_is_refused (test_xr.XR.test_an_uncommitted_or_symlinked_authorization_is_refused) ... ok
+test_comparator_on_the_fixture (test_xr.XR.test_comparator_on_the_fixture)
+Deterministic arms reproduce their fixture references to 1e-8. The unseeded exact arms ... ok
+test_lightgbm_ran_with_a_child_free_core_count (test_xr.XR.test_lightgbm_ran_with_a_child_free_core_count) ... ok
+test_strict_without_the_guard_is_refused (test_xr.XR.test_strict_without_the_guard_is_refused) ... ok
+test_the_authorization_binding (test_xr.XR.test_the_authorization_binding) ... ok
+test_the_d1bc8813_record_driver_is_what_X0p_executed (test_xr.XR.test_the_d1bc8813_record_driver_is_what_X0p_executed) ... ok
+test_the_environment_and_module_origins_are_recorded (test_xr.XR.test_the_environment_and_module_origins_are_recorded) ... ok
+test_the_wrong_working_directory_is_refused (test_xr.XR.test_the_wrong_working_directory_is_refused) ... ok
+test_unknown_run_and_attempt_over_the_cap_are_refused (test_xr.XR.test_unknown_run_and_attempt_over_the_cap_are_refused) ... ok
+test_verify_refuses_a_changed_nested_setup_or_a_copied_admission (test_xr.XR.test_verify_refuses_a_changed_nested_setup_or_a_copied_admission) ... ok
+
+----------------------------------------------------------------------
+Ran 42 tests in 170.310s
+
+OK
+1 2026-10-13T17:00:00
+
+TMPDIR=$T/tmp-xrr OMP_NUM_THREADS=1 PYTHONPATH=$(root-config --libdir)  -m     106.20s user 57.39s system 95% cpu 2:50.81 total

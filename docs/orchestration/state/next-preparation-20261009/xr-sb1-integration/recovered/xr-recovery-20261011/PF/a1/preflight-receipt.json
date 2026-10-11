@@ -1,0 +1,147 @@
+{
+ "admission": {
+  "path": "/pscratch/sd/j/josephrb/xr-recovery-20261011/admission.json",
+  "sha256": "4563871f100c00bf00fdf98cbda02ec2d4969d5f99a398afe956700d9f6c18cf"
+ },
+ "allocation_record": {
+  "line": "JobId=59655414 JobName=xrr_PF_a1 UserId=josephrb(112498) GroupId=josephrb(112498) MCS_label=N/A Priority=67709 Nice=0 Account=m3246 QOS=shared JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:05 TimeLimit=00:05:00 TimeMin=N/A SubmitTime=2026-10-10T19:40:04 EligibleTime=2026-10-10T19:40:04 AccrueTime=2026-10-10T19:40:05 StartTime=2026-10-10T20:11:21 EndTime=2026-10-10T20:16:21 Deadline=2026-10-13T19:40:00 PreemptEligibleTime=2026-10-10T20:11:21 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-10T20:11:21 Scheduler=Backfill Partition=shared_milan_ss11 AllocNode:Sid=login23:257283 ReqNodeList=(null) ExcNodeList=(null) NodeList=nid004073 BatchHost=nid004073 StepMgrEnabled=Yes NumNodes=1 NumCPUs=12 NumTasks=1 CPUs/Task=12 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=12,mem=22860M,node=1,billing=12 AllocTRES=cpu=12,mem=22860M,node=1,billing=12 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=12 MinMemoryNode=22860M MinTmpDiskNode=0 Features=cpu DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=u2:1 LicensesAlloc=u2:1 Network=(null) Command=/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/launch/xr_job.sbatch SubmitLine=sbatch --parsable --account=m3246 --qos=shared --constraint=cpu --nodes=1 --ntasks=1 --cpus-per-task=12 --mem=22860M --time=00:05:00 --deadline=2026-10-13T19:40:00 --job-name=xrr_PF_a1 --output=/pscratch/sd/j/josephrb/xr-recovery-20261011/PF/a1/slurm-%j.out --error=/pscratch/sd/j/josephrb/xr-recovery-20261011/PF/a1/slurm-%j.err /pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/launch/xr_job.sbatch /pscratch/sd/j/josephrb/xr-recovery-20261011/admission.json PF 1 WorkDir=/global/u2/j/josephrb StdErr=/pscratch/sd/j/josephrb/xr-recovery-20261011/PF/a1/slurm-59655414.err StdIn=/dev/null StdOut=/pscratch/sd/j/josephrb/xr-recovery-20261011/PF/a1/slurm-59655414.out TresPerTask=cpu=12 ResvPorts=63168-63170\n",
+  "path": "/pscratch/sd/j/josephrb/xr-recovery-20261011/PF/a1/scontrol-job.txt",
+  "sha256": "539a9d781a5c60c4b7fa3849a44ba613e3327cea7fae8e8641782d22d2f71825"
+ },
+ "attempt": 1,
+ "ended_utc": "2026-10-11T03:12:21.393598Z",
+ "environment": {
+  "affinity_cpus": 12,
+  "argv": [
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/xr_run.py",
+   "--run",
+   "PF",
+   "--attempt",
+   "1",
+   "--admission",
+   "/pscratch/sd/j/josephrb/xr-recovery-20261011/admission.json",
+   "--require-provenance"
+  ],
+  "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1/2d-unfolding",
+  "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python",
+  "host": "nid004073",
+  "packages": {
+   "lightgbm": null,
+   "numpy": null,
+   "scikit-learn": null,
+   "scipy": null,
+   "xgboost": null
+  },
+  "python": "3.11.14",
+  "root_version": "6.28/12",
+  "slurm": {
+   "SLURMD_NODENAME": "nid004073",
+   "SLURM_CPUS_PER_TASK": "12",
+   "SLURM_JOB_ID": "59655414",
+   "SLURM_JOB_QOS": "shared",
+   "SLURM_MEM_PER_NODE": "22860"
+  },
+  "threads": {
+   "MKL_NUM_THREADS": "1",
+   "NUMEXPR_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "12",
+   "OPENBLAS_NUM_THREADS": "1",
+   "SLURM_CPUS_PER_TASK": "12"
+  },
+  "uname": [
+   "Linux",
+   "nid004073",
+   "6.4.0-150600.23.125_15.0.29-cray_shasta_c",
+   "#1 SMP Mon 21 Sep 2026 11:10:49 PDT (f9f1fdc)",
+   "x86_64"
+  ]
+ },
+ "error": "SystemExit: 3",
+ "exit_code": 1,
+ "fits": [],
+ "identity": {
+  "executed": [
+   {
+    "git_blob": "d57c7294de7a2191464219ad4fafdb2000e8fd74",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/xr_run.py",
+    "relpath": "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/xr_run.py",
+    "sha256": "4371d3e2b2e52b5600c457f6b0fac79bcb53b11c034155e14bd1c71f171e12bf"
+   },
+   {
+    "git_blob": "6509b94a5f324ee5edcc44e539b7b5a0ef290151",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1/2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
+    "relpath": "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
+    "sha256": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef"
+   },
+   {
+    "git_blob": "1ea941f390bb3ce36925a9e8f2fbad675d88cada",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1/2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+    "relpath": "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+    "sha256": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856"
+   },
+   {
+    "git_blob": "5966663bfe88809fd245d4dd2edb472eb6514480",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1/unbinned_unfolding/python/omnifold.py",
+    "relpath": "unbinned_unfolding/python/omnifold.py",
+    "sha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   },
+   {
+    "git_blob": "e19aeb6d3c242a21a67fa1b4e4573ddf72729206",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1/2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "relpath": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "sha256": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933"
+   },
+   {
+    "git_blob": "0f87330b3fe6e61d8922fafaefd0c17165f752b1",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/record/unfold_2d_omnifold_unbinned_d1bc8813.py.record",
+    "relpath": "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/record/unfold_2d_omnifold_unbinned_d1bc8813.py.record",
+    "sha256": "447288e2c61d30cdd46c88077093ec0d78ac08ae63144bb2fe57525e7144ea34"
+   }
+  ],
+  "git": {
+   "commit": "9ec77fa1084dc54eea0246efd3d5597a4df43f63",
+   "mismatched": [],
+   "status": "ok"
+  },
+  "guard": {
+   "allowed": [
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1"
+   ],
+   "depth": 0,
+   "expect_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1",
+   "installed": true,
+   "propagation": "armed"
+  },
+  "strict": true
+ },
+ "inputs_start": {
+  "mcfile": {
+   "ino": 882724771874215681,
+   "mtime_ns": 1777003503000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "size": 5143
+  },
+  "omnifile": {
+   "ino": 6874571285,
+   "mtime_ns": 1779094334000000000,
+   "path": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+   "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "size": 2144008221
+  }
+ },
+ "kind": "preflight",
+ "not_a_result": "preflight only: no fit, no histogram; it cannot satisfy any comparison",
+ "preflight_of": [
+  "X0",
+  "X0p",
+  "X1",
+  "L0",
+  "L1"
+ ],
+ "run": "PF",
+ "schema": "xr-preflight-receipt/1",
+ "started_utc": "2026-10-11T03:12:18.598251Z",
+ "status": "preflight-fail",
+ "wall_s": 47.061142084989115
+}

@@ -1,0 +1,128 @@
+{
+ "authorization": {
+  "path": "docs/orchestration/AUTHORIZATION-20261010-xr.md",
+  "sha256": "d368967b2b2b2a2568688f4eaf0f647cb38bc421845776be6cc86d92c6a8240f"
+ },
+ "cap_node_h": 6.4,
+ "checkout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xr-b838fc02",
+ "drafted_utc": "2026-10-10T22:34:40Z",
+ "expect": {
+  "L0": {
+   "commit": "b838fc02d599947858daae4778bb31d1f01f2856",
+   "inputs": {
+    "mcfile": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+    "omnifile": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+   },
+   "modules": {
+    "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+    "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/xr_run.py": "cc387f97f82b086e6b6eb2eeb9cfdccaf6c4952a5a96a1b44ad1a6972c7a07e7",
+    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  },
+  "L1": {
+   "commit": "b838fc02d599947858daae4778bb31d1f01f2856",
+   "inputs": {
+    "mcfile": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+    "omnifile": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+   },
+   "modules": {
+    "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+    "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/xr_run.py": "cc387f97f82b086e6b6eb2eeb9cfdccaf6c4952a5a96a1b44ad1a6972c7a07e7",
+    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  },
+  "X0": {
+   "commit": "b838fc02d599947858daae4778bb31d1f01f2856",
+   "inputs": {
+    "mcfile": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+    "omnifile": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+   },
+   "modules": {
+    "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+    "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/xr_run.py": "cc387f97f82b086e6b6eb2eeb9cfdccaf6c4952a5a96a1b44ad1a6972c7a07e7",
+    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  },
+  "X0p": {
+   "commit": "b838fc02d599947858daae4778bb31d1f01f2856",
+   "inputs": {
+    "mcfile": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+    "omnifile": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+   },
+   "modules": {
+    "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+    "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/record/unfold_2d_omnifold_unbinned_d1bc8813.py.record": "447288e2c61d30cdd46c88077093ec0d78ac08ae63144bb2fe57525e7144ea34",
+    "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/xr_run.py": "cc387f97f82b086e6b6eb2eeb9cfdccaf6c4952a5a96a1b44ad1a6972c7a07e7",
+    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  },
+  "X1": {
+   "commit": "b838fc02d599947858daae4778bb31d1f01f2856",
+   "inputs": {
+    "mcfile": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+    "omnifile": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+   },
+   "modules": {
+    "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+    "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/xr_run.py": "cc387f97f82b086e6b6eb2eeb9cfdccaf6c4952a5a96a1b44ad1a6972c7a07e7",
+    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  }
+ },
+ "grant_date": "2026-10-10",
+ "head": "b838fc02d599947858daae4778bb31d1f01f2856",
+ "kinds": {
+  "exact": {
+   "billing_max": 12,
+   "ceiling_node_h_per_attempt": 1.40625,
+   "constraint": "cpu",
+   "cpus_per_task": 12,
+   "max_attempts_total": 4,
+   "mem_mb": 22860,
+   "omp_threads": 12,
+   "qos": "shared",
+   "time": "30:00:00",
+   "time_limit_s_max": 108000
+  },
+  "lgbm": {
+   "billing_max": 64,
+   "ceiling_node_h_per_attempt": 0.25,
+   "constraint": "cpu",
+   "cpus_per_task": 64,
+   "max_attempts_total": 3,
+   "mem_mb": 121920,
+   "omp_threads": 64,
+   "qos": "shared",
+   "time": "01:00:00",
+   "time_limit_s_max": 3600
+  }
+ },
+ "manifest_sha256": "fbca1be80d56b09751bcd9f8fbe698ac65786ebe08e21ae04e561e5c73dd06b8",
+ "outroot": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010",
+ "package_commit": "06eae0fede3508419f235f8cbe61954b33de8497",
+ "references_sha256": "af7d5a1935176367e3c6cff9c17986e8e4e5c15c91b75d73efb3ccec04b88c89",
+ "runs_sha256": "b38d6e2d509db692b1443de30592c4afabed8e7558d93a96e03b5953e1232b7f",
+ "schema": "xr-admission/2",
+ "setup": {
+  "nested": {
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh": "e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT-MINERvA.sh": "c259101619ac365dcc57043d8ac4926908e51a8a87dad08f601394c9b418c3ac",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT.sh": "733e9cd839a0f75186d109eaab3dfe746a921d6d7b0347fbd6662b6f1ced3c0e",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_UnfoldUtils.sh": "bd305c17ddcd507f88ab49cbfcf5fe5a14075e0c1a173e631addcb3423212cd9",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/setup.sh": "40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598"
+  },
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh",
+  "sha256": "ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48"
+ },
+ "status": "ADMITTED",
+ "stop_after_hours": 72
+}

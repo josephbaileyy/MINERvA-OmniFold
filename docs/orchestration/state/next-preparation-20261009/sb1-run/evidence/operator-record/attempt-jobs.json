@@ -1,0 +1,92 @@
+{
+ "ambiguous": {},
+ "matched": {
+  "59645299": {
+   "AllocTRES": "billing=2,cpu=2,energy=631082,mem=3810M,node=1",
+   "ElapsedRaw": "929",
+   "JobID": "59645299",
+   "JobName": "sb1_H0",
+   "State": "COMPLETED",
+   "StdErr": "/pscratch/sd/j/josephrb/sb1-2b35ba52/%x_%j.err",
+   "StdOut": "/pscratch/sd/j/josephrb/sb1-2b35ba52/%x_%j.out",
+   "Submit": "2026-10-10T13:31:30",
+   "User": "josephrb",
+   "WorkDir": "/pscratch/sd/j/josephrb/sb1-2b35ba52"
+  },
+  "59645300": {
+   "AllocTRES": "billing=256,cpu=256,energy=815532,mem=487802M,node=1",
+   "ElapsedRaw": "2604",
+   "JobID": "59645300",
+   "JobName": "sb1_UL",
+   "State": "COMPLETED",
+   "StdErr": "/pscratch/sd/j/josephrb/sb1-2b35ba52/%x_%j.err",
+   "StdOut": "/pscratch/sd/j/josephrb/sb1-2b35ba52/%x_%j.out",
+   "Submit": "2026-10-10T13:31:33",
+   "User": "josephrb",
+   "WorkDir": "/pscratch/sd/j/josephrb/sb1-2b35ba52"
+  },
+  "59645301": {
+   "AllocTRES": "billing=256,cpu=256,energy=294574,mem=487802M,node=1",
+   "ElapsedRaw": "888",
+   "JobID": "59645301",
+   "JobName": "sb1_SL",
+   "State": "COMPLETED",
+   "StdErr": "/pscratch/sd/j/josephrb/sb1-2b35ba52/%x_%j.err",
+   "StdOut": "/pscratch/sd/j/josephrb/sb1-2b35ba52/%x_%j.out",
+   "Submit": "2026-10-10T13:31:36",
+   "User": "josephrb",
+   "WorkDir": "/pscratch/sd/j/josephrb/sb1-2b35ba52"
+  },
+  "59645302": {
+   "AllocTRES": "billing=64,cpu=64,energy=1142100,mem=121920M,node=1",
+   "ElapsedRaw": "1793",
+   "JobID": "59645302",
+   "JobName": "sb1_J1",
+   "State": "COMPLETED",
+   "StdErr": "/pscratch/sd/j/josephrb/sb1-2b35ba52/%x_%j.err",
+   "StdOut": "/pscratch/sd/j/josephrb/sb1-2b35ba52/%x_%j.out",
+   "Submit": "2026-10-10T13:31:43",
+   "User": "josephrb",
+   "WorkDir": "/pscratch/sd/j/josephrb/sb1-2b35ba52"
+  },
+  "59645304": {
+   "AllocTRES": "billing=64,cpu=64,energy=623126,mem=121920M,node=1",
+   "ElapsedRaw": "948",
+   "JobID": "59645304",
+   "JobName": "sb1_C",
+   "State": "COMPLETED",
+   "StdErr": "/pscratch/sd/j/josephrb/sb1-2b35ba52/%x_%j.err",
+   "StdOut": "/pscratch/sd/j/josephrb/sb1-2b35ba52/%x_%j.out",
+   "Submit": "2026-10-10T13:31:43",
+   "User": "josephrb",
+   "WorkDir": "/pscratch/sd/j/josephrb/sb1-2b35ba52"
+  },
+  "59645305": {
+   "AllocTRES": "billing=2,cpu=2,energy=106560,mem=3810M,node=1",
+   "ElapsedRaw": "180",
+   "JobID": "59645305",
+   "JobName": "sb1_H1",
+   "State": "COMPLETED",
+   "StdErr": "/pscratch/sd/j/josephrb/sb1-2b35ba52/%x_%j.err",
+   "StdOut": "/pscratch/sd/j/josephrb/sb1-2b35ba52/%x_%j.out",
+   "Submit": "2026-10-10T13:31:43",
+   "User": "josephrb",
+   "WorkDir": "/pscratch/sd/j/josephrb/sb1-2b35ba52"
+  }
+ },
+ "outroot": "/pscratch/sd/j/josephrb/sb1-2b35ba52",
+ "submission_json": {
+  "C": "59645304",
+  "H0": "59645299",
+  "H1": "59645305",
+  "J1": "59645302",
+  "SL": "59645301",
+  "UL": "59645300"
+ },
+ "submission_json_agrees": true,
+ "utc": "2026-10-11T01:41:09Z",
+ "window_utc": [
+  "2026-10-10T20:29:26Z",
+  "2026-10-10T20:33:43Z"
+ ]
+}

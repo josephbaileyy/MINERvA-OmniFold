@@ -1,0 +1,5 @@
+[sb1] H0 job=59645299 node=nid004111 start 2026-10-10T20:37:49Z
+[sb1-hash] 220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418  171117087867 B  902.4 s  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root
+[sb1-hash] 43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df  2144008221 B  9.6 s  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root
+[sb1-hash] d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316  5143 B  0.0 s  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root
+[sb1] H0 done 2026-10-10T20:53:02Z

@@ -1,0 +1,81 @@
+{
+ "authorization": {
+  "path": "docs/orchestration/AUTHORIZATION-20261010-sb1.md",
+  "sha256": "3beec1da1fbd33154ffcc7da5e87adf957ebe7565372587f7da246069d0e9537"
+ },
+ "cannot_authorize": [
+  "a change to the production 2D driver or the pinned OmniFold helper",
+  "replacing or changing any estimator",
+  "claiming a production speedup",
+  "the transfer measurement (option (b))",
+  "a matched sweep (option (c))",
+  "N2",
+  "lifting KI-85",
+  "adoption, a changed gate or any quoted number",
+  "publication or any external communication",
+  "a Rust/C++ rewrite",
+  "any compute beyond these six jobs"
+ ],
+ "ceiling_node_h": 2.0,
+ "checkout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52",
+ "code": {
+  "commit": "2b35ba520e1dd98a162f82ac6a9e4f8cd63a86ac",
+  "modules": {
+   "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+   "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+   "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+   "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py": "ce001cb96a416fa208bdbc0f2e3467521dcddfb198c22d7f9b3a222b51afb60d",
+   "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py": "17a4a5f6bb6583b7c784eb9940cc2c353f1c310e486705c4fca7bd9b94bea7eb",
+   "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+  },
+  "package_commit": "d4335d3b9bc2502002f93390f9555d07e134855f"
+ },
+ "decision": "Permission to run the fixed SB1 package (the package commit named in code.package_commit, whose files manifest/expected-code.json pins) on Perlmutter CPU under account m3246, as the six jobs of launch/launch-spec.json, with at most 2.0 node-h charged in total (planned ceilings 1.699 node-h; expected about 1.19), no retries under the admission, no other compute, GPU or training.",
+ "inputs_observed": {
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root": {
+   "ino": 882724771874215681,
+   "mtime_ns": 1777003503000000000,
+   "size": 5143
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root": {
+   "ino": 882724772125893981,
+   "mtime_ns": 1779094334000000000,
+   "size": 2144008221
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root": {
+   "ino": 882725391507234642,
+   "mtime_ns": 1783523295000000000,
+   "size": 171117087867
+  }
+ },
+ "jobs": [
+  {
+   "ceiling_node_h": 0.005859375,
+   "id": "H0"
+  },
+  {
+   "ceiling_node_h": 0.8333333333333334,
+   "id": "UL"
+  },
+  {
+   "ceiling_node_h": 0.5,
+   "id": "SL"
+  },
+  {
+   "ceiling_node_h": 0.1875,
+   "id": "J1"
+  },
+  {
+   "ceiling_node_h": 0.16666666666666666,
+   "id": "C"
+  },
+  {
+   "ceiling_node_h": 0.005859375,
+   "id": "H1"
+  }
+ ],
+ "launch_spec_sha256": "fb9a1947ab944d0f1cf41f1630732ad73cd84132a94dc6e4800b27d28cd730c6",
+ "outroot": "/pscratch/sd/j/josephrb/sb1-2b35ba52",
+ "schema": "sb1-admission/1",
+ "status": "ADMITTED"
+}

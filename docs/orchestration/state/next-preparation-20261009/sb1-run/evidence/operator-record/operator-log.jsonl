@@ -1,0 +1,4 @@
+{"checkout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52", "event": "submit-start", "outroot": "/pscratch/sd/j/josephrb/sb1-2b35ba52", "utc": "2026-10-10T20:31:26Z"}
+{"event": "submit-end", "rc": 0, "utc": "2026-10-10T20:31:43Z"}
+{"agrees": true, "ambiguous": [], "event": "identify", "matched": ["59645299", "59645300", "59645301", "59645302", "59645304", "59645305"], "submission_json": {"C": "59645304", "H0": "59645299", "H1": "59645305", "J1": "59645302", "SL": "59645301", "UL": "59645300"}, "utc": "2026-10-10T20:31:48Z"}
+{"agrees": true, "ambiguous": [], "event": "identify", "matched": ["59645299", "59645300", "59645301", "59645302", "59645304", "59645305"], "submission_json": {"C": "59645304", "H0": "59645299", "H1": "59645305", "J1": "59645302", "SL": "59645301", "UL": "59645300"}, "utc": "2026-10-11T01:41:09Z"}

@@ -1,0 +1,52 @@
+# Read-only Perlmutter reads, 2026-10-10 (login nodes; no job, no allocation charge). Values as printed.
+
+## 20:10:35Z  scontrol show config / sacctmgr qos shared
+SelectTypeParameters = CR_CORE_MEMORY ; QOS shared MaxWall 2-00:00:00, MaxSubmitPU 5000, DenyOnLimit
+## sacct reference jobs (AllocTRES)
+59409026_1|regular_1|regular_milan_ss11|128|487802M|billing=256,cpu=256,energy=276520,mem=487802M,node=1
+59410433_1|shared|shared_milan_ss11|64|121920M|billing=64,cpu=64,energy=367655,mem=121920M,node=1
+## iris
+m3246  Charged(user) 2035.0  Allocated(user) 10000.0  Charged 16976.9  Allocated 20000.0   (remaining 3,023.1 CPU node-h)
+## 20:36:02Z  scontrol show partition shared_milan_ss11
+MaxTime=7-00:00:00 TotalNodes=70 SelectTypeParameters=CR_CORE_MEMORY DefMemPerCPU=1905 MaxMemPerCPU=1905
+## sacctmgr assoc: m3246 QOS list includes shared (and regular_0/1, debug, ...)
+## pscratch quota: 16.76 TiB of 20.00 TiB; inodes 1.29M of 10M
+
+## 20:12:53Z-20:13:14Z  one verified CFS copy of the CV omnifile (authorized)
+src 2144008221 B mtime 1779094334 /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root
+dst 2144008221 B mtime 1779094334 mode 0440 /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root
+src_sha256 = dst_sha256 = 43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df (equal to B populations.tsv); SHA256SUMS written beside it (0440)
+flux file (not copied) 5143 B sha256 d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316 /pscratch/.../2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root
+
+## 20:13:26Z  squeue --me: empty. Canonical checkout HEAD 32e403b8, `git status --porcelain` 733 lines (not clean: not movable).
+## worktrees include /pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52 (SB1 run, detached at 2b35ba52)
+
+## MAT source (read-only): MINERvA101/MAT-MINERvA/universes/GenieSystematics.cxx sha256 d33d6dfb2d26bc5c...
+## lines 658-671 GenieRvx1piUniverse<T>::GetGenieWeight: if UseNonResPiReweight() && IsNonResPi(*this):
+##   wgt = kNonResPiWeight + plusMinus * kNonResPiWeightShift   (independent of Rvn1pi vs Rvp1pi)
+
+## May truth-input comparison (adopted sweep vs CV42), hTruth2D / hOFInputTruth2D, 205 reported cells
+EtaNCEL_0 integral ratio 0.879075 median|r| 0.0630 p84 0.1662 max 0.3741 cells>1%: 205 of 205
+MaRES_0   integral ratio 0.830399 median|r| 0.1157 p84 0.2051 max 0.3825 cells>1%: 205 of 205
+
+## Background-template statistics, July CV hBkgReco2D bin errors (Sumw2 present), 205 reco bins
+eB/sqrt(D): median 0.0722 p84 0.1247 p99 0.2524 max 0.3024 n>0.1 60 n>0.3 1
+eB/(D-B):  median 7.70e-04 p84 2.36e-03 max 1.08e-01
+
+== 2026-10-10T21:40:25Z login23: environment (review B-3), after sourcing the canonical setup_salloc_env.sh
+/usr/bin/python3 -V -> Python 3.6.15; setup_salloc_env.sh ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+python 3.11.14 (root_6_28 env), ROOT 6.28/12, numpy 1.26.4, sklearn 1.8.0, lightgbm 4.6.0, joblib 1.5.3, threadpoolctl 3.6.0, scipy 1.16.3
+unbinned_unfolding/build/setup.sh 40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598 (prepends the canonical build dir to PATH, PYTHONPATH, LD_LIBRARY_PATH; it holds RooUnfold/omnifold.py, a package submodule, no top-level omnifold.py)
+MINERvA101/opt/bin/setup.sh e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6 (sources setup_MAT.sh, setup_MAT-MINERvA.sh, setup_UnfoldUtils.sh)
+squeue --me: 5 sb1_* jobs PENDING, WORK_DIR /pscratch/sd/j/josephrb/sb1-2b35ba52; /pscratch/sd/j/josephrb/xr-two-d-followup-20261010 absent
+
+== review B-8: chmod g-w on the CFS copy directories
+2026-10-10T21:52:33Z
+drwxrws--- 3 josephrb m3246 4096 Oct 10 13:12 /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010
+drwxrws--- 2 josephrb m3246 4096 Oct 10 13:13 /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input
+drwxr-s--- 3 josephrb m3246 4096 Oct 10 13:12 /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010
+drwxr-s--- 2 josephrb m3246 4096 Oct 10 13:13 /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input
+total 2093761
+-r--r----- 1 josephrb m3246 2144008221 May 18 01:52 runEventLoopOmniFold_MEFHC.root
+-r--r----- 1 josephrb m3246         98 Oct 10 13:13 SHA256SUMS
+drwxrws--- 14 josephrb m3246 4096 Oct 10 13:12 /global/cfs/cdirs/m3246/josephrb

@@ -1,0 +1,71 @@
+Please complete a bounded XR infrastructure recovery and retry. Do not reopen the methodological study or change the scientific comparisons.
+
+AUTHORIZATION
+I authorize repairing the failed XR launch package, independently reviewing the repair, running one in-allocation preflight, and then executing the five original XR runs if admission and preflight pass.
+
+This amends the previous XR grant’s package, attempt allowance, output namespace and review budget. The cumulative CPU-node-hour ceiling remains 6.4, INCLUDING the previous failed jobs, preflight, new runs, failures and verification. No GPU, full-node substitution, transfer experiment, uncertainty production, N2, KI-85 lift, re-quote or adoption.
+
+BASELINE AND OWNERSHIP
+Read AGENTS.md, the campaign review, CURRENT_WORK and governing records, the committed XR authorization, and:
+docs/orchestration/state/next-preparation-20261009/two-d-followup/REPORT.md
+especially B7–B8 and E.3, plus its final verification.
+
+Refresh remote main and the completed follow-up branch. Use an isolated worktree. Preserve the old package, failed-run records, outputs and reviews at their existing commits.
+
+Own the XR package’s narrowly scoped repair and tests, and a new recovery record under:
+docs/orchestration/state/next-preparation-20261009/xr-recovery/
+
+You may create a dedicated authorization-amendment record quoting this grant, with the scoped registration required by repository policy. Do not rewrite shared scientific status, publication sources, the production driver, pinned OmniFold helper or SB1’s package.
+
+DECISION
+Can the repaired, correctly admitted package answer the original central-reproduction and one-seed comparison questions?
+
+REPAIR
+1. Parse actual granted billing from AllocTRES in recorded Perlmutter scontrol output. Remain fail-closed when the field is absent, null, malformed or exceeds the cap. Parse the named field explicitly.
+
+2. Replace the self-confirming scheduler fixture with captured real scheduler formats. Test a valid allocation, excessive billing, pending/null allocation and malformed output. Require a regression test that fails when the old TRES parser is restored. Check the other scheduler parsers against recorded real output.
+
+3. Add a preflight mode through the actual xr_job.sbatch path: allocation check, admission verification, environment setup, input hashing, guard, pinned driver/helper loading and the relevant environment/core-count setup. Stop before any fit. Its receipt must be unmistakably a preflight receipt and must never satisfy a scientific comparison.
+
+4. Freeze a new package commit, manifest and output namespace. Preserve all original scientific arguments, references, cell identities, comparison tolerances and missing-result rules.
+
+5. Make attempt accounting distinguish this amendment’s jobs while retaining the old jobs and their charges in the cumulative ledger. A new package, outroot or date must not reset the 6.4-node-hour ceiling.
+
+REVIEW AND RELEASE
+Use one fresh read-only reviewer, explicitly authorized. Maximum:
+- one admission review of the repair and executable package;
+- one final independent numerical verification;
+- one focused repair/re-review across this assignment.
+
+The reviewer must inspect actual scheduler operands and negative controls. Do not repeat the completed methodological review.
+
+After admission passes, run ONE preflight job: shared QOS, at most 12 billing CPUs, at most five minutes, no fits. If it fails, stop dependent execution and deliver the exact defect; do not launch the five runs.
+
+After preflight passes, run L0 first. Confirm successful guarded execution and a complete, comparable receipt before releasing the remaining runs. A scientifically meaningful comparison failure is a result, not automatically an infrastructure failure; preserve the frozen outcome rules.
+
+RESOURCE LIMITS
+Re-measure current scheduler billing and allocation before launch.
+
+The amendment permits:
+- one five-minute preflight at <=12/256 node billing;
+- at most FOUR exact jobs total at <=30 hours and <=12/256 billing each;
+- at most THREE LightGBM jobs total at <=1 hour and <=64/256 billing each.
+
+These totals include retries: only one additional exact attempt across the three exact arms and one additional LightGBM attempt across the two LightGBM arms.
+
+The previous recorded charge was 0.0013498264 node-hours; verify it. With the stated ceilings, cumulative planned maximum is about 6.3803 node-hours. Refuse any settings that would exceed 6.4. No automatic resource expansion.
+
+Use a new 72-hour execution window beginning with the preflight submission. Enforce the stop and cancel only this assignment’s unfinished jobs. Record missing comparisons as INCONCLUSIVE.
+
+DEPLOYMENT
+Keep SB1’s running checkout, package, environment and outputs untouched. Use an isolated pinned deployment. Inspect scheduler state directly; do not infer it from an old report. If safe coexistence cannot be established, serialize within the budget or finish the dependent work as INCONCLUSIVE.
+
+LOCAL BUDGET
+Six active hours including review and delivery; three local CPU core-hours; two local compute threads; 8 GiB RAM; 3 GiB new local scratch beyond worktrees; 20 MiB tracked evidence. Protect the final quarter for verification and delivery.
+
+DELIVERY
+Independently reproduce the consequential comparisons from output histograms and verified references, and recompute charges from scheduler records. Report admission, preflight, execution and each scientific comparison separately.
+
+Push a reviewable branch/PR with exact package/input/result refs, actual resources and remaining limitations. Do not merge or change scientific status. Complete unaffected work when blocked.
+
+PASS, FAIL and INCONCLUSIVE are all valid terminal scientific outcomes. No subsequent experiment starts automatically, and no further routine permission is needed within this grant.

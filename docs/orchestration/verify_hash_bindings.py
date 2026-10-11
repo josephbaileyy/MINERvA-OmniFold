@@ -435,8 +435,19 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: docs/orchestration/state/uqpaper-median-20261006/paper_median.json declares, nothing removed:
 #:   ADDED   2d-unfolding/minerva_paper_anc/bin_mapping.txt                                      d21a41eb
 #:   ADDED   2d-unfolding/minerva_paper_anc/data_result_ptpl_2D_minerva_inclusive_6GeV.txt       02153e7a
-RECEIPT_BINDING_COUNT = 144
-RECEIPT_BINDING_SHA256 = "f9dab8dd64af311296216d02878d28ab05a83062812def44d3cdc39830229cc0"
+#: 144 -> 148, digest f9dab8dd -> 1b610bb3 (2026-10-11, the XR/SB1 evidence integration). The SB1 run had tracked
+#: its JSON receipts with a `.txt` suffix and XR had held three receipts off the tree, both to keep them out of this
+#: inventory. Integration renamed the 27 SB1 files to `.json` (bytes unchanged) and tracked the four XR receipts
+#: recovered from Perlmutter at their recorded sha256. Enumerated before the constant moved (receipt_inventory()
+#: rows on origin/main ced3a8db and on the integration tree): four ADDED, nothing removed or repointed, all OK:
+#:   ADDED   docs/orchestration/AUTHORIZATION-20261010-sb1.md                                    3beec1da
+#:   ADDED   docs/orchestration/AUTHORIZATION-20261010-xr.md                                     d368967b
+#:   ADDED   docs/orchestration/AUTHORIZATION-20261011-xr-recovery.md                            25deb61b
+#:   ADDED   setup_salloc_env.sh                                                                 ea3c6998
+#: Power-tested before the bump: one flipped hex digit in each binding's receipt gives MISMATCH, rc 1. Delta and
+#: controls: docs/orchestration/state/next-preparation-20261009/xr-sb1-integration/logs/binding-delta.txt.
+RECEIPT_BINDING_COUNT = 148
+RECEIPT_BINDING_SHA256 = "1b610bb358810abd951d01ee1c6779259e4c6f80fe51913d85b556968c318f4f"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"
