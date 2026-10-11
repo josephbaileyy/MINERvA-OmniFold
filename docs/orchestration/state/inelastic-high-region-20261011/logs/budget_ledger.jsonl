@@ -1,0 +1,1 @@
+{"cap_s": 30.0, "charged_cpu_s": 30.0, "cmd": null, "cumulative_after_s": 30.0, "id": "PRE-inspect", "local_cpu_s": null, "note": "pre-plan listing, hashing and npz/json header inspection (conservative)", "rc": null, "remote_cpu_s": null, "rule": "manual charge", "utc": "2026-10-11T22:14:55+00:00", "wall_s": null}
