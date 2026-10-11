@@ -1,0 +1,128 @@
+# XR deployment and submission transcript (login23; read from this session over ssh)
+
+## worktree, Python 3.6 checks
+(2026-10-10T22:33:55Z, a first attempt: `git fetch origin` failed with "'origin' does not appear to be a git
+repository" before any change; the cluster checkout's remote for this repository is named `github`. The
+queue then held 4 sb1_* jobs PENDING and no xr_* job. The second attempt below fetched from `github`.)
+2026-10-10T22:34:09Z
+commit
+32e403b84e9e8f9d9bc435028749f896653c7a43
+b838fc02d599947858daae4778bb31d1f01f2856
+status_lines=0
+Python 3.6.15
+[xr-admit] manifest current
+[xr-admit] binding holds
+[REFUSED] not inside a Slurm job
+jobcheck-outside-job rc=3
+
+## draft, verify, empty ledger
+2026-10-10T22:34:39Z
+ls: cannot access '/pscratch/sd/j/josephrb/xr-two-d-followup-20261010': No such file or directory
+[xr-admit] ADMITTED -> /pscratch/sd/j/josephrb/xr-two-d-followup-20261010/admission.json
+draft rc=0
+[xr-admit] admission verified
+verify rc=0
+ef8b49b364a908e2edcc10322ea3a6f6f15bd4aacb5c749d0c3b253104459e1f  /pscratch/sd/j/josephrb/xr-two-d-followup-20261010/admission.json
+b838fc02d599947858daae4778bb31d1f01f2856 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT-MINERvA.sh c259101619ac365dcc57043d8ac4926908e51a8a87dad08f601394c9b418c3ac
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT.sh 733e9cd839a0f75186d109eaab3dfe746a921d6d7b0347fbd6662b6f1ced3c0e
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_UnfoldUtils.sh bd305c17ddcd507f88ab49cbfcf5fe5a14075e0c1a173e631addcb3423212cd9
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/setup.sh 40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598
+{
+ "charged_node_h": 0.0,
+ "unfinished_ceiling_node_h": 0.0,
+ "attempts": {
+  "exact": 0,
+  "lgbm": 0
+ },
+ "hours_since_first_submission": null,
+ "jobs": [],
+ "over": []
+}
+ledger rc=0
+
+## submission and scheduler record
+2026-10-10T22:34:48Z
+[xr-admit] admission verified
+[xr-submit] X0 a1 -> job 59648608
+[xr-submit] X0p a1 -> job 59648610
+[xr-submit] X1 a1 -> job 59648611
+[xr-submit] L0 a1 -> job 59648616
+[xr-submit] L1 a1 -> job 59648617
+submit rc=0
+{"run": "X0", "kind": "exact", "attempt": 1, "job_id": 59648608, "submitted_utc": "2026-10-10T22:34:53Z", "dir": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010/X0/a1"}
+{"run": "X0p", "kind": "exact", "attempt": 1, "job_id": 59648610, "submitted_utc": "2026-10-10T22:34:57Z", "dir": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010/X0p/a1"}
+{"run": "X1", "kind": "exact", "attempt": 1, "job_id": 59648611, "submitted_utc": "2026-10-10T22:35:00Z", "dir": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010/X1/a1"}
+{"run": "L0", "kind": "lgbm", "attempt": 1, "job_id": 59648616, "submitted_utc": "2026-10-10T22:35:05Z", "dir": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010/L0/a1"}
+{"run": "L1", "kind": "lgbm", "attempt": 1, "job_id": 59648617, "submitted_utc": "2026-10-10T22:35:09Z", "dir": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010/L1/a1"}
+JOBID NAME STATE QOS CPUS MIN_MEMORY TIME_LIMIT REASON WORK_DIR
+59645301 sb1_SL PENDING regular_1 128 0 30:00 Priority /pscratch/sd/j/josephrb/sb1-2b35ba52
+59648617 xr_L1_a1 PENDING shared 64 121920M 1:00:00 Priority /global/u2/j/josephrb
+59648616 xr_L0_a1 PENDING shared 64 121920M 1:00:00 Priority /global/u2/j/josephrb
+59648611 xr_X1_a1 PENDING shared 12 22860M 1-06:00:00 Priority /global/u2/j/josephrb
+59648610 xr_X0p_a1 PENDING shared 12 22860M 1-06:00:00 Priority /global/u2/j/josephrb
+59648608 xr_X0_a1 PENDING shared 12 22860M 1-06:00:00 Priority /global/u2/j/josephrb
+59645305 sb1_H1 PENDING shared 2 1905M 45:00 Dependency /pscratch/sd/j/josephrb/sb1-2b35ba52
+59645304 sb1_C PENDING shared 64 1905M 40:00 Dependency /pscratch/sd/j/josephrb/sb1-2b35ba52
+59645302 sb1_J1 PENDING shared 64 1905M 45:00 Dependency /pscratch/sd/j/josephrb/sb1-2b35ba52
+JobId=59648608 JobName=xr_X0_a1 Account=m3246 QOS=shared TimeLimit=1-06:00:00 SubmitTime=2026-10-10T15:34:53 Deadline=2026-10-13T15:34:49 NumCPUs=12 
+JobId=59648610 JobName=xr_X0p_a1 Account=m3246 QOS=shared TimeLimit=1-06:00:00 SubmitTime=2026-10-10T15:34:57 Deadline=2026-10-13T15:34:53 NumCPUs=12 
+JobId=59648611 JobName=xr_X1_a1 Account=m3246 QOS=shared TimeLimit=1-06:00:00 SubmitTime=2026-10-10T15:35:00 Deadline=2026-10-13T15:34:53 NumCPUs=12 
+JobId=59648616 JobName=xr_L0_a1 Account=m3246 QOS=shared TimeLimit=01:00:00 SubmitTime=2026-10-10T15:35:05 Deadline=2026-10-13T15:34:53 NumCPUs=64 
+JobId=59648617 JobName=xr_L1_a1 Account=m3246 QOS=shared TimeLimit=01:00:00 SubmitTime=2026-10-10T15:35:08 Deadline=2026-10-13T15:34:53 NumCPUs=64 
+Sat Oct 10 03:35:18 PM PDT 2026
+Sat Oct 10 10:35:18 PM UTC 2026
+
+== OUTCOME (2026-10-11T00:25:57Z monitor; reads on login node, read-only)
+All five jobs ran the in-job allocation check (`xr_admit.py jobcheck`) first, as `xr_job.sbatch` does, and
+were refused there with exit 3. Neither `verify` nor `xr_run.py` ran; no fit started; no receipt was written.
+Each job's .err (copied to results/xr/joblogs.txt):
+  [REFUSED] allocation outside the frozen caps for exact: {'QOS': True, 'NumCPUs': True, 'billing': False, 'TimeLimit': True} (QOS=shared NumCPUs=12 TRES=None TimeLimit=1-06:00:00)
+  (X0, X0p, X1 identical; L0 and L1 the same for lgbm with NumCPUs=64 TimeLimit=01:00:00)
+
+Root cause (the admitted package's defect, not the cluster's): jobcheck reads billing from a field named
+`TRES` in `scontrol show job <id> -o`. Perlmutter prints no such field. Measured on job 59648617 after it ended:
+  scontrol show job 59648617 -o | tr " " "\n" | grep -n "TRES\|^QOS\|NumCPUs\|TimeLimit"
+  9:QOS=shared
+  19:TimeLimit=01:00:00
+  41:NumCPUs=64
+  45:ReqTRES=cpu=64,mem=121920M,node=1,billing=64
+  46:AllocTRES=cpu=64,mem=121920M,node=1,billing=64
+`parse_billing(f.get("TRES",""))` therefore returns None and the billing clause is False on every correct
+allocation. The test fixture's fake scontrol (`tests/test_xr.py:543`) printed `TRES=...`, the name the code
+expected, so the suite and the mutants could not see it; neither review did.
+
+sacct (results/xr/sacct.psv; times are cluster-local PDT):
+JobID|JobName|State|ElapsedRaw|AllocTRES|Timelimit|ExitCode|Start|End
+59648608|xr_X0_a1|FAILED|19|billing=12,cpu=12,mem=22860M,node=1|1-06:00:00|3:0|2026-10-10T15:45:15|2026-10-10T15:45:34
+59648610|xr_X0p_a1|FAILED|19|billing=12,cpu=12,mem=22860M,node=1|1-06:00:00|3:0|2026-10-10T15:45:15|2026-10-10T15:45:34
+59648611|xr_X1_a1|FAILED|7|billing=12,cpu=12,mem=22860M,node=1|1-06:00:00|3:0|2026-10-10T16:06:03|2026-10-10T16:06:10
+59648616|xr_L0_a1|FAILED|7|billing=64,cpu=64,mem=121920M,node=1|01:00:00|3:0|2026-10-10T16:35:32|2026-10-10T16:35:39
+59648617|xr_L1_a1|FAILED|4|billing=64,cpu=64,mem=121920M,node=1|01:00:00|3:0|2026-10-10T17:23:52|2026-10-10T17:23:56
+
+ledger (/usr/bin/python3 xr_admit.py ledger --now 2026-10-11T00:26:52Z; results/xr/ledger.txt):
+charged_node_h 0.0013498 ; unfinished_ceiling 0.0 ; attempts exact 3 (cap 4), lgbm 2 (cap 3) ; over: none
+squeue after: no xr_* job (sb1_C, sb1_H1 PENDING in their own worktree)
+
+comparator (root_6_28 python, xr_compare.py --outroot <frozen outroot>; 0.13 s wall, 10 MB RSS; results/xr/comparisons.json):
+X0_vs_E_C, X0p_vs_E_C, X1_vs_X0, L0_vs_CV42, L0_vs_PN_CV, L1_vs_SEED1, NC_X0_vs_CV42: INCONCLUSIVE (no complete attempt)
+
+Decision: no resubmission. The admitted package (06eae0fe, manifest fbca1be8) is unchanged and would refuse
+identically; a repaired package is a new, unadmitted package, and the single repair/re-review is spent. The
+remaining attempts (exact 1, lgbm 1) are left unused. Remote reduction dir: /pscratch/sd/j/josephrb/xr-reduce.4fPw
+(4 small text files at this point; the next-attempt read below added a fifth). Login-node work for the outcome: one sacct, one scontrol, the ledger and the comparator, < 1 s CPU.
+
+== next-attempt on the real sacct output (read-only; 2026-10-11T00:29Z, login node, /usr/bin/python3)
+It prints only and creates nothing (`xr_admit.py next_attempt`: reads, refuses or prints).
+  sacct -u "$(id -un)" -X -n -P -S 2026-10-10 -E now --format=JobID,JobName,State > $R/sacct-nextattempt.psv
+  sha256 f67f649518d7dfdee4488d1b76dd881486a34ea121e8d1dc7f68dbab121cd341, 10 rows: the five xr_* rows below,
+  plus five of this account's non-XR jobs
+  59648608|xr_X0_a1|FAILED
+  59648610|xr_X0p_a1|FAILED
+  59648611|xr_X1_a1|FAILED
+  59648616|xr_L0_a1|FAILED
+  59648617|xr_L1_a1|FAILED
+  xr_admit.py next-attempt --admission <outroot>/admission.json --run X0 --sacct ... -> "2 2026-10-13T15:34:53" rc=0
+  xr_admit.py next-attempt --admission <outroot>/admission.json --run L0 --sacct ... -> "2 2026-10-13T15:34:53" rc=0
+  ls <outroot>/X0 <outroot>/L0 afterwards: a1 only (nothing created)

@@ -1,0 +1,7 @@
+# remote_probe.py run (login node, read-only)
+2026-10-10T20:02:47Z
+exit=0
+2026-10-10T20:04:38Z
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:47.33
+	Maximum resident set size (kbytes): 3812528
+	Exit status: 0

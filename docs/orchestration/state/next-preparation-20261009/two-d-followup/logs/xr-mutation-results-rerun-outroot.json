@@ -1,0 +1,15 @@
+{
+ "n": 1,
+ "caught": 1,
+ "results": [
+  {
+   "mutant": "outroot-unchecked",
+   "file": "xr_run.py",
+   "tests": [
+    "test_xr.XR.test_an_admission_that_is_not_admitted_or_has_other_runs_is_refused"
+   ],
+   "caught": true,
+   "tail": "FAILED (failures=1)"
+  }
+ ]
+}

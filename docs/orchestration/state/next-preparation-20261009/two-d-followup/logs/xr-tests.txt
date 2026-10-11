@@ -1,0 +1,40 @@
+test_receipts_must_name_their_run_and_admission (test_xr.Comparator.test_receipts_must_name_their_run_and_admission) ... ok
+test_tolerance_cells_and_digests (test_xr.Comparator.test_tolerance_cells_and_digests) ... ok
+test_the_regressor_must_fit_every_iteration (test_xr.FitCounts.test_the_regressor_must_fit_every_iteration) ... ok
+test_a_backend_other_than_the_frozen_one_stops_before_training (test_xr.XR.test_a_backend_other_than_the_frozen_one_stops_before_training) ... ok
+test_a_changed_driver_or_helper_is_refused (test_xr.XR.test_a_changed_driver_or_helper_is_refused) ... ok
+test_a_normalization_differing_from_the_reference_is_refused (test_xr.XR.test_a_normalization_differing_from_the_reference_is_refused) ... ok
+test_a_package_change_after_the_package_commit_is_refused (test_xr.XR.test_a_package_change_after_the_package_commit_is_refused) ... ok
+test_a_second_draft_for_the_same_grant_is_refused (test_xr.XR.test_a_second_draft_for_the_same_grant_is_refused) ... ok
+test_a_symlinked_attempt_directory_is_refused (test_xr.XR.test_a_symlinked_attempt_directory_is_refused) ... ok
+test_a_wrong_seed_stops_before_training (test_xr.XR.test_a_wrong_seed_stops_before_training) ... ok
+test_admission_tool_is_python36_syntax_and_api (test_xr.XR.test_admission_tool_is_python36_syntax_and_api)
+The launch scripts run xr_admit.py under the cluster's /usr/bin/python3 (3.6.15). ... ok
+test_all_five_runs_complete_strict_with_their_intended_backend_and_seeds (test_xr.XR.test_all_five_runs_complete_strict_with_their_intended_backend_and_seeds) ... ok
+test_an_admission_that_is_not_admitted_or_has_other_runs_is_refused (test_xr.XR.test_an_admission_that_is_not_admitted_or_has_other_runs_is_refused) ... ok
+test_an_environment_other_than_the_frozen_one_stops_before_training (test_xr.XR.test_an_environment_other_than_the_frozen_one_stops_before_training) ... ok
+test_an_existing_output_is_never_overwritten (test_xr.XR.test_an_existing_output_is_never_overwritten) ... ok
+test_an_input_with_other_bytes_is_refused (test_xr.XR.test_an_input_with_other_bytes_is_refused) ... ok
+test_an_output_that_is_a_frozen_reference_path_is_refused (test_xr.XR.test_an_output_that_is_a_frozen_reference_path_is_refused) ... ok
+test_an_outroot_inside_the_checkout_is_refused (test_xr.XR.test_an_outroot_inside_the_checkout_is_refused) ... ok
+test_an_uncommitted_or_symlinked_authorization_is_refused (test_xr.XR.test_an_uncommitted_or_symlinked_authorization_is_refused) ... ok
+test_comparator_on_the_fixture (test_xr.XR.test_comparator_on_the_fixture)
+Deterministic arms reproduce their fixture references to 1e-8. The unseeded exact arms ... ok
+test_jobcheck_refuses_an_allocation_outside_the_caps (test_xr.XR.test_jobcheck_refuses_an_allocation_outside_the_caps) ... ok
+test_ledger_charges_and_flags (test_xr.XR.test_ledger_charges_and_flags) ... ok
+test_lightgbm_ran_with_a_child_free_core_count (test_xr.XR.test_lightgbm_ran_with_a_child_free_core_count) ... ok
+test_next_attempt_counts_sacct_jobs_and_enforces_the_stop (test_xr.XR.test_next_attempt_counts_sacct_jobs_and_enforces_the_stop) ... ok
+test_strict_without_the_guard_is_refused (test_xr.XR.test_strict_without_the_guard_is_refused) ... ok
+test_submit_counts_attempts_per_kind_and_cancels_on_a_failed_sbatch (test_xr.XR.test_submit_counts_attempts_per_kind_and_cancels_on_a_failed_sbatch) ... ok
+test_the_authorization_binding (test_xr.XR.test_the_authorization_binding) ... ok
+test_the_d1bc8813_record_driver_is_what_X0p_executed (test_xr.XR.test_the_d1bc8813_record_driver_is_what_X0p_executed) ... ok
+test_the_environment_and_module_origins_are_recorded (test_xr.XR.test_the_environment_and_module_origins_are_recorded) ... ok
+test_the_wrong_working_directory_is_refused (test_xr.XR.test_the_wrong_working_directory_is_refused) ... ok
+test_unknown_run_and_attempt_over_the_cap_are_refused (test_xr.XR.test_unknown_run_and_attempt_over_the_cap_are_refused) ... ok
+test_verify_refuses_a_changed_nested_setup_or_a_copied_admission (test_xr.XR.test_verify_refuses_a_changed_nested_setup_or_a_copied_admission) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 149.410s
+
+OK
+TMPDIR=$T/tmp OMP_NUM_THREADS=1 PYTHONPATH=$(root-config --libdir)  -m   -v  90.86s user 53.32s system 96% cpu 2:29.86 total
