@@ -203,10 +203,10 @@ Under the release rule, this receipt was the gate for L0.
 |---|---|---|---|---|---|---|---|
 | PF | 59659845 | 10-11 06:13:23 | 06:41:05–06:43:32 | 147 | 12 | COMPLETED 0:0 | preflight-pass |
 | L0 | 59660487 | 10-11 06:44:07 | 08:24:41–08:38:37 | 836 | 64 | COMPLETED 0:0 | complete |
-| X0 | 59664200 | 10-11 08:41:25 | _pending_ | | 12 | | |
-| X0p | 59664201 | 10-11 08:41:28 | _pending_ | | 12 | | |
-| X1 | 59664202 | 10-11 08:41:31 | _pending_ | | 12 | | |
-| L1 | 59664203 | 10-11 08:41:34 | _pending_ | | 64 | | |
+| X0 | 59664200 | 10-11 08:41:25 | from 08:58:03; _running_ | | 12 | | |
+| X0p | 59664201 | 10-11 08:41:28 | from 08:58:03; _running_ | | 12 | | |
+| X1 | 59664202 | 10-11 08:41:31 | from 09:03:02; _running_ | | 12 | | |
+| L1 | 59664203 | 10-11 08:41:34 | 11:03:21–11:18:30 | 909 | 64 | COMPLETED 0:0 | complete |
 
 **L0 first, and the release.** L0 (`results/outroot/L0/a1/receipt.json`) ran on `nid004128`. Its
 receipt shows:
@@ -222,3 +222,16 @@ receipt shows:
 The guard inventory verdict is `REPOSITORY-ORIGINS-INSPECTED`. The release gate in `xr_submit.sh`
 accepted this receipt, and X0, X0p, X1 and L1 were submitted together at 08:41Z, with no diagnosis
 (first attempts).
+
+**L1** (`results/outroot/L1/a1/receipt.json`, `nid004084`) has the same shape as L0:
+
+- `status: complete`, `launches: []`;
+- 10 classifier and 5 regressor fits, with seeds 1/2/3;
+- 64 LightGBM threads at all 15 fits and all 15 predict calls;
+- output sha256 `e472fa62…`;
+- guard inventory verdict `REPOSITORY-ORIGINS-INSPECTED`.
+
+**The exact runs.** At 11:20Z the three exact runs were each about 2.3 h into execution, with
+sstat MaxRSS 15.3–15.6 GB of 22.86 GB. The measured exact unfold takes about 19.3 h (`Q/speed`
+REPORT §3), so they are expected to end around 2026-10-12T04:30Z. That is inside both the 30-h
+limit and the window.
