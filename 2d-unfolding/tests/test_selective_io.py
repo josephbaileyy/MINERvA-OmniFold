@@ -350,8 +350,12 @@ class Loaders(unittest.TestCase):
             with self.subTest(tree=tree), Open(tree) as t:
                 before = DRV.branch_status_snapshot(t)
                 for uni in (LAT, ("Flux", 0)):            # two selections on one tree object
-                    got, _, _ = call(tree, True, uni, "derived", tree=t)
+                    got, _, rec = call(tree, True, uni, "derived", tree=t)
                     self.assertEqual(DRV.branch_status_snapshot(t), before)
+                    # The loader's buffers are freed on return; a fresh tree's null addresses
+                    # must be back, or the next read writes through freed memory.
+                    self.assertFalse(any(DRV._branch_has_address(t.GetBranch(n))
+                                         for n in rec["branches"]))
                     self.assertEqual(got, call(tree, True, uni, "direct")[0])
                 after, _, _ = call(tree, True, LAT, "direct", tree=t)  # default read, same object
                 self.assertEqual(after, call(tree, True, LAT, "direct")[0])
@@ -579,8 +583,8 @@ def write_flux_universes(path, n_univ=2):
 
 
 def output_objects(path):
-    """Every object a driver output holds: histograms (contents and errors, flow included),
-    TNamed titles and TParameter values."""
+    """Every object a driver output holds: histograms (both axes' bin edges, contents and errors
+    with flow, entries), TNamed titles and TParameter values."""
     f = ROOT.TFile.Open(str(path))
     out = {}
     for key in f.GetListOfKeys():
@@ -590,8 +594,10 @@ def output_objects(path):
             n = obj.GetNcells()
             out[name] = ("TH1", obj.GetDimension(),
                          [obj.GetXaxis().GetBinLowEdge(i) for i in range(1, obj.GetNbinsX() + 2)],
+                         [obj.GetYaxis().GetBinLowEdge(i) for i in range(1, obj.GetNbinsY() + 2)],
                          np.array([obj.GetBinContent(i) for i in range(n)]).tobytes().hex(),
-                         np.array([obj.GetBinError(i) for i in range(n)]).tobytes().hex())
+                         np.array([obj.GetBinError(i) for i in range(n)]).tobytes().hex(),
+                         repr(obj.GetEntries()))
         elif obj.InheritsFrom("TNamed") and obj.ClassName() == "TNamed":
             out[name] = ("TNamed", obj.GetTitle())
         elif obj.ClassName().startswith("TParameter"):

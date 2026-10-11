@@ -25,6 +25,10 @@ case "${1:-}" in
 esac
 py=${2:-python3}
 repo=$(git rev-parse --show-toplevel) || exit 2
+if ! git -C "$repo" cat-file -e "$commit^{commit}" 2>/dev/null; then
+  echo "[frozen] commit $commit is not in this repository; fetch it first" >&2
+  exit 2
+fi
 if ! git -C "$repo" diff --quiet "$commit" HEAD -- "$pkg"; then
   echo "[frozen] $pkg at HEAD differs from $commit: not a frozen package any more" >&2
   exit 2
@@ -43,7 +47,7 @@ if [ "$1" = sb1 ]; then
     "$py" -m unittest discover -s "$pkg/tests" -t "$pkg/tests" -p "$t.py" || rc=1
   done
 else
-  python3 "$pkg/xr_admit.py" manifest --check || rc=1
+  "$py" "$pkg/xr_admit.py" manifest --check || rc=1
   "$py" -m unittest discover -s "$pkg/tests" -t "$pkg/tests" -p test_xr.py || rc=1
 fi
 echo "[frozen] $1 rc=$rc"

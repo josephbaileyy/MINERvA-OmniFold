@@ -1,0 +1,17 @@
+# 2026-10-11T06:27:33Z frozen_package_checks.sh xr (after review repair F6: manifest check under the chosen interpreter), from 6486867fb479249d415bd53f070df6e0273dbd58 + working tree
+[frozen] docs/orchestration/state/next-preparation-20261009/two-d-followup/xr at 07428e5dec9fecd2e1148d8a2bdabc139a35138f, driver sha256 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933
+[xr-admit] manifest current
+..........................................
+----------------------------------------------------------------------
+Ran 42 tests in 174.795s
+
+OK
+1 2026-10-13T17:00:00
+[frozen] xr rc=0
+real 179.16
+user 108.94
+sys 59.92
+# exit 0
+# unreachable-commit branch (a copy of the script with the sb1 commit set to 40 zeros):
+[frozen] commit 0000000000000000000000000000000000000000 is not in this repository; fetch it first
+# exit 2

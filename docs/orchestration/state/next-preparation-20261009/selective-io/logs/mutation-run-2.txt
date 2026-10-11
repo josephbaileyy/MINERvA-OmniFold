@@ -1,0 +1,94 @@
+# 2026-10-11T06:25:59Z mutation run at 6486867fb479249d415bd53f070df6e0273dbd58 + working-tree test repairs (F1, F5); each mutant applied to the driver, Loaders and Refusals run, driver restored; untruncated FAIL/ERROR list
+== M1-no-verify-at-first-entry
+runner exit 1
+FAIL: test_an_extra_activation_is_refused_before_the_first_read (tree='mc_signal_reco')
+FAIL: test_an_extra_activation_is_refused_before_the_first_read (tree='mc_truth_denom')
+FAIL: test_an_extra_activation_is_refused_before_the_first_read (tree='mc_background')
+FAIL: test_an_extra_activation_is_refused_before_the_first_read (tree='data')
+Ran 19 tests in 12.035s
+FAILED (failures=4)
+== M2-no-inactive-check
+runner exit 1
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='data', omit='measured')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='data', omit='measured_pz')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='data', omit='measured_pass')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_background', omit='sim_background_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_background', omit='sim_background_pz_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_background', omit='sim_background_pass')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_background', omit='w_bkg_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='MC_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='MC_pz_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='sim_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='sim_pz_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='sim_pass')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='w_truth_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='w_reco_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_truth_denom', omit='pT_truth_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_truth_denom', omit='pz_truth_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_truth_denom', omit='w_truth_Muon_Energy_MINOS_0')
+Ran 19 tests in 12.217s
+FAILED (failures=17)
+== M3-no-status-restore
+runner exit 1
+FAIL: test_a_partial_entry_state_is_restored_exactly
+FAIL: test_a_reused_tree_is_restored_and_reads_identically_afterwards (tree='mc_signal_reco')
+FAIL: test_a_reused_tree_is_restored_and_reads_identically_afterwards (tree='mc_truth_denom')
+FAIL: test_a_reused_tree_is_restored_and_reads_identically_afterwards (tree='mc_background')
+FAIL: test_an_empty_tree_is_verified_without_a_read
+FAIL: test_an_extra_activation_is_refused_before_the_first_read (tree='mc_signal_reco')
+FAIL: test_an_extra_activation_is_refused_before_the_first_read (tree='mc_truth_denom')
+FAIL: test_an_extra_activation_is_refused_before_the_first_read (tree='mc_background')
+FAIL: test_an_extra_activation_is_refused_before_the_first_read (tree='data')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='data', omit='measured')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='data', omit='measured_pz')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='data', omit='measured_pass')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_background', omit='sim_background_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_background', omit='sim_background_pz_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_background', omit='sim_background_pass')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_background', omit='w_bkg_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='MC_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='MC_pz_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='sim_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='sim_pz_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='sim_pass')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='w_truth_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_signal_reco', omit='w_reco_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_truth_denom', omit='pT_truth_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_truth_denom', omit='pz_truth_Muon_Energy_MINOS_0')
+FAIL: test_every_omitted_activation_is_refused_before_the_first_read (tree='mc_truth_denom', omit='w_truth_Muon_Energy_MINOS_0')
+Ran 19 tests in 11.978s
+FAILED (failures=26)
+== M4-default-applies-selection
+runner exit 1
+ERROR: test_the_default_hands_the_loader_the_real_tree_and_touches_no_status
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='data', use_weights=True, universe=None)
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_background', use_weights=True, universe=None)
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_background', use_weights=True, universe=('Flux', 0))
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_background', use_weights=True, universe=('GEANT_Neutron', 0))
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_background', use_weights=True, universe=('Muon_Energy_MINOS', 0))
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_signal_reco', use_weights=False, universe=None)
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_signal_reco', use_weights=True, universe=None)
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_signal_reco', use_weights=True, universe=('Flux', 0))
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_signal_reco', use_weights=True, universe=('GEANT_Neutron', 0))
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_signal_reco', use_weights=True, universe=('Muon_Energy_MINOS', 0))
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_truth_denom', use_weights=False, universe=None)
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_truth_denom', use_weights=True, universe=None)
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_truth_denom', use_weights=True, universe=('Flux', 0))
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_truth_denom', use_weights=True, universe=('GEANT_Neutron', 0))
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern (tree='mc_truth_denom', use_weights=True, universe=('Muon_Energy_MINOS', 0))
+FAIL: test_derived_is_byte_identical_to_the_direct_call_in_every_pattern
+Ran 19 tests in 11.945s
+FAILED (failures=16, errors=1)
+== M5-rule-forgets-alt
+runner exit 1
+ERROR: test_the_alt_model_closure_path_is_byte_identical
+Ran 19 tests in 12.002s
+FAILED (errors=1)
+== M6-no-address-restore
+runner exit 1
+FAIL: test_a_reused_tree_is_restored_and_reads_identically_afterwards (tree='mc_signal_reco')
+FAIL: test_a_reused_tree_is_restored_and_reads_identically_afterwards (tree='mc_truth_denom')
+FAIL: test_a_reused_tree_is_restored_and_reads_identically_afterwards (tree='mc_background')
+Ran 19 tests in 11.924s
+FAILED (failures=3)
+# driver restored: sha256 equal

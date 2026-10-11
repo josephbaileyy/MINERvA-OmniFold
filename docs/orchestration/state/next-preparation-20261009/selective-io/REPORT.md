@@ -30,9 +30,10 @@
 - `--branch-select derived` is an opt-in mode of the supported 2D driver.
 - On synthetic fixtures it gives every loader's caller the same arrays (dtype, shape and bytes) and
   the same filled histograms as the default. Through the real command line, under the OI-136 guard,
-  it gives the same OmniFold inputs, estimator arguments and outputs in six modes.
+  it gives the same OmniFold inputs, estimator arguments and outputs in six modes. These outputs
+  come from a stub helper with deterministic weights: nothing was trained.
 - The default, `--branch-select all`, makes the same loader calls as before. Its OmniFold inputs and
-  outputs equal those of the pre-change driver (`3892e769`). Only the recorded paths, the driver's
+  outputs (stub helper, no training) equal those of the pre-change driver (`3892e769`). Only the recorded paths, the driver's
   digest and `runConfig`'s new `branch_select` key differ.
 - The frozen SB1 and XR packages pin the old driver. At a later `HEAD` they refuse the new driver, by
   design (§7.2). At their own commits they pass (§7.3). A check-routing script for integration is
@@ -62,7 +63,8 @@
   - `unbinned_unfolding/python/omnifold.py` keeps its digest.
 
   Neither changed:
-  - the insert is unchanged, now at `:2059`, inside `main()`;
+  - the insert is unchanged, now at `:2061` (`sys.path.insert`; the literal is at `:2059`), inside
+    `main()`;
   - the helper is not touched.
 
   Both condition tests in `test_oi136_rooted_insert_ratchet.py` pass, and so does the whole suite (§7.1).
@@ -152,14 +154,16 @@ python3 2d-unfolding/unfold_2d_omnifold_unbinned.py <the usual arguments> --bran
 | `TheFixture` | 2 | the fixture reaches every boundary: pass flags 0/1/2, ±4 ulps of the 20° cut, weights at and past 1e4 and 1e6, non-finite and negative, `-0.0`, `\|x\|>1e3`; lateral branches differ from CV; vertical ones have no kinematics (`test_branch_select.TheFixture`) |
 | `Loaders` | 11 | derived = direct call = `all`, byte for byte, for 15 loader × pattern cases (CV unweighted/weighted, `Flux_0`, `GEANT_Neutron_0`, `Muon_Energy_MINOS_0`); the alt-closure path; the lateral and vertical branch lists; the default passes the real tree and changes no status; a reused tree (two selections, then a default read on the same object); a partial entry state; discovery reads no entry and leaves no address; an empty tree; a missing universe branch fails with the default's error; an unknown mode is refused (`test_branch_select.Equality`) |
 | `Refusals` | 8 | each of the 17 derived branches omitted in turn (the lateral pattern), and one extra activation per tree, are refused before the first read with the tree restored; the silent defect is reproduced without the guard; a loader reading another branch is refused by the rule; a wrong rule that agrees with a wrong loader passes the guard and is caught only by the bytes; unmodelled access; digest power (`test_branch_select.NegativeControls`) |
-| `CommandLine` | 6 | the real script, run under `mnv_guarded_run.py` in a throwaway git checkout, with a stub helper that records what `ohf.omnifold` receives and returns deterministic non-unit weights. Six modes × both settings: CV, CV unweighted, lateral `Muon_Energy_MINOS:0` with `lgbm`, vertical `Flux:0` with a flux-universe file, alt-model closure, bootstrap + `negweight` with `hist`. Asserted: every module loaded from the checkout (guard inventory); identical OmniFold inputs and estimator arguments; identical output objects, each histogram's contents, errors and bin edges, TParameters and TNamed, except `runConfig` (only `branch_select` and `out`), `runArgv` and the added `branchSelection`; the selections recorded; the default equal to the pre-change driver in four modes; two mutant drivers (omit, extra) refused through the entry point with no output and no training, while their default path still runs (`test_sb1_guarded`) |
+| `CommandLine` | 6 | the real script, run under `mnv_guarded_run.py` in a throwaway git checkout, with a stub helper that records what `ohf.omnifold` receives and returns deterministic non-unit weights. Six modes × both settings: CV, CV unweighted, lateral `Muon_Energy_MINOS:0` with `lgbm`, vertical `Flux:0` with a flux-universe file, alt-model closure, bootstrap + `negweight` with `hist`. Asserted: every module loaded from the checkout (guard inventory); identical OmniFold inputs and estimator arguments; identical output objects (each histogram's X- and Y-axis bin edges, contents and errors with flow, and entries; TParameters; TNamed), except `runConfig` (only `branch_select` and `out`), `runArgv` and the added `branchSelection`; the selections recorded; the default equal to the pre-change driver in four modes; two mutant drivers (omit, extra) refused through the entry point with no output and no training, while their default path still runs (`test_sb1_guarded`) |
 
 - **What the CLI tests do not run.** The real helper and training. The stub stands in, so the
   equality of OmniFold inputs is shown directly. Trained-output equality is not shown here; SB1
   measured it on the real file at 6.4e-13 relative (§9).
-- **Do the tests fail when they should?** `S/logs/mutation-run.txt` records five deliberate driver
-  mutants, each run against `Loaders` and `Refusals` and then reverted, with the driver's sha256
-  re-checked. Every mutant was caught:
+- **Do the tests fail when they should?** `S/logs/mutation-run-2.txt` records six deliberate
+  driver mutants (`S/checks/mutants.py`), each run against `Loaders` and `Refusals` and then
+  reverted, with the driver's sha256 re-checked. Its failure lists are complete; the first run,
+  `S/logs/mutation-run.txt`, had five mutants and cut each list at 12 lines (review F4). Every mutant
+  was caught:
 
   | mutant | tests that failed |
   |---|---|
@@ -168,6 +172,9 @@ python3 2d-unfolding/unfold_2d_omnifold_unbinned.py <the usual arguments> --bran
   | no status restore | the reuse, partial-state, empty-tree and refusal-restore tests |
   | the default applying a selection | the default and equality tests |
   | the rule forgetting the alt weights | the alt-closure test |
+  | no address restore | the three reused-tree cases, by an assertion on the restored null addresses. Before repair batch 1 this mutant was detected only by a segfault (review F5) |
+
+  The counts per mutant are 4, 17, 26, 17 (16 failures and 1 error), 1 and 3 failing tests or subtests.
 
 - **ROOT 6.28.** SB1's only 6.28 failure was a fixture-*reading* problem
   (`Q/sb1-run/REPORT.md` §3): `RDataFrame.AsNumpy` returns a `UChar_t` column as `str` objects
@@ -279,13 +286,15 @@ Same interpreter and venv for all three:
 ## 8. Caller and reproduction compatibility
 
 Population: `git grep` at the base for the driver's name and its four loaders, outside the frozen
-`sb1-prep`, `two-d-followup` and `speed` packages, then each hit opened.
+`sb1-prep`, `two-d-followup` and `speed` packages, then each hit opened. The first version of this
+table missed the module's other importers (review F2); the row for them was added in repair batch 1.
 
 | caller | how it uses the driver | effect |
 |---|---|---|
 | every `2d-unfolding/sbatch_*.sh`, `seedscan*/`, `tension_iter/`, `uq/run_*_interactive.sh`, `ki84-rebuild` launcher | runs the script without `--branch-select` | default path; the same loader calls as before |
 | `uq/coverage_fixed_truth/fixed_truth_toy.py` (N2) | imports the driver from hashed bytes and calls `collect_signal_arrays_2d` directly | unchanged signature and body. `test_producer_provenance` (26) and `test_n2_harness` (22) pass. A future N2 launch states the driver digest it executes, so it must name the new digest if it runs after a merge, as for any driver edit |
 | `3d-unfolding/unfold_3d_omnifold_unbinned.py`, `xsec_3d.py`, `genie/gen_to_xsec5d.py`, `docs/analysis-note/redraw_central_only.py`, `ibu_1d_projection/build_1d_ibu_inputs.py` | import constants (`PT_EDGES`, `PZ_EDGES`), `make_th2d`/`make_th1d` and the branch-name helpers | unchanged. The only module-level additions are three standard-library imports (`contextlib`, `inspect`, `io`) and new names |
+| 49 importers outside `Q`'s state packages: 36 in `nd-unfolding/`, 6 in `nd-unfolding/pet/`, 3 in `nd-unfolding/tests/`, and one each in `2d-unfolding/`, `2d-unfolding/uq/`, `3d-unfolding/` and `docs/analysis-note/` (count by `git grep -l` for an import of the module, at `6486867f`; review F2). Among them `unfold_nd_omnifold_unbinned.py`, `pet_systematics*.py`, `sweep_bank*.py`, `s5c_with_estimator.py` (which monkeypatches `refine_stay_positive` and `_make_bkg_classifier`) and `plot_2d_cross_section.py` | constants, histogram and branch-name helpers, `refine_stay_positive`/`_make_bkg_classifier`. Only N2 calls one of the four loaders | unaffected. Importing the module adds three standard-library imports and new definitions; the ROOT declaration is lazy (`_branch_address_api()`); none uses `import *` |
 | `2d-unfolding/tests/test_bootstrap_completeness_ki84.py` | runs the real `main()` with a stub helper; compares against the pre-fix blob `4e7c20bb` | 15/15 pass. It records `driverSha256` of the current bytes, so it moves with the edit by design |
 | `nd-unfolding/tests/test_oi136_*` | the driver's insert stays in a function; the helper digest | pass (§3, §7.1) |
 | Frozen SB1 package `Q/sb1-prep` (`d4335d3b`) | loads the driver against `DRIVER_SHA256 = 3cc5adc7…`; its manifest pins it | refuses the new driver at a later `HEAD` (§7.2); passes at its commit (§7.3) |
@@ -334,7 +343,8 @@ probe, belongs to the pinned helper's and the guard's owners (`Q/sb1-run/REPORT.
 1. **Check routing for the frozen packages (integration).** The SB1 and XR packages pin the old
    driver, so their at-`HEAD` checks refuse it by design (§7.2). Run them at their own commits.
    - `S/checks/frozen_package_checks.sh {sb1|xr} [PYTHON]` does this:
-     - it first confirms the package bytes at `HEAD` equal those at the commit;
+     - it first confirms the commit is present and the package bytes at `HEAD` equal those at the
+       commit;
      - it then runs the package's own suites (SB1), or its `manifest --check` and suite (XR), in a
        throwaway detached worktree at `d4335d3b` or `07428e5d`;
      - it removes the worktree.
@@ -411,7 +421,42 @@ probe, belongs to the pinned helper's and the guard's owners (`Q/sb1-run/REPORT.
     - scope and ownership;
     - the accuracy of this record's claims.
   - Budget: one initial review and at most two focused repair/re-review cycles.
-- **Initial review:** pending at the record commit.
+- **Initial review** of `6486867f`, 06:08–06:27Z, about 0.13 local core-h, by the reviewer's own
+  account.
+  - Its worktree had 0 changed files at start and end and was removed. It made no cluster contact,
+    and its mutants ran on a scratch copy outside every checkout.
+  - Preserved verbatim at `S/review/review-6486867f.md`.
+  - **Verdict: PASS WITH CHANGES.** 0 MATERIAL, 3 MINOR, 4 NOTE.
+  - **What it reproduced:**
+    - the scope diff;
+    - the new suite (27 OK), KI-84 (15) and the rooted-insert ratchet (10);
+    - both gates;
+    - `frozen_package_checks.sh` for both packages;
+    - the at-`HEAD` refusals;
+    - the manifest delta (38/61/0).
+  - **Its own probes,** eight of them; all passed with byte-identical arrays and restored state:
+    - an exception inside a loader after it sets addresses;
+    - reusing a tree after a refusal;
+    - a derived read on a tree a default read had used;
+    - a caller-disabled needed branch;
+    - a two-file `TChain`;
+    - unweighted universe runs;
+    - alt-model plus universe together;
+    - positional optional arguments.
+- **Repair batch 1** (cycle 1 of at most 2):
+
+  | finding | disposition |
+  |---|---|
+  | F1 MINOR: the CLI comparison checked X edges only | `output_objects()` now also compares Y-axis edges and entries (test change) |
+  | F2 MINOR: the §8 caller table missed the module's other importers | row added: 49 importers, counted at `6486867f`, unaffected |
+  | F3 MINOR: §1 and the reference subsection did not say the outputs come from a stub | both now say so |
+  | F4 NOTE: the insert is at `:2061`; the mutation log was truncated; the probe is loky's | fixed; six mutants rerun with complete lists (`S/logs/mutation-run-2.txt`); the reference subsection corrected |
+  | F5 NOTE: the address restore was detected only by a segfault | the reuse test now asserts the restored null addresses. The new mutant M6 (no address restore) fails three assertions deterministically |
+  | F6 NOTE: the XR manifest check ran under bare `python3`; an unreachable commit read as "differs" | the script now uses the chosen interpreter and refuses an absent commit with its own message (exit 2). Rerun: `S/logs/frozen-routing-xr-2.txt` |
+  | F7 NOTE: the rule restates the loaders' logic, by design | recorded in §11; no change |
+
+  No driver byte changed in this batch.
+- **Focused re-review:** requested on the repair commit (§13).
 
 ## 13. Resources and terminal
 

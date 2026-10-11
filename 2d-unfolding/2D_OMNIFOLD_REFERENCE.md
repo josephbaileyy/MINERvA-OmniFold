@@ -200,7 +200,8 @@ including `Flux`), `--closure` and its variants, including
 other:
 - the loader arrays;
 - the OmniFold inputs and estimator arguments;
-- every output histogram and metadata object.
+- every output histogram and metadata object. These outputs come from a stub
+  OmniFold helper with deterministic weights: nothing is trained.
 
 It also tests the default against the driver before this option existed.
 
@@ -214,7 +215,8 @@ See `docs/orchestration/state/next-preparation-20261009/sb1-run/REPORT.md` §7.
 **What is not measured.**
 - A whole-sweep speedup.
 - The 128-thread production runtime. Both timed SB1 runs very probably trained
-  with 64 LightGBM threads, because the guard refused LightGBM's `lscpu` probe.
+  with 64 LightGBM threads, because the guard refused loky's `lscpu` probe,
+  reached through LightGBM.
 - A reduction in the process heap. The process peak RSS was about 14.1 GB in
   both runs.
 - A cluster run of the in-driver implementation. Its equality is shown on
