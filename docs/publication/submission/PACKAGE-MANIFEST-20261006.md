@@ -27,6 +27,39 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
 > - **Limitations stated in the article** are updated in §5.
 > - **One scientific decision is open:** REVIEW-20261007 §5.
 
+## 1f. Construction diagnoses and reproduction status (2026-10-11)
+
+Source commit `69497f7ab727fef619a7ad1917513dc0682ee2f1` extends §1e with the
+committed follow-up evidence at canonical main `3892e769043cddebfd58ec19e1ab1a567eb01784`.
+Standalone main is pushed and verified at
+`dbbf6b37f303c852fdbc68365e1d73ac9a0bf358`.
+
+- The note, paper and primer describe the remaining 2D construction issues and
+  distinguish proposed conditional-width checks from independent-population coverage.
+  Source: `docs/orchestration/state/next-preparation-20261009/two-d-followup/REPORT.md`,
+  §§A4–A5 and E2. The printed budget and the interim keep-and-disclose disposition
+  are unchanged; documenting these issues does not repair them.
+- The note and primer add the saved-output PET interval diagnosis and the
+  generator-recovery diagnosis, retaining their bank, exposure and model limits.
+  Sources: `docs/orchestration/state/next-preparation-20261009/pet/REPORT.md` and
+  `nd-unfolding/pet/generator_diagnosis/REPORT-20261006.md`. PET remains diagnostic;
+  `NO_ELIGIBLE_DESIGN` and the absence of an adopted PET uncertainty stand.
+- The note's release appendix and article's data-availability statement distinguish
+  local RC7 replay, the separate complete AnaTuple checksum inventory, internal data
+  preservation and event-level reproduction. Sources: `docs/publication/release/RC7-README.md`
+  and `docs/publication/corrections-20261008/RECORD-20261010-ost61-hashed-and-data-addition.md`.
+  The archive payload is unchanged; no deposit, release tag or submission is made.
+
+Validation: `build_all.sh` passes in both repositories at **126 / 12 / 12 pages**
+(note / primer / paper). References and citations resolve; strict containment passes;
+the canonical Sec. IV receipt check passes 14/14 and the standalone skips it as designed.
+All 123 mirrored source files agree, excluding repository-specific `.gitignore` and
+`AGENTS.md`; all three extracted PDF texts are identical. The changed construction,
+PET, release and article pages were visually inspected. Existing appendix layout
+warnings and a sub-point article box warning remain; the additions have no overflow.
+The source commit passed all 13 pre-commit checks. This is documentation of existing
+evidence, with no new analysis, scientific adoption or publication-readiness decision.
+
 ## 1e. Selection and validation explanations (2026-10-11)
 
 Source commit `0542408bcf595a30a3a51d62f5dd42599ede23c1` on
@@ -161,6 +194,10 @@ figure and equations have no overflow. The source commit passed all 13 pre-commi
 - The rebuilt 2D statistical band has not been re-tested (KNOWN_ISSUES 84, 85).
 - The 2D covariance is computed with LightGBM ensembles; whether it describes the exact-split quoted central value is
   unmeasured (KNOWN_ISSUES 88; interim keep-and-disclose, 2026-10-09, not a publication-ready endpoint).
+- The adopted 2D systematic sweep has a truth-input mismatch and duplicated small pion band;
+  background-template statistics need propagation or an unfolded bound, and lateral completeness
+  and flux-universe identity need verification. Full-domain interval validation requires new inputs
+  and construction repairs (§1f); conditional-width checks cannot supply population coverage.
 - No recoil-response band in the calibration. The W2 sensitivity is exploratory and data-side only: the null was
   not varied, and species, energy and resolution effects and larger variations are untested. The matched
   (p_T, p∥) projection does not reject GENIE 2.12.10 CV (W1, post hoc).
