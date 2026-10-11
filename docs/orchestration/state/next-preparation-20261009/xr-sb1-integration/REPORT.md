@@ -275,7 +275,11 @@ Cluster coexistence follows the SB1/XR precedent: separate worktrees and outroot
   - N-3: the iris window includes the first-attempt XR jobs;
   - N-4: both reasons the gate is unaffected by a driver edit;
   - N-5 needs no change (pre-existing `*.jsonl` gate scope; recorded in §10).
-- **Focused re-review:** pending.
+- **Focused re-review** (cycle 1 of at most 2) of `bebffb8d`, by the same reviewer, 04:27–04:29Z, without cluster contact. Its worktree status was 0 lines at start and end.
+  - **Verdict: PASS.** R-1, R-2 and R-3 are resolved, N-1 to N-5 are accurate, and no new defect was found.
+  - All five gates give rc 0 at `bebffb8d`.
+  - Preserved verbatim at `review/rereview-bebffb8d.md`, apart from relay-escaped entities restored.
+- **Delivery commit.** It adds the re-review file and fills §9, §11 and §12 of this record, plus the regenerated `MANIFEST.tsv`. It is wording only and is **not re-reviewed**. The second review cycle was not needed.
 
 ## 10. Residual limitations
 
@@ -299,8 +303,23 @@ Cluster coexistence follows the SB1/XR precedent: separate worktrees and outroot
 
 ## 11. Resources (this integration)
 
-Pending; filled at delivery.
+| item | limit | used |
+|---|---|---|
+| active hours | 6, including review and delivery | prompt received 03:39Z; delivery about 04:40Z, so **≈ 1.0 h** |
+| local CPU core-hours | 3 | **≈ 0.35**: suites 560 s user+sys (`logs/suite-run1.txt`); gates, power tests and probes ≈ 0.05 h; reviewer ≈ 0.12 h, self-reported |
+| threads | 2 | 1 per process, at most 2 processes at once |
+| RAM | 8 GiB | not instrumented; the largest processes were the small-fixture suite trainings, well under 2 GiB |
+| new scratch | 3 GiB | ≈ 0.85 GiB: two throwaway checkouts (425 + 421 MiB, removed after delivery), 1.5 MiB of fetched cluster evidence, 1 MiB of logs |
+| tracked evidence | 20 MiB | `I/` ≈ 0.12 MiB, plus the 27 renamed SB1 files (bytes unchanged) |
+| cluster | no jobs | **0 jobs**, 0 GPU: read-only login-node reads only (`tar` of the outroots, one `sacct`/`squeue`, plus the reviewer's `sha256sum`/`sacct`) |
 
 ## 12. Terminal
 
-Pending review.
+**PASS.** The reviewed evidence is merged, the checks are complete, and ownership is recorded. The merge result (the merged `main` SHA and the delivered-tree check) is recorded in the PR's delivery comment, because this file cannot carry its own merge commit.
+
+- **Remaining blockers.** These belong to their owners and are not this integration's:
+  - XR needs a new or amended grant before any rerun (`Q/xr-recovery/REPORT.md` §9);
+  - selective I/O needs its own authorization to change the supported driver;
+  - Joseph decides on KI-88's scope and on rows 92–94;
+  - KI-85 stays deferred.
+- **Not followed by this merge:** no compute, publication adoption, KI-85 lift, transfer measurement or campaign reopening.
