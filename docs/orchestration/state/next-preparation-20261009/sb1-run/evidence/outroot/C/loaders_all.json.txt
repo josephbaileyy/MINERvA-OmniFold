@@ -1,0 +1,522 @@
+{
+ "argv": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+  "loaders",
+  "--label",
+  "sb1-C-loaders_all",
+  "--expect",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/C/expect.json",
+  "--require-provenance",
+  "--input-hashes",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/H0/hashes.json",
+  "--arm",
+  "all",
+  "--omnifile",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root",
+  "--receipt",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/C/loaders_all.json"
+ ],
+ "arm": "all",
+ "compare_digests": null,
+ "comparison_key": {
+  "mode": "loaders",
+  "omnifile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root",
+  "trees": [
+   "data",
+   "mc_background",
+   "mc_signal_reco",
+   "mc_truth_denom"
+  ],
+  "universe": null
+ },
+ "driver_argv": null,
+ "ended_utc": "2026-10-11T01:21:18.880446Z",
+ "environment": {
+  "affinity_cpus": 64,
+  "argv": [
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+   "loaders",
+   "--label",
+   "sb1-C-loaders_all",
+   "--expect",
+   "/pscratch/sd/j/josephrb/sb1-2b35ba52/C/expect.json",
+   "--require-provenance",
+   "--input-hashes",
+   "/pscratch/sd/j/josephrb/sb1-2b35ba52/H0/hashes.json",
+   "--arm",
+   "all",
+   "--omnifile",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root",
+   "--receipt",
+   "/pscratch/sd/j/josephrb/sb1-2b35ba52/C/loaders_all.json"
+  ],
+  "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python",
+  "host": "nid004105",
+  "omp": {
+   "GOMP_SPINCOUNT": null,
+   "OMP_PLACES": null,
+   "OMP_PROC_BIND": null,
+   "OMP_WAIT_POLICY": null
+  },
+  "os_cpu_count": 256,
+  "packages": {
+   "lightgbm": null,
+   "numpy": null,
+   "scikit-learn": null,
+   "scipy": null,
+   "xgboost": null
+  },
+  "python": "3.11.14",
+  "root_version": "6.28/12",
+  "sb1_env_setup": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh",
+  "sb1_env_setup_sha256": "ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48",
+  "slurm": {
+   "SLURMD_NODENAME": "nid004105",
+   "SLURM_ARRAY_JOB_ID": null,
+   "SLURM_ARRAY_TASK_ID": null,
+   "SLURM_CPUS_ON_NODE": "64",
+   "SLURM_CPUS_PER_TASK": "64",
+   "SLURM_JOB_ID": "59645304",
+   "SLURM_JOB_PARTITION": "shared_milan_ss11",
+   "SLURM_JOB_QOS": "shared",
+   "SLURM_MEM_PER_CPU": "1905",
+   "SLURM_MEM_PER_NODE": null
+  },
+  "threads": {
+   "MKL_NUM_THREADS": null,
+   "NUMEXPR_NUM_THREADS": null,
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": null,
+   "SLURM_CPUS_PER_TASK": "64"
+  },
+  "uname": [
+   "Linux",
+   "nid004105",
+   "6.4.0-150600.23.125_15.0.29-cray_shasta_c",
+   "#1 SMP Mon 21 Sep 2026 11:10:49 PDT (f9f1fdc)",
+   "x86_64"
+  ]
+ },
+ "error": null,
+ "exit_code": 0,
+ "identity": {
+  "executed": [
+   {
+    "git_blob": "0f864615c0180a6e1e49421a0940932fc050a015",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+    "relpath": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+    "sha256": "17a4a5f6bb6583b7c784eb9940cc2c353f1c310e486705c4fca7bd9b94bea7eb"
+   },
+   {
+    "git_blob": "6509b94a5f324ee5edcc44e539b7b5a0ef290151",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
+    "relpath": "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
+    "sha256": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef"
+   },
+   {
+    "git_blob": "1ea941f390bb3ce36925a9e8f2fbad675d88cada",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+    "relpath": "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+    "sha256": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856"
+   },
+   {
+    "git_blob": "e47bc942a0fd42d031b51515016c50547065f57f",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py",
+    "relpath": "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py",
+    "sha256": "ce001cb96a416fa208bdbc0f2e3467521dcddfb198c22d7f9b3a222b51afb60d"
+   },
+   {
+    "git_blob": "e19aeb6d3c242a21a67fa1b4e4573ddf72729206",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "relpath": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "sha256": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933"
+   },
+   {
+    "git_blob": "5966663bfe88809fd245d4dd2edb472eb6514480",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/unbinned_unfolding/python/omnifold.py",
+    "relpath": "unbinned_unfolding/python/omnifold.py",
+    "sha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  ],
+  "git": {
+   "commit": "2b35ba520e1dd98a162f82ac6a9e4f8cd63a86ac",
+   "mismatched": [],
+   "status": "ok"
+  },
+  "guard": {
+   "allowed": [
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52"
+   ],
+   "depth": 0,
+   "expect_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52",
+   "installed": true,
+   "propagation": "armed"
+  },
+  "strict": true
+ },
+ "inputs_end": {
+  "omnifile": {
+   "ino": 882724772125893981,
+   "key": "omnifile",
+   "mtime_ns": 1779094334000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root",
+   "sha256_hashed": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "sha256_stated": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "size": 2144008221
+  }
+ },
+ "inputs_start": {
+  "omnifile": {
+   "ino": 882724772125893981,
+   "key": "omnifile",
+   "mtime_ns": 1779094334000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root",
+   "sha256_hashed": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "sha256_stated": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "size": 2144008221
+  }
+ },
+ "io_end": {
+  "cancelled_write_bytes": 0,
+  "rchar": 2176783651,
+  "read_bytes": 2177471488,
+  "syscr": 4465,
+  "syscw": 1045,
+  "wchar": 138214,
+  "write_bytes": 221184
+ },
+ "label": "sb1-C-loaders_all",
+ "loaders": [
+  {
+   "branches": null,
+   "digests": {
+    "[0]": "0b090a797c39ca468a417e9aa8e963f032a226e772e604ec21e4db9204d8849f",
+    "[1]": "56d80b464d69817f03b47316ee5f20f61e0e522ae052cd3a536947c84edf7dbf",
+    "histogram": "873bf73ed39bb1faaa7dfe9cb1f372f1be3f36325afbee9cdf02fff0e7c8d612"
+   },
+   "entries": 4119797,
+   "loader": "fill_data_reco_2d",
+   "mode": "all",
+   "n_active_on_entry": 3,
+   "n_branches_in_tree": 3,
+   "settings": {
+    "guard_max": 1000.0,
+    "pt_hi": 4.5,
+    "pt_lo": 0,
+    "pz_hi": 60.0,
+    "pz_lo": 1.5,
+    "verbose": false
+   },
+   "sizes": {
+    "[0]": 4091707,
+    "[1]": 4091707
+   },
+   "tree": "data",
+   "verified_before_first_read": null
+  },
+  {
+   "branches": null,
+   "digests": {
+    "[0]": "deb9476200aeb6d8424798de5f3b353f9366ab7b9ce0dbedb9cf1f298171889f",
+    "[1]": "c9990205a4088b6e24a552adb7eece6a312a31d9ca19b1e168c389d1f67f8721",
+    "[2]": "065266d2b1154fb213b3b02cb5ef6ed14d880a17d0cba7a7c01f81da23bca5b4",
+    "histogram": "8bc40b105e1c3e4097b1a66d19eb1a82143d21b6dda2f5c7e4198063da0d9d94"
+   },
+   "entries": 658227,
+   "loader": "fill_bkg_reco_2d",
+   "mode": "all",
+   "n_active_on_entry": 4,
+   "n_branches_in_tree": 4,
+   "settings": {
+    "guard_max": 1000.0,
+    "pot_scale": 0.21240500334472884,
+    "pt_hi": 4.5,
+    "pt_lo": 0,
+    "pz_hi": 60.0,
+    "pz_lo": 1.5,
+    "universe_branch": null,
+    "verbose": false
+   },
+   "sizes": {
+    "[0]": 621547,
+    "[1]": 621547,
+    "[2]": 621547
+   },
+   "tree": "mc_background",
+   "verified_before_first_read": null
+  },
+  {
+   "branches": null,
+   "digests": {
+    "pass_reco": "d566baa3f7ccf55e43991e11ab00f9d34fa7e20e0dae6faecedac226622fbe14",
+    "pass_truth": "7e4bb3951407f05182e19bfa28cbf184fcbab840c4f2a1512c197387be2b61ab",
+    "reco_pt": "7e44b0c391296dd8e2dc209b99bbea790f9a0205d67f907a04734274bf602f3a",
+    "reco_pz": "302bc094e20a486471b7ecfe0a47e7708ca2ebb6095a17527b2c4c0a34f9b53c",
+    "truth_pt": "d60a6181a262695ec637f680352fea1efa2bdab2da3f2f4081511ddfda67596c",
+    "truth_pz": "51735be90332c5eeb9391e2ad23a6caa4a365953ec96a7bbdc886c54f2aabf70",
+    "w_reco": "4f3d8f923cc39badcf571c17d033bea2a9f1db4158d4014cbd6d8ed348f48005",
+    "w_truth": "c8ce6641f4c499c179bbf271b7aa87783c802e1dac1b707767f3b98a5a78b0ed"
+   },
+   "entries": 32849103,
+   "loader": "collect_signal_arrays_2d",
+   "mode": "all",
+   "n_active_on_entry": 7,
+   "n_branches_in_tree": 7,
+   "settings": {
+    "alt_universe_branch": null,
+    "pot_scale": 0.21240500334472884,
+    "pt_hi": 4.5,
+    "pt_lo": 0,
+    "pz_hi": 60.0,
+    "pz_lo": 1.5,
+    "universe_branch": null,
+    "use_weights": true,
+    "verbose": false
+   },
+   "sizes": {
+    "pass_reco": 32849103,
+    "pass_truth": 32849103,
+    "reco_pt": 32849103,
+    "reco_pz": 32849103,
+    "truth_pt": 32849103,
+    "truth_pz": 32849103,
+    "w_reco": 32849103,
+    "w_truth": 32849103
+   },
+   "tree": "mc_signal_reco",
+   "verified_before_first_read": null
+  },
+  {
+   "branches": null,
+   "digests": {
+    "truth_pt": "856a71a9464e36d396e5040d7bc02abd169a44acea4cc9b28a2ff8c69a6f1181",
+    "truth_pz": "4de3bd674e826b24d8b9002ace18bcbe9e7976a2ec0c0965faec8e4a813c3ed1",
+    "w_truth": "7d1ccac100fb6d584dcf54168289612df71fd7630d4df49a6a8084a4b03ac0b2"
+   },
+   "entries": 32849103,
+   "loader": "collect_truth_denom_arrays",
+   "mode": "all",
+   "n_active_on_entry": 3,
+   "n_branches_in_tree": 3,
+   "settings": {
+    "pot_scale": 0.21240500334472884,
+    "pt_hi": 4.5,
+    "pt_lo": 0,
+    "pz_hi": 60.0,
+    "pz_lo": 1.5,
+    "universe_branch": null,
+    "use_weights": true,
+    "verbose": false
+   },
+   "sizes": {
+    "truth_pt": 32849103,
+    "truth_pz": 32849103,
+    "w_truth": 32849103
+   },
+   "tree": "mc_truth_denom",
+   "verified_before_first_read": null
+  }
+ ],
+ "maxrss_bytes": 9905442816,
+ "mode": "loaders",
+ "negative_control": null,
+ "output": null,
+ "phases": [
+  {
+   "end_s": 35.451491766998515,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 95495820,
+    "read_bytes": 64857088,
+    "syscr": 4213,
+    "syscw": 1041,
+    "wchar": 95002,
+    "write_bytes": 172032
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 32651224,
+    "read_bytes": 2024448,
+    "syscr": 4198,
+    "syscw": 1041,
+    "wchar": 95002,
+    "write_bytes": 172032
+   },
+   "maxrss_end_bytes": 903888896,
+   "name": "load:fill_data_reco_2d",
+   "start_s": 31.412539805998676
+  },
+  {
+   "end_s": 35.53788296899802,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 95496058,
+    "read_bytes": 64857088,
+    "syscr": 4217,
+    "syscw": 1041,
+    "wchar": 95002,
+    "write_bytes": 172032
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 95495939,
+    "read_bytes": 64857088,
+    "syscr": 4215,
+    "syscw": 1041,
+    "wchar": 95002,
+    "write_bytes": 172032
+   },
+   "maxrss_end_bytes": 903888896,
+   "name": "digest:fill_data_reco_2d",
+   "start_s": 35.451809281999886
+  },
+  {
+   "end_s": 36.31238872099857,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 110547884,
+    "read_bytes": 79909888,
+    "syscr": 4225,
+    "syscw": 1042,
+    "wchar": 102669,
+    "write_bytes": 180224
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 95501751,
+    "read_bytes": 64861184,
+    "syscr": 4220,
+    "syscw": 1042,
+    "wchar": 102669,
+    "write_bytes": 180224
+   },
+   "maxrss_end_bytes": 903888896,
+   "name": "load:fill_bkg_reco_2d",
+   "start_s": 35.541990952999186
+  },
+  {
+   "end_s": 36.32380413300052,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 110548126,
+    "read_bytes": 79909888,
+    "syscr": 4229,
+    "syscw": 1042,
+    "wchar": 102669,
+    "write_bytes": 180224
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 110548005,
+    "read_bytes": 79909888,
+    "syscr": 4227,
+    "syscw": 1042,
+    "wchar": 102669,
+    "write_bytes": 180224
+   },
+   "maxrss_end_bytes": 903888896,
+   "name": "digest:fill_bkg_reco_2d",
+   "start_s": 36.31252708899774
+  },
+  {
+   "end_s": 100.18486099800066,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 1431314216,
+    "read_bytes": 1221166080,
+    "syscr": 4394,
+    "syscw": 1043,
+    "wchar": 112236,
+    "write_bytes": 192512
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 110675343,
+    "read_bytes": 80032768,
+    "syscr": 4232,
+    "syscw": 1043,
+    "wchar": 112236,
+    "write_bytes": 192512
+   },
+   "maxrss_end_bytes": 9905442816,
+   "name": "load:collect_signal_arrays_2d",
+   "start_s": 36.329157066000334
+  },
+  {
+   "end_s": 101.61369805700087,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 1431314464,
+    "read_bytes": 1221166080,
+    "syscr": 4398,
+    "syscw": 1043,
+    "wchar": 112236,
+    "write_bytes": 192512
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 1431314340,
+    "read_bytes": 1221166080,
+    "syscr": 4396,
+    "syscw": 1043,
+    "wchar": 112236,
+    "write_bytes": 192512
+   },
+   "maxrss_end_bytes": 9905442816,
+   "name": "digest:collect_signal_arrays_2d",
+   "start_s": 100.18499724199864
+  },
+  {
+   "end_s": 129.24623424499805,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2176782196,
+    "read_bytes": 2177467392,
+    "syscr": 4457,
+    "syscw": 1044,
+    "wchar": 124275,
+    "write_bytes": 204800
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 1431412984,
+    "read_bytes": 1221272576,
+    "syscr": 4401,
+    "syscw": 1044,
+    "wchar": 124275,
+    "write_bytes": 204800
+   },
+   "maxrss_end_bytes": 9905442816,
+   "name": "load:collect_truth_denom_arrays",
+   "start_s": 101.62552084499839
+  },
+  {
+   "end_s": 130.07745289800005,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2176782444,
+    "read_bytes": 2177467392,
+    "syscr": 4461,
+    "syscw": 1044,
+    "wchar": 124275,
+    "write_bytes": 204800
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 2176782320,
+    "read_bytes": 2177467392,
+    "syscr": 4459,
+    "syscw": 1044,
+    "wchar": 124275,
+    "write_bytes": 204800
+   },
+   "maxrss_end_bytes": 9905442816,
+   "name": "digest:collect_truth_denom_arrays",
+   "start_s": 129.24638463600058
+  }
+ ],
+ "schema": "sb1-receipt/1",
+ "started_utc": "2026-10-11T01:19:01.691397Z",
+ "status": "complete",
+ "wall_s": 137.18904401200052
+}

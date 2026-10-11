@@ -1,0 +1,16 @@
+{
+ "commit": "2b35ba520e1dd98a162f82ac6a9e4f8cd63a86ac",
+ "inputs": {
+  "mcfile": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+  "omnifile": "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418"
+ },
+ "modules": {
+  "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+  "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+  "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py": "ce001cb96a416fa208bdbc0f2e3467521dcddfb198c22d7f9b3a222b51afb60d",
+  "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py": "17a4a5f6bb6583b7c784eb9940cc2c353f1c310e486705c4fca7bd9b94bea7eb",
+  "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+ },
+ "note": "written by docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_admit.py from /pscratch/sd/j/josephrb/sb1-2b35ba52/admission.json and /pscratch/sd/j/josephrb/sb1-2b35ba52/H0/hashes.json"
+}

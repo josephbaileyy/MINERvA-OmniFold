@@ -1,0 +1,7 @@
+# Admission condition C1, final check. Command (on saul.nersc.gov, polled every 60 s until the outroot row was gone):
+#   squeue --me -t all -h -o '%i|%j|%T|%Z' ; grep -F /pscratch/sd/j/josephrb/sb1-2b35ba52
+# Earlier reads at 01:35:18Z and 01:40:50Z listed only 59645305|sb1_H1|COMPLETED; MinJobAge = 300 s, and the 01:40:50Z read is 375 s after H1 ended (01:34:35Z). Why the row outlived 300 s was not investigated.
+# rows = all rows squeue returned for the user; grep_rc=1 means no row lists the outroot.
+2026-10-11T01:42:09Z
+rows=0
+grep_rc=1
