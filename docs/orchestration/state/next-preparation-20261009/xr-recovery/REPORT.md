@@ -182,7 +182,7 @@ What passed in the allocation:
   4. on Linux, `ctypes/util.py` `_findSoname_ldconfig` runs `subprocess.Popen(['/sbin/ldconfig', '-p'])`.
 - **The guard's refusal:** the OI-136 guard refuses that child (`/sbin/ldconfig` "is neither an interpreter, a shell, a leaf tool nor a script with a readable shebang"). It raises `SystemExit(3)`, which the preflight recorded as `preflight-fail`, `SystemExit: 3`, exit 1. No fit was attempted (`fits: []`).
 - **The trace:** the spy counted 0 child launches across `import ROOT`, threadpoolctl, numpy, sklearn, lightgbm, joblib, scipy and `gROOT.GetVersion()`, and 1 launch in `threadpool_info()`.
-- **Consequence:** every scientific run calls the same `check_environment` before its first fit (`xr_run.py` `main`, before `driver.main()`). All five would have failed this way after a queue wait, and the exact runs after up to 30 h of queue and allocation.
+- **Consequence:** every scientific run calls the same `check_environment` before its first fit (`xr_run.py` `main`, before `driver.main()`). All five would have failed this way about a minute into their allocation (PF: 47 s in `xr_run.py`), after their queue wait. The charge at risk was minutes per run, not their 30-h limits (V-1).
 - **The guard behaved correctly.** Its own message says not to widen its leaf table. The defect is XR's call.
 
 **After the failure** (03:16:02Z).
@@ -196,13 +196,36 @@ No run produced a histogram, so there is nothing to reproduce from output histog
 
 ## 8. Independent numerical verification (use 3 of 3)
 
-PENDING-FILL-VERIFY
+Preserved verbatim in `review/final-verification-204805d8.md`. The same reviewer worked read-only at `204805d8`, 2026-10-11T03:19:40–03:23:50Z, under 0.01 local core-hours, with login23 reads only.
+
+- **Admission, as recorded: CONFIRMED.**
+- **Preflight: FAIL confirmed, and the stated defect is the cause.** The reviewer reproduced it on login23: one launch, from `threadpool_info()`, and none from the imports, the loky seed or the fit-recorder imports.
+- **Execution: INCONCLUSIVE (not launched), confirmed.** The only `xrr_*` job is 59655414. The outroot holds no `receipt.json`, no `.root` file and no run directory other than `PF/a1`.
+- **All seven comparisons: INCONCLUSIVE.** The frozen comparator was rerun on the live outroot.
+- **Numerical verification overall: CONFIRMED WITH DISCREPANCIES** (V-1 to V-3, all MINOR wording or completeness).
+
+What the reviewer re-derived:
+- the cumulative charge from sacct, 0.0023133680555555555;
+- every digest in `PF/a1`;
+- F-3: the job's own RUNNING line, byte-equal to the tracked copy, parses under `check_allocation`;
+- F-4/N-2: the receipt `SLURM_JOB_ID`, the line's JobId, the submission and sacct all agree (59655414);
+- all six release refusals (`next-attempt` for L0, X0, X0p, X1, L1, PF: rc 3);
+- the window;
+- the §9–§10 arithmetic;
+- the data hygiene.
+
+**Post-verification corrections.** These are documentary only: nothing under `xr/` changed, and no review remains, so they are not re-reviewed.
+- V-1: §6 now says the failure would come about a minute into each allocation, not after 30 h.
+- V-2: §9 item 2 now requires the whole PF path and the end-to-end fixture tests on Linux under the guard.
+- V-3: §9 item 1 now requires a child-free replacement for the thread-pool record.
+- V-4 (a fit-path probe found no launch, indicative only) is added to §9 item 3.
+- V-5 and V-6 are notes.
 
 ## 9. Reopening requirements (a new grant; not within this one: its single preflight is spent)
 
-1. **Remove the child launch from `check_environment`.** Record the thread pools without starting a process: no `threadpoolctl.threadpool_info()`, and nothing else that reaches `ctypes.util.find_library` on Linux. The guard must not be widened.
-2. **Exercise the Linux path before admission.** Run `check_environment` and `seed_loky_cache` under the OI-136 guard on Linux. A login-node run of these two functions takes seconds and needs no fit. This closes the gap the macOS suite has (§5). Add a test or mutant that fails if a child launch reappears.
-3. **Audit the fit path for child launches.** Decide whether the next preflight may include a fit, for example a tiny fixture fit under the guard in the allocation. That is the only way to see whether sklearn's exact GBT or LightGBM launch a child on Linux, as loky's `lscpu` did (which XR's seed handles). This grant's preflight forbids fits. Without that decision, the risk remains for the exact runs (up to 30 h each).
+1. **Remove the child launch from `check_environment`.** Record the thread pools without starting a process: no `threadpoolctl.threadpool_info()`, and nothing else that reaches `ctypes.util.find_library` on Linux. The guard must not be widened. State what child-free evidence of the BLAS/OpenMP pools replaces the dropped record, for example the loaded libraries from `/proc/self/maps` plus the thread environment. The pre-registered L-arm thread-count check reads the receipt's thread record (V-3).
+2. **Exercise the whole Linux path before admission (V-2).** Run the full PF code path under the OI-136 guard on Linux in the frozen environment. That path is `check_environment`, `seed_loky_cache`, the fit recorder's installation, the OMP check, `gx.recheck` and the input recheck. Also run the package's own end-to-end fixture tests there (all five runs, with fits, under the guard). This closes the gap the macOS suite has (§5) and covers item 3's fit path on fixtures. Add a test or mutant that fails if a child launch reappears.
+3. **Audit the fit path for child launches.** The verifier's unguarded login-node probe of the four classes' `fit`/`predict` on tiny data launched no child (V-4). That lowers the risk without removing it: the probe skipped the driver's own code, ran without the guard and used tiny data. Decide whether the next preflight may include a fit, for example a tiny fixture fit under the guard in the allocation. That is the only way to see whether sklearn's exact GBT or LightGBM launch a child on Linux, as loky's `lscpu` did (which XR's seed handles). This grant's preflight forbids fits. Without that decision, the risk remains for the exact runs (up to 30 h each).
 4. **One new preflight attempt and a new 72-h window.** The cumulative budget remaining is 6.4 − 0.0023134 = 6.3977 node-h. The planned ceiling with a second preflight is 0.0023134 + 0.0039063 + 5.625 + 0.75 = 6.3812 ≤ 6.4.
 5. **A new package commit, manifest and outroot,** and an independent admission review of the delta with its own budget. Carry N-1 (ledger header check before reading any row).
 6. **Unchanged:** the comparisons, the 1e-8 criterion, the control, the references and the release order.
