@@ -593,6 +593,7 @@ submission was recorded, which is conservative.
 computed. The record is in `logs/xr-deploy.txt` (OUTCOME), and the job logs, sacct, ledger and
 comparator output are in `results/xr/`. The admission itself is not tracked, because it would add receipt
 bindings to the shared inventory. `results/xr/README.txt` gives its sha256 and the values it binds.
+*Integration note, 2026-10-11 (XR/SB1 evidence integration, not this lane):* that `admission.json` was recovered read-only from Perlmutter at the recorded sha256 `ef8b49b3…`, tracked at [`../xr-sb1-integration/recovered/xr-two-d-followup-20261010/admission.json`](../xr-sb1-integration/recovered/xr-two-d-followup-20261010/admission.json), and its bindings enrolled in the receipt hash-binding inventory (map: [`../xr-sb1-integration/evidence-map.tsv`](../xr-sb1-integration/evidence-map.tsv)).
 
 | run | job | started (PDT) | elapsed | State / exit | refusal |
 |---|---|---|---|---|---|

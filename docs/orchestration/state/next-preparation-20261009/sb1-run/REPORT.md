@@ -122,7 +122,7 @@ price, any estimator, uncertainty, coverage or adoption claim, or authority for 
   refuses any import from the canonical checkout.
 - **Admission.** `sb1_admit.py draft` (package commit `d4335d3b…`) wrote
   `$SCRATCH/sb1-admission-2b35ba52.json` (sha256 `cc9dc814…`). `check` reported "admission holds".
-  - The byte-identical copy is [`admission/admission.json.txt`](admission/admission.json.txt).
+  - The byte-identical copy is [`admission/admission.json`](admission/admission.json).
   - It is stored with `.txt` so that `verify_hash_bindings.py`, which harvests `{path, sha256}`
     pairs from `docs/**/*.json`, does not count it as a new live receipt binding: its
     `authorization` pair would move `RECEIPT_BINDING_COUNT` from 144 to 145.
@@ -306,6 +306,12 @@ uses only the standard library.
   [`evidence/`](evidence/): 61 files, sha256-equal to the cluster copies, listed in
   [`evidence/SHA256-MAP.txt`](evidence/SHA256-MAP.txt). JSON files carry a `.txt` suffix with their
   bytes unchanged (§11).
+  - *Integration note, 2026-10-11 (XR/SB1 evidence integration, not this lane):* the 27 `.json.txt`
+    files were renamed to `.json` with their bytes unchanged, and their bindings were enrolled in the
+    receipt hash-binding inventory (144 → 148, with XR's). `SHA256-MAP.txt` is kept as delivered, so its
+    `tracked_path` column names the pre-rename paths. The rename map and a fresh cluster recheck (all
+    `MATCH`) are in [`../xr-sb1-integration/evidence-map.tsv`](../xr-sb1-integration/evidence-map.tsv).
+    Two links in this report were updated to the new names; nothing else in it changed.
 
 ## 7. Results under the frozen rules
 
@@ -316,7 +322,7 @@ by rule enter no overall verdict:
 - S6 = **FAIL**.
 
 The verdict is from H1's `sb1_verify.py verdict`
-([`evidence/outroot/H1/verdict.json.txt`](evidence/outroot/H1/verdict.json.txt), verifier exit 0).
+([`evidence/outroot/H1/verdict.json`](evidence/outroot/H1/verdict.json), verifier exit 0).
 The owner rechecked it from the fresh sacct and the receipts; §8 has the independent verification.
 Criteria are as frozen in sb1-prep REPORT §6 and `sb1_verify.py:13-30`. Nothing was relaxed or
 reinterpreted after the results.

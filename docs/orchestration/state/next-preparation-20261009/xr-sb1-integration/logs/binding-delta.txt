@@ -1,0 +1,43 @@
+# Receipt-binding inventory delta for the XR/SB1 evidence integration (2026-10-11).
+# Rows from receipt_inventory() via the gate's own collect/localize/tracked_paths (scratch helper inv_rows.py).
+## origin/main ced3a8db
+144 f9dab8dd64af311296216d02878d28ab05a83062812def44d3cdc39830229cc0
+## integration tree (renames + recovered receipts staged)
+148 1b610bb358810abd951d01ee1c6779259e4c6f80fe51913d85b556968c318f4f
+## rows only in the integration tree (path, want, verifies, receipts binding it)
+ADDED docs/orchestration/AUTHORIZATION-20261010-sb1.md 3beec1da1fbd33154ffcc7da5e87adf957ebe7565372587f7da246069d0e9537 OK (2 receipts)
+    docs/orchestration/state/next-preparation-20261009/sb1-run/admission/admission.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/admission.json
+ADDED docs/orchestration/AUTHORIZATION-20261010-xr.md d368967b2b2b2a2568688f4eaf0f647cb38bc421845776be6cc86d92c6a8240f OK (1 receipts)
+    docs/orchestration/state/next-preparation-20261009/xr-sb1-integration/recovered/xr-two-d-followup-20261010/admission.json
+ADDED docs/orchestration/AUTHORIZATION-20261011-xr-recovery.md 25deb61b21bd810abff94702ecd3c9c6a697bc767b0668d94fa7b0ae3260c82e OK (1 receipts)
+    docs/orchestration/state/next-preparation-20261009/xr-sb1-integration/recovered/xr-recovery-20261011/admission.json
+ADDED setup_salloc_env.sh ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48 OK (17 receipts)
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/C/loaders_all.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/C/loaders_selective.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/C/receipt.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/J1/all_data.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/J1/all_mc_background.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/J1/all_mc_signal_reco.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/J1/all_mc_truth_denom.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/J1/control_extra.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/J1/control_omit.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/J1/selective_data.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/J1/selective_mc_background.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/J1/selective_mc_signal_reco.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/J1/selective_mc_truth_denom.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/SL/receipt.json
+    docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/UL/receipt.json
+    docs/orchestration/state/next-preparation-20261009/xr-sb1-integration/recovered/xr-recovery-20261011/admission.json
+    docs/orchestration/state/next-preparation-20261009/xr-sb1-integration/recovered/xr-two-d-followup-20261010/admission.json
+## rows only on main
+removed or repointed: 0
+## power test (scratch `git clone --shared` of the integration tree with the bumped constants; one hex digit
+## flipped in one receipt, gate run, receipt restored)
+baseline (bumped constants, unmodified receipts): rc=0
+flip 3beec1da in docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/admission.json -> rc=1; MISMATCH docs/orchestration/AUTHORIZATION-20261010-sb1.md
+flip d368967b in docs/orchestration/state/next-preparation-20261009/xr-sb1-integration/recovered/xr-two-d-followup-20261010/admission.json -> rc=1; MISMATCH docs/orchestration/AUTHORIZATION-20261010-xr.md
+flip 25deb61b in docs/orchestration/state/next-preparation-20261009/xr-sb1-integration/recovered/xr-recovery-20261011/admission.json -> rc=1; MISMATCH docs/orchestration/AUTHORIZATION-20261011-xr-recovery.md
+flip ea3c6998 in docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/outroot/UL/receipt.json -> rc=1; MISMATCH setup_salloc_env.sh
+after restore: rc=0
+## other tracked *.json.txt files (4): renamed to .json in the scratch clone -> inventory unchanged at 148/1b610bb3; they hide no binding

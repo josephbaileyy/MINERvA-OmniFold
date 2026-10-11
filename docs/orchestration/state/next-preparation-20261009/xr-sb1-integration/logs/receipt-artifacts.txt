@@ -1,0 +1,19 @@
+# verify_receipt_artifacts.py on the integration tree, before and after the Slurm-pattern fix (2026-10-11).
+## base f0fb8e8f (merges only; the SB1 JSON still .json.txt, no recovered receipts)
+RECEIPT-ARTIFACTS :: 451 receipts scanned at working tree, 14 deliverable-area artifact path(s), 0 missing
+  bare-filename citations: TRACKED 9, MISSING 0, OFF-AREA 29, BY-PATH 7, UNRESOLVED 66
+## integration tree, old pattern (pre-commit refusal)
+RECEIPT-ARTIFACTS :: 481 receipts scanned at working tree, 14 deliverable-area artifact path(s), 4 missing
+  bare-filename citations: TRACKED 9, MISSING 4, OFF-AREA 29, BY-PATH 7, UNRESOLVED 66
+  FAIL docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/operator-record/j.err
+  FAIL docs/orchestration/state/next-preparation-20261009/sb1-run/evidence/operator-record/j.out
+  FAIL docs/orchestration/state/next-preparation-20261009/xr-sb1-integration/recovered/xr-recovery-20261011/PF/a1/j.err
+  FAIL docs/orchestration/state/next-preparation-20261009/xr-sb1-integration/recovered/xr-recovery-20261011/PF/a1/j.out
+## integration tree, fixed pattern
+RECEIPT-ARTIFACTS :: 481 receipts scanned at working tree, 14 deliverable-area artifact path(s), 0 missing
+  bare-filename citations: TRACKED 9, MISSING 0, OFF-AREA 28, BY-PATH 7, UNRESOLVED 66
+## receipts whose extracted citations differ between the two patterns (all tracked state/ JSON + the two added)
+RECEIPT-20260830-k0-7ac0edec-legs-1-5-submission.json  only-old: A.out   (from 'boot5dG_%a_%A.out', OFF-AREA)
+Q/sb1-run/evidence/operator-record/attempt-jobs.json    only-old: j.err j.out (from '%x_%j.err', '%x_%j.out')
+Q/xr-sb1-integration/recovered/xr-recovery-20261011/PF/a1/preflight-receipt.json only-old: j.err j.out (from 'slurm-%j.err', 'slurm-%j.out')
+## negative control: tests test_a_slurm_filename_pattern_is_not_a_citation and test_a_real_log_beside_a_pattern_is_still_a_citation FAIL (2 failed) under the old pattern; 29 passed under the fix

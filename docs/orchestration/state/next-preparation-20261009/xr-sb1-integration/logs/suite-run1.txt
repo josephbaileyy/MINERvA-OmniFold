@@ -1,0 +1,19 @@
+# Integration suite summary, run 2026-10-11 ~03:49-04:00Z on the integration tree (fake Slurm; tripwire stubs first on PATH; OMP_NUM_THREADS=1).
+# name rc wall runner-summary skipped-count user/sys
+xr rc=0 wall=175s Ran 42 tests in 174.710s OK  skip=0 user 105.67 sys 59.99 
+sb1op rc=0 wall=23s Ran 5 tests in 23.034s OK  skip=0 user 0.68 sys 0.38 
+sb1prep-test_branch_select rc=0 wall=18s Ran 16 tests in 16.470s OK  skip=0 user 14.06 sys 0.88 
+sb1prep-test_sb1_guarded rc=0 wall=31s Ran 10 tests in 30.447s OK  skip=0 user 21.92 sys 4.06 
+sb1prep-test_launch_chain rc=0 wall=69s Ran 29 tests in 68.962s OK  skip=0 user 48.76 sys 14.60 
+sb1prep-test_package_consistency rc=0 wall=0s Ran 7 tests in 0.158s OK  skip=0 user 0.14 sys 0.04 
+producer rc=0 wall=42s Ran 31 tests in 40.520s OK  skip=0 user 20.66 sys 9.26 
+harness rc=0 wall=109s Ran 22 tests in 109.515s OK  skip=0 user 60.49 sys 19.84 
+ratchets rc=0 wall=70s Ran 17 tests in 69.053s OK  skip=0 user 62.69 sys 2.32 
+inventory rc=0 wall=21s  skip=0 user 19.59 sys 0.70 
+bindings rc=0 wall=7s  skip=0 user 5.45 sys 0.62 
+hashtests rc=0 wall=97s 33 passed in 96.26s (0:01:36)  skip=0 user 79.04 sys 8.37 
+tripwire hits:        0
+probe_counts: {'candidates': 145, 'failopen': 16, 'insert_not_rooted': 68, 'no_insert': 61}
+ast_unlisted: []
+union_n: 17
+probe_failopen_digest_as_ratchet_digests_it: 7aa2943198612b5e904d37c2d75f3ac9b0fe33cabeb69bcddd7a7e87fc334aa9

@@ -209,6 +209,18 @@ class BareCitationsAndLogEvidence(unittest.TestCase):
         body = {"a": "GATE5_REPLICA_WEIGHTS.npz", "b": "/pscratch/x/GATE5_REPLICA_WEIGHTS.npz"}
         self.assertEqual("BY-PATH", self._classify("GATE5_REPLICA_WEIGHTS.npz", body, set())[0])
 
+    def test_a_slurm_filename_pattern_is_not_a_citation(self):
+        """SILENT on a pattern: `%x_%j.out` names no file, so no tail of it is a bare citation."""
+        for t in ("/pscratch/x/%x_%j.out", "--error=/p/a1/slurm-%j.err", "boot5dG_%a_%A.out", "s-%5j.log"):
+            self.assertEqual(set(), V.bare_citations(json.dumps({"o": t})), t)
+
+    def test_a_real_log_beside_a_pattern_is_still_a_citation(self):
+        """FIRES on the real thing: the resolved name of the same job is still extracted and checked."""
+        body = {"pattern": "slurm-%j.out", "stdout": "slurm-59655414.out"}
+        self.assertEqual({"slurm-59655414.out"}, V.bare_citations(json.dumps(body)))
+        self.assertEqual("MISSING", self._classify("slurm-59655414.out", body,
+                                                   {self.COMPANION + "/centring.py"})[0])
+
     def test_an_unlocatable_bare_citation_is_UNRESOLVED(self):
         """FIRES in the new direction: nothing resolves it, and it is not silently dropped."""
         self.assertEqual(("UNRESOLVED", None),

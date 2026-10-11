@@ -272,6 +272,7 @@ Local CPU items, all `user+sys`:
 ## 11. Limitations, held items and proposed shared-status updates (for their owners; not applied)
 
 - **Held untracked:** `admission.json`, `PF/a1/preflight-receipt.json` and `inventory.jsonl`. They carry path+sha256 pairs (live receipt bindings for the shared pre-commit inventory). Their digests and key fields are in `results/preflight-summary.txt` and `logs/xr-deploy.txt`.
+  - *Integration note, 2026-10-11 (XR/SB1 evidence integration, not this lane):* all three, and the earlier attempt's `admission.json`, were recovered read-only from Perlmutter at exactly the digests recorded here, tracked under [`../xr-sb1-integration/recovered/`](../xr-sb1-integration/recovered/), and their bindings enrolled in the receipt hash-binding inventory (144 → 148, with SB1's). Map: [`../xr-sb1-integration/evidence-map.tsv`](../xr-sb1-integration/evidence-map.tsv).
 - **N-1 and N-2 are open** (§4).
 - **The fit path is unexercised in an allocation** (§9 item 3).
 

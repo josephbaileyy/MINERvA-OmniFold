@@ -94,11 +94,27 @@ owner. Registration grants no compute, experiment, adoption or claim-scope autho
 
 | owner | report |
 |---|---|
-| 2D methodology and XR owner | `state/next-preparation-20261009/two-d-followup/REPORT.md` |
+| 2D methodology and XR owner. Delivered 2026-10-11: method PASS (the split-sample calibration supports conditional width agreement only; the original objective has no feasible route under current inputs); XR refused at start by its own allocation check, so every comparison is INCONCLUSIVE | `state/next-preparation-20261009/two-d-followup/REPORT.md` |
 | 2D methodology and XR owner: Joseph's 2026-10-10 XR execution authority (X0, X0′, X1, L0, L1; ≤ 6.4 CPU node-h), bound to package `06eae0fe` and manifest `fbca1be8…` | [`AUTHORIZATION-20261010-xr.md`](AUTHORIZATION-20261010-xr.md) |
 | XR recovery owner: Joseph's 2026-10-11 amendment of the XR grant (repair, one preflight, the five runs; ≤ 6.4 CPU node-h cumulative with the prior grant), bound to package `07428e5d` and manifest `07a74b91…` | [`AUTHORIZATION-20261011-xr-recovery.md`](AUTHORIZATION-20261011-xr-recovery.md) |
-| SB1 execution owner (runs only under a committed `AUTHORIZATION-` record naming the package pin) | `state/next-preparation-20261009/sb1-run/REPORT.md` |
+| XR recovery owner. Delivered 2026-10-11: admission PASS; the in-allocation preflight FAILED (threadpoolctl launched `/sbin/ldconfig` under the OI-136 guard), so no run was launched, no fit ran and every comparison is INCONCLUSIVE; 0.0023 of 6.4 node-h used | `state/next-preparation-20261009/xr-recovery/REPORT.md` |
+| SB1 execution owner. Delivered 2026-10-11: frozen benchmark PASS on one matched lateral pair (S5 PASS-AT-TOLERANCE, S6 profiling coverage FAIL, both outside the verdict; the timed pair very probably trained with 64 LightGBM threads under the guard's `lscpu` refusal); not a sweep or production speedup | `state/next-preparation-20261009/sb1-run/REPORT.md` |
 | SB1 execution authorization — **AUTHORIZED 2026-10-10** by Joseph: the six-job package once, ≤ 2.0 charged CPU node-h, zero GPU, no retries; names package commit `d4335d3b` and manifest `f060df81…` in full | [`AUTHORIZATION-20261010-sb1.md`](AUTHORIZATION-20261010-sb1.md) |
+
+**XR/SB1 evidence integration, 2026-10-11.** The 2D follow-up, XR recovery and SB1 records land on `main` together. Integration enrolled their binding-bearing receipts in the hash-binding inventory (144 → 148): the SB1 JSON evidence
+is tracked as `.json` again, and four XR receipts held off the tree were recovered from Perlmutter at their recorded digests.
+Nothing here adopts a measurement, narrows a claim, lifts KI-85, measures a transfer or authorizes compute. Combined state,
+evidence map, recomputed charges and the dispatch table:
+[`state/next-preparation-20261009/xr-sb1-integration/REPORT.md`](state/next-preparation-20261009/xr-sb1-integration/REPORT.md).
+
+**Next owned reports, registered 2026-10-11 (not launched).** Each path is absent until its owner pushes it. Each owner
+writes only its own subtree plus the files named here. Shared status, catalogs, manifests and binding-inventory enrollment
+stay with the integration owner. Registration grants no compute, experiment, adoption or claim-scope authority.
+
+| owner | scope | report |
+|---|---|---|
+| XR owner | a new XR package under its own subtree and its dedicated authorization amendment (one `docs/orchestration/AUTHORIZATION-*` record, plus the one `MANIFEST-overrides.tsv` row and one routing row that the LIVE-index gate requires for that record); the frozen packages, outroots and records of the two earlier XR attempts stay unchanged | `state/next-preparation-20261009/xr-linux/REPORT.md` |
+| selective-I/O owner | the narrowly scoped, opt-in selective-read change to the supported 2D driver and its tests; the default all-branch path stays byte-for-byte equivalent in behaviour; no helper, guard or estimator change | `state/next-preparation-20261009/selective-io/REPORT.md` |
 
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
