@@ -1,11 +1,17 @@
+% Each cell is wrapped in \rsA..\rsD (one per column). They default to the identity, for
+% tables with p{} columns; main_paper (RevTeX) redefines them as \parbox cells in l columns,
+% because RevTeX 4.2f replaces the array preamble parser with its own copy, and that build
+% stopped with "Extra \or" on this table's p{} columns under a newer TeX Live.
+\providecommand{\rsA}[1]{#1}\providecommand{\rsB}[1]{#1}%
+\providecommand{\rsC}[1]{#1}\providecommand{\rsD}[1]{#1}%
 \newcommand{\resultstatusrows}{%
 \toprule
-Result / central estimator & Uncertainty construction & Recovery and interval checks & Interpretation \\
+\rsA{Result / central estimator} & \rsB{Uncertainty construction} & \rsC{Recovery and interval checks} & \rsD{Interpretation} \\
 \midrule
-2D: exact-split trees, five iterations, unpinned seed & LightGBM systematic, statistical and seed ensembles & Published-result reproduction; injection tests use LightGBM. Earlier statistical band failed fixed-truth coverage; rebuilt band lacks independent re-test. & Central reproduction stands. Transfer of the covariance to the quoted central is unmeasured; publication readiness unresolved. \\
+\rsA{2D: exact-split trees, five iterations, unpinned seed} & \rsB{LightGBM systematic, statistical and seed ensembles} & \rsC{Published-result reproduction; injection tests use LightGBM. Earlier statistical band failed fixed-truth coverage; rebuilt band lacks independent re-test.} & \rsD{Central reproduction stands. Transfer of the covariance to the quoted central is unmeasured; publication readiness unresolved.} \\
 \addlinespace
-3D--5D: LightGBM, five iterations, purity subtraction & One scalar-5D covariance adopted under exception & Marginal anchors and selected injections pass; background and large-deformation tests expose bias. No validated total-interval coverage. & Central comparisons; all four adoption measurements apply. No covariance-based generator significance. \\
+\rsA{3D--5D: LightGBM, five iterations, purity subtraction} & \rsB{One scalar-5D covariance adopted under exception} & \rsC{Marginal anchors and selected injections pass; background and large-deformation tests expose bias. No validated total-interval coverage.} & \rsD{Central comparisons; all four adoption measurements apply. No covariance-based generator significance.} \\
 \addlinespace
-Joint tests: deterministic LightGBM with enlarged background refinement & Null-specific full-chain calibration; no new measurement covariance & Frozen tests and arithmetic recomputation; calibration adequacy remains conditional. & Tests of hybrid generator hypotheses under six stated conditions; no new reportable uncertainty. \\
+\rsA{Joint tests: deterministic LightGBM with enlarged background refinement} & \rsB{Null-specific full-chain calibration; no new measurement covariance} & \rsC{Frozen tests and arithmetic recomputation; calibration adequacy remains conditional.} & \rsD{Tests of hybrid generator hypotheses under six stated conditions; no new reportable uncertainty.} \\
 \bottomrule
 }

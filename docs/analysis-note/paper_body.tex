@@ -155,13 +155,20 @@ Missed-event bookkeeping is an invariant check, and iteration dependence is
 a stability diagnostic. Neither establishes recovery or coverage.
 Table~\ref{tab:result-status} summarizes the estimator identities and scope.
 
+% l columns with \parbox cells instead of p{} columns: see result_status_rows.tex.
+\newcommand{\rscell}[2]{\parbox[t]{#1}{\leftskip=0pt\rightskip=0pt\parfillskip=0pt plus 1fil\relax
+  \strut#2\strut}}
+\newcommand{\rsA}{\rscell{0.20\textwidth}}
+\newcommand{\rsB}{\rscell{0.20\textwidth}}
+\newcommand{\rsC}{\rscell{0.27\textwidth}}
+\newcommand{\rsD}{\rscell{0.24\textwidth}}
 \input{result_status_rows}
 \begin{table*}[t]
 \caption{Current result components and validation scope. Adoption of a
 construction does not establish interval coverage or publication readiness.}
 \label{tab:result-status}
 \centering\footnotesize
-\begin{tabular}{@{}p{0.20\textwidth}p{0.20\textwidth}p{0.27\textwidth}p{0.24\textwidth}@{}}
+\begin{tabular}{@{}llll@{}}
 \resultstatusrows
 \end{tabular}
 \end{table*}
