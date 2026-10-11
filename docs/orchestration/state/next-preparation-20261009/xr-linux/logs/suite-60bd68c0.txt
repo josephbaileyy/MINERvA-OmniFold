@@ -1,0 +1,9 @@
+# Local suite at 60bd68c0's package content (run before the commit; xr_run.py, test_xr.py, mutation.py identical to 60bd68c0)
+# Python 3.13.7, ROOT 6.36.000, scikit-learn 1.8.0, LightGBM 4.6.0, numpy 2.4.6 (macOS venv); OMP_NUM_THREADS=1; scratch TMPDIR
+..............................
+Ran 57 tests in 264.670s
+OK
+real 265.20
+user 181.04
+sys 53.20
+exit=0

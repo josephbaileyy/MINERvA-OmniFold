@@ -1,0 +1,125 @@
+{
+ "environment": {
+  "origins": {
+   "ROOT": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/__init__.py",
+   "joblib": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/joblib/__init__.py",
+   "lightgbm": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/lightgbm/__init__.py",
+   "numpy": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/__init__.py",
+   "scipy": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/__init__.py",
+   "sklearn": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/__init__.py",
+   "threadpoolctl": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/threadpoolctl.py"
+  },
+  "packages": {
+   "joblib": "1.5.3",
+   "lightgbm": "4.6.0",
+   "numpy": "1.26.4",
+   "scipy": "1.16.3",
+   "sklearn": "1.8.0",
+   "threadpoolctl": "3.6.0"
+  },
+  "python": "3.11.14",
+  "root": "6.28/12",
+  "runtime": {
+   "basis": "supporting record only; the estimator's threads are established by thread_plan and the fit recorder",
+   "pools": [
+    {
+     "api": "openmp",
+     "getter": "omp_get_max_threads",
+     "num_threads": 12,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libgomp.so.1.0.0"
+    },
+    {
+     "api": "blas",
+     "getter": "openblas_get_num_threads",
+     "num_threads": 1,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libopenblasp-r0.3.30.so"
+    },
+    {
+     "api": "lightgbm",
+     "getter": null,
+     "num_threads": null,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/lightgbm/lib/lib_lightgbm.so"
+    },
+    {
+     "api": "openmp",
+     "getter": "omp_get_max_threads",
+     "num_threads": 12,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scikit_learn.libs/libgomp-e985bcbb.so.1.0.0"
+    },
+    {
+     "api": "blas",
+     "getter": "scipy_openblas_get_num_threads",
+     "num_threads": 1,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy.libs/libscipy_openblas-b75cc656.so"
+    }
+   ],
+   "source": "/proc/self/maps"
+  }
+ },
+ "environment_s": 11.357422715052962,
+ "environment_status": "ok",
+ "fixture_write": {
+  "bytes": 1244434,
+  "s": 15.900261686183512
+ },
+ "import_xr_run_s": 0.024091275176033378,
+ "launch_controls": {
+  "met": true,
+  "platform": "linux",
+  "probes": {
+   "find_library_c": {
+    "launches": [
+     {
+      "argv": "['/sbin/ldconfig', '-p']",
+      "call": "subprocess.Popen",
+      "stack": [
+       "<frozen runpy>:98:_run_module_code",
+       "<frozen runpy>:88:_run_code",
+       "linux_login_probe.py:52:<module>",
+       "xr_run.py:600:launch_controls",
+       "xr_run.py:595:<lambda>",
+       "util.py:353:find_library",
+       "util.py:293:_findSoname_ldconfig"
+      ]
+     }
+    ],
+    "outcome": "refused"
+   },
+   "loky_physical_cores": {
+    "launches": [
+     {
+      "argv": "['lscpu', '--parse=core']",
+      "call": "subprocess.Popen",
+      "stack": [
+       "<frozen runpy>:98:_run_module_code",
+       "<frozen runpy>:88:_run_code",
+       "linux_login_probe.py:52:<module>",
+       "xr_run.py:600:launch_controls",
+       "xr_run.py:592:<lambda>",
+       "context.py:269:_count_physical_cores_linux",
+       "subprocess.py:548:run"
+      ]
+     },
+     {
+      "argv": "['cat', '/proc/cpuinfo']",
+      "call": "subprocess.Popen",
+      "stack": [
+       "<frozen runpy>:98:_run_module_code",
+       "<frozen runpy>:88:_run_code",
+       "linux_login_probe.py:52:<module>",
+       "xr_run.py:600:launch_controls",
+       "xr_run.py:592:<lambda>",
+       "context.py:278:_count_physical_cores_linux",
+       "subprocess.py:548:run"
+      ]
+     }
+    ],
+    "outcome": "refused"
+   }
+  }
+ },
+ "launches_in_window": [],
+ "platform": "linux",
+ "thread_plan": "refused: CPU affinity 244 differs from the kind's 12 CPUs",
+ "total_s": 27.291771015152335
+}
