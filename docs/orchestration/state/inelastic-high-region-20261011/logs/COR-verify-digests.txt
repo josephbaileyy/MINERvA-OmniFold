@@ -1,0 +1,2 @@
+# 2026-10-11T22:54:37+00:00 id=COR-verify rc=0 cmd=python3 -I -c import sys; sys.path.insert(0,'.'); import common as C; d=C.verify('/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/inputs', list(C.DIGESTS)); print(len(d), 'inputs verified against pinned digests')
+14 inputs verified against pinned digests

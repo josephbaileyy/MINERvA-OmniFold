@@ -2,39 +2,56 @@
 
 **Date 2026-10-11. Owner: this session (inelastic-high-region lane). Base: remote `main` `3892e769`. Frozen plan
 [`PLAN.md`](PLAN.md), committed as `60d1405f` before any reduction, with two descriptive amendments (§8 there).
-This memo authorizes nothing, adopts nothing and contacted no one. Joseph owns the scientific decision.**
+Reviewed once (fresh, read-only) with one correction pass applied; see [`REVIEW.md`](REVIEW.md). This memo authorizes
+nothing, adopts nothing and contacted no one. Joseph owns the scientific decision.**
 
 Evidence labels used throughout: **[M]** measured here or in a cited committed receipt; **[D]** deduced
 analytically from [M] and stated definitions; **[A]** assumption; **[L]** literature, opened by the owner unless
 marked *(agent-read)*, meaning the delegated literature agent read it and the owner did not re-open it.
 
-## 1. Verdict: INCONCLUSIVE under the frozen rule; no new inelastic model is motivated by this region
+## 1. Verdict: INCONCLUSIVE under the frozen rule; GO not reached
 
-**Supported statement.** After separating rate, energy coverage, detector response and estimator effects, the
-high-E_avail / high-W region (A ≡ E_avail ≥ 0.8 GeV, W ≥ 1.8 GeV; "region C") carries a small
-normalization-removed residual against the complete-support external generators. Its size is
-ρ_C − 1 = +2.9% (GENIE 2.12.10 CV), +6.7% (GENIE + MEC) and +0.6% (NuWro 21.09) **[M]**. A coherent ±4%
-recoil-response scale moves that residual by ±3.7% **[M]**. The residual is not localized in the final-state
-energy partition. It sits in the inclusive muon-kinematics and energy-transfer factors **[M]**. Its sign also
-reverses inside C, from −2.8% in the non-overflow cells to +9.0% in the overflow cells (GENIE CV) **[M]**.
+**Supported statement.**
+- After separating rate, energy coverage, detector response and estimator effects, the high-E_avail / high-W
+  region (A ≡ E_avail ≥ 0.8 GeV, W ≥ 1.8 GeV; "region C") carries a small normalization-removed residual against
+  the complete-support external generators **[M]**:
+  - ρ_C − 1 = +2.85% (GENIE 2.12.10 CV), +6.65% (GENIE + MEC) and +0.62% (NuWro 21.09).
+  - A coherent ±4% recoil-response scale moves ρ_C by 3.7–4.0%.
+- **No single decomposition factor holds two thirds of the residual for any of the three [M].**
+  - The muon-shape step is the largest common component: +1.7% to +2.9%, with response sensitivity ±0.2%.
+  - The final-state-partition step is comparable for GENIE CV (+0.8% against a net +2.8%) and larger than the net
+    for NuWro (+1.7% against +0.6%).
+- The residual reverses sign inside C: −2.7% in the non-overflow cells and +9.4% in the overflow cells
+  (GENIE CV, linear) **[M]**.
 
-**Frozen rule outcome (PLAN §6).** S_C = 0.037, set by the response shift; the target effect is 0.0025. B_C =
-0.025.
-- **NO-GO fails narrowly**, because GENIE + MEC's 0.067 exceeds S_C.
-  - *Deduction [D]:* that excess comes from MEC's added low-A strength in the normalizing total. MEC's corner ratio
-    (1.139) equals GENIE CV's (1.142).
-- **GO fails** on magnitude (0.029 and 0.006 < 2 S_C = 0.074), on localization, and on candidate.
-- The result is **INCONCLUSIVE**.
+**Frozen rule outcome (PLAN §6).** Inputs as the plan defines them **[M]**:
+- S_C = 0.040, the largest linear ±4% shift of ρ_C over G (0.038–0.040). The target effect is 0.0025, so the response
+  shift sets S_C.
+- B_C = 0.031, the s5n regularization aggregate (0.025) plus the s5c background aggregate (0.007).
+- **NO-GO is not reached**, because GENIE + MEC's 0.067 exceeds S_C (1.7×).
+- **GO is not reached** on any criterion:
+  - magnitude: 0.029 and 0.006 < 2 S_C = 0.079;
+  - localization;
+  - candidate.
+- The result is **INCONCLUSIVE**. The verdict is the same with the pre-review values (S_C = 0.037, B_C = 0.025).
 
 **Bounded recommendation.**
-1. Do **not** develop or fit a new inelastic model from this region.
+1. The present evidence does not motivate developing or fitting a new inelastic model from this region. That is a
+   recommendation, not the rule outcome.
 2. The only independently constrained existing inelastic change found is the GENIE v3 H/D tune G18_02a_02_11b.
-   - It has the right sign in 1.4 ≤ W < 1.8 GeV, where the real normalization-independent discrepancy lies.
-   - A first-order emulation fails our Δ-region control. It lowers the 1.1–1.4 GeV prediction by 24% where GENIE CV
-     already matches, and it raises the rate deficit (§6.4).
+   - It has the right sign at 1.4 ≤ W < 1.8 GeV. That band holds the largest normalization-independent feature,
+     robust to the one coherent response scale tested.
+   - A first-order emulation on GENIE 2.12 events does not pass our Δ-region check (§6.1). It lowers the 1.1–1.4 GeV
+     prediction by 24% where GENIE CV already matches, and it raises the rate deficit.
+   - The emulation applies v3 parameters to GENIE 2.12's Rein–Sehgal resonances (v3 uses Berger–Sehgal). It also
+     omits W_cut and M_A^RES. **It is not a test of the tune itself.**
 3. The cheapest decision-relevant next step is not a model. It is a species-dependent recoil-response family
    propagated on the data side, costed in §8.
 4. GO would have authorized no compute. INCONCLUSIVE authorizes none either.
+
+**Post-hoc observation, outside the rule [D].** GENIE + MEC's larger ρ_C comes from MEC's added strength in the
+normalizing total: +4.0% of the total, 90% of it at A < 0.8 (review). Its corner ratio (1.139) equals GENIE CV's
+(1.142). This observation is recorded for interpretation. It does not change the rule's inputs.
 
 **What this memo does not claim.** It assigns no significance. It does not use the adopted 5D covariance, any
 quarantined significance or any s5p p-value as a test of a mechanism. It does not read generator channel labels as
@@ -47,8 +64,8 @@ observed mechanisms. It does not claim that flux explains the rate difference.
   this is not independent domain validation.
 - **Budget [M].** Aggregate cap 7,200 core-s, enforced by [`code/budget.py`](code/budget.py); ledger
   [`logs/budget_ledger.jsonl`](logs/budget_ledger.jsonl). Owner reductions used **1,092.1 core-s**, of which
-  **900 core-s** is one crashed cluster run charged its full cap by the conservative rule (§10). The total after
-  review is in `REVIEW.md`.
+  **900 core-s** is one crashed cluster run charged its full cap by the conservative rule (§10). After review and the correction pass the ledger total is **1,100.9 core-s of 7,200**: the owner
+  1,093.6 (including a 1.5 core-s digest verification in the correction pass) and the reviewer 7.3 ([`REVIEW.md`](REVIEW.md)).
 - **Not done.** No GPU, generation, detector simulation, fit, unfolding, covariance, adoption or contact.
 - **Baseline.**
   - Remote `main` `3892e769` was fetched and checked out in the isolated worktree on branch
@@ -103,8 +120,9 @@ cross section, not a sparse tail [M].**
 - **[M]** The rate difference is the dominant effect: R_total − 1 = 7–15% for the complete-support predictions.
 - **[M]** The published 2D measurement, which involves no hadronic axis, already shows it against Tune v1.
   Released `paper_v` / `tune_v1_v` gives **1.118** overall; this analysis's 2D gives 1.130 (ours/paper 1.011).
-  The ratio rises with p_T, with ρ from 0.83 at p_T < 0.07 GeV/c to 1.10 at 1.25–1.5 GeV/c, and is 1.195 for
-  p_T > 0.85 GeV/c (`code/a1b_published_rate.py`).
+  The ratio rises with p_T. The normalization-removed ρ goes from 0.74 at p_T < 0.07 GeV/c (0.84 at 0.07–0.15) to
+  1.10 at 1.25–1.5 GeV/c, and is 1.07 for p_T > 0.85 GeV/c, where paper/Tune v1 = 1.195
+  (`code/a1b_published_rate.py`).
 - **[D]** Normalizing shapes removes this rate by construction. That is a diagnostic. It does not show that flux
   explains the rate.
 - **[M]** The analysis flux is already the ν-e-constrained flux, and data and predictions share it.
@@ -113,7 +131,8 @@ cross section, not a sparse tail [M].**
   - NOMAD Table 3 (arXiv:0711.1183): 0.763 ± 0.038 (6.5), 0.716 ± 0.034 (9.5), 0.705 ± 0.025 (11.5),
     0.698 ± 0.025 (16.2);
   - MINOS Table III (arXiv:0910.2201): 0.708 ± 0.032 (5.89), 0.708 ± 0.020 (16.42), 0.689 ± 0.016 (19.87).
-- **[D]** GENIE therefore matches world inclusive σ/E within 1–2% above 9 GeV, and within NOMAD's 5% at 6.5 GeV. An
+- **[D]** GENIE therefore matches world inclusive σ/E within 1–2% above 9 GeV. At 6–6.5 GeV the two data sets
+  bracket it: GENIE is 5.9% below NOMAD (1.2σ) and 1.4% above MINOS at 5.9 GeV. An
   ~11% increase of the inclusive inelastic cross section at 5–20 GeV would conflict with those data.
 - The rate difference is therefore **not** a motivation for an inelastic change. Its origin (flux normalization,
   efficiency, target count, or the inclusive cross section below 5 GeV) is **unresolved here**.
@@ -144,7 +163,8 @@ only **6.0% of C** and 76.4% of M.
 | ρ_C on S20 ∩ C | 1.077 | 0.899 | 0.982 | 0.799 | **1.381** |
 | ln ρ_M on S20 | −0.123 | −0.204 | −0.161 | −0.017 | +0.123 |
 
-**[M]** On its complete support GiBUU 2019 is still 29% below the data overall and 78% below in S20 ∩ C. Its
+**[M]** On its complete support the data still exceed GiBUU 2019 by 29% overall and 78% in S20 ∩ C, i.e. GiBUU is
+22% and 44% below the data. Its
 deficit is therefore **not only** the 20 GeV cap (VL161 had attributed its *extra corner* shortfall to the cap).
 
 **[L]** *(agent-read)* GiBUU's 2025 paper (arXiv:2507.20539, §IV, Fig. 5a) introduces a two-pion background and
@@ -188,7 +208,8 @@ W² = M² + 2Mω − Q̃²,
 
 $$(M+\omega)^2 = W^2 + q_3^2 - (Q^2-\tilde Q^2),\qquad Q^2-\tilde Q^2 = 2E_\nu(E_\mu-p_\mu)\cos\theta - m_\mu^2 \ \ge\ -m_\mu^2 .$$
 
-So (q3, W) fix ω up to m_μ²-sized terms, and with the muon cell they fix E_ν. That is the S20 bound used above.
+So (q3, W) bound ω from above, ω ≤ (W² + q3² + m_μ²)^½ − M. Q² − Q̃² is not small at high y, so (q3, W) do not fix ω
+exactly. With the muon cell this bounds E_ν, which is the S20 bound used above.
 
 Two consequences follow:
 1. **Truth W and q3 are inclusive variables.** At fixed incident energy, the distribution of (p_T, p_∥, q3, W) is
@@ -235,8 +256,9 @@ factors into each prediction one at a time splits ln R_C into four steps:
 3. transfer | muon (inclusive tensor × flux shape at fixed muon);
 4. A | transfer (final-state partition plus response).
 
-Code: `code/reduce_r3.py`. The two substitution orders agree to ≤ 0.004 in every step. MC-statistical spreads from
-200 `sumw2` replicas are ≤ 0.004 per step. Prediction-empty (m, t) cells hold ≤ 0.06% of the data, except GiBUU
+Code: `code/reduce_r3.py`. For the complete-support predictions and Tune v1, the two substitution orders agree to
+≤ 0.0045 in every step. GiBUU differs by up to 0.022 (C_overflow partition). MC-statistical spreads from 200 `sumw2`
+replicas are ≤ 0.0045 per step, and 0.0056 for GiBUU. Prediction-empty (m, t) cells hold ≤ 0.06% of the data, except GiBUU
 (4.6%, its cap).
 
 | ln ρ_C split (inclusive-first) | muon shape | transfer \| muon | A \| transfer | ln ρ_C |
@@ -245,10 +267,16 @@ Code: `code/reduce_r3.py`. The two substitution orders agree to ≤ 0.004 in eve
 | GENIE CV | +0.017 | +0.004 | +0.008 | +0.028 |
 | GENIE + MEC | +0.029 | +0.028 | +0.008 | +0.064 |
 | NuWro | +0.024 | −0.034 | +0.017 | +0.006 |
-| GiBUU (cap) | +0.015 | +0.094 | +0.039 | +0.148 |
+| GiBUU, full domain (support-contaminated) | +0.015 | +0.094 | +0.039 | +0.148 |
 | GENIE CV, non-overflow C | −0.007 | −0.035 | +0.014 | −0.028 |
 | GENIE CV, overflow C | +0.044 | +0.046 | +0.001 | +0.090 |
 | GENIE CV, **M** | −0.010 | **−0.184** | 0 (by construction) | **−0.195** |
+| *S20 ∩ C, the plan's GiBUU domain (6% of C):* | | | | |
+| Tune v1 | −0.024 | +0.081 | +0.018 | +0.074 |
+| GENIE CV | −0.015 | −0.121 | +0.030 | −0.106 |
+| GENIE + MEC | −0.023 | −0.034 | +0.038 | −0.019 |
+| NuWro | −0.040 | −0.229 | +0.045 | −0.225 |
+| GiBUU | +0.015 | +0.240 | +0.068 | +0.323 |
 
 **Per-W profile [M]** (amendment A1-a, `code/reduce_r4b.py`). Entries are ln ρ per analysis W bin, with all A
 included, and the ±4% recoil shift of the same quantity.
@@ -265,14 +293,18 @@ included, and the ±4% recoil shift of the same quantity.
 See [`results/fig_contrast_by_W.png`](results/fig_contrast_by_W.png).
 
 **What the decomposition shows.**
-1. **[M]** The partition step is small in C (+0.006 to +0.017 for complete-support predictions) and order-independent.
-   Inside C the residual is in the inclusive steps.
+1. **[M]** The partition step in full C is +0.008 to +0.017 for the complete-support predictions (Tune v1 +0.006). It
+   is order-independent and positive for every prediction. No single step holds two thirds of ln ρ_C for every G.
+   - For GENIE CV the steps are muon 59%, partition 27% and transfer 13%.
+   - For NuWro the muon (+0.024) and partition (+0.017) steps are offset by the transfer step (−0.034).
+   - On S20 ∩ C (the low-ω corner) the partition steps are larger, +0.030 to +0.045. There all complete-support ρ_C
+     are below 1.
 2. **[M]** The response-robust component is the **muon-shape step**: +0.017 to +0.029, with response sensitivity
    ±0.002.
    - **[D]** It is inherited from the (p_T, p_∥) distribution, which the published measurement already shows
      (§4.2: ρ rises with p_T).
-   - **[L]** *(agent-read)* Ruterbories et al. (PRD 104, 092007, §VI) describe their p_T ≫ 0.85 region as
-     "dominated by the 'True DIS' process".
+   - **[L]** *(agent-read)* Ruterbories et al. (PRD 104, 092007, §VI) describe their high-p_T (> 0.85 GeV/c)
+     region as "dominated by the 'True DIS' process" for p_∥ > 6 GeV/c.
    - So this component is an inclusive muon-kinematics (Q²/y) shape discrepancy that was already published, not a
      new hadronic-axis finding.
 3. **[M]** The transfer step is the response-degenerate one. ±4% recoil moves ln ρ_C's transfer step by ±0.033,
@@ -280,8 +312,11 @@ See [`results/fig_contrast_by_W.png`](results/fig_contrast_by_W.png).
    - The W ≥ 3 excess (+0.09 to +0.15) is at most twice that shift.
    - **[M]** In GENIE, 46% of the W ≥ 3 cross section comes from E_ν ≥ 20 GeV (mean 22 GeV). The high-energy
      flux-tail *shape* is therefore a further competitor there.
-4. **[M]** The largest normalization-independent feature is outside C: GENIE (and Tune v1) overshoot at
-   1.4–2.2 GeV, ln ρ −0.19 and −0.09. It sits in the inclusive transfer step and moves only ±0.01 under ±4% recoil.
+4. **[M]** The largest normalization-independent feature is outside C. GENIE overshoots at 1.4–2.2 GeV (ln ρ −0.19
+   and −0.09); Tune v1 overshoots at 1.4–1.8 only (−0.12). It moves only ±0.01 under the one coherent ±4% recoil scale
+   tested. Species-dependent response and prior leakage into the unfolded (q3, W) were not tested.
+   - **[D]** That a W-only region's residual "sits in the transfer step" holds by construction: its partition step is
+     identically zero.
    NuWro shows it only at 1.8–2.2 GeV.
 
 **Partition at fixed transfer, W ≥ 1.8 [M].** At W ≥ 1.8 the data put fewer events at A < 0.8 than GENIE CV
@@ -359,7 +394,8 @@ The "DIS" label in M includes GENIE's non-resonant background below W_cut = 1.7 
 
 **First-order emulation on our events [M]** (amendment A1-d: `code/r5b_tune_emulation.py`,
 `code/reduce_a1d.py`). Method:
-- Reweight the existing GENIE CV events: RES × 0.84; DIS × 1.062/1.032.
+- Reweight the existing GENIE CV events: RES × 0.84; DIS × 1.062/1.032. The 1.062 is the code value 1.062213
+  *(agent-read, GENIE `CommonParam.xml`)*; Table VI gives 1.06 ± 0.01.
 - Non-resonant (DIS, W_gen < 1.7) multiplicity-2 and multiplicity-3 events × R_new/R_old, by struck nucleon. Of the
   ni = 2 non-resonant events, 99.2% have exactly one primary pion.
 - W_cut and RES-M_A are not reweightable and are omitted.
@@ -382,7 +418,10 @@ The "DIS" label in M includes GENIE's non-resonant background below W_cut = 1.7 
 - Caveats: the omitted W_cut move (1.7 → 1.81) shifts strength from DIS into RES + NRB in 1.7–1.81 GeV, partly
   offsetting the W 1.8–2.2 change. The tune was fitted to H/D, not CH; nuclear effects on the Δ (absorption, which
   Tune v1 handles through its own ×0.57 non-resonant reduction) are outside it.
-- **This is a sign-and-size check, not a GENIE v3 prediction.**
+- The resonance model differs: G18_02a uses Berger–Sehgal resonances, GENIE 2.12.10 uses Rein–Sehgal. S_RES = 0.84 is
+  defined relative to the v3 model, so ×0.84 applied to Rein–Sehgal is not equivalent. M_A^RES (1.09 in Table VI
+  against 1.12 in Table III) is also omitted.
+- **This is a sign-and-size check on GENIE 2.12 events, not a GENIE v3 prediction. It cannot falsify the tune.**
 
 **Sign expectations and overshoot risks [D].**
 - A pure DIS scale raises C, the total and, through NRB = DIS × R_ij, also W < W_cut. It therefore worsens GENIE's M
@@ -410,12 +449,14 @@ The "DIS" label in M includes GENIE's non-resonant background below W_cut = 1.7 
 
 ### 6.3 Explanation (iii): response and estimator (competing explanation)
 
-**[M]** This explanation is sufficient in size for every part of the C residual that is not muon-shape:
+**[D]** In size, this explanation matches every part of the C residual that is not muon-shape **[M]**:
 - the transfer step: ±0.033 at 4%;
 - the W ≥ 3 excess: ±0.07;
 - the partition differences: estimator scale 10–74%.
 
-It is not sufficient for GENIE's 1.4–2.2 GeV overshoot (±0.01) or for the muon-shape step (±0.002).
+It does not reconcile the predictions with one another. A data-side coherent scale shifts the transfer step by the
+same ±0.033 for every G, while the transfer steps differ across G by 0.062 (+0.004, +0.028, −0.034). It is too small
+for GENIE's 1.4–2.2 GeV overshoot (±0.01) and for the muon-shape step (±0.002).
 
 ### 6.4 MINERvA SIS and DIS selections and overlap [L]
 
@@ -428,6 +469,11 @@ It is not sufficient for GENIE's 1.4–2.2 GeV overshoot (±0.01) or for the muo
 - **[D]** Its sample is a W slice of the same exposure and muon selection. It is not independent of ours, and any joint
   use needs a shared-event covariance.
 
+- **[D] Sign comparison.** Lozano's preferred direction (less reduction of non-resonant pions, at 1.5 < W < 2 GeV and
+  Q² ≥ 1 GeV²) is opposite to 02_11b's near-removal of the 1π non-resonant background. The two cover different
+  kinematics, on CH versus H/D. Even so, an existing constrained inelastic change does not agree with the
+  same-exposure SIS measurement in direction.
+
 **DIS (agent-read).** Mousseau et al. (LE, PRD 93, 071101, Table I) fit a high-W / low-Q² sideband at ×1.57 against
 ×0.94 at low W. That is the same sign pattern on a different exposure, but it is a reco-template fit.
 
@@ -436,23 +482,27 @@ It is not sufficient for GENIE's 1.4–2.2 GeV overshoot (±0.01) or for the muo
 | Rank | Explanation | Reach for C | Independent constraints | Identifiability now | Verdict |
 |---|---|---|---|---|---|
 | 1 | (iii) Response / estimator / flux-tail shape | sufficient in size for the non-muon part of C | test beam (p, π, e only), ν-e flux | high: one measured family exists; species family is the missing input | **leading competitor** |
-| 2 | (i) RES–SIS–DIS matching (02_11b family) | right sign in M and W ≥ 3, wrong at 1.8–2.2 and Δ at first order | H/D bubble chamber; NOMAD/MINOS σ/E | needs a real GENIE v3 prediction (W_cut) | **the one constrained candidate, motivated by M, not by C; not selected for development** |
+| 2 | (i) RES–SIS–DIS matching (02_11b family) | right sign in M and W ≥ 3, wrong at 1.8–2.2 and Δ in a first-order emulation on GENIE 2.12 events | H/D bubble chamber; NOMAD/MINOS σ/E | needs a real GENIE v3 prediction (W_cut, Berger–Sehgal RES); same-exposure SIS prefers the opposite NRB direction | **the one constrained candidate, motivated by M, not by C; not selected for development** |
 | 3 | (ii) Partition / FSI / hadronization | only through A\|t (≤ 1.7%) | hadron–nucleus data, e-scattering knockout | not identifiable with this estimator | none |
 
 **Selection.** None is selected as a GO candidate for region C. If Joseph wants one physics test, it is explanation
 (i), evaluated through the official GENIE v3 02_11b configuration rather than a new model. It would test M and the W
 profile, not C (§8).
 
-## 7. Falsification tests (each a frozen prediction, not a fit)
+## 7. Proposed falsification tests (written after the data were seen; thresholds tied to tabulated values; none is a fit)
+
+Any decision from these tests needs a new frozen rule, like PLAN §6. The outcomes below are proposals, not
+pre-declared verdicts.
 
 1. **Response degeneracy of C.** If one-standard-deviation species-dependent recoil variations (π± 5%, EM 3%, p 3.5%,
-   n 10–25%) move ln ρ_W≥3 or the transfer step of ln ρ_C by at least the observed values (+0.15 / +0.04), the
-   high-region residual is response-degenerate. That is NO-GO for any high-region model.
+   n 10–25%) move ln ρ_W≥3 by at least the observed per-G values (GENIE CV 0.152, GENIE + MEC 0.191,
+   NuWro 0.088), or ln ρ_C by at least the observed per-G values (0.028, 0.064, 0.006), then the high-region residual
+   is response-degenerate. That would argue against a high-region model.
 2. **02_11b family.** A real GENIE v3 G18_02a_02_11b CH prediction on the analysis flux is falsified for this
    measurement if it overshoots the Δ bin (|ln ρ_W1.1–1.4| > 0.10) or worsens R_total by more than 3%. It passes the
    intermediate-W test if it reduces |ln ρ_M| below 0.10 without either.
 3. **Muon-shape component.** Any inclusive change offered for C must reproduce the published ρ(p_T) rise
-   (0.83 → 1.10) without changing the Δ region. A low-Q² change predicts the opposite p_T trend.
+   (ρ 0.74 → 1.10 across p_T) without changing the Δ region. A low-Q² change predicts the opposite p_T trend.
 4. **Partition.** A claimed FSI/hadronization change must predict the A|t pattern at W ≥ 1.8 and leave the muon and
    transfer steps unchanged. It cannot be evaluated until an estimator follows A-shape departures (§5.3).
 
@@ -480,7 +530,7 @@ profile, not C (§8).
 
 | Stage | Work | Cost basis | Decision it answers |
 |---|---|---|---|
-| V1 | 8 data-side species variations (4 species × ±1σ) through the W2B machinery and estimator R | measured W2B: 1.898 billed CPU node-h for 3 variants → **≈ 5 CPU node-h** for 8 [M→A] | test 1: is C response-degenerate? A positive answer ends the high-region question (NO-GO) |
+| V1 | 8 data-side species variations (4 species × ±1σ) through the W2B machinery and estimator R | measured W2B: 1.898 billed CPU node-h for 3 variants → **≈ 5 CPU node-h** for 8 [M→A] | test 1: is C response-degenerate? A positive answer would argue against a high-region model, under a new frozen rule |
 | V2 | GENIE v3.06.02 G18_02a_02_11b and AR23_20i, CH mixture, 1M + 0.1M (50–100 GeV) events each, through the existing converter | GENIE v3 throughput unmeasured here; **assumed** 5–50 ms/event → 1.5–15 core-h per configuration. A 10⁴-event pilot (≤ 0.2 core-h) measures it first. Official splines assumed usable [A] | tests 2–3 |
 | V3 | Only if V1 is negative and V2 passes: review and Joseph's decision on any implementation | — | — |
 
@@ -515,10 +565,15 @@ python3 -I code/budget.py run --id A1d-red --cap-s 60 -- python3 -I code/reduce_
 python3 -I code/make_figure.py results results/fig_contrast_by_W.png
 ```
 
+**Digests.** After the review, `code/common.py` pins every input (14), including the W2B unfolds
+(manifests), the frozen estimator-R central (`fb5cc679…`) and the three jitters (recorded on first read). They are
+verified in ledger entry `COR-verify`. The amendments, their results and the memo landed together in `f0352ea4`.
+The "after R1/R3" ordering of the amendments is stated, not git-evidenced.
+
 **Emulation array.** `r5b_tune_emulation.npz` (SHA-256 `4139c4e9…`, 1.05 MB) stays in the cluster scratch
 directory and is not committed. Its reduction is committed.
 
 **Budget.** The first R5 attempt crashed on an RVec conversion and was charged its full 900 core-s cap. Its log was overwritten by the rerun's (same path); the ledger keeps its rc = 255 entry. The rerun used
 39.3 core-s, the hydrogen-code fix 39.5 core-s and the emulation 35.7 core-s.
 
-**Owner budget [M]: 1,092.1 core-s of 7,200 before review** (19.4 core-s of it reran five local reductions only to key their digests by canonical path; no number changed).
+**Budget [M]: 1,092.1 core-s of 7,200 before review; 1,100.9 after review (7.3) and correction (1.5)** (19.4 core-s of it reran five local reductions only to key their digests by canonical path; no number changed).

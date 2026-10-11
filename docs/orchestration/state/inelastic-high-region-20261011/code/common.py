@@ -23,9 +23,16 @@ DIGESTS = {
     "nuwro_cv_xsec5d_full.npz": "475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070",
     "gibuu_cv_xsec5d_fluxfix.npz": "48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18",
     "fig_arrays.npz": "72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8",
-    "w2b/w2b_rrzero_b-_j-.npz": None,
+    # W2B manifests (publication/w2/w2b-results/*/manifest.json)
+    "w2b/w2b_rrzero_b-_j-.npz": "ec5dc97d8554f008902a17428724e8482544d6e6de7db5ae1155d96d51dc4c4e",
     "w2b/w2b_rr0_b-_j-.npz": "df11bfd8e879a051d3d0bf2aa5fc4e0131efa9065bcbd89d29a859ddb9f8639b",
-    "w2b/w2b_rr1_b-_j-.npz": None,
+    "w2b/w2b_rr1_b-_j-.npz": "36313201ecffa85183fa83d642c9b0b71dc67f9ed1743dba7184eb22c41356a8",
+    # frozen estimator-R data central (W2B report section 4: fb5cc679...)
+    "s5pdata/data_b-_j-.npz": "fb5cc6798b97b5902ad8f0fecbc49990271f7772f98d3063c1dc8596340e680c",
+    # numerical jitters: no external reference digest; pinned as recorded on first read, 2026-10-11
+    "s5pdata/data_b-_j1.npz": "1167923a18a60f5f42332b7c1d0a0778c32af24bed73054bb97e330da5b2399c",
+    "s5pdata/data_b-_j2.npz": "015093815820df594a81e7775817f2dbc999f645b555d5601d5b899038e5a0dc",
+    "s5pdata/data_b-_j3.npz": "d77f58eeffd0a5c4bffbe02a0c21d27dd3a784bf3d471ca15e73fa2a222a64b1",
 }
 PREDICTIONS = {
     "TuneV1": "mnvtune_v1_xsec5d.npz",

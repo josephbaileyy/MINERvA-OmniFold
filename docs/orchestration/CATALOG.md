@@ -119,14 +119,16 @@ stay with the integration owner. Registration grants no compute, experiment, ado
 ### High-E_avail / high-W inelastic investigation, 2026-10-11 — task branch, INCONCLUSIVE
 
 Bounded reduction study under Joseph's 2026-10-11 prompt (≤ 2 CPU core-h of reductions of existing products; no
-generation, fits, unfolding, covariance, adoption or contact). Verdict INCONCLUSIVE under the frozen rule: the
-corner's normalization-removed residual (+0.6% to +6.7%) is inclusive, response-degenerate and not a partition
-effect; no new inelastic model is motivated. Grants no compute, contact or adoption authority.
+generation, fits, unfolding, covariance, adoption or contact). Verdict INCONCLUSIVE under the frozen rule (GO not
+reached): the corner's normalization-removed residual (+0.6% to +6.7%) is comparable to a ±4% recoil-scale shift,
+is localized in no single factor, and reverses sign inside the region. The recommendation is not to develop a new
+inelastic model from it. Grants no compute, contact or adoption authority.
 
 | record | path |
 |---|---|
 | frozen plan, decision rule and amendments | [`state/inelastic-high-region-20261011/PLAN.md`](state/inelastic-high-region-20261011/PLAN.md) |
 | research memo: rate/shape/coverage, decomposition, literature, ranking, costed proposal | [`state/inelastic-high-region-20261011/REPORT.md`](state/inelastic-high-region-20261011/REPORT.md) |
+| one read-only review and the correction-pass dispositions | [`state/inelastic-high-region-20261011/REVIEW.md`](state/inelastic-high-region-20261011/REVIEW.md) |
 
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
