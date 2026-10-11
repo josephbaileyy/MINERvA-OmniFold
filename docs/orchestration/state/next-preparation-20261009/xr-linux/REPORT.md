@@ -136,3 +136,89 @@ comparable receipt. The 72-h stop is passed to Slurm as `--deadline`.
 - **L-arm FAIL:** first examined for a thread-count cause against the ≤ 5.8e-9 prior (the
   64-versus-128-thread difference pre-registered in the two-d-followup REPORT B1); the criterion does
   not change.
+
+## 4. Admission: PASS
+
+- **Review** (`review/admission-review-60bd68c0.md`, verbatim): **ADMIT** at package `60bd68c0`,
+  manifest `5d2f5955…` re-hashed by the reviewer. One MINOR finding (E-1: a *repaired* package's
+  accounting would not import this package's `xrl` attempts). It applies only to a repair after a
+  failed first preflight. None happened, so E-1 never became live. Notes E-2 to E-4, A-1 to A-4,
+  B-1, C-1 and D-1 confirm the time budget, the thread plan on a correct allocation, both job
+  controls on Linux, the scientific definitions unchanged against `07428e5d`, the driver pin and
+  the accounting. E-3 led to the pre-registration above. Reviewer window 05:49:49Z–06:10Z.
+- **Authorization.** `docs/orchestration/AUTHORIZATION-20261011-xr-linux.md` quotes the dispatch and
+  binds package `60bd68c05ad89116ac5a4bca5f925f8da1240e4e` and manifest `5d2f5955…`. It has one
+  `MANIFEST-overrides.tsv` row and one `CATALOG.md` routing row.
+- **Admission record.** `/pscratch/sd/j/josephrb/xr-linux-20261011/admission.json`, sha256
+  `6b7660f4…`, drafted with `xr_admit.py draft` on the cluster worktree
+  `MINERvA-OmniFold-xrl-92386d3f`. That worktree is detached at `92386d3f` (this branch, after the
+  amendment commit), with `git status --porcelain` empty at the start and before every submission.
+  The canonical cluster checkout (`32e403b8`) was not moved.
+  It is held off the tracked tree (results/README.txt): tracking it adds one live receipt
+  binding, and the verifier constants belong to integration (§9).
+- **Ledger before the first submission.** The six prior jobs (both earlier grants) were matched
+  in sacct. Prior charge 2132/921600 = 0.002313368055555556 node-h; `over: []`.
+
+## 5. Preflight: PASS (one of two allowed attempts used)
+
+Job **59659845** `xrl_PF_a1`, submitted 2026-10-11T06:13:23Z. That submission starts the 72-h window,
+which ends **2026-10-14T06:13:23Z** and is passed to Slurm as `--deadline`. The job ran on
+`nid004085` from 06:41:05 to 06:43:32Z: ElapsedRaw 147 s of the 300-s limit, billing 12,
+COMPLETED 0:0. The receipt is `results/outroot/PF/a1/preflight-receipt.json` (sha256 `50907f29…`,
+schema `xr-preflight-receipt/2`, `status: preflight-pass`, `launches: []`). It shows:
+
+- **Allocation and admission.** `jobcheck` passed on the real RUNNING `scontrol` line
+  (`scontrol-job.txt`; QOS shared, 12 CPUs, AllocTRES `billing=12`, 00:05:00), and
+  `verify` passed.
+- **Job controls, both met.**
+  - `jobcheck --run L0` against this allocation: rc 3, "allocation outside the frozen caps"
+    (NumCPUs 12 ≠ 64).
+  - The guarded `xr_guard_control.py`: rc 3. The guard refused `/sbin/ldconfig -p`, and the
+    control's inventory verdict is `REFUSED launch` (`results/controls-PF-a1.txt`).
+- **Thread plan.** affinity 12, `os.cpu_count()` 256, joblib physical and logical counts 12,
+  `LOKY_MAX_CPU_COUNT` unset, `OMP_NUM_THREADS` 12.
+- **Environment.** Python 3.11.14, ROOT 6.28/12, joblib 1.5.3, lightgbm 4.6.0, numpy 1.26.4,
+  scipy 1.16.3, sklearn 1.8.0, threadpoolctl 3.6.0, all equal to the frozen environment. The
+  child-free runtime record lists libgomp at 12 threads and OpenBLAS at 1.
+  - The separate `environment.packages` provenance field reads `null` for every package. It comes
+    from the shared `n2` execution record, which looks up distributions by another route; the
+    frozen check, `environment_checked`, is the one that gates.
+- **Production inputs.** Both inputs hashed to their frozen digests (omnifile `43f8cc16…`,
+  2,144,008,221 bytes on CFS; mcfile `d40aea69…`). The guard inventory verdict is
+  `REPOSITORY-ORIGINS-INSPECTED`.
+- **Fixture stage: PASS**, all six checks true.
+  - The five configurations and the L0 repeat ran end to end on SB1's 3,000-row fixture, each
+    with its frozen classes and seeds.
+  - LightGBM used 12 threads at every fit and every predict.
+  - The L0 repeat was bitwise equal in 176 of 176 cells: comparator PASS, max 0.
+  - The comparator FAILs X0 against L0 (max 0.725), as the control requires.
+  - All four refusal and launch controls were met.
+- **Wall time.** `xr_run` took 104 s inside the 147-s job.
+
+Under the release rule, this receipt was the gate for L0.
+
+## 6. Execution
+
+| run | job | submitted (UTC) | ran (UTC) | ElapsedRaw | billing | state | receipt |
+|---|---|---|---|---|---|---|---|
+| PF | 59659845 | 10-11 06:13:23 | 06:41:05–06:43:32 | 147 | 12 | COMPLETED 0:0 | preflight-pass |
+| L0 | 59660487 | 10-11 06:44:07 | 08:24:41–08:38:37 | 836 | 64 | COMPLETED 0:0 | complete |
+| X0 | 59664200 | 10-11 08:41:25 | _pending_ | | 12 | | |
+| X0p | 59664201 | 10-11 08:41:28 | _pending_ | | 12 | | |
+| X1 | 59664202 | 10-11 08:41:31 | _pending_ | | 12 | | |
+| L1 | 59664203 | 10-11 08:41:34 | _pending_ | | 64 | | |
+
+**L0 first, and the release.** L0 (`results/outroot/L0/a1/receipt.json`) ran on `nid004128`. Its
+receipt shows:
+
+- `status: complete`, `launches: []`;
+- 10 classifier and 5 regressor fits, with frozen classes and `random_state` 42/43/44;
+- 64 LightGBM threads at all 15 fits and all 15 predict calls (affinity 64 of 256, joblib 64);
+- identity rechecked;
+- both inputs re-hashed against their frozen digests at the end. The digests are checked; the
+  end record keeps stat fields only;
+- output `XR-L0.root`, sha256 `75138024…`, 205 reported cells, and the 7 normalization parameters.
+
+The guard inventory verdict is `REPOSITORY-ORIGINS-INSPECTED`. The release gate in `xr_submit.sh`
+accepted this receipt, and X0, X0p, X1 and L1 were submitted together at 08:41Z, with no diagnosis
+(first attempts).
