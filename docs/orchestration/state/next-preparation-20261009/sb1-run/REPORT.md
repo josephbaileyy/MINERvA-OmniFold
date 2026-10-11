@@ -288,8 +288,10 @@ uses only the standard library.
     output is under the outroot, and nothing was cancelled.
   - Only X0 and X0p (22:45:15–22:45:34Z) overlapped an SB1 job (SL), and they ran on another node
     (nid004092). L1 ran on J1's node (nid004101) at 00:23:52Z, after J1 ended at 00:22:54Z.
-  - P checks the env setup's digest and every input's stat at every SB1 job's start and end, and it
-    passed (§7). So they changed nothing SB1 read.
+  - Every input's stat is checked at each SB1 job's start and end against H0, and H1 = H0 (§7.5).
+    The top-level env setup's digest is checked once, at each job's start, against the digest
+    recorded at submission; its two sourced sub-setups are not covered (finding 3 of §8). So the xr
+    jobs changed none of SB1's inputs or its top-level setup.
   - The 20:00Z admission snapshot showed an empty queue; these jobs were submitted at 22:34Z.
 - **Condition C1.** After the final `status`, `squeue --me -t all` listed H1 (`COMPLETED`) at
   01:35:18Z and 01:40:50Z. It listed no row at all at 01:42:09Z
@@ -321,7 +323,7 @@ reinterpreted after the results.
 
 | criterion | rule (frozen) | measured | verdict |
 |---|---|---|---|
-| P | every receipt strict and guarded at `2b35ba52` with the admitted module digests; inputs' stat equal to H0 at each job's start and end; H1 = H0; one env-setup digest; every guard inventory on the admitted checkout alone | `problems: {}`; all 15 receipts (13 complete, 2 refused controls) and all 15 guard inventories clean; one env digest `ea3c6998…` | **PASS** |
+| P | every receipt strict and guarded at `2b35ba52` with the admitted module digests; inputs' stat equal to H0 at each job's start and end; H1 = H0; one env-setup digest; every guard inventory on the admitted checkout alone | `problems: {}`; all 15 receipts (13 complete, 2 refused controls) pass; all 15 guard inventories satisfy P's rule (installed on the admitted checkout alone, `allow` empty, 0 origins outside, the manifest's shim, `violation` null). UL's and SL's inventories also record one **refused child launch** each (`lscpu --parse=core`), which P's rule does not test (§7.6); one env digest `ea3c6998…` | **PASS** |
 | S1 | byte-identical loader digests and equal settings in the lateral, vertical and CV patterns; selective verified before first read; all arm entered fully active | lateral, vertical, cv and cv-unfold-vs-loaders difference lists all empty; arm checks empty | **PASS** |
 | NC | both J1 activation controls refused with exit 5 before any loader returned | omit: exit 5 (`SetBranchAddress on inactive branch 'w_reco_Flux_0'`); extra: exit 5 (`active … != derived`, extra `w_truth`); `loaders == []` for both | **PASS** |
 | S2 | SL MaxDiskRead ≤ 10 GB and ≤ 0.1 × UL | 2.3578 GB vs 171.2978 GB, ratio 0.01376 | **PASS** |
@@ -351,7 +353,11 @@ GB here is 10⁹ bytes of sacct's KiB values, as in the verifier.
   deactivates nothing. Its equality holds, but trivially. It also shows that the unfold run's loaders
   equal the loaders-only run.
 - **Measured vertical loader times (J1, not a criterion; 64-CPU shared allocation, one thread).** The
-  load phase and the bytes it read (`/proc/self/io` `read_bytes`), all → selective:
+  load phase and the bytes it read (`/proc/self/io` `read_bytes`), all → selective. **Not a matched
+  pair:** the four `all` runs ran concurrently (all started at 23:53:19Z, as the launch spec says),
+  while the four `selective` runs ran one after another (00:16:14Z → 00:21:51Z). So the `all` times
+  include four-way contention for the node and the filesystem, and may overstate a single job's
+  saving:
 
   | tree | load phase | bytes read |
   |---|---|---|
@@ -366,6 +372,8 @@ GB here is 10⁹ bytes of sacct's KiB values, as in the verifier.
   any bin of any histogram is 6.40 × 10⁻¹³, in `hXSec2D`, below the frozen 10⁻⁸ tolerance. S5 is
   therefore PASS-AT-TOLERANCE and is not unresolved.
   - The verifier's note stands: the 128-thread rerun envelope of the driver itself is unmeasured.
+    ("128-thread" is the frozen wording. UL and SL very probably trained with 64 LightGBM threads,
+    §7.6.)
   - So this run does not show *why* two runs with byte-identical inputs differ at 10⁻¹³. It shows
     only that they differ by less than the tolerance.
   - Output sha256: UL `5745e2d5…`, SL `99b11bd1…`.
@@ -409,6 +417,9 @@ GB here is 10⁹ bytes of sacct's KiB values, as in the verifier.
 | wrapper wall | 2,577.8 | 857.5 |
 
 - After selective reading, `omnifold` is 66 % of SL's wall and loading is 21 %.
+- UL's and SL's `omnifold` phases (592.0 and 563.7 s) very probably ran LightGBM with 64 threads,
+  not the spec's 128 (§7.6). They are matched with each other, but they are not the unguarded
+  production configuration's training time.
 - The 1,682 s saved is entirely in the loads, mostly `collect_signal_arrays_2d`
   (1,265.2 → 120.7 s) and `collect_truth_denom_arrays` (581.5 → 54.6 s).
 - **Memory: an observation, not a criterion change.**
@@ -434,9 +445,79 @@ The CV and MC digests equal the 2026-10-09 records.
 H1 hashed the universes file in 149.7 s against H0's 902.4 s. The cause, for example caching, was not
 investigated, and the digests agree.
 
+### 7.6 Guard refusal in UL and SL and the inferred LightGBM thread count (reviewer's finding 1)
+
+- **What is recorded.** In both timed jobs the OI-136 guard refused one child launch:
+  - `outcome: refused:launch-unmodelled-launch-grammar`, `verdict: REFUSED launch`;
+  - `offending_argv: ["lscpu", "--parse=core"]`;
+  - see `evidence/outroot/UL/inventory.jsonl` and `SL/inventory.jsonl`, and the banner in
+    `sb1_UL_59645300.err:11-15` and `sb1_SL_59645301.err:11-15`.
+
+  The run continued, and both jobs completed. C's and J1's inventories show no refusal.
+- **Where the call comes from** (the reviewer's source reading, cluster environment):
+  - The helper builds the LightGBM estimators without `n_jobs`, so LightGBM 4.6.0 asks joblib/loky
+    for the number of physical cores.
+  - With affinity 256 (= `os.cpu_count()` in the UL and SL receipts), loky runs
+    `lscpu --parse=core`. On failure it falls back to counting distinct `core id` lines in
+    `/proc/cpuinfo`.
+  - In C the affinity was 64, so loky returned 64 without calling `lscpu`.
+- **The inferred effect.** On a two-socket node the fallback counts one socket's core ids. On login23
+  (2 × 64-core EPYC), distinct `core id` = 64 while `lscpu --parse=core` = 128. The owner re-measured
+  this; the reviewer measured it first.
+  - So UL and SL **very probably** trained with 64 LightGBM threads despite `OMP_NUM_THREADS=128`.
+  - This is an inference. The receipts do not record the trainer's thread count
+    (`environment.packages` is null), and the compute nodes' `/proc/cpuinfo` was not read.
+- **Consequences.**
+  - **None for the verdict.** P's frozen rule tests the guard's installation and origins, which all
+    hold, and refusing is the guard working. UL and SL ran under the identical refusal and fallback,
+    so S4 compares matched runs. S1, S2 and S3 do not depend on training threads.
+  - **The `omnifold` timings are not the production configuration's.** Unguarded, `lscpu` would
+    succeed and LightGBM would use 128 threads. The load savings, the subject of SB1, do not depend
+    on this. The share figures in §7.4 and §10 describe the guarded runs.
+
 ## 8. Review and verification
 
-*Pending: the final result verification by the same reviewer (§5) follows this record's pre-verification commit, and its verdict is recorded here.*
+- **Reviewer.** The same fresh, read-only reviewer as the admission review (§5), on its second and
+  last authorized task. It verified commit `4cab15aa` from its own detached worktree, 01:52–01:57Z
+  for the checks, using its own cluster reads: sha256 of the originals, its own `sacct`, `squeue`
+  and `iris`, and read-only source reads. It did not run sbatch, srun, salloc or scancel, and wrote
+  nothing on the cluster. Its worktree status was 0 lines with `--ignored` at start and end.
+- **The verification is preserved byte-identical** at
+  [`review/final-verification.md`](review/final-verification.md).
+- **Verdicts.**
+  - **RESULT VERIFIED: PASS.** This is the reviewer's independent reading of the frozen terminal.
+    - It recomputed charges, queue times and S2–S4 from its own fresh sacct; its 18 rows equal
+      `sacct-final.psv` field by field.
+    - It recomputed S1, NC and S6 from the receipts with its own code.
+    - It read S5 from the output ROOT files: 12 of 16 histograms are byte-identical; `hUnfold2D`,
+      `hXSec2D`, `hXSec_pt` and `hXSec_pz` differ, by at most 6.395e-13 in content and 6.55e-13 in
+      errors.
+    - It checked `verdict()` against the frozen rule.
+    - It re-ran C1 at 01:52:37Z: no row.
+  - **RECORD: REPAIR NEEDED (disclosure only).** Three findings, each repaired in this commit
+    without changing any criterion, number in a criterion or verdict:
+
+    | # | severity | finding | repair |
+    |---|---|---|---|
+    | 1 | MATERIAL | the guard refused `lscpu --parse=core` in UL and SL; the record called all inventories "clean"; LightGBM very probably trained with 64 threads, not 128 | §7 P row reworded; new §7.6; qualifiers in §7.2, §7.4 and §10; §11 item 6 |
+    | 2 | MINOR | J1's `all` loaders ran concurrently and its `selective` loaders sequentially, so the vertical timings and the 1,755.5 s forecast basis are not matched | disclosed in §7.1 and §10 |
+    | 3 | MINOR | §6 said the env digest is checked at every job's start and end; it is checked once, at the start, against the submission-time digest, and the sub-setups are not covered | §6 corrected |
+
+  - **Notes, recorded without repair.**
+    - The xr jobs are correctly handled (note 4).
+    - The python3.6 slip is consistent with the operator log, which holds exactly four events
+      (note 5).
+    - The jobs' own imports left two ignored `__pycache__` directories in the frozen checkout
+      (`2d-unfolding/uq/coverage_fixed_truth/n2/`, `nd-unfolding/`). HEAD is still `2b35ba52`, and
+      no tracked file differs (note 6).
+    - The receipts' `environment.packages` is null, so the library versions come only from §2's
+      login-node record (note 7).
+- **Focused re-review.** The one authorized re-review covers only these repairs; its verdict is in
+  §8.1.
+
+### 8.1 Focused re-review of the repairs
+
+RE-REVIEW_PENDING
 
 ## 9. Resources
 
@@ -483,10 +564,14 @@ is the agent runtime, not compute.
   - **Measured.** For one lateral universe job on a regular node: elapsed 2,604 → 888 s (−66 %),
     disk read 171.3 → 2.36 GB, sacct MaxRSS 69.5 → 17.2 GB, charge 0.7233 → 0.2467 node-h. For the
     vertical `Flux:0` loaders alone (J1, one thread): `collect_signal_arrays_2d` 1,331.7 → 133.4 s
-    and `collect_truth_denom_arrays` 607.3 → 62.4 s.
+    and `collect_truth_denom_arrays` 607.3 → 62.4 s. These J1 pairs are not matched: the `all` runs
+    were concurrent and the `selective` runs sequential (§7.1). Both timed unfold runs very probably
+    trained with 64 LightGBM threads (§7.6), so the `omnifold` share is that of the guarded runs.
   - **Forecast, not measured.**
     - A vertical-universe unfold job would save roughly the J1 load difference summed over the four
       trees (1,755.5 s) of its wall. This assumes its other phases match UL's; no vertical unfold timing pair exists.
+      The basis compares concurrent `all` runs with sequential `selective` runs (§7.1), so it may
+      overstate the saving.
     - A whole sweep's saving scales with how many jobs read the universes file and how much of each
       job is load. Neither has been measured for the sweep.
     - The lower sacct MaxRSS might allow a smaller allocation. This is unmeasured, because the
@@ -525,3 +610,22 @@ is the agent runtime, not compute.
 4. **Phase hooks (driver owner, only if S6-grade profiles are wanted again).** About 30 s inside the
    driver between `omnifold` and `compute_efficiency_2d`, plus about 34 s of startup, are unhooked
    (§7.3). Profiling them would require a production-driver change, which is not authorized here.
+5. **`docs/orchestration/MANIFEST.tsv` (integration owner).** The manifest has been out of date on
+   this branch since the first sb1-run record commit (`f7135d31`). Main at `016265cc` checks `OK`.
+   - `generate_manifest.py --at-sha 4cab15aa` differs from the committed table by:
+     - 77 added rows, every one under `Q/sb1-run/`;
+     - 46 changed rows outside it, in derived columns only: `inbound_count` in all 46, plus
+       `consumer` for `P/launch/sb1_submit.sh` and `P/sb1_verify.py`, and MANIFEST's own
+       `lines`/`bytes`.
+   - All of them follow from the new sb1-run files citing existing paths. Nothing is removed or
+     reclassified.
+   - Regenerating a shared generated file is outside this lane's files, so integration should
+     regenerate it when merging.
+6. **The guard's refusal of `lscpu` (OI-136 guard owner) and thread pinning (driver/helper owner).**
+   Under the guard, LightGBM's physical-core probe falls back to a count that is very probably half
+   of a two-socket node's cores (§7.6). Two candidate remedies, neither tested here:
+   - model `lscpu` as a leaf tool in the guard's launch grammar;
+   - pass an explicit `n_jobs` (= `OMP_NUM_THREADS`) to the helper's LightGBM estimators.
+
+   Either way, a future timed run should record the trainer's effective thread count in its
+   receipt.
