@@ -127,6 +127,21 @@ MUTANTS = [
      '--job-name="xr_${RUN}_a${ATT}"', ['test_xr.Launch.test_submit_releases_in_order_counts_attempts_and_cancels_on_a_failed_sbatch']),
     ('submit-window-reset', 'launch/xr_submit.sh', '-S "$SINCE"',
      '-S "2026-10-11"', ['test_xr.Launch.test_submit_releases_in_order_counts_attempts_and_cancels_on_a_failed_sbatch']),
+    # admission review F-1/F-2 (repair batch)
+    ('gate-job-unbound', 'xr_admit.py', '        if not job or job != subs.get((pf, r.get("attempt"))):\n',
+     '        if False:\n', ['test_xr.Launch.test_the_preflight_gate_requires_the_pf_jobs_own_bound_receipt']),
+    ('gate-record-unchecked', 'xr_admit.py', '        if not line or not f.is_file() or f.read_text() != line or sha(f) != rec.get("sha256"):\n',
+     '        if not line:\n', ['test_xr.Launch.test_the_preflight_gate_requires_the_pf_jobs_own_bound_receipt']),
+    ('gate-allocation-unchecked', 'xr_admit.py', '            check_allocation(line, kind, job)\n',
+     '            pass\n', ['test_xr.Launch.test_the_preflight_gate_requires_the_pf_jobs_own_bound_receipt']),
+    ('gate-strict-exit-unchecked', 'xr_admit.py', '        if r.get("exit_code") != 0 or (r.get("identity") or {}).get("strict") is not True:\n',
+     '        if False:\n', ['test_xr.Launch.test_the_preflight_gate_requires_the_pf_jobs_own_bound_receipt']),
+    ('ledger-unreadable-billing-uncharged', 'xr_admit.py', '            flagged.append("job {} ran {} s with unreadable billing".format(s["job_id"], elapsed))\n',
+     '            pass\n', ['test_xr.Launch.test_ledger_is_cumulative_over_the_prior_grant_and_flags']),
+    ('prior-unreadable-billing-uncharged', 'xr_admit.py', '            over.append("prior job {} ran {} s with unreadable billing".format(jid, elapsed))\n',
+     '            pass\n', ['test_xr.Launch.test_ledger_is_cumulative_over_the_prior_grant_and_flags']),
+    ('ledger-header-unchecked', 'xr_admit.py', '    if lacking:\n',
+     '    if False:\n', ['test_xr.Launch.test_ledger_is_cumulative_over_the_prior_grant_and_flags']),
 ]
 
 

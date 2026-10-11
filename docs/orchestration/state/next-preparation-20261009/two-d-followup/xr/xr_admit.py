@@ -373,15 +373,38 @@ def admission_matches(adm, rec):
 
 
 def preflight_passed(adm, runs):
-    """A preflight receipt of this admission, passed, with no fit."""
+    """A passing preflight receipt of this admission that the submitted PF job itself produced.
+
+    Besides schema, status, run, no fit and this admission, it requires exit 0, strict provenance,
+    the job's own ``SLURM_JOB_ID`` equal to the PF job in ``submissions.jsonl`` for that attempt,
+    and that job's recorded ``scontrol`` line (``scontrol-job.txt``, at its recorded digest) passing
+    the preflight kind's allocation check. A preflight run by hand outside the job releases nothing."""
     pf = runs["release"]["preflight"]
+    kind = runs["kinds"][runs["runs"][pf]["kind"]]
+    subs = {(s["run"], s["attempt"]): str(s["job_id"]) for s in submissions(adm["outroot"])}
     for d in sorted(Path(adm["outroot"], pf).glob("a*")):
         p = d / "preflight-receipt.json"
-        if p.is_file() and p.stat().st_size:
-            r = json.loads(p.read_text())
-            if (r.get("schema") == "xr-preflight-receipt/1" and r.get("status") == "preflight-pass"
-                    and r.get("run") == pf and r.get("fits") == [] and admission_matches(adm, r)):
-                return True
+        if not (p.is_file() and p.stat().st_size):
+            continue
+        r = json.loads(p.read_text())
+        if not (r.get("schema") == "xr-preflight-receipt/1" and r.get("status") == "preflight-pass"
+                and r.get("run") == pf and r.get("fits") == [] and admission_matches(adm, r)
+                and d.name == "a{}".format(r.get("attempt"))):
+            continue
+        if r.get("exit_code") != 0 or (r.get("identity") or {}).get("strict") is not True:
+            continue
+        job = ((r.get("environment") or {}).get("slurm") or {}).get("SLURM_JOB_ID")
+        if not job or job != subs.get((pf, r.get("attempt"))):
+            continue
+        rec = r.get("allocation_record") or {}
+        line, f = rec.get("line"), d / "scontrol-job.txt"
+        if not line or not f.is_file() or f.read_text() != line or sha(f) != rec.get("sha256"):
+            continue
+        try:
+            check_allocation(line, kind, job)
+        except Refusal:
+            continue
+        return True
     return False
 
 
@@ -464,12 +487,15 @@ def ledger(args):
     runs = load_runs()
     rows = {}
     lines = Path(args.sacct).read_text().splitlines()
-    head = lines[0].split("|")
+    head = lines[0].split("|") if lines else []
+    over, report = [], []
+    lacking = [c for c in ("JobID", "JobName", "State", "ElapsedRaw", "AllocTRES") if c not in head]
+    if lacking:
+        over.append("the sacct header lacks {}".format(lacking))
     for line in lines[1:]:
         r = dict(zip(head, line.split("|")))
-        if "." not in r["JobID"]:
+        if "." not in r.get("JobID", "."):
             rows[r["JobID"]] = r
-    over, report = [], []
     prior = runs["prior"]
     prior_charged = 0.0
     for jid, run_name in sorted(prior["jobs"].items()):
@@ -479,6 +505,8 @@ def ledger(args):
             continue
         c, billing, elapsed = charge(r)
         prior_charged += c
+        if elapsed > 0 and billing is None:
+            over.append("prior job {} ran {} s with unreadable billing".format(jid, elapsed))
         report.append("prior {} job {} {} billing={} elapsed={}s charged={:.10f}".format(
             run_name, jid, r["State"].split()[0], billing, elapsed, c))
     if abs(prior_charged - prior["charged_node_h_recorded"]) > 1e-12:
@@ -500,6 +528,8 @@ def ledger(args):
         state = r["State"].split()[0] if r else "UNKNOWN"
         c, billing, elapsed = charge(r)
         charged += c
+        if elapsed > 0 and billing is None:
+            flagged.append("job {} ran {} s with unreadable billing".format(s["job_id"], elapsed))
         if state not in FINISHED:
             pending += kind["ceiling_node_h_per_attempt"]
         if billing is not None and billing > kind["billing_max"]:

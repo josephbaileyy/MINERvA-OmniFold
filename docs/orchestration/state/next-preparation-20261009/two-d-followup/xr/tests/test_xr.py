@@ -60,9 +60,9 @@ def running_line(**fields):
     return scontrol_line(**dict({"JobState": "RUNNING", "AllocTRES": RUNNING_ALLOC}, **fields))
 
 
-def preflight_line():
+def preflight_line(job=PENDING_JOB):
     """The running line for the preflight kind: 12 CPUs, 5 minutes, billing 12."""
-    return running_line(NumCPUs="12", TimeLimit="00:05:00", AllocTRES="cpu=12,mem=22860M,node=1,billing=12")
+    return running_line(JobId=job, NumCPUs="12", TimeLimit="00:05:00", AllocTRES="cpu=12,mem=22860M,node=1,billing=12")
 
 
 def load_admit():
@@ -73,14 +73,33 @@ def load_admit():
     return xa
 
 
-def write_preflight_pass(admj, attempt=1, **upd):
-    """A passing preflight receipt for this admission, as xr_run.py writes one (for the release gate)."""
+def write_preflight_pass(admj, attempt=1, job=None, line=None, record=True, **upd):
+    """A passing preflight receipt bound to its PF job, as the job writes one: the job id is the PF
+    submission's (a submission is recorded if there is none), the allocation line is recorded in
+    ``scontrol-job.txt`` and in the receipt. ``upd`` overrides receipt fields (for refusals)."""
+    import datetime
     adm = Path(admj["outroot"], "admission.json")
+    subs_p = Path(admj["outroot"], "submissions.jsonl")
+    subs = [json.loads(l) for l in subs_p.read_text().splitlines() if l.strip()] if subs_p.exists() else []
+    pf = [s for s in subs if s["run"] == "PF" and s["attempt"] == attempt]
+    if pf:
+        job = job or str(pf[0]["job_id"])
+    else:
+        job = job or PENDING_JOB
+        now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        with open(subs_p, "a") as fh:
+            fh.write(json.dumps({"run": "PF", "kind": "preflight", "attempt": attempt, "job_id": int(job),
+                                 "submitted_utc": now}) + "\n")
     d = Path(admj["outroot"], "PF", f"a{attempt}")
     d.mkdir(parents=True, exist_ok=True)
+    line = preflight_line(job) if line is None else line
     r = {"schema": "xr-preflight-receipt/1", "run": "PF", "attempt": attempt, "kind": "preflight",
-         "status": "preflight-pass", "fits": [],
+         "status": "preflight-pass", "fits": [], "exit_code": 0, "identity": {"strict": True},
+         "environment": {"slurm": {"SLURM_JOB_ID": job}},
          "admission": {"path": str(adm.resolve()), "sha256": sha(adm)}}
+    if record:
+        (d / "scontrol-job.txt").write_text(line)
+        r["allocation_record"] = {"path": str(d / "scontrol-job.txt"), "sha256": sha(d / "scontrol-job.txt"), "line": line}
     r.update(upd)
     (d / "preflight-receipt.json").write_text(json.dumps(r))
     return d
@@ -112,7 +131,8 @@ def sha(path):
 
 
 def py(argv, cwd=None, env=None):
-    e = dict(os.environ, OMP_NUM_THREADS="1", PYTHONDONTWRITEBYTECODE="1", **(env or {}))
+    e = dict(os.environ, OMP_NUM_THREADS="1", PYTHONDONTWRITEBYTECODE="1")
+    e.update(env or {})
     for k in [k for k in e if k.startswith("MNV_GUARD")]:
         e.pop(k)
     return subprocess.run([sys.executable, *map(str, argv)], capture_output=True, text=True, env=e, cwd=cwd)
@@ -591,6 +611,9 @@ class Launch(unittest.TestCase):
             (cls.pf_slurm / f).chmod(0o755)
         env = {k: v for k, v in os.environ.items() if not k.startswith("MNV_GUARD")}
         env.update(PATH=f"{cls.pf_slurm}:{os.environ['PATH']}", SLURM_JOB_ID=PENDING_JOB, PYTHONDONTWRITEBYTECODE="1")
+        Path(cls.admj["outroot"], "submissions.jsonl").write_text(json.dumps(
+            {"run": "PF", "kind": "preflight", "attempt": 1, "job_id": int(PENDING_JOB),
+             "submitted_utc": "2026-10-11T00:00:00Z"}) + "\n")
         cls.pf = subprocess.run(["bash", cls.root / PKG_REL / "launch/xr_job.sbatch", cls.adm, "PF", "1"],
                                 capture_output=True, text=True, env=env, cwd=cls.root)
 
@@ -665,7 +688,8 @@ class Launch(unittest.TestCase):
         self.assertEqual(parts["sacct"], {"exact": 2, "lgbm": 0, "preflight": 0})
         # the stop: 72 h after the first submission, which is the preflight's
         Path(admj["outroot"], "submissions.jsonl").write_text(json.dumps(
-            {"run": "PF", "kind": "preflight", "attempt": 1, "job_id": 1, "submitted_utc": "2026-10-11T00:00:00Z"}) + "\n")
+            {"run": "PF", "kind": "preflight", "attempt": 1, "job_id": int(PENDING_JOB),
+             "submitted_utc": "2026-10-11T00:00:00Z"}) + "\n")
         r = self.next_attempt(adm, "X1", real, now="2026-10-12T18:00:00Z")      # 42 h + 30 h = 72 h: allowed
         self.assertEqual(r.returncode, 0, r.stderr)
         import datetime
@@ -852,11 +876,23 @@ echo $((1000 + n))
                 ("a prior charge changed", prior.replace("|xr_X1_a1|FAILED|7|", "|xr_X1_a1|FAILED|8|"), "differs from the recorded"),
                 ("another xr_ job", prior + "59700000|xr_X0_a2|FAILED|5|billing=12,cpu=12,mem=22860M,node=1|1-06:00:00\n",
                  "carries the prior prefix"),
-                ("an unrecorded xrr_ job", prior + "14|xrr_X0p_a1|PENDING|0||1-06:00:00\n", "not in the submissions record")):
+                ("an unrecorded xrr_ job", prior + "14|xrr_X0p_a1|PENDING|0||1-06:00:00\n", "not in the submissions record"),
+                ("a prior job's billing unreadable", prior.replace("billing=64,cpu=64,mem=121920M,node=1|01:00:00\n59648617",
+                                                                   "cpu=64,mem=121920M,node=1|01:00:00\n59648617"), "unreadable billing")):
             psv.write_text(text + new)
             r = ledger("2026-10-12T00:00:00Z")
             self.assertEqual(r.returncode, 6, f"{why}: {r.stdout}")
             self.assertIn(flag, r.stdout, why)
+        psv.write_text(prior + new.replace("11|xrr_X0_a1|COMPLETED|72000|billing=12,cpu=12,mem=22860M,node=1|",
+                                           "11|xrr_X0_a1|COMPLETED|72000||"))
+        r = ledger("2026-10-12T00:00:00Z")      # an amendment job that ran with no readable billing
+        self.assertEqual(r.returncode, 6, r.stdout)
+        self.assertIn("job 11 ran 72000 s with unreadable billing", r.stdout)
+        psv.write_text("|".join(c for c in captured("sacct-X-P-ledger.psv").splitlines()[0].split("|") if c != "AllocTRES")
+                       + "\n" + new)
+        r = ledger("2026-10-12T00:00:00Z")      # a header without AllocTRES
+        self.assertEqual(r.returncode, 6, r.stdout)
+        self.assertIn("lacks ['AllocTRES']", r.stdout)
         psv.write_text(prior + new.replace("billing=12,cpu=12,mem=22860M,node=1|1-06:00:00\n12",
                                            "billing=24,cpu=24,mem=45720M,node=1|1-06:00:00\n12"))
         r = ledger("2026-10-12T00:00:00Z")
@@ -907,6 +943,63 @@ echo $((1000 + n))
         self.assertEqual(got["fits"], [])
         xa = load_admit()
         self.assertFalse(xa.preflight_passed(admj, xa.load_runs()))
+
+    def test_a_preflight_run_by_hand_outside_the_job_releases_nothing(self):
+        """Admission F-1: a passing preflight receipt made outside the PF job (no allocation record,
+        no Slurm job id) must not release L0."""
+        root, pc, ms = make_checkout(self.tmp, "PH", self.omni, self.flux, dict(self.refs))
+        adm, admj = draft(root, pc, ms, self.tmp, "PH")
+        Path(admj["outroot"], "PF", "a1").mkdir(parents=True)
+        Path(admj["outroot"], "submissions.jsonl").write_text(json.dumps(
+            {"run": "PF", "kind": "preflight", "attempt": 1, "job_id": int(PENDING_JOB),
+             "submitted_utc": "2026-10-11T00:00:00Z"}) + "\n")
+        r = py([root / GUARD, "--expect-root", root, "--inventory", Path(admj["outroot"], "inv-PH.jsonl"), "--label", "PH",
+                "--", root / PKG_REL / "xr_run.py", "--run", "PF", "--attempt", "1", "--admission", adm,
+                "--require-provenance"], cwd=root / "2d-unfolding", env={"OMP_NUM_THREADS": "12"})
+        self.assertEqual(r.returncode, 0, r.stderr[-2000:])
+        got = json.loads(Path(admj["outroot"], "PF", "a1", "preflight-receipt.json").read_text())
+        self.assertEqual(got["status"], "preflight-pass")       # the run itself passes ...
+        self.assertNotIn("allocation_record", got)
+        xa = load_admit()
+        self.assertFalse(xa.preflight_passed(admj, xa.load_runs()))     # ... and releases nothing
+        psv = self.tmp / "ph.psv"
+        psv.write_text(captured("sacct-X-n-P.psv"))
+        r = py([root / PKG_REL / "xr_admit.py", "next-attempt", "--admission", adm, "--run", "L0", "--sacct", psv])
+        self.assertEqual(r.returncode, 3)
+        self.assertIn("no passed preflight", r.stderr)
+
+    def test_the_preflight_gate_requires_the_pf_jobs_own_bound_receipt(self):
+        xa = load_admit()
+        runs = xa.load_runs()
+
+        def gate(tag, **kw):
+            out = self.tmp / f"gate-{tag}"
+            out.mkdir()
+            (out / "admission.json").write_text('{"status": "ADMITTED"}\n')
+            admj = {"outroot": str(out)}
+            write_preflight_pass(admj, **kw)
+            return xa.preflight_passed(admj, runs)
+        self.assertTrue(gate("ok"))
+        refused = {"no allocation record": dict(record=False),
+                   "record of another job": dict(line=preflight_line("59645305")),
+                   "record over the cap": dict(line=running_line(NumCPUs="12", TimeLimit="00:05:00",
+                                                                 AllocTRES="cpu=12,mem=24765M,node=1,billing=13")),
+                   "record of a pending job": dict(line=scontrol_line(NumCPUs="12", TimeLimit="00:05:00")),
+                   "no Slurm job id": dict(environment={"slurm": {"SLURM_JOB_ID": None}}),
+                   "another job id than submitted": dict(environment={"slurm": {"SLURM_JOB_ID": "59645305"}},
+                                                         line=preflight_line("59645305")),
+                   "not strict": dict(identity={"strict": False}),
+                   "nonzero exit": dict(exit_code=6),
+                   "a fit recorded": dict(fits=[{"class": "LGBMClassifier"}])}
+        for i, (why, kw) in enumerate(refused.items()):
+            self.assertFalse(gate(f"r{i}", **kw), why)
+        # a recorded line edited after the job: the file no longer matches the receipt's digest
+        out = self.tmp / "gate-edited"
+        out.mkdir()
+        (out / "admission.json").write_text('{"status": "ADMITTED"}\n')
+        d = write_preflight_pass({"outroot": str(out)})
+        (d / "scontrol-job.txt").write_text(preflight_line() + " ")
+        self.assertFalse(xa.preflight_passed({"outroot": str(out)}, runs))
 
 
 class Comparator(unittest.TestCase):
