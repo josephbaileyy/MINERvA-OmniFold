@@ -1,0 +1,30 @@
+Event selection determines which observations enter the analysis and which
+truth population is being estimated. Classifier features determine what the
+learner can use within that population. A muon can therefore be required for
+selection even when its momentum is absent from the classifier.
+
+\begin{table}[H]
+\centering\footnotesize
+\begin{tabular}{@{}p{0.18\textwidth}p{0.24\textwidth}p{0.24\textwidth}p{0.25\textwidth}@{}}
+\toprule
+Analysis & Selected observations & Truth domain & Classifier information \\
+\midrule
+Scalar 2D--5D & Tracker vertex and MINOS-matched muon; common reconstructed selection & Published muon cuts & Muon $(\pT,\pPar)$; successively $\Eavail$, $q_3$, $W$ \\
+\addlinespace
+Scalar extended fiducial & Same reconstructed selection & Tracker CC $\nu_\mu$; truth-muon cuts removed & Muon kinematics; extended-domain study \\
+\addlinespace
+Historical recoil-only PET & MINOS-based selection, including the muon & Standard or extended domain, as declared for each cross-check & Recoil clusters at reco; hadron four-momenta at truth; no muon features \\
+\addlinespace
+Full-event PET candidate & Same MINOS-based reconstructed selection & Extended tracker CC $\nu_\mu$ domain & Muon event features plus recoil/hadron clouds \\
+\addlinespace
+PET design studies & Signal-only simulation banks with fixed selection and sampling & Declared bank population & Muon and cloud features; finalists add detector energy summaries \\
+\bottomrule
+\end{tabular}
+\caption{Selection and classifier information are separate choices. Reporting
+bins are not classifier inputs. Removing truth cuts adds extrapolation without
+adding selected data. PET design-study recovery does not validate real-data
+background subtraction; PET remains diagnostic method development.}
+\label{tab:selection-features}
+\end{table}
+% Sources: sec_experiment, sec_fps, sec_pet (input contracts and extended population),
+% sec_pet_campaigns; nd-unfolding/pet/final_design/DECISION_RECORD-pet-final-design.md.

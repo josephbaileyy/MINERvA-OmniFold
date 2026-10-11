@@ -62,18 +62,19 @@ has not yet produced a result.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{excess_eavail_W}
+  \includegraphics[width=0.55\textwidth]{paper_fig2_joint}
 
   \caption{Unfolded data and MINERvA Tune~v1 (GENIE~2.12.6 with analysis tune
-  weights, the OmniFold prior; labelled ``GENIE CV'' and ``CV'' in the figure)
+  weights, the OmniFold prior)
   % tune weights: \texttt{w\_truth}
-  in $(\Eavail,W)$. Left gives $d\sigma/d\Eavail$ integrated over $W$ for both;
-  centre gives dimensionless per-cell data/CV on a $0.5$--$1.5$ colour scale;
-  right gives per-cell data\,$-$\,CV. Axes are zero-based cell indices on the
+  in $(\Eavail,W)$. Top gives dimensionless per-cell data/Tune on a
+  $0.5$--$1.5$ colour scale; bottom gives per-cell data\,$-$\,Tune in units of
+  $10^{-40}\,\si{cm^2/nucleon}$. Equal-size display cells are labelled by
+  physical bin edges on the
   $7\times6$ reporting grid, with $\Eavail$ edges
   $[0,0.1,0.2,0.4,0.8,1.5,3.0,100]\,\si{GeV}$ and $W$ edges
-  $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$. Index~6 in $\Eavail$ and index~5
-  in $W$ are wide catch bins. The density ratio is area-free; the right panel
+  $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$. The final interval on each axis,
+  $[3,100]\,\si{GeV}$, is a wide catch bin. The density ratio is area-free; the bottom panel
   instead subtracts \emph{cell-integrated} cross sections,
   $(\mathrm{d}^{2}\sigma/\mathrm{d}\Eavail\,\mathrm{d}W)\times
   \Delta\Eavail\,\Delta W$ in \si{cm^2/nucleon}
@@ -81,7 +82,7 @@ has not yet produced a result.
   their large widths and look correspondingly bigger. Together the panels locate the positive excess
   at high $\Eavail$ and high $W$ (deep-inelastic), with a secondary low-$W$
   QE-like component and a small $\Delta$-region deficit. Quoted percentage shares
-  refer to cell-integrated positive excess in the right panel.}
+  refer to cell-integrated positive excess in the bottom panel.}
 
   \label{fig:eavailWexcess}
 \end{figure}
@@ -311,6 +312,18 @@ companion products; their grades do not regrade these bytes
 (App.~\ref{app:provenance}, \texttt{z-adoption}).
 
 \subsection{Validation of the five-axis estimator}
+\paragraph{Which source of error is being tested.}
+Prior reweighting changes the frequencies of existing simulated truth events
+while retaining their detector-response simulation. A response mismatch
+instead changes how a given truth is reconstructed. Finite classifier capacity
+and iterations approximate the inverse and can leave residuals under either
+condition. Calibration asks whether the resulting intervals contain their
+specified target at the stated rate. These are separate mechanisms: an
+incorrect generator prediction alone does not diagnose an interval failure.
+The tests below isolate particular interventions. Improved background
+refinement repairs nominal recovery, while the signal-only departure failure
+shows that background subtraction cannot explain all the residuals.
+
 \label{sec:val-fiveaxis}
 
 All 2D closures in \S\ref{sec:validation} unfold reweighted simulated signal
@@ -599,6 +612,21 @@ claimed for any five-dimensional interval.
 
 % Source: docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
 
+\paragraph{A scoped response-information diagnostic.}
+A subsequent signal-only study compared binned exact-response inversions and
+local information widths with the stored GBDT residuals. Of 376
+joint-cell/departure combinations with residuals above 2\%, 232 changed
+classification with truth resolution or response weighting and were excluded.
+Among the remaining 144, 121 (84\%) were classified as weakly constrained
+under the study's binned, fixed-response assumptions. Thus the result supports
+weak response information for that subset, not a universal explanation of
+the unfolding residual. The coarser muon projection retained only three cases
+and was effectively uninformative. The diagnostic does not bound biased or
+unbinned estimators, validate intervals, or establish an impossibility theorem;
+its proposed precision thresholds are not scientific adoption gates.
+The full exclusions, definitions and numerical verification are in the
+\href{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/7d173bd0bad495c4dcbb404ae769cab718fb928c/docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md}{binned response diagnostic record}.
+
 \subsection{Joint five-dimensional generator tests}
 \label{sec:joint5d}
 
@@ -703,6 +731,25 @@ cross section. They hold under the test's frozen conditions:
         $\mathrm{diag}\,\mathrm{Var}(\mu_G)$ and as a drawn residual.
 \end{itemize}
 No new reportable uncertainty is produced (App.~\ref{app:provenance}, \texttt{joint-5d}).
+
+The grid specifies a finite hybrid hypothesis and reporting statistic; it
+does not turn OmniFold's event-level training into binned unfolding.
+In the matched coarse muon-only projection, GENIE~2.12.10 CV is not rejected,
+whereas its $(\Eavail,W)$ projection is. This post hoc comparison shows that
+hadronic information participates in this rejection; it does not establish
+added power of the joint test over all matched projections, or accept GENIE
+as true. The comparison and its independent recomputation are preserved in
+the \href{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/3892e769043cddebfd58ec19e1ab1a567eb01784/docs/publication/w1/W1-RECORD-20261006.md}{matched-projection record}.
+
+The multiplier $\kappa$ scales the last measured refinement change
+$\delta_{\rm M1}$: $\kappa=1$ means one such change, not one standard
+deviation or a confidence level. A report-only scan first loses determinate
+rejection at $\kappa\in(5.2547,5.2563]$ for the frozen ensembles, or
+$(5.1688,5.1703]$ with recovered draws included. The first loss is an
+undetermined decision, not a determinate failure to reject. This probes one
+direction and establishes neither convergence nor a bound on the true
+below-grid discrepancy; see the
+\href{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/3892e769043cddebfd58ec19e1ab1a567eb01784/publication/kappa/RECORD-20261008-kappa-breakdown.md}{refinement-sensitivity record}.
 % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md (decisions, B, k, p,
 % the six conditions verbatim); RECORD-20261006-s5p-lost-seed-recovery-resolution.md (recovery,
 % margins 4.6/49.8 T units, earlier stops, power over the complete sets); DECISION-20261005-s5p-

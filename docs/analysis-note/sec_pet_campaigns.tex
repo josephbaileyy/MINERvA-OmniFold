@@ -128,6 +128,12 @@ and good regions). C2 and C3 pass.}
 \label{tab:pet-final-coverage}
 \end{table}
 
+Each entry pools checks of bin values over the 120 draws: it counts intervals
+containing their target, not events classified correctly. It is not the
+probability that every bin is covered simultaneously. The draw-specific truth
+target differs from the fixed unfluctuated population used in the 2D test
+(\S\ref{sec:coverage}).
+
 The same over- and under-coverage pattern survives comparison with the
 final-bank population target. Its mechanism is not established; it is not
 uniform conservatism. The proton-topology coverage stage C5 was skipped
@@ -137,6 +143,39 @@ interval calibration and L128S1T24 fails B2 by the frozen point rule (statistica
 unresolved). Neither failure proves that the
 point estimator is unusable. No repair or reserve-bank revalidation forms
 part of these completed results.
+
+\paragraph{Computational cost and what it establishes.}
+Table~\ref{tab:pet-cost} separates measured study resources from projections
+to real-data scale~\cite{PETFinalDesign2026,PETGBDT2026}.
+The comparison buys evidence about recovery on the specified simulation
+banks, not a calibrated uncertainty product. CPU core-hours and A100-hours
+are different resources, so these values do not establish a
+hardware-normalized speedup or a universal architecture ranking.
+
+\begin{table}[htbp]
+\centering\footnotesize
+\begin{tabular}{@{}p{0.24\textwidth}p{0.30\textwidth}p{0.37\textwidth}@{}}
+\toprule
+Configuration & Population and repetitions & Resource use and status \\
+\midrule
+Compact PET H2S1T24, $K=5$ & About 600k prior and 600k pseudo-data events; 352 final-bank units & Measured median 1.768 A100-h per unfold; no eligible interval procedure \\
+\addlinespace
+Larger PET L128S1T24, $K=4$ & Same scale and 352 units & Measured median 1.517 A100-h per unfold; fails a frozen point rule, coverage unmeasured \\
+\addlinespace
+Paired scalar GBDT, $K=1$--10 ($K=7$ primary) & Same events; 352 tasks, control and retries & Measured 5.306 charged CPU core-h for the fitting campaign (4.422 process CPU-h); no uncertainty comparison \\
+\addlinespace
+PET at real-data scale & 2M-event prior; full selected data and background target & Forecast 7.3 / 7.1 A100-h per unfold (compact / larger), with factor-two ranges \\
+\addlinespace
+PET with full MC inventory & 49.15M-event prior; same real-data target & Forecast 136 / 119 A100-h per unfold, with factor-two ranges; not trained at this scale \\
+\bottomrule
+\end{tabular}
+\caption{Measured PET costs use two unfoldings packed per A100. Forecasts scale
+the measured training rates and retain each finalist's iteration count;
+they are not observed production costs. The compact finalist was not cheaper
+at its chosen operating point. GBDT cost is a campaign total, not a per-unfold
+time.}
+\label{tab:pet-cost}
+\end{table}
 
 \subsection{Exploratory PET--GBDT comparison on the same events}
 \label{sec:pet-gbdt-paired}
