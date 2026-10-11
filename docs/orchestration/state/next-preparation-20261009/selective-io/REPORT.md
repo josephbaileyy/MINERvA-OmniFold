@@ -294,7 +294,7 @@ table missed the module's other importers (review F2); the row for them was adde
 | every `2d-unfolding/sbatch_*.sh`, `seedscan*/`, `tension_iter/`, `uq/run_*_interactive.sh`, `ki84-rebuild` launcher | runs the script without `--branch-select` | default path; the same loader calls as before |
 | `uq/coverage_fixed_truth/fixed_truth_toy.py` (N2) | imports the driver from hashed bytes and calls `collect_signal_arrays_2d` directly | unchanged signature and body. `test_producer_provenance` (26) and `test_n2_harness` (22) pass. A future N2 launch states the driver digest it executes, so it must name the new digest if it runs after a merge, as for any driver edit |
 | `3d-unfolding/unfold_3d_omnifold_unbinned.py`, `xsec_3d.py`, `genie/gen_to_xsec5d.py`, `docs/analysis-note/redraw_central_only.py`, `ibu_1d_projection/build_1d_ibu_inputs.py` | import constants (`PT_EDGES`, `PZ_EDGES`), `make_th2d`/`make_th1d` and the branch-name helpers | unchanged. The only module-level additions are three standard-library imports (`contextlib`, `inspect`, `io`) and new names |
-| 49 importers outside `Q`'s state packages: 36 in `nd-unfolding/`, 6 in `nd-unfolding/pet/`, 3 in `nd-unfolding/tests/`, and one each in `2d-unfolding/`, `2d-unfolding/uq/`, `3d-unfolding/` and `docs/analysis-note/` (count by `git grep -l` for an import of the module, at `6486867f`; review F2). Among them `unfold_nd_omnifold_unbinned.py`, `pet_systematics*.py`, `sweep_bank*.py`, `s5c_with_estimator.py` (which monkeypatches `refine_stay_positive` and `_make_bkg_classifier`) and `plot_2d_cross_section.py` | constants, histogram and branch-name helpers, `refine_stay_positive`/`_make_bkg_classifier`. Only N2 calls one of the four loaders | unaffected. Importing the module adds three standard-library imports and new definitions; the ROOT declaration is lazy (`_branch_address_api()`); none uses `import *` |
+| 49 importers outside `Q`'s state packages: 36 in `nd-unfolding/`, 6 in `nd-unfolding/pet/`, 3 in `nd-unfolding/tests/`, and one each in `2d-unfolding/`, `2d-unfolding/uq/`, `3d-unfolding/` and `docs/analysis-note/` (count: `git grep -l -E "import unfold_2d_omnifold_unbinned\|from unfold_2d_omnifold_unbinned import\|\"unfold_2d_omnifold_unbinned\"\|'unfold_2d_omnifold_unbinned'" 6486867f -- '*.py'`, excluding `docs/orchestration/state/`; review F2. The re-review counts 44 files with an import statement, plus 5 that load or stub the module by name or path: re-review N1). Among them `unfold_nd_omnifold_unbinned.py`, `pet_systematics*.py`, `sweep_bank*.py`, `s5c_with_estimator.py` (which monkeypatches `refine_stay_positive` and `_make_bkg_classifier`) and `plot_2d_cross_section.py` | constants, histogram and branch-name helpers, `refine_stay_positive`/`_make_bkg_classifier`. Only N2 calls one of the four loaders | unaffected. Importing the module adds three standard-library imports and new definitions; the ROOT declaration is lazy (`_branch_address_api()`); none uses `import *` |
 | `2d-unfolding/tests/test_bootstrap_completeness_ki84.py` | runs the real `main()` with a stub helper; compares against the pre-fix blob `4e7c20bb` | 15/15 pass. It records `driverSha256` of the current bytes, so it moves with the edit by design |
 | `nd-unfolding/tests/test_oi136_*` | the driver's insert stays in a function; the helper digest | pass (§3, §7.1) |
 | Frozen SB1 package `Q/sb1-prep` (`d4335d3b`) | loads the driver against `DRIVER_SHA256 = 3cc5adc7…`; its manifest pins it | refuses the new driver at a later `HEAD` (§7.2); passes at its commit (§7.3) |
@@ -456,18 +456,45 @@ probe, belongs to the pinned helper's and the guard's owners (`Q/sb1-run/REPORT.
   | F7 NOTE: the rule restates the loaders' logic, by design | recorded in §11; no change |
 
   No driver byte changed in this batch.
-- **Focused re-review:** requested on the repair commit (§13).
+- **Focused re-review** of `446e2857` (cycle 1 of at most 2), by the same reviewer, 06:32–06:35Z,
+  about 0.02 local core-h.
+  - Its worktree had 0 changed files at start and end and was removed. It made no cluster contact.
+  - Preserved verbatim at `S/review/rereview-446e2857.md`.
+  - **Verdict: PASS.** F1–F6 resolved as dispositioned and F7 needs no change. No new defect. The
+    preserved first review is byte-identical to what the reviewer wrote.
+  - It reran the new suite (27 OK) and mutant M6 (three assertion failures, no segfault), and tallied
+    the mutation log (4/17/26/17/1/3). It checked the routing script's new refusal (exit 2,
+    worktree count unchanged).
+  - One NOTE (N1): the importer count's method was not stated exactly. The delivery commit writes
+    the exact pattern and the re-review's 44 + 5 split beside it (§8).
+- **Delivery commit.** It preserves the re-review, writes N1's wording, and fills §13 and the manifest
+  recount. Wording only, and **not re-reviewed**. The second repair cycle was not needed.
 
 ## 13. Resources and terminal
 
 | item | limit | used |
 |---|---|---|
-| active hours | 8, including review and delivery | prompt received ≈ 05:07Z; record commit ≈ 06:15Z; review and delivery follow |
-| local CPU core-hours | 6 | ≈ 0.65 before review: user+sys where timed (the suites 295 s and the frozen checks 182 s at `a35b1a3f`; the routing runs 113 + 167 s), and an estimate for the untimed rest: two earlier passes of the same suites, the base and frozen-commit batch, five mutant runs and the venv setup |
+| active hours | 8, including review and delivery | prompt received ≈ 05:07Z; record commit 06:06Z; review 06:08–06:27Z; re-review 06:32–06:35Z; delivery ≈ 06:40Z: **≈ 1.6 h** |
+| local CPU core-hours | 6 | **≈ 0.9 in total.** Owner ≈ 0.75: user+sys where timed (suites 295 s and frozen checks 182 s at `a35b1a3f`; routing runs 113 + 167 + 169 s), and an estimate for the untimed rest (two earlier suite passes, the base and frozen-commit batch, 11 mutant runs, the repaired suite, the venv setup). Reviewer ≈ 0.15, self-reported |
 | threads | 2 | 1 per process; at most 2 processes at once |
 | RAM | 8 GiB | largest measured process 0.89 GB peak RSS (the new suite, `/usr/bin/time -l`) |
 | scratch beyond worktrees | 3 GiB | about 0.2 GiB: venv 165 MiB, logs and fixtures. The four scratch worktrees (about 0.42 GiB each, at most one at a time) were removed |
 | tracked evidence | 20 MiB | `S/` is 0.25 MiB |
 | cluster / GPU / training / benchmark | none | **none**: no cluster contact of any kind, no GPU, no training, no benchmark |
 
-**Terminal:** pending review.
+**Terminal: PASS.** The opt-in implementation is independently reviewed (initial review PASS WITH
+CHANGES, with 0 MATERIAL findings; focused re-review PASS) and ready for integration.
+- **Merge.** Branch `impl/selective-io-20261010`, pushed as a draft PR; not merged, not deployed.
+- **What integration needs to do (§10):**
+  - route the frozen SB1/XR checks to their commits with `S/checks/frozen_package_checks.sh`;
+  - regenerate `MANIFEST.tsv` from source. At the delivered head the delta is
+    43 new rows (the files under `S/`), 61 existing rows with changed derived columns, 0 removed;
+  - optionally, add the catalog outcome line.
+- **What PASS does not include:**
+  - a cluster or ROOT 6.28 run of this implementation;
+  - a real-file equality run;
+  - trained-output equality;
+  - any new performance number.
+
+  The measured speedup remains SB1's single matched lateral pair, for prototype 1 (§9). No launcher
+  uses the opt-in path, and no production use, adoption or training change follows from this record.
