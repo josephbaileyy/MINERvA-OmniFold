@@ -111,4 +111,18 @@ X0_vs_E_C, X0p_vs_E_C, X1_vs_X0, L0_vs_CV42, L0_vs_PN_CV, L1_vs_SEED1, NC_X0_vs_
 Decision: no resubmission. The admitted package (06eae0fe, manifest fbca1be8) is unchanged and would refuse
 identically; a repaired package is a new, unadmitted package, and the single repair/re-review is spent. The
 remaining attempts (exact 1, lgbm 1) are left unused. Remote reduction dir: /pscratch/sd/j/josephrb/xr-reduce.4fPw
-(4 small text files). Login-node work for the outcome: one sacct, one scontrol, the ledger and the comparator, < 1 s CPU.
+(4 small text files at this point; the next-attempt read below added a fifth). Login-node work for the outcome: one sacct, one scontrol, the ledger and the comparator, < 1 s CPU.
+
+== next-attempt on the real sacct output (read-only; 2026-10-11T00:29Z, login node, /usr/bin/python3)
+It prints only and creates nothing (`xr_admit.py next_attempt`: reads, refuses or prints).
+  sacct -u "$(id -un)" -X -n -P -S 2026-10-10 -E now --format=JobID,JobName,State > $R/sacct-nextattempt.psv
+  sha256 f67f649518d7dfdee4488d1b76dd881486a34ea121e8d1dc7f68dbab121cd341, 10 rows: the five xr_* rows below,
+  plus five of this account's non-XR jobs
+  59648608|xr_X0_a1|FAILED
+  59648610|xr_X0p_a1|FAILED
+  59648611|xr_X1_a1|FAILED
+  59648616|xr_L0_a1|FAILED
+  59648617|xr_L1_a1|FAILED
+  xr_admit.py next-attempt --admission <outroot>/admission.json --run X0 --sacct ... -> "2 2026-10-13T15:34:53" rc=0
+  xr_admit.py next-attempt --admission <outroot>/admission.json --run L0 --sacct ... -> "2 2026-10-13T15:34:53" rc=0
+  ls <outroot>/X0 <outroot>/L0 afterwards: a1 only (nothing created)

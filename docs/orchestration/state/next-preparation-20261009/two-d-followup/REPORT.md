@@ -27,7 +27,7 @@ The original publication objective is retained. **Publication readiness is not a
 | `Owned files` | `Q/two-d-followup/` (this report, `methods/`, `xr/`, `logs/`, `review/`); `docs/orchestration/AUTHORIZATION-20261010-xr.md` and its scoped registration (one `MANIFEST-overrides.tsv` row, one `CATALOG.md` row) |
 | `Pinned inputs` | §1 |
 | `Resources` | §C |
-| `Review` | §B4, §B7 |
+| `Review` | §B4, §B6, §B8 |
 | `Model / effort` | Claude Opus 5.5 (`claude-opus-5-5`), Claude Code; effort not observable to the session |
 | `Disposition` | §D |
 | `Next action` | §E |
@@ -614,8 +614,10 @@ bindings to the shared inventory. `results/xr/README.txt` gives its sha256 and t
   never pass on this cluster.
 - **Why no control saw it.** The suite's fake `scontrol` (`tests/test_xr.py:543`) prints `TRES=`,
   the field name the code expects. So the fixture agreed with the code, not with the cluster.
-  Neither the 29 mutants nor either review could detect this, because every check of `jobcheck`
-  was against that fixture. B7's cluster check ran `jobcheck` only **outside** a job, where it
+  The 29 mutants could not detect this, because every check of `jobcheck` was against that
+  fixture. Neither review **did** detect it, though a review could have: one read-only `scontrol
+  show job <id> -o` on a login node shows the field names (F-1, F-2 of the final verification).
+  B7's cluster check ran `jobcheck` only **outside** a job, where it
   refuses before reading the field.
 - **No resubmission.**
   - The admitted package (`06eae0fe`, manifest `fbca1be8…`) cannot change, so a resubmission would
@@ -633,7 +635,8 @@ bindings to the shared inventory. `results/xr/README.txt` gives its sha256 and t
   - The parts that ran outside a job on the cluster did hold, under `/usr/bin/python3`:
     - `manifest --check`, `check`, `draft`, `verify`, `ledger` (on the real sacct, with
       `AllocTRES` parsed correctly);
-    - `next-attempt`, on the real `sacct -X -n -P` output after the failures. It offers each run
+    - `next-attempt`, on the real `sacct -X -n -P` output after the failures (`logs/xr-deploy.txt`, last
+      entry). It offers each run
       attempt 2 with the deadline at the stop, read-only.
 
 ## B8. Comparisons and the independent numerical verification
@@ -654,7 +657,38 @@ root_6_28 Python on a login node, 0.13 s) returns, for every comparison and the 
 There are no maxima and no affected cells to report, because no run produced a histogram. The
 pre-registered thread-count check on an L-arm FAIL (B1) did not arise.
 
-**Independent numerical verification (review use 3 of 3).** PENDING-FILL-VERIFY
+**Independent numerical verification (review use 3 of 3).** Preserved verbatim in `review/final-verification-eb145ba6.md`. The same
+reviewer worked read-only at `eb145ba6`, 2026-10-11T00:33–00:36Z, under 0.01 local core-hours.
+
+- **Method: PASS.**
+- **Admission outcome as recorded: CONFIRMED.**
+- **Deployment: FAIL CONFIRMED.**
+- **All seven comparisons INCONCLUSIVE,** re-derived by rerunning the frozen comparator on the
+  cluster.
+- **Numerical verification: CONFIRMED WITH DISCREPANCIES.** The discrepancies are documentary.
+
+The reviewer re-measured, among other things:
+- sacct;
+- all ten job-log digests;
+- the absence of any receipt or fit;
+- the ledger sum (1,244 / 921,600 = 0.0013498 node-h);
+- the attempt counts;
+- the stop, and that it never bound (last job ended at 1.8175 h);
+- the Perlmutter field names, on another job;
+- the in-job step order.
+
+**F-1 (MATERIAL, recorded, not repaired).** The reviewer missed the `TRES` defect in both earlier
+reviews, though one read-only `scontrol` read would have shown it. Only `jobcheck`'s `TRES` read was
+taken from a fixture rather than the cluster. The other in-job steps are low-risk, but none has run
+inside an allocation.
+
+**Post-verification corrections** (documentary only; nothing under `xr/` changed; no further review
+is available, so these are not re-reviewed):
+- F-2: B7 now says the reviews did not detect the defect, not that they could not;
+- F-3: §E.3 item 6 states both ceilings;
+- F-4: §C's measured share is now 1.315 h, with the 19-mutant pass marked measured;
+- F-5: the `next-attempt` run, its input digest and its outputs are now in `logs/xr-deploy.txt`;
+- F-6, F-7 and F-8: added to §E.3 items 1 and 3.
 
 # C. Resources
 
@@ -692,7 +726,7 @@ pre-registered thread-count check on an L-arm FAIL (B1) did not arise.
 | item | limit | used |
 |---|---|---|
 | active hours | 10 (last quarter protected) | grant received 19:58:09Z. Counting all wall-clock time as active, including queue waits, about 4.6 h at 00:35Z; the value at delivery is in the commit message |
-| local CPU core-hours | 4 | **≈ 2.4** before the final verification. Of this, 1.25 h was measured and the rest is estimated, as itemized below |
+| local CPU core-hours | 4 | **≈ 2.35**, including the final verification (< 0.01). Of this, 1.315 h was measured and the rest is estimated, as itemized below |
 | concurrent compute threads | 2 | ≤ 2 processes, `OMP_NUM_THREADS=1` |
 | RAM | 8 GiB | not instrumented; the largest local processes were the unit suite and the synthetic controls on small fixtures |
 | new local scratch beyond worktrees | 3 GiB | 202 MiB (`scratchpad/fu/`, incl. the test venv) |
@@ -701,7 +735,7 @@ pre-registered thread-count check on an L-arm FAIL (B1) did not arise.
 Local CPU items, all `user+sys` unless marked:
 - synthetic controls A + B: 0.403, measured;
 - one earlier aborted synthetic run: ≤ 0.22, bound from wall time;
-- the first 19-mutant pass and its 2-mutant rerun: ≈ 0.41;
+- the first 19-mutant pass: 0.374, measured (`user+sys` 1,347 s), and its 2-mutant rerun: ≈ 0.04;
 - the 29-mutant pass: 0.518, measured;
 - the outroot rerun: 0.020, measured;
 - 8 unit-suite runs: ≈ 0.32 (138–159 s each);
@@ -714,7 +748,7 @@ Separate outcomes. Each verdict word stands alone, and the line under it says wh
 
 | object | outcome | basis |
 |---|---|---|
-| **Task A — method** | **PASS WITH CHANGES** (re-review, `06eae0fe`); the remaining change (A-5: §B6–§E) is applied here. Final verification: see B8 | derivation, status classification, controls, read-only resolutions, admission matrix |
+| **Task A — method** | **PASS** (final verification at `eb145ba6`; the re-review's PASS WITH CHANGES left only A-5, now applied) | derivation, status classification, controls, read-only resolutions, admission matrix |
 | Task A — the original objective | **no feasible route under current inputs** (A5); reopening needs new inputs (§E.2) | the admission matrix over all 205 cells |
 | **XR — admission review** | **PASS (ADMIT)** at `06eae0fe`, after the one repair batch | `review/rereview-06eae0fe.md` |
 | XR — the admitted package in deployment | **FAIL**: all five runs refused at the in-job allocation check by the package's own defect (B7). The admission did not catch a MATERIAL defect | `logs/xr-deploy.txt`, `results/xr/` |
@@ -772,7 +806,8 @@ The exact requirements:
 
 1. **Repair** (`xr_admit.py` `jobcheck`, lines 241–249). Read billing from `AllocTRES`, the allocation actually
    granted, which is always present for a running job. Keep it fail-closed: absent or unparsable means refuse.
-   No other field changes.
+   No other field changes. Parse the named key explicitly, not by splitting the whole line on spaces (F-8).
+   `ReqTRES` also carries billing; `AllocTRES` is `(null)` until the job runs (F-6).
 2. **A fixture from the cluster, not from the code.**
    - The fake `scontrol` in `tests/test_xr.py` must print the recorded Perlmutter field set (`ReqTRES=…
      AllocTRES=…`, no `TRES=`; B7).
@@ -787,12 +822,20 @@ The exact requirements:
    - It must pass, and it is counted in the charged node-hours, with its own line in the grant.
    - Its point is to exercise the steps that have never run inside an allocation: `verify` in a job, the
      environment refusal, the loky seed and the guarded driver import.
+   - It should go through `xr_job.sbatch` itself (F-7): the setup `source` in the job, the guard, the CFS
+     input hash in the job, then `check_environment` and the loky seed, stopping before the first fit.
+   - The stop-before-fit mode is new code and belongs to item 4's package.
+   - It uses its own outroot or attempt namespace, so it consumes no run attempt.
 4. **A new package commit and manifest sha256**, a new frozen outroot (for example `…-20261010b`), and a new
    AUTHORIZATION record binding them.
 5. **One independent admission review of the delta** (items 1–4), with its own review budget.
 6. **Attempt caps that cover the five runs.** For example, 4 exact and 3 LightGBM again, counted over the new
    grant. The current grant's 0.00135 node-h is already spent.
-   - Wall time is unchanged: 3 × 30 h at 12/256 and 2 × 1 h at 64/256 is ≤ 4.72 charged node-h.
+   - Ceilings (F-3):
+     - one attempt per run: 3 × 30 h at 12/256 plus 2 × 1 h at 64/256 is ≤ 4.72 charged node-h;
+     - the full caps (4 exact, 3 LightGBM): ≤ 6.375;
+     - the preflight: ≈ 0.004.
+     - Both fit in a 6.4 node-h grant.
    - The new 72-h window starts at the new first submission.
 7. Everything else in the package, and every comparison and criterion (1e-8, the negative control, the
    pre-registered thread-count check), stays as admitted.
