@@ -1,0 +1,1380 @@
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/event1.cc -o src/event1.o
+Making dependencies for src/whist.cc
+Making dependencies for src/vivisection.cc
+Making dependencies for src/test.cc
+Making dependencies for src/test_nucleus.cc
+Making dependencies for src/test_makehist.cc
+Making dependencies for src/test_beam.cc
+Making dependencies for src/test_beam_rf.cc
+Making dependencies for src/target_mixer.cc
+Making dependencies for src/simulations.cc
+Making dependencies for src/shell_sampler.cc
+Making dependencies for src/sfevent.cc
+Making dependencies for src/scatter.cc
+Making dependencies for src/rpa_2013.cc
+Making dependencies for src/resevent_hybrid.cc
+Making dependencies for src/qelevent1.cc
+Making dependencies for src/qel_sigma.cc
+Making dependencies for src/plots.cc
+Making dependencies for src/pitab.cc
+Making dependencies for src/pdg.cc
+Making dependencies for src/pauli.cc
+Making dependencies for src/particle.cc
+Making dependencies for src/nuwro2rootracker.cc
+Making dependencies for src/nuwro2nuance.cc
+Making dependencies for src/nuwro2neut.cc
+Making dependencies for src/nuwro.cc
+Making dependencies for src/nucleus.cc
+Making dependencies for src/nucleus_data.cc
+Making dependencies for src/nu_e_el_sigma.cc
+Making dependencies for src/niwg.cc
+Making dependencies for src/niwg_tech.cc
+Making dependencies for src/niwg_ccqe.cc
+Making dependencies for src/niwg_ccpi.cc
+Making dependencies for src/nd280stats.cc
+Making dependencies for src/myroot.cc
+Making dependencies for src/mplots.cc
+Making dependencies for src/mktabular2d.cc
+Making dependencies for src/mktabular.cc
+Making dependencies for src/mecevent2.cc
+Making dependencies for src/mecevent.cc
+Making dependencies for src/mecevent_tem.cc
+Making dependencies for src/mecevent_SuSA.cc
+Making dependencies for src/mecevent_Nieves.cc
+Making dependencies for src/mecevent_common.cc
+Making dependencies for src/mecevent_2020Valencia.cc
+Making dependencies for src/mecdynamics2.cc
+Making dependencies for src/mecdynamics.cc
+Making dependencies for src/mec_dec18.cc
+Making dependencies for src/mb_nce.cc
+Making dependencies for src/mb_nce_run.cc
+Making dependencies for src/mb_nce_fit.cc
+Making dependencies for src/main.cc
+Making dependencies for src/lepevent.cc
+Making dependencies for src/ladek_topologies.cc
+Making dependencies for src/kinsolver.cc
+Making dependencies for src/kinematics.cc
+Making dependencies for src/kaskada7.cc
+Making dependencies for src/kaskada.cc
+Making dependencies for src/isotopes.cc
+Making dependencies for src/Interaction.cc
+Making dependencies for src/input_data.cc
+Making dependencies for src/hypevent.cc
+Making dependencies for src/hyperon_interaction.cc
+Making dependencies for src/hyperon_cascade.cc
+Making dependencies for src/glue.cc
+Making dependencies for src/generatormt.cc
+Making dependencies for src/ganalysis.cc
+Making dependencies for src/fsi.cc
+Making dependencies for src/fsi_main.cc
+Making dependencies for src/ff.cc
+Making dependencies for src/event1.cc
+Making dependencies for src/elements.cc
+Making dependencies for src/e_spp_event.cc
+Making dependencies for src/e_el_sigma.cc
+Making dependencies for src/e_el_event.cc
+Making dependencies for src/dumpParams.cc
+Making dependencies for src/dirs.cc
+Making dependencies for src/data_container.cc
+Making dependencies for src/cohevent2.cc
+Making dependencies for src/cohdynamics2.cc
+Making dependencies for src/coh.cc
+Making dependencies for src/calculations.cc
+Making dependencies for src/beamHist.cc
+Making dependencies for src/beam.cc
+Making dependencies for src/beam_nomad.cc
+Making dependencies for src/sf/gridfun2d.cc
+Making dependencies for src/sf/FormFactors.cc
+Making dependencies for src/sf/CSpectralFunc.cc
+Making dependencies for src/sf/CSFOptions.cc
+Making dependencies for src/sf/CMomDistrib.cc
+Making dependencies for src/sf/CGaussianSF.cc
+Making dependencies for src/dis/singlepionhadr.cc
+Making dependencies for src/dis/singlepion.cc
+Making dependencies for src/dis/resweight.cc
+Making dependencies for src/dis/reshadr.cc
+Making dependencies for src/dis/resevent2.cc
+Making dependencies for src/dis/res_xsec.cc
+Making dependencies for src/dis/res_kinematics.cc
+Making dependencies for src/dis/parameters.cc
+Making dependencies for src/dis/LeptonMass.cc
+Making dependencies for src/dis/grv94_bodek.cc
+Making dependencies for src/dis/fragmentation.cc
+Making dependencies for src/dis/fragmentation_nc.cc
+Making dependencies for src/dis/fragmentation_cc.cc
+Making dependencies for src/dis/disweight.cc
+Making dependencies for src/dis/dishadr.cc
+Making dependencies for src/dis/disevent.cc
+Making dependencies for src/dis/dis2res.cc
+Making dependencies for src/dis/dis_nc.cc
+Making dependencies for src/dis/dis_cr_sec.cc
+Making dependencies for src/dis/dis_cc_proton.cc
+Making dependencies for src/dis/dis_cc_neutron.cc
+Making dependencies for src/dis/delta.cc
+Making dependencies for src/dis/charge.cc
+Making dependencies for src/dis/alfa.cc
+Generating dictionary ...
+cd src;/opt/homebrew/Cellar/root/6.36.00/bin/rootcint -f event1Dict.cc -c event1.h event1LinkDef.h;cd ..
+cp src/event1Dict_rdict.pcm bin
+Making dependencies for src/event1Dict.cc
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/pauli.cc -o src/pauli.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/cohevent2.cc -o src/cohevent2.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/cohdynamics2.cc -o src/cohdynamics2.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/qelevent1.cc -o src/qelevent1.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/hypevent.cc -o src/hypevent.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/hyperon_interaction.cc -o src/hyperon_interaction.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/hyperon_cascade.cc -o src/hyperon_cascade.o
+In file included from src/cohevent2.cc:12:
+src/quat.h:55:1: warning: non-void function does not return a value in all control paths [-Wreturn-type]
+} 
+^
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/lepevent.cc -o src/lepevent.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/nu_e_el_sigma.cc -o src/nu_e_el_sigma.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/qel_sigma.cc -o src/qel_sigma.o
+1 warning generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/kinsolver.cc -o src/kinsolver.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/kinematics.cc -o src/kinematics.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/pdg.cc -o src/pdg.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/target_mixer.cc -o src/target_mixer.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/nucleus.cc -o src/nucleus.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/sfevent.cc -o src/sfevent.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/ff.cc -o src/ff.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dirs.cc -o src/dirs.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/rpa_2013.cc -o src/rpa_2013.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/nucleus_data.cc -o src/nucleus_data.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/isotopes.cc -o src/isotopes.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/elements.cc -o src/elements.o
+gfortran  -c src/rew/PythiaQuiet.f -o src/rew/PythiaQuiet.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/rew/rewparams.cc -o src/rew/rewparams.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/nuwro.cc -o src/nuwro.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/beam.cc -o src/beam.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/nd280stats.cc -o src/nd280stats.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/beamHist.cc -o src/beamHist.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/coh.cc -o src/coh.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/fsi.cc -o src/fsi.o
+In file included from src/beam.cc:1:
+In file included from src/beam_uniform.h:6:
+In file included from src/beam.h:7:
+src/geomy.h:63:12: warning: private field 'box1' is not used [-Wunused-private-field]
+        TGeoBBox* box1;
+                  ^
+src/geomy.h:67:15: warning: private field 'ele1' is not used [-Wunused-private-field]
+        TGeoElement* ele1;
+                     ^
+In file included from src/beam.cc:4:
+src/beamRF.h:109:7: warning: private field 'curevent' is not used [-Wunused-private-field]
+  int curevent;
+      ^
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/pitab.cc -o src/pitab.o
+In file included from src/beamHist.cc:3:
+In file included from src/beamHist.h:5:
+In file included from src/beam.h:7:
+src/geomy.h:63:12: warning: private field 'box1' is not used [-Wunused-private-field]
+        TGeoBBox* box1;
+                  ^
+src/geomy.h:67:15: warning: private field 'ele1' is not used [-Wunused-private-field]
+        TGeoElement* ele1;
+                     ^
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/scatter.cc -o src/scatter.o
+2 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/kaskada7.cc -o src/kaskada7.o
+3 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/shell_sampler.cc -o src/shell_sampler.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/Interaction.cc -o src/Interaction.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/input_data.cc -o src/input_data.o
+src/nuwro.cc:843:5: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+                                sprintf(filename,"%s.%d.part",a.output,k);
+                                ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdio.h:180:1: note: 'sprintf' has been explicitly marked deprecated here
+__deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:218:48: note: expanded from macro '__deprecated_msg'
+        #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+                                                      ^
+src/nuwro.cc:912:4: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+                        sprintf(filename,"%s.%d.part",a.output,k);
+                        ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdio.h:180:1: note: 'sprintf' has been explicitly marked deprecated here
+__deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:218:48: note: expanded from macro '__deprecated_msg'
+        #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+                                                      ^
+src/nuwro.cc:944:4: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+                        sprintf(filename,"%s.%d.part",a.output,k);
+                        ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdio.h:180:1: note: 'sprintf' has been explicitly marked deprecated here
+__deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:218:48: note: expanded from macro '__deprecated_msg'
+        #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+                                                      ^
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/data_container.cc -o src/data_container.o
+In file included from src/nuwro.cc:15:
+In file included from src/beam.h:7:
+src/geomy.h:63:12: warning: private field 'box1' is not used [-Wunused-private-field]
+        TGeoBBox* box1;
+                  ^
+src/geomy.h:67:15: warning: private field 'ele1' is not used [-Wunused-private-field]
+        TGeoElement* ele1;
+                     ^
+In file included from src/nuwro.cc:33:
+src/hist.h:17:15: warning: private field 'max' is not used [-Wunused-private-field]
+  double min, max, width;       // x_min , x_max  and bin width
+              ^
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/main.cc -o src/main.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/particle.cc -o src/particle.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/generatormt.cc -o src/generatormt.o
+In file included from src/kaskada7.cc:1:
+In file included from src/kaskada7.h:27:
+In file included from src/beam.h:7:
+src/geomy.h:63:12: warning: private field 'box1' is not used [-Wunused-private-field]
+        TGeoBBox* box1;
+                  ^
+src/geomy.h:67:15: warning: private field 'ele1' is not used [-Wunused-private-field]
+        TGeoElement* ele1;
+                     ^
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/event1Dict.cc -o src/event1Dict.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/sf/CGaussianSF.cc -o src/sf/CGaussianSF.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/sf/CMomDistrib.cc -o src/sf/CMomDistrib.o
+2 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/sf/CSFOptions.cc -o src/sf/CSFOptions.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/sf/CSpectralFunc.cc -o src/sf/CSpectralFunc.o
+6 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/sf/FormFactors.cc -o src/sf/FormFactors.o
+In file included from src/main.cc:1:
+In file included from src/nuwro.h:6:
+src/geomy.h:63:12: warning: private field 'box1' is not used [-Wunused-private-field]
+        TGeoBBox* box1;
+                  ^
+src/geomy.h:67:15: warning: private field 'ele1' is not used [-Wunused-private-field]
+        TGeoElement* ele1;
+                     ^
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/sf/gridfun2d.cc -o src/sf/gridfun2d.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/charge.cc -o src/dis/charge.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/LeptonMass.cc -o src/dis/LeptonMass.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/parameters.cc -o src/dis/parameters.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/grv94_bodek.cc -o src/dis/grv94_bodek.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/dis_cr_sec.cc -o src/dis/dis_cr_sec.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/dis_nc.cc -o src/dis/dis_nc.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/dis_cc_neutron.cc -o src/dis/dis_cc_neutron.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/delta.cc -o src/dis/delta.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/dis2res.cc -o src/dis/dis2res.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/dis_cc_proton.cc -o src/dis/dis_cc_proton.o
+2 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/fragmentation.cc -o src/dis/fragmentation.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/fragmentation_nc.cc -o src/dis/fragmentation_nc.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/fragmentation_cc.cc -o src/dis/fragmentation_cc.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/singlepion.cc -o src/dis/singlepion.o
+src/dis/delta.cc:603:3: warning: switch condition has boolean value [-Wswitch-bool]
+  switch (current)
+  ^       ~~~~~~~
+1 warning generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/disevent.cc -o src/dis/disevent.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/resevent2.cc -o src/dis/resevent2.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/singlepionhadr.cc -o src/dis/singlepionhadr.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/alfa.cc -o src/dis/alfa.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/res_kinematics.cc -o src/dis/res_kinematics.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dis/res_xsec.cc -o src/dis/res_xsec.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/mecdynamics.cc -o src/mecdynamics.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/mecevent.cc -o src/mecevent.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/mecevent_tem.cc -o src/mecevent_tem.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/mecevent_Nieves.cc -o src/mecevent_Nieves.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/mecevent_2020Valencia.cc -o src/mecevent_2020Valencia.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/mecevent_SuSA.cc -o src/mecevent_SuSA.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/mecevent_common.cc -o src/mecevent_common.o
+In file included from src/mecevent.cc:8:
+In file included from src/beam.h:7:
+src/geomy.h:63:12: warning: private field 'box1' is not used [-Wunused-private-field]
+        TGeoBBox* box1;
+                  ^
+src/geomy.h:67:15: warning: private field 'ele1' is not used [-Wunused-private-field]
+        TGeoElement* ele1;
+                     ^
+2 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/mecdynamics2.cc -o src/mecdynamics2.o
+In file included from src/mecevent_tem.cc:1:
+In file included from src/mecevent_tem.h:11:
+In file included from src/beam.h:7:
+src/geomy.h:63:12: warning: private field 'box1' is not used [-Wunused-private-field]
+        TGeoBBox* box1;
+                  ^
+src/geomy.h:67:15: warning: private field 'ele1' is not used [-Wunused-private-field]
+        TGeoElement* ele1;
+                     ^
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/mecevent2.cc -o src/mecevent2.o
+2 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/hybrid/ABCDE.cc -o src/hybrid/ABCDE.o
+In file included from src/mecevent_Nieves.cc:1:
+In file included from src/mecevent_Nieves.h:9:
+In file included from src/beam.h:7:
+src/geomy.h:63:12: warning: private field 'box1' is not used [-Wunused-private-field]
+        TGeoBBox* box1;
+                  ^
+src/geomy.h:67:15: warning: private field 'ele1' is not used [-Wunused-private-field]
+        TGeoElement* ele1;
+                     ^
+In file included from src/mecevent_2020Valencia.cc:1:
+In file included from src/mecevent_2020Valencia.h:10:
+In file included from src/beam.h:7:
+src/geomy.h:63:12: warning: private field 'box1' is not used [-Wunused-private-field]
+        TGeoBBox* box1;
+                  ^
+src/geomy.h:67:15: warning: private field 'ele1' is not used [-Wunused-private-field]
+        TGeoElement* ele1;
+                     ^
+2 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/hybrid/Calculations.cc -o src/hybrid/Calculations.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/hybrid/Delta_free.cc -o src/hybrid/Delta_free.o
+2 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/hybrid/diracMatrices.cc -o src/hybrid/diracMatrices.o
+src/hybrid/Delta_free.cc:586:12: warning: variable 'icD' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if( nucleon == 2 ){
+           ^~~~~~~~~~~~
+src/hybrid/Delta_free.cc:594:5: note: uninitialized use occurs here
+if( icD != 0 ){
+    ^~~
+src/hybrid/Delta_free.cc:586:8: note: remove the 'if' if its condition is always true
+  else if( nucleon == 2 ){
+       ^~~~~~~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:581:10: warning: variable 'icD' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+else if( process == 0 || process == 2 ){
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:594:5: note: uninitialized use occurs here
+if( icD != 0 ){
+    ^~~
+src/hybrid/Delta_free.cc:581:6: note: remove the 'if' if its condition is always true
+else if( process == 0 || process == 2 ){
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:571:11: warning: variable 'icD' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if(Helicity == 1){ //antineutrino
+          ^~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:594:5: note: uninitialized use occurs here
+if( icD != 0 ){
+    ^~~
+src/hybrid/Delta_free.cc:571:8: note: remove the 'if' if its condition is always true
+  else if(Helicity == 1){ //antineutrino
+       ^~~~~~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:556:17: note: initialize the variable 'icD' to silence this warning
+      double icD;
+                ^
+                 = 0.0
+src/hybrid/Delta_free.cc:698:12: warning: variable 'icD' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if( nucleon == 2 ){
+           ^~~~~~~~~~~~
+src/hybrid/Delta_free.cc:705:6: note: uninitialized use occurs here
+ if( icD == 0 ){
+     ^~~
+src/hybrid/Delta_free.cc:698:8: note: remove the 'if' if its condition is always true
+  else if( nucleon == 2 ){
+       ^~~~~~~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:693:10: warning: variable 'icD' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+else if( process == 0 || process == 2 ){
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:705:6: note: uninitialized use occurs here
+ if( icD == 0 ){
+     ^~~
+src/hybrid/Delta_free.cc:693:6: note: remove the 'if' if its condition is always true
+else if( process == 0 || process == 2 ){
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:683:11: warning: variable 'icD' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if(Helicity == 1){ //antineutrino
+          ^~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:705:6: note: uninitialized use occurs here
+ if( icD == 0 ){
+     ^~~
+src/hybrid/Delta_free.cc:683:8: note: remove the 'if' if its condition is always true
+  else if(Helicity == 1){ //antineutrino
+       ^~~~~~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:668:17: note: initialize the variable 'icD' to silence this warning
+      double icD;
+                ^
+                 = 0.0
+src/hybrid/Delta_free.cc:783:12: warning: variable 'icD' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if( nucleon == 2 ){
+           ^~~~~~~~~~~~
+src/hybrid/Delta_free.cc:791:4: note: uninitialized use occurs here
+if(icD != 0){
+   ^~~
+src/hybrid/Delta_free.cc:783:8: note: remove the 'if' if its condition is always true
+  else if( nucleon == 2 ){
+       ^~~~~~~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:779:10: warning: variable 'icD' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+else if( process == 0 || process == 2 ){
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:791:4: note: uninitialized use occurs here
+if(icD != 0){
+   ^~~
+src/hybrid/Delta_free.cc:779:6: note: remove the 'if' if its condition is always true
+else if( process == 0 || process == 2 ){
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:765:11: warning: variable 'icD' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if(Helicity == 1){ //antineutrino
+          ^~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:791:4: note: uninitialized use occurs here
+if(icD != 0){
+   ^~~
+src/hybrid/Delta_free.cc:765:8: note: remove the 'if' if its condition is always true
+  else if(Helicity == 1){ //antineutrino
+       ^~~~~~~~~~~~~~~~~
+src/hybrid/Delta_free.cc:748:17: note: initialize the variable 'icD' to silence this warning
+      double icD;
+                ^
+                 = 0.0
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/hybrid/hybrid_gateway.cc -o src/hybrid/hybrid_gateway.o
+In file included from src/mecevent_SuSA.cc:1:
+In file included from src/mecevent_SuSA.h:9:
+In file included from src/beam.h:7:
+src/geomy.h:63:12: warning: private field 'box1' is not used [-Wunused-private-field]
+        TGeoBBox* box1;
+                  ^
+src/geomy.h:67:15: warning: private field 'ele1' is not used [-Wunused-private-field]
+        TGeoElement* ele1;
+                     ^
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/hybrid/Leptonic.cc -o src/hybrid/Leptonic.o
+9 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/hybrid/Matrix.cc -o src/hybrid/Matrix.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/hybrid/NON-Resonant.cc -o src/hybrid/NON-Resonant.o
+2 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/hybrid/Operators.cc -o src/hybrid/Operators.o
+In file included from src/mecevent2.cc:8:
+In file included from src/beam.h:7:
+src/geomy.h:63:12: warning: private field 'box1' is not used [-Wunused-private-field]
+        TGeoBBox* box1;
+                  ^
+src/geomy.h:67:15: warning: private field 'ele1' is not used [-Wunused-private-field]
+        TGeoElement* ele1;
+                     ^
+2 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/resevent_hybrid.cc -o src/resevent_hybrid.o
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/dumpParams.cc -o src/dumpParams.o
+In file included from src/hybrid/Operators.cc:4:
+src/hybrid/D13.h:473:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 0.; } 
+                 ^~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:473:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 0.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/D13.h:471:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 1 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:471:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 1 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:469:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( Helicity == 1 ){
+             ^~~~~~~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:469:10: note: remove the 'if' if its condition is always true
+    else if( Helicity == 1 ){
+         ^~~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:466:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 0.; } 
+                 ^~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:466:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 0.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/D13.h:464:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 2 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:464:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 2 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:461:12: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if( process == 1 ){
+           ^~~~~~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:461:8: note: remove the 'if' if its condition is always true
+  else if( process == 1 ){
+       ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:457:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:457:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/D13.h:455:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( nucleon == 2 ){ 
+             ^~~~~~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:455:10: note: remove the 'if' if its condition is always true
+    else if( nucleon == 2 ){ 
+         ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:453:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:453:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/D13.h:449:10: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+else if( cross == 1 ){
+         ^~~~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:449:6: note: remove the 'if' if its condition is always true
+else if( cross == 1 ){
+     ^~~~~~~~~~~~~~~~
+src/hybrid/D13.h:442:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 1.; } 
+                 ^~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:442:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 1.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/D13.h:440:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 1 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:440:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 1 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:438:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( Helicity == 1 ){
+             ^~~~~~~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:438:10: note: remove the 'if' if its condition is always true
+    else if( Helicity == 1 ){
+         ^~~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:435:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 1.; } 
+                 ^~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:435:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 1.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/D13.h:433:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 2 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:433:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 2 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:430:12: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if( process == 1 ){
+           ^~~~~~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:430:8: note: remove the 'if' if its condition is always true
+  else if( process == 1 ){
+       ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:426:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:426:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/D13.h:424:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( nucleon == 2 ){ 
+             ^~~~~~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:424:10: note: remove the 'if' if its condition is always true
+    else if( nucleon == 2 ){ 
+         ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:422:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/D13.h:479:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:422:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/D13.h:417:18: note: initialize the variable 'icNP' to silence this warning
+      double icNP, icD13;
+                 ^
+                  = 0.0
+src/hybrid/D13.h:610:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 0.; } 
+                 ^~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:610:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 0.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/D13.h:608:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 1 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:608:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 1 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:606:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( Helicity == 1 ){
+             ^~~~~~~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:606:10: note: remove the 'if' if its condition is always true
+    else if( Helicity == 1 ){
+         ^~~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:603:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 0.; } 
+                 ^~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:603:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 0.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/D13.h:601:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 2 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:601:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 2 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:598:12: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if( process == 1 ){
+           ^~~~~~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:598:8: note: remove the 'if' if its condition is always true
+  else if( process == 1 ){
+       ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:594:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:594:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/D13.h:592:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( nucleon == 2 ){ 
+             ^~~~~~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:592:10: note: remove the 'if' if its condition is always true
+    else if( nucleon == 2 ){ 
+         ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:590:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:590:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/D13.h:586:10: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+else if( cross == 1 ){
+         ^~~~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:586:6: note: remove the 'if' if its condition is always true
+else if( cross == 1 ){
+     ^~~~~~~~~~~~~~~~
+src/hybrid/D13.h:579:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 1.; } 
+                 ^~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:579:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 1.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/D13.h:577:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 1 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:577:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 1 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:575:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( Helicity == 1 ){
+             ^~~~~~~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:575:10: note: remove the 'if' if its condition is always true
+    else if( Helicity == 1 ){
+         ^~~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:572:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 1.; } 
+                 ^~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:572:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 1.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/D13.h:570:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 2 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:570:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 2 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:567:12: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if( process == 1 ){
+           ^~~~~~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:567:8: note: remove the 'if' if its condition is always true
+  else if( process == 1 ){
+       ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:563:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:563:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/D13.h:561:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( nucleon == 2 ){ 
+             ^~~~~~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:561:10: note: remove the 'if' if its condition is always true
+    else if( nucleon == 2 ){ 
+         ^~~~~~~~~~~~~~~~~~
+src/hybrid/D13.h:559:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/D13.h:616:9: note: uninitialized use occurs here
+icD13 = icNP;
+        ^~~~
+src/hybrid/D13.h:559:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/D13.h:554:18: note: initialize the variable 'icNP' to silence this warning
+      double icNP, icD13;
+                 ^
+                  = 0.0
+In file included from src/hybrid/Operators.cc:5:
+src/hybrid/S11.h:322:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 0.; } 
+                 ^~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:322:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 0.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/S11.h:320:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 1 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:320:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 1 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/S11.h:318:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( Helicity == 1 ){
+             ^~~~~~~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:318:10: note: remove the 'if' if its condition is always true
+    else if( Helicity == 1 ){
+         ^~~~~~~~~~~~~~~~~~~
+src/hybrid/S11.h:315:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 0.; } 
+                 ^~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:315:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 0.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/S11.h:313:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 2 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:313:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 2 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/S11.h:310:12: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if( process == 1 ){
+           ^~~~~~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:310:8: note: remove the 'if' if its condition is always true
+  else if( process == 1 ){
+       ^~~~~~~~~~~~~~~~~~
+src/hybrid/S11.h:306:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:306:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/S11.h:304:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( nucleon == 2 ){ 
+             ^~~~~~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:304:10: note: remove the 'if' if its condition is always true
+    else if( nucleon == 2 ){ 
+         ^~~~~~~~~~~~~~~~~~
+src/hybrid/S11.h:302:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:302:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/S11.h:298:10: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+else if( cross == 1 ){
+         ^~~~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:298:6: note: remove the 'if' if its condition is always true
+else if( cross == 1 ){
+     ^~~~~~~~~~~~~~~~
+src/hybrid/S11.h:292:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 1.; } 
+                 ^~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:292:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 1.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/S11.h:290:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 1 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:290:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 1 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/S11.h:288:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( Helicity == 1 ){
+             ^~~~~~~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:288:10: note: remove the 'if' if its condition is always true
+    else if( Helicity == 1 ){
+         ^~~~~~~~~~~~~~~~~~~
+src/hybrid/S11.h:285:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 1.; } 
+                 ^~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:285:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 1.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/S11.h:283:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 2 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:283:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 2 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/S11.h:280:12: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if( process == 1 ){
+           ^~~~~~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:280:8: note: remove the 'if' if its condition is always true
+  else if( process == 1 ){
+       ^~~~~~~~~~~~~~~~~~
+src/hybrid/S11.h:276:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:276:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/S11.h:274:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( nucleon == 2 ){ 
+             ^~~~~~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:274:10: note: remove the 'if' if its condition is always true
+    else if( nucleon == 2 ){ 
+         ^~~~~~~~~~~~~~~~~~
+src/hybrid/S11.h:272:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/S11.h:328:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/S11.h:272:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/S11.h:267:23: note: initialize the variable 'icNP' to silence this warning
+      double icR, icNP; 
+                      ^
+                       = 0.0
+In file included from src/hybrid/Operators.cc:6:
+src/hybrid/P11.h:335:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 0.; } 
+                 ^~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:335:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 0.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/P11.h:333:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 1 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:333:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 1 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:331:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( Helicity == 1 ){
+             ^~~~~~~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:331:10: note: remove the 'if' if its condition is always true
+    else if( Helicity == 1 ){
+         ^~~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:328:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 0.; } 
+                 ^~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:328:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 0.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/P11.h:326:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 2 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:326:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 2 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:323:12: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if( process == 1 ){
+           ^~~~~~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:323:8: note: remove the 'if' if its condition is always true
+  else if( process == 1 ){
+       ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:319:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:319:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/P11.h:317:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( nucleon == 2 ){ 
+             ^~~~~~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:317:10: note: remove the 'if' if its condition is always true
+    else if( nucleon == 2 ){ 
+         ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:315:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:315:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/P11.h:311:10: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+else if( cross == 1 ){
+         ^~~~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:311:6: note: remove the 'if' if its condition is always true
+else if( cross == 1 ){
+     ^~~~~~~~~~~~~~~~
+src/hybrid/P11.h:305:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 1.; } 
+                 ^~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:305:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 1.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/P11.h:303:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 1 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:303:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 1 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:301:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( Helicity == 1 ){
+             ^~~~~~~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:301:10: note: remove the 'if' if its condition is always true
+    else if( Helicity == 1 ){
+         ^~~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:298:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 1.; } 
+                 ^~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:298:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 1.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/P11.h:296:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 2 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:296:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 2 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:293:12: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if( process == 1 ){
+           ^~~~~~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:293:8: note: remove the 'if' if its condition is always true
+  else if( process == 1 ){
+       ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:289:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:289:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/P11.h:287:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( nucleon == 2 ){ 
+             ^~~~~~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:287:10: note: remove the 'if' if its condition is always true
+    else if( nucleon == 2 ){ 
+         ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:285:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/P11.h:341:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:285:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/P11.h:280:23: note: initialize the variable 'icNP' to silence this warning
+      double icR, icNP; 
+                      ^
+                       = 0.0
+src/hybrid/P11.h:453:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 0.; } 
+                 ^~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:453:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 0.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/P11.h:451:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 1 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:451:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 1 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:449:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( Helicity == 1 ){
+             ^~~~~~~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:449:10: note: remove the 'if' if its condition is always true
+    else if( Helicity == 1 ){
+         ^~~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:446:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 0.; } 
+                 ^~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:446:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 0.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/P11.h:444:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 2 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:444:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 2 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:441:12: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if( process == 1 ){
+           ^~~~~~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:441:8: note: remove the 'if' if its condition is always true
+  else if( process == 1 ){
+       ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:437:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:437:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/P11.h:435:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( nucleon == 2 ){ 
+             ^~~~~~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:435:10: note: remove the 'if' if its condition is always true
+    else if( nucleon == 2 ){ 
+         ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:433:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:433:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/P11.h:429:10: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+else if( cross == 1 ){
+         ^~~~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:429:6: note: remove the 'if' if its condition is always true
+else if( cross == 1 ){
+     ^~~~~~~~~~~~~~~~
+src/hybrid/P11.h:422:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 1.; } 
+                 ^~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:422:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 1.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/P11.h:420:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 1 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:420:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 1 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:418:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( Helicity == 1 ){
+             ^~~~~~~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:418:10: note: remove the 'if' if its condition is always true
+    else if( Helicity == 1 ){
+         ^~~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:415:11: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+        else if( decay==2 ){ icNP = 1.; } 
+                 ^~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:415:7: note: remove the 'if' if its condition is always true
+        else if( decay==2 ){ icNP = 1.; } 
+             ^~~~~~~~~~~~~~
+src/hybrid/P11.h:413:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( nucleon == 2 ){ 
+               ^~~~~~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:413:12: note: remove the 'if' if its condition is always true
+      else if( nucleon == 2 ){ 
+           ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:410:12: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+  else if( process == 1 ){
+           ^~~~~~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:410:8: note: remove the 'if' if its condition is always true
+  else if( process == 1 ){
+       ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:406:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:406:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/P11.h:404:14: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    else if( nucleon == 2 ){ 
+             ^~~~~~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:404:10: note: remove the 'if' if its condition is always true
+    else if( nucleon == 2 ){ 
+         ^~~~~~~~~~~~~~~~~~
+src/hybrid/P11.h:402:16: warning: variable 'icNP' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+      else if( decay==2 ){ icNP = 1.; } 
+               ^~~~~~~~
+src/hybrid/P11.h:459:7: note: uninitialized use occurs here
+icR = icNP;
+      ^~~~
+src/hybrid/P11.h:402:12: note: remove the 'if' if its condition is always true
+      else if( decay==2 ){ icNP = 1.; } 
+           ^~~~~~~~~~~~~~
+src/hybrid/P11.h:397:23: note: initialize the variable 'icNP' to silence this warning
+      double icR, icNP; 
+                      ^
+                       = 0.0
+src/hybrid/Operators.cc:13:71: warning: argument 'Operator' of type 'Matrix[]' with mismatched bound [-Warray-parameter]
+void GetOperator(Hadron_prime* kin, Reaction_parameters* par,  Matrix Operator[])
+                                                                      ^
+src/hybrid/Operators.h:6:70: note: previously declared as 'Matrix[4]' here
+void GetOperator(Hadron_prime *kin, Reaction_parameters *par, Matrix Operator[4]);
+                                                                     ^
+src/hybrid/Operators.cc:58:68: warning: argument 'ReChi' of type 'Matrix[]' with mismatched bound [-Warray-parameter]
+void Get_ReChi(Hadron_prime* kin, Reaction_parameters* par, Matrix ReChi[])
+                                                                   ^
+src/hybrid/Operators.h:10:71: note: previously declared as 'Matrix[4]' here
+void Get_ReChi(Hadron_prime *kin, Reaction_parameters *params, Matrix ReChi[4]);
+                                                                      ^
+src/hybrid/Operators.cc:97:71: warning: argument 'ChPT' of type 'Matrix[]' with mismatched bound [-Warray-parameter]
+void Get_Res_ChPT(Hadron_prime* kin, Reaction_parameters* par, Matrix ChPT[], Matrix Resonances[])
+                                                                      ^
+src/hybrid/Operators.h:8:74: note: previously declared as 'Matrix[4]' here
+void Get_Res_ChPT(Hadron_prime *kin, Reaction_parameters *params, Matrix ChPT[4], Matrix Resonances[4]);
+                                                                         ^
+src/hybrid/Operators.cc:97:86: warning: argument 'Resonances' of type 'Matrix[]' with mismatched bound [-Warray-parameter]
+void Get_Res_ChPT(Hadron_prime* kin, Reaction_parameters* par, Matrix ChPT[], Matrix Resonances[])
+                                                                                     ^
+src/hybrid/Operators.h:8:90: note: previously declared as 'Matrix[4]' here
+void Get_Res_ChPT(Hadron_prime *kin, Reaction_parameters *params, Matrix ChPT[4], Matrix Resonances[4]);
+                                                                                         ^
+99 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include  `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --libs` -L/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib -Wl,-rpath,/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib -lEGPythia6 -lPythia6 -lGeom -lMinuit -lgfortran   src/dumpParams.o src/dirs.o -o bin/dumpParams
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include  `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --libs` -L/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib -Wl,-rpath,/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib -lEGPythia6 -lPythia6 -lGeom -lMinuit -lgfortran   src/pauli.o src/cohevent2.o src/cohdynamics2.o src/qelevent1.o src/hypevent.o src/hyperon_interaction.o src/hyperon_cascade.o src/lepevent.o src/nu_e_el_sigma.o src/qel_sigma.o src/kinsolver.o src/kinematics.o src/pdg.o src/target_mixer.o src/nucleus.o src/sfevent.o src/ff.o src/dirs.o src/rpa_2013.o src/nucleus_data.o src/isotopes.o src/elements.o src/rew/PythiaQuiet.o src/rew/rewparams.o src/nuwro.o src/beam.o src/nd280stats.o src/beamHist.o src/coh.o src/fsi.o src/pitab.o src/scatter.o src/kaskada7.o src/shell_sampler.o src/Interaction.o src/input_data.o src/data_container.o src/main.o src/event1.o src/particle.o src/generatormt.o src/event1Dict.o src/sf/CGaussianSF.o src/sf/CMomDistrib.o src/sf/CSFOptions.o src/sf/CSpectralFunc.o src/sf/FormFactors.o src/sf/gridfun2d.o src/dis/charge.o src/dis/LeptonMass.o src/dis/parameters.o src/dis/grv94_bodek.o src/dis/dis_cr_sec.o src/dis/dis_nc.o src/dis/dis_cc_neutron.o src/dis/delta.o src/dis/dis2res.o src/dis/dis_cc_proton.o src/dis/fragmentation.o src/dis/fragmentation_nc.o src/dis/fragmentation_cc.o src/dis/singlepion.o src/dis/disevent.o src/dis/resevent2.o src/dis/singlepionhadr.o src/dis/alfa.o src/dis/res_kinematics.o src/dis/res_xsec.o src/mecdynamics.o src/mecevent.o src/mecevent_tem.o src/mecevent_Nieves.o src/mecevent_2020Valencia.o src/mecevent_SuSA.o src/mecevent_common.o src/mecdynamics2.o src/mecevent2.o src/hybrid/ABCDE.o src/hybrid/Calculations.o src/hybrid/Delta_free.o src/hybrid/diracMatrices.o src/hybrid/hybrid_gateway.o src/hybrid/Leptonic.o src/hybrid/Matrix.o src/hybrid/NON-Resonant.o src/hybrid/Operators.o src/resevent_hybrid.o -o bin/nuwro
+ld: library 'gfortran' not found
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make: *** [bin/dumpParams] Error 1
+make: *** Waiting for unfinished jobs....
+ld: library 'gfortran' not found
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make: *** [bin/nuwro] Error 1
+       16.10 real        52.87 user         6.53 sys
+           395509760  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              975179  page reclaims
+               19132  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                  91  signals received
+                 543  voluntary context switches
+               46335  involuntary context switches
+           758471993  instructions retired
+           676028833  cycles elapsed
+             4145368  peak memory footprint

@@ -31,12 +31,12 @@
  },
  "energy_partition_weighted_mean_MeV": {
   "omega": 489.40479146980346,
-  "T_protons": 310.00050772817514,
+  "T_protons": 310.00470354832754,
   "T_neutrons": 106.26890352310843,
   "pions_total_E": 10.444649245084067,
   "other_E": 0.0,
-  "unrecorded_remainder": 62.69073097343587,
-  "E_avail": 314.9178799170053
+  "unrecorded_remainder": 62.68653515328342,
+  "E_avail": 314.9220757371577
  },
  "neutron_fraction_of_omega_weighted": 0.21713907459703588,
  "post_species_counts": {

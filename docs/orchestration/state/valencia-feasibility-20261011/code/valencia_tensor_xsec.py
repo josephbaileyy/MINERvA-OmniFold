@@ -20,8 +20,8 @@ contracts four-vectors directly. The sign of the antisymmetric (VA) term is fixe
 by the physical requirement that it is constructive for neutrinos; its magnitude
 is then tested against the published antineutrino value.
 
-Convention under test (benchmark B1/B2): d2sigma/(dOmega dE') =
-(|k'|/E) (G_F V_ud)^2 / (4 pi^2) L_{mu nu} W^{mu nu}, W per nucleon in MeV^-1.
+Convention (the authors'): d2sigma/(dOmega dE') = (|k'|/E) G_F^2 / (4 pi^2)
+L_{mu nu} W^{mu nu}, with cos^2(theta_C) inside W; W per nucleon in MeV^-1.
 """
 
 from __future__ import annotations
@@ -34,7 +34,11 @@ from pathlib import Path
 import numpy as np
 
 GF_MEV = 1.1663787e-11  # MeV^-2
-VUD = 0.97373
+VUD = 0.97373  # used only for the diagnostic "extra V_ud^2" variant
+# The Valencia hadron tensor already contains cos^2(theta_C): Nieves et al. 2011
+# (arXiv:1102.2777, Eqs. for W^{mu nu} carry -2 cos^2(theta_C)), and the 2020 paper's
+# prefactor is G^2/(4 pi^2) with no V_ud. Corrected after review (REVIEW.md, finding 1).
+PREFACTOR_VUD2 = 1.0
 HBARC2_CM2_MEV2 = 0.3893794e-21  # (hbar c)^2 in cm^2 MeV^2
 M_MU = 105.6583755  # MeV
 NGRID = 120
@@ -149,7 +153,7 @@ def sigma(tables, E: float, beam: str = "nu", nucleus: str = "C12",
     Ep = E - Om
     kp = np.sqrt(np.maximum(Ep ** 2 - M_MU ** 2, 0.0))
     allowed = (Q > np.abs(E - kp)) & (Q < E + kp) & (Q <= QMAX)
-    pref = (GF_MEV * VUD) ** 2 / (2 * np.pi) * Q / E ** 2
+    pref = GF_MEV ** 2 * PREFACTOR_VUD2 / (2 * np.pi) * Q / E ** 2
     sym, anti = {}, {}
     for ch in channels:
         w = {c: interp(tables[ch][c], Om - B, Q) for c in COMPONENTS}

@@ -1,0 +1,112 @@
+-- The CXX compiler identification is AppleClang 15.0.0.15000309
+-- The C compiler identification is AppleClang 15.0.0.15000309
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Found Vdt: /opt/homebrew/Cellar/root/6.36.00/include/root (found version "0.4")
+-- The Fortran compiler identification is GNU 15.2.0
+-- Checking whether Fortran compiler has -isysroot
+-- Checking whether Fortran compiler has -isysroot - yes
+-- Checking whether Fortran compiler supports OSX deployment target flag
+-- Checking whether Fortran compiler supports OSX deployment target flag - yes
+-- Detecting Fortran compiler ABI info
+-- Detecting Fortran compiler ABI info - done
+-- Check for working Fortran compiler: /opt/homebrew/bin/gfortran - skipped
+-- Configuring done (2.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build
+        2.15 real         0.97 user         0.99 sys
+            39075840  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              116312  page reclaims
+                7314  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                  22  signals received
+                 559  voluntary context switches
+                7555  involuntary context switches
+          3424078500  instructions retired
+          1180438908  cycles elapsed
+            13844912  peak memory footprint
+[ 10%] Building C object CMakeFiles/Pythia6.dir/pythia6/pythia6_common_address.c.o
+[ 30%] Building Fortran object CMakeFiles/Pythia6.dir/pythia6/tpythia6_called_from_cc.F.o
+[ 30%] Building Fortran object CMakeFiles/Pythia6.dir/pythia6/pythia6428.f.o
+/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/pythia6/pythia6428.f:10637:72:
+
+10637 |   100   VINT(J)=VINTSV(J)
+      |                                                                        1
+Warning: Fortran 2018 deleted feature: DO termination statement which is not END DO or CONTINUE with label 100 at (1)
+/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/pythia6/pythia6428.f:56725:72:
+
+56725 |          DO 440 J = I, N
+      |                                                                        1
+Warning: Fortran 2018 deleted feature: Shared DO termination label 440 at (1)
+/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/pythia6/pythia6428.f:56793:72:
+
+56793 |          DO 540 I = LOW, IGH
+      |                                                                        1
+Warning: Fortran 2018 deleted feature: Shared DO termination label 540 at (1)
+/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/pythia6/pythia6428.f:57018:72:
+
+57018 |   220 SCALE(I) = 1.0D0
+      |                                                                        1
+Warning: Fortran 2018 deleted feature: DO termination statement which is not END DO or CONTINUE with label 220 at (1)
+/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/pythia6/pythia6428.f:57224:72:
+
+57224 |   100    SCALE = SCALE + DABS(AR(I,M-1)) + DABS(AI(I,M-1))
+      |                                                                        1
+Warning: Fortran 2018 deleted feature: DO termination statement which is not END DO or CONTINUE with label 100 at (1)
+[ 40%] Linking Fortran shared library libPythia6.dylib
+[ 40%] Built target Pythia6
+[ 50%] Generating TPythia6.cxx, libTPythia6_rdict.pcm, libTPythia6.rootmap
+[ 60%] Building CXX object CMakeFiles/EGPythia6.dir/src/TMCParticle.cxx.o
+[ 70%] Building CXX object CMakeFiles/EGPythia6.dir/TPythia6.cxx.o
+[ 80%] Building CXX object CMakeFiles/EGPythia6.dir/src/TPythia6.cxx.o
+[ 90%] Building CXX object CMakeFiles/EGPythia6.dir/src/TPythia6Decayer.cxx.o
+[100%] Linking CXX shared library libEGPythia6.dylib
+[100%] Built target EGPythia6
+Install the project...
+-- Install configuration: "RELWITHDEBINFO"
+-- Installing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib/libPythia6.dylib
+-- Installing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib/libEGPythia6.dylib
+-- Installing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include/TMCParticle.h
+-- Installing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include/TPythia6.h
+-- Installing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include/TPythia6Decayer.h
+-- Installing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include/TPythia6Calls.h
+-- Installing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib/libTPythia6.rootmap
+-- Installing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib/libTPythia6_rdict.pcm
+-- Installing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib/cmake/ROOTEGPythia6/ROOTEGPythia6Targets.cmake
+-- Installing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib/cmake/ROOTEGPythia6/ROOTEGPythia6Targets-relwithdebinfo.cmake
+-- Installing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib/cmake/ROOTEGPythia6/ROOTEGPythia6Config.cmake
+-- Installing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib/cmake/ROOTEGPythia6/ROOTEGPythia6ConfigVersion.cmake
+-- Installing: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/bin/ROOTEGPythia6-config
+       45.23 real        40.02 user         2.26 sys
+           550993920  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              236814  page reclaims
+                9528  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                  34  signals received
+                2182  voluntary context switches
+               68866  involuntary context switches
+            61667486  instructions retired
+            36673865  cycles elapsed
+             1474752  peak memory footprint

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Diagnostic for B1/B2: sensitivity of the 1 GeV 12C result to the energy-shift B and V_ud.
+"""Diagnostic for B1/B2: sensitivity of the 1 GeV 12C result to the energy shift B (and an extra V_ud^2).
 
 B = 0 (no shift), NuWro's B, and 27.41 MeV (the corrected paper's carbon separation
 energy, used by Kasturi et al.). Reported per nucleus in 1e-38 cm^2. Not a benchmark.
@@ -21,6 +21,6 @@ for beam in ("nu", "nubar"):
         s.pop("_nu_sign_of_raw_W12_term")
         tot = 12 * sum(s.values()) / 1e-38
         out.append({"beam": beam, "B_MeV": B, "per_nucleus_1e38": round(tot, 4),
-                    "without_Vud2": round(tot / vx.VUD ** 2, 4)})
+                    "with_extra_Vud2": round(tot * vx.VUD ** 2, 4)})
         print(json.dumps(out[-1]))
     vx.B_SHIFT[("C12", beam)] = nominal

@@ -1,0 +1,6 @@
+{"beam": "nu", "B_MeV": 0.0, "per_nucleus_1e38": 1.4525, "with_extra_Vud2": 1.3772}
+{"beam": "nu", "B_MeV": 16.827, "per_nucleus_1e38": 1.3044, "with_extra_Vud2": 1.2368}
+{"beam": "nu", "B_MeV": 27.41, "per_nucleus_1e38": 1.2189, "with_extra_Vud2": 1.1557}
+{"beam": "nubar", "B_MeV": 0.0, "per_nucleus_1e38": 0.4106, "with_extra_Vud2": 0.3893}
+{"beam": "nubar", "B_MeV": 13.878, "per_nucleus_1e38": 0.3604, "with_extra_Vud2": 0.3417}
+{"beam": "nubar", "B_MeV": 27.41, "per_nucleus_1e38": 0.3194, "with_extra_Vud2": 0.3029}

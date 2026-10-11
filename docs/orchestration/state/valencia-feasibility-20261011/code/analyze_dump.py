@@ -20,7 +20,7 @@ from pathlib import Path
 
 import numpy as np
 
-M_P, M_N, M_PI_EAVAIL = 938.272, 939.565, 135.0  # MeV; E_avail uses 135 MeV for charged pions
+M_P, M_N, M_PI_EAVAIL = 938.27, 939.565, 135.0  # MeV; proton mass and 135 MeV pion as in CVUniverse.h
 LEGACY_CM2 = 2.56818808476849e21  # NuWro cm2 constant; v1 dumps divided the weight by it
 EAVAIL_EDGES_GEV = [0, 0.1, 0.2, 0.4, 0.8, 1.5, 3, 100]
 

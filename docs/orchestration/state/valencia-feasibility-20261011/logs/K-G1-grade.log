@@ -1,0 +1,6 @@
+B0 PASS {'max_rel_diff_n8_vs_n16': 2e-05, 'tolerance': 0.002}
+B1 PASS {'integrator_per_nucleus_1e38': 1.30441, 'published_1e38': 1.38, 'rel_dev': -0.05478, 'diagnostic_rel_dev_with_extra_Vud2': -0.10379}
+B2 QUALIFIED {'integrator_per_nucleus_1e38': 0.36038, 'published_1e38': 0.31, 'rel_dev': 0.16251, 'diagnostic_rel_dev_with_extra_Vud2': 0.10223}
+B3 PASS {'nuwro_per_nucleon_cm2': 0.0, 'mc_error_cm2': 0.0, 'integrator_per_nucleon_cm2': 0.0, 'rel_dev': -0.02869, 'pulls': -1.57223, 'tolerance': 0.05474, 'diagnostic_rel_dev_vs_integrator_times_nuwro_formula_factor': -0.02571}
+B4 PASS {}
+B5 FAIL {'tolerance_MeV': 0.001}

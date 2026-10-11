@@ -26,9 +26,9 @@ for bid, val, pub, (tp, tq) in (("B1", n8, 1.38, (0.07, 0.15)), ("B2", b8, 0.31,
     per_nucleus = 12 * val / 1e-38
     dev = per_nucleus / pub - 1
     grade = "PASS" if abs(dev) <= tp else ("QUALIFIED" if abs(dev) <= tq else "FAIL")
-    alt = per_nucleus / VUD2 / pub - 1
+    alt = per_nucleus * VUD2 / pub - 1
     out[bid] = {"integrator_per_nucleus_1e38": per_nucleus, "published_1e38": pub, "rel_dev": dev,
-                "grade": grade, "diagnostic_rel_dev_without_Vud2": alt}
+                "grade": grade, "diagnostic_rel_dev_with_extra_Vud2": alt}
 
 r1 = load("R1/analysis.json")
 mc, err = r1["sigma_per_nucleon_cm2"], r1["sigma_mc_error_cm2"]
@@ -37,7 +37,7 @@ tol = max(3 * err / n8, 0.01)
 out["B3"] = {"nuwro_per_nucleon_cm2": mc, "mc_error_cm2": err, "integrator_per_nucleon_cm2": n8,
              "rel_dev": dev, "pulls": dev * n8 / err, "tolerance": tol,
              "grade": "PASS" if abs(dev) <= tol else "FAIL",
-             "diagnostic_rel_dev_vs_nuwro_convention": mc / (n8 / VUD2 * (1 - 0.003052)) - 1}
+             "diagnostic_rel_dev_vs_integrator_times_nuwro_formula_factor": mc / (n8 * (1 - 0.003052)) - 1}
 
 ch = load("integrator-C12-nu-1GeV-n8.json")[0]["per_nucleon_cm2"]
 tot_i = sum(ch.values())

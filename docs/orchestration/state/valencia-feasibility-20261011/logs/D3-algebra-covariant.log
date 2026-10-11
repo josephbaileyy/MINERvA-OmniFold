@@ -1,0 +1,9 @@
+w=  100 q=  400 q^mu q^nu   exact +8.995909e+08 ours +8.995909e+08 nuwro +3.268185e+09
+w=  100 q=  400 -g^{mu nu}  exact +1.611637e+05 ours +1.611637e+05 nuwro +1.611637e+05
+w=  100 q=  400 e_z e_z     exact +1.270407e+05 ours +1.270407e+05 nuwro +1.418444e+05
+w=   50 q=  900 q^mu q^nu   exact +4.569655e+09 ours +4.569655e+09 nuwro +1.429235e+10
+w=   50 q=  900 -g^{mu nu}  exact +8.186637e+05 ours +8.186637e+05 nuwro +8.186637e+05
+w=   50 q=  900 e_z e_z     exact +1.162061e+04 ours +1.162061e+04 nuwro +2.362393e+04
+w=  700 q=  800 q^mu q^nu   exact +8.995909e+08 ours +8.995909e+08 nuwro +2.775394e+09
+w=  700 q=  800 -g^{mu nu}  exact +1.611637e+05 ours +1.611637e+05 nuwro +1.611637e+05
+w=  700 q=  800 e_z e_z     exact +4.235057e+05 ours +4.235057e+05 nuwro +4.264367e+05

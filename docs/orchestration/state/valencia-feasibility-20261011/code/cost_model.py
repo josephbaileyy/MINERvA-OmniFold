@@ -17,9 +17,6 @@ measured = {
     # upper bounds: total CPU (setup included) divided by sampled events
     "mec_cpu_s_per_trial_upper_R2_flux": ledger["R2-mefhc-flux"]["cpu_charged_s"] / ledger["R2-mefhc-flux"]["events_charged"],
     "mec_cpu_s_per_trial_upper_R1_1GeV": ledger["R1-bench-1GeV"]["cpu_charged_s"] / ledger["R1-bench-1GeV"]["events_charged"],
-    "mec_cpu_s_per_trial_setup_subtracted_R1_minus_R0b":
-        (ledger["R1-bench-1GeV"]["cpu_charged_s"] - ledger["R0b-smoke-1GeV"]["cpu_charged_s"])
-        / (ledger["R1-bench-1GeV"]["events_charged"] - ledger["R0b-smoke-1GeV"]["events_charged"]),
     "fullmodel_cpu_s_per_trial_R3": ledger["R3-fullmodel-throughput"]["cpu_charged_s"] / ledger["R3-fullmodel-throughput"]["events_charged"],
     "kish_neff_over_n_R2": r2["kish_neff_over_n"],
     "wmax_over_wmean_R2": r2["wmax_over_wmean"],
@@ -31,7 +28,7 @@ measured = {
 N_CONFIG = 4
 TARGETS = {"1pct": 10_000, "2pct": 2_500}  # effective events per E_avail bin (memo's precision scale)
 KISH_UNCERTAINTY_FACTOR = 3.0  # assumption: Kish estimates from 4,000 heavy-tailed weights are uncertain by up to x3
-limiting_bin = min((v, k) for k, v in measured["kish_neff_per_trial_by_signal_eavail_bin"].items() if k != "0.8-1.5")
+limiting_bin = min((v, k) for k, v in measured["kish_neff_per_trial_by_signal_eavail_bin"].items())
 cpu_hi = max(measured["mec_cpu_s_per_trial_upper_R2_flux"], measured["mec_cpu_s_per_trial_upper_R1_1GeV"])
 gen = {}
 for name, neff in TARGETS.items():
@@ -45,8 +42,9 @@ for name, neff in TARGETS.items():
 
 # Full-model baseline (QEL, RES, DIS, COH + predecessor MEC), needed once for a matched
 # total prediction. Throughput measured per weighted trial with a uniform channel mix;
-# the unweighting factor of the full model was NOT measured (assumption 1-10).
-baseline = {"events_assumed": 2_000_000, "unweighting_factor_assumed": [1, 10]}
+# the unweighting factor of the full model was NOT measured. Assumed 1-50: the MEC
+# channel alone measured w_max/<w> = 42 at this flux (REVIEW.md, finding 5).
+baseline = {"events_assumed": 2_000_000, "unweighting_factor_assumed": [1, 50]}
 baseline["core_hours"] = [baseline["events_assumed"] * f * measured["fullmodel_cpu_s_per_trial_R3"] / 3600
                           for f in baseline["unweighting_factor_assumed"]]
 

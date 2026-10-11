@@ -118,7 +118,7 @@ stay with the integration owner. Registration grants no compute, experiment, ado
 
 ### Valencia multinucleon feasibility pilot, 2026-10-11 — task branch, INCONCLUSIVE
 
-Bounded CPU pilot under Joseph's 2026-10-11 prompt (≤ 10 core-h, ≤ 10,000 events; used 0.034 core-h and
+Bounded CPU pilot under Joseph's 2026-10-11 prompt (≤ 10 core-h, ≤ 10,000 events; used 0.067 core-h and
 7,900 events). The 2025 corrected Valencia calculation has no public implementation, so only the 2020
 predecessor (NuWro 25.11.1 `mec_kind=6`) was benchmarked and run. Verdict INCONCLUSIVE, blocked on the
 authors' corrected tables and conventions; table-route generation is measured to be cheap. Grants no
@@ -128,6 +128,7 @@ compute, contact or adoption authority.
 |---|---|
 | frozen plan (observables, tolerances, budget) | [`state/valencia-feasibility-20261011/PLAN.md`](state/valencia-feasibility-20261011/PLAN.md) |
 | report: identity, benchmarks, pilot, applicability, cost, missing input | [`state/valencia-feasibility-20261011/REPORT.md`](state/valencia-feasibility-20261011/REPORT.md) |
+| one read-only review and the correction-pass dispositions | [`state/valencia-feasibility-20261011/REVIEW.md`](state/valencia-feasibility-20261011/REVIEW.md) |
 
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 

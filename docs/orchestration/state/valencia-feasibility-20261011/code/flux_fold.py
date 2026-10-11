@@ -3,8 +3,8 @@
 
 sigma(E) is computed on a log grid, interpolated linearly in log E, and folded
 with the piecewise-constant corrected ME-FHC flux (phi_t) over 0-100 GeV.
-Reports per-nucleon values with the integrator's declared V_ud^2 and without it
-(the NuWro and GENIE convention for these tables).
+Reports per-nucleon values in the authors' convention (cos^2 theta_C inside W, as
+NuWro and GENIE also use) and, as a diagnostic, with an extra V_ud^2 factor.
 """
 import json
 import sys
@@ -33,8 +33,8 @@ for lo, hi, ph in zip(edges[:-1], edges[1:], dens):
     num += ph * np.trapz(se, e) / 1000.0  # density is per GeV
 avg = num / float(d["Phi_t"])
 out = {"grid_MeV": grid.tolist(), "sigma_per_nucleon_cm2": sig.tolist(),
-       "flux_avg_per_nucleon_cm2_with_Vud2": avg,
-       "flux_avg_per_nucleon_cm2_without_Vud2": avg / vx.VUD ** 2, "n_sub": int(sys.argv[3])}
+       "flux_avg_per_nucleon_cm2_authors_convention": avg,
+       "flux_avg_per_nucleon_cm2_with_extra_Vud2": avg * vx.VUD ** 2, "n_sub": int(sys.argv[3])}
 Path(sys.argv[4]).write_text(json.dumps(out, indent=1) + "\n")
 print(json.dumps({k: v for k, v in out.items() if not isinstance(v, list)}))
 print("sigma(E) at 1, 3, 10, 30, 100 GeV:", [float(np.interp(np.log(x), np.log(grid), sig)) for x in (1e3, 3e3, 1e4, 3e4, 1e5)])

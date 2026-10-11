@@ -1,6 +1,6 @@
 # Valencia multinucleon feasibility pilot for MINERvA ME-FHC: report
 
-**Date 2026-10-11. Owner: this session (valencia-feasibility lane). Review status: see §11.**
+**Date 2026-10-11. Owner: this session (valencia-feasibility lane). Reviewed once (read-only, fresh context) with one correction pass applied; see §11 and [`REVIEW.md`](REVIEW.md).**
 Base: remote `main` `3892e769`. Frozen plan: [`PLAN.md`](PLAN.md), committed as `2492f16b` before any
 scientific computation. This report authorizes nothing and adopts nothing.
 
@@ -12,18 +12,29 @@ benchmark of the corrected model was possible (§3). This is a missing input, no
 impossibility. The authors state that inclusion in event generators is under way. That rules out
 NO-GO and also GO.
 
-**Evaluating it would be cheap once the input exists.** A predecessor pilot in the same table format
-(Valencia 2020 in NuWro 25.11.1) measured ≤ 0.13 ms of CPU per sampled event with nuclear transport at
-the ME-FHC flux. It also measured Kish N_eff/N = 0.096, and 96.7% of the weighted rate inside the
-truth signal (§5). Generating the four-configuration matched comparison (§7) needs at most about
-0.25 core-hours, or 0.74 with a ×3 margin on the effective-statistics estimate. The memo assumed
-83–833 core-hours. Detector-level work is the only potentially large cost, and it was not measured.
+**Inclusive (table-route) evaluation would be cheap once the input exists; faithful exclusive
+evaluation is still uncosted.**
 
-**The predecessor tables are only partly faithful to their own publication.** Against the authors'
-published 1 GeV carbon values, the table route gives −10.4% for ν (B1, QUALIFIED) and +10.2% for ν̄
-(B2, PASS). The ν̄/ν ratio is 0.276 against the published 0.225, under any tested energy-shift
-convention. A corrected-versus-predecessor comparison could therefore not be read at the ≲10% level
-until the conventions (V_ud, energy shift) are fixed with the authors (§4).
+- *Measured.* A predecessor pilot in the same table format (Valencia 2020 in NuWro 25.11.1) measured
+  ≤ 0.13 ms of CPU per sampled event, with nuclear transport, at the ME-FHC flux. It also measured Kish
+  N_eff/N = 0.096, and 96.7% of the weighted rate inside the truth signal (§5).
+- *Table-route generation.* MEC generation for the four-configuration comparison, using NuWro's
+  parametrized nucleon sampler, needs ≤ 0.25 core-hours. That rises to ≤ 0.74 with a ×3 margin on the
+  effective statistics.
+- *Full-model baseline.* A matched full-model NuWro baseline adds 4.7–237 core-hours. The measured
+  rate is 8.5 ms/trial; the unweighting factor is assumed (§7).
+- *What remains uncosted.* The memo's 83–833 core-hour figure was for **faithful exclusive** generation
+  with the corrected calculation. That cost is still **unknown**, because no exclusive sampler is
+  available (§6, §8). Detector-level work was also not measured.
+
+**The predecessor tables are only partly faithful to their own publication.** The integrator uses the
+authors' convention: cos²θ_C sits inside W, as in Nieves et al. 2011, and NuWro and GENIE do the same.
+Against the authors' published 1 GeV carbon values, the table route then gives −5.5% for ν (B1, PASS)
+and +16.3% for ν̄ (B2, QUALIFIED). The symmetric part agrees to about 1–2%. The VA-interference part is
+about 12% low. The ν̄/ν ratio is 0.276 against the published 0.225, independent of V_ud and of any
+tested energy shift. A corrected-versus-predecessor comparison could therefore not be read at the
+≲10% level for antineutrino-sensitive or VA-sensitive quantities. That changes only if the authors
+regenerate both table sets with one code (§4, §8).
 
 **What would turn this into a GO:** the authors provide the corrected per-channel tensor tables with
 their conventions (§8). Then the table route can be benchmarked against their published curves and
@@ -40,8 +51,8 @@ into NuWro (exit 97 at the cap) and `ulimit -t`.
 
 | Resource | Used | Cap |
 |---|---:|---:|
-| Scientific CPU (all runs, integrator, analysis, diagnostics) | **124.2 core-s (0.034 core-h)** | 36,000 core-s |
-| Generated events charged | **7,900** | 10,000 |
+| Scientific CPU (all runs, integrator, analysis, diagnostics, review 16.6 s, correction-pass reruns) | **242.8 core-s (0.067 core-h)** | 36,000 core-s |
+| Generated events charged (the reviewer and the correction pass generated none) | **7,900** | 10,000 |
 | of which: failed config run R0 (sampled nothing; charged its full allotment by the conservative rule) | 200 | — |
 | Software builds (Pythia6 wrapper, NuWro ×3), recorded as setup rather than science | ≈ 2.5 core-min | — |
 | GPU, cluster jobs, paid resources, detector simulation, fits, external messages | none | none |
@@ -57,8 +68,9 @@ is not committed.
 |---|---|---|
 | Valencia 2011 inclusive 2p2h (Nieves et al., PRC 83, 045501) | GENIE `data/evgen/hadron_tensors/nieves/HadTensor120-Nieves-<nucleus>-{FullAll,Fullpn,DeltaAll,Deltapn}-20150210.dat` for C, O, Si, Ca, Fe, Ba, Pb; last changed by commit `689808ee6b` (2018-10-29). NuWro `mec_kind=3`. | The repository's GENIE+MEC comparison used this model, through GENIE 2.12.10c. |
 | Valencia 2020 exclusive (Sobczyk, Nieves, Sánchez, PRC 102, 024601) | NuWro ≥ 25.03, `mec_kind=6`, `src/MEC_data/{C12,O16,Ca40}/*_{pp,np,pn,3p3h}.h`. Added in commit `bd312957b6` (2025-03-11), never changed since. Tag `NuWro_25_11_1` = `6ef4144b`. | Per-nucleon W00, W03, W11, W12, W33 on a 10 MeV grid to 1.2 GeV, upper-triangular, for the pp, np, pn and 3p3h channels. Nucleon kinematics come from a **parametrized** sampler, with (P, l) fitted to the 2020 exclusive distributions (Prasad et al., PRD 111, 036032, §III). That paper's footnote 1 states that the 2025 revision is not included. |
-| **2025 correction** (Sobczyk and Nieves, PRC 111, 025502; arXiv:2407.21587 v1) | **None.** The arXiv record has no ancillary files. The TeX source (SHA-256 `d4163b6f…`) contains no data or code statement beyond "work is currently underway to include our predictions in Monte Carlo event generators". GENIE and NuWro tables are unchanged since before the paper. | Physics content, checked from the source: removal of the constant −k_F²/2M from the virtual-nucleon energy in the W N → N′π amplitude (§II B(c), Eq. 10). Also a local p_Δ²/M_Δ² factor in the Δ propagator, C₅ᴬ(0) about 20% larger, and Re Σ_Δ^eff varied over [−50, +30] ρ/ρ₀ MeV as the model uncertainty. S_NN ≈ 27 MeV (C) and 22 MeV (O); |q| < 1.2 GeV. |
+| **2025 correction** (Sobczyk and Nieves, PRC 111, 025502; arXiv:2407.21587 v1) | **None.** The arXiv record has no ancillary files. The TeX source (SHA-256 `d4163b6f…`) contains no data or code statement beyond "work is currently underway to include our predictions in Monte Carlo event generators". GENIE and NuWro tables are unchanged since before the paper. | Physics content, checked from the source (§II B(c), Eq. 10). The constant −k_F²/2M was **missing** from the virtual-nucleon energy in the W N → N′π amplitude, which made the calculation inconsistent. The fix removes the term from all nucleon energies. Also a local p_Δ²/M_Δ² factor in the Δ propagator, C₅ᴬ(0) about 20% larger, and Re Σ_Δ^eff varied over [−50, +30] ρ/ρ₀ MeV as the model uncertainty. S_NN ≈ 27 MeV (C) and 22 MeV (O); |q| < 1.2 GeV. |
 | **2026 exclusive study** (Kasturi, Nieves, Sánchez, Sobczyk; arXiv:2603.28314; PRD 114, 012002) | **None.** It ran inside NEUT, with no availability statement. Its §VI says naive tabulation of the exclusive response is "prohibitively large", and proposes on-the-fly samplers or surrogates. | Fixed E_ν = 450, 650, 1000 MeV; ¹²C; S = 27.41 MeV. |
+| NuWro work in progress | Open NuWro PR #56 (fork `hprasad2419`, opened 2026-07-02). It adds a Pb208 grid for the **2020** model and empty (0-line) `src/mecevent_2025Valencia.{cc,h}` files. | An implementation of the 2025 model appears to be under way in NuWro. The PR contains no corrected tables or code. |
 | GENIE ≥ 3.6 tunes, SuSAv2 | Present, but they are other models. None was substituted. | — |
 
 The pilot therefore ran only the **predecessor**, and it is labelled as such throughout. It resolved
@@ -70,35 +82,43 @@ numbers. It is not a substitute for the corrected model.
 An independent integrator, [`code/valencia_tensor_xsec.py`](code/valencia_tensor_xsec.py), builds
 W^{μν} in the frame q ∥ z from the five tabulated components. It contracts W with an explicitly
 constructed lepton tensor and integrates on the table grid. It shares with NuWro only the table values
-and the declared NuWro energy-shift convention. The VA sign is fixed by requiring σ_ν > σ_ν̄. Grades
+and the declared NuWro energy-shift convention. The VA sign is fixed by requiring σ_ν > σ_ν̄. Its
+coupling convention is the authors': G_F² with no extra V_ud, because the tensor contains cos²θ_C.
+The plan did not fix that convention. The first committed version (`3b4d81b3`) wrongly multiplied by
+V_ud² as well. The review caught it, and the grades below come from the corrected rerun; the old grades
+are kept as a diagnostic column in `benchmarks.json`. Grades
 come from [`code/grade_benchmarks.py`](code/grade_benchmarks.py) and are recorded in
 [`results/benchmarks.json`](results/benchmarks.json).
 
 | Id | Result | Frozen tolerance | Grade |
 |---|---|---|---|
 | B0 quadrature, N vs 2N | 2×10⁻⁵ | ≤ 0.2% | **PASS** |
-| B1 ν ¹²C 1 GeV, per nucleus, vs published 2020 "around 1.38" ×10⁻³⁸ cm² | 1.2368 (−10.4%) | PASS ≤ 7%, QUALIFIED ≤ 15% | **QUALIFIED** |
-| B2 ν̄ ¹²C 1 GeV vs published "0.31" | 0.3417 (+10.2%) | PASS ≤ 12% | **PASS** |
-| B3 NuWro weighted mean vs integrator, 1 GeV | 1.2670 ± 0.0238 per nucleus (+2.4%, 1.3 σ) | ≤ max(3σ_MC, 1%) = 5.8% | **PASS** |
+| B1 ν ¹²C 1 GeV, per nucleus, vs published 2020 "around 1.38" ×10⁻³⁸ cm² | 1.3044 (−5.5%) | PASS ≤ 7%, QUALIFIED ≤ 15% | **PASS** |
+| B2 ν̄ ¹²C 1 GeV vs published "0.31" | 0.3604 (+16.3%) | PASS ≤ 12%, QUALIFIED ≤ 25% | **QUALIFIED** |
+| B3 NuWro weighted mean vs integrator, 1 GeV | 1.2670 ± 0.0238 per nucleus vs 1.3044 (−2.9%, 1.6 σ; −2.6% after NuWro's −0.31% formula offset) | ≤ max(3σ_MC, 1%) = 5.5% | **PASS** |
 | B4 channel fractions, NuWro vs integrator | pp 0.571 ± 0.014 vs 0.604; np+pn 0.181 ± 0.011 vs 0.163; 3p3h 0.248 ± 0.012 vs 0.233 (pulls −2.4, +1.6, +1.3) | each ≤ 3σ | **PASS** |
 | B5 primary-vertex three-momentum balance | R1: max 3 eV. R2: 3 of 1,458 events above 1 keV (max 1.47 keV); all are 3p3h at 12–15 GeV, with \|Δp\| = 1.0×10⁻⁷ E_ν | ≤ 1 keV per event | **FAIL** (numerical; physically negligible) |
 
 B4 uses the delta-method error of the weighted ratio estimator, the weighted-event analogue of the
-plan's "binomial σ". B3 has 1.9% MC precision, so it cannot resolve the 5.2% V_ud² question below.
+plan's "binomial σ".
 
 **Findings from the benchmarks.**
 
-1. **V_ud convention is ambiguous.** NuWro's coupling constant (`jednostki.h:52`) is G_F without
-   V_ud. GENIE's `TabulatedLabFrameHadronTensor::dSigma_dT_dCosTheta`, applied to the same author's
-   2011 tensors, also uses `kGF2` without V_ud, although the Rosenbluth-form path in the same class
-   (`dSigma_dT_dCosTheta_rosenbluth`) applies `CKM-Vud` explicitly. Two independent generator implementations therefore treat V_ud² as absorbed in the
-   Valencia tables. The integrator's frozen convention included it. Without V_ud², B1 becomes −5.5%
-   and B2 +16.3%. Neither convention puts both inside their PASS bands.
+1. **The authors' papers fix the V_ud convention.** Nieves et al. 2011 (arXiv:1102.2777, TeX lines
+   1275 and 1308) put cos²θ_C inside W^{μν}. The 2020 paper's prefactor is G²/4π² with no V_ud. NuWro
+   (`jednostki.h:52`) and GENIE (`TabulatedLabFrameHadronTensor::dSigma_dT_dCosTheta`, `kGF2`) agree
+   with the authors. The NuWro implementers' own paper writes G_F² cos²θ_C (Prasad et al.), which
+   contradicts their code but not the authors. With the extra V_ud² that the first version wrongly
+   applied, B1 would be −10.4% and B2 +10.2%.
+   - *Where the gap sits.* The symmetric part, (σ_ν + σ_ν̄)/2 ≈ 0.832 against the published 0.845,
+     agrees to about 1.5%. The VA part, (σ_ν − σ_ν̄)/2 ≈ 0.472 against 0.535, is about 12% low.
+   - *Caveat on that split.* The two beams use slightly different shifts, so this decomposition is
+     approximate.
 2. **The energy shift does not explain the gap.** A diagnostic varied the shift B in
    [`code/convention_sensitivity.py`](code/convention_sensitivity.py); results are in
-   `logs/D5-convention.log`. With B = 0, ν gives 1.377, matching the published value, but ν̄ gives
-   0.389 (+26%). At B = 27.41 MeV (the corrected paper's carbon S) ν gives 1.156 and ν̄ 0.303. The
-   ν̄/ν ratio stays at 0.262–0.283 against the published 0.225. The VA-interference part of the
+   `logs/K-D5-convention.log`. In the authors' convention, B = 0 gives ν 1.453 (+5.3%) and ν̄ 0.411
+   (+32%). B = 27.41 MeV (the corrected paper's carbon S) gives ν 1.219 (−11.7%) and ν̄ 0.319 (+3.0%).
+   The ν̄/ν ratio stays at 0.262–0.283 against the published 0.225. The VA-interference part of the
    distributed 2020 tables is weaker, relative to the symmetric part, than in the authors' published
    figure. It is a ~10% fidelity limitation of the predecessor implementation that the public material
    cannot resolve.
@@ -108,8 +128,9 @@ plan's "binomial σ". B3 has 1.9% MC precision, so it cannot resolve the 5.2% V_
    NuWro's W4 term uses sin²θ where 2 sin²(θ/2) is required. GENIE's implementation uses the correct
    form, but this one term does not account for the whole difference. The integrated effect at 1 GeV is
    −0.31% (ν) and −1.1% (ν̄) ([`code/algebra_check_w4.py`](code/algebra_check_w4.py)).
-4. **3p3h events do not conserve energy.** Every 3p3h event loses 2.5–3.2 MeV at the primary vertex
-   (644 of 644 in R1). 2p2h events conserve energy to within 2 eV.
+4. **3p3h events do not conserve energy.** Every 3p3h event loses about 2.0–3.2 MeV at the primary
+   vertex: 644 of 644 in R1 (2.09–3.10 MeV) and 594 in R2 (1.97–3.18 MeV); `logs/K-D6-3p3h-loss.log`.
+   2p2h events conserve energy to within 2 eV.
 
 A reproduction test for future corrected tables, from the TeX source: at 1 GeV, ¹²C, |q| < 1.2 GeV, the
 corrected model gives ν 1.69 (+30 ρ/ρ₀ MeV) to 2.39 (−50 ρ/ρ₀ MeV) ×10⁻³⁸ cm². For ν̄ it gives 0.50 to
@@ -126,7 +147,7 @@ the integral matches Φ_t = 6.243343377×10⁻⁴ m⁻²/POT exactly. Sampled E_
 
 | Uncertainty | Measurement |
 |---|---|
-| U1 throughput | ≤ 1.28×10⁻⁴ CPU-s per sampled event at the flux, setup included (0.512 s for 4,000). ≈ 5.7×10⁻⁵ s/event setup-subtracted at 1 GeV. Full NuWro CC model (R3, 1,000 trials, uniform channel mix): 8.5×10⁻³ s/trial. |
+| U1 throughput | ≤ 1.28×10⁻⁴ CPU-s per sampled event at the flux, setup included (0.512 s for 4,000). This is only an upper bound: the ~0.5 s setup jitter is larger than the per-event cost, and R2 with 4,000 events used less CPU than R0b with 200. Full NuWro CC model (R3, 1,000 trials, uniform channel mix): ≤ 8.5×10⁻³ s/trial. |
 | U2 support | 99.6% of the flux-averaged rate comes from E_ν > 1.1 GeV, where |q| < 1.2 GeV makes the rate saturate. 86% comes from 3–10 GeV. 8.7 ± 0.8% comes from 1.1 < |q| < 1.2 GeV: the density does not vanish at the hard cut, so strength at |q| > 1.2 GeV is **absent**, not extrapolated. |
 | U3 acceptance | 96.7 ± 0.5% of the weighted rate lies in the truth signal (θμ < 20°, 1.5 < p∥ < 60 GeV, pT < 4.5 GeV). |
 | U4 statistics | 63.5% of trials have zero weight, because NuWro samples E′ uniformly up to E_ν while the tensor vanishes above |q| = 1.2 GeV. Kish N_eff/N = 0.096 and w_max/⟨w⟩ = 42; signal N_eff = 363. At 1 GeV the values are 0.53 and 5.6. Restricting the E′ proposal to ω ≤ 1.2 GeV + B would remove most zero-weight trials without changing the model. This was not done here. |
@@ -135,11 +156,13 @@ the integral matches Φ_t = 6.243343377×10⁻⁴ m⁻²/POT exactly. Sampled E_
 
 Scale, as context rather than a measurement of the corrected model:
 
-- **NuWro σ̄.** 1.026 ± 0.050 ×10⁻³⁹ cm² per C nucleon, in NuWro's convention without V_ud.
-- **Integrator fold, as a diagnostic.** 1.066×10⁻³⁹ with V_ud² and 1.125×10⁻³⁹ without; the fold is
-  converged to 0.03%. NuWro differs by −3.8% (0.8σ) and −8.5% (1.9σ) respectively.
+- **NuWro σ̄.** 1.026 ± 0.050 ×10⁻³⁹ cm² per C nucleon, in the authors' convention (cos²θ_C inside W).
+- **Integrator fold, as a diagnostic.** 1.125×10⁻³⁹ in the same convention, converged to 0.03%. NuWro
+  is −8.8% (2.0σ) from it, uncorrected for the −0.31% formula offset. This was not a frozen benchmark.
+  The MC error comes from Kish-limited, heavy-tailed weights.
 - **Committed GENIE 2011 value.** GENIE's Valencia-2011 MEC contributes 1.099×10⁻³⁹ per CH nucleon in
-  the 3D signal region (`s5p/gen5d/gen5d-fluxfix-3.json`, "after").
+  the 3D signal region (`s5p/gen5d/gen5d-fluxfix-3.json`, "after"). That sample is plain `gevgen
+  Default+CCMEC` (`sbatch_gevgen_mec.sh`) with no MINERvA enhancement.
 - **Comparison.** The 2020 table route gives ≈ 0.92–1.00×10⁻³⁹ CH-equivalent, so the two are the
   same scale.
 
@@ -153,8 +176,10 @@ Scale, as context rather than a measurement of the corrected model:
   `A() <= 1`), which is correct. Z ≤ 6 uses ¹²C, 7–12 uses ¹⁶O and > 12 uses ⁴⁰Ca, per nucleon. For the
   reference tracker composition, C (88.51%) and O (2.50%) have direct tables and H (8.18%) is correctly
   zero. Ti, Cl, Al and Si (0.81% together) use the Ca proxy. The corrected paper shows only C and O.
-- **E_avail definition.** It is reproducible exactly from the post-transport final state: proton
-  kinetic energy, charged pions at E − 135 MeV, π⁰ and γ at total energy, neutrons excluded. Two
+- **E_avail definition.** It is reproduced literally from the post-transport final state, as in
+  `CVUniverse.h::GetEAvailableTrue`: proton kinetic energy with m_p = 938.27 MeV, charged pions at
+  E − 135 MeV, π⁰ and γ at total energy, neutrons excluded. The first version used 938.272, a 2 keV
+  difference per proton; the correction pass fixed it. Two
   generator limitations bias it low. NuWro emits no nuclear de-excitation photons, although Eq. 1
   counts photons. And the 21.7% of ω carried by neutrons and the 12.8% unrecorded remainder are
   invisible by construction. The pilot computed true ω and |q| from the lepton. No analysis estimator
@@ -186,7 +211,7 @@ nominal, and the corrected Re Σ_Δ^eff = −50 and +30 ρ/ρ₀ MeV endpoints. 
 |---|---|---|
 | MEC generation, 1% statistics per E_avail signal bin (10⁴ N_eff; limiting bin 0–0.1 GeV, 0.0119 N_eff per trial) | **measured** throughput and Kish values | 0.84 M trials/config, 3.4 M in total: **≤ 0.25 core-h**; ≤ 0.74 core-h with a ×3 Kish margin (assumption) |
 | Same at 2% (2,500 N_eff) | measured | ≤ 0.06 core-h; ≤ 0.19 with margin |
-| Full-model NuWro baseline (QEL, RES, DIS, COH + predecessor MEC), generated once; 2 M events | 8.5 ms/trial **measured**; unweighting factor 1–10 **assumed** | 4.7–47 core-h |
+| Full-model NuWro baseline (QEL, RES, DIS, COH + predecessor MEC), generated once; 2 M events | ≤ 8.5 ms/trial **measured**; unweighting factor 1–50 **assumed** (the MEC channel alone measured w_max/⟨w⟩ = 42) | 4.7–237 core-h |
 | Conversion to the 3D/5D grids with the existing converters | prior production record: under ~2 min per step (`README-gen5d-fluxfix.md`) | negligible |
 | Corrected microscopic exclusive sampler | no code available | **unknown** ("computationally expensive", Kasturi et al. §I) |
 | Detector simulation and reconstruction for detector-level predictions (memo stage 3) | no measurement; MINERvA simulation not available in this environment | **unknown**. The memo's 10 CPU-s/event (8,333 core-h per 3 M events) remains an assumption. |
@@ -205,13 +230,14 @@ change the conclusion.
 ## 8. The exact missing input
 
 To make a faithful corrected-model pilot possible, the Valencia authors (Sobczyk, Nieves) would need to
-supply the following.
+supply the following. The NuWro developers are a possible second source: PR #56 suggests a 2025-model
+implementation is in progress there.
 
 1. **Corrected inclusive tensor tables:** W00, W03, W11, W12, W33 for the pp, np, pn and 3p3h channels,
    on the (q0, |q|) grid to |q| = 1.2 GeV, for ¹²C and ¹⁶O. Three variants are needed: Re Σ_Δ^eff = 0,
    −50 ρ/ρ₀ and +30 ρ/ρ₀ MeV. Preferably they would also send the 2020 tables regenerated with the same
    code, so the predecessor is matched.
-2. **Their conventions:** whether V_ud² is included; the energy shift (S_NN per channel versus a
+2. **Their conventions:** confirmation that cos²θ_C stays inside W, as in Nieves et al. 2011; the energy shift (S_NN per channel versus a
    NuWro-style B) and the variable the tensor is evaluated at; the per-nucleon versus per-nucleus
    normalization; and the antineutrino and isospin treatment.
 3. **Their 1 GeV and energy-dependent σ values**, for the table route to reproduce, for example the
@@ -225,12 +251,13 @@ supply the following.
   corrected tables only if they share the format; that is an assumption, plausible because only the
   tensor values change.
 - **Benchmarks.**
-  - B1 is QUALIFIED and B5 FAILs as frozen.
+  - B2 is QUALIFIED (+16.3%) and B5 FAILs as frozen.
+  - The coupling convention was set after the plan froze, by the review's citation of the authors'
+    papers. The first committed grades used a double-counted V_ud².
   - The published comparison values are single rounded numbers ("around 1.38", "0.31").
-  - The V_ud convention is inferred from two generator implementations, not from the authors.
 - **Statistics.** The R2 statistical precision is modest: σ̄ ± 4.8%, and Kish estimates from heavy-tailed
-  weights are uncertain. The flux-level NuWro-versus-integrator difference (−3.8% or −8.5%, by
-  convention) is within 2σ and was not a frozen benchmark.
+  weights are uncertain. The flux-level NuWro-versus-integrator difference (−8.8%, 2.0σ) was not a
+  frozen benchmark.
 - **Throughput resolution.** It is an upper bound, because setup CPU (~0.5 s) dominates runs of
   this size. NuWro's unweighting efficiency for the full model was not measured.
 - **Model and detector coverage.** NuWro emits no de-excitation photons and records no residual
@@ -281,7 +308,11 @@ and path.
 
 ## 11. Review
 
-See [`REVIEW.md`](REVIEW.md) if present. If it is absent, these results are **owner-checked** only.
+One fresh read-only reviewer examined the frozen commit `3b4d81b3` in a detached worktree. It used
+16.6 CPU-s, generated no events and modified no file. It found no blocker, upheld the verdict and
+reported two MAJOR and five MINOR findings. One focused correction pass followed; there was no second
+review round. Findings and dispositions are in [`REVIEW.md`](REVIEW.md). The run logs are now committed;
+the repository's `*.log` ignore rule had silently excluded them from `3b4d81b3`.
 
 ## 12. Recommendation
 
