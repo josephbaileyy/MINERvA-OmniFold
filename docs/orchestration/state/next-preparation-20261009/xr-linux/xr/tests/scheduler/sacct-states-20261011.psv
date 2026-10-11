@@ -1,0 +1,8 @@
+JobID|JobName|State|ElapsedRaw|AllocTRES|Timelimit
+58891652|s5e-s5e_cand_assess_a|CANCELLED by 112498|8130|billing=256,cpu=256,energy=4626412,mem=487802M,node=1|02:30:00
+58891695|pfd-chain|TIMEOUT|1804|billing=128,cpu=128,energy=1208838,gres/gpu:a100=4,gres/gpu=4,mem=229802M,node=1|00:30:00
+58904830_1|s5p-s5p_k_b0|TIMEOUT|36022|billing=32,cpu=32,energy=18039356,mem=56G,node=1|10:00:00
+58917890_0|s5p-s5p_dump_pilot|FAILED|2334|billing=64,cpu=64,energy=1150051,gres/gpu:a100=2,gres/gpu=2,mem=110G,node=1|04:00:00
+59037559|pfd-chain|PREEMPTED|12694|billing=128,cpu=128,energy=9469108,gres/gpu:a100=4,gres/gpu=4,mem=229802M,node=1|06:00:00
+57668375|WAKER_STATE_DIR=/pscratch/sd/j/josephrb/MINERvA-OmniFold/docs/orchestration/state/waker|CANCELLED|0||12:00:00
+58892468|pfd-shr|CANCELLED by 112498|0||04:00:00
