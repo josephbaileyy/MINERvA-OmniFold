@@ -127,6 +127,9 @@ price, any estimator, uncertainty, coverage or adoption claim, or authority for 
     pairs from `docs/**/*.json`, does not count it as a new live receipt binding: its
     `authorization` pair would move `RECEIPT_BINDING_COUNT` from 144 to 145.
   - Changing that shared gate is outside this lane; §11 proposes the patch.
+  - *Integration note, 2026-10-11 (not this lane): superseded.* Both admission copies are now tracked
+    as `.json` and their binding is enrolled (inventory 144 → 148); the two sentences above describe
+    the record as delivered. See the §6 note.
   - The binding it carries is checked by `sb1_admit.py` at submission and by the reviewer.
   - Status `ADMITTED`; checkout the frozen worktree; commit `2b35ba52`.
   - Outroot `/pscratch/sd/j/josephrb/sb1-2b35ba52`, absent before submission.
@@ -311,7 +314,8 @@ uses only the standard library.
     receipt hash-binding inventory (144 → 148, with XR's). `SHA256-MAP.txt` is kept as delivered, so its
     `tracked_path` column names the pre-rename paths. The rename map and a fresh cluster recheck (all
     `MATCH`) are in [`../xr-sb1-integration/evidence-map.tsv`](../xr-sb1-integration/evidence-map.tsv).
-    Two links in this report were updated to the new names; nothing else in it changed.
+    Two links in this report were updated to the new names, and a matching note was added under §2
+    "Admission"; nothing else in it changed.
 
 ## 7. Results under the frozen rules
 

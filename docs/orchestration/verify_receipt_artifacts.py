@@ -76,8 +76,8 @@ _AREA_MARKER = "/" + AREA
 EXT = (".npz", ".npy", ".h5", ".hdf5", ".root", ".pkl", ".parquet", ".out", ".err", ".log")
 #: A token must start at a path boundary, and never right after `%`. Slurm filename patterns such as
 #: `%x_%j.out` or `boot5dG_%a_%A.out` name no file, but the old pattern matched their tail (`j.out`, `A.out`)
-#: as a bare citation. Measured 2026-10-11 (XR/SB1 evidence integration) over every tracked receipt plus
-#: the two receipts that integration adds: exactly three receipts change, all Slurm patterns, and nothing else
+#: as a bare citation. Measured 2026-10-11 (XR/SB1 evidence integration) over all 481 receipts scanned on
+#: the integration tree (451 + 27 renamed + 3 recovered): exactly three change, all Slurm patterns, and nothing else
 #: moves. `RECEIPT-20260830-k0-7ac0edec-legs-1-5-submission.json` loses its OFF-AREA `A.out`. The SB1
 #: `operator-record/attempt-jobs.json` and the recovered XR `PF/a1/preflight-receipt.json` lose false
 #: MISSING `j.out`/`j.err`. TRACKED, BY-PATH and the pinned UNRESOLVED set are unchanged.

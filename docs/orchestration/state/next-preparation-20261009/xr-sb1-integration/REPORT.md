@@ -94,7 +94,7 @@ The cluster originals were fetched read-only from login23 with `tar -cf -` over 
   | `xr-recovery-20261011/PF/a1/inventory.jsonl` | `65535693…` | same |
 
   They are tracked under `I/recovered/`, mirroring their cluster paths.
-- **Already tracked.** The preflight's `scontrol-job.txt` (`539a9d78…`) and both `submissions.jsonl` files are `cmp`-identical to their tracked copies.
+- **Already tracked.** The preflight's `scontrol-job.txt` (`539a9d78…`) and both `submissions.jsonl` files are `cmp`-identical to their tracked copies. These checks and the 62nd SB1 file are listed in `logs/extra-file-checks.txt`.
 - **Not tracked by design.** The ten 2D-attempt and two PF Slurm `.out`/`.err` files are kept as digested concatenations in the lanes' `joblogs.txt` (the repository ignores `*.out`/`*.err`).
 
 ### 4.2 Enrollment
@@ -134,7 +134,7 @@ Tracking the receipts as `.json` brought them under `verify_receipt_artifacts.py
 
 - **Cause.** These are the tails of the Slurm filename patterns `%x_%j.out` and `slurm-%j.err`, which name no file. The checker's `PATHLIKE` started a match right after the `%`. The real job logs are cited by their resolved names (`slurm-59655414.out`, the `sb1_*_<id>.out` files) and are unaffected.
 - **Repair.** A match may no longer start immediately after `%` or inside a path token (`(?<![%\w./\-])`). No state, threshold or pinned inventory changed.
-- **Measured blast radius.** Over every tracked receipt under `state/` plus the two added here, exactly three receipts' extracted citations change, all of them Slurm patterns:
+- **Measured blast radius.** Over all 481 receipts scanned on the integration tree (451 on the base, plus 27 renamed and 3 recovered here), exactly three receipts' extracted citations change, all of them Slurm patterns:
   - the two above, which lose their false MISSING;
   - `RECEIPT-20260830-k0-7ac0edec-legs-1-5-submission.json`, which loses an OFF-AREA `A.out` from `boot5dG_%a_%A.out`.
 - **Counts.** Before: TRACKED 9, MISSING 4, OFF-AREA 29, BY-PATH 7, UNRESOLVED 66. After: 9 / 0 / 28 / 7 / 66. The pinned UNRESOLVED digest `49916d28…` is unchanged.
@@ -191,7 +191,7 @@ Tracking the receipts as `.json` brought them under `verify_receipt_artifacts.py
 | XR cumulative | 6 | **0.00231337** of 6.4 | 0.0023133681 | |
 | GPU allocations | | **0** | 0 | |
 
-- **The divisor.** A regular node bills 256: SB1 UL/SL show `billing=256,cpu=256,node=1`. iris's change for the SB1 window (2035.0 → 2036.1, SB1 record §6) fits /256 (1.16) and excludes /128 (2.33).
+- **The divisor.** A regular node bills 256: SB1 UL/SL show `billing=256,cpu=256,node=1`. iris's change for the SB1 window (2035.0 → 2036.1, SB1 record §6) fits /256 (1.164 node-h, which includes the five first-attempt `xr_*` jobs that ran inside the window) and excludes /128 (2.33).
 - **Local resources.** The lanes' local resource figures are self-reported (CPU-time sums and wall clocks) and are not recomputable from scheduler operands.
 
 ## 7. Checks
@@ -254,7 +254,7 @@ Inputs each lane starts from:
    - turns the committed `Q/sb1-prep/tests/test_package_consistency.py::Plan.test_the_manifest_is_current` red;
    - makes `Q/two-d-followup/xr/xr_admit.py manifest --check` report `OUT OF DATE` (rc 3).
 
-   Both packages are immutable and correctly pinned to their commits, so this is expected, not a defect of either lane. It does not move the receipt-binding inventory or raise a MISMATCH: the frozen receipts bind the driver under their own worktree paths.
+   Both packages are immutable and correctly pinned to their commits, so this is expected, not a defect of either lane. It does not move the receipt-binding inventory or raise a MISMATCH, for two reasons: the frozen run receipts bind the driver under their own worktree paths, which `localize()` does not resolve; and the package manifests (`expected-code.json`, `ADMISSION-PROPOSAL.json`) name it in a `{path: digest}` map that `collect()` does not harvest.
 
    The selective-I/O owner must not edit those packages or their tests. How their at-HEAD consistency checks are treated once the driver changes (for example, checked at their package commit) is decided by integration when that lane is merged.
 
@@ -262,7 +262,20 @@ Cluster coexistence follows the SB1/XR precedent: separate worktrees and outroot
 
 ## 9. Review
 
-Pending: one fresh read-only reviewer, at the fixed head named here after the review.
+- **Initial review** of `b80c328a`. One fresh read-only reviewer (Claude Opus 5.5, a general-purpose subagent; not the campaign review's suggested Astra High, which this session cannot select). It ran 04:09–04:23Z, about 0.1 local core-h, with read-only cluster reads (`sha256sum`, `sacct`, `squeue`). Its worktree status was 0 lines at start and end.
+  - Preserved verbatim at `review/review-b80c328a.md`, apart from one relay-escaped `<` restored.
+  - **Verdict: PASS WITH CHANGES.** 0 MATERIAL, 3 MINOR, 5 NOTE.
+  - It reproduced every number and SHA it checked: the merges by `merge-tree`, the renames by blob id, the 66 evidence rows by a fresh cluster re-hash, the 144 → 148 delta with three power tests of its own, the checker's blast radius, the charges by its own `sacct`, the driver-edit blast radius and the gates.
+- **Repair batch 1** (this commit):
+  - R-1: dated note at SB1 REPORT §2 "Admission";
+  - R-2: KI 92–94 owner named as Joseph, as for row 88;
+  - R-3: the checker comment and §4.3 name the true population, 481 = 451 + 27 + 3;
+  - N-1: CATALOG SB1 wording;
+  - N-2: `logs/extra-file-checks.txt`;
+  - N-3: the iris window includes the first-attempt XR jobs;
+  - N-4: both reasons the gate is unaffected by a driver edit;
+  - N-5 needs no change (pre-existing `*.jsonl` gate scope; recorded in §10).
+- **Focused re-review:** pending.
 
 ## 10. Residual limitations
 
@@ -282,6 +295,7 @@ Pending: one fresh read-only reviewer, at the fixed head named here after the re
 - **Evidence durability.** The integration tracks every receipt the lanes named. The cluster outroots and worktrees remain on purgeable `/pscratch`, as the lanes left them. Only the tracked copies are durable; the 171-GB input and the full CFS inputs are not copied.
 - **Post-verification corrections.** The lanes' corrections are not re-reviewed by their own reviewers (none remained). This integration's reviewer read them as part of the delta.
 - **Local resources.** The lanes' local resource figures are self-reported.
+- **Gate scope for `*.jsonl`.** The binding gate globs `*.json` only. 37 tracked `*.jsonl` files, among them the guard inventories and the recovered `inventory.jsonl`, carry sha256 pairs that it never reads. This is pre-existing scope, not a concealment (review N-5).
 
 ## 11. Resources (this integration)
 
