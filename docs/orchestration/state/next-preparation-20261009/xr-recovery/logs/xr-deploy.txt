@@ -1,0 +1,78 @@
+# XR recovery deployment (Perlmutter login23; /usr/bin/python3 3.6.15 for xr_admit.py). Values as printed.
+
+== 2026-10-11T02:32:06Z  pre-deployment reads
+squeue --me: empty (SB1's two jobs had finished; SB1's worktree /pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52 not touched)
+setup_salloc_env.sh ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48 (unchanged); nested:
+  unbinned_unfolding/build/setup.sh        40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598
+  MINERvA101/opt/bin/setup.sh              e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6
+  MINERvA101/opt/bin/setup_MAT.sh          733e9cd839a0f75186d109eaab3dfe746a921d6d7b0347fbd6662b6f1ced3c0e
+  MINERvA101/opt/bin/setup_MAT-MINERvA.sh  c259101619ac365dcc57043d8ac4926908e51a8a87dad08f601394c9b418c3ac
+  MINERvA101/opt/bin/setup_UnfoldUtils.sh  bd305c17ddcd507f88ab49cbfcf5fe5a14075e0c1a173e631addcb3423212cd9
+canonical checkout HEAD 32e403b84e9e8f9d9bc435028749f896653c7a43 (not moved)
+CFS input dir drwxr-s---, file -r--r----- 2144008221 B (unchanged)
+new outroot /pscratch/sd/j/josephrb/xr-recovery-20261011: absent
+prior outroot /pscratch/sd/j/josephrb/xr-two-d-followup-20261010: 12 files; admission ef8b49b3..., submissions 4d673e7c... (unchanged)
+
+== 2026-10-11T02:39:20Z  isolated pinned deployment
+git -C <canonical> fetch github prep/xr-recovery-20261011 -> FETCH_HEAD 9ec77fa1084dc54eea0246efd3d5597a4df43f63 (canonical HEAD and work tree unchanged)
+git worktree add --detach /pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1 9ec77fa1...  -> HEAD 9ec77fa1, 0 status lines
+xr_admit.py manifest --check: current
+xr_admit.py check (AUTHORIZATION-20261011-xr-recovery.md, 07428e5d..., 07a74b91...): binding holds
+xr_admit.py jobcheck outside a job: [REFUSED] not inside a Slurm job, rc 3
+
+== 2026-10-11T02:39:47Z  admission
+draft -> /pscratch/sd/j/josephrb/xr-recovery-20261011/admission.json (9253 B) sha256 4563871f100c00bf00fdf98cbda02ec2d4969d5f99a398afe956700d9f6c18cf
+verify: admission verified
+sacct -u josephrb -X -P -S 2026-10-10 -E now --format=JobID,JobName,State,ElapsedRaw,AllocTRES,Timelimit  (reduce dir /pscratch/sd/j/josephrb/xrr-reduce.41iU)
+ledger: prior_charged_node_h 0.0013498263888888891 (= recorded), amendment 0.0, cumulative 0.0013498263888888891, over []
+re-measured billing: shared_milan_ss11 TRES cpu=17920 ... billing=17920; DefMemPerCPU=MaxMemPerCPU=1905; qos shared MaxWall 2-00:00:00 DenyOnLimit UsageFactor 1.0
+iris m3246: Charged(user) 2036.2 / 10000.0; Charged 16981.9 / 20000.0
+squeue --me: empty
+
+== 2026-10-11T02:39:59Z  preflight submission (xr_submit.sh <adm> PF)
+[xr-submit] PF a1 -> job 59655414     submitted_utc 2026-10-11T02:40:04Z  (the 72-h window: stop 2026-10-14T02:40:04Z)
+scontrol: JobName=xrr_PF_a1 QOS=shared JobState=PENDING Reason=Priority TimeLimit=00:05:00 Deadline=2026-10-13T19:40:00 (PDT; 4 s before the
+  stop, computed before the submission was recorded) Partition=shared_milan_ss11 NumCPUs=12 ReqTRES=cpu=12,mem=22860M,node=1,billing=12
+
+== preflight outcome (monitor DONE 2026-10-11T03:14:39Z; reads on login23)
+sacct: 59655414|xrr_PF_a1|FAILED|74|billing=12,cpu=12,energy=39366,mem=22860M,node=1|1:0
+slurm-59655414.out: [xr-job] run=PF attempt=1 job=59655414 node=nid004073 start=2026-10-11T03:11:26Z
+                    [xr-admit] admission verified
+                    [xr-job] end=2026-10-11T03:12:32Z rc=1
+PF/a1/scontrol-job.txt (the job's own allocation line, the first RUNNING line of this account; results/scontrol-job-59655414.txt):
+  JobId=59655414 QOS=shared JobState=RUNNING TimeLimit=00:05:00 NodeList=nid004073 NumCPUs=12
+  ReqTRES=cpu=12,mem=22860M,node=1,billing=12 AllocTRES=cpu=12,mem=22860M,node=1,billing=12   (one "TRES=" substring: inside ReqTRES/AllocTRES; no TRES= token)
+  -> jobcheck PASSED in the allocation (repair item 1 confirmed on the real format)
+slurm-59655414.err (results/joblogs.txt): after the setup's RooUnfold rootmap warnings,
+  [oi136 launch] THIS CHILD CANNOT BE PROVEN TO KEEP ITS OWN PYTHON LAUNCHES GUARDED -- REFUSING BEFORE LAUNCH.
+  [oi136 launch]   executable     /sbin/ldconfig      argv ['/sbin/ldconfig', '-p']
+  [XR] preflight-fail: SystemExit: 3
+  [oi136] inventory: checked=1172 repo_origin_count=2 outside_expect_root=0 verdict=REFUSED launch
+  modules from the checkout: __main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned, xr_driver_unfold_2d_omnifold_unbinned_d1bc8813
+preflight-receipt.json: status preflight-fail, exit_code 1, error "SystemExit: 3", fits [], identity.strict true,
+  SLURM_JOB_ID 59655414, affinity 12; inputs_start omnifile 43f8cc16... 2144008221 B and mcfile d40aea69... (= frozen);
+  environment_checked, cpu_count and threads ABSENT: check_environment raised. wall_s 47.1 (xr_run start to end; the job 74 s).
+
+== the exact defect, traced read-only on login23 (root_6_28 python, no guard, no job; ~10 s)
+subprocess.Popen spied while repeating check_environment's steps:
+  launches after: import ROOT 0, import threadpoolctl 0, numpy 0, sklearn 0, lightgbm 0, joblib 0, scipy 0, ROOT version 0, threadpool_info() 1
+  LAUNCH ['/sbin/ldconfig', '-p'] from
+    threadpoolctl.py:567 threadpool_info -> :818 ThreadpoolController.__init__ -> :976 _load_libraries
+    -> :988 _find_libraries_with_dl_iterate_phdr -> :1239 _get_libc: ctypes.CDLL(find_library("c"), mode=_RTLD_NOLOAD)
+    -> ctypes/util.py:353 find_library -> :293 _findSoname_ldconfig: subprocess.Popen(['/sbin/ldconfig', '-p'], ...)
+  threadpoolctl 3.6.0 (/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/threadpoolctl.py)
+So: xr_run.py check_environment's last line `have["threadpools"] = threadpoolctl.threadpool_info()` launches a child the
+OI-136 guard (correctly) refuses; every import and the version comparison before it passed (the frozen environment matched
+in the allocation). macOS find_library takes no ldconfig path, so the local suite could not see it. Every one of the five
+runs calls the same check_environment before its first fit, so each would have failed the same way.
+
+== gates after the failure (2026-10-11T03:16:02Z; read-only; next-attempt prints only)
+next-attempt L0:  [REFUSED] no passed preflight for this admission: L0 is not released            rc 3
+next-attempt X0:  [REFUSED] no passed preflight for this admission: X0 is not released            rc 3
+next-attempt PF:  [REFUSED] 1 preflight attempts already used of 1 in this amendment               rc 3
+outroot: admission.json, PF/, submissions.jsonl only
+ledger --now 2026-10-11T03:16:02Z (results/ledger-post.txt): prior 0.0013498263888888891 + amendment 0.0009635416666666667
+  = cumulative 0.002313368055555556 node-h of 6.4; unfinished 0; attempts preflight 1, exact 0, lgbm 0; over []
+xr_compare.py (results/comparisons-post.json): all six comparisons and NC_X0_vs_CV42 INCONCLUSIVE (no complete attempt)
+squeue --me: empty. Nothing to cancel. Decision (grant: "If it fails, stop dependent execution and deliver the exact
+defect; do not launch the five runs"): no L0, no further submission.
