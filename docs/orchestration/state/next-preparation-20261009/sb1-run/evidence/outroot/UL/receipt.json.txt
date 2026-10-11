@@ -1,0 +1,797 @@
+{
+ "argv": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+  "unfold",
+  "--arm",
+  "all",
+  "--receipt",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/UL/receipt.json",
+  "--label",
+  "sb1-UL",
+  "--expect",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/UL/expect.json",
+  "--require-provenance",
+  "--input-hashes",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/H0/hashes.json",
+  "--",
+  "--omnifile",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "--mcfile",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+  "--iters",
+  "5",
+  "--use-weights",
+  "--estimator",
+  "lgbm",
+  "--universe",
+  "Muon_Energy_MINOS:0",
+  "--seed",
+  "42",
+  "--out",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/UL/2d_xsec_UL.root"
+ ],
+ "arm": "all",
+ "compare_digests": null,
+ "comparison_key": {
+  "driver_argv_without_out": [
+   "--omnifile",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "--mcfile",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "--iters",
+   "5",
+   "--use-weights",
+   "--estimator",
+   "lgbm",
+   "--universe",
+   "Muon_Energy_MINOS:0",
+   "--seed",
+   "42"
+  ],
+  "mode": "unfold"
+ },
+ "driver_argv": [
+  "--omnifile",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+  "--mcfile",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+  "--iters",
+  "5",
+  "--use-weights",
+  "--estimator",
+  "lgbm",
+  "--universe",
+  "Muon_Energy_MINOS:0",
+  "--seed",
+  "42",
+  "--out",
+  "/pscratch/sd/j/josephrb/sb1-2b35ba52/UL/2d_xsec_UL.root"
+ ],
+ "ended_utc": "2026-10-10T22:30:26.747929Z",
+ "environment": {
+  "affinity_cpus": 256,
+  "argv": [
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+   "unfold",
+   "--arm",
+   "all",
+   "--receipt",
+   "/pscratch/sd/j/josephrb/sb1-2b35ba52/UL/receipt.json",
+   "--label",
+   "sb1-UL",
+   "--expect",
+   "/pscratch/sd/j/josephrb/sb1-2b35ba52/UL/expect.json",
+   "--require-provenance",
+   "--input-hashes",
+   "/pscratch/sd/j/josephrb/sb1-2b35ba52/H0/hashes.json",
+   "--",
+   "--omnifile",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "--mcfile",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "--iters",
+   "5",
+   "--use-weights",
+   "--estimator",
+   "lgbm",
+   "--universe",
+   "Muon_Energy_MINOS:0",
+   "--seed",
+   "42",
+   "--out",
+   "/pscratch/sd/j/josephrb/sb1-2b35ba52/UL/2d_xsec_UL.root"
+  ],
+  "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python",
+  "host": "nid004471",
+  "omp": {
+   "GOMP_SPINCOUNT": null,
+   "OMP_PLACES": null,
+   "OMP_PROC_BIND": null,
+   "OMP_WAIT_POLICY": null
+  },
+  "os_cpu_count": 256,
+  "packages": {
+   "lightgbm": null,
+   "numpy": null,
+   "scikit-learn": null,
+   "scipy": null,
+   "xgboost": null
+  },
+  "python": "3.11.14",
+  "root_version": "6.28/12",
+  "sb1_env_setup": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh",
+  "sb1_env_setup_sha256": "ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48",
+  "slurm": {
+   "SLURMD_NODENAME": "nid004471",
+   "SLURM_ARRAY_JOB_ID": null,
+   "SLURM_ARRAY_TASK_ID": null,
+   "SLURM_CPUS_ON_NODE": "256",
+   "SLURM_CPUS_PER_TASK": "128",
+   "SLURM_JOB_ID": "59645300",
+   "SLURM_JOB_PARTITION": "regular_milan_ss11",
+   "SLURM_JOB_QOS": "regular_1",
+   "SLURM_MEM_PER_CPU": null,
+   "SLURM_MEM_PER_NODE": null
+  },
+  "threads": {
+   "MKL_NUM_THREADS": null,
+   "NUMEXPR_NUM_THREADS": null,
+   "OMP_NUM_THREADS": "128",
+   "OPENBLAS_NUM_THREADS": null,
+   "SLURM_CPUS_PER_TASK": "128"
+  },
+  "uname": [
+   "Linux",
+   "nid004471",
+   "6.4.0-150600.23.125_15.0.29-cray_shasta_c",
+   "#1 SMP Mon 21 Sep 2026 11:10:49 PDT (f9f1fdc)",
+   "x86_64"
+  ]
+ },
+ "error": null,
+ "exit_code": 0,
+ "identity": {
+  "executed": [
+   {
+    "git_blob": "0f864615c0180a6e1e49421a0940932fc050a015",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+    "relpath": "docs/orchestration/state/next-preparation-20261009/sb1-prep/sb1_run.py",
+    "sha256": "17a4a5f6bb6583b7c784eb9940cc2c353f1c310e486705c4fca7bd9b94bea7eb"
+   },
+   {
+    "git_blob": "6509b94a5f324ee5edcc44e539b7b5a0ef290151",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
+    "relpath": "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
+    "sha256": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef"
+   },
+   {
+    "git_blob": "1ea941f390bb3ce36925a9e8f2fbad675d88cada",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+    "relpath": "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+    "sha256": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856"
+   },
+   {
+    "git_blob": "e47bc942a0fd42d031b51515016c50547065f57f",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py",
+    "relpath": "docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py",
+    "sha256": "ce001cb96a416fa208bdbc0f2e3467521dcddfb198c22d7f9b3a222b51afb60d"
+   },
+   {
+    "git_blob": "e19aeb6d3c242a21a67fa1b4e4573ddf72729206",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "relpath": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "sha256": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933"
+   },
+   {
+    "git_blob": "5966663bfe88809fd245d4dd2edb472eb6514480",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52/unbinned_unfolding/python/omnifold.py",
+    "relpath": "unbinned_unfolding/python/omnifold.py",
+    "sha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  ],
+  "git": {
+   "commit": "2b35ba520e1dd98a162f82ac6a9e4f8cd63a86ac",
+   "mismatched": [],
+   "status": "ok"
+  },
+  "guard": {
+   "allowed": [
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52"
+   ],
+   "depth": 0,
+   "expect_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52",
+   "installed": true,
+   "propagation": "armed"
+  },
+  "strict": true
+ },
+ "inputs_end": {
+  "mcfile": {
+   "ino": 882724771874215681,
+   "key": "mcfile",
+   "mtime_ns": 1777003503000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256_hashed": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "sha256_stated": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "size": 5143
+  },
+  "omnifile": {
+   "ino": 882725391507234642,
+   "key": "omnifile",
+   "mtime_ns": 1783523295000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "sha256_hashed": "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418",
+   "sha256_stated": "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418",
+   "size": 171117087867
+  }
+ },
+ "inputs_start": {
+  "mcfile": {
+   "ino": 882724771874215681,
+   "key": "mcfile",
+   "mtime_ns": 1777003503000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256_hashed": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "sha256_stated": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "size": 5143
+  },
+  "omnifile": {
+   "ino": 882725391507234642,
+   "key": "omnifile",
+   "mtime_ns": 1783523295000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "sha256_hashed": "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418",
+   "sha256_stated": "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418",
+   "size": 171117087867
+  }
+ },
+ "io_end": {
+  "cancelled_write_bytes": 0,
+  "rchar": 171267849830,
+  "read_bytes": 171127345152,
+  "syscr": 31963,
+  "syscw": 1324,
+  "wchar": 983945,
+  "write_bytes": 733184
+ },
+ "label": "sb1-UL",
+ "loaders": [
+  {
+   "branches": null,
+   "digests": {
+    "[0]": "0b090a797c39ca468a417e9aa8e963f032a226e772e604ec21e4db9204d8849f",
+    "[1]": "56d80b464d69817f03b47316ee5f20f61e0e522ae052cd3a536947c84edf7dbf",
+    "histogram": "873bf73ed39bb1faaa7dfe9cb1f372f1be3f36325afbee9cdf02fff0e7c8d612"
+   },
+   "entries": 4119797,
+   "loader": "fill_data_reco_2d",
+   "mode": "all",
+   "n_active_on_entry": 6,
+   "n_branches_in_tree": 6,
+   "settings": {
+    "guard_max": 1000.0,
+    "pt_hi": 4.5,
+    "pt_lo": 0,
+    "pz_hi": 60.0,
+    "pz_lo": 1.5,
+    "verbose": false
+   },
+   "sizes": {
+    "[0]": 4091707,
+    "[1]": 4091707
+   },
+   "tree": "data",
+   "verified_before_first_read": null
+  },
+  {
+   "branches": null,
+   "digests": {
+    "[0]": "07a837bb4f7834b05637fa68575652efa5aa0cfd99e92dfc498014fbd0a5b919",
+    "[1]": "039ad5c7fd3173cef187c44cb20c4a7670c3c704b1ea1865d9f024e1d644b4d2",
+    "[2]": "9dfbc62f8a7072c93b4068116bd0237ed56119ce04e0d8ed0865e1277d39a813",
+    "histogram": "c3c4212e11a3cd82270d1ce13f83eff57d8ffe248d4525d03ff16613005eedb8"
+   },
+   "entries": 658227,
+   "loader": "fill_bkg_reco_2d",
+   "mode": "all",
+   "n_active_on_entry": 240,
+   "n_branches_in_tree": 240,
+   "settings": {
+    "guard_max": 1000.0,
+    "pot_scale": 0.21240500334472884,
+    "pt_hi": 4.5,
+    "pt_lo": 0,
+    "pz_hi": 60.0,
+    "pz_lo": 1.5,
+    "universe_branch": [
+     "Muon_Energy_MINOS",
+     0
+    ],
+    "verbose": false
+   },
+   "sizes": {
+    "[0]": 621036,
+    "[1]": 621036,
+    "[2]": 621036
+   },
+   "tree": "mc_background",
+   "verified_before_first_read": null
+  },
+  {
+   "branches": null,
+   "digests": {
+    "pass_reco": "a6b7b35c96cc377a8d2a7dfb035313f0a6a2fdac6bfa27b2b6472da82d041318",
+    "pass_truth": "7e4bb3951407f05182e19bfa28cbf184fcbab840c4f2a1512c197387be2b61ab",
+    "reco_pt": "48a7a1ab299fdbd45e86513658aca1cbb0024f42eb1111e979d2695b56f78d06",
+    "reco_pz": "896b579afd9e1ac1ebb5f4a160f7d0c5625c045f5a6a16f5db072bd21e2c042f",
+    "truth_pt": "d60a6181a262695ec637f680352fea1efa2bdab2da3f2f4081511ddfda67596c",
+    "truth_pz": "51735be90332c5eeb9391e2ad23a6caa4a365953ec96a7bbdc886c54f2aabf70",
+    "w_reco": "fa18c4a0628895e1c7f94ae5dc6198c6710d4e739e9ce1d0e9cbecb52e6815c4",
+    "w_truth": "9a9494d475ec9beb9bdafc8a65dafeef1f2de53425fb18b1d41421b55d3840de"
+   },
+   "entries": 32849103,
+   "loader": "collect_signal_arrays_2d",
+   "mode": "all",
+   "n_active_on_entry": 470,
+   "n_branches_in_tree": 470,
+   "settings": {
+    "alt_universe_branch": null,
+    "pot_scale": 0.21240500334472884,
+    "pt_hi": 4.5,
+    "pt_lo": 0,
+    "pz_hi": 60.0,
+    "pz_lo": 1.5,
+    "universe_branch": [
+     "Muon_Energy_MINOS",
+     0
+    ],
+    "use_weights": true,
+    "verbose": false
+   },
+   "sizes": {
+    "pass_reco": 32849103,
+    "pass_truth": 32849103,
+    "reco_pt": 32849103,
+    "reco_pz": 32849103,
+    "truth_pt": 32849103,
+    "truth_pz": 32849103,
+    "w_reco": 32849103,
+    "w_truth": 32849103
+   },
+   "tree": "mc_signal_reco",
+   "verified_before_first_read": null
+  },
+  {
+   "branches": null,
+   "digests": {
+    "truth_pt": "856a71a9464e36d396e5040d7bc02abd169a44acea4cc9b28a2ff8c69a6f1181",
+    "truth_pz": "4de3bd674e826b24d8b9002ace18bcbe9e7976a2ec0c0965faec8e4a813c3ed1",
+    "w_truth": "b0e7562afd3063cfa73863fbb0f9fc6e49824ff206fdeb1c9e0802d075e0cd37"
+   },
+   "entries": 32849103,
+   "loader": "collect_truth_denom_arrays",
+   "mode": "all",
+   "n_active_on_entry": 236,
+   "n_branches_in_tree": 236,
+   "settings": {
+    "pot_scale": 0.21240500334472884,
+    "pt_hi": 4.5,
+    "pt_lo": 0,
+    "pz_hi": 60.0,
+    "pz_lo": 1.5,
+    "universe_branch": [
+     "Muon_Energy_MINOS",
+     0
+    ],
+    "use_weights": true,
+    "verbose": false
+   },
+   "sizes": {
+    "truth_pt": 32849103,
+    "truth_pz": 32849103,
+    "w_truth": 32849103
+   },
+   "tree": "mc_truth_denom",
+   "verified_before_first_read": null
+  }
+ ],
+ "maxrss_bytes": 14167011328,
+ "mode": "unfold",
+ "negative_control": null,
+ "output": {
+  "mtime_ns": 1791671420000000000,
+  "path": "/pscratch/sd/j/josephrb/sb1-2b35ba52/UL/2d_xsec_UL.root",
+  "sha256": "5745e2d577216db6996cab33a39b3985c5408819c0f4943ac9ea4ee93282178c",
+  "size": 61647
+ },
+ "phases": [
+  {
+   "end_s": 2571.5889475990552,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171267786971,
+    "read_bytes": 171127341056,
+    "syscr": 31956,
+    "syscw": 1324,
+    "wchar": 983945,
+    "write_bytes": 733184
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 32230264,
+    "read_bytes": 1016832,
+    "syscr": 3941,
+    "syscw": 1030,
+    "wchar": 428828,
+    "write_bytes": 516096
+   },
+   "maxrss_end_bytes": 14167011328,
+   "name": "driver:main",
+   "start_s": 35.55037318007089
+  },
+  {
+   "end_s": 41.95616735704243,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 209176990,
+    "read_bytes": 177419264,
+    "syscr": 4267,
+    "syscw": 1062,
+    "wchar": 430510,
+    "write_bytes": 520192
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 51554800,
+    "read_bytes": 19799040,
+    "syscr": 4242,
+    "syscw": 1062,
+    "wchar": 430510,
+    "write_bytes": 520192
+   },
+   "maxrss_end_bytes": 955240448,
+   "name": "load:fill_data_reco_2d",
+   "start_s": 37.67014406900853
+  },
+  {
+   "end_s": 42.025787400081754,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 209177234,
+    "read_bytes": 177419264,
+    "syscr": 4271,
+    "syscw": 1062,
+    "wchar": 430510,
+    "write_bytes": 520192
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 209177112,
+    "read_bytes": 177419264,
+    "syscr": 4269,
+    "syscw": 1062,
+    "wchar": 430510,
+    "write_bytes": 520192
+   },
+   "maxrss_end_bytes": 955240448,
+   "name": "digest:fill_data_reco_2d",
+   "start_s": 41.956522135064006
+  },
+  {
+   "end_s": 53.857596538960934,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 1393154568,
+    "read_bytes": 1350300672,
+    "syscr": 4494,
+    "syscw": 1063,
+    "wchar": 440147,
+    "write_bytes": 532480
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 209177356,
+    "read_bytes": 177419264,
+    "syscr": 4273,
+    "syscw": 1063,
+    "wchar": 440147,
+    "write_bytes": 532480
+   },
+   "maxrss_end_bytes": 955240448,
+   "name": "load:fill_bkg_reco_2d",
+   "start_s": 42.029323040973395
+  },
+  {
+   "end_s": 53.86860116105527,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 1393154816,
+    "read_bytes": 1350300672,
+    "syscr": 4498,
+    "syscw": 1063,
+    "wchar": 440147,
+    "write_bytes": 532480
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 1393154692,
+    "read_bytes": 1350300672,
+    "syscr": 4496,
+    "syscw": 1063,
+    "wchar": 440147,
+    "write_bytes": 532480
+   },
+   "maxrss_end_bytes": 955240448,
+   "name": "digest:fill_bkg_reco_2d",
+   "start_s": 53.857930335914716
+  },
+  {
+   "end_s": 1319.0713912479114,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 113549988749,
+    "read_bytes": 113426232320,
+    "syscr": 23380,
+    "syscw": 1064,
+    "wchar": 451737,
+    "write_bytes": 544768
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 1393154940,
+    "read_bytes": 1350300672,
+    "syscr": 4500,
+    "syscw": 1064,
+    "wchar": 451737,
+    "write_bytes": 544768
+   },
+   "maxrss_end_bytes": 10100510720,
+   "name": "load:collect_signal_arrays_2d",
+   "start_s": 53.87166206189431
+  },
+  {
+   "end_s": 1320.4936757490505,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 113549989007,
+    "read_bytes": 113426232320,
+    "syscr": 23384,
+    "syscw": 1064,
+    "wchar": 451737,
+    "write_bytes": 544768
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 113549988878,
+    "read_bytes": 113426232320,
+    "syscr": 23382,
+    "syscw": 1064,
+    "wchar": 451737,
+    "write_bytes": 544768
+   },
+   "maxrss_end_bytes": 10100510720,
+   "name": "digest:collect_signal_arrays_2d",
+   "start_s": 1319.0717091530096
+  },
+  {
+   "end_s": 1901.9861136008985,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171262947782,
+    "read_bytes": 171127272448,
+    "syscr": 31318,
+    "syscw": 1065,
+    "wchar": 465858,
+    "write_bytes": 561152
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 113549989136,
+    "read_bytes": 113426232320,
+    "syscr": 23386,
+    "syscw": 1065,
+    "wchar": 465858,
+    "write_bytes": 561152
+   },
+   "maxrss_end_bytes": 10100510720,
+   "name": "load:collect_truth_denom_arrays",
+   "start_s": 1320.4994173990563
+  },
+  {
+   "end_s": 1902.6523856509011,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171262948040,
+    "read_bytes": 171127272448,
+    "syscr": 31322,
+    "syscw": 1065,
+    "wchar": 465858,
+    "write_bytes": 561152
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171262947911,
+    "read_bytes": 171127272448,
+    "syscr": 31320,
+    "syscw": 1065,
+    "wchar": 465858,
+    "write_bytes": 561152
+   },
+   "maxrss_end_bytes": 10100510720,
+   "name": "digest:collect_truth_denom_arrays",
+   "start_s": 1901.9863974209875
+  },
+  {
+   "end_s": 1908.9168377518654,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171262948298,
+    "read_bytes": 171127276544,
+    "syscr": 31326,
+    "syscw": 1070,
+    "wchar": 482031,
+    "write_bytes": 581632
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171262948169,
+    "read_bytes": 171127276544,
+    "syscr": 31324,
+    "syscw": 1070,
+    "wchar": 482031,
+    "write_bytes": 581632
+   },
+   "maxrss_end_bytes": 10100510720,
+   "name": "build_measured_training_2d",
+   "start_s": 1903.720665060915
+  },
+  {
+   "end_s": 2501.1459253930952,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171267654496,
+    "read_bytes": 171127341056,
+    "syscr": 31918,
+    "syscw": 1248,
+    "wchar": 920956,
+    "write_bytes": 651264
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171262969070,
+    "read_bytes": 171127301120,
+    "syscr": 31330,
+    "syscw": 1092,
+    "wchar": 482612,
+    "write_bytes": 581632
+   },
+   "maxrss_end_bytes": 14167011328,
+   "name": "omnifold",
+   "start_s": 1909.1493799339514
+  },
+  {
+   "end_s": 2548.827392240055,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171267654754,
+    "read_bytes": 171127341056,
+    "syscr": 31922,
+    "syscw": 1260,
+    "wchar": 921258,
+    "write_bytes": 655360
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171267654625,
+    "read_bytes": 171127341056,
+    "syscr": 31920,
+    "syscw": 1260,
+    "wchar": 921258,
+    "write_bytes": 655360
+   },
+   "maxrss_end_bytes": 14167011328,
+   "name": "compute_efficiency_2d",
+   "start_s": 2528.0337986659724
+  },
+  {
+   "end_s": 2570.790255821077,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171267655012,
+    "read_bytes": 171127341056,
+    "syscr": 31926,
+    "syscw": 1266,
+    "wchar": 921407,
+    "write_bytes": 659456
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171267654883,
+    "read_bytes": 171127341056,
+    "syscr": 31924,
+    "syscw": 1266,
+    "wchar": 921407,
+    "write_bytes": 659456
+   },
+   "maxrss_end_bytes": 14167011328,
+   "name": "compute_omnifold_completeness_2d",
+   "start_s": 2548.8277778369375
+  },
+  {
+   "end_s": 2570.8066190399695,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171267655270,
+    "read_bytes": 171127341056,
+    "syscr": 31930,
+    "syscw": 1272,
+    "wchar": 921602,
+    "write_bytes": 663552
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171267655141,
+    "read_bytes": 171127341056,
+    "syscr": 31928,
+    "syscw": 1272,
+    "wchar": 921602,
+    "write_bytes": 663552
+   },
+   "maxrss_end_bytes": 14167011328,
+   "name": "extract_cross_section_2d",
+   "start_s": 2570.790900518885
+  },
+  {
+   "end_s": 2570.8097582589835,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171267655528,
+    "read_bytes": 171127341056,
+    "syscr": 31934,
+    "syscw": 1272,
+    "wchar": 921602,
+    "write_bytes": 663552
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171267655399,
+    "read_bytes": 171127341056,
+    "syscr": 31932,
+    "syscw": 1272,
+    "wchar": 921602,
+    "write_bytes": 663552
+   },
+   "maxrss_end_bytes": 14167011328,
+   "name": "project_xsec_1d",
+   "start_s": 2570.806712832069
+  },
+  {
+   "end_s": 2570.8101363820024,
+   "io_end": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171267655786,
+    "read_bytes": 171127341056,
+    "syscr": 31938,
+    "syscw": 1272,
+    "wchar": 921602,
+    "write_bytes": 663552
+   },
+   "io_start": {
+    "cancelled_write_bytes": 0,
+    "rchar": 171267655657,
+    "read_bytes": 171127341056,
+    "syscr": 31936,
+    "syscw": 1272,
+    "wchar": 921602,
+    "write_bytes": 663552
+   },
+   "maxrss_end_bytes": 14167011328,
+   "name": "project_xsec_1d",
+   "start_s": 2570.809824697906
+  }
+ ],
+ "schema": "sb1-receipt/1",
+ "started_utc": "2026-10-10T21:47:28.953645Z",
+ "status": "complete",
+ "wall_s": 2577.7943007699214
+}

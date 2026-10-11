@@ -1,0 +1,9 @@
+{
+ "t0_utc": "2026-10-10T20:31:26Z",
+ "t1_utc": "2026-10-10T20:31:43Z",
+ "outroot": "/pscratch/sd/j/josephrb/sb1-2b35ba52",
+ "checkout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-sb1-2b35ba52",
+ "admission": "/pscratch/sd/j/josephrb/sb1-admission-2b35ba52.json",
+ "user": "josephrb",
+ "submit_rc": 0
+}

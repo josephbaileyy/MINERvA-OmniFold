@@ -1,0 +1,30 @@
+{
+ "ended_utc": "2026-10-10T20:53:02.577897+00:00",
+ "files": {
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root": {
+   "ino": 882724771874215681,
+   "mtime_ns": 1777003503000000000,
+   "seconds": 0.001,
+   "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "size": 5143
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root": {
+   "ino": 882724772125893981,
+   "mtime_ns": 1779094334000000000,
+   "seconds": 9.637,
+   "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "size": 2144008221
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root": {
+   "ino": 882725391507234642,
+   "mtime_ns": 1783523295000000000,
+   "seconds": 902.447,
+   "sha256": "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418",
+   "size": 171117087867
+  }
+ },
+ "host": "nid004111",
+ "schema": "sb1-hashes/1",
+ "slurm_job_id": "59645299",
+ "started_utc": "2026-10-10T20:37:50.485953+00:00"
+}

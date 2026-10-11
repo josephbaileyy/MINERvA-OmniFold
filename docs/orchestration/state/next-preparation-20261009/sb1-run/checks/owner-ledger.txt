@@ -1,0 +1,12 @@
+job    id        state      bill elapsed_s    node_h  queue_s maxrss_GB diskread_GB
+H0     59645299  COMPLETED     2       929  0.002016      365     3.964     169.617
+UL     59645300  COMPLETED   256      2604  0.723333     3233    69.460     171.298
+SL     59645301  COMPLETED   256       888  0.246667      764    17.165       2.358
+J1     59645302  COMPLETED    64      1793  0.124514     3258    20.818     173.874
+C      59645304  COMPLETED    64       948  0.065833     2680    16.371       6.565
+H1     59645305  COMPLETED     2       180  0.000391      457     1.828     165.007
+charged total 1.162754 node-h (cap 2.0; headroom 0.837246)
+charged elapsed 7342 s; queue after eligibility 10757 s; first submit -> last end 18185 s
+S2 disk  SL 2.3578 GB <= 10 and <= 0.1 x UL 171.2978: ratio 0.01376 -> PASS
+S3 rss   SL 17.1652 GB <= 30 and <= 0.5 x UL 69.4598: ratio 0.24712 -> PASS
+S4 time  SL 888 s <= 0.5 x UL 2604 s: ratio 0.34101 -> PASS

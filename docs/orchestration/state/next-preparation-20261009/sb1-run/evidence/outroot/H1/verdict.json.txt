@@ -1,0 +1,171 @@
+{
+ "cannot_authorize": [
+  "a change to the production 2D driver or the pinned OmniFold helper",
+  "replacing or changing any estimator",
+  "claiming a production speedup",
+  "the transfer measurement (option (b))",
+  "a matched sweep (option (c))",
+  "N2",
+  "lifting KI-85",
+  "adoption, a changed gate or any quoted number",
+  "publication or any external communication",
+  "a Rust/C++ rewrite",
+  "any compute beyond these six jobs"
+ ],
+ "ceiling_node_h": 2.0,
+ "charged_node_h": 1.1627343750000003,
+ "criteria": {
+  "NC": {
+   "detail": {
+    "extra": true,
+    "omit": true
+   },
+   "verdict": "PASS"
+  },
+  "P": {
+   "problems": {},
+   "verdict": "PASS"
+  },
+  "S1": {
+   "detail": {
+    "arms": [],
+    "cv": [],
+    "cv_unfold_vs_loaders": [],
+    "lateral": [],
+    "vertical": []
+   },
+   "verdict": "PASS"
+  },
+  "S2": {
+   "sl_gb": 2.35780371456,
+   "ul_gb": 171.29780500479998,
+   "verdict": "PASS"
+  },
+  "S3": {
+   "sl_gb": 17.165213696,
+   "ul_gb": 69.459787776,
+   "verdict": "PASS"
+  },
+  "S4": {
+   "ratio": 0.34101382488479265,
+   "sl_s": 888,
+   "ul_s": 2604,
+   "verdict": "PASS"
+  },
+  "S5": {
+   "detail": {
+    "byte_identical": false,
+    "histograms": 16,
+    "label": "UL vs SL (matched: same commit, argv, threads, node shape)",
+    "max_rel_any": 6.395454012972304e-13,
+    "max_rel_hXSec2D": 6.395454012972304e-13,
+    "only_in_one": []
+   },
+   "note": "within 1e-8; the 128-thread rerun envelope itself is unmeasured",
+   "verdict": "PASS-AT-TOLERANCE"
+  },
+  "S6": {
+   "detail": {
+    "by_phase_s": {
+     "build_measured_training_2d": 5.519461754000076,
+     "compute_efficiency_2d": 22.16832521899778,
+     "compute_omnifold_completeness_2d": 23.239625477999653,
+     "digest": 2.347345132002374,
+     "extract_cross_section_2d": 0.01527857499968377,
+     "load": 96.92726895699889,
+     "omnifold": 392.4354059879988,
+     "project_xsec_1d": 0.0031601839982613456
+    },
+    "covered_s": 542.6558712869955,
+    "fraction": 0.869305065007111,
+    "wall_s": 624.241009434998
+   },
+   "verdict": "FAIL"
+  }
+ },
+ "overall": "PASS",
+ "scheduler": {
+  "C": {
+   "billing": 64,
+   "elapsed_s": 948,
+   "exit_code": "0:0",
+   "maxdiskread_bytes": 6564931973.12,
+   "maxrss_bytes": 16371380224.0,
+   "node_h": 0.06583333333333333,
+   "state": "COMPLETED"
+  },
+  "H0": {
+   "billing": 2,
+   "elapsed_s": 929,
+   "exit_code": "0:0",
+   "maxdiskread_bytes": 169616501954.56,
+   "maxrss_bytes": 3964469248.0,
+   "node_h": 0.0020160590277777776,
+   "state": "COMPLETED"
+  },
+  "H1": {
+   "billing": 2,
+   "elapsed_s": 171,
+   "exit_code": "0:0",
+   "maxdiskread_bytes": null,
+   "maxrss_bytes": null,
+   "node_h": 0.00037109375,
+   "state": "RUNNING"
+  },
+  "J1": {
+   "billing": 64,
+   "elapsed_s": 1793,
+   "exit_code": "0:0",
+   "maxdiskread_bytes": 173873968066.56,
+   "maxrss_bytes": 20817870848.0,
+   "node_h": 0.12451388888888888,
+   "state": "COMPLETED"
+  },
+  "SL": {
+   "billing": 256,
+   "elapsed_s": 888,
+   "exit_code": "0:0",
+   "maxdiskread_bytes": 2357803714.56,
+   "maxrss_bytes": 17165213696.0,
+   "node_h": 0.24666666666666667,
+   "state": "COMPLETED"
+  },
+  "UL": {
+   "billing": 256,
+   "elapsed_s": 2604,
+   "exit_code": "0:0",
+   "maxdiskread_bytes": 171297805004.8,
+   "maxrss_bytes": 69459787776.0,
+   "node_h": 0.7233333333333334,
+   "state": "COMPLETED"
+  }
+ },
+ "schema": "sb1-verdict/1",
+ "unmatched_historical": [
+  {
+   "byte_identical": false,
+   "histograms": 16,
+   "label": "UL vs historical reference (UNMATCHED: July driver revision)",
+   "max_rel_any": 7.876000723719068e-12,
+   "max_rel_hXSec2D": 7.875896163747547e-12,
+   "only_in_one": []
+  },
+  {
+   "byte_identical": false,
+   "histograms": 16,
+   "label": "SL vs historical reference (UNMATCHED: July driver revision)",
+   "max_rel_any": 7.737589132228293e-12,
+   "max_rel_hXSec2D": 7.737572439705629e-12,
+   "only_in_one": []
+  },
+  {
+   "byte_identical": false,
+   "histograms": 16,
+   "label": "C vs 59410433_1 (UNMATCHED: other driver revision)",
+   "max_rel_any": 8.305439724753652e-13,
+   "max_rel_hXSec2D": 8.305439724753652e-13,
+   "only_in_one": []
+  }
+ ],
+ "within_ceiling": true
+}
