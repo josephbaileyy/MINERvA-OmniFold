@@ -1,0 +1,30 @@
+# The preflight job's Slurm logs (the repository ignores *.out/*.err); originals in /pscratch/sd/j/josephrb/xr-recovery-20261011/PF/a1/
+== slurm-59655414.out sha256 80f8f1b41ba350442f8faaf768daa41918f8ec6f1ae03c3e084b9cdaedb59d3f
+[xr-job] run=PF attempt=1 job=59655414 node=nid004073 start=2026-10-11T03:11:26Z
+[xr-admit] admission verified
+[xr-job] end=2026-10-11T03:12:32Z rc=1
+== slurm-59655414.err sha256 94d0e08f0c484ebfd2fa18284a184082df6c6aefffc3d63c052f3f9fa0731694
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+
+[oi136 launch] THIS CHILD CANNOT BE PROVEN TO KEEP ITS OWN PYTHON LAUNCHES GUARDED -- REFUSING BEFORE LAUNCH.
+[oi136 launch]   executable     /sbin/ldconfig
+[oi136 launch]   offending flag /sbin/ldconfig resolves to /sbin/ldconfig, which is neither an interpreter, a shell, a leaf tool nor a script with a readable shebang
+[oi136 launch]   argv           ['/sbin/ldconfig', '-p']
+[oi136 launch] A guarded process may start only a child this guard can PROVE keeps its Python launches guarded: an interpreter under the startup-flag grammar, a shell whose -c string or SCRIPT FILE has been read and scanned, a leaf tool that execs no other program and resolves under a system prefix, a read-only `git`, or a file whose shebang is one of those. Round 6 reached the wrong-tree import through a shell SCRIPT FILE, which the previous model admitted UNREAD on the strength of a PATH lookup the script declined to make. Route the work through a shell script this guard can read, or through mnv_guarded_run.py; do not widen the leaf table to make a launcher pass.
+
+[XR] preflight-fail: SystemExit: 3
+[oi136] inventory: checked=1172 repo_origin_count=2 outside_expect_root=0 verdict=REFUSED launch -> /pscratch/sd/j/josephrb/xr-recovery-20261011/PF/a1/inventory.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 7   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/MINERvA-OmniFold-xrr-9ec77fa1  (7) __main__, __mp_main__, n2, n2.execution, omnifold, xr_driver_unfold_2d_omnifold_unbinned, xr_driver_unfold_2d_omnifold_unbinned_d1bc8813
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.

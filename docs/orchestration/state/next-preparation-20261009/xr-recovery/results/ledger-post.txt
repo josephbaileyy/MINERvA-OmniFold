@@ -1,0 +1,22 @@
+{
+ "prior_charged_node_h": 0.0013498263888888891,
+ "amendment_charged_node_h": 0.0009635416666666667,
+ "cumulative_charged_node_h": 0.002313368055555556,
+ "unfinished_ceiling_node_h": 0.0,
+ "cap_node_h": 6.4,
+ "attempts": {
+  "exact": 0,
+  "lgbm": 0,
+  "preflight": 1
+ },
+ "hours_since_first_submission": 0.5994444444444444,
+ "jobs": [
+  "prior X0 job 59648608 FAILED billing=12 elapsed=19s charged=0.0002473958",
+  "prior X0p job 59648610 FAILED billing=12 elapsed=19s charged=0.0002473958",
+  "prior X1 job 59648611 FAILED billing=12 elapsed=7s charged=0.0000911458",
+  "prior L0 job 59648616 FAILED billing=64 elapsed=7s charged=0.0004861111",
+  "prior L1 job 59648617 FAILED billing=64 elapsed=4s charged=0.0002777778",
+  "PF a1 job 59655414 FAILED billing=12 elapsed=74s charged=0.0009635417"
+ ],
+ "over": []
+}

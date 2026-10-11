@@ -1,0 +1,20 @@
+# Read-only Perlmutter reads for the XR recovery (login23 unless stated; no job, no charge). Values as printed.
+
+== 2026-10-11T00:54:42Z  scheduler state and billing (re-measured before any launch)
+squeue --me: 59645304 sb1_C PENDING shared 64 CPUs (Resources); 59645305 sb1_H1 PENDING shared 2 CPUs (Dependency);
+             WORK_DIR /pscratch/sd/j/josephrb/sb1-2b35ba52 (SB1's own; not touched)
+scontrol show config: SLURM_VERSION 25.11.8; SelectTypeParameters CR_CORE_MEMORY; PriorityFlags (empty); MinJobAge 300 sec;
+             AccountingStorageTRES cpu,mem,energy,node,billing,fs/disk,vmem,pages,gres/gpu,gres/gpu:a100,gres/gpumem,gres/gpuutil
+scontrol show partition shared_milan_ss11: MaxTime 7-00:00:00 DefMemPerCPU 1905 MaxMemPerCPU 1905 QoS N/A
+             TRES=cpu=17920,mem=36057000M,node=70,billing=17920   (billing = CPUs)
+sacctmgr show qos shared: MaxWall 2-00:00:00, MaxSubmitPU 5000, Flags DenyOnLimit, UsageFactor 1.000000
+iris:        m3246  Charged(user) 2036.1  Allocated(user) 10000.0  Charged 16980.6  Allocated 20000.0
+
+== 2026-10-11T00:55:14Z  captured scheduler formats (-> two-d-followup/xr/tests/scheduler/, byte for byte)
+scontrol show job 59645304 -o; scontrol show job 59645305 -o   (both PENDING: ReqTRES=...billing=N, AllocTRES=(null), no TRES= key)
+sacct -u josephrb -X -n -P -S 2026-10-10 -E now --format=JobID,JobName,State          (sha256 f67f6495...; = two-d-followup next-attempt input)
+sacct -P -j 59648608,59648616 --format=JobID,JobName,State,ElapsedRaw,AllocTRES,Timelimit   (with .batch/.extern steps)
+sacct -X -P -j <the five prior jobs> --format=JobID,JobName,State,ElapsedRaw,AllocTRES,Timelimit
+capture dir on the cluster: /pscratch/sd/j/josephrb/xrr-capture.Fs7P
+
+== 2026-10-11T01:00:15Z  squeue --me: the same two SB1 jobs PENDING; no RUNNING job of this account (no running scontrol line to capture)

@@ -1,0 +1,5 @@
+{"run": "X0", "kind": "exact", "attempt": 1, "job_id": 59648608, "submitted_utc": "2026-10-10T22:34:53Z", "dir": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010/X0/a1"}
+{"run": "X0p", "kind": "exact", "attempt": 1, "job_id": 59648610, "submitted_utc": "2026-10-10T22:34:57Z", "dir": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010/X0p/a1"}
+{"run": "X1", "kind": "exact", "attempt": 1, "job_id": 59648611, "submitted_utc": "2026-10-10T22:35:00Z", "dir": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010/X1/a1"}
+{"run": "L0", "kind": "lgbm", "attempt": 1, "job_id": 59648616, "submitted_utc": "2026-10-10T22:35:05Z", "dir": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010/L0/a1"}
+{"run": "L1", "kind": "lgbm", "attempt": 1, "job_id": 59648617, "submitted_utc": "2026-10-10T22:35:09Z", "dir": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010/L1/a1"}

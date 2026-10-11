@@ -1,0 +1,26 @@
+# The ten Slurm logs of the XR attempts, concatenated (originals: /pscratch/sd/j/josephrb/xr-two-d-followup-20261010/<run>/a1/). sha256 of each original precedes it.
+== slurm-59648608.err sha256 6c8dc12b56119e2ed48e87d005489513e501279c8fad7cba71aeeac2756fcdc2
+[REFUSED] allocation outside the frozen caps for exact: {'QOS': True, 'NumCPUs': True, 'billing': False, 'TimeLimit': True} (QOS=shared NumCPUs=12 TRES=None TimeLimit=1-06:00:00)
+[xr-job] REFUSED: allocation
+== slurm-59648608.out sha256 682617a30d9ac8b4c11d8aed5ff90b460844cfea866f4bd683b23a5e736809d8
+[xr-job] run=X0 attempt=1 job=59648608 node=nid004092 start=2026-10-10T22:45:29Z
+== slurm-59648610.err sha256 6c8dc12b56119e2ed48e87d005489513e501279c8fad7cba71aeeac2756fcdc2
+[REFUSED] allocation outside the frozen caps for exact: {'QOS': True, 'NumCPUs': True, 'billing': False, 'TimeLimit': True} (QOS=shared NumCPUs=12 TRES=None TimeLimit=1-06:00:00)
+[xr-job] REFUSED: allocation
+== slurm-59648610.out sha256 928699fdf607c06f4f6ac71c03fcbecc49a5d334a3c4be9354511cc738fb5c78
+[xr-job] run=X0p attempt=1 job=59648610 node=nid004092 start=2026-10-10T22:45:29Z
+== slurm-59648611.err sha256 6c8dc12b56119e2ed48e87d005489513e501279c8fad7cba71aeeac2756fcdc2
+[REFUSED] allocation outside the frozen caps for exact: {'QOS': True, 'NumCPUs': True, 'billing': False, 'TimeLimit': True} (QOS=shared NumCPUs=12 TRES=None TimeLimit=1-06:00:00)
+[xr-job] REFUSED: allocation
+== slurm-59648611.out sha256 11aeb3404ac1f42fc51e2de5ebb4e759746b84e0b23bf115eb4744174cf6a240
+[xr-job] run=X1 attempt=1 job=59648611 node=nid004073 start=2026-10-10T23:06:07Z
+== slurm-59648616.err sha256 06b026dd28a17520e9f180331537f70c3b8afc66cbf4fbb8909fe5764550bd00
+[REFUSED] allocation outside the frozen caps for lgbm: {'QOS': True, 'NumCPUs': True, 'billing': False, 'TimeLimit': True} (QOS=shared NumCPUs=64 TRES=None TimeLimit=01:00:00)
+[xr-job] REFUSED: allocation
+== slurm-59648616.out sha256 59b4cc1e89411a6bc3762aebdd56d56e3c90ef153eb621bd78a56ee9c5fa9873
+[xr-job] run=L0 attempt=1 job=59648616 node=nid004138 start=2026-10-10T23:35:37Z
+== slurm-59648617.err sha256 06b026dd28a17520e9f180331537f70c3b8afc66cbf4fbb8909fe5764550bd00
+[REFUSED] allocation outside the frozen caps for lgbm: {'QOS': True, 'NumCPUs': True, 'billing': False, 'TimeLimit': True} (QOS=shared NumCPUs=64 TRES=None TimeLimit=01:00:00)
+[xr-job] REFUSED: allocation
+== slurm-59648617.out sha256 071d0cf9cd852104b3af0624b7a3085c3fd0eaaffddaa99ba4823eb3c88983ab
+[xr-job] run=L1 attempt=1 job=59648617 node=nid004101 start=2026-10-11T00:23:56Z

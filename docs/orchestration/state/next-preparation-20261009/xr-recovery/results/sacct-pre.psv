@@ -1,0 +1,12 @@
+JobID|JobName|State|ElapsedRaw|AllocTRES|Timelimit
+59645299|sb1_H0|COMPLETED|929|billing=2,cpu=2,energy=631082,mem=3810M,node=1|00:45:00
+59645300|sb1_UL|COMPLETED|2604|billing=256,cpu=256,energy=815532,mem=487802M,node=1|00:50:00
+59645301|sb1_SL|COMPLETED|888|billing=256,cpu=256,energy=294574,mem=487802M,node=1|00:30:00
+59645302|sb1_J1|COMPLETED|1793|billing=64,cpu=64,energy=1142100,mem=121920M,node=1|00:45:00
+59645304|sb1_C|COMPLETED|948|billing=64,cpu=64,energy=623126,mem=121920M,node=1|00:40:00
+59645305|sb1_H1|COMPLETED|180|billing=2,cpu=2,energy=106560,mem=3810M,node=1|00:45:00
+59648608|xr_X0_a1|FAILED|19|billing=12,cpu=12,mem=22860M,node=1|1-06:00:00
+59648610|xr_X0p_a1|FAILED|19|billing=12,cpu=12,mem=22860M,node=1|1-06:00:00
+59648611|xr_X1_a1|FAILED|7|billing=12,cpu=12,mem=22860M,node=1|1-06:00:00
+59648616|xr_L0_a1|FAILED|7|billing=64,cpu=64,mem=121920M,node=1|01:00:00
+59648617|xr_L1_a1|FAILED|4|billing=64,cpu=64,mem=121920M,node=1|01:00:00

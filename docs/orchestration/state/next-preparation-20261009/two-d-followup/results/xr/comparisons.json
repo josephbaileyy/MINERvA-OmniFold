@@ -1,0 +1,43 @@
+{
+ "comparisons": {
+  "L0_vs_CV42": {
+   "question": "a CV-file seed-42 run reproduces the seed-42 realization of the adopted sweep's CV",
+   "verdict": "INCONCLUSIVE",
+   "why": "no complete attempt of L0"
+  },
+  "L0_vs_PN_CV": {
+   "question": "the same against the July background-aware sweep's CV",
+   "verdict": "INCONCLUSIVE",
+   "why": "no complete attempt of L0"
+  },
+  "L1_vs_SEED1": {
+   "question": "a seed-1 run reproduces the seedscan seed-1 central",
+   "verdict": "INCONCLUSIVE",
+   "why": "no complete attempt of L1"
+  },
+  "NC_X0_vs_CV42": {
+   "control_met": false,
+   "question": "different estimators (exact vs LightGBM; median 0.99 % per bin): the comparator must report FAIL here, or it is not discriminating",
+   "verdict": "INCONCLUSIVE",
+   "why": "no complete attempt of X0"
+  },
+  "X0_vs_E_C": {
+   "question": "today's driver regenerates the quoted exact central",
+   "verdict": "INCONCLUSIVE",
+   "why": "no complete attempt of X0"
+  },
+  "X0p_vs_E_C": {
+   "question": "the d1bc8813 driver (with today's helper) regenerates the quoted exact central",
+   "verdict": "INCONCLUSIVE",
+   "why": "no complete attempt of X0p"
+  },
+  "X1_vs_X0": {
+   "question": "one-seed P09b: random_state 1/2/3 against random_state=None, today's driver",
+   "verdict": "INCONCLUSIVE",
+   "why": "no complete attempt of X1"
+  }
+ },
+ "outroot": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010",
+ "schema": "xr-comparisons/1",
+ "tolerance": 1e-08
+}

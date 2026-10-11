@@ -1,0 +1,17 @@
+{
+ "charged_node_h": 0.0013498263888888891,
+ "unfinished_ceiling_node_h": 0.0,
+ "attempts": {
+  "exact": 3,
+  "lgbm": 2
+ },
+ "hours_since_first_submission": 1.8663888888888889,
+ "jobs": [
+  "X0 a1 job 59648608 FAILED billing=12 elapsed=19s charged=0.0002",
+  "X0p a1 job 59648610 FAILED billing=12 elapsed=19s charged=0.0002",
+  "X1 a1 job 59648611 FAILED billing=12 elapsed=7s charged=0.0001",
+  "L0 a1 job 59648616 FAILED billing=64 elapsed=7s charged=0.0005",
+  "L1 a1 job 59648617 FAILED billing=64 elapsed=4s charged=0.0003"
+ ],
+ "over": []
+}

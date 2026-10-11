@@ -1,0 +1,7 @@
+JobID|JobName|State|ElapsedRaw|AllocTRES|Timelimit
+59648608|xr_X0_a1|FAILED|19|billing=12,cpu=12,mem=22860M,node=1|1-06:00:00
+59648608.batch|batch|FAILED|19|cpu=12,mem=22860M,node=1|
+59648608.extern|extern|COMPLETED|33|billing=12,cpu=12,mem=22860M,node=1|
+59648616|xr_L0_a1|FAILED|7|billing=64,cpu=64,mem=121920M,node=1|01:00:00
+59648616.batch|batch|FAILED|7|cpu=64,mem=121920M,node=1|
+59648616.extern|extern|COMPLETED|13|billing=64,cpu=64,mem=121920M,node=1|
