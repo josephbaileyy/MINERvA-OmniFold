@@ -1,0 +1,130 @@
+{
+ "digests": {
+  "/pscratch/sd/j/josephrb/pub-release-20261006/figs/fig_arrays.npz": "72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8"
+ },
+ "area_check_max_rel": 0.06666666666666676,
+ "total": {
+  "paper_over_tune": 1.1178729336870956,
+  "ours_over_tune": 1.130490528733731,
+  "ours_over_paper": 1.0112871460310062
+ },
+ "by_pt": [
+  {
+   "pt_lo": 0.0,
+   "pt_hi": 0.07,
+   "paper_over_tune": 0.8304963011375474,
+   "ours_over_tune": 0.7610214902736907,
+   "rho_paper": 0.742925493685861,
+   "paper_fraction": 0.0027908424317667747
+  },
+  {
+   "pt_lo": 0.07,
+   "pt_hi": 0.15,
+   "paper_over_tune": 0.9337845397062381,
+   "ours_over_tune": 0.9904540776338319,
+   "rho_paper": 0.8353226127645149,
+   "paper_fraction": 0.01042834311761166
+  },
+  {
+   "pt_lo": 0.15,
+   "pt_hi": 0.25,
+   "paper_over_tune": 1.0430207638920683,
+   "ours_over_tune": 1.048174696222913,
+   "rho_paper": 0.9330405383837845,
+   "paper_fraction": 0.03293434683201318
+  },
+  {
+   "pt_lo": 0.25,
+   "pt_hi": 0.33,
+   "paper_over_tune": 1.0591594784033953,
+   "ours_over_tune": 1.1522773822758674,
+   "rho_paper": 0.9474775231474253,
+   "paper_fraction": 0.042320476897036476
+  },
+  {
+   "pt_lo": 0.33,
+   "pt_hi": 0.4,
+   "paper_over_tune": 1.0500649691850887,
+   "ours_over_tune": 1.000547041997925,
+   "rho_paper": 0.9393419748715491,
+   "paper_fraction": 0.05832088728057225
+  },
+  {
+   "pt_lo": 0.4,
+   "pt_hi": 0.47,
+   "paper_over_tune": 1.0469548601936705,
+   "ours_over_tune": 0.9923583927123127,
+   "rho_paper": 0.9365598080458795,
+   "paper_fraction": 0.07251918036656474
+  },
+  {
+   "pt_lo": 0.47,
+   "pt_hi": 0.55,
+   "paper_over_tune": 1.0708404250915604,
+   "ours_over_tune": 1.1502931412472748,
+   "rho_paper": 0.957926784719255,
+   "paper_fraction": 0.08431911771743986
+  },
+  {
+   "pt_lo": 0.55,
+   "pt_hi": 0.7,
+   "paper_over_tune": 1.09760187418587,
+   "ours_over_tune": 1.102869990716299,
+   "rho_paper": 0.9818664010100278,
+   "paper_fraction": 0.17899619916556067
+  },
+  {
+   "pt_lo": 0.7,
+   "pt_hi": 0.85,
+   "paper_over_tune": 1.119659689935255,
+   "ours_over_tune": 1.1378000640833277,
+   "rho_paper": 1.001598353618122,
+   "paper_fraction": 0.1605931930071361
+  },
+  {
+   "pt_lo": 0.85,
+   "pt_hi": 1.0,
+   "paper_over_tune": 1.1687468439299176,
+   "ours_over_tune": 1.1798402880648033,
+   "rho_paper": 1.0455095643786847,
+   "paper_fraction": 0.1254315638886125
+  },
+  {
+   "pt_lo": 1.0,
+   "pt_hi": 1.25,
+   "paper_over_tune": 1.2198745975979448,
+   "ours_over_tune": 1.2303566726268347,
+   "rho_paper": 1.0912462059300565,
+   "paper_fraction": 0.12445162953869414
+  },
+  {
+   "pt_lo": 1.25,
+   "pt_hi": 1.5,
+   "paper_over_tune": 1.228059070310841,
+   "ours_over_tune": 1.235795625084228,
+   "rho_paper": 1.0985676755410088,
+   "paper_fraction": 0.05213220518709603
+  },
+  {
+   "pt_lo": 1.5,
+   "pt_hi": 2.5,
+   "paper_over_tune": 1.1781750794013688,
+   "ours_over_tune": 1.2032797604133665,
+   "rho_paper": 1.0539436494945609,
+   "paper_fraction": 0.04777231978111788
+  },
+  {
+   "pt_lo": 2.5,
+   "pt_hi": 4.5,
+   "paper_over_tune": 1.1463543186325709,
+   "ours_over_tune": 1.1812509546143417,
+   "rho_paper": 1.0254781953182592,
+   "paper_fraction": 0.006989694788777723
+  }
+ ],
+ "pt_gt_0.85": {
+  "paper_over_tune": 1.195485017598975,
+  "rho_paper": 1.0694283594968979,
+  "paper_fraction": 0.3567774131842983
+ }
+}

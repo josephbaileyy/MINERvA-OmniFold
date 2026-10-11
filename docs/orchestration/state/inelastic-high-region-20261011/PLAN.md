@@ -117,3 +117,27 @@ R6 as the intermediate-W overshoot check for any candidate.
 
 `REPORT.md` (the research memo), `REVIEW.md`, `code/`, `results/*.json`, `logs/budget_ledger.jsonl`, plus the
 required CATALOG and MANIFEST rows. Task branch `study/inelastic-high-region-20261011`; not merged.
+
+## 8. Amendments
+
+**Amendment 1 (2026-10-11, after R1, R3/R4 had been seen; descriptive only, no change to §6).**
+Reason: R1/R3 showed that region C mixes opposite-sign sub-regions (non-overflow versus overflow cells) and that
+the largest normalization-independent feature is at 1.4 ≤ W < 2.2 GeV, outside C. To report that faithfully
+without redefining C, three descriptive reductions are added. None enters the decision rule, whose inputs
+(ρ_C^G, S_C, B_C) are unchanged.
+- **A1-a** Per-W-bin and per-E_avail-bin (within W ≥ 1.8) profiles of the frozen R3 decomposition and of the ±4%
+  recoil shifts (`reduce_r4b.py`), and the recorded biases split into C's non-overflow and overflow cells.
+- **A1-b** The published 2D comparison as a rate check independent of the hadronic axes: released `paper_v`
+  against `tune_v1_v` (total and p_T slices) from `fig_arrays.npz`.
+- **A1-c** GENIE 2.12.10 inclusive σ_CC/E per nucleon from the committed spline graphs at 3–50 GeV (isoscalar C12
+  and the CH mixture), for comparison with published NOMAD and MINOS σ/E tables opened by the owner.
+
+**Amendment 2 (2026-10-11, after R1–R4 and the literature report; descriptive only, no change to §6).**
+Reason: the only existing, independently (H/D) constrained inelastic change the literature identifies is the GENIE
+v3 bare-nucleon tune G18_02a_02_11b (Tena-Vidal et al., PRD 104, 072009, Table VI, verified by the owner). Its
+sign pattern in C, M and the total is needed for R6. **A1-d**: a first-order emulation by reweighting the existing
+GENIE 2.12.10 CV events (no generation): RES × 0.84/1.0 (S_RES); DIS × 1.062/1.032 (S_DIS); nonresonant events
+(DIS with generator W < 1.7 GeV) of primary hadronic multiplicity 2 or 3 × R_new/R_old with R = (νp: 0.008/0.10,
+0.94/1.00; νn: 0.03/0.30, 2.3/1.00), as GENIE ReWeight's non-resonant-background dial does. The W_cut move to 1.81
+GeV and the RES axial-mass change are not reweightable and are omitted; this is not a GENIE v3 prediction, is not
+fitted, and is reported only as the candidate's approximate sign and size in C, M, the total and per W bin.

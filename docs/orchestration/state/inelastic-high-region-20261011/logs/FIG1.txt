@@ -1,0 +1,2 @@
+# 2026-10-11T22:30:12+00:00 id=FIG1 rc=0 cmd=python3 -I make_figure.py ../results ../results/fig_contrast_by_W.png
+wrote ../results/fig_contrast_by_W.png

@@ -1,0 +1,12 @@
+# 2026-10-11T22:38:58+00:00 id=A1d-red-rerun rc=0 cmd=python3 -I reduce_a1d.py /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/inputs /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/inputs/r5b_tune_emulation.npz ../results/A1d_tune_emulation_contrasts.json
+{'digests': {'/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root': '630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8', '/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz': 'cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2', '/pscratch/sd/j/josephrb/inelastic-high-region-20261011/out/r5b_tune_emulation.npz': '4139c4e9c67ec91890ead0df79ce44b1c115d9cffffc9da25b209d03944847ce'}, 'control_nominal_vs_product_maxrel': 7.647216193618078e-13, 'total_emulated_over_nominal': 0.9408937045155834, 'R_total': {'nominal': 1.1104968991383906, 'emulated': 1.1802575506763828}}
+C              pred x1.0296  ln_rho +0.0281 -> -0.0620
+M              pred x0.8813  ln_rho -0.1946 -> -0.1291
+C_no_overflow  pred x1.0304  ln_rho -0.0277 -> -0.1186
+C_overflow     pred x1.0286  ln_rho +0.0900 -> +0.0008
+W0             pred x0.9770  ln_rho +0.1970 -> +0.1593
+W1             pred x0.7632  ln_rho +0.0256 -> +0.2349
+W2             pred x0.8813  ln_rho -0.1946 -> -0.1291
+W3             pred x1.0255  ln_rho -0.0857 -> -0.1719
+W4             pred x1.0279  ln_rho +0.0110 -> -0.0774
+W5             pred x1.0290  ln_rho +0.1521 -> +0.0626

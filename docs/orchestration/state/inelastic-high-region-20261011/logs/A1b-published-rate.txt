@@ -1,0 +1,16 @@
+# 2026-10-11T22:38:57+00:00 id=A1b-rerun rc=0 cmd=python3 -I a1b_published_rate.py /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/inputs ../results/A1b_published_rate.json
+{'area_check_max_rel': 0.06666666666666676, 'total': {'paper_over_tune': 1.1178729336870956, 'ours_over_tune': 1.130490528733731, 'ours_over_paper': 1.0112871460310062}, 'pt_gt_0.85': {'paper_over_tune': 1.195485017598975, 'rho_paper': 1.0694283594968979, 'paper_fraction': 0.3567774131842983}}
+pT [0.00,0.07) paper/tune=0.8305 ours/tune=0.7610 rho=0.7429 frac=0.0028
+pT [0.07,0.15) paper/tune=0.9338 ours/tune=0.9905 rho=0.8353 frac=0.0104
+pT [0.15,0.25) paper/tune=1.0430 ours/tune=1.0482 rho=0.9330 frac=0.0329
+pT [0.25,0.33) paper/tune=1.0592 ours/tune=1.1523 rho=0.9475 frac=0.0423
+pT [0.33,0.40) paper/tune=1.0501 ours/tune=1.0005 rho=0.9393 frac=0.0583
+pT [0.40,0.47) paper/tune=1.0470 ours/tune=0.9924 rho=0.9366 frac=0.0725
+pT [0.47,0.55) paper/tune=1.0708 ours/tune=1.1503 rho=0.9579 frac=0.0843
+pT [0.55,0.70) paper/tune=1.0976 ours/tune=1.1029 rho=0.9819 frac=0.1790
+pT [0.70,0.85) paper/tune=1.1197 ours/tune=1.1378 rho=1.0016 frac=0.1606
+pT [0.85,1.00) paper/tune=1.1687 ours/tune=1.1798 rho=1.0455 frac=0.1254
+pT [1.00,1.25) paper/tune=1.2199 ours/tune=1.2304 rho=1.0912 frac=0.1245
+pT [1.25,1.50) paper/tune=1.2281 ours/tune=1.2358 rho=1.0986 frac=0.0521
+pT [1.50,2.50) paper/tune=1.1782 ours/tune=1.2033 rho=1.0539 frac=0.0478
+pT [2.50,4.50) paper/tune=1.1464 ours/tune=1.1813 rho=1.0255 frac=0.0070
