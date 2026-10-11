@@ -27,6 +27,41 @@ Those acts, and any message to coauthors, need Joseph's separate authorization (
 > - **Limitations stated in the article** are updated in §5.
 > - **One scientific decision is open:** REVIEW-20261007 §5.
 
+## 1e. Selection and validation explanations (2026-10-11)
+
+Source commit `0542408bcf595a30a3a51d62f5dd42599ede23c1` on
+`docs/selection-validation-clarity-20261011` updates the note, paper and primer.
+The corresponding standalone source commit is
+`dbe81a2f8398ccedb221d81e0d42df2d06a69660`.
+This is an editorial update, not a new result, adoption, release candidate or
+publication-readiness decision. The 2D pairing and coverage limitations remain.
+
+The input was `docs/ben-research-presentation/revised/Questions-and-note-suggestions.pdf`
+(SHA256 `0ff4f5305c20e72a56958c0b1c1630e1f7c00ec65a943ce81f57771981968f28`),
+printed pages 16–18 and the selection/features suggestion on page 5.
+The recommendations were assessed against the canonical records, not treated as evidence.
+
+| recommendation | disposition |
+|---|---|
+| Estimator identity beside results | Shared scalar-status table in note and paper; plain-language status paragraph in primer. The existing exact-split/LightGBM disclosure is retained. |
+| Closure versus coverage | Definitions and a validation table precede the note's results; shorter table in primer and paragraph in paper. Coverage names its target and pooling unit; invariants and stability remain distinct. |
+| Scalar information content | Note and paper share the implemented reconstructed kinematic equations, checked against `CVUniverse.h`; primer explains the shared inputs without equations. No count of identifiable directions is inferred. |
+| Prior, response and approximation | Separate explanations retain the signal-only counterexample. Note alone adds the committed D-ID diagnostic, including 232 excluded cases out of 376 and its limits for biased/unbinned estimators; source and verification are linked at `7d173bd0`. |
+| Conditional inference | Retain the paper's six conditions, hybrid null and sensitivity thresholds; clarify the meaning of the multiplier. Add matched muon-only scope and frozen/recovered thresholds to note and primer, using the existing W1 and kappa records. |
+| Historical graphics | Eight inline historical graphics become exact-commit preservation links; captions and assets survive. The note reuses the correctly labelled `paper_fig2_joint.pdf`, with cell-integrated units and catch-bin edges. No figure calculation changes. |
+| PET costs and truncation | Note table separates measured PET/GBDT resources from real-data forecasts, using the final-design and paired-comparison records. Explain the detector-side limitation of top-twelve truncation. Detailed PET material stays out of the article, consistent with its existing scope. |
+| Selection versus classifier features | Note table separates observed selection, truth domain and classifier information for scalar, extended-fiducial and PET routes. Paper and primer carry shorter explanations. |
+
+Validation: `build_all.sh` passes in both repositories (note 125, primer 11,
+paper 12 pages), with no unresolved references or citations and strict
+retracted-value containment passing. The canonical Sec. IV receipt check passes
+14/14; the standalone correctly skips that check because it contains no receipts.
+All mirrored source files agree except the repository-specific `.gitignore` and
+`AGENTS.md`; extracted text of each PDF is identical between repositories.
+The changed tables, equations and replacement figure were visually inspected.
+Pre-existing appendix box warnings and small article box warnings remain; the new
+figure and equations have no overflow. The source commit passed all 13 pre-commit checks.
+
 ## 1d. Editorial and presentation pass (2026-10-08; PR #56, merged: main `dd0515fe`; Analysis-Note main `657d5bd3`; supersedes §1c for the article text)
 
 | component | identity |
