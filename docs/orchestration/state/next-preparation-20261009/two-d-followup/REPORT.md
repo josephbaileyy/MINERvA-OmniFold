@@ -6,8 +6,9 @@
 - the read-only resolutions of the Flux-background anomaly, the cross-sweep pair changes and the
   duplicate bands;
 - the admission matrix;
-- Task B: the XR package, its admission evidence, its scheduler record, its comparisons against the
-  frozen 1e-8 criterion, and the independent numerical verification.
+- Task B: the XR package, its admission evidence, its scheduler record, the refusal of all five runs
+  by the package's own allocation check (B7), the comparisons' INCONCLUSIVE outcomes, and the XR
+  reopening requirements (§E.3).
 
 **NOT CITABLE FOR:**
 - any cross section, uncertainty, coverage or calibration result;
@@ -370,6 +371,8 @@ and nothing here relies on it.
     replicas on shared-64 is 14.4–17.2 GB (`59410433`, `Q/speed/REPORT.md` §3).
   - `jobcheck` refuses a job whose actual `scontrol` QOS, CPU count, billing or time limit exceeds
     the kind's frozen value, before any input is read.
+    **As deployed it refused every correct allocation too:** it reads a `TRES` field that
+    Perlmutter's `scontrol` does not print (B7).
 - **Ceiling, from these settings.** 4 exact attempts × 30 h × 12/256 = 5.625, plus 3 LightGBM
   attempts × 1 h × 64/256 = 0.75, gives **6.375 ≤ 6.4** node-h.
   - **What enforces it.** One admission per grant: the outroot is frozen in `runs.json`, and `draft`
@@ -467,6 +470,8 @@ Environment: Homebrew Python 3.13.7 with PyROOT 6.36.000, numpy 2.4.6, scikit-le
     `subprocess` keyword.
   - **`jobcheck`** refuses billing 14 at 14 CPUs, billing 13 at 12 CPUs, a regular QOS, a 31 h limit
     and 16 CPUs.
+    Every one of these cases used a fixture that prints `TRES=`, and the cluster prints `ReqTRES=`/`AllocTRES=`.
+    So none of them tested the real format (B7).
   - **`ledger`** computes the charge exactly, and flags a billing above the cap and an unfinished
     job past the stop.
 - **OI-136 ratchets** after the repair batch: 17 passed (rooted-insert 10, fail-open inventory 7).
@@ -533,4 +538,274 @@ Every finding was repaired in one batch; the re-review covers all of them.
 | A-7 | the model-bias row mentions pre-registered truth warps |
 | A-8 | the defect-detection wording |
 
-(B6–B8, C, D, E below)
+## B6. Focused re-review (use 2 of 3)
+
+At `06eae0fe` (manifest `fbca1be8…`), preserved verbatim in `review/rereview-06eae0fe.md`.
+
+- **XR: ADMIT.** B-1 to B-11 are all REPAIRED, and there is no new MATERIAL defect. Among the
+  checks:
+  - the reviewer ran `xr_admit.py` under the cluster's Python 3.6.15;
+  - it re-measured the frozen environment, the nested-setup chain and its digests, and the CFS
+    permissions;
+  - it reran the suite (32 OK) and four new mutants (4 of 4 caught).
+- **Method: PASS WITH CHANGES.** A-1 to A-4 and A-6 to A-8 are REPAIRED. A-5 (and N-3) remained:
+  §B6–§E were not yet written at the fixed commit. They are written here (documentation only; no
+  package file changed).
+- **New notes, not repaired** (no repair was required for admission):
+  - N-1: the stop's start is read only from `submissions.jsonl`;
+  - N-2: a refused `next-attempt` leaves the invocation's earlier jobs queued.
+
+## B7. Deployment and the runs
+
+**Authorization and admission** (`logs/xr-deploy.txt`).
+- `docs/orchestration/AUTHORIZATION-20261010-xr.md` quotes the grant verbatim (sha256 `4c469151…`)
+  and binds package `06eae0fede3508419f235f8cbe61954b33de8497` and manifest
+  `fbca1be80d56b09751bcd9f8fbe698ac65786ebe08e21ae04e561e5c73dd06b8`. It is committed at
+  `b838fc02d599947858daae4778bb31d1f01f2856` with its two scoped registration rows.
+- **Worktree.** At 2026-10-10T22:34:09Z a detached worktree
+  `/pscratch/sd/j/josephrb/MINERvA-OmniFold-xr-b838fc02` was created at `b838fc02`, with 0 status
+  lines. The canonical checkout stayed at `32e403b8`, and no checkout was moved.
+  - The first attempt named the remote `origin`, which does not exist there (it is `github`), and
+    failed before any change.
+- **Checks under `/usr/bin/python3` 3.6.15 on login23:** `manifest --check` current; `check`
+  holds; `jobcheck` outside a job refuses with exit 3. This is the cluster record B5 promised for
+  B-1.
+- **Admission.** `draft` created the outroot and
+  `/pscratch/sd/j/josephrb/xr-two-d-followup-20261010/admission.json` (sha256 `ef8b49b3…`). It binds
+  the setup `ea3c6998…` and its five nested scripts. `verify` held, and the ledger was empty.
+- **SB1 at submission:** four `sb1_*` jobs PENDING in their own worktree. They share no mutable
+  resource with XR.
+
+**Submission** (2026-10-10T22:34:53Z to 22:35:09Z; `xr_submit.sh`, all five in one invocation).
+
+| run | attempt | job | QOS / CPUs / mem / limit | Deadline (PDT) |
+|---|---|---|---|---|
+| X0 | a1 | 59648608 | shared / 12 / 22,860M / 30 h | 2026-10-13T15:34:49 |
+| X0′ | a1 | 59648610 | shared / 12 / 22,860M / 30 h | 2026-10-13T15:34:53 |
+| X1 | a1 | 59648611 | shared / 12 / 22,860M / 30 h | 2026-10-13T15:34:53 |
+| L0 | a1 | 59648616 | shared / 64 / 121,920M / 1 h | 2026-10-13T15:34:53 |
+| L1 | a1 | 59648617 | shared / 64 / 121,920M / 1 h | 2026-10-13T15:34:53 |
+
+The stop is 2026-10-13T22:34:53Z. X0's deadline is 4 s earlier: it was computed before the first
+submission was recorded, which is conservative.
+
+**Outcomes: all five runs were refused at start, by a defect in the admitted package.** Nothing was
+computed. The record is in `logs/xr-deploy.txt` (OUTCOME), and the job logs, sacct, ledger and
+comparator output are in `results/xr/`. The admission itself is not tracked, because it would add receipt
+bindings to the shared inventory. `results/xr/README.txt` gives its sha256 and the values it binds.
+
+| run | job | started (PDT) | elapsed | State / exit | refusal |
+|---|---|---|---|---|---|
+| X0 | 59648608 | 2026-10-10T15:45:15 | 19 s | FAILED 3:0 | allocation check: `billing` False |
+| X0′ | 59648610 | 2026-10-10T15:45:15 | 19 s | FAILED 3:0 | same |
+| X1 | 59648611 | 2026-10-10T16:06:03 | 7 s | FAILED 3:0 | same |
+| L0 | 59648616 | 2026-10-10T16:35:32 | 7 s | FAILED 3:0 | same (lgbm caps) |
+| L1 | 59648617 | 2026-10-10T17:23:52 | 4 s | FAILED 3:0 | same (lgbm caps) |
+
+- **What ran.** Each job's first step is the in-job allocation check (`xr_admit.py jobcheck`).
+  - It found QOS, CPU count and time limit within the frozen caps.
+  - It found billing `None`, and refused with exit 3.
+  - `verify`, the environment check, the loky seed, the guard and `xr_run.py` never ran. No fit
+    started and no receipt was written.
+- **Root cause.** `jobcheck` reads billing from a field named `TRES` in `scontrol show job <id> -o`
+  (`xr_admit.py:241–243`). Perlmutter prints no such field: it prints
+  `ReqTRES=cpu=64,mem=121920M,node=1,billing=64` and `AllocTRES=…` (measured on 59648617). The
+  billing clause was therefore False on every correct allocation: a fail-closed guard that could
+  never pass on this cluster.
+- **Why no control saw it.** The suite's fake `scontrol` (`tests/test_xr.py:543`) prints `TRES=`,
+  the field name the code expects. So the fixture agreed with the code, not with the cluster.
+  Neither the 29 mutants nor either review could detect this, because every check of `jobcheck`
+  was against that fixture. B7's cluster check ran `jobcheck` only **outside** a job, where it
+  refuses before reading the field.
+- **No resubmission.**
+  - The admitted package (`06eae0fe`, manifest `fbca1be8…`) cannot change, so a resubmission would
+    refuse identically and spend the last attempts.
+  - A repaired package would be a new, unadmitted package, and this assignment's one
+    repair/re-review is spent.
+  - The remaining attempts (exact 1 of 4, LightGBM 1 of 3) are left unused.
+  - The last job ended 1.82 h after the first submission. The stop (2026-10-13T22:34:53Z) never
+    bound, so nothing needed cancelling.
+- **What this does not show.**
+  - Nothing about any reproduction question.
+  - It shows nothing about the parts of the package that never ran inside an allocation: `verify`
+    in a job, the environment refusal, the loky seed, the guarded driver import and the regressor
+    count.
+  - The parts that ran outside a job on the cluster did hold, under `/usr/bin/python3`:
+    - `manifest --check`, `check`, `draft`, `verify`, `ledger` (on the real sacct, with
+      `AllocTRES` parsed correctly);
+    - `next-attempt`, on the real `sacct -X -n -P` output after the failures. It offers each run
+      attempt 2 with the deadline at the stop, read-only.
+
+## B8. Comparisons and the independent numerical verification
+
+**Comparisons.** The frozen comparator (`xr_compare.py --outroot /pscratch/sd/j/josephrb/xr-two-d-followup-20261010`,
+root_6_28 Python on a login node, 0.13 s) returns, for every comparison and the control:
+
+| comparison | question | outcome |
+|---|---|---|
+| X0_vs_E_C | today's driver regenerates the quoted exact central | **INCONCLUSIVE** (no complete attempt of X0) |
+| X0p_vs_E_C | the `d1bc8813` driver (today's helper) regenerates it | **INCONCLUSIVE** (no complete attempt of X0p) |
+| X1_vs_X0 | one-seed P09b: `random_state` 1/2/3 vs `None` | **INCONCLUSIVE** (no complete attempt of X1) |
+| L0_vs_CV42 | a CV-file seed-42 run reproduces CV42 | **INCONCLUSIVE** (no complete attempt of L0) |
+| L0_vs_PN_CV | the same against the July CV | **INCONCLUSIVE** (no complete attempt of L0) |
+| L1_vs_SEED1 | a seed-1 run reproduces the seed-1 central | **INCONCLUSIVE** (no complete attempt of L1) |
+| NC_X0_vs_CV42 (negative control) | the comparator must FAIL different estimators | **INCONCLUSIVE**: not exercised (`control_met` false only because nothing ran) |
+
+There are no maxima and no affected cells to report, because no run produced a histogram. The
+pre-registered thread-count check on an L-arm FAIL (B1) did not arise.
+
+**Independent numerical verification (review use 3 of 3).** PENDING-FILL-VERIFY
+
+# C. Resources
+
+**Remote (m3246, Perlmutter), from sacct and the frozen ledger** (`results/xr/ledger.txt`, `results/xr/sacct.psv`).
+
+| item | grant limit | used |
+|---|---|---|
+| charged CPU node-hours | 6.4 | **0.00135** (5 jobs, 4–19 s each, billing 12 or 64 of 256) |
+| GPU | 0 | 0 |
+| exact jobs | 4, each ≤ 30 h at ≤ 12/256 | **3** (all FAILED 3:0 at start; counted) |
+| LightGBM jobs | 3, each ≤ 1 h at ≤ 64/256 | **2** (both FAILED 3:0 at start; counted) |
+| full-node substitution | none | none |
+| elapsed after first submission | stop at 72 h (2026-10-13T22:34:53Z) | last job ended at 1.82 h; nothing cancelled |
+
+- Every job's QOS, CPU count and time limit were measured by the in-job check and agreed with the frozen caps. The
+  allocation's billing (12 and 64, from sacct `AllocTRES`) was inside the cap; only the check's reading of it was
+  wrong (B7).
+- **Remote storage.**
+  - CFS input copy `/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/` (2.14 GB, mode 0440,
+    directories `g-w`).
+  - The detached worktree `/pscratch/sd/j/josephrb/MINERvA-OmniFold-xr-b838fc02`.
+  - The outroot `/pscratch/sd/j/josephrb/xr-two-d-followup-20261010` (admission, submissions, 10 job logs).
+  - The reduction directory `/pscratch/sd/j/josephrb/xr-reduce.4fPw` (5 small text files).
+  - All of these are left in place as evidence; none is shared.
+- **Login-node work** (`logs/remote-reads.txt`, `logs/xr-deploy.txt`):
+  - read-only reads;
+  - the CFS copy and its `sha256sum`;
+  - the worktree creation;
+  - `manifest --check`, `check`, `draft` and `verify`;
+  - after the runs: one `sacct`, one `scontrol`, the ledger, `next-attempt` (read-only) and the comparator.
+  - Every step took seconds, except the copy and its hash.
+
+**Local.**
+
+| item | limit | used |
+|---|---|---|
+| active hours | 10 (last quarter protected) | grant received 19:58:09Z. Counting all wall-clock time as active, including queue waits, about 4.6 h at 00:35Z; the value at delivery is in the commit message |
+| local CPU core-hours | 4 | **≈ 2.4** before the final verification. Of this, 1.25 h was measured and the rest is estimated, as itemized below |
+| concurrent compute threads | 2 | ≤ 2 processes, `OMP_NUM_THREADS=1` |
+| RAM | 8 GiB | not instrumented; the largest local processes were the unit suite and the synthetic controls on small fixtures |
+| new local scratch beyond worktrees | 3 GiB | 202 MiB (`scratchpad/fu/`, incl. the test venv) |
+| tracked evidence | ≤ 20 MiB | `F/` 0.56 MiB on disk |
+
+Local CPU items, all `user+sys` unless marked:
+- synthetic controls A + B: 0.403, measured;
+- one earlier aborted synthetic run: ≤ 0.22, bound from wall time;
+- the first 19-mutant pass and its 2-mutant rerun: ≈ 0.41;
+- the 29-mutant pass: 0.518, measured;
+- the outroot rerun: 0.020, measured;
+- 8 unit-suite runs: ≈ 0.32 (138–159 s each);
+- the reviewer: 0.2 + 0.15, as self-reported;
+- other (A4 producer, AST checks, git, hooks): ≤ 0.1.
+
+# D. Disposition
+
+Separate outcomes. Each verdict word stands alone, and the line under it says what it covers.
+
+| object | outcome | basis |
+|---|---|---|
+| **Task A — method** | **PASS WITH CHANGES** (re-review, `06eae0fe`); the remaining change (A-5: §B6–§E) is applied here. Final verification: see B8 | derivation, status classification, controls, read-only resolutions, admission matrix |
+| Task A — the original objective | **no feasible route under current inputs** (A5); reopening needs new inputs (§E.2) | the admission matrix over all 205 cells |
+| **XR — admission review** | **PASS (ADMIT)** at `06eae0fe`, after the one repair batch | `review/rereview-06eae0fe.md` |
+| XR — the admitted package in deployment | **FAIL**: all five runs refused at the in-job allocation check by the package's own defect (B7). The admission did not catch a MATERIAL defect | `logs/xr-deploy.txt`, `results/xr/` |
+| X0_vs_E_C | **INCONCLUSIVE** | no run completed |
+| X0p_vs_E_C | **INCONCLUSIVE** | no run completed |
+| X1_vs_X0 | **INCONCLUSIVE** | no run completed |
+| L0_vs_CV42 | **INCONCLUSIVE** | no run completed |
+| L0_vs_PN_CV | **INCONCLUSIVE** | no run completed |
+| L1_vs_SEED1 | **INCONCLUSIVE** | no run completed |
+| NC_X0_vs_CV42 (control) | **INCONCLUSIVE** (not exercised) | no run completed |
+
+No scientific status changes. No reproduction question is answered either way. In particular:
+- whether `E_C` is regenerable;
+- whether `random_state=None` matters on the production input;
+- whether CV42 or SEED1 are reproducible.
+
+# E. Next action, reopening requirements and proposed shared-status updates
+
+## E.1 What happens next
+
+Nothing starts automatically. No stage T, statistical-band production, N2, KI-85 lift, re-quote,
+adoption, gate change or publication edit follows from this report. The branch is pushed for
+review; merging and every status change belong to their owners.
+
+## E.2 The original objective: the narrowest change that would reopen it
+
+Under current inputs the objective has no feasible route (A5). It reopens only with **new inputs**,
+not with more compute on the current ones:
+
+1. **Repeated-sampling coverage of the statistical intervals.** Either independent MC productions
+   (each a fresh bank, so the binning sample and mappers re-draw), enough to estimate the
+   per-functional repeated-sampling variance at the declared tier, or a generative law validated
+   against the bank. Only that sees the binning component that SD/SM and the bootstrap cannot.
+2. **Total-interval coverage.** A built M1 continuous-throw generator, and populations independent
+   of the declared law, with a design sized for 236 functionals × 2 levels.
+3. **The model-bias allowance.** Truth-level samples from at least one independent generator, an
+   untouched domain. Pre-registered truth warps of the current bank are a partial route only.
+4. **The construction repairs of A4,** in any case: Rvn1pi/Rvp1pi counted once; universe and CV on
+   one truth input; selection-complete laterals; flux identity; a template-statistics stream or
+   bound.
+
+Without items 1–3, the only publishable statement is a different claim (A5's proposal: conditional
+precision plus a convention-level total, no coverage). That is a scope decision for Joseph, not an
+approved endpoint.
+
+## E.3 Reopening requirements for XR
+
+XR reopens only under a **new or amended grant**. It cannot reopen inside this one:
+- the admitted package cannot change;
+- the review budget (1 + 1 + 1) is spent;
+- the frozen outroot is consumed by design (`draft` refuses an existing one);
+- the remaining attempts (exact 1, LightGBM 1) cannot cover five runs.
+
+The exact requirements:
+
+1. **Repair** (`xr_admit.py` `jobcheck`, lines 241–249). Read billing from `AllocTRES`, the allocation actually
+   granted, which is always present for a running job. Keep it fail-closed: absent or unparsable means refuse.
+   No other field changes.
+2. **A fixture from the cluster, not from the code.**
+   - The fake `scontrol` in `tests/test_xr.py` must print the recorded Perlmutter field set (`ReqTRES=…
+     AllocTRES=…`, no `TRES=`; B7).
+   - It needs one test in each direction: a correct allocation in that real format **passes**, and billing over
+     the cap refuses.
+   - It needs one new mutant (read `TRES` again) that must be caught.
+   - Audit every other parser of scheduler output against a recorded real line: `sacct -X -n -P` for
+     `next-attempt`, which held on the real output (B7), and the ledger's `AllocTRES`, which held.
+3. **An in-allocation preflight** before any frozen run.
+   - One shared-QOS job of ≤ 5 minutes, at the exact kind's caps (12 CPUs). It runs `jobcheck`, `verify` and
+     `xr_run.py`'s environment check, then stops before any fit.
+   - It must pass, and it is counted in the charged node-hours, with its own line in the grant.
+   - Its point is to exercise the steps that have never run inside an allocation: `verify` in a job, the
+     environment refusal, the loky seed and the guarded driver import.
+4. **A new package commit and manifest sha256**, a new frozen outroot (for example `…-20261010b`), and a new
+   AUTHORIZATION record binding them.
+5. **One independent admission review of the delta** (items 1–4), with its own review budget.
+6. **Attempt caps that cover the five runs.** For example, 4 exact and 3 LightGBM again, counted over the new
+   grant. The current grant's 0.00135 node-h is already spent.
+   - Wall time is unchanged: 3 × 30 h at 12/256 and 2 × 1 h at 64/256 is ≤ 4.72 charged node-h.
+   - The new 72-h window starts at the new first submission.
+7. Everything else in the package, and every comparison and criterion (1e-8, the negative control, the
+   pre-registered thread-count check), stays as admitted.
+
+## E.4 Proposed shared-status updates, for their owners (not applied here)
+
+| owner / surface | proposed update |
+|---|---|
+| `KNOWN_ISSUES.md` owner | **New row:** in the current universe omnifile, `w_*_Rvn1pi_i` and `w_*_Rvp1pi_i` are byte-identical (MAT `GenieSystematics.cxx:658–671` under the NonResPi reweight), so `C_U` counts one shift twice (0.088 % band; negligible in variance, a construction defect) |
+| `KNOWN_ISSUES.md` owner | **New row:** the adopted (May) sweep's universes were unfolded on a different MC truth input from CV42 (`hTruth2D` integral 0.879, median 6.3 %); the universes' common offset is a median 0.98 σ_ML from the adopted CV. The July sweep does not have this defect |
+| `KNOWN_ISSUES.md` / `OPEN_ITEMS.md` owner | the reco-level background-template statistical error exceeds 10 % of the data's Poisson error in 60 of 205 bins (max 0.30). The two-d-path "< 10 % of σ_stat" proposal fails; a template stream or propagated bound is required (C03) |
+| `CURRENT_WORK.md` / integration owner | the `two-d-followup` row: method verdict, XR admission and comparison outcomes (§D), the authorization record, and that no follow-on is authorized |
+| OI-136 owner | (a) classify execution-only record copies (`*.py.record`) explicitly, rather than rely on the suffix; (b) LightGBM's default core count under the guard reaches loky's `lscpu`/`sysctl` child **only when the affinity count equals the OS count** (a full node). Shared-QOS jobs, including SB1's C, take the affinity branch and are unaffected; a full-node LightGBM run under the guard would be refused without a cache seed like XR's |
+| `E_C` / 2D estimator owner | sklearn's exact backend with `random_state=None` is irreproducible run to run when features tie (33 % on the synthetic fixture); how much that matters on the production input is still untested: X0/X0′/X1 did not run (§D) |
+| receipt-binding inventory owner (pre-commit hook) | whether to admit `xr-two-d-followup-20261010/admission.json` as a tracked receipt. It adds two live bindings (authorization, setup; 144 → 146). Here it is held off the tracked tree, and `results/xr/README.txt` gives its sha256 and the values it binds |
+| two-d-path owner (immutable evidence) | A4 items 2–3 change the reading of `T` §3.6's cross-sweep pair changes; `T` is not edited |
