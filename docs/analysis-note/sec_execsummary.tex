@@ -76,10 +76,24 @@ medium-energy neutrino data.
   % sec_pet.tex:42-53, 362-363.
 \end{itemize}
 
+\input{result_status_rows}
+\begin{table}[H]
+\centering\footnotesize
+\begin{tabular}{@{}p{0.20\textwidth}p{0.20\textwidth}p{0.27\textwidth}p{0.24\textwidth}@{}}
+\resultstatusrows
+\end{tabular}
+\caption{Current scalar results: construction, adoption, testing and publication
+readiness are distinct. Details: \S\ref{sec:method-config},
+\S\ref{sec:coverage}, \S\ref{sec:val-fiveaxis},
+\S\ref{sec:eavailw-adopted} and \S\ref{sec:joint5d}.
+PET is separately limited to diagnostic method development.}
+\label{tab:result-status}
+\end{table}
+
 \paragraph{What is not claimed:}
 \begin{itemize}[itemsep=2pt, parsep=0pt, topsep=2pt]
   \item \emph{Coverage.}
-  The 2D statistical band undercovers a fixed truth in its tails ($C_2=\covTwoDCTwo$ vs.\ $0.954$; \S\ref{sec:coverage}); no frequentist coverage is claimed for any five-dimensional interval (\S\ref{sec:coverage-5d}).
+  The earlier 2D statistical band undercovers a fixed truth in its tails ($C_2=\covTwoDCTwo$ vs.\ $0.954$; \S\ref{sec:coverage}); the rebuilt, currently quoted band has not been independently re-tested. No frequentist coverage is claimed for any five-dimensional interval (\S\ref{sec:coverage-5d}).
 % Source (2D): docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md; VALIDATION_LEDGER VL169.
 % Source (5D): docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
 % Shortened (one-page summary): "pre-registered", the interval [0.907, 0.918], where the deficit sits,

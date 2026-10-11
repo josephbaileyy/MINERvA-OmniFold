@@ -1,0 +1,11 @@
+\newcommand{\resultstatusrows}{%
+\toprule
+Result / central estimator & Uncertainty construction & Recovery and interval checks & Interpretation \\
+\midrule
+2D: exact-split trees, five iterations, unpinned seed & LightGBM systematic, statistical and seed ensembles & Published-result reproduction; injection tests use LightGBM. Earlier statistical band failed fixed-truth coverage; rebuilt band lacks independent re-test. & Central reproduction stands. Transfer of the covariance to the quoted central is unmeasured; publication readiness unresolved. \\
+\addlinespace
+3D--5D: LightGBM, five iterations, purity subtraction & One scalar-5D covariance adopted under exception & Marginal anchors and selected injections pass; background and large-deformation tests expose bias. No validated total-interval coverage. & Central comparisons; all four adoption measurements apply. No covariance-based generator significance. \\
+\addlinespace
+Joint tests: deterministic LightGBM with enlarged background refinement & Null-specific full-chain calibration; no new measurement covariance & Frozen tests and arithmetic recomputation; calibration adequacy remains conditional. & Tests of hybrid generator hypotheses under six stated conditions; no new reportable uncertainty. \\
+\bottomrule
+}

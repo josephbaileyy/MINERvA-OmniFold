@@ -3,42 +3,51 @@
 
 Rebuilding this note's three PDFs assembles documents; it does not reproduce
 scientific results. App.~\ref{app:provenance} lists the supporting internal
-records. This appendix specifies the \emph{external}
-release that would let a reader outside the collaboration recompute the quoted
-numbers, records the identities that are already fixed, and states plainly
-which parts do not exist yet.
+records. This appendix distinguishes the existing local replay package from
+the broader event-level and covariance release, records fixed identities,
+and states the remaining reproduction limits.
 
-\paragraph{Release status.} \textbf{No release tag and no release manifest
-exist.} A local checkout
-of the canonical analysis repository on 2026-09-21 contained 35 git tags:
-30 \texttt{evidence/*} preservation anchors, one \texttt{freeze/*} anchor and
-four deployment tags. None releases publication results. This dated census
-must be repeated against the remote when a release is cut. The adopted
-covariance and five-axis central values reside on the compute system's
-\texttt{/pscratch}, outside the repository, and are identified by digest
-(\S\ref{sec:eavailw-construction}). Consequently the release
-below is a \emph{specification plus an identity register}, not an index of
-something already published. Packaging these existing products requires no
-reanalysis or new compute.
+\paragraph{Release status.} A local release candidate, RC7, exists with a
+README, checksums and a replay verifier~\cite{ReleaseCandidate2026}. Its
+approximately \SI{16}{MB} sufficient-input package reproduces the joint-test
+$p$ values, decisions, robustness and power results, the lost-seed resolution
+under reading~(a),
+coarse-projection comparison and fine-grid $L_2$ ratios. It also regenerates
+the article's first three figures from packaged arrays and its joint-null
+figure. It has not been
+deposited or released under a publication tag. The schema below remains a
+specification for the broader central-value and covariance products, not a
+claim that RC7 contains them all. Fixed identities do not supply missing
+scientific qualification.
 
 \subsection{What today's reader can and cannot recompute}
 \label{app:release-scope}
 
-Public ancillary files suffice for every part of the 2D reproduction using
-the published data release: the comparison to
+Public ancillary files supply the published inputs for comparisons to
 Ref.~\cite{MINERvA:2021owq}'s central values and covariance, standardized
 differences, tension anatomy, and MINERvA~Tune~v1 model comparison.
 
-No $\Eavail$, $q_{3}$ or $W$ result is recomputable from public inputs. Each
-requires collaboration-internal MINERvA production AnaTuples, their event-loop
-outputs, the four truth-level generator samples produced for this analysis,
-and the adopted five-axis covariance. Without them, readers can check only
-the internal consistency of the quoted numbers.
+They do not reproduce this analysis's unfolded 2D uncertainty construction.
+RC7 supports replay of the higher-dimensional inference from sufficient
+inputs, but not extraction from the archived pseudo-experiment products,
+event-level unfolding, or the quoted closure, bias and covariance-status
+measurements. Event processing requires the earlier production of MINERvA
+\href{https://doi.org/10.15484/3022562}{open-data AnaTuples}, event-loop outputs, and the
+generator samples used here.
+
+The repository now records SHA256 identities for all 2,374 inventoried
+AnaTuple input files~\cite{AnaTuplePreservation2026}; RC7 itself still carries
+the earlier names-and-sizes inventory. The dated 2026-10-10 preservation
+record verifies copies of all 1,885 data, flux and parameter files on
+collaboration storage. The 489 simulation AnaTuples are identified by hash
+but have no preservation copy in that record. Internal preservation and
+complete identities are distinct from a public deposit and do not make the
+full event-level analysis reproducible from the small candidate package.
 
 \subsection{Release schema}
 \label{app:release-schema}
 
-The package must contain every item below. A $\checkmark$ marks identities or
+The broader result package must contain every item below. A $\checkmark$ marks identities or
 values already fixed in \S\ref{app:release-identities}; the rest are packaging.
 
 \begin{enumerate}[itemsep=2pt]

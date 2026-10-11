@@ -61,7 +61,63 @@ section practical without removing the need to validate them.
   mixing. OmniFold does it without ever building these bins.}
 \end{figure}
 
+\subsection*{What the checks tell us}
+
+In a simulated experiment, \emph{truth} is the known answer, the \emph{prior}
+is our starting prediction, and the \emph{response} describes what the detector
+records for a given truth. Changing the prior changes how often simulated
+events occur. Changing the response changes how those events appear in the
+detector. A finite learner and a finite number of iterations can also leave
+an approximation error, even with the correct response.
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{@{}p{0.20\textwidth}p{0.36\textwidth}p{0.35\textwidth}@{}}
+\toprule
+Check & Question & What it cannot establish \\
+\midrule
+Closure & Does unfolding recover a known, specified truth? & Accuracy for every other truth or detector response \\
+\addlinespace
+Coverage & Over repeated experiments, how often does an interval contain its target bin value? & Simultaneous coverage of all bins, or validity for a different estimator \\
+\addlinespace
+Bookkeeping & Are selected and missed simulated events represented consistently? & Recovery of a changed truth \\
+\addlinespace
+Stability & Does the answer move when iterations, seeds or rounding change? & That a stable answer is accurate \\
+\bottomrule
+\end{tabular}
+\caption{Different checks answer different questions. Bias is a systematic
+offset of the average answer from truth; a single simulated experiment can
+also fluctuate. Coverage tests the estimate and its interval together.}
+\end{table}
+
+Selection and classifier inputs are also distinct. Every real-data route here
+requires a reconstructed muon matched to MINOS. The scalar classifiers use its
+momentum; the historical recoil-only PET classifier does not, even though
+the muon is needed to select the event. Full-event PET adds muon features.
+Removing truth-muon cuts enlarges the population being estimated without
+adding selected observations. The technical note's selection-versus-features
+table gives each route; PET design studies use signal-only simulation banks.
+
 \section{What we found}
+
+The headline results have different levels of validation. The two-variable
+central value reproduces the published measurement, but its error budget was
+built with a different tree learner, and that transfer remains unmeasured.
+The rebuilt statistical band awaits an independent coverage test. The
+higher-dimensional central values pass particular recovery checks; adoption
+of their covariance under an exception does not certify their intervals.
+The generator tests below are a separate inference, and PET remains method
+development. None of these statuses supplies another's missing validation.
+
+The two-variable budget also needs construction repairs: a systematic
+sweep and its reference used different truth inputs, one small pion-model
+variation was counted twice, and background-template statistics still need
+propagation or a bound~\cite{TwoDFollowup2026}. Selection-changing detector
+variations and matching flux variations need further verification. Checking
+widths by splitting the existing simulation can test precision conditional
+on that sample, but cannot establish coverage across independently generated
+samples. The full uncertainty-validation objective needs new inputs as well
+as these repairs; the quoted budget has not been recalculated.
 
 The multi-quantity central values below pass the stated validation tests. A
 five-quantity uncertainty has now been adopted under a documented exception, and the two-quantity
@@ -184,6 +240,13 @@ the struck nucleus released), the momentum transfer ($q_{3}$), and the hadronic
 mass ($W$). Each richer measurement, when collapsed back down, reproduces the
 simpler one --- a built-in consistency check.
 
+These are five recorded coordinates, not five demonstrated independent pieces
+of information. The reconstructed momentum transfer and hadronic mass reuse
+the muon's motion and the same recoil-energy estimate. Available energy is
+a different quantity: in particular it omits energy carried by neutrons at
+truth level. A new coordinate can help the learner describe correlations
+without revealing a new independently measurable direction.
+
 The first physics payoff appears in the available energy. When we compare the
 data to four state-of-the-art simulation predictions, all four fall short of
 the data in the low-energy region, just above the very lowest energies
@@ -271,7 +334,10 @@ visible because we measured available energy and $W$ jointly.
 We also asked a sharper question: under stated modelling assumptions, is each
 of five widely used simulations (MINERvA Tune~v1, GENIE with and without MEC,
 NuWro, GiBUU) statistically compatible with the five-dimensional data, both
-overall (rate and shape together) and in shape alone? Rather than rely on a
+overall (rate and shape together) and in shape alone? Each hypothesis uses
+that generator's rates on a finite truth grid and Tune~v1's shapes inside
+each cell. The unfolding still learns from unbinned events; the grid specifies
+the hypothesis and the quantities tested. Rather than rely on a
 textbook formula for how the test statistic is distributed, we simulated about
 1,340 to 1,750 pseudo-experiments under each simulation's hypothesis, unfolded
 each one, and counted how often one looked as discrepant as the data. In each
@@ -280,8 +346,28 @@ error level, as the test was designed. Some pseudo-experiments were
 lost to computing time limits. In a check reported separately from the result,
 rerunning exactly those seeds recovered them; none looked as discrepant as the
 data, though in one robustness variant one came close. This is a test of the
-simulations under the assumptions listed in the analysis note (``Joint
-five-dimensional generator tests''), not a new measurement with new error bars.
+simulations under six conditions: unresolved structure below the fine grid;
+the stated detector-uncertainty model, which lacks a calorimetric recoil-response
+band; the stated interaction-model variations, including clipped negative
+weights; a bounded calibration shift from using half the simulation in
+pseudo-experiments and all of it for data; the generator energy domains;
+and finite generator-sample statistics. Numerical-rounding sensitivity is
+also checked. These conditions are detailed
+in the analysis note (``Joint five-dimensional generator tests''). The result
+is not a new measurement with new error bars.
+
+In a post hoc comparison on the same coarse muon-only projection, GENIE CV
+is not rejected, whereas its hadronic projection is. Hadronic information
+therefore participates in this rejection, but no added power from the joint
+five-variable test over all matched projections was established. Non-rejection
+does not mean that a generator is accepted as true.
+
+The sensitivity multiplier $\kappa$ counts multiples of the last measured
+grid-refinement shift; it is not a confidence level. The frozen tests first
+lose a determinate rejection near $\kappa=5.26$, or $5.17$ when recovered
+experiments are included. This is an ambiguous decision at that point, not a
+determinate non-rejection, and the one-direction scan does not bound the
+unmeasured below-grid error.
 % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md; DECISION-20261005 section 5.
 % Wording review: docs/orchestration/REVIEW-20261006-s5p-stage7-note-wording.md.
 
@@ -315,6 +401,16 @@ nominal 68\% intervals covered 90\% of the aggregate bin targets, yet only
 It over-covers in aggregate and under-covers where acceptance is low.
 No design or default was selected, and no PET uncertainty was adopted.
 
+Saved outputs now give a partial explanation~\cite{PETIntervalDiagnosis2026}.
+The point checks used one fit, while the intervals surrounded an average of
+six bootstrap fits. Under an additive variance model, much of the internal
+fit variation averages away, helping explain the excess aggregate width.
+The event-sample component and bias do not average away. A diagnostic width
+adjustment still leaves poor coverage, especially at low acceptance, so
+dividing the width by the square root of six is not a validated repair.
+The diagnosis concerns the development tilt at study scale; generator-case
+and data-scale coverage of the six-fit average remain unmeasured.
+
 A subsequent exploratory comparison used exactly the same simulated events
 for PET and a scalar tree-based OmniFold~\cite{PETGBDT2026}. Figure~\ref{fig:primerpet}
 shows PET's advantage on the two energy tilts. The ordering changes across
@@ -326,6 +422,14 @@ of neural versus scalar unfolding. The comparator differs from the production
 LightGBM studied earlier. Its uncertainty was not tested here; no precision
 comparison or ranking of the PET finalists follows. All results condition
 on the study's finite simulation banks and event scale.
+
+For the three generator reweightings, a saved-output diagnosis finds both
+underfitting at the detector step and weak extrapolation to missed
+events~\cite{PETGeneratorDiagnosis2026}. Exact distortion weights recover
+the changes well on those same samples. The reconstructed muon and scalar
+inputs are already present in PET, while the effect of adding the tree
+method's scalar truth inputs is untested. These findings locate the
+shortfalls without establishing a universal cause or changing the verdict.
 
 \begin{figure}[H]
   \centering

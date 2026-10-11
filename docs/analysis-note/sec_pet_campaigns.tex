@@ -128,15 +128,79 @@ and good regions). C2 and C3 pass.}
 \label{tab:pet-final-coverage}
 \end{table}
 
+Each entry pools checks of bin values over the 120 draws: it counts intervals
+containing their target, not events classified correctly. It is not the
+probability that every bin is covered simultaneously. The draw-specific truth
+target differs from the fixed unfluctuated population used in the 2D test
+(\S\ref{sec:coverage}).
+
 The same over- and under-coverage pattern survives comparison with the
-final-bank population target. Its mechanism is not established; it is not
-uniform conservatism. The proton-topology coverage stage C5 was skipped
+final-bank population target; it is not uniform conservatism. A later
+saved-output diagnosis partially explains the aggregate excess width,
+subject to the limits below. The proton-topology coverage stage C5 was skipped
 after the decisive failure, and L128S1T24 coverage was never measured.
 The terminal outcome remains \texttt{NO\_ELIGIBLE\_DESIGN}: H2S1T24 fails
 interval calibration and L128S1T24 fails B2 by the frozen point rule (statistically
 unresolved). Neither failure proves that the
 point estimator is unusable. No repair or reserve-bank revalidation forms
 part of these completed results.
+
+\paragraph{What the saved intervals diagnose.}
+The point-estimate rules tested a single unbootstrapped fit, whereas the
+intervals are centered on the mean of six Poisson-bootstrap fits: these
+are different estimators~\cite{PETIntervalDiagnosis2026}. Without a variance
+model, the saved outputs show that within-experiment member variance exceeds
+the across-experiment variance of a single nominal fit in aggregate.
+Under an additive model with no interaction between Poisson reweighting and
+training randomness, and equal training variance in nominal and reweighted
+fits, much of the member variance averages away in the six-member mean.
+Charging its full spread therefore makes the aggregate intervals too wide.
+Simply dividing by $\sqrt{6}$ is also unjustified: the event-sample component
+is common to the members, and bias does not average away.
+
+An in-sample diagnostic using the modeled variance of the member mean's
+\emph{error} still covers only \SI{55.4}{\percent}/\SI{89.6}{\percent}
+at nominal 68\%/95\% in aggregate, and
+\SI{8.2}{\percent}/\SI{31.2}{\percent} in low acceptance. These are
+post-hoc, bank-conditional results on the development tilt at study scale,
+not a validated replacement interval. Bias remains material after the
+width adjustment. The Poisson--training interaction and training variance
+in the Poisson-weighted regime are unidentified; member-mean coverage on
+generator cases and at data scale is unmeasured. The diagnosis neither
+establishes a universal failure mechanism nor changes the terminal verdict.
+
+\paragraph{Computational cost and what it establishes.}
+Table~\ref{tab:pet-cost} separates measured study resources from projections
+to real-data scale~\cite{PETFinalDesign2026,PETGBDT2026}.
+The comparison buys evidence about recovery on the specified simulation
+banks, not a calibrated uncertainty product. CPU core-hours and A100-hours
+are different resources, so these values do not establish a
+hardware-normalized speedup or a universal architecture ranking.
+
+\begin{table}[htbp]
+\centering\footnotesize
+\begin{tabular}{@{}p{0.24\textwidth}p{0.30\textwidth}p{0.37\textwidth}@{}}
+\toprule
+Configuration & Population and repetitions & Resource use and status \\
+\midrule
+Compact PET H2S1T24, $K=5$ & About 600k prior and 600k pseudo-data events; 352 final-bank units & Measured median 1.768 A100-h per unfold; no eligible interval procedure \\
+\addlinespace
+Larger PET L128S1T24, $K=4$ & Same scale and 352 units & Measured median 1.517 A100-h per unfold; fails a frozen point rule, coverage unmeasured \\
+\addlinespace
+Paired scalar GBDT, $K=1$--10 ($K=7$ primary) & Same events; 352 tasks, control and retries & Measured 5.306 charged CPU core-h for the fitting campaign (4.422 process CPU-h); no uncertainty comparison \\
+\addlinespace
+PET at real-data scale & 2M-event prior; full selected data and background target & Forecast 7.3 / 7.1 A100-h per unfold (compact / larger), with factor-two ranges \\
+\addlinespace
+PET with full MC inventory & 49.15M-event prior; same real-data target & Forecast 136 / 119 A100-h per unfold, with factor-two ranges; not trained at this scale \\
+\bottomrule
+\end{tabular}
+\caption{Measured PET costs use two unfoldings packed per A100. Forecasts scale
+the measured training rates and retain each finalist's iteration count;
+they are not observed production costs. The compact finalist was not cheaper
+at its chosen operating point. GBDT cost is a campaign total, not a per-unfold
+time.}
+\label{tab:pet-cost}
+\end{table}
 
 \subsection{Exploratory PET--GBDT comparison on the same events}
 \label{sec:pet-gbdt-paired}
@@ -202,6 +266,23 @@ not isolate detector-response sensitivity. The generator rows show that
 PET's tilt advantage does not extend to every tested departure.}
 \label{fig:pet-gbdt-library}
 \end{figure}
+
+\paragraph{Where generator recovery is lost.}
+A diagnosis on the same eight draws per generator case separates two
+shortfalls~\cite{PETGeneratorDiagnosis2026}. Exact distortion weights recover
+about 0.96 of the injected $\Eavail$ change, showing sufficient sample
+support for these particular tests. PET's detector step underfits the
+reweighted pseudo-data. Its truth step transfers the result almost
+losslessly on reconstructed events, but extrapolates much less successfully
+to missed events, with recovery deteriorating over the tested iterations.
+These shortfalls use separately normalized populations and are not additive
+shares of the final gap. PET already receives the tree method's reconstructed
+scalar inputs plus the cluster cloud; omitting the reconstructed muon is
+therefore not the explanation. The effect of omitting scalar true
+$\Eavail$ and $q_3$ from PET's truth inputs remains untested. Optimization
+and scalar conditioning remain possible causes; the tested larger network
+does not support a capacity-only explanation. This fixed-response,
+bank-conditional diagnosis adds no interval validation or adoption.
 
 All contrasts are exploratory: the PET final-bank results had already been
 inspected, intervals are not adjusted for multiple comparisons, and inference

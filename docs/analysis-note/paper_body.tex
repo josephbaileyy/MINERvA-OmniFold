@@ -90,8 +90,13 @@ two-particle--two-hole (2p2h) enhancement~\cite{MINERvA:2016lowrecoil}.
 
 Reconstructed $\Eavail$ is the calorimetric recoil energy in the tracker and
 electromagnetic calorimeter after removal of the muon's energy deposits; the
-reconstructed energy transfer $q_{0}$ is the calorimetric recoil energy, from
-which $Q^{2}$, $q_{3}$, and $W$ follow with the muon kinematics.  The external
+reconstructed energy transfer $q_{0}$ is a separate calorimetric recoil-energy
+estimate. \input{scalar_kinematics}
+
+Event selection is held fixed as the scalar classifier grows from
+$(\pT,\pPar)$ to $(\pT,\pPar,\Eavail,q_3,W)$. It requires a tracker vertex
+and a MINOS-matched muon; adding features does not add selected events or
+relax the signal definition. The external
 generator predictions compared below are GENIE~2.12.10 on CH without (``GENIE
 CV'') and with (``GENIE + MEC'') the Valencia 2p2h
 component~\cite{Nieves:2011pp}, which models meson-exchange currents (MEC),
@@ -141,6 +146,26 @@ The use of AI tools in this work is described in the Acknowledgments.
 \section{Validation}
 \label{sec:validation}
 
+In closure tests, truth denotes the known simulated target and the prior is
+the initial truth distribution; the response maps truth to selected
+observations. Closure measures recovery under a specified deformation.
+Coverage measures how often intervals contain their target over repeated
+experiments, testing the estimator and interval construction jointly.
+Missed-event bookkeeping is an invariant check, and iteration dependence is
+a stability diagnostic. Neither establishes recovery or coverage.
+Table~\ref{tab:result-status} summarizes the estimator identities and scope.
+
+\input{result_status_rows}
+\begin{table*}[t]
+\caption{Current result components and validation scope. Adoption of a
+construction does not establish interval coverage or publication readiness.}
+\label{tab:result-status}
+\centering\footnotesize
+\begin{tabular}{@{}p{0.20\textwidth}p{0.20\textwidth}p{0.27\textwidth}p{0.24\textwidth}@{}}
+\resultstatusrows
+\end{tabular}
+\end{table*}
+
 \subsection{Two-dimensional reproduction}
 
 The two-dimensional result provides a stringent end-to-end validation.  Its
@@ -187,7 +212,11 @@ deviation of the statistical block; no block of the covariance carries this
 difference, and whether the covariance describes the exact-split central value
 has not been measured.  Coverage of this total remains untested.  Its statistical block,
 as first built, was tested against a fixed truth in \covTwoDNtoy{} pre-registered
-closure pseudo-experiments and undercovered in its tails:
+closure pseudo-experiments and undercovered in its tails. The target is the
+same unfluctuated MC truth in each experiment; containment is pooled over
+100 experiments and 205 bins, not scored as simultaneous coverage of all
+bins. The MC fluctuation uses the resampling mechanism that built the band,
+so only the data fluctuation has an independent mechanism:
 \SI{\covTwoDCTwoPctOne}{\percent} of standardized residuals fell within two standard
 deviations, against \SI{95.4}{\percent} nominal, while the one-standard-deviation
 fraction, $\covTwoDCOne$, was nominal; the pull mean was consistent with zero.  The
@@ -207,6 +236,18 @@ over-scattering; it is neither an independent-population coverage test nor a
 real-data calibration, and the held-out test that would separate the two has
 not been run.
 The rebuilt band has not been independently re-tested.
+An assessment of the saved products also finds a truth-input mismatch
+between the adopted systematic sweep and its reference, a duplicated small
+nonresonant-pion band, and unpropagated background-template statistics;
+selection-complete lateral variations and flux-universe identity still need
+verification~\cite{TwoDFollowup2026}. Common offsets cancel to first order
+under MAT mean centering, so the mismatch alone does not invalidate the
+whole covariance. These findings do not change the printed budget.
+Proposed split-sample width checks condition on the existing MC bank,
+binning maps and purity; they cannot establish repeated-sampling coverage
+across independent populations. Validated total intervals over the full
+2D reporting domain require new inputs and construction repairs, beyond
+disclosure of the estimator mismatch.
 % Source: docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md;
 % VALIDATION_LEDGER VL169 (test of the earlier band); VL170 (rebuilt band, adopted by Joseph
 % 2026-10-06, docs/publication/DECISION-20261006 addendum af24a101); VL172 (rebuilt products;
@@ -262,6 +303,14 @@ unestablished.
 % RECORD-20260927-s5p-stage2-exit.md (VL155); OUTCOME-20260925-s5c-tier-s-futility-fail.md (VL150).
 % 16-31%: VL154 A4, candidate R (refinement 400/31 = the joint-test estimator), max over the 42 (E_avail,W)
 % cells for W2/W1 (16.4/31.3%); 20/42 cells within the adopted sigma. The 74% is the F2/N estimator (VL151).
+
+Prior mismatch changes truth-event frequencies; response mismatch changes
+the conditional distribution of reconstructed observations at fixed truth.
+Finite classifiers and iterations approximate the inverse even with the
+correct response. Interval calibration is a further question: correcting a
+nominal closure bias does not certify coverage under other truths. In
+particular, the signal-only deformation failure above rules out background
+subtraction as a sufficient explanation of that residual.
 
 These checks probe distinct properties of the estimator.  Marginal anchors
 assess consistency across dimensions; injected-shape tests measure the recovery
@@ -546,7 +595,8 @@ $\alpha=\jtAlpha$; nine have $k=0$, and NuWro's shape test
 has $k=1$.  Each rejection also survives the robustness check with the residual
 variants at $\pm\jtMoneKappaRobust\,\delta_{\mathrm{M1}}$, the upper end of the
 extrapolation in condition~(i).  A report-only scan along the frozen direction
-$\delta_{\mathrm{M1}}$~\cite{JointTestKappa2026} found all ten decisions to remain
+$\delta_{\mathrm{M1}}$~\cite{JointTestKappa2026}, with $\kappa=1$ denoting one
+last-step shift rather than a confidence level, found all ten decisions to remain
 determinate rejections at every sampled multiplier up to 5.25 in the frozen
 ensembles.  Determinate rejection is first lost between the sampled multipliers
 5.2547 and 5.2563, near 5.26 (between 5.1688 and 5.1703, near 5.17, with the
