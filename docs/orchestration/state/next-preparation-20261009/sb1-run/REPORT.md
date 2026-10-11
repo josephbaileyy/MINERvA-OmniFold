@@ -470,7 +470,8 @@ investigated, and the digests agree.
 - **Consequences.**
   - **None for the verdict.** P's frozen rule tests the guard's installation and origins, which all
     hold, and refusing is the guard working. UL and SL ran under the identical refusal and fallback,
-    so S4 compares matched runs. S1, S2 and S3 do not depend on training threads.
+    so S4 compares matched runs. S1 and S2 do not depend on training threads. S3's sacct MaxRSS may depend on them weakly, but both
+    arms ran with the same count, so S3 also compares matched runs.
   - **The `omnifold` timings are not the production configuration's.** Unguarded, `lscpu` would
     succeed and LightGBM would use 128 threads. The load savings, the subject of SB1, do not depend
     on this. The share figures in §7.4 and §10 describe the guarded runs.
@@ -517,7 +518,24 @@ investigated, and the digests agree.
 
 ### 8.1 Focused re-review of the repairs
 
-RE-REVIEW_PENDING
+- **Verdict: RE-REVIEW: REPAIRS ACCEPTED.** The same reviewer, on its one authorized re-review,
+  checked commit `767d0f08` from its own detached worktree, 02:00–02:04Z, with no cluster access.
+  Its worktree status was 0 lines at start and end. The re-review is preserved byte-identical at
+  [`review/re-review.md`](review/re-review.md) (sha256 `61bea706…`).
+- **What it confirmed.**
+  - All three findings are repaired accurately and sufficiently.
+  - The §8 summary represents the verification faithfully.
+  - §11 item 5 is accurate: the reviewer reproduced the 77 added and 46 changed rows, and `--check`
+    gives OK at `016265cc` and `2b35ba52` and OUT OF DATE from `f7135d31`.
+  - Only two files changed; no criterion, number in a criterion or verdict changed; `Q/sb1-prep` is
+    unchanged.
+- **Three non-blocking residual points, applied in the delivery commit without further review**
+  (the review allowance is spent). All three are wording only:
+  - **R1.** §10's precondition sentence now also points to the 64-thread disclosure (§7.6).
+  - **R2.** §11 item 6 now prefers the explicit-`n_jobs` remedy and notes that the guard-side option
+    conflicts with the guard's own "do not widen the leaf table" policy.
+  - **R3.** §7.6 now says S3's MaxRSS may depend weakly on thread count, but that S3 compares
+    matched runs.
 
 ## 9. Resources
 
@@ -532,7 +550,7 @@ RE-REVIEW_PENDING
 | local scratch | 2 GiB | under 2 MiB: the fetched evidence (0.7 MiB) and small text files |
 | tracked evidence | ≤ 20 MiB | the `evidence/` tree is 0.69 MiB (69 staged files, including `checks/`) |
 | bulk data | no local copy of the 171-GB file | none; only receipts, logs and the three 61-KB output ROOT files were copied |
-| active hours | 6, including review and delivery | grant at 19:58:20Z. At this record's pre-verification commit the wall time is about 5.8 h, of which 5.05 h was scheduler queue and run time spent in passive 120-s polls. The final verification and delivery follow, and §8 records their times |
+| active hours | 6, including review and delivery | grant at 19:58:20Z; delivery commit about 02:10Z, so about **6.2 h of wall time**. Of that, 5.05 h (20:31Z–01:35Z) was the scheduler queueing and running the jobs, while the owner polled every 120 s and drafted the record. The reviews took about 01:52–02:04Z. Counted as wall time, the 6-hour budget was **exceeded by about 0.2 h**. Counted as active work, excluding passive scheduler waits, it was not, but that split is the owner's estimate, not a measurement |
 
 The owner's harness process reported 15 min 56 s of CPU for the whole session, phases 1 and 2. That
 is the agent runtime, not compute.
@@ -541,7 +559,8 @@ is the agent runtime, not compute.
 
 - **Terminal (frozen rules): PASS.** P, S1, NC, S2, S3 and S4 pass. S5 is PASS-AT-TOLERANCE and S6 is
   FAIL; both are reported separately (§7).
-- **Verification verdict.** §8.
+- **Verification verdict (separate): RESULT VERIFIED: PASS.** The record repairs were accepted on
+  re-review (§8, §8.1).
 - **What this establishes, and only this.** For one lateral universe (`Muon_Energy_MINOS:0`) on one
   regular node, prototype 1's selective branch reading:
   - preserved every loader input byte for byte in the lateral, vertical (`Flux:0`) and CV patterns;
@@ -579,7 +598,8 @@ is the agent runtime, not compute.
       is unknown.
   - **Precondition.** S5 is PASS-AT-TOLERANCE, not unresolved, so the grant's S5 precondition for a
     deployment proposal is met at the frozen tolerance. The proposal should still state that byte
-    identity was not achieved, and that the 128-thread rerun envelope is unmeasured.
+    identity was not achieved, that the 128-thread rerun envelope is unmeasured, and that UL and SL
+    very probably trained with 64 LightGBM threads (§7.6).
 - **Not done and not to follow automatically.** No transfer study, sweep, alternate universe, extra
   timing pair, production implementation, Rust rewrite or estimator change.
 
@@ -624,8 +644,11 @@ is the agent runtime, not compute.
 6. **The guard's refusal of `lscpu` (OI-136 guard owner) and thread pinning (driver/helper owner).**
    Under the guard, LightGBM's physical-core probe falls back to a count that is very probably half
    of a two-socket node's cores (§7.6). Two candidate remedies, neither tested here:
-   - model `lscpu` as a leaf tool in the guard's launch grammar;
-   - pass an explicit `n_jobs` (= `OMP_NUM_THREADS`) to the helper's LightGBM estimators.
+   - pass an explicit `n_jobs` (= `OMP_NUM_THREADS`) to the helper's LightGBM estimators. This is
+     preferred, because it needs no change to the guard;
+   - model `lscpu` in the guard's launch grammar. This conflicts with the guard's own refusal
+     message ("do not widen the leaf table to make a launcher pass", `sb1_UL_59645300.err:15`), so
+     it is the guard owner's call.
 
    Either way, a future timed run should record the trainer's effective thread count in its
    receipt.
