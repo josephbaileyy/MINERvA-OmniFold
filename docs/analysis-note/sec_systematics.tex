@@ -2,8 +2,9 @@
 \label{sec:systematics}
 
 The uncertainty budget sums three blocks from systematic universes, statistical
-bootstraps, and ML training-seed variation, assuming independence based on
-distinct RNGs and physics sources. All three 2D blocks are computed with the
+bootstraps, and ML training-seed variation. Independence is an assumption;
+distinct RNGs and physics sources alone do not establish it after unfolding.
+All three 2D blocks are computed with the
 LightGBM estimator, not with the exact-split estimator of the quoted 2D central
 value (\S\ref{sec:method-config}). Whether the resulting covariance describes
 that central value has not been measured. The historical 3D budget uses the analogous 3D grid construction
@@ -17,8 +18,10 @@ total appear in \S\ref{sec:results-uq}.
 Detector and model systematics use MAT-MINERvA's 44 error bands and 187
 universes, identical to the published analysis's \texttt{GetStandardSystematics}
 set. Each universe is re-unfolded with LightGBM at a fixed seed (seed~42),
-against a matched central-value unfold with the same estimator and seed;
-this matched central value is not the quoted exact-split one.
+against a reference central-value unfold with the same estimator and seed;
+this reference is not the quoted exact-split one. Matching the learner and
+seed does not ensure matching inputs: the adopted sweep's truth input
+differs from this reference, as detailed below.
 Per-band covariances follow MAT's universe-mean centering and biased $1/N$.
 For a $\pm1\sigma$ pair, the covariance is the half-difference outer product,
 excluding any common endpoint displacement from CV. The 100 PPFX universes
@@ -71,8 +74,10 @@ demonstrate a causal efficiency advantage. The data-only stream of the split
 data/MC bootstrap ($C_{\mathrm{data}}/\texttt{StatOnly}=0.356$) shows the
 difference is not a missing MC term, but cannot distinguish efficiency gain
 from regularization bias or undercoverage (App.~\ref{sec:rank}). The fixed-truth coverage test
-(\S\ref{sec:coverage}) finds the statistical band undercovers in its tails, unevenly across
-bins. It cannot decide between these explanations, because its truth equals the prior.
+(\S\ref{sec:coverage}) found that the earlier statistical band undercovered
+in its tails, unevenly across bins. The rebuilt band has not been independently
+re-tested. The original test cannot decide between these explanations,
+because its truth equals the prior.
 
 \begin{figure}[H]
   \centering
@@ -109,6 +114,35 @@ estimator itself has not been measured.
   relative spread (left) and fractional band projected onto $\pT$ (right).}
   \label{fig:seedscan}
 \end{figure}
+
+\subsection{Remaining checks of the 2D construction}
+\label{sec:uq-2d-construction}
+A saved-product and code review identifies additional construction issues
+in the quoted 2D budget~\cite{TwoDFollowup2026}. The adopted May systematic
+sweep uses a different simulated truth input from its seed-42 reference:
+even a no-op EtaNCEL universe differs in all 205 truth-input cells, while
+its saved reconstructed inputs agree. A common displacement cancels to
+first order in the MAT mean-centered covariance; this observation neither
+invalidates the entire covariance nor supplies a correction to subtract.
+The July sweep does not have this mismatch. The unavailable May input and
+code revision prevent a more specific attribution.
+
+The Rvn1pi and Rvp1pi bands also encode the same shift under the configured
+nonresonant-pion tune, counting it twice. This is a small, \SI{0.088}{\percent}
+band, but a real construction defect; no conclusion about the published
+analysis's implementation follows. The two examined small-input responses,
+EtaNCEL and NormNCRES, are consistent with trainer instability contributing
+at the ML-noise scale. They do not establish a mechanism for every small
+band or justify subtracting an overlap from the budget.
+
+Background-template statistics still require propagation or an unfolded
+bound. In the saved reconstructed histograms their error exceeds one tenth
+of the data's Poisson error in 60 of 205 bins, so neglecting them everywhere
+is unsupported. This is a reconstructed-space diagnostic, not a measured
+unfolded uncertainty. Selection-complete 2D lateral variations and the
+identity of the PPFX universe indices between event weights and flux
+normalization also require verification. These findings leave the printed
+budget unchanged while identifying work needed to qualify its construction.
 
 \subsection{Combination and the unified-throw test}
 \label{sec:uq-combine}

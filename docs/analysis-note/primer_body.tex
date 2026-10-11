@@ -109,6 +109,16 @@ of their covariance under an exception does not certify their intervals.
 The generator tests below are a separate inference, and PET remains method
 development. None of these statuses supplies another's missing validation.
 
+The two-variable budget also needs construction repairs: a systematic
+sweep and its reference used different truth inputs, one small pion-model
+variation was counted twice, and background-template statistics still need
+propagation or a bound~\cite{TwoDFollowup2026}. Selection-changing detector
+variations and matching flux variations need further verification. Checking
+widths by splitting the existing simulation can test precision conditional
+on that sample, but cannot establish coverage across independently generated
+samples. The full uncertainty-validation objective needs new inputs as well
+as these repairs; the quoted budget has not been recalculated.
+
 The multi-quantity central values below pass the stated validation tests. A
 five-quantity uncertainty has now been adopted under a documented exception, and the two-quantity
 $(\Eavail,W)$ version of it has been built --- but the multi-quantity plots
@@ -391,6 +401,16 @@ nominal 68\% intervals covered 90\% of the aggregate bin targets, yet only
 It over-covers in aggregate and under-covers where acceptance is low.
 No design or default was selected, and no PET uncertainty was adopted.
 
+Saved outputs now give a partial explanation~\cite{PETIntervalDiagnosis2026}.
+The point checks used one fit, while the intervals surrounded an average of
+six bootstrap fits. Under an additive variance model, much of the internal
+fit variation averages away, helping explain the excess aggregate width.
+The event-sample component and bias do not average away. A diagnostic width
+adjustment still leaves poor coverage, especially at low acceptance, so
+dividing the width by the square root of six is not a validated repair.
+The diagnosis concerns the development tilt at study scale; generator-case
+and data-scale coverage of the six-fit average remain unmeasured.
+
 A subsequent exploratory comparison used exactly the same simulated events
 for PET and a scalar tree-based OmniFold~\cite{PETGBDT2026}. Figure~\ref{fig:primerpet}
 shows PET's advantage on the two energy tilts. The ordering changes across
@@ -402,6 +422,14 @@ of neural versus scalar unfolding. The comparator differs from the production
 LightGBM studied earlier. Its uncertainty was not tested here; no precision
 comparison or ranking of the PET finalists follows. All results condition
 on the study's finite simulation banks and event scale.
+
+For the three generator reweightings, a saved-output diagnosis finds both
+underfitting at the detector step and weak extrapolation to missed
+events~\cite{PETGeneratorDiagnosis2026}. Exact distortion weights recover
+the changes well on those same samples. The reconstructed muon and scalar
+inputs are already present in PET, while the effect of adding the tree
+method's scalar truth inputs is untested. These findings locate the
+shortfalls without establishing a universal cause or changing the verdict.
 
 \begin{figure}[H]
   \centering

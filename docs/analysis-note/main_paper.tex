@@ -109,9 +109,13 @@ generated or edited by a generative-AI image tool.  AI tools are not authors.  T
 
 The input data and simulation are the MINERvA open-data AnaTuples, released under
 CC0~\cite{MINERvA:OpenData}; this analysis used an earlier production of that
-release, whose file names and sizes, but not checksums, are recorded with the
-release described here.
-A release of about \SI{16}{MB} lets a reader, with numpy, scipy, and matplotlib
+release. The local candidate described here carries their file names and
+sizes; a separate repository manifest now records SHA256 checksums for all
+2,374 inventoried inputs~\cite{AnaTuplePreservation2026}. The dated
+preservation record verifies internal copies of the data, flux and parameter
+files; the simulation AnaTuples are identified by hash but not copied there.
+A local release candidate of about \SI{16}{MB}~\cite{ReleaseCandidate2026}
+lets a reader, with numpy, scipy, and matplotlib
 only, recompute every $p$ value, decision, robustness label, and power figure of the
 joint tests, the lost-seed resolution, the coarse-projection comparison, and the
 fine-grid $L_{2}$ ratios of condition~(i); regenerate Figs.~\ref{fig:validation}--\ref{fig:joint-nulls}; and recompute the
