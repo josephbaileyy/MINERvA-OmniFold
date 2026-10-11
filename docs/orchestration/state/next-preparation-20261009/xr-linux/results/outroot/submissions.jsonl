@@ -1,0 +1,2 @@
+{"run": "PF", "kind": "preflight", "attempt": 1, "job_id": 59659845, "submitted_utc": "2026-10-11T06:13:23Z", "dir": "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1", "diagnosis": null}
+{"run": "L0", "kind": "lgbm", "attempt": 1, "job_id": 59660487, "submitted_utc": "2026-10-11T06:44:07Z", "dir": "/pscratch/sd/j/josephrb/xr-linux-20261011/L0/a1", "diagnosis": null}

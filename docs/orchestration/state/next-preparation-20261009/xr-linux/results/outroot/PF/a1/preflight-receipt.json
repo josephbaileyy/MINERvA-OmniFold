@@ -1,0 +1,2933 @@
+{
+ "admission": {
+  "path": "/pscratch/sd/j/josephrb/xr-linux-20261011/admission.json",
+  "sha256": "6b7660f44632bad13304209d17d3929bc7d5c7bed535176f70d80a27259f118d"
+ },
+ "allocation_record": {
+  "line": "JobId=59659845 JobName=xrl_PF_a1 UserId=josephrb(112498) GroupId=josephrb(112498) MCS_label=N/A Priority=67705 Nice=0 Account=m3246 QOS=shared JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:14 TimeLimit=00:05:00 TimeMin=N/A SubmitTime=2026-10-10T23:13:23 EligibleTime=2026-10-10T23:13:23 AccrueTime=2026-10-10T23:13:26 StartTime=2026-10-10T23:41:05 EndTime=2026-10-10T23:46:05 Deadline=2026-10-13T23:13:19 PreemptEligibleTime=2026-10-10T23:41:05 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-10T23:41:05 Scheduler=Main Partition=shared_milan_ss11 AllocNode:Sid=login23:177625 ReqNodeList=(null) ExcNodeList=(null) NodeList=nid004085 BatchHost=nid004085 StepMgrEnabled=Yes NumNodes=1 NumCPUs=12 NumTasks=1 CPUs/Task=12 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=12,mem=22860M,node=1,billing=12 AllocTRES=cpu=12,mem=22860M,node=1,billing=12 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=12 MinMemoryNode=22860M MinTmpDiskNode=0 Features=cpu DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=u2:1 LicensesAlloc=u2:1 Network=(null) Command=/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/docs/orchestration/state/next-preparation-20261009/xr-linux/xr/launch/xr_job.sbatch SubmitLine=sbatch --parsable --account=m3246 --qos=shared --constraint=cpu --nodes=1 --ntasks=1 --cpus-per-task=12 --mem=22860M --time=00:05:00 --deadline=2026-10-13T23:13:19 --job-name=xrl_PF_a1 --output=/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/slurm-%j.out --error=/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/slurm-%j.err /pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/docs/orchestration/state/next-preparation-20261009/xr-linux/xr/launch/xr_job.sbatch /pscratch/sd/j/josephrb/xr-linux-20261011/admission.json PF 1 WorkDir=/global/u2/j/josephrb StdErr=/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/slurm-59659845.err StdIn=/dev/null StdOut=/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/slurm-59659845.out TresPerTask=cpu=12 ResvPorts=63549-63551\n",
+  "path": "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/scontrol-job.txt",
+  "sha256": "5b38175cb95ad22484afd7f813e14d7713a8fc56a41e8ce0b47fb567ec125a3b"
+ },
+ "attempt": 1,
+ "controls": {
+  "guard_refuses_launch": {
+   "met": true,
+   "rc": "3",
+   "stderr_tail": "tion=ABSENT  value=None\n[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from\n[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f  (1) __main__\n[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.\n"
+  },
+  "jobcheck_other_kind": {
+   "met": true,
+   "rc": "3",
+   "stderr_tail": "[REFUSED] allocation outside the frozen caps: {'JobId': True, 'QOS': True, 'NumCPUs': False, 'billing': True, 'TimeLimit': True} ({'JobId': '59659845', 'QOS': 'shared', 'NumCPUs': '12', 'TimeLimit': '00:05:00', 'AllocTRES': 'cpu=12,mem=22860M,node=1,billing=12'}) (lgbm)\n"
+  }
+ },
+ "ended_utc": "2026-10-11T06:43:13.138418Z",
+ "environment": {
+  "affinity_cpus": 12,
+  "argv": [
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_run.py",
+   "--run",
+   "PF",
+   "--attempt",
+   "1",
+   "--admission",
+   "/pscratch/sd/j/josephrb/xr-linux-20261011/admission.json",
+   "--require-provenance"
+  ],
+  "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/2d-unfolding",
+  "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python",
+  "host": "nid004085",
+  "packages": {
+   "lightgbm": null,
+   "numpy": null,
+   "scikit-learn": null,
+   "scipy": null,
+   "xgboost": null
+  },
+  "python": "3.11.14",
+  "root_version": "6.28/12",
+  "slurm": {
+   "SLURMD_NODENAME": "nid004085",
+   "SLURM_CPUS_PER_TASK": "12",
+   "SLURM_JOB_ID": "59659845",
+   "SLURM_JOB_QOS": "shared",
+   "SLURM_MEM_PER_NODE": "22860"
+  },
+  "threads": {
+   "MKL_NUM_THREADS": "1",
+   "NUMEXPR_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "12",
+   "OPENBLAS_NUM_THREADS": "1",
+   "SLURM_CPUS_PER_TASK": "12"
+  },
+  "uname": [
+   "Linux",
+   "nid004085",
+   "6.4.0-150600.23.125_15.0.29-cray_shasta_c",
+   "#1 SMP Mon 21 Sep 2026 11:10:49 PDT (f9f1fdc)",
+   "x86_64"
+  ]
+ },
+ "environment_checked": {
+  "origins": {
+   "ROOT": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/__init__.py",
+   "joblib": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/joblib/__init__.py",
+   "lightgbm": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/lightgbm/__init__.py",
+   "numpy": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/__init__.py",
+   "scipy": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/__init__.py",
+   "sklearn": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/__init__.py",
+   "threadpoolctl": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/threadpoolctl.py"
+  },
+  "packages": {
+   "joblib": "1.5.3",
+   "lightgbm": "4.6.0",
+   "numpy": "1.26.4",
+   "scipy": "1.16.3",
+   "sklearn": "1.8.0",
+   "threadpoolctl": "3.6.0"
+  },
+  "python": "3.11.14",
+  "root": "6.28/12",
+  "runtime": {
+   "basis": "supporting record only; the estimator's threads are established by thread_plan and the fit recorder",
+   "pools": [
+    {
+     "api": "openmp",
+     "getter": "omp_get_max_threads",
+     "num_threads": 12,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libgomp.so.1.0.0"
+    },
+    {
+     "api": "blas",
+     "getter": "openblas_get_num_threads",
+     "num_threads": 1,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libopenblasp-r0.3.30.so"
+    },
+    {
+     "api": "lightgbm",
+     "getter": null,
+     "num_threads": null,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/lightgbm/lib/lib_lightgbm.so"
+    },
+    {
+     "api": "openmp",
+     "getter": "omp_get_max_threads",
+     "num_threads": 12,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scikit_learn.libs/libgomp-e985bcbb.so.1.0.0"
+    },
+    {
+     "api": "blas",
+     "getter": "scipy_openblas_get_num_threads",
+     "num_threads": 1,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy.libs/libscipy_openblas-b75cc656.so"
+    }
+   ],
+   "source": "/proc/self/maps"
+  }
+ },
+ "error": null,
+ "exit_code": 0,
+ "fits": [],
+ "fixture": {
+  "checks": {
+   "all_complete": true,
+   "comparator_fails_different_estimators": true,
+   "frozen_classes_and_seeds": true,
+   "lgbm_threads_at_every_fit_and_predict": true,
+   "one_normalization_and_cell_set": true,
+   "repeat_reproduces_to_the_criterion": true
+  },
+  "comparator": {
+   "L0-repeat_vs_L0": {
+    "argmax_globalid": 0,
+    "cells_over_tol": [],
+    "exactly_equal_cells": 176,
+    "integral_rel_diff": 0.0,
+    "max_rel_diff_cells": 0.0,
+    "median_rel_diff_cells": 0.0,
+    "n_cells": 176,
+    "n_cells_over_tol": 0,
+    "tolerance": 1e-08,
+    "verdict": "PASS"
+   },
+   "X0_vs_L0": {
+    "argmax_globalid": 92,
+    "cells_over_tol": [
+     {
+      "globalid": 92,
+      "rel_diff": 0.7254392705202017
+     },
+     {
+      "globalid": 48,
+      "rel_diff": 0.7039805781471706
+     },
+     {
+      "globalid": 76,
+      "rel_diff": 0.6888022739714188
+     },
+     {
+      "globalid": 0,
+      "rel_diff": 0.6764260622819191
+     },
+     {
+      "globalid": 16,
+      "rel_diff": 0.6506276238001463
+     },
+     {
+      "globalid": 148,
+      "rel_diff": 0.64716694682156
+     },
+     {
+      "globalid": 32,
+      "rel_diff": 0.593714681220362
+     },
+     {
+      "globalid": 167,
+      "rel_diff": 0.5132965575475308
+     },
+     {
+      "globalid": 141,
+      "rel_diff": 0.5097302822943218
+     },
+     {
+      "globalid": 220,
+      "rel_diff": 0.5078496655597946
+     },
+     {
+      "globalid": 110,
+      "rel_diff": 0.5057562715484428
+     },
+     {
+      "globalid": 132,
+      "rel_diff": 0.5034471503556541
+     },
+     {
+      "globalid": 44,
+      "rel_diff": 0.49572267533989434
+     },
+     {
+      "globalid": 49,
+      "rel_diff": 0.4650300580846749
+     },
+     {
+      "globalid": 108,
+      "rel_diff": 0.45660768910321115
+     },
+     {
+      "globalid": 80,
+      "rel_diff": 0.43981604864066015
+     },
+     {
+      "globalid": 96,
+      "rel_diff": 0.4264934412471705
+     },
+     {
+      "globalid": 1,
+      "rel_diff": 0.41648394848118475
+     },
+     {
+      "globalid": 33,
+      "rel_diff": 0.4118405837360938
+     },
+     {
+      "globalid": 126,
+      "rel_diff": 0.39584916357968847
+     },
+     {
+      "globalid": 65,
+      "rel_diff": 0.3946364011625034
+     },
+     {
+      "globalid": 5,
+      "rel_diff": 0.3945164959596752
+     },
+     {
+      "globalid": 50,
+      "rel_diff": 0.38964811515224695
+     },
+     {
+      "globalid": 60,
+      "rel_diff": 0.3672362468557031
+     },
+     {
+      "globalid": 17,
+      "rel_diff": 0.36334612203520167
+     },
+     {
+      "globalid": 201,
+      "rel_diff": 0.36333384220572795
+     },
+     {
+      "globalid": 112,
+      "rel_diff": 0.3516558315148681
+     },
+     {
+      "globalid": 216,
+      "rel_diff": 0.34446865289326234
+     },
+     {
+      "globalid": 219,
+      "rel_diff": 0.33472059356530903
+     },
+     {
+      "globalid": 78,
+      "rel_diff": 0.3268188071372613
+     },
+     {
+      "globalid": 62,
+      "rel_diff": 0.32480187359175094
+     },
+     {
+      "globalid": 13,
+      "rel_diff": 0.32105322611413467
+     },
+     {
+      "globalid": 51,
+      "rel_diff": 0.31588955586891654
+     },
+     {
+      "globalid": 217,
+      "rel_diff": 0.30232393777315714
+     },
+     {
+      "globalid": 116,
+      "rel_diff": 0.2906559724957338
+     },
+     {
+      "globalid": 29,
+      "rel_diff": 0.28848719968405534
+     },
+     {
+      "globalid": 142,
+      "rel_diff": 0.283563841712555
+     },
+     {
+      "globalid": 179,
+      "rel_diff": 0.2703774230515643
+     },
+     {
+      "globalid": 81,
+      "rel_diff": 0.26464584395038915
+     },
+     {
+      "globalid": 204,
+      "rel_diff": 0.26095086481933805
+     },
+     {
+      "globalid": 45,
+      "rel_diff": 0.2589338876941345
+     },
+     {
+      "globalid": 66,
+      "rel_diff": 0.2534862213385647
+     },
+     {
+      "globalid": 200,
+      "rel_diff": 0.251599280323036
+     },
+     {
+      "globalid": 218,
+      "rel_diff": 0.2515990875407992
+     },
+     {
+      "globalid": 100,
+      "rel_diff": 0.23856705318189597
+     },
+     {
+      "globalid": 30,
+      "rel_diff": 0.22529317832836593
+     },
+     {
+      "globalid": 8,
+      "rel_diff": 0.2141198634302155
+     },
+     {
+      "globalid": 183,
+      "rel_diff": 0.20656826791654248
+     },
+     {
+      "globalid": 22,
+      "rel_diff": 0.20487601680547796
+     },
+     {
+      "globalid": 125,
+      "rel_diff": 0.20011456699489827
+     },
+     {
+      "globalid": 151,
+      "rel_diff": 0.19467659887226163
+     },
+     {
+      "globalid": 171,
+      "rel_diff": 0.18919943551344798
+     },
+     {
+      "globalid": 67,
+      "rel_diff": 0.18814086042217415
+     },
+     {
+      "globalid": 2,
+      "rel_diff": 0.1870710081729241
+     },
+     {
+      "globalid": 135,
+      "rel_diff": 0.1865445526044317
+     },
+     {
+      "globalid": 202,
+      "rel_diff": 0.18590084232392212
+     },
+     {
+      "globalid": 166,
+      "rel_diff": 0.18469233585851463
+     },
+     {
+      "globalid": 6,
+      "rel_diff": 0.17859937648953728
+     },
+     {
+      "globalid": 97,
+      "rel_diff": 0.17647971710592758
+     },
+     {
+      "globalid": 77,
+      "rel_diff": 0.17322103406178235
+     },
+     {
+      "globalid": 4,
+      "rel_diff": 0.16984651075826906
+     },
+     {
+      "globalid": 182,
+      "rel_diff": 0.16717529628324945
+     },
+     {
+      "globalid": 121,
+      "rel_diff": 0.162200742838989
+     },
+     {
+      "globalid": 120,
+      "rel_diff": 0.158493114555587
+     },
+     {
+      "globalid": 152,
+      "rel_diff": 0.1562369644648669
+     },
+     {
+      "globalid": 130,
+      "rel_diff": 0.1562220077965537
+     },
+     {
+      "globalid": 3,
+      "rel_diff": 0.15513054532785742
+     },
+     {
+      "globalid": 19,
+      "rel_diff": 0.15427177669876802
+     },
+     {
+      "globalid": 170,
+      "rel_diff": 0.15295958239580165
+     },
+     {
+      "globalid": 181,
+      "rel_diff": 0.15101414430112037
+     },
+     {
+      "globalid": 28,
+      "rel_diff": 0.15079910427224852
+     },
+     {
+      "globalid": 12,
+      "rel_diff": 0.15038397541239346
+     },
+     {
+      "globalid": 9,
+      "rel_diff": 0.14525210192328297
+     },
+     {
+      "globalid": 129,
+      "rel_diff": 0.14274238586673416
+     },
+     {
+      "globalid": 172,
+      "rel_diff": 0.14194598068607078
+     },
+     {
+      "globalid": 188,
+      "rel_diff": 0.14068023683038566
+     },
+     {
+      "globalid": 105,
+      "rel_diff": 0.14011651972103367
+     },
+     {
+      "globalid": 35,
+      "rel_diff": 0.13439976806608278
+     },
+     {
+      "globalid": 146,
+      "rel_diff": 0.1343104036274706
+     },
+     {
+      "globalid": 119,
+      "rel_diff": 0.13104443338761784
+     },
+     {
+      "globalid": 153,
+      "rel_diff": 0.12889668708918767
+     },
+     {
+      "globalid": 7,
+      "rel_diff": 0.12884485509413723
+     },
+     {
+      "globalid": 164,
+      "rel_diff": 0.12850644384719545
+     },
+     {
+      "globalid": 199,
+      "rel_diff": 0.1263296640580439
+     },
+     {
+      "globalid": 84,
+      "rel_diff": 0.1258697722062383
+     },
+     {
+      "globalid": 140,
+      "rel_diff": 0.12486244032643146
+     },
+     {
+      "globalid": 55,
+      "rel_diff": 0.12242362004352558
+     },
+     {
+      "globalid": 115,
+      "rel_diff": 0.12140446036058883
+     },
+     {
+      "globalid": 11,
+      "rel_diff": 0.11276458268642409
+     },
+     {
+      "globalid": 109,
+      "rel_diff": 0.11214347109186629
+     },
+     {
+      "globalid": 58,
+      "rel_diff": 0.11179695077296936
+     },
+     {
+      "globalid": 43,
+      "rel_diff": 0.11071907510304713
+     },
+     {
+      "globalid": 53,
+      "rel_diff": 0.10875720146152501
+     },
+     {
+      "globalid": 42,
+      "rel_diff": 0.10333710409712082
+     },
+     {
+      "globalid": 34,
+      "rel_diff": 0.10044691580025
+     },
+     {
+      "globalid": 38,
+      "rel_diff": 0.0999825501299374
+     },
+     {
+      "globalid": 185,
+      "rel_diff": 0.09796007984907495
+     },
+     {
+      "globalid": 86,
+      "rel_diff": 0.09677762168329296
+     },
+     {
+      "globalid": 165,
+      "rel_diff": 0.09456806434093756
+     },
+     {
+      "globalid": 168,
+      "rel_diff": 0.0944641846041624
+     },
+     {
+      "globalid": 203,
+      "rel_diff": 0.09328374192527211
+     },
+     {
+      "globalid": 59,
+      "rel_diff": 0.09313959126554061
+     },
+     {
+      "globalid": 23,
+      "rel_diff": 0.09121338389429456
+     },
+     {
+      "globalid": 74,
+      "rel_diff": 0.0908174005787371
+     },
+     {
+      "globalid": 25,
+      "rel_diff": 0.09079881990355398
+     },
+     {
+      "globalid": 82,
+      "rel_diff": 0.08782369990970906
+     },
+     {
+      "globalid": 104,
+      "rel_diff": 0.08501128036876249
+     },
+     {
+      "globalid": 70,
+      "rel_diff": 0.08344283445253065
+     },
+     {
+      "globalid": 98,
+      "rel_diff": 0.08089306425089049
+     },
+     {
+      "globalid": 197,
+      "rel_diff": 0.08011768598328595
+     },
+     {
+      "globalid": 154,
+      "rel_diff": 0.07872712377873059
+     },
+     {
+      "globalid": 24,
+      "rel_diff": 0.07844538224538611
+     },
+     {
+      "globalid": 69,
+      "rel_diff": 0.0772698572715188
+     },
+     {
+      "globalid": 52,
+      "rel_diff": 0.07724387468276583
+     },
+     {
+      "globalid": 106,
+      "rel_diff": 0.07659321907957273
+     },
+     {
+      "globalid": 27,
+      "rel_diff": 0.07575076589095009
+     },
+     {
+      "globalid": 36,
+      "rel_diff": 0.07461098654533405
+     },
+     {
+      "globalid": 18,
+      "rel_diff": 0.07427746805516433
+     },
+     {
+      "globalid": 137,
+      "rel_diff": 0.07100794757036977
+     },
+     {
+      "globalid": 21,
+      "rel_diff": 0.06868690099295138
+     },
+     {
+      "globalid": 184,
+      "rel_diff": 0.06839874558057979
+     },
+     {
+      "globalid": 90,
+      "rel_diff": 0.06827035252702118
+     },
+     {
+      "globalid": 89,
+      "rel_diff": 0.06819807500833353
+     },
+     {
+      "globalid": 39,
+      "rel_diff": 0.06603246583357292
+     },
+     {
+      "globalid": 103,
+      "rel_diff": 0.06510807753601666
+     },
+     {
+      "globalid": 147,
+      "rel_diff": 0.06405561920472036
+     },
+     {
+      "globalid": 169,
+      "rel_diff": 0.06389080446898543
+     },
+     {
+      "globalid": 75,
+      "rel_diff": 0.059737602383191146
+     },
+     {
+      "globalid": 26,
+      "rel_diff": 0.05964194216336727
+     },
+     {
+      "globalid": 156,
+      "rel_diff": 0.058773509516294786
+     },
+     {
+      "globalid": 113,
+      "rel_diff": 0.05831123466631716
+     },
+     {
+      "globalid": 10,
+      "rel_diff": 0.057945217681324435
+     },
+     {
+      "globalid": 131,
+      "rel_diff": 0.057053883000858896
+     },
+     {
+      "globalid": 198,
+      "rel_diff": 0.05637598026235335
+     },
+     {
+      "globalid": 61,
+      "rel_diff": 0.05625751100329224
+     },
+     {
+      "globalid": 180,
+      "rel_diff": 0.05574462348746256
+     },
+     {
+      "globalid": 102,
+      "rel_diff": 0.054387726570983785
+     },
+     {
+      "globalid": 54,
+      "rel_diff": 0.052809327274800255
+     },
+     {
+      "globalid": 173,
+      "rel_diff": 0.05113019645994221
+     },
+     {
+      "globalid": 150,
+      "rel_diff": 0.048078315677008265
+     },
+     {
+      "globalid": 37,
+      "rel_diff": 0.04747680739877713
+     },
+     {
+      "globalid": 107,
+      "rel_diff": 0.042468885720082006
+     },
+     {
+      "globalid": 122,
+      "rel_diff": 0.04091112078639436
+     },
+     {
+      "globalid": 40,
+      "rel_diff": 0.040726623355148206
+     },
+     {
+      "globalid": 73,
+      "rel_diff": 0.03995794253869667
+     },
+     {
+      "globalid": 134,
+      "rel_diff": 0.039736258387236045
+     },
+     {
+      "globalid": 136,
+      "rel_diff": 0.03971627963360547
+     },
+     {
+      "globalid": 88,
+      "rel_diff": 0.037664297445276995
+     },
+     {
+      "globalid": 99,
+      "rel_diff": 0.036428111265285334
+     },
+     {
+      "globalid": 123,
+      "rel_diff": 0.032999944805521264
+     },
+     {
+      "globalid": 20,
+      "rel_diff": 0.030064505744539893
+     },
+     {
+      "globalid": 87,
+      "rel_diff": 0.029262935028452786
+     },
+     {
+      "globalid": 85,
+      "rel_diff": 0.02910774050572673
+     },
+     {
+      "globalid": 101,
+      "rel_diff": 0.028947717724910227
+     },
+     {
+      "globalid": 83,
+      "rel_diff": 0.028366090291704005
+     },
+     {
+      "globalid": 68,
+      "rel_diff": 0.02710027057814135
+     },
+     {
+      "globalid": 71,
+      "rel_diff": 0.02416451188767732
+     },
+     {
+      "globalid": 155,
+      "rel_diff": 0.021330957630870895
+     },
+     {
+      "globalid": 118,
+      "rel_diff": 0.01870710255151642
+     },
+     {
+      "globalid": 138,
+      "rel_diff": 0.01505942525120152
+     },
+     {
+      "globalid": 93,
+      "rel_diff": 0.014660315787151657
+     },
+     {
+      "globalid": 56,
+      "rel_diff": 0.014247230158474622
+     },
+     {
+      "globalid": 117,
+      "rel_diff": 0.014155695946379332
+     },
+     {
+      "globalid": 91,
+      "rel_diff": 0.012768382423183344
+     },
+     {
+      "globalid": 149,
+      "rel_diff": 0.012443549373656326
+     },
+     {
+      "globalid": 57,
+      "rel_diff": 0.010866524198995475
+     },
+     {
+      "globalid": 186,
+      "rel_diff": 0.00918876581646133
+     },
+     {
+      "globalid": 72,
+      "rel_diff": 0.008366122266370568
+     },
+     {
+      "globalid": 139,
+      "rel_diff": 0.006084796678274884
+     },
+     {
+      "globalid": 114,
+      "rel_diff": 0.005918961357047614
+     },
+     {
+      "globalid": 41,
+      "rel_diff": 0.004261491240635573
+     },
+     {
+      "globalid": 157,
+      "rel_diff": 0.004068199821041896
+     },
+     {
+      "globalid": 163,
+      "rel_diff": 0.0033900067227949915
+     },
+     {
+      "globalid": 124,
+      "rel_diff": 0.0030970538861367913
+     },
+     {
+      "globalid": 187,
+      "rel_diff": 0.002752349188217096
+     },
+     {
+      "globalid": 133,
+      "rel_diff": 0.001471126069557016
+     }
+    ],
+    "exactly_equal_cells": 0,
+    "integral_rel_diff": 0.13508107532647995,
+    "max_rel_diff_cells": 0.7254392705202017,
+    "median_rel_diff_cells": 0.11708452152350646,
+    "n_cells": 176,
+    "n_cells_over_tol": 176,
+    "tolerance": 1e-08,
+    "verdict": "FAIL"
+   }
+  },
+  "controls": {
+   "launch_window": {
+    "met": true,
+    "platform": "linux",
+    "probes": {
+     "find_library_c": {
+      "launches": [
+       {
+        "argv": "['/sbin/ldconfig', '-p']",
+        "call": "subprocess.Popen",
+        "stack": [
+         "xr_run.py:665:preflight",
+         "xr_run.py:540:fixture_stage",
+         "xr_run.py:586:fixture_controls",
+         "xr_run.py:602:launch_controls",
+         "xr_run.py:597:<lambda>",
+         "util.py:353:find_library",
+         "util.py:293:_findSoname_ldconfig"
+        ]
+       }
+      ],
+      "outcome": "refused"
+     },
+     "loky_physical_cores": {
+      "launches": [
+       {
+        "argv": "['lscpu', '--parse=core']",
+        "call": "subprocess.Popen",
+        "stack": [
+         "xr_run.py:665:preflight",
+         "xr_run.py:540:fixture_stage",
+         "xr_run.py:586:fixture_controls",
+         "xr_run.py:602:launch_controls",
+         "xr_run.py:594:<lambda>",
+         "context.py:269:_count_physical_cores_linux",
+         "subprocess.py:548:run"
+        ]
+       },
+       {
+        "argv": "['cat', '/proc/cpuinfo']",
+        "call": "subprocess.Popen",
+        "stack": [
+         "xr_run.py:665:preflight",
+         "xr_run.py:540:fixture_stage",
+         "xr_run.py:586:fixture_controls",
+         "xr_run.py:602:launch_controls",
+         "xr_run.py:594:<lambda>",
+         "context.py:278:_count_physical_cores_linux",
+         "subprocess.py:548:run"
+        ]
+       }
+      ],
+      "outcome": "refused"
+     }
+    }
+   },
+   "wrong_backend": {
+    "error": "LGBMClassifier.fit called; run expects exact",
+    "expect": "LGBMClassifier.fit called; run expects exact",
+    "fits": [],
+    "met": true,
+    "outcome": "refused"
+   },
+   "wrong_lgbm_threads": {
+    "error": "LGBMClassifier.fit would train on 12 threads; the plan is 13",
+    "expect": "would train on",
+    "fits": [],
+    "met": true,
+    "outcome": "refused"
+   },
+   "wrong_seed": {
+    "error": "LGBMClassifier.fit with random_state=1; expected 7",
+    "expect": "random_state=1",
+    "fits": [],
+    "met": true,
+    "outcome": "refused"
+   }
+  },
+  "inputs": {
+   "mcfile": "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-flux.root",
+   "omnifile": {
+    "bytes": 1244648,
+    "extra_per_tree": 4,
+    "path": "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-omni.root",
+    "root": "6.28/12",
+    "rows": 3000,
+    "seed": 20261010
+   },
+   "omnifile_sha256": "89e88d13c7e7a55e10f660b1bf8195229160d9d0f5d6625e0c0d346b4f2bf7f7",
+   "write_s": 17.96146350300114
+  },
+  "not_a_result": "synthetic fixture: it checks the code path only",
+  "repeat_exactly_equal_cells": [
+   176,
+   176
+  ],
+  "runs": {
+   "L0": {
+    "argv": [
+     "--omnifile",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-omni.root",
+     "--mcfile",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-flux.root",
+     "--iters",
+     "5",
+     "--use-weights",
+     "--estimator",
+     "lgbm",
+     "--seed",
+     "42",
+     "--out",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/FX-L0.root"
+    ],
+    "cells": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     48,
+     49,
+     50,
+     51,
+     52,
+     53,
+     54,
+     55,
+     56,
+     57,
+     58,
+     59,
+     60,
+     61,
+     62,
+     65,
+     66,
+     67,
+     68,
+     69,
+     70,
+     71,
+     72,
+     73,
+     74,
+     75,
+     76,
+     77,
+     78,
+     80,
+     81,
+     82,
+     83,
+     84,
+     85,
+     86,
+     87,
+     88,
+     89,
+     90,
+     91,
+     92,
+     93,
+     96,
+     97,
+     98,
+     99,
+     100,
+     101,
+     102,
+     103,
+     104,
+     105,
+     106,
+     107,
+     108,
+     109,
+     110,
+     112,
+     113,
+     114,
+     115,
+     116,
+     117,
+     118,
+     119,
+     120,
+     121,
+     122,
+     123,
+     124,
+     125,
+     126,
+     129,
+     130,
+     131,
+     132,
+     133,
+     134,
+     135,
+     136,
+     137,
+     138,
+     139,
+     140,
+     141,
+     142,
+     146,
+     147,
+     148,
+     149,
+     150,
+     151,
+     152,
+     153,
+     154,
+     155,
+     156,
+     157,
+     163,
+     164,
+     165,
+     166,
+     167,
+     168,
+     169,
+     170,
+     171,
+     172,
+     173,
+     179,
+     180,
+     181,
+     182,
+     183,
+     184,
+     185,
+     186,
+     187,
+     188,
+     197,
+     198,
+     199,
+     200,
+     201,
+     202,
+     203,
+     204,
+     216,
+     217,
+     218,
+     219,
+     220
+    ],
+    "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "fit_counts": {
+     "classifier_fits": 10,
+     "regressor_fits": 5
+    },
+    "fits": [
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 42
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 44
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 43
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 42
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 44
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 43
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 42
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 44
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 43
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 42
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 44
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 43
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 42
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 44
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 43
+     }
+    ],
+    "n_cells": 176,
+    "params": {
+     "dataPOT": 1e+20,
+     "fluxIntegral_cm2_per_POT": 1.0500000000000001e-10,
+     "fluxIntegral_m2_per_POT": 1.0500000000000001e-06,
+     "mcPOT": 4.708e+20,
+     "nIterations": 5.0,
+     "nNucleons": 3.2352943296224835e+30,
+     "potScale": 0.21240441801189464
+    },
+    "predicts": {
+     "calls": 15,
+     "num_threads": [
+      12
+     ]
+    },
+    "sha256": "6e66e1b5c269482ec3b279b33d8e4e8675d0b750a3ecba2d734d658e8dc49762",
+    "status": "complete",
+    "wall_s": 0.36223183599940967
+   },
+   "L0-repeat": {
+    "argv": [
+     "--omnifile",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-omni.root",
+     "--mcfile",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-flux.root",
+     "--iters",
+     "5",
+     "--use-weights",
+     "--estimator",
+     "lgbm",
+     "--seed",
+     "42",
+     "--out",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/FX-L0-repeat.root"
+    ],
+    "cells": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     48,
+     49,
+     50,
+     51,
+     52,
+     53,
+     54,
+     55,
+     56,
+     57,
+     58,
+     59,
+     60,
+     61,
+     62,
+     65,
+     66,
+     67,
+     68,
+     69,
+     70,
+     71,
+     72,
+     73,
+     74,
+     75,
+     76,
+     77,
+     78,
+     80,
+     81,
+     82,
+     83,
+     84,
+     85,
+     86,
+     87,
+     88,
+     89,
+     90,
+     91,
+     92,
+     93,
+     96,
+     97,
+     98,
+     99,
+     100,
+     101,
+     102,
+     103,
+     104,
+     105,
+     106,
+     107,
+     108,
+     109,
+     110,
+     112,
+     113,
+     114,
+     115,
+     116,
+     117,
+     118,
+     119,
+     120,
+     121,
+     122,
+     123,
+     124,
+     125,
+     126,
+     129,
+     130,
+     131,
+     132,
+     133,
+     134,
+     135,
+     136,
+     137,
+     138,
+     139,
+     140,
+     141,
+     142,
+     146,
+     147,
+     148,
+     149,
+     150,
+     151,
+     152,
+     153,
+     154,
+     155,
+     156,
+     157,
+     163,
+     164,
+     165,
+     166,
+     167,
+     168,
+     169,
+     170,
+     171,
+     172,
+     173,
+     179,
+     180,
+     181,
+     182,
+     183,
+     184,
+     185,
+     186,
+     187,
+     188,
+     197,
+     198,
+     199,
+     200,
+     201,
+     202,
+     203,
+     204,
+     216,
+     217,
+     218,
+     219,
+     220
+    ],
+    "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "fit_counts": {
+     "classifier_fits": 10,
+     "regressor_fits": 5
+    },
+    "fits": [
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 42
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 44
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 43
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 42
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 44
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 43
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 42
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 44
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 43
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 42
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 44
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 43
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 42
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 44
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 43
+     }
+    ],
+    "n_cells": 176,
+    "params": {
+     "dataPOT": 1e+20,
+     "fluxIntegral_cm2_per_POT": 1.0500000000000001e-10,
+     "fluxIntegral_m2_per_POT": 1.0500000000000001e-06,
+     "mcPOT": 4.708e+20,
+     "nIterations": 5.0,
+     "nNucleons": 3.2352943296224835e+30,
+     "potScale": 0.21240441801189464
+    },
+    "predicts": {
+     "calls": 15,
+     "num_threads": [
+      12
+     ]
+    },
+    "sha256": "d22a05c31273f3ad67c3c3ebe9ca3df19a901b5e973150b9d55ef1e86d39fb24",
+    "status": "complete",
+    "wall_s": 0.3280574689997593
+   },
+   "L1": {
+    "argv": [
+     "--omnifile",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-omni.root",
+     "--mcfile",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-flux.root",
+     "--iters",
+     "5",
+     "--use-weights",
+     "--estimator",
+     "lgbm",
+     "--seed",
+     "1",
+     "--out",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/FX-L1.root"
+    ],
+    "cells": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     48,
+     49,
+     50,
+     51,
+     52,
+     53,
+     54,
+     55,
+     56,
+     57,
+     58,
+     59,
+     60,
+     61,
+     62,
+     65,
+     66,
+     67,
+     68,
+     69,
+     70,
+     71,
+     72,
+     73,
+     74,
+     75,
+     76,
+     77,
+     78,
+     80,
+     81,
+     82,
+     83,
+     84,
+     85,
+     86,
+     87,
+     88,
+     89,
+     90,
+     91,
+     92,
+     93,
+     96,
+     97,
+     98,
+     99,
+     100,
+     101,
+     102,
+     103,
+     104,
+     105,
+     106,
+     107,
+     108,
+     109,
+     110,
+     112,
+     113,
+     114,
+     115,
+     116,
+     117,
+     118,
+     119,
+     120,
+     121,
+     122,
+     123,
+     124,
+     125,
+     126,
+     129,
+     130,
+     131,
+     132,
+     133,
+     134,
+     135,
+     136,
+     137,
+     138,
+     139,
+     140,
+     141,
+     142,
+     146,
+     147,
+     148,
+     149,
+     150,
+     151,
+     152,
+     153,
+     154,
+     155,
+     156,
+     157,
+     163,
+     164,
+     165,
+     166,
+     167,
+     168,
+     169,
+     170,
+     171,
+     172,
+     173,
+     179,
+     180,
+     181,
+     182,
+     183,
+     184,
+     185,
+     186,
+     187,
+     188,
+     197,
+     198,
+     199,
+     200,
+     201,
+     202,
+     203,
+     204,
+     216,
+     217,
+     218,
+     219,
+     220
+    ],
+    "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "fit_counts": {
+     "classifier_fits": 10,
+     "regressor_fits": 5
+    },
+    "fits": [
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 1
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 3
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 2
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 1
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 3
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 2
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 1
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 3
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 2
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 1
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 3
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 2
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 2604,
+      "num_threads": 12,
+      "random_state": 1
+     },
+     {
+      "class": "LGBMRegressor",
+      "n_rows": 1702,
+      "num_threads": 12,
+      "random_state": 3
+     },
+     {
+      "class": "LGBMClassifier",
+      "n_rows": 5568,
+      "num_threads": 12,
+      "random_state": 2
+     }
+    ],
+    "n_cells": 176,
+    "params": {
+     "dataPOT": 1e+20,
+     "fluxIntegral_cm2_per_POT": 1.0500000000000001e-10,
+     "fluxIntegral_m2_per_POT": 1.0500000000000001e-06,
+     "mcPOT": 4.708e+20,
+     "nIterations": 5.0,
+     "nNucleons": 3.2352943296224835e+30,
+     "potScale": 0.21240441801189464
+    },
+    "predicts": {
+     "calls": 15,
+     "num_threads": [
+      12
+     ]
+    },
+    "sha256": "00f362c384e0a292eec31b799a73e679f3b88f51effeec86c9267c2d04f61a72",
+    "status": "complete",
+    "wall_s": 0.3286402590019861
+   },
+   "X0": {
+    "argv": [
+     "--omnifile",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-omni.root",
+     "--mcfile",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-flux.root",
+     "--iters",
+     "5",
+     "--use-weights",
+     "--out",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/FX-X0.root"
+    ],
+    "cells": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     48,
+     49,
+     50,
+     51,
+     52,
+     53,
+     54,
+     55,
+     56,
+     57,
+     58,
+     59,
+     60,
+     61,
+     62,
+     65,
+     66,
+     67,
+     68,
+     69,
+     70,
+     71,
+     72,
+     73,
+     74,
+     75,
+     76,
+     77,
+     78,
+     80,
+     81,
+     82,
+     83,
+     84,
+     85,
+     86,
+     87,
+     88,
+     89,
+     90,
+     91,
+     92,
+     93,
+     96,
+     97,
+     98,
+     99,
+     100,
+     101,
+     102,
+     103,
+     104,
+     105,
+     106,
+     107,
+     108,
+     109,
+     110,
+     112,
+     113,
+     114,
+     115,
+     116,
+     117,
+     118,
+     119,
+     120,
+     121,
+     122,
+     123,
+     124,
+     125,
+     126,
+     129,
+     130,
+     131,
+     132,
+     133,
+     134,
+     135,
+     136,
+     137,
+     138,
+     139,
+     140,
+     141,
+     142,
+     146,
+     147,
+     148,
+     149,
+     150,
+     151,
+     152,
+     153,
+     154,
+     155,
+     156,
+     157,
+     163,
+     164,
+     165,
+     166,
+     167,
+     168,
+     169,
+     170,
+     171,
+     172,
+     173,
+     179,
+     180,
+     181,
+     182,
+     183,
+     184,
+     185,
+     186,
+     187,
+     188,
+     197,
+     198,
+     199,
+     200,
+     201,
+     202,
+     203,
+     204,
+     216,
+     217,
+     218,
+     219,
+     220
+    ],
+    "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "fit_counts": {
+     "classifier_fits": 10,
+     "regressor_fits": 5
+    },
+    "fits": [
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": null
+     }
+    ],
+    "n_cells": 176,
+    "params": {
+     "dataPOT": 1e+20,
+     "fluxIntegral_cm2_per_POT": 1.0500000000000001e-10,
+     "fluxIntegral_m2_per_POT": 1.0500000000000001e-06,
+     "mcPOT": 4.708e+20,
+     "nIterations": 5.0,
+     "nNucleons": 3.2352943296224835e+30,
+     "potScale": 0.21240441801189464
+    },
+    "predicts": {
+     "calls": 0,
+     "num_threads": []
+    },
+    "sha256": "3c8eeb7f734a9c13ec515a9330ac7ab3aded0cbfa27ac43429f84dbfe325648c",
+    "status": "complete",
+    "wall_s": 4.132148524993681
+   },
+   "X0p": {
+    "argv": [
+     "--omnifile",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-omni.root",
+     "--mcfile",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-flux.root",
+     "--iters",
+     "5",
+     "--use-weights",
+     "--out",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/FX-X0p.root"
+    ],
+    "cells": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     48,
+     49,
+     50,
+     51,
+     52,
+     53,
+     54,
+     55,
+     56,
+     57,
+     58,
+     59,
+     60,
+     61,
+     62,
+     65,
+     66,
+     67,
+     68,
+     69,
+     70,
+     71,
+     72,
+     73,
+     74,
+     75,
+     76,
+     77,
+     78,
+     80,
+     81,
+     82,
+     83,
+     84,
+     85,
+     86,
+     87,
+     88,
+     89,
+     90,
+     91,
+     92,
+     93,
+     96,
+     97,
+     98,
+     99,
+     100,
+     101,
+     102,
+     103,
+     104,
+     105,
+     106,
+     107,
+     108,
+     109,
+     110,
+     112,
+     113,
+     114,
+     115,
+     116,
+     117,
+     118,
+     119,
+     120,
+     121,
+     122,
+     123,
+     124,
+     125,
+     126,
+     129,
+     130,
+     131,
+     132,
+     133,
+     134,
+     135,
+     136,
+     137,
+     138,
+     139,
+     140,
+     141,
+     142,
+     146,
+     147,
+     148,
+     149,
+     150,
+     151,
+     152,
+     153,
+     154,
+     155,
+     156,
+     157,
+     163,
+     164,
+     165,
+     166,
+     167,
+     168,
+     169,
+     170,
+     171,
+     172,
+     173,
+     179,
+     180,
+     181,
+     182,
+     183,
+     184,
+     185,
+     186,
+     187,
+     188,
+     197,
+     198,
+     199,
+     200,
+     201,
+     202,
+     203,
+     204,
+     216,
+     217,
+     218,
+     219,
+     220
+    ],
+    "driver": "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/record/unfold_2d_omnifold_unbinned_d1bc8813.py.record",
+    "fit_counts": {
+     "classifier_fits": 10,
+     "regressor_fits": 5
+    },
+    "fits": [
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": null
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": null
+     }
+    ],
+    "n_cells": 176,
+    "params": {
+     "dataPOT": 1e+20,
+     "fluxIntegral_cm2_per_POT": 1.0500000000000001e-10,
+     "fluxIntegral_m2_per_POT": 1.0500000000000001e-06,
+     "mcPOT": 4.708e+20,
+     "nIterations": 5.0,
+     "nNucleons": 3.2352943296224835e+30,
+     "potScale": 0.21240441801189464
+    },
+    "predicts": {
+     "calls": 0,
+     "num_threads": []
+    },
+    "sha256": "c47ab9cf5c070aabe8489c51205a8042cc3302586c84854783315270296d14fc",
+    "status": "complete",
+    "wall_s": 3.736043889002758
+   },
+   "X1": {
+    "argv": [
+     "--omnifile",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-omni.root",
+     "--mcfile",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/fixture-flux.root",
+     "--iters",
+     "5",
+     "--use-weights",
+     "--seed",
+     "1",
+     "--out",
+     "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/fixture/FX-X1.root"
+    ],
+    "cells": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     48,
+     49,
+     50,
+     51,
+     52,
+     53,
+     54,
+     55,
+     56,
+     57,
+     58,
+     59,
+     60,
+     61,
+     62,
+     65,
+     66,
+     67,
+     68,
+     69,
+     70,
+     71,
+     72,
+     73,
+     74,
+     75,
+     76,
+     77,
+     78,
+     80,
+     81,
+     82,
+     83,
+     84,
+     85,
+     86,
+     87,
+     88,
+     89,
+     90,
+     91,
+     92,
+     93,
+     96,
+     97,
+     98,
+     99,
+     100,
+     101,
+     102,
+     103,
+     104,
+     105,
+     106,
+     107,
+     108,
+     109,
+     110,
+     112,
+     113,
+     114,
+     115,
+     116,
+     117,
+     118,
+     119,
+     120,
+     121,
+     122,
+     123,
+     124,
+     125,
+     126,
+     129,
+     130,
+     131,
+     132,
+     133,
+     134,
+     135,
+     136,
+     137,
+     138,
+     139,
+     140,
+     141,
+     142,
+     146,
+     147,
+     148,
+     149,
+     150,
+     151,
+     152,
+     153,
+     154,
+     155,
+     156,
+     157,
+     163,
+     164,
+     165,
+     166,
+     167,
+     168,
+     169,
+     170,
+     171,
+     172,
+     173,
+     179,
+     180,
+     181,
+     182,
+     183,
+     184,
+     185,
+     186,
+     187,
+     188,
+     197,
+     198,
+     199,
+     200,
+     201,
+     202,
+     203,
+     204,
+     216,
+     217,
+     218,
+     219,
+     220
+    ],
+    "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "fit_counts": {
+     "classifier_fits": 10,
+     "regressor_fits": 5
+    },
+    "fits": [
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": 1
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": 3
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": 2
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": 1
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": 3
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": 2
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": 1
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": 3
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": 2
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": 1
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": 3
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": 2
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 2604,
+      "num_threads": null,
+      "random_state": 1
+     },
+     {
+      "class": "GradientBoostingRegressor",
+      "n_rows": 1702,
+      "num_threads": null,
+      "random_state": 3
+     },
+     {
+      "class": "GradientBoostingClassifier",
+      "n_rows": 5568,
+      "num_threads": null,
+      "random_state": 2
+     }
+    ],
+    "n_cells": 176,
+    "params": {
+     "dataPOT": 1e+20,
+     "fluxIntegral_cm2_per_POT": 1.0500000000000001e-10,
+     "fluxIntegral_m2_per_POT": 1.0500000000000001e-06,
+     "mcPOT": 4.708e+20,
+     "nIterations": 5.0,
+     "nNucleons": 3.2352943296224835e+30,
+     "potScale": 0.21240441801189464
+    },
+    "predicts": {
+     "calls": 0,
+     "num_threads": []
+    },
+    "sha256": "a154231f725fb6d2308e3390d66a9f4bfe9dac735749811313215d920c4e9543",
+    "status": "complete",
+    "wall_s": 3.7383070580108324
+   }
+  },
+  "verdict": "PASS"
+ },
+ "identity": {
+  "executed": [
+   {
+    "git_blob": "39976fa4e3c0032a85235b8d9194245e08bf7bfd",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_run.py",
+    "relpath": "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_run.py",
+    "sha256": "e8c7ca64e617cc331d9ea451c3911a2f01cbdd5c1ba34c76a77f4b46656715df"
+   },
+   {
+    "git_blob": "6509b94a5f324ee5edcc44e539b7b5a0ef290151",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
+    "relpath": "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
+    "sha256": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef"
+   },
+   {
+    "git_blob": "1ea941f390bb3ce36925a9e8f2fbad675d88cada",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+    "relpath": "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+    "sha256": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856"
+   },
+   {
+    "git_blob": "5966663bfe88809fd245d4dd2edb472eb6514480",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/unbinned_unfolding/python/omnifold.py",
+    "relpath": "unbinned_unfolding/python/omnifold.py",
+    "sha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   },
+   {
+    "git_blob": "e19aeb6d3c242a21a67fa1b4e4573ddf72729206",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "relpath": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "sha256": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933"
+   },
+   {
+    "git_blob": "0f87330b3fe6e61d8922fafaefd0c17165f752b1",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/record/unfold_2d_omnifold_unbinned_d1bc8813.py.record",
+    "relpath": "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/record/unfold_2d_omnifold_unbinned_d1bc8813.py.record",
+    "sha256": "447288e2c61d30cdd46c88077093ec0d78ac08ae63144bb2fe57525e7144ea34"
+   },
+   {
+    "git_blob": "7e626a8446b02ed25c6c15430af0c6fbdd31fa84",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/make_fixture_omnifile.py",
+    "relpath": "docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/make_fixture_omnifile.py",
+    "sha256": "6a76ccd13dcf995688bb32fd0f3c29c060da84fcd3c4a494a843a274e02853d3"
+   },
+   {
+    "git_blob": "c6daa241e6aff4a7241d23c999e8bf2575a73663",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_compare.py",
+    "relpath": "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_compare.py",
+    "sha256": "9e59c590cd33868bd619694ceff68adbed7cc4fa4dc05aeb1b3e76653e2e948b"
+   }
+  ],
+  "git": {
+   "commit": "92386d3fe23f5f9c401ceb779e8a572cfba4ed78",
+   "mismatched": [],
+   "status": "ok"
+  },
+  "guard": {
+   "allowed": [
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f"
+   ],
+   "depth": 0,
+   "expect_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f",
+   "installed": true,
+   "propagation": "armed"
+  },
+  "strict": true
+ },
+ "inputs_start": {
+  "mcfile": {
+   "ino": 882724771874215681,
+   "mtime_ns": 1777003503000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "size": 5143
+  },
+  "omnifile": {
+   "ino": 6874571285,
+   "mtime_ns": 1779094334000000000,
+   "path": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+   "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "size": 2144008221
+  }
+ },
+ "kind": "preflight",
+ "launches": [],
+ "not_a_result": "preflight only: its fixture products are synthetic; it cannot satisfy any comparison",
+ "preflight_of": [
+  "X0",
+  "X0p",
+  "X1",
+  "L0",
+  "L1"
+ ],
+ "run": "PF",
+ "schema": "xr-preflight-receipt/2",
+ "started_utc": "2026-10-11T06:42:22.127087Z",
+ "status": "preflight-pass",
+ "threads": {
+  "LOKY_MAX_CPU_COUNT": null,
+  "OMP_NUM_THREADS": "12",
+  "affinity": 12,
+  "exact_estimator_basis": "sklearn's exact GradientBoosting{Classifier,Regressor} take no thread parameter and build their trees serially, so the exact runs train on one thread",
+  "exact_estimator_threads": 1,
+  "joblib_cpu_count_logical": 12,
+  "joblib_cpu_count_physical": 12,
+  "kind_cpus": 12,
+  "kind_omp_threads": 12,
+  "lgbm_num_threads": 12,
+  "os_cpu_count": 256,
+  "platform": "linux"
+ },
+ "wall_s": 104.18764280399773
+}

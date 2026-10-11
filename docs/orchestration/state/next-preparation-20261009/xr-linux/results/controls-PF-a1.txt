@@ -1,0 +1,20 @@
+# The preflight job-script controls' stdout/stderr (the repository ignores *.out/*.err); originals in /pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/controls/
+== jobcheck_other_kind.out sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+== jobcheck_other_kind.err sha256 06d58c41f4622c9dd22d77c8541e22621bf8d6a717dca6cce6c53ef6dca71078
+[REFUSED] allocation outside the frozen caps: {'JobId': True, 'QOS': True, 'NumCPUs': False, 'billing': True, 'TimeLimit': True} ({'JobId': '59659845', 'QOS': 'shared', 'NumCPUs': '12', 'TimeLimit': '00:05:00', 'AllocTRES': 'cpu=12,mem=22860M,node=1,billing=12'}) (lgbm)
+== guard_refuses_launch.out sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+== guard_refuses_launch.err sha256 f25e018b1ac119fb545ab859607c708143413c58bf54eb28bc61997139db1a06
+
+[oi136 launch] THIS CHILD CANNOT BE PROVEN TO KEEP ITS OWN PYTHON LAUNCHES GUARDED -- REFUSING BEFORE LAUNCH.
+[oi136 launch]   executable     /sbin/ldconfig
+[oi136 launch]   offending flag /sbin/ldconfig resolves to /sbin/ldconfig, which is neither an interpreter, a shell, a leaf tool nor a script with a readable shebang
+[oi136 launch]   argv           ['/sbin/ldconfig', '-p']
+[oi136 launch] A guarded process may start only a child this guard can PROVE keeps its Python launches guarded: an interpreter under the startup-flag grammar, a shell whose -c string or SCRIPT FILE has been read and scanned, a leaf tool that execs no other program and resolves under a system prefix, a read-only `git`, or a file whose shebang is one of those. Round 6 reached the wrong-tree import through a shell SCRIPT FILE, which the previous model admitted UNREAD on the strength of a PATH lookup the script declined to make. Route the work through a shell script this guard can read, or through mnv_guarded_run.py; do not widen the leaf table to make a launcher pass.
+
+[oi136] inventory: checked=6 repo_origin_count=0 outside_expect_root=0 verdict=REFUSED launch -> /pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1/controls/inventory-guard-control.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 1   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f  (1) __main__
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
