@@ -5,9 +5,9 @@
     xr_admit.py check  --authorization A --package-commit C --manifest-sha S
     xr_admit.py draft  --authorization A --package-commit C --manifest-sha S --setup F
     xr_admit.py verify --admission ADM                re-run check against the admission's values
-    xr_admit.py jobcheck --admission ADM --run R      inside a job: its allocation within the caps
+    xr_admit.py jobcheck --admission ADM --run R [--record F]   inside a job: its allocation within the caps
     xr_admit.py next-attempt --admission ADM --run R --sacct PSV [--now ISO]   prints: ATTEMPT DEADLINE
-    xr_admit.py ledger --admission ADM --sacct PSV    charge, attempts and the stop; exit 6 if over
+    xr_admit.py ledger --admission ADM --sacct PSV    cumulative charge, attempts and the stop; exit 6 if over
 
 Standard library only, and Python 3.6-compatible: the launch scripts run it with the cluster's
 ``/usr/bin/python3`` (3.6.15), before the analysis environment is sourced.
@@ -24,8 +24,17 @@ The binding (``check``), every clause a refusal (exit 3):
 
 One admission per grant: the outroot is frozen in ``runs.json`` (independent of HEAD), ``draft``
 creates it exclusively and writes ``<outroot>/admission.json``, so a second ``draft`` is refused.
-Attempt caps and the stop rule are counted over the whole grant: attempt directories, the
-submissions record, and every ``xr_*`` job ``sacct`` lists for the user since the grant date.
+
+The 2026-10-11 amendment (``runs.json`` ``amendment`` and ``prior``):
+* the allocation is read from the named ``scontrol -o`` fields, each required exactly once, and the
+  billing from ``AllocTRES`` (absent, ``(null)``, malformed or over the cap refuses);
+* this amendment's jobs are named ``<prefix>_<RUN>_a<N>`` and its attempt caps count only them
+  (attempt directories, the submissions record, and ``sacct`` since ``cumulative_since``);
+* the prior grant's jobs (``prior.jobs``, named ``xr_*``) must all be in ``sacct``, and no other
+  ``xr_*`` job may be. Their charge stays in the cumulative ledger and in every submission's
+  planned ceiling against ``cap_node_h``. A new package, outroot or date does not reset it;
+* release order: no run before the preflight has passed, and nothing but the preflight and the
+  first run (L0) before that run has a complete, comparable receipt.
 """
 
 import argparse
@@ -168,6 +177,8 @@ def draft(args):
     outroot = Path(runs["outroot"])
     if not outroot.is_absolute() or os.path.realpath(str(outroot)) != os.path.normpath(str(outroot)):
         raise Refusal("the frozen outroot {} must be absolute and free of symlinks".format(outroot))
+    if os.path.normpath(runs["prior"]["outroot"]) == os.path.normpath(str(outroot)):
+        raise Refusal("the outroot {} is the prior grant's".format(outroot))
     try:
         outroot.mkdir(parents=False)
     except FileExistsError:
@@ -177,15 +188,20 @@ def draft(args):
               "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
               "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py"]
     inputs = {k: v["sha256"] for k, v in runs["inputs"].items()}
-    expect = {name: {"commit": bound["head"], "modules": {m: man[m] for m in common + [r["driver"]]},
+    def drivers(r):
+        """A run's driver; for the preflight, every driver of the runs it stands in front of."""
+        return sorted({runs["runs"][o]["driver"] for o in r["preflight_of"]}) if "preflight_of" in r else [r["driver"]]
+    expect = {name: {"commit": bound["head"], "modules": {m: man[m] for m in common + drivers(r)},
                      "inputs": inputs} for name, r in runs["runs"].items()}
-    adm = {"schema": "xr-admission/2", "status": "ADMITTED", "head": bound["head"],
+    adm = {"schema": "xr-admission/3", "status": "ADMITTED", "head": bound["head"],
            "authorization": bound["authorization"], "package_commit": args.package_commit,
            "manifest_sha256": args.manifest_sha, "checkout": str(REPO), "outroot": str(outroot),
            "runs_sha256": sha(RUNS), "references_sha256": sha(HERE / "manifest" / "references.json"),
            "setup": setup_record(args.setup, runs["environment"]["nested_setup"]), "expect": expect,
            "kinds": runs["kinds"], "cap_node_h": runs["cap_node_h"],
-           "stop_after_hours": runs["stop_after_hours_from_first_submission"], "grant_date": runs["grant_date"],
+           "stop_after_hours": runs["stop_after_hours_from_first_submission"],
+           "cumulative_since": runs["amendment"]["cumulative_since"],
+           "job_name_prefix": runs["amendment"]["job_name_prefix"], "prior": runs["prior"], "release": runs["release"],
            "drafted_utc": utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")}
     path = outroot / "admission.json"
     with open(str(path), "x") as fh:
@@ -211,8 +227,57 @@ def verify(args):
 
 
 def parse_billing(tres):
-    m = re.search(r"billing=(\d+)", tres or "")
-    return int(m.group(1)) if m else None
+    """The ``billing`` count of a TRES value (``scontrol`` AllocTRES or ``sacct`` AllocTRES).
+
+    None for an absent, empty or ``(null)`` value, an item that is not ``key=value``, or a billing
+    that is missing, repeated or not a whole number. The callers refuse on None."""
+    if not tres or tres == "(null)":
+        return None
+    pairs = [item.split("=", 1) for item in tres.split(",")]
+    if any(len(kv) != 2 or not kv[0] or not kv[1] for kv in pairs):
+        return None
+    vals = [v for k, v in pairs if k == "billing"]
+    if len(vals) != 1 or not re.fullmatch(r"[0-9]+", vals[0]):
+        return None
+    return int(vals[0])
+
+
+def scontrol_field(text, key):
+    """The value of ``key`` in one ``scontrol show job <id> -o`` line, which must hold it exactly once.
+
+    The line is ``Key=Value`` tokens, but ``Command=``, ``SubmitLine=`` and ``Comment=`` carry free
+    text (the sbatch argv, spaces included) after the scheduler's own fields, so splitting the
+    whole line into a dict lets a later token stand in for a field. A key that is absent or appears
+    twice refuses. Perlmutter prints ``ReqTRES=`` and ``AllocTRES=``, never ``TRES=``
+    (``tests/scheduler/``)."""
+    hits = re.findall(r"(?:^|\s){}=(\S*)".format(re.escape(key)), text)
+    if len(hits) != 1:
+        raise Refusal("scontrol field {} appears {} times".format(key, len(hits)))
+    return hits[0]
+
+
+def check_allocation(text, kind, job_id):
+    """Refuse an allocation outside the kind's caps; billing is the allocation actually granted."""
+    vals, errors = {}, []
+    for key in ("JobId", "QOS", "NumCPUs", "TimeLimit", "AllocTRES"):
+        try:
+            vals[key] = scontrol_field(text, key)
+        except Refusal as exc:
+            errors.append(str(exc))
+    if errors:
+        raise Refusal("unreadable allocation: {}".format("; ".join(errors)))
+    billing = parse_billing(vals["AllocTRES"])
+    try:
+        limit = seconds(vals["TimeLimit"])
+    except ValueError:
+        limit = None
+    checks = {"JobId": vals["JobId"] == str(job_id), "QOS": vals["QOS"] == kind["qos"],
+              "NumCPUs": vals["NumCPUs"] == str(kind["cpus_per_task"]),
+              "billing": billing is not None and billing <= kind["billing_max"],
+              "TimeLimit": limit is not None and limit <= kind["time_limit_s_max"]}
+    if not all(checks.values()):
+        raise Refusal("allocation outside the frozen caps: {} ({})".format(checks, vals))
+    return dict(vals, billing=billing)
 
 
 def seconds(limit):
@@ -232,21 +297,23 @@ def kind_of(run_name):
 
 
 def jobcheck(args):
-    """Refuse a job whose actual allocation exceeds its kind's frozen caps; print its thread count."""
+    """Refuse a job whose actual allocation exceeds its kind's frozen caps; print its thread count.
+
+    With ``--record`` the raw ``scontrol`` line is first written there (created exclusively), so a
+    refused allocation is still on record."""
     kind_name, runs = kind_of(args.run)
     kind = runs["kinds"][kind_name]
     job = os.environ.get("SLURM_JOB_ID")
     if not job:
         raise Refusal("not inside a Slurm job")
     text = run(["scontrol", "show", "job", job, "-o"])
-    f = dict(t.split("=", 1) for t in text.split() if "=" in t)
-    billing = parse_billing(f.get("TRES", ""))
-    checks = {"QOS": f.get("QOS") == kind["qos"], "NumCPUs": f.get("NumCPUs") == str(kind["cpus_per_task"]),
-              "billing": billing is not None and billing <= kind["billing_max"],
-              "TimeLimit": seconds(f.get("TimeLimit", "99-00:00:00")) <= kind["time_limit_s_max"]}
-    if not all(checks.values()):
-        raise Refusal("allocation outside the frozen caps for {}: {} (QOS={} NumCPUs={} TRES={} TimeLimit={})".format(
-            kind_name, checks, f.get("QOS"), f.get("NumCPUs"), f.get("TRES"), f.get("TimeLimit")))
+    if args.record:
+        with open(args.record, "x") as fh:
+            fh.write(text)
+    try:
+        check_allocation(text, kind, job)
+    except Refusal as exc:
+        raise Refusal("{} ({})".format(exc, kind_name)) from None
     print(kind["omp_threads"])
     return 0
 
@@ -256,20 +323,36 @@ def submissions(outroot):
     return [json.loads(l) for l in p.read_text().splitlines() if l.strip()] if p.exists() else []
 
 
-def sacct_jobs(psv):
-    """``JobID|JobName|State`` rows (header optional) of every ``xr_*`` job, steps excluded."""
+def sacct_jobs(psv, prefix):
+    """``JobID|JobName|State`` rows (header optional) of the jobs named ``<prefix>_<RUN>_a<N>``, steps excluded."""
     out = []
+    pat = re.compile(r"{}_([A-Za-z0-9]+)_a(\d+)".format(re.escape(prefix)))
     for line in Path(psv).read_text().splitlines():
         parts = line.split("|")
         if len(parts) < 3 or parts[0] == "JobID" or "." in parts[0]:
             continue
-        if re.fullmatch(r"xr_[A-Za-z0-9]+_a\d+", parts[1]):
-            out.append({"job_id": parts[0], "name": parts[1], "state": parts[2].split()[0] if parts[2] else ""})
+        m = pat.fullmatch(parts[1])
+        if m:
+            out.append({"job_id": parts[0], "name": parts[1], "run": m.group(1),
+                        "state": parts[2].split()[0] if parts[2] else ""})
     return out
 
 
+def check_prior(runs, psv):
+    """The prior grant's jobs must all be listed, and no other job with its name prefix."""
+    prior = runs["prior"]
+    seen = {j["job_id"]: j for j in sacct_jobs(psv, prior["job_name_prefix"])}
+    missing = sorted(set(prior["jobs"]) - set(seen))
+    extra = sorted(set(seen) - set(prior["jobs"]))
+    if missing or extra:
+        raise Refusal("sacct does not show exactly the prior grant's jobs: missing {} unexpected {}".format(missing, extra))
+    wrong = sorted(j for j, r in prior["jobs"].items() if seen[j]["run"] != r)
+    if wrong:
+        raise Refusal("prior jobs {} carry another run name than recorded".format(wrong))
+
+
 def attempts_by_kind(adm, runs, psv):
-    """Attempts per kind over the grant: the largest of three independent records."""
+    """This amendment's attempts per kind: the largest of three independent records."""
     dirs = {k: 0 for k in runs["kinds"]}
     subs = {k: 0 for k in runs["kinds"]}
     sac = {k: 0 for k in runs["kinds"]}
@@ -277,30 +360,86 @@ def attempts_by_kind(adm, runs, psv):
         dirs[spec["kind"]] += len(list(Path(adm["outroot"], r).glob("a*")))
     for s in submissions(adm["outroot"]):
         subs[s["kind"]] += 1
-    for j in sacct_jobs(psv):
-        r = j["name"][3:].rsplit("_a", 1)[0]
-        if r in runs["runs"]:
-            sac[runs["runs"][r]["kind"]] += 1
+    for j in sacct_jobs(psv, runs["amendment"]["job_name_prefix"]):
+        if j["run"] in runs["runs"]:
+            sac[runs["runs"][j["run"]]["kind"]] += 1
     return {k: max(dirs[k], subs[k], sac[k]) for k in runs["kinds"]}, {"dirs": dirs, "submissions": subs, "sacct": sac}
 
 
+def admission_matches(adm, rec):
+    adm_path = Path(adm["outroot"]) / "admission.json"
+    a = rec.get("admission") or {}
+    return a.get("sha256") == sha(adm_path) and Path(a.get("path", "")) == adm_path.resolve()
+
+
+def preflight_passed(adm, runs):
+    """A preflight receipt of this admission, passed, with no fit."""
+    pf = runs["release"]["preflight"]
+    for d in sorted(Path(adm["outroot"], pf).glob("a*")):
+        p = d / "preflight-receipt.json"
+        if p.is_file() and p.stat().st_size:
+            r = json.loads(p.read_text())
+            if (r.get("schema") == "xr-preflight-receipt/1" and r.get("status") == "preflight-pass"
+                    and r.get("run") == pf and r.get("fits") == [] and admission_matches(adm, r)):
+                return True
+    return False
+
+
+def comparable(adm, run_name):
+    """The run's newest complete receipt: this admission, strict provenance, output at its digest."""
+    best = None
+    for d in sorted(Path(adm["outroot"], run_name).glob("a*"),
+                    key=lambda d: int(d.name[1:]) if d.name[1:].isdigit() else -1):
+        p = d / "receipt.json"
+        if p.is_file() and p.stat().st_size:
+            r = json.loads(p.read_text())
+            if r.get("status") == "complete":
+                best = r
+    if best is None or best.get("schema") != "xr-receipt/2" or best.get("run") != run_name:
+        return False
+    out = (best.get("output") or {}).get("path")
+    return (admission_matches(adm, best) and (best.get("identity") or {}).get("strict") is True
+            and bool(out) and Path(out).is_file() and sha(out) == best["output"].get("sha256"))
+
+
+def planned_ceiling(adm, runs, extra):
+    """Prior charge plus the ceiling of every submitted attempt of this amendment, plus ``extra``."""
+    return runs["prior"]["charged_node_h_recorded"] + extra + sum(
+        runs["kinds"][s["kind"]]["ceiling_node_h_per_attempt"] for s in submissions(adm["outroot"]))
+
+
 def next_attempt(args):
-    """Refuse a submission over a kind's total, a rerun of a completed run, or one past the stop."""
+    """Refuse a submission over a kind's cap, out of release order, over the cumulative ceiling,
+    a rerun of a completed run, or one that could run past the stop."""
     adm = json.loads(Path(args.admission).read_text())
     kind_name, runs = kind_of(args.run)
+    kind = runs["kinds"][kind_name]
+    check_prior(runs, args.sacct)
     total, parts = attempts_by_kind(adm, runs, args.sacct)
-    cap = runs["kinds"][kind_name]["max_attempts_total"]
+    if kind_name == "preflight" and preflight_passed(adm, runs):
+        raise Refusal("the preflight has already passed; no rerun")
+    cap = kind["max_attempts_total"]
     if total[kind_name] + 1 > cap:
-        raise Refusal("{} {} attempts already used of {} over the grant ({})".format(total[kind_name], kind_name, cap, parts))
+        raise Refusal("{} {} attempts already used of {} in this amendment ({})".format(total[kind_name], kind_name, cap, parts))
     for d in sorted(Path(adm["outroot"], args.run).glob("a*")):
         rec = d / "receipt.json"
         if rec.is_file() and rec.stat().st_size and json.loads(rec.read_text()).get("status") == "complete":
             raise Refusal("{} already has a complete attempt ({}); no rerun".format(args.run, d.name))
+    release = runs["release"]
+    if kind_name == "preflight":
+        pass
+    elif not preflight_passed(adm, runs):
+        raise Refusal("no passed preflight for this admission: {} is not released".format(args.run))
+    elif args.run != release["first"] and not comparable(adm, release["first"]):
+        raise Refusal("{} has no complete, comparable receipt: {} is not released".format(release["first"], args.run))
+    planned = planned_ceiling(adm, runs, kind["ceiling_node_h_per_attempt"])
+    if planned > runs["cap_node_h"]:
+        raise Refusal("planned cumulative ceiling {:.6f} node-h > {}".format(planned, runs["cap_node_h"]))
     now = parse_utc(args.now) if args.now else utcnow()
     subs = submissions(adm["outroot"])
     first = min((parse_utc(s["submitted_utc"]) for s in subs), default=now)
     stop = first + datetime.timedelta(hours=adm["stop_after_hours"])
-    limit = datetime.timedelta(seconds=runs["kinds"][kind_name]["time_limit_s_max"])
+    limit = datetime.timedelta(seconds=kind["time_limit_s_max"])
     if now > stop:
         raise Refusal("past the stop: {} hours after the first submission {}".format(adm["stop_after_hours"], first))
     if now + limit > stop:
@@ -312,8 +451,15 @@ def next_attempt(args):
     return 0
 
 
+def charge(row):
+    billing = parse_billing(row.get("AllocTRES")) if row else None
+    elapsed = int(row["ElapsedRaw"]) if row and row.get("ElapsedRaw") else 0
+    return (billing or 0) / 256 * elapsed / 3600, billing, elapsed
+
+
 def ledger(args):
-    """Charged node-h of every XR job, plus the ceilings of unfinished ones; attempts; the stop."""
+    """Cumulative charged node-h (the prior grant's jobs and this amendment's), plus the ceilings of
+    unfinished jobs; this amendment's attempts; the stop."""
     adm = json.loads(Path(args.admission).read_text())
     runs = load_runs()
     rows = {}
@@ -323,29 +469,51 @@ def ledger(args):
         r = dict(zip(head, line.split("|")))
         if "." not in r["JobID"]:
             rows[r["JobID"]] = r
-    charged, pending, report, flagged = 0.0, 0.0, [], []
+    over, report = [], []
+    prior = runs["prior"]
+    prior_charged = 0.0
+    for jid, run_name in sorted(prior["jobs"].items()):
+        r = rows.get(jid)
+        if r is None:
+            over.append("prior job {} ({}) is not in sacct".format(jid, run_name))
+            continue
+        c, billing, elapsed = charge(r)
+        prior_charged += c
+        report.append("prior {} job {} {} billing={} elapsed={}s charged={:.10f}".format(
+            run_name, jid, r["State"].split()[0], billing, elapsed, c))
+    if abs(prior_charged - prior["charged_node_h_recorded"]) > 1e-12:
+        over.append("prior charge {:.13f} differs from the recorded {}".format(prior_charged, prior["charged_node_h_recorded"]))
+    pre = re.compile(r"{}_[A-Za-z0-9]+_a\d+".format(re.escape(prior["job_name_prefix"])))
+    for jid, r in rows.items():
+        if pre.fullmatch(r.get("JobName", "")) and jid not in prior["jobs"]:
+            over.append("job {} {} carries the prior prefix but is not a prior job".format(jid, r["JobName"]))
+    charged, pending, flagged = 0.0, 0.0, []
     subs = submissions(adm["outroot"])
+    known = {str(s["job_id"]) for s in subs}
+    new = re.compile(r"{}_[A-Za-z0-9]+_a\d+".format(re.escape(runs["amendment"]["job_name_prefix"])))
+    for jid, r in rows.items():
+        if new.fullmatch(r.get("JobName", "")) and jid not in known:
+            flagged.append("job {} {} is not in the submissions record".format(jid, r["JobName"]))
     for s in subs:
         kind = adm["kinds"][s["kind"]]
         r = rows.get(str(s["job_id"]))
         state = r["State"].split()[0] if r else "UNKNOWN"
-        billing = parse_billing(r.get("AllocTRES")) if r else None
-        elapsed = int(r["ElapsedRaw"]) if r and r.get("ElapsedRaw") else 0
-        c = (billing or 0) / 256 * elapsed / 3600
+        c, billing, elapsed = charge(r)
         charged += c
         if state not in FINISHED:
             pending += kind["ceiling_node_h_per_attempt"]
         if billing is not None and billing > kind["billing_max"]:
             flagged.append("{} billing {} > {}".format(s["job_id"], billing, kind["billing_max"]))
-        report.append("{} a{} job {} {} billing={} elapsed={}s charged={:.4f}".format(
+        report.append("{} a{} job {} {} billing={} elapsed={}s charged={:.10f}".format(
             s["run"], s["attempt"], s["job_id"], state, billing, elapsed, c))
     counts = {k: sum(1 for s in subs if s["kind"] == k) for k in runs["kinds"]}
-    over = list(flagged)
+    over += flagged
     for k, n in counts.items():
         if n > runs["kinds"][k]["max_attempts_total"]:
             over.append("{} {} attempts > {}".format(n, k, runs["kinds"][k]["max_attempts_total"]))
-    if charged + pending > adm["cap_node_h"]:
-        over.append("charged {:.4f} + unfinished ceilings {:.4f} > {}".format(charged, pending, adm["cap_node_h"]))
+    cumulative = prior_charged + charged
+    if cumulative + pending > adm["cap_node_h"]:
+        over.append("cumulative charged {:.6f} + unfinished ceilings {:.6f} > {}".format(cumulative, pending, adm["cap_node_h"]))
     hours = None
     if subs:
         first = min(parse_utc(s["submitted_utc"]) for s in subs)
@@ -353,8 +521,10 @@ def ledger(args):
         hours = (now - first).total_seconds() / 3600
         if hours > adm["stop_after_hours"] and pending:
             over.append("{:.1f} h after the first submission with unfinished jobs: cancel them".format(hours))
-    out = {"charged_node_h": charged, "unfinished_ceiling_node_h": pending, "attempts": counts,
-           "hours_since_first_submission": hours, "jobs": report, "over": over}
+    out = {"prior_charged_node_h": prior_charged, "amendment_charged_node_h": charged,
+           "cumulative_charged_node_h": cumulative, "unfinished_ceiling_node_h": pending,
+           "cap_node_h": adm["cap_node_h"], "attempts": counts, "hours_since_first_submission": hours,
+           "jobs": report, "over": over}
     print(json.dumps(out, indent=1))
     return OVER if over else 0
 
@@ -380,6 +550,8 @@ def main(argv=None):
         if name == "next-attempt":
             p.add_argument("--sacct", required=True)
             p.add_argument("--now")
+        else:
+            p.add_argument("--record")
     led = sub.add_parser("ledger")
     led.add_argument("--admission", required=True)
     led.add_argument("--sacct", required=True)

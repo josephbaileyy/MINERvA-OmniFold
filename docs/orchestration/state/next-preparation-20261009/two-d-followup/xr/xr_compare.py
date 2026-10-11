@@ -4,8 +4,9 @@
     xr_compare.py --outroot OUTROOT --out RESULT.json [--refs-dir DIR]
 
 For each comparison in ``manifest/runs.json`` (and its negative control) it uses the newest
-complete attempt of the new run (its receipt must be ``complete``, name that run, cite the
-outroot's own ``admission.json`` by path and sha256, and its output digest must match the receipt)
+complete attempt of the new run (its receipt must be ``complete``, a run receipt
+``xr-receipt/2`` and never a preflight receipt, name that run, cite the outroot's own
+``admission.json`` by path and sha256, and its output digest must match the receipt)
 and the reference: a frozen product from ``manifest/references.json`` (its sha256 must
 match) or another XR run's output. ``--refs-dir`` replaces the reference products' directory
 (tests only); the digests are still enforced.
@@ -63,6 +64,8 @@ def newest_complete(outroot, run):
     if best is None:
         return None, f"no complete attempt of {run}"
     r, d = best
+    if r.get("schema") != "xr-receipt/2" or r.get("kind") == "preflight":
+        return None, f"{run}: the receipt is not a run receipt (schema {r.get('schema')!r}, kind {r.get('kind')!r})"
     if r.get("run") != run or r.get("admission", {}).get("sha256") != adm_sha \
             or Path(r.get("admission", {}).get("path", "")) != adm_path.resolve():
         return None, f"{run}: the receipt names another run or admission than {adm_path}"

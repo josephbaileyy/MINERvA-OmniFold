@@ -3,6 +3,12 @@
 
     xr_run.py --run X0 --attempt 1 --admission ADMISSION.json [--require-provenance]
 
+``--run PF`` is the preflight (kind ``preflight``): every step below up to the first fit, for the
+helper and the drivers of all five runs, then ``preflight-receipt.json`` (schema
+``xr-preflight-receipt/1``, status ``preflight-pass`` or ``preflight-fail``) and exit. It never
+calls a driver's ``main``, writes no histogram and no ``receipt.json``, and any GBDT ``fit`` during
+it is refused. It is not a result and cannot satisfy a comparison.
+
 The run's driver, argv template, inputs, backend and seeds come only from ``manifest/runs.json``
 (bound by the admission); nothing on the command line can change them. In order, before any input
 is read:
@@ -103,19 +109,29 @@ def check_out_path(path, repo, refs, extra_forbidden=()):
     return real
 
 
-def load_code(run, expect):
+def run_drivers(run, runs):
+    """(driver, digest) of the run; for the preflight, of every run it stands in front of."""
+    if "preflight_of" in run:
+        return sorted({runs["runs"][o]["driver"]: runs["runs"][o]["driver_digest"] for o in run["preflight_of"]}.items())
+    return [(run["driver"], run["driver_digest"])]
+
+
+def load_code(run, expect, runs):
     records = [gx.file_record(__file__, _SELF_BYTES, REPO),
                gx.bootstrap_record(sys.modules["n2"], REPO), gx.bootstrap_record(gx, REPO)]
     helper, rec = gx.load_verified("omnifold", REPO / HELPER_REL, REPO, expect["modules"].get(HELPER_REL))
     if rec["sha256"] != HELPER_SHA256:
         raise gx.ProvenanceRefusal(f"{HELPER_REL} has sha256 {rec['sha256']}; XR pins {HELPER_SHA256}")
     records.append(rec)
-    name = "xr_driver_" + Path(run["driver"]).name.split(".")[0]
-    driver, rec = gx.load_verified(name, REPO / run["driver"], REPO, expect["modules"].get(run["driver"]))
-    if rec["sha256"] != run["driver_digest"]:
-        raise gx.ProvenanceRefusal(f"{run['driver']} has sha256 {rec['sha256']}; the run pins {run['driver_digest']}")
-    records.append(rec)
-    return helper, driver, records
+    drivers = []
+    for rel, digest in run_drivers(run, runs):
+        name = "xr_driver_" + Path(rel).name.split(".")[0]
+        driver, rec = gx.load_verified(name, REPO / rel, REPO, expect["modules"].get(rel))
+        if rec["sha256"] != digest:
+            raise gx.ProvenanceRefusal(f"{rel} has sha256 {rec['sha256']}; the run pins {digest}")
+        records.append(rec)
+        drivers.append(driver)
+    return helper, drivers, records
 
 
 def check_environment(want):
@@ -192,9 +208,10 @@ class FitRecorder:
     """Wrap ``fit`` of the four GBDT classes; refuse an unexpected class or seed before training."""
 
     def __init__(self, backend):
-        self.backend = backend
+        """``backend`` None (the preflight): every fit of the four classes is refused."""
+        self.backend = backend or {"estimator": "none (preflight)"}
         self.fits = []
-        self.want = dict(zip(GBDT[backend["estimator"]], ("classifier", "regressor")))
+        self.want = dict(zip(GBDT[backend["estimator"]], ("classifier", "regressor"))) if backend else {}
 
     def expected_seed(self, cls_name, n_classifier_fits):
         rs = self.backend["random_state"]
@@ -257,6 +274,52 @@ def read_output(path, refs):
     return {"params": params, "n_reported": len(cells), "runConfig": run_config}
 
 
+def preflight(a, adm, runs, kind, identity, inputs, env, receipt_path, rundir, t0):
+    """Everything a run does before its first fit, then a preflight receipt; no driver ``main``."""
+    receipt = {"schema": "xr-preflight-receipt/1", "run": a.run, "attempt": a.attempt, "kind": "preflight",
+               "not_a_result": "preflight only: no fit, no histogram; it cannot satisfy any comparison",
+               "admission": {"path": str(Path(a.admission).resolve()), "sha256": sha256_file(a.admission)},
+               "preflight_of": runs["runs"][a.run]["preflight_of"], "started_utc": utc(), "status": "running",
+               "identity": identity, "inputs_start": inputs, "environment": env}
+    alloc = rundir / "scontrol-job.txt"
+    if alloc.is_file():
+        receipt["allocation_record"] = {"path": str(alloc), "sha256": sha256_file(alloc), "line": alloc.read_text()}
+
+    def write(**upd):
+        receipt.update(upd)
+        tmp = receipt_path.with_name(receipt_path.name + ".tmp")
+        tmp.write_text(json.dumps(receipt, indent=1, sort_keys=True, default=str) + "\n")
+        os.replace(tmp, receipt_path)
+
+    write()
+    rec = FitRecorder(None)
+    status, code, error = "preflight-pass", 0, None
+    try:
+        receipt["environment_checked"] = check_environment(runs["environment"])
+        receipt["cpu_count"] = seed_loky_cache()
+        rec.install()
+        omp = os.environ.get("OMP_NUM_THREADS")
+        receipt["threads"] = {"OMP_NUM_THREADS": omp, "kind_omp_threads": kind["omp_threads"]}
+        if omp != str(kind["omp_threads"]):
+            raise BackendRefusal(f"OMP_NUM_THREADS={omp!r}; the preflight kind sets {kind['omp_threads']}")
+        receipt["identity"] = gx.recheck(REPO, identity)
+        for key, spec in runs["inputs"].items():
+            st = stat_record(spec["path"])
+            if any(st[k] != inputs[key][k] for k in ("size", "mtime_ns", "ino")):
+                raise gx.ProvenanceRefusal(f"input {key} changed during the preflight")
+        if rec.fits:
+            raise BackendRefusal(f"{len(rec.fits)} fits during the preflight")
+    except BackendRefusal as exc:
+        status, code, error = "preflight-fail", EXIT_BACKEND, str(exc)
+    except gx.ProvenanceRefusal as exc:
+        status, code, error = "preflight-fail", gx.REFUSAL_EXIT, str(exc)
+    except BaseException as exc:  # noqa: BLE001 - recorded, then reported by exit status
+        status, code, error = "preflight-fail", 1, f"{type(exc).__name__}: {exc}"
+    write(status=status, error=error, exit_code=code, fits=rec.fits, ended_utc=utc(), wall_s=time.perf_counter() - t0)
+    print(f"[XR] {status}" + (f": {error}" if error else ""), file=sys.stderr)
+    return code
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--run", required=True)
@@ -286,7 +349,8 @@ def main(argv=None):
             raise gx.ProvenanceRefusal(f"attempt {a.attempt} outside 1..{kind['max_attempts_total']}")
         expect = gx.load_expectations(None)
         expect.update(adm["expect"][a.run])
-        helper, driver, records = load_code(run, expect)
+        helper, drivers, records = load_code(run, expect, runs)
+        driver = drivers[0]
         identity = gx.finalize(REPO, records, expect, a.require_provenance)
         if Path.cwd().resolve() != REPO / "2d-unfolding":
             raise gx.ProvenanceRefusal(f"working directory is {Path.cwd()}, not {REPO / '2d-unfolding'}")
@@ -294,10 +358,15 @@ def main(argv=None):
         rundir = check_out_path(os.path.join(adm["outroot"], a.run, f"a{a.attempt}"), REPO, refs, forbid)
         if not rundir.is_dir():
             raise gx.ProvenanceRefusal(f"run directory {rundir} does not exist (the submit script creates it)")
-        out = check_out_path(str(rundir / f"XR-{a.run}.root"), REPO, refs, forbid)
-        receipt_path = check_out_path(str(rundir / "receipt.json"), REPO, refs, forbid)
-        gx.reserve_output(str(receipt_path))
-        gx.reserve_output(str(out))
+        if run["kind"] == "preflight":
+            out = None
+            receipt_path = check_out_path(str(rundir / "preflight-receipt.json"), REPO, refs, forbid)
+            gx.reserve_output(str(receipt_path))
+        else:
+            out = check_out_path(str(rundir / f"XR-{a.run}.root"), REPO, refs, forbid)
+            receipt_path = check_out_path(str(rundir / "receipt.json"), REPO, refs, forbid)
+            gx.reserve_output(str(receipt_path))
+            gx.reserve_output(str(out))
         inputs = {}
         for key, spec in runs["inputs"].items():
             if expect["inputs"].get(key) != spec["sha256"]:
@@ -311,13 +380,15 @@ def main(argv=None):
         print(f"[REFUSED] {exc}", file=sys.stderr)
         return gx.REFUSAL_EXIT
 
-    subst = {"omnifile": runs["inputs"]["omnifile"]["path"], "mcfile": runs["inputs"]["mcfile"]["path"], "out": str(out)}
-    driver_argv = [tok.format(**subst) for tok in run["argv"]]
     env = gx.environment_record()
     env.update(slurm={k: os.environ.get(k) for k in ("SLURM_JOB_ID", "SLURM_JOB_QOS", "SLURM_CPUS_PER_TASK",
                                                       "SLURM_MEM_PER_NODE", "SLURMD_NODENAME")},
                cwd=str(Path.cwd()), uname=list(os.uname()),
                affinity_cpus=len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None)
+    if run["kind"] == "preflight":
+        return preflight(a, adm, runs, kind, identity, inputs, env, receipt_path, rundir, t0)
+    subst = {"omnifile": runs["inputs"]["omnifile"]["path"], "mcfile": runs["inputs"]["mcfile"]["path"], "out": str(out)}
+    driver_argv = [tok.format(**subst) for tok in run["argv"]]
     receipt = {"schema": "xr-receipt/2", "run": a.run, "attempt": a.attempt, "kind": run["kind"],
                "admission": {"path": str(Path(a.admission).resolve()), "sha256": sha256_file(a.admission)},
                "driver": run["driver"], "driver_argv": driver_argv, "backend_expected": run["backend"],
