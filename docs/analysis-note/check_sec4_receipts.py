@@ -48,7 +48,8 @@ def stat_median():
 
 
 def total_median():
-    return receipt("ki84-adopt-20261006/recompute_2d_budget.json")["VL170"]["block_sum"]["median_pct"]
+    # VL175 (adopted 2026-10-12): the flux-constraint + MINOS-denominator repair of the VL172 construction
+    return receipt("2d-closeout/c04-repair/products/budget.json")["repaired"]["block_sum"]["median_pct"]
 
 
 def rescore(key):
@@ -101,7 +102,7 @@ def half_of_cells():  # VL154 A4: cells whose model dependence is within the ado
 
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
-    ("total median uncertainty (VL172)", "values.tex", r"\\newcommand\{\\uqMedian\}\{([0-9.]+)\}", total_median, "round"),
+    ("total median uncertainty (VL175)", "values.tex", r"\\newcommand\{\\uqMedian\}\{([0-9.]+)\}", total_median, "round"),
     ("closure toys (VL169)", "values.tex", r"\\newcommand\{\\covTwoDNtoy\}\{([0-9.]+)\}", lambda: interim("n_toys"), "round"),
     ("first-built band, within 2 sigma (VL169)", "values.tex", r"\\newcommand\{\\covTwoDCTwoPctOne\}\{([0-9.]+)\}",
      lambda: 100.0 * interim("C2"), "round"),

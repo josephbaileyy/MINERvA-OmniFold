@@ -255,7 +255,12 @@ estimates.
 The standalone covariance combines systematic-universe, statistical, and
 training-seed blocks, all built with the central value's LightGBM estimator.
 Its median relative uncertainty is \SI{\uqMedian}{\percent}, compared with
-\SI{\uqPaper}{\percent} for the publication.  The blocks use different training
+\SI{\uqPaper}{\percent} for the publication.  The flux block applies the
+per-universe neutrino--electron-scattering and inverse-muon-decay constraint
+weights of the MINERvA analysis toolkit; an earlier version omitted them and
+quoted \SI{6.87}{\percent}.  The published flux block (\SI{4.01}{\percent}
+median) is larger than ours (\SI{\fluxBand}{\percent}), for a reason the
+release does not establish.  The blocks use different training
 seeds: the systematic block that of the central value, the statistical block
 another, and the training-seed block ten.  The central value differs from the
 statistical block's own central value by a per-bin median of 0.30 of that
@@ -269,7 +274,7 @@ standardized residuals fell within two standard deviations, against
 \SI{95.4}{\percent} nominal.  The main cause, a completeness division that the
 bootstrap replicas carried and the central value does not, was removed.  The
 rebuilt band, now the quoted one, has a median statistical uncertainty of
-\SI{0.674}{\percent} and leaves the total median at \SI{\uqMedian}{\percent}.
+\SI{0.674}{\percent}.
 Rescoring the same pseudo-experiments against it, which is post hoc and partly
 circular, removes the tail undercoverage: \SI{97.7}{\percent} fall within two
 standard deviations and \SI{78.1}{\percent} within one, so the rebuilt band is
@@ -279,8 +284,8 @@ simulation-side fluctuation shares the band's resampling mechanism).  It has
 not been independently re-tested.  An assessment of the saved products also
 finds construction defects, among them a truth-input mismatch between the
 adopted systematic sweep and its reference and unpropagated
-background-template statistics~\cite{TwoDFollowup2026}; the printed budget has
-not been revised for them, and their effect is unmeasured.  Validated total
+background-template statistics~\cite{TwoDFollowup2026}; the printed budget
+includes the flux-constraint repair but not these, whose effect is unmeasured.  Validated total
 intervals over the full reporting domain require new inputs and construction
 repairs~\cite{AnalysisNote2026}.
 % Source: docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md;

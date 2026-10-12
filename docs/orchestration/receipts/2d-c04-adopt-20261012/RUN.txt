@@ -1,0 +1,20 @@
+# Fig. 1 regeneration with VL175 (2026-10-12)
+matplotlib 3.11.2, numpy 2.5.4
+inputs:
+72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8  /private/tmp/minerva-theory-sources/fig_arrays.npz
+2ecfc243ab4a6c508a69df0e231676019106f3ad86f34e3ac3423f7bd2bca9ce  docs/orchestration/state/next-preparation-20261009/two-d-path/operands/remote_reduce.json
+c2606f9095c61e3b0d56bbb72d4c6948b5662461da51563858ce3c8ae18824f8  docs/orchestration/state/2d-closeout/c04-repair/products/cov2d_blocks_205.npz
+4e48f6392c9e84a5ad2f9b32bf01ac854f5b63ce2003d3b366a1956b8ee80ef8  docs/orchestration/state/2d-closeout/c04-repair/products/sigma_abs_205_repaired.json
+9c4dbf24d5e19161034fbdf6f84834f578fbde3a1b879961ef7c25a739301c7c  publication/release/figs/make_figs.py
+0140abc28eeb6d9f025abbd9253227de132f60ca28e31edc16f38beec63ef61e  docs/orchestration/receipts/2d-c04-adopt-20261012/make_fig1_vl175.py
+
+$ python -I make_fig1_vl175.py --npz fig_arrays.npz --reduce remote_reduce.json --make-figs publication/release/figs/make_figs.py --values docs/analysis-note/values.tex --tmp <tmp> --outdir <out> --cov c04-repair/products/cov2d_blocks_205.npz --sigma c04-repair/products/sigma_abs_205_repaired.json
+wrote ['fig1_validation.pdf', 'fig2_joint_localization.pdf', 'fig3_generator_context.pdf']
+(exit status not captured: the command was piped through grep; the output digest below equals the committed figure)
+output:
+49766e26a9632911f2b5995fb3a3da5577bdd9268d0c77c5dd9b2ec77768578e  f1r/fig1_validation.pdf
+committed figure:
+49766e26a9632911f2b5995fb3a3da5577bdd9268d0c77c5dd9b2ec77768578e  docs/analysis-note/figures/paper_fig1_validation.pdf
+
+negative control: the VL172-bound script on the repaired export must refuse
+AssertionError: total covariance cell order

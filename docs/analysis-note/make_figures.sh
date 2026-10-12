@@ -47,6 +47,10 @@ echo "== 2D uncertainty =="
 # products stay at their sha-pinned paths. --paper-root and --include-ml always are the flags the note's
 # figure was drawn with (it shows the published total and ML); this line had dropped them.
 UFLX="$REPO/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170"
+# 2026-10-12: the quoted Fig. 6/7 is VL175 (adopted; flux constraint weights + MINOS denominator), drawn with E_U by
+# docs/orchestration/state/2d-closeout/c04-repair/scripts/run_repair.sh (the repaired universe root lives in the
+# c04-repair namespace, /pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/). The VL172 recipe line below
+# is kept for the adopted-unrepaired control.
 run universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/MEFHC_fig6_7_uncertainty_pt.png  2d-unfolding/uq  python plot_uncertainty_fig6_7_style.py --universe-root "$UFLX/uq_universe_covariance_full_matcorr_fluxfix.root" --bootstrap-root "$REPO/2d-unfolding/uq/bootstrap_MEFHC_300_vl170/uq_covariance_boot300.root" --paper-root "$REPO/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root" --include-ml always --out-prefix "$UFLX/MEFHC_fig6_7_uncertainty"
 run nn_vs_gbdt_full.png  nd-unfolding  python plot_nn_vs_gbdt_full.py --gbdt res_lgbm_3d.npz --nn res_nn_3d.npz --out nn_vs_gbdt_full.png
 # bootstrap corr/spread: per-replica files were cleaned up; plot from the saved 300-replica product
