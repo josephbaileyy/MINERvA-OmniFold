@@ -138,13 +138,44 @@ Source: `results/repair/va_convention_checks.json`, from `tests/check_va_convent
 - The old data-driven rule happened to select this same sign (−1 on the raw term, recorded in all
   four committed integrator JSONs), so no committed number changes.
 
-**What it does not establish:** the authors never state that the tabulated W12 is Im W^{12}. Following
+**What it does not establish:** the authors never state that the tabulated W12 is Im W^{12}. Support
+found by the review:
+- the authors' 2004 paper defines W₃ = −i W^{xy}/|q| with the same ε₀₁₂₃ = +1, and gives the
+  −W₃(E+E′) sin²(θ/2) cross-section term (Nieves, Amaro and Valverde, PRC 70, 055503, TeX lines
+  279–312; checked by the owner). NuWro's expression is that formula with w3 = W12/|q|, so C6 is in
+  effect a check against the authors' own formula, given W12 = Im W^{xy};
+- GENIE independently reads the authors' 2015 tables' fourth column as `ImWxy`.
+
+Neither is an author definition of the table column. Following
 the frozen status rule, B1 and B2 are now **UNVALIDATED (table W12 encoding not author-confirmed)**.
 - Their deviations are unchanged: −5.5% and +16.3%.
 - The superseded grades are kept in `results/benchmarks.json`.
 - B3 and B4 compare two implementations with the same reading (C6), so they stand.
-- The flux-fold and convention-sensitivity outputs were not rerun. Their sign was the same −1, and C7
-  shows the fixed code reproduces the integrator to machine precision.
+- The flux-fold and convention-sensitivity outputs were not rerun by the owner. Those scripts
+  discarded the selected sign without recording it. The reviewer then measured the 36-point flux fold
+  (`results/integrator-C12-nu-fluxfold.json`, n_sub = 4):
+  - the fixed code reproduces every committed σ(E) to within 4.4×10⁻¹⁶;
+  - the interference is positive at all 36 energies (150 MeV–100 GeV), so the old rule selected −1
+    there too (`results/repair/review/va_extra.json`).
+
+  The 72-point n_sub = 8 fold and the B = 0 / 27.41 MeV sensitivity runs remain unverified. The same
+  sign is expected.
+
+**Free-nucleon check (the reviewer's, not frozen).** For n → p, a nucleon at rest and a pure V−A trace,
+with no table involved:
+- Im W¹² = −M|q| < 0;
+- the code's contraction equals the full trace contraction;
+- σ_ν > σ_ν̄ at three kinematic points.
+
+So the fixed convention gives constructive neutrino interference from first principles.
+
+**Isospin assumption.** `sec:anti` also says the W⁻N → N′π amplitudes are to be used for ν̄. The tables,
+like NuWro, reuse one tensor for both beams, an isospin assumption for N = Z nuclei that the authors do
+not state. It is now named in the module docstring.
+
+**C5's power.** C5's source scan is a literal pattern over one file and has little power. The numerical
+W12 → −W12 reversal is the real guard: it would fail under the old rule. The review found no remaining
+data-dependent sign selection anywhere in `code/`.
 
 **Descriptive only** (never used to choose the convention): the fraction of nonzero W12 cells that are
 negative is pp 1.00, np 0.65, pn 1.00, 3p3h 1.00.
@@ -166,7 +197,9 @@ the job even after the launcher dies. The first test run (`L-launcher-1`) and pr
   own measured child CPU, and SIGKILLs at the allotment.
 - RLIMIT_CPU stays as layer 2.
 - A `start` record names the job, and later launches are refused while that job lives.
-- The reservation is N + `WATCHDOG_MARGIN_S` = N + 1.5 s on 10 cores.
+- The reservation is N + `WATCHDOG_MARGIN_S` = N + 1.5 s on 10 cores. That is an engineering margin,
+  not a derived bound. The measured overshoot was 0.02–0.03 s for single-threaded spinners, and 0.25 s
+  for one 10-thread job ignoring SIGXCPU (reviewer probe).
 - L9b was added to measure the residual.
 
 **Harness defect found in the first run.** `pgrep -f <marker>` matched the launcher's own argv, which
@@ -187,12 +220,18 @@ identified as direct children of the launcher (`pgrep -P`). L4 `sh_fork` was als
 | L9 | Orphan with default SIGXCPU action: stopped by the kernel at 0.96 s of observed CPU; a new launch was refused while it lived. |
 | L9b | Orphan ignoring SIGXCPU: **still running at the 3 s timeout** (3.07 s CPU, above its 2.5 s reservation). This confirms the residual. A new launch was refused while it lived; the test then killed it. |
 
+**Scope.** The sandbox denies fork, vfork and posix_spawn by the job itself. Processes that launchd, XPC
+or other system services start on the job's behalf are outside the bound; this is not tested and not
+relevant to NuWro.
+
 **Remaining residual (not certified).** If the launcher dies and its job ignores, catches or blocks
 SIGXCPU, that orphaned job has no CPU bound. Its reservation stays charged and no new launch proceeds
 while it lives, but its own consumption is unbounded until a person kills it. Whether NuWro and ROOT
 leave SIGXCPU at its default action, or run at all with forking denied, was not executed: zero
-production compute was authorized. Static evidence: the patched binary's only process-creating import
-is `popen`, reached only from NIWG plotting code.
+production compute was authorized. Static evidence covers only the executable: its only process-creating
+import is `popen`, reached only from NIWG plotting code. The ROOT libraries it links can create
+processes (`libCore`: popen and system; `libCling`: fork, execv, posix_spawn; `libMultiProc`: fork).
+Under the sandbox, NuWro may therefore fail closed.
 
 ### R3. Metering
 
@@ -203,7 +242,74 @@ is `popen`, reached only from NIWG plotting code.
   spinner when its cleanup killed the launcher. That CPU was unmeasured, at most 15 s by the test's
   wall timeout. It is charged as `X-correction-…` (16 s).
 - **Probe P1** is `tests/probe_rlimit_sigxcpu.py` (run from a scratch copy; the content is identical).
-- **Backstop:** the meter's own `ulimit -t` backstop is subject to the same macOS limitation. The
-  effective bound on the checks was their wall-clock timeouts.
+- **Backstop:** the meter enforces its 300 s cap at admission only. A settlement may exceed its
+  reservation, and its per-process `ulimit -t` is subject to the macOS SIGXCPU limitation.
+  - The convention checks and the grade/cost run do not touch SIGXCPU, so RLIMIT bounded them.
+  - The launcher tests were bounded by their wall-clock timeouts and the watchdog.
+- **Correction charge:** the 15 s bound for the run-1 orphan rests on the run-1 cleanup having killed
+  every process that matched `while True: pass`. The run-1 test source was not committed and its
+  JSON was overwritten, so this cannot be re-checked. No such process was alive when checked during
+  the correction pass.
 
 Totals before review: 77.3 of 300 CPU-s, zero events, no NuWro execution, campaign ledger untouched.
+
+### R4. Review and correction pass
+
+**Review.** One fresh, read-only, targeted reviewer subagent examined `fedcc918` in a detached worktree.
+- It ran 27.05 CPU-s through the meter, against a copy of the repair ledger in which 162.7 s was held
+  for this pass. Its records are merged into `logs/repair_ledger.jsonl` (`REV2-*`).
+- Its outputs are in `results/repair/review/`.
+- It reproduced L1–L9b and the committed integrator numbers.
+- The worktree stayed clean.
+- **Verdict:** no blocker; the convention is fixed and correctly derived; the launcher meets the
+  requirement, with the residual stated correctly; INCONCLUSIVE unchanged.
+
+| # | Severity | Finding | Disposition |
+|---|---|---|---|
+| 1 | MAJOR | REPORT §9 still said "B2 is QUALIFIED". | **Fixed.** |
+| 2 | MINOR | "Flux-fold sign was −1" was asserted without a check. | **Fixed.** The text now cites the reviewer's 36-point measurement; the 72-point fold and the sensitivity runs are labelled unverified. |
+| 3 | MINOR | "NuWro creates no child process" covers only the executable; the linked ROOT libraries can fork. | **Fixed** in REPORT §2 and §9 and in R2. The charged CPU stands because waited children are counted. |
+| 4 | MINOR | The watchdog margin was asserted, not derived. | **Fixed.** It is labelled an engineering margin, with the measured overshoots. |
+| 5 | MINOR | The meter's own bound was misdescribed. | **Fixed** (R3). |
+| 6 | MINOR | The encoding is better supported than stated: the authors' 2004 W₃ = −iW^{xy}/\|q\|, and GENIE's `ImWxy`. | **Fixed.** Both are cited in R1, REPORT §1, §4 and §9, and the docstring; the owner checked the 2004 TeX lines 279–312. The label is now "generator-corroborated" (the frozen plan text above says "distributor-corroborated"). The status stays UNVALIDATED. |
+| 7 | MINOR | The `sec:anti` paraphrase dropped the W⁻ amplitudes clause, leaving an isospin assumption unstated. | **Fixed** (docstring, R1). |
+| 8 | MINOR | Start-record gap; `proc is None` on an interrupted `Popen`. | **Fixed.** SIGINT/TERM/HUP are blocked from before `Popen` until the `start` record, so a pending signal lands with `proc` set. The child unblocks them before exec (L10: the job's mask is empty). A SIGKILL inside the window remains, documented. |
+| 9 | MINOR | `job_alive` failed open when `ps` printed nothing. | **Fixed.** It uses `os.kill(pid, 0)`; it reports dead only for a missing pid or a different start time (L10). |
+| 10 | MINOR | "Cannot create children" was unscoped (launchd/XPC). | **Fixed** (docstring, R2). |
+| 11 | MINOR | Stale wording: CATALOG "measured to be cheap"; REPORT §2/§11 omitted the residual; REVIEW had no repair section. | **Fixed.** |
+| 12 | MINOR | The X-correction cannot be re-checked. | **Documented** (R3). It cannot be fixed after the fact. |
+| 13 | NIT | An RLIMIT-killed job was settled as "completed". | **Fixed.** The status is "killed by signal N" when rc < 0. |
+| 14 | NIT | The cap was printed with `.0f`. | **Fixed** (`.3f`). |
+| 15 | NIT | `fsync` is not durable on macOS. | **Fixed.** It uses `F_FULLFSYNC` where available. |
+| 16 | NIT | The C5 scan has little power. | **Documented** (R1). |
+| 17 | NIT | A stale comment in `algebra_check_components.py`. | **Fixed.** |
+
+**Reruns after the fixes:**
+- `L-launcher-3-correction`: L1–L9b and the new L10 all pass; L5 overshoots 0.028 and 0.025 s.
+- `C-va-convention-4-correction`: C1–C7 all pass; the encoding label is updated.
+- No numerical result changed.
+
+**Remaining issues** (not fixed in this bounded repair):
+- **Table encoding.** The W12 encoding is not author-confirmed, so B1 and B2 stay UNVALIDATED. Only the
+  authors can resolve it (REPORT §8 item 2).
+- **Orphan residual.** A launcher crash with a job that ignores SIGXCPU leaves that job unbounded, and
+  a SIGKILL between `Popen` and the `start` record leaves no live-orphan refusal.
+- **NuWro untested in the new launcher.** NuWro's compatibility with the fork-denying sandbox and its
+  SIGXCPU disposition were never executed.
+- **Unverified reruns.** The 72-point flux fold and the sensitivity runs were not rerun.
+- **Margin.** The watchdog margin is empirical.
+
+**Verdict change: none.** INCONCLUSIVE, blocked on the authors' corrected tables and conventions.
+
+
+**Final repair accounting** (all of `logs/repair_ledger.jsonl`, no unsettled reservations): 127.8 of
+300 CPU-s.
+
+| Part | CPU-s |
+|---|---:|
+| Owner checks, probes and correction charges before review | 77.3 |
+| Review | 27.05 |
+| Correction-pass reruns | 23.4 |
+
+There were zero events and no NuWro execution, and `logs/budget_ledger.jsonl` is unchanged (SHA-256
+`b22d4d78…`). The branch is not merged or pushed.

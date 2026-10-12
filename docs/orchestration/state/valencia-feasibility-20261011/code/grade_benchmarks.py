@@ -28,7 +28,7 @@ for bid, val, pub, (tp, tq) in (("B1", n8, 1.38, (0.07, 0.15)), ("B2", b8, 0.31,
     superseded = "PASS" if abs(dev) <= tp else ("QUALIFIED" if abs(dev) <= tq else "FAIL")
     alt = per_nucleus * VUD2 / pub - 1
     # REPAIR.md section 1, frozen status rule: the table's W12 encoding (W12 = Im W^{12}) is
-    # distributor-corroborated, not author-confirmed, so no PASS/QUALIFIED word is attached.
+    # generator-corroborated, not author-confirmed, so no PASS/QUALIFIED word is attached.
     out[bid] = {"integrator_per_nucleus_1e38": per_nucleus, "published_1e38": pub, "rel_dev": dev,
                 "frozen_tolerances_pass_qualified": [tp, tq],
                 "grade": "UNVALIDATED (table W12 encoding not author-confirmed)",

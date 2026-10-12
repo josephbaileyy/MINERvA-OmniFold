@@ -28,7 +28,9 @@ Vicente Vacas 2011 (arXiv:1102.2777), repeated in Sobczyk, Nieves and Sanchez 20
                           + i eps_{mu sigma alpha beta} k'^alpha k^beta   (neutrino);
 * eq:wmunu W^{mu sigma} ~ sum_f <f|j^mu|i> <f|j^sigma|i>^*, j = V - A, and
            W = W_s + i W_a with W_s, W_a real symmetric / antisymmetric;
-* sec:anti antineutrino: reverse the sign of L^a.
+* sec:anti antineutrino: reverse the sign of L^a, and use the W^- N -> N' pi
+           amplitudes. These tables, like NuWro, reuse one tensor for nu and nubar:
+           an isospin assumption for N = Z nuclei, not stated by the authors.
 
 Hence L.W = L^s.W_s - L^a.W_a. With q along +z the antisymmetric part has only
 W_a^{12} = -W_a^{21}, and L^a_{12} = eps_{1203} k'^0 k^3 + eps_{1230} k'^3 k^0
@@ -37,7 +39,9 @@ W_a^{12} = -W_a^{21}, and L^a_{12} = eps_{1203} k'^0 k^3 + eps_{1230} k'^3 k^0
 
 Table encoding (not documented by the authors): the column W12 is read as
 W_a^{12} = Im W^{12}. NuWro, which distributes the tables, contracts them the same
-way (REPAIR.md check C6); the encoding is distributor-corroborated, not
+way (REPAIR.md check C6), transcribing the authors' 2004 formula with
+W_3 = -i W^{xy}/|q| (Nieves, Amaro, Valverde, PRC 70, 055503); GENIE reads the
+authors' 2015 tables as Im W^{xy}. The encoding is generator-corroborated, not
 author-confirmed. The sign is never chosen from the data.
 """
 
@@ -61,7 +65,7 @@ M_MU = 105.6583755  # MeV
 NGRID = 120
 STEP = 10.0  # MeV
 BEAM_SIGN = {"nu": +1.0, "nubar": -1.0}  # sign of L^a (eq:lep, sec:anti)
-W12_ENCODING = "W12 = W_a^{12} = Im W^{12} (distributor-corroborated, not author-confirmed)"
+W12_ENCODING = "W12 = W_a^{12} = Im W^{12} (generator-corroborated, not author-confirmed)"
 QMAX = 1200.0  # MeV
 B_SHIFT = {("C12", "nu"): 16.827, ("C12", "nubar"): 13.878,
            ("O16", "nu"): 14.906, ("O16", "nubar"): 10.931}

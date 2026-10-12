@@ -22,7 +22,9 @@ Budget is reserved before launch (repair of 2026-10-11, after review found that
 
 Aggregate CPU bound. One execution mode is supported: a single process.
 ``sandbox-exec`` (macOS) denies ``process-fork`` (fork, vfork and posix_spawn),
-so the job cannot create children; a preflight probe must show the fork denied
+so the job cannot create children itself. The profile otherwise allows default
+operations, so processes started on the job's behalf by launchd, XPC or other
+system services are outside this bound (not relevant to NuWro, not tested); a preflight probe must show the fork denied
 inside the same profile, and any other platform is refused. A job that needs
 children fails closed inside its reservation. The job's CPU is then bounded in
 two layers:
@@ -30,15 +32,20 @@ two layers:
 1. While the launcher lives, a watchdog polls the job's CPU time (``ps``) and
    SIGKILLs it once job CPU plus the launcher's own measured child CPU (preflight
    and ``ps`` calls) reaches N = ``--cpu-seconds``. The poll interval shrinks as
-   the remainder shrinks, so the overshoot is at most one minimum interval on
-   every core (``WATCHDOG_MARGIN_S``). SIGKILL cannot be caught.
+   the remainder shrinks, so the overshoot should be at most about one minimum
+   interval on every core; ``WATCHDOG_MARGIN_S`` is an engineering margin, not a
+   derived bound (measured overshoots: 0.02-0.03 s single-threaded, 0.25 s for a
+   10-thread job in the repair review). SIGKILL cannot be caught.
 2. ``ulimit -t N`` (RLIMIT_CPU) stays set. The macOS kernel enforces it only by
    SIGXCPU: a process that ignores, catches or blocks SIGXCPU is not stopped at
    either the soft or the hard limit (REPAIR.md, check L5 and probe P1).
 
 The reservation is N + ``WATCHDOG_MARGIN_S``. If the launcher dies, its
 reservation stays charged in full and a ``start`` record names the job; every
-later launch is refused while that job is still alive. The orphan itself is
+later launch is refused while that job is still alive (or while its liveness
+cannot be determined). SIGINT/TERM/HUP are blocked between ``Popen`` and the
+``start`` record; a SIGKILL of the launcher inside that window leaves a job with
+no ``start`` record, whose reservation still counts in full. The orphan itself is
 then bounded only by layer 2, i.e. only if it leaves SIGXCPU at its default
 action. That residual is not certified.
 
@@ -68,7 +75,8 @@ CPU_CAP_S = 36_000.0
 EVENT_CAP = 10_000
 NCPU = os.cpu_count() or 1
 POLL_MIN_S, POLL_MAX_S = 0.05, 1.0
-# one minimum poll interval (plus ps latency, taken equal) on every core, and 0.5 s slack
+# engineering margin: one minimum poll interval (plus ps latency, taken equal) on every
+# core, and 0.5 s slack; not a derived bound
 WATCHDOG_MARGIN_S = NCPU * 2 * POLL_MIN_S + 0.5
 SANDBOX_EXEC = "/usr/bin/sandbox-exec"
 SANDBOX_PROFILE = "(version 1)(allow default)(deny process-fork)"
@@ -98,7 +106,10 @@ def append_durable(ledger: Path, rec: dict) -> None:
     fd = os.open(ledger, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o644)
     try:
         os.write(fd, (json.dumps(rec) + "\n").encode())
-        os.fsync(fd)
+        if hasattr(fcntl, "F_FULLFSYNC"):  # macOS: plain fsync does not reach stable storage
+            fcntl.fcntl(fd, fcntl.F_FULLFSYNC)
+        else:
+            os.fsync(fd)
     finally:
         os.close(fd)
     if new:
@@ -172,7 +183,7 @@ def reserve(ledger: Path, run_id: str, cpu_s: float, n_events: int, cpu_cap: flo
             raise PermissionError(
                 f"REFUSED {run_id}: charged {used_events} events / {used_cpu:.3f} s "
                 f"({len(unsettled)} unsettled reservations at full value); request "
-                f"{n_events} / {cpu_s:.3f} s; caps {event_cap} / {cpu_cap:.0f}")
+                f"{n_events} / {cpu_s:.3f} s; caps {event_cap} / {cpu_cap:.3f} s")
         rec = {"kind": "reserve", "reservation_id": uuid.uuid4().hex, "run_id": run_id,
                "time_utc": now(), "launcher_pid": os.getpid(),
                "cpu_reserved_s": cpu_s, "events_reserved": n_events, **(extra or {})}
@@ -213,8 +224,17 @@ def job_cpu(pid: int) -> float | None:
 
 
 def job_alive(pid: int, lstart: str) -> bool:
-    """The process exists and is the one recorded (same start time)."""
-    return _ps(pid, "lstart") == lstart
+    """True if the recorded process may still be running; fails closed.
+
+    Dead only if the pid does not exist, or exists with a different start time."""
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        pass  # exists, owned by someone else
+    now_lstart = _ps(pid, "lstart")
+    return now_lstart == lstart or not now_lstart
 
 
 def record_start(ledger: Path, res: dict, pid: int) -> None:
@@ -297,9 +317,15 @@ def main(argv: list[str] | None = None) -> int:
         start = dt.datetime.now(dt.timezone.utc)
         status = "completed"
         with args.log.open("w") as log:
-            proc = subprocess.Popen(["/bin/bash", "-c", shell], cwd=args.workdir, env=env,
-                                    stdout=log, stderr=subprocess.STDOUT)
-            record_start(args.ledger, res, proc.pid)
+            blocked = {signal.SIGINT, signal.SIGTERM, signal.SIGHUP}
+            signal.pthread_sigmask(signal.SIG_BLOCK, blocked)
+            try:
+                proc = subprocess.Popen(["/bin/bash", "-c", shell], cwd=args.workdir, env=env,
+                                        stdout=log, stderr=subprocess.STDOUT,
+                                        preexec_fn=lambda: signal.pthread_sigmask(signal.SIG_UNBLOCK, blocked))
+                record_start(args.ledger, res, proc.pid)
+            finally:
+                signal.pthread_sigmask(signal.SIG_UNBLOCK, blocked)  # a pending signal lands here
             interval = POLL_MIN_S
             while True:  # watchdog (layer 1)
                 try:
@@ -327,7 +353,8 @@ def main(argv: list[str] | None = None) -> int:
     sampled = count_events(args.dump)
     events_charged = args.events if (sampled is None and args.events > 0) else (sampled or 0)
     rec = settle(args.ledger, res, cpu, events_charged, {
-        "rc": rc, "basis": "measured", "status": status,
+        "rc": rc, "basis": "measured",
+        "status": status if (status != "completed" or rc >= 0) else f"killed by signal {-rc}",
         "start_utc": start.isoformat(timespec="seconds"), "end_utc": end.isoformat(timespec="seconds"),
         "wall_s": round((end - start).total_seconds(), 3), "events_sampled_dumped": sampled,
         "cpu_reached_allotment": cpu >= args.cpu_seconds})

@@ -311,19 +311,56 @@ def l9b_orphan_ignoring_sigxcpu() -> dict:
     return r
 
 
+def l10_review_fixes() -> dict:
+    """Added in the correction pass: liveness fails closed, and the job does not inherit the
+    launcher's temporarily blocked signals; a normal job still settles as completed."""
+    dead = pr.job_alive(99999999, "x") is False if not _pid_exists(99999999) else None
+    other = pr.job_alive(os.getpid(), "not-my-start-time") is False
+    orig = pr._ps
+    pr._ps = lambda pid, field: ""  # ps prints nothing for a live process
+    try:
+        unknown = pr.job_alive(os.getpid(), "whatever") is True
+    finally:
+        pr._ps = orig
+    led = fresh("L10")
+    p = launcher(led, "mask", [PY, "-I", "-c",
+                               "import signal; print('MASK', sorted(int(x) for x in signal.pthread_sigmask(signal.SIG_BLOCK, [])))"])
+    p.wait(timeout=20)
+    log = (SCRATCH / f"{led.stem}-mask.log").read_text()
+    mask_empty = "MASK []" in log
+    led2 = fresh("L10b")
+    q = launcher(led2, "normal", ["/bin/sleep", "0.1"])
+    q.wait(timeout=20)
+    st = [r for r in records(led2) if r["kind"] == "settle"]
+    ok = dead is not False and other and unknown and mask_empty and st and st[0]["status"] == "completed"
+    return {"nonexistent_pid_dead": dead, "pid_reuse_dead": other, "ps_silent_means_alive": unknown,
+            "job_signal_mask_empty": mask_empty, "mask_log": log.strip(), "pass": bool(ok)}
+
+
+def _pid_exists(pid: int) -> bool:
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except (PermissionError, OverflowError):
+        return True
+    return True
+
+
 def main() -> int:
     SCRATCH.mkdir(parents=True, exist_ok=True)
     preflight = pr.fork_denied_preflight()
     res = {"platform": sys.platform, "fork_denied_preflight": preflight, "reserve_per_run_s": RESERVE}
     for name, fn in (("L1", l1_concurrency), ("L2", l2_crash), ("L3", l3_interrupt), ("L4", l4_children),
                      ("L5", l5_spinners), ("L6", l6_fail_closed), ("L7", l7_caps_only_lower), ("L8", l8_legacy),
-                     ("L9", l9_orphan), ("L9b", l9b_orphan_ignoring_sigxcpu)):
+                     ("L9", l9_orphan), ("L9b", l9b_orphan_ignoring_sigxcpu),
+                     ("L10", l10_review_fixes)):
         try:
             res[name] = fn()
         except Exception as exc:  # a crashed check is a failed check
             res[name] = {"error": repr(exc), "pass": False}
         print(name, "PASS" if res[name]["pass"] else "FAIL", flush=True)
-    res["all_pass"] = all(res[k]["pass"] for k in [f"L{i}" for i in range(1, 10)] + ["L9b"])
+    res["all_pass"] = all(res[k]["pass"] for k in [f"L{i}" for i in range(1, 10)] + ["L9b", "L10"])
     Path(sys.argv[2]).write_text(json.dumps(res, indent=1, default=str) + "\n")
     return 0 if res["all_pass"] else 1
 

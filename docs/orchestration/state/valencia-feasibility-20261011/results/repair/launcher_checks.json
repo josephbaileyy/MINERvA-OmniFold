@@ -37,17 +37,17 @@
   "charged_after_crash": 2.5,
   "unsettled": [
    [
-    "03ead094910e4bd7a68e8d545f76022a",
+    "655becda766f49b19282bfd1891a74da",
     [
-     71558,
-     "Sun Oct 11 20:26:30 2026"
+     74659,
+     "Sun Oct 11 20:47:07 2026"
     ]
    ]
   ],
   "rc_while_job_alive": 3,
-  "stderr_while_alive": "[pilot_run] REFUSED while-alive: the job of unsettled reservation(s) is still running: [('03ead094910e4bd7a68e8d545f76022a', (71558, 'Sun Oct 11 20:26:30 2026'))]",
+  "stderr_while_alive": "[pilot_run] REFUSED while-alive: the job of unsettled reservation(s) is still running: [('655becda766f49b19282bfd1891a74da', (74659, 'Sun Oct 11 20:47:07 2026'))]",
   "rc_after_job_exit": 3,
-  "stderr_after_exit": "[pilot_run] REFUSED after-exit: charged 0 events / 2.500 s (1 unsettled reservations at full value); request 0 / 2.500 s; caps 0 / 4",
+  "stderr_after_exit": "[pilot_run] REFUSED after-exit: charged 0 events / 2.500 s (1 unsettled reservations at full value); request 0 / 2.500 s; caps 0 / 4.500 s",
   "pass": true
  },
  "L3": {
@@ -56,9 +56,9 @@
   "settle": [
    {
     "kind": "settle",
-    "reservation_id": "de045533458b42e9aaf3565d638cb6f9",
+    "reservation_id": "f462731d99094ef987c9ea81fbb458e1",
     "run_id": "intr",
-    "time_utc": "2026-10-12T03:26:33.176+00:00",
+    "time_utc": "2026-10-12T03:47:10.453+00:00",
     "cpu_charged_s": 2.5,
     "events_charged": 0,
     "rc": null,
@@ -72,7 +72,7 @@
   "sh_fork": {
    "rc": 128,
    "child_ran": false,
-   "cpu_charged_s": 0.03,
+   "cpu_charged_s": 0.034,
    "log_tail": [
     "/bin/sh: fork: Operation not permitted"
    ],
@@ -81,7 +81,7 @@
   "bash_background": {
    "rc": 128,
    "child_ran": false,
-   "cpu_charged_s": 0.03,
+   "cpu_charged_s": 0.032,
    "log_tail": [
     "/bin/bash: fork: Operation not permitted"
    ],
@@ -90,7 +90,7 @@
   "python_subprocess": {
    "rc": 1,
    "child_ran": false,
-   "cpu_charged_s": 0.05,
+   "cpu_charged_s": 0.053,
    "log_tail": [
     "PermissionError: [Errno 1] Operation not permitted"
    ],
@@ -99,7 +99,7 @@
   "python_posix_spawn": {
    "rc": 1,
    "child_ran": false,
-   "cpu_charged_s": 0.042,
+   "cpu_charged_s": 0.043,
    "log_tail": [
     "PermissionError: [Errno 1] Operation not permitted: '/usr/bin/touch'"
    ],
@@ -108,7 +108,7 @@
   "python_fork": {
    "rc": 1,
    "child_ran": false,
-   "cpu_charged_s": 0.041,
+   "cpu_charged_s": 0.043,
    "log_tail": [
     "PermissionError: [Errno 1] Operation not permitted"
    ],
@@ -127,17 +127,17 @@
   "spin": {
    "rc": 247,
    "timed_out": false,
-   "cpu_measured_s": 1.016,
+   "cpu_measured_s": 1.028,
    "status": "killed by watchdog: CPU allotment reached",
-   "overshoot_over_ulimit_s": 0.016,
+   "overshoot_over_ulimit_s": 0.028,
    "pass": true
   },
   "spin_ignoring_SIGXCPU": {
    "rc": 247,
    "timed_out": false,
-   "cpu_measured_s": 1.021,
+   "cpu_measured_s": 1.025,
    "status": "killed by watchdog: CPU allotment reached",
-   "overshoot_over_ulimit_s": 0.021,
+   "overshoot_over_ulimit_s": 0.025,
    "pass": true
   },
   "pass": true
@@ -194,10 +194,18 @@
   "orphan_started": true,
   "still_running_at_timeout": true,
   "timeout_s": 3,
-  "last_observed_cpu_s": 3.07,
+  "last_observed_cpu_s": 3.04,
   "next_launch_refused_while_alive": true,
   "reservation_unsettled": true,
   "residual_confirmed_unbounded": true,
+  "pass": true
+ },
+ "L10": {
+  "nonexistent_pid_dead": true,
+  "pid_reuse_dead": true,
+  "ps_silent_means_alive": true,
+  "job_signal_mask_empty": true,
+  "mask_log": "MASK []",
   "pass": true
  },
  "all_pass": true

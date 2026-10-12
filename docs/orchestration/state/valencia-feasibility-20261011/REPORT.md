@@ -1,6 +1,6 @@
 # Valencia multinucleon feasibility pilot for MINERvA ME-FHC: report
 
-**Date 2026-10-11. Owner: this session (valencia-feasibility lane). Reviewed once (read-only, fresh context) with one correction pass applied; see §11 and [`REVIEW.md`](REVIEW.md). Then repaired once, under a separate allowance, for two named defects: the VA-sign convention and the launcher's CPU bound. See [`REPAIR.md`](REPAIR.md); its targeted review is pending. The verdict is unchanged.**
+**Date 2026-10-11. Owner: this session (valencia-feasibility lane). Reviewed once (read-only, fresh context) with one correction pass applied; see §11 and [`REVIEW.md`](REVIEW.md). Then repaired once, under a separate allowance, for two named defects: the VA-sign convention and the launcher's CPU bound. See [`REPAIR.md`](REPAIR.md), which records one targeted review and one correction pass. The verdict is unchanged.**
 Base: remote `main` `3892e769`. Frozen plan: [`PLAN.md`](PLAN.md), committed as `2492f16b` before any
 scientific computation. This report authorizes nothing and adopts nothing.
 
@@ -36,8 +36,8 @@ Against the authors' published 1 GeV carbon values, the table route then gives �
 +16.3% for ν̄ (B2). Both are now recorded **UNVALIDATED**.
 - The VA sign is derived from the authors' conventions (metric, ε tensor, V−A current, W = W_s + iW_a)
   and checked against an independent Dirac trace.
-- The mapping of the table column W12 to Im W^{12}, however, is corroborated only by NuWro's code. The
-  authors do not document it (§4; REPAIR.md §1).
+- The mapping of the table column W12 to Im W^{12}, however, is not documented by the authors. It is
+  corroborated by two generator implementations (§4; REPAIR.md §1).
 
 Under that encoding:
 - the symmetric part agrees with the published values to about 1–2%;
@@ -69,12 +69,15 @@ The repair (REPAIR.md §2) found that `ulimit -t` was **not an aggregate cap**:
 
 The charged CPU values still stand as measurements, for two reasons:
 - the campaign's runs were sequential;
-- NuWro's event generation creates no child process. Its only process-creating import, `popen`, is
-  reached only from NIWG plotting helpers; this is a static check of the source and the patched binary.
-  So the waited-children CPU covers the whole job.
+- any child that the job waited for is counted in the waited-children CPU. The NuWro executable's only
+  process-creating import, `popen`, is reached only from NIWG plotting helpers. The ROOT libraries it
+  links (`libCore`, `libCling`, `libMultiProc`) can create processes, so "no child process" is not
+  established statically. Only a child that outlived NuWro unwaited would be missed; there is no
+  evidence of one.
 
-The per-run CPU limits were not certified bounds. The launcher now reserves budget under a lock and
-bounds a single-process job with a watchdog (§11).
+The per-run CPU limits were not certified bounds. The launcher now reserves budget under a lock. It
+bounds a single-process job with a watchdog while the launcher runs; §9 states the residual after a
+launcher crash, and §11 summarizes the repair.
 
 | Resource | Used | Cap |
 |---|---:|---:|
@@ -118,8 +121,8 @@ Dirac trace. Before the repair, the sign was chosen by requiring σ_ν > σ_ν̄
 rule happened to select the same sign, so no committed value changed (check C7, relative change
 ≤ 7×10⁻¹⁶).
 
-The table column W12 is read as Im W^{12}. The authors do not document that encoding; NuWro's code
-uses the same reading (check C6).
+The table column W12 is read as Im W^{12}. The authors do not document that encoding. NuWro's code transcribes the authors' own 2004 structure-function formula, in which W₃ = −i W^{xy}/|q| (Nieves, Amaro and Valverde, PRC 70, 055503; TeX lines 279–312), with w3 = W12/|q|. GENIE independently reads the corresponding column of the authors' 2015 tables as Im W^{xy}. Check C6
+shows that the integrator equals NuWro's expression.
 
 The integrator's coupling convention is the authors': G_F² with no extra V_ud, because the tensor contains cos²θ_C.
 The plan did not fix that convention. The first committed version (`3b4d81b3`) wrongly multiplied by
@@ -302,7 +305,8 @@ implementation is in progress there.
   corrected tables only if they share the format; that is an assumption, plausible because only the
   tensor values change.
 - **Benchmarks.**
-  - B2 is QUALIFIED (+16.3%) and B5 FAILs as frozen.
+  - B1 and B2 are UNVALIDATED, because the table W12 encoding is not author-confirmed. Their deviations
+    are −5.5% and +16.3% against the frozen tolerances. B5 FAILs as frozen.
   - The coupling convention was set after the plan froze, by the review's citation of the authors'
     papers. The first committed grades used a double-counted V_ud².
   - The published comparison values are single rounded numbers ("around 1.38", "0.31").
@@ -313,14 +317,18 @@ implementation is in progress there.
   this size. NuWro's unweighting efficiency for the full model was not measured. The §7 cost figures
   extrapolate these runs and are not certified bounds.
 - **Table W12 encoding.** The VA sign is derived from the authors' conventions. That W12 = Im W^{12} in
-  the distributed tables rests on NuWro's code, not on an author statement. B1 and B2 are therefore
+  the distributed tables rests on NuWro's and GENIE's readings, which are consistent with the authors'
+  2004 formula, but not on an author statement about the table column. B1 and B2 are therefore
   UNVALIDATED, and the "VA part ≈ 12% low" and ν̄/ν findings hold only under that encoding. §8 item 2
   asks the authors to confirm it.
 - **Launcher residual.** The repaired launcher bounds a single-process job while it runs. If the
   launcher itself dies, its reservation stays charged and new launches are refused while the job
   lives. The orphaned job is then bounded only by the kernel RLIMIT_CPU, which holds only if the job
   leaves SIGXCPU at its default action (check L9b). Whether NuWro and ROOT run under the fork-denying
-  sandbox, or leave SIGXCPU at default, was not executed (zero production compute).
+  sandbox, or leave SIGXCPU at default, was not executed (zero production compute). ROOT's libraries
+  can fork, so the sandbox may make a NuWro run fail. That failure is closed and stays inside its
+  reservation. The watchdog margin is an engineering margin, not a derived bound. It held with
+  0.25 s of overshoot for one 10-thread job.
 - **Model and detector coverage.** NuWro emits no de-excitation photons and records no residual
   nucleus. Only ¹²C was run. No detector response, background, unfolding or covariance was involved,
   and nothing here concerns data agreement.
@@ -385,10 +393,14 @@ the repository's `*.log` ignore rule had silently excluded them from `3b4d81b3`.
   the primary-source conventions and checked against an independent trace. No value changed. B1/B2
   become UNVALIDATED pending author confirmation of the W12 encoding.
 - **Launcher CPU bound:** `ulimit -t` was not an aggregate bound. The launcher now has durable locked
-  reservations, a single-process sandbox mode and a watchdog. It was tested for concurrency, crashes,
-  interruption, child-process workloads and fail-closed ledgers.
+  reservations, a single-process sandbox mode and a watchdog that bounds the job while the launcher
+  runs. It was tested for concurrency, crashes, interruption, child-process workloads and fail-closed
+  ledgers. One residual is not certified: a job that ignores SIGXCPU, orphaned by a launcher crash,
+  has no CPU bound (§9).
 
-The repair's targeted review is pending. The verdict is unchanged: INCONCLUSIVE.
+The repair had one fresh, read-only, targeted review. It found no blocker, one MAJOR finding (a stale
+B2 grade in §9) and MINOR findings. One correction pass followed (REPAIR.md R4; REVIEW.md). The
+verdict is unchanged: INCONCLUSIVE.
 
 ## 12. Recommendation
 

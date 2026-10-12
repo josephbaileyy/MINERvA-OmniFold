@@ -1,5 +1,5 @@
 {
- "w12_encoding": "W12 = W_a^{12} = Im W^{12} (distributor-corroborated, not author-confirmed)",
+ "w12_encoding": "W12 = W_a^{12} = Im W^{12} (generator-corroborated, not author-confirmed)",
  "C1_trace_vs_eqlep_max_dev_over_max_L": 4.119375679416962e-16,
  "C2_code_vs_full_complex_contraction_max_rel": 9.93789685937641e-12,
  "C2_imag_over_real_max": 0.0,

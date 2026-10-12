@@ -121,7 +121,7 @@ stay with the integration owner. Registration grants no compute, experiment, ado
 Bounded CPU pilot under Joseph's 2026-10-11 prompt (≤ 10 core-h, ≤ 10,000 events; used 0.067 core-h and
 7,900 events). The 2025 corrected Valencia calculation has no public implementation, so only the 2020
 predecessor (NuWro 25.11.1 `mec_kind=6`) was benchmarked and run. Verdict INCONCLUSIVE, blocked on the
-authors' corrected tables and conventions; table-route generation is measured to be cheap. Grants no
+authors' corrected tables and conventions; table-route generation extrapolates to be cheap (not a certified bound). A later bounded repair fixed the VA-sign convention (B1/B2 now UNVALIDATED pending author confirmation of the W12 encoding) and the launcher's CPU bound; verdict unchanged. Grants no
 compute, contact or adoption authority.
 
 | record | path |
