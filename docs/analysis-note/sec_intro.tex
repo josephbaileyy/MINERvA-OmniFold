@@ -69,8 +69,8 @@ applications: its iteration count, which we do not adopt
 different train/test splits that controls the ML stochastic component --- which we
 budget explicitly via the training-seed variation band (\S\ref{sec:systematics}). The
 present work differs in unfolding \emph{real} MINERvA data to an absolutely
-normalized cross section with a finalized 2D uncertainty budget (computed with
-a different GBDT implementation from the central value, \S\ref{sec:method-config}), in using GBDT
+normalized cross section with a complete 2D uncertainty budget built with the
+central value's own learner (\S\ref{sec:method-config}), in using GBDT
 learners suited to a low-dimensional tabular feature set, and in validating
 the method directly against a published binned measurement of the same data
 (\S\ref{sec:results}).

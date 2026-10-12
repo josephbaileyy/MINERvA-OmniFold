@@ -44,6 +44,12 @@ OmniFold in place of D'Agostini IBU.
 
 ## Headline (MEFHC 5-iter, 205 paper-reported bins; exact-GBT central, LightGBM uncertainty blocks)
 
+**Superseded as the quoted central value 2026-10-11.** The quoted 2D central value is now the LightGBM
+seed-42 matched universe CV (`4f5a1b6d…`). Its numbers are in `VALIDATION_LEDGER.md` VL173 (paper-cov χ²/ndf
+2.654, combined 0.914, within 10% 95.6%); the decision record is
+`docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md`. The exact-split headline below is
+kept as the cross-check's record.
+
 *Corrected 2026-10-09 (uncertainty preparation, E).* This heading said "lgbm". The quoted central
 product (`142a45b0…`) was produced by exact-split scikit-learn gradient boosting with an unpinned seed,
 as "Phase 18.2 pipeline" below says. The statistical (`VL170`, seed 1), systematic (seed 42, with its

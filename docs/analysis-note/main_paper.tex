@@ -123,10 +123,14 @@ checksum~\cite{AnaTuplePreservation2026}.  A local release candidate, not yet de
 matplotlib only, recompute every $p$ value, decision, robustness label, and power
 figure of the joint tests, the lost-seed resolution, the coarse-projection
 comparison, and the fine-grid $L_{2}$ ratios of condition~(i); regenerate
-Figs.~\ref{fig:validation}--\ref{fig:joint-nulls}; and recompute the numbers
-quoted from Figs.~\ref{fig:validation}--\ref{fig:generator-context}.  A replay
+Figs.~\ref{fig:joint}--\ref{fig:joint-nulls}; and recompute the numbers
+quoted from Figs.~\ref{fig:joint} and~\ref{fig:generator-context}.  A replay
 of the packaged files from an empty directory reproduces every recorded value
-and every checked figure number.  The other quoted numbers, apart from the
+and every checked figure number.  The candidate predates the change of the
+two-dimensional central value to LightGBM and carries the exact-split curve;
+Fig.~\ref{fig:validation} and its numbers were instead regenerated with the
+release's plotting code, extended to draw this analysis's band, from the
+committed LightGBM values and covariance.  The other quoted numbers, apart from the
 multiplier scan (recomputable from Ref.~\cite{JointTestKappa2026}), are not
 recomputable from this release; they and the event-level processing require the
 archived analysis products, the open-data AnaTuples, and the generator samples

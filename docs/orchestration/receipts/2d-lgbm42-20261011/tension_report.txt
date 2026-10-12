@@ -1,0 +1,114 @@
+========================================================================
+TENSION ANATOMY  -  2D OmniFold vs arXiv:2106.16210
+========================================================================
+ours = /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root
+reported bins: 205   sigma_tot(ours)/sigma_tot(paper) = 1.0098
+
+--- Track A: the crux (off-diagonal vs diagonal) ---
+  diagonal-only chi2/ndf =   0.324   (= per-bin pull RMS^2 = 0.319; mean pull +0.074)
+  full-cov   chi2/ndf    =   2.654
+  => 8.2x inflation comes purely from the off-diagonal / small-eigenvalue structure of TotalCov.
+
+--- Track A: eigenmode decomposition of the paper-cov chi2 ---
+  cond(V) = 1.47e+12   rank(lam>0) = 205/205   modes kept by pinv (rcond=1e-15) = 205
+  sum_k c_k^2/lambda_k = 544.1164  vs  pinv chi2 = 544.1164   (rel diff 7.01e-09)
+
+  top contributing modes (lam_rank 0 = smallest eigenvalue):
+   rank  lam/lam_max   lam_rank   eigpull=c/sqrt(lam)   chi2_contrib   cum/chi2
+      0   3.549e-09      23/205          -4.94            24.38      0.045
+      1   6.590e-11       2/205          +4.24            17.96      0.078
+      2   4.314e-10       9/205          -4.19            17.53      0.110
+      3   5.765e-05     119/205          +4.15            17.22      0.142
+      4   1.219e-04     136/205          -4.04            16.31      0.172
+      5   4.829e-10      10/205          +3.96            15.66      0.200
+      6   6.048e-05     121/205          +3.91            15.31      0.229
+      7   2.984e-04     155/205          +3.86            14.91      0.256
+      8   5.613e-05     118/205          +3.59            12.89      0.280
+      9   1.778e-05      98/205          +3.52            12.40      0.302
+     10   4.460e-06      79/205          -3.50            12.25      0.325
+     11   6.708e-09      27/205          +3.50            12.22      0.347
+     12   4.376e-05     115/205          +3.43            11.78      0.369
+     13   3.982e-05     113/205          -3.31            10.99      0.389
+     14   6.483e-07      59/205          -3.05             9.29      0.406
+  fraction of top-5 contributors in the smallest-10%% lambda band: 0.40
+  chi2 share from the 10 smallest-lambda modes:  0.095
+
+--- Track A: rank-truncation scan (keep r largest-lambda modes) ---
+    r      chi2/ndf
+     5        0.007
+    10        0.008
+    20        0.084
+    50        0.410
+   100        1.294
+   150        1.820
+   180        2.073
+   200        2.541
+   205        2.654
+  (monotone; a late jump near r=n means the tension rides on the smallest-lambda / least-determined directions.)
+
+--- Track A: pinv rcond sensitivity ---
+    rcond      chi2/ndf   modes_kept
+    1e-15        2.654     205
+    1e-12        2.653     204
+    1e-10        2.544     202
+    1e-08        1.961     176
+    1e-06        1.722     139
+    1e-04        0.806      73
+    1e-02        0.002       3
+
+--- Track B: normalization (along paper spectrum) vs shape split ---
+  chi2_norm  =     0.06  (0.000/ndf)   [overall scale; sigma_tot ratio 1.0098]
+  chi2_shape =   544.13  (2.654/ndf)
+  chi2_cross =    -0.08   (norm+shape+cross = 544.12 vs full 544.12)
+  (chi2 is not additive across a non-Vinv-orthogonal split; cross term reported for closure. Shape dominates -> not a pure normalization.)
+
+--- Track B: marginal chi^2 by p|| band (pz bin, low->high p||) ---
+    pz_bin   n_bins   chi2_sum   frac
+       0        9       20.90    0.038
+       1       10       40.08    0.074
+       2       11       25.68    0.047
+       3       12       13.88    0.026
+       4       12       15.81    0.029
+       5       13       35.78    0.066
+       6       13       32.28    0.059
+       7       13       76.24    0.140
+       8       14       61.42    0.113
+       9       14       18.56    0.034
+      10       14       13.41    0.025
+      11       14       24.16    0.044
+      12       14       15.99    0.029
+      13       14       16.07    0.030
+      14       14       63.66    0.117
+      15       14       70.20    0.129
+  marginal chi^2 by p_T band (pt bin, low->high p_T):
+    pt_bin   n_bins   chi2_sum   frac
+       0       16       37.78    0.069
+       1       16       35.63    0.065
+       2       16       52.30    0.096
+       3       16       24.85    0.046
+       4       16       39.80    0.073
+       5       16       25.55    0.047
+       6       16       27.59    0.051
+       7       16       37.37    0.069
+       8       16       38.14    0.070
+       9       15       12.23    0.022
+      10       14       57.70    0.106
+      11       13       34.92    0.064
+      12       11       79.89    0.147
+      13        8       40.35    0.074
+
+--- Track C bridge: top-12 bins of dominant mode (lam_rank 23/205) ---
+   pt_bin pz_bin    ours        paper       Tune_v1    ours/paper  |ours-mod|<|paper-mod|?
+      12    14   1.394e-41  1.268e-41  1.220e-41     1.0999   no
+      13    13   4.736e-42  4.342e-42  4.080e-42     1.0906   no
+       1    14   2.178e-42  2.267e-42  2.270e-42     0.9609   no
+      13    12   4.378e-42  3.938e-42  3.710e-42     1.1115   no
+       9    14   2.104e-41  2.056e-41  1.850e-41     1.0232   no
+       8    14   2.042e-41  1.962e-41  1.760e-41     1.0407   no
+       0    14   8.034e-43  8.659e-43  9.370e-43     0.9278   no
+       5    14   1.368e-41  1.319e-41  1.220e-41     1.0373   no
+      13    10   2.362e-42  2.362e-42  1.980e-42     1.0003   no
+      11    14   2.024e-41  1.848e-41  1.780e-41     1.0949   no
+       2    14   4.748e-42  4.461e-42  4.310e-42     1.0644   no
+      10    15   3.480e-42  3.443e-42  2.780e-42     1.0106   no
+  ours closer to Tune v1 than paper in 0/12 dominant-mode bins (frames tension as IBU-vs-OmniFold regularization).

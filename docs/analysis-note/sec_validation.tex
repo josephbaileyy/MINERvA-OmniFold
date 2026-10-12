@@ -102,8 +102,8 @@ pre-registered before any toy ran (App.~\ref{app:provenance}, \texttt{coverage-f
 
 Each toy draws pseudo-data event by event as Poisson counts with means equal to the simulated
 reconstructed weights. It resamples the simulation with the production Poisson(1) bootstrap, and
-unfolds with the statistical band's estimator (lgbm, five iterations, fixed training seed), which is
-not the exact-split estimator of the quoted central value (\S\ref{sec:method-config}). The reference
+unfolds with the statistical band's estimator (lgbm, five iterations, fixed training seed), the
+learner of the quoted central value at a different seed (\S\ref{sec:method-config}). The reference
 $T$ is the unfluctuated simulated truth, identical in every toy. The no-fluctuation configuration
 reproduces both the production closure output and $T$ exactly.
 
@@ -177,8 +177,8 @@ domain need new inputs as well as the construction repairs of \S\ref{sec:uq-2d-c
 \textbf{Scope.} The result concerns the statistical band only.
 \begin{itemize}[nosep]
   \item It changes no central value or quoted uncertainty.
-  \item It tests the LightGBM statistical estimator, not the uncertainty of the exact-split quoted
-        central value.
+  \item It tests the LightGBM statistical estimator at the band's training seed (seed~1), not at
+        the quoted central value's seed~42.
   \item It says nothing about systematic, total or five-dimensional coverage.
   \item Its simulation-side scatter reuses the resampling that built the band, so only the
         data-side fluctuation is tested by an independent mechanism.
@@ -237,7 +237,7 @@ this ensemble. The fixed-truth test above is the 2D coverage statement (App.~\re
 \paragraph{Stability and efficiency.}
 The 5-iter total $\sigma$ is within \SI{0.026}{\percent} of 10-iter (per-bin shape RMS
 \SI{1.54}{\percent}); HistGBT and exact-GBT agree on total $\sigma$ to
-\SI{0.04}{\percent}. Efficiency (Fig.~\ref{fig:eff}) reproduces the published
+\SI{0.04}{\percent} (both measured for the exact-split cross-check). Efficiency (Fig.~\ref{fig:eff}) reproduces the published
 Fig.~5.
 
 \begin{figure}[H]

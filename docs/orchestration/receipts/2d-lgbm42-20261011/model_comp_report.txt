@@ -1,0 +1,11 @@
+========================================================================
+THREE-WAY COMPARISON  -  ours / published data / generator model
+========================================================================
+reported bins: 205
+sigma_tot: ours/data = 1.0098
+model MINERvA_Tune_v1: sigma_tot/data = 0.9124
+
+--- chi^2 in paper TotalCov (ndf = 205) ---
+  ours vs data (sanity ~3.66)     chi2 =       544.12   ndf = 205   chi2/ndf =   2.654
+  data vs MINERvA_Tune_v1         chi2 =      6773.05   ndf = 205   chi2/ndf =  33.039
+  ours vs MINERvA_Tune_v1         chi2 =      6099.70   ndf = 205   chi2/ndf =  29.755

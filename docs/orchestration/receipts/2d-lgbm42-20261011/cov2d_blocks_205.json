@@ -1,0 +1,22 @@
+{
+ "universe_plus_boot": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/uq_universe_covariance_full_matcorr_fluxfix.root",
+  "object": "hCov_combined",
+  "sha256": "077912e3e7a53376c6df89ee1af4a2a504fe1f49423bab88780204beccd952f5",
+  "shape": [
+   205,
+   205
+  ],
+  "sqrt_trace": 3.2200476233305695e-39
+ },
+ "ml": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+  "object": "hCov2D_reported",
+  "sha256": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9",
+  "shape": [
+   205,
+   205
+  ],
+  "sqrt_trace": 5.060524519225612e-41
+ }
+}
