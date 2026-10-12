@@ -31,7 +31,14 @@ They do not reproduce this analysis's unfolded 2D uncertainty construction.
 RC7 supports replay of the higher-dimensional inference from sufficient
 inputs, but not extraction from the archived pseudo-experiment products,
 event-level unfolding, or the quoted closure, bias and covariance-status
-measurements. Event processing requires the earlier production of MINERvA
+measurements. Nor does it reproduce the 2D uncertainty and coverage figures,
+the low-recoil comparisons, the recoil-response sensitivity, or the proxy
+convergence rate of joint-test condition~(i). The multiplier scan of the joint
+tests is recomputable from RC7's sufficient inputs with the scan code of
+Ref.~\cite{JointTestKappa2026}, but it is not part of RC7's own verification.
+The pseudo-experiment products are archived (about \SI{2.3}{GB}). An earlier
+version of the package was also replayed from an empty directory by an
+independent reader. Event processing requires the earlier production of MINERvA
 \href{https://doi.org/10.15484/3022562}{open-data AnaTuples}, event-loop outputs, and the
 generator samples used here.
 
