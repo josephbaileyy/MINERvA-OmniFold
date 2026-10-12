@@ -36,7 +36,8 @@ on the cluster and checked after the copy). Code citations are `file:line` at `7
 ## 1. Answer
 
 **EXIT CONDITIONAL.** Every C01–C10 / X01–X03 source is assigned an input, a law and a propagation (§3), and a
-complete recipe is proposed for review (§4). Its inputs exist, with two exceptions that are named, routed and
+complete recipe is proposed for review (§4). One further source is **not** assigned: data-POT counting (C07′), a
+materiality decision for Joseph (§3, §5, R10). The inputs exist, with two exceptions that are named, routed and
 priced (§5). No Stop condition is met (§8).
 
 The reads found more than the plan anticipated:
@@ -47,7 +48,7 @@ The reads found more than the plan anticipated:
 | **X01** | **DEFECT.** `Muon_Energy_MINOS` universes divide by Φ_CV; their event weights carry the correlated flux. The adopted total has no cross block, and none should be added | **independently verified** | KI 96 |
 | KI 91 flux index | **Identity established** by a code chain and an exact numeric test with a powered control | worker; Stage B review | KI 91 note |
 | KI 92 Rvn1pi/Rvp1pi | **Confirmed** in all four weight families; effect negligible (median σ ratio 0.99991) | worker; Stage B review | KI 92 note |
-| KI 93 truth inputs | May sweep: **all 87** non-flux universes affected, broader than recorded. July `purity_newomni` sweep **passes** the KI-93 bar | worker; Stage B review | KI 93 note |
+| KI 93 truth inputs | May sweep: **all 87** non-flux universes affected, broader than recorded. July `purity_newomni` sweep **passes** the KI-93 bar **provisionally** (pending P2; producer revision uncommitted) | worker; Stage B review | KI 93 note |
 | P06/C06 background | **Confirmed**: May background frozen at CV in 87/87 non-flux universes (re-measured twice). July varies it in 185/187 | two workers | KI 93 note |
 | KI 94/C03 | **Confirmed**: no background-template fluctuation is propagated. Also, the bootstrap's data stream holds purity fixed, scaling σ by p (understated by up to 1/p = 1.87) | worker; Stage B review | KI 94 note |
 | C05a laterals | Six muon-scale/resolution universes **qualified** (event-level identity with active-mode files). The four **beam-angle** universes are **not** (up to 1,465 wrong exits / 1,344 missing entrants each) | worker; Stage B review | §2.7 |
@@ -275,7 +276,8 @@ Three distinct objects, measured to different extents:
 ## 3. Source table (C01–C10, X01–X03), updated for KI 92–96
 
 Status vocabulary: **ELIGIBLE** (inputs exist and pass their checks), **REPAIR** (inputs exist; a specified
-change is needed), **MISSING** (an input does not exist; route in §5).
+change is needed), **MISSING** (an input does not exist; route in §5), **OPEN QUESTION** (whether the source needs
+a band at all is a decision; route in §5).
 
 | id | source | input | law | conditioning | propagation | correlation partners | independent evidence | status |
 |---|---|---|---|---|---|---|---|---|
@@ -287,7 +289,7 @@ change is needed), **MISSING** (an input does not exist; route in §5).
 | C05b | weight-only detector bands (MinosEfficiency, GEANT ×3; 8 universes) | July sweep | MAT ±1σ pairs | data fixed | mean-centred 1/N | C05a, C08 | July qualification (§2.5); c = 1 (GEANT), c−1 = 4.8e-4 (MinosEfficiency) | ELIGIBLE |
 | C06 | interaction model (GENIE, FSI, 2p2h, RPA; background-aware) | July sweep, Rvx1pi once, `NormDISCC` null | MAT ±1σ pairs (2p2h: 3) | data fixed | background-aware per universe (current driver); mean-centred 1/N | C03, C08 (X03), C09 | July qualification; KI 92 rebuild; P06 census | REPAIR: KI 92 rule; G2 |
 | C07 | target normalization | 1.4% rank-1, scaled to the adopted central | fully correlated scale | none | one site (`uq/analyze_universes.py:274-280` via `--add-norm`) | C04 | lane C Audit 1 (counted once) | ELIGIBLE |
-| (C07′) | data POT counting | the POT normalization of data (1.057394e21) | — | — | **not assigned a separate band**: no POT-counting uncertainty is in the adopted or the proposed construction; the paper's normalization text names only the 1.4% target count. Flagged for Joseph (review N8) | C07 | — | OPEN QUESTION |
+| (C07′) | data POT counting | the POT normalization of data (1.057394e21) | — | — | **not assigned a separate band**: no POT-counting uncertainty is in the adopted or the proposed construction; the analysis note's paraphrase of Ruterbories §V (`docs/analysis-note/app_statmethods.tex:330-338`) names only the 1.4% target count; the paper itself was not read here, and absence from a paraphrase is weak evidence. Flagged for Joseph (review N8) | C07 | — | OPEN QUESTION |
 | C08 | estimator variability | factorial panel (S4) | seed main effect at the adopted estimator | data and MC fixed | sample covariance over seed triplets | X02, X03 | panel interaction terms | REPAIR: measure (R7) |
 | C09 | unfolding-model dependence, including the iteration count (5) and regularization | development closures only | signed allowance B−/B+ | fixed response | separate allowance, not added in quadrature by default | C06 | — | MISSING (Stage D: independent-generator 2D truths) |
 | C10 | response departures | none outside the parametrized family | stated assumption | — | — | — | — | MISSING (Stage D) |
@@ -299,8 +301,9 @@ change is needed), **MISSING** (an input does not exist; route in §5).
 
 - **R0 Producer.** L0's frozen central-value procedure (Stage A §1): LightGBM, seeds 42/43/44, 5 iterations,
   `--use-weights`, `bkg_mode purity`, on the current `main` driver after a default-path regeneration of L0 within
-  the frozen 1e-8 (pilot P0). The PRD 104/106 comment at `unfold_2d_omnifold_unbinned.py:26` is fixed in the same
-  driver change, so the digest moves once (that is the `# Paper binning` comment in `2d-unfolding/unfold_2d_omnifold_unbinned.py` (line 27 before the selective-I/O merge, line 30 after)). `--branch-select derived` exists only once the
+  the frozen 1e-8 (pilot P0). The PRD 104/106 citation in the `# Paper binning` comment of
+  `2d-unfolding/unfold_2d_omnifold_unbinned.py` (line 27 before the selective-I/O merge, line 30 after) is fixed in
+  the same driver change, so the digest moves once. `--branch-select derived` exists only once the
   selective-I/O delivery is merged (PR #95); it may be used for universe runs only after its first real-file equality
   check (delivery REPORT §11; pilot P2).
 - **Authority principle (review N10).** MAT conformance governs how a band is computed (C04's weights, X01's
@@ -328,7 +331,7 @@ change is needed), **MISSING** (an input does not exist; route in §5).
 - **R9 Conventions.** MAT centring (weighted mean for the constrained Flux band, mean otherwise), 1/N; centring,
   rank, PSD and ensemble error reported (plan Stage C).
 - **R10 Open items before production.** G1 and G2 resolved by the pilot (§7); if either is material, the recipe
-  gains its repair and returns for review.
+  gains its repair and returns for review. Joseph decides whether data-POT counting (C07′) needs a band.
 
 ## 5. Missing inputs and acquisition routes
 
@@ -341,12 +344,13 @@ change is needed), **MISSING** (an input does not exist; route in §5).
 | Active files durability | CFS copy of the 10 active merged files (≈ 538 GB) | copy to `/global/cfs/cdirs/m3246/` with re-measured sha256 (CFS first) | I/O only |
 | C09, C10 | independent-generator 2D truths; response departures | Stage D | unpriced |
 | Paper flux construction | which constraint file and PPFX version the publication used | collaboration question | none; not needed for a MAT-conformant construction |
+| C07′ data-POT counting | whether a POT-counting uncertainty belongs in the construction, and its size | Joseph's materiality decision; the paper's own normalization section (not only the note's paraphrase) and MINERvA convention | none |
 
 ## 6. KNOWN_ISSUES records
 
 - **New rows (independently verified):** 95 (C04 flux constraint weights) and 96 (X01 MINOS flux denominator).
 - **Dated evidence notes appended** to rows 91 (identity evidence), 92 (confirmed, negligible), 93 (May broader;
-  July qualified; P06 confirmed) and 94 (confirmed; data-stream purity conditioning). Status cells are unchanged:
+  July qualified provisionally, pending P2; P06 confirmed) and 94 (confirmed; data-stream purity conditioning). Status cells are unchanged:
   closure is the row owner's.
 - **Corrections appended** to `2D_OMNIFOLD_STUDY_STATUS.md` (PRD 104, 092007 citation; "both ν-e-constrained") and
   `2D_VALIDATION_FOR_3D.md` ("both constrained"). No history text is rewritten.
@@ -376,8 +380,8 @@ change is needed), **MISSING** (an input does not exist; route in §5).
 | P4 | G1 census: instrumented event loop over 12 playlists | 12 × u_E | 0.9 |
 | P5 | G2 diagnostic: one vertical universe with universe-weighted miss rows | 1–2 × u_U, after design | 0.7–1.5 |
 | | **subtotal** | | **7.4–11.8** |
-| | **≥ 20% reserve of the admitted total** (admitted = subtotal / 0.8) | | **1.9–2.9** |
-| | **admitted total** | | **9.3–14.7** |
+| | **≥ 20% reserve of the admitted total** (admitted = subtotal / 0.8) | | **1.9–3.0** |
+| | **admitted total** | | **9.3–14.8** |
 | | **pilot request (ceiling)** | | **15.0 node-h** |
 
 The reserve follows the repository's cost model (`state/uncertainty-preparation-20261008/c/costs.py`: ≥ 20% of the
@@ -423,7 +427,7 @@ None met.
 - **Selection support:** the beam-angle laterals lack it in dump mode, but selection-complete inputs exist
   (active files) and need only re-unfolds. **G1 is also a support gap** (events in neither tree). It is a routed
   candidate rather than a Stop because its existence and size are unknown, its acquisition route is named and
-  priced (P4, ≈ 0.9 node-h), and the plan's Stop rule asks for exactly that record. If P4 confirms a material G1,
+  priced (P4, ≈ 0.9 node-h). If P4 confirms a material G1,
   that is a Stop-or-repair decision at that point (§7 contingency).
 - **Joint-law evidence:** X01 is carried by MAT's in-band correlation, whose inputs exist; no transplanted
   correlation is needed. This passes **by adopting MAT's in-band convention as the joint law**; whether it reproduces
@@ -469,12 +473,21 @@ CONDITIONAL the right verdict.
 | M3: KI 95/96 remedies named retired May outputs | rows now say the diagnostic uses the adopted (May) sweep and the construction uses July (R1) |
 | M4: "July qualified" too strong; the July sweep ran on uncommitted driver code | §2.5 heading and body, §1 and the KI 93 note now say provisional pending P2, producer revision uncommitted; P2 carries a frozen envelope; July rebuild added as a contingency |
 | M5: KI 92 figure mislabelled, no NOT QUOTABLE | relabelled `C_U`+norm; quoted-total figures added; label added |
-| M6: reserve taken on the subtotal | reserve now ≥ 20% of the admitted total: pilot 9.3–14.7, ceiling 15.0; production 49.8–81.8 |
+| M6: reserve taken on the subtotal | reserve now ≥ 20% of the admitted total: pilot 9.3–14.8 (as rounded at delivery), ceiling 15.0; production 49.8–81.8 |
 | M7: pilot before the final recipe; R0 depends on PR #95 | sequencing stated for the director (grant together, or P4–P5 first); P2 price without the port stated |
 | N1 citations (`:27`/`:30`, `:1203-1212`, `:1175`); N2 u_E billing; N3 KI 94 note attribution; N4 R7 reasoning and 4 dof; N5 R2 as Joseph's decision; N6 joint law by convention; N7 NOT QUOTABLE in the 3D correction; N8 POT and iteration rows; N9 MinosEfficiency; N10 authority principle; N11 `.npz` durability; N12 P1 criterion; N13 positive findings | all applied in place |
 | N14: KI 95/96 faithful to the verification | no change |
 
-**Focused re-review:** see below.
+**Focused re-review of `2b3774f7` (cycle 1 of at most 2): PASS WITH CHANGES**, preserved verbatim at
+[`review/rereview-2b3774f7.md`](review/rereview-2b3774f7.md). M1–M3, M5–M7 and N2–N13 resolved; pricing checked
+correct. Residues: R1 ("passes"/"qualified" unqualified in §1, §6 and the CATALOG row), R2 (a stale `:26` in R0),
+R3 (C07′ unassigned but absent from §1, §5 and R10, and outside the table's vocabulary), N-a (a circular clause in
+§8), N-b (rounding).
+
+**Delivery commit.** It applies R1–R3, N-a and N-b as wording: "provisionally" in §1 and §6 and the CATALOG row; R0
+cites the comment by content; C07′ is named in §1 and R10, gains a §5 row and an OPEN QUESTION status, and its paper
+claim is scoped to the note's paraphrase; the §8 clause is deleted; the pilot reserve and admitted total round up
+(1.9–3.0; 9.3–14.8). Wording only, and **not re-reviewed**; the second repair cycle was not needed.
 
 **Same-model caveat.** Owner, workers, verifier and reviewer are Claude Opus 5.5 sessions. Distinct sessions of
 one model are not cross-provider independence (plan §5).
