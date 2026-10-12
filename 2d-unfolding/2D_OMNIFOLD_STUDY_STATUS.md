@@ -43,7 +43,7 @@ OmniFold in place of D'Agostini IBU.
 > **Correction 2026-10-12 (citation; the text above is kept as written).** arXiv:2106.16210 is
 > Ruterbories et al., **Phys. Rev. D 104, 092007 (2021)**. Phys. Rev. D 106, 032001 is Ascencio et al.,
 > the low-recoil paper. The analysis note's bibliography is already correct. The same miscitation is in
-> the comment at `2d-unfolding/unfold_2d_omnifold_unbinned.py:26`; it is left there for the next
+> the `# Paper binning` comment in `2d-unfolding/unfold_2d_omnifold_unbinned.py` (line 27 before the selective-I/O merge, line 30 after); it is left there for the next
 > behavioural driver change, because a comment edit alone would move the driver's sha256.
 
 ---
