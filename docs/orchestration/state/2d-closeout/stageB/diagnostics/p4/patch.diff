@@ -1,0 +1,245 @@
+--- a/MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp (sha256 57792e42, main 3921dec4)
++++ b/runEventLoopOmniFold.cpp (P4 G1 census diagnostic copy)
+@@ -85,6 +85,10 @@
+ #include <unordered_set>
+ #include <set>
+ #include <vector>
++#include <unordered_map>
++#include <memory>
++#include "TFile.h"
++#include "TTree.h"
+ 
+ struct ActiveUniverseRequest
+ {
+@@ -158,6 +162,131 @@
+          static_cast<uint64_t>(nth);
+ }
+ 
++// ---- P4 G1 census (DIAGNOSTIC COPY ONLY; 2D closeout Stage B, grant
++// AUTHORIZATION-20261012-2d-closeout-stageB-diagnostics.md). Not for production.
++// Enabled only when MNV101_G1_CENSUS=<output ROOT path> is set. When it is unset,
++// gG1 stays null: no branch, output object, loop decision or Cutter statistic
++// changes, so the main output is the unpatched program's.
++//
++// G1 = an MC reco-tree entry that passes the reco selection and is signal in the
++// 2D phase space by the reco tree's own mc_* branches (so the background loop
++// skips it), but whose key is not in the signal-reco key set (so it is not a row
++// of mc_signal_reco): it is in neither tree. Recorded from the background loop.
++// The census uses its OWN constraint instances (weight 0), never the Cutter's.
++struct G1Row
++{
++  int run, subrun, nth;
++  double reco_pt, reco_pz, w_reco, true_pt, true_pz;
++  int truth_mask;        // bit k = constraint k passed on the TRUTH-tree row (see G1_MASK_LEGEND)
++  int truth_status;      // 0 no fiducial truth-tree failure record; 1 record found (mask valid);
++                         // 2 key IS in truthDenomIDs (truth passes, yet absent from the reco tree)
++};
++static const char* G1_MASK_LEGEND =
++    "bit0 IsNeutrino, bit1 IsCC, bit2 ZRange(Tracker,5980,8422), bit3 Apothem(850), "
++    "bit4 MuonAngle(20), bit5 PZMuMin(1500), bit6 MaxPzMu(60000), bit7 MaxPtMu(4500)";
++struct G1Census
++{
++  std::string outPath;
++  std::vector<std::unique_ptr<PlotUtils::SignalConstraint<CVUniverse>>> cons;
++  std::unordered_map<uint64_t, int> truthFiducialFail;  // truth key -> mask; fiducial, not (signal && PS)
++  const std::unordered_set<uint64_t>* recoIDs = nullptr;
++  const std::unordered_set<uint64_t>* truthDenomIDs = nullptr;
++  std::unordered_set<uint64_t> seenG1;
++  std::vector<G1Row> rows;
++  long nTruthFail = 0, nTruthFidFailStored = 0, nTruthFidFailDupKey = 0;
++  long nSigLoopNoTruth = 0, nSigLoopNoTruthPassReco = 0;
++  double wSigLoopNoTruthPassReco = 0.0;
++  long nBkgSkipped = 0, nBkgSkippedInReco = 0, nG1 = 0, nG1DupKey = 0;
++  long nG1Status[3] = {0, 0, 0};
++  double wG1 = 0.0;
++  // Positive control only (MNV101_G1_CENSUS_SELFTEST=N > 0): the census treats every skipped key with
++  // key % N == 0 as absent from the reco tree, so it must record exactly those as G1 rows (status 2).
++  // Touches only the census's own view, never recoIDs or any output tree.
++  long selftestN = 0, nSelftestInjected = 0;
++  int mask(const CVUniverse& u) const
++  {
++    int m = 0;
++    for(size_t k = 0; k < cons.size(); ++k)
++      if(cons[k]->passes(u, 0)) m |= (1 << k);
++    return m;
++  }
++};
++static G1Census* gG1 = nullptr;
++
++// Called from the background loop for each selected entry it skips as
++// signal-in-phase-space. Reco mode on entry; restored to reco mode on exit.
++inline void G1CensusBkgSkip(CVUniverse* u, const double wReco)
++{
++  ++gG1->nBkgSkipped;
++  const int run = u->GetInt("mc_run"), subrun = u->GetInt("mc_subrun"),
++            nth = u->GetInt("mc_nthEvtInFile");
++  const uint64_t key = makeEventKey(run, subrun, nth);
++  const bool injected = gG1->selftestN > 0 && key % static_cast<uint64_t>(gG1->selftestN) == 0;
++  if(injected) ++gG1->nSelftestInjected;
++  if(!injected && gG1->recoIDs->find(key) != gG1->recoIDs->end()) { ++gG1->nBkgSkippedInReco; return; }
++  if(!gG1->seenG1.insert(key).second) { ++gG1->nG1DupKey; return; }
++  G1Row r;
++  r.run = run; r.subrun = subrun; r.nth = nth;
++  r.reco_pt = u->GetMuonPT();
++  r.reco_pz = u->GetMuonPz();
++  r.w_reco = wReco;
++  CVUniverse::SetTruth(true);
++  r.true_pt = u->GetMuonPTTrue();
++  r.true_pz = u->GetMuonPzTrue();
++  CVUniverse::SetTruth(false);
++  r.truth_mask = -1;
++  r.truth_status = 0;
++  if(gG1->truthDenomIDs->find(key) != gG1->truthDenomIDs->end()) r.truth_status = 2;
++  else
++  {
++    const auto it = gG1->truthFiducialFail.find(key);
++    if(it != gG1->truthFiducialFail.end()) { r.truth_status = 1; r.truth_mask = it->second; }
++  }
++  ++gG1->nG1Status[r.truth_status];
++  ++gG1->nG1;
++  gG1->wG1 += wReco;
++  gG1->rows.push_back(r);
++}
++
++inline void WriteG1Census()
++{
++  TFile* f = TFile::Open(gG1->outPath.c_str(), "RECREATE");
++  if(!f) { std::cerr << "[G1] cannot open " << gG1->outPath << "\n"; return; }
++  f->cd();
++  TTree* t = new TTree("g1_census", "selected MC reco entries in neither mc_signal_reco nor mc_background");
++  G1Row r;
++  t->Branch("run", &r.run); t->Branch("subrun", &r.subrun); t->Branch("nth", &r.nth);
++  t->Branch("reco_pt", &r.reco_pt); t->Branch("reco_pz", &r.reco_pz); t->Branch("w_reco", &r.w_reco);
++  t->Branch("true_pt", &r.true_pt); t->Branch("true_pz", &r.true_pz);
++  t->Branch("truth_mask", &r.truth_mask); t->Branch("truth_status", &r.truth_status);
++  for(const auto& x : gG1->rows) { r = x; t->Fill(); }
++  t->Write();
++  TNamed("maskLegend", G1_MASK_LEGEND).Write();
++  TParameter<long>("nTruthFail", gG1->nTruthFail).Write();
++  TParameter<long>("nTruthFidFailStored", gG1->nTruthFidFailStored).Write();
++  TParameter<long>("nTruthFidFailDupKey", gG1->nTruthFidFailDupKey).Write();
++  TParameter<long>("nSigLoopNoTruth", gG1->nSigLoopNoTruth).Write();
++  TParameter<long>("nSigLoopNoTruthPassReco", gG1->nSigLoopNoTruthPassReco).Write();
++  TParameter<double>("wSigLoopNoTruthPassReco", gG1->wSigLoopNoTruthPassReco).Write();
++  TParameter<long>("nBkgSkipped", gG1->nBkgSkipped).Write();
++  TParameter<long>("nBkgSkippedInReco", gG1->nBkgSkippedInReco).Write();
++  TParameter<long>("nG1", gG1->nG1).Write();
++  TParameter<long>("nG1DupKey", gG1->nG1DupKey).Write();
++  TParameter<long>("nG1Status0", gG1->nG1Status[0]).Write();
++  TParameter<long>("nG1Status1", gG1->nG1Status[1]).Write();
++  TParameter<long>("nG1Status2", gG1->nG1Status[2]).Write();
++  TParameter<double>("wG1", gG1->wG1).Write();
++  TParameter<long>("selftestN", gG1->selftestN).Write();
++  TParameter<long>("nSelftestInjected", gG1->nSelftestInjected).Write();
++  f->Close();
++  std::cout << "[G1] census: nG1=" << gG1->nG1 << " (weighted " << gG1->wG1 << "), status0/1/2="
++            << gG1->nG1Status[0] << "/" << gG1->nG1Status[1] << "/" << gG1->nG1Status[2]
++            << "; signal-loop no-truth pass-reco=" << gG1->nSigLoopNoTruthPassReco
++            << "; bkg skipped=" << gG1->nBkgSkipped << " (in reco tree " << gG1->nBkgSkippedInReco
++            << ") -> " << gG1->outPath << "\n";
++}
++// ---- end P4 G1 census
++
+ // Full-event (G2) truth-muon 4-vector components (MeV, beam frame), built to
+ // MIRROR the reco GetMuon4V() construction but from the TRUTH accessors
+ // (GetPlepTrue/GetThetalepTrue/GetPhilepTrue/GetElepTrue, all beam-frame). This
+@@ -576,6 +705,16 @@
+     }
+ 
+     // Use the SAME isEfficiencyDenom logic as the old code (Truth tree context)
++    if(gG1 && !activePassesTruth)
++    {
++      ++gG1->nTruthFail;
++      const int m = gG1->mask(*truthCV);
++      if((m & 0x0C) == 0x0C)  // fiducial (ZRange && Apothem) on the truth tree
++      {
++        if(gG1->truthFiducialFail.emplace(key, m).second) ++gG1->nTruthFidFailStored;
++        else ++gG1->nTruthFidFailDupKey;
++      }
++    }
+     if(!activePassesTruth) continue;
+ 
+     if(!seenKeys.insert(key).second)
+@@ -1209,6 +1348,11 @@
+     }
+     const bool truthAgrees = (truthDenomIDs == nullptr) ||
+                              (haveKey && truthDenomIDs->find(key) != truthDenomIDs->end());
++    if(gG1 && inPhaseSpace && !truthAgrees)
++    {
++      ++gG1->nSigLoopNoTruth;
++      if(passesReco) { ++gG1->nSigLoopNoTruthPassReco; gG1->wSigLoopNoTruthPassReco += w_reco_tmp; }
++    }
+     if(inPhaseSpace && truthAgrees)
+     {
+       if(!seenRecoKeys.insert(key).second)
+@@ -1453,7 +1597,11 @@
+     // so they are subtracted from the data spectrum like any other background.
+     const bool isSignal = michelcuts.isSignal(*recoCV, cvWeight);
+     const bool inPS_bkg = michelcuts.isEfficiencyDenom(*recoCV, cvWeight);
+-    if(isSignal && inPS_bkg) continue;
++    if(isSignal && inPS_bkg)
++    {
++      if(gG1) G1CensusBkgSkip(recoCV, cvWeight);
++      continue;
++    }
+ 
+     sim_background = recoCV->GetMuonPT();       // reco p_T (GeV/c)
+     sim_background_pz = recoCV->GetMuonPz();    // reco p_|| (GeV/c)
+@@ -1741,6 +1889,31 @@
+   }
+ 
+   PlotUtils::Cutter<CVUniverse, MichelEvent> mycuts(std::move(preCuts), std::move(sidebands), std::move(signalDefinition), std::move(phaseSpace));
++
++  // P4 G1 census (diagnostic copy): own constraint instances, same parameters as above.
++  std::unique_ptr<G1Census> g1Holder;
++  if(getenv("MNV101_G1_CENSUS") != nullptr)
++  {
++    if(fullPhaseSpace)
++    {
++      std::cerr << "[G1] MNV101_G1_CENSUS needs the default phase space; unset MNV101_FULL_PHASE_SPACE.\n";
++      return badCmdLine;
++    }
++    g1Holder.reset(new G1Census);
++    g1Holder->outPath = getenv("MNV101_G1_CENSUS");
++    g1Holder->cons.emplace_back(new truth::IsNeutrino<CVUniverse>());
++    g1Holder->cons.emplace_back(new truth::IsCC<CVUniverse>());
++    g1Holder->cons.emplace_back(new truth::ZRange<CVUniverse>("Tracker", minZ, maxZ));
++    g1Holder->cons.emplace_back(new truth::Apothem<CVUniverse>(apothem));
++    g1Holder->cons.emplace_back(new truth::MuonAngle<CVUniverse>(20.));
++    g1Holder->cons.emplace_back(new truth::PZMuMin<CVUniverse>(1500.));
++    g1Holder->cons.emplace_back(new MaxPzMu<CVUniverse>(60000.));
++    g1Holder->cons.emplace_back(new MaxPtMu<CVUniverse>(4500.));
++    if(getenv("MNV101_G1_CENSUS_SELFTEST") != nullptr)
++      g1Holder->selftestN = std::atol(getenv("MNV101_G1_CENSUS_SELFTEST"));
++    gG1 = g1Holder.get();
++    std::cout << "[G1] census enabled -> " << g1Holder->outPath << "\n";
++  }
+ 
+   std::vector<std::unique_ptr<PlotUtils::Reweighter<CVUniverse, MichelEvent>>> MnvTunev1;
+   MnvTunev1.emplace_back(new PlotUtils::FluxAndCVReweighter<CVUniverse, MichelEvent>());
+@@ -1956,6 +2129,17 @@
+     std::unordered_set<uint64_t> truthDenomIDs;
+     std::vector<TruthDenomEntry> truthDenomCache;
+     ActiveUniverseMigrationCounts activeMigrationCounts;
++    if(gG1)
++    {
++      if(truthOnly || !appendTruthMisses || activeUniverse.enabled)
++      {
++        std::cerr << "[G1] census needs the production CV configuration (no MNV101_TRUTH_ONLY, "
++                  << "MNV101_DISABLE_TRUTH_MISSES or MNV101_ACTIVE_UNIVERSE).\n";
++        return badCmdLine;
++      }
++      gG1->recoIDs = &recoIDs;
++      gG1->truthDenomIDs = &truthDenomIDs;
++    }
+     CVUniverse* comparisonRecoCV =
+         activeUniverse.enabled ? error_bands["cv"].front() : nullptr;
+     CVUniverse* comparisonTruthCV =
+@@ -2028,6 +2212,7 @@
+ 
+     outFile->Write();
+     outFile->Close();
++    if(gG1) WriteG1Census();
+ 
+     std::cout << "Wrote unbinned unfolding inputs to " << OUT_FILE_NAME << "\n";
+     std::cout << "Success\n";

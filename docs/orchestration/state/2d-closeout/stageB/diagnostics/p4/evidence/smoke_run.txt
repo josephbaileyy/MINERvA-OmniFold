@@ -1,0 +1,17 @@
+compare patched_off rc=0
+compare patched_on rc=0
+compare patched_self rc=0
+stdout patched_off == unpatched
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+patched_on {'nBkgSkipped': 37440, 'nBkgSkippedInReco': 37440, 'nG1': 0, 'nG1Status0': 0, 'nG1Status1': 0, 'nG1Status2': 0, 'nSelftestInjected': 0, 'nSigLoopNoTruth': 0, 'nTruthFidFailStored': 62982} rows 0
+patched_self {'nBkgSkipped': 37440, 'nBkgSkippedInReco': 32155, 'nG1': 5285, 'nG1Status0': 0, 'nG1Status1': 0, 'nG1Status2': 5285, 'nSelftestInjected': 5285, 'nSigLoopNoTruth': 0, 'nTruthFidFailStored': 62982} rows 5285
+SELFTEST PASS 5285
+SMOKE-DONE

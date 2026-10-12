@@ -1,0 +1,28 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[tree] data: entries [1981, 1981], 6 common branches, ALL EQUAL; only_a [] only_b []
+[tree] mc_background: entries [1133, 1133], 13 common branches, ALL EQUAL; only_a [] only_b []
+[tree] mc_signal_reco: entries [57862, 57862], 16 common branches, ALL EQUAL; only_a [] only_b []
+[tree] mc_truth_denom: entries [57862, 57862], 9 common branches, ALL EQUAL; only_a [] only_b []
+[obj] activeUniverseBand: equal
+[obj] activeUniverseIndex: equal
+[obj] activeUniverseIsLateral: equal
+[obj] activeUniverseRecoEntrants: equal
+[obj] activeUniverseRecoExits: equal
+[obj] activeUniverseTruthEntrants: equal
+[obj] activeUniverseTruthExits: equal
+[obj] dataPOTUsed: equal
+[obj] hasActiveUniverse: equal
+[obj] hasTruthOnlyMisses: equal
+[obj] mcPOTUsed: equal
+[obj] nTruthOnlyMisses: equal
+[only_a] []
+[only_b] []
+RESULT: IDENTICAL

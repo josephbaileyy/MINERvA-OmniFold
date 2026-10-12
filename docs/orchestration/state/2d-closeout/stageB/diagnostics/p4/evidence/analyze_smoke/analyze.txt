@@ -1,0 +1,67 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+{
+ "gates": [],
+ "controls": {
+  "noop_ctl1A_vs_1A": "IDENTICAL"
+ },
+ "bridge": {
+  "1A": "DIFFERENT (see json)"
+ },
+ "totals": {
+  "counters_summed": {
+   "nTruthFail": 417388.0,
+   "nTruthFidFailStored": 62982.0,
+   "nTruthFidFailDupKey": 0.0,
+   "nSigLoopNoTruth": 0.0,
+   "nSigLoopNoTruthPassReco": 0.0,
+   "wSigLoopNoTruthPassReco": 0.0,
+   "nBkgSkipped": 37440.0,
+   "nBkgSkippedInReco": 37440.0,
+   "nG1": 0.0,
+   "nG1DupKey": 0.0,
+   "nG1Status0": 0.0,
+   "nG1Status1": 0.0,
+   "nG1Status2": 0.0,
+   "wG1": 0.0,
+   "selftestN": 0.0,
+   "nSelftestInjected": 0.0
+  },
+  "G1_weighted_census_wG1": 0.0,
+  "G1_weighted_binned_on_grid": 0.0,
+  "G1_weighted_out_of_grid": 0.0,
+  "G1_weighted_outside_reported_cells_on_grid": 0.0,
+  "nG1": 0.0,
+  "nSigLoopNoTruthPassReco": 0.0,
+  "nG1DupKey": 0.0,
+  "S_weighted": 30308.523722633647,
+  "B_weighted": 976.6936016759096,
+  "D": 1972.0,
+  "pot_scale": 0.05536576011804238,
+  "integral_f_S_grid224": 0.0,
+  "integral_f_SB_grid224": 0.0,
+  "integral_f_D_grid224": 0.0
+ },
+ "per_cell_summary": {
+  "f_S_median": 0.0,
+  "f_S_max": 0.0,
+  "n_cells_f_S_ge_sigma_over_3": 0,
+  "n_cells_S_zero": 4
+ },
+ "classification": {
+  "status_weighted": {
+   "0": 0.0,
+   "1": 0.0,
+   "2": 0.0
+  },
+  "first_failed_truth_constraint_weighted": {}
+ },
+ "outcome": "SMOKE/SUBSET (not the P4 result): MEASURED; below the pre-declared materiality bound"
+}
