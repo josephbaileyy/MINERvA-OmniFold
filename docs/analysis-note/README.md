@@ -122,8 +122,9 @@ not imply otherwise.
 | Scalar higher-dimensional central values | `sec_3d.tex` (`E_avail`, `q3`), `sec_eavailw.tex` (`W`, the `(E_avail,W)` plane) |
 | Five-axis estimator validation, model dependence, 5D coverage, adopted 5D covariance | `sec_5d.tex` |
 | Calibrated joint generator tests (complete record; the article's Sec. VI is a summary of it) | `sec_joint.tex`, numbers in `values_inference.tex` |
-| Uncertainty construction and inference rules | `sec_systematics.tex`, `app_statmethods.tex` |
-| PET full-event `C_stat` construction | `app_cstat.tex` |
+| Uncertainty construction and inference rules | `sec_systematics.tex`, `app_statmethods.tex` (general methods and the 2D comparison), `app_statmethods_nd.tex` (N-D and inference) |
+| PET diagnostic studies (an appendix since 2026-10-11) and the full-event `C_stat` construction | `sec_pet.tex`, `sec_pet_campaigns.tex`, `app_cstat.tex` |
+| Guide to the appendices (methods, diagnostic studies, records) | `app_guide.tex` |
 | Struck values, withdrawn arguments, superseded constructions (note only; the only note file allowed `\dead{}`) | `app_history.tex` |
 | Generated figure inputs | `figures/`, `make_figures.sh` |
 | Build and containment behavior | `build_all.sh`, `test_build_all.py`, `check_dead_containment.py` |

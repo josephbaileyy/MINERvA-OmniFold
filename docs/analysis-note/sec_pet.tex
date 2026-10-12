@@ -1,4 +1,4 @@
-\section{Point-cloud representation and PET method development}
+\section{Diagnostic study: point-cloud representation and PET method development}
 \label{sec:pet}
 
 \paragraph{Status: diagnostic and method development, not a publication
@@ -97,7 +97,7 @@ optimal cap. They also do not apply to reconstructed clusters: one particle
 can produce many deposits, so detector-side truncation can discard useful
 information even when truth clouds are sparse. The later design studies add
 detector energy summaries to recover some of that information
-(\S\ref{sec:pet-campaigns}).
+(App.~\ref{sec:pet-campaigns}).
 
 \begin{figure}[H]
   \centering
@@ -207,7 +207,7 @@ Ordinary closure alone cannot uniquely attribute a data-side gap to training
 configuration. The recoil-only feature contract adds another difference:
 at fixed recoil, the conditional muon distribution is inherited from the prior.
 These structural limits survive the withdrawn numerical comparison.
-The later simulation-only comparison in \S\ref{sec:pet-gbdt-paired}
+The later simulation-only comparison in App.~\ref{sec:pet-gbdt-paired}
 does not revive it.
 
 \subsection{Statistical and training diagnostics of the recoil-only estimator}
@@ -218,7 +218,7 @@ binning and completeness.
 
 The replicas and nominal use scalar GBDT's background-subtracted
 five-dimensional measured target, unlike the legacy comparison in
-\S\ref{sec:pet-abs}. Data align exactly event by event; MC arrays are
+App.~\ref{sec:pet-abs}. Data align exactly event by event; MC arrays are
 byte-identical to the full-cloud input. Ordering, event-alignment and
 finite-output gates passed for the nominal extraction, an identical-seed
 GPU-floor repeat, a 20-member coherent-Poisson retraining ensemble, and a
@@ -438,3 +438,5 @@ rank designs. Closure bias and uncertainty calibration must also be assessed.
 These are method-development directions, not explanations of the existing
 full-event anomaly, evidence for its declined pairing, or an adopted PET
 uncertainty construction.
+% Moved from the body to the appendices 2026-10-11 (note reorganization): PET is diagnostic method
+% development and is absent from the article; its full-event C_stat appendix follows it.
