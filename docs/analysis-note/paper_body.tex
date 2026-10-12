@@ -53,25 +53,25 @@ muon-kinematic measurement already disfavours these generator
 families~\cite{MINERvA:2021owq}.  We calibrate each test through the full
 analysis chain, using an estimator with unbinned background refinement, so that the
 estimator's bias toward its prior enters each simulated null distribution
-(Sec.~\ref{sec:joint}).  The tests hold under six stated conditions
-(Sec.~\ref{sec:conditions}); an
-omitted calorimetric recoil-response uncertainty and unresolved fine-grid
-convergence limit their physical interpretation.  Matched coarse-projection
-tests assess whether the joint information adds discrimination.
+(Sec.~\ref{sec:joint}).
 
 The higher-dimensional central values pass their marginal anchors and
 injected-shape closure tests and recover the known low-recoil discrepancy.
 Background-inclusive pseudo-experiments, however, reveal a background-subtraction
 bias of up to \SI{4}{\percent} in simulation in the highest-$W$ cells, which an
-unbinned treatment largely removes, and the unfolding follows a generator-sized
-change of the $\Eavail$ shape only partly.  This regularization bias and the
-estimator-seed sensitivity limit the construction, and the measured model
+unbinned treatment, used only for the generator tests, largely removes; the
+quoted uncertainties omit it, and the unfolding follows a generator-sized
+change of the $\Eavail$ shape only partly.  This regularization bias, the
+estimator-seed sensitivity, and untested coverage limit the construction, and the measured model
 dependence prevents a five-dimensional measurement with qualified total
 uncertainties at useful precision.  All ten
 calibrated tests, in total and in shape for each of the five predictions, reject
-at the 5\% familywise level under the stated conditions; because each test also
-has $p<0.05$ in at least one matched coarse projection, the joint information is
-not shown to add discrimination.
+at the 5\% familywise level under six stated conditions
+(Sec.~\ref{sec:conditions}), among which an omitted calorimetric
+recoil-response uncertainty and unresolved fine-grid convergence limit their
+physical interpretation; because each test also has $p<0.05$ in at least one
+matched coarse projection, the joint information is not shown to add
+discrimination.
 % TODO(2D lane): a sentence giving the two-dimensional reproduction's headline numbers belongs here.
 
 Sections~\ref{sec:data} and~\ref{sec:method} describe the data and estimators,
@@ -113,7 +113,7 @@ the available energy
 in which protons contribute kinetic energy, charged pions their energy minus an
 inherited constant of \SI{135}{MeV} rather than the charged-pion mass (an
 uncorrected deviation that, in a simulated sample, moves \SI{0.67}{\percent} of
-events into another true-$\Eavail$ bin and changes no bin by more than
+events into another true-$\Eavail$ bin and changes no true-$\Eavail$ bin by more than
 \SI{1.05}{\percent}; it has not been compared with the correlated
 uncertainty), and neutral pions and
 photons their total energy; all other final-state particles, including neutrons,
@@ -132,7 +132,7 @@ the higher-dimensional extensions~\cite{AnalysisNote2026}.
 % 135 MeV effect: docs/EAVAIL_DEFINITION.md sec. 3 (439/65,911 = 0.666% of events change truth bin; worst bin +1.049%;
 % the comparison against the adopted covariance with off-diagonals "has not been done").
 
-Event selection is held fixed as the unfolded observables grow from
+Event selection is held fixed as the classifier inputs and unfolded observables grow from
 $(\pT,\pPar)$ to $(\pT,\pPar,\Eavail,q_3,W)$. It requires a tracker vertex
 and a MINOS-matched muon; adding features does not add selected events or
 relax the signal definition. The external
@@ -153,25 +153,18 @@ reconstruction-level classifier distinguishes data from simulated events and
 defines a likelihood-ratio weight.  The event pairing transfers that weight to
 truth, including unmatched events, and a truth-level classifier propagates a
 smooth reweighting to the next iteration.  Cross sections are formed by
-histogramming the reweighted truth events in a reporting binning fixed in advance and
+histogramming the reweighted truth events in the reporting binning and
 dividing by integrated flux, target count, and bin width.
 
 Backgrounds enter the reconstruction-level step through the density the
 classifier learns to match.  In the purity-based subtraction every data event in
 reconstructed bin $b$ carries the weight
-\begin{equation}
-  w_{\mathrm{pur}}(b)=\max\bigl(0,\;1-B_{b}/D_{b}\bigr),
-\end{equation}
-where $D_{b}$ and $B_{b}$ are the data and predicted background counts in that
+$w_{\mathrm{pur}}(b)=\max(0,\,1-B_{b}/D_{b})$, where $D_{b}$ and $B_{b}$ are the data and predicted background counts in that
 bin, so the target density is $D(x)\,w_{\mathrm{pur}}(b)$.  The unbinned
 negative-weight treatment instead adds simulated background events with negative
-weight to the data, so the target is
-\begin{equation}
-  D(x)-B(x)
-\end{equation}
-pointwise; a classifier refinement~\cite{StayPositive2025}, clipped at
+weight to the data, so the target is $D(x)-B(x)$ pointwise; a classifier refinement~\cite{StayPositive2025}, clipped at
 zero, converts the signed sample into non-negative weights before the first
-iteration.  The two targets share bin integrals but differ inside a bin wherever
+iteration.  The two targets share bin integrals wherever $B_{b}<D_{b}$ but differ inside a bin wherever
 the background fraction varies within it.  Both are defined in the analysis
 note's appendix on negative-weight background subtraction~\cite{AnalysisNote2026}.
 
@@ -179,11 +172,13 @@ All four estimator configurations use five OmniFold iterations with
 gradient-boosted decision-tree classifiers~\cite{Pedregosa:2011sklearn,Ke:2017lightgbm}, and each result
 names the one it uses.  The iteration count and classifier capacity regularize
 the unfolding, and no hyperparameter search was performed on data: the nominal
-settings are library defaults at matched capacity, and the joint-test
-estimator's refinement capacity was chosen in simulation studies.  A
+settings are scikit-learn defaults, with LightGBM matched to their capacity,
+and the joint-test estimator's refinement capacity was chosen in simulation
+closure studies.  A
 neural-network classifier in the same five-iteration loop changes the
 three-dimensional total cross section by \SI{0.8}{\percent} and the
-one-dimensional projections by medians of 0.7--\SI{1.4}{\percent}.  The two-dimensional
+one-dimensional projections by median absolute differences of
+\SIrange{0.7}{1.4}{\percent}.  The two-dimensional
 central value uses exact-split scikit-learn boosting with the purity-based
 background subtraction.  The three- to five-dimensional central values use
 LightGBM at matched nominal capacity with the same subtraction, as do the
@@ -477,10 +472,10 @@ muon and beam-angle lateral bands through a linear surrogate, a
 predictions' finite-sample residual.  The data are unfolded once with the full
 simulation.  The Monte Carlo $p$ value of a test is $(k+1)/(B+1)$, where $k$
 of $B$ null pseudo-experiments reach the observed statistic; it is never zero.
-Each decision uses the largest $p$ value over a set of shifted nulls fixed in
-advance, the claim variants: shifts by an upper bound on the effect of the
-pseudo-experiments' using half of the simulation where the data unfolding uses
-all of it, and by $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$, where
+Each decision uses the claim $p$ value, the largest $p$ value over a set of
+shifted nulls fixed in advance (the claim variants): shifts by an upper bound
+on the simulation-size difference (half of the simulation in the
+pseudo-experiments, all of it for the data), and by $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$, where
 $\delta_{\mathrm{fine}}$ is the change of the noise-free unfolded result in the
 last step of a refinement of the null truth's grid (Sec.~\ref{sec:conditions}).  The
 external nulls are strongly non-central, with non-centralities $\lambda$ of
@@ -503,7 +498,7 @@ shifted null, threshold, or stopping rule, was decided while job-status outputs
 exposed observed claim $p$ values; the Monte Carlo $p$ values remain valid at
 the number of pseudo-experiments reached.  An independent recomputation with
 separately written code agrees with the production evaluation in all
-\jtRecompRows{} compared quantities.  The pre-registered specification and the
+\jtRecompRows{} compared quantities.  The specification fixed in advance and the
 recorded result are in Ref.~\cite{JointTestRecord2026}; the complete record is
 in the analysis note's joint-test section~\cite{AnalysisNote2026}.
 % Sources: amendment 7 data_informed_disclosure, claims.rejection, calibration.sequential_rule,
@@ -514,28 +509,28 @@ in the analysis note's joint-test section~\cite{AnalysisNote2026}.
 \label{sec:conditions}
 
 The decisions are tests of the hybrid null, and each holds under six
-conditions of the nuisance model, numbered as in the pre-registered
-specification~\cite{JointTestRecord2026}.  (i) Below the fine grid the null
+conditions of the nuisance model, numbered as in the specification fixed in
+advance~\cite{JointTestRecord2026}.  (i) Below the fine grid the null
 truth carries the Tune~v1's shapes, and convergence on the fine grid has not
 been shown: in the $L_{2}$ norm of the per-cell relative changes, the last
 refinement step, from a twofold-merged grid to the fine grid, is
 \jtMoneMin--\jtMoneMax{} of the whole change from the coarse test grid, so the
-residual below the fine grid is unmeasured and potentially material.  The claim
-variants were set before any result from an assumed extrapolation: if the step
+residual below the fine grid is unmeasured and potentially material.  Before any
+result, the claim variants were set from an assumed extrapolation: if the step
 kept shrinking geometrically at a rate taken from the design review, whose
-calculation is not recorded, the residual would be about one to three times
-the last step, with $\jtMoneKappa\,\delta_{\mathrm{fine}}$ the central estimate
-and $\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$ the upper end, used for
-robustness checks that do not enter the decisions.  The measured $L_{2}$ ratios
-also allow slower convergence.  A later scan of the shift multiplier
-(Sec.~\ref{sec:joint-results}), which does not enter the decisions and does not
-rely on that rate, measures how large a shift along $\delta_{\mathrm{fine}}$ the
-rejections tolerate.  The rejections carry over from the simulated hybrid null to $G$
-itself only if replacing the Tune~v1's shape below the fine grid by $G$'s moves
-the noise-free unfolded result by no more than
-$\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$ along $\delta_{\mathrm{fine}}$; the
-scan shows that they would persist for shifts along that direction up to about
-$5.2\,\delta_{\mathrm{fine}}$.  (ii) The
+calculation is not recorded, the residual would be about one to three times the
+last step; the claim variants take its central estimate,
+$\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$, and robustness checks that do not
+enter the decisions use its upper end,
+$\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$.  The measured $L_{2}$ ratios
+also allow slower convergence.  The rejections carry over from the simulated
+hybrid null to $G$ itself only if replacing the Tune~v1's shape below the fine
+grid by $G$'s moves the noise-free unfolded result by no more than
+$\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$ along $\delta_{\mathrm{fine}}$;
+outside the decision rule, the scan of Sec.~\ref{sec:joint-results} finds them
+determinate for shifts along that direction up to about
+$5.2\,\delta_{\mathrm{fine}}$, which bounds neither the residual nor
+convergence.  (ii) The
 detector model is the simulation's, varied only by the drawn detector bands and
 the lateral surrogate; there is no band for the calorimetric recoil-energy
 response (Sec.~\ref{sec:response}).  (iii) The interaction-model prior is the
@@ -566,15 +561,12 @@ independent recomputation verifies the calculation, not that adequacy.
 Table~\ref{tab:joint} lists the ten decisions.  Every test is rejected at
 familywise $\alpha=\jtAlpha$; nine have $k=0$, and NuWro's shape test has
 $k=1$.  A scan of the shift multiplier along
-$\delta_{\mathrm{fine}}$~\cite{JointTestKappa2026}, run after the decisions to a
-specification fixed before it ran and not entering them, keeps all ten decisions determinate
+$\delta_{\mathrm{fine}}$, specified before it ran but run after the decisions
+and outside the decision rule~\cite{JointTestKappa2026}, keeps all ten decisions determinate
 rejections at every sampled multiplier up to $5.25\,\delta_{\mathrm{fine}}$ in
 the calibration ensembles at their stopping point ($5.17\,\delta_{\mathrm{fine}}$
 with the recovered pseudo-experiments included); it tests one prescribed
-direction and bounds neither the actual residual nor convergence.  Each
-rejection also survives the robustness shifts at
-$\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$, the upper end of the
-extrapolation in condition~(i).
+direction and bounds neither the actual residual nor convergence.
 Figure~\ref{fig:joint-nulls} shows each null's calibrated distribution with the
 observed statistic: the Tune~v1 null is centred at small values, whereas the
 external nulls are displaced far upward by the estimator's pull toward its
@@ -625,7 +617,7 @@ prior, which the calibration reproduces.
 Computing-job time limits interrupted or prevented \jtLostCal{} calibration
 and \jtLostPow{} power pseudo-experiments.  Had every interrupted one exceeded
 the observed statistic, no test would have been rejected, so the lost seeds
-were rerun, without changing the decisions, under a procedure fixed and
+were rerun after the decisions, outside the decision rule, under a procedure fixed and
 independently reviewed beforehand~\cite{JointTestRecovery2026}, which first reproduced 16 completed
 seeds exactly.  None of the recovered pseudo-experiments reaches the observed
 statistic in any test or shifted null: every submitted pseudo-experiment has now
@@ -707,23 +699,22 @@ so the rejections remain conditional on the simulation's hadronic response.
 \label{sec:uncertainty-status}
 
 A covariance has been built for the five-dimensional central value, and its
-\zprojCells-cell $(\Eavail,W)$ projection formed; it is independent of the
+\zprojCells-cell $(\Eavail,W)$ projection formed; it is separate from the
 joint-test calibration.  It has not met the analysis's predeclared
 qualification criteria, one of which requires a bound fixed before production
 and can no longer be applied to it, and it is used only under a documented
 exception limited to that one product.  We quote no covariance-based generator
-significance, because the covariance depends measurably on the estimator's
-random seed.  In two further covariances built at two seed settings (separate
+significance, because covariances from this estimator depend measurably on
+its random seed.  In two further covariances built at two seed settings (separate
 from the one in use), changing the seed moves the projected uncertainty by
 \SI{\sprojMeasured}{\percent}, against a \SI{\sprojBound}{\percent} limit set
 before they were produced.  The movement did not fall with ensemble size over the range
 tested (\SI{\seedEffectNforty}{\percent}, \SI{\seedEffectNeighty}{\percent},
 and \SI{\sprojMeasured}{\percent} at 40, 80, and 160 throws), whereas a
 same-seed resampling floor fell from \SI{\floorNforty}{\percent} to
-\SI{\floorNeighty}{\percent} between 40 and 80.  The comparison is a single
-seed pair whose 40- and 80-throw points are nested subsets of the same 160
-throws, so the seed-pair width and the behaviour at much larger ensembles are
-unmeasured.  Five of the covariance's 45 uncertainty bands are built at a
+\SI{\floorNeighty}{\percent} between 40 and 80.  It rests on one seed pair
+with nested throw subsets, so the seed-pair width and the behaviour at much
+larger ensembles are unmeasured.  Five of the covariance's 45 uncertainty bands are built at a
 fixed seed that the variation cannot reach (\SI{\pinnedBandsSqrtTr}{\percent} of
 $\sqrt{\mathrm{Tr}\,C}$); their seed sensitivity, and its effect on the total
 in either direction, is unmeasured.
