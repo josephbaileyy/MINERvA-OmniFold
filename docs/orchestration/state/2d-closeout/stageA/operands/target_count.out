@@ -1,0 +1,5 @@
+libMAT 0
+libMAT-MINERvA 0
+isMC=True GetTrackerNNucleons(5980,8422,apothem=850) = 3.2352943296224835e+30
+isMC=False GetTrackerNNucleons(5980,8422,apothem=850) = 3.234779999602547e+30
+driver constant 3.2352943296224835e+30
