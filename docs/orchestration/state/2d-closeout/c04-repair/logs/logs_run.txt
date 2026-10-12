@@ -1,0 +1,5 @@
+RUN COMPLETE
+
+real	0m55.985s
+user	4m49.200s
+sys	0m13.629s

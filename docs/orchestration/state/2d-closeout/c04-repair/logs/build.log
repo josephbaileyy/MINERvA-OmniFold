@@ -1,0 +1,127 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[check] input_pin_cv_E_U: PASS  4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c
+[check] input_pin_rollup_vl172: PASS  077912e3e7a53376c6df89ee1af4a2a504fe1f49423bab88780204beccd952f5
+[check] input_pin_boot_vl170: PASS  71a75821ceeb658710adca30243e39e7184e33f868f58ea56cffe63ba8db0115
+[check] input_pin_ml: PASS  3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9
+[check] input_pin_flux_band: PASS  5eecae84509ba8ededbe8fdee63508d8e36cd057cc0547a940383f80248580eb
+[check] input_pin_constraint: PASS  e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2
+[check] input_pin_committed_export: PASS  
+[check] n_reported_205: PASS  205
+[check] sweep_44_bands_187_files: PASS  [44, 187]
+[check] flux_100_minos_2: PASS  
+[check] adopted_object_set: PASS  ['hCov_combined', 'hCov_universe___Normalization_flat', 'hCov_universe_full_2p2h', 'hCov_universe_full_AGKYxF1pi', 'hCov_universe_full_AhtBY', 'hCov_universe_full_BeamAngleX', 'hCov_universe_full_BeamAngleY', 'hCov_universe_full_BhtBY', 'hCov_universe_full_CCQEPauliSupViaKF', 'hCov_universe_full_CV1uBY', 'hCov_universe_full_CV2uBY', 'hCov_universe_full_EtaNCEL', 'hCov_universe_full_Flux', 'hCov_universe_full_FrAbs_N', 'hCov_universe_full_FrAbs_pi', 'hCov_universe_full_FrCEx_N', 'hCov_universe_full_FrCEx_pi', 'hCov_universe_full_FrElas_N', 'hCov_universe_full_FrElas_pi', 'hCov_universe_full_FrInel_N', 'hCov_universe_full_FrPiProd_N', 'hCov_universe_full_FrPiProd_pi', 'hCov_universe_full_GEANT_Neutron', 'hCov_universe_full_GEANT_Pion', 'hCov_universe_full_GEANT_Proton', 'hCov_universe_full_HighQ2', 'hCov_universe_full_LowQ2', 'hCov_universe_full_MFP_N', 'hCov_universe_full_MFP_pi', 'hCov_universe_full_MaCCQE', 'hCov_universe_full_MaNCEL', 'hCov_universe_full_MaRES', 'hCov_universe_full_MinosEfficiency', 'hCov_universe_full_MuonResolution', 'hCov_universe_full_Muon_Energy_MINERvA', 'hCov_universe_full_Muon_Energy_MINOS', 'hCov_universe_full_MvRES', 'hCov_universe_full_NormDISCC', 'hCov_universe_full_NormNCRES', 'hCov_universe_full_RDecBR1gamma', 'hCov_universe_full_Rvn1pi', 'hCov_universe_full_Rvn2pi', 'hCov_universe_full_Rvp1pi', 'hCov_universe_full_Rvp2pi', 'hCov_universe_full_Theta_Delta2Npi', 'hCov_universe_full_VecFFCCQEshape', 'hCov_universe_total', 'hSigma_combined', 'hSigma_universe_total']
+[check] boot_cells_equal_cv_cells: PASS  hMean2D > 0
+[check] control_total_bitwise: PASS  0.0
+[check] control_combined_bitwise: PASS  0.0
+[check] control_full_Flux_block_recompute: PASS  {'bitwise': True, 'max_rel': 0.0}
+[check] control_full_Muon_Energy_MINOS_block_recompute: PASS  {'bitwise': True, 'max_rel': 0.0}
+[check] control_export_bitwise: PASS  
+[check] weights_100: PASS  100
+[check] weights_identical_across_playlists: PASS  
+[check] weights_equal_constraint_file_first_100: PASS  0.0
+[check] flux_unweighted_wcov_equals_stored: PASS  8.401760762220007e-16
+[check] mat_flux_weighted_le_1e-12: PASS  1.0987992138307785e-15
+[check] mat_flux_unweighted_vs_stored_le_1e-12: PASS  8.401760762220007e-16
+[check] phi_cv_vs_runEventLoopMC_MEFHC_le_1e-9: PASS  1.736573029933704e-16
+[check] phi_cv_vs_hFluxCV_le_1e-12: PASS  0.0
+[check] n_pt_equals_NX: PASS  [14, 14]
+[check] minos_outputs_divided_by_phi_cv: PASS  0.0
+[check] mat_minos_rescaled_le_1e-12: PASS  6.476709371146054e-17
+[check] block_identical_full_2p2h: PASS  
+[check] block_identical_full_AGKYxF1pi: PASS  
+[check] block_identical_full_AhtBY: PASS  
+[check] block_identical_full_BeamAngleX: PASS  
+[check] block_identical_full_BeamAngleY: PASS  
+[check] block_identical_full_BhtBY: PASS  
+[check] block_identical_full_CCQEPauliSupViaKF: PASS  
+[check] block_identical_full_CV1uBY: PASS  
+[check] block_identical_full_CV2uBY: PASS  
+[check] block_identical_full_EtaNCEL: PASS  
+[check] block_identical_full_FrAbs_N: PASS  
+[check] block_identical_full_FrAbs_pi: PASS  
+[check] block_identical_full_FrCEx_N: PASS  
+[check] block_identical_full_FrCEx_pi: PASS  
+[check] block_identical_full_FrElas_N: PASS  
+[check] block_identical_full_FrElas_pi: PASS  
+[check] block_identical_full_FrInel_N: PASS  
+[check] block_identical_full_FrPiProd_N: PASS  
+[check] block_identical_full_FrPiProd_pi: PASS  
+[check] block_identical_full_GEANT_Neutron: PASS  
+[check] block_identical_full_GEANT_Pion: PASS  
+[check] block_identical_full_GEANT_Proton: PASS  
+[check] block_identical_full_HighQ2: PASS  
+[check] block_identical_full_LowQ2: PASS  
+[check] block_identical_full_MFP_N: PASS  
+[check] block_identical_full_MFP_pi: PASS  
+[check] block_identical_full_MaCCQE: PASS  
+[check] block_identical_full_MaNCEL: PASS  
+[check] block_identical_full_MaRES: PASS  
+[check] block_identical_full_MinosEfficiency: PASS  
+[check] block_identical_full_MuonResolution: PASS  
+[check] block_identical_full_Muon_Energy_MINERvA: PASS  
+[check] block_identical_full_MvRES: PASS  
+[check] block_identical_full_NormDISCC: PASS  
+[check] block_identical_full_NormNCRES: PASS  
+[check] block_identical_full_RDecBR1gamma: PASS  
+[check] block_identical_full_Rvn1pi: PASS  
+[check] block_identical_full_Rvn2pi: PASS  
+[check] block_identical_full_Rvp1pi: PASS  
+[check] block_identical_full_Rvp2pi: PASS  
+[check] block_identical_full_Theta_Delta2Npi: PASS  
+[check] block_identical_full_VecFFCCQEshape: PASS  
+[check] block_identical___Normalization_flat: PASS  
+[check] mat_universe_total_minus_norm_le_1e-12: PASS  2.1219181007477824e-16
+[check] mat_adopted_universe_total_minus_norm_le_1e-12: PASS  5.218263058138331e-17
+[check] readback_uq_universe_covariance_c04x01.root: PASS  
+[check] readback_uq_universe_covariance_control.root: PASS  
+[check] control_block_sum_median_6.8707: PASS  6.8706583503726995
+{
+ "weights": {
+  "sum": 211.01200325082078,
+  "min": 1.05652249534e-05,
+  "max": 26.9529360302,
+  "n_eff": 19.060534772246488
+ },
+ "minos_flux_ratio_phi_u_over_phi_cv": {
+  "u0": {
+   "min": 1.0004185782162152,
+   "max": 1.0004185782162152
+  },
+  "u1": {
+   "min": 0.9953531560419153,
+   "max": 0.9953531560419154
+  }
+ },
+ "block_sum_median_pct": {
+  "adopted": 6.8706583503726995,
+  "repaired": 6.089795123254515
+ },
+ "block_sum_integral_pct": {
+  "adopted": 5.391245869218487,
+  "repaired": 4.230343746835186
+ },
+ "full_Flux_median_pct": {
+  "adopted": 4.9930098023455765,
+  "repaired": 3.654940752609054
+ },
+ "full_Muon_Energy_MINOS_median_pct": {
+  "adopted": 2.304891875504767,
+  "repaired": 2.281030644028989
+ },
+ "full_Flux_integral_pct": {
+  "adopted": 4.893242222638669,
+  "repaired": 3.556940242388944
+ },
+ "full_Muon_Energy_MINOS_integral_pct": {
+  "adopted": 0.11304748460610649,
+  "repaired": 0.3674935227807775
+ }
+}
