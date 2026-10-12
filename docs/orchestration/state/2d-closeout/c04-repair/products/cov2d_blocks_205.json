@@ -1,0 +1,22 @@
+{
+ "universe_plus_boot": {
+  "path": "/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/uq_universe_covariance_c04x01.root",
+  "object": "hCov_combined",
+  "shape": [
+   205,
+   205
+  ],
+  "sqrt_trace": 2.9166413043077494e-39,
+  "construction": "VL172 rollup with the C04 (MAT-weighted Flux) and X01 (MINOS / Phi_MINOS,u) blocks; universe + VL170 bootstrap"
+ },
+ "ml": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+  "object": "hCov2D_reported",
+  "sha256": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9",
+  "shape": [
+   205,
+   205
+  ],
+  "sqrt_trace": 5.060524519225612e-41
+ }
+}

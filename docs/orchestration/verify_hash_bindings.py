@@ -452,8 +452,14 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: (gate run with and without the file on the integration tree): one ADDED, nothing removed or repointed, OK:
 #:   ADDED   docs/orchestration/AUTHORIZATION-20261011-xr-linux.md                               0c547f6e
 #: Power-tested before the bump: one flipped hex digit in that receipt's authorization sha256 gives MISMATCH, rc 1.
-RECEIPT_BINDING_COUNT = 149
-RECEIPT_BINDING_SHA256 = "6a3787ea17b042e371908a70bc83f720300557fc9f1464ba9ddace9850215b13"
+#: 149 -> 150, digest 6a3787ea -> f1736989 (2026-10-12, the 2D C04+X01-repaired covariance, VL175). The record's
+#: per-cell sigma vectors (state/2d-closeout/c04-repair/products/sigma_abs_205_repaired.json) pin their cell-order
+#: operand. Enumerated before the constant moved (receipt_inventory() rows on origin/main 3921dec4 and on the
+#: branch): one ADDED, nothing removed or repointed, OK:
+#:   ADDED   docs/orchestration/state/next-preparation-20261009/two-d-path/operands/remote_reduce.json 2ecfc243
+#: Power-tested before the bump: one flipped hex digit in that receipt's cell_order sha256 gives MISMATCH, rc 1.
+RECEIPT_BINDING_COUNT = 150
+RECEIPT_BINDING_SHA256 = "f17369895245ae656a78346d05c2b272699745dd9e10a34f29c016b2d08c31c9"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"
