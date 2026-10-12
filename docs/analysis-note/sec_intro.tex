@@ -31,7 +31,7 @@ than on a fixed histogram binning.
 
 Machine-learning advances have enabled unbinned unfolding
 (overviews in Refs.~\cite{Arratia:2021otl,Huetsch:2024quz}; cross-experiment
-guidance in Ref.~\cite{unbinnedguide}). One broad family iteratively reweights
+guidance in Ref.~\cite{Canelli:2025guide}). One broad family iteratively reweights
 a starting simulation; OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk,Chan:2023tbf}
 is its most widely adopted method. The other generates new samples directly
 with a neural network~\cite{Datta:2018mwd,Bellagente:2019uyp,Bellagente:2020piv,
@@ -42,7 +42,7 @@ method~\cite{Hocker:1995kb}, and TUnfold~\cite{Schmitt:2012kp}.
 \paragraph{Prior OmniFold applications.}
 % Merged here from sec_method.tex (prior applications, background practice,
 % Huang et al.) and the earlier one-sentence H1/T2K summary of this section.
-OmniFold has advanced from method paper to production measurement over the last few years. H1 published the first real-data applications: jet substructure in high-$Q^{2}$ deep-inelastic scattering, followed by a multi-differential eight-observable jet measurement~\cite{H1:2021wkz,H1:2023fzk}. LHCb unfolded identified-hadron distributions in $Z$-tagged jets~\cite{LHCb:2022rky}. ATLAS performed a simultaneous unbinned measurement of twenty-four $Z+$jets observables~\cite{ATLAS:2024jets}. Ref.~\cite{unbinnedguide} collects these
+OmniFold has advanced from method paper to production measurement over the last few years. H1 published the first real-data applications in deep-inelastic scattering: lepton--jet correlations unfolded simultaneously in eight dimensions~\cite{H1:2021wkz}, followed by jet substructure at high $Q^{2}$~\cite{H1:2023fzk}. LHCb unfolded identified-hadron distributions in $Z$-tagged jets~\cite{LHCb:2022rky}. ATLAS performed a simultaneous unbinned measurement of twenty-four $Z+$jets observables~\cite{ATLAS:2024jets}. Ref.~\cite{Canelli:2025guide} collects these
 and other applications and distills cross-experiment practice; several of the
 practices audited there appear in our uncertainty budget (the ensemble-mean
 cross-check of the central value, the bootstrap statistical block, and the
@@ -53,14 +53,14 @@ unfolding. ATLAS left its
 less-than-\SI{0.25}{\percent} background in place and assigned it as an uncertainty,
 while identifying negatively-weighted simulated events as the natural
 in-method subtraction~\cite{ATLAS:2024jets,Andreassen:2021zzk};
-Ref.~\cite{unbinnedguide} recommends that route for nontrivial backgrounds.
+Ref.~\cite{Canelli:2025guide} recommends that route for nontrivial backgrounds.
 Recent methodological work explicitly treats backgrounds, fakes, acceptance,
 and inefficiency in OmniFold-HI~\cite{Falcao:2025backgrounds} and generative
 unfolding~\cite{Butter:2025genfold}. These constructions address related
 problems; their subtraction prescriptions can differ.
 
 Closest to this analysis is the study of Huang \emph{et
-al.}~\cite{Huang:2024omnifold}, the first application of OmniFold to a
+al.}~\cite{Huang:2025omnifold}, the first application of OmniFold to a
 neutrino cross section: a mock-data unfolding of muon kinematics on the
 public T2K near-detector simulated dataset, benchmarked against traditional
 binned approaches. Two of its findings shape expectations for neutrino
@@ -86,7 +86,8 @@ the method directly against a published binned measurement of the same data
         \emph{before} training (\S\ref{sec:method-algo}).
   \item Additional observables enter as input features, avoiding multiplication
         of response-matrix bins. This enables the available-energy extension
-        (\S\ref{sec:3d}), which has no practical IBU analog.
+        (\S\ref{sec:3d}); a binned method such as IBU would need a
+        correspondingly larger multidimensional response matrix to include it.
   \item OmniFold regularizes through model capacity and the iteration count
         shared with IBU. Comparing both methods on the same data quantifies
         the result's method-dependence (\S\ref{sec:results}).

@@ -29,8 +29,7 @@
 %\large MINERvA analysis note --- DRAFT}
 
 \title{\textbf{Analysis Note:}\\
-Unbinned measurement of the charged-current inclusive cross section in
-$\nu N$ collisions with public MINERvA data}
+Unbinned OmniFold analysis of MINERvA charged-current inclusive data}
 
 \author[1]{Joseph Bailey\thanks{\url{josephrb@stanford.edu}}}
 \author[2]{Benjamin Nachman\thanks{\url{nachman@stanford.edu}}}
@@ -45,9 +44,9 @@ $\nu N$ collisions with public MINERvA data}
 
 \begin{abstract}
 
-We measure multidimensional medium-energy charged-current neutrino--nucleus
-cross sections with OmniFold, an unbinned machine-learning method. An independent
-unfolding method reproduces the published double-differential cross section in muon transverse and longitudinal
+We study multidimensional medium-energy charged-current neutrino--nucleus
+cross sections on MINERvA open data with OmniFold, an unbinned machine-learning
+unfolding method. An independent unfolding method reproduces the published double-differential cross section in muon transverse and longitudinal
 momentum, including its spectrum and uncertainty scale; that uncertainty is computed with a
 different tree-learning implementation from the central value, and whether it describes the central
 value has not been measured. Adding available energy
@@ -57,14 +56,23 @@ Each passes projection anchors against its lower-dimensional predecessor to
 $\approx$1--2\,\%. Binned MINERvA measurements already reach triple-differential;
 the methodological feature here is simultaneous unbinned unfolding. The unfolds
 recover the established MINERvA low-recoil discrepancy, better described with the
-tested multinucleon contribution, and localize the residual high-$\Eavail$ excess
-over the MINERvA-tuned simulation to the deep-inelastic region. Four external
-generators also under-predict the data there, each by about its overall shortfall
-after accounting for high-energy neutrinos absent from the GiBUU sample. A scalar study examines
-the effect of removing the truth-level muon kinematic cuts, and a recoil-only
-point-cloud transformer provides a low-level-representation cross-check.
-Completed full-event PET studies improve simulated point recovery but
-select no eligible design; PET remains diagnostic method development.
+tested multinucleon contribution, and show a descriptive excess over the
+MINERvA-tuned simulation at high $\Eavail$ and high $W$, where four external
+generators also under-predict the data, each by about its overall shortfall
+after accounting for high-energy neutrinos absent from the GiBUU sample.
+Background-inclusive tests expose a purity-subtraction bias, which a
+negative-weight background treatment largely removes; generator-sized
+shape-reweighting tests expose a regularization bias that no quoted uncertainty
+includes; and coverage and estimator-seed studies expose further limits. The
+measured model dependence prevents a qualified five-dimensional measurement
+with total uncertainties at useful precision. Calibrated joint tests reject all
+five tested generator predictions in total and in shape at the 5\% familywise
+level. These conditional tests recover known discrepancies without demonstrated
+discrimination beyond matched coarse projections, and their interpretation is
+limited by an omitted calorimetric recoil-response uncertainty and unresolved
+fine-grid convergence. A scalar study examines the effect of removing
+the truth-level muon kinematic cuts, and point-cloud transformer (PET) studies
+remain diagnostic method development.
 
 \end{abstract}
 
@@ -94,15 +102,30 @@ This
 analysis was carried out on the Perlmutter system at the National Energy
 Research Scientific Computing Center (NERSC), a U.S.\ Department of Energy
 Office of Science User Facility, under project m3246. It builds on the MINERvA
-Analysis Toolkit (MAT) and the MINERvA-101 cross-section framework, and I thank
-their authors. I am grateful to the MINERvA Collaboration for the public release
+Analysis Toolkit (MAT) and the MINERvA-101 cross-section framework, and we thank
+their authors. We are grateful to the MINERvA Collaboration for the public release
 of the medium-energy CC-inclusive data product on which the reproduction rests.
 
 We thank Callum Wilkinson for connecting us with this dataset and for many helpful discussions.
 We thank Kevin McFarland for suggesting a detector-response-mismatch closure
 targeting correlations among the reconstructed hadronic observables.
 
-Large language model assistants (Anthropic's Claude and OpenAI's ChatGPT) were used to support brainstorming and methodological discussion, code development, analysis scripting, and manuscript preparation. All scientific ideas, results, and claims were critically evaluated and verified by the authors, who take full responsibility for the content.
+% Aligned with the article's statement (main_paper.tex acknowledgments), 2026-10-11.
+The analysis code, statistical procedures, computing campaigns, independent
+recomputations and reviews, figures, and manuscript drafts were produced with
+substantial assistance from AI language-model tools, used through the Claude
+Code and OpenAI Codex command-line agents: Anthropic Claude (Opus 4.7, 4.8, 5,
+and 5.5; Fable 5 and 5.1) and OpenAI GPT models (GPT-5.5, GPT-5.6 Sol and Luna,
+GPT-6 Astra, and GPT-6.1), including those used for independent review. The
+authors directed this work through written specifications fixed before each
+study. Results were accepted only after verification against committed
+evidence: predeclared criteria, independent recomputation by separately written
+code (for example, the joint-test evaluation and the lost-seed recovery), and
+independent read-only reviews. AI tools were also used for methodological
+discussion. The figures were drawn by plotting code
+from the analysis outputs; no image was generated or edited by a generative-AI
+image tool. AI tools are not authors. The authors take responsibility for the
+content.
 
 \appendix
 \input{app_statmethods}
