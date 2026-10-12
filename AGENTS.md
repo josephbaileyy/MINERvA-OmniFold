@@ -139,7 +139,7 @@ There is no standing authorization here for a new scientific analysis. Read `doc
 | Apply process rules | `docs/orchestration/PLAYBOOK.md`; open `FINDINGS.md` only by routed `BEN-*` id |
 | Recover history or a path removed from main | First find the path's removal family and its tag in `docs/POST_PUBLICATION_REORG_PLAN.md` (the 2026-08-20 compaction, A2, A3), or in `docs/orchestration/CATALOG.md` § Frozen pre-compaction evidence; then `git show <tag>:<old-path>`. Pre-freeze history is at `evidence/prepublication-2026-08-20-0b329e8a`. Never load the orchestration directory wholesale |
 | Local checkouts, disk use, or a file removed from a local machine | `docs/LOCAL_CHECKOUTS_AND_STORAGE.md` (worktree conventions, out-of-repo evidence epochs, local archive records and recovery commands) |
-| Build deliverables | `docs/analysis-note/`; `build_all.sh` must build note, primer, and paper; then synchronize, build, commit, and push the standalone `MINERvA-OmniFold-Analysis-Note` repository |
+| Build deliverables | `docs/analysis-note/`; `build_all.sh` must build note, PET note (`pet_note.tex`, the companion split from the note on 2026-10-12), primer, and paper; then synchronize, build, commit, and push the standalone `MINERvA-OmniFold-Analysis-Note` repository |
 
 ## Deliverable synchronization
 

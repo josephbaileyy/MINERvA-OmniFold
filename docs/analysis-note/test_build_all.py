@@ -36,7 +36,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 SCRIPT = HERE / "build_all.sh"
-TARGETS = ("main_note", "main_primer", "main_paper")
+TARGETS = ("main_note", "main_primer", "main_paper", "pet_note")
 SHARED = ("preamble.tex", "values.tex", "technote.bib")
 
 # A fake latexmk. Its behaviour comes from BUILD_TEST_MODE so one shim covers every scenario.
@@ -257,7 +257,7 @@ class TestTheHappyPath(BuildAllHarness):
         for t in TARGETS:
             self.assertIn("-g", self.calls)
             self.assertIn("%s.tex" % t, self.calls)
-        self.assertEqual(3, self.calls.count("latexmk: fake invoked"),
+        self.assertEqual(len(TARGETS), self.calls.count("latexmk: fake invoked"),
                          "expected exactly one forced latexmk run per target")
 
     def test_the_force_flag_is_what_makes_an_up_to_date_pdf_rebuild(self):
@@ -365,7 +365,7 @@ class TestUnresolvedReferences(BuildAllHarness):
         proc = self.run_build("build")
         self.assertEqual(0, proc.returncode, proc.stdout)
         self.assertNotIn("has unresolved references after latexmk invocation", proc.stdout)
-        self.assertEqual(3, self.calls.count("latexmk: fake invoked"), self.calls)
+        self.assertEqual(len(TARGETS), self.calls.count("latexmk: fake invoked"), self.calls)
         self.assertIn("Font shape", (self.sandbox / "main_note.log").read_text())
 
     def test_a_missing_log_FAILS_rather_than_passing_unread(self):
@@ -559,12 +559,14 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
     is edited to make one PDF stale. Both directions: fresh passes, stale fails in strict mode.
     """
 
-    BODIES = {"main_note": r"struck $\dead{1.234}$ here", "main_paper": "clean paper",
-              "main_primer": "clean primer"}
+    BODIES = {"main_note": r"struck $\dead{1.234}$ here", "pet_note": r"struck $\dead{5.678}$ here",
+              "main_paper": "clean paper", "main_primer": "clean primer"}
     # The note's struck values live in app_history.tex (the checker enforces it), so the
     # fixture's note body carries that name; the outward bodies keep their generic names.
-    BODY_FILES = {"main_note": "app_history", "main_paper": "body_main_paper",
-                  "main_primer": "body_main_primer"}
+    BODY_FILES = {"main_note": "app_history", "pet_note": "app_history_pet",
+                  "main_paper": "body_main_paper", "main_primer": "body_main_primer"}
+    # What each fake PDF "renders": each note shows its own struck literal (its positive control).
+    PDF_TEXT = {"main_note": "1.234 rendered\n", "pet_note": "5.678 rendered\n"}
 
     def setUp(self):
         import hashlib
@@ -581,8 +583,7 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
             (self.note / f"{driver}.tex").write_text(
                 "\\documentclass{article}\n\\input{%s}\n" % stem)
             (self.note / f"{stem}.tex").write_text(body + "\n")
-            (self.note / f"{driver}.pdf").write_text(
-                "1.234 rendered\n" if driver == "main_note" else "nothing struck\n")
+            (self.note / f"{driver}.pdf").write_text(self.PDF_TEXT.get(driver, "nothing struck\n"))
             rows = "".join(
                 '  "%s" 1790000000 %d %s ""\n' % (
                     name, (self.note / name).stat().st_size,
@@ -615,7 +616,7 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
         self.assertIn("mode=strict", line)
         digest = hashlib.sha256((self.note / "main_note.pdf").read_bytes()).hexdigest()
         self.assertIn(f"main_note.pdf@sha256:{digest}(fresh)", line)
-        self.assertEqual(line.count("(fresh)"), 3, line)
+        self.assertEqual(line.count("(fresh)"), 4, line)
 
     def test_a_stale_product_fails_strict_mode(self):
         (self.note / "body_main_paper.tex").write_text("clean paper, edited after the build\n")
@@ -640,7 +641,7 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn("main_primer.pdf freshness UNKNOWN", out)
         self.assertIn("(unknown)", line)
-        self.assertEqual(line.count("(fresh)"), 2, line)
+        self.assertEqual(line.count("(fresh)"), 3, line)
 
     def test_absent_pdfs_are_named_absent(self):
         for driver in self.BODIES:
@@ -662,6 +663,7 @@ class StruckOnlyInHistoryTest(unittest.TestCase):
 
     BODIES = ResultLineNamesItsObjectTest.BODIES
     BODY_FILES = ResultLineNamesItsObjectTest.BODY_FILES
+    PDF_TEXT = ResultLineNamesItsObjectTest.PDF_TEXT
     setUp = ResultLineNamesItsObjectTest.setUp
     tearDown = ResultLineNamesItsObjectTest.tearDown
     _run = ResultLineNamesItsObjectTest._run
@@ -693,6 +695,31 @@ class StruckOnlyInHistoryTest(unittest.TestCase):
         code, line, out = self._add_body(r"was $\dead{1.008}$ before")
         self.assertEqual(code, 1, out)
         self.assertIn("in sec_body.tex", out)
+
+    def test_the_pet_note_has_its_own_history_file(self):
+        """pet_note (2026-10-12) may strike only in app_history_pet.tex, not in main_note's file."""
+        (self.note / "pet_note.tex").write_text(
+            "\\documentclass{article}\n\\input{app_history_pet}\n\\input{sec_pet_body}\n")
+        (self.note / "sec_pet_body.tex").write_text(r"was $\dead{2.468}$ before" + "\n")
+        code, line, out = self._run("--source-only")
+        self.assertEqual(code, 1, out)
+        self.assertIn("pet_note: 1 \\dead{} use(s) in sec_pet_body.tex", out)
+        self.assertIn("belongs only in app_history_pet.tex", out)
+
+    def test_each_note_runs_its_own_positive_control(self):
+        """main_note rendering its strikes must not vouch for a pet_note PDF that drops its own."""
+        (self.note / "pet_note.pdf").write_text("nothing struck\n")
+        code, line, out = self._run("--source-only")
+        self.assertEqual(code, 1, out)
+        self.assertIn("appear in pet_note.pdf", out)
+        self.assertIn("note.pdf carries 1/1 struck literals (positive control OK)", out)
+
+    def test_a_pet_note_strike_in_the_paper_FAILS(self):
+        """The outward builds are checked against the PET note's struck literals too."""
+        (self.note / "main_paper.pdf").write_text("the paper prints 5.678\n")
+        code, line, out = self._run("--source-only")
+        self.assertEqual(code, 1, out)
+        self.assertIn("main_paper.pdf contains struck literal(s) ['5.678']", out)
 
 
 class UnitRequiredLiteralTest(unittest.TestCase):

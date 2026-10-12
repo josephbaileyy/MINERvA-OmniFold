@@ -7,9 +7,10 @@
 # and the note's vector figure set versioned
 !docs/**/*.pdf
 !docs/*.pdf
-# the note is source-only (three latexmk build targets via build_all.sh);
+# the note is source-only (four latexmk build targets via build_all.sh);
 # do not version its build outputs
 docs/analysis-note/main_*.pdf
+docs/analysis-note/pet_note.pdf
 *.out
 *.err
 *.log

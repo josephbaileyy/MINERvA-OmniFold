@@ -25,7 +25,7 @@ coverage evidence; no branch was chosen
 PET is the point-cloud transformer used by OmniLearn~\cite{Mikuni:2024qsr},
 vendored here inside OmniFold. Table~\ref{tab:pet-inputs} compares the historical
 recoil-only cross-check with the later full-event extended-fiducial-phase-space
-(extended-FPS, \S\ref{sec:fps}) candidate. Both classifiers use unbinned,
+(extended-FPS, \notesec{Extended fiducial phase-space study}) candidate. Both classifiers use unbinned,
 continuous event features without reporting-bin edges.
 
 \begin{table}[H]
@@ -97,7 +97,7 @@ optimal cap. They also do not apply to reconstructed clusters: one particle
 can produce many deposits, so detector-side truncation can discard useful
 information even when truth clouds are sparse. The later design studies add
 detector energy summaries to recover some of that information
-(App.~\ref{sec:pet-campaigns}).
+(\S\ref{sec:pet-campaigns}).
 
 \begin{figure}[H]
   \centering
@@ -207,7 +207,7 @@ Ordinary closure alone cannot uniquely attribute a data-side gap to training
 configuration. The recoil-only feature contract adds another difference:
 at fixed recoil, the conditional muon distribution is inherited from the prior.
 These structural limits survive the withdrawn numerical comparison.
-The later simulation-only comparison in App.~\ref{sec:pet-gbdt-paired}
+The later simulation-only comparison in \S\ref{sec:pet-gbdt-paired}
 does not revive it.
 
 \subsection{Statistical and training diagnostics of the recoil-only estimator}
@@ -218,7 +218,7 @@ binning and completeness.
 
 The replicas and nominal use scalar GBDT's background-subtracted
 five-dimensional measured target, unlike the legacy comparison in
-App.~\ref{sec:pet-abs}. Data align exactly event by event; MC arrays are
+\S\ref{sec:pet-abs}. Data align exactly event by event; MC arrays are
 byte-identical to the full-cloud input. Ordering, event-alignment and
 finite-output gates passed for the nominal extraction, an identical-seed
 GPU-floor repeat, a 20-member coherent-Poisson retraining ensemble, and a
@@ -260,7 +260,7 @@ projects any observable of the stored 4-vectors without retraining or
 re-unfolding. We demonstrate this \emph{reweight-then-project} capability on
 three observables computed post-hoc from the stored cloud: available energy
 $\Eavail$ (the exact operational definition in
-\S\ref{sec:eavail-definition}), hadronic-system invariant mass
+\notesec{Operational definition and provenance}), hadronic-system invariant mass
 $W_{\text{had}}=\sqrt{(\sum E)^2-|\sum\vec p|^2}$, and proton/charged-pion
 multiplicities, while quantifying the cloud's two limitations.
 
@@ -350,7 +350,7 @@ a physically interpretable hadron-cloud diagnostic from the recoil-only unfold.
 Reweighting can only redistribute weight among truth configurations the
 generator already produced; it cannot populate phase space the prior never
 sampled --- the same extrapolation limit flagged for the extended-fiducial
-study (\S\ref{sec:fps}). Hadron-cloud diagnostics can be projected within that
+study (\notesec{Extended fiducial phase-space study}). Hadron-cloud diagnostics can be projected within that
 stored spectrum. They cannot convert recoil-derived weights to full-event
 weights or remove the prior conditional for omitted muon information.
 The stored recoil-only result cannot acquire the later full-event estimator's
@@ -367,7 +367,7 @@ $\Eavail$ scale. Details and reproduction are in App.~\ref{app:provenance}
 \paragraph{Recoil-PET feasibility study on the extended population.}
 \label{sec:fps-pet}
 The feasibility study on the enlarged population and reporting grid of
-\S\ref{sec:fps} remained recoil-only. Step~1 used non-muon reco clusters;
+the extended-fiducial study (\notesec{Extended fiducial phase-space study}) remained recoil-only. Step~1 used non-muon reco clusters;
 step~2 used truth hadrons with the muon removed. Muon coordinates defined
 and binned the extension but were absent from classifier inputs. The
 populated-bin counts, prior-transfer envelope and retraining floor are
@@ -440,3 +440,5 @@ full-event anomaly, evidence for its declined pairing, or an adopted PET
 uncertainty construction.
 % Moved from the body to the appendices 2026-10-11 (note reorganization): PET is diagnostic method
 % development and is absent from the article; its full-event C_stat appendix follows it.
+% Moved with app_cstat.tex to the companion PET note (pet_note.tex) on 2026-10-12; references
+% into the analysis note now name its sections by title (\notesec, preamble.tex).

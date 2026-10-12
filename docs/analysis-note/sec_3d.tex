@@ -78,7 +78,7 @@ includes other final-state particles except neutrons, subtracting a nucleon
 mass for strange baryons. It therefore includes species our closed list omits.
 The charged-pion term in Rodrigues and in Henry/Su \emph{et al.}
 Eq.~4~\cite{MINERvA:2023avz} is kinetic energy; the
-\texttt{minerva-ml} implementation discussed in App.~\ref{sec:pet-gregor} instead
+\texttt{minerva-ml} implementation (App.~\ref{sec:pet}) instead
 uses charged-pion total energy.  We therefore do not claim generically to
 ``match the published definition.''
 
@@ -184,9 +184,7 @@ A full scalar Keras-MLP cross-check with the same weighted 3D inputs and
 five-iteration OmniFold loop gives total ratio $1.0078$ versus GBDT and median projection
 differences of \SIrange{0.7}{1.4}{\percent} (Fig.~\ref{fig:calibration}).
 Agreement in the populated bulk establishes that the scalar result is not
-specific to the production classifier family. Appendix~\ref{sec:pet-shape}
-reports the diagnostic cross-check using low-level recoil point clouds in
-place of engineered scalars.
+specific to the production classifier family.
 
 \begin{figure}[H]
   \centering

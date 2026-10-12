@@ -24,15 +24,11 @@ The analysis chain has four components, named in italics throughout the note.
         \texttt{unbinned\_unfolding/python/omnifold.py} implements OmniFold
         iteration independently of the learner backend (LightGBM central value
         and uncertainty ensembles, \texttt{exact} cross-check, \texttt{hist}
-        alternate; MLP and
-        point-cloud-transformer cross-checks).
+        alternate; MLP cross-check).
 \end{itemize}
 
-The recoil-point-cloud cross-checks in App.~\ref{sec:pet} use non-muon cluster
-and truth-hadron inputs from \texttt{nd-unfolding/pet/} in place of the driver's
-scalar classifier features, with the same omnifile and cross-section machinery.
-Muon scalars remain for selection and binning; these legacy PET classifiers
-exclude them.
+Point-cloud (PET) code under \texttt{nd-unfolding/pet/} supports future work
+(App.~\ref{sec:pet}) and produces no result in this note.
 
 Scripts, figure files and stored artifacts call \emph{training-seed variation}
 \texttt{seedscan}, retaining the code name as provenance. Both names denote

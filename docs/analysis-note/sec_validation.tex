@@ -26,8 +26,6 @@ Miss completeness & Full truth inventory; production event mapping & Same event 
 Iteration stability & Same data; five versus ten iterations & Shared sample; movement of total and shape & Small observed movement; not a known-truth accuracy test \\
 \addlinespace
 Fixed-truth coverage & Fixed unfluctuated MC truth; LightGBM statistical estimator & Poisson pseudo-data; MC resampling shares the band's mechanism; pooled toy--bin containment & Predeclared coverage windows; earlier band fails. Rebuilt band awaits independent test \\
-\addlinespace
-PET interval coverage & Each draw's pseudo-data truth; H2S1T24 K5, six-member procedure & Fixed banks; pooled bin--draw containment & Frozen regional and width rules; no eligible design (App.~\ref{sec:pet-campaigns}) \\
 \bottomrule
 \end{tabular}
 \caption{Validation questions, targets and limits. Shared simulation is not an
@@ -93,6 +91,113 @@ nuisance generator for total-interval tests, an untouched generator-truth
 domain for bias checks, and the construction repairs in
 \S\ref{sec:uq-2d-construction}. This is a limitation of the available
 evidence, not a general impossibility result for 2D unfolding.
+
+\subsection{Closure tests across dimensions: what each test changes}
+\label{sec:closure-map}
+
+Only the MINERvA simulation supplies a detector response, the conditional
+distribution of reconstructed events given truth. Other generators (GiBUU,
+NuWro, GENIE variants) supply truth only. Every closure test here therefore
+keeps the simulated MINERvA response and changes the truth distribution, by
+reweighting the simulated events, or changes the analysis chain around it.
+Reweighting to another generator's shape is a valid known-truth test of the
+unfolding; it is not a test of the detector model. A closure test is only as
+informative as what it changes: an ordinary closure, whose pseudo-data are the
+simulation itself, is an identity check that a constant estimator would pass.
+Table~\ref{tab:closure-map} collects the tests by what they change.
+
+\begin{longtable}{@{}p{0.17\textwidth}p{0.27\textwidth}p{0.10\textwidth}p{0.38\textwidth}@{}}
+\caption{Closure tests by what they change relative to the unfolding's own
+simulation. All retain the simulated MINERvA detector response. ``Marginal''
+means the metric is a one-dimensional projection; ``joint'' means
+multidimensional cells.}
+\label{tab:closure-map}\\
+\toprule
+Test & What changes & Dim. & Result and what it can detect \\
+\midrule
+\endfirsthead
+\toprule
+Test & What changes & Dim. & Result and what it can detect \\
+\midrule
+\endhead
+Ordinary closure & Nothing: pseudo-data are the simulated reco & any &
+  Bookkeeping only; cannot detect estimator bias \\
+\addlinespace
+Truth reweight & Gaussian in $\pT$, tilt in $\pPar$, applied to truth and reco weights & 2D &
+  Residuals \SI{0.046}{\percent} and \SI{0.013}{\percent} (thr.\ \SI{1.5}{\percent}); pass \\
+\addlinespace
+Injected feature & Gaussian truth feature of \SI{17.2}{\percent} & 2D &
+  Residual \SI{1.69}{\percent} (ratio 0.098); passes the recovery test \\
+\addlinespace
+Alternative universe & Pseudo-data from MaCCQE or flux universe & 2D &
+  \SI{0.068}{\percent}, \SI{0.376}{\percent} (thr.\ \SI{2.0}{\percent}); pass \\
+\addlinespace
+Hidden variable & Bias in $\Delta\pT$, a resolution variable outside the features & 2D &
+  Leakage linear in amplitude; $A=0.30$ exceeds its \SI{3}{\percent} threshold \\
+\addlinespace
+Injected $\Eavail$ bump & $+\SI{30}{\percent}$ Gaussian in truth $\Eavail$ at \SI{0.3}{GeV}, width \SI{0.15}{GeV} & 3D &
+  Marginal residual \SI{1.84}{\percent} of \SI{18.1}{\percent} injected (ratio 0.102); pass.
+  Per-3D-bin spread \SI{3.2}{\percent} (\S\ref{sec:3d-closure}) \\
+\addlinespace
+Injected $q_3$ bump & Same Gaussian form in truth $q_3$ (mean weight 1.014) & 4D &
+  Marginal $q_3$ ratios within \SI{1.1}{\percent}; no predeclared threshold \\
+\addlinespace
+``Injected $W$'' bump & Same default Gaussian, centre \SI{0.3}{GeV}, applied to truth $W$ & 5D &
+  \emph{Not a recovery test.} Physical $W$ lies above about \SI{0.94}{GeV}, where the
+  bump's weight change is below $10^{-8}$ (mean weight 1.0000). It is a null
+  self-closure: median per-bin ratio 1.0000, spread \SI{0.62}{\percent},
+  largest per-bin deviation \SI{23}{\percent} \\
+\addlinespace
+Background-inclusive & Adds background simulation and rebuilds purity weights; nominal truth & 5D &
+  Highest-$W$ column \SIrange{3.5}{4.1}{\percent} low; negative-weight treatment
+  \SIrange{0.11}{0.24}{\percent}, with joint cells \SIrange{0.7}{1.1}{\percent} high
+  (\S\ref{sec:val-negweight}) \\
+\addlinespace
+Generator-shaped & Truth reweighted by GiBUU/GENIE ratio in $\Eavail$ (0.70--1.33 per bin) & 5D &
+  Joint $(\Eavail,W)$ residuals median \SI{9.7}{\percent}, up to \SI{74}{\percent} at highest $W$;
+  regularization bias outside every quoted uncertainty \\
+\addlinespace
+Withheld generator shapes & NuWro/GENIE and GENIE MEC/CV ratios & 5D &
+  Median \SIrange{2}{6}{\percent}, at most \SIrange{16}{31}{\percent} per joint cell;
+  within total uncertainty in 20 of 42 $(\Eavail,W)$ cells (\S\ref{sec:val-departure}) \\
+\addlinespace
+Hidden $q_3$ & $q_3$ at fixed $(\Eavail,W)$ truth, amplitude 0.3 & 5D &
+  $(\Eavail,W)$ cells shift by up to \SI{37}{\percent} \\
+\addlinespace
+Response mismatch & Reconstructed $\Eavail$ of pseudo-data scaled & 5D &
+  Protocol implemented, not run (App.~\ref{app:response-mismatch}) \\
+\bottomrule
+\end{longtable}
+
+\paragraph{Why injected bumps pass while generator-shaped tests do not.}
+The passing tests and the failing tests measure different things, so they do
+not contradict each other.
+\begin{itemize}
+  \item \emph{Deformation.} The passing injections are single smooth bumps in
+        one variable the classifiers see directly. A generator ratio changes
+        correlated structure across $\Eavail$, $W$ and $q_3$, including directions
+        the reconstructed observables constrain weakly
+        (\S\ref{sec:coverage-5d}, response-information diagnostic).
+  \item \emph{Metric.} The 3D and 4D passes are judged on one-dimensional
+        marginals, where per-cell errors average out; the 3D test's per-bin
+        spread is already \SI{3.2}{\percent}. The generator-shaped failures are
+        measured in joint $(\Eavail,W)$ cells.
+  \item \emph{Iterations.} At five iterations the estimator retains part of
+        the prior wherever the data pull weakly. Thirty iterations reduce the
+        $\Eavail$ residual by \SI{26}{\percent} while the $q_3$ residual grows
+        (\S\ref{sec:val-departure}).
+  \item \emph{The five-dimensional $W$ test injected nothing.} Its pass
+        therefore says nothing about recovery of a $W$ shape. No
+        five-dimensional injected-shape recovery test exists; the
+        generator-shaped tests are the five-dimensional recovery evidence.
+\end{itemize}
+% Sources: 2D rows sec_validation.tex "Closure" and "Injected-feature recovery"; 3D sec_3d.tex
+% sec:3d-closure; 4D git show 798f0c89 (job 53925395, ratios 1.007/0.989/1.005/1.000..., mean factor
+% 1.0142); 5D W bump git show aecd0d22 (job 54062313: median 1.0000, std 0.0062, max|dev| 0.227,
+% mean factor 1.0000) with driver defaults A=0.3, c=0.3, s=0.15 at fdefe5f8
+% nd-unfolding/unfold_nd_omnifold_unbinned.py (launcher sbatch_hadd_unfold_5d.sh:43-48 sets no
+% centre); 0.3*exp(-((0.938-0.3)/0.15)^2) = 4.2e-9. Background, generator and q3 rows: sec_5d.tex
+% sec:val-negweight, sec:val-departure, VL149, VL151, VL154.
 
 \subsection{Fixed-truth coverage of the 2D statistical band}
 \label{sec:coverage}
