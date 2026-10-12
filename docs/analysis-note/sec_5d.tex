@@ -54,7 +54,7 @@ five-dimensional LightGBM production estimator, brings the highest-$W$ column to
 over sixty nominal-truth experiments.
 % CLI form: \texttt{-{}-bkg-mode negweight-refined}. Implementation (refinement to
 % non-negative weights before the first OmniFold step; injection and independent
-% subtraction halves of the background simulation) is in App. B.
+% subtraction halves of the background simulation) is in the negative-weight appendix (app:negweight).
 Some joint cells remain up to \SI{1.0}{\percent} high, up to 14 standard
 errors, versus \SI{-0.2}{\percent} without background; the mechanism is not
 established. On data, the two treatments differ by median \SI{0.36}{\percent}
@@ -137,7 +137,7 @@ Nothing is adopted.
 \label{sec:gbdt-model-dependence}
 
 The scalar estimator here uses production LightGBM. The matched
-HistGradientBoosting comparator of \S\ref{sec:pet-gbdt-paired} uses
+HistGradientBoosting comparator of App.~\ref{sec:pet-gbdt-paired} uses
 different inputs, signal-only samples and reporting histograms; neither its
 recovery metric nor its residual spread supplies a missing operand here.
 
@@ -164,6 +164,22 @@ Both joint partitions subdivide all five axes; H2 is not nested within J.
 Unsupported cells remain in the full-domain rate. Historical interval assessment
 keeps all 42 EW cells, including three excluded by the later support rule
 (definitions and normalization checks in App.~\ref{sec:gbdt-diagnostic-definitions}).
+
+\begin{center}
+\small
+\begin{tabular}{@{}lp{0.72\textwidth}@{}}
+\toprule
+Label & Meaning in this section \\
+\midrule
+J & 109 supported fine joint cells, subdividing all five axes \\
+H2 & 27 supported coarser joint cells, not nested within J \\
+EW & 39 supported $(\Eavail,W)$ cells (42 before the later support rule) \\
+RD1--RD3 & reporting definitions at J, H2 and EW resolution (``Reporting definitions'' below) \\
+D1, W1--W3 & fixed historical truth deformations (next paragraph) \\
+candidate $R$ & the raised-refinement-capacity estimator of \S\ref{sec:val-departure}: baseline OmniFold classifiers with a 400-tree, 31-leaf background-refinement classifier \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 Truth labels denote fixed historical deformations predating the generator-flux
 repair: D1 is a GiBUU/GENIE $\Eavail$ ratio, W1 a NuWro/GENIE $\Eavail$
