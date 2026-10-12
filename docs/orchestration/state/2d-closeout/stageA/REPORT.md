@@ -11,6 +11,8 @@
 
 **NOT CITABLE FOR:**
 - any uncertainty, covariance, coverage or calibration result;
+- the publication consumers' cell-identity checks (KI 90): row 1 checks `E_U`'s own cell set only, and
+  KI 90's closure needs a refusing same-size, different-cell negative control in those consumers;
 - the flux-universe index identity (KI 91), the GENIE duplicate (KI 92), the universes' zero point
   (KI 93), background-template statistics (KI 94) or the seed-1/seed-42 pairing (`P07`). Those are Stage B
   or later;
@@ -20,7 +22,7 @@
 |---|---|
 | `Owner` | 2D closeout executor (2d closer), directed by the paper-tighten lane under [`AUTHORIZATION-20261012-2d-closeout-delegation.md`](../../../AUTHORIZATION-20261012-2d-closeout-delegation.md) |
 | `Deliverable` | A-2 of the director's 2026-10-12 assignment: the plan §4 Stage A candidate checklist |
-| `Branch` / `Base` | `closeout/stage-a-checklist-20261012` / `origin/main` `37985accc87cfd493cb10ff76169f6dcf90c1e9e` (PR #92) |
+| `Branch` / `Base` | `closeout/stage-a-checklist-20261012` / `origin/main` `7edb65fab817b9bf04749dcafb12971352b3c64f` (PR #93). The work was done at `37985acc` (PR #92); every cited path is byte-identical between the two |
 | `Decision` | Is `E_U` one reproducible candidate with a complete manifest and an independent comparison (plan §4 Stage A exit)? |
 | `Terminal outcomes` | EXIT MET, or STOP (reproduction failure, unexplained input drift, unavailable required receipt) |
 | `Compute` | Login-node reads only (saul `login05`), plus scripts writing only under `/pscratch/sd/j/josephrb/2d-closeout-stageAB-20261012/a2/`. **No Slurm job; 0 charged node-h.** No product or publication namespace was written |
@@ -31,20 +33,31 @@
 
 ## 1. Answer
 
-**EXIT MET.** `E_U` (`2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root`, sha256
-`4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c`) passes every checklist item. Its
-manifest is complete through its receipted regeneration L0 (XR, job 59660487). An independent
-recomputation, from the product vectors and without the XR comparator, agrees with L0 to 1.4e-11.
+**EXIT MET for the candidate procedure, via L0.** The plan's exit asks for "one reproducible candidate
+with a complete manifest and an independent comparison". `E_U`'s own manifest is **not** complete: its
+driver and helper bytes, environment, threads, input digest and effective seeds were never recorded
+(decision record §3; §4 below). The complete manifest is that of its receipted regeneration L0 (XR, job
+59660487), which plan §4 allows to supply the candidate ("a separately verified L0 delivery can supply the
+candidate"). So:
+- **The candidate procedure, frozen for Stages B and C,** is L0's: driver `3cc5adc7…`, helper
+  `e9623412…`, CV omnifile `43f8cc16…`, flux `d40aea69…`, L0's recorded environment, 64 LightGBM threads,
+  seeds 42/43/44, `--iters 5 --use-weights --estimator lgbm --seed 42`, `bkg_mode purity` (§4).
+- **`E_U`** (`2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root`, sha256
+  `4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c`) is the quoted file. It passes every
+  checklist item and is equivalent to that procedure's output under the frozen 1e-8 criterion: a
+  recomputation from the product vectors, without the XR comparator, agrees with L0 to 1.4e-11.
+- **Do not re-run `E_U`'s launcher** as the candidate producer. Its omnifile path now holds a different file
+  (§4, §8).
+- **Producer change.** Once the selective-I/O delivery merges (A-1), `main`'s driver is no longer
+  `3cc5adc7…`. A Stage C producer on the new driver needs the plan §4 equivalence bridge to L0 first.
 
-`E_U`'s own execution is not recorded: its driver and helper bytes, environment, threads, input digest
-and effective seeds are unknown. This was already disclosed in the decision record, §3. The
-reproducibility claim therefore rests on L0, as plan §0 and §4 allow ("a separately verified L0 delivery
-can supply the candidate"). No Stop condition was met (§6).
+No Stop condition was met (§6). Stage A's other remainder, the selective-I/O delivery, is outside this
+record's scope and is delivered separately (A-1).
 
 | # | item | verdict | measured | comparison partner |
 |---|---|---|---|---|
-| 1 | 205 cell identities | **VERIFIED** | 205 positive cells, 19 zero, 0 negative; edges and GlobalIDs equal the paper's | paper `bin_mapping.txt` and `data_result…txt`; XR `references.json` CV42 |
-| 2 | units | **VERIFIED** | `hXSec2D` recomputed from its own ingredients to 4.4e-16; integral 3.0730230563866027e-38 cm²/nucleon | paper README units; VL173 receipt (bitwise equal) |
+| 1 | 205 cell identities (`E_U`'s own set; not KI 90) | **VERIFIED** | 205 positive cells, 19 zero, 0 negative; edges and GlobalIDs equal the paper's | paper `bin_mapping.txt` and `data_result…txt`; XR `references.json` CV42 |
+| 2 | units | **VERIFIED** | `hXSec2D` recomputed from its own ingredients to 4.4e-16; integral 3.0730230563866027e-38 cm²/nucleon | paper units; VL173 receipt (`integral_ours_all_bins` bitwise; `integral_ours_reported` 1 ulp away) |
 | 3 | POT | **VERIFIED** | data 1.057394261158926e21, MC 4.978198462880827e21 | sums of the 12 playlists' `POTUsed`; both omnifiles; the flux file |
 | 4 | target count | **VERIFIED** | 3.2352943296224835e30 | MAT `TargetUtils::GetTrackerNNucleons` re-run on the cluster (bitwise) |
 | 5 | flux | **VERIFIED** (the flux this central uses) | `hFlux_pt` = flux file `d40aea69` exactly = the 12-playlist POT-weighted recombination to 2.2e-16 | flux file; per-playlist fluxes; six other products |
@@ -58,7 +71,8 @@ can supply the candidate"). No Stop condition was met (§6).
   55,531 B, mtime 2026-05-27 04:58 (PDT); sha256 `4f5a1b6d…` re-measured on `login05` on 2026-10-12.
 - **CFS copy** `/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/uq/…`:
   the same size and sha256, and all 205 cells bitwise equal (`operands/analysis.json` `reproduction.E_U_cfs`).
-- **Objects:** 7 `TParameter`s, `fluxSource`, `hEffDenSource` and 17 histograms. There is no
+- **Objects:** 25 keys: 16 histograms (13 `TH2D`, 3 `TH1D`), 7 `TParameter`s, and 2 `TNamed`
+  (`fluxSource`, `hEffDenSource`). There is no
   `runConfig`, `runArgv` or driver digest: the file predates `971fc00c`. L0 carries all of them.
 
 ## 3. The checklist
@@ -77,8 +91,8 @@ digests.
   `data_result_ptpl_2D_minerva_inclusive_6GeV.txt`) cell for cell. It also equals XR's frozen
   `references.json` CV42 list. The 19 unreported GlobalIDs are 144, 160, 161, 176–178, 192–196 and 208–215.
 - **Limit.** This checks `E_U`'s own cell set. The two publication consumers' identity checks (KI 90)
-  are a separate item; the plan places them in Stage A's issue map, but the director's A-2 scope is the
-  candidate checklist.
+  are a separate item in the plan's §3 issue map, outside the §4 Stage A candidate checklist that is A-2's
+  scope. This row does not close KI 90.
 
 ### 3.2 Units: VERIFIED
 
@@ -87,12 +101,16 @@ digests.
   driver's formula (`2d-unfolding/unfold_2d_omnifold_unbinned.py:888–945`) and the MINERvA-101 `normalize`
   (`MINERvA101/MINERvA-101-Cross-Section/ExtractCrossSection.cpp:122–128`). It reproduces the stored
   `hXSec2D` to a maximum relative difference of **4.4e-16** (median 0).
-- **Units.** The result is cm² (GeV/c)⁻² nucleon⁻¹, the paper's units (`minerva_paper_anc/README`).
+- **Units.** The result is cm² (GeV/c)⁻² nucleon⁻¹. The data release's README states cm²/(GeV/c)²
+  (`minerva_paper_anc/README`); "per nucleon" is the paper's and the MINERvA-101 normalization's convention.
 - **Projections.** The stored `hXSec_pt` and `hXSec_pz` equal the bin-width-weighted 2D sums to
   4.3e-16 and 0.
 - **Integral.** Σ x · ΔpT · Δp∥ over the 205 cells is **3.0730230563866027e-38** cm²/nucleon. Summing all
-  224 cells gives the same value. It is bitwise equal to `integral_ours_reported` in the VL173 receipt
-  (`receipts/2d-lgbm42-20261011/RECEIPT-2d-agreement-windows-lgbm42-20261011.json`).
+  224 cells gives the same value. In the VL173 receipt
+  (`receipts/2d-lgbm42-20261011/RECEIPT-2d-agreement-windows-lgbm42-20261011.json`) it is bitwise equal to
+  `integral_ours_all_bins`, and 1 ulp from `integral_ours_reported` (3.073023056386603e-38), a summation-order
+  difference. `scripts/analyze.py` does not open the receipt; this comparison was made separately, and
+  re-made by the reviewer (§7).
 - **Ratio to the paper.** Against the paper's text file, rounded to three significant figures, the
   integral is 3.03950e-38, giving ratio 1.01103 and median bin ratio 1.00836. The receipt reads the
   paper's ROOT values (3.03901e-38) and gets 1.0112 and 1.0081. The difference comes from the text file's
@@ -117,9 +135,12 @@ digests.
 
 - `nNucleons` = **3.2352943296224835e30**, equal to the driver constant
   `TRACKER_FIDUCIAL_N_NUCLEONS` (`2d-unfolding/unfold_2d_omnifold_unbinned.py:41`).
-- **Independent recomputation.** MAT's `PlotUtils::TargetUtils::Get().GetTrackerNNucleons(5980, 8422,
+- **Recomputation.** MAT's `PlotUtils::TargetUtils::Get().GetTrackerNNucleons(5980, 8422,
   isMC=true, 850)`, re-run on `login05` with the canonical environment's MAT libraries, returns
-  3.2352943296224835e30 bitwise (`operands/target_count.out`). The `isMC=false` geometry gives
+  3.2352943296224835e30 bitwise (`operands/target_count.out`). This re-runs the call that produced the driver
+  constant (driver `:38` comment), so it confirms the transcription rather than deriving the count
+  independently. The call's parameters are those of the selection: `minZ=5980, maxZ=8422, apothem=850` at
+  `runEventLoop.cpp:361` and in the omnifile producer `runEventLoopOmniFold.cpp:1708`. The `isMC=false` geometry gives
   3.234779999602547e30 (−0.016 %).
 - **Convention.** The MC count is the MINERvA-101 convention: `runEventLoop.cpp:483` writes
   `GetTrackerNNucleons(minZ, maxZ, true, apothem)`, and `ExtractCrossSection.cpp:195` normalizes by it.
@@ -132,8 +153,8 @@ digests.
 - **Recombination.** Rebuilding the data-POT-weighted average of the 12 per-playlist
   `pTmu_reweightedflux_integrated` histograms (the rule of `2d-unfolding/combine_flux_MEFHC.py`)
   reproduces the file to **2.2e-16**. The playlists differ from the combination by at most 0.77 %.
-- **Values.** The histogram carries one value, **6.2433433768512e-4 m⁻²/POT**, in all 14 p_T bins: the
-  integrated flux, broadcast per bin.
+- **Values.** The histogram carries the integrated flux, **6.2433433768512e-4 m⁻²/POT**, broadcast to all
+  14 p_T bins (as two adjacent doubles, 6.243343376851218e-4 and 6.243343376851219e-4).
   - `fluxIntegral_m2_per_POT` = 8.740680727591705e-3 is the sum of the 14 equal bins, i.e. 14 × Φ. It is
     metadata, not the integrated flux.
   - `fluxIntegral_cm2_per_POT` is that sum × 1e-4, exactly.
@@ -145,8 +166,8 @@ digests.
   2. **The flux histogram's p_T edges are not the analysis edges.** The flux file's edges are
      0, 0.075, 0.15, 0.25, 0.325, 0.4, 0.475, … (`dansPTBins`, `runEventLoop.cpp:407`), against the
      paper's 0.07, 0.33 and 0.47 at three boundaries. The driver uses the histogram by bin index and checks
-     only the bin count (`unfold_2d_omnifold_unbinned.py:126–142`). Since all 14 values are equal, the
-     mismatch has no numerical effect.
+     only the bin count (`unfold_2d_omnifold_unbinned.py:126–142`). Since the 14 values are equal to 1 ulp,
+     the mismatch has no numerical effect.
 - **Out of scope (Stage B).** Flux universes, the PPFX index identity (KI 91) and the flux–muon-energy
   joint treatment (X01) are Stage B items. The flux model is not compared with the paper's here.
 
@@ -158,7 +179,8 @@ digests.
   - `E_C`'s;
   - the July CV's.
 - **The purity rule.** The driver's purity mode is a per-reco-bin `max(0, (N_data − N_bkg)/N_data)`
-  data down-weight (`unfold_2d_omnifold_unbinned.py:1044–1048`). In `E_U`:
+  data down-weight (described at `unfold_2d_omnifold_unbinned.py:1488`; `hMeasSub2D` built at `:1472–1474`;
+  weights from `build_measured_training_2d`, `:338`, called at `:1475`). In `E_U`:
   - `hMeasSub2D` equals `max(0, hDataReco2D − hBkgReco2D)` exactly;
   - `hMeasTrain2D`, the down-weighted training target, equals it to 2.7e-12 relative.
 - **The truth side.** `hTruth2D`, `hEffNum` and `hEffDen` are also bitwise equal to L0's.
@@ -190,7 +212,9 @@ digests.
   - Max relative difference **1.375e-11** (GlobalID 171), median 5.88e-12, integral 7.0e-13. All 205
     cells are under the frozen 1e-8 criterion, and none is bitwise equal.
   - This is the same as XR's `L0_vs_CV42` (1.4e-11, 5.9e-12, 7.0e-13) and was computed without XR's
-    comparator or its reproduction script.
+    comparator or its reproduction script. It is independent of XR's code, not of the owner: it reads
+    values through `GetBinContent`, as XR does. The reviewer's read, through `TH1::GetArray()` buffers,
+    reproduced the same numbers exactly (§7).
 - **Seed identification.** `E_U` against each LightGBM seedscan product, seeds 1–10 (sha256 in
   `operands/analysis.json` `seedscan_vs_E_U`):
   - every seed differs in all 205 cells, median 1.6e-3 to 2.3e-3 and max 1.5e-2 to 3.2e-2;
@@ -211,7 +235,7 @@ digests.
 | driver | **not recorded** | `unfold_2d_omnifold_unbinned.py` sha256 `3cc5adc7…` (last change `355174fe`) |
 | helper | **not recorded** | `unbinned_unfolding/python/omnifold.py` sha256 `e96234124a31…` |
 | argv | launcher text only (`…_CV.sh:43–50`) | `--iters 5 --use-weights --estimator lgbm --seed 42`, recorded |
-| MC/data input | **digest not recorded**. The launcher path `runEventLoopOmniFold_MEFHC_universes_full.root` now holds a file with mtime **2026-07-08**, after `E_U`'s 2026-05-27, so it is not `E_U`'s input as run (171,117,087,867 B; sha256: §8) | CV omnifile, CFS copy, sha256 `43f8cc16…`, 2,144,008,221 B; hashed at the start and end of the run |
+| MC/data input | **digest not recorded**. The launcher path `runEventLoopOmniFold_MEFHC_universes_full.root` now holds a file with mtime **2026-07-08**, after `E_U`'s 2026-05-27, so it is not `E_U`'s input as run (171,117,087,867 B; sha256 `220c479e…`, §8) | CV omnifile, CFS copy, sha256 `43f8cc16…`, 2,144,008,221 B; hashed at the start and end of the run |
 | flux | `fluxSource` names the pre-rename `MEHFC` file; content equals `d40aea69…` | `baseline_flux/runEventLoopMC_MEFHC.root`, `d40aea69…` |
 | normalization | the 7 parameters of §3.3–3.5 | identical |
 | environment | **not recorded** | Python 3.11.14, ROOT 6.28/12, lightgbm 4.6.0, numpy 1.26.4, scipy 1.16.3, scikit-learn 1.8.0, joblib 1.5.3 |
@@ -244,31 +268,54 @@ byte.
 
 None was met.
 - **Reproduction.** L0 reproduces `E_U` under the frozen criterion, re-measured here.
-- **Input drift.** None found in anything the candidate depends on. The launcher-path omnifile's July
-  mtime (§4) means `E_U`'s original input is unidentified by digest. L0's regeneration from `43f8cc16`,
-  with bitwise-equal saved inputs, bridges it. The July file belongs to Stage B's KI-93 reads.
+- **Input drift.** `E_U`'s actual input is unavailable (KI 93: "The May file and code revision are
+  unavailable"), so drift cannot be excluded by digest. Its equivalence to L0's input `43f8cc16` is
+  inferred: bitwise-equal binned saved inputs, and above all the 1.4e-11 output agreement (a different event
+  sample would move LightGBM at about 1e-3). This is no unexplained drift, so no Stop. The July file at the
+  launcher path belongs to Stage B's KI-93 reads.
 - **Required receipts.** L0's receipt, admission record and comparator output are on `main`. `E_U`'s
   missing run log was disclosed before this checklist (decision record §3), and plan §4 accepts L0 in its
   place.
 
 ## 7. Independent review
 
-**Pending at this commit.** The 2d-closer session dispatches one fresh read-only reviewer against this
-commit (plan §5 budget: one review plus at most two focused re-reviews) and records its verdict here
-before the PR is handed to the director.
+**Setup.** One fresh read-only reviewer: a general-purpose Claude Opus 5.5 session, in its own detached
+worktree at `8d086a20` (empty `git status` at start and end; removed). Cluster writes only under
+`…/2d-closeout-stageAB-20261012/review-a2/`; no Slurm job. Budget: one review plus at most two focused
+re-reviews (plan §5).
 
-**Same-model caveat.** Owner and reviewer are expected to be Claude Opus 5.5. Distinct sessions of one
-model are not cross-provider independence (plan §5).
+**Initial review of `8d086a20`: PASS WITH CHANGES** (1 MATERIAL, 4 MINOR, 9 NOTE), preserved verbatim at
+[`review/review-8d086a20.md`](review/review-8d086a20.md). Its own reads (via `TH1::GetArray()` buffers, under
+two environments) reproduced the `E_U` and L0 digests, the 205-cell set, the integral, `E_U` vs L0
+(1.3751444427612114e-11, GlobalID 171), POT and the flux recombination. `analyze.py` re-ran byte for byte; 14
+citations checked; both hygiene gates green.
+
+**Repair batch 1 (cycle 1 of at most 2):**
+
+| finding | disposition |
+|---|---|
+| M1: "EXIT MET" named `E_U` as having a complete manifest; no frozen producer declared | §1 now states the exit is met for the candidate procedure via L0, declares L0's manifest as the producer frozen for Stages B and C, and says not to re-run `E_U`'s launcher; CATALOG row says "via L0" |
+| m1: integral "bitwise equal to `integral_ours_reported`" is 1 ulp off | §1 table and §3.2 now say bitwise equal to `integral_ours_all_bins`, 1 ulp from `integral_ours_reported` |
+| m2: KI 90 missing from NOT CITABLE FOR; plan misquoted | added; §3.1 attribution corrected; row 1 labelled "`E_U`'s own set; not KI 90" |
+| m3: §6 "None found" overstated | §6 now says the input is unavailable and its equivalence inferred |
+| m4: the selective-I/O remainder unmentioned | §1 says it is outside this record and delivered as A-1 |
+| N1 base; N2 key count; N3 flux doubles; N4 units source; N5 target count is a transcription check, with the parameters' sources; N6 purity citation; N7 omnifile digest; N8 independence of the comparison | all applied in place |
+| N9 (a 0.35 % in another record) | not this record's; no change |
+
+**Focused re-review:** see below.
+
+**Same-model caveat.** Owner and reviewer are Claude Opus 5.5 sessions. Distinct sessions of one model are
+not cross-provider independence (plan §5).
 
 ## 8. Limits
 
 - `E_U`'s own execution provenance (driver, helper, environment, threads, input digest, seeds) is
   **NOT AVAILABLE**. Every "VERIFIED" above is about the file's contents and its agreement with L0's
   recorded execution.
-- **Launcher-path omnifile digest:** a nice'd `sha256sum` was started on `login05` at 08:07:38Z and had
-  not finished when this record was committed, so it is **not measured** here. Its output goes to
-  `/pscratch/sd/j/josephrb/2d-closeout-stageAB-20261012/a2/eu_omnifile.sha256`; Stage B's KI-93 reads
-  pick it up. Either way it describes the July file, not `E_U`'s input.
+- **Launcher-path omnifile digest:** the `sha256sum` started on `login05` at 08:07:38Z ended at 08:20:38Z:
+  `220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418`
+  (`/pscratch/sd/j/josephrb/2d-closeout-stageAB-20261012/a2/eu_omnifile.sha256`; read by the reviewer). It
+  describes the July file, not `E_U`'s input.
 - The paper comparison of §3.2 uses the three-significant-figure text file, so it is descriptive. The
   quoted ratios come from the VL173 receipt.
 - No item here tests an uncertainty.
