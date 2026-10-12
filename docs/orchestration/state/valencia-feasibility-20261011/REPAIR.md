@@ -354,3 +354,31 @@ defects are repaired without changing any committed number, and the verdict stay
 - `git merge-tree` reports no textual conflict. `MANIFEST.tsv` would still need regenerating at any
   integration, because main added documents.
 - This branch is not merged or rebased; integration is Joseph's decision.
+
+**Order of governance reading (disclosed).**
+- **At the start of the repair:** remote main was checked (`d81f532b`), and `docs/CURRENT_WORK.md`
+  was read in full (35 lines; no Valencia item). `AGENTS.md` was skimmed by search. The campaign
+  review was **not** opened this session; it had been read during the original pilot, under the same
+  unchanged text.
+- **At closeout:** `AGENTS.md` and the campaign review were read in full, and remote main was
+  re-checked: still `d81f532b`, with all three documents unchanged since `3892e769`.
+
+Nothing in them conflicts with the repair as executed:
+- compute stayed within Joseph's named allowance;
+- the review was read-only, in an isolated worktree inspected afterwards;
+- results are committed;
+- no `docs/analysis-note/` change, so the standalone note repository needs no sync;
+- one owner, one reviewer, a frozen object and rubric, a budgeted single correction pass.
+
+The campaign review's two departures stand as recorded above: the reviewer was of the same model
+(not Astra High), and the review cycle was single by Joseph's instruction.
+
+**Remaining by design.** The authorization ends the repair after one review and one correction pass.
+The following therefore stay open as recorded issues:
+- the launcher orphan residual;
+- NuWro not yet executed under the new launcher;
+- the same-model review;
+- the reviewer measurements the owner has not independently re-run: the free-nucleon check, the
+  36-point flux fold, and the 10-thread overshoot. The owner did check the 2004 TeX citation.
+
+None of these was re-opened.
