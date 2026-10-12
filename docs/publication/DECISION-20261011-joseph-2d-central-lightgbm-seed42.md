@@ -77,7 +77,15 @@ and `fig_arrays.npz` (sha256 `72394a2b…`); its output is `lgbm_central_metrics
    at seed 42, and the ML block over seeds 1–10. The seed-42 central value differs from the seed-1 one by
    0.30 statistical standard deviations (median). The seed-1/seed-42 pairing (`P07`) is still unresolved.
 3. **Reproducibility.** This file has no execution log or `runConfig` (it predates `971fc00c`). Its
-   reproduction rests on the 1.4e-11 agreement with the July CV.
+   reproduction rests on the 1.4e-11 agreement with the July CV. **Update 2026-10-12 (XR integrated):** XR's
+   L0 is a receipted regeneration with the current driver (job 59660487) and reproduces it to 1.4e-11. L1
+   reproduces the seed-1 central to 2.4e-12. The two runs use one driver and one input and differ only in
+   the seed, so the seed-1/seed-42 difference in item 2 is attributable to the seed. This is inferred from
+   the two regenerations; XR did not compare L0 with L1 directly, and `P07` stays open. XR also finds the exact-split estimator
+   seed-dependent: X1 against X0 gives median 0.18%, max 1.6%. A reseeded exact-split run gives χ²/ndf
+   3.565 against the published covariance, while the unseeded run gives 3.661
+   (VL174, computed at integration, not by XR: `docs/orchestration/receipts/xr-x1-chi2-20261012/`). The 3.66 is
+   one seed setting (`random_state=None`, reproducible in XR), not a seed average.
 4. **Unchanged by the switch.** Coverage of the rebuilt band is still untested (KI 85). The universes'
    zero-point issue (KI 93) remains. The two-d-followup still finds no feasible route to the original
    objective under current inputs.

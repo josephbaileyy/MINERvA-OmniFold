@@ -1,0 +1,32 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[paper] opening: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+[paper] reported bins: 205 / 224
+[paper] cross-section sum (reported bins): 3.6892e-37
+
+[ours] opening: /global/cfs/cdirs/m3246/josephrb/xr-linux-20261011/outputs/X1/a1/XR-X1.root
+[ours] cross-section sum (all bins): 3.7317e-37
+
+=== chi^2 comparisons (ours vs paper) ===
+  stat only                       chi2 =      1377.02   ndf = 205   chi2/ndf =   6.717
+  flux only                       chi2 = 17537019931.28   ndf = 205   chi2/ndf = 85546438.689
+  muon E scale only               chi2 =         0.23   ndf = 205   chi2/ndf =   0.001
+  PAPER (stat+syst)               chi2 =       730.82   ndf = 205   chi2/ndf =   3.565
+
+wrote /pscratch/sd/j/josephrb/receipts-2d-lgbm-20261011/x1/x1_pull_full.png
+
+Summary for run log:
+  reported bins: 205
+  chi^2/ndf  stat only        : 6.717
+  chi^2/ndf  flux only        : 85546438.689
+  chi^2/ndf  muon E scale     : 0.001
+  chi^2/ndf  PAPER (full cov) : 3.565
+  pull mean / rms             : 0.087 / 0.596

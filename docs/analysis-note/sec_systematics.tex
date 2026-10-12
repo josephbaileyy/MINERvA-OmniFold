@@ -100,8 +100,10 @@ Table~\ref{tab:uq}. The block measures LightGBM seed noise only: the
 ten-seed LightGBM mean differs from the exact-split cross-check by a median of
 \SI{0.99}{\percent} per bin, about five times this block's per-bin standard
 deviation, a backend difference the block does not cover
-(\S\ref{sec:method-config}). The seed noise of the exact-split estimator itself
-has not been measured.
+(\S\ref{sec:method-config}). One reseeded exact-split run differs from the
+unseeded one by a per-bin median of \SI{0.18}{\percent} (maximum
+\SI{1.6}{\percent}); the spread of the exact-split estimator over seeds is
+unmeasured.
 % Source: ASSESSMENT-20261008-2d-estimator-pairing.md P09a/P09b; state/uncertainty-preparation-20261008/
 % a/verification.md (lgbm 10-seed mean vs E_C: 0.99 % rel., 5.15 sigma_ML); reviewer recompute
 % e/recompute/rc_pairing.json.txt "seedmean vs exact" 0.987 % / 5.147. The 0.28 % figure that stood here was not

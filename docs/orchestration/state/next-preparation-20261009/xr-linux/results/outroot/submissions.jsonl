@@ -1,0 +1,6 @@
+{"run": "PF", "kind": "preflight", "attempt": 1, "job_id": 59659845, "submitted_utc": "2026-10-11T06:13:23Z", "dir": "/pscratch/sd/j/josephrb/xr-linux-20261011/PF/a1", "diagnosis": null}
+{"run": "L0", "kind": "lgbm", "attempt": 1, "job_id": 59660487, "submitted_utc": "2026-10-11T06:44:07Z", "dir": "/pscratch/sd/j/josephrb/xr-linux-20261011/L0/a1", "diagnosis": null}
+{"run": "X0", "kind": "exact", "attempt": 1, "job_id": 59664200, "submitted_utc": "2026-10-11T08:41:25Z", "dir": "/pscratch/sd/j/josephrb/xr-linux-20261011/X0/a1", "diagnosis": null}
+{"run": "X0p", "kind": "exact", "attempt": 1, "job_id": 59664201, "submitted_utc": "2026-10-11T08:41:28Z", "dir": "/pscratch/sd/j/josephrb/xr-linux-20261011/X0p/a1", "diagnosis": null}
+{"run": "X1", "kind": "exact", "attempt": 1, "job_id": 59664202, "submitted_utc": "2026-10-11T08:41:31Z", "dir": "/pscratch/sd/j/josephrb/xr-linux-20261011/X1/a1", "diagnosis": null}
+{"run": "L1", "kind": "lgbm", "attempt": 1, "job_id": 59664203, "submitted_utc": "2026-10-11T08:41:34Z", "dir": "/pscratch/sd/j/josephrb/xr-linux-20261011/L1/a1", "diagnosis": null}

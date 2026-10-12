@@ -1,0 +1,198 @@
+{
+ "authorization": {
+  "path": "docs/orchestration/AUTHORIZATION-20261011-xr-linux.md",
+  "sha256": "0c547f6eaceb0b80875f9889df5fe92d34c531cf09668dcc61643bdc688ee524"
+ },
+ "cap_node_h": 6.4,
+ "checkout": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f",
+ "cumulative_since": "2026-10-10",
+ "drafted_utc": "2026-10-11T06:13:08Z",
+ "expect": {
+  "L0": {
+   "commit": "92386d3fe23f5f9c401ceb779e8a572cfba4ed78",
+   "inputs": {
+    "mcfile": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+    "omnifile": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+   },
+   "modules": {
+    "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+    "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_run.py": "e8c7ca64e617cc331d9ea451c3911a2f01cbdd5c1ba34c76a77f4b46656715df",
+    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  },
+  "L1": {
+   "commit": "92386d3fe23f5f9c401ceb779e8a572cfba4ed78",
+   "inputs": {
+    "mcfile": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+    "omnifile": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+   },
+   "modules": {
+    "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+    "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_run.py": "e8c7ca64e617cc331d9ea451c3911a2f01cbdd5c1ba34c76a77f4b46656715df",
+    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  },
+  "PF": {
+   "commit": "92386d3fe23f5f9c401ceb779e8a572cfba4ed78",
+   "inputs": {
+    "mcfile": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+    "omnifile": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+   },
+   "modules": {
+    "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+    "docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/make_fixture_omnifile.py": "6a76ccd13dcf995688bb32fd0f3c29c060da84fcd3c4a494a843a274e02853d3",
+    "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/record/unfold_2d_omnifold_unbinned_d1bc8813.py.record": "447288e2c61d30cdd46c88077093ec0d78ac08ae63144bb2fe57525e7144ea34",
+    "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_compare.py": "9e59c590cd33868bd619694ceff68adbed7cc4fa4dc05aeb1b3e76653e2e948b",
+    "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_run.py": "e8c7ca64e617cc331d9ea451c3911a2f01cbdd5c1ba34c76a77f4b46656715df",
+    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  },
+  "X0": {
+   "commit": "92386d3fe23f5f9c401ceb779e8a572cfba4ed78",
+   "inputs": {
+    "mcfile": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+    "omnifile": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+   },
+   "modules": {
+    "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+    "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_run.py": "e8c7ca64e617cc331d9ea451c3911a2f01cbdd5c1ba34c76a77f4b46656715df",
+    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  },
+  "X0p": {
+   "commit": "92386d3fe23f5f9c401ceb779e8a572cfba4ed78",
+   "inputs": {
+    "mcfile": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+    "omnifile": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+   },
+   "modules": {
+    "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+    "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/record/unfold_2d_omnifold_unbinned_d1bc8813.py.record": "447288e2c61d30cdd46c88077093ec0d78ac08ae63144bb2fe57525e7144ea34",
+    "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_run.py": "e8c7ca64e617cc331d9ea451c3911a2f01cbdd5c1ba34c76a77f4b46656715df",
+    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  },
+  "X1": {
+   "commit": "92386d3fe23f5f9c401ceb779e8a572cfba4ed78",
+   "inputs": {
+    "mcfile": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+    "omnifile": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+   },
+   "modules": {
+    "2d-unfolding/unfold_2d_omnifold_unbinned.py": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef",
+    "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856",
+    "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_run.py": "e8c7ca64e617cc331d9ea451c3911a2f01cbdd5c1ba34c76a77f4b46656715df",
+    "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   }
+  }
+ },
+ "head": "92386d3fe23f5f9c401ceb779e8a572cfba4ed78",
+ "job_name_prefix": "xrl",
+ "kinds": {
+  "exact": {
+   "billing_max": 12,
+   "ceiling_node_h_per_attempt": 1.40625,
+   "constraint": "cpu",
+   "cpus_per_task": 12,
+   "max_attempts_total": 4,
+   "mem_mb": 22860,
+   "omp_threads": 12,
+   "qos": "shared",
+   "time": "30:00:00",
+   "time_limit_s_max": 108000
+  },
+  "lgbm": {
+   "billing_max": 64,
+   "ceiling_node_h_per_attempt": 0.25,
+   "constraint": "cpu",
+   "cpus_per_task": 64,
+   "max_attempts_total": 3,
+   "mem_mb": 121920,
+   "omp_threads": 64,
+   "qos": "shared",
+   "time": "01:00:00",
+   "time_limit_s_max": 3600
+  },
+  "preflight": {
+   "billing_max": 12,
+   "ceiling_node_h_per_attempt": 0.00390625,
+   "constraint": "cpu",
+   "cpus_per_task": 12,
+   "max_attempts_total": 2,
+   "mem_mb": 22860,
+   "omp_threads": 12,
+   "qos": "shared",
+   "time": "00:05:00",
+   "time_limit_s_max": 300
+  }
+ },
+ "manifest_sha256": "5d2f5955464c3be0117f36f35240b7626a719b6a985350e1bda6c7d99ff850b0",
+ "outroot": "/pscratch/sd/j/josephrb/xr-linux-20261011",
+ "package_commit": "60bd68c05ad89116ac5a4bca5f925f8da1240e4e",
+ "prior": {
+  "charged_node_h_recorded": 0.002313368055555556,
+  "grants": [
+   {
+    "authorization": "docs/orchestration/AUTHORIZATION-20261010-xr.md",
+    "job_name_prefix": "xr",
+    "jobs": {
+     "59648608": "X0",
+     "59648610": "X0p",
+     "59648611": "X1",
+     "59648616": "L0",
+     "59648617": "L1"
+    },
+    "note": "All five refused at start (exit 3) by the TRES defect; two-d-followup REPORT B7.",
+    "outroot": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010",
+    "package_commit": "06eae0fede3508419f235f8cbe61954b33de8497"
+   },
+   {
+    "authorization": "docs/orchestration/AUTHORIZATION-20261011-xr-recovery.md",
+    "job_name_prefix": "xrr",
+    "jobs": {
+     "59655414": "PF"
+    },
+    "note": "The recovery preflight: FAILED at 74 s (threadpoolctl -> /sbin/ldconfig refused by the OI-136 guard); xr-recovery REPORT 6.",
+    "outroot": "/pscratch/sd/j/josephrb/xr-recovery-20261011",
+    "package_commit": "07428e5dec9fecd2e1148d8a2bdabc139a35138f"
+   }
+  ],
+  "note": "(19+19+7) s x 12/256 + (7+4) s x 64/256 + 74 s x 12/256 = 2132/921600 node-h, recomputed from sacct by every ledger; it must equal this value."
+ },
+ "references_sha256": "af7d5a1935176367e3c6cff9c17986e8e4e5c15c91b75d73efb3ccec04b88c89",
+ "release": {
+  "first": "L0",
+  "note": "next-attempt refuses every run until PF has passed, and every run but PF and L0 until L0 has a complete, comparable receipt.",
+  "preflight": "PF"
+ },
+ "runs_sha256": "4a54b0250b6ab10ed077c8dec649fe6e6389ac2361398fcba4370f7a9d1807d3",
+ "schema": "xr-admission/3",
+ "setup": {
+  "nested": {
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh": "e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT-MINERvA.sh": "c259101619ac365dcc57043d8ac4926908e51a8a87dad08f601394c9b418c3ac",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT.sh": "733e9cd839a0f75186d109eaab3dfe746a921d6d7b0347fbd6662b6f1ced3c0e",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_UnfoldUtils.sh": "bd305c17ddcd507f88ab49cbfcf5fe5a14075e0c1a173e631addcb3423212cd9",
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/setup.sh": "40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598"
+  },
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh",
+  "sha256": "ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48"
+ },
+ "status": "ADMITTED",
+ "stop_after_hours": 72,
+ "window": {
+  "first_submission_utc": null,
+  "note": "The 72-h window starts at the first preflight submission of this amendment (submissions.jsonl). first_submission_utc stays null in this package; a repaired package under the same amendment sets it to the first preflight's submission time, so a repair never restarts the window.",
+  "stop_after_hours_from_first_submission": 72
+ }
+}

@@ -121,6 +121,8 @@
 \newcommand{\pullMeanAbs}{0.794}\newcommand{\pullGauss}{0.798}  % <|r|> vs sqrt(2/pi)
 \newcommand{\chiPaper}{2.65}          % chi2/ndf vs paper covariance; 2.654, chi2_lgbm42_paperonly.txt (exact-split 3.661)
 \newcommand{\chiPaperExact}{3.66}     % the exact-split cross-check's chi2/ndf vs paper covariance (VL172; control reproduces 3.661)
+\newcommand{\chiPaperExactSeeded}{3.57} % the same estimator with random_state 1/2/3 (XR run X1): 3.565, VL174,
+                                       % docs/orchestration/receipts/xr-x1-chi2-20261012/; one seed setting, not a spread
 \newcommand{\chiCombined}{0.914}      % chi2/ndf vs combined (paper+ours) cov; chi2_lgbm42.txt (exact-split 1.472, VL172)
 \newcommand{\chiCombinedLog}{0.932}   % log-normal chi2/ndf, combined (paper+ours); chi2_lgbm42_lognormal.txt (exact-split 1.455)
 \newcommand{\chiCombinedSubStat}{4.13} % chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic); 4.128, chi2_lgbm42_substat.txt (exact-split 6.79)
