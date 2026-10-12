@@ -116,10 +116,14 @@ not imply otherwise.
 | Paper scientific narrative and figure placement | `paper_body.tex` |
 | Full note driver and section ordering | `main_note.tex` |
 | Primer driver and narrative | `main_primer.tex`, `primer_body.tex` |
-| Shared measured-value macros | `values.tex` |
-| Validation details | `sec_validation.tex`, `app_response_mismatch.tex` |
-| Scalar higher-dimensional result | `sec_3d.tex`, `sec_eavailw.tex` |
+| Shared measured-value macros | `values.tex` (all three builds); `values_inference.tex` (joint-test numbers, note and paper) |
+| Where each topic lives (the note's own map, "Where to find it") | `sec_intro.tex` |
+| 2D validation, including fixed-truth coverage | `sec_validation.tex`, `app_response_mismatch.tex` |
+| Scalar higher-dimensional central values | `sec_3d.tex` (`E_avail`, `q3`), `sec_eavailw.tex` (`W`, the `(E_avail,W)` plane) |
+| Five-axis estimator validation, model dependence, 5D coverage, adopted 5D covariance | `sec_5d.tex` |
+| Calibrated joint generator tests (complete record; the article's Sec. VI is a summary of it) | `sec_joint.tex`, numbers in `values_inference.tex` |
 | Uncertainty construction and inference rules | `sec_systematics.tex`, `app_statmethods.tex` |
+| PET full-event `C_stat` construction | `app_cstat.tex` |
 | Struck values, withdrawn arguments, superseded constructions (note only; the only note file allowed `\dead{}`) | `app_history.tex` |
 | Generated figure inputs | `figures/`, `make_figures.sh` |
 | Build and containment behavior | `build_all.sh`, `test_build_all.py`, `check_dead_containment.py` |
