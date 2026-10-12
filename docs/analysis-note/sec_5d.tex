@@ -1,0 +1,509 @@
+\section{Five-dimensional estimator: validation and uncertainty}
+\label{sec:5d}
+
+This section collects what is known about the five-axis estimator behind the
+central values of \S\S\ref{sec:3d}--\ref{sec:eavailw}: what each validation
+test isolates (\S\ref{sec:val-fiveaxis}), background subtraction and
+generator-sized truth changes (\S\ref{sec:val-negweight}), why the estimator does
+not follow such changes (\S\ref{sec:val-departure}), model dependence and the
+reporting definitions it rules out (\S\ref{sec:gbdt-model-dependence}), the
+failed five-dimensional coverage test (\S\ref{sec:coverage-5d}), and the status
+of the one adopted five-axis covariance (\S\ref{sec:eavailw-construction}). The
+calibrated generator tests built on a variant of this estimator follow in
+\S\ref{sec:joint5d}. The unbinned negative-weight background method itself is
+derived in App.~\ref{app:negweight}.
+
+\subsection{Which source of error is being tested}
+\label{sec:val-fiveaxis}
+Prior reweighting changes the frequencies of existing simulated truth events
+while retaining their detector-response simulation. A response mismatch
+instead changes how a given truth is reconstructed. Finite classifier capacity
+and iterations approximate the inverse and can leave residuals under either
+condition. Calibration asks whether the resulting intervals contain their
+specified target at the stated rate; correcting a nominal closure bias does not
+certify coverage under other truths. These are separate mechanisms: an
+incorrect generator prediction alone does not diagnose an interval failure.
+The tests below isolate particular interventions. Improved background
+refinement repairs nominal recovery, while the signal-only departure failure
+shows that background subtraction cannot explain all the residuals.
+
+
+All 2D closures in \S\ref{sec:validation} unfold reweighted simulated signal
+without background, leaving background subtraction untested.
+
+\subsection{Background subtraction and generator-sized truth changes}
+\label{sec:val-negweight}
+
+\paragraph{Background subtraction.}
+
+End-to-end five-dimensional pseudo-experiments add background-simulation events
+and rebuild per-bin purity weights as in the measurement. At nominal truth they return
+% (scalar-5D campaign, development study D1)
+the highest-$W$ column of $(\Eavail,W)$ \SIrange{3.5}{4.1}{\percent} low and
+the highest-$\Eavail$, highest-$W$ cell \SI{1.7}{\percent} high. Without
+background, the same experiments close to \SI{0.22}{\percent}. Relative to
+these cells' quoted total uncertainty, the bias is 0.36--1.07 standard deviations.
+It comes from the purity footing (\S\ref{app:negweight}), enters no quoted
+covariance, and has no established size on data.
+% Sources: docs/orchestration/OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md,
+% docs/orchestration/state/s5c/d1/d1_summary.json, docs/orchestration/state/s5c/d1/bias_vs_adopted.json.
+Unbinned negative-weight treatment (\texttt{negweight-refined},
+App.~\ref{app:negweight}), as first measured with a deterministic variant of the
+five-dimensional LightGBM production estimator, brings the highest-$W$ column to
+\SIrange{0.11}{0.24}{\percent} and the corner cell to \SI{0.24}{\percent}
+over sixty nominal-truth experiments.
+% CLI form: \texttt{-{}-bkg-mode negweight-refined}. Implementation (refinement to
+% non-negative weights before the first OmniFold step; injection and independent
+% subtraction halves of the background simulation) is in App. B.
+Some joint cells remain \SIrange{0.7}{1.1}{\percent} high, up to 14 standard
+errors, versus \SI{-0.2}{\percent} without background; the mechanism is not
+established. On data, the two treatments differ by median \SI{0.36}{\percent}
+and at most \SI{1.4}{\percent} over reported functionals. These differences
+measure method sensitivity; they do not measure bias. Negative-weight treatment
+is not adopted.
+
+\paragraph{Generator-sized truth changes.}
+
+The unfolding does not follow a GiBUU-to-GENIE $\Eavail$ shape reweighting of
+the truth (0.70--1.33 per $\Eavail$ bin, total preserved). Its GENIE prediction was later
+found to use a mis-sampled flux (\S\ref{sec:3d-models}); the ratio remains a
+valid known-truth
+% KNOWN_ISSUES.md row 83
+deformation of this size but is not a measured GiBUU--GENIE difference.
+Residuals in $(\Eavail,W)$ are median \SI{9.7}{\percent}, up to
+\SI{74}{\percent} in the highest-$W$ column, and several percent in the largest
+cells. A $q_3$ deformation preserving $(\Eavail,W)$ truth shifts these cells by
+up to \SI{37}{\percent}. Signal-only experiments with the same seeds reproduce both results,
+so they are a property of the estimator (five iterations, the GBDT configuration of
+\S\ref{sec:method}), not of the background treatment. This regularization (unfolding-model) bias enters no quoted uncertainty.
+% Source: docs/orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md (VL151, VL152);
+% KNOWN_ISSUES 75, 77; independently reproduced (state/s5n/stage1/review-round-1.md).
+
+\subsection{Why the estimator does not follow a generator-sized change}
+\label{sec:val-departure}
+% An instrumented rerun recorded every OmniFold iteration of these experiments. It
+% reproduced the development results bitwise and repeated them through the unmodified
+% driver, which shows the same response to the $\Eavail$ departure (highest-$W$ cell
+% \SI{73.8}{\percent} against \SI{73.5}{\percent}).
+
+Both steps behave as intended: the first matches reco pseudo-data within
+statistical noise, and the second reproduces truth-level weight sums to
+\SI{0.5}{\percent}. Yet the unfolded result folds back onto the data less well than the
+true model does. With noise-free pseudo-data it recovers more than \SI{99}{\percent}
+of the departure's reco signal, while $(\Eavail,W)$ residuals remain median
+\SIrange{5}{11}{\percent} and up to \SI{74}{\percent} in the worst cell.
+The remaining reco imprint is small relative to the departure but statistically
+significant at the analysis exposure.
+
+Thirty iterations reduce the $\Eavail$ residual by \SI{26}{\percent}; it
+continues falling slowly, while the $q_3$ residual grows with iterations.
+A larger classifier improves the
+reco-level fit without improving the $\Eavail$ truth residual, and removing the regression
+for events that fail reconstruction does not help it. No single cause is established, and no authorized estimator change passes the
+predeclared GiBUU-to-GENIE departure screen.
+
+\paragraph{Higher-capacity background refinement and data stability.}
+
+The refinement classifier underfits, causing the residual background bias
+(App.~\ref{app:negweight}). A candidate with raised refinement capacity passes the
+nominal background-inclusive closure on 40 fresh pseudo-experiments (largest deviation
+2.7 standard errors) and a pooled calibration test of its statistical intervals (pull width 1.02),
+which did not establish calibration for every functional.
+The candidate fails predeclared data stability: input perturbations within
+floating-point rounding move functionals by median 0.8 and maximum 2.6
+statistical standard deviations. Baseline shifts of 0.8 and 2.5 locate this
+instability in the estimator family. It also explains the driver--development
+pipeline difference on data, at most \SI{1.2}{\percent}. A later study of the
+same candidate found rounding spread already contained in the data bootstrap,
+which refits everything per replica. Each replica has the same spread (median
+\SI{0.23}{\percent} per joint cell), about \SI{37}{\percent} of bootstrap
+variance and below a tenth of any total uncertainty. Central values are
+reproducible only to this size.
+% Source: KNOWN_ISSUES 80; docs/orchestration/RECORD-20260927-s5p-stage2-exit.md section 2 (VL155).
+The paired-bootstrap study below addresses containment only for this candidate.
+
+\paragraph{Unfolding-model dependence.}
+
+For historical shapes withheld during that assessment (NuWro; GENIE with enhanced
+meson-exchange currents), unfolding-model dependence is median
+\SIrange{2}{6}{\percent} and at most \SIrange{16}{31}{\percent}. It remains
+within quoted total uncertainty in 20 of the 42 $(\Eavail,W)$ cells.
+Nothing is adopted.
+% Source: docs/orchestration/DIAGNOSIS-20260926-s5e-oi192-estimator.md (VL153);
+% docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md (VL154); KNOWN_ISSUES 75, 77, 79, 80;
+% independently reproduced (state/s5e/diag/review-round-1.md, state/s5e/cand/review-round-2.md).
+
+\subsection{Model dependence, variability and reporting resolution}
+\label{sec:gbdt-model-dependence}
+
+The scalar estimator here uses production LightGBM. The matched
+HistGradientBoosting comparator of \S\ref{sec:pet-gbdt-paired} uses
+different inputs, signal-only samples and reporting histograms; neither its
+recovery metric nor its residual spread supplies a missing operand here.
+
+These studies do not establish a bias--variance tradeoff across estimator settings.
+They establish truth-dependent responses to iterations and capacity, small repeat
+variability at one setting, and appreciable prior sensitivity. These are different quantities. Unfolding benchmarks
+also assess these quantities separately~\cite{Brenner2020Unfolding}.
+Regularization bias can invalidate intervals based solely on estimator
+variability~\cite{Kuusela2015Unfolding}; neither literature result supplies
+this estimator's missing variance measurement.
+
+The noise-free study unfolds the full simulation's reweighted reco events without
+background. Baseline classifiers and the missed-event regressor use 100 trees
+and 8 leaves; the capacity probe uses 400 trees and 31 leaves. Repeated experiments
+use candidate $R$ with five iterations, baseline OmniFold estimators and a separate
+400-tree, 31-leaf background-refinement classifier. With seed 42, its 40 nominal
+experiments and 20 at each of five departures include Poisson pseudo-data, changing
+MC splits and background refinement. These samples have since informed development;
+they provide no fresh validation here.
+
+Saved fine-grid outputs are integrated into 109 supported joint cells (J), 27
+supported coarser joint cells (H2) and 39 supported $(\Eavail,W)$ cells (EW).
+Both joint partitions subdivide all five axes; H2 is not nested within J.
+Unsupported cells remain in the full-domain rate. Historical interval assessment
+keeps all 42 EW cells, including three excluded by the later support rule
+(definitions and normalization checks in App.~\ref{sec:gbdt-diagnostic-definitions}).
+
+Truth labels denote fixed historical deformations predating the generator-flux
+repair: D1 is a GiBUU/GENIE $\Eavail$ ratio, W1 a NuWro/GENIE $\Eavail$
+ratio, W2 a GENIE MEC/CV $(\Eavail,W)$ ratio, and W3 a NuWro/GENIE
+$(\pT,\pPar,\Eavail)$ ratio. Removing D1 leaves the remaining ratios uncorrected
+as generator comparisons. The $q_3$ stress changes the conditional distribution
+at fixed $(\Eavail,W)$ with amplitude 0.3. All tests retain the simulated
+detector response.
+
+\paragraph{Recovery changes, but not uniformly.}
+
+Figure~\ref{fig:gbdt-recovery} shows the available traces, without extension
+beyond the committed iteration ranges.
+D1 and W1 improve slowly. W3's J-cell median absolute residual rises from
+\SI{5.57}{\percent} at iteration 5 to \SI{6.57}{\percent} at 200, and its
+maximum from \SI{32.9}{\percent} to \SI{44.8}{\percent}. H2 medians are
+\SI{3.42}{\percent} and \SI{3.68}{\percent}. Persistence over this finite scan
+makes no claim about infinite iterations or every possible classifier.
+The $q_3$ stress illustrates the importance of the functional:
+its EW median residual rises from \SI{4.99}{\percent} at iteration 5 to
+\SI{6.42}{\percent} at 30 even while some joint-cell summaries improve.
+The capacity probe changes recovery, but the affordable five-iteration setting
+fails the frozen improvement requirement. No reporting definition qualified under
+historical usefulness and budget rules; no measurement construction was admitted.
+These verdicts remain.
+
+\paragraph{Reporting definitions for a five-dimensional measurement.}
+The measurement branch assessed three reporting definitions at the development
+resolution: the 109 J cells (RD1), the 27 H2 cells (RD2) and the 39 EW cells (RD3).
+Its bounded unfolding-model component, the largest shift over five generator-sized
+truth departures at the smallest envelope the vertices allow, has median
+\SI{12.0}{\percent}, \SI{9.6}{\percent} and \SI{13.4}{\percent} respectively
+(90th percentile 38.6, 22.5 and \SI{39.2}{\percent}), with GiBUU the dominant
+vertex in most cells. The frozen total-width target (median 68\% half-width at most
+\SI{10}{\percent}) is therefore unattainable in RD1 and RD3 from the model component
+alone, and in RD2 once the flat \SI{1.4}{\percent} normalization is added (median at
+least \SI{11.0}{\percent}). The model-component and recovery targets (median at most
+\SI{5}{\percent}; recovery of at least 75\% of a generator-sized departure, against
+0.31--0.63 measured) fail in every definition. By the frozen selection procedure RD3
+is the fallback, and it fails the total-width target. No reporting definition can meet
+the useful-precision targets with any configuration the rules support within the
+budget; the limitation is the measured prior dependence, about 10--13\% per coarse
+joint cell, which is comparable to the generator differences a user would need to
+resolve. The calibrated joint tests (\S\ref{sec:joint5d}) were the separately
+admitted inference branch.
+% Source: docs/orchestration/RECORD-20260927-s5p-stage2-exit.md sec. 4 (VL155). Added 2026-10-11: the article's
+% Sec. VII states this result, and the note carried only the one-line verdict above.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/gbdt_recovery.pdf}
+
+\caption{Noise-free scalar-5D recovery of historical truths at fixed simulated
+response. Solid curves use 100 trees/8 leaves; dashed use 400/31 for OmniFold
+estimators. D1 and W1 extend to 40 iterations, $q_3$ stress to 30, W3 to 200,
+and capacity probes to 10; some baseline traces are partial checkpoints.
+The upper row gives median $|\hat f/f_{\rm true}-1|$ over supported cells.
+The lower row gives the historical proxy
+$\operatorname{median}(|\hat f/f_{\rm true}-1|/|f_{\rm true}/f_0-1|)$
+for departures above 1\%, with dotted frozen bound 0.25. Different denominators
+prevent interpreting one minus the proxy as an exact recovered fraction.
+The $q_3$ stress has no eligible EW departure. These traces measure no repeat variance.}
+
+\label{fig:gbdt-recovery}
+\end{figure}
+
+\paragraph{Variability and interval behavior at five iterations.}
+
+Figure~\ref{fig:gbdt-bias-spread} compares ensemble residual means and repeat
+standard deviations at the same setting. At historical W3 truth, EW29 has
+mean residual \SI{23.67}{\percent} and repeat SD \SI{0.56}{\percent}; EW7 has
+\SI{-6.81}{\percent} and \SI{0.30}{\percent}. Small spread does not imply
+small bias. Coarser cells can have smaller
+residuals and spread, but they estimate different integrals; this is not an improvement
+in precision on an unchanged quantity. There are no matching repeat ensembles at
+the longer iterations or larger OmniFold capacity from which to infer a tradeoff.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/gbdt_bias_spread.pdf}
+
+\caption{Candidate $R$ at five iterations. Each supported J or H2 cell gives
+the mean and SD of $(\hat f-f_{\rm true})/f_{\rm true}$ in the same
+background-inclusive ensemble: 40 nominal experiments, 20 each for W2 and W3.
+Bars give pointwise 95\% Student-$t$ intervals for means and normal-model
+intervals for SDs, conditional on saved simulation. They supply neither
+simultaneous bounds nor total uncertainties. Truth panels and reporting cells
+form no frontier across estimator settings.}
+
+\label{fig:gbdt-bias-spread}
+\end{figure}
+
+Historical statistical intervals fix their width from 100 bootstrap replicas of
+one nominal development experiment, without recomputing it per assessment
+experiment; their behavior is correspondingly limited
+(Fig.~\ref{fig:gbdt-coverage}). Nominal EW41 contains truth in 15
+of 40 nominal 68\% intervals (37.5\%, pointwise exact 95\% interval
+[22.7\%, 54.2\%]); a pooled calibration pass cannot qualify this cell.
+A later 160-experiment check averaged six bootstrap-width estimates. It changed
+pull scales without validating the real-data procedure with its own width.
+Finite replica noise explains much of the six estimates' apparent variation.
+Neither check establishes total coverage.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/gbdt_coverage.pdf}
+
+\caption{Development reuse of the historical $R$ assessment: containment in $\hat f\pm\sigma$
+with fixed nominal-bootstrap $\sigma$ for all 42 EW functionals. Right shows
+EW7 ($\Eavail\in[0.1,0.2)$, $W\in[1.1,1.4)$ GeV) and EW41 (both above
+3 GeV), with pointwise 95\% Clopper--Pearson bounds. The dotted line gives
+nominal Gaussian 68.27\% coverage. Zero of 20 intervals contains truth;
+the upper 95\% bound is 16.8\%, without implying zero population coverage.
+Truth ratios are historical. No total-uncertainty construction or newly validated
+interval is shown.}
+
+\label{fig:gbdt-coverage}
+\end{figure}
+
+A paired perturbation study supports containment of rounding variability for
+the tested $R$ refit-per-replica bootstrap. Twenty edge-safe data jitters give
+J-cell median SD \SI{0.228}{\percent}, versus bootstrap SD
+\SI{0.368}{\percent}. Fifty bootstrap replicas with jittered partners give
+median consistency ratio 1.02 and estimated numerical share 0.37 of bootstrap
+variance. Adding this share again would double-count it in this design.
+The study does not regrade the stability failure, certify interval coverage,
+or transfer to the adopted covariance.
+
+\paragraph{Prior sensitivity is not a measured real-data bias.}
+
+Real-data prior shifts correlate with minus the noise-free residual at the same
+historical truth (Fig.~\ref{fig:gbdt-prior}). W3's J correlation is 0.92, yet
+$|\mathrm{shift}|\geq|\mathrm{residual}|$ holds in only 71\% of supported
+cells (52\% on H2, 54\% on EW). Maximum shifts over five historical vertices
+have medians 12.0\%, 9.6\% and 13.4\% on J, H2 and EW; excluding D1 gives
+11.2\%, 4.3\% and 9.9\%. These sensitivity envelopes provide no probabilities,
+covariance components or guaranteed bias bounds. Data truth has not been
+demonstrated to lie within their span.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/gbdt_prior_response.pdf}
+
+\caption{Historical W3 at five iterations. Horizontal gives minus the noise-free
+relative truth residual; vertical gives the relative shift in real-data $R$
+when its MC prior changes to W3, normalized to CV-prior results. Points are
+supported cells, not independent repeated experiments. The diagonal marks
+equality. Strong correlation supplies no per-cell bound; shifts do not measure
+unknown real-data bias.}
+
+\label{fig:gbdt-prior}
+\end{figure}
+
+A decisive next measurement would share pseudo-data and MC splits across a small
+set of iteration and capacity settings, measuring bias, variance and mean squared
+error for common functionals. Comparing settings statistically and validating
+intervals are separate tasks. Total-interval validation also requires explicit
+physical-nuisance and model-dependence treatment. No new ensemble enters this
+synthesis; the precision-measurement objective remains unmet.
+% Evidence: nd-unfolding/gbdt_model_dependence/{inputs,results,README.md}; VL163.
+% Historical grades: s5e A_FAIL; s5p amendment 4 NOT ADMITTED; amendment 6 LOW corrections.
+
+\subsection{Five-dimensional coverage test}
+\label{sec:coverage-5d}
+
+An end-to-end independent-truth test assessed statistical intervals of a
+deterministic five-dimensional estimator variant with nominal-truth bias
+correction (1,200 pseudo-experiments over three truths). It failed its predeclared
+futility criterion at the nominal and the $\Eavail$-tilted truths, so no frequentist coverage is
+claimed for any five-dimensional interval.
+
+% Source: docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
+
+\paragraph{A scoped response-information diagnostic.}
+A subsequent signal-only study compared binned exact-response inversions and
+local information widths with the stored GBDT residuals. Of 376
+joint-cell/departure combinations with residuals above 2\%, 232 changed
+classification with truth resolution or response weighting and were excluded.
+Among the remaining 144, 121 (84\%) were classified as weakly constrained
+under the study's binned, fixed-response assumptions. Thus the result supports
+weak response information for that subset, not a universal explanation of
+the unfolding residual. The coarser muon projection retained only three cases
+and was effectively uninformative. The diagnostic does not bound biased or
+unbinned estimators, validate intervals, or establish an impossibility theorem;
+its proposed precision thresholds are not scientific adoption gates.
+The full exclusions, definitions and numerical verification are in the
+\href{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/7d173bd0bad495c4dcbb404ae769cab718fb928c/docs/orchestration/state/next-preparation-20261009/d-id/REPORT.md}{binned response diagnostic record}.
+
+\subsection{The adopted five-axis covariance and its $(\Eavail,W)$ projection}
+\label{sec:eavailw-construction}
+
+\paragraph{Status.}
+\label{sec:eavailw-adopted}
+
+The adopted five-axis covariance \texttt{z-cv.npz}
+(\texttt{sha256}~\zcvDigest\ldots, \num{890500272} bytes, variant \texttt{cv})
+has an $(\Eavail,W)$ projection with \texttt{sha256}~\zprojDigest\ldots\ on
+\zprojCells\ cells. Its digest-bound exception covers only these bytes.
+Metadata still reads $\texttt{scientific\_acceptance}=\text{\texttt{NON-PASSING}}$
+and $\texttt{adoptable}=\text{\texttt{false}}$: the specification's null bound
+could not be fixed before production (App.~\ref{app:release-audit}).
+The earlier direct 42-bin $(\Eavail,W)$ block sum (\S\ref{sec:eavailw-cov})
+is superseded and quoted nowhere in this note (App.~\ref{app:history}).
+
+\paragraph{Construction.} The adopted object projects the corrected five-axis
+statistical covariance as $M C_{5D}M^{\top}$, without rebuilding it in the
+destination bins, and uses corrected systematic endpoints. Selection-complete
+active-universe event loops now bound migrations omitted by the
+CV-support-limited dump-all sample (\S\ref{sec:uq-higherdim}). On the
+$\latBins$ reported cells of $(\pT,\pPar,\Eavail,q_{3},W)$, the covariance is
+
+\begin{equation}
+  \label{eq:zassembly}
+  C_{Z} \;=\; D\,\Big(\textstyle\sum_{V} C_{b}\Big)\,D
+  \;+\; \textstyle\sum_{R} C_{b}
+  \;+\; \textstyle\sum_{A} L_{b}
+  \;+\; C_{\mathrm{stat}}
+  \;+\; C_{\mathrm{ML}},
+\end{equation}
+with the inflation $D=\diag(g)$,
+\begin{equation}
+  \label{eq:zinflation}
+  g_{i} \;=\;
+  \sqrt{\frac{\max\!\big(v^{\mathrm{cv}}_{\mathrm{uni},i},\,
+                         v_{\mathrm{blk},i}\big)}
+             {v_{\mathrm{blk},i}}}
+  \;\ge\; 1,
+  \qquad
+  g_{i}\equiv 1 \ \text{ where } v_{\mathrm{blk},i}=0 .
+\end{equation}
+
+Here $v_{\mathrm{blk}}=\diag\big(\sum_{V}C_{b}\big)$ is the vertical block-sum
+diagonal; $v^{\mathrm{cv}}_{\mathrm{uni}}$ is the unified-throw covariance
+diagonal \emph{centered on the central value}. A zero denominator pins $g=1$
+by declaration; it does not compute unity. Band groups $V$ (vertical), $R$
+(residual) and $A$ (active lateral) must be disjoint and exhaust the 45 bands
+(implementation in App.~\ref{app:release-audit}).
+Adoption was conditioned (2026-07) on documenting low-rank treatment, mean shift
+and the selection-support bound above before transferring information onto a sweep block,
+$\mathbf{C}^{\syst}\!\to\!(\mathbf{C}^{\syst}-\mathbf{C}^{\mathrm{vert}})+\mathbf{G}\,\mathbf{C}^{\mathrm{vert}}\mathbf{G}$
+($\mathbf{G}=\operatorname{diag}g$). This transfer is positive-semidefinite by construction
+and never falls below the block baseline; a direct rank-$N$ swap is not positive-semidefinite.
+
+\paragraph{Centering, explicitly.} Per-band blocks $C_{b}$ use the MAT-conformant
+mean-centered $\pm1\sigma$ estimator of \S\ref{app:pair}. Inflation in variant
+\texttt{cv} uses $v^{\mathrm{cv}}_{\mathrm{uni}}$. The unified-throw centerings
+differ by the outer product of measured joint mean shift $\mathbf{ms}$
+(joint throw mean minus central value),
+
+\begin{equation}
+  \label{eq:zcentering}
+  C^{\mathrm{cv}}_{\mathrm{uni}}
+  = C^{\mathrm{mean}}_{\mathrm{uni}} + \mathbf{ms}\,\mathbf{ms}^{\top}
+  \qquad\Longrightarrow\qquad
+  v^{\mathrm{cv}}_{\mathrm{uni},i}-v^{\mathrm{mean}}_{\mathrm{uni},i}
+  = \mathbf{ms}_{i}^{2},
+\end{equation}
+
+so CV centering retains the mean shift as variance; mean centering removes it.
+Retention is the deliberate adopted choice. The mean-centered sibling's
+$\sqrt{\Tr C}$ is \SI{7.13}{\percent} lower. The variant must be read and checked
+in product metadata, never inferred from a path (App.~\ref{app:release-audit}).
+
+\paragraph{The projection to $(\Eavail,W)$.} The quoted 42-cell covariance is
+$C_{EW}=M\,C_{Z}\,M^{\top}$, with $M$ of shape $\zprojCells\times\latBins$
+over kept axes $(\Eavail,W)$. Each entry of $M$ is the product of the dropped axes' bin widths,
+giving a differential density in \si{cm^2/GeV^2/nucleon}. Integrating a
+destination cell requires its own $\Delta\Eavail\,\Delta W$. Rows follow the
+$7\times6$ $(\Eavail,W)$ grid in measured C order. No source cell is dropped;
+the result is exactly symmetric (App.~\ref{app:release-audit}). Support and
+pinned masks and row-index arrays accompany the covariance, byte-identical in
+\texttt{cv} and \texttt{mean}. We pair this covariance with the central values in Fig.~\ref{fig:eavailWexcess} \emph{by digest identity} rather than numerical agreement. The projected source's central-value array and the figure's share the same bytes. Numerical agreement provides only a corroborating check.
+
+\paragraph{Conditioning, and why no rank is quoted.}
+Measured extremes $\lambda_{\min}=+4.359104\times10^{-92}$ and
+$\lambda_{\max}=1.488215\times10^{-77}$ give
+$\lambda_{\min}/\lambda_{\max}=2.9\times10^{-15}$ and condition number
+$\approx3.4\times10^{14}$, at double precision's edge. No eigenvalue is negative,
+but the smallest lie at the floating-point noise floor of a $\latBins$-term
+weighted sum. Their sign carries no information; $n_{\mathrm{negative}}=0$
+describes this computation without demonstrating that the source's negative
+directions were cured. Rank is a property of the cutoff, not of the matrix. The 42 eigenvalues decay
+smoothly across about fifteen orders of magnitude with no plateau. Retained
+counts are 26 at relative cutoff $10^{-6}$, 36 at the code default $10^{-12}$,
+41 at \texttt{numpy.linalg.matrix\_rank}'s default $n\epsilon=9.3\times10^{-15}$,
+and 42 without a cutoff. \textbf{A bare ``rank 36'' should not be quoted, and it is not a number of
+degrees of freedom.} An inverse requires declared regularization, which this
+analysis does not supply silently (App.~\ref{app:release-audit}).
+
+\paragraph{What the covariance supports.}
+
+Four measurements bound the claims. Items one, two and four use two companion
+covariances at two estimator-seed settings; only item three describes these bytes.
+
+\begin{enumerate}
+
+\item Estimator-seed sensitivity exceeds its declared limit. Companion
+  covariances at seed offsets $\{0,1200\}$ give the correlation-sensitive leg
+  $s_{\mathrm{proj}}=\sprojMeasured\,\%$, against the preproduction
+  \sprojBound\,\% movement limit. Diagonal-only legs pass
+  ($s_{\mathrm{agg}}=\saggMeasured\,\%$, $s_{\mathrm{med}}=\smedMeasured\,\%$).
+  The failing leg probes the off-diagonal structure used by projections.
+\item The sensitivity is not the statistic's own resampling noise. With the
+  throw ensemble fixed and only the seed changed, it does not fall over the
+  tested ensemble sizes: mean $\seedEffectNforty\,\%$ over four disjoint
+  40-throw subsets, $\seedEffectNeighty\,\%$ over two 80-throw halves, and
+  $\sprojMeasured\,\%$ over all $N=160$ throws. The same-seed resampling floor
+  falls steeply from $\floorNforty\,\%$ at $N=40$ to $\floorNeighty\,\%$ at
+  $N=80$, with two-point exponent $\floorExponent$; no floor measurement exists
+  at $N=160$. Statistical noise must fall with $N$; seed sensitivity did not
+  fall between $N=40$ and $N=160$.
+  Three limits are why no infinite-ensemble statement is made. The $40$- and $80$-throw points are
+  nested subsets of the same 160 throws, not independent ensembles, so flatness holds within one ensemble
+  over a factor of four in $N$; larger-$N$ behaviour is unmeasured. The quoted
+  $\pm\seedEffectScatter\,\%$ is subset scatter at a single seed pair
+  (offsets $\{0,1200\}$); the seed-pair distribution's width is unmeasured.
+  The statistic is a maximum over the declared offset set, so additional pairs
+  can only raise it. Failure of the $\sprojBound\,\%$ limit is established
+  to differ from the statistic's own resampling noise, with no observed reduction over $N=40$--$160$.
+\item Five of the covariance's 45 bands fall outside the variation probe.
+  The endpoint convention fixes the estimator seed for the muon-energy,
+  muon-resolution and beam-angle blocks; the offset cannot reach them.
+  They carry $\pinnedBandsSqrtTr\,\%$ of $\sqrt{\mathrm{Tr}\,C}$ and move
+  exactly zero. Their seed sensitivity is unprobed. Allowing them to vary could
+  move the total either way, and neither direction is measured:
+  $s_{\mathrm{proj}}$ maximizes relative changes over functionals, rather than
+  summing nonnegative component contributions.
+\item Seed shifts in central values are a small fraction of their uncertainty.
+  Across the grade's 43 projection functionals (\zprojCells\ destinations
+  plus the all-ones total rate), shifts reach $\cvMoveProjMax\,\%$, versus
+  relative uncertainties of order ten percent. They reach at most
+  $\cvMoveOverSigmaMax\,\%$ of quoted uncertainty, with median
+  $\cvMoveOverSigmaMed\,\%$. The largest shift occurs in the destination cell
+  driving the covariance result. Individual five-axis bins reach
+  $\cvMoveBinOverSigmaMax\,\%$ of their uncertainty; summing bins suppresses
+  this movement in projections.
+
+\end{enumerate}
+
+\noindent The estimator-seed magnitude criterion remains \emph{predeclared and
+not computed} for this object. It was computed only for the purpose-built
+companion products; their grades do not regrade these bytes
+(App.~\ref{app:provenance}, \texttt{z-adoption}).

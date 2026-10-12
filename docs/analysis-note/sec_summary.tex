@@ -2,72 +2,46 @@
 \label{sec:summary}
 
 \paragraph{Summary.}
-Unbinned OmniFold with gradient-boosted trees reproduces the published
-MINERvA ME FHC CC-inclusive $d^{2}\sigma/(d\pT\,d\pPar)$
-and its uncertainty scale (\S\ref{sec:execsummary}, \S\ref{sec:results}); the
-uncertainty is computed with LightGBM ensembles, and its transfer to the
-exact-split central value is unmeasured (\S\ref{sec:method-config}).
-A correlated shape difference follows the low-$\pT$ peak ridge
-($\chi^{2}/\mathrm{ndf}=\chiPaper$ against the published covariance,
-\S\ref{sec:results-tension}). Closure, iteration, pull, calibration, and
-classifier-family checks pass; a pre-registered fixed-truth test finds the 2D
-statistical band undercovers in its tails (\S\ref{sec:coverage}). Simultaneous \emph{unbinned}
-three-, four- and five-observable unfolds of MINERvA data ($+\Eavail$,
-$+q_{3}$, $+W$) are validated against their lower-dimensional predecessors
-by projection anchors agreeing to $\approx$1--2\,\% (prior binned measurements
-in App.~\ref{app:landscape}).
-% Cut (lane 3 §11 #1, lane 5 R2); the disclaimer's homes are the abstract, sec_3d.tex and App. D:
-% (Binned MINERvA multi-differential
-% measurements, up to triple-differential~\cite{MINERvA:2022qe,MINERvA:2026qeleme}, exist; the methodological distinction is the
-% unbinned, simultaneously-unfolded formulation.)
+The executive summary (\S\ref{sec:execsummary}) lists each result with its
+scope; this section states the conclusions they support.
 \begin{itemize}[itemsep=2pt]
-  \item the low-$\Eavail$ excess over all four truth-level generators in the
-        quasielastic--$\Delta$ dip recovers the established MINERvA low-recoil/2p2h
-        deficit through independent unfolding. Tested pion-FSI variations give
-        small responses; including Valencia 2p2h improves the description.
-        These tests do not exclude other transport effects or uniquely
-        identify a nuclear mechanism (\S\ref{sec:3d-2p2h});
-  \item the $(\Eavail,q_{3})$ plane resolves the deficit's momentum-transfer
-        structure (\S\ref{sec:4d}). The 4D systematic-budget composition is not
-        quoted; no corrected 4D covariance is adopted (\S\ref{sec:3d});
-  \item following the unified-throw block-sum test (\S\ref{sec:uq-combine}) and
-        selection-complete lateral replacement, the CV-centered variant of
-        the resulting 5D covariance is adopted as publication-under-exception, subject to the
-        four measurements of \S\ref{sec:eavailw-adopted};
-        % Construction details cut (lane 3 §11 #2; stated in sec:uq-combine): the unified-throw
-        % machinery tests the block sum with asymmetric endpoints, a fixed estimator seed, and
-        % mean-centered joint throws.
-        % "no corrected 4D covariance is reported" cut here: stated in the bullet above (lane 5 R10).
-  \item the $(\Eavail,W)$ study localizes the remaining high-$\Eavail$
-        excess over the MINERvA Tune~v1 prior to the deep-inelastic region.
-        % GENIE and NuWro rebuilt on 2026-09-27 after a flux-sampling defect.
-        All four external generator predictions (GENIE and NuWro flux-repaired,
-        \S\ref{sec:3d-models}) lie below the central result there,
-        each by about its overall normalization shortfall after accounting
-        for the $E_\nu>\SI{20}{GeV}$ events missing from GiBUU
-        (\S\ref{sec:eavailw-band}). The plane's projected covariance is built
-        and adopted (\S\ref{sec:eavailw-construction}); no significance is
-        quoted because its estimator-seed sensitivity exceeds
-        the declared limit
-        (\S\ref{sec:eavailw-adopted});
-        % Cut (lane 3 §11 #3; stated in sec:eavailw-adopted): "(measured on two seed-varied
-        % sibling products)"; "the limit declared for it before production".
-  \item the recoil-only PET point-cloud track provides an absolutely-normalized
-        central value for a low-level-input representation cross-check.
-        Both classifiers omit the muon, so a joint muon--hadron unfold is not
-        established. The whole track is diagnostic and method development;
-        no PET covariance is adopted as a publication uncertainty product
-        (\S\ref{sec:pet}).
-        Completed simulation studies improve PET point estimates but end at
-        \texttt{NO\_ELIGIBLE\_DESIGN}; the later exploratory PET--GBDT
-        comparison changes neither that outcome nor uncertainty status
-        (\S\ref{sec:pet-campaigns}--\ref{sec:pet-gbdt-paired}).
-        % Cut (lane 3 §11 #4, lane 5 R8); each survives in sec_pet.tex:
-        % its ordinary closure survives only as a legacy two-iteration
-        % self-consistency diagnostic, and no current closure level is quoted;
-        % no covariance component transfers automatically to the full-event replacement;
-        % the full-event central/statistical pairing was declined rather than resolved.
+  \item Unbinned OmniFold with gradient-boosted trees reproduces the published
+        MINERvA ME FHC CC-inclusive $d^{2}\sigma/(d\pT\,d\pPar)$ and its
+        uncertainty scale (\S\ref{sec:results}), with a correlated shape
+        difference along the low-$\pT$ peak ridge
+        ($\chi^{2}/\mathrm{ndf}=\chiPaper$, \S\ref{sec:results-tension}). The
+        uncertainty is computed with LightGBM ensembles and its transfer to the
+        exact-split central value is unmeasured (\S\ref{sec:method-config}); the
+        first-built statistical band failed a fixed-truth coverage test in its
+        tails and the rebuilt band has not been re-tested (\S\ref{sec:coverage}).
+  \item Simultaneous unbinned three-, four- and five-observable unfolds
+        ($+\Eavail$, $+q_{3}$, $+W$) agree with their lower-dimensional
+        predecessors to $\approx$1--2\,\% and recover an injected $\Eavail$
+        shape (\S\ref{sec:3d}). They recover the established low-recoil 2p2h
+        deficit (\S\ref{sec:3d-2p2h}), resolve its momentum-transfer structure
+        (\S\ref{sec:4d}), and place the remaining high-$\Eavail$ excess over the
+        Tune~v1 prior in the deep-inelastic region, where all four external
+        generators lie below the data, each by about its overall shortfall after
+        accounting for the $E_\nu>\SI{20}{GeV}$ events missing from GiBUU
+        (\S\ref{sec:eavailw-band}).
+  \item The five-axis estimator does not follow generator-sized truth changes,
+        and its measured model dependence rules out every predeclared
+        five-dimensional reporting definition at useful precision; no
+        five-dimensional interval coverage is established (\S\ref{sec:5d}). The
+        one adopted five-axis covariance carries estimator-seed sensitivity
+        above its declared limit, so no covariance-based significance is quoted
+        (\S\ref{sec:eavailw-adopted}).
+  \item Calibrated through the full analysis chain, frozen joint tests reject
+        all ten simple generator hypotheses under six stated conditions. They
+        recover established discrepancies, show no discrimination beyond matched
+        coarse projections, and add no reportable uncertainty
+        (\S\ref{sec:joint5d}).
+  \item The point-cloud (PET) track is diagnostic and method development, with
+        no adopted covariance and no eligible full-event design
+        (\S\ref{sec:pet}, \S\ref{sec:pet-campaigns}).
 \end{itemize}
+% 2026-10-11: shortened. The earlier bullets restated the executive summary item by item; the original text
+% (with its lane-review cut comments) is in git history at e25abfd5:docs/analysis-note/sec_summary.tex.
 
 \paragraph{Outlook.}
 The scalar extended-fiducial study (\S\ref{sec:fps}) yields a preliminary
@@ -85,14 +59,11 @@ publication critical path.
 % $C_{\rm stat}$ artifacts exist, but their pairing was declined and no PET
 % covariance is adopted. Its remaining closure and complete-UQ requirements are
 % method development and are not on the publication critical path.
-The publication critical path ran
-through the adoption of a selection-complete scalar five-dimensional
-covariance, which has happened under exception (\S\ref{sec:eavailw-adopted}) and never
-through PET; the path itself is not complete.
-The scalar-5D campaign's frozen joint tests reject all ten simple generator
-hypotheses under the stated conditions (\S\ref{sec:joint5d}). They do not complete
-the precision-measurement objective: the measurement branch was not admitted, so
-no new uncertainty is reported and the publication objective remains not ready.
+The publication critical path ran through the adoption of a selection-complete
+scalar five-dimensional covariance, which has happened under exception
+(\S\ref{sec:eavailw-adopted}) and never through PET; the precision-measurement
+objective is not complete, because the five-dimensional measurement branch was not
+admitted (\S\ref{sec:gbdt-model-dependence}).
 % Resolves the demoted TODO (lane 5 R12) on the scalar-5D campaign (s5p, OI-193) closing.
 % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md section 7 (NOT ADMITTED,
 % no new reportable uncertainty, NOT READY); CHECKLIST-20261001-s5p-terminal-and-claims.md section 4.
