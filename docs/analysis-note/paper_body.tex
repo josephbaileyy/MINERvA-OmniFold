@@ -183,20 +183,19 @@ estimates.
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{paper_fig1_validation}
-  \caption{Comparison with the published binned result~\cite{MINERvA:2021owq}.
-  Top: $\pT$ and $\pPar$ projections of the published result with its
-  $\pm1\sigma$ band (published covariance), the OmniFold result, and the MINERvA
-  Tune~v1, with ratios to the published projection below.  Bottom left:
-  $(\mathrm{OmniFold}-\mathrm{published})/\sigma_{\mathrm{published}}$ on the
-  reported grid, drawn as equal-size cells labelled by their bin edges (grey: not
-  reported).  Bottom right: the median relative uncertainties of this analysis's
-  standalone covariance (LightGBM ensembles; Sec.~\ref{sec:validation}) and of
-  the publication, and the mean and RMS of the
-  residuals.}
+  \caption{Comparison with the published result~\cite{MINERvA:2021owq}.  Top:
+  $\pT$ and $\pPar$ projections of the published result ($\pm1\sigma$ band),
+  this analysis, and the MINERvA Tune~v1, with ratios to the published result
+  below.  Bottom left:
+  $(\mathrm{OmniFold}-\mathrm{published})/\sigma_{\mathrm{published}}$ per
+  reported bin, with cells drawn at equal size (grey: not reported).  Bottom
+  right: median relative uncertainties (this analysis: LightGBM-ensemble
+  covariance, Sec.~\ref{sec:uq2d}) and residual summary.}
   \label{fig:validation}
 \end{figure*}
 
 \subsection{Two-dimensional uncertainty and its coverage}
+\label{sec:uq2d}
 
 The standalone covariance combines systematic-universe, statistical, and
 training-seed blocks.  Its median relative uncertainty is
@@ -323,7 +322,8 @@ the two common cells is uncomputed, so the comparison is not quantitative.
 
 The fifth observable, $W$, separates the remaining discrepancy from the
 low-mass enhancement.  Figure~\ref{fig:joint} shows the joint $(\Eavail,W)$
-projection relative to the MINERvA Tune~v1.  In cell-integrated terms, two
+projection of the five-dimensional result (LightGBM production estimator)
+relative to the MINERvA Tune~v1.  In cell-integrated terms, two
 thirds of the positive difference lies at $\Eavail\ge\SI{0.8}{GeV}$ and most of
 that at $W\ge\SI{1.8}{GeV}$, but a fifth of it sits in the single widest overflow
 cell.  In ratio, the data exceed Tune~v1 by \SIrange{\figTwoHiHiLo}{\figTwoHiHiHi}{\percent} in those
@@ -338,15 +338,12 @@ bias of Sec.~\ref{sec:validation} is largest.
 \begin{figure}[t]
   \centering
   \includegraphics[width=\columnwidth]{paper_fig2_joint}
-  \caption{Joint $(\Eavail,W)$ central value (five-dimensional LightGBM
-  production estimator) relative to the MINERvA Tune~v1 on the $7\times6$
-  reporting grid, drawn as equal-size cells labelled by their bin edges; the last
-  row and column are overflow bins extending to \SI{100}{GeV}.  Top: the
-  unfolded-to-Tune~v1 ratio, printed in each cell.  Bottom: the unfolded-minus-Tune~v1 difference as a
-  \emph{cell-integrated} cross section in units of
-  $10^{-40}\,\si{cm^2/nucleon}$ (the density difference times
-  $\Delta\Eavail\,\Delta W$), so the wide overflow cells appear larger than in
-  the ratio panel.}
+  \caption{Joint $(\Eavail,W)$ projection of the five-dimensional central value
+  relative to the MINERvA Tune~v1, with
+  cells drawn at equal size; the last row and column are overflow bins extending
+  to \SI{100}{GeV}.  Top: ratio, printed per cell.  Bottom: difference
+  integrated over each cell ($10^{-40}\,\si{cm^2/nucleon}$), which gives the
+  wide overflow cells more weight than in the ratio panel.}
   \label{fig:joint}
 \end{figure}
 
@@ -378,11 +375,9 @@ treating them as independent confirmation of this high-$\Eavail$, high-$W$ diffe
   \centering
   \includegraphics[width=0.84\textwidth]{paper_fig3_generators}
   \caption{Unfolded $\Eavail$ (left) and $W$ (right) central-value projections
-  (five-dimensional LightGBM production estimator), in
-  $\mathrm{cm^{2}\,GeV^{-1}\,nucleon^{-1}}$, compared with the GENIE CV,
-  GENIE + MEC, NuWro, and GiBUU predictions of Sec.~\ref{sec:data}, with the
-  data-to-prediction ratio below each.  The overflow bins
-  ($\Eavail>\SI{3}{GeV}$, $W>\SI{3}{GeV}$) are not shown.}
+  (uncertainties not shown; Sec.~\ref{sec:uncertainty-status}) compared with the
+  generator predictions of Sec.~\ref{sec:data}, with data-to-prediction ratios
+  below.  Overflow bins are not shown.}
   \label{fig:generator-context}
 \end{figure*}
 
@@ -531,22 +526,19 @@ prior, which the calibration reproduces.
 \begin{figure*}[t]
   \centering
   \includegraphics[width=0.98\textwidth]{paper_joint_nulls}
-  \caption{Calibrated null distributions (joint-test estimator) of the total
-  (top) and shape (bottom) statistics for each prediction (columns), for the
-  declared claim variant whose null distribution has the largest median, on a
-  logarithmic axis.  The vertical line is the observed statistic; $k/B$ is as in
-  Table~\ref{tab:joint}.}
+  \caption{Calibrated null distributions of the total (top) and shape (bottom)
+  statistics for each prediction, for the declared claim variant with the
+  largest null median, on a logarithmic axis.  Vertical lines mark the observed statistics; $k/B$ is as
+  in Table~\ref{tab:joint}.}
   \label{fig:joint-nulls}
 \end{figure*}
 
 \begin{table}[t]
-  \caption{Joint-test decisions as recorded (Tune~v1 null: the analysis
-  simulation; $B$: null pseudo-experiments completed at the frozen stop, of
-  1400 submitted per null (1800 for NuWro); $p=(k+1)/(B+1)$;
-  CP: 95\% Clopper--Pearson interval of $k/B$; all ten survive the sub-fine
-  residual variants at $\pm\jtMoneKappaRobust\,\delta_{\mathrm{M1}}$).  Every submitted
-  pseudo-experiment, including those first lost to time limits, has been observed;
-  none of the recovered ones reaches the observed statistic.}
+  \caption{Joint-test decisions.  $B$: null pseudo-experiments completed at the
+  frozen stop, of 1400 submitted per null (1800 for NuWro); $p=(k+1)/(B+1)$;
+  Holm thr.: Holm step threshold $\alpha/(11-i)$ at rank $i$; CP: 95\% Clopper--Pearson interval of $k/B$.
+  Tune~v1 is the prediction of the analysis simulation, for which the null
+  is exact.}
   \label{tab:joint}
   \centering\scriptsize
   \begin{tabular}{@{}llrrlll@{}}
