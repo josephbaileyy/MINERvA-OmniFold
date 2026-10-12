@@ -1,0 +1,86 @@
+{
+ "july": {
+  "cv": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_CV.root",
+  "cv_sha": "b8457af7897b9d8b186670efad4ab6e294077613d8d17632825490ea653b98cf",
+  "ncells": 205,
+  "bands": {
+   "BeamAngleX": {
+    "median_rel_half": 0.0014676962125660616,
+    "max_rel_half": 0.01100561978261574,
+    "median_abs_disp": 0.0016105987859638387,
+    "sha0": "ed548ad9bdbd2dc4b735771ba96708ad7cf294f93cba67b0f4a21db3bf5aec10",
+    "sha1": "c8cf088c8c48c72f1bc9a97abaa7c6dba0a014c9ecf31e372d6d0950f89176dc"
+   },
+   "BeamAngleY": {
+    "median_rel_half": 0.0010393266427954895,
+    "max_rel_half": 0.009193141582368003,
+    "median_abs_disp": 0.0015153259585136774,
+    "sha0": "e4d2d88781e22b8429220f55aff25dfd0e8f45f5df174ea3adefaab5ffd6c647",
+    "sha1": "775aed2416e72619c33e38996f2e3b4e9b588d566974a5d740f53acd447b3e48"
+   },
+   "MuonResolution": {
+    "median_rel_half": 0.0010440793370045075,
+    "max_rel_half": 0.014609972916310646,
+    "median_abs_disp": 0.0013180850955272778,
+    "sha0": "1969c1c101f4f16d0e8b60f1880470c481d84e711efddaafbb13e996a519b927",
+    "sha1": "5d5ba92ae5f41aecb520768613d5d0ae7c1e47fd2b34a8e21064f00c9329f96f"
+   },
+   "Muon_Energy_MINERvA": {
+    "median_rel_half": 0.01376183285505321,
+    "max_rel_half": 0.18014865625481524,
+    "median_abs_disp": 0.0029577813036054915,
+    "sha0": "f9b817470e839171f765d83f3d38f79cabba5c013e10f040a0ab7ec926f8525f",
+    "sha1": "91de4b823aa58a62263e4431316c41f4f4837e3522a7cc43d5d44f5e13d7d7e1"
+   },
+   "Muon_Energy_MINOS": {
+    "median_rel_half": 0.024924565698552354,
+    "max_rel_half": 0.08252869424435362,
+    "median_abs_disp": 0.0036164635809886906,
+    "sha0": "09828330f8294a544c8c90a58b9577f66f86606c90704608580ecba2672becf5",
+    "sha1": "444c232016392344dede8369cf4c1f816763a4356a09e543194b9f0670477786"
+   }
+  }
+ },
+ "may": {
+  "cv": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+  "cv_sha": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c",
+  "ncells": 205,
+  "bands": {
+   "BeamAngleX": {
+    "median_rel_half": 0.0014936933554745878,
+    "max_rel_half": 0.008753928053961057,
+    "median_abs_disp": 0.0037853588240443783,
+    "sha0": "7bef66cda17f22a09aeba74e37d5894d69f4f4f5593b341a7e755333552a5bf9",
+    "sha1": "5950151455603f238119da67692f60500574b31e2cdbc62804b36687902a9286"
+   },
+   "BeamAngleY": {
+    "median_rel_half": 0.0011084007233427065,
+    "max_rel_half": 0.009556752662296606,
+    "median_abs_disp": 0.00435191098334409,
+    "sha0": "ec25e9248e918758df2ca9f7175b75482dcc613b4b55c5c7317a3aef1564fb16",
+    "sha1": "8d0598734c1af8c780f779217a119a7b2bae6eb25c750bdda63480f07d1807bb"
+   },
+   "MuonResolution": {
+    "median_rel_half": 0.0011024403241304836,
+    "max_rel_half": 0.009294826231670491,
+    "median_abs_disp": 0.0035810717212968533,
+    "sha0": "f6a4b37234afb9beba0fb627e39e63958fa0c15f1cb703e39516382d0fc59c6b",
+    "sha1": "d37db3bcb636c66382c1b863cff5246c51d7377138623aac712691540ebaa5ba"
+   },
+   "Muon_Energy_MINERvA": {
+    "median_rel_half": 0.012849834954183643,
+    "max_rel_half": 0.19979313514467426,
+    "median_abs_disp": 0.004582589285001586,
+    "sha0": "732914a368a28cbc6f45eaa82d57819b8207143b06c404f7b63a4011cfad8b89",
+    "sha1": "d193dbe05d969f4f7d98264f2519dc0bc398842819122d1ac5bdb79ca77a032f"
+   },
+   "Muon_Energy_MINOS": {
+    "median_rel_half": 0.02304891875504767,
+    "max_rel_half": 0.09193348114250888,
+    "median_abs_disp": 0.004900227017040594,
+    "sha0": "e101af65d6bc22a187ac21fa8e21b0965dc46e914deeb0f313ff7f29b7a46a0d",
+    "sha1": "2422b965a97ede188f81a46564e3bd78dd6e1b7e8a4a6019f7d2dffacdd67c1f"
+   }
+  }
+ }
+}

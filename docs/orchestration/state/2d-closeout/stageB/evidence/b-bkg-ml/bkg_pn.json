@@ -1,0 +1,3645 @@
+{
+ "bkg_frac_total": 0.029115566880443675,
+ "bkg_neff_per_bin": {
+  "median": 2105.177061374963,
+  "min": 9.044550055279853
+ },
+ "by_band": {
+  "2p2h": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.24273697804608024,
+   "data_equal": 3,
+   "n": 3,
+   "train_equal": 0
+  },
+  "AGKYxF1pi": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.04173003473025077,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "AhtBY": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.023531261483389028,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "BeamAngleX": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.4175973192686409,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "BeamAngleY": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.30155235936447533,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "BhtBY": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.0316461229250312,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "CCQEPauliSupViaKF": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.02672807254717325,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "CV1uBY": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.020409652666995452,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "CV2uBY": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.017821088533016022,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "EtaNCEL": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 7.913462033446733e-06,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "Flux": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.9805048761203424,
+   "data_equal": 100,
+   "n": 100,
+   "train_equal": 0
+  },
+  "FrAbs_N": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.023087397134079278,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "FrAbs_pi": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.06952993795178539,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "FrCEx_N": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.04432387631439967,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "FrCEx_pi": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.03171443662337478,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "FrElas_N": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.09742936800562238,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "FrElas_pi": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.01811471156932161,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "FrInel_N": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.16371164314156927,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "FrPiProd_N": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.009407970151739185,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "FrPiProd_pi": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.012408654435341736,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "GEANT_Neutron": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.05818149673370136,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "GEANT_Pion": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.1091387782352225,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "GEANT_Proton": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.027677135450338036,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "HighQ2": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.009152769322991519,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "LowQ2": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.015858831736138182,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "MFP_N": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.1671906402912202,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "MFP_pi": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.06054405702567662,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "MaCCQE": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.060783820528653595,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "MaNCEL": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.00029057736516647603,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "MaRES": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.13320474754572748,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "MinosEfficiency": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.032498090708063664,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "MuonResolution": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.2686862183697817,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "Muon_Energy_MINERvA": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.14247864024271933,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "Muon_Energy_MINOS": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.19805784053215397,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "MvRES": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.062157836656954416,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "NormDISCC": {
+   "bkg_equal": 2,
+   "bkg_max_rel": 0.0,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 2
+  },
+  "NormNCRES": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.00026421608088634765,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "RDecBR1gamma": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.0035527404171439322,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "Rvn1pi": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.012648639927871108,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "Rvn2pi": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.06881169009398927,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "Rvp1pi": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.012648639927871108,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "Rvp2pi": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.03413958571296647,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "Theta_Delta2Npi": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.03096669841546919,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  },
+  "VecFFCCQEshape": {
+   "bkg_equal": 0,
+   "bkg_max_rel": 0.0050004498618272135,
+   "data_equal": 2,
+   "n": 2,
+   "train_equal": 0
+  }
+ },
+ "cells": {
+  "B": [
+   426.66694487621936,
+   162.01109895899995,
+   64.88095220124488,
+   38.100781201390326,
+   29.033946691829943,
+   30.286583650989172,
+   27.126231566297456,
+   49.742021549537654,
+   29.30005492929144,
+   16.66773350280172,
+   10.723518328731732,
+   6.320240580462142,
+   12.562504059692808,
+   4.491088029854244,
+   6.521846094456366,
+   5.256065087526614,
+   1162.3950624831791,
+   490.5909917226023,
+   208.62060383815157,
+   144.40322847194705,
+   123.25748156557887,
+   117.37119143976085,
+   107.43858766489383,
+   191.63382453185307,
+   122.21963186440976,
+   63.80106203731398,
+   33.31105790506153,
+   23.733348962203582,
+   39.7891977796542,
+   24.34219109471245,
+   25.08354082351746,
+   9.073240402815687,
+   1681.6852016985752,
+   821.5822741826743,
+   456.1283189592094,
+   352.4619602072917,
+   322.3097721444413,
+   306.6826107959862,
+   276.4460180131192,
+   481.35200489384107,
+   311.4444844996285,
+   166.21282067254168,
+   87.44322747260334,
+   52.208368487043465,
+   118.1750836228958,
+   44.12918876647476,
+   58.249713134190245,
+   19.80872693896089,
+   1235.66443456809,
+   760.1216259722547,
+   542.1574205157881,
+   456.5814832778984,
+   416.0957927317385,
+   383.2132726375041,
+   359.6681414052952,
+   586.756122638925,
+   384.96264345574593,
+   208.07106079264778,
+   106.99392676104172,
+   65.40063569630392,
+   145.5308802622604,
+   52.2470220954863,
+   59.71816312911987,
+   24.136717872199167,
+   998.7650717770662,
+   719.1253468411346,
+   619.3043875931578,
+   539.8316012470561,
+   512.3101979008526,
+   448.2407591970707,
+   398.4936518084359,
+   678.0535133509286,
+   414.22014311747586,
+   236.74883747767652,
+   119.78042448621261,
+   78.21706523956021,
+   163.80820304260757,
+   55.378227306925574,
+   75.25228165244067,
+   23.978879872329784,
+   927.5030797740727,
+   756.7297219102771,
+   711.4654024628796,
+   661.089844919201,
+   574.7415493652245,
+   510.5590007505809,
+   488.4844257651674,
+   786.8959939007358,
+   496.79536443188687,
+   261.95811942575915,
+   145.9176024386578,
+   82.15920311977261,
+   205.70894291055097,
+   86.11637515269258,
+   84.65497054122834,
+   25.7943625473539,
+   976.4074312509183,
+   865.2911596292967,
+   864.9392312961456,
+   828.5291949564007,
+   730.2836248250134,
+   687.0642880644488,
+   584.8031982029721,
+   982.474229205231,
+   624.7753134307518,
+   346.0973855069352,
+   193.14072859386388,
+   117.98639988296681,
+   283.9056159836357,
+   110.54230371086683,
+   125.44419870519073,
+   42.56963909186537,
+   1449.4295650930255,
+   1376.594482715959,
+   1557.3487602655289,
+   1609.9378082133271,
+   1508.4111857736732,
+   1349.4409979541676,
+   1204.665809628891,
+   1862.7630389136518,
+   1212.7236550484265,
+   706.2675939889242,
+   423.5410934538975,
+   269.77808953595377,
+   695.9579567031659,
+   276.5728911219979,
+   302.7603309661809,
+   74.11803528592739,
+   89.31026375905576,
+   1540.401619432562,
+   1223.5122576884135,
+   1368.0455051078195,
+   1307.0343314585518,
+   1262.4298867303287,
+   1092.0435046824878,
+   1702.6923882199414,
+   1148.6814734525017,
+   686.1940408340611,
+   468.8693663957185,
+   316.21880960709785,
+   827.4223998077966,
+   356.9360997792825,
+   382.8858025002456,
+   78.72474573260178,
+   0.0,
+   294.3399280730807,
+   1269.9451345263567,
+   929.95590447428,
+   985.5596670406278,
+   968.962522965506,
+   860.093787437511,
+   1431.9862553929938,
+   982.7953251574983,
+   651.4052219834912,
+   451.4127138995223,
+   333.4521234633707,
+   915.0783852386181,
+   423.2401039848661,
+   438.1373911528266,
+   80.01924214746948,
+   0.0,
+   0.0,
+   393.94121852182457,
+   1194.3825598537885,
+   909.8094314719485,
+   954.6311518307152,
+   911.6943826652969,
+   1663.124621244838,
+   1251.9047351301938,
+   911.4218941834683,
+   684.2813264177702,
+   550.8141614196302,
+   1658.5396131921482,
+   816.9910026265479,
+   851.8821979132588,
+   131.1454216972737,
+   0.0,
+   0.0,
+   0.0,
+   21.409555448527414,
+   493.48672740540434,
+   476.55548215504206,
+   427.3564223336073,
+   892.6292248849928,
+   790.8154074331468,
+   654.5036245456749,
+   572.3924888260524,
+   477.07782007559155,
+   1649.3936141700885,
+   858.7253275057825,
+   967.537640481412,
+   140.73175119148422,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   119.34542478337343,
+   258.6975447327904,
+   754.6946549994219,
+   882.3757174755573,
+   927.0274848095544,
+   967.4186408727492,
+   917.564317257179,
+   3972.4829394798353,
+   2572.653948985745,
+   3303.505912755163,
+   414.9947342368406,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   2.6531713303886,
+   66.18028892378761,
+   118.49891984671439,
+   143.22799505013919,
+   1157.8109187475864,
+   1240.436683186666,
+   2471.6624591682576,
+   383.12928976087187
+  ],
+  "D": [
+   919.0,
+   1132.0,
+   1284.0,
+   1255.0,
+   1343.0,
+   1372.0,
+   1413.0,
+   2521.0,
+   1783.0,
+   863.0,
+   488.0,
+   248.0,
+   522.0,
+   226.0,
+   212.0,
+   40.0,
+   3517.0,
+   4761.0,
+   5203.0,
+   5676.0,
+   5875.0,
+   6094.0,
+   6165.0,
+   10961.0,
+   7435.0,
+   3987.0,
+   1984.0,
+   1028.0,
+   2017.0,
+   770.0,
+   880.0,
+   132.0,
+   9004.0,
+   13638.0,
+   15584.0,
+   16650.0,
+   17443.0,
+   17520.0,
+   17385.0,
+   30884.0,
+   20940.0,
+   11201.0,
+   5552.0,
+   2908.0,
+   5314.0,
+   1815.0,
+   1944.0,
+   289.0,
+   10845.0,
+   17759.0,
+   20627.0,
+   22228.0,
+   23107.0,
+   23373.0,
+   22887.0,
+   40260.0,
+   27154.0,
+   14087.0,
+   7178.0,
+   3902.0,
+   6886.0,
+   2432.0,
+   2449.0,
+   319.0,
+   11460.0,
+   19602.0,
+   23926.0,
+   25986.0,
+   26368.0,
+   26879.0,
+   26044.0,
+   44981.0,
+   30294.0,
+   15981.0,
+   8062.0,
+   4397.0,
+   7835.0,
+   2684.0,
+   2706.0,
+   376.0,
+   12421.0,
+   22418.0,
+   27689.0,
+   30240.0,
+   30863.0,
+   31000.0,
+   30250.0,
+   51737.0,
+   34474.0,
+   17937.0,
+   9219.0,
+   5141.0,
+   9125.0,
+   3229.0,
+   3221.0,
+   402.0,
+   13698.0,
+   26208.0,
+   34190.0,
+   37825.0,
+   38538.0,
+   39125.0,
+   37471.0,
+   63612.0,
+   41527.0,
+   22366.0,
+   11607.0,
+   6343.0,
+   11839.0,
+   4247.0,
+   4322.0,
+   508.0,
+   13706.0,
+   41891.0,
+   60759.0,
+   70677.0,
+   73925.0,
+   73812.0,
+   70606.0,
+   118033.0,
+   76007.0,
+   41002.0,
+   21819.0,
+   12427.0,
+   23964.0,
+   8811.0,
+   8909.0,
+   1119.0,
+   309.0,
+   20594.0,
+   44811.0,
+   58001.0,
+   63684.0,
+   64211.0,
+   61185.0,
+   100631.0,
+   63476.0,
+   35522.0,
+   19784.0,
+   11512.0,
+   24449.0,
+   9130.0,
+   9653.0,
+   1207.0,
+   0.0,
+   1357.0,
+   23427.0,
+   38512.0,
+   45357.0,
+   47597.0,
+   45148.0,
+   75859.0,
+   48578.0,
+   27923.0,
+   16648.0,
+   10434.0,
+   23007.0,
+   9288.0,
+   9864.0,
+   1284.0,
+   0.0,
+   0.0,
+   2799.0,
+   22970.0,
+   37337.0,
+   42919.0,
+   42518.0,
+   73113.0,
+   49604.0,
+   31535.0,
+   20002.0,
+   13703.0,
+   34580.0,
+   14749.0,
+   16130.0,
+   2062.0,
+   0.0,
+   0.0,
+   0.0,
+   118.0,
+   6348.0,
+   13481.0,
+   15169.0,
+   30344.0,
+   23569.0,
+   17124.0,
+   12444.0,
+   9657.0,
+   27744.0,
+   13019.0,
+   14728.0,
+   1924.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   1110.0,
+   4011.0,
+   13973.0,
+   16917.0,
+   16515.0,
+   15654.0,
+   14104.0,
+   52732.0,
+   30534.0,
+   40427.0,
+   6034.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   9.0,
+   568.0,
+   1242.0,
+   1753.0,
+   12067.0,
+   11416.0,
+   22340.0,
+   4659.0
+  ],
+  "eB": [
+   9.16845551379254,
+   5.7522489361502895,
+   3.6032148912489816,
+   2.690742905676131,
+   2.246731938869302,
+   2.2892973955662423,
+   2.2087324013763534,
+   3.0130783206274274,
+   2.330487593172025,
+   1.7935228003868215,
+   1.4326564448999268,
+   1.1365928654588913,
+   1.6515144751137147,
+   1.0117687420661234,
+   1.3116421895338197,
+   1.7477014690265964,
+   15.02754289816709,
+   9.887656790953177,
+   6.365224612363737,
+   5.14110659739222,
+   4.687834654887746,
+   4.599710839847997,
+   4.391567712900274,
+   5.917623588246138,
+   4.763884489007772,
+   3.49215793361573,
+   2.5301931626578607,
+   2.2119334865838045,
+   2.96989179092823,
+   2.3672136220219184,
+   2.7241929390387316,
+   1.4321956511456098,
+   17.82369030023091,
+   12.665856652668802,
+   9.246848897454433,
+   8.01035651179033,
+   7.684213457108786,
+   7.745061080270479,
+   7.1623516508010105,
+   9.560940999458618,
+   7.7329634260979105,
+   5.790123244603198,
+   4.205697121833197,
+   3.265629830001561,
+   5.100737283278888,
+   3.3056970066008042,
+   3.9825113201799227,
+   2.3014896760725994,
+   15.169373721453939,
+   11.92189805774805,
+   10.23255922930461,
+   9.40487284143317,
+   9.436695422701654,
+   8.95412590215494,
+   9.12617061620313,
+   11.004866939623009,
+   9.380429060077836,
+   7.020562345088197,
+   4.75674340941101,
+   3.880602543133188,
+   5.683752165377974,
+   3.4840518777977785,
+   3.96552318069284,
+   2.679336640954421,
+   13.547297857558418,
+   11.815659421358825,
+   11.31054809157011,
+   10.282505962596511,
+   10.84977140005651,
+   9.761669701636931,
+   9.271963745520395,
+   13.156160808554423,
+   10.495685312944099,
+   8.302118251928224,
+   4.939276884202938,
+   4.996650076049049,
+   6.212763649731978,
+   3.588080114288597,
+   4.351335531410125,
+   2.314933408179242,
+   13.2326984631487,
+   11.706684242880955,
+   11.875785078945107,
+   11.43102558173704,
+   10.764630206750077,
+   10.106507218214894,
+   10.646488937835864,
+   13.87924995667513,
+   11.205953618066479,
+   8.203618047231789,
+   5.716292863630313,
+   4.118748499722412,
+   6.691473602261812,
+   4.453186751310031,
+   4.579499224782544,
+   2.4061689502652635,
+   13.017379887970895,
+   12.583418214319051,
+   12.683927374057385,
+   12.43686916621535,
+   11.52484970874583,
+   11.339423284620636,
+   10.639821647694903,
+   14.719113623314763,
+   11.907388443945413,
+   8.811475471049478,
+   6.697888469894316,
+   5.185679942965237,
+   8.268412238436118,
+   5.003030071707311,
+   6.161788890504556,
+   4.461743221091627,
+   15.72166165220162,
+   15.590952528192581,
+   16.713577223501257,
+   17.04603207431955,
+   16.59653657021899,
+   15.856682917685346,
+   15.018219371470918,
+   19.02007993203655,
+   15.525176848612455,
+   12.544513064134316,
+   9.68551619095121,
+   7.677345367892541,
+   12.525330331675896,
+   8.004809328198146,
+   8.857905489816805,
+   4.178241258341448,
+   3.8703607587983067,
+   16.32258394431497,
+   14.832066784070093,
+   15.784295807697687,
+   15.450796900782207,
+   15.273721647972694,
+   14.282242879615218,
+   17.980230843296173,
+   15.178218070149676,
+   11.87006943408163,
+   9.974902687567942,
+   8.242785128844199,
+   13.62386357978338,
+   9.005505742008536,
+   9.915580124591079,
+   4.320481280553684,
+   0.0,
+   7.102247538311108,
+   15.004467008896972,
+   13.074338452304058,
+   13.527358198635724,
+   13.578363260183272,
+   12.764536672205391,
+   16.67751645991884,
+   14.02113014918719,
+   11.660824436227403,
+   9.773463938742461,
+   8.616239835247166,
+   14.351240644250968,
+   9.98563508446942,
+   10.581655345514175,
+   4.403822901055876,
+   0.0,
+   0.0,
+   8.334002236800583,
+   14.745838326046158,
+   13.065760275154238,
+   13.5257745993032,
+   13.258080256711358,
+   18.163881581075614,
+   16.036526461139683,
+   13.879472388429221,
+   12.196515770310315,
+   11.020982549986508,
+   19.41640803219965,
+   13.932940889187048,
+   14.886273425311881,
+   5.615535223508097,
+   0.0,
+   0.0,
+   0.0,
+   1.9409541474191072,
+   9.578288128914544,
+   9.565810995702698,
+   9.17821655619013,
+   13.452990045878016,
+   12.851498163266186,
+   11.865306503687195,
+   11.205582687469802,
+   10.315813697357033,
+   19.378843723442223,
+   14.245639170610218,
+   16.012660571147784,
+   5.890506934761201,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   4.688846702158033,
+   7.078872892022278,
+   12.400771073883421,
+   13.61497541259733,
+   14.176895160646778,
+   14.628614419020371,
+   14.3303504877074,
+   30.477032379822603,
+   25.124806501853385,
+   29.92251871697229,
+   10.130275832175757,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.6862047375856868,
+   3.605029518613484,
+   4.942676284550642,
+   5.49699878253638,
+   16.296389148691063,
+   17.541057878529674,
+   25.825015294749857,
+   9.758812838049119
+  ]
+ },
+ "cv_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_CV.root",
+ "cv_sha256": "b8457af7897b9d8b186670efad4ab6e294077613d8d17632825490ea653b98cf",
+ "eB_over_sqrtD": {
+  "max": 0.30243944080079316,
+  "median": 0.07217371913039482,
+  "n": 205,
+  "n_gt_0p1": 60,
+  "p84": 0.12472671774417178
+ },
+ "n_bkg_bitwise_equal_to_cv": 2,
+ "n_universes": 187,
+ "purity": {
+  "max": 0.9863266606219886,
+  "median": 0.9745589801846464,
+  "min": 0.5357269370226122,
+  "n_below_0p8": 5,
+  "n_below_0p9": 17,
+  "p16": 0.9312491504844868
+ },
+ "purity_scaled_data_stream_ratio": {
+  "median": 0.9745589801846464,
+  "min": 0.5357269370226122
+ },
+ "reco_bins_D_pos": 205,
+ "sigma_inflation_reco_if_added": {
+  "max": 1.0447342319230746,
+  "median": 1.0026011399021613
+ },
+ "universes": {
+  "2p2h_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1198846500812272
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.017888678519202224
+   }
+  },
+  "2p2h_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.23334723225633663
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.03530078685166973
+   }
+  },
+  "2p2h_2": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.24273697804608024
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.036721268301181546
+   }
+  },
+  "AGKYxF1pi_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.04173003473025077
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.017444449429135263
+   }
+  },
+  "AGKYxF1pi_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.03927928813473393
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.016419961303844356
+   }
+  },
+  "AhtBY_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.023531261483389028
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.009088721982378903
+   }
+  },
+  "AhtBY_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.022881897249467383
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.009080737085479327
+   }
+  },
+  "BeamAngleX_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.4175973192686409
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.06317415387698647
+   }
+  },
+  "BeamAngleX_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.27040448070004963
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.013412601980774808
+   }
+  },
+  "BeamAngleY_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.30155235936447533
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.04080348399567756
+   }
+  },
+  "BeamAngleY_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2824143695235656
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.04272366706903315
+   }
+  },
+  "BhtBY_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0316461229250312
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.01820860349177907
+   }
+  },
+  "BhtBY_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.030827485174486635
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.017602468400709514
+   }
+  },
+  "CCQEPauliSupViaKF_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.02672807254717325
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0018494428867564597
+   }
+  },
+  "CCQEPauliSupViaKF_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.014810452505741407
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0017915339912388164
+   }
+  },
+  "CV1uBY_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.020409652666995452
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.00919719974401706
+   }
+  },
+  "CV1uBY_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.018600436593109025
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.008640537011674871
+   }
+  },
+  "CV2uBY_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.017821088533016022
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.008008890281021855
+   }
+  },
+  "CV2uBY_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.017821088533015544
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.008008890281021046
+   }
+  },
+  "EtaNCEL_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 7.913462033446733e-06
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 8.912488828835473e-07
+   }
+  },
+  "EtaNCEL_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 7.752632948823727e-06
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 8.744170891277941e-07
+   }
+  },
+  "Flux_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2874064726600766
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0405723802612335
+   }
+  },
+  "Flux_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.36217316015845347
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.047972557744378995
+   }
+  },
+  "Flux_10": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.16382749943801206
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.05859655184592627
+   }
+  },
+  "Flux_11": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.22469296088395513
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.036081164943120886
+   }
+  },
+  "Flux_12": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.19783815272577202
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.09350238081317552
+   }
+  },
+  "Flux_13": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.09714629071520625
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.04173551326185187
+   }
+  },
+  "Flux_14": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.6937869640820691
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.07419383092709265
+   }
+  },
+  "Flux_15": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0996418002401905
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.031069112554891025
+   }
+  },
+  "Flux_16": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.5097958681580987
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.14670864289119648
+   }
+  },
+  "Flux_17": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.10628770835821937
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.037991306533739895
+   }
+  },
+  "Flux_18": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2003353506635563
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.06556811932964884
+   }
+  },
+  "Flux_19": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.45628952548141083
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.07472259853396727
+   }
+  },
+  "Flux_2": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2089001846933408
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.02950382145279535
+   }
+  },
+  "Flux_20": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.09698022446048332
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.012064541362874092
+   }
+  },
+  "Flux_21": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.3860715477084299
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.060016060099227164
+   }
+  },
+  "Flux_22": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.4079170889480662
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.04852105134902547
+   }
+  },
+  "Flux_23": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.5490185168194259
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.17099376082871653
+   }
+  },
+  "Flux_24": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.19579954071995564
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.025568436375792186
+   }
+  },
+  "Flux_25": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.14785913027872932
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.015916349961313424
+   }
+  },
+  "Flux_26": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.21698804426705798
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.01744061082511737
+   }
+  },
+  "Flux_27": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.9805048761203424
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.14797894373747417
+   }
+  },
+  "Flux_28": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.20963892512435142
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.05308732386229351
+   }
+  },
+  "Flux_29": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.3083298168712881
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.10687444971184697
+   }
+  },
+  "Flux_3": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2717432688377407
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.10868994061877506
+   }
+  },
+  "Flux_30": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.38046516796366353
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.10093271389602616
+   }
+  },
+  "Flux_31": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.17740107036380612
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.07422304956100947
+   }
+  },
+  "Flux_32": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.13293646639472356
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.07887376548537109
+   }
+  },
+  "Flux_33": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.44599254745273287
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.053032649874568315
+   }
+  },
+  "Flux_34": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.30157267388076764
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.12339682780499242
+   }
+  },
+  "Flux_35": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.5299474841988224
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.14659862506866805
+   }
+  },
+  "Flux_36": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.13112120220233783
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.08702438785424765
+   }
+  },
+  "Flux_37": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1849170825936328
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.10721911757110389
+   }
+  },
+  "Flux_38": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.6371952727195348
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1336643269994311
+   }
+  },
+  "Flux_39": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.6402151771556368
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.09267549686292481
+   }
+  },
+  "Flux_4": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2123756590639403
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.07417429622907448
+   }
+  },
+  "Flux_40": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.12331824892976034
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.04304937543745908
+   }
+  },
+  "Flux_41": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.4469319376750686
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.06730250106552428
+   }
+  },
+  "Flux_42": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.09762193103272482
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.03487719596335195
+   }
+  },
+  "Flux_43": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2755995281159786
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.06526745803206987
+   }
+  },
+  "Flux_44": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.5712499084513812
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.046955476130527425
+   }
+  },
+  "Flux_45": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.35668756469592194
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.08487270181981407
+   }
+  },
+  "Flux_46": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.4594206587032673
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1129310638451312
+   }
+  },
+  "Flux_47": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.7957217434760718
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1147892184886812
+   }
+  },
+  "Flux_48": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.36426058587190296
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.13288006617032777
+   }
+  },
+  "Flux_49": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.31456117147300205
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.09883136283922106
+   }
+  },
+  "Flux_5": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1137433564683767
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.014149909803768717
+   }
+  },
+  "Flux_50": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2110120662298471
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.02736374036823387
+   }
+  },
+  "Flux_51": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.294279682088802
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.10942055729186309
+   }
+  },
+  "Flux_52": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.16242018363876756
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.01794918379378771
+   }
+  },
+  "Flux_53": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.20358767149242676
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.03574696175281205
+   }
+  },
+  "Flux_54": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.33648917333354533
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.06404066592580292
+   }
+  },
+  "Flux_55": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.4026515424019552
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.09945491701345928
+   }
+  },
+  "Flux_56": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.25367892309399354
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.026888145550323567
+   }
+  },
+  "Flux_57": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2510680540754764
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.13046078262879635
+   }
+  },
+  "Flux_58": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.15210644823294064
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.095553627899801
+   }
+  },
+  "Flux_59": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.3376299490281551
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.10365261735819968
+   }
+  },
+  "Flux_6": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.18880678307452478
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.021332815896081565
+   }
+  },
+  "Flux_60": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.8721236940811868
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.10636603184743508
+   }
+  },
+  "Flux_61": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.16394984708300878
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.03504314610961725
+   }
+  },
+  "Flux_62": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.4315833482521685
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.08761521531022495
+   }
+  },
+  "Flux_63": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.17079907771239566
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.11648657556837276
+   }
+  },
+  "Flux_64": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.16264054331712463
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.019296792427710627
+   }
+  },
+  "Flux_65": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.7490916358775993
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.15967604528655338
+   }
+  },
+  "Flux_66": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.626565221959078
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.07174687714663477
+   }
+  },
+  "Flux_67": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2858393265454727
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.13204445108593157
+   }
+  },
+  "Flux_68": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1858338062448327
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.043212994489407165
+   }
+  },
+  "Flux_69": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2029463772093475
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.08719894440144049
+   }
+  },
+  "Flux_7": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.24793763701931643
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.09267220191259505
+   }
+  },
+  "Flux_70": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1489189362405131
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.016264383042310825
+   }
+  },
+  "Flux_71": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.33248325674349855
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.08236072474112428
+   }
+  },
+  "Flux_72": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2767868060346852
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.04187232884104408
+   }
+  },
+  "Flux_73": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.3189344128505102
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.10688855828525227
+   }
+  },
+  "Flux_74": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.3944080408780727
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.05884189698064899
+   }
+  },
+  "Flux_75": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.8615645690796514
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.11512357225822564
+   }
+  },
+  "Flux_76": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1556485715097207
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.10026835861659024
+   }
+  },
+  "Flux_77": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.623552011155451
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.11911517735862973
+   }
+  },
+  "Flux_78": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.5884061195534876
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.09263695529212884
+   }
+  },
+  "Flux_79": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.30286924981237534
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.08804479219780953
+   }
+  },
+  "Flux_8": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.36416519950975973
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1434177585178675
+   }
+  },
+  "Flux_80": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.35537389467470243
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.08645901452890244
+   }
+  },
+  "Flux_81": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.28029868662810903
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.02612649917789374
+   }
+  },
+  "Flux_82": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.5059784816445477
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.14444969873158497
+   }
+  },
+  "Flux_83": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.5490800051517316
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.14036717554312558
+   }
+  },
+  "Flux_84": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.38876901429811805
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.04290987083118437
+   }
+  },
+  "Flux_85": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.10669634310796353
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.02920844193607577
+   }
+  },
+  "Flux_86": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2968767682012111
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.11223116437786353
+   }
+  },
+  "Flux_87": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.5865912677709771
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.07647572123069749
+   }
+  },
+  "Flux_88": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.491067763197333
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.10577525487496137
+   }
+  },
+  "Flux_89": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.22538067096725886
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.08155817653338382
+   }
+  },
+  "Flux_9": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.13386461367346705
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.03263567251280457
+   }
+  },
+  "Flux_90": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.11377606578641913
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.060104387677269284
+   }
+  },
+  "Flux_91": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.6791451910555751
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.06607538929323716
+   }
+  },
+  "Flux_92": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.40109040205974966
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.13296622703062813
+   }
+  },
+  "Flux_93": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.6163484767405177
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1378778452766225
+   }
+  },
+  "Flux_94": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.24448531078367716
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.024812128450539178
+   }
+  },
+  "Flux_95": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.3414559959289367
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.134162866492197
+   }
+  },
+  "Flux_96": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.3655287879329134
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.08479509691160768
+   }
+  },
+  "Flux_97": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.28858751980387776
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.06935809126549601
+   }
+  },
+  "Flux_98": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0808684112681292
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0236093990414273
+   }
+  },
+  "Flux_99": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.16278813665215405
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.09996427666745629
+   }
+  },
+  "FrAbs_N_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.022007680173010098
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.004196949913308449
+   }
+  },
+  "FrAbs_N_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.023087397134079278
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0041969499133083085
+   }
+  },
+  "FrAbs_pi_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.06952993795178539
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.020501851403778804
+   }
+  },
+  "FrAbs_pi_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.06024690698180641
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.021563913717757288
+   }
+  },
+  "FrCEx_N_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.04432387631439967
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.006705319343558678
+   }
+  },
+  "FrCEx_N_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.04426446199985314
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0066963311415849
+   }
+  },
+  "FrCEx_pi_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.03156915729221872
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.010209126584646448
+   }
+  },
+  "FrCEx_pi_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.03171443662337478
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.007801342306211323
+   }
+  },
+  "FrElas_N_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.09138006328710985
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.013823982849073999
+   }
+  },
+  "FrElas_N_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.09742936800562238
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.014739122122010435
+   }
+  },
+  "FrElas_pi_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.018008390403690178
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.00429462357576466
+   }
+  },
+  "FrElas_pi_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.01811471156932161
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0032523948572814034
+   }
+  },
+  "FrInel_N_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1635057848566159
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.024735167434502495
+   }
+  },
+  "FrInel_N_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.16371164314156927
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.02476630969133885
+   }
+  },
+  "FrPiProd_N_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.009407970151739019
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.003932823459259194
+   }
+  },
+  "FrPiProd_N_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.009407970151739185
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.003932823459259055
+   }
+  },
+  "FrPiProd_pi_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.012408654435341736
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.00174022841110472
+   }
+  },
+  "FrPiProd_pi_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.011607529435374046
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.001711314689534202
+   }
+  },
+  "GEANT_Neutron_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.05818149673370136
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.013866852923996122
+   }
+  },
+  "GEANT_Neutron_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.03901632191481541
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.013922583192015059
+   }
+  },
+  "GEANT_Pion_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.08091656999474947
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.07012412705223896
+   }
+  },
+  "GEANT_Pion_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1091387782352225
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.08935269351148431
+   }
+  },
+  "GEANT_Proton_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.013500337064927006
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.009127219186759855
+   }
+  },
+  "GEANT_Proton_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.027677135450338036
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.013019484380985795
+   }
+  },
+  "HighQ2_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.009152769322991519
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.002574072554680628
+   }
+  },
+  "HighQ2_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.00815833581249531
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.002062756984795877
+   }
+  },
+  "LowQ2_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.015858831736138182
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.00239912525818601
+   }
+  },
+  "LowQ2_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.015858831736137845
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.002399125258185192
+   }
+  },
+  "MFP_N_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.15519831668570658
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.023478413024593584
+   }
+  },
+  "MFP_N_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1671906402912202
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.02529261264188106
+   }
+  },
+  "MFP_pi_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.055840813351216594
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.02512506998094259
+   }
+  },
+  "MFP_pi_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.06054405702567662
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.024282486687500368
+   }
+  },
+  "MaCCQE_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.019883462697729344
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.00745513212275936
+   }
+  },
+  "MaCCQE_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.060783820528653595
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.025409523145042433
+   }
+  },
+  "MaNCEL_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.00010439168464671937
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 1.1924853390352999e-05
+   }
+  },
+  "MaNCEL_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.00029057736516647603
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 3.457162240547256e-05
+   }
+  },
+  "MaRES_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.07021284852460112
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.015688644987917874
+   }
+  },
+  "MaRES_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.13320474754572748
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.019203656864924156
+   }
+  },
+  "MinosEfficiency_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.032498090708063664
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.01321141853263125
+   }
+  },
+  "MinosEfficiency_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.032498090708062234
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.013211418532636944
+   }
+  },
+  "MuonResolution_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.17333926151379112
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.07246119015014793
+   }
+  },
+  "MuonResolution_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.2686862183697817
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.11231917679808477
+   }
+  },
+  "Muon_Energy_MINERvA_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.14247864024271933
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.05956049283238018
+   }
+  },
+  "Muon_Energy_MINERvA_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.1125672499772049
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.020633106263365363
+   }
+  },
+  "Muon_Energy_MINOS_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.19805784053215397
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.08279432321445675
+   }
+  },
+  "Muon_Energy_MINOS_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.18664124587077344
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.07802183238115767
+   }
+  },
+  "MvRES_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.041667166109193146
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.008652726940658365
+   }
+  },
+  "MvRES_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.062157836656954416
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.010645625416749627
+   }
+  },
+  "NormDISCC_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   }
+  },
+  "NormDISCC_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   }
+  },
+  "NormNCRES_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0002642160808860062
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 6.335912650203475e-05
+   }
+  },
+  "NormNCRES_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.00026421608088634765
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 6.335912650469027e-05
+   }
+  },
+  "RDecBR1gamma_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.003552740417143796
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0003333731215185431
+   }
+  },
+  "RDecBR1gamma_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0035527404171439322
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0003333731215184137
+   }
+  },
+  "Rvn1pi_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.012648639927871108
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.005287523985910867
+   }
+  },
+  "Rvn1pi_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.012648639927871108
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.005287523985910728
+   }
+  },
+  "Rvn2pi_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0688116900939891
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.028765421733707348
+   }
+  },
+  "Rvn2pi_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.06881169009398927
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.028765421733707348
+   }
+  },
+  "Rvp1pi_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.012648639927871108
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.005287523985910867
+   }
+  },
+  "Rvp1pi_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.012648639927871108
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.005287523985910728
+   }
+  },
+  "Rvp2pi_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.03413958571296647
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.005862600099398825
+   }
+  },
+  "Rvp2pi_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.03413958571296647
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0058626000994045175
+   }
+  },
+  "Theta_Delta2Npi_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.03096669841546919
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0036724537508414736
+   }
+  },
+  "Theta_Delta2Npi_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.03096669841546919
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.003672453750863726
+   }
+  },
+  "VecFFCCQEshape_0": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0050004498618272135
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.001108364384088339
+   }
+  },
+  "VecFFCCQEshape_1": {
+   "hBkgReco2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.005000449861826881
+   },
+   "hDataReco2D": {
+    "bitwise_equal": true,
+    "max_rel": 0.0
+   },
+   "hMeasTrain2D": {
+    "bitwise_equal": false,
+    "max_rel": 0.0011083643840940768
+   }
+  }
+ }
+}

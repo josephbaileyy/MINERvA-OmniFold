@@ -1,0 +1,307 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+{
+ "mat_calccov_1A_flux_bin1_rel": 0.03533472488258405,
+ "flux_1A_names": {
+  "vert": [
+   "BeamAngleX",
+   "BeamAngleY",
+   "Flux",
+   "GEANT_Neutron",
+   "GEANT_Pion",
+   "GEANT_Proton",
+   "GENIE_AGKYxF1pi",
+   "GENIE_AhtBY",
+   "GENIE_BhtBY",
+   "GENIE_CCQEPauliSupViaKF",
+   "GENIE_CV1uBY",
+   "GENIE_CV2uBY",
+   "GENIE_EtaNCEL",
+   "GENIE_FrAbs_N",
+   "GENIE_FrAbs_pi",
+   "GENIE_FrCEx_N",
+   "GENIE_FrCEx_pi",
+   "GENIE_FrElas_N",
+   "GENIE_FrElas_pi",
+   "GENIE_FrInel_N",
+   "GENIE_FrPiProd_N",
+   "GENIE_FrPiProd_pi",
+   "GENIE_MFP_N",
+   "GENIE_MFP_pi",
+   "GENIE_MaCCQE",
+   "GENIE_MaNCEL",
+   "GENIE_MaRES",
+   "GENIE_MvRES",
+   "GENIE_NormDISCC",
+   "GENIE_NormNCRES",
+   "GENIE_RDecBR1gamma",
+   "GENIE_Rvn1pi",
+   "GENIE_Rvn2pi",
+   "GENIE_Rvp1pi",
+   "GENIE_Rvp2pi",
+   "GENIE_Theta_Delta2Npi",
+   "GENIE_VecFFCCQEshape",
+   "Low_Recoil_2p2h_Tune",
+   "MINOS_Reconstruction_Efficiency",
+   "Muon_Energy_MINERvA",
+   "Muon_Energy_MINOS",
+   "Muon_Energy_Resolution",
+   "RPA_HighQ2",
+   "RPA_LowQ2"
+  ],
+  "lat": []
+ },
+ "flux_bins_constant_within_hist": true,
+ "univwgts_present_all": true,
+ "univwgts_identical_across_playlists": true,
+ "univwgt_stats": {
+  "n": 100,
+  "min": 1.05652249534e-05,
+  "max": 26.9529360302,
+  "sum": 211.01200325082078,
+  "n_eff": 19.060534772246488
+ },
+ "univwgt_vs_constraint_file_max_absdiff": 0.0,
+ "constraint_file_n_entries": 1000,
+ "flux_integral": {
+  "phi_cv": 0.0006243343376851217,
+  "unweighted_mean_over_cv": 1.0489204323191268,
+  "weighted_mean_over_cv": 0.9996782524957896,
+  "sigma_unweighted_meancentred_rel": 0.05157392073976468,
+  "sigma_weighted_rel": 0.03525632090676428,
+  "sigma_unweighted_cvcentred_rel": 0.07108500544251085,
+  "mat_calccovmx_weighted_rel": 0.03525632090676429,
+  "mat_calccovmx_unweighted_rel": 0.05157392073976468
+ },
+ "fluxband_file_vs_mine": {
+  "cv_max_rel": 1.7365730299337046e-16,
+  "univ_max_rel": 0.0
+ },
+ "minos_band_kind": [
+  "vert",
+  "vert",
+  "vert",
+  "vert",
+  "vert",
+  "vert",
+  "vert",
+  "vert",
+  "vert",
+  "vert",
+  "vert",
+  "vert"
+ ],
+ "minos_flux_ratio_u0_u1": [
+  1.0004185782162156,
+  0.9953531560419157
+ ],
+ "minos_flux_ratio_per_playlist": {
+  "1A": [
+   1.0004185904725102,
+   0.9953530199787193
+  ],
+  "1B": [
+   1.0004185904725102,
+   0.9953530199787193
+  ],
+  "1C": [
+   1.0004185904725102,
+   0.9953530199787193
+  ],
+  "1D": [
+   1.0004185904725102,
+   0.9953530199787193
+  ],
+  "1E": [
+   1.0004185904725102,
+   0.9953530199787193
+  ],
+  "1F": [
+   1.0004185904725102,
+   0.9953530199787193
+  ],
+  "1G": [
+   1.0004185422130722,
+   0.9953535557306289
+  ],
+  "1L": [
+   1.0004185422130722,
+   0.9953535557306289
+  ],
+  "1M": [
+   1.0004185422130722,
+   0.9953535557306289
+  ],
+  "1N": [
+   1.0004186018516326,
+   0.9953528936534579
+  ],
+  "1O": [
+   1.0004186018516326,
+   0.9953528936534579
+  ],
+  "1P": [
+   1.0004186018516326,
+   0.9953528936534579
+  ]
+ },
+ "n_cells": 205,
+ "n_universe_files": 187,
+ "n_bands": 44,
+ "sha256_of_Flux_file_shas": "39eca81fff06ed3e435c3e6e855ffd357491df9d0ee6ce215095472ed0dcdc7f",
+ "sha256_of_Muon_Energy_MINOS_file_shas": "519b2b434c12824fc47daca96159c0f90c86568015362ba3b15f1e8ad09dc763",
+ "control": {
+  "per_band_max_rel_diff_vs_adopted": 1.4005111865831029e-06,
+  "universe_total_max_rel_diff_vs_adopted": 5.196787861422696e-17,
+  "norm_block_present": true,
+  "adopted_keys": [
+   "hCov_universe_total",
+   "hSigma_universe_total",
+   "hCov_universe_full_2p2h",
+   "hCov_universe_full_AGKYxF1pi",
+   "hCov_universe_full_AhtBY",
+   "hCov_universe_full_BeamAngleX",
+   "hCov_universe_full_BeamAngleY",
+   "hCov_universe_full_BhtBY",
+   "hCov_universe_full_CCQEPauliSupViaKF",
+   "hCov_universe_full_CV1uBY",
+   "hCov_universe_full_CV2uBY",
+   "hCov_universe_full_EtaNCEL",
+   "hCov_universe_full_Flux",
+   "hCov_universe_full_FrAbs_N",
+   "hCov_universe_full_FrAbs_pi",
+   "hCov_universe_full_FrCEx_N",
+   "hCov_universe_full_FrCEx_pi",
+   "hCov_universe_full_FrElas_N",
+   "hCov_universe_full_FrElas_pi",
+   "hCov_universe_full_FrInel_N",
+   "hCov_universe_full_FrPiProd_N",
+   "hCov_universe_full_FrPiProd_pi",
+   "hCov_universe_full_GEANT_Neutron",
+   "hCov_universe_full_GEANT_Pion",
+   "hCov_universe_full_GEANT_Proton",
+   "hCov_universe_full_HighQ2",
+   "hCov_universe_full_LowQ2",
+   "hCov_universe_full_MFP_N",
+   "hCov_universe_full_MFP_pi",
+   "hCov_universe_full_MaCCQE",
+   "hCov_universe_full_MaNCEL",
+   "hCov_universe_full_MaRES",
+   "hCov_universe_full_MinosEfficiency",
+   "hCov_universe_full_MuonResolution",
+   "hCov_universe_full_Muon_Energy_MINERvA",
+   "hCov_universe_full_Muon_Energy_MINOS",
+   "hCov_universe_full_MvRES",
+   "hCov_universe_full_NormDISCC",
+   "hCov_universe_full_NormNCRES",
+   "hCov_universe_full_RDecBR1gamma",
+   "hCov_universe_full_Rvn1pi",
+   "hCov_universe_full_Rvn2pi",
+   "hCov_universe_full_Rvp1pi",
+   "hCov_universe_full_Rvp2pi",
+   "hCov_universe_full_Theta_Delta2Npi",
+   "hCov_universe_full_VecFFCCQEshape",
+   "hCov_universe___Normalization_flat",
+   "hCov_combined",
+   "hSigma_combined"
+  ],
+  "adopted_has_cross_block_key": false,
+  "adopted_total_minus_sum_of_adopted_blocks_max_rel": 0.0,
+  "flux_band_unweighted_median": 0.049930098023455764,
+  "minos_band_median": 0.02304891875504767,
+  "universe_total_median": 0.0682980281573948,
+  "hCov_combined_eq_univ_plus_boot_max_rel": 0.0,
+  "total_median_adopted_construction": 0.068706583503727,
+  "total_median_without_ML": 0.06869363168877043,
+  "total_integral_sigma": 0.05391245869218487,
+  "boot_median": 0.006738150183177408,
+  "ml_median": 0.0016634710180594113
+ },
+ "C04": {
+  "flux_band_median_unweighted": 0.049930098023455764,
+  "flux_band_median_weighted": 0.03654940752609054,
+  "flux_band_max_unweighted": 0.1280618685497009,
+  "flux_band_max_weighted": 0.1339534317848335,
+  "flux_band_min_unweighted": 0.04783209305526982,
+  "flux_band_min_weighted": 0.02971834148309751,
+  "ratio_weighted_over_unweighted_median": 0.7349886126752715,
+  "integral_sigma_unweighted": 0.04893242222638669,
+  "integral_sigma_weighted": 0.03556940242388944,
+  "universe_mean_over_cv_median_unweighted": 0.9565261667122165,
+  "universe_mean_over_cv_median_weighted": 1.0015098806843872,
+  "universe_mean_integral_over_cv_unweighted": 0.9562492913117786,
+  "universe_mean_integral_over_cv_weighted": 1.0015047867044815,
+  "flux_band_median_unweighted_cvcentred": 0.06636235860545894,
+  "flux_band_median_weighted_cvcentred": 0.03692869805952863,
+  "mat_gettotalerrormatrix_unweighted_vs_numpy_max_rel": 5.601173841480004e-16,
+  "mat_gettotalerrormatrix_weighted_vs_numpy_max_rel": 1.0987992138307785e-15,
+  "mat_weighted_median": 0.036549407526090545
+ },
+ "X01": {
+  "minos_band_median_adopted": 0.02304891875504767,
+  "minos_band_median_corrected": 0.022810306440290008,
+  "minos_integral_sigma_adopted": 0.0011304748460610632,
+  "minos_integral_sigma_corrected": 0.003674935227807855,
+  "minos_integral_shift_u0_u1_adopted": [
+   -0.0016858015485300415,
+   0.0005751481435920525
+  ],
+  "minos_integral_shift_u0_u1_corrected": [
+   -0.002103499285767252,
+   0.005246371169848496
+  ]
+ },
+ "diagnostic_NOT_QUOTABLE": {
+  "adopted (unweighted flux, Phi_CV MINOS)": {
+   "syst_median": 0.0682980281573948,
+   "total_median": 0.068706583503727,
+   "total_p84": 0.09496885346403969,
+   "total_max": 0.2344077556934829,
+   "syst_integral": 0.05390929943895862,
+   "total_integral": 0.05391245869218487,
+   "flux_median": 0.049930098023455764,
+   "minos_median": 0.02304891875504767
+  },
+  "C04 weighted flux only": {
+   "syst_median": 0.06007408362628761,
+   "total_median": 0.06089541458524401,
+   "total_p84": 0.0908280701986584,
+   "total_max": 0.23191417455207955,
+   "syst_integral": 0.04215463212804156,
+   "total_integral": 0.04215867225242928,
+   "flux_median": 0.03654940752609054,
+   "minos_median": 0.02304891875504767
+  },
+  "X01 MINOS Phi_u only": {
+   "syst_median": 0.06890175734846432,
+   "total_median": 0.06934157365840782,
+   "total_p84": 0.0947585855419433,
+   "total_max": 0.23356205665931098,
+   "syst_integral": 0.05402258547635711,
+   "total_integral": 0.05402573810497684,
+   "flux_median": 0.049930098023455764,
+   "minos_median": 0.022810306440290008
+  },
+  "C04 + X01": {
+   "syst_median": 0.06043176007656464,
+   "total_median": 0.060897951232545204,
+   "total_p84": 0.09024417709929429,
+   "total_max": 0.23105934895572622,
+   "syst_integral": 0.04229941117086052,
+   "total_integral": 0.042303437468351864,
+   "flux_median": 0.03654940752609054,
+   "minos_median": 0.022810306440290008
+  }
+ },
+ "cross_block_side_check": {
+  "total_median_with_rho0.9_cross_added": 0.06562552253505562,
+  "total_integral_with_rho0.9_cross_added": 0.056315645137811246
+ }
+}

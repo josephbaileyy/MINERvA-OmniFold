@@ -40,6 +40,12 @@ Reproduce arXiv:2106.16210 (Ruterbories et al., Phys. Rev. D 106, 032001)
 — MINERvA ME FHC d²σ/(dp_T dp_||) CC inclusive — with 2D **unbinned**
 OmniFold in place of D'Agostini IBU.
 
+> **Correction 2026-10-12 (citation; the text above is kept as written).** arXiv:2106.16210 is
+> Ruterbories et al., **Phys. Rev. D 104, 092007 (2021)**. Phys. Rev. D 106, 032001 is Ascencio et al.,
+> the low-recoil paper. The analysis note's bibliography is already correct. The same miscitation is in
+> the `# Paper binning` comment in `2d-unfolding/unfold_2d_omnifold_unbinned.py` (line 27 before the selective-I/O merge, line 30 after); it is left there for the next
+> behavioural driver change, because a comment edit alone would move the driver's sha256.
+
 ---
 
 ## Headline (MEFHC 5-iter, 205 paper-reported bins; exact-GBT central, LightGBM uncertainty blocks)
@@ -155,6 +161,14 @@ ours ~5 % vs paper ~4 % flux (both ν-e-constrained) is a PPFX-version /
 flux-weighting difference, not resolvable from disk (we store only the
 integrated Φ) — collaborator question for the #65 flux cluster. See
 RUN_LOG 2026-05-29.
+
+> **Correction 2026-10-12 (the paragraph above is kept as written).** "Both ν-e-constrained" is false for
+> our band: only our CV flux is constrained. The universe spread is unweighted and centred on a universe
+> mean 4.4% (cross section) from the CV, while MAT carries the constraint as per-universe weights
+> (n_eff = 19.1). With the weights, the per-cell flux median is 3.655%, not 4.99%, so the residual is
+> not a PPFX-version or flux-weighting difference of the kind described. Why the paper's 4.01% exceeds
+> the weighted 3.655% is unresolved. See [`KNOWN_ISSUES.md`](../KNOWN_ISSUES.md) row 95 and its independent verification. The budget effect is
+> diagnostic and NOT QUOTABLE until Joseph adopts a repaired construction.
 
 Canonical covariance ROOTs:
 - systematic (flux-fixed): `uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root`

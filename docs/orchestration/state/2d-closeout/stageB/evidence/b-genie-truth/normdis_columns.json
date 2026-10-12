@@ -1,0 +1,86 @@
+{
+ "end": 1791793920.8737767,
+ "file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+ "mtime": 1783523295.0,
+ "size": 171117087867,
+ "start": 1791793864.586726,
+ "trees": {
+  "mc_background": {
+   "entries": 658227,
+   "pairs": {
+    "w_bkg_0": {
+     "identical_to_cv": true,
+     "rows_differing_from_cv": 0,
+     "sha256_cv": "f4394539eaf9f34cc66b7a1127017cfce107c26b57f50deee1c61efe6a132e21",
+     "sha256_u": "f4394539eaf9f34cc66b7a1127017cfce107c26b57f50deee1c61efe6a132e21"
+    },
+    "w_bkg_1": {
+     "identical_to_cv": true,
+     "rows_differing_from_cv": 0,
+     "sha256_cv": "f4394539eaf9f34cc66b7a1127017cfce107c26b57f50deee1c61efe6a132e21",
+     "sha256_u": "f4394539eaf9f34cc66b7a1127017cfce107c26b57f50deee1c61efe6a132e21"
+    }
+   },
+   "rv_branches_present": [
+    "w_bkg_NormDISCC_0",
+    "w_bkg_NormDISCC_1"
+   ]
+  },
+  "mc_signal_reco": {
+   "entries": 32849103,
+   "pairs": {
+    "w_reco_0": {
+     "identical_to_cv": true,
+     "rows_differing_from_cv": 0,
+     "sha256_cv": "42ec2748e5278b323eac47e4653b0c3c82cb2c1dc9761c3281c687e4f7bf2b35",
+     "sha256_u": "42ec2748e5278b323eac47e4653b0c3c82cb2c1dc9761c3281c687e4f7bf2b35"
+    },
+    "w_reco_1": {
+     "identical_to_cv": true,
+     "rows_differing_from_cv": 0,
+     "sha256_cv": "42ec2748e5278b323eac47e4653b0c3c82cb2c1dc9761c3281c687e4f7bf2b35",
+     "sha256_u": "42ec2748e5278b323eac47e4653b0c3c82cb2c1dc9761c3281c687e4f7bf2b35"
+    },
+    "w_truth_0": {
+     "identical_to_cv": true,
+     "rows_differing_from_cv": 0,
+     "sha256_cv": "906b21a52380aee9c6478701bb47d00d7aab4cd55e0e50bd0e3bd376e6bf7330",
+     "sha256_u": "906b21a52380aee9c6478701bb47d00d7aab4cd55e0e50bd0e3bd376e6bf7330"
+    },
+    "w_truth_1": {
+     "identical_to_cv": true,
+     "rows_differing_from_cv": 0,
+     "sha256_cv": "906b21a52380aee9c6478701bb47d00d7aab4cd55e0e50bd0e3bd376e6bf7330",
+     "sha256_u": "906b21a52380aee9c6478701bb47d00d7aab4cd55e0e50bd0e3bd376e6bf7330"
+    }
+   },
+   "rv_branches_present": [
+    "w_reco_NormDISCC_0",
+    "w_reco_NormDISCC_1",
+    "w_truth_NormDISCC_0",
+    "w_truth_NormDISCC_1"
+   ]
+  },
+  "mc_truth_denom": {
+   "entries": 32849103,
+   "pairs": {
+    "w_truth_0": {
+     "identical_to_cv": true,
+     "rows_differing_from_cv": 0,
+     "sha256_cv": "6c88d96d7b9db7638e75bca63532e247082582ef3eceab20e70270b0c6f83a04",
+     "sha256_u": "6c88d96d7b9db7638e75bca63532e247082582ef3eceab20e70270b0c6f83a04"
+    },
+    "w_truth_1": {
+     "identical_to_cv": true,
+     "rows_differing_from_cv": 0,
+     "sha256_cv": "6c88d96d7b9db7638e75bca63532e247082582ef3eceab20e70270b0c6f83a04",
+     "sha256_u": "6c88d96d7b9db7638e75bca63532e247082582ef3eceab20e70270b0c6f83a04"
+    }
+   },
+   "rv_branches_present": [
+    "w_truth_NormDISCC_0",
+    "w_truth_NormDISCC_1"
+   ]
+  }
+ }
+}

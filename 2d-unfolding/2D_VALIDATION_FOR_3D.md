@@ -96,3 +96,10 @@ rate-weighted over the measured range; ours is the full 0–100 GeV Φ integral)
 Not resolvable from disk (we store only integrated Φ). Sharp question for the
 #65 flux cluster. Until then ours is internally correct and mildly conservative.
 Carries to 3D unchanged (flux is pT-binned; the 3D σ ∝ 1/Φ(pT) the same way).
+
+> **Correction 2026-10-12 (the section above is kept as written).** "Not a ν-e-constraint mismatch (both
+> constrained)" is false for our band: only our CV flux is constrained. The universe spread ignores MAT's
+> per-universe constraint weights (n_eff = 19.1); with them, the 2D per-cell flux median is 3.655%, not
+> 4.99% (DIAGNOSTIC, NOT QUOTABLE). "Internally correct and mildly conservative" therefore does not hold as stated. See
+> [`KNOWN_ISSUES.md`](../KNOWN_ISSUES.md) row 95. Nothing quoted changes until Joseph adopts a repaired
+> construction.
