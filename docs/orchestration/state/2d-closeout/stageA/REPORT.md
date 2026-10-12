@@ -39,9 +39,10 @@ driver and helper bytes, environment, threads, input digest and effective seeds 
 (decision record §3; §4 below). The complete manifest is that of its receipted regeneration L0 (XR, job
 59660487), which plan §4 allows to supply the candidate ("a separately verified L0 delivery can supply the
 candidate"). So:
-- **The candidate procedure, frozen for Stages B and C,** is L0's: driver `3cc5adc7…`, helper
+- **The central-value producer, frozen for Stages B and C,** is L0's procedure: driver `3cc5adc7…`, helper
   `e9623412…`, CV omnifile `43f8cc16…`, flux `d40aea69…`, L0's recorded environment, 64 LightGBM threads,
-  seeds 42/43/44, `--iters 5 --use-weights --estimator lgbm --seed 42`, `bkg_mode purity` (§4).
+  seeds 42/43/44, `--iters 5 --use-weights --estimator lgbm --seed 42`, `bkg_mode purity` (§4). The
+  inputs for universe and replica products are not frozen here: they are Stage B's to resolve (KI 93).
 - **`E_U`** (`2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root`, sha256
   `4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c`) is the quoted file. It passes every
   checklist item and is equivalent to that procedure's output under the frozen 1e-8 criterion: a
@@ -52,7 +53,8 @@ candidate"). So:
   `3cc5adc7…`. A Stage C producer on the new driver needs the plan §4 equivalence bridge to L0 first.
 
 No Stop condition was met (§6). Stage A's other remainder, the selective-I/O delivery, is outside this
-record's scope and is delivered separately (A-1).
+record's scope. It is outstanding at this commit; it is the director's A-1 deliverable (branch
+`closeout/stage-a-selective-io-20261012`).
 
 | # | item | verdict | measured | comparison partner |
 |---|---|---|---|---|
@@ -270,8 +272,8 @@ None was met.
 - **Reproduction.** L0 reproduces `E_U` under the frozen criterion, re-measured here.
 - **Input drift.** `E_U`'s actual input is unavailable (KI 93: "The May file and code revision are
   unavailable"), so drift cannot be excluded by digest. Its equivalence to L0's input `43f8cc16` is
-  inferred: bitwise-equal binned saved inputs, and above all the 1.4e-11 output agreement (a different event
-  sample would move LightGBM at about 1e-3). This is no unexplained drift, so no Stop. The July file at the
+  inferred: bitwise-equal binned saved inputs, and above all the 1.4e-11 output agreement, about 10⁸ times
+  below the 1e-3 seed effect. (The output's sensitivity to a changed event sample was not measured.) This is no unexplained drift, so no Stop. The July file at the
   launcher path belongs to Stage B's KI-93 reads.
 - **Required receipts.** L0's receipt, admission record and comparator output are on `main`. `E_U`'s
   missing run log was disclosed before this checklist (decision record §3), and plan §4 accepts L0 in its
@@ -302,7 +304,16 @@ citations checked; both hygiene gates green.
 | N1 base; N2 key count; N3 flux doubles; N4 units source; N5 target count is a transcription check, with the parameters' sources; N6 purity citation; N7 omnifile digest; N8 independence of the comparison | all applied in place |
 | N9 (a 0.35 % in another record) | not this record's; no change |
 
-**Focused re-review:** see below.
+**Focused re-review of `4122f928` (cycle 1 of at most 2): PASS WITH CHANGES**, preserved verbatim at
+[`review/rereview-4122f928.md`](review/rereview-4122f928.md). It found all 14 findings resolved as above, both
+gates green and the preserved first review byte-identical, and raised R1 (MINOR: the freeze also froze the
+CV omnifile as an input, which Stage B must resolve), R2 (NOTE: "delivered separately" could read as
+delivered) and R3 (NOTE: the "about 1e-3" sample-sensitivity phrase was unmeasured). R4 notes that the first
+review's "14 citations" list has 15 entries.
+
+**Delivery commit.** It applies R1–R3 as one-line wording changes (§1 scopes the freeze to the central-value
+producer; §1 says A-1 is outstanding; §6 drops the unmeasured sensitivity). Wording only, and **not
+re-reviewed**; the second repair cycle was not needed.
 
 **Same-model caveat.** Owner and reviewer are Claude Opus 5.5 sessions. Distinct sessions of one model are
 not cross-provider independence (plan §5).
