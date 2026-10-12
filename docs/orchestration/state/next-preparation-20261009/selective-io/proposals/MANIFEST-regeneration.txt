@@ -1,0 +1,15 @@
+MANIFEST.tsv regeneration: a proposal for integration, not applied by this lane.
+
+docs/orchestration/MANIFEST.tsv is generated, shared, and owned by integration. At the base
+(3892e769) `generate_manifest.py --check --at-sha 3892e769` is OK. At this branch's record
+commit it is OUT OF DATE, only because of this branch's files:
+  - new rows: the files under Q/selective-io/ (no other new tracked path is in the
+    generator's scope);
+  - changed rows: derived columns (reference lists and inbound-reference counts) of existing
+    rows that this branch's record, logs and checks mention.
+The counts measured at the delivered head are in REPORT.md section 10, item 2.
+
+Action at merge: regenerate once from source, after every other edit, with the generator
+(`python3 docs/orchestration/generate_manifest.py`, then `--check --at-sha HEAD`). Do not
+hand-apply a diff. A tracked diff of the table would itself name every path it lists and
+move their inbound-reference counts, so it could never be current.

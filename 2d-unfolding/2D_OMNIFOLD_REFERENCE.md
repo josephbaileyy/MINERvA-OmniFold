@@ -172,6 +172,60 @@ Required invariants:
 7. **Full-stats sbatch must pass `--use-weights`.** The 1A validation runs
    use it; the production path must match.
 
+### Opt-in selective branch reading (`--branch-select derived`)
+
+`--branch-select` chooses which ROOT branches the four input loaders read
+(`fill_data_reco_2d`, `fill_bkg_reco_2d`, `collect_signal_arrays_2d`,
+`collect_truth_denom_arrays`). The loaders and everything after them are unchanged.
+
+- **`all` (default).** Every branch stays active and each loader is called as
+  before. Every existing output, receipt and launcher used this path.
+- **`derived` (opt-in).**
+  - Each loader runs with only the branches it reads active. On the universe
+    omnifile that is 7 of 470 on `mc_signal_reco`.
+  - The branch set is derived from the loader's own `SetBranchAddress` calls and
+    must equal a static rule built from the same branch-name helpers.
+  - Any mismatch between the derived and active sets raises
+    `BranchSelectionError` before the first value is read. The run then exits
+    non-zero and writes no output.
+  - The tree's branch statuses and addresses are restored afterwards.
+  - The output gains a `branchSelection` record: each loader's tree and
+    branches.
+- **In both settings,** `runConfig` records `branch_select`.
+
+Supported with every mode of `main()`: CV, `--universe` (lateral and vertical,
+including `Flux`), `--closure` and its variants, including
+`--closure-alt-universe`, `--bootstrap-seed`, and every `--bkg-mode`.
+`2d-unfolding/tests/test_selective_io.py` tests both settings against each
+other:
+- the loader arrays;
+- the OmniFold inputs and estimator arguments;
+- every output histogram and metadata object. These outputs come from a stub
+  OmniFold helper with deterministic weights: nothing is trained.
+
+It also tests the default against the driver before this option existed.
+
+**What is measured.** SB1 measured the same mechanism, as a wrapper around these
+unchanged loaders, for one lateral universe (`Muon_Energy_MINOS:0`) on one node.
+See `docs/orchestration/state/next-preparation-20261009/sb1-run/REPORT.md` §7.
+- Elapsed time went from 2,604 to 888 s.
+- Loader inputs were byte-identical.
+- Outputs agreed within 6.4e-13 relative, but were not byte-identical.
+
+**What is not measured.**
+- A whole-sweep speedup.
+- The 128-thread production runtime. Both timed SB1 runs very probably trained
+  with 64 LightGBM threads, because the guard refused loky's `lscpu` probe,
+  reached through LightGBM.
+- A reduction in the process heap. The process peak RSS was about 14.1 GB in
+  both runs.
+- A cluster run of the in-driver implementation. Its equality is shown on
+  synthetic fixtures only.
+
+The frozen SB1 package (`d4335d3b`) and the frozen XR package (`07428e5d`) pin
+the driver as it was before this option existed (sha256 `3cc5adc7…`). Run their
+checks at those commits, not at a later `HEAD`.
+
 ## Which script produced the quoted 2D uncertainty
 
 The quoted 2D statistical, systematic and combined products come from the

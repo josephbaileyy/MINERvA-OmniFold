@@ -1,0 +1,8 @@
+[xr-linux] tree 37985acc driver 6be77c51805547ba
+[xr-admit] manifest/expected-code.json is OUT OF DATE
+manifest rc=3
+Ran 57 tests in 143.495s
+
+FAILED (failures=16, errors=2)
+1 2026-10-13T17:00:00
+suite rc=

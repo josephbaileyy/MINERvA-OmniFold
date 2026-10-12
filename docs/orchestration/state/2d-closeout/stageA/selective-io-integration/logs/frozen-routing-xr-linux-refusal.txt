@@ -1,0 +1,2 @@
+[frozen] docs/orchestration/state/next-preparation-20261009/xr-linux/xr at HEAD differs from 4bde0670b59166bf91fdf4e64e729d2e2e6864fb: not a frozen package any more
+refusal-branch (package absent at ad786c68~1) rc=2
