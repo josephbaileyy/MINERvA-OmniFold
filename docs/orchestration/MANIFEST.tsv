@@ -716,7 +716,7 @@ docs/orchestration/state/2d-closeout/stageA/scripts/read_inputs.py	tracked	MACHI
 docs/orchestration/state/2d-closeout/stageA/scripts/read_products.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only		yes	1	99	4232
 docs/orchestration/state/2d-closeout/stageA/scripts/read_seedscan.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only		yes	1	15	651
 docs/orchestration/state/2d-closeout/stageA/scripts/target_count.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only		yes	1	9	446
-docs/orchestration/state/2d-closeout/stageA/selective-io-integration/RECORD.md	tracked	MACHINE	state-artifact	2d-closeout		open		exact-path-only		no	4	201	16294
+docs/orchestration/state/2d-closeout/stageA/selective-io-integration/RECORD.md	tracked	MACHINE	state-artifact	2d-closeout		open		exact-path-only		no	4	201	16345
 docs/orchestration/state/2d-closeout/stageA/selective-io-integration/checks/binding_table.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only		yes	2	62	2334
 docs/orchestration/state/2d-closeout/stageA/selective-io-integration/checks/frozen_xr_linux_check.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only		yes	3	40	1920
 docs/orchestration/state/2d-closeout/stageA/selective-io-integration/logs/bindings-at-7edb65fa.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only		yes	1	172	32135

@@ -156,7 +156,7 @@ Each package's bytes at the merged `HEAD` equal its frozen commit (`git diff --q
   §11). This record does not make that check.
 - **N2.** `uq/coverage_fixed_truth/fixed_truth_toy.py` imports the driver directly, so any future N2 launch
   executes and records `6be77c51…` (or its successor), not `3cc5adc7…` (delivery REPORT §8; review NOTE-6).
-- **Carried to the Stage C producer change:** the driver comment at `unfold_2d_omnifold_unbinned.py:26` cites
+- **Carried to the Stage C producer change:** the `# Paper binning` comment in `unfold_2d_omnifold_unbinned.py` (line 27 before this merge, line 30 after) cites
   Phys. Rev. D 106, 032001; the published 2D result is Phys. Rev. D 104, 092007. It is fixed with the next
   behavioural driver change, so the digest moves once (director's ruling, 2026-10-12).
 - **Not applied (owners' items, delivery REPORT §10 item 4):** six live files cite driver line numbers
