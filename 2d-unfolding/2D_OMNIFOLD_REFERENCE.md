@@ -277,7 +277,10 @@ Per-event Poisson(1) weight bootstrap on data + MC jointly. Invariants:
    was therefore made with the driver's default exact-split sklearn
    backend and an unpinned `random_state`, not with LightGBM. Read
    `docs/orchestration/ASSESSMENT-20261008-2d-estimator-pairing.md`
-   (`E_C` against `E_S`/`E_U`/`E_ML`) before pairing it with any block. The older coverage-toy
+   (`E_C` against `E_S`/`E_U`/`E_ML`) before pairing it with any block.
+   **Since 2026-10-11 the quoted 2D central value is `E_U`**, the LightGBM seed-42 matched universe CV
+   (`uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root`, sha256 `4f5a1b6d…`); the exact-split `E_C` above is
+   a cross-check (`docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md`). The older coverage-toy
    launchers `sbatch_coverage_toys_MEFHC{,_200}.sh` (`--closure`, item 3)
    do pass `--seed` equal to the toy's bootstrap seed. They do not produce
    the band.

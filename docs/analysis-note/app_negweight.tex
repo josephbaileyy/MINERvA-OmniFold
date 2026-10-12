@@ -79,8 +79,8 @@ and clipped refinement depends on the classifier.
 For the histogrammed gradient-boosted density estimator used in \emph{this
 comparison}, they agree to the reported median $\nwMedianBin$ at this
 measurement's sub-percent genuine-background scale. The \texttt{hist} backend
-differs from both the production central value's \texttt{exact} and the
-covariance ensemble's \texttt{lgbm} (\S\ref{sec:method}). This validation therefore establishes the equivalence on a
+differs from both the \texttt{lgbm} estimator of the quoted 2D central value and its
+ensembles, and the \texttt{exact} cross-check (\S\ref{sec:method}). This validation therefore establishes the equivalence on a
 third backend, and its transfer to the production configuration is an assumption
 rather than a demonstration.
 Raw signed weights destabilize an \emph{exact} (tree-boosted) classifier,

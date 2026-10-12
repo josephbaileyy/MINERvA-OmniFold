@@ -79,6 +79,10 @@ def fig1(z, out: Path, uq_median: str | None = None):
     m = z["mask_reported"].astype(bool)
     pt_e, pz_e = z["pt_edges"], z["pz_edges"]
     cov = z["cov_total"]
+    # Optional (2026-10-11): `cov_ours`, this analysis's total covariance on the same 224-bin grid (zero
+    # outside the reported mask). When present, the OmniFold curve gets its own +-1 sigma band; arrays
+    # without it draw exactly as before.
+    cov_o = z["cov_ours"] if "cov_ours" in z.files else None
     j_pt, j_pz = projection_jacobians(m, pt_e, pz_e)
     fig = plt.figure(figsize=(7.0, 6.2))
     gs = fig.add_gridspec(2, 2, height_ratios=[2.0, 0.9], hspace=0.08, wspace=0.28,
@@ -93,11 +97,18 @@ def fig1(z, out: Path, uq_median: str | None = None):
         top.stairs((pub + sig) / unit, edges, baseline=(pub - sig) / unit, fill=True, color="0.82", lw=0,
                    label=r"published $\pm1\sigma$")
         top.stairs(pub / unit, edges, color="k", lw=1.4, label=PUBLISHED)
+        if cov_o is not None:
+            sig_o = np.sqrt(np.diag(jac @ cov_o @ jac.T))
+            top.stairs((ours + sig_o) / unit, edges, baseline=(ours - sig_o) / unit, fill=True,
+                       color="#c0392b", alpha=0.22, lw=0, label=r"this work $\pm1\sigma$")
         top.stairs(ours / unit, edges, color="#c0392b", lw=1.2, ls="--", label="This work (OmniFold)")
         top.stairs(tune / unit, edges, color="#2a78d6", lw=1.0, label="MINERvA Tune v1")
         top.set_ylabel(ylab, fontsize=7.5); top.set_ylim(bottom=0); top.tick_params(labelbottom=False)
         rel = sig / pub
         bot.stairs(1 + rel, edges, baseline=1 - rel, fill=True, color="0.82", lw=0)
+        if cov_o is not None:
+            bot.stairs((ours + sig_o) / pub, edges, baseline=(ours - sig_o) / pub, fill=True,
+                       color="#c0392b", alpha=0.22, lw=0)
         bot.axhline(1.0, color="k", lw=0.8)
         bot.stairs(ours / pub, edges, color="#c0392b", lw=1.2, ls="--", baseline=None)
         bot.stairs(tune / pub, edges, color="#2a78d6", lw=1.0, baseline=None)

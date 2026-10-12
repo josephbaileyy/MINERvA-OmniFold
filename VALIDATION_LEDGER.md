@@ -1,5 +1,19 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-10-11 2D central value switched to the LightGBM seed-42 matched CV
+
+Joseph's ruling (2026-10-11): "switch to the LightGBM central value". Decision record:
+[`DECISION-20261011-joseph-2d-central-lightgbm-seed42.md`](docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md).
+- The committed producers ran at `e1216e9c` on saul login05 (ROOT 6.28/12).
+- Receipts are in [`receipts/2d-lgbm42-20261011/`](docs/orchestration/receipts/2d-lgbm42-20261011/), with
+  `SHA256SUMS`.
+- No covariance, band or uncertainty changes. VL172's covariance products stand; its central-value-dependent
+  numbers (χ², pulls) are re-measured below for the new central value.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL173 | 2D comparison numbers for the LightGBM seed-42 matched universe CV (`uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root`, sha256 `4f5a1b6d…`) against the published result, 205 bins | integral 3.0730e-38 (ratio 1.0112); median bin ratio 1.0081; within 5/10/20 % 170/196/203 = 82.9/95.6/99.0 %; published-σ pull mean/RMS 0.074/0.564; paper-cov χ²/ndf **2.654**; combined **0.914**, log-normal **0.932**, stat-subtracted **4.128**; combined pull mean/RMS 0.041/0.386; ours vs Tune v1 29.755; diagonal-only 0.324 | **QUOTED from 2026-10-11.** Control: the same producers on the exact-split file (`142a45b0…`) reproduce 3.661 and 0.089/0.598. The exact-split values (VL172 χ² 3.661/1.472/1.455/6.79, pulls 0.051/0.405) remain quotable as the cross-check, labelled; they are not struck. `KNOWN_ISSUES.md` 88. |
+
 ## 2026-10-06 PET finalists' generator-reweighting weakness: diagnosis of existing outputs (exploratory)
 
 Source: [report](nd-unfolding/pet/generator_diagnosis/REPORT-20261006.md).

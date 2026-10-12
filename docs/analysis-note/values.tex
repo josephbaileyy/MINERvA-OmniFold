@@ -12,6 +12,16 @@
 % ====================================================================
 
 % --- 2D reproduction (the demonstrator) ---
+% CENTRAL VALUE SWITCHED 2026-10-11 (Joseph): the quoted 2D central value is now the LightGBM seed-42
+% matched CV of the systematic sweep, uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root, sha256
+% 4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c, no longer the exact-split
+% 2d_crossSection_omnifold_MEFHC_5iter.root (142a45b0...). Decision record:
+% docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md. Every macro below that depends
+% on the central value was re-measured by the SAME committed producers at e1216e9c (saul login05, ROOT
+% 6.28/12); receipts in docs/orchestration/receipts/2d-lgbm42-20261011/ (SHA256SUMS). Control: the same
+% producers on the exact-split file reproduce 3.661 and 0.089/0.598. The provenance blocks below describe
+% the 2026-08-21 receipts for the exact-split values (kept as history); the values printed are the new ones,
+% each with its new receipt in its trailing comment.
 % PROVENANCE, ADDED 2026-08-21 (OI-130). These three were the HARD CORE of the OI-130
 % enumeration: of 71 macros they were the only ones naming NO backing artifact anywhere, even
 % under the generous bound -- which makes them UNBINDABLE BY CONSTRUCTION, since no hash-binding,
@@ -33,9 +43,9 @@
 % STILL NOT ESTABLISHED: that this producer is the method that ORIGINALLY produced these three, and
 % both artifacts live on PURGEABLE SCRATCH and are untracked, so this closes the CITATION gap and
 % not the DURABILITY one (OI-130's class, and OI-75 for the same shape elsewhere).
-\newcommand{\sigTwoD}{3.073e-38}      % our 2D total; integral 3.0733e-38, receipt above
+\newcommand{\sigTwoD}{3.073e-38}      % our 2D total; integral 3.0730e-38 (LightGBM seed 42; exact-split was 3.0733e-38), RECEIPT-2d-agreement-windows-lgbm42-20261011.json
 \newcommand{\sigTwoDpaper}{3.039e-38} % published 2D total; integral 3.0390e-38, receipt above
-\newcommand{\ratioTot}{1.011}         % sigma_tot ours/paper; integral ratio 1.0113, receipt above
+\newcommand{\ratioTot}{1.011}         % sigma_tot ours/paper; integral ratio 1.0112 (exact-split was 1.0113), lgbm42 receipt
 % PROVENANCE FOR THE NEXT FOUR MACROS -- RESOLVED 2026-08-21, AND THE HISTORY MATTERS.
 % \medianBinRatio, \binsFive, \binsTen and \binsTwenty had NO committed producing script
 % (OI-130). They were suppressed from all three deliverables on 2026-08-21 and are RESTORED
@@ -70,13 +80,13 @@
 % (the audit's re-run reports 185/179/171/162/152/141). `git log --follow` puts that interior
 % mask in the initial commit (d3239355), so no committed version of IT ever produced these.
 % Any future change to these four goes through the producer and a fresh receipt.
-\newcommand{\medianBinRatio}{1.006}   % median per-bin ratio ours/paper; receipt measures 1.0064, ATTESTED above
-\newcommand{\binsFive}{77.6}          % percent of bins within 5%; 159/205, ATTESTED above
-\newcommand{\binsTen}{94.1}           % within 10%; 193/205, ATTESTED above
-\newcommand{\binsTwenty}{98.5}        % within 20%; 202/205, ATTESTED above
-\newcommand{\pullMean}{0.089}
-\newcommand{\pullRMS}{0.598}
-\newcommand{\pullRMSr}{0.60}          % rounded, for prose
+\newcommand{\medianBinRatio}{1.008}   % median per-bin ratio ours/paper; lgbm42 receipt measures 1.0081 (exact-split 1.0064)
+\newcommand{\binsFive}{82.9}          % percent of bins within 5%; 170/205, lgbm42 receipt (exact-split 77.6)
+\newcommand{\binsTen}{95.6}           % within 10%; 196/205, lgbm42 receipt (exact-split 94.1)
+\newcommand{\binsTwenty}{99.0}        % within 20%; 203/205, lgbm42 receipt (exact-split 98.5)
+\newcommand{\pullMean}{0.074}         % chi2_lgbm42_paperonly.txt (exact-split 0.089)
+\newcommand{\pullRMS}{0.564}          % chi2_lgbm42_paperonly.txt (exact-split 0.598)
+\newcommand{\pullRMSr}{0.56}          % rounded, for prose
 % FPS containment (Agent C WS1 statistical-validation repair, 2026-07-16):
 % split-sample +/-1sigma truth-containment against an independent fixed NPZ truth.
 % The estimator seed is fixed, so this diagnoses the statistical closure-toy
@@ -109,10 +119,11 @@
 \newcommand{\covTwoDNodeH}{13.3}     % CPU node-h charged, pilot + equivalence + 100 toys
 \newcommand{\pullFrac}{68.71}        % OLD 2D "coverage" = same-ensemble pull fraction (diagnostic)
 \newcommand{\pullMeanAbs}{0.794}\newcommand{\pullGauss}{0.798}  % <|r|> vs sqrt(2/pi)
-\newcommand{\chiPaper}{3.66}          % chi2/ndf vs paper covariance
-\newcommand{\chiCombined}{1.472}      % chi2/ndf vs combined (paper+ours) cov; VL172 (2026-10-06, VL170 band; was 1.481 with VL162)
-\newcommand{\chiCombinedLog}{1.455}   % log-normal chi2/ndf, combined (paper+ours); VL172 (was 1.468)
-\newcommand{\chiCombinedSubStat}{6.79} % chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic); VL172 (was 11.56)
+\newcommand{\chiPaper}{2.65}          % chi2/ndf vs paper covariance; 2.654, chi2_lgbm42_paperonly.txt (exact-split 3.661)
+\newcommand{\chiPaperExact}{3.66}     % the exact-split cross-check's chi2/ndf vs paper covariance (VL172; control reproduces 3.661)
+\newcommand{\chiCombined}{0.914}      % chi2/ndf vs combined (paper+ours) cov; chi2_lgbm42.txt (exact-split 1.472, VL172)
+\newcommand{\chiCombinedLog}{0.932}   % log-normal chi2/ndf, combined (paper+ours); chi2_lgbm42_lognormal.txt (exact-split 1.455)
+\newcommand{\chiCombinedSubStat}{4.13} % chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic); 4.128, chi2_lgbm42_substat.txt (exact-split 6.79)
 % All three recomputed 2026-07-16 (compare_to_paper_fullcov.py, flux-fix hCov_combined
 % [already incl. bootstrap] + ML). Supersede the pre-flux-fix appendix 1.699/1.688/23.96.
 

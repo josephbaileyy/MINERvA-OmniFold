@@ -55,8 +55,10 @@ analysis chain, using an estimator with unbinned background refinement, so that 
 estimator's bias toward its prior enters each simulated null distribution
 (Sec.~\ref{sec:joint}).
 
-The higher-dimensional central values pass their marginal anchors and
-injected-shape closure tests and recover the known low-recoil discrepancy.
+The two-dimensional reproduction agrees with the published total cross section
+to about one percent (ratio $\ratioTot$), with \SI{\binsTen}{\percent} of the
+205 bins within \SI{10}{\percent}.  The higher-dimensional central values pass
+their marginal anchors and injected-shape closure tests and recover the known low-recoil discrepancy.
 Background-inclusive pseudo-experiments, however, reveal a background-subtraction
 bias of up to \SI{4}{\percent} in simulation in the highest-$W$ cells, which an
 unbinned treatment, used only for the generator tests, largely removes; the
@@ -72,7 +74,6 @@ recoil-response uncertainty and unresolved fine-grid convergence limit their
 physical interpretation; because each test also has $p<0.05$ in at least one
 matched coarse projection, the joint information is not shown to add
 discrimination.
-% TODO(2D lane): a sentence giving the two-dimensional reproduction's headline numbers belongs here.
 
 Sections~\ref{sec:data} and~\ref{sec:method} describe the data and estimators,
 Sec.~\ref{sec:validation} the validation, Sec.~\ref{sec:central} the central
@@ -168,7 +169,7 @@ iteration.  The two targets share bin integrals wherever $B_{b}<D_{b}$ but diffe
 the background fraction varies within it.  Both are defined in the analysis
 note's appendix on negative-weight background subtraction~\cite{AnalysisNote2026}.
 
-All four estimator configurations use five OmniFold iterations with
+All estimator configurations use five OmniFold iterations with
 gradient-boosted decision-tree classifiers~\cite{Pedregosa:2011sklearn,Ke:2017lightgbm}, and each result
 names the one it uses.  The iteration count and classifier capacity regularize
 the unfolding, and no hyperparameter search was performed on data: the nominal
@@ -178,13 +179,12 @@ closure studies.  A
 neural-network classifier in the same five-iteration loop changes the
 three-dimensional total cross section by \SI{0.8}{\percent} and the
 one-dimensional projections by median absolute differences of
-\SIrange{0.7}{1.4}{\percent}.  The two-dimensional
-central value uses exact-split scikit-learn boosting with the purity-based
-background subtraction.  The three- to five-dimensional central values use
-LightGBM at matched nominal capacity with the same subtraction, as do the
-two-dimensional uncertainty ensembles; that covariance therefore belongs to a
-different estimator from the two-dimensional central value, and whether it also
-describes that central value has not been measured.  The joint tests
+\SIrange{0.7}{1.4}{\percent}.  The two- to five-dimensional central values use
+LightGBM at matched nominal capacity with the purity-based subtraction; the
+two-dimensional one is the central value of its systematic-universe ensemble,
+so its covariance is built with the same estimator.  An exact-split
+scikit-learn estimator, the original two-dimensional choice, is retained as a
+cross-check (Sec.~\ref{sec:repro2d}).  The joint tests
 (Sec.~\ref{sec:joint}) use a deterministic LightGBM configuration, selected
 before the joint-test design was fixed, whose unbinned negative-weight background
 treatment and higher-capacity refinement classifier together remove most of the
@@ -192,7 +192,7 @@ purity method's nominal-truth bias in the highest-$W$ cells
 (Sec.~\ref{sec:validation}).  Classifier settings are given in the analysis
 note's estimator-configuration section~\cite{AnalysisNote2026}.
 % 2026-10-11: the tree counts, depths, the unpinned exact-split seed, the 400-tree/31-leaf refinement and the
-% fifteen-fold bias reduction moved to the note, sec_method.tex sec:method-config ("The four estimator configurations").
+% fifteen-fold bias reduction moved to the note, sec_method.tex sec:method-config ("The estimator configurations"; three since the 2026-10-11 switch of the 2D central value).
 % Background definitions: note sec_method.tex (w_pur) and app_negweight.tex eq:negweight-purity/-continuous and the
 % clipped Stay-Positive refinement. NN cross-check: note sec_3d.tex sec:3d-classifier (Keras MLP, 3D inputs, five
 % iterations): total ratio 1.0078; median projection differences 1.20% (pT), 1.36% (p||), 0.66% (E_avail).
@@ -210,15 +210,21 @@ Missed-event bookkeeping is an invariant check, and iteration dependence is
 a stability diagnostic. Neither establishes recovery or coverage.
 
 \subsection{Two-dimensional reproduction}
+\label{sec:repro2d}
 
-The two-dimensional result provides a stringent end-to-end validation.  Its
-integrated cross section is \SI{\sigTwoD}{cm^2/nucleon}, compared with
+The two-dimensional result is an end-to-end test of the unfolding against a
+measurement from the same data.  Its integrated cross section is \SI{\sigTwoD}{cm^2/nucleon}, compared with
 \SI{\sigTwoDpaper}{cm^2/nucleon} in the published analysis, a ratio of
 $\ratioTot$.  Of the 205 reported bins, \SI{\binsTen}{\percent} agree within
 \SI{10}{\percent}; the standardized bin differences formed with the published
 uncertainties have an RMS of $\pullRMS$; against the full published covariance
 the indicative distance is $\chi^{2}/\mathrm{ndf}=\chiPaper$, a correlated
-shape difference along the low-$\pT$ peak ridge.  Figure~\ref{fig:validation}
+shape difference.  That distance depends on the learner: ten LightGBM training
+seeds give 2.64--2.75, and the exact-split estimator gives $\chiPaperExact$.
+The quoted central value was changed from exact-split to LightGBM after both
+comparisons were known, so that it matches the estimator of its covariance;
+the two differ by a per-bin median of \SI{0.98}{\percent}, and no block of
+the covariance includes this learner dependence.  Figure~\ref{fig:validation}
 shows the principal one-dimensional projections.  Both results derive from the
 same data, making this a direct test of the unfolding procedure.  The published
 covariance sets the scale of the displayed differences; a significance for
@@ -229,13 +235,15 @@ estimates.
   \centering
   \includegraphics[width=\textwidth]{paper_fig1_validation}
   \caption{Comparison with the published result~\cite{MINERvA:2021owq}.  Top:
-  $\pT$ and $\pPar$ projections of the published result ($\pm1\sigma$ band),
-  this analysis, and the MINERvA Tune~v1, with ratios to the published result
-  below.  Bottom left:
+  $\pT$ and $\pPar$ projections of the published result and of this analysis,
+  each with its total $\pm1\sigma$ band (this analysis: statistical,
+  systematic-universe, normalization and training-seed covariance,
+  Sec.~\ref{sec:uq2d}; it omits the learner dependence, and the two bands are
+  correlated, so their overlap is not a compatibility test), and the MINERvA
+  Tune~v1, with ratios to the published result below.  Bottom left:
   $(\mathrm{OmniFold}-\mathrm{published})/\sigma_{\mathrm{published}}$ per
   reported bin, with cells drawn at equal size (grey: not reported).  Bottom
-  right: median relative uncertainties (this analysis: LightGBM-ensemble
-  covariance, Sec.~\ref{sec:uq2d}) and residual summary.}
+  right: median relative uncertainties and residual summary.}
   \label{fig:validation}
 \end{figure*}
 
@@ -243,15 +251,14 @@ estimates.
 \label{sec:uq2d}
 
 The standalone covariance combines systematic-universe, statistical, and
-training-seed blocks.  Its median relative uncertainty is
-\SI{\uqMedian}{\percent}, compared with \SI{\uqPaper}{\percent} for the
-publication.  These ensembles use LightGBM, not the exact-split estimator of
-the quoted central value (Sec.~\ref{sec:method}).  At the statistical
-ensemble's training seed the two central values differ by a per-bin median of
-\SI{0.97}{\percent}, 1.3 times the per-bin standard deviation of the
-statistical block; no block of the covariance carries this difference, and
-whether the covariance describes the exact-split central value has not been
-measured.  Coverage of the total remains untested.
+training-seed blocks, all built with the central value's LightGBM estimator.
+Its median relative uncertainty is \SI{\uqMedian}{\percent}, compared with
+\SI{\uqPaper}{\percent} for the publication.  The blocks use different training
+seeds: the systematic block that of the central value, the statistical block
+another, and the training-seed block ten.  The central value differs from the
+statistical block's own central value by a per-bin median of 0.30 of that
+block's standard deviation (\SI{0.18}{\percent}).  Coverage of the total
+remains untested.
 
 The statistical block, as first built, undercovered in its tails in
 \covTwoDNtoy{} pre-registered closure pseudo-experiments against a fixed
@@ -749,8 +756,8 @@ low-recoil discrepancy.  Background-inclusive tests reveal a subtraction bias
 that unbinned background refinement reduces, while regularization bias persists
 under the tested generator-sized shape changes.  Coverage and estimator-seed studies
 expose further limits: the rebuilt two-dimensional statistical band awaits an
-independent coverage test, the transfer of the two-dimensional covariance to
-the exact-split central value is unmeasured, and the measured model
+independent coverage test, the two-dimensional comparison depends on the
+learner at the level of one unit of $\chi^{2}/\mathrm{ndf}$, and the measured model
 dependence prevents a qualified five-dimensional measurement with total
 uncertainties at useful precision.  These outcomes provide practical checks for future
 multidimensional neutrino unfolding.

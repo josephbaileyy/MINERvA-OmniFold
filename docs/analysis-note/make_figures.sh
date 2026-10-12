@@ -27,14 +27,19 @@ run () {  # run "<png>" <workdir> <command...>
 }
 
 echo "== 2D reproduction =="
-run MEFHC_5iter_fig13.png            2d-unfolding  python plot_2d_threeway_fig13.py
+# 2026-10-11 (docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md): the quoted 2D
+# central value is the LightGBM seed-42 matched universe CV; the exact-split file is a cross-check. The
+# figures below that show the central value read CV42 explicitly (the producers' defaults still name the
+# exact-split file). The efficiency figure does not depend on the central value.
+CV42=uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root
+run MEFHC_5iter_fig13.png            2d-unfolding  python plot_2d_threeway_fig13.py --infile "$CV42"
 run MEFHC_5iter_eff_fig5.png         2d-unfolding  python plot_efficiency_fig5_style.py
-run MEFHC_5iter_xsec_paper_pt_slices.png 2d-unfolding python plot_2d_paper_comparison.py
-run MEFHC_5iter_xsec_proj_pt.png     2d-unfolding  python plot_2d_cross_section.py --infile 2d_crossSection_omnifold_MEFHC_5iter.root --prefix MEFHC_5iter_xsec
-run MEFHC_5iter_pull_full.png        2d-unfolding  python compare_to_paper_fullcov.py
+run MEFHC_5iter_xsec_paper_pt_slices.png 2d-unfolding python plot_2d_paper_comparison.py --infile "$CV42"
+run MEFHC_5iter_xsec_proj_pt.png     2d-unfolding  python plot_2d_cross_section.py --infile "$CV42" --prefix MEFHC_5iter_xsec
+run MEFHC_5iter_pull_full.png        2d-unfolding  python compare_to_paper_fullcov.py --ours "$CV42"
 run ../docs/analysis-note/figures/negweight_ratio_2d.pdf 2d-unfolding python plot_negweight_ratio.py
-run model_comp_projections.png       2d-unfolding  python compare_to_models.py
-run tension_spectrum.png             2d-unfolding  python diagnose_tension.py
+run model_comp_projections.png       2d-unfolding  python compare_to_models.py --ours "$CV42"
+run tension_spectrum.png             2d-unfolding  python diagnose_tension.py --ours "$CV42"
 
 echo "== 2D uncertainty =="
 # 2026-10-06 (KNOWN_ISSUES 84, VL170/VL172): the adopted statistical band and the universe+bootstrap rollup

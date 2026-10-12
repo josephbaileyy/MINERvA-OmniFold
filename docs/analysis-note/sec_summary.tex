@@ -8,11 +8,11 @@ scope; this section states the conclusions they support.
   \item Unbinned OmniFold with gradient-boosted trees reproduces the published
         MINERvA ME FHC CC-inclusive $d^{2}\sigma/(d\pT\,d\pPar)$ and its
         uncertainty scale (\S\ref{sec:results}), with a correlated shape
-        difference along the low-$\pT$ peak ridge
-        ($\chi^{2}/\mathrm{ndf}=\chiPaper$, \S\ref{sec:results-tension}). The
-        uncertainty is computed with LightGBM ensembles and its transfer to the
-        exact-split central value is unmeasured (\S\ref{sec:method-config}); the
-        first-built statistical band failed a fixed-truth coverage test in its
+        difference ($\chi^{2}/\mathrm{ndf}=\chiPaper$, \S\ref{sec:results-tension})
+        whose size depends on the learner (exact-split cross-check
+        $\chiPaperExact$). The central value and its uncertainty use the same
+        LightGBM estimator, a choice made after both comparisons were known
+        (\S\ref{sec:method-config}); the first-built statistical band failed a fixed-truth coverage test in its
         tails and the rebuilt band has not been re-tested (\S\ref{sec:coverage}).
   \item Simultaneous unbinned three-, four- and five-observable unfolds
         ($+\Eavail$, $+q_{3}$, $+W$) agree with their lower-dimensional

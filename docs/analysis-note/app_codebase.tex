@@ -22,8 +22,9 @@ The analysis chain has four components, named in italics throughout the note.
         runs the engine, and extracts the cross section.
   \item \emph{Engine} (Python):
         \texttt{unbinned\_unfolding/python/omnifold.py} implements OmniFold
-        iteration independently of the learner backend (\texttt{exact} central
-        value, LightGBM uncertainty ensemble, \texttt{hist} alternate; MLP and
+        iteration independently of the learner backend (LightGBM central value
+        and uncertainty ensembles, \texttt{exact} cross-check, \texttt{hist}
+        alternate; MLP and
         point-cloud-transformer cross-checks).
 \end{itemize}
 

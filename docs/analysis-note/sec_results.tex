@@ -139,12 +139,11 @@ published \SI{\uqPaper}{\percent} --- and is flux-dominated as in the publicatio
 (Fig.~\ref{fig:uqbands}). The
 systematic block dominates; statistical and ML blocks together contribute
 under a tenth of the combined $\sqrt{\mathrm{Tr}\,C}$. Every block is computed
-with the LightGBM estimator, while the quoted central value is the exact-split
-one (\S\ref{sec:method-config}). The relative uncertainties divide by the
-LightGBM seed-42 central value of the universe sweep; against the quoted
-exact-split central value the same combined covariance gives a combined median
-of \SI{6.827}{\percent} (against the \SI{6.871}{\percent} of the table). Whether this covariance describes the exact-split central
-value has not been measured.
+with the LightGBM estimator of the quoted central value
+(\S\ref{sec:method-config}), and the relative uncertainties divide by that
+central value, the seed-42 central value of the universe sweep. Against the
+exact-split cross-check the same combined covariance gives a combined median
+of \SI{6.827}{\percent}.
 % Source: ASSESSMENT-20261008-2d-estimator-pairing.md P14 (6.8707 % vs CV42, 6.8269 % vs E_C), reproduced
 % by the review (e/recompute/rc_pairing.json.txt blocksum_median_rel_pct_den_exact_central); KNOWN_ISSUES 88.
 
@@ -172,23 +171,34 @@ value has not been measured.
 \label{sec:results-tension}
 Using the published uncertainties as a descriptive scale, the central values
 have pull RMS $\pullRMS$ (a diagonal-only $\chi^{2}/\mathrm{ndf}$ would be
-$0.37$), while the full paper-covariance distance is $\chiPaper$ per bin:
-a $10\times$ inflation living entirely in the off-diagonal structure of the
-published covariance. The eigenmode decomposition (Fig.~\ref{fig:tension}) shows
-the indicative distance is carried by moderate-$\lambda$ modes whose
-paper-covariance-standardized components have magnitude $5$--$6$
-(the 10 smallest-$\lambda$ modes carry only \SI{3}{\percent}; keeping the 73
-best-measured directions still gives $1.42$), so it is \emph{not} a small-$\lambda$
-inversion artifact. It is \emph{shape}, not normalization
-($\chi^{2}_{\mathrm{norm}}=0.10$ vs $\chi^{2}_{\mathrm{shape}}=750$), localized to
-the low-$\pT$ cross-section peak ridge where the flux and muon-energy bands
-dominate. The GBDT estimator gives a $\sim1$-unit methodological band
-(exact-GBT $\chiPaper$ vs HistGBT $2.70\pm0.04$ vs LightGBM $2.65$).
-Iteration-count effects are negligible: $5\to10$ iterations move it by $+0.01$.
+$0.32$), while the full paper-covariance distance is $\chiPaper$ per bin:
+an $8\times$ inflation living entirely in the off-diagonal structure of the
+published covariance. It is \emph{shape}, not normalization
+($\chi^{2}_{\mathrm{norm}}=0.06$ vs $\chi^{2}_{\mathrm{shape}}=544$). The
+eigenmode decomposition (Fig.~\ref{fig:tension}) spreads it over many modes,
+the largest with paper-covariance-standardized components of magnitude about
+$4$--$5$; the 10 smallest-$\lambda$ modes carry \SI{9.5}{\percent}, two of the
+five largest contributors lie in the smallest-$\lambda$ tenth, and keeping the
+73 best-measured directions gives $0.81$. The four leading modes in the
+highest-$\pPar$ bins are all poorly determined directions
+($\lambda/\lambda_{\max}\lesssim4\times10^{-9}$); the two leading
+moderate-$\lambda$ modes lie at low-to-moderate $\pT$, below the highest $\pPar$
+(Fig.~\ref{fig:tensionmodes}). No single $\pT$ or $\pPar$
+band carries more than \SI{15}{\percent} of the total. The GBDT estimator gives
+a $\sim1$-unit methodological band (the exact-split cross-check
+$\chiPaperExact$, HistGBT $2.70\pm0.04$, LightGBM seeds 1--10 2.64--2.75).
+For the exact-split cross-check the distance is larger and differently
+distributed: magnitude-$5$--$6$ components in moderate-$\lambda$ modes on the
+low-$\pT$ cross-section peak ridge, \SI{3}{\percent} from the 10
+smallest-$\lambda$ modes and $1.42$ from the 73 best-measured directions
+(App.~\ref{sec:tension}). Iteration-count effects are negligible: $5\to10$
+iterations move the LightGBM (seed~1) distance by $+0.01$.
+% 2026-10-11: LightGBM seed-42 values from diagnose_tension.py at e1216e9c,
+% docs/orchestration/receipts/2d-lgbm42-20261011/tension_report.txt; the exact-split control
+% (tension_report_exact_control.txt) reproduces 0.37 (0.366), 10x, 3 %, 1.42 and 0.10/750.
 See App.~\ref{sec:tension} for the full treatment and
 Figs.~\ref{fig:tension}--\ref{fig:tensionmodes} for eigenmode-localization maps.
-% NOTE: the estimator-band value "exact-GBT 3.66" below is the same number as
-% the paper-covariance chi2 (\chiPaper); they coincide by construction.
+% NOTE (2026-10-11): the exact-split cross-check's 3.66 is \chiPaperExact; \chiPaper is now the LightGBM 2.65.
 
 \begin{figure}[H]
   \centering
@@ -203,8 +213,9 @@ Figs.~\ref{fig:tension}--\ref{fig:tensionmodes} for eigenmode-localization maps.
   \centering
   \includegraphics[width=0.9\textwidth]{tension_mode_maps}
   \caption{Leading tension-carrying eigenmodes of the published covariance
-  in bin space. Magnitude-$5$--$6$ standardized components occupy the low-$\pT$
-  cross-section-peak ridge where flux and muon-energy bands dominate.}
+  in bin space, for the LightGBM central value. Four of the six, all
+  smallest-$\lambda$ directions, concentrate in the highest-$\pPar$ bins; two
+  moderate-$\lambda$ modes lie at low-to-moderate $\pT$.}
   \label{fig:tensionmodes}
 \end{figure}
 
@@ -215,7 +226,7 @@ by $\sim\SI{9}{\percent}$ ($\sigma_{\mathrm{tune}}/\sigma_{\mathrm{data}}=0.91$)
 concentrated in the low-$\pT$ peak. The ancillary prediction is compared with
 both the published data and our result in Fig.~\ref{fig:model}. The data
 covariance strongly disfavors the tune ($\chi^{2}/\mathrm{ndf}$: data vs tune
-$33.0$, ours vs tune $26.5$). Our unfold tracks the data far more closely than
+$33.0$, ours vs tune $29.8$; $26.5$ for the exact-split cross-check). Our unfold tracks the data far more closely than
 the model does (Fig.~\ref{fig:modelmaps}).
 The published analysis~\cite{MINERvA:2021owq} also compares with
 NuWro~\cite{Golan:2012wx}, GiBUU~\cite{Buss:2011mx} and NEUT~\cite{Hayato:2009zz}.

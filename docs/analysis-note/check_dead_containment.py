@@ -209,6 +209,27 @@ def token_hit(value: str, text: str) -> bool:
     return re.search(r"(?<![\d.])" + re.escape(value) + r"(?![\d.])", text) is not None
 
 
+# NARROWED 2026-10-11, on this check's own instruction, after it FAILED main_paper.pdf on `0.564`,
+# verified by eye in the outward PDFs: the paper and primer print the LIVE published-sigma pull RMS
+# 0.564 (\pullRMS, re-measured for the LightGBM 2D central value; docs/publication/
+# DECISION-20261011-joseph-2d-central-lightgbm-seed42.md), in Sec. IV A and in the Fig. 1 inset, while
+# app_history.tex strikes `0.564\%`, the superseded 2D statistical per-bin median spread -- a different
+# quantity that happens to share three digits. A leak of the struck value would print as a percentage,
+# so for a literal listed here only the token FOLLOWED BY ITS UNIT is a hit in an outward build. Every
+# other literal keeps the bare-token test. The note's positive control uses the same rule, so a listed
+# literal counts as rendered in the note only WITH its unit (the live bare 0.564 cannot satisfy it). test_build_all.py::UnitRequiredLiteralTest checks both directions and that every key is
+# struck WITH that unit in app_history.tex, so this cannot become a silent general exemption.
+UNIT_REQUIRED = {"0.564": "%"}
+
+
+def outward_hit(value: str, text: str) -> bool:
+    """token_hit, except that a UNIT_REQUIRED literal must be followed by its unit."""
+    unit = UNIT_REQUIRED.get(value)
+    if unit is None:
+        return token_hit(value, text)
+    return re.search(r"(?<![\d.])" + re.escape(value) + r"\s*" + re.escape(unit), text) is not None
+
+
 def resolve_closure(root: Path, seen: set[Path] | None = None) -> list[Path]:
     """Transitive \\input/\\include closure of a driver .tex, in discovery order."""
     if seen is None:
@@ -621,7 +642,7 @@ def main() -> int:
             _skipped("main_note.pdf absent, no PDF text extractor available, or the PDF extracted EMPTY -- "
                       "PDF stage did not run")
         else:
-            seen_in_note = sorted(v for v in struck_values if token_hit(v, note_txt))
+            seen_in_note = sorted(v for v in struck_values if outward_hit(v, note_txt))
             if not seen_in_note:
                 failures.append(
                     f"none of the {len(struck_values)} derived struck literals appear in "
@@ -638,7 +659,7 @@ def main() -> int:
                                  f"NOT PDF-checked, and this is an outward-facing build the "
                                  f"whole check exists to protect")
                         continue
-                    hits = sorted(v for v in seen_in_note if token_hit(v, txt))
+                    hits = sorted(v for v in seen_in_note if outward_hit(v, txt))
                     if hits:
                         failures.append(
                             f"{driver}.pdf contains struck literal(s) {hits} that main_note.pdf "

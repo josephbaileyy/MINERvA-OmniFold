@@ -695,6 +695,41 @@ class StruckOnlyInHistoryTest(unittest.TestCase):
         self.assertIn("in sec_body.tex", out)
 
 
+class UnitRequiredLiteralTest(unittest.TestCase):
+    r"""check_dead_containment.UNIT_REQUIRED narrows the outward PDF test for listed literals only.
+
+    Added 2026-10-11 with the narrowing: the live pull RMS 0.564 (\pullRMS) printed bare in the paper
+    must not count as a leak of the struck `0.564\%`, while the struck percentage itself still must.
+    """
+
+    def setUp(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "cdc_unit_under_test", str(HERE / "check_dead_containment.py"))
+        self.mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.mod)
+
+    def test_bare_live_number_is_not_a_hit(self):
+        self.assertFalse(self.mod.outward_hit("0.564", "mean = 0.074, RMS = 0.564 (205 bins)"))
+
+    def test_struck_percentage_is_still_a_hit(self):
+        for text in ("median spread 0.564% per bin", "median spread 0.564 % per bin",
+                     "median spread 0.564\u2009% per bin"):
+            with self.subTest(text=text):
+                self.assertTrue(self.mod.outward_hit("0.564", text))
+
+    def test_unlisted_literal_keeps_the_bare_token_test(self):
+        self.assertTrue(self.mod.outward_hit("6.865", "a median of 6.865 in the table"))
+        self.assertFalse(self.mod.outward_hit("6.865", "a median of 6.8650"))
+
+    def test_every_key_is_struck_with_its_unit_in_app_history(self):
+        hist = (HERE / "app_history.tex").read_text(encoding="utf-8")
+        for value, unit in self.mod.UNIT_REQUIRED.items():
+            with self.subTest(value=value):
+                self.assertEqual(unit, "%")
+                self.assertIn("\\dead{" + value + "\\%}", hist)
+
+
 # The mutation runner points the whole suite at a mutated copy without editing anything.
 if os.environ.get("BUILD_ALL_SCRIPT"):
     SCRIPT = Path(os.environ["BUILD_ALL_SCRIPT"])
