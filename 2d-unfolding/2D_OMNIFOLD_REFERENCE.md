@@ -280,7 +280,14 @@ Per-event Poisson(1) weight bootstrap on data + MC jointly. Invariants:
    (`E_C` against `E_S`/`E_U`/`E_ML`) before pairing it with any block.
    **Since 2026-10-11 the quoted 2D central value is `E_U`**, the LightGBM seed-42 matched universe CV
    (`uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root`, sha256 `4f5a1b6d…`); the exact-split `E_C` above is
-   a cross-check (`docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md`). The older coverage-toy
+   a cross-check (`docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md`).
+   **XR (integrated 2026-10-12):** `E_C` and `E_U` both regenerate within the 1e-8 criterion (≤ 7.1e-15 and
+   1.4e-11), but the exact-split estimator is *not* seed-invariant on production inputs: `--seed 1` moves
+   every cell, median 0.18 %, max 1.6 % (`docs/orchestration/state/next-preparation-20261009/xr-linux/REPORT.md`).
+   Its χ²/ndf is 3.565 against 3.661 (VL174, computed at integration). On production inputs (sklearn 1.8.0)
+   this contradicts the synthetic indication in the two-d-path REPORT §3.3 (sklearn 1.6.1, small data; cited
+   in its §4) that exact-split predictions do not depend on `random_state`. That report called it mechanism
+   evidence, not proof, and left the test to X1. Why the two differ is unexamined. The older coverage-toy
    launchers `sbatch_coverage_toys_MEFHC{,_200}.sh` (`--closure`, item 3)
    do pass `--seed` equal to the toy's bootstrap seed. They do not produce
    the band.

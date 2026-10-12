@@ -220,7 +220,9 @@ $\ratioTot$.  Of the 205 reported bins, \SI{\binsTen}{\percent} agree within
 uncertainties have an RMS of $\pullRMS$; against the full published covariance
 the indicative distance is $\chi^{2}/\mathrm{ndf}=\chiPaper$, a correlated
 shape difference.  That distance depends on the learner: ten LightGBM training
-seeds give 2.64--2.75, and the exact-split estimator gives $\chiPaperExact$.
+seeds give 2.64--2.75, and the exact-split estimator gives $\chiPaperExact$
+unseeded and $\chiPaperExactSeeded$ in one run with a fixed seed (its seed
+spread is unmeasured).
 The quoted central value was changed from exact-split to LightGBM after both
 comparisons were known, so that it matches the estimator of its covariance;
 the two differ by a per-bin median of \SI{0.98}{\percent}, and no block of

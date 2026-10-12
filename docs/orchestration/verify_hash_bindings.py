@@ -446,8 +446,14 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #:   ADDED   setup_salloc_env.sh                                                                 ea3c6998
 #: Power-tested before the bump: one flipped hex digit in each binding's receipt gives MISMATCH, rc 1. Delta and
 #: controls: docs/orchestration/state/next-preparation-20261009/xr-sb1-integration/logs/binding-delta.txt.
-RECEIPT_BINDING_COUNT = 148
-RECEIPT_BINDING_SHA256 = "1b610bb358810abd951d01ee1c6779259e4c6f80fe51913d85b556968c318f4f"
+#: 148 -> 149, digest 1b610bb3 -> 6a3787ea (2026-10-12, the XR Linux integration, REPORT sec. 10 item 1). The
+#: admission record was recovered read-only from Perlmutter at its recorded sha256 6b7660f4 and tracked as
+#: state/next-preparation-20261009/xr-linux/results/outroot/admission.json. Enumerated before the constant moved
+#: (gate run with and without the file on the integration tree): one ADDED, nothing removed or repointed, OK:
+#:   ADDED   docs/orchestration/AUTHORIZATION-20261011-xr-linux.md                               0c547f6e
+#: Power-tested before the bump: one flipped hex digit in that receipt's authorization sha256 gives MISMATCH, rc 1.
+RECEIPT_BINDING_COUNT = 149
+RECEIPT_BINDING_SHA256 = "6a3787ea17b042e371908a70bc83f720300557fc9f1464ba9ddace9850215b13"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

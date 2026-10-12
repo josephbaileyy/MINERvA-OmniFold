@@ -1,0 +1,358 @@
+{
+ "admission": {
+  "path": "/pscratch/sd/j/josephrb/xr-linux-20261011/admission.json",
+  "sha256": "6b7660f44632bad13304209d17d3929bc7d5c7bed535176f70d80a27259f118d"
+ },
+ "attempt": 1,
+ "backend_expected": {
+  "classifier": "LGBMClassifier",
+  "estimator": "lgbm",
+  "iterations": 5,
+  "random_state": {
+   "regressor": 3,
+   "step1": 1,
+   "step2": 2
+  },
+  "regressor": "LGBMRegressor"
+ },
+ "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+ "driver_argv": [
+  "--omnifile",
+  "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "--mcfile",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+  "--iters",
+  "5",
+  "--use-weights",
+  "--estimator",
+  "lgbm",
+  "--seed",
+  "1",
+  "--out",
+  "/pscratch/sd/j/josephrb/xr-linux-20261011/L1/a1/XR-L1.root"
+ ],
+ "ended_utc": "2026-10-11T11:18:21.916216Z",
+ "environment": {
+  "affinity_cpus": 64,
+  "argv": [
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_run.py",
+   "--run",
+   "L1",
+   "--attempt",
+   "1",
+   "--admission",
+   "/pscratch/sd/j/josephrb/xr-linux-20261011/admission.json",
+   "--require-provenance"
+  ],
+  "cwd": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/2d-unfolding",
+  "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python",
+  "host": "nid004084",
+  "packages": {
+   "lightgbm": null,
+   "numpy": null,
+   "scikit-learn": null,
+   "scipy": null,
+   "xgboost": null
+  },
+  "python": "3.11.14",
+  "root_version": "6.28/12",
+  "slurm": {
+   "SLURMD_NODENAME": "nid004084",
+   "SLURM_CPUS_PER_TASK": "64",
+   "SLURM_JOB_ID": "59664203",
+   "SLURM_JOB_QOS": "shared",
+   "SLURM_MEM_PER_NODE": "121920"
+  },
+  "threads": {
+   "MKL_NUM_THREADS": "1",
+   "NUMEXPR_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "64",
+   "OPENBLAS_NUM_THREADS": "1",
+   "SLURM_CPUS_PER_TASK": "64"
+  },
+  "uname": [
+   "Linux",
+   "nid004084",
+   "6.4.0-150600.23.125_15.0.29-cray_shasta_c",
+   "#1 SMP Mon 21 Sep 2026 11:10:49 PDT (f9f1fdc)",
+   "x86_64"
+  ]
+ },
+ "environment_checked": {
+  "origins": {
+   "ROOT": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/__init__.py",
+   "joblib": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/joblib/__init__.py",
+   "lightgbm": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/lightgbm/__init__.py",
+   "numpy": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/__init__.py",
+   "scipy": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy/__init__.py",
+   "sklearn": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/__init__.py",
+   "threadpoolctl": "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/threadpoolctl.py"
+  },
+  "packages": {
+   "joblib": "1.5.3",
+   "lightgbm": "4.6.0",
+   "numpy": "1.26.4",
+   "scipy": "1.16.3",
+   "sklearn": "1.8.0",
+   "threadpoolctl": "3.6.0"
+  },
+  "python": "3.11.14",
+  "root": "6.28/12",
+  "runtime": {
+   "basis": "supporting record only; the estimator's threads are established by thread_plan and the fit recorder",
+   "pools": [
+    {
+     "api": "openmp",
+     "getter": "omp_get_max_threads",
+     "num_threads": 64,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libgomp.so.1.0.0"
+    },
+    {
+     "api": "blas",
+     "getter": "openblas_get_num_threads",
+     "num_threads": 1,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libopenblasp-r0.3.30.so"
+    },
+    {
+     "api": "lightgbm",
+     "getter": null,
+     "num_threads": null,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/lightgbm/lib/lib_lightgbm.so"
+    },
+    {
+     "api": "openmp",
+     "getter": "omp_get_max_threads",
+     "num_threads": 64,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scikit_learn.libs/libgomp-e985bcbb.so.1.0.0"
+    },
+    {
+     "api": "blas",
+     "getter": "scipy_openblas_get_num_threads",
+     "num_threads": 1,
+     "path": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy.libs/libscipy_openblas-b75cc656.so"
+    }
+   ],
+   "source": "/proc/self/maps"
+  }
+ },
+ "error": null,
+ "exit_code": 0,
+ "fit_counts": {
+  "classifier_fits": 10,
+  "regressor_fits": 5
+ },
+ "fits": [
+  {
+   "class": "LGBMClassifier",
+   "n_rows": 24495999,
+   "num_threads": 64,
+   "random_state": 1
+  },
+  {
+   "class": "LGBMRegressor",
+   "n_rows": 20404292,
+   "num_threads": 64,
+   "random_state": 3
+  },
+  {
+   "class": "LGBMClassifier",
+   "n_rows": 65698206,
+   "num_threads": 64,
+   "random_state": 2
+  },
+  {
+   "class": "LGBMClassifier",
+   "n_rows": 24495999,
+   "num_threads": 64,
+   "random_state": 1
+  },
+  {
+   "class": "LGBMRegressor",
+   "n_rows": 20404292,
+   "num_threads": 64,
+   "random_state": 3
+  },
+  {
+   "class": "LGBMClassifier",
+   "n_rows": 65698206,
+   "num_threads": 64,
+   "random_state": 2
+  },
+  {
+   "class": "LGBMClassifier",
+   "n_rows": 24495999,
+   "num_threads": 64,
+   "random_state": 1
+  },
+  {
+   "class": "LGBMRegressor",
+   "n_rows": 20404292,
+   "num_threads": 64,
+   "random_state": 3
+  },
+  {
+   "class": "LGBMClassifier",
+   "n_rows": 65698206,
+   "num_threads": 64,
+   "random_state": 2
+  },
+  {
+   "class": "LGBMClassifier",
+   "n_rows": 24495999,
+   "num_threads": 64,
+   "random_state": 1
+  },
+  {
+   "class": "LGBMRegressor",
+   "n_rows": 20404292,
+   "num_threads": 64,
+   "random_state": 3
+  },
+  {
+   "class": "LGBMClassifier",
+   "n_rows": 65698206,
+   "num_threads": 64,
+   "random_state": 2
+  },
+  {
+   "class": "LGBMClassifier",
+   "n_rows": 24495999,
+   "num_threads": 64,
+   "random_state": 1
+  },
+  {
+   "class": "LGBMRegressor",
+   "n_rows": 20404292,
+   "num_threads": 64,
+   "random_state": 3
+  },
+  {
+   "class": "LGBMClassifier",
+   "n_rows": 65698206,
+   "num_threads": 64,
+   "random_state": 2
+  }
+ ],
+ "identity": {
+  "executed": [
+   {
+    "git_blob": "39976fa4e3c0032a85235b8d9194245e08bf7bfd",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_run.py",
+    "relpath": "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_run.py",
+    "sha256": "e8c7ca64e617cc331d9ea451c3911a2f01cbdd5c1ba34c76a77f4b46656715df"
+   },
+   {
+    "git_blob": "6509b94a5f324ee5edcc44e539b7b5a0ef290151",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
+    "relpath": "2d-unfolding/uq/coverage_fixed_truth/n2/__init__.py",
+    "sha256": "65c577a805df88013bfdd72aee63bfe20d23ea460116ae5f6254e71bbaaff9ef"
+   },
+   {
+    "git_blob": "1ea941f390bb3ce36925a9e8f2fbad675d88cada",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+    "relpath": "2d-unfolding/uq/coverage_fixed_truth/n2/execution.py",
+    "sha256": "f35dacc690313a77af13e8abbb8377a0e0f9a5970167cbd51d782437ba597856"
+   },
+   {
+    "git_blob": "5966663bfe88809fd245d4dd2edb472eb6514480",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/unbinned_unfolding/python/omnifold.py",
+    "relpath": "unbinned_unfolding/python/omnifold.py",
+    "sha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+   },
+   {
+    "git_blob": "e19aeb6d3c242a21a67fa1b4e4573ddf72729206",
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f/2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "relpath": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+    "sha256": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933"
+   }
+  ],
+  "git": {
+   "commit": "92386d3fe23f5f9c401ceb779e8a572cfba4ed78",
+   "mismatched": [],
+   "status": "ok"
+  },
+  "guard": {
+   "allowed": [
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f"
+   ],
+   "depth": 0,
+   "expect_root": "/pscratch/sd/j/josephrb/MINERvA-OmniFold-xrl-92386d3f",
+   "installed": true,
+   "propagation": "armed"
+  },
+  "strict": true
+ },
+ "inputs_end": {
+  "mcfile": {
+   "ino": 882724771874215681,
+   "mtime_ns": 1777003503000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "size": 5143
+  },
+  "omnifile": {
+   "ino": 6874571285,
+   "mtime_ns": 1779094334000000000,
+   "path": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+   "size": 2144008221
+  }
+ },
+ "inputs_start": {
+  "mcfile": {
+   "ino": 882724771874215681,
+   "mtime_ns": 1777003503000000000,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "size": 5143
+  },
+  "omnifile": {
+   "ino": 6874571285,
+   "mtime_ns": 1779094334000000000,
+   "path": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+   "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "size": 2144008221
+  }
+ },
+ "kind": "lgbm",
+ "launches": [],
+ "output": {
+  "bytes": 60696,
+  "n_reported": 205,
+  "params": {
+   "dataPOT": 1.057394261158926e+21,
+   "fluxIntegral_cm2_per_POT": 8.740680727591705e-07,
+   "fluxIntegral_m2_per_POT": 0.008740680727591705,
+   "mcPOT": 4.978198462880827e+21,
+   "nIterations": 5.0,
+   "nNucleons": 3.2352943296224835e+30,
+   "potScale": 0.21240500334472884
+  },
+  "path": "/pscratch/sd/j/josephrb/xr-linux-20261011/L1/a1/XR-L1.root",
+  "runConfig": "{\"bkg_mode\": \"purity\", \"bootstrap_seed\": null, \"bootstrap_streams\": \"both\", \"closure\": false, \"closure_alt_universe\": null, \"closure_hidden_dpt\": false, \"closure_hidden_dpt_amplitude\": 0.3, \"closure_hidden_dpt_center\": 0.1, \"closure_hidden_dpt_sigma\": 0.05, \"closure_reweight\": null, \"closure_reweight_alpha\": 0.1, \"closure_reweight_amplitude\": 0.2, \"closure_reweight_pt0\": 0.4, \"closure_reweight_pz_ref\": 5.0, \"closure_reweight_sigma\": 0.1, \"device\": \"cpu\", \"estimator\": \"lgbm\", \"flux_hist\": \"pTmu_reweightedflux_integrated\", \"flux_universe_file\": \"baseline_flux/flux_integral_universes_MEFHC.root\", \"iters\": 5, \"mcfile\": \"/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root\", \"omnifile\": \"/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root\", \"out\": \"/pscratch/sd/j/josephrb/xr-linux-20261011/L1/a1/XR-L1.root\", \"seed\": 1, \"universe\": null, \"use_weights\": true, \"verbose\": false}",
+  "sha256": "e472fa627529e55d4f04a09270f7c3dd647a63dff39049d514590117c824a1d9"
+ },
+ "predicts": {
+  "calls": 15,
+  "num_threads": [
+   64
+  ]
+ },
+ "run": "L1",
+ "schema": "xr-receipt/2",
+ "started_utc": "2026-10-11T11:04:24.217600Z",
+ "status": "complete",
+ "threads": {
+  "LOKY_MAX_CPU_COUNT": null,
+  "OMP_NUM_THREADS": "64",
+  "affinity": 64,
+  "exact_estimator_basis": "sklearn's exact GradientBoosting{Classifier,Regressor} take no thread parameter and build their trees serially, so the exact runs train on one thread",
+  "exact_estimator_threads": 1,
+  "joblib_cpu_count_logical": 64,
+  "joblib_cpu_count_physical": 64,
+  "kind_cpus": 64,
+  "kind_omp_threads": 64,
+  "lgbm_num_threads": 64,
+  "os_cpu_count": 256,
+  "platform": "linux"
+ },
+ "wall_s": 884.5047158939997
+}

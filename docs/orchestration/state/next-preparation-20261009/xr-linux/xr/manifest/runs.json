@@ -1,0 +1,351 @@
+{
+ "schema": "xr-runs/4",
+ "outroot": "/pscratch/sd/j/josephrb/xr-linux-20261011",
+ "outroot_note": "Frozen, independent of the checkout's HEAD. xr_admit.py draft creates it exclusively (one admission per package) and writes admission.json inside it; xr_run.py refuses an admission naming another outroot. Earlier outroots (prior.grants) are refused.",
+ "amendment": {
+  "authorization": "docs/orchestration/AUTHORIZATION-20261011-xr-linux.md",
+  "date": "2026-10-11",
+  "job_name_prefix": "xrl",
+  "cumulative_since": "2026-10-10",
+  "note": "This amendment's jobs are named xrl_<RUN>_a<N>; its attempt caps count only them. sacct is read from the first grant's date, so every earlier grant's jobs stay in the cumulative ledger and in every planned ceiling."
+ },
+ "prior": {
+  "grants": [
+   {
+    "authorization": "docs/orchestration/AUTHORIZATION-20261010-xr.md",
+    "package_commit": "06eae0fede3508419f235f8cbe61954b33de8497",
+    "outroot": "/pscratch/sd/j/josephrb/xr-two-d-followup-20261010",
+    "job_name_prefix": "xr",
+    "jobs": {
+     "59648608": "X0",
+     "59648610": "X0p",
+     "59648611": "X1",
+     "59648616": "L0",
+     "59648617": "L1"
+    },
+    "note": "All five refused at start (exit 3) by the TRES defect; two-d-followup REPORT B7."
+   },
+   {
+    "authorization": "docs/orchestration/AUTHORIZATION-20261011-xr-recovery.md",
+    "package_commit": "07428e5dec9fecd2e1148d8a2bdabc139a35138f",
+    "outroot": "/pscratch/sd/j/josephrb/xr-recovery-20261011",
+    "job_name_prefix": "xrr",
+    "jobs": {
+     "59655414": "PF"
+    },
+    "note": "The recovery preflight: FAILED at 74 s (threadpoolctl -> /sbin/ldconfig refused by the OI-136 guard); xr-recovery REPORT 6."
+   }
+  ],
+  "charged_node_h_recorded": 0.002313368055555556,
+  "note": "(19+19+7) s x 12/256 + (7+4) s x 64/256 + 74 s x 12/256 = 2132/921600 node-h, recomputed from sacct by every ledger; it must equal this value."
+ },
+ "release": {
+  "preflight": "PF",
+  "first": "L0",
+  "note": "next-attempt refuses every run until PF has passed, and every run but PF and L0 until L0 has a complete, comparable receipt."
+ },
+ "window": {
+  "stop_after_hours_from_first_submission": 72,
+  "first_submission_utc": null,
+  "note": "The 72-h window starts at the first preflight submission of this amendment (submissions.jsonl). first_submission_utc stays null in this package; a repaired package under the same amendment sets it to the first preflight's submission time, so a repair never restarts the window."
+ },
+ "preflight": {
+  "fixture": {
+   "maker": "docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/make_fixture_omnifile.py",
+   "maker_digest": "6a76ccd13dcf995688bb32fd0f3c29c060da84fcd3c4a494a843a274e02853d3",
+   "rows": 3000,
+   "extra": 4,
+   "seed": 20261010,
+   "repeat": "L0",
+   "note": "SB1's synthetic omnifile writer (frozen SB1 package, executed from verified bytes, not edited), at the size the package tests use. The fixture is written inside PF/a<N>/fixture/; tiny synthetic fits on it are the preflight's fit-path exercise and never a scientific output."
+  }
+ },
+ "environment": {
+  "note": "Measured on login23 2026-10-10T21:40Z after sourcing the canonical checkout's setup_salloc_env.sh (sha256 ea3c6998...). xr_run.py refuses (exit 6) before any fit if the interpreter, ROOT or a package version differs; module origins and a child-free record of the loaded OpenMP/BLAS libraries are recorded. nested_setup paths are relative to the setup script's directory and are hashed into the admission; draft and verify refuse if one is missing or changed.",
+  "python": "3.11.14",
+  "root": "6.28/12",
+  "packages": {
+   "numpy": "1.26.4",
+   "sklearn": "1.8.0",
+   "lightgbm": "4.6.0",
+   "joblib": "1.5.3",
+   "threadpoolctl": "3.6.0",
+   "scipy": "1.16.3"
+  },
+  "nested_setup": [
+   "unbinned_unfolding/build/setup.sh",
+   "MINERvA101/opt/bin/setup.sh",
+   "MINERvA101/opt/bin/setup_MAT.sh",
+   "MINERvA101/opt/bin/setup_MAT-MINERvA.sh",
+   "MINERvA101/opt/bin/setup_UnfoldUtils.sh"
+  ]
+ },
+ "note": "Frozen before submission. xr_run.py executes exactly these argv templates; {omnifile}, {mcfile} and {out} are the only substitutions, from the inputs below and the admitted outroot. Two-d-path REPORT section 10 defines the runs.",
+ "criterion": {
+  "max_abs_rel_diff": 1e-08,
+  "functionals": "every reported cell (the reference E_C's hXSec2D > 0: 205 paper GlobalIDs, references.json) and the area-weighted integral over them",
+  "cell_identity": "the output's hXSec2D > 0 GlobalID set must equal the reference's; otherwise the comparison is INCONCLUSIVE (cell mismatch), never a pass"
+ },
+ "inputs": {
+  "omnifile": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+   "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "size": 2144008221,
+   "provenance": "verified CFS copy (mode 0440) of /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root, made 2026-10-10T20:12:53Z; equal to B populations.tsv 43f8cc16"
+  },
+  "mcfile": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "size": 5143,
+   "provenance": "the flux file both central launchers pass; read in place (not copied: only the CV omnifile copy is authorized)"
+  }
+ },
+ "kinds": {
+  "exact": {
+   "qos": "shared",
+   "constraint": "cpu",
+   "cpus_per_task": 12,
+   "mem_mb": 22860,
+   "time": "30:00:00",
+   "time_limit_s_max": 108000,
+   "billing_max": 12,
+   "omp_threads": 12,
+   "max_attempts_total": 4,
+   "ceiling_node_h_per_attempt": 1.40625
+  },
+  "lgbm": {
+   "qos": "shared",
+   "constraint": "cpu",
+   "cpus_per_task": 64,
+   "mem_mb": 121920,
+   "time": "01:00:00",
+   "time_limit_s_max": 3600,
+   "billing_max": 64,
+   "omp_threads": 64,
+   "max_attempts_total": 3,
+   "ceiling_node_h_per_attempt": 0.25
+  },
+  "preflight": {
+   "qos": "shared",
+   "constraint": "cpu",
+   "cpus_per_task": 12,
+   "mem_mb": 22860,
+   "time": "00:05:00",
+   "time_limit_s_max": 300,
+   "billing_max": 12,
+   "omp_threads": 12,
+   "max_attempts_total": 2,
+   "ceiling_node_h_per_attempt": 0.00390625
+  }
+ },
+ "cap_node_h": 6.4,
+ "ceiling_node_h_total": 6.385125868055556,
+ "ceiling_note": "prior 0.002313368055555556 + preflight 2 x 12/256 x 5 min (0.0078125) + exact 4 x 30 h x 12/256 (5.625) + lgbm 3 x 1 h x 64/256 (0.75)",
+ "stop_after_hours_from_first_submission": 72,
+ "runs": {
+  "PF": {
+   "kind": "preflight",
+   "preflight_of": [
+    "X0",
+    "X0p",
+    "X1",
+    "L0",
+    "L1"
+   ],
+   "note": "On the production inputs: the allocation check, admission verification, setup, guard, the helper and every driver loaded from verified bytes, both inputs hashed, the environment check (child-free), the thread plan and the input recheck, with no fit. Then the five configurations end to end on the synthetic fixture (fits and predictions, L0 twice), the comparator both ways, the refusal controls, and the job script's controls; then preflight-receipt.json (xr-preflight-receipt/2) and exit."
+  },
+  "X0": {
+   "kind": "exact",
+   "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+   "driver_digest": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+   "argv": [
+    "--omnifile",
+    "{omnifile}",
+    "--mcfile",
+    "{mcfile}",
+    "--iters",
+    "5",
+    "--use-weights",
+    "--out",
+    "{out}"
+   ],
+   "backend": {
+    "estimator": "exact",
+    "classifier": "GradientBoostingClassifier",
+    "regressor": "GradientBoostingRegressor",
+    "random_state": {
+     "step1": null,
+     "step2": null,
+     "regressor": null
+    },
+    "iterations": 5
+   }
+  },
+  "X0p": {
+   "kind": "exact",
+   "driver": "docs/orchestration/state/next-preparation-20261009/two-d-followup/xr/record/unfold_2d_omnifold_unbinned_d1bc8813.py.record",
+   "driver_digest": "447288e2c61d30cdd46c88077093ec0d78ac08ae63144bb2fe57525e7144ea34",
+   "driver_git_blob_at_d1bc8813": "0f87330b3fe6e61d8922fafaefd0c17165f752b1",
+   "argv": [
+    "--omnifile",
+    "{omnifile}",
+    "--mcfile",
+    "{mcfile}",
+    "--iters",
+    "5",
+    "--use-weights",
+    "--out",
+    "{out}"
+   ],
+   "backend": {
+    "estimator": "exact",
+    "classifier": "GradientBoostingClassifier",
+    "regressor": "GradientBoostingRegressor",
+    "random_state": {
+     "step1": null,
+     "step2": null,
+     "regressor": null
+    },
+    "iterations": 5
+   }
+  },
+  "X1": {
+   "kind": "exact",
+   "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+   "driver_digest": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+   "argv": [
+    "--omnifile",
+    "{omnifile}",
+    "--mcfile",
+    "{mcfile}",
+    "--iters",
+    "5",
+    "--use-weights",
+    "--seed",
+    "1",
+    "--out",
+    "{out}"
+   ],
+   "backend": {
+    "estimator": "exact",
+    "classifier": "GradientBoostingClassifier",
+    "regressor": "GradientBoostingRegressor",
+    "random_state": {
+     "step1": 1,
+     "step2": 2,
+     "regressor": 3
+    },
+    "iterations": 5
+   }
+  },
+  "L0": {
+   "kind": "lgbm",
+   "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+   "driver_digest": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+   "argv": [
+    "--omnifile",
+    "{omnifile}",
+    "--mcfile",
+    "{mcfile}",
+    "--iters",
+    "5",
+    "--use-weights",
+    "--estimator",
+    "lgbm",
+    "--seed",
+    "42",
+    "--out",
+    "{out}"
+   ],
+   "backend": {
+    "estimator": "lgbm",
+    "classifier": "LGBMClassifier",
+    "regressor": "LGBMRegressor",
+    "random_state": {
+     "step1": 42,
+     "step2": 43,
+     "regressor": 44
+    },
+    "iterations": 5
+   }
+  },
+  "L1": {
+   "kind": "lgbm",
+   "driver": "2d-unfolding/unfold_2d_omnifold_unbinned.py",
+   "driver_digest": "3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933",
+   "argv": [
+    "--omnifile",
+    "{omnifile}",
+    "--mcfile",
+    "{mcfile}",
+    "--iters",
+    "5",
+    "--use-weights",
+    "--estimator",
+    "lgbm",
+    "--seed",
+    "1",
+    "--out",
+    "{out}"
+   ],
+   "backend": {
+    "estimator": "lgbm",
+    "classifier": "LGBMClassifier",
+    "regressor": "LGBMRegressor",
+    "random_state": {
+     "step1": 1,
+     "step2": 2,
+     "regressor": 3
+    },
+    "iterations": 5
+   }
+  }
+ },
+ "comparisons": [
+  {
+   "id": "X0_vs_E_C",
+   "new": "X0",
+   "ref": "E_C",
+   "question": "today's driver regenerates the quoted exact central"
+  },
+  {
+   "id": "X0p_vs_E_C",
+   "new": "X0p",
+   "ref": "E_C",
+   "question": "the d1bc8813 driver (with today's helper) regenerates the quoted exact central"
+  },
+  {
+   "id": "X1_vs_X0",
+   "new": "X1",
+   "ref": "X0",
+   "question": "one-seed P09b: random_state 1/2/3 against random_state=None, today's driver"
+  },
+  {
+   "id": "L0_vs_CV42",
+   "new": "L0",
+   "ref": "CV42",
+   "question": "a CV-file seed-42 run reproduces the seed-42 realization of the adopted sweep's CV"
+  },
+  {
+   "id": "L0_vs_PN_CV",
+   "new": "L0",
+   "ref": "PN_CV",
+   "question": "the same against the July background-aware sweep's CV"
+  },
+  {
+   "id": "L1_vs_SEED1",
+   "new": "L1",
+   "ref": "SEED1",
+   "question": "a seed-1 run reproduces the seedscan seed-1 central"
+  }
+ ],
+ "controls": [
+  {
+   "id": "NC_X0_vs_CV42",
+   "new": "X0",
+   "ref": "CV42",
+   "expect": "differ",
+   "why": "different estimators (exact vs LightGBM; median 0.99 % per bin): the comparator must report FAIL here, or it is not discriminating"
+  }
+ ]
+}
