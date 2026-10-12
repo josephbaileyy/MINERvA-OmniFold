@@ -6,7 +6,8 @@
 % technical details, extended-fiducial study, and the PET (diagnostic) record.
 %
 % DRAFT STATE: \pubhold{...} marks the pending deposit identifier and access
-% route recorded in docs/publication/submission/PACKAGE-MANIFEST-20261006.md.
+% route recorded in docs/publication/submission/PACKAGE-MANIFEST-20261006.md,
+% and (2026-10-11) the funding acknowledgments still to be supplied by the authors.
 % Do not submit a build that renders any \pubhold.
 % ====================================================================
 \documentclass[aps,prd,reprint,superscriptaddress,nofootinbib,floatfix,longbibliography]{revtex4-2}
@@ -59,7 +60,7 @@ background-inclusive tests and uncertainty studies expose background-treatment,
 regularization, coverage, and estimator-seed limitations, and the measured model
 dependence prevents a qualified five-dimensional measurement with total
 uncertainties at useful precision.  Generator tests, calibrated with
-pseudo-experiments that rerun the full analysis chain under a declared nuisance
+pseudo-experiments that rerun the full analysis chain under a stated nuisance
 model, reject all five tested predictions (MINERvA Tune~v1, GENIE~2.12.10 with
 and without Valencia two-particle--two-hole contributions, NuWro~21.09, and
 GiBUU~2019) in total and in shape at the 5\% familywise level.  These
@@ -75,7 +76,17 @@ calorimetric recoil-response uncertainty and unresolved fine-grid convergence.
 
 \begin{acknowledgments}
 The authors thank the MINERvA Collaboration for making their data, simulated
-data, and analysis tools available to the community~\cite{MINERvA:OpenData,MINERvA:2013zvz}.
+data, and analysis tools available to the community~\cite{MINERvA:OpenData,MINERvA:2013zvz},
+and the authors of the MINERvA Analysis Toolkit and the MINERvA-101
+cross-section framework on which this analysis builds.  We thank Callum
+Wilkinson for connecting us with this dataset and for many helpful discussions,
+and Kevin McFarland for suggesting a detector-response-mismatch closure
+targeting correlations among the reconstructed hadronic observables.  This
+research used resources of the National Energy Research Scientific Computing
+Center (NERSC), a U.S.\ Department of Energy Office of Science User Facility,
+under project m3246.  \pubhold{funding and grant acknowledgments}
+% TODO(Joseph/Ben): grant numbers and funding sources; the note's acknowledgments (main_note.tex) list none.
+% NERSC, MAT/MINERvA-101, Wilkinson and McFarland: copied from the note's acknowledgments, 2026-10-11.
 The analysis code, statistical procedures, computing campaigns, independent
 recomputations and reviews, figures, and manuscript drafts were produced with
 substantial assistance from AI language-model tools, used through the Claude
@@ -106,36 +117,25 @@ generated or edited by a generative-AI image tool.  AI tools are not authors.  T
 
 The input data and simulation are the MINERvA open-data AnaTuples, released under
 CC0~\cite{MINERvA:OpenData}; this analysis used an earlier production of that
-release. The local candidate described here carries their file names and
-sizes; a separate repository manifest now records SHA256 checksums for all
-2,374 inventoried inputs~\cite{AnaTuplePreservation2026}. The dated
-preservation record verifies internal copies of the data, flux and parameter
-files; the simulation AnaTuples are identified by hash but not copied there.
-A local release candidate of about \SI{16}{MB}~\cite{ReleaseCandidate2026}
-lets a reader, with numpy, scipy, and matplotlib
-only, recompute every $p$ value, decision, robustness label, and power figure of the
-joint tests, the lost-seed resolution, the coarse-projection comparison, and the
-fine-grid $L_{2}$ ratios of condition~(i); regenerate Figs.~\ref{fig:validation}--\ref{fig:joint-nulls}; and recompute the
-numbers quoted from Figs.~\ref{fig:validation}--\ref{fig:generator-context}.  It
-contains the per-pseudo-experiment cell values after the declared nuisance terms,
-their seeds, the predictions, the test domains, the variant shifts, the metric,
-the observed data vector, the arrays behind Figs.~\ref{fig:validation}--\ref{fig:generator-context},
-and the digest of every source product.  A replay of the packaged files from an
-empty directory reproduces every recorded value and every checked figure number;
-an earlier version of the release was also replayed by an independent reader.  The remaining quoted numbers (the
-two-dimensional uncertainty and coverage figures, the closure and bias studies,
-the low-recoil comparisons, the recoil-response sensitivity, the proxy
-convergence rate of condition~(i), and the covariance-status measurements) are not
-recomputable from this release.  The multiplier scan of Sec.~\ref{sec:joint} is
-recomputable from the released sufficient inputs with the scan code of
-Ref.~\cite{JointTestKappa2026}, but it is not part of the release's own
-verification.
-Extraction from the pseudo-experiment products, which are archived
-(\SI{2.3}{GB}), and the event-level processing are not reproducible from it
-either; they need the archived products and the open-data AnaTuples together
-with the generator samples produced for this analysis.
+release, whose 2,374 inventoried input files are identified by SHA256
+checksum~\cite{AnaTuplePreservation2026}.  A release candidate of about
+\SI{16}{MB}~\cite{ReleaseCandidate2026} lets a reader, with numpy, scipy, and
+matplotlib only, recompute every $p$ value, decision, robustness label, and power
+figure of the joint tests, the lost-seed resolution, the coarse-projection
+comparison, and the fine-grid $L_{2}$ ratios of condition~(i); regenerate
+Figs.~\ref{fig:validation}--\ref{fig:joint-nulls}; and recompute the numbers
+quoted from Figs.~\ref{fig:validation}--\ref{fig:generator-context}.  A replay
+of the packaged files from an empty directory reproduces every recorded value
+and every checked figure number.  The other quoted numbers are not
+recomputable from this release; they and the event-level processing require the
+archived analysis products, the open-data AnaTuples, and the generator samples
+produced for this analysis; the analysis note's release
+appendix~\cite{AnalysisNote2026} states what each part of the release does and
+does not reproduce.
 \pubhold{deposit identifier and access route, after the separately authorized
 release decision.}
+% 2026-10-11: shortened; the multiplier-scan scope, the 2.3 GB product archive, the earlier independent replay, the
+% preservation-copy scope and the list of non-recomputable numbers moved to the note, app_release.tex (app:release-scope).
 % Source: docs/publication/release/RC7-README.md (RC7: the figure code that draws Figs. 1-3 as printed; data as RC6),
 % docs/publication/release/RC6-README.md and docs/publication/corrections-20261008/ (RC6 identity, empty-
 % directory verification; RC5 superseded); RC1-REPLAY-RECEIPT-20261006.md (the earlier independent empty-directory replay, of RC1);

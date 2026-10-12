@@ -33,11 +33,11 @@ finite hybrid hypothesis and a reporting statistic; it does not turn
 OmniFold's event-level training into binned unfolding.
 
 Two statistics are formed from the unfolded cell values $F$ and the
-prediction $\mu_{G}$: a total statistic $T_{\mathrm{tot}}=r^{\top}\mathcal{W}^{-1}r$
+prediction $\mu_{G}$: a total statistic $T_{\mathrm{tot}}=r^{\top}\Sigma^{-1}r$
 with $r=F-\mu_{G}$, and a shape statistic $T_{\mathrm{sh}}$ of the same form
 on the normalized cell fractions, with the normalization Jacobian applied to
-$\mathcal{W}$ and one cell dropped. The metric
-$\mathcal{W}=V+\mathrm{diag}\,\mathrm{Var}(\mu_{G})$ adds the prediction's own
+$\Sigma$ and one cell dropped. The metric
+$\Sigma=V+\mathrm{diag}\,\mathrm{Var}(\mu_{G})$ adds the prediction's own
 finite-sample variance to $V$, a Ledoit--Wolf-shrunk
 covariance~\cite{LedoitWolf:2004} of \jtVn{} pilot pseudo-experiments at the
 Tune~v1 null. The metric defines how hypotheses are compared and so affects
@@ -71,7 +71,7 @@ of a test is $(k+1)/(B+1)$, where $k$ of $B$ null pseudo-experiments reach the
 observed statistic; it is never zero. The \emph{claim} $p$ value is the largest
 over declared variants that move the null by an upper bound on the
 simulation-size difference between the pseudo-experiments and the data unfold
-(condition~(iv) below) and by $\pm\jtMoneKappa\,\delta_{\mathrm{M1}}$
+(condition~(iv) below) and by $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$
 (condition~(i)). The external nulls are strongly non-central, with
 non-centralities $\lambda$ of \jtLambdaMin{}--\jtLambdaMax{} in these units,
 because the calibration reproduces the estimator's pull toward its prior
@@ -121,11 +121,11 @@ The frozen design takes the step in a proxy of the test metric to shrink by
 \jtMoneWnormMin--\jtMoneWnormMax{} per halving, a design-review value whose
 calculation is not recorded. If it kept shrinking geometrically at that rate,
 the residual would be about one to three times the last step,
-$\delta_{\mathrm{M1}}$ (the change of the noise-free unfolded result when the
+$\delta_{\mathrm{fine}}$ (the change of the noise-free unfolded result when the
 null truth is refined from the twofold-merged grid to the fine grid). This sets
-the claim variants at $\pm\jtMoneKappa\,\delta_{\mathrm{M1}}$, the central
+the claim variants at $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$, the central
 extrapolated estimate, and the report-only robustness check at
-$\pm\jtMoneKappaRobust\,\delta_{\mathrm{M1}}$. The extrapolation assumes
+$\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$. The extrapolation assumes
 geometric convergence; the measured $L_{2}$ ratios also allow slower rates and
 larger residuals. Measured before any observed statistic, the claim variants
 move the external nulls by \jtMoneClaimSdMin--\jtMoneClaimSdMax{} null
@@ -133,8 +133,8 @@ standard deviations and the robustness variants by
 \jtMoneRobSdMin--\jtMoneRobSdMax{}. For the hybrid null as simulated the
 residual plays no role; the variants carry the rejections over to $G$ itself
 only if replacing the Tune~v1's shape below the fine grid by $G$'s moves the
-noise-free unfolded result by no more than $\pm\jtMoneKappa\,\delta_{\mathrm{M1}}$
-along $\delta_{\mathrm{M1}}$. (vi) The predictions' own finite samples enter
+noise-free unfolded result by no more than $\pm\jtMoneKappa\,\delta_{\mathrm{fine}}$
+along $\delta_{\mathrm{fine}}$. (vi) The predictions' own finite samples enter
 the metric as $\mathrm{diag}\,\mathrm{Var}(\mu_{G})$ and the simulated
 residuals as a drawn term.
 
@@ -171,7 +171,7 @@ this kind.
 Table~\ref{tab:joint5d} lists the ten decisions. Every test is rejected at
 familywise $\alpha=\jtAlpha$; nine have $k=0$, and NuWro's shape test has
 $k=1$. Each rejection also survives the robustness variants at
-$\pm\jtMoneKappaRobust\,\delta_{\mathrm{M1}}$, the upper end of the
+$\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$, the upper end of the
 extrapolation in condition~(i). Figure~\ref{fig:joint5d-nulls} shows each
 null's calibrated distribution with the observed statistic: the Tune~v1 null
 is centred at small values, whereas the external nulls are displaced far upward
@@ -224,9 +224,9 @@ by the estimator's pull toward its prior.
 \label{sec:joint5d-kappa}
 
 The multiplier $\kappa$ scales the last measured refinement change
-$\delta_{\mathrm{M1}}$: $\kappa=1$ means one such change, not one standard
+$\delta_{\mathrm{fine}}$: $\kappa=1$ means one such change, not one standard
 deviation or a confidence level. A report-only scan along the frozen direction
-$\delta_{\mathrm{M1}}$~\cite{JointTestKappa2026} found all ten decisions to
+$\delta_{\mathrm{fine}}$~\cite{JointTestKappa2026} found all ten decisions to
 remain determinate rejections at every sampled multiplier up to 5.25 in the
 frozen ensembles. Determinate rejection is first lost between the sampled
 multipliers 5.2547 and 5.2563 (between 5.1688 and 5.1703 with the recovered
@@ -271,7 +271,7 @@ shows that each recovered draw is the lost draw, so every submitted draw has
 now been observed. No recovered draw reaches the observed statistic in any
 test, claim variant or robustness variant, so no assignment of the lost draws
 changes any decision. The closest margin is 4.6 units of $T$ below the observed
-value of 868.6 (GENIE~2.12.10 + MEC shape, $\pm\jtMoneKappaRobust\,\delta_{\mathrm{M1}}$
+value of 868.6 (GENIE~2.12.10 + MEC shape, $\pm\jtMoneKappaRobust\,\delta_{\mathrm{fine}}$
 variant); the next is 49.8 (GENIE~2.12.10 shape, same variant). With complete
 batches the frozen rule would have stopped the Tune~v1, GENIE~2.12.10,
 GENIE~2.12.10 + MEC and GiBUU nulls one batch earlier ($B=1200$), with the same
