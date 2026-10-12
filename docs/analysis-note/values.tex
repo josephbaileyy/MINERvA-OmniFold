@@ -123,17 +123,19 @@
 \newcommand{\chiPaperExact}{3.66}     % the exact-split cross-check's chi2/ndf vs paper covariance (VL172; control reproduces 3.661)
 \newcommand{\chiPaperExactSeeded}{3.57} % the same estimator with random_state 1/2/3 (XR run X1): 3.565, VL174,
                                        % docs/orchestration/receipts/xr-x1-chi2-20261012/; one seed setting, not a spread
-\newcommand{\chiCombined}{0.914}      % chi2/ndf vs combined (paper+ours) cov; chi2_lgbm42.txt (exact-split 1.472, VL172)
-\newcommand{\chiCombinedLog}{0.932}   % log-normal chi2/ndf, combined (paper+ours); chi2_lgbm42_lognormal.txt (exact-split 1.455)
-\newcommand{\chiCombinedSubStat}{4.13} % chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic); 4.128, chi2_lgbm42_substat.txt (exact-split 6.79)
+\newcommand{\chiCombined}{0.994}      % chi2/ndf vs combined (paper+ours) cov, VL175 repaired covariance, state/2d-closeout/c04-repair/chi2/repaired_std.txt (0.994); was 0.914 (VL173) / exact-split 1.472 (VL172)
+\newcommand{\chiCombinedLog}{1.014}   % log-normal, VL175, c04-repair/chi2/repaired_lognormal.txt (1.014); was 0.932 (VL173)
+\newcommand{\chiCombinedSubStat}{5.80} % chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic); 5.803, VL175, c04-repair/chi2/repaired_substat.txt; was 4.128 (VL173)
 % All three recomputed 2026-07-16 (compare_to_paper_fullcov.py, flux-fix hCov_combined
 % [already incl. bootstrap] + ML). Supersede the pre-flux-fix appendix 1.699/1.688/23.96.
 
 % --- uncertainty budget ---
-\newcommand{\uqMedian}{6.87}          % our standalone combined median per-bin (%); 6.8707 with VL170 (VL172), 6.8646 with VL162
+\newcommand{\uqMedian}{6.09}          % our standalone combined median per-bin (%); 6.0898, VL175 (flux-constraint + MINOS-denominator repair,
+                                      % adopted 2026-10-12, docs/publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md;
+                                      % receipt state/2d-closeout/c04-repair/products/budget.json). Was 6.8707 (VL172), 6.8646 (VL162)
 \newcommand{\uqPaper}{6.85}           % published total median per-bin (%): 6.8525 from the full-precision ROOT release;
 % the 3-significant-figure CSV gives 6.859, the earlier printed 6.86. Producer: docs/orchestration/state/uqpaper-median-20261006/
-\newcommand{\fluxBand}{4.99}          % leading flux band (%)
+\newcommand{\fluxBand}{3.65}          % leading flux band (%); 3.6549 with MAT's nu-e+IMD constraint weights (VL175, KI 95); was 4.993 unweighted
 \newcommand{\rhoFluxMuon}{0.900}      % flux <-> muon-energy-scale correlation
 
 % --- 3D / 4D higher-dimensional ---

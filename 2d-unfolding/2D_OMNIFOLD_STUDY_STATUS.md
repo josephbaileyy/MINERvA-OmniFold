@@ -19,7 +19,7 @@ peak + a ~1-unit GBDT-estimator regularization band. Canonical uncertainty = mat
 pair case, + 1.4 % target-nucleon normalization rank-1; matches
 `MnvVertErrorBand::CalcCovMx`) with the per-universe 1/Φ flux
 normalization applied (Task #70, 2026-05-29). Our **standalone** combined
-budget is now **6.87 % median rel σ ≈ paper total 6.85 %** (6.86 % until 2026-10-06, from the rounded CSV release). Paper+OmniFold
+budget was **6.87 % median rel σ ≈ paper total 6.85 %** [superseded 2026-10-12: 6.09 %, VL175, see the banner below] (6.86 % until 2026-10-06, from the rounded CSV release). Paper+OmniFold
 combined-cov χ²/ndf = **1.472** (1.481 before the 2026-10-06 VL170 band) — but that comparison now *double-counts*
 flux (we add our ~5 % flux on top of the paper's; see χ² caveats). The
 pre-fluxfix matcorr rollup (combined χ²/ndf 1.703, flux band 1 %) and the
@@ -49,6 +49,11 @@ OmniFold in place of D'Agostini IBU.
 ---
 
 ## Headline (MEFHC 5-iter, 205 paper-reported bins; exact-GBT central, LightGBM uncertainty blocks)
+
+**Quoted 2D covariance from 2026-10-12: VL175.** It is the flux-constraint-weighted Flux band plus the MINOS
+flux-denominator fix (KI 95–96), adopted by Joseph. Its median relative budget is 6.09%, against 6.87% for
+VL172, and the combined χ²/ndf with E_U is 0.994. The record is
+`docs/publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md`.
 
 **Superseded as the quoted central value 2026-10-11.** The quoted 2D central value is now the LightGBM
 seed-42 matched universe CV (`4f5a1b6d…`). Its numbers are in `VALIDATION_LEDGER.md` VL173 (paper-cov χ²/ndf
