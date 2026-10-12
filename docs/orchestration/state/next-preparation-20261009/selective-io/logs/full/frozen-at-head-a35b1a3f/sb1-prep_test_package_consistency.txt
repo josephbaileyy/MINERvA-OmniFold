@@ -1,0 +1,15 @@
+....F..
+======================================================================
+FAIL: test_the_manifest_is_current (test_package_consistency.Plan.test_the_manifest_is_current)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_package_consistency.py", line 83, in test_the_manifest_is_current
+    self.assertEqual(r.returncode, 0, r.stdout)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : manifest or proposal OUT OF DATE
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.186s
+
+FAILED (failures=1)

@@ -1,0 +1,6 @@
+# refusal branch: run from a no-checkout worktree at d4335d3b~1 (62e555303f1a86b4c222bf6029aedc6a53905027), where the SB1 package does not exist yet
+[frozen] docs/orchestration/state/next-preparation-20261009/sb1-prep at HEAD differs from d4335d3b9bc2502002f93390f9555d07e134855f: not a frozen package any more
+# exit 2
+# usage branch
+usage: /Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/selective-io/checks/frozen_package_checks.sh {sb1|xr} [PYTHON]
+# exit 2

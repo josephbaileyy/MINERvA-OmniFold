@@ -1,0 +1,9 @@
+tree /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/wt-3892e769 head 3892e769043cddebfd58ec19e1ab1a567eb01784 driver-sha256 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933 dirty-files 0
+git diff --quiet d4335d3b HEAD on its package: identical
+git diff --quiet 07428e5d HEAD on its package: identical
+sb1-prep/test_package_consistency | rc=0 | 0s | Ran 7 tests in 0.196s OK 
+sb1-prep/test_branch_select | rc=0 | 15s | Ran 16 tests in 14.389s OK 
+sb1-prep/test_sb1_guarded | rc=0 | 30s | Ran 10 tests in 29.385s OK 
+sb1-prep/test_launch_chain | rc=0 | 71s | Ran 29 tests in 71.030s OK 
+xr manifest --check | rc=0 | 0s | 
+xr tests/test_xr.py | rc=0 | 192s | Ran 42 tests in 190.939s OK 

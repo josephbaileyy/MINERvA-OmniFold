@@ -1,0 +1,296 @@
+E...EEEFE..EEE....E....EFF.EF
+======================================================================
+ERROR: test_a_control_that_returned_a_loader_fails_nc (test_launch_chain.Chain.test_a_control_that_returned_a_loader_fails_nc)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 444, in test_a_control_that_returned_a_loader_fails_nc
+    v = self.verdict(*self.mutated("nc", receipt_edit={"J1/control_omit.json": edit}))
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 184, in mutated
+    rec = json.loads(p.read_text())
+                     ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmplwzrj9yp/mut-nc/J1/control_omit.json'
+
+======================================================================
+ERROR: test_a_guard_record_from_another_root_is_not_a_pass (test_launch_chain.Chain.test_a_guard_record_from_another_root_is_not_a_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 251, in test_a_guard_record_from_another_root_is_not_a_pass
+    recs = [json.loads(line) for line in p.read_text().splitlines()]
+                                         ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmplwzrj9yp/mut-inventory/SL/inventory.jsonl'
+
+======================================================================
+ERROR: test_a_killed_selective_arm_is_inconclusive_not_fail (test_launch_chain.Chain.test_a_killed_selective_arm_is_inconclusive_not_fail)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 451, in test_a_killed_selective_arm_is_inconclusive_not_fail
+    v = self.verdict(*self.mutated("killed", receipt_edit={"SL/receipt.json": edit}))
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 184, in mutated
+    rec = json.loads(p.read_text())
+                     ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmplwzrj9yp/mut-killed/SL/receipt.json'
+
+======================================================================
+ERROR: test_a_loader_byte_difference_fails_s1 (test_launch_chain.Chain.test_a_loader_byte_difference_fails_s1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 225, in test_a_loader_byte_difference_fails_s1
+    v = self.verdict(*self.mutated("s1", receipt_edit={"J1/selective_data.json": edit}))
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 184, in mutated
+    rec = json.loads(p.read_text())
+                     ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmplwzrj9yp/mut-s1/J1/selective_data.json'
+
+======================================================================
+ERROR: test_a_missing_receipt_is_inconclusive_not_pass (test_launch_chain.Chain.test_a_missing_receipt_is_inconclusive_not_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 229, in test_a_missing_receipt_is_inconclusive_not_pass
+    v = self.verdict(*self.mutated("missing", drop="SL/receipt.json"))
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 188, in mutated
+    (dst / drop).unlink()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 746, in unlink
+    os.unlink(self)
+    ~~~~~~~~~^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmplwzrj9yp/mut-missing/SL/receipt.json'
+
+======================================================================
+ERROR: test_a_real_difference_still_fails_when_later_trees_are_missing (test_launch_chain.Chain.test_a_real_difference_still_fails_when_later_trees_are_missing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 459, in test_a_real_difference_still_fails_when_later_trees_are_missing
+    v = self.verdict(*self.mutated("mismatch", receipt_edit={"SL/receipt.json": edit}))
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 184, in mutated
+    rec = json.loads(p.read_text())
+                     ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmplwzrj9yp/mut-mismatch/SL/receipt.json'
+
+======================================================================
+ERROR: test_a_receipt_input_stat_unlike_h0_is_not_a_pass (test_launch_chain.Chain.test_a_receipt_input_stat_unlike_h0_is_not_a_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 438, in test_a_receipt_input_stat_unlike_h0_is_not_a_pass
+    v = self.verdict(*self.mutated("rstat", receipt_edit={"C/receipt.json": edit}))
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 184, in mutated
+    rec = json.loads(p.read_text())
+                     ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmplwzrj9yp/mut-rstat/C/receipt.json'
+
+======================================================================
+ERROR: test_a_wrong_executed_digest_is_not_a_pass (test_launch_chain.Chain.test_a_wrong_executed_digest_is_not_a_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 243, in test_a_wrong_executed_digest_is_not_a_pass
+    v = self.verdict(*self.mutated("prov", receipt_edit={"SL/receipt.json": edit}))
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 184, in mutated
+    rec = json.loads(p.read_text())
+                     ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmplwzrj9yp/mut-prov/SL/receipt.json'
+
+======================================================================
+ERROR: test_an_unadmitted_executed_module_is_not_a_pass (test_launch_chain.Chain.test_an_unadmitted_executed_module_is_not_a_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 431, in test_an_unadmitted_executed_module_is_not_a_pass
+    v = self.verdict(*self.mutated("extra-mod", receipt_edit={"UL/receipt.json": edit}))
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 184, in mutated
+    rec = json.loads(p.read_text())
+                     ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmplwzrj9yp/mut-extra-mod/UL/receipt.json'
+
+======================================================================
+ERROR: test_receipts_from_different_environments_are_not_a_pass (test_launch_chain.Chain.test_receipts_from_different_environments_are_not_a_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 465, in test_receipts_from_different_environments_are_not_a_pass
+    v = self.verdict(*self.mutated("envsha", receipt_edit={"SL/receipt.json": edit}))
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 184, in mutated
+    rec = json.loads(p.read_text())
+                     ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/tmp/tmplwzrj9yp/mut-envsha/SL/receipt.json'
+
+======================================================================
+ERROR: test_the_ledger_adds_charges_and_unfinished_ceilings (test_launch_chain.Chain.test_the_ledger_adds_charges_and_unfinished_ceilings)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 266, in test_the_ledger_adds_charges_and_unfinished_ceilings
+    el = {j["opts"]["job-name"]: j["elapsed"] for j in st["jobs"].values()}
+                                 ~^^^^^^^^^^^
+KeyError: 'elapsed'
+
+======================================================================
+FAIL: test_a_mib_value_is_not_read_as_kib (test_launch_chain.Chain.test_a_mib_value_is_not_read_as_kib)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 212, in test_a_mib_value_is_not_read_as_kib
+    self.assertEqual(v["criteria"]["S3"]["verdict"], "FAIL")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'INCONCLUSIVE' != 'FAIL'
+- INCONCLUSIVE
++ FAIL
+
+
+======================================================================
+FAIL: test_slow_selective_arm_fails_s4 (test_launch_chain.Chain.test_slow_selective_arm_fails_s4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 220, in test_slow_selective_arm_fails_s4
+    self.assertEqual((v["criteria"]["S4"]["verdict"], v["overall"]), ("FAIL", "FAIL"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: ('INCONCLUSIVE', 'INCONCLUSIVE') != ('FAIL', 'FAIL')
+
+First differing element 0:
+'INCONCLUSIVE'
+'FAIL'
+
+- ('INCONCLUSIVE', 'INCONCLUSIVE')
++ ('FAIL', 'FAIL')
+
+======================================================================
+FAIL: test_the_chain_runs_and_the_verifier_passes_it (test_launch_chain.Chain.test_the_chain_runs_and_the_verifier_passes_it)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 160, in test_the_chain_runs_and_the_verifier_passes_it
+    self.assertEqual(states, {k: "COMPLETED" for k in
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                              ("sb1_H0", "sb1_UL", "sb1_SL", "sb1_J1", "sb1_C", "sb1_H1")})
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'sb1[25 chars]L': 'FAILED', 'sb1_SL': 'CANCELLED', 'sb1_J1':[53 chars]TED'} != {'sb1[25 chars]L': 'COMPLETED', 'sb1_SL': 'COMPLETED', 'sb1_J[56 chars]TED'}
+- {'sb1_C': 'CANCELLED',
+?             ^^^ ^^
+
++ {'sb1_C': 'COMPLETED',
+?             ^^^^ ^
+
+   'sb1_H0': 'COMPLETED',
+   'sb1_H1': 'COMPLETED',
+-  'sb1_J1': 'CANCELLED',
+?              ^^^ ^^
+
++  'sb1_J1': 'COMPLETED',
+?              ^^^^ ^
+
+-  'sb1_SL': 'CANCELLED',
+?              ^^^ ^^
+
++  'sb1_SL': 'COMPLETED',
+?              ^^^^ ^
+
+-  'sb1_UL': 'FAILED'}
+?             ^^^
+
++  'sb1_UL': 'COMPLETED'}
+?             ^^^^ ++
+
+
+======================================================================
+FAIL: test_too_many_bytes_read_fails_s2 (test_launch_chain.Chain.test_too_many_bytes_read_fails_s2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-selective-io-20261010/docs/orchestration/state/next-preparation-20261009/sb1-prep/tests/test_launch_chain.py", line 205, in test_too_many_bytes_read_fails_s2
+    self.assertEqual((v["criteria"]["S2"]["verdict"], v["overall"]), ("FAIL", "FAIL"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: ('INCONCLUSIVE', 'INCONCLUSIVE') != ('FAIL', 'FAIL')
+
+First differing element 0:
+'INCONCLUSIVE'
+'FAIL'
+
+- ('INCONCLUSIVE', 'INCONCLUSIVE')
++ ('FAIL', 'FAIL')
+
+----------------------------------------------------------------------
+Ran 29 tests in 39.056s
+
+FAILED (failures=4, errors=11)

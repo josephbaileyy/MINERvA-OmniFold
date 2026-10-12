@@ -14,6 +14,9 @@ Created: 2026-04-17
 """
 
 import argparse
+import contextlib
+import inspect
+import io
 import math
 from array import array
 
@@ -767,6 +770,322 @@ def collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
 
 
 # ---------------------------------------------------------------------------
+# Opt-in selective branch reading (--branch-select derived)
+# ---------------------------------------------------------------------------
+# The loaders above never call SetBranchStatus, so every GetEntry decompresses every
+# branch of the row: 470 on the universe omnifile's mc_signal_reco, 236 on
+# mc_truth_denom. With --branch-select derived, main() calls each loader through
+# call_loader(), which keeps only the branches that loader reads active while it runs.
+# The loaders themselves are unchanged. The default, --branch-select all, calls them
+# exactly as before, with every branch active.
+#
+# Ported from SB1 prototype 1
+# (docs/orchestration/state/next-preparation-20261009/sb1-prep/branch_select.py at
+# d4335d3b), which wrapped these same loaders unchanged. The SB1 benchmark measured it
+# on the real universe file (Q/sb1-run/REPORT.md §7).
+#
+# How the branch set is obtained. It is derived from the loader's own accesses: the
+# loader first runs against _DiscoveryTree, which answers its GetBranch/GetEntries
+# queries from the real tree, records every SetBranchAddress name without forwarding
+# it, and stops the loader at its first GetEntry, before any value is read.
+# expected_loader_branches() is a second, static statement of the loaders' selection
+# rules, written with the same branch-name helpers the loaders use. The two must
+# agree exactly (names and order), or the call is refused.
+#
+# How a mismatch is refused. TBranch::SetAddress is a no-op on a deactivated branch, so
+# a branch the loader reads but that was not activated would keep its initial buffer
+# value for every entry. _SelectedTree therefore refuses at the loader's
+# SetBranchAddress (a name outside the derived set, or an inactive branch), and again
+# at the first GetEntry unless the addressed, active and derived sets are identical and
+# every derived branch holds an address. Its interface is closed: any tree method other
+# than the ones the loaders use raises.
+#
+# Tree state. The caller's branch statuses, and the addresses of the branches the
+# loader sets, are restored and verified in a `finally`. The addresses matter: a loader
+# leaves its branches pointing at local buffers that Python frees when it returns, so a
+# reused, re-activated tree would be written into freed memory by its next GetEntry.
+BRANCH_SELECT_MODES = ("all", "derived")
+
+_BRANCH_WILDCARD = set("*?[]^$\\")
+
+
+class BranchSelectionError(RuntimeError):
+    """The branch selection could not be derived, applied, verified or restored."""
+
+
+class UnmodelledTreeAccess(BranchSelectionError):
+    """A loader used a tree method the selection does not model."""
+
+
+class _DiscoveryDone(Exception):
+    """Raised at the loader's first GetEntry during discovery."""
+
+
+def _branch_address_api():
+    if not hasattr(ROOT, "u2d_branch_address"):
+        ROOT.gInterpreter.Declare("""
+            #include <cstdint>
+            std::uintptr_t u2d_branch_address(TBranch* b) {
+                return b ? reinterpret_cast<std::uintptr_t>(b->GetAddress()) : 0; }
+            void u2d_restore_branch_address(TTree* t, TBranch* b, std::uintptr_t a) {
+                if (a) b->SetAddress(reinterpret_cast<void*>(a)); else t->ResetBranchAddress(b); }
+        """)
+    return ROOT
+
+
+def _branch_has_address(branch):
+    return _branch_address_api().u2d_branch_address(branch) != 0
+
+
+def tree_branch_names(tree):
+    return [b.GetName() for b in tree.GetListOfBranches()]
+
+
+def active_branch_names(tree):
+    return [n for n in tree_branch_names(tree) if tree.GetBranchStatus(n)]
+
+
+def branch_status_snapshot(tree):
+    return [(n, bool(tree.GetBranchStatus(n))) for n in tree_branch_names(tree)]
+
+
+def restore_branch_status(tree, snapshot):
+    """Put every branch status back to `snapshot` and verify it."""
+    if all(s for _, s in snapshot):
+        tree.SetBranchStatus("*", 1)
+    else:
+        tree.SetBranchStatus("*", 0)
+        for name, status in snapshot:
+            if status:
+                tree.SetBranchStatus(name, 1)
+    if branch_status_snapshot(tree) != snapshot:
+        raise BranchSelectionError(f"{tree.GetName()}: branch statuses not restored")
+
+
+def branch_address_snapshot(tree, names):
+    api = _branch_address_api()
+    return [(n, int(api.u2d_branch_address(tree.GetBranch(n)))) for n in names]
+
+
+def restore_branch_addresses(tree, snapshot):
+    """Put back the addresses `snapshot` recorded (null on a freshly opened tree)."""
+    api = _branch_address_api()
+    for name, addr in snapshot:
+        api.u2d_restore_branch_address(tree, tree.GetBranch(name), addr)
+    if branch_address_snapshot(tree, [n for n, _ in snapshot]) != snapshot:
+        raise BranchSelectionError(f"{tree.GetName()}: branch addresses not restored")
+
+
+def apply_branch_selection(tree, names):
+    """Deactivate every branch, activate exactly `names`, and verify the active set."""
+    present = set(tree_branch_names(tree))
+    bad = [n for n in names if n not in present or _BRANCH_WILDCARD & set(n)]
+    if bad:
+        raise BranchSelectionError(
+            f"{tree.GetName()}: cannot select {bad} (absent or a pattern)")
+    tree.SetBranchStatus("*", 0)
+    for n in names:
+        tree.SetBranchStatus(n, 1)
+    got = active_branch_names(tree)
+    if sorted(got) != sorted(names):
+        raise BranchSelectionError(
+            f"{tree.GetName()}: active set {sorted(got)} != selected {sorted(names)}")
+
+
+class _DiscoveryTree:
+    """Answers a loader's schema queries from `tree` and records what it would read."""
+
+    def __init__(self, tree):
+        self._tree = tree
+        self.addressed = []
+        self.stopped_at_first_entry = False
+
+    def GetBranch(self, name):
+        return self._tree.GetBranch(name)
+
+    def GetListOfBranches(self):
+        return self._tree.GetListOfBranches()
+
+    def GetName(self):
+        return self._tree.GetName()
+
+    def GetEntries(self):
+        return self._tree.GetEntries()
+
+    def SetBranchAddress(self, name, buf):          # recorded, never forwarded
+        self.addressed.append(str(name))
+        return 0
+
+    def GetEntry(self, i):
+        self.stopped_at_first_entry = True
+        raise _DiscoveryDone
+
+    def __getattr__(self, attr):
+        raise UnmodelledTreeAccess(
+            f"discovery: the loader used tree.{attr}, which is not modelled")
+
+
+class _SelectedTree:
+    """The loader's view of the real tree under a selection: refuses any unverified read."""
+
+    def __init__(self, tree, names):
+        self._tree = tree
+        self._names = tuple(names)
+        self.addressed = []
+        self.verified = False
+
+    def GetBranch(self, name):
+        return self._tree.GetBranch(name)
+
+    def GetListOfBranches(self):
+        return self._tree.GetListOfBranches()
+
+    def GetName(self):
+        return self._tree.GetName()
+
+    def GetEntries(self):
+        return self._tree.GetEntries()
+
+    def SetBranchAddress(self, name, buf):
+        if name not in self._names:
+            raise BranchSelectionError(
+                f"SetBranchAddress on {name!r}, outside the derived set "
+                f"{list(self._names)} of {self._tree.GetName()}")
+        if not self._tree.GetBranchStatus(name):
+            raise BranchSelectionError(
+                f"SetBranchAddress on inactive branch {name!r} of {self._tree.GetName()}")
+        self.addressed.append(name)
+        return self._tree.SetBranchAddress(name, buf)
+
+    def verify(self):
+        """The check that must pass before the first entry is read."""
+        tree, want = self._tree, sorted(self._names)
+        if sorted(self.addressed) != want:
+            raise BranchSelectionError(
+                f"{tree.GetName()}: addressed {sorted(self.addressed)} != derived {want}")
+        active = sorted(active_branch_names(tree))
+        if active != want:
+            raise BranchSelectionError(
+                f"{tree.GetName()}: active {active} != derived {want}")
+        missing = [n for n in want if not _branch_has_address(tree.GetBranch(n))]
+        if missing:
+            raise BranchSelectionError(f"{tree.GetName()}: no address on {missing}")
+        self.verified = True
+
+    def GetEntry(self, i):
+        self.verify()
+        self.GetEntry = self._tree.GetEntry           # verified: later reads go straight to ROOT
+        return self._tree.GetEntry(i)
+
+    def __getattr__(self, attr):
+        raise UnmodelledTreeAccess(f"the loader used tree.{attr}, which is not modelled")
+
+
+def loader_settings(func, args, kwargs):
+    """The loader's arguments by name, defaults applied, tree and histogram objects omitted."""
+    bound = inspect.signature(func).bind(None, *args, **kwargs)
+    bound.apply_defaults()
+    return {k: v for k, v in bound.arguments.items() if not k.startswith(("t_", "h_"))}
+
+
+def expected_loader_branches(loader, settings, present):
+    """The four loaders' branch-selection rules, stated apart from their access record.
+
+    `present` is the set of branch names in the tree. Branch names come from the same
+    helpers the loaders use (_universe_*_branch, _universe_kine_branches), so the
+    sanitization and naming conventions exist once.
+    """
+    uni = settings.get("universe_branch")
+
+    def lateral(kine_ctx):
+        a, b = _universe_kine_branches(uni, kine_ctx)
+        return (a, b) if (a in present and b in present) else None
+
+    if loader == "fill_data_reco_2d":
+        return ["measured", "measured_pz", "measured_pass"]
+    if loader == "fill_bkg_reco_2d":
+        kin, w = ("sim_background", "sim_background_pz"), "w_bkg"
+        if uni is not None:
+            w = _universe_bkg_branch(uni)
+            kin = lateral("bkg_tree_reco") or kin
+        return [kin[0], kin[1], "sim_background_pass", w]
+    use_w = bool(settings.get("use_weights"))
+    if loader == "collect_truth_denom_arrays":
+        kin, w = ("MC", "MC_pz"), "w_truth"
+        if use_w and uni is not None:
+            w = _universe_truth_branch(uni)
+            kin = lateral("truth_tree") or kin
+        return [kin[0], kin[1]] + ([w] if use_w else [])
+    if loader == "collect_signal_arrays_2d":
+        mc, sim, wts = ("MC", "MC_pz"), ("sim", "sim_pz"), ("w_truth", "w_reco")
+        if use_w and uni is not None:
+            wts = (_universe_truth_branch(uni), _universe_reco_branch(uni))
+            mc = lateral("reco_tree_truth") or mc
+            sim = lateral("reco_tree_reco") or sim
+        names = [mc[0], mc[1], sim[0], sim[1], "sim_pass"] + (list(wts) if use_w else [])
+        alt = settings.get("alt_universe_branch")
+        if use_w and alt is not None:
+            names += [_universe_truth_branch(alt), _universe_reco_branch(alt)]
+        return names
+    raise BranchSelectionError(f"no branch-selection rule for loader {loader!r}")
+
+
+def discover_loader_branches(func, tree, args, kwargs):
+    """Run `func` against a _DiscoveryTree; return the names it addresses, in order."""
+    proxy = _DiscoveryTree(tree)
+    with contextlib.redirect_stdout(io.StringIO()):
+        try:
+            func(proxy, *args, **kwargs)
+        except _DiscoveryDone:
+            pass
+    return proxy.addressed, proxy
+
+
+def derive_loader_branches(func, tree, args, kwargs):
+    """The access-derived branch list, refused unless it equals the static rule."""
+    names, _ = discover_loader_branches(func, tree, args, kwargs)
+    want = expected_loader_branches(func.__name__, loader_settings(func, args, kwargs),
+                                    set(tree_branch_names(tree)))
+    if names != want:
+        raise BranchSelectionError(f"{func.__name__}: accesses {names} != rule {want}")
+    if len(set(names)) != len(names):
+        raise BranchSelectionError(f"{func.__name__}: a branch is addressed twice: {names}")
+    return names
+
+
+def call_loader(func, tree, *args, branch_select="all", selection_log=None, **kwargs):
+    """Run one of the four loaders on `tree`, under the --branch-select mode.
+
+    "all" is the call main() has always made, with every branch active. "derived" runs
+    the loader with only its derived branches active and appends a record to
+    `selection_log` (a list) when one is given.
+    """
+    if branch_select == "all":
+        return func(tree, *args, **kwargs)
+    if branch_select != "derived":
+        raise BranchSelectionError(f"unknown --branch-select mode {branch_select!r}")
+    snapshot = branch_status_snapshot(tree)
+    names = derive_loader_branches(func, tree, args, kwargs)
+    addresses = branch_address_snapshot(tree, names)
+    guard = _SelectedTree(tree, names)
+    try:
+        apply_branch_selection(tree, names)
+        result = func(guard, *args, **kwargs)
+        if not guard.verified:                        # an empty tree never calls GetEntry
+            guard.verify()
+    finally:
+        restore_branch_status(tree, snapshot)
+        restore_branch_addresses(tree, addresses)
+    record = {"loader": func.__name__, "tree": tree.GetName(), "branches": names,
+              "n_branches_in_tree": len(snapshot), "verified": guard.verified}
+    print(f"[INFO] branch-select=derived: {record['tree']} read {len(names)} of "
+          f"{len(snapshot)} branches: {', '.join(names)}")
+    if selection_log is not None:
+        selection_log.append(record)
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Cross-section calculation
 # ---------------------------------------------------------------------------
 def compute_efficiency_2d(sig, pt_edges, pz_edges, truth_denom=None):
@@ -1189,6 +1508,17 @@ def main():
                           "build). For d<=2 features the host-device "
                           "transfer dominates; GPU wins at higher d. Ignored "
                           "by 'exact' and 'hist'.")
+    ap.add_argument("--branch-select", choices=BRANCH_SELECT_MODES, default="all",
+                     help="Which ROOT branches the four input loaders read. 'all' "
+                          "(default) leaves every branch active, as every earlier "
+                          "run did. 'derived' (opt-in) activates only the branches "
+                          "each loader reads, derived from its own accesses and "
+                          "cross-checked against a static rule. It refuses before any "
+                          "value is read if the active and derived sets differ, and "
+                          "restores the tree's branch statuses and addresses afterwards. "
+                          "The loaders and everything after them are unchanged. "
+                          "The selections are recorded in the output as "
+                          "'branchSelection'.")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
 
@@ -1399,24 +1729,32 @@ def main():
     hDataReco2D = make_th2d("hDataReco2D", "Data reco", pt_edges, pz_edges)
     hBkgReco2D = make_th2d("hBkgReco2D", "Background reco (POT-scaled)", pt_edges, pz_edges)
 
-    meas_pt, meas_pz = fill_data_reco_2d(
-        t_data, hDataReco2D, pt_lo, pt_hi, pz_lo, pz_hi, verbose=args.verbose)
+    # --branch-select: "all" calls each loader exactly as before; "derived" reads only
+    # the branches it uses (call_loader). The loaders' arguments are the same in both.
+    selection_log = []
+    loader_select = {"branch_select": args.branch_select, "selection_log": selection_log}
+    meas_pt, meas_pz = call_loader(
+        fill_data_reco_2d,
+        t_data, hDataReco2D, pt_lo, pt_hi, pz_lo, pz_hi, verbose=args.verbose,
+        **loader_select)
     # KNOWN_ISSUES #13: vary the genuine background per systematic universe
     # (weight + lateral kinematics). universe_branch=None (CV/non-universe) keeps
     # the pre-#13 CV behaviour byte-identical. Both the purity down-weight (via
     # hBkgReco2D) and the negweight injection (via the returned arrays) then track
     # the per-universe background.
-    bkg_reco_pt, bkg_reco_pz, bkg_reco_w = fill_bkg_reco_2d(
+    bkg_reco_pt, bkg_reco_pz, bkg_reco_w = call_loader(
+        fill_bkg_reco_2d,
         t_bkg, hBkgReco2D, pot_scale, pt_lo=pt_lo, pt_hi=pt_hi,
         pz_lo=pz_lo, pz_hi=pz_hi, verbose=args.verbose,
-        universe_branch=universe_branch)
+        universe_branch=universe_branch, **loader_select)
 
     # --- Read signal MC arrays ---
-    sig = collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
-                                    pot_scale, use_weights=args.use_weights,
-                                    verbose=args.verbose,
-                                    universe_branch=universe_branch,
-                                    alt_universe_branch=alt_universe_branch)
+    sig = call_loader(collect_signal_arrays_2d,
+                      t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
+                      pot_scale, use_weights=args.use_weights,
+                      verbose=args.verbose,
+                      universe_branch=universe_branch,
+                      alt_universe_branch=alt_universe_branch, **loader_select)
     if sig["truth_pt"].size == 0:
         raise RuntimeError("No signal events for OmniFold")
     if meas_pt.size == 0:
@@ -1429,10 +1767,11 @@ def main():
     # mc_signal_reco truth-pass subset inside compute_efficiency_2d).
     truth_denom = None
     if not args.closure and t_truth_denom is not None:
-        truth_denom = collect_truth_denom_arrays(
+        truth_denom = call_loader(
+            collect_truth_denom_arrays,
             t_truth_denom, pt_lo, pt_hi, pz_lo, pz_hi,
             pot_scale, use_weights=args.use_weights, verbose=args.verbose,
-            universe_branch=universe_branch)
+            universe_branch=universe_branch, **loader_select)
         print(f"[INFO] truth_denom events kept (in binning): "
               f"{truth_denom['truth_pt'].size}")
         print(f"[INFO]   sum(w_truth) = {truth_denom['w_truth'].sum():.6g}")
@@ -2025,6 +2364,10 @@ def main():
         ROOT.TNamed(name, value).Write()
         if name.startswith(("driver", "omnifoldHelper")):
             print(f"[INFO] {name}: {value}")
+    if args.branch_select != "all":
+        import json
+        ROOT.TNamed("branchSelection", json.dumps(
+            {"mode": args.branch_select, "loaders": selection_log}, sort_keys=True)).Write()
 
     # Histograms
     hist_list = [hDataReco2D, hBkgReco2D, hMeasSub2D, hMeasTrain2D,

@@ -1,0 +1,7 @@
+speed package at its frozen commit; tree 318d3e45db6dba2263479385bc9cdf1916549e7f driver blob e19aeb6d3c242a21a67fa1b4e4573ddf72729206; package bytes equal at merge: yes; synthetic trees rows=20000 extra 0 and 192 (smaller than the package's recorded 200k-1M rows)
+Ran 11 tests in 4.402s
+
+OK
+--- at the integration merge (798f8340), the same test:
+    raise RuntimeError(f"{DRIVER_REL} blob {actual} != pinned {pinned} at {BASE}")
+RuntimeError: 2d-unfolding/unfold_2d_omnifold_unbinned.py blob bf2d7b58ab3b039feef76b46d35a92077cef7128 != pinned e19aeb6d3c242a21a67fa1b4e4573ddf72729206 at 5ac9706a21e8a5ac8863a65fd7623d8ab8d22269
