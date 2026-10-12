@@ -297,6 +297,9 @@ inverted.
 - Setup: GENIE v3.4.2 with hA2018, hN2018, INCL++ 5.2.9.5 and Geant4 Bertini. Probes are single pi±, pi0, p and n with
   T = 0.05-2 GeV on C, O, Ar and Fe.
 - **Eq. 1 E_vis** (proton KE + meson and photon total energy, neutrons excluded) **is our E_avail construction.**
+  **CORRECTED 2026-10-11 (close-out, owner re-opened the PDF): it is not.** Eq. (1) uses total energies for π±
+  and kaons; our A uses π± kinetic energy, π⁰ total energy and no kaons (`docs/EAVAIL_DEFINITION.md`). The paper's
+  nucleon counts use a 5 MeV/nucleon threshold (30 MeV in Tables I–II). See REPORT §6.2.
 - Table 1, pi+ on 40Ar at 239 MeV, absorption (mb):
 
   | Data | hA2018 | hN2018 | INCL++ | G4 Bertini |
@@ -357,6 +360,9 @@ carbon.
 
 **Sign.** A longer formation zone means fewer reinteractions, so less omega goes to neutrons and binding and the visible
 fraction is higher.
+**CORRECTED 2026-10-11 (close-out):** this holds only channel by channel. Fewer π± absorptions into pp, fewer
+neutron-induced proton knockouts and less π± → π⁰ exchange each *lower* our A; the net sign is not determined
+(REPORT §6.2 table).
 
 ### B4. MINERvA constraints on hadronic partition
 
@@ -560,18 +566,22 @@ The table gives the change in the *prediction*. "+" raises the prediction, i.e. 
 | Larger generic DIS scale (fit to our corner) | + | + (W>1.8 is 50-73% of σ at 5-10 GeV) | + if R_ij × DIS NRB scales with it (wrong direction) | broad; high-Q2 high-p_T up (matches Ruterbories 10-25% deficit) | A1, D2 |
 | Undo the Tune v1 nonres-pion reduction | + (W 1.8-2 slice) | + | + (wrong direction for 1.4-1.8 vs untuned GENIE) | high-Q2 up (Lozano prefers it) | D1 |
 | AGKY 2021 hadronisation tune | + (more pions → more E_avail; SIS rate up) | + (SIS) | + (wrong direction; breaks CC pi+pi−) | small | B1 |
-| Weaker FSI / longer formation zone / less neutron share | **+ (migration in E_avail at fixed ω)** | **0** | 0 in rate (E_avail-shape only) | **0** | B2, B3 |
+| Weaker FSI / longer formation zone / less neutron share | **+ (migration in E_avail at fixed ω)** — *CORRECTED 2026-10-11: sign channel-dependent, net not determined (REPORT §6.2)* | **0** | 0 in rate (E_avail-shape only) | **0** | B2, B3 |
 | Flux normalisation (nu-e/IMD constrained flux −9.6%) | data up uniformly (if used) | data up uniformly | data up uniformly (wrong direction there) | uniform | A4 |
 | Detector hadronic response 3-5% (pi±, EM) | ± migration across E_avail = 0.8 and (if reco-omega) W = 1.8 | 0 | small ± | 0 | C1 |
 
 **Key reading.**
 1. The *uniform* part of the excess (about 7-15%) is degenerate with flux normalisation. It is not distinctive of
    inelastic physics, and world inclusive sigma/E data give no motivation for a 10% inelastic increase (A4).
+   *CORRECTED 2026-10-11 (close-out): σ/E limits a rate change, not a redistribution in (Q², W) or between channels at
+   fixed σ(E) (REPORT §4.2).*
 2. The *shape* part (corner/total 1.006-1.067) is the size of the 02_11b DIS change (+3%), the BYX change (+3%) and the
    E_avail response systematic (3-5% scale, which migrates events at the 0.8 GeV edge).
 3. Only the 02_11b-type re-partition (DIS up a little, RES/NRB down) has the right sign in all three regions
    simultaneously (corner +, 1.4-1.8 −, total ≈ flat or slightly −). It is already an official, H/D-constrained
    parameter set, so it is the most defensible "constrained" option.
+   *Superseded in REPORT §6.1: the first-order emulation is wrong-signed at 1.8–2.2 GeV and in the Δ bin, and is not a
+   GENIE v3 prediction.*
 4. Two independent MINERvA observations point the same way (data above GENIE at high W):
    - Mousseau (LE): high-W/low-Q2 sideband ×1.57 vs low-W ×0.94.
    - Ruterbories (ME): high-p_T True-DIS region 10-25% above Tune v1.

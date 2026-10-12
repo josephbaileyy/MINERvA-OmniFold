@@ -121,14 +121,19 @@ stay with the integration owner. Registration grants no compute, experiment, ado
 Bounded reduction study under Joseph's 2026-10-11 prompt (≤ 2 CPU core-h of reductions of existing products; no
 generation, fits, unfolding, covariance, adoption or contact). Verdict INCONCLUSIVE under the frozen rule (GO not
 reached): the corner's normalization-removed residual (+0.6% to +6.7%) is comparable to a ±4% recoil-scale shift,
-is localized in no single factor, and reverses sign inside the region. The recommendation is not to develop a new
-inelastic model from it. Grants no compute, contact or adoption authority.
+is localized in no single factor, and reverses sign inside the region. That comparability is a degeneracy: it
+neither establishes a detector cause nor excludes interaction physics, and the factor split is descriptive. The
+recommendation is not to develop a new inelastic model from it. A close-out pass (same day) corrected interpretation
+only (no number or rule changed) and added a no-run feasibility specification (§11): a species-dependent response
+study is possible only on the simulated-response side with a new event-loop pass; no official GENIE v3 prediction
+exists for the intermediate-W feature. The next decision recommended to Joseph is two independent reviews (response;
+nuclear theory/generator) before any validation. Grants no compute, contact or adoption authority.
 
 | record | path |
 |---|---|
 | frozen plan, decision rule and amendments | [`state/inelastic-high-region-20261011/PLAN.md`](state/inelastic-high-region-20261011/PLAN.md) |
-| research memo: rate/shape/coverage, decomposition, literature, ranking, costed proposal | [`state/inelastic-high-region-20261011/REPORT.md`](state/inelastic-high-region-20261011/REPORT.md) |
-| one read-only review and the correction-pass dispositions | [`state/inelastic-high-region-20261011/REVIEW.md`](state/inelastic-high-region-20261011/REVIEW.md) |
+| research memo: rate/shape/coverage, decomposition, literature, ranking, costed proposal, feasibility specification (§11) | [`state/inelastic-high-region-20261011/REPORT.md`](state/inelastic-high-region-20261011/REPORT.md) |
+| one read-only review and the correction-pass dispositions; the close-out targeted review and its correction pass | [`state/inelastic-high-region-20261011/REVIEW.md`](state/inelastic-high-region-20261011/REVIEW.md) |
 
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
