@@ -1,0 +1,204 @@
+{
+ "platform": "darwin",
+ "fork_denied_preflight": true,
+ "reserve_per_run_s": 2.5,
+ "L1": {
+  "end_to_end": {
+   "rcs": [
+    0,
+    0,
+    0,
+    3,
+    3,
+    3,
+    3,
+    3
+   ],
+   "n_ran": 3,
+   "n_refused": 5,
+   "n_reserve_records": 3,
+   "max_charged_after_any_append": 7.5
+  },
+  "lock_power_control": {
+   "lock": {
+    "ok": 3,
+    "refused": 5,
+    "charged": 6.0
+   },
+   "nolock": {
+    "ok": 8,
+    "refused": 0,
+    "charged": 16.0
+   }
+  },
+  "pass": true
+ },
+ "L2": {
+  "charged_after_crash": 2.5,
+  "unsettled": [
+   [
+    "03ead094910e4bd7a68e8d545f76022a",
+    [
+     71558,
+     "Sun Oct 11 20:26:30 2026"
+    ]
+   ]
+  ],
+  "rc_while_job_alive": 3,
+  "stderr_while_alive": "[pilot_run] REFUSED while-alive: the job of unsettled reservation(s) is still running: [('03ead094910e4bd7a68e8d545f76022a', (71558, 'Sun Oct 11 20:26:30 2026'))]",
+  "rc_after_job_exit": 3,
+  "stderr_after_exit": "[pilot_run] REFUSED after-exit: charged 0 events / 2.500 s (1 unsettled reservations at full value); request 0 / 2.500 s; caps 0 / 4",
+  "pass": true
+ },
+ "L3": {
+  "rc": 130,
+  "child_killed": true,
+  "settle": [
+   {
+    "kind": "settle",
+    "reservation_id": "de045533458b42e9aaf3565d638cb6f9",
+    "run_id": "intr",
+    "time_utc": "2026-10-12T03:26:33.176+00:00",
+    "cpu_charged_s": 2.5,
+    "events_charged": 0,
+    "rc": null,
+    "basis": "full-reservation",
+    "status": "interrupted by SIGTERM"
+   }
+  ],
+  "pass": true
+ },
+ "L4": {
+  "sh_fork": {
+   "rc": 128,
+   "child_ran": false,
+   "cpu_charged_s": 0.03,
+   "log_tail": [
+    "/bin/sh: fork: Operation not permitted"
+   ],
+   "pass": true
+  },
+  "bash_background": {
+   "rc": 128,
+   "child_ran": false,
+   "cpu_charged_s": 0.03,
+   "log_tail": [
+    "/bin/bash: fork: Operation not permitted"
+   ],
+   "pass": true
+  },
+  "python_subprocess": {
+   "rc": 1,
+   "child_ran": false,
+   "cpu_charged_s": 0.05,
+   "log_tail": [
+    "PermissionError: [Errno 1] Operation not permitted"
+   ],
+   "pass": true
+  },
+  "python_posix_spawn": {
+   "rc": 1,
+   "child_ran": false,
+   "cpu_charged_s": 0.042,
+   "log_tail": [
+    "PermissionError: [Errno 1] Operation not permitted: '/usr/bin/touch'"
+   ],
+   "pass": true
+  },
+  "python_fork": {
+   "rc": 1,
+   "child_ran": false,
+   "cpu_charged_s": 0.041,
+   "log_tail": [
+    "PermissionError: [Errno 1] Operation not permitted"
+   ],
+   "pass": true
+  },
+  "control_outside_sandbox_child_ran": {
+   "sh_fork": true,
+   "bash_background": true,
+   "python_subprocess": true,
+   "python_posix_spawn": true,
+   "python_fork": true
+  },
+  "pass": true
+ },
+ "L5": {
+  "spin": {
+   "rc": 247,
+   "timed_out": false,
+   "cpu_measured_s": 1.016,
+   "status": "killed by watchdog: CPU allotment reached",
+   "overshoot_over_ulimit_s": 0.016,
+   "pass": true
+  },
+  "spin_ignoring_SIGXCPU": {
+   "rc": 247,
+   "timed_out": false,
+   "cpu_measured_s": 1.021,
+   "status": "killed by watchdog: CPU allotment reached",
+   "overshoot_over_ulimit_s": 0.021,
+   "pass": true
+  },
+  "pass": true
+ },
+ "L6": {
+  "truncated": {
+   "rc": 3,
+   "ledger_unchanged": true,
+   "stderr": "[pilot_run] line 1: unreadable ledger record (Unterminated string starting at: line 1 column 44 (char 43))",
+   "pass": true
+  },
+  "unknown_kind": {
+   "rc": 3,
+   "ledger_unchanged": true,
+   "stderr": "[pilot_run] line 1: unknown record kind 'release'",
+   "pass": true
+  },
+  "orphan_settle": {
+   "rc": 3,
+   "ledger_unchanged": true,
+   "stderr": "[pilot_run] line 1: settlement without open reservation zz",
+   "pass": true
+  },
+  "duplicate_reserve": {
+   "rc": 3,
+   "ledger_unchanged": true,
+   "stderr": "[pilot_run] line 2: duplicate reservation a",
+   "pass": true
+  },
+  "pass": true
+ },
+ "L7": {
+  "rc_cpu": 3,
+  "rc_events": 3,
+  "pass": true
+ },
+ "L8": {
+  "cpu_s": 242.87500000000006,
+  "events": 7900,
+  "sha256": "b22d4d78e2bebe010479c91af7f294e602ba8667b4e9242c231dd921165ef4d2",
+  "unchanged": true,
+  "pass": true
+ },
+ "L9": {
+  "orphan_started": true,
+  "still_running_at_timeout": false,
+  "timeout_s": 10,
+  "last_observed_cpu_s": 0.96,
+  "next_launch_refused_while_alive": true,
+  "reservation_unsettled": true,
+  "pass": true
+ },
+ "L9b": {
+  "orphan_started": true,
+  "still_running_at_timeout": true,
+  "timeout_s": 3,
+  "last_observed_cpu_s": 3.07,
+  "next_launch_refused_while_alive": true,
+  "reservation_unsettled": true,
+  "residual_confirmed_unbounded": true,
+  "pass": true
+ },
+ "all_pass": true
+}

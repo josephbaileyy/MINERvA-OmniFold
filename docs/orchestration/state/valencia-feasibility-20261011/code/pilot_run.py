@@ -21,17 +21,30 @@ Budget is reserved before launch (repair of 2026-10-11, after review found that
   every launch until a person inspects the ledger.
 
 Aggregate CPU bound. One execution mode is supported: a single process.
-``sandbox-exec`` (macOS) denies ``process-fork``, so the job cannot create
-children, and ``ulimit -t N`` then bounds the CPU of the whole job, threads
-included, even if the launcher dies. A preflight probe must fail to fork inside
-the same profile before the job starts; on any other platform, or if the probe
-forks, the launch is refused. A job that needs children fails closed (the fork
-is denied) inside its reservation. The reservation is N plus a measured
-enforcement margin.
+``sandbox-exec`` (macOS) denies ``process-fork`` (fork, vfork and posix_spawn),
+so the job cannot create children; a preflight probe must show the fork denied
+inside the same profile, and any other platform is refused. A job that needs
+children fails closed inside its reservation. The job's CPU is then bounded in
+two layers:
 
-After the job, the measured user+sys CPU of the waited children (exact, because
-the job is one process) and the sampled events (dump lines; the full allotment
-when the count is unknown) are settled.
+1. While the launcher lives, a watchdog polls the job's CPU time (``ps``) and
+   SIGKILLs it once job CPU plus the launcher's own measured child CPU (preflight
+   and ``ps`` calls) reaches N = ``--cpu-seconds``. The poll interval shrinks as
+   the remainder shrinks, so the overshoot is at most one minimum interval on
+   every core (``WATCHDOG_MARGIN_S``). SIGKILL cannot be caught.
+2. ``ulimit -t N`` (RLIMIT_CPU) stays set. The macOS kernel enforces it only by
+   SIGXCPU: a process that ignores, catches or blocks SIGXCPU is not stopped at
+   either the soft or the hard limit (REPAIR.md, check L5 and probe P1).
+
+The reservation is N + ``WATCHDOG_MARGIN_S``. If the launcher dies, its
+reservation stays charged in full and a ``start`` record names the job; every
+later launch is refused while that job is still alive. The orphan itself is
+then bounded only by layer 2, i.e. only if it leaves SIGXCPU at its default
+action. That residual is not certified.
+
+After the job, the measured user+sys CPU of the waited children (the job is one
+process, so this is exact) and the sampled events (dump lines; the full
+allotment when the count is unknown) are settled.
 """
 
 from __future__ import annotations
@@ -53,10 +66,10 @@ from pathlib import Path
 
 CPU_CAP_S = 36_000.0
 EVENT_CAP = 10_000
-# RLIMIT_CPU is enforced by the kernel at tick granularity; tests/test_pilot_run.py
-# measures the overshoot of a spinning job (REPAIR.md, check L5). The margin is
-# reserved on top of the integer ulimit.
-RLIMIT_MARGIN_S = 1.0
+NCPU = os.cpu_count() or 1
+POLL_MIN_S, POLL_MAX_S = 0.05, 1.0
+# one minimum poll interval (plus ps latency, taken equal) on every core, and 0.5 s slack
+WATCHDOG_MARGIN_S = NCPU * 2 * POLL_MIN_S + 0.5
 SANDBOX_EXEC = "/usr/bin/sandbox-exec"
 SANDBOX_PROFILE = "(version 1)(allow default)(deny process-fork)"
 
@@ -96,8 +109,8 @@ def append_durable(ledger: Path, rec: dict) -> None:
             os.close(dfd)
 
 
-def ledger_totals(ledger: Path) -> tuple[float, int, list[str]]:
-    """Charged CPU-s and events, with the ids of unsettled reservations.
+def ledger_totals(ledger: Path) -> tuple[float, int, list[tuple[str, tuple[int, str] | None]]]:
+    """Charged CPU-s and events, with the unsettled reservations and their job (pid, start).
 
     Legacy records (no ``kind``; written before the repair) are settled runs.
     An unsettled reservation counts at its full reserved amount.
@@ -121,6 +134,11 @@ def ledger_totals(ledger: Path) -> tuple[float, int, list[str]]:
                 if rid in open_res or rid in settled:
                     raise LedgerError(f"line {n}: duplicate reservation {rid}")
                 open_res[rid] = rec
+            elif kind == "start":
+                rid = rec["reservation_id"]
+                if rid not in open_res or "_start" in open_res[rid]:
+                    raise LedgerError(f"line {n}: start record without open reservation {rid}")
+                open_res[rid]["_start"] = (int(rec["job_pid"]), str(rec["job_lstart"]))
             elif kind == "settle":
                 rid = rec["reservation_id"]
                 if rid not in open_res:
@@ -138,7 +156,7 @@ def ledger_totals(ledger: Path) -> tuple[float, int, list[str]]:
     for rec in open_res.values():
         cpu += float(rec["cpu_reserved_s"])
         events += int(rec["events_reserved"])
-    return cpu, events, sorted(open_res)
+    return cpu, events, sorted((rid, rec.get("_start")) for rid, rec in open_res.items())
 
 
 def reserve(ledger: Path, run_id: str, cpu_s: float, n_events: int, cpu_cap: float,
@@ -146,6 +164,10 @@ def reserve(ledger: Path, run_id: str, cpu_s: float, n_events: int, cpu_cap: flo
     """Append a reservation under the lock, or raise PermissionError."""
     with locked(ledger):
         used_cpu, used_events, unsettled = ledger_totals(ledger)
+        alive = [(rid, job) for rid, job in unsettled if job is not None and job_alive(*job)]
+        if alive:
+            raise PermissionError(f"REFUSED {run_id}: the job of unsettled reservation(s) is still "
+                                  f"running: {alive}")
         if used_events + n_events > event_cap or used_cpu + cpu_s > cpu_cap:
             raise PermissionError(
                 f"REFUSED {run_id}: charged {used_events} events / {used_cpu:.3f} s "
@@ -172,6 +194,34 @@ def count_events(dump: Path | None) -> int | None:
         return None
     with dump.open() as fh:
         return sum(1 for line in fh if line.strip() and not line.startswith("#"))
+
+
+def _ps(pid: int, field: str) -> str:
+    return subprocess.run(["/bin/ps", "-o", f"{field}=", "-p", str(pid)],
+                          capture_output=True, text=True).stdout.strip()
+
+
+def job_cpu(pid: int) -> float | None:
+    """CPU time of a live process from ``ps -o time`` ([[D-]H:]M:SS.cc), or None."""
+    out = _ps(pid, "time")
+    if not out:
+        return None
+    secs = 0.0
+    for part in out.replace("-", ":").split(":"):
+        secs = secs * 60 + float(part)
+    return secs
+
+
+def job_alive(pid: int, lstart: str) -> bool:
+    """The process exists and is the one recorded (same start time)."""
+    return _ps(pid, "lstart") == lstart
+
+
+def record_start(ledger: Path, res: dict, pid: int) -> None:
+    with locked(ledger):
+        append_durable(ledger, {"kind": "start", "reservation_id": res["reservation_id"],
+                                "run_id": res["run_id"], "time_utc": now(), "job_pid": pid,
+                                "job_lstart": _ps(pid, "lstart")})
 
 
 def children_cpu() -> float:
@@ -219,7 +269,7 @@ def main(argv: list[str] | None = None) -> int:
         print("[pilot_run] REFUSED: unsupported execution mode (needs macOS sandbox-exec)", file=sys.stderr)
         return 4
 
-    cpu_reserved = args.cpu_seconds + RLIMIT_MARGIN_S
+    cpu_reserved = args.cpu_seconds + WATCHDOG_MARGIN_S
     try:
         res = reserve(args.ledger, args.run_id, cpu_reserved, args.events, cpu_cap, event_cap,
                       {"cpu_ulimit_s": args.cpu_seconds, "cmd": cmd, "workdir": str(args.workdir)})
@@ -245,10 +295,25 @@ def main(argv: list[str] | None = None) -> int:
                  f"exec {SANDBOX_EXEC} -p {shlex.quote(SANDBOX_PROFILE)} {shlex.join(cmd)}")
         args.workdir.mkdir(parents=True, exist_ok=True)
         start = dt.datetime.now(dt.timezone.utc)
+        status = "completed"
         with args.log.open("w") as log:
             proc = subprocess.Popen(["/bin/bash", "-c", shell], cwd=args.workdir, env=env,
                                     stdout=log, stderr=subprocess.STDOUT)
-            rc = proc.wait()
+            record_start(args.ledger, res, proc.pid)
+            interval = POLL_MIN_S
+            while True:  # watchdog (layer 1)
+                try:
+                    rc = proc.wait(timeout=interval)
+                    break
+                except subprocess.TimeoutExpired:
+                    pass
+                used = (job_cpu(proc.pid) or 0.0) + children_cpu() - before
+                if used >= args.cpu_seconds:
+                    proc.kill()
+                    rc = proc.wait()
+                    status = "killed by watchdog: CPU allotment reached"
+                    break
+                interval = min(POLL_MAX_S, max(POLL_MIN_S, (args.cpu_seconds - used) / (2 * NCPU)))
         end = dt.datetime.now(dt.timezone.utc)
     except Interrupted as exc:
         if proc is not None and proc.poll() is None:
@@ -262,11 +327,10 @@ def main(argv: list[str] | None = None) -> int:
     sampled = count_events(args.dump)
     events_charged = args.events if (sampled is None and args.events > 0) else (sampled or 0)
     rec = settle(args.ledger, res, cpu, events_charged, {
-        "rc": rc, "basis": "measured", "status": "completed",
+        "rc": rc, "basis": "measured", "status": status,
         "start_utc": start.isoformat(timespec="seconds"), "end_utc": end.isoformat(timespec="seconds"),
         "wall_s": round((end - start).total_seconds(), 3), "events_sampled_dumped": sampled,
-        "cpu_exceeded_ulimit": bool(rc in (-signal.SIGXCPU, 128 + signal.SIGXCPU, -signal.SIGKILL, 137)
-                                    and cpu >= args.cpu_seconds)})
+        "cpu_reached_allotment": cpu >= args.cpu_seconds})
     print(json.dumps(rec))
     return rc
 

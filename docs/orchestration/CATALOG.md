@@ -129,6 +129,7 @@ compute, contact or adoption authority.
 | frozen plan (observables, tolerances, budget) | [`state/valencia-feasibility-20261011/PLAN.md`](state/valencia-feasibility-20261011/PLAN.md) |
 | report: identity, benchmarks, pilot, applicability, cost, missing input | [`state/valencia-feasibility-20261011/REPORT.md`](state/valencia-feasibility-20261011/REPORT.md) |
 | one read-only review and the correction-pass dispositions | [`state/valencia-feasibility-20261011/REVIEW.md`](state/valencia-feasibility-20261011/REVIEW.md) |
+| bounded repair (VA-sign convention, launcher CPU bound): frozen checks, results, residuals | [`state/valencia-feasibility-20261011/REPAIR.md`](state/valencia-feasibility-20261011/REPAIR.md) |
 
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 

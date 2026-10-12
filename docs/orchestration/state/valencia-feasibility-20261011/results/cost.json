@@ -1,4 +1,5 @@
 {
+ "basis": "projections are linear extrapolations of measured per-run CPU; not certified bounds",
  "measured": {
   "mec_cpu_s_per_trial_upper_R2_flux": 0.000128,
   "mec_cpu_s_per_trial_upper_R1_1GeV": 0.00026480000000000004,
@@ -19,15 +20,15 @@
    "limiting_bin_GeV": "0-0.1",
    "trials_per_config": 840532.0759727354,
    "trials_total": 3362128.3038909417,
-   "core_hours_upper": 0.24730321524175597,
-   "core_hours_upper_with_kish_factor": 0.7419096457252679
+   "core_hours_extrapolated": 0.24730321524175597,
+   "core_hours_extrapolated_with_kish_factor": 0.7419096457252679
   },
   "2pct": {
    "limiting_bin_GeV": "0-0.1",
    "trials_per_config": 210133.01899318385,
    "trials_total": 840532.0759727354,
-   "core_hours_upper": 0.06182580381043899,
-   "core_hours_upper_with_kish_factor": 0.18547741143131696
+   "core_hours_extrapolated": 0.06182580381043899,
+   "core_hours_extrapolated_with_kish_factor": 0.18547741143131696
   }
  },
  "fullmodel_baseline": {
@@ -36,7 +37,7 @@
    1,
    50
   ],
-  "core_hours": [
+  "core_hours_extrapolated": [
    4.732222222222223,
    236.61111111111114
   ]

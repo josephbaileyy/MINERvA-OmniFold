@@ -16,12 +16,29 @@ Shared with NuWro, and declared rather than re-derived:
 * the hard cut |q| <= 1.2 GeV.
 
 Not shared: the contraction. NuWro uses structure functions w1..w5; this code
-contracts four-vectors directly. The sign of the antisymmetric (VA) term is fixed
-by the physical requirement that it is constructive for neutrinos; its magnitude
-is then tested against the published antineutrino value.
+contracts four-vectors directly.
 
-Convention (the authors'): d2sigma/(dOmega dE') = (|k'|/E) G_F^2 / (4 pi^2)
-L_{mu nu} W^{mu nu}, with cos^2(theta_C) inside W; W per nucleon in MeV^-1.
+Convention (the authors', fixed; REPAIR.md section 1). Nieves, Ruiz Simo and
+Vicente Vacas 2011 (arXiv:1102.2777), repeated in Sobczyk, Nieves and Sanchez 2020:
+
+* eq:sec   d2sigma/(dOmega dE') = (|k'|/|k|) G^2/(4 pi^2) L_{mu sigma} W^{mu sigma},
+           with cos^2(theta_C) inside W (W per nucleon, MeV^-1);
+* footnote eps_{0123} = +1, g = diag(+1, -1, -1, -1);
+* eq:lep   L_{mu sigma} = k'_mu k_sigma + k'_sigma k_mu - g_{mu sigma} k.k'
+                          + i eps_{mu sigma alpha beta} k'^alpha k^beta   (neutrino);
+* eq:wmunu W^{mu sigma} ~ sum_f <f|j^mu|i> <f|j^sigma|i>^*, j = V - A, and
+           W = W_s + i W_a with W_s, W_a real symmetric / antisymmetric;
+* sec:anti antineutrino: reverse the sign of L^a.
+
+Hence L.W = L^s.W_s - L^a.W_a. With q along +z the antisymmetric part has only
+W_a^{12} = -W_a^{21}, and L^a_{12} = eps_{1203} k'^0 k^3 + eps_{1230} k'^3 k^0
+= E'k_z - (k_z - |q|)E = E|q| - omega k_z. The interference is therefore
+-2 s (E|q| - omega k_z) W_a^{12}, s = +1 (nu), -1 (nubar).
+
+Table encoding (not documented by the authors): the column W12 is read as
+W_a^{12} = Im W^{12}. NuWro, which distributes the tables, contracts them the same
+way (REPAIR.md check C6); the encoding is distributor-corroborated, not
+author-confirmed. The sign is never chosen from the data.
 """
 
 from __future__ import annotations
@@ -43,6 +60,8 @@ HBARC2_CM2_MEV2 = 0.3893794e-21  # (hbar c)^2 in cm^2 MeV^2
 M_MU = 105.6583755  # MeV
 NGRID = 120
 STEP = 10.0  # MeV
+BEAM_SIGN = {"nu": +1.0, "nubar": -1.0}  # sign of L^a (eq:lep, sec:anti)
+W12_ENCODING = "W12 = W_a^{12} = Im W^{12} (distributor-corroborated, not author-confirmed)"
 QMAX = 1200.0  # MeV
 B_SHIFT = {("C12", "nu"): 16.827, ("C12", "nubar"): 13.878,
            ("O16", "nu"): 14.906, ("O16", "nubar"): 10.931}
@@ -104,12 +123,11 @@ def interp(dense: np.ndarray, q0: np.ndarray, q: np.ndarray) -> np.ndarray:
     return np.where(inside, val, 0.0)
 
 
-def lepton_contraction(E, omega, q, w: dict[str, np.ndarray]) -> tuple[np.ndarray, np.ndarray]:
-    """Symmetric and antisymmetric parts of L_{mu nu} W^{mu nu}.
+def lepton_contraction(E, omega, q, w: dict[str, np.ndarray], beam: str) -> tuple[np.ndarray, np.ndarray]:
+    """Symmetric part and VA interference of L_{mu sigma} W^{mu sigma}.
 
-    Explicit four-vectors, q along +z, k in the x-z plane. The antisymmetric part
-    enters with opposite signs for neutrinos and antineutrinos; ``sigma`` fixes
-    which sign is the neutrino one.
+    Explicit four-vectors, q along +z, k in the x-z plane. The interference
+    carries the fixed convention of the module docstring: -2 s (E|q| - omega k_z) W12.
     """
     Ep = E - omega
     kp = np.sqrt(np.maximum(Ep ** 2 - M_MU ** 2, 0.0))
@@ -121,31 +139,31 @@ def lepton_contraction(E, omega, q, w: dict[str, np.ndarray]) -> tuple[np.ndarra
     kdotkp = sum(metric[i] * k[i] * kprime[i] for i in range(4))
 
     def l_low(mu: int, nu: int) -> np.ndarray:
-        """L_{mu nu} = k'_mu k_nu + k_mu k'_nu - g_{mu nu} k.k' (lower indices)."""
+        """L^s_{mu nu} = k'_mu k_nu + k_mu k'_nu - g_{mu nu} k.k' (lower indices)."""
         g = metric[mu] if mu == nu else 0.0
         return metric[mu] * metric[nu] * (kprime[mu] * k[nu] + k[mu] * kprime[nu]) - g * kdotkp
 
-    # W^{mu nu} (symmetric part) is nonzero only in 00, 03 = 30, 11 = 22, 33.
+    # W_s^{mu nu} is nonzero only in 00, 03 = 30, 11 = 22, 33.
     total = (l_low(0, 0) * w["W00"] + 2.0 * l_low(0, 3) * w["W03"]
              + (l_low(1, 1) + l_low(2, 2)) * w["W11"] + l_low(3, 3) * w["W33"])
-    # antisymmetric (VA) part, before its beam-dependent sign: 2 W12 (E q - omega k_z)
-    anti = 2.0 * w["W12"] * (E * q - omega * kz)
-    return total, anti
+    # -L^a_{mu nu} W_a^{mu nu} = -2 L^a_{12} W_a^{12}, L^a_{12} = s (E|q| - omega k_z)
+    interference = -2.0 * BEAM_SIGN[beam] * (E * q - omega * kz) * w["W12"]
+    return total, interference
 
 
 def sigma(tables, E: float, beam: str = "nu", nucleus: str = "C12",
-          n_sub: int = 8, channels=CHANNELS) -> dict[str, float]:
+          n_sub: int = 8, channels=CHANNELS, shift: float | None = None) -> dict[str, float]:
     """Per-nucleon cross section in cm^2, by channel, at neutrino energy E (MeV).
 
     Quadrature: midpoint rule with ``n_sub`` sub-points per 10 MeV table cell in
     both omega and |q| (the integrand is bilinear within a cell up to kinematic
-    factors, so the rule converges quickly).
+    factors, so the rule converges quickly). ``shift`` overrides the energy
+    shift B (tests only: identical kinematics for both beams).
     """
-    B = B_SHIFT[(nucleus, beam)]
+    B = B_SHIFT[(nucleus, beam)] if shift is None else shift
     h = STEP / n_sub
     # the tensor vanishes for q0_eff > |q| and |q| > QMAX, so omega <= QMAX + B suffices
     omega = np.arange(B + h / 2, min(E - M_MU, QMAX + B), h)
-    out = {}
     if omega.size == 0:
         return {ch: 0.0 for ch in channels}
     q_all = np.arange(h / 2, QMAX, h)
@@ -154,21 +172,12 @@ def sigma(tables, E: float, beam: str = "nu", nucleus: str = "C12",
     kp = np.sqrt(np.maximum(Ep ** 2 - M_MU ** 2, 0.0))
     allowed = (Q > np.abs(E - kp)) & (Q < E + kp) & (Q <= QMAX)
     pref = GF_MEV ** 2 * PREFACTOR_VUD2 / (2 * np.pi) * Q / E ** 2
-    sym, anti = {}, {}
+    norm = h * h * HBARC2_CM2_MEV2
+    out = {}
     for ch in channels:
         w = {c: interp(tables[ch][c], Om - B, Q) for c in COMPONENTS}
-        s_part, a_part = lepton_contraction(E, Om, Q, w)
-        norm = h * h * HBARC2_CM2_MEV2
-        sym[ch] = float(np.where(allowed, pref * s_part, 0.0).sum() * norm)
-        anti[ch] = float(np.where(allowed, pref * a_part, 0.0).sum() * norm)
-    # The VA interference is constructive for neutrinos (the physical requirement
-    # sigma_nu > sigma_nubar for these currents); that fixes the sign, the
-    # published antineutrino value then tests the magnitude.
-    nu_sign = 1.0 if sum(anti.values()) >= 0 else -1.0
-    beam_sign = nu_sign if beam == "nu" else -nu_sign
-    for ch in channels:
-        out[ch] = sym[ch] + beam_sign * anti[ch]
-    out["_nu_sign_of_raw_W12_term"] = nu_sign
+        s_part, i_part = lepton_contraction(E, Om, Q, w, beam)
+        out[ch] = float(np.where(allowed, pref * (s_part + i_part), 0.0).sum() * norm)
     return out
 
 
@@ -208,10 +217,9 @@ def main() -> None:
     rows = []
     for E in args.energies:
         s = sigma(tables, E, args.beam, args.nucleus, args.n_sub)
-        sign = s.pop("_nu_sign_of_raw_W12_term")
         rows.append({"E_MeV": E, "beam": args.beam, "per_nucleon_cm2": s,
                      "total_per_nucleon_cm2": sum(s.values()),
-                     "nu_sign_of_raw_W12_term": sign, "n_sub": args.n_sub})
+                     "w12_convention": W12_ENCODING, "n_sub": args.n_sub})
         print(json.dumps(rows[-1]))
     if args.json_out:
         args.json_out.write_text(json.dumps(rows, indent=1) + "\n")

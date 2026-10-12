@@ -4,3 +4,5 @@ inputs/phi_t.json
 inputs/flux_mefhc_phi_t.root
 inputs/flux_mefhc_phi_t.C
 code/__pycache__/
+logs/*.lock
+tests/__pycache__/

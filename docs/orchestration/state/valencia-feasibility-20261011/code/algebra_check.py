@@ -21,7 +21,8 @@ kp = np.sqrt(Ep ** 2 - vx.M_MU ** 2)
 q = rng.uniform(np.abs(E - kp) + 1e-6, np.minimum(E + kp, 1200) - 1e-6)
 ok = q > np.abs(E - kp)
 w = {c: rng.normal(size=omega.size) for c in vx.COMPONENTS}
-sym, anti = vx.lepton_contraction(E, omega, q, w)
+sym, anti = vx.lepton_contraction(E, omega, q, w, "nu")
+anti = -anti  # repair API shim: old raw term 2 W12 (E q - omega k_z) = -(nu interference)
 for beam, nu_sign in (("nu", -1.0), ("nubar", -1.0)):
     ours = sym + (nu_sign if beam == "nu" else -nu_sign) * anti
     theirs = vx.nuwro_formula_contraction(E, omega, q, w, beam)

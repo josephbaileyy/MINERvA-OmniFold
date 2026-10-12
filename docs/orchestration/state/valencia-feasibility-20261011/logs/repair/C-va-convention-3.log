@@ -1,0 +1,44 @@
+{
+ "w12_encoding": "W12 = W_a^{12} = Im W^{12} (distributor-corroborated, not author-confirmed)",
+ "C1_trace_vs_eqlep_max_dev_over_max_L": 4.119375679416962e-16,
+ "C2_code_vs_full_complex_contraction_max_rel": 9.93789685937641e-12,
+ "C2_imag_over_real_max": 0.0,
+ "C3_beam_reversal_sym_max_rel": 0.0,
+ "C3_beam_reversal_interference_sum_max_rel": 0.0,
+ "C6_nuwro_W12_only_vs_code_max_rel": 1.1999721659739918e-14,
+ "C4_W12_zero_nu_minus_nubar_rel": 0.0,
+ "C5_interference_nu": 4.0129513434528805e-40,
+ "C5_interference_nu_W12_negated": -4.012951343452879e-40,
+ "C5_reversal_rel": 4.0651529943445123e-16,
+ "C5_nubar_equals_nu_with_W12_negated_rel": 0.0,
+ "C5_source_scan_hits": [],
+ "C7": {
+  "nu": {
+   "committed_total": 1.0870042571419313e-39,
+   "recomputed_total": 1.0870042571419315e-39,
+   "rel_change": 2.220446049250313e-16,
+   "committed_selected_nu_sign": -1.0
+  },
+  "nubar": {
+   "committed_total": 3.003148860404057e-40,
+   "recomputed_total": 3.003148860404059e-40,
+   "rel_change": 6.661338147750939e-16,
+   "committed_selected_nu_sign": -1.0
+  }
+ },
+ "descriptive_fraction_of_nonzero_W12_cells_negative": {
+  "pp": 1.0,
+  "np": 0.6545203588681849,
+  "pn": 1.0,
+  "3p3h": 1.0
+ },
+ "grades": {
+  "C1": true,
+  "C2": true,
+  "C3": true,
+  "C6": true,
+  "C4": true,
+  "C5": true,
+  "C7_unchanged": true
+ }
+}

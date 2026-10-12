@@ -114,3 +114,96 @@ Results already in the repository are reused, with no new events.
 ---
 
 ## Results (appended after the freeze)
+
+### R1. VA convention (checks C1–C7: all pass)
+
+Source: `results/repair/va_convention_checks.json`, from `tests/check_va_convention.py`; latest run
+`C-va-convention-3`.
+
+| id | Measured | Tolerance | Result |
+|---|---|---|---|
+| C1 | trace vs `eq:lep`: max dev / max\|L\| = 4.1×10⁻¹⁶ (both beams, 200 points, E 0.3–20 GeV) | ≤ 1e-9 | pass |
+| C2 | code vs full complex contraction: max rel 9.9×10⁻¹²; imaginary part 0 | ≤ 1e-9 | pass |
+| C3 | beam reversal at identical inputs: symmetric part identical (0); interference sum 0 | ≤ 1e-12 | pass |
+| C4 | W12 = 0, common shift 15 MeV: σ_ν − σ_ν̄ = 0 | ≤ 1e-12 | pass |
+| C5 | W12 → −W12: interference +4.013×10⁻⁴⁰ → −4.013×10⁻⁴⁰ cm² (rel 4×10⁻¹⁶); source scan of `valencia_tensor_xsec.py` for data-dependent sign selection: no hits | ≤ 1e-9; empty | pass |
+| C6 | NuWro's transcribed expression, W12 only: max rel 1.2×10⁻¹⁴ for ν and ν̄ | ≤ 1e-9 | pass |
+| C7 | committed 1 GeV n_sub = 8 totals recomputed: ν +2.2×10⁻¹⁶, ν̄ +6.7×10⁻¹⁶ | ≤ 1e-12 = unchanged | unchanged |
+
+**What this establishes:**
+- The integrator's contraction is exactly the authors' `eq:sec`/`eq:lep` convention with W = W_s + iW_a.
+- `eq:lep` itself agrees with the V−A Dirac trace for the index order of `eq:wmunu`.
+- The interference reverses with W12 and with the beam, with no compensation.
+- NuWro reads W12 the same way.
+- The old data-driven rule happened to select this same sign (−1 on the raw term, recorded in all
+  four committed integrator JSONs), so no committed number changes.
+
+**What it does not establish:** the authors never state that the tabulated W12 is Im W^{12}. Following
+the frozen status rule, B1 and B2 are now **UNVALIDATED (table W12 encoding not author-confirmed)**.
+- Their deviations are unchanged: −5.5% and +16.3%.
+- The superseded grades are kept in `results/benchmarks.json`.
+- B3 and B4 compare two implementations with the same reading (C6), so they stand.
+- The flux-fold and convention-sensitivity outputs were not rerun. Their sign was the same −1, and C7
+  shows the fixed code reproduces the integrator to machine precision.
+
+**Descriptive only** (never used to choose the convention): the fraction of nonzero W12 cells that are
+negative is pp 1.00, np 0.65, pn 1.00, 3p3h 1.00.
+
+**Diagnostics adapted, not rerun.** `algebra_check*.py` hard-coded the old raw-term sign −1 for ν. They
+now call the new signature through a one-line shim that preserves their arithmetic. Their committed
+logs (D1–D4) came from the `d75987e1` code.
+
+### R2. Launcher (checks L1–L9 and L9b: all pass, after one design change)
+
+Source: `results/repair/launcher_checks.json`, from `tests/test_pilot_run.py`; latest run
+`L-launcher-2`.
+
+**Design change after the freeze.** The plan assumed that, once forking is denied, `ulimit -t` bounds
+the job even after the launcher dies. The first test run (`L-launcher-1`) and probe P1 falsified that.
+- On this macOS, a process that ignores SIGXCPU is **not** stopped by RLIMIT_CPU, neither with soft =
+  hard = 1 s nor with soft 1 s / hard 2 s. Both probe processes ran until the 8 s wall timeout.
+- The launcher therefore gained a watchdog (layer 1): it polls the job's CPU with `ps`, includes its
+  own measured child CPU, and SIGKILLs at the allotment.
+- RLIMIT_CPU stays as layer 2.
+- A `start` record names the job, and later launches are refused while that job lives.
+- The reservation is N + `WATCHDOG_MARGIN_S` = N + 1.5 s on 10 cores.
+- L9b was added to measure the residual.
+
+**Harness defect found in the first run.** `pgrep -f <marker>` matched the launcher's own argv, which
+contains the marker. That invalidated L3 and L9 in run 1, and L9's apparent pass there. Jobs are now
+identified as direct children of the launcher (`pgrep -P`). L4 `sh_fork` was also invalid, because
+`sh -c` exec'd its single command without forking; it now forces a fork.
+
+| id | Result (run `L-launcher-2`) |
+|---|---|
+| L1 | 8 simultaneous launchers, cap for 3: 3 ran, 5 refused (rc 3), 3 reserve records; charged total never above the cap (7.5 of 8.5) after any append. **Power control:** with a 0.3 s delay between reading totals and appending, the locked `reserve()` admitted 3 of 8. The same harness without the lock admitted **8 of 8**, charging 16.0 against a cap of 6.5. |
+| L2 | Launcher SIGKILLed mid-job: the reservation stays charged (2.5 s). (a) While the orphaned job lives, even a request inside the cap is refused, naming the job pid. (b) After the job exits, the unsettled reservation still counts in full and the next request is refused on the cap. |
+| L3 | SIGTERM to the launcher: rc 130; the job is killed; settled at the full reservation (2.5 s). |
+| L4 | `sh` fork, `bash` background job, Python `subprocess`, `os.posix_spawn`, `os.fork`: all denied ("Operation not permitted"); no marker file created; each settled ≤ 0.05 s. **Positive control:** all five create their marker outside the sandbox. |
+| L5 | 1 s spinner: killed by the watchdog at 1.016 s. Spinner ignoring SIGXCPU: killed by the watchdog at 1.021 s. Both ≤ 2.5 s reserved. |
+| L6 | Truncated line, unknown kind, orphan settlement, duplicate reservation: every launch refused; ledger byte-identical. |
+| L7 | `--cpu-cap 1e9` / `--event-cap 1e9` do not raise 36,000 / 10,000. |
+| L8 | The original campaign ledger reads as 242.875 CPU-s and 7,900 events, with no unsettled reservations. SHA-256 `b22d4d78…` is unchanged and no lock file was created. |
+| L9 | Orphan with default SIGXCPU action: stopped by the kernel at 0.96 s of observed CPU; a new launch was refused while it lived. |
+| L9b | Orphan ignoring SIGXCPU: **still running at the 3 s timeout** (3.07 s CPU, above its 2.5 s reservation). This confirms the residual. A new launch was refused while it lived; the test then killed it. |
+
+**Remaining residual (not certified).** If the launcher dies and its job ignores, catches or blocks
+SIGXCPU, that orphaned job has no CPU bound. Its reservation stays charged and no new launch proceeds
+while it lives, but its own consumption is unbounded until a person kills it. Whether NuWro and ROOT
+leave SIGXCPU at its default action, or run at all with forking denied, was not executed: zero
+production compute was authorized. Static evidence: the patched binary's only process-creating import
+is `popen`, reached only from NIWG plotting code.
+
+### R3. Metering
+
+- **Ledger:** `logs/repair_ledger.jsonl`. Each check's log is under `logs/repair/`.
+- **Coverage:** the meter charges the measured CPU of all waited descendants, plus declared extra
+  charges for processes a check orphans on purpose.
+- **Undercount found and corrected:** the failed run `L-launcher-1` orphaned its SIGXCPU-ignoring
+  spinner when its cleanup killed the launcher. That CPU was unmeasured, at most 15 s by the test's
+  wall timeout. It is charged as `X-correction-…` (16 s).
+- **Probe P1** is `tests/probe_rlimit_sigxcpu.py` (run from a scratch copy; the content is identical).
+- **Backstop:** the meter's own `ulimit -t` backstop is subject to the same macOS limitation. The
+  effective bound on the checks was their wall-clock timeouts.
+
+Totals before review: 77.3 of 300 CPU-s, zero events, no NuWro execution, campaign ledger untouched.

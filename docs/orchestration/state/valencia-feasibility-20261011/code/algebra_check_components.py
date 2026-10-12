@@ -14,7 +14,8 @@ for omega, q in ((100.0, 400.0), (300.0, 600.0), (500.0, 1000.0), (50.0, 900.0),
     row = []
     for c in vx.COMPONENTS:
         w = {k: np.array([1.0 if k == c else 0.0]) for k in vx.COMPONENTS}
-        sym, anti = vx.lepton_contraction(E, om, qq, w)
+        sym, anti = vx.lepton_contraction(E, om, qq, w, "nu")
+        anti = -anti  # repair API shim: old raw term 2 W12 (E q - omega k_z) = -(nu interference)
         ours = sym - anti  # neutrino with the integrator's selected sign (-1)
         theirs = vx.nuwro_formula_contraction(E, om, qq, w, "nu")
         row.append(f"{c}: ours {ours[0]:+.6e} nuwro {theirs[0]:+.6e}")

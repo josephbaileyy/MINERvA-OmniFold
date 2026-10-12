@@ -33,6 +33,6 @@ for omega, q in ((100.0, 400.0), (50.0, 900.0), (700.0, 800.0)):
     }
     for name, (w, exact) in cases.items():
         w = {k: np.array([v]) for k, v in w.items()}
-        sym, _ = vx.lepton_contraction(E, om, qq, w)
+        sym, _ = vx.lepton_contraction(E, om, qq, w, "nu")
         nuwro = vx.nuwro_formula_contraction(E, om, qq, w, "nu")
         print(f"w={omega:5.0f} q={q:5.0f} {name:11s} exact {exact:+.6e} ours {sym[0]:+.6e} nuwro {nuwro[0]:+.6e}")

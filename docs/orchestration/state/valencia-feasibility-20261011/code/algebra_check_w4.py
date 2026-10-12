@@ -32,7 +32,8 @@ Ep = E - om
 kp = np.sqrt(Ep ** 2 - vx.M_MU ** 2)
 q = rng.uniform(np.abs(E - kp) + 1e-3, np.minimum(E + kp, 1200) - 1e-3)
 w = {c: rng.normal(size=om.size) for c in vx.COMPONENTS}
-sym, anti = vx.lepton_contraction(E, om, q, w)
+sym, anti = vx.lepton_contraction(E, om, q, w, "nu")
+anti = -anti  # repair API shim: old raw term 2 W12 (E q - omega k_z) = -(nu interference)
 for beam in ("nu", "nubar"):
     ours = sym + (-1.0 if beam == "nu" else 1.0) * anti
     fixed = nuwro_fixed(E, om, q, w, beam)
@@ -52,7 +53,8 @@ for beam in ("nu", "nubar"):
     tot = {"explicit": 0.0, "nuwro_as_written": 0.0, "nuwro_sin2half": 0.0}
     for ch in vx.CHANNELS:
         ww = {c: vx.interp(tables[ch][c], Om - B, Q) for c in vx.COMPONENTS}
-        s, a = vx.lepton_contraction(E, Om, Q, ww)
+        s, a = vx.lepton_contraction(E, Om, Q, ww, "nu")
+        a = -a  # repair API shim: old raw term 2 W12 (E q - omega k_z) = -(nu interference)
         tot["explicit"] += float(np.where(allowed, pref * (s + (-1.0 if beam == "nu" else 1.0) * a), 0).sum())
         tot["nuwro_as_written"] += float(np.where(allowed, pref * vx.nuwro_formula_contraction(E, Om, Q, ww, beam), 0).sum())
         tot["nuwro_sin2half"] += float(np.where(allowed, pref * nuwro_fixed(E, Om, Q, ww, beam), 0).sum())

@@ -8,14 +8,24 @@
   "integrator_per_nucleus_1e38": 1.3044051085703177,
   "published_1e38": 1.38,
   "rel_dev": -0.05477890683310305,
-  "grade": "PASS",
+  "frozen_tolerances_pass_qualified": [
+   0.07,
+   0.15
+  ],
+  "grade": "UNVALIDATED (table W12 encoding not author-confirmed)",
+  "grade_at_d75987e1_superseded": "PASS",
   "diagnostic_rel_dev_with_extra_Vud2": -0.1037885137983453
  },
  "B2": {
   "integrator_per_nucleus_1e38": 0.36037786324848686,
   "published_1e38": 0.31,
   "rel_dev": 0.16250923628544145,
-  "grade": "QUALIFIED",
+  "frozen_tolerances_pass_qualified": [
+   0.12,
+   0.25
+  ],
+  "grade": "UNVALIDATED (table W12 encoding not author-confirmed)",
+  "grade_at_d75987e1_superseded": "QUALIFIED",
   "diagnostic_rel_dev_with_extra_Vud2": 0.10223326363133411
  },
  "B3": {

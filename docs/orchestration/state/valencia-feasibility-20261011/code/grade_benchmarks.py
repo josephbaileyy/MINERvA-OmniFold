@@ -25,10 +25,15 @@ out["B0"] = {"max_rel_diff_n8_vs_n16": conv, "tolerance": 0.002, "grade": "PASS"
 for bid, val, pub, (tp, tq) in (("B1", n8, 1.38, (0.07, 0.15)), ("B2", b8, 0.31, (0.12, 0.25))):
     per_nucleus = 12 * val / 1e-38
     dev = per_nucleus / pub - 1
-    grade = "PASS" if abs(dev) <= tp else ("QUALIFIED" if abs(dev) <= tq else "FAIL")
+    superseded = "PASS" if abs(dev) <= tp else ("QUALIFIED" if abs(dev) <= tq else "FAIL")
     alt = per_nucleus * VUD2 / pub - 1
+    # REPAIR.md section 1, frozen status rule: the table's W12 encoding (W12 = Im W^{12}) is
+    # distributor-corroborated, not author-confirmed, so no PASS/QUALIFIED word is attached.
     out[bid] = {"integrator_per_nucleus_1e38": per_nucleus, "published_1e38": pub, "rel_dev": dev,
-                "grade": grade, "diagnostic_rel_dev_with_extra_Vud2": alt}
+                "frozen_tolerances_pass_qualified": [tp, tq],
+                "grade": "UNVALIDATED (table W12 encoding not author-confirmed)",
+                "grade_at_d75987e1_superseded": superseded,
+                "diagnostic_rel_dev_with_extra_Vud2": alt}
 
 r1 = load("R1/analysis.json")
 mc, err = r1["sigma_per_nucleon_cm2"], r1["sigma_mc_error_cm2"]

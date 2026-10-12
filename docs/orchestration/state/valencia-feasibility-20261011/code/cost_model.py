@@ -14,7 +14,8 @@ ledger = {r["run_id"]: r for r in map(json.loads, (HERE / "logs/budget_ledger.js
 r2 = json.loads((HERE / "results/R2/analysis.json").read_text())
 
 measured = {
-    # upper bounds: total CPU (setup included) divided by sampled events
+    # per-run measured values: total CPU (setup included) / sampled events, i.e. an upper bound
+    # on the per-event cost of THAT run on THAT machine; not a certified cap
     "mec_cpu_s_per_trial_upper_R2_flux": ledger["R2-mefhc-flux"]["cpu_charged_s"] / ledger["R2-mefhc-flux"]["events_charged"],
     "mec_cpu_s_per_trial_upper_R1_1GeV": ledger["R1-bench-1GeV"]["cpu_charged_s"] / ledger["R1-bench-1GeV"]["events_charged"],
     "fullmodel_cpu_s_per_trial_R3": ledger["R3-fullmodel-throughput"]["cpu_charged_s"] / ledger["R3-fullmodel-throughput"]["events_charged"],
@@ -36,8 +37,8 @@ for name, neff in TARGETS.items():
     gen[name] = {
         "limiting_bin_GeV": limiting_bin[1], "trials_per_config": trials,
         "trials_total": N_CONFIG * trials,
-        "core_hours_upper": N_CONFIG * trials * cpu_hi / 3600,
-        "core_hours_upper_with_kish_factor": N_CONFIG * trials * cpu_hi * KISH_UNCERTAINTY_FACTOR / 3600,
+        "core_hours_extrapolated": N_CONFIG * trials * cpu_hi / 3600,
+        "core_hours_extrapolated_with_kish_factor": N_CONFIG * trials * cpu_hi * KISH_UNCERTAINTY_FACTOR / 3600,
     }
 
 # Full-model baseline (QEL, RES, DIS, COH + predecessor MEC), needed once for a matched
@@ -45,13 +46,17 @@ for name, neff in TARGETS.items():
 # the unweighting factor of the full model was NOT measured. Assumed 1-50: the MEC
 # channel alone measured w_max/<w> = 42 at this flux (REVIEW.md, finding 5).
 baseline = {"events_assumed": 2_000_000, "unweighting_factor_assumed": [1, 50]}
-baseline["core_hours"] = [baseline["events_assumed"] * f * measured["fullmodel_cpu_s_per_trial_R3"] / 3600
+baseline["core_hours_extrapolated"] = [baseline["events_assumed"] * f * measured["fullmodel_cpu_s_per_trial_R3"] / 3600
                           for f in baseline["unweighting_factor_assumed"]]
 
 memo_assumption = {"events": 3_000_000, "cpu_s_per_event": [0.1, 1.0]}
 memo_assumption["core_hours"] = [memo_assumption["events"] * c / 3600 for c in memo_assumption["cpu_s_per_event"]]
 
-out = {"measured": measured, "generation_mec_four_configs": gen, "fullmodel_baseline": baseline,
+# Every projection is a linear extrapolation of runs of 200-4,000 events to millions of
+# trials on the same Apple M1 Pro core. It is not a certified bound: no run of that size was
+# made, and the campaign launcher's per-run CPU limits were not aggregate caps (REPAIR.md).
+out = {"basis": "projections are linear extrapolations of measured per-run CPU; not certified bounds",
+       "measured": measured, "generation_mec_four_configs": gen, "fullmodel_baseline": baseline,
        "memo_assumption_for_comparison": memo_assumption,
        "not_costed_unmeasured": [
            "a microscopic exclusive sampler for the corrected model (Kasturi et al. 2026): no code available",

@@ -21,7 +21,6 @@ grid = np.geomspace(150.0, 100000.0, int(sys.argv[5]) if len(sys.argv) > 5 else 
 sig = []
 for E in grid:
     s = vx.sigma(tables, E, "nu", "C12", int(sys.argv[3]))
-    s.pop("_nu_sign_of_raw_W12_term")
     sig.append(sum(s.values()))
 sig = np.array(sig)
 edges = d["edges"] * 1000.0

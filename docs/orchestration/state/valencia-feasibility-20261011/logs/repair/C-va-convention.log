@@ -1,0 +1,14 @@
+/Users/josephbailey/local-research/MINERvA-OmniFold-valencia-pilot-20261011/docs/orchestration/state/valencia-feasibility-20261011/tests/check_va_convention.py:104: RuntimeWarning: invalid value encountered in sqrt
+  kpm = np.sqrt((E - om) ** 2 - vx.M_MU ** 2)
+Traceback (most recent call last):
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-valencia-pilot-20261011/docs/orchestration/state/valencia-feasibility-20261011/tests/check_va_convention.py", line 191, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-valencia-pilot-20261011/docs/orchestration/state/valencia-feasibility-20261011/tests/check_va_convention.py", line 118, in main
+    om, q = random_points(1, E)
+            ^^^^^^^^^^^^^^^^^^^
+  File "/Users/josephbailey/local-research/MINERvA-OmniFold-valencia-pilot-20261011/docs/orchestration/state/valencia-feasibility-20261011/tests/check_va_convention.py", line 105, in random_points
+    q = RNG.uniform(np.abs(E - kpm) * 1.001 + 1e-3, (E + kpm) * 0.999)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "numpy/random/_generator.pyx", line 1043, in numpy.random._generator.Generator.uniform
+OverflowError: Range exceeds valid bounds

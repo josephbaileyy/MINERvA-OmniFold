@@ -18,7 +18,6 @@ for beam in ("nu", "nubar"):
     for B in (0.0, nominal, 27.41):
         vx.B_SHIFT[("C12", beam)] = B
         s = vx.sigma(tables, 1000.0, beam, "C12", 8)
-        s.pop("_nu_sign_of_raw_W12_term")
         tot = 12 * sum(s.values()) / 1e-38
         out.append({"beam": beam, "B_MeV": B, "per_nucleus_1e38": round(tot, 4),
                     "with_extra_Vud2": round(tot * vx.VUD ** 2, 4)})
