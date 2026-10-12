@@ -1,0 +1,27 @@
+# 2026-10-11T05:45:30Z frozen_package_checks.sh sb1 /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/venv313/bin/python, from a35b1a3fc2a711a6955c1cf7d25edf41ca8b509f
+[frozen] docs/orchestration/state/next-preparation-20261009/sb1-prep at d4335d3b9bc2502002f93390f9555d07e134855f, driver sha256 3cc5adc7306b3043c2fd147602d866b90162644523b64060462aa4d934766933
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 0.176s
+
+OK
+................
+----------------------------------------------------------------------
+Ran 16 tests in 16.377s
+
+OK
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 34.430s
+
+OK
+.............................
+----------------------------------------------------------------------
+Ran 29 tests in 70.652s
+
+OK
+[frozen] sb1 rc=0
+real 126.94
+user 90.34
+sys 22.24
+# exit 0

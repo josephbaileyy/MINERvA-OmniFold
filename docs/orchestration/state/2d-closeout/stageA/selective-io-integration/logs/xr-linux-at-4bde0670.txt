@@ -1,0 +1,8 @@
+[xr-linux] tree 4bde0670 driver 3cc5adc7306b3043
+[xr-admit] manifest current
+manifest rc=0
+Ran 57 tests in 229.654s
+
+OK
+1 2026-10-13T17:00:00
+suite rc=

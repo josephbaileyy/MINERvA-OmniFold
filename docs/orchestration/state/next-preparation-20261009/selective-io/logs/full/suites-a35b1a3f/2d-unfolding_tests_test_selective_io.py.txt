@@ -1,0 +1,41 @@
+...........................
+----------------------------------------------------------------------
+Ran 27 tests in 41.577s
+
+OK
+[INFO] branch-select=derived: mc_signal_reco read 7 of 42 branches: MC_Muon_Energy_MINOS_0, MC_pz_Muon_Energy_MINOS_0, sim_Muon_Energy_MINOS_0, sim_pz_Muon_Energy_MINOS_0, sim_pass, w_truth_Muon_Energy_MINOS_0, w_reco_Muon_Energy_MINOS_0
+[INFO] branch-select=derived: mc_signal_reco read 7 of 42 branches: MC_Muon_Energy_MINOS_0, MC_pz_Muon_Energy_MINOS_0, sim_Muon_Energy_MINOS_0, sim_pz_Muon_Energy_MINOS_0, sim_pass, w_truth_Muon_Energy_MINOS_0, w_reco_Muon_Energy_MINOS_0
+[INFO] branch-select=derived: mc_signal_reco read 7 of 42 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_Flux_0, w_reco_Flux_0
+[INFO] branch-select=derived: mc_truth_denom read 3 of 28 branches: pT_truth_Muon_Energy_MINOS_0, pz_truth_Muon_Energy_MINOS_0, w_truth_Muon_Energy_MINOS_0
+[INFO] branch-select=derived: mc_truth_denom read 3 of 28 branches: MC, MC_pz, w_truth_Flux_0
+[INFO] branch-select=derived: mc_background read 4 of 32 branches: sim_background_Muon_Energy_MINOS_0, sim_background_pz_Muon_Energy_MINOS_0, sim_background_pass, w_bkg_Muon_Energy_MINOS_0
+[INFO] branch-select=derived: mc_background read 4 of 32 branches: sim_background, sim_background_pz, sim_background_pass, w_bkg_Flux_0
+[INFO] branch-select=derived: data read 3 of 4 branches: measured, measured_pz, measured_pass
+[INFO] branch-select=derived: data read 3 of 6 branches: measured, measured_pz, measured_pass
+[INFO] branch-select=derived: mc_background read 4 of 32 branches: sim_background, sim_background_pz, sim_background_pass, w_bkg
+[INFO] branch-select=derived: mc_background read 4 of 32 branches: sim_background, sim_background_pz, sim_background_pass, w_bkg_Flux_0
+[INFO] branch-select=derived: mc_background read 4 of 32 branches: sim_background, sim_background_pz, sim_background_pass, w_bkg_GEANT_Neutron_0
+[INFO] branch-select=derived: mc_background read 4 of 32 branches: sim_background_Muon_Energy_MINOS_0, sim_background_pz_Muon_Energy_MINOS_0, sim_background_pass, w_bkg_Muon_Energy_MINOS_0
+[INFO] branch-select=derived: mc_signal_reco read 5 of 42 branches: MC, MC_pz, sim, sim_pz, sim_pass
+[INFO] branch-select=derived: mc_signal_reco read 7 of 42 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth, w_reco
+[INFO] branch-select=derived: mc_signal_reco read 7 of 42 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_Flux_0, w_reco_Flux_0
+[INFO] branch-select=derived: mc_signal_reco read 7 of 42 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_GEANT_Neutron_0, w_reco_GEANT_Neutron_0
+[INFO] branch-select=derived: mc_signal_reco read 7 of 42 branches: MC_Muon_Energy_MINOS_0, MC_pz_Muon_Energy_MINOS_0, sim_Muon_Energy_MINOS_0, sim_pz_Muon_Energy_MINOS_0, sim_pass, w_truth_Muon_Energy_MINOS_0, w_reco_Muon_Energy_MINOS_0
+[INFO] branch-select=derived: mc_truth_denom read 2 of 28 branches: MC, MC_pz
+[INFO] branch-select=derived: mc_truth_denom read 3 of 28 branches: MC, MC_pz, w_truth
+[INFO] branch-select=derived: mc_truth_denom read 3 of 28 branches: MC, MC_pz, w_truth_Flux_0
+[INFO] branch-select=derived: mc_truth_denom read 3 of 28 branches: MC, MC_pz, w_truth_GEANT_Neutron_0
+[INFO] branch-select=derived: mc_truth_denom read 3 of 28 branches: pT_truth_Muon_Energy_MINOS_0, pz_truth_Muon_Energy_MINOS_0, w_truth_Muon_Energy_MINOS_0
+[INFO] branch-select=derived: mc_signal_reco read 9 of 42 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth, w_reco, w_truth_Flux_0, w_reco_Flux_0
+[INFO] branch-select=derived: mc_signal_reco read 7 of 42 branches: MC_Muon_Energy_MINOS_0, MC_pz_Muon_Energy_MINOS_0, sim_Muon_Energy_MINOS_0, sim_pz_Muon_Energy_MINOS_0, sim_pass, w_truth_Muon_Energy_MINOS_0, w_reco_Muon_Energy_MINOS_0
+[INFO] branch-select=derived: mc_truth_denom read 3 of 28 branches: pT_truth_Muon_Energy_MINOS_0, pz_truth_Muon_Energy_MINOS_0, w_truth_Muon_Energy_MINOS_0
+[INFO] branch-select=derived: mc_background read 4 of 32 branches: sim_background_Muon_Energy_MINOS_0, sim_background_pz_Muon_Energy_MINOS_0, sim_background_pass, w_bkg_Muon_Energy_MINOS_0
+[INFO] branch-select=derived: data read 3 of 6 branches: measured, measured_pz, measured_pass
+[INFO] branch-select=derived: mc_signal_reco read 7 of 42 branches: MC, MC_pz, sim, sim_pz, sim_pass, w_truth_Flux_0, w_reco_Flux_0
+[INFO] branch-select=derived: mc_background read 4 of 32 branches: sim_background, sim_background_pz, sim_background_pass, w_bkg_GEANT_Neutron_0
+[INFO] branch-select=derived: mc_truth_denom read 2 of 28 branches: MC, MC_pz
+[INFO] branch-select=derived: mc_truth_denom read 3 of 28 branches: MC, MC_pz, w_truth_Muon_Energy_MINOS_0
+[INFO] branch-select=derived: data read 3 of 6 branches: measured, measured_pz, measured_pass
+[INFO] branch-select=derived: mc_background read 4 of 32 branches: sim_background_Muon_Energy_MINOS_0, sim_background_pz_Muon_Energy_MINOS_0, sim_background_pass, w_bkg_Muon_Energy_MINOS_0
+[INFO] branch-select=derived: mc_signal_reco read 7 of 42 branches: MC_Muon_Energy_MINOS_0, MC_pz_Muon_Energy_MINOS_0, sim_Muon_Energy_MINOS_0, sim_pz_Muon_Energy_MINOS_0, sim_pass, w_truth_Muon_Energy_MINOS_0, w_reco_Muon_Energy_MINOS_0
+[INFO] branch-select=derived: mc_truth_denom read 3 of 28 branches: pT_truth_Muon_Energy_MINOS_0, pz_truth_Muon_Energy_MINOS_0, w_truth_Muon_Energy_MINOS_0

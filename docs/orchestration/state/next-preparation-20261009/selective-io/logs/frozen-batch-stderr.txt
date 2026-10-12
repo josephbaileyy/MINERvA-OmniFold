@@ -1,0 +1,2 @@
+/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/run_frozen.sh: line 13: syntax error near unexpected token `done'
+/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c5961a1c-c2f8-4299-b73b-907c4dff568b/scratchpad/selio/run_frozen.sh: line 13: `env PYTHONPATH=$RP $PY -m unittest discover -s $Q/sb1-prep/tests -t $Q/sb1-prep/tests -p $t.py; done'
