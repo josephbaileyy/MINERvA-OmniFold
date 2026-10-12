@@ -125,3 +125,32 @@ REPORT now defines that phrase in W2B's sense (§9), and the figure is not regen
 
 **Still open, as in the first review:** the *(agent-read)* items, plus every §11 inventory item not marked
 owner-checked. The latter rest on the read-only inventory agents' branch listings and greps.
+
+### Close-out record (per `CAMPAIGN-REVIEW-20260929.md` §1 and §6.7)
+
+**Setup.**
+- **Decision answered:** Joseph's close-out request. The memo's interpretation is corrected and a no-run feasibility
+  specification added; the verdict stays INCONCLUSIVE.
+- **Terminal condition:** one targeted review and one correction pass, then stop. Both ran.
+- **Owner:** Claude Opus 5.5 (`claude-opus-5-5`), session `de68ac2a-c125-408f-ba1c-8f2380a0f64b`.
+- **Reviewer:** one fresh read-only subagent of the same model.
+  - The campaign review recommends an Astra High reviewer for consequential review. None was available in this
+    session.
+  - This review is therefore limited to fresh-context independence, as stated above.
+- **Delegated read-only inventory:** two agents of the same model (response inputs; GENIE v3 predictions). Their key
+  citations were re-opened by the owner where marked owner-checked.
+
+**Commits.**
+- **Input:** `3e9e5188`.
+- **Outputs:** `6f48a9e8` (pre-review) and `db87bf78` (correction pass), plus the commit carrying this record.
+- **Remote:** checked at `d81f532b`; none of the study's inputs differ there.
+
+**Cost.**
+- **Compute:** zero metered reductions. The ledger is unchanged at 1,100.9 / 7,200 core-s. Login-node branch and
+  spline listings took seconds and are not metered.
+- **Inference cost:** unavailable.
+
+**Findings.**
+- **Accepted:** 12 (5 MAJOR, 6 MINOR, 1 NIT), all fixed.
+- **Residual open items:** the *(agent-read)* literature items, and the §11 inventory entries not marked
+  owner-checked. Neither reviewer the memo recommends (§11.7) has examined it.
