@@ -124,7 +124,8 @@ reached): the corner's normalization-removed residual (+0.6% to +6.7%) is compar
 is localized in no single factor, and reverses sign inside the region. That comparability is a degeneracy: it
 neither establishes a detector cause nor excludes interaction physics, and the factor split is descriptive. The
 recommendation is not to develop a new inelastic model from it. A close-out pass (same day) corrected interpretation
-only (no number or rule changed) and added a no-run feasibility specification (§11): a species-dependent response
+(no number or rule changed), changed the proposed GENIE v3 configurations (no G18_02a_02_11b splines exist), and
+added a no-run feasibility specification (§11), reviewed once with one correction pass: a species-dependent response
 study is possible only on the simulated-response side with a new event-loop pass; no official GENIE v3 prediction
 exists for the intermediate-W feature. The next decision recommended to Joseph is two independent reviews (response;
 nuclear theory/generator) before any validation. Grants no compute, contact or adoption authority.

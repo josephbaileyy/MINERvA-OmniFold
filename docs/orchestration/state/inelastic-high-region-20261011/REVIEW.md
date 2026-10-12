@@ -72,3 +72,56 @@ Ledger total **1,100.9 / 7,200 core-s**:
 - owner reductions, including the 900 core-s crashed run: 1,092.1;
 - reviewer: 7.3;
 - correction pass: 1.5.
+
+## Close-out review (2026-10-11)
+
+**Object reviewed:** commit `6f48a9e8`, the close-out's corrections and new §11, in a detached worktree.
+
+**Reviewer:** one fresh, read-only Claude subagent of the same model family. It had no access to the owner's
+reasoning and was given a targeted checklist of the eight close-out items Joseph set. Independence is limited to a
+fresh context, so this is **not** independent domain validation, and it is not the MINERvA-response or
+nuclear-theory review the memo recommends (§11.7).
+
+**Rounds:** one review and one focused correction pass, then stop.
+
+**Budget:** the reviewer ran only file reads, `git diff`, PDF text extraction and a JSON read, so no reduction was
+needed. That is not metered by `budget.py` and adds nothing to the ledger. The review worktree's `git status` was
+empty afterwards, and the worktree was removed.
+
+**Overall.** No blocker.
+
+**Reviewer-checked:**
+- **Frozen files:** PLAN.md, `results/`, `code/` and `logs/` are unchanged.
+- **Numbers:** every number token of the reviewed memo survives, except the superseded version string "3.06" in V2.
+- **Predecessor memo:** SHA-256 `4f3da639…`.
+
+**Reviewer re-opened:**
+- arXiv:2106.16210 §III and Ref. 36;
+- arXiv:2609.22662v2, Eq. (1) and the 5 and 30 MeV thresholds;
+- `R1_rate_shape.json` (S20: 0.0598 of C) and VL161;
+- the cited lines in `CVUniverse.h`, PACKET :277 / :321, `app_statmethods.tex:385`, `runEventLoopOmniFold.cpp` and
+  `unfold_nd_omnifold_unbinned.py`;
+- the W2B §6 costs.
+
+Items 1, 2, 3, 4, 6 and 8 were met. Items 5 and 7 had the defects below.
+
+| # | Severity | Finding | Disposition |
+|---|---|---|---|
+| C1 | MAJOR | §6.2 de-excitation row wrong-signed against the table's own "step not occurring" reference: emitted γ and evaporated protons add to A | **Fixed.** Row now +E_γ + ΣT_p(evap), neutrons 0, ≥ 0, with the reference stated |
+| C2 | MINOR | ε ≈ 8 MeV is the mean binding, not the separation energy (¹²C: S_p ≈ 16, S_n ≈ 18.7, pn ≈ 27 MeV); "+0.12 / +0.13" are about 0.01–0.02 GeV high | **Fixed.** ε and ε₂ are relabelled. Values are now +0.11 (pp absorption), +0.12 (π⁺n → π⁰p) and T_n < 0.11; no sign changed |
+| C3 | MAJOR | §11.3 closure would fail by construction: §5.3 already records that the estimator does not follow A-shape departures; the floor omitted the known bias | **Fixed.** Expected nominal non-closure is stated (s5n C4/C5). Closure is judged against the recorded bias, the floor includes it, and hiding is claimable only above the floor. The Failure row is restated accordingly |
+| C4 | MAJOR | Header and CATALOG cited a close-out review not yet in REVIEW.md | **Fixed** by this section, landing in the same commit as the correction pass |
+| C5 | MAJOR | §1 item 3 (response study next) contradicted §11.7 (reviews, then V2, then response study) | **Fixed.** §1 item 3 now states the §11.7 order |
+| C6 | MAJOR | §7 rule 2 still screened G18_02a_02_11b while V2 now proposes G18_10a_02_11b / AR23_20i; CATALOG said "interpretation only" | **Fixed.** Rule 2 now covers both kinds of configuration, states the nuclear-model confound and the unmeasured spline cost for G18_02a. The proposal change is disclosed in the REPORT header and CATALOG |
+| C7 | MINOR | §11.4 outcomes not exhaustive | **Fixed.** Catch-all "Inconclusive (default)" row added |
+| C8 | MINOR | §11 omitted the truth fields and `Fr*` weights the closure needs | **Fixed.** Added "Outputs the new pass must also write" to §11.1 |
+| C9 | MINOR | §6.3 generalized one coherent scale to explanation (iii) as a whole | **Fixed.** Now reads "the tested coherent scale moves … by only ±0.01 / ±0.002; species family open" |
+| C10 | MINOR | LIT-REPORT candidate table still had unqualified rate invariance | **Fixed.** Qualified as "factorized post-vertex kernel at fixed primary dynamics" |
+| C11 | MINOR | Species-branch listing had no receipt; `Systematics.h` cited as a bare untracked filename | **Fixed.** Cites the committed `feature_inventory.json` (`e39774e7`, owner-checked). `Systematics.h` is given by full cluster path, with SHA-256 `1bdfa4f0…` and its untracked status (owner-checked) |
+| C12 | NIT | "135–140 MeV" should be exactly 135 MeV per π±; "data-side" ambiguity; 1.898/3 = 0.633 gives ≈ 9.4, not 9; stray NuWro line | **Fixed.** 135 MeV, with kaons noted; "data-side" is marked as W2B usage at each site; ≈ 6–9.5 node-h; the NuWro line moved under item 4 |
+
+**Not changed, by design.** The figure legend's "data side" is produced by the frozen `code/make_figure.py`. The
+REPORT now defines that phrase in W2B's sense (§9), and the figure is not regenerated.
+
+**Still open, as in the first review:** the *(agent-read)* items, plus every §11 inventory item not marked
+owner-checked. The latter rest on the read-only inventory agents' branch listings and greps.

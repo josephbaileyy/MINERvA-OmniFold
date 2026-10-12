@@ -16,6 +16,10 @@ concern:
 - the status of the 4.1% response estimate and of world σ/E;
 - the status of §7's central-value cutoffs.
 
+**Proposal changes.** One change goes beyond interpretation. The V2 proposal (§8) now names G18_10a_02_11b and
+AR23_20i at v3.04.00 in place of G18_02a_02_11b at v3.06.02, because the inventory found no G18_02a_02_11b splines
+(§11.6).
+
 The corrections were reviewed once more (targeted, read-only), and one correction pass followed (REVIEW.md, "Close-out
 review"). Remote `main` had advanced to `d81f532b` (article and note edits only). None of this study's inputs changed.
 
@@ -69,8 +73,13 @@ marked *(agent-read)*, meaning the delegated literature agent read it and the ow
    - The emulation applies v3 parameters to GENIE 2.12's Rein–Sehgal resonances (v3 uses Berger–Sehgal). It also
      omits W_cut and M_A^RES. **It is not a test of the tune itself.**
    - No official GENIE v3 prediction exists that could test it without new generation (§11.6).
-3. The next decision-relevant step is not a model. It is a response-hypothesis study, specified but not executed in
-   §11.
+3. The next decision-relevant step is not a model. It is **two independent reviews, before any validation** (§11.7):
+   - one by a MINERvA hadronic-response reviewer;
+   - one by a nuclear-theory/generator reviewer.
+
+   If they clear it, the order would be:
+   - an official GENIE v3 prediction for the intermediate-W feature (V2, §8);
+   - then the response-hypothesis study specified, but not executed, in §11.
    - Response degeneracy, meaning that the tested ±4% scale moves part of the residual by a comparable amount,
      **does not establish a detector cause and does not exclude interaction physics**. It shows only that this region
      cannot yet tell them apart.
@@ -384,9 +393,9 @@ See [`results/fig_contrast_by_W.png`](results/fig_contrast_by_W.png).
 4. **[M]** The largest normalization-independent feature is outside C. GENIE overshoots at 1.4–2.2 GeV (ln ρ −0.19
    and −0.09); Tune v1 overshoots at 1.4–1.8 only (−0.12). It moves only ±0.01 under the one coherent ±4% recoil scale
    tested. Species-dependent response and prior leakage into the unfolded (q3, W) were not tested.
+   - NuWro shows the overshoot only at 1.8–2.2 GeV.
    - **[D]** That a W-only region's residual "sits in the transfer step" holds by construction: its partition step is
      identically zero.
-   NuWro shows it only at 1.8–2.2 GeV.
 
 **Partition at fixed transfer, W ≥ 1.8 [M].** At W ≥ 1.8 the data put fewer events at A < 0.8 than GENIE CV
 (A|t step −0.03 to −0.11) and Tune v1 (−0.05 to −0.09). These cells hold 3.7% of the data. The other A bins differ
@@ -404,7 +413,7 @@ A|t −0.31 to −0.41 below 0.4 GeV and +0.24 at 0.8–1.5 GeV.
 
 | Effect on region C | Size | Source |
 |---|---:|---|
-| ±4% coherent recoil scale (data side, estimator R) | Δ ln ρ_C = +0.037 / −0.038 | W2B unfolds; `reduce_r3.py` |
+| ±4% coherent recoil scale (W2B "data side": simulated response scaled, real data re-unfolded, null fixed; estimator R) | Δ ln ρ_C = +0.037 / −0.038 | W2B unfolds; `reduce_r3.py` |
 | Estimator R vs production estimator | Δ ln ρ_C = 0.001 | same |
 | Numerical jitter floor (3 jitters) | ≤ 0.0012 | same |
 | s5n C4: regularization residual under a generator-sized A-shape departure (F2), data-weighted | +2.5% over C; **+8.0% non-overflow / −3.3% overflow**; max cell 74% | `state/s5n/stage1/dev_receipt.json` |
@@ -543,7 +552,8 @@ The "DIS" label in M includes GENIE's non-resonant background below W_cut = 1.7 
     rest mass and **kaons are included**;
   - our A (`docs/EAVAIL_DEFINITION.md`) uses **kinetic** energy for π± (rest mass removed, with the 135 MeV constant),
     total energy for π⁰, and excludes kaons and e±.
-  - **Its E_vis is therefore not our E_avail.** Per charged pion they differ by ≈ 135–140 MeV.
+  - **Its E_vis is therefore not our E_avail.** Per charged pion they differ by 135 MeV, because A uses E_π± − 0.135.
+    Kaons add their full total energy.
   - Its nucleon multiplicities use a 5 MeV-per-nucleon kinetic threshold, chosen to match DUNE's Phase-II near
     detector. Its Tables I–II comparisons with data use 30 MeV for p, d and n. Our A has no threshold.
   - Its reweighting tools address the spread between hadron-transport models. They are not a detector response.
@@ -556,17 +566,21 @@ The "DIS" label in M includes GENIE's non-resonant background below W_cut = 1.7 
 
 *Definitions.*
 - A counts Σ T_p + Σ (E_π± − 0.135) + Σ E_π⁰ + E_γ. It excludes neutrons, binding and kaons.
-- Each FSI step conserves energy, E_in + Σ_removed (M − ε) = Σ_out E, with ε ≈ 8 MeV the separation energy per
-  removed nucleon on C. Recoil, the n–p mass difference and the 4.6 MeV π± constant offset are neglected.
+- Each FSI step conserves energy, E_in + Σ_removed (M − ε) = Σ_out E, where ε is the separation energy of the removed
+  nucleons.
+  - On ¹²C, S_p ≈ 16 MeV and S_n ≈ 18.7 MeV, so a single removal costs ε ≈ 16–19 MeV.
+  - Removing a pn pair costs ε₂ ≈ 27 MeV. These are ground-state values, and deeper shells cost more.
+  - The 8 MeV mean binding per nucleon is not the relevant quantity.
+  - Recoil, the n–p mass difference and the 4.6 MeV π± constant offset are neglected.
 - ΔA is the change of A relative to the same step not occurring.
 
 | FSI step | ΔA | Sign |
 |---|---|---|
-| π⁰ absorption on a nucleon pair | −(Σ T_n + 2ε) | ≤ 0 always: the π⁰'s total energy is already counted |
-| π± absorption → p p (π⁺ on a quasi-deuteron pn) | +0.135 − 2ε ≈ **+0.12 GeV** | **> 0**: the uncounted rest mass becomes counted proton energy |
-| π± absorption → p n | +0.135 − 2ε − T_n | either sign: > 0 if T_n < 0.12 GeV |
+| π⁰ absorption on a nucleon pair | −(Σ T_n + ε₂) | ≤ 0 always: the π⁰'s total energy is already counted |
+| π± absorption → p p (π⁺ on a quasi-deuteron pn) | +0.135 − ε₂ ≈ **+0.11 GeV** | **> 0**: the uncounted rest mass becomes counted proton energy |
+| π± absorption → p n | +0.135 − ε₂ − T_n | either sign: > 0 if T_n < 0.11 GeV |
 | π± absorption → n n (π⁻ on pn) | −(E_π − 0.135) | < 0: the pion's whole contribution is lost |
-| π⁺ n → π⁰ p (charge exchange) | +0.135 − ε ≈ +0.13 GeV | > 0 |
+| π⁺ n → π⁰ p (charge exchange) | +0.135 − S_n ≈ +0.12 GeV | > 0 |
 | π⁻ p → π⁰ n | +0.135 − ε − T_n | either sign |
 | π⁰ → π± (either target) | −0.135 − ε (− T_n) | < 0 |
 | π or p transferring energy to a bound proton | −ε | ≈ 0 |
@@ -575,7 +589,7 @@ The "DIS" label in M includes GENIE's non-resonant background below W_cut = 1.7 
 | a proton producing a pion, N N → N N π± | −0.135 − ε − Σ T_n | < 0 |
 | … producing a π⁰ | −ε − Σ T_n | ≤ 0 |
 | a neutron producing a pion | +Σ T_p + E_π (− 0.135 for π±) | > 0 |
-| de-excitation by evaporated nucleons or γ | − (neutron share + ε); γ counted | ≤ 0 |
+| de-excitation of the residual nucleus (evaporation or γ), against the excitation energy staying unemitted | +E_γ + Σ T_p(evap); evaporated neutrons 0 | ≥ 0 (the excitation energy itself was taken from counted particles by the preceding step, whose row carries that cost) |
 
 **Consequences [D].**
 - "Weaker absorption raises A" is **false as a general statement**. It holds for π⁰ absorption and for π± absorption
@@ -600,9 +614,12 @@ Tuning FSI against it would absorb a detector effect into physics, and vice vers
 - the W ≥ 3 excess: ±0.07;
 - the partition differences: estimator scale 10–74%.
 
-It does not reconcile the predictions with one another. A data-side coherent scale shifts the transfer step by the
-same ±0.033 for every G, while the transfer steps differ across G by 0.062 (+0.004, +0.028, −0.034). It is too small
-for GENIE's 1.4–2.2 GeV overshoot (±0.01) and for the muon-shape step (±0.002).
+The tested scale does not reconcile the predictions with one another. A coherent scale applied on the response side
+(W2B sense) shifts the transfer step by the same ±0.033 for every G, while the transfer steps differ across G by
+0.062 (+0.004, +0.028, −0.034).
+
+The tested coherent scale moves GENIE's 1.4–2.2 GeV overshoot by only ±0.01 and the muon-shape step by only ±0.002.
+Whether an untested species-dependent family could move them more is open (§11).
 
 **[D] What matching in size does and does not show.**
 - That the tested response scale *can* move these quantities by their observed size is a degeneracy.
@@ -665,7 +682,13 @@ decision needs a new frozen rule like PLAN §6, an uncertainty treatment, and sa
    If it does, the residual is *movable* by response at that size. **That does not rule out a high-region model or
    any physics explanation.** It means this region cannot discriminate between them without independent calibration
    (§11.4).
-2. **02_11b family.** Apply this screen to a real GENIE v3 G18_02a_02_11b CH prediction on the analysis flux.
+2. **02_11b family.** Apply this screen to a real GENIE v3 CH prediction on the analysis flux. Two kinds are possible:
+   - **A ready-spline configuration** (G18_10a_02_11b or AR23_20i at v3.04.00, the V2 proposal). It also changes the
+     nuclear model, so a result screens that whole configuration. It is not attributable to the inelastic tune alone,
+     and it does not test the G18_02a values emulated in §6.1.
+   - **G18_02a_02_11b itself.** This needs splines built first, at a cost not measured here.
+
+   The screen applies to either:
    - It is *flagged* if it overshoots the Δ bin (|ln ρ_W1.1–1.4| > 0.10) or worsens R_total by more than 3%.
    - It *passes the intermediate-W screen* if it reduces |ln ρ_M| below 0.10 without either.
    - Neither outcome is a statistical statement.
@@ -710,9 +733,9 @@ decision needs a new frozen rule like PLAN §6, an uncertainty treatment, and sa
 | Stage | Work | Cost basis | Decision it answers |
 |---|---|---|---|
 | R | The two independent reviews of §6.2 and §11 | zero compute | §11.7: whether, and in what form, V1/V2 are worth executing |
-| V1 | **Sensitivity-only** species response: 8–12 simulated-response endpoints plus a control, through the W2B chain and estimator R, plus closure (§11.2 a, §11.3) | ≈ 6–9 + 1.5–2 billed CPU node-h, extrapolated from W2B's measured 1.898 for 3 endpoints (§11.5) [A]. **Not a total validation budget, not core-hours** | §7 rule 1 (movability) and §11.3 (hiding), as a screen |
+| V1 | **Sensitivity-only** species response: 8–12 simulated-response endpoints plus a control, through the W2B chain and estimator R, plus closure (§11.2 a, §11.3) | ≈ 6–9.5 + 1.5–2 billed CPU node-h, extrapolated from W2B's measured 1.898 for 3 endpoints (§11.5) [A]. **Not a total validation budget, not core-hours** | §7 rule 1 (movability) and §11.3 (hiding), as a screen |
 | V1-matched | Response-varied null ensembles (§11.2 b) | order 10² billed CPU node-h (packet estimate ~200, unmeasured) [A] | any calibrated response statement |
-| V2 | GENIE v3.04.00 G18_10a_02_11b and AR23_20i (ready splines), CH mixture, 1M + 0.1M (50–100 GeV) events each, through the existing converter | GENIE v3 throughput unmeasured here; **assumed** 5–50 ms/event → 1.5–15 core-h per configuration. A 10⁴-event pilot (≤ 0.2 core-h) measures it first [A] | §7 screens 2–3 (M feature, Δ bin, rate) |
+| V2 | GENIE v3.04.00 G18_10a_02_11b and AR23_20i (ready splines), CH mixture, 1M + 0.1M (50–100 GeV) events each, through the existing converter | GENIE v3 throughput unmeasured here; **assumed** 5–50 ms/event → 1.5–15 core-h per configuration. A 10⁴-event pilot (≤ 0.2 core-h) measures it first [A]. The alternative, G18_02a_02_11b itself, needs splines built first, at an unmeasured cost | §7 screens 2–3 (M feature, Δ bin, rate) |
 | V3 | Only if V1 and V2 are informative: review and Joseph's decision on any implementation | — | — |
 
 ## 9. Limitations
@@ -721,7 +744,8 @@ decision needs a new frozen rule like PLAN §6, an uncertainty treatment, and sa
   errors are not quantified here.
 - The 2D statistical band is ~0.5% per bin (VL170), small against these effects, but 5D cell errors are larger and
   unmeasured.
-- The Tune v1 comparisons are prior-coupled. The ±4% response test is data-side only.
+- The Tune v1 comparisons are prior-coupled. The ±4% response test is data-side only in the W2B sense: the simulated response was varied and the real data
+  re-unfolded; the null was not varied. (The figure legend's "data side" has the same meaning.)
 - The recorded estimator biases are pseudo-experiment means at development scale. The s5n A-shape departure inherited
   the KI 83 flux defect; it remains a valid estimator stress, but it is not physically anchored.
 - The GENIE decomposition is one model's labels.
@@ -791,10 +815,10 @@ the cost.
 
 | Item | Status | Evidence |
 |---|---|---|
-| Per-species visible energy in the **MC AnaTuples** | **exists**: `blob_recoil_E_{tracker,ecal,…}_{p,meson,em,other,lown,midn,highn,xtalk,mu}` and MAT's per-species shift branches `part_response_recoil_allNonMuonClusters_*_{proton,meson,em,…}_err` | branch listing of a Playlist 1F MC AnaTuple (4,190 branches) |
+| Per-species visible energy in the **MC AnaTuples** | **exists**: `blob_recoil_E_{tracker,ecal,…}_{p,meson,em,other,lown,midn,highn,xtalk,mu}` and MAT's per-species shift branches `part_response_recoil_allNonMuonClusters_*_{proton,meson,em,…}_err` | branch listing of a Playlist 1F MC AnaTuple (4,190 branches; agent-read, no receipt); the `blob_recoil_E_<subdetector>_<species>` family is in the committed receipt `nd-unfolding/pet/improvement_campaign/phase_a/receipts/feature_inventory.json` (`e39774e7`) *(owner-checked)* |
 | Per-species information in **our stored products** (event-loop outputs, npz dumps) | **absent**. The event loop reads only the tracker/ECAL totals and `<tree>_recoil_E`; the dumps carry (p_T, p_∥, E_avail, q3, W) and weights only | `CVUniverse.h:185-209` *(owner-checked)*; `PACKET-20261005-publication-decision.md:277` *(owner-checked)* |
 | Species branches in **data** tuples | names present; contents not read. **Data have no truth species labels in any case** | data AnaTuple branch listing |
-| Response universes | 2D/3D: 187 universes. The only hadron-detector entries are `GEANT_{Neutron,Pion,Proton}` (interaction-rate weights). There is no calorimetric response universe, and MAT's response band is commented out (`Systematics.h:87-89`). 5D: "no recoil-energy-scale band" (amendment 7). W2B: one coherent ±4% (`RecoilResponseUniverse.h`) | agent-read; W2B §1 *(owner-checked)* |
+| Response universes | 2D/3D: 187 universes. The only hadron-detector entries are `GEANT_{Neutron,Pion,Proton}` (interaction-rate weights). There is no calorimetric response universe, and MAT's response band is commented out at `/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MINERvA-101-Cross-Section/systematics/Systematics.h:87-89` (untracked; SHA-256 `1bdfa4f0…`; *owner-checked*). 5D: "no recoil-energy-scale band" (amendment 7). W2B: one coherent ±4% (`RecoilResponseUniverse.h`) | agent-read; W2B §1 *(owner-checked)* |
 | Selection | **No reco cut reads the recoil**, so a response variation moves events across reco cells without changing selection | `runEventLoopOmniFold.cpp:1710-1715` (agent-read) |
 | Background | Per-reco-cell purity weight max(0, data − bkg)/data. W2B scaled the background rows' reco observables with the signal's. The interaction with s5c D1's high-W purity bias (≤ 4%) is unrecorded | `unfold_nd_omnifold_unbinned.py:502-600` (agent-read) |
 | Null / pseudo-experiments | Frozen s5p ensembles built with the nominal response. **No response-varied null exists** | W2B §1 |
@@ -815,6 +839,11 @@ the cost.
   - the species pieces sum to the totals used now;
   - the `_mu` component and the muon-fuzz subtraction do not double count;
   - the q0 calibration convention is the one `recoil_E` uses.
+- **Outputs the new pass must also write.** The closure (11.3) needs these fields in the 5D event outputs, which store
+  only kinematics and weights today:
+  - truth interaction mode, W_gen, struck-nucleon and target codes, and primary-hadron multiplicity;
+  - the GENIE `Fr*`/`MFP_*` FSI reweight weights. Their availability in the 5D chain rests only on the 2D universe
+    list and must be confirmed.
 
 ### 11.2 Response hypotheses and matched propagation
 
@@ -860,8 +889,18 @@ reweight of known form:
 **Procedure.**
 - Unfold each D_j under the nominal response and under every H_k.
 - Form the departure signature d_j (the same reductions as §11.2 step 4) and the response shift vectors r_k.
-- **Hidden** means that d_j lies within the span of {r_k} at coefficients inside the reviewed band, to within the
-  estimator floor. The floor is measured on the δ = 0 control by jitter and seed spread.
+- **Expected nominal non-closure.** The estimator does not follow generator-sized A-shape departures (§5.3: s5n C4,
+  +2.5% over C, up to 74% per cell; C5 +0.8%). So D₂, and the A-dependent part of D₁, will not close against truth
+  even at nominal response.
+  - **Closure is therefore judged against the recorded bias, not against truth.**
+  - At nominal response, d_j^nom (unfolded) must differ from the truth departure by no more than the recorded s5n/s5c
+    scale for that region.
+  - The test then compares each d_j^k (unfolded under H_k) with d_j^nom.
+- **Hidden** means that the departure's unfolded signature d_j^nom lies within the span of {r_k}, at coefficients
+  inside the reviewed band, to within a floor.
+  - The floor is the jitter and seed spread on the δ = 0 control, **plus** the recorded estimator bias for the
+    reductions concerned.
+  - Hiding can therefore be claimed only for departures larger than that floor.
 - **Reverse closure.** Fake data at nominal physics with a response shift H_k: does the reduction attribute it to a
   physics step?
 
@@ -876,10 +915,11 @@ Lozano's SIS sample shares events with ours (§6.4) and is not independent.
 
 | Outcome | Condition | Reading |
 |---|---|---|
-| **Failure** | The δ = 0 control does not reproduce the nominal product within the jitter floor; a species-sum check fails; or closure on the known departures fails beyond the estimator floor at nominal response | The study is uninformative. Fix or stop; nothing about physics |
+| **Failure** | The δ = 0 control does not reproduce the nominal product within the jitter floor; a species-sum check fails; or, at nominal response, d_j^nom differs from the truth departure by more than the recorded s5n/s5c bias for that region | The study is uninformative. Fix or stop; nothing about physics |
 | **Inconclusive** | The reviewed family moves ρ_C / ρ_M / the W profile by amounts comparable to the residual **and** closure shows that departures D_j can be hidden by it | The region cannot discriminate between response and the candidate physics. **No model is ruled out or in.** A movable residual is a degeneracy, not a refutation |
 | **Useful (a)** | Closure shows the D_j are **not** hidden: d_j is outside span{r_k} within the band; and the family moves the observed residual by less than its size | That residual becomes a candidate physics constraint, subject to a new frozen rule, a response-varied null (11.2 b) and a blind sample |
 | **Useful (b)** | Independent calibration narrows δ_s enough that the family's shifts fall below the residual | Same, with the calibration documented and reviewed |
+| **Inconclusive (default)** | Any other combination, e.g. the family moves the residual comparably but the D_j are not hidden, or it moves the residual less but some D_j are hidden, or a departure is below the floor | No discrimination is claimed; record the combination and stop |
 
 ### 11.5 Cost: sensitivity-only versus matched validation
 
@@ -889,12 +929,13 @@ and are not converted here: the W2B event loops ran at billing 10/256 of a node.
 | Part | Basis | Estimate |
 |---|---|---|
 | Measured W2B, for reference | 3 endpoints (δ = 0, ±4%): 36 event loops 1.724, 3 lateral dumps 0.080, 3 unfolds 0.095; **1.898 for W2b, 1.997 including W2a** | measured [M] |
-| **Sensitivity-only (11.2 a)** | ≈ 0.6 node-h per endpoint (W2B 1.898 / 3) × (8–12 endpoints + 1 control), plus 3 jitters per endpoint at 0.03 node-h | **≈ 6–9 node-h** [A, extrapolated] |
+| **Sensitivity-only (11.2 a)** | ≈ 0.63 node-h per endpoint (W2B 1.898 / 3) × (8–12 endpoints + 1 control), plus 3 jitters per endpoint at 0.03 node-h | **≈ 6–9.5 node-h** [A, extrapolated] |
 | Closure (11.3) | 3 departures + 1 reverse, each unfolded under each of 9–13 response endpoints at ≈ 0.03 node-h per unfold, reusing the event-loop outputs | **≈ 1.5–2 node-h** [A] |
 | Code and review | ≈ 50 lines in `RecoilResponseUniverse`, species-sum checks, two reviewers | human time; not computed |
 | **Matched validation (11.2 b)** | response-varied null ensembles per hypothesis or band; the packet's estimate for a calibrated re-production with a response band is **~200 node-h, "like s5p itself"** (`PACKET-20261005…:321`), unmeasured | **order 10² node-h** [A] |
 
-The memo's earlier "≈ 5 CPU node-h" was this extrapolation for **eight data-side endpoints only**. It is not a total
+The memo's earlier "≈ 5 CPU node-h" was this extrapolation (1.898 × 8/3) for **eight endpoints only**, "data-side" in
+the W2B sense. It is not a total
 validation budget, it omits the control, jitters, closure and any null, and it is not a core-hour figure. Every item
 here is well above this study's 2 core-hour authorization, and none is authorized.
 
@@ -945,7 +986,7 @@ hadronic-response reviewer and one nuclear-theory/generator reviewer. They would
 - the FSI net sign.
 
 The cheapest compute, V2 with ready AR23/G18_10a_02_11b splines (§8), is generation and needs its own authorization.
-The sensitivity-only response study (≈ 6–9 billed CPU node-h plus closure) needs new event-loop code. Both should
+The sensitivity-only response study (≈ 6–9.5 billed CPU node-h plus closure) needs new event-loop code. Both should
 follow review, not precede it.
 
 **If the reviews clear it,** the recommended order is:

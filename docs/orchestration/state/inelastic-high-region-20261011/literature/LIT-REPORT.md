@@ -566,7 +566,7 @@ The table gives the change in the *prediction*. "+" raises the prediction, i.e. 
 | Larger generic DIS scale (fit to our corner) | + | + (W>1.8 is 50-73% of σ at 5-10 GeV) | + if R_ij × DIS NRB scales with it (wrong direction) | broad; high-Q2 high-p_T up (matches Ruterbories 10-25% deficit) | A1, D2 |
 | Undo the Tune v1 nonres-pion reduction | + (W 1.8-2 slice) | + | + (wrong direction for 1.4-1.8 vs untuned GENIE) | high-Q2 up (Lozano prefers it) | D1 |
 | AGKY 2021 hadronisation tune | + (more pions → more E_avail; SIS rate up) | + (SIS) | + (wrong direction; breaks CC pi+pi−) | small | B1 |
-| Weaker FSI / longer formation zone / less neutron share | **+ (migration in E_avail at fixed ω)** — *CORRECTED 2026-10-11: sign channel-dependent, net not determined (REPORT §6.2)* | **0** | 0 in rate (E_avail-shape only) | **0** | B2, B3 |
+| Weaker FSI / longer formation zone / less neutron share | **+ (migration in E_avail at fixed ω)** — *CORRECTED 2026-10-11: sign channel-dependent, net not determined (REPORT §6.2)* | **0** | 0 in rate (E_avail-shape only; for a factorized post-vertex kernel at fixed primary dynamics, REPORT §5.1) | **0** | B2, B3 |
 | Flux normalisation (nu-e/IMD constrained flux −9.6%) | data up uniformly (if used) | data up uniformly | data up uniformly (wrong direction there) | uniform | A4 |
 | Detector hadronic response 3-5% (pi±, EM) | ± migration across E_avail = 0.8 and (if reco-omega) W = 1.8 | 0 | small ± | 0 | C1 |
 
