@@ -1,0 +1,28 @@
+{
+ "prior_charged_node_h": 0.002313368055555556,
+ "amendment_charged_node_h": 3.0887847222222224,
+ "cumulative_charged_node_h": 3.091098090277778,
+ "unfinished_ceiling_node_h": 0.0,
+ "cap_node_h": 6.4,
+ "attempts": {
+  "exact": 3,
+  "lgbm": 2,
+  "preflight": 1
+ },
+ "hours_since_first_submission": 23.99897127722222,
+ "jobs": [
+  "prior xr_X0 job 59648608 FAILED billing=12 elapsed=19s charged=0.0002473958",
+  "prior xr_X0p job 59648610 FAILED billing=12 elapsed=19s charged=0.0002473958",
+  "prior xr_X1 job 59648611 FAILED billing=12 elapsed=7s charged=0.0000911458",
+  "prior xr_L0 job 59648616 FAILED billing=64 elapsed=7s charged=0.0004861111",
+  "prior xr_L1 job 59648617 FAILED billing=64 elapsed=4s charged=0.0002777778",
+  "prior xrr_PF job 59655414 FAILED billing=12 elapsed=74s charged=0.0009635417",
+  "PF a1 job 59659845 COMPLETED billing=12 elapsed=147s charged=0.0019140625",
+  "L0 a1 job 59660487 COMPLETED billing=64 elapsed=836s charged=0.0580555556",
+  "X0 a1 job 59664200 COMPLETED billing=12 elapsed=75296s charged=0.9804166667",
+  "X0p a1 job 59664201 COMPLETED billing=12 elapsed=76470s charged=0.9957031250",
+  "X1 a1 job 59664202 COMPLETED billing=12 elapsed=75999s charged=0.9895703125",
+  "L1 a1 job 59664203 COMPLETED billing=64 elapsed=909s charged=0.0631250000"
+ ],
+ "over": []
+}
