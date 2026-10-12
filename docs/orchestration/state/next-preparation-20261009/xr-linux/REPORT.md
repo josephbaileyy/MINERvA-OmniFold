@@ -21,7 +21,7 @@
 | `Branch` / `Base` | `run/xr-linux-20261010` / `3892e769043cddebfd58ec19e1ab1a567eb01784` (`origin/main`, PR #77; refreshed at the start, no later commit) |
 | `Owned files` | `Q/xr-linux/` (this record, the package `xr/`, `logs/`, `results/`, `review/`); `docs/orchestration/AUTHORIZATION-20261011-xr-linux.md` and its two registration rows (one `MANIFEST-overrides.tsv` row, one `CATALOG.md` routing row) |
 | `Owner / reviewer` | One owner: Claude Opus 5.5 (`claude-opus-5-5`), Claude Code. One fresh read-only reviewer: Claude Opus 5.5, a general-purpose subagent of this session. Same provider and model as the owner: **not** a cross-provider review. The campaign review's suggested Astra High reviewer is not available in this session |
-| `Review budget` | admission review; at most two focused repair/re-review cycles in total; final independent numerical verification |
+| `Review budget` | admission review; at most two focused repair/re-review cycles in total; final independent numerical verification. **Used:** the admission review (ADMIT) and the final verification (VERIFIED WITH FINDINGS, notes only); 0 repair cycles, since no repair was needed |
 | `Terminal outcomes` | admission, preflight, execution and each comparison are each PASS, FAIL or INCONCLUSIVE. A failed preflight stops dependent execution; the window is 72 h from the first preflight submission |
 
 `Q` = `docs/orchestration/state/next-preparation-20261009`; `P` = `Q/xr-linux/xr` (the package).
@@ -43,6 +43,10 @@ their area-weighted integral:
 | `L1_vs_SEED1` | a seed-1 run reproduces the seedscan seed-1 central | **PASS** | 2.4e-12 | 6.3e-14 | 4.2e-14 |
 | `NC_X0_vs_CV42` | negative control: different estimators must FAIL | **FAIL = control met** | 1.4e-1 | 9.9e-3 | 9.4e-5 |
 
+Integrals are the frozen comparator's (numpy summation). Correctly rounded sums (`reproduction-final.json`,
+and the verification in §8) differ by at most 3.3e-16 absolute: X0 0, X0p 2.2e-16, L0_vs_PN_CV 1.32e-14,
+L1_vs_SEED1 4.13e-14 (verification note N-1).
+
 - **Central reproduction: PASS.** The quoted exact central `E_C` is regenerated, by today's driver and
   by the `d1bc8813` driver, to rounding (29–32 of 205 cells bitwise equal; the rest differ in the last
   bits). Both LightGBM centrals and the seed-1 central are regenerated to ≤ 1.4e-11, under 64
@@ -52,9 +56,11 @@ their area-weighted integral:
   every one of the 205 cells relative to the unseeded run (X0): median 0.18 %, max 1.6 %, integral
   4.0e-6. The exact central is therefore **not** invariant to the estimator seed at the frozen
   criterion. Per the frozen rules, this is an outcome, not a reason to retry. Its mechanism was not
-  examined: the run path sets no global numpy seed, the estimator settings are sklearn's defaults
-  (no subsampling, all features), and why the unseeded run reproduces `E_C` while seeded runs move is
-  an open question for the 2D estimator owner. It is not a measurement of seed spread (one seed
+  examined: the run path sets no global numpy seed, and the estimator settings are sklearn's defaults
+  (no subsampling, all features). The verifier measured (§8, N-2) that two processes in the frozen
+  environment start with different global numpy RNG states, which `random_state=None` uses. So the
+  agreement of X0, X0′ and `E_C` does not come from a shared global seed. Why unseeded runs agree to
+  rounding while seeded runs move is an open question for the 2D estimator owner. It is not a measurement of seed spread (one seed
   triple), and it changes no gate.
 - Cumulative charge **3.0911 of 6.4** CPU node-h on m3246 (every XR job since 2026-10-10), from sacct.
 - Independently reproduced by the owner (`checks/reproduce_comparisons.py`) and by the final
@@ -238,7 +244,7 @@ Under the release rule, this receipt was the gate for L0.
 | X0 | 59664200 | 10-11 08:41:25 | 08:58:03–10-12 05:52:59 | 75296 | 12 | COMPLETED 0:0 | complete |
 | X0p | 59664201 | 10-11 08:41:28 | 08:58:03–10-12 06:12:33 | 76470 | 12 | COMPLETED 0:0 | complete |
 | X1 | 59664202 | 10-11 08:41:31 | 09:03:02–10-12 06:09:41 | 75999 | 12 | COMPLETED 0:0 | complete |
-| L1 | 59664203 | 10-11 08:41:34 | 11:03:21–11:18:30 | 909 | 64 | COMPLETED 0:0 | complete |
+| L1 | 59664203 | 10-11 08:41:33 | 11:03:21–11:18:30 | 909 | 64 | COMPLETED 0:0 | complete |
 
 **L0 first, and the release.** L0 (`results/outroot/L0/a1/receipt.json`) ran on `nid004128`. Its
 receipt shows:
@@ -253,7 +259,8 @@ receipt shows:
 
 The guard inventory verdict is `REPOSITORY-ORIGINS-INSPECTED`. The release gate in `xr_submit.sh`
 accepted this receipt, and X0, X0p, X1 and L1 were submitted together at 08:41Z, with no diagnosis
-(first attempts).
+(first attempts). Submission times in the table are sacct's `Submit`, converted from PDT;
+`submissions.jsonl` records each after `sbatch` returns (L1: 08:41:34Z).
 
 **L1** (`results/outroot/L1/a1/receipt.json`, `nid004084`) has the same shape as L0:
 
@@ -300,7 +307,37 @@ The interim files in `logs/` are the same comparator and reproduction run as eac
 
 ## 8. Independent numerical verification
 
-_Pending: the final verification by the same fresh reviewer (review use 2)._
+**VERIFIED WITH FINDINGS** (`review/final-verification-aa6b173d.md`, verbatim). The reviewer was the
+same fresh read-only subagent as the admission review: Claude Opus 5.5 (`claude-opus-5-5`), the same
+provider and model as the owner, so this is not cross-provider. Fixed commit `aa6b173d`, 06:16:56Z to
+06:21:36Z on 2026-10-12, in a fresh detached worktree left clean. It used its own scripts and not
+the comparator or the owner's reproduction.
+
+- **Comparisons**, recomputed from `hXSec2D` after re-hashing all five outputs, their CFS copies,
+  the tracked receipts against the cluster originals, and the four references. Every verdict,
+  maximum, median, argmax cell, count over 1e-8 and bitwise-equal count equals both final files
+  exactly. The maxima were also computed in exact rational arithmetic. X1_vs_X0 is confirmed:
+  max 1.618 % at cell 111, median 0.18 %, integral 4.0e-6, all 205 cells over.
+- **Receipts:** confirmed for every run (fits, classes, seeds, threads, drivers and digests), and
+  for the preflight receipt.
+- **Charges**, from live sacct at 06:19:53Z: 2,848,756 CPU-s = 3.0910981 node-h (712189/230400),
+  every digit equal to §9. Attempts 1/2, 3/4 and 2/3; `squeue` empty; every `xrl` job inside the
+  window.
+- **Wording:** §1 and §7 stay within the numbers; the X1 interpretation is adequately scoped;
+  NOT CITABLE FOR is respected.
+
+Three NOTEs, all applied:
+
+- **N-1:** the §1 integral column now states its summation.
+- **N-2:** the global-RNG measurement is added to §1 and §10 item 6.
+- **N-3:** L1's submission time now follows sacct.
+
+Not verified by the reviewer:
+
+- training inside the jobs;
+- the mechanism of the X1 difference;
+- the earlier products' provenance and the 5.8e-9 prior, taken from the frozen record;
+- the self-reported local resources.
 
 ## 9. Resources
 
@@ -355,7 +392,9 @@ The dispatch reserves shared-register and binding-inventory changes for integrat
    reach `lscpu`.
 6. **For the 2D estimator owner** (observation only): unseeded exact runs regenerate `E_C` to
    rounding, twice, with two driver revisions, while one seeded run moves every cell (median 0.18 %).
-   The mechanism is unexamined. This is one seed triple: it is not a seed-spread estimate, and no
+   The global numpy RNG state that `random_state=None` draws from differs between processes in this
+   environment (§8, N-2), so a shared global seed does not explain the agreement. The mechanism is
+   unexamined. This is one seed triple: it is not a seed-spread estimate, and no
    claim, gate or re-quote changes.
 
 ## 11. Limitations and what this record does not do
