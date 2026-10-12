@@ -313,3 +313,44 @@ Totals before review: 77.3 of 300 CPU-s, zero events, no NuWro execution, campai
 
 There were zero events and no NuWro execution, and `logs/budget_ledger.jsonl` is unchanged (SHA-256
 `b22d4d78…`). The branch is not merged or pushed.
+
+### R5. Closeout record (CAMPAIGN-REVIEW-20260929 §1 and §6.7)
+
+The campaign review was read in full during closeout. It is unchanged between this branch's base
+`3892e769` and remote main `d81f532b`.
+
+**Owner:** Claude Opus 5.5 (`claude-opus-5-5`), session `c89a62fc-4a1b-4827-a04d-d76daccaa218`, the
+same session that ran the original pilot.
+
+**Reviewer:** one fresh general-purpose Claude subagent of the same model, read-only, on fixed commit
+`fedcc918`. The review recommends an Astra High reviewer for consequential code review. None was
+available in this environment. Review independence is therefore limited to a fresh context and a
+frozen object; this is not cross-model or domain-expert review.
+
+**Budget:** one review and one correction pass, as authorized. The pass did not re-open review, so the
+review-loop failure mode of §4 does not apply.
+
+**Commits:**
+- input `d75987e1`;
+- outputs `89254dd5` (frozen plan), `fedcc918` (pre-review) and `288c5c97` (correction pass), plus
+  this record.
+
+**Compute:** 127.8 of 300 CPU-s on one Apple M1 Pro; zero events; no GPU. Inference cost is not
+available.
+
+**Consequential findings accepted:**
+- *the repair's own tests:* macOS RLIMIT_CPU does not stop a process that ignores SIGXCPU; a harness
+  `pgrep` matched the launcher's own command line;
+- *the reviewer:* the stale B2 grade, the start-record window, fail-open liveness, and support for
+  the W12 encoding from the authors' 2004 paper.
+
+**Residual defects and decision:** the residual defects are as in R4. The decision resolved: both named
+defects are repaired without changing any committed number, and the verdict stays INCONCLUSIVE.
+
+**Baseline divergence (measured at closeout):**
+- The branch is 6 commits ahead of and 16 behind remote main `d81f532b`, from merge base `3892e769`.
+- Main's 16 commits change 30 paths (paper and note). None is under this study directory, CATALOG.md
+  or the MANIFEST files.
+- `git merge-tree` reports no textual conflict. `MANIFEST.tsv` would still need regenerating at any
+  integration, because main added documents.
+- This branch is not merged or rebased; integration is Joseph's decision.
