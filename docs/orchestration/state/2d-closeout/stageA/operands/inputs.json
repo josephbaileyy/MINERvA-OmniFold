@@ -1,0 +1,1242 @@
+{
+ "playlists": {
+  "1A": {
+   "Data": {
+    "keys": [
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "8.972756120489268e+19"
+    }
+   },
+   "MC": {
+    "keys": [
+     [
+      "pTmu_background_Wrong_Sign",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_NC",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_Other",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_numerator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_denominator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_migration",
+      "PlotUtils::MnvH2D"
+     ],
+     [
+      "pTmu_selected_signal_reco",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ],
+     [
+      "pTmu_reweightedflux_integrated",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_fiducial_nucleons",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "4.0692592418996086e+20",
+     "pTmu_fiducial_nucleons": "3.2352943296224835e+30"
+    },
+    "flux": [
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818"
+    ],
+    "flux_edges": [
+     0.0,
+     0.075,
+     0.15,
+     0.25,
+     0.325,
+     0.4,
+     0.475,
+     0.55,
+     0.7,
+     0.85,
+     1.0,
+     1.25,
+     1.5,
+     2.5,
+     4.5
+    ]
+   }
+  },
+  "1B": {
+   "Data": {
+    "keys": [
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "1.8673986975553036e+19"
+    }
+   },
+   "MC": {
+    "keys": [
+     [
+      "pTmu_background_Wrong_Sign",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_NC",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_Other",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_numerator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_denominator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_migration",
+      "PlotUtils::MnvH2D"
+     ],
+     [
+      "pTmu_selected_signal_reco",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ],
+     [
+      "pTmu_reweightedflux_integrated",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_fiducial_nucleons",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "1.0937143891069359e+20",
+     "pTmu_fiducial_nucleons": "3.2352943296224835e+30"
+    },
+    "flux": [
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818"
+    ],
+    "flux_edges": [
+     0.0,
+     0.075,
+     0.15,
+     0.25,
+     0.325,
+     0.4,
+     0.475,
+     0.55,
+     0.7,
+     0.85,
+     1.0,
+     1.25,
+     1.5,
+     2.5,
+     4.5
+    ]
+   }
+  },
+  "1C": {
+   "Data": {
+    "keys": [
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "4.294376238504551e+19"
+    }
+   },
+   "MC": {
+    "keys": [
+     [
+      "pTmu_background_Wrong_Sign",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_NC",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_Other",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_numerator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_denominator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_migration",
+      "PlotUtils::MnvH2D"
+     ],
+     [
+      "pTmu_selected_signal_reco",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ],
+     [
+      "pTmu_reweightedflux_integrated",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_fiducial_nucleons",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "2.0873802493616207e+20",
+     "pTmu_fiducial_nucleons": "3.2352943296224835e+30"
+    },
+    "flux": [
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818"
+    ],
+    "flux_edges": [
+     0.0,
+     0.075,
+     0.15,
+     0.25,
+     0.325,
+     0.4,
+     0.475,
+     0.55,
+     0.7,
+     0.85,
+     1.0,
+     1.25,
+     1.5,
+     2.5,
+     4.5
+    ]
+   }
+  },
+  "1D": {
+   "Data": {
+    "keys": [
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "1.4404452962278602e+20"
+    }
+   },
+   "MC": {
+    "keys": [
+     [
+      "pTmu_background_Wrong_Sign",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_NC",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_Other",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_numerator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_denominator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_migration",
+      "PlotUtils::MnvH2D"
+     ],
+     [
+      "pTmu_selected_signal_reco",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ],
+     [
+      "pTmu_reweightedflux_integrated",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_fiducial_nucleons",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "6.074026581183651e+20",
+     "pTmu_fiducial_nucleons": "3.2352943296224835e+30"
+    },
+    "flux": [
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818"
+    ],
+    "flux_edges": [
+     0.0,
+     0.075,
+     0.15,
+     0.25,
+     0.325,
+     0.4,
+     0.475,
+     0.55,
+     0.7,
+     0.85,
+     1.0,
+     1.25,
+     1.5,
+     2.5,
+     4.5
+    ]
+   }
+  },
+  "1E": {
+   "Data": {
+    "keys": [
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "1.0296200958633945e+20"
+    }
+   },
+   "MC": {
+    "keys": [
+     [
+      "pTmu_background_Wrong_Sign",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_NC",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_Other",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_numerator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_denominator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_migration",
+      "PlotUtils::MnvH2D"
+     ],
+     [
+      "pTmu_selected_signal_reco",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ],
+     [
+      "pTmu_reweightedflux_integrated",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_fiducial_nucleons",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "5.0861289099383597e+20",
+     "pTmu_fiducial_nucleons": "3.2352943296224835e+30"
+    },
+    "flux": [
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818"
+    ],
+    "flux_edges": [
+     0.0,
+     0.075,
+     0.15,
+     0.25,
+     0.325,
+     0.4,
+     0.475,
+     0.55,
+     0.7,
+     0.85,
+     1.0,
+     1.25,
+     1.5,
+     2.5,
+     4.5
+    ]
+   }
+  },
+  "1F": {
+   "Data": {
+    "keys": [
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "1.6685546978706168e+20"
+    }
+   },
+   "MC": {
+    "keys": [
+     [
+      "pTmu_background_Wrong_Sign",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_NC",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_Other",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_numerator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_denominator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_migration",
+      "PlotUtils::MnvH2D"
+     ],
+     [
+      "pTmu_selected_signal_reco",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ],
+     [
+      "pTmu_reweightedflux_integrated",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_fiducial_nucleons",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "7.071214242029071e+20",
+     "pTmu_fiducial_nucleons": "3.2352943296224835e+30"
+    },
+    "flux": [
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818",
+     "0.0006229922661506818"
+    ],
+    "flux_edges": [
+     0.0,
+     0.075,
+     0.15,
+     0.25,
+     0.325,
+     0.4,
+     0.475,
+     0.55,
+     0.7,
+     0.85,
+     1.0,
+     1.25,
+     1.5,
+     2.5,
+     4.5
+    ]
+   }
+  },
+  "1G": {
+   "Data": {
+    "keys": [
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "1.375694142738046e+20"
+    }
+   },
+   "MC": {
+    "keys": [
+     [
+      "pTmu_background_Wrong_Sign",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_NC",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_Other",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_numerator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_denominator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_migration",
+      "PlotUtils::MnvH2D"
+     ],
+     [
+      "pTmu_selected_signal_reco",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ],
+     [
+      "pTmu_reweightedflux_integrated",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_fiducial_nucleons",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "5.954273654656092e+20",
+     "pTmu_fiducial_nucleons": "3.2352943296224835e+30"
+    },
+    "flux": [
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279"
+    ],
+    "flux_edges": [
+     0.0,
+     0.075,
+     0.15,
+     0.25,
+     0.325,
+     0.4,
+     0.475,
+     0.55,
+     0.7,
+     0.85,
+     1.0,
+     1.25,
+     1.5,
+     2.5,
+     4.5
+    ]
+   }
+  },
+  "1L": {
+   "Data": {
+    "keys": [
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "1.3370718209243894e+19"
+    }
+   },
+   "MC": {
+    "keys": [
+     [
+      "pTmu_background_Wrong_Sign",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_NC",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_Other",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_numerator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_denominator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_migration",
+      "PlotUtils::MnvH2D"
+     ],
+     [
+      "pTmu_selected_signal_reco",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ],
+     [
+      "pTmu_reweightedflux_integrated",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_fiducial_nucleons",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "5.822833555494932e+19",
+     "pTmu_fiducial_nucleons": "3.2352943296224835e+30"
+    },
+    "flux": [
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279"
+    ],
+    "flux_edges": [
+     0.0,
+     0.075,
+     0.15,
+     0.25,
+     0.325,
+     0.4,
+     0.475,
+     0.55,
+     0.7,
+     0.85,
+     1.0,
+     1.25,
+     1.5,
+     2.5,
+     4.5
+    ]
+   }
+  },
+  "1M": {
+   "Data": {
+    "keys": [
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "1.581268994168384e+20"
+    }
+   },
+   "MC": {
+    "keys": [
+     [
+      "pTmu_background_Wrong_Sign",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_NC",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_Other",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_numerator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_denominator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_migration",
+      "PlotUtils::MnvH2D"
+     ],
+     [
+      "pTmu_selected_signal_reco",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ],
+     [
+      "pTmu_reweightedflux_integrated",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_fiducial_nucleons",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "8.978852586344844e+20",
+     "pTmu_fiducial_nucleons": "3.2352943296224835e+30"
+    },
+    "flux": [
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279",
+     "0.0006291408598300279"
+    ],
+    "flux_edges": [
+     0.0,
+     0.075,
+     0.15,
+     0.25,
+     0.325,
+     0.4,
+     0.475,
+     0.55,
+     0.7,
+     0.85,
+     1.0,
+     1.25,
+     1.5,
+     2.5,
+     4.5
+    ]
+   }
+  },
+  "1N": {
+   "Data": {
+    "keys": [
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "1.0656505761839266e+20"
+    }
+   },
+   "MC": {
+    "keys": [
+     [
+      "pTmu_background_Wrong_Sign",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_NC",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_Other",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_numerator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_denominator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_migration",
+      "PlotUtils::MnvH2D"
+     ],
+     [
+      "pTmu_selected_signal_reco",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ],
+     [
+      "pTmu_reweightedflux_integrated",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_fiducial_nucleons",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "5.12109566521608e+20",
+     "pTmu_fiducial_nucleons": "3.2352943296224835e+30"
+    },
+    "flux": [
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254"
+    ],
+    "flux_edges": [
+     0.0,
+     0.075,
+     0.15,
+     0.25,
+     0.325,
+     0.4,
+     0.475,
+     0.55,
+     0.7,
+     0.85,
+     1.0,
+     1.25,
+     1.5,
+     2.5,
+     4.5
+    ]
+   }
+  },
+  "1O": {
+   "Data": {
+    "keys": [
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "2.9796628174847955e+19"
+    }
+   },
+   "MC": {
+    "keys": [
+     [
+      "pTmu_background_Wrong_Sign",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_NC",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_Other",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_numerator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_denominator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_migration",
+      "PlotUtils::MnvH2D"
+     ],
+     [
+      "pTmu_selected_signal_reco",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ],
+     [
+      "pTmu_reweightedflux_integrated",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_fiducial_nucleons",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "1.5823900034490132e+20",
+     "pTmu_fiducial_nucleons": "3.2352943296224835e+30"
+    },
+    "flux": [
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254"
+    ],
+    "flux_edges": [
+     0.0,
+     0.075,
+     0.15,
+     0.25,
+     0.325,
+     0.4,
+     0.475,
+     0.55,
+     0.7,
+     0.85,
+     1.0,
+     1.25,
+     1.5,
+     2.5,
+     4.5
+    ]
+   }
+  },
+  "1P": {
+   "Data": {
+    "keys": [
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "4.675822390412008e+19"
+    }
+   },
+   "MC": {
+    "keys": [
+     [
+      "pTmu_background_Wrong_Sign",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_NC",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_background_Other",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_numerator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_efficiency_denominator",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_migration",
+      "PlotUtils::MnvH2D"
+     ],
+     [
+      "pTmu_selected_signal_reco",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_data",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "POTUsed",
+      "TParameter<double>"
+     ],
+     [
+      "pTmu_reweightedflux_integrated",
+      "PlotUtils::MnvH1D"
+     ],
+     [
+      "pTmu_fiducial_nucleons",
+      "TParameter<double>"
+     ]
+    ],
+    "params": {
+     "POTUsed": "2.0813657500734895e+20",
+     "pTmu_fiducial_nucleons": "3.2352943296224835e+30"
+    },
+    "flux": [
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254",
+     "0.0006203643221928254"
+    ],
+    "flux_edges": [
+     0.0,
+     0.075,
+     0.15,
+     0.25,
+     0.325,
+     0.4,
+     0.475,
+     0.55,
+     0.7,
+     0.85,
+     1.0,
+     1.25,
+     1.5,
+     2.5,
+     4.5
+    ]
+   }
+  }
+ },
+ "trees": {
+  "E_U_omnifile": {
+   "mc_truth_denom": 32849103,
+   "mc_signal_reco": 32849103,
+   "mc_background": 658227,
+   "data": 4119797
+  },
+  "XR_omnifile": {
+   "mc_truth_denom": 32849103,
+   "mc_signal_reco": 32849103,
+   "mc_background": 658227,
+   "data": 4119797
+  }
+ }
+}
