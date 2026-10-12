@@ -5,17 +5,19 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=128
-#SBATCH --time=01:00:00
+#SBATCH --time=01:30:00
 #SBATCH --output=/pscratch/sd/j/josephrb/2d-closeout-stageB-diag-20261012/p5/out/%x_%j.out
 #SBATCH --error=/pscratch/sd/j/josephrb/2d-closeout-stageB-diag-20261012/p5/out/%x_%j.err
 # P5 (G2 miss-row universe weights), grant AUTHORIZATION-20261012-2d-closeout-stageB-diagnostics.md.
 # One vertical universe, MaRES:0, two runs on the July universe omnifile with identical options:
 #   sbatch --job-name=2dc_B5_off                   sbatch_p5.sh off      production driver (6be77c51...)
-#   sbatch --job-name=2dc_B5_on --time=01:30:00    sbatch_p5.sh on       build_miss_override.py, then driver_p5.py
+#   sbatch --job-name=2dc_B5_on --time=02:00:00    sbatch_p5.sh on       build_miss_override.py, then driver_p5.py
+# Caps re-priced 2026-10-12 before any P5 job ran (AUTHORIZATION-20261012-2d-closeout-stageB-p4-retry.md, P5 walltime
+# check): 1.5 x a full-read universe unfold (max 2,738 s) -> off 1:30; plus the override build -> on 2:00.
 # Conditional seed-43 pair (DESIGN §7: only if seed 42 routes MATERIAL or NOT RESOLVED, after a budget check and the
 # director's go-ahead; it reuses the seed-42 override, verified by sha256):
 #   sbatch --job-name=2dc_B5_off_s43                sbatch_p5.sh off 43
-#   sbatch --job-name=2dc_B5_on_s43 --time=01:30:00 sbatch_p5.sh on 43
+#   sbatch --job-name=2dc_B5_on_s43 --time=02:00:00 sbatch_p5.sh on 43
 # Mode and seed are positional arguments (sbatch --export cannot carry commas). Every path is absolute: sbatch runs a
 # COPY of this script, so BASH_SOURCE/$0 do not name the package. No `set -u` before the root_6_28 activation.
 set -eo pipefail
@@ -24,7 +26,7 @@ SEED=${2:-42}
 case "$MODE" in off|on) ;; *) echo "REFUSE: mode $MODE"; exit 2;; esac
 case "$SEED" in 42) TAG="";; 43) TAG="_s43";; *) echo "REFUSE: seed $SEED"; exit 2;; esac
 [ "${SLURM_JOB_NAME:-}" = "2dc_B5_${MODE}${TAG}" ] || { echo "REFUSE: job name '${SLURM_JOB_NAME:-}' != 2dc_B5_${MODE}${TAG}"; exit 4; }
-WANT_LIMIT=01:00:00; [ "$MODE" = on ] && WANT_LIMIT=01:30:00
+WANT_LIMIT=01:30:00; [ "$MODE" = on ] && WANT_LIMIT=02:00:00
 LIMIT=$(scontrol show job "$SLURM_JOB_ID" | grep -o 'TimeLimit=[^ ]*' | cut -d= -f2)
 [ "$LIMIT" = "$WANT_LIMIT" ] || { echo "REFUSE: TimeLimit $LIMIT != $WANT_LIMIT"; exit 4; }
 

@@ -65,7 +65,7 @@ block, using the per-playlist files for the block sizes.
 | `patch.diff` | unified diff production → diagnostic copy (120 lines) | `e4ce8fba5635994687ac54a6479f30c108bf559c2f780fc42e2e392a15b4a89c` |
 | `build_miss_override.py` | alignment and checks → `w_override` (NaN except on miss rows) | `7f346e1af1688b6a43be540ef2a8c6f8456d76a1ea965613abce17263739296b` |
 | `test_noop.py` | loader-level controls C1–C3 | `cf9c9ecdd3df4af67be61081ee0f42c958340544efcf98d8d1b0d7ca4a006863` |
-| `sbatch_p5.sh` | the jobs (NERSC `p5/sbatch_p5.sh`) | `fc3fbc95ec84ec8f55f32093f20731febf235adb77c3a8e53cc966c356dd730a` |
+| `sbatch_p5.sh` | the jobs (NERSC `p5/sbatch_p5.sh`) | `2b4689a7e349355d4c184940ad41ac34aa35674c35a1ea44a5838a184bbfeb8e` |
 | `analyze_p5.py` | gates, metrics, routing (NERSC `p5/analyze_p5.py`) | `8f37fd7fe64ae5cb17517d71878d8a7e30595802847768a1eaa5ab1ea1fe8e65` |
 | `dry_confirm.py` | synthetic dry run of the seed-43 routing branches (§7) | `55c4be53795e532b712ed6366490531a52425fed9721a59dac0ad885efa53ad0` |
 | helper `unbinned_unfolding/python/omnifold.py` (the driver's `_OF_PY` import; pinned in `sbatch_p5.sh`) | — | `e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a` |
@@ -111,10 +111,10 @@ Completeness depends only on weights, so this ties run *a* to the July inputs.
 
 | job | content | limit | enforced worst case |
 |---|---|---|---|
-| `2dc_B5_off` | production driver, `--universe MaRES:0`, seed 42 | 01:00:00 | 0.50 node-h |
-| `2dc_B5_on` | `build_miss_override.py` (merged file, about 5–10 min), then `driver_p5.py --miss-weight-override` | **01:30:00** | 0.75 node-h |
-| **P5 (seed 42)** | | | **1.25 node-h** |
-| conditional `2dc_B5_off_s43` + `2dc_B5_on_s43` (§7) | the same pair at `--seed 43`, reusing the seed-42 override, sha256-checked | 01:00:00 / 01:30:00 | 1.25 node-h |
+| `2dc_B5_off` | production driver, `--universe MaRES:0`, seed 42 | 01:30:00 | 0.75 node-h |
+| `2dc_B5_on` | `build_miss_override.py` (merged file, about 5–10 min), then `driver_p5.py --miss-weight-override` | **02:00:00** | 1.00 node-h |
+| **P5 (seed 42)** | | | **1.75 node-h** |
+| conditional `2dc_B5_off_s43` + `2dc_B5_on_s43` (§7) | the same pair at `--seed 43`, reusing the seed-42 override, sha256-checked | 01:30:00 / 02:00:00 | 1.75 node-h |
 
 **Shared settings.** Both runs use shared QOS with 128 CPUs, charged half a node (charge = elapsed ×
 128/256), and `OMP_NUM_THREADS=64` (L0's 64 LightGBM threads). Options: `--iters 5 --use-weights
@@ -132,6 +132,21 @@ Completeness depends only on weights, so this ties run *a* to the July inputs.
 | conditional seed-43 pair | 1.25 |
 | **total** | **2.91** |
 
+**Amendment 2026-10-12, before any P5 job ran.** The first submission (59713367/8, 1:00 and 1:30) was cancelled
+while still pending. The caps were re-priced under the director's P5 walltime check in
+`AUTHORIZATION-20261012-2d-closeout-stageB-p4-retry.md` (main `6c37ce18`). The in-driver selective read is
+unmeasured on a universe job, so the projection uses the measured full-read universe unfold: max 2,738 s
+(July sweep), × 1.5, which is 68 min.
+- `off` is now 01:30:00.
+- `on` is now 02:00:00: the same projection plus the override build (about 5–10 min).
+- Enforced worst case: 1.75 node-h for the seed-42 pair, and 1.75 for the conditional seed-43 pair.
+- P4's worst case after its own walltime retry is 0.91 (diagnostics REPORT). With P5 seed 42 the total is
+  2.66 of 3.0.
+- The seed-43 pair now runs only if the actual `sacct` charges plus 1.75 stay ≤ 3.0 at its launch. Otherwise
+  stop and ask the director.
+- The table above shows the amended caps. Only `sbatch_p5.sh` changed (its `WANT_LIMIT` and comments);
+  `fc3fbc95…` → `2b4689a7…`.
+
 **Retry procedure** (written before any job). The grant allows one retry, and only after a diagnosed
 infrastructure cause; a scientific result is never a reason. A retry:
 1. records the failed job's `sacct` State, ExitCode, Elapsed and charge, and the diagnosed cause (node fault,
@@ -147,7 +162,7 @@ Without step 2, `sbatch_p5.sh` refuses: it will not overwrite an output or an ov
 
 **`sbatch_p5.sh` refuses** (exit 3/4) if:
 - the job name is not `2dc_B5_<mode>[_s43]`;
-- the job's TimeLimit is not 01:00:00 (off) or 01:30:00 (on);
+- the job's TimeLimit is not 01:30:00 (off) or 02:00:00 (on);
 - the output exists;
 - in seed-42 `on` mode, the override npz/json/sha256 already exists;
 - any pinned sha256 fails: driver, diagnostic copy, builder, or helper.
@@ -209,7 +224,7 @@ hence the r3 > 2 requirement.
 
 **Conditional seed-43 pair.** It runs only if the seed-42 routing is MATERIAL or NOT RESOLVED ABOVE
 TRAINER NOISE, and only after both:
-- a budget check: the **actual `sacct` charges** of every P4/P5 job so far, plus the pair's **enforced 1.25
+- a budget check: the **actual `sacct` charges** of every P4/P5 job so far, plus the pair's **enforced 1.75
   node-h**, must be ≤ 3.0;
 - the director's go-ahead.
 
