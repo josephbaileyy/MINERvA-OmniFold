@@ -5,6 +5,11 @@
 \newif\ifPRIMER
 \newif\ifPAPER
 
+% The analysis note (main_note) and its companion PET note (pet_note) are separate PDFs, so a
+% reference from one into the other names the section by title: its number moves with every edit.
+\newcommand{\notesec}[1]{the analysis note, \S``#1''}
+\newcommand{\petsec}[1]{the companion PET note, \S``#1''}
+
 \usepackage[margin=1in]{geometry}
 \usepackage[T1]{fontenc}      % proper hyphenation + line breaking
 \usepackage{amsmath,amssymb}

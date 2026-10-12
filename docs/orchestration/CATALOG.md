@@ -1262,7 +1262,7 @@ four describe standing systems or rules rather than events, so they are `LIVE`:
 | Maintain classifications | `MANIFEST-overrides.tsv`, then `generate_manifest.py` |
 | Operate continuation | `WAKER.md`, `wakerctl.py`, `waker-config.json`, and `profiles.json` |
 | Glance at campaign status | [`RUNBOOK-status-dashboard.md`](RUNBOOK-status-dashboard.md), then `dashboard_collector.py --print-scrontab`; the page is a view, so re-measure before deciding |
-| Build deliverables | `docs/analysis-note/build_all.sh` for note, primer, and paper |
+| Build deliverables | `docs/analysis-note/build_all.sh` for note, PET note (`pet_note.tex`, split from the note 2026-10-12), primer, and paper |
 
 ## Frozen pre-compaction evidence
 

@@ -17,6 +17,8 @@ instead of moving; their rows and sentences are taken from that commit's parent,
 \texttt{95d03169\^{}}. The
 repository's index of retracted and superseded values is routed in App.~\ref{app:provenance}
 (\texttt{retracted-values}).
+The entries for the point-cloud (PET) studies moved, verbatim, to the corresponding appendix of
+the companion PET note on 2026-10-12, together with those studies (App.~\ref{sec:pet}).
 
 \subsection{Struck values}
 \label{app:history-errata}
@@ -53,7 +55,6 @@ $\dead{6.845\%}$ & 2D universe $+$ bootstrap median before ML (\S\ref{sec:combin
 $\dead{1.481}$, $\dead{1.468}$, $\dead{0.409}$, $\dead{11.56}$ & 2D combined $\chi^{2}/\mathrm{ndf}$, its log-normal form, the combined pull RMS, and the stat-subtracted diagnostic & $1.472$, $1.455$, $0.405$, $6.79$ & As above; the paper-covariance $3.661$ and the pull mean $0.051$ do not move & \texttt{VL172}, \texttt{state/ki84-adopt-20261006/controls/} \\
 $\dead{6.86\%}$ & The published 2D total, as a per-bin median relative $\sigma$ (\S\ref{sec:results}, Tables~\ref{tab:uq} and~\ref{tab:combine}, and the article) & $\uqPaper\%$ & Computed from the CSV release, whose cross sections and uncertainties carry three significant figures; the median bin sits close enough to its neighbours that the rounding gives $6.859\%$. The full-precision ROOT release gives $6.8525\%$. Independent of the bootstrap & \texttt{state/uqpaper-median-20261006/} \\
 $\dead{2.55}$, $\dead{0.392}$, $\dead{201}$, $\dead{3.8\times10^{14}}$ & Our bootstrap against the paper's \texttt{StatOnlyCov} ($\sqrt{\Tr}$ ratio and its inverse), and $\mathrm{rank}$, $\mathrm{cond}$ of $\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$ (\S\ref{sec:rank}) & $2.40$, $0.416$, $204$, $1.0\times10^{12}$ & As above. The split bootstrap's closure ($1.07$) and the pseudo-inverse $252$ and rescaled $76.7$ are kept as earlier-bootstrap values, not re-derived; the first $201$/$3.8\times10^{14}$ did not reproduce from the files (they give $199$/$6.1\times10^{14}$) & \texttt{VL172} \\
-$\dead{5.0467}$ & Full-event $C_{\rm stat}$ family: nominal-to-member ratio of unfolded yield in $6<p_{\parallel}<\SI{20}{GeV/c}$ (App.~\ref{app:cstatlimit}) & $3.5969$ (family mean; s.d.\ $1.6091$) & A single member's value, a $70$th-percentile draw quoted as if typical & \texttt{state/probe-oi126-band-\allowbreak Rpush-sigma-20260815} (family spread) \\
 $\dead{6.871\%}$ & 2D combined (block-sum) per-bin median relative $\sigma$ (Tables~\ref{tab:uq} and~\ref{tab:combine}; \S\ref{sec:chisq}, \S\ref{sec:assemble}), printed as \SI{6.87}{\percent} in the article and primer & $6.090\%$ & The Flux band omitted MAT's per-universe $\nu$--$e$ and inverse-muon-decay constraint weights (\texttt{KNOWN\_ISSUES.md} 95), and the Muon\_Energy\_MINOS universes were divided by $\Phi_{\rm CV}$ (96); repaired without a re-unfold and adopted 2026-10-12 & \texttt{VL175}; \texttt{state/2d-closeout/c04-repair/} \\
 $\dead{6.830\%}$, $\dead{3.214\times10^{-39}}$, $\dead{3.220\times10^{-39}}$, $\dead{6.869\%}$ & 2D systematic total median and $\sqrt{\Tr\mathbf{C}}$, combined $\sqrt{\Tr\mathbf{C}}$, universe $+$ bootstrap median (Tables~\ref{tab:uq}, \ref{tab:band-medians}, \ref{tab:combine}) & $6.043\%$, $2.910\times10^{-39}$, $2.917\times10^{-39}$, $6.084\%$ & As above & \texttt{VL175}; \texttt{state/2d-closeout/c04-repair/} \\
 $\dead{4.993\%}$, $\dead{2.305\%}$ & 2D Flux and Muon\_Energy\_MINOS per-bin medians (Table~\ref{tab:band-medians}; \S\ref{sec:systematics}) & $3.655\%$, $2.281\%$ & As above; the unweighted band is quoted once, labelled, as \SI{4.99}{\percent} in \S\ref{sec:systematics} & \texttt{VL175}; \texttt{state/2d-closeout/c04-repair/} \\
@@ -64,14 +65,6 @@ $\dead{2.26\%}$ & Our width-weighted total $\sigma$ in the worked example of \S\
 \midrule
 \multicolumn{5}{@{}l}{\emph{Removed from the body on 2026-08-23 by \texttt{95d03169}; text from its parent, \texttt{95d03169\^{}}}} \\
 \midrule
-$\dead{\SI{2.796e-38}{cm^2/nucleon}}$ & Recoil-only PET absolute total on data, in the \texttt{niter}${}={}$2 cross-check against GBDT (removed 2026-08-23, 95d03169) & Not quoted & \texttt{niter}${}={}$2 legacy, withdrawn as a current comparison: the pinned policy is \texttt{niter}${}={}$3 (CLM-010, CLM-012), the 2026-08-01 full-event schema makes a pre-08-01 PET total a different estimator, and the missing background subtraction (J21) biases PET high & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
-$\dead{\SI{3.066e-38}{}}$ & GBDT absolute total on data, the other operand of that cross-check (removed 2026-08-23, 95d03169) & Not quoted & Struck with the cross-check it is an operand of, on the grounds above & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
-$\dead{\petRatio}$ & PET/GBDT absolute total ratio, in that cross-check and in the Fig.~\ref{fig:petabs} caption (removed 2026-08-23, 95d03169) & Not quoted & Arithmetically correct, the exact quotient of the two struck operands; withdrawn because its operands describe a training configuration that no longer exists & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
-\dead{\SIrange{6.5}{9.9}{\percent}} & Per-axis median PET/GBDT differences in that cross-check (removed 2026-08-23, 95d03169) & Not quoted & As above & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
-$\dead{\sim\SI{\petGbdtGap}{\percent}}$ & PET--GBDT data-side gap (removed 2026-08-23, 95d03169) & Not quoted & Struck beside the scope note, which covers every quantity derived from the cross-check's struck figures & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
-$\dead{-1.6\%}$ & Shift of the PET total under a higher-epoch retrain (removed 2026-08-23, 95d03169) & Not quoted & Struck on the same grounds, being the same legacy run & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
-$\dead{0.897}$ & Ratio of the PET total under that higher-epoch retrain (removed 2026-08-23, 95d03169) & Not quoted & Struck on the same grounds, being the same legacy run & \texttt{INDEX-retracted-and-\allowbreak superseded-values.md} \\
-$\sim$\,\dead{\SI{\petClosure}{\percent}} & Ordinary-closure level of the recoil-only PET, in the Fig.~\ref{fig:petabs} caption (removed 2026-08-23, 95d03169) & Not quoted & Legacy two-iteration self-consistency diagnostic, not a current validation & None given in the deleted text \\
 \dead{\SI{\gbdtFiveBlockMedian}{\percent}} & 5D candidate background-aware block sum: median per-bin uncertainty (removed 2026-08-23, 95d03169) & Not quoted & Pre-J28, and under the 2026-07-12 construction-cause quarantine (two independent grounds); no replacement magnitude is quoted or authorized, because the corrected J28 products are non-background-aware & \texttt{PROCEDURE-gbdtFive-\allowbreak macro-update.md} \\
 $\dead{\SI{\gbdtFiveAdoptTrace}{cm^2/nucleon}}$ & 5D candidate mean-centered covariance including cross-source nonlinear response, $\sqrt{\mathrm{Tr}\,C}$ (removed 2026-08-23, 95d03169) & Not quoted & As above & \texttt{PROCEDURE-gbdtFive-\allowbreak macro-update.md} \\
 $\dead{\SI{\gbdtFiveMeanShift}{cm^2/nucleon}}$ & 5D candidate joint mean-shift norm (removed 2026-08-23, 95d03169) & Not quoted & As above & \texttt{PROCEDURE-gbdtFive-\allowbreak macro-update.md} \\
@@ -85,29 +78,6 @@ $\dead{\SI{\gbdtFiveCVTrace}{cm^2/nucleon}}$ & 5D candidate CV-centered construc
 
 \paragraph{Struck values removed from the body on 2026-08-23.}
 Commit \texttt{95d03169} deleted the sentences below instead of moving them; they are reproduced from its parent, \texttt{95d03169\^{}}. The unstruck prose it deleted with them, including the two scope notes that the reasons in the table above are taken from, is not reproduced.
-
-From \S\ref{sec:pet-abs}, the third gate of the absolute path:
-\textbf{Cross-check vs GBDT} (\textbf{\texttt{niter}${}={}$2 legacy --- not
-        a current number}; see the scope note below): on data, the PET absolute total was
-        $\dead{\SI{2.796e-38}{cm^2/nucleon}}$ versus the GBDT
-        $\dead{\SI{3.066e-38}{}}$, ratio $\dead{\petRatio}$, with per-axis median
-        differences of \dead{\SIrange{6.5}{9.9}{\percent}} (Fig.~\ref{fig:petabs}).
-
-From the paragraph after its scope note:
-What survives independently of the withdrawn comparison: the
-$\dead{\sim\SI{\petGbdtGap}{\percent}}$ data-side gap is not
-a normalization bug, but ordinary closure alone cannot assign it uniquely to
-training configuration. A higher-epoch retrain moved the PET total by
-$\dead{-1.6\%}$ (ratio $\dead{0.897}$) --- struck on the same grounds, being the
-same legacy run --- which demonstrated training sensitivity qualitatively.
-
-From the caption of Fig.~\ref{fig:petabs}:
-The PET/GBDT total
-  ratio is $\dead{\petRatio}$ --- \textbf{struck: \texttt{niter}${}={}$2 legacy, see
-  the scope note in the text}; ordinary closure was assessed to
-  $\sim$\,\dead{\SI{\petClosure}{\percent}} --- \textbf{struck: legacy two-iteration
-  self-consistency diagnostic, not a current validation} --- and it does not test
-  omitted muon dependence.
 
 From \S\ref{sec:uq-combine}:
 For the 5D candidate, the background-aware block sum gave median per-bin uncertainty
@@ -185,14 +155,6 @@ global offset) and the pull RMS $\dead{0.466} \to \boxed{0.409}$.
 The struck values were computed on the pre-flux-fix combined covariance and are
 \textbf{retracted}; the live pair is the flux-fixed one recorded in
 \texttt{VALIDATION\_LEDGER.md} (App.~\ref{app:history-combine} provenance note).
-
-\paragraph{From App.~\ref{app:cstatlimit}, the measured spread and the recomputation route.}
-An earlier internal statement of the band ratio used a single member's value,
-$\dead{5.0467}$ --- \textbf{struck: a $70$th-percentile draw quoted as if typical}; the
-family-typical value is $3.5969$ with the spread above.
-That receipt carries two retracted share-of-total fields, marked in place;
-neither relative-standard-deviation field is among them, and no share-of-total figure from it is used
-here.
 
 \subsection{Withdrawn arguments}
 \label{app:history-withdrawn}
@@ -277,83 +239,6 @@ the earlier reading here --- that $A=0.30$ was under threshold and the leakage
 was ``small enough to be safely ignored'' --- was an arithmetic error and is
 withdrawn.
 
-\paragraph{From App.~\ref{app:cstatlimit}, construction.}
-An
-earlier version reported from them that MC accounted for ${\sim}88\%$ of the variance and the
-background MC alone for $87\%$; that step does not follow and is withdrawn.
-
-\paragraph{From App.~\ref{app:cstatlimit}, the two readings of the band.}
-After ``The family disagrees with the central value by a factor of order three, coherently, in the best-accepted region of the plane.'':
-
-Two readings are available a priori.
-\textbf{(a) The spread is real:} the estimator is genuinely this sensitive to the measured
-sample there, and the quoted uncertainties in $6<p_{\parallel}<\SI{20}{GeV/c}$ really are of
-order $67\%$. \textbf{(b) The proxy is wrong:} $\mathrm{Poisson}(1)$ resampling gives $36.8\%$
-of measured rows zero weight, and a learned estimator facing that much removed support may
-respond in a way that is a property of the perturbation rather than of the data. Both fit the
-measurements above: an unstable estimator and an invalid perturbation both act during training,
-concentrate where information is scarcest, and leave the extraction faithful.
-The proposed binary was withdrawn on 2026-08-19 as a type mismatch: a covariance measures
-dispersion \emph{about a centre} and does not establish finite-family \emph{containment} of a
-separately trained nominal, so non-containment of the nominal by $50$ draws is not what this
-covariance reports and \textbf{no choice between (a) and (b) follows from it}. The readings are
-recorded because the measurements were gathered while they were live and a reader will meet them in
-that form elsewhere; neither is asserted.
-
-The resampling argument that follows opened with the sentence
-``What follows concerns the resampling scheme alone and is offered as an argument rather than a
-ratified result; it bears on reading (b) without adjudicating the retracted fork.''
-Within it:
-An earlier version concluded that the scheme ``is the sampling
-distribution rather than a stand-in that might be the wrong one''; that promotion is withdrawn.
-
-In the paragraph on the discriminating $\mathrm{Exponential}(1)$ contrast, which the body keeps, the
-sentence before the surviving objection read, with the opening of that objection:
-No ``publish it as it stands''
-branch exists for either outcome to select; the earlier framing here --- that an unimportant zero
-atom would mean publishing the covariance as it stands --- described a posture the ruling had already
-closed, and is withdrawn. What stands on its own is the other half: \ldots
-
-In ``What the band figure is'':
-An earlier version called it an ``upper bound on how poorly the data constrain the
-cross section,'' reasoning that a better-regularised estimator could improve on it and none could do
-worse for want of information. That is withdrawn: no information bound follows from an observed
-refit dispersion without conditions on the estimator's bias and on the perturbation's validity as a
-sampling proxy, and neither is established here; a more strongly regularised estimator can show
-\emph{less} dispersion while constraining the cross section no better, exactly the direction that
-breaks the claimed inequality.
-
-\paragraph{From App.~\ref{app:cstatlimit}, the resampling argument.}
-The subsection on the band, then titled ``Why the two readings of the band are not a live fork'',
-opened: ``The family disagrees with the central value by a factor of order three, coherently, in
-the best-accepted region of the plane. Two readings were proposed as a binary --- \textbf{(a)} the
-spread is real, \textbf{(b)} the $\mathrm{Poisson}(1)$ proxy is wrong --- and no choice between
-them follows from this covariance, which measures dispersion about a centre and does not establish
-finite-family containment of a separately trained nominal.'' The resampling argument that followed
-read, in full:
-
-What follows concerns the resampling scheme alone and is offered as an argument rather than a
-ratified result; it bears on reading (b). The resampled
-objects are individual reconstructed events. A $\mathrm{Poisson}(1)$ multiplicity $k$ on a row
-states that, were the data retaken, that event occurred $k$ times; zero states that it did not
-occur, which is exactly what counting noise does to an event observed once, so the zero atom is not
-an artifact of the method. Independent $\mathrm{Poisson}(1)$ multiplicities also reproduce exact
-Poisson fluctuations in every aggregate of those rows (\S\ref{app:poisson}), which variance-matched
-continuous alternatives do not: they match the first two moments and get the discreteness wrong.
-\textbf{That argument reaches counts, and it stops there.} Exact aggregation concerns unweighted sums
-of resampled rows; this covariance disperses the output of a weighted, learned, iteratively refit
-estimator evaluated on every replica, and nothing above shows that a perturbation with the right
-counting behaviour induces the right \emph{sampling} distribution for that functional --- still less
-that the resulting interval covers.
-
-The body keeps the surviving conclusion: the zero atom is what counting noise does to a row
-observed once, so its presence is not by itself evidence that the proxy is invalid.
-
-\paragraph{From App.~\ref{app:cstatlimit}, limitations of the covariance object.}
-\textbf{The $257$ are the quotable all-member domain, and they are not an
-``invertible sub-block'' --- this appendix called them one, which is impossible at this rank, and the
-name is corrected here.}
-
 \paragraph{From \S\ref{sec:coverage}, the 2D coverage test.}
 The
 attempted 100/100 split-sample reinterpretation is also withdrawn because it
@@ -395,35 +280,6 @@ $r^{\star}(x)=(D(x)-B(x))/S(x)$ was stated here without those conditions and is 
 Two properties of this
 matrix are routinely misstated, including in an earlier version of this
 subsection, so both are given with their operands.
-
-\paragraph{From \S\ref{sec:pet-abs}, the PET--GBDT level of agreement.}
-The only such comparison that exists was taken with a two-iteration training,
-against the campaign's pinned three-iteration policy (\texttt{CLM-010},
-\texttt{CLM-012}, \textsc{frozen}); before the 2026-08-01 full-event schema change,
-which makes a pre-08-01 PET total a different estimator rather than a
-differently-trained one; and with unit measured weights and \emph{no} background
-subtraction (audit finding J21), which at this analysis's
-${\sim}\SI{3}{\percent}$ background scale biases PET high, so the underlying gap is
-\emph{larger} than the withdrawn figure. It has not been re-extracted under the
-pinned configuration, and the same three grounds withdraw the legacy closure level
-and the higher-epoch retrain response.
-
-The figure that followed that discussion in \S\ref{sec:pet-abs} plots the withdrawn comparison, and
-is kept here with it.
-
-\begin{figure}[H]
-  \centering
-  \par\href{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/3892e769043cddebfd58ec19e1ab1a567eb01784/docs/analysis-note/figures/pet_vs_gbdt_absolute.pdf}{Preserved historical graphic: \texttt{pet\_vs\_gbdt\_absolute}}
-  \par\smallskip\textbf{Historical; non-inferential.}
-  \caption{Recoil-only PET representation cross-check: absolutely-normalized
-  4D cross section from the point-cloud unfold (full-statistics reweight of the generator sample) versus the
-  production scalar GBDT result, projected on each axis. The PET/GBDT total
-  offset shown is a two-iteration legacy result, withdrawn as a current comparison
-  (see text) and not quoted here as a level of agreement. Ordinary closure was
-  assessed only as a legacy two-iteration self-consistency diagnostic; no current
-  closure level is quoted, and it does not test omitted muon dependence.}
-  \label{fig:petabs}
-\end{figure}
 
 \paragraph{From \S\ref{sec:summary}, outlook.}
 After listing the remaining paper-independent cross-checks, the outlook continued ``The
@@ -512,31 +368,6 @@ different generated samples for CV and CV$+$MEC; the MEC component alone gave
 \SI{64}{\percent} before the repair. Historical 3D $\chi^{2}$ values
 are not quoted pending the corrected covariance projection.
 
-\subsubsection{The historical recoil-PET uncertainty assembly}
-\label{app:history-petbudget}
-From \S\ref{sec:pet-syst}:
-
-The historical recoil-PET campaign produced vertical, retraining, ML,
-statistical and detector blocks on a common nominal.  That assembly is now
-quarantined rather than quoted as an uncertainty.  For a nuisance endpoint
-$u$, the physical shift and the induced retraining response form one joint
-shift,
-\begin{equation}
-  \delta_u=x_u^{\rm varied+retrained}-x_{\rm CV}.
-\end{equation}
-Writing this as a frozen-map piece plus a retraining increment is an algebraic
-decomposition, but adding the two separate covariances omits
-$\operatorname{Cov}(\delta_{\rm frozen},\delta_{\rm retrain})$ and its
-transpose.  Positive semidefiniteness of that sum does not restore the missing
-cross term.
-
-The historical detector block is additionally CV-support-limited: it propagates
-shifted weights and observables through the nominal cloud membership instead of
-regenerating the selected cloud for every lateral endpoint.  A replacement
-construction would need end-to-end joint nuisance/retraining shifts and the
-selection-complete FPS lateral samples, and would belong to a full-event PET
-estimator with its own statistical and ML ensembles.
-
 \subsubsection{The earlier direct $(\Eavail,W)$ block sum}
 \label{sec:eavailw-cov}
 From \S\ref{sec:eavailw}:
@@ -551,7 +382,7 @@ by a \emph{frozen-reweighter} block sum on the merged five-axis
 \texttt{\_universes\_full} sample: the central-value OmniFold push-weights
 were held fixed and only the per-event truth reweight ratios changed per
 systematic universe (the same frozen-reweighter \emph{technique} as the PET
-budget, App.~\ref{app:history-petbudget} --- not the PET covariance matrix, which is never
+budget, recorded in the companion PET note's audit-trail appendix --- not the PET covariance matrix, which is never
 applied to this GBDT central value; no per-universe re-inference). That object
 carried 13 knob bands $\pm1\sigma$, the 100-universe flux multisim, the
 projected full five-axis bootstrap covariance $C_{EW}=M C_{5D}M^{\top}$, and a
@@ -812,23 +643,3 @@ $\max$ inflation transfer (Eq.~\eqref{eq:zinflation},
 the superseded products [the 5D candidates of \S\ref{app:history-5dcandidates}], so they bound the size of the background-CV
 choice rather than describing a current covariance; either way that concern is
 numerically negligible.''
-
-\paragraph{From \S\ref{sec:pet-projection}, cloud coverage before the miss-row fix.}
-Originally the cloud was filled only in the reco-signal event loop, so the
-truth-only ``miss'' events appended for the unfold (\SI{\pcMiss}{\percent} of
-the truth sample) carried no cloud --- only \SI{\pcHasCloudBefore}{\percent} of
-truth events had one, and cloud projections were correspondingly
-acceptance-limited, landing exactly on the stored-$\Eavail$ projection
-restricted to the has-cloud subset but sitting $1.5$--$2\times$ below
-the full unfold per bin. This is a truth-side instance of the same
-dangling-miss-row dump issue tracked for the systematic bank. We fixed it at
-source by carrying the truth final-state hadrons through the
-truth-denominator loop and filling \texttt{part\_gen} for the appended miss
-rows (the reco cloud \texttt{part\_reco} correctly stays empty for a miss),
-then re-dumping, rebuilding the inputs, and re-training.
-
-\paragraph{From \S\ref{sec:pet-projection}, the \texttt{ISSUE-30} projection fix.}
-After ``the unfolded counts are already acceptance-corrected'':
-``\ldots so
-that division corrected for acceptance twice. The fix lowers every projected
-$d\sigma/d\Eavail$ bin by 25--51\% and leaves the spread above essentially unchanged.''

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Build all three audience-tiered PDFs from the shared source.
+# Build the four audience-tiered PDFs from the shared source: the analysis note, the primer, the
+# paper and (since 2026-10-12) the companion PET note.
 # Run on a NERSC LOGIN node (pdflatex/biber are not on the compute nodes):
 #     module load texlive/2024
 #     bash build_all.sh
@@ -52,7 +53,9 @@ cd "$(dirname "$0")"
 
 module load texlive/2024 2>/dev/null || true
 
-targets=(main_note main_primer main_paper)
+# pet_note is the companion PET note split from main_note on 2026-10-12; it is last so the order of
+# the three original targets, and every failure message that names one, is unchanged.
+targets=(main_note main_primer main_paper pet_note)
 
 # The sources every target genuinely depends on. Deliberately NOT "every .tex in this
 # directory": a note-only body edited after the paper's build would then fail the paper,
