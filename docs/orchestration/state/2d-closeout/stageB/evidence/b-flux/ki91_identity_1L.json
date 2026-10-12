@@ -1,0 +1,28 @@
+{
+ "playlist": "1L",
+ "NU": 100,
+ "nbins": 128,
+ "F_max_rel_saved_vs_frw_univ": 0.0,
+ "F_rel_saved_vs_frw_cv": 0.0,
+ "F_univwgt_max_abs_diff": 0.0,
+ "F_best_match_is_identity": true,
+ "E_branch_type": "Double_t",
+ "E_n_events": 300,
+ "E_unsolved": 0,
+ "E_resid_max_median": [
+  5.46229728115577e-14,
+  4.440892098500626e-16
+ ],
+ "E_frac_resid_below_1e-9": 1.0,
+ "E_Enu_range": [
+  1.9707463618960321,
+  48.989081114627155
+ ],
+ "control_shift1_unsolved": 0,
+ "control_shift1_resid_min_median": [
+  0.2455446372284551,
+  0.35143905768016914
+ ],
+ "omnifile_sha256_note": "not hashed here (multi-GB); path recorded",
+ "omnifile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1L_universes_full.root"
+}

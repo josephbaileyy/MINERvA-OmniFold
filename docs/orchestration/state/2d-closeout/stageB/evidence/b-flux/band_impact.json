@@ -1,0 +1,43 @@
+{
+ "cv": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+ "cv_sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c",
+ "n_cells": 205,
+ "univwgts_identical_across_playlists": true,
+ "minos_flux_integral_ratio_u0_u1": [
+  1.0004185782162152,
+  0.9953531560419157
+ ],
+ "flux_band_unweighted_median_max": [
+  0.049930098023455764,
+  0.12806186854970086
+ ],
+ "flux_band_weighted_median_max": [
+  0.03654940752609054,
+  0.1339534317848335
+ ],
+ "flux_ratio_weighted_over_unweighted_median_min_max": [
+  0.7349886126752714,
+  0.5962660984261936,
+  1.0564696124806892
+ ],
+ "flux_unweighted_mean_over_cv_median": 0.9565261667122162,
+ "flux_weighted_mean_over_cv_median": 1.0015098806843872,
+ "flux_integral_sigma_unweighted": 0.0489324222263867,
+ "flux_integral_sigma_weighted": 0.03556940242388943,
+ "minos_band_adopted_median_max": [
+  0.02304891875504767,
+  0.09193348114250888
+ ],
+ "minos_band_with_flux_denominator_median_max": [
+  0.022810306440289772,
+  0.08951080972842158
+ ],
+ "minos_integral_shift_u0_u1_adopted": [
+  -0.0016858015485302635,
+  0.0005751481435918304
+ ],
+ "minos_integral_shift_u0_u1_with_denominator": [
+  -0.0021034992857663637,
+  0.005246371169848718
+ ]
+}

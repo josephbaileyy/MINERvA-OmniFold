@@ -1,0 +1,126 @@
+{
+ "end": 1791793636.7029734,
+ "file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+ "mtime": 1783523295.0,
+ "size": 171117087867,
+ "start": 1791793539.6837094,
+ "trees": {
+  "mc_background": {
+   "entries": 658227,
+   "pairs": {
+    "w_bkg_0": {
+     "frac_rows_differing_from_cv": 0.05890672974520948,
+     "identical": true,
+     "n_rows_differing": 0,
+     "rows_differing_from_cv": 38774,
+     "sha256_n": "d3aed46a9d13c99b6c3652032dac8954cb0ba6533b50a41e611841a993dc6f2e",
+     "sha256_p": "d3aed46a9d13c99b6c3652032dac8954cb0ba6533b50a41e611841a993dc6f2e"
+    },
+    "w_bkg_1": {
+     "frac_rows_differing_from_cv": 0.05890672974520948,
+     "identical": true,
+     "n_rows_differing": 0,
+     "rows_differing_from_cv": 38774,
+     "sha256_n": "e01c3ec51e62c4f2580b2dea4705c79961d2773ca991981d22761df73db266f9",
+     "sha256_p": "e01c3ec51e62c4f2580b2dea4705c79961d2773ca991981d22761df73db266f9"
+    }
+   },
+   "rv_branches_present": [
+    "w_bkg_Rvn1pi_0",
+    "w_bkg_Rvn1pi_1",
+    "w_bkg_Rvn2pi_0",
+    "w_bkg_Rvn2pi_1",
+    "w_bkg_Rvp1pi_0",
+    "w_bkg_Rvp1pi_1",
+    "w_bkg_Rvp2pi_0",
+    "w_bkg_Rvp2pi_1"
+   ]
+  },
+  "mc_signal_reco": {
+   "entries": 32849103,
+   "pairs": {
+    "w_reco_0": {
+     "frac_rows_differing_from_cv": 0.07397459224381256,
+     "identical": true,
+     "n_rows_differing": 0,
+     "rows_differing_from_cv": 2429999,
+     "sha256_n": "e0111e29d8f36ea863ae341fdf9fb1235272395ea411ed053ba1833d2f8dd663",
+     "sha256_p": "e0111e29d8f36ea863ae341fdf9fb1235272395ea411ed053ba1833d2f8dd663"
+    },
+    "w_reco_1": {
+     "frac_rows_differing_from_cv": 0.07397459224381256,
+     "identical": true,
+     "n_rows_differing": 0,
+     "rows_differing_from_cv": 2429999,
+     "sha256_n": "59e4dbf2587d9d79631eb05457654f828d6e912ff7f7d5c0acacba887e2a1491",
+     "sha256_p": "59e4dbf2587d9d79631eb05457654f828d6e912ff7f7d5c0acacba887e2a1491"
+    },
+    "w_truth_0": {
+     "frac_rows_differing_from_cv": 0.07397459224381256,
+     "identical": true,
+     "n_rows_differing": 0,
+     "rows_differing_from_cv": 2429999,
+     "sha256_n": "621b89a6338aae0e0e00bd1275426cd49bfb0ca03e6927aa263f2ae00e8b1ccf",
+     "sha256_p": "621b89a6338aae0e0e00bd1275426cd49bfb0ca03e6927aa263f2ae00e8b1ccf"
+    },
+    "w_truth_1": {
+     "frac_rows_differing_from_cv": 0.07397459224381256,
+     "identical": true,
+     "n_rows_differing": 0,
+     "rows_differing_from_cv": 2429999,
+     "sha256_n": "6fb09d3ba08799e62aa57d494282544572475dda53f3ffd37bd8c48380869359",
+     "sha256_p": "6fb09d3ba08799e62aa57d494282544572475dda53f3ffd37bd8c48380869359"
+    }
+   },
+   "rv_branches_present": [
+    "w_reco_Rvn1pi_0",
+    "w_reco_Rvn1pi_1",
+    "w_reco_Rvn2pi_0",
+    "w_reco_Rvn2pi_1",
+    "w_reco_Rvp1pi_0",
+    "w_reco_Rvp1pi_1",
+    "w_reco_Rvp2pi_0",
+    "w_reco_Rvp2pi_1",
+    "w_truth_Rvn1pi_0",
+    "w_truth_Rvn1pi_1",
+    "w_truth_Rvn2pi_0",
+    "w_truth_Rvn2pi_1",
+    "w_truth_Rvp1pi_0",
+    "w_truth_Rvp1pi_1",
+    "w_truth_Rvp2pi_0",
+    "w_truth_Rvp2pi_1"
+   ]
+  },
+  "mc_truth_denom": {
+   "entries": 32849103,
+   "pairs": {
+    "w_truth_0": {
+     "frac_rows_differing_from_cv": 0.10695768465884746,
+     "identical": true,
+     "n_rows_differing": 0,
+     "rows_differing_from_cv": 3513464,
+     "sha256_n": "b6752ef514a7d9a7855506ab02ee2a477ba88e9634e52d48b00ba4e0451aaf53",
+     "sha256_p": "b6752ef514a7d9a7855506ab02ee2a477ba88e9634e52d48b00ba4e0451aaf53"
+    },
+    "w_truth_1": {
+     "frac_rows_differing_from_cv": 0.10695768465884746,
+     "identical": true,
+     "n_rows_differing": 0,
+     "rows_differing_from_cv": 3513464,
+     "sha256_n": "f581beed87c2c26190ca0aa469f79df7de31511d985d77d432a6aa7f7771c40b",
+     "sha256_p": "f581beed87c2c26190ca0aa469f79df7de31511d985d77d432a6aa7f7771c40b"
+    }
+   },
+   "rv_branches_present": [
+    "w_truth_Rvn1pi_0",
+    "w_truth_Rvn1pi_1",
+    "w_truth_Rvn2pi_0",
+    "w_truth_Rvn2pi_1",
+    "w_truth_Rvp1pi_0",
+    "w_truth_Rvp1pi_1",
+    "w_truth_Rvp2pi_0",
+    "w_truth_Rvp2pi_1"
+   ]
+  }
+ }
+}

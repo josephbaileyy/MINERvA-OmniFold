@@ -1,0 +1,52 @@
+{
+ "playlist": "1L",
+ "reco_vs_truth_flux_ratio_max_rel": 4.440892098500626e-16,
+ "w_truth_Muon_Energy_MINERvA_0": {
+  "min": 1.0,
+  "max": 1.0,
+  "frac_ne_1": 0.0,
+  "mean": 1.0
+ },
+ "w_truth_Muon_Energy_MINERvA_1": {
+  "min": 1.0,
+  "max": 1.0,
+  "frac_ne_1": 0.0,
+  "mean": 1.0
+ },
+ "w_truth_Muon_Energy_MINOS_0": {
+  "min": 0.9413282154434387,
+  "max": 1.0481992521168633,
+  "frac_ne_1": 0.919,
+  "mean": 0.9901700812138032
+ },
+ "w_truth_Muon_Energy_MINOS_1": {
+  "min": 0.9819812003463074,
+  "max": 1.0221215684371416,
+  "frac_ne_1": 0.919,
+  "mean": 0.9992725676338339
+ },
+ "w_reco_Muon_Energy_MINERvA_0": {
+  "min": 1.0,
+  "max": 1.0,
+  "frac_ne_1": 0.0,
+  "mean": 1.0
+ },
+ "w_reco_Muon_Energy_MINERvA_1": {
+  "min": 1.0,
+  "max": 1.0,
+  "frac_ne_1": 0.0,
+  "mean": 1.0
+ },
+ "w_reco_Muon_Energy_MINOS_0": {
+  "min": 0.9413282154434387,
+  "max": 1.0481992521168633,
+  "frac_ne_1": 0.9235,
+  "mean": 0.9900082547921172
+ },
+ "w_reco_Muon_Energy_MINOS_1": {
+  "min": 0.9819812003463073,
+  "max": 1.0221215684371416,
+  "frac_ne_1": 0.9235,
+  "mean": 0.9994291864611378
+ }
+}

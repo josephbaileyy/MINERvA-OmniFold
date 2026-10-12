@@ -1,0 +1,251 @@
+{
+ "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix/uq_universe_covariance_full_matcorr_fluxfix.root",
+ "sha256": "62590df75525d6095ce2c0cb96230c875112f0f9223d685c449665eb1936d4e9",
+ "keys": [
+  [
+   "hCov_universe_total",
+   "TH2D",
+   "Universe-only covariance, reported bins"
+  ],
+  [
+   "hSigma_universe_total",
+   "TH2D",
+   "Universe-only sqrt(diag) over reported bins"
+  ],
+  [
+   "hCov_universe_full_2p2h",
+   "TH2D",
+   "Universe covariance (full_2p2h)"
+  ],
+  [
+   "hCov_universe_full_AGKYxF1pi",
+   "TH2D",
+   "Universe covariance (full_AGKYxF1pi)"
+  ],
+  [
+   "hCov_universe_full_AhtBY",
+   "TH2D",
+   "Universe covariance (full_AhtBY)"
+  ],
+  [
+   "hCov_universe_full_BeamAngleX",
+   "TH2D",
+   "Universe covariance (full_BeamAngleX)"
+  ],
+  [
+   "hCov_universe_full_BeamAngleY",
+   "TH2D",
+   "Universe covariance (full_BeamAngleY)"
+  ],
+  [
+   "hCov_universe_full_BhtBY",
+   "TH2D",
+   "Universe covariance (full_BhtBY)"
+  ],
+  [
+   "hCov_universe_full_CCQEPauliSupViaKF",
+   "TH2D",
+   "Universe covariance (full_CCQEPauliSupViaKF)"
+  ],
+  [
+   "hCov_universe_full_CV1uBY",
+   "TH2D",
+   "Universe covariance (full_CV1uBY)"
+  ],
+  [
+   "hCov_universe_full_CV2uBY",
+   "TH2D",
+   "Universe covariance (full_CV2uBY)"
+  ],
+  [
+   "hCov_universe_full_EtaNCEL",
+   "TH2D",
+   "Universe covariance (full_EtaNCEL)"
+  ],
+  [
+   "hCov_universe_full_Flux",
+   "TH2D",
+   "Universe covariance (full_Flux)"
+  ],
+  [
+   "hCov_universe_full_FrAbs_N",
+   "TH2D",
+   "Universe covariance (full_FrAbs_N)"
+  ],
+  [
+   "hCov_universe_full_FrAbs_pi",
+   "TH2D",
+   "Universe covariance (full_FrAbs_pi)"
+  ],
+  [
+   "hCov_universe_full_FrCEx_N",
+   "TH2D",
+   "Universe covariance (full_FrCEx_N)"
+  ],
+  [
+   "hCov_universe_full_FrCEx_pi",
+   "TH2D",
+   "Universe covariance (full_FrCEx_pi)"
+  ],
+  [
+   "hCov_universe_full_FrElas_N",
+   "TH2D",
+   "Universe covariance (full_FrElas_N)"
+  ],
+  [
+   "hCov_universe_full_FrElas_pi",
+   "TH2D",
+   "Universe covariance (full_FrElas_pi)"
+  ],
+  [
+   "hCov_universe_full_FrInel_N",
+   "TH2D",
+   "Universe covariance (full_FrInel_N)"
+  ],
+  [
+   "hCov_universe_full_FrPiProd_N",
+   "TH2D",
+   "Universe covariance (full_FrPiProd_N)"
+  ],
+  [
+   "hCov_universe_full_FrPiProd_pi",
+   "TH2D",
+   "Universe covariance (full_FrPiProd_pi)"
+  ],
+  [
+   "hCov_universe_full_GEANT_Neutron",
+   "TH2D",
+   "Universe covariance (full_GEANT_Neutron)"
+  ],
+  [
+   "hCov_universe_full_GEANT_Pion",
+   "TH2D",
+   "Universe covariance (full_GEANT_Pion)"
+  ],
+  [
+   "hCov_universe_full_GEANT_Proton",
+   "TH2D",
+   "Universe covariance (full_GEANT_Proton)"
+  ],
+  [
+   "hCov_universe_full_HighQ2",
+   "TH2D",
+   "Universe covariance (full_HighQ2)"
+  ],
+  [
+   "hCov_universe_full_LowQ2",
+   "TH2D",
+   "Universe covariance (full_LowQ2)"
+  ],
+  [
+   "hCov_universe_full_MFP_N",
+   "TH2D",
+   "Universe covariance (full_MFP_N)"
+  ],
+  [
+   "hCov_universe_full_MFP_pi",
+   "TH2D",
+   "Universe covariance (full_MFP_pi)"
+  ],
+  [
+   "hCov_universe_full_MaCCQE",
+   "TH2D",
+   "Universe covariance (full_MaCCQE)"
+  ],
+  [
+   "hCov_universe_full_MaNCEL",
+   "TH2D",
+   "Universe covariance (full_MaNCEL)"
+  ],
+  [
+   "hCov_universe_full_MaRES",
+   "TH2D",
+   "Universe covariance (full_MaRES)"
+  ],
+  [
+   "hCov_universe_full_MinosEfficiency",
+   "TH2D",
+   "Universe covariance (full_MinosEfficiency)"
+  ],
+  [
+   "hCov_universe_full_MuonResolution",
+   "TH2D",
+   "Universe covariance (full_MuonResolution)"
+  ],
+  [
+   "hCov_universe_full_Muon_Energy_MINERvA",
+   "TH2D",
+   "Universe covariance (full_Muon_Energy_MINERvA)"
+  ],
+  [
+   "hCov_universe_full_Muon_Energy_MINOS",
+   "TH2D",
+   "Universe covariance (full_Muon_Energy_MINOS)"
+  ],
+  [
+   "hCov_universe_full_MvRES",
+   "TH2D",
+   "Universe covariance (full_MvRES)"
+  ],
+  [
+   "hCov_universe_full_NormDISCC",
+   "TH2D",
+   "Universe covariance (full_NormDISCC)"
+  ],
+  [
+   "hCov_universe_full_NormNCRES",
+   "TH2D",
+   "Universe covariance (full_NormNCRES)"
+  ],
+  [
+   "hCov_universe_full_RDecBR1gamma",
+   "TH2D",
+   "Universe covariance (full_RDecBR1gamma)"
+  ],
+  [
+   "hCov_universe_full_Rvn1pi",
+   "TH2D",
+   "Universe covariance (full_Rvn1pi)"
+  ],
+  [
+   "hCov_universe_full_Rvn2pi",
+   "TH2D",
+   "Universe covariance (full_Rvn2pi)"
+  ],
+  [
+   "hCov_universe_full_Rvp1pi",
+   "TH2D",
+   "Universe covariance (full_Rvp1pi)"
+  ],
+  [
+   "hCov_universe_full_Rvp2pi",
+   "TH2D",
+   "Universe covariance (full_Rvp2pi)"
+  ],
+  [
+   "hCov_universe_full_Theta_Delta2Npi",
+   "TH2D",
+   "Universe covariance (full_Theta_Delta2Npi)"
+  ],
+  [
+   "hCov_universe_full_VecFFCCQEshape",
+   "TH2D",
+   "Universe covariance (full_VecFFCCQEshape)"
+  ],
+  [
+   "hCov_universe___Normalization_flat",
+   "TH2D",
+   "Universe covariance (__Normalization_flat)"
+  ],
+  [
+   "hCov_combined",
+   "TH2D",
+   "Universe + bootstrap covariance, reported bins"
+  ],
+  [
+   "hSigma_combined",
+   "TH2D",
+   "Combined sqrt(diag) over reported bins"
+  ]
+ ]
+}
