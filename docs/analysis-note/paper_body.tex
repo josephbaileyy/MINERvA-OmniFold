@@ -114,10 +114,11 @@ Event selection is held fixed as the scalar classifier grows from
 $(\pT,\pPar)$ to $(\pT,\pPar,\Eavail,q_3,W)$. It requires a tracker vertex
 and a MINOS-matched muon; adding features does not add selected events or
 relax the signal definition. The external
-generator predictions compared below are GENIE~2.12.10 on CH without (``GENIE
+generator predictions compared below are the untuned GENIE~2.12.10 on CH without (``GENIE
 CV'') and with (``GENIE + MEC'') the Valencia 2p2h
 component~\cite{Nieves:2011pp}, which models meson-exchange currents (MEC),
-NuWro~21.09~\cite{Golan:2012wx}, and GiBUU~2019~\cite{Buss:2011mx} on carbon.
+and NuWro~21.09~\cite{Golan:2012wx} and GiBUU~2019~\cite{Buss:2011mx}, both on
+carbon.
 The GENIE and NuWro predictions use a corrected flux sampling (an exact event-by-event
 reweighting to the analysis flux, with added 50--\SI{100}{GeV} samples);
 the GiBUU sample stops at $E_{\nu}\approx\SI{20}{GeV}$.
@@ -162,25 +163,6 @@ Coverage measures how often intervals contain their target over repeated
 experiments, testing the estimator and interval construction jointly.
 Missed-event bookkeeping is an invariant check, and iteration dependence is
 a stability diagnostic. Neither establishes recovery or coverage.
-Table~\ref{tab:result-status} summarizes the estimator identities and scope.
-
-% l columns with \parbox cells instead of p{} columns: see result_status_rows.tex.
-\newcommand{\rscell}[2]{\parbox[t]{#1}{\leftskip=0pt\rightskip=0pt\parfillskip=0pt plus 1fil\relax
-  \strut#2\strut}}
-\newcommand{\rsA}{\rscell{0.20\textwidth}}
-\newcommand{\rsB}{\rscell{0.20\textwidth}}
-\newcommand{\rsC}{\rscell{0.27\textwidth}}
-\newcommand{\rsD}{\rscell{0.24\textwidth}}
-\input{result_status_rows}
-\begin{table*}[t]
-\caption{Current result components and validation scope. Adoption of a
-construction does not establish interval coverage or publication readiness.}
-\label{tab:result-status}
-\centering\footnotesize
-\begin{tabular}{@{}llll@{}}
-\resultstatusrows
-\end{tabular}
-\end{table*}
 
 \subsection{Two-dimensional reproduction}
 
@@ -201,17 +183,16 @@ estimates.
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{paper_fig1_validation}
-  \caption{End-to-end validation against the published binned result
-  \cite{MINERvA:2021owq}.  Top: $\pT$ and $\pPar$ projections of the published
-  result with its $\pm1\sigma$ band (from the published covariance), the
-  five-iteration OmniFold result, and the MINERvA Tune~v1, with each curve's
-  ratio to the published projection below.  The shared data sample permits a
-  direct comparison of the unfolding procedures.  Bottom left:
+  \caption{Comparison with the published binned result~\cite{MINERvA:2021owq}.
+  Top: $\pT$ and $\pPar$ projections of the published result with its
+  $\pm1\sigma$ band (published covariance), the OmniFold result, and the MINERvA
+  Tune~v1, with ratios to the published projection below.  Bottom left:
   $(\mathrm{OmniFold}-\mathrm{published})/\sigma_{\mathrm{published}}$ on the
-  reported two-dimensional grid, drawn as equal-size cells labelled by their bin
-  edges (grey: not reported).  Bottom right: the independently reconstructed and
-  published median relative uncertainties, and the mean and RMS of the residuals.
-  Generated from the released figure arrays (see Data availability).}
+  reported grid, drawn as equal-size cells labelled by their bin edges (grey: not
+  reported).  Bottom right: the median relative uncertainties of this analysis's
+  standalone covariance (LightGBM ensembles; Sec.~\ref{sec:validation}) and of
+  the publication, and the mean and RMS of the
+  residuals.}
   \label{fig:validation}
 \end{figure*}
 
@@ -357,27 +338,26 @@ bias of Sec.~\ref{sec:validation} is largest.
 \begin{figure}[t]
   \centering
   \includegraphics[width=\columnwidth]{paper_fig2_joint}
-  \caption{Descriptive joint $(\Eavail,W)$ central-value comparison
-  (five-dimensional LightGBM production estimator) with the MINERvA Tune~v1
-  (GENIE~2.12.6 with the analysis tune weights), on the $7\times6$ reporting
-  grid.  The external GENIE CV prediction in Fig.~\ref{fig:generator-context}
-  uses GENIE~2.12.10.  Cells
-  are drawn with equal size and labelled by their bin edges; the last row and
-  column are wide overflow bins that extend to \SI{100}{GeV}.  Top: the
-  unfolded-to-Tune~v1 ratio in each cell, with its value printed.  Bottom: the
-  unfolded-minus-Tune~v1 difference as a \emph{cell-integrated} cross section in
-  units of $10^{-40}\,\si{cm^2/nucleon}$, i.e.\ the density difference
-  multiplied by that cell's $\Delta\Eavail\,\Delta W$; the overflow cells
-  therefore carry their large widths and appear larger here than in the ratio
-  panel.  Generated from the released figure
-  arrays.}
+  \caption{Joint $(\Eavail,W)$ central value (five-dimensional LightGBM
+  production estimator) relative to the MINERvA Tune~v1 on the $7\times6$
+  reporting grid, drawn as equal-size cells labelled by their bin edges; the last
+  row and column are overflow bins extending to \SI{100}{GeV}.  Top: the
+  unfolded-to-Tune~v1 ratio, printed in each cell.  Bottom: the unfolded-minus-Tune~v1 difference as a
+  \emph{cell-integrated} cross section in units of
+  $10^{-40}\,\si{cm^2/nucleon}$ (the density difference times
+  $\Delta\Eavail\,\Delta W$), so the wide overflow cells appear larger than in
+  the ratio panel.}
   \label{fig:joint}
 \end{figure}
 
 The one-dimensional projections in Fig.~\ref{fig:generator-context} compare the
 same central result with the four external predictions: GENIE CV, GENIE + MEC,
 NuWro, and GiBUU.  All four lie below the data overall (integrated data-to-prediction
-ratios $\genRatioTotLo$--$\genRatioTotHi$) and at high $W$.  For GENIE and NuWro the high-$W$
+ratios $\genRatioTotLo$--$\genRatioTotHi$) and at high $W$, although at
+$1.4\le W<\SI{1.8}{GeV}$ both GENIE predictions lie
+\SIrange{\genieWmidLo}{\genieWmidHi}{\percent} above it.  As for
+Fig.~\ref{fig:joint}, these comparisons are descriptive; no significance is
+assigned.  For GENIE and NuWro the high-$W$
 shortfall is about their overall one (ratios $\genRatioWhiLo$--$\genRatioWhiHi$ for
 $2.2\le W<\SI{3.0}{GeV}$, against $\genRatioTotGNLo$--$\genRatioTotGNHi$ integrated), and in the joint
 high-$\Eavail$, high-$W$ region ($\Eavail\ge\SI{0.8}{GeV}$, $W\ge\SI{1.8}{GeV}$)
@@ -397,20 +377,12 @@ treating them as independent confirmation of this high-$\Eavail$, high-$W$ diffe
 \begin{figure*}[t]
   \centering
   \includegraphics[width=0.84\textwidth]{paper_fig3_generators}
-  \caption{Descriptive generator comparison for the unfolded $\Eavail$ (left) and $W$ (right)
-  central-value projections (five-dimensional LightGBM production estimator), in
-  $\mathrm{cm^{2}\,GeV^{-1}\,nucleon^{-1}}$, with the data-to-prediction ratio
-  below each; the wide overflow bins ($\Eavail>\SI{3}{GeV}$, $W>\SI{3}{GeV}$) are
-  omitted from the display.  Drawn from the released figure arrays (see Data
-  availability).  GENIE CV (untuned GENIE~2.12.10 on CH, with no 2p2h events),
-  GENIE + MEC (the same GENIE with the Valencia 2p2h contribution), NuWro~21.09,
-  and GiBUU~2019 (both on carbon; GENIE and NuWro with corrected flux sampling)
-  all remain below the
-  unfolded result overall and at high $W$, GENIE and NuWro by about their overall
-  normalization shortfall and GiBUU, whose sample stops at
-  $E_\nu\approx\SI{20}{GeV}$, by more.  The two GENIE predictions lie
-  \SIrange{\genieWmidLo}{\genieWmidHi}{\percent} above the unfolded result at
-  $1.4\le W<\SI{1.8}{GeV}$.}
+  \caption{Unfolded $\Eavail$ (left) and $W$ (right) central-value projections
+  (five-dimensional LightGBM production estimator), in
+  $\mathrm{cm^{2}\,GeV^{-1}\,nucleon^{-1}}$, compared with the GENIE CV,
+  GENIE + MEC, NuWro, and GiBUU predictions of Sec.~\ref{sec:data}, with the
+  data-to-prediction ratio below each.  The overflow bins
+  ($\Eavail>\SI{3}{GeV}$, $W>\SI{3}{GeV}$) are not shown.}
   \label{fig:generator-context}
 \end{figure*}
 
@@ -559,13 +531,11 @@ prior, which the calibration reproduces.
 \begin{figure*}[t]
   \centering
   \includegraphics[width=0.98\textwidth]{paper_joint_nulls}
-  \caption{Calibrated null distributions of the joint statistics (joint-test
-  estimator) for each prediction (columns), total statistic (top) and shape
-  statistic (bottom), shown for the declared claim variant whose null distribution
-  has the largest median; the vertical line is the observed statistic and $k/B$ is
-  as in Table~\ref{tab:joint}.  The horizontal axis is logarithmic.  Plotted from
-  the released sufficient inputs (see Data availability), which reproduce
-  every recorded $p$ value and decision.}
+  \caption{Calibrated null distributions (joint-test estimator) of the total
+  (top) and shape (bottom) statistics for each prediction (columns), for the
+  declared claim variant whose null distribution has the largest median, on a
+  logarithmic axis.  The vertical line is the observed statistic; $k/B$ is as in
+  Table~\ref{tab:joint}.}
   \label{fig:joint-nulls}
 \end{figure*}
 
@@ -720,7 +690,13 @@ uncertainty.
 
 This study applies OmniFold to MINERvA inclusive charged-current data,
 reproduces the published two-dimensional result, and extends the construction
-to five simultaneous observables.  The higher-dimensional central values pass
+to five simultaneous observables.  These results differ in standing: the
+two-dimensional comparison is an end-to-end test of the unfolding against a
+measurement from the same data; the three- to five-dimensional central values
+support only descriptive comparisons, without validated total-interval coverage
+or a covariance-based generator significance; and the joint tests are
+calibrated generator tests that are conditional on six stated conditions and
+yield no new reportable uncertainty.  The higher-dimensional central values pass
 marginal anchors and injected-shape closure tests and recover the established
 low-recoil discrepancy.  Background-inclusive tests reveal a subtraction bias
 that unbinned background refinement reduces, while regularization bias persists
@@ -733,8 +709,8 @@ uncertainties at useful precision.  These outcomes provide practical checks for 
 multidimensional neutrino unfolding.
 
 The generator comparisons illustrate calibration through the full analysis
-chain with an estimator that retains substantial model dependence.  Under the six
-stated conditions, all ten total and shape hypotheses for the five predictions
+chain with an estimator that retains substantial model dependence.  Under the stated
+conditions, all ten total and shape hypotheses for the five predictions
 are rejected at familywise level 0.05, and the report-only recovery of every
 lost pseudo-experiment leaves the frozen decisions unchanged.  Each test also has $p<0.05$ in at
 least one matched coarse projection, so additional discrimination from the
