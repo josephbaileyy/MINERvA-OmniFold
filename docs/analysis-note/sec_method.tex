@@ -120,6 +120,30 @@ universe sweep and its matched central value, and seeds 1--10 for the ML band
 % sbatch_unfold_2d_MEHFC.sh, job 53116554; executed-bytes log not found); P09b (E_C seed noise unmeasured).
 % Later driver revisions add --seed and --estimator options; their defaults do not describe this run.
 
+\paragraph{The four estimator configurations.}
+The note and the article use four configurations, all with five OmniFold
+iterations, and each result names the one it uses:
+\begin{enumerate}[itemsep=1pt, topsep=2pt]
+  \item the 2D central value: the \texttt{exact} backend above, with purity-based
+        background subtraction (\S\ref{sec:method-algo});
+  \item the 2D uncertainty ensembles: the LightGBM backend above;
+  \item the three- to five-dimensional central values: LightGBM at the same matched
+        capacity (100 trees, 8 leaves), with purity-based background subtraction
+        (\S\S\ref{sec:3d}--\ref{sec:eavailw});
+  \item the joint-test estimator: a deterministic LightGBM variant with the unbinned
+        negative-weight background treatment (App.~\ref{app:negweight}), whose
+        refinement classifier has 400 trees and 31 leaves. The negative-weight
+        treatment reduces the purity method's nominal-truth bias in the highest-$W$
+        column at least fifteen-fold (from \SIrange{3.5}{4.1}{\percent} to
+        \SIrange{0.11}{0.24}{\percent}, the level of the no-background closure), and the larger refinement classifier
+        removes most of the background-related bias that remains
+        (\S\S\ref{sec:val-negweight}--\ref{sec:val-departure}). It was selected
+        before the joint-test design was frozen (\S\ref{sec:joint5d}).
+\end{enumerate}
+% Configuration 3: sec_5d.tex (100 trees, 8 leaves; purity footing) for 5D; the 3D/4D drivers default to
+% --estimator lgbm and the purity bkg-mode (review 2026-10-11). Added 2026-10-11 so that this subsection is the single home the article cites for all four configurations;
+% before, configurations 3-4 were described only in the article and in sec_5d.tex.
+
 \paragraph{Hyperparameter choice.}
 The learner settings were fixed \emph{a priori} rather than tuned on data. They are the sklearn
 \texttt{GradientBoosting} defaults: 100 trees, learning rate $0.1$, and

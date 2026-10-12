@@ -85,10 +85,30 @@ Tune~v1, which reweights GENIE with a non-resonant pion reduction, a
 random-phase-approximation correction, and an empirical low-recoil
 two-particle--two-hole (2p2h) enhancement~\cite{MINERvA:2016lowrecoil}.
 
-Reconstructed $\Eavail$ is the calorimetric recoil energy in the tracker and
-electromagnetic calorimeter after removal of the muon's energy deposits; the
-reconstructed energy transfer $q_{0}$ is a separate calorimetric recoil-energy
-estimate. \input{scalar_kinematics}
+The unfolded observables are defined at truth level.  Besides the muon
+momentum components $\pT$ and $\pPar$, they are the three-momentum transfer
+$q_{3}=|\vec{q}\,|$ from the generator, the hadronic invariant mass
+$W=\sqrt{M^{2}+2M(E_{\nu}-E_{\mu})-Q^{2}}$ with the struck-nucleon mass $M$, and
+the available energy
+\begin{equation}
+  \Eavail=\sum_{p}(E_{p}-m_{p})+\sum_{\pi^{\pm}}(E_{\pi}-\SI{135}{MeV})
+  +\sum_{\pi^{0}}E_{\pi}+\sum_{\gamma}E_{\gamma},
+\end{equation}
+in which protons contribute kinetic energy, charged pions their energy minus an
+inherited constant of \SI{135}{MeV} rather than the charged-pion mass (an
+uncorrected deviation whose effect has not been assessed), and neutral pions and
+photons their total energy; all other final-state particles, including neutrons,
+contribute nothing.  Reconstructed
+$\Eavail$ is the calorimetric recoil energy in the tracker and electromagnetic
+calorimeter after removal of the muon's energy deposits.  Reconstructed $q_{3}$
+and $W$ combine the muon kinematics with a separate calorimetric estimate of
+the energy transfer, so the five reconstructed inputs share information and do
+not by themselves establish five independently constrained physical
+directions.  The implemented
+reconstructed and truth definitions are given in Ref.~\cite{AnalysisNote2026}.
+% Sources: CVUniverse::GetEAvailableTrue(), Getq3True(), GetTrueExperimentersW(), NewEavail(), RecoQ3(), RecoW();
+% note sec_3d.tex eq:eavail-implemented (the 135 MeV charged-pion term) and scalar_kinematics.tex
+% eq:shared-reco-inputs, which the article input until 2026-10-11; sec_eavailw.tex sec:eavailw-axis (truth W).
 
 Event selection is held fixed as the scalar classifier grows from
 $(\pT,\pPar)$ to $(\pT,\pPar,\Eavail,q_3,W)$. It requires a tracker vertex
@@ -113,31 +133,23 @@ smooth reweighting to the next iteration.  Cross sections are formed by
 histogramming the reweighted truth events in a declared reporting binning and
 dividing by integrated flux, target count, and bin width.
 
-Four estimator configurations appear in this paper, and each result names the
-one it uses.
-\begin{itemize}
-\item \emph{Two-dimensional central value} (Sec.~\ref{sec:validation}): five
-iterations of depth-three gradient-boosted decision trees with 100 trees, fitted
-with exact-split scikit-learn~\cite{Pedregosa:2011sklearn} gradient boosting with an
-unpinned seed, and a purity-based background subtraction.
-\item \emph{Three- to five-dimensional central values}
-(Secs.~\ref{sec:validation}--\ref{sec:central}, Figs.~\ref{fig:joint}
-and~\ref{fig:generator-context}): the same five-iteration configuration fitted
-with LightGBM~\cite{Ke:2017lightgbm} at matched nominal capacity, with the
-purity-based background subtraction.
-\item \emph{Two-dimensional uncertainty ensembles}: the finalized systematic-universe,
-Poisson-bootstrap, and training-seed ensembles use LightGBM at matched nominal
-capacity.  The covariance therefore belongs to a different estimator from the
-exact-split central value, and whether it also describes that central value has
-not been measured (Sec.~\ref{sec:validation}).
-\item \emph{Joint-test estimator} (Sec.~\ref{sec:joint}): a deterministic
-LightGBM OmniFold, five iterations, with an unbinned negative-weight background
-treatment whose refinement classifier uses 400 trees and 31 leaves.  The
-negative-weight treatment reduces the purity method's nominal-truth bias in the
-highest-$W$ cells about fifteen-fold, and the larger refinement classifier
-removes most of the background-related bias that remains; the configuration was
-selected before the joint-test design was frozen.
-\end{itemize}
+All four estimator configurations use five OmniFold iterations with
+gradient-boosted decision-tree classifiers~\cite{Pedregosa:2011sklearn,Ke:2017lightgbm}, and each result
+names the one it uses.  The two-dimensional
+central value uses exact-split scikit-learn boosting with the purity-based
+background subtraction.  The three- to five-dimensional central values use
+LightGBM at matched nominal capacity with the same subtraction, as do the
+two-dimensional uncertainty ensembles; that covariance therefore belongs to a
+different estimator from the two-dimensional central value, and whether it also
+describes that central value has not been measured.  The joint tests
+(Sec.~\ref{sec:joint}) use a deterministic LightGBM variant, selected before the
+joint-test design was frozen, whose unbinned negative-weight background
+treatment and higher-capacity refinement classifier together remove most of the
+purity method's nominal-truth bias in the highest-$W$ cells
+(Sec.~\ref{sec:validation}).  Classifier settings are given in
+Ref.~\cite{AnalysisNote2026}.
+% 2026-10-11: the tree counts, depths, the unpinned exact-split seed, the 400-tree/31-leaf refinement and the
+% fifteen-fold bias reduction moved to the note, sec_method.tex sec:method-config ("The four estimator configurations").
 The use of AI tools in this work is described in the Acknowledgments.
 
 \section{Validation}
