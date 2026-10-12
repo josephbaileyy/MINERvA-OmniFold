@@ -59,18 +59,20 @@ publication critical path.
 % $C_{\rm stat}$ artifacts exist, but their pairing was declined and no PET
 % covariance is adopted. Its remaining closure and complete-UQ requirements are
 % method development and are not on the publication critical path.
-The publication critical path ran through the adoption of a selection-complete
-scalar five-dimensional covariance, which has happened under exception
-(\S\ref{sec:eavailw-adopted}) and never through PET; the precision-measurement
-objective is not complete, because the five-dimensional measurement branch was not
-admitted (\S\ref{sec:gbdt-model-dependence}).
+A selection-complete scalar five-dimensional covariance has been adopted
+under a documented exception (\S\ref{sec:eavailw-adopted}); PET played no
+part in it. A five-dimensional measurement with qualified total uncertainties at
+useful precision was not obtained: the study of reporting definitions found none
+that meets its precision targets within its rules and budget (\S\ref{sec:gbdt-model-dependence}).
 % Resolves the demoted TODO (lane 5 R12) on the scalar-5D campaign (s5p, OI-193) closing.
 % Source: docs/orchestration/RECORD-20261005-s5p-joint-5d-inference-result.md section 7 (NOT ADMITTED,
 % no new reportable uncertainty, NOT READY); CHECKLIST-20261001-s5p-terminal-and-claims.md section 4.
 Further refinements are a fifth generator, NEUT, and a finer 44-cell Ascencio
 comparison (maximal-common-grid comparison in \S\ref{sec:4d}).
-A paper-independent flux\,$\leftrightarrow$\,muon posterior from MAT-MINERvA
-for a fully self-derived $\rho$ would further strengthen the analysis.
+A flux--muon-energy-scale posterior derived from MAT-MINERvA, independent of the
+published analysis, would let the correlation $\rho$ between the leading flux mode
+and the muon-energy-scale band (\S\ref{sec:systematics}) be derived entirely
+within this analysis.
 % Withdrawn outlook item moved to App. H (sidecar appH-additions.tex, "From \S\ref{sec:summary}, outlook"):
 % The truncated-spectral ``ours-only'' goodness-of-fit convention
 % (App.~\ref{sec:rank}) is no longer among them: the collaboration confirmed it
@@ -86,8 +88,9 @@ identity, estimator and uncertainty-family definitions, units, support,
 normalization, and a reproducible projection example.
 App.~\ref{app:release} specifies this release for our analysis. It records
 which objects have fixed identities today and which do not exist yet.
-\textbf{No release tag or release manifest
-exists}; rebuilding the documents reproduces no result here. New projections
+A local release candidate with checksums and a replay verifier exists
+(App.~\ref{app:release}), but \textbf{no release has been tagged or
+deposited}; rebuilding the documents reproduces no result here. New projections
 require their own applicability checks; nominal weights alone cannot certify arbitrary
 downstream inference (App.~\ref{sec:unbinned-inference}). The release design and
 public example have no bearing on the separately settled covariance adoption
