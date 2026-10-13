@@ -1,0 +1,142 @@
+{
+ "n_sampled": 2500,
+ "n_positive": 2462,
+ "sigma_per_nucleon_cm2": 1.0558218039210882e-39,
+ "sigma_mc_error_cm2": 1.9833283368273604e-41,
+ "kish_neff": 1328.5093131991914,
+ "kish_neff_over_n": 0.5314037252796766,
+ "wmax_over_wmean": 5.585222017389537,
+ "channel_fraction": {
+  "pp": [
+   0.5711944030393769,
+   0.013549878967439396
+  ],
+  "np+pn": [
+   0.18059124035789276,
+   0.01078466626037243
+  ],
+  "3p3h": [
+   0.24821435660273047,
+   0.0115702476555044
+  ]
+ },
+ "conservation": {
+  "max_abs_dp_MeV": 3.0000001440081944e-06,
+  "deltaE_in_minus_out_MeV": {
+   "min": -2.000000222324161e-06,
+   "median": 0.0,
+   "max": 3.1018659999999727
+  },
+  "n_events_dp_over_1keV": 0
+ },
+ "energy_partition_weighted_mean_MeV": {
+  "omega": 462.113734781564,
+  "T_protons": 293.5949377633645,
+  "T_neutrons": 96.47496281533768,
+  "pions_total_E": 7.315796199565106,
+  "other_E": 0.0,
+  "unrecorded_remainder": 64.72803800329675,
+  "E_avail": 296.8767957998974
+ },
+ "neutron_fraction_of_omega_weighted": 0.20876887128433935,
+ "post_species_counts": {
+  "-211": 23,
+  "13": 2462,
+  "111": 23,
+  "211": 76,
+  "2112": 2585,
+  "2212": 5379
+ },
+ "mean_multiplicity_weighted": {
+  "protons": 2.1495963974066834,
+  "neutrons": 1.019184434087844
+ },
+ "signal_acceptance": [
+  0.0,
+  0.0
+ ],
+ "signal_kish_neff": 0.0,
+ "eavail_bins": [
+  {
+   "bin_GeV": [
+    0,
+    0.1
+   ],
+   "frac_all": 0.19380684569395248,
+   "frac_of_signal": 0.0,
+   "kish_neff_signal": 0.0,
+   "n_raw_signal": 0
+  },
+  {
+   "bin_GeV": [
+    0.1,
+    0.2
+   ],
+   "frac_all": 0.17924695934023796,
+   "frac_of_signal": 0.0,
+   "kish_neff_signal": 0.0,
+   "n_raw_signal": 0
+  },
+  {
+   "bin_GeV": [
+    0.2,
+    0.4
+   ],
+   "frac_all": 0.3134221442809696,
+   "frac_of_signal": 0.0,
+   "kish_neff_signal": 0.0,
+   "n_raw_signal": 0
+  },
+  {
+   "bin_GeV": [
+    0.4,
+    0.8
+   ],
+   "frac_all": 0.3109221577641049,
+   "frac_of_signal": 0.0,
+   "kish_neff_signal": 0.0,
+   "n_raw_signal": 0
+  },
+  {
+   "bin_GeV": [
+    0.8,
+    1.5
+   ],
+   "frac_all": 0.002601892920735136,
+   "frac_of_signal": 0.0,
+   "kish_neff_signal": 0.0,
+   "n_raw_signal": 0
+  },
+  {
+   "bin_GeV": [
+    1.5,
+    3
+   ],
+   "frac_all": 0.0,
+   "frac_of_signal": 0.0,
+   "kish_neff_signal": 0.0,
+   "n_raw_signal": 0
+  },
+  {
+   "bin_GeV": [
+    3,
+    100
+   ],
+   "frac_all": 0.0,
+   "frac_of_signal": 0.0,
+   "kish_neff_signal": 0.0,
+   "n_raw_signal": 0
+  }
+ ],
+ "q_near_cut": {
+  "frac_q_gt_1100MeV": [
+   0.07041463848889039,
+   0.005046872543952186
+  ]
+ },
+ "enu_weighted_frac_above_1p1GeV": [
+  0.0,
+  0.0
+ ],
+ "dump": "dump.txt"
+}
