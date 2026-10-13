@@ -1,0 +1,229 @@
+--- 2d-unfolding/unfold_2d_omnifold_unbinned.py	2026-10-13 04:36:35
++++ docs/orchestration/state/2d-closeout/stageC/pilot/p1/driver_p1.py	2026-10-13 04:52:16
+@@ -250,8 +250,16 @@
+ 
+ def fill_bkg_reco_2d(t_bkg, h_bkg_2d, pot_scale, pt_lo=None, pt_hi=None,
+                      pz_lo=None, pz_hi=None, guard_max=1e3, verbose=False,
+-                     universe_branch=None):
++                     universe_branch=None, return_fill_rows=False):
+     """Fill background TH2D with POT-scaled MC background events.
++
++    P1 diagnostic (stage package only, not the production driver): with
++    `return_fill_rows=True` a fourth value is returned, a dict of arrays
++    (pt, pz, w_pot, entry) with one element per h_bkg_2d.Fill call, in fill
++    order and including the out-of-window (overflow) rows: the reco kinematics,
++    the filled weight w * pot_scale, and the mc_background tree entry index.
++    p1_refill_bkg_2d() rebuilds B* from them. False (the default) leaves the
++    loader byte-for-byte on its production path.
+ 
+     Also returns the per-event background reco arrays (p_T, p_||, POT-scaled
+     weight) for the unbinned negative-weight-injection background mode
+@@ -306,6 +314,7 @@
+     t_bkg.SetBranchAddress(w_name, w_bkg)
+ 
+     bkg_pt, bkg_pz, bkg_w = [], [], []
++    fill_rows = [] if return_fill_rows else None  # P1 diagnostic
+     n_filled, n_skip = 0, 0
+     for i in range(t_bkg.GetEntries()):
+         t_bkg.GetEntry(i)
+@@ -321,6 +330,8 @@
+             continue
+         h_bkg_2d.Fill(pt, pz, w * pot_scale)
+         n_filled += 1
++        if fill_rows is not None:  # P1 diagnostic: the same Fill, recorded
++            fill_rows.append((pt, pz, w * pot_scale, i))
+         # Returned arrays: fiducial reco window only (parity with the data).
+         if pt_lo is not None and pt < pt_lo: continue
+         if pt_hi is not None and pt > pt_hi: continue
+@@ -333,9 +344,42 @@
+     if verbose:
+         print(f"[INFO] bkg: filled={n_filled}, skipped={n_skip}, "
+               f"in-fiducial for injection={len(bkg_pt)}")
++    if fill_rows is not None:  # P1 diagnostic
++        cols = list(zip(*fill_rows)) if fill_rows else [(), (), (), ()]
++        rows = {"pt": np.asarray(cols[0], dtype=float),
++                "pz": np.asarray(cols[1], dtype=float),
++                "w_pot": np.asarray(cols[2], dtype=float),
++                "entry": np.asarray(cols[3], dtype=np.int64)}
++        return (np.asarray(bkg_pt, dtype=float),
++                np.asarray(bkg_pz, dtype=float),
++                np.asarray(bkg_w, dtype=float), rows)
+     return (np.asarray(bkg_pt, dtype=float),
+             np.asarray(bkg_pz, dtype=float),
+             np.asarray(bkg_w, dtype=float))
++
++
++# ---------------------------------------------------------------------------
++# P1 diagnostic (stage package only): background-MC Poisson(1) stream
++# ---------------------------------------------------------------------------
++P1_STREAMS = ("three", "bkg")
++P1_BKG_SEED_OFFSET = 20_000_000  # data: seed; signal MC: seed + 10_000_000
++
++
++def p1_draw_bkg_factors(bootstrap_seed, n_entries):
++    """Poisson(1) factor per mc_background tree entry, drawn over ALL entries
++    before any selection (the PET convention), from its own sub-RNG."""
++    rng = np.random.default_rng(int(bootstrap_seed) + P1_BKG_SEED_OFFSET)
++    return rng.poisson(1.0, size=int(n_entries)).astype(float)
++
++
++def p1_refill_bkg_2d(name, title, rows, b_bkg, pt_edges, pz_edges):
++    """B*: refill the background TH2D as sum b_bkg[entry] * w_pot, in the
++    production fill order (overflow rows included). With b_bkg == 1 every
++    Fill gets the production weight bit for bit."""
++    h = make_th2d(name, title, pt_edges, pz_edges)
++    for pt, pz, wp, e in zip(rows["pt"], rows["pz"], rows["w_pot"], rows["entry"]):
++        h.Fill(float(pt), float(pz), float(b_bkg[int(e)]) * float(wp))
++    return h
+ 
+ 
+ def build_measured_training_2d(meas_pt, meas_pz, h_data_2d, h_bkg_2d, verbose=False):
+@@ -1445,7 +1489,8 @@
+                           "to omitting this flag. Data and MC draws are "
+                           "independent (separate sub-RNGs) so data-stat and "
+                           "MC-stat contribute jointly per replica.")
+-    ap.add_argument("--bootstrap-streams", choices=["both", "data", "mc"],
++    ap.add_argument("--bootstrap-streams",
++                     choices=["both", "data", "mc"] + list(P1_STREAMS),
+                      default="both",
+                      help="Which sample(s) the Poisson(1) bootstrap fluctuates "
+                           "(only with --bootstrap-seed). 'both' (default) is the "
+@@ -1454,7 +1499,16 @@
+                           "'mc' fluctuates only sig['w_truth']/['w_reco'] "
+                           "(MC-statistical component). The data and MC sub-RNGs "
+                           "are independent, so C_both == C_data + C_mc up to "
+-                          "sampling noise -- a decomposition AND a closure check.")
++                          "sampling noise -- a decomposition AND a closure check. "
++                          "P1 diagnostic: 'three' adds a third stream over the "
++                          "mc_background entries (seed + 20,000,000) and "
++                          "recomputes the purity from the resampled D* and B*; "
++                          "'bkg' does the same with the data and MC factors "
++                          "all 1. Both need --bootstrap-seed and bkg-mode purity.")
++    ap.add_argument("--unit-factors", action="store_true",
++                     help="P1 diagnostic, test only: with --bootstrap-streams "
++                          "three|bkg, set all three factor vectors to 1 on the "
++                          "new path (the b == 1 control; reproduces the central).")
+     ap.add_argument("--universe", type=str, default=None, metavar="BAND:IDX",
+                      help="Systematic-universe unfold. Argument is "
+                           "'BAND:IDX' (e.g. 'MaCCQE:0' or 'Flux:42'). When "
+@@ -1521,6 +1575,17 @@
+                           "'branchSelection'.")
+     ap.add_argument("--verbose", action="store_true")
+     args = ap.parse_args()
++
++    # P1 diagnostic: the background stream is used only on the CV purity path.
++    p1_on = args.bootstrap_streams in P1_STREAMS
++    if args.unit_factors and not p1_on:
++        raise SystemExit("[FAIL] --unit-factors requires --bootstrap-streams three|bkg")
++    if p1_on and (args.bootstrap_seed is None or args.closure
++                  or args.bkg_mode != "purity" or args.universe is not None):
++        raise SystemExit(
++            "[FAIL] --bootstrap-streams three|bkg (P1 diagnostic) requires "
++            "--bootstrap-seed and --bkg-mode purity, and refuses --closure and "
++            "--universe.")
+ 
+     # --closure + --bootstrap-seed: Stage-1 coverage-toy mode. The naive
+     # closure invariant (step-1 reweight = 1 per event) is intentionally
+@@ -1742,11 +1807,14 @@
+     # the pre-#13 CV behaviour byte-identical. Both the purity down-weight (via
+     # hBkgReco2D) and the negweight injection (via the returned arrays) then track
+     # the per-universe background.
+-    bkg_reco_pt, bkg_reco_pz, bkg_reco_w = call_loader(
++    p1_kw = {"return_fill_rows": True} if p1_on else {}  # P1 diagnostic
++    bkg_out = call_loader(
+         fill_bkg_reco_2d,
+         t_bkg, hBkgReco2D, pot_scale, pt_lo=pt_lo, pt_hi=pt_hi,
+         pz_lo=pz_lo, pz_hi=pz_hi, verbose=args.verbose,
+-        universe_branch=universe_branch, **loader_select)
++        universe_branch=universe_branch, **p1_kw, **loader_select)
++    bkg_reco_pt, bkg_reco_pz, bkg_reco_w = bkg_out[:3]
++    p1_bkg_rows = bkg_out[3] if p1_on else None
+ 
+     # --- Read signal MC arrays ---
+     sig = call_loader(collect_signal_arrays_2d,
+@@ -1798,6 +1866,9 @@
+     fake_pt = sig["reco_pt"][is_fake]
+     fake_pz = sig["reco_pz"][is_fake]
+     fake_wr = sig["w_reco"][is_fake]  # already POT-scaled in collect_signal_arrays_2d
++    if p1_on and n_fakes != 0:  # P1 diagnostic: B* is refilled from mc_background only
++        raise RuntimeError(f"[FAIL] P1: n_fakes = {n_fakes} != 0; the background "
++                           f"stream would miss the signal fakes in hBkgReco2D")
+     if n_fakes:
+         fake_sum = 0.0
+         for pt, pz, w in zip(fake_pt, fake_pz, fake_wr):
+@@ -1979,16 +2050,48 @@
+     # w_truth_cv keeps the un-resampled MC truth weights for the completeness
+     # (KNOWN_ISSUES 84); it stays None on the central path.
+     w_truth_cv = None
++    p1_hists = []  # P1 diagnostic: D*, B* and the starred training target
+     if args.bootstrap_seed is not None:
+         rng_data = np.random.default_rng(args.bootstrap_seed)
+         rng_mc = np.random.default_rng(args.bootstrap_seed + 10_000_000)
+-        do_data = args.bootstrap_streams in ("both", "data")
+-        do_mc = args.bootstrap_streams in ("both", "mc")
++        do_data = args.bootstrap_streams in ("both", "data") or p1_on
++        do_mc = args.bootstrap_streams in ("both", "mc") or p1_on
+         # Draw both sub-RNGs unconditionally (keeps the data/mc streams seed-
+         # aligned across modes), then apply only the requested stream(s). With
+         # independent streams, Cov(both) = Cov(data-only) + Cov(mc-only).
+         b_data = rng_data.poisson(1.0, size=measured_weights.shape[0]).astype(float)
+         b_truth = rng_mc.poisson(1.0, size=sig["w_truth"].shape[0]).astype(float)
++        if p1_on:
++            # P1 diagnostic. Third stream over every mc_background entry; data
++            # and MC draws above are unchanged, so arms pair by bootstrap seed.
++            # 'bkg' holds the data and MC factors at 1; --unit-factors holds all
++            # three at 1. Purity is recomputed from D* = sum b_data and
++            # B* = sum b_bkg * w * pot per reco cell (production function), and
++            # is then multiplied by b_data below, as production does.
++            b_bkg = p1_draw_bkg_factors(args.bootstrap_seed, t_bkg.GetEntries())
++            if args.bootstrap_streams == "bkg" or args.unit_factors:
++                b_data = np.ones_like(b_data)
++                b_truth = np.ones_like(b_truth)
++            if args.unit_factors:
++                b_bkg = np.ones_like(b_bkg)
++            hDataRecoStar2D = make_th2d("hDataRecoStar2D", "Data reco, resampled (P1 D*)",
++                                        pt_edges, pz_edges)
++            for pt, pz, b in zip(meas_pt, meas_pz, b_data):
++                hDataRecoStar2D.Fill(float(pt), float(pz), float(b))
++            hBkgRecoStar2D = p1_refill_bkg_2d(
++                "hBkgRecoStar2D", "Background reco, resampled (P1 B*)",
++                p1_bkg_rows, b_bkg, pt_edges, pz_edges)
++            p1_purity, hMeasTrainStar2D = build_measured_training_2d(
++                meas_pt, meas_pz, hDataRecoStar2D, hBkgRecoStar2D, verbose=args.verbose)
++            hMeasTrainStar2D.SetName("hMeasTrainStar2D")
++            p1_hists = [hDataRecoStar2D, hBkgRecoStar2D, hMeasTrainStar2D]
++            measured_weights = p1_purity
++            print(f"[INFO] P1 streams={args.bootstrap_streams} unit_factors="
++                  f"{args.unit_factors}: bkg factor sum={b_bkg.sum():.6g} "
++                  f"(n={b_bkg.size}, seed+{P1_BKG_SEED_OFFSET}); fill rows "
++                  f"{p1_bkg_rows['entry'].size}; D* integral "
++                  f"{hDataRecoStar2D.Integral():.6g}, B* integral "
++                  f"{hBkgRecoStar2D.Integral():.6g}")
+         if do_data:
+             measured_weights = measured_weights * b_data
+         if do_mc:
+@@ -2061,6 +2164,16 @@
+         sys.path.insert(0, _OF_PY)
+     from omnifold import OmniFold_helper_functions as ohf
+     provenance = run_provenance(args, sys.modules.get("omnifold"), driver_sha256)
++    if p1_on:  # P1 diagnostic: factor-stream record (runConfig holds the flags)
++        import json
++        provenance.append(("p1Streams", json.dumps({
++            "streams": args.bootstrap_streams, "unit_factors": args.unit_factors,
++            "bootstrap_seed": args.bootstrap_seed,
++            "seed_offsets": {"data": 0, "mc": 10_000_000, "bkg": P1_BKG_SEED_OFFSET},
++            "n": {"data": int(b_data.size), "mc": int(b_truth.size), "bkg": int(b_bkg.size)},
++            "sum": {"data": float(b_data.sum()), "mc": float(b_truth.sum()),
++                    "bkg": float(b_bkg.sum())},
++            "n_bkg_fill_rows": int(p1_bkg_rows["entry"].size)}, sort_keys=True)))
+ 
+     print(f"[INFO] Running 2D OmniFold with {args.iters} iterations...")
+     print(f"[INFO] MC events: {sig['truth_pt'].shape[0]}, "
+@@ -2392,6 +2505,7 @@
+         hist_list.append(hTruthAltExtrapolated2D)
+     if hTruthAltExtrapolatedXSec2D is not None:
+         hist_list.append(hTruthAltExtrapolatedXSec2D)
++    hist_list += p1_hists  # P1 diagnostic: new names only; production names unchanged
+     for h in hist_list:
+         h.Write()
+     ROOT.TNamed("hEffDenSource", eff_source).Write()

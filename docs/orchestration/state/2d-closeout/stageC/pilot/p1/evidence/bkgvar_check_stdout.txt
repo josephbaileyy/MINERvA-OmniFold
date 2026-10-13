@@ -1,0 +1,50 @@
+{
+ "verdict": "PASS",
+ "n_cells_used": 205,
+ "max_abs_z": 3.1549981785823946,
+ "argmax_globalid": 92,
+ "pooled_z": 0.7706082831434323,
+ "ratio_s2_over_sumw2": {
+  "median": 1.0021363209149792,
+  "min": 0.9119866345738709,
+  "max": 1.0997989051592378
+ },
+ "refill_crosscheck": {
+  "1": {
+   "max_rel": 0.0,
+   "zero_cells_agree": true
+  },
+  "2": {
+   "max_rel": 0.0,
+   "zero_cells_agree": true
+  },
+  "3": {
+   "max_rel": 0.0,
+   "zero_cells_agree": true
+  }
+ },
+ "seconds": 50.6
+}
+	Command being timed: "python3 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/p1-dev/scripts/bkgvar_check.py --d2 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/p1-dev/repo/2d-unfolding --omnifile /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root --out /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/p1-dev/work/bkgvar/bkgvar_check.json"
+	User time (seconds): 59.39
+	System time (seconds): 0.90
+	Percent of CPU this job got: 115%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:52.31
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 597012
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 296662
+	Voluntary context switches: 1273
+	Involuntary context switches: 5623
+	Swaps: 0
+	File system inputs: 120
+	File system outputs: 120
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

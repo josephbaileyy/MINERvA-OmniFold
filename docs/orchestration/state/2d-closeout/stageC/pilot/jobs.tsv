@@ -1,0 +1,74 @@
+name	item	batch	qos	cpus	mem	time	billing	enforced_nh	after	what
+2dc_C_P0_default	P0	B0	shared	64	121920M	00:25:00	64	0.1042	-	CV unfold, production driver 74a4ed69, --branch-select all; vs XR-L0 (1e-8)
+2dc_C_P0_derived	P0	B0	shared	64	121920M	00:25:00	64	0.1042	-	CV unfold, production driver, --branch-select derived; vs P0_default (1e-8)
+2dc_C_P2_NormDISCC0	P2	B1	shared	128	243840M	00:30:00	128	0.2500	P0_PASS	universe NormDISCC:0, production driver, derived path, seed 42; vs July (K1)
+2dc_C_P2_MaRES0	P2	B1	shared	128	243840M	00:30:00	128	0.2500	P0_PASS	universe MaRES:0, production driver, derived path, seed 42; vs July (K1)
+2dc_C_P2_Flux23	P2	B1	shared	128	243840M	00:30:00	128	0.2500	P0_PASS	universe Flux:23, production driver, derived path, seed 42; vs July (K1)
+2dc_C_P2_MINOS0	P2	B1	shared	128	243840M	00:30:00	128	0.2500	P0_PASS	universe Muon_Energy_MINOS:0, production driver, derived path, seed 42; vs July (K1)
+2dc_C_P2_MINOS0def	P2	B1	shared	128	243840M	01:10:00	128	0.5833	P0_PASS	universe Muon_Energy_MINOS:0, production driver, --branch-select all; vs July (K1) and vs P2_MINOS0 (P2-EQ, 1e-8)
+2dc_C_P1_unit	P1	B1	shared	64	121920M	00:32:00	64	0.1333	P0_PASS	driver_p1 --bootstrap-streams three --unit-factors, seed 42; vs XR-L0 (b=1 control, 1e-8)
+2dc_C_G2_on	P2-G2	B2	shared	128	243840M	00:50:00	128	0.4167	P2_Flux23_DONE	build_miss_override Flux:23, then driver_g2 --miss-weight-override, seed 42 (run a = 2dc_C_P2_Flux23)
+2dc_C_G2_off_s43	P2-G2	B3	shared	128	243840M	00:30:00	128	0.2500	G2_S42_ROUTES_NR_OR_MATERIAL	conditional: production driver Flux:23 derived, seed 43
+2dc_C_G2_on_s43	P2-G2	B3	shared	128	243840M	00:50:00	128	0.4167	G2_S42_ROUTES_NR_OR_MATERIAL	conditional: driver_g2 with the seed-42 override (sha-checked), seed 43
+2dc_C_P3_BeamAngleX0	P3	B4	shared	128	243840M	00:45:00	128	0.3750	P0_PASS	active file BeamAngleX_0 (CFS, sha-checked in job), production driver, no --universe, --branch-select all
+2dc_C_P3_MINOS0	P3	B4	shared	128	243840M	00:45:00	128	0.3750	P0_PASS	active file Muon_Energy_MINOS_0 (CFS, sha-checked in job), production driver, no --universe, --branch-select all
+2dc_C_P1_fixed_01	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 1 --seed 42 (VL170 law)
+2dc_C_P1_fixed_02	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 2 --seed 42 (VL170 law)
+2dc_C_P1_fixed_03	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 3 --seed 42 (VL170 law)
+2dc_C_P1_fixed_04	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 4 --seed 42 (VL170 law)
+2dc_C_P1_fixed_05	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 5 --seed 42 (VL170 law)
+2dc_C_P1_joint_01	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 1 --seed 42
+2dc_C_P1_joint_02	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 2 --seed 42
+2dc_C_P1_joint_03	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 3 --seed 42
+2dc_C_P1_joint_04	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 4 --seed 42
+2dc_C_P1_joint_05	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 5 --seed 42
+2dc_C_P1_bkg_01	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 1 --seed 42
+2dc_C_P1_bkg_02	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 2 --seed 42
+2dc_C_P1_bkg_03	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 3 --seed 42
+2dc_C_P1_bkg_04	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 4 --seed 42
+2dc_C_P1_bkg_05	P1	B5	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 5 --seed 42
+2dc_C_P1_fixed_06	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 6 --seed 42 (VL170 law)
+2dc_C_P1_fixed_07	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 7 --seed 42 (VL170 law)
+2dc_C_P1_fixed_08	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 8 --seed 42 (VL170 law)
+2dc_C_P1_fixed_09	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 9 --seed 42 (VL170 law)
+2dc_C_P1_fixed_10	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 10 --seed 42 (VL170 law)
+2dc_C_P1_joint_06	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 6 --seed 42
+2dc_C_P1_joint_07	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 7 --seed 42
+2dc_C_P1_joint_08	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 8 --seed 42
+2dc_C_P1_joint_09	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 9 --seed 42
+2dc_C_P1_joint_10	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 10 --seed 42
+2dc_C_P1_bkg_06	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 6 --seed 42
+2dc_C_P1_bkg_07	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 7 --seed 42
+2dc_C_P1_bkg_08	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 8 --seed 42
+2dc_C_P1_bkg_09	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 9 --seed 42
+2dc_C_P1_bkg_10	P1	B6	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 10 --seed 42
+2dc_C_P1_fixed_11	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 11 --seed 42 (VL170 law)
+2dc_C_P1_fixed_12	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 12 --seed 42 (VL170 law)
+2dc_C_P1_fixed_13	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 13 --seed 42 (VL170 law)
+2dc_C_P1_fixed_14	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 14 --seed 42 (VL170 law)
+2dc_C_P1_fixed_15	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 15 --seed 42 (VL170 law)
+2dc_C_P1_joint_11	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 11 --seed 42
+2dc_C_P1_joint_12	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 12 --seed 42
+2dc_C_P1_joint_13	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 13 --seed 42
+2dc_C_P1_joint_14	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 14 --seed 42
+2dc_C_P1_joint_15	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 15 --seed 42
+2dc_C_P1_bkg_11	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 11 --seed 42
+2dc_C_P1_bkg_12	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 12 --seed 42
+2dc_C_P1_bkg_13	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 13 --seed 42
+2dc_C_P1_bkg_14	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 14 --seed 42
+2dc_C_P1_bkg_15	P1	B7	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 15 --seed 42
+2dc_C_P1_fixed_16	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 16 --seed 42 (VL170 law)
+2dc_C_P1_fixed_17	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 17 --seed 42 (VL170 law)
+2dc_C_P1_fixed_18	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 18 --seed 42 (VL170 law)
+2dc_C_P1_fixed_19	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 19 --seed 42 (VL170 law)
+2dc_C_P1_fixed_20	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	production driver --bootstrap-seed 20 --seed 42 (VL170 law)
+2dc_C_P1_joint_16	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 16 --seed 42
+2dc_C_P1_joint_17	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 17 --seed 42
+2dc_C_P1_joint_18	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 18 --seed 42
+2dc_C_P1_joint_19	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 19 --seed 42
+2dc_C_P1_joint_20	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams three --bootstrap-seed 20 --seed 42
+2dc_C_P1_bkg_16	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 16 --seed 42
+2dc_C_P1_bkg_17	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 17 --seed 42
+2dc_C_P1_bkg_18	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 18 --seed 42
+2dc_C_P1_bkg_19	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 19 --seed 42
+2dc_C_P1_bkg_20	P1	B8	shared	64	121920M	00:32:00	64	0.1333	P1_UNIT_PASS	driver_p1 --bootstrap-streams bkg --bootstrap-seed 20 --seed 42

@@ -1,0 +1,29 @@
+{
+ "PASS": true,
+ "entries_ok": true,
+ "n_out_of_grid_rows": 2,
+ "recorded_entries": [
+  0,
+  2,
+  3,
+  5,
+  7,
+  8,
+  10,
+  11
+ ],
+ "refill_b1_equals_fill": true,
+ "refill_equals_by_hand": true,
+ "row_position_refill_differs": true,
+ "w_pot_ok": true,
+ "want_entries": [
+  0,
+  2,
+  3,
+  5,
+  7,
+  8,
+  10,
+  11
+ ]
+}

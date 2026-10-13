@@ -1,0 +1,14 @@
+# Stage C pilot: receipt-binding inventory delta and power test (2026-10-13T12:17:42Z, branch closeout/stagec-pilot-20261013 on ca1bb536)
+## delta (binding_delta: rows with and without the stageC package)
+all 151 without stageC-only 150
+ADDED unbinned_unfolding/python/omnifold.py e9623412 from ['docs/orchestration/state/2d-closeout/stageC/pilot/manifest.json'] actual e9623412
+## control 1: constants bumped, manifest as committed -> expect OK
+rc=0
+  169 OK
+## control 2: one flipped hex digit (e9623412 -> f9623412) in the manifest's helper sha256 -> expect MISMATCH rc 1
+rc=1
+    this is COVERAGE, not drift: no binding is shown broken. Resolving a role key needs a RECEIPT-SIDE declared mapping, never one inferred here (BEN-312)
+MISMATCH unbinned_unfolding/python/omnifold.py
+*** BINDINGS BROKEN ***
+## restored; manifest sha256 66861f7136f4cfeaad7a1f9ea188e40d6a0a1c5b3a9e6f2a07e2c6daed69f60f
+## note: manifest.json was then regenerated to list this file; its helper binding is unchanged (e9623412)

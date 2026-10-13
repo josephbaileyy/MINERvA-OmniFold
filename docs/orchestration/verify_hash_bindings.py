@@ -458,8 +458,15 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #: branch): one ADDED, nothing removed or repointed, OK:
 #:   ADDED   docs/orchestration/state/next-preparation-20261009/two-d-path/operands/remote_reduce.json 2ecfc243
 #: Power-tested before the bump: one flipped hex digit in that receipt's cell_order sha256 gives MISMATCH, rc 1.
-RECEIPT_BINDING_COUNT = 150
-RECEIPT_BINDING_SHA256 = "f17369895245ae656a78346d05c2b272699745dd9e10a34f29c016b2d08c31c9"
+#: 150 -> 151, digest f1736989 -> 914c11e8 (2026-10-13, the 2D closeout Stage C pilot package). The package
+#: manifest (state/2d-closeout/stageC/pilot/manifest.json) pins the helper the pilot jobs import. Enumerated before
+#: the constant moved (receipt_inventory() rows with and without the stageC package on the branch): one ADDED,
+#: nothing removed or repointed, OK:
+#:   ADDED   unbinned_unfolding/python/omnifold.py                                               e9623412
+#: Power-tested before the bump: one flipped hex digit in that manifest's helper sha256 gives MISMATCH, rc 1.
+#: Delta and controls: docs/orchestration/state/2d-closeout/stageC/pilot/evidence/binding-delta.txt.
+RECEIPT_BINDING_COUNT = 151
+RECEIPT_BINDING_SHA256 = "914c11e8b88c358bdc9416b5348a6b090da6ee9a448e27a2b7437ea0315e55c0"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"
