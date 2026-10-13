@@ -1,0 +1,4 @@
+nu: max |ours - nuwro_fixed| / mean|ours| = 2.15e-02
+nubar: max |ours - nuwro_fixed| / mean|ours| = 2.14e-02
+nu {'explicit': 1.23677, 'nuwro_as_written': 1.233, 'nuwro_sin2half': 1.23488} as-written/explicit - 1 = -0.3052%
+nubar {'explicit': 0.34169, 'nuwro_as_written': 0.33791, 'nuwro_sin2half': 0.3398} as-written/explicit - 1 = -1.1064%

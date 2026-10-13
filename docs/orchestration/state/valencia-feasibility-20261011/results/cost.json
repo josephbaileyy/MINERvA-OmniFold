@@ -1,0 +1,61 @@
+{
+ "basis": "projections are linear extrapolations of measured per-run CPU; not certified bounds",
+ "measured": {
+  "mec_cpu_s_per_trial_upper_R2_flux": 0.000128,
+  "mec_cpu_s_per_trial_upper_R1_1GeV": 0.00026480000000000004,
+  "fullmodel_cpu_s_per_trial_R3": 0.008518000000000001,
+  "kish_neff_over_n_R2": 0.09636984902304563,
+  "wmax_over_wmean_R2": 42.2333557171167,
+  "signal_acceptance_R2": 0.9670855820761078,
+  "kish_neff_per_trial_by_signal_eavail_bin": {
+   "0-0.1": 0.011897225918983696,
+   "0.1-0.2": 0.013634521268264862,
+   "0.2-0.4": 0.02969006804882363,
+   "0.4-0.8": 0.04020912727009006,
+   "0.8-1.5": 0.012442862049987725
+  }
+ },
+ "generation_mec_four_configs": {
+  "1pct": {
+   "limiting_bin_GeV": "0-0.1",
+   "trials_per_config": 840532.0759727354,
+   "trials_total": 3362128.3038909417,
+   "core_hours_extrapolated": 0.24730321524175597,
+   "core_hours_extrapolated_with_kish_factor": 0.7419096457252679
+  },
+  "2pct": {
+   "limiting_bin_GeV": "0-0.1",
+   "trials_per_config": 210133.01899318385,
+   "trials_total": 840532.0759727354,
+   "core_hours_extrapolated": 0.06182580381043899,
+   "core_hours_extrapolated_with_kish_factor": 0.18547741143131696
+  }
+ },
+ "fullmodel_baseline": {
+  "events_assumed": 2000000,
+  "unweighting_factor_assumed": [
+   1,
+   50
+  ],
+  "core_hours_extrapolated": [
+   4.732222222222223,
+   236.61111111111114
+  ]
+ },
+ "memo_assumption_for_comparison": {
+  "events": 3000000,
+  "cpu_s_per_event": [
+   0.1,
+   1.0
+  ],
+  "core_hours": [
+   83.33333333333333,
+   833.3333333333334
+  ]
+ },
+ "not_costed_unmeasured": [
+  "a microscopic exclusive sampler for the corrected model (Kasturi et al. 2026): no code available",
+  "MINERvA detector simulation and reconstruction for detector-level predictions",
+  "obtaining corrected tensor tables (requires the authors; outside this authorization)"
+ ]
+}

@@ -1,0 +1,30 @@
+  ____________________________________________________________________________
+ |                                                                            |
+ |                                                                            |
+ |                                      `.``      `.       .-.        `       |
+ |                                  `-/+os+s  ./ohmN:.    sNNNy:`   .---.+`   |
+ |    |\ |     |  |  _  _           :oooyysy: +oodMMd-`  .MMMMM/-   -----s/   |
+ |    | \| |_| |/\| |  (_)           `.`oyy+d`   `mMMo-   yMMMyo`   .----d.   |
+ |                                      .yyyoo    :MMN:.  :MMho.    `---h:    |
+ |                                       :yyoh-    sMMh-`.mMho-     ---h:     |
+ |                                        oyy+h    `mMM+-mMho-     ---h:      |
+ |                                        .yyys+    -MMNmMh+-     ---h:       |
+ |                                         :yyod.    sMMMh+-     ---h:        |
+ |   Wrocław Neutrino Event Generator       oyy+h    `mMh-+.    ---h:         |
+ |   https://github.com/NuWro/nuwro         .yyss/  .s/y--oh   .--y-          |
+ |                                           :yy+d`.sy+----d/ .--y-           |
+ |   J. T. Sobczyk et al.                     oyy++syoy`.--:s.--y-            |
+ |   Institute of Theoretical Physics         .yyssyoy.  ------y-             |
+ |   University of Wrocław                     :yyyoh.   `----y-              |
+ |   Poland                                     osoh.     .-:y-               |
+ |                                              `-:.       .:-                |
+ |                                                                            |
+ |____________________________________________________________________________|
+
+  ____________________________________________________________________________
+ |                         |                                                  |
+ |  Simulation parameters  |
+ |_________________________|
+ |
+ |
+/Users/josephbailey/local-research/MINERvA-OmniFold-valencia-pilot-20261011/docs/orchestration/state/valencia-feasibility-20261011/inputs/params-R0.txt:1: '=' expected after  "//"
