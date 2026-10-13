@@ -1,6 +1,9 @@
 # Bounded repair of the Valencia feasibility study
 
 **Status:** plan frozen before any repair computation. Results are appended below the freeze line.
+**Terminal disposition: §R6** (VA sign fixed; launcher accounting improved but aggregate CPU
+enforcement incomplete; `pilot_run.py` unsuitable where a guaranteed aggregate cap is required;
+verdict INCONCLUSIVE). §R7 is an unsent draft request for Joseph.
 
 **Object:** branch `study/valencia-feasibility-20261011`, reviewed head `d75987e17cfd5a3635f027a902d8545c70107fce`.
 
@@ -184,7 +187,7 @@ negative is pp 1.00, np 0.65, pn 1.00, 3p3h 1.00.
 now call the new signature through a one-line shim that preserves their arithmetic. Their committed
 logs (D1–D4) came from the `d75987e1` code.
 
-### R2. Launcher (checks L1–L9 and L9b: all pass, after one design change)
+### R2. Launcher (harness checks L1–L9 and L9b pass after one design change; L9b passes by detecting an enforcement failure, see R6)
 
 Source: `results/repair/launcher_checks.json`, from `tests/test_pilot_run.py`; latest run
 `L-launcher-2`.
@@ -262,7 +265,8 @@ Totals before review: 77.3 of 300 CPU-s, zero events, no NuWro execution, campai
 - It reproduced L1–L9b and the committed integrator numbers.
 - The worktree stayed clean.
 - **Verdict:** no blocker; the convention is fixed and correctly derived; the launcher meets the
-  requirement, with the residual stated correctly; INCONCLUSIVE unchanged.
+  requirement, with the residual stated correctly; INCONCLUSIVE unchanged. *(The owner does not adopt
+  "the launcher meets the requirement": see R6.)*
 
 | # | Severity | Finding | Disposition |
 |---|---|---|---|
@@ -285,7 +289,8 @@ Totals before review: 77.3 of 300 CPU-s, zero events, no NuWro execution, campai
 | 17 | NIT | A stale comment in `algebra_check_components.py`. | **Fixed.** |
 
 **Reruns after the fixes:**
-- `L-launcher-3-correction`: L1–L9b and the new L10 all pass; L5 overshoots 0.028 and 0.025 s.
+- `L-launcher-3-correction`: L1–L9b and the new L10 all pass; L5 overshoots 0.028 and 0.025 s. (L9b
+  passes by detecting the unbounded orphan; that is not budget enforcement, see R6.)
 - `C-va-convention-4-correction`: C1–C7 all pass; the encoding label is updated.
 - No numerical result changed.
 
@@ -346,6 +351,8 @@ available.
 
 **Residual defects and decision:** the residual defects are as in R4. The decision resolved: both named
 defects are repaired without changing any committed number, and the verdict stays INCONCLUSIVE.
+*(Corrected in R6: only the VA-sign defect is repaired. The launcher's accounting was improved, but
+aggregate CPU enforcement remains incomplete.)*
 
 **Baseline divergence (measured at closeout):**
 - The branch is 6 commits ahead of and 16 behind remote main `d81f532b`, from merge base `3892e769`.
@@ -382,3 +389,109 @@ The following therefore stay open as recorded issues:
   36-point flux fold, and the 10-thread overshoot. The owner did check the 2004 TeX citation.
 
 None of these was re-opened.
+
+### R6. Terminal disposition (documentation pass, 2026-10-12)
+
+Where R1–R5 differ from this section, this section governs. It was written in one documentation pass
+under Joseph's instruction of 2026-10-12: no new tests, runs, agents or review rounds. Numerical
+artifacts, `logs/budget_ledger.jsonl` and `logs/repair_ledger.jsonl` are unchanged.
+
+**Correction.** R5 said that "both named defects are repaired". That is wrong for the launcher, and
+the reviewer's "the launcher meets the requirement" (R4) is not adopted.
+
+| Named defect | Terminal disposition |
+|---|---|
+| VA sign chosen from the integrated interference | **Fixed.** The convention is derived from the authors' metric, ε tensor, lepton tensor, V−A current and W = W_s + iW_a (§1). The contraction is verified (C1–C7) **under the declared W12 encoding**, W12 = Im W^{12}. That table interpretation remains generator-corroborated, not author-confirmed, so B1 and B2 stay UNVALIDATED. The corrected model's inputs (tables, conventions, sampler) remain unavailable. |
+| `ulimit -t` is not an aggregate CPU cap | **Not fixed. Accounting improved; enforcement incomplete.** Fixed: reservations are durable and taken under a lock; unsettled reservations stay charged in full; interruption settles in full; unreadable ledgers refuse every launch; a watchdog stops a single-process job while the launcher lives. Not fixed: aggregate CPU enforcement. (a) If the launcher dies and the job ignores, catches or blocks SIGXCPU, the job's CPU is unbounded. **L9b demonstrates it:** the orphan used 3.07 s of CPU against a 2.5 s reservation at its 3 s timeout (`L-launcher-2`; 3.04 s in `L-launcher-3-correction`), and only the test's own kill stopped it. (b) A SIGKILL of the launcher between `Popen` and the `start` record leaves a job with no live-orphan refusal and only the RLIMIT layer. (b) is documented, not tested. |
+
+Against the repair request: "concurrent requests, crashes and unknown completion must not release or
+bypass reservations" is met on the ledger side (L1, L2, L3, L6), but not on the consumption side: an
+orphan can consume beyond its reservation. "Enforce a conservative aggregate job bound, or refuse
+unsupported execution modes" is **not met**. The launcher cannot detect in advance a job that
+disables SIGXCPU, so it neither bounds nor refuses that mode.
+
+**Reading L9b and `all_pass`.** In `results/repair/launcher_checks.json`, L9b records `"pass": true`
+and `residual_confirmed_unbounded: true`, and `all_pass` is `true` with L9b included. L9b passes when
+it *detects* the unbounded orphan. **A successful test that detects this failure is not a successful
+budget-enforcement gate.** `all_pass` certifies the harness's assertions, not an aggregate CPU cap.
+The artifact is left unchanged.
+
+**Status of `code/pilot_run.py`.** It is **unsuitable for any future authorization that requires a
+guaranteed aggregate CPU cap.** Its module docstring now says so; that is a comment-only change, and
+no committed artifact pins the file's digest. It is not redesigned.
+- **Future runs** need a separately validated execution arrangement. The preferred route is the
+  project's existing guarded scheduler path: a Slurm allocation launched under the routed guard
+  `nd-unfolding/mnv_guarded_run.py` (AGENTS.md).
+- **Where the cap comes from:** the scheduler, whose allocation and time limit apply to the whole job.
+  If the allocation confines the job to its cores (to be verified), allocated cores × time limit is a
+  guaranteed over-bound. The guard checks imports, not CPU.
+- **Not done:** neither has been validated for this workload, and using them needs Joseph's
+  authorization.
+
+**The completed pilot is not invalidated.** The campaign ran sequentially under the launcher at
+`d75987e1`. Its charges are the measured user+sys CPU of waited children (REPORT §2): 242.875 CPU-s and
+7,900 events (L8), with the ledger unchanged (SHA-256 `b22d4d78…`). The limitation concerns enforcing
+a future cap, not measuring past runs. The REPORT §7 figures remain extrapolations, not bounds.
+
+**Verdict:** INCONCLUSIVE, unchanged. No new committed evidence bears on it.
+
+**This pass.**
+- **Governance reading at the start:** `AGENTS.md` and `docs/CURRENT_WORK.md`, in full from remote
+  main `f30370cd`; `CURRENT_WORK` has no Valencia item. The campaign review was also read in full.
+- **Changes on main since `d81f532b`:** `CURRENT_WORK` and the campaign review are unchanged. The
+  `AGENTS.md` changes touch only the 2D, 5D-closure and build rows; none affects this study.
+- **Owner and work:** the same session as R5. No agents, no review, no tests or numerical runs, and
+  nothing charged to either ledger: only file reads and `git`.
+
+**Baseline divergence (measured 2026-10-12, before this pass's commit).**
+- The branch is 8 commits ahead of and 80 behind remote main `f30370cd`, from merge base `3892e769`.
+- Main changed 359 paths, including `CATALOG.md`, `MANIFEST-overrides.tsv` and `MANIFEST.tsv`.
+- `git merge-tree` now reports content conflicts in two files:
+  - `MANIFEST-overrides.tsv`: both sides appended rows at the same place; keeping both resolves it;
+  - `MANIFEST.tsv`: generated, so it is regenerated.
+- `CATALOG.md` auto-merges.
+- Not merged or rebased; integration is Joseph's decision.
+
+### R7. UNSENT draft request to the calculation authors (for Joseph)
+
+**UNSENT. No contact has been made.** Whether, when and to whom to send it is Joseph's decision.
+Items 1–3 are what inclusive evaluation needs. Items 4–5 are what E_avail predictions additionally
+need, because E_avail depends on the final-state nucleons and not only on the inclusive response
+(REPORT §6, §8).
+
+> **Subject:** Corrected 2p2h/3p3h hadronic tensors (PRC 111, 025502) for a MINERvA E_avail comparison
+>
+> Dear Dr. Sobczyk and Prof. Nieves,
+>
+> We are comparing multinucleon models in a MINERvA medium-energy inclusive charged-current
+> measurement that includes available energy (E_avail), and would like to include your corrected
+> calculation (PRC 111, 025502) and, if possible, its exclusive predictions (arXiv:2603.28314). We found
+> no public release, and would be grateful for the following.
+>
+> *For inclusive evaluation:*
+> 1. **Corrected channel-resolved tensors:** W00, W03, W11, W12 and W33 for the pp, np, pn and 3p3h
+>    channels, on a (q0, |q|) grid to |q| = 1.2 GeV, for ¹²C and ¹⁶O, at Re Σ_Δ^eff = 0, −50 ρ/ρ₀ and
+>    +30 ρ/ρ₀ MeV. Ideally also the 2020 tables regenerated with the same code.
+> 2. **Units and conventions:**
+>    - units and normalization (per nucleon or per nucleus);
+>    - whether cos²θ_C is included in W, as in PRC 83, 045501;
+>    - the definition of the tabulated W12 relative to your lepton tensor. We currently read it as
+>      W12 = Im W^{12} with ε_{0123} = +1 and g = (+,−,−,−); please confirm or correct;
+>    - the energy-transfer variable and the binding or shift convention, per channel;
+>    - the antineutrino and isospin treatment: one tensor for both beams, or W⁻ amplitudes recomputed.
+> 3. **Matched ν and ν̄ benchmark values** from the same tables, for example σ at E_ν = 1 GeV on ¹²C
+>    with |q| < 1.2 GeV (per channel if available, including the nominal Re Σ = 0 case), and the Fig. 8
+>    curves as numbers.
+>
+> *For E_avail predictions:*
+> 4. Whether the exclusive sampler used in arXiv:2603.28314 is available or planned, and its rough cost
+>    per event.
+> 5. Failing that, exclusive distributions sufficient to fit or validate a parametrized nucleon
+>    sampler: leading and subleading nucleon momenta and angles per channel, binned in (ω, |q|). Any
+>    validation targets for such a sampler would also help.
+>
+> Inclusive tables alone would let us evaluate the inclusive cross sections and reweight within an
+> existing generator's nucleon model, but not the corrected nucleon sharing that affects E_avail.
+>
+> With thanks and kind regards,
+> Joseph Bailey

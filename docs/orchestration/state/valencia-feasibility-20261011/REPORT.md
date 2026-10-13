@@ -1,6 +1,6 @@
 # Valencia multinucleon feasibility pilot for MINERvA ME-FHC: report
 
-**Date 2026-10-11. Owner: this session (valencia-feasibility lane). Reviewed once (read-only, fresh context) with one correction pass applied; see §11 and [`REVIEW.md`](REVIEW.md). Then repaired once, under a separate allowance, for two named defects: the VA-sign convention and the launcher's CPU bound. See [`REPAIR.md`](REPAIR.md), which records one targeted review and one correction pass. The verdict is unchanged.**
+**Date 2026-10-11. Owner: this session (valencia-feasibility lane). Reviewed once (read-only, fresh context) with one correction pass applied; see §11 and [`REVIEW.md`](REVIEW.md). Then repaired once, under a separate allowance, for two named defects: the VA-sign convention (fixed) and the launcher's CPU bound (accounting improved; aggregate CPU enforcement still incomplete). See [`REPAIR.md`](REPAIR.md), which records one targeted review and one correction pass; its §R6 is the terminal disposition. The verdict is unchanged.**
 Base: remote `main` `3892e769`. Frozen plan: [`PLAN.md`](PLAN.md), committed as `2492f16b` before any
 scientific computation. This report authorizes nothing and adopts nothing.
 
@@ -34,8 +34,8 @@ evaluation is still uncosted.**
 authors' convention: cos²θ_C sits inside W, as in Nieves et al. 2011, and NuWro and GENIE do the same.
 Against the authors' published 1 GeV carbon values, the table route then gives −5.5% for ν (B1) and
 +16.3% for ν̄ (B2). Both are now recorded **UNVALIDATED**.
-- The VA sign is derived from the authors' conventions (metric, ε tensor, V−A current, W = W_s + iW_a)
-  and checked against an independent Dirac trace.
+- The VA sign is derived from the authors' conventions (metric, ε tensor, V−A current, W = W_s + iW_a).
+  The contraction is verified against an independent Dirac trace **under the declared W12 encoding**.
 - The mapping of the table column W12 to Im W^{12}, however, is not documented by the authors. It is
   corroborated by two generator implementations (§4; REPAIR.md §1).
 
@@ -75,9 +75,12 @@ The charged CPU values still stand as measurements, for two reasons:
   established statically. Only a child that outlived NuWro unwaited would be missed; there is no
   evidence of one.
 
-The per-run CPU limits were not certified bounds. The launcher now reserves budget under a lock. It
-bounds a single-process job with a watchdog while the launcher runs; §9 states the residual after a
-launcher crash, and §11 summarizes the repair.
+The per-run CPU limits were not certified bounds. The repaired launcher now reserves budget durably
+under a lock, and it bounds a single-process job with a watchdog while the launcher runs. Aggregate CPU
+enforcement is still incomplete (§9; REPAIR.md §R6). `pilot_run.py` is therefore **unsuitable for
+any future authorization that requires a guaranteed aggregate CPU cap**. Such a run needs a separately
+validated execution arrangement, preferably the project's guarded scheduler path. This limitation
+does not invalidate the measured charges above.
 
 | Resource | Used | Cap |
 |---|---:|---:|
@@ -321,10 +324,19 @@ implementation is in progress there.
   2004 formula, but not on an author statement about the table column. B1 and B2 are therefore
   UNVALIDATED, and the "VA part ≈ 12% low" and ν̄/ν findings hold only under that encoding. §8 item 2
   asks the authors to confirm it.
-- **Launcher residual.** The repaired launcher bounds a single-process job while it runs. If the
-  launcher itself dies, its reservation stays charged and new launches are refused while the job
-  lives. The orphaned job is then bounded only by the kernel RLIMIT_CPU, which holds only if the job
-  leaves SIGXCPU at its default action (check L9b). Whether NuWro and ROOT run under the fork-denying
+- **Launcher: aggregate CPU enforcement incomplete.** The repaired launcher bounds a single-process
+  job while it runs. If the launcher itself dies, its reservation stays charged and new launches are
+  refused while the job lives. The orphaned job is then bounded only by the kernel RLIMIT_CPU, which
+  holds only if the job leaves SIGXCPU at its default action (check L9).
+  - **L9b demonstrates the failure.** An orphan ignoring SIGXCPU used 3.07 s of CPU against its
+    2.5 s reservation and was still running when the test killed it. L9b "passes" by detecting this,
+    which does not make it a budget-enforcement gate.
+  - **Start-record window.** A SIGKILL of the launcher between `Popen` and the `start` record also
+    leaves no live-orphan refusal.
+  - **Consequence.** `pilot_run.py` is unsuitable wherever a guaranteed aggregate CPU cap is
+    required (REPAIR.md §R6).
+  
+  Whether NuWro and ROOT run under the fork-denying
   sandbox, or leave SIGXCPU at default, was not executed (zero production compute). ROOT's libraries
   can fork, so the sandbox may make a NuWro run fail. That failure is closed and stays inside its
   reservation. The watchdog margin is an engineering margin, not a derived bound. It held with
@@ -374,7 +386,8 @@ python3 -I code/grade_benchmarks.py && python3 -I code/cost_model.py
 Repair checks: `python3 -I tests/check_va_convention.py $NUWRO/src results/repair/va_convention_checks.json`
 and `python3 -I tests/test_pilot_run.py <scratch dir> results/repair/launcher_checks.json`, each run
 through `code/repair_meter.py` (REPAIR.md). The campaign runs used the launcher at `d75987e1`. The
-repaired launcher has been exercised only on synthetic jobs, never on NuWro.
+repaired launcher has been exercised only on synthetic jobs, never on NuWro. Do not use it to reproduce
+or extend these runs under an authorization that requires a guaranteed aggregate CPU cap (§9).
 
 The exact command lines of every run are in the ledger. The parameter files are in `inputs/`. The flux
 copies (`phi_t.npz`, the ROOT histogram and its macro) are not committed; they are referenced by digest
@@ -389,14 +402,18 @@ review round. Findings and dispositions are in [`REVIEW.md`](REVIEW.md). The run
 the repository's `*.log` ignore rule had silently excluded them from `3b4d81b3`.
 
 **Repair.** A later bounded repair (REPAIR.md) addressed two defects.
-- **VA sign:** it had been chosen from the sign of the integrated interference. It is now fixed from
-  the primary-source conventions and checked against an independent trace. No value changed. B1/B2
-  become UNVALIDATED pending author confirmation of the W12 encoding.
-- **Launcher CPU bound:** `ulimit -t` was not an aggregate bound. The launcher now has durable locked
-  reservations, a single-process sandbox mode and a watchdog that bounds the job while the launcher
-  runs. It was tested for concurrency, crashes, interruption, child-process workloads and fail-closed
-  ledgers. One residual is not certified: a job that ignores SIGXCPU, orphaned by a launcher crash,
-  has no CPU bound (§9).
+- **VA sign (fixed):** it had been chosen from the sign of the integrated interference. It is now
+  fixed from the primary-source conventions, and the contraction is verified against an independent
+  trace under the declared W12 encoding. No value changed. B1/B2 become UNVALIDATED pending author
+  confirmation of the W12 encoding.
+- **Launcher CPU bound (not fixed; accounting improved):** `ulimit -t` was not an aggregate bound.
+  - *Added:* durable locked reservations, a single-process sandbox mode, and a watchdog that bounds
+    the job while the launcher runs.
+  - *Tested:* concurrency, crashes, interruption, child-process workloads and fail-closed ledgers.
+  - *Still unenforced:* a job that ignores SIGXCPU and is orphaned by a launcher crash has no CPU
+    bound; L9b demonstrates this. The `Popen`-to-`start`-record SIGKILL window also remains (§9).
+  - *Status:* `pilot_run.py` is unsuitable for future authorizations that require a guaranteed
+    aggregate cap.
 
 The repair had one fresh, read-only, targeted review. It found no blocker, one MAJOR finding (a stale
 B2 grade in §9) and MINOR findings. One correction pass followed (REPAIR.md R4; REVIEW.md). The
@@ -405,7 +422,8 @@ verdict is unchanged: INCONCLUSIVE.
 ## 12. Recommendation
 
 Joseph should decide whether to request the §8 inputs from the Valencia authors. That would be an
-external contact, which needs his authorization. Before any physics use, an **independent domain
+external contact, which needs his authorization. An **unsent** draft request is in REPAIR.md §R7. It
+separates the inputs needed for inclusive evaluation from those needed for E_avail predictions. Before any physics use, an **independent domain
 expert** should validate an implementation of the corrected calculation. That means a nuclear theorist
 outside the Valencia group, for the currents, energy conventions and channel overlap, and a generator
 developer, for the tensor-to-event and exclusive-sampling consistency. The memo suggests Noemi Rocco

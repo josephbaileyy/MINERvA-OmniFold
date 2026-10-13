@@ -48,11 +48,24 @@ read-only, targeted reviewer on `fedcc918` and one correction pass.
 **Reviewer verdict:**
 - no blocker;
 - the convention is fixed and correctly derived;
-- the launcher meets the requirement, with its residual stated correctly;
+- the launcher meets the requirement, with its residual stated correctly (not adopted; see the terminal disposition below);
 - INCONCLUSIVE unchanged.
 
-**Findings:** one MAJOR (a stale "B2 is QUALIFIED" in REPORT §9) and eleven MINOR or NIT findings. All
-were fixed or documented.
+**Findings:** one MAJOR (a stale "B2 is QUALIFIED" in REPORT §9), eleven MINOR and five NIT
+findings. All were fixed or documented.
 
 The plan, the results, the full disposition table, the remaining issues and the CPU accounting are in
 [`REPAIR.md`](REPAIR.md) §R1–R4.
+
+**Terminal disposition (2026-10-12; [`REPAIR.md`](REPAIR.md) §R6).** The owner does not adopt the
+reviewer's "the launcher meets the requirement".
+- **VA sign:** fixed. The contraction is verified under the declared W12 encoding; the encoding
+  itself is not author-confirmed.
+- **Launcher:** accounting improved, but aggregate CPU enforcement is incomplete:
+  - L9b demonstrates an orphan exceeding its reservation;
+  - the `Popen`-to-`start`-record SIGKILL window remains.
+
+  L9b's recorded "pass" means the test detected that failure; it is not a budget-enforcement gate.
+  `pilot_run.py` is unsuitable for future authorizations that require a guaranteed aggregate CPU cap.
+- **Pilot results and verdict:** the completed pilot's measured results stand; the verdict is
+  unchanged.

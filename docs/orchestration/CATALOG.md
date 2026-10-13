@@ -121,7 +121,7 @@ stay with the integration owner. Registration grants no compute, experiment, ado
 Bounded CPU pilot under Joseph's 2026-10-11 prompt (≤ 10 core-h, ≤ 10,000 events; used 0.067 core-h and
 7,900 events). The 2025 corrected Valencia calculation has no public implementation, so only the 2020
 predecessor (NuWro 25.11.1 `mec_kind=6`) was benchmarked and run. Verdict INCONCLUSIVE, blocked on the
-authors' corrected tables and conventions; table-route generation extrapolates to be cheap (not a certified bound). A later bounded repair fixed the VA-sign convention (B1/B2 now UNVALIDATED pending author confirmation of the W12 encoding) and the launcher's CPU bound; verdict unchanged. Grants no
+authors' corrected tables and conventions; table-route generation extrapolates to be cheap (not a certified bound). A later bounded repair fixed the VA-sign convention (contraction verified under the declared W12 encoding; B1/B2 UNVALIDATED pending author confirmation of that encoding). It improved the launcher's reservation accounting, but aggregate CPU enforcement remains incomplete (an orphan ignoring SIGXCPU is unbounded, check L9b), so `pilot_run.py` is unsuitable where a guaranteed aggregate CPU cap is required. Verdict unchanged. REPAIR.md §R7 holds an unsent draft request to the authors. Grants no
 compute, contact or adoption authority.
 
 | record | path |
@@ -129,7 +129,7 @@ compute, contact or adoption authority.
 | frozen plan (observables, tolerances, budget) | [`state/valencia-feasibility-20261011/PLAN.md`](state/valencia-feasibility-20261011/PLAN.md) |
 | report: identity, benchmarks, pilot, applicability, cost, missing input | [`state/valencia-feasibility-20261011/REPORT.md`](state/valencia-feasibility-20261011/REPORT.md) |
 | one read-only review and the correction-pass dispositions | [`state/valencia-feasibility-20261011/REVIEW.md`](state/valencia-feasibility-20261011/REVIEW.md) |
-| bounded repair (VA-sign convention, launcher CPU bound): frozen checks, results, residuals | [`state/valencia-feasibility-20261011/REPAIR.md`](state/valencia-feasibility-20261011/REPAIR.md) |
+| bounded repair (VA-sign convention, launcher CPU bound): frozen checks, results, residuals, terminal disposition (§R6), unsent author request (§R7) | [`state/valencia-feasibility-20261011/REPAIR.md`](state/valencia-feasibility-20261011/REPAIR.md) |
 
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 

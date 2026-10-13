@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 """Run one pilot step under the authorized caps and record it in the budget ledger.
 
+NOT FOR FUTURE AUTHORIZATIONS THAT REQUIRE A GUARANTEED AGGREGATE CPU CAP
+(REPAIR.md R6, 2026-10-12). Its reservation accounting is locked and durable,
+but CPU enforcement is incomplete: a job orphaned by a launcher crash that
+ignores SIGXCPU is unbounded (check L9b), and a SIGKILL between ``Popen`` and
+the ``start`` record leaves no live-orphan refusal. Use a separately validated
+execution arrangement instead, preferably the project's guarded scheduler path.
+The completed pilot's measured charges are unaffected.
+
 Caps (authorization of 2026-10-11): 36,000 CPU core-seconds of scientific
 computation and 10,000 generated events in total, across every run, failure,
 review and rerun. ``--cpu-cap`` / ``--event-cap`` may only lower them.
@@ -20,7 +28,7 @@ Budget is reserved before launch (repair of 2026-10-11, after review found that
   parse, an unknown record kind, or a settlement without its reservation stops
   every launch until a person inspects the ledger.
 
-Aggregate CPU bound. One execution mode is supported: a single process.
+Aggregate CPU bound (incomplete; see the warning above). One execution mode is supported: a single process.
 ``sandbox-exec`` (macOS) denies ``process-fork`` (fork, vfork and posix_spawn),
 so the job cannot create children itself. The profile otherwise allows default
 operations, so processes started on the job's behalf by launchd, XPC or other
