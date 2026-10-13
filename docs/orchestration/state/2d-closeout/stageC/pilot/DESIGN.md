@@ -104,7 +104,11 @@ P3 (a stop-and-report), not on K2 or on P1's declared 20 + 20 + 20.
 > charges of COMPLETED (terminal) `2dc_C_*` jobs from `sacct` (ElapsedRaw × billing / 256)
 > \+ the FULL enforced worst case of every `2dc_C_*` job still PENDING or RUNNING (billing × TimeLimit / 256)
 > \+ the batch's enforced worst case
-> ≤ **12.9** charged node-h. Otherwise **stop and report to the director**.
+> ≤ **20.0** charged node-h. Otherwise **stop and report to the director**.
+
+(v2, 2026-10-13. The grant's ceiling was 12.9; after the B1 stop the director raised it to 20.0 and ruled the v2 caps
+below in [`AUTHORIZATION-20261013-2d-closeout-stageC-pilot-recap.md`](../../../../AUTHORIZATION-20261013-2d-closeout-stageC-pilot-recap.md) (PR #111, merge `9b30356c`). v2 changes only caps, the ceiling and the `JOBS_SHA` pin; no driver,
+analysis, threshold or replica count changed.)
 
 - A running job's partial charge is not its liability; in-flight jobs count at their full cap, so overlapping
   batches cannot jointly exceed the ceiling.
@@ -122,40 +126,55 @@ P3 (a stop-and-report), not on K2 or on P1's declared 20 + 20 + 20.
 | `P2_NormDISCC0`, `P2_MaRES0`, `P2_Flux23`, `P2_MINOS0` | 128 | 00:30:00 | 0.2500 | 4 | 1.0000 |
 | `P2_MINOS0def` | 128 | 01:10:00 | 0.5833 | 1 | 0.5833 |
 | `P1_unit` | 64 | 00:32:00 | 0.1333 | 1 | 0.1333 |
-| `G2_on` | 128 | 00:50:00 | 0.4167 | 1 | 0.4167 |
-| `G2_off_s43` (conditional) | 128 | 00:30:00 | 0.2500 | 1 | 0.2500 |
-| `G2_on_s43` (conditional) | 128 | 00:50:00 | 0.4167 | 1 | 0.4167 |
+| `G2_on` | 128 | 01:15:00 | 0.6250 | 1 | 0.6250 |
+| `G2_off_s43` (conditional) | 128 | 00:40:00 | 0.3333 | 1 | 0.3333 |
+| `G2_on_s43` (conditional) | 128 | 01:15:00 | 0.6250 | 1 | 0.6250 |
 | `P3_BeamAngleX0`, `P3_MINOS0` | 128 | 00:45:00 | 0.3750 | 2 | 0.7500 |
-| `P1_{fixed,joint,bkg}_{01..20}` | 64 | 00:32:00 | 0.1333 | 60 | 8.0000 |
-| **all 73 jobs** | | | | | **11.7583** (11.0917 without the conditional pair) |
+| `P1_{fixed,joint,bkg}_{01..20}` | 64 | 00:58:00 | 0.2417 | 60 | 14.5000 |
+| **all 73 jobs** | | | | | **18.7583** (17.8000 without the conditional pair) |
 
-**Worked example** (`python launch.py simulate median|cap`; batches in order, each after the previous ends):
+**Worked example** (`python launch.py simulate median|cap`; batches in order, each after the previous ends; v2 caps):
 
-| batch | gate at measured medians | charged | gate at caps | charged |
+| batch | gate at pre-pilot medians | charged | gate at caps | charged |
 |---|---|---|---|---|
 | B0 | 0.0000 + 0.2083 = 0.2083 OK | 0.1161 | 0.0000 + 0.2083 = 0.2083 OK | 0.2083 |
 | B1 | 0.1161 + 1.7167 = 1.8328 OK | 0.9149 | 0.2083 + 1.7167 = 1.9250 OK | 1.7167 |
-| B2 | 1.0310 + 0.4167 = 1.4477 OK | 0.2360 | 1.9250 + 0.4167 = 2.3417 OK | 0.4167 |
-| B3 | 1.2670 + 0.6667 = 1.9337 OK | 0.3617 | 2.3417 + 0.6667 = 3.0083 OK | 0.6667 |
-| B4 | 1.6287 + 2.0000 = 3.6287 OK | 0.8740 | 3.0083 + 2.0000 = 5.0083 OK | 2.0000 |
-| B5 | 2.5026 + 2.0000 = 4.5026 OK | 0.8740 | 5.0083 + 2.0000 = 7.0083 OK | 2.0000 |
-| B6 | 3.3766 + 2.0000 = 5.3766 OK | 0.8740 | 7.0083 + 2.0000 = 9.0083 OK | 2.0000 |
-| B7 | 4.2506 + 2.0000 = 6.2506 OK | 0.8740 | 9.0083 + 2.0000 = 11.0083 OK | 2.0000 |
-| B8 | 5.1245 + 0.7500 = 5.8745 OK | 0.3694 | 11.0083 + 0.7500 = 11.7583 OK | 0.7500 |
-| **total** | | **5.494** (7.41 unused) | | **11.758** (1.142 unused) |
+| B2 | 1.0310 + 0.6250 = 1.6560 OK | 0.2360 | 1.9250 + 0.6250 = 2.5500 OK | 0.6250 |
+| B3 | 1.2670 + 0.9583 = 2.2253 OK | 0.3617 | 2.5500 + 0.9583 = 3.5083 OK | 0.9583 |
+| B4 | 1.6287 + 3.6250 = 5.2537 OK | 0.8740 | 3.5083 + 3.6250 = 7.1333 OK | 3.6250 |
+| B5 | 2.5026 + 3.6250 = 6.1276 OK | 0.8740 | 7.1333 + 3.6250 = 10.7583 OK | 3.6250 |
+| B6 | 3.3766 + 3.6250 = 7.0016 OK | 0.8740 | 10.7583 + 3.6250 = 14.3833 OK | 3.6250 |
+| B7 | 4.2506 + 3.6250 = 7.8756 OK | 0.8740 | 14.3833 + 3.6250 = 18.0083 OK | 3.6250 |
+| B8 | 5.1245 + 0.7500 = 5.8745 OK | 0.3694 | 18.0083 + 0.7500 = 18.7583 OK | 0.7500 |
+| **total** | | **5.494** (14.51 unused) | | **18.758** (1.242 unused) |
 
-Medians used: P0 836 s (L0); P2 derived 905 s and G2 off 905 s (P5 off runs 776/1,034 s); P2 default 2,548 s
-(July sweep median); G2 on 1,699 s (P5 on runs 1,470/1,928 s); P3 1,330 s (projection, §7); P1 839 s (VL170
-median). Overlapping batches move charge from "completed" to "in-flight at cap", which is never smaller, so the
-no-overlap walk is the lower edge of what the gate sees and the cap walk is its upper edge.
+Medians used (pre-pilot, hard-coded in `simulate()`, which v2 does not change): P0 836 s (L0); P2 derived 905 s
+and G2 off 905 s (P5 off runs 776/1,034 s); P2 default 2,548 s (July sweep median); G2 on 1,699 s (P5 on runs
+1,470/1,928 s); P3 1,330 s (projection, §7); P1 839 s (VL170 median). Today's 64-CPU shared jobs ran well above
+them (§9), so the median walk is a floor that the measured pilot will not reach; the cap walk and the measured
+upper edge below are the binding views. Overlapping batches move charge from "completed" to "in-flight at cap",
+which is never smaller, so the no-overlap walk is the lower edge of what the gate sees and the cap walk is its
+upper edge.
 
-**Where the gate first refuses.** With every job at its cap and no retries, the full pilot, including the
-conditional pair, fits with 1.142 node-h unused: the gate never refuses. A refusal therefore needs walltime
-retries (§9). The first batch it would refuse is **B8** (P3, 0.75 at caps), if retries before it have added
-more than 1.142 node-h of caps, for example nine P1 retries at 0.1333 each, or two G2_on retries at 0.4167 plus
-three P1 retries. Without the conditional pair the margin at caps is 1.808. At measured costs, a batch
-launched while earlier ones still run sees them at their caps, so the gate's totals then lie between the two
-walks.
+**Measured upper edge after the B1 stop** (director's v2 ruling, recap record §2–§4; B0 and B1 charged from `sacct`, everything after at
+its v2 cap, no further retries):
+
+| term | node-h |
+|---|---|
+| B0 + B1 charged: (935 + 1,450) s × 64 + (1,003 + 1,069 + 1,166 + 856 + 2,497) s × 128 + 1,930 s × 64 = 1,119,808 CPU-s / 921,600 | 1.2151 |
+| `P1_unit` walltime retry at 00:58:00 (64 CPUs; the row stays 00:32:00, the retry uses its re-projected cap) | 0.2417 |
+| B2 `G2_on` | 0.6250 |
+| B3 `G2_off_s43` + `G2_on_s43` (conditional) | 0.9583 |
+| B4–B7, 60 P1 replicas × 0.241667 | 14.5000 |
+| B8, 2 P3 jobs | 0.7500 |
+| **total** | **18.2901** ≤ 20.0, **1.7099** unused (2.6683 without the conditional pair) |
+
+**Where the gate first refuses.** With every remaining job at its cap and no further retries, the pilot fits with
+1.7099 node-h unused: the gate never refuses. A refusal therefore needs walltime retries (§9). The first batch it
+would refuse is **B8** (P3, 0.75 at caps), if retries before it have added more than 1.7099 node-h of caps: seven
+P1 retries at 0.2417 each (1.6917) still fit, eight (1.9333) do not, and one `G2_on` retry at 0.6250 plus four P1
+retries (1.5917) still fits. At measured costs, a batch launched while earlier ones still run sees them at their
+caps, so the gate's totals then lie between the two walks.
 
 ## 5. P2 and K1: the July bridge
 
@@ -356,11 +375,19 @@ INCONCLUSIVE. The 20 + 20 + 20 counts are fixed (§4).
 | job | projection basis (measured) | projection | cap = 1.5 × projection, rounded up |
 |---|---|---|---|
 | P0 | max u_CV 948 s (SB1 C) + 30 s hashing | 978 s | 1,467 s → **00:25:00** |
-| P1 (all 61) | VL170 replica p99 1,267 s (300 replicas: median 839, p95 1,161, max 1,900) | 1,267 s | 1,901 s → **00:32:00** (also covers the observed max) |
-| P2 derived, G2 off | max P5 off run 1,034 s | 1,034 s | 1,551 s → **00:30:00** |
+| `P1_unit` (row unchanged) | VL170 replica p99 1,267 s (300 replicas: median 839, p95 1,161, max 1,900) | 1,267 s | 1,901 s → **00:32:00**; it timed out at 1,930 s (job 59734962), and its one retry runs at the v2 replica cap **00:58:00** |
+| P1 replicas (60; v2) | `P1_unit` job 59734962 (64 CPUs, shared): TIMEOUT at 1,930 s; its unbuffered log wrote `Starting iteration 4` (the last of 0–4) at 15:47:54Z, 1,756 s after the Slurm start; re-projection 1,756 + 1,756/4 + ~100 s finalization | 2,295 s | 3,443 s → **00:58:00** (v1: 00:32:00 from the VL170 p99 above) |
+| P2 derived | max P5 off run 1,034 s | 1,034 s | 1,551 s → **00:30:00** (B1 ran 856–1,166 s) |
+| `G2_off_s43` (v2) | P5 off s43 1,034 s × today's slowdown 1,166/776 (`P2_Flux23` job 59734957 vs P5 off s42) | 1,554 s | 2,331 s → **00:40:00** (v1: 00:30:00) |
 | P2 default | max July sweep task 2,751 s | 2,751 s | 4,127 s → **01:10:00** |
-| G2 on | max P5 on run 1,928 s (includes the override build) | 1,928 s | 2,892 s → **00:50:00** |
+| `G2_on`, `G2_on_s43` (v2) | P5 on s42 1,928 s (includes the override build) × today's slowdown 1,166/776 (as above) | 2,897 s | 4,346 s → **01:15:00** (v1: 00:50:00 from 1,928 s) |
 | P3 (composite; u_A never measured) | max u_CV 948 s + full read of 50.1 GiB at the July sweep's worst rate, (2,751 − 778) s / 159.5 GiB = 12.4 s/GiB (621 s), + in-job hash of 54 GB at ≥ 0.4 GB/s (135 s) | 1,704 s | 2,556 s → **00:45:00** |
+
+v2 (director's ruling after the B1 stop, 2026-10-13: [`AUTHORIZATION-20261013-2d-closeout-stageC-pilot-recap.md`](../../../../AUTHORIZATION-20261013-2d-closeout-stageC-pilot-recap.md) (PR #111, merge `9b30356c`)) re-bases only the rows marked v2. P3 keeps its cap: today's
+128-CPU jobs ran at most 1.13× their bases (`P2_Flux23` 1,166 s vs 1,034 s; `P2_MINOS0def` 2,497 s vs 2,751 s).
+Launch conditions from the same ruling (they change no code): B4 launches only if the `P1_unit` retry passes
+and its elapsed × 1.3 ≤ 3,480 s; `G2_on`'s elapsed is checked against its 4,500 s cap only as the ordinary
+retry trigger.
 
 Every cap is under 12 h. P4's lesson (Stage B diagnostics §4.1): per-file smoke timings underestimated by 6–10×, so every basis here is a measured job of the same kind, except P3's, which composes measured parts
 (u_CV, the July read rate, a hash rate) because no active-file 2D unfold has run; P3 therefore runs last (§4).

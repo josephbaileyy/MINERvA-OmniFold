@@ -18,7 +18,7 @@ D2=/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding
 NAME=${SLURM_JOB_NAME:?no job name}
 
 # ---- pins (DESIGN §2) --------------------------------------------------------------------------------------------
-JOBS_SHA=54b0abcaff3da6256c3ba791ad55ab4c95a2c5b66bb88148f82c4fa522f4b9d8   # jobs.tsv
+JOBS_SHA=1c30a50b5bf0fd8a8fec25d226113a130cd197847ed2347568f5ac2aefca0182   # jobs.tsv
 PROD_SHA=74a4ed69c3fa9c4ae5b6866f36343212b8d3f903fddde6c7bd40c382c1167d56     # production driver (main ec2088a6)
 G2_SHA=eb258cadfc2b0ab7191e400eb13564a2866d393e18b830c3f2d5a7d12349cc99       # p2g2/driver_g2.py
 P1_SHA=3056e625a22f2ee79621e515aa5a76a4685662ac6fc10ee7e832680dde087578     # p1/driver_p1.py

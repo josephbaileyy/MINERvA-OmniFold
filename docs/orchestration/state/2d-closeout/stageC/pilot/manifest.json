@@ -47,11 +47,11 @@
   }
  },
  "package": {
-  "docs/orchestration/state/2d-closeout/stageC/pilot/DESIGN.md": "5c7292c2068cdd857833f12e79cdfb03dd793e52221aefee73436343b6e03600",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/DESIGN.md": "45f29c66936aa695391af480054838ae37d4a513e7c21faaf6d61b04ddf77310",
   "docs/orchestration/state/2d-closeout/stageC/pilot/analyze_pilot.py": "a9e1292ba55387410f61617a0c0bc92068ff5584261934b44c2f9d81878c3f75",
   "docs/orchestration/state/2d-closeout/stageC/pilot/evidence/binding-delta.txt": "e3d7d0f31535587e0eb5fa9198689507b669530aa4b1230fe966aa85af027c07",
-  "docs/orchestration/state/2d-closeout/stageC/pilot/jobs.tsv": "54b0abcaff3da6256c3ba791ad55ab4c95a2c5b66bb88148f82c4fa522f4b9d8",
-  "docs/orchestration/state/2d-closeout/stageC/pilot/launch.py": "e13ca799c9332144d64e82546eaeaaf57ccd478cbba18bc9b40538d98254aa69",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/jobs.tsv": "1c30a50b5bf0fd8a8fec25d226113a130cd197847ed2347568f5ac2aefca0182",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/launch.py": "fa0b01675e2e99aa047b713dc6fdae99c5acce7a841027a5cbd6187ce4d858cf",
   "docs/orchestration/state/2d-closeout/stageC/pilot/make_manifest.py": "d8eb19a3b9aef1177d985b843368e7bcb82fdc8937464fd09364e364f221bee3",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p1/README.md": "ed63b337ddfea7f2aaca7574ea317a8367a2628d6a66d5487f67274a68bb9124",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p1/SHA256SUMS": "d4a83675794010e6b480f66740f398d16ce2c1caea0e81f6ac8806b69249a14a",
@@ -82,7 +82,7 @@
   "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/select_flux.json": "35ce6226116a0415255408e341b2ae4dafa8102830185c0eaf9b0b68aea1e0b0",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/select_flux.py": "5a675910f5e42686d48e7c7e3b80295e041f9724944c28bb7bd85ffab39a731c",
   "docs/orchestration/state/2d-closeout/stageC/pilot/preflight_uomni.sh": "6d42896d4f25ecce119f712f36c603ae04c91f4a11128a6d6404801dbabeaed9",
-  "docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh": "80ddd0567194d0b20a956c3b75c6fcd863a4133d455714f0ec9f38e83f193855"
+  "docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh": "507ff6a114458a58cebf09aceb540ea6e0ac23e2d5c286548f8f05a40e4c93fb"
  },
  "schema": "stagec-pilot-manifest/1"
 }

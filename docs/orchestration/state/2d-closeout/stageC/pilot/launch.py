@@ -12,7 +12,7 @@ each batch,
     charges of COMPLETED (terminal) 2dc_C_* jobs from sacct (ElapsedRaw x billing / 256 / 3600)
   + the FULL enforced worst case of every 2dc_C_* job still PENDING or RUNNING (billing x TimeLimit / 256)
   + the batch's enforced worst case (billing x cap / 256, from jobs.tsv; a retry uses its re-projected cap)
-  <= 12.9 charged node-h, otherwise REFUSE: stop and report to the director. A running job's partial charge is
+  <= 20.0 charged node-h, otherwise REFUSE: stop and report to the director. A running job's partial charge is
 not its liability. The same gate is P2-G2's seed-43 pre-declared actual-charge check. A refusal never shrinks a
 declared batch (P1 stays 20 + 20 + 20 unless the director records otherwise before data).
 
@@ -31,7 +31,7 @@ from pathlib import Path
 if sys.version_info < (3, 9):
     raise SystemExit("REFUSE: launch.py needs Python >= 3.9; source setup_salloc_env.sh first (root_6_28 has 3.11)")
 HERE = Path(__file__).resolve().parent
-CEILING = 12.9
+CEILING = 20.0
 WINDOW_START = "2026-10-13T00:00:00"
 NS = "/pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013"
 SBATCH = f"{NS}/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh"
