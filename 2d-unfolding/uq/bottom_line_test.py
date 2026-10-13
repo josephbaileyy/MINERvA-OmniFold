@@ -123,20 +123,14 @@ def rms_rel(num, den, mask):
     return float(np.sqrt(np.mean((num[m] / den[m]) ** 2)))
 
 
-def run_closure(D, tol):
-    if D == 2:
-        cf = "2d-unfolding/uq/closure/2d_xsec_1A_5iter_lgbm_closure_truthrw.root"
-        unf = arr(get(cf, "hUnfold2D"))
-        ref = arr(get(cf, "hTruthRew2D"))      # injected truth target
-        nom = arr(get(cf, "hTruth2D"))         # nominal (un-reweighted) truth
-        label = "1A gaussian-bump truth reweight"
-    else:
-        cf = "3d-unfolding/closure_3d_MEFHC_eavail_bump.root"
-        unf = arr(get(cf, "hXSec_eavail"))             # unfolded closure (E_avail proj)
-        ref = arr(get(cf, "hXSec_eavail_closureRef"))  # injected +30% bump reference
-        nom = arr(get("3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root", "hXSec_eavail"))
-        label = "MEFHC +30% E_avail bump (E_avail projection)"
+def bottom_line_ratio(unf, ref, nom, tol):
+    """The bottom-line recovery statistic, shared by the 2D, 3D and 5D closures.
 
+    injected feature = (ref - nom)/nom ; residual = (unf - ref)/ref. Both are RMS over the
+    FEATURE bins, those whose |injected| exceeds the all-bin injected RMS. PASS iff
+    ratio = residual/injected < tol. Pure numpy, so it can be tested without ROOT.
+    """
+    unf, ref, nom = (np.asarray(a, dtype=float) for a in (unf, ref, nom))
     mask = (ref > 0) & (nom > 0)
     injected_all = rms_rel(ref - nom, nom, mask)     # feature we try to recover
     residual_all = rms_rel(unf - ref, ref, mask)     # what is left after unfolding
@@ -151,6 +145,30 @@ def run_closure(D, tol):
     injected = rms_rel(ref - nom, nom, feat)
     residual = rms_rel(unf - ref, ref, feat)
     ratio = residual / injected if injected > 0 else float("nan")
+    return dict(mask=mask, feature_mask=feat, injected_all=injected_all,
+                residual_all=residual_all, injected=injected, residual=residual,
+                ratio=ratio, tol=tol, verdict="PASS" if ratio < tol else "FAIL")
+
+
+def run_closure(D, tol):
+    if D == 2:
+        cf = "2d-unfolding/uq/closure/2d_xsec_1A_5iter_lgbm_closure_truthrw.root"
+        unf = arr(get(cf, "hUnfold2D"))
+        ref = arr(get(cf, "hTruthRew2D"))      # injected truth target
+        nom = arr(get(cf, "hTruth2D"))         # nominal (un-reweighted) truth
+        label = "1A gaussian-bump truth reweight"
+    else:
+        cf = "3d-unfolding/closure_3d_MEFHC_eavail_bump.root"
+        unf = arr(get(cf, "hXSec_eavail"))             # unfolded closure (E_avail proj)
+        ref = arr(get(cf, "hXSec_eavail_closureRef"))  # injected +30% bump reference
+        nom = arr(get("3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root", "hXSec_eavail"))
+        label = "MEFHC +30% E_avail bump (E_avail projection)"
+
+    res = bottom_line_ratio(unf, ref, nom, tol)
+    injected_all, residual_all = res["injected_all"], res["residual_all"]
+    injected, residual, ratio = res["injected"], res["residual"], res["ratio"]
+    feat = res["feature_mask"]
+    mask = res["mask"]
 
     print(f"\n===== BOTTOM-LINE TEST ({D}D, closure) =====")
     print(f"closure: {label}")

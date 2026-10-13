@@ -142,11 +142,16 @@ Injected $\Eavail$ bump & $+\SI{30}{\percent}$ Gaussian in truth $\Eavail$ at \S
 Injected $q_3$ bump & Same Gaussian form in truth $q_3$ (mean weight 1.014) & 4D &
   Marginal $q_3$ ratios within \SI{1.1}{\percent}; no predeclared threshold \\
 \addlinespace
-``Injected $W$'' bump & Same default Gaussian, centre \SI{0.3}{GeV}, applied to truth $W$ & 5D &
-  \emph{Not a recovery test.} Physical $W$ lies above about \SI{0.94}{GeV}, where the
-  bump's weight change is below $10^{-8}$ (mean weight 1.0000). It is a null
-  self-closure: median per-bin ratio 1.0000, spread \SI{0.62}{\percent},
-  largest per-bin deviation \SI{23}{\percent} \\
+Injected $W$ bump & $+\SI{30}{\percent}$ Gaussian in truth $W$ at \SI{1.23}{GeV} (the $\Delta$ peak), width \SI{0.15}{GeV}; mean weight 1.053 & 5D &
+  Marginal residual \SI{4.2}{\percent} of \SI{23.1}{\percent} injected in the
+  \SIrange{1.1}{1.4}{GeV} bin (ratio 0.180; threshold 0.20, set in advance); pass, by a
+  narrow margin. Neighbouring $W$ bins come out \SI{3.1}{\percent} and
+  \SI{2.7}{\percent} high, and joint $(\Eavail,W)$ cells in the peak column
+  \SIrange{2.2}{9.4}{\percent} low. Per-5D-bin spread \SI{3.7}{\percent}. Signal only.
+  The June 2026 run that this row replaces centred the bump at the driver default
+  \SI{0.3}{GeV}, below physical $W$, and so injected nothing (mean weight 1.0000). It was
+  read as a pass because it had no predeclared threshold and nothing checked that
+  the injection was nonzero, so ratios of 1.000 looked like perfect recovery \\
 \addlinespace
 Background-inclusive & Adds background simulation and rebuilds purity weights; nominal truth & 5D &
   Highest-$W$ column \SIrange{3.5}{4.1}{\percent} low; negative-weight treatment
@@ -178,22 +183,31 @@ not contradict each other.
         correlated structure across $\Eavail$, $W$ and $q_3$, including directions
         the reconstructed observables constrain weakly
         (\S\ref{sec:coverage-5d}, response-information diagnostic).
-  \item \emph{Metric.} The 3D and 4D passes are judged on one-dimensional
+  \item \emph{Metric.} The 3D, 4D and 5D passes are judged on one-dimensional
         marginals, where per-cell errors average out; the 3D test's per-bin
-        spread is already \SI{3.2}{\percent}. The generator-shaped failures are
+        spread is already \SI{3.2}{\percent}, and the 5D test's is
+        \SI{3.7}{\percent}. The generator-shaped failures are
         measured in joint $(\Eavail,W)$ cells.
   \item \emph{Iterations.} At five iterations the estimator retains part of
         the prior wherever the data pull weakly. Thirty iterations reduce the
         $\Eavail$ residual by \SI{26}{\percent} while the $q_3$ residual grows
         (\S\ref{sec:val-departure}).
-  \item \emph{The five-dimensional $W$ test injected nothing.} Its pass
-        therefore says nothing about recovery of a $W$ shape. No
-        five-dimensional injected-shape recovery test exists; the
-        generator-shaped tests are the five-dimensional recovery evidence.
+  \item \emph{The five-dimensional $W$ test passes only in the marginal, and
+        narrowly.} A $W$ bump at the $\Delta$ peak is recovered to a ratio of
+        0.180 against a threshold of 0.20. The same unfold leaves joint
+        $(\Eavail,W)$ cells in the peak column up to \SI{9.4}{\percent} low
+        and moves part of the bump into the neighbouring $W$ bins. A single
+        smooth bump in a marginal is therefore weaker evidence than the
+        generator-shaped tests, which stay the main five-dimensional recovery
+        evidence.
 \end{itemize}
 % Sources: 2D rows sec_validation.tex "Closure" and "Injected-feature recovery"; 3D sec_3d.tex
 % sec:3d-closure; 4D git show 798f0c89 (job 53925395, ratios 1.007/0.989/1.005/1.000..., mean factor
-% 1.0142); 5D W bump git show aecd0d22 (job 54062313: median 1.0000, std 0.0062, max|dev| 0.227,
+% 1.0142); 5D W bump (corrected, 2026-10-12) job 59719296 at b11ff40d, PREREG-20261012-5d-injected-w-closure.md,
+% docs/orchestration/state/wclosure-5d-20261012/closure_5d_w_bottom_line.json (VL176): mean factor 1.0529, W-marginal
+% feature bin [1.1,1.4] injected 0.2310 residual 0.0416 ratio 0.1799, W ratios 1.031/0.958/1.027/0.998/1.000/1.000,
+% 5D median 1.0070 std 0.0371 max|dev| 0.1515, joint (Eavail,W) median 1.0093 max|dev| 0.094, peak column 0.906-0.978.
+% Superseded June run: git show aecd0d22 (job 54062313: median 1.0000, std 0.0062, max|dev| 0.227,
 % mean factor 1.0000) with driver defaults A=0.3, c=0.3, s=0.15 at fdefe5f8
 % nd-unfolding/unfold_nd_omnifold_unbinned.py (launcher sbatch_hadd_unfold_5d.sh:43-48 sets no
 % centre); 0.3*exp(-((0.938-0.3)/0.15)^2) = 4.2e-9. Background, generator and q3 rows: sec_5d.tex

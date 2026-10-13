@@ -1,0 +1,2 @@
+JobID|JobName|State|ExitCode|Elapsed|Submit|Start|End|NCPUS|Partition|QOS|NodeList|CPUTime
+59719296|wclos5d|COMPLETED|0:0|00:37:34|2026-10-12T15:30:48|2026-10-13T02:06:36|2026-10-13T02:44:10|52|shared_milan_ss11|shared|nid004103|1-08:33:28
