@@ -1,0 +1,23 @@
+{
+ "omnifile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1B_universes_full.root",
+ "override": "smoke/override_1B_MaRES_0.npz",
+ "universe": "MaRES:0",
+ "n_override": 181498,
+ "C1_noop_bitwise": true,
+ "C2_identity_bitwise": true,
+ "C3_unchanged_arrays": {
+  "truth_pt": true,
+  "truth_pz": true,
+  "reco_pt": true,
+  "reco_pz": true,
+  "pass_reco": true,
+  "pass_truth": true,
+  "w_truth": false,
+  "w_reco": false
+ },
+ "C3_changed_rows": 40948,
+ "C3_changed_only_where_no_reco": true,
+ "C3_w_reco_equals_w_truth_on_changed": true,
+ "C3_sum_w_truth_ratio_changed": 0.7078794194902734,
+ "PASS": true
+}

@@ -1,0 +1,2228 @@
+#define OUT_FILE_NAME "runEventLoopOmniFold.root"
+
+#define USAGE \
+"\n*** USAGE ***\n"\
+"runEventLoopOmniFold <dataPlaylist.txt> <mcPlaylist.txt>\n\n"\
+"*** Explanation ***\n"\
+"Reduce MasterAnaDev AnaTuples to unbinned event-level arrays for OmniFold-style unfolding.\n\n"\
+"*** The Input Files ***\n"\
+"Playlist files are plaintext files with 1 file name per line.  Filenames may be\n"\
+"xrootd URLs or refer to the local filesystem.  The first playlist file's\n"\
+"entries will be treated like data, and the second playlist's entries must\n"\
+"have the \"Truth\" tree to use for calculating the efficiency denominator.\n\n"\
+"*** Output ***\n"\
+"Produces a single ROOT file, " OUT_FILE_NAME ", containing TTrees with the\n"\
+"unbinned arrays needed for OmniFold-style unfolding.  Writes both p_T and\n"\
+"p_|| (longitudinal momentum) branches for 2D unfolding.  This variant does\n"\
+"NOT write the standard ExtractCrossSection histogram suite.\n\n"\
+"*** Environment Variables ***\n"\
+"Setting up this package appends to PATH and LD_LIBRARY_PATH.  PLOTUTILSROOT,\n"\
+"MPARAMFILESROOT, and MPARAMFILES must be set according to the setup scripts in\n"\
+"those packages for systematics and flux reweighters to function.\n\n"\
+"*** Return Codes ***\n"\
+"0 indicates success.\n"
+
+// Shared error codes with the histogram-based event loop.
+
+enum ErrorCodes
+{
+  success = 0,
+  badCmdLine = 1,
+  badInputFile = 2,
+  badFileRead = 3,
+  badOutputFile = 4
+};
+
+//PlotUtils includes
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+
+//Includes from this package
+#include "event/CVUniverse.h"
+#include "event/MichelEvent.h"
+#include "systematics/Systematics.h"
+#include "cuts/MaxPzMu.h"
+#include "cuts/MaxPtMu.h"
+#include "util/Variable.h"
+#include "util/Variable2D.h"
+#include "util/GetFluxIntegral.h"
+#include "util/GetPlaylist.h"
+#include "cuts/SignalDefinition.h"
+#include "cuts/q3RecoCut.h"
+#include "studies/Study.h"
+//#include "Binning.h" //TODO: Fix me
+
+//PlotUtils includes
+#include "PlotUtils/makeChainWrapper.h"
+#include "PlotUtils/HistWrapper.h"
+#include "PlotUtils/Hist2DWrapper.h"
+#include "PlotUtils/MacroUtil.h"
+#include "PlotUtils/MnvPlotter.h"
+#include "PlotUtils/CCInclusiveCuts.h"
+#include "PlotUtils/CCInclusiveSignal.h"
+#include "PlotUtils/CrashOnROOTMessage.h" //Sets up ROOT's debug callbacks by itself
+#include "PlotUtils/Cutter.h"
+#include "PlotUtils/Model.h"
+#include "PlotUtils/FluxAndCVReweighter.h"
+#include "PlotUtils/GENIEReweighter.h"
+#include "PlotUtils/LowRecoil2p2hReweighter.h"
+#include "PlotUtils/RPAReweighter.h"
+#include "PlotUtils/MINOSEfficiencyReweighter.h"
+#pragma GCC diagnostic pop
+
+//ROOT includes
+#include "TParameter.h"
+#include "TNamed.h"
+
+//c++ includes
+#include <iostream>
+#include <cstdlib> //getenv()
+#include <cstdint>
+#include <cmath> //std::sin/std::cos for the truth-muon 4-vector helper
+#include <limits>
+#include <sstream>
+#include <string>
+#include <unordered_set>
+#include <set>
+#include <vector>
+#include <unordered_map>
+#include <memory>
+#include "TFile.h"
+#include "TTree.h"
+
+struct ActiveUniverseRequest
+{
+  bool enabled = false;
+  std::string band;
+  size_t idx = 0;
+};
+
+struct ActiveUniverseMigrationCounts
+{
+  long truthEntrants = 0;
+  long truthExits = 0;
+  long recoEntrants = 0;
+  long recoExits = 0;
+};
+
+// Parse the selection-complete universe mode.  Unlike MNV101_DUMP_UNIVERSES,
+// this mode does not write CV-selected shadow branches: it promotes one
+// universe to be the ordinary event-loop universe, so truth/reco entrants and
+// exits are handled before either tree is filled.
+inline bool ParseActiveUniverse(const char* envVal,
+                                ActiveUniverseRequest& out,
+                                std::string& error)
+{
+  if(envVal == nullptr || std::string(envVal).empty()) return true;
+
+  const std::string spec(envVal);
+  const size_t colon = spec.find(':');
+  if(colon == std::string::npos || colon == 0 || colon + 1 == spec.size() ||
+     spec.find(':', colon + 1) != std::string::npos)
+  {
+    error = "expected BAND:IDX, got '" + spec + "'";
+    return false;
+  }
+
+  const std::string idxText = spec.substr(colon + 1);
+  if(idxText.find_first_not_of("0123456789") != std::string::npos)
+  {
+    error = "universe index must be a non-negative integer in '" + spec + "'";
+    return false;
+  }
+
+  try
+  {
+    const unsigned long long parsed = std::stoull(idxText);
+    if(parsed > static_cast<unsigned long long>(std::numeric_limits<size_t>::max()))
+    {
+      error = "universe index is out of range in '" + spec + "'";
+      return false;
+    }
+    out.enabled = true;
+    out.band = spec.substr(0, colon);
+    out.idx = static_cast<size_t>(parsed);
+  }
+  catch(const std::exception&)
+  {
+    error = "invalid universe index in '" + spec + "'";
+    return false;
+  }
+  return true;
+}
+
+// Pack (mc_run, mc_subrun, mc_nthEvtInFile) into a unique 64-bit key for
+// fast hash-set lookup of "is this truth event already represented on the
+// reco/AnaTuple side?". Run ~5 digits, subrun ~3 digits, nth ~6 digits;
+// (run * 1e8 + subrun) * 1e8 + nth fits comfortably in uint64_t.
+inline uint64_t makeEventKey(int run, int subrun, int nth)
+{
+  return (static_cast<uint64_t>(run) * 100000000ULL +
+          static_cast<uint64_t>(subrun)) * 100000000ULL +
+         static_cast<uint64_t>(nth);
+}
+
+// ---- P4 G1 census (DIAGNOSTIC COPY ONLY; 2D closeout Stage B, grant
+// AUTHORIZATION-20261012-2d-closeout-stageB-diagnostics.md). Not for production.
+// Enabled only when MNV101_G1_CENSUS=<output ROOT path> is set. When it is unset,
+// gG1 stays null: no branch, output object, loop decision or Cutter statistic
+// changes, so the main output is the unpatched program's.
+//
+// G1 = an MC reco-tree entry that passes the reco selection and is signal in the
+// 2D phase space by the reco tree's own mc_* branches (so the background loop
+// skips it), but whose key is not in the signal-reco key set (so it is not a row
+// of mc_signal_reco): it is in neither tree. Recorded from the background loop.
+// The census uses its OWN constraint instances (weight 0), never the Cutter's.
+struct G1Row
+{
+  int run, subrun, nth;
+  double reco_pt, reco_pz, w_reco, true_pt, true_pz;
+  int truth_mask;        // bit k = constraint k passed on the TRUTH-tree row (see G1_MASK_LEGEND)
+  int truth_status;      // 0 no fiducial truth-tree failure record; 1 record found (mask valid);
+                         // 2 key IS in truthDenomIDs (truth passes, yet absent from the reco tree)
+};
+static const char* G1_MASK_LEGEND =
+    "bit0 IsNeutrino, bit1 IsCC, bit2 ZRange(Tracker,5980,8422), bit3 Apothem(850), "
+    "bit4 MuonAngle(20), bit5 PZMuMin(1500), bit6 MaxPzMu(60000), bit7 MaxPtMu(4500)";
+struct G1Census
+{
+  std::string outPath;
+  std::vector<std::unique_ptr<PlotUtils::SignalConstraint<CVUniverse>>> cons;
+  std::unordered_map<uint64_t, int> truthFiducialFail;  // truth key -> mask; fiducial, not (signal && PS)
+  const std::unordered_set<uint64_t>* recoIDs = nullptr;
+  const std::unordered_set<uint64_t>* truthDenomIDs = nullptr;
+  std::unordered_set<uint64_t> seenG1;
+  std::vector<G1Row> rows;
+  long nTruthFail = 0, nTruthFidFailStored = 0, nTruthFidFailDupKey = 0;
+  long nSigLoopNoTruth = 0, nSigLoopNoTruthPassReco = 0;
+  double wSigLoopNoTruthPassReco = 0.0;
+  long nBkgSkipped = 0, nBkgSkippedInReco = 0, nG1 = 0, nG1DupKey = 0;
+  long nG1Status[3] = {0, 0, 0};
+  double wG1 = 0.0;
+  // Positive control only (MNV101_G1_CENSUS_SELFTEST=N > 0): the census treats every skipped key with
+  // key % N == 0 as absent from the reco tree, so it must record exactly those as G1 rows (status 2).
+  // Touches only the census's own view, never recoIDs or any output tree.
+  long selftestN = 0, nSelftestInjected = 0;
+  int mask(const CVUniverse& u) const
+  {
+    int m = 0;
+    for(size_t k = 0; k < cons.size(); ++k)
+      if(cons[k]->passes(u, 0)) m |= (1 << k);
+    return m;
+  }
+};
+static G1Census* gG1 = nullptr;
+
+// Called from the background loop for each selected entry it skips as
+// signal-in-phase-space. Reco mode on entry; restored to reco mode on exit.
+inline void G1CensusBkgSkip(CVUniverse* u, const double wReco)
+{
+  ++gG1->nBkgSkipped;
+  const int run = u->GetInt("mc_run"), subrun = u->GetInt("mc_subrun"),
+            nth = u->GetInt("mc_nthEvtInFile");
+  const uint64_t key = makeEventKey(run, subrun, nth);
+  const bool injected = gG1->selftestN > 0 && key % static_cast<uint64_t>(gG1->selftestN) == 0;
+  if(injected) ++gG1->nSelftestInjected;
+  if(!injected && gG1->recoIDs->find(key) != gG1->recoIDs->end()) { ++gG1->nBkgSkippedInReco; return; }
+  if(!gG1->seenG1.insert(key).second) { ++gG1->nG1DupKey; return; }
+  G1Row r;
+  r.run = run; r.subrun = subrun; r.nth = nth;
+  r.reco_pt = u->GetMuonPT();
+  r.reco_pz = u->GetMuonPz();
+  r.w_reco = wReco;
+  CVUniverse::SetTruth(true);
+  r.true_pt = u->GetMuonPTTrue();
+  r.true_pz = u->GetMuonPzTrue();
+  CVUniverse::SetTruth(false);
+  r.truth_mask = -1;
+  r.truth_status = 0;
+  if(gG1->truthDenomIDs->find(key) != gG1->truthDenomIDs->end()) r.truth_status = 2;
+  else
+  {
+    const auto it = gG1->truthFiducialFail.find(key);
+    if(it != gG1->truthFiducialFail.end()) { r.truth_status = 1; r.truth_mask = it->second; }
+  }
+  ++gG1->nG1Status[r.truth_status];
+  ++gG1->nG1;
+  gG1->wG1 += wReco;
+  gG1->rows.push_back(r);
+}
+
+inline void WriteG1Census()
+{
+  TFile* f = TFile::Open(gG1->outPath.c_str(), "RECREATE");
+  if(!f) { std::cerr << "[G1] cannot open " << gG1->outPath << "\n"; return; }
+  f->cd();
+  TTree* t = new TTree("g1_census", "selected MC reco entries in neither mc_signal_reco nor mc_background");
+  G1Row r;
+  t->Branch("run", &r.run); t->Branch("subrun", &r.subrun); t->Branch("nth", &r.nth);
+  t->Branch("reco_pt", &r.reco_pt); t->Branch("reco_pz", &r.reco_pz); t->Branch("w_reco", &r.w_reco);
+  t->Branch("true_pt", &r.true_pt); t->Branch("true_pz", &r.true_pz);
+  t->Branch("truth_mask", &r.truth_mask); t->Branch("truth_status", &r.truth_status);
+  for(const auto& x : gG1->rows) { r = x; t->Fill(); }
+  t->Write();
+  TNamed("maskLegend", G1_MASK_LEGEND).Write();
+  TParameter<long>("nTruthFail", gG1->nTruthFail).Write();
+  TParameter<long>("nTruthFidFailStored", gG1->nTruthFidFailStored).Write();
+  TParameter<long>("nTruthFidFailDupKey", gG1->nTruthFidFailDupKey).Write();
+  TParameter<long>("nSigLoopNoTruth", gG1->nSigLoopNoTruth).Write();
+  TParameter<long>("nSigLoopNoTruthPassReco", gG1->nSigLoopNoTruthPassReco).Write();
+  TParameter<double>("wSigLoopNoTruthPassReco", gG1->wSigLoopNoTruthPassReco).Write();
+  TParameter<long>("nBkgSkipped", gG1->nBkgSkipped).Write();
+  TParameter<long>("nBkgSkippedInReco", gG1->nBkgSkippedInReco).Write();
+  TParameter<long>("nG1", gG1->nG1).Write();
+  TParameter<long>("nG1DupKey", gG1->nG1DupKey).Write();
+  TParameter<long>("nG1Status0", gG1->nG1Status[0]).Write();
+  TParameter<long>("nG1Status1", gG1->nG1Status[1]).Write();
+  TParameter<long>("nG1Status2", gG1->nG1Status[2]).Write();
+  TParameter<double>("wG1", gG1->wG1).Write();
+  TParameter<long>("selftestN", gG1->selftestN).Write();
+  TParameter<long>("nSelftestInjected", gG1->nSelftestInjected).Write();
+  f->Close();
+  std::cout << "[G1] census: nG1=" << gG1->nG1 << " (weighted " << gG1->wG1 << "), status0/1/2="
+            << gG1->nG1Status[0] << "/" << gG1->nG1Status[1] << "/" << gG1->nG1Status[2]
+            << "; signal-loop no-truth pass-reco=" << gG1->nSigLoopNoTruthPassReco
+            << "; bkg skipped=" << gG1->nBkgSkipped << " (in reco tree " << gG1->nBkgSkippedInReco
+            << ") -> " << gG1->outPath << "\n";
+}
+// ---- end P4 G1 census
+
+// Full-event (G2) truth-muon 4-vector components (MeV, beam frame), built to
+// MIRROR the reco GetMuon4V() construction but from the TRUTH accessors
+// (GetPlepTrue/GetThetalepTrue/GetPhilepTrue/GetElepTrue, all beam-frame). This
+// is a truth-only quantity: it may only be written into truth-named branches
+// (mu_true_*), NEVER a data/reco feature family, and there is deliberately NO
+// truth MINOS/charge/qp/range counterpart (those are detector-only). Keeping the
+// px,py,pz,E,phi construction in one helper keeps the truth-denom tree, the
+// signal-reco truth side, and the Phase-18 miss-row cache bit-consistent.
+struct TruthMuonKin { double px, py, pz, E, phi; };
+inline TruthMuonKin GetTruthMuonKin(const CVUniverse* u)
+{
+  const double p     = u->GetPlepTrue();      // MeV
+  const double theta = u->GetThetalepTrue();  // rad (beam frame)
+  const double phi   = u->GetPhilepTrue();    // rad (beam frame)
+  TruthMuonKin k;
+  k.px  = p * std::sin(theta) * std::cos(phi);
+  k.py  = p * std::sin(theta) * std::sin(phi);
+  k.pz  = p * std::cos(theta);
+  k.E   = u->GetElepTrue();                    // MeV
+  k.phi = phi;
+  return k;
+}
+
+// Phase 18 (2026-05): truth-denom entries cached so the reco-loop can gate
+// on truthCV.isEfficiencyDenom membership, and miss-append can iterate the
+// cache rather than re-walking the truth tree. See main() and
+// AppendTruthOnlyMisses below.
+struct TruthDenomEntry
+{
+  double MC;
+  double MC_pz;
+  double MC_eavail;
+  double MC_q3;
+  double MC_W;        // Workstream F: truth hadronic invariant mass (GeV)
+  int    MC_nproton;  // truth diagnostics (DIS-tail-excess investigation)
+  int    MC_npip;
+  double MC_hadangle;
+  double w_truth;
+  uint64_t key;
+  // Full-event (G2) schema, cached so a Phase-18 truth-only miss row carries its
+  // real MC event identity + truth-muon 4-vector/phi (MeV/rad) + true vertex
+  // (mm) instead of zeros. The identity ints are always populated; the
+  // muon/vertex doubles only when MNV101_DUMP_POINTCLOUD is set (same gate as the
+  // cloud below). The reco side of a miss stays sentinel/empty (a miss has no
+  // reconstructed muon/vertex/cluster), so no reco counterpart is cached here.
+  int    id_run, id_subrun, id_nth;
+  double mu_true_px, mu_true_py, mu_true_pz, mu_true_E, mu_true_phi;
+  double vtx_true_x, vtx_true_y, vtx_true_z;
+  // Truth FS-hadron point cloud (the raw, untruncated GetTruthFSHadrons output,
+  // matching the signal-loop part_gen_* fill). Populated only when
+  // MNV101_DUMP_POINTCLOUD is set, so AppendTruthOnlyMisses can give a
+  // truth-only miss row its real generator-level cloud instead of an empty one
+  // (the cloud-coverage fix; see nd-unfolding/pet/CLOUD_COVERAGE_FIX_PLAN.md).
+  // float to halve cache RAM over the per-playlist truth-denom cache.
+  std::vector<float> pg_E, pg_px, pg_py, pg_pz;
+  std::vector<int>   pg_pdg;
+};
+
+// UQ Stage-1 #7 (2026-05-21): per-systematic-universe weight dump.
+// When MNV101_DUMP_UNIVERSES is set (env var), build one TBranch per
+// (band, idx) for every (band) named in the comma-separated allowlist
+// (or for every standard band when the env var is exactly "1"). One
+// model.GetWeight(*universe, evt) is evaluated per (band, idx) per event,
+// in addition to the CV evaluation. Restores universe state to CV after
+// the per-event universe sweep so subsequent CV-dependent code is intact.
+//
+// Branch name: w_<prefix>_<sanitized-band>_<idx> where prefix is "truth"
+// or "reco" and the sanitizer replaces non-[A-Za-z0-9_] with '_' so the
+// resulting names are ROOT-safe.
+//
+// Lateral (non-vertical-only) universes additionally write shifted muon
+// kinematics so the Python driver can swap (pT, pz) per universe. The
+// kinematic branch names follow the existing CV-side convention of the
+// host tree: pT_truth/pz_truth on the truth-denom tree, MC/MC_pz when the
+// universe is in truth-mode on the reco tree, sim/sim_pz when in
+// reco-mode on the reco tree.
+//
+// NOTE (3D E_avail): the lateral bands are all muon/beam systematics
+// (BeamAngleX/Y, MuonResolution, Muon_Energy_MINERvA/MINOS). They override
+// only muon momentum/angle getters, none of which feed NewEavail()
+// (blob_recoil_E_tracker/ecal + muon_fuzz) or GetEAvailableTrue() (truth
+// mc_FSPartE). So E_avail is invariant under every lateral universe and needs
+// no shifted branch. The GEANT hadronic-response bands (which DO move E_avail
+// physically) are vertical/weight-only and are captured by w_reco_GEANT_*.
+//
+// NOTE (4D q3): UNLIKE E_avail, q3 IS shifted by the lateral muon bands.
+// RecoQ3() reconstructs q3 from the muon kinematics (Q^2 from Emu/Pmu/theta)
+// + recoil_E, and Getq3True() from mc_Q2 + the true muon, so a muon-energy /
+// beam-angle shift moves q3. Lateral universes therefore ALSO write a shifted
+// q3 (q3_truth_/MC_q3_/sim_q3_<band>_<idx>) alongside pT/pz; the 4D Python
+// driver must swap it per universe (it cannot reuse the CV q3 the way it
+// reuses CV E_avail).
+struct UniverseBranchInfo
+{
+  std::string bandName;
+  size_t idx;
+  CVUniverse* univ;
+  std::string branchName;          // w_<prefix>_<band>_<idx>
+  bool isLateral = false;
+  std::string ptBranchName;        // empty when !isLateral
+  std::string pzBranchName;        // empty when !isLateral
+  std::string q3BranchName;        // empty when !isLateral; q3 is NOT
+                                   // lateral-invariant (depends on muon
+                                   // kinematics + recoil), unlike E_avail,
+                                   // so lateral universes dump shifted q3.
+  std::string wBranchName;         // empty when !isLateral; W (hadronic invariant
+                                   // mass) is muon+recoil dependent like q3, so it
+                                   // is NOT lateral-invariant either -> shifted W.
+};
+
+inline std::string SanitizeForRootBranchName(const std::string& s)
+{
+  std::string out = s;
+  for(char& c : out)
+  {
+    if(!(std::isalnum(static_cast<unsigned char>(c)) || c == '_')) c = '_';
+  }
+  return out;
+}
+
+// Parse MNV101_DUMP_UNIVERSES env var. Returns a (dumpAll, allowlist) pair.
+// dumpAll = true when env var is exactly "1"; allowlist holds band names
+// when env var is a comma-separated list. Returns (false, empty) when the
+// env var is not set, meaning "do not dump".
+inline std::pair<bool, std::set<std::string>>
+ParseUniverseAllowlist(const char* envVal)
+{
+  std::pair<bool, std::set<std::string>> result(false, {});
+  if(envVal == nullptr) return result;
+  const std::string s = envVal;
+  if(s == "1")
+  {
+    result.first = true;
+    return result;
+  }
+  std::stringstream ss(s);
+  std::string item;
+  while(std::getline(ss, item, ','))
+  {
+    // trim surrounding whitespace
+    size_t a = item.find_first_not_of(" \t");
+    size_t b = item.find_last_not_of(" \t");
+    if(a == std::string::npos) continue;
+    result.second.insert(item.substr(a, b - a + 1));
+  }
+  return result;
+}
+
+// Kinematic-branch naming context for lateral universes. The host tree
+// uses a different (pT, pz) branch convention depending on the dump
+// site, so the BuildUniverseBranchTable caller picks one.
+enum class UniverseKineContext
+{
+  TruthTree,        // pT_truth_<band>_<idx>, pz_truth_<band>_<idx>
+  RecoTreeTruth,    // MC_<band>_<idx>,        MC_pz_<band>_<idx>
+  RecoTreeReco,     // sim_<band>_<idx>,       sim_pz_<band>_<idx>
+  BkgTreeReco       // sim_background_<band>_<idx>, sim_background_pz_<band>_<idx>
+                    // (mc_background tree; keeps the bkg reco kinematics in
+                    //  their own namespace so they never alias mc_signal_reco's
+                    //  sim_* shadow branches — KNOWN_ISSUES #13)
+};
+
+// Build the per-universe branch table. `bands` is the truth_bands or
+// error_bands map. `prefix` is "truth" or "reco". `kineCtx` selects the
+// kinematic branch naming convention for lateral universes. `dumpAll`
+// and `allowlist` come from ParseUniverseAllowlist(). The "cv" band is
+// always skipped (CV weight already lives in w_truth / w_reco).
+inline std::vector<UniverseBranchInfo>
+BuildUniverseBranchTable(
+    const std::map<std::string, std::vector<CVUniverse*>>& bands,
+    const std::string& prefix,
+    UniverseKineContext kineCtx,
+    bool dumpAll,
+    const std::set<std::string>& allowlist)
+{
+  std::vector<UniverseBranchInfo> out;
+  for(const auto& kv : bands)
+  {
+    const std::string& bandName = kv.first;
+    const auto& universes = kv.second;
+    if(bandName == "cv") continue;
+    if(!dumpAll && allowlist.find(bandName) == allowlist.end()) continue;
+    const std::string sanBand = SanitizeForRootBranchName(bandName);
+    for(size_t idx = 0; idx < universes.size(); ++idx)
+    {
+      UniverseBranchInfo ub;
+      ub.bandName = bandName;
+      ub.idx = idx;
+      ub.univ = universes[idx];
+      ub.branchName = "w_" + prefix + "_" + sanBand + "_" + std::to_string(idx);
+      ub.isLateral = (universes[idx] != nullptr) && !universes[idx]->IsVerticalOnly();
+      if(ub.isLateral)
+      {
+        const std::string suffix = sanBand + "_" + std::to_string(idx);
+        switch(kineCtx)
+        {
+          case UniverseKineContext::TruthTree:
+            ub.ptBranchName = "pT_truth_" + suffix;
+            ub.pzBranchName = "pz_truth_" + suffix;
+            ub.q3BranchName = "q3_truth_" + suffix;   // truth q3 (Getq3True)
+            ub.wBranchName  = "W_truth_"  + suffix;   // truth W (GetTrueExperimentersW)
+            break;
+          case UniverseKineContext::RecoTreeTruth:
+            ub.ptBranchName = "MC_"     + suffix;
+            ub.pzBranchName = "MC_pz_"  + suffix;
+            ub.q3BranchName = "MC_q3_"  + suffix;      // truth q3 (Getq3True)
+            ub.wBranchName  = "MC_W_"   + suffix;      // truth W (GetTrueExperimentersW)
+            break;
+          case UniverseKineContext::RecoTreeReco:
+            ub.ptBranchName = "sim_"    + suffix;
+            ub.pzBranchName = "sim_pz_" + suffix;
+            ub.q3BranchName = "sim_q3_" + suffix;      // reco q3 (RecoQ3)
+            ub.wBranchName  = "sim_W_"  + suffix;      // reco W (RecoW)
+            break;
+          case UniverseKineContext::BkgTreeReco:
+            ub.ptBranchName = "sim_background_"    + suffix;
+            ub.pzBranchName = "sim_background_pz_" + suffix;
+            ub.q3BranchName = "sim_background_q3_" + suffix;  // reco q3 (RecoQ3)
+            ub.wBranchName  = "sim_background_W_"  + suffix;  // reco W (RecoW)
+            break;
+        }
+      }
+      out.push_back(ub);
+    }
+  }
+  return out;
+}
+
+//==============================================================================
+// Loop and Fill (write only the unbinned arrays needed for OmniFold)
+//==============================================================================
+
+// Truth efficiency denominator: loop Truth tree in truth-mode and fill MC truth pTmu + weight.
+//
+// When outTruthDenomIDs is non-null, this loop also populates it with the
+// (mc_run, mc_subrun, mc_nthEvtInFile) hash key of every event written to
+// `out`. Phase 18: the reco loop consults this set to gate `mc_signal_reco`
+// fills on truth-side `isEfficiencyDenom` agreement (avoids the ~1.8% of
+// reco entries that pass recoCV.isEfficiencyDenom but whose corresponding
+// truth-tree entry fails the same cut — see Phase 18 in
+// 2D_OMNIFOLD_STUDY_STATUS.md).
+//
+// When outTruthDenomCache is non-null, this loop also pushes a
+// TruthDenomEntry for every written event. AppendTruthOnlyMisses() iterates
+// the cache (post reco-loop) to write miss entries to mc_signal_reco for
+// the events not in recoIDs — replaces the inline miss-append that lived
+// here in Phase 17, so the reco loop can run AFTER truth-denom.
+void LoopAndFillUnbinnedMCTruthDenom(
+    PlotUtils::ChainWrapper* truth,
+    CVUniverse* truthCV,
+    PlotUtils::Cutter<CVUniverse, MichelEvent>& michelcuts,
+    PlotUtils::Model<CVUniverse, MichelEvent>& model,
+    const std::vector<PlotUtils::Reweighter<CVUniverse, MichelEvent>*>& componentRWs,
+    TTree* out,
+    std::unordered_set<uint64_t>* outTruthDenomIDs = nullptr,
+    std::vector<TruthDenomEntry>* outTruthDenomCache = nullptr,
+    const std::map<std::string, std::vector<CVUniverse*>>* truthBands = nullptr,
+    CVUniverse* comparisonCV = nullptr,
+    ActiveUniverseMigrationCounts* migrationCounts = nullptr)
+{
+  double MC = 0.0;
+  double MC_pz = 0.0;
+  double MC_eavail = 0.0;
+  double MC_q3 = 0.0;
+  double MC_W = 0.0;
+  int    MC_nproton = 0;
+  int    MC_npip = 0;
+  double MC_hadangle = 0.0;
+  double w_truth = 1.0;
+
+  out->Branch("MC", &MC);
+  out->Branch("MC_pz", &MC_pz);
+  out->Branch("MC_eavail", &MC_eavail);   // truth available energy (GeV)
+  out->Branch("MC_q3", &MC_q3);           // truth 3-momentum transfer (GeV)
+  out->Branch("MC_W", &MC_W);             // truth hadronic invariant mass (GeV)
+  out->Branch("MC_nproton", &MC_nproton); // truth proton multiplicity (KE>110 MeV)
+  out->Branch("MC_npip", &MC_npip);       // truth charged-pion multiplicity
+  out->Branch("MC_hadangle", &MC_hadangle); // truth hadronic-system angle (rad)
+  out->Branch("w_truth", &w_truth);
+
+  // Per-reweighter component dump for MnvTune-v1 audit (Option 1
+  // decomposition). Gated behind MNV101_DUMP_COMPONENTS so canonical
+  // production output is byte-clean vs the pre-audit schema. When set,
+  // each branch holds GetWeight() of one reweighter at CV in truth
+  // mode; the product matches w_truth modulo GetWeightRatioToCV()
+  // which is 1 in CV.
+  const bool dumpComponents = (getenv("MNV101_DUMP_COMPONENTS") != nullptr);
+  // Gate truth-cloud caching: only compute/store the per-event FS-hadron cloud
+  // when the point-cloud dump is active (otherwise it is dead weight).
+  const bool dumpPointcloud = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
+
+  // Full-event (G2) truth-side branches: truth muon 4-vector/phi (MeV/rad),
+  // true vertex (mm), and MC event identity (run/subrun/nth). Gated on
+  // MNV101_DUMP_POINTCLOUD so the default (recoil-only / non-pointcloud) schema
+  // is byte-identical. Truth-only quantities: there is NO reco/detector
+  // counterpart on the truth-denom tree.
+  double mu_true_px = 0.0, mu_true_py = 0.0, mu_true_pz = 0.0,
+         mu_true_E = 0.0, mu_true_phi = 0.0;
+  double vtx_true_x = 0.0, vtx_true_y = 0.0, vtx_true_z = 0.0;
+  int    id_run = 0, id_subrun = 0, id_nth = 0;
+  if(dumpPointcloud)
+  {
+    out->Branch("mu_true_px",  &mu_true_px);   // MeV (beam frame)
+    out->Branch("mu_true_py",  &mu_true_py);   // MeV
+    out->Branch("mu_true_pz",  &mu_true_pz);   // MeV
+    out->Branch("mu_true_E",   &mu_true_E);    // MeV
+    out->Branch("mu_true_phi", &mu_true_phi);  // rad (beam frame)
+    out->Branch("vtx_true_x",  &vtx_true_x);   // mm (true interaction vertex)
+    out->Branch("vtx_true_y",  &vtx_true_y);   // mm
+    out->Branch("vtx_true_z",  &vtx_true_z);   // mm
+    out->Branch("mc_run",           &id_run);          // MC event identity
+    out->Branch("mc_subrun",        &id_subrun);
+    out->Branch("mc_nthEvtInFile",  &id_nth);
+  }
+
+  std::vector<double> w_component(componentRWs.size(), 1.0);
+  if(dumpComponents)
+  {
+    for(size_t k = 0; k < componentRWs.size(); ++k)
+    {
+      const std::string bname = "w_" + componentRWs[k]->GetName();
+      out->Branch(bname.c_str(), &w_component[k]);
+    }
+  }
+
+  // Per-systematic-universe weight dump (UQ Stage-1 #7). Build the branch
+  // table once before the loop; uniWeights storage is sized + reserved
+  // up front so the addresses we hand to TBranch::Branch stay valid.
+  const auto uniAllow = ParseUniverseAllowlist(getenv("MNV101_DUMP_UNIVERSES"));
+  std::vector<UniverseBranchInfo> uniBranches;
+  std::vector<double> uniWeights;
+  std::vector<double> uniLatPT;     // parallel to uniBranches; unused (NaN) for vertical entries
+  std::vector<double> uniLatPZ;
+  std::vector<double> uniLatQ3;     // shifted truth q3 for lateral universes
+  std::vector<double> uniLatW;      // shifted truth W for lateral universes
+  size_t nLateral = 0;
+  const bool dumpUniverses = (getenv("MNV101_DUMP_UNIVERSES") != nullptr) &&
+                             (truthBands != nullptr);
+  if(dumpUniverses)
+  {
+    uniBranches = BuildUniverseBranchTable(
+        *truthBands, "truth", UniverseKineContext::TruthTree,
+        uniAllow.first, uniAllow.second);
+    uniWeights.assign(uniBranches.size(), 1.0);
+    uniLatPT.assign(uniBranches.size(), 0.0);
+    uniLatPZ.assign(uniBranches.size(), 0.0);
+    uniLatQ3.assign(uniBranches.size(), 0.0);
+    uniLatW.assign(uniBranches.size(), 0.0);
+    for(size_t k = 0; k < uniBranches.size(); ++k)
+    {
+      out->Branch(uniBranches[k].branchName.c_str(), &uniWeights[k]);
+      if(uniBranches[k].isLateral)
+      {
+        out->Branch(uniBranches[k].ptBranchName.c_str(), &uniLatPT[k]);
+        out->Branch(uniBranches[k].pzBranchName.c_str(), &uniLatPZ[k]);
+        out->Branch(uniBranches[k].q3BranchName.c_str(), &uniLatQ3[k]);
+        out->Branch(uniBranches[k].wBranchName.c_str(), &uniLatW[k]);
+        ++nLateral;
+      }
+    }
+    std::cout << "  Universe-weight dump enabled: "
+              << uniBranches.size() << " (band,idx) branches written to "
+              << out->GetName() << " ("
+              << nLateral << " lateral with shifted pT/pz).\n";
+  }
+
+  std::cout << "Starting unbinned MC truth-denom loop (Truth tree)...\n";
+  if(outTruthDenomIDs)
+    std::cout << "  (collecting truth-denom event IDs for reco-loop gating)\n";
+  const int nEntries = truth->GetEntries();
+
+  // Dedupe on (mc_run, mc_subrun, mc_nthEvtInFile). MEFHC playlist 1E file
+  // run00111353 contains 1,102 truth events written twice with identical
+  // IDs (upstream AnaTuple double-fill). Without this dedupe the
+  // efficiency denominator is over-counted and Phase-18's by-construction
+  // mc_signal_reco==mc_truth_denom identity is broken (98-entry deficit
+  // observed pre-fix).
+  std::unordered_set<uint64_t> seenKeys;
+  std::unordered_set<uint64_t> seenMigrationKeys;
+  long nDupSkipped = 0;
+
+  for(int i = 0; i < nEntries; ++i)
+  {
+    if(i % 10000 == 0) std::cout << i << " / " << nEntries << "\r" << std::flush;
+
+    // Truth mode + Truth tree entry
+    CVUniverse::SetTruth(true);
+
+    MichelEvent evt; // only to keep Model happy
+    truthCV->SetEntry(i);
+    model.SetEntry(*truthCV, evt);
+
+    const double w_cv = model.GetWeight(*truthCV, evt);
+
+    const int key_run    = truthCV->GetInt("mc_run");
+    const int key_subrun = truthCV->GetInt("mc_subrun");
+    const int key_nth    = truthCV->GetInt("mc_nthEvtInFile");
+    const uint64_t key = makeEventKey(key_run, key_subrun, key_nth);
+    // In active-universe mode, census selection migrations against CV on the
+    // same Truth-tree entry. Count each upstream event key once, independent
+    // of whether it passes either selection.
+    const bool activePassesTruth = michelcuts.isEfficiencyDenom(*truthCV, w_cv);
+    if(comparisonCV != nullptr && migrationCounts != nullptr &&
+       seenMigrationKeys.insert(key).second)
+    {
+      comparisonCV->SetEntry(i);
+      MichelEvent cvEvt;
+      model.SetEntry(*comparisonCV, cvEvt);
+      const double comparisonWeight = model.GetWeight(*comparisonCV, cvEvt);
+      const bool cvPassesTruth =
+          michelcuts.isEfficiencyDenom(*comparisonCV, comparisonWeight);
+      if(activePassesTruth && !cvPassesTruth) ++migrationCounts->truthEntrants;
+      if(!activePassesTruth && cvPassesTruth) ++migrationCounts->truthExits;
+      truthCV->SetEntry(i);
+      model.SetEntry(*truthCV, evt);
+    }
+
+    // Use the SAME isEfficiencyDenom logic as the old code (Truth tree context)
+    if(gG1 && !activePassesTruth)
+    {
+      ++gG1->nTruthFail;
+      const int m = gG1->mask(*truthCV);
+      if((m & 0x0C) == 0x0C)  // fiducial (ZRange && Apothem) on the truth tree
+      {
+        if(gG1->truthFiducialFail.emplace(key, m).second) ++gG1->nTruthFidFailStored;
+        else ++gG1->nTruthFidFailDupKey;
+      }
+    }
+    if(!activePassesTruth) continue;
+
+    if(!seenKeys.insert(key).second)
+    {
+      ++nDupSkipped;
+      continue;
+    }
+
+    MC = truthCV->GetMuonPTTrue();      // truth p_T (GeV/c)
+    MC_pz = truthCV->GetMuonPzTrue();   // truth p_|| (GeV/c)
+    MC_eavail = truthCV->GetEAvailableTrue() / 1000.0;  // MeV -> GeV
+    MC_q3 = truthCV->Getq3True() / 1000.0;              // MeV -> GeV
+    MC_W = truthCV->GetTrueExperimentersW() / 1000.0;   // MeV -> GeV
+    MC_nproton = truthCV->GetNProtonsTrue();
+    MC_npip = truthCV->GetNChargedPionsTrue();
+    MC_hadangle = truthCV->GetHadronAngleTrue();
+    w_truth = model.GetWeight(*truthCV, evt);
+    if(dumpComponents)
+    {
+      for(size_t k = 0; k < componentRWs.size(); ++k)
+        w_component[k] = componentRWs[k]->GetWeight(*truthCV, evt);
+    }
+    if(dumpUniverses)
+    {
+      for(size_t k = 0; k < uniBranches.size(); ++k)
+      {
+        CVUniverse* u = uniBranches[k].univ;
+        u->SetEntry(i);
+        MichelEvent uEvt;
+        model.SetEntry(*u, uEvt);
+        uniWeights[k] = model.GetWeight(*u, uEvt);
+        if(uniBranches[k].isLateral)
+        {
+          uniLatPT[k] = u->GetMuonPTTrue();
+          uniLatPZ[k] = u->GetMuonPzTrue();
+          uniLatQ3[k] = u->Getq3True() / 1000.0;  // MeV -> GeV (truth q3)
+          uniLatW[k]  = u->GetTrueExperimentersW() / 1000.0;  // MeV -> GeV (truth W)
+        }
+      }
+      // Restore CV state so any subsequent code in this iteration
+      // (or the next loop pass) sees the CV-side model context.
+      truthCV->SetEntry(i);
+      model.SetEntry(*truthCV, evt);
+    }
+
+    // Full-event (G2) truth-side fill. Truth mode (SetTruth(true) at loop top);
+    // truth-only quantities only. Identity is captured unconditionally; the
+    // muon/vertex are only meaningful when the branches exist (dumpPointcloud).
+    id_run = key_run; id_subrun = key_subrun; id_nth = key_nth;
+    if(dumpPointcloud)
+    {
+      const TruthMuonKin tk = GetTruthMuonKin(truthCV);
+      mu_true_px = tk.px; mu_true_py = tk.py; mu_true_pz = tk.pz;
+      mu_true_E  = tk.E;  mu_true_phi = tk.phi;
+      const ROOT::Math::XYZTVector tv = truthCV->GetTrueVertex();
+      vtx_true_x = tv.X(); vtx_true_y = tv.Y(); vtx_true_z = tv.Z();
+    }
+
+    out->Fill();
+
+    if(outTruthDenomIDs) outTruthDenomIDs->insert(key);
+    if(outTruthDenomCache)
+    {
+      TruthDenomEntry tde{MC, MC_pz, MC_eavail, MC_q3, MC_W,
+                          MC_nproton, MC_npip, MC_hadangle, w_truth, key};
+      // Full-event (G2): cache identity + truth muon/vertex so a truth-only miss
+      // row (AppendTruthOnlyMisses) carries its real truth identity/features.
+      tde.id_run = key_run; tde.id_subrun = key_subrun; tde.id_nth = key_nth;
+      if(dumpPointcloud)
+      {
+        tde.mu_true_px = mu_true_px; tde.mu_true_py = mu_true_py;
+        tde.mu_true_pz = mu_true_pz; tde.mu_true_E  = mu_true_E;
+        tde.mu_true_phi = mu_true_phi;
+        tde.vtx_true_x = vtx_true_x; tde.vtx_true_y = vtx_true_y;
+        tde.vtx_true_z = vtx_true_z;
+        // Same accessor the signal loop uses (line ~916), so a miss-row cloud
+        // is constructed identically to an accepted-row cloud. Narrow to float
+        // for the cache; AppendTruthOnlyMisses widens back to double for the
+        // vector<double> branches.
+        std::vector<double> cE, cpx, cpy, cpz;
+        std::vector<int>    cpdg;
+        truthCV->GetTruthFSHadrons(cE, cpx, cpy, cpz, cpdg);
+        tde.pg_E.assign(cE.begin(), cE.end());
+        tde.pg_px.assign(cpx.begin(), cpx.end());
+        tde.pg_py.assign(cpy.begin(), cpy.end());
+        tde.pg_pz.assign(cpz.begin(), cpz.end());
+        tde.pg_pdg = std::move(cpdg);
+      }
+      outTruthDenomCache->push_back(std::move(tde));
+    }
+  }
+
+  std::cout << "Finished unbinned MC truth-denom loop.\n";
+  if(nDupSkipped > 0)
+    std::cout << "  WARN: skipped " << nDupSkipped
+              << " duplicate-key truth entries (upstream AnaTuple double-fill).\n";
+  if(outTruthDenomIDs)
+    std::cout << "  Captured " << outTruthDenomIDs->size()
+              << " unique event IDs from mc_truth_denom.\n";
+}
+
+// Append a miss entry to mc_signal_reco for every truth_denom event whose
+// (mc_run, mc_subrun, mc_nthEvtInFile) key is NOT in recoIDs. Replaces the
+// Phase-17 inline miss-append in LoopAndFillUnbinnedMCTruthDenom — moved out
+// so the reco loop can run AFTER the truth-denom loop (Phase 18). The cache
+// is built during the truth-denom pass so this function does not re-read the
+// truth tree.
+long AppendTruthOnlyMisses(
+    TTree* sigOut,
+    const std::vector<TruthDenomEntry>& truthDenomCache,
+    const std::unordered_set<uint64_t>& recoIDs)
+{
+  double miss_sim = 0.0, miss_sim_pz = 0.0, miss_sim_eavail = 0.0, miss_sim_q3 = 0.0, miss_sim_W = 0.0, miss_w_reco = 1.0;
+  double miss_MC = 0.0, miss_MC_pz = 0.0, miss_MC_eavail = 0.0, miss_MC_q3 = 0.0, miss_MC_W = 0.0, miss_w_truth = 1.0;
+  int    miss_MC_nproton = 0, miss_MC_npip = 0;
+  double miss_MC_hadangle = 0.0;
+  UChar_t miss_sim_pass = 0;
+
+  // Full-event (G2) miss-row buffers. Reco muon/vertex are SENTINELS held
+  // constant across all misses (a native miss has no reconstructed muon/vertex),
+  // exactly mirroring miss_sim = -9999 below. Truth muon/vertex + identity are
+  // overwritten per miss from the truth-denom cache. These are bound only when
+  // the full-event branches exist (havePointcloud) -- see below.
+  double miss_mu_reco_px = -9999.0, miss_mu_reco_py = -9999.0, miss_mu_reco_pz = -9999.0,
+         miss_mu_reco_E = -9999.0, miss_mu_reco_phi = -9999.0, miss_mu_reco_qp = -9999.0;
+  UChar_t miss_mu_reco_minos_ok = 0;
+  double miss_vtx_reco_x = -9999.0, miss_vtx_reco_y = -9999.0, miss_vtx_reco_z = -9999.0;
+  double miss_mu_true_px = 0.0, miss_mu_true_py = 0.0, miss_mu_true_pz = 0.0,
+         miss_mu_true_E = 0.0, miss_mu_true_phi = 0.0;
+  double miss_vtx_true_x = 0.0, miss_vtx_true_y = 0.0, miss_vtx_true_z = 0.0;
+  int    miss_id_run = 0, miss_id_subrun = 0, miss_id_nth = 0;
+
+  sigOut->SetBranchAddress("sim",        &miss_sim);
+  sigOut->SetBranchAddress("sim_pz",     &miss_sim_pz);
+  sigOut->SetBranchAddress("sim_eavail", &miss_sim_eavail);
+  sigOut->SetBranchAddress("sim_q3",     &miss_sim_q3);
+  sigOut->SetBranchAddress("sim_W",      &miss_sim_W);
+  sigOut->SetBranchAddress("sim_pass",   &miss_sim_pass);
+  sigOut->SetBranchAddress("w_reco",     &miss_w_reco);
+  sigOut->SetBranchAddress("MC",         &miss_MC);
+  sigOut->SetBranchAddress("MC_pz",      &miss_MC_pz);
+  sigOut->SetBranchAddress("MC_eavail",  &miss_MC_eavail);
+  sigOut->SetBranchAddress("MC_q3",      &miss_MC_q3);
+  sigOut->SetBranchAddress("MC_W",       &miss_MC_W);
+  sigOut->SetBranchAddress("MC_nproton", &miss_MC_nproton);
+  sigOut->SetBranchAddress("MC_npip",    &miss_MC_npip);
+  sigOut->SetBranchAddress("MC_hadangle",&miss_MC_hadangle);
+  sigOut->SetBranchAddress("w_truth",    &miss_w_truth);
+
+  // Phase 3: if the point-cloud branches exist (signal loop dumped them), rebind
+  // them to local vectors for the miss entries. Their addresses currently
+  // dangle (the signal loop's locals went out of scope), so a bare Fill() would
+  // read freed memory and segfault. The TRUTH cloud (part_gen_*) is filled
+  // per-row from the truth-denom cache below (a truth-only miss is a truth-pass
+  // event whose generator-level hadrons exist); the RECO cloud (part_reco_*)
+  // stays empty -- a miss genuinely has no reco clusters. (Cloud-coverage fix;
+  // see nd-unfolding/pet/CLOUD_COVERAGE_FIX_PLAN.md.)
+  std::vector<double> e_gen_E, e_gen_px, e_gen_py, e_gen_pz;
+  std::vector<int>    e_gen_pdg;
+  std::vector<double> e_reco_E, e_reco_pos, e_reco_z;
+  // Full-event (G2): the reco recoil cloud gains parallel view/time vectors.
+  // They stay EMPTY on a native miss (no reco clusters), exactly like the
+  // reco E/pos/z vectors above.
+  std::vector<int>    e_reco_view;
+  std::vector<double> e_reco_time;
+  // Object/vector branches must be rebound via pointer-TO-pointer (vector<T>**),
+  // unlike scalar branches. These pointers must stay alive until the Fill loop ends.
+  std::vector<double>* p_gen_E = &e_gen_E;  std::vector<double>* p_gen_px = &e_gen_px;
+  std::vector<double>* p_gen_py = &e_gen_py; std::vector<double>* p_gen_pz = &e_gen_pz;
+  std::vector<int>*    p_gen_pdg = &e_gen_pdg;
+  std::vector<double>* p_reco_E = &e_reco_E; std::vector<double>* p_reco_pos = &e_reco_pos;
+  std::vector<double>* p_reco_z = &e_reco_z;
+  std::vector<int>*    p_reco_view = &e_reco_view;
+  std::vector<double>* p_reco_time = &e_reco_time;
+  const bool havePointcloud = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr &&
+                               sigOut->GetBranch("part_gen_E") != nullptr);
+  if(havePointcloud)
+  {
+    sigOut->SetBranchAddress("part_gen_E",   &p_gen_E);
+    sigOut->SetBranchAddress("part_gen_px",  &p_gen_px);
+    sigOut->SetBranchAddress("part_gen_py",  &p_gen_py);
+    sigOut->SetBranchAddress("part_gen_pz",  &p_gen_pz);
+    sigOut->SetBranchAddress("part_gen_pdg", &p_gen_pdg);
+    sigOut->SetBranchAddress("part_reco_E",   &p_reco_E);
+    sigOut->SetBranchAddress("part_reco_pos", &p_reco_pos);
+    sigOut->SetBranchAddress("part_reco_z",   &p_reco_z);
+    sigOut->SetBranchAddress("part_reco_view", &p_reco_view);
+    sigOut->SetBranchAddress("part_reco_time", &p_reco_time);
+    // Reco muon/vertex sentinels (constant across misses).
+    sigOut->SetBranchAddress("mu_reco_px",  &miss_mu_reco_px);
+    sigOut->SetBranchAddress("mu_reco_py",  &miss_mu_reco_py);
+    sigOut->SetBranchAddress("mu_reco_pz",  &miss_mu_reco_pz);
+    sigOut->SetBranchAddress("mu_reco_E",   &miss_mu_reco_E);
+    sigOut->SetBranchAddress("mu_reco_phi", &miss_mu_reco_phi);
+    sigOut->SetBranchAddress("mu_reco_qp",  &miss_mu_reco_qp);
+    sigOut->SetBranchAddress("mu_reco_minos_ok", &miss_mu_reco_minos_ok);
+    sigOut->SetBranchAddress("vtx_reco_x",  &miss_vtx_reco_x);
+    sigOut->SetBranchAddress("vtx_reco_y",  &miss_vtx_reco_y);
+    sigOut->SetBranchAddress("vtx_reco_z",  &miss_vtx_reco_z);
+    // Truth muon/vertex + identity (overwritten per miss from the cache).
+    sigOut->SetBranchAddress("mu_true_px",  &miss_mu_true_px);
+    sigOut->SetBranchAddress("mu_true_py",  &miss_mu_true_py);
+    sigOut->SetBranchAddress("mu_true_pz",  &miss_mu_true_pz);
+    sigOut->SetBranchAddress("mu_true_E",   &miss_mu_true_E);
+    sigOut->SetBranchAddress("mu_true_phi", &miss_mu_true_phi);
+    sigOut->SetBranchAddress("vtx_true_x",  &miss_vtx_true_x);
+    sigOut->SetBranchAddress("vtx_true_y",  &miss_vtx_true_y);
+    sigOut->SetBranchAddress("vtx_true_z",  &miss_vtx_true_z);
+    sigOut->SetBranchAddress("mc_run",          &miss_id_run);
+    sigOut->SetBranchAddress("mc_subrun",       &miss_id_subrun);
+    sigOut->SetBranchAddress("mc_nthEvtInFile", &miss_id_nth);
+  }
+
+  // KNOWN_ISSUES #12: every OTHER branch on sigOut (the per-universe weight and
+  // shifted-kinematics branches written by the signal loop when
+  // MNV101_DUMP_UNIVERSES is set) also dangles here -- the signal loop's local
+  // buffers went out of scope, so pre-fix dumps wrote uninitialized memory into
+  // all universe branches of every miss entry (12.35M rows, 37.6% of the 5D
+  // MEFHC tree; verified empirically 2026-06-10). Rebind them to deterministic
+  // CV proxies: universe weights := tde.w_truth (the same proxy the CV w_reco
+  // uses for misses), truth-mode shifted kinematics := the CV truth values,
+  // reco-mode shifted kinematics := -9999 (a miss has no reco). This makes a
+  // miss carry NO per-universe variation in the dump -- exact for detector
+  // bands (truth untouched); consumers needing true VERTICAL miss variation
+  // must take it from mc_truth_denom, whose universe branches are filled
+  // correctly by the truth loop.
+  enum class MissCat { WTruth, WReco, KinePT, KinePZ, KineQ3, KineW, SimKine, Other };
+  std::vector<double> uniMissBuf;
+  std::vector<std::pair<size_t, MissCat>> uniMissSlots;  // (buffer slot, category)
+  {
+    const std::set<std::string> explicitNames = {
+        "sim", "sim_pz", "sim_eavail", "sim_q3", "sim_W", "sim_pass", "w_reco",
+        "MC", "MC_pz", "MC_eavail", "MC_q3", "MC_W", "MC_nproton", "MC_npip",
+        "MC_hadangle", "w_truth", "part_gen_E", "part_gen_px", "part_gen_py",
+        "part_gen_pz", "part_gen_pdg", "part_reco_E", "part_reco_pos", "part_reco_z",
+        // Full-event (G2) branches are explicitly bound above -- exclude them
+        // from the generic dangling-universe-branch rebind (KNOWN_ISSUES #12) so
+        // it can never override their sentinel/cache values.
+        "part_reco_view", "part_reco_time",
+        "mu_reco_px", "mu_reco_py", "mu_reco_pz", "mu_reco_E", "mu_reco_phi",
+        "mu_reco_qp", "mu_reco_minos_ok", "vtx_reco_x", "vtx_reco_y", "vtx_reco_z",
+        "mu_true_px", "mu_true_py", "mu_true_pz", "mu_true_E", "mu_true_phi",
+        "vtx_true_x", "vtx_true_y", "vtx_true_z",
+        "mc_run", "mc_subrun", "mc_nthEvtInFile"};
+    TObjArray* brs = sigOut->GetListOfBranches();
+    std::vector<std::pair<std::string, MissCat>> pending;
+    for(int bi = 0; bi < brs->GetEntriesFast(); ++bi)
+    {
+      const std::string nm = brs->At(bi)->GetName();
+      if(explicitNames.count(nm)) continue;
+      MissCat cat = MissCat::Other;
+      auto startsWith = [&nm](const char* p){ return nm.rfind(p, 0) == 0; };
+      if(startsWith("w_truth_"))      cat = MissCat::WTruth;
+      else if(startsWith("w_reco_"))  cat = MissCat::WReco;
+      else if(startsWith("sim_"))     cat = MissCat::SimKine;
+      else if(startsWith("MC_pz_"))   cat = MissCat::KinePZ;
+      else if(startsWith("MC_q3_"))   cat = MissCat::KineQ3;
+      else if(startsWith("MC_W_"))    cat = MissCat::KineW;
+      else if(startsWith("MC_"))      cat = MissCat::KinePT;  // MC_<band>_<idx>
+      pending.emplace_back(nm, cat);
+    }
+    // Reserve BEFORE binding: reallocation would invalidate bound addresses.
+    uniMissBuf.assign(pending.size(), 0.0);
+    for(size_t k = 0; k < pending.size(); ++k)
+    {
+      sigOut->SetBranchAddress(pending[k].first.c_str(), &uniMissBuf[k]);
+      uniMissSlots.emplace_back(k, pending[k].second);
+      if(pending[k].second == MissCat::SimKine) uniMissBuf[k] = -9999.0;
+    }
+    if(!pending.empty())
+      std::cout << "  Miss-append: rebound " << pending.size()
+                << " universe branches to CV proxies (KNOWN_ISSUES #12 fix).\n";
+  }
+
+  long nTruthOnlyMisses = 0;
+  for(const auto& tde : truthDenomCache)
+  {
+    if(recoIDs.find(tde.key) == recoIDs.end())
+    {
+      for(const auto& slot : uniMissSlots)
+      {
+        switch(slot.second)
+        {
+          case MissCat::WTruth:  uniMissBuf[slot.first] = tde.w_truth; break;
+          case MissCat::WReco:   uniMissBuf[slot.first] = tde.w_truth; break;
+          case MissCat::KinePT:  uniMissBuf[slot.first] = tde.MC;      break;
+          case MissCat::KinePZ:  uniMissBuf[slot.first] = tde.MC_pz;   break;
+          case MissCat::KineQ3:  uniMissBuf[slot.first] = tde.MC_q3;   break;
+          case MissCat::KineW:   uniMissBuf[slot.first] = tde.MC_W;    break;
+          case MissCat::SimKine: /* stays -9999 */                     break;
+          case MissCat::Other:   /* stays 0 */                         break;
+        }
+      }
+      miss_MC        = tde.MC;
+      miss_MC_pz     = tde.MC_pz;
+      miss_MC_eavail = tde.MC_eavail;
+      miss_MC_q3     = tde.MC_q3;
+      miss_MC_W      = tde.MC_W;
+      miss_MC_nproton  = tde.MC_nproton;
+      miss_MC_npip     = tde.MC_npip;
+      miss_MC_hadangle = tde.MC_hadangle;
+      miss_w_truth   = tde.w_truth;
+      miss_sim        = -9999.0;
+      miss_sim_pz     = -9999.0;
+      miss_sim_eavail = -9999.0;
+      miss_sim_q3     = -9999.0;
+      miss_sim_W      = -9999.0;
+      miss_sim_pass = 0;            // false: this is a miss (no reco)
+      miss_w_reco   = tde.w_truth;  // proxy; w_reco unused for sim_pass=false
+      if(havePointcloud)
+      {
+        // Give the miss row its real generator-level cloud (cached in the
+        // truth-denom loop). Mutate the bound vectors in place; p_gen_* still
+        // point at them. Widen the float cache back to the double branches.
+        // part_reco_*/view/time deliberately left empty -- a miss has no reco
+        // clusters (e_reco_* are never assigned, so they Fill as empty vectors).
+        e_gen_E.assign(tde.pg_E.begin(), tde.pg_E.end());
+        e_gen_px.assign(tde.pg_px.begin(), tde.pg_px.end());
+        e_gen_py.assign(tde.pg_py.begin(), tde.pg_py.end());
+        e_gen_pz.assign(tde.pg_pz.begin(), tde.pg_pz.end());
+        e_gen_pdg = tde.pg_pdg;
+        // Truth muon/vertex from the cache; reco muon/vertex stay at their
+        // constant -9999 sentinels (a miss has no reconstructed muon/vertex).
+        miss_mu_true_px = tde.mu_true_px; miss_mu_true_py = tde.mu_true_py;
+        miss_mu_true_pz = tde.mu_true_pz; miss_mu_true_E  = tde.mu_true_E;
+        miss_mu_true_phi = tde.mu_true_phi;
+        miss_vtx_true_x = tde.vtx_true_x; miss_vtx_true_y = tde.vtx_true_y;
+        miss_vtx_true_z = tde.vtx_true_z;
+        miss_id_run = tde.id_run; miss_id_subrun = tde.id_subrun;
+        miss_id_nth = tde.id_nth;
+      }
+      sigOut->Fill();
+      ++nTruthOnlyMisses;
+    }
+  }
+  std::cout << "  Appended " << nTruthOnlyMisses
+            << " truth-only miss entries to mc_signal_reco.\n";
+  return nTruthOnlyMisses;
+}
+
+// Selected signal reco: loop reco MC tree in reco-mode and fill reco pTmu + weight.
+//
+// When outRecoIDs is non-null, also populates it with
+// (mc_run, mc_subrun, mc_nthEvtInFile) keys for every event written to out.
+// AppendTruthOnlyMisses() then uses this set to identify truth-pass events
+// that have no reco-tree counterpart and append them as miss entries — see
+// LoopAndFillUnbinnedMCTruthDenom and Phase 17 in 2D_OMNIFOLD_RUN_LOG.md.
+//
+// Phase 18: when truthDenomIDs is non-null, fills are gated on membership
+// in that set. This makes the truth-tree's `isEfficiencyDenom` evaluation
+// authoritative — reco-tree entries that pass `recoCV.isEfficiencyDenom`
+// but whose corresponding truth-tree entry fails the same cut (~1.8% of
+// events, driven by mc_primFSLepton differing between trees when reco
+// matched a secondary muon) are dropped. With the gate, the captured
+// reco-ID set is a strict subset of truth_denom IDs, c_global lands at
+// 1.000, and the Python c-division becomes a true no-op. See Phase 18 in
+// 2D_OMNIFOLD_STUDY_STATUS.md.
+void LoopAndFillUnbinnedMCSelectedSignalReco(
+    PlotUtils::ChainWrapper* reco,
+    CVUniverse* recoCV,
+    PlotUtils::Cutter<CVUniverse, MichelEvent>& michelcuts,
+    PlotUtils::Model<CVUniverse, MichelEvent>& model,
+    TTree* out,
+    std::unordered_set<uint64_t>* outRecoIDs = nullptr,
+    const std::unordered_set<uint64_t>* truthDenomIDs = nullptr,
+    const std::map<std::string, std::vector<CVUniverse*>>* errorBands = nullptr,
+    CVUniverse* comparisonCV = nullptr,
+    ActiveUniverseMigrationCounts* migrationCounts = nullptr)
+{
+  double sim = 0.0;
+  double sim_pz = 0.0;
+  double sim_eavail = 0.0;
+  double sim_q3 = 0.0;
+  double sim_W = 0.0;
+  UChar_t sim_pass = true;
+  double w_reco = 1.0;
+  double MC = 0.0;
+  double MC_pz = 0.0;
+  double MC_eavail = 0.0;
+  double MC_q3 = 0.0;
+  double MC_W = 0.0;
+  int    MC_nproton = 0;
+  int    MC_npip = 0;
+  double MC_hadangle = 0.0;
+  double w_truth = 1.0;
+
+  out->Branch("sim", &sim);
+  out->Branch("sim_pz", &sim_pz);
+  out->Branch("sim_eavail", &sim_eavail);   // reco available energy (GeV)
+  out->Branch("sim_q3", &sim_q3);           // reco 3-momentum transfer (GeV)
+  out->Branch("sim_W", &sim_W);             // reco hadronic invariant mass (GeV)
+  out->Branch("sim_pass", &sim_pass);
+  out->Branch("w_reco", &w_reco);
+  out->Branch("MC", &MC);
+  out->Branch("MC_pz", &MC_pz);
+  out->Branch("MC_eavail", &MC_eavail);     // truth available energy (GeV)
+  out->Branch("MC_q3", &MC_q3);             // truth 3-momentum transfer (GeV)
+  out->Branch("MC_W", &MC_W);               // truth hadronic invariant mass (GeV)
+  out->Branch("MC_nproton", &MC_nproton);   // truth proton multiplicity (KE>110 MeV)
+  out->Branch("MC_npip", &MC_npip);         // truth charged-pion multiplicity
+  out->Branch("MC_hadangle", &MC_hadangle); // truth hadronic-system angle (rad)
+  out->Branch("w_truth", &w_truth);
+
+  // Phase 3 point-cloud dump (gated, MNV101_DUMP_POINTCLOUD): per-event
+  // variable-length truth FS-hadron + reco-cluster vectors for the PET track.
+  // Off by default so the canonical / q3 / universe omnifiles stay lean.
+  const bool dumpPC = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
+  std::vector<double> pc_gen_E, pc_gen_px, pc_gen_py, pc_gen_pz;
+  std::vector<int>    pc_gen_pdg;
+  std::vector<double> pc_reco_E, pc_reco_pos, pc_reco_z;
+  // Full-event (G2) reco recoil-cloud view/timing (parallel to E/pos/z) and the
+  // distinguished reco+truth muon objects, reco+true vertices, MC identity.
+  std::vector<int>    pc_reco_view;
+  std::vector<double> pc_reco_time;
+  double mu_reco_px = 0.0, mu_reco_py = 0.0, mu_reco_pz = 0.0,
+         mu_reco_E = 0.0, mu_reco_phi = 0.0, mu_reco_qp = 0.0;
+  UChar_t mu_reco_minos_ok = 0;
+  double vtx_reco_x = 0.0, vtx_reco_y = 0.0, vtx_reco_z = 0.0;
+  double mu_true_px = 0.0, mu_true_py = 0.0, mu_true_pz = 0.0,
+         mu_true_E = 0.0, mu_true_phi = 0.0;
+  double vtx_true_x = 0.0, vtx_true_y = 0.0, vtx_true_z = 0.0;
+  int    id_run = 0, id_subrun = 0, id_nth = 0;
+  if(dumpPC){
+    out->Branch("part_gen_E",   &pc_gen_E);
+    out->Branch("part_gen_px",  &pc_gen_px);
+    out->Branch("part_gen_py",  &pc_gen_py);
+    out->Branch("part_gen_pz",  &pc_gen_pz);
+    out->Branch("part_gen_pdg", &pc_gen_pdg);
+    out->Branch("part_reco_E",   &pc_reco_E);
+    out->Branch("part_reco_pos", &pc_reco_pos);
+    out->Branch("part_reco_z",   &pc_reco_z);
+    out->Branch("part_reco_view", &pc_reco_view);  // 1=X,2=U,3=V per recoil token
+    out->Branch("part_reco_time", &pc_reco_time);  // per recoil token (tuple ns)
+    // Reco muon object (step-1 detector; data/MC identical definitions). Sentinel
+    // -9999 on !pass_reco rows, exactly like sim/sim_pz above.
+    out->Branch("mu_reco_px",  &mu_reco_px);   // MeV
+    out->Branch("mu_reco_py",  &mu_reco_py);   // MeV
+    out->Branch("mu_reco_pz",  &mu_reco_pz);   // MeV
+    out->Branch("mu_reco_E",   &mu_reco_E);    // MeV
+    out->Branch("mu_reco_phi", &mu_reco_phi);  // rad (beam frame)
+    out->Branch("mu_reco_qp",  &mu_reco_qp);   // signed charge/momentum, MINOS trk (q sign; |1/p|)
+    out->Branch("mu_reco_minos_ok", &mu_reco_minos_ok);  // uint8 0/1 IsMinosMatchMuon
+    out->Branch("vtx_reco_x",  &vtx_reco_x);   // mm (reco vertex)
+    out->Branch("vtx_reco_y",  &vtx_reco_y);   // mm
+    out->Branch("vtx_reco_z",  &vtx_reco_z);   // mm
+    // Truth muon object (step-2 generator; truth-only, NO detector counterpart).
+    out->Branch("mu_true_px",  &mu_true_px);   // MeV (beam frame)
+    out->Branch("mu_true_py",  &mu_true_py);   // MeV
+    out->Branch("mu_true_pz",  &mu_true_pz);   // MeV
+    out->Branch("mu_true_E",   &mu_true_E);    // MeV
+    out->Branch("mu_true_phi", &mu_true_phi);  // rad (beam frame)
+    out->Branch("vtx_true_x",  &vtx_true_x);   // mm (true vertex)
+    out->Branch("vtx_true_y",  &vtx_true_y);   // mm
+    out->Branch("vtx_true_z",  &vtx_true_z);   // mm
+    out->Branch("mc_run",           &id_run);          // MC event identity
+    out->Branch("mc_subrun",        &id_subrun);
+    out->Branch("mc_nthEvtInFile",  &id_nth);
+  }
+
+  // Per-systematic-universe weight dump (UQ Stage-1 #7). Builds two
+  // parallel branch tables — one for truth-mode weights, one for
+  // reco-mode weights — over the same (band, idx) universes from
+  // errorBands. The MNV101_DUMP_UNIVERSES allowlist applies to both;
+  // each event evaluates 2*N_universes extra model.GetWeight() calls.
+  const auto uniAllow = ParseUniverseAllowlist(getenv("MNV101_DUMP_UNIVERSES"));
+  std::vector<UniverseBranchInfo> uniTruthBranches;
+  std::vector<UniverseBranchInfo> uniRecoBranches;
+  std::vector<double> uniTruthWeights;
+  std::vector<double> uniRecoWeights;
+  // Lateral kinematic shadow arrays, parallel to the branch tables.
+  // For truth-mode entries we dump universe-shifted truth pT/pz as
+  // MC_<band>_<idx>/MC_pz_<band>_<idx>; for reco-mode entries we dump
+  // universe-shifted reco pT/pz as sim_<band>_<idx>/sim_pz_<band>_<idx>.
+  std::vector<double> uniTruthLatPT, uniTruthLatPZ, uniTruthLatQ3, uniTruthLatW;
+  std::vector<double> uniRecoLatPT,  uniRecoLatPZ,  uniRecoLatQ3,  uniRecoLatW;
+  size_t nLatTruth = 0, nLatReco = 0;
+  const bool dumpUniverses = (getenv("MNV101_DUMP_UNIVERSES") != nullptr) &&
+                             (errorBands != nullptr);
+  if(dumpUniverses)
+  {
+    uniTruthBranches = BuildUniverseBranchTable(
+        *errorBands, "truth", UniverseKineContext::RecoTreeTruth,
+        uniAllow.first, uniAllow.second);
+    uniRecoBranches = BuildUniverseBranchTable(
+        *errorBands, "reco", UniverseKineContext::RecoTreeReco,
+        uniAllow.first, uniAllow.second);
+    uniTruthWeights.assign(uniTruthBranches.size(), 1.0);
+    uniRecoWeights.assign(uniRecoBranches.size(),  1.0);
+    uniTruthLatPT.assign(uniTruthBranches.size(),  0.0);
+    uniTruthLatPZ.assign(uniTruthBranches.size(),  0.0);
+    uniTruthLatQ3.assign(uniTruthBranches.size(),  0.0);
+    uniTruthLatW.assign(uniTruthBranches.size(),   0.0);
+    uniRecoLatPT.assign(uniRecoBranches.size(),    0.0);
+    uniRecoLatPZ.assign(uniRecoBranches.size(),    0.0);
+    uniRecoLatQ3.assign(uniRecoBranches.size(),    0.0);
+    uniRecoLatW.assign(uniRecoBranches.size(),     0.0);
+    for(size_t k = 0; k < uniTruthBranches.size(); ++k)
+    {
+      out->Branch(uniTruthBranches[k].branchName.c_str(), &uniTruthWeights[k]);
+      if(uniTruthBranches[k].isLateral)
+      {
+        out->Branch(uniTruthBranches[k].ptBranchName.c_str(), &uniTruthLatPT[k]);
+        out->Branch(uniTruthBranches[k].pzBranchName.c_str(), &uniTruthLatPZ[k]);
+        out->Branch(uniTruthBranches[k].q3BranchName.c_str(), &uniTruthLatQ3[k]);
+        out->Branch(uniTruthBranches[k].wBranchName.c_str(),  &uniTruthLatW[k]);
+        ++nLatTruth;
+      }
+    }
+    for(size_t k = 0; k < uniRecoBranches.size(); ++k)
+    {
+      out->Branch(uniRecoBranches[k].branchName.c_str(), &uniRecoWeights[k]);
+      if(uniRecoBranches[k].isLateral)
+      {
+        out->Branch(uniRecoBranches[k].ptBranchName.c_str(), &uniRecoLatPT[k]);
+        out->Branch(uniRecoBranches[k].pzBranchName.c_str(), &uniRecoLatPZ[k]);
+        out->Branch(uniRecoBranches[k].q3BranchName.c_str(), &uniRecoLatQ3[k]);
+        out->Branch(uniRecoBranches[k].wBranchName.c_str(),  &uniRecoLatW[k]);
+        ++nLatReco;
+      }
+    }
+    std::cout << "  Universe-weight dump enabled: "
+              << uniTruthBranches.size() << " truth-mode + "
+              << uniRecoBranches.size() << " reco-mode (band,idx) branches "
+              << "written to " << out->GetName() << " ("
+              << nLatTruth << " lateral truth + "
+              << nLatReco  << " lateral reco with shifted pT/pz).\n";
+  }
+
+  std::cout << "Starting unbinned MC selected-signal-reco loop (reco tree)...\n";
+  const int nEntries = reco->GetEntries();
+
+  // Phase 18.2: mirror the truth-denom dedupe (Phase 18.1) on the reco side.
+  // AnaTuple files such as run00111353_Playlist.root double-fill some events,
+  // so the same (mc_run, mc_subrun, mc_nthEvtInFile) key can appear twice on
+  // the reco tree too. Without this dedupe, mc_signal_reco picks up a small
+  // count surplus over mc_truth_denom (7 events at MEFHC scale = 0.2 ppm),
+  // which prevents `c` from landing at exactly 1 by construction.
+  std::unordered_set<uint64_t> seenRecoKeys;
+  std::unordered_set<uint64_t> seenMigrationKeys;
+  long nDupRecoSkipped = 0;
+
+  for(int i = 0; i < nEntries; ++i)
+  {
+    if(i % 10000 == 0) std::cout << i << " / " << nEntries << "\r" << std::flush;
+
+    // set entry
+    CVUniverse::SetTruth(false);
+    MichelEvent evt;
+    recoCV->SetEntry(i);
+    model.SetEntry(*recoCV, evt);
+    
+    // --- truth mode: determine signal + phase space + truth weight
+    CVUniverse::SetTruth(true);
+    const double w_truth_tmp = model.GetWeight(*recoCV, evt);
+    
+    const bool isSignalTruth = michelcuts.isSignal(*recoCV, w_truth_tmp);
+    const bool inPhaseSpace = michelcuts.isEfficiencyDenom(*recoCV, w_truth_tmp);
+    if(isSignalTruth)
+    {
+      MC      = recoCV->GetMuonPTTrue();   // truth p_T (GeV/c)
+      MC_pz   = recoCV->GetMuonPzTrue();  // truth p_|| (GeV/c)
+      MC_eavail = recoCV->GetEAvailableTrue() / 1000.0;  // MeV -> GeV
+      MC_q3   = recoCV->Getq3True() / 1000.0;            // MeV -> GeV
+      MC_W    = recoCV->GetTrueExperimentersW() / 1000.0; // MeV -> GeV
+      MC_nproton = recoCV->GetNProtonsTrue();
+      MC_npip = recoCV->GetNChargedPionsTrue();
+      MC_hadangle = recoCV->GetHadronAngleTrue();
+      w_truth = w_truth_tmp;
+    }
+
+    // --- reco mode: selection + reco weight + reco value
+    CVUniverse::SetTruth(false);
+    const double w_reco_tmp = model.GetWeight(*recoCV, evt);
+    const bool passesReco = michelcuts.isMCSelected(*recoCV, evt, w_reco_tmp).all();
+
+    if(comparisonCV != nullptr && migrationCounts != nullptr)
+    {
+      const uint64_t migrationKey = makeEventKey(
+          recoCV->GetInt("mc_run"), recoCV->GetInt("mc_subrun"),
+          recoCV->GetInt("mc_nthEvtInFile"));
+      if(seenMigrationKeys.insert(migrationKey).second)
+      {
+        comparisonCV->SetEntry(i);
+        MichelEvent cvEvt;
+        model.SetEntry(*comparisonCV, cvEvt);
+        const double comparisonWeight = model.GetWeight(*comparisonCV, cvEvt);
+        const bool cvPassesReco =
+            michelcuts.isMCSelected(*comparisonCV, cvEvt, comparisonWeight).all();
+        if(passesReco && !cvPassesReco) ++migrationCounts->recoEntrants;
+        if(!passesReco && cvPassesReco) ++migrationCounts->recoExits;
+        recoCV->SetEntry(i);
+        model.SetEntry(*recoCV, evt);
+      }
+    }
+
+    w_reco   = w_reco_tmp;
+    sim_pass = passesReco;
+    sim      = passesReco ? recoCV->GetMuonPT() : -9999.0;
+    sim_pz   = passesReco ? recoCV->GetMuonPz() : -9999.0;
+    sim_eavail = passesReco ? recoCV->NewEavail() / 1000.0 : -9999.0;  // MeV -> GeV
+    sim_q3   = passesReco ? recoCV->RecoQ3() / 1000.0 : -9999.0;       // MeV -> GeV
+    sim_W    = passesReco ? recoCV->RecoW() / 1000.0 : -9999.0;        // MeV -> GeV
+
+    if(!isSignalTruth) continue; // keep only signal for this tree
+    
+    // --- KEEP event only if BOTH of these hold:
+    //   1. recoCV.isEfficiencyDenom (CCInclusive2DPhaseSpace evaluated on
+    //      the reco-tree's mc_* branches)
+    //   2. Phase 18: the event's (mc_run, mc_subrun, mc_nthEvtInFile) key is
+    //      in truthDenomIDs, i.e. the SAME event also passes the cut when
+    //      evaluated on the truth tree's mc_* branches.
+    //
+    // Without (2), ~1.8% of reco entries pass (1) but their truth-tree row
+    // fails the same cut (likely because mc_primFSLepton differs between
+    // the two trees for events with secondary muons). Those events appear
+    // in mc_signal_reco but not in mc_truth_denom — inflating c_global and
+    // biasing the OmniFold response. The gate makes truth-tree authoritative.
+    //
+    // OmniFold has no fake-row concept, so reco-pass-truth-PS-fail events
+    // (passesReco && !inPhaseSpace) must NOT enter mc_signal_reco either —
+    // condition (1) already enforces that.
+    uint64_t key = 0;
+    bool haveKey = false;
+    if(inPhaseSpace)
+    {
+      key = makeEventKey(
+          recoCV->GetInt("mc_run"),
+          recoCV->GetInt("mc_subrun"),
+          recoCV->GetInt("mc_nthEvtInFile"));
+      haveKey = true;
+    }
+    const bool truthAgrees = (truthDenomIDs == nullptr) ||
+                             (haveKey && truthDenomIDs->find(key) != truthDenomIDs->end());
+    if(gG1 && inPhaseSpace && !truthAgrees)
+    {
+      ++gG1->nSigLoopNoTruth;
+      if(passesReco) { ++gG1->nSigLoopNoTruthPassReco; gG1->wSigLoopNoTruthPassReco += w_reco_tmp; }
+    }
+    if(inPhaseSpace && truthAgrees)
+    {
+      if(!seenRecoKeys.insert(key).second)
+      {
+        ++nDupRecoSkipped;
+        continue;
+      }
+      if(dumpUniverses)
+      {
+        // Truth-mode universe weights: same context as the CV w_truth_tmp
+        // computation above (CVUniverse::SetTruth(true)).
+        CVUniverse::SetTruth(true);
+        for(size_t k = 0; k < uniTruthBranches.size(); ++k)
+        {
+          CVUniverse* u = uniTruthBranches[k].univ;
+          u->SetEntry(i);
+          MichelEvent uEvt;
+          model.SetEntry(*u, uEvt);
+          uniTruthWeights[k] = model.GetWeight(*u, uEvt);
+          if(uniTruthBranches[k].isLateral)
+          {
+            uniTruthLatPT[k] = u->GetMuonPTTrue();
+            uniTruthLatPZ[k] = u->GetMuonPzTrue();
+            uniTruthLatQ3[k] = u->Getq3True() / 1000.0;  // MeV -> GeV (truth q3)
+            uniTruthLatW[k]  = u->GetTrueExperimentersW() / 1000.0;  // MeV -> GeV (truth W)
+          }
+        }
+        // Reco-mode universe weights: CVUniverse::SetTruth(false).
+        CVUniverse::SetTruth(false);
+        for(size_t k = 0; k < uniRecoBranches.size(); ++k)
+        {
+          CVUniverse* u = uniRecoBranches[k].univ;
+          u->SetEntry(i);
+          MichelEvent uEvt;
+          model.SetEntry(*u, uEvt);
+          uniRecoWeights[k] = model.GetWeight(*u, uEvt);
+          if(uniRecoBranches[k].isLateral)
+          {
+            uniRecoLatPT[k] = u->GetMuonPT();
+            uniRecoLatPZ[k] = u->GetMuonPz();
+            uniRecoLatQ3[k] = u->RecoQ3() / 1000.0;  // MeV -> GeV (reco q3)
+            uniRecoLatW[k]  = u->RecoW() / 1000.0;  // MeV -> GeV (reco W)
+          }
+        }
+        // Restore CV state for downstream code that may still consult
+        // recoCV in this iteration (the duplicate-key check has already
+        // run, but be defensive against future edits).
+        recoCV->SetEntry(i);
+        model.SetEntry(*recoCV, evt);
+      }
+      if(dumpPC){
+        CVUniverse::SetTruth(true);
+        recoCV->GetTruthFSHadrons(pc_gen_E, pc_gen_px, pc_gen_py, pc_gen_pz, pc_gen_pdg);
+        // Truth muon object + true vertex (truth mode). Every filled row is
+        // isSignalTruth, so these are always valid here.
+        const TruthMuonKin tk = GetTruthMuonKin(recoCV);
+        mu_true_px = tk.px; mu_true_py = tk.py; mu_true_pz = tk.pz;
+        mu_true_E  = tk.E;  mu_true_phi = tk.phi;
+        const ROOT::Math::XYZTVector tv = recoCV->GetTrueVertex();
+        vtx_true_x = tv.X(); vtx_true_y = tv.Y(); vtx_true_z = tv.Z();
+        CVUniverse::SetTruth(false);
+        recoCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z,
+                                pc_reco_view, pc_reco_time);
+        // Reco muon object + reco vertex (reco mode). Sentinel on !pass_reco so a
+        // no-reco-muon row cannot look like a valid reco object nor pollute the
+        // reco normalization (the loader masks reco features on sim_pass).
+        if(passesReco){
+          const auto mp = recoCV->GetMuon4V();  // MeV, beam frame
+          mu_reco_px = mp.Px(); mu_reco_py = mp.Py();
+          mu_reco_pz = mp.Pz(); mu_reco_E  = mp.E();
+          mu_reco_phi = recoCV->GetPhimu();
+          mu_reco_qp  = recoCV->GetMuonQP();
+          mu_reco_minos_ok = recoCV->IsMinosMatchMuon() ? 1 : 0;
+          const ROOT::Math::XYZTVector rv = recoCV->GetVertex();
+          vtx_reco_x = rv.X(); vtx_reco_y = rv.Y(); vtx_reco_z = rv.Z();
+        } else {
+          mu_reco_px = mu_reco_py = mu_reco_pz = mu_reco_E = -9999.0;
+          mu_reco_phi = -9999.0; mu_reco_qp = -9999.0; mu_reco_minos_ok = 0;
+          vtx_reco_x = vtx_reco_y = vtx_reco_z = -9999.0;
+        }
+        id_run    = recoCV->GetInt("mc_run");
+        id_subrun = recoCV->GetInt("mc_subrun");
+        id_nth    = recoCV->GetInt("mc_nthEvtInFile");
+      }
+      out->Fill();
+      if(outRecoIDs) outRecoIDs->insert(key);
+    }
+
+  }
+
+  std::cout << "Finished unbinned MC selected-signal-reco loop.\n";
+  if(nDupRecoSkipped > 0)
+    std::cout << "  WARN: skipped " << nDupRecoSkipped
+              << " duplicate-key reco entries (upstream AnaTuple double-fill).\n";
+  if(outRecoIDs)
+    std::cout << "  Captured " << outRecoIDs->size()
+              << " unique event IDs from mc_signal_reco.\n";
+}
+
+
+// MC background: events that pass reco selection but are NOT signal.
+// This is NOT truth-aligned; it's just a flat list of selected background reco values.
+void LoopAndFillUnbinnedMCBackground(
+    PlotUtils::ChainWrapper* reco,
+    CVUniverse* recoCV,
+    PlotUtils::Cutter<CVUniverse, MichelEvent>& michelcuts,
+    PlotUtils::Model<CVUniverse, MichelEvent>& model,
+    TTree* out,
+    const std::map<std::string, std::vector<CVUniverse*>>* errorBands = nullptr)
+{
+  double sim_background = 0.0;
+  double sim_background_pz = 0.0;
+  double sim_background_eavail = 0.0;
+  double sim_background_q3 = 0.0;
+  double sim_background_W = 0.0;
+  UChar_t sim_background_pass = true;
+  double w_bkg = 1.0;
+
+  // Truth channel labels (KNOWN_ISSUES #13 closure, Ruterbories 0.2% cross-check).
+  // Read straight from the reco tree's mc_* branches — present regardless of
+  // SetTruth mode. Enables an offline split of genuine background (wrong
+  // flavour / wrong sign / NC) from out-of-fiducial-vertex signal fakes.
+  int    bkg_nuPDG = 0;
+  int    bkg_current = 0;
+  int    bkg_inttype = 0;
+  double bkg_vtx_x = 0.0;
+  double bkg_vtx_y = 0.0;
+  double bkg_vtx_z = 0.0;
+
+  // Phase 3 point-cloud dump (gated, MNV101_DUMP_POINTCLOUD): per-event
+  // reco-cluster vectors for the background reco point cloud (reco-only),
+  // mirrors LoopAndFillUnbinnedData (:1166-1191) so background clouds can be
+  // injected at -w on the OmniFold measured side (negweight background
+  // subtraction for the PET point cloud). GetRecoClusters self-clears.
+  const bool dumpPC = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
+  std::vector<double> pc_reco_E, pc_reco_pos, pc_reco_z;
+  // Full-event (G2): background is a reco-schema event injected on the measured
+  // side, so it carries the SAME reco muon object + reco vertex + view/timing as
+  // data. bkg_nuPDG/current/inttype and bkg_vtx_* (TRUTH vertex) above stay as
+  // truth AUDIT metadata only -- never a publication classifier feature.
+  std::vector<int>    pc_reco_view;
+  std::vector<double> pc_reco_time;
+  double mu_reco_px = 0.0, mu_reco_py = 0.0, mu_reco_pz = 0.0,
+         mu_reco_E = 0.0, mu_reco_phi = 0.0, mu_reco_qp = 0.0;
+  UChar_t mu_reco_minos_ok = 0;
+  double vtx_reco_x = 0.0, vtx_reco_y = 0.0, vtx_reco_z = 0.0;
+  int    id_run = 0, id_subrun = 0, id_nth = 0;
+
+  out->Branch("sim_background", &sim_background);
+  out->Branch("sim_background_pz", &sim_background_pz);
+  out->Branch("sim_background_eavail", &sim_background_eavail);  // reco Eavail (GeV)
+  out->Branch("sim_background_q3", &sim_background_q3);          // reco q3 (GeV)
+  out->Branch("sim_background_W", &sim_background_W);            // reco W (GeV)
+  out->Branch("sim_background_pass", &sim_background_pass);
+  out->Branch("w_bkg", &w_bkg);
+  out->Branch("bkg_nuPDG",   &bkg_nuPDG);    // truth incoming-nu PDG (mc_incoming)
+  out->Branch("bkg_current", &bkg_current);  // 1=CC, 2=NC (mc_current)
+  out->Branch("bkg_inttype", &bkg_inttype);  // interaction type (mc_intType)
+  out->Branch("bkg_vtx_x",   &bkg_vtx_x);    // truth vertex x (mm)
+  out->Branch("bkg_vtx_y",   &bkg_vtx_y);    // truth vertex y (mm)
+  out->Branch("bkg_vtx_z",   &bkg_vtx_z);    // truth vertex z (mm); fiducial split
+                                             //   offline vs minZ=5980,maxZ=8422,apothem=850
+  if(dumpPC){
+    out->Branch("part_reco_E",   &pc_reco_E);
+    out->Branch("part_reco_pos", &pc_reco_pos);
+    out->Branch("part_reco_z",   &pc_reco_z);
+    out->Branch("part_reco_view", &pc_reco_view);  // 1=X,2=U,3=V per recoil token
+    out->Branch("part_reco_time", &pc_reco_time);  // per recoil token (tuple ns)
+    out->Branch("mu_reco_px",  &mu_reco_px);   // MeV
+    out->Branch("mu_reco_py",  &mu_reco_py);   // MeV
+    out->Branch("mu_reco_pz",  &mu_reco_pz);   // MeV
+    out->Branch("mu_reco_E",   &mu_reco_E);    // MeV
+    out->Branch("mu_reco_phi", &mu_reco_phi);  // rad (beam frame)
+    out->Branch("mu_reco_qp",  &mu_reco_qp);   // signed charge/momentum, MINOS trk
+    out->Branch("mu_reco_minos_ok", &mu_reco_minos_ok);  // uint8 0/1 IsMinosMatchMuon
+    out->Branch("vtx_reco_x",  &vtx_reco_x);   // mm (reco vertex)
+    out->Branch("vtx_reco_y",  &vtx_reco_y);   // mm
+    out->Branch("vtx_reco_z",  &vtx_reco_z);   // mm
+    out->Branch("mc_run",           &id_run);          // MC event identity
+    out->Branch("mc_subrun",        &id_subrun);
+    out->Branch("mc_nthEvtInFile",  &id_nth);
+  }
+
+  // Per-systematic-universe background-weight dump (KNOWN_ISSUES #13). Mirrors
+  // the reco-mode block in LoopAndFillUnbinnedMCSelectedSignalReco, but the
+  // background target is a pure reco-space quantity so there is NO truth-mode
+  // table. Weight branch: w_bkg_<band>_<idx>; lateral (detector/muon) bands
+  // additionally dump shifted reco kinematics as sim_background_<...>. Off
+  // unless MNV101_DUMP_UNIVERSES is set AND errorBands is non-null.
+  const auto uniAllow = ParseUniverseAllowlist(getenv("MNV101_DUMP_UNIVERSES"));
+  std::vector<UniverseBranchInfo> uniBkgBranches;
+  std::vector<double> uniBkgWeights;
+  std::vector<double> uniBkgLatPT, uniBkgLatPZ, uniBkgLatQ3, uniBkgLatW;
+  size_t nLatBkg = 0;
+  const bool dumpUniverses = (getenv("MNV101_DUMP_UNIVERSES") != nullptr) &&
+                             (errorBands != nullptr);
+  if(dumpUniverses)
+  {
+    uniBkgBranches = BuildUniverseBranchTable(
+        *errorBands, "bkg", UniverseKineContext::BkgTreeReco,
+        uniAllow.first, uniAllow.second);
+    uniBkgWeights.assign(uniBkgBranches.size(), 1.0);
+    uniBkgLatPT.assign(uniBkgBranches.size(), 0.0);
+    uniBkgLatPZ.assign(uniBkgBranches.size(), 0.0);
+    uniBkgLatQ3.assign(uniBkgBranches.size(), 0.0);
+    uniBkgLatW.assign(uniBkgBranches.size(),  0.0);
+    for(size_t k = 0; k < uniBkgBranches.size(); ++k)
+    {
+      out->Branch(uniBkgBranches[k].branchName.c_str(), &uniBkgWeights[k]);
+      if(uniBkgBranches[k].isLateral)
+      {
+        out->Branch(uniBkgBranches[k].ptBranchName.c_str(), &uniBkgLatPT[k]);
+        out->Branch(uniBkgBranches[k].pzBranchName.c_str(), &uniBkgLatPZ[k]);
+        out->Branch(uniBkgBranches[k].q3BranchName.c_str(), &uniBkgLatQ3[k]);
+        out->Branch(uniBkgBranches[k].wBranchName.c_str(),  &uniBkgLatW[k]);
+        ++nLatBkg;
+      }
+    }
+    std::cout << "  Background universe-weight dump enabled: "
+              << uniBkgBranches.size() << " (band,idx) branches written to "
+              << out->GetName() << " (" << nLatBkg
+              << " lateral with shifted reco pT/pz).\n";
+  }
+
+  std::cout << "Starting unbinned MC background reco loop...\n";
+  const int nEntries = reco->GetEntries();
+  for(int i = 0; i < nEntries; ++i)
+  {
+    CVUniverse::SetTruth(false);
+    MichelEvent cvEvent;
+    recoCV->SetEntry(i);
+    model.SetEntry(*recoCV, cvEvent);
+
+    const double cvWeight = model.GetWeight(*recoCV, cvEvent);
+
+    if(!michelcuts.isMCSelected(*recoCV, cvEvent, cvWeight).all()) continue;
+
+    // Skip only if the event is CC-inclusive signal AND in the 2D fiducial PS.
+    // Events that are CC-inclusive signal but fail the 2D PS (e.g. truth vertex
+    // outside the tracker fiducial, theta_mu >= 20 deg, or p_|| < 1500 MeV) are
+    // reco-fakes from the analysis-PS perspective and belong in mc_background
+    // so they are subtracted from the data spectrum like any other background.
+    const bool isSignal = michelcuts.isSignal(*recoCV, cvWeight);
+    const bool inPS_bkg = michelcuts.isEfficiencyDenom(*recoCV, cvWeight);
+    if(isSignal && inPS_bkg)
+    {
+      if(gG1) G1CensusBkgSkip(recoCV, cvWeight);
+      continue;
+    }
+
+    sim_background = recoCV->GetMuonPT();       // reco p_T (GeV/c)
+    sim_background_pz = recoCV->GetMuonPz();    // reco p_|| (GeV/c)
+    sim_background_eavail = recoCV->NewEavail() / 1000.0;  // MeV -> GeV
+    sim_background_q3 = recoCV->RecoQ3() / 1000.0;         // MeV -> GeV
+    sim_background_W = recoCV->RecoW() / 1000.0;           // MeV -> GeV
+    w_bkg = cvWeight;
+
+    // Truth channel labels for the offline genuine-vs-fake split.
+    bkg_nuPDG   = recoCV->GetTruthNuPDG();
+    bkg_current = recoCV->GetCurrent();
+    bkg_inttype = recoCV->GetInteractionType();
+    const ROOT::Math::XYZTVector tvtx = recoCV->GetTrueVertex();
+    bkg_vtx_x = tvtx.X();
+    bkg_vtx_y = tvtx.Y();
+    bkg_vtx_z = tvtx.Z();
+
+    // Per-universe background weights + shifted reco kinematics. Reco-mode
+    // only (the background loop is entirely CVUniverse::SetTruth(false)); one
+    // model.GetWeight(*u) per (band,idx) per CV-selected background event.
+    if(dumpUniverses)
+    {
+      for(size_t k = 0; k < uniBkgBranches.size(); ++k)
+      {
+        CVUniverse* u = uniBkgBranches[k].univ;
+        u->SetEntry(i);
+        MichelEvent uEvt;
+        model.SetEntry(*u, uEvt);
+        uniBkgWeights[k] = model.GetWeight(*u, uEvt);
+        if(uniBkgBranches[k].isLateral)
+        {
+          uniBkgLatPT[k] = u->GetMuonPT();
+          uniBkgLatPZ[k] = u->GetMuonPz();
+          uniBkgLatQ3[k] = u->RecoQ3() / 1000.0;  // MeV -> GeV (reco q3)
+          uniBkgLatW[k]  = u->RecoW() / 1000.0;   // MeV -> GeV (reco W)
+        }
+      }
+      // Restore CV state (defensive against future edits below the fill).
+      recoCV->SetEntry(i);
+      model.SetEntry(*recoCV, cvEvent);
+    }
+    if(dumpPC){
+      recoCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z,
+                              pc_reco_view, pc_reco_time);
+      // Reco muon object + reco vertex (background loop is entirely reco mode;
+      // every row passed the reco selection incl. the MINOS-match precut, so the
+      // muon/qp/MINOS fields are all defined -- no sentinel branch here).
+      const auto mp = recoCV->GetMuon4V();  // MeV, beam frame
+      mu_reco_px = mp.Px(); mu_reco_py = mp.Py();
+      mu_reco_pz = mp.Pz(); mu_reco_E  = mp.E();
+      mu_reco_phi = recoCV->GetPhimu();
+      mu_reco_qp  = recoCV->GetMuonQP();
+      mu_reco_minos_ok = recoCV->IsMinosMatchMuon() ? 1 : 0;
+      const ROOT::Math::XYZTVector rv = recoCV->GetVertex();
+      vtx_reco_x = rv.X(); vtx_reco_y = rv.Y(); vtx_reco_z = rv.Z();
+      id_run    = recoCV->GetInt("mc_run");
+      id_subrun = recoCV->GetInt("mc_subrun");
+      id_nth    = recoCV->GetInt("mc_nthEvtInFile");
+    }
+    out->Fill();
+  }
+  std::cout << "Finished unbinned MC background reco loop.\n";
+}
+
+// Data: selected reco events.
+void LoopAndFillUnbinnedData(
+    PlotUtils::ChainWrapper* data,
+    CVUniverse* dataCV,
+    PlotUtils::Cutter<CVUniverse, MichelEvent>& michelcuts,
+    TTree* out)
+{
+  double measured = 0.0;
+  double measured_pz = 0.0;
+  double measured_eavail = 0.0;
+  double measured_q3 = 0.0;
+  double measured_W = 0.0;
+  UChar_t measured_pass = true; // Only filled for selected data events
+  out->Branch("measured", &measured);
+  out->Branch("measured_pz", &measured_pz);
+  out->Branch("measured_eavail", &measured_eavail);  // reco available energy (GeV)
+  out->Branch("measured_q3", &measured_q3);          // reco 3-momentum transfer (GeV)
+  out->Branch("measured_W", &measured_W);            // reco hadronic invariant mass (GeV)
+  out->Branch("measured_pass", &measured_pass);
+
+  // Phase 3 point-cloud dump (gated): per-event reco-cluster vectors for data
+  // (the measured point cloud; no truth on data).
+  const bool dumpPC = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
+  std::vector<double> pc_reco_E, pc_reco_pos, pc_reco_z;
+  // Full-event (G2): data carries the SAME reco muon object + reco vertex +
+  // view/timing observable schema as reco-signal/background (identical data/MC
+  // definitions), plus REAL data event identity (ev_run/ev_subrun/ev_gate) --
+  // NOT an mc_* counterpart, which does not exist for data. There is NO truth
+  // side on data: no mu_true_*/vtx_true_*/mc_* branch is emitted here.
+  std::vector<int>    pc_reco_view;
+  std::vector<double> pc_reco_time;
+  double mu_reco_px = 0.0, mu_reco_py = 0.0, mu_reco_pz = 0.0,
+         mu_reco_E = 0.0, mu_reco_phi = 0.0, mu_reco_qp = 0.0;
+  UChar_t mu_reco_minos_ok = 0;
+  double vtx_reco_x = 0.0, vtx_reco_y = 0.0, vtx_reco_z = 0.0;
+  int    ev_run = 0, ev_subrun = 0, ev_gate = 0;
+  if(dumpPC){
+    out->Branch("part_reco_E",   &pc_reco_E);
+    out->Branch("part_reco_pos", &pc_reco_pos);
+    out->Branch("part_reco_z",   &pc_reco_z);
+    out->Branch("part_reco_view", &pc_reco_view);  // 1=X,2=U,3=V per recoil token
+    out->Branch("part_reco_time", &pc_reco_time);  // per recoil token (tuple ns)
+    out->Branch("mu_reco_px",  &mu_reco_px);   // MeV
+    out->Branch("mu_reco_py",  &mu_reco_py);   // MeV
+    out->Branch("mu_reco_pz",  &mu_reco_pz);   // MeV
+    out->Branch("mu_reco_E",   &mu_reco_E);    // MeV
+    out->Branch("mu_reco_phi", &mu_reco_phi);  // rad (beam frame)
+    out->Branch("mu_reco_qp",  &mu_reco_qp);   // signed charge/momentum, MINOS trk
+    out->Branch("mu_reco_minos_ok", &mu_reco_minos_ok);  // uint8 0/1 IsMinosMatchMuon
+    out->Branch("vtx_reco_x",  &vtx_reco_x);   // mm (reco vertex)
+    out->Branch("vtx_reco_y",  &vtx_reco_y);   // mm
+    out->Branch("vtx_reco_z",  &vtx_reco_z);   // mm
+    out->Branch("ev_run",    &ev_run);         // REAL data event identity
+    out->Branch("ev_subrun", &ev_subrun);
+    out->Branch("ev_gate",   &ev_gate);
+  }
+
+  std::cout << "Starting unbinned data reco loop...\n";
+  const int nEntries = data->GetEntries();
+  for(int i = 0; i < nEntries; ++i)
+  {
+    if(i % 10000 == 0) std::cout << i << " / " << nEntries << "\r" << std::flush;
+
+    CVUniverse::SetTruth(false);
+    dataCV->SetEntry(i);
+    MichelEvent event;
+    if(!michelcuts.isDataSelected(*dataCV, event).all()) continue;
+
+    measured = dataCV->GetMuonPT();       // reco p_T (GeV/c)
+    measured_pz = dataCV->GetMuonPz();   // reco p_|| (GeV/c)
+    measured_eavail = dataCV->NewEavail() / 1000.0;  // MeV -> GeV
+    measured_q3 = dataCV->RecoQ3() / 1000.0;         // MeV -> GeV
+    measured_W = dataCV->RecoW() / 1000.0;           // MeV -> GeV
+    if(dumpPC){
+      dataCV->GetRecoClusters(pc_reco_E, pc_reco_pos, pc_reco_z,
+                              pc_reco_view, pc_reco_time);
+      // Reco muon object + reco vertex. Every data row passed isDataSelected
+      // (incl. the MINOS-match precut), so the muon/qp/MINOS fields are defined.
+      const auto mp = dataCV->GetMuon4V();  // MeV, beam frame
+      mu_reco_px = mp.Px(); mu_reco_py = mp.Py();
+      mu_reco_pz = mp.Pz(); mu_reco_E  = mp.E();
+      mu_reco_phi = dataCV->GetPhimu();
+      mu_reco_qp  = dataCV->GetMuonQP();
+      mu_reco_minos_ok = dataCV->IsMinosMatchMuon() ? 1 : 0;
+      const ROOT::Math::XYZTVector rv = dataCV->GetVertex();
+      vtx_reco_x = rv.X(); vtx_reco_y = rv.Y(); vtx_reco_z = rv.Z();
+      // Real data event identity (data has no mc_* counterpart).
+      ev_run    = dataCV->GetInt("ev_run");
+      ev_subrun = dataCV->GetInt("ev_subrun");
+      ev_gate   = dataCV->GetInt("ev_gate");
+    }
+    out->Fill();
+  }
+  std::cout << "Finished unbinned data reco loop.\n";
+}
+
+//Returns false if recoTreeName could not be inferred
+bool inferRecoTreeNameAndCheckTreeNames(const std::string& mcPlaylistName, const std::string& dataPlaylistName, std::string& recoTreeName)
+{
+  const std::vector<std::string> knownTreeNames = {"Truth", "Meta"};
+  bool areFilesOK = false;
+
+  std::ifstream playlist(mcPlaylistName);
+  std::string firstFile = "";
+  playlist >> firstFile;
+  auto testFile = TFile::Open(firstFile.c_str());
+  if(!testFile)
+  {
+    std::cerr << "Failed to open the first MC file at " << firstFile << "\n";
+    return false;
+  }
+
+  const auto truthTree = testFile->Get("Truth");
+  if(truthTree == nullptr || !truthTree->IsA()->InheritsFrom(TClass::GetClass("TTree")))
+  {
+    std::cerr << "Could not find the \"Truth\" tree in MC file named " << firstFile << "\n";
+    return false;
+  }
+
+  for(auto key: *testFile->GetListOfKeys())
+  {
+    if(static_cast<TKey*>(key)->ReadObj()->IsA()->InheritsFrom(TClass::GetClass("TTree"))
+       && std::find(knownTreeNames.begin(), knownTreeNames.end(), key->GetName()) == knownTreeNames.end())
+    {
+      recoTreeName = key->GetName();
+      areFilesOK = true;
+    }
+  }
+  delete testFile;
+  testFile = nullptr;
+
+  playlist.open(dataPlaylistName);
+  playlist >> firstFile;
+  testFile = TFile::Open(firstFile.c_str());
+  if(!testFile)
+  {
+    std::cerr << "Failed to open the first data file at " << firstFile << "\n";
+    return false;
+  }
+
+  const auto recoTree = testFile->Get(recoTreeName.c_str());
+  if(recoTree == nullptr || !recoTree->IsA()->InheritsFrom(TClass::GetClass("TTree")))
+  {
+    std::cerr << "Could not find the \"" << recoTreeName << "\" tree in data file named " << firstFile << "\n";
+    return false;
+  }
+
+  return areFilesOK;
+}
+
+//==============================================================================
+// Main
+//==============================================================================
+int main(const int argc, const char** argv)
+{
+  TH1::AddDirectory(false);
+
+  const int nArgsExpected = 2;
+  if(argc != nArgsExpected + 1)
+  {
+    std::cerr << "Expected " << nArgsExpected << " arguments, but got " << argc - 1 << "\n" << USAGE << "\n";
+    return badCmdLine;
+  }
+
+  const std::string mc_file_list = argv[2],
+                    data_file_list = argv[1];
+
+  std::string reco_tree_name;
+  if(!inferRecoTreeNameAndCheckTreeNames(mc_file_list, data_file_list, reco_tree_name))
+  {
+    std::cerr << "Failed to find required trees in MC playlist " << mc_file_list << " and/or data playlist " << data_file_list << ".\n" << USAGE << "\n";
+    return badInputFile;
+  }
+
+  PlotUtils::MacroUtil options(reco_tree_name, mc_file_list, data_file_list, "minervame1A", true);
+  options.m_plist_string = util::GetPlaylist(*options.m_mc, true);
+
+  PlotUtils::MinervaUniverse::SetNuEConstraint(true);
+  PlotUtils::MinervaUniverse::SetPlaylist(options.m_plist_string);
+  PlotUtils::MinervaUniverse::SetAnalysisNuPDG(14);
+  PlotUtils::MinervaUniverse::SetNFluxUniverses(100);
+  PlotUtils::MinervaUniverse::SetZExpansionFaReweight(false);
+  PlotUtils::MinervaUniverse::RPAMaterials(true);
+
+  PlotUtils::Cutter<CVUniverse, MichelEvent>::reco_t sidebands, preCuts;
+  PlotUtils::Cutter<CVUniverse, MichelEvent>::truth_t signalDefinition, phaseSpace;
+
+  const double minZ = 5980, maxZ = 8422, apothem = 850;
+
+  preCuts.emplace_back(new reco::ZRange<CVUniverse, MichelEvent>("Tracker", minZ, maxZ));
+  preCuts.emplace_back(new reco::Apothem<CVUniverse, MichelEvent>(apothem));
+  preCuts.emplace_back(new reco::MaxMuonAngle<CVUniverse, MichelEvent>(20.));
+  preCuts.emplace_back(new reco::HasMINOSMatch<CVUniverse, MichelEvent>());
+  preCuts.emplace_back(new reco::NoDeadtime<CVUniverse, MichelEvent>(1, "Deadtime"));
+  preCuts.emplace_back(new reco::IsNeutrino<CVUniverse, MichelEvent>());
+
+  signalDefinition.emplace_back(new truth::IsNeutrino<CVUniverse>());
+  signalDefinition.emplace_back(new truth::IsCC<CVUniverse>());
+
+  phaseSpace.emplace_back(new truth::ZRange<CVUniverse>("Tracker", minZ, maxZ));
+  phaseSpace.emplace_back(new truth::Apothem<CVUniverse>(apothem));
+  // MNV101_FULL_PHASE_SPACE: drop the muon kinematic truth cuts so the signal
+  // definition is "nu_mu CC in the tracker fiducial" with NO muon acceptance
+  // restriction. The reco selection (incl. MINOS match + reco MaxMuonAngle) is
+  // unchanged -- truth events outside the measurable acceptance enter as
+  // OmniFold misses and the truth-authoritative gate reclassifies former
+  // out-of-phase-space "fakes" as signal automatically.
+  const bool fullPhaseSpace = (getenv("MNV101_FULL_PHASE_SPACE") != nullptr);
+  if(fullPhaseSpace)
+  {
+    std::cout << "[FPS] MNV101_FULL_PHASE_SPACE set: truth muon kinematic cuts "
+              << "(theta<20deg, 1.5<p_||<60 GeV, p_T<4.5 GeV) are OFF; "
+              << "fiducial ZRange/Apothem kept.\n";
+  }
+  else
+  {
+    phaseSpace.emplace_back(new truth::MuonAngle<CVUniverse>(20.));
+    phaseSpace.emplace_back(new truth::PZMuMin<CVUniverse>(1500.));    // p_|| > 1.5 GeV (MeV units)
+    phaseSpace.emplace_back(new MaxPzMu<CVUniverse>(60000.));          // p_|| < 60 GeV (MeV units)
+    phaseSpace.emplace_back(new MaxPtMu<CVUniverse>(4500.));           // p_T < 4.5 GeV (MeV units)
+  }
+
+  PlotUtils::Cutter<CVUniverse, MichelEvent> mycuts(std::move(preCuts), std::move(sidebands), std::move(signalDefinition), std::move(phaseSpace));
+
+  // P4 G1 census (diagnostic copy): own constraint instances, same parameters as above.
+  std::unique_ptr<G1Census> g1Holder;
+  if(getenv("MNV101_G1_CENSUS") != nullptr)
+  {
+    if(fullPhaseSpace)
+    {
+      std::cerr << "[G1] MNV101_G1_CENSUS needs the default phase space; unset MNV101_FULL_PHASE_SPACE.\n";
+      return badCmdLine;
+    }
+    g1Holder.reset(new G1Census);
+    g1Holder->outPath = getenv("MNV101_G1_CENSUS");
+    g1Holder->cons.emplace_back(new truth::IsNeutrino<CVUniverse>());
+    g1Holder->cons.emplace_back(new truth::IsCC<CVUniverse>());
+    g1Holder->cons.emplace_back(new truth::ZRange<CVUniverse>("Tracker", minZ, maxZ));
+    g1Holder->cons.emplace_back(new truth::Apothem<CVUniverse>(apothem));
+    g1Holder->cons.emplace_back(new truth::MuonAngle<CVUniverse>(20.));
+    g1Holder->cons.emplace_back(new truth::PZMuMin<CVUniverse>(1500.));
+    g1Holder->cons.emplace_back(new MaxPzMu<CVUniverse>(60000.));
+    g1Holder->cons.emplace_back(new MaxPtMu<CVUniverse>(4500.));
+    if(getenv("MNV101_G1_CENSUS_SELFTEST") != nullptr)
+      g1Holder->selftestN = std::atol(getenv("MNV101_G1_CENSUS_SELFTEST"));
+    gG1 = g1Holder.get();
+    std::cout << "[G1] census enabled -> " << g1Holder->outPath << "\n";
+  }
+
+  std::vector<std::unique_ptr<PlotUtils::Reweighter<CVUniverse, MichelEvent>>> MnvTunev1;
+  MnvTunev1.emplace_back(new PlotUtils::FluxAndCVReweighter<CVUniverse, MichelEvent>());
+  MnvTunev1.emplace_back(new PlotUtils::GENIEReweighter<CVUniverse, MichelEvent>(true, false));
+  MnvTunev1.emplace_back(new PlotUtils::LowRecoil2p2hReweighter<CVUniverse, MichelEvent>());
+  MnvTunev1.emplace_back(new PlotUtils::MINOSEfficiencyReweighter<CVUniverse, MichelEvent>());
+  MnvTunev1.emplace_back(new PlotUtils::RPAReweighter<CVUniverse, MichelEvent>());
+
+  // Capture raw observer pointers to each reweighter BEFORE std::move so
+  // the truth-denom loop can dump per-reweighter weights without going
+  // through the (collapsed) Model::GetWeight product. The unique_ptrs
+  // move into Model and keep the underlying objects alive.
+  std::vector<PlotUtils::Reweighter<CVUniverse, MichelEvent>*> tuneComponents;
+  for(auto& rw : MnvTunev1) tuneComponents.push_back(rw.get());
+
+  PlotUtils::Model<CVUniverse, MichelEvent> model(std::move(MnvTunev1));
+
+  const bool doSystematics = (getenv("MNV101_SKIP_SYST") == nullptr);
+  ActiveUniverseRequest activeUniverse;
+  std::string activeUniverseError;
+  if(!ParseActiveUniverse(getenv("MNV101_ACTIVE_UNIVERSE"),
+                          activeUniverse, activeUniverseError))
+  {
+    std::cerr << "Invalid MNV101_ACTIVE_UNIVERSE: "
+              << activeUniverseError << "\n";
+    return badCmdLine;
+  }
+  if(activeUniverse.enabled && !doSystematics)
+  {
+    std::cerr << "MNV101_ACTIVE_UNIVERSE=" << activeUniverse.band << ":"
+              << activeUniverse.idx
+              << " is incompatible with MNV101_SKIP_SYST: the requested "
+                 "universe maps would not be constructed.\n";
+    return badCmdLine;
+  }
+  if(!doSystematics){
+    std::cout << "Skipping systematics loops (CV-only output) because MNV101_SKIP_SYST is set.\n";
+    PlotUtils::MinervaUniverse::SetNFluxUniverses(2);
+  }
+
+  std::map<std::string, std::vector<CVUniverse*>> error_bands;
+  if(doSystematics) error_bands = GetStandardSystematics(options.m_mc);
+  error_bands["cv"] = {new CVUniverse(options.m_mc)};
+
+  std::map<std::string, std::vector<CVUniverse*>> truth_bands;
+  if(doSystematics) truth_bands = GetStandardSystematics(options.m_truth);
+  truth_bands["cv"] = {new CVUniverse(options.m_truth)};
+
+  // Diagnostic: print the GetStandardSystematics inventory once so a fresh
+  // dump-all rebuild documents which bands are present and which are lateral.
+  if(doSystematics)
+  {
+    std::cout << "GetStandardSystematics inventory ("
+              << error_bands.size() << " bands incl. cv):\n";
+    for(const auto& kv : error_bands)
+    {
+      const auto& v = kv.second;
+      const bool vert = v.empty() ? true : v.front()->IsVerticalOnly();
+      std::cout << "  " << kv.first << "  n=" << v.size()
+                << "  IsVerticalOnly=" << (vert ? "true" : "false") << "\n";
+    }
+  }
+
+  CVUniverse* activeRecoUniverse = error_bands["cv"].front();
+  CVUniverse* activeTruthUniverse = truth_bands["cv"].front();
+  bool activeUniverseIsLateral = false;
+  if(activeUniverse.enabled)
+  {
+    const auto recoBand = error_bands.find(activeUniverse.band);
+    const auto truthBand = truth_bands.find(activeUniverse.band);
+    if(recoBand == error_bands.end() || truthBand == truth_bands.end())
+    {
+      std::cerr << "MNV101_ACTIVE_UNIVERSE requested unknown or unmatched band '"
+                << activeUniverse.band << "'. The band must exist in both reco "
+                   "and truth GetStandardSystematics maps.\n";
+      return badCmdLine;
+    }
+    if(activeUniverse.idx >= recoBand->second.size() ||
+       activeUniverse.idx >= truthBand->second.size())
+    {
+      std::cerr << "MNV101_ACTIVE_UNIVERSE index " << activeUniverse.idx
+                << " is out of range for band '" << activeUniverse.band
+                << "' (reco n=" << recoBand->second.size()
+                << ", truth n=" << truthBand->second.size() << ").\n";
+      return badCmdLine;
+    }
+    activeRecoUniverse = recoBand->second[activeUniverse.idx];
+    activeTruthUniverse = truthBand->second[activeUniverse.idx];
+    if(activeRecoUniverse == nullptr || activeTruthUniverse == nullptr)
+    {
+      std::cerr << "MNV101_ACTIVE_UNIVERSE resolved to a null universe pointer.\n";
+      return badCmdLine;
+    }
+    if(activeRecoUniverse->IsVerticalOnly() != activeTruthUniverse->IsVerticalOnly())
+    {
+      std::cerr << "MNV101_ACTIVE_UNIVERSE reco/truth IsVerticalOnly mismatch for '"
+                << activeUniverse.band << ":" << activeUniverse.idx << "'.\n";
+      return badCmdLine;
+    }
+    activeUniverseIsLateral = !activeRecoUniverse->IsVerticalOnly();
+    std::cout << "[ACTIVE_UNIVERSE] " << activeUniverse.band << ":"
+              << activeUniverse.idx
+              << " promoted to the ordinary truth and reco event-loop universe; "
+              << (activeUniverseIsLateral ? "lateral" : "vertical")
+              << " selection, kinematics, weights, truth-authoritative IDs, "
+                 "backgrounds, and native misses will be rebuilt.\n";
+  }
+
+  CVUniverse* data_universe = new CVUniverse(options.m_data);
+
+  try
+  {
+    TFile* outFile = TFile::Open(OUT_FILE_NAME, "RECREATE");
+    if(!outFile)
+    {
+      std::cerr << "Failed to open " << OUT_FILE_NAME << " for writing.\n";
+      return badOutputFile;
+    }
+
+    outFile->cd();
+
+    // ---- Save POT info (single-file output => must use distinct keys) ----
+    auto mcPOT   = new TParameter<double>("mcPOTUsed",   options.m_mc_pot);
+    auto dataPOT = new TParameter<double>("dataPOTUsed", options.m_data_pot);
+    mcPOT->Write();
+    dataPOT->Write();
+    auto activeBandMetadata = new TNamed(
+        "activeUniverseBand", activeUniverse.enabled ? activeUniverse.band.c_str() : "cv");
+    auto activeIndexMetadata = new TParameter<int>(
+        "activeUniverseIndex", activeUniverse.enabled
+                                   ? static_cast<int>(activeUniverse.idx) : 0, 'f');
+    auto activeEnabledMetadata = new TParameter<int>(
+        "hasActiveUniverse", activeUniverse.enabled ? 1 : 0, 'f');
+    auto activeLateralMetadata = new TParameter<int>(
+        "activeUniverseIsLateral", activeUniverseIsLateral ? 1 : 0, 'f');
+    activeBandMetadata->Write();
+    activeIndexMetadata->Write();
+    activeEnabledMetadata->Write();
+    activeLateralMetadata->Write();
+
+    // ---- Full-event (G2) schema/provenance metadata ----
+    // Lets Python consumers REJECT old recoil-only pointcloud ROOTs (which set
+    // MNV101_DUMP_POINTCLOUD but carry none of these objects). Written only in
+    // pointcloud mode so the default schema is byte-identical. Uses hadd-safe
+    // types ONLY: TNamed (hadd keeps the first, never concatenates) and
+    // TParameter<int> with the 'f' (first) merge mode (never summed) -- so the
+    // per-playlist merge cannot corrupt them the way default-merge
+    // TParameter<double> corrupted pTmu_fiducial_nucleons (KNOWN_ISSUES #8).
+    const bool dumpPointcloud = (getenv("MNV101_DUMP_POINTCLOUD") != nullptr);
+    if(dumpPointcloud)
+    {
+      auto petSchema = new TNamed("petSchemaVersion", "g2-fullevent-v1");
+      auto petFamilies = new TNamed(
+          "petFeatureFamilies",
+          "reco_muon_object,reco_vertex,recoil_cloud_E_pos_z,recoil_cloud_view_time,"
+          "truth_muon,truth_vertex,mc_event_id,data_event_id,truth_fs_hadron_cloud");
+      auto petFull = new TParameter<int>("hasFullEventSchema", 1, 'f');
+      auto petFPS = new TParameter<int>("fullPhaseSpace", fullPhaseSpace ? 1 : 0, 'f');
+      petSchema->Write();
+      petFamilies->Write();
+      petFull->Write();
+      petFPS->Write();
+    }
+
+    // Do not write pTmu_fiducial_nucleons here. In the documented full-MEFHC
+    // workflow these per-playlist ROOT files are merged with hadd, which sums
+    // TParameter<double> objects and silently multiplies the fiducial nucleon
+    // count by the number of playlists. The 2D Python extraction now uses the
+    // known tracker-geometry constant directly to avoid merge-sensitive
+    // metadata.
+
+
+    TTree* mcTruthTree = new TTree("mc_truth_denom", "Truth efficiency denominator: MC, w_truth");
+    TTree* mcSigTree   = new TTree("mc_signal_reco", "Selected signal reco: sim, sim_pass, w_reco");
+
+    TTree* mcBkgTree = new TTree("mc_background", "Selected MC background reco: sim_background, sim_background_pass");
+    TTree* dataTree = new TTree("data", "Selected data reco: measured, measured_pass");
+
+    assert(error_bands["cv"].size() == 1);
+    //assert(truth_bands["cv"].size() == 1);
+    // In active-universe mode these pointers deliberately name the matching
+    // reco- and truth-tree universe objects.  Every ordinary output branch and
+    // every selection decision below is therefore made in that universe.
+    auto* recoCV  = activeRecoUniverse;
+    auto* truthCV = activeTruthUniverse;
+
+    // MNV101_TRUTH_ONLY short-circuits the slow reco loops so the
+    // truth-denom + per-reweighter dump can be regenerated quickly for
+    // the Option 1 decomposition diagnostic.
+    const bool truthOnly = (getenv("MNV101_TRUTH_ONLY") != nullptr);
+
+    // Phase 18 (2026-05): the truth-denom walk runs FIRST and collects
+    // `truthDenomIDs` (the set of (mc_run, mc_subrun, mc_nthEvtInFile)
+    // packed keys for events that pass truth-tree-side isEfficiencyDenom)
+    // and a cache of truth-denom entries for later miss-append. The reco
+    // walk then runs second, gated on truthDenomIDs membership so the
+    // truth tree's cut evaluation is authoritative — this resolves the
+    // ~1.8% c_global discrepancy caused by recoCV/truthCV disagreeing on
+    // isEfficiencyDenom for the same physics event (most likely
+    // mc_primFSLepton differing between the two trees when reco matches a
+    // secondary muon). AppendTruthOnlyMisses then walks the cache and
+    // writes a miss entry to mc_signal_reco for each truth-denom event not
+    // captured by the reco loop. With both pieces, OmniFold's step-2 miss
+    // regression handles miss events natively, and the per-bin
+    // completeness (c) correction in the Python pipeline becomes a no-op.
+    //
+    // MNV101_DISABLE_TRUTH_MISSES: set to keep the legacy behaviour
+    // (no miss-append; downstream pipeline must apply the c correction).
+    const bool disableTruthMisses = (getenv("MNV101_DISABLE_TRUTH_MISSES") != nullptr);
+    const bool appendTruthMisses = !truthOnly && !disableTruthMisses;
+
+    std::unordered_set<uint64_t> recoIDs;
+    std::unordered_set<uint64_t> truthDenomIDs;
+    std::vector<TruthDenomEntry> truthDenomCache;
+    ActiveUniverseMigrationCounts activeMigrationCounts;
+    if(gG1)
+    {
+      if(truthOnly || !appendTruthMisses || activeUniverse.enabled)
+      {
+        std::cerr << "[G1] census needs the production CV configuration (no MNV101_TRUTH_ONLY, "
+                  << "MNV101_DISABLE_TRUTH_MISSES or MNV101_ACTIVE_UNIVERSE).\n";
+        return badCmdLine;
+      }
+      gG1->recoIDs = &recoIDs;
+      gG1->truthDenomIDs = &truthDenomIDs;
+    }
+    CVUniverse* comparisonRecoCV =
+        activeUniverse.enabled ? error_bands["cv"].front() : nullptr;
+    CVUniverse* comparisonTruthCV =
+        activeUniverse.enabled ? truth_bands["cv"].front() : nullptr;
+
+    LoopAndFillUnbinnedMCTruthDenom(
+        options.m_truth, truthCV, mycuts, model, tuneComponents, mcTruthTree,
+        !truthOnly ? &truthDenomIDs : nullptr,
+        appendTruthMisses ? &truthDenomCache : nullptr,
+        &truth_bands, comparisonTruthCV, &activeMigrationCounts);
+
+    if(!truthOnly)
+    {
+      LoopAndFillUnbinnedMCSelectedSignalReco(
+          options.m_mc, recoCV, mycuts, model, mcSigTree,
+          appendTruthMisses ? &recoIDs : nullptr,
+          &truthDenomIDs,
+          &error_bands, comparisonRecoCV, &activeMigrationCounts);
+    }
+
+    long nTruthOnlyMisses = 0;
+    if(appendTruthMisses)
+      nTruthOnlyMisses = AppendTruthOnlyMisses(mcSigTree, truthDenomCache, recoIDs);
+
+    if(!truthOnly)
+    {
+      LoopAndFillUnbinnedMCBackground(options.m_mc, recoCV, mycuts, model, mcBkgTree,
+                                      &error_bands);
+      LoopAndFillUnbinnedData(options.m_data, data_universe, mycuts, dataTree);
+    }
+    else
+    {
+      std::cout << "MNV101_TRUTH_ONLY set: skipping reco signal/background/data loops.\n";
+    }
+
+    // Flag for downstream pipeline: when set, mc_signal_reco contains
+    // truth-only miss entries (Phase 17) and the per-bin c correction in
+    // unfold_2d_omnifold_unbinned.py becomes a no-op. nTruthOnlyMisses is
+    // diagnostic only. cd back to outFile because the loops above (in
+    // particular the RPA reweighter) open auxiliary ROOT files and leave
+    // gDirectory pointing at one of them — a bare TParameter::Write()
+    // would otherwise try to write into a read-only data file.
+    outFile->cd();
+    auto pHasMisses = new TParameter<int>(
+        "hasTruthOnlyMisses", appendTruthMisses ? 1 : 0);
+    auto pNMisses = new TParameter<long>(
+        "nTruthOnlyMisses", nTruthOnlyMisses);
+    pHasMisses->Write();
+    pNMisses->Write();
+    auto pTruthEntrants = new TParameter<long>(
+        "activeUniverseTruthEntrants", activeMigrationCounts.truthEntrants);
+    auto pTruthExits = new TParameter<long>(
+        "activeUniverseTruthExits", activeMigrationCounts.truthExits);
+    auto pRecoEntrants = new TParameter<long>(
+        "activeUniverseRecoEntrants", activeMigrationCounts.recoEntrants);
+    auto pRecoExits = new TParameter<long>(
+        "activeUniverseRecoExits", activeMigrationCounts.recoExits);
+    pTruthEntrants->Write();
+    pTruthExits->Write();
+    pRecoEntrants->Write();
+    pRecoExits->Write();
+    if(activeUniverse.enabled)
+    {
+      std::cout << "[ACTIVE_UNIVERSE] migration census vs CV: truth entrants="
+                << activeMigrationCounts.truthEntrants << " exits="
+                << activeMigrationCounts.truthExits << "; reco entrants="
+                << activeMigrationCounts.recoEntrants << " exits="
+                << activeMigrationCounts.recoExits << "\n";
+    }
+
+    outFile->Write();
+    outFile->Close();
+    if(gG1) WriteG1Census();
+
+    std::cout << "Wrote unbinned unfolding inputs to " << OUT_FILE_NAME << "\n";
+    std::cout << "Success\n";
+  }
+  catch(const ROOT::exception& e)
+  {
+    std::cerr << "Ending on a ROOT error message.  No output will be produced.\n"
+              << e.what() << "\n" << USAGE << "\n";
+    return badFileRead;
+  }
+
+  return success;
+}

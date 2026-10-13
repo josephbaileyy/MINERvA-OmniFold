@@ -1,0 +1,9 @@
+CMAKE_CXX_COMPILER:FILEPATH build_MINERvA101: /global/homes/j/josephrb/.conda/envs/root_6_28/bin/x86_64-conda-linux-gnu-c++
+CMAKE_CXX_COMPILER:FILEPATH unpatched: /global/homes/j/josephrb/.conda/envs/root_6_28/bin/x86_64-conda-linux-gnu-c++
+CMAKE_CXX_COMPILER:FILEPATH patched: /global/homes/j/josephrb/.conda/envs/root_6_28/bin/x86_64-conda-linux-gnu-c++
+CMAKE_CXX_FLAGS:STRING build_MINERvA101: -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /global/homes/j/josephrb/.conda/envs/root_6_28/include
+CMAKE_CXX_FLAGS:STRING unpatched: -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /global/homes/j/josephrb/.conda/envs/root_6_28/include
+CMAKE_CXX_FLAGS:STRING patched: -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /global/homes/j/josephrb/.conda/envs/root_6_28/include
+CMAKE_BUILD_TYPE:STRING build_MINERvA101: 
+CMAKE_BUILD_TYPE:STRING unpatched: 
+CMAKE_BUILD_TYPE:STRING patched: 

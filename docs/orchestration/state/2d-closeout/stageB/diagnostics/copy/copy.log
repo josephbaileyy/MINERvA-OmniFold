@@ -1,0 +1,8 @@
+start 2026-10-12T16:05:20Z host dtn01.nersc.gov
+cfsquota m3246 before: used 82907 GB quota 102400 GB; copy 539 GB; free after 18954 GB
+source sha256 (active) 2026-10-12T16:05:20Z
+copy 2026-10-12T16:08:58Z
+destination sha256 2026-10-12T16:12:06Z
+SHA256 MATCH: 10 active + 2 npz
+cfsquota m3246 after: used 83408 GB quota 102400 GB; free 18992 GB
+done 2026-10-12T16:16:43Z

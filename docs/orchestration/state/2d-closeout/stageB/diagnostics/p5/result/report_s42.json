@@ -1,0 +1,156 @@
+{
+ "tag": "",
+ "inputs": {
+  "a": {
+   "path": "out/xsec_MaRES_0_off.root",
+   "sha256": "c0f02713356dddca9ab3768e39a64834d27a5220917d8d05b875928d0f459e37"
+  },
+  "b": {
+   "path": "out/xsec_MaRES_0_on.root",
+   "sha256": "4d7e2f43817629f2026d0d4c2ee94d91cea871b045e71057bdb95bc840871cce"
+  },
+  "cv": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+   "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
+  },
+  "j0": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_MaRES_0.root",
+   "sha256": "80e1e04eb13f150edcc398959ff555ce67ece391865d0994c63cecc4d56036dc"
+  },
+  "j1": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_MaRES_1.root",
+   "sha256": "872715cc688af865b0fac2248c50437276ce379214948e717d4f990d1ab9575a"
+  },
+  "ml": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+   "sha256": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9"
+  }
+ },
+ "gates": {
+  "ml_pinned": true,
+  "G-a_override": true,
+  "G-b_max_abs_c_on_minus_1": 1.865174681370263e-14,
+  "G-c_max_rel_c_off_vs_july": 0.0,
+  "G-p_provenance": true,
+  "G-f_finite_r1_r3": true
+ },
+ "provenance": {
+  "a": {
+   "driverSha256": "6be77c51805547bac2d864ce77c7bc636607cf43194bd2f4ad1a7c14db621257",
+   "omnifoldHelperSha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
+   "p5MissWeightOverride": null
+  },
+  "b": {
+   "driverSha256": "f71b5759bf01422fa8c6b6e5432885b34d1f127653df1165a0adb7527bdb12d2",
+   "omnifoldHelperSha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
+   "p5MissWeightOverride": "/pscratch/sd/j/josephrb/2d-closeout-stageB-diag-20261012/p5/out/override_MaRES_0.npz sha256=ce1cd319406c8791a7d8c94591b25191b2d356f31ee8b09334d0830c22ec5b57 universe=MaRES:0"
+  },
+  "runConfig_a": {
+   "bkg_mode": "purity",
+   "bootstrap_seed": null,
+   "bootstrap_streams": "both",
+   "branch_select": "derived",
+   "closure": false,
+   "closure_alt_universe": null,
+   "closure_hidden_dpt": false,
+   "closure_hidden_dpt_amplitude": 0.3,
+   "closure_hidden_dpt_center": 0.1,
+   "closure_hidden_dpt_sigma": 0.05,
+   "closure_reweight": null,
+   "closure_reweight_alpha": 0.1,
+   "closure_reweight_amplitude": 0.2,
+   "closure_reweight_pt0": 0.4,
+   "closure_reweight_pz_ref": 5.0,
+   "closure_reweight_sigma": 0.1,
+   "device": "cpu",
+   "estimator": "lgbm",
+   "flux_hist": "pTmu_reweightedflux_integrated",
+   "flux_universe_file": "baseline_flux/flux_integral_universes_MEFHC.root",
+   "iters": 5,
+   "mcfile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "omnifile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "out": "/pscratch/sd/j/josephrb/2d-closeout-stageB-diag-20261012/p5/out/xsec_MaRES_0_off.root",
+   "seed": 42,
+   "universe": "MaRES:0",
+   "use_weights": true,
+   "verbose": true
+  },
+  "runConfig_b": {
+   "bkg_mode": "purity",
+   "bootstrap_seed": null,
+   "bootstrap_streams": "both",
+   "branch_select": "derived",
+   "closure": false,
+   "closure_alt_universe": null,
+   "closure_hidden_dpt": false,
+   "closure_hidden_dpt_amplitude": 0.3,
+   "closure_hidden_dpt_center": 0.1,
+   "closure_hidden_dpt_sigma": 0.05,
+   "closure_reweight": null,
+   "closure_reweight_alpha": 0.1,
+   "closure_reweight_amplitude": 0.2,
+   "closure_reweight_pt0": 0.4,
+   "closure_reweight_pz_ref": 5.0,
+   "closure_reweight_sigma": 0.1,
+   "device": "cpu",
+   "estimator": "lgbm",
+   "flux_hist": "pTmu_reweightedflux_integrated",
+   "flux_universe_file": "baseline_flux/flux_integral_universes_MEFHC.root",
+   "iters": 5,
+   "mcfile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "miss_weight_override": "/pscratch/sd/j/josephrb/2d-closeout-stageB-diag-20261012/p5/out/override_MaRES_0.npz",
+   "omnifile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "out": "/pscratch/sd/j/josephrb/2d-closeout-stageB-diag-20261012/p5/out/xsec_MaRES_0_on.root",
+   "seed": 42,
+   "universe": "MaRES:0",
+   "use_weights": true,
+   "verbose": true
+  }
+ },
+ "metrics": {
+  "c_off_minus_1": {
+   "median": 0.005771756041450304,
+   "p84": 0.022586528009961693,
+   "max": 0.06763077691142527
+  },
+  "rel_change_b_over_a": {
+   "median": 0.0015857312762310874,
+   "p84": 0.005960843417888595,
+   "max": 0.02810104739674429
+  },
+  "r1_abs_d_over_sigma_band": {
+   "median": 0.3052173748358626,
+   "p84": 1.4010161561990178,
+   "max": 123.77701711341807
+  },
+  "r1_floored_cells": {
+   "median": 0.2759513879426376,
+   "p84": 0.979502787431304,
+   "max": 7.372932444609711
+  },
+  "n_floored_cells": 188,
+  "r2_abs_d_over_universe_shift": {
+   "median": 0.2247437785473444,
+   "p84": 1.0122203675793178,
+   "max": 317.1028475917826
+  },
+  "r3_abs_d_over_sigma_ml": {
+   "median": 0.9621946896893931,
+   "p84": 2.1622330423529137,
+   "max": 10.884429415869377
+  },
+  "sigma_ml_over_sigma_band_median": 0.29931950269196156,
+  "integral_rel_change": 2.9078834421245494e-06,
+  "corr_d_over_a_vs_c_off_minus_1": {
+   "pearson": -0.056098433204644915,
+   "spearman": -0.00042066554303464224
+  },
+  "bridge_abs_a_minus_july_over_sigma_band": {
+   "median": 7.855179585858047e-12,
+   "p84": 2.835410328031199e-11,
+   "max": 1.4793314504947406e-09
+  }
+ },
+ "outcome": "MEASURED",
+ "routing": "NOT RESOLVED ABOVE TRAINER NOISE"
+}

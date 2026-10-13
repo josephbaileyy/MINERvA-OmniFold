@@ -1,0 +1,27 @@
+# sacct -X -n -P -o JobID,JobName,State,ElapsedRaw,AllocTRES (saul, 2026-10-13); charge = ElapsedRaw x billing / 256 / 3600 node-h
+59713341_0|2dc_B4_1A|TIMEOUT|7204|billing=4,cpu=4,energy=4448755,mem=7600M,node=1
+59713345_1|2dc_B4_1B|COMPLETED|2137|billing=4,cpu=4,energy=1369836,mem=7600M,node=1
+59713348_2|2dc_B4_1C|COMPLETED|3836|billing=4,cpu=4,energy=1999378,mem=7600M,node=1
+59713349_3|2dc_B4_1D|CANCELLED by 112498|4141|billing=4,cpu=4,energy=2173207,mem=7600M,node=1
+59713353_4|2dc_B4_1E|CANCELLED by 112498|3400|billing=4,cpu=4,energy=2087445,mem=7600M,node=1
+59713356_5|2dc_B4_1F|CANCELLED by 112498|3327|billing=4,cpu=4,energy=2088156,mem=7600M,node=1
+59713358_6|2dc_B4_1G|CANCELLED by 112498|2534|billing=4,cpu=4,energy=1529413,mem=7600M,node=1
+59713360_7|2dc_B4_1L|COMPLETED|856|billing=4,cpu=4,energy=367321,mem=7600M,node=1
+59713362_8|2dc_B4_1M|CANCELLED by 112498|1242|billing=4,cpu=4,energy=694640,mem=7600M,node=1
+59713363_9|2dc_B4_1N|CANCELLED by 112498|0|
+59713364_10|2dc_B4_1O|COMPLETED|2786|billing=4,cpu=4,energy=1600043,mem=7600M,node=1
+59713365_11|2dc_B4_1P|COMPLETED|3907|billing=4,cpu=4,energy=2376047,mem=7600M,node=1
+59713366_12|2dc_B4_ctl1L|COMPLETED|935|billing=4,cpu=4,energy=544338,mem=7600M,node=1
+59713367|2dc_B5_off|CANCELLED by 112498|0|
+59713368|2dc_B5_on|CANCELLED by 112498|0|
+59717845_0|2dc_B4_1A|COMPLETED|6776|billing=4,cpu=4,energy=3790146,mem=7600M,node=1
+59717848_3|2dc_B4_1D|COMPLETED|15214|billing=4,cpu=4,energy=9936265,mem=7600M,node=1
+59717850_4|2dc_B4_1E|COMPLETED|10322|billing=4,cpu=4,energy=5782339,mem=7600M,node=1
+59717852_5|2dc_B4_1F|COMPLETED|13548|billing=4,cpu=4,energy=8252696,mem=7600M,node=1
+59717855_6|2dc_B4_1G|COMPLETED|11656|billing=4,cpu=4,energy=6475704,mem=7600M,node=1
+59717856_8|2dc_B4_1M|COMPLETED|18227|billing=4,cpu=4,energy=11689176,mem=7600M,node=1
+59717858_9|2dc_B4_1N|COMPLETED|9843|billing=4,cpu=4,energy=5899913,mem=7600M,node=1
+59717961|2dc_B5_off|COMPLETED|776|billing=128,cpu=128,energy=300427,mem=243840M,node=1
+59717963|2dc_B5_on|COMPLETED|1928|billing=128,cpu=128,energy=1016120,mem=243840M,node=1
+59727563|2dc_B5_off_s43|COMPLETED|1034|billing=128,cpu=128,energy=445322,mem=243840M,node=1
+59727564|2dc_B5_on_s43|COMPLETED|1470|billing=128,cpu=128,energy=713253,mem=243840M,node=1

@@ -1,0 +1,71 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+{
+ "gates": [
+  "1A: self-test active (selftestN 7, injected 5285)"
+ ],
+ "controls": {
+  "noop_ctl1A_vs_1A": "IDENTICAL"
+ },
+ "bridge": {
+  "1A": "DIFFERENT (see json)"
+ },
+ "totals": {
+  "counters_summed": {
+   "nTruthFail": 417388.0,
+   "nTruthFidFailStored": 62982.0,
+   "nTruthFidFailDupKey": 0.0,
+   "nSigLoopNoTruth": 0.0,
+   "nSigLoopNoTruthPassReco": 0.0,
+   "wSigLoopNoTruthPassReco": 0.0,
+   "nBkgSkipped": 37440.0,
+   "nBkgSkippedInReco": 32155.0,
+   "nG1": 5285.0,
+   "nG1DupKey": 0.0,
+   "nG1Status0": 0.0,
+   "nG1Status1": 0.0,
+   "nG1Status2": 5285.0,
+   "wG1": 4273.92686912599,
+   "selftestN": 7.0,
+   "nSelftestInjected": 5285.0
+  },
+  "G1_weighted_census_wG1": 4273.92686912599,
+  "G1_weighted_binned_on_grid": 4257.571813802828,
+  "G1_weighted_out_of_grid": 16.35505532316256,
+  "G1_weighted_outside_reported_cells_on_grid": 0.0,
+  "nG1": 5285.0,
+  "nSigLoopNoTruthPassReco": 0.0,
+  "nG1DupKey": 0.0,
+  "S_weighted": 30308.523722633647,
+  "B_weighted": 976.6936016759096,
+  "D": 1972.0,
+  "pot_scale": 0.05536576011804238,
+  "integral_f_S_grid224": 0.14047440425557184,
+  "integral_f_SB_grid224": 0.13608893202396155,
+  "integral_f_D_grid224": 0.11953534468983061
+ },
+ "per_cell_summary": {
+  "f_S_median": 0.1385143062192851,
+  "f_S_max": 0.735146254763392,
+  "n_cells_f_S_ge_sigma_over_3": 183,
+  "n_cells_S_zero": 4
+ },
+ "classification": {
+  "status_weighted": {
+   "0": 0.0,
+   "1": 0.0,
+   "2": 4273.926869125988
+  },
+  "first_failed_truth_constraint_weighted": {},
+  "reco_minus_true_pt_median": 0.0011845071058914636,
+  "reco_minus_true_pz_median": -0.011167290290079013
+ },
+ "outcome": "SMOKE/SUBSET (not the P4 result): INCONCLUSIVE (1A: self-test active (selftestN 7, injected 5285)) (would implicate E_U)"
+}
