@@ -154,3 +154,26 @@ owner-checked. The latter rest on the read-only inventory agents' branch listing
 - **Accepted:** 12 (5 MAJOR, 6 MINOR, 1 NIT), all fixed.
 - **Residual open items:** the *(agent-read)* literature items, and the §11 inventory entries not marked
   owner-checked. Neither reviewer the memo recommends (§11.7) has examined it.
+
+## Second close-out pass (2026-10-12): documentation only, not reviewed
+
+- **Decision answered:** Joseph's request to close the study with a corrected validation proposal. The verdict stays
+  INCONCLUSIVE. The frozen rule, every number and every artifact are unchanged.
+- **Terminal condition:** one documentation pass, one owner self-check, a local commit, then stop. By instruction
+  there were **no review rounds and no additional agents**, so this pass has no independent review.
+- **Owner:** Claude Opus 5.5 (`claude-opus-5-5`), same session as above.
+- **Input:** `19010898`. Remote `main` checked at `f30370cd`. Since the study's base it changed AGENTS.md: the 5D
+  "injected-W" closure injected nothing. That change is used in REPORT §8 and §11.3. None of the study's inputs
+  changed.
+- **Changes:**
+  - REPORT §11.3–11.5: the s5n/s5c biases are no longer a closure allowance or floor; per-departure truth recovery
+    comes first, then matched/mismatched response dependence; the span test is qualified; work not covered by the
+    earlier costs is listed.
+  - REPORT §8, §9, §11.6–11.7, and the header: follow from those changes.
+  - `REVIEWER-BRIEF.md` (new).
+  - CATALOG, MANIFEST overrides and MANIFEST updated.
+- **Compute:** none. The ledger is unchanged at 1,100.9 / 7,200 core-s. The §11.5 cost arithmetic came from a local
+  arithmetic snippet over W2B's recorded figures. It read no data and is not metered.
+- **Residual:** the revised §11 and the brief are unreviewed. The brief is the instrument for the two reviews that
+  REPORT §11.7 recommends.
+

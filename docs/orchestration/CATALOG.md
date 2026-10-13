@@ -128,13 +128,18 @@ recommendation is not to develop a new inelastic model from it. A close-out pass
 added a no-run feasibility specification (§11), reviewed once with one correction pass: a species-dependent response
 study is possible only on the simulated-response side with a new event-loop pass; no official GENIE v3 prediction
 exists for the intermediate-W feature. The next decision recommended to Joseph is two independent reviews (response;
-nuclear theory/generator) before any validation. Grants no compute, contact or adoption authority.
+nuclear theory/generator) before any validation. A second close-out (2026-10-12, documentation only, not reviewed)
+withdrew the use of the recorded s5n/s5c biases as a closure allowance (each departure's own truth recovery comes
+first; attenuation is kept separate from response mimicry), qualified the span test as local and family-limited,
+costed sensitivity, closure, linear checks and calibrated validation separately, and added a two-role reviewer brief.
+Grants no compute, contact or adoption authority.
 
 | record | path |
 |---|---|
 | frozen plan, decision rule and amendments | [`state/inelastic-high-region-20261011/PLAN.md`](state/inelastic-high-region-20261011/PLAN.md) |
 | research memo: rate/shape/coverage, decomposition, literature, ranking, costed proposal, feasibility specification (§11) | [`state/inelastic-high-region-20261011/REPORT.md`](state/inelastic-high-region-20261011/REPORT.md) |
 | one read-only review and the correction-pass dispositions; the close-out targeted review and its correction pass | [`state/inelastic-high-region-20261011/REVIEW.md`](state/inelastic-high-region-20261011/REVIEW.md) |
+| two-role reviewer brief (hadronic response; nuclear theory/generator) and GENIE v3 attribution controls; prepared, not sent | [`state/inelastic-high-region-20261011/REVIEWER-BRIEF.md`](state/inelastic-high-region-20261011/REVIEWER-BRIEF.md) |
 
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 

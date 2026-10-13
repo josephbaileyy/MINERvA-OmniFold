@@ -23,6 +23,20 @@ AR23_20i at v3.04.00 in place of G18_02a_02_11b at v3.06.02, because the invento
 The corrections were reviewed once more (targeted, read-only), and one correction pass followed (REVIEW.md, "Close-out
 review"). Remote `main` had advanced to `d81f532b` (article and note edits only). None of this study's inputs changed.
 
+**Second close-out (2026-10-12, on reviewed head `19010898`; remote `main` `f30370cd`).** One documentation pass,
+not reviewed. No number, input, frozen rule, rule outcome or verdict changed, and nothing was run. It changed only the
+proposal:
+- §11.3–11.4: the recorded s5n/s5c biases are no longer used as a closure allowance or uncertainty floor. Each
+  departure and functional needs its own recovery against known truth first, then its response dependence under the
+  matched analysis, with estimator attenuation kept separate from response mimicry. An unresolved departure is
+  inconclusive for that mechanism.
+- §11.3: the span test is qualified as a local linear approximation, and as limited to the finite family tested.
+- §11.5: sensitivity, closure, linear-approximation checks and calibrated validation are costed separately. The work
+  not covered by earlier estimates is listed.
+- [`REVIEWER-BRIEF.md`](REVIEWER-BRIEF.md) (new): a two-role brief, including the controls needed to attribute a
+  GENIE v3 comparison.
+- §8, §9 and §11.6–11.7 follow from these changes.
+
 Evidence labels used throughout: **[M]** measured here or in a cited committed receipt; **[D]** deduced
 analytically from [M] and stated definitions; **[A]** assumption; **[L]** literature, opened by the owner unless
 marked *(agent-read)*, meaning the delegated literature agent read it and the owner did not re-open it.
@@ -712,7 +726,9 @@ decision needs a new frozen rule like PLAN §6, an uncertainty treatment, and sa
    - None exists in any usable form (§11.6).
    - Ready CVMFS splines exist for G18_10a_02_11b and AR23_20i, but not for G18_02a_02_11b.
 4. **An estimator that follows generator-sized E_avail departures.** s5c, s5n and s5e are closed, and this memo does
-   not propose reopening them.
+   not propose reopening them. For each proposed departure, its own recovery against known truth must be measured
+   (§11.3 Step 1). No 5D injected-shape recovery measurement exists (AGENTS.md at `f30370cd`), and the recorded s5n/s5c
+   biases do not transfer to new departures.
 5. **GiBUU support above 20 GeV** and its two-pion-background configuration.
 6. **A measured high-energy flux-shape uncertainty** for E_ν > 20 GeV in the W ≥ 3 cells.
 7. **Per-channel FSI fate tables for region C.** These are needed for the net FSI sign (§6.2).
@@ -733,9 +749,9 @@ decision needs a new frozen rule like PLAN §6, an uncertainty treatment, and sa
 | Stage | Work | Cost basis | Decision it answers |
 |---|---|---|---|
 | R | The two independent reviews of §6.2 and §11 | zero compute | §11.7: whether, and in what form, V1/V2 are worth executing |
-| V1 | **Sensitivity-only** species response: 8–12 simulated-response endpoints plus a control, through the W2B chain and estimator R, plus closure (§11.2 a, §11.3) | ≈ 6–9.5 + 1.5–2 billed CPU node-h, extrapolated from W2B's measured 1.898 for 3 endpoints (§11.5) [A]. **Not a total validation budget, not core-hours** | §7 rule 1 (movability) and §11.3 (hiding), as a screen |
-| V1-matched | Response-varied null ensembles (§11.2 b) | order 10² billed CPU node-h (packet estimate ~200, unmeasured) [A] | any calibrated response statement |
-| V2 | GENIE v3.04.00 G18_10a_02_11b and AR23_20i (ready splines), CH mixture, 1M + 0.1M (50–100 GeV) events each, through the existing converter | GENIE v3 throughput unmeasured here; **assumed** 5–50 ms/event → 1.5–15 core-h per configuration. A 10⁴-event pilot (≤ 0.2 core-h) measures it first [A]. The alternative, G18_02a_02_11b itself, needs splines built first, at an unmeasured cost | §7 screens 2–3 (M feature, Δ bin, rate) |
+| V1 | **Sensitivity-only** species response: 8–12 simulated-response endpoints plus a control, through the W2B chain and estimator R; truth-recovery closure and matched/mismatched response dependence per departure and functional; linear-approximation checks (§11.2 a, §11.3) | Kept separate (§11.5): sensitivity ≈ 6–9.5, closure ≈ 5–10, linear-approximation checks ≈ 8–23 billed CPU node-h; ≈ 19–42 in all, extrapolated from W2B's measured 1.898 for 3 endpoints [A]. **Not a calibrated validation budget, not core-hours** | §7 rule 1 (movability) and §11.3 (recovery, then mimicry by the reviewed family), as a screen |
+| V1-matched | Calibrated validation: response-varied null ensembles (§11.2 b) | order 10² billed CPU node-h (packet estimate ~200, unmeasured) [A] | any calibrated response statement |
+| V2 | GENIE v3.04.00 G18_10a_02_11b and AR23_20i (ready splines), CH mixture, 1M + 0.1M (50–100 GeV) events each, through the existing converter | GENIE v3 throughput unmeasured here; **assumed** 5–50 ms/event → 1.5–15 core-h per configuration. A 10⁴-event pilot (≤ 0.2 core-h) measures it first [A]. The alternative, G18_02a_02_11b itself, needs splines built first, at an unmeasured cost. Attributing a difference to the inelastic tune needs a same-model control pair ([`REVIEWER-BRIEF.md`](REVIEWER-BRIEF.md) §3): G18_02a_00_000 (ready splines, one more 1.5–15 core-h) against G18_02a_02_11b (splines to build) | §7 screens 2–3 (M feature, Δ bin, rate), on complete predictions only, unless the control pair is run |
 | V3 | Only if V1 and V2 are informative: review and Joseph's decision on any implementation | — | — |
 
 ## 9. Limitations
@@ -758,6 +774,11 @@ decision needs a new frozen rule like PLAN §6, an uncertainty treatment, and sa
 - The 4.1% species-weighted figure is an assumption-laden size comparison, not a calibrated band (§5.3).
 - The FSI net sign is not determined (§6.2).
 - §7's cutoffs are screening rules on central values.
+- The recorded s5n/s5c biases measure particular departures and estimators. They are not acceptance bounds for new
+  departures and set no closure allowance in §11 (they still enter the frozen rule's B_C, unchanged).
+- The proposed span (mimicry) test is a local linear approximation unless linearity, simultaneous variations and
+  interactions are checked. A finite response family that fails to mimic a signal does not exclude other detector
+  explanations (§11.3).
 
 ## 10. Reproduction and budget
 
@@ -876,33 +897,76 @@ memo, and cross-talk is excluded as MAT advises.
   response, which is the W2B limitation.
 - The memo proposes only (a). (b) is costed so the difference is visible.
 
-### 11.3 Closure: can response variation hide a known physics departure?
+### 11.3 Closure: recovery of known departures, then response dependence
 
-**Departures D_j.** Each is a fake data set built from the analysis MC at **nominal** response, with a truth-level
-reweight of known form:
+**Correction (2026-10-12).** An earlier version of this section borrowed the recorded s5n/s5c estimator biases
+(§5.3) as the closure allowance and added them to the "hidden" floor. That is withdrawn. Those numbers measure
+particular departures (s5n's F2 A-shape, inheriting the KI 83 flux defect; a q3 departure; s5c's purity background at
+nominal truth) under particular estimators. They are not acceptance bounds that transfer to a new departure, a new
+functional or estimator R. They remain in §5.3 as measurements, and the frozen rule's B_C (§1, PLAN §6) is unchanged.
+They may motivate an expectation (D₂ may not resolve), but they set no allowance and add no uncertainty floor here.
+Remote `main` `f30370cd` also records that the 5D "injected-W" closure injected nothing (AGENTS.md, scalar 4D/5D row),
+so **no 5D injected-shape recovery measurement exists** for any departure proposed below.
+
+**Departures D_j.** Each is a fake data set built from the analysis MC with a truth-level reweight of known form.
+The reviewers (§11.7, [`REVIEWER-BRIEF.md`](REVIEWER-BRIEF.md)) set the final forms and sizes:
 1. an emulated 02_11b-type re-partition (RES × 0.84, DIS × 1.06, NRB 1π reduced by struck nucleon), applied by truth
    mode and W_gen on the analysis MC;
 2. an FSI change from the existing `Fr*` universes (pion absorption and charge exchange at ±1σ). Its A shift is
    channel-signed (§6.2);
 3. a W-localized strength change of −15% at 1.4 ≤ W_gen < 1.8 GeV, matching the size of M's feature.
 
-**Procedure.**
-- Unfold each D_j under the nominal response and under every H_k.
-- Form the departure signature d_j (the same reductions as §11.2 step 4) and the response shift vectors r_k.
-- **Expected nominal non-closure.** The estimator does not follow generator-sized A-shape departures (§5.3: s5n C4,
-  +2.5% over C, up to 74% per cell; C5 +0.8%). So D₂, and the A-dependent part of D₁, will not close against truth
-  even at nominal response.
-  - **Closure is therefore judged against the recorded bias, not against truth.**
-  - At nominal response, d_j^nom (unfolded) must differ from the truth departure by no more than the recorded s5n/s5c
-    scale for that region.
-  - The test then compares each d_j^k (unfolded under H_k) with d_j^nom.
-- **Hidden** means that the departure's unfolded signature d_j^nom lies within the span of {r_k}, at coefficients
-  inside the reviewed band, to within a floor.
-  - The floor is the jitter and seed spread on the δ = 0 control, **plus** the recorded estimator bias for the
-    reductions concerned.
-  - Hiding can therefore be claimed only for departures larger than that floor.
-- **Reverse closure.** Fake data at nominal physics with a response shift H_k: does the reduction attribute it to a
-  physics step?
+**Reported functionals f.** The functionals are those this memo reports: ln ρ_C, ln ρ_M, ln ρ_W≥3, the
+normalization-removed per-W and per-A profiles, and the three decomposition steps. Each (D_j, f) pair is a separate
+test. The fake data must come from an MC half independent of the half used to build the response, or the recovery is
+optimistic.
+
+**Step 1: nominal-response recovery against known truth.** Fake data simulated with the nominal response, unfolded
+with the nominal response.
+- For each (D_j, f), compare the unfolded departure d_{j,f} with the **known truth** departure t_{j,f}.
+- Measure the recovery a_{j,f} = d_{j,f} / t_{j,f} and its spread over estimator seeds, numerical jitters and
+  Poisson pseudo-data at data statistics.
+- This is **estimator attenuation**: what the estimator does to the departure with no response error present.
+- **Adequate resolution** must be declared before execution. For example: correct sign, a recovered departure at
+  least 3× its seed/jitter/Poisson spread, and a_{j,f} within a reviewed interval (placeholder [0.5, 1.5]) [A].
+  The reviewers set the criterion. It is not taken from s5n or s5c.
+- **If (D_j, f) is not adequately resolved, the result for that mechanism through that functional is inconclusive.**
+  It is not carried into Step 2. A response family cannot be said to mimic, or fail to mimic, a departure that the
+  estimator cannot see.
+- A comparison against the nominal unfolded result (unfolded D_j minus unfolded nominal) diagnoses sensitivity. It
+  does **not** establish recovery. Recovery is judged only against t_{j,f}.
+
+**Step 2: response dependence under the matched analysis.** Only for (D_j, f) pairs that pass Step 1. The
+propagation is §11.2's: signal and background shifted together, purity recomputed, same chain and estimator.
+- **Matched:** simulate the fake data with response H_k and unfold with response H_k. The change a_{j,f}^k − a_{j,f}
+  measures whether **attenuation itself depends on the response** model.
+- **Mismatched:** simulate with H_k and unfold with the nominal response. This gives the response-error signature
+  r_{k,f} at nominal physics, which is the **mimicry** vector. The same run with D_j reweighting gives the bias of
+  the departure's recovery under that response error.
+- Keep the two separate. Attenuation (Step 1, and its response dependence in the matched runs) says how much of a
+  physics departure survives the estimator. Mimicry (mismatched runs) says whether a response error produces a
+  departure-like signature in unfolded space.
+- **Reverse closure.** Nominal physics, response shift H_k in the fake data, nominal response in the unfold: does
+  the reduction book the shift to a physics step? This is the mismatched run with no D_j.
+
+**Mimicry (span) test, and its limits.**
+- **Mimicked** means that, for a resolved (D_j, f), the recovered signature d_{j,f} lies within the span of
+  {r_{k,f}}, at coefficients inside the reviewed band, to within the measured seed/jitter/Poisson spread of the δ = 0
+  control and of D_j itself. That spread is measured in this study and is the only floor.
+- **The span test is a local linear approximation.** Each r_k is measured at one size per species and sign. It
+  assumes that shifts scale linearly with δ_s, that simultaneous variations add, and that species shifts do not
+  interact through the estimator or the purity weights. Unless these are checked, a span result holds only near the
+  tested points:
+  - linearity: a second size per species (for example ±0.5× and ±2× placeholder);
+  - simultaneous variation: at least the fully correlated all-species shift and the reviewer's correlated
+    combinations, compared with the sum of the one-at-a-time shifts;
+  - interactions: reviewer-selected species pairs (for example meson × EM and proton × neutron), or a fractional
+    factorial design.
+- **"Not mimicked" is limited to the reviewed, finite family.** It cannot exclude all detector explanations.
+  Untested routes include energy-dependent or position-dependent response, resolution, cross-talk, Birks
+  saturation, timing and pile-up, neutron detection beyond the three energy bins, and muon-side reconstruction.
+  Background modeling beyond the purity weight and flux shape are also untested. Any of these could produce a signature
+  outside span{r_k}.
 
 **Validation samples.** The already-inspected W regions (C, M, the Δ bin, the per-W profile) are **non-blind**. They
 may serve only as consistency checks, never as a confirmation. A blind check needs data not inspected in this study:
@@ -913,31 +977,51 @@ Lozano's SIS sample shares events with ours (§6.4) and is not independent.
 
 ### 11.4 Outcomes, defined before any execution
 
+Each outcome is read per (D_j, f) pair and per mechanism. No outcome is an automatic launch of the next stage.
+
 | Outcome | Condition | Reading |
 |---|---|---|
-| **Failure** | The δ = 0 control does not reproduce the nominal product within the jitter floor; a species-sum check fails; or, at nominal response, d_j^nom differs from the truth departure by more than the recorded s5n/s5c bias for that region | The study is uninformative. Fix or stop; nothing about physics |
-| **Inconclusive** | The reviewed family moves ρ_C / ρ_M / the W profile by amounts comparable to the residual **and** closure shows that departures D_j can be hidden by it | The region cannot discriminate between response and the candidate physics. **No model is ruled out or in.** A movable residual is a degeneracy, not a refutation |
-| **Useful (a)** | Closure shows the D_j are **not** hidden: d_j is outside span{r_k} within the band; and the family moves the observed residual by less than its size | That residual becomes a candidate physics constraint, subject to a new frozen rule, a response-varied null (11.2 b) and a blind sample |
-| **Useful (b)** | Independent calibration narrows δ_s enough that the family's shifts fall below the residual | Same, with the calibration documented and reviewed |
-| **Inconclusive (default)** | Any other combination, e.g. the family moves the residual comparably but the D_j are not hidden, or it moves the residual less but some D_j are hidden, or a departure is below the floor | No discrimination is claimed; record the combination and stop |
+| **Failure** | The δ = 0 control does not reproduce the nominal product within its measured jitter spread; a species-sum check fails; or the MC halves used for fake data and response are not independent | The study is uninformative. Fix or stop; nothing about physics |
+| **Inconclusive (unresolved)** | Step 1 does not resolve (D_j, f) adequately against known truth | Inconclusive **for that mechanism through that functional**. No mimicry statement is made for it |
+| **Inconclusive (mimicked)** | (D_j, f) is resolved, the reviewed family moves the observed residual in f by an amount comparable to it, **and** d_{j,f} lies within span{r_{k,f}} | The region cannot discriminate between response and that mechanism. **No model is ruled out or in.** A movable residual is a degeneracy, not a refutation |
+| **Useful (a), screening only** | (D_j, f) is resolved; d_{j,f} lies outside span{r_{k,f}} with the linearity, simultaneous-variation and interaction checks done; the family moves the observed residual by less than its size; and the matched runs show attenuation changes with H_k by less than a reviewed tolerance | The residual becomes a *candidate* physics constraint **against this reviewed family only**. It does not exclude other detector explanations. It still needs a new frozen rule, a response-varied null (11.2 b) and a blind sample |
+| **Useful (b)** | Independent calibration narrows δ_s enough that the family's shifts fall below the residual | Same as (a), with the calibration documented and reviewed |
+| **Inconclusive (default)** | Any other combination: the family moves the residual comparably but D_j is not mimicked; it moves the residual less but some D_j is mimicked; or the linear-approximation checks were not done or fail | No discrimination is claimed; record the combination and stop |
 
-### 11.5 Cost: sensitivity-only versus matched validation
+### 11.5 Cost: sensitivity, closure and calibrated validation, kept separate
 
 Units are **billed CPU node-hours** on Perlmutter (sacct ElapsedRaw × billing/256, W2B §6). They are not core-hours
-and are not converted here: the W2B event loops ran at billing 10/256 of a node.
+and are not converted here: the W2B event loops ran at billing 10/256 of a node. V2 generation (§8) is quoted in
+**core-hours** and is not added to any node-hour line. The unit costs come from W2B's measured 1.898 node-h for three
+endpoints: ≈ 0.63 node-h per response endpoint (event loops 0.575, dumps 0.027, unfold 0.032) and ≈ 0.032 node-h per
+additional unfold of existing event-loop outputs. Every line below is an extrapolation [A], not a measurement.
 
 | Part | Basis | Estimate |
 |---|---|---|
 | Measured W2B, for reference | 3 endpoints (δ = 0, ±4%): 36 event loops 1.724, 3 lateral dumps 0.080, 3 unfolds 0.095; **1.898 for W2b, 1.997 including W2a** | measured [M] |
-| **Sensitivity-only (11.2 a)** | ≈ 0.63 node-h per endpoint (W2B 1.898 / 3) × (8–12 endpoints + 1 control), plus 3 jitters per endpoint at 0.03 node-h | **≈ 6–9.5 node-h** [A, extrapolated] |
-| Closure (11.3) | 3 departures + 1 reverse, each unfolded under each of 9–13 response endpoints at ≈ 0.03 node-h per unfold, reusing the event-loop outputs | **≈ 1.5–2 node-h** [A] |
-| Code and review | ≈ 50 lines in `RecoilResponseUniverse`, species-sum checks, two reviewers | human time; not computed |
-| **Matched validation (11.2 b)** | response-varied null ensembles per hypothesis or band; the packet's estimate for a calibrated re-production with a response band is **~200 node-h, "like s5p itself"** (`PACKET-20261005…:321`), unmeasured | **order 10² node-h** [A] |
+| **1. Sensitivity only (11.2 a)** | 8–12 one-at-a-time endpoints + 1 control at ≈ 0.63, plus 3 jitters per endpoint at ≈ 0.03 | **≈ 6–9.5 node-h** (unchanged) |
+| **2. Closure (11.3), revised** | Step 1: 3 departures × (nominal + 3 seeds + 3 jitters) ≈ 0.7, plus Poisson pseudo-data at data statistics for the 3 departures and the δ = 0 control, 20–50 each, ≈ 2.5–6.3. Step 2: per endpoint, matched and mismatched unfolds for 3 departures plus 1 reverse = 7 unfolds × 9–13 endpoints ≈ 2.0–2.9 | **≈ 5–10 node-h** (was ≈ 1.5–2, which covered one unfold per departure and endpoint only) |
+| **3. Linear-approximation checks (11.3)**, not in any earlier estimate | each added endpoint ≈ 0.95 (event loops, 3 jitters and its 7 closure unfolds): linearity, a second size for 4–12 species-sign points ≈ 3.8–11.4; simultaneous variations, 2–6 combinations ≈ 1.9–5.7; interactions, 2–6 reviewer-selected pairs ≈ 1.9–5.7 | **≈ 8–23 node-h** |
+| **4. Calibrated validation (11.2 b)** | response-varied null ensembles per hypothesis or band; the packet's estimate for a calibrated re-production with a response band is **~200 node-h, "like s5p itself"** (`PACKET-20261005…:321`), unmeasured | **order 10² node-h** |
+| Code and review | ≈ 50 lines in `RecoilResponseUniverse`; species-sum checks; truth fields in the 5D outputs; truth reweights for D₁–D₃; an MC half-split; a Poisson pseudo-data generator for estimator R; two reviewers | human time; not computed |
+
+**Not covered by any existing estimate.**
+- Rows 2 and 3 as revised: the truth-recovery repeats and Poisson pseudo-data of Step 1, the matched/mismatched
+  doubling of Step 2, and all linear-approximation endpoints. Together they add ≈ 11–31 node-h to a screening study
+  that was costed at ≈ 7.5–11.5. **The revised screening total, rows 1–3, is ≈ 19–42 node-h.**
+- The pseudo-data generator: whether s5p's machinery serves estimator R was not checked.
+- The MC half-split halves the response statistics. Whether that degrades Step 1's resolution enough to need more MC
+  is unmeasured.
+- A multi-endpoint event loop, writing several species shifts per pass, could cut the event-loop share. That is
+  unmeasured and not counted.
+- For V2 (core-hours): the attribution control of §8 and [`REVIEWER-BRIEF.md`](REVIEWER-BRIEF.md) needs one more
+  configuration (G18_02a_00_000, ready splines, 1.5–15 core-h on the same assumed throughput). The paired
+  G18_02a_02_11b needs splines built first, at an unmeasured cost.
 
 The memo's earlier "≈ 5 CPU node-h" was this extrapolation (1.898 × 8/3) for **eight endpoints only**, "data-side" in
-the W2B sense. It is not a total
-validation budget, it omits the control, jitters, closure and any null, and it is not a core-hour figure. Every item
-here is well above this study's 2 core-hour authorization, and none is authorized.
+the W2B sense. It is not a total validation budget. It omits the control, jitters, closure, the linear-approximation
+checks and any null, and it is not a core-hour figure. Every item here is well above this study's 2 core-hour
+authorization, and none is authorized.
 
 ### 11.6 Existing official GENIE v3 predictions for the intermediate-W feature
 
@@ -963,33 +1047,48 @@ All entries are agent-read unless marked; item-level verification status is in t
   - *(agent-read)* AR23's inelastic parameters come from G18_10a_02_11b.
   - Whether G18_10a's 02_11b inelastic values equal the G18_02a values emulated in §6.1 was **not checked**.
   - G18_10a also changes the nuclear model (LFG, Valencia QE, hN FSI). A difference from GENIE 2.12 is therefore
-    not attributable to the inelastic tune alone.
+    not attributable to the inelastic tune alone. A G18_10a or AR23 comparison tests complete predictions. The
+    controls that attribution would need are in [`REVIEWER-BRIEF.md`](REVIEWER-BRIEF.md) §3.
 - G18_02a_02_11b itself would need splines built first.
 
 ### 11.7 The next decision for Joseph (one, prioritized)
 
-**Decision.** Whether to commission the two independent reviews named in the precondition above: one MINERvA
-hadronic-response reviewer and one nuclear-theory/generator reviewer. They would cover:
-- §6.2 (the FSI channel signs and the scope of the inclusive-invariance statement);
-- §11.1–11.4 (the species response family, its propagation, the closure departures and the outcome table);
-- whether a GENIE v3 V2 prediction is worth generating.
+**Decision.** Whether to commission the two independent reviews, using the brief in
+[`REVIEWER-BRIEF.md`](REVIEWER-BRIEF.md):
+- a MINERvA hadronic-response reviewer;
+- an independent nuclear-theory/generator reviewer.
+
+They would assess a concrete proposal: §6.2, §11.1–11.5 and the V2 attribution controls. They would not restart the
+literature search.
 
 **Cost.**
 - Zero compute.
 - Two read-only review sessions, the reviewers' time, and no data access beyond this branch.
-- Choosing reviewers outside the project may involve contact, which only Joseph can authorize.
+- Choosing reviewers outside the project may involve contact, which only Joseph can authorize. The brief is prepared,
+  not sent.
 
 **Why first.** Every execution path depends on choices this memo cannot make independently:
 - the response sizes and correlations;
 - whether the AnaTuple species branches mean what their names say;
-- which physics departures are realistic;
-- the FSI net sign.
+- how neutrons and background are treated;
+- which physics departures are realistic, and what counts as adequate recovery;
+- the FSI net sign;
+- which GENIE comparison can be attributed to what.
 
-The cheapest compute, V2 with ready AR23/G18_10a_02_11b splines (§8), is generation and needs its own authorization.
-The sensitivity-only response study (≈ 6–9.5 billed CPU node-h plus closure) needs new event-loop code. Both should
-follow review, not precede it.
+**No automatic launch.** A favorable review authorizes nothing. Each stage below needs Joseph's own authorization,
+and the estimates stay separate:
+
+| Stage | Unit | Estimate [A] |
+|---|---|---|
+| V2: 10⁴-event pilot, then G18_10a_02_11b and AR23_20i (complete predictions) | core-h | ≤ 0.2 pilot; 1.5–15 per configuration |
+| V2 attribution control: G18_02a_00_000 against G18_02a_02_11b | core-h | 1.5–15 for the first; splines to build for the second (unmeasured) |
+| V1 sensitivity only | billed CPU node-h | ≈ 6–9.5 |
+| V1 closure (truth recovery, matched/mismatched) | billed CPU node-h | ≈ 5–10 |
+| V1 linear-approximation checks | billed CPU node-h | ≈ 8–23 |
+| Calibrated validation (response-varied nulls) | billed CPU node-h | order 10² |
 
 **If the reviews clear it,** the recommended order is:
-1. V2 first: a 10⁴-event throughput pilot, then two official configurations. It tests M directly and needs no
-   detector code.
-2. The §11 sensitivity study second. A matched validation (order 10² node-h) only if both are informative.
+1. V2 first: the pilot, then the two official configurations. It tests M as complete predictions and needs no
+   detector code. The control pair is needed only if an attribution to the inelastic tune is wanted.
+2. The §11 screening study second (sensitivity, closure, linear checks). A calibrated validation (order 10² node-h)
+   only if both are informative.
