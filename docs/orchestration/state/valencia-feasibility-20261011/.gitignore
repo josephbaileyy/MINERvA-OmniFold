@@ -1,0 +1,8 @@
+# flux copies are referenced by digest and cluster path in REPORT.md, not committed
+inputs/phi_t.npz
+inputs/phi_t.json
+inputs/flux_mefhc_phi_t.root
+inputs/flux_mefhc_phi_t.C
+code/__pycache__/
+logs/*.lock
+tests/__pycache__/

@@ -1,0 +1,4515 @@
+{
+ "schema": "inelastic-r3/1",
+ "digests": {
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz": "bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz": "cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz": "c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz": "475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz": "48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18",
+  "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rrzero_b-_j-.npz": "ec5dc97d8554f008902a17428724e8482544d6e6de7db5ae1155d96d51dc4c4e",
+  "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr0_b-_j-.npz": "df11bfd8e879a051d3d0bf2aa5fc4e0131efa9065bcbd89d29a859ddb9f8639b",
+  "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr1_b-_j-.npz": "36313201ecffa85183fa83d642c9b0b71dc67f9ed1743dba7184eb22c41356a8",
+  "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz": "fb5cc6798b97b5902ad8f0fecbc49990271f7772f98d3063c1dc8596340e680c",
+  "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j1.npz": "1167923a18a60f5f42332b7c1d0a0778c32af24bed73054bb97e330da5b2399c",
+  "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j2.npz": "015093815820df594a81e7775817f2dbc999f645b555d5601d5b899038e5a0dc",
+  "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j3.npz": "d77f58eeffd0a5c4bffbe02a0c21d27dd3a784bf3d471ca15e73fa2a222a64b1"
+ },
+ "n_rep": 200,
+ "seed": 20261011,
+ "results": {
+  "production": {
+   "TuneV1": {
+    "inclusive_first": {
+     "C": {
+      "lnR": 0.17483939689043718,
+      "steps": {
+       "rate": 0.1262927571804725,
+       "muon_shape": 0.028386446057058107,
+       "transfer_given_muon": 0.014665548704373125,
+       "partition_given_transfer": 0.005494644948533391
+      },
+      "ln_rho": 0.04854663970996467
+     },
+     "M": {
+      "lnR": 0.005556412081486011,
+      "steps": {
+       "rate": 0.1262927571804725,
+       "muon_shape": -0.01187222695470198,
+       "transfer_given_muon": -0.10886411814428437,
+       "partition_given_transfer": -1.1102230246251565e-16
+      },
+      "ln_rho": -0.1207363450989865
+     },
+     "C_no_overflow": {
+      "lnR": 0.15191513071877727,
+      "steps": {
+       "rate": 0.1262927571804723,
+       "muon_shape": 0.004683638707431242,
+       "transfer_given_muon": 0.011737317176672818,
+       "partition_given_transfer": 0.009201417654201008
+      },
+      "ln_rho": 0.02562237353830496
+     },
+     "C_overflow": {
+      "lnR": 0.19937825836355708,
+      "steps": {
+       "rate": 0.1262927571804723,
+       "muon_shape": 0.05373849338168778,
+       "transfer_given_muon": 0.017712534889927377,
+       "partition_given_transfer": 0.0016344729114697346
+      },
+      "ln_rho": 0.07308550118308477
+     }
+    },
+    "partition_first": {
+     "C": {
+      "lnR": 0.17483939689043718,
+      "steps": {
+       "rate": 0.1262927571804725,
+       "partition_given_transfer": 0.005461299413455628,
+       "muon_shape": 0.02820798277792907,
+       "transfer_given_muon": 0.01487735751858018
+      },
+      "ln_rho": 0.04854663970996467
+     },
+     "M": {
+      "lnR": 0.005556412081486011,
+      "steps": {
+       "rate": 0.1262927571804725,
+       "partition_given_transfer": -2.2204460492503136e-16,
+       "muon_shape": -0.011872226954701531,
+       "transfer_given_muon": -0.10886411814428475
+      },
+      "ln_rho": -0.1207363450989865
+     },
+     "C_no_overflow": {
+      "lnR": 0.15191513071877727,
+      "steps": {
+       "rate": 0.1262927571804723,
+       "partition_given_transfer": 0.009155481919794008,
+       "muon_shape": 0.004530875771860409,
+       "transfer_given_muon": 0.011936015846650647
+      },
+      "ln_rho": 0.02562237353830496
+     },
+     "C_overflow": {
+      "lnR": 0.19937825836355708,
+      "steps": {
+       "rate": 0.1262927571804723,
+       "partition_given_transfer": 0.001396210583582548,
+       "muon_shape": 0.05372798042325941,
+       "transfer_given_muon": 0.017961310176242994
+      },
+      "ln_rho": 0.07308550118308477
+     }
+    },
+    "fallback": {
+     "data_fraction_in_pred_empty_mt": 0.0,
+     "data_fraction_in_pred_empty_m": 0.0,
+     "pred_fraction_in_data_empty_mt": 0.0
+    },
+    "mc_sd": {
+     "inclusive_first": {
+      "C": {
+       "lnR_sd": 0.00028007749989976416,
+       "ln_rho_sd": 0.00020975126509266214,
+       "steps_sd": {
+        "rate": 0.00019221572151479973,
+        "muon_shape": 0.00010132923750168518,
+        "transfer_given_muon": 0.00015388828309500065,
+        "partition_given_transfer": 8.220253150457838e-05
+       }
+      },
+      "M": {
+       "lnR_sd": 0.0003672657034628647,
+       "ln_rho_sd": 0.00034362637993506635,
+       "steps_sd": {
+        "rate": 0.00019221572151481076,
+        "muon_shape": 5.7821471621882926e-05,
+        "transfer_given_muon": 0.00033889805306048517,
+        "partition_given_transfer": 1.312218298470605e-16
+       }
+      },
+      "C_no_overflow": {
+       "lnR_sd": 0.0003759278446987608,
+       "ln_rho_sd": 0.00033191040290009093,
+       "steps_sd": {
+        "rate": 0.0001922157215148058,
+        "muon_shape": 7.748109539898584e-05,
+        "transfer_given_muon": 0.00023525073391257787,
+        "partition_given_transfer": 0.0002108847309174702
+       }
+      },
+      "C_overflow": {
+       "lnR_sd": 0.0004053359663020395,
+       "ln_rho_sd": 0.0003553155772267829,
+       "steps_sd": {
+        "rate": 0.00019221572151480076,
+        "muon_shape": 0.00019700036115088672,
+        "transfer_given_muon": 0.00023811810477386566,
+        "partition_given_transfer": 0.00018935307920393843
+       }
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR_sd": 0.00028007749989976416,
+       "ln_rho_sd": 0.00020975126509266214,
+       "steps_sd": {
+        "rate": 0.00019221572151479973,
+        "partition_given_transfer": 8.336796244019204e-05,
+        "muon_shape": 0.00010043518688646003,
+        "transfer_given_muon": 0.00015423181286072343
+       }
+      },
+      "M": {
+       "lnR_sd": 0.0003672657034628647,
+       "ln_rho_sd": 0.00034362637993506635,
+       "steps_sd": {
+        "rate": 0.00019221572151481076,
+        "partition_given_transfer": 1.2860432888143453e-16,
+        "muon_shape": 5.782147162189377e-05,
+        "transfer_given_muon": 0.0003388980530604913
+       }
+      },
+      "C_no_overflow": {
+       "lnR_sd": 0.0003759278446987608,
+       "ln_rho_sd": 0.00033191040290009093,
+       "steps_sd": {
+        "rate": 0.0001922157215148058,
+        "partition_given_transfer": 0.00021233030996777567,
+        "muon_shape": 7.583120720557227e-05,
+        "transfer_given_muon": 0.00023585741238844765
+       }
+      },
+      "C_overflow": {
+       "lnR_sd": 0.0004053359663020395,
+       "ln_rho_sd": 0.0003553155772267829,
+       "steps_sd": {
+        "rate": 0.00019221572151480076,
+        "partition_given_transfer": 0.00020204185940518157,
+        "muon_shape": 0.00019620781059328973,
+        "transfer_given_muon": 0.00023658577765978448
+       }
+      }
+     }
+    }
+   },
+   "GENIE_CV": {
+    "inclusive_first": {
+     "C": {
+      "lnR": 0.1329105156480089,
+      "steps": {
+       "rate": 0.10480757203723351,
+       "muon_shape": 0.01662806943734775,
+       "transfer_given_muon": 0.0040169767047458105,
+       "partition_given_transfer": 0.007457897468681822
+      },
+      "ln_rho": 0.028102943610775394
+     },
+     "M": {
+      "lnR": -0.0897459192577413,
+      "steps": {
+       "rate": 0.10480757203723351,
+       "muon_shape": -0.010390132359054232,
+       "transfer_given_muon": -0.18416335893592045,
+       "partition_given_transfer": 0.0
+      },
+      "ln_rho": -0.1945534912949748
+     },
+     "C_no_overflow": {
+      "lnR": 0.07710367185006883,
+      "steps": {
+       "rate": 0.10480757203723351,
+       "muon_shape": -0.006965697397787566,
+       "transfer_given_muon": -0.034851653504005826,
+       "partition_given_transfer": 0.01411345071462875
+      },
+      "ln_rho": -0.027703900187164676
+     },
+     "C_overflow": {
+      "lnR": 0.1947807365300644,
+      "steps": {
+       "rate": 0.10480757203723351,
+       "muon_shape": 0.04367745851196957,
+       "transfer_given_muon": 0.04574803360828327,
+       "partition_given_transfer": 0.0005476723725780012
+      },
+      "ln_rho": 0.08997316449283088
+     }
+    },
+    "partition_first": {
+     "C": {
+      "lnR": 0.1329105156480089,
+      "steps": {
+       "rate": 0.10480757203723351,
+       "partition_given_transfer": 0.008165552657705608,
+       "muon_shape": 0.016332181117582976,
+       "transfer_given_muon": 0.0036052098354866636
+      },
+      "ln_rho": 0.028102943610775394
+     },
+     "M": {
+      "lnR": -0.0897459192577413,
+      "steps": {
+       "rate": 0.10480757203723351,
+       "partition_given_transfer": 0.0,
+       "muon_shape": -0.010390132359054456,
+       "transfer_given_muon": -0.18416335893592017
+      },
+      "ln_rho": -0.1945534912949748
+     },
+     "C_no_overflow": {
+      "lnR": 0.07710367185006883,
+      "steps": {
+       "rate": 0.10480757203723351,
+       "partition_given_transfer": 0.014085881377742105,
+       "muon_shape": -0.006883827055917343,
+       "transfer_given_muon": -0.034905954508989305
+      },
+      "ln_rho": -0.027703900187164676
+     },
+     "C_overflow": {
+      "lnR": 0.1947807365300644,
+      "steps": {
+       "rate": 0.10480757203723351,
+       "partition_given_transfer": 0.0011588611012069347,
+       "muon_shape": 0.04330095197295934,
+       "transfer_given_muon": 0.045513351418664416
+      },
+      "ln_rho": 0.08997316449283088
+     }
+    },
+    "fallback": {
+     "data_fraction_in_pred_empty_mt": 0.0005999848230364506,
+     "data_fraction_in_pred_empty_m": 0.0,
+     "pred_fraction_in_data_empty_mt": 0.0
+    },
+    "mc_sd": {
+     "inclusive_first": {
+      "C": {
+       "lnR_sd": 0.003772938027447845,
+       "ln_rho_sd": 0.0024647562785838468,
+       "steps_sd": {
+        "rate": 0.0017132579704846375,
+        "muon_shape": 0.0014140587461779928,
+        "transfer_given_muon": 0.0017047940186768551,
+        "partition_given_transfer": 0.0005517080689898166
+       }
+      },
+      "M": {
+       "lnR_sd": 0.0024629710149943816,
+       "ln_rho_sd": 0.0026533429190978577,
+       "steps_sd": {
+        "rate": 0.0017132579704846394,
+        "muon_shape": 0.0010299252765683783,
+        "transfer_given_muon": 0.0025630939484994906,
+        "partition_given_transfer": 1.300411863219936e-16
+       }
+      },
+      "C_no_overflow": {
+       "lnR_sd": 0.002535710623621688,
+       "ln_rho_sd": 0.0027428236235505963,
+       "steps_sd": {
+        "rate": 0.0017132579704846442,
+        "muon_shape": 0.0010057006855179005,
+        "transfer_given_muon": 0.002188456726654445,
+        "partition_given_transfer": 0.0016468982451665031
+       }
+      },
+      "C_overflow": {
+       "lnR_sd": 0.007797095856794938,
+       "ln_rho_sd": 0.006461641493510917,
+       "steps_sd": {
+        "rate": 0.0017132579704846318,
+        "muon_shape": 0.003885710772130789,
+        "transfer_given_muon": 0.00400443439915951,
+        "partition_given_transfer": 0.001578063692562239
+       }
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR_sd": 0.003772938027447845,
+       "ln_rho_sd": 0.0024647562785838468,
+       "steps_sd": {
+        "rate": 0.0017132579704846375,
+        "partition_given_transfer": 0.0005817827010106616,
+        "muon_shape": 0.0013899175180938767,
+        "transfer_given_muon": 0.0016892624033704611
+       }
+      },
+      "M": {
+       "lnR_sd": 0.0024629710149943816,
+       "ln_rho_sd": 0.0026533429190978577,
+       "steps_sd": {
+        "rate": 0.0017132579704846394,
+        "partition_given_transfer": 1.3477983346338773e-16,
+        "muon_shape": 0.0010299252765683675,
+        "transfer_given_muon": 0.0025630939484995
+       }
+      },
+      "C_no_overflow": {
+       "lnR_sd": 0.002535710623621688,
+       "ln_rho_sd": 0.0027428236235505963,
+       "steps_sd": {
+        "rate": 0.0017132579704846442,
+        "partition_given_transfer": 0.0015349945416995461,
+        "muon_shape": 0.0009369480930448526,
+        "transfer_given_muon": 0.0020932370330979016
+       }
+      },
+      "C_overflow": {
+       "lnR_sd": 0.007797095856794938,
+       "ln_rho_sd": 0.006461641493510917,
+       "steps_sd": {
+        "rate": 0.0017132579704846318,
+        "partition_given_transfer": 0.0016146418773346442,
+        "muon_shape": 0.0038026896482810726,
+        "transfer_given_muon": 0.003964442051456157
+       }
+      }
+     }
+    }
+   },
+   "GENIE_MEC": {
+    "inclusive_first": {
+     "C": {
+      "lnR": 0.12979577251710575,
+      "steps": {
+       "rate": 0.06537850234691954,
+       "muon_shape": 0.028618211583654535,
+       "transfer_given_muon": 0.027635657061320946,
+       "partition_given_transfer": 0.00816340152521093
+      },
+      "ln_rho": 0.06441727017018621
+     },
+     "M": {
+      "lnR": -0.1114761520414219,
+      "steps": {
+       "rate": 0.06537850234691954,
+       "muon_shape": -0.011816713260878348,
+       "transfer_given_muon": -0.16503794112746303,
+       "partition_given_transfer": 0.0
+      },
+      "ln_rho": -0.17685465438834144
+     },
+     "C_no_overflow": {
+      "lnR": 0.07523337870818286,
+      "steps": {
+       "rate": 0.06537850234691933,
+       "muon_shape": 0.0028841596703196117,
+       "transfer_given_muon": -0.005879523172985103,
+       "partition_given_transfer": 0.012850239863929112
+      },
+      "ln_rho": 0.009854876361263532
+     },
+     "C_overflow": {
+      "lnR": 0.19020465684006227,
+      "steps": {
+       "rate": 0.06537850234691933,
+       "muon_shape": 0.05797622920422306,
+       "transfer_given_muon": 0.06356245170594774,
+       "partition_given_transfer": 0.0032874735829722403
+      },
+      "ln_rho": 0.12482615449314294
+     }
+    },
+    "partition_first": {
+     "C": {
+      "lnR": 0.12979577251710575,
+      "steps": {
+       "rate": 0.06537850234691954,
+       "partition_given_transfer": 0.009463167087655728,
+       "muon_shape": 0.028010841571188362,
+       "transfer_given_muon": 0.026943261511342045
+      },
+      "ln_rho": 0.06441727017018621
+     },
+     "M": {
+      "lnR": -0.1114761520414219,
+      "steps": {
+       "rate": 0.06537850234691954,
+       "partition_given_transfer": -2.2204460492503136e-16,
+       "muon_shape": -0.011816713260878124,
+       "transfer_given_muon": -0.16503794112746303
+      },
+      "ln_rho": -0.17685465438834144
+     },
+     "C_no_overflow": {
+      "lnR": 0.07523337870818286,
+      "steps": {
+       "rate": 0.06537850234691933,
+       "partition_given_transfer": 0.014237447064618554,
+       "muon_shape": 0.002602544415161254,
+       "transfer_given_muon": -0.0069851151185163635
+      },
+      "ln_rho": 0.009854876361263532
+     },
+     "C_overflow": {
+      "lnR": 0.19020465684006227,
+      "steps": {
+       "rate": 0.06537850234691933,
+       "partition_given_transfer": 0.0038351967389972635,
+       "muon_shape": 0.0573060036309352,
+       "transfer_given_muon": 0.06368495412321053
+      },
+      "ln_rho": 0.12482615449314294
+     }
+    },
+    "fallback": {
+     "data_fraction_in_pred_empty_mt": 0.0006181796205641843,
+     "data_fraction_in_pred_empty_m": 0.0,
+     "pred_fraction_in_data_empty_mt": 0.0
+    },
+    "mc_sd": {
+     "inclusive_first": {
+      "C": {
+       "lnR_sd": 0.004128547531410421,
+       "ln_rho_sd": 0.0026080535977863564,
+       "steps_sd": {
+        "rate": 0.0019031995896216514,
+        "muon_shape": 0.0016117568815872654,
+        "transfer_given_muon": 0.001592992508037089,
+        "partition_given_transfer": 0.0006607428943227691
+       }
+      },
+      "M": {
+       "lnR_sd": 0.002526350976922047,
+       "ln_rho_sd": 0.0027182218445001368,
+       "steps_sd": {
+        "rate": 0.0019031995896216702,
+        "muon_shape": 0.00117899109655183,
+        "transfer_given_muon": 0.0025423907951485367,
+        "partition_given_transfer": 1.2536924076449047e-16
+       }
+      },
+      "C_no_overflow": {
+       "lnR_sd": 0.0030092453841281106,
+       "ln_rho_sd": 0.0028028030805005606,
+       "steps_sd": {
+        "rate": 0.0019031995896216466,
+        "muon_shape": 0.001028836120165272,
+        "transfer_given_muon": 0.0022700032804190383,
+        "partition_given_transfer": 0.001703510931182228
+       }
+      },
+      "C_overflow": {
+       "lnR_sd": 0.007848431282417237,
+       "ln_rho_sd": 0.0063840416889788905,
+       "steps_sd": {
+        "rate": 0.001903199589621643,
+        "muon_shape": 0.004257519927216663,
+        "transfer_given_muon": 0.0037809342921215103,
+        "partition_given_transfer": 0.0016810271842815437
+       }
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR_sd": 0.004128547531410421,
+       "ln_rho_sd": 0.0026080535977863564,
+       "steps_sd": {
+        "rate": 0.0019031995896216514,
+        "partition_given_transfer": 0.0007393520607777086,
+        "muon_shape": 0.0015873088954786324,
+        "transfer_given_muon": 0.0015731003328598504
+       }
+      },
+      "M": {
+       "lnR_sd": 0.002526350976922047,
+       "ln_rho_sd": 0.0027182218445001368,
+       "steps_sd": {
+        "rate": 0.0019031995896216702,
+        "partition_given_transfer": 1.4262050164063586e-16,
+        "muon_shape": 0.001178991096551813,
+        "transfer_given_muon": 0.002542390795148514
+       }
+      },
+      "C_no_overflow": {
+       "lnR_sd": 0.0030092453841281106,
+       "ln_rho_sd": 0.0028028030805005606,
+       "steps_sd": {
+        "rate": 0.0019031995896216466,
+        "partition_given_transfer": 0.0016997416914219957,
+        "muon_shape": 0.001000113807478031,
+        "transfer_given_muon": 0.00223817366036247
+       }
+      },
+      "C_overflow": {
+       "lnR_sd": 0.007848431282417237,
+       "ln_rho_sd": 0.0063840416889788905,
+       "steps_sd": {
+        "rate": 0.001903199589621643,
+        "partition_given_transfer": 0.0018076947915196487,
+        "muon_shape": 0.004255099397942776,
+        "transfer_given_muon": 0.003738689344447813
+       }
+      }
+     }
+    }
+   },
+   "NuWro": {
+    "inclusive_first": {
+     "C": {
+      "lnR": 0.14850826755716476,
+      "steps": {
+       "rate": 0.1422872659974123,
+       "muon_shape": 0.023725246135922827,
+       "transfer_given_muon": -0.03411473257294351,
+       "partition_given_transfer": 0.016610487996773192
+      },
+      "ln_rho": 0.00622100155975247
+     },
+     "M": {
+      "lnR": 0.10845194882299566,
+      "steps": {
+       "rate": 0.14228726599741248,
+       "muon_shape": -0.004639067921624759,
+       "transfer_given_muon": -0.02919624925279213,
+       "partition_given_transfer": 0.0
+      },
+      "ln_rho": -0.03383531717441682
+     },
+     "C_no_overflow": {
+      "lnR": 0.15954922850026057,
+      "steps": {
+       "rate": 0.14228726599741248,
+       "muon_shape": 0.00503992307579738,
+       "transfer_given_muon": -0.07455501213292359,
+       "partition_given_transfer": 0.0867770515599743
+      },
+      "ln_rho": 0.01726196250284809
+     },
+     "C_overflow": {
+      "lnR": 0.13709566066162251,
+      "steps": {
+       "rate": 0.14228726599741248,
+       "muon_shape": 0.04246980314390484,
+       "transfer_given_muon": 0.004165113572744779,
+       "partition_given_transfer": -0.051826522052439525
+      },
+      "ln_rho": -0.005191605335789967
+     }
+    },
+    "partition_first": {
+     "C": {
+      "lnR": 0.14850826755716476,
+      "steps": {
+       "rate": 0.1422872659974123,
+       "partition_given_transfer": 0.01790088912638328,
+       "muon_shape": 0.022919440933263244,
+       "transfer_given_muon": -0.034599328499894014
+      },
+      "ln_rho": 0.00622100155975247
+     },
+     "M": {
+      "lnR": 0.10845194882299566,
+      "steps": {
+       "rate": 0.14228726599741248,
+       "partition_given_transfer": -2.2204460492503136e-16,
+       "muon_shape": -0.0046390679216244245,
+       "transfer_given_muon": -0.029196249252792246
+      },
+      "ln_rho": -0.03383531717441682
+     },
+     "C_no_overflow": {
+      "lnR": 0.15954922850026057,
+      "steps": {
+       "rate": 0.14228726599741248,
+       "partition_given_transfer": 0.08541056524278837,
+       "muon_shape": 0.00453135582229064,
+       "transfer_given_muon": -0.07267995856223089
+      },
+      "ln_rho": 0.01726196250284809
+     },
+     "C_overflow": {
+      "lnR": 0.13709566066162251,
+      "steps": {
+       "rate": 0.14228726599741248,
+       "partition_given_transfer": -0.05616077606847568,
+       "muon_shape": 0.0441478725708993,
+       "transfer_given_muon": 0.00682129816178658
+      },
+      "ln_rho": -0.005191605335789967
+     }
+    },
+    "fallback": {
+     "data_fraction_in_pred_empty_mt": 0.0002814541777767664,
+     "data_fraction_in_pred_empty_m": 0.0,
+     "pred_fraction_in_data_empty_mt": 2.0007617248125327e-07
+    },
+    "mc_sd": {
+     "inclusive_first": {
+      "C": {
+       "lnR_sd": 0.0034354532535013195,
+       "ln_rho_sd": 0.002014483387513628,
+       "steps_sd": {
+        "rate": 0.0017734167614168054,
+        "muon_shape": 0.0011895695160822177,
+        "transfer_given_muon": 0.001391292194636479,
+        "partition_given_transfer": 0.0007292229861603996
+       }
+      },
+      "M": {
+       "lnR_sd": 0.0022249265906675573,
+       "ln_rho_sd": 0.0022839277223754783,
+       "steps_sd": {
+        "rate": 0.0017734167614167785,
+        "muon_shape": 0.0009177503896850986,
+        "transfer_given_muon": 0.0021425681892031055,
+        "partition_given_transfer": 1.2748205494709443e-16
+       }
+      },
+      "C_no_overflow": {
+       "lnR_sd": 0.0023100865706261044,
+       "ln_rho_sd": 0.002248707356599833,
+       "steps_sd": {
+        "rate": 0.0017734167614167793,
+        "muon_shape": 0.001051198181511621,
+        "transfer_given_muon": 0.0016224484438101228,
+        "partition_given_transfer": 0.0014144001005385062
+       }
+      },
+      "C_overflow": {
+       "lnR_sd": 0.006379061460951124,
+       "ln_rho_sd": 0.005031808470437729,
+       "steps_sd": {
+        "rate": 0.001773416761416773,
+        "muon_shape": 0.0032166949510382915,
+        "transfer_given_muon": 0.002947310620415762,
+        "partition_given_transfer": 0.0015708358984896748
+       }
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR_sd": 0.0034354532535013195,
+       "ln_rho_sd": 0.002014483387513628,
+       "steps_sd": {
+        "rate": 0.0017734167614168054,
+        "partition_given_transfer": 0.0006577491357298336,
+        "muon_shape": 0.0011758681021484115,
+        "transfer_given_muon": 0.0013855650802677003
+       }
+      },
+      "M": {
+       "lnR_sd": 0.0022249265906675573,
+       "ln_rho_sd": 0.0022839277223754783,
+       "steps_sd": {
+        "rate": 0.0017734167614167785,
+        "partition_given_transfer": 1.3511833408267694e-16,
+        "muon_shape": 0.0009177503896850919,
+        "transfer_given_muon": 0.0021425681892031025
+       }
+      },
+      "C_no_overflow": {
+       "lnR_sd": 0.0023100865706261044,
+       "ln_rho_sd": 0.002248707356599833,
+       "steps_sd": {
+        "rate": 0.0017734167614167793,
+        "partition_given_transfer": 0.001397759297234881,
+        "muon_shape": 0.0009808445712023764,
+        "transfer_given_muon": 0.0016177480389041566
+       }
+      },
+      "C_overflow": {
+       "lnR_sd": 0.006379061460951124,
+       "ln_rho_sd": 0.005031808470437729,
+       "steps_sd": {
+        "rate": 0.001773416761416773,
+        "partition_given_transfer": 0.001634201483087081,
+        "muon_shape": 0.0034491777542317043,
+        "transfer_given_muon": 0.0031808006097820848
+       }
+      }
+     }
+    }
+   },
+   "GiBUU": {
+    "inclusive_first": {
+     "C": {
+      "lnR": 0.474355924496059,
+      "steps": {
+       "rate": 0.32633192831007973,
+       "muon_shape": 0.015309971241587464,
+       "transfer_given_muon": 0.09402198842699996,
+       "partition_given_transfer": 0.03869203651739179
+      },
+      "ln_rho": 0.14802399618597928
+     },
+     "M": {
+      "lnR": 0.31762865042394817,
+      "steps": {
+       "rate": 0.32633192831007973,
+       "muon_shape": 0.004011961007709398,
+       "transfer_given_muon": -0.012715238893841059,
+       "partition_given_transfer": 0.0
+      },
+      "ln_rho": -0.008703277886131566
+     },
+     "C_no_overflow": {
+      "lnR": 0.36023195253252716,
+      "steps": {
+       "rate": 0.32633192831007973,
+       "muon_shape": -0.002012671679870289,
+       "transfer_given_muon": -0.008053694560108172,
+       "partition_given_transfer": 0.04396639046242591
+      },
+      "ln_rho": 0.03390002422244742
+     },
+     "C_overflow": {
+      "lnR": 0.6094556310901987,
+      "steps": {
+       "rate": 0.3263319283100799,
+       "muon_shape": 0.038081604085287844,
+       "transfer_given_muon": 0.21183392999000628,
+       "partition_given_transfer": 0.033208168704824605
+      },
+      "ln_rho": 0.28312370278011884
+     }
+    },
+    "partition_first": {
+     "C": {
+      "lnR": 0.474355924496059,
+      "steps": {
+       "rate": 0.32633192831007973,
+       "partition_given_transfer": 0.03473497348224341,
+       "muon_shape": 0.01557872438101501,
+       "transfer_given_muon": 0.09771029832272081
+      },
+      "ln_rho": 0.14802399618597928
+     },
+     "M": {
+      "lnR": 0.31762865042394817,
+      "steps": {
+       "rate": 0.32633192831007973,
+       "partition_given_transfer": 0.0,
+       "muon_shape": 0.004011961007709619,
+       "transfer_given_muon": -0.012715238893841171
+      },
+      "ln_rho": -0.008703277886131566
+     },
+     "C_no_overflow": {
+      "lnR": 0.36023195253252716,
+      "steps": {
+       "rate": 0.32633192831007973,
+       "partition_given_transfer": 0.051706222972496794,
+       "muon_shape": -0.011230324028099635,
+       "transfer_given_muon": -0.0065758747219496734
+      },
+      "ln_rho": 0.03390002422244742
+     },
+     "C_overflow": {
+      "lnR": 0.6094556310901987,
+      "steps": {
+       "rate": 0.3263319283100799,
+       "partition_given_transfer": 0.011511467465109204,
+       "muon_shape": 0.051846452370894025,
+       "transfer_given_muon": 0.21976578294411567
+      },
+      "ln_rho": 0.28312370278011884
+     }
+    },
+    "fallback": {
+     "data_fraction_in_pred_empty_mt": 0.04626277898113103,
+     "data_fraction_in_pred_empty_m": 0.03349115322757853,
+     "pred_fraction_in_data_empty_mt": 0.0
+    },
+    "mc_sd": {
+     "inclusive_first": {
+      "C": {
+       "lnR_sd": 0.003020467229306498,
+       "ln_rho_sd": 0.004564620060600829,
+       "steps_sd": {
+        "rate": 0.004413198140248634,
+        "muon_shape": 0.002852870833947524,
+        "transfer_given_muon": 0.0038266072670257076,
+        "partition_given_transfer": 0.0010745196948189737
+       }
+      },
+      "M": {
+       "lnR_sd": 0.0035586321865012484,
+       "ln_rho_sd": 0.005050370411780707,
+       "steps_sd": {
+        "rate": 0.004413198140248642,
+        "muon_shape": 0.002678460158397209,
+        "transfer_given_muon": 0.005618762211696374,
+        "partition_given_transfer": 1.2613761386286871e-16
+       }
+      },
+      "C_no_overflow": {
+       "lnR_sd": 0.003302615245136777,
+       "ln_rho_sd": 0.005249116972089842,
+       "steps_sd": {
+        "rate": 0.004413198140248647,
+        "muon_shape": 0.0029630447550859024,
+        "transfer_given_muon": 0.004571593338059111,
+        "partition_given_transfer": 0.0022680351244773406
+       }
+      },
+      "C_overflow": {
+       "lnR_sd": 0.005337968163405372,
+       "ln_rho_sd": 0.005795190893824199,
+       "steps_sd": {
+        "rate": 0.004413198140248636,
+        "muon_shape": 0.004107906303752307,
+        "transfer_given_muon": 0.004793226061017004,
+        "partition_given_transfer": 0.0026389993474277697
+       }
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR_sd": 0.003020467229306498,
+       "ln_rho_sd": 0.004564620060600829,
+       "steps_sd": {
+        "rate": 0.004413198140248634,
+        "partition_given_transfer": 0.0009147955192997379,
+        "muon_shape": 0.0028142573630020326,
+        "transfer_given_muon": 0.0038105711684340198
+       }
+      },
+      "M": {
+       "lnR_sd": 0.0035586321865012484,
+       "ln_rho_sd": 0.005050370411780707,
+       "steps_sd": {
+        "rate": 0.004413198140248642,
+        "partition_given_transfer": 1.3620156725095105e-16,
+        "muon_shape": 0.0026784601583972204,
+        "transfer_given_muon": 0.0056187622116963855
+       }
+      },
+      "C_no_overflow": {
+       "lnR_sd": 0.003302615245136777,
+       "ln_rho_sd": 0.005249116972089842,
+       "steps_sd": {
+        "rate": 0.004413198140248647,
+        "partition_given_transfer": 0.001945903849367064,
+        "muon_shape": 0.0025940574090491868,
+        "transfer_given_muon": 0.004366005832321915
+       }
+      },
+      "C_overflow": {
+       "lnR_sd": 0.005337968163405372,
+       "ln_rho_sd": 0.005795190893824199,
+       "steps_sd": {
+        "rate": 0.004413198140248636,
+        "partition_given_transfer": 0.002487282962223782,
+        "muon_shape": 0.003634118610326782,
+        "transfer_given_muon": 0.004642397893989439
+       }
+      }
+     }
+    }
+   }
+  },
+  "production_S20": {
+   "TuneV1": {
+    "inclusive_first": {
+     "C": {
+      "lnR": 0.15634465768731026,
+      "steps": {
+       "rate": 0.08209266972996926,
+       "muon_shape": -0.024348770699357734,
+       "transfer_given_muon": 0.08059459107415547,
+       "partition_given_transfer": 0.01800616758254305
+      },
+      "ln_rho": 0.074251987957341
+     },
+     "M": {
+      "lnR": -0.041107398125147895,
+      "steps": {
+       "rate": 0.08209266972996926,
+       "muon_shape": 0.004579323967809228,
+       "transfer_given_muon": -0.12777939182292658,
+       "partition_given_transfer": 0.0
+      },
+      "ln_rho": -0.12320006785511715
+     },
+     "C_no_overflow": {
+      "lnR": 0.15634465768731026,
+      "steps": {
+       "rate": 0.08209266972996905,
+       "muon_shape": -0.02434877069935762,
+       "transfer_given_muon": 0.08059459107415567,
+       "partition_given_transfer": 0.01800616758254305
+      },
+      "ln_rho": 0.07425198795734121
+     },
+     "C_overflow": null
+    },
+    "partition_first": {
+     "C": {
+      "lnR": 0.15634465768731026,
+      "steps": {
+       "rate": 0.08209266972996926,
+       "partition_given_transfer": 0.01765751300279019,
+       "muon_shape": -0.02478184076357845,
+       "transfer_given_muon": 0.08137631571812928
+      },
+      "ln_rho": 0.074251987957341
+     },
+     "M": {
+      "lnR": -0.041107398125147895,
+      "steps": {
+       "rate": 0.08209266972996926,
+       "partition_given_transfer": -1.1102230246251565e-16,
+       "muon_shape": 0.0045793239678094495,
+       "transfer_given_muon": -0.12777939182292658
+      },
+      "ln_rho": -0.12320006785511715
+     },
+     "C_no_overflow": {
+      "lnR": 0.15634465768731026,
+      "steps": {
+       "rate": 0.08209266972996905,
+       "partition_given_transfer": 0.017657513002790406,
+       "muon_shape": -0.02478184076357868,
+       "transfer_given_muon": 0.08137631571812969
+      },
+      "ln_rho": 0.07425198795734121
+     },
+     "C_overflow": null
+    },
+    "fallback": {
+     "data_fraction_in_pred_empty_mt": 0.0,
+     "data_fraction_in_pred_empty_m": 0.0,
+     "pred_fraction_in_data_empty_mt": 0.0
+    }
+   },
+   "GENIE_CV": {
+    "inclusive_first": {
+     "C": {
+      "lnR": -0.01896505829130305,
+      "steps": {
+       "rate": 0.08722254501836108,
+       "muon_shape": -0.015111984607518666,
+       "transfer_given_muon": -0.12140165077904115,
+       "partition_given_transfer": 0.030326032076895687
+      },
+      "ln_rho": -0.10618760330966412
+     },
+     "M": {
+      "lnR": -0.11712567101425586,
+      "steps": {
+       "rate": 0.08722254501836127,
+       "muon_shape": 0.001809980826869934,
+       "transfer_given_muon": -0.20615819685948675,
+       "partition_given_transfer": -1.1102230246251565e-16
+      },
+      "ln_rho": -0.20434821603261713
+     },
+     "C_no_overflow": {
+      "lnR": -0.01896505829130305,
+      "steps": {
+       "rate": 0.08722254501836108,
+       "muon_shape": -0.015111984607518891,
+       "transfer_given_muon": -0.12140165077904078,
+       "partition_given_transfer": 0.030326032076895472
+      },
+      "ln_rho": -0.10618760330966412
+     },
+     "C_overflow": null
+    },
+    "partition_first": {
+     "C": {
+      "lnR": -0.01896505829130305,
+      "steps": {
+       "rate": 0.08722254501836108,
+       "partition_given_transfer": 0.029176811535614473,
+       "muon_shape": -0.015231193188832846,
+       "transfer_given_muon": -0.12013322165644563
+      },
+      "ln_rho": -0.10618760330966412
+     },
+     "M": {
+      "lnR": -0.11712567101425586,
+      "steps": {
+       "rate": 0.08722254501836127,
+       "partition_given_transfer": -1.1102230246251565e-16,
+       "muon_shape": 0.001809980826869934,
+       "transfer_given_muon": -0.2061581968594869
+      },
+      "ln_rho": -0.20434821603261713
+     },
+     "C_no_overflow": {
+      "lnR": -0.01896505829130305,
+      "steps": {
+       "rate": 0.08722254501836108,
+       "partition_given_transfer": 0.029176811535614473,
+       "muon_shape": -0.015231193188832846,
+       "transfer_given_muon": -0.12013322165644563
+      },
+      "ln_rho": -0.10618760330966412
+     },
+     "C_overflow": null
+    },
+    "fallback": {
+     "data_fraction_in_pred_empty_mt": 0.00026985735252686943,
+     "data_fraction_in_pred_empty_m": 9.121905958446593e-06,
+     "pred_fraction_in_data_empty_mt": 0.0
+    }
+   },
+   "GENIE_MEC": {
+    "inclusive_first": {
+     "C": {
+      "lnR": -0.0037784747775390396,
+      "steps": {
+       "rate": 0.014891981240844033,
+       "muon_shape": -0.022566058225684808,
+       "transfer_given_muon": -0.03424445919378521,
+       "partition_given_transfer": 0.038140061401086854
+      },
+      "ln_rho": -0.01867045601838307
+     },
+     "M": {
+      "lnR": -0.1461539067829567,
+      "steps": {
+       "rate": 0.014891981240844033,
+       "muon_shape": 0.004613311235225492,
+       "transfer_given_muon": -0.16565919925902625,
+       "partition_given_transfer": 0.0
+      },
+      "ln_rho": -0.16104588802380074
+     },
+     "C_no_overflow": {
+      "lnR": -0.0037784747775392626,
+      "steps": {
+       "rate": 0.014891981240844033,
+       "muon_shape": -0.022566058225684808,
+       "transfer_given_muon": -0.03424445919378521,
+       "partition_given_transfer": 0.038140061401086854
+      },
+      "ln_rho": -0.018670456018383297
+     },
+     "C_overflow": null
+    },
+    "partition_first": {
+     "C": {
+      "lnR": -0.0037784747775390396,
+      "steps": {
+       "rate": 0.014891981240844033,
+       "partition_given_transfer": 0.03832096243777002,
+       "muon_shape": -0.02276551474209078,
+       "transfer_given_muon": -0.034225903714062395
+      },
+      "ln_rho": -0.01867045601838307
+     },
+     "M": {
+      "lnR": -0.1461539067829567,
+      "steps": {
+       "rate": 0.014891981240844033,
+       "partition_given_transfer": 0.0,
+       "muon_shape": 0.004613311235225934,
+       "transfer_given_muon": -0.1656591992590265
+      },
+      "ln_rho": -0.16104588802380074
+     },
+     "C_no_overflow": {
+      "lnR": -0.0037784747775392626,
+      "steps": {
+       "rate": 0.014891981240844033,
+       "partition_given_transfer": 0.038320962437769814,
+       "muon_shape": -0.022765514742090553,
+       "transfer_given_muon": -0.034225903714062395
+      },
+      "ln_rho": -0.018670456018383297
+     },
+     "C_overflow": null
+    },
+    "fallback": {
+     "data_fraction_in_pred_empty_mt": 0.0001844272737160239,
+     "data_fraction_in_pred_empty_m": 1.6104291928402364e-05,
+     "pred_fraction_in_data_empty_mt": 0.0
+    }
+   },
+   "NuWro": {
+    "inclusive_first": {
+     "C": {
+      "lnR": -0.08404622956353433,
+      "steps": {
+       "rate": 0.1405291527450956,
+       "muon_shape": -0.04023392511592661,
+       "transfer_given_muon": -0.2288055820756424,
+       "partition_given_transfer": 0.04446412488293902
+      },
+      "ln_rho": -0.22457538230862992
+     },
+     "M": {
+      "lnR": 0.12391999049050438,
+      "steps": {
+       "rate": 0.1405291527450956,
+       "muon_shape": 0.013340253740189387,
+       "transfer_given_muon": -0.02994941599478065,
+       "partition_given_transfer": 2.2204460492503128e-16
+      },
+      "ln_rho": -0.016609162254591206
+     },
+     "C_no_overflow": {
+      "lnR": -0.08404622956353457,
+      "steps": {
+       "rate": 0.1405291527450954,
+       "muon_shape": -0.040233925115926494,
+       "transfer_given_muon": -0.2288055820756424,
+       "partition_given_transfer": 0.04446412488293902
+      },
+      "ln_rho": -0.22457538230862994
+     },
+     "C_overflow": null
+    },
+    "partition_first": {
+     "C": {
+      "lnR": -0.08404622956353433,
+      "steps": {
+       "rate": 0.1405291527450956,
+       "partition_given_transfer": 0.05020369886176972,
+       "muon_shape": -0.0427688887086619,
+       "transfer_given_muon": -0.23201019246173785
+      },
+      "ln_rho": -0.22457538230862992
+     },
+     "M": {
+      "lnR": 0.12391999049050438,
+      "steps": {
+       "rate": 0.1405291527450956,
+       "partition_given_transfer": 0.0,
+       "muon_shape": 0.013340253740189387,
+       "transfer_given_muon": -0.02994941599478065
+      },
+      "ln_rho": -0.016609162254591206
+     },
+     "C_no_overflow": {
+      "lnR": -0.08404622956353457,
+      "steps": {
+       "rate": 0.1405291527450954,
+       "partition_given_transfer": 0.050203698861770146,
+       "muon_shape": -0.042768888708662245,
+       "transfer_given_muon": -0.2320101924617377
+      },
+      "ln_rho": -0.22457538230862994
+     },
+     "C_overflow": null
+    },
+    "fallback": {
+     "data_fraction_in_pred_empty_mt": 0.0001465324230226342,
+     "data_fraction_in_pred_empty_m": 2.6677905173655624e-06,
+     "pred_fraction_in_data_empty_mt": 0.0
+    }
+   },
+   "GiBUU": {
+    "inclusive_first": {
+     "C": {
+      "lnR": 0.577367554330285,
+      "steps": {
+       "rate": 0.25472366167245597,
+       "muon_shape": 0.014697022332432603,
+       "transfer_given_muon": 0.24024187161750313,
+       "partition_given_transfer": 0.06770499870789334
+      },
+      "ln_rho": 0.322643892657829
+     },
+     "M": {
+      "lnR": 0.3775863106940458,
+      "steps": {
+       "rate": 0.25472366167245614,
+       "muon_shape": 0.019988435236988317,
+       "transfer_given_muon": 0.10287421378460147,
+       "partition_given_transfer": 0.0
+      },
+      "ln_rho": 0.12286264902158966
+     },
+     "C_no_overflow": {
+      "lnR": 0.5779315081021351,
+      "steps": {
+       "rate": 0.25472366167245614,
+       "muon_shape": 0.014723330614629918,
+       "transfer_given_muon": 0.24024330063529914,
+       "partition_given_transfer": 0.06824121517974997
+      },
+      "ln_rho": 0.323207846429679
+     },
+     "C_overflow": null
+    },
+    "partition_first": {
+     "C": {
+      "lnR": 0.577367554330285,
+      "steps": {
+       "rate": 0.25472366167245597,
+       "partition_given_transfer": 0.07077695822811114,
+       "muon_shape": 0.012375810408193246,
+       "transfer_given_muon": 0.23949112402152462
+      },
+      "ln_rho": 0.322643892657829
+     },
+     "M": {
+      "lnR": 0.3775863106940458,
+      "steps": {
+       "rate": 0.25472366167245614,
+       "partition_given_transfer": 0.0,
+       "muon_shape": 0.019988435236988317,
+       "transfer_given_muon": 0.10287421378460147
+      },
+      "ln_rho": 0.12286264902158966
+     },
+     "C_no_overflow": {
+      "lnR": 0.5779315081021351,
+      "steps": {
+       "rate": 0.25472366167245614,
+       "partition_given_transfer": 0.07134091199996097,
+       "muon_shape": 0.012375810408193246,
+       "transfer_given_muon": 0.23949112402152462
+      },
+      "ln_rho": 0.323207846429679
+     },
+     "C_overflow": null
+    },
+    "fallback": {
+     "data_fraction_in_pred_empty_mt": 6.760347261901296e-05,
+     "data_fraction_in_pred_empty_m": 0.0,
+     "pred_fraction_in_data_empty_mt": 0.0
+    }
+   }
+  },
+  "estimator_R": {
+   "TuneV1": {
+    "w2b/w2b_rrzero_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.17270682413337987,
+       "steps": {
+        "rate": 0.12517931361364748,
+        "muon_shape": 0.028093338177505357,
+        "transfer_given_muon": 0.013498525469159708,
+        "partition_given_transfer": 0.005935646873067342
+       },
+       "ln_rho": 0.04752751051973239
+      },
+      "M": {
+       "lnR": 0.006553917864649794,
+       "steps": {
+        "rate": 0.12517931361364767,
+        "muon_shape": -0.011530581732270201,
+        "transfer_given_muon": -0.1070948140167278,
+        "partition_given_transfer": 2.2204460492503128e-16
+       },
+       "ln_rho": -0.11862539574899789
+      },
+      "C_no_overflow": {
+       "lnR": 0.15318091805102943,
+       "steps": {
+        "rate": 0.1251793136136473,
+        "muon_shape": 0.005414528009036775,
+        "transfer_given_muon": 0.012701514194886321,
+        "partition_given_transfer": 0.009885562233458935
+       },
+       "ln_rho": 0.028001604437382144
+      },
+      "C_overflow": {
+       "lnR": 0.1936808847706537,
+       "steps": {
+        "rate": 0.12517931361364748,
+        "muon_shape": 0.052375552436420406,
+        "transfer_given_muon": 0.014331405527915172,
+        "partition_given_transfer": 0.001794613192670645
+       },
+       "ln_rho": 0.06850157115700622
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.17270682413337987,
+       "steps": {
+        "rate": 0.12517931361364748,
+        "partition_given_transfer": 0.0058897638698880836,
+        "muon_shape": 0.02789330579387697,
+        "transfer_given_muon": 0.013744440855967467
+       },
+       "ln_rho": 0.04752751051973239
+      },
+      "M": {
+       "lnR": 0.006553917864649794,
+       "steps": {
+        "rate": 0.12517931361364767,
+        "partition_given_transfer": -2.2204460492503136e-16,
+        "muon_shape": -0.011530581732269975,
+        "transfer_given_muon": -0.10709481401672767
+       },
+       "ln_rho": -0.11862539574899789
+      },
+      "C_no_overflow": {
+       "lnR": 0.15318091805102943,
+       "steps": {
+        "rate": 0.1251793136136473,
+        "partition_given_transfer": 0.009834187595590802,
+        "muon_shape": 0.0052052126287071695,
+        "transfer_given_muon": 0.012962204213084352
+       },
+       "ln_rho": 0.028001604437382144
+      },
+      "C_overflow": {
+       "lnR": 0.1936808847706537,
+       "steps": {
+        "rate": 0.12517931361364748,
+        "partition_given_transfer": 0.0015481656532643406,
+        "muon_shape": 0.05238489315900702,
+        "transfer_given_muon": 0.014568512344734762
+       },
+       "ln_rho": 0.06850157115700622
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "w2b/w2b_rr0_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.21087072777563107,
+       "steps": {
+        "rate": 0.12673925318886164,
+        "muon_shape": 0.029523662142318906,
+        "transfer_given_muon": 0.046579339660813,
+        "partition_given_transfer": 0.008028472783637514
+       },
+       "ln_rho": 0.08413147458676942
+      },
+      "M": {
+       "lnR": -0.003296533729100317,
+       "steps": {
+        "rate": 0.12673925318886164,
+        "muon_shape": -0.012712664165388566,
+        "transfer_given_muon": -0.11732312275257328,
+        "partition_given_transfer": -1.1102230246251565e-16
+       },
+       "ln_rho": -0.13003578691796197
+      },
+      "C_no_overflow": {
+       "lnR": 0.1635565806189473,
+       "steps": {
+        "rate": 0.12673925318886164,
+        "muon_shape": 0.004497864779822826,
+        "transfer_given_muon": 0.024126742903480405,
+        "partition_given_transfer": 0.00819271974678223
+       },
+       "ln_rho": 0.036817327430085645
+      },
+      "C_overflow": {
+       "lnR": 0.26028471892573984,
+       "steps": {
+        "rate": 0.12673925318886164,
+        "muon_shape": 0.05625460842394479,
+        "transfer_given_muon": 0.06942579675375944,
+        "partition_given_transfer": 0.007865060559173978
+       },
+       "ln_rho": 0.1335454657368782
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.21087072777563107,
+       "steps": {
+        "rate": 0.12673925318886164,
+        "partition_given_transfer": 0.008087125555604747,
+        "muon_shape": 0.02929617851178628,
+        "transfer_given_muon": 0.0467481705193782
+       },
+       "ln_rho": 0.08413147458676942
+      },
+      "M": {
+       "lnR": -0.003296533729100317,
+       "steps": {
+        "rate": 0.12673925318886164,
+        "partition_given_transfer": 2.2204460492503128e-16,
+        "muon_shape": -0.012712664165389015,
+        "transfer_given_muon": -0.11732312275257328
+       },
+       "ln_rho": -0.13003578691796197
+      },
+      "C_no_overflow": {
+       "lnR": 0.1635565806189473,
+       "steps": {
+        "rate": 0.12673925318886164,
+        "partition_given_transfer": 0.007967745548137044,
+        "muon_shape": 0.004321673487846441,
+        "transfer_given_muon": 0.024527908394102082
+       },
+       "ln_rho": 0.036817327430085645
+      },
+      "C_overflow": {
+       "lnR": 0.26028471892573984,
+       "steps": {
+        "rate": 0.12673925318886164,
+        "partition_given_transfer": 0.008217966631719068,
+        "muon_shape": 0.05596714801133742,
+        "transfer_given_muon": 0.06936035109382162
+       },
+       "ln_rho": 0.1335454657368782
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "w2b/w2b_rr1_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.13234222264490722,
+       "steps": {
+        "rate": 0.12242287216388567,
+        "muon_shape": 0.025443926723409286,
+        "transfer_given_muon": -0.019183292520181593,
+        "partition_given_transfer": 0.00365871627779385
+       },
+       "ln_rho": 0.00991935048102155
+      },
+      "M": {
+       "lnR": 0.012870568031236356,
+       "steps": {
+        "rate": 0.12242287216388548,
+        "muon_shape": -0.00941204225954431,
+        "transfer_given_muon": -0.10014026187310487,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.10955230413264912
+      },
+      "C_no_overflow": {
+       "lnR": 0.13744715962398288,
+       "steps": {
+        "rate": 0.12242287216388548,
+        "muon_shape": 0.006211044413612156,
+        "transfer_given_muon": -0.0029787163478340426,
+        "partition_given_transfer": 0.011791959394319389
+       },
+       "ln_rho": 0.015024287460097402
+      },
+      "C_overflow": {
+       "lnR": 0.12671638386027678,
+       "steps": {
+        "rate": 0.12242287216388548,
+        "muon_shape": 0.04610944740586734,
+        "transfer_given_muon": -0.03653986120525354,
+        "partition_given_transfer": -0.005276074504222318
+       },
+       "ln_rho": 0.004293511696391306
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.13234222264490722,
+       "steps": {
+        "rate": 0.12242287216388567,
+        "partition_given_transfer": 0.00354745969679933,
+        "muon_shape": 0.02536826850149099,
+        "transfer_given_muon": -0.018996377717268743
+       },
+       "ln_rho": 0.00991935048102155
+      },
+      "M": {
+       "lnR": 0.012870568031236356,
+       "steps": {
+        "rate": 0.12242287216388548,
+        "partition_given_transfer": -2.2204460492503136e-16,
+        "muon_shape": -0.009412042259543863,
+        "transfer_given_muon": -0.10014026187310511
+       },
+       "ln_rho": -0.10955230413264912
+      },
+      "C_no_overflow": {
+       "lnR": 0.13744715962398288,
+       "steps": {
+        "rate": 0.12242287216388548,
+        "partition_given_transfer": 0.012238971602993858,
+        "muon_shape": 0.006053533513387916,
+        "transfer_given_muon": -0.003268217656284365
+       },
+       "ln_rho": 0.015024287460097402
+      },
+      "C_overflow": {
+       "lnR": 0.12671638386027678,
+       "steps": {
+        "rate": 0.12242287216388548,
+        "partition_given_transfer": -0.006067268548215268,
+        "muon_shape": 0.04649935681039287,
+        "transfer_given_muon": -0.03613857656578621
+       },
+       "ln_rho": 0.004293511696391306
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.17213416736949566,
+       "steps": {
+        "rate": 0.12467171395118237,
+        "muon_shape": 0.027859035095349226,
+        "transfer_given_muon": 0.013847463303944322,
+        "partition_given_transfer": 0.005755955019019707
+       },
+       "ln_rho": 0.04746245341831329
+      },
+      "M": {
+       "lnR": 0.004830139939009027,
+       "steps": {
+        "rate": 0.12467171395118237,
+        "muon_shape": -0.011449300483377113,
+        "transfer_given_muon": -0.10839227352879634,
+        "partition_given_transfer": 2.2204460492503128e-16
+       },
+       "ln_rho": -0.11984157401217335
+      },
+      "C_no_overflow": {
+       "lnR": 0.15242578835745163,
+       "steps": {
+        "rate": 0.12467171395118218,
+        "muon_shape": 0.005021699351100083,
+        "transfer_given_muon": 0.01319238060714478,
+        "partition_given_transfer": 0.009539994448024466
+       },
+       "ln_rho": 0.027754074406269452
+      },
+      "C_overflow": {
+       "lnR": 0.19330026948865198,
+       "steps": {
+        "rate": 0.12467171395118237,
+        "muon_shape": 0.05230701741104931,
+        "transfer_given_muon": 0.014531904814859485,
+        "partition_given_transfer": 0.0017896333115609466
+       },
+       "ln_rho": 0.0686285555374696
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.17213416736949566,
+       "steps": {
+        "rate": 0.12467171395118237,
+        "partition_given_transfer": 0.005704496094861016,
+        "muon_shape": 0.027670116407009032,
+        "transfer_given_muon": 0.014087840916443132
+       },
+       "ln_rho": 0.04746245341831329
+      },
+      "M": {
+       "lnR": 0.004830139939009027,
+       "steps": {
+        "rate": 0.12467171395118237,
+        "partition_given_transfer": 0.0,
+        "muon_shape": -0.011449300483377113,
+        "transfer_given_muon": -0.10839227352879621
+       },
+       "ln_rho": -0.11984157401217335
+      },
+      "C_no_overflow": {
+       "lnR": 0.15242578835745163,
+       "steps": {
+        "rate": 0.12467171395118218,
+        "partition_given_transfer": 0.009486654908993482,
+        "muon_shape": 0.004820553288860377,
+        "transfer_given_muon": 0.013446866208415613
+       },
+       "ln_rho": 0.027754074406269452
+      },
+      "C_overflow": {
+       "lnR": 0.19330026948865198,
+       "steps": {
+        "rate": 0.12467171395118237,
+        "partition_given_transfer": 0.001542212563547782,
+        "muon_shape": 0.05232359819954175,
+        "transfer_given_muon": 0.014762744774380181
+       },
+       "ln_rho": 0.0686285555374696
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j1.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.1719731718046755,
+       "steps": {
+        "rate": 0.12487609891082903,
+        "muon_shape": 0.028048262022693244,
+        "transfer_given_muon": 0.013372534286954844,
+        "partition_given_transfer": 0.005676276584198571
+       },
+       "ln_rho": 0.04709707289384647
+      },
+      "M": {
+       "lnR": 0.0053714144333858686,
+       "steps": {
+        "rate": 0.12487609891082864,
+        "muon_shape": -0.011604690902185084,
+        "transfer_given_muon": -0.1078999935752577,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.11950468447744277
+      },
+      "C_no_overflow": {
+       "lnR": 0.1521595823882234,
+       "steps": {
+        "rate": 0.12487609891082883,
+        "muon_shape": 0.00517492089367554,
+        "transfer_given_muon": 0.012406469552187339,
+        "partition_given_transfer": 0.009702093031531765
+       },
+       "ln_rho": 0.02728348347739458
+      },
+      "C_overflow": {
+       "lnR": 0.19324996868959599,
+       "steps": {
+        "rate": 0.12487609891082883,
+        "muon_shape": 0.05253388719311639,
+        "transfer_given_muon": 0.014381500115107193,
+        "partition_given_transfer": 0.0014584824705433383
+       },
+       "ln_rho": 0.06837386977876715
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.1719731718046755,
+       "steps": {
+        "rate": 0.12487609891082903,
+        "partition_given_transfer": 0.0056220919760997,
+        "muon_shape": 0.027850761102694972,
+        "transfer_given_muon": 0.01362421981505194
+       },
+       "ln_rho": 0.04709707289384647
+      },
+      "M": {
+       "lnR": 0.0053714144333858686,
+       "steps": {
+        "rate": 0.12487609891082864,
+        "partition_given_transfer": 0.0,
+        "muon_shape": -0.011604690902185084,
+        "transfer_given_muon": -0.1078999935752577
+       },
+       "ln_rho": -0.11950468447744277
+      },
+      "C_no_overflow": {
+       "lnR": 0.1521595823882234,
+       "steps": {
+        "rate": 0.12487609891082883,
+        "partition_given_transfer": 0.009683079021352394,
+        "muon_shape": 0.004950017738331277,
+        "transfer_given_muon": 0.012650386717710868
+       },
+       "ln_rho": 0.02728348347739458
+      },
+      "C_overflow": {
+       "lnR": 0.19324996868959599,
+       "steps": {
+        "rate": 0.12487609891082883,
+        "partition_given_transfer": 0.0011516448902223267,
+        "muon_shape": 0.052572494380104945,
+        "transfer_given_muon": 0.014649730508439847
+       },
+       "ln_rho": 0.06837386977876715
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j2.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.17196382728135812,
+       "steps": {
+        "rate": 0.12482055354835732,
+        "muon_shape": 0.027876268046431073,
+        "transfer_given_muon": 0.013578483630805993,
+        "partition_given_transfer": 0.005688522055763603
+       },
+       "ln_rho": 0.0471432737330008
+      },
+      "M": {
+       "lnR": 0.004656348746735459,
+       "steps": {
+        "rate": 0.12482055354835692,
+        "muon_shape": -0.01150000802000658,
+        "transfer_given_muon": -0.10866419678161506,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.12016420480162146
+      },
+      "C_no_overflow": {
+       "lnR": 0.1520735899874628,
+       "steps": {
+        "rate": 0.12482055354835692,
+        "muon_shape": 0.005002024154521007,
+        "transfer_given_muon": 0.012787830415519603,
+        "partition_given_transfer": 0.00946318186906529
+       },
+       "ln_rho": 0.02725303643910587
+      },
+      "C_overflow": {
+       "lnR": 0.19332125246443385,
+       "steps": {
+        "rate": 0.12482055354835712,
+        "muon_shape": 0.052362837000399676,
+        "transfer_given_muon": 0.014404394741763577,
+        "partition_given_transfer": 0.0017334671739133681
+       },
+       "ln_rho": 0.06850069891607673
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.17196382728135812,
+       "steps": {
+        "rate": 0.12482055354835732,
+        "partition_given_transfer": 0.005654073643696408,
+        "muon_shape": 0.027690026983006176,
+        "transfer_given_muon": 0.01379917310629826
+       },
+       "ln_rho": 0.0471432737330008
+      },
+      "M": {
+       "lnR": 0.004656348746735459,
+       "steps": {
+        "rate": 0.12482055354835692,
+        "partition_given_transfer": 0.0,
+        "muon_shape": -0.011500008020006355,
+        "transfer_given_muon": -0.10866419678161518
+       },
+       "ln_rho": -0.12016420480162146
+      },
+      "C_no_overflow": {
+       "lnR": 0.1520735899874628,
+       "steps": {
+        "rate": 0.12482055354835692,
+        "partition_given_transfer": 0.009385359823034376,
+        "muon_shape": 0.004802552144371899,
+        "transfer_given_muon": 0.013065124471699616
+       },
+       "ln_rho": 0.02725303643910587
+      },
+      "C_overflow": {
+       "lnR": 0.19332125246443385,
+       "steps": {
+        "rate": 0.12482055354835712,
+        "partition_given_transfer": 0.001547995512969099,
+        "muon_shape": 0.05238084041280015,
+        "transfer_given_muon": 0.014571862990307414
+       },
+       "ln_rho": 0.06850069891607673
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j3.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.17213781387204108,
+       "steps": {
+        "rate": 0.12470339105929806,
+        "muon_shape": 0.02759594152920325,
+        "transfer_given_muon": 0.01407241547440436,
+        "partition_given_transfer": 0.00576606580913548
+       },
+       "ln_rho": 0.047434422812743016
+      },
+      "M": {
+       "lnR": 0.0037517078074000673,
+       "steps": {
+        "rate": 0.12470339105929767,
+        "muon_shape": -0.011364344182395188,
+        "transfer_given_muon": -0.10958733906950245,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.1209516832518976
+      },
+      "C_no_overflow": {
+       "lnR": 0.15261345893785244,
+       "steps": {
+        "rate": 0.12470339105929767,
+        "muon_shape": 0.004999661168401305,
+        "transfer_given_muon": 0.013468539699705281,
+        "partition_given_transfer": 0.009441867010448178
+       },
+       "ln_rho": 0.027910067878554767
+      },
+      "C_overflow": {
+       "lnR": 0.19311024171340996,
+       "steps": {
+        "rate": 0.12470339105929767,
+        "muon_shape": 0.05179183419928987,
+        "transfer_given_muon": 0.014703699287327345,
+        "partition_given_transfer": 0.0019113171674951467
+       },
+       "ln_rho": 0.06840685065411228
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.17213781387204108,
+       "steps": {
+        "rate": 0.12470339105929806,
+        "partition_given_transfer": 0.005712167938745235,
+        "muon_shape": 0.027407165794735067,
+        "transfer_given_muon": 0.014315089079262718
+       },
+       "ln_rho": 0.047434422812743016
+      },
+      "M": {
+       "lnR": 0.0037517078074000673,
+       "steps": {
+        "rate": 0.12470339105929767,
+        "partition_given_transfer": 2.2204460492503128e-16,
+        "muon_shape": -0.0113643441823953,
+        "transfer_given_muon": -0.10958733906950245
+       },
+       "ln_rho": -0.1209516832518976
+      },
+      "C_no_overflow": {
+       "lnR": 0.15261345893785244,
+       "steps": {
+        "rate": 0.12470339105929767,
+        "partition_given_transfer": 0.00935656303869187,
+        "muon_shape": 0.004802228086265279,
+        "transfer_given_muon": 0.013751276753597727
+       },
+       "ln_rho": 0.027910067878554767
+      },
+      "C_overflow": {
+       "lnR": 0.19311024171340996,
+       "steps": {
+        "rate": 0.12470339105929767,
+        "partition_given_transfer": 0.0017020753995358594,
+        "muon_shape": 0.05179585190635473,
+        "transfer_given_muon": 0.014908923348221598
+       },
+       "ln_rho": 0.06840685065411228
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    }
+   },
+   "GENIE_CV": {
+    "w2b/w2b_rrzero_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.1307779428909517,
+       "steps": {
+        "rate": 0.10369412847040888,
+        "muon_shape": 0.016327555298856145,
+        "transfer_given_muon": 0.002849786510855056,
+        "partition_given_transfer": 0.007906472610831616
+       },
+       "ln_rho": 0.027083814420542834
+      },
+      "M": {
+       "lnR": -0.08874841347457749,
+       "steps": {
+        "rate": 0.10369412847040888,
+        "muon_shape": -0.010033816875387841,
+        "transfer_given_muon": -0.1824087250695987,
+        "partition_given_transfer": 2.2204460492503128e-16
+       },
+       "ln_rho": -0.19244254194498636
+      },
+      "C_no_overflow": {
+       "lnR": 0.07836945918232113,
+       "steps": {
+        "rate": 0.10369412847040888,
+        "muon_shape": -0.006281993379779815,
+        "transfer_given_muon": -0.033837010206814185,
+        "partition_given_transfer": 0.01479433429850615
+       },
+       "ln_rho": -0.025324669288087742
+      },
+      "C_overflow": {
+       "lnR": 0.189083362937161,
+       "steps": {
+        "rate": 0.10369412847040908,
+        "muon_shape": 0.04227563190008663,
+        "transfer_given_muon": 0.042406644803484134,
+        "partition_given_transfer": 0.0007069577631812047
+       },
+       "ln_rho": 0.08538923446675191
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.1307779428909517,
+       "steps": {
+        "rate": 0.10369412847040888,
+        "partition_given_transfer": 0.008600067756567199,
+        "muon_shape": 0.01603153642156538,
+        "transfer_given_muon": 0.002452210242410089
+       },
+       "ln_rho": 0.027083814420542834
+      },
+      "M": {
+       "lnR": -0.08874841347457749,
+       "steps": {
+        "rate": 0.10369412847040888,
+        "partition_given_transfer": -2.2204460492503136e-16,
+        "muon_shape": -0.010033816875387729,
+        "transfer_given_muon": -0.18240872506959843
+       },
+       "ln_rho": -0.19244254194498636
+      },
+      "C_no_overflow": {
+       "lnR": 0.07836945918232113,
+       "steps": {
+        "rate": 0.10369412847040888,
+        "partition_given_transfer": 0.014760229620826747,
+        "muon_shape": -0.00623400023216993,
+        "transfer_given_muon": -0.0338508986767448
+       },
+       "ln_rho": -0.025324669288087742
+      },
+      "C_overflow": {
+       "lnR": 0.189083362937161,
+       "steps": {
+        "rate": 0.10369412847040908,
+        "partition_given_transfer": 0.0013076185730613692,
+        "muon_shape": 0.04193589223498926,
+        "transfer_given_muon": 0.04214572365870115
+       },
+       "ln_rho": 0.08538923446675191
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0006060174318490406,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "w2b/w2b_rr0_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.1689418465332029,
+       "steps": {
+        "rate": 0.10525406804562289,
+        "muon_shape": 0.017684333626482106,
+        "transfer_given_muon": 0.036125955181743934,
+        "partition_given_transfer": 0.00987748967935403
+       },
+       "ln_rho": 0.06368777848758002
+      },
+      "M": {
+       "lnR": -0.09859886506832749,
+       "steps": {
+        "rate": 0.10525406804562269,
+        "muon_shape": -0.011188028730494046,
+        "transfer_given_muon": -0.19266490438345593,
+        "partition_given_transfer": -2.2204460492503136e-16
+       },
+       "ln_rho": -0.2038529331139502
+      },
+      "C_no_overflow": {
+       "lnR": 0.08874512175023887,
+       "steps": {
+        "rate": 0.10525406804562329,
+        "muon_shape": -0.007224248042442022,
+        "transfer_given_muon": -0.022188104517345875,
+        "partition_given_transfer": 0.012903406264403483
+       },
+       "ln_rho": -0.016508946295384422
+      },
+      "C_overflow": {
+       "lnR": 0.25568719709224713,
+       "steps": {
+        "rate": 0.10525406804562329,
+        "muon_shape": 0.04620138690700878,
+        "transfer_given_muon": 0.09735622253868523,
+        "partition_given_transfer": 0.00687551960092961
+       },
+       "ln_rho": 0.15043312904662384
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.1689418465332029,
+       "steps": {
+        "rate": 0.10525406804562289,
+        "partition_given_transfer": 0.010829401177926763,
+        "muon_shape": 0.01734644832201942,
+        "transfer_given_muon": 0.03551192898763366
+       },
+       "ln_rho": 0.06368777848758002
+      },
+      "M": {
+       "lnR": -0.09859886506832749,
+       "steps": {
+        "rate": 0.10525406804562269,
+        "partition_given_transfer": 4.440892098500625e-16,
+        "muon_shape": -0.011188028730494383,
+        "transfer_given_muon": -0.19266490438345618
+       },
+       "ln_rho": -0.2038529331139502
+      },
+      "C_no_overflow": {
+       "lnR": 0.08874512175023887,
+       "steps": {
+        "rate": 0.10525406804562329,
+        "partition_given_transfer": 0.013217252897372911,
+        "muon_shape": -0.007057863433030212,
+        "transfer_given_muon": -0.0226683357597271
+       },
+       "ln_rho": -0.016508946295384422
+      },
+      "C_overflow": {
+       "lnR": 0.25568719709224713,
+       "steps": {
+        "rate": 0.10525406804562329,
+        "partition_given_transfer": 0.008014277419965575,
+        "muon_shape": 0.04544488879964426,
+        "transfer_given_muon": 0.09697396282701384
+       },
+       "ln_rho": 0.15043312904662384
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0005930579833274807,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "w2b/w2b_rr1_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.09041334140247893,
+       "steps": {
+        "rate": 0.10093768702064647,
+        "muon_shape": 0.013793151430203335,
+        "transfer_given_muon": -0.03007215970002894,
+        "partition_given_transfer": 0.005754662651658052
+       },
+       "ln_rho": -0.010524345618167535
+      },
+      "M": {
+       "lnR": -0.0824317633079908,
+       "steps": {
+        "rate": 0.10093768702064647,
+        "muon_shape": -0.007952571377994874,
+        "transfer_given_muon": -0.17541687895064245,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.18336945032863727
+      },
+      "C_no_overflow": {
+       "lnR": 0.06263570075527458,
+       "steps": {
+        "rate": 0.10093768702064666,
+        "muon_shape": -0.0054492464815085575,
+        "transfer_given_muon": -0.04982118011977358,
+        "partition_given_transfer": 0.016968440335909867
+       },
+       "ln_rho": -0.03830198626537208
+      },
+      "C_overflow": {
+       "lnR": 0.12211886202678406,
+       "steps": {
+        "rate": 0.10093768702064687,
+        "muon_shape": 0.03595603809424305,
+        "transfer_given_muon": -0.008250125159527886,
+        "partition_given_transfer": -0.006524737928577738
+       },
+       "ln_rho": 0.021181175006137185
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.09041334140247893,
+       "steps": {
+        "rate": 0.10093768702064647,
+        "partition_given_transfer": 0.00621304838918454,
+        "muon_shape": 0.013584740179059404,
+        "transfer_given_muon": -0.030322134186411547
+       },
+       "ln_rho": -0.010524345618167535
+      },
+      "M": {
+       "lnR": -0.0824317633079908,
+       "steps": {
+        "rate": 0.10093768702064647,
+        "partition_given_transfer": 0.0,
+        "muon_shape": -0.007952571377994874,
+        "transfer_given_muon": -0.17541687895064245
+       },
+       "ln_rho": -0.18336945032863727
+      },
+      "C_no_overflow": {
+       "lnR": 0.06263570075527458,
+       "steps": {
+        "rate": 0.10093768702064666,
+        "partition_given_transfer": 0.016792205473023986,
+        "muon_shape": -0.005450847044578942,
+        "transfer_given_muon": -0.049643344693817225
+       },
+       "ln_rho": -0.03830198626537208
+      },
+      "C_overflow": {
+       "lnR": 0.12211886202678406,
+       "steps": {
+        "rate": 0.10093768702064687,
+        "partition_given_transfer": -0.006371584297045702,
+        "muon_shape": 0.03602243254745064,
+        "transfer_given_muon": -0.008469673244267749
+       },
+       "ln_rho": 0.021181175006137185
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.000600456861007406,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.13020528612706744,
+       "steps": {
+        "rate": 0.10318652880794374,
+        "muon_shape": 0.016114218288796354,
+        "transfer_given_muon": 0.003176629184841522,
+        "partition_given_transfer": 0.007727909845485838
+       },
+       "ln_rho": 0.027018757319123704
+      },
+      "M": {
+       "lnR": -0.09047219140021813,
+       "steps": {
+        "rate": 0.10318652880794354,
+        "muon_shape": -0.009953082348671918,
+        "transfer_given_muon": -0.1837056378594897,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.19365872020816166
+      },
+      "C_no_overflow": {
+       "lnR": 0.07761432948874314,
+       "steps": {
+        "rate": 0.10318652880794374,
+        "muon_shape": -0.006641488821024752,
+        "transfer_given_muon": -0.033387718876961896,
+        "partition_given_transfer": 0.014457008378785824
+       },
+       "ln_rho": -0.0255721993192006
+      },
+      "C_overflow": {
+       "lnR": 0.1887027476551591,
+       "steps": {
+        "rate": 0.10318652880794393,
+        "muon_shape": 0.042225987339185526,
+        "transfer_given_muon": 0.04259440305589772,
+        "partition_given_transfer": 0.0006958284521320201
+       },
+       "ln_rho": 0.08551621884721516
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.13020528612706744,
+       "steps": {
+        "rate": 0.10318652880794374,
+        "partition_given_transfer": 0.008422113634211921,
+        "muon_shape": 0.015820699350987653,
+        "transfer_given_muon": 0.002775944333924224
+       },
+       "ln_rho": 0.027018757319123704
+      },
+      "M": {
+       "lnR": -0.09047219140021813,
+       "steps": {
+        "rate": 0.10318652880794354,
+        "partition_given_transfer": 2.2204460492503128e-16,
+        "muon_shape": -0.009953082348672143,
+        "transfer_given_muon": -0.1837056378594897
+       },
+       "ln_rho": -0.19365872020816166
+      },
+      "C_no_overflow": {
+       "lnR": 0.07761432948874314,
+       "steps": {
+        "rate": 0.10318652880794374,
+        "partition_given_transfer": 0.014438246764418308,
+        "muon_shape": -0.006588785632301321,
+        "transfer_given_muon": -0.03342166045131774
+       },
+       "ln_rho": -0.0255721993192006
+      },
+      "C_overflow": {
+       "lnR": 0.1887027476551591,
+       "steps": {
+        "rate": 0.10318652880794393,
+        "partition_given_transfer": 0.0013012905612225442,
+        "muon_shape": 0.041880398526542684,
+        "transfer_given_muon": 0.042334529759449936
+       },
+       "ln_rho": 0.08551621884721516
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0006024704614950773,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j1.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.13004429056224714,
+       "steps": {
+        "rate": 0.10339091376758998,
+        "muon_shape": 0.016301520767855602,
+        "transfer_given_muon": 0.002705573315432228,
+        "partition_given_transfer": 0.007646282711369427
+       },
+       "ln_rho": 0.026653376794657166
+      },
+      "M": {
+       "lnR": -0.08993091690584133,
+       "steps": {
+        "rate": 0.10339091376759019,
+        "muon_shape": -0.010088494845697772,
+        "transfer_given_muon": -0.1832333358277338,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.1933218306734315
+      },
+      "C_no_overflow": {
+       "lnR": 0.07734812351951481,
+       "steps": {
+        "rate": 0.10339091376758998,
+        "muon_shape": -0.006481880692719125,
+        "transfer_given_muon": -0.03416860205218629,
+        "partition_given_transfer": 0.014607692496830211
+       },
+       "ln_rho": -0.026042790248075168
+      },
+      "C_overflow": {
+       "lnR": 0.18865244685610322,
+       "steps": {
+        "rate": 0.10339091376759038,
+        "muon_shape": 0.04244430082969033,
+        "transfer_given_muon": 0.04244251605189965,
+        "partition_given_transfer": 0.00037471620692284754
+       },
+       "ln_rho": 0.08526153308851284
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.13004429056224714,
+       "steps": {
+        "rate": 0.10339091376758998,
+        "partition_given_transfer": 0.00832942233851428,
+        "muon_shape": 0.016006385727607597,
+        "transfer_given_muon": 0.0023175687285352854
+       },
+       "ln_rho": 0.026653376794657166
+      },
+      "M": {
+       "lnR": -0.08993091690584133,
+       "steps": {
+        "rate": 0.10339091376759019,
+        "partition_given_transfer": -2.2204460492503136e-16,
+        "muon_shape": -0.01008849484569766,
+        "transfer_given_muon": -0.1832333358277338
+       },
+       "ln_rho": -0.1933218306734315
+      },
+      "C_no_overflow": {
+       "lnR": 0.07734812351951481,
+       "steps": {
+        "rate": 0.10339091376758998,
+        "partition_given_transfer": 0.014597914132639873,
+        "muon_shape": -0.006444153035119886,
+        "transfer_given_muon": -0.03419655134559515
+       },
+       "ln_rho": -0.026042790248075168
+      },
+      "C_overflow": {
+       "lnR": 0.18865244685610322,
+       "steps": {
+        "rate": 0.10339091376759038,
+        "partition_given_transfer": 0.0009078503996990728,
+        "muon_shape": 0.04212693761393956,
+        "transfer_given_muon": 0.042226745074874256
+       },
+       "ln_rho": 0.08526153308851284
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0005999642760924216,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j2.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.13003494603892973,
+       "steps": {
+        "rate": 0.10333536840511837,
+        "muon_shape": 0.016131576270428275,
+        "transfer_given_muon": 0.002909752700972714,
+        "partition_given_transfer": 0.0076582486624104315
+       },
+       "ln_rho": 0.026699577633811367
+      },
+      "M": {
+       "lnR": -0.09064598259249172,
+       "steps": {
+        "rate": 0.10333536840511817,
+        "muon_shape": -0.009994624334055825,
+        "transfer_given_muon": -0.18398672666355423,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.19398135099760988
+      },
+      "C_no_overflow": {
+       "lnR": 0.07726213111875442,
+       "steps": {
+        "rate": 0.10333536840511837,
+        "muon_shape": -0.006647958005217463,
+        "transfer_given_muon": -0.03377753484782165,
+        "partition_given_transfer": 0.0143522555666753
+       },
+       "ln_rho": -0.026073237286363946
+      },
+      "C_overflow": {
+       "lnR": 0.18872373063094092,
+       "steps": {
+        "rate": 0.10333536840511837,
+        "muon_shape": 0.042270026124683634,
+        "transfer_given_muon": 0.04245314626584678,
+        "partition_given_transfer": 0.00066518983529223
+       },
+       "ln_rho": 0.08538836222582255
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.13003494603892973,
+       "steps": {
+        "rate": 0.10333536840511837,
+        "partition_given_transfer": 0.008361420762179633,
+        "muon_shape": 0.01583477865471094,
+        "transfer_given_muon": 0.0025033782169210424
+       },
+       "ln_rho": 0.026699577633811367
+      },
+      "M": {
+       "lnR": -0.09064598259249172,
+       "steps": {
+        "rate": 0.10333536840511817,
+        "partition_given_transfer": 0.0,
+        "muon_shape": -0.009994624334055825,
+        "transfer_given_muon": -0.18398672666355423
+       },
+       "ln_rho": -0.19398135099760988
+      },
+      "C_no_overflow": {
+       "lnR": 0.07726213111875442,
+       "steps": {
+        "rate": 0.10333536840511837,
+        "partition_given_transfer": 0.014320231642143555,
+        "muon_shape": -0.006601932252563832,
+        "transfer_given_muon": -0.03379153667594383
+       },
+       "ln_rho": -0.026073237286363946
+      },
+      "C_overflow": {
+       "lnR": 0.18872373063094092,
+       "steps": {
+        "rate": 0.10333536840511837,
+        "partition_given_transfer": 0.0013088883991452594,
+        "muon_shape": 0.041922145037211526,
+        "transfer_given_muon": 0.042157328789465806
+       },
+       "ln_rho": 0.08538836222582255
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0006043708072907215,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j3.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.1302089326296128,
+       "steps": {
+        "rate": 0.1032182059160589,
+        "muon_shape": 0.015871751473588172,
+        "transfer_given_muon": 0.003383196343570777,
+        "partition_given_transfer": 0.007735778896394972
+       },
+       "ln_rho": 0.026990726713553903
+      },
+      "M": {
+       "lnR": -0.09155062353182711,
+       "steps": {
+        "rate": 0.10321820591605911,
+        "muon_shape": -0.009885648567732027,
+        "transfer_given_muon": -0.18488318088015435,
+        "partition_given_transfer": 2.2204460492503128e-16
+       },
+       "ln_rho": -0.1947688294478862
+      },
+      "C_no_overflow": {
+       "lnR": 0.07780200006914412,
+       "steps": {
+        "rate": 0.10321820591605911,
+        "muon_shape": -0.006639121494675053,
+        "transfer_given_muon": -0.033125099980979233,
+        "partition_given_transfer": 0.014348015628739177
+       },
+       "ln_rho": -0.025416205846914994
+      },
+      "C_overflow": {
+       "lnR": 0.18851271987991708,
+       "steps": {
+        "rate": 0.10321820591605911,
+        "muon_shape": 0.04170928596487104,
+        "transfer_given_muon": 0.04276283151540002,
+        "partition_given_transfer": 0.0008223964835869457
+       },
+       "ln_rho": 0.08529451396385797
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.1302089326296128,
+       "steps": {
+        "rate": 0.1032182059160589,
+        "partition_given_transfer": 0.008419420657417607,
+        "muon_shape": 0.015576898876522341,
+        "transfer_given_muon": 0.002994407179613926
+       },
+       "ln_rho": 0.026990726713553903
+      },
+      "M": {
+       "lnR": -0.09155062353182711,
+       "steps": {
+        "rate": 0.10321820591605911,
+        "partition_given_transfer": 0.0,
+        "muon_shape": -0.00988564856773225,
+        "transfer_given_muon": -0.18488318088015396
+       },
+       "ln_rho": -0.1947688294478862
+      },
+      "C_no_overflow": {
+       "lnR": 0.07780200006914412,
+       "steps": {
+        "rate": 0.10321820591605911,
+        "partition_given_transfer": 0.01429847635584531,
+        "muon_shape": -0.006587149131931256,
+        "transfer_given_muon": -0.03312753307082926
+       },
+       "ln_rho": -0.025416205846914994
+      },
+      "C_overflow": {
+       "lnR": 0.18851271987991708,
+       "steps": {
+        "rate": 0.10321820591605911,
+        "partition_given_transfer": 0.0014618901482796231,
+        "muon_shape": 0.04135029753844455,
+        "transfer_given_muon": 0.04248232627713357
+       },
+       "ln_rho": 0.08529451396385797
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0006036263159188148,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    }
+   },
+   "GENIE_MEC": {
+    "w2b/w2b_rrzero_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.12766319976004847,
+       "steps": {
+        "rate": 0.06426505878009468,
+        "muon_shape": 0.028297493375614866,
+        "transfer_given_muon": 0.02649193011880997,
+        "partition_given_transfer": 0.008608717485529039
+       },
+       "ln_rho": 0.06339814097995379
+      },
+      "M": {
+       "lnR": -0.11047864625825808,
+       "steps": {
+        "rate": 0.06426505878009468,
+        "muon_shape": -0.011449817137860684,
+        "transfer_given_muon": -0.16329388790049199,
+        "partition_given_transfer": 2.2204460492503128e-16
+       },
+       "ln_rho": -0.17474370503835276
+      },
+      "C_no_overflow": {
+       "lnR": 0.07649916604043504,
+       "steps": {
+        "rate": 0.06426505878009448,
+        "muon_shape": 0.003547915076061765,
+        "transfer_given_muon": -0.004832240323032754,
+        "partition_given_transfer": 0.013518432507311544
+       },
+       "ln_rho": 0.012234107260340563
+      },
+      "C_overflow": {
+       "lnR": 0.18450728324715887,
+       "steps": {
+        "rate": 0.06426505878009448,
+        "muon_shape": 0.05656177015106315,
+        "transfer_given_muon": 0.06021396589842287,
+        "partition_given_transfer": 0.00346648841757825
+       },
+       "ln_rho": 0.1202422244670644
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.12766319976004847,
+       "steps": {
+        "rate": 0.06426505878009468,
+        "partition_given_transfer": 0.009895487569846194,
+        "muon_shape": 0.02768344386247879,
+        "transfer_given_muon": 0.025819209547628962
+       },
+       "ln_rho": 0.06339814097995379
+      },
+      "M": {
+       "lnR": -0.11047864625825808,
+       "steps": {
+        "rate": 0.06426505878009468,
+        "partition_given_transfer": -2.2204460492503136e-16,
+        "muon_shape": -0.011449817137860571,
+        "transfer_given_muon": -0.16329388790049199
+       },
+       "ln_rho": -0.17474370503835276
+      },
+      "C_no_overflow": {
+       "lnR": 0.07649916604043504,
+       "steps": {
+        "rate": 0.06426505878009448,
+        "partition_given_transfer": 0.014897317867925206,
+        "muon_shape": 0.0032431072111462136,
+        "transfer_given_muon": -0.005906317818730846
+       },
+       "ln_rho": 0.012234107260340563
+      },
+      "C_overflow": {
+       "lnR": 0.18450728324715887,
+       "steps": {
+        "rate": 0.06426505878009448,
+        "partition_given_transfer": 0.003997812637445606,
+        "muon_shape": 0.05590539030467867,
+        "transfer_given_muon": 0.06033902152494013
+       },
+       "ln_rho": 0.1202422244670644
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0006226437495646629,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "w2b/w2b_rr0_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.1658271034022998,
+       "steps": {
+        "rate": 0.06582499835530889,
+        "muon_shape": 0.0297110139149845,
+        "transfer_given_muon": 0.05974214277168605,
+        "partition_given_transfer": 0.010548948360320316
+       },
+       "ln_rho": 0.10000210504699092
+      },
+      "M": {
+       "lnR": -0.12032909785200802,
+       "steps": {
+        "rate": 0.06582499835530889,
+        "muon_shape": -0.012613618122266607,
+        "transfer_given_muon": -0.1735404780850502,
+        "partition_given_transfer": -2.2204460492503136e-16
+       },
+       "ln_rho": -0.1861540962073169
+      },
+      "C_no_overflow": {
+       "lnR": 0.08687482860835281,
+       "steps": {
+        "rate": 0.06582499835530868,
+        "muon_shape": 0.0027491370243342564,
+        "transfer_given_muon": 0.006625422962468386,
+        "partition_given_transfer": 0.011675270266241404
+       },
+       "ln_rho": 0.021049830253044133
+      },
+      "C_overflow": {
+       "lnR": 0.25111111740224484,
+       "steps": {
+        "rate": 0.06582499835530889,
+        "muon_shape": 0.06042995403534539,
+        "transfer_given_muon": 0.11542674010346751,
+        "partition_given_transfer": 0.009429424908123199
+       },
+       "ln_rho": 0.18528611904693595
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.1658271034022998,
+       "steps": {
+        "rate": 0.06582499835530889,
+        "partition_given_transfer": 0.012118376227783294,
+        "muon_shape": 0.029046888020799192,
+        "transfer_given_muon": 0.05883684079840842
+       },
+       "ln_rho": 0.10000210504699092
+      },
+      "M": {
+       "lnR": -0.12032909785200802,
+       "steps": {
+        "rate": 0.06582499835530889,
+        "partition_given_transfer": 0.0,
+        "muon_shape": -0.012613618122266607,
+        "transfer_given_muon": -0.17354047808505046
+       },
+       "ln_rho": -0.1861540962073169
+      },
+      "C_no_overflow": {
+       "lnR": 0.08687482860835281,
+       "steps": {
+        "rate": 0.06582499835530868,
+        "partition_given_transfer": 0.013328581587600046,
+        "muon_shape": 0.002437283620622031,
+        "transfer_given_muon": 0.005283965044822022
+       },
+       "ln_rho": 0.021049830253044133
+      },
+      "C_overflow": {
+       "lnR": 0.25111111740224484,
+       "steps": {
+        "rate": 0.06582499835530889,
+        "partition_given_transfer": 0.010697305498552865,
+        "muon_shape": 0.05945443516898755,
+        "transfer_given_muon": 0.11513437837939562
+       },
+       "ln_rho": 0.18528611904693595
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0006086171852706968,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "w2b/w2b_rr1_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.08729859827157574,
+       "steps": {
+        "rate": 0.06150861733033256,
+        "muon_shape": 0.025687069708238718,
+        "transfer_given_muon": -0.00639721198817896,
+        "partition_given_transfer": 0.006500123221183505
+       },
+       "ln_rho": 0.025789980941243178
+      },
+      "M": {
+       "lnR": -0.10416199609167144,
+       "steps": {
+        "rate": 0.06150861733033256,
+        "muon_shape": -0.00943028141452431,
+        "transfer_given_muon": -0.15624033200747967,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.165670613422004
+      },
+      "C_no_overflow": {
+       "lnR": 0.060765407613388535,
+       "steps": {
+        "rate": 0.06150861733033235,
+        "muon_shape": 0.004271196114109777,
+        "transfer_given_muon": -0.020681411571575253,
+        "partition_given_transfer": 0.01566700574052176
+       },
+       "ln_rho": -0.0007432097169438184
+      },
+      "C_overflow": {
+       "lnR": 0.11754278233678185,
+       "steps": {
+        "rate": 0.06150861733033235,
+        "muon_shape": 0.05023068165819144,
+        "transfer_given_muon": 0.009362794705359936,
+        "partition_given_transfer": -0.0035593113571017946
+       },
+       "ln_rho": 0.0560341650064495
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.08729859827157574,
+       "steps": {
+        "rate": 0.06150861733033256,
+        "partition_given_transfer": 0.007523298296600753,
+        "muon_shape": 0.0251954448376675,
+        "transfer_given_muon": -0.006928762193025008
+       },
+       "ln_rho": 0.025789980941243178
+      },
+      "M": {
+       "lnR": -0.10416199609167144,
+       "steps": {
+        "rate": 0.06150861733033256,
+        "partition_given_transfer": -2.2204460492503136e-16,
+        "muon_shape": -0.009430281414524084,
+        "transfer_given_muon": -0.15624033200747967
+       },
+       "ln_rho": -0.165670613422004
+      },
+      "C_no_overflow": {
+       "lnR": 0.060765407613388535,
+       "steps": {
+        "rate": 0.06150861733033235,
+        "partition_given_transfer": 0.016958378424166937,
+        "muon_shape": 0.004042821464774963,
+        "transfer_given_muon": -0.02174440960588572
+       },
+       "ln_rho": -0.0007432097169438184
+      },
+      "C_overflow": {
+       "lnR": 0.11754278233678185,
+       "steps": {
+        "rate": 0.06150861733033235,
+        "partition_given_transfer": -0.003655793193525668,
+        "muon_shape": 0.04994298488773209,
+        "transfer_given_muon": 0.009746973312243128
+       },
+       "ln_rho": 0.0560341650064495
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.000619159891881785,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.1270905429961644,
+       "steps": {
+        "rate": 0.06375745911762973,
+        "muon_shape": 0.028075726609135213,
+        "transfer_given_muon": 0.02682543943324131,
+        "partition_given_transfer": 0.008431917836158029
+       },
+       "ln_rho": 0.06333308387853467
+      },
+      "M": {
+       "lnR": -0.1122024241838987,
+       "steps": {
+        "rate": 0.0637574591176295,
+        "muon_shape": -0.01137791932015913,
+        "transfer_given_muon": -0.16458196398136912,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.1759598833015282
+      },
+      "C_no_overflow": {
+       "lnR": 0.07574403634685715,
+       "steps": {
+        "rate": 0.0637574591176295,
+        "muon_shape": 0.003178579494961944,
+        "transfer_given_muon": -0.00437120352844487,
+        "partition_given_transfer": 0.01317920126271036
+       },
+       "ln_rho": 0.011986577229227649
+      },
+      "C_overflow": {
+       "lnR": 0.18412666796515706,
+       "steps": {
+        "rate": 0.0637574591176295,
+        "muon_shape": 0.0565040958141563,
+        "transfer_given_muon": 0.06040426757620391,
+        "partition_given_transfer": 0.0034608454571675206
+       },
+       "ln_rho": 0.12036920884752755
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.1270905429961644,
+       "steps": {
+        "rate": 0.06375745911762973,
+        "partition_given_transfer": 0.009717305206425457,
+        "muon_shape": 0.02746494429696964,
+        "transfer_given_muon": 0.02615083437513944
+       },
+       "ln_rho": 0.06333308387853467
+      },
+      "M": {
+       "lnR": -0.1122024241838987,
+       "steps": {
+        "rate": 0.0637574591176295,
+        "partition_given_transfer": 0.0,
+        "muon_shape": -0.01137791932015913,
+        "transfer_given_muon": -0.16458196398136912
+       },
+       "ln_rho": -0.1759598833015282
+      },
+      "C_no_overflow": {
+       "lnR": 0.07574403634685715,
+       "steps": {
+        "rate": 0.0637574591176295,
+        "partition_given_transfer": 0.014573045465051226,
+        "muon_shape": 0.002872648433378002,
+        "transfer_given_muon": -0.005459116669201571
+       },
+       "ln_rho": 0.011986577229227649
+      },
+      "C_overflow": {
+       "lnR": 0.18412666796515706,
+       "steps": {
+        "rate": 0.0637574591176295,
+        "partition_given_transfer": 0.003992799267520354,
+        "muon_shape": 0.05584884028818174,
+        "transfer_given_muon": 0.06052756929182564
+       },
+       "ln_rho": 0.12036920884752755
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0006202924184596193,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j1.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.12692954743134408,
+       "steps": {
+        "rate": 0.06396184407727591,
+        "muon_shape": 0.028275313312684777,
+        "transfer_given_muon": 0.026339780817745496,
+        "partition_given_transfer": 0.008352609223637892
+       },
+       "ln_rho": 0.06296770335406816
+      },
+      "M": {
+       "lnR": -0.11166114968952193,
+       "steps": {
+        "rate": 0.06396184407727612,
+        "muon_shape": -0.011514306805699264,
+        "transfer_given_muon": -0.16410868696109868,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.17562299376679805
+      },
+      "C_no_overflow": {
+       "lnR": 0.0754778303776288,
+       "steps": {
+        "rate": 0.06396184407727591,
+        "muon_shape": 0.00334647530206152,
+        "transfer_given_muon": -0.005166288193536798,
+        "partition_given_transfer": 0.013335799191828061
+       },
+       "ln_rho": 0.011515986300352887
+      },
+      "C_overflow": {
+       "lnR": 0.18407636716610098,
+       "steps": {
+        "rate": 0.06396184407727591,
+        "muon_shape": 0.05673891524581288,
+        "transfer_given_muon": 0.06023871837066521,
+        "partition_given_transfer": 0.00313688947234735
+       },
+       "ln_rho": 0.12011452308882507
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.12692954743134408,
+       "steps": {
+        "rate": 0.06396184407727591,
+        "partition_given_transfer": 0.009625776159186058,
+        "muon_shape": 0.027658185652479614,
+        "transfer_given_muon": 0.025683741542402282
+       },
+       "ln_rho": 0.06296770335406816
+      },
+      "M": {
+       "lnR": -0.11166114968952193,
+       "steps": {
+        "rate": 0.06396184407727612,
+        "partition_given_transfer": -2.2204460492503136e-16,
+        "muon_shape": -0.011514306805699039,
+        "transfer_given_muon": -0.16410868696109868
+       },
+       "ln_rho": -0.17562299376679805
+      },
+      "C_no_overflow": {
+       "lnR": 0.0754778303776288,
+       "steps": {
+        "rate": 0.06396184407727591,
+        "partition_given_transfer": 0.01473539854855642,
+        "muon_shape": 0.0030199361564133835,
+        "transfer_given_muon": -0.006239348404616988
+       },
+       "ln_rho": 0.011515986300352887
+      },
+      "C_overflow": {
+       "lnR": 0.18407636716610098,
+       "steps": {
+        "rate": 0.06396184407727591,
+        "partition_given_transfer": 0.003600293558906289,
+        "muon_shape": 0.056109291488768503,
+        "transfer_given_muon": 0.060404938041150276
+       },
+       "ln_rho": 0.12011452308882507
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0006191397571359046,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j2.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.12692020290802664,
+       "steps": {
+        "rate": 0.06390629871480426,
+        "muon_shape": 0.02809716036784887,
+        "transfer_given_muon": 0.02655681172587632,
+        "partition_given_transfer": 0.008359932099497272
+       },
+       "ln_rho": 0.06301390419322238
+      },
+      "M": {
+       "lnR": -0.1123762153761724,
+       "steps": {
+        "rate": 0.06390629871480384,
+        "muon_shape": -0.011420358845510077,
+        "transfer_given_muon": -0.164862155245466,
+        "partition_given_transfer": -1.1102230246251565e-16
+       },
+       "ln_rho": -0.17628251409097623
+      },
+      "C_no_overflow": {
+       "lnR": 0.07539183797686838,
+       "steps": {
+        "rate": 0.06390629871480405,
+        "muon_shape": 0.0031610123591730927,
+        "transfer_given_muon": -0.004768868751529475,
+        "partition_given_transfer": 0.01309339565442094
+       },
+       "ln_rho": 0.011485539262064332
+      },
+      "C_overflow": {
+       "lnR": 0.1841476509409389,
+       "steps": {
+        "rate": 0.06390629871480384,
+        "muon_shape": 0.056568888942913786,
+        "transfer_given_muon": 0.06026735734234497,
+        "partition_given_transfer": 0.003405105940876037
+       },
+       "ln_rho": 0.12024135222613506
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.12692020290802664,
+       "steps": {
+        "rate": 0.06390629871480426,
+        "partition_given_transfer": 0.009657720355973174,
+        "muon_shape": 0.02748916784130887,
+        "transfer_given_muon": 0.025867015995940358
+       },
+       "ln_rho": 0.06301390419322238
+      },
+      "M": {
+       "lnR": -0.1123762153761724,
+       "steps": {
+        "rate": 0.06390629871480384,
+        "partition_given_transfer": 2.2204460492503128e-16,
+        "muon_shape": -0.011420358845510077,
+        "transfer_given_muon": -0.16486215524546638
+       },
+       "ln_rho": -0.17628251409097623
+      },
+      "C_no_overflow": {
+       "lnR": 0.07539183797686838,
+       "steps": {
+        "rate": 0.06390629871480405,
+        "partition_given_transfer": 0.01445887368849614,
+        "muon_shape": 0.002857357568491407,
+        "transfer_given_muon": -0.005830691994923149
+       },
+       "ln_rho": 0.011485539262064332
+      },
+      "C_overflow": {
+       "lnR": 0.1841476509409389,
+       "steps": {
+        "rate": 0.06390629871480384,
+        "partition_given_transfer": 0.003997905279116975,
+        "muon_shape": 0.05591413391461421,
+        "transfer_given_muon": 0.060329313032403686
+       },
+       "ln_rho": 0.12024135222613506
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0006225812386618487,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j3.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.12709418949870963,
+       "steps": {
+        "rate": 0.06378913622574481,
+        "muon_shape": 0.027820476865195606,
+        "transfer_given_muon": 0.027043903385730823,
+        "partition_given_transfer": 0.00844067302203834
+       },
+       "ln_rho": 0.06330505327296482
+      },
+      "M": {
+       "lnR": -0.11328085631550773,
+       "steps": {
+        "rate": 0.06378913622574481,
+        "muon_shape": -0.01132040778920722,
+        "transfer_given_muon": -0.16574958475204524,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.17706999254125255
+      },
+      "C_no_overflow": {
+       "lnR": 0.07593170692725798,
+       "steps": {
+        "rate": 0.0637891362257446,
+        "muon_shape": 0.0031405397051775495,
+        "transfer_given_muon": -0.004080332996390438,
+        "partition_given_transfer": 0.01308236399272622
+       },
+       "ln_rho": 0.01214257070151338
+      },
+      "C_overflow": {
+       "lnR": 0.18393664018991498,
+       "steps": {
+        "rate": 0.0637891362257446,
+        "muon_shape": 0.05600729685974571,
+        "transfer_given_muon": 0.060562392325368516,
+        "partition_given_transfer": 0.0035778147790560847
+       },
+       "ln_rho": 0.12014750396417039
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.12709418949870963,
+       "steps": {
+        "rate": 0.06378913622574481,
+        "partition_given_transfer": 0.009716096654833629,
+        "muon_shape": 0.027211690059244148,
+        "transfer_given_muon": 0.026377266558887176
+       },
+       "ln_rho": 0.06330505327296482
+      },
+      "M": {
+       "lnR": -0.11328085631550773,
+       "steps": {
+        "rate": 0.06378913622574481,
+        "partition_given_transfer": 2.2204460492503128e-16,
+        "muon_shape": -0.011320407789207444,
+        "transfer_given_muon": -0.16574958475204524
+       },
+       "ln_rho": -0.17706999254125255
+      },
+      "C_no_overflow": {
+       "lnR": 0.07593170692725798,
+       "steps": {
+        "rate": 0.0637891362257446,
+        "partition_given_transfer": 0.014438170163238818,
+        "muon_shape": 0.0028461298822119252,
+        "transfer_given_muon": -0.005141729343937379
+       },
+       "ln_rho": 0.01214257070151338
+      },
+      "C_overflow": {
+       "lnR": 0.18393664018991498,
+       "steps": {
+        "rate": 0.0637891362257446,
+        "partition_given_transfer": 0.004149985242155125,
+        "muon_shape": 0.0553325701040918,
+        "transfer_given_muon": 0.060664948617923604
+       },
+       "ln_rho": 0.12014750396417039
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0006215349823518194,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    }
+   },
+   "NuWro": {
+    "w2b/w2b_rrzero_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.14637569480010748,
+       "steps": {
+        "rate": 0.1411738224305876,
+        "muon_shape": 0.0234060808477487,
+        "transfer_given_muon": -0.035242221204154565,
+        "partition_given_transfer": 0.0170380127259258
+       },
+       "ln_rho": 0.005201872369519883
+      },
+      "M": {
+       "lnR": 0.10944945460615933,
+       "steps": {
+        "rate": 0.14117382243058776,
+        "muon_shape": -0.004181902216717982,
+        "transfer_given_muon": -0.027542465607710537,
+        "partition_given_transfer": 2.2204460492503128e-16
+       },
+       "ln_rho": -0.03172436782442843
+      },
+      "C_no_overflow": {
+       "lnR": 0.1608150158325129,
+       "steps": {
+        "rate": 0.14117382243058776,
+        "muon_shape": 0.005659071654688087,
+        "transfer_given_muon": -0.07344944514878204,
+        "partition_given_transfer": 0.08743156689601908
+       },
+       "ln_rho": 0.019641193401925133
+      },
+      "C_overflow": {
+       "lnR": 0.13139828706871912,
+       "steps": {
+        "rate": 0.1411738224305876,
+        "muon_shape": 0.04122594075079321,
+        "transfer_given_muon": 0.0010674909400364388,
+        "partition_given_transfer": -0.05206896705269823
+       },
+       "ln_rho": -0.009775535361868481
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.14637569480010748,
+       "steps": {
+        "rate": 0.1411738224305876,
+        "partition_given_transfer": 0.018450766492185085,
+        "muon_shape": 0.0225358006600865,
+        "transfer_given_muon": -0.03578469478275169
+       },
+       "ln_rho": 0.005201872369519883
+      },
+      "M": {
+       "lnR": 0.10944945460615933,
+       "steps": {
+        "rate": 0.14117382243058776,
+        "partition_given_transfer": -2.2204460492503136e-16,
+        "muon_shape": -0.004181902216717759,
+        "transfer_given_muon": -0.027542465607710422
+       },
+       "ln_rho": -0.03172436782442843
+      },
+      "C_no_overflow": {
+       "lnR": 0.1608150158325129,
+       "steps": {
+        "rate": 0.14117382243058776,
+        "partition_given_transfer": 0.0862834288158383,
+        "muon_shape": 0.005004910507835425,
+        "transfer_given_muon": -0.07164714592174856
+       },
+       "ln_rho": 0.019641193401925133
+      },
+      "C_overflow": {
+       "lnR": 0.13139828706871912,
+       "steps": {
+        "rate": 0.1411738224305876,
+        "partition_given_transfer": -0.05599137077839872,
+        "muon_shape": 0.04280725857304474,
+        "transfer_given_muon": 0.0034085768434854854
+       },
+       "ln_rho": -0.009775535361868481
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0002859551628707535,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 2.0007617248125327e-07
+     }
+    },
+    "w2b/w2b_rr0_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.18453959844235882,
+       "steps": {
+        "rate": 0.14273376200580215,
+        "muon_shape": 0.02465451593412487,
+        "transfer_given_muon": -0.002169688030523336,
+        "partition_given_transfer": 0.01932100853295521
+       },
+       "ln_rho": 0.041805836436556665
+      },
+      "M": {
+       "lnR": 0.09959900301240926,
+       "steps": {
+        "rate": 0.14273376200580215,
+        "muon_shape": -0.0053472562380894725,
+        "transfer_given_muon": -0.03778750275530316,
+        "partition_given_transfer": -1.1102230246251565e-16
+       },
+       "ln_rho": -0.04313475899339289
+      },
+      "C_no_overflow": {
+       "lnR": 0.17119067840043056,
+       "steps": {
+        "rate": 0.14273376200580215,
+        "muon_shape": 0.004721901077027631,
+        "transfer_given_muon": -0.06383249362942059,
+        "partition_given_transfer": 0.08756750894702152
+       },
+       "ln_rho": 0.028456916394628412
+      },
+      "C_overflow": {
+       "lnR": 0.1980021212238052,
+       "steps": {
+        "rate": 0.14273376200580196,
+        "muon_shape": 0.044625601596927425,
+        "transfer_given_muon": 0.05490225641042449,
+        "partition_given_transfer": -0.044259498789348685
+       },
+       "ln_rho": 0.055268359218003243
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.18453959844235882,
+       "steps": {
+        "rate": 0.14273376200580215,
+        "partition_given_transfer": 0.020859517040081134,
+        "muon_shape": 0.02367455276131275,
+        "transfer_given_muon": -0.002728233364837312
+       },
+       "ln_rho": 0.041805836436556665
+      },
+      "M": {
+       "lnR": 0.09959900301240926,
+       "steps": {
+        "rate": 0.14273376200580215,
+        "partition_given_transfer": 2.2204460492503128e-16,
+        "muon_shape": -0.0053472562380894725,
+        "transfer_given_muon": -0.03778750275530339
+       },
+       "ln_rho": -0.04313475899339289
+      },
+      "C_no_overflow": {
+       "lnR": 0.17119067840043056,
+       "steps": {
+        "rate": 0.14273376200580215,
+        "partition_given_transfer": 0.08519472578723787,
+        "muon_shape": 0.004004820541256295,
+        "transfer_given_muon": -0.06074262993386584
+       },
+       "ln_rho": 0.028456916394628412
+      },
+      "C_overflow": {
+       "lnR": 0.1980021212238052,
+       "steps": {
+        "rate": 0.14273376200580196,
+        "partition_given_transfer": -0.04947687094273402,
+        "muon_shape": 0.04619742628484384,
+        "transfer_given_muon": 0.058547803875893444
+       },
+       "ln_rho": 0.055268359218003243
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.00027499222479642274,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 2.0007617248125327e-07
+     }
+    },
+    "w2b/w2b_rr1_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.10601109331163483,
+       "steps": {
+        "rate": 0.1384173809808258,
+        "muon_shape": 0.021077105920181503,
+        "transfer_given_muon": -0.0680973306267828,
+        "partition_given_transfer": 0.014613937037410398
+       },
+       "ln_rho": -0.03240628766919096
+      },
+      "M": {
+       "lnR": 0.11576610477274593,
+       "steps": {
+        "rate": 0.1384173809808258,
+        "muon_shape": -0.00216768941226074,
+        "transfer_given_muon": -0.020483586795819086,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.022651276208079857
+      },
+      "C_no_overflow": {
+       "lnR": 0.14508125740546626,
+       "steps": {
+        "rate": 0.1384173809808256,
+        "muon_shape": 0.006762479764410306,
+        "transfer_given_muon": -0.08730851442804446,
+        "partition_given_transfer": 0.08720991108827468
+       },
+       "ln_rho": 0.006663876424640669
+      },
+      "C_overflow": {
+       "lnR": 0.06443378615834214,
+       "steps": {
+        "rate": 0.1384173809808256,
+        "muon_shape": 0.035499659479580656,
+        "transfer_given_muon": -0.04937587972940237,
+        "partition_given_transfer": -0.0601073745726617
+       },
+       "ln_rho": -0.07398359482248346
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.10601109331163483,
+       "steps": {
+        "rate": 0.1384173809808258,
+        "partition_given_transfer": 0.015723155965985183,
+        "muon_shape": 0.020426088490625133,
+        "transfer_given_muon": -0.06855553212580134
+       },
+       "ln_rho": -0.03240628766919096
+      },
+      "M": {
+       "lnR": 0.11576610477274593,
+       "steps": {
+        "rate": 0.1384173809808258,
+        "partition_given_transfer": -2.2204460492503136e-16,
+        "muon_shape": -0.002167689412260629,
+        "transfer_given_muon": -0.02048358679581897
+       },
+       "ln_rho": -0.022651276208079857
+      },
+      "C_no_overflow": {
+       "lnR": 0.14508125740546626,
+       "steps": {
+        "rate": 0.1384173809808256,
+        "partition_given_transfer": 0.08752736727762031,
+        "muon_shape": 0.006340821216342894,
+        "transfer_given_muon": -0.08720431206932282
+       },
+       "ln_rho": 0.006663876424640669
+      },
+      "C_overflow": {
+       "lnR": 0.06443378615834214,
+       "steps": {
+        "rate": 0.1384173809808256,
+        "partition_given_transfer": -0.06341937748044868,
+        "muon_shape": 0.036914639276929215,
+        "transfer_given_muon": -0.04747885661896397
+       },
+       "ln_rho": -0.07398359482248346
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.00028650528109552316,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 2.0007617248125327e-07
+     }
+    },
+    "s5pdata/data_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.14580303803622338,
+       "steps": {
+        "rate": 0.14066622276812282,
+        "muon_shape": 0.023200511883307816,
+        "transfer_given_muon": -0.034926438294854076,
+        "partition_given_transfer": 0.01686274167964685
+       },
+       "ln_rho": 0.0051368152681005586
+      },
+      "M": {
+       "lnR": 0.10772567668051872,
+       "steps": {
+        "rate": 0.14066622276812263,
+        "muon_shape": -0.004161718110549703,
+        "transfer_given_muon": -0.02877882797705431,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.03294054608760391
+      },
+      "C_no_overflow": {
+       "lnR": 0.160059886138935,
+       "steps": {
+        "rate": 0.14066622276812263,
+        "muon_shape": 0.005365208886906377,
+        "transfer_given_muon": -0.07301820294812478,
+        "partition_given_transfer": 0.08704665743203086
+       },
+       "ln_rho": 0.01939366337081236
+      },
+      "C_overflow": {
+       "lnR": 0.1310176717867174,
+       "steps": {
+        "rate": 0.14066622276812263,
+        "muon_shape": 0.0411074577279943,
+        "transfer_given_muon": 0.0012713152365638478,
+        "partition_given_transfer": -0.05202732394596355
+       },
+       "ln_rho": -0.00964855098140524
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.14580303803622338,
+       "steps": {
+        "rate": 0.14066622276812282,
+        "partition_given_transfer": 0.018212667593357768,
+        "muon_shape": 0.02236807276876738,
+        "transfer_given_muon": -0.0354439250940247
+       },
+       "ln_rho": 0.0051368152681005586
+      },
+      "M": {
+       "lnR": 0.10772567668051872,
+       "steps": {
+        "rate": 0.14066622276812263,
+        "partition_given_transfer": 2.2204460492503128e-16,
+        "muon_shape": -0.004161718110549703,
+        "transfer_given_muon": -0.028778827977054423
+       },
+       "ln_rho": -0.03294054608760391
+      },
+      "C_no_overflow": {
+       "lnR": 0.160059886138935,
+       "steps": {
+        "rate": 0.14066622276812263,
+        "partition_given_transfer": 0.08585021564362837,
+        "muon_shape": 0.004757619167585998,
+        "transfer_given_muon": -0.07121417144040212
+       },
+       "ln_rho": 0.01939366337081236
+      },
+      "C_overflow": {
+       "lnR": 0.1310176717867174,
+       "steps": {
+        "rate": 0.14066622276812263,
+        "partition_given_transfer": -0.05599959648776705,
+        "muon_shape": 0.04272123804786271,
+        "transfer_given_muon": 0.003629807458498943
+       },
+       "ln_rho": -0.00964855098140524
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0002842963548807173,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 2.0007617248125327e-07
+     }
+    },
+    "s5pdata/data_b-_j1.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.14564204247140317,
+       "steps": {
+        "rate": 0.14087060772776902,
+        "muon_shape": 0.0233104157485745,
+        "transfer_given_muon": -0.035328522892109554,
+        "partition_given_transfer": 0.016789541887169218
+       },
+       "ln_rho": 0.004771434743634145
+      },
+      "M": {
+       "lnR": 0.10826695117489558,
+       "steps": {
+        "rate": 0.14087060772776902,
+        "muon_shape": -0.004253932294307419,
+        "transfer_given_muon": -0.02834972425856601,
+        "partition_given_transfer": -1.1102230246251565e-16
+       },
+       "ln_rho": -0.032603656552873436
+      },
+      "C_no_overflow": {
+       "lnR": 0.15979368016970663,
+       "steps": {
+        "rate": 0.1408706077277692,
+        "muon_shape": 0.00541252670369462,
+        "transfer_given_muon": -0.07365212576861614,
+        "partition_given_transfer": 0.08716267150685893
+       },
+       "ln_rho": 0.018923072441937444
+      },
+      "C_overflow": {
+       "lnR": 0.13096737098766126,
+       "steps": {
+        "rate": 0.1408706077277692,
+        "muon_shape": 0.04127908221373565,
+        "transfer_given_muon": 0.0010770153559892038,
+        "partition_given_transfer": -0.052259334309832865
+       },
+       "ln_rho": -0.009903236740107929
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.14564204247140317,
+       "steps": {
+        "rate": 0.14087060772776902,
+        "partition_given_transfer": 0.0181583445408644,
+        "muon_shape": 0.02245144552345537,
+        "transfer_given_muon": -0.035838355320685675
+       },
+       "ln_rho": 0.004771434743634145
+      },
+      "M": {
+       "lnR": 0.10826695117489558,
+       "steps": {
+        "rate": 0.14087060772776902,
+        "partition_given_transfer": 2.2204460492503128e-16,
+        "muon_shape": -0.004253932294307642,
+        "transfer_given_muon": -0.02834972425856601
+       },
+       "ln_rho": -0.032603656552873436
+      },
+      "C_no_overflow": {
+       "lnR": 0.15979368016970663,
+       "steps": {
+        "rate": 0.1408706077277692,
+        "partition_given_transfer": 0.08601007533685498,
+        "muon_shape": 0.00479875972071146,
+        "transfer_given_muon": -0.07188576261562885
+       },
+       "ln_rho": 0.018923072441937444
+      },
+      "C_overflow": {
+       "lnR": 0.13096737098766126,
+       "steps": {
+        "rate": 0.1408706077277692,
+        "partition_given_transfer": -0.05630626342379391,
+        "muon_shape": 0.042861924044573535,
+        "transfer_given_muon": 0.003541102639112555
+       },
+       "ln_rho": -0.009903236740107929
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0002834801574817671,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 2.0007617248125327e-07
+     }
+    },
+    "s5pdata/data_b-_j2.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.1456326979480856,
+       "steps": {
+        "rate": 0.14081506236529737,
+        "muon_shape": 0.023173567554750498,
+        "transfer_given_muon": -0.035149001456537744,
+        "partition_given_transfer": 0.016793069484575377
+       },
+       "ln_rho": 0.004817635582788221
+      },
+      "M": {
+       "lnR": 0.10755188548824504,
+       "steps": {
+        "rate": 0.14081506236529717,
+        "muon_shape": -0.0041775862616755255,
+        "transfer_given_muon": -0.029085590615376657,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.03326317687705213
+      },
+      "C_no_overflow": {
+       "lnR": 0.15970768776894617,
+       "steps": {
+        "rate": 0.14081506236529737,
+        "muon_shape": 0.005282604772578715,
+        "transfer_given_muon": -0.07339845008253346,
+        "partition_given_transfer": 0.08700847071360349
+       },
+       "ln_rho": 0.018892625403648805
+      },
+      "C_overflow": {
+       "lnR": 0.13103865476249912,
+       "steps": {
+        "rate": 0.14081506236529737,
+        "muon_shape": 0.04113540390979668,
+        "transfer_given_muon": 0.0011891638932862345,
+        "partition_given_transfer": -0.052100975405881156
+       },
+       "ln_rho": -0.009776407602798243
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.1456326979480856,
+       "steps": {
+        "rate": 0.14081506236529737,
+        "partition_given_transfer": 0.01811863637476965,
+        "muon_shape": 0.02235148372105448,
+        "transfer_given_muon": -0.03565248451303588
+       },
+       "ln_rho": 0.004817635582788221
+      },
+      "M": {
+       "lnR": 0.10755188548824504,
+       "steps": {
+        "rate": 0.14081506236529717,
+        "partition_given_transfer": 2.2204460492503128e-16,
+        "muon_shape": -0.0041775862616755255,
+        "transfer_given_muon": -0.029085590615376772
+       },
+       "ln_rho": -0.03326317687705213
+      },
+      "C_no_overflow": {
+       "lnR": 0.15970768776894617,
+       "steps": {
+        "rate": 0.14081506236529737,
+        "partition_given_transfer": 0.08579482029591486,
+        "muon_shape": 0.00463684556734828,
+        "transfer_given_muon": -0.0715390404596142
+       },
+       "ln_rho": 0.018892625403648805
+      },
+      "C_overflow": {
+       "lnR": 0.13103865476249912,
+       "steps": {
+        "rate": 0.14081506236529737,
+        "partition_given_transfer": -0.05613913866402775,
+        "muon_shape": 0.04282448808555666,
+        "transfer_given_muon": 0.003538242975672897
+       },
+       "ln_rho": -0.009776407602798243
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.00028571062326057694,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 2.0007617248125327e-07
+     }
+    },
+    "s5pdata/data_b-_j3.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.14580668453876866,
+       "steps": {
+        "rate": 0.14069789987623818,
+        "muon_shape": 0.022993273001471363,
+        "transfer_given_muon": -0.03476436428338223,
+        "partition_given_transfer": 0.01687987594444129
+       },
+       "ln_rho": 0.00510878466253048
+      },
+      "M": {
+       "lnR": 0.10664724454890971,
+       "steps": {
+        "rate": 0.14069789987623818,
+        "muon_shape": -0.004150068742887047,
+        "transfer_given_muon": -0.029900586584441405,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.03405065532732847
+      },
+      "C_no_overflow": {
+       "lnR": 0.1602475567193358,
+       "steps": {
+        "rate": 0.14069789987623818,
+        "muon_shape": 0.005394645654372633,
+        "transfer_given_muon": -0.0727725660937256,
+        "partition_given_transfer": 0.08692757728245082
+       },
+       "ln_rho": 0.019549656843097618
+      },
+      "C_overflow": {
+       "lnR": 0.13082764401147526,
+       "steps": {
+        "rate": 0.1406978998762378,
+        "muon_shape": 0.04066674651876799,
+        "transfer_given_muon": 0.0013735542034679035,
+        "partition_given_transfer": -0.05191055658699836
+       },
+       "ln_rho": -0.009870255864762534
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.14580668453876866,
+       "steps": {
+        "rate": 0.14069789987623818,
+        "partition_given_transfer": 0.018223888200721492,
+        "muon_shape": 0.02215381204072968,
+        "transfer_given_muon": -0.035268915578920694
+       },
+       "ln_rho": 0.00510878466253048
+      },
+      "M": {
+       "lnR": 0.10664724454890971,
+       "steps": {
+        "rate": 0.14069789987623818,
+        "partition_given_transfer": -1.1102230246251565e-16,
+        "muon_shape": -0.004150068742886936,
+        "transfer_given_muon": -0.029900586584441405
+       },
+       "ln_rho": -0.03405065532732847
+      },
+      "C_no_overflow": {
+       "lnR": 0.1602475567193358,
+       "steps": {
+        "rate": 0.14069789987623818,
+        "partition_given_transfer": 0.08578422847386416,
+        "muon_shape": 0.004733567048111132,
+        "transfer_given_muon": -0.0709681386788776
+       },
+       "ln_rho": 0.019549656843097618
+      },
+      "C_overflow": {
+       "lnR": 0.13082764401147526,
+       "steps": {
+        "rate": 0.1406978998762378,
+        "partition_given_transfer": -0.05589744078363462,
+        "muon_shape": 0.04228788189444666,
+        "transfer_given_muon": 0.003739303024425423
+       },
+       "ln_rho": -0.009870255864762534
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.0002848675701893811,
+      "data_fraction_in_pred_empty_m": 0.0,
+      "pred_fraction_in_data_empty_mt": 2.0007617248125327e-07
+     }
+    }
+   },
+   "GiBUU": {
+    "w2b/w2b_rrzero_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.4722233517390018,
+       "steps": {
+        "rate": 0.3252184847432548,
+        "muon_shape": 0.015306518333818294,
+        "transfer_given_muon": 0.09263916788372645,
+        "partition_given_transfer": 0.03905918077820211
+       },
+       "ln_rho": 0.147004866995747
+      },
+      "M": {
+       "lnR": 0.318626156207112,
+       "steps": {
+        "rate": 0.3252184847432551,
+        "muon_shape": 0.004129315096614477,
+        "transfer_given_muon": -0.010721643632757842,
+        "partition_given_transfer": 2.2204460492503128e-16
+       },
+       "ln_rho": -0.0065923285361431105
+      },
+      "C_no_overflow": {
+       "lnR": 0.36149773986477923,
+       "steps": {
+        "rate": 0.32521848474325493,
+        "muon_shape": -0.0014872575922937291,
+        "transfer_given_muon": -0.006759243243166749,
+        "partition_given_transfer": 0.04452575595698493
+       },
+       "ln_rho": 0.0362792551215243
+      },
+      "C_overflow": {
+       "lnR": 0.6037582574972954,
+       "steps": {
+        "rate": 0.32521848474325493,
+        "muon_shape": 0.03739630411049008,
+        "transfer_given_muon": 0.20780649518474298,
+        "partition_given_transfer": 0.033336973458807165
+       },
+       "ln_rho": 0.27853977275404046
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.4722233517390018,
+       "steps": {
+        "rate": 0.3252184847432548,
+        "partition_given_transfer": 0.03515986148359294,
+        "muon_shape": 0.015591684184781567,
+        "transfer_given_muon": 0.09625332132737244
+       },
+       "ln_rho": 0.147004866995747
+      },
+      "M": {
+       "lnR": 0.318626156207112,
+       "steps": {
+        "rate": 0.3252184847432551,
+        "partition_given_transfer": -1.1102230246251565e-16,
+        "muon_shape": 0.004129315096614477,
+        "transfer_given_muon": -0.010721643632757506
+       },
+       "ln_rho": -0.0065923285361431105
+      },
+      "C_no_overflow": {
+       "lnR": 0.36149773986477923,
+       "steps": {
+        "rate": 0.32521848474325493,
+        "partition_given_transfer": 0.05230330358700981,
+        "muon_shape": -0.010720654287500317,
+        "transfer_given_muon": -0.005303394177985067
+       },
+       "ln_rho": 0.0362792551215243
+      },
+      "C_overflow": {
+       "lnR": 0.6037582574972954,
+       "steps": {
+        "rate": 0.32521848474325493,
+        "partition_given_transfer": 0.01169589105034507,
+        "muon_shape": 0.05122236786497447,
+        "transfer_given_muon": 0.21562151383872097
+       },
+       "ln_rho": 0.27853977275404046
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.046093280999192715,
+      "data_fraction_in_pred_empty_m": 0.03352311267195391,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "w2b/w2b_rr0_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.510387255381253,
+       "steps": {
+        "rate": 0.3267784243184691,
+        "muon_shape": 0.01590782419698013,
+        "transfer_given_muon": 0.12608752012872967,
+        "partition_given_transfer": 0.04161348673707397
+       },
+       "ln_rho": 0.18360883106278386
+      },
+      "M": {
+       "lnR": 0.3087757046133619,
+       "steps": {
+        "rate": 0.3267784243184694,
+        "muon_shape": 0.003495869531029195,
+        "transfer_given_muon": -0.021498589236136654,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.018002719705107473
+      },
+      "C_no_overflow": {
+       "lnR": 0.37187340243269706,
+       "steps": {
+        "rate": 0.3267784243184694,
+        "muon_shape": -0.0020246398666056297,
+        "transfer_given_muon": 0.0032087952739951386,
+        "partition_given_transfer": 0.04391082270683834
+       },
+       "ln_rho": 0.04509497811422769
+      },
+      "C_overflow": {
+       "lnR": 0.6703620916523815,
+       "steps": {
+        "rate": 0.3267784243184694,
+        "muon_shape": 0.03946465138099513,
+        "transfer_given_muon": 0.2647863372089512,
+        "partition_given_transfer": 0.03933267874396573
+       },
+       "ln_rho": 0.3435836673339121
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.510387255381253,
+       "steps": {
+        "rate": 0.3267784243184691,
+        "partition_given_transfer": 0.03762222614686343,
+        "muon_shape": 0.0161627432461398,
+        "transfer_given_muon": 0.12982386166978052
+       },
+       "ln_rho": 0.18360883106278386
+      },
+      "M": {
+       "lnR": 0.3087757046133619,
+       "steps": {
+        "rate": 0.3267784243184694,
+        "partition_given_transfer": -1.1102230246251565e-16,
+        "muon_shape": 0.003495869531029416,
+        "transfer_given_muon": -0.021498589236136654
+       },
+       "ln_rho": -0.018002719705107473
+      },
+      "C_no_overflow": {
+       "lnR": 0.37187340243269706,
+       "steps": {
+        "rate": 0.3267784243184694,
+        "partition_given_transfer": 0.05037909365972893,
+        "muon_shape": -0.011137202747467384,
+        "transfer_given_muon": 0.00585308720196609
+       },
+       "ln_rho": 0.04509497811422769
+      },
+      "C_overflow": {
+       "lnR": 0.6703620916523815,
+       "steps": {
+        "rate": 0.3267784243184694,
+        "partition_given_transfer": 0.020253274591835072,
+        "muon_shape": 0.05271048650240619,
+        "transfer_given_muon": 0.27061990623967097
+       },
+       "ln_rho": 0.3435836673339121
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.04688957046935203,
+      "data_fraction_in_pred_empty_m": 0.03382948020723797,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "w2b/w2b_rr1_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.431858750250529,
+       "steps": {
+        "rate": 0.3224620432934927,
+        "muon_shape": 0.013354724632186687,
+        "transfer_given_muon": 0.05961278651520993,
+        "partition_given_transfer": 0.03642919580963979
+       },
+       "ln_rho": 0.1093967069570363
+      },
+      "M": {
+       "lnR": 0.3249428063736986,
+       "steps": {
+        "rate": 0.3224620432934928,
+        "muon_shape": 0.005503371203858534,
+        "transfer_given_muon": -0.00302260812365289,
+        "partition_given_transfer": 2.2204460492503128e-16
+       },
+       "ln_rho": 0.0024807630802057834
+      },
+      "C_no_overflow": {
+       "lnR": 0.3457639814377326,
+       "steps": {
+        "rate": 0.322462043293493,
+        "muon_shape": -0.0013654042428597828,
+        "transfer_given_muon": -0.021031147652725932,
+        "partition_given_transfer": 0.0456984900398255
+       },
+       "ln_rho": 0.023301938144239642
+      },
+      "C_overflow": {
+       "lnR": 0.5367937565869185,
+       "steps": {
+        "rate": 0.3224620432934928,
+        "muon_shape": 0.03276305387229237,
+        "transfer_given_muon": 0.15531019442888183,
+        "partition_given_transfer": 0.02625846499225124
+       },
+       "ln_rho": 0.2143317132934257
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.431858750250529,
+       "steps": {
+        "rate": 0.3224620432934927,
+        "partition_given_transfer": 0.03280010589981567,
+        "muon_shape": 0.013638391631552498,
+        "transfer_given_muon": 0.06295820942566817
+       },
+       "ln_rho": 0.1093967069570363
+      },
+      "M": {
+       "lnR": 0.3249428063736986,
+       "steps": {
+        "rate": 0.3224620432934928,
+        "partition_given_transfer": 2.2204460492503128e-16,
+        "muon_shape": 0.005503371203858313,
+        "transfer_given_muon": -0.0030226081236527785
+       },
+       "ln_rho": 0.0024807630802057834
+      },
+      "C_no_overflow": {
+       "lnR": 0.3457639814377326,
+       "steps": {
+        "rate": 0.322462043293493,
+        "partition_given_transfer": 0.05503686650360907,
+        "muon_shape": -0.0103907250930573,
+        "transfer_given_muon": -0.02134420326631209
+       },
+       "ln_rho": 0.023301938144239642
+      },
+      "C_overflow": {
+       "lnR": 0.5367937565869185,
+       "steps": {
+        "rate": 0.3224620432934928,
+        "partition_given_transfer": 0.002178219286004487,
+        "muon_shape": 0.04665913591655545,
+        "transfer_given_muon": 0.1654943580908658
+       },
+       "ln_rho": 0.2143317132934257
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.045225808999801054,
+      "data_fraction_in_pred_empty_m": 0.03316964547991804,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j-.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.4716506949751175,
+       "steps": {
+        "rate": 0.3247108850807897,
+        "muon_shape": 0.014986723621700684,
+        "transfer_given_muon": 0.09305897109039504,
+        "partition_given_transfer": 0.03889411518223202
+       },
+       "ln_rho": 0.1469398098943278
+      },
+      "M": {
+       "lnR": 0.3169023782814713,
+       "steps": {
+        "rate": 0.3247108850807899,
+        "muon_shape": 0.004255594244894045,
+        "transfer_given_muon": -0.012064101044212626,
+        "partition_given_transfer": -1.1102230246251565e-16
+       },
+       "ln_rho": -0.007808506799318604
+      },
+      "C_no_overflow": {
+       "lnR": 0.3607426101712014,
+       "steps": {
+        "rate": 0.3247108850807897,
+        "muon_shape": -0.0018538806466329623,
+        "transfer_given_muon": -0.006310292675571939,
+        "partition_given_transfer": 0.04419589841261659
+       },
+       "ln_rho": 0.03603172509041169
+      },
+      "C_overflow": {
+       "lnR": 0.6033776422152936,
+       "steps": {
+        "rate": 0.3247108850807897,
+        "muon_shape": 0.03713691662758207,
+        "transfer_given_muon": 0.20818429537435285,
+        "partition_given_transfer": 0.03334554513256896
+       },
+       "ln_rho": 0.27866675713450384
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.4716506949751175,
+       "steps": {
+        "rate": 0.3247108850807897,
+        "partition_given_transfer": 0.03497798533895459,
+        "muon_shape": 0.015264635849800173,
+        "transfer_given_muon": 0.09669718870557303
+       },
+       "ln_rho": 0.1469398098943278
+      },
+      "M": {
+       "lnR": 0.3169023782814713,
+       "steps": {
+        "rate": 0.3247108850807899,
+        "partition_given_transfer": 0.0,
+        "muon_shape": 0.004255594244893824,
+        "transfer_given_muon": -0.012064101044212513
+       },
+       "ln_rho": -0.007808506799318604
+      },
+      "C_no_overflow": {
+       "lnR": 0.3607426101712014,
+       "steps": {
+        "rate": 0.3247108850807897,
+        "partition_given_transfer": 0.05198443530229,
+        "muon_shape": -0.011108430362406241,
+        "transfer_given_muon": -0.004844279849472204
+       },
+       "ln_rho": 0.03603172509041169
+      },
+      "C_overflow": {
+       "lnR": 0.6033776422152936,
+       "steps": {
+        "rate": 0.3247108850807897,
+        "partition_given_transfer": 0.011705330454741534,
+        "muon_shape": 0.05096352673761728,
+        "transfer_given_muon": 0.21599789994214483
+       },
+       "ln_rho": 0.27866675713450384
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.046027764154000145,
+      "data_fraction_in_pred_empty_m": 0.03344919987344936,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j1.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.4714896994102974,
+       "steps": {
+        "rate": 0.32491527004043647,
+        "muon_shape": 0.015111935844968066,
+        "transfer_given_muon": 0.09262312929559648,
+        "partition_given_transfer": 0.038839364229296305
+       },
+       "ln_rho": 0.14657442936986093
+      },
+      "M": {
+       "lnR": 0.3174436527758481,
+       "steps": {
+        "rate": 0.32491527004043663,
+        "muon_shape": 0.004114628980813208,
+        "transfer_given_muon": -0.011586246245401626,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.007471617264588559
+      },
+      "C_no_overflow": {
+       "lnR": 0.3604764042019732,
+       "steps": {
+        "rate": 0.32491527004043647,
+        "muon_shape": -0.0016628437679218773,
+        "transfer_given_muon": -0.0071284570691695906,
+        "partition_given_transfer": 0.04435243499862811
+       },
+       "ln_rho": 0.03556113416153672
+      },
+      "C_overflow": {
+       "lnR": 0.6033273414162376,
+       "steps": {
+        "rate": 0.32491527004043647,
+        "muon_shape": 0.03717721507105366,
+        "transfer_given_muon": 0.20816269917031913,
+        "partition_given_transfer": 0.033072157134428334
+       },
+       "ln_rho": 0.2784120713758011
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.4714896994102974,
+       "steps": {
+        "rate": 0.32491527004043647,
+        "partition_given_transfer": 0.03487095990575159,
+        "muon_shape": 0.015400337336679336,
+        "transfer_given_muon": 0.09630313212743005
+       },
+       "ln_rho": 0.14657442936986093
+      },
+      "M": {
+       "lnR": 0.3174436527758481,
+       "steps": {
+        "rate": 0.32491527004043663,
+        "partition_given_transfer": 2.2204460492503128e-16,
+        "muon_shape": 0.004114628980812987,
+        "transfer_given_muon": -0.011586246245401626
+       },
+       "ln_rho": -0.007471617264588559
+      },
+      "C_no_overflow": {
+       "lnR": 0.3604764042019732,
+       "steps": {
+        "rate": 0.32491527004043647,
+        "partition_given_transfer": 0.0521447976594629,
+        "muon_shape": -0.01099363307583753,
+        "transfer_given_muon": -0.005590030422088653
+       },
+       "ln_rho": 0.03556113416153672
+      },
+      "C_overflow": {
+       "lnR": 0.6033273414162376,
+       "steps": {
+        "rate": 0.32491527004043647,
+        "partition_given_transfer": 0.011224827850430918,
+        "muon_shape": 0.05114915822248144,
+        "transfer_given_muon": 0.21603808530288876
+       },
+       "ln_rho": 0.2784120713758011
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.046107574052250674,
+      "data_fraction_in_pred_empty_m": 0.033503939602317664,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j2.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.4714803548869799,
+       "steps": {
+        "rate": 0.32485972467796465,
+        "muon_shape": 0.014935778116822973,
+        "transfer_given_muon": 0.09285039183561025,
+        "partition_given_transfer": 0.038834460256582125
+       },
+       "ln_rho": 0.14662063020901528
+      },
+      "M": {
+       "lnR": 0.31672858708919777,
+       "steps": {
+        "rate": 0.32485972467796465,
+        "muon_shape": 0.004174977213767664,
+        "transfer_given_muon": -0.012306114802534653,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.008131137588766879
+      },
+      "C_no_overflow": {
+       "lnR": 0.36039041180121273,
+       "steps": {
+        "rate": 0.3248597246779648,
+        "muon_shape": -0.0018482283028268922,
+        "transfer_given_muon": -0.006782287301725734,
+        "partition_given_transfer": 0.044161202727800414
+       },
+       "ln_rho": 0.03553068712324792
+      },
+      "C_overflow": {
+       "lnR": 0.6033986251910755,
+       "steps": {
+        "rate": 0.32485972467796465,
+        "muon_shape": 0.03701296069138469,
+        "transfer_given_muon": 0.20826395452410756,
+        "partition_given_transfer": 0.03326198529761849
+       },
+       "ln_rho": 0.2785389005131108
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.4714803548869799,
+       "steps": {
+        "rate": 0.32485972467796465,
+        "partition_given_transfer": 0.034932590087815886,
+        "muon_shape": 0.015198099549161558,
+        "transfer_given_muon": 0.09648994057203794
+       },
+       "ln_rho": 0.14662063020901528
+      },
+      "M": {
+       "lnR": 0.31672858708919777,
+       "steps": {
+        "rate": 0.32485972467796465,
+        "partition_given_transfer": 2.2204460492503128e-16,
+        "muon_shape": 0.004174977213767885,
+        "transfer_given_muon": -0.012306114802534992
+       },
+       "ln_rho": -0.008131137588766879
+      },
+      "C_no_overflow": {
+       "lnR": 0.36039041180121273,
+       "steps": {
+        "rate": 0.3248597246779648,
+        "partition_given_transfer": 0.051903720911305136,
+        "muon_shape": -0.011196806464264342,
+        "transfer_given_muon": -0.005176227323792807
+       },
+       "ln_rho": 0.03553068712324792
+      },
+      "C_overflow": {
+       "lnR": 0.6033986251910755,
+       "steps": {
+        "rate": 0.32485972467796465,
+        "partition_given_transfer": 0.011709249752835334,
+        "muon_shape": 0.050922679347094345,
+        "transfer_given_muon": 0.21590697141318105
+       },
+       "ln_rho": 0.2785389005131108
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.04609306487119194,
+      "data_fraction_in_pred_empty_m": 0.03348404466196071,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    },
+    "s5pdata/data_b-_j3.npz": {
+     "inclusive_first": {
+      "C": {
+       "lnR": 0.4716543414776628,
+       "steps": {
+        "rate": 0.3247425621889053,
+        "muon_shape": 0.014695195274078462,
+        "transfer_given_muon": 0.09331195225573273,
+        "partition_given_transfer": 0.038904631758946255
+       },
+       "ln_rho": 0.14691177928875748
+      },
+      "M": {
+       "lnR": 0.3158239461498623,
+       "steps": {
+        "rate": 0.32474256218890546,
+        "muon_shape": 0.004218905704911142,
+        "transfer_given_muon": -0.013137521743954305,
+        "partition_given_transfer": 0.0
+       },
+       "ln_rho": -0.008918616039043148
+      },
+      "C_no_overflow": {
+       "lnR": 0.36093028075160233,
+       "steps": {
+        "rate": 0.32474256218890546,
+        "muon_shape": -0.0019253102790242535,
+        "transfer_given_muon": -0.006014591027592876,
+        "partition_given_transfer": 0.04412761986931404
+       },
+       "ln_rho": 0.03618771856269687
+      },
+      "C_overflow": {
+       "lnR": 0.6031876144400515,
+       "steps": {
+        "rate": 0.32474256218890546,
+        "muon_shape": 0.03656141085814803,
+        "transfer_given_muon": 0.208447615836481,
+        "partition_given_transfer": 0.03343602555651708
+       },
+       "ln_rho": 0.2784450522511461
+      }
+     },
+     "partition_first": {
+      "C": {
+       "lnR": 0.4716543414776628,
+       "steps": {
+        "rate": 0.3247425621889053,
+        "partition_given_transfer": 0.03499948934828483,
+        "muon_shape": 0.014949247147364125,
+        "transfer_given_muon": 0.0969630427931087
+       },
+       "ln_rho": 0.14691177928875748
+      },
+      "M": {
+       "lnR": 0.3158239461498623,
+       "steps": {
+        "rate": 0.32474256218890546,
+        "partition_given_transfer": 0.0,
+        "muon_shape": 0.004218905704911363,
+        "transfer_given_muon": -0.013137521743954531
+       },
+       "ln_rho": -0.008918616039043148
+      },
+      "C_no_overflow": {
+       "lnR": 0.36093028075160233,
+       "steps": {
+        "rate": 0.32474256218890546,
+        "partition_given_transfer": 0.051866438315486256,
+        "muon_shape": -0.011204261803467227,
+        "transfer_given_muon": -0.004474457949322042
+       },
+       "ln_rho": 0.03618771856269687
+      },
+      "C_overflow": {
+       "lnR": 0.6031876144400515,
+       "steps": {
+        "rate": 0.32474256218890546,
+        "partition_given_transfer": 0.011921589211553039,
+        "muon_shape": 0.0503483174945725,
+        "transfer_given_muon": 0.21617514554502065
+       },
+       "ln_rho": 0.2784450522511461
+      }
+     },
+     "fallback": {
+      "data_fraction_in_pred_empty_mt": 0.04607552082067457,
+      "data_fraction_in_pred_empty_m": 0.033469823342675065,
+      "pred_fraction_in_data_empty_mt": 0.0
+     }
+    }
+   }
+  },
+  "estimator_R_totals": {
+   "w2b/w2b_rrzero_b-_j-.npz": {
+    "total": 3.0665116049824757e-38,
+    "corner": 1.346871165959369e-38,
+    "mid": 5.680521683383838e-39
+   },
+   "w2b/w2b_rr0_b-_j-.npz": {
+    "total": 3.0712989107760346e-38,
+    "corner": 1.3992664728226477e-38,
+    "mid": 5.624840671304642e-39
+   },
+   "w2b/w2b_rr1_b-_j-.npz": {
+    "total": 3.058070584222627e-38,
+    "corner": 1.2935878621010318e-38,
+    "mid": 5.7165171172181e-39
+   },
+   "s5pdata/data_b-_j-.npz": {
+    "total": 3.064955439714737e-38,
+    "corner": 1.3461000918775678e-38,
+    "mid": 5.67073816023309e-39
+   },
+   "s5pdata/data_b-_j1.npz": {
+    "total": 3.065581934529479e-38,
+    "corner": 1.3458833931772044e-38,
+    "mid": 5.6738084170143976e-39
+   },
+   "s5pdata/data_b-_j2.npz": {
+    "total": 3.0654116603987516e-38,
+    "corner": 1.3458708165972155e-38,
+    "mid": 5.6697527215199167e-39
+   },
+   "s5pdata/data_b-_j3.npz": {
+    "total": 3.065052530177334e-38,
+    "corner": 1.3461050004439287e-38,
+    "mid": 5.664625950385284e-39
+   }
+  },
+  "production_totals": {
+   "total": 3.0699278941712995e-38,
+   "corner": 1.3497465315886322e-38,
+   "mid": 5.674858155323881e-39
+  }
+ }
+}

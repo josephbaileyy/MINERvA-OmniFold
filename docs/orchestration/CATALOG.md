@@ -131,6 +131,55 @@ stay with the integration owner. Registration grants no compute, experiment, ado
 | XR owner | a new XR package under its own subtree and its dedicated authorization amendment (one `docs/orchestration/AUTHORIZATION-*` record, plus the one `MANIFEST-overrides.tsv` row and one routing row that the LIVE-index gate requires for that record); the frozen packages, outroots and records of the two earlier XR attempts stay unchanged | `state/next-preparation-20261009/xr-linux/REPORT.md` |
 | selective-I/O owner | the narrowly scoped, opt-in selective-read change to the supported 2D driver and its tests; the default all-branch path stays byte-for-byte equivalent in behaviour; no helper, guard or estimator change | `state/next-preparation-20261009/selective-io/REPORT.md` |
 
+### Valencia multinucleon feasibility pilot, 2026-10-11 — task branch, INCONCLUSIVE
+
+Bounded CPU pilot under Joseph's 2026-10-11 prompt (≤ 10 core-h, ≤ 10,000 events; used 0.067 core-h and
+7,900 events). The 2025 corrected Valencia calculation has no public implementation, so only the 2020
+predecessor (NuWro 25.11.1 `mec_kind=6`) was benchmarked and run. Verdict INCONCLUSIVE, blocked on the
+authors' corrected tables and conventions; table-route generation extrapolates to be cheap (not a certified bound). A later bounded repair fixed the VA-sign convention (contraction verified under the declared W12 encoding; B1/B2 UNVALIDATED pending author confirmation of that encoding). It improved the launcher's reservation accounting, but aggregate CPU enforcement remains incomplete (an orphan ignoring SIGXCPU is unbounded, check L9b), so `pilot_run.py` is unsuitable where a guaranteed aggregate CPU cap is required. Verdict unchanged. REPAIR.md §R7 holds an unsent draft request to the authors. Grants no
+compute, contact or adoption authority.
+
+| record | path |
+|---|---|
+| frozen plan (observables, tolerances, budget) | [`state/valencia-feasibility-20261011/PLAN.md`](state/valencia-feasibility-20261011/PLAN.md) |
+| report: identity, benchmarks, pilot, applicability, cost, missing input | [`state/valencia-feasibility-20261011/REPORT.md`](state/valencia-feasibility-20261011/REPORT.md) |
+| one read-only review and the correction-pass dispositions | [`state/valencia-feasibility-20261011/REVIEW.md`](state/valencia-feasibility-20261011/REVIEW.md) |
+| bounded repair (VA-sign convention, launcher CPU bound): frozen checks, results, residuals, terminal disposition (§R6), unsent author request (§R7) | [`state/valencia-feasibility-20261011/REPAIR.md`](state/valencia-feasibility-20261011/REPAIR.md) |
+
+### High-E_avail / high-W inelastic investigation, 2026-10-11 — task branch, INCONCLUSIVE
+
+Bounded reduction study under Joseph's 2026-10-11 prompt (≤ 2 CPU core-h of reductions of existing products; no
+generation, fits, unfolding, covariance, adoption or contact). Verdict INCONCLUSIVE under the frozen rule (GO not
+reached): the corner's normalization-removed residual (+0.6% to +6.7%) is comparable to a ±4% recoil-scale shift,
+is localized in no single factor, and reverses sign inside the region. That comparability is a degeneracy: it
+neither establishes a detector cause nor excludes interaction physics, and the factor split is descriptive. The
+recommendation is not to develop a new inelastic model from it. A close-out pass (same day) corrected interpretation
+(no number or rule changed), changed the proposed GENIE v3 configurations (no G18_02a_02_11b splines exist), and
+added a no-run feasibility specification (§11), reviewed once with one correction pass: a species-dependent response
+study is possible only on the simulated-response side with a new event-loop pass; no official GENIE v3 prediction
+exists for the intermediate-W feature. The next decision recommended to Joseph is two independent reviews (response;
+nuclear theory/generator) before any validation. A second close-out (2026-10-12, documentation only, not reviewed)
+withdrew the use of the recorded s5n/s5c biases as a closure allowance (each departure's own truth recovery comes
+first; attenuation is kept separate from response mimicry), qualified the span test as local and family-limited,
+costed sensitivity, closure, linear checks and calibrated validation separately, and added a two-role reviewer brief.
+Grants no compute, contact or adoption authority.
+
+| record | path |
+|---|---|
+| frozen plan, decision rule and amendments | [`state/inelastic-high-region-20261011/PLAN.md`](state/inelastic-high-region-20261011/PLAN.md) |
+| research memo: rate/shape/coverage, decomposition, literature, ranking, costed proposal, feasibility specification (§11) | [`state/inelastic-high-region-20261011/REPORT.md`](state/inelastic-high-region-20261011/REPORT.md) |
+| one read-only review and the correction-pass dispositions; the close-out targeted review and its correction pass | [`state/inelastic-high-region-20261011/REVIEW.md`](state/inelastic-high-region-20261011/REVIEW.md) |
+| two-role reviewer brief (hadronic response; nuclear theory/generator) and GENIE v3 attribution controls; prepared, not sent | [`state/inelastic-high-region-20261011/REVIEWER-BRIEF.md`](state/inelastic-high-region-20261011/REVIEWER-BRIEF.md) |
+
+### Interaction-model studies — research synthesis, 2026-10-12
+
+The two studies above (Valencia head `cbbc29e2`, high-region head `caf95593`) are summarized as a research extension,
+outside the adopted analysis, in [`docs/research/MINERVA-MODEL-STUDIES-SYNTHESIS-20261012.md`](../research/MINERVA-MODEL-STUDIES-SYNTHESIS-20261012.md):
+what each tested, why neither establishes a model improvement, corrected costs, the superseded 2D-status statements,
+and one proposed next decision. Its dated predecessor is
+[`docs/research/MINERVA-MODEL-IMPROVEMENT-MEMO-20261011.md`](../research/MINERVA-MODEL-IMPROVEMENT-MEMO-20261011.md).
+Unreviewed documentation. Grants no compute, contact or adoption authority.
+
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
 | Subject | Record |

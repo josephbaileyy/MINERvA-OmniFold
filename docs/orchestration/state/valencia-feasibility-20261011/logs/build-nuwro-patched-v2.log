@@ -1,0 +1,44 @@
+Making dependencies for src/nuwro.cc
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include -c src/nuwro.cc -o src/nuwro.o
+src/nuwro.cc:886:5: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+                                sprintf(filename,"%s.%d.part",a.output,k);
+                                ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdio.h:180:1: note: 'sprintf' has been explicitly marked deprecated here
+__deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:218:48: note: expanded from macro '__deprecated_msg'
+        #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+                                                      ^
+src/nuwro.cc:955:4: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+                        sprintf(filename,"%s.%d.part",a.output,k);
+                        ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdio.h:180:1: note: 'sprintf' has been explicitly marked deprecated here
+__deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:218:48: note: expanded from macro '__deprecated_msg'
+        #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+                                                      ^
+src/nuwro.cc:987:4: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+                        sprintf(filename,"%s.%d.part",a.output,k);
+                        ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdio.h:180:1: note: 'sprintf' has been explicitly marked deprecated here
+__deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:218:48: note: expanded from macro '__deprecated_msg'
+        #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+                                                      ^
+In file included from src/nuwro.cc:15:
+In file included from src/beam.h:7:
+src/geomy.h:63:12: warning: private field 'box1' is not used [-Wunused-private-field]
+        TGeoBBox* box1;
+                  ^
+src/geomy.h:67:15: warning: private field 'ele1' is not used [-Wunused-private-field]
+        TGeoElement* ele1;
+                     ^
+In file included from src/nuwro.cc:33:
+src/hist.h:17:15: warning: private field 'max' is not used [-Wunused-private-field]
+  double min, max, width;       // x_min , x_max  and bin width
+              ^
+6 warnings generated.
+g++ `/opt/homebrew/Cellar/root/6.36.00/bin/root-config --cflags` -fPIC -O2  -I src -Wall -Wno-unused-variable -Wno-sign-compare -Wno-unused-function -Wno-unused-but-set-variable -Wreorder -Wmissing-braces  -DVERSION=\"NuWro_25_11_1\" -I/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/include  -L/opt/homebrew/Cellar/root/6.36.00/lib/root -lCore -lImt -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lROOTVecOps -lTree -lTreePlayer -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lROOTNTuple -lMultiProc -lROOTDataFrame -lROOTNTupleUtil -Wl,-rpath,/opt/homebrew/Cellar/root/6.36.00/lib/root -stdlib=libc++ -lpthread -lm -ldl -L/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib -Wl,-rpath,/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/ROOTEGPythia6/build/Darwin/lib -lEGPythia6 -lPythia6 -lGeom -lMinuit -L/opt/homebrew/Cellar/gcc/15.2.0_1/bin/../lib/gcc/current/gcc/aarch64-apple-darwin25/15/../../.. -Wl,-rpath,/opt/homebrew/Cellar/gcc/15.2.0_1/bin/../lib/gcc/current/gcc/aarch64-apple-darwin25/15/../../.. -lgfortran  src/pauli.o src/cohevent2.o src/cohdynamics2.o src/qelevent1.o src/hypevent.o src/hyperon_interaction.o src/hyperon_cascade.o src/lepevent.o src/nu_e_el_sigma.o src/qel_sigma.o src/kinsolver.o src/kinematics.o src/pdg.o src/target_mixer.o src/nucleus.o src/sfevent.o src/ff.o src/dirs.o src/rpa_2013.o src/nucleus_data.o src/isotopes.o src/elements.o src/rew/PythiaQuiet.o src/rew/rewparams.o src/nuwro.o src/beam.o src/nd280stats.o src/beamHist.o src/coh.o src/fsi.o src/pitab.o src/scatter.o src/kaskada7.o src/shell_sampler.o src/Interaction.o src/input_data.o src/data_container.o src/main.o src/event1.o src/particle.o src/generatormt.o src/event1Dict.o src/sf/CGaussianSF.o src/sf/CMomDistrib.o src/sf/CSFOptions.o src/sf/CSpectralFunc.o src/sf/FormFactors.o src/sf/gridfun2d.o src/dis/charge.o src/dis/LeptonMass.o src/dis/parameters.o src/dis/grv94_bodek.o src/dis/dis_cr_sec.o src/dis/dis_nc.o src/dis/dis_cc_neutron.o src/dis/delta.o src/dis/dis2res.o src/dis/dis_cc_proton.o src/dis/fragmentation.o src/dis/fragmentation_nc.o src/dis/fragmentation_cc.o src/dis/singlepion.o src/dis/disevent.o src/dis/resevent2.o src/dis/singlepionhadr.o src/dis/alfa.o src/dis/res_kinematics.o src/dis/res_xsec.o src/mecdynamics.o src/mecevent.o src/mecevent_tem.o src/mecevent_Nieves.o src/mecevent_2020Valencia.o src/mecevent_SuSA.o src/mecevent_common.o src/mecdynamics2.o src/mecevent2.o src/hybrid/ABCDE.o src/hybrid/Calculations.o src/hybrid/Delta_free.o src/hybrid/diracMatrices.o src/hybrid/hybrid_gateway.o src/hybrid/Leptonic.o src/hybrid/Matrix.o src/hybrid/NON-Resonant.o src/hybrid/Operators.o src/resevent_hybrid.o -o bin/nuwro
+ld: warning: object file (/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/c89a62fc-4a1b-4827-a04d-d76daccaa218/scratchpad/src/nuwro-25.11.1/src/rew/PythiaQuiet.o) was built for newer 'macOS' version (26.0) than being linked (14.4)
