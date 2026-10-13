@@ -52,14 +52,17 @@ The reads found more than the plan anticipated:
 | P06/C06 background | **Confirmed**: May background frozen at CV in 87/87 non-flux universes (re-measured twice). July varies it in 185/187 | two workers | KI 93 note |
 | KI 94/C03 | **Confirmed**: no background-template fluctuation is propagated. Also, the bootstrap's data stream holds purity fixed, scaling σ by p (understated by up to 1/p = 1.87) | worker; Stage B review | KI 94 note |
 | C05a laterals | Six muon-scale/resolution universes **qualified** (event-level identity with active-mode files). The four **beam-angle** universes are **not** (up to 1,465 wrong exits / 1,344 missing entrants each) | worker; Stage B review | §2.7 |
-| G1 gap class | **Candidate.** Reco-in/truth-out events land in neither omnifile tree (≈1.8% of reco entries per a code comment). **If confirmed, it biases the adopted central value**, not only the uncertainty | unmeasured | §2.10 |
-| G2 miss-row stand-in | **Candidate.** Dump-mode truth-only miss rows carry the CV truth weight in every universe; completeness then deviates from 1 by up to 18% (Flux) and the driver divides by it | worker; unverified as a defect | §2.11 |
+| G1 gap class | ~~**Candidate.** Reco-in/truth-out events land in neither omnifile tree (≈1.8% of reco entries per a code comment). **If confirmed, it biases the adopted central value**, not only the uncertainty~~ **Corrected 2026-10-13: NOT A DEFECT.** P4 census MEASURED nG1 = 0 over all 12 playlists; the class is empty in the production CV configuration and `E_U` is not implicated | P4 census, [`diagnostics/REPORT.md`](diagnostics/REPORT.md) §2 | §2.10 |
+| G2 miss-row stand-in | **Candidate.** Dump-mode truth-only miss rows carry the CV truth weight in every universe; completeness then deviates from 1 by up to 18% (Flux) and the driver divides by it. **Corrected 2026-10-13: NOT RESOLVED ABOVE TRAINER NOISE** (P5, `MaRES_0`, seeds 42 and 43: shift median 0.31–0.41 σ_band but 0.96–1.23 σ_ML, seed-to-seed z correlation 0.11, NOT CONFIRMED). No repair triggered by the pre-declared rule; a repair, if chosen, is re-unfolds only | P5, [`diagnostics/REPORT.md`](diagnostics/REPORT.md) §3 | §2.11 |
 
 **Why CONDITIONAL, not MET.** G1 could be an unmodelled, unsubtracted background at the percent level, which
 would bias the adopted central value `E_U` itself, and G2 could bias every truth-weight-varying universe. The July
 products also ran on an uncommitted driver revision (§2.5), so their qualification is provisional until the pilot's
 P2 bridge. Neither can be settled from saved products. Each has a diagnostic in the
 Stage C pilot request (§7). If either is confirmed as material, the recipe gains a repair before production.
+**Update 2026-10-13:** neither was confirmed as material. G1 = 0 (not a defect) and G2 is NOT RESOLVED ABOVE
+TRAINER NOISE in `MaRES_0` ([`diagnostics/REPORT.md`](diagnostics/REPORT.md)). The P2 bridge is still open. This
+REPORT's terminal outcome is unchanged here; any re-grading is the director's.
 
 **Diagnostic budget (NOT QUOTABLE)**, from the independent verification's per-cell recomputation (205 cells):
 adopted 6.871% median / 5.391% integral; with the C04 repair 6.090% / 4.216%; with C04 and X01 6.090% / 4.230%.
@@ -244,6 +247,13 @@ Three distinct objects, measured to different extents:
 
 ### 2.10 G1, the reco-in/truth-out gap class: CANDIDATE, missing input
 
+**Correction 2026-10-13: resolved, NOT A DEFECT.** Pilot P4 (a reviewed census patch over all 12 playlists,
+489 MC files) measured **nG1 = 0** and wG1 = 0: every skipped reco-tree signal-in-phase-space background entry
+(20,498,013) has its key in the reco signal tree, and no signal-loop event lacks a truth-tree record. The no-op
+control is IDENTICAL and all 12 outputs are IDENTICAL to the May production files on common branches, so the
+census ran on `E_U`'s own input. The "~1.8%" comment below does not describe the shipped configuration. The text
+below is the original candidate statement. See [`diagnostics/REPORT.md`](diagnostics/REPORT.md) §2.
+
 - `mc_signal_reco` keeps an event only if its key is in the truth-tree set (`runEventLoopOmniFold.cpp:1203-1212`);
   `mc_background` skips reco-tree signal-in-phase-space events (`:1454-1456`). An event that is signal in phase
   space on the reco tree but out of it on the truth tree is therefore in **neither** tree. The code comment puts
@@ -257,6 +267,15 @@ Three distinct objects, measured to different extents:
   active files) and re-unfolding the central value and every block. Priced in §7 as a contingency.
 
 ### 2.11 G2, miss rows carry the CV truth weight: CANDIDATE
+
+**Correction 2026-10-13: NOT RESOLVED ABOVE TRAINER NOISE.** Pilot P5 unfolded `MaRES_0` with the miss rows
+carrying their own universe truth weights (from `mc_truth_denom`) against the production stand-in, at seeds 42
+and 43. Both pairs pass every gate. The shift is large against the band (median r1 0.305 and 0.411) but not
+resolved above LightGBM seed noise (median r3 0.96 and 1.23 ≤ 2), it does not repeat across seeds (Pearson
+z43 vs z42 = 0.113 < 0.5, NOT CONFIRMED), and it does not track the completeness deviation. Final routing under
+the rules frozen before data: NOT RESOLVED ABOVE TRAINER NOISE. Flux universes are unmeasured. The correct
+universe weights are already in `mc_truth_denom`, so any G2 repair is re-unfolds only. The text below is the
+original candidate statement. See [`diagnostics/REPORT.md`](diagnostics/REPORT.md) §3.
 
 - In dump mode, appended truth-only miss rows carry the CV truth weight as a stand-in for every universe weight
   (`runEventLoopOmniFold.cpp:794-905`); the comment calls this "exact for detector bands (truth untouched)".
@@ -332,15 +351,19 @@ a band at all is a decision; route in §5).
   rank, PSD and ensemble error reported (plan Stage C).
 - **R10 Open items before production.** G1 and G2 resolved by the pilot (§7); if either is material, the recipe
   gains its repair and returns for review. Joseph decides whether data-POT counting (C07′) needs a band.
+  **Updated 2026-10-13** ([`diagnostics/REPORT.md`](diagnostics/REPORT.md)): G1 NOT A DEFECT (nG1 = 0); G2 NOT RESOLVED ABOVE TRAINER NOISE in `MaRES_0`
+  (neither is MATERIAL, so neither repair is triggered by the pre-declared rule; how G2 is carried is the
+  director's and Joseph's call); C07′ determined under Joseph's rule: not documented as a band, so omitted
+  with a disclosure.
 
 ## 5. Missing inputs and acquisition routes
 
 | item | what is missing | route | cost |
 |---|---|---|---|
-| G1 gap class | count and reco-pass rate of reco-in/truth-out events; whether they belong in the background | instrumented event-loop pass (a counter, no new outputs) over the 12 playlists, or an ID-carrying AnaTuple read | ≈ 0.9 node-h (12 loops × ≈ 0.077 node-h, from array 55985231); needs a reviewed counter patch; jobs ≈ 2–5 h, above the A/B grant's 1 h bound |
-| G2 miss-row stand-in | size of the per-cell-c approximation for truth-weight-varying universes | pilot P5: compare one vertical universe unfolded with universe-weighted miss rows against the July product | design needed (a driver option or a re-weighted copy of the miss rows); unpriced until designed |
+| G1 gap class | count and reco-pass rate of reco-in/truth-out events; whether they belong in the background | instrumented event-loop pass (a counter, no new outputs) over the 12 playlists, or an ID-carrying AnaTuple read | ≈ 0.9 node-h (12 loops × ≈ 0.077 node-h, from array 55985231); needs a reviewed counter patch; jobs ≈ 2–5 h, above the A/B grant's 1 h bound. **Acquired 2026-10-13 (P4): nG1 = 0, 0.5290 node-h actual; [`diagnostics/REPORT.md`](diagnostics/REPORT.md)** |
+| G2 miss-row stand-in | size of the per-cell-c approximation for truth-weight-varying universes | pilot P5: compare one vertical universe unfolded with universe-weighted miss rows against the July product | design needed (a driver option or a re-weighted copy of the miss rows); unpriced until designed. **Acquired 2026-10-13 (P5, `MaRES_0`, seeds 42 and 43): NOT RESOLVED ABOVE TRAINER NOISE, 0.7233 node-h actual; [`diagnostics/REPORT.md`](diagnostics/REPORT.md)** |
 | G3 `NormDISCC` | whether the knob should be null in this MC | GENIE/MAT intent (collaboration question) | none |
-| Shared class (C03) | overlap of background rows with signal-tree miss rows | as G1 (same pass) | included in G1 |
+| Shared class (C03) | overlap of background rows with signal-tree miss rows | as G1 (same pass) | included in G1. **2026-10-13: P4 did not measure the overlap itself; the C03 recipe's shared-draw clause stays as written** |
 | Active files durability | CFS copy of the 10 active merged files (≈ 538 GB) | copy to `/global/cfs/cdirs/m3246/` with re-measured sha256 (CFS first) | I/O only |
 | C09, C10 | independent-generator 2D truths; response departures | Stage D | unpriced |
 | Paper flux construction | which constraint file and PPFX version the publication used | collaboration question | none; not needed for a MAT-conformant construction |
@@ -411,11 +434,13 @@ upper bound.
 | **admitted total, ≥ 20% reserve** (subtotal / 0.8) | | **49.8–81.8** |
 
 **Contingencies, not included** (each needs its own decision):
-- a **G1 repair** if P4 confirms a material effect: new event-loop omnifiles (CV, 187-universe dump, active files;
+- ~~a **G1 repair** if P4 confirms a material effect: new event-loop omnifiles (CV, 187-universe dump, active files;
   the dump-mode loop cost is not recorded here, so this part is **unpriced**) plus re-unfolding the central value
-  and every block (≈ 187 × u_U,sel…u_U = 47–142 node-h on top of S1–S4), and Joseph's re-adoption of the central;
+  and every block (≈ 187 × u_U,sel…u_U = 47–142 node-h on top of S1–S4), and Joseph's re-adoption of the central;~~
+  **Corrected 2026-10-13: not needed; P4 measured G1 = 0** ([`diagnostics/REPORT.md`](diagnostics/REPORT.md));
 - a **G2 repair** if P5 shows a material effect: re-running ≈ 170 truth-weight-varying universes, 43–129 node-h,
-  plus event loops;
+  ~~plus event loops~~ **(corrected 2026-10-13: no event loops; the weights are in `mc_truth_denom`, so re-unfolds
+  only. P5 routed NOT RESOLVED ABOVE TRAINER NOISE, so the pre-declared rule does not trigger it; [`diagnostics/REPORT.md`](diagnostics/REPORT.md))**;
 - a **July rebuild** if P2 fails its envelope: 47–142 node-h;
 - all Stage D/E work. Against the plan's
 forecasts (matching 25.5–93.2; repairs 79–469) and the delegation's 700 node-h ceiling, the construction without
@@ -428,7 +453,8 @@ None met.
   (active files) and need only re-unfolds. **G1 is also a support gap** (events in neither tree). It is a routed
   candidate rather than a Stop because its existence and size are unknown, its acquisition route is named and
   priced (P4, ≈ 0.9 node-h). If P4 confirms a material G1,
-  that is a Stop-or-repair decision at that point (§7 contingency).
+  that is a Stop-or-repair decision at that point (§7 contingency). **2026-10-13: P4 measured G1 = 0, so this
+  support gap does not exist and is not a Stop** ([`diagnostics/REPORT.md`](diagnostics/REPORT.md)).
 - **Joint-law evidence:** X01 is carried by MAT's in-band correlation, whose inputs exist; no transplanted
   correlation is needed. This passes **by adopting MAT's in-band convention as the joint law**; whether it reproduces
   the paper's flux × energy-scale correlation is unresolved (§2.3; review N6).
@@ -498,5 +524,6 @@ one model are not cross-provider independence (plan §5).
 - KI 91, 92, 93, P06, C05a and KI 94 rest on worker measurements; the Stage B review re-checks them.
 - The July products carry no driver or input digest; their qualification rests on saved inputs, logs and mtimes,
   bridged by pilot P2.
-- The beam-angle effect after unfolding, G1 and G2 are unmeasured.
+- The beam-angle effect after unfolding, G1 and G2 are unmeasured. **Updated 2026-10-13:** G1 measured (nG1 = 0);
+  G2 measured in `MaRES_0` only, NOT RESOLVED ABOVE TRAINER NOISE ([`diagnostics/REPORT.md`](diagnostics/REPORT.md)); the beam-angle effect remains unmeasured.
 - Unit costs for the in-driver selective port and for active-file unfolds are unmeasured; the pilot measures them.

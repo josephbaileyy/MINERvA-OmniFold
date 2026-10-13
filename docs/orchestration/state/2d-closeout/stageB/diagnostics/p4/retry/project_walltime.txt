@@ -1,0 +1,24 @@
+fit (min, min/M entries): setup 0.00  truth 0.216  sig 8.508  bkg 7.244  data 0.000  rss 9.06
+  1B: measured   35.6  fitted   33.6
+  1C: measured   63.9  fitted   64.2
+  1L: measured   14.3  fitted   17.4
+  1A: measured   66.8  fitted   69.5
+  1D: measured   69.0  fitted   72.3
+  1E: measured   56.7  fitted   52.5
+  1F: measured   55.5  fitted   52.5
+  1G: measured   42.2  fitted   38.7
+  1M: measured   20.7  fitted   24.2
+1M own sig rate (elapsed - setup - fitted truth)/N_sig: 6.280 min/M; conservative (all elapsed)/N_sig: 13.27
+  1B post-signal per reco entry: 8.23 min/M
+  1C post-signal per reco entry: 7.19 min/M
+  1L post-signal per reco entry: 4.32 min/M
+projection rates: truth 0.216, signal 8.508, post 8.23 min/M
+  1A: N_truth  22.19 M  N_reco   7.60 M  projected  132.0 min = 2.20 h; x1.5 = 3.30 h; cap 6 h OK
+  1D: N_truth  33.58 M  N_reco  11.36 M  projected  197.4 min = 3.29 h; x1.5 = 4.93 h; cap 6 h OK
+  1E: N_truth  28.12 M  N_reco   9.50 M  projected  165.0 min = 2.75 h; x1.5 = 4.13 h; cap 6 h OK
+  1F: N_truth  39.08 M  N_reco  12.91 M  projected  224.4 min = 3.74 h; x1.5 = 5.61 h; cap 6 h OK
+  1G: N_truth  32.46 M  N_reco  10.94 M  projected  190.0 min = 3.17 h; x1.5 = 4.75 h; cap 6 h OK
+  1M: N_truth  50.44 M  N_reco  16.32 M  projected  284.0 min = 4.73 h; x1.5 = 7.10 h; cap 8 h OK
+  1N: N_truth  34.62 M  N_reco  11.86 M  projected  205.9 min = 3.43 h; x1.5 = 5.15 h; cap 6 h OK
+  1O: N_truth  10.39 M  N_reco   3.56 M  projected   61.8 min = 1.03 h; x1.5 = 1.55 h; cap 2 h OK
+  1P: N_truth  13.76 M  N_reco   4.71 M  projected   81.9 min = 1.36 h; x1.5 = 2.05 h; cap 2 h SHORT

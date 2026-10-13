@@ -1,0 +1,83 @@
+{
+ "what": "per-bin median relative sigma (%), 205 reported cells, E_U hXSec2D denominator",
+ "cv": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+  "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
+ },
+ "boot": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/bootstrap_MEFHC_300_vl170/uq_covariance_boot300.root",
+  "sha256": "71a75821ceeb658710adca30243e39e7184e33f868f58ea56cffe63ba8db0115"
+ },
+ "adopted": {
+  "n_bands": 45,
+  "sha256": "077912e3e7a53376c6df89ee1af4a2a504fe1f49423bab88780204beccd952f5",
+  "grouped_current": {
+   "Flux": 4.9930098023455765,
+   "Models": 1.478844355001427,
+   "Normalization": 1.4000000000000001,
+   "Statistical": 0.6738150183177422,
+   "Hadronic response": 0.7576337577146391,
+   "Muon reconstruction": 3.3658971854735564
+  },
+  "grouped_legacy": {
+   "Flux": 4.9930098023455765,
+   "Models": 2.03354846923842,
+   "Normalization": 0.080783313335517,
+   "Statistical": 0.6738150183177422,
+   "Hadronic response": 0.7576337577146391,
+   "Muon reconstruction": 3.3658971854735564
+  },
+  "statistical_vl170_boot300": 0.6738150183177408,
+  "statistical_rollup_bootstrap": 0.6738150183177422,
+  "statistical_rollup_eq_vl170_max_abs_rel": 7.159664325209985e-14,
+  "bands": {
+   "Muon_Energy_MINOS": 2.304891875504767,
+   "Muon_Energy_MINERvA": 1.2849834954183643,
+   "MinosEfficiency": 1.4719747819743398,
+   "Flux": 4.9930098023455765,
+   "MaRES": 0.5477671248910931,
+   "MvRES": 0.376884543725863,
+   "MaCCQE": 0.3565736571942123,
+   "NormDISCC": 0.080783313335517
+  },
+  "universe_total": 6.82980281573948,
+  "combined": 6.869363168877044,
+  "band_sum_eq_total_max_abs_rel": 0.0
+ },
+ "repaired": {
+  "n_bands": 45,
+  "sha256": "da92c5d2567647e8613bb3a6522176dbd9a287970082b45ac9e83e24684b1948",
+  "grouped_current": {
+   "Flux": 3.654940752609054,
+   "Models": 1.478844355001427,
+   "Normalization": 1.4000000000000001,
+   "Statistical": 0.6738150183177422,
+   "Hadronic response": 0.7576337577146391,
+   "Muon reconstruction": 3.4209043774906736
+  },
+  "grouped_legacy": {
+   "Flux": 3.654940752609054,
+   "Models": 2.03354846923842,
+   "Normalization": 0.080783313335517,
+   "Statistical": 0.6738150183177422,
+   "Hadronic response": 0.7576337577146391,
+   "Muon reconstruction": 3.4209043774906736
+  },
+  "statistical_vl170_boot300": 0.6738150183177408,
+  "statistical_rollup_bootstrap": 0.6738150183177422,
+  "statistical_rollup_eq_vl170_max_abs_rel": 7.159664325209985e-14,
+  "bands": {
+   "Muon_Energy_MINOS": 2.281030644028989,
+   "Muon_Energy_MINERvA": 1.2849834954183643,
+   "MinosEfficiency": 1.4719747819743398,
+   "Flux": 3.654940752609054,
+   "MaRES": 0.5477671248910931,
+   "MvRES": 0.376884543725863,
+   "MaCCQE": 0.3565736571942123,
+   "NormDISCC": 0.080783313335517
+  },
+  "universe_total": 6.043176007656457,
+  "combined": 6.083737195260213,
+  "band_sum_eq_total_max_abs_rel": 0.0
+ }
+}
