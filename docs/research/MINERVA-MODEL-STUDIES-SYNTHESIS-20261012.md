@@ -52,7 +52,8 @@ with the routed queue.
    encoding the authors have not confirmed. The CPU launcher's aggregate guarantee is incomplete. **[Study]**
 3. **High region.** After the overall rate is removed, the high-E_avail / high-W corner keeps a residual of
    +0.6% to +6.7%. That residual is comparable to a ±4% recoil-response shift and is localized in no single factor.
-   Its sign also reverses between the overflow and non-overflow cells. Response, estimator and physics explanations
+   Against GENIE CV, its sign also reverses: −2.7% in the non-overflow cells and +9.4% in the overflow cells.
+   Response, estimator and physics explanations
    remain unseparated. **[Study]**
 4. **The most specific lead is outside the corner.** GENIE overshoots the data at intermediate W (1.4–1.8 GeV). That
    feature is the largest normalization-independent one, and the one response scale tested barely moves it. It merits
@@ -82,7 +83,7 @@ All reviewers came from the same model family as the owners. Neither study had i
   encoding. A corrected-versus-predecessor comparison could therefore not be read at the ≲10% level for
   antineutrino- or VA-sensitive quantities (REPORT §1, §4).
 - **High region.** The frozen rule reached neither GO nor NO-GO. The decomposition is a descriptive accounting
-  identity, not a causal separation. The final-state partition cannot be tested with the present estimator. The only
+  identity, not a causal separation. A partition discrepancy is not established by the available checks (§5). The only
   independently constrained inelastic change found (GENIE v3 `G18_02a_02_11b`) fails the Δ-region check in a
   first-order emulation, and that emulation is explicitly **not** a test of the tune (REPORT §1, §5.2–5.3, §6.1). The
   study recommends against developing or fitting a new inelastic model from this region.
@@ -175,10 +176,25 @@ sparse tail (REPORT §4.1). All ratios are data/prediction.
   exists, no response-varied null exists, and species, neutrons and resolution were not varied. A species-dependent
   family is possible only on the simulated-response side, through a new event-loop pass: the MC AnaTuples carry
   per-species branches, but no stored product keeps them.
-- *Estimator.* The estimator does not follow generator-sized E_avail departures (up to 74% residual; VL151, KI 77),
-  so the final-state partition is not testable.
-- *No 5D recovery measurement.* No 5D injected-shape recovery test exists. [`AGENTS.md`](../../AGENTS.md) (scalar
-  4D/5D row) records that the 5D "injected-W" closure injected nothing.
+- *Partition.* **A partition discrepancy is not established by the available checks.** The 5–10% A|t differences at
+  W ≥ 1.8 lie inside the scale of the measured departure residuals and prior dependence of the estimators tested
+  (REPORT §5.3).
+- *Recovery evidence, and what it does not cover.*
+  - The historical 5D "injected-W" closure was effectively a **null test**: its bump was centred at W = 0.3 GeV,
+    below physical W, with mean factor 1.0000. It supplies no W-shape recovery evidence
+    ([`AGENTS.md`](../../AGENTS.md), scalar 4D/5D row; [`ND_OMNIFOLD_STATUS.md`](../../nd-unfolding/ND_OMNIFOLD_STATUS.md),
+    5D central cross-section row).
+  - Later departure/recovery diagnostics exist, **under a different estimator**. In s5n, family `N` (the F2
+    LightGBM estimator with the `negweight-refined` background) did not follow a generator-anchored E_avail shape
+    departure: median |residual| 9.7%, max 74.1% ([`VALIDATION_LEDGER.md`](../../VALIDATION_LEDGER.md) VL151;
+    [s5n outcome](../orchestration/OUTCOME-20260925-s5n-stage1-development-fail.md);
+    [`dev_receipt.json`](../orchestration/state/s5n/stage1/dev_receipt.json)). Separately, the s5p data-side prior
+    dependence is recorded in VL155 and [`KNOWN_ISSUES.md`](../../KNOWN_ISSUES.md) 77.
+  - The proposed estimator R (400 trees / 31 leaves with refinement; the W2B estimator) has recovery measurements
+    only for three **other** generator departures (s5e assessment A4: median 6.2/1.9/5.7%, max 31/16/24%;
+    VL154).
+  - Recovery of the **proposed departures** with the proposed estimator R remains **unmeasured**. These are the
+    `02_11b`-type re-partition, the `Fr*` FSI change and the −15% change at 1.4–1.8 GeV (REPORT §11.3).
 - *Prior closure allowance withdrawn.* The second close-out withdrew the recorded s5n/s5c biases as a closure
   allowance for new departures. Each departure's own truth recovery must be measured first, with estimator
   attenuation kept separate from response mimicry (REPORT §11.3).
@@ -210,9 +226,11 @@ synthesis's argument.
    parameters, R^1π, S_RES and W_cut, from bubble-chamber data rather than from ours (REPORT §6.1). Tune v1 already
    carries a partial non-resonant reduction (×0.57) and overshoots less. That is consistent with the direction but not
    shown to cause it.
-4. **No usable prediction exists yet, and one is cheap to make.** No official GENIE v3 prediction tests the feature
-   for ME-FHC ν on CH without new generation (REPORT §11.6). Ready CVMFS splines exist for v3.04.00 `G18_10a_02_11b`
-   and `AR23_20i`, and the existing converter applies.
+4. **No usable prediction exists yet; generation appears feasible at the estimated cost.** No official GENIE v3
+   prediction tests the feature for ME-FHC ν on CH without new generation (REPORT §11.6). Ready CVMFS splines exist
+   for v3.04.00 `G18_10a_02_11b` and `AR23_20i`, and the existing converter applies. The estimate is a ≤ 0.2 core-h
+   pilot, then 1.5–15 core-h per configuration [Assumption]. **GENIE v3 throughput is unmeasured**; the pilot exists
+   to measure it (REPORT §8, §11.7; §8 below).
 5. **It answers a bounded question with published models.** Does an official modern configuration remove the M
    overshoot without damaging the Δ region or the rate? That question needs no new model, no detector code and no
    unavailable input.
@@ -228,8 +246,9 @@ synthesis's argument.
   models, so a difference tests a complete prediction. Attributing it to the inelastic tune needs a same-model control
   pair: `G18_02a_00_000`, with ready splines, against `G18_02a_02_11b`, whose splines must be built.
 - **The same-exposure SIS measurement disagrees in direction.** At 1.5 < W < 2 GeV and Q² ≥ 1 GeV², it prefers less
-  non-resonant reduction, the opposite direction to `02_11b`. The kinematics and targets differ, and that sample
-  shares events with ours.
+  non-resonant reduction, the opposite direction to `02_11b`. The kinematics differ. The target contrast is CH
+  against `02_11b`'s H/D bubble-chamber tuning data; the MINERvA SIS analysis and ours both use the hydrocarbon
+  tracker. That sample also shares events with ours (REPORT §6.4).
 
 ## 7. The single prioritized next decision
 
@@ -291,8 +310,9 @@ published 2D versus Tune v1 comparison.
 | High-region REPORT §4.2 | "this analysis's 2D gives 1.130 (ours/paper 1.011)" against Tune v1 | That figure is the **exact-split cross-check**: it was computed from `fig_arrays.npz` `72394a2b…`, which carries the exact-split curve (2026-10-11 decision, disclosure 6). The quoted `E_U` ratio to the published result is 1.0112 (VL173). Ours/Tune v1 for `E_U` was not recomputed here. The study's ρ(p_T) uses published/Tune v1 only and is unaffected |
 | High-region REPORT §9 | 2D statistical band ~0.5% per bin (VL170) | **Unchanged**: VL175 rebuilt only the Flux and MINOS blocks |
 
-The 3D injected-shape closure the memo cites remains valid. For 5D, [`AGENTS.md`](../../AGENTS.md) records that the
-"injected-W" closure injected nothing (§5); the high-region close-out already reads this at `f30370cd`.
+The 3D injected-shape closure the memo cites remains valid. For 5D, the "injected-W" closure was effectively a null
+test and supplies no W-shape recovery evidence ([`AGENTS.md`](../../AGENTS.md); §5); the high-region close-out
+already reads this at `f30370cd`.
 
 ## 10. Assumptions and unresolved issues
 
@@ -312,6 +332,8 @@ The 3D injected-shape closure the memo cites remains valid. For 5D, [`AGENTS.md`
 - Aggregate CPU enforcement for `pilot_run.py`.
 - The origin of the overall rate difference.
 - Response versus estimator versus physics in region C.
+- Recovery of the proposed departures with the proposed estimator R (§5).
+- GENIE v3 generation throughput.
 - The net FSI sign for our E_avail (REPORT §6.2).
 - Whether G18_10a's `02_11b` inelastic values equal G18_02a's (REVIEWER-BRIEF §3).
 - GiBUU above 20 GeV and its two-pion background.
