@@ -171,6 +171,15 @@ Grants no compute, contact or adoption authority.
 | one read-only review and the correction-pass dispositions; the close-out targeted review and its correction pass | [`state/inelastic-high-region-20261011/REVIEW.md`](state/inelastic-high-region-20261011/REVIEW.md) |
 | two-role reviewer brief (hadronic response; nuclear theory/generator) and GENIE v3 attribution controls; prepared, not sent | [`state/inelastic-high-region-20261011/REVIEWER-BRIEF.md`](state/inelastic-high-region-20261011/REVIEWER-BRIEF.md) |
 
+### Interaction-model studies — research synthesis, 2026-10-12
+
+The two studies above (Valencia head `cbbc29e2`, high-region head `caf95593`) are summarized as a research extension,
+outside the adopted analysis, in [`docs/research/MINERVA-MODEL-STUDIES-SYNTHESIS-20261012.md`](../research/MINERVA-MODEL-STUDIES-SYNTHESIS-20261012.md):
+what each tested, why neither establishes a model improvement, corrected costs, the superseded 2D-status statements,
+and one proposed next decision. Its dated predecessor is
+[`docs/research/MINERVA-MODEL-IMPROVEMENT-MEMO-20261011.md`](../research/MINERVA-MODEL-IMPROVEMENT-MEMO-20261011.md).
+Unreviewed documentation. Grants no compute, contact or adoption authority.
+
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
 | Subject | Record |
