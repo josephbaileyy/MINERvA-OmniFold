@@ -27,8 +27,10 @@ For a $\pm1\sigma$ pair, the covariance is the half-difference outer product,
 excluding any common endpoint displacement from CV. The 100 PPFX universes
 use the same mean-centered $1/N$ formula.
 
-Top 2D bands: Flux \SI{\fluxBand}{\percent}, Muon\_Energy\_MINOS
-\SI{2.31}{\percent}, MinosEfficiency \SI{1.47}{\percent},
+Top 2D bands: Flux \SI{\fluxBand}{\percent} (with MAT's $\nu$--$e$ and
+inverse-muon-decay constraint weights; \SI{4.99}{\percent} without them,
+\texttt{KNOWN\_ISSUES.md} 95), Muon\_Energy\_MINOS
+\SI{2.28}{\percent}, MinosEfficiency \SI{1.47}{\percent},
 Muon\_Energy\_MINERvA \SI{1.29}{\percent}. Figure~\ref{fig:uqbands} shows the
 grouped fractional-uncertainty projections in the published Fig.~6/7 style
 (the full $205\times205$ covariance projected exactly, $C_{1D}=PC_{2D}P^{\top}$,
@@ -47,18 +49,25 @@ before dividing by the 1D central value).
 
 \paragraph{Flux $1/\Phi$ normalization.}
 Varying $\Phi$ per flux universe in the dominant $\sigma\propto1/\Phi$ term
-gives a Flux band of \SI{\fluxBand}{\percent}, versus
-$\sim\SI{1}{\percent}$ when all universes use CV $\Phi$, and a standalone
+gives a Flux band of \SI{4.99}{\percent} without the constraint weights
+(\SI{\fluxBand}{\percent} with them), versus $\sim\SI{1}{\percent}$ when all
+universes use CV $\Phi$, and a standalone
 combined budget of \SI{\uqMedian}{\percent}. Target-nucleon normalization
-contributes a fully-correlated rank-1 band of \SI{1.4}{\percent}. The
-100-universe flux covariance has participation-ratio effective rank
-$\approx1$; one coherent normalization mode carries \SI{99.6}{\percent} of
-the variance. Its leading mode correlates at $\rho=\rhoFluxMuon$ with the
+contributes a fully-correlated rank-1 band of \SI{1.4}{\percent}. The two
+Muon\_Energy\_MINOS universes carry the correlated-flux weight, so each is
+divided by its own flux, not by the CV flux (\texttt{KNOWN\_ISSUES.md} 96); this
+raises that band's integral $\sigma$ from \SI{0.11}{\percent} to
+\SI{0.37}{\percent}. The unweighted 100-universe flux covariance has
+participation-ratio effective rank $\approx1$; one coherent normalization mode
+carries \SI{99.6}{\percent} of its variance. Its leading mode correlates at $\rho=\rhoFluxMuon$ with the
 rank-1 muon-energy-scale band in the rederived
 Bashyal~\cite{Bashyal:2021tqu} joint block. The cross term is rank-2; two
 independent estimators give $\rho=0.87$--$0.90$. Adding this block leaves
 the systematic rank unchanged because its directions already lie in the
-universe-covariance span (App.~\ref{sec:rank}).
+universe-covariance span (App.~\ref{sec:rank}). The quoted budget does not
+include this paper-derived cross block: with the MINOS universes divided by
+their own flux, the correlated-flux effect is already in the MINOS band, and
+adding the block would count it twice.
 
 \subsection{Statistical uncertainty: Poisson bootstrap}
 \label{sec:uq-boot}

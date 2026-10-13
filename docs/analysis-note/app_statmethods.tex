@@ -2,7 +2,7 @@
 \label{app:statmethods}
 \label{app:methods}
 
-This appendix collects the measurement's statistical methods. These include covariance inversion, MAT-conformant construction, estimator combinations, and conventions for $\chi^{2}$, pulls, and shape-only comparisons. We discuss training-seed, bootstrap, and universe estimators, covering the Poisson limit and $\pm1\sigma$ pair covariance. The text details ill-conditioning/rank analysis and the tension anatomy of the 2D comparison. Remaining topics are closure tests and the 2D audit trail. The N-D declarations, scalar-5D reductions, extended-fiducial fractions and unfolded-event inference are in App.~\ref{app:statmethods-nd}; the full-event $C_{\rm stat}$ construction has its own appendix (App.~\ref{app:cstatlimit}). The 2D fixed-truth coverage test is in \S\ref{sec:coverage} and the same-ensemble pull diagnostic in \S\ref{sec:val-other}. We focus entirely on analysis-specific conventions rather than a general statistics primer. The $\chi^{2}$ convention referenced throughout is Eq.~\eqref{eq:chi2} in \S\ref{sec:chisq}.
+This appendix collects the measurement's statistical methods. These include covariance inversion, MAT-conformant construction, estimator combinations, and conventions for $\chi^{2}$, pulls, and shape-only comparisons. We discuss training-seed, bootstrap, and universe estimators, covering the Poisson limit and $\pm1\sigma$ pair covariance. The text details ill-conditioning/rank analysis and the tension anatomy of the 2D comparison. Remaining topics are closure tests and the 2D audit trail. The N-D declarations, scalar-5D reductions, extended-fiducial fractions and unfolded-event inference are in App.~\ref{app:statmethods-nd}. The 2D fixed-truth coverage test is in \S\ref{sec:coverage} and the same-ensemble pull diagnostic in \S\ref{sec:val-other}. We focus entirely on analysis-specific conventions rather than a general statistics primer. The $\chi^{2}$ convention referenced throughout is Eq.~\eqref{eq:chi2} in \S\ref{sec:chisq}.
 
 \subsection{Numerical conventions: inverting a covariance (Cholesky, ridge jitter, pseudo-inverse)}
 \label{sec:invert}
@@ -83,7 +83,7 @@ Poisson bootstrap (stat) & Data- and MC-statistical variance, propagated coheren
 Universes (syst) & Flux, detector and interaction-model uncertainty, by re-unfolding under reweighted MC &
   The event loop dumps truth and reco weights per (band $B$, universe $u$); each $(B,u)$ is re-unfolded with a fixed seed against a matched CV job (same omnifile, backend, seed, iteration count and flux, so ML noise cancels); MAT per-band covariance, Eq.~\eqref{eq:matcov}, plus a rank-1 normalization &
   $187$ universes, $44$ bands, $+$ norm &
-  median $6.830\%$; Table~\ref{tab:band-medians} \\
+  median $6.043\%$; Table~\ref{tab:band-medians} \\
 MAT reference & How MINERvA builds its published covariance &
   Read from the MAT source (\texttt{MnvVertErrorBand::\allowbreak CalcCovMx}, \texttt{MnvH1D::\allowbreak GetTotalErrorMatrix}); our rollup compared with it element by element &
   $44$ bands / $187$ universes &
@@ -91,7 +91,7 @@ MAT reference & How MINERvA builds its published covariance &
 Block sum & Total uncertainty covariance &
   Element-wise sum of the three independent blocks, Eq.~\eqref{eq:blocksum} &
   --- &
-  median $6.871\%$; Table~\ref{tab:combine} \\
+  median $6.090\%$; Table~\ref{tab:combine} \\
 \bottomrule
 \end{tabular}
 \caption{Variance-source procedures for the 2D measurement ($205$ reported bins).
@@ -258,25 +258,36 @@ its adopted five-axis use is in \S\ref{sec:eavailw-adopted}
 \toprule
 Band & Per-bin median rel.\ $\sigma$ \\
 \midrule
-Muon\_Energy\_MINOS & $2.305\%$ \\
+Muon\_Energy\_MINOS & $2.281\%$ \\
 Muon\_Energy\_MINERvA & $1.285\%$ \\
 MinosEfficiency & $1.472\%$ \\
-Flux (PPFX, $N_{u}=100$) & $4.993\%$ \\
+Flux (PPFX, $N_{u}=100$, constraint-weighted) & $3.655\%$ \\
 MaRES & $0.548\%$ \\
 MvRES & $0.377\%$ \\
 MaCCQE & $0.357\%$ \\
 \midrule
-\shortstack[l]{Systematic total\\(44 bands $+$ norm)} & \shortstack[l]{$\boxed{6.830\%}$ (median)\\$\sqrt{\Tr\mathbf{C}}=3.214\times10^{-39}$} \\
+\shortstack[l]{Systematic total\\(44 bands $+$ norm)} & \shortstack[l]{$\boxed{6.043\%}$ (median)\\$\sqrt{\Tr\mathbf{C}}=2.910\times10^{-39}$} \\
 \bottomrule
 \end{tabular}
 \caption{Top contributing bands of the full matcorr sweep: per-bin median
-relative $\sigma_{i}/X^{\CV}_{i}$ over the $205$ reported bins.}
+relative $\sigma_{i}/X^{\CV}_{i}$ over the $205$ reported bins. Flux carries
+MAT's $\nu$--$e$ and inverse-muon-decay constraint weights and
+Muon\_Energy\_MINOS is divided by its own flux (VL175; earlier values in
+App.~\ref{app:history}).}
 \label{tab:band-medians}
 \end{table}
 % Table tab:band-medians rollup: ...\_full\_matcorr\_fluxfix/uq\_universe\_summary.txt
-Grouped by category the medians are: Muon reconstruction $3.366\%$,
-Models $2.034\%$, Flux $4.993\%$, Hadronic response $0.758\%$,
-Statistical $0.674\%$, Normalization $0.081\%$. Muon energy scale
+Grouped by category as in the Fig.~6/7 producer and the published grouping, the
+VL175 medians are: Muon reconstruction $3.421\%$, Models $1.479\%$, Flux
+$3.655\%$, Hadronic response $0.758\%$, Statistical $0.674\%$, Normalization
+$1.400\%$. An earlier version of this sentence used a legacy grouping, with the
+flat $1.4\%$ band under Models and the GENIE normalization bands under
+Normalization (App.~\ref{app:history}). The muon-reconstruction median rises
+slightly although the MINOS band's falls: the per-cell rescale reshuffles the
+distribution, and most cells fall.
+% 2026-10-12: group medians from NERSC 2d-closeout-c04repair-20261012/scripts/group_medians.py (7e02decc...),
+% build/group_medians.json (7927c51e...); control on the adopted rollup reproduces the legacy six exactly and
+% gives Models 1.479 / Normalization 1.400 under the current analyze_universes.category_for_band grouping. Muon energy scale
 (MINOS$+$MINERvA) and the MINOS-efficiency band dominate; these are
 exactly the bands the Ruterbories paper flags as flux-correlated
 (\S\ref{sec:rank}).
@@ -366,7 +377,12 @@ shifts. Our rollup was verified against MAT byte-for-byte: filling a
 comparing \texttt{MnvH1D::GetTotalErrorMatrix} with our
 \texttt{-{}-add-norm 0} rollup gives maximum element-wise relative difference
 $5.5\times10^{-17}$ (machine $\varepsilon$) and $\sqrt{\Tr\mathbf{C}}$
-matching to seven digits.
+matching to seven digits. That check filled the \texttt{MnvH1D} without MAT's
+per-universe weights (\texttt{SetUnivWgts}), so both sides were unweighted, and
+it ran on the sweep before the flux fix: it could not detect that the Flux band
+omitted MAT's $\nu$--$e$ and inverse-muon-decay constraint weights
+(\texttt{KNOWN\_ISSUES.md} 95). The quoted Flux band now uses them, and agrees with
+MAT's weighted \texttt{CalcCovMx} to $\le10^{-12}$ (VL175).
 
 \texttt{MnvH1D::GetTotalErrorMatrix} sums bands and the statistical matrix
 element-wise, assuming band independence. Cross-band correlations exist only if
@@ -417,9 +433,9 @@ Component & $\sqrt{\Tr\mathbf{C}}$ & Per-bin median rel.\ $\sigma$ \\
 \midrule
 ML noise (lgbm training-seed variation, $n=10$) & $5.061\times10^{-41}$ & $0.166\%$ \\
 Statistical (Poisson bootstrap, $N=300$) & $1.931\times10^{-40}$ & $0.674\%$ \\
-Systematic (fluxfix sweep $+$ norm) & $3.214\times10^{-39}$ & $6.830\%$ \\
+Systematic (fluxfix sweep $+$ norm, VL175) & $2.910\times10^{-39}$ & $6.043\%$ \\
 \midrule
-\textbf{Combined (block sum)} & $3.220\times10^{-39}$ & $\boxed{6.871\%}$ \\
+\textbf{Combined (block sum)} & $2.917\times10^{-39}$ & $\boxed{6.090\%}$ \\
 Paper \texttt{TotalCov} (reference) & $2.676\times10^{-39}$ & $\uqPaper\%$ \\
 \bottomrule
 \end{tabular}
@@ -429,14 +445,14 @@ Table~\ref{tab:uq}.}
 \label{tab:combine}
 \end{table}
 The combined $\sqrt{\Tr\mathbf{C}}$ is the quadrature sum of the independent
-component traces. The per-bin median $6.871\%$ cannot be reconstructed by
+component traces. The per-bin median $6.090\%$ cannot be reconstructed by
 quadrature of component medians. Both combined entries are read values.
 The relative entries divide by the quoted central value, the LightGBM seed-42
 central value of the universe sweep; dividing the combined covariance by the
 exact-split cross-check instead gives a combined median of
-\SI{6.827}{\percent}. All three blocks are LightGBM ensembles, at different
+\SI{6.058}{\percent}. All three blocks are LightGBM ensembles, at different
 training seeds (\S\ref{sec:method-config}).
-The flux-fixed rollup also reports $6.869\%$ for universe $+$ bootstrap
+The repaired rollup also reports $6.084\%$ for universe $+$ bootstrap
 before ML, again a read value rather than a combination of the printed medians.
 % Recomputed from the covariance files, with the sha256 of each input, by
 % docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py (VL172); the 6.869% is also
@@ -513,15 +529,15 @@ is specific to 2D and does not transfer to N-D covariances
 \toprule
 Metric (205 bins) & Paper & OmniFold (combined) \\
 \midrule
-Width-weighted total $\sigma$, $\sqrt{\mathbf{w}\T\mathbf{C}\,\mathbf{w}}/(\mathbf{w}\T\mathbf{x})$ & $4.61\%$ & $2.26\%$ \\
-Per-bin median relative $\sigma$ & $\uqPaper\%$ & $6.871\%$ \\
+Width-weighted total $\sigma$, $\sqrt{\mathbf{w}\T\mathbf{C}\,\mathbf{w}}/(\mathbf{w}\T\mathbf{x})$ & $4.61\%$ & $4.23\%$ \\
+Per-bin median relative $\sigma$ & $\uqPaper\%$ & $6.090\%$ \\
 $\chi^{2}/\mathrm{ndf}$ & $\chiPaper$ (paper-only) & $\boxed{\chiCombined}$ (paper$+$ours) \\
 Log-normal $\chi^{2}/\mathrm{ndf}$ & --- & $\chiCombinedLog$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 Adding the OmniFold error budget lowers the summed-covariance distance from
-$\chiPaper$ to $\chiCombined$ per bin, about \SI{66}{\percent} (for the
+$\chiPaper$ to $\chiCombined$ per bin, about \SI{63}{\percent} (for the
 exact-split cross-check, $3.661$ to $1.472$). \textbf{That number is a descriptive distance and is not a validation result.}
 Three things have to be said with it, and none of them is repaired by a
 disclaimer placed elsewhere.
@@ -606,9 +622,9 @@ For each of the $205$ reported bins,
 summarized by mean, RMS, a $14\times16$ heatmap and histogram.
 % (\texttt{compare\_to\_paper\_fullcov.py})
 The combined covariance (paper TotalCov $+$ flux-fixed matcorr universe $+$
-bootstrap-300 $+$ ML) gives mean $\boxed{0.041}$, centered on zero with no
-global offset, and RMS $\boxed{0.386}$ (exact-split cross-check: $0.051$ and
-$0.405$, App.~\ref{app:history}).
+bootstrap-300 $+$ ML; VL175) gives mean $\boxed{0.048}$, centered on zero with no
+global offset, and RMS $\boxed{0.406}$ (before the flux-constraint repair $0.041$
+and $0.386$; exact-split cross-check $0.051$ and $0.405$, App.~\ref{app:history}).
 % Pair recorded in \texttt{VALIDATION\_LEDGER.md}.
 RMS $< 1$ is descriptive and does not establish conservatism: the summed
 covariance is wrong by an unknown amount (Eq.~\eqref{eq:diffcov}). No reported
@@ -814,8 +830,9 @@ reference has been identified.
 \paragraph{What is reported.}
 The combined $\chi^{2}/\mathrm{ndf}=\chiCombined$ is a descriptive distance,
 not a publication headline or validation statistic. Equation~\eqref{eq:diffcov}
-and its three limits govern every use. The per-band rollup is MAT-conformant
-and byte-for-byte verified (\S\ref{sec:minerva}), with $1.4\%$ normalization
+and its three limits govern every use. The per-band rollup is MAT-conformant,
+with the Flux band weighted as MAT weights it (\texttt{KNOWN\_ISSUES.md} 95; the
+byte-for-byte check of \S\ref{sec:minerva} covers the unweighted bands), with $1.4\%$ normalization
 as a rank-1 band. Ours-only truncated-spectral $\chi^{2}$ uses
 $\mathbf{C}^{\mathrm{ours}}$ (rank $201$) with the scan disclosed.
 The 2D agreement claims are the total-cross-section ratio, per-bin ratio
@@ -1040,7 +1057,7 @@ model variations of order $\pm 1\sigma$ GENIE and full PPFX flux universes.
 \label{sec:assemble}
 
 Across $205$ reported bins, combined OmniFold $+$ paper uncertainties give
-$\chi^{2}/\mathrm{ndf} = \chiCombined$ and pull mean/RMS $0.041/0.386$.
+$\chi^{2}/\mathrm{ndf} = \chiCombined$ and pull mean/RMS $0.048/0.406$.
 Shared data and unavailable cross-covariance make this an indicative distance,
 without calibrated goodness-of-fit. Same-ensemble toy pulls are approximately
 Gaussian; the $0.166\%$ ML floor is over an order below systematics.
@@ -1060,9 +1077,9 @@ $\mathbf{C}^{\stat}$ & \S\ref{sec:bootstrap} &
   Poisson bootstrap, $300$ replicas, Eq.~\eqref{eq:bootcov} \\
 $\mathbf{C}^{\ML}$ & \S\ref{sec:seedscan} & lgbm training-seed variation, $n=10$ trials \\
 $\mathbf{C}^{\paper}$ & \S\ref{sec:minerva} & Paper's published \texttt{TotalCovariance} \\
-Pull RMS $= 0.386$ & \S\ref{sec:pull} &
+Pull RMS $= 0.406$ & \S\ref{sec:pull} &
   Per-bin standardized residual on combined $\mathbf{C}$ \\
-Combined median rel.\ $= 6.871\%$ & \S\ref{sec:combine} &
+Combined median rel.\ $= 6.090\%$ & \S\ref{sec:combine} &
   $\sqrt{\diag\mathbf{C}^{\tot}}/\mathbf{X}^{\CV}$, $\mathbf{X}^{\CV}$ the LightGBM seed-42 central value \\
 Fixed-truth $C_2=\covTwoDCTwo$ (nominal $0.954$) & \S\ref{sec:coverage} &
   Statistical band vs.\ fixed truth, $N_{\text{toy}}=\covTwoDNtoy$: FAIL \\

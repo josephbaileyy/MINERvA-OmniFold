@@ -1,0 +1,59 @@
+--- src/nuwro.cc.orig	2026-10-11 10:27:01
++++ src/nuwro.cc	2026-10-11 10:36:28
+@@ -190,6 +190,22 @@
+ 
+ void NuWro::makeevent(event* e, params &p)
+ {
++	// [pilot instrumentation] hard cap on sampled events, read from NUWRO_PILOT_EVENT_CAP
++	{
++		static long pilot_count=0;
++		static long pilot_cap=-2;
++		if(pilot_cap==-2)
++		{
++			const char* c=getenv("NUWRO_PILOT_EVENT_CAP");
++			pilot_cap = c ? atol(c) : -1;
++		}
++		if(pilot_cap>=0 && pilot_count>=pilot_cap)
++		{
++			cerr<<"[pilot] event cap "<<pilot_cap<<" reached; refusing to sample more"<<endl;
++			exit(97);
++		}
++		pilot_count++;
++	}
+ 	static double max_norm=0;
+ 	particle nu;
+ 	int dyn = e->dyn;
+@@ -679,6 +695,33 @@
+ 					// finishevent(e, p);
+ 					t1->Fill ();
+ 					break;
++				case 3:
++				{
++					static FILE* pilot_dump=NULL;
++					if(!pilot_dump)
++					{
++						const char* d=getenv("NUWRO_PILOT_DUMP");
++						pilot_dump=fopen(d ? d : "pilot_dump.txt","w");
++						fprintf(pilot_dump,"# v2 idx weight_cm2 dyn | in: pdg E px py pz ; | out: ... | post: ... (MeV)\n");
++					}
++					if(e->weight>0)
++						finishevent(e, p);
++					fprintf(pilot_dump,"%d %.10e %d |",i,e->weight,e->dyn); // e->weight is already a number in cm^2
++					vector<particle>* sets[3]={&e->in,&e->out,&e->post};
++					for(int s3=0;s3<3;s3++)
++					{
++						for(size_t jj=0;jj<sets[s3]->size();jj++)
++						{
++							particle& q=(*sets[s3])[jj];
++							fprintf(pilot_dump," %d %.6f %.6f %.6f %.6f ;",q.pdg,q.t,q.x,q.y,q.z);
++						}
++						fprintf(pilot_dump," |");
++					}
++					fprintf(pilot_dump,"\n");
++					if(i+1==p.number_of_test_events)
++						fflush(pilot_dump);
++					break;
++				}
+ 				case 2:
+ 					if(e->weight>0)
+ 					{

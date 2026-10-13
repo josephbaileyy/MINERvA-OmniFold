@@ -165,7 +165,7 @@ instructions, not evidence that a run has occurred.
 | Result | Current statement | Artifact |
 |---|---|---|
 | 4D central cross section | sigma=3.066e-38 cm2/nucleon; 4D/3D anchor 0.9960; closure PASS | `products/4d/xsec_4d_MEFHC_5iter_lgbm.root` |
-| 5D central cross section | 5D/4D anchor 1.0011; injected-W closure PASS | `products/5d/xsec_5d_MEFHC_5iter_lgbm.root` |
+| 5D central cross section | 5D/4D anchor 1.0011. Injected-W closure (corrected, `VL176`, job 59719296): +30% bump at W = 1.23 GeV, mean factor 1.0529; W-marginal residual 4.2% of 23.1% injected, ratio **0.180 < 0.20 → PASS (narrow)**; joint (E_avail,W) peak-W cells up to 9.4% low. The June run (bump at W = 0.3 GeV) was a null test | `products/5d/xsec_5d_MEFHC_5iter_lgbm.root` |
 | Corrected 5D GBDT covariance | background-aware block median 13.359%; adopted mean-centered sqrt-trace 5.8077e-38; CV-centered conservative variant 6.2367e-38 | `uq_5d/universe_stage2_5d_bkgaware/` |
 | `(E_avail,W)` shape localization | Positive data-minus-generator excess is concentrated at high E_avail and high W; exact significance withheld | `products/5d/` |
 | PET central-value milestone | Closure 0.9884; PET/GBDT central-total ratio 0.9117 is a training-configuration diagnostic, not a precision claim | `products/pet/` |

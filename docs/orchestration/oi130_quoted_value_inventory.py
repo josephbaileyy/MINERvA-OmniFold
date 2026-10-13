@@ -37,8 +37,10 @@ NOTE = REPO / "docs" / "analysis-note"
 DEF_RE = re.compile(r"^\s*\\(?:newcommand|renewcommand)\s*\{\s*\\([A-Za-z]+)\s*\}\s*\{(.*?)\}\s*(%.*)?$")
 #: An artifact path in free text. Deliberately suffix-anchored: a bare word is not a path.
 ART_RE = re.compile(r"[\w./+-]+\.(?:root|json|npz|tsv|csv|txt|pdf|png|h5|parquet)\b")
-#: The three build roots. A macro used by NONE of them is inert and is reported as such.
-BUILDS = {"note": "main_note.tex", "primer": "main_primer.tex", "paper": "main_paper.tex"}
+#: The build roots (pet_note, the companion PET note, since 2026-10-12). A macro used by NONE of
+#: them is inert and is reported as such.
+BUILDS = {"note": "main_note.tex", "pet-note": "pet_note.tex", "primer": "main_primer.tex",
+          "paper": "main_paper.tex"}
 
 
 def git_tracked(repo):

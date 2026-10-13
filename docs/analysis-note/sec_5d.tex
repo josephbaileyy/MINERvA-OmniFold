@@ -136,10 +136,7 @@ Nothing is adopted.
 \subsection{Model dependence, variability and reporting resolution}
 \label{sec:gbdt-model-dependence}
 
-The scalar estimator here uses production LightGBM. The matched
-HistGradientBoosting comparator of App.~\ref{sec:pet-gbdt-paired} uses
-different inputs, signal-only samples and reporting histograms; neither its
-recovery metric nor its residual spread supplies a missing operand here.
+The scalar estimator here uses production LightGBM.
 
 These studies do not establish a bias--variance tradeoff across estimator settings.
 They establish truth-dependent responses to iterations and capacity, small repeat
@@ -479,9 +476,18 @@ covariances at two estimator-seed settings; only item three describes these byte
 \item Estimator-seed sensitivity exceeds its declared limit. Companion
   covariances at seed offsets $\{0,1200\}$ give the correlation-sensitive leg
   $s_{\mathrm{proj}}=\sprojMeasured\,\%$, against the preproduction
-  \sprojBound\,\% movement limit. Diagonal-only legs pass
+  \sprojBound\,\% movement limit. The limit was approved on 2026-09-18,
+  before production, as a direct movement tolerance at the scale of the
+  ensemble's own precision. A 160-throw ensemble determines a standard deviation
+  only to a relative precision of about $1/\sqrt{2(N-1)}\approx\SI{5.6}{\percent}$
+  for independent Gaussian throws, so a smaller seed-induced drift could not be
+  resolved against the width it would change. It is a declared stability
+  tolerance, not a derived confidence threshold for a maximum over correlated
+  projections. Diagonal-only legs pass
   ($s_{\mathrm{agg}}=\saggMeasured\,\%$, $s_{\mathrm{med}}=\smedMeasured\,\%$).
   The failing leg probes the off-diagonal structure used by projections.
+% Source: docs/orchestration/AUTHORIZATION-20260918-d-resource-required-deliverable-path.md:42 (ruling 5,
+% delta = 5% APPROVED; ground: the ~5.6% precision the 160-throw ensemble imposes on sigma).
 \item The sensitivity is not the statistic's own resampling noise. With the
   throw ensemble fixed and only the seed changed, it does not fall over the
   tested ensemble sizes: mean $\seedEffectNforty\,\%$ over four disjoint

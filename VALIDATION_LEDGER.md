@@ -1,15 +1,26 @@
 # MINERvA-OmniFold Validation Ledger
 
-## 2026-10-12 2D covariance with C04+X01 repaired (built, verified, not adopted)
+## 2026-10-13 5D injected-W-shape closure, corrected (signal only)
+
+Plan [`PREREG-20261012-5d-injected-w-closure.md`](docs/orchestration/PREREG-20261012-5d-injected-w-closure.md) (`b11ff40d`, pushed before submission);
+outcome [`OUTCOME-20261013-5d-injected-w-closure-pass.md`](docs/orchestration/OUTCOME-20261013-5d-injected-w-closure-pass.md);
+evidence [`state/wclosure-5d-20261012/`](docs/orchestration/state/wclosure-5d-20261012/). Supersedes the June 2026 5D
+"injected-W" closure (job `54062313`), which centred the bump at W = 0.3 GeV and injected nothing.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL176 | Production 5D unfold (lgbm, 5 iter, seed 42, `--use-weights`, omnifile `b6d2651c…`) in `--closure` with +30% truth-W Gaussian at 1.23 GeV, σ 0.15; plain-closure arm for nominal truth; scored by `bottom_line_test.bottom_line_ratio` on the W marginal. Job `59719296` COMPLETED, 00:37:34, at `b11ff40d` | positive control: mean factor **1.0529** (≥ 1.01). W-marginal feature bin 1.1–1.4 GeV: injected **23.10%**, residual **4.16%**, ratio **0.1799** (< 0.20); all-bin ratio 0.249 (not the rule). W ratios 1.031/0.958/1.027/0.998/1.000/1.000. 5D per bin median 1.0070, std 0.0371, max\|dev\| 0.1515 (null arm exactly 1/0/0). Joint (E_avail,W), 42 cells: median 1.0093, max\|dev\| 0.094; peak column 0.906–0.978; highest-W column 0.999–1.018 | **PASS** (narrow; one feature bin; no seed repeat). Marginal W recovery of one smooth bump only; joint cells, generator shapes, background and coverage not tested. Paper wording unchanged (Joseph's call) |
+
+## 2026-10-12 2D covariance with C04+X01 repaired (built, verified, adopted 2026-10-12)
 
 Grant: [`AUTHORIZATION-20261012-2d-closeout-fluxrepair.md`](docs/orchestration/AUTHORIZATION-20261012-2d-closeout-fluxrepair.md), on
 Joseph's R2 decision ([`DECISION-20261012-joseph-2d-closeout-recipe.md`](docs/publication/DECISION-20261012-joseph-2d-closeout-recipe.md)).
 Record: [`state/2d-closeout/c04-repair/REPORT.md`](docs/orchestration/state/2d-closeout/c04-repair/REPORT.md).
-The quoted 2D uncertainty (VL172) and comparison numbers (VL173) are unchanged until Joseph adopts this.
+VL175 is the quoted 2D uncertainty from 2026-10-12 ([decision](docs/publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md)); VL173's comparison numbers that involve our covariance are superseded by VL175's.
 
 | ID | measurement | verified value | disposition |
 |---|---|---|---|
-| VL175 | The adopted 2D construction (VL172 rollup + VL170 bootstrap + ML, central `E_U` `4f5a1b6d…`, 205 cells) with two blocks rebuilt from the existing universe outputs, no re-unfold: Flux as MAT's weighted `CalcCovMx` with the ν-e+IMD universe weights (KI 95; Σw 211.01, n_eff 19.06), and `Muon_Energy_MINOS` rescaled by Φ_CV/Φ_MINOS,u (1/1.0004186, 1/0.9953532; KI 96); the other 43 blocks byte-identical | Flux per-cell median 4.993 → **3.655 %**, integral 4.893 → 3.557 %; MINOS median 2.305 → 2.281 %; block-sum median 6.8707 → **6.0898 %**, integral σ 5.391 → **4.230 %**, √tr 3.2204e-39 → 2.9171e-39; combined χ²/ndf 0.914 → **0.994**, log-normal 0.932 → **1.014**, stat-subtracted 4.128 → **5.803**, pull mean/RMS 0.041/0.386 → **0.048/0.406**, paper-cov 2.654 unchanged; Fig. 6/7 (E_U) Total median p∥ 5.881 → 4.843 %, pT 6.215 → 5.310 %; Fig. 1 export `cov2d_blocks_205.npz` `c2606f90…`, σ vectors `sigma_abs_205_repaired.json` `4e48f639…` | **BUILT AND VERIFIED 2026-10-12; NOT ADOPTED** (Joseph adopts; the paper-tighten lane re-quotes). Controls: the same path on the adopted blocks reproduces VL172 (6.8707 %, the Fig. 6/7 summary) and VL173 (the χ² receipts line by line) exactly, and the committed export `f04f496a…` bitwise; MAT agreement ≤ 1.1e-15 (bound 1e-12); 76/76 build checks. An independent same-model verifier with its own code CONFIRMED every claim (Flux block bitwise, all others ≤ 5.3e-15). The published flux block (4.01 %) exceeds the repaired 3.655 % for a reason not established from the release. Login node, 0 node-h. `KNOWN_ISSUES.md` 95, 96. |
+| VL175 | The adopted 2D construction (VL172 rollup + VL170 bootstrap + ML, central `E_U` `4f5a1b6d…`, 205 cells) with two blocks rebuilt from the existing universe outputs, no re-unfold: Flux as MAT's weighted `CalcCovMx` with the ν-e+IMD universe weights (KI 95; Σw 211.01, n_eff 19.06), and `Muon_Energy_MINOS` rescaled by Φ_CV/Φ_MINOS,u (1/1.0004186, 1/0.9953532; KI 96); the other 43 blocks byte-identical | Flux per-cell median 4.993 → **3.655 %**, integral 4.893 → 3.557 %; MINOS median 2.305 → 2.281 %; block-sum median 6.8707 → **6.0898 %**, integral σ 5.391 → **4.230 %**, √tr 3.2204e-39 → 2.9171e-39; combined χ²/ndf 0.914 → **0.994**, log-normal 0.932 → **1.014**, stat-subtracted 4.128 → **5.803**, pull mean/RMS 0.041/0.386 → **0.048/0.406**, paper-cov 2.654 unchanged; Fig. 6/7 (E_U) Total median p∥ 5.881 → 4.843 %, pT 6.215 → 5.310 %; Fig. 1 export `cov2d_blocks_205.npz` `c2606f90…`, σ vectors `sigma_abs_205_repaired.json` `4e48f639…` | **BUILT AND VERIFIED 2026-10-12; ADOPTED 2026-10-12** by Joseph ([decision](docs/publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md)); quoted from that date (\uqMedian 6.09), superseding VL172 as the quoted 2D covariance. Controls: the same path on the adopted blocks reproduces VL172 (6.8707 %, the Fig. 6/7 summary) and VL173 (the χ² receipts line by line) exactly, and the committed export `f04f496a…` bitwise; MAT agreement ≤ 1.1e-15 (bound 1e-12); 76/76 build checks. An independent same-model verifier with its own code CONFIRMED every claim (Flux block bitwise, all others ≤ 5.3e-15). The published flux block (4.01 %) exceeds the repaired 3.655 % for a reason not established from the release. Login node, 0 node-h. `KNOWN_ISSUES.md` 95, 96. |
 
 ## 2026-10-11 2D central value switched to the LightGBM seed-42 matched CV
 

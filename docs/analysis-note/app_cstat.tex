@@ -1,10 +1,11 @@
 % Moved verbatim from app_statmethods.tex (its last subsection) on 2026-10-11, so that
 % the PET statistical method has its own appendix; labels unchanged.
+% Moved with sec_pet.tex to the companion PET note (pet_note.tex) on 2026-10-12.
 \section{The full-event $C_{\rm stat}$ construction: what it is, and what it is not}
 \label{app:cstatlimit}
 
-The published uncertainty is constructed in \S\ref{sec:systematics}, with
-adopted five-axis covariance identified in \S\ref{sec:eavailw-adopted}.
+The published uncertainty is constructed in \notesec{Uncertainty quantification: constructing the covariance blocks}, with
+adopted five-axis covariance identified in \notesec{The adopted five-axis covariance and its $(\Eavail,W)$ projection}.
 The full-event artifact describes another estimator and enters no published number.
 
 It has one builder, is not independently verified or adopted, and is not
@@ -31,7 +32,7 @@ training and cross-section extraction under an independent coherent
 $\mathrm{Poisson}(1)$ bootstrap of all three inventories. Distinct reproducible
 streams draw one global factor per data, signal-MC and background-MC event
 before training subsets are taken, reusing it everywhere that event appears
-(\S\ref{app:poisson}).
+(\notesec{Multinomial $\to$ independent Poisson bootstrap limit}).
 
 Offsets from replica seed $s$ are $s$, $s+10^{7}$ and
 $s+2{\times}10^{7}$. The signal primitive matches recoil-only replicas,
@@ -43,7 +44,7 @@ making both contracts bit-consistent with shared first two offsets.
 Data and background factors rebuild background-subtracted targets through
 Stay-Positive refinement; they do not rescale the nominal target. Signal factors
 follow every use of signal MC. The third, background stream extends the scalar
-bootstrap's data/MC streams (\S\ref{sec:bootstrap}) because background enters
+bootstrap's data/MC streams (\notesec{Poisson bootstrap}) because background enters
 as a separate weighted inventory with its own counting noise. Resampling data
 and MC together is the intended scope, without adopted statistical-uncertainty
 status. The
@@ -194,7 +195,7 @@ goodness-of-fit. \textbf{The $257$ are the quotable all-member domain, and they 
 ``invertible sub-block''}
 (App.~\ref{app:history}). The covariance's rank is $49=N-1$, so no sub-block larger than $49$ cells is
 ordinarily invertible, $257$ and $262$ alike; any use requiring an inverse requires a declared
-regularisation which this analysis does not silently supply (\S\ref{sec:rank}). Finally, the
+regularisation which this analysis does not silently supply (\notesec{Ill-conditioning and rank deficiency}). Finally, the
 covariance is on the density scale and centred on the replica mean rather than on the published
 central value: integrating it requires bin areas, and the centring means it does not by itself
 express the offset tabulated above. The per-cell arrays behind every aggregate in this subsection

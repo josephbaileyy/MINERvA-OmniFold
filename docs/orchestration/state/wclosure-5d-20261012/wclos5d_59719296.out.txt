@@ -1,0 +1,40 @@
+[sbatch] job=59719296 node=nid004103 start=2026-10-13 09:06:43 UTC
+[sbatch] worktree HEAD=b11ff40d03e2b1f2d9504e402fc3ee578985449d
+[sbatch] arm I (W bump at 1.23 GeV) 09:06:43
+[sbatch] arm N (plain closure) 09:32:35
+[sbatch] score 09:43:38
+{
+ "positive_control": {
+  "injected_mean_factor": 1.0529,
+  "min": 1.01,
+  "ok": true
+ },
+ "primary_bottom_line": {
+  "injected_all": 0.09569271050536113,
+  "residual_all": 0.023846321810399283,
+  "injected": 0.23102405853139796,
+  "residual": 0.041553958833397374,
+  "ratio": 0.17986853446153042,
+  "tol": 0.2,
+  "verdict": "PASS"
+ },
+ "per_bin_5d_injected": {
+  "median": 1.0069821915470243,
+  "std": 0.03706455226661643,
+  "max_abs_dev": 0.1515041770911344,
+  "n": 10694
+ },
+ "per_bin_5d_null": {
+  "median": 1.0,
+  "std": 0.0,
+  "max_abs_dev": 0.0,
+  "n": 10694
+ },
+ "verdict": "PASS"
+}
+b6d2651cfdbc52790cc7ed6032f2062a3e0ea50c12d63725beba29098dd5175a  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root
+d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root
+2ece46ab2ecd87f06da0ce56de20ea173330843caf2c52db04c75615cea82ae3  /pscratch/sd/j/josephrb/wclosure_5d_20261012/closure_5d_Wbump_c1p23.root
+29038e1b0e2894395a9311587df3885f57ab388cc6ebbcf9ad1d06e0d5e80555  /pscratch/sd/j/josephrb/wclosure_5d_20261012/closure_5d_null.root
+5141558b4541fb4d45f63a79fa4ad5073857f0101081e7b1830cd438193d6888  /pscratch/sd/j/josephrb/wclosure_5d_20261012/closure_5d_w_bottom_line.json
+[sbatch] done=2026-10-13 09:44:07 UTC

@@ -1,0 +1,99 @@
+% ====================================================================
+% PET NOTE -- companion to the analysis note (main_note.tex), split from it on 2026-10-12 at
+% Joseph's request so the analysis note can accompany the scalar (GBDT) result on its own while
+% the PET method development continues. Build: bash build_all.sh (a note-audience target).
+% Shares preamble.tex, values.tex, publication.bib and the figure set.
+% The PET sections and appendices are the analysis note's former appendices, moved verbatim
+% except for cross-reference targets: references into the analysis note name its sections by
+% title (\notesec, preamble.tex), because that note's numbering is a different build's.
+% ====================================================================
+\documentclass[11pt]{article}
+\usepackage{authblk}
+\input{preamble}
+\NOTEtrue
+\input{values}
+\addbibresource{publication.bib}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+\usepackage{xcolor}
+
+\title{\textbf{Companion Note:}\\
+Point-cloud (PET) method development for unbinned OmniFold of MINERvA
+charged-current inclusive data}
+
+\author[1]{Joseph Bailey\thanks{\url{josephrb@stanford.edu}}}
+\author[2]{Benjamin Nachman\thanks{\url{nachman@stanford.edu}}}
+\affil[1]{Department of Physics, Stanford University}
+\affil[2]{Department of Particle Physics and Astrophysics, Stanford University and SLAC National Laboratory}
+
+
+\date{\today~~DRAFT v1.0\\[4pt]\small Code and file references: \repolink}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This companion to the MINERvA OmniFold analysis note records the point-cloud
+transformer (PET) studies. All results here are diagnostic and method
+development, not a publication uncertainty product.
+A point-cloud transformer uses recoil clusters (step~1) and truth hadrons
+(step~2); muon kinematics enter selection and binning but neither classifier, so
+its central value and ordinary closure test a recoil-only estimator.
+Completed simulation studies improve point recovery but select no eligible
+design; the exploratory PET--GBDT comparison makes no uncertainty comparison.
+No PET covariance is adopted as a publication uncertainty product; full-event
+nominal and unverified $C_{\rm stat}$ artifacts lack an uncertainty budget, and
+their pairing was declined.
+% Sources: the opening paragraph of sec_pet.tex, and the two PET items of the analysis note's
+% executive summary (sec_execsummary.tex), whose sentences these are.
+\end{abstract}
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\input{sec_pet}
+
+\section*{Acknowledgments}
+This
+analysis was carried out on the Perlmutter system at the National Energy
+Research Scientific Computing Center (NERSC), a U.S.\ Department of Energy
+Office of Science User Facility, under project m3246. It builds on the MINERvA
+Analysis Toolkit (MAT) and the MINERvA-101 cross-section framework, and we thank
+their authors. We are grateful to the MINERvA Collaboration for the public release
+of the medium-energy CC-inclusive data product on which the reproduction rests.
+
+We thank Callum Wilkinson for connecting us with this dataset and for many helpful discussions.
+
+% The analysis note's statement, verbatim (main_note.tex acknowledgments).
+The analysis code, statistical procedures, computing campaigns, independent
+recomputations and reviews, figures, and manuscript drafts were produced with
+substantial assistance from AI language-model tools, used through the Claude
+Code and OpenAI Codex command-line agents: Anthropic Claude (Opus 4.7, 4.8, 5,
+and 5.5; Fable 5 and 5.1) and OpenAI GPT models (GPT-5.5, GPT-5.6 Sol and Luna,
+GPT-6 Astra, and GPT-6.1), including those used for independent review. The
+authors directed this work through written specifications fixed before each
+study. Results were accepted only after verification against committed
+evidence: predeclared criteria, independent recomputation by separately written
+code (for example, the joint-test evaluation and the lost-seed recovery), and
+independent read-only reviews. AI tools were also used for methodological
+discussion. The figures were drawn by plotting code
+from the analysis outputs; no image was generated or edited by a generative-AI
+image tool. AI tools are not authors. The authors take responsibility for the
+content.
+
+\appendix
+\input{app_cstat}
+\input{app_provenance_pet}
+\input{app_history_pet}
+
+\printbibliography
+
+\end{document}

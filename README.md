@@ -31,6 +31,7 @@ rebuilt. See [Setup](#setup).
 | Find the record that governs a plan, decision, outcome or receipt | `docs/orchestration/CATALOG.md` (`## Current work`, `## Task routes`) |
 | See what reads what across workstreams | [How the workstreams connect](#how-the-workstreams-connect) |
 | Avoid repeating a closed study | [Closed approaches](#closed-approaches) |
+| Read research beyond the adopted analysis (interaction-model studies; proposals only, nothing adopted) | `docs/research/MINERVA-MODEL-STUDIES-SYNTHESIS-20261012.md` |
 | Tell a current instruction from a historical record | [Current versus historical documents](#current-versus-historical-documents) |
 | Build the note, primer or paper | `docs/analysis-note/` and [Deliverables](#deliverables) |
 | Check the article and its release package | `docs/publication/submission/PACKAGE-MANIFEST-20261006.md`; code in `publication/` |
@@ -171,6 +172,7 @@ treating a document as an instruction.
 | `VALIDATION_LEDGER.md`, `KNOWN_ISSUES.md`, `docs/OPEN_ITEMS.md` | current authorities; order is not chronological | the row, not the file, is the unit |
 | `*_STATUS.md` | current, but banner-stacked by date | read the top banner and any correction note; older banners are history |
 | `docs/orchestration/*` dated records (`HANDOFF-`, `PLAN-`, `OUTCOME-`, `DECISION-`, `RECORD-`, …) | historical once their event concludes | `docs/orchestration/MANIFEST.tsv` gives `class` (`LIVE`/`ARCHIVAL`/`MACHINE`/`DEAD`) and `event_status`; see `CONVENTION-document-retention.md` |
+| `docs/research/` | research extensions, dated; outside the adopted analysis and the publication | each file is dated in its name; the newest synthesis names its predecessor and what supersedes it |
 | `docs/orchestration/state/`, `runs/`, `receipts/` | machine records | open one exact file when a live document names it; never load wholesale |
 | `docs/orchestration/LIVE-STATE.md` | a generated view that can be stale | it prints its own generation time; check freshness before use |
 | Root `REMEDIATION_DELIVERABLES.md`, `REMEDIATION_META_PROMPTS.md` (July), `DESIGN-20260902-declarative-routing-register.md` | historical records kept at their cited paths | the REMEDIATION headers say "UNCOMMITTED working-tree" at HEAD `3e85589` (July); the DESIGN file is dated in its name |

@@ -107,7 +107,9 @@ owner. Registration grants no compute, experiment, adoption or claim-scope autho
 | 2D closeout Stages A (remainder) and B: small diagnostic compute grant (≤ 2.0 charged CPU node-h, jobs ≤ 1 h, `2dc_AB_*`, shared/regular QOS, audit and diagnostics only), issued by the paper-tighten lane under the delegation | [`AUTHORIZATION-20261012-2d-closeout-stageAB.md`](AUTHORIZATION-20261012-2d-closeout-stageAB.md) |
 | 2D closeout: grant to build the C04+X01-repaired 2D covariance (weighted flux, MINOS denominator; no re-unfold; ≤ 1.0 node-h), on Joseph's 2026-10-12 decision; adoption stays Joseph's | [`AUTHORIZATION-20261012-2d-closeout-fluxrepair.md`](AUTHORIZATION-20261012-2d-closeout-fluxrepair.md) |
 | 2D closeout: Stage B diagnostics P4 (G1 census) and P5 (G2 miss-row weights), ≤ 3.0 node-h, diagnostic code copies only; CFS copy of the Stage C inputs after a quota check | [`AUTHORIZATION-20261012-2d-closeout-stageB-diagnostics.md`](AUTHORIZATION-20261012-2d-closeout-stageB-diagnostics.md) |
+| 2D closeout: one walltime retry of the P4 jobs that timed out on their own 2 h limit (a deviation from P4 DESIGN §5's retry rule, inside the diagnostics grant; 6 h caps, measured projections for 1M/1N ≤ 11:30; one retry only) | [`AUTHORIZATION-20261012-2d-closeout-stageB-p4-retry.md`](AUTHORIZATION-20261012-2d-closeout-stageB-p4-retry.md) |
 | 2D closeout recipe decisions by Joseph, 2026-10-12: R2 build the C04+X01 repair now; R5 three-stream seed-42 bootstrap; C07′ POT band if documented; G3 NormDISCC disclosed, collaboration asked | [`../publication/DECISION-20261012-joseph-2d-closeout-recipe.md`](../publication/DECISION-20261012-joseph-2d-closeout-recipe.md) |
+| Joseph adopts the C04+X01-repaired 2D covariance (VL175) as the quoted 2D uncertainty, 2026-10-12: median 6.09 % (was 6.87 %); re-quote record | [`../publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md`](../publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md) |
 | 2D closeout executor (2d closer). Stage A candidate checklist for `E_U` (LightGBM seed 42, `4f5a1b6d…`), delivered 2026-10-12: all eight plan §4 items VERIFIED for `E_U`'s own file (effective seeds by content; cell identities not KI 90); `E_U`'s own execution provenance not recorded, so Stage A exit MET for the candidate procedure via L0, whose central-value producer is frozen for Stages B–C (universe and replica inputs are Stage B's, KI 93); 0 node-h | [`state/2d-closeout/stageA/REPORT.md`](state/2d-closeout/stageA/REPORT.md) |
 | 2D closeout executor (2d closer). Stage B input and recipe assessment, 2026-10-12: EXIT CONDITIONAL (two candidates, G1 reco-in/truth-out gap and G2 miss-row CV weights, routed to a priced pilot); new KI 95 (C04 flux constraint weights) and 96 (X01 MINOS flux denominator), independently verified; KI 91 identity, KI 92/93/94 and P06 evidence; May sweep retired, July sweep provisional pending the pilot; beam-angle laterals need active-file re-unfolds; source table, proposed recipe, pilot request ≤ 15.0 node-h; July qualification provisional (uncommitted producer); budgets DIAGNOSTIC, NOT QUOTABLE; 0 node-h | [`state/2d-closeout/stageB/REPORT.md`](state/2d-closeout/stageB/REPORT.md) |
 | 2D closeout executor (2d closer). C04+X01-repaired 2D covariance built 2026-10-12 under the flux-repair grant, no re-unfold: Flux band MAT-weighted (ν-e+IMD universe weights), `Muon_Energy_MINOS` on its own flux denominator, all other blocks byte-identical; block-sum median 6.871 → 6.090 %, integral 5.391 → 4.230 %, combined χ²/ndf 0.914 → 0.994; controls reproduce VL172/VL173 exactly, MAT ≤ 1.1e-15; independently verified (VL175); NOT ADOPTED (Joseph adopts, then the paper-tighten lane re-quotes); 0 node-h | [`state/2d-closeout/c04-repair/REPORT.md`](state/2d-closeout/c04-repair/REPORT.md) |
@@ -129,6 +131,55 @@ stay with the integration owner. Registration grants no compute, experiment, ado
 | XR owner | a new XR package under its own subtree and its dedicated authorization amendment (one `docs/orchestration/AUTHORIZATION-*` record, plus the one `MANIFEST-overrides.tsv` row and one routing row that the LIVE-index gate requires for that record); the frozen packages, outroots and records of the two earlier XR attempts stay unchanged | `state/next-preparation-20261009/xr-linux/REPORT.md` |
 | selective-I/O owner | the narrowly scoped, opt-in selective-read change to the supported 2D driver and its tests; the default all-branch path stays byte-for-byte equivalent in behaviour; no helper, guard or estimator change | `state/next-preparation-20261009/selective-io/REPORT.md` |
 
+### Valencia multinucleon feasibility pilot, 2026-10-11 — task branch, INCONCLUSIVE
+
+Bounded CPU pilot under Joseph's 2026-10-11 prompt (≤ 10 core-h, ≤ 10,000 events; used 0.067 core-h and
+7,900 events). The 2025 corrected Valencia calculation has no public implementation, so only the 2020
+predecessor (NuWro 25.11.1 `mec_kind=6`) was benchmarked and run. Verdict INCONCLUSIVE, blocked on the
+authors' corrected tables and conventions; table-route generation extrapolates to be cheap (not a certified bound). A later bounded repair fixed the VA-sign convention (contraction verified under the declared W12 encoding; B1/B2 UNVALIDATED pending author confirmation of that encoding). It improved the launcher's reservation accounting, but aggregate CPU enforcement remains incomplete (an orphan ignoring SIGXCPU is unbounded, check L9b), so `pilot_run.py` is unsuitable where a guaranteed aggregate CPU cap is required. Verdict unchanged. REPAIR.md §R7 holds an unsent draft request to the authors. Grants no
+compute, contact or adoption authority.
+
+| record | path |
+|---|---|
+| frozen plan (observables, tolerances, budget) | [`state/valencia-feasibility-20261011/PLAN.md`](state/valencia-feasibility-20261011/PLAN.md) |
+| report: identity, benchmarks, pilot, applicability, cost, missing input | [`state/valencia-feasibility-20261011/REPORT.md`](state/valencia-feasibility-20261011/REPORT.md) |
+| one read-only review and the correction-pass dispositions | [`state/valencia-feasibility-20261011/REVIEW.md`](state/valencia-feasibility-20261011/REVIEW.md) |
+| bounded repair (VA-sign convention, launcher CPU bound): frozen checks, results, residuals, terminal disposition (§R6), unsent author request (§R7) | [`state/valencia-feasibility-20261011/REPAIR.md`](state/valencia-feasibility-20261011/REPAIR.md) |
+
+### High-E_avail / high-W inelastic investigation, 2026-10-11 — task branch, INCONCLUSIVE
+
+Bounded reduction study under Joseph's 2026-10-11 prompt (≤ 2 CPU core-h of reductions of existing products; no
+generation, fits, unfolding, covariance, adoption or contact). Verdict INCONCLUSIVE under the frozen rule (GO not
+reached): the corner's normalization-removed residual (+0.6% to +6.7%) is comparable to a ±4% recoil-scale shift,
+is localized in no single factor, and reverses sign inside the region. That comparability is a degeneracy: it
+neither establishes a detector cause nor excludes interaction physics, and the factor split is descriptive. The
+recommendation is not to develop a new inelastic model from it. A close-out pass (same day) corrected interpretation
+(no number or rule changed), changed the proposed GENIE v3 configurations (no G18_02a_02_11b splines exist), and
+added a no-run feasibility specification (§11), reviewed once with one correction pass: a species-dependent response
+study is possible only on the simulated-response side with a new event-loop pass; no official GENIE v3 prediction
+exists for the intermediate-W feature. The next decision recommended to Joseph is two independent reviews (response;
+nuclear theory/generator) before any validation. A second close-out (2026-10-12, documentation only, not reviewed)
+withdrew the use of the recorded s5n/s5c biases as a closure allowance (each departure's own truth recovery comes
+first; attenuation is kept separate from response mimicry), qualified the span test as local and family-limited,
+costed sensitivity, closure, linear checks and calibrated validation separately, and added a two-role reviewer brief.
+Grants no compute, contact or adoption authority.
+
+| record | path |
+|---|---|
+| frozen plan, decision rule and amendments | [`state/inelastic-high-region-20261011/PLAN.md`](state/inelastic-high-region-20261011/PLAN.md) |
+| research memo: rate/shape/coverage, decomposition, literature, ranking, costed proposal, feasibility specification (§11) | [`state/inelastic-high-region-20261011/REPORT.md`](state/inelastic-high-region-20261011/REPORT.md) |
+| one read-only review and the correction-pass dispositions; the close-out targeted review and its correction pass | [`state/inelastic-high-region-20261011/REVIEW.md`](state/inelastic-high-region-20261011/REVIEW.md) |
+| two-role reviewer brief (hadronic response; nuclear theory/generator) and GENIE v3 attribution controls; prepared, not sent | [`state/inelastic-high-region-20261011/REVIEWER-BRIEF.md`](state/inelastic-high-region-20261011/REVIEWER-BRIEF.md) |
+
+### Interaction-model studies — research synthesis, 2026-10-12
+
+The two studies above (Valencia head `cbbc29e2`, high-region head `caf95593`) are summarized as a research extension,
+outside the adopted analysis, in [`docs/research/MINERVA-MODEL-STUDIES-SYNTHESIS-20261012.md`](../research/MINERVA-MODEL-STUDIES-SYNTHESIS-20261012.md):
+what each tested, why neither establishes a model improvement, corrected costs, the superseded 2D-status statements,
+and one proposed next decision. Its dated predecessor is
+[`docs/research/MINERVA-MODEL-IMPROVEMENT-MEMO-20261011.md`](../research/MINERVA-MODEL-IMPROVEMENT-MEMO-20261011.md).
+Unreviewed documentation. Grants no compute, contact or adoption authority.
+
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
 | Subject | Record |
@@ -139,6 +190,13 @@ stay with the integration owner. Registration grants no compute, experiment, ado
 | KNOWN_ISSUES 84 fix and the rebuilt band (`VL170`, adopted 2026-10-06): per-bin σ_new/σ_old, launcher, comparison script, budget, and the post hoc rescoring of the VL169 toys | [`state/ki84-rebuild-20261006/`](state/ki84-rebuild-20261006/) |
 | VL170 adoption: rebuilt bootstrap and universe+bootstrap rollups, χ², budget recomputation with input sha256, figures, controls (`VL172`, `KNOWN_ISSUES.md` 85) | [`state/ki84-adopt-20261006/`](state/ki84-adopt-20261006/) |
 | KNOWN_ISSUES 85 bootstrap-on-one-toy diagnostic (arms B + T): decision rule committed before any run | [`DECISION-RULE-20261006-ki85-bootstrap-diagnostic.md`](DECISION-RULE-20261006-ki85-bootstrap-diagnostic.md) |
+
+### 5D injected-W-shape closure, corrected — PASS (narrow), 2026-10-13
+
+| Subject | Record |
+|---|---|
+| why the June 5D W closure was a null test, the corrected bump (W = 1.23 GeV), positive control, rule (bottom-line ratio < 0.20), launcher and scorer | [`PREREG-20261012-5d-injected-w-closure.md`](PREREG-20261012-5d-injected-w-closure.md) |
+| the verdict (ratio 0.180 vs 0.20, `VL176`, job 59719296), CITABLE FOR / NOT CITABLE FOR, per-bin and joint-cell numbers, evidence | [`OUTCOME-20261013-5d-injected-w-closure-pass.md`](OUTCOME-20261013-5d-injected-w-closure-pass.md), [`state/wclosure-5d-20261012/`](state/wclosure-5d-20261012/) |
 
 ### Scalar-5D — the current entry route (compacted 2026-09-24)
 
@@ -1260,7 +1318,7 @@ four describe standing systems or rules rather than events, so they are `LIVE`:
 | Maintain classifications | `MANIFEST-overrides.tsv`, then `generate_manifest.py` |
 | Operate continuation | `WAKER.md`, `wakerctl.py`, `waker-config.json`, and `profiles.json` |
 | Glance at campaign status | [`RUNBOOK-status-dashboard.md`](RUNBOOK-status-dashboard.md), then `dashboard_collector.py --print-scrontab`; the page is a view, so re-measure before deciding |
-| Build deliverables | `docs/analysis-note/build_all.sh` for note, primer, and paper |
+| Build deliverables | `docs/analysis-note/build_all.sh` for note, PET note (`pet_note.tex`, split from the note 2026-10-12), primer, and paper |
 
 ## Frozen pre-compaction evidence
 

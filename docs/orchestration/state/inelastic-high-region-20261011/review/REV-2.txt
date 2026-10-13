@@ -1,0 +1,45 @@
+# 2026-10-11T22:44:44+00:00 id=REV-2 rc=0 cmd=python3 -I /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/review-scratch/rev/rev2.py /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/inputs /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/review-scratch/rev/rev2.json
+TuneV1 C {'incl_first(mu,t|mu,a|t)': [0.0284, 0.0147, 0.0055], 'part_first(a|t,mu,t|mu)': [0.0055, 0.0282, 0.0149], 'ln_rho': 0.0485, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0}}
+TuneV1 M {'incl_first(mu,t|mu,a|t)': [-0.0119, -0.1089, 0.0], 'part_first(a|t,mu,t|mu)': [0.0, -0.0119, -0.1089], 'ln_rho': -0.1207, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0}}
+TuneV1 C_noovf {'incl_first(mu,t|mu,a|t)': [0.0047, 0.0117, 0.0092], 'part_first(a|t,mu,t|mu)': [0.0092, 0.0045, 0.0119], 'ln_rho': 0.0256, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0}}
+TuneV1 C_ovf {'incl_first(mu,t|mu,a|t)': [0.0537, 0.0177, 0.0016], 'part_first(a|t,mu,t|mu)': [0.0014, 0.0537, 0.018], 'ln_rho': 0.0731, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0}}
+GENIE_CV C {'incl_first(mu,t|mu,a|t)': [0.0166, 0.0037, 0.0078], 'part_first(a|t,mu,t|mu)': [0.0082, 0.0163, 0.0036], 'ln_rho': 0.0281, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0005999848230364506}}
+GENIE_CV M {'incl_first(mu,t|mu,a|t)': [-0.0104, -0.1848, 0.0006], 'part_first(a|t,mu,t|mu)': [0.0, -0.0104, -0.1842], 'ln_rho': -0.1946, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0005999848230364506}}
+GENIE_CV C_noovf {'incl_first(mu,t|mu,a|t)': [-0.007, -0.0354, 0.0146], 'part_first(a|t,mu,t|mu)': [0.0141, -0.0069, -0.0349], 'ln_rho': -0.0277, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0005999848230364506}}
+GENIE_CV C_ovf {'incl_first(mu,t|mu,a|t)': [0.0437, 0.0456, 0.0007], 'part_first(a|t,mu,t|mu)': [0.0012, 0.0433, 0.0455], 'ln_rho': 0.09, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0005999848230364506}}
+GENIE_MEC C {'incl_first(mu,t|mu,a|t)': [0.0286, 0.0272, 0.0086], 'part_first(a|t,mu,t|mu)': [0.0095, 0.028, 0.0269], 'ln_rho': 0.0644, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0006181796205641843}}
+GENIE_MEC M {'incl_first(mu,t|mu,a|t)': [-0.0118, -0.1657, 0.0007], 'part_first(a|t,mu,t|mu)': [0.0, -0.0118, -0.165], 'ln_rho': -0.1769, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0006181796205641843}}
+GENIE_MEC C_noovf {'incl_first(mu,t|mu,a|t)': [0.0029, -0.0065, 0.0134], 'part_first(a|t,mu,t|mu)': [0.0142, 0.0026, -0.007], 'ln_rho': 0.0099, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0006181796205641843}}
+GENIE_MEC C_ovf {'incl_first(mu,t|mu,a|t)': [0.058, 0.0634, 0.0035], 'part_first(a|t,mu,t|mu)': [0.0038, 0.0573, 0.0637], 'ln_rho': 0.1248, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0006181796205641843}}
+NuWro C {'incl_first(mu,t|mu,a|t)': [0.0237, -0.0342, 0.0167], 'part_first(a|t,mu,t|mu)': [0.0179, 0.0229, -0.0346], 'ln_rho': 0.0062, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0002814541777767664}}
+NuWro M {'incl_first(mu,t|mu,a|t)': [-0.0046, -0.0296, 0.0004], 'part_first(a|t,mu,t|mu)': [0.0, -0.0046, -0.0292], 'ln_rho': -0.0338, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0002814541777767664}}
+NuWro C_noovf {'incl_first(mu,t|mu,a|t)': [0.005, -0.0747, 0.0869], 'part_first(a|t,mu,t|mu)': [0.0854, 0.0045, -0.0727], 'ln_rho': 0.0173, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0002814541777767664}}
+NuWro C_ovf {'incl_first(mu,t|mu,a|t)': [0.0425, 0.0042, -0.0518], 'part_first(a|t,mu,t|mu)': [-0.0562, 0.0441, 0.0068], 'ln_rho': -0.0052, 'lost': {'D_in_P_empty_m': 0.0, 'D_in_P_empty_mt': 0.0002814541777767664}}
+P(A>=0.8|W>=1.8) TuneV1 0.9182 max partition step ~ 0.0853
+P(A>=0.8|W>=1.8) GENIE_CV 0.913 max partition step ~ 0.0911
+P(A>=0.8|W>=1.8) GENIE_MEC 0.9119 max partition step ~ 0.0922
+P(A>=0.8|W>=1.8) NuWro 0.9053 max partition step ~ 0.0994
+recoil C dlnrho -4% 0.0366 +4% -0.0376 Rcentral-vs-prod -0.0011 rrzero-vs-Rcentral 0.0001 jitters [-0.0004, -0.0003, -0.0]
+recoil M dlnrho -4% -0.0114 +4% 0.0091 Rcentral-vs-prod 0.0009 rrzero-vs-Rcentral 0.0012 jitters [0.0003, -0.0003, -0.0011]
+linear rho_C shift GENIE_CV d0 1.0275  -4% +0.0383  +4% -0.0379
+  step shifts (mu, t|mu, a|t) -4%: [0.0014 0.0333 0.002 ] +4%: [-0.0025 -0.0329 -0.0021]
+linear rho_C shift GENIE_MEC d0 1.0655  -4% +0.0397  +4% -0.0393
+  step shifts (mu, t|mu, a|t) -4%: [0.0014 0.0332 0.0019] +4%: [-0.0026 -0.0329 -0.0021]
+linear rho_C shift NuWro d0 1.0052  -4% +0.0375  +4% -0.0371
+  step shifts (mu, t|mu, a|t) -4%: [0.0013 0.0331 0.0023] +4%: [-0.0023 -0.0329 -0.0024]
+W0 frac 0.157 lnrho G 0.197 T 0.094 N 0.006 recoil -0.068/+0.068
+W1 frac 0.183 lnrho G 0.026 T -0.051 N 0.072 recoil -0.019/+0.016
+W2 frac 0.185 lnrho G -0.195 T -0.121 N -0.034 recoil -0.011/+0.009
+W3 frac 0.150 lnrho G -0.086 T 0.031 N -0.091 recoil -0.013/+0.010
+W4 frac 0.195 lnrho G 0.011 T -0.005 N -0.020 recoil +0.036/-0.046
+W5 frac 0.130 lnrho G 0.152 T 0.128 N 0.088 recoil +0.078/-0.068
+emu nominal vs product maxrel 7.647216193618078e-13 nom where G==0: 0.0
+emu total x 0.9408937045155834 Rtot 1.1104968991383906 1.1802575506763828
+emu C pred x 1.0296 lnrho 0.0281 -> -0.0620
+emu M pred x 0.8813 lnrho -0.1946 -> -0.1291
+emu W0 pred x 0.9770 lnrho 0.1970 -> 0.1593
+emu W1 pred x 0.7632 lnrho 0.0256 -> 0.2349
+emu W2 pred x 0.8813 lnrho -0.1946 -> -0.1291
+emu W3 pred x 1.0255 lnrho -0.0857 -> -0.1719
+emu W4 pred x 1.0279 lnrho 0.0110 -> -0.0774
+emu W5 pred x 1.0290 lnrho 0.1521 -> 0.0626

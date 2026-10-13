@@ -1,0 +1,80 @@
+{
+ "B0": {
+  "max_rel_diff_n8_vs_n16": 1.9369717589201585e-05,
+  "tolerance": 0.002,
+  "grade": "PASS"
+ },
+ "B1": {
+  "integrator_per_nucleus_1e38": 1.3044051085703177,
+  "published_1e38": 1.38,
+  "rel_dev": -0.05477890683310305,
+  "frozen_tolerances_pass_qualified": [
+   0.07,
+   0.15
+  ],
+  "grade": "UNVALIDATED (table W12 encoding not author-confirmed)",
+  "grade_at_d75987e1_superseded": "PASS",
+  "diagnostic_rel_dev_with_extra_Vud2": -0.1037885137983453
+ },
+ "B2": {
+  "integrator_per_nucleus_1e38": 0.36037786324848686,
+  "published_1e38": 0.31,
+  "rel_dev": 0.16250923628544145,
+  "frozen_tolerances_pass_qualified": [
+   0.12,
+   0.25
+  ],
+  "grade": "UNVALIDATED (table W12 encoding not author-confirmed)",
+  "grade_at_d75987e1_superseded": "QUALIFIED",
+  "diagnostic_rel_dev_with_extra_Vud2": 0.10223326363133411
+ },
+ "B3": {
+  "nuwro_per_nucleon_cm2": 1.0558218039210882e-39,
+  "mc_error_cm2": 1.9833283368273604e-41,
+  "integrator_per_nucleon_cm2": 1.0870042571419313e-39,
+  "rel_dev": -0.02868659714620747,
+  "pulls": -1.5722284929748063,
+  "tolerance": 0.05473745821498826,
+  "grade": "PASS",
+  "diagnostic_rel_dev_vs_integrator_times_nuwro_formula_factor": -0.025713073446365642
+ },
+ "B4": {
+  "channels": {
+   "pp": {
+    "nuwro": 0.5711944030393769,
+    "err": 0.013549878967439396,
+    "integrator": 0.6035687772032802,
+    "pull": -2.3892740475172896
+   },
+   "np+pn": {
+    "nuwro": 0.18059124035789276,
+    "err": 0.01078466626037243,
+    "integrator": 0.16314261904020952,
+    "pull": 1.6179101788060968
+   },
+   "3p3h": {
+    "nuwro": 0.24821435660273047,
+    "err": 0.0115702476555044,
+    "integrator": 0.2332886037565103,
+    "pull": 1.2900115270323902
+   }
+  },
+  "grade": "PASS"
+ },
+ "B5": {
+  "runs": {
+   "R1": {
+    "max_abs_dp_MeV": 3.0000001440081944e-06,
+    "n_events_dp_over_1keV": 0,
+    "n_positive": 2462
+   },
+   "R2": {
+    "max_abs_dp_MeV": 0.001465999999709311,
+    "n_events_dp_over_1keV": 3,
+    "n_positive": 1458
+   }
+  },
+  "tolerance_MeV": 0.001,
+  "grade": "FAIL"
+ }
+}

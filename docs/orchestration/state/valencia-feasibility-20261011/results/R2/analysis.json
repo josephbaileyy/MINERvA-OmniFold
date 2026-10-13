@@ -1,0 +1,155 @@
+{
+ "n_sampled": 4000,
+ "n_positive": 1458,
+ "sigma_per_nucleon_cm2": 1.02570784905551e-39,
+ "sigma_mc_error_cm2": 4.96675507504803e-41,
+ "kish_neff": 385.4793960921825,
+ "kish_neff_over_n": 0.09636984902304563,
+ "wmax_over_wmean": 42.2333557171167,
+ "channel_fraction": {
+  "pp": [
+   0.5565486538632821,
+   0.024976243068051282
+  ],
+  "np+pn": [
+   0.20910805032856816,
+   0.021637842103796916
+  ],
+  "3p3h": [
+   0.2343432958081497,
+   0.018774599564806455
+  ]
+ },
+ "conservation": {
+  "max_abs_dp_MeV": 0.001465999999709311,
+  "deltaE_in_minus_out_MeV": {
+   "min": -2.0000006770715117e-06,
+   "median": 9.99999429041054e-07,
+   "max": 3.1759729999994306
+  },
+  "n_events_dp_over_1keV": 3
+ },
+ "energy_partition_weighted_mean_MeV": {
+  "omega": 489.40479146980346,
+  "T_protons": 310.00470354832754,
+  "T_neutrons": 106.26890352310843,
+  "pions_total_E": 10.444649245084067,
+  "other_E": 0.0,
+  "unrecorded_remainder": 62.68653515328342,
+  "E_avail": 314.9220757371577
+ },
+ "neutron_fraction_of_omega_weighted": 0.21713907459703588,
+ "post_species_counts": {
+  "-211": 34,
+  "13": 1458,
+  "111": 35,
+  "211": 61,
+  "2112": 1834,
+  "2212": 3324
+ },
+ "mean_multiplicity_weighted": {
+  "protons": 2.0979100761479,
+  "neutrons": 1.0485281507033732
+ },
+ "signal_acceptance": [
+  0.9670855820761078,
+  0.004590379973639372
+ ],
+ "signal_kish_neff": 363.2586286943251,
+ "eavail_bins": [
+  {
+   "bin_GeV": [
+    0,
+    0.1
+   ],
+   "frac_all": 0.18705955453426917,
+   "frac_of_signal": 0.18547022284326253,
+   "kish_neff_signal": 47.58890367593478,
+   "n_raw_signal": 172
+  },
+  {
+   "bin_GeV": [
+    0.1,
+    0.2
+   ],
+   "frac_all": 0.2041665498015867,
+   "frac_of_signal": 0.20693095123815153,
+   "kish_neff_signal": 54.53808507305945,
+   "n_raw_signal": 193
+  },
+  {
+   "bin_GeV": [
+    0.2,
+    0.4
+   ],
+   "frac_all": 0.2801479701952528,
+   "frac_of_signal": 0.2796590264425414,
+   "kish_neff_signal": 118.76027219529452,
+   "n_raw_signal": 308
+  },
+  {
+   "bin_GeV": [
+    0.4,
+    0.8
+   ],
+   "frac_all": 0.30497026424084644,
+   "frac_of_signal": 0.3040759693476732,
+   "kish_neff_signal": 160.83650908036023,
+   "n_raw_signal": 440
+  },
+  {
+   "bin_GeV": [
+    0.8,
+    1.5
+   ],
+   "frac_all": 0.023655661228044918,
+   "frac_of_signal": 0.023863830128371184,
+   "kish_neff_signal": 49.771448199950896,
+   "n_raw_signal": 172
+  },
+  {
+   "bin_GeV": [
+    1.5,
+    3
+   ],
+   "frac_all": 0.0,
+   "frac_of_signal": 0.0,
+   "kish_neff_signal": 0.0,
+   "n_raw_signal": 0
+  },
+  {
+   "bin_GeV": [
+    3,
+    100
+   ],
+   "frac_all": 0.0,
+   "frac_of_signal": 0.0,
+   "kish_neff_signal": 0.0,
+   "n_raw_signal": 0
+  }
+ ],
+ "q_near_cut": {
+  "frac_q_gt_1100MeV": [
+   0.08703376247337768,
+   0.008370755560606102
+  ]
+ },
+ "enu_weighted_frac_above_1p1GeV": [
+  0.9961316002764661,
+  0.0011020991566207594
+ ],
+ "flux_sampling_check": {
+  "chi2": 121.37193321046729,
+  "ndf": 99,
+  "n_outside_edges": 0
+ },
+ "sigma_frac_by_enu_GeV": {
+  "0-1.1": 0.003868399723533855,
+  "1.1-3": 0.08384865926789072,
+  "3-10": 0.8632586577799226,
+  "10-20": 0.040612487192924956,
+  "20-50": 0.008411796035727774,
+  "50-100": 0.0
+ },
+ "dump": "dump.txt"
+}

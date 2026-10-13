@@ -34,6 +34,13 @@ note file is a struck value back in the body, and the check fails. The positive 
 still applies: the note must carry struck values, now all of them in `app_history.tex`.
 test_build_all.py::StruckOnlyInHistoryTest plants one in a body file to show this check fires.
 
+EXTENDED 2026-10-12 TO A SECOND NOTE BUILD. The PET studies left main_note for a companion note,
+pet_note.tex, and their struck values moved with them, verbatim, from app_history.tex into
+app_history_pet.tex. `STRUCK_ALLOWED` names each note-audience build with its one history file; the
+invariant above holds per build, and each note runs its own positive control against its own PDF,
+so neither note's strikes can vouch for the other's. The paper and primer are still checked against
+every struck literal either note was shown to render.
+
 The struck values are DERIVED from the sources, never hardcoded: a hardcoded list silently stops
 covering anything added after it was written. Macro-valued `\\dead{\\petRatio}` bodies are resolved
 through values.tex, and any body this script cannot reduce to a literal is REPORTED rather than
@@ -62,9 +69,14 @@ import subprocess
 import sys
 from pathlib import Path
 
-BUILDS = {"main_note": "note", "main_paper": "paper", "main_primer": "primer"}
-STRUCK_ALLOWED_IN = "main_note"
-STRUCK_ALLOWED_FILE = "app_history.tex"   # the one note file that may carry \dead{}
+BUILDS = {"main_note": "note", "pet_note": "pet-note", "main_paper": "paper",
+          "main_primer": "primer"}
+#: The note-audience builds, each with the ONE file in it that may carry \dead{}. pet_note joined on
+#: 2026-10-12, when the PET studies left main_note for a companion note and their struck values moved
+#: with them, verbatim, from app_history.tex into app_history_pet.tex. Each listed build must carry
+#: struck values (its positive control); every build NOT listed here is outward-facing and must
+#: carry none. To make a note build strike-free, delete its entry -- it is then checked as outward.
+STRUCK_ALLOWED = {"main_note": "app_history.tex", "pet_note": "app_history_pet.tex"}
 
 INPUT_RE = re.compile(r"\\(?:input|include)\{([^}]+)\}")
 # `\s*` is load-bearing and BEN-090 is the reason. This read `r"\\dead\{"` from 4f75e50 until
@@ -531,7 +543,7 @@ def main() -> int:
             f"BUILDS with its audience label rather than deleting this assert.")
 
     # ---- source-level: exact, and the hard invariant ---------------------------------------
-    struck_values: set[str] = set()
+    struck_by_note: dict[str, set[str]] = {driver: set() for driver in STRUCK_ALLOWED}
     unresolved: list[str] = []
     for driver, label in BUILDS.items():
         closure = resolve_closure(note_dir / f"{driver}.tex")
@@ -548,26 +560,27 @@ def main() -> int:
             if bodies:
                 users.append((path.name, bodies))
         n_uses = sum(len(b) for _, b in users)
-        if driver == STRUCK_ALLOWED_IN:
+        if driver in STRUCK_ALLOWED:
+            allowed_file = STRUCK_ALLOWED[driver]
             if n_uses == 0:
                 failures.append(
-                    "main_note: ZERO \\dead{} uses. Either the retraction marking was removed, or "
+                    f"{driver}: ZERO \\dead{{}} uses. Either the retraction marking was removed, or "
                     "this test is now vacuous. A containment test whose positive control is empty "
                     "proves nothing.")
             else:
-                notes.append(f"note: {n_uses} \\dead{{}} uses across "
+                notes.append(f"{label}: {n_uses} \\dead{{}} uses across "
                              f"{', '.join(n for n, _ in users)}")
                 for name, bodies in users:
-                    if name != STRUCK_ALLOWED_FILE:
+                    if name != allowed_file:
                         failures.append(
-                            f"main_note: {len(bodies)} \\dead{{}} use(s) in {name}: "
+                            f"{driver}: {len(bodies)} \\dead{{}} use(s) in {name}: "
                             f"{bodies[:3]}{'...' if len(bodies) > 3 else ''} -- inside the note a "
-                            f"struck value belongs only in {STRUCK_ALLOWED_FILE}; state the current "
+                            f"struck value belongs only in {allowed_file}; state the current "
                             f"value in the body and move the struck one there")
                 for _, bodies in users:
                     for body in bodies:
                         nums, unres = literals_from(body, macros)
-                        struck_values |= nums
+                        struck_by_note[driver] |= nums
                         unresolved.extend(unres)
         elif n_uses:
             for name, bodies in users:
@@ -634,39 +647,54 @@ def main() -> int:
             notes.append(f"{pdf.name} freshness UNKNOWN: {'; '.join(detail)}")
         return pdf_text(pdf, tmp)
 
+    # Each note build's positive control runs on its OWN struck literals and its OWN PDF, so a note
+    # whose strikes stopped rendering cannot hide behind the other note's. The outward builds are
+    # then checked against every literal some note PDF was shown to carry -- and only when every
+    # note's control passed, as before the split, because an unproven derivation proves no absence.
+    struck_values = set().union(*struck_by_note.values())
     if not struck_values:
         _skipped("no struck literals derived -- PDF stage cannot run")
     else:
-        note_txt = read_pdf("main_note")
-        if note_txt is None:
-            _skipped("main_note.pdf absent, no PDF text extractor available, or the PDF extracted EMPTY -- "
-                      "PDF stage did not run")
-        else:
-            seen_in_note = sorted(v for v in struck_values if outward_hit(v, note_txt))
-            if not seen_in_note:
+        seen: set[str] = set()
+        controls_ok = True
+        for driver, literals in struck_by_note.items():
+            if not literals:
+                continue   # a ZERO-use note already failed above; uncoverable bodies are reported
+            note_txt = read_pdf(driver)
+            if note_txt is None:
+                _skipped(f"{driver}.pdf absent, no PDF text extractor available, or the PDF extracted "
+                         f"EMPTY -- PDF stage did not run")
+                controls_ok = False
+                continue
+            hit = sorted(v for v in literals if outward_hit(v, note_txt))
+            if not hit:
                 failures.append(
-                    f"none of the {len(struck_values)} derived struck literals appear in "
-                    f"main_note.pdf -- the derivation is broken, so absence elsewhere means nothing")
+                    f"none of the {len(literals)} derived struck literals appear in "
+                    f"{driver}.pdf -- the derivation is broken, so absence elsewhere means nothing")
+                controls_ok = False
             else:
-                notes.append(f"note.pdf carries {len(seen_in_note)}/{len(struck_values)} struck "
+                notes.append(f"{BUILDS[driver]}.pdf carries {len(hit)}/{len(literals)} struck "
                              f"literals (positive control OK)")
-                for driver, label in BUILDS.items():
-                    if driver == STRUCK_ALLOWED_IN:
-                        continue
-                    txt = read_pdf(driver)
-                    if txt is None:
-                        _skipped(f"{driver}.pdf absent, unreadable, or extracted EMPTY -- {label} build "
-                                 f"NOT PDF-checked, and this is an outward-facing build the "
-                                 f"whole check exists to protect")
-                        continue
-                    hits = sorted(v for v in seen_in_note if outward_hit(v, txt))
-                    if hits:
-                        failures.append(
-                            f"{driver}.pdf contains struck literal(s) {hits} that main_note.pdf "
-                            f"also carries as \\dead{{}} -- verify by eye before treating as a "
-                            f"digit coincidence, then narrow this check rather than deleting it")
-                    else:
-                        notes.append(f"{label}.pdf: 0 of {len(seen_in_note)} struck literals")
+                seen.update(hit)
+        if controls_ok:
+            seen_in_note = sorted(seen)
+            for driver, label in BUILDS.items():
+                if driver in STRUCK_ALLOWED:
+                    continue
+                txt = read_pdf(driver)
+                if txt is None:
+                    _skipped(f"{driver}.pdf absent, unreadable, or extracted EMPTY -- {label} build "
+                             f"NOT PDF-checked, and this is an outward-facing build the "
+                             f"whole check exists to protect")
+                    continue
+                hits = sorted(v for v in seen_in_note if outward_hit(v, txt))
+                if hits:
+                    failures.append(
+                        f"{driver}.pdf contains struck literal(s) {hits} that a note PDF "
+                        f"also carries as \\dead{{}} -- verify by eye before treating as a "
+                        f"digit coincidence, then narrow this check rather than deleting it")
+                else:
+                    notes.append(f"{label}.pdf: 0 of {len(seen_in_note)} struck literals")
 
     for n in notes:
         print(f"  ok   {n}")

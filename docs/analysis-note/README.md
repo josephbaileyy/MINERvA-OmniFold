@@ -1,10 +1,11 @@
 # Publication deliverables and completion plan
 
-This directory builds three audience-specific documents from shared sources:
+This directory builds four audience-specific documents from shared sources:
 
 | Deliverable | Driver | Purpose |
 |---|---|---|
-| Analysis note | `main_note.tex` | Complete technical and validation record |
+| Analysis note | `main_note.tex` | Complete technical and validation record of the scalar (GBDT) analysis |
+| PET note | `pet_note.tex` | Companion note: point-cloud (PET) method development, split from the analysis note on 2026-10-12 |
 | Primer | `main_primer.tex` | Short internal orientation |
 | External paper | `main_paper.tex` | PRL-style scientific argument |
 
@@ -14,7 +15,7 @@ Build and containment checks run together:
 bash build_all.sh
 ```
 
-`build_all.sh` must produce all three PDFs and prove that retracted note-only material does not
+`build_all.sh` must produce all four PDFs and prove that retracted note-only material does not
 reach the primer or paper. The PDFs are generated outputs; the tracked sources and figures in this
 directory are the publication inputs.
 
@@ -115,17 +116,20 @@ not imply otherwise.
 | Paper title, authors, abstract, bibliography wiring | `main_paper.tex` |
 | Paper scientific narrative and figure placement | `paper_body.tex` |
 | Full note driver and section ordering | `main_note.tex` |
+| PET note driver and section ordering | `pet_note.tex` |
 | Primer driver and narrative | `main_primer.tex`, `primer_body.tex` |
-| Shared measured-value macros | `values.tex` (all three builds); `values_inference.tex` (joint-test numbers, note and paper) |
+| Shared measured-value macros | `values.tex` (all four builds); `values_inference.tex` (joint-test numbers, note and paper) |
 | Where each topic lives (the note's own map, "Where to find it") | `sec_intro.tex` |
 | 2D validation, including fixed-truth coverage | `sec_validation.tex`, `app_response_mismatch.tex` |
 | Scalar higher-dimensional central values | `sec_3d.tex` (`E_avail`, `q3`), `sec_eavailw.tex` (`W`, the `(E_avail,W)` plane) |
 | Five-axis estimator validation, model dependence, 5D coverage, adopted 5D covariance | `sec_5d.tex` |
 | Calibrated joint generator tests (complete record; the article's Sec. VI is a summary of it) | `sec_joint.tex`, numbers in `values_inference.tex` |
 | Uncertainty construction and inference rules | `sec_systematics.tex`, `app_statmethods.tex` (general methods and the 2D comparison), `app_statmethods_nd.tex` (N-D and inference) |
-| PET diagnostic studies (an appendix since 2026-10-11) and the full-event `C_stat` construction | `sec_pet.tex`, `sec_pet_campaigns.tex`, `app_cstat.tex` |
+| PET diagnostic studies and the full-event `C_stat` construction (the PET note since 2026-10-12) | `sec_pet.tex`, `sec_pet_campaigns.tex`, `app_cstat.tex`; the PET note's records and audit trail `app_provenance_pet.tex`, `app_history_pet.tex` |
+| The analysis note's pointer to the PET note | `app_pet_pointer.tex` (keeps the `sec:pet` label) |
+| References between the two notes (by section title) | `\notesec`, `\petsec` in `preamble.tex` |
 | Guide to the appendices (methods, diagnostic studies, records) | `app_guide.tex` |
-| Struck values, withdrawn arguments, superseded constructions (note only; the only note file allowed `\dead{}`) | `app_history.tex` |
+| Struck values, withdrawn arguments, superseded constructions (notes only; the only file in each note allowed `\dead{}`) | `app_history.tex` (analysis note), `app_history_pet.tex` (PET note) |
 | Generated figure inputs | `figures/`, `make_figures.sh` |
 | Build and containment behavior | `build_all.sh`, `test_build_all.py`, `check_dead_containment.py` |
 

@@ -1,0 +1,11 @@
+# 2026-10-11T22:38:57+00:00 id=R3R4-rerun rc=0 cmd=python3 -I reduce_r3.py /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/inputs ../results/R3R4_decomposition.json
+TuneV1     C ln_rho=+0.0485 steps={'rate': 0.1263, 'muon_shape': 0.0284, 'transfer_given_muon': 0.0147, 'partition_given_transfer': 0.0055} sd=0.0002
+GENIE_CV   C ln_rho=+0.0281 steps={'rate': 0.1048, 'muon_shape': 0.0166, 'transfer_given_muon': 0.004, 'partition_given_transfer': 0.0075} sd=0.0025
+GENIE_MEC  C ln_rho=+0.0644 steps={'rate': 0.0654, 'muon_shape': 0.0286, 'transfer_given_muon': 0.0276, 'partition_given_transfer': 0.0082} sd=0.0026
+NuWro      C ln_rho=+0.0062 steps={'rate': 0.1423, 'muon_shape': 0.0237, 'transfer_given_muon': -0.0341, 'partition_given_transfer': 0.0166} sd=0.0020
+GiBUU      C ln_rho=+0.1480 steps={'rate': 0.3263, 'muon_shape': 0.0153, 'transfer_given_muon': 0.094, 'partition_given_transfer': 0.0387} sd=0.0046
+  R TuneV1     C ln_rho d0=+0.0475 -4%=+0.0841 +4%=+0.0099
+  R GENIE_CV   C ln_rho d0=+0.0271 -4%=+0.0637 +4%=-0.0105
+  R GENIE_MEC  C ln_rho d0=+0.0634 -4%=+0.1000 +4%=+0.0258
+  R NuWro      C ln_rho d0=+0.0052 -4%=+0.0418 +4%=-0.0324
+  R GiBUU      C ln_rho d0=+0.1470 -4%=+0.1836 +4%=+0.1094
