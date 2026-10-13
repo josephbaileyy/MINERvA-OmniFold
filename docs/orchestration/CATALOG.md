@@ -191,11 +191,12 @@ Unreviewed documentation. Grants no compute, contact or adoption authority.
 | VL170 adoption: rebuilt bootstrap and universe+bootstrap rollups, χ², budget recomputation with input sha256, figures, controls (`VL172`, `KNOWN_ISSUES.md` 85) | [`state/ki84-adopt-20261006/`](state/ki84-adopt-20261006/) |
 | KNOWN_ISSUES 85 bootstrap-on-one-toy diagnostic (arms B + T): decision rule committed before any run | [`DECISION-RULE-20261006-ki85-bootstrap-diagnostic.md`](DECISION-RULE-20261006-ki85-bootstrap-diagnostic.md) |
 
-### 5D injected-W-shape closure, corrected — pre-registered 2026-10-12
+### 5D injected-W-shape closure, corrected — PASS (narrow), 2026-10-13
 
 | Subject | Record |
 |---|---|
 | why the June 5D W closure was a null test, the corrected bump (W = 1.23 GeV), positive control, rule (bottom-line ratio < 0.20), launcher and scorer | [`PREREG-20261012-5d-injected-w-closure.md`](PREREG-20261012-5d-injected-w-closure.md) |
+| the verdict (ratio 0.180 vs 0.20, `VL176`, job 59719296), CITABLE FOR / NOT CITABLE FOR, per-bin and joint-cell numbers, evidence | [`OUTCOME-20261013-5d-injected-w-closure-pass.md`](OUTCOME-20261013-5d-injected-w-closure-pass.md), [`state/wclosure-5d-20261012/`](state/wclosure-5d-20261012/) |
 
 ### Scalar-5D — the current entry route (compacted 2026-09-24)
 

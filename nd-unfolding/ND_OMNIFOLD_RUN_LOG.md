@@ -1082,3 +1082,25 @@ The paper/primer rounding statement is narrowed to containment in the tested R b
 Historical A_FAIL, measurement NOT ADMITTED, adoption boundaries and NOT READY remain.
 New results are same-analyst reductions, not a newly independent scientific review.
 Delivery/build evidence and both pushed branch heads: package DELIVERY.md.
+
+## 2026-10-13 — Corrected 5D injected-W-shape closure: PASS, narrow (VL176)
+
+- Authorization: Joseph, 2026-10-12 ("just do the injected shape closure"), within the standing
+  under-12 h approval. Plan `docs/orchestration/PREREG-20261012-5d-injected-w-closure.md`, committed
+  at `b11ff40d` (15:28:41 PT) and pushed before submission (15:30:48 PT).
+- Job `59719296` (`wclos5d`): `sacct` State COMPLETED, exit 0:0, Elapsed 00:37:34, 52 CPUs on
+  `shared_milan_ss11` `nid004103`. Ran from the dedicated detached worktree
+  `/pscratch/sd/j/josephrb/MINERvA-OmniFold-wclosure-20261012` at `b11ff40d`, each step under
+  `mnv_guarded_run.py --expect-root` (0 modules outside). Launcher
+  `nd-unfolding/sbatch_closure_5d_wbump_20261012.sh`; scorer `nd-unfolding/closure_5d_w_bottom_line.py`.
+- Inputs: `runEventLoopOmniFold_5D_MEFHC.root` `b6d2651c…`, flux MC `d40aea69…`. Arms: I = production
+  5D flags + `--closure --closure-reweight-axis W --closure-amplitude 0.3 --closure-center 1.23
+  --closure-sigma 0.15` (26 min); N = `--closure` only (11 min).
+- Numbers: injected mean factor 1.0529; W-marginal feature bin 1.1–1.4 GeV injected 23.10%, residual
+  4.16%, bottom-line ratio 0.1799 < 0.20 → PASS. W ratios 1.031/0.958/1.027/0.998/1.000/1.000; 5D per
+  bin median 1.0070, std 0.0371, max|dev| 0.1515; joint (E_avail, W) median 1.0093, max|dev| 0.094,
+  peak-W column 0.906–0.978.
+- Outputs `/pscratch/sd/j/josephrb/wclosure_5d_20261012/` (`SHA256SUMS`); score JSON, driver logs,
+  inventories and `sacct` copy in `docs/orchestration/state/wclosure-5d-20261012/`. Outcome
+  `docs/orchestration/OUTCOME-20261013-5d-injected-w-closure-pass.md`. Supersedes the June null test
+  (job `54062313`, bump at W = 0.3 GeV).

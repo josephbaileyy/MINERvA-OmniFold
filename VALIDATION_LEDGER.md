@@ -1,5 +1,16 @@
 # MINERvA-OmniFold Validation Ledger
 
+## 2026-10-13 5D injected-W-shape closure, corrected (signal only)
+
+Plan [`PREREG-20261012-5d-injected-w-closure.md`](docs/orchestration/PREREG-20261012-5d-injected-w-closure.md) (`b11ff40d`, pushed before submission);
+outcome [`OUTCOME-20261013-5d-injected-w-closure-pass.md`](docs/orchestration/OUTCOME-20261013-5d-injected-w-closure-pass.md);
+evidence [`state/wclosure-5d-20261012/`](docs/orchestration/state/wclosure-5d-20261012/). Supersedes the June 2026 5D
+"injected-W" closure (job `54062313`), which centred the bump at W = 0.3 GeV and injected nothing.
+
+| ID | measurement | verified value | disposition |
+|---|---|---|---|
+| VL176 | Production 5D unfold (lgbm, 5 iter, seed 42, `--use-weights`, omnifile `b6d2651c…`) in `--closure` with +30% truth-W Gaussian at 1.23 GeV, σ 0.15; plain-closure arm for nominal truth; scored by `bottom_line_test.bottom_line_ratio` on the W marginal. Job `59719296` COMPLETED, 00:37:34, at `b11ff40d` | positive control: mean factor **1.0529** (≥ 1.01). W-marginal feature bin 1.1–1.4 GeV: injected **23.10%**, residual **4.16%**, ratio **0.1799** (< 0.20); all-bin ratio 0.249 (not the rule). W ratios 1.031/0.958/1.027/0.998/1.000/1.000. 5D per bin median 1.0070, std 0.0371, max\|dev\| 0.1515 (null arm exactly 1/0/0). Joint (E_avail,W), 42 cells: median 1.0093, max\|dev\| 0.094; peak column 0.906–0.978; highest-W column 0.999–1.018 | **PASS** (narrow; one feature bin; no seed repeat). Marginal W recovery of one smooth bump only; joint cells, generator shapes, background and coverage not tested. Paper wording unchanged (Joseph's call) |
+
 ## 2026-10-12 2D covariance with C04+X01 repaired (built, verified, adopted 2026-10-12)
 
 Grant: [`AUTHORIZATION-20261012-2d-closeout-fluxrepair.md`](docs/orchestration/AUTHORIZATION-20261012-2d-closeout-fluxrepair.md), on
