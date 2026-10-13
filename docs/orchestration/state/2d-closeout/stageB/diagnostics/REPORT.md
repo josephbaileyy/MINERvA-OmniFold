@@ -147,7 +147,7 @@ seed-42 July product by trainer noise; the bridge is meaningful at seed 42 only,
 
 ### 3.3 No new event loop for a G2 repair
 
-The correct per-event universe truth weights of the miss rows are already in each universe omnifile's
+The correct per-event universe truth weights of the miss rows are already in the universe omnifile's
 `mc_truth_denom` tree (`w_truth_<band>_<idx>`), and `build_miss_override.py` attaches them exactly (G-a:
 8,999,007 rows; G-b: c_b = 1 to 1.9e-14). **A G2 repair is therefore re-unfolds only.** This was verified for
 `MaRES_0` in the July universe omnifile; for the other vertical universes it follows from the same
@@ -398,6 +398,11 @@ shas, the scope (only `state/2d-closeout/**` plus the generated MANIFEST) and th
 | 8 the App. A grouping statement is stale after the merge | dated to `b456fa4d`; App. A on merged main uses the current grouping (§6.3) |
 | 9 "any vertical universe" and "would double-count" overstate | scoped to `MaRES_0` plus tree layout (§3.3, CITABLE FOR); "would risk counting it twice" (§6.2) |
 | 10 muon ratio has no committed output | `muon_check.py` re-run 2026-10-13, output committed (§6.3) |
+
+**Focused re-review 1** (the same verifier, fresh worktree, on `a2266685`): **APPROVE**. All ten findings are
+resolved with no new overclaims, the muon-check output supports the quoted figures, and the scope and MANIFEST
+check pass. One remaining cosmetic MINOR ("each universe omnifile's" → "the universe omnifile's", §3.3) was
+applied in the next commit. No second re-review was needed.
 
 Not checkable by the verifier: the director's seed-43 go-ahead and the docstring ruling (cross-session messages
 with no committed record), whether the quoted decision is verbatim, the C07′ literature quotes, today's CFS
