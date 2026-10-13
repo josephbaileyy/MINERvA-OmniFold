@@ -231,6 +231,19 @@ of this paragraph said that a perfectly correct model with correct
 uncertainties gives exactly $1$, and then used $\approx1.5$ as a tolerance
 against it. Both halves of that inference are withdrawn.
 
+\paragraph{From \S\ref{sec:closure-map}, injected-$W$ closure.}
+Earlier versions of this note and of the paper counted the five-dimensional central value
+among those passing an injected-shape closure check. That statement rested on a June 2026 run that
+centred the $W$ bump at the driver default \SI{0.3}{GeV}, below physical $W$
+($W\gtrsim\SI{0.94}{GeV}$), so the injected factor was about $4\times10^{-9}$ and the mean
+weight 1.0000: a null self-closure, not a recovery test. It was read as a pass because it
+had no predeclared threshold and nothing checked that the injection was nonzero, so ratios
+of 1.000 looked like perfect recovery. The statement is withdrawn. The corrected test, with
+the bump at \SI{1.23}{GeV}, a nonzero-injection check and a threshold set in advance, was run
+on 2026-10-13 and is the row in Table~\ref{tab:closure-map}.
+% June run: git show aecd0d22 (job 54062313); corrected run job 59719296, VL176,
+% OUTCOME-20261013-5d-injected-w-closure-pass.md.
+
 \paragraph{From \S\ref{sec:closure-hv}, hidden-variable closure.}
 After ``$A=0.30$ gives $3.43\%$, which \emph{exceeds} $3.0\%$'':
 \S\ref{sec:validation}
