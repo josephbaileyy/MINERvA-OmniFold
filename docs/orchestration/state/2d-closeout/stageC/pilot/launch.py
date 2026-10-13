@@ -94,6 +94,15 @@ def ledger():
     return done, fly, rows
 
 
+def queued():
+    """Job names this user has in the Slurm queue now (squeue sees a submission before sacct may)."""
+    r = subprocess.run(["squeue", "-h", "-u", os.environ.get("USER", "josephrb"), "-o", "%j"],
+                       capture_output=True, text=True)
+    if r.returncode != 0:
+        raise SystemExit(f"REFUSE: squeue unreadable (rc {r.returncode})")
+    return {ln.strip() for ln in r.stdout.splitlines() if ln.strip().startswith("2dc_C_")}
+
+
 def attempts(rows):
     """jobs.tsv name -> list of sacct states of its attempts (array tasks are not used by this package)."""
     out = {}
@@ -138,6 +147,11 @@ def preconditions(batch):
         raise SystemExit("REFUSE: seed 42 did not route MATERIAL or NOT RESOLVED; no seed-43 pair")
     if batch in ("B4", "B5", "B6", "B7") and load("p1_unit.json").get("b_eq_1", {}).get("verdict") != "PASS":
         raise SystemExit("REFUSE: the b = 1 control did not PASS; P1 stops")
+    if batch == "B8":   # P3 runs last (DESIGN §4): every P1 replica job must already have been submitted
+        names = {r["name"] for r in table() if r["batch"] in ("B4", "B5", "B6", "B7")}
+        seen = set(attempts(ledger()[2])) | queued()
+        if not names <= seen:
+            raise SystemExit(f"REFUSE: B8 (P3) runs after B4-B7; {len(names - seen)} P1 jobs not yet submitted")
 
 
 def simulate(mode):
@@ -188,8 +202,11 @@ def main():
         Path(NS, d).mkdir(parents=True, exist_ok=True)
     done, fly, rows_l = ledger()
     att = attempts(rows_l)
+    inq = queued()
     for r in br:
         prior = att.get(r["name"], [])
+        if r["name"] in inq:
+            raise SystemExit(f"REFUSE: {r['name']} is in the Slurm queue now; no double submission")
         if a.retry:
             if len(prior) != 1 or prior[0] in TERMINAL_RUNNING or prior[0] == "COMPLETED":
                 raise SystemExit(f"REFUSE: {r['name']} has attempts {prior}; a retry needs exactly one ended, "
@@ -209,8 +226,9 @@ def main():
     if a.action == "gate":
         return 0
     preconditions(br[0]["batch"])
-    if a.retry and a.action == "submit":
-        Path(NS, "retries", f"{a.retry}.time").write_text(a.time + "\n")
+    rec = Path(NS, "retries", f"{a.retry}.time") if a.retry else None
+    if rec is not None:   # written before sbatch (the job reads it at start), removed if sbatch fails
+        rec.write_text(a.time + "\n")
     for r in br:
         cmd = ["sbatch", f"--job-name={r['name']}", f"--qos={r['qos']}", f"--cpus-per-task={r['cpus']}",
                f"--mem={r['mem']}", f"--time={a.time or r['time']}", SBATCH]
@@ -218,6 +236,8 @@ def main():
         s = subprocess.run(cmd, capture_output=True, text=True)
         print(s.stdout.strip(), s.stderr.strip())
         if s.returncode != 0:
+            if rec is not None:
+                rec.unlink()
             raise SystemExit(f"sbatch failed for {r['name']}; nothing further submitted")
     return 0
 

@@ -89,9 +89,9 @@ INCONCLUSIVE. Anything but PASS stops the pilot (record §3): no later batch is 
 | B2 | `G2_on` | P0 PASS; `out/2dc_C_P2_Flux23/xsec.root` exists (run *a* of P2-G2); `results/p2.json` P2-EQ PASS |
 | B3 (conditional) | `G2_off_s43`, `G2_on_s43` | as B2, and `results/g2_s42.json` routes MATERIAL or NOT RESOLVED ABOVE TRAINER NOISE |
 | B4–B7 | P1 replicas, 15 jobs each: bootstrap seeds 1–5, 6–10, 11–15, 16–20, each × the three arms `fixed`, `joint`, `bkg` | P0 PASS; `results/p1_unit.json` b ≡ 1 control PASS |
-| B8 | `P3_BeamAngleX0`, `P3_MINOS0` | P0 PASS |
+| B8 | `P3_BeamAngleX0`, `P3_MINOS0` | P0 PASS; every B4–B7 job already submitted (P3 runs last) |
 
-`launch.py` also refuses a job name that already has a `sacct` row (no double submission), creates `logs/`,
+`launch.py` also refuses a job name that already has a `sacct` row or is in `squeue` (no double submission), creates `logs/`,
 `results/`, `retries/`, `out/` and `tmp/` before the first submission, and needs Python ≥ 3.9 (source
 `setup_salloc_env.sh` first; the login node's `/usr/bin/python3` is 3.6).
 
@@ -447,3 +447,8 @@ and every external pin on NERSC, and independently recomputed the Flux selection
 The verifier's scientific note is taken into §5: a K1 FAIL at 0.01 σ_ML needs diagnosis and is not presumed to
 be a defect. Its other note, that P5's 2.4e-13 covers only a vertical universe on the derived path, is why P2-EQ
 gates P2-G2.
+
+**Focused re-review 1** (same verifier, fresh worktree, `c4b8d915`): **APPROVE**, all 14 resolved, no new
+MATERIAL defect; it confirmed `scontrol` prints `AllocTRES=…,billing=N` on Perlmutter (Slurm 25.11.8). Three
+non-blocking MINOR notes were applied in the next commit: B8 now requires every B4–B7 job to have been submitted
+(P3 last is enforced); a retry record is removed if `sbatch` fails; the double-submit guard also reads `squeue`.

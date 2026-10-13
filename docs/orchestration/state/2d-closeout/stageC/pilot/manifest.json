@@ -47,11 +47,11 @@
   }
  },
  "package": {
-  "docs/orchestration/state/2d-closeout/stageC/pilot/DESIGN.md": "3ed4461eb664f89491c7522cdc71eaac75cfb2c4e575ef8bf550a85cff402718",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/DESIGN.md": "5c7292c2068cdd857833f12e79cdfb03dd793e52221aefee73436343b6e03600",
   "docs/orchestration/state/2d-closeout/stageC/pilot/analyze_pilot.py": "a9e1292ba55387410f61617a0c0bc92068ff5584261934b44c2f9d81878c3f75",
   "docs/orchestration/state/2d-closeout/stageC/pilot/evidence/binding-delta.txt": "e3d7d0f31535587e0eb5fa9198689507b669530aa4b1230fe966aa85af027c07",
   "docs/orchestration/state/2d-closeout/stageC/pilot/jobs.tsv": "54b0abcaff3da6256c3ba791ad55ab4c95a2c5b66bb88148f82c4fa522f4b9d8",
-  "docs/orchestration/state/2d-closeout/stageC/pilot/launch.py": "b86e09bb1d268bcc912716a2649b39ef9d9dbe9d1647b717e154185a7cb56b41",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/launch.py": "e13ca799c9332144d64e82546eaeaaf57ccd478cbba18bc9b40538d98254aa69",
   "docs/orchestration/state/2d-closeout/stageC/pilot/make_manifest.py": "d8eb19a3b9aef1177d985b843368e7bcb82fdc8937464fd09364e364f221bee3",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p1/README.md": "ed63b337ddfea7f2aaca7574ea317a8367a2628d6a66d5487f67274a68bb9124",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p1/SHA256SUMS": "d4a83675794010e6b480f66740f398d16ce2c1caea0e81f6ac8806b69249a14a",
