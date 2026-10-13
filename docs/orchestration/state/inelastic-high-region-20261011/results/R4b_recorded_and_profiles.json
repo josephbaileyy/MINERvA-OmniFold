@@ -1,0 +1,1813 @@
+{
+ "schema": "inelastic-r4b/1",
+ "digests": {
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/products/5d/xsec_5d_MEFHC_5iter_lgbm.root": "630306e20e4e175bde8b459174842a58e4f4b5a694b8a5018e730a952820aec8",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz": "bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz": "cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz": "c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz": "475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz": "48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18",
+  "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rrzero_b-_j-.npz": "ec5dc97d8554f008902a17428724e8482544d6e6de7db5ae1155d96d51dc4c4e",
+  "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr0_b-_j-.npz": "df11bfd8e879a051d3d0bf2aa5fc4e0131efa9065bcbd89d29a859ddb9f8639b",
+  "/pscratch/sd/j/josephrb/w2-recoil-20261006/w2b/unf/w2b_rr1_b-_j-.npz": "36313201ecffa85183fa83d642c9b0b71dc67f9ed1743dba7184eb22c41356a8"
+ },
+ "recorded_biases": {
+  "s5n_C3_nominal_background_residual": {
+   "C": {
+    "weighted_mean_rel": 0.0018814995053991156,
+    "max_abs_rel_cell": 0.0024149215285057136,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.001231939939628036,
+      0.0016834473295442183,
+      0.0012956929932553788
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.0019261889459137728,
+      0.0014775087926662148,
+      0.0010958993484568795
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.00044166477275070883,
+      0.0020262863244498728,
+      0.0024149215285057136
+     ]
+    ]
+   },
+   "M": {
+    "weighted_mean_rel": 0.0008559977685255387,
+    "max_abs_rel_cell": 0.0019408441409418773,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      0.0014989301542719477,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.0011587330723899063,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.0008716761323970524,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.0007026664697267276,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.0008651254718888342,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.0011043664646753647,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      -0.0019408441409418773,
+      NaN,
+      NaN,
+      NaN
+     ]
+    ]
+   },
+   "C_no_overflow": {
+    "weighted_mean_rel": 0.001613732295971722,
+    "max_abs_rel_cell": 0.0019261889459137728,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.001231939939628036,
+      0.0016834473295442183,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.0019261889459137728,
+      0.0014775087926662148,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ]
+    ]
+   },
+   "C_overflow": {
+    "weighted_mean_rel": 0.0021614048935254234,
+    "max_abs_rel_cell": 0.0024149215285057136,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      0.0012956929932553788
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      0.0010958993484568795
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.00044166477275070883,
+      0.0020262863244498728,
+      0.0024149215285057136
+     ]
+    ]
+   }
+  },
+  "s5n_C4_eavail_shape_regularization_residual": {
+   "C": {
+    "weighted_mean_rel": 0.02477423977935584,
+    "max_abs_rel_cell": 0.7406711163877655,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.13727284393129616,
+      0.4201711932304145,
+      0.7406711163877655
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      -0.031443881980627454,
+      0.10187897477776749,
+      0.34537280650606655
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      -0.1509671363461816,
+      -0.10925392390750771,
+      -0.016065413319230837
+     ]
+    ]
+   },
+   "M": {
+    "weighted_mean_rel": 0.01321898933169534,
+    "max_abs_rel_cell": 0.2890416103863797,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      -0.26434241700241407,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      -0.2890416103863797,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      -0.1740011559901434,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      -0.023550943159788333,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.10646861873640633,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      -0.06720693608759214,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      -0.13175273096421533,
+      NaN,
+      NaN,
+      NaN
+     ]
+    ]
+   },
+   "C_no_overflow": {
+    "weighted_mean_rel": 0.08006874956500866,
+    "max_abs_rel_cell": 0.4201711932304145,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.13727284393129616,
+      0.4201711932304145,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      -0.031443881980627454,
+      0.10187897477776749,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ]
+    ]
+   },
+   "C_overflow": {
+    "weighted_mean_rel": -0.03302683024674744,
+    "max_abs_rel_cell": 0.7406711163877655,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      0.7406711163877655
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      0.34537280650606655
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      -0.1509671363461816,
+      -0.10925392390750771,
+      -0.016065413319230837
+     ]
+    ]
+   }
+  },
+  "s5n_C5_q3_departure_induced_movement": {
+   "C": {
+    "weighted_mean_rel": 0.007630321414883264,
+    "max_abs_rel_cell": 0.2604365643042662,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      -0.09351200554304635,
+      -0.0359304470343655,
+      -0.04433430853537935
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.003825299330076281,
+      -0.05386865188444426,
+      -0.04638151579720847
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.2604365643042662,
+      0.04490802825305475,
+      0.06249885815226227
+     ]
+    ]
+   },
+   "M": {
+    "weighted_mean_rel": -0.018481220812484635,
+    "max_abs_rel_cell": 0.3596143573227082,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      0.07120911830751189,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      -0.048928158750227185,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      -0.08425243643636232,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      -0.11043970750151665,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      -0.019343800404484655,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.2170768135406762,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.3596143573227082,
+      NaN,
+      NaN,
+      NaN
+     ]
+    ]
+   },
+   "C_no_overflow": {
+    "weighted_mean_rel": -0.03839461301887192,
+    "max_abs_rel_cell": 0.09351200554304635,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      -0.09351200554304635,
+      -0.0359304470343655,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.003825299330076281,
+      -0.05386865188444426,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ]
+    ]
+   },
+   "C_overflow": {
+    "weighted_mean_rel": 0.05574161616122999,
+    "max_abs_rel_cell": 0.2604365643042662,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      -0.04433430853537935
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      -0.04638151579720847
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.2604365643042662,
+      0.04490802825305475,
+      0.06249885815226227
+     ]
+    ]
+   }
+  },
+  "s5c_D1_purity_background_production": {
+   "C": {
+    "weighted_mean_rel": 0.006627802835950866,
+    "max_abs_rel_cell": 0.0392470311945947,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.0021875340952951195,
+      0.004819811131022866,
+      -0.0392470311945947
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.0026295153857465907,
+      0.004744166861613495,
+      -0.038449061918506736
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.0033496336396906775,
+      0.003466185615908163,
+      0.01864875744428269
+     ]
+    ]
+   },
+   "M": {
+    "weighted_mean_rel": 0.0013283802977724197,
+    "max_abs_rel_cell": 0.00235349840397899,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      0.0022105620697665017,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.00235349840397899,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.001001646198930026,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.0008315285255996695,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.0015094654087098613,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.0016595106132483673,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      0.0012759830270600303,
+      NaN,
+      NaN,
+      NaN
+     ]
+    ]
+   },
+   "C_no_overflow": {
+    "weighted_mean_rel": 0.003496479741881285,
+    "max_abs_rel_cell": 0.004819811131022866,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.0021875340952951195,
+      0.004819811131022866,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.0026295153857465907,
+      0.004744166861613495,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ]
+    ]
+   },
+   "C_overflow": {
+    "weighted_mean_rel": 0.009901072210004212,
+    "max_abs_rel_cell": 0.0392470311945947,
+    "per_cell_rel": [
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      -0.0392470311945947
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      -0.038449061918506736
+     ],
+     [
+      NaN,
+      NaN,
+      NaN,
+      0.0033496336396906775,
+      0.003466185615908163,
+      0.01864875744428269
+     ]
+    ]
+   }
+  },
+  "units_note": "mean_rel as stored in each receipt (fractional unless the receipt says percent)",
+  "receipt_unit_probe": {
+   "s5c_EW41": 0.01864875744428269,
+   "s5n_C4_EW29": 0.7406711163877655
+  }
+ },
+ "profiles": {
+  "TuneV1": {
+   "W0": {
+    "ln_rho": 0.09447015940030434,
+    "steps": {
+     "rate": 0.1262927571804723,
+     "muon_shape": -0.027904463056323606,
+     "transfer_given_muon": 0.1223746224566284,
+     "partition_given_transfer": -2.2204460492503136e-16
+    },
+    "recoil_minus4_shift_ln_rho": -0.06824116753727133,
+    "recoil_plus4_shift_ln_rho": 0.06826086880580168,
+    "data_fraction": 0.15659795218969608
+   },
+   "W1": {
+    "ln_rho": -0.05089678459038999,
+    "steps": {
+     "rate": 0.1262927571804725,
+     "muon_shape": -0.031419616527315945,
+     "transfer_given_muon": -0.01947716806307402,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": -0.018650657267739956,
+    "recoil_plus4_shift_ln_rho": 0.01611588720443384,
+    "data_fraction": 0.18324155860607005
+   },
+   "W2": {
+    "ln_rho": -0.1207363450989865,
+    "steps": {
+     "rate": 0.1262927571804725,
+     "muon_shape": -0.01187222695470198,
+     "transfer_given_muon": -0.10886411814428437,
+     "partition_given_transfer": -1.1102230246251565e-16
+    },
+    "recoil_minus4_shift_ln_rho": -0.011410391168964085,
+    "recoil_plus4_shift_ln_rho": 0.009073091616348769,
+    "data_fraction": 0.1848531415378979
+   },
+   "W3": {
+    "ln_rho": 0.0306066746676264,
+    "steps": {
+     "rate": 0.1262927571804723,
+     "muon_shape": 0.01080620628321743,
+     "transfer_given_muon": 0.019800468384408954,
+     "partition_given_transfer": 2.2204460492503128e-16
+    },
+    "recoil_minus4_shift_ln_rho": -0.012567435414931882,
+    "recoil_plus4_shift_ln_rho": 0.010281213759087776,
+    "data_fraction": 0.15014081128888543
+   },
+   "W4": {
+    "ln_rho": -0.004839166462984948,
+    "steps": {
+     "rate": 0.1262927571804725,
+     "muon_shape": 0.01283559361070628,
+     "transfer_given_muon": -0.017674760073691332,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": 0.03608031805915696,
+    "recoil_plus4_shift_ln_rho": -0.04590932862058675,
+    "data_fraction": 0.19494953721981712
+   },
+   "W5": {
+    "ln_rho": 0.12754496580483507,
+    "steps": {
+     "rate": 0.1262927571804723,
+     "muon_shape": 0.06936885100638358,
+     "transfer_given_muon": 0.05817611479845159,
+     "partition_given_transfer": -1.1102230246251565e-16
+    },
+    "recoil_minus4_shift_ln_rho": 0.07842653032826744,
+    "recoil_plus4_shift_ln_rho": -0.068336704159799,
+    "data_fraction": 0.13021699915763352
+   },
+   "A0_Wge1.8": {
+    "ln_rho": -0.07427958211136713,
+    "steps": {
+     "rate": 0.1262927571804723,
+     "muon_shape": 0.011779768306067315,
+     "transfer_given_muon": 0.00547856152752473,
+     "partition_given_transfer": -0.09153791194495908
+    },
+    "recoil_minus4_shift_ln_rho": -0.014070772876261295,
+    "recoil_plus4_shift_ln_rho": 0.017166578076936168,
+    "data_fraction": 0.0076456535931762725
+   },
+   "A1_Wge1.8": {
+    "ln_rho": -0.030937132477553475,
+    "steps": {
+     "rate": 0.1262927571804723,
+     "muon_shape": 0.008635495515753088,
+     "transfer_given_muon": 0.012074872812509916,
+     "partition_given_transfer": -0.05164750080581655
+    },
+    "recoil_minus4_shift_ln_rho": -0.019452001848071054,
+    "recoil_plus4_shift_ln_rho": 0.022710454081359313,
+    "data_fraction": 0.002756742140918584
+   },
+   "A2_Wge1.8": {
+    "ln_rho": -0.03342918036198397,
+    "steps": {
+     "rate": 0.1262927571804723,
+     "muon_shape": 0.007396717273240479,
+     "transfer_given_muon": 0.013279804472911556,
+     "partition_given_transfer": -0.054105702108135985
+    },
+    "recoil_minus4_shift_ln_rho": -0.017861082031195533,
+    "recoil_plus4_shift_ln_rho": 0.01730700407983346,
+    "data_fraction": 0.007642832173917108
+   },
+   "A3_Wge1.8": {
+    "ln_rho": -0.04040990628005141,
+    "steps": {
+     "rate": 0.1262927571804723,
+     "muon_shape": 0.005763429781818438,
+     "transfer_given_muon": 0.014749442659148635,
+     "partition_given_transfer": -0.0609227787210185
+    },
+    "recoil_minus4_shift_ln_rho": -0.014920821566216644,
+    "recoil_plus4_shift_ln_rho": 0.008645918949648418,
+    "data_fraction": 0.01759494250920342
+   },
+   "A4_Wge1.8": {
+    "ln_rho": 0.014627398701700822,
+    "steps": {
+     "rate": 0.12629275718047211,
+     "muon_shape": -0.004879423031429933,
+     "transfer_given_muon": 0.027173215751504103,
+     "partition_given_transfer": -0.0076663940183732135
+    },
+    "recoil_minus4_shift_ln_rho": -0.0054699737307531415,
+    "recoil_plus4_shift_ln_rho": -0.0034660151008501228,
+    "data_fraction": 0.05869196905246628
+   },
+   "A5_Wge1.8": {
+    "ln_rho": 0.028999956504468405,
+    "steps": {
+     "rate": 0.1262927571804723,
+     "muon_shape": 0.009857022520912683,
+     "transfer_given_muon": 0.010335402918596246,
+     "partition_given_transfer": 0.008807531064959406
+    },
+    "recoil_minus4_shift_ln_rho": 0.01691066069018618,
+    "recoil_plus4_shift_ln_rho": -0.018528726311474952,
+    "data_fraction": 0.17589714087172495
+   },
+   "A6_Wge1.8": {
+    "ln_rho": 0.07571667337938717,
+    "steps": {
+     "rate": 0.12629275718047211,
+     "muon_shape": 0.05449590985351614,
+     "transfer_given_muon": 0.014770954107422752,
+     "partition_given_transfer": 0.006449809418448345
+    },
+    "recoil_minus4_shift_ln_rho": 0.06491419166745127,
+    "recoil_plus4_shift_ln_rho": -0.06461872187420828,
+    "data_fraction": 0.20507806732492936
+   }
+  },
+  "GENIE_CV": {
+   "W0": {
+    "ln_rho": 0.19696476645797548,
+    "steps": {
+     "rate": 0.1048075720372337,
+     "muon_shape": -0.015312619465937642,
+     "transfer_given_muon": 0.21227738592391318,
+     "partition_given_transfer": -1.1102230246251565e-16
+    },
+    "recoil_minus4_shift_ln_rho": -0.06824116753727105,
+    "recoil_plus4_shift_ln_rho": 0.06826086880580168,
+    "data_fraction": 0.15659795218969608
+   },
+   "W1": {
+    "ln_rho": 0.025636974519253897,
+    "steps": {
+     "rate": 0.10480757203723351,
+     "muon_shape": -0.015095734822994856,
+     "transfer_given_muon": 0.040732709342248964,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": -0.018650657267739762,
+    "recoil_plus4_shift_ln_rho": 0.016115887204434118,
+    "data_fraction": 0.18324155860607005
+   },
+   "W2": {
+    "ln_rho": -0.1945534912949748,
+    "steps": {
+     "rate": 0.10480757203723351,
+     "muon_shape": -0.010390132359054232,
+     "transfer_given_muon": -0.18416335893592045,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": -0.011410391168963835,
+    "recoil_plus4_shift_ln_rho": 0.009073091616349088,
+    "data_fraction": 0.1848531415378979
+   },
+   "W3": {
+    "ln_rho": -0.08571903834722566,
+    "steps": {
+     "rate": 0.10480757203723351,
+     "muon_shape": -0.004692897212488858,
+     "transfer_given_muon": -0.08102614113473701,
+     "partition_given_transfer": 2.2204460492503128e-16
+    },
+    "recoil_minus4_shift_ln_rho": -0.012567435414931508,
+    "recoil_plus4_shift_ln_rho": 0.010281213759087929,
+    "data_fraction": 0.15014081128888543
+   },
+   "W4": {
+    "ln_rho": 0.011010324026200904,
+    "steps": {
+     "rate": 0.1048075720372333,
+     "muon_shape": 0.00013525805210766958,
+     "transfer_given_muon": 0.010875065974093134,
+     "partition_given_transfer": 2.2204460492503128e-16
+    },
+    "recoil_minus4_shift_ln_rho": 0.03608031805915694,
+    "recoil_plus4_shift_ln_rho": -0.045909328620586484,
+    "data_fraction": 0.19494953721981712
+   },
+   "W5": {
+    "ln_rho": 0.15206030129349463,
+    "steps": {
+     "rate": 0.1048075720372333,
+     "muon_shape": 0.0665015171142674,
+     "transfer_given_muon": 0.08555878417922717,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": 0.07842653032826755,
+    "recoil_plus4_shift_ln_rho": -0.06833670415979919,
+    "data_fraction": 0.13021699915763352
+   },
+   "A0_Wge1.8": {
+    "ln_rho": -0.07788964234573002,
+    "steps": {
+     "rate": 0.1048075720372333,
+     "muon_shape": -0.005019531235409727,
+     "transfer_given_muon": -0.04788410587844035,
+     "partition_given_transfer": -0.02498600523187998
+    },
+    "recoil_minus4_shift_ln_rho": -0.014070772876261295,
+    "recoil_plus4_shift_ln_rho": 0.01716657807693621,
+    "data_fraction": 0.0076456535931762725
+   },
+   "A1_Wge1.8": {
+    "ln_rho": -0.1298737254422953,
+    "steps": {
+     "rate": 0.1048075720372333,
+     "muon_shape": -0.005940718192371723,
+     "transfer_given_muon": -0.04690262224348945,
+     "partition_given_transfer": -0.07703038500643415
+    },
+    "recoil_minus4_shift_ln_rho": -0.019452001848071138,
+    "recoil_plus4_shift_ln_rho": 0.022710454081359355,
+    "data_fraction": 0.002756742140918584
+   },
+   "A2_Wge1.8": {
+    "ln_rho": -0.15599630727937192,
+    "steps": {
+     "rate": 0.1048075720372333,
+     "muon_shape": -0.008138270479640542,
+     "transfer_given_muon": -0.04411036420699198,
+     "partition_given_transfer": -0.10374767259273948
+    },
+    "recoil_minus4_shift_ln_rho": -0.01786108203119552,
+    "recoil_plus4_shift_ln_rho": 0.01730700407983371,
+    "data_fraction": 0.007642832173917108
+   },
+   "A3_Wge1.8": {
+    "ln_rho": -0.14895418972511876,
+    "steps": {
+     "rate": 0.1048075720372333,
+     "muon_shape": -0.0041257064835051056,
+     "transfer_given_muon": -0.03629666387655961,
+     "partition_given_transfer": -0.1085318193650542
+    },
+    "recoil_minus4_shift_ln_rho": -0.014920821566216158,
+    "recoil_plus4_shift_ln_rho": 0.008645918949648945,
+    "data_fraction": 0.01759494250920342
+   },
+   "A4_Wge1.8": {
+    "ln_rho": -0.060234179794776604,
+    "steps": {
+     "rate": 0.10480757203723351,
+     "muon_shape": -0.006201104745068524,
+     "transfer_given_muon": -0.05496218813467868,
+     "partition_given_transfer": 0.0009291130849708635
+    },
+    "recoil_minus4_shift_ln_rho": -0.005469973730752649,
+    "recoil_plus4_shift_ln_rho": -0.0034660151008496856,
+    "data_fraction": 0.05869196905246628
+   },
+   "A5_Wge1.8": {
+    "ln_rho": -0.012425643258520996,
+    "steps": {
+     "rate": 0.1048075720372333,
+     "muon_shape": -0.004829237304938381,
+     "transfer_given_muon": -0.01954795289005648,
+     "partition_given_transfer": 0.01195154693647364
+    },
+    "recoil_minus4_shift_ln_rho": 0.016910660690186582,
+    "recoil_plus4_shift_ln_rho": -0.018528726311474633,
+    "data_fraction": 0.17589714087172495
+   },
+   "A6_Wge1.8": {
+    "ln_rho": 0.09200966027622531,
+    "steps": {
+     "rate": 0.1048075720372337,
+     "muon_shape": 0.043984688551527415,
+     "transfer_given_muon": 0.04253612043395009,
+     "partition_given_transfer": 0.0054888512907479365
+    },
+    "recoil_minus4_shift_ln_rho": 0.06491419166745133,
+    "recoil_plus4_shift_ln_rho": -0.06461872187420807,
+    "data_fraction": 0.20507806732492936
+   }
+  },
+  "GENIE_MEC": {
+   "W0": {
+    "ln_rho": 0.15010492979298223,
+    "steps": {
+     "rate": 0.06537850234691912,
+     "muon_shape": -0.031358724373167376,
+     "transfer_given_muon": 0.18146365416614954,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": -0.06824116753727127,
+    "recoil_plus4_shift_ln_rho": 0.06826086880580154,
+    "data_fraction": 0.15659795218969608
+   },
+   "W1": {
+    "ln_rho": -0.04962993564678618,
+    "steps": {
+     "rate": 0.06537850234691933,
+     "muon_shape": -0.02791937719009393,
+     "transfer_given_muon": -0.021710558456692473,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": -0.018650657267740275,
+    "recoil_plus4_shift_ln_rho": 0.016115887204433743,
+    "data_fraction": 0.18324155860607005
+   },
+   "W2": {
+    "ln_rho": -0.17685465438834144,
+    "steps": {
+     "rate": 0.06537850234691954,
+     "muon_shape": -0.011816713260878348,
+     "transfer_given_muon": -0.16503794112746303,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": -0.01141039116896414,
+    "recoil_plus4_shift_ln_rho": 0.009073091616348755,
+    "data_fraction": 0.1848531415378979
+   },
+   "W3": {
+    "ln_rho": -0.04525200128507021,
+    "steps": {
+     "rate": 0.06537850234691954,
+     "muon_shape": 0.006568516987816878,
+     "transfer_given_muon": -0.05182051827288693,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": -0.012567435414931868,
+    "recoil_plus4_shift_ln_rho": 0.010281213759088186,
+    "data_fraction": 0.15014081128888543
+   },
+   "W4": {
+    "ln_rho": 0.03968000263899611,
+    "steps": {
+     "rate": 0.06537850234691933,
+     "muon_shape": 0.013067304950476989,
+     "transfer_given_muon": 0.026612697688518885,
+     "partition_given_transfer": 2.2204460492503128e-16
+    },
+    "recoil_minus4_shift_ln_rho": 0.03608031805915658,
+    "recoil_plus4_shift_ln_rho": -0.04590932862058653,
+    "data_fraction": 0.19494953721981712
+   },
+   "W5": {
+    "ln_rho": 0.19084753517681013,
+    "steps": {
+     "rate": 0.06537850234691933,
+     "muon_shape": 0.07650565191350338,
+     "transfer_given_muon": 0.11434188326330673,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": 0.07842653032826752,
+    "recoil_plus4_shift_ln_rho": -0.06833670415979873,
+    "data_fraction": 0.13021699915763352
+   },
+   "A0_Wge1.8": {
+    "ln_rho": -0.06942665610575999,
+    "steps": {
+     "rate": 0.06537850234691954,
+     "muon_shape": 3.671058166365746e-05,
+     "transfer_given_muon": -0.036721389844032386,
+     "partition_given_transfer": -0.032741976843391196
+    },
+    "recoil_minus4_shift_ln_rho": -0.01407077287626149,
+    "recoil_plus4_shift_ln_rho": 0.01716657807693614,
+    "data_fraction": 0.0076456535931762725
+   },
+   "A1_Wge1.8": {
+    "ln_rho": -0.039297780103660016,
+    "steps": {
+     "rate": 0.06537850234691912,
+     "muon_shape": 0.0003895205687868116,
+     "transfer_given_muon": -0.010089938290303219,
+     "partition_given_transfer": -0.02959736238214366
+    },
+    "recoil_minus4_shift_ln_rho": -0.019452001848071263,
+    "recoil_plus4_shift_ln_rho": 0.022710454081359174,
+    "data_fraction": 0.002756742140918584
+   },
+   "A2_Wge1.8": {
+    "ln_rho": -0.13409727957577272,
+    "steps": {
+     "rate": 0.06537850234691954,
+     "muon_shape": 0.005241216841515691,
+     "transfer_given_muon": -0.012786127206839068,
+     "partition_given_transfer": -0.1265523692104494
+    },
+    "recoil_minus4_shift_ln_rho": -0.017861082031195796,
+    "recoil_plus4_shift_ln_rho": 0.017307004079833405,
+    "data_fraction": 0.007642832173917108
+   },
+   "A3_Wge1.8": {
+    "ln_rho": -0.1285825771917119,
+    "steps": {
+     "rate": 0.06537850234691933,
+     "muon_shape": 0.0019430203869814212,
+     "transfer_given_muon": -0.01239773025454185,
+     "partition_given_transfer": -0.11812786732415137
+    },
+    "recoil_minus4_shift_ln_rho": -0.014920821566216547,
+    "recoil_plus4_shift_ln_rho": 0.008645918949648626,
+    "data_fraction": 0.01759494250920342
+   },
+   "A4_Wge1.8": {
+    "ln_rho": -0.018470869902659393,
+    "steps": {
+     "rate": 0.06537850234691912,
+     "muon_shape": -0.0052543827418957394,
+     "transfer_given_muon": -0.017480704814175806,
+     "partition_given_transfer": 0.0042642176534122824
+    },
+    "recoil_minus4_shift_ln_rho": -0.005469973730752815,
+    "recoil_plus4_shift_ln_rho": -0.003466015100849769,
+    "data_fraction": 0.05869196905246628
+   },
+   "A5_Wge1.8": {
+    "ln_rho": 0.02097444238180389,
+    "steps": {
+     "rate": 0.06537850234691933,
+     "muon_shape": 0.00838354370329444,
+     "transfer_given_muon": 0.006695167328999593,
+     "partition_given_transfer": 0.005895731349509737
+    },
+    "recoil_minus4_shift_ln_rho": 0.016910660690186055,
+    "recoil_plus4_shift_ln_rho": -0.018528726311475015,
+    "data_fraction": 0.17589714087172495
+   },
+   "A6_Wge1.8": {
+    "ln_rho": 0.1292922637189832,
+    "steps": {
+     "rate": 0.06537850234691933,
+     "muon_shape": 0.05836743972211637,
+     "transfer_given_muon": 0.05969140978752415,
+     "partition_given_transfer": 0.011233414209342566
+    },
+    "recoil_minus4_shift_ln_rho": 0.06491419166745073,
+    "recoil_plus4_shift_ln_rho": -0.06461872187420842,
+    "data_fraction": 0.20507806732492936
+   }
+  },
+  "NuWro": {
+   "W0": {
+    "ln_rho": 0.005994186097843551,
+    "steps": {
+     "rate": 0.14228726599741248,
+     "muon_shape": -0.020357721462280244,
+     "transfer_given_muon": 0.02635190756012418,
+     "partition_given_transfer": -2.2204460492503136e-16
+    },
+    "recoil_minus4_shift_ln_rho": -0.06824116753727125,
+    "recoil_plus4_shift_ln_rho": 0.06826086880580115,
+    "data_fraction": 0.15659795218969608
+   },
+   "W1": {
+    "ln_rho": 0.07209887374251137,
+    "steps": {
+     "rate": 0.14228726599741248,
+     "muon_shape": -0.04025872233059929,
+     "transfer_given_muon": 0.11235759607311092,
+     "partition_given_transfer": -2.2204460492503136e-16
+    },
+    "recoil_minus4_shift_ln_rho": -0.018650657267740012,
+    "recoil_plus4_shift_ln_rho": 0.01611588720443377,
+    "data_fraction": 0.18324155860607005
+   },
+   "W2": {
+    "ln_rho": -0.03383531717441682,
+    "steps": {
+     "rate": 0.14228726599741248,
+     "muon_shape": -0.004639067921624759,
+     "transfer_given_muon": -0.02919624925279213,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": -0.01141039116896446,
+    "recoil_plus4_shift_ln_rho": 0.009073091616348575,
+    "data_fraction": 0.1848531415378979
+   },
+   "W3": {
+    "ln_rho": -0.09081815123425371,
+    "steps": {
+     "rate": 0.14228726599741248,
+     "muon_shape": 0.011220931387960476,
+     "transfer_given_muon": -0.10203908262221432,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": -0.012567435414931924,
+    "recoil_plus4_shift_ln_rho": 0.010281213759087804,
+    "data_fraction": 0.15014081128888543
+   },
+   "W4": {
+    "ln_rho": -0.020175595703567792,
+    "steps": {
+     "rate": 0.14228726599741248,
+     "muon_shape": 0.013472582502313389,
+     "transfer_given_muon": -0.033648178205881556,
+     "partition_given_transfer": 2.2204460492503128e-16
+    },
+    "recoil_minus4_shift_ln_rho": 0.036080318059156874,
+    "recoil_plus4_shift_ln_rho": -0.04590932862058668,
+    "data_fraction": 0.19494953721981712
+   },
+   "W5": {
+    "ln_rho": 0.08763857698529734,
+    "steps": {
+     "rate": 0.1422872659974123,
+     "muon_shape": 0.050636879117413505,
+     "transfer_given_muon": 0.037001697867883716,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": 0.07842653032826749,
+    "recoil_plus4_shift_ln_rho": -0.06833670415979909,
+    "data_fraction": 0.13021699915763352
+   },
+   "A0_Wge1.8": {
+    "ln_rho": -0.38119506591326446,
+    "steps": {
+     "rate": 0.14228726599741248,
+     "muon_shape": 0.014771042690515514,
+     "transfer_given_muon": -0.058723347219823065,
+     "partition_given_transfer": -0.33724276138395687
+    },
+    "recoil_minus4_shift_ln_rho": -0.014070772876261572,
+    "recoil_plus4_shift_ln_rho": 0.017166578076936168,
+    "data_fraction": 0.0076456535931762725
+   },
+   "A1_Wge1.8": {
+    "ln_rho": -0.46400342339207157,
+    "steps": {
+     "rate": 0.14228726599741248,
+     "muon_shape": 0.0156284477640095,
+     "transfer_given_muon": -0.07083874548642716,
+     "partition_given_transfer": -0.408793125669654
+    },
+    "recoil_minus4_shift_ln_rho": -0.019452001848070888,
+    "recoil_plus4_shift_ln_rho": 0.0227104540813593,
+    "data_fraction": 0.002756742140918584
+   },
+   "A2_Wge1.8": {
+    "ln_rho": -0.3793855381945812,
+    "steps": {
+     "rate": 0.14228726599741248,
+     "muon_shape": 0.004298342492143411,
+     "transfer_given_muon": -0.06891999686739106,
+     "partition_given_transfer": -0.31476388381933357
+    },
+    "recoil_minus4_shift_ln_rho": -0.01786108203119574,
+    "recoil_plus4_shift_ln_rho": 0.017307004079832933,
+    "data_fraction": 0.007642832173917108
+   },
+   "A3_Wge1.8": {
+    "ln_rho": -0.07369639230481079,
+    "steps": {
+     "rate": 0.1422872659974123,
+     "muon_shape": -0.001306920359361017,
+     "transfer_given_muon": -0.07485106801111559,
+     "partition_given_transfer": 0.002461596065665923
+    },
+    "recoil_minus4_shift_ln_rho": -0.014920821566216824,
+    "recoil_plus4_shift_ln_rho": 0.008645918949648168,
+    "data_fraction": 0.01759494250920342
+   },
+   "A4_Wge1.8": {
+    "ln_rho": 0.11626527685671678,
+    "steps": {
+     "rate": 0.14228726599741248,
+     "muon_shape": -0.018295337148972936,
+     "transfer_given_muon": -0.10923764137255657,
+     "partition_given_transfer": 0.24379825537824623
+    },
+    "recoil_minus4_shift_ln_rho": -0.005469973730752975,
+    "recoil_plus4_shift_ln_rho": -0.0034660151008499285,
+    "data_fraction": 0.05869196905246628
+   },
+   "A5_Wge1.8": {
+    "ln_rho": -0.011999767423066604,
+    "steps": {
+     "rate": 0.14228726599741268,
+     "muon_shape": 0.012762771925719615,
+     "transfer_given_muon": -0.05940507497274855,
+     "partition_given_transfer": 0.034642535623962085
+    },
+    "recoil_minus4_shift_ln_rho": 0.016910660690186347,
+    "recoil_plus4_shift_ln_rho": -0.018528726311474647,
+    "data_fraction": 0.17589714087172495
+   },
+   "A6_Wge1.8": {
+    "ln_rho": -0.007732764273823661,
+    "steps": {
+     "rate": 0.14228726599741248,
+     "muon_shape": 0.04332656494089984,
+     "transfer_given_muon": 0.003245539287019237,
+     "partition_given_transfer": -0.05430486850174282
+    },
+    "recoil_minus4_shift_ln_rho": 0.06491419166745127,
+    "recoil_plus4_shift_ln_rho": -0.06461872187420839,
+    "data_fraction": 0.20507806732492936
+   }
+  },
+  "GiBUU": {
+   "W0": {
+    "ln_rho": -0.2375549354825109,
+    "steps": {
+     "rate": 0.3263319283100799,
+     "muon_shape": -0.02483982752389457,
+     "transfer_given_muon": -0.21271510795861617,
+     "partition_given_transfer": -1.1102230246251565e-16
+    },
+    "recoil_minus4_shift_ln_rho": -0.06824116753727105,
+    "recoil_plus4_shift_ln_rho": 0.06826086880580165,
+    "data_fraction": 0.15659795218969608
+   },
+   "W1": {
+    "ln_rho": -0.018476323834072994,
+    "steps": {
+     "rate": 0.32633192831007973,
+     "muon_shape": -0.010378968125991697,
+     "transfer_given_muon": -0.008097355708080983,
+     "partition_given_transfer": -2.2204460492503136e-16
+    },
+    "recoil_minus4_shift_ln_rho": -0.018650657267739845,
+    "recoil_plus4_shift_ln_rho": 0.0161158872044338,
+    "data_fraction": 0.18324155860607005
+   },
+   "W2": {
+    "ln_rho": -0.008703277886131566,
+    "steps": {
+     "rate": 0.32633192831007973,
+     "muon_shape": 0.004011961007709398,
+     "transfer_given_muon": -0.012715238893841059,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": -0.011410391168964362,
+    "recoil_plus4_shift_ln_rho": 0.009073091616348894,
+    "data_fraction": 0.1848531415378979
+   },
+   "W3": {
+    "ln_rho": -0.027187104266995554,
+    "steps": {
+     "rate": 0.32633192831007957,
+     "muon_shape": 0.007147583450677117,
+     "transfer_given_muon": -0.034334687717672764,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": -0.012567435414931882,
+    "recoil_plus4_shift_ln_rho": 0.010281213759088137,
+    "data_fraction": 0.15014081128888543
+   },
+   "W4": {
+    "ln_rho": -0.03178150112153305,
+    "steps": {
+     "rate": 0.32633192831007973,
+     "muon_shape": 0.017818361668248118,
+     "transfer_given_muon": -0.04959986278978128,
+     "partition_given_transfer": 2.2204460492503128e-16
+    },
+    "recoil_minus4_shift_ln_rho": 0.03608031805915696,
+    "recoil_plus4_shift_ln_rho": -0.04590932862058658,
+    "data_fraction": 0.19494953721981712
+   },
+   "W5": {
+    "ln_rho": 0.5820364771772046,
+    "steps": {
+     "rate": 0.32633192831007973,
+     "muon_shape": 0.01804924919860582,
+     "transfer_given_muon": 0.5639872279785988,
+     "partition_given_transfer": 0.0
+    },
+    "recoil_minus4_shift_ln_rho": 0.07842653032826774,
+    "recoil_plus4_shift_ln_rho": -0.06833670415979864,
+    "data_fraction": 0.13021699915763352
+   },
+   "A0_Wge1.8": {
+    "ln_rho": -0.31064196017501994,
+    "steps": {
+     "rate": 0.3263319283100799,
+     "muon_shape": 0.011339211686289862,
+     "transfer_given_muon": 0.036676133965964176,
+     "partition_given_transfer": -0.3586573058272742
+    },
+    "recoil_minus4_shift_ln_rho": -0.014070772876261517,
+    "recoil_plus4_shift_ln_rho": 0.017166578076935946,
+    "data_fraction": 0.0076456535931762725
+   },
+   "A1_Wge1.8": {
+    "ln_rho": -0.41011998630471136,
+    "steps": {
+     "rate": 0.32633192831007973,
+     "muon_shape": -0.012334431926956806,
+     "transfer_given_muon": 0.02667134633426268,
+     "partition_given_transfer": -0.424456900712017
+    },
+    "recoil_minus4_shift_ln_rho": -0.019452001848071054,
+    "recoil_plus4_shift_ln_rho": 0.022710454081359244,
+    "data_fraction": 0.002756742140918584
+   },
+   "A2_Wge1.8": {
+    "ln_rho": -0.3111181577433683,
+    "steps": {
+     "rate": 0.32633192831007957,
+     "muon_shape": -0.0025423925408449353,
+     "transfer_given_muon": 0.059563920702823195,
+     "partition_given_transfer": -0.3681396859053468
+    },
+    "recoil_minus4_shift_ln_rho": -0.01786108203119563,
+    "recoil_plus4_shift_ln_rho": 0.017307004079833377,
+    "data_fraction": 0.007642832173917108
+   },
+   "A3_Wge1.8": {
+    "ln_rho": -0.3142879629969141,
+    "steps": {
+     "rate": 0.3263319283100799,
+     "muon_shape": 0.006557645563096134,
+     "transfer_given_muon": 0.07440593691221271,
+     "partition_given_transfer": -0.39525154547222296
+    },
+    "recoil_minus4_shift_ln_rho": -0.014920821566216658,
+    "recoil_plus4_shift_ln_rho": 0.008645918949648668,
+    "data_fraction": 0.01759494250920342
+   },
+   "A4_Wge1.8": {
+    "ln_rho": 0.007500510518071601,
+    "steps": {
+     "rate": 0.32633192831007957,
+     "muon_shape": -0.0007718181795036023,
+     "transfer_given_muon": 0.07566580565887084,
+     "partition_given_transfer": -0.06739347696129568
+    },
+    "recoil_minus4_shift_ln_rho": -0.005469973730752586,
+    "recoil_plus4_shift_ln_rho": -0.0034660151008498175,
+    "data_fraction": 0.05869196905246628
+   },
+   "A5_Wge1.8": {
+    "ln_rho": 0.02963230888192503,
+    "steps": {
+     "rate": 0.32633192831007973,
+     "muon_shape": -0.001128834544361305,
+     "transfer_given_muon": 0.013643645913670562,
+     "partition_given_transfer": 0.01711749751261578
+    },
+    "recoil_minus4_shift_ln_rho": 0.016910660690186374,
+    "recoil_plus4_shift_ln_rho": -0.01852872631147484,
+    "data_fraction": 0.17589714087172495
+   },
+   "A6_Wge1.8": {
+    "ln_rho": 0.31169740006632085,
+    "steps": {
+     "rate": 0.32633192831007973,
+     "muon_shape": 0.0397395601680559,
+     "transfer_given_muon": 0.18119789291614355,
+     "partition_given_transfer": 0.09075994698212136
+    },
+    "recoil_minus4_shift_ln_rho": 0.06491419166745133,
+    "recoil_plus4_shift_ln_rho": -0.06461872187420836,
+    "data_fraction": 0.20507806732492936
+   }
+  }
+ }
+}

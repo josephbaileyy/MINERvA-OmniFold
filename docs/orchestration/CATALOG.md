@@ -146,6 +146,31 @@ compute, contact or adoption authority.
 | one read-only review and the correction-pass dispositions | [`state/valencia-feasibility-20261011/REVIEW.md`](state/valencia-feasibility-20261011/REVIEW.md) |
 | bounded repair (VA-sign convention, launcher CPU bound): frozen checks, results, residuals, terminal disposition (§R6), unsent author request (§R7) | [`state/valencia-feasibility-20261011/REPAIR.md`](state/valencia-feasibility-20261011/REPAIR.md) |
 
+### High-E_avail / high-W inelastic investigation, 2026-10-11 — task branch, INCONCLUSIVE
+
+Bounded reduction study under Joseph's 2026-10-11 prompt (≤ 2 CPU core-h of reductions of existing products; no
+generation, fits, unfolding, covariance, adoption or contact). Verdict INCONCLUSIVE under the frozen rule (GO not
+reached): the corner's normalization-removed residual (+0.6% to +6.7%) is comparable to a ±4% recoil-scale shift,
+is localized in no single factor, and reverses sign inside the region. That comparability is a degeneracy: it
+neither establishes a detector cause nor excludes interaction physics, and the factor split is descriptive. The
+recommendation is not to develop a new inelastic model from it. A close-out pass (same day) corrected interpretation
+(no number or rule changed), changed the proposed GENIE v3 configurations (no G18_02a_02_11b splines exist), and
+added a no-run feasibility specification (§11), reviewed once with one correction pass: a species-dependent response
+study is possible only on the simulated-response side with a new event-loop pass; no official GENIE v3 prediction
+exists for the intermediate-W feature. The next decision recommended to Joseph is two independent reviews (response;
+nuclear theory/generator) before any validation. A second close-out (2026-10-12, documentation only, not reviewed)
+withdrew the use of the recorded s5n/s5c biases as a closure allowance (each departure's own truth recovery comes
+first; attenuation is kept separate from response mimicry), qualified the span test as local and family-limited,
+costed sensitivity, closure, linear checks and calibrated validation separately, and added a two-role reviewer brief.
+Grants no compute, contact or adoption authority.
+
+| record | path |
+|---|---|
+| frozen plan, decision rule and amendments | [`state/inelastic-high-region-20261011/PLAN.md`](state/inelastic-high-region-20261011/PLAN.md) |
+| research memo: rate/shape/coverage, decomposition, literature, ranking, costed proposal, feasibility specification (§11) | [`state/inelastic-high-region-20261011/REPORT.md`](state/inelastic-high-region-20261011/REPORT.md) |
+| one read-only review and the correction-pass dispositions; the close-out targeted review and its correction pass | [`state/inelastic-high-region-20261011/REVIEW.md`](state/inelastic-high-region-20261011/REVIEW.md) |
+| two-role reviewer brief (hadronic response; nuclear theory/generator) and GENIE v3 attribution controls; prepared, not sent | [`state/inelastic-high-region-20261011/REVIEWER-BRIEF.md`](state/inelastic-high-region-20261011/REVIEWER-BRIEF.md) |
+
 ### 2D statistical-band coverage test — FAIL-undercoverage (futility), 2026-10-05
 
 | Subject | Record |

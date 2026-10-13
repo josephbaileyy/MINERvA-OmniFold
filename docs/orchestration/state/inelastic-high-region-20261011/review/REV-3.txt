@@ -1,0 +1,9 @@
+# 2026-10-11T22:51:09+00:00 id=REV-3 rc=0 cmd=python3 -I /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/review-scratch/rev/rev3.py /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/inputs /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/review-wt/docs/orchestration/state/inelastic-high-region-20261011/results
+MEC-CV by A bin (frac of added): [0.158 0.153 0.297 0.293 0.063 0.026 0.01 ] added/CV total 0.0402
+MEC-CV by W bin: [ 0.288  0.54   0.123 -0.004  0.052  0.002]
+TuneV1 fallback {'data_fraction_in_pred_empty_mt': 0.0, 'data_fraction_in_pred_empty_m': 0.0, 'pred_fraction_in_data_empty_mt': 0.0}
+GENIE_CV fallback {'data_fraction_in_pred_empty_mt': 0.0006, 'data_fraction_in_pred_empty_m': 0.0, 'pred_fraction_in_data_empty_mt': 0.0}
+GENIE_MEC fallback {'data_fraction_in_pred_empty_mt': 0.00062, 'data_fraction_in_pred_empty_m': 0.0, 'pred_fraction_in_data_empty_mt': 0.0}
+NuWro fallback {'data_fraction_in_pred_empty_mt': 0.00028, 'data_fraction_in_pred_empty_m': 0.0, 'pred_fraction_in_data_empty_mt': 0.0}
+GiBUU fallback {'data_fraction_in_pred_empty_mt': 0.04626, 'data_fraction_in_pred_empty_m': 0.03349, 'pred_fraction_in_data_empty_mt': 0.0}
+max order disagreement 0.0217 ('GiBUU', 'C_overflow', 'partition_given_transfer') max MC sd per step 0.0056

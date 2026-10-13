@@ -1,0 +1,17 @@
+# 2026-10-11T22:43:45+00:00 id=REV-1 rc=0 cmd=python3 -I /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/review-scratch/rev/rev1.py /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/inputs /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/de68ac2a-c125-408f-ba1c-8f2380a0f64b/scratchpad/review-scratch/rev/rev1.json
+edges: [[0.0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100.0], [0.0, 0.2, 0.4, 0.6, 0.8, 1.2, 2.0, 100.0], [0.0, 1.1, 1.4, 1.8, 2.2, 3.0, 100.0]]
+pt [0.0, 0.07, 0.15, 0.25, 0.33, 0.4, 0.47, 0.55, 0.7, 0.85, 1.0, 1.25, 1.5, 2.5, 4.5]
+pz [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0]
+data total 3.0699278941712995e-38 corner 1.3497465315886322e-38 C frac 0.4396671772491206
+TuneV1 {'Rt': 1.1346, 'RC': 1.1911, 'rhoC': 1.0497, 'RM': 1.0056, 'rhoM': 0.8863, 'RC_noovf': 1.1641, 'RC_ovf': 1.2206, 'rhoC_noovf': 1.026, 'rhoC_ovf': 1.0758, 'ovf_share_C': 0.4771, 'dshape_C': 6.3961, 'dshape_Cov': 4.651, 'dshape_M': -7.2824, 'fC': 0.4188}
+GENIE_CV {'Rt': 1.1105, 'RC': 1.1421, 'rhoC': 1.0285, 'RM': 0.9142, 'rhoM': 0.8232, 'RC_noovf': 1.0802, 'RC_ovf': 1.215, 'rhoC_noovf': 0.9727, 'rhoC_ovf': 1.0941, 'ovf_share_C': 0.4596, 'dshape_C': 3.7404, 'dshape_Cov': 5.6782, 'dshape_M': -12.1878, 'fC': 0.4275}
+GENIE_MEC {'Rt': 1.0676, 'RC': 1.1386, 'rhoC': 1.0665, 'RM': 0.8945, 'rhoM': 0.8379, 'RC_noovf': 1.0781, 'RC_ovf': 1.2095, 'rhoC_noovf': 1.0099, 'rhoC_ovf': 1.133, 'ovf_share_C': 0.4603, 'dshape_C': 8.4206, 'dshape_Cov': 7.7441, 'dshape_M': -10.9784, 'fC': 0.4122}
+NuWro {'Rt': 1.1529, 'RC': 1.1601, 'rhoC': 1.0062, 'RM': 1.1146, 'rhoM': 0.9667, 'RC_noovf': 1.173, 'RC_ovf': 1.1469, 'rhoC_noovf': 1.0174, 'rhoC_ovf': 0.9948, 'ovf_share_C': 0.4945, 'dshape_C': 0.8371, 'dshape_Cov': -0.3435, 'dshape_M': -1.953, 'fC': 0.4369}
+GiBUU {'Rt': 1.3859, 'RC': 1.607, 'rhoC': 1.1595, 'RM': 1.3739, 'rhoM': 0.9913, 'RC_noovf': 1.4337, 'RC_ovf': 1.8394, 'rhoC_noovf': 1.0345, 'rhoC_ovf': 1.3273, 'ovf_share_C': 0.4271, 'dshape_C': 18.5711, 'dshape_Cov': 16.2718, 'dshape_M': -0.4961, 'fC': 0.3792}
+S20 cells 38220 data frac total/C/M 0.49488756756783503 0.05982444444598218 0.7638653204833372
+S20 with M_p: cells 38220 changed 0
+ S20 TuneV1 Rt 1.0856 rhoC 1.0771 lnrhoM -0.1232
+ S20 GENIE_CV Rt 1.0911 rhoC 0.8993 lnrhoM -0.2043
+ S20 GENIE_MEC Rt 1.0150 rhoC 0.9815 lnrhoM -0.1610
+ S20 NuWro Rt 1.1509 rhoC 0.7989 lnrhoM -0.0166
+ S20 GiBUU Rt 1.2901 rhoC 1.3808 lnrhoM 0.1229
