@@ -18,7 +18,7 @@ D2=/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding
 NAME=${SLURM_JOB_NAME:?no job name}
 
 # ---- pins (DESIGN §2) --------------------------------------------------------------------------------------------
-JOBS_SHA=ead6c7c853f9af9e678fe2b2b62b91315907473974f34c3106210b0e1e776aba   # jobs.tsv
+JOBS_SHA=54b0abcaff3da6256c3ba791ad55ab4c95a2c5b66bb88148f82c4fa522f4b9d8   # jobs.tsv
 PROD_SHA=74a4ed69c3fa9c4ae5b6866f36343212b8d3f903fddde6c7bd40c382c1167d56     # production driver (main ec2088a6)
 G2_SHA=eb258cadfc2b0ab7191e400eb13564a2866d393e18b830c3f2d5a7d12349cc99       # p2g2/driver_g2.py
 P1_SHA=3056e625a22f2ee79621e515aa5a76a4685662ac6fc10ee7e832680dde087578     # p1/driver_p1.py
@@ -46,6 +46,9 @@ G_CPUS=$(grep -o 'NumCPUs=[^ ]*' <<< "$JOBINFO" | head -1 | cut -d= -f2)
 G_TIME=$(grep -o 'TimeLimit=[^ ]*' <<< "$JOBINFO" | head -1 | cut -d= -f2)
 [ "$G_QOS" = "$R_QOS" ] || { echo "REFUSE: QOS $G_QOS != $R_QOS"; exit 4; }
 [ "$G_CPUS" = "$R_CPUS" ] || { echo "REFUSE: NumCPUs $G_CPUS != $R_CPUS"; exit 4; }
+# The charge gate assumes billing = jobs.tsv billing (= CPUs at mem = 1905M x CPUs); refuse anything else.
+G_BILL=$(grep -o 'AllocTRES=[^ ]*' <<< "$JOBINFO" | grep -o 'billing=[0-9]*' | head -1 | cut -d= -f2)
+[ "$G_BILL" = "$R_BILL" ] || { echo "REFUSE: allocated billing '$G_BILL' != jobs.tsv billing $R_BILL"; exit 4; }
 # A walltime retry carries its re-projected cap in $NS/retries/<name>.time (written by the executor, < 12 h).
 WANT_TIME=$R_TIME; [ -f "$NS/retries/$NAME.time" ] && WANT_TIME=$(cat "$NS/retries/$NAME.time")
 [ "$G_TIME" = "$WANT_TIME" ] || { echo "REFUSE: TimeLimit $G_TIME != $WANT_TIME"; exit 4; }
@@ -95,6 +98,8 @@ case "$NAME" in
     OVN=$NS/out/2dc_C_G2_override/override_Flux_23.npz; OVJ=$NS/out/2dc_C_G2_override/override_Flux_23.json
     SEED=42
     if [ "$NAME" = 2dc_C_G2_on ]; then
+      # A G2_on retry rebuilds the override: the executor moves out/2dc_C_G2_override/ aside (sha-verified) with
+      # out/2dc_C_G2_on/ before resubmitting (DESIGN §9), so an existing override here is a refusal.
       for f in "$OVN" "$OVJ"; do [ -e "$f" ] && { echo "REFUSE: $f exists"; exit 3; }; done
       mkdir -p "$(dirname "$OVN")"
       echo "$BUILD_SHA  $PKG/p2g2/build_miss_override.py" | sha256sum -c -

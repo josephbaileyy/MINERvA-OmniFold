@@ -47,15 +47,15 @@
   }
  },
  "package": {
-  "docs/orchestration/state/2d-closeout/stageC/pilot/DESIGN.md": "7232e0266401e0d8160882bbb85b67f6dc6a4bd33af3a0c929b77c19062a0a6a",
-  "docs/orchestration/state/2d-closeout/stageC/pilot/analyze_pilot.py": "55339e8c12e83c0b56881ab2c29c3ef11c8e59b9225082b710b5ca28a78bda09",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/DESIGN.md": "3ed4461eb664f89491c7522cdc71eaac75cfb2c4e575ef8bf550a85cff402718",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/analyze_pilot.py": "a9e1292ba55387410f61617a0c0bc92068ff5584261934b44c2f9d81878c3f75",
   "docs/orchestration/state/2d-closeout/stageC/pilot/evidence/binding-delta.txt": "e3d7d0f31535587e0eb5fa9198689507b669530aa4b1230fe966aa85af027c07",
-  "docs/orchestration/state/2d-closeout/stageC/pilot/jobs.tsv": "ead6c7c853f9af9e678fe2b2b62b91315907473974f34c3106210b0e1e776aba",
-  "docs/orchestration/state/2d-closeout/stageC/pilot/launch.py": "18bc770bbc2662c716b6c3153bded986e1fda7ac0c89588e20e989f27565cd83",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/jobs.tsv": "54b0abcaff3da6256c3ba791ad55ab4c95a2c5b66bb88148f82c4fa522f4b9d8",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/launch.py": "b86e09bb1d268bcc912716a2649b39ef9d9dbe9d1647b717e154185a7cb56b41",
   "docs/orchestration/state/2d-closeout/stageC/pilot/make_manifest.py": "d8eb19a3b9aef1177d985b843368e7bcb82fdc8937464fd09364e364f221bee3",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p1/README.md": "ed63b337ddfea7f2aaca7574ea317a8367a2628d6a66d5487f67274a68bb9124",
-  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/SHA256SUMS": "1e72c0df35fcd1f178b25dca1e915a4cbf9ccf82216bc934cf3932e4d5be1642",
-  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/analyze_p1.py": "36dbf75c1b243cde0789d176d9c7db722ce7616b10f36b57cfabb7feb03c45ab",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/SHA256SUMS": "d4a83675794010e6b480f66740f398d16ce2c1caea0e81f6ac8806b69249a14a",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/analyze_p1.py": "cd9a1fc117f9f486251b8cf7f751ce09c86b9759794f71c9b8d8724ea80936d0",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p1/bkgvar_check.py": "deb2d2bb1d5899446c04d90f24b90164b1e6577c8d3956fa878bd0e94dd29f0f",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p1/driver_p1.py": "3056e625a22f2ee79621e515aa5a76a4685662ac6fc10ee7e832680dde087578",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/bkgvar_check.json": "961e987b616693517310d20f935960b8afea0e89457ecad4d3c9aaf6da31f997",
@@ -75,14 +75,14 @@
   "docs/orchestration/state/2d-closeout/stageC/pilot/p1/smoke_analyze_p1.py": "ea6d255772f6f26899dc0ccccea677c2d2bf5491b192db750688a697d8146814",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p1/test_noop.py": "6b36401d96a4d2d3c8b746d1439f54b6979b9df8a16017c0fc1d4c3c1a6585ba",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p1/test_rows_mapping.py": "689ae47239f3913a2751339385c881ddb188ff4ef83c894975229b685e2ad6db",
-  "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/analyze_g2.py": "d7b8918843248a93d19708b0c6b77f1514dfa27bd760b4aafe8b2acd4fa77da3",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/analyze_g2.py": "42c3d8a2cfc15d6f08f6b5954fe5e36228a446a3934e5de455b046e48427251f",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/build_miss_override.py": "7f346e1af1688b6a43be540ef2a8c6f8456d76a1ea965613abce17263739296b",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/driver_g2.py": "eb258cadfc2b0ab7191e400eb13564a2866d393e18b830c3f2d5a7d12349cc99",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/patch.diff": "c22c541e687011e92e8c4a429b50e6de99bfe45c0e701152e0b830efa5ecfe55",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/select_flux.json": "35ce6226116a0415255408e341b2ae4dafa8102830185c0eaf9b0b68aea1e0b0",
   "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/select_flux.py": "5a675910f5e42686d48e7c7e3b80295e041f9724944c28bb7bd85ffab39a731c",
-  "docs/orchestration/state/2d-closeout/stageC/pilot/preflight_uomni.sh": "54c65942b1a7bdd9256be8078bb26d5208f64a82986cc354c41404ba9473218a",
-  "docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh": "4898188b0a314be9941761f53268d2ab2931f954ba2c9accb1b9f58fc7075223"
+  "docs/orchestration/state/2d-closeout/stageC/pilot/preflight_uomni.sh": "6d42896d4f25ecce119f712f36c603ae04c91f4a11128a6d6404801dbabeaed9",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh": "80ddd0567194d0b20a956c3b75c6fcd863a4133d455714f0ec9f38e83f193855"
  },
  "schema": "stagec-pilot-manifest/1"
 }

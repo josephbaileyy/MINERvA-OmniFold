@@ -189,7 +189,8 @@ def p2():
             verdicts.append("INCONCLUSIVE")
             continue
         ok, info = prov(p, {"omnifile": UOMNI, "universe": uni, "seed": 42, "branch_select": sel,
-                            "flux_universe_file": FLUXU, "bkg_mode": "purity", "bootstrap_seed": None})
+                            "flux_universe_file": FLUXU, "bkg_mode": "purity", "bootstrap_seed": None,
+                            "iters": 5, "use_weights": True, "estimator": "lgbm"})
         e1 = compare(str(p), PIN[ref][0], cells)
         r = {"universe": uni, "branch_select": sel, "reference": {"path": PIN[ref][0], "sha256": PIN[ref][1]},
              "provenance": info | {"ok": ok}, "E1_1e-8": e1, "shift": shift(p, PIN[ref][0], sml), "envelope": env}
@@ -201,10 +202,25 @@ def p2():
             r["verdict"] = "PASS" if r["shift"]["over_sigma_ml"]["max"] <= K1_SIGMA_ML_TOL else "FAIL"
         rep["K1_comparisons"][tag] = r
         verdicts.append(r["verdict"])
-    rep["K1"] = ("INCONCLUSIVE" if "INCONCLUSIVE" in verdicts else "FAIL" if "FAIL" in verdicts else "PASS")
     a, b = out_of("2dc_C_P2_MINOS0def"), out_of("2dc_C_P2_MINOS0")
-    rep["P2-EQ_derived_vs_default"] = (compare(str(b), str(a), cells) if a and b and not rep["pins_failed"]
-                                       else {"verdict": "INCONCLUSIVE", "why": "output missing or pins failed"})
+    pa = rep["K1_comparisons"].get("MINOS0def", {}).get("provenance", {}).get("ok")
+    pb = rep["K1_comparisons"].get("MINOS0", {}).get("provenance", {}).get("ok")
+    if a and b and pa and pb and not rep["pins_failed"]:
+        rep["P2-EQ_derived_vs_default"] = compare(str(b), str(a), cells)
+    else:
+        rep["P2-EQ_derived_vs_default"] = {"verdict": "INCONCLUSIVE", "why": "output missing, provenance or pins failed"}
+    # K1 aggregation (DESIGN §5): FAIL if any evaluable comparison FAILs; else INCONCLUSIVE if any is inconclusive;
+    # else PASS. If P2-EQ is not PASS, the derived comparisons do not qualify July: K1 is FAIL if the default-path
+    # comparison FAILs, otherwise INCONCLUSIVE. INCONCLUSIVE is not a pass and goes to the director.
+    eq = rep["P2-EQ_derived_vs_default"]["verdict"]
+    use = verdicts if eq == "PASS" else [rep["K1_comparisons"]["MINOS0def"]["verdict"]]
+    rep["K1_basis"] = "all five comparisons" if eq == "PASS" else f"default path only (P2-EQ {eq})"
+    if "FAIL" in use:
+        rep["K1"] = "FAIL"
+    elif "INCONCLUSIVE" in use or eq != "PASS":
+        rep["K1"] = "INCONCLUSIVE"
+    else:
+        rep["K1"] = "PASS"
     n = out_of("2dc_C_P2_NormDISCC0")
     if n and not rep["pins_failed"]:
         rep["null_NormDISCC0_vs_July_CV_measured"] = {"E1_1e-8": compare(str(n), PIN["J_CV"][0], cells),
@@ -228,7 +244,8 @@ def p3():
             rep[tag] = {"outcome": "INCONCLUSIVE", "why": "output missing or pins failed"}
             continue
         ok, info = prov(p, {"omnifile": f, "universe": None, "seed": 42, "branch_select": "all",
-                            "bkg_mode": "purity", "bootstrap_seed": None})
+                            "bkg_mode": "purity", "bootstrap_seed": None, "iters": 5, "use_weights": True,
+                            "estimator": "lgbm"})
         sb = np.abs(cellvec(PIN[j0][0]) - cellvec(PIN[j1][0])) / 2
         d_july = cellvec(p) - cellvec(PIN[j0][0])
         r = {"active_file": {"path": f, "sha256_SHA256SUMS": sums.get(Path(f).name)}, "provenance": info | {"ok": ok},
@@ -250,6 +267,7 @@ def p3():
 def main():
     what, outp = sys.argv[1], sys.argv[2]
     rep = {"p0": p0, "p2": p2, "p3": p3}[what]()
+    Path(outp).parent.mkdir(parents=True, exist_ok=True)
     Path(outp).write_text(json.dumps(rep, indent=1, sort_keys=True) + "\n")
     print(json.dumps({k: v for k, v in rep.items() if k in ("P0", "K1", "pins_failed")} |
                      {k: v.get("verdict", v.get("outcome")) for k, v in rep.items() if isinstance(v, dict)

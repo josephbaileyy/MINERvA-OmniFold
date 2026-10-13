@@ -159,6 +159,7 @@ def main(argv=None):
     ap.add_argument("--p1-sha", default=None, help="driver_p1.py digest (default: the sibling driver_p1.py)")
     ap.add_argument("--n", type=int, default=20)
     a = ap.parse_args(argv)
+    Path(a.result).parent.mkdir(parents=True, exist_ok=True)
     p1_sha = a.p1_sha or sha(HERE / "driver_p1.py")
     refs = json.loads(Path(a.xr_dir, "manifest", "references.json").read_text())["references"]
     cells_ec = refs["E_C"]["reported_globalid"]

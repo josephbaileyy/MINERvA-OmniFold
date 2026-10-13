@@ -86,13 +86,18 @@ INCONCLUSIVE. Anything but PASS stops the pilot (record §3): no later batch is 
 |---|---|---|
 | B0 | `P0_default`, `P0_derived` | none |
 | B1 | `P2_NormDISCC0`, `P2_MaRES0`, `P2_Flux23`, `P2_MINOS0`, `P2_MINOS0def`, `P1_unit` | P0 PASS; universe preflight recorded |
-| B2 | `G2_on` | P0 PASS; `out/2dc_C_P2_Flux23/xsec.root` exists (run *a* of P2-G2) |
-| B3 (conditional) | `G2_off_s43`, `G2_on_s43` | P0 PASS; `results/g2_s42.json` routes MATERIAL or NOT RESOLVED ABOVE TRAINER NOISE |
-| B4 | `P3_BeamAngleX0`, `P3_MINOS0` | P0 PASS |
-| B5–B8 | P1 replicas, 15 jobs each: bootstrap seeds 1–5, 6–10, 11–15, 16–20, each × the three arms `fixed`, `joint`, `bkg` | P0 PASS; `results/p1_unit.json` b ≡ 1 control PASS |
+| B2 | `G2_on` | P0 PASS; `out/2dc_C_P2_Flux23/xsec.root` exists (run *a* of P2-G2); `results/p2.json` P2-EQ PASS |
+| B3 (conditional) | `G2_off_s43`, `G2_on_s43` | as B2, and `results/g2_s42.json` routes MATERIAL or NOT RESOLVED ABOVE TRAINER NOISE |
+| B4–B7 | P1 replicas, 15 jobs each: bootstrap seeds 1–5, 6–10, 11–15, 16–20, each × the three arms `fixed`, `joint`, `bkg` | P0 PASS; `results/p1_unit.json` b ≡ 1 control PASS |
+| B8 | `P3_BeamAngleX0`, `P3_MINOS0` | P0 PASS |
 
-Batches may overlap in time; the gate makes that safe. The K items (B1–B3) come before P1's replicas so that,
-if costs run high, the gate's refusal falls on a P1 batch (a stop-and-report) rather than on K2.
+`launch.py` also refuses a job name that already has a `sacct` row (no double submission), creates `logs/`,
+`results/`, `retries/`, `out/` and `tmp/` before the first submission, and needs Python ≥ 3.9 (source
+`setup_salloc_env.sh` first; the login node's `/usr/bin/python3` is 3.6).
+
+Batches may overlap in time; the gate makes that safe. The K items (B1–B3) come first, then P1's replicas,
+then P3, whose cost basis is the least measured (§9): if retries use up the margin, the gate's refusal falls on
+P3 (a stop-and-report), not on K2 or on P1's declared 20 + 20 + 20.
 
 **GATE** (director, 2026-10-13; `launch.py`). Before each batch:
 
@@ -132,11 +137,11 @@ if costs run high, the gate's refusal falls on a P1 batch (a stop-and-report) ra
 | B1 | 0.1161 + 1.7167 = 1.8328 OK | 0.9149 | 0.2083 + 1.7167 = 1.9250 OK | 1.7167 |
 | B2 | 1.0310 + 0.4167 = 1.4477 OK | 0.2360 | 1.9250 + 0.4167 = 2.3417 OK | 0.4167 |
 | B3 | 1.2670 + 0.6667 = 1.9337 OK | 0.3617 | 2.3417 + 0.6667 = 3.0083 OK | 0.6667 |
-| B4 | 1.6287 + 0.7500 = 2.3787 OK | 0.3694 | 3.0083 + 0.7500 = 3.7583 OK | 0.7500 |
-| B5 | 1.9981 + 2.0000 = 3.9981 OK | 0.8740 | 3.7583 + 2.0000 = 5.7583 OK | 2.0000 |
-| B6 | 2.8721 + 2.0000 = 4.8721 OK | 0.8740 | 5.7583 + 2.0000 = 7.7583 OK | 2.0000 |
-| B7 | 3.7460 + 2.0000 = 5.7460 OK | 0.8740 | 7.7583 + 2.0000 = 9.7583 OK | 2.0000 |
-| B8 | 4.6200 + 2.0000 = 6.6200 OK | 0.8740 | 9.7583 + 2.0000 = 11.7583 OK | 2.0000 |
+| B4 | 1.6287 + 2.0000 = 3.6287 OK | 0.8740 | 3.0083 + 2.0000 = 5.0083 OK | 2.0000 |
+| B5 | 2.5026 + 2.0000 = 4.5026 OK | 0.8740 | 5.0083 + 2.0000 = 7.0083 OK | 2.0000 |
+| B6 | 3.3766 + 2.0000 = 5.3766 OK | 0.8740 | 7.0083 + 2.0000 = 9.0083 OK | 2.0000 |
+| B7 | 4.2506 + 2.0000 = 6.2506 OK | 0.8740 | 9.0083 + 2.0000 = 11.0083 OK | 2.0000 |
+| B8 | 5.1245 + 0.7500 = 5.8745 OK | 0.3694 | 11.0083 + 0.7500 = 11.7583 OK | 0.7500 |
 | **total** | | **5.494** (7.41 unused) | | **11.758** (1.142 unused) |
 
 Medians used: P0 836 s (L0); P2 derived 905 s and G2 off 905 s (P5 off runs 776/1,034 s); P2 default 2,548 s
@@ -146,9 +151,11 @@ no-overlap walk is the lower edge of what the gate sees and the cap walk is its 
 
 **Where the gate first refuses.** With every job at its cap and no retries, the full pilot, including the
 conditional pair, fits with 1.142 node-h unused: the gate never refuses. A refusal therefore needs walltime
-retries (§9). The first batch it would refuse is **B8** (P1 seeds 16–20), if retries before it have added more
-than 1.142 node-h of caps, for example nine P1 retries at 0.1333 each, or three P3 retries at 0.375 plus one P1
-retry. Without the conditional pair the margin at caps is 1.808.
+retries (§9). The first batch it would refuse is **B8** (P3, 0.75 at caps), if retries before it have added
+more than 1.142 node-h of caps, for example nine P1 retries at 0.1333 each, or two G2_on retries at 0.4167 plus
+three P1 retries. Without the conditional pair the margin at caps is 1.808. At measured costs, a batch
+launched while earlier ones still run sees them at their caps, so the gate's totals then lie between the two
+walks.
 
 ## 5. P2 and K1: the July bridge
 
@@ -168,9 +175,14 @@ envelope declared before P2 runs"):
 - `MaRES_0`, `Flux_23`, `Muon_Energy_MINOS_0` (derived) and `Muon_Energy_MINOS_0` (default):
   **max over the 205 cells of |P2 − July| / σ_ML ≤ 0.01**, with σ_ML = √diag of the pinned ML covariance; cell
   sets must match (else INCONCLUSIVE). The 1e-8 verdict is also reported for each, descriptively.
-- **K1 = PASS** iff all five comparisons PASS with provenance (driver `74a4ed69…`, helper, universe, seed 42,
-  path, absolute flux file); **FAIL** iff all are evaluable and any FAILs; **INCONCLUSIVE** otherwise. Only PASS
-  qualifies July (record: production only if K1 PASSES).
+- **K1 aggregation:** **FAIL** if any evaluable comparison FAILs (whatever the others give); otherwise
+  **INCONCLUSIVE** if any comparison is inconclusive (a missing output after its retry, a provenance or pin
+  failure, different cell sets); otherwise **PASS**. Provenance: driver `74a4ed69…`, helper, universe, seed 42,
+  path, absolute flux file, iters, use_weights, estimator.
+- **If P2-EQ is not PASS**, the four derived comparisons do not qualify July: K1 is FAIL if the default-path
+  comparison (`P2_MINOS0def`) FAILs, otherwise INCONCLUSIVE.
+- Only PASS qualifies July (record: production only if K1 PASSES). **K1 INCONCLUSIVE is not a pass**: it goes to
+  the director, like a FAIL, with what was missing.
 
 **Why 0.01 σ_ML.** K1 asks whether the July products are what the committed producer gives on the same inputs.
 - Same inputs and seed give deterministic output: P5's run *a* (committed driver, derived path, 128 CPUs)
@@ -183,13 +195,19 @@ envelope declared before P2 runs"):
 
 **K1 FAIL** (record §3): that line stops, the cause is diagnosed (which universes, by how much in σ_ML and
 σ_band, the driver and helper changes since July, the background-universe branch), and reported to the
-director. No rebuild is pre-committed; a July rebuild needs its own grant.
+director. No rebuild is pre-committed; a July rebuild needs its own grant. Because 0.01 σ_ML amounts to
+reproduction up to floating-point noise, a FAIL says the July products are not what the committed producer gives,
+not that they are statistically wrong: a one-ulp input difference can change LightGBM's trainer path and move
+cells by O(σ_ML) while leaving July statistically equivalent. The diagnosis must tell those apart; a FAIL is not
+presumed to be a defect.
 
 **P2-EQ, the first real-file equality of the selective read** (selective-I/O delivery REPORT §11):
 `P2_MINOS0` (derived) vs `P2_MINOS0def` (all) under the frozen 1e-8 criterion. PASS clears `--branch-select
 derived` for universe runs. FAIL is a failed identity (record §3): the derived line stops and is reported; K1's
-derived comparisons are then not used for qualification until the director rules. P3 does not depend on P2-EQ
-(it runs the default path, §7).
+derived comparisons are then not used for qualification (aggregation above). P2-G2 runs on the derived path, so
+**B2 and B3 require P2-EQ PASS** (`launch.py`); if P2-EQ is not PASS, P2-G2 does not run and K2 is INCONCLUSIVE
+(director, then Joseph). P3 does not depend on P2-EQ (it runs the default path, §7). P5's 2.4e-13 agreement
+covered a vertical universe on the derived path only; P2-EQ is the first equality on a lateral universe.
 
 **Null check, MEASURED:** `P2_NormDISCC0` vs the July CV (`b8457af7…`), 1e-8 verdict and σ_ML shift, reported
 with no pass/fail (Stage B §7: the null knob "reproduces July and CV"). Smoke on existing products: July
@@ -220,7 +238,8 @@ K2 measures the size of the G2 mechanism where it is largest, not that universe'
 **Same universe as P2's Flux case: yes.** Stage B §7 asks P2 for "one large Flux universe". `Flux_23` moves the
 result by 8.4% (median over cells) from the July CV and has the largest G2 exposure, so one choice serves both,
 and **`P2_Flux23` is P2-G2's run *a*** (production driver, seed 42, derived path, the same options as run *b*
-apart from `--out` and `--miss-weight-override`, which G-p checks).
+apart from `--out` and `--miss-weight-override`, which G-p checks). The record names P2-G2's jobs `2dc_C_G2_*`;
+run *a* keeps its P2 name `2dc_C_P2_Flux23`, so the binding addendum is asked to accept that reuse explicitly.
 
 **Code** (pilot copy of the P5 package, named `2dc_C_G2_*`, pinned to `74a4ed69…`):
 - [`p2g2/driver_g2.py`](p2g2/driver_g2.py) (`eb258cad…`) is the production driver at `74a4ed69…` with P5's
@@ -326,7 +345,7 @@ VL170 ran at GBDT seed 1, so the `fixed` arm is a new realization of the VL170 l
 | no-op, loader and `main()` level | login node, done in packaging (`p1/test_noop.py`, `test_rows_mapping.py`) | C1 options off bitwise = production; C2 `three --unit-factors` bitwise = central; C3 `bkg` changes only B\*, purity, training target and measured weights; C4 data/MC factors equal production's `both` | **PASS** (evidence in `p1/evidence/`) |
 | **b ≡ 1 run-level control** | `P1_unit`, before any replica batch | the unit run vs `XR-L0.root` under the frozen 1e-8 criterion (XR instrument), with provenance | PASS/FAIL. A FAIL is a failed no-op control: P1 stops (record §3) |
 | **bkg-only reco variance = Σw² of B** | login node, no unfold (`p1/bkgvar_check.py`), done in packaging | N = 2000 draws; per reco cell z_c = (s²_c − Σw²_c)/SE_c, SE_c = Σw²_c·√((2 + κ_c)/N), κ_c = Σw⁴_c/(Σw²_c)²; PASS iff max\|z_c\| ≤ 5 and pooled \|Σz_c/√n\| ≤ 3 | **PASS**: 205 cells, max\|z\| 3.15, pooled z 0.77 |
-| paired σ ratios | `p1/analyze_p1.py` after B5–B8 | σ_joint/σ_fixed and σ_bkg/σ_fixed per reported cell (ddof 1), median over cells with a leave-one-replica-out jackknife SE (pairs by bootstrap seed) | **MEASURED**, no pass/fail |
+| paired σ ratios | `p1/analyze_p1.py` after B4–B7 | σ_joint/σ_fixed and σ_bkg/σ_fixed per reported cell (ddof 1), median over cells with a leave-one-replica-out jackknife SE (pairs by bootstrap seed) | **MEASURED**, no pass/fail |
 
 Each replica is gated on its provenance (driver digest, runConfig seed 42, bootstrap seed, streams,
 `unit_factors`, one shared omnifile and MC file, `p1Streams`); an arm with a missing or mismatched replica is
@@ -341,32 +360,45 @@ INCONCLUSIVE. The 20 + 20 + 20 counts are fixed (§4).
 | P2 derived, G2 off | max P5 off run 1,034 s | 1,034 s | 1,551 s → **00:30:00** |
 | P2 default | max July sweep task 2,751 s | 2,751 s | 4,127 s → **01:10:00** |
 | G2 on | max P5 on run 1,928 s (includes the override build) | 1,928 s | 2,892 s → **00:50:00** |
-| P3 | max u_CV 948 s + full read of 50.1 GiB at the July sweep's worst rate, (2,751 − 778) s / 159.5 GiB = 12.4 s/GiB (621 s), + in-job hash of 54 GB at ≥ 0.4 GB/s (135 s) | 1,704 s | 2,556 s → **00:45:00** |
+| P3 (composite; u_A never measured) | max u_CV 948 s + full read of 50.1 GiB at the July sweep's worst rate, (2,751 − 778) s / 159.5 GiB = 12.4 s/GiB (621 s), + in-job hash of 54 GB at ≥ 0.4 GB/s (135 s) | 1,704 s | 2,556 s → **00:45:00** |
 
-Every cap is under 12 h. P4's lesson (Stage B diagnostics §4.1): per-file smoke timings underestimated by 6–10×, so every basis here is a measured job of the same kind.
+Every cap is under 12 h. P4's lesson (Stage B diagnostics §4.1): per-file smoke timings underestimated by 6–10×, so every basis here is a measured job of the same kind, except P3's, which composes measured parts
+(u_CV, the July read rate, a hash rate) because no active-file 2D unfold has run; P3 therefore runs last (§4).
 
 **Retries** (record §3). One walltime retry per job, at 1.5 × a projection re-measured from that job's own
 partial progress (< 12 h), written to `retries/<name>.time` and submitted with `launch.py submit --retry <name>
---time <cap>` through the gate; partial output is moved, sha-verified, to `out/<name>.failed-<jobid>` first. An
-out-of-memory kill is a diagnosed resource cause: one retry, on a full regular node if the shared allocation was
-the cause, through the gate at that node's cap. Any other failure needs a diagnosed infrastructure cause. A
-scientific result is never a reason to retry. A second failure is INCONCLUSIVE.
+--time <cap>` through the gate; `launch.py` writes `retries/<name>.time` (HH:MM:SS, scontrol's format), refuses
+a second retry or a retry of a job that has not ended, and refuses while `out/<name>/` is not empty. Partial
+output is moved, sha-verified, to `out/<name>.failed-<jobid>` first; for a `G2_on` retry the override directory
+`out/2dc_C_G2_override/` is moved aside the same way and rebuilt (a `G2_on_s43` retry reuses the seed-42 override,
+sha-checked). The package has no larger allocation than its jobs.tsv rows (shared QOS, at most 128 CPUs and
+243,840M; P2's default run peaked at 177,920 MiB in July), so an out-of-memory kill is a stop-and-report to the
+director, not a retry. Any other failure needs a diagnosed infrastructure cause. A scientific result is never a
+reason to retry. A second failure is INCONCLUSIVE.
 
 **Stops** (record §3): a P0 FAIL, a failed no-op control (P1 b ≡ 1), a failed identity (P2-EQ), a K1 FAIL, or a
 gate refusal stops that line of work; diagnose and report to the director. No replacement product is built.
 
 ## 10. Deployment and launch (after the binding addendum only)
 
+All commands on a saul login node after `source /pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh`
+(Python 3.11), from `$NS/repo/docs/orchestration/state/2d-closeout/stageC/pilot`; `$O = $NS/out`.
 1. `git archive <package commit>` → `$NS/repo/` (`COPYFILE_DISABLE=1`); copy `p1/driver_p1.py` and
    `p2g2/driver_g2.py` into `$NS/repo/2d-unfolding/`; check every file against `manifest.json`.
-2. `preflight_uomni.sh` on a data-transfer node (before B1): hash the universe omnifile, record its stat.
-3. `python launch.py submit B0`; after the jobs end, `analyze_pilot.py p0 results/p0.json`.
-4. On P0 PASS: B1; `analyze_pilot.py p2 results/p2.json`; `p1/analyze_p1.py` for the b ≡ 1 control →
-   `results/p1_unit.json`.
-5. B2; `analyze_g2.py out/2dc_C_P2_Flux23/xsec.root out/2dc_C_G2_on/xsec.root <override.json> <override.npz>
-   results/g2_s42.json`. If it routes MATERIAL or NOT RESOLVED: B3 through the gate, then `--tag _s43 --confirm`.
-6. B4; `analyze_pilot.py p3 results/p3.json`. B5–B8; `p1/analyze_p1.py`.
-7. `REPORT.md`: K1 and K2 terminal outcomes, every `sacct` row, measured unit costs and peak memory (MaxRSS), and
+2. `preflight_uomni.sh` on a data-transfer node (before B1): hash the universe omnifile (full digest
+   `220c479efa97…f011418`), record its stat.
+3. `python launch.py submit B0`; after the jobs end, `python analyze_pilot.py p0 $NS/results/p0.json`.
+4. On P0 PASS: B1; `python analyze_pilot.py p2 $NS/results/p2.json`; `python p1/analyze_p1.py --out-root $O
+   --result $NS/results/p1_unit.json` for the b ≡ 1 control.
+5. On P2-EQ PASS: B2; `python p2g2/analyze_g2.py $O/2dc_C_P2_Flux23/xsec.root $O/2dc_C_G2_on/xsec.root
+   $O/2dc_C_G2_override/override_Flux_23.json $O/2dc_C_G2_override/override_Flux_23.npz
+   $NS/results/g2_s42.json`. If it routes MATERIAL or NOT RESOLVED: B3 through the gate, then
+   `python p2g2/analyze_g2.py $O/2dc_C_G2_off_s43/xsec.root $O/2dc_C_G2_on_s43/xsec.root <the same override json,
+   npz> $NS/results/g2_s43.json --tag _s43 --confirm --a42 $O/2dc_C_P2_Flux23/xsec.root --b42
+   $O/2dc_C_G2_on/xsec.root`.
+6. On the b ≡ 1 PASS: B4–B7; `python p1/analyze_p1.py --out-root $O --result $NS/results/p1.json`.
+7. B8; `python analyze_pilot.py p3 $NS/results/p3.json`.
+8. `REPORT.md`: K1 and K2 terminal outcomes, every `sacct` row, measured unit costs and peak memory (MaxRSS), and
    S1–S5 repriced with a ≥ 20% reserve; durable copies of results to CFS `m3246`, sha256 re-measured.
 
 ## 11. Smoke tests during packaging (login node, existing products; not pilot results)
@@ -386,3 +418,32 @@ gate refusal stops that line of work; diagnose and report to the director. No re
 - P3's comparisons have no written criterion; its u_A cost is the measured outcome.
 - The G1 = 0 census covered the dump and CV files, not the active files.
 - Same-model caveat: the executor, the research agents, the P1 builder and the verifier are all Claude Opus 5.5.
+
+## 13. Independent review
+
+One fresh read-only verifier (Claude Opus 5.5, own isolated worktree, `git-dir` ≠ `git-common-dir`) reviewed the
+package at `0c0d4d26`. **Verdict: APPROVE WITH CHANGES, 3 MATERIAL, 11 MINOR.** It re-measured every walltime
+basis from `sacct`, recomputed the gate arithmetic and both walks, reproduced both patches, read the P1 patch in
+full, diffed `analyze_g2.py` against `analyze_p5.py`, checked the argparse dest names against the provenance keys
+and every external pin on NERSC, and independently recomputed the Flux selection and σ_band.
+
+| finding | disposition |
+|---|---|
+| M1 `$NS/logs` (and `results/`, `retries/`, `out/`) did not exist, so every job would fail at start | `launch.py` creates them before any submission; the analyses create their result directory (§4) |
+| M2 a demonstrated K1 FAIL could be reported INCONCLUSIVE, which had no route; P2-EQ FAIL not folded into K1 | FAIL if any evaluable comparison FAILs; INCONCLUSIVE goes to the director; under a non-PASS P2-EQ, K1 rests on the default-path comparison only (§5, `analyze_pilot.py`) |
+| M3 B2 could launch before P2-EQ was known | B2 and B3 require `results/p2.json` P2-EQ PASS; otherwise P2-G2 does not run and K2 is INCONCLUSIVE (§4, §5, `launch.py`) |
+| m4 a `G2_on` retry would refuse on its own override | the override directory is moved aside with the output and rebuilt (§9, `sbatch_pilot.sh` comment) |
+| m5 the "full regular node" OOM retry could not run | removed: an OOM is a stop-and-report (§9) |
+| m6 retry rules and double submission not enforced | `launch.py` writes `retries/<name>.time` (HH:MM:SS), allows one retry of an ended, failed job, refuses a non-empty output directory and any job name already in `sacct` |
+| m7 Python 3.9 needed | explicit version check; §10 sources the environment first |
+| m8 preflight pinned an 8-hex prefix | full digest `220c479efa97…f011418` |
+| m9 P3 basis is composite; its retries would eat P1's margin | stated as composite; P3 moved last (B8), P1 is B4–B7 (§4, §9) |
+| m10 provenance gaps (P2 iters/use_weights/estimator; P2-EQ none) | added; P2-EQ requires both runs' provenance |
+| m11 `analyze_g2.py` raised on a missing output; §10 omitted `--a42/--b42` | missing outputs give INCONCLUSIVE (frozen seed-43 row); §10 gives the full command |
+| m12 the gate assumes billing = CPUs, unchecked | each job refuses unless `AllocTRES` billing equals jobs.tsv; pending liability uses max(jobs.tsv, Slurm) billing |
+| m13 run *a* is named `2dc_C_P2_Flux23`, not `2dc_C_G2_*` | stated; the addendum is asked to accept the reuse (§6) |
+| m14 the first commit message cites the superseded `select_flux.json` e20cfd48 | the committed file and its pin are `35ce6226…`; recorded here |
+
+The verifier's scientific note is taken into §5: a K1 FAIL at 0.01 σ_ML needs diagnosis and is not presumed to
+be a defect. Its other note, that P5's 2.4e-13 covers only a vertical universe on the derived path, is why P2-EQ
+gates P2-G2.

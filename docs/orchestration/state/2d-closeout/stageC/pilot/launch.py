@@ -21,11 +21,15 @@ controls). If sacct cannot be read (no header, rc != 0), the gate refuses: an un
 """
 import argparse
 import csv
+import json
+import re
 import os
 import subprocess
 import sys
 from pathlib import Path
 
+if sys.version_info < (3, 9):
+    raise SystemExit("REFUSE: launch.py needs Python >= 3.9; source setup_salloc_env.sh first (root_6_28 has 3.11)")
 HERE = Path(__file__).resolve().parent
 CEILING = 12.9
 WINDOW_START = "2026-10-13T00:00:00"
@@ -55,7 +59,12 @@ def enforced(row, time=None):
 
 
 def ledger():
-    """Every 2dc_C_* job since the window start: (completed charge, in-flight enforced, rows)."""
+    """Every 2dc_C_* job since the window start: (completed charge, in-flight enforced, rows).
+
+    An in-flight job's liability uses the larger of its jobs.tsv billing and any billing Slurm reports
+    (AllocTRES, else ReqTRES), so a pending job's ReqTRES cannot understate it; sbatch_pilot.sh refuses at start
+    a job whose allocated billing differs from jobs.tsv."""
+    tbl = {r["name"]: int(r["billing"]) for r in table()}
     cmd = ["sacct", "-X", "-P", "-S", WINDOW_START, "-E", "now", "-u", os.environ.get("USER", "josephrb"),
            "-o", "JobID,JobName,State,ElapsedRaw,AllocTRES,Timelimit,ReqTRES"]
     r = subprocess.run(cmd, capture_output=True, text=True)
@@ -72,9 +81,10 @@ def ledger():
         bill = int(tres.split("billing=")[1].split(",")[0]) if "billing=" in tres else None
         st = state.split()[0]
         if st in TERMINAL_RUNNING:
-            if bill is None:
+            b = max(x for x in (bill, tbl.get(name)) if x is not None) if (bill or tbl.get(name)) else None
+            if b is None:
                 raise SystemExit(f"REFUSE: no billing for in-flight job {jid}")
-            liab = bill * hours(tl) / 256
+            liab = b * hours(tl) / 256
             fly += liab
             rows.append((jid, name, st, "in-flight at cap", round(liab, 4)))
         else:
@@ -82,6 +92,14 @@ def ledger():
             done += ch
             rows.append((jid, name, st, "charged", round(ch, 4)))
     return done, fly, rows
+
+
+def attempts(rows):
+    """jobs.tsv name -> list of sacct states of its attempts (array tasks are not used by this package)."""
+    out = {}
+    for jid, name, st, _, _ in rows:
+        out.setdefault(name, []).append(st)
+    return out
 
 
 def gate(batch_rows, retry=None, time=None, verbose=True):
@@ -97,29 +115,29 @@ def gate(batch_rows, retry=None, time=None, verbose=True):
 
 
 def preconditions(batch):
-    """Order rules (DESIGN §4). Each reads a committed-analysis result on the namespace."""
+    """Order rules (DESIGN §4). Each reads a result written by the frozen analyses on the namespace."""
     res = Path(NS, "results")
-    need = {"B0": [], "B1": ["p0.json"], "B2": ["p0.json", "flux23"], "B3": ["p0.json", "g2_s42.json"],
-            "B4": ["p0.json"]} | {f"B{k}": ["p0.json", "p1_unit.json"] for k in range(5, 9)}
-    import json
+
+    def load(f):
+        p = res / f
+        if not p.is_file():
+            raise SystemExit(f"REFUSE: precondition {p} missing")
+        return json.load(open(p))
+    if batch == "B0":
+        return
+    if load("p0.json").get("P0") != "PASS":
+        raise SystemExit("REFUSE: P0 did not PASS; the pilot stops (record §3)")
     if batch in ("B1", "B2", "B3") and not Path(NS, "preflight", "uomni.stat").is_file():
         raise SystemExit("REFUSE: the universe-omnifile preflight (preflight_uomni.sh) is not recorded")
-    for f in need[batch]:
-        if f == "flux23":   # run a of P2-G2 must exist before its run b: the P2 Flux_23 job finished its output
-            o = Path(NS, "out", "2dc_C_P2_Flux23", "xsec.root")
-            if not o.is_file():
-                raise SystemExit(f"REFUSE: precondition {o} missing")
-            continue
-        p = res / f
-        if not p.exists():
-            raise SystemExit(f"REFUSE: precondition {p} missing")
-        if f == "p0.json" and json.load(open(p)).get("P0") != "PASS":
-            raise SystemExit("REFUSE: P0 did not PASS; the pilot stops (record §3)")
-        if f == "p1_unit.json" and json.load(open(p)).get("b_eq_1", {}).get("verdict") != "PASS":
-            raise SystemExit("REFUSE: the b = 1 control did not PASS; P1 stops")
-        if f == "g2_s42.json" and json.load(open(p)).get("routing") not in (
-                "MATERIAL", "NOT RESOLVED ABOVE TRAINER NOISE"):
-            raise SystemExit("REFUSE: seed 42 did not route MATERIAL or NOT RESOLVED; no seed-43 pair")
+    if batch in ("B2", "B3"):
+        if not Path(NS, "out", "2dc_C_P2_Flux23", "xsec.root").is_file():
+            raise SystemExit("REFUSE: run a of P2-G2 (out/2dc_C_P2_Flux23/xsec.root) is missing")
+        if load("p2.json").get("P2-EQ_derived_vs_default", {}).get("verdict") != "PASS":
+            raise SystemExit("REFUSE: P2-EQ did not PASS; the derived line (P2-G2) stops (DESIGN §5)")
+    if batch == "B3" and load("g2_s42.json").get("routing") not in ("MATERIAL", "NOT RESOLVED ABOVE TRAINER NOISE"):
+        raise SystemExit("REFUSE: seed 42 did not route MATERIAL or NOT RESOLVED; no seed-43 pair")
+    if batch in ("B4", "B5", "B6", "B7") and load("p1_unit.json").get("b_eq_1", {}).get("verdict") != "PASS":
+        raise SystemExit("REFUSE: the b = 1 control did not PASS; P1 stops")
 
 
 def simulate(mode):
@@ -166,6 +184,24 @@ def main():
         br = [r for r in rows if r["batch"] == a.arg]
         if not br:
             raise SystemExit(f"REFUSE: no batch {a.arg}")
+    for d in ("logs", "results", "retries", "out", "tmp"):
+        Path(NS, d).mkdir(parents=True, exist_ok=True)
+    done, fly, rows_l = ledger()
+    att = attempts(rows_l)
+    for r in br:
+        prior = att.get(r["name"], [])
+        if a.retry:
+            if len(prior) != 1 or prior[0] in TERMINAL_RUNNING or prior[0] == "COMPLETED":
+                raise SystemExit(f"REFUSE: {r['name']} has attempts {prior}; a retry needs exactly one ended, "
+                                 "failed attempt (one retry per job, record §3)")
+            if not re.fullmatch(r"\d{2}:\d{2}:\d{2}", a.time):
+                raise SystemExit("REFUSE: --time must be HH:MM:SS (scontrol's TimeLimit format)")
+            if Path(NS, "retries", f"{r['name']}.time").exists():
+                raise SystemExit(f"REFUSE: {r['name']} already has a retry record")
+            if any(Path(NS, "out", r["name"]).glob("*")):
+                raise SystemExit(f"REFUSE: move out/{r['name']} aside (sha-verified) before the retry")
+        elif prior:
+            raise SystemExit(f"REFUSE: {r['name']} was already submitted ({prior}); no double submission")
     ok, total = gate(br, a.retry, a.time)
     if not ok:
         print("REFUSE: the batch would exceed the ceiling. Stop and report to the director.")
@@ -173,6 +209,8 @@ def main():
     if a.action == "gate":
         return 0
     preconditions(br[0]["batch"])
+    if a.retry and a.action == "submit":
+        Path(NS, "retries", f"{a.retry}.time").write_text(a.time + "\n")
     for r in br:
         cmd = ["sbatch", f"--job-name={r['name']}", f"--qos={r['qos']}", f"--cpus-per-task={r['cpus']}",
                f"--mem={r['mem']}", f"--time={a.time or r['time']}", SBATCH]

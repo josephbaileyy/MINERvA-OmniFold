@@ -222,6 +222,18 @@ def main():
     if a.tag not in ("", "_s43"):
         raise SystemExit(f"REFUSE: unknown --tag {a.tag!r}")
     rep = {"tag": a.tag, "universe": UNI}
+    os.makedirs(os.path.dirname(os.path.abspath(a.report)), exist_ok=True)
+    need = [a.a, a.b, a.override_json, a.override_npz] + ([a.a42, a.b42] if a.confirm else [])
+    missing = [p for p in need if not os.path.isfile(p)]
+    if missing:
+        # A missing output (a failed or twice-timed-out job) is INCONCLUSIVE, never an exception: the frozen
+        # seed-43 row then gives a final INCONCLUSIVE (DESIGN §6).
+        rep.update(outcome="INCONCLUSIVE", routing=None, missing=missing, metrics={})
+        if a.confirm:
+            rep["confirm"] = {"verdict": "INCONCLUSIVE", "final_routing": "INCONCLUSIVE", "missing": missing}
+        json.dump(rep, open(a.report, "w"), indent=1)
+        print(json.dumps({k: rep.get(k) for k in ("outcome", "routing", "confirm", "missing")}, indent=1))
+        return
     d, floor, sig_ml, sig = pair(a.a, a.b, a.override_json, a.override_npz, rep)
     if a.confirm:
         r42 = {}
