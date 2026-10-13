@@ -1,0 +1,7 @@
+# muon_check.py 7c2081248f86be1c4c088bb9d97c120715a07129fdee4623ccad97f9d8d70e2a on login16 2026-10-13T11:22:45Z
+# adopted  077912e3e7a53376c6df89ee1af4a2a504fe1f49423bab88780204beccd952f5  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/uq_universe_covariance_full_matcorr_fluxfix.root
+# repaired da92c5d2567647e8613bb3a6522176dbd9a287970082b45ac9e83e24684b1948  /pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/uq_universe_covariance_c04x01.root
+bands whose diagonal changed: ['full_Flux', 'full_Muon_Energy_MINOS']
+muon-reco sigma ratio: min 0.8864 median 0.9923 max 1.1281 frac>1 0.478
+MINOS sigma ratio: min 0.0238 median 0.9706 max 27.8148 frac>1 0.478
+rc=0

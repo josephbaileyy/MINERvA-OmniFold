@@ -7,7 +7,7 @@
 - the charged compute of every job under
   [`AUTHORIZATION-20261012-2d-closeout-stageB-diagnostics.md`](../../../../AUTHORIZATION-20261012-2d-closeout-stageB-diagnostics.md);
 - the P4 walltime-retry deviation and the P5 cap re-pricing, with the director's decision;
-- the finding that a G2 repair needs no new event loop;
+- the finding that a G2 repair needs no new event loop (verified for `MaRES_0`; by tree layout for the rest);
 - the C07′ determination (data-POT counting is not documented as a band, so it is disclosed as omitted);
 - the per-category median relative σ of the adopted and the C04+X01-repaired rollups;
 - the Stage C input copy to CFS.
@@ -37,7 +37,7 @@
 | diagnostic | outcome | consequence for the Stage B recipe |
 |---|---|---|
 | **P4, G1 census** (reco-in/truth-out gap class) | **MEASURED; below the pre-declared materiality bound.** nG1 = 0 over all 12 playlists (489 MC files), so the G1 class is **empty** in the production CV configuration. Every gate passed; the no-op control is IDENTICAL; all 12 outputs are IDENTICAL to the May production files on common branches | **G1 is not a defect.** `E_U` is not implicated; no G1 repair, no re-adoption. Stage B §2.10's "≈1.8% of reco entries" code comment does not describe the shipped configuration |
-| **P5, G2 miss-row weighting** (`MaRES_0`) | seed 42: **MEASURED, NOT RESOLVED ABOVE TRAINER NOISE** (median r1 0.305 > 0.10, but median r3 0.96 ≤ 2). Seed-43 confirmation: **NOT CONFIRMED (Pearson 0.113 < 0.5)**. **Final: NOT RESOLVED ABOVE TRAINER NOISE** | **No G2 repair is triggered**: the pre-declared rule routes to a repair only on MATERIAL. G2 stays an approximation of unresolved size below LightGBM trainer noise, measured in `MaRES_0` only (Flux, with c − 1 up to 18%, is unmeasured). How the recipe carries it (disclosure, or a repair anyway) is the director's and Joseph's call; if repaired, it is re-unfolds only (§3.3) |
+| **P5, G2 miss-row weighting** (`MaRES_0`) | seed 42: **MEASURED, NOT RESOLVED ABOVE TRAINER NOISE** (median r1 0.305 > 0.10, but median r3 0.96 ≤ 2). Seed-43 confirmation: **NOT CONFIRMED (Pearson 0.113 < 0.5)**. **Final: NOT RESOLVED ABOVE TRAINER NOISE** | **No G2 repair is triggered**: the pre-declared rule routes to a repair only on MATERIAL. G2 stays an approximation whose effect is not resolved above LightGBM trainer noise, measured in `MaRES_0` only (Flux, with c − 1 up to 18%, is unmeasured). How the recipe carries it (disclosure, or a repair anyway) is the director's and Joseph's call; if repaired, it is re-unfolds only (§3.3) |
 
 Both were declared before data (P4 DESIGN §6; P5 DESIGN §6–7, the seed-43 routing frozen by the director's
 2026-10-12 ruling before any seed-42 result). No threshold or rule was changed after a result was seen.
@@ -66,9 +66,11 @@ and its charge counts toward the ceiling (§5). Scripts: [`p4/sbatch_p4.sh`](p4/
   f_S ≥ σ_rel/3; 0 reported cells with S = 0.
 
 **Power.** The analysis smoke on a self-test census (P4 DESIGN §4, review M2) exercised the non-empty path
-(wG1 4,273.9, integral f_S 0.1405 against ≈ 1/7 expected) and the self-test gate fired as designed. A zero here
-is therefore an empty class, not a blind census. Not exercised on real data: the status-1 mask path, since no
-real G1 row exists (P4 DESIGN §6 item 3).
+(wG1 4,273.9, integral f_S 0.1405 against ≈ 1/7 expected) and the self-test gate fired as designed. That shows
+the record, bin and analyse path is not blind. The self-test forces keys absent from the census's view (P4
+DESIGN §2), so it does not exercise the `recoIDs` membership lookup itself; that lookup rests on the counter
+identity above (every skipped entry accounted for) and the key-packing check in P4 DESIGN. Not exercised on real
+data: the status-1 mask path, since no real G1 row exists (P4 DESIGN §7 item 3).
 
 ## 3. P5: G2 miss-row weighting (`MaRES_0`)
 
@@ -135,9 +137,11 @@ pins; analysis on NERSC 2026-10-13, rc 0):
 | corr(d/a, c_off − 1), Pearson / Spearman | −0.056 / −0.0004 | −0.009 / −0.006 |
 
 **Reading (descriptive, not a routing input).** The on-minus-off shift is about the size seed noise alone
-predicts (DESIGN §7: median r1 ≈ 0.28 from σ_ML/σ_band = 0.30), it is not reproduced from one seed to the next
-(per-cell z correlation 0.11), and in neither seed does it track the completeness deviation that G2's mechanism
-would drive. So no G2 effect was resolved in `MaRES_0`; the measurement cannot exclude one below trainer noise.
+predicts (DESIGN §7: median r1 ≈ 0.28 from σ_ML/σ_band = 0.30; seed 43's 0.41 is above that), it is only weakly
+reproduced from one seed to the next (per-cell z correlation: Pearson 0.113, below the 0.5 bar; Spearman 0.213,
+nominally non-zero at about 3σ for 188 cells), and in neither seed does it track the completeness deviation that
+G2's mechanism would drive. So no G2 effect was resolved in `MaRES_0`. A weak coherent part is not excluded, and
+the measurement cannot exclude an effect below trainer noise.
 The seed-43 bridge |a − July|/σ_band (median 0.41, max 60) only shows that run *a* at seed 43 differs from the
 seed-42 July product by trainer noise; the bridge is meaningful at seed 42 only, where it is 1.5e-9.
 
@@ -145,8 +149,9 @@ seed-42 July product by trainer noise; the bridge is meaningful at seed 42 only,
 
 The correct per-event universe truth weights of the miss rows are already in each universe omnifile's
 `mc_truth_denom` tree (`w_truth_<band>_<idx>`), and `build_miss_override.py` attaches them exactly (G-a:
-8,999,007 rows; G-b: c_b = 1 to 1.9e-14). **A G2 repair of any vertical universe is therefore re-unfolds
-only.** This revises Stage B §7's contingency, "re-running ≈ 170 truth-weight-varying universes, 43–129
+8,999,007 rows; G-b: c_b = 1 to 1.9e-14). **A G2 repair is therefore re-unfolds only.** This was verified for
+`MaRES_0` in the July universe omnifile; for the other vertical universes it follows from the same
+`mc_truth_denom` layout, which was not checked universe by universe. This revises Stage B §7's contingency, "re-running ≈ 170 truth-weight-varying universes, 43–129
 node-h, plus event loops", to the re-unfold cost alone (P5 DESIGN §2 gives the mechanism).
 
 ## 4. Deviations and pricing errors
@@ -159,7 +164,8 @@ the smoke's rate: 1M took **5:04** (≈ 186 s per file). 1A timed out at 02:00:0
 projected to; no G1 number from any of them was read. The error hit every job the same way, so the retry
 does not select on a result.
 
-**Director's decision** (cross-session message, about 21:45Z 2026-10-12), quoted:
+**Director's decision** (cross-session message 2026-10-12, received before the cancellations, which ended at
+21:37:34Z by `sacct`; the committed record dates it about 21:40Z), quoted:
 
 > P4 retry deviation: YES, with the conditions below. Cancel the doomed jobs now.
 >
@@ -239,8 +245,12 @@ files each; 1N was cancelled before it started and had no output.
 | 1O (proxy, first run) | 10.39 | 3.56 | 1.03 h | 1.55 h | 2 h | 0:46 | 0.75 | COMPLETED |
 | 1P (proxy, first run) | 13.76 | 4.71 | 1.36 h | 2.05 h | 2 h | 1:05 | 0.80 | COMPLETED |
 
-1P's 2 h cap was 1.46× its projection, below the 1.5 rule; the director accepted it because 1P kept its one
-walltime retry. It was not needed. **No job timed out on its retry; nothing is INCONCLUSIVE for walltime.**
+1P's 2 h cap was 1.46× its projection. The 1.5× rule in the decision applied to 1M and 1N only; the director
+called 1P's margin acceptable in a later cross-session message (not a committed record), since 1P kept a walltime
+retry. It was not needed. The quoted message and the committed record word the 1O/1P/ctl1L case differently
+(the message: a job that "times out again, 1O, 1P and ctl1L included" is INCONCLUSIVE; the record: those three
+get at most one walltime retry if they time out for the first time later). The difference is moot, because no
+job in either group timed out. **No job timed out on its retry; nothing is INCONCLUSIVE for walltime.**
 For Stage C pricing: the projection underestimated by up to 28% (1D), inside the 1.5 margin.
 
 ### 4.2 P5 caps re-priced before any P5 job ran
@@ -316,8 +326,8 @@ destination made read-only. This closes Stage B §5's "active files durability" 
 uncertainty (MAT `MnvNormalization.h:100-103`, `mass_scale_err = .014`), and MAT's `"POT_Scale"` is only a
 plot-group label (`MnvPlotter.cxx:401-406`). The 2% POT-counting term of the NuMI flux prediction (Aliaga et al.,
 arXiv:1607.00704 §IV) sits inside the flux band by convention. Under Joseph's C07′ rule the band is **omitted
-with a disclosure**, which should say that the flux band carries the POT-counting term, so a separate band
-would double-count it. Two links are inferred, not verified (the ME PPFX universes carrying that term; the ν-e
+with a disclosure**, which should say that the flux prediction carries a POT-counting term, so a separate band
+would risk counting it twice. Two links are inferred, not verified (the ME PPFX universes carrying that term; the ν-e
 constraint absorbing it); see the determination.
 
 ### 6.3 Per-category median relative σ, adopted vs C04+X01-repaired
@@ -339,21 +349,59 @@ DIAGNOSTIC, NOT QUOTABLE.
 
 - **Grouping caveat:** the current grouping puts the flat 1.4% under Normalization. The note's App. A wording
   ("legacy": GENIE `Norm*` bands → Normalization, flat 1.4% → Models) gives Models 2.034% and Normalization
-  0.081%; the JSON carries both, and the legacy one reproduces App. A.
+  0.081%; the JSON carries both. The legacy grouping reproduced App. A as it stood at base `b456fa4d`; at the
+  merged `origin/main`, App. A (`app_statmethods.tex:281-285`) already uses the current grouping and calls the
+  legacy one an earlier version.
 - Only the `full_Flux` and `full_Muon_Energy_MINOS` diagonals change
-  ([`c04-grouped/muon_check.py`](c04-grouped/muon_check.py), `7c208124…`); the per-cell muon-reconstruction σ
-  ratio is median 0.992, range 0.886–1.128 (the median of the category rises while the per-cell median falls).
+  ([`c04-grouped/muon_check.py`](c04-grouped/muon_check.py), `7c208124…`; output
+  [`c04-grouped/muon_check_output.txt`](c04-grouped/muon_check_output.txt), re-run 2026-10-13 on the adopted
+  `077912e3…` and repaired `da92c5d2…` rollups); the per-cell muon-reconstruction σ ratio is median 0.992,
+  range 0.886–1.128, above 1 in 47.8% of cells (the category median rises while the per-cell ratio median falls).
 - The statistical block equals the VL170 boot300 one to 7.2e-14.
 
 ## 7. Updates made to the Stage B REPORT
 
-Dated 2026-10-13 corrections in [`../REPORT.md`](../REPORT.md): the G1 and G2 rows of §1, R10 of §4, the G1/G2
-rows of §5, the G2-repair contingency of §7, and §11's limits now cite this REPORT's outcomes. No other text
-changed.
+Dated 2026-10-13 corrections in [`../REPORT.md`](../REPORT.md), each keeping the original text (struck or
+retained) and citing this REPORT:
+- §1: the G1 and G2 rows of the issue table, and an update note after "Why CONDITIONAL, not MET" (the terminal
+  outcome is left to the director);
+- §2.10 and §2.11: a correction block at the head of each, above the original candidate statement;
+- §4: R10;
+- §5: the G1 and G2 rows, and a note on the shared-class (C03) row (P4 did not measure that overlap);
+- §7: the G1-repair contingency (struck) and the G2-repair contingency ("plus event loops" struck);
+- §8: a note on the G1 support gap under Stop conditions;
+- §11: the limits line.
+No other text changed.
 
 ## 8. Independent review
 
-Pending: one fresh read-only verifier on this commit (the grant's reviewer requirement). Its verdict and the repairs will be recorded here.
+One fresh read-only verifier (a general-purpose Claude Opus 5.5 agent, its own isolated worktree, `git-dir` ≠
+`git-common-dir` asserted, removed afterwards) reviewed `23576f9f`. **Same-model caveat:** the executor, the
+package reviewers and this verifier are all Claude Opus 5.5.
+
+**Verdict: APPROVE WITH CHANGES, 0 MATERIAL, 10 MINOR.** It found no wrong number, routing or policy breach. It
+re-hashed every committed artifact and the NERSC products (P4 result, both P5 reports, all four
+`xsec_MaRES_0_*.root`, the override npz `ce1cd319…`). It recomputed the charges from the committed rows and from
+live `sacct` (1.2524, 26 `2dc_*` rows, none other), re-applied the frozen routing, and checked the AUTHORIZATION
+shas, the scope (only `state/2d-closeout/**` plus the generated MANIFEST) and that the merge commit resolved only
+`MANIFEST.tsv`.
+
+| finding | disposition |
+|---|---|
+| 1 "of unresolved size below trainer noise" asserts a bound | reworded: "not resolved above LightGBM trainer noise" (§1) |
+| 2 the Reading paragraph omits Spearman 0.213 and seed 43's r1 0.41 | both cited; "a weak coherent part is not excluded" (§3.2); Stage B §1 G2 row gives both correlations |
+| 3 the self-test does not exercise the `recoIDs` lookup; wrong DESIGN section | Power paragraph scoped to the record/bin/analyse path; lookup rests on the counter identity; §7 item 3 (§2) |
+| 4 the decision timestamp put the cancellations before it | dated from `sacct` (cancellations ended 21:37:34Z) and the committed record (about 21:40Z) (§4.1) |
+| 5 1P acceptance has no committed record; message vs record wording on 1O/1P/ctl1L | both stated as such; noted moot (§4.1) |
+| 6 §7 inventory incomplete | full list (§7) |
+| 7 Stage B §1 table originals deleted, G2 "Candidate." not struck | originals struck, not deleted |
+| 8 the App. A grouping statement is stale after the merge | dated to `b456fa4d`; App. A on merged main uses the current grouping (§6.3) |
+| 9 "any vertical universe" and "would double-count" overstate | scoped to `MaRES_0` plus tree layout (§3.3, CITABLE FOR); "would risk counting it twice" (§6.2) |
+| 10 muon ratio has no committed output | `muon_check.py` re-run 2026-10-13, output committed (§6.3) |
+
+Not checkable by the verifier: the director's seed-43 go-ahead and the docstring ruling (cross-session messages
+with no committed record), whether the quoted decision is verbatim, the C07′ literature quotes, today's CFS
+destination files, and the July-sweep 2,738 s figure.
 
 ## 9. Limits
 
