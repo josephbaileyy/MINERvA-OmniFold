@@ -562,6 +562,8 @@ docs/orchestration/AUTHORIZATION-20261013-2d-closeout-stageC-pilot-binding-v2.md
 docs/orchestration/state/2d-closeout/stageB/REPORT.md	MACHINE	open	""
 docs/orchestration/state/2d-closeout/stageB/verify-c04-x01/VERIFICATION.md	MACHINE	open	""
 docs/orchestration/state/2d-closeout/c04-repair/REPORT.md	MACHINE	open	""
+docs/orchestration/state/2d-closeout/stageD-inputs/REPORT.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageD-inputs/verification/VERIFICATION.md	MACHINE	open	""
 docs/orchestration/PREREG-20261012-5d-injected-w-closure.md	LIVE	open	
 docs/orchestration/state/valencia-feasibility-20261011/PLAN.md	MACHINE	open	""
 docs/orchestration/state/valencia-feasibility-20261011/REPAIR.md	MACHINE	open	""
