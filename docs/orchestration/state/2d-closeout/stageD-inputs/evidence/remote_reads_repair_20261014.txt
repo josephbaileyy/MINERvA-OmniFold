@@ -1,0 +1,37 @@
+## host login29 2026-10-14T07:51:44Z
+## CFS m3246 top level: directories / non-directories (find -maxdepth 1, excluding the root)
+99
+7
+## top-level names matching generator or MC patterns (case-insensitive)
+/global/cfs/cdirs/m3246/g4
+/global/cfs/cdirs/m3246/geant4-v11.3.1
+/global/cfs/cdirs/m3246/geant4-v11.3.1-build
+/global/cfs/cdirs/m3246/geant4-v11.3.1-install
+/global/cfs/cdirs/m3246/geant4-v11.3.1.tar.gz
+/global/cfs/cdirs/m3246/Herwig7
+/global/cfs/cdirs/m3246/Herwig7perlmutte_python36
+/global/cfs/cdirs/m3246/Herwig7perlmutter
+/global/cfs/cdirs/m3246/sherpa
+/global/cfs/cdirs/m3246/Sherpa
+## second-level directories named like MINERvA under member directories
+/global/cfs/cdirs/m3246/gregork/Minerva
+/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage
+## gregork/Minerva/20260326 listing
+drwxr-sr-x 10 gregork m3246 4096 Aug  6 10:00 /global/cfs/cdirs/m3246/gregork/Minerva
+drwxrws---  7 gregork m3246 4096 Apr 12  2026 /global/cfs/cdirs/m3246/gregork/Minerva/20260326
+1A: 41 mc .pb files; total entries 44; du 15G
+1B: 11 mc .pb files; total entries 14; du 4.0G
+1A
+1B
+baselines
+baselines2
+baselines3
+result.pkl
+## sizes
+9.6T	/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC
+12G	/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie
+## CVMFS gibuu product
+ls: cannot access '/cvmfs/larsoft.opensciencegrid.org/products/gibuu': No such file or directory
+## end 2026-10-14T07:51:49Z
+## point-cloud-mode identity-carrying omnifile (ls -l), 2026-10-14
+-rw-r----- 1 josephrb josephrb 113496440965 Jul 18 22:01 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/merged/runEventLoopOmniFold_G2_FPS_MEFHC.root
