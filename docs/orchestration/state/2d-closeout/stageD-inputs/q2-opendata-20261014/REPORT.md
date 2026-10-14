@@ -83,12 +83,13 @@ and 1P (`../evidence/identity_probe_*.out`).
 
 ## 4. Not measured
 
-- The 1A Data content: only sizes were compared.
-- The other 39 1A MC files beyond those two.
+- In this record, the 1A Data content (only sizes were compared here) and the other 39 1A MC files. The triage
+  below then compared all 253 1A Data and all 41 1A MC files on the selected samples.
 - Reco variables beyond the four above.
 - Nine Data playlists.
-- The effect on the 2D result. A read-only impact triage (event-loop branch use, old 1A Data against new,
-  per-playlist yields) was started on 2026-10-14. Its result will be recorded separately.
+- The effect on the 2D result was measured afterwards in [`triage/REPORT.md`](triage/REPORT.md): **NO MATERIAL
+  BIAS EXPECTED**. The selection reads no branch that changed, and the selected 1A events are the same in both
+  processings, for Data and for MC.
 
 ## 5. Corrections this makes
 
