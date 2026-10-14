@@ -1,0 +1,110 @@
+{
+ "1A": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1A.root",
+  "sha256": "9e56ba6855521fdfd4e599a840d0fa0d334076df364ae8698260923b04e65453",
+  "pot_data": 8.972756120489268e+19,
+  "pot_mc": 4.0692592418996086e+20,
+  "n_data": 360123,
+  "n_sig_pass": 1736833,
+  "n_bkg_pass": 52626
+ },
+ "1B": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1B.root",
+  "sha256": "ec03ba5d776cea66020451813c736ea502e21bb2685e1f6f2ab277a9e943b3b7",
+  "pot_data": 1.8673986975553036e+19,
+  "pot_mc": 1.0937143891069359e+20,
+  "n_data": 75192,
+  "n_sig_pass": 469084,
+  "n_bkg_pass": 14182
+ },
+ "1C": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1C.root",
+  "sha256": "e6502e38f5e46cad1f51cb808c446652c3243c1dd08a81d63bc1c07ddbce2423",
+  "pot_data": 4.294376238504551e+19,
+  "pot_mc": 2.0873802493616207e+20,
+  "n_data": 173122,
+  "n_sig_pass": 894027,
+  "n_bkg_pass": 26898
+ },
+ "1D": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1D.root",
+  "sha256": "c63d224cefabb432053a0e5d7f34d7140fdcc8fed79b8cb7b29da4198b243c8b",
+  "pot_data": 1.4404452962278602e+20,
+  "pot_mc": 6.074026581183651e+20,
+  "n_data": 580834,
+  "n_sig_pass": 2595088,
+  "n_bkg_pass": 78987
+ },
+ "1E": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1E.root",
+  "sha256": "bc2898b5d8cf7e1aae483ec7b0074c47866370a729d8a1825e56493bb1cdbbc4",
+  "pot_data": 1.0296200958633945e+20,
+  "pot_mc": 5.0861289099383597e+20,
+  "n_data": 408075,
+  "n_sig_pass": 2165554,
+  "n_bkg_pass": 66077
+ },
+ "1F": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1F.root",
+  "sha256": "397dd1d6f8e5e7e4a4ddfc00e4fc176b6138c34aa4f2d6fc2fcdb6c2a3eeab8d",
+  "pot_data": 1.6685546978706168e+20,
+  "pot_mc": 7.071214242029071e+20,
+  "n_data": 642737,
+  "n_sig_pass": 2919699,
+  "n_bkg_pass": 92219
+ },
+ "1G": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1G.root",
+  "sha256": "c060835c00da5324b15ebecd577750d5ccff330fb53b4541041e574c9a558c50",
+  "pot_data": 1.375694142738046e+20,
+  "pot_mc": 5.954273654656092e+20,
+  "n_data": 538406,
+  "n_sig_pass": 2484197,
+  "n_bkg_pass": 76742
+ },
+ "1L": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1L.root",
+  "sha256": "3b0ba3bf81c73bcccf3bfeef510f50b6423bcd238401c45b3014a6dfa568f777",
+  "pot_data": 1.3370718209243894e+19,
+  "pot_mc": 5.822833555494932e+19,
+  "n_data": 49872,
+  "n_sig_pass": 232123,
+  "n_bkg_pass": 7820
+ },
+ "1M": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1M.root",
+  "sha256": "d1bd9d0891acaee1ecb572b963c1951d2f3e7f837efae1a5389a52cc75f99355",
+  "pot_data": 1.581268994168384e+20,
+  "pot_mc": 8.978852586344844e+20,
+  "n_data": 591031,
+  "n_sig_pass": 3583806,
+  "n_bkg_pass": 120642
+ },
+ "1N": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1N.root",
+  "sha256": "15367193b8bc8477c8dbe01c5ad932532b51669d6d46573083eebf8d3ff97b3e",
+  "pot_data": 1.0656505761839266e+20,
+  "pot_mc": 5.12109566521608e+20,
+  "n_data": 415928,
+  "n_sig_pass": 2042233,
+  "n_bkg_pass": 70774
+ },
+ "1O": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1O.root",
+  "sha256": "68f20baa8d5fe2474970d8179e895f1933e9b63beb7741e6bcad81e84f2fb3d9",
+  "pot_data": 2.9796628174847955e+19,
+  "pot_mc": 1.5823900034490132e+20,
+  "n_data": 110836,
+  "n_sig_pass": 593359,
+  "n_bkg_pass": 22038
+ },
+ "1P": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1P.root",
+  "sha256": "ee42dcab1aa9c946062bedabd0206d78d20932fa3cc16d4dc0f951ded273094c",
+  "pot_data": 4.675822390412008e+19,
+  "pot_mc": 2.0813657500734895e+20,
+  "n_data": 173641,
+  "n_sig_pass": 782010,
+  "n_bkg_pass": 29222
+ }
+}
