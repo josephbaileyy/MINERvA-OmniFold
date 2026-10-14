@@ -54,6 +54,8 @@ The director's amendments, received during the work, override the matching parts
 
 ## 1. Answer
 
+> **Correction 2026-10-14:** Q2 is answered in [`q2-opendata-20261014/REPORT.md`](q2-opendata-20261014/REPORT.md). The current open-data MC is a **reprocessing** of the same events, not a new production, so it is not an independent bank. Only Playlist 1A of our inputs is the older processing; the triage ([`q2-opendata-20261014/triage/REPORT.md`](q2-opendata-20261014/triage/REPORT.md)) finds no material bias from it. Every mention of Q2 as open in this report is superseded by those records.
+
 **Overall: UNAVAILABLE.** Two of the three inputs cannot be produced inside this project with the samples that
 exist. The third (the nuisance generator) is unbuilt and unpriced, and its physical-adequacy evidence is
 unavailable. The decision therefore goes to Joseph as the plan's §6 two-outcome decision: keep the full endpoint
@@ -319,6 +321,8 @@ the marginal of the 3D result.
 
 ## 9. Is "no feasible route to the full objective under current inputs" confirmed?
 
+> **Correction 2026-10-14:** Q2 is answered in [`q2-opendata-20261014/REPORT.md`](q2-opendata-20261014/REPORT.md). The current open-data MC is a **reprocessing** of the same events, not a new production, so it is not an independent bank. Only Playlist 1A of our inputs is the older processing; the triage ([`q2-opendata-20261014/triage/REPORT.md`](q2-opendata-20261014/triage/REPORT.md)) finds no material bias from it. Every mention of Q2 as open in this report is superseded by those records.
+
 **CONFIRMED by inventory, with one refinement.** The basis is the files themselves, not the earlier reports:
 
 | premise | measured here | verdict |
@@ -360,6 +364,8 @@ Contacting MINERvA, an external author or a coauthor is Joseph's act or Ben's.
   separately adopt narrower conditional or convention claims, which is a different publication endpoint.
 
 ## 11. Not measured, and how each would be measured
+
+> **Correction 2026-10-14:** Q2 is answered in [`q2-opendata-20261014/REPORT.md`](q2-opendata-20261014/REPORT.md). The current open-data MC is a **reprocessing** of the same events, not a new production, so it is not an independent bank. Only Playlist 1A of our inputs is the older processing; the triage ([`q2-opendata-20261014/triage/REPORT.md`](q2-opendata-20261014/triage/REPORT.md)) finds no material bias from it. Every mention of Q2 as open in this report is superseded by those records.
 
 - **The identity census over all 489 MC files.** Four were read (§4.2). Measurement: the same probe over every
   file. It needs login-node reads only: the verifier measured 2.1–5.5 s per file for the integer branches, so the
