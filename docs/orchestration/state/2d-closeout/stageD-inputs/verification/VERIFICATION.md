@@ -189,3 +189,15 @@ The only cluster check was a read-only listing of `josephrb/minerva-shutdown-sta
 ```
 ```
 (empty; HEAD `d28ba3f589362c6e18b212b6188492de11de2ce0`. The authorized checkout was the only write.)
+
+---
+
+# Director finding on `e70a2db2` (paper-tighten lane, APPROVE WITH ONE MINOR)
+
+- **MINOR, §6.1 (the sentence before §6.2).** The text said "The 2D measurement is the E_avail marginal of the 3D
+  result". The 2D result is its own unfold, not the marginal of the 3D result. The conclusion, that a 2D projection
+  of these samples is a projection of an already-inspected sample, holds without that premise.
+- **Repair.** The sentence now rests on the 2D observables lying inside the 3D/5D phase space the samples were
+  compared in, citing `3d-unfolding/genie/README.md:43` (the E_avail-marginal `hXSec2D`), and it says the 2D result
+  is its own unfold. The writer checked that `:43` carries the `hXSec2D` text.
+- **Re-verification.** None, at the director's instruction: this is a one-sentence wording repair. No outcome changes.

@@ -268,8 +268,10 @@ MINERvA Tune v1 prediction (`2d-unfolding/minerva_paper_anc/`; `2d-unfolding/com
 our prior, not an independent generator. NEUT is "not openly available" (`3d-unfolding/genie/README.md:234-235`).
 
 **None of these is fresh.** All four were compared with our 3D and 5D results (`3d-unfolding/genie/README.md:144-198`;
-`docs/analysis-note/paper_body.tex:410-460`). The 2D measurement is the E_avail marginal of the 3D result, so a 2D
-projection of these samples is a projection of an inspected sample.
+`docs/analysis-note/paper_body.tex:410-460`). The 2D observables `(p_T, p_‖)` lie within the 3D and 5D phase space these samples were
+compared in (the 3D generator products include an E_avail-marginal `hXSec2D`, `3d-unfolding/genie/README.md:43`), so a 2D
+projection of these samples is a projection of an already-inspected sample. The 2D result is its own unfold, not
+the marginal of the 3D result.
 
 ### 6.2 Routes, laws, prices and dependencies
 
