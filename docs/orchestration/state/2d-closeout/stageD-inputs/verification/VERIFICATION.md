@@ -1,7 +1,7 @@
 # Stage D inputs REPORT: independent verification record
 
 **CITABLE FOR:** the independent read-only verifier's findings on the Stage D inputs REPORT at commit
-`d534b7ea11fb3a3ad4935cf70dee831fc01a6ebe`, and its own re-measurements. These include identity on 1L, 1N and 1B,
+`d534b7ea11fb3a3ad4935cf70dee831fc01a6ebe`, its focused re-review of `d28ba3f5`, and its own re-measurements. These include identity on 1L, 1N and 1B,
 per-file read times, the `gregork/Minerva` derived MC and the point-cloud omnifile size.
 
 **NOT CITABLE FOR:** the repaired REPORT. Its disposition of each finding is in the REPORT itself and in the
@@ -12,7 +12,7 @@ repair commit. Also not citable for any adoption, grant or coverage claim.
 | `Verifier` | a fresh Claude Opus 5.5 (`claude-opus-5-5`) subagent of session `minerva-omnifold-ed`. It did not write the REPORT, and it worked in a separate detached worktree at `d534b7ea`, read-only, ending with an empty `git status` |
 | `Object` | `docs/orchestration/state/2d-closeout/stageD-inputs/REPORT.md` and its evidence at `d534b7ea` |
 | `Cluster` | login-node reads printed to stdout only; no Slurm job |
-| `Text` | the verifier's final report, reproduced verbatim below |
+| `Text` | the verifier's final report on `d534b7ea`, then its focused re-review of the repair commit `d28ba3f5`, both reproduced verbatim below |
 
 ## Verdict: PASS WITH CHANGES
 
@@ -130,3 +130,62 @@ Citations checked and correct, apart from those flagged above:
 (empty; HEAD `d534b7ea11fb3a3ad4935cf70dee831fc01a6ebe`)
 
 Probe scripts went only to my scratchpad, `/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7c1fcb17-c356-416d-9b7b-fb768bb6d284/scratchpad/verify/`, along with a downloaded copy of the official MAD tuple CSV (`mad.csv`). On the cluster I ran only reads that print to stdout.
+
+---
+
+# Focused re-review of the repair commit `d28ba3f589362c6e18b212b6188492de11de2ce0` (verbatim)
+
+## Re-review of d28ba3f5: PASS WITH CHANGES
+
+The writer resolved all 19 of my findings except M1, which is only partly resolved. Every outcome label is now consistent: no "PRICED (projection)" and no "≥ 0.43" is left anywhere in the REPORT, the CATALOG row or the commit message. Two small text fixes are still needed (N1 and N2 below), plus a few cosmetic ones. None of them changes an outcome.
+
+### Per-finding status
+
+| finding | status | evidence at d28ba3f5 |
+|---|---|---|
+| M1: R0 labelled PRICED; the ≥ 0.43 bound not established | **PARTIAL** | Fixed: §1 row 1 (`:64`), §4.5 R0 row (`:211`, price "**UNPRICED** … not a lower bound"), N2 (`:304`), §9 (`:320`), CATALOG and commit message. §4.3 (`:165-172`) now states that no identity-only mode exists and names the two routes. **Remaining:** the R0 row's own production-law column (`:211`) still says "same binary, inputs and environment, plus the identity branches", which contradicts `:166` and the same row's dependency column. |
+| M2: CFS absence claims unsupported, and one wrong | **RESOLVED** | `:214`, `:251-255` and `:320` scope the claims to the top level, record `gregork/Minerva` and point to the new evidence file. Q2 now has the internal route (`:338-341`). |
+| §3 GENIE row cited the NuWro line | RESOLVED (citation off by one, C1) | `:97-99` split into GENIE, NuWro and login-node rows |
+| s5p archive: GENIE-only event files | RESOLVED | `:248-250` |
+| NuWro and SL7 builds called unmeasured | RESOLVED | `:278-279`, `:364-365` |
+| DESIGN-20260911 misquoted | RESOLVED | `:279` quotes "where fresh production would buy something" and leaves freshness open |
+| ASSESSMENT line numbers | RESOLVED | `:96` (`:274`), `:212` (`:313`), `:307` (§5 `:249`) |
+| "five orders of magnitude" | RESOLVED | dropped; `:308` cites NO-GO under delegation §3.4 only |
+| census left UNPRICED | RESOLVED | `:213` and `:358-359` give a 15–45 login-minute PROJECTION |
+| overlay hedge missing downstream | RESOLVED | `:64`, `:174`, `:324` and the CATALOG all say "inferred" |
+| §9 identity scope | RESOLVED | `:320` ("4 of 489 … plus 3 more by the verifier") |
+| custodian group-permission caveat | RESOLVED | `:286` |
+| one-account citations | RESOLVED | `:286`. I re-opened `FINDINGS.md:158`, `PLAYBOOK.md:26` and `REVIEW-CONTRACT…:1017`; all say what is claimed. |
+| identity write sites (all four) | RESOLVED | `:161-163`. I re-opened `:753`, `:787-789`, `:985`, `:1001-1035`, `:1346` and `:1390-1392`; all correct. |
+| "120 rows" | RESOLVED | `:76` ("119 job rows") |
+| 9.6 TB vs 10.53 TB | RESOLVED | `:221` (TiB, "the same quantity") |
+| 1,964 of 1,964 | RESOLVED | `:145` |
+| "meets" the 3 TB rule | RESOLVED | `:214` ("is constrained by") |
+| remote-log claims not in the log | RESOLVED | The repair log carries 9.6T (`:31`), 12G (`:32`) and gibuu absent (`:34`). |
+
+### New findings (MINOR)
+- **N1. The R0 row overstates the size of a point-cloud R0.** `:211` says the point-cloud mode's "output is about 53× larger". The 53× file is the full-phase-space G2 omnifile, with 49,906,108 signal rows against the 2D file's 32,849,103. §4.3 (`:172`) correctly says "Its selection also differs". A 2D-selection point-cloud R0 would be roughly 35× by row scaling, and that is a projection. Fix: say "the one point-cloud-mode file (FPS selection, 1.5× the rows) is 53× the production file", and fix the leftover "same binary" text from M1.
+- **N2. "cheap" on a projection.** `:68` ("the fixed-band test's unfolds are cheap") and `:310` ("Its unfolds are cheap") are an affordability judgement on 232–344 node-h. That is 34–51 % of the 674.0 node-h of uncommitted headroom in §2, before the 2,151 node-h event-loop add-on, so it reads as the fit verdict amendment 1 excludes. Fix: drop "cheap" and keep the numbers.
+- **N3. §8 overstates the cost reduction.** `:308` says "The measured units lower the per-experiment cost". The new range is 36.9–51.6 node-h against the old 43.2–160.9. The upper end falls, but 51.6 is above the old optimistic 43.2. Fix: "lower the conservative end".
+
+### New findings (COSMETIC)
+- **C1. Two citations are one line off.** `3d-unfolding/genie/README.md:97-98` should be `:98-99`; line 97 is "## Status / stages", and the "~9 min" text is on line 99. `:116-118` should be `:117-119`.
+- **C2. One second-level hit is not mentioned.** `:254-255` says the second-level search "found `gregork/Minerva`". The evidence file (`:18`) also lists `josephrb/minerva-shutdown-stage`. I re-checked it read-only: 60G of `fig_products`, `g2_input`, `pet_inputs` and `results`, with no `*mc_AnaTuple*` and no `StandardMC`. Mention it as checked.
+- **C3. Provenance gaps in `remote_reads_repair_20261014.txt`.** The `ls -l` of the 113 GB file (`:36-37`) is appended after the `## end` marker, with no timestamp or host. The generator and MC name patterns behind `:5-15` are not recorded either. Otherwise the file supports every use the REPORT makes of it: 99/7, the generator names, `gregork` 41 + 11 `.pb` files at 15G and 4.0G, 9.6T, 12G, gibuu absent, and 113,496,440,965 B (53× is 52.9).
+- **C4. The verifier numbers have no committed probe code.** The REPORT cites `VERIFICATION.md` for my 1L/1N/1B identity and timing numbers and for the overlay decomposition. The probe scripts behind them are only in my session scratchpad, which is not durable. If the director wants them reproducible, commit the probes or label the numbers as verifier observations.
+
+### VERIFICATION.md
+It reproduces my first report verbatim: verdict, both MATERIAL findings, the 12 MINOR and 5 COSMETIC items, the recomputation table, the citations list, the not-checked list and the status block. Its header and its NOT CITABLE scope are accurate. It is registered as MACHINE.
+
+### Mechanics
+- `generate_manifest.py --at-sha d28ba3f5… --check` returns OK, exit 0, 2743 rows, LIVE 352.
+- The REPORT override row is still LIVE.
+- The CATALOG row matches the repaired §1.
+
+### Cluster
+The only cluster check was a read-only listing of `josephrb/minerva-shutdown-stage`, for C2.
+
+### `git -C /Users/josephbailey/local-research/MINERvA-OmniFold-stage-d-verify-20261014 status --short`
+```
+```
+(empty; HEAD `d28ba3f589362c6e18b212b6188492de11de2ce0`. The authorized checkout was the only write.)

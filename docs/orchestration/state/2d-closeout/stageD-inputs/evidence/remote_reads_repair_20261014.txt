@@ -33,5 +33,23 @@ result.pkl
 ## CVMFS gibuu product
 ls: cannot access '/cvmfs/larsoft.opensciencegrid.org/products/gibuu': No such file or directory
 ## end 2026-10-14T07:51:49Z
-## point-cloud-mode identity-carrying omnifile (ls -l), 2026-10-14
+## note, added at repair 2 (2026-10-14): patterns used in the block above
+##   top level: find $C -mindepth 1 -maxdepth 1 | grep -iE 'genie|nuwro|gibuu|neut|herwig|sherpa|g4|geant|minerva|mc'
+##   second level: find $C -mindepth 2 -maxdepth 2 -type d -iname '*minerva*'
+##   gregork counts: ls <dir> | grep -c 'MasterAnaDev_mc_AnaTuple_run.*_Playlist\.pb$'
+
+## host login29 2026-10-14T07:59:04Z
+## point-cloud-mode identity-carrying omnifile (ls -l)
 -rw-r----- 1 josephrb josephrb 113496440965 Jul 18 22:01 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/g2_fullevent/merged/runEventLoopOmniFold_G2_FPS_MEFHC.root
+## josephrb/minerva-shutdown-stage: size, top-level entries, AnaTuple / StandardMC matches
+60G	/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage
+fig_products
+g2_input
+pet_inputs
+README.md
+results
+SHA256SUMS
+stage.log
+stage_to_cfs.sh
+mc_AnaTuple files: 0; StandardMC paths: 0
+## end 2026-10-14T07:59:04Z
