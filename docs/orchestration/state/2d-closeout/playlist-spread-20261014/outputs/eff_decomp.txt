@@ -1,0 +1,24 @@
+1A {'n_rows': 2682267, 'n_miss_rows': 945434, 'nTruthOnlyMisses_param': 681612, 'f_present': 0.6495, 'f_pass_present': 1.0, 'f_grid_pass': 0.9952, 'wreco_over_wtruth': 0.9839, 'eff': 0.6359}
+1B {'n_rows': 721082, 'n_miss_rows': 251998, 'nTruthOnlyMisses_param': 181498, 'f_present': 0.6525, 'f_pass_present': 1.0, 'f_grid_pass': 0.9953, 'wreco_over_wtruth': 0.9844, 'eff': 0.6393}
+1C {'n_rows': 1376832, 'n_miss_rows': 482805, 'nTruthOnlyMisses_param': 348220, 'f_present': 0.6514, 'f_pass_present': 1.0, 'f_grid_pass': 0.9953, 'wreco_over_wtruth': 0.9846, 'eff': 0.6383}
+1D {'n_rows': 4003632, 'n_miss_rows': 1408544, 'nTruthOnlyMisses_param': 1015932, 'f_present': 0.6502, 'f_pass_present': 1.0, 'f_grid_pass': 0.9952, 'wreco_over_wtruth': 0.9843, 'eff': 0.6369}
+1E {'n_rows': 3350021, 'n_miss_rows': 1184467, 'nTruthOnlyMisses_param': 855054, 'f_present': 0.6483, 'f_pass_present': 1.0, 'f_grid_pass': 0.9953, 'wreco_over_wtruth': 0.9841, 'eff': 0.635}
+1F {'n_rows': 4660210, 'n_miss_rows': 1740511, 'nTruthOnlyMisses_param': 1268635, 'f_present': 0.6283, 'f_pass_present': 1.0, 'f_grid_pass': 0.995, 'wreco_over_wtruth': 0.9812, 'eff': 0.6134}
+1G {'n_rows': 3922748, 'n_miss_rows': 1438551, 'nTruthOnlyMisses_param': 1046274, 'f_present': 0.6361, 'f_pass_present': 1.0, 'f_grid_pass': 0.9951, 'wreco_over_wtruth': 0.9825, 'eff': 0.6219}
+1L {'n_rows': 383848, 'n_miss_rows': 151725, 'nTruthOnlyMisses_param': 111605, 'f_present': 0.6074, 'f_pass_present': 1.0, 'f_grid_pass': 0.9949, 'wreco_over_wtruth': 0.9786, 'eff': 0.5914}
+1M {'n_rows': 5917406, 'n_miss_rows': 2333600, 'nTruthOnlyMisses_param': 1719176, 'f_present': 0.6082, 'f_pass_present': 1.0, 'f_grid_pass': 0.9948, 'wreco_over_wtruth': 0.9787, 'eff': 0.5921}
+1N {'n_rows': 3416266, 'n_miss_rows': 1374033, 'nTruthOnlyMisses_param': 1009931, 'f_present': 0.5995, 'f_pass_present': 1.0, 'f_grid_pass': 0.9949, 'wreco_over_wtruth': 0.9797, 'eff': 0.5843}
+1O {'n_rows': 1042088, 'n_miss_rows': 448729, 'nTruthOnlyMisses_param': 328937, 'f_present': 0.5709, 'f_pass_present': 1.0, 'f_grid_pass': 0.9946, 'wreco_over_wtruth': 0.9767, 'eff': 0.5546}
+1P {'n_rows': 1372703, 'n_miss_rows': 590693, 'nTruthOnlyMisses_param': 432133, 'f_present': 0.571, 'f_pass_present': 1.0, 'f_grid_pass': 0.9946, 'wreco_over_wtruth': 0.9767, 'eff': 0.5547}
+1A rel {'f_present': 0.9978, 'f_pass_present': 1.0, 'f_grid_pass': 0.9999, 'wreco_over_wtruth': 0.9996, 'eff': 0.9974}
+1B rel {'f_present': 1.0025, 'f_pass_present': 1.0, 'f_grid_pass': 1.0, 'wreco_over_wtruth': 1.0001, 'eff': 1.0026}
+1C rel {'f_present': 1.0008, 'f_pass_present': 1.0, 'f_grid_pass': 1.0, 'wreco_over_wtruth': 1.0003, 'eff': 1.0011}
+1D rel {'f_present': 0.9989, 'f_pass_present': 1.0, 'f_grid_pass': 1.0, 'wreco_over_wtruth': 1.0, 'eff': 0.9989}
+1E rel {'f_present': 0.9961, 'f_pass_present': 1.0, 'f_grid_pass': 1.0, 'wreco_over_wtruth': 0.9997, 'eff': 0.9959}
+1F rel {'f_present': 0.9653, 'f_pass_present': 1.0, 'f_grid_pass': 0.9998, 'wreco_over_wtruth': 0.9968, 'eff': 0.962}
+1G rel {'f_present': 0.9773, 'f_pass_present': 1.0, 'f_grid_pass': 0.9999, 'wreco_over_wtruth': 0.9981, 'eff': 0.9753}
+1L rel {'f_present': 0.9332, 'f_pass_present': 1.0, 'f_grid_pass': 0.9996, 'wreco_over_wtruth': 0.9943, 'eff': 0.9275}
+1M rel {'f_present': 0.9344, 'f_pass_present': 1.0, 'f_grid_pass': 0.9996, 'wreco_over_wtruth': 0.9943, 'eff': 0.9287}
+1N rel {'f_present': 0.9211, 'f_pass_present': 1.0, 'f_grid_pass': 0.9997, 'wreco_over_wtruth': 0.9953, 'eff': 0.9165}
+1O rel {'f_present': 0.8772, 'f_pass_present': 1.0, 'f_grid_pass': 0.9994, 'wreco_over_wtruth': 0.9923, 'eff': 0.8699}
+1P rel {'f_present': 0.8773, 'f_pass_present': 1.0, 'f_grid_pass': 0.9994, 'wreco_over_wtruth': 0.9922, 'eff': 0.8699}

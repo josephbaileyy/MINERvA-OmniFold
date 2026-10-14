@@ -1,0 +1,655 @@
+{
+ "1A": {
+  "Data": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1A/MasterAnaDev_data_AnaTuple_run00006038_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1A/MasterAnaDev_data_AnaTuple_run00006205_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1A/MasterAnaDev_data_AnaTuple_run00010066_Playlist.root"
+   ],
+   "n_fiducial": 6986,
+   "numi_pot_mean": 22.01163443302719,
+   "numi_pot_median": 21.286500930786133,
+   "batch_pot_mean": 3.6687428571133793,
+   "batch_pot_p90": 4.220583279927571,
+   "minos_match_frac": 0.5614085313484111,
+   "tdead_le1_frac": 0.9829659318637275,
+   "pot_used_sum": 8.754114589250089e+17,
+   "fiducial_per_1e17_pot": 798.0247378277062,
+   "chain_per_1e17_pot": 412.94867266635526,
+   "match_tdead_nu_frac": 0.5174634984254223,
+   "minos_corr_mean_on_matched": 0.9844632243656157,
+   "batch_structure_counts": {
+    "-1": 2,
+    "0": 6982,
+    "1": 2
+   }
+  },
+  "MC": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root"
+   ],
+   "n_fiducial": 79772,
+   "numi_pot_mean": 23.997656454600275,
+   "numi_pot_median": 24.691299438476562,
+   "batch_pot_mean": 3.999748833081164,
+   "batch_pot_p90": 4.250766754150391,
+   "minos_match_frac": 0.6065787494358923,
+   "tdead_le1_frac": 0.9870882013739156,
+   "pot_used_sum": 9.982552765777527e+18,
+   "fiducial_per_1e17_pot": 799.1142333199244,
+   "chain_per_1e17_pot": 448.0517263413261,
+   "match_tdead_nu_frac": 0.5606854535425964,
+   "minos_corr_mean_on_matched": 0.9830852845229701,
+   "batch_structure_counts": {
+    "-1": 8,
+    "0": 79745,
+    "2": 19
+   }
+  },
+  "minos_match_frac_data_over_mc": 0.925532804883968,
+  "tdead_le1_frac_data_over_mc": 0.9958238083441273,
+  "match_tdead_nu_frac_data_over_mc": 0.9229122945065126,
+  "fiducial_per_1e17_pot_data_over_mc": 0.9986366210902139,
+  "chain_per_1e17_pot_data_over_mc": 0.9216540153485999
+ },
+ "1B": {
+  "Data": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1B/MasterAnaDev_data_AnaTuple_run00010068_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1B/MasterAnaDev_data_AnaTuple_run00010097_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1B/MasterAnaDev_data_AnaTuple_run00010128_Playlist.root"
+   ],
+   "n_fiducial": 10948,
+   "numi_pot_mean": 23.8283237133054,
+   "numi_pot_median": 23.97369956970215,
+   "batch_pot_mean": 3.9713872855509,
+   "batch_pot_p90": 4.05080000559489,
+   "minos_match_frac": 0.557179393496529,
+   "tdead_le1_frac": 0.9826452320058459,
+   "pot_used_sum": 1.3558198859405517e+18,
+   "fiducial_per_1e17_pot": 807.4818870505956,
+   "chain_per_1e17_pot": 413.40299387272455,
+   "match_tdead_nu_frac": 0.5119656558275484,
+   "minos_corr_mean_on_matched": 0.9833163523650896,
+   "batch_structure_counts": {
+    "0": 10948
+   }
+  },
+  "MC": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111000_Playlist.root"
+   ],
+   "n_fiducial": 78972,
+   "numi_pot_mean": 23.040596017798638,
+   "numi_pot_median": 23.641199111938477,
+   "batch_pot_mean": 3.840157818187828,
+   "batch_pot_p90": 4.028149922688802,
+   "minos_match_frac": 0.6059742693612926,
+   "tdead_le1_frac": 0.9868434381806209,
+   "pot_used_sum": 9.883456823270816e+18,
+   "fiducial_per_1e17_pot": 799.0321747959549,
+   "chain_per_1e17_pot": 447.0399455377814,
+   "match_tdead_nu_frac": 0.5594767765790407,
+   "minos_corr_mean_on_matched": 0.9836048086783041,
+   "batch_structure_counts": {
+    "-1": 6,
+    "0": 78955,
+    "1": 2,
+    "2": 9
+   }
+  },
+  "minos_match_frac_data_over_mc": 0.9194769838722785,
+  "tdead_le1_frac_data_over_mc": 0.995745823488967,
+  "match_tdead_nu_frac_data_over_mc": 0.9150793692599676,
+  "fiducial_per_1e17_pot_data_over_mc": 1.010574933677481,
+  "chain_per_1e17_pot_data_over_mc": 0.9247562728995231
+ },
+ "1C": {
+  "Data": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1C/MasterAnaDev_data_AnaTuple_run00010129_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1C/MasterAnaDev_data_AnaTuple_run00010189_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1C/MasterAnaDev_data_AnaTuple_run00010254_Playlist.root"
+   ],
+   "n_fiducial": 445,
+   "numi_pot_mean": 23.882133180639716,
+   "numi_pot_median": 24.19499969482422,
+   "batch_pot_mean": 3.9803555301066194,
+   "batch_pot_p90": 4.0972334543863935,
+   "minos_match_frac": 0.5662921348314607,
+   "tdead_le1_frac": 0.9910112359550561,
+   "pot_used_sum": 5.5222484673023224e+16,
+   "fiducial_per_1e17_pot": 805.8311802427595,
+   "chain_per_1e17_pot": 414.6861579226785,
+   "match_tdead_nu_frac": 0.5146067415730337,
+   "minos_corr_mean_on_matched": 0.9826920913197563,
+   "batch_structure_counts": {
+    "0": 445
+   }
+  },
+  "MC": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1C/MasterAnaDev_mc_AnaTuple_run00111030_Playlist.root"
+   ],
+   "n_fiducial": 80727,
+   "numi_pot_mean": 22.854281259489465,
+   "numi_pot_median": 24.08180046081543,
+   "batch_pot_mean": 3.80906763945134,
+   "batch_pot_p90": 4.293466567993164,
+   "minos_match_frac": 0.6055470908122438,
+   "tdead_le1_frac": 0.9878479319186889,
+   "pot_used_sum": 9.973458937796205e+18,
+   "fiducial_per_1e17_pot": 809.4182820974036,
+   "chain_per_1e17_pot": 452.841890478367,
+   "match_tdead_nu_frac": 0.5594658540513088,
+   "minos_corr_mean_on_matched": 0.9837608631332139,
+   "batch_structure_counts": {
+    "-1": 7,
+    "0": 80711,
+    "1": 3,
+    "2": 6
+   }
+  },
+  "minos_match_frac_data_over_mc": 0.9351743958869839,
+  "tdead_le1_frac_data_over_mc": 1.0032022176026862,
+  "match_tdead_nu_frac_data_over_mc": 0.9198179618051165,
+  "fiducial_per_1e17_pot_data_over_mc": 0.9955682964741679,
+  "chain_per_1e17_pot_data_over_mc": 0.9157416013006613
+ },
+ "1D": {
+  "Data": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1D/MasterAnaDev_data_AnaTuple_run00010255_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1D/MasterAnaDev_data_AnaTuple_run00010411_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1D/MasterAnaDev_data_AnaTuple_run00010662_Playlist.root"
+   ],
+   "n_fiducial": 12473,
+   "numi_pot_mean": 23.335404609148632,
+   "numi_pot_median": 23.670799255371094,
+   "batch_pot_mean": 3.889118167911145,
+   "batch_pot_p90": 4.09636656443278,
+   "minos_match_frac": 0.5579251182554318,
+   "tdead_le1_frac": 0.9813998236190171,
+   "pot_used_sum": 1.5609189110136033e+18,
+   "fiducial_per_1e17_pot": 799.0805872100359,
+   "chain_per_1e17_pot": 409.8867631660234,
+   "match_tdead_nu_frac": 0.5129479676100377,
+   "minos_corr_mean_on_matched": 0.9839515172573902,
+   "batch_structure_counts": {
+    "-1": 1,
+    "0": 12471,
+    "2": 1
+   }
+  },
+  "MC": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1D/MasterAnaDev_mc_AnaTuple_run00111100_Playlist.root"
+   ],
+   "n_fiducial": 79560,
+   "numi_pot_mean": 23.24628461211575,
+   "numi_pot_median": 24.23859977722168,
+   "batch_pot_mean": 3.874351598118565,
+   "batch_pot_p90": 4.152683258056641,
+   "minos_match_frac": 0.6031548516842634,
+   "tdead_le1_frac": 0.9877828054298643,
+   "pot_used_sum": 9.95789830524723e+18,
+   "fiducial_per_1e17_pot": 798.9637728884672,
+   "chain_per_1e17_pot": 446.2086138857876,
+   "match_tdead_nu_frac": 0.5584841628959276,
+   "minos_corr_mean_on_matched": 0.9834934659543026,
+   "batch_structure_counts": {
+    "-1": 1,
+    "0": 79551,
+    "1": 3,
+    "2": 5
+   }
+  },
+  "minos_match_frac_data_over_mc": 0.9250114074312242,
+  "tdead_le1_frac_data_over_mc": 0.9935380715520054,
+  "match_tdead_nu_frac_data_over_mc": 0.9184646614690567,
+  "fiducial_per_1e17_pot_data_over_mc": 1.0001462072818976,
+  "chain_per_1e17_pot_data_over_mc": 0.9185989476907293
+ },
+ "1E": {
+  "Data": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1E/MasterAnaDev_data_AnaTuple_run00016003_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1E/MasterAnaDev_data_AnaTuple_run00016132_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1E/MasterAnaDev_data_AnaTuple_run00016522_Playlist.root"
+   ],
+   "n_fiducial": 11238,
+   "numi_pot_mean": 22.417658395032312,
+   "numi_pot_median": 23.784000396728516,
+   "batch_pot_mean": 3.736276399172052,
+   "batch_pot_p90": 4.094333330790202,
+   "minos_match_frac": 0.5615767930236697,
+   "tdead_le1_frac": 0.9834490122797651,
+   "pot_used_sum": 1.427719977096081e+18,
+   "fiducial_per_1e17_pot": 787.1291415882262,
+   "chain_per_1e17_pot": 407.92312872484683,
+   "match_tdead_nu_frac": 0.5182416800142374,
+   "minos_corr_mean_on_matched": 0.984553765360275,
+   "batch_structure_counts": {
+    "-1": 5,
+    "0": 11233
+   }
+  },
+  "MC": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1E/MasterAnaDev_mc_AnaTuple_run00111325_Playlist.root"
+   ],
+   "n_fiducial": 80533,
+   "numi_pot_mean": 23.769322465198613,
+   "numi_pot_median": 24.189800262451172,
+   "batch_pot_mean": 3.9615664447288306,
+   "batch_pot_p90": 4.129449844360352,
+   "minos_match_frac": 0.6050066432394173,
+   "tdead_le1_frac": 0.9879924999689568,
+   "pot_used_sum": 9.975313804933605e+18,
+   "fiducial_per_1e17_pot": 807.3229732398983,
+   "chain_per_1e17_pot": 451.01338042868167,
+   "match_tdead_nu_frac": 0.5586529745570139,
+   "minos_corr_mean_on_matched": 0.9832978887041817,
+   "batch_structure_counts": {
+    "-1": 16,
+    "0": 80500,
+    "1": 13,
+    "2": 4
+   }
+  },
+  "minos_match_frac_data_over_mc": 0.9282159118398948,
+  "tdead_le1_frac_data_over_mc": 0.995401293340451,
+  "match_tdead_nu_frac_data_over_mc": 0.9276629743628936,
+  "fiducial_per_1e17_pot_data_over_mc": 0.9749866753195051,
+  "chain_per_1e17_pot_data_over_mc": 0.9044590391910808
+ },
+ "1F": {
+  "Data": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1F/MasterAnaDev_data_AnaTuple_run00016523_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1F/MasterAnaDev_data_AnaTuple_run00016677_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1F/MasterAnaDev_data_AnaTuple_run00016843_Playlist.root"
+   ],
+   "n_fiducial": 7836,
+   "numi_pot_mean": 28.328921658704328,
+   "numi_pot_median": 31.147499084472656,
+   "batch_pot_mean": 5.066302267700225,
+   "batch_pot_p90": 7.9671502113342285,
+   "minos_match_frac": 0.5593415007656968,
+   "tdead_le1_frac": 0.9769014803471159,
+   "pot_used_sum": 1.0076291599545477e+18,
+   "fiducial_per_1e17_pot": 777.6670536562744,
+   "chain_per_1e17_pot": 400.44494148839556,
+   "match_tdead_nu_frac": 0.5149310872894334,
+   "minos_corr_mean_on_matched": 0.9815174278371172,
+   "batch_structure_counts": {
+    "-1": 2,
+    "0": 3014,
+    "1": 4819,
+    "2": 1
+   }
+  },
+  "MC": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1F/MasterAnaDev_mc_AnaTuple_run00111490_Playlist.root"
+   ],
+   "n_fiducial": 78064,
+   "numi_pot_mean": 29.889264388440157,
+   "numi_pot_median": 31.35650062561035,
+   "batch_pot_mean": 5.495532963943464,
+   "batch_pot_p90": 8.145224571228027,
+   "minos_match_frac": 0.6018523262963722,
+   "tdead_le1_frac": 0.9828089772494364,
+   "pot_used_sum": 9.925811641334252e+18,
+   "fiducial_per_1e17_pot": 786.4747269121707,
+   "chain_per_1e17_pot": 434.9971726261374,
+   "match_tdead_nu_frac": 0.5530974584955933,
+   "minos_corr_mean_on_matched": 0.9801532139406361,
+   "batch_structure_counts": {
+    "-1": 26,
+    "0": 13845,
+    "1": 64187,
+    "2": 6
+   }
+  },
+  "minos_match_frac_data_over_mc": 0.9293666840298268,
+  "tdead_le1_frac_data_over_mc": 0.9939891707960853,
+  "match_tdead_nu_frac_data_over_mc": 0.9309952150024858,
+  "fiducial_per_1e17_pot_data_over_mc": 0.9888010727433333,
+  "chain_per_1e17_pot_data_over_mc": 0.9205690673133683
+ },
+ "1G": {
+  "Data": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1G/MasterAnaDev_data_AnaTuple_run00018668_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1G/MasterAnaDev_data_AnaTuple_run00018878_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1G/MasterAnaDev_data_AnaTuple_run00019167_Playlist.root"
+   ],
+   "n_fiducial": 12531,
+   "numi_pot_mean": 27.126585959341735,
+   "numi_pot_median": 25.983699798583984,
+   "batch_pot_mean": 4.638604151333421,
+   "batch_pot_p90": 7.891000366210937,
+   "minos_match_frac": 0.5545447290719017,
+   "tdead_le1_frac": 0.9793312584789722,
+   "pot_used_sum": 1.5977371416510346e+18,
+   "fiducial_per_1e17_pot": 784.296720238411,
+   "chain_per_1e17_pot": 399.5025109952739,
+   "match_tdead_nu_frac": 0.5093767456707365,
+   "minos_corr_mean_on_matched": 0.982623915438994,
+   "batch_structure_counts": {
+    "-1": 2,
+    "0": 9579,
+    "2": 2950
+   }
+  },
+  "MC": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1G/MasterAnaDev_mc_AnaTuple_run00110150_Playlist.root"
+   ],
+   "n_fiducial": 78065,
+   "numi_pot_mean": 27.92610245985445,
+   "numi_pot_median": 25.63360023498535,
+   "batch_pot_mean": 4.811913521921058,
+   "batch_pot_p90": 7.654499816894531,
+   "minos_match_frac": 0.5999615704861333,
+   "tdead_le1_frac": 0.9837827451482739,
+   "pot_used_sum": 9.901570261342796e+18,
+   "fiducial_per_1e17_pot": 788.4103019980313,
+   "chain_per_1e17_pot": 435.9611542477297,
+   "match_tdead_nu_frac": 0.552962275027221,
+   "minos_corr_mean_on_matched": 0.981393390662447,
+   "batch_structure_counts": {
+    "-1": 48,
+    "0": 50520,
+    "1": 5,
+    "2": 27492
+   }
+  },
+  "minos_match_frac_data_over_mc": 0.9243004158125803,
+  "tdead_le1_frac_data_over_mc": 0.9954751323996531,
+  "match_tdead_nu_frac_data_over_mc": 0.9211781140868266,
+  "fiducial_per_1e17_pot_data_over_mc": 0.9947824353015233,
+  "chain_per_1e17_pot_data_over_mc": 0.9163718076777578
+ },
+ "1L": {
+  "Data": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019168_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019177_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1L/MasterAnaDev_data_AnaTuple_run00019184_Playlist.root"
+   ],
+   "n_fiducial": 19009,
+   "numi_pot_mean": 38.06114965579117,
+   "numi_pot_median": 38.155799865722656,
+   "batch_pot_mean": 6.842111969867928,
+   "batch_pot_p90": 7.676439666748047,
+   "minos_match_frac": 0.5486874638329212,
+   "tdead_le1_frac": 0.9705928770582356,
+   "pot_used_sum": 2.5017508946681027e+18,
+   "fiducial_per_1e17_pot": 759.8278485884922,
+   "chain_per_1e17_pot": 378.5748621169767,
+   "match_tdead_nu_frac": 0.4982376768898943,
+   "minos_corr_mean_on_matched": 0.9780377955215686,
+   "batch_structure_counts": {
+    "-1": 17,
+    "0": 9,
+    "1": 6,
+    "2": 18977
+   }
+  },
+  "MC": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1L/MasterAnaDev_mc_AnaTuple_run00113000_Playlist.root"
+   ],
+   "n_fiducial": 72978,
+   "numi_pot_mean": 37.89083306240347,
+   "numi_pot_median": 38.147098541259766,
+   "batch_pot_mean": 6.796325505587523,
+   "batch_pot_p90": 7.681999969482422,
+   "minos_match_frac": 0.5985776535394228,
+   "tdead_le1_frac": 0.9777741237085149,
+   "pot_used_sum": 9.522544871941847e+18,
+   "fiducial_per_1e17_pot": 766.3707651830497,
+   "chain_per_1e17_pot": 420.3183134157084,
+   "match_tdead_nu_frac": 0.548452958425827,
+   "minos_corr_mean_on_matched": 0.9773750123909123,
+   "batch_structure_counts": {
+    "-1": 87,
+    "0": 295,
+    "1": 47,
+    "2": 72549
+   }
+  },
+  "minos_match_frac_data_over_mc": 0.9166521011743453,
+  "tdead_le1_frac_data_over_mc": 0.9926555157513862,
+  "match_tdead_nu_frac_data_over_mc": 0.9084419533809045,
+  "fiducial_per_1e17_pot_data_over_mc": 0.9914624658301068,
+  "chain_per_1e17_pot_data_over_mc": 0.9006860991625504
+ },
+ "1M": {
+  "Data": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1M/MasterAnaDev_data_AnaTuple_run00019186_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1M/MasterAnaDev_data_AnaTuple_run00019325_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1M/MasterAnaDev_data_AnaTuple_run00019483_Playlist.root"
+   ],
+   "n_fiducial": 11856,
+   "numi_pot_mean": 39.4134323321856,
+   "numi_pot_median": 38.72529983520508,
+   "batch_pot_mean": 6.9654862608986825,
+   "batch_pot_p90": 7.783719635009765,
+   "minos_match_frac": 0.5437753036437247,
+   "tdead_le1_frac": 0.9718286099865048,
+   "pot_used_sum": 1.5494602331392768e+18,
+   "fiducial_per_1e17_pot": 765.1696859608463,
+   "chain_per_1e17_pot": 379.42245139708285,
+   "match_tdead_nu_frac": 0.4958670715249663,
+   "minos_corr_mean_on_matched": 0.9779923904431758,
+   "batch_structure_counts": {
+    "-1": 4,
+    "2": 9266,
+    "3": 2586
+   }
+  },
+  "MC": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1M/MasterAnaDev_mc_AnaTuple_run00113020_Playlist.root"
+   ],
+   "n_fiducial": 74325,
+   "numi_pot_mean": 39.53632259985433,
+   "numi_pot_median": 39.9286994934082,
+   "batch_pot_mean": 7.085140055416598,
+   "batch_pot_p90": 8.089540100097656,
+   "minos_match_frac": 0.6002287251934073,
+   "tdead_le1_frac": 0.9770467541204171,
+   "pot_used_sum": 9.731408097011083e+18,
+   "fiducial_per_1e17_pot": 763.7640848997821,
+   "chain_per_1e17_pot": 417.9970626500967,
+   "match_tdead_nu_frac": 0.5472855701311806,
+   "minos_corr_mean_on_matched": 0.9770915607326087,
+   "batch_structure_counts": {
+    "-1": 53,
+    "0": 849,
+    "1": 5,
+    "2": 73416,
+    "3": 2
+   }
+  },
+  "minos_match_frac_data_over_mc": 0.905946817970946,
+  "tdead_le1_frac_data_over_mc": 0.9946592687484951,
+  "match_tdead_nu_frac_data_over_mc": 0.906048137549306,
+  "fiducial_per_1e17_pot_data_over_mc": 1.0018403602484773,
+  "chain_per_1e17_pot_data_over_mc": 0.9077155925248582
+ },
+ "1N": {
+  "Data": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1N/MasterAnaDev_data_AnaTuple_run00020328_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1N/MasterAnaDev_data_AnaTuple_run00020460_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1N/MasterAnaDev_data_AnaTuple_run00020618_Playlist.root"
+   ],
+   "n_fiducial": 21470,
+   "numi_pot_mean": 35.82250839882137,
+   "numi_pot_median": 33.582298278808594,
+   "batch_pot_mean": 5.970324859865295,
+   "batch_pot_p90": 7.3395334879557295,
+   "minos_match_frac": 0.5532836516068933,
+   "tdead_le1_frac": 0.9647880763856544,
+   "pot_used_sum": 2.6885719106569293e+18,
+   "fiducial_per_1e17_pot": 798.5652128141885,
+   "chain_per_1e17_pot": 400.6588016969929,
+   "match_tdead_nu_frac": 0.5017233348858873,
+   "minos_corr_mean_on_matched": 0.9792543097624941,
+   "batch_structure_counts": {
+    "-1": 202,
+    "0": 12867,
+    "1": 1,
+    "2": 3,
+    "3": 8397
+   }
+  },
+  "MC": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1N/MasterAnaDev_mc_AnaTuple_run00113270_Playlist.root"
+   ],
+   "n_fiducial": 127212,
+   "numi_pot_mean": 35.54914706599258,
+   "numi_pot_median": 35.21419906616211,
+   "batch_pot_mean": 5.924858879764652,
+   "batch_pot_p90": 7.59119987487793,
+   "minos_match_frac": 0.5976716033078641,
+   "tdead_le1_frac": 0.9736188409898437,
+   "pot_used_sum": 1.6464506916432888e+19,
+   "fiducial_per_1e17_pot": 772.6438492551047,
+   "chain_per_1e17_pot": 419.14404330640804,
+   "match_tdead_nu_frac": 0.5424802691569978,
+   "minos_corr_mean_on_matched": 0.9786020522565542,
+   "batch_structure_counts": {
+    "-1": 8857,
+    "0": 61979,
+    "1": 3,
+    "2": 30,
+    "3": 56343
+   }
+  },
+  "minos_match_frac_data_over_mc": 0.9257318710554393,
+  "tdead_le1_frac_data_over_mc": 0.9909299571532414,
+  "match_tdead_nu_frac_data_over_mc": 0.9248692780394652,
+  "fiducial_per_1e17_pot_data_over_mc": 1.0335489159514752,
+  "chain_per_1e17_pot_data_over_mc": 0.9558976397145126
+ },
+ "1O": {
+  "Data": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1O/MasterAnaDev_data_AnaTuple_run00020619_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1O/MasterAnaDev_data_AnaTuple_run00020631_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1O/MasterAnaDev_data_AnaTuple_run00020653_Playlist.root"
+   ],
+   "n_fiducial": 20384,
+   "numi_pot_mean": 48.517519951416425,
+   "numi_pot_median": 50.0369987487793,
+   "batch_pot_mean": 8.08616194498634,
+   "batch_pot_p90": 8.432966868082682,
+   "minos_match_frac": 0.5494014913657771,
+   "tdead_le1_frac": 0.9508437990580848,
+   "pot_used_sum": 2.6176563011175393e+18,
+   "fiducial_per_1e17_pot": 778.711857293778,
+   "chain_per_1e17_pot": 381.9065167467572,
+   "match_tdead_nu_frac": 0.49043367346938777,
+   "minos_corr_mean_on_matched": 0.9763990436155876,
+   "batch_structure_counts": {
+    "-1": 50,
+    "0": 241,
+    "1": 3,
+    "2": 10,
+    "3": 20080
+   }
+  },
+  "MC": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1O/MasterAnaDev_mc_AnaTuple_run00113375_Playlist.root"
+   ],
+   "n_fiducial": 73279,
+   "numi_pot_mean": 47.93970529176023,
+   "numi_pot_median": 48.790000915527344,
+   "batch_pot_mean": 7.990170416884483,
+   "batch_pot_p90": 8.376949946085611,
+   "minos_match_frac": 0.5924071016252951,
+   "tdead_le1_frac": 0.9610256690184091,
+   "pot_used_sum": 9.848901010221044e+18,
+   "fiducial_per_1e17_pot": 744.0322521665324,
+   "chain_per_1e17_pot": 396.1558752545968,
+   "match_tdead_nu_frac": 0.5324444929652424,
+   "minos_corr_mean_on_matched": 0.9756177325196835,
+   "batch_structure_counts": {
+    "-1": 115,
+    "0": 1048,
+    "1": 1,
+    "2": 27,
+    "3": 72088
+   }
+  },
+  "minos_match_frac_data_over_mc": 0.9274053093868554,
+  "tdead_le1_frac_data_over_mc": 0.9894052049923661,
+  "match_tdead_nu_frac_data_over_mc": 0.9210982176529017,
+  "fiducial_per_1e17_pot_data_over_mc": 1.0466103519387269,
+  "chain_per_1e17_pot_data_over_mc": 0.9640309297478372
+ },
+ "1P": {
+  "Data": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1P/MasterAnaDev_data_AnaTuple_run00020800_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1P/MasterAnaDev_data_AnaTuple_run00020820_Playlist.root",
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1P/MasterAnaDev_data_AnaTuple_run00020839_Playlist.root"
+   ],
+   "n_fiducial": 21273,
+   "numi_pot_mean": 48.54834064477725,
+   "numi_pot_median": 48.10380172729492,
+   "batch_pot_mean": 8.091388328364678,
+   "batch_pot_p90": 8.428333282470703,
+   "minos_match_frac": 0.5502279885300616,
+   "tdead_le1_frac": 0.9533211112678043,
+   "pot_used_sum": 2.765849805638313e+18,
+   "fiducial_per_1e17_pot": 769.1307010465284,
+   "chain_per_1e17_pot": 379.3409164377463,
+   "match_tdead_nu_frac": 0.49320735204249516,
+   "minos_corr_mean_on_matched": 0.9763649422556864,
+   "batch_structure_counts": {
+    "-1": 26,
+    "0": 25,
+    "2": 6,
+    "3": 21216
+   }
+  },
+  "MC": {
+   "files": [
+    "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1P/MasterAnaDev_mc_AnaTuple_run00112000_Playlist.root"
+   ],
+   "n_fiducial": 72234,
+   "numi_pot_mean": 48.254792236683066,
+   "numi_pot_median": 48.631500244140625,
+   "batch_pot_mean": 8.042753966150096,
+   "batch_pot_p90": 8.2619997660319,
+   "minos_match_frac": 0.5956474790264972,
+   "tdead_le1_frac": 0.9616662513497799,
+   "pot_used_sum": 9.622986637801226e+18,
+   "fiducial_per_1e17_pot": 750.6401361532481,
+   "chain_per_1e17_pot": 401.2267859578164,
+   "match_tdead_nu_frac": 0.5345128332918017,
+   "minos_corr_mean_on_matched": 0.9754199465907143,
+   "batch_structure_counts": {
+    "-1": 388,
+    "0": 797,
+    "1": 3,
+    "2": 16,
+    "3": 71030
+   }
+  },
+  "minos_match_frac_data_over_mc": 0.9237476996114088,
+  "tdead_le1_frac_data_over_mc": 0.9913222076055362,
+  "match_tdead_nu_frac_data_over_mc": 0.922723125289759,
+  "fiducial_per_1e17_pot_data_over_mc": 1.0246330618397752,
+  "chain_per_1e17_pot_data_over_mc": 0.9454526210960125
+ }
+}

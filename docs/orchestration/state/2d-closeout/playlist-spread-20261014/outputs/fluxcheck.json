@@ -1,0 +1,94 @@
+{
+ "MEFHC": {
+  "DataPOTUsedForFluxWeighting": 1.057394261158926e+21,
+  "POTUsed": 4.978198462880827e+21,
+  "fluxSource": "POT(data)-weighted combination of baseline_flux/runEventLoopMC_<1A..1P>.root:pTmu_reweightedflux_integrated",
+  "flux_sum_m2_per_pot": 0.008740680727591705,
+  "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+  "fluxSource_TNamed_verbatim_relative_to": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding"
+ },
+ "1A": {
+  "data_POTUsed": 8.972756120489268e+19,
+  "mc_POTUsed": 4.0692592418996086e+20,
+  "flux_sum_m2_per_pot": 0.008721891726109545,
+  "source_data": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1A.root",
+  "source_mc": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root"
+ },
+ "1B": {
+  "data_POTUsed": 1.8673986975553036e+19,
+  "mc_POTUsed": 1.0937143891069359e+20,
+  "flux_sum_m2_per_pot": 0.008721891726109545,
+  "source_data": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1B.root",
+  "source_mc": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1B.root"
+ },
+ "1C": {
+  "data_POTUsed": 4.294376238504551e+19,
+  "mc_POTUsed": 2.0873802493616207e+20,
+  "flux_sum_m2_per_pot": 0.008721891726109545,
+  "source_data": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1C.root",
+  "source_mc": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1C.root"
+ },
+ "1D": {
+  "data_POTUsed": 1.4404452962278602e+20,
+  "mc_POTUsed": 6.074026581183651e+20,
+  "flux_sum_m2_per_pot": 0.008721891726109545,
+  "source_data": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1D.root",
+  "source_mc": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1D.root"
+ },
+ "1E": {
+  "data_POTUsed": 1.0296200958633945e+20,
+  "mc_POTUsed": 5.0861289099383597e+20,
+  "flux_sum_m2_per_pot": 0.008721891726109545,
+  "source_data": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1E.root",
+  "source_mc": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1E.root"
+ },
+ "1F": {
+  "data_POTUsed": 1.6685546978706168e+20,
+  "mc_POTUsed": 7.071214242029071e+20,
+  "flux_sum_m2_per_pot": 0.008721891726109545,
+  "source_data": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1F.root",
+  "source_mc": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1F.root"
+ },
+ "1G": {
+  "data_POTUsed": 1.375694142738046e+20,
+  "mc_POTUsed": 5.954273654656092e+20,
+  "flux_sum_m2_per_pot": 0.00880797203762039,
+  "source_data": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1G.root",
+  "source_mc": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1G.root"
+ },
+ "1L": {
+  "data_POTUsed": 1.3370718209243894e+19,
+  "mc_POTUsed": 5.822833555494932e+19,
+  "flux_sum_m2_per_pot": 0.00880797203762039,
+  "source_data": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1L.root",
+  "source_mc": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1L.root"
+ },
+ "1M": {
+  "data_POTUsed": 1.581268994168384e+20,
+  "mc_POTUsed": 8.978852586344844e+20,
+  "flux_sum_m2_per_pot": 0.00880797203762039,
+  "source_data": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1M.root",
+  "source_mc": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1M.root"
+ },
+ "1N": {
+  "data_POTUsed": 1.0656505761839266e+20,
+  "mc_POTUsed": 5.12109566521608e+20,
+  "flux_sum_m2_per_pot": 0.008685100510699557,
+  "source_data": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1N.root",
+  "source_mc": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1N.root"
+ },
+ "1O": {
+  "data_POTUsed": 2.9796628174847955e+19,
+  "mc_POTUsed": 1.5823900034490132e+20,
+  "flux_sum_m2_per_pot": 0.008685100510699557,
+  "source_data": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1O.root",
+  "source_mc": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1O.root"
+ },
+ "1P": {
+  "data_POTUsed": 4.675822390412008e+19,
+  "mc_POTUsed": 2.0813657500734895e+20,
+  "flux_sum_m2_per_pot": 0.008685100510699557,
+  "source_data": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopData_1P.root",
+  "source_mc": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1P.root"
+ }
+}
