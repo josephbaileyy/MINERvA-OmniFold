@@ -29,6 +29,9 @@ this section (sha256 of the untracked file `4e98aa13ce03495c…`). Since then, o
   delivery (`impl/selective-io-20261010`) has not been received.
 - **Stages B–F are untouched.** The next bounded action is unchanged: Stage B's input and recipe
   assessment, with a resource request.
+- **Endpoint chosen, 2026-10-14.** Joseph adopted the narrower endpoint of §6 for this publication: construction
+  complete under declared conventions, with full scientific closeout disclosed as NOT ACHIEVED. Stages D and E are not
+  executed for it. Record: [`DECISION-20261014-joseph-2d-endpoint-and-open-items.md`](DECISION-20261014-joseph-2d-endpoint-and-open-items.md).
 - **Execution authority.** On 2026-10-12 Joseph delegated compute authorization for this plan to the
   paper-tighten lane. The bounds are in
   [`AUTHORIZATION-20261012-2d-closeout-delegation.md`](AUTHORIZATION-20261012-2d-closeout-delegation.md).
