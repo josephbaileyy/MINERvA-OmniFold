@@ -1,0 +1,35 @@
+{
+ "src": "root://fndca1.fnal.gov:1095//pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/Data/Playlist1A/MasterAnaDev_data_AnaTuple_run00006133_Playlist.root",
+ "entries": 5480,
+ "n_branches": 3687,
+ "meta_pot": {
+  "POT_Used": 1.7466504544305805e+17,
+  "POT_Total": 1.7680554993519744e+17
+ },
+ "vc_MasterAnaDev_minos_trk_is_ok": {
+  "False": 1131,
+  "True": 4349
+ },
+ "vc_isMinosMatchTrack": {
+  "-1": 1131,
+  "1": 4349
+ },
+ "vc_MasterAnaDev_minos_trk_quality": {
+  "-1": 1131,
+  "1": 3467,
+  "2": 882
+ },
+ "frac_muonP_sentinel": 0.0,
+ "n_muonP_sentinel": 0,
+ "cutflow": {
+  "fid": 1418,
+  "fid_ang": 1056,
+  "fid_ang_minos": 759,
+  "fid_ang_minos_dead": 743,
+  "sel_approx": 704
+ },
+ "frac_minos_given_fid_ang": 0.71875,
+ "sel_pmu_lep_mean_GeV": 6.705567651193658,
+ "sel_theta_mean_deg": 8.10489013812443,
+ "sum_numi_pot_entries": 135371.99363136292
+}
