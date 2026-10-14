@@ -218,6 +218,10 @@ tested:
 
 ### 4.6 A dependency of every route above: the MC AnaTuples are only on `/pscratch`
 
+> **Correction 2026-10-14** ([`q2-opendata-20261014/REPORT.md`](q2-opendata-20261014/REPORT.md)): only Playlist 1A (41 MC
+> files, and its 253 Data files) is the earlier processing. The other 448 MC files match the current release in size,
+> two of them by checksum. The current 1A release is a reprocessing of the same events, so it is not a fresh bank.
+
 The 489 MC AnaTuples (9.6 TiB by `du -sh` today, [`E/remote_reads_repair_20261014.txt`](evidence/remote_reads_repair_20261014.txt), the same quantity as the 10.53 TB of the 2026-10-08
 inventory in decimal units) exist only under
 `/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/`. The CFS preservation copy holds data, flux and

@@ -1,0 +1,209 @@
+size local 17319286427 remote 21539812319 ratio 1.24369
+created local 2024-06-14 22:00:34 remote 2026-01-06 18:26:18 | compress 1 1
+
+[MasterAnaDev] entries local=186557 remote=186570 (delta 13); branches local=4102 remote=4190; zip local=10563312057 remote=12375536248 delta=1812224191
+  remote-minus-local: 98 branches, zipbytes 739821327
+  local-minus-remote: 10 branches, zipbytes 136765114
+  common branches: 4092, zipbytes delta 1209167978
+    + EnergyPoint_MIPSub  zip=99784  title=EnergyPoint_MIPSub/I
+    + EnergyPoint_sys_em  zip=69710371  title=EnergyPoint_sys_em[EnergyPoint_sys_em_sz]/D
+    + EnergyPoint_sys_em_err  zip=69802947  title=EnergyPoint_sys_em_err[EnergyPoint_sys_em_err_sz]/D
+    + EnergyPoint_sys_em_err_sz  zip=379117  title=EnergyPoint_sys_em_err_sz/I
+    + EnergyPoint_sys_em_sz  zip=377737  title=EnergyPoint_sys_em_sz/I
+    + EnergyPoint_sys_high_neutron  zip=15173719  title=EnergyPoint_sys_high_neutron[EnergyPoint_sys_high_neutron_sz]/D
+    + EnergyPoint_sys_high_neutron_err  zip=15262040  title=EnergyPoint_sys_high_neutron_err[EnergyPoint_sys_high_neutron_err_sz]/D
+    + EnergyPoint_sys_high_neutron_err_sz  zip=382567  title=EnergyPoint_sys_high_neutron_err_sz/I
+    + EnergyPoint_sys_high_neutron_sz  zip=381187  title=EnergyPoint_sys_high_neutron_sz/I
+    + EnergyPoint_sys_low_neutron  zip=2715110  title=EnergyPoint_sys_low_neutron[EnergyPoint_sys_low_neutron_sz]/D
+    + EnergyPoint_sys_low_neutron_err  zip=2716190  title=EnergyPoint_sys_low_neutron_err[EnergyPoint_sys_low_neutron_err_sz]/D
+    + EnergyPoint_sys_low_neutron_err_sz  zip=382222  title=EnergyPoint_sys_low_neutron_err_sz/I
+    + EnergyPoint_sys_low_neutron_sz  zip=380842  title=EnergyPoint_sys_low_neutron_sz/I
+    + EnergyPoint_sys_meson  zip=104165568  title=EnergyPoint_sys_meson[EnergyPoint_sys_meson_sz]/D
+    + EnergyPoint_sys_meson_err  zip=104550351  title=EnergyPoint_sys_meson_err[EnergyPoint_sys_meson_err_sz]/D
+    + EnergyPoint_sys_meson_err_sz  zip=380152  title=EnergyPoint_sys_meson_err_sz/I
+    + EnergyPoint_sys_meson_sz  zip=378772  title=EnergyPoint_sys_meson_sz/I
+    + EnergyPoint_sys_mid_neutron  zip=2653230  title=EnergyPoint_sys_mid_neutron[EnergyPoint_sys_mid_neutron_sz]/D
+    + EnergyPoint_sys_mid_neutron_err  zip=2657478  title=EnergyPoint_sys_mid_neutron_err[EnergyPoint_sys_mid_neutron_err_sz]/D
+    + EnergyPoint_sys_mid_neutron_err_sz  zip=382222  title=EnergyPoint_sys_mid_neutron_err_sz/I
+    + EnergyPoint_sys_mid_neutron_sz  zip=380842  title=EnergyPoint_sys_mid_neutron_sz/I
+    + EnergyPoint_sys_muon  zip=17966490  title=EnergyPoint_sys_muon[EnergyPoint_sys_muon_sz]/D
+    + EnergyPoint_sys_muon_err  zip=17947850  title=EnergyPoint_sys_muon_err[EnergyPoint_sys_muon_err_sz]/D
+    + EnergyPoint_sys_muon_err_sz  zip=379807  title=EnergyPoint_sys_muon_err_sz/I
+    + EnergyPoint_sys_muon_sz  zip=378427  title=EnergyPoint_sys_muon_sz/I
+    + EnergyPoint_sys_other  zip=10083381  title=EnergyPoint_sys_other[EnergyPoint_sys_other_sz]/D
+    + EnergyPoint_sys_other_err  zip=10157873  title=EnergyPoint_sys_other_err[EnergyPoint_sys_other_err_sz]/D
+    + EnergyPoint_sys_other_err_sz  zip=380152  title=EnergyPoint_sys_other_err_sz/I
+    + EnergyPoint_sys_other_sz  zip=378772  title=EnergyPoint_sys_other_sz/I
+    + EnergyPoint_sys_proton  zip=31564895  title=EnergyPoint_sys_proton[EnergyPoint_sys_proton_sz]/D
+    + EnergyPoint_sys_proton_err  zip=31638750  title=EnergyPoint_sys_proton_err[EnergyPoint_sys_proton_err_sz]/D
+    + EnergyPoint_sys_proton_err_sz  zip=380497  title=EnergyPoint_sys_proton_err_sz/I
+    + EnergyPoint_sys_proton_sz  zip=379117  title=EnergyPoint_sys_proton_sz/I
+    + EnergyPoint_sys_xtalk  zip=3319379  title=EnergyPoint_sys_xtalk[EnergyPoint_sys_xtalk_sz]/D
+    + EnergyPoint_sys_xtalk_err  zip=3325549  title=EnergyPoint_sys_xtalk_err[EnergyPoint_sys_xtalk_err_sz]/D
+    + EnergyPoint_sys_xtalk_err_sz  zip=380152  title=EnergyPoint_sys_xtalk_err_sz/I
+    + EnergyPoint_sys_xtalk_sz  zip=378772  title=EnergyPoint_sys_xtalk_sz/I
+    + mc_fr_HadronExitTgtIdx  zip=145650  title=mc_fr_HadronExitTgtIdx/I
+    + mc_fr_HadronExitTgtP  zip=4507859  title=mc_fr_HadronExitTgtP[4]/D
+    + mc_fr_HadronExitTgtVtx  zip=2263966  title=mc_fr_HadronExitTgtVtx[3]/D
+    + mc_fr_isOverflow  zip=45537  title=mc_fr_isOverflow/I
+    + mc_fr_nNuAncestorParentIDs  zip=139639  title=mc_fr_nNuAncestorParentIDs/I
+    + mc_fr_nNuAncestorParentProdPXs  zip=141019  title=mc_fr_nNuAncestorParentProdPXs/I
+    + mc_fr_nNuAncestorParentProdPYs  zip=141019  title=mc_fr_nNuAncestorParentProdPYs/I
+    + mc_fr_nNuAncestorParentProdPZs  zip=141019  title=mc_fr_nNuAncestorParentProdPZs/I
+    + mc_fr_nNuAncestorProcesses  zip=139639  title=mc_fr_nNuAncestorProcesses/I
+    + mc_fr_nNuAncestorStartPXs  zip=139294  title=mc_fr_nNuAncestorStartPXs/I
+    + mc_fr_nNuAncestorStartPYs  zip=139294  title=mc_fr_nNuAncestorStartPYs/I
+    + mc_fr_nNuAncestorStartPZs  zip=139294  title=mc_fr_nNuAncestorStartPZs/I
+    + mc_fr_nNuAncestorStartVols  zip=139639  title=mc_fr_nNuAncestorStartVols/I
+    + mc_fr_nNuAncestorStartXs  zip=138949  title=mc_fr_nNuAncestorStartXs/I
+    + mc_fr_nNuAncestorStartYs  zip=138949  title=mc_fr_nNuAncestorStartYs/I
+    + mc_fr_nNuAncestorStartZs  zip=138949  title=mc_fr_nNuAncestorStartZs/I
+    + mc_fr_nNuAncestorStopPXs  zip=138949  title=mc_fr_nNuAncestorStopPXs/I
+    + mc_fr_nNuAncestorStopPYs  zip=138949  title=mc_fr_nNuAncestorStopPYs/I
+    + mc_fr_nNuAncestorStopPZs  zip=138949  title=mc_fr_nNuAncestorStopPZs/I
+    + mc_fr_nNuAncestorStopVols  zip=139294  title=mc_fr_nNuAncestorStopVols/I
+    + mc_fr_nNuAncestorStopXs  zip=138604  title=mc_fr_nNuAncestorStopXs/I
+    + mc_fr_nNuAncestorStopYs  zip=138604  title=mc_fr_nNuAncestorStopYs/I
+    + mc_fr_nNuAncestorStopZs  zip=138604  title=mc_fr_nNuAncestorStopZs/I
+    + mc_fr_nNuAncestorTgtElement  zip=139984  title=mc_fr_nNuAncestorTgtElement/I
+    + mc_fr_nNuAncestorTrkIDs  zip=138604  title=mc_fr_nNuAncestorTrkIDs/I
+    + mc_fr_nTraj  zip=134464  title=mc_fr_nTraj/I
+    + mc_fr_nuAncestorID  zip=131898  title=mc_fr_nuAncestorID/I
+    + mc_fr_nuAncestorParentIDs  zip=378433  title=mc_fr_nuAncestorParentIDs[mc_fr_nNuAncestorParentIDs]/I
+    + mc_fr_nuAncestorParentProdPXs  zip=5388389  title=mc_fr_nuAncestorParentProdPXs[mc_fr_nNuAncestorParentProdPXs]/D
+    + mc_fr_nuAncestorParentProdPYs  zip=5388995  title=mc_fr_nuAncestorParentProdPYs[mc_fr_nNuAncestorParentProdPYs]/D
+    + mc_fr_nuAncestorParentProdPZs  zip=5029082  title=mc_fr_nuAncestorParentProdPZs[mc_fr_nNuAncestorParentProdPZs]/D
+    + mc_fr_nuAncestorProcesses  zip=633127  title=mc_fr_nuAncestorProcesses[mc_fr_nNuAncestorProcesses]/I
+    + mc_fr_nuAncestorStartPXs  zip=4271049  title=mc_fr_nuAncestorStartPXs[mc_fr_nNuAncestorStartPXs]/D
+    + mc_fr_nuAncestorStartPYs  zip=4271002  title=mc_fr_nuAncestorStartPYs[mc_fr_nNuAncestorStartPYs]/D
+    + mc_fr_nuAncestorStartPZs  zip=4172353  title=mc_fr_nuAncestorStartPZs[mc_fr_nNuAncestorStartPZs]/D
+    + mc_fr_nuAncestorStartVols  zip=703730  title=mc_fr_nuAncestorStartVols[mc_fr_nNuAncestorStartVols]/I
+    + mc_fr_nuAncestorStartXs  zip=5165443  title=mc_fr_nuAncestorStartXs[mc_fr_nNuAncestorStartXs]/D
+    + mc_fr_nuAncestorStartYs  zip=5166076  title=mc_fr_nuAncestorStartYs[mc_fr_nNuAncestorStartYs]/D
+    + mc_fr_nuAncestorStartZs  zip=4142230  title=mc_fr_nuAncestorStartZs[mc_fr_nNuAncestorStartZs]/D
+    + mc_fr_nuAncestorStopPXs  zip=3890550  title=mc_fr_nuAncestorStopPXs[mc_fr_nNuAncestorStopPXs]/D
+    + mc_fr_nuAncestorStopPYs  zip=3890732  title=mc_fr_nuAncestorStopPYs[mc_fr_nNuAncestorStopPYs]/D
+    + mc_fr_nuAncestorStopPZs  zip=3771609  title=mc_fr_nuAncestorStopPZs[mc_fr_nNuAncestorStopPZs]/D
+    + mc_fr_nuAncestorStopVols  zip=707421  title=mc_fr_nuAncestorStopVols[mc_fr_nNuAncestorStopVols]/I
+    + mc_fr_nuAncestorStopXs  zip=4258789  title=mc_fr_nuAncestorStopXs[mc_fr_nNuAncestorStopXs]/D
+    + mc_fr_nuAncestorStopYs  zip=4258546  title=mc_fr_nuAncestorStopYs[mc_fr_nNuAncestorStopYs]/D
+    + mc_fr_nuAncestorStopZs  zip=4141204  title=mc_fr_nuAncestorStopZs[mc_fr_nNuAncestorStopZs]/D
+    + mc_fr_nuAncestorTgtElement  zip=644290  title=mc_fr_nuAncestorTgtElement[mc_fr_nNuAncestorTgtElement]/I
+    + mc_fr_nuAncestorTrkIDs  zip=379567  title=mc_fr_nuAncestorTrkIDs[mc_fr_nNuAncestorTrkIDs]/I
+    + mc_fr_nuParentDecP  zip=4610670  title=mc_fr_nuParentDecP[4]/D
+    + mc_fr_nuParentGeneration  zip=138858  title=mc_fr_nuParentGeneration/I
+    + mc_fr_numEvtInSpill  zip=46572  title=mc_fr_numEvtInSpill/I
+    + muon_off_track_cluster_t_pos  zip=13061585  title=muon_off_track_cluster_t_pos[muon_off_track_cluster_t_pos_sz]/D
+    + muon_off_track_cluster_t_pos_sz  zip=274348  title=muon_off_track_cluster_t_pos_sz/I
+    + muon_off_track_cluster_view  zip=1441249  title=muon_off_track_cluster_view[muon_off_track_cluster_view_sz]/I
+    + muon_off_track_cluster_view_sz  zip=274003  title=muon_off_track_cluster_view_sz/I
+    + muon_track_cluster_t_pos  zip=113135921  title=muon_track_cluster_t_pos[muon_track_cluster_t_pos_sz]/D
+    + muon_track_cluster_t_pos_sz  zip=343584  title=muon_track_cluster_t_pos_sz/I
+    + muon_track_cluster_view  zip=2737893  title=muon_track_cluster_view[muon_track_cluster_view_sz]/I
+    + muon_track_cluster_view_sz  zip=343239  title=muon_track_cluster_view_sz/I
+    + truth_reco_isMinosMatchStub  zip=125596  title=truth_reco_isMinosMatchStub/I
+    + truth_reco_isMinosMatchTrack  zip=126263  title=truth_reco_isMinosMatchTrack/I
+    - mc_wgt_Norm  zip=72792  title=mc_wgt_Norm[mc_wgt_Norm_sz]/D
+    - mc_wgt_Norm_sz  zip=38102  title=mc_wgt_Norm_sz/I
+    - mc_wgt_gen1_Flux_NA49  zip=96892742  title=mc_wgt_gen1_Flux_NA49[mc_wgt_gen1_Flux_NA49_sz]/D
+    - mc_wgt_gen1_Flux_NA49_sz  zip=42465  title=mc_wgt_gen1_Flux_NA49_sz/I
+    - mc_wgt_gen1_Flux_Tertiary  zip=39352002  title=mc_wgt_gen1_Flux_Tertiary[mc_wgt_gen1_Flux_Tertiary_sz]/D
+    - mc_wgt_gen1_Flux_Tertiary_sz  zip=43629  title=mc_wgt_gen1_Flux_Tertiary_sz/I
+    - muon_is_minos_match_stub  zip=41012  title=muon_is_minos_match_stub/I
+    - muon_is_minos_match_track  zip=41303  title=muon_is_minos_match_track/I
+    - truth_reco_muon_is_minos_match_stub  zip=120299  title=truth_reco_muon_is_minos_match_stub/I
+    - truth_reco_muon_is_minos_match_track  zip=120768  title=truth_reco_muon_is_minos_match_track/I
+    ~ mc_wgt_ppfx1_Total  zip 141758100 -> 642293181  title 'mc_wgt_ppfx1_Total[mc_wgt_ppfx1_Total_sz]/D' -> 'mc_wgt_ppfx1_Total[mc_wgt_ppfx1_Total_sz]/I'
+    ~ mc_wgt_Flux_BeamFocus  zip 44639831 -> 428060489  title 'mc_wgt_Flux_BeamFocus[mc_wgt_Flux_BeamFocus_sz]/D' -> 'mc_wgt_Flux_BeamFocus[mc_wgt_Flux_BeamFocus_sz]/I'
+    ~ MasterAnaDev_BlobEnergyPerCluster  zip 63188786 -> 76118619
+    ~ MasterAnaDev_BlobTimePerCluster  zip 58345665 -> 70502588
+    ~ MasterAnaDev_BlobTPosPerCluster  zip 47880680 -> 57067091
+    ~ MasterAnaDev_BlobPIDPerCluster  zip 83812 -> 5909854
+    ~ MasterAnaDev_BlobCoplanarityAngle  zip 18466257 -> 23802993
+    ~ MasterAnaDev_BlobReactionPlaneAngle  zip 18390235 -> 23706067
+  common branches whose leaf title/type changed: 4 ['ANN_plane_probs', 'mc_wgt_ppfx1_Total', 'mc_wgt_Flux_BeamFocus', 'ANN_segments']
+
+[Meta] entries local=1 remote=1 (delta 0); branches local=4 remote=4; zip local=354 remote=354 delta=0
+  remote-minus-local: 0 branches, zipbytes 0
+  local-minus-remote: 0 branches, zipbytes 0
+  common branches: 4, zipbytes delta 0
+    ~ Total_Truth_Entries  zip 94 -> 94
+    ~ Total_Reco_Entries  zip 93 -> 93
+    ~ POT_Used  zip 83 -> 83
+    ~ POT_Total  zip 84 -> 84
+  common branches whose leaf title/type changed: 0 []
+
+[Truth] entries local=544499 remote=544528 (delta 29); branches local=515 remote=560; zip local=6744436398 remote=9149821657 delta=2405385259
+  remote-minus-local: 53 branches, zipbytes 243411460
+  local-minus-remote: 8 branches, zipbytes 390948703
+  common branches: 507, zipbytes delta 2552922502
+    + mc_fr_HadronExitTgtIdx  zip=320867  title=mc_fr_HadronExitTgtIdx/I
+    + mc_fr_HadronExitTgtP  zip=13122363  title=mc_fr_HadronExitTgtP[4]/D
+    + mc_fr_HadronExitTgtVtx  zip=6484814  title=mc_fr_HadronExitTgtVtx[3]/D
+    + mc_fr_isOverflow  zip=42127  title=mc_fr_isOverflow/I
+    + mc_fr_nNuAncestorParentIDs  zip=301801  title=mc_fr_nNuAncestorParentIDs/I
+    + mc_fr_nNuAncestorParentProdPXs  zip=302917  title=mc_fr_nNuAncestorParentProdPXs/I
+    + mc_fr_nNuAncestorParentProdPYs  zip=302917  title=mc_fr_nNuAncestorParentProdPYs/I
+    + mc_fr_nNuAncestorParentProdPZs  zip=302917  title=mc_fr_nNuAncestorParentProdPZs/I
+    + mc_fr_nNuAncestorProcesses  zip=301801  title=mc_fr_nNuAncestorProcesses/I
+    + mc_fr_nNuAncestorStartPXs  zip=301522  title=mc_fr_nNuAncestorStartPXs/I
+    + mc_fr_nNuAncestorStartPYs  zip=301522  title=mc_fr_nNuAncestorStartPYs/I
+    + mc_fr_nNuAncestorStartPZs  zip=301522  title=mc_fr_nNuAncestorStartPZs/I
+    + mc_fr_nNuAncestorStartVols  zip=301801  title=mc_fr_nNuAncestorStartVols/I
+    + mc_fr_nNuAncestorStartXs  zip=301243  title=mc_fr_nNuAncestorStartXs/I
+    + mc_fr_nNuAncestorStartYs  zip=301243  title=mc_fr_nNuAncestorStartYs/I
+    + mc_fr_nNuAncestorStartZs  zip=301243  title=mc_fr_nNuAncestorStartZs/I
+    + mc_fr_nNuAncestorStopPXs  zip=301243  title=mc_fr_nNuAncestorStopPXs/I
+    + mc_fr_nNuAncestorStopPYs  zip=301243  title=mc_fr_nNuAncestorStopPYs/I
+    + mc_fr_nNuAncestorStopPZs  zip=301243  title=mc_fr_nNuAncestorStopPZs/I
+    + mc_fr_nNuAncestorStopVols  zip=301522  title=mc_fr_nNuAncestorStopVols/I
+    + mc_fr_nNuAncestorStopXs  zip=300964  title=mc_fr_nNuAncestorStopXs/I
+    + mc_fr_nNuAncestorStopYs  zip=300964  title=mc_fr_nNuAncestorStopYs/I
+    + mc_fr_nNuAncestorStopZs  zip=300964  title=mc_fr_nNuAncestorStopZs/I
+    + mc_fr_nNuAncestorTgtElement  zip=302080  title=mc_fr_nNuAncestorTgtElement/I
+    + mc_fr_nNuAncestorTrkIDs  zip=300964  title=mc_fr_nNuAncestorTrkIDs/I
+    + mc_fr_nTraj  zip=297616  title=mc_fr_nTraj/I
+    + mc_fr_nuAncestorID  zip=246017  title=mc_fr_nuAncestorID/I
+    + mc_fr_nuAncestorParentIDs  zip=1011015  title=mc_fr_nuAncestorParentIDs[mc_fr_nNuAncestorParentIDs]/I
+    + mc_fr_nuAncestorParentProdPXs  zip=15527684  title=mc_fr_nuAncestorParentProdPXs[mc_fr_nNuAncestorParentProdPXs]/D
+    + mc_fr_nuAncestorParentProdPYs  zip=15530039  title=mc_fr_nuAncestorParentProdPYs[mc_fr_nNuAncestorParentProdPYs]/D
+    + mc_fr_nuAncestorParentProdPZs  zip=14638159  title=mc_fr_nuAncestorParentProdPZs[mc_fr_nNuAncestorParentProdPZs]/D
+    + mc_fr_nuAncestorProcesses  zip=1769844  title=mc_fr_nuAncestorProcesses[mc_fr_nNuAncestorProcesses]/I
+    + mc_fr_nuAncestorStartPXs  zip=12282179  title=mc_fr_nuAncestorStartPXs[mc_fr_nNuAncestorStartPXs]/D
+    + mc_fr_nuAncestorStartPYs  zip=12282857  title=mc_fr_nuAncestorStartPYs[mc_fr_nNuAncestorStartPYs]/D
+    + mc_fr_nuAncestorStartPZs  zip=11993337  title=mc_fr_nuAncestorStartPZs[mc_fr_nNuAncestorStartPZs]/D
+    + mc_fr_nuAncestorStartVols  zip=1956509  title=mc_fr_nuAncestorStartVols[mc_fr_nNuAncestorStartVols]/I
+    + mc_fr_nuAncestorStartXs  zip=14889381  title=mc_fr_nuAncestorStartXs[mc_fr_nNuAncestorStartXs]/D
+    + mc_fr_nuAncestorStartYs  zip=14889451  title=mc_fr_nuAncestorStartYs[mc_fr_nNuAncestorStartYs]/D
+    + mc_fr_nuAncestorStartZs  zip=11873106  title=mc_fr_nuAncestorStartZs[mc_fr_nNuAncestorStartZs]/D
+    + mc_fr_nuAncestorStopPXs  zip=11009971  title=mc_fr_nuAncestorStopPXs[mc_fr_nNuAncestorStopPXs]/D
+    + mc_fr_nuAncestorStopPYs  zip=11011186  title=mc_fr_nuAncestorStopPYs[mc_fr_nNuAncestorStopPYs]/D
+    + mc_fr_nuAncestorStopPZs  zip=10604066  title=mc_fr_nuAncestorStopPZs[mc_fr_nNuAncestorStopPZs]/D
+    + mc_fr_nuAncestorStopVols  zip=1956313  title=mc_fr_nuAncestorStopVols[mc_fr_nNuAncestorStopVols]/I
+    + mc_fr_nuAncestorStopXs  zip=12219160  title=mc_fr_nuAncestorStopXs[mc_fr_nNuAncestorStopXs]/D
+    + mc_fr_nuAncestorStopYs  zip=12220108  title=mc_fr_nuAncestorStopYs[mc_fr_nNuAncestorStopYs]/D
+    + mc_fr_nuAncestorStopZs  zip=11871653  title=mc_fr_nuAncestorStopZs[mc_fr_nNuAncestorStopZs]/D
+    + mc_fr_nuAncestorTgtElement  zip=1778105  title=mc_fr_nuAncestorTgtElement[mc_fr_nNuAncestorTgtElement]/I
+    + mc_fr_nuAncestorTrkIDs  zip=1010152  title=mc_fr_nuAncestorTrkIDs[mc_fr_nNuAncestorTrkIDs]/I
+    + mc_fr_nuParentDecP  zip=13409069  title=mc_fr_nuParentDecP[4]/D
+    + mc_fr_nuParentGeneration  zip=301157  title=mc_fr_nuParentGeneration/I
+    + mc_fr_numEvtInSpill  zip=42964  title=mc_fr_numEvtInSpill/I
+    + truth_reco_isMinosMatchStub  zip=248497  title=truth_reco_isMinosMatchStub/I
+    + truth_reco_isMinosMatchTrack  zip=238058  title=truth_reco_isMinosMatchTrack/I
+    - mc_wgt_Norm  zip=58239  title=mc_wgt_Norm[mc_wgt_Norm_sz]/D
+    - mc_wgt_Norm_sz  zip=33130  title=mc_wgt_Norm_sz/I
+    - mc_wgt_gen1_Flux_NA49  zip=282582664  title=mc_wgt_gen1_Flux_NA49[mc_wgt_gen1_Flux_NA49_sz]/D
+    - mc_wgt_gen1_Flux_NA49_sz  zip=37244  title=mc_wgt_gen1_Flux_NA49_sz/I
+    - mc_wgt_gen1_Flux_Tertiary  zip=107730226  title=mc_wgt_gen1_Flux_Tertiary[mc_wgt_gen1_Flux_Tertiary_sz]/D
+    - mc_wgt_gen1_Flux_Tertiary_sz  zip=38068  title=mc_wgt_gen1_Flux_Tertiary_sz/I
+    - truth_reco_muon_is_minos_match_stub  zip=239935  title=truth_reco_muon_is_minos_match_stub/I
+    - truth_reco_muon_is_minos_match_track  zip=229197  title=truth_reco_muon_is_minos_match_track/I
+    ~ mc_wgt_ppfx1_Total  zip 413349897 -> 1872063565  title 'mc_wgt_ppfx1_Total[mc_wgt_ppfx1_Total_sz]/D' -> 'mc_wgt_ppfx1_Total[mc_wgt_ppfx1_Total_sz]/I'
+    ~ mc_wgt_Flux_BeamFocus  zip 109848270 -> 1195694082  title 'mc_wgt_Flux_BeamFocus[mc_wgt_Flux_BeamFocus_sz]/D' -> 'mc_wgt_Flux_BeamFocus[mc_wgt_Flux_BeamFocus_sz]/I'
+    ~ truth_genie_wgt_FrCEx_N  zip 5427510 -> 5800607
+    ~ truth_genie_wgt_FrInel_N  zip 5210536 -> 5517332
+    ~ mc_er_LD  zip 7324148 -> 7622901
+    ~ mc_er_FD  zip 7178838 -> 7422461
+    ~ truth_genie_wgt_FrAbs_N  zip 5013812 -> 5251833
+    ~ truth_hadronReweightNuke  zip 13148694 -> 13374863
+  common branches whose leaf title/type changed: 2 ['mc_wgt_Flux_BeamFocus', 'mc_wgt_ppfx1_Total']

@@ -1,0 +1,40 @@
+size local 20328781801 remote 20328781801 ratio 1.0
+created local 2026-01-11 16:58:16 remote 2026-01-11 16:58:16 | compress 1 1
+
+[MasterAnaDev] entries local=169086 remote=169086 (delta 0); branches local=4190 remote=4190; zip local=11207703685 remote=11207703685 delta=0
+  remote-minus-local: 0 branches, zipbytes 0
+  local-minus-remote: 0 branches, zipbytes 0
+  common branches: 4190, zipbytes delta 0
+    ~ pi0_thetaY  zip 477975 -> 477975
+    ~ part_response_recoil_allNonMuonClusters_hcal_other  zip 91155 -> 91155
+    ~ part_response_container_recoil_passive_muon_od_sz  zip 149659 -> 149659
+    ~ gamma2_E_Old  zip 49655 -> 49655
+    ~ part_response_recoil_nonMuonNonVtx100mm_high_neutron_od_err  zip 60191 -> 60191
+    ~ part_response_recoil_passive_muon_od_err  zip 53940 -> 53940
+    ~ part_response_container_recoil_passive_primaryHadrons_mid_proton_id_err_sz  zip 157884 -> 157884
+    ~ MasterAnaDev_BlobY  zip 12941593 -> 12941593
+  common branches whose leaf title/type changed: 0 []
+
+[Meta] entries local=1 remote=1 (delta 0); branches local=4 remote=4; zip local=354 remote=354 delta=0
+  remote-minus-local: 0 branches, zipbytes 0
+  local-minus-remote: 0 branches, zipbytes 0
+  common branches: 4, zipbytes delta 0
+    ~ POT_Used  zip 83 -> 83
+    ~ Total_Truth_Entries  zip 94 -> 94
+    ~ Total_Reco_Entries  zip 93 -> 93
+    ~ POT_Total  zip 84 -> 84
+  common branches whose leaf title/type changed: 0 []
+
+[Truth] entries local=549315 remote=549315 (delta 0); branches local=560 remote=560; zip local=9107340309 remote=9107340309 delta=0
+  remote-minus-local: 0 branches, zipbytes 0
+  local-minus-remote: 0 branches, zipbytes 0
+  common branches: 560, zipbytes delta 0
+    ~ numi_is_good_toroids  zip 45565 -> 45565
+    ~ truth_fuzz_end_z  zip 8992919 -> 8992919
+    ~ truth_FittedMichel_all_micheltrajectory_energy  zip 998563 -> 998563
+    ~ truth_FittedMichel_reco_micheltrajectory_initialy_sz  zip 349737 -> 349737
+    ~ truth_FittedMichel_true_primaryparent_momentumx  zip 939168 -> 939168
+    ~ mc_diffXSec  zip 4178560 -> 4178560
+    ~ mc_er_mother  zip 6626241 -> 6626241
+    ~ truth_pi_theta_wrtbeam  zip 6693303 -> 6693303
+  common branches whose leaf title/type changed: 0 []

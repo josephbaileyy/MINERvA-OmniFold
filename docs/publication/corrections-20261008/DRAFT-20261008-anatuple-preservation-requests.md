@@ -4,6 +4,11 @@
 needs Joseph's explicit decision (goal 2026-10-08: "Do not send it or request a quota increase"). The figures come from
 `RECORD-20261008-followups-g11-g12-preservation.md` §3 and §7; re-measure them before sending.
 
+> **Correction 2026-10-14, before any send:** only Playlist 1A (41 MC files and 253 Data files) differs from the
+> current public release. 1B–1P match it, so "a fresh download would not reproduce the analysis inputs" holds for
+> 1A only (`docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/REPORT.md`). Revise A and B
+> accordingly.
+
 ## A. To NERSC (HPSS allocation request, via the ERCAP allocation-change process or a help ticket)
 
 > **Subject:** HPSS storage increase for project m3246 (user josephrb): archival copy of analysed MINERvA open-data

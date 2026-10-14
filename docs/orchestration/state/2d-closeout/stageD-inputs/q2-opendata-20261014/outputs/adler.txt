@@ -1,0 +1,6 @@
+Playlist1P/MasterAnaDev_mc_AnaTuple_run00112000_Playlist.root remote: adler32 fdbb0df7
+Playlist1P/MasterAnaDev_mc_AnaTuple_run00112000_Playlist.root local: fdbb0df7 /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1P/MasterAnaDev_mc_AnaTuple_run00112000_Playlist.root
+Playlist1D/MasterAnaDev_mc_AnaTuple_run00111100_Playlist.root remote: adler32 43ddaa01
+Playlist1D/MasterAnaDev_mc_AnaTuple_run00111100_Playlist.root local: 43ddaa01 /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1D/MasterAnaDev_mc_AnaTuple_run00111100_Playlist.root
+Playlist1A/MasterAnaDev_mc_AnaTuple_run00110001_Playlist.root remote: adler32 cd524740
+Playlist1A/MasterAnaDev_mc_AnaTuple_run00110001_Playlist.root local: cdb0621a /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110001_Playlist.root

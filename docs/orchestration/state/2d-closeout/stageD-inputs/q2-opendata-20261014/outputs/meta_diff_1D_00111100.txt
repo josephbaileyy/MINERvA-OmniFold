@@ -1,0 +1,40 @@
+size local 21631153471 remote 21631153471 ratio 1.0
+created local 2026-01-08 20:38:36 remote 2026-01-08 20:38:36 | compress 1 1
+
+[MasterAnaDev] entries local=186373 remote=186373 (delta 0); branches local=4190 remote=4190; zip local=12409042017 remote=12409042017 delta=0
+  remote-minus-local: 0 branches, zipbytes 0
+  local-minus-remote: 0 branches, zipbytes 0
+  common branches: 4190, zipbytes delta 0
+    ~ part_response_container_recoil_passive_primaryHadrons_resthcal_em  zip 264114 -> 264114
+    ~ part_response_recoil_allNonMuonClusters_unused_resthcal_none_err  zip 67052 -> 67052
+    ~ part_response_recoil_allNonMuonClusters_primaryHadronsRemoved_tracker_high_proton  zip 772339 -> 772339
+    ~ part_response_recoil_allNonMuonClusters_quarterhcal_high_proton  zip 176294 -> 176294
+    ~ gamma1_energy_ecal  zip 314783 -> 314783
+    ~ part_response_container_recoil_passive_primaryHadrons_quarterhcal_em_sz  zip 172855 -> 172855
+    ~ part_response_container_recoil_passive_primaryHadrons_hcal_proton_err  zip 304145 -> 304145
+    ~ part_response_container_recoil_passive_primaryHadrons_quarterhcal_mid_neutron_sz  zip 176032 -> 176032
+  common branches whose leaf title/type changed: 0 []
+
+[Meta] entries local=1 remote=1 (delta 0); branches local=4 remote=4; zip local=354 remote=354 delta=0
+  remote-minus-local: 0 branches, zipbytes 0
+  local-minus-remote: 0 branches, zipbytes 0
+  common branches: 4, zipbytes delta 0
+    ~ Total_Truth_Entries  zip 94 -> 94
+    ~ POT_Used  zip 83 -> 83
+    ~ POT_Total  zip 84 -> 84
+    ~ Total_Reco_Entries  zip 93 -> 93
+  common branches whose leaf title/type changed: 0 []
+
+[Truth] entries local=550037 remote=550037 (delta 0); branches local=560 remote=560; zip local=9207438146 remote=9207438146 delta=0
+  remote-minus-local: 0 branches, zipbytes 0
+  local-minus-remote: 0 branches, zipbytes 0
+  common branches: 560, zipbytes delta 0
+    ~ mc_fr_nNuAncestorStopPXs  zip 304563 -> 304563
+    ~ numi_tor101  zip 1861059 -> 1861059
+    ~ truth_N_chargedK  zip 119080 -> 119080
+    ~ truth_FittedMichel_all_muontrajectory_finaly  zip 1613183 -> 1613183
+    ~ truth_hadronReweightColumnarDensity  zip 180538920 -> 180538920
+    ~ mc_fr_nNuAncestorTgtElement  zip 305418 -> 305418
+    ~ truth_FittedMichel_all_piontrajectory_momentumz_sz  zip 347252 -> 347252
+    ~ mc_run  zip 42706 -> 42706
+  common branches whose leaf title/type changed: 0 []

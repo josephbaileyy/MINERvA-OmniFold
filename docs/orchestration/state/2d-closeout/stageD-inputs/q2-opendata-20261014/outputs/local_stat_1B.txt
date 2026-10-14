@@ -1,0 +1,11 @@
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111000_Playlist.root 21456672032 2026-04-18 19:03:54.000000000 -0700
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111001_Playlist.root 21719130441 2026-04-18 19:10:37.000000000 -0700
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111002_Playlist.root 21621344900 2026-04-18 19:12:24.000000000 -0700
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111003_Playlist.root 21604975871 2026-04-18 19:20:03.000000000 -0700
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111004_Playlist.root 21536173415 2026-04-18 19:21:36.000000000 -0700
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111005_Playlist.root 21652613607 2026-04-18 19:23:21.000000000 -0700
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111006_Playlist.root 21540099700 2026-04-18 19:25:03.000000000 -0700
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111007_Playlist.root 21674042524 2026-04-18 19:26:26.000000000 -0700
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111008_Playlist.root 21482574785 2026-04-18 19:28:22.000000000 -0700
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111009_Playlist.root 21713147162 2026-04-18 19:29:44.000000000 -0700
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111010_Playlist.root 21612720072 2026-04-18 19:32:09.000000000 -0700
