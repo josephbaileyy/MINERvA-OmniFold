@@ -341,7 +341,7 @@ docs/orchestration/PROPOSAL-20260916-B-and-S-bounded-determinism-control.md	trac
 docs/orchestration/PROPOSAL-20260917-integrated-acceptance-existing-products.md	tracked	LIVE	document		20260917	open		route-only		no	4	296	23204
 docs/orchestration/PROPOSAL-20260921-note-appendix-and-test-consolidation.md	tracked	LIVE	document		20260921	open		route-only		no	2	211	13013
 docs/orchestration/PROPOSAL-20261005-scalar-measurement-successor.md	tracked	LIVE	document	20261006-s5p-campaign	20261005	open		route-only		no	14	435	35946
-docs/orchestration/PROPOSAL-20261014-q3-custodian-key-design.md	tracked	LIVE	document		20261014	open		route-only		no	2	129	7633
+docs/orchestration/PROPOSAL-20261014-q3-custodian-key-design.md	tracked	LIVE	document		20261014	open		route-only		no	2	130	7814
 docs/orchestration/PROVENANCE-20260822-declaration-v-scalar5d-blocks.md	tracked	LIVE	document		20260822	open		route-only	docs/orchestration/state/declaration-v-5d-covering-search-20260822.sh	no	11	367	28401
 docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	tracked	LIVE	document		20260810	open		route-only	docs/open-items/verify_open_items_restructure.py	no	11	398	26929
 docs/orchestration/PUBLICATION-READINESS-20260822.md	tracked	LIVE	document		20260822	open		route-only		no	12	1352	101166
