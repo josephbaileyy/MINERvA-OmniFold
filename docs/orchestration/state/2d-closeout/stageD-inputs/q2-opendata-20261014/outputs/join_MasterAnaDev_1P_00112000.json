@@ -1,0 +1,93 @@
+{
+ "local": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1P/MasterAnaDev_mc_AnaTuple_run00112000_Playlist.root",
+ "remote": "root://fndca1.fnal.gov:1095//pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1P/MasterAnaDev_mc_AnaTuple_run00112000_Playlist.root",
+ "tree": "MasterAnaDev",
+ "first_N": "all",
+ "read_seconds": {
+  "local": 4.4,
+  "remote": 12.5
+ },
+ "entries_read": {
+  "local": 169086,
+  "remote": 169086
+ },
+ "duplicate_K": {
+  "local": 0,
+  "remote": 0
+ },
+ "K_local": 169086,
+ "K_remote": 169086,
+ "K_intersection": 169086,
+ "K_only_local": 0,
+ "K_only_remote": 0,
+ "only_local_by_mc_subrun": {},
+ "only_remote_by_mc_subrun": {},
+ "mc_run_values": {
+  "local": [
+   112000
+  ],
+  "remote": [
+   112000
+  ]
+ },
+ "n_mc_subruns": {
+  "local": 481,
+  "remote": 481
+ },
+ "row_order_identical_on_shared": true,
+ "compare_on_shared_K": {
+  "mc_incomingE": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0,
+   "max_rel_diff": 0.0,
+   "n_nonfinite_mismatch": 0
+  },
+  "mc_Q2": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0,
+   "max_rel_diff": 0.0,
+   "n_nonfinite_mismatch": 0
+  },
+  "mc_w": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0,
+   "max_rel_diff": 0.0,
+   "n_nonfinite_mismatch": 0
+  },
+  "mc_intType": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0
+  },
+  "mc_targetZ": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0
+  },
+  "ev_run": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0
+  },
+  "ev_subrun": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0
+  },
+  "ev_gate": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0
+  },
+  "MasterAnaDev_muon_P": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0,
+   "max_rel_diff": 0.0,
+   "n_nonfinite_mismatch": 0
+  },
+  "MasterAnaDev_muon_theta": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0,
+   "max_rel_diff": 0.0,
+   "n_nonfinite_mismatch": 0
+  }
+ },
+ "gate_triple_match_frac": 1.0,
+ "all_kinematics_bit_identical_frac": 1.0,
+ "examples_kin_differ": []
+}

@@ -1,0 +1,141 @@
+{
+ "local": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root",
+ "remote": "root://fndca1.fnal.gov:1095//pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root",
+ "tree": "MasterAnaDev",
+ "first_N": "all",
+ "read_seconds": {
+  "local": 4.6,
+  "remote": 24.0
+ },
+ "entries_read": {
+  "local": 186439,
+  "remote": 186434
+ },
+ "duplicate_K": {
+  "local": 0,
+  "remote": 0
+ },
+ "K_local": 186439,
+ "K_remote": 186434,
+ "K_intersection": 186413,
+ "K_only_local": 26,
+ "K_only_remote": 21,
+ "only_local_by_mc_subrun": {
+  "13": 1,
+  "29": 1,
+  "32": 1,
+  "40": 1,
+  "41": 1,
+  "63": 1,
+  "74": 1,
+  "147": 1,
+  "159": 1,
+  "175": 1,
+  "181": 1,
+  "183": 1,
+  "210": 1,
+  "232": 1,
+  "250": 1,
+  "252": 1,
+  "259": 1,
+  "284": 1,
+  "293": 1,
+  "306": 1,
+  "325": 1,
+  "331": 1,
+  "373": 1,
+  "480": 1,
+  "482": 1,
+  "488": 1
+ },
+ "only_remote_by_mc_subrun": {
+  "66": 1,
+  "72": 1,
+  "103": 2,
+  "132": 1,
+  "171": 1,
+  "180": 1,
+  "224": 1,
+  "230": 1,
+  "239": 1,
+  "277": 1,
+  "294": 1,
+  "333": 1,
+  "357": 1,
+  "379": 1,
+  "382": 1,
+  "384": 1,
+  "398": 1,
+  "402": 1,
+  "461": 1,
+  "475": 1
+ },
+ "mc_run_values": {
+  "local": [
+   110000
+  ],
+  "remote": [
+   110000
+  ]
+ },
+ "n_mc_subruns": {
+  "local": 500,
+  "remote": 500
+ },
+ "row_order_identical_on_shared": true,
+ "compare_on_shared_K": {
+  "mc_incomingE": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0,
+   "max_rel_diff": 0.0,
+   "n_nonfinite_mismatch": 0
+  },
+  "mc_Q2": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0,
+   "max_rel_diff": 0.0,
+   "n_nonfinite_mismatch": 0
+  },
+  "mc_w": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0,
+   "max_rel_diff": 0.0,
+   "n_nonfinite_mismatch": 0
+  },
+  "mc_intType": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0
+  },
+  "mc_targetZ": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0
+  },
+  "ev_run": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0
+  },
+  "ev_subrun": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0
+  },
+  "ev_gate": {
+   "frac_bit_identical": 1.0,
+   "n_differ": 0
+  },
+  "MasterAnaDev_muon_P": {
+   "frac_bit_identical": 0.6906599861597635,
+   "n_differ": 57665,
+   "max_rel_diff": 1.9999468713850774,
+   "n_nonfinite_mismatch": 0
+  },
+  "MasterAnaDev_muon_theta": {
+   "frac_bit_identical": 0.6721205066170278,
+   "n_differ": 61121,
+   "max_rel_diff": 1.0001604948001248,
+   "n_nonfinite_mismatch": 0
+  }
+ },
+ "gate_triple_match_frac": 1.0,
+ "all_kinematics_bit_identical_frac": 1.0,
+ "examples_kin_differ": []
+}
