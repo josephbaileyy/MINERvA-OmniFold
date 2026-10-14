@@ -136,8 +136,12 @@ R = rel. (D − B)/POT ÷ (rel. eff × rel. truth/POT), each relative to the mea
 - In the MC, the efficiency loss is largest at low p_∥: 0.896 at 1.5–2 GeV/c, against 0.94 at 10–15 GeV/c. The data
   loss has the same shape but is smaller.
 
-**1G–1M.** The block steps up at 6 GeV/c, which is what a difference in flux shape would produce (inferred).
-- In p_∥ it is 0.955–0.989 below 6 GeV/c, then 1.022–1.025 at 6–10 GeV/c.
+**1G–1M.** The block steps up at 8 GeV/c, which is what a difference in flux shape would produce (inferred).
+- In p_∥ it is 0.954–0.989 below 8 GeV/c (0.9545 at 6–8 GeV/c), then 1.022–1.025 at 8–15 GeV/c.
+
+  > **Correction 2026-10-14:** this line first read "0.955–0.989 below 6 GeV/c, then 1.022–1.025 at 6–10 GeV/c",
+  > one bin off. The values are from `outputs/ref_shape.json` (`1G-1M_vs_1A-1E.by_pz` on edges 1.5, 2, 3, 4, 5, 6, 8,
+  > 10, 15, 20, 60 GeV/c), found by [`coverage/REPORT.md`](coverage/REPORT.md) §2.1 and re-read by the director.
 - In p_T it is 0.963–1.000.
 - The shape χ² is 553 for 88 bins.
 

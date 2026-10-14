@@ -1,0 +1,129 @@
+{
+ "host": "saul.nersc.gov login29 (one multiplexed ssh session); no Slurm job of any kind; 0 node-h",
+ "scratch": "/pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014",
+ "steps": [
+  {
+   "script": "/pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/scripts/export_cov.py",
+   "note": "first run wrote the npz then failed on a JSON bool; rerun after the fix (untimed, same work)",
+   "wall_s": 24.49,
+   "user_s": 11.56,
+   "maxrss_kB": 386340
+  },
+  {
+   "script": "/pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/scripts/proxy_hists.py",
+   "note": "first run failed writing the npz (Lustre BrokenPipe, errno 108); rerun",
+   "wall_s": 37.12,
+   "user_s": 35.69,
+   "maxrss_kB": 845144,
+   "failed_attempt": {
+    "wall_s": 329.88,
+    "user_s": 36.42
+   }
+  },
+  {
+   "script": "/pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/scripts/universe_reco_sample.py",
+   "note": "timing test, 1L, 100k entries",
+   "wall_s": 18.67,
+   "user_s": 22.69,
+   "maxrss_kB": 587664
+  },
+  {
+   "script": "/pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/scripts/universe_reco_sample.py",
+   "note": "12 sequential processes, first 500k mc_signal_reco entries per playlist",
+   "per_playlist": [
+    {
+     "playlist": "1A",
+     "wall_s": 55.55,
+     "user_s": 60.43,
+     "maxrss_kB": 700232
+    },
+    {
+     "playlist": "1B",
+     "wall_s": 50.56,
+     "user_s": 54.52,
+     "maxrss_kB": 594788
+    },
+    {
+     "playlist": "1C",
+     "wall_s": 52.34,
+     "user_s": 56.34,
+     "maxrss_kB": 639972
+    },
+    {
+     "playlist": "1D",
+     "wall_s": 57.8,
+     "user_s": 61.51,
+     "maxrss_kB": 682468
+    },
+    {
+     "playlist": "1E",
+     "wall_s": 56.4,
+     "user_s": 60.13,
+     "maxrss_kB": 681900
+    },
+    {
+     "playlist": "1F",
+     "wall_s": 58.29,
+     "user_s": 62.98,
+     "maxrss_kB": 698020
+    },
+    {
+     "playlist": "1G",
+     "wall_s": 57.05,
+     "user_s": 61.15,
+     "maxrss_kB": 694236
+    },
+    {
+     "playlist": "1L",
+     "wall_s": 32.13,
+     "user_s": 36.72,
+     "maxrss_kB": 609392
+    },
+    {
+     "playlist": "1M",
+     "wall_s": 60.77,
+     "user_s": 64.58,
+     "maxrss_kB": 688412
+    },
+    {
+     "playlist": "1N",
+     "wall_s": 55.19,
+     "user_s": 59.27,
+     "maxrss_kB": 698800
+    },
+    {
+     "playlist": "1O",
+     "wall_s": 52.07,
+     "user_s": 55.32,
+     "maxrss_kB": 648732
+    },
+    {
+     "playlist": "1P",
+     "wall_s": 52.11,
+     "user_s": 55.3,
+     "maxrss_kB": 615928
+    }
+   ],
+   "user_s_total": 688.25
+  },
+  {
+   "script": "/pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/scripts/universe_reco_sample.py",
+   "note": "3 split-sample processes (1D, 1M, 1N; entries 500k-1M); untimed, about 1 min each"
+  },
+  {
+   "script": "/pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/scripts/coverage.py",
+   "wall_s": 8.15,
+   "user_s": 193.83,
+   "maxrss_kB": 57620,
+   "note": "numpy BLAS threads; also run locally on copies, identical text output"
+  },
+  {
+   "script": "/pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/scripts/reco_universes.py",
+   "wall_s": 3.9,
+   "user_s": 14.96,
+   "maxrss_kB": 86016,
+   "note": "also run locally on copies, identical text output"
+  }
+ ],
+ "largest_single_process_user_s": 193.83
+}
