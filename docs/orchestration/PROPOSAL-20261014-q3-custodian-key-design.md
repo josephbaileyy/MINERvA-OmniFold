@@ -27,7 +27,7 @@ Joseph said "there is probably some way I can do this with keys and encryption".
 | public key (recipient) | `age1c7ssjcx0exu4uv9ymnghfrv3pf3elw03mhxdyh5ghxa99xagd3qqh3zglu` |
 | made by | Joseph, 2026-10-14, in his own Terminal: `age-keygen \| age -p -o ~/q3-custodian-key.age` (`age` v1.3.2, Homebrew) |
 | private key | `~/q3-custodian-key.age` on Joseph's Mac. It is passphrase-encrypted, so no plaintext copy was ever written |
-| director's checks (2026-10-14) | The file is 371 bytes. Its header reads `age-encryption.org/v1` and its first stanza `-> scrypt`, which makes it a passphrase-encrypted file and not a plaintext key. `age -r <public key>` accepts the recipient. Only the header was read. The passphrase is not known to any session |
+| director's checks (2026-10-14) | The file is 371 bytes. Its header reads `age-encryption.org/v1` and its first stanza `-> scrypt`, which makes it a passphrase-encrypted file and not a plaintext key. `age -r <public key>` accepts the recipient. Only the header was read. The passphrase is not known to any session. Joseph's own round trip succeeded (§6) |
 | backup | Joseph's responsibility. He keeps the key file and the passphrase together, in a password manager or offline. Lose either one and nothing encrypted to this key can be recovered |
 
 ## 2. What it protects, and what it cannot
@@ -122,8 +122,9 @@ None of this is due until Stage D proceeds, which waits on Q7.
 
 ## 6. Limits
 
-- The procedure was rehearsed with a throwaway key without a passphrase. Unlocking Joseph's passphrase-protected
-  identity at S4 has not been exercised. `age` v1.3.2 accepts encrypted identity files with `-i`. Joseph can test
-  the round trip himself, on a dummy file, before S1.
+- The S1 commands were rehearsed with a throwaway key without a passphrase. **Update 2026-10-14:** Joseph then
+  exercised his own passphrase-protected identity. In his own Terminal he ran
+  `echo hello | age -r <public key> -o ~/test.age` and `age -d -i ~/q3-custodian-key.age ~/test.age`, entered his
+  passphrase, and it printed `hello` (Joseph's report to the director). So the S4 decryption path works with his key.
 - The director did not search the Mac for other copies of the private key. Joseph made it with the encrypted pipeline
   above, which writes no plaintext.
