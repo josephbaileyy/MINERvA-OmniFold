@@ -1,0 +1,2 @@
+2144008221 2026-05-18 01:52:14.000000000 -0700
+{"path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC.root", "mc_truth_denom": {"entries": 32849103, "branches": ["MC", "MC_pz", "w_truth"]}, "mc_signal_reco": {"entries": 32849103, "branches": ["sim", "sim_pz", "sim_pass", "w_reco", "MC", "MC_pz", "w_truth"]}, "mc_background": {"entries": 658227, "branches": ["sim_background", "sim_background_pz", "sim_background_pass", "w_bkg"]}, "data": {"entries": 4119797, "branches": ["measured", "measured_pz", "measured_pass"]}}

@@ -1,0 +1,217 @@
+## host login29 2026-10-14T07:28:47Z
+## iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2043.0            10000.0     17193.7      20000.0
+m3246_g             1295.8            90000.0    129162.8     180000.0
+## prjquota m3246
+                  ---------- Space (GB) ---------     ------------- Inode --------------
+Project             Usage      Quota    Percent          Usage       Quota     Percent  
+---------------   ---------  ---------  ---------     ----------  ----------  ----------
+m3246                 83496     102400         81       40082863    75000000          53
+
+## MC AnaTuple files per playlist (find -name *.root)
+Playlist1A 41
+Playlist1B 11
+Playlist1C 21
+Playlist1D 61
+Playlist1E 51
+Playlist1F 71
+Playlist1G 61
+Playlist1L 6
+Playlist1M 98
+Playlist1N 31
+Playlist1O 16
+Playlist1P 21
+total 489
+drwxrwx--- 14 josephrb josephrb 4096 Apr 19 15:26 /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC
+## CFS copies of MC AnaTuples (expect none)
+ls: cannot access '/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-data-20261009/MC': No such file or directory
+## generator samples (CFS first, then pscratch)
+drwxr-s--- 9 josephrb m3246    4096 Oct  6 20:51 /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006
+drwxrwx--- 2 josephrb josephrb 4096 Sep 26 11:02 /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/gen5d
+drwxrwx--- 4 josephrb josephrb 4096 Sep 27 02:23 /global/cfs/cdirs/m3246/josephrb/s5p-archive-20261006/gen5d_fluxfix
+-rw-r----- 1 josephrb josephrb 999514329 Jun  8 12:37 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_cv_ALL.gst.root
+-rw-r----- 1 josephrb josephrb 997606940 Jun  8 12:51 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/genie_mefhc_mec_ALL.gst.root
+-rw-r----- 1 josephrb josephrb 310474649 Jun  8 11:04 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p1/nuwro_p1.root
+-rw-r----- 1 josephrb josephrb 309924946 Jun  8 11:04 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p2/nuwro_p2.root
+-rw-r----- 1 josephrb josephrb 310360625 Jun  8 11:28 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p3/nuwro_p3.root
+-rw-r----- 1 josephrb josephrb 310399353 Jun  8 11:49 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p4/nuwro_p4.root
+-rw-r----- 1 josephrb josephrb 310254514 Jun  8 11:49 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p5/nuwro_p5.root
+-rw-r----- 1 josephrb josephrb 309920336 Jun  8 12:19 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p6/nuwro_p6.root
+-rw-r----- 1 josephrb josephrb 310851218 Jun  8 12:19 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p7/nuwro_p7.root
+-rw-r----- 1 josephrb josephrb 310252507 Jun  8 12:38 /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_nuwro_p8/nuwro_p8.root
+gibuu tasks: 80, FinalEvents.dat: 80
+2.0G	/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/work_gibuu_arr
+## generator software on CVMFS
+/cvmfs/larsoft.opensciencegrid.org/products/genie:
+v2_10_10
+v2_10_10.version
+v2_10_4a
+v2_10_4a.version
+v2_10_6
+v2_10_6.version
+v2_12_10a
+v2_12_10a.version
+v2_12_10b
+v2_12_10b.version
+v2_12_10c
+v2_12_10c.version
+v2_12_10d
+v2_12_10d.version
+v2_12_2
+v2_12_2b
+v2_12_2b.version
+v2_12_2.version
+v2_12_8a
+v2_12_8a.version
+v2_12_8c
+v2_12_8c.version
+v2_12_8d
+v2_12_8d.version
+v2_8_0m
+v2_8_0m.version
+v3_00_02
+v3_00_02.version
+v3_00_04
+v3_00_04a
+v3_00_04a.version
+v3_00_04_rc
+v3_00_04_rc.version
+v3_00_04_ub1
+v3_00_04_ub1.version
+v3_00_04_ub2
+v3_00_04_ub2.version
+v3_00_04_ub3
+v3_00_04_ub3.version
+v3_00_04_ub4
+v3_00_04_ub4.version
+v3_00_04.version
+v3_00_06
+v3_00_06a
+v3_00_06a.version
+v3_00_06b
+v3_00_06b.version
+v3_00_06c
+v3_00_06c.version
+v3_00_06d
+v3_00_06d.version
+v3_00_06e
+v3_00_06e.version
+v3_00_06f
+v3_00_06f.version
+v3_00_06g
+v3_00_06g.version
+v3_00_06h
+v3_00_06h.version
+v3_00_06i
+v3_00_06i.version
+v3_00_06j
+v3_00_06j.version
+v3_00_06k
+v3_00_06k.version
+v3_00_06n
+v3_00_06n.version
+v3_00_06p
+v3_00_06p.version
+v3_00_06.version
+v3_0_0_b4a
+v3_0_0_b4a.version
+v3_02_00
+v3_02_00b
+v3_02_00b.version
+v3_02_00.version
+v3_02_02
+v3_02_02_p01
+v3_02_02_p01.version
+v3_02_02.version
+v3_04_00
+v3_04_00a
+v3_04_00a.version
+v3_04_00b
+v3_04_00b.version
+v3_04_00c
+v3_04_00c.version
+v3_04_00d
+v3_04_00d.version
+v3_04_00e
+v3_04_00e.version
+v3_04_00f
+v3_04_00f.version
+v3_04_00g
+v3_04_00g.version
+v3_04_00h
+v3_04_00h.version
+v3_04_00i
+v3_04_00i.version
+v3_04_00.version
+v3_04_02
+v3_04_02a
+v3_04_02a.version
+v3_04_02.version
+v3_06_00
+v3_06_00c
+v3_06_00c.version
+v3_06_00.version
+v3_06_02a
+v3_06_02a.version
+v3_06_02b
+v3_06_02b.version
+v3_06_02d
+v3_06_02d.version
+v3_06_02e
+v3_06_02e.version
+v3_06_02f
+v3_06_02f.version
+v3_06_02h
+v3_06_02h.version
+v3_06_02_sbn1
+v3_06_02_sbn1.version
+v3_06_02_sbn2
+v3_06_02_sbn2.version
+v3_06_02_sbn4
+v3_06_02_sbn4.version
+
+/cvmfs/larsoft.opensciencegrid.org/products/nuwro:
+v21_09_1
+v21_09_1.version
+R-2_8_0
+R-2_8_0.version
+v2_10_2
+v2_10_2.version
+v2_10_6a
+v2_10_6a.version
+v2_12_0
+v2_12_0.version
+v2_12_10
+v2_12_10.version
+v2_12_8
+v2_12_8.version
+v3_00_02
+v3_00_02.version
+v3_00_04
+v3_00_04a
+v3_00_04a.version
+v3_00_04_ub2
+v3_00_04_ub2.version
+v3_00_04.version
+v3_02_00
+v3_02_00.version
+v3_04_00
+v3_04_00.version
+v3_06_00
+v3_06_00.version
+v3_06_02_sbn1
+v3_06_02_sbn1.version
+v3_06_02_sbn2
+v3_06_02_sbn2.version
+Linux64bit+3.10-2.17-c14-debug
+Linux64bit+3.10-2.17-c14-prof
+Linux64bit+3.10-2.17-e26-debug
+Linux64bit+3.10-2.17-e26-prof
+ups
+NAME="SLES"
+VERSION="15-SP6"
+VERSION_ID="15.6"
+## squeue
+50
