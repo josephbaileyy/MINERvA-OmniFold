@@ -1,10 +1,15 @@
 {
  "S3": "INCONCLUSIVE",
- "analyze_prod_sha256": "3a1a3abcf8957c6f3c2c38eeb58dc9f20ac743edce142aaafdef6ff537a28362",
+ "analyze_prod_sha256": "f9e0d8f271f28bee1ef264de62cf7b924d18d4086e8fbe896abff4adb79320a4",
  "item": "S3",
  "laterals": {
   "BeamAngleX_0": {
    "closure": "PASS",
+   "closure_denominator": {
+    "hEffDenSource": "mc_truth_denom (canonical Truth-tree denominator)",
+    "hOFCompleteness2D_title": "OmniFold input completeness (mc_signal_reco truth-pass / mc_truth_denom)",
+    "hOFTruthDenom2D_integral": 5779535.683846292
+   },
    "closure_max_abs_c_minus_1": 1.5765166949677223e-14,
    "job": "2dc_P_S3_BeamAngleX0",
    "provenance_bad": {},
@@ -63,6 +68,11 @@
   },
   "Muon_Energy_MINOS_0": {
    "closure": "PASS",
+   "closure_denominator": {
+    "hEffDenSource": "mc_truth_denom (canonical Truth-tree denominator)",
+    "hOFCompleteness2D_title": "OmniFold input completeness (mc_signal_reco truth-pass / mc_truth_denom)",
+    "hOFTruthDenom2D_integral": 5723867.863769796
+   },
    "closure_max_abs_c_minus_1": 1.84297022087776e-14,
    "job": "2dc_P_S3_MuonEnergyMINOS0",
    "provenance_bad": {},

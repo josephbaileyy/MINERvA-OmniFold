@@ -279,14 +279,91 @@ def main():
         print(rep["S5"])
         return 0 if rep["S5"].endswith("PASS") else 2
 
-    # ---- every unfold S5 reads passed its frozen analysis (DESIGN §7)
+    try:
+        ok = production(a, rep, cells, w, phi_minos)
+    except Exception as e:   # a missing or unreadable input is a FAIL with a record, never a silent crash
+        import traceback
+        check("production_ran_without_exception", False, f"{type(e).__name__}: {e}")
+        rep["traceback"] = traceback.format_exc()
+        ok = False
+    rep["S5"] = "PASS" if ok and all(c["ok"] for c in CHECKS.values()) else "FAIL"
+    Path(a.out, "s5.json").write_text(json.dumps(rep, indent=1, default=str) + "\n")
+    print("S5", rep["S5"])
+    return 0 if rep["S5"] == "PASS" else 2
+
+
+def functionals(cells):
+    """F (31 x 205): the area-weighted integral, the 14 pT projections (sum over p_par of x * dp_par) and the 16 p_par
+    projections (sum over pT of x * dpT), each over the reported cells (plan Stage C: 236 functionals = 205 + 1 + 30)."""
+    ix, iy = np.divmod(np.flatnonzero(cells.rep), cells.NY)
+    f = ROOT.TFile.Open(PIN["E_U"][0])
+    h = f.Get("hXSec2D")
+    wpt = np.array([h.GetXaxis().GetBinWidth(i) for i in range(1, cells.NX + 1)])
+    wpz = np.array([h.GetYaxis().GetBinWidth(j) for j in range(1, cells.NY + 1)])
+    f.Close()
+    F = np.zeros((1 + cells.NX + cells.NY, ix.size))
+    F[0] = cells.area
+    for k in range(cells.NX):
+        F[1 + k, ix == k] = wpz[iy[ix == k]]
+    for k in range(cells.NY):
+        F[1 + cells.NX + k, iy == k] = wpt[ix[iy == k]]
+    return F
+
+
+def fcov(Z, w=None):
+    """Covariance of the rows of Z (n x m): weighted 1/sum(w) about the weighted mean, or 1/N."""
+    return BR.wcov(Z, np.ones(Z.shape[0]) if w is None else w)
+
+
+def func_identity(name, F, X, C, w=None, ddof_scale=1.0):
+    """F C F^T from the matrix vs the covariance of the functionals F x of the same vectors (same convention).
+    Returns (max|diff|, max|F C F^T|): the caller compares at the total's scale and, for a non-null block, at its own."""
+    A = F @ C @ F.T
+    V = fcov(X @ F.T, w) * ddof_scale
+    return float(np.abs(A - V).max()), float(np.abs(A).max())
+
+
+def func_check(name, diffs, scale):
+    """The control's two-part rule (DESIGN §8): every block at the total's scale; a non-null block (max|F C F^T| at least
+    1e-12 of that scale) also at its own scale. A null block's own-scale ratio is rounding."""
+    at_total = max(d for d, _ in diffs.values()) / scale
+    null = sorted(k for k, (_, m) in diffs.items() if m < REL_TOL * scale)
+    own = max((d / m for k, (d, m) in diffs.items() if k not in null), default=0.0)
+    check(f"functionals_from_vectors_{name}_at_total_scale_le_1e-10", at_total <= VEC_TOL, at_total)
+    check(f"functionals_from_vectors_{name}_nonnull_own_scale_le_1e-10", own <= VEC_TOL,
+          {"max": own, "null": null, "worst": sorted(((k, d / m if m else None) for k, (d, m) in diffs.items()
+                                                      if k not in null), key=lambda kv: -(kv[1] or 0))[:3]})
+
+
+def jack_rel_se(X, v):
+    """Leave-one-out jackknife relative SE of the sample variance (ddof 1) of the projections X @ v."""
+    s = X @ v
+    n = s.size
+    full = s.var(ddof=1)
+    loo = np.array([np.delete(s, k).var(ddof=1) for k in range(n)])
+    return float(np.sqrt((n - 1) / n * ((loo - loo.mean()) ** 2).sum()) / full)
+
+
+def production(a, rep, cells, w, phi_minos):
+    # ---- every unfold S5 reads passed its frozen analysis (DESIGN §7), on these outputs
     for f, key in (("c0.json", "C0"), ("s3.json", "S3"), ("s4ii.json", "S4ii"), ("s1.json", "S1"),
                    ("s2.json", "S2"), ("s4i.json", "S4i")):
         p = Path(a.results, f)
         r = json.loads(p.read_text()) if p.is_file() else {}
         check(f"analysis_{key}_PASS", r.get(key) == "PASS", r.get(key))
+        check(f"analysis_{key}_out_root_matches", r.get("out_root") == a.out_root, r.get("out_root"))
         rep["inputs"][f] = {"path": str(p), "sha256": sha(p) if p.is_file() else None}
-    O = lambda n: Path(a.out_root, n, "xsec.root")
+    # ---- the per-playlist flux and POT files, against VL175's recorded digests (build.json, pinned)
+    bi = json.loads(Path(PIN["vl175_build_json"][0]).read_text())["inputs"]
+    badf = [k for k in bi if k.startswith(("flux_MC_", "flux_Data_")) and sha(bi[k]["path"]) != bi[k]["sha256"]]
+    check("flux_pot_24_files_match_vl175_build_json",
+          not badf and sum(k.startswith(("flux_MC_", "flux_Data_")) for k in bi) == 24, badf)
+    produced = {}
+
+    def O(n):
+        p = Path(a.out_root, n, "xsec.root")
+        produced[n] = sha(p)
+        return p
 
     # ---- universe block (R1-R4, R6)
     pn = sweep(cells, "pn")
@@ -324,30 +401,73 @@ def main():
     T, B = Y.shape[:2]
     mt = Y.mean(axis=1)
     C08 = np.cov(mt, rowvar=False)
-    R = Y - mt[:, None, :] - Y.mean(axis=0)[None, :, :] + Y.mean(axis=(0, 1))[None, None, :]
-    Rf = R.reshape(T * B, -1)
-    C_int = Rf.T @ Rf / ((T - 1) * (B - 1))
+
+    def interaction(Yb):
+        t_, b_ = Yb.shape[:2]
+        Rr = Yb - Yb.mean(axis=1)[:, None, :] - Yb.mean(axis=0)[None, :, :] + Yb.mean(axis=(0, 1))[None, None, :]
+        Rf = Rr.reshape(t_ * b_, -1)
+        return Rf.T @ Rf / ((t_ - 1) * (b_ - 1))
+    C_int = interaction(Y)
     fml = ROOT.TFile.Open(PIN["ml"][0])
     sml = np.sqrt(np.diag(BR.sq(fml, "hCov2D_reported")))
     fml.Close()
+    x02_med = float(np.median(np.diag(C_int) / np.diag(C_stat)))
+    x02_loo = np.array([np.median(np.diag(interaction(np.delete(Y, k, axis=1))) / np.diag(C_stat)) for k in range(B)])
     rep["numbers"]["c08"] = {
         "rank": int(np.linalg.matrix_rank(C08)), "median_rel_pct": float(100 * np.median(np.sqrt(np.diag(C08)) / cells.x)),
+        "dof": T - 1, "gaussian_rel_se_of_variance": float(np.sqrt(2 / (T - 1))),
         "sigma_c08_over_sigma_ml_median": float(np.median(np.sqrt(np.diag(C08)) / sml)),
-        "x02_interaction_over_B_over_c08_diag_median": float(np.median(np.diag(C_int) / B / np.diag(C08))),
         "random_effects_seed_var_clipped_median_rel_pct":
             float(100 * np.median(np.sqrt(np.maximum(np.diag(C08) - np.diag(C_int) / B, 0)) / cells.x))}
+    rep["numbers"]["x02"] = {
+        "interaction_var_over_stat_var_median": x02_med,
+        "jackknife_se_over_bootstrap_seeds": float(np.sqrt((B - 1) / B * ((x02_loo - x02_loo.mean()) ** 2).sum())),
+        "dof": (T - 1) * (B - 1), "gaussian_rel_se_of_variance": float(np.sqrt(2 / ((T - 1) * (B - 1)))),
+        "interaction_over_B_over_c08_diag_median": float(np.median(np.diag(C_int) / B / np.diag(C08)))}
 
-    # ---- X03 from the S4(ii) panel (reported)
+    # ---- X03 from the S4(ii) panel (reported, with uncertainties)
     cvs = {s: cells.vec(O("2dc_P_C0_cv" if s == 42 else f"2dc_P_S4CV_s{s}")) for s in SEEDS}
     x03 = {}
     for u in PANEL_U:
         d = np.stack([cells.vec(O(f"2dc_P_S4U_{u.replace(':', '')}_s{s}")) - cvs[s] for s in SEEDS])
         dm = np.abs(d.mean(axis=0))
         sd = d.std(axis=0, ddof=1)
+        med = float(np.median(sd / sml))
+        loo = np.array([np.median(np.delete(d, k, axis=0).std(axis=0, ddof=1) / sml) for k in range(len(SEEDS))])
+        n = len(SEEDS)
         x03[u] = {"shift_median_rel_pct": float(100 * np.median(dm / cells.x)),
                   "seed_sd_of_shift_median_rel_pct": float(100 * np.median(sd / cells.x)),
-                  "seed_sd_over_sigma_ml_median": float(np.median(sd / sml))}
+                  "seed_sd_over_sigma_ml_median": med,
+                  "seed_sd_over_sigma_ml_jackknife_se": float(np.sqrt((n - 1) / n * ((loo - loo.mean()) ** 2).sum())),
+                  "dof": n - 1, "gaussian_rel_se_of_sd": float(1 / np.sqrt(2 * (n - 1)))}
     rep["numbers"]["x03"] = x03
+
+    # ---- the 31 functionals from vectors vs matrix, per block (plan Stage C)
+    F = functionals(cells)
+    scale = float(np.abs(F @ (C_univ + C_stat + C08) @ F.T).max())     # the total's functional scale
+    diffs = {b: func_identity(b, F, (mx if b == MINOS else bands[b]), ublocks[b], w if b == FLUX else None)
+             for b in bands}
+    diffs["stat"] = func_identity("stat", F, X1, C_stat, None, 300 / 299)
+    diffs["c08"] = func_identity("c08", F, mt, C08, None, T / (T - 1))
+    func_check("blocks", diffs, scale)
+    vn = F @ (NORM * cells.x)
+    rn = rel(F @ ublocks["__Normalization_flat"] @ F.T, np.outer(vn, vn))
+    check("functionals_normalization_rank1_le_1e-10", rn <= VEC_TOL, rn)
+
+    # ---- centring conventions (R9): offset of each band's centre and of the stat ensemble mean from E_U
+    cen = {}
+    for b in bands:
+        X = mx if b == MINOS else bands[b]
+        ww = w if b == FLUX else np.ones(X.shape[0])
+        c = (ww[:, None] * X).sum(axis=0) / ww.sum()
+        sb = np.sqrt(np.maximum(np.diag(ublocks[b]), 0))
+        cen[b] = {"centre": "weighted mean" if b == FLUX else "mean",
+                  "median_abs_offset_rel_pct": float(100 * np.median(np.abs(c - cells.x) / cells.x)),
+                  "median_abs_offset_over_sigma_band": float(np.median(np.abs(c - cells.x)[sb > 0] / sb[sb > 0]))
+                  if np.any(sb > 0) else None}
+    cen["stat"] = {"centre": "replica mean (ddof 1 covariance)",
+                   "median_abs_offset_over_sigma_mean": float(np.median(np.abs(X1.mean(axis=0) - cells.x) / (s1 / np.sqrt(300))))}
+    rep["numbers"]["centring"] = cen
 
     # ---- total and its checks (plan Stage C)
     C_tot = C_univ + C_stat + C08
@@ -357,12 +477,23 @@ def main():
         check(f"psd_{n}", ev.min() >= -PSD_TOL * ev.max(), float(ev.min() / ev.max()))
         rep["numbers"][f"{n}_rank"] = int(np.sum(ev > PSD_TOL * ev.max()))
         rep["numbers"][f"{n}_summary"] = BR.summary(C, cells.x, cells.area)
+    # ---- ensemble error in the modes used for inference: the 10 leading eigenmodes of the total and the 31 functionals
+    ev, V = np.linalg.eigh(C_tot)
+    lead = V[:, np.argsort(ev)[::-1][:10]]
+    rep["numbers"]["ensemble_error"] = {
+        "stat_jackknife_rel_se_of_variance_leading10_modes": [jack_rel_se(X1, lead[:, k]) for k in range(10)],
+        "stat_jackknife_rel_se_of_variance_31_functionals": [jack_rel_se(X1, F[k]) for k in range(F.shape[0])],
+        "stat_share_of_total_variance_leading10_modes": [float(lead[:, k] @ C_stat @ lead[:, k] / (lead[:, k] @ C_tot @ lead[:, k]))
+                                                         for k in range(10)],
+        "c08_gaussian_rel_se_of_variance": float(np.sqrt(2 / (T - 1)))}
+    proj = F @ C_tot @ F.T
+    rep["numbers"]["functionals_total_sigma_rel_pct"] = (100 * np.sqrt(np.diag(proj)) / np.abs(F @ cells.x)).tolist()
     vl = json.loads(Path(PIN["vl175_budget"][0]).read_text())
     rep["numbers"]["vl175_block_sum"] = vl.get("repaired", {}).get("block_sum")
+    rep["inputs"]["production_outputs"] = produced
     ok = all(c["ok"] for c in CHECKS.values())
-    rep["S5"] = "PASS" if ok else "FAIL"
     if ok:
-        np.savez(Path(a.out, "production_cov.npz"), cells_x_EU=cells.x, area=cells.area, universe=C_univ,
+        np.savez(Path(a.out, "production_cov.npz"), cells_x_EU=cells.x, area=cells.area, functionals=F, universe=C_univ,
                  stat=C_stat, c08=C08, total=C_tot, bkg_separable=C_bkg, x02_interaction=C_int,
                  **{f"band_{b}": m for b, m in ublocks.items()})
         f = ROOT.TFile.Open(PIN["E_U"][0])
@@ -375,12 +506,10 @@ def main():
             for iy in range(cells.NY):
                 cells_hist.SetBinContent(ix + 1, iy + 1, 1.0 if h.GetBinContent(ix + 1, iy + 1) > 0 else 0.0)
         f.Close()
-        BR.write_rollup(str(Path(a.out, "uq_production_covariance.root")), ublocks, C_univ, C_univ + C_stat + C08,
+        BR.write_rollup(str(Path(a.out, "uq_production_covariance.root")), ublocks, C_univ, C_tot,
                         cells_hist, cells.NX, cells.NY, np.flatnonzero(cells.rep), pt, pz)
         rep["products"] = {n: sha(Path(a.out, n)) for n in ("production_cov.npz", "uq_production_covariance.root")}
-    Path(a.out, "s5.json").write_text(json.dumps(rep, indent=1, default=str) + "\n")
-    print("S5", rep["S5"])
-    return 0 if ok else 2
+    return ok
 
 
 if __name__ == "__main__":

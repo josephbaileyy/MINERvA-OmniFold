@@ -3,8 +3,9 @@
 
   python launch.py gate  <batch> [--retry NAME --time HH:MM:SS]   print the gate arithmetic; submit nothing
   python launch.py submit <batch> [--retry NAME --time HH:MM:SS]  gate, preconditions, then sbatch each job
-  python launch.py redo <batch>                                   resubmit the batch's rows whose only record is a
-                                                                  never-started DEADLINE row (after the window)
+  python launch.py redo <batch>                                   submit the batch's rows owed a submission: never
+                                                                  started (DEADLINE), a deadline-cancelled retry, or
+                                                                  never submitted after an sbatch failure (owed())
   python launch.py simulate {mean,p84,cap}                        the worked example of DESIGN §6 (no Slurm)
 
 Runs on a NERSC login node from the deployed package ($NS/repo/docs/orchestration/state/2d-closeout/stageC/production).
@@ -122,16 +123,44 @@ def attempts(rows):
     return out
 
 
-def gate(batch_rows, retry=None, time=None, verbose=True):
+def gate(batch_rows, times, verbose=True):
+    """times: job name -> the cap it is submitted with (the row's, or its retry record's)."""
     done, fly, rows = ledger()
-    b = sum(enforced(r, time if retry else None) for r in batch_rows)
+    b = sum(enforced(r, times[r["name"]]) for r in batch_rows)
     total = done + fly + b
     if verbose:
         for x in rows:
             print("  ", *x)
         print(f"GATE completed {done:.4f} + in-flight at cap {fly:.4f} + batch {b:.4f} = {total:.4f} "
               f"vs ceiling {CEILING}")
-    return total <= CEILING + 1e-12, total
+    return total <= CEILING + 1e-12, total, fly
+
+
+def owed(batch_rows):
+    """redo: the batch's rows that are owed a submission, with the cap each is submitted with.
+      (a) a row whose only record is a never-started DEADLINE row: at its jobs.tsv cap;
+      (b) a walltime retry cancelled by the deadline before it started (records: one TIMEOUT attempt, a never-started
+          DEADLINE row, and its retries/<name>.time): at the recorded cap;
+      (c) a row never submitted while other rows of the batch were (an sbatch failure mid-batch): at its cap.
+    Nothing that ran, nothing queued, and nothing with a second attempt is ever owed."""
+    _, _, rl = ledger()
+    dead = {name for _, name, st, el, _, _ in rl if st == "DEADLINE" and el == 0}
+    seen = {name for _, name, _, _, _, _ in rl}
+    att, inq = attempts(rl), queued()
+    partial = any(r["name"] in seen or r["name"] in inq for r in batch_rows)
+    out, times = [], {}
+    for r in batch_rows:
+        n, prior = r["name"], att.get(r["name"], [])
+        rec = Path(NS, "retries", f"{n}.time")
+        if n in inq or any(Path(NS, "out", n).glob("*")):
+            continue
+        if n in dead and not prior and not rec.exists():
+            out.append(r); times[n] = r["time"]
+        elif n in dead and prior == ["TIMEOUT"] and rec.exists():
+            out.append(r); times[n] = rec.read_text().strip()
+        elif partial and n not in seen:
+            out.append(r); times[n] = r["time"]
+    return out, times
 
 
 def load_result(f):
@@ -214,28 +243,27 @@ def main():
         br = [r for r in rows if r["batch"] == a.arg]
         if not br:
             raise SystemExit(f"REFUSE: no batch {a.arg}")
+    for d in ("logs", "results", "retries", "out", "tmp", "gatelog"):
+        Path(NS, d).mkdir(parents=True, exist_ok=True)
+    times = {r["name"]: (a.time if a.retry else r["time"]) for r in br}
     if a.action == "redo":
         if a.retry:
             raise SystemExit("REFUSE: redo takes a batch, not --retry")
-        _, _, rl = ledger()
-        dead = {name for _, name, st, el, _, _ in rl if st == "DEADLINE" and el == 0}
-        att0, inq0 = attempts(rl), queued()
-        br = [r for r in br if r["name"] in dead and not att0.get(r["name"]) and r["name"] not in inq0]
+        br, times = owed(br)
         if not br:
-            raise SystemExit(f"REFUSE: batch {a.arg} has no never-started DEADLINE rows to resubmit")
-    for d in ("logs", "results", "retries", "out", "tmp", "gatelog"):
-        Path(NS, d).mkdir(parents=True, exist_ok=True)
+            raise SystemExit(f"REFUSE: batch {a.arg} has no rows owed a submission (see owed())")
     done, fly, rows_l = ledger()
     att = attempts(rows_l)
     inq = queued()
-    for r in br:
+    for r in (br if a.action != "redo" else []):
         prior = att.get(r["name"], [])
         if r["name"] in inq:
             raise SystemExit(f"REFUSE: {r['name']} is in the Slurm queue now; no double submission")
         if a.retry:
-            if len(prior) != 1 or prior[0] in IN_FLIGHT or prior[0] == "COMPLETED":
-                raise SystemExit(f"REFUSE: {r['name']} has attempts {prior}; a retry needs exactly one ended, "
-                                 "failed attempt (one retry per job, grant §3)")
+            if prior != ["TIMEOUT"]:
+                raise SystemExit(f"REFUSE: {r['name']} has attempts {prior}; a walltime retry needs exactly one "
+                                 "TIMEOUT attempt (grant §3). Out of memory is a stop; any other failure needs a "
+                                 "diagnosed infrastructure cause and the director")
             if not re.fullmatch(r"\d{2}:\d{2}:\d{2}", a.time):
                 raise SystemExit("REFUSE: --time must be HH:MM:SS (scontrol's TimeLimit format)")
             if Path(NS, "retries", f"{r['name']}.time").exists():
@@ -245,10 +273,12 @@ def main():
         elif prior:
             raise SystemExit(f"REFUSE: {r['name']} was already submitted ({prior}); no double submission")
     dl = deadline_arg()
-    ok, total = gate(br, a.retry, a.time)
+    ok, total, fly = gate(br, times)
     if not ok:
-        print("REFUSE: the batch would exceed the ceiling."
-              + (" Wait and re-check." if a.action == "gate" else " Stop and report to the director."))
+        if a.action == "gate" and fly > 0:
+            print("NOT ADMITTED: the batch would exceed the ceiling with jobs still in flight. Wait and re-check.")
+        else:   # a submit refusal, or a pre-check refusal with nothing in flight (waiting cannot help): a stop
+            print("REFUSE: the batch would exceed the ceiling. Stop and report to the director (grant §3).")
         return 3
     if a.action == "gate":
         return 0
@@ -258,7 +288,7 @@ def main():
         rec.write_text(a.time + "\n")
     for r in br:
         cmd = ["sbatch", f"--job-name={r['name']}", f"--qos={r['qos']}", f"--cpus-per-task={r['cpus']}",
-               f"--mem={r['mem']}", f"--time={a.time or r['time']}", *dl, SBATCH]
+               f"--mem={r['mem']}", f"--time={times[r['name']]}", "--no-requeue", *dl, SBATCH]
         print("+", " ".join(cmd))
         s = subprocess.run(cmd, capture_output=True, text=True)
         print(s.stdout.strip(), s.stderr.strip())

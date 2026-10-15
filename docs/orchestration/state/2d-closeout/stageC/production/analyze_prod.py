@@ -172,13 +172,26 @@ def s3():
                                                 "branch_select": "all"})
             tf = ROOT.TFile.Open(str(p))
             h = tf.Get("hOFCompleteness2D")
+            ctitle = h.GetTitle()
             cfull = np.array([[h.GetBinContent(i, j) for j in range(1, h.GetNbinsY() + 1)]
                               for i in range(1, h.GetNbinsX() + 1)]).ravel()
+            src = tf.Get("hEffDenSource")
+            src = src.GetTitle() if src else ""
+            hd = tf.Get("hOFTruthDenom2D")
+            den = float(hd.Integral()) if hd else 0.0
             tf.Close()
             cc = cfull[np.array(cells)]
             dev = float(np.max(np.abs(cc - 1)))
+            # Not vacuous: without mc_truth_denom the driver writes c = 1 by fiat, titled "Completeness = 1 (closure /
+            # fallback)", and clones it into hOFTruthDenom2D (driver :2276-2289). The closure is read only from the
+            # measured ratio: its title, the canonical Truth-tree denominator, and a non-empty denominator.
+            real = (ctitle.startswith("OmniFold input completeness") and src.startswith("mc_truth_denom")
+                    and den > 0)
             r.update({"provenance_ok": ok, "provenance_bad": bad, "closure_max_abs_c_minus_1": dev,
-                      "closure": "PASS" if dev <= CLOSURE_TOL else "FAIL", "sha256": sha(p)})
+                      "closure_denominator": {"hOFCompleteness2D_title": ctitle, "hEffDenSource": src,
+                                              "hOFTruthDenom2D_integral": den},
+                      "closure": ("PASS" if dev <= CLOSURE_TOL else "FAIL") if real else "INCONCLUSIVE",
+                      "sha256": sha(p)})
             r["verdict"] = ("INCONCLUSIVE" if not ok and r["closure"] != "FAIL" else r["closure"])
         if u in ("BeamAngleX_0", "Muon_Energy_MINOS_0"):
             pn = "2dc_C_P3_BeamAngleX0" if u == "BeamAngleX_0" else "2dc_C_P3_MINOS0"

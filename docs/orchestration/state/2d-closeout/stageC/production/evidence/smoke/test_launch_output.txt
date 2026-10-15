@@ -1,0 +1,15 @@
+[PASS] redo (a): DEADLINE-only row owed at its cap; a COMPLETED row not owed
+[PASS] redo (c): partial batch -> the 49 never-submitted rows are owed
+[PASS] redo: an unsubmitted batch owes nothing (submit, not redo)
+[PASS] redo (b): deadline-cancelled retry owed at the recorded cap
+[PASS] redo: a retry that ran is never owed
+[PASS] redo: a queued row is never owed
+[PASS] redo: a row with output is never owed
+[PASS] retry after TIMEOUT: allowed
+[PASS] retry after OUT_OF_MEMORY: refused
+[PASS] retry after FAILED: refused
+[PASS] retry after CANCELLED: refused
+[PASS] sbatch line has --no-requeue and --time=01:16:00
+[PASS] gate pre-check refused with nothing in flight -> STOP wording
+[PASS] gate pre-check refused with jobs in flight -> wait
+[PASS] submit refused -> stop, nothing submitted

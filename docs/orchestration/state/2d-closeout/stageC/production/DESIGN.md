@@ -4,7 +4,7 @@
 - the frozen production package: every job, name and walltime; the namespace, QOS and CPUs; the gate, batching,
   order and maintenance rule; every check and threshold; the S5 steps with their inputs and digests. All are fixed
   before any production job;
-- the choices this DESIGN makes where the recipe left them open (§3.4): the S4 panel seeds, bootstrap seeds and
+- the choices this DESIGN makes where the recipe left them open (§3.5): the S4 panel seeds, bootstrap seeds and
   universes; the S1/S2 bootstrap seeds; running all 10 laterals; the closure read as a product check.
 
 **NOT CITABLE FOR:**
@@ -49,7 +49,7 @@ production jobs) ran during packaging (§11).
 | active laterals | `/global/cfs/…/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/` (10 files, ≈ 53.8 GB each) | its `SHA256SUMS` `73775251…`, then each file against it, in the job | S3 jobs |
 | XR instrument, L0 | `state/next-preparation-20261009/xr-linux/xr/xr_compare.py` `9e59c590…`; `references.json` `af7d5a19…` (205 GlobalIDs); `XR-L0.root` `75138024…` | pinned by the pilot's `analyze_pilot.py`, reused | `analyze_prod.py` |
 | pilot outputs (reproduction references) | `/pscratch/…/2d-closeout-stageC-pilot-20261013/out/…` | the pilot's committed `evidence/SHA256SUMS.pscratch` `b82a0e08…` | `analyze_prod.py` |
-| July sweep (187 universes + CV) | `…/2d-unfolding/uq/purity_newomni/` | per file, `stageB/evidence/b-genie-truth/sweeps.json` `15b57de9…` ("pn/"); also matched against the CFS shutdown-stage `SHA256SUMS` | `analyze_prod.py`, `s5_rollup.py` |
+| July sweep (187 universes + CV) | `…/2d-unfolding/uq/purity_newomni/` | per file, `stageB/evidence/b-genie-truth/sweeps.json` `15b57de9…` ("pn/"). The CFS shutdown-stage `SHA256SUMS` agrees (verified during packaging), but no code reads it | `analyze_prod.py`, `s5_rollup.py` |
 | May sweep (S5 control only) | `…/2d-unfolding/uq/universe_sweep_fluxfix/` | per file, `sweeps.json` ("may/") | `s5_rollup.py` |
 | adopted central `E_U` | `…/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root` | `4f5a1b6d…` | `s5_rollup.py` |
 | adopted VL175 (control references) | `/pscratch/…/2d-closeout-c04repair-20261012/build/`: `uq_universe_covariance_c04x01.root` `da92c5d2…`, `build.json` `dcc1331e…`, `minos_rescaled.npz` `8912376e…`, `budget.json` `aab8a24e…` | pinned in `s5_rollup.py` | `s5_rollup.py` |
@@ -108,6 +108,25 @@ The repository specifies none of these (searched: Stage B REPORT, its reviews, t
 - **S1 and S2 bootstrap seeds:** 1–300 and 1–100. Seeds 1–20 repeat the pilot's joint and bkg replicas exactly, so
   the pilot outputs become reproduction checks (§7). The pilot replicas are not pooled into production.
 
+### 3.6 Departures from the grant's run counts, and what the binding is asked to accept
+
+| item | grant (Stage B §7) | this package | why |
+|---|---|---|---|
+| S3 | 8 remaining laterals | 10 (+2) | every lateral comes from one namespace and binding; the 2 pilot laterals become reproduction checks |
+| S4(i) | 100 × u_CV | 80 (−20) | S1's replicas 1–20 are the seed-42 column, run once |
+| S4(ii) | 35 universe runs | 35 + 4 CV (+4 u_CV) | the per-seed CV reference for the X03 shifts |
+| controls | b ≡ 1 (grant §3 order) | b ≡ 1 + a production-driver CV (+1 u_CV) | the CV is also the panel's seed-42 reference |
+| driver | the production driver `74a4ed69…` | `driver_p1.py` `3056e625…` for C0_unit, S1, S2, S4(i) (482 of 531 jobs) | §4. It is a deployed copy, not on `main`. Before Stage F adoption it should reach `main` through its own reviewed PR (grant: no driver edits on `main` except by such a PR) |
+
+**The binding is asked to accept, explicitly:**
+1. these departures;
+2. the §3.5 choices;
+3. the gate-refusal reading (§6);
+4. the ROOT rollup's storage (§8);
+5. the universe omnifile checked in jobs by size, mtime and inode after the DTN hash (§2, as in the pilot);
+6. the 24 per-playlist flux and POT files, checked against VL175's recorded digests rather than pinned separately
+   (§8).
+
 ## 4. The three-stream driver copy
 
 The production driver at `74a4ed69…` offers `--bootstrap-streams {both, data, mc}` only (`:1448`). The R5 law
@@ -127,19 +146,31 @@ memory are the pilot's for the same kind of job (shared QOS, 1,905M per CPU; bil
 | family | jobs | projection basis (pilot, measured) | projection | cap | CPUs | enforced node-h each |
 |---|---|---|---|---|---|---|
 | CV unfold (C0, S4(ii) CV, S1, S2, S4(i)) | 2 + 4 + 300 + 100 + 80 = 486 | max of the 60 P1 replicas, 2,003 s (grant §1) | 2,003 s | 3,005 s → **00:51:00** | 64 | 0.2125 |
-| universe unfold, derived read (S4(ii)) | 35 | max of the P2 derived runs, `P2_Flux23` 1,166 s | 1,166 s | 1,749 s → **00:30:00** | 128 | 0.2500 |
+| universe unfold, derived read (S4(ii)) | 35 | max of the P2 derived runs, `P2_Flux23` 1,166 s; the `G2_*` runs are excluded because `G2_on`'s 1,607 s included building the miss-row override in the same job, and `G2_on_s43` without the build ran 752 s | 1,166 s | 1,749 s → **00:30:00** | 128 | 0.2500 |
 | active-file lateral (S3) | 10 | `P3_BeamAngleX0`'s re-projection from its own progress, 2,800 s (it timed out at 2,727 s after all five iterations; its retry ran 2,085 s; `P3_MINOS0` 2,657 s) | 2,800 s | 4,200 s → **01:10:00** | 128 | 0.5833 |
 
-Every cap is under 12 h. The enforced total of all 531 rows is **117.8580** node-h, above the ceiling, so batches
-are admitted only as charges settle (§6).
+Every cap is under 12 h. The enforced total of all 531 rows is **117.8583** node-h (exact: Σ billing × cap / 256;
+`jobs.tsv` rounds each row to 4 decimals, which sums to 117.8580). That is above the ceiling, so batches are admitted
+only as charges settle (§6).
+
+**Timeout risk.** The universe cap is 1.54 × the max of 6 like-for-like runs, but the P1 replicas spread 1.94×. Some
+S4(ii) jobs may therefore time out and use their one retry. The conservative cost walk (§6) prices u_U,sel at its
+pilot max, 0.2232 node-h (the 1,607 s `G2_on` run, override build included), a larger basis than the cap's; the gate
+itself always charges the 0.25 cap.
 
 ## 6. Gate, batching, order and maintenance (`launch.py`)
 
 **Gate** (grant §3), before each batch: terminal charges of every `2dc_P_*` job from `sacct` (ElapsedRaw × billing
 / 256 / 3600) + the full cap of every `2dc_P_*` job pending or running + the batch's caps ≤ **100.0**. An unreadable
-`sacct` refuses. The executor runs `launch.py gate <batch>` (prints, submits nothing) and submits only when it admits;
-a pre-check that does not admit means wait for charges to settle. **A refusal by `launch.py submit` is a stop**
-(grant §3). Every gate and submit runs as `USER=josephrb python3 launch.py …` from the deployed package, after every
+`sacct` refuses.
+
+**What a refusal means.** The executor runs `launch.py gate <batch>` (prints, submits nothing) and submits only when
+it admits:
+- a pre-check that does not admit **while `2dc_P_*` jobs are in flight** means wait for their charges to settle;
+- a pre-check that does not admit **with nothing in flight**, where waiting cannot help, is a stop;
+- **a refusal by `launch.py submit` is a stop** (grant §3).
+
+The grant's stop list says "a gate refusal". **The binding should accept this reading explicitly.** Every gate and submit runs as `USER=josephrb python3 launch.py …` from the deployed package, after every
 earlier `2dc_P_*` submission appears in the printed ledger, and its printout is kept in `$NS/gatelog/`.
 
 **Batches and order** (frozen; `launch.py` refuses a batch before every earlier batch's jobs are submitted):
@@ -169,8 +200,28 @@ remaining 43 node-h cover retries.
 **Maintenance** (grant §3): 2026-10-21 06:00 to 2026-10-28 06:00 UTC. Every job submitted before the window carries
 `--deadline` = the window's start (in the cluster's local time), so Slurm never starts a job that could not end
 before it; such a job ends `DEADLINE` without starting (charge 0). `launch.py` does not count a never-started
-`DEADLINE` row as an attempt, submits nothing while the window is open, and `launch.py redo <batch>` resubmits
-exactly those rows after it, through the gate.
+`DEADLINE` row as an attempt and submits nothing while the window is open. After it, `launch.py redo <batch>`
+submits, through the gate, exactly the rows owed a submission (`launch.py owed()`):
+- (a) a row whose only record is a never-started `DEADLINE` row, at its cap;
+- (b) a walltime retry cancelled by the deadline before it started, at its recorded retry cap;
+- (c) a row never submitted while the rest of its batch was, after an `sbatch` failure mid-batch, at its cap.
+
+Nothing that ran, nothing queued, nothing with output and nothing with a second attempt is ever owed. Every job is
+submitted with `--no-requeue`, so a Slurm requeue cannot hide an earlier run's charge from the gate (`sacct` without
+`-D`); a node failure ends the job, and that needs a diagnosed infrastructure cause (§9).
+
+**`--deadline` was tested only for syntax.** `sbatch --test-only` with the production arguments accepted
+`--deadline=2026-10-20T23:00:00` (the login node's zone, PDT = the window's 06:00 UTC). It also accepted an
+already-past deadline, so `--test-only` does not exercise the semantics. Slurm's documented behaviour is to remove
+a pending job whose earliest possible end falls after the deadline. If a job ever started that could straddle the
+window, that would be a stop.
+
+**Schedule (an estimate, not a commitment).** The pilot cleared about 2 jobs/h on the shared QOS, including a 4 h
+outage (60 replicas in about 34 h). From a binding on 2026-10-16, about 200–250 jobs would finish before the window
+(2026-10-20 23:00 PDT); the remaining ~300 would follow from 2026-10-28, finishing in early November, inside the
+2026-11-15 grant window. `--test-only` estimated a start of 2026-10-21 11:41 PDT for a CV job submitted now. Such
+estimates are unreliable, but taken at face value, little would run before the window. Either way the order and the
+gate are unchanged; only the calendar moves.
 
 ## 7. Frozen checks (`analyze_prod.py`) and stops
 
@@ -197,8 +248,17 @@ R4 requires the nine remaining closure reads before the laterals are used (Stage
 sum inside the truth phase space equals the `mc_truth_denom` sum; read for `Muon_Energy_MINOS_0` only). The driver
 writes the same identity per cell: `hOFCompleteness2D` = (signal-tree truth-pass `w_truth`) / (`mc_truth_denom`
 `w_truth`) (`unfold_2d_omnifold_unbinned.py:1140-1179`). This DESIGN therefore reads the closure from every S3
-product, per cell rather than integrated, for all 10 laterals. Pilot evidence: both pilot P3 products have c = 1
-exactly in all 205 cells; the dump-mode `P2_MINOS0def` has c in 0.9923–1.0176 (read during packaging, §11).
+product, per cell rather than integrated, for all 10 laterals.
+
+**Guard against a vacuous pass.** Without `mc_truth_denom` the driver writes c ≡ 1 by fiat (title "Completeness ≡ 1
+(closure / fallback)") and clones it into `hOFTruthDenom2D` (`:2276-2289`). So the closure counts only when three
+things hold: the completeness title is "OmniFold input completeness …", `hEffDenSource` is `mc_truth_denom`, and the
+denominator is non-empty. Otherwise the lateral is INCONCLUSIVE.
+
+**Pilot evidence** (read during packaging, §11):
+- both pilot P3 products have |c − 1| ≤ 1.8e-14 in all 205 cells, with the measured-ratio title, the canonical
+  source and a denominator integral of 5,723,868;
+- the dump-mode `P2_MINOS0def` has c in 0.9923–1.0176.
 
 ## 8. S5: the matrices (`s5_rollup.py`, login node)
 
@@ -214,6 +274,11 @@ outputs, the July sweep and the pinned references, and writes products only if e
 | c08 | R7, C08 | the seed main effect: sample covariance (ddof 1) over the 5 seed triplets of the per-triplet mean of the 20 bootstrap replicas. Rank ≤ 4, PSD. It includes the interaction's 1/20 share (conservative); the clipped random-effects estimate (minus C_int/20, diagonal only) is reported, not used |
 | **total** | | universe + stat + c08 |
 
+**C03 shared draw, not applied.** Stage B §3 C03 keeps a conditional rule: share a draw between a background row and
+a signal-tree miss row if the G1 or shared-class reads show they overlap. The overlap was never measured (P4 measured
+G1 = 0, not the overlap; Stage B §5). Joseph adopted three independent streams (R5), so the background stream here is
+independent of the signal stream, and the REPORT discloses this.
+
 Reported, not added (R5, R7): the bkg-only separable covariance (S2; already inside the three-stream stat block); the
 bootstrap × seed interaction X02 (the two-way residual mean square of the S4(i) panel); the universe × retraining
 interaction X03 (per universe, the seed spread of the shift U(s) − CV(s) over 5 seeds). C07′ (data POT) has no band
@@ -221,7 +286,11 @@ interaction X03 (per universe, the seed spread of the shift U(s) − CV(s) over 
 replaced by C08 and is only compared descriptively.
 
 **Checks, every one a stop** (frozen tolerances in `s5_rollup.py`):
-- every pin; every July and May file against `sweeps.json`; every item analysis PASS;
+- every pin; every July and May file against `sweeps.json`; the 24 per-playlist flux and POT files against the
+  digests VL175's pinned `build.json` records;
+- every item analysis PASS, and computed on the same `out_root` S5 reads. The sha256 of every production output S5
+  reads is recorded in `s5.json`. Any exception (a missing or unreadable input) is a FAIL with a recorded
+  traceback, never a crash without `s5.json`;
 - **control** (runs first, also in packaging): the same universe-block code on the **May** sweep with no lateral swap
   and Rvp1pi kept reproduces the adopted VL175 rollup:
   - all 45 blocks are found;
@@ -233,22 +302,54 @@ replaced by C08 and is only compared descriptively.
   - the X01 factors equal VL175's `minos_rescaled.npz` to 1e-15, for both the May MINOS outputs and the S3 ones;
 - MAT `GetTotalErrorMatrix` on the production universe block (43 vertical bands on one 205-bin MnvH1D) vs numpy
   ≤ 1e-12;
-- the integral's variance from the vectors equals aᵀCa at 1e-10 (weighted Flux, the X01 MINOS band, the stat block);
+- **functionals from vectors** (plan Stage C: "check the integral and projections directly from vectors"). F is the
+  31 × 205 map: the area-weighted integral, the 14 pT projections (Σ over p∥ of x·Δp∥) and the 16 p∥ projections
+  (Σ over pT of x·ΔpT). For every universe band (weighted Flux, the X01 MINOS band, each other band), the stat block
+  and C08, F C Fᵀ must equal the covariance of the F x of the same vectors, in the same convention, under the
+  control's two-part rule at 1e-10:
+  - every block at the total's functional scale;
+  - every non-null block also at its own scale. A null block is below 1e-12 of the total's scale, and its own-scale
+    ratio is rounding.
+
+  The normalization block must equal (0.014 F x_EU)(0.014 F x_EU)ᵀ. The integral alone is also checked for Flux,
+  MINOS and stat;
 - symmetry ≤ 1e-12 and PSD (min eigenvalue ≥ −1e-10 × max) for universe, stat, c08 and total.
 
-**Reported numbers** (no pass/fail): per block and total, the per-cell median, p84, max and integral σ (VL175's
-`summary`), rank, the stat block's ensemble error (relative SE of σ ≈ 1/√(2·299) = 4.1%) and the nested 150-vs-300
-σ ratio, σ_bkg/σ_stat, C08 against σ_ML, X02 and X03, and VL175's budget beside them.
+**Reported numbers** (no pass/fail):
+- per block and total: the per-cell median, p84, max and integral σ (VL175's `summary`), the rank, and the total's σ
+  on each of the 31 functionals;
+- **ensemble error in the modes used for inference:**
+  - for the 10 leading eigenmodes of the total and the 31 functionals, the jackknife relative SE of the stat block's
+    variance (over the 300 replicas) and the stat share of the total variance;
+  - the per-cell relative SE of σ ≈ 1/√(2·299) = 4.1%;
+  - the nested 150-vs-300 σ ratio;
+  - C08's Gaussian relative SE of variance, √(2/4) = 71% (4 degrees of freedom);
+- **X02 with its uncertainty:** the median over cells of diag(C_int)/diag(C_stat), its jackknife SE over the 20
+  bootstrap seeds, and the Gaussian relative SE √(2/76);
+- **X03 with its uncertainty:** per universe, the shift, the seed SD of the shift (relative and over σ_ML), its
+  jackknife SE over the 5 seeds, and the Gaussian relative SE of an SD with 4 degrees of freedom, 1/√8;
+- **centring conventions (R9):**
+  - per universe band, its centre (the weighted mean for Flux, the mean otherwise) and the median offset of that
+    centre from E_U, relative and over σ_band;
+  - for the stat ensemble, the offset of the replica mean from E_U over σ/√300;
+- σ_bkg/σ_stat, C08 against σ_ML, and VL175's budget beside them.
 
-**Products** (`$NS/results/s5/`): `production_cov.npz` (every block, the total, the separable and interaction
-terms, the cell centre and areas), `uq_production_covariance.root` (`analyze_universes.py` schema; `hCov_combined` =
-total), `s5.json` (inputs with sha256, every check, every number). They are diagnostic until Joseph adopts them.
+**Products** (`$NS/results/s5/`), all diagnostic until Joseph adopts them:
+- `production_cov.npz`: every block, the total, the separable and interaction terms, the functional map, the cell
+  centre and the areas;
+- `s5.json`: the inputs with sha256, every check and every number;
+- `uq_production_covariance.root`: the same total in the `analyze_universes.py` schema (`hCov_combined` = total), for
+  the existing χ² and figure producers. It is regenerable from the NPZ. The grant names xsec.root/JSON/NPZ as the
+  stored products, so this ROOT file stays on pscratch and is not copied to CFS unless the binding allows it.
 
 ## 9. Retries and failures
 
 One walltime retry per job (grant §3): 1.5 × a projection re-measured from that job's own partial progress, < 12 h,
-through `launch.py submit <batch> --retry <name> --time <cap>`, which writes `retries/<name>.time`, refuses a second
-retry or a retry of a job that has not ended, and refuses while `out/<name>/` is not empty. Partial output is moved,
+through `launch.py submit <batch> --retry <name> --time <cap>`. That command:
+- writes `retries/<name>.time`;
+- accepts a retry **only after exactly one TIMEOUT attempt**, so it refuses an out-of-memory, failed or cancelled
+  first attempt, a second retry, and a job that has not ended;
+- refuses while `out/<name>/` is not empty. Partial output is moved,
 sha-verified, to `out/<name>.failed-<jobid>` first. An out-of-memory kill is a stop (the allocations are the pilot's,
 whose peak was 65.9 GiB of 238 GiB), not a retry. Any other failure needs a diagnosed infrastructure cause. A
 scientific result is never a reason to retry. A second failure is INCONCLUSIVE for that job, which makes its item
@@ -265,62 +366,92 @@ All commands on a saul login node after `source /pscratch/sd/j/josephrb/MINERvA-
 4. `preflight_uomni.sh` on a DTN; `launch.py submit G2`; `analyze_prod.py s4ii …`.
 5. S1a–f, S2a–b, S4a–b in order, each when `launch.py gate` admits; then `analyze_prod.py s1|s2|s4i …`.
 6. `s5_rollup.py --out $NS/results/s5`.
-7. Products to CFS `m3246` (`xsec.root`, JSON, NPZ, plus logs and gate printouts), sha256 re-measured; inputs are not
-   copied.
+7. Products to CFS: `/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-production-20261015/`, the pilot's
+   procedure.
+   - **What is copied:** every `out/<job>/xsec.root`, `results/` (JSON, the S5 NPZ and JSON), `logs/`, `gatelog/`
+     and `retries/`.
+   - **Verification:** a `SHA256SUMS.pscratch` is computed on the originals, then `sha256sum -c` is run on the
+     copies.
+   - **Not copied:** the inputs, and the S5 ROOT rollup (unless the binding allows it).
 8. `REPORT.md`: every `sacct` row, the gates, the products and their digests, the S5 matrices and numbers, the terminal
    outcome; a fresh read-only verifier.
 
 ## 11. Smoke tests during packaging (login node, existing products; not production results)
 
-Run on saul login nodes in a separate smoke directory (`/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/`),
-with the package scripts at their committed digests (`analyze_prod.py` `3a1a3abc…`, `s5_rollup.py` `cca262a7…`; each
-smoke JSON records the digest it ran). Outputs are in [`evidence/smoke/`](evidence/smoke/). Nothing was submitted.
+Run on saul login nodes in a separate smoke directory, `/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/`.
+The scripts ran at their committed digests: `analyze_prod.py` `f9e0d8f2…` and `s5_rollup.py` `6c437004…`. Each smoke
+JSON records the digest it ran. Outputs are in [`evidence/smoke/`](evidence/smoke/). Nothing was submitted.
 
-- **S5 control** (`s5_rollup.py --control-only`, real inputs; `s5_control.json`): **PASS**.
-  - every pin matches;
-  - the weights equal the constraint file and VL175 (Σw = 211.012, n_eff = 19.06);
-  - the May X01 factors equal VL175 bitwise;
-  - all 45 VL175 blocks match at the total's scale to 2.6e-17, every non-null block at its own scale to 2.1e-16,
-    and the total to 1.3e-17.
+**S5 control** (`s5_rollup.py --control-only`, real inputs; `s5_control.json`): **PASS**.
+- Every pin matches.
+- The weights equal the constraint file and VL175 (Σw = 211.012, n_eff = 19.06).
+- The May X01 factors equal VL175 bitwise.
+- All 45 VL175 blocks match at the total's scale to 2.6e-17, every non-null block at its own scale to 2.1e-16, and
+  the total to 1.3e-17.
 
-  **Criterion change, made here, before any production data:** the first run compared each block only at its own
-  scale. It failed at 1.4e-6 on three bands, EtaNCEL, MaNCEL and NormNCRES. Those are neutral-current knobs, null in
-  this charged-current sample:
-  - their entries are about 1e-103, against about 1e-80 for real bands;
-  - their absolute differences are 4e-109, which is rounding.
+The independent verifier re-ran this control in its own directory and got identical values (§13).
 
-  The criterion is now the two-part rule in §8.
-- **S5 production path on stand-ins** (`s5_standin.json.gz`, stored with `gzip -n` because it names product files the receipt-artifact gate would read as untracked deliverables; uncompressed sha256 `851658a2…`, check with `gunzip -c … | shasum -a 256`): every computation and both product writers ran, and every
-  check passed. The stand-ins:
+**Criterion change, before any production data.** The first control run compared each block only at its own scale.
+It failed at 1.4e-6 on EtaNCEL, MaNCEL and NormNCRES. These neutral-current knobs are null in this charged-current
+sample: their entries are about 1e-103 against about 1e-80 for real bands, and their absolute differences of 4e-109
+are rounding. The rule is now the two-part rule in §8. The functional checks added after review hit the same issue,
+on EtaNCEL, NormDISCC and the stand-ins' identically zero C08, and use the same rule.
+
+**S5 production path on stand-ins** (`s5_standin.json.gz`): **PASS**. Every computation, every check and both
+product writers ran.
+- **Storage.** The file is gzipped with `gzip -n`, because it names product files that the receipt-artifact gate
+  would read as untracked deliverables. Its uncompressed sha256 is `6b3354c8…`; check with
+  `gunzip -c … | shasum -a 256`.
+- **Stand-ins:**
   - July dump laterals for S3;
   - the pilot's 20 joint and 20 bkg replicas, cycled, for S1 and S2;
   - the pilot's joint replicas at every seed for S4(i);
   - July products at every seed for S4(ii);
-  - PASS placeholders for the item analyses.
+  - PASS placeholders for the item analyses, carrying the matching `out_root`.
+- **Checks of note** (not production numbers):
+  - the 24 flux and POT files match VL175's digests;
+  - the MAT universe block agrees to 1.1e-16;
+  - the integral identities hold to ≤ 3.0e-13;
+  - the functionals agree at the total's scale to 4.8e-15, and every non-null block at its own scale to ≤ 1.8e-12;
+  - the normalization rank-1 identity holds to 5.7e-16;
+  - symmetry and PSD pass.
+- Because the stand-in seed columns are identical, C08 and X02 are zero and the X03 seed spreads are 0.
 
-  Checks of note: the MAT cross-check of the universe block 1.1e-16; the integral-from-vectors identities ≤ 3.0e-13;
-  PSD and symmetry pass. These are not production numbers. C08 is zero here (identical stand-in columns), so its PSD
-  ratio prints `nan`.
-- **Analyses** (`analyze_prod.py --out-root <stand-ins>`; `analyze_*.json`), with pilot outputs linked under
-  production names: P1_unit → C0_unit, P0_default → C0_cv, the two P3 → S3, four P2 derived runs → S4(ii) seed 42,
-  joint/bkg 1–20 → S1/S2 1–20.
-  - **C0: PASS.** C0_unit vs XR-L0 gives max rel 1.38e-11, and provenance holds.
-  - **S3, S4(ii), S1, S2 and S4(i): INCONCLUSIVE**, as they must be, because most outputs are missing. Every present
-    output passed:
-    - closure |c − 1| ≤ 1.8e-14 on both laterals;
-    - both P3 reproductions;
-    - the July identity for the four universes present;
-    - null-vs-CV at seed 42;
-    - provenance on all 20 + 20 replicas.
+**Analyses on pilot stand-ins** (`analyze_prod.py --out-root <stand-ins>`; `analyze_*.json`). Pilot outputs were
+linked under production names: P1_unit → C0_unit, P0_default → C0_cv, the two P3 → S3, four P2 derived runs → S4(ii)
+at seed 42, and joint/bkg 1–20 → S1/S2 1–20.
+- **C0: PASS.** C0_unit against XR-L0 has max rel 1.38e-11, and provenance holds.
+- **S3, S4(ii), S1, S2 and S4(i): INCONCLUSIVE**, as they must be, because most outputs are missing. Every output
+  that is present passed:
+  - closure |c − 1| ≤ 1.8e-14 on both laterals, with the measured-ratio title, `mc_truth_denom`, and a denominator
+    of 5.78e6;
+  - both P3 reproductions;
+  - the July identity for the four universes present;
+  - null-vs-CV at seed 42;
+  - provenance on all 20 + 20 replicas.
 
-    The S1/S2 reproductions are trivially PASS here, since the stand-in is the reference.
-- **Dispatcher dry run** (`dispatch_dryrun.sh` → `dispatch_dryrun.txt`): `sbatch_prod.sh`'s case block, run with the
-  commands echoed and the checks stubbed, maps all 531 `jobs.tsv` names to a command, and refuses none. Every command
-  carries its row's seed, bootstrap seed, streams, universe or active file, and driver (0 mismatches).
-- **Pilot evidence for §7.1**, read with PyROOT: `hOFCompleteness2D` is 1 in all 205 cells for both pilot P3
-  products, and 0.9923–1.0176 for the dump-mode `P2_MINOS0def`.
-- `launch.py simulate {mean,p84,cap}` produced §6's table. `make_jobs.py --check` and `bash -n` on both shell
-  scripts pass.
+  The S1/S2 reproductions pass trivially here, because each stand-in is its own reference.
+
+**Launcher logic** (`test_launch.py` → `test_launch_output.txt`, mocked ledger, no Slurm): 15/15 cases pass.
+- `redo` owes exactly the three kinds in §6, and never a row that ran, is queued, has output, or has a second attempt.
+- A retry is accepted after TIMEOUT, and refused after OUT_OF_MEMORY, FAILED or CANCELLED.
+- Every `sbatch` line carries `--no-requeue` and its cap.
+- A pre-check refusal with nothing in flight is a stop; with jobs in flight it is a wait. A `submit` refusal is a
+  stop, and nothing is submitted.
+
+**Dispatcher dry run** (`dispatch_dryrun.sh` → `dispatch_dryrun.txt`): `sbatch_prod.sh`'s case block, run with the
+commands echoed and the checks stubbed, maps all 531 `jobs.tsv` names to a command and refuses none. Every command
+carries its row's seed, bootstrap seed, streams, universe or active file, and driver (0 mismatches). The verifier
+reproduced this.
+
+**`sbatch --test-only`**, with the production arguments for `2dc_P_C0_unit` and an S3 job: the arguments and
+`--deadline=2026-10-20T23:00:00` are accepted. This is syntax only (§6).
+
+**Pilot evidence for §7.1**, read with PyROOT: `hOFCompleteness2D` is 1 to 1.8e-14 in all 205 cells for both pilot
+P3 products, and 0.9923–1.0176 for the dump-mode `P2_MINOS0def`.
+
+**Other checks.** `launch.py simulate {mean,p84,cap}` produced §6's table. `make_jobs.py --check` and `bash -n` on
+both shell scripts pass.
 
 ## 12. Limits
 
@@ -335,4 +466,31 @@ smoke JSON records the digest it ran). Outputs are in [`evidence/smoke/`](eviden
 
 ## 13. Independent review
 
-Pending: one fresh read-only verifier (Claude Opus 5.5) reviews the package at its commit; the verdict and the dispositions go here.
+One fresh read-only verifier (Claude Opus 5.5, its own detached worktree, `git-dir` ≠ `git-common-dir`) reviewed the
+package at `647a78ca`. **Verdict: APPROVE WITH CHANGES, 1 MATERIAL, 12 MINOR.**
+
+What it re-measured:
+- every external pin on the cluster, and 15 July `sweeps.json` entries;
+- `jobs.tsv` (531 rows, enforced charge 117.8583, the batch totals and both walks);
+- the dispatcher dry run, with all 531 commands against their rows;
+- the S5 control, re-run in its own directory, with identical values;
+- the gate, filter, double-submit, `redo` and `--deadline` time-zone logic;
+- C08 and the closure equivalence (`hOFTruthDenom2D` = Stage B's sum × the POT scale).
+
+| finding | disposition |
+|---|---|
+| M1 S5 lacked the plan's "integral and projections directly from vectors", mode-level ensemble error, X02/X03 uncertainties and centring reports | §8 and `s5_rollup.py` add the 31-functional check per block (two-part rule), the jackknife ensemble error on the 10 leading modes and 31 functionals, X02/X03 jackknife and Gaussian SEs, and per-band and stat centring offsets. Smoke PASS (§11) |
+| m1 the universe cap basis excluded `G2_*` silently; timeout risk unstated | §5 states the exclusion (in-job override build) and the timeout risk |
+| m2 a pre-check refusal was redefined as "wait" | §6: a wait only while jobs are in flight; with nothing in flight it is a stop; the binding is asked to accept this reading. `launch.py` and a test implement it |
+| m3 no path for a deadline-cancelled retry or a batch half-submitted by an `sbatch` failure | `launch.py redo` owes both (`owed()` cases b and c); tested (§11) |
+| m4 retry allowed after OOM, FAILED or CANCELLED | a retry needs exactly one TIMEOUT attempt; tested |
+| m5 a requeue could hide charge | every `sbatch` line carries `--no-requeue` (§6) |
+| m6 the closure could pass vacuously on the driver's c ≡ 1 fallback | the closure counts only with the measured-ratio title, `mc_truth_denom` and a non-empty denominator (§7.1). The verifier's suggested denominator-integral test alone would not catch it: the fallback clones c ≡ 1 into the denominator |
+| m7 S5 trusted the item JSONs loosely; a missing input crashed it | S5 checks each item JSON's `out_root`, records every production output's sha256, and writes `s5.json` with a FAIL and a traceback on any exception |
+| m8 run-count departures and `driver_p1` acceptance not listed together | §3.6 table and the list of items the binding is asked to accept |
+| m9 C03 shared-draw clause not addressed | §8 discloses that it is not applied (overlap unmeasured; Joseph adopted independent streams) |
+| m10 prose: CFS SHA256SUMS claim, "c = 1 exactly", 117.8580, §3.4 | fixed (§2, §7.1, §5, header) |
+| m11 ROOT product, CFS path, flux/POT pins, universe omnifile check | §8: the ROOT rollup stays on pscratch unless the binding allows it; §10.7 freezes the CFS path and procedure; S5 checks the 24 flux/POT files against VL175's recorded digests; §3.6 lists these for acceptance |
+| m12 no schedule assessment; `--deadline` untested | §6 adds the schedule estimate; `sbatch --test-only` accepted the arguments, syntax only, as stated |
+
+The verifier is the same model as the executor, so its blind spots may be correlated with the executor's.
