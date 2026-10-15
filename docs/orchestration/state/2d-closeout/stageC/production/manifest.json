@@ -81,7 +81,7 @@
   }
  },
  "package": {
-  "docs/orchestration/state/2d-closeout/stageC/production/DESIGN.md": "513dae3f9a35a0a26bab10427366b30a8798f25be97ad81ed21a0ccaf02e7cb3",
+  "docs/orchestration/state/2d-closeout/stageC/production/DESIGN.md": "d49897042f6c4f8227eaa72eb7228db2accc1571a7f3718fe5ca8033ef8acf1a",
   "docs/orchestration/state/2d-closeout/stageC/production/analyze_prod.py": "f9e0d8f271f28bee1ef264de62cf7b924d18d4086e8fbe896abff4adb79320a4",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_c0.json": "89bff43c8179a66fb822816338a4a74907e815f66dac5bd9c7817d4933e41777",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_s1.json": "70513c437d989ef3f9ffcf1c55ccdc125bccd90136381073c45e69e52c4cdb9d",

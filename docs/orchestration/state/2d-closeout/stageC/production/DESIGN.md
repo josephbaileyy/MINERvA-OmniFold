@@ -116,7 +116,7 @@ The repository specifies none of these (searched: Stage B REPORT, its reviews, t
 | S4(i) | 100 × u_CV | 80 (−20) | S1's replicas 1–20 are the seed-42 column, run once |
 | S4(ii) | 35 universe runs | 35 + 4 CV (+4 u_CV) | the per-seed CV reference for the X03 shifts |
 | controls | b ≡ 1 (grant §3 order) | b ≡ 1 + a production-driver CV (+1 u_CV) | the CV is also the panel's seed-42 reference |
-| driver | the production driver `74a4ed69…` | `driver_p1.py` `3056e625…` for C0_unit, S1, S2, S4(i) (482 of 531 jobs) | §4. It is a deployed copy, not on `main`. Before Stage F adoption it should reach `main` through its own reviewed PR (grant: no driver edits on `main` except by such a PR) |
+| driver | the production driver `74a4ed69…` | `driver_p1.py` `3056e625…` for C0_unit, S1, S2, S4(i) (481 of 531 jobs: C0_unit 1, S1 300, S2 100, S4(i) 80) | §4. It is a deployed copy, not on `main`. Before Stage F adoption it should reach `main` through its own reviewed PR (grant: no driver edits on `main` except by such a PR) |
 
 **The binding is asked to accept, explicitly:**
 1. these departures;
@@ -289,8 +289,9 @@ replaced by C08 and is only compared descriptively.
 - every pin; every July and May file against `sweeps.json`; the 24 per-playlist flux and POT files against the
   digests VL175's pinned `build.json` records;
 - every item analysis PASS, and computed on the same `out_root` S5 reads. The sha256 of every production output S5
-  reads is recorded in `s5.json`. Any exception (a missing or unreadable input) is a FAIL with a recorded
-  traceback, never a crash without `s5.json`;
+  reads is recorded in `s5.json`. After the pins and the control, any exception (a missing or unreadable input)
+  is a FAIL with a recorded traceback in `s5.json`. Before that point (pin hashing, the cell set, the weights, the
+  control) a missing input stops the script without writing `s5.json`. That fails closed: no product is written;
 - **control** (runs first, also in packaging): the same universe-block code on the **May** sweep with no lateral swap
   and Rvp1pi kept reproduces the adopted VL175 rollup:
   - all 45 blocks are found;
@@ -492,5 +493,18 @@ What it re-measured:
 | m10 prose: CFS SHA256SUMS claim, "c = 1 exactly", 117.8580, §3.4 | fixed (§2, §7.1, §5, header) |
 | m11 ROOT product, CFS path, flux/POT pins, universe omnifile check | §8: the ROOT rollup stays on pscratch unless the binding allows it; §10.7 freezes the CFS path and procedure; S5 checks the 24 flux/POT files against VL175's recorded digests; §3.6 lists these for acceptance |
 | m12 no schedule assessment; `--deadline` untested | §6 adds the schedule estimate; `sbatch --test-only` accepted the arguments, syntax only, as stated |
+
+**Re-review 1** at `51615e0d`: **APPROVE, 0 MATERIAL, 2 MINOR.** All 13 dispositions repair their findings, and
+`jobs.tsv` and `sbatch_prod.sh` are unchanged. What the verifier re-measured:
+- it rebuilt the 31 × 205 functional map independently (max|diff| 0);
+- it judged the two-part rule principled for the functionals too: a wrongly near-zero matrix still fails at the
+  total's scale;
+- it re-ran the S5 control and the stand-in path from its own copy, with bit-identical results;
+- it re-ran `test_launch.py` (15/15) plus four extra `owed()` probes;
+- it confirmed the closure guard against the driver fallback.
+
+Its two MINOR findings are fixed here:
+- the `driver_p1` count is 481, not 482 (§3.6);
+- the exception guarantee is narrowed to what the code does (§8).
 
 The verifier is the same model as the executor, so its blind spots may be correlated with the executor's.
