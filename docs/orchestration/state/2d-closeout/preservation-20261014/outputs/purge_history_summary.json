@@ -1,0 +1,305 @@
+{
+ "dir": "/global/pscratch/sd/j/josephrb/.purge",
+ "files": [
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260604.json",
+   "records": 1111,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 1101,
+   "minerva_large_files_bytes": 1288736216,
+   "minerva_large_files_top": [
+    "MATFluxAndReweightFiles",
+    "MParamFiles"
+   ],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 146
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260608.json",
+   "records": 10,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 0,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 150
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260611.json",
+   "records": 10,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 0,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 153
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260615.json",
+   "records": 10,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 0,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 157
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260618.json",
+   "records": 10,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 0,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 160
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260622.json",
+   "records": 14,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 4,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [
+    "MATFluxAndReweightFiles"
+   ],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 148
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260625.json",
+   "records": 14,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 4,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [
+    "MATFluxAndReweightFiles"
+   ],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 151
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260629.json",
+   "records": 4,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 4,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [
+    "MATFluxAndReweightFiles"
+   ],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 155
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260702.json",
+   "records": 4,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 4,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [
+    "MATFluxAndReweightFiles"
+   ],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 158
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260706.json",
+   "records": 80,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 4,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [
+    "MATFluxAndReweightFiles"
+   ],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 147
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260709.json",
+   "records": 80,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 4,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [
+    "MATFluxAndReweightFiles"
+   ],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 150
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260716.json",
+   "records": 582,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 493,
+   "minerva_large_files_bytes": 1683351195,
+   "minerva_large_files_top": [
+    "MATFluxAndReweightFiles"
+   ],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 139
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260817.json",
+   "records": 10,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 0,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 139
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260820.json",
+   "records": 10,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 0,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 142
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260824.json",
+   "records": 3,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 0,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 146
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260827.json",
+   "records": 3,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 0,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 149
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/candidates_20260831.json",
+   "records": 3,
+   "dryrun_values": [
+    "True"
+   ],
+   "minerva_large_files_records": 0,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 153
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/purge_20260608.json",
+   "records": 1101,
+   "dryrun_values": [
+    "False"
+   ],
+   "minerva_large_files_records": 1101,
+   "minerva_large_files_bytes": 1288736216,
+   "minerva_large_files_top": [
+    "MATFluxAndReweightFiles",
+    "MParamFiles"
+   ],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 171
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/purge_20260626.json",
+   "records": 10,
+   "dryrun_values": [
+    "False"
+   ],
+   "minerva_large_files_records": 0,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 169
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/purge_20260711.json",
+   "records": 4,
+   "dryrun_values": [
+    "False"
+   ],
+   "minerva_large_files_records": 4,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [
+    "MATFluxAndReweightFiles"
+   ],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 167
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/purge_20260720.json",
+   "records": 76,
+   "dryrun_values": [
+    "False"
+   ],
+   "minerva_large_files_records": 0,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 161
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/purge_20260803.json",
+   "records": 499,
+   "dryrun_values": [
+    "False"
+   ],
+   "minerva_large_files_records": 493,
+   "minerva_large_files_bytes": 1683351195,
+   "minerva_large_files_top": [
+    "MATFluxAndReweightFiles"
+   ],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 163
+  },
+  {
+   "file": "/global/pscratch/sd/j/josephrb/.purge/purge_20260820.json",
+   "records": 7,
+   "dryrun_values": [
+    "False"
+   ],
+   "minerva_large_files_records": 0,
+   "minerva_large_files_bytes": 0,
+   "minerva_large_files_top": [],
+   "StandardMC_or_AnaTuple_records": 0,
+   "min_age_days": 174
+  }
+ ]
+}

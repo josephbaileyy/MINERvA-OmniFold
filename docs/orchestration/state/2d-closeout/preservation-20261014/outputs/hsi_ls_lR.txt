@@ -1,0 +1,207 @@
+# hsi ls -lR (HPSS home), login29, 2026-10-14T23:17:32Z
+/home/j/josephrb:
+drwxr-s---    3 josephrb  josephrb         512 Feb 20  2026 backups
+drwxr-s---    2 josephrb  josephrb         512 Aug 21 14:43 mnv-negweight-historical-20260821
+drwxr-s---    2 josephrb  josephrb         512 Aug 21 14:54 mnv-negweight-residency-control-20260821
+drwxr-s---    2 josephrb  josephrb         512 Aug 18 06:19 mnv-p3f-pet-fullevent-final
+drwxr-s---    2 josephrb  josephrb         512 Aug 11 15:37 mnv-p3f-smoketest
+drwxr-s---    5 josephrb  josephrb         512 Aug 12 07:22 mnv-quoted-products-20260812
+drwxr-s---    4 josephrb  josephrb         512 Sep 24 23:21 mnv-scalar5d-solecopy-20260925
+drwxr-s---    2 josephrb  josephrb         512 Oct  8 17:18 prd-release-preservation-20261008
+
+/home/j/josephrb/backups:
+drwxr-s---    2 josephrb  josephrb         512 Feb 20  2026 scratch_backup
+
+/home/j/josephrb/backups/scratch_backup:
+-rw-r-----    1 josephrb  josephrb        2048 Feb 20  2026 backup_2026-02-20.tar
+-rw-r-----    1 josephrb  josephrb        1312 Feb 20  2026 backup_2026-02-20.tar.idx
+
+/home/j/josephrb/mnv-negweight-historical-20260821:
+-rw-r-----    1 josephrb  josephrb        1802 Aug 21 14:43 LABEL.txt
+-rw-r-----    1 josephrb  josephrb     3246080 Aug 21 14:43 negweight_boot_51.tar
+-rw-r-----    1 josephrb  josephrb      460800 Aug 21 14:43 negweight_runs_8.tar
+-rw-r-----    1 josephrb  josephrb    14489600 Aug 21 14:43 negweight_sidecars.tar
+-rw-r-----    1 josephrb  josephrb    10946560 Aug 21 14:43 negweight_uni_188.tar
+
+/home/j/josephrb/mnv-negweight-residency-control-20260821:
+-rw-r-----    1 josephrb  josephrb          65 Aug 21 14:54 residency_control.txt
+
+/home/j/josephrb/mnv-p3f-pet-fullevent-final:
+
+/home/j/josephrb/mnv-p3f-smoketest:
+-rw-r-----    1 josephrb  josephrb       12334 Aug 11 15:37 smoketest.json
+
+/home/j/josephrb/mnv-quoted-products-20260812:
+drwxr-s---    3 josephrb  josephrb         512 Aug 12 07:22 2d-unfolding
+drwxr-s---    3 josephrb  josephrb         512 Aug 12 07:22 3d-unfolding
+drwxr-s---    8 josephrb  josephrb         512 Aug 12 07:22 nd-unfolding
+
+/home/j/josephrb/mnv-quoted-products-20260812/2d-unfolding:
+drwxr-s---    5 josephrb  josephrb         512 Aug 12 07:22 uq
+
+/home/j/josephrb/mnv-quoted-products-20260812/2d-unfolding/uq:
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:22 bootstrap_MEFHC_300
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:22 seedscan_lgbm_ml
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:22 universe_stage2_MEFHC_full_matcorr_fluxfix
+
+/home/j/josephrb/mnv-quoted-products-20260812/2d-unfolding/uq/bootstrap_MEFHC_300:
+-rw-r-----    1 josephrb  josephrb      319885 Aug 12 07:22 uq_covariance_boot300.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/2d-unfolding/uq/seedscan_lgbm_ml:
+-rw-r-----    1 josephrb  josephrb      320371 Aug 12 07:22 uq_covariance_ml.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix:
+-rw-r-----    1 josephrb  josephrb    14106315 Aug 12 07:22 uq_universe_covariance_full_matcorr_fluxfix.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/3d-unfolding:
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:22 genie
+
+/home/j/josephrb/mnv-quoted-products-20260812/3d-unfolding/genie:
+-rw-r-----    1 josephrb  josephrb        5631 Aug 12 07:22 gibuu_cv_xsec_eavailW.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding:
+drwxr-s---    3 josephrb  josephrb         512 Aug 12 07:18 g2_fullevent
+-rw-r-----    1 josephrb  josephrb  5880556108 Aug 12 07:20 of_inputs_pc.npz
+drwxr-s---    3 josephrb  josephrb         512 Aug 12 07:18 pet
+drwxr-s---    5 josephrb  josephrb         512 Aug 12 07:22 products
+-rw-r-----    1 josephrb  josephrb  4825716683 Aug 12 07:20 runEventLoopOmniFold_5D_MEFHC.root
+-rw-r-----    1 josephrb  josephrb 169974191800 Aug 12 07:04 runEventLoopOmniFold_5D_MEFHC_universes_full.root
+-rw-r-----    1 josephrb  josephrb 49215205065 Aug 12 07:12 runEventLoopOmniFold_PC_MEFHC.root
+drwxr-s---    4 josephrb  josephrb         512 Aug 12 07:19 uq_4d
+drwxr-s---    7 josephrb  josephrb         512 Aug 12 07:22 uq_5d
+drwxr-s---    3 josephrb  josephrb         512 Aug 12 07:22 uq_fps
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/g2_fullevent:
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:18 input
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/g2_fullevent/input:
+-rw-------    1 josephrb  josephrb  9897374636 Aug 12 07:18 G2_FPS_MEFHC_P12.npz
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/pet:
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:18 g2_smoke
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/pet/g2_smoke:
+-rw-r-----    1 josephrb  josephrb  9419026130 Aug 12 07:18 runEventLoopOmniFold_G2_FPS_1A.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/products:
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:22 4d
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:22 5d
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:22 pet
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/products/4d:
+-rw-r-----    1 josephrb  josephrb      338837 Aug 12 07:22 xsec_4d_MEFHC_ascencio_fine.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/products/5d:
+-rw-r-----    1 josephrb  josephrb       30701 Aug 12 07:22 closure_2d_FPS_hidden_eavail_MEFHC.root
+-rw-r-----    1 josephrb  josephrb       34865 Aug 12 07:22 eavailW_covariance.root
+-rw-r-----    1 josephrb  josephrb       34145 Aug 12 07:22 eavailW_covariance_wlat.root
+-rw-r-----    1 josephrb  josephrb        6166 Aug 12 07:22 excess_eavail_W.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/products/pet:
+-rw-r-----    1 josephrb  josephrb  1071515651 Aug 12 07:21 pet_4d_covariance_combined.root
+-rw-r-----    1 josephrb  josephrb   714104917 Aug 12 07:22 pet_4d_covariance_combined_rebank.root
+-rw-r-----    1 josephrb  josephrb  1715893301 Aug 12 07:21 pet_4d_covariance_combined_wlat.root
+-rw-r-----    1 josephrb  josephrb   141455862 Aug 12 07:22 pet_weights_full.npz
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_4d:
+drwxr-s---    3 josephrb  josephrb         512 Aug 12 07:19 corrected
+-rw-r-----    1 josephrb  josephrb   545263178 Aug 12 07:22 unified_throw_cov_4d.root
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:22 universe_stage2_4d
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_4d/corrected:
+-rw-r-----    1 josephrb  josephrb   545400036 Aug 12 07:22 unified_throw_cov_4d.root
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:22 universe_stage2_4d
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_4d/corrected/universe_stage2_4d:
+-rw-r-----    1 josephrb  josephrb  8355185775 Aug 12 07:20 uq_universe_4d_covariance_combined.root
+-rw-r-----    1 josephrb  josephrb   181794146 Aug 12 07:22 uq_universe_4d_covariance_combined_uthrow.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_4d/universe_stage2_4d:
+-rw-r-----    1 josephrb  josephrb  8355187459 Aug 12 07:19 uq_universe_4d_covariance_combined.root
+-rw-r-----    1 josephrb  josephrb   181811405 Aug 12 07:22 uq_universe_4d_covariance_combined_uthrow.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d:
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:21 _archive_prehm_20260713
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:22 readopt_20260811_footing
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:22 rescaled_20260806_full160
+-rw-r-----    1 josephrb  josephrb  2677168123 Aug 12 07:21 unified_throw_cov_5d.root
+-rw-r-----    1 josephrb  josephrb  2668021041 Aug 12 07:21 unified_throw_cov_5d_fluxfix_20260806_full160.root
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:21 universe_stage2_5d
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:15 universe_stage2_5d_bkgaware
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d/_archive_prehm_20260713:
+-rw-r-----    1 josephrb  josephrb   892233209 Aug 12 07:21 uq_universe_5d_covariance_combined_uthrow.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d/readopt_20260811_footing:
+-rw-r-----    1 josephrb  josephrb   892170881 Aug 12 07:22 stamped_bkgaware_meancentered_20260812.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d/rescaled_20260806_full160:
+-rw-r-----    1 josephrb  josephrb   892266576 Aug 12 07:21 adopted_cvcentered_20260806_full160.root
+-rw-r-----    1 josephrb  josephrb   892196879 Aug 12 07:22 adopted_meancentered_20260806_full160.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d/universe_stage2_5d:
+-rw-r-----    1 josephrb  josephrb   892224371 Aug 12 07:21 uq_universe_5d_covariance_combined_uthrow.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_5d/universe_stage2_5d_bkgaware:
+-rw-r-----    1 josephrb  josephrb 41436632945 Aug 12 07:16 uq_universe_5d_covariance_combined_bkgaware.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_fps:
+drwxr-s---    3 josephrb  josephrb         512 Aug 12 07:22 corrected
+-rw-r-----    1 josephrb  josephrb     1607692 Aug 12 07:22 unified_throw_cov_fps.root
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_fps/corrected:
+-rw-r-----    1 josephrb  josephrb     1609132 Aug 12 07:22 unified_throw_cov_fps.root
+drwxr-s---    2 josephrb  josephrb         512 Aug 12 07:22 universe_stage2_fps
+
+/home/j/josephrb/mnv-quoted-products-20260812/nd-unfolding/uq_fps/corrected/universe_stage2_fps:
+-rw-r-----    1 josephrb  josephrb    25092215 Aug 12 07:22 uq_universe_fps_covariance_combined_activelat.root
+
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925:
+drwxr-s---    3 josephrb  josephrb         512 Sep 24 23:21 MINERvA-OmniFold
+drwxr-s---    4 josephrb  josephrb         512 Sep 24 23:21 z2m-products
+
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold:
+drwxr-s---    4 josephrb  josephrb         512 Sep 24 23:23 nd-unfolding
+
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding:
+drwxr-s---    3 josephrb  josephrb         512 Sep 24 23:21 active_universe_5d
+drwxr-s---    4 josephrb  josephrb         512 Sep 24 23:23 uq_5d
+-rw-r-----    1 josephrb  josephrb   892078834 Sep 24 23:23 uq_cov_mlsplit_5d.root
+-rw-r-----    1 josephrb  josephrb   891732011 Sep 24 23:23 uq_cov_stat_5d.root
+
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/active_universe_5d:
+drwxr-s---    3 josephrb  josephrb         512 Sep 24 23:21 standard
+
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard:
+drwxr-s---    2 josephrb  josephrb         512 Sep 24 23:21 candidate
+
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/active_universe_5d/standard/candidate:
+-rw-r-----    1 josephrb  josephrb 42326607877 Sep 24 23:23 std_final5_candidate.root
+
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_5d:
+drwxr-s---    2 josephrb  josephrb         512 Sep 24 23:21 z_pilot_20260916_a5
+drwxr-s---    2 josephrb  josephrb         512 Sep 24 23:23 z_precursor_20260914
+
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_5d/z_pilot_20260916_a5:
+-rw-------    1 josephrb  josephrb   890383062 Sep 24 23:21 z-mean.npz
+
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/MINERvA-OmniFold/nd-unfolding/uq_5d/z_precursor_20260914:
+-rw-r-----    1 josephrb  josephrb  2668265910 Sep 24 23:23 unified_throw_cov_5d.root
+
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/z2m-products:
+drwxr-s---    2 josephrb  josephrb         512 Sep 24 23:21 member_k000000
+drwxr-s---    2 josephrb  josephrb         512 Sep 24 23:21 member_k001200
+
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/z2m-products/member_k000000:
+-rw-------    1 josephrb  josephrb   887254200 Sep 24 23:21 z-cv.npz
+-rw-------    1 josephrb  josephrb   887371441 Sep 24 23:21 z-mean.npz
+
+/home/j/josephrb/mnv-scalar5d-solecopy-20260925/z2m-products/member_k001200:
+-rw-------    1 josephrb  josephrb   887228520 Sep 24 23:21 z-cv.npz
+-rw-------    1 josephrb  josephrb   887324826 Sep 24 23:21 z-mean.npz
+
+/home/j/josephrb/prd-release-preservation-20261008:
+-rw-r-----    1 josephrb  josephrb  2324167680 Oct  8 17:17 s5p-archive-20261006.tar
+-rw-r-----    1 josephrb  josephrb     5472032 Oct  8 17:17 s5p-archive-20261006.tar.idx
+-rw-------    1 josephrb  josephrb   890500272 Oct  8 17:18 z-cv.npz
+rc=0

@@ -1,0 +1,6 @@
+# hsi du -s (HPSS home), login29, start 2026-10-14T23:17:18Z
+735886034	57	/home/j/josephrb/
+-----------------------
+735886034	total 512-byte blocks, 57 Files (376,773,649,398 bytes)
+rc=0
+# end 2026-10-14T23:17:19Z

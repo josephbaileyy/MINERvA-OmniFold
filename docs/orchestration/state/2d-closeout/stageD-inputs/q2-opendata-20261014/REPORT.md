@@ -91,6 +91,11 @@ and 1P (`../evidence/identity_probe_*.out`).
   BIAS EXPECTED**. The selection reads no branch that changed, and the selected 1A events are the same in both
   processings, for Data and for MC.
 
+> **Side effect, found 2026-10-14** ([`../../preservation-20261014/REPORT.md`](../../preservation-20261014/REPORT.md) §1):
+> `outputs/adler.sh` ran `xrdadler32` on three local inputs: 1A `run00110001`, 1D `run00111100` and 1P `run00112000`.
+> That wrote a `user.XrdCks.adler32` extended attribute to each and moved its ctime. Their content, size and mtime are
+> unchanged; all still equal `ANATUPLE-SHA256.tsv`. The probe was not read-only in this one respect.
+
 ## 5. Corrections this makes
 
 - **OI-55 ("valid older production, inputs COMPLETE").** Completeness stands. "Older production" holds for 1A

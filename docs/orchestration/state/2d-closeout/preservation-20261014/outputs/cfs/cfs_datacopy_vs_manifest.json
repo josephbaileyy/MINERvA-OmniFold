@@ -1,0 +1,45 @@
+{
+ "dest": "/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-data-20261009",
+ "manifest": "publication/release/preservation/anatuple-checksums/ANATUPLE-SHA256.tsv",
+ "listing": "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/cfs/cfs_datacopy_files.tsv",
+ "per_tree": {
+  "Data": {
+   "manifest_files": 1818,
+   "manifest_bytes": 989532713730,
+   "present_same_bytes": 1818,
+   "present_same_bytes_and_mtime": 1818,
+   "cfs_bytes_of_present": 989532713730
+  },
+  "MATFluxAndReweightFiles": {
+   "manifest_files": 58,
+   "manifest_bytes": 90795241,
+   "present_same_bytes": 58,
+   "present_same_bytes_and_mtime": 58,
+   "cfs_bytes_of_present": 90795241
+  },
+  "MParamFiles": {
+   "manifest_files": 9,
+   "manifest_bytes": 72568200,
+   "present_same_bytes": 9,
+   "present_same_bytes_and_mtime": 9,
+   "cfs_bytes_of_present": 72568200
+  }
+ },
+ "manifest_files_total": 1885,
+ "manifest_bytes_total": 989696077171,
+ "missing": [],
+ "size_differs": [],
+ "extra_files_not_in_manifest": [
+  "/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-data-20261009/.add-20261010-drift",
+  "/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-data-20261009/.add-20261010-listed.txt",
+  "/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-data-20261009/.add-20261010-manifest-sums",
+  "/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-data-20261009/.add-20261010-rel.txt",
+  "/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-data-20261009/.add-20261010-rows.tsv",
+  "/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-data-20261009/.data-rel.txt",
+  "/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-data-20261009/.data-rows.tsv",
+  "/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-data-20261009/DATA-SHA256SUMS",
+  "/global/cfs/cdirs/m3246/josephrb/prd-release-preservation-20261008/anatuple-data-20261009/DATA-SHA256SUMS-ADD-20261010"
+ ],
+ "cfs_files_total": 1894,
+ "cfs_bytes_total": 989697230957
+}
