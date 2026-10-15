@@ -4,7 +4,7 @@
 - the pilot's terminal outcomes: P0, the P1 checks and σ ratios, **K1**, **K2**, P3;
 - every pilot job's `sacct` row, each gate's printed arithmetic, the measured unit costs and peak memory;
 - the S1–S5 production budget repriced from the pilot, with a ≥ 20% reserve (an estimate for the director's
-  production grant, not a grant).
+  production grant, not a grant), under the stated node-type assumption (§7).
 
 **NOT CITABLE FOR:**
 - production authority, a G2 repair, a July rebuild, adoption, claims or publication. Production needs its own
@@ -20,7 +20,7 @@
 | `Bindings` | v1 [`…-binding.md`](../../../../AUTHORIZATION-20261013-2d-closeout-stageC-pilot-binding.md) (PR #110): package `92b0b466b4c94421446f7c751725365e8176793b`; v2 [`…-binding-v2.md`](../../../../AUTHORIZATION-20261013-2d-closeout-stageC-pilot-binding-v2.md) (PR #112, merge `f0926ccf`): package `a2ea0d6a50cc644f5898a2983f953172b2b3904b`, manifest `bd67d23a…`, `jobs.tsv` `1c30a50b…`, `launch.py` `fa0b0167…`, `sbatch_pilot.sh` `507ff6a1…` |
 | `Branch` | `closeout/stagec-pilot-20261013` (package commits plus this REPORT) |
 | `Namespace` | `/pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/` (`$NS`) |
-| `Durable copy` | `/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-pilot-20261013/`: 270 files, sha256 re-measured on CFS against the pscratch source, 0 mismatches (§10) |
+| `Durable copy` | `/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-pilot-20261013/`: 270 checksummed files (of 274; §10), sha256 re-measured on CFS against the pscratch source, 0 mismatches |
 | `Charged` | **7.2479 node-h** of the 20.0 ceiling (every row in §5; retries and timeouts included) |
 
 ## 1. Answer
@@ -60,9 +60,11 @@ matching provenance (none missing).
 | σ_joint / σ_fixed | 1.0316 | 0.0153 | 0.959–1.125 | 1.047 |
 | σ_bkg / σ_fixed | 0.2642 | 0.0206 | 0.185–0.429 | 0.299 |
 
-Reading, with no pass/fail (DESIGN §8): adding the background stream raises the median per-cell statistical σ by
-3.2% ± 1.5%, about the ≈ 3% the Stage B report expected, resolved at ≈ 2 SE by the paired design. The
-background stream alone is about a quarter of the fixed-purity σ in the median cell. The packaging-time checks (no-op
+Reading, with no pass/fail (DESIGN §8). The median over cells of the per-cell paired ratio σ_joint/σ_fixed is
+1.032 ± 0.015, about the ≈ 3% the Stage B report expected. That is 2.1 jackknife SE from 1. A jackknife SE of a
+median is itself rough, so this is an indication, not a resolved effect. The ratio of the arms' median relative σ
+(0.00643 / 0.00608 = 1.057) is a different statistic and is not the paired measure. The median per-cell
+σ_bkg/σ_fixed is 0.264. The packaging-time checks (no-op
 C1–C4, bkg variance = Σw² of B) PASSED before the pilot (DESIGN §8).
 
 **K1** (`P2_NormDISCC0`, `P2_MaRES0`, `P2_Flux23`, `P2_MINOS0` on the derived path, `P2_MINOS0def` on the default
@@ -93,6 +95,13 @@ TRAINER NOISE.** The seed-42 pattern does not repeat at seed 43, so the miss-row
 not resolved above the trainer's seed noise. This is a passing route for the exit condition, not a measurement of
 zero.
 
+**Resolution.**
+- **Median r3:** 0.91 and 0.85 measured, against the pre-declared noise-only value of ≈ 0.95 (DESIGN line 289).
+  K2 can exclude only a median effect large enough to raise r3 above its 2 σ_ML routing bound. It does not bound
+  an effect below that.
+- **Cell patterns:** the two seeds' per-cell z patterns are weakly anti-correlated (Pearson −0.295, Spearman
+  −0.118). They do not reproduce each other, which is what the NOT CONFIRMED verdict tests.
+
 **P3** (`P3_BeamAngleX0` retry 59802592, `P3_MINOS0` 59753421): the production driver on the CFS active files
 (each hashed in the job against `SHA256SUMS`), seed 42, no `--universe`, `--branch-select all`. Both MEASURED.
 Comparisons, with no pass/fail (DESIGN §7), over the 205 reported cells:
@@ -104,24 +113,39 @@ Comparisons, with no pass/fail (DESIGN §7), over the 205 reported cells:
 | `P3_MINOS0` vs July `Muon_Energy_MINOS_0` | identical to the row above to ≈ 1e-11 (`P2_MINOS0def` reproduces July, §2 K1) | | |
 
 σ_band here is the per-cell, unfloored July pair half-difference |X_0 − X_1|/2 (`analyze_pilot.py` `p3()`), so its
-max (1,424 and 244) is a ratio over cells where the July pair nearly coincides and is not read. The active-file runs
-differ from the dump-mode runs at a median 0.7–1.0 σ_ML, as DESIGN §7 expected (the active file's signal-tree truth
-weights differ from the dump on 8,525,527 reco-failing rows). `P3_BeamAngleX0` is the first unfolded measurement of
-the beam-angle lateral on a selection-complete input (DESIGN §7).
+max (1,424 and 244) is a ratio over cells where the July pair nearly coincides and is not read.
+
+The active-file runs differ from the dump-mode runs at a median 0.7–1.0 σ_ML. That is the trainer-noise scale: a
+trainer-path change moves cells by O(σ_ML) (DESIGN line 209), and the noise-only median r3 is ≈ 0.95 (DESIGN line
+289). A single-seed comparison therefore cannot separate the active-vs-dump input difference from trainer noise.
+That input difference is the 8,525,527 reco-failing rows whose truth weights differ (DESIGN §7). **No part of the
+difference is attributed to the input.**
+
+`P3_BeamAngleX0` is the first unfold of the beam-angle lateral on a selection-complete input (DESIGN §7). It is one
+seed and diagnostic only. Its shift from the CV is not computed here, so it is not a measurement of the beam-angle
+uncertainty.
 
 ## 3. Run record
 
-| when (PDT, `sacct`'s clock) | event |
+Times are PDT (`sacct`'s clock). Gates act at submission, so batches are listed by their `sacct` Submit time.
+
+| when (PDT) | event |
 |---|---|
-| 2026-10-13 06:15 | B0 (P0) under v1 `92b0b466`; P0 PASS |
-| 07:19 | B1 (P2 × 5, `P1_unit`) |
-| 08:50 | `P1_unit` 59734962 TIMEOUT at 1,930 s (cap 1,920 s; iteration 4 of 0–4 had started at 1,756 s; node `nid004107` shared with other users' jobs). The director's pre-B4 headroom check (elapsed × 1.3 ≤ 1,920 s) failed, and so did the like-for-like `G2_on` check against its 3,000 s cap: **stop, reported** |
-| 2026-10-13 | Director's recap record (PR #111): `P1_unit` retry at 00:58:00 under v1; ceiling 20.0; v2 caps. Retry 59740518 COMPLETED in 715 s (b ≡ 1 PASS; headroom 715 × 1.3 = 930 ≤ 3,480 s) |
+| 2026-10-13 05:51 | B0 (P0) submitted under v1 `92b0b466`; P0 PASS |
+| 06:45–06:46 | B1 (P2 × 5, `P1_unit`) submitted |
+| 08:50 | `P1_unit` 59734962 TIMEOUT at 1,930 s, past its 1,920 s cap. Iteration 4 of 0–4 had started at 1,756 s. On node `nid004107`, `sacct -a -N nid004107` lists jobs of 17 other users overlapping the attempt's window (not necessarily simultaneous). A headroom condition failed: pre-B4, elapsed × 1.3 ≤ 1,920 s. The director set it in a relayed message after P0, not in a committed record. I also held B2: `G2_on`'s 3,000 s cap failed a proportional check against the P5 pair. The recap record later ruled an off run's time "not a like-for-like check" (§3(c)). **Stop, reported** |
+| 09:09:53 | The director's ruling arrives by message: `P1_unit` retry at 00:58:00 under the v1 binding; ceiling 20.0 and v2 caps to follow in a recap record |
+| 09:10:19 | `P1_unit` retry 59740518 submitted under that ruling and the grant's committed "attempts" row: one walltime retry at 1.5 × a re-projection, 2,295 × 1.5 = 3,443 s → 00:58:00. `out/2dc_C_P1_unit/` was empty (`launch.py` refuses otherwise) |
+| 09:12:19 / 09:13:13 | Recap record committed (`6382a70e`) and merged (PR #111, `9b30356c`). Its §3(a) records the same ruling, so it confirmed the retry about three minutes after submission |
+| 10:16 | Retry (started 10:04) COMPLETED in 715 s; b ≡ 1 PASS; headroom 715 × 1.3 = 930 ≤ 3,480 s. Co-tenancy recorded once, as §3(a) asks, at 17:04:53Z: `nid004072` held josephrb 64 + rul048 64 + rul048 128 CPUs |
 | 2026-10-13 | v2 binding (PR #112); v2 deployed to `$NS/repo` after `squeue` showed no pilot job (§6) |
-| 2026-10-13 PM | B2 (`G2_on`), seed-42 analysis, B3 (seed-43 pair), then B4–B8 through the gate |
-| 2026-10-14 15:48–22:10 | Perlmutter-wide outage: the last pilot job before it ended 15:48; nodes "Not responding" from 17:03; every partition `DOWN` when observed at 20:34; `shared_milan_ss11` `UP` again by 22:10. 29 jobs waited `PartitionDown`; none was killed |
-| 2026-10-15 00:56 | `P3_BeamAngleX0` 59753370 TIMEOUT at 2,727 s (cap 2,700 s), after all five iterations; walltime retry 59802592 at 01:10:00 (§8) |
-| 2026-10-15 02:42 | retry 59802592 COMPLETED in 2,085 s; every pilot job terminal (73 jobs + 2 retries); P1 and P3 analyses run |
+| 11:57 | B2 (`G2_on`) submitted; seed-42 analysis after it ended |
+| 14:27–14:31 | B3 (seed-43 pair), then B4–B8 submitted through the gate in turn |
+| 2026-10-14 15:48 | Last pilot job before the outage ends (`P1_fixed_13`) |
+| 2026-10-14 17:03–21:08 | Perlmutter-wide outage. Nodes reported "Not responding" from 17:03. Every partition was `DOWN` when observed at 20:34, with 29 pilot jobs `PartitionDown`. Pilot jobs started again at 21:08 (`P1_fixed_14`, `_15`). No job was killed |
+| 2026-10-15 00:56 | `P3_BeamAngleX0` 59753370 TIMEOUT at 2,727 s (cap 2,700 s), after all five iterations |
+| 00:59 | Walltime retry 59802592 submitted, cap 01:10:00 (§8) |
+| 02:42 | Retry COMPLETED in 2,085 s. Every pilot job is terminal (73 jobs + 2 retries); P1 and P3 analyses run |
 
 Two operational incidents changed no job: the NERSC sshproxy key expired twice during the run and was renewed by
 Joseph (monitoring only; jobs unaffected), and the first v2 deploy pipe dropped mid-extract (redone from a local
@@ -261,9 +285,23 @@ allocation row's MaxRSS is empty). Billing = allocated CPUs on the shared QOS.
 Peak memory never approached the 243,840M (128-CPU) or 121,920M (64-CPU) allocations: the largest was
 `P2_MINOS0def`, the full-branch default read, at 65.94 GiB. No job was killed for memory.
 
-**S1–S5** (Stage B REPORT §7 run counts, unchanged; units repriced from the pilot). For each unit, the low edge is
-the measured mean and the high edge a conservative per-job value: u_CV p84 over the 60 replicas (they spread
-649–2,003 s, cause not diagnosed); u_U,sel → u_U for S4(ii) as in Stage B; u_A as stated.
+**S1–S5** (Stage B REPORT §7 run counts, unchanged; units repriced from the pilot).
+
+**Basis: the universe and lateral units were measured on 128 shared CPUs.** That is billed at 128/256 = 0.5 node.
+Stage B's u_U and u_U,sel assumed a full regular node. The pilot's runs were not faster:
+- `P2_MINOS0def` took 2,497 s, against a July median of 2,530 s;
+- P2 derived took 856–1,166 s, against Stage B's 888 s.
+
+So the drop in S3 and S4 against Stage B comes from billing, not speed. The table assumes production runs these
+unfolds on shared QOS at 128 CPUs, as the pilot did. On regular nodes their terms double (second table).
+
+**Edges.** For each unit, the left figure is the measured mean (the expected cost, not a lower bound). The right
+figure is a conservative per-job value:
+- **u_CV:** p84 over the 60 replicas. They spread 649–2,003 s, cause not diagnosed.
+- **u_U,sel → u_U** for S4(ii), as in Stage B.
+- **u_A:** mean of the two completed P3 runs, 0.3293. Including the timed-out attempt's 2,800 s re-projection, the
+  mean is 0.3491. The high edge is that re-projection, 0.3889.
+- **u_U and u_A carry no measured spread.** u_U rests on one run and u_A on two runs plus one re-projection.
 
 | item | runs | repriced node-h (low–high) | Stage B estimate |
 |---|---|---|---|
@@ -276,7 +314,19 @@ the measured mean and the high edge a conservative per-job value: u_CV p84 over 
 | **≥ 20% reserve** (admitted − subtotal) | | **11.3–15.5** | |
 | **admitted total** (subtotal / 0.8) | | **56.6–77.4** | 49.8–81.8 |
 
-Units used: u_CV 0.0754–0.0933; u_U,sel 0.1418; u_U 0.3468; u_A 0.3293–0.3889. S4(ii)'s high edge prices all 35 runs at u_U (the full-branch read), as Stage B did; at u_U,sel's measured max (0.2232) it would be 17.1.
+Units used: u_CV 0.0754–0.0933; u_U,sel 0.1418; u_U 0.3468; u_A 0.3293–0.3889. S4(ii)'s high edge prices all 35
+runs at u_U (the full-branch read), as Stage B did; at u_U,sel's measured max (0.2232) S4 would be 17.1.
+
+**Alternatives** (same run counts):
+
+| assumption | S3 | S4 | subtotal | admitted (/ 0.8) |
+|---|---|---|---|---|
+| as above: shared QOS, 128 CPUs | 2.6–3.1 | 12.5–21.5 | 45.3–61.9 | 56.6–77.4 |
+| universe and lateral unfolds on regular nodes (billing 256: u_U,sel, u_U, u_A × 2) | 5.3–6.2 | 17.5–33.6 | 52.9–77.1 | 66.1–96.4 |
+| shared QOS, u_U and u_A high edges × 1.85 (u_CV's measured max/mean spread) | 2.6–4.9 | 12.5–31.7 | 45.3–73.9 | 56.6–92.4 |
+| regular nodes and the × 1.85 spread | 5.3–9.7 | 17.5–54.1 | 52.9–101.2 | 66.1–126.5 |
+
+S1 and S2 are the same in every row: 22.6–28.0 and 7.5–9.3.
 
 The ≥ 20% reserve follows the repository's cost model: admitted = subtotal / 0.8, so the reserve is 20% of the
 admitted total (Stage B review M6).
@@ -302,12 +352,23 @@ Caps against measured elapsed, per job family (enforced cap from `jobs.tsv`, or 
 | P3 | 00:45:00 (2,700 s) | 2,727 s | TIMEOUT | `P3_MINOS0` 2,657 s (0.98); P3's composite basis (1,704 s, DESIGN §9) was at least 1.56× low |
 | `P3_BeamAngleX0` retry | 01:10:00 (4,200 s) | 2,085 s | 0.50 | |
 
-**Retries.** Two jobs used their one walltime retry, both for walltime, neither after a scientific result. `P1_unit`:
-the director's ruling (recap record §3(a)). `P3_BeamAngleX0` (DESIGN §9 rule, no further ruling needed): its log
-showed all five iterations finished and the first four post-unfold `[CHECK]` lines printed at the kill; `out/` was
-empty, so nothing was moved aside. Re-projection from its own progress: 2,727 s + a short finalization ≈ 2,800 s;
-× 1.5 = 4,200 s → 01:10:00 (< 12 h). Gate: 6.9583 + 0 + 0.5833 = 7.5417 ≤ 20.0. MaxRSS 13.2 GiB, so not an
-out-of-memory kill. Neither retry failed again, so no line is INCONCLUSIVE.
+**Retries.** Two jobs used their one walltime retry, both for walltime, neither after a scientific result.
+
+- **`P1_unit`.** Submitted at 09:10:19 PDT under two authorities:
+  - the grant's committed "attempts" row: one walltime retry at 1.5 × a re-projection from the job's own progress;
+  - the director's ruling, relayed by message at 09:09:53.
+
+  The recap record committing that ruling (§3(a)) landed at 09:12:19 and merged at 09:13:13, about three minutes
+  after submission (§3). Re-projection: 2,295 s × 1.5 = 3,443 s → 00:58:00. `out/2dc_C_P1_unit/` was empty.
+- **`P3_BeamAngleX0`.** Submitted under the DESIGN §9 rule, with no further ruling needed. At the kill its log
+  showed all five iterations finished and the first four post-unfold `[CHECK]` lines printed. The fourth `[CHECK]`
+  line was written at `.out` mtime 00:56:52, 2,721 s into the job. The verifier measured 73–79 s of finalization after
+  that line in the sibling jobs, which gives the re-projection: ≈ 2,800 s × 1.5 = 4,200 s → 01:10:00 (< 12 h).
+  - `out/` was empty, so nothing was moved aside.
+  - Gate: 6.9583 + 0 + 0.5833 = 7.5417 ≤ 20.0.
+  - MaxRSS 13.2 GiB, so not an out-of-memory kill.
+
+Neither retry failed again, so no line is INCONCLUSIVE.
 
 **Ceiling headroom.** Charged **7.2479** of 20.0 node-h (**12.7521** unused). The largest committed
 worst case at any gate was B8's 17.6963 (2.3037 below the ceiling).
@@ -324,7 +385,11 @@ before binding, and the v1 binding cites the true value. Every sha in this REPOR
   `gatelog/`, `retries/`, `logs/` (every job's `.out`/`.err`), `out/` (every job's `xsec.root` and the G2 override),
   `preflight/`, `tmp/verify_deploy_v2.py` and `repo-meta/` (both `.deployed_commit` values). `SHA256SUMS.pscratch`
   (sha256 `b82a0e085fab914693291ddc2468a197315987e9c111b8c05491ef4bd3c7f33f`, 270 entries) was computed on the
-  pscratch originals; `sha256sum -c` on the CFS copies returned 0. The v2 deploy tarball (428 MB, reproducible by
+  pscratch originals, and `sha256sum -c` on the CFS copies returned 0.
+  - The directory holds 274 files. The four outside that list are `SHA256SUMS.pscratch` itself, `.filelist`
+    (its input list), and the two `repo-meta/` files.
+  - The `repo-meta/` files are copies of `.deployed_commit` (v1 `92b0b466…`, v2 `a2ea0d6a…`). The verifier checked
+    their contents by hand. The v2 deploy tarball (428 MB, reproducible by
   `git archive a2ea0d6a`) was not copied.
 - **In this repository:** [`evidence/results/`](evidence/results/) (every analysis JSON and its stdout),
   [`evidence/gatelog/`](evidence/gatelog/) (every gate pre-check and submit printout) and
@@ -349,12 +414,46 @@ before binding, and the v1 binding cites the true value. Every sha in this REPOR
 - P1 has 20 replicas per arm: the median ratios carry the jackknife SE above; per-cell ratios carry ≈ 9% SE each
   (median per-cell jackknife SE 0.094 and 0.068).
 - P3's comparisons have no written criterion (DESIGN §7); its cost is the measured outcome.
-- Unit costs are from one 2.5-day window on shared nodes. The P1 replicas spread 3× (649–2,003 s) and `P1_unit`
-  ran 1,930 s (timed out) then 715 s; no cause is diagnosed (other users' jobs shared some of the nodes, which is a
-  candidate, not a measured cause). S1–S5 carry the spread in their high edges.
+- Unit costs come from one 2.5-day window on shared nodes. No cause is diagnosed for their spread. Other users'
+  jobs overlapped some of the nodes; that is a candidate cause, not a measured one.
+  - The P1 replicas spread 3× (649–2,003 s).
+  - `P1_unit` ran 1,930 s (timed out), then 715 s.
+- Only u_CV's high edge carries a measured spread. u_U (one run) and u_A (two runs) do not; §7's alternatives table
+  shows the effect of adding one.
 - σ_ML is the pinned LightGBM seed-scan σ and is not re-measured.
 - **Same-model caveat:** the executor, the director, the P1 builder and the verifier are all Claude Opus 5.5.
 
 ## 12. Independent review
 
-Pending: one fresh read-only verifier (Claude Opus 5.5) reviews this REPORT at its commit; its verdict and the dispositions are recorded here.
+One fresh read-only verifier (Claude Opus 5.5) reviewed this REPORT at `c740a9a9` in its own detached worktree
+(`git-dir` ≠ `git-common-dir`), re-measuring from `sacct`, the cluster namespace, the CFS copy and git. **Verdict:
+APPROVE WITH CHANGES, 3 MATERIAL, 10 MINOR.**
+
+It confirmed the following:
+- all 75 `sacct` rows, with 0 field mismatches, and the 7.2479 total;
+- every gate's arithmetic and its ledger count; the repo gate logs are byte-identical to the cluster's;
+- every number, verdict and sha256 in §1–§2, on the repo, pscratch and CFS copies, and the routing;
+- both retries against the rule;
+- the four bound digests, the deployed v1 and v2 trees against the manifest (no change after deployment), and the
+  reproducible deploy tarball;
+- `sha256sum -c` of the CFS copy;
+- every item the grant's record row requires, including the sha correction (`git rev-parse 92b0b466`).
+
+| finding | disposition |
+|---|---|
+| M1 the `P1_unit` retry (submitted 09:10:19) predates the recap record it cited (committed 09:12:19, merged 09:13:13) | §3 and §8 now give the order with times. The authorities at submission were the grant's committed "attempts" row and the director's ruling relayed at 09:09:53; the recap record confirmed the retry afterwards |
+| M2 the S1–S5 basis was unstated: u_U, u_U,sel and u_A were measured at 128 shared CPUs (0.5 node billing), not on a full node; and "high edges carry the spread" overclaimed | §7 states the shared-QOS assumption and that the runs were not faster. It adds a table for regular nodes and for a × 1.85 spread on u_U and u_A. §11 limits the spread claim to u_CV |
+| M3 P3's active-vs-dump difference was attributed to the input without evidence | §2 now says the 0.7–1.0 σ_ML median is the trainer-noise scale and attributes none of it to the input |
+| m1 the outage window conflicted with `sacct` (jobs started at 21:08) | §3: outage 17:03–21:08; 15:48 is the last job's end |
+| m2 the timeline mixed start and submit times | §3 lists submit times and says so |
+| m3 "like-for-like" mislabel; uncited pre-B4 condition | §3 uses the recap record's wording and names the source (a relayed message, not a committed record) |
+| m4 co-tenancy record missing; `nid004107` claim uncited | §3 gives the retry node's recorded co-tenancy and the `sacct -a -N nid004107` count |
+| m5 "low edge = mean" was mislabelled; u_A's mean left out the slowest attempt | §7: the mean is called the expected cost, and u_A's mean with the re-projection (0.3491) is stated |
+| m6 P1 wording ("raises σ by 3.2%", "resolved") | §2 names the statistic, calls the 2.1 SE an indication, and contrasts it with the 1.057 ratio of arm medians |
+| m7 K2's resolution was not stated | §2 adds a resolution paragraph: r3 against the noise-only ≈ 0.95, and the anti-correlated seed patterns |
+| m8 "first unfolded measurement" overclaimed | §2: one seed, diagnostic, no CV shift computed |
+| m9 durable-copy coverage (274 files vs 270 checksummed) | header and §10 state the coverage |
+| m10 the P3 re-projection basis was not shown; `P1_unit` `out/` state was not stated | §8 gives the 2,721 s `[CHECK]` mtime and the verifier's 73–79 s finalization; §3 and §8 state that `out/` was empty |
+
+The verifier is the same model as the executor and the director, so its blind spots may be correlated with
+theirs.
