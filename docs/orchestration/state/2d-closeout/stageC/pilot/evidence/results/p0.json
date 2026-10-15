@@ -1,0 +1,42 @@
+{
+ "P0": "PASS",
+ "P0-1_default_vs_L0": {
+  "argmax_globalid": 96,
+  "cells_over_tol": [],
+  "exactly_equal_cells": 3,
+  "integral_rel_diff": 8.43769498715119e-15,
+  "max_rel_diff_cells": 9.348077867343818e-14,
+  "median_rel_diff_cells": 9.103828801926284e-15,
+  "n_cells": 205,
+  "n_cells_over_tol": 0,
+  "tolerance": 1e-08,
+  "verdict": "PASS"
+ },
+ "P0-2_derived_vs_default": {
+  "argmax_globalid": 171,
+  "cells_over_tol": [],
+  "exactly_equal_cells": 0,
+  "integral_rel_diff": 7.120970479945754e-13,
+  "max_rel_diff_cells": 1.3641754392779148e-11,
+  "median_rel_diff_cells": 5.8828497628837795e-12,
+  "n_cells": 205,
+  "n_cells_over_tol": 0,
+  "tolerance": 1e-08,
+  "verdict": "PASS"
+ },
+ "item": "P0",
+ "pins_failed": {},
+ "provenance": {
+  "default": {
+   "driverSha256": "74a4ed69c3fa9c4ae5b6866f36343212b8d3f903fddde6c7bd40c382c1167d56",
+   "omnifoldHelperSha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
+   "runConfig_mismatch": {}
+  },
+  "derived": {
+   "driverSha256": "74a4ed69c3fa9c4ae5b6866f36343212b8d3f903fddde6c7bd40c382c1167d56",
+   "omnifoldHelperSha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
+   "runConfig_mismatch": {}
+  },
+  "ok": true
+ }
+}

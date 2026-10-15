@@ -1,0 +1,81 @@
+{
+ "BeamAngleX0": {
+  "active_file": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root",
+   "sha256_SHA256SUMS": "38b9fc307eabd864cd0fd663679b51fb2e6d064672410af6b3cf8b0a7e161ed5"
+  },
+  "outcome": "MEASURED",
+  "provenance": {
+   "driverSha256": "74a4ed69c3fa9c4ae5b6866f36343212b8d3f903fddde6c7bd40c382c1167d56",
+   "ok": true,
+   "omnifoldHelperSha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
+   "runConfig_mismatch": {}
+  },
+  "vs_july_dump": {
+   "over_sigma_band_july_pair": {
+    "max": 1423.546816327327,
+    "median": 1.044862850245902,
+    "p84": 2.953914034480565
+   },
+   "over_sigma_ml": {
+    "max": 5.272737969426816,
+    "median": 1.012160907230558,
+    "p84": 2.3854182241929687
+   },
+   "rel": {
+    "max": 0.014379574359131153,
+    "median": 0.001810455446809345,
+    "p84": 0.004990246202933477
+   }
+  }
+ },
+ "MINOS0": {
+  "active_file": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_0.root",
+   "sha256_SHA256SUMS": "f105f68193cc80d125fe272588d3223e9df57cd2e9f720e0853dbd712f52a87a"
+  },
+  "outcome": "MEASURED",
+  "provenance": {
+   "driverSha256": "74a4ed69c3fa9c4ae5b6866f36343212b8d3f903fddde6c7bd40c382c1167d56",
+   "ok": true,
+   "omnifoldHelperSha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
+   "runConfig_mismatch": {}
+  },
+  "vs_P2_MINOS0def_same_driver_dump": {
+   "over_sigma_band_july_pair": {
+    "max": 243.89325494109676,
+    "median": 0.06737386984982943,
+    "p84": 0.2590379096398594
+   },
+   "over_sigma_ml": {
+    "max": 5.023577783140379,
+    "median": 0.737500090427671,
+    "p84": 1.6755245558878629
+   },
+   "rel": {
+    "max": 0.014540471983999586,
+    "median": 0.0013231710677643316,
+    "p84": 0.0035981382651470335
+   }
+  },
+  "vs_july_dump": {
+   "over_sigma_band_july_pair": {
+    "max": 243.89325494693685,
+    "median": 0.0673738698508423,
+    "p84": 0.2590379096343125
+   },
+   "over_sigma_ml": {
+    "max": 5.023577783167651,
+    "median": 0.7375000904544753,
+    "p84": 1.6755245558772454
+   },
+   "rel": {
+    "max": 0.014540471983971976,
+    "median": 0.0013231710677965617,
+    "p84": 0.0035981382651519736
+   }
+  }
+ },
+ "item": "P3",
+ "pins_failed": {}
+}

@@ -1,0 +1,43 @@
+   59733771 2dc_C_P0_default COMPLETED charged 0.0649
+   59733772 2dc_C_P0_derived COMPLETED charged 0.1007
+   59734955 2dc_C_P2_NormDISCC0 COMPLETED charged 0.1393
+   59734956 2dc_C_P2_MaRES0 COMPLETED charged 0.1485
+   59734957 2dc_C_P2_Flux23 COMPLETED charged 0.1619
+   59734959 2dc_C_P2_MINOS0 COMPLETED charged 0.1189
+   59734961 2dc_C_P2_MINOS0def COMPLETED charged 0.3468
+   59734962 2dc_C_P1_unit TIMEOUT charged 0.134
+   59740518 2dc_C_P1_unit COMPLETED charged 0.0497
+   59747065 2dc_C_G2_on COMPLETED charged 0.2232
+   59753246 2dc_C_G2_off_s43 PENDING in-flight at cap 0.3333
+   59753248 2dc_C_G2_on_s43 PENDING in-flight at cap 0.625
+GATE completed 1.4879 + in-flight at cap 0.9583 + batch 3.6250 = 6.0713 vs ceiling 20.0
++ sbatch --job-name=2dc_C_P1_fixed_01 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753253 
++ sbatch --job-name=2dc_C_P1_fixed_02 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753254 
++ sbatch --job-name=2dc_C_P1_fixed_03 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753255 
++ sbatch --job-name=2dc_C_P1_fixed_04 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753256 
++ sbatch --job-name=2dc_C_P1_fixed_05 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753257 
++ sbatch --job-name=2dc_C_P1_joint_01 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753258 
++ sbatch --job-name=2dc_C_P1_joint_02 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753259 
++ sbatch --job-name=2dc_C_P1_joint_03 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753260 
++ sbatch --job-name=2dc_C_P1_joint_04 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753261 
++ sbatch --job-name=2dc_C_P1_joint_05 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753263 
++ sbatch --job-name=2dc_C_P1_bkg_01 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753264 
++ sbatch --job-name=2dc_C_P1_bkg_02 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753265 
++ sbatch --job-name=2dc_C_P1_bkg_03 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753267 
++ sbatch --job-name=2dc_C_P1_bkg_04 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753268 
++ sbatch --job-name=2dc_C_P1_bkg_05 --qos=shared --cpus-per-task=64 --mem=121920M --time=00:58:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753269 

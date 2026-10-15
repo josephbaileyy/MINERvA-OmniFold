@@ -1,0 +1,10 @@
+   59733771 2dc_C_P0_default COMPLETED charged 0.0649
+   59733772 2dc_C_P0_derived COMPLETED charged 0.1007
+   59734955 2dc_C_P2_NormDISCC0 COMPLETED charged 0.1393
+   59734956 2dc_C_P2_MaRES0 COMPLETED charged 0.1485
+   59734957 2dc_C_P2_Flux23 COMPLETED charged 0.1619
+   59734959 2dc_C_P2_MINOS0 COMPLETED charged 0.1189
+   59734961 2dc_C_P2_MINOS0def COMPLETED charged 0.3468
+   59734962 2dc_C_P1_unit TIMEOUT charged 0.134
+   59740518 2dc_C_P1_unit COMPLETED charged 0.0497
+GATE completed 1.2647 + in-flight at cap 0.0000 + batch 0.6250 = 1.8897 vs ceiling 20.0
