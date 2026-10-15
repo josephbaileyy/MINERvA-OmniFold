@@ -53,5 +53,29 @@ a non-purged copy on CFS. Every destination file equals `ANATUPLE-SHA256.tsv` by
 
 - **Ownership and permissions.** `rsync -a` kept the source group `josephrb` and mode `r--r-----` on the files. So
   other m3246 members, Ben included, cannot read them. Making them group-readable would take
-  `chgrp -R m3246` plus `chmod g+rX` by Joseph's account. That is not done, and it is Joseph's choice.
+  `chgrp -R m3246` plus `chmod g+rX` by Joseph's account. **Done 2026-10-15 (§4).**
 - **Single copy.** CFS has no tape copy of these files. NERSC CFS snapshots are short-term, not an archive.
+
+## 4. Group read access (2026-10-15)
+
+**Authority.** Joseph, 2026-10-15, leaving it to the director: "up to you whether you want to make the copy
+readable".
+
+**Why the director did it.**
+- The sibling preservation folders, `2d-closeout-stageC-inputs-20261012/` and `mnv-p3f-pet-fullevent-final/`, are
+  already group `m3246` and group-readable.
+- The files are MINERvA open data.
+- The Stage D record found no custodian inside the single `josephrb` account. Group read lets another m3246 member,
+  Ben among them, recover the copy.
+
+**What was run** (saul login node, 17:04:51Z): in `mc-1A-preservation-20261014/`, `chgrp -R m3246 .` and then
+`chmod -R g+rX .`.
+
+**Result:**
+- all 41 files are `-r--r----- josephrb m3246`, and the 4 directories are group `m3246` with group `r-x`;
+- `find -perm /222` finds nothing, so nothing is writable;
+- the per-file size and mtime listings taken before and after are byte-identical (`cmp`), so the verified content
+  of §1 is untouched. The ctime changed.
+
+Others outside the group still cannot read the files.
+
