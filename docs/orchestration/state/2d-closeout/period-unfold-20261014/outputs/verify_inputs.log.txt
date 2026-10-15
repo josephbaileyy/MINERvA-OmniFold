@@ -1,0 +1,40 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[verify] read 1A
+[verify] read 1B
+[verify] read 1C
+[verify] read 1D
+[verify] read 1E
+[verify] read 1F
+[verify] read 1G
+[verify] read 1L
+[verify] read 1M
+[verify] read 1N
+[verify] read 1O
+[verify] read 1P
+[verify] PA: POT d=5.652073e+20 mc=2.548172e+21 scale=0.221809 flux=8.7218917e-03
+[verify] PB: POT d=3.090670e+20 mc=1.551541e+21 scale=0.199200 flux=8.8079720e-03
+[verify] PC: POT d=1.831199e+20 mc=8.784851e+20 scale=0.208450 flux=8.6851005e-03
+[verify] ALL: POT d=1.057394e+21 mc=4.978198e+21 scale=0.212405 flux=8.7406807e-03
+{
+ "verdict": "PASS",
+ "fails": [],
+ "data_pot_share": {
+  "PA": 0.53452845388266,
+  "PB": 0.29229119473482207,
+  "PC": 0.1731803513825179
+ },
+ "mc_signal_share": {
+  "PA": 0.5112481762439601,
+  "PB": 0.3112414363338932,
+  "PC": 0.17751038742214664
+ }
+}
+rc=0

@@ -1,0 +1,19 @@
+# sacct unit-cost basis, queried 2026-10-15T04:01:22Z on login29
+# sacct -X -n -P -j <ids> -o JobID,JobName%40,Elapsed,ElapsedRaw,NCPUS,NNodes,QOS,AllocTRES%80,State,Start
+53474290|unfold_MEHFC_uni_full_CV|00:35:37|2137|256|1|regular_1|billing=256,cpu=256,energy=704642,mem=487802M,node=1|COMPLETED|2026-05-27T04:23:15
+59660487|xrl_L0_a1|00:13:56|836|64|1|shared|billing=64,cpu=64,energy=530990,mem=121920M,node=1|COMPLETED|2026-10-11T01:24:41
+59733771|2dc_C_P0_default|00:15:35|935|64|1|shared|billing=64,cpu=64,energy=542561,mem=121920M,node=1|COMPLETED|2026-10-13T06:15:18
+59733772|2dc_C_P0_derived|00:24:10|1450|64|1|shared|billing=64,cpu=64,energy=867070,mem=121920M,node=1|COMPLETED|2026-10-13T06:19:37
+59753253|2dc_C_P1_fixed_01|00:14:54|894|64|1|shared|billing=64,cpu=64,energy=518208,mem=121920M,node=1|COMPLETED|2026-10-13T15:15:32
+59753254|2dc_C_P1_fixed_02|00:11:31|691|64|1|shared|billing=64,cpu=64,energy=421538,mem=121920M,node=1|COMPLETED|2026-10-13T15:15:32
+59753255|2dc_C_P1_fixed_03|00:11:08|668|64|1|shared|billing=64,cpu=64,energy=406309,mem=121920M,node=1|COMPLETED|2026-10-13T15:51:43
+59753256|2dc_C_P1_fixed_04|00:12:25|745|64|1|shared|billing=64,cpu=64,energy=442512,mem=121920M,node=1|COMPLETED|2026-10-13T16:09:38
+59753257|2dc_C_P1_fixed_05|00:15:34|934|64|1|shared|billing=64,cpu=64,energy=524452,mem=121920M,node=1|COMPLETED|2026-10-13T17:03:40
+59753274|2dc_C_P1_fixed_06|00:16:19|979|64|1|shared|billing=64,cpu=64,energy=597671,mem=121920M,node=1|COMPLETED|2026-10-14T05:33:25
+59753276|2dc_C_P1_fixed_07|00:12:08|728|64|1|shared|billing=64,cpu=64,energy=378613,mem=121920M,node=1|COMPLETED|2026-10-14T07:09:26
+59753278|2dc_C_P1_fixed_08|00:21:41|1301|64|1|shared|billing=64,cpu=64,energy=812294,mem=121920M,node=1|COMPLETED|2026-10-14T07:14:50
+59753280|2dc_C_P1_fixed_09|00:20:06|1206|64|1|shared|billing=64,cpu=64,energy=752192,mem=121920M,node=1|COMPLETED|2026-10-14T07:36:56
+59753281|2dc_C_P1_fixed_10|00:22:14|1334|64|1|shared|billing=64,cpu=64,energy=810923,mem=121920M,node=1|COMPLETED|2026-10-14T07:42:02
+59753300|2dc_C_P1_fixed_11|00:13:45|825|64|1|shared|billing=64,cpu=64,energy=500194,mem=121920M,node=1|COMPLETED|2026-10-14T14:25:53
+59753302|2dc_C_P1_fixed_12|00:16:09|969|64|1|shared|billing=64,cpu=64,energy=600633,mem=121920M,node=1|COMPLETED|2026-10-14T15:14:05
+59753304|2dc_C_P1_fixed_13|00:33:23|2003|64|1|shared|billing=64,cpu=64,energy=1137383,mem=121920M,node=1|COMPLETED|2026-10-14T15:15:26
