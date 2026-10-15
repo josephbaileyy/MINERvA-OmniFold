@@ -1,0 +1,120 @@
+--- 2d-unfolding/unfold_2d_omnifold_unbinned.py (74a4ed69)
++++ docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/driver_g2.py
+@@ -609,8 +609,17 @@
+ def collect_signal_arrays_2d(t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
+                               pot_scale, use_weights=False, verbose=False,
+                               universe_branch=None,
+-                              alt_universe_branch=None):
++                              alt_universe_branch=None,
++                              miss_weight_override=None):
+     """Read mc_signal_reco TTree, return dict of 2D arrays for OmniFold.
++
++    P5 diagnostic (stage package only, not the production driver): when
++    `miss_weight_override` is an array of length t_sig.GetEntries(), every entry
++    with a finite value replaces BOTH w_truth and w_reco of that row (before the
++    POT scale). It is built by build_miss_override.py: finite on the appended
++    truth-only miss rows, carrying the universe truth weight of the same event
++    from mc_truth_denom; NaN elsewhere. None (the default) leaves the loader
++    byte-for-byte on its production path.
+ 
+     When `universe_branch` is set to a (band, idx) tuple, the per-event
+     weights are read from `w_truth_<sanitized_band>_<idx>` and
+@@ -698,6 +707,11 @@
+     w_truth_list, w_reco_list = [], []
+     w_truth_alt_list, w_reco_alt_list = [], []
+     dropped, bad_w = 0, 0
++    n_override = 0
++    if miss_weight_override is not None and len(miss_weight_override) != t_sig.GetEntries():
++        raise RuntimeError(
++            f"[FAIL] miss_weight_override has {len(miss_weight_override)} entries, "
++            f"mc_signal_reco has {t_sig.GetEntries()}")
+ 
+     for i in range(t_sig.GetEntries()):
+         t_sig.GetEntry(i)
+@@ -709,6 +723,14 @@
+ 
+         wt = float(wt_arr[0]) if use_weights else 1.0
+         wr = float(wr_arr[0]) if use_weights else wt
++        if miss_weight_override is not None:
++            o = float(miss_weight_override[i])
++            if math.isfinite(o):
++                if passed:
++                    raise RuntimeError(f"[FAIL] miss_weight_override is finite on "
++                                       f"entry {i}, which has sim_pass=1")
++                wt = wr = o
++                n_override += 1
+         if not (math.isfinite(wt) and math.isfinite(wr) and
+                 0 <= wt < 1e4 and 0 <= wr < 1e4):
+             bad_w += 1
+@@ -752,6 +774,12 @@
+ 
+     if verbose:
+         print(f"[INFO] signal: kept={len(truth_pt_list)}, dropped={dropped}, bad_w={bad_w}")
++    if miss_weight_override is not None:
++        n_finite = int(np.isfinite(np.asarray(miss_weight_override, dtype=float)).sum())
++        print(f"[INFO] P5 miss_weight_override: replaced {n_override} of {n_finite} "
++              f"finite entries")
++        if n_override != n_finite:
++            raise RuntimeError("[FAIL] miss_weight_override: not every finite entry was applied")
+ 
+     out = {
+         "truth_pt": np.asarray(truth_pt_list, dtype=float),
+@@ -1508,6 +1536,12 @@
+                           "build). For d<=2 features the host-device "
+                           "transfer dominates; GPU wins at higher d. Ignored "
+                           "by 'exact' and 'hist'.")
++    ap.add_argument("--miss-weight-override", default=None, metavar="NPZ",
++                     help="P5 diagnostic only. An .npz from build_miss_override.py: "
++                          "per-entry universe truth weights for the appended "
++                          "truth-only miss rows of mc_signal_reco (NaN elsewhere). "
++                          "Requires --universe and --use-weights; the npz must name "
++                          "the same universe and entry count. Default: off.")
+     ap.add_argument("--branch-select", choices=BRANCH_SELECT_MODES, default="all",
+                      help="Which ROOT branches the four input loaders read. 'all' "
+                           "(default) leaves every branch active, as every earlier "
+@@ -1749,12 +1783,35 @@
+         universe_branch=universe_branch, **loader_select)
+ 
+     # --- Read signal MC arrays ---
++    p5_kw = {}
++    p5_prov = None
++    if args.miss_weight_override is not None:
++        import hashlib
++        import os
++        if universe_branch is None or not args.use_weights:
++            raise RuntimeError("[FAIL] --miss-weight-override needs --universe and --use-weights")
++        ov = np.load(args.miss_weight_override, allow_pickle=False)
++        want_uni = f"{universe_branch[0]}:{int(universe_branch[1])}"
++        if str(ov["universe"]) != want_uni:
++            raise RuntimeError(f"[FAIL] override universe {ov['universe']} != {want_uni}")
++        if int(ov["n_signal"]) != t_sig.GetEntries():
++            raise RuntimeError(f"[FAIL] override n_signal {int(ov['n_signal'])} != "
++                               f"{t_sig.GetEntries()}")
++        if (str(ov["omnifile"]) != os.path.realpath(args.omnifile)
++                or int(ov["omnifile_size"]) != os.path.getsize(args.omnifile)):
++            raise RuntimeError(f"[FAIL] override was built from {ov['omnifile']} "
++                               f"({int(ov['omnifile_size'])} B), not --omnifile {args.omnifile}")
++        p5_kw["miss_weight_override"] = np.asarray(ov["w_override"], dtype=float)
++        with open(args.miss_weight_override, "rb") as fh:
++            ov_sha = hashlib.sha256(fh.read()).hexdigest()
++        p5_prov = (f"{args.miss_weight_override} sha256={ov_sha} universe={want_uni}")
++        print(f"[INFO] P5: miss-row weights from {args.miss_weight_override} (sha256 {ov_sha})")
+     sig = call_loader(collect_signal_arrays_2d,
+                       t_sig, pt_lo, pt_hi, pz_lo, pz_hi,
+                       pot_scale, use_weights=args.use_weights,
+                       verbose=args.verbose,
+                       universe_branch=universe_branch,
+-                      alt_universe_branch=alt_universe_branch, **loader_select)
++                      alt_universe_branch=alt_universe_branch, **p5_kw, **loader_select)
+     if sig["truth_pt"].size == 0:
+         raise RuntimeError("No signal events for OmniFold")
+     if meas_pt.size == 0:
+@@ -2061,6 +2118,8 @@
+         sys.path.insert(0, _OF_PY)
+     from omnifold import OmniFold_helper_functions as ohf
+     provenance = run_provenance(args, sys.modules.get("omnifold"), driver_sha256)
++    if p5_prov is not None:
++        provenance.append(("p5MissWeightOverride", p5_prov))
+ 
+     print(f"[INFO] Running 2D OmniFold with {args.iters} iterations...")
+     print(f"[INFO] MC events: {sig['truth_pt'].shape[0]}, "

@@ -1,0 +1,88 @@
+{
+ "code_outside_package": {
+  "2d-unfolding/unfold_2d_omnifold_unbinned.py": "74a4ed69c3fa9c4ae5b6866f36343212b8d3f903fddde6c7bd40c382c1167d56",
+  "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/manifest/references.json": "af7d5a1935176367e3c6cff9c17986e8e4e5c15c91b75d73efb3ccec04b88c89",
+  "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_compare.py": "9e59c590cd33868bd619694ceff68adbed7cc4fa4dc05aeb1b3e76653e2e948b"
+ },
+ "external_pins": {
+  "E_U": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+   "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
+  },
+  "L0_reference": {
+   "path": "/pscratch/sd/j/josephrb/xr-linux-20261011/L0/a1/XR-L0.root",
+   "sha256": "751380245dbb27f67616ade8321d73274e0a5c0bb1344275fc3b67db2595aecc"
+  },
+  "active_files": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/SHA256SUMS",
+   "sha256": "per file in that list (= stageB/diagnostics/copy/SHA256SUMS.active.src)"
+  },
+  "cv_omnifile": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+   "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+  },
+  "flux_mc_file": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
+  },
+  "flux_universe_file": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root",
+   "sha256": "5eecae84509ba8ededbe8fdee63508d8e36cd057cc0547a940383f80248580eb"
+  },
+  "helper": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/python/omnifold.py",
+   "sha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+  },
+  "july_products": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/",
+   "sha256": "per file in analyze_pilot.py PIN and p2g2/select_flux.json"
+  },
+  "ml_covariance": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+   "sha256": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9"
+  },
+  "universe_omnifile": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "sha256": "220c479e (prefix; the full digest is recorded by preflight_uomni.sh)"
+  }
+ },
+ "package": {
+  "docs/orchestration/state/2d-closeout/stageC/pilot/DESIGN.md": "45f29c66936aa695391af480054838ae37d4a513e7c21faaf6d61b04ddf77310",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/analyze_pilot.py": "a9e1292ba55387410f61617a0c0bc92068ff5584261934b44c2f9d81878c3f75",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/evidence/binding-delta.txt": "e3d7d0f31535587e0eb5fa9198689507b669530aa4b1230fe966aa85af027c07",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/jobs.tsv": "1c30a50b5bf0fd8a8fec25d226113a130cd197847ed2347568f5ac2aefca0182",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/launch.py": "fa0b01675e2e99aa047b713dc6fdae99c5acce7a841027a5cbd6187ce4d858cf",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/make_manifest.py": "d8eb19a3b9aef1177d985b843368e7bcb82fdc8937464fd09364e364f221bee3",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/README.md": "ed63b337ddfea7f2aaca7574ea317a8367a2628d6a66d5487f67274a68bb9124",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/SHA256SUMS": "d4a83675794010e6b480f66740f398d16ce2c1caea0e81f6ac8806b69249a14a",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/analyze_p1.py": "cd9a1fc117f9f486251b8cf7f751ce09c86b9759794f71c9b8d8724ea80936d0",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/bkgvar_check.py": "deb2d2bb1d5899446c04d90f24b90164b1e6577c8d3956fa878bd0e94dd29f0f",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/driver_p1.py": "3056e625a22f2ee79621e515aa5a76a4685662ac6fc10ee7e832680dde087578",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/bkgvar_check.json": "961e987b616693517310d20f935960b8afea0e89457ecad4d3c9aaf6da31f997",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/bkgvar_check_stdout.txt": "a5b45961f2e668ed4f699eb1c879e05eab37f097f8f8960ce23b54f73c08e8b2",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/smoke_analyze_p1.json": "3a38f47538562d44370ed199466a79961b95926e8a9f1c39b6f97e7848f1ec88",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/test_noop_report.json": "24a9e152a98baba9f67d85fabdbb4ba3b9632c7fdb3d35ace29abe86bcbce14e",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/test_noop_stdout.txt": "dc4a5cf24370fc53f7790bda641e0bd234789a731fc3d0f12d3beb9617e71e3d",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/test_noop_workers/p1_bkg.json": "d163506f5a9495f4df46a45c8f2aca8fcd085636fb63dce3b66bc8427bd78391",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/test_noop_workers/p1_both.json": "a6a3970ac9613faf10c17aca32b21d6c3fb22628687bdf640caf1232f6d56ee1",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/test_noop_workers/p1_cv.json": "b9f4de8bcdfd22ee07611e1992d58b7782857610468d42798f0c4e2ac00c5b4d",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/test_noop_workers/p1_three.json": "86f6c75231d752e2ec3564007120bb6f9032b5256e9a5dbd2fc4d3d0a6887b66",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/test_noop_workers/p1_unit.json": "d0978a22c1f2765fc81af23f499895f1861e8615943824e4891aaa39def7f42a",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/test_noop_workers/prod_both.json": "96e5875b01b7a2907783aeaeeb798b659063d43a727fbabdfc5f2659f65188b2",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/test_noop_workers/prod_cv.json": "617719a31c67aafab83070b7dcc2d45e310fe4b7d2731e7c022b18d35a02b939",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/evidence/test_rows_mapping.json": "112928f21d5e99bb1364ec2f7c1528baaaa293c0fcf345b562a5a1c4dc00c5d0",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/patch.diff": "2cdac849478688920359d312f9a793ec39ff1dd7aaaefe65f973a6114b073905",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/smoke_analyze_p1.py": "ea6d255772f6f26899dc0ccccea677c2d2bf5491b192db750688a697d8146814",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/test_noop.py": "6b36401d96a4d2d3c8b746d1439f54b6979b9df8a16017c0fc1d4c3c1a6585ba",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/test_rows_mapping.py": "689ae47239f3913a2751339385c881ddb188ff4ef83c894975229b685e2ad6db",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/analyze_g2.py": "42c3d8a2cfc15d6f08f6b5954fe5e36228a446a3934e5de455b046e48427251f",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/build_miss_override.py": "7f346e1af1688b6a43be540ef2a8c6f8456d76a1ea965613abce17263739296b",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/driver_g2.py": "eb258cadfc2b0ab7191e400eb13564a2866d393e18b830c3f2d5a7d12349cc99",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/patch.diff": "c22c541e687011e92e8c4a429b50e6de99bfe45c0e701152e0b830efa5ecfe55",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/select_flux.json": "35ce6226116a0415255408e341b2ae4dafa8102830185c0eaf9b0b68aea1e0b0",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p2g2/select_flux.py": "5a675910f5e42686d48e7c7e3b80295e041f9724944c28bb7bd85ffab39a731c",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/preflight_uomni.sh": "6d42896d4f25ecce119f712f36c603ae04c91f4a11128a6d6404801dbabeaed9",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh": "507ff6a114458a58cebf09aceb540ea6e0ac23e2d5c286548f8f05a40e4c93fb"
+ },
+ "schema": "stagec-pilot-manifest/1"
+}

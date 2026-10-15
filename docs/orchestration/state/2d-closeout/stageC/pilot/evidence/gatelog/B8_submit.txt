@@ -1,0 +1,77 @@
+   59733771 2dc_C_P0_default COMPLETED charged 0.0649
+   59733772 2dc_C_P0_derived COMPLETED charged 0.1007
+   59734955 2dc_C_P2_NormDISCC0 COMPLETED charged 0.1393
+   59734956 2dc_C_P2_MaRES0 COMPLETED charged 0.1485
+   59734957 2dc_C_P2_Flux23 COMPLETED charged 0.1619
+   59734959 2dc_C_P2_MINOS0 COMPLETED charged 0.1189
+   59734961 2dc_C_P2_MINOS0def COMPLETED charged 0.3468
+   59734962 2dc_C_P1_unit TIMEOUT charged 0.134
+   59740518 2dc_C_P1_unit COMPLETED charged 0.0497
+   59747065 2dc_C_G2_on COMPLETED charged 0.2232
+   59753246 2dc_C_G2_off_s43 PENDING in-flight at cap 0.3333
+   59753248 2dc_C_G2_on_s43 PENDING in-flight at cap 0.625
+   59753253 2dc_C_P1_fixed_01 PENDING in-flight at cap 0.2417
+   59753254 2dc_C_P1_fixed_02 PENDING in-flight at cap 0.2417
+   59753255 2dc_C_P1_fixed_03 PENDING in-flight at cap 0.2417
+   59753256 2dc_C_P1_fixed_04 PENDING in-flight at cap 0.2417
+   59753257 2dc_C_P1_fixed_05 PENDING in-flight at cap 0.2417
+   59753258 2dc_C_P1_joint_01 PENDING in-flight at cap 0.2417
+   59753259 2dc_C_P1_joint_02 PENDING in-flight at cap 0.2417
+   59753260 2dc_C_P1_joint_03 PENDING in-flight at cap 0.2417
+   59753261 2dc_C_P1_joint_04 PENDING in-flight at cap 0.2417
+   59753263 2dc_C_P1_joint_05 PENDING in-flight at cap 0.2417
+   59753264 2dc_C_P1_bkg_01 PENDING in-flight at cap 0.2417
+   59753265 2dc_C_P1_bkg_02 PENDING in-flight at cap 0.2417
+   59753267 2dc_C_P1_bkg_03 PENDING in-flight at cap 0.2417
+   59753268 2dc_C_P1_bkg_04 PENDING in-flight at cap 0.2417
+   59753269 2dc_C_P1_bkg_05 PENDING in-flight at cap 0.2417
+   59753274 2dc_C_P1_fixed_06 PENDING in-flight at cap 0.2417
+   59753276 2dc_C_P1_fixed_07 PENDING in-flight at cap 0.2417
+   59753278 2dc_C_P1_fixed_08 PENDING in-flight at cap 0.2417
+   59753280 2dc_C_P1_fixed_09 PENDING in-flight at cap 0.2417
+   59753281 2dc_C_P1_fixed_10 PENDING in-flight at cap 0.2417
+   59753282 2dc_C_P1_joint_06 PENDING in-flight at cap 0.2417
+   59753283 2dc_C_P1_joint_07 PENDING in-flight at cap 0.2417
+   59753284 2dc_C_P1_joint_08 PENDING in-flight at cap 0.2417
+   59753285 2dc_C_P1_joint_09 PENDING in-flight at cap 0.2417
+   59753287 2dc_C_P1_joint_10 PENDING in-flight at cap 0.2417
+   59753290 2dc_C_P1_bkg_06 PENDING in-flight at cap 0.2417
+   59753291 2dc_C_P1_bkg_07 PENDING in-flight at cap 0.2417
+   59753292 2dc_C_P1_bkg_08 PENDING in-flight at cap 0.2417
+   59753293 2dc_C_P1_bkg_09 PENDING in-flight at cap 0.2417
+   59753294 2dc_C_P1_bkg_10 PENDING in-flight at cap 0.2417
+   59753300 2dc_C_P1_fixed_11 PENDING in-flight at cap 0.2417
+   59753302 2dc_C_P1_fixed_12 PENDING in-flight at cap 0.2417
+   59753304 2dc_C_P1_fixed_13 PENDING in-flight at cap 0.2417
+   59753305 2dc_C_P1_fixed_14 PENDING in-flight at cap 0.2417
+   59753306 2dc_C_P1_fixed_15 PENDING in-flight at cap 0.2417
+   59753308 2dc_C_P1_joint_11 PENDING in-flight at cap 0.2417
+   59753309 2dc_C_P1_joint_12 PENDING in-flight at cap 0.2417
+   59753311 2dc_C_P1_joint_13 PENDING in-flight at cap 0.2417
+   59753312 2dc_C_P1_joint_14 PENDING in-flight at cap 0.2417
+   59753313 2dc_C_P1_joint_15 PENDING in-flight at cap 0.2417
+   59753314 2dc_C_P1_bkg_11 PENDING in-flight at cap 0.2417
+   59753315 2dc_C_P1_bkg_12 PENDING in-flight at cap 0.2417
+   59753317 2dc_C_P1_bkg_13 PENDING in-flight at cap 0.2417
+   59753319 2dc_C_P1_bkg_14 PENDING in-flight at cap 0.2417
+   59753321 2dc_C_P1_bkg_15 PENDING in-flight at cap 0.2417
+   59753334 2dc_C_P1_fixed_16 PENDING in-flight at cap 0.2417
+   59753338 2dc_C_P1_fixed_17 PENDING in-flight at cap 0.2417
+   59753340 2dc_C_P1_fixed_18 PENDING in-flight at cap 0.2417
+   59753342 2dc_C_P1_fixed_19 PENDING in-flight at cap 0.2417
+   59753344 2dc_C_P1_fixed_20 PENDING in-flight at cap 0.2417
+   59753347 2dc_C_P1_joint_16 PENDING in-flight at cap 0.2417
+   59753350 2dc_C_P1_joint_17 PENDING in-flight at cap 0.2417
+   59753351 2dc_C_P1_joint_18 PENDING in-flight at cap 0.2417
+   59753352 2dc_C_P1_joint_19 PENDING in-flight at cap 0.2417
+   59753353 2dc_C_P1_joint_20 PENDING in-flight at cap 0.2417
+   59753354 2dc_C_P1_bkg_16 PENDING in-flight at cap 0.2417
+   59753356 2dc_C_P1_bkg_17 PENDING in-flight at cap 0.2417
+   59753357 2dc_C_P1_bkg_18 PENDING in-flight at cap 0.2417
+   59753358 2dc_C_P1_bkg_19 PENDING in-flight at cap 0.2417
+   59753360 2dc_C_P1_bkg_20 PENDING in-flight at cap 0.2417
+GATE completed 1.4879 + in-flight at cap 15.4583 + batch 0.7500 = 17.6963 vs ceiling 20.0
++ sbatch --job-name=2dc_C_P3_BeamAngleX0 --qos=shared --cpus-per-task=128 --mem=243840M --time=00:45:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753370 
++ sbatch --job-name=2dc_C_P3_MINOS0 --qos=shared --cpus-per-task=128 --mem=243840M --time=00:45:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/repo/docs/orchestration/state/2d-closeout/stageC/pilot/sbatch_pilot.sh
+Submitted batch job 59753421 

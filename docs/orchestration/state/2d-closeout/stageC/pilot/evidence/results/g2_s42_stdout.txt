@@ -1,0 +1,69 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+{
+ "gates": {
+  "ml_pinned": true,
+  "select_pinned": true,
+  "select_matches": true,
+  "G-a_override": true,
+  "G-b_max_abs_c_on_minus_1": 2.7200464103316335e-14,
+  "G-c_max_rel_c_off_vs_july": 0.0,
+  "G-u_universe": true,
+  "G-p_provenance": true,
+  "G-f_finite_r1_r3": true
+ },
+ "outcome": "MEASURED",
+ "routing": "NOT RESOLVED ABOVE TRAINER NOISE",
+ "confirm": null
+}
+{
+ "c_off_minus_1": {
+  "median": 0.017748936221102518,
+  "p84": 0.04098174955623225,
+  "max": 0.11820946277606503
+ },
+ "rel_change_b_over_a": {
+  "median": 0.0017294126210711195,
+  "p84": 0.005406407438035529,
+  "max": 0.07127582238598475
+ },
+ "r1_abs_d_over_sigma_band": {
+  "median": 0.040019700532813285,
+  "p84": 0.11345271893448101,
+  "max": 0.926996851980967
+ },
+ "r1_floored_cells": {
+  "median": 0.040019700532813285,
+  "p84": 0.11345271893448101,
+  "max": 0.926996851980967
+ },
+ "n_floored_cells": 205,
+ "r2_abs_d_over_universe_shift": {
+  "median": 0.018696170043731426,
+  "p84": 0.05861993803792063,
+  "max": 0.5188010695704494
+ },
+ "r3_abs_d_over_sigma_ml": {
+  "median": 0.9118429418245594,
+  "p84": 2.151074239387792,
+  "max": 9.267144007700297
+ },
+ "sigma_ml_over_sigma_band_median": 0.04287047020270095,
+ "integral_rel_change": 8.960289251526157e-05,
+ "corr_d_over_a_vs_c_off_minus_1": {
+  "pearson": 0.06303811872012555,
+  "spearman": -0.08841776824393029
+ },
+ "bridge_abs_a_minus_july_over_sigma_band": {
+  "median": 6.608093451771326e-13,
+  "p84": 1.5750595897318774e-12,
+  "max": 1.1610792642643852e-11
+ }
+}

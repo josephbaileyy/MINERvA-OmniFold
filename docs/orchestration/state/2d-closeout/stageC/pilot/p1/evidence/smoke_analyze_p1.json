@@ -1,0 +1,95 @@
+{
+ "PASS": true,
+ "a_complete": {
+  "arms": {
+   "bkg": "OK",
+   "fixed": "OK",
+   "joint": "OK"
+  },
+  "b_eq_1": "PASS",
+  "b_eq_1_max_rel": 0.0,
+  "cells_equal_E_C": true,
+  "n_cells": 205,
+  "ratios": {
+   "sigma_bkg_over_sigma_fixed": {
+    "median": 0.19851332786740214,
+    "median_jackknife_se": 0.0074035263328894865,
+    "status": "MEASURED"
+   },
+   "sigma_joint_over_sigma_fixed": {
+    "median": 1.0320929267316878,
+    "median_jackknife_se": 0.005433445568470082,
+    "status": "MEASURED"
+   }
+  }
+ },
+ "b_missing_fixed_boot5": {
+  "arms": {
+   "bkg": "OK",
+   "fixed": "INCONCLUSIVE",
+   "joint": "OK"
+  },
+  "b_eq_1": "PASS",
+  "b_eq_1_max_rel": 0.0,
+  "cells_equal_E_C": true,
+  "n_cells": 205,
+  "ratios": {
+   "sigma_bkg_over_sigma_fixed": {
+    "median": null,
+    "median_jackknife_se": null,
+    "status": "INCONCLUSIVE"
+   },
+   "sigma_joint_over_sigma_fixed": {
+    "median": null,
+    "median_jackknife_se": null,
+    "status": "INCONCLUSIVE"
+   }
+  }
+ },
+ "c_joint_boot3_seed43": {
+  "arms": {
+   "bkg": "OK",
+   "fixed": "OK",
+   "joint": "INCONCLUSIVE"
+  },
+  "b_eq_1": "PASS",
+  "b_eq_1_max_rel": 0.0,
+  "cells_equal_E_C": true,
+  "n_cells": 205,
+  "ratios": {
+   "sigma_bkg_over_sigma_fixed": {
+    "median": 0.19851332786740214,
+    "median_jackknife_se": 0.0074035263328894865,
+    "status": "MEASURED"
+   },
+   "sigma_joint_over_sigma_fixed": {
+    "median": null,
+    "median_jackknife_se": null,
+    "status": "INCONCLUSIVE"
+   }
+  }
+ },
+ "d_unit_scaled_1e-6": {
+  "arms": {
+   "bkg": "OK",
+   "fixed": "OK",
+   "joint": "OK"
+  },
+  "b_eq_1": "FAIL",
+  "b_eq_1_max_rel": 9.999999999177334e-07,
+  "cells_equal_E_C": true,
+  "n_cells": 205,
+  "ratios": {
+   "sigma_bkg_over_sigma_fixed": {
+    "median": 0.19851332786740214,
+    "median_jackknife_se": 0.0074035263328894865,
+    "status": "MEASURED"
+   },
+   "sigma_joint_over_sigma_fixed": {
+    "median": 1.0320929267316878,
+    "median_jackknife_se": 0.005433445568470082,
+    "status": "MEASURED"
+   }
+  }
+ }
+}

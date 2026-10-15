@@ -1,0 +1,238 @@
+{
+ "tag": "_s43",
+ "universe": "Flux:23",
+ "inputs": {
+  "a": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/out/2dc_C_G2_off_s43/xsec.root",
+   "sha256": "91d03f2d36f7ab256eb98a1cf7c81b59fd6e839f8e7c6465f4ed21220b6b9e1d"
+  },
+  "b": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/out/2dc_C_G2_on_s43/xsec.root",
+   "sha256": "6ca2d8ba231b8976238ae302ce2ee37ed3f7924d42ed7788dab71cc6a7fca38b"
+  },
+  "cv": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+   "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
+  },
+  "j0": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_Flux_23.root",
+   "sha256": "eb8414af4d9c06e4be80fc190ddfbd8734e0470b7f6e30c1790cebe6cb171141"
+  },
+  "ml": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+   "sha256": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9"
+  },
+  "select": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/select/select_flux.json",
+   "sha256": "35ce6226116a0415255408e341b2ae4dafa8102830185c0eaf9b0b68aea1e0b0"
+  }
+ },
+ "gates": {
+  "ml_pinned": true,
+  "select_pinned": true,
+  "select_matches": true,
+  "G-a_override": true,
+  "G-b_max_abs_c_on_minus_1": 2.7200464103316335e-14,
+  "G-c_max_rel_c_off_vs_july": 0.0,
+  "G-u_universe": true,
+  "G-p_provenance": true,
+  "G-f_finite_r1_r3": true
+ },
+ "universe_recorded": {
+  "a": "Flux:23",
+  "b": "Flux:23"
+ },
+ "provenance": {
+  "a": {
+   "driverSha256": "74a4ed69c3fa9c4ae5b6866f36343212b8d3f903fddde6c7bd40c382c1167d56",
+   "omnifoldHelperSha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
+   "p5MissWeightOverride": null
+  },
+  "b": {
+   "driverSha256": "eb258cadfc2b0ab7191e400eb13564a2866d393e18b830c3f2d5a7d12349cc99",
+   "omnifoldHelperSha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
+   "p5MissWeightOverride": "/pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/out/2dc_C_G2_override/override_Flux_23.npz sha256=440893620821fc841b49262d9af13ba884abe796bc40a56aa8a6cba533f8127e universe=Flux:23"
+  },
+  "runConfig_a": {
+   "bkg_mode": "purity",
+   "bootstrap_seed": null,
+   "bootstrap_streams": "both",
+   "branch_select": "derived",
+   "closure": false,
+   "closure_alt_universe": null,
+   "closure_hidden_dpt": false,
+   "closure_hidden_dpt_amplitude": 0.3,
+   "closure_hidden_dpt_center": 0.1,
+   "closure_hidden_dpt_sigma": 0.05,
+   "closure_reweight": null,
+   "closure_reweight_alpha": 0.1,
+   "closure_reweight_amplitude": 0.2,
+   "closure_reweight_pt0": 0.4,
+   "closure_reweight_pz_ref": 5.0,
+   "closure_reweight_sigma": 0.1,
+   "device": "cpu",
+   "estimator": "lgbm",
+   "flux_hist": "pTmu_reweightedflux_integrated",
+   "flux_universe_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root",
+   "iters": 5,
+   "mcfile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "omnifile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "out": "/pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/out/2dc_C_G2_off_s43/xsec.root",
+   "seed": 43,
+   "universe": "Flux:23",
+   "use_weights": true,
+   "verbose": true
+  },
+  "runConfig_b": {
+   "bkg_mode": "purity",
+   "bootstrap_seed": null,
+   "bootstrap_streams": "both",
+   "branch_select": "derived",
+   "closure": false,
+   "closure_alt_universe": null,
+   "closure_hidden_dpt": false,
+   "closure_hidden_dpt_amplitude": 0.3,
+   "closure_hidden_dpt_center": 0.1,
+   "closure_hidden_dpt_sigma": 0.05,
+   "closure_reweight": null,
+   "closure_reweight_alpha": 0.1,
+   "closure_reweight_amplitude": 0.2,
+   "closure_reweight_pt0": 0.4,
+   "closure_reweight_pz_ref": 5.0,
+   "closure_reweight_sigma": 0.1,
+   "device": "cpu",
+   "estimator": "lgbm",
+   "flux_hist": "pTmu_reweightedflux_integrated",
+   "flux_universe_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root",
+   "iters": 5,
+   "mcfile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "miss_weight_override": "/pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/out/2dc_C_G2_override/override_Flux_23.npz",
+   "omnifile": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "out": "/pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/out/2dc_C_G2_on_s43/xsec.root",
+   "seed": 43,
+   "universe": "Flux:23",
+   "use_weights": true,
+   "verbose": true
+  }
+ },
+ "metrics": {
+  "c_off_minus_1": {
+   "median": 0.017748936221102518,
+   "p84": 0.04098174955623225,
+   "max": 0.11820946277606503
+  },
+  "rel_change_b_over_a": {
+   "median": 0.0018886974674104146,
+   "p84": 0.005423786246857725,
+   "max": 0.03907781061332372
+  },
+  "r1_abs_d_over_sigma_band": {
+   "median": 0.04164279342329753,
+   "p84": 0.12879722282833142,
+   "max": 0.5679720342867737
+  },
+  "r1_floored_cells": {
+   "median": 0.04164279342329753,
+   "p84": 0.12879722282833142,
+   "max": 0.5679720342867737
+  },
+  "n_floored_cells": 205,
+  "r2_abs_d_over_universe_shift": {
+   "median": 0.017850715346875833,
+   "p84": 0.06716466578760412,
+   "max": 0.9815658151686836
+  },
+  "r3_abs_d_over_sigma_ml": {
+   "median": 0.8530721636973596,
+   "p84": 2.253976224556161,
+   "max": 12.519330675100234
+  },
+  "sigma_ml_over_sigma_band_median": 0.04287047020270095,
+  "integral_rel_change": 5.306798274280627e-05,
+  "corr_d_over_a_vs_c_off_minus_1": {
+   "pearson": -0.11143950260286387,
+   "spearman": -0.07914223231324259
+  },
+  "bridge_abs_a_minus_july_over_sigma_band": {
+   "median": 0.03188705287467991,
+   "p84": 0.10128629865000863,
+   "max": 0.6268078334156437
+  }
+ },
+ "outcome": "MEASURED",
+ "routing": "NOT RESOLVED ABOVE TRAINER NOISE",
+ "seed42": {
+  "outcome": "MEASURED",
+  "routing": "NOT RESOLVED ABOVE TRAINER NOISE",
+  "gates": {
+   "ml_pinned": true,
+   "select_pinned": true,
+   "select_matches": true,
+   "G-a_override": true,
+   "G-b_max_abs_c_on_minus_1": 2.7200464103316335e-14,
+   "G-c_max_rel_c_off_vs_july": 0.0,
+   "G-u_universe": true,
+   "G-p_provenance": true,
+   "G-f_finite_r1_r3": true
+  },
+  "metrics": {
+   "c_off_minus_1": {
+    "median": 0.017748936221102518,
+    "p84": 0.04098174955623225,
+    "max": 0.11820946277606503
+   },
+   "rel_change_b_over_a": {
+    "median": 0.0017294126210711195,
+    "p84": 0.005406407438035529,
+    "max": 0.07127582238598475
+   },
+   "r1_abs_d_over_sigma_band": {
+    "median": 0.040019700532813285,
+    "p84": 0.11345271893448101,
+    "max": 0.926996851980967
+   },
+   "r1_floored_cells": {
+    "median": 0.040019700532813285,
+    "p84": 0.11345271893448101,
+    "max": 0.926996851980967
+   },
+   "n_floored_cells": 205,
+   "r2_abs_d_over_universe_shift": {
+    "median": 0.018696170043731426,
+    "p84": 0.05861993803792063,
+    "max": 0.5188010695704494
+   },
+   "r3_abs_d_over_sigma_ml": {
+    "median": 0.9118429418245594,
+    "p84": 2.151074239387792,
+    "max": 9.267144007700297
+   },
+   "sigma_ml_over_sigma_band_median": 0.04287047020270095,
+   "integral_rel_change": 8.960289251526157e-05,
+   "corr_d_over_a_vs_c_off_minus_1": {
+    "pearson": 0.06303811872012555,
+    "spearman": -0.08841776824393029
+   },
+   "bridge_abs_a_minus_july_over_sigma_band": {
+    "median": 6.608093451771326e-13,
+    "p84": 1.5750595897318774e-12,
+    "max": 1.1610792642643852e-11
+   }
+  }
+ },
+ "confirm": {
+  "seed42_outcome": "MEASURED",
+  "seed42_routing": "NOT RESOLVED ABOVE TRAINER NOISE",
+  "statistic": "z = d / sigma_ML",
+  "n_cells": 205,
+  "pearson_z43_z42_floored": -0.29470516525566187,
+  "spearman_z43_z42_floored": -0.11793818166622556,
+  "r1_seed_mean": {
+   "median": 0.026236830809002062,
+   "max_floored": 0.3755415372617577,
+   "rule_holds": true
+  },
+  "verdict": "NOT CONFIRMED",
+  "final_routing": "NOT RESOLVED ABOVE TRAINER NOISE"
+ }
+}
