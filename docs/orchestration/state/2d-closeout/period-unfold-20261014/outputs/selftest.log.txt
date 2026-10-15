@@ -1,0 +1,79 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+period-unfold analysis: 205 cells used (0 dropped), 2 bootstrap pairs
+comparison            integral%  chi2_205  chi2_pz16  chi2_pT14 | noise E[chi2] 205/pz/pT | step%  sigma%  z
+raw_PB/PA                +0.000      0.00      0.00      0.00 |    0.00   0.00   0.00 |  +0.00   0.00 None
+raw_PC/PA                +0.000      0.00      0.00      0.00 |    0.00   0.00   0.00 |  +0.00   0.00 None
+raw_PC/PB                +0.000      0.00      0.00      0.00 |    0.00   0.00   0.00 |  +0.00   0.00 None
+raw_PA/POOL              +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+raw_PB/POOL              +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+raw_PC/POOL              +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+raw_POOL/PA              +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+dr_PB/PA                 +0.000      0.00      0.00      0.00 |    0.00   0.00   0.00 |  +0.00   0.00 None
+dr_PC/PA                 +0.000      0.00      0.00      0.00 |    0.00   0.00   0.00 |  +0.00   0.00 None
+dr_PC/PB                 +0.000      0.00      0.00      0.00 |    0.00   0.00   0.00 |  +0.00   0.00 None
+dr_PA/POOL               +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+dr_PB/POOL               +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+dr_PC/POOL               +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+dr_POOL/PA               +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+bias_PB                  +0.000      0.00      0.00      0.00 |    0.00   0.00   0.00 |       
+bias_PC                  +0.000      0.00      0.00      0.00 |    0.00   0.00   0.00 |       
+mc_PB/PA                 +0.000      0.00      0.00      0.00 |     nan    nan    nan |  +0.00
+mc_PC/PA                 +0.000      0.00      0.00      0.00 |     nan    nan    nan |  +0.00
+J36                      -0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |       
+J36_potw                 -0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |       
+period-unfold analysis: 205 cells used (0 dropped), 1 bootstrap pairs
+comparison            integral%  chi2_205  chi2_pz16  chi2_pT14 | noise E[chi2] 205/pz/pT | step%  sigma%  z
+raw_PB/PA                -1.352   1285.78    227.51      1.54 |    0.00   0.00   0.00 |  +6.12   0.00 None
+raw_PC/PA                +0.000      0.00      0.00      0.00 |    0.00   0.00   0.00 |  +0.00   0.00 None
+raw_PC/PB                +1.400   1231.58    216.27      1.51 |    0.00   0.00   0.00 |  -5.77   0.00 None
+raw_PA/POOL              +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+raw_PB/POOL              -1.352   1285.78    227.51      1.54 |    5.38   0.17   0.17 |  +6.12   0.00 None
+raw_PC/POOL              +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+raw_POOL/PA              +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+dr_PB/PA                 -1.352   1285.78    227.51      1.54 |    0.00   0.00   0.00 |  +6.12   0.00 None
+dr_PC/PA                 +0.000      0.00      0.00      0.00 |    0.00   0.00   0.00 |  +0.00   0.00 None
+dr_PC/PB                 +1.400   1231.58    216.27      1.51 |    0.00   0.00   0.00 |  -5.77   0.00 None
+dr_PA/POOL               +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+dr_PB/POOL               -1.352   1285.78    227.51      1.54 |    5.38   0.17   0.17 |  +6.12   0.00 None
+dr_PC/POOL               +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+dr_POOL/PA               +0.000      0.00      0.00      0.00 |    5.38   0.17   0.17 |  +0.00   0.00 None
+bias_PB                  -0.451    142.86     25.28      0.17 |    0.00   0.00   0.00 |       
+bias_PC                  +0.000      0.00      0.00      0.00 |    0.00   0.00   0.00 |       
+mc_PB/PA                 +0.000      0.00      0.00      0.00 |     nan    nan    nan |  +0.00
+mc_PC/PA                 +0.000      0.00      0.00      0.00 |     nan    nan    nan |  +0.00
+J36                      -0.451    142.86     25.28      0.17 |    5.38   0.17   0.17 |       
+J36_potw                 -0.451    142.86     25.28      0.17 |    5.38   0.17   0.17 |       
+{
+ "identity_all_zero": {
+  "max_abs_any": 4.46424123899388e-15,
+  "max_chi2": 1.4552830036773703e-25,
+  "n_values": 154,
+  "n_exactly_zero": 146,
+  "nonzero": {
+   "J36": 1.4552830036773703e-25,
+   "J36_potw": 1.4552830036773703e-25
+  },
+  "pass": true,
+  "cells_used": 205
+ },
+ "injection": {
+  "step": 0.061224489795918435,
+  "want_step": 0.061224489795918435,
+  "chi2_205": 1285.777612687678,
+  "direct_chi2_205": 1285.7776126876768,
+  "chi2_pz": 227.50717638360686,
+  "direct_chi2_pz": 227.50717638360624,
+  "pz_marginal_ratio_maxdiff": 0.0,
+  "noise_zero": true,
+  "pass": true
+ },
+ "verdict": "PASS"
+}

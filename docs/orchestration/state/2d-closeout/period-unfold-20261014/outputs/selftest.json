@@ -1,0 +1,26 @@
+{
+ "identity_all_zero": {
+  "max_abs_any": 4.46424123899388e-15,
+  "max_chi2": 1.4552830036773703e-25,
+  "n_values": 154,
+  "n_exactly_zero": 146,
+  "nonzero": {
+   "J36": 1.4552830036773703e-25,
+   "J36_potw": 1.4552830036773703e-25
+  },
+  "pass": true,
+  "cells_used": 205
+ },
+ "injection": {
+  "step": 0.061224489795918435,
+  "want_step": 0.061224489795918435,
+  "chi2_205": 1285.777612687678,
+  "direct_chi2_205": 1285.7776126876768,
+  "chi2_pz": 227.50717638360686,
+  "direct_chi2_pz": 227.50717638360624,
+  "pz_marginal_ratio_maxdiff": 0.0,
+  "noise_zero": true,
+  "pass": true
+ },
+ "verdict": "PASS"
+}
