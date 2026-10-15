@@ -1,0 +1,196 @@
+{
+ "s5_rollup_sha256": "cca262a78b460e89f78fee7d29787dbf297c6b4b7e10f64a950d9a7641a62678",
+ "build_repair_sha256": "b5363a948bd2816442a95be6a4cd25f34797386aee90b34534286321b0e389d5",
+ "out_root": "/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out",
+ "inputs": {
+  "E_U": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+   "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
+  },
+  "sweeps_json": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/repo/docs/orchestration/state/2d-closeout/stageB/evidence/b-genie-truth/sweeps.json",
+   "sha256": "15b57de9124f204bf3cdf8cd0660c467783bf633bf0d45bfbd4e2506b19be2e4"
+  },
+  "vl175_rollup": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/uq_universe_covariance_c04x01.root",
+   "sha256": "da92c5d2567647e8613bb3a6522176dbd9a287970082b45ac9e83e24684b1948"
+  },
+  "vl175_build_json": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/build.json",
+   "sha256": "dcc1331e8e510cc21a2abd95675cfc69acf92bae7ae3dfa43a3a94b9fdbe34dd"
+  },
+  "vl175_minos_npz": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/minos_rescaled.npz",
+   "sha256": "8912376ef2a6cfce8bed515cc945d9d5778cf5c838154a685435c3c7ce25416d"
+  },
+  "vl175_budget": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/budget.json",
+   "sha256": "aab8a24ebd61df54e7277999d49300c3bdaa045710835bfa05adf3bfc71dd8fa"
+  },
+  "ml": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+   "sha256": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9"
+  },
+  "constraint": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+   "sha256": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
+  },
+  "flux_mefhc": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
+  }
+ },
+ "checks": {
+  "pin_E_U": {
+   "ok": true,
+   "value": "4f5a1b6d44b9e721"
+  },
+  "pin_sweeps_json": {
+   "ok": true,
+   "value": "15b57de9124f204b"
+  },
+  "pin_vl175_rollup": {
+   "ok": true,
+   "value": "da92c5d2567647e8"
+  },
+  "pin_vl175_build_json": {
+   "ok": true,
+   "value": "dcc1331e8e510cc2"
+  },
+  "pin_vl175_minos_npz": {
+   "ok": true,
+   "value": "8912376ef2a6cfce"
+  },
+  "pin_vl175_budget": {
+   "ok": true,
+   "value": "aab8a24ebd61df54"
+  },
+  "pin_ml": {
+   "ok": true,
+   "value": "3b6b48ec89207ae2"
+  },
+  "pin_constraint": {
+   "ok": true,
+   "value": "e38ad7d28354d071"
+  },
+  "pin_flux_mefhc": {
+   "ok": true,
+   "value": "d40aea69235cdc98"
+  },
+  "reported_cells_205": {
+   "ok": true,
+   "value": null
+  },
+  "weights_identical_across_playlists": {
+   "ok": true,
+   "value": null
+  },
+  "weights_equal_constraint_file": {
+   "ok": true,
+   "value": null
+  },
+  "weights_equal_vl175_build_json": {
+   "ok": true,
+   "value": {
+    "sum": 211.01200325082078,
+    "n_eff": 19.060534772246488
+   }
+  },
+  "may_sweep_files_match_sweeps_json": {
+   "ok": true,
+   "value": []
+  },
+  "may_44_bands_187_universes": {
+   "ok": true,
+   "value": null
+  },
+  "may_minos_outputs_divided_by_phi_cv": {
+   "ok": true,
+   "value": 0.0
+  },
+  "may_x01_scale_equals_vl175": {
+   "ok": true,
+   "value": 0.0
+  },
+  "control_vl175_all_45_blocks_found": {
+   "ok": true,
+   "value": []
+  },
+  "control_vl175_per_block": {
+   "ok": true,
+   "value": [
+    [
+     "MaNCEL",
+     {
+      "rel_own": 1.4005111865831029e-06,
+      "absmax_diff": 4.257959840008151e-109,
+      "absmax": 3.04028977476182e-103
+     }
+    ],
+    [
+     "EtaNCEL",
+     {
+      "rel_own": 9.157299512373801e-07,
+      "absmax_diff": 4.257959840008151e-109,
+      "absmax": 4.649798594284901e-103
+     }
+    ],
+    [
+     "NormNCRES",
+     {
+      "rel_own": 6.818859054865222e-07,
+      "absmax_diff": 4.257959840008151e-109,
+      "absmax": 6.244387522528593e-103
+     }
+    ],
+    [
+     "BeamAngleX",
+     {
+      "rel_own": 2.112568288378435e-16,
+      "absmax_diff": 1.1704190886730496e-97,
+      "absmax": 5.540266296297763e-82
+     }
+    ],
+    [
+     "MinosEfficiency",
+     {
+      "rel_own": 1.8478287604277915e-16,
+      "absmax_diff": 7.490682167507517e-96,
+      "absmax": 4.0537750726281295e-80
+     }
+    ],
+    [
+     "FrCEx_N",
+     {
+      "rel_own": 1.552446322539971e-16,
+      "absmax_diff": 2.926047721682624e-98,
+      "absmax": 1.8847979986163334e-82
+     }
+    ]
+   ]
+  },
+  "control_vl175_every_block_at_total_scale_le_1e-12": {
+   "ok": true,
+   "value": 2.6413017182865303e-17
+  },
+  "control_vl175_nonnull_blocks_own_scale_le_1e-12": {
+   "ok": true,
+   "value": {
+    "max": 2.112568288378435e-16,
+    "null_bands": [
+     "EtaNCEL",
+     "MaNCEL",
+     "NormNCRES"
+    ]
+   }
+  },
+  "control_vl175_total_le_1e-12": {
+   "ok": true,
+   "value": 1.3206508591432652e-17
+  }
+ },
+ "numbers": {
+  "control_worst_block_rel": 2.112568288378435e-16
+ },
+ "S5": "CONTROL ONLY: PASS"
+}

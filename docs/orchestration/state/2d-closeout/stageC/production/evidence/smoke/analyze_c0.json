@@ -1,0 +1,39 @@
+{
+ "C0": "PASS",
+ "analyze_prod_sha256": "3a1a3abcf8957c6f3c2c38eeb58dc9f20ac743edce142aaafdef6ff537a28362",
+ "cv_vs_L0": {
+  "argmax_globalid": 96,
+  "cells_over_tol": [],
+  "exactly_equal_cells": 3,
+  "integral_rel_diff": 8.43769498715119e-15,
+  "max_rel_diff_cells": 9.348077867343818e-14,
+  "median_rel_diff_cells": 9.103828801926284e-15,
+  "n_cells": 205,
+  "n_cells_over_tol": 0,
+  "new": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/out/2dc_P_C0_cv/xsec.root",
+  "provenance_bad": {},
+  "provenance_ok": true,
+  "ref": "/pscratch/sd/j/josephrb/xr-linux-20261011/L0/a1/XR-L0.root",
+  "tolerance": 1e-08,
+  "verdict": "PASS"
+ },
+ "item": "C0",
+ "out_root": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/out",
+ "pins_failed": {},
+ "unit_vs_L0": {
+  "argmax_globalid": 171,
+  "cells_over_tol": [],
+  "exactly_equal_cells": 0,
+  "integral_rel_diff": 7.117639810871879e-13,
+  "max_rel_diff_cells": 1.3790191211171532e-11,
+  "median_rel_diff_cells": 5.8610893916011264e-12,
+  "n_cells": 205,
+  "n_cells_over_tol": 0,
+  "new": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/out/2dc_P_C0_unit/xsec.root",
+  "provenance_bad": {},
+  "provenance_ok": true,
+  "ref": "/pscratch/sd/j/josephrb/xr-linux-20261011/L0/a1/XR-L0.root",
+  "tolerance": 1e-08,
+  "verdict": "PASS"
+ }
+}

@@ -1,0 +1,105 @@
+{
+ "code_outside_package": {
+  "2d-unfolding/unfold_2d_omnifold_unbinned.py": "74a4ed69c3fa9c4ae5b6866f36343212b8d3f903fddde6c7bd40c382c1167d56",
+  "docs/orchestration/state/2d-closeout/c04-repair/scripts/build_repair.py": "b5363a948bd2816442a95be6a4cd25f34797386aee90b34534286321b0e389d5",
+  "docs/orchestration/state/2d-closeout/stageB/evidence/b-genie-truth/sweeps.json": "15b57de9124f204bf3cdf8cd0660c467783bf633bf0d45bfbd4e2506b19be2e4",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/analyze_pilot.py": "a9e1292ba55387410f61617a0c0bc92068ff5584261934b44c2f9d81878c3f75",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/evidence/SHA256SUMS.pscratch": "b82a0e085fab914693291ddc2468a197315987e9c111b8c05491ef4bd3c7f33f",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/analyze_p1.py": "cd9a1fc117f9f486251b8cf7f751ce09c86b9759794f71c9b8d8724ea80936d0",
+  "docs/orchestration/state/2d-closeout/stageC/pilot/p1/driver_p1.py": "3056e625a22f2ee79621e515aa5a76a4685662ac6fc10ee7e832680dde087578",
+  "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/manifest/references.json": "af7d5a1935176367e3c6cff9c17986e8e4e5c15c91b75d73efb3ccec04b88c89",
+  "docs/orchestration/state/next-preparation-20261009/xr-linux/xr/xr_compare.py": "9e59c590cd33868bd619694ceff68adbed7cc4fa4dc05aeb1b3e76653e2e948b"
+ },
+ "external_pins": {
+  "E_U": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+   "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
+  },
+  "L0_reference": {
+   "path": "/pscratch/sd/j/josephrb/xr-linux-20261011/L0/a1/XR-L0.root",
+   "sha256": "751380245dbb27f67616ade8321d73274e0a5c0bb1344275fc3b67db2595aecc"
+  },
+  "active_files_sums": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/SHA256SUMS",
+   "sha256": "73775251f377a35b86c5d9433d1db63d65267525b9261f773064a1e9d17764f6"
+  },
+  "constraint": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+   "sha256": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
+  },
+  "cv_omnifile": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+   "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+  },
+  "flux_mc_file": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
+  },
+  "flux_universe_file": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root",
+   "sha256": "5eecae84509ba8ededbe8fdee63508d8e36cd057cc0547a940383f80248580eb"
+  },
+  "helper": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/python/omnifold.py",
+   "sha256": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a"
+  },
+  "july_products": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/",
+   "sha256": "per file in stageB/evidence/b-genie-truth/sweeps.json ('pn/')"
+  },
+  "may_products": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/universe_sweep_fluxfix/",
+   "sha256": "per file in stageB/evidence/b-genie-truth/sweeps.json ('may/'); S5 control only"
+  },
+  "ml_covariance": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root",
+   "sha256": "3b6b48ec89207ae29dc7bb0ddc5a41836c359c4805877d663731694b828d5db9"
+  },
+  "pilot_outputs": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/out/",
+   "sha256": "per file in stageC/pilot/evidence/SHA256SUMS.pscratch"
+  },
+  "universe_omnifile": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+   "sha256": "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418"
+  },
+  "vl175_budget": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/budget.json",
+   "sha256": "aab8a24ebd61df54e7277999d49300c3bdaa045710835bfa05adf3bfc71dd8fa"
+  },
+  "vl175_build_json": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/build.json",
+   "sha256": "dcc1331e8e510cc21a2abd95675cfc69acf92bae7ae3dfa43a3a94b9fdbe34dd"
+  },
+  "vl175_minos_npz": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/minos_rescaled.npz",
+   "sha256": "8912376ef2a6cfce8bed515cc945d9d5778cf5c838154a685435c3c7ce25416d"
+  },
+  "vl175_rollup": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/uq_universe_covariance_c04x01.root",
+   "sha256": "da92c5d2567647e8613bb3a6522176dbd9a287970082b45ac9e83e24684b1948"
+  }
+ },
+ "package": {
+  "docs/orchestration/state/2d-closeout/stageC/production/DESIGN.md": "3abde10567f5a39ca0168793cc7d37442a193576ac6a6d23d7cc95f2b5b6084a",
+  "docs/orchestration/state/2d-closeout/stageC/production/analyze_prod.py": "3a1a3abcf8957c6f3c2c38eeb58dc9f20ac743edce142aaafdef6ff537a28362",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_c0.json": "e514743972c5a65b77529440cab0098b2a88a466db4c0dee32954063672e5111",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_s1.json": "c9ee2a9e5cbebd1fc1d4bf1421d655117610d06f8b8b846426e8ce8899813b15",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_s2.json": "92c1272d6a4f5291f662214879da3e1ad1b7249ff68b6424661825ed00e27812",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_s3.json": "7619903de865b8dc56963f0406a3e0ff4d1cc991cba1f53296cdbe06afdf24de",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_s4i.json": "2c95971a30fafa293ce7791ec0a92229415dca37147124e00e49e7c0733e3c4d",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_s4ii.json": "8b506e4f3853c1e8f443d6561b5346708b19c5af57836a79b11cf079a9ce8025",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/dispatch_dryrun.sh": "ff8e2618dac94c3d081b15490c49a99c07db320a24fd496f9e5491fcccb39c1b",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/dispatch_dryrun.txt": "fd9fabf59105fbb3c21a5664850fc87203100c72ed70b0edea8226d7816c176a",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/s5_control.json": "3c9ac676a86a3cd34c412b9ca95eb4eed05a95ebbd04eb096f40ab3115ca35eb",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/s5_standin.json.gz": "b2ef4702b0625d55e645e359018cfd8811f70a6b9c34b50a56fcfe2408a18954",
+  "docs/orchestration/state/2d-closeout/stageC/production/jobs.tsv": "c4f1b7082fac3635be78622cb9b9a5f71103789337bbc29e7dd29684e9b4d3a4",
+  "docs/orchestration/state/2d-closeout/stageC/production/launch.py": "37c895ff18e8b0e76e091f89b4939e28f91318b99a1b4e466f49ec83430363d6",
+  "docs/orchestration/state/2d-closeout/stageC/production/make_jobs.py": "550e273be77944c25e8cc4607574c891b247f4328b1b72c6eba85d521ab2fa91",
+  "docs/orchestration/state/2d-closeout/stageC/production/make_manifest.py": "57e7a6adbb634ff815920672303490df7b4840024e7c65ede77636ac0392cdcc",
+  "docs/orchestration/state/2d-closeout/stageC/production/preflight_uomni.sh": "14a58c70eeafa18035da7562c16516347a841d5e2a96810b5ed9ff0170679f0d",
+  "docs/orchestration/state/2d-closeout/stageC/production/s5_rollup.py": "cca262a78b460e89f78fee7d29787dbf297c6b4b7e10f64a950d9a7641a62678",
+  "docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh": "1dc95ad32b442e54713b58d08724f9112fa6b4183caa8c9c306f9e94c21576d5"
+ },
+ "schema": "stagec-production-manifest/1"
+}

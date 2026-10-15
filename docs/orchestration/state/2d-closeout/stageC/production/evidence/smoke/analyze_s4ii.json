@@ -1,0 +1,267 @@
+{
+ "S4ii": "INCONCLUSIVE",
+ "analyze_prod_sha256": "3a1a3abcf8957c6f3c2c38eeb58dc9f20ac743edce142aaafdef6ff537a28362",
+ "item": "S4ii",
+ "july_identity_seed42": {
+  "2p2h:0": {
+   "verdict": "INCONCLUSIVE",
+   "why": "production output missing"
+  },
+  "Flux:23": {
+   "argmax_globalid": 207,
+   "cells_over_tol": [],
+   "exactly_equal_cells": 1,
+   "integral_rel_diff": 6.217248937900877e-15,
+   "max_rel_diff_cells": 9.36806188178707e-13,
+   "median_rel_diff_cells": 2.731148640577885e-14,
+   "n_cells": 205,
+   "n_cells_over_tol": 0,
+   "new": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/out/2dc_P_S4U_Flux23_s42/xsec.root",
+   "ref": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_Flux_23.root",
+   "tolerance": 1e-08,
+   "verdict": "PASS"
+  },
+  "MaCCQE:0": {
+   "verdict": "INCONCLUSIVE",
+   "why": "production output missing"
+  },
+  "MaRES:0": {
+   "argmax_globalid": 203,
+   "cells_over_tol": [],
+   "exactly_equal_cells": 0,
+   "integral_rel_diff": 1.4432899320127035e-14,
+   "max_rel_diff_cells": 2.431388423929093e-13,
+   "median_rel_diff_cells": 4.04121180963557e-14,
+   "n_cells": 205,
+   "n_cells_over_tol": 0,
+   "new": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/out/2dc_P_S4U_MaRES0_s42/xsec.root",
+   "ref": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_MaRES_0.root",
+   "tolerance": 1e-08,
+   "verdict": "PASS"
+  },
+  "MinosEfficiency:0": {
+   "verdict": "INCONCLUSIVE",
+   "why": "production output missing"
+  },
+  "Muon_Energy_MINOS:0": {
+   "argmax_globalid": 223,
+   "cells_over_tol": [],
+   "exactly_equal_cells": 1,
+   "integral_rel_diff": 1.6209256159527285e-14,
+   "max_rel_diff_cells": 7.544298519235326e-12,
+   "median_rel_diff_cells": 2.6423307986078726e-14,
+   "n_cells": 205,
+   "n_cells_over_tol": 0,
+   "new": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/out/2dc_P_S4U_Muon_Energy_MINOS0_s42/xsec.root",
+   "ref": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_Muon_Energy_MINOS_0.root",
+   "tolerance": 1e-08,
+   "verdict": "PASS"
+  },
+  "NormDISCC:0": {
+   "argmax_globalid": 171,
+   "cells_over_tol": [],
+   "exactly_equal_cells": 0,
+   "integral_rel_diff": 7.190914530497139e-13,
+   "max_rel_diff_cells": 1.378130942697453e-11,
+   "median_rel_diff_cells": 5.8972826622039065e-12,
+   "n_cells": 205,
+   "n_cells_over_tol": 0,
+   "new": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/out/2dc_P_S4U_NormDISCC0_s42/xsec.root",
+   "ref": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/purity_newomni/2d_xsec_MEFHC_5iter_lgbm_pn_uni_NormDISCC_0.root",
+   "tolerance": 1e-08,
+   "verdict": "PASS"
+  }
+ },
+ "null_vs_cv": {
+  "s42": {
+   "argmax_globalid": 171,
+   "cells_over_tol": [],
+   "exactly_equal_cells": 0,
+   "integral_rel_diff": 7.251976796851523e-13,
+   "max_rel_diff_cells": 1.3751888516821964e-11,
+   "median_rel_diff_cells": 5.88817883340198e-12,
+   "n_cells": 205,
+   "n_cells_over_tol": 0,
+   "new": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/out/2dc_P_S4U_NormDISCC0_s42/xsec.root",
+   "ref": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/out/2dc_P_C0_cv/xsec.root",
+   "tolerance": 1e-08,
+   "verdict": "PASS"
+  },
+  "s45": {
+   "verdict": "INCONCLUSIVE",
+   "why": "production output missing"
+  },
+  "s48": {
+   "verdict": "INCONCLUSIVE",
+   "why": "production output missing"
+  },
+  "s51": {
+   "verdict": "INCONCLUSIVE",
+   "why": "production output missing"
+  },
+  "s54": {
+   "verdict": "INCONCLUSIVE",
+   "why": "production output missing"
+  }
+ },
+ "out_root": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/out",
+ "pins_failed": {},
+ "provenance": {
+  "2dc_P_S4CV_s45": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4CV_s48": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4CV_s51": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4CV_s54": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_2p2h0_s42": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_2p2h0_s45": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_2p2h0_s48": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_2p2h0_s51": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_2p2h0_s54": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_Flux23_s42": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_Flux23_s45": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_Flux23_s48": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_Flux23_s51": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_Flux23_s54": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MaCCQE0_s42": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MaCCQE0_s45": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MaCCQE0_s48": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MaCCQE0_s51": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MaCCQE0_s54": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MaRES0_s42": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_MaRES0_s45": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MaRES0_s48": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MaRES0_s51": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MaRES0_s54": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MinosEfficiency0_s42": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MinosEfficiency0_s45": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MinosEfficiency0_s48": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MinosEfficiency0_s51": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_MinosEfficiency0_s54": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_Muon_Energy_MINOS0_s42": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_Muon_Energy_MINOS0_s45": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_Muon_Energy_MINOS0_s48": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_Muon_Energy_MINOS0_s51": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_Muon_Energy_MINOS0_s54": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_NormDISCC0_s42": {
+   "bad": {},
+   "ok": true
+  },
+  "2dc_P_S4U_NormDISCC0_s45": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_NormDISCC0_s48": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_NormDISCC0_s51": {
+   "bad": "missing",
+   "ok": false
+  },
+  "2dc_P_S4U_NormDISCC0_s54": {
+   "bad": "missing",
+   "ok": false
+  }
+ }
+}
