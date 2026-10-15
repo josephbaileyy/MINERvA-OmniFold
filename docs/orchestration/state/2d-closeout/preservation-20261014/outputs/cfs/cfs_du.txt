@@ -1,0 +1,6 @@
+du-start	2026-10-14T23:14:44Z	dtn01.nersc.gov
+3239895250944	/global/cfs/cdirs/m3246/josephrb
+du_rc	0
+Terminated
+Terminated
+du-end	2026-10-14T23:56:49Z
