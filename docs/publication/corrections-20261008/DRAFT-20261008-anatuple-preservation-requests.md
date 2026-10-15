@@ -12,6 +12,12 @@ needs Joseph's explicit decision (goal 2026-10-08: "Do not send it or request a 
 
 ## A. To NERSC (HPSS allocation request, via the ERCAP allocation-change process or a help ticket)
 
+> **Superseded 2026-10-15, not sent.** Joseph chose CFS instead ("yes you can copy them", 2026-10-14). The 41 files
+> are now on CFS at `/global/cfs/cdirs/m3246/josephrb/mc-1A-preservation-20261014/`, and all 41 match
+> `ANATUPLE-SHA256.tsv` by sha256, bytes and mtime
+> ([`cfs-copy-1A-mc/REPORT.md`](../../orchestration/state/2d-closeout/preservation-20261014/cfs-copy-1A-mc/REPORT.md)).
+> No HPSS request is needed for them. The text below is kept as it stood.
+
 **Revised 2026-10-14, at Joseph's direction** ([`DECISION-20261014-joseph-2d-endpoint-and-open-items.md`](../../orchestration/DECISION-20261014-joseph-2d-endpoint-and-open-items.md)
 item 5). The request now covers only the 41 Playlist 1A MC files. The figures are from
 [`state/2d-closeout/preservation-20261014/REPORT.md`](../../orchestration/state/2d-closeout/preservation-20261014/REPORT.md),
