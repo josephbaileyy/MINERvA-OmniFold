@@ -133,8 +133,8 @@ Times are PDT (`sacct`'s clock). Gates act at submission, so batches are listed 
 |---|---|
 | 2026-10-13 05:51 | B0 (P0) submitted under v1 `92b0b466`; P0 PASS |
 | 06:45–06:46 | B1 (P2 × 5, `P1_unit`) submitted |
-| 08:50 | `P1_unit` 59734962 TIMEOUT at 1,930 s, past its 1,920 s cap. Iteration 4 of 0–4 had started at 1,756 s. On node `nid004107`, `sacct -a -N nid004107` lists jobs of 17 other users overlapping the attempt's window (not necessarily simultaneous). A headroom condition failed: pre-B4, elapsed × 1.3 ≤ 1,920 s. The director set it in a relayed message after P0, not in a committed record. I also held B2: `G2_on`'s 3,000 s cap failed a proportional check against the P5 pair. The recap record later ruled an off run's time "not a like-for-like check" (§3(c)). **Stop, reported** |
-| 09:09:53 | The director's ruling arrives by message: `P1_unit` retry at 00:58:00 under the v1 binding; ceiling 20.0 and v2 caps to follow in a recap record |
+| 08:50 | `P1_unit` 59734962 TIMEOUT at 1,930 s, past its 1,920 s cap. Iteration 4 of 0–4 had started at 1,756 s. On node `nid004107`, jobs of 8 other users ran during the attempt (start–end overlapping 08:18:38–08:50:48; `sacct -a -N nid004107`). A headroom condition failed: pre-B4, elapsed × 1.3 ≤ 1,920 s. The director set it in a relayed message after P0, not in a committed record. I also held B2: `G2_on`'s 3,000 s cap failed a proportional check against the P5 pair. The recap record later ruled an off run's time "not a like-for-like check" (§3(c)). **Stop, reported** |
+| 09:09:53 | The director's ruling arrives by message (executor's session transcript, 2026-10-13T16:09:53Z): `P1_unit` retry at 00:58:00 under the v1 binding; ceiling 20.0 and v2 caps to follow in a recap record |
 | 09:10:19 | `P1_unit` retry 59740518 submitted under that ruling and the grant's committed "attempts" row: one walltime retry at 1.5 × a re-projection, 2,295 × 1.5 = 3,443 s → 00:58:00. `out/2dc_C_P1_unit/` was empty (`launch.py` refuses otherwise) |
 | 09:12:19 / 09:13:13 | Recap record committed (`6382a70e`) and merged (PR #111, `9b30356c`). Its §3(a) records the same ruling, so it confirmed the retry about three minutes after submission |
 | 10:16 | Retry (started 10:04) COMPLETED in 715 s; b ≡ 1 PASS; headroom 715 × 1.3 = 930 ≤ 3,480 s. Co-tenancy recorded once, as §3(a) asks, at 17:04:53Z: `nid004072` held josephrb 64 + rul048 64 + rul048 128 CPUs |
@@ -323,8 +323,8 @@ runs at u_U (the full-branch read), as Stage B did; at u_U,sel's measured max (0
 |---|---|---|---|---|
 | as above: shared QOS, 128 CPUs | 2.6–3.1 | 12.5–21.5 | 45.3–61.9 | 56.6–77.4 |
 | universe and lateral unfolds on regular nodes (billing 256: u_U,sel, u_U, u_A × 2) | 5.3–6.2 | 17.5–33.6 | 52.9–77.1 | 66.1–96.4 |
-| shared QOS, u_U and u_A high edges × 1.85 (u_CV's measured max/mean spread) | 2.6–4.9 | 12.5–31.7 | 45.3–73.9 | 56.6–92.4 |
-| regular nodes and the × 1.85 spread | 5.3–9.7 | 17.5–54.1 | 52.9–101.2 | 66.1–126.5 |
+| shared QOS, u_U and u_A high edges × 1.85 (u_CV's measured max/mean spread) | 2.6–5.7 | 12.5–31.7 | 45.3–74.8 | 56.6–93.5 |
+| regular nodes and the × 1.85 spread | 5.3–11.5 | 17.5–54.1 | 52.9–103.0 | 66.1–128.7 |
 
 S1 and S2 are the same in every row: 22.6–28.0 and 7.5–9.3.
 
@@ -447,13 +447,22 @@ It confirmed the following:
 | m1 the outage window conflicted with `sacct` (jobs started at 21:08) | §3: outage 17:03–21:08; 15:48 is the last job's end |
 | m2 the timeline mixed start and submit times | §3 lists submit times and says so |
 | m3 "like-for-like" mislabel; uncited pre-B4 condition | §3 uses the recap record's wording and names the source (a relayed message, not a committed record) |
-| m4 co-tenancy record missing; `nid004107` claim uncited | §3 gives the retry node's recorded co-tenancy and the `sacct -a -N nid004107` count |
+| m4 co-tenancy record missing; `nid004107` claim uncited | §3 gives the retry node's recorded co-tenancy, and the 8 users whose jobs ran on `nid004107` during the attempt (`sacct -a -N`) |
 | m5 "low edge = mean" was mislabelled; u_A's mean left out the slowest attempt | §7: the mean is called the expected cost, and u_A's mean with the re-projection (0.3491) is stated |
 | m6 P1 wording ("raises σ by 3.2%", "resolved") | §2 names the statistic, calls the 2.1 SE an indication, and contrasts it with the 1.057 ratio of arm medians |
 | m7 K2's resolution was not stated | §2 adds a resolution paragraph: r3 against the noise-only ≈ 0.95, and the anti-correlated seed patterns |
 | m8 "first unfolded measurement" overclaimed | §2: one seed, diagnostic, no CV shift computed |
 | m9 durable-copy coverage (274 files vs 270 checksummed) | header and §10 state the coverage |
 | m10 the P3 re-projection basis was not shown; `P1_unit` `out/` state was not stated | §8 gives the 2,721 s `[CHECK]` mtime and the verifier's 73–79 s finalization; §3 and §8 state that `out/` was empty |
+
+**Re-review 1** at `54306da8`: APPROVE WITH CHANGES, 0 MATERIAL, 2 MINOR. All 13 dispositions repair their
+findings, and no result, verdict or package file changed. It re-checked the alternatives arithmetic, u_A's 0.3491,
+every §3 time against `sacct` and git, and the co-tenancy. Its two MINOR findings are fixed here:
+- the `nid004107` co-tenancy count is now 8 users with jobs running during the attempt. The 17 had counted jobs
+  only pending in the query window;
+- the spread rows' S3 now uses u_A's high edge × 1.846, as labelled, instead of its mean: 5.7 and 11.5.
+
+It also suggested citing the source of the 09:09:53 ruling time; §3 now does.
 
 The verifier is the same model as the executor and the director, so its blind spots may be correlated with
 theirs.
