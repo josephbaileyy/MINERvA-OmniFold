@@ -1,0 +1,105 @@
+{
+ "S3": "INCONCLUSIVE",
+ "analyze_prod_sha256": "f9e0d8f271f28bee1ef264de62cf7b924d18d4086e8fbe896abff4adb79320a4",
+ "item": "S3",
+ "laterals": {
+  "BeamAngleX_0": {
+   "closure": "PASS",
+   "closure_denominator": {
+    "hEffDenSource": "mc_truth_denom (canonical Truth-tree denominator)",
+    "hOFCompleteness2D_title": "OmniFold input completeness (mc_signal_reco truth-pass / mc_truth_denom)",
+    "hOFTruthDenom2D_integral": 5779535.683846292
+   },
+   "closure_max_abs_c_minus_1": 1.5765166949677223e-14,
+   "job": "2dc_P_S3_BeamAngleX0",
+   "provenance_bad": {},
+   "provenance_ok": true,
+   "reproduces_pilot_2dc_C_P3_BeamAngleX0": {
+    "argmax_globalid": 0,
+    "cells_over_tol": [],
+    "exactly_equal_cells": 205,
+    "integral_rel_diff": 0.0,
+    "max_rel_diff_cells": 0.0,
+    "median_rel_diff_cells": 0.0,
+    "n_cells": 205,
+    "n_cells_over_tol": 0,
+    "new": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/out/2dc_P_S3_BeamAngleX0/xsec.root",
+    "ref": "/pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/out/2dc_C_P3_BeamAngleX0/xsec.root",
+    "tolerance": 1e-08,
+    "verdict": "PASS"
+   },
+   "sha256": "7528122026b61d9d541140fdbe9570d74e70a4852da60d65d64b5fb3e7d1cd23",
+   "verdict": "PASS"
+  },
+  "BeamAngleX_1": {
+   "job": "2dc_P_S3_BeamAngleX1",
+   "verdict": "INCONCLUSIVE",
+   "why": "output missing"
+  },
+  "BeamAngleY_0": {
+   "job": "2dc_P_S3_BeamAngleY0",
+   "verdict": "INCONCLUSIVE",
+   "why": "output missing"
+  },
+  "BeamAngleY_1": {
+   "job": "2dc_P_S3_BeamAngleY1",
+   "verdict": "INCONCLUSIVE",
+   "why": "output missing"
+  },
+  "MuonResolution_0": {
+   "job": "2dc_P_S3_MuonResolution0",
+   "verdict": "INCONCLUSIVE",
+   "why": "output missing"
+  },
+  "MuonResolution_1": {
+   "job": "2dc_P_S3_MuonResolution1",
+   "verdict": "INCONCLUSIVE",
+   "why": "output missing"
+  },
+  "Muon_Energy_MINERvA_0": {
+   "job": "2dc_P_S3_MuonEnergyMINERvA0",
+   "verdict": "INCONCLUSIVE",
+   "why": "output missing"
+  },
+  "Muon_Energy_MINERvA_1": {
+   "job": "2dc_P_S3_MuonEnergyMINERvA1",
+   "verdict": "INCONCLUSIVE",
+   "why": "output missing"
+  },
+  "Muon_Energy_MINOS_0": {
+   "closure": "PASS",
+   "closure_denominator": {
+    "hEffDenSource": "mc_truth_denom (canonical Truth-tree denominator)",
+    "hOFCompleteness2D_title": "OmniFold input completeness (mc_signal_reco truth-pass / mc_truth_denom)",
+    "hOFTruthDenom2D_integral": 5723867.863769796
+   },
+   "closure_max_abs_c_minus_1": 1.84297022087776e-14,
+   "job": "2dc_P_S3_MuonEnergyMINOS0",
+   "provenance_bad": {},
+   "provenance_ok": true,
+   "reproduces_pilot_2dc_C_P3_MINOS0": {
+    "argmax_globalid": 0,
+    "cells_over_tol": [],
+    "exactly_equal_cells": 205,
+    "integral_rel_diff": 0.0,
+    "max_rel_diff_cells": 0.0,
+    "median_rel_diff_cells": 0.0,
+    "n_cells": 205,
+    "n_cells_over_tol": 0,
+    "new": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/out/2dc_P_S3_MuonEnergyMINOS0/xsec.root",
+    "ref": "/pscratch/sd/j/josephrb/2d-closeout-stageC-pilot-20261013/out/2dc_C_P3_MINOS0/xsec.root",
+    "tolerance": 1e-08,
+    "verdict": "PASS"
+   },
+   "sha256": "07fc6269dacc823b7e883c85729556dadc56dde75518ae0de528dab7590e9254",
+   "verdict": "PASS"
+  },
+  "Muon_Energy_MINOS_1": {
+   "job": "2dc_P_S3_MuonEnergyMINOS1",
+   "verdict": "INCONCLUSIVE",
+   "why": "output missing"
+  }
+ },
+ "out_root": "/pscratch/sd/j/josephrb/2d-closeout-stageC-prod-smoke-20261015/out",
+ "pins_failed": {}
+}
