@@ -1,0 +1,11 @@
+-r-- 2026-01-06 19:12:46  21456672032 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111000_Playlist.root
+-r-- 2026-01-06 19:27:19  21719130441 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111001_Playlist.root
+-r-- 2026-01-06 19:31:26  21621344900 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111002_Playlist.root
+-r-- 2026-01-06 19:44:31  21604975871 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111003_Playlist.root
+-r-- 2026-01-06 19:27:23  21536173415 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111004_Playlist.root
+-r-- 2026-01-06 19:21:00  21652613607 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111005_Playlist.root
+-r-- 2026-01-06 19:15:51  21540099700 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111006_Playlist.root
+-r-- 2026-01-06 19:13:22  21674042524 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111007_Playlist.root
+-r-- 2026-01-06 19:28:55  21482574785 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111008_Playlist.root
+-r-- 2026-01-06 19:22:51  21713147162 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111009_Playlist.root
+-r-- 2026-01-06 20:00:13  21612720072 /pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1B/MasterAnaDev_mc_AnaTuple_run00111010_Playlist.root

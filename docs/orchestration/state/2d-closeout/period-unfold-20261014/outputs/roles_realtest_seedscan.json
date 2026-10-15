@@ -1,0 +1,7 @@
+{"POOL": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+ "PA": {"s42": "/pscratch/sd/j/josephrb/xr-linux-20261011/L0/a1/XR-L0.root", "s43": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed1.root",
+        "boot": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed2.root", "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed3.root"]},
+ "PB": {"s42": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed4.root", "s43": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed5.root",
+        "boot": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed6.root", "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed7.root"]},
+ "PC": {"s42": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed8.root", "s43": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed9.root",
+        "boot": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed10.root"]}}

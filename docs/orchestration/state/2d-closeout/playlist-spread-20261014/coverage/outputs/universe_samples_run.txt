@@ -1,0 +1,25 @@
+1A sig entries used 500000 of 2682267 pass 433945 universes 187 lateral ['BeamAngleX_0', 'BeamAngleX_1', 'BeamAngleY_0', 'BeamAngleY_1', 'MuonResolution_0', 'MuonResolution_1', 'Muon_Energy_MINERvA_0', 'Muon_Energy_MINERvA_1', 'Muon_Energy_MINOS_0', 'Muon_Energy_MINOS_1'] bkg missing 0
+1A wall 55.55 user 60.43 maxrss_kB 700232
+1B sig entries used 500000 of 721082 pass 434735 universes 187 lateral ['BeamAngleX_0', 'BeamAngleX_1', 'BeamAngleY_0', 'BeamAngleY_1', 'MuonResolution_0', 'MuonResolution_1', 'Muon_Energy_MINERvA_0', 'Muon_Energy_MINERvA_1', 'Muon_Energy_MINOS_0', 'Muon_Energy_MINOS_1'] bkg missing 0
+1B wall 50.56 user 54.52 maxrss_kB 594788
+1C sig entries used 500000 of 1376832 pass 434466 universes 187 lateral ['BeamAngleX_0', 'BeamAngleX_1', 'BeamAngleY_0', 'BeamAngleY_1', 'MuonResolution_0', 'MuonResolution_1', 'Muon_Energy_MINERvA_0', 'Muon_Energy_MINERvA_1', 'Muon_Energy_MINOS_0', 'Muon_Energy_MINOS_1'] bkg missing 0
+1C wall 52.34 user 56.34 maxrss_kB 639972
+1D sig entries used 500000 of 4003632 pass 434682 universes 187 lateral ['BeamAngleX_0', 'BeamAngleX_1', 'BeamAngleY_0', 'BeamAngleY_1', 'MuonResolution_0', 'MuonResolution_1', 'Muon_Energy_MINERvA_0', 'Muon_Energy_MINERvA_1', 'Muon_Energy_MINOS_0', 'Muon_Energy_MINOS_1'] bkg missing 0
+1D wall 57.80 user 61.51 maxrss_kB 682468
+1E sig entries used 500000 of 3350021 pass 434052 universes 187 lateral ['BeamAngleX_0', 'BeamAngleX_1', 'BeamAngleY_0', 'BeamAngleY_1', 'MuonResolution_0', 'MuonResolution_1', 'Muon_Energy_MINERvA_0', 'Muon_Energy_MINERvA_1', 'Muon_Energy_MINOS_0', 'Muon_Energy_MINOS_1'] bkg missing 0
+1E wall 56.40 user 60.13 maxrss_kB 681900
+1F sig entries used 500000 of 4660210 pass 430153 universes 187 lateral ['BeamAngleX_0', 'BeamAngleX_1', 'BeamAngleY_0', 'BeamAngleY_1', 'MuonResolution_0', 'MuonResolution_1', 'Muon_Energy_MINERvA_0', 'Muon_Energy_MINERvA_1', 'Muon_Energy_MINOS_0', 'Muon_Energy_MINOS_1'] bkg missing 0
+1F wall 58.29 user 62.98 maxrss_kB 698020
+1G sig entries used 500000 of 3922748 pass 431874 universes 187 lateral ['BeamAngleX_0', 'BeamAngleX_1', 'BeamAngleY_0', 'BeamAngleY_1', 'MuonResolution_0', 'MuonResolution_1', 'Muon_Energy_MINERvA_0', 'Muon_Energy_MINERvA_1', 'Muon_Energy_MINOS_0', 'Muon_Energy_MINOS_1'] bkg missing 0
+1G wall 57.05 user 61.15 maxrss_kB 694236
+1L sig entries used 383848 of 383848 pass 232123 universes 187 lateral ['BeamAngleX_0', 'BeamAngleX_1', 'BeamAngleY_0', 'BeamAngleY_1', 'MuonResolution_0', 'MuonResolution_1', 'Muon_Energy_MINERvA_0', 'Muon_Energy_MINERvA_1', 'Muon_Energy_MINOS_0', 'Muon_Energy_MINOS_1'] bkg missing 0
+1L wall 32.13 user 36.72 maxrss_kB 609392
+1M sig entries used 500000 of 5917406 pass 426207 universes 187 lateral ['BeamAngleX_0', 'BeamAngleX_1', 'BeamAngleY_0', 'BeamAngleY_1', 'MuonResolution_0', 'MuonResolution_1', 'Muon_Energy_MINERvA_0', 'Muon_Energy_MINERvA_1', 'Muon_Energy_MINOS_0', 'Muon_Energy_MINOS_1'] bkg missing 0
+1M wall 60.77 user 64.58 maxrss_kB 688412
+1N sig entries used 500000 of 3416266 pass 424039 universes 187 lateral ['BeamAngleX_0', 'BeamAngleX_1', 'BeamAngleY_0', 'BeamAngleY_1', 'MuonResolution_0', 'MuonResolution_1', 'Muon_Energy_MINERvA_0', 'Muon_Energy_MINERvA_1', 'Muon_Energy_MINOS_0', 'Muon_Energy_MINOS_1'] bkg missing 0
+1N wall 55.19 user 59.27 maxrss_kB 698800
+1O sig entries used 500000 of 1042088 pass 415948 universes 187 lateral ['BeamAngleX_0', 'BeamAngleX_1', 'BeamAngleY_0', 'BeamAngleY_1', 'MuonResolution_0', 'MuonResolution_1', 'Muon_Energy_MINERvA_0', 'Muon_Energy_MINERvA_1', 'Muon_Energy_MINOS_0', 'Muon_Energy_MINOS_1'] bkg missing 0
+1O wall 52.07 user 55.32 maxrss_kB 648732
+1P sig entries used 500000 of 1372703 pass 415659 universes 187 lateral ['BeamAngleX_0', 'BeamAngleX_1', 'BeamAngleY_0', 'BeamAngleY_1', 'MuonResolution_0', 'MuonResolution_1', 'Muon_Energy_MINERvA_0', 'Muon_Energy_MINERvA_1', 'Muon_Energy_MINOS_0', 'Muon_Energy_MINOS_1'] bkg missing 0
+1P wall 52.11 user 55.30 maxrss_kB 615928
+ALLDONE

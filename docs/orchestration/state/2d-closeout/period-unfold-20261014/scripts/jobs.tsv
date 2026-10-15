@@ -1,0 +1,38 @@
+name	period	seed	bootstrap_seed	qos	cpus	mem	time	billing	enforced_nh	expected_s	what
+pu_CTRL_s42	ALL	42	-	shared	64	121920M	00:50:00	64	0.2083	935	control: all 12 playlists merged, closeout config; vs XR-L0 and E_U (1e-8)
+pu_PA_s42	PA	42	-	shared	64	121920M	00:40:00	64	0.1667	537	P_A = 1A-1F central, own POT scale and flux
+pu_PB_s42	PB	42	-	shared	64	121920M	00:30:00	64	0.1250	373	P_B = 1G,1L,1M central, own POT scale and flux
+pu_PC_s42	PC	42	-	shared	64	121920M	00:25:00	64	0.1042	265	P_C = 1N-1P central, own POT scale and flux
+pu_PA_s43	PA	43	-	shared	64	121920M	00:40:00	64	0.1667	537	estimator-seed noise of P_A
+pu_PB_s43	PB	43	-	shared	64	121920M	00:30:00	64	0.1250	373	estimator-seed noise of P_B
+pu_PC_s43	PC	43	-	shared	64	121920M	00:25:00	64	0.1042	265	estimator-seed noise of P_C
+pu_PA_b01	PA	42	1001	shared	64	121920M	00:40:00	64	0.1667	537	P_A Poisson(1) bootstrap, data+MC
+pu_PA_b02	PA	42	1002	shared	64	121920M	00:40:00	64	0.1667	537	P_A Poisson(1) bootstrap, data+MC
+pu_PA_b03	PA	42	1003	shared	64	121920M	00:40:00	64	0.1667	537	P_A Poisson(1) bootstrap, data+MC
+pu_PA_b04	PA	42	1004	shared	64	121920M	00:40:00	64	0.1667	537	P_A Poisson(1) bootstrap, data+MC
+pu_PA_b05	PA	42	1005	shared	64	121920M	00:40:00	64	0.1667	537	P_A Poisson(1) bootstrap, data+MC
+pu_PA_b06	PA	42	1006	shared	64	121920M	00:40:00	64	0.1667	537	P_A Poisson(1) bootstrap, data+MC
+pu_PA_b07	PA	42	1007	shared	64	121920M	00:40:00	64	0.1667	537	P_A Poisson(1) bootstrap, data+MC
+pu_PA_b08	PA	42	1008	shared	64	121920M	00:40:00	64	0.1667	537	P_A Poisson(1) bootstrap, data+MC
+pu_PA_b09	PA	42	1009	shared	64	121920M	00:40:00	64	0.1667	537	P_A Poisson(1) bootstrap, data+MC
+pu_PA_b10	PA	42	1010	shared	64	121920M	00:40:00	64	0.1667	537	P_A Poisson(1) bootstrap, data+MC
+pu_PB_b01	PB	42	2001	shared	64	121920M	00:30:00	64	0.1250	373	P_B Poisson(1) bootstrap, data+MC
+pu_PB_b02	PB	42	2002	shared	64	121920M	00:30:00	64	0.1250	373	P_B Poisson(1) bootstrap, data+MC
+pu_PB_b03	PB	42	2003	shared	64	121920M	00:30:00	64	0.1250	373	P_B Poisson(1) bootstrap, data+MC
+pu_PB_b04	PB	42	2004	shared	64	121920M	00:30:00	64	0.1250	373	P_B Poisson(1) bootstrap, data+MC
+pu_PB_b05	PB	42	2005	shared	64	121920M	00:30:00	64	0.1250	373	P_B Poisson(1) bootstrap, data+MC
+pu_PB_b06	PB	42	2006	shared	64	121920M	00:30:00	64	0.1250	373	P_B Poisson(1) bootstrap, data+MC
+pu_PB_b07	PB	42	2007	shared	64	121920M	00:30:00	64	0.1250	373	P_B Poisson(1) bootstrap, data+MC
+pu_PB_b08	PB	42	2008	shared	64	121920M	00:30:00	64	0.1250	373	P_B Poisson(1) bootstrap, data+MC
+pu_PB_b09	PB	42	2009	shared	64	121920M	00:30:00	64	0.1250	373	P_B Poisson(1) bootstrap, data+MC
+pu_PB_b10	PB	42	2010	shared	64	121920M	00:30:00	64	0.1250	373	P_B Poisson(1) bootstrap, data+MC
+pu_PC_b01	PC	42	3001	shared	64	121920M	00:25:00	64	0.1042	265	P_C Poisson(1) bootstrap, data+MC
+pu_PC_b02	PC	42	3002	shared	64	121920M	00:25:00	64	0.1042	265	P_C Poisson(1) bootstrap, data+MC
+pu_PC_b03	PC	42	3003	shared	64	121920M	00:25:00	64	0.1042	265	P_C Poisson(1) bootstrap, data+MC
+pu_PC_b04	PC	42	3004	shared	64	121920M	00:25:00	64	0.1042	265	P_C Poisson(1) bootstrap, data+MC
+pu_PC_b05	PC	42	3005	shared	64	121920M	00:25:00	64	0.1042	265	P_C Poisson(1) bootstrap, data+MC
+pu_PC_b06	PC	42	3006	shared	64	121920M	00:25:00	64	0.1042	265	P_C Poisson(1) bootstrap, data+MC
+pu_PC_b07	PC	42	3007	shared	64	121920M	00:25:00	64	0.1042	265	P_C Poisson(1) bootstrap, data+MC
+pu_PC_b08	PC	42	3008	shared	64	121920M	00:25:00	64	0.1042	265	P_C Poisson(1) bootstrap, data+MC
+pu_PC_b09	PC	42	3009	shared	64	121920M	00:25:00	64	0.1042	265	P_C Poisson(1) bootstrap, data+MC
+pu_PC_b10	PC	42	3010	shared	64	121920M	00:25:00	64	0.1042	265	P_C Poisson(1) bootstrap, data+MC

@@ -1,0 +1,38 @@
+{
+ "A": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1A/MasterAnaDev_data_AnaTuple_run00006133_Playlist.root",
+ "B": "root://fndca1.fnal.gov:1095//pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/Data/Playlist1A/MasterAnaDev_data_AnaTuple_run00006133_Playlist.root",
+ "key": [
+  "ev_run",
+  "ev_subrun",
+  "ev_gate"
+ ],
+ "entries": [
+  5480,
+  5480
+ ],
+ "joined": 5480,
+ "same_entry_order": true,
+ "sel_total": [
+  704,
+  704
+ ],
+ "sel_both": 704,
+ "sel_A_only": 0,
+ "sel_B_only": 0,
+ "sel_unjoined": [
+  0,
+  0
+ ],
+ "identical_frac_pl": 1.0,
+ "max_absdiff_pl": 0.0,
+ "identical_frac_th": 1.0,
+ "max_absdiff_th": 0.0,
+ "identical_frac_vz": 1.0,
+ "max_absdiff_vz": 0.0,
+ "identical_frac_MasterAnaDev_minos_trk_p": 1.0,
+ "max_absdiff_MasterAnaDev_minos_trk_p": 0.0,
+ "identical_frac_MasterAnaDev_muon_P": 1.0,
+ "max_absdiff_MasterAnaDev_muon_P": 0.0,
+ "A_muonP_sentinel_among_B_selected_joined": 0,
+ "A_muonP_sentinel_among_A_selected": 0
+}

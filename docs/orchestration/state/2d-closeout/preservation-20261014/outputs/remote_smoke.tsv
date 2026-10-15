@@ -1,0 +1,6 @@
+#run-start	2026-10-14T23:12:06Z	login29	1068325
+Playlist1B/MasterAnaDev_mc_AnaTuple_run00111000_Playlist.root	d436971f	OK	2026-10-14T23:12:11Z	login29	adler32 d436971f
+Playlist1B/MasterAnaDev_mc_AnaTuple_run00111001_Playlist.root	b47b3f8d	OK	2026-10-14T23:12:12Z	login29	adler32 b47b3f8d
+Playlist1A/MasterAnaDev_mc_AnaTuple_run00110001_Playlist.root	cd524740	OK	2026-10-14T23:12:12Z	login29	adler32 cd524740
+Playlist1B/DOES_NOT_EXIST.root	-	ERR	2026-10-14T23:12:12Z	login29	rc=54 [ERROR] Server responded with an error: [3011] No such file or directory /pnfs/fs/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1B/DOES_NOT_EXIST.root
+#run-end	2026-10-14T23:12:12Z	login29	1068325

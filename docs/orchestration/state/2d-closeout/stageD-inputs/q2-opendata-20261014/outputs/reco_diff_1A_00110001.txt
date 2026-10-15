@@ -1,0 +1,7 @@
+MasterAnaDev_muon_P: n=186535 identical=0.6897 rel>1e-9=0.2950 rel>1e-6=0.2949 rel>1e-3=0.2938 rel>1e-2=0.2933 rel>0.1=0.2932 median_rel_among_differing=1.39 sign_or_sentinel_flip=54685
+MasterAnaDev_muon_theta: n=186535 identical=0.6701 rel>1e-9=0.2947 rel>1e-6=0.2943 rel>1e-3=0.2933 rel>1e-2=0.2932 rel>0.1=0.2932 median_rel_among_differing=1 sign_or_sentinel_flip=54685
+MasterAnaDev_muon_E: n=186535 identical=0.7031 rel>1e-9=0.2950 rel>1e-6=0.2949 rel>1e-3=0.2938 rel>1e-2=0.2933 rel>0.1=0.2932 median_rel_among_differing=1.4 sign_or_sentinel_flip=54685
+MasterAnaDev_minos_trk_p: n=186535 identical=0.7803 rel>1e-9=0.2197 rel>1e-6=0.2197 rel>1e-3=0.2197 rel>1e-2=0.2197 rel>0.1=0.2197 median_rel_among_differing=1 sign_or_sentinel_flip=40985
+Truth subrun 112 {'local': 1000, 'remote': 1029} max nthEvtInFile {'local': 999, 'remote': 1028}
+Truth subrun 111 {'local': 1017, 'remote': 1017} max nthEvtInFile {'local': 1016, 'remote': 1016}
+Truth subrun 113 {'local': 1109, 'remote': 1109} max nthEvtInFile {'local': 1108, 'remote': 1108}

@@ -1,0 +1,10 @@
+local non-positive muon_P (value, count): [(-9999.0, 54685)]
+remote non-positive muon_P (value, count): []
+both real: 131850 identical among both real: 0.9756920743268866
+real local -> nonpositive remote: 0 | nonpositive local -> real remote: 54684
+MasterAnaDev_minos_trk_is_ok local values {False: 95797, True: 90738}
+MasterAnaDev_minos_trk_is_ok remote values {False: 54812, True: 131723}
+muon_is_minos_match_track local values {-1: 186535}
+truth_reco_isMinosMatchTrack remote values {-1: 54812, 1: 131723}
+MasterAnaDev_minos_trk_quality local values {-1: 95797, 1: 69860, 2: 20878}
+MasterAnaDev_minos_trk_quality remote values {-1: 54812, 1: 100802, 2: 30921}

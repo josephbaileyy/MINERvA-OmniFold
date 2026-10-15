@@ -1,0 +1,1082 @@
+{
+ "1A": {
+  "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1A.root",
+  "n_rows": 2682267,
+  "n_miss_rows": 945434,
+  "nTruthOnlyMisses_param": 681612,
+  "f_present": 0.6494501178616824,
+  "f_pass_present": 1.0,
+  "f_grid_pass": 0.9951527122966541,
+  "wreco_over_wtruth": 0.9839148027083308,
+  "eff": 0.6359061503668276,
+  "by_truth_pz": {
+   "1.5-2.0": {
+    "f_present": 0.280167591477996,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9836938985418014,
+    "wreco_over_wtruth": 0.9524981855140693,
+    "eff": 0.2625076905957383
+   },
+   "2.0-3.0": {
+    "f_present": 0.4487642214313994,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9960151828642254,
+    "wreco_over_wtruth": 0.9696471336912572,
+    "eff": 0.4334089759662806
+   },
+   "3.0-4.0": {
+    "f_present": 0.5765926054968397,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9959796301672643,
+    "wreco_over_wtruth": 0.9804136493488412,
+    "eff": 0.5630265484491596
+   },
+   "4.0-5.0": {
+    "f_present": 0.6783433015632453,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9964617261071037,
+    "wreco_over_wtruth": 0.9859737737941995,
+    "eff": 0.6664622058247136
+   },
+   "5.0-6.0": {
+    "f_present": 0.7504927978438063,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9969183660563828,
+    "wreco_over_wtruth": 0.9880821082202295,
+    "eff": 0.739263324850994
+   },
+   "6.0-8.0": {
+    "f_present": 0.7967213225952632,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9970763641643717,
+    "wreco_over_wtruth": 0.988398060810339,
+    "eff": 0.7851755119135702
+   },
+   "8.0-10.0": {
+    "f_present": 0.7873427235883323,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.995949846556359,
+    "wreco_over_wtruth": 0.9884548583241902,
+    "eff": 0.7751006972809498
+   },
+   "10.0-15.0": {
+    "f_present": 0.769427453631381,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9929467470808463,
+    "wreco_over_wtruth": 0.9884591757641433,
+    "eff": 0.7551832918591177
+   },
+   "15.0-20.0": {
+    "f_present": 0.7815427324002159,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9885504346014753,
+    "wreco_over_wtruth": 0.9885258082466422,
+    "eff": 0.7637295113914887
+   },
+   "20.0-60.0": {
+    "f_present": 0.7987365052494152,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9741122546407819,
+    "wreco_over_wtruth": 0.9885321072438289,
+    "eff": 0.7691363206160978
+   }
+  },
+  "rel_to_1A1D_mean": {
+   "f_present": 0.9978375555604944,
+   "f_pass_present": 1.0,
+   "f_grid_pass": 0.9999133117536794,
+   "wreco_over_wtruth": 0.9996087495279872,
+   "eff": 0.9973602702240961
+  }
+ },
+ "1B": {
+  "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1B.root",
+  "n_rows": 721082,
+  "n_miss_rows": 251998,
+  "nTruthOnlyMisses_param": 181498,
+  "f_present": 0.6524707775722942,
+  "f_pass_present": 1.0,
+  "f_grid_pass": 0.9952842998052257,
+  "wreco_over_wtruth": 0.9843816685818358,
+  "eff": 0.6392514715203022,
+  "by_truth_pz": {
+   "1.5-2.0": {
+    "f_present": 0.2833274498235414,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9824865836838759,
+    "wreco_over_wtruth": 0.9539760201049244,
+    "eff": 0.2655539338283881
+   },
+   "2.0-3.0": {
+    "f_present": 0.45021418696200644,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.996037478194045,
+    "wreco_over_wtruth": 0.9705699815679996,
+    "eff": 0.43523289427644335
+   },
+   "3.0-4.0": {
+    "f_present": 0.5793075443617284,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9960782342026373,
+    "wreco_over_wtruth": 0.980990493909649,
+    "eff": 0.5660664734140924
+   },
+   "4.0-5.0": {
+    "f_present": 0.6822157536644883,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9966233982818071,
+    "wreco_over_wtruth": 0.9863979239572684,
+    "eff": 0.6706639655659539
+   },
+   "5.0-6.0": {
+    "f_present": 0.7529209187572944,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9970534173046574,
+    "wreco_over_wtruth": 0.9884272566058246,
+    "eff": 0.7420146890557673
+   },
+   "6.0-8.0": {
+    "f_present": 0.8011402346594733,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9975316111450979,
+    "wreco_over_wtruth": 0.9887173041731057,
+    "eff": 0.7901459992708098
+   },
+   "8.0-10.0": {
+    "f_present": 0.7911159717882871,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9962285882071291,
+    "wreco_over_wtruth": 0.9887468582830364,
+    "eff": 0.7792633826825589
+   },
+   "10.0-15.0": {
+    "f_present": 0.7757751414846783,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9912561523223257,
+    "wreco_over_wtruth": 0.9887850556240123,
+    "eff": 0.760367680635264
+   },
+   "15.0-20.0": {
+    "f_present": 0.7831047608919437,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.987157581305522,
+    "wreco_over_wtruth": 0.9888102648668445,
+    "eff": 0.7643976015249644
+   },
+   "20.0-60.0": {
+    "f_present": 0.8008040982484408,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9764803127378935,
+    "wreco_over_wtruth": 0.9888418064436301,
+    "eff": 0.7732440699740297
+   }
+  },
+  "rel_to_1A1D_mean": {
+   "f_present": 1.0024786012989122,
+   "f_pass_present": 1.0,
+   "f_grid_pass": 1.000045528748976,
+   "wreco_over_wtruth": 1.0000830621521364,
+   "eff": 1.0026070985614082
+  }
+ },
+ "1C": {
+  "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1C.root",
+  "n_rows": 1376832,
+  "n_miss_rows": 482805,
+  "nTruthOnlyMisses_param": 348220,
+  "f_present": 0.6513512041076597,
+  "f_pass_present": 1.0,
+  "f_grid_pass": 0.9952865898393796,
+  "wreco_over_wtruth": 0.9845920358173325,
+  "eff": 0.6382924264664859,
+  "by_truth_pz": {
+   "1.5-2.0": {
+    "f_present": 0.2832367572509641,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9843781968397767,
+    "wreco_over_wtruth": 0.9545329343083994,
+    "eff": 0.2661353208433978
+   },
+   "2.0-3.0": {
+    "f_present": 0.44872385761420197,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9956383852752035,
+    "wreco_over_wtruth": 0.9708945090306663,
+    "eff": 0.43376333296367425
+   },
+   "3.0-4.0": {
+    "f_present": 0.5772326196578017,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9961806874724232,
+    "wreco_over_wtruth": 0.9812409134787768,
+    "eff": 0.5642409881054093
+   },
+   "4.0-5.0": {
+    "f_present": 0.6790535567335455,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9965738601913453,
+    "wreco_over_wtruth": 0.9866082233921658,
+    "eff": 0.66766444717656
+   },
+   "5.0-6.0": {
+    "f_present": 0.7540552814026931,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9971113252109526,
+    "wreco_over_wtruth": 0.9885862076443659,
+    "eff": 0.7432952922714317
+   },
+   "6.0-8.0": {
+    "f_present": 0.8003323517568331,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9971710240619436,
+    "wreco_over_wtruth": 0.988858585902119,
+    "eff": 0.7891766221536561
+   },
+   "8.0-10.0": {
+    "f_present": 0.7930406904462053,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9956616668342716,
+    "wreco_over_wtruth": 0.988902803261803,
+    "eff": 0.7808378667787352
+   },
+   "10.0-15.0": {
+    "f_present": 0.7727233968190235,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.993303891766891,
+    "wreco_over_wtruth": 0.9889279913721427,
+    "eff": 0.7590508464275196
+   },
+   "15.0-20.0": {
+    "f_present": 0.7842413515603297,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9892362147548335,
+    "wreco_over_wtruth": 0.9889385069645279,
+    "eff": 0.7672184403713629
+   },
+   "20.0-60.0": {
+    "f_present": 0.8007506199571662,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9751921889712531,
+    "wreco_over_wtruth": 0.9889682169497344,
+    "eff": 0.772271187716219
+   }
+  },
+  "rel_to_1A1D_mean": {
+   "f_present": 1.0007584500224762,
+   "f_pass_present": 1.0,
+   "f_grid_pass": 1.0000478297381674,
+   "wreco_over_wtruth": 1.0002967848531645,
+   "eff": 1.0011029246617227
+  }
+ },
+ "1D": {
+  "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1D.root",
+  "n_rows": 4003632,
+  "n_miss_rows": 1408544,
+  "nTruthOnlyMisses_param": 1015932,
+  "f_present": 0.6501581451613919,
+  "f_pass_present": 1.0,
+  "f_grid_pass": 0.9952323493354525,
+  "wreco_over_wtruth": 0.9843111349441855,
+  "eff": 0.6369068060414219,
+  "by_truth_pz": {
+   "1.5-2.0": {
+    "f_present": 0.2795486534154762,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9835581249496627,
+    "wreco_over_wtruth": 0.9535837648136463,
+    "eff": 0.2621900964714096
+   },
+   "2.0-3.0": {
+    "f_present": 0.44858196032231423,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9958700041446792,
+    "wreco_over_wtruth": 0.9704631731197803,
+    "eff": 0.4335343521370819
+   },
+   "3.0-4.0": {
+    "f_present": 0.5755472177170232,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.996144670050783,
+    "wreco_over_wtruth": 0.980843575181839,
+    "eff": 0.5623453729448096
+   },
+   "4.0-5.0": {
+    "f_present": 0.6793411233947209,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9964478432291476,
+    "wreco_over_wtruth": 0.9863342606666589,
+    "eff": 0.6676772756660382
+   },
+   "5.0-6.0": {
+    "f_present": 0.750991243772988,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9970602475663102,
+    "wreco_over_wtruth": 0.988354540042736,
+    "eff": 0.7400635869907524
+   },
+   "6.0-8.0": {
+    "f_present": 0.7990034917558717,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9971376198349867,
+    "wreco_over_wtruth": 0.9886506871181125,
+    "eff": 0.7876742558534844
+   },
+   "8.0-10.0": {
+    "f_present": 0.7909896748959371,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.995783915230551,
+    "wreco_over_wtruth": 0.9886918913139893,
+    "eff": 0.7787479093416608
+   },
+   "10.0-15.0": {
+    "f_present": 0.7699758501187489,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9929188342526722,
+    "wreco_over_wtruth": 0.9887133921728877,
+    "eff": 0.7558946463182424
+   },
+   "15.0-20.0": {
+    "f_present": 0.7800720490599282,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9886069135529635,
+    "wreco_over_wtruth": 0.9887352994009809,
+    "eff": 0.7624974569105286
+   },
+   "20.0-60.0": {
+    "f_present": 0.798265859808506,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9754093578284684,
+    "wreco_over_wtruth": 0.9887604589618249,
+    "eff": 0.7698844785322593
+   }
+  },
+  "rel_to_1A1D_mean": {
+   "f_present": 0.9989253931181168,
+   "f_pass_present": 1.0,
+   "f_grid_pass": 0.9999933297591765,
+   "wreco_over_wtruth": 1.0000114034667122,
+   "eff": 0.9989297065527728
+  }
+ },
+ "1E": {
+  "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1E.root",
+  "n_rows": 3350021,
+  "n_miss_rows": 1184467,
+  "nTruthOnlyMisses_param": 855054,
+  "f_present": 0.6483392920062137,
+  "f_pass_present": 1.0,
+  "f_grid_pass": 0.9952737866435157,
+  "wreco_over_wtruth": 0.9840513787385077,
+  "eff": 0.6349838539705842,
+  "by_truth_pz": {
+   "1.5-2.0": {
+    "f_present": 0.27870130957809136,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9834928891554957,
+    "wreco_over_wtruth": 0.9528982946754275,
+    "eff": 0.26119014312209193
+   },
+   "2.0-3.0": {
+    "f_present": 0.44659600236682645,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9957946473119472,
+    "wreco_over_wtruth": 0.9699408299984684,
+    "eff": 0.43135005744842847
+   },
+   "3.0-4.0": {
+    "f_present": 0.5757938433745778,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9961209005609882,
+    "wreco_over_wtruth": 0.980520160209178,
+    "eff": 0.562387419399919
+   },
+   "4.0-5.0": {
+    "f_present": 0.6769201323646331,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.996508946227161,
+    "wreco_over_wtruth": 0.9860987155481543,
+    "eff": 0.66517975949451
+   },
+   "5.0-6.0": {
+    "f_present": 0.7492359404958295,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.997087210476277,
+    "wreco_over_wtruth": 0.9881791097637338,
+    "eff": 0.7382227355999033
+   },
+   "6.0-8.0": {
+    "f_present": 0.7968139192247424,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9972556333764508,
+    "wreco_over_wtruth": 0.9884811700155419,
+    "eff": 0.7854739944308413
+   },
+   "8.0-10.0": {
+    "f_present": 0.7882644626610527,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9956890676591029,
+    "wreco_over_wtruth": 0.9885280648089196,
+    "eff": 0.7758623724779443
+   },
+   "10.0-15.0": {
+    "f_present": 0.7655654362358459,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9926849021069465,
+    "wreco_over_wtruth": 0.9885455871602845,
+    "eff": 0.7512602944074589
+   },
+   "15.0-20.0": {
+    "f_present": 0.7759000710564755,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9885986267086494,
+    "wreco_over_wtruth": 0.9885844804168185,
+    "eff": 0.7582974276654902
+   },
+   "20.0-60.0": {
+    "f_present": 0.7986941379444618,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9763560071432937,
+    "wreco_over_wtruth": 0.9886002782419018,
+    "eff": 0.7709202044862218
+   }
+  },
+  "rel_to_1A1D_mean": {
+   "f_present": 0.9961308444124176,
+   "f_pass_present": 1.0,
+   "f_grid_pass": 1.0000349652945308,
+   "wreco_over_wtruth": 0.9997475040160433,
+   "eff": 0.9959137332115929
+  }
+ },
+ "1F": {
+  "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1F.root",
+  "n_rows": 4660210,
+  "n_miss_rows": 1740511,
+  "nTruthOnlyMisses_param": 1268635,
+  "f_present": 0.6282902333086847,
+  "f_pass_present": 1.0,
+  "f_grid_pass": 0.9950114616380934,
+  "wreco_over_wtruth": 0.9811831614934049,
+  "eff": 0.6133925241967686,
+  "by_truth_pz": {
+   "1.5-2.0": {
+    "f_present": 0.270615738654085,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9829166210214076,
+    "wreco_over_wtruth": 0.946066345438245,
+    "eff": 0.2516467486344436
+   },
+   "2.0-3.0": {
+    "f_present": 0.432499699716374,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9957470258229273,
+    "wreco_over_wtruth": 0.9623563849915364,
+    "eff": 0.41444867951842296
+   },
+   "3.0-4.0": {
+    "f_present": 0.5560941729312083,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9957847199680601,
+    "wreco_over_wtruth": 0.976306757283757,
+    "eff": 0.5406299452122404
+   },
+   "4.0-5.0": {
+    "f_present": 0.6553002453817659,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9963193481129337,
+    "wreco_over_wtruth": 0.9833110179247356,
+    "eff": 0.6419922719392431
+   },
+   "5.0-6.0": {
+    "f_present": 0.7277724734279757,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9966745255819072,
+    "wreco_over_wtruth": 0.9865867849419416,
+    "eff": 0.7156229784980596
+   },
+   "6.0-8.0": {
+    "f_present": 0.7731828935140356,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9970996368372828,
+    "wreco_over_wtruth": 0.9872258894231506,
+    "eff": 0.7610923046395813
+   },
+   "8.0-10.0": {
+    "f_present": 0.7642180294404441,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9953472104313212,
+    "wreco_over_wtruth": 0.9872995771658454,
+    "eff": 0.7510015511270598
+   },
+   "10.0-15.0": {
+    "f_present": 0.7448507058084086,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9925691955671937,
+    "wreco_over_wtruth": 0.9873355161335642,
+    "eff": 0.7299528120262471
+   },
+   "15.0-20.0": {
+    "f_present": 0.7580143712687806,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.988953705682501,
+    "wreco_over_wtruth": 0.9873959959150281,
+    "eff": 0.7401926416701248
+   },
+   "20.0-60.0": {
+    "f_present": 0.7723315731816526,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9753328021067711,
+    "wreco_over_wtruth": 0.9874181488156275,
+    "eff": 0.7438026565728111
+   }
+  },
+  "rel_to_1A1D_mean": {
+   "f_present": 0.965326779293606,
+   "f_pass_present": 1.0,
+   "f_grid_pass": 0.999771385381934,
+   "wreco_over_wtruth": 0.9968335372316635,
+   "eff": 0.962049719653479
+  }
+ },
+ "1G": {
+  "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1G.root",
+  "n_rows": 3922748,
+  "n_miss_rows": 1438551,
+  "nTruthOnlyMisses_param": 1046274,
+  "f_present": 0.6360738902057023,
+  "f_pass_present": 1.0,
+  "f_grid_pass": 0.9950996759298126,
+  "wreco_over_wtruth": 0.9824648312749414,
+  "eff": 0.621857915587951,
+  "by_truth_pz": {
+   "1.5-2.0": {
+    "f_present": 0.2711840981414239,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9829022768998572,
+    "wreco_over_wtruth": 0.9487362542246079,
+    "eff": 0.25288324591010525
+   },
+   "2.0-3.0": {
+    "f_present": 0.43560473845454767,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9958239878943216,
+    "wreco_over_wtruth": 0.9656502773618133,
+    "eff": 0.4188852311073387
+   },
+   "3.0-4.0": {
+    "f_present": 0.5591359786520975,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9958137517902688,
+    "wreco_over_wtruth": 0.9781189768121354,
+    "eff": 0.5446120458653034
+   },
+   "4.0-5.0": {
+    "f_present": 0.658888362139167,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9962255290786334,
+    "wreco_over_wtruth": 0.9844092189228981,
+    "eff": 0.6461675965378656
+   },
+   "5.0-6.0": {
+    "f_present": 0.732785060743716,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9968461848353232,
+    "wreco_over_wtruth": 0.9871361318730578,
+    "eff": 0.7210772710020723
+   },
+   "6.0-8.0": {
+    "f_present": 0.7834769408931743,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9972860095419802,
+    "wreco_over_wtruth": 0.9876404785018391,
+    "eff": 0.7716934725126863
+   },
+   "8.0-10.0": {
+    "f_present": 0.7786695116269251,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9957566078567403,
+    "wreco_over_wtruth": 0.9877112882391397,
+    "eff": 0.765837070716218
+   },
+   "10.0-15.0": {
+    "f_present": 0.7538141416665987,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9927991738256446,
+    "wreco_over_wtruth": 0.9877390316981866,
+    "eff": 0.7392101193414974
+   },
+   "15.0-20.0": {
+    "f_present": 0.7599032441862013,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.989141426426865,
+    "wreco_over_wtruth": 0.9877847619908636,
+    "eff": 0.7424701735214781
+   },
+   "20.0-60.0": {
+    "f_present": 0.7802934645187237,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9749376339850779,
+    "wreco_over_wtruth": 0.9878056655505605,
+    "eff": 0.7514607770463049
+   }
+  },
+  "rel_to_1A1D_mean": {
+   "f_present": 0.9772858581479048,
+   "f_pass_present": 1.0,
+   "f_grid_pass": 0.9998600216721104,
+   "wreco_over_wtruth": 0.9981356503049732,
+   "eff": 0.97532690692489
+  }
+ },
+ "1L": {
+  "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1L.root",
+  "n_rows": 383848,
+  "n_miss_rows": 151725,
+  "nTruthOnlyMisses_param": 111605,
+  "f_present": 0.6073777854440847,
+  "f_pass_present": 1.0,
+  "f_grid_pass": 0.9948659236025151,
+  "wreco_over_wtruth": 0.9786463865662054,
+  "eff": 0.5913563385370777,
+  "by_truth_pz": {
+   "1.5-2.0": {
+    "f_present": 0.25981433595250397,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9834024160512713,
+    "wreco_over_wtruth": 0.9395657348121901,
+    "eff": 0.24006096731456023
+   },
+   "2.0-3.0": {
+    "f_present": 0.41788709283632536,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9959406389910436,
+    "wreco_over_wtruth": 0.9558010285355723,
+    "eff": 0.3977955357011626
+   },
+   "3.0-4.0": {
+    "f_present": 0.5342708969793252,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9952627654841643,
+    "wreco_over_wtruth": 0.9724321355183713,
+    "eff": 0.5170809961033602
+   },
+   "4.0-5.0": {
+    "f_present": 0.6286619514258932,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9960166548663678,
+    "wreco_over_wtruth": 0.9806737533898439,
+    "eff": 0.6140564943457044
+   },
+   "5.0-6.0": {
+    "f_present": 0.6978136440164631,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9966070123234633,
+    "wreco_over_wtruth": 0.984984677642004,
+    "eff": 0.6850036254858357
+   },
+   "6.0-8.0": {
+    "f_present": 0.7463329722874759,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9969638825828802,
+    "wreco_over_wtruth": 0.9859371049284893,
+    "eff": 0.733603281354534
+   },
+   "8.0-10.0": {
+    "f_present": 0.7473801209080663,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9969106795960984,
+    "wreco_over_wtruth": 0.9860287970362696,
+    "eff": 0.7346616829546275
+   },
+   "10.0-15.0": {
+    "f_present": 0.7224632627529132,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9922160843946342,
+    "wreco_over_wtruth": 0.986088352235901,
+    "eff": 0.7068672486996394
+   },
+   "15.0-20.0": {
+    "f_present": 0.7264836175041719,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9886847192904276,
+    "wreco_over_wtruth": 0.9861523451690075,
+    "eff": 0.7083169898574623
+   },
+   "20.0-60.0": {
+    "f_present": 0.7543918304452718,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9737339031692586,
+    "wreco_over_wtruth": 0.9861382644336262,
+    "eff": 0.7243943908156288
+   }
+  },
+  "rel_to_1A1D_mean": {
+   "f_present": 0.9331961732869365,
+   "f_pass_present": 1.0,
+   "f_grid_pass": 0.999625151123269,
+   "wreco_over_wtruth": 0.9942562994405134,
+   "eff": 0.9274879905813832
+  }
+ },
+ "1M": {
+  "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1M.root",
+  "n_rows": 5917406,
+  "n_miss_rows": 2333600,
+  "nTruthOnlyMisses_param": 1719176,
+  "f_present": 0.6081501744750863,
+  "f_pass_present": 1.0,
+  "f_grid_pass": 0.9948434842821886,
+  "wreco_over_wtruth": 0.9787268145793441,
+  "eff": 0.592143658462983,
+  "by_truth_pz": {
+   "1.5-2.0": {
+    "f_present": 0.25638173173703027,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9834636203445903,
+    "wreco_over_wtruth": 0.9395347273628515,
+    "eff": 0.23689626489662238
+   },
+   "2.0-3.0": {
+    "f_present": 0.41622626531650786,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9950468780114199,
+    "wreco_over_wtruth": 0.9559549109666394,
+    "eff": 0.3959227271486307
+   },
+   "3.0-4.0": {
+    "f_present": 0.5340591570059522,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9954688577981831,
+    "wreco_over_wtruth": 0.972649577872899,
+    "eff": 0.5170987008678019
+   },
+   "4.0-5.0": {
+    "f_present": 0.6310052423949061,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9960264121991936,
+    "wreco_over_wtruth": 0.9807606606649748,
+    "eff": 0.616406003529415
+   },
+   "5.0-6.0": {
+    "f_present": 0.7007061002821966,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9966257210613052,
+    "wreco_over_wtruth": 0.9849513063013032,
+    "eff": 0.6878325917676922
+   },
+   "6.0-8.0": {
+    "f_present": 0.7494350015241578,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9969990318555068,
+    "wreco_over_wtruth": 0.9858635546326235,
+    "eff": 0.7366234173004945
+   },
+   "8.0-10.0": {
+    "f_present": 0.7451726527014197,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9956436433545197,
+    "wreco_over_wtruth": 0.9859875218001923,
+    "eff": 0.7315301871496535
+   },
+   "10.0-15.0": {
+    "f_present": 0.7200812409442539,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9926150010144965,
+    "wreco_over_wtruth": 0.9860208826706035,
+    "eff": 0.7047716796959675
+   },
+   "15.0-20.0": {
+    "f_present": 0.7288655774601304,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9890961439295197,
+    "wreco_over_wtruth": 0.9860934979537272,
+    "eff": 0.7108926826294117
+   },
+   "20.0-60.0": {
+    "f_present": 0.7484727250293518,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9753154396444366,
+    "wreco_over_wtruth": 0.9861255544808508,
+    "eff": 0.7198687012006071
+   }
+  },
+  "rel_to_1A1D_mean": {
+   "f_present": 0.9343828984278512,
+   "f_pass_present": 1.0,
+   "f_grid_pass": 0.9996026044579944,
+   "wreco_over_wtruth": 0.9943380103218004,
+   "eff": 0.9287228294229336
+  }
+ },
+ "1N": {
+  "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1N.root",
+  "n_rows": 3416266,
+  "n_miss_rows": 1374033,
+  "nTruthOnlyMisses_param": 1009931,
+  "f_present": 0.5994808684224032,
+  "f_pass_present": 1.0,
+  "f_grid_pass": 0.9949271501312587,
+  "wreco_over_wtruth": 0.9796853558990811,
+  "eff": 0.5843233298760604,
+  "by_truth_pz": {
+   "1.5-2.0": {
+    "f_present": 0.25185739633977616,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9833758554266873,
+    "wreco_over_wtruth": 0.9417016974690464,
+    "eff": 0.23323171385024455
+   },
+   "2.0-3.0": {
+    "f_present": 0.4100708030407933,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.995225675573805,
+    "wreco_over_wtruth": 0.959281681044847,
+    "eff": 0.3914953170118014
+   },
+   "3.0-4.0": {
+    "f_present": 0.5299179156172648,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9955807161629443,
+    "wreco_over_wtruth": 0.9744321572088309,
+    "eff": 0.5140870762280725
+   },
+   "4.0-5.0": {
+    "f_present": 0.6263432347925095,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9962416958726448,
+    "wreco_over_wtruth": 0.9818993819915398,
+    "eff": 0.6126946554370667
+   },
+   "5.0-6.0": {
+    "f_present": 0.6941115034777546,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9967016509404112,
+    "wreco_over_wtruth": 0.9854446849872724,
+    "eff": 0.6817523931246996
+   },
+   "6.0-8.0": {
+    "f_present": 0.7387317502405426,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9969293471931192,
+    "wreco_over_wtruth": 0.9861468779852314,
+    "eff": 0.7262610447116171
+   },
+   "8.0-10.0": {
+    "f_present": 0.7346433829088286,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9959037274348741,
+    "wreco_over_wtruth": 0.9862426923401746,
+    "eff": 0.7215687681948737
+   },
+   "10.0-15.0": {
+    "f_present": 0.7095545924265597,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9925244397203165,
+    "wreco_over_wtruth": 0.9862636428064497,
+    "eff": 0.6945764409777198
+   },
+   "15.0-20.0": {
+    "f_present": 0.7240552136983484,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9896587585085568,
+    "wreco_over_wtruth": 0.9863410949964238,
+    "eff": 0.7067800553234912
+   },
+   "20.0-60.0": {
+    "f_present": 0.7340652988760504,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9749981110318903,
+    "wreco_over_wtruth": 0.9863584616025263,
+    "eff": 0.7059488632320712
+   }
+  },
+  "rel_to_1A1D_mean": {
+   "f_present": 0.9210630776716441,
+   "f_pass_present": 1.0,
+   "f_grid_pass": 0.999686670546737,
+   "wreco_over_wtruth": 0.9953118408682621,
+   "eff": 0.9164573637906307
+  }
+ },
+ "1O": {
+  "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1O.root",
+  "n_rows": 1042088,
+  "n_miss_rows": 448729,
+  "nTruthOnlyMisses_param": 328937,
+  "f_present": 0.57094636584961,
+  "f_pass_present": 1.0,
+  "f_grid_pass": 0.9946330171494528,
+  "wreco_over_wtruth": 0.9766788483308523,
+  "eff": 0.5546384417597361,
+  "by_truth_pz": {
+   "1.5-2.0": {
+    "f_present": 0.23901548661363226,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9828870330396795,
+    "wreco_over_wtruth": 0.9357155638162177,
+    "eff": 0.21982318701520417
+   },
+   "2.0-3.0": {
+    "f_present": 0.3864810216808913,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9943097619020362,
+    "wreco_over_wtruth": 0.9500147120333707,
+    "eff": 0.36507341358226353
+   },
+   "3.0-4.0": {
+    "f_present": 0.5017359799887158,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9950787117555934,
+    "wreco_over_wtruth": 0.9694851282049269,
+    "eff": 0.4840317304406127
+   },
+   "4.0-5.0": {
+    "f_present": 0.5971459042061763,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9958447274770407,
+    "wreco_over_wtruth": 0.9787095955639938,
+    "eff": 0.5820039503953828
+   },
+   "5.0-6.0": {
+    "f_present": 0.6619689397846532,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9969725049674447,
+    "wreco_over_wtruth": 0.9840264997287713,
+    "eff": 0.6494228836830748
+   },
+   "6.0-8.0": {
+    "f_present": 0.7087918503091273,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9966229332861006,
+    "wreco_over_wtruth": 0.985256928988175,
+    "eff": 0.6959837339283002
+   },
+   "8.0-10.0": {
+    "f_present": 0.7006387569088158,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9955176051278263,
+    "wreco_over_wtruth": 0.9854310879599635,
+    "eff": 0.6873364271611279
+   },
+   "10.0-15.0": {
+    "f_present": 0.682322120099921,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9933315596764501,
+    "wreco_over_wtruth": 0.9855121643470309,
+    "eff": 0.6679526450270488
+   },
+   "15.0-20.0": {
+    "f_present": 0.6884607803057556,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9892656734759814,
+    "wreco_over_wtruth": 0.9855090187562163,
+    "eff": 0.6712012359472191
+   },
+   "20.0-60.0": {
+    "f_present": 0.701597887379847,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9741092935266777,
+    "wreco_over_wtruth": 0.9856081549254225,
+    "eff": 0.6735971602379398
+   }
+  },
+  "rel_to_1A1D_mean": {
+   "f_present": 0.8772216839859867,
+   "f_pass_present": 1.0,
+   "f_grid_pass": 0.9993911304951456,
+   "wreco_over_wtruth": 0.9922573779590232,
+   "eff": 0.8698993488757089
+  }
+ },
+ "1P": {
+  "source": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1P.root",
+  "n_rows": 1372703,
+  "n_miss_rows": 590693,
+  "nTruthOnlyMisses_param": 432133,
+  "f_present": 0.570992739863274,
+  "f_pass_present": 1.0,
+  "f_grid_pass": 0.9946011358099879,
+  "wreco_over_wtruth": 0.9766580482869885,
+  "eff": 0.5546538991655254,
+  "by_truth_pz": {
+   "1.5-2.0": {
+    "f_present": 0.2361996851136775,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9839637537246364,
+    "wreco_over_wtruth": 0.9355054659160283,
+    "eff": 0.21742262972996748
+   },
+   "2.0-3.0": {
+    "f_present": 0.38921112810589154,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9948646253499821,
+    "wreco_over_wtruth": 0.9500793680012283,
+    "eff": 0.36788249626075714
+   },
+   "3.0-4.0": {
+    "f_present": 0.5051094742710486,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9951217608494758,
+    "wreco_over_wtruth": 0.9694623787581764,
+    "eff": 0.48729583371462565
+   },
+   "4.0-5.0": {
+    "f_present": 0.5946028525603557,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9959372622841925,
+    "wreco_over_wtruth": 0.9787134485398267,
+    "eff": 0.579581515156861
+   },
+   "5.0-6.0": {
+    "f_present": 0.6606551336471266,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9964978887618484,
+    "wreco_over_wtruth": 0.9840437280261018,
+    "eff": 0.6478367707169032
+   },
+   "6.0-8.0": {
+    "f_present": 0.7093658030649217,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9967130376448742,
+    "wreco_over_wtruth": 0.9852913374218878,
+    "eff": 0.6966346177134288
+   },
+   "8.0-10.0": {
+    "f_present": 0.6996331629564502,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9953296644677787,
+    "wreco_over_wtruth": 0.9854452336906357,
+    "eff": 0.6862302021604586
+   },
+   "10.0-15.0": {
+    "f_present": 0.6799086704321448,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9919098624471046,
+    "wreco_over_wtruth": 0.9854669811285217,
+    "eff": 0.6646069298914524
+   },
+   "15.0-20.0": {
+    "f_present": 0.6844997468234647,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9900730368953239,
+    "wreco_over_wtruth": 0.9855478740675305,
+    "eff": 0.6679104687993965
+   },
+   "20.0-60.0": {
+    "f_present": 0.6947676066717409,
+    "f_pass_present": 1.0,
+    "f_grid_pass": 0.9738947119938006,
+    "wreco_over_wtruth": 0.9856174229674055,
+    "eff": 0.6668988079392014
+   }
+  },
+  "rel_to_1A1D_mean": {
+   "f_present": 0.8772929346196587,
+   "f_pass_present": 1.0,
+   "f_grid_pass": 0.9993590966421162,
+   "wreco_over_wtruth": 0.9922362461437689,
+   "eff": 0.8699235923940427
+  }
+ }
+}

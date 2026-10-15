@@ -4,33 +4,52 @@
 needs Joseph's explicit decision (goal 2026-10-08: "Do not send it or request a quota increase"). The figures come from
 `RECORD-20261008-followups-g11-g12-preservation.md` §3 and §7; re-measure them before sending.
 
+> **Correction 2026-10-14, before any send:** only Playlist 1A (41 MC files and 253 Data files) differs from the
+> current public release. 1B–1P match it, so "a fresh download would not reproduce the analysis inputs" holds for
+> 1A only (`docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/REPORT.md`). Revise A and B
+> accordingly.
+> **Done 2026-10-14:** A is revised to the 41 1A MC files, and B is dropped (below). Neither is sent.
+
 ## A. To NERSC (HPSS allocation request, via the ERCAP allocation-change process or a help ticket)
 
-> **Subject:** HPSS storage increase for project m3246 (user josephrb): archival copy of analysed MINERvA open-data
-> files
+> **Superseded 2026-10-15, not sent.** Joseph chose CFS instead ("yes you can copy them", 2026-10-14). The 41 files
+> are now on CFS at `/global/cfs/cdirs/m3246/josephrb/mc-1A-preservation-20261014/`, and all 41 match
+> `ANATUPLE-SHA256.tsv` by sha256, bytes and mtime
+> ([`cfs-copy-1A-mc/REPORT.md`](../../orchestration/state/2d-closeout/preservation-20261014/cfs-copy-1A-mc/REPORT.md)).
+> No HPSS request is needed for them. The text below is kept as it stood.
+
+**Revised 2026-10-14, at Joseph's direction** ([`DECISION-20261014-joseph-2d-endpoint-and-open-items.md`](../../orchestration/DECISION-20261014-joseph-2d-endpoint-and-open-items.md)
+item 5). The request now covers only the 41 Playlist 1A MC files. The figures are from
+[`state/2d-closeout/preservation-20261014/REPORT.md`](../../orchestration/state/2d-closeout/preservation-20261014/REPORT.md),
+measured 2026-10-14/15. Re-measure the HPSS line before sending. The 2026-10-08 text (about 11 TiB) is in git history.
+**Not sent.**
+
+> **Subject:** HPSS storage increase for project m3246 (user josephrb): archival copy of 0.71 TB of MINERvA
+> open-data files that are no longer public
 >
-> We request an increase of about **11 TiB** in HPSS storage for user josephrb under project m3246. It is for a
-> one-time archival copy of the MINERvA open-data AnaTuples that our published analysis read: 2,374 files,
-> 11,523,656,218,592 bytes (1,818 data files, 0.99 TB; 489 simulation files, 10.53 TB; 67 flux and parameter files,
-> 0.16 GB).
+> We request an increase of **1 TiB** in HPSS storage for user josephrb under project m3246, from 512 GiB to
+> 1.5 TiB. It is for a one-time archival copy of 41 MINERvA open-data simulation files that our analysis read:
+> 706,929,079,280 bytes (658 GiB). They are the medium-energy FHC Playlist 1A simulation as released before January
+> 2026. MINERvA has since replaced them with a reprocessing, and the current public files of the same names differ
+> (checked by checksum). So these files can no longer be downloaded, and a fresh download would not reproduce our
+> inputs.
 >
-> The files now sit only on Perlmutter scratch. They are an earlier production of the public MINERvA release, and the
-> current public files of the same names differ, so a fresh download would not reproduce the analysis inputs. We have
-> sha256 checksums for all 2,374 files (computed 2026-10-08/10) and would verify the archive against them after
-> transfer.
+> The rest of our inputs are covered without HPSS:
+> - the other 448 simulation files are byte-identical to the current public release (adler32, checked
+>   2026-10-14);
+> - our data files are already preserved on project storage.
 >
-> Current use: 350.9 GiB of a 512 GiB quota (2026-10-09). The copy would be written once with htar, then left untouched.
+> The 41 files now sit only on Perlmutter scratch, where they become purge-eligible from December 2026. We hold a
+> sha256 checksum for each and would verify the archive against them after transfer. Current use is 350.9 GiB of a
+> 512 GiB quota (2026-10-14), so the copy does not fit today. It would be written once with htar and then left
+> untouched.
 
 ## B. To the MINERvA collaboration (open-data contact)
 
-> **Subject:** Is the earlier ME FHC open-data production still retained?
->
-> Our analysis of the MINERvA open data (medium-energy FHC, 12 playlists) used files downloaded before the current
-> release. They are an earlier production: the current files of the same names are about 24% larger. To make our
-> published analysis reproducible, we would like to know whether that earlier production is retained, and under what
-> version tag or path, so that we can cite it rather than archive our own copy.
->
-> We can supply a list of the 2,374 file names and sizes we used, with a sha256 checksum for each.
+**Dropped 2026-10-14, at Joseph's direction** (same decision, item 5). Q2 answered its question: the current release
+is a reprocessing, and only our 1A files are the earlier one
+([`q2-opendata-20261014/REPORT.md`](../../orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/REPORT.md)).
+The 2026-10-08 text is in git history. **Not sent.**
 
 ## C. To NERSC (help ticket: unreadable files on pscratch OST 61)
 
@@ -59,10 +78,8 @@ drafted.
 
 ## What each answer would mean
 
-- **A granted:** copy the MC (10.53 TB) and, if not already done, the data to HPSS with htar; verify against
-  `ANATUPLE-SHA256.tsv`.
-- **B answers yes, with a stable location:** cite it, and keep only the checksum manifest. A and the CFS data copy
-  become optional.
-- **Neither:** the event-level reproduction chain depends on purgeable scratch. Record that as a known limitation.
-- **C fixed:** re-run the sweep script (it resumes, hashing only the missing files) to complete the manifest. (Done
-  2026-10-10 without a ticket: the storage recovered on its own.)
+- **A granted:** copy the 41 1A MC files (0.707 TB) to HPSS with htar, and verify them against `ANATUPLE-SHA256.tsv`.
+- **A refused:** exact reproduction of the 1A MC depends on purgeable scratch. Record that as a known limitation. The
+  fallback is to re-download the current 1A release and re-run the 1A event loop. The measured effect on the 2D
+  result is of order 10⁻⁶ (`state/2d-closeout/stageD-inputs/q2-opendata-20261014/triage/REPORT.md`).
+- **C:** withdrawn; see above.

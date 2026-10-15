@@ -1,0 +1,87 @@
+Q3 (reco level, per-playlist universe files, sample). Observed block ratios against 1A-1E:
+  1G-1M: total -2.61 %, step r[8,15)/r[1.5,8) - 1 = +6.10 %
+  1N-1P: total +5.02 %, step r[8,15)/r[1.5,8) - 1 = +1.36 %
+  band (N)               | pooled proxy: total sd, min..max; step sd, min..max | 1G-1M/1A-1E ratio: total sd; step sd, min..max | 1N-1P/1A-1E ratio: total sd, min..max; step sd   [%]
+  MaRES                 (  2) |  6.98,  -6.72.. +7.23;  1.07,  -1.33.. +0.82 |  0.03;  0.02,  +0.04.. +0.07 |  0.02,  -0.01.. +0.03;  0.02
+  Flux                  (100) |  3.31, -11.13.. +9.35;  2.77,  -8.77.. +6.62 |  0.09;  0.10,  -0.32.. +0.33 |  0.03,  -0.12.. +0.07;  0.07
+  Muon_Energy_MINOS     (  2) |  0.56,  -0.00.. +1.12;  3.99,  -3.71.. +4.27 |  0.08;  0.21,  -0.16.. +0.26 |  0.02,  -0.01.. +0.02;  0.00
+  MvRES                 (  2) |  3.39,  -3.54.. +3.24;  0.56,  -0.60.. +0.53 |  0.01;  0.01,  +0.01.. +0.02 |  0.01,  -0.01.. +0.01;  0.00
+  MaCCQE                (  2) |  2.87,  -3.63.. +2.11;  0.10,  -0.19.. +0.01 |  0.00;  0.09,  -0.12.. +0.07 |  0.01,  -0.01.. +0.01;  0.03
+  Rvp2pi                (  2) |  2.19,  -2.14.. +2.23;  0.62,  -0.63.. +0.61 |  0.00;  0.03,  -0.03.. +0.03 |  0.00,  -0.00.. +0.00;  0.05
+  Rvn2pi                (  2) |  2.02,  -1.98.. +2.06;  0.55,  -0.56.. +0.54 |  0.01;  0.00,  -0.00.. +0.00 |  0.00,  -0.00.. +0.00;  0.07
+  MFP_pi                (  2) |  2.39,  -2.36.. +2.42;  0.14,  -0.09.. +0.19 |  0.03;  0.08,  -0.06.. +0.09 |  0.03,  -0.04.. +0.03;  0.04
+  MinosEfficiency       (  2) |  1.63,  -1.60.. +1.65;  0.17,  -0.17.. +0.16 |  0.01;  0.01,  -0.01.. +0.01 |  0.01,  -0.01.. +0.01;  0.00
+  MFP_N                 (  2) |  1.43,  -1.34.. +1.52;  0.14,  -0.16.. +0.13 |  0.02;  0.02,  -0.02.. +0.01 |  0.01,  -0.01.. +0.00;  0.10
+  Muon_Energy_MINERvA   (  2) |  0.04,  -0.03.. +0.04;  1.34,  -1.33.. +1.34 |  0.00;  0.12,  -0.15.. +0.09 |  0.01,  -0.01.. +0.00;  0.02
+  Theta_Delta2Npi       (  2) |  1.13,  -1.12.. +1.14;  0.22,  -0.23.. +0.22 |  0.01;  0.04,  -0.04.. +0.05 |  0.02,  -0.02.. +0.02;  0.01
+  BhtBY                 (  2) |  0.68,  -0.68.. +0.67;  0.25,  -0.24.. +0.25 |  0.01;  0.04,  -0.04.. +0.04 |  0.00,  -0.00.. +0.00;  0.01
+  HighQ2                (  2) |  0.90,  -0.97.. +0.82;  0.01,  -0.00.. +0.01 |  0.00;  0.04,  -0.03.. +0.04 |  0.01,  -0.01.. +0.01;  0.00
+  AGKYxF1pi             (  2) |  0.58,  -0.98.. +0.19;  0.12,  -0.01.. +0.23 |  0.00;  0.00,  +0.01.. +0.01 |  0.00,  -0.01.. -0.01;  0.02
+  LowQ2                 (  2) |  0.66,  -0.66.. +0.67;  0.02,  -0.02.. +0.02 |  0.00;  0.02,  -0.02.. +0.02 |  0.01,  -0.01.. +0.01;  0.00
+  GEANT_Pion            (  2) |  0.02,  -0.01.. +0.03;  0.65,  -0.75.. +0.55 |  0.01;  0.09,  -0.07.. +0.11 |  0.00,  -0.00.. +0.01;  0.04
+  CV1uBY                (  2) |  0.49,  -0.51.. +0.47;  0.17,  -0.17.. +0.17 |  0.01;  0.02,  -0.02.. +0.02 |  0.00,  -0.00.. +0.00;  0.00
+  CV2uBY                (  2) |  0.45,  -0.44.. +0.45;  0.15,  -0.15.. +0.15 |  0.01;  0.02,  -0.02.. +0.02 |  0.00,  -0.00.. +0.00;  0.00
+  CCQEPauliSupViaKF     (  2) |  0.54,  -0.49.. +0.59;  0.05,  -0.06.. +0.05 |  0.00;  0.01,  -0.00.. +0.02 |  0.01,  -0.01.. +0.01;  0.00
+  AhtBY                 (  2) |  0.38,  -0.38.. +0.39;  0.18,  -0.18.. +0.18 |  0.00;  0.03,  -0.03.. +0.03 |  0.00,  -0.00.. +0.00;  0.00
+  Rvn1pi                (  2) |  0.44,  -0.44.. +0.44;  0.10,  -0.10.. +0.10 |  0.00;  0.01,  -0.01.. +0.01 |  0.00,  -0.00.. +0.00;  0.01
+  Rvp1pi                (  2) |  0.44,  -0.44.. +0.44;  0.10,  -0.10.. +0.10 |  0.00;  0.01,  -0.01.. +0.01 |  0.00,  -0.00.. +0.00;  0.01
+  2p2h                  (  3) |  0.42,  -0.79.. +0.19;  0.12,  -0.06.. +0.21 |  0.03;  0.03,  +0.00.. +0.06 |  0.05,  -0.07.. +0.06;  0.15
+  VecFFCCQEshape        (  2) |  0.05,  -0.05.. +0.05;  0.05,  -0.05.. +0.05 |  0.00;  0.00,  -0.00.. +0.00 |  0.00,  -0.00.. +0.00;  0.00
+  GEANT_Neutron         (  2) |  0.01,  -0.02.. -0.00;  0.06,  -0.06.. +0.05 |  0.01;  0.03,  -0.02.. +0.04 |  0.01,  -0.02.. +0.01;  0.01
+  FrElas_N              (  2) |  0.02,  -0.02.. +0.02;  0.04,  -0.05.. +0.04 |  0.02;  0.20,  -0.19.. +0.21 |  0.01,  -0.02.. +0.01;  0.00
+  MuonResolution        (  2) |  0.00,  -0.00.. +0.00;  0.04,  -0.04.. +0.05 |  0.00;  0.01,  -0.00.. +0.01 |  0.00,  -0.00.. -0.00;  0.01
+  FrAbs_pi              (  2) |  0.01,  -0.02.. +0.01;  0.03,  -0.03.. +0.02 |  0.02;  0.01,  -0.01.. +0.00 |  0.01,  -0.01.. +0.01;  0.05
+  FrCEx_N               (  2) |  0.00,  -0.00.. +0.00;  0.02,  -0.02.. +0.02 |  0.02;  0.08,  -0.08.. +0.07 |  0.03,  -0.03.. +0.03;  0.04
+  FrCEx_pi              (  2) |  0.01,  -0.01.. +0.01;  0.01,  -0.01.. +0.01 |  0.02;  0.00,  -0.00.. -0.00 |  0.02,  -0.02.. +0.02;  0.01
+  FrElas_pi             (  2) |  0.00,  -0.00.. +0.00;  0.01,  -0.01.. +0.01 |  0.01;  0.03,  -0.03.. +0.03 |  0.01,  -0.01.. +0.01;  0.00
+  FrInel_N              (  2) |  0.01,  -0.01.. +0.01;  0.00,  +0.00.. +0.00 |  0.03;  0.11,  -0.11.. +0.11 |  0.03,  -0.03.. +0.03;  0.00
+  FrAbs_N               (  2) |  0.00,  -0.00.. +0.00;  0.00,  +0.00.. +0.00 |  0.01;  0.05,  -0.04.. +0.05 |  0.01,  -0.01.. +0.01;  0.04
+  GEANT_Proton          (  2) |  0.00,  +0.00.. +0.00;  0.00,  -0.00.. +0.00 |  0.00;  0.01,  -0.02.. +0.01 |  0.00,  -0.00.. +0.00;  0.00
+  FrPiProd_pi           (  2) |  0.00,  -0.00.. +0.00;  0.00,  -0.00.. +0.00 |  0.00;  0.02,  -0.02.. +0.02 |  0.00,  -0.00.. +0.00;  0.03
+  FrPiProd_N            (  2) |  0.00,  -0.00.. +0.00;  0.00,  -0.00.. +0.00 |  0.00;  0.01,  -0.01.. +0.01 |  0.00,  -0.00.. +0.00;  0.00
+  BeamAngleY            (  2) |  0.00,  -0.00.. -0.00;  0.00,  -0.00.. -0.00 |  0.00;  0.01,  -0.00.. +0.01 |  0.00,  -0.00.. +0.00;  0.00
+  RDecBR1gamma          (  2) |  0.00,  -0.00.. +0.00;  0.00,  -0.00.. +0.00 |  0.00;  0.00,  -0.00.. +0.00 |  0.00,  -0.00.. +0.00;  0.00
+  BeamAngleX            (  2) |  0.00,  -0.00.. -0.00;  0.00,  +0.00.. +0.00 |  0.00;  0.00,  -0.00.. +0.01 |  0.00,  -0.00.. +0.00;  0.00
+  all bands in quadrature, 1G-1M_vs_1A-1E: total sd 0.146 %, step sd 0.403 %
+  all bands in quadrature, 1N-1P_vs_1A-1E: total sd 0.099 %, step sd 0.241 %
+  pooled proxy p_|| marginal at the two universes of selected bands [%] (proxy p_|| bins 1.5-2 2-3 3-4 4-5 5-6 6-8 8-10 10-15 15-20 20-60):
+   MinosEfficiency_0       +2.42  +2.03  +1.80  +1.63  +1.54  +1.49  +1.50  +1.52  +1.50  +1.47
+   MinosEfficiency_1       -2.32  -1.96  -1.74  -1.58  -1.49  -1.45  -1.46  -1.48  -1.46  -1.43
+   Muon_Energy_MINOS_0     -4.16  -2.61  -1.62  -0.40  +1.25  +5.86  +6.90  +2.73  +1.24  +2.32
+   Muon_Energy_MINOS_1     +4.59  +2.75  +2.22  +1.38  +0.32  -3.13  -4.28  -1.92  -1.16  -2.14
+   Muon_Energy_MINERvA_0   -8.12  -2.51  -0.76  +0.04  +0.62  +1.89  +1.63  +0.74  +0.42  +0.32
+   Muon_Energy_MINERvA_1   +9.82  +2.62  +0.80  +0.01  -0.64  -1.81  -1.59  -0.74  -0.37  -0.33
+  p_|| SHAPE match (pooled universes vs undiluted 1G-1M, means removed; block shape rms 2.81 %): Flux resid 0.12 at 3.3 sigma (k=5, band shape rms 3.26 %); AhtBY resid 0.44 at 11.4 sigma (k=1, band shape rms 0.18 %); BhtBY resid 0.48 at 7.5 sigma (k=1, band shape rms 0.27 %); Rvp2pi resid 0.48 at 4.0 sigma (k=1, band shape rms 0.51 %); CV1uBY resid 0.53 at 8.7 sigma (k=1, band shape rms 0.22 %); CV2uBY resid 0.54 at 9.6 sigma (k=1, band shape rms 0.20 %)
+  p_|| SHAPE match (pooled universes vs undiluted 1N-1P, means removed; block shape rms 1.74 %): Flux resid 0.13 at 2.8 sigma (k=5, band shape rms 3.26 %); Muon_Energy_MINOS resid 0.28 at 0.5 sigma (k=1, band shape rms 3.00 %); Muon_Energy_MINERvA resid 0.52 at 0.4 sigma (k=1, band shape rms 3.08 %); MinosEfficiency resid 0.52 at 4.1 sigma (k=1, band shape rms 0.29 %); 2p2h resid 0.67 at 20.5 sigma (k=2, band shape rms 0.19 %); FrPiProd_pi resid 0.67 at 120.1 sigma (k=1, band shape rms 0.01 %)
+  Flux universes, pooled step: weighted sd 2.77 %, max |step| 8.77 %; 1G-1M/1A-1E step: max |.| 0.325 %
+
+Q4. Per-playlist consistency of the proxy total R_p (proxy grid; May CV; per-playlist POT)
+   PL    R_p     rel(1A-1D)  data stat  MC stat   sys sd (measured, per playlist)  [rel]
+   1A  1.12501  0.99955    0.00172   0.00084   0.10180
+   1B  1.12288  0.99765    0.00376   0.00162   0.10169
+   1C  1.12558  1.00005    0.00248   0.00117   0.10165
+   1D  1.12861  1.00275    0.00135   0.00069   0.10188
+   1E  1.11303  0.98890    0.00162   0.00075   0.10176
+   1F  1.11808  0.99339    0.00129   0.00065   0.10194
+   1G  1.09439  0.97234    0.00141   0.00071   0.10164
+   1L  1.09220  0.97040    0.00464   0.00232   0.10201
+   1M  1.09354  0.97158    0.00135   0.00059   0.10161
+   1N  1.17332  1.04247    0.00160   0.00078   0.10212
+   1O  1.19177  1.05886    0.00311   0.00145   0.10237
+   1P  1.18690  1.05454    0.00249   0.00126   0.10230
+  i_stat_only                                          chi2 =   1967.99 / 11   p = 0.00e+00   GLS mean R = 1.12309
+  ii_stat_plus_identical_correlated_bands_plus_norm    chi2 =   1967.99 / 11   p = 0.00e+00   GLS mean R = 1.12309
+  iii_stat_plus_measured_per_playlist_response         chi2 =   1265.84 / 11   p = 1.04e-264   GLS mean R = 1.12309
+  iii_same_with_full_response_incl_common_part         chi2 =   1265.84 / 11   p = 1.04e-264   GLS mean R = 0.44824
+  iii_without_flux                                     chi2 =   1348.38 / 11   p = 1.65e-282   GLS mean R = 1.12310
+  iv_bands_uncorrelated_across_playlists_upper_bound   chi2 =      0.97 / 11   p = 1.00e+00   GLS mean R = 1.12982
+  v_detector_bands_uncorrelated_across_playlists       chi2 =     33.41 / 11   p = 4.51e-04   GLS mean R = 1.13005
+  vi_detector_bands_correlated_within_run_period_only  chi2 =     69.15 / 11   p = 1.78e-10   GLS mean R = 1.12741
+  chi2 change when ONE band's measured per-playlist response is added to stat (most negative first): Flux -256.1, FrInel_N -171.1, Muon_Energy_MINOS -144.3, MaRES -140.7, 2p2h -127.8, FrCEx_N -123.3, MvRES -45.4, MFP_N -29.5, FrElas_pi -21.3, GEANT_Neutron -19.1, MaCCQE -15.9, Theta_Delta2Npi -15.8
+  playlist-dependent part, all bands in quadrature: 0.111 %; observed POT-weighted rms of ln R_p: 2.54 %
+  note: the GLS mean is meaningful only for i, ii and iv; with a common-mode band the fitted mean trades off against that band's pull
+  playlist-dependent part of each band, POT-weighted rms over playlists [rel]: 2p2h 0.00054, Flux 0.00044, Muon_Energy_MINOS 0.00037, MFP_pi 0.00028, FrInel_N 0.00024, FrElas_N 0.00024, GEANT_Neutron 0.00023, MaRES 0.00021, FrCEx_pi 0.00021, FrCEx_N 0.00020
+  sample controls (universe file vs May CV): 1A D 357701/357701 B 44360.5/44360.5 sigpass 433945/1736833; 1B D 74700/74700 B 11966.2/11966.2 sigpass 434735/469084; 1C D 171986/171986 B 22766.2/22766.2 sigpass 434466/894027; 1D D 577049/577049 B 66627.2/66627.2 sigpass 434682/2595088; 1E D 405389/405389 B 55780.9/55780.9 sigpass 434052/2165554; 1F D 638336/638336 B 77410.2/77410.2 sigpass 430153/2919699; 1G D 534905/534905 B 66546.0/66546.0 sigpass 431874/2484197; 1L D 49514/49514 B 6810.3/6810.3 sigpass 232123/232123; 1M D 586754/586754 B 105084.4/105084.4 sigpass 426207/3583806; 1N D 412949/412949 B 60044.6/60044.6 sigpass 424039/2042233; 1O D 110054/110054 B 18671.1/18671.1 sigpass 415948/593359; 1P D 172370/172370 B 24806.3/24806.3 sigpass 415659/782010
+  split-sample check 1D (entries 0-500k vs 500k-1M), largest rms difference of the per-universe total shift: 2p2h 0.099 % (band sd 0.42/0.41 %), FrInel_N 0.067 % (band sd 0.02/0.04 %), FrElas_N 0.040 % (band sd 0.03/0.01 %), Rvn2pi 0.038 % (band sd 2.03/1.99 %)
+  split-sample check 1M (entries 0-500k vs 500k-1M), largest rms difference of the per-universe total shift: 2p2h 0.092 % (band sd 0.39/0.43 %), FrElas_N 0.072 % (band sd 0.04/0.03 %), MFP_N 0.053 % (band sd 1.43/1.38 %), FrAbs_pi 0.043 % (band sd 0.00/0.04 %)
+  split-sample check 1N (entries 0-500k vs 500k-1M), largest rms difference of the per-universe total shift: 2p2h 0.089 % (band sd 0.43/0.40 %), FrElas_N 0.059 % (band sd 0.03/0.03 %), FrInel_N 0.056 % (band sd 0.04/0.02 %), FrAbs_N 0.055 % (band sd 0.02/0.04 %)

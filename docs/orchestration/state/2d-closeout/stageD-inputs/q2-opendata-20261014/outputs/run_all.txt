@@ -1,0 +1,38 @@
+1A_00110001 Truth rc=0
+1A_00110001 MasterAnaDev rc=0
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root size 17318473069 keys [('MasterAnaDev', 'TTree', 1), ('Truth', 'TTree', 207), ('Truth', 'TTree', 206), ('Meta', 'TTree', 1)] sec 0.6
+   MasterAnaDev;1 entries 186439 branches 4102 4102 zip 10555502891
+   Truth;207 entries 544343 branches 515 515 zip 6751418063
+   Truth;206 entries 541780 branches 515 515 zip 6720374681
+   Meta;1 entries 1 branches 4 4 zip 354
+root://fndca1.fnal.gov:1095//pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root size 21528935276 keys [('MasterAnaDev', 'TTree', 1), ('Truth', 'TTree', 284), ('Truth', 'TTree', 283), ('Meta', 'TTree', 1)] sec 2.4
+   MasterAnaDev;1 entries 186434 branches 4190 4190 zip 12358144877
+   Truth;284 entries 544343 branches 560 560 zip 9156424293
+   Truth;283 entries 543360 branches 560 560 zip 9140022568
+   Meta;1 entries 1 branches 4 4 zip 354
+1A_00110000 Truth rc=0
+1A_00110000 MasterAnaDev rc=0
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1P/MasterAnaDev_mc_AnaTuple_run00112000_Playlist.root size 20328781801 keys [('MasterAnaDev', 'TTree', 1), ('Truth', 'TTree', 285), ('Truth', 'TTree', 284), ('Meta', 'TTree', 1)] sec 0.7
+   MasterAnaDev;1 entries 169086 branches 4190 4190 zip 11207703685
+   Truth;285 entries 549315 branches 560 560 zip 9107340309
+   Truth;284 entries 548972 branches 560 560 zip 9101849620
+   Meta;1 entries 1 branches 4 4 zip 354
+root://fndca1.fnal.gov:1095//pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1P/MasterAnaDev_mc_AnaTuple_run00112000_Playlist.root size 20328781801 keys [('MasterAnaDev', 'TTree', 1), ('Truth', 'TTree', 285), ('Truth', 'TTree', 284), ('Meta', 'TTree', 1)] sec 2.7
+   MasterAnaDev;1 entries 169086 branches 4190 4190 zip 11207703685
+   Truth;285 entries 549315 branches 560 560 zip 9107340309
+   Truth;284 entries 548972 branches 560 560 zip 9101849620
+   Meta;1 entries 1 branches 4 4 zip 354
+1P_00112000 Truth rc=0
+1P_00112000 MasterAnaDev rc=0
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1D/MasterAnaDev_mc_AnaTuple_run00111100_Playlist.root size 21631153471 keys [('MasterAnaDev', 'TTree', 1), ('Truth', 'TTree', 285), ('Truth', 'TTree', 284), ('Meta', 'TTree', 1)] sec 0.7
+   MasterAnaDev;1 entries 186373 branches 4190 4190 zip 12409042017
+   Truth;285 entries 550037 branches 560 560 zip 9207438146
+   Truth;284 entries 549824 branches 560 560 zip 9203714431
+   Meta;1 entries 1 branches 4 4 zip 354
+root://fndca1.fnal.gov:1095//pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1D/MasterAnaDev_mc_AnaTuple_run00111100_Playlist.root size 21631153471 keys [('MasterAnaDev', 'TTree', 1), ('Truth', 'TTree', 285), ('Truth', 'TTree', 284), ('Meta', 'TTree', 1)] sec 2.5
+   MasterAnaDev;1 entries 186373 branches 4190 4190 zip 12409042017
+   Truth;285 entries 550037 branches 560 560 zip 9207438146
+   Truth;284 entries 549824 branches 560 560 zip 9203714431
+   Meta;1 entries 1 branches 4 4 zip 354
+1D_00111100 Truth rc=0
+1D_00111100 MasterAnaDev rc=0

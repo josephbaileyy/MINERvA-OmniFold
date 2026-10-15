@@ -1,0 +1,116 @@
+{
+ "joined_single": 186535,
+ "joined_fid_matched": 79003,
+ "numi_pot": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "batch_structure": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "reco_vertex_batch": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "mc_incomingE": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "mc_incoming": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "mc_current": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "mc_intType": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "mc_Q2": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "mc_w": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "mc_targetNucleon": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "mc_targetZ": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "mc_resID": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "mc_nFSPart": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "mc_er_nPart": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "MasterAnaDev_minos_trk_p": {
+  "identical_all": 0.7802825207065698,
+  "identical_fid_matched": 0.6721896636836576
+ },
+ "MasterAnaDev_minos_trk_qp": {
+  "identical_all": 0.7802825207065698,
+  "identical_fid_matched": 0.6721896636836576
+ },
+ "muon_thetaX": {
+  "identical_all": 0.9564692953065108,
+  "identical_fid_matched": 1.0
+ },
+ "muon_thetaY": {
+  "identical_all": 0.9540407966333396,
+  "identical_fid_matched": 1.0
+ },
+ "isMinosMatchTrack": {
+  "identical_all": 1.0,
+  "identical_fid_matched": 1.0
+ },
+ "phys_n_dead_discr_pair_upstream_prim_track_proj": {
+  "identical_all": 0.9999892781515534,
+  "identical_fid_matched": 1.0
+ },
+ "MasterAnaDev_recoil_E": {
+  "identical_all": 0.7038035757364569,
+  "identical_fid_matched": 0.6721896636836576
+ },
+ "blob_recoil_E_tracker": {
+  "identical_all": 0.9953467177741443,
+  "identical_fid_matched": 1.0
+ },
+ "blob_recoil_E_ecal": {
+  "identical_all": 0.9996408180770365,
+  "identical_fid_matched": 1.0
+ },
+ "l0": {
+  "identical_all": 0.6488594633714853,
+  "identical_fid_matched": 0.6721896636836576
+ },
+ "l1": {
+  "identical_all": 0.6483716192671617,
+  "identical_fid_matched": 0.6721896636836576
+ },
+ "l2": {
+  "identical_all": 0.6702334682499262,
+  "identical_fid_matched": 0.6721896636836576
+ },
+ "vz": {
+  "identical_all": 0.99996783445466,
+  "identical_fid_matched": 1.0
+ },
+ "vx": {
+  "identical_all": 0.9760473905701343,
+  "identical_fid_matched": 1.0
+ }
+}

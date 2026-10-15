@@ -1,0 +1,65 @@
+{
+ "population_1B_1P_files": 448,
+ "population_1B_1P_bytes_local": 9827031062141,
+ "population_1B_1P_bytes_read": 9827031062141,
+ "size_equal_local_vs_remote_1B_1P": 448,
+ "counts": {
+  "1B-1P": {
+   "MATCH": 448
+  },
+  "1A-control": {
+   "MISMATCH": 2
+  }
+ },
+ "not_match": [
+  {
+   "local_path": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root",
+   "remote_url": "root://fndca1.fnal.gov:1095//pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root",
+   "population": "1A-control",
+   "local_bytes": 17318473069,
+   "remote_bytes": 21528935276,
+   "local_bytes_read": 17318473069,
+   "remote_adler32": "b4118698",
+   "local_adler32": "689b3b0e",
+   "verdict": "MISMATCH",
+   "remote_err_rows": 0,
+   "local_err_rows": 0
+  },
+  {
+   "local_path": "/pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110001_Playlist.root",
+   "remote_url": "root://fndca1.fnal.gov:1095//pnfs/fnal.gov/usr/minerva/persistent/OpenData/MediumEnergy_FHC/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110001_Playlist.root",
+   "population": "1A-control",
+   "local_bytes": 17319286427,
+   "remote_bytes": 21539812319,
+   "local_bytes_read": 17319286427,
+   "remote_adler32": "cd524740",
+   "local_adler32": "cdb0621a",
+   "verdict": "MISMATCH",
+   "remote_err_rows": 0,
+   "local_err_rows": 0
+  }
+ ],
+ "remote_rows_err_total": 0,
+ "local_rows_err_total": 0,
+ "inputs": {
+  "filelist_450.txt": "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/filelist_450.txt",
+  "mc_stat_pre_read.tsv": "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/mc_stat_pre_read.tsv",
+  "remote_adler.tsv": "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/remote_adler.tsv",
+  "local_adler.tsv": "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/local_adler.tsv"
+ },
+ "q2_remote_ls": [
+  "docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/outputs/remote_ls_1A.txt",
+  "docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/outputs/remote_ls_1B.txt",
+  "docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/outputs/remote_ls_1C.txt",
+  "docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/outputs/remote_ls_1D.txt",
+  "docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/outputs/remote_ls_1E.txt",
+  "docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/outputs/remote_ls_1F.txt",
+  "docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/outputs/remote_ls_1G.txt",
+  "docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/outputs/remote_ls_1L.txt",
+  "docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/outputs/remote_ls_1M.txt",
+  "docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/outputs/remote_ls_1N.txt",
+  "docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/outputs/remote_ls_1O.txt",
+  "docs/orchestration/state/2d-closeout/stageD-inputs/q2-opendata-20261014/outputs/remote_ls_1P.txt"
+ ],
+ "table": "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/checksum_table.tsv"
+}

@@ -184,6 +184,11 @@ sparse tail (REPORT §4.1). All ratios are data/prediction.
     below physical W, with mean factor 1.0000. It supplies no W-shape recovery evidence
     ([`AGENTS.md`](../../AGENTS.md), scalar 4D/5D row; [`ND_OMNIFOLD_STATUS.md`](../../nd-unfolding/ND_OMNIFOLD_STATUS.md),
     5D central cross-section row).
+    *Update 2026-10-13:* a corrected, predeclared 5D injected-W closure (bump at W = 1.23 GeV, mean factor 1.053)
+    passed narrowly in the W marginal only: ratio 0.180 against a 0.20 threshold, with joint (E_avail, W) cells in the
+    peak column 2–9% low ([`VALIDATION_LEDGER.md`](../../VALIDATION_LEDGER.md) VL176;
+    [outcome](../orchestration/OUTCOME-20261013-5d-injected-w-closure-pass.md)). It is marginal W-bump recovery
+    evidence only and does not bear on the generator-shaped departures below.
   - Later departure/recovery diagnostics exist, **under a different estimator**. In s5n, family `N` (the F2
     LightGBM estimator with the `negweight-refined` background) did not follow a generator-anchored E_avail shape
     departure: median |residual| 9.7%, max 74.1% ([`VALIDATION_LEDGER.md`](../../VALIDATION_LEDGER.md) VL151;
@@ -312,7 +317,8 @@ published 2D versus Tune v1 comparison.
 
 The 3D injected-shape closure the memo cites remains valid. For 5D, the "injected-W" closure was effectively a null
 test and supplies no W-shape recovery evidence ([`AGENTS.md`](../../AGENTS.md); §5); the high-region close-out
-already reads this at `f30370cd`.
+already reads this at `f30370cd`. *Update 2026-10-13:* the corrected 5D test passes narrowly in the W marginal only
+(VL176; §5).
 
 ## 10. Assumptions and unresolved issues
 

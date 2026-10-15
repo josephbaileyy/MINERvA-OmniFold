@@ -1,0 +1,879 @@
+{
+ "commit": "c67dbddac445790229a1269dba1209cf98824bc4",
+ "pins": {
+  "combine_flux": {
+   "path": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/code/repo/2d-unfolding/combine_flux_MEFHC.py",
+   "sha256": "1fc5c1e9fdb15011e5a6209f415e3b184de9e7080944b3548763e0294d117803"
+  },
+  "cv_omnifile_cfs": {
+   "path": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+   "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+  },
+  "flux_production": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
+  }
+ },
+ "periods": {
+  "PA": {
+   "playlists": [
+    "1A",
+    "1B",
+    "1C",
+    "1D",
+    "1E",
+    "1F"
+   ],
+   "omnifile": {
+    "path": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/inputs/runEventLoopOmniFold_PA.root",
+    "sha256": "1d2f5b3712169c2eeca0739a9e391ea05b547153444a23a06a0b7cffa93ac948",
+    "bytes": 1101561461
+   },
+   "params": {
+    "mcPOTUsed": {
+     "merged": 2.5481723613519245e+21,
+     "sum_sequential": 2.5481723613519245e+21,
+     "sum_fsum": 2.5481723613519245e+21,
+     "rel_diff": 0.0,
+     "equal": true
+    },
+    "dataPOTUsed": {
+     "merged": 5.6520731956167836e+20,
+     "sum_sequential": 5.6520731956167836e+20,
+     "sum_fsum": 5.6520731956167836e+20,
+     "rel_diff": 0.0,
+     "equal": true
+    },
+    "hasTruthOnlyMisses": {
+     "merged": 6,
+     "sum_sequential": 6,
+     "sum_fsum": 6,
+     "rel_diff": 0.0,
+     "equal": true
+    },
+    "nTruthOnlyMisses": {
+     "merged": 4350951,
+     "sum_sequential": 4350951,
+     "sum_fsum": 4350951,
+     "rel_diff": 0.0,
+     "equal": true
+    }
+   },
+   "pot_scale": 0.22180890434813816,
+   "trees": {
+    "data": {
+     "entries": 2240083,
+     "entries_sum": 2240083,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "measured": "6be43770f03461476e4ed4f24787f4731917e2353e40ee1fe8b033e6d36d0a3d",
+      "measured_pz": "af7ecb6969f865fe36043d896da23c2c0b92ea1a6f99d2ef3d1f54bbd7557fb1",
+      "measured_pass": "ba50a91845873187bc43ca608be1369cec0a3a495f5e704cf6eba5e8d06bacf1"
+     }
+    },
+    "mc_signal_reco": {
+     "entries": 16794044,
+     "entries_sum": 16794044,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "sim": "06ebbfd62b36ae5641587cf3b2ca2049307ef2bbfdb763ad6ac51ac8710bba1a",
+      "sim_pz": "fb071b8cb9734bc00422a812bbf3451e2fd3d375ac64e05c9f450e149adb7522",
+      "sim_pass": "c5135b063763e262a133366d55c1887dfd985de08fe3e93b267fde24a029d45d",
+      "w_reco": "d392912214ba57dd734e8fc3343e6359105feaf70eb4c3ef9f6b1d7dba1ce6ff",
+      "MC": "e2459be9a95957b69a117f73080d0475168319b6e4c3735ff6e62f9db602f934",
+      "MC_pz": "c15c759f3caa44017ee7ced1d9b8d2193dc09a5ecf873e92110a47872608b46b",
+      "w_truth": "8e21db427f35a129c20fab75465ee2af7e8d8bc11d309fbd0fce9a4feff7e736"
+     }
+    },
+    "mc_background": {
+     "entries": 330989,
+     "entries_sum": 330989,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "sim_background": "4a87a2dce37889c2c0ce3d7da1ae792edc4357e9df9863a115b9d308fbaad08b",
+      "sim_background_pz": "326f41821a0a46631c7a0939481aaffc09a1683d0837e39251976d59a8507d01",
+      "sim_background_pass": "0a2283f39237be73370112c91553fefb70211a1382f5ca9ccb13592d896612a5",
+      "w_bkg": "906e791a0edd0c6a9cdb8328fc0a4d0a8eb55e94d7a0b8b93280692e38ab4fe6"
+     }
+    },
+    "mc_truth_denom": {
+     "entries": 16794044,
+     "entries_sum": 16794044,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "MC": "4adad31418caa4f6141f55641d765bb68e504644b5a76db3d4dd216f3d2811ee",
+      "MC_pz": "b5560aa68ef97cc6d457a24228a39c72dab59335bfa1ab7c48b25b358825cb38",
+      "w_truth": "d9f29384f9b906b182e11ded51c2e5bd123edad9767c7939f308c1578bbfdbe9"
+     }
+    }
+   },
+   "flux": {
+    "path": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/flux/runEventLoopMC_PA.root",
+    "sha256": "927f5af214b15935c1093b83c7e703730b8a5993b5e8f43f60a56eb8f07963fe",
+    "periodPlaylists": "1A,1B,1C,1D,1E,1F",
+    "bins_m2_per_POT": [
+     0.0006229922661506818,
+     0.0006229922661506818,
+     0.0006229922661506818,
+     0.0006229922661506818,
+     0.0006229922661506818,
+     0.0006229922661506818,
+     0.0006229922661506818,
+     0.0006229922661506818,
+     0.0006229922661506818,
+     0.0006229922661506818,
+     0.0006229922661506818,
+     0.0006229922661506818,
+     0.0006229922661506818,
+     0.0006229922661506818
+    ],
+    "integral_m2_per_POT": 0.008721891726109545,
+    "max_rel_diff_vs_numpy": 0.0,
+    "max_abs_diff_err_vs_numpy": 0.0,
+    "DataPOTUsedForFluxWeighting": 5.6520731956167836e+20,
+    "POTUsed": 2.5481723613519245e+21,
+    "data_pot_equals_omnifile": true,
+    "data_pot_rel_diff_vs_omnifile": 0.0,
+    "per_playlist_data_pot": {
+     "1A": {
+      "flux_data_POTUsed": 8.972756120489268e+19,
+      "omnifile_dataPOTUsed": 8.972756120489268e+19,
+      "equal": true
+     },
+     "1B": {
+      "flux_data_POTUsed": 1.8673986975553036e+19,
+      "omnifile_dataPOTUsed": 1.8673986975553036e+19,
+      "equal": true
+     },
+     "1C": {
+      "flux_data_POTUsed": 4.294376238504551e+19,
+      "omnifile_dataPOTUsed": 4.294376238504551e+19,
+      "equal": true
+     },
+     "1D": {
+      "flux_data_POTUsed": 1.4404452962278602e+20,
+      "omnifile_dataPOTUsed": 1.4404452962278602e+20,
+      "equal": true
+     },
+     "1E": {
+      "flux_data_POTUsed": 1.0296200958633945e+20,
+      "omnifile_dataPOTUsed": 1.0296200958633945e+20,
+      "equal": true
+     },
+     "1F": {
+      "flux_data_POTUsed": 1.6685546978706168e+20,
+      "omnifile_dataPOTUsed": 1.6685546978706168e+20,
+      "equal": true
+     }
+    },
+    "equals_combiner_main": {
+     "path": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/tmp/flux_viamain_PA.root",
+     "bins_equal": true,
+     "errors_equal": true,
+     "POTUsed_equal": true,
+     "DataPOT_equal": true
+    }
+   }
+  },
+  "PB": {
+   "playlists": [
+    "1G",
+    "1L",
+    "1M"
+   ],
+   "omnifile": {
+    "path": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/inputs/runEventLoopOmniFold_PB.root",
+    "sha256": "200fd1dd18df3f907443caf1217ffbfe580b24e638cbbfff333d39cecfc85004",
+    "bytes": 665513423
+   },
+   "params": {
+    "mcPOTUsed": {
+     "merged": 1.5515409596550427e+21,
+     "sum_sequential": 1.5515409596550427e+21,
+     "sum_fsum": 1.551540959655043e+21,
+     "rel_diff": 0.0,
+     "equal": true
+    },
+    "dataPOTUsed": {
+     "merged": 3.090670318998869e+20,
+     "sum_sequential": 3.090670318998869e+20,
+     "sum_fsum": 3.090670318998869e+20,
+     "rel_diff": 0.0,
+     "equal": true
+    },
+    "hasTruthOnlyMisses": {
+     "merged": 3,
+     "sum_sequential": 3,
+     "sum_fsum": 3,
+     "rel_diff": 0.0,
+     "equal": true
+    },
+    "nTruthOnlyMisses": {
+     "merged": 2877055,
+     "sum_sequential": 2877055,
+     "sum_fsum": 2877055,
+     "rel_diff": 0.0,
+     "equal": true
+    }
+   },
+   "pot_scale": 0.19920004688023346,
+   "trees": {
+    "data": {
+     "entries": 1179309,
+     "entries_sum": 1179309,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "measured": "eeb3cbb386ad47f67df065875892b376624958223e01aea78e354e64118b4ca3",
+      "measured_pz": "1f2f92b21ec66722e79a67a95bb59dc30e7ffae0c1a3fd53a5f28af6886bc172",
+      "measured_pass": "7f897cdbfb165b3b823981003d3d76d86010fa552b1738d1eb4f773876d5dac5"
+     }
+    },
+    "mc_signal_reco": {
+     "entries": 10224002,
+     "entries_sum": 10224002,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "sim": "da4c9b83486812f122975ccb445c436f5f6baa32e0e9e2822ad9fd62e43b7835",
+      "sim_pz": "7194d772e8596de5a22645c5fd83f2775c3e0879ddc4543690c5b5bbcbd15eb2",
+      "sim_pass": "ee0d8c75a9159faeda5a87d693534aec298ab3a017cc73cd30f487f39bc87074",
+      "w_reco": "52ce3dc0eee16739ce0aff90f76324ea864ec06e3f68d2a408360e8ac645eae9",
+      "MC": "9846252c3a99343f6692346634fea498fd7b701e0a07aaca243687c0bbe31dee",
+      "MC_pz": "57515e2fc18963d613e5b38e48b979ec470e91ecdb9c07e37a2f1fba6606fc23",
+      "w_truth": "bc31aee6fde9320a363e45991d9bf7dcb8d581ffcb98be0158fbd0795c795d14"
+     }
+    },
+    "mc_background": {
+     "entries": 205204,
+     "entries_sum": 205204,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "sim_background": "da52ba7cdcb2f256542360fc5df4fdf1803695e7ffc290fe38f0951009be1e20",
+      "sim_background_pz": "a4605bd4d4da36a141fb956b690a54ba8104f3e4acb4a821708b80603c938421",
+      "sim_background_pass": "13c40cc35ff042b8009ebcfaf5036508cbcf5bffbabe1e67aa62313309352db5",
+      "w_bkg": "0ccff606b5cf8eff5651eb478e47b213a5a23a989dd3e7df14e3a8bc94628218"
+     }
+    },
+    "mc_truth_denom": {
+     "entries": 10224002,
+     "entries_sum": 10224002,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "MC": "3844761cc0e3a3aa3a0747f096b8a7e89f774d1ac4bd637633e505ef9b279825",
+      "MC_pz": "e9cba100f9eeff6392037a82d9ffcf5e7a7a0dbd3d55ca950053ec02258179bf",
+      "w_truth": "b1c1e23f6dab9f57a224fff4a59a09eabdff16df5e0adc7d16153140811ce836"
+     }
+    }
+   },
+   "flux": {
+    "path": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/flux/runEventLoopMC_PB.root",
+    "sha256": "c64637d58961c4681f83611ab79f057f741329398cde00df175fac28dad15f0d",
+    "periodPlaylists": "1G,1L,1M",
+    "bins_m2_per_POT": [
+     0.0006291408598300279,
+     0.0006291408598300279,
+     0.0006291408598300279,
+     0.0006291408598300279,
+     0.0006291408598300279,
+     0.0006291408598300279,
+     0.0006291408598300279,
+     0.0006291408598300279,
+     0.0006291408598300279,
+     0.0006291408598300279,
+     0.0006291408598300279,
+     0.0006291408598300279,
+     0.0006291408598300279,
+     0.0006291408598300279
+    ],
+    "integral_m2_per_POT": 0.00880797203762039,
+    "max_rel_diff_vs_numpy": 0.0,
+    "max_abs_diff_err_vs_numpy": 0.0,
+    "DataPOTUsedForFluxWeighting": 3.090670318998869e+20,
+    "POTUsed": 1.5515409596550427e+21,
+    "data_pot_equals_omnifile": true,
+    "data_pot_rel_diff_vs_omnifile": 0.0,
+    "per_playlist_data_pot": {
+     "1G": {
+      "flux_data_POTUsed": 1.375694142738046e+20,
+      "omnifile_dataPOTUsed": 1.375694142738046e+20,
+      "equal": true
+     },
+     "1L": {
+      "flux_data_POTUsed": 1.3370718209243894e+19,
+      "omnifile_dataPOTUsed": 1.3370718209243894e+19,
+      "equal": true
+     },
+     "1M": {
+      "flux_data_POTUsed": 1.581268994168384e+20,
+      "omnifile_dataPOTUsed": 1.581268994168384e+20,
+      "equal": true
+     }
+    }
+   }
+  },
+  "PC": {
+   "playlists": [
+    "1N",
+    "1O",
+    "1P"
+   ],
+   "omnifile": {
+    "path": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/inputs/runEventLoopOmniFold_PC.root",
+    "sha256": "eedbb5dc0f8bf6d1314e36ccc8f08760f2e59687988db55974ee54d377cc9224",
+    "bytes": 376932485
+   },
+   "params": {
+    "mcPOTUsed": {
+     "merged": 8.784851418738582e+20,
+     "sum_sequential": 8.784851418738582e+20,
+     "sum_fsum": 8.784851418738582e+20,
+     "rel_diff": 0.0,
+     "equal": true
+    },
+    "dataPOTUsed": {
+     "merged": 1.831199096973607e+20,
+     "sum_sequential": 1.831199096973607e+20,
+     "sum_fsum": 1.831199096973607e+20,
+     "rel_diff": 0.0,
+     "equal": true
+    },
+    "hasTruthOnlyMisses": {
+     "merged": 3,
+     "sum_sequential": 3,
+     "sum_fsum": 3,
+     "rel_diff": 0.0,
+     "equal": true
+    },
+    "nTruthOnlyMisses": {
+     "merged": 1771001,
+     "sum_sequential": 1771001,
+     "sum_fsum": 1771001,
+     "rel_diff": 0.0,
+     "equal": true
+    }
+   },
+   "pot_scale": 0.2084496378695212,
+   "trees": {
+    "data": {
+     "entries": 700405,
+     "entries_sum": 700405,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "measured": "69f9f76aa95851334534ba37483e66f534105522a86608f2bad9bdad3c141159",
+      "measured_pz": "6e705198311c9cae033c9b15bcc971c611dd99ad43355457904dd853a81e28d1",
+      "measured_pass": "86051988f0b0b99ffff3a1e59dbced0a50de27f60d1a470496044a3bd3329da8"
+     }
+    },
+    "mc_signal_reco": {
+     "entries": 5831057,
+     "entries_sum": 5831057,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "sim": "f7bfa4b4f04d752d905986dc402a4bc1b7c28c560cfb2644a0cee4a7ca7827ed",
+      "sim_pz": "e8c563bac6689a41c20c49de56a79c6cada1e0efac659694c679c944c228a45c",
+      "sim_pass": "ddd60cac266ace35515315c3eb38a08787980eaa812f22475791d115a8a96686",
+      "w_reco": "989ea551ebf64750a96a762c0b6d56202b9c879b3e67b37c0f7fcbbe1695ef65",
+      "MC": "28f82fd7c64b31310ff4b0db34178d2e6330c3b955326574754f834788b3eaec",
+      "MC_pz": "ef68c76de47b29f62dc581887f7d5984df7cd75899f7abd957193b807f3419ba",
+      "w_truth": "fcf52ee85be44d0e7762cd1ea7efd78a2b985a16baa563530be6080ad4de11d4"
+     }
+    },
+    "mc_background": {
+     "entries": 122034,
+     "entries_sum": 122034,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "sim_background": "cfd9c38d09e798001084603a7d8a20f1d9cb98f8b8fee635160d74756191ca89",
+      "sim_background_pz": "fba872ea0d28abf9218d39668c28259bed741427ba95a8c033dacc47a8ab12fa",
+      "sim_background_pass": "a2c3c5d6296d70389aa03784993ec244ab010bbe3ae13b6fa90cc6a840e8a092",
+      "w_bkg": "5deebac06eb766769f4ccaf97f251e0356bfcb60893117c5c35520b31916d1df"
+     }
+    },
+    "mc_truth_denom": {
+     "entries": 5831057,
+     "entries_sum": 5831057,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "MC": "d0ecbe5175e000677be08b3bf1c381f3b63adaeedca4106b1b60edd5342026a2",
+      "MC_pz": "3d18b282d23eecf347229540558decf81e7e5a1b977b8c7a67e8624ee56a5e55",
+      "w_truth": "e0b0fc0ed1bb43de6c5188f4f4b6b766bbb4984bf19f33b411939fcfd9a2edf9"
+     }
+    }
+   },
+   "flux": {
+    "path": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/flux/runEventLoopMC_PC.root",
+    "sha256": "95c45a5f91f1fc356bfde74b463e1a24a70d698d8693a766773a6a37c3bdfafc",
+    "periodPlaylists": "1N,1O,1P",
+    "bins_m2_per_POT": [
+     0.0006203643221928254,
+     0.0006203643221928254,
+     0.0006203643221928254,
+     0.0006203643221928254,
+     0.0006203643221928254,
+     0.0006203643221928254,
+     0.0006203643221928254,
+     0.0006203643221928254,
+     0.0006203643221928254,
+     0.0006203643221928254,
+     0.0006203643221928254,
+     0.0006203643221928254,
+     0.0006203643221928254,
+     0.0006203643221928254
+    ],
+    "integral_m2_per_POT": 0.008685100510699557,
+    "max_rel_diff_vs_numpy": 0.0,
+    "max_abs_diff_err_vs_numpy": 0.0,
+    "DataPOTUsedForFluxWeighting": 1.831199096973607e+20,
+    "POTUsed": 8.784851418738582e+20,
+    "data_pot_equals_omnifile": true,
+    "data_pot_rel_diff_vs_omnifile": 0.0,
+    "per_playlist_data_pot": {
+     "1N": {
+      "flux_data_POTUsed": 1.0656505761839266e+20,
+      "omnifile_dataPOTUsed": 1.0656505761839266e+20,
+      "equal": true
+     },
+     "1O": {
+      "flux_data_POTUsed": 2.9796628174847955e+19,
+      "omnifile_dataPOTUsed": 2.9796628174847955e+19,
+      "equal": true
+     },
+     "1P": {
+      "flux_data_POTUsed": 4.675822390412008e+19,
+      "omnifile_dataPOTUsed": 4.675822390412008e+19,
+      "equal": true
+     }
+    }
+   }
+  },
+  "ALL": {
+   "playlists": [
+    "1A",
+    "1B",
+    "1C",
+    "1D",
+    "1E",
+    "1F",
+    "1G",
+    "1L",
+    "1M",
+    "1N",
+    "1O",
+    "1P"
+   ],
+   "omnifile": {
+    "path": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/inputs/runEventLoopOmniFold_ALL.root",
+    "sha256": "a7a4bcb359ddb4764e0baf9922ab35e6bfbb3e4e2fd9b03d152514f02ea6b3e9",
+    "bytes": 2144008371
+   },
+   "params": {
+    "mcPOTUsed": {
+     "merged": 4.978198462880827e+21,
+     "sum_sequential": 4.978198462880827e+21,
+     "sum_fsum": 4.978198462880826e+21,
+     "rel_diff": 0.0,
+     "equal": true
+    },
+    "dataPOTUsed": {
+     "merged": 1.057394261158926e+21,
+     "sum_sequential": 1.057394261158926e+21,
+     "sum_fsum": 1.057394261158926e+21,
+     "rel_diff": 0.0,
+     "equal": true
+    },
+    "hasTruthOnlyMisses": {
+     "merged": 12,
+     "sum_sequential": 12,
+     "sum_fsum": 12,
+     "rel_diff": 0.0,
+     "equal": true
+    },
+    "nTruthOnlyMisses": {
+     "merged": 8999007,
+     "sum_sequential": 8999007,
+     "sum_fsum": 8999007,
+     "rel_diff": 0.0,
+     "equal": true
+    }
+   },
+   "pot_scale": 0.21240500334472884,
+   "trees": {
+    "data": {
+     "entries": 4119797,
+     "entries_sum": 4119797,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "measured": "24aac1b391f110f73526deaaca6e51d550e7ac0db8a88ff649de90bcbffdc1d5",
+      "measured_pz": "ece3a12bc9ab0dc4b0203ced81706a6b9220f485d1043c84012c60286cea579e",
+      "measured_pass": "4356fb63b8703bf6117562d59d6874bc6ebd46d2cd108ed14a614c227c565adc"
+     }
+    },
+    "mc_signal_reco": {
+     "entries": 32849103,
+     "entries_sum": 32849103,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "sim": "dc845cb1aea4e84e3cde3ee2a98413b736001c01c9ade1533fae3f0548986aa5",
+      "sim_pz": "9ddd71753b76ad806f52b1d36a93e3b69132d3af17a60e8f8007333de262c43e",
+      "sim_pass": "f2514c0e72b9f5632d221404f1999bfc43b5a9914eaa8ae4ccfea20a777ac9ea",
+      "w_reco": "666707678af4d6ade73cdc16c23b72d342552e03a868cf820a8ce09318f5c2c6",
+      "MC": "bdd7352279676bfd1f8aaf6762009c9981aec07c67b5f2eda7140d789abd4b81",
+      "MC_pz": "81728abfc27215d6d4f50c67188125581b04753f44f6e264aefb3e1c5c2169f5",
+      "w_truth": "3b2523f7d0092e64d52aebcec586c7b7a36cbdf59cb8f6f18b5a59735746cf53"
+     }
+    },
+    "mc_background": {
+     "entries": 658227,
+     "entries_sum": 658227,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "sim_background": "989907db0d050f32eb17961cb6cbb38a0b3aedb0568a0a871d311617ebbafeda",
+      "sim_background_pz": "03b950a5c1b2ef5bbb3aa5cf0a19aa78db2fd91aee5382d548b24666adf71683",
+      "sim_background_pass": "11ff8170a97dd69cb8f0c2550f2b7591d6f14ba194dea06a88b14a1f78efd58e",
+      "w_bkg": "f138054ca3d68a58c05e7bfea777987e1b35c21e8df2fae4aefd0d029f2b01ee"
+     }
+    },
+    "mc_truth_denom": {
+     "entries": 32849103,
+     "entries_sum": 32849103,
+     "entries_equal": true,
+     "branches_equal_concat": true,
+     "branch_sha256": {
+      "MC": "335b85d6d57cb151d84acb03c7e0bc87e8a50288a5636732ca75d00ad31dba7a",
+      "MC_pz": "0df73a11533689f6cdcdd0b4371daf56d232d61fae13964b6fd246fe6717ef08",
+      "w_truth": "b33c2d754cdaf5807671be993105cd4f98916f2b2cc43cda89bd2b4beff8f5a7"
+     }
+    }
+   },
+   "equals_production_cv_omnifile": {
+    "trees": {
+     "data": true,
+     "mc_signal_reco": true,
+     "mc_background": true,
+     "mc_truth_denom": true
+    },
+    "params": true,
+    "reference": [
+     "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+     "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+    ]
+   },
+   "flux": {
+    "path": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/flux/runEventLoopMC_ALL.root",
+    "sha256": "e3dc9e63bc8db07ab545cee6d8b227cdaa7f8249c657cc1a60119020dd6a86de",
+    "periodPlaylists": "1A,1B,1C,1D,1E,1F,1G,1L,1M,1N,1O,1P",
+    "bins_m2_per_POT": [
+     0.0006243343376851218,
+     0.0006243343376851218,
+     0.0006243343376851218,
+     0.0006243343376851218,
+     0.0006243343376851218,
+     0.0006243343376851218,
+     0.0006243343376851218,
+     0.0006243343376851218,
+     0.0006243343376851218,
+     0.0006243343376851218,
+     0.0006243343376851218,
+     0.0006243343376851218,
+     0.0006243343376851219,
+     0.0006243343376851219
+    ],
+    "integral_m2_per_POT": 0.008740680727591705,
+    "max_rel_diff_vs_numpy": 2.220446049250313e-16,
+    "max_abs_diff_err_vs_numpy": 0.0,
+    "DataPOTUsedForFluxWeighting": 1.057394261158926e+21,
+    "POTUsed": 4.978198462880827e+21,
+    "data_pot_equals_omnifile": true,
+    "data_pot_rel_diff_vs_omnifile": 0.0,
+    "per_playlist_data_pot": {
+     "1A": {
+      "flux_data_POTUsed": 8.972756120489268e+19,
+      "omnifile_dataPOTUsed": 8.972756120489268e+19,
+      "equal": true
+     },
+     "1B": {
+      "flux_data_POTUsed": 1.8673986975553036e+19,
+      "omnifile_dataPOTUsed": 1.8673986975553036e+19,
+      "equal": true
+     },
+     "1C": {
+      "flux_data_POTUsed": 4.294376238504551e+19,
+      "omnifile_dataPOTUsed": 4.294376238504551e+19,
+      "equal": true
+     },
+     "1D": {
+      "flux_data_POTUsed": 1.4404452962278602e+20,
+      "omnifile_dataPOTUsed": 1.4404452962278602e+20,
+      "equal": true
+     },
+     "1E": {
+      "flux_data_POTUsed": 1.0296200958633945e+20,
+      "omnifile_dataPOTUsed": 1.0296200958633945e+20,
+      "equal": true
+     },
+     "1F": {
+      "flux_data_POTUsed": 1.6685546978706168e+20,
+      "omnifile_dataPOTUsed": 1.6685546978706168e+20,
+      "equal": true
+     },
+     "1G": {
+      "flux_data_POTUsed": 1.375694142738046e+20,
+      "omnifile_dataPOTUsed": 1.375694142738046e+20,
+      "equal": true
+     },
+     "1L": {
+      "flux_data_POTUsed": 1.3370718209243894e+19,
+      "omnifile_dataPOTUsed": 1.3370718209243894e+19,
+      "equal": true
+     },
+     "1M": {
+      "flux_data_POTUsed": 1.581268994168384e+20,
+      "omnifile_dataPOTUsed": 1.581268994168384e+20,
+      "equal": true
+     },
+     "1N": {
+      "flux_data_POTUsed": 1.0656505761839266e+20,
+      "omnifile_dataPOTUsed": 1.0656505761839266e+20,
+      "equal": true
+     },
+     "1O": {
+      "flux_data_POTUsed": 2.9796628174847955e+19,
+      "omnifile_dataPOTUsed": 2.9796628174847955e+19,
+      "equal": true
+     },
+     "1P": {
+      "flux_data_POTUsed": 4.675822390412008e+19,
+      "omnifile_dataPOTUsed": 4.675822390412008e+19,
+      "equal": true
+     }
+    },
+    "equals_production_flux": {
+     "bins_equal": true,
+     "errors_equal": true,
+     "max_rel_diff": 0.0,
+     "POTUsed_equal": true,
+     "DataPOT_equal": true,
+     "reference": [
+      "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+      "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
+     ]
+    },
+    "equals_combiner_main": {
+     "path": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/tmp/flux_viamain_ALL.root",
+     "bins_equal": true,
+     "errors_equal": true,
+     "POTUsed_equal": true,
+     "DataPOT_equal": true
+    }
+   }
+  }
+ },
+ "period_data_pot_share": {
+  "PA": 0.53452845388266,
+  "PB": 0.29229119473482207,
+  "PC": 0.1731803513825179
+ },
+ "period_mc_signal_share": {
+  "PA": 0.5112481762439601,
+  "PB": 0.3112414363338932,
+  "PC": 0.17751038742214664
+ },
+ "source_params": {
+  "1A": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1A.root",
+   "params": {
+    "mcPOTUsed": 4.0692592418996086e+20,
+    "dataPOTUsed": 8.972756120489268e+19,
+    "hasTruthOnlyMisses": 1,
+    "nTruthOnlyMisses": 681612
+   },
+   "entries": {
+    "data": 360123,
+    "mc_signal_reco": 2682267,
+    "mc_background": 52626,
+    "mc_truth_denom": 2682267
+   }
+  },
+  "1B": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1B.root",
+   "params": {
+    "mcPOTUsed": 1.0937143891069359e+20,
+    "dataPOTUsed": 1.8673986975553036e+19,
+    "hasTruthOnlyMisses": 1,
+    "nTruthOnlyMisses": 181498
+   },
+   "entries": {
+    "data": 75192,
+    "mc_signal_reco": 721082,
+    "mc_background": 14182,
+    "mc_truth_denom": 721082
+   }
+  },
+  "1C": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1C.root",
+   "params": {
+    "mcPOTUsed": 2.0873802493616207e+20,
+    "dataPOTUsed": 4.294376238504551e+19,
+    "hasTruthOnlyMisses": 1,
+    "nTruthOnlyMisses": 348220
+   },
+   "entries": {
+    "data": 173122,
+    "mc_signal_reco": 1376832,
+    "mc_background": 26898,
+    "mc_truth_denom": 1376832
+   }
+  },
+  "1D": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1D.root",
+   "params": {
+    "mcPOTUsed": 6.074026581183651e+20,
+    "dataPOTUsed": 1.4404452962278602e+20,
+    "hasTruthOnlyMisses": 1,
+    "nTruthOnlyMisses": 1015932
+   },
+   "entries": {
+    "data": 580834,
+    "mc_signal_reco": 4003632,
+    "mc_background": 78987,
+    "mc_truth_denom": 4003632
+   }
+  },
+  "1E": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1E.root",
+   "params": {
+    "mcPOTUsed": 5.0861289099383597e+20,
+    "dataPOTUsed": 1.0296200958633945e+20,
+    "hasTruthOnlyMisses": 1,
+    "nTruthOnlyMisses": 855054
+   },
+   "entries": {
+    "data": 408075,
+    "mc_signal_reco": 3350021,
+    "mc_background": 66077,
+    "mc_truth_denom": 3350021
+   }
+  },
+  "1F": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1F.root",
+   "params": {
+    "mcPOTUsed": 7.071214242029071e+20,
+    "dataPOTUsed": 1.6685546978706168e+20,
+    "hasTruthOnlyMisses": 1,
+    "nTruthOnlyMisses": 1268635
+   },
+   "entries": {
+    "data": 642737,
+    "mc_signal_reco": 4660210,
+    "mc_background": 92219,
+    "mc_truth_denom": 4660210
+   }
+  },
+  "1G": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1G.root",
+   "params": {
+    "mcPOTUsed": 5.954273654656092e+20,
+    "dataPOTUsed": 1.375694142738046e+20,
+    "hasTruthOnlyMisses": 1,
+    "nTruthOnlyMisses": 1046274
+   },
+   "entries": {
+    "data": 538406,
+    "mc_signal_reco": 3922748,
+    "mc_background": 76742,
+    "mc_truth_denom": 3922748
+   }
+  },
+  "1L": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1L.root",
+   "params": {
+    "mcPOTUsed": 5.822833555494932e+19,
+    "dataPOTUsed": 1.3370718209243894e+19,
+    "hasTruthOnlyMisses": 1,
+    "nTruthOnlyMisses": 111605
+   },
+   "entries": {
+    "data": 49872,
+    "mc_signal_reco": 383848,
+    "mc_background": 7820,
+    "mc_truth_denom": 383848
+   }
+  },
+  "1M": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1M.root",
+   "params": {
+    "mcPOTUsed": 8.978852586344844e+20,
+    "dataPOTUsed": 1.581268994168384e+20,
+    "hasTruthOnlyMisses": 1,
+    "nTruthOnlyMisses": 1719176
+   },
+   "entries": {
+    "data": 591031,
+    "mc_signal_reco": 5917406,
+    "mc_background": 120642,
+    "mc_truth_denom": 5917406
+   }
+  },
+  "1N": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1N.root",
+   "params": {
+    "mcPOTUsed": 5.12109566521608e+20,
+    "dataPOTUsed": 1.0656505761839266e+20,
+    "hasTruthOnlyMisses": 1,
+    "nTruthOnlyMisses": 1009931
+   },
+   "entries": {
+    "data": 415928,
+    "mc_signal_reco": 3416266,
+    "mc_background": 70774,
+    "mc_truth_denom": 3416266
+   }
+  },
+  "1O": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1O.root",
+   "params": {
+    "mcPOTUsed": 1.5823900034490132e+20,
+    "dataPOTUsed": 2.9796628174847955e+19,
+    "hasTruthOnlyMisses": 1,
+    "nTruthOnlyMisses": 328937
+   },
+   "entries": {
+    "data": 110836,
+    "mc_signal_reco": 1042088,
+    "mc_background": 22038,
+    "mc_truth_denom": 1042088
+   }
+  },
+  "1P": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1P.root",
+   "params": {
+    "mcPOTUsed": 2.0813657500734895e+20,
+    "dataPOTUsed": 4.675822390412008e+19,
+    "hasTruthOnlyMisses": 1,
+    "nTruthOnlyMisses": 432133
+   },
+   "entries": {
+    "data": 173641,
+    "mc_signal_reco": 1372703,
+    "mc_background": 29222,
+    "mc_truth_denom": 1372703
+   }
+  }
+ },
+ "fails": [],
+ "verdict": "PASS"
+}

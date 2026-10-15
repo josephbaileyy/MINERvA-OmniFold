@@ -1,0 +1,71 @@
+{
+ "measured_utc": "2026-10-14T23:09Z..2026-10-15T00:20Z",
+ "hpss": {
+  "instrument": [
+   "showquota --hpss (login29, 2026-10-14T23:17Z)",
+   "hsi -q 'du -s' (login29, 2026-10-14T23:17:18Z)"
+  ],
+  "showquota_used_GiB": 350.9,
+  "showquota_quota_GiB": 512.0,
+  "showquota_used_pct": 68.5,
+  "hsi_du_bytes": 376773649398,
+  "hsi_du_files": 57,
+  "hsi_du_GiB": 350.9,
+  "free_GiB_vs_512": 161.1,
+  "evidence": [
+   "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/showquota_hpss.txt",
+   "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/hsi_du.txt",
+   "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/hsi_ls_lR.txt"
+  ]
+ },
+ "cfs_josephrb": {
+  "path": "/global/cfs/cdirs/m3246/josephrb",
+  "instrument": "du -s --block-size=1 on dtn01.nersc.gov, 2026-10-14T23:14:44Z..23:42Z, rc 0",
+  "du_bytes": 3239895250944,
+  "du_TB": 3.24,
+  "du_TiB": 2.947,
+  "du_GiB": 3017.4,
+  "rule": "Joseph: 'as long as I am under 3 TB it is fine' (memory compute-allocations.md); the 2026-10-09 record read it in decimal TB",
+  "vs_3e12_bytes": 223.4,
+  "vs_3TiB": -54.6,
+  "growth_since_2026-10-09_GiB": 505.4,
+  "likely_growth_source": "2d-closeout-stageC-inputs-20261012/ (539 GB, stageB/diagnostics/REPORT.md section 6.1)",
+  "evidence": [
+   "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/cfs/cfs_du.txt"
+  ]
+ },
+ "mc_1A_on_pscratch": {
+  "files": 41,
+  "bytes": 706929079280,
+  "TB": 0.706929,
+  "TiB": 0.642948,
+  "GiB": 658.38,
+  "manifest_bytes_equal": true,
+  "atime_min_utc": "2026-10-14T14:46:59Z",
+  "atime_max_utc": "2026-10-14T19:47:34Z",
+  "mtime_min_utc": "2025-12-18T19:49:28Z",
+  "mtime_max_utc": "2025-12-18T21:15:53Z",
+  "earliest_purge_eligible_utc_8wk_from_min_atime": "2026-12-09",
+  "evidence": [
+   "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/mc_stat_pre_read.tsv",
+   "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/mc_stat_post_read.tsv",
+   "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/mc_stat_pre_vs_post_diff.txt"
+  ]
+ },
+ "cfs_data_copy": {
+  "evidence": "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/cfs/cfs_datacopy_vs_manifest.json"
+ },
+ "purge_history": {
+  "evidence": [
+   "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/purge_history_summary.json",
+   "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/purge_dir_scan.tsv"
+  ]
+ },
+ "1A_copies_elsewhere": {
+  "evidence": [
+   "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/find1A",
+   "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/cfs/cfs_mc_anatuple_hits.tsv",
+   "docs/orchestration/state/2d-closeout/preservation-20261014/outputs/hsi_ls_lR.txt"
+  ]
+ }
+}

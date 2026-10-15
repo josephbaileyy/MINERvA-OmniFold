@@ -1,0 +1,51 @@
+1A {'source': '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1A.root', 'pot_data': 8.972756120489268e+19, 'pot_mc': 4.0692592418996086e+20, 'sumw_truth_signal_reco': 2205561.0705626, 'sumw_truth_denom': 2205561.0705625988, 'truth_rows_outside_grid': 0}
+1B {'source': '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1B.root', 'pot_data': 1.8673986975553036e+19, 'pot_mc': 1.0937143891069359e+20, 'sumw_truth_signal_reco': 592842.4606550109, 'sumw_truth_denom': 592842.4606550107, 'truth_rows_outside_grid': 0}
+1C {'source': '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1C.root', 'pot_data': 4.294376238504551e+19, 'pot_mc': 2.0873802493616207e+20, 'sumw_truth_signal_reco': 1131900.7535218294, 'sumw_truth_denom': 1131900.7535218296, 'truth_rows_outside_grid': 0}
+1D {'source': '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1D.root', 'pot_data': 1.4404452962278602e+20, 'pot_mc': 6.074026581183651e+20, 'sumw_truth_signal_reco': 3292408.7760336334, 'sumw_truth_denom': 3292408.7760336343, 'truth_rows_outside_grid': 0}
+1E {'source': '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1E.root', 'pot_data': 1.0296200958633945e+20, 'pot_mc': 5.0861289099383597e+20, 'sumw_truth_signal_reco': 2754511.7924319003, 'sumw_truth_denom': 2754511.792431899, 'truth_rows_outside_grid': 0}
+1F {'source': '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1F.root', 'pot_data': 1.6685546978706168e+20, 'pot_mc': 7.071214242029071e+20, 'sumw_truth_signal_reco': 3831607.6415627496, 'sumw_truth_denom': 3831607.6415627506, 'truth_rows_outside_grid': 0}
+1G {'source': '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1G.root', 'pot_data': 1.375694142738046e+20, 'pot_mc': 5.954273654656092e+20, 'sumw_truth_signal_reco': 3304107.7049398343, 'sumw_truth_denom': 3304107.7049398385, 'truth_rows_outside_grid': 0}
+1L {'source': '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1L.root', 'pot_data': 1.3370718209243894e+19, 'pot_mc': 5.822833555494932e+19, 'sumw_truth_signal_reco': 323309.65818834706, 'sumw_truth_denom': 323309.6581883472, 'truth_rows_outside_grid': 0}
+1M {'source': '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1M.root', 'pot_data': 1.581268994168384e+20, 'pot_mc': 8.978852586344844e+20, 'sumw_truth_signal_reco': 4983019.570481383, 'sumw_truth_denom': 4983019.570481377, 'truth_rows_outside_grid': 0}
+1N {'source': '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1N.root', 'pot_data': 1.0656505761839266e+20, 'pot_mc': 5.12109566521608e+20, 'sumw_truth_signal_reco': 2806928.40636444, 'sumw_truth_denom': 2806928.4063644377, 'truth_rows_outside_grid': 0}
+1O {'source': '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1O.root', 'pot_data': 2.9796628174847955e+19, 'pot_mc': 1.5823900034490132e+20, 'sumw_truth_signal_reco': 855954.3269356298, 'sumw_truth_denom': 855954.3269356294, 'truth_rows_outside_grid': 0}
+1P {'source': '/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_1P.root', 'pot_data': 4.675822390412008e+19, 'pot_mc': 2.0813657500734895e+20, 'sumw_truth_signal_reco': 1127826.8540533832, 'sumw_truth_denom': 1127826.8540533823, 'truth_rows_outside_grid': 0}
+toy 0 {'bbb': 0.001738, 'ibu': 0.001722}
+toy 1 {'bbb': 0.001762, 'ibu': 0.001747}
+toy 2 {'bbb': 0.001784, 'ibu': 0.001758}
+toy 3 {'bbb': 0.001756, 'ibu': 0.001724}
+toy 4 {'bbb': 0.001812, 'ibu': 0.001792}
+toy 5 {'bbb': 0.001755, 'ibu': 0.001732}
+toy 6 {'bbb': 0.001756, 'ibu': 0.001734}
+toy 7 {'bbb': 0.001741, 'ibu': 0.001722}
+toy 8 {'bbb': 0.001768, 'ibu': 0.00175}
+toy 9 {'bbb': 0.001789, 'ibu': 0.001762}
+toy 10 {'bbb': 0.001778, 'ibu': 0.001762}
+toy 11 {'bbb': 0.001742, 'ibu': 0.001724}
+toy 12 {'bbb': 0.001798, 'ibu': 0.001773}
+toy 13 {'bbb': 0.001789, 'ibu': 0.001771}
+toy 14 {'bbb': 0.00179, 'ibu': 0.00177}
+toy 15 {'bbb': 0.001778, 'ibu': 0.001748}
+toy 16 {'bbb': 0.00177, 'ibu': 0.001746}
+toy 17 {'bbb': 0.001738, 'ibu': 0.001708}
+toy 18 {'bbb': 0.001791, 'ibu': 0.001779}
+toy 19 {'bbb': 0.001783, 'ibu': 0.00177}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/lib/nanfunctions.py:1879: RuntimeWarning: Degrees of freedom <= 0 for slice.
+  var = nanvar(a, axis=axis, dtype=dtype, out=out, ddof=ddof,
+{
+ "bbb_eff_only": {
+  "total_bias": 0.0018179326600220591,
+  "total_bias_mcstat": 1.9433494580703874e-05
+ },
+ "bbb_bkg_only": {
+  "total_bias": -4.495783719959956e-05,
+  "total_bias_mcstat": 6.230016289847301e-06
+ },
+ "eff_total_pooled": 0.6114407204252317,
+ "eff_total_dw": 0.6124598156037823,
+ "bkg_total_pooled": 119132.36881367954,
+ "bkg_total_dw": 118895.5128383302,
+ "global_potd_over_potmc": 0.21240500334472884
+}
+bbb {'total_bias': 0.0017729148555656327, 'total_bias_mcstat': 2.16529326077848e-05, 'pt_marginal_bias': [0.0015496534943435503, 0.0017629135960897102, 0.001741470665125977, 0.0019018608670655635, 0.0017969711111509579, 0.0018944140041476931, 0.0019133507881685663, 0.0018964862535011395, 0.000930434757792975, 0.0004477131226892084], 'pt_marginal_mcstat': [5.2053159282748176e-05, 5.3162414189233384e-05, 7.038857765789899e-05, 5.56990823007727e-05, 5.472591614152479e-05, 8.055648723412837e-05, 9.973912846227195e-05, 0.00015447431604825946, 0.00013964840776688517, 0.00030682088517331666], 'pz_marginal_bias': [0.0029220283312878514, 0.0022950411728215325, 0.002044797519121788, 0.001860872803892688, 0.0014701654624034166, 0.001224401598064695, 0.0015089919149788855, 0.0009620227018229954, 0.001151385173226771, 0.0014720643874184258], 'pz_marginal_mcstat': [0.00011514953579200456, 6.226123019208502e-05, 5.2634776671430956e-05, 4.503187225946129e-05, 5.938213623243309e-05, 5.887122587176243e-05, 0.0001016777892774898, 9.356379734539031e-05, 0.00011273381479436096, 0.00013856059946135477], 'bins_used_D_ge_50': 88, 'bin_bias_min_max_D_ge_50': [-0.0005588125754538709, 0.0057584854414001185]}
+ibu {'total_bias': 0.001752844169956802, 'total_bias_mcstat': 2.305977954555979e-05, 'pt_marginal_bias': [0.0016358488993775122, 0.0018130497983828153, 0.0018260704278298956, 0.0019583613627283114, 0.001824843164887957, 0.0018985270133420329, 0.0018538760666917398, 0.0015136555575918642, 0.00044501460472612386, -0.00025831935373377135], 'pt_marginal_mcstat': [6.125901163771547e-05, 7.535266616593045e-05, 8.872414826550105e-05, 7.358976009073561e-05, 6.638923244329418e-05, 0.00010367347774977661, 0.00012589183672340288, 0.00020127669119026828, 0.00020137253773875848, 0.00035138209828434374], 'pz_marginal_bias': [0.003194182374692822, 0.0023702990884038044, 0.0021169039372446186, 0.001883283044698203, 0.0014411842224073546, 0.000954673822432861, 0.0011194665697942252, 0.0009670831456702889, 0.0011628025453662705, 0.001526670368497518], 'pz_marginal_mcstat': [0.00016243525840867537, 7.775114079059203e-05, 7.27768432113835e-05, 6.515994059374542e-05, 8.496274496666522e-05, 7.335299323262864e-05, 0.00012796531646073992, 0.00012040170876052289, 0.0001604503789517597, 0.00014589499297425695], 'bins_used_D_ge_50': 88, 'bin_bias_min_max_D_ge_50': [-0.002859970414535007, 0.003644100166157571]}
