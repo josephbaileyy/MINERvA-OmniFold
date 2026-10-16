@@ -641,6 +641,24 @@ without that record makes the launcher refuse.
 node failure before the steps. It is a pack-level **STOP**, not an attempt by its members. The launcher refuses
 everything until the director rules.
 
+**For the binding to accept explicitly.** Re-review 1 (R2, R3) raised two points:
+- A pack-level STOP is global. One pack that ran without launching its members halts every launcher action,
+  including `members` for that pack, for the rest of production. No record clears it.
+- A FAILED member cannot be re-run from this package either. That includes members whose `srun` step could not be
+  created after the `#pack` line was written.
+- Clearing a STOP, or re-running a FAILED member, needs a director record, a new package commit and a re-binding.
+- This fails closed, as grant §3 requires. Its price: a transient failure in any of the about 140 packs stops
+  production until then.
+
+**Navigation refusals are not stops (R4).** Some refusals come from the frozen order or an empty pool, not from the
+ceiling or a check:
+- "submit <earlier batch> before <batch>";
+- "no rows owed a first submission (or only a held partial pack)";
+- "no deadline-cancelled retry owed".
+
+They mean "run the named batch first", or "nothing to do here". The binding is asked to accept that these are not
+stops under its §3 ruling 4. Every other refusal stays a stop.
+
 A member killed for memory inside a pack that ends FAILED is labelled FAILED, not OUT_OF_MEMORY. Both are stops.
 
 **What follows from the derived state:**
@@ -658,9 +676,13 @@ A member killed for memory inside a pack that ends FAILED is labelled FAILED, no
 
 ### 14.4 Migration and launch (step 2: after the director's binding of this package only)
 
-1. **Deploy.** Run `git archive <bound commit>` into `$NS/repo_k/` and copy `driver_p1.py` into
-   `$NS/repo_k/2d-unfolding/`, as in §10.1. Check every file against `manifest.json`. `$NS/repo/` is left untouched,
-   because a shared job that has started may still read it.
+1. **Deploy.** Run `bash deploy_repo_k.sh <git archive of the bound commit> <commit> <manifest sha256>`.
+   - It refuses while any `2dc_P_K*` pack is in the queue, or if `squeue` cannot be read. A queued pack runs the
+     dispatcher copied at its submission, which checks the deployed `sbatch_prod.sh` against its own commit's
+     `MEMBER_SHA`. A redeploy under it would make it refuse at start: a pack-level STOP.
+   - It moves the old `repo_k` to `$NS/tmp/repo_k.<commit>.retired.<UTC>` and copies `driver_p1.py` (as in §10.1).
+   - It checks every manifest entry.
+   - `$NS/repo/` is left untouched, because a shared job that has started may still read it.
 2. **Migrate.** Run `launch.py migrate` (a dry run), then `launch.py migrate --execute`:
    - The cancel list is measured from `squeue -t PENDING` now, not from any saved list: the never-started
      shared-QOS `2dc_P_*` row jobs.
@@ -739,6 +761,17 @@ What it re-measured:
 | m9 a retry pack of fewer members is charged a whole node | Itemized in §14.1 |
 | m10 a failed job-id record write left `retries/<n>.time` behind | Removed on that path (tested) |
 | m11 an OOM kill inside a FAILED pack is labelled FAILED | §14.3 says so; both are stops |
+
+**Re-review 1** at `2b3678b8`: **APPROVE WITH CHANGES, 1 MATERIAL, 3 MINOR.** All 14 earlier dispositions repair
+their findings. The verifier simulated migration, a deadline removal and a full walk from G2 to S4b, and found no
+legitimate sequence blocked by the frozen-order rule and no bypass of it.
+
+| finding | disposition |
+|---|---|
+| R1 redeploying `repo_k` while a pack is queued makes that pack refuse at start, and the STOP halts the launcher (the smoke pack 59860260 runs `8ea086eb`'s dispatcher, `MEMBER_SHA` `9d373dee…`) | `deploy_repo_k.sh` refuses while any `2dc_P_K*` job is queued, or if `squeue` is unreadable (§14.4.1; tested both ways). `repo_k` stays at `8ea086eb` until the smoke pack has ended |
+| R2 a pack-level STOP is global and has no clearance | Stated for the binding to accept (§14.3): clearing it needs a director record, a new commit and a re-binding |
+| R3 an `srun` failure after the `#pack` line makes members FAILED | Same statement (§14.3); the smoke pack exercises `srun` inside the allocation |
+| R4 order refusals read as stops under the binding's ruling 4 | §14.3: they are navigation, and the binding is asked to accept that |
 
 The verifier noted the second smoke submission. The director authorized it in
 [`AUTHORIZATION-20261016-2d-closeout-stageC-smoke-resubmit.md`](../../../../AUTHORIZATION-20261016-2d-closeout-stageC-smoke-resubmit.md).

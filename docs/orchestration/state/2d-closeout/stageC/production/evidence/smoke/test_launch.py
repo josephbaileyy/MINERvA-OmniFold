@@ -18,7 +18,8 @@ Cases (AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md §4):
     its explicit name and records each rc; it refuses before any step on a duplicated or unknown member, a mixed
     class, arguments that differ from the launcher's record, and billing 64 (accepts 256), QOS shared (accepts regular_1 and regular); one failing member does
     not stop the others; MEMBER_SHA equals sha256(sbatch_prod.sh);
-  - sbatch_prod.sh refuses without --member, outside an srun step, at billing 64, and on a CPU mismatch.
+  - sbatch_prod.sh refuses without --member, outside an srun step, at billing 64, and on a CPU mismatch;
+  - deploy_repo_k.sh refuses while a pack is queued or squeue is unreadable, and deploys otherwise.
 """
 import contextlib
 import hashlib
@@ -597,6 +598,44 @@ p = subprocess.run(["bash", str(t2 / "sbatch_prod.sh"), "--member", n1], capture
 case("member runner refuses QOS shared", p.returncode == 4 and "QOS shared is not regular" in p.stdout + p.stderr)
 rc, o = run_member(["--member", n1], cpus="128")
 case("member runner refuses a CPU mismatch", rc == 4 and "step CPUs '128' != 64" in o)
+
+# deploy_repo_k.sh: refuses under a queued pack (R1, re-review 1) and when squeue is unreadable; deploys otherwise
+def deploy(squeue_out, squeue_rc=0):
+    t = Path(tempfile.mkdtemp())
+    ns = t / "ns"
+    (ns / "tmp").mkdir(parents=True)
+    old = ns / "repo_k"
+    old.mkdir()
+    (old / ".deployed_commit").write_text("0ldc0mm1t\n")
+    src = t / "src"
+    pp = src / "docs/orchestration/state/2d-closeout/stageC/production"
+    pp.mkdir(parents=True)
+    (src / "docs/orchestration/state/2d-closeout/stageC/pilot/p1").mkdir(parents=True)
+    shutil.copy(PKG.parent / "pilot/p1/driver_p1.py", src / "docs/orchestration/state/2d-closeout/stageC/pilot/p1/")
+    (src / "2d-unfolding").mkdir()
+    (pp / "manifest.json").write_text('{"package": {}, "code_outside_package": {}}')
+    msha = hashlib.sha256((pp / "manifest.json").read_bytes()).hexdigest()
+    subprocess.run(["tar", "-cf", str(t / "p.tar"), "-C", str(src), "."], check=True)
+    b = t / "bin"
+    b.mkdir()
+    (b / "squeue").write_text(f"#!/bin/bash\nprintf '%s' '{squeue_out}'\nexit {squeue_rc}\n")
+    (b / "squeue").chmod(0o755)
+    (t / "d.sh").write_text((PKG / "deploy_repo_k.sh").read_text().replace(REAL_NS, str(ns)))
+    env = dict(os.environ, PATH=f"{b}:{os.environ['PATH']}")
+    p = subprocess.run(["bash", str(t / "d.sh"), str(t / "p.tar"), "c0ffee", msha], capture_output=True, text=True,
+                       env=env)
+    return p.returncode, p.stdout + p.stderr, ns
+
+
+rc, o, ns = deploy("59860260|2dc_P_K4_S1_001|PENDING\n")
+case("deploy_repo_k.sh refuses while a pack is queued, and leaves repo_k untouched",
+     rc == 4 and "packs are queued" in o and (ns / "repo_k/.deployed_commit").read_text() == "0ldc0mm1t\n")
+rc, o, ns = deploy("", squeue_rc=1)
+case("deploy_repo_k.sh refuses when squeue is unreadable", rc == 4 and "squeue unreadable" in o)
+rc, o, ns = deploy("123|2dc_P_S1_050|PENDING\n")
+case("deploy_repo_k.sh deploys when no pack is queued (shared rows may be), retiring the old copy, 0 mismatches",
+     rc == 0 and "mismatches 0" in o and (ns / "repo_k/.deployed_commit").read_text() == "c0ffee\n"
+     and any(ns.joinpath("tmp").glob("repo_k.0ldc0mm1.retired.*")))
 
 print(f"RAN {RAN[0]}, FAILED {len(FAILS)}")
 sys.exit(1 if FAILS else 0)

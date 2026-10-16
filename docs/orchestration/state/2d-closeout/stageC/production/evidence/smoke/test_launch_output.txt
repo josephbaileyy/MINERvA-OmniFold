@@ -84,4 +84,7 @@
 [PASS] member runner refuses billing 64
 [PASS] member runner refuses QOS shared
 [PASS] member runner refuses a CPU mismatch
-RAN 86, FAILED 0
+[PASS] deploy_repo_k.sh refuses while a pack is queued, and leaves repo_k untouched
+[PASS] deploy_repo_k.sh refuses when squeue is unreadable
+[PASS] deploy_repo_k.sh deploys when no pack is queued (shared rows may be), retiring the old copy, 0 mismatches
+RAN 89, FAILED 0
