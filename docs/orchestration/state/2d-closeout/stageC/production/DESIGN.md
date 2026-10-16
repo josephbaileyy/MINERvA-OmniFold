@@ -434,7 +434,7 @@ at seed 42, and joint/bkg 1–20 → S1/S2 1–20.
 
   The S1/S2 reproductions pass trivially here, because each stand-in is its own reference.
 
-**Launcher logic** (`test_launch.py` → `test_launch_output.txt`, mocked ledger, no Slurm): 15/15 cases pass.
+**Launcher logic** (`test_launch.py`, mocked ledger, no Slurm): 15/15 cases passed for the shared-QOS launcher at `4139548b`. The packed launcher's suite replaces it (§14.5); `test_launch_output.txt` now records that suite.
 - `redo` owes exactly the three kinds in §6, and never a row that ran, is queued, has output, or has a second attempt.
 - A retry is accepted after TIMEOUT, and refused after OUT_OF_MEMORY, FAILED or CANCELLED.
 - Every `sbatch` line carries `--no-requeue` and its cap.
@@ -544,6 +544,10 @@ side, each as its own `srun` step:
 - A row is owed when it has no attempt, is not queued and has nothing in `out/<row>/`.
 - A partial chunk is held for the next batch, unless the batch is the class's last (G2 for S4U, S4b for CV).
 - S1a's two leftover rows therefore lead S1b's first pack, and no CV slot is wasted.
+- **Frozen order.** Owed rows of earlier batches may lead a submission only as such a held remainder, fewer than a
+  node's worth per class. More than that means an earlier batch is owed a submission, and `compose()` refuses with
+  "submit <earlier batch> before <batch>". This also covers rows owed after a never-started pack or a migrated
+  shared job: each batch is resubmitted, in order, with `submit <batch>`.
 
 **Names.** A pack is named `2dc_P_K<n>_<first member without 2dc_P_>`, for example `2dc_P_K4_S1_001`. The `2dc_P_`
 prefix keeps every pack in the gate's ledger.
@@ -563,6 +567,10 @@ Itemized excess over the row caps:
   multiple of 4. The CV tail pack then carries up to 3 empty slots of 0.2125.
 - **−0.25** if an odd number of S4U rows start there, because the single disappears.
 - **Maximum: 118.7458.**
+
+- **Retry packs** are charged a whole node at the re-projected cap, whatever their member count. A retry pack of one
+  CV member at cap T costs T node-h, not T/4. Retries sit outside the 118.1083 plan, as they did before, and are
+  admitted only by the gate.
 
 Rows that start on the shared QOS keep their shared caps in the ledger. As before, the gate enforces 100.0 at every
 submission whatever the plan's worst case.
@@ -608,8 +616,9 @@ What is identical:
 
 ### 14.3 The gate and member-level attempts
 
-**The gate.** `launch.py` reads `sacct -X` over every `2dc_P_*` job, rows and packs alike. A pack's terminal charge
-is ElapsedRaw × 256 / 256 / 3600, measured. Its in-flight liability is the larger of 256 and Slurm's billing, times
+**The gate.** `launch.py` reads `sacct -X` over every `2dc_P_*` job, rows and packs alike, with `TZ=UTC`. A pack's
+terminal charge is ElapsedRaw × 256 / 256 / 3600, measured. For a pack that ran, the billing is never taken below 256,
+even if `AllocTRES` lacks it; a pending pack's `ReqTRES` reads `billing=1`. Its in-flight liability is the larger of 256 and Slurm's billing, times
 `TimeLimit`, over 256. Each pack submitted adds 256 × cap / 256. The stop rule is §6's: wait only while jobs are in
 flight, and a `submit` refusal is a stop. `$NS/packs/<job id>.members` maps a pack job to its members; a pack job
 without that record makes the launcher refuse.
@@ -625,18 +634,26 @@ without that record makes the launcher refuse.
 |---|---|
 | COMPLETED (validated output) | rc 0 in the status file, and `out/<member>/xsec.root` exists |
 | OUT_OF_MEMORY | the pack ended OUT_OF_MEMORY |
-| TIMEOUT | the pack timed out, and the member had no rc line, or its rc line is within 300 s of the pack's end (killed at the limit) |
-| FAILED | anything else: a non-zero rc recorded earlier, a refusal, or a missing status |
+| TIMEOUT | the pack timed out, and the member had no rc line, or its rc line is within 120 s of Start + TimeLimit (killed at the limit; KillWait is 30 s) |
+| FAILED | anything else: a non-zero rc recorded earlier, or a missing rc in a pack that ended otherwise |
+
+**A pack that ran but never launched its members** has no `#pack` line in its status file: a dispatcher refusal, or a
+node failure before the steps. It is a pack-level **STOP**, not an attempt by its members. The launcher refuses
+everything until the director rules.
+
+A member killed for memory inside a pack that ends FAILED is labelled FAILED, not OUT_OF_MEMORY. Both are stops.
 
 **What follows from the derived state:**
 - **A walltime retry** (`submit <batch> --retry A[,B..] --time HH:MM:SS`) needs exactly one TIMEOUT attempt for
-  every member. OUT_OF_MEMORY is a stop, as before. FAILED needs a diagnosed infrastructure cause and the director,
-  as before. The retry members go together in one pack at the re-projected cap: same class, at most a node.
+  every member. It is refused while `out/<member>/xsec.root` exists. OUT_OF_MEMORY is a stop, as before. FAILED
+  needs a diagnosed infrastructure cause and the director, as before. **No command in this package acts on a FAILED
+  member.** Re-running one needs a director record and a package change that implements it. The retry members go together in one pack at the re-projected cap: same class, at most a node.
   `retries/<member>.time` is written before `sbatch` and removed if `sbatch` fails.
 - **A member with validated output is never re-run:** it has an attempt, so it is not owed.
 - **A `DEADLINE` or never-started `CANCELLED` pack** owes its members. They return to `compose()` at their row caps.
 - **`redo <batch>`** now covers only §6 case (b): a walltime retry whose pack was removed by the deadline before
-  starting is owed at its recorded cap. Cases (a) and (c) need no separate path, because `compose()` packs every
+  starting is owed at its recorded cap. The pack is checked by the retry rule: one class, one node, and the cap
+  equal to every member's record, under 12 h. Cases (a) and (c) need no separate path, because `compose()` packs every
   row with no attempt.
 
 ### 14.4 Migration and launch (step 2: after the director's binding of this package only)
@@ -658,7 +675,11 @@ without that record makes the launcher refuse.
 5. **Check each item.** Run `analyze_prod.py` per item as in §10, which is unchanged, followed by S5, CFS and
    REPORT.
 
-`launch.py members <job id>` prints each member's derived state, rc and `sacct` step row, for the REPORT.
+`launch.py members <job id>` prints each member's derived state, rc and `sacct` step row, for the REPORT. The
+dispatcher appends the step rows to its status file only when it ends normally; after a TIMEOUT, `members` reads them
+from `sacct`.
+
+The universe preflight (`preflight/uomni.stat`) is required for G2 and for any submission with an S4U member.
 
 ### 14.5 Tests and the smoke pack
 
@@ -685,3 +706,40 @@ The runner's count is reported with each run.
 Its members' outputs are kept only if they pass `analyze_prod.py`'s existing provenance checks and reproduce the
 pilot's joint replicas 1–4. Its measured member and pack charges give the expected-charge figure (record §4.7),
 which is reported before the binding.
+
+### 14.6 Independent review of the packed path
+
+One fresh read-only verifier (Claude Opus 5.5) reviewed `8ea086eb` in its own detached worktree, with `git-dir` ≠
+`git-common-dir`. **Verdict: APPROVE WITH CHANGES, 3 MATERIAL, 11 MINOR.**
+
+What it re-measured:
+- `MEMBER_SHA`, `jobs.tsv` and the manifest;
+- every case block in `sbatch_prod.sh`, byte-identical to `4139548b`, with no diff in `2d-unfolding/`;
+- the worst case: 118.1083, and 118.7458 at most;
+- the live Slurm facts:
+  - a pending pack's `ReqTRES` has billing 1;
+  - past `regular_1` jobs have `AllocTRES` billing 256;
+  - KillWait is 30 s, and OverSubscribe is EXCLUSIVE;
+- the ledger on live rows;
+- 62/62 tests.
+
+| finding | disposition |
+|---|---|
+| M1 `redo` refused every retry pack it owed: `main()` checked it with the first-submission rule, cap = row cap | `redo` packs are checked by the retry rule, with the cap equal to every member's record (§14.3). Tests drive `main redo` both ways |
+| M2 `compose()` folded every owed earlier-batch row into a later batch, bypassing the frozen order and the G2 preflight | Earlier rows lead only as a held remainder, fewer than a node's worth per class; otherwise `compose()` refuses (§14.1). The preflight is required for any S4U member. Tests run the real `preconditions` (no `c0.json`, C0 FAIL, preflight missing or present) and the order refusal |
+| M3 a FAILED member has no way back; a dispatcher refusal or a node failure would turn every member FAILED | The FAILED reading is kept: grant §3 allows one walltime retry, and any other failure needs the director. §14.3 states that no command here acts on a FAILED member: re-running one needs a director record and a package change. A pack that ran without launching its members is a pack-level STOP, not member attempts (tested) |
+| m1 a member with `xsec.root` but no rc line could be retried after its output was moved aside | `--retry` refuses while `xsec.root` exists (tested) |
+| m2 the 300 s margin from the pack's End was too wide, and `epoch()` was DST-ambiguous | Margin 120 s from Start + TimeLimit. `sacct` is read with `TZ=UTC` and parsed as UTC (tested both sides of the margin) |
+| m3 a terminal pack without `AllocTRES` billing could be charged at `ReqTRES` billing 1 | A pack that ran is never charged below 256 (tested on a parsed `sacct` table) |
+| m4 `ledger()`, `queued()`, the member runner's accept path, the dispatcher's memory clause and its retry-cap acceptance were untested | Tests added for each, the memory clause on a `jobs.tsv` that breaks it (pin re-set in the test copy only) |
+| m5 stale evidence (15/15) | §11 updated; `test_launch_output.txt` regenerated |
+| m6 the `sbatch_prod.sh` header claimed a memory check | Comment corrected; it checks CPUs and logs the step's TRES. Comment-only diff; `MEMBER_SHA` re-pinned |
+| m7 `simulate` models row caps | Its docstring says so; the packed expected charge is measured from the smoke pack |
+| m8 step states are not written to the status file after a TIMEOUT | §14.4: `members` reads them from `sacct` |
+| m9 a retry pack of fewer members is charged a whole node | Itemized in §14.1 |
+| m10 a failed job-id record write left `retries/<n>.time` behind | Removed on that path (tested) |
+| m11 an OOM kill inside a FAILED pack is labelled FAILED | §14.3 says so; both are stops |
+
+The verifier noted the second smoke submission. The director authorized it in
+[`AUTHORIZATION-20261016-2d-closeout-stageC-smoke-resubmit.md`](../../../../AUTHORIZATION-20261016-2d-closeout-stageC-smoke-resubmit.md).
+The verifier is the same model as the executor, so their blind spots may be correlated.

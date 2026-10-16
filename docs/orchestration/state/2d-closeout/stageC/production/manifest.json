@@ -81,7 +81,7 @@
   }
  },
  "package": {
-  "docs/orchestration/state/2d-closeout/stageC/production/DESIGN.md": "ba37e8842f08bcbfc685d43648973449626fb65e950887c0a4db8e71f1fe24ad",
+  "docs/orchestration/state/2d-closeout/stageC/production/DESIGN.md": "ce40e5245f0e474f5d6ba71cefcda26dbb191d2cf530f002530a2848a840116d",
   "docs/orchestration/state/2d-closeout/stageC/production/analyze_prod.py": "f9e0d8f271f28bee1ef264de62cf7b924d18d4086e8fbe896abff4adb79320a4",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_c0.json": "89bff43c8179a66fb822816338a4a74907e815f66dac5bd9c7817d4933e41777",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_s1.json": "70513c437d989ef3f9ffcf1c55ccdc125bccd90136381073c45e69e52c4cdb9d",
@@ -93,16 +93,16 @@
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/dispatch_dryrun.txt": "fd9fabf59105fbb3c21a5664850fc87203100c72ed70b0edea8226d7816c176a",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/s5_control.json": "576093313a32b214c8bd0f67aca84794b952dfd1883b99c989af93ad7e027333",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/s5_standin.json.gz": "0d045e594d53e598053ef75f8d7aa70025063a178803a0d2c130bed506ac7d66",
-  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/test_launch.py": "4818772ca3357c397dfef5d4ce00898229f53e23f0a7d9e79e009e4c64e5a42d",
-  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/test_launch_output.txt": "e8e486cfeac7549762d741a73e3f534822fedfc4ca62d2d96ed5b4816d9f9864",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/test_launch.py": "5249e9477498c9a2515d5fce7888daaa8b82ff0ecadcca64ed42f5c09410495a",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/test_launch_output.txt": "51cfa44078b3b1916f93fcaff31de51a0179e01dd1f9f8baced99a621e707202",
   "docs/orchestration/state/2d-closeout/stageC/production/jobs.tsv": "c4f1b7082fac3635be78622cb9b9a5f71103789337bbc29e7dd29684e9b4d3a4",
-  "docs/orchestration/state/2d-closeout/stageC/production/launch.py": "39300e63dc454311f3d2e66841cbf3707d4a1bf5f29b3e88b7f2d9cbdca40acb",
+  "docs/orchestration/state/2d-closeout/stageC/production/launch.py": "a6a9a60adc8394059c8edbf93c225b6639c28d4f6d72a55e65308c5ae298c405",
   "docs/orchestration/state/2d-closeout/stageC/production/make_jobs.py": "550e273be77944c25e8cc4607574c891b247f4328b1b72c6eba85d521ab2fa91",
   "docs/orchestration/state/2d-closeout/stageC/production/make_manifest.py": "57e7a6adbb634ff815920672303490df7b4840024e7c65ede77636ac0392cdcc",
   "docs/orchestration/state/2d-closeout/stageC/production/preflight_uomni.sh": "14a58c70eeafa18035da7562c16516347a841d5e2a96810b5ed9ff0170679f0d",
   "docs/orchestration/state/2d-closeout/stageC/production/s5_rollup.py": "6c437004fb439201c173a2857fb95bda2cb3045285ba61c1bef8f8c215b39d15",
-  "docs/orchestration/state/2d-closeout/stageC/production/sbatch_pack.sh": "9ebe41dbdac13281b6a17afc9764f859603cf78b8b506448e20679f6e5266be6",
-  "docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh": "9d373deee1289add57190d004f2919d20ec93080efeef2f8c5ed19028ab2bc47"
+  "docs/orchestration/state/2d-closeout/stageC/production/sbatch_pack.sh": "2908a7bf16ec8788944aadeb5cfac4237ca72f4a32c54b1ed2b71a15f9a623ca",
+  "docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh": "ad9b12f3c51f03af68d6da181826bbc591c26cefaf3c19d845427221f4e70bf9"
  },
  "schema": "stagec-production-manifest/1"
 }

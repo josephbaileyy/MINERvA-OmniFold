@@ -19,7 +19,7 @@ NS=/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015
 REPO=$NS/repo_k
 PKG=$REPO/docs/orchestration/state/2d-closeout/stageC/production
 JOBS_SHA=c4f1b7082fac3635be78622cb9b9a5f71103789337bbc29e7dd29684e9b4d3a4    # jobs.tsv (unchanged by packing)
-MEMBER_SHA=9d373deee1289add57190d004f2919d20ec93080efeef2f8c5ed19028ab2bc47                                                    # sbatch_prod.sh (the member runner)
+MEMBER_SHA=ad9b12f3c51f03af68d6da181826bbc591c26cefaf3c19d845427221f4e70bf9                                                    # sbatch_prod.sh (the member runner)
 NODE_CPUS=256; NODE_MEM_MB=515100; PACK_BILLING=256
 JID=${SLURM_JOB_ID:?not a Slurm job}
 PNAME=${SLURM_JOB_NAME:?no job name}   # the PACK's name only; a member's identity comes from its argument

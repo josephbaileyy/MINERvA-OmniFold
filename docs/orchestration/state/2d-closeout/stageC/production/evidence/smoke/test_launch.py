@@ -30,6 +30,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import re
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -40,6 +41,7 @@ spec.loader.exec_module(L)
 TABLE = L.table()
 REAL_TABLE = L.table
 REAL_RUN = subprocess.run   # L.subprocess IS this module: patches below are undone before the shell tests
+REAL_LEDGER, REAL_QUEUED, REAL_PRE = L.ledger, L.queued, L.preconditions
 FAILS, RAN = [], [0]
 
 
@@ -58,9 +60,9 @@ def refused(fn, *a, want=""):
     return False
 
 
-def R(jid, name, st, el=0, start="Unknown", end="Unknown", amount=0.0):
+def R(jid, name, st, el=0, start="Unknown", end="Unknown", amount=0.0, tl="00:51:00"):
     kind = "in-flight at cap" if st in L.IN_FLIGHT else "charged"
-    return L.Row(jid, name, st, el, kind, amount, start, end)
+    return L.Row(jid, name, st, el, kind, amount, start, end, tl)
 
 
 def setup(rows, queue=(), done=0.0, fly=0.0, packs=None):
@@ -87,8 +89,9 @@ def out(tmp, name):
     Path(tmp, "out", name, "xsec.root").write_text("x")
 
 
-def status(tmp, jid, lines):
-    Path(tmp, "packs", f"{jid}.status").write_text("".join(f"{m}\t{rc}\t{t}\n" for m, rc, t in lines))
+def status(tmp, jid, lines, launched=True):
+    head = f"#pack\tx\tx\t0\n" if launched else ""
+    Path(tmp, "packs", f"{jid}.status").write_text(head + "".join(f"{m}\t{rc}\t{t}\n" for m, rc, t in lines))
 
 
 def rows_of(batch):
@@ -103,6 +106,7 @@ def done_rows(batches):
 
 S1a, S1b = rows_of("S1a"), rows_of("S1b")
 n1, n2, n3, n4 = (r["name"] for r in S1a[:4])
+m4l = [n1, n2, n3, n4]
 PRE = ["G0", "G1"]
 
 # ---- compose() ------------------------------------------------------------------------------------------------------
@@ -136,7 +140,7 @@ setup(done_rows(PRE + ["G2"]) + [R("8", n2, "CANCELLED", 0, "None"), R("9", n3, 
 names = [r["name"] for m, _ in L.compose("S1a", L.ledger()[2], L.queued()) for r in m]
 case("compose: a never-started CANCELLED shared row is owed; a CANCELLED row that started is an attempt",
      n2 in names and n3 not in names)
-setup([], queue=[("31", "2dc_P_S1_005")])
+setup(done_rows(PRE + ["G2"]), queue=[("31", "2dc_P_S1_005")])
 names = [r["name"] for m, _ in L.compose("S1a", L.ledger()[2], L.queued()) for r in m]
 case("compose: a row in the queue is never packed", "2dc_P_S1_005" not in names)
 
@@ -181,6 +185,11 @@ status(tmp, "50", [(n1, 0, end_s - 900), (n3, 1, end_s - 2000), (n4, 137, end_s 
 st = L.member_states(L.ledger()[2][0])
 case("TIMEOUT pack: validated member COMPLETED, unfinished TIMEOUT, early rc 1 FAILED, killed-at-limit TIMEOUT",
      st == {n1: "COMPLETED", n2: "TIMEOUT", n3: "FAILED", n4: "TIMEOUT"})
+status(tmp, "50", [(n1, 0, end_s - 900), (n3, 1, end_s - 200), (n4, 1, end_s - 60)])
+st = L.member_states(L.ledger()[2][0])
+case("TIMEOUT margin is 120 s before Start + TimeLimit: rc 1 at -200 s FAILED, at -60 s TIMEOUT",
+     st[n3] == "FAILED" and st[n4] == "TIMEOUT")
+status(tmp, "50", [(n1, 0, end_s - 900), (n3, 1, end_s - 2000), (n4, 137, end_s - 20)])
 calls = []
 
 
@@ -221,15 +230,26 @@ case("retry refused for a member with validated output", isinstance(code, str) a
 code, o = run(["submit", "S1a", "--retry", n3, "--time", "01:16:00"])
 case("retry refused for a FAILED member", isinstance(code, str) and "FAILED" in code)
 tmp = setup([R("51", "2dc_P_K4_S1_001", "OUT_OF_MEMORY", 900, "2026-10-17T09:09:00", END)], packs={"51": [n1, n2, n3, n4]})
+status(tmp, "51", [])
 code, o = run(["submit", "S1a", "--retry", n2, "--time", "01:16:00"])
 case("retry refused for a member of an OUT_OF_MEMORY pack", isinstance(code, str) and "OUT_OF_MEMORY" in code)
 for st_, el, start, owed in (("DEADLINE", 0, "Unknown", True), ("CANCELLED", 0, "None", True),
                              ("CANCELLED", 30, "2026-10-17T09:09:00", False)):
-    setup(done_rows(PRE + ["G2"]) + [R("52", "2dc_P_K4_S1_001", st_, el, start, END)], packs={"52": [n1, n2, n3, n4]})
+    tmp = setup(done_rows(PRE + ["G2"]) + [R("52", "2dc_P_K4_S1_001", st_, el, start, END)], packs={"52": [n1, n2, n3, n4]})
+    if el:
+        status(tmp, "52", [])
     names = {r["name"] for m, _ in L.compose("S1a", L.ledger()[2], L.queued()) for r in m}
     case(f"{st_} pack (elapsed {el}): its members {'are' if owed else 'are NOT'} owed", ({n1, n2, n3, n4} <= names) == owed)
 setup([R("53", "2dc_P_K4_S1_001", "COMPLETED", 900, "2026-10-17T09:09:00", END)])
 case("a pack job with no member record fails closed", refused(L.attempts, L.ledger()[2], want="no member record"))
+setup([R("55", "2dc_P_K4_S1_001", "FAILED", 3, "2026-10-17T09:09:00", "2026-10-17T09:09:03")], packs={"55": m4l})
+case("a pack that ran but never launched its members (dispatcher refusal) is a STOP, not member attempts",
+     refused(L.attempts, L.ledger()[2], want="STOP: pack 55"))
+tmp = setup([R("56", "2dc_P_K4_S1_001", "FAILED", 900, "2026-10-17T09:09:00", END)], packs={"56": m4l})
+status(tmp, "56", [(n1, 1, end_s - 500), (n2, 0, end_s - 400)])
+out(tmp, n2)
+case("a launched pack that FAILED: rc 1 member FAILED, validated member COMPLETED, members without rc FAILED",
+     L.member_states(L.ledger()[2][0]) == {n1: "FAILED", n2: "COMPLETED", n3: "FAILED", n4: "FAILED"})
 tmp = setup(done_rows(PRE + ["G2"]) + [R("54", "2dc_P_K4_S1_001", "COMPLETED", 900, "2026-10-17T09:09:00", END)],
             packs={"54": [n1, n2, n3, n4]})
 for m in (n1, n2, n3, n4):
@@ -242,6 +262,7 @@ case("members with validated output are never re-packed", not ({n1, n2, n3, n4} 
 tmp = setup([R("60", "2dc_P_K4_S1_001", "TIMEOUT", 3060, "2026-10-17T09:09:00", END),
              R("61", "2dc_P_K1_S1_002", "DEADLINE", 0, "Unknown", "Unknown")],
             packs={"60": [n1, n2, n3, n4], "61": [n2]})
+status(tmp, "60", [])
 Path(tmp, "retries", f"{n2}.time").write_text("01:16:00\n")
 pk = L.owed_retries("S1a", L.ledger()[2], L.queued())
 case("redo: a deadline-cancelled retry is owed at its recorded cap, alone",
@@ -249,6 +270,8 @@ case("redo: a deadline-cancelled retry is owed at its recorded cap, alone",
 tmp = setup([R("60", "2dc_P_K4_S1_001", "TIMEOUT", 3060, "2026-10-17T09:09:00", END),
              R("62", "2dc_P_K1_S1_002", "TIMEOUT", 4560, "2026-10-18T09:09:00", "2026-10-18T10:25:00")],
             packs={"60": [n1, n2, n3, n4], "62": [n2]})
+status(tmp, "60", [])
+status(tmp, "62", [], )
 Path(tmp, "retries", f"{n2}.time").write_text("01:16:00\n")
 case("redo: a retry that ran is never owed", not L.owed_retries("S1a", L.ledger()[2], L.queued()))
 
@@ -274,10 +297,115 @@ def fail_sbatch(cmd, **k):
 
 
 tmp = setup([R("60", "2dc_P_K4_S1_001", "TIMEOUT", 3060, "2026-10-17T09:09:00", END)], packs={"60": [n1, n2, n3, n4]})
+status(tmp, "60", [])
 L.subprocess.run = fail_sbatch
 code, o = run(["submit", "S1a", "--retry", n2, "--time", "01:16:00"])
 case("sbatch failure: the retry record is removed", "sbatch failed" in str(code) and not Path(tmp, "retries", f"{n2}.time").exists())
 L.subprocess.run = fake_run
+
+# ---- verifier round 1 (M1, M2, M3, m1, m3, m4, m10) -----------------------------------------------------------------
+# M1: redo through main(): the recorded retry cap is the pack cap
+tmp = setup([R("60", "2dc_P_K4_S1_001", "TIMEOUT", 3060, "2026-10-17T09:09:00", END),
+             R("61", "2dc_P_K1_S1_002", "DEADLINE", 0, "Unknown", "Unknown")], packs={"60": m4l, "61": [n2]})
+status(tmp, "60", [])
+Path(tmp, "retries", f"{n2}.time").write_text("01:16:00\n")
+calls.clear()
+code, o = run(["redo", "S1a"])
+sb = [c for c in calls if c[0] == "sbatch"]
+case("redo via main: a deadline-cancelled retry goes as one pack at its recorded cap 01:16:00",
+     code == 0 and len(sb) == 1 and "--time=01:16:00" in sb[0] and sb[0][-1] == n2)
+REAL_OR = L.owed_retries
+L.owed_retries = lambda b, rl, q: [(pk[0], "01:20:00") for pk in REAL_OR(b, rl, q)]
+calls.clear()
+code, o = run(["redo", "S1a"])
+case("redo via main: a pack cap that differs from the member's retry record is refused",
+     "differs from a member's retry record" in str(code) and not [c for c in calls if c[0] == "sbatch"])
+L.owed_retries = REAL_OR
+# M2: frozen order: earlier batches may lead only as a held remainder
+setup(done_rows(PRE))
+case("M2: submit S1a with G2's rows owed is refused (frozen order)",
+     refused(L.compose, "S1a", L.ledger()[2], L.queued(), want="submit G2 before S1a"))
+setup(done_rows(PRE + ["G2"]) + [R("70", "2dc_P_K4_S1_001", "DEADLINE", 0)], packs={"70": m4l})
+case("M2: a never-started S1a pack's 4 members are owed to S1a, not folded into S1b",
+     refused(L.compose, "S1b", L.ledger()[2], L.queued(), want="submit S1a before S1b"))
+L.preconditions = REAL_PRE
+tmp = setup(done_rows(PRE))
+code, o = run(["pack", ",".join(r["name"] for r in u[:2])])
+case("real preconditions: no c0.json -> refused", "c0.json" in str(code) and "missing" in str(code))
+import json as _json  # noqa: E402
+Path(tmp, "results", "c0.json").write_text(_json.dumps({"C0": "PASS", "out_root": f"{tmp}/out"}))
+calls.clear()
+code, o = run(["pack", ",".join(r["name"] for r in u[:2])])
+case("real preconditions: an S4U member without the uomni preflight -> refused",
+     "preflight" in str(code) and not [c for c in calls if c[0] == "sbatch"])
+Path(tmp, "preflight").mkdir()
+Path(tmp, "preflight", "uomni.stat").write_text("1 2 3\n")
+calls.clear()
+code, o = run(["pack", ",".join(r["name"] for r in u[:2])])
+case("real preconditions: with the preflight recorded and C0 PASS -> one S4U pack submitted",
+     code == 0 and len([c for c in calls if c[0] == "sbatch"]) == 1)
+Path(tmp, "results", "c0.json").write_text(_json.dumps({"C0": "FAIL", "out_root": f"{tmp}/out"}))
+code, o = run(["pack", ",".join(r["name"] for r in S1a[4:8])])
+case("real preconditions: C0 not PASS -> refused", "did not PASS" in str(code))
+L.preconditions = lambda *a: None
+# m1: a member with xsec.root but no rc line (classified TIMEOUT) is never retried
+tmp = setup([R("57", "2dc_P_K4_S1_001", "TIMEOUT", 3060, "2026-10-17T09:09:00", END)], packs={"57": m4l})
+status(tmp, "57", [])
+out(tmp, n3)
+code, o = run(["submit", "S1a", "--retry", n3, "--time", "01:16:00"])
+case("m1: retry refused while out/<member>/xsec.root exists", "xsec.root exists" in str(code))
+# m10: a failed job-id record write cancels the job and removes the retry record
+tmp = setup([R("58", "2dc_P_K4_S1_001", "TIMEOUT", 3060, "2026-10-17T09:09:00", END)], packs={"58": m4l})
+status(tmp, "58", [])
+real_sp = L.sbatch_pack
+
+
+def sp_fail(ms, t, dl):
+    calls.append(["scancel", "999"])
+    raise SystemExit("REFUSE: could not record pack")
+
+
+L.sbatch_pack = sp_fail
+code, o = run(["submit", "S1a", "--retry", n2, "--time", "01:16:00"])
+case("m10: a record-write failure leaves no retry record behind",
+     "could not record" in str(code) and not Path(tmp, "retries", f"{n2}.time").exists())
+L.sbatch_pack = real_sp
+# m3, m4: the real ledger() parse (TZ=UTC, billing floors) and queued()
+SACCT = ("JobID|JobName|State|ElapsedRaw|AllocTRES|Timelimit|ReqTRES|Start|End\n"
+         "1|2dc_P_K4_S1_001|PENDING|0||00:51:00|cpu=1,mem=487680M,node=1,billing=1|Unknown|Unknown\n"
+         "2|2dc_P_K4_S1_005|COMPLETED|3000||00:51:00|cpu=1,mem=487680M,node=1,billing=1|2026-10-17T09:00:00|2026-10-17T09:50:00\n"
+         "3|2dc_P_S1_009|COMPLETED|1800|cpu=64,mem=121920M,node=1,billing=64|00:51:00|billing=64|2026-10-17T09:00:00|x\n"
+         "4|2dc_P_K4_S1_013|CANCELLED by 1|0||00:51:00|billing=1|None|2026-10-17T09:00:00\n"
+         "5|other|COMPLETED|99|billing=256|01:00:00|billing=256|x|x\n")
+envs = []
+
+
+def sacct_run(cmd, **k):
+    envs.append(k.get("env", {}).get("TZ"))
+    if cmd[0] == "sacct":
+        return type("R", (), {"returncode": 0, "stdout": SACCT, "stderr": ""})()
+    if cmd[0] == "squeue":
+        return type("R", (), {"returncode": 0, "stdout": "1|2dc_P_K4_S1_001\n31|2dc_P_S1_050\n", "stderr": ""})()
+    return type("R", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+
+
+tmp = setup([], packs={"1": m4l})
+L.ledger, L.queued = REAL_LEDGER, REAL_QUEUED
+L.subprocess.run = sacct_run
+d, f, rl = L.ledger()
+case("ledger: a pending pack whose ReqTRES says billing=1 is in flight at 256 x 00:51 / 256 = 0.85",
+     abs(f - 0.85) < 1e-9)
+case("ledger: a pack that ran with no AllocTRES billing is charged at 256 (3000 s -> 0.8333); a row at its 64",
+     abs(d - (3000 * 256 + 1800 * 64) / 256 / 3600) < 1e-9 and [x.name for x in rl] == [
+         "2dc_P_K4_S1_001", "2dc_P_K4_S1_005", "2dc_P_S1_009", "2dc_P_K4_S1_013"])
+case("ledger: sacct is read with TZ=UTC and TimeLimit is kept", envs[0] == "UTC" and rl[1].tl == "00:51:00")
+case("ledger: a never-started cancelled pack is not an attempt", L.never_started(rl[3].st, rl[3].el, rl[3].start))
+case("queued: a queued pack contributes its members; a queued row itself", L.queued() == set(m4l) | {"2dc_P_S1_050"})
+Path(tmp, "packs", "1.members").unlink()
+case("queued: a queued pack with no member record fails closed", refused(L.queued, want="no member record"))
+L.subprocess.run = fake_run
+L.ledger = lambda: (0.0, 0.0, [])
+L.queued = lambda: set()
 
 # ---- gate stop rule -------------------------------------------------------------------------------------------------
 setup(done_rows(PRE + ["G2"]), done=95.0, fly=0.0)
@@ -405,6 +533,38 @@ case("dispatcher: one failing member does not stop the others (4 steps, rc 1 rec
      rc == 1 and len(log) == 4 and f"{n2}\t1\t" in st and all(f"{m}\t0\t" in st for m in (n1, n3, n4)))
 
 
+# dispatcher: a retry pack at its recorded cap is accepted; a member without the record (class differs) is refused
+t, ns = sh_env(tl="01:16:00")
+for m in m4:
+    (ns / "retries" / f"{m}.time").write_text("01:16:00\n")
+rc, o, log = run_pack(t, ns, m4)
+case("dispatcher accepts a retry pack whose TimeLimit equals every member's retry record", rc == 0 and len(log) == 4)
+t, ns = sh_env(tl="01:16:00")
+for m in m4[:3]:
+    (ns / "retries" / f"{m}.time").write_text("01:16:00\n")
+rc, o, log = run_pack(t, ns, m4)
+case("dispatcher refuses a retry pack where one member lacks the record", rc == 4 and "differ in class" in o and not log)
+# dispatcher memory clause, on a jobs.tsv that breaks it (the pin re-set to that table in the test copy only)
+t, ns = sh_env()
+pkg = ns / "repo_k/docs/orchestration/state/2d-closeout/stageC/production"
+hdr, *body = (PKG / "jobs.tsv").read_text().splitlines()
+fake_rows = []
+for i in range(3):
+    f = body[0].split("\t")
+    f[0], f[5] = f"2dc_P_S1_9{i:02d}", "180000M"
+    fake_rows.append("\t".join(f))
+(pkg / "jobs.tsv").write_text("\n".join([hdr] + body + fake_rows) + "\n")
+fsha = hashlib.sha256((pkg / "jobs.tsv").read_bytes()).hexdigest()
+src = (t / "sbatch_pack.sh").read_text()
+(t / "sbatch_pack.sh").write_text(re.sub(r"^JOBS_SHA=[0-9a-f]{64}", f"JOBS_SHA={fsha}", src, flags=re.M))
+fn = [r.split("\t")[0] for r in fake_rows]
+rc, o, log = run_pack(t, ns, fn, name="2dc_P_K3_S1_900")
+case("dispatcher refuses 3 x 180000M > 515100M (the memory clause) before any step",
+     rc == 4 and "summed member memory 540000M exceeds" in o and not log)
+rc, o, log = run_pack(t, ns, fn[:2], name="2dc_P_K2_S1_900")
+case("dispatcher accepts 2 x 180000M on that table", rc == 0 and len(log) == 2)
+
+
 def run_member(args, step="0", billing=256, cpus="64"):
     t, ns = sh_env(billing=billing)
     env = dict(os.environ, PATH=f"{t / 'bin'}:{os.environ['PATH']}", SLURM_JOB_ID="999", SLURM_JOB_NAME="x",
@@ -419,6 +579,9 @@ def run_member(args, step="0", billing=256, cpus="64"):
 
 rc, o = run_member([])
 case("member runner refuses without --member", rc == 4 and "usage" in o)
+rc, o = run_member(["--member", n1])
+case("member runner: a good member passes every check (reaches the step log, no REFUSE)",
+     "[prod] step 999.0" in o and "REFUSE" not in o)
 rc, o = run_member(["--member", n1], step=None)
 case("member runner refuses outside an srun step", rc == 4 and "srun step" in o)
 rc, o = run_member(["--member", n1], step="batch")

@@ -35,9 +35,10 @@ GATE (AUTHORIZATION-20261015-2d-closeout-stageC-production.md §3, unchanged): b
 ATTEMPTS ARE MEMBER-LEVEL. A job that never started (DEADLINE, or CANCELLED, with ElapsedRaw 0 and no Start) is not
 an attempt. Otherwise every member of a pack has one attempt, whose state is derived (member_states()):
 COMPLETED only with rc 0 in $NS/packs/<job id>.status AND out/<member>/xsec.root present ("validated output");
-FAILED for a nonzero rc recorded more than 300 s before the pack ended, or a pack that ended otherwise; TIMEOUT
-when the pack timed out and the member had not ended 300 s before (a member killed at the limit); OUT_OF_MEMORY
-when the pack did. A walltime retry needs exactly one TIMEOUT attempt (grant §3); any other state refuses.
+TIMEOUT when the pack timed out and the member had no rc line or ended within 120 s of Start + TimeLimit (killed at
+the limit); OUT_OF_MEMORY when the pack did; FAILED otherwise. A walltime retry needs exactly one TIMEOUT attempt
+(grant §3); any other state refuses, and a FAILED member needs the director (no command here acts on it). A pack
+that ran without launching its members is a STOP. sacct is read with TZ=UTC.
 
 MAINTENANCE: maintenance_20261021 runs 2026-10-21 13:00Z to 2026-10-28 06:00Z (TZ=UTC scontrol; the regular-packing
 record §2 corrects the binding's 06:00Z). Every job keeps --deadline=2026-10-20T23:00:00 PDT (06:00Z), 7 h before the
@@ -64,7 +65,7 @@ PACK_QOS = "regular"
 PACK_BILLING = 256
 NODE_CPUS = 256
 NODE_MEM_MB = 515100          # RealMemory of a regular_milan_ss11 node (scontrol show node)
-KILL_MARGIN_S = 300           # a member that ended within this of its pack's end was killed by the limit
+KILL_MARGIN_S = 120           # a member ending within this of Start + TimeLimit was killed by the limit (KillWait 30 s)
 WINDOW_START = "2026-10-15T00:00:00"
 NS = "/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015"
 SBATCH = f"{NS}/repo_k/docs/orchestration/state/2d-closeout/stageC/production/sbatch_pack.sh"
@@ -72,7 +73,7 @@ DEADLINE = dt.datetime(2026, 10, 21, 6, 0, tzinfo=dt.timezone.utc)      # = 2026
 MAINT_END = dt.datetime(2026, 10, 28, 6, 0, tzinfo=dt.timezone.utc)
 IN_FLIGHT = ("PENDING", "RUNNING", "REQUEUED", "RESIZING", "SUSPENDED", "CONFIGURING", "COMPLETING")
 ORDER = ["G0", "G1", "G2", "S1a", "S1b", "S1c", "S1d", "S1e", "S1f", "S2a", "S2b", "S4a", "S4b"]
-Row = namedtuple("Row", "jid name st el kind amount start end")
+Row = namedtuple("Row", "jid name st el kind amount start end tl", defaults=("",))
 
 
 def hours(t):
@@ -166,7 +167,7 @@ def ledger():
     tbl = {r["name"]: int(r["billing"]) for r in table()}
     cmd = ["sacct", "-X", "-P", "-S", WINDOW_START, "-E", "now", "-u", os.environ.get("USER", "josephrb"),
            "-o", "JobID,JobName,State,ElapsedRaw,AllocTRES,Timelimit,ReqTRES,Start,End"]
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    r = subprocess.run(cmd, capture_output=True, text=True, env=dict(os.environ, TZ="UTC"))   # times in UTC
     lines = r.stdout.strip().splitlines()
     if r.returncode != 0 or not lines or not lines[0].startswith("JobID|"):
         raise SystemExit(f"REFUSE: sacct unreadable (rc {r.returncode}); the gate does not treat that as zero")
@@ -186,11 +187,13 @@ def ledger():
                 raise SystemExit(f"REFUSE: no billing for in-flight job {jid}")
             liab = max(cands) * hours(tl) / 256
             fly += liab
-            rows.append(Row(jid, name, st, int(el), "in-flight at cap", round(liab, 4), start, end))
+            rows.append(Row(jid, name, st, int(el), "in-flight at cap", round(liab, 4), start, end, tl))
         else:
+            if is_pack(name) and int(el) > 0:   # a pack that ran holds a whole node: never charge it below 256
+                bill = max(bill or 0, PACK_BILLING)
             ch = int(el) * (bill or 0) / 256 / 3600
             done += ch
-            rows.append(Row(jid, name, st, int(el), "charged", round(ch, 4), start, end))
+            rows.append(Row(jid, name, st, int(el), "charged", round(ch, 4), start, end, tl))
     return done, fly, rows
 
 
@@ -218,9 +221,9 @@ def status_of(jid):
 
 
 def epoch(t):
-    """sacct's local (cluster-zone) timestamp -> epoch; None if absent."""
+    """A sacct timestamp, read with TZ=UTC (ledger()) -> epoch; None if absent."""
     try:
-        return dt.datetime.strptime(t, "%Y-%m-%dT%H:%M:%S").timestamp()
+        return dt.datetime.strptime(t, "%Y-%m-%dT%H:%M:%S").replace(tzinfo=dt.timezone.utc).timestamp()
     except (ValueError, TypeError):
         return None
 
@@ -229,17 +232,29 @@ def validated(name):
     return Path(NS, "out", name, "xsec.root").is_file()
 
 
+def started_steps(jid):
+    """True when the dispatcher passed its refusals and launched the members (its '#pack' status line)."""
+    p = Path(NS, "packs", f"{jid}.status")
+    return p.is_file() and any(ln.startswith("#pack\t") for ln in p.read_text().splitlines())
+
+
 def member_states(row):
-    """member -> derived attempt state of one terminal pack job (module docstring, ATTEMPTS)."""
+    """member -> derived attempt state of one terminal pack job that ran (module docstring, ATTEMPTS). A pack that
+    ran but never launched its members (no '#pack' status line: a dispatcher refusal or a node failure before the
+    steps) is a pack-level STOP for the director, not an attempt by its members."""
     ms, rc = members_of(row.jid), status_of(row.jid)
-    end = epoch(row.end)
+    if not started_steps(row.jid):
+        raise SystemExit(f"STOP: pack {row.jid} ({row.name}, {row.st}) ran but never launched its members; report to "
+                         "the director (DESIGN §14.3). Nothing is submitted until it rules")
+    start = epoch(row.start)
+    limit = start + hours(row.tl) * 3600 if start is not None and row.tl else None
     out = {}
     for m in ms:
         if m in rc and rc[m][0] == 0 and validated(m):
             out[m] = "COMPLETED"
         elif row.st == "OUT_OF_MEMORY":
             out[m] = "OUT_OF_MEMORY"
-        elif row.st == "TIMEOUT" and (m not in rc or end is None or rc[m][1] >= end - KILL_MARGIN_S):
+        elif row.st == "TIMEOUT" and limit is not None and (m not in rc or rc[m][1] >= limit - KILL_MARGIN_S):
             out[m] = "TIMEOUT"
         else:
             out[m] = "FAILED"
@@ -290,14 +305,22 @@ def owed_first(rows_l, inq):
 
 
 def compose(batch, rows_l, inq):
-    """Packs for `submit <batch>`: per class, in the frozen order, chunks of every owed row of this or an earlier
-    batch; a partial chunk is held for the next batch unless this is the class's last batch."""
+    """Packs for `submit <batch>`: per class, in the frozen order, chunks of the batch's owed rows led by the owed rows
+    of earlier batches; a partial chunk is held for the next batch unless this is the class's last batch. Earlier
+    rows may lead only as a held remainder (fewer than a node's worth per class): more than that means an earlier
+    batch is owed a submission first (frozen order), and compose() refuses."""
     i = ORDER.index(batch)
     owed = [r for r in owed_first(rows_l, inq) if ORDER.index(r["batch"]) <= i]
     owed.sort(key=lambda r: ORDER.index(r["batch"]))   # stable: jobs.tsv order within a batch
     last = {}
     for r in table():
         last[klass(r)] = max(last.get(klass(r), -1), ORDER.index(r["batch"]))
+    for k in dict.fromkeys(klass(r) for r in owed):
+        early = [r for r in owed if klass(r) == k and ORDER.index(r["batch"]) < i]
+        if early and len(early) >= per_node(early[0]):
+            first = min((r["batch"] for r in early), key=ORDER.index)
+            raise SystemExit(f"REFUSE: {len(early)} rows of earlier batches ({first} first) are owed a submission; "
+                             f"submit {first} before {batch} (frozen order)")
     packs = []
     for k in dict.fromkeys(klass(r) for r in owed):
         rs = [r for r in owed if klass(r) == k]
@@ -360,7 +383,8 @@ def preconditions(batch, rows_l, inq, members):
         raise SystemExit("REFUSE: c0.json was not computed from the production outputs ($NS/out)")
     if c0.get("C0") != "PASS":
         raise SystemExit("REFUSE: the controls (C0) did not PASS; production stops (grant §3)")
-    if batch == "G2" and not Path(NS, "preflight", "uomni.stat").is_file():
+    if (batch == "G2" or any(m.startswith("2dc_P_S4U_") for m in members)) and \
+            not Path(NS, "preflight", "uomni.stat").is_file():
         raise SystemExit("REFUSE: the universe-omnifile preflight (preflight_uomni.sh) is not recorded")
     i = ORDER.index(batch)
     names = {r["name"] for r in table() if r["batch"] in ORDER[:i]}
@@ -451,7 +475,8 @@ def show_members(jid):
 
 
 def simulate(mode):
-    """Worked example (DESIGN §6): batches in the frozen order, each admitted against the charges of every earlier
+    """Worked example of the shared-QOS design (DESIGN §6), at ROW caps and per-row units; it does not model packs.
+    The packed path's expected charge is measured from the smoke pack (DESIGN §14.5). Batches in the frozen order, each admitted against the charges of every earlier
     batch, with no overlap (the floor of the gate's totals) and costs per job at the pilot's measured mean, p84
     (u_CV) / max (u_U,sel, u_A), or the cap."""
     unit = {"mean": {"cv": 0.0754, "u": 0.1418, "a": 0.3293},
@@ -522,6 +547,9 @@ def main():
                                  "diagnosed infrastructure cause and the director")
             if Path(NS, "retries", f"{n}.time").exists():
                 raise SystemExit(f"REFUSE: {n} already has a retry record")
+            if validated(n):
+                raise SystemExit(f"REFUSE: out/{n}/xsec.root exists; a member with output is never re-run without "
+                                 "the director")
             if any(Path(NS, "out", n).glob("*")):
                 raise SystemExit(f"REFUSE: move out/{n} aside (sha-verified) before the retry")
         packs = [(members, a.time)]
@@ -547,7 +575,14 @@ def main():
         if not packs:
             raise SystemExit(f"REFUSE: batch {a.arg} has no rows owed a first submission (or only a held partial pack)")
     for ms, t in packs:
-        (check_pack_retry if rec_write else check_pack)(ms, t)
+        if rec_write:
+            check_pack_retry(ms, t)
+        elif a.action == "redo":   # each member's recorded retry cap is the pack cap
+            check_pack_retry(ms, t)
+            if any(Path(NS, "retries", f"{r['name']}.time").read_text().strip() != t for r in ms):
+                raise SystemExit(f"REFUSE: retry pack {pack_name(ms)} cap {t} differs from a member's retry record")
+        else:
+            check_pack(ms, t)
     batch = a.arg if a.action != "pack" else max((r["batch"] for r in packs[0][0]), key=ORDER.index)
     dl = deadline_arg()
     ok, total, fly = gate(packs, led)
@@ -563,7 +598,13 @@ def main():
     for n in rec_write:   # written before sbatch (the dispatcher and member read them at start)
         Path(NS, "retries", f"{n}.time").write_text(a.time + "\n")
     for ms, t in packs:
-        if sbatch_pack(ms, t, dl) is None:
+        try:
+            jid = sbatch_pack(ms, t, dl)
+        except SystemExit:   # the job-id record could not be written; sbatch_pack() cancelled the job
+            for n in rec_write:
+                Path(NS, "retries", f"{n}.time").unlink(missing_ok=True)
+            raise
+        if jid is None:
             for n in rec_write:
                 Path(NS, "retries", f"{n}.time").unlink()
             raise SystemExit(f"sbatch failed for {pack_name(ms)}; nothing further submitted")

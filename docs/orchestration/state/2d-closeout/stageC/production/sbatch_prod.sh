@@ -3,8 +3,9 @@
 # and AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md; DESIGN §14). Runs ONE jobs.tsv row ("member")
 # as an `srun --exact` step of a regular-QOS pack started by sbatch_pack.sh; never submitted with sbatch itself.
 # The member's identity is its explicit `--member <name>` argument, never SLURM_JOB_NAME (the pack's name). It
-# refuses unless that name is one jobs.tsv row, the step got exactly the row's CPUs and memory, and the pack's
-# allocation is QOS regular with billing 256 and TimeLimit = the row's cap (or its retry record). Every path is
+# refuses unless that name is one jobs.tsv row, the step got exactly the row's CPUs (its memory is logged, from the
+# step's TRES), and the pack's allocation is QOS regular with billing 256 and TimeLimit = the row's cap (or its retry
+# record). Every path is
 # absolute. No `set -u` before the root_6_28 activation. The command lines are the shared-QOS path's, unchanged
 # (adapted from the pilot's sbatch_pilot.sh, stageC/pilot v2 a2ea0d6a).
 set -eo pipefail

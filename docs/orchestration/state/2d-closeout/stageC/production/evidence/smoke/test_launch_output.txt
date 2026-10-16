@@ -1,15 +1,87 @@
-[PASS] redo (a): DEADLINE-only row owed at its cap; a COMPLETED row not owed
-[PASS] redo (c): partial batch -> the 49 never-submitted rows are owed
-[PASS] redo: an unsubmitted batch owes nothing (submit, not redo)
-[PASS] redo (b): deadline-cancelled retry owed at the recorded cap
+[PASS] compose G2: 17 S4U pairs + 1 S4U single (class tail) + 1 pack of the 4 S4CV rows
+[PASS] compose G2: enforced 17 x 0.5 + 0.5 + 0.85 = 9.85
+[PASS] compose S1a: 12 full CV packs; the 2 rows of the partial chunk are held
+[PASS] compose S1b: 13 packs, the first carrying S1a's 2 held rows
+[PASS] compose S4b (the CV class's last batch): the 2-row tail goes as a partial pack
+[PASS] compose: a shared job that started is left out of the packs
+[PASS] compose: a never-started CANCELLED shared row is owed; a CANCELLED row that started is an attempt
+[PASS] compose: a row in the queue is never packed
+[PASS] worst case packed (G0, G1 shared; the rest packed) = row caps 117.8583 + 0.25 (S4U single): 118.1083
+[PASS] fit: 4 CV rows accepted
+[PASS] fit: 5 CV rows refused (count)
+[PASS] fit: 2 S4U rows accepted, 3 refused
+[PASS] fit: a duplicated member refused
+[PASS] fit: mixed classes refused
+[PASS] fit: every class of jobs.tsv fits a node at full packing
+[PASS] fit: summed memory 3 x 180000M > 515100M refused (the memory clause)
+[PASS] fit: summed memory 2 x 180000M accepted
+[PASS] check_pack: a cap other than the members' cap refused
+[PASS] TIMEOUT pack: validated member COMPLETED, unfinished TIMEOUT, early rc 1 FAILED, killed-at-limit TIMEOUT
+[PASS] TIMEOUT margin is 120 s before Start + TimeLimit: rc 1 at -200 s FAILED, at -60 s TIMEOUT
+[PASS] retry fires for a TIMEOUT member
+[PASS] retry sbatch line: --qos=regular --exclusive --no-requeue --deadline --time=01:16:00 --mem=121920M, member arg
+[PASS] retry refused for a member with validated output
+[PASS] retry refused for a FAILED member
+[PASS] retry refused for a member of an OUT_OF_MEMORY pack
+[PASS] DEADLINE pack (elapsed 0): its members are owed
+[PASS] CANCELLED pack (elapsed 0): its members are owed
+[PASS] CANCELLED pack (elapsed 30): its members are NOT owed
+[PASS] a pack job with no member record fails closed
+[PASS] a pack that ran but never launched its members (dispatcher refusal) is a STOP, not member attempts
+[PASS] a launched pack that FAILED: rc 1 member FAILED, validated member COMPLETED, members without rc FAILED
+[PASS] members with validated output are never re-packed
+[PASS] redo: a deadline-cancelled retry is owed at its recorded cap, alone
 [PASS] redo: a retry that ran is never owed
-[PASS] redo: a queued row is never owed
-[PASS] redo: a row with output is never owed
-[PASS] retry after TIMEOUT: allowed
-[PASS] retry after OUT_OF_MEMORY: refused
-[PASS] retry after FAILED: refused
-[PASS] retry after CANCELLED: refused
-[PASS] sbatch line has --no-requeue and --time=01:16:00
-[PASS] gate pre-check refused with nothing in flight -> STOP wording
-[PASS] gate pre-check refused with jobs in flight -> wait
+[PASS] pack: a member still PENDING on the shared QOS is refused
+[PASS] pack: 4 never-started cancelled rows -> one sbatch of 2dc_P_K4_S1_001 at 00:51:00, --mem=487680M
+[PASS] pack: the pre-sbatch and job-id member records are written and equal
+[PASS] sbatch failure: the retry record is removed
+[PASS] redo via main: a deadline-cancelled retry goes as one pack at its recorded cap 01:16:00
+[PASS] redo via main: a pack cap that differs from the member's retry record is refused
+[PASS] M2: submit S1a with G2's rows owed is refused (frozen order)
+[PASS] M2: a never-started S1a pack's 4 members are owed to S1a, not folded into S1b
+[PASS] real preconditions: no c0.json -> refused
+[PASS] real preconditions: an S4U member without the uomni preflight -> refused
+[PASS] real preconditions: with the preflight recorded and C0 PASS -> one S4U pack submitted
+[PASS] real preconditions: C0 not PASS -> refused
+[PASS] m1: retry refused while out/<member>/xsec.root exists
+[PASS] m10: a record-write failure leaves no retry record behind
+[PASS] ledger: a pending pack whose ReqTRES says billing=1 is in flight at 256 x 00:51 / 256 = 0.85
+[PASS] ledger: a pack that ran with no AllocTRES billing is charged at 256 (3000 s -> 0.8333); a row at its 64
+[PASS] ledger: sacct is read with TZ=UTC and TimeLimit is kept
+[PASS] ledger: a never-started cancelled pack is not an attempt
+[PASS] queued: a queued pack contributes its members; a queued row itself
+[PASS] queued: a queued pack with no member record fails closed
+[PASS] gate refused with nothing in flight -> STOP wording
+[PASS] gate refused with jobs in flight -> wait
 [PASS] submit refused -> stop, nothing submitted
+[PASS] migrate: cancels exactly the PENDING shared-QOS rows, with --state=PENDING (packs and others left)
+[PASS] migrate --only: a name not PENDING now is refused, nothing cancelled
+[PASS] migrate without --execute is a dry run
+[PASS] deadline: --deadline=2026-10-20T23:00:00 in PDT before 06:00Z
+[PASS] deadline: refused between 06:00Z and the window's end
+[PASS] sbatch_pack.sh MEMBER_SHA equals sha256(sbatch_prod.sh)
+[PASS] dispatcher: a good pack starts 4 srun --exact -N1 -n1 -c 64 --mem=121920M steps, each named and --member'd
+[PASS] dispatcher: each member's rc is recorded
+[PASS] dispatcher refuses a duplicated member before any step
+[PASS] dispatcher refuses an unknown member before any step
+[PASS] dispatcher refuses a mixed class before any step
+[PASS] dispatcher refuses arguments that differ from the launcher's record before any step
+[PASS] dispatcher refuses billing 64 before any step
+[PASS] dispatcher refuses QOS shared before any step
+[PASS] dispatcher refuses a TimeLimit other than the cap before any step
+[PASS] dispatcher accepts QOS regular as well as regular_1 (the name Slurm records)
+[PASS] dispatcher: one failing member does not stop the others (4 steps, rc 1 recorded, pack exit 1)
+[PASS] dispatcher accepts a retry pack whose TimeLimit equals every member's retry record
+[PASS] dispatcher refuses a retry pack where one member lacks the record
+[PASS] dispatcher refuses 3 x 180000M > 515100M (the memory clause) before any step
+[PASS] dispatcher accepts 2 x 180000M on that table
+[PASS] member runner refuses without --member
+[PASS] member runner: a good member passes every check (reaches the step log, no REFUSE)
+[PASS] member runner refuses outside an srun step
+[PASS] member runner refuses in the batch step
+[PASS] member runner refuses an unknown member
+[PASS] member runner refuses billing 64
+[PASS] member runner refuses QOS shared
+[PASS] member runner refuses a CPU mismatch
+RAN 86, FAILED 0
