@@ -1,0 +1,5 @@
+[gate] charged 0.0000 + in-flight caps 0.0000 + batch B0 caps 0.6042 = 0.6042 node-h (ceiling 6.0)
+pu_CTRL_s42 0 59795637 
+pu_PA_s42 0 59795638 
+pu_PB_s42 0 59795835 
+pu_PC_s42 0 59795837 

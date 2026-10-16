@@ -1,0 +1,42 @@
+{
+ "new": {
+  "path": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_CTRL_s42/xsec.root",
+  "sha256": "5582d19edb1dda50621c79fcf207c08c749c49180f5847746c3c0d7e46600723"
+ },
+ "tolerance": 1e-08,
+ "comparisons": {
+  "CTRL_vs_XR_L0": {
+   "verdict": "PASS",
+   "max_rel_diff_cells": 1.3714696045497021e-11,
+   "argmax_globalid": 171,
+   "median_rel_diff_cells": 5.876854558550804e-12,
+   "integral_rel_diff": 6.928901896685602e-13,
+   "n_cells": 205,
+   "n_cells_over_tol": 0,
+   "cells_over_tol": [],
+   "tolerance": 1e-08,
+   "exactly_equal_cells": 0,
+   "ref": {
+    "path": "/pscratch/sd/j/josephrb/xr-linux-20261011/L0/a1/XR-L0.root",
+    "sha256": "751380245dbb27f67616ade8321d73274e0a5c0bb1344275fc3b67db2595aecc"
+   }
+  },
+  "CTRL_vs_E_U": {
+   "verdict": "PASS",
+   "max_rel_diff_cells": 2.9964919434632975e-13,
+   "argmax_globalid": 111,
+   "median_rel_diff_cells": 2.1316282072803006e-14,
+   "integral_rel_diff": 8.215650382226158e-15,
+   "n_cells": 205,
+   "n_cells_over_tol": 0,
+   "cells_over_tol": [],
+   "tolerance": 1e-08,
+   "exactly_equal_cells": 1,
+   "ref": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+    "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
+   }
+  }
+ },
+ "verdict": "PASS"
+}
