@@ -112,7 +112,8 @@ from their weighted spread about that mean. By construction it is symmetric and 
 **Reported (no pass/fail):**
 - per-cell relative σ (median, p84, max), and the σ of each of the 31 functionals, for C_PL and for each sensitivity;
 - the noise share: the same estimator applied to noise-only inputs. It replaces each period's g_X with that period's
-  fractional bootstrap draw d_X,k, minus the e-weighted mean of the draws.
+  fractional bootstrap draw d_X,k on the double ratio r = x/t, minus the e-weighted mean of the draws. (Wording made
+  explicit after the run, at the recompute verifier's request; the code was always on r.)
   - The bootstrap covariance is the mean over the 10 draws k. The seed covariance uses s_X / √2.
   - Each share is the median over the 205 cells of the noise covariance's diagonal over C_PL's. Likewise for the
     16 p_∥ marginal bins.
