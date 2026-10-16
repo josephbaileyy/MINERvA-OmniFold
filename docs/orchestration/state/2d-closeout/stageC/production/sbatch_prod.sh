@@ -1,22 +1,21 @@
 #!/bin/bash
-#SBATCH --account=m3246
-#SBATCH --constraint=cpu
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --output=/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/logs/%x_%j.out
-#SBATCH --error=/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/logs/%x_%j.err
-# Stage C production job (AUTHORIZATION-20261015-2d-closeout-stageC-production.md and its binding addendum).
-# Submitted only by launch.py, which applies the charge gate and passes --job-name/--qos/--cpus-per-task/--mem/
-# --time/--deadline from the frozen jobs.tsv. This script refuses unless its job name is one jobs.tsv row and the
-# allocation Slurm granted (QOS, CPUs, billing, TimeLimit) equals that row. Every path is absolute: sbatch runs a COPY
-# of this script, so BASH_SOURCE/$0 do not name the package. No `set -u` before the root_6_28 activation.
-# Adapted from the pilot's sbatch_pilot.sh (stageC/pilot, v2 a2ea0d6a); the command lines are the pilot's.
+# Stage C production member runner (AUTHORIZATION-20261015-2d-closeout-stageC-production.md, its binding addendum,
+# and AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md; DESIGN §14). Runs ONE jobs.tsv row ("member")
+# as an `srun --exact` step of a regular-QOS pack started by sbatch_pack.sh; never submitted with sbatch itself.
+# The member's identity is its explicit `--member <name>` argument, never SLURM_JOB_NAME (the pack's name). It
+# refuses unless that name is one jobs.tsv row, the step got exactly the row's CPUs and memory, and the pack's
+# allocation is QOS regular with billing 256 and TimeLimit = the row's cap (or its retry record). Every path is
+# absolute. No `set -u` before the root_6_28 activation. The command lines are the shared-QOS path's, unchanged
+# (adapted from the pilot's sbatch_pilot.sh, stageC/pilot v2 a2ea0d6a).
 set -eo pipefail
 NS=/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015
-REPO=$NS/repo
+REPO=$NS/repo_k
 PKG=$REPO/docs/orchestration/state/2d-closeout/stageC/production
 D2=/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding
-NAME=${SLURM_JOB_NAME:?no job name}
+[ "${1:-}" = --member ] && [ -n "${2:-}" ] || { echo "REFUSE: usage: sbatch_prod.sh --member <jobs.tsv name>"; exit 4; }
+NAME=$2
+case "${SLURM_STEP_ID:-}" in ''|batch|extern) echo "REFUSE: run only as an srun step of sbatch_pack.sh"; exit 4;; esac
+PACK_QOS=regular; PACK_BILLING=256
 
 # ---- pins (DESIGN §2) --------------------------------------------------------------------------------------------
 JOBS_SHA=c4f1b7082fac3635be78622cb9b9a5f71103789337bbc29e7dd29684e9b4d3a4   # jobs.tsv
@@ -42,13 +41,15 @@ ROW=$(awk -F'\t' -v n="$NAME" 'NR>1 && $1==n' "$PKG/jobs.tsv")
 IFS=$'\t' read -r R_NAME R_ITEM R_BATCH R_QOS R_CPUS R_MEM R_TIME R_BILL R_ENF R_AFTER R_WHAT <<< "$ROW"
 JOBINFO=$(scontrol show job "$SLURM_JOB_ID")
 G_QOS=$(grep -o 'QOS=[^ ]*' <<< "$JOBINFO" | head -1 | cut -d= -f2)
-G_CPUS=$(grep -o 'NumCPUs=[^ ]*' <<< "$JOBINFO" | head -1 | cut -d= -f2)
 G_TIME=$(grep -o 'TimeLimit=[^ ]*' <<< "$JOBINFO" | head -1 | cut -d= -f2)
-[ "$G_QOS" = "$R_QOS" ] || { echo "REFUSE: QOS $G_QOS != $R_QOS"; exit 4; }
-[ "$G_CPUS" = "$R_CPUS" ] || { echo "REFUSE: NumCPUs $G_CPUS != $R_CPUS"; exit 4; }
-# The charge gate assumes billing = jobs.tsv billing (= CPUs at mem = 1905M x CPUs); refuse anything else.
+[ "$G_QOS" = "$PACK_QOS" ] || { echo "REFUSE: QOS $G_QOS != $PACK_QOS"; exit 4; }
+# The charge gate counts the pack at billing 256 (one node); refuse anything else.
 G_BILL=$(grep -o 'AllocTRES=[^ ]*' <<< "$JOBINFO" | grep -o 'billing=[0-9]*' | head -1 | cut -d= -f2)
-[ "$G_BILL" = "$R_BILL" ] || { echo "REFUSE: allocated billing '$G_BILL' != jobs.tsv billing $R_BILL"; exit 4; }
+[ "$G_BILL" = "$PACK_BILLING" ] || { echo "REFUSE: allocated billing '$G_BILL' != pack billing $PACK_BILLING"; exit 4; }
+# The step must hold exactly this row's CPUs (srun --exact -c <cpus> --mem <mem>); the step's TRES is logged.
+[ "${SLURM_CPUS_PER_TASK:-}" = "$R_CPUS" ] || { echo "REFUSE: step CPUs '${SLURM_CPUS_PER_TASK:-}' != $R_CPUS"; exit 4; }
+G_CPUS=$SLURM_CPUS_PER_TASK
+echo "[prod] step $SLURM_JOB_ID.$SLURM_STEP_ID $(scontrol show step "$SLURM_JOB_ID.$SLURM_STEP_ID" 2>/dev/null | grep -o 'TRES=[^ ]*' | head -1) row mem=$R_MEM"
 # A walltime retry carries its re-projected cap in $NS/retries/<name>.time (written by launch.py, < 12 h).
 WANT_TIME=$R_TIME; [ -f "$NS/retries/$NAME.time" ] && WANT_TIME=$(cat "$NS/retries/$NAME.time")
 [ "$G_TIME" = "$WANT_TIME" ] || { echo "REFUSE: TimeLimit $G_TIME != $WANT_TIME"; exit 4; }
@@ -64,7 +65,7 @@ export TMPDIR=$NS/tmp; mkdir -p "$TMPDIR"
 export PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 export OMP_NUM_THREADS=64 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 unset LOKY_MAX_CPU_COUNT
-echo "[prod] $NAME item=$R_ITEM batch=$R_BATCH node=$(hostname) job=$SLURM_JOB_ID qos=$G_QOS cpus=$G_CPUS limit=$G_TIME start=$(date -u +%FT%TZ)"
+echo "[prod] $NAME item=$R_ITEM batch=$R_BATCH node=$(hostname) job=$SLURM_JOB_ID step=$SLURM_STEP_ID pack=${SLURM_JOB_NAME:-} qos=$G_QOS cpus=$G_CPUS limit=$G_TIME start=$(date -u +%FT%TZ)"
 echo "$PROD_SHA  $REPO/2d-unfolding/unfold_2d_omnifold_unbinned.py" | sha256sum -c -
 echo "$HELPER_SHA  $HELPER" | sha256sum -c -
 echo "$MCFILE_SHA  $MCFILE" | sha256sum -c -

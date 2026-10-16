@@ -22,7 +22,8 @@
 | `Pilot` | [`../pilot/REPORT.md`](../pilot/REPORT.md) (PR #129, merge `677b5ba4`): K1 PASS, K2 NOT RESOLVED, measured units (§7) |
 | `Branch` / `Base` | `closeout/stagec-production-20261015` / `origin/main` `8fbcae96` |
 | `Producer pins` | production driver `2d-unfolding/unfold_2d_omnifold_unbinned.py` sha256 `74a4ed69c3fa9c4ae5b6866f36343212b8d3f903fddde6c7bd40c382c1167d56`; helper `omnifold.py` `e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a`; the pilot's three-stream copy `stageC/pilot/p1/driver_p1.py` `3056e625a22f2ee79621e515aa5a76a4685662ac6fc10ee7e832680dde087578` (§4) |
-| `Namespace` | `/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/` (`$NS`): `repo/` (the deployed package), `out/<job>/`, `logs/`, `results/`, `retries/`, `preflight/`, `gatelog/`, `tmp/` |
+| `Namespace` | `/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/` (`$NS`): `repo/` (the deployed shared-QOS package), `repo_k/` (the deployed packed package, §14), `out/<job>/`, `logs/`, `results/`, `retries/`, `packs/` (§14), `preflight/`, `gatelog/`, `tmp/` |
+| `Packed path` | §14 ([`AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md`](../../../../AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md)): every row not yet run on the shared QOS goes in regular-QOS single-node packs, deployed at `$NS/repo_k/`; §14 supersedes §6's submission unit, §9's retry command and §10's launch steps for those rows. The bound shared-QOS package (`4139548b`, `$NS/repo/`) ran G0 and G1 |
 | `Manifest` | [`manifest.json`](manifest.json): every package file and every pin it executes or reads, with its sha256; its digest is what the binding names |
 | `Terminal outcomes` | per item: PASS (every frozen check passed, products written) / FAIL / INCONCLUSIVE; S5: PASS / FAIL. Overall: COMPLETE (all PASS) or STOPPED at a named item |
 
@@ -508,3 +509,179 @@ Its two MINOR findings are fixed here:
 - the exception guarantee is narrowed to what the code does (§8).
 
 The verifier is the same model as the executor, so its blind spots may be correlated with the executor's.
+
+## 14. Packed submission path (regular QOS)
+
+Under [`AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md`](../../../../AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md)
+(step 1, build and test), every row not yet run on the shared QOS is submitted in **single-node regular-QOS packs**.
+
+**Why.** The shared partition started 0 of our 64-CPU jobs and about 0.56 of our 128-CPU jobs per hour. Over 24 h
+it started 17,672 jobs averaging 7.95 CPUs, and only 260 of at least 64 CPUs. The regular partition started 5,799
+to 6,451 single-node jobs over a similar 24 h (record §1).
+
+**Unchanged** (record §3):
+- analysis and products: `analyze_prod.py`, `s5_rollup.py`, the production driver, `driver_p1.py`, `omnifold.py`
+  and every pinned input;
+- `jobs.tsv`: byte-identical (`c4f1b708…`), so every row's command line, seeds, inputs and cap are unchanged;
+- every output path (`out/<row>/xsec.root`);
+- the gate formula and `CEILING = 100.0`, the frozen order and preconditions, and the retry rule (one walltime retry
+  after exactly one TIMEOUT, at 1.5 × the re-projection, under 12 h).
+
+### 14.1 Packs
+
+A pack is one regular-QOS node: 256 CPUs, RealMemory 515,100 MB, billing 256. It runs members of one class side by
+side, each as its own `srun` step:
+- a CV class row is 64 CPUs, 121,920M and 00:51:00, so 4 fit a node, with 487,680 MB summed;
+- an S4U row is 128 CPUs, 243,840M and 00:30:00, so 2 fit a node, with 487,680 MB summed.
+
+**Charge.** A full pack's enforced charge is 256 × cap / 256:
+- a CV pack: 0.85 = 4 × 0.2125;
+- an S4U pack: 0.5 = 2 × 0.25.
+
+**Composition** (`launch.py compose()`):
+- Per class, in the frozen order and in `jobs.tsv` order within a batch, the rows owed a first submission are cut
+  into chunks of 4 or 2.
+- A row is owed when it has no attempt, is not queued and has nothing in `out/<row>/`.
+- A partial chunk is held for the next batch, unless the batch is the class's last (G2 for S4U, S4b for CV).
+- S1a's two leftover rows therefore lead S1b's first pack, and no CV slot is wasted.
+
+**Names.** A pack is named `2dc_P_K<n>_<first member without 2dc_P_>`, for example `2dc_P_K4_S1_001`. The `2dc_P_`
+prefix keeps every pack in the gate's ledger.
+
+**Worst case**, recomputed (`test_launch.py`):
+
+| part | enforced (node-h) |
+|---|---|
+| G0 and G1, run on the shared QOS at their row caps | 6.2583 |
+| G2: 17 S4U pairs, 1 S4U single (35 rows), 1 pack of the 4 S4CV rows | 9.8500 |
+| S1a–S4b: 480 CV rows, 120 full packs | 102.0000 |
+| **total** | **118.1083** = 117.8583 + 0.2500 |
+
+Itemized excess over the row caps:
+- **+0.25:** the odd S4U row runs alone on a node, at 0.5 against its row cap of 0.25.
+- **Up to +0.6375 more** if, before the migration, some CV rows start on the shared QOS in a number that is not a
+  multiple of 4. The CV tail pack then carries up to 3 empty slots of 0.2125.
+- **−0.25** if an odd number of S4U rows start there, because the single disappears.
+- **Maximum: 118.7458.**
+
+Rows that start on the shared QOS keep their shared caps in the ledger. As before, the gate enforces 100.0 at every
+submission whatever the plan's worst case.
+
+### 14.2 Dispatcher and member runner
+
+**`sbatch_pack.sh <members…>`** is submitted by `launch.py` with:
+- `--qos=regular --nodes=1 --exclusive`;
+- `--mem=<summed member memory>` and `--time=<the members' cap>`;
+- `--no-requeue --deadline=2026-10-20T23:00:00`.
+
+**Before any step starts,** it refuses unless all of these hold (the record §4.2, §4.3 checks):
+- `jobs.tsv` matches its pin, and `sbatch_prod.sh` matches `MEMBER_SHA`;
+- every argument is exactly one `jobs.tsv` row, and none repeats;
+- the members share one class (CPUs, memory and cap, where the cap is a member's retry record if it has one);
+- the members fit one node: count ≤ 256 / CPUs, and summed memory ≤ 515,100 MB;
+- the arguments equal the launcher's record `$NS/packs/<pack name>.members`;
+- the allocation is QOS `regular`, `NumCPUs=256`, billing 256, and `TimeLimit` equal to the members' cap.
+
+**Each member** then runs as:
+
+    srun --exact -N1 -n1 -c <cpus> --mem=<mem> --job-name=<member> bash sbatch_prod.sh --member <member>
+
+in a subshell that appends `<member> <rc> <end epoch>` to `$NS/packs/<job id>.status` the moment the member ends.
+- One member failing never touches the others.
+- The pack exits non-zero if any member's rc is non-zero.
+- At the end it appends the `sacct` step rows (state, exit code, elapsed) to the status file.
+- Member logs are `logs/<member>_<pack job id>.{out,err}`.
+
+**`sbatch_prod.sh --member <name>`** is the shared-QOS job script with two kinds of change.
+
+What changes:
+- the identity is the explicit argument, never `SLURM_JOB_NAME`;
+- it refuses outside an `srun` step;
+- it checks QOS `regular`, billing 256, `SLURM_CPUS_PER_TASK` equal to the row's CPUs, and `TimeLimit` equal to the
+  row's cap or its retry record;
+- it logs the step's TRES;
+- `REPO` is `$NS/repo_k`.
+
+What is identical:
+- every pin, the input checks, `OMP_NUM_THREADS=64` and the per-row command lines;
+- the refusal of an existing or non-empty `out/<row>/`.
+
+### 14.3 The gate and member-level attempts
+
+**The gate.** `launch.py` reads `sacct -X` over every `2dc_P_*` job, rows and packs alike. A pack's terminal charge
+is ElapsedRaw × 256 / 256 / 3600, measured. Its in-flight liability is the larger of 256 and Slurm's billing, times
+`TimeLimit`, over 256. Each pack submitted adds 256 × cap / 256. The stop rule is §6's: wait only while jobs are in
+flight, and a `submit` refusal is a stop. `$NS/packs/<job id>.members` maps a pack job to its members; a pack job
+without that record makes the launcher refuse.
+
+**Attempts** are member-level:
+- A job that never started is not an attempt. That means `DEADLINE` with ElapsedRaw 0, or `CANCELLED` with
+  ElapsedRaw 0 and no Start: a migrated shared job, or a pack cancelled while pending.
+- An in-flight pack gives each member an in-flight attempt.
+
+**A terminal pack** gives each member one attempt, derived as follows:
+
+| member's derived state | when |
+|---|---|
+| COMPLETED (validated output) | rc 0 in the status file, and `out/<member>/xsec.root` exists |
+| OUT_OF_MEMORY | the pack ended OUT_OF_MEMORY |
+| TIMEOUT | the pack timed out, and the member had no rc line, or its rc line is within 300 s of the pack's end (killed at the limit) |
+| FAILED | anything else: a non-zero rc recorded earlier, a refusal, or a missing status |
+
+**What follows from the derived state:**
+- **A walltime retry** (`submit <batch> --retry A[,B..] --time HH:MM:SS`) needs exactly one TIMEOUT attempt for
+  every member. OUT_OF_MEMORY is a stop, as before. FAILED needs a diagnosed infrastructure cause and the director,
+  as before. The retry members go together in one pack at the re-projected cap: same class, at most a node.
+  `retries/<member>.time` is written before `sbatch` and removed if `sbatch` fails.
+- **A member with validated output is never re-run:** it has an attempt, so it is not owed.
+- **A `DEADLINE` or never-started `CANCELLED` pack** owes its members. They return to `compose()` at their row caps.
+- **`redo <batch>`** now covers only §6 case (b): a walltime retry whose pack was removed by the deadline before
+  starting is owed at its recorded cap. Cases (a) and (c) need no separate path, because `compose()` packs every
+  row with no attempt.
+
+### 14.4 Migration and launch (step 2: after the director's binding of this package only)
+
+1. **Deploy.** Run `git archive <bound commit>` into `$NS/repo_k/` and copy `driver_p1.py` into
+   `$NS/repo_k/2d-unfolding/`, as in §10.1. Check every file against `manifest.json`. `$NS/repo/` is left untouched,
+   because a shared job that has started may still read it.
+2. **Migrate.** Run `launch.py migrate` (a dry run), then `launch.py migrate --execute`:
+   - The cancel list is measured from `squeue -t PENDING` now, not from any saved list: the never-started
+     shared-QOS `2dc_P_*` row jobs.
+   - The list is written to `gatelog/migrate_<UTC>.tsv`, and the jobs are cancelled with `scancel --state=PENDING`,
+     so a job that starts in between is left alone.
+   - A shared job that has started stays. Having an attempt, it leaves the packs.
+3. **Check.** Confirm in `sacct` that every cancelled job is `CANCELLED` with ElapsedRaw 0 and no Start. The ledger
+   then shows the 12 completed rows, plus any that started, at their measured charges.
+4. **Submit.** Run `launch.py gate G2`, then `submit G2`, and so on in the frozen order (S1a … S4b), each when the
+   gate admits. S2b goes only as packs. Run each `gate` at least 2 min after the last `submit`, and check that the
+   ledger's in-flight count matches `squeue`, because `sacct` lags `sbatch` (observed 2026-10-15).
+5. **Check each item.** Run `analyze_prod.py` per item as in §10, which is unchanged, followed by S5, CFS and
+   REPORT.
+
+`launch.py members <job id>` prints each member's derived state, rc and `sacct` step row, for the REPORT.
+
+### 14.5 Tests and the smoke pack
+
+**Tests.** [`evidence/smoke/test_launch.py`](evidence/smoke/test_launch.py) runs offline: a mocked ledger, and
+stubbed `scontrol`, `srun` and `sacct` for the two shell scripts. It covers:
+- composition, the worst case and the node fit;
+- memory > 515,100 MB refused, and ours accepted;
+- member-level retry and redo, each in both directions;
+- fail-closed records, the stop rule, the `sbatch` flags, migration and the deadline;
+- the dispatcher's refusals before any step: a duplicate, an unknown member, a mixed class, a record mismatch,
+  billing 64 refused against 256 accepted, QOS and `TimeLimit`;
+- a failing member that does not stop the others;
+- the member runner's refusals.
+
+The runner's count is reported with each run.
+
+**The smoke pack** (record §4.6) is the only pre-binding submission: one 4-member CV pack of real S1a rows,
+`2dc_P_S1_001`–`004`. Its procedure:
+1. `launch.py migrate --only 2dc_P_S1_001,…,004 --execute` cancels exactly those 4 shared jobs. Each must be
+   PENDING, never started, and charged 0.
+2. `launch.py pack 2dc_P_S1_001,2dc_P_S1_002,2dc_P_S1_003,2dc_P_S1_004` submits it. Its enforced charge is 0.85,
+   and the gate counts it.
+
+Its members' outputs are kept only if they pass `analyze_prod.py`'s existing provenance checks and reproduce the
+pilot's joint replicas 1–4. Its measured member and pack charges give the expected-charge figure (record §4.7),
+which is reported before the binding.
