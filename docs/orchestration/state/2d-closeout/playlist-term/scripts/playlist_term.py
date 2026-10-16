@@ -225,7 +225,7 @@ def main(analysis_json, outdir):
 
     rep["noise_share"] = {"boot": share(Nb), "seed": share(Ns), "total": share(Nb + Ns), "n_boot": K}
 
-    # coverage of the P_A-reference scenario
+    # the P_A-reference vectors against VL175 and VL175 + C_PL (reported; DESIGN §4: no pass/fail)
     def chi2s(bvec):
         o = {}
         for ax in ("pz", "pt"):
@@ -255,7 +255,8 @@ def main(analysis_json, outdir):
                         ("bias_PB_raw_frozen", b_raw["PB"], "PB"), ("bias_PC_raw_frozen", b_raw["PC"], "PC")):
         eX = float(np.mean(e[X]))
         cov[nm] = {**chi2s(bvec), "out_of_span": out_of_span(bvec),
-                   "first_order_in_span_bound": eX ** 2 * (1 / eA + 1 / eX) / kk_b}
+                   # a first-order bound for the dr vectors only; the raw vectors are not in C_PL's span
+                   "first_order_in_span_bound": eX ** 2 * (1 / eA + 1 / eX) / kk_b if nm.endswith("_dr") else None}
     cov["note"] = ("no pass/fail: the dr vectors lie in C_PL's span to first order, so their chi2 against "
                    "VL175 + C_PL is bounded by an e-only constant whatever the data (DESIGN §4, §6 item 1)")
     rep["reference_scenario_algebraic"] = cov

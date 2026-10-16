@@ -122,9 +122,12 @@ from their weighted spread about that mean. By construction it is symmetric and 
   - the χ² of b_B and b_C (dr, S-ref) and of the frozen `bias_PB`/`bias_PC` (raw), in the p_∥ and p_T marginals,
     against VL175 alone and against VL175 + C_PL;
   - to first order, b_X(dr) = e_X(u_X − u_A) with u_X = x ∘ g_X. That lies in C_PL's span, so its χ² against
-    VL175 + C_PL is bounded by an e-only constant, bᵀC_PL⁺b = cᵀM⁻¹c, whatever the data. This bound is printed
-    beside the observed values;
-  - the fraction of each b outside C_PL's span (Euclidean, and in the VL175 metric);
+    VL175 + C_PL is bounded by an e-only constant, bᵀC_PL⁺b = e_X²(1/e_A + 1/e_X)/k, whatever the data. That is
+    0.68 for b_B and 0.34 for b_C. The bound is first-order: the script's b_X carries a per-cell factor m/r_A,
+    so an observed value can exceed it by that nonlinear residual (about 1.2× in the pre-run verifier's synthetic
+    trials). The bound is printed beside the dr values only;
+  - the fraction of each b outside C_PL's span: the Euclidean norm of the out-of-span residual over that of b,
+    and the p_∥ VL175 χ² of that Euclidean residual over that of b (not a metric-orthogonal split);
   - there is **no pass/fail reading**. A block built from the period differences contains them by construction. A real
     coverage statement would need an estimate that is not built from the same three vectors, and none exists. The raw
     rows are not in the span, so they are informative;
@@ -162,7 +165,7 @@ A second report, against the S5 total, follows when S5 lands (Stage F checklist 
 The pre-run verifier gave APPROVE WITH CHANGES on `c144cdc4`: 1 MATERIAL and 6 MINOR. No number had been computed.
 This record was amended in place, and the script with it:
 1. **MATERIAL.** The pre-declared reading "covers if χ² ≤ 4" could not fail. The dr reference vectors lie in
-   C_PL's span to first order, so their χ² is bounded by an e-only constant of about 0.68. The reading is removed and
+   C_PL's span to first order, so their χ² is bounded by an e-only constant: 0.68 for b_B and 0.34 for b_C. The reading is removed and
    replaced by the algebraic statement, the bound, and the out-of-span fractions (§4).
 2. Check 4 is relabelled as an identity, and check 5 (grid and central value) is added. The symmetry check is noted as
    holding by construction.
@@ -174,3 +177,7 @@ This record was amended in place, and the script with it:
 7. The eigenmode sign convention.
 
 The construction (§2) and the choices of §3 are unchanged.
+
+The re-review of `074051b5` gave APPROVE WITH CHANGES, with 4 MINOR findings: the first-order caveat on the bound, the
+bound field left out of the raw rows, the exact description of the out-of-span fraction, and a stale comment. All four
+are text or label fixes, applied before the run.
