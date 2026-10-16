@@ -729,6 +729,89 @@ Its members' outputs are kept only if they pass `analyze_prod.py`'s existing pro
 pilot's joint replicas 1–4. Its measured member and pack charges give the expected-charge figure (record §4.7),
 which is reported before the binding.
 
+**Smoke pack result: PASS.** Evidence is in [`evidence/smoke_pack/`](evidence/smoke_pack/), measured 2026-10-16T20:23Z.
+
+The first submission, 59859828, was cancelled while still pending (ElapsedRaw 0, Start None) because of the QOS-alias
+defect fixed in `8ea086eb`. The re-submission, 59860260 (`2dc_P_K4_S1_001`, under the smoke-resubmit record), ran
+`repo_k` at `8ea086eb`:
+- Allocation: QOS `regular_1`, AllocTRES `billing=256,cpu=256,mem=487680M,node=1`, on nid005593.
+- Timing: Start 19:03:09Z, End 19:13:43Z, COMPLETED 0:0.
+- Dispatcher: passed every pre-step check (both pins `OK`), wrote its `#pack` line and launched 4 steps at 19:03:17Z.
+  Its `.err` is empty.
+
+| step | member | state | rc | ElapsedRaw | MaxRSS | `xsec.root` sha256 |
+|---|---|---|---|---|---|---|
+| .2 | `2dc_P_S1_001` | COMPLETED 0:0 | 0 | 618 | 14,414,800K | `c67bb587…` |
+| .0 | `2dc_P_S1_002` | COMPLETED 0:0 | 0 | 604 | 14,319,728K | `6557d9af…` |
+| .3 | `2dc_P_S1_003` | COMPLETED 0:0 | 0 | 614 | 14,410,484K | `a297e178…` |
+| .1 | `2dc_P_S1_004` | COMPLETED 0:0 | 0 | 611 | 14,310,816K | `15b2554a…` |
+
+Each step had `cpu=64,mem=121920M`. Each member's runner logged `qos=regular_1`, its step TRES and every input pin
+`OK`. `launch.py members 59860260` derives all four members as COMPLETED.
+
+**Charges.** The pack was charged 634 × 256 / 256 / 3600 = **0.1761 node-h**, against its enforced 0.85: 21% of the
+cap. Each member's own task time is 0.168–0.172 h at 64 CPUs. The pack runs about 16 s longer than its slowest member.
+
+**Validation.** `analyze_prod.py s1` (`f9e0d8f2…`) wrote `$NS/results/smoke_pack_s1.json`, sha256 `87c9d534…`, which
+is copied as `evidence/smoke_pack/analyze_s1_smoke_pack.json`. Its results:
+- `pins_failed` empty, and provenance PASS for all 4 present replicas, with 296 not yet run.
+- Pilot reproduction:
+
+  | replica | max rel diff (cells) | integral rel diff |
+  |---|---|---|
+  | joint_01 | 4.9e-13 | 4.2e-14 |
+  | joint_02 | 1.3e-12 | 5.8e-14 |
+  | joint_03 | 2.5e-14 | 1.0e-15 |
+  | joint_04 | 1.3e-12 | 1.2e-14 |
+
+  All four PASS.
+
+The file's overall `S1` field reads INCONCLUSIVE only because 296 replicas are missing, as designed. The outputs stay
+in `out/`, and the production `s1` analysis will re-check them.
+
+**Expected charge** (record §4.7). Measured terminal so far is 4.3244 node-h:
+- C0, 2 rows: 0.2430;
+- S3, 10 rows: 3.2314;
+- the 4 S4U rows `NormDISCC0_s42`–`s51`, which started on the shared QOS before any migration and completed there at
+  1,028–1,323 s: 0.6739;
+- the smoke pack: 0.1761.
+
+What remains:
+
+| part | basis | expected (node-h) |
+|---|---|---|
+| G2: 31 S4U rows = 15 pairs + 1 single | a pack ends with its slower member; 1,028–1,323 s measured on the shared QOS | 5.4–5.9 |
+| G2: the S4CV pack | production-driver CV like C0's `cv` row, 2,655 s on the shared QOS | 0.74–0.85 |
+| S1–S4b: 119 CV packs (S1 74, S2 25, S4B 20) | 634 s per pack, as measured; ×1.25 margin | 21.0–26.2 |
+| **total, including the 4.3244 measured** | | **≈ 31–37** |
+
+This is against the 100.0 ceiling and the 118.1083 all-at-cap worst case.
+
+**Would the gate first refuse before S4b?** Caps still to submit:
+- G2: 8.85;
+- S1: 62.90;
+- S2: 21.25;
+- S4a: 8.50;
+- S4b: 8.50.
+
+At measured charges, with S4b submitted after the earlier batches have ended, its gate is about 29.6 + 8.5 = 38.1.
+No refusal is expected. A refusal before S4b would need one of two things:
+- the earlier CV packs averaging at least 0.7186 node-h (2,587 s, about 4.1 times the smoke pack, with G2 at its
+  caps);
+- or batches submitted while their predecessors are all still in flight. Every cap at once would be about 105.8 after
+  S4a, so S4a would be refused until about 7 packs end. Under §6 that refusal is a wait, because jobs are in flight.
+
+Only the all-at-cap worst case (114.32 from today's terminal) would refuse terminally, before S4b. That was already
+stated in §14.1.
+
+**Noted, not changed:**
+- The member runner's `pack=` log field shows the member's name, because `srun --job-name` sets `SLURM_JOB_NAME`
+  inside the step. The identity comes from `--member`, and `job=`/`step=` give the pack.
+- The dispatcher's `#step` rows for the pack, batch and extern are written before the job ends, so they read RUNNING.
+  `members` reads the final states from `sacct` (§14.4).
+- The 4 S4U rows that started on the shared QOS keep their shared attempts. With 31 S4U rows left, the odd one still
+  runs alone.
+
 ### 14.6 Independent review of the packed path
 
 One fresh read-only verifier (Claude Opus 5.5) reviewed `8ea086eb` in its own detached worktree, with `git-dir` ≠
