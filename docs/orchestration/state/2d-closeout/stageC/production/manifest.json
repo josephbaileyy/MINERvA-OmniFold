@@ -81,8 +81,9 @@
   }
  },
  "package": {
-  "docs/orchestration/state/2d-closeout/stageC/production/DESIGN.md": "d49897042f6c4f8227eaa72eb7228db2accc1571a7f3718fe5ca8033ef8acf1a",
+  "docs/orchestration/state/2d-closeout/stageC/production/DESIGN.md": "fc214731c9185278bdbe6e2ac6357305a58981844d18583d57d7d04e5172ee66",
   "docs/orchestration/state/2d-closeout/stageC/production/analyze_prod.py": "f9e0d8f271f28bee1ef264de62cf7b924d18d4086e8fbe896abff4adb79320a4",
+  "docs/orchestration/state/2d-closeout/stageC/production/deploy_repo_k.sh": "49619cc576246903195f4dd93288e7c2b302a3a5109c3cd1d9bd9371682dd0e6",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_c0.json": "89bff43c8179a66fb822816338a4a74907e815f66dac5bd9c7817d4933e41777",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_s1.json": "70513c437d989ef3f9ffcf1c55ccdc125bccd90136381073c45e69e52c4cdb9d",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_s2.json": "0f4c260c9179313977883d119a150bf12206c1cca906bea46aa971c2a14f600a",
@@ -93,15 +94,24 @@
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/dispatch_dryrun.txt": "fd9fabf59105fbb3c21a5664850fc87203100c72ed70b0edea8226d7816c176a",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/s5_control.json": "576093313a32b214c8bd0f67aca84794b952dfd1883b99c989af93ad7e027333",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/s5_standin.json.gz": "0d045e594d53e598053ef75f8d7aa70025063a178803a0d2c130bed506ac7d66",
-  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/test_launch.py": "fb8cf1fa4b06c94778b79429bd5f996a1f63172f818da80ba2f0725de1caaff4",
-  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/test_launch_output.txt": "e8e486cfeac7549762d741a73e3f534822fedfc4ca62d2d96ed5b4816d9f9864",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/test_launch.py": "7b4360a3a70b0a232d430c3f2e53290fdef3eda94a451d137517a73dc873d31d",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/test_launch_output.txt": "2ffbb599c2fd7c8fa2ac78d3f7f8ca7ac49081b0870fd919b5d6c44af2b26308",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/analyze_s1_smoke_pack.json": "87c9d534677540ce9c165af0d49eb9164af7838341c335caa5b556367768f03c",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/gatelog_migrate_20261016T163006Z.tsv": "5718cab94b22ca55705cbb75d19908dbd91c287b89639d40b7cd0d8fa0547b31",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/gatelog_smoke_migrate_dryrun.txt": "e73288146564406af1b6961cff8a9db63f65b5291ffd23545c86494ade12e884",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/gatelog_smoke_migrate_execute.txt": "d96192fdeea77de91c858fa24e517c2fc6ad3b03c8f6561f185e50349267c416",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/gatelog_smoke_migrate_sacct.txt": "c908d93200fc834c967bc4e1b436f74fb65e854c32f129f61aa5792f1198b441",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/gatelog_smoke_pack1_cancel_sacct.txt": "03846ce70408e6b984529a6fefa79e48853f6c482b81158deecd22b13349f4e7",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/gatelog_smoke_pack2_submit.txt": "a79d62b0a45120bf3f3de35d22a28fbb06bbde0e3a884b217d0adf11b32a4fe6",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/smoke_pack_59860260.txt": "1b33847b1139d5056bb0cc58b8d4cfc14f47dd42fa3b63dc93b6a006a3c99a44",
   "docs/orchestration/state/2d-closeout/stageC/production/jobs.tsv": "c4f1b7082fac3635be78622cb9b9a5f71103789337bbc29e7dd29684e9b4d3a4",
-  "docs/orchestration/state/2d-closeout/stageC/production/launch.py": "ea9f06d7cfebe34e6792b800902b8e55f5d9c1eba5b4309af1a71dc4223f40c6",
+  "docs/orchestration/state/2d-closeout/stageC/production/launch.py": "a6a9a60adc8394059c8edbf93c225b6639c28d4f6d72a55e65308c5ae298c405",
   "docs/orchestration/state/2d-closeout/stageC/production/make_jobs.py": "550e273be77944c25e8cc4607574c891b247f4328b1b72c6eba85d521ab2fa91",
   "docs/orchestration/state/2d-closeout/stageC/production/make_manifest.py": "57e7a6adbb634ff815920672303490df7b4840024e7c65ede77636ac0392cdcc",
   "docs/orchestration/state/2d-closeout/stageC/production/preflight_uomni.sh": "14a58c70eeafa18035da7562c16516347a841d5e2a96810b5ed9ff0170679f0d",
   "docs/orchestration/state/2d-closeout/stageC/production/s5_rollup.py": "6c437004fb439201c173a2857fb95bda2cb3045285ba61c1bef8f8c215b39d15",
-  "docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh": "1dc95ad32b442e54713b58d08724f9112fa6b4183caa8c9c306f9e94c21576d5"
+  "docs/orchestration/state/2d-closeout/stageC/production/sbatch_pack.sh": "2908a7bf16ec8788944aadeb5cfac4237ca72f4a32c54b1ed2b71a15f9a623ca",
+  "docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh": "ad9b12f3c51f03af68d6da181826bbc591c26cefaf3c19d845427221f4e70bf9"
  },
  "schema": "stagec-production-manifest/1"
 }

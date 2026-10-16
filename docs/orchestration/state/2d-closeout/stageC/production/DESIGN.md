@@ -22,7 +22,8 @@
 | `Pilot` | [`../pilot/REPORT.md`](../pilot/REPORT.md) (PR #129, merge `677b5ba4`): K1 PASS, K2 NOT RESOLVED, measured units (§7) |
 | `Branch` / `Base` | `closeout/stagec-production-20261015` / `origin/main` `8fbcae96` |
 | `Producer pins` | production driver `2d-unfolding/unfold_2d_omnifold_unbinned.py` sha256 `74a4ed69c3fa9c4ae5b6866f36343212b8d3f903fddde6c7bd40c382c1167d56`; helper `omnifold.py` `e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a`; the pilot's three-stream copy `stageC/pilot/p1/driver_p1.py` `3056e625a22f2ee79621e515aa5a76a4685662ac6fc10ee7e832680dde087578` (§4) |
-| `Namespace` | `/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/` (`$NS`): `repo/` (the deployed package), `out/<job>/`, `logs/`, `results/`, `retries/`, `preflight/`, `gatelog/`, `tmp/` |
+| `Namespace` | `/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/` (`$NS`): `repo/` (the deployed shared-QOS package), `repo_k/` (the deployed packed package, §14), `out/<job>/`, `logs/`, `results/`, `retries/`, `packs/` (§14), `preflight/`, `gatelog/`, `tmp/` |
+| `Packed path` | §14 ([`AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md`](../../../../AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md)): every row not yet run on the shared QOS goes in regular-QOS single-node packs, deployed at `$NS/repo_k/`; §14 supersedes §6's submission unit, §9's retry command and §10's launch steps for those rows. The bound shared-QOS package (`4139548b`, `$NS/repo/`) ran G0 and G1 |
 | `Manifest` | [`manifest.json`](manifest.json): every package file and every pin it executes or reads, with its sha256; its digest is what the binding names |
 | `Terminal outcomes` | per item: PASS (every frozen check passed, products written) / FAIL / INCONCLUSIVE; S5: PASS / FAIL. Overall: COMPLETE (all PASS) or STOPPED at a named item |
 
@@ -433,7 +434,7 @@ at seed 42, and joint/bkg 1–20 → S1/S2 1–20.
 
   The S1/S2 reproductions pass trivially here, because each stand-in is its own reference.
 
-**Launcher logic** (`test_launch.py` → `test_launch_output.txt`, mocked ledger, no Slurm): 15/15 cases pass.
+**Launcher logic** (`test_launch.py`, mocked ledger, no Slurm): 15/15 cases passed for the shared-QOS launcher at `4139548b`. The packed launcher's suite replaces it (§14.5); `test_launch_output.txt` now records that suite.
 - `redo` owes exactly the three kinds in §6, and never a row that ran, is queued, has output, or has a second attempt.
 - A retry is accepted after TIMEOUT, and refused after OUT_OF_MEMORY, FAILED or CANCELLED.
 - Every `sbatch` line carries `--no-requeue` and its cap.
@@ -508,3 +509,388 @@ Its two MINOR findings are fixed here:
 - the exception guarantee is narrowed to what the code does (§8).
 
 The verifier is the same model as the executor, so its blind spots may be correlated with the executor's.
+
+## 14. Packed submission path (regular QOS)
+
+Under [`AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md`](../../../../AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md)
+(step 1, build and test), every row not yet run on the shared QOS is submitted in **single-node regular-QOS packs**.
+
+**Why.** The shared partition started 0 of our 64-CPU jobs and about 0.56 of our 128-CPU jobs per hour. Over 24 h
+it started 17,672 jobs averaging 7.95 CPUs, and only 260 of at least 64 CPUs. The regular partition started 5,799
+to 6,451 single-node jobs over a similar 24 h (record §1).
+
+**Unchanged** (record §3):
+- analysis and products: `analyze_prod.py`, `s5_rollup.py`, the production driver, `driver_p1.py`, `omnifold.py`
+  and every pinned input;
+- `jobs.tsv`: byte-identical (`c4f1b708…`), so every row's command line, seeds, inputs and cap are unchanged;
+- every output path (`out/<row>/xsec.root`);
+- the gate formula and `CEILING = 100.0`, the frozen order and preconditions, and the retry rule (one walltime retry
+  after exactly one TIMEOUT, at 1.5 × the re-projection, under 12 h).
+
+### 14.1 Packs
+
+A pack is one regular-QOS node: 256 CPUs, RealMemory 515,100 MB, billing 256. It runs members of one class side by
+side, each as its own `srun` step:
+- a CV class row is 64 CPUs, 121,920M and 00:51:00, so 4 fit a node, with 487,680 MB summed;
+- an S4U row is 128 CPUs, 243,840M and 00:30:00, so 2 fit a node, with 487,680 MB summed.
+
+**Charge.** A full pack's enforced charge is 256 × cap / 256:
+- a CV pack: 0.85 = 4 × 0.2125;
+- an S4U pack: 0.5 = 2 × 0.25.
+
+**Composition** (`launch.py compose()`):
+- Per class, in the frozen order and in `jobs.tsv` order within a batch, the rows owed a first submission are cut
+  into chunks of 4 or 2.
+- A row is owed when it has no attempt, is not queued and has nothing in `out/<row>/`.
+- A partial chunk is held for the next batch, unless the batch is the class's last (G2 for S4U, S4b for CV).
+- S1a's two leftover rows therefore lead S1b's first pack, and no CV slot is wasted.
+- **Frozen order.** Owed rows of earlier batches may lead a submission only as such a held remainder, fewer than a
+  node's worth per class. More than that means an earlier batch is owed a submission, and `compose()` refuses with
+  "submit <earlier batch> before <batch>". This also covers rows owed after a never-started pack or a migrated
+  shared job: each batch is resubmitted, in order, with `submit <batch>`.
+
+**Names.** A pack is named `2dc_P_K<n>_<first member without 2dc_P_>`, for example `2dc_P_K4_S1_001`. The `2dc_P_`
+prefix keeps every pack in the gate's ledger.
+
+**Worst case**, recomputed (`test_launch.py`):
+
+| part | enforced (node-h) |
+|---|---|
+| G0 and G1, run on the shared QOS at their row caps | 6.2583 |
+| G2: 17 S4U pairs, 1 S4U single (35 rows), 1 pack of the 4 S4CV rows | 9.8500 |
+| S1a–S4b: 480 CV rows, 120 full packs | 102.0000 |
+| **total** | **118.1083** = 117.8583 + 0.2500 |
+
+Itemized excess over the row caps:
+- **+0.25:** the odd S4U row runs alone on a node, at 0.5 against its row cap of 0.25.
+- **Up to +0.6375 more** if, before the migration, some CV rows start on the shared QOS in a number that is not a
+  multiple of 4. The CV tail pack then carries up to 3 empty slots of 0.2125.
+- **−0.25** if an odd number of S4U rows start there, because the single disappears.
+- **Maximum: 118.7458.**
+
+- **Retry packs** are charged a whole node at the re-projected cap, whatever their member count. A retry pack of one
+  CV member at cap T costs T node-h, not T/4. Retries sit outside the 118.1083 plan, as they did before, and are
+  admitted only by the gate.
+
+Rows that start on the shared QOS keep their shared caps in the ledger. As before, the gate enforces 100.0 at every
+submission whatever the plan's worst case.
+
+### 14.2 Dispatcher and member runner
+
+**`sbatch_pack.sh <members…>`** is submitted by `launch.py` with:
+- `--qos=regular --nodes=1 --exclusive`;
+- `--mem=<summed member memory>` and `--time=<the members' cap>`;
+- `--no-requeue --deadline=2026-10-20T23:00:00`.
+
+**Before any step starts,** it refuses unless all of these hold (the record §4.2, §4.3 checks):
+- `jobs.tsv` matches its pin, and `sbatch_prod.sh` matches `MEMBER_SHA`;
+- every argument is exactly one `jobs.tsv` row, and none repeats;
+- the members share one class (CPUs, memory and cap, where the cap is a member's retry record if it has one);
+- the members fit one node: count ≤ 256 / CPUs, and summed memory ≤ 515,100 MB;
+- the arguments equal the launcher's record `$NS/packs/<pack name>.members`;
+- the allocation is QOS `regular`, `NumCPUs=256`, billing 256, and `TimeLimit` equal to the members' cap.
+
+**Each member** then runs as:
+
+    srun --exact -N1 -n1 -c <cpus> --mem=<mem> --job-name=<member> bash sbatch_prod.sh --member <member>
+
+in a subshell that appends `<member> <rc> <end epoch>` to `$NS/packs/<job id>.status` the moment the member ends.
+- One member failing never touches the others.
+- The pack exits non-zero if any member's rc is non-zero.
+- At the end it appends the `sacct` step rows (state, exit code, elapsed) to the status file.
+- Member logs are `logs/<member>_<pack job id>.{out,err}`.
+
+**`sbatch_prod.sh --member <name>`** is the shared-QOS job script with two kinds of change.
+
+What changes:
+- the identity is the explicit argument, never `SLURM_JOB_NAME`;
+- it refuses outside an `srun` step;
+- it checks QOS `regular`, billing 256, `SLURM_CPUS_PER_TASK` equal to the row's CPUs, and `TimeLimit` equal to the
+  row's cap or its retry record;
+- it logs the step's TRES;
+- `REPO` is `$NS/repo_k`.
+
+What is identical:
+- every pin, the input checks, `OMP_NUM_THREADS=64` and the per-row command lines;
+- the refusal of an existing or non-empty `out/<row>/`.
+
+### 14.3 The gate and member-level attempts
+
+**The gate.** `launch.py` reads `sacct -X` over every `2dc_P_*` job, rows and packs alike, with `TZ=UTC`. A pack's
+terminal charge is ElapsedRaw × 256 / 256 / 3600, measured. For a pack that ran, the billing is never taken below 256,
+even if `AllocTRES` lacks it; a pending pack's `ReqTRES` reads `billing=1`. Its in-flight liability is the larger of 256 and Slurm's billing, times
+`TimeLimit`, over 256. Each pack submitted adds 256 × cap / 256. The stop rule is §6's: wait only while jobs are in
+flight, and a `submit` refusal is a stop. `$NS/packs/<job id>.members` maps a pack job to its members; a pack job
+without that record makes the launcher refuse.
+
+**Attempts** are member-level:
+- A job that never started is not an attempt. That means `DEADLINE` with ElapsedRaw 0, or `CANCELLED` with
+  ElapsedRaw 0 and no Start: a migrated shared job, or a pack cancelled while pending.
+- An in-flight pack gives each member an in-flight attempt.
+
+**A terminal pack** gives each member one attempt, derived as follows:
+
+| member's derived state | when |
+|---|---|
+| COMPLETED (validated output) | rc 0 in the status file, and `out/<member>/xsec.root` exists |
+| OUT_OF_MEMORY | the pack ended OUT_OF_MEMORY |
+| TIMEOUT | the pack timed out, and the member had no rc line, or its rc line is within 120 s of Start + TimeLimit (killed at the limit; KillWait is 30 s) |
+| FAILED | anything else: a non-zero rc recorded earlier, or a missing rc in a pack that ended otherwise |
+
+**A pack that ran but never launched its members** has no `#pack` line in its status file: a dispatcher refusal, or a
+node failure before the steps. It is a pack-level **STOP**, not an attempt by its members. The launcher refuses
+everything until the director rules.
+
+**For the binding to accept explicitly.** Re-review 1 (R2, R3) raised two points:
+- A pack-level STOP is global. One pack that ran without launching its members halts every launcher action,
+  including `members` for that pack, for the rest of production. No record clears it.
+- A FAILED member cannot be re-run from this package either. That includes members whose `srun` step could not be
+  created after the `#pack` line was written.
+- Clearing a STOP, or re-running a FAILED member, needs a director record, a new package commit and a re-binding.
+- This fails closed, as grant §3 requires. Its price: a transient failure in any of the about 140 packs stops
+  production until then.
+
+**Navigation refusals are not stops (R4).** Some refusals come from the frozen order or an empty pool, not from the
+ceiling or a check:
+- "submit <earlier batch> before <batch>";
+- "no rows owed a first submission (or only a held partial pack)";
+- "no deadline-cancelled retry owed".
+
+They mean "run the named batch first", or "nothing to do here". The binding is asked to accept that these are not
+stops under its §3 ruling 4. Every other refusal stays a stop.
+
+A member killed for memory inside a pack that ends FAILED is labelled FAILED, not OUT_OF_MEMORY. Both are stops.
+
+**What follows from the derived state:**
+- **A walltime retry** (`submit <batch> --retry A[,B..] --time HH:MM:SS`) needs exactly one TIMEOUT attempt for
+  every member. It is refused while `out/<member>/xsec.root` exists. OUT_OF_MEMORY is a stop, as before. FAILED
+  needs a diagnosed infrastructure cause and the director, as before. **No command in this package acts on a FAILED
+  member.** Re-running one needs a director record and a package change that implements it. The retry members go together in one pack at the re-projected cap: same class, at most a node.
+  `retries/<member>.time` is written before `sbatch` and removed if `sbatch` fails.
+- **A member with validated output is never re-run:** it has an attempt, so it is not owed.
+- **A `DEADLINE` or never-started `CANCELLED` pack** owes its members. They return to `compose()` at their row caps.
+- **`redo <batch>`** now covers only §6 case (b): a walltime retry whose pack was removed by the deadline before
+  starting is owed at its recorded cap. The pack is checked by the retry rule: one class, one node, and the cap
+  equal to every member's record, under 12 h. Cases (a) and (c) need no separate path, because `compose()` packs every
+  row with no attempt.
+
+### 14.4 Migration and launch (step 2: after the director's binding of this package only)
+
+1. **Deploy.** Run `bash deploy_repo_k.sh <git archive of the bound commit> <commit> <manifest sha256>`.
+   - It refuses while any `2dc_P_K*` pack is in the queue, or if `squeue` cannot be read. A queued pack runs the
+     dispatcher copied at its submission, which checks the deployed `sbatch_prod.sh` against its own commit's
+     `MEMBER_SHA`. A redeploy under it would make it refuse at start: a pack-level STOP.
+   - It moves the old `repo_k` to `$NS/tmp/repo_k.<commit>.retired.<UTC>` and copies `driver_p1.py` (as in §10.1).
+   - It checks every manifest entry.
+   - `$NS/repo/` is left untouched, because a shared job that has started may still read it.
+2. **Migrate.** Run `launch.py migrate` (a dry run), then `launch.py migrate --execute`:
+   - The cancel list is measured from `squeue -t PENDING` now, not from any saved list: the never-started
+     shared-QOS `2dc_P_*` row jobs.
+   - The list is written to `gatelog/migrate_<UTC>.tsv`, and the jobs are cancelled with `scancel --state=PENDING`,
+     so a job that starts in between is left alone.
+   - A shared job that has started stays. Having an attempt, it leaves the packs.
+3. **Check.** Confirm in `sacct` that every cancelled job is `CANCELLED` with ElapsedRaw 0 and no Start. The ledger
+   then shows the 12 completed rows, plus any that started, at their measured charges.
+4. **Submit.** Run `launch.py gate G2`, then `submit G2`, and so on in the frozen order (S1a … S4b), each when the
+   gate admits. S2b goes only as packs. Run each `gate` at least 2 min after the last `submit`, and check that the
+   ledger's in-flight count matches `squeue`, because `sacct` lags `sbatch` (observed 2026-10-15).
+5. **Check each item.** Run `analyze_prod.py` per item as in §10, which is unchanged, followed by S5, CFS and
+   REPORT.
+
+`launch.py members <job id>` prints each member's derived state, rc and `sacct` step row, for the REPORT. The
+dispatcher appends the step rows to its status file only when it ends normally; after a TIMEOUT, `members` reads them
+from `sacct`.
+
+The universe preflight (`preflight/uomni.stat`) is required for G2 and for any submission with an S4U member.
+
+### 14.5 Tests and the smoke pack
+
+**Tests.** [`evidence/smoke/test_launch.py`](evidence/smoke/test_launch.py) runs offline: a mocked ledger, and
+stubbed `scontrol`, `srun` and `sacct` for the two shell scripts. It covers:
+- composition, the worst case and the node fit;
+- memory > 515,100 MB refused, and ours accepted;
+- member-level retry and redo, each in both directions;
+- fail-closed records, the stop rule, the `sbatch` flags, migration and the deadline;
+- the dispatcher's refusals before any step: a duplicate, an unknown member, a mixed class, a record mismatch,
+  billing 64 refused against 256 accepted, QOS and `TimeLimit`;
+- a failing member that does not stop the others;
+- the member runner's refusals.
+
+The runner's count is reported with each run.
+
+**The smoke pack** (record §4.6) is the only pre-binding submission: one 4-member CV pack of real S1a rows,
+`2dc_P_S1_001`–`004`. Its procedure:
+1. `launch.py migrate --only 2dc_P_S1_001,…,004 --execute` cancels exactly those 4 shared jobs. Each must be
+   PENDING, never started, and charged 0.
+2. `launch.py pack 2dc_P_S1_001,2dc_P_S1_002,2dc_P_S1_003,2dc_P_S1_004` submits it. Its enforced charge is 0.85,
+   and the gate counts it.
+
+Its members' outputs are kept only if they pass `analyze_prod.py`'s existing provenance checks and reproduce the
+pilot's joint replicas 1–4. Its measured member and pack charges give the expected-charge figure (record §4.7),
+which is reported before the binding.
+
+**Smoke pack result: PASS.** Evidence is in [`evidence/smoke_pack/`](evidence/smoke_pack/), measured 2026-10-16T20:23Z.
+
+The first submission, 59859828, was cancelled while still pending (ElapsedRaw 0, Start None) because of the QOS-alias
+defect fixed in `8ea086eb`. The re-submission, 59860260 (`2dc_P_K4_S1_001`, under the smoke-resubmit record), ran
+`repo_k` at `8ea086eb`:
+- Allocation: QOS `regular_1`, AllocTRES `billing=256,cpu=256,mem=487680M,node=1`, on nid005593.
+- Timing: Start 19:03:09Z, End 19:13:43Z, COMPLETED 0:0.
+- Dispatcher: passed every pre-step check (both pins `OK`), wrote its `#pack` line and launched 4 steps at 19:03:17Z.
+  Its `.err` is empty.
+
+| step | member | state | rc | ElapsedRaw | MaxRSS | `xsec.root` sha256 |
+|---|---|---|---|---|---|---|
+| .2 | `2dc_P_S1_001` | COMPLETED 0:0 | 0 | 618 | 14,414,800K | `c67bb587…` |
+| .0 | `2dc_P_S1_002` | COMPLETED 0:0 | 0 | 604 | 14,319,728K | `6557d9af…` |
+| .3 | `2dc_P_S1_003` | COMPLETED 0:0 | 0 | 614 | 14,410,484K | `a297e178…` |
+| .1 | `2dc_P_S1_004` | COMPLETED 0:0 | 0 | 611 | 14,310,816K | `15b2554a…` |
+
+Each step had `cpu=64,mem=121920M`. Each member's runner logged `qos=regular_1`, its step TRES and every input pin
+`OK`. `launch.py members 59860260` derives all four members as COMPLETED.
+
+**Charges.** The pack was charged 634 × 256 / 256 / 3600 = **0.1761 node-h**, against its enforced 0.85: 21% of the
+cap. Each member's own task time is 0.168–0.172 h at 64 CPUs. The pack runs about 16 s longer than its slowest member.
+
+**Validation.** `analyze_prod.py s1` (`f9e0d8f2…`) wrote `$NS/results/smoke_pack_s1.json`, sha256 `87c9d534…`, which
+is copied as `evidence/smoke_pack/analyze_s1_smoke_pack.json`. Its results:
+- `pins_failed` empty, and provenance PASS for all 4 present replicas, with 296 not yet run.
+- Pilot reproduction:
+
+  | replica | max rel diff (cells) | integral rel diff |
+  |---|---|---|
+  | joint_01 | 4.9e-13 | 4.2e-14 |
+  | joint_02 | 1.3e-12 | 5.8e-14 |
+  | joint_03 | 2.5e-14 | 1.0e-15 |
+  | joint_04 | 1.3e-12 | 1.2e-14 |
+
+  All four PASS.
+
+The file's overall `S1` field reads INCONCLUSIVE only because 296 replicas are missing, as designed. The outputs stay
+in `out/`, and the production `s1` analysis will re-check them. The analysis json does not record the digests of the
+`xsec.root` files it read. They are recorded beside it in `smoke_pack_59860260.txt`, measured at the same time.
+
+**Gate and migration records.** These are copied from `$NS/gatelog/` with byte-identical sha256:
+- `gatelog_smoke_migrate_dryrun.txt`, `gatelog_smoke_migrate_execute.txt`, `gatelog_migrate_20261016T163006Z.tsv`
+  (exactly the 4 jobs) and `gatelog_smoke_migrate_sacct.txt`;
+- `gatelog_smoke_pack1_cancel_sacct.txt`: 59859828 CANCELLED, ElapsedRaw 0, Start None;
+- `gatelog_smoke_pack2_submit.txt`: `GATE completed 3.4744 + in-flight at cap 83.1250 + packs 0.8500 = 87.4494 vs
+  ceiling 100.0`, then the `sbatch` line and job 59860260.
+
+**Expected charge** (record §4.7). Measured terminal so far is 4.3244 node-h:
+- C0, 2 rows: 0.2430;
+- S3, 10 rows: 3.2314;
+- the 4 S4U rows `NormDISCC0_s42`–`s51`, which started on the shared QOS before any migration and completed there at
+  1,028–1,323 s: 0.6739;
+- the smoke pack: 0.1761.
+
+What remains:
+
+| part | basis | expected (node-h) |
+|---|---|---|
+| G2: 31 S4U rows = 15 pairs + 1 single | **shared-QOS estimate**: 16 packs at the 4 rows' mean (1,213 s) to their max (1,323 s) | 5.4–5.9 |
+| G2: the S4CV pack | **shared-QOS estimate**: production-driver CV like C0's `cv` row, 2,655 s of its 3,060 s cap | 0.74–0.85 |
+| S1–S4b: 119 CV packs (S1 74, S2 25, S4B 20) | 634 s per pack, as measured; ×1.25 margin | 21.0–26.2 |
+| **total, including the 4.3244 measured** | | **≈ 31–37** |
+
+This is against the 100.0 ceiling and the 118.1083 all-at-cap worst case.
+
+Only the CV row is measured from the smoke pack. No 128-CPU pair, S4U single or production-driver CV member has run
+packed yet, so the two G2 lines are shared-QOS estimates. The first G2 packs are watched against their caps (00:30:00
+S4U, 00:51:00 S4CV), and C0's `cv` row used 87% of that cap on the shared QOS. A TIMEOUT there follows the retry rule
+(§14.3). The total does not depend on these lines: G2 at full caps (8.85) gives about 34–39.
+
+**Would the gate first refuse before S4b?** Caps still to submit:
+- G2: 8.85;
+- S1: 62.90;
+- S2: 21.25;
+- S4a: 8.50;
+- S4b: 8.50.
+
+At measured charges, with S4b submitted after the earlier batches have ended, its gate is about 29.6 + 8.5 = 38.1.
+No refusal is expected. A refusal before S4b would need one of two things:
+- the earlier CV packs averaging at least 0.7186 node-h (2,587 s, about 4.1 times the smoke pack, with G2 at its
+  caps);
+- or batches submitted while their predecessors are all still in flight. Every cap at once would be about 105.8 after
+  S4a, 5.82 over the ceiling. A pack that ends at the measured rate frees 0.85 − 0.176 = 0.674, so S4a would be
+  refused until about 9 packs end. Under §6 that refusal is a wait, because jobs are in flight.
+
+Only the all-at-cap worst case would refuse terminally. The gate then reaches 97.32 through S2b and still admits.
+**S4a is the first batch refused**, at 105.82, and S4b would bring 114.32 from today's terminal. §14.1 already states
+that worst case.
+
+**Noted, not changed:**
+- The member runner's `pack=` log field shows the member's name, because `srun --job-name` sets `SLURM_JOB_NAME`
+  inside the step. The identity comes from `--member`, and `job=`/`step=` give the pack.
+- The dispatcher's `#step` rows for the pack, batch and extern are written before the job ends, so they read RUNNING.
+  `members` reads the final states from `sacct` (§14.4).
+- The 4 S4U rows that started on the shared QOS keep their shared attempts. With 31 S4U rows left, the odd one still
+  runs alone.
+
+### 14.6 Independent review of the packed path
+
+One fresh read-only verifier (Claude Opus 5.5) reviewed `8ea086eb` in its own detached worktree, with `git-dir` ≠
+`git-common-dir`. **Verdict: APPROVE WITH CHANGES, 3 MATERIAL, 11 MINOR.**
+
+What it re-measured:
+- `MEMBER_SHA`, `jobs.tsv` and the manifest;
+- every case block in `sbatch_prod.sh`, byte-identical to `4139548b`, with no diff in `2d-unfolding/`;
+- the worst case: 118.1083, and 118.7458 at most;
+- the live Slurm facts:
+  - a pending pack's `ReqTRES` has billing 1;
+  - past `regular_1` jobs have `AllocTRES` billing 256;
+  - KillWait is 30 s, and OverSubscribe is EXCLUSIVE;
+- the ledger on live rows;
+- 62/62 tests.
+
+| finding | disposition |
+|---|---|
+| M1 `redo` refused every retry pack it owed: `main()` checked it with the first-submission rule, cap = row cap | `redo` packs are checked by the retry rule, with the cap equal to every member's record (§14.3). Tests drive `main redo` both ways |
+| M2 `compose()` folded every owed earlier-batch row into a later batch, bypassing the frozen order and the G2 preflight | Earlier rows lead only as a held remainder, fewer than a node's worth per class; otherwise `compose()` refuses (§14.1). The preflight is required for any S4U member. Tests run the real `preconditions` (no `c0.json`, C0 FAIL, preflight missing or present) and the order refusal |
+| M3 a FAILED member has no way back; a dispatcher refusal or a node failure would turn every member FAILED | The FAILED reading is kept: grant §3 allows one walltime retry, and any other failure needs the director. §14.3 states that no command here acts on a FAILED member: re-running one needs a director record and a package change. A pack that ran without launching its members is a pack-level STOP, not member attempts (tested) |
+| m1 a member with `xsec.root` but no rc line could be retried after its output was moved aside | `--retry` refuses while `xsec.root` exists (tested) |
+| m2 the 300 s margin from the pack's End was too wide, and `epoch()` was DST-ambiguous | Margin 120 s from Start + TimeLimit. `sacct` is read with `TZ=UTC` and parsed as UTC (tested both sides of the margin) |
+| m3 a terminal pack without `AllocTRES` billing could be charged at `ReqTRES` billing 1 | A pack that ran is never charged below 256 (tested on a parsed `sacct` table) |
+| m4 `ledger()`, `queued()`, the member runner's accept path, the dispatcher's memory clause and its retry-cap acceptance were untested | Tests added for each, the memory clause on a `jobs.tsv` that breaks it (pin re-set in the test copy only) |
+| m5 stale evidence (15/15) | §11 updated; `test_launch_output.txt` regenerated |
+| m6 the `sbatch_prod.sh` header claimed a memory check | Comment corrected; it checks CPUs and logs the step's TRES. Comment-only diff; `MEMBER_SHA` re-pinned |
+| m7 `simulate` models row caps | Its docstring says so; the packed expected charge is measured from the smoke pack |
+| m8 step states are not written to the status file after a TIMEOUT | §14.4: `members` reads them from `sacct` |
+| m9 a retry pack of fewer members is charged a whole node | Itemized in §14.1 |
+| m10 a failed job-id record write left `retries/<n>.time` behind | Removed on that path (tested) |
+| m11 an OOM kill inside a FAILED pack is labelled FAILED | §14.3 says so; both are stops |
+
+**Re-review 1** at `2b3678b8`: **APPROVE WITH CHANGES, 1 MATERIAL, 3 MINOR.** All 14 earlier dispositions repair
+their findings. The verifier simulated migration, a deadline removal and a full walk from G2 to S4b, and found no
+legitimate sequence blocked by the frozen-order rule and no bypass of it.
+
+| finding | disposition |
+|---|---|
+| R1 redeploying `repo_k` while a pack is queued makes that pack refuse at start, and the STOP halts the launcher (the smoke pack 59860260 runs `8ea086eb`'s dispatcher, `MEMBER_SHA` `9d373dee…`) | `deploy_repo_k.sh` refuses while any `2dc_P_K*` job is queued, or if `squeue` is unreadable (§14.4.1; tested both ways). `repo_k` stays at `8ea086eb` until the smoke pack has ended |
+| R2 a pack-level STOP is global and has no clearance | Stated for the binding to accept (§14.3): clearing it needs a director record, a new commit and a re-binding |
+| R3 an `srun` failure after the `#pack` line makes members FAILED | Same statement (§14.3); the smoke pack exercises `srun` inside the allocation |
+| R4 order refusals read as stops under the binding's ruling 4 | §14.3: they are navigation, and the binding is asked to accept that |
+
+**Re-review 2** (the last allowed) was done by one fresh read-only verifier (Claude Opus 5.5) on `e8cc50b0`, in its
+own detached worktree, with `git-dir` ≠ `git-common-dir`. **Verdict: APPROVE, 0 MATERIAL, 4 MINOR.**
+
+What it confirmed:
+- The delta since `b2d6d8ea` is documentation and evidence only. Since `8ea086eb`, `sbatch_pack.sh` changed only its
+  `MEMBER_SHA` line and `sbatch_prod.sh` only comments, so the smoke pack tested functionally the deployed scripts.
+- Every smoke-pack value, re-measured in `sacct` and on disk.
+- The validation, and requirements 1–7 of the regular-packing record, each mapped to file:line.
+- No prior finding regressed. `RAN 89, FAILED 0`, byte-identical to `test_launch_output.txt`.
+- Live state: 381 PENDING shared jobs (S1 296, S2 50, S4CV 4, S4U 31), no pack queued, `repo_k` at `8ea086eb`.
+- An offline `compose()` walk on the live state: G2 is 15 S4U pairs + 1 single + 1 S4CV pack, S1a is 11 packs with 2
+  held, through S4b with nothing refused or left owed, and caps of 110.0.
+
+| finding | disposition |
+|---|---|
+| F1 "about 7 packs" counted an ended pack as freeing 0.85 | It frees 0.674 at the measured rate, so about 9 (§14.5) |
+| F2 the G2 lines are shared-QOS estimates, not smoke-pack measurements; the 5.4 low end was not derivable from 1,028 s | Labelled as estimates. 5.4 = 16 packs at the 4 rows' mean of 1,213 s. G2 at full caps gives 34–39. The first G2 packs are watched against their caps (§14.5) |
+| F3 the terminal refusal should name S4a | S4a named (97.32 through S2b admits; S4a 105.82) |
+| F4 the gate and migrate transcripts were not in the committed evidence; the analysis json does not bind the `xsec.root` digests | Copied into `evidence/smoke_pack/gatelog_*` (sha-identical). Digests are in `smoke_pack_59860260.txt` (§14.5) |
+
+The verifier noted the second smoke submission. The director authorized it in
+[`AUTHORIZATION-20261016-2d-closeout-stageC-smoke-resubmit.md`](../../../../AUTHORIZATION-20261016-2d-closeout-stageC-smoke-resubmit.md).
+The verifier is the same model as the executor, so their blind spots may be correlated.

@@ -1,0 +1,91 @@
+# measured 2026-10-16T20:23:02Z on login04; repo_k 8ea086eb40155e8dbb850996eedfe7f41b403493
+## TZ=UTC sacct -j 59860260
+JobID|JobName|QOS|State|ExitCode|ElapsedRaw|Submit|Start|End|Timelimit|AllocTRES|MaxRSS
+59860260|2dc_P_K4_S1_001|regular_1|COMPLETED|0:0|634|2026-10-16T16:38:06|2026-10-16T19:03:09|2026-10-16T19:13:43|00:51:00|billing=256,cpu=256,energy=275568,mem=487680M,node=1|
+59860260.batch|batch||COMPLETED|0:0|634|2026-10-16T19:03:09|2026-10-16T19:03:09|2026-10-16T19:13:43||cpu=256,mem=487680M,node=1|69524K
+59860260.extern|extern||COMPLETED|0:0|637|2026-10-16T19:03:09|2026-10-16T19:03:09|2026-10-16T19:13:46||billing=256,cpu=256,mem=487680M,node=1|
+59860260.0|2dc_P_S1_002||COMPLETED|0:0|604|2026-10-16T19:03:17|2026-10-16T19:03:17|2026-10-16T19:13:21||cpu=64,mem=121920M,node=1|14319728K
+59860260.1|2dc_P_S1_004||COMPLETED|0:0|611|2026-10-16T19:03:17|2026-10-16T19:03:17|2026-10-16T19:13:28||cpu=64,mem=121920M,node=1|14310816K
+59860260.2|2dc_P_S1_001||COMPLETED|0:0|618|2026-10-16T19:03:17|2026-10-16T19:03:17|2026-10-16T19:13:35||cpu=64,mem=121920M,node=1|14414800K
+59860260.3|2dc_P_S1_003||COMPLETED|0:0|614|2026-10-16T19:03:17|2026-10-16T19:03:17|2026-10-16T19:13:31||cpu=64,mem=121920M,node=1|14410484K
+## cancelled shared jobs (migrate --only) and the refused first pack
+JobID|JobName|QOS|State|ElapsedRaw|Start
+59829287|2dc_P_S1_001|shared|CANCELLED by 112498|0|None
+59829288|2dc_P_S1_002|shared|CANCELLED by 112498|0|None
+59829289|2dc_P_S1_003|shared|CANCELLED by 112498|0|None
+59829292|2dc_P_S1_004|shared|CANCELLED by 112498|0|None
+59859828|2dc_P_K4_S1_001|regular_1|CANCELLED by 112498|0|None
+## /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/packs/2dc_P_K4_S1_001.members
+2dc_P_K4_S1_001	00:51:00	2dc_P_S1_001,2dc_P_S1_002,2dc_P_S1_003,2dc_P_S1_004
+## /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/packs/59860260.members
+2dc_P_K4_S1_001	00:51:00	2dc_P_S1_001,2dc_P_S1_002,2dc_P_S1_003,2dc_P_S1_004
+## /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/packs/59860260.status
+#pack	2dc_P_K4_S1_001	2dc_P_S1_001,2dc_P_S1_002,2dc_P_S1_003,2dc_P_S1_004	1792177397
+2dc_P_S1_002	0	1792178001
+2dc_P_S1_004	0	1792178007
+2dc_P_S1_003	0	1792178011
+2dc_P_S1_001	0	1792178015
+#step	59860260|2dc_P_K4_S1_001|RUNNING|0:0|631
+#step	59860260.batch|batch|RUNNING|0:0|631
+#step	59860260.extern|extern|RUNNING|0:0|631
+#step	59860260.0|2dc_P_S1_002|COMPLETED|0:0|604
+#step	59860260.1|2dc_P_S1_004|COMPLETED|0:0|611
+#step	59860260.2|2dc_P_S1_001|COMPLETED|0:0|618
+#step	59860260.3|2dc_P_S1_003|COMPLETED|0:0|614
+## dispatcher log /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/logs/2dc_P_K4_S1_001_59860260.out (.err is 0 bytes)
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/docs/orchestration/state/2d-closeout/stageC/production/jobs.tsv: OK
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh: OK
+[pack] 2dc_P_K4_S1_001 job=59860260 node=nid005593 members=2dc_P_S1_001 2dc_P_S1_002 2dc_P_S1_003 2dc_P_S1_004 class=64 121920M 00:51:00 start=2026-10-16T19:03:17Z
+[pack] done 2dc_P_K4_S1_001 fail=0 2026-10-16T19:13:40Z
+## member log head/tail logs/2dc_P_S1_001_59860260.out
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/docs/orchestration/state/2d-closeout/stageC/production/jobs.tsv: OK
+[prod] step 59860260.2 TRES=cpu=64,mem=121920M,node=1 row mem=121920M
+[prod] 2dc_P_S1_001 item=S1 batch=S1a node=nid005593 job=59860260 step=2 pack=2dc_P_S1_001 qos=regular_1 cpus=64 limit=00:51:00 start=2026-10-16T19:03:24Z
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/2d-unfolding/unfold_2d_omnifold_unbinned.py: OK
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/python/omnifold.py: OK
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root: OK
+/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root: OK
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/2d-unfolding/driver_p1.py: OK
+[prod] done 2dc_P_S1_001 2026-10-16T19:13:35Z
+## member log head/tail logs/2dc_P_S1_002_59860260.out
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/docs/orchestration/state/2d-closeout/stageC/production/jobs.tsv: OK
+[prod] step 59860260.0 TRES=cpu=64,mem=121920M,node=1 row mem=121920M
+[prod] 2dc_P_S1_002 item=S1 batch=S1a node=nid005593 job=59860260 step=0 pack=2dc_P_S1_002 qos=regular_1 cpus=64 limit=00:51:00 start=2026-10-16T19:03:24Z
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/2d-unfolding/unfold_2d_omnifold_unbinned.py: OK
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/python/omnifold.py: OK
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root: OK
+/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root: OK
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/2d-unfolding/driver_p1.py: OK
+[prod] done 2dc_P_S1_002 2026-10-16T19:13:21Z
+## member log head/tail logs/2dc_P_S1_003_59860260.out
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/docs/orchestration/state/2d-closeout/stageC/production/jobs.tsv: OK
+[prod] step 59860260.3 TRES=cpu=64,mem=121920M,node=1 row mem=121920M
+[prod] 2dc_P_S1_003 item=S1 batch=S1a node=nid005593 job=59860260 step=3 pack=2dc_P_S1_003 qos=regular_1 cpus=64 limit=00:51:00 start=2026-10-16T19:03:24Z
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/2d-unfolding/unfold_2d_omnifold_unbinned.py: OK
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/python/omnifold.py: OK
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root: OK
+/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root: OK
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/2d-unfolding/driver_p1.py: OK
+[prod] done 2dc_P_S1_003 2026-10-16T19:13:31Z
+## member log head/tail logs/2dc_P_S1_004_59860260.out
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/docs/orchestration/state/2d-closeout/stageC/production/jobs.tsv: OK
+[prod] step 59860260.1 TRES=cpu=64,mem=121920M,node=1 row mem=121920M
+[prod] 2dc_P_S1_004 item=S1 batch=S1a node=nid005593 job=59860260 step=1 pack=2dc_P_S1_004 qos=regular_1 cpus=64 limit=00:51:00 start=2026-10-16T19:03:24Z
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/2d-unfolding/unfold_2d_omnifold_unbinned.py: OK
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/python/omnifold.py: OK
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root: OK
+/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root: OK
+/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/2d-unfolding/driver_p1.py: OK
+[prod] done 2dc_P_S1_004 2026-10-16T19:13:27Z
+## launch.py members 59860260
+pack 59860260 2dc_P_K4_S1_001 COMPLETED elapsed 634 charged 0.1761
+  2dc_P_S1_001 derived=COMPLETED rc=0 step=59860260.2|2dc_P_S1_001|COMPLETED|0:0|618
+  2dc_P_S1_002 derived=COMPLETED rc=0 step=59860260.0|2dc_P_S1_002|COMPLETED|0:0|604
+  2dc_P_S1_003 derived=COMPLETED rc=0 step=59860260.3|2dc_P_S1_003|COMPLETED|0:0|614
+  2dc_P_S1_004 derived=COMPLETED rc=0 step=59860260.1|2dc_P_S1_004|COMPLETED|0:0|611
+## sha256 outputs and analysis
+c67bb58768c68104c54b9a4bf134bb3bee9476d9e48aa4395637eee597d988cb  /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out/2dc_P_S1_001/xsec.root
+6557d9af3ef7fc9aa933df250176424ef44fff308058fecc373fc4f13d5e5466  /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out/2dc_P_S1_002/xsec.root
+a297e178edffe0a81e4f30324deabe3c9e058de7e7dd689aaab21cadd3bf36ca  /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out/2dc_P_S1_003/xsec.root
+15b2554aeaae302ba4d731966dc6245bbe5e1d883d92294dc77e5ff49f02b6f9  /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out/2dc_P_S1_004/xsec.root
+87c9d534677540ce9c165af0d49eb9164af7838341c335caa5b556367768f03c  /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/results/smoke_pack_s1.json
