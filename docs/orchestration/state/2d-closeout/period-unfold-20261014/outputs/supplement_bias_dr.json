@@ -1,0 +1,21 @@
+{
+ "note": "ad hoc supplement (not analyze_periods.py output): bias on the combined result from the DOUBLE ratio, e_X*(r_X/r_A-1), same Metric; noise not computed",
+ "bias_dr_PB": {
+  "integral_shift_pct": -0.6834272830294202,
+  "chi2_pz_marginal": 33.12202139692209,
+  "chi2_pt_marginal": 2.8484366525605957,
+  "chi2_205_pinv": 222.98176804109698,
+  "pz_marg_z_max": 0.3649037528094895,
+  "pt_marg_z_max": 0.18626468619824993,
+  "cell_z_max": 0.5584358149932069
+ },
+ "bias_dr_PC": {
+  "integral_shift_pct": 0.8532657006336413,
+  "chi2_pz_marginal": 2.8581920895079596,
+  "chi2_pt_marginal": 0.8122939521784746,
+  "chi2_205_pinv": 26.48213112039172,
+  "pz_marg_z_max": 0.2596876817939367,
+  "pt_marg_z_max": 0.22381726188588555,
+  "cell_z_max": 0.3698391547088113
+ }
+}

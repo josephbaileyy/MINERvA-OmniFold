@@ -1,0 +1,51 @@
+{
+ "POOL": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_CTRL_s42/xsec.root",
+ "PA": {
+  "s42": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_s42/xsec.root",
+  "s43": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_s43/xsec.root",
+  "boot": [
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b01/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b02/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b03/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b04/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b05/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b06/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b07/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b08/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b09/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b10/xsec.root"
+  ]
+ },
+ "PB": {
+  "s42": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_s42/xsec.root",
+  "s43": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_s43/xsec.root",
+  "boot": [
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b01/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b02/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b03/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b04/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b05/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b06/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b07/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b08/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b09/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b10/xsec.root"
+  ]
+ },
+ "PC": {
+  "s42": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_s42/xsec.root",
+  "s43": "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_s43/xsec.root",
+  "boot": [
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b01/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b02/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b03/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b04/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b05/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b06/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b07/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b08/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b09/xsec.root",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b10/xsec.root"
+  ]
+ }
+}

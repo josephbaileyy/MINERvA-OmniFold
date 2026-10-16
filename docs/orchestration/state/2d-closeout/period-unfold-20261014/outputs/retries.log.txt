@@ -1,0 +1,7 @@
+# 2026-10-15T22:14:55Z walltime retries (grant §2: one per name, walltime/node failure, inside the ceiling)
+# failed: pu_PC_b01 59803463, pu_PC_b04 59803472, pu_PC_b05 59803473: TIMEOUT at the 00:25:00 cap while still iterating (logs reached Starting iteration 4/4/2); same-config PC jobs took 165-653 s; 2 of 3 on nid004074, 1 on nid004078
+# retry cap 00:50:00 = the grant max walltime; nodes nid004074,nid004078 excluded
+# gate: charged 1.8480 (37 terminal pu_ jobs, sacct ElapsedRaw x billing / 256) + 0 in flight + 3 x 0.2083 = 2.4730 <= 6.0
+pu_PC_b01 retry 59829084
+pu_PC_b04 retry 59829085
+pu_PC_b05 retry 59829086
