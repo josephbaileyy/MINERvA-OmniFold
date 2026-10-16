@@ -28,9 +28,9 @@ The decision also requires a fresh read-only verifier to check the design before
 | per-period unfolds, seed 42 | `pu_PA_s42`, `pu_PB_s42`, `pu_PC_s42` `xsec.root` under `/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/`, with the sha256 recorded in [`../period-unfold-20261014/outputs/analysis.json`](../period-unfold-20261014/outputs/analysis.json) `_runs` |
 | seed-43 and bootstrap draws | `pu_X_s43` and `pu_X_b01–b10`, same record. Used only for the noise reference (§4) |
 | pooled control | `pu_CTRL_s42`. It reproduces `E_U` to 3.0e-13 (period-unfold REPORT §1) |
-| central value | `E_U` `4f5a1b6d…` (the `periods.py` pin) |
+| central value | `E_U` `4f5a1b6d…` (the `periods.py` pin). The vector x is read from `work_cov.npz` `EU`. Check 5 requires it to equal the pinned ROOT file's `hXSec2D` on the 205 cells |
 | VL175 covariance | `work_cov.npz` `70c4daf2…`: `hCov_combined` + `ML`, the metric of the period-unfold analysis |
-| loader and metric | the deployed `analyze_periods.py` `912af1dd…` and `periods.py`, imported unchanged: `load()` gives x, t, φ and POT per period; `Metric` gives the projections and χ² |
+| loader and metric | the deployed `analyze_periods.py` `912af1dd…` and `periods.py` `d37c1a8f…`, imported unchanged: `load()` gives x, t, φ and POT per period; `Metric` gives the projections and χ². `common.py` `dcb78c52…` (`area`, `proj_matrix`, `mahalanobis2`, `cell_ipt_ipz`) is pinned too |
 
 If any pin or sha256 differs, the script stops and writes no product.
 
@@ -60,6 +60,7 @@ If any pin or sha256 differs, the script stops and writes no product.
 - **C_PL = Σ_X [V2 / (1 − V2)] e_X (x ∘ g_X)(x ∘ g_X)ᵀ**, with x = `E_U` on the 205 cells.
 
   V2/(1 − V2) is per cell. If e varied by cell, the factor would enter as diag(√k) on each side, k = V2/(1 − V2).
+  The rank ≤ 2 claim would then fail, and check 3 would stop the run. The test's e is identical in all 14 p_T rows.
 
 This is the variance of the exposure-weighted mean of three exchangeable offsets, with the offsets' variance taken
 from their weighted spread about that mean. By construction it is symmetric and PSD, with rank ≤ 2.
@@ -81,8 +82,9 @@ from their weighted spread about that mean. By construction it is symmetric and 
   errors that differ by period. These would show up as part of δ_X, which the term carries.
 - **Regularization.** At 5 iterations, each period may be pulled toward its own prior. That would shrink the observed
   offsets, so the term may be underestimated on this count. This is disclosed and not corrected.
-- **Three periods.** The offsets' variance rests on 2 degrees of freedom, so its own relative SE is of order 100%.
-  This is disclosed. It is not inflated or shrunk.
+- **Three periods.** The offsets' variance rests on 2 degrees of freedom; with these unequal e, the effective number
+  is about 1.83. Its own relative SE is therefore of order 100% (about 105%), and the implied σ is biased low, by
+  about 0.89 at 2 dof. This is disclosed. It is not inflated or shrunk.
 - **Noise.** The period results carry their own statistical and seed noise, and the pooled stat block already covers
   the pooled share of it. The term does not subtract it, which is conservative. Its expected share is reported (§4).
 
@@ -95,27 +97,43 @@ from their weighted spread about that mean. By construction it is symmetric and 
    - `dr_PB/PA` step: +6.94%, `analysis.json` `comparisons.dr_PB/PA.step.value`;
    - `bias_PB` χ² p_∥: 33.78, `comparisons.bias_PB.chi2_pz_marginal`.
 3. **Identity.** Σ_X e_X g_X = 0 to 1e-12 per cell. C_PL is symmetric to 1e-12, and its min eigenvalue is ≥ −1e-12 ×
-   max. Its numerical rank is ≤ 2 at rcond 1e-12.
-4. **Functionals from vectors.** For the 31 functionals F (the S5 map: the area-weighted integral, 14 p_T and 16 p_∥
+   max. Its numerical rank is ≤ 2 at rcond 1e-12. The symmetry check holds exactly by construction (a sum of
+   outer products), so it guards only against a code change. The PSD and rank checks can fire.
+4. **Functional identity.** For the 31 functionals F (the S5 map: the area-weighted integral, 14 p_T and 16 p_∥
    projections, built from `common.py` `area` and `proj_matrix`, which use the same orthogonal-bin-width
    convention), F C_PL Fᵀ equals the same estimator built from the projected vectors F(x ∘ g_X), to 1e-10
-   relative to its max.
+   relative to its max. This is a linear-algebra identity, so it cannot detect a wrong F. Check 5 tests F's inputs.
+5. **Grid and central value.** The pinned `E_U` ROOT file's `hXSec2D` axes equal `common.py` `PT_A`/`PZ_A`, so F's
+   bin widths are the result's own. Its `hXSec2D` on the 205 cells equals `work_cov` `EU`, to a relative 1e-12.
+   S5's stored functional map is compared at the S5 report.
+6. **Populations.** `work_cov` has exactly 205 cells and none is dropped. Each period has exactly 10 bootstrap
+   draws, matching `analysis.json` `n_boot_pairs`.
 
 **Reported (no pass/fail):**
 - per-cell relative σ (median, p84, max), and the σ of each of the 31 functionals, for C_PL and for each sensitivity;
 - the noise share: the same estimator applied to noise-only inputs. It replaces each period's g_X with that period's
-  fractional bootstrap draw d_X,k, minus the e-weighted mean of the draws, for each of the 10 draws k, and also with
-  the seed draw s_X / √2. Each reported number is the mean of the draws' per-cell median variance and p_∥-marginal
-  variance, as a fraction of C_PL's;
-- **coverage of the reference scenario:** the χ² of the S-ref vector b_B (dr), and of the frozen `bias_PB` (raw),
-  in the p_∥ and p_T marginals, against VL175 alone and against VL175 + C_PL. **Pre-declared reading:** C_PL
-  "covers the P_A-reference scenario" if χ² p_∥ of the dr b_B against VL175 + C_PL is ≤ 4. Otherwise it "does not
-  cover it". Either outcome goes to Joseph, and **neither switches the construction**;
-- C_PL's two eigenmodes, as p_∥ and p_T marginal shapes;
+  fractional bootstrap draw d_X,k, minus the e-weighted mean of the draws.
+  - The bootstrap covariance is the mean over the 10 draws k. The seed covariance uses s_X / √2.
+  - Each share is the median over the 205 cells of the noise covariance's diagonal over C_PL's. Likewise for the
+    16 p_∥ marginal bins.
+  - It is reported for the bootstrap, the seed and their sum. The sum may count part of the seed noise twice, if the
+    bootstrap replicas already carry training noise; the test's noise model has the same feature;
+- **the reference scenario, as an algebraic property, not a coverage test:**
+  - the χ² of b_B and b_C (dr, S-ref) and of the frozen `bias_PB`/`bias_PC` (raw), in the p_∥ and p_T marginals,
+    against VL175 alone and against VL175 + C_PL;
+  - to first order, b_X(dr) = e_X(u_X − u_A) with u_X = x ∘ g_X. That lies in C_PL's span, so its χ² against
+    VL175 + C_PL is bounded by an e-only constant, bᵀC_PL⁺b = cᵀM⁻¹c, whatever the data. This bound is printed
+    beside the observed values;
+  - the fraction of each b outside C_PL's span (Euclidean, and in the VL175 metric);
+  - there is **no pass/fail reading**. A block built from the period differences contains them by construction. A real
+    coverage statement would need an estimate that is not built from the same three vectors, and none exists. The raw
+    rows are not in the span, so they are informative;
+- C_PL's two eigenmodes, as p_∥ and p_T marginal shapes. The sign convention makes each mode's p_∥ marginal
+  summed over [8, 15) GeV/c positive;
 - the median ratio of C_PL's per-cell σ to VL175's.
 
 A second report, against the S5 total, follows when S5 lands (Stage F checklist F9):
-- the same coverage numbers, against S5 + C_PL;
+- the same χ² numbers, against S5 + C_PL;
 - the budget, with and without the block.
 
 ## 5. Products and order
@@ -138,3 +156,21 @@ A second report, against the S5 total, follows when S5 lands (Stage F checklist 
      Joseph.
 - **Delegation.** Each verifier runs on a permitted account (claude-school, codex-school, codex-school2 or agy), as Joseph
   ruled on 2026-10-16.
+
+## 6. Amendments before the run (2026-10-16)
+
+The pre-run verifier gave APPROVE WITH CHANGES on `c144cdc4`: 1 MATERIAL and 6 MINOR. No number had been computed.
+This record was amended in place, and the script with it:
+1. **MATERIAL.** The pre-declared reading "covers if χ² ≤ 4" could not fail. The dr reference vectors lie in
+   C_PL's span to first order, so their χ² is bounded by an e-only constant of about 0.68. The reading is removed and
+   replaced by the algebraic statement, the bound, and the out-of-span fractions (§4).
+2. Check 4 is relabelled as an identity, and check 5 (grid and central value) is added. The symmetry check is noted as
+   holding by construction.
+3. `common.py` is pinned (`dcb78c52…`). The director re-measured it on the committed copy.
+4. The noise-share wording now matches the code. The possible double count in the sum is disclosed.
+5. Check 6 (populations: 205 cells, 10 draws per period) is added.
+6. Precision: x comes from `work_cov` and is checked against `E_U`; the rank caveat for per-cell e; the effective dof
+   and the σ bias.
+7. The eigenmode sign convention.
+
+The construction (§2) and the choices of §3 are unchanged.
