@@ -1,0 +1,405 @@
+{
+ "design": "docs/orchestration/state/2d-closeout/playlist-term/DESIGN.md",
+ "inputs": {
+  "E_U": {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+   "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c"
+  },
+  "work_cov": {
+   "path": "/pscratch/sd/j/josephrb/tmp-playlist-coverage-20261014/work_cov.npz",
+   "sha256": "70c4daf2048875538eb74ee507b1d8741ca4ff80a8a351f0500450151a19ed1d"
+  },
+  "analysis_json": {
+   "path": "/pscratch/sd/j/josephrb/tmp-playlist-term-20261016/in/analysis.json",
+   "sha256": "05edff61673fed987f487f8c19ad25ec055db8118491815b9c263f3a7c3de72b"
+  },
+  "scripts": {
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/code/record/scripts/analyze_periods.py": "912af1ddfbae2e28a2cba6e6843b0985e2442adb4b1e775a22d4c547b8d8ebc5",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/code/record/scripts/periods.py": "d37c1a8fbda7119988643100039e28e335e4fc79eb30a10f0f5a3df984fa8514",
+   "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/code/repo/docs/orchestration/state/2d-closeout/playlist-spread-20261014/coverage/scripts/common.py": "dcb78c52f8a11c581942bb1887da29e435c10dfa288125df700789bd331c56a1"
+  }
+ },
+ "runs": {
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_CTRL_s42/xsec.root": "5582d19edb1dda50621c79fcf207c08c749c49180f5847746c3c0d7e46600723",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_s42/xsec.root": "9e59f456ceb0f8eda7b6477829fb114da92c2570fb5cf5fff3f384d4bb48a5c0",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_s43/xsec.root": "28907430e5b958a1bae4cc1779238bbc1e03784bb48e637baf2b1bf5f25dcd56",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b01/xsec.root": "e20e031a53a52f2d8d73ac151d18e640255bf9644e5bea056fd0c302b4772adc",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b02/xsec.root": "854e79a8f035ce9d4512475d790b357efca0c9e2278e8564583126e09722669a",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b03/xsec.root": "6886a0a5ea98b05e0c841dc052dc752a8d6642fc5c2374c53caa70cca1b8d7ed",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b04/xsec.root": "db26bb318beb0f84ac3a07a9299524ff6e7b66397c1cd666b900acc4a4009d52",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b05/xsec.root": "d802236eb835b1aed238b75196312fc76ee12fac4c18b0aadf80eaaacf9216c9",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b06/xsec.root": "3c4350572a806320a1ea5e1c113e214d2d32f97e1d55218f6ff7a072dc787029",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b07/xsec.root": "fdc9d8dc79dfd7d990fda8f93282be3312c84f468b69c402e85114185d70d814",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b08/xsec.root": "d8b990b6342e017eb187ef4810d1f530db02224791501581780973bf42b2aa19",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b09/xsec.root": "0ca233e22b6629aea4ac0e5893cdeb0c8807efb3ca4ae5e37fa2aaffd891f930",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PA_b10/xsec.root": "d86752199f3d107e1eaec251804b58d27a3a1b3be561c6e473a6b46171738139",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_s42/xsec.root": "194db1b92b4f5c6dde283a2c8f38101791acd86b64ef158ac49768e0569268a1",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_s43/xsec.root": "99d6f61f5f3100876c5aa2ae2c316727816cc2e9c2676bb3e1a64616a3b5f6e1",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b01/xsec.root": "083a451509f93941194b06a70a4507ee75dec34faa0141750d6873d128fffb37",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b02/xsec.root": "f0ca57672f267071d5e119c13138b2030cbec2ac25e61a74127483ec074888c0",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b03/xsec.root": "a375965da72f3de6cbf5c7db129a876800947045a9d2c0a54de59424b2d141f7",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b04/xsec.root": "1efdaadbab67788e7c7c1d90112130366f99d16771fac1a4a827b622642f085c",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b05/xsec.root": "d093632e1cd8ccba9bd869844878fe9ae7ce85f7fc7916ae82f63c37a6353b8b",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b06/xsec.root": "8f4846a1e78de70188925593685ac4b27317a78ac3824e0795411879ebebd3bb",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b07/xsec.root": "e37587f8da256c3bedc1dc86ce17de477abdd0ddd23eaeb1714ce0aa3c67aa2d",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b08/xsec.root": "93484bd4e0453c1a3c357689bfd17ae9e1b5e633bff96e6ebc85d4982e731a52",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b09/xsec.root": "df477bd199ec7d5d04d87ec77317341cd1bd026607ab494f2639866db816d16a",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PB_b10/xsec.root": "3e4cad35950b9167ee2e41bdedcf7678a8190f6b20f5ff3a750f5d4208c0fad3",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_s42/xsec.root": "8216fccca49776d073d8ddbacf836d8872c6488e74a4ce6d09996e5a8b676dfc",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_s43/xsec.root": "68db869a9662580e019a47d72853a142306c6c48a5cc0624d1e49cd94a216b45",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b01/xsec.root": "a142b241d80689586c5dfb2fe29c3193fa331a05966bb98291b921a6b9ddabfd",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b02/xsec.root": "607343c7a8b5cc0dc792148233ec2bab99642607c4e8b0b78e77b9d37f7abe9d",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b03/xsec.root": "5e9a6604db5d5c7aec80a6dbcab10a6cb35e801e9afa32691eb15292171032c0",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b04/xsec.root": "af852c75f0802b2fa28fd646341fee5dd64a198b877b3279462074b0805b65ab",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b05/xsec.root": "0d48c32481f50edbc6e176b38125f8235ccb2a92d29a1764d1a7119ab2e31c6a",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b06/xsec.root": "3d4b9db5549d74ad2ef52f9bfb5611ae679760458fb98438069dfdb906b75e3e",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b07/xsec.root": "c3cd7b4471a9bdb0fcafe824c0ea533b3d03783a77a49d6adb41b3d1af877d67",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b08/xsec.root": "1a00b1bd88d7a2939df3c1dbbd763f693091ec546624f08d270f255207f442bc",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b09/xsec.root": "e9207ec8dcde879802f947e822370faf5418e50c83b2b6d65bd20b8794580b15",
+  "/pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/out/pu_PC_b10/xsec.root": "836f2da6ec65b818efe38384b819ac49549865717e5032ae098d6837a281b739"
+ },
+ "checks": {
+  "grid_equals_E_U_axes": true,
+  "x_vs_E_U_rel": 0.0,
+  "control_dr_step": {
+   "value": 0.06942682814976497,
+   "frozen": 0.06942682814976497,
+   "rel": 0.0
+  },
+  "control_bias_PB_chi2_pz": {
+   "value": 33.77885700582344,
+   "frozen": 33.77885700582344,
+   "rel": 0.0
+  },
+  "identity_sum_e_g": 2.949029909160572e-16,
+  "symmetry_rel": 0.0,
+  "min_eig_over_max": -2.516404037119923e-16,
+  "rank": 2,
+  "functionals_from_vectors_rel": 3.292526080756413e-16,
+  "functionals_projected_estimator_rel": 5.487543467927355e-16
+ },
+ "checks_passed": true,
+ "report": {
+  "C_PL": {
+   "cell_rel_sigma_pct": {
+    "median": 2.136847531649445,
+    "p84": 3.307910887051735,
+    "max": 5.69430361465634
+   },
+   "integral_rel_sigma_pct": 1.9683699043176155,
+   "pt_rel_sigma_pct": [
+    2.0768,
+    1.1707,
+    1.5432,
+    1.5872,
+    1.7701,
+    2.1473,
+    1.9361,
+    2.0232,
+    1.8259,
+    2.1131,
+    2.1943,
+    2.4016,
+    1.8982,
+    2.7186
+   ],
+   "pz_rel_sigma_pct": [
+    1.8202,
+    1.2852,
+    1.7516,
+    1.7133,
+    1.8203,
+    1.964,
+    1.9696,
+    2.7139,
+    3.3644,
+    3.241,
+    2.4382,
+    2.6349,
+    1.8498,
+    1.6885,
+    1.717,
+    1.2416
+   ],
+   "median_sigma_ratio_to_VL175": 0.3446891503863958
+  },
+  "S_ref": {
+   "cell_rel_sigma_pct": {
+    "median": 1.4538123774861471,
+    "p84": 2.2443762259795665,
+    "max": 4.269877425355257
+   },
+   "integral_rel_sigma_pct": 1.0932223959775038,
+   "pt_rel_sigma_pct": [
+    1.1811,
+    0.6519,
+    0.8562,
+    0.8807,
+    0.958,
+    1.1891,
+    1.125,
+    1.156,
+    1.0028,
+    1.1914,
+    1.249,
+    1.3024,
+    1.0271,
+    1.7929
+   ],
+   "pz_rel_sigma_pct": [
+    1.4152,
+    0.6947,
+    0.9571,
+    0.9661,
+    1.076,
+    1.2811,
+    1.2233,
+    1.5649,
+    1.9706,
+    1.7961,
+    1.6064,
+    2.2351,
+    1.4724,
+    1.1092,
+    1.0185,
+    0.8909
+   ],
+   "median_sigma_ratio_to_VL175": 0.21595292784210504
+  },
+  "S_raw": {
+   "cell_rel_sigma_pct": {
+    "median": 2.4121146996807523,
+    "p84": 3.98609589634316,
+    "max": 12.47684988131073
+   },
+   "integral_rel_sigma_pct": 1.9893053689764653,
+   "pt_rel_sigma_pct": [
+    2.4346,
+    1.4826,
+    1.8455,
+    1.8347,
+    2.0287,
+    2.3079,
+    2.0183,
+    2.0421,
+    1.9451,
+    2.007,
+    1.9357,
+    2.3655,
+    2.21,
+    3.2896
+   ],
+   "pz_rel_sigma_pct": [
+    2.1872,
+    1.7322,
+    2.0859,
+    2.0251,
+    2.0744,
+    2.0309,
+    1.9342,
+    2.4669,
+    2.6862,
+    2.9101,
+    4.1078,
+    4.4052,
+    2.4485,
+    2.0279,
+    2.3044,
+    2.0897
+   ],
+   "median_sigma_ratio_to_VL175": 0.41093399485709226
+  },
+  "S_ref_raw": {
+   "cell_rel_sigma_pct": {
+    "median": 1.5506192732235948,
+    "p84": 2.8767471931454054,
+    "max": 10.436412337559842
+   },
+   "integral_rel_sigma_pct": 1.0815203014744823,
+   "pt_rel_sigma_pct": [
+    1.3235,
+    0.8388,
+    1.0066,
+    0.9922,
+    1.0966,
+    1.2667,
+    1.1119,
+    1.1115,
+    1.064,
+    1.0918,
+    1.086,
+    1.4951,
+    1.4369,
+    2.385
+   ],
+   "pz_rel_sigma_pct": [
+    1.6257,
+    0.9404,
+    1.1305,
+    1.1343,
+    1.1936,
+    1.2442,
+    1.108,
+    1.338,
+    1.4633,
+    1.9218,
+    3.5481,
+    3.942,
+    2.0115,
+    1.4397,
+    1.7053,
+    1.6755
+   ],
+   "median_sigma_ratio_to_VL175": 0.2706210778033944
+  },
+  "k_factor": 0.6690575980384477,
+  "exposure_share": {
+   "PA": 0.5333794294273275,
+   "PB": 0.2945414379385886,
+   "PC": 0.172079132634084
+  },
+  "exposure_share_constant_over_cells": true,
+  "noise_share": {
+   "boot": {
+    "median_cell_variance_share": 0.08403191962585571,
+    "median_pz_marginal_variance_share": 0.018600169679500775
+   },
+   "seed": {
+    "median_cell_variance_share": 0.001843448015184519,
+    "median_pz_marginal_variance_share": 0.00021865283624576052
+   },
+   "total": {
+    "median_cell_variance_share": 0.08735098367713048,
+    "median_pz_marginal_variance_share": 0.018818822515746535
+   },
+   "n_boot": 10
+  },
+  "reference_scenario_algebraic": {
+   "b_PB_dr": {
+    "pz_vs_VL175": 33.12202139692209,
+    "pz_vs_VL175_plus_C_PL": 0.6768911919817413,
+    "pt_vs_VL175": 2.8484366525605957,
+    "pt_vs_VL175_plus_C_PL": 0.5566562418990496,
+    "out_of_span": {
+     "euclid": 0.007863471686033418,
+     "pz_vl175_chi2_fraction": 0.0006796087286378802
+    },
+    "first_order_in_span_bound": 0.6833378267038563
+   },
+   "b_PC_dr": {
+    "pz_vs_VL175": 2.8581920895079596,
+    "pz_vs_VL175_plus_C_PL": 0.30637917886262717,
+    "pt_vs_VL175": 0.8122939521784746,
+    "pt_vs_VL175_plus_C_PL": 0.24465742638376878,
+    "out_of_span": {
+     "euclid": 0.005929322509216679,
+     "pz_vl175_chi2_fraction": 0.0007925147738579445
+    },
+    "first_order_in_span_bound": 0.3401730842186354
+   },
+   "bias_PB_raw_frozen": {
+    "pz_vs_VL175": 33.77885700582344,
+    "pz_vs_VL175_plus_C_PL": 1.9761447595072923,
+    "pt_vs_VL175": 1.9550452517647192,
+    "pt_vs_VL175_plus_C_PL": 0.5986962758144645,
+    "out_of_span": {
+     "euclid": 0.45703145881414936,
+     "pz_vl175_chi2_fraction": 0.05430366644943937
+    },
+    "first_order_in_span_bound": null
+   },
+   "bias_PC_raw_frozen": {
+    "pz_vs_VL175": 2.618525252019177,
+    "pz_vs_VL175_plus_C_PL": 0.40012524426914264,
+    "pt_vs_VL175": 0.6210652585695927,
+    "pt_vs_VL175_plus_C_PL": 0.21125094882637574,
+    "out_of_span": {
+     "euclid": 0.13332877179994726,
+     "pz_vl175_chi2_fraction": 0.4402869333717889
+    },
+    "first_order_in_span_bound": null
+   },
+   "note": "no pass/fail: the dr vectors lie in C_PL's span to first order, so their chi2 against VL175 + C_PL is bounded by an e-only constant whatever the data (DESIGN \u00a74, \u00a76 item 1)"
+  },
+  "eigenmodes": [
+   {
+    "eigenvalue": 6.203205295126117e-79,
+    "pz_marginal_rel_pct": [
+     1.3802,
+     1.1904,
+     1.5709,
+     1.7061,
+     1.8193,
+     1.9029,
+     1.95,
+     2.7125,
+     3.3642,
+     3.1999,
+     1.494,
+     0.0956,
+     0.3992,
+     1.0231,
+     1.308,
+     0.5717
+    ],
+    "pt_marginal_rel_pct": [
+     1.7193,
+     1.0049,
+     1.5273,
+     1.5719,
+     1.704,
+     2.1217,
+     1.936,
+     2.0207,
+     1.7958,
+     2.1062,
+     2.1907,
+     2.3176,
+     1.7558,
+     1.6671
+    ]
+   },
+   {
+    "eigenvalue": 7.585796131016622e-80,
+    "pz_marginal_rel_pct": [
+     -1.1866,
+     0.4846,
+     0.7748,
+     0.1574,
+     -0.0603,
+     -0.4863,
+     -0.2777,
+     0.086,
+     -0.0355,
+     0.5148,
+     1.9269,
+     2.6331,
+     1.8062,
+     1.3433,
+     1.1123,
+     1.1022
+    ],
+    "pt_marginal_rel_pct": [
+     1.165,
+     0.6006,
+     0.2209,
+     0.2194,
+     0.4794,
+     0.3308,
+     0.0138,
+     0.1,
+     0.3302,
+     0.1701,
+     0.1253,
+     0.6297,
+     0.7213,
+     2.1475
+    ]
+   }
+  ]
+ },
+ "npz": {
+  "path": "out/playlist_term.npz",
+  "sha256": "c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476"
+ }
+}

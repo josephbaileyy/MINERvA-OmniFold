@@ -1,0 +1,127 @@
+{
+ "checks": {
+  "grid_equals_E_U_axes": true,
+  "x_vs_E_U_rel": 0.0,
+  "control_dr_step": {
+   "value": 0.06942682814976497,
+   "frozen": 0.06942682814976497,
+   "rel": 0.0
+  },
+  "control_bias_PB_chi2_pz": {
+   "value": 33.77885700582344,
+   "frozen": 33.77885700582344,
+   "rel": 0.0
+  },
+  "identity_sum_e_g": 2.949029909160572e-16,
+  "symmetry_rel": 0.0,
+  "min_eig_over_max": -2.516404037119923e-16,
+  "rank": 2,
+  "functionals_from_vectors_rel": 3.292526080756413e-16,
+  "functionals_projected_estimator_rel": 5.487543467927355e-16
+ },
+ "C_PL": {
+  "cell_rel_sigma_pct": {
+   "median": 2.136847531649445,
+   "p84": 3.307910887051735,
+   "max": 5.69430361465634
+  },
+  "integral_rel_sigma_pct": 1.9683699043176155,
+  "pt_rel_sigma_pct": [
+   2.0768,
+   1.1707,
+   1.5432,
+   1.5872,
+   1.7701,
+   2.1473,
+   1.9361,
+   2.0232,
+   1.8259,
+   2.1131,
+   2.1943,
+   2.4016,
+   1.8982,
+   2.7186
+  ],
+  "pz_rel_sigma_pct": [
+   1.8202,
+   1.2852,
+   1.7516,
+   1.7133,
+   1.8203,
+   1.964,
+   1.9696,
+   2.7139,
+   3.3644,
+   3.241,
+   2.4382,
+   2.6349,
+   1.8498,
+   1.6885,
+   1.717,
+   1.2416
+  ],
+  "median_sigma_ratio_to_VL175": 0.3446891503863958
+ },
+ "reference_scenario": {
+  "b_PB_dr": {
+   "pz_vs_VL175": 33.12202139692209,
+   "pz_vs_VL175_plus_C_PL": 0.6768911919817413,
+   "pt_vs_VL175": 2.8484366525605957,
+   "pt_vs_VL175_plus_C_PL": 0.5566562418990496,
+   "out_of_span": {
+    "euclid": 0.007863471686033418,
+    "pz_vl175_chi2_fraction": 0.0006796087286378802
+   },
+   "first_order_in_span_bound": 0.6833378267038563
+  },
+  "b_PC_dr": {
+   "pz_vs_VL175": 2.8581920895079596,
+   "pz_vs_VL175_plus_C_PL": 0.30637917886262717,
+   "pt_vs_VL175": 0.8122939521784746,
+   "pt_vs_VL175_plus_C_PL": 0.24465742638376878,
+   "out_of_span": {
+    "euclid": 0.005929322509216679,
+    "pz_vl175_chi2_fraction": 0.0007925147738579445
+   },
+   "first_order_in_span_bound": 0.3401730842186354
+  },
+  "bias_PB_raw_frozen": {
+   "pz_vs_VL175": 33.77885700582344,
+   "pz_vs_VL175_plus_C_PL": 1.9761447595072923,
+   "pt_vs_VL175": 1.9550452517647192,
+   "pt_vs_VL175_plus_C_PL": 0.5986962758144645,
+   "out_of_span": {
+    "euclid": 0.45703145881414936,
+    "pz_vl175_chi2_fraction": 0.05430366644943937
+   },
+   "first_order_in_span_bound": null
+  },
+  "bias_PC_raw_frozen": {
+   "pz_vs_VL175": 2.618525252019177,
+   "pz_vs_VL175_plus_C_PL": 0.40012524426914264,
+   "pt_vs_VL175": 0.6210652585695927,
+   "pt_vs_VL175_plus_C_PL": 0.21125094882637574,
+   "out_of_span": {
+    "euclid": 0.13332877179994726,
+    "pz_vl175_chi2_fraction": 0.4402869333717889
+   },
+   "first_order_in_span_bound": null
+  },
+  "note": "no pass/fail: the dr vectors lie in C_PL's span to first order, so their chi2 against VL175 + C_PL is bounded by an e-only constant whatever the data (DESIGN \u00a74, \u00a76 item 1)"
+ },
+ "noise_share": {
+  "boot": {
+   "median_cell_variance_share": 0.08403191962585571,
+   "median_pz_marginal_variance_share": 0.018600169679500775
+  },
+  "seed": {
+   "median_cell_variance_share": 0.001843448015184519,
+   "median_pz_marginal_variance_share": 0.00021865283624576052
+  },
+  "total": {
+   "median_cell_variance_share": 0.08735098367713048,
+   "median_pz_marginal_variance_share": 0.018818822515746535
+  },
+  "n_boot": 10
+ }
+}
