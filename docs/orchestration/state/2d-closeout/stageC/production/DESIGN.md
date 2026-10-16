@@ -767,7 +767,15 @@ is copied as `evidence/smoke_pack/analyze_s1_smoke_pack.json`. Its results:
   All four PASS.
 
 The file's overall `S1` field reads INCONCLUSIVE only because 296 replicas are missing, as designed. The outputs stay
-in `out/`, and the production `s1` analysis will re-check them.
+in `out/`, and the production `s1` analysis will re-check them. The analysis json does not record the digests of the
+`xsec.root` files it read. They are recorded beside it in `smoke_pack_59860260.txt`, measured at the same time.
+
+**Gate and migration records.** These are copied from `$NS/gatelog/` with byte-identical sha256:
+- `gatelog_smoke_migrate_dryrun.txt`, `gatelog_smoke_migrate_execute.txt`, `gatelog_migrate_20261016T163006Z.tsv`
+  (exactly the 4 jobs) and `gatelog_smoke_migrate_sacct.txt`;
+- `gatelog_smoke_pack1_cancel_sacct.txt`: 59859828 CANCELLED, ElapsedRaw 0, Start None;
+- `gatelog_smoke_pack2_submit.txt`: `GATE completed 3.4744 + in-flight at cap 83.1250 + packs 0.8500 = 87.4494 vs
+  ceiling 100.0`, then the `sbatch` line and job 59860260.
 
 **Expected charge** (record §4.7). Measured terminal so far is 4.3244 node-h:
 - C0, 2 rows: 0.2430;
@@ -780,12 +788,17 @@ What remains:
 
 | part | basis | expected (node-h) |
 |---|---|---|
-| G2: 31 S4U rows = 15 pairs + 1 single | a pack ends with its slower member; 1,028–1,323 s measured on the shared QOS | 5.4–5.9 |
-| G2: the S4CV pack | production-driver CV like C0's `cv` row, 2,655 s on the shared QOS | 0.74–0.85 |
+| G2: 31 S4U rows = 15 pairs + 1 single | **shared-QOS estimate**: 16 packs at the 4 rows' mean (1,213 s) to their max (1,323 s) | 5.4–5.9 |
+| G2: the S4CV pack | **shared-QOS estimate**: production-driver CV like C0's `cv` row, 2,655 s of its 3,060 s cap | 0.74–0.85 |
 | S1–S4b: 119 CV packs (S1 74, S2 25, S4B 20) | 634 s per pack, as measured; ×1.25 margin | 21.0–26.2 |
 | **total, including the 4.3244 measured** | | **≈ 31–37** |
 
 This is against the 100.0 ceiling and the 118.1083 all-at-cap worst case.
+
+Only the CV row is measured from the smoke pack. No 128-CPU pair, S4U single or production-driver CV member has run
+packed yet, so the two G2 lines are shared-QOS estimates. The first G2 packs are watched against their caps (00:30:00
+S4U, 00:51:00 S4CV), and C0's `cv` row used 87% of that cap on the shared QOS. A TIMEOUT there follows the retry rule
+(§14.3). The total does not depend on these lines: G2 at full caps (8.85) gives about 34–39.
 
 **Would the gate first refuse before S4b?** Caps still to submit:
 - G2: 8.85;
@@ -799,10 +812,12 @@ No refusal is expected. A refusal before S4b would need one of two things:
 - the earlier CV packs averaging at least 0.7186 node-h (2,587 s, about 4.1 times the smoke pack, with G2 at its
   caps);
 - or batches submitted while their predecessors are all still in flight. Every cap at once would be about 105.8 after
-  S4a, so S4a would be refused until about 7 packs end. Under §6 that refusal is a wait, because jobs are in flight.
+  S4a, 5.82 over the ceiling. A pack that ends at the measured rate frees 0.85 − 0.176 = 0.674, so S4a would be
+  refused until about 9 packs end. Under §6 that refusal is a wait, because jobs are in flight.
 
-Only the all-at-cap worst case (114.32 from today's terminal) would refuse terminally, before S4b. That was already
-stated in §14.1.
+Only the all-at-cap worst case would refuse terminally. The gate then reaches 97.32 through S2b and still admits.
+**S4a is the first batch refused**, at 105.82, and S4b would bring 114.32 from today's terminal. §14.1 already states
+that worst case.
 
 **Noted, not changed:**
 - The member runner's `pack=` log field shows the member's name, because `srun --job-name` sets `SLURM_JOB_NAME`
@@ -855,6 +870,26 @@ legitimate sequence blocked by the frozen-order rule and no bypass of it.
 | R2 a pack-level STOP is global and has no clearance | Stated for the binding to accept (§14.3): clearing it needs a director record, a new commit and a re-binding |
 | R3 an `srun` failure after the `#pack` line makes members FAILED | Same statement (§14.3); the smoke pack exercises `srun` inside the allocation |
 | R4 order refusals read as stops under the binding's ruling 4 | §14.3: they are navigation, and the binding is asked to accept that |
+
+**Re-review 2** (the last allowed) was done by one fresh read-only verifier (Claude Opus 5.5) on `e8cc50b0`, in its
+own detached worktree, with `git-dir` ≠ `git-common-dir`. **Verdict: APPROVE, 0 MATERIAL, 4 MINOR.**
+
+What it confirmed:
+- The delta since `b2d6d8ea` is documentation and evidence only. Since `8ea086eb`, `sbatch_pack.sh` changed only its
+  `MEMBER_SHA` line and `sbatch_prod.sh` only comments, so the smoke pack tested functionally the deployed scripts.
+- Every smoke-pack value, re-measured in `sacct` and on disk.
+- The validation, and requirements 1–7 of the regular-packing record, each mapped to file:line.
+- No prior finding regressed. `RAN 89, FAILED 0`, byte-identical to `test_launch_output.txt`.
+- Live state: 381 PENDING shared jobs (S1 296, S2 50, S4CV 4, S4U 31), no pack queued, `repo_k` at `8ea086eb`.
+- An offline `compose()` walk on the live state: G2 is 15 S4U pairs + 1 single + 1 S4CV pack, S1a is 11 packs with 2
+  held, through S4b with nothing refused or left owed, and caps of 110.0.
+
+| finding | disposition |
+|---|---|
+| F1 "about 7 packs" counted an ended pack as freeing 0.85 | It frees 0.674 at the measured rate, so about 9 (§14.5) |
+| F2 the G2 lines are shared-QOS estimates, not smoke-pack measurements; the 5.4 low end was not derivable from 1,028 s | Labelled as estimates. 5.4 = 16 packs at the 4 rows' mean of 1,213 s. G2 at full caps gives 34–39. The first G2 packs are watched against their caps (§14.5) |
+| F3 the terminal refusal should name S4a | S4a named (97.32 through S2b admits; S4a 105.82) |
+| F4 the gate and migrate transcripts were not in the committed evidence; the analysis json does not bind the `xsec.root` digests | Copied into `evidence/smoke_pack/gatelog_*` (sha-identical). Digests are in `smoke_pack_59860260.txt` (§14.5) |
 
 The verifier noted the second smoke submission. The director authorized it in
 [`AUTHORIZATION-20261016-2d-closeout-stageC-smoke-resubmit.md`](../../../../AUTHORIZATION-20261016-2d-closeout-stageC-smoke-resubmit.md).

@@ -81,7 +81,7 @@
   }
  },
  "package": {
-  "docs/orchestration/state/2d-closeout/stageC/production/DESIGN.md": "30c3febab6d59d7a0339b3975b5581a0f316088a5268a16b381687011876a2a7",
+  "docs/orchestration/state/2d-closeout/stageC/production/DESIGN.md": "fc214731c9185278bdbe6e2ac6357305a58981844d18583d57d7d04e5172ee66",
   "docs/orchestration/state/2d-closeout/stageC/production/analyze_prod.py": "f9e0d8f271f28bee1ef264de62cf7b924d18d4086e8fbe896abff4adb79320a4",
   "docs/orchestration/state/2d-closeout/stageC/production/deploy_repo_k.sh": "49619cc576246903195f4dd93288e7c2b302a3a5109c3cd1d9bd9371682dd0e6",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/analyze_c0.json": "89bff43c8179a66fb822816338a4a74907e815f66dac5bd9c7817d4933e41777",
@@ -97,6 +97,12 @@
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/test_launch.py": "7b4360a3a70b0a232d430c3f2e53290fdef3eda94a451d137517a73dc873d31d",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke/test_launch_output.txt": "2ffbb599c2fd7c8fa2ac78d3f7f8ca7ac49081b0870fd919b5d6c44af2b26308",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/analyze_s1_smoke_pack.json": "87c9d534677540ce9c165af0d49eb9164af7838341c335caa5b556367768f03c",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/gatelog_migrate_20261016T163006Z.tsv": "5718cab94b22ca55705cbb75d19908dbd91c287b89639d40b7cd0d8fa0547b31",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/gatelog_smoke_migrate_dryrun.txt": "e73288146564406af1b6961cff8a9db63f65b5291ffd23545c86494ade12e884",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/gatelog_smoke_migrate_execute.txt": "d96192fdeea77de91c858fa24e517c2fc6ad3b03c8f6561f185e50349267c416",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/gatelog_smoke_migrate_sacct.txt": "c908d93200fc834c967bc4e1b436f74fb65e854c32f129f61aa5792f1198b441",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/gatelog_smoke_pack1_cancel_sacct.txt": "03846ce70408e6b984529a6fefa79e48853f6c482b81158deecd22b13349f4e7",
+  "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/gatelog_smoke_pack2_submit.txt": "a79d62b0a45120bf3f3de35d22a28fbb06bbde0e3a884b217d0adf11b32a4fe6",
   "docs/orchestration/state/2d-closeout/stageC/production/evidence/smoke_pack/smoke_pack_59860260.txt": "1b33847b1139d5056bb0cc58b8d4cfc14f47dd42fa3b63dc93b6a006a3c99a44",
   "docs/orchestration/state/2d-closeout/stageC/production/jobs.tsv": "c4f1b7082fac3635be78622cb9b9a5f71103789337bbc29e7dd29684e9b4d3a4",
   "docs/orchestration/state/2d-closeout/stageC/production/launch.py": "a6a9a60adc8394059c8edbf93c225b6639c28d4f6d72a55e65308c5ae298c405",
