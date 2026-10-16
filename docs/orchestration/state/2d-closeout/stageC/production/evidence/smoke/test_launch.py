@@ -16,7 +16,7 @@ Cases (AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md §4):
   - migrate: lists only never-started PENDING shared-QOS rows, cancels with --state=PENDING, refuses a stale --only;
   - sbatch_pack.sh (stubbed scontrol/srun/sacct): a good pack runs every member as `srun --exact -n1 -c -mem` with
     its explicit name and records each rc; it refuses before any step on a duplicated or unknown member, a mixed
-    class, arguments that differ from the launcher's record, and billing 64 (accepts 256); one failing member does
+    class, arguments that differ from the launcher's record, and billing 64 (accepts 256), QOS shared (accepts regular_1 and regular); one failing member does
     not stop the others; MEMBER_SHA equals sha256(sbatch_prod.sh);
   - sbatch_prod.sh refuses without --member, outside an srun step, at billing 64, and on a CPU mismatch.
 """
@@ -339,7 +339,7 @@ pack_src = (PKG / "sbatch_pack.sh").read_text()
 case("sbatch_pack.sh MEMBER_SHA equals sha256(sbatch_prod.sh)", f"MEMBER_SHA={sha_prod}" in pack_src)
 
 
-def sh_env(billing=256, qos="regular", tl="00:51:00", fail_member=None):
+def sh_env(billing=256, qos="regular_1", tl="00:51:00", fail_member=None):
     t = Path(tempfile.mkdtemp())
     ns = t / "ns"
     pkg = ns / "repo_k/docs/orchestration/state/2d-closeout/stageC/production"
@@ -390,11 +390,14 @@ for label, members, kw, rec, want in (
         ("a mixed class", [n1, u[0]["name"]], {}, None, "differ in class"),
         ("arguments that differ from the launcher's record", m4, {}, [n1, n2, n3, "2dc_P_S1_009"], "differ from"),
         ("billing 64", m4, {"billing": 64}, None, "billing '64' != pack billing 256"),
-        ("QOS shared", m4, {"qos": "shared"}, None, "QOS shared != regular"),
+        ("QOS shared", m4, {"qos": "shared"}, None, "QOS shared is not regular"),
         ("a TimeLimit other than the cap", m4, {"tl": "01:00:00"}, None, "TimeLimit 01:00:00")):
     t, ns = sh_env(**kw)
     rc, o, log = run_pack(t, ns, members, record=rec)
     case(f"dispatcher refuses {label} before any step", rc == 4 and want in o and not log)
+t, ns = sh_env(qos="regular")
+rc, o, log = run_pack(t, ns, m4)
+case("dispatcher accepts QOS regular as well as regular_1 (the name Slurm records)", rc == 0 and len(log) == 4)
 t, ns = sh_env(fail_member=n2)
 rc, o, log = run_pack(t, ns, m4)
 st = (ns / "packs" / "999.status").read_text()
@@ -424,6 +427,11 @@ rc, o = run_member(["--member", "2dc_P_S1_999x"])
 case("member runner refuses an unknown member", rc == 4 and "not exactly one jobs.tsv row" in o)
 rc, o = run_member(["--member", n1], billing=64)
 case("member runner refuses billing 64", rc == 4 and "billing '64'" in o)
+t2, ns2 = sh_env(qos="shared")
+env = dict(os.environ, PATH=f"{t2 / 'bin'}:{os.environ['PATH']}", SLURM_JOB_ID="999", SLURM_STEP_ID="0",
+           SLURM_CPUS_PER_TASK="64")
+p = subprocess.run(["bash", str(t2 / "sbatch_prod.sh"), "--member", n1], capture_output=True, text=True, env=env)
+case("member runner refuses QOS shared", p.returncode == 4 and "QOS shared is not regular" in p.stdout + p.stderr)
 rc, o = run_member(["--member", n1], cpus="128")
 case("member runner refuses a CPU mismatch", rc == 4 and "step CPUs '128' != 64" in o)
 

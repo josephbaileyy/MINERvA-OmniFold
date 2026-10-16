@@ -15,7 +15,7 @@ D2=/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding
 [ "${1:-}" = --member ] && [ -n "${2:-}" ] || { echo "REFUSE: usage: sbatch_prod.sh --member <jobs.tsv name>"; exit 4; }
 NAME=$2
 case "${SLURM_STEP_ID:-}" in ''|batch|extern) echo "REFUSE: run only as an srun step of sbatch_pack.sh"; exit 4;; esac
-PACK_QOS=regular; PACK_BILLING=256
+PACK_BILLING=256   # QOS: `--qos=regular` is recorded as regular_1 (or regular_0)
 
 # ---- pins (DESIGN §2) --------------------------------------------------------------------------------------------
 JOBS_SHA=c4f1b7082fac3635be78622cb9b9a5f71103789337bbc29e7dd29684e9b4d3a4   # jobs.tsv
@@ -42,7 +42,7 @@ IFS=$'\t' read -r R_NAME R_ITEM R_BATCH R_QOS R_CPUS R_MEM R_TIME R_BILL R_ENF R
 JOBINFO=$(scontrol show job "$SLURM_JOB_ID")
 G_QOS=$(grep -o 'QOS=[^ ]*' <<< "$JOBINFO" | head -1 | cut -d= -f2)
 G_TIME=$(grep -o 'TimeLimit=[^ ]*' <<< "$JOBINFO" | head -1 | cut -d= -f2)
-[ "$G_QOS" = "$PACK_QOS" ] || { echo "REFUSE: QOS $G_QOS != $PACK_QOS"; exit 4; }
+case "$G_QOS" in regular|regular_0|regular_1) ;; *) echo "REFUSE: QOS $G_QOS is not regular (regular, regular_0, regular_1)"; exit 4;; esac
 # The charge gate counts the pack at billing 256 (one node); refuse anything else.
 G_BILL=$(grep -o 'AllocTRES=[^ ]*' <<< "$JOBINFO" | grep -o 'billing=[0-9]*' | head -1 | cut -d= -f2)
 [ "$G_BILL" = "$PACK_BILLING" ] || { echo "REFUSE: allocated billing '$G_BILL' != pack billing $PACK_BILLING"; exit 4; }

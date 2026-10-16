@@ -19,8 +19,8 @@ NS=/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015
 REPO=$NS/repo_k
 PKG=$REPO/docs/orchestration/state/2d-closeout/stageC/production
 JOBS_SHA=c4f1b7082fac3635be78622cb9b9a5f71103789337bbc29e7dd29684e9b4d3a4    # jobs.tsv (unchanged by packing)
-MEMBER_SHA=885dd7f28191a1e51b411358eaeef55a3db037b17fbd526aa9d8410f6c64a73d                                                    # sbatch_prod.sh (the member runner)
-PACK_QOS=regular; NODE_CPUS=256; NODE_MEM_MB=515100; PACK_BILLING=256
+MEMBER_SHA=9d373deee1289add57190d004f2919d20ec93080efeef2f8c5ed19028ab2bc47                                                    # sbatch_prod.sh (the member runner)
+NODE_CPUS=256; NODE_MEM_MB=515100; PACK_BILLING=256
 JID=${SLURM_JOB_ID:?not a Slurm job}
 PNAME=${SLURM_JOB_NAME:?no job name}   # the PACK's name only; a member's identity comes from its argument
 refuse() { echo "REFUSE: $*"; exit 4; }
@@ -54,7 +54,8 @@ G_QOS=$(grep -o 'QOS=[^ ]*' <<< "$JOBINFO" | head -1 | cut -d= -f2)
 G_CPUS=$(grep -o 'NumCPUs=[^ ]*' <<< "$JOBINFO" | head -1 | cut -d= -f2)
 G_TIME=$(grep -o 'TimeLimit=[^ ]*' <<< "$JOBINFO" | head -1 | cut -d= -f2)
 G_BILL=$(grep -o 'AllocTRES=[^ ]*' <<< "$JOBINFO" | grep -o 'billing=[0-9]*' | head -1 | cut -d= -f2)
-[ "$G_QOS" = "$PACK_QOS" ] || refuse "QOS $G_QOS != $PACK_QOS"
+# `--qos=regular` is recorded as regular_1 (or regular_0) on Perlmutter (seen 2026-10-16, job 59859828)
+case "$G_QOS" in regular|regular_0|regular_1) ;; *) refuse "QOS $G_QOS is not regular (regular, regular_0, regular_1)";; esac
 [ "$G_CPUS" = "$NODE_CPUS" ] || refuse "NumCPUs $G_CPUS != $NODE_CPUS"
 # The charge gate counts a pack at PACK_BILLING x TimeLimit / 256 (one node); refuse any other billing.
 [ "$G_BILL" = "$PACK_BILLING" ] || refuse "allocated billing '$G_BILL' != pack billing $PACK_BILLING"
