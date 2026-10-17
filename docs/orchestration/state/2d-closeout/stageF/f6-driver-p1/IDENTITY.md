@@ -156,4 +156,9 @@ It confirmed, by its own measurement:
 | m5 two scratch hash files left in `$NS/tmp/` | named in §3.3 |
 | m6 "identical to `main`" means a clean checkout; the live cluster checkout has extra untracked files | scoped in §3.1 |
 
+**Re-review 1** (`3eecef18`): **APPROVE**, no remaining or new findings. It re-checked each disposition against its
+own measurements (the retired tree's hash list equals its streamed hashes; 18 directories, no symlinks, no
+`__pycache__` in both retired copies; the 1 + 4 + 476 split against the 481 provenance records; across the live
+cluster `2d-unfolding/`, 530 untracked and 3,955 ignored files, none a `.py`), and `--at-sha 3eecef18 --check` OK.
+
 **Director's review:** on the PR.
