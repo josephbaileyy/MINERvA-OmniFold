@@ -1,0 +1,30 @@
+# Shared-era (2026-10-15/16) GATE lines as printed in the executor's session, extracted verbatim.
+# Source: /Users/josephbailey/.claude-school/projects/-Users-josephbailey-local-research-MINERvA-OmniFold/42670017-c41b-4c65-9b50-994312a5d203.jsonl
+# The transcript is append-only and still growing; this extract was taken from its first 22553453 bytes, whose
+# sha256 is 2211c960202b198f796ef4554e3aae6fabb20bf0fb0264d23dafaa58bea721d8
+# (check: head -c 22553453 <transcript> | shasum -a 256). Snapshot taken 2026-10-17T23:16:48Z.
+# Columns: transcript line (1-based) | tool-result timestamp (UTC) | batch(es) from the launching command (line) | printed line
+7114	2026-10-15T11:46:24.412Z	G0 (cmd line 7106)	GATE completed 0.0000 + in-flight at cap 0.0000 + batch 0.4250 = 0.4250 vs ceiling 100.0
+7117	2026-10-15T11:46:42.897Z	G0 (cmd line 7116)	GATE completed 0.0000 + in-flight at cap 0.0000 + batch 0.4250 = 0.4250 vs ceiling 100.0
+7232	2026-10-15T22:15:36.175Z	G1 (cmd line 7231)	GATE completed 0.2430 + in-flight at cap 0.0000 + batch 5.8333 = 6.0763 vs ceiling 100.0
+7236	2026-10-15T22:15:50.719Z	G1 (cmd line 7235)	GATE completed 0.2430 + in-flight at cap 0.0000 + batch 5.8333 = 6.0763 vs ceiling 100.0
+7266	2026-10-15T22:19:47.600Z	G2 (cmd line 7258)	GATE completed 0.2430 + in-flight at cap 5.8333 + batch 9.6000 = 15.6763 vs ceiling 100.0
+7266	2026-10-15T22:19:47.600Z	G2 (cmd line 7258)	gate_rc=0
+7266	2026-10-15T22:19:47.600Z	G2 (cmd line 7258)	submit_rc=0
+7266	2026-10-15T22:19:47.600Z	G2 (cmd line 7258)	GATE completed 0.2430 + in-flight at cap 5.8333 + batch 9.6000 = 15.6763 vs ceiling 100.0
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S1a gate_rc=0 GATE completed 0.2430 + in-flight at cap 15.4333 + batch 10.6250 = 26.3013 vs ceiling 100.0
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S1a submit_rc=0 n=50
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S1b gate_rc=0 GATE completed 0.2430 + in-flight at cap 24.1458 + batch 10.6250 = 35.0138 vs ceiling 100.0
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S1b submit_rc=0 n=50
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S1c gate_rc=0 GATE completed 0.2430 + in-flight at cap 35.4083 + batch 10.6250 = 46.2763 vs ceiling 100.0
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S1c submit_rc=0 n=50
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S1d gate_rc=0 GATE completed 0.2430 + in-flight at cap 46.6708 + batch 10.6250 = 57.5388 vs ceiling 100.0
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S1d submit_rc=0 n=50
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S1e gate_rc=0 GATE completed 0.2430 + in-flight at cap 57.9333 + batch 10.6250 = 68.8013 vs ceiling 100.0
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S1e submit_rc=0 n=50
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S1f gate_rc=0 GATE completed 0.2430 + in-flight at cap 68.3458 + batch 10.6250 = 79.2138 vs ceiling 100.0
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S1f submit_rc=0 n=50
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S2a gate_rc=0 GATE completed 0.2430 + in-flight at cap 79.1833 + batch 10.6250 = 90.0513 vs ceiling 100.0
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S2a submit_rc=0 n=50
+7270	2026-10-15T22:27:12.566Z	S1a S1b S1c S1d S1e S1f S2a S2b S4a S4b (cmd line 7269)	S2b gate_rc=3 GATE completed 0.2430 + in-flight at cap 89.8083 + batch 10.6250 = 100.6763 vs ceiling 100.0 NOT ADMITTED: the batch would exceed the ceiling with jobs still in flight. Wait and re-check.
+7410	2026-10-16T16:08:12.565Z	S2b (cmd line 7408)	GATE completed 3.4744 + in-flight at cap 83.9750 + batch 10.6250 = 98.0744 vs ceiling 100.0

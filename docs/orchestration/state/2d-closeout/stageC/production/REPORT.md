@@ -92,6 +92,12 @@ the sha256 of every input it read. Its `checks` object has 55 entries, all `ok: 
 | normalization rank 1 | 5.7e-16 |
 | symmetry and PSD: universe, stat, c08, total | all symmetric; min eigenvalue / max: −3.0e-17, 7.7e-10, −3.5e-16, 1.2e-12 |
 
+**X01 and Flux implementation details that DESIGN §8 does not state** (`s5_rollup.py:144-194`): the per-playlist
+flux histogram is `pTmu_reweightedflux_integrated`; the POT is each playlist's `runEventLoopData_<pl>.root`
+`POTUsed`, and Φ_MINOS,u is combined over the 12 playlists as a POT-weighted mean; Flux universe u takes the
+constraint file's entry u (u = 0–99 of the file's 1,000 `Flux` entries, `sorted_NuEConstraint_FHC_RHC_IMD.txt`,
+`e38ad7d2…`). The director's F4 verifier reproduced VL175's `minos_rescaled.npz` exactly with these.
+
 **Reported numbers** (no pass/fail; from `s5.json` `numbers`). σ is per cell, relative to E_U. "Rank" counts the
 eigenvalues above 1e-10 × the largest (the total is strictly positive-definite, min/max eigenvalue 1.2e-12; numpy's
 default `matrix_rank` tolerance gives 141 for universe and 205 for the total):
@@ -167,9 +173,9 @@ The ROOT rollup is regenerable from the NPZ and is on CFS per the 2026-10-15 bin
 | 2026-10-16 21:08:56 | G2 submitted, 17 packs |
 | 2026-10-16 21:11–21:29 | S1a–S2b submitted, 99 packs |
 | 2026-10-16 22:29 – 2026-10-17 01:04 | all 17 G2 packs ran and completed |
-| 2026-10-17 01:03:11 | S4a submitted, 10 packs |
+| 2026-10-17 01:03:11 | S4a submitted, 10 packs (the waiter's submit-completion time, `watchers/task_b0lvmo979.txt`; `sacct` Submit 01:02:59–01:03:11) |
 | 2026-10-17 01:08:45 | `s4ii` PASS |
-| 2026-10-17 02:36:04 | S4b submitted, 10 packs |
+| 2026-10-17 02:36:04 | S4b submitted, 10 packs (the waiter's submit-completion time, `watchers/task_b0lvmo979.txt`; `sacct` Submit 02:36:02–02:36:03) |
 | 2026-10-17 00:49 – 22:25 | the 119 CV packs ran (S1 00:49–20:25, S2 20:20–21:43, S4B 21:34–22:25) |
 | 2026-10-17 22:29:04 | the pack watcher sees 137 K-packs ended (136 production + the smoke pack); `squeue` empty |
 | 2026-10-17 22:29:43–22:30:05 | `s1`, `s2`, `s4i` PASS |
@@ -224,7 +230,11 @@ gate is terminal charges + every in-flight job at its full cap + the batch's cap
 
 † The shared-QOS gate and submit transcripts for G2 and S1a–S2b were written to the same `gatelog/` file names that
 the packed path later reused (`G2_gate.txt`, `S1a_submit.txt`, …), so the files now hold the packed submissions. The
-shared-era GATE lines above are as printed in the executor's session at 2026-10-15 22:18–22:27Z; the jobs themselves
+shared-era GATE lines above are as printed in the executor's session at 2026-10-15 22:18–22:27Z, extracted verbatim
+with their transcript line numbers into `gatelog/shared_era_gate_lines_from_transcript.txt` (source: the session
+transcript `~/.claude-school/projects/-Users-josephbailey-local-research-MINERvA-OmniFold/42670017-c41b-4c65-9b50-994312a5d203.jsonl`,
+first 22,553,453 bytes, sha256 `2211c960202b198f796ef4554e3aae6fabb20bf0fb0264d23dafaa58bea721d8`; the file is
+append-only, so `head -c 22553453 <transcript> | shasum -a 256` re-checks it); the jobs themselves
 are in `sacct` (§11) and their `Deadline=` reads in `all_deadline_check_20261015.txt` (§7). For these rows the time
 is the batch's first `sacct` Submit (for S2b, the last S2a Submit), not the gate's own time. `S2b_gate_2.txt` is a
 later shared-QOS re-check of S2b on 2026-10-16 (98.0744; nothing submitted before the packed path replaced it).
@@ -554,7 +564,9 @@ Total of the charge column: 29.0297.
 - **Stat centring (R9):** the replica mean sits a median 4.43 σ/√300 from E_U. It does not enter the ddof-1
   covariance, but it is reported for Stage F.
 - **Shared-QOS gate deviation.** Four shared gates on 2026-10-15 under-counted the jobs in flight, by up to 1.9125
-  node-h, because they ran before `sacct` listed the previous batch (§5). No ceiling was affected.
+  node-h, because they ran before `sacct` listed the previous batch (§5). No ceiling was affected. It remains a
+  breach of DESIGN §6. Director ruling 2026-10-17: disclosure suffices; no separate record (the packed-era coverage
+  check closes the hazard).
 - **Shared-era gate files overwritten.** The `gatelog/` transcripts of the shared-QOS G2 and S1a–S2b gates and
   submissions were overwritten by the packed path's same-named files (§5 †). Their GATE lines survive in the
   executor's session transcript only. Of the 389 jobs those batches created, 381 were cancelled unstarted by the
@@ -629,4 +641,17 @@ It confirmed:
 | n1 "at least 2 min … equal counts" held for S1b–S2b only (S1a ≤ 92 s after G2, count check not in evidence; S4a/S4b under the v2 rule) | §5 now states how each packed gate applied DESIGN §14.4 step 4, and that the printed in-flight was complete at the gates recomputed |
 | n2 footnote range 22:19–22:27Z vs G2's first Submit 22:18:51 | 22:18–22:27Z |
 
-**Director's F4 verifier:** dispatched by the director on the PR.
+**Director's F4 verifier** (dispatched by the director on PR #150 at `5a247ee3`): **VERIFIED WITH FINDINGS, 0 MATERIAL,
+4 MINOR**, as relayed by the director; the director's F4 record with the verifier's outputs goes on `main` under
+`stageF/`. It rebuilt every S5 block from the 530 consumed `xsec.root` vectors with its own code (universe, the 43
+bands, normalization, c08, X02 and F at 0.0; stat 1.4e-16; bkg-separable 9.8e-17; total 8.8e-19; the 31 functional σ
+match `s5.json`), and confirmed the 10 result files byte-identical across pscratch, CFS and `evidence/`, the
+`repo_k` code against the binding, 539/153/386 and 29.0297, all 531 `xsec.root` under `sha256sum -c` on pscratch and
+CFS, and the four gate shortfalls. Dispositions, all in one commit:
+
+| finding | disposition |
+|---|---|
+| F1 X01/Flux implementation details not stated in DESIGN §8 | named in §3, citing `s5_rollup.py:144-194` |
+| F2 † shared-era GATE lines exist only in the session transcript | verbatim extract committed as `gatelog/shared_era_gate_lines_from_transcript.txt`, with the transcript path and the sha256 of its byte prefix (§5 †) |
+| F3 the director's ruling on the gate deviation | added to §12 as sent |
+| F4 01:03:11 and 02:36:04 are the waiter's submit-completion times | relabelled in §4, with the `sacct` Submit windows |
