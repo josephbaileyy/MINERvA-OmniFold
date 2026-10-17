@@ -1,0 +1,24 @@
+{
+ "verifier": "F4 independent (director-dispatched), read-only",
+ "pr": 150, "head": "5a247ee3e196f549323509f03a4724dc3132b5b7",
+ "verdict": "VERIFIED WITH FINDINGS",
+ "A_recompute": {
+  "script": "recompute.py (no import/exec of s5_rollup.py, analyze_prod.py, build_repair.py)",
+  "npz_sha256": "6689d2fc2a795a72e66ee953a32d94c7906dd81a866771979f379c5f163a9ddc",
+  "max_absdiff_over_max_block": {"universe": 0.0, "stat": 1.41e-16, "c08": 0.0, "total": 8.8e-19,
+     "bkg_separable": 9.8e-17, "x02_interaction": 0.0, "every band_* (43) and normalization": 0.0,
+     "cells_x_EU": 0.0, "area": 0.0, "functionals_map": 0.0},
+  "non_vacuity": {"flux_band_if_unweighted": 0.977, "minos_band_if_not_rescaled": 0.0992},
+  "x01_scale_vs_vl175_minos_rescaled_npz": 0.0, "mat_univwgts_equal_constraint_all_12": true,
+  "functional_sigma_vs_s5json_max_rel": {"from_my_matrix": 0.0, "from_vectors_directly": 3.3e-15},
+  "functional_sigma_pct": {"integral": 4.3284, "pT": [4.359, 7.274], "ppar": [4.300, 13.706]},
+  "consumed_files": 530, "consumed_vs_s5json_digest_mismatch": 0, "consumed_vs_SHA256SUMS_mismatch": 0
+ },
+ "B_provenance": "all 10 result files identical pscratch=CFS=PR evidence; repo_k bound files match packing binding §1; repo matches 2026-10-15 binding; six item JSONs PASS, pins_failed {}",
+ "C_completeness": {"alloc": 539, "ran": 153, "ran_completed_0_0": 153, "never_started_cancelled": 386,
+    "regular_1_ran": 137, "shared_ran": 16, "member_steps_completed": 515, "all_steps_completed": 821,
+    "charge": 29.0297, "xsec_root": 531, "sha256sum_c_out_pscratch_rc": 0, "sha256sum_c_out_cfs_rc": 0, "sha256sum_c_full_cfs_rc": 0,
+    "committed_sacct_vs_fresh_diffs": 0, "report_s11_rows_vs_fresh_diffs": 0},
+ "D_text": "every checked number matches; no adoption/coverage/G2-zero claim; shared-gate under-count arithmetic and transcript lines confirmed",
+ "E_extra": {"replica_provenance_bad": 0, "duplicate_vectors": 0, "panel_crossing_mismatch": 0, "C0_cv_vs_E_U_max_rel": 4.18e-13}
+}

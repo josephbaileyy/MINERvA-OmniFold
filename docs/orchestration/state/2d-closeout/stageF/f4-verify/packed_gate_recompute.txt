@@ -1,0 +1,5 @@
+G2 2026-10-16T21:08:56 completed 4.3244 inflight 0.0000 unknown-billing 0
+S1a 2026-10-16T21:11:00 completed 4.3244 inflight 8.8500 unknown-billing 0
+S2b 2026-10-16T21:29:00 completed 4.3244 inflight 81.9500 unknown-billing 0
+S4a 2026-10-17T01:02:57 completed 9.1591 inflight 76.4500 unknown-billing 0
+S4b 2026-10-17T02:36:02 completed 10.6955 inflight 83.3000 unknown-billing 0

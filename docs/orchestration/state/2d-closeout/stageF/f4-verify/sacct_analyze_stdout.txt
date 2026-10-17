@@ -1,0 +1,22 @@
+alloc rows 2dc_P_: 539 other names: ['2dc_C_P1_bkg', '2dc_C_P1_fix', '2dc_C_P1_joi', '2dc_C_P3_Bea', '2dc_C_P3_MIN', 'pu_CTRL_s42', 'pu_PA_b01', 'pu_PA_b02', 'pu_PA_b03', 'pu_PA_b04']
+ran 153 never started 386
+ran states Counter({('COMPLETED', '0:0'): 153})
+never-started states Counter({('CANCELLED', '0'): 386})
+ran QOS Counter({'regular_1': 137, 'shared': 16})
+nr QOS Counter({'shared': 385, 'regular_1': 1})
+charge total 29.0297 {('shared', True): 4.1483, ('shared', False): 0.0, ('regular_1', False): 0.0, ('regular_1', True): 24.8814} badbill []
+K packs ran 137 Counter({'regular_1': 137})
+shared ran 16
+max End 2026-10-17T22:25:05
+nr id range 59829236 59859828
+rows incl steps for 2dc_P_ 1360
+numbered steps 515 Counter({('COMPLETED', '0:0'): 515})
+all steps 821 Counter({('COMPLETED', '0:0'): 821})
+pack member steps 515 elapsed 574 891
+smoke 1 0.1761 634 634
+S4U 16 3.5611 736 910
+S4CV 1 0.1969 709 709
+S1 74 13.2003 607 774
+S2 25 4.3106 605 663
+S4B 20 3.4364 608 637
+CV packs 119 sum elapsed 75410 20.9472
