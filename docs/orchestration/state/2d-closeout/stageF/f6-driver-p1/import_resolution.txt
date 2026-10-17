@@ -1,0 +1,42 @@
+== sys.path[0] = /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo/2d-unfolding  (2026-10-17T23:25:12Z, host login04)
+python /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 3.11.14
+argparse   /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/argparse.py
+contextlib /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/contextlib.py
+inspect    /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/inspect.py
+io         frozen
+math       /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/math.cpython-311-x86_64-linux-gnu.so
+array      /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/array.cpython-311-x86_64-linux-gnu.so
+hashlib    /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/hashlib.py
+json       /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/json/__init__.py
+os         frozen
+sys        built-in
+numpy      /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/__init__.py
+ROOT       /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/__init__.py
+sklearn    /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/__init__.py
+xgboost    /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/xgboost/__init__.py
+lightgbm   /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/lightgbm/__init__.py
+omnifold   /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/python/omnifold.py sha256 e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+== sys.path[0] = /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo_k/2d-unfolding  (2026-10-17T23:25:12Z, host login04)
+python /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 3.11.14
+argparse   /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/argparse.py
+contextlib /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/contextlib.py
+inspect    /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/inspect.py
+io         frozen
+math       /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/math.cpython-311-x86_64-linux-gnu.so
+array      /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/lib-dynload/array.cpython-311-x86_64-linux-gnu.so
+hashlib    /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/hashlib.py
+json       /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/json/__init__.py
+os         frozen
+sys        built-in
+numpy      /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/__init__.py
+ROOT       /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/ROOT/__init__.py
+sklearn    /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/__init__.py
+xgboost    /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/xgboost/__init__.py
+lightgbm   /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/lightgbm/__init__.py
+omnifold   /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/python/omnifold.py sha256 e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+__init__.py
+omnifold_old.py
+omnifold.py
+__pycache__
+pickle /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/pickle.py
+omnifold_nn_core None
