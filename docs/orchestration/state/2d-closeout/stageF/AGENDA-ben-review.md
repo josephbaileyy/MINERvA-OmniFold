@@ -34,7 +34,7 @@ chooses one meeting after both are ready, or two meetings.
 | # | item | what Joseph and Ben see |
 |---|---|---|
 | 11 | The production covariance: per-block medians, rank, PSD, ensemble errors (≈4% per-cell σ; C08 with 4 dof, 71% relative SE of variance) | production REPORT and `s5.json` summary |
-| 12 | The playlist-consistency block: its design (construction, reference period, ratio type, 1F, MC responses), and its size with and without it in the budget | the block record and its verifier report |
+| 12 | The playlist-consistency block: its design (reference-free double ratio, 1F in group A, each period's own MC response) against its sensitivities (1A–1F reference, raw ratios); exchangeability, grouping, noise overlap and possible shrinkage; its size with and without it in the budget. The block and its independent recompute exist ([`../playlist-term/REPORT.md`](../playlist-term/REPORT.md)); the budget waits on S5. Containment of the observed differences is algebraic, not a coverage test | the block REPORT, its [`recompute/`](../playlist-term/recompute/) outputs, and the F9 combination |
 | 13 | The budget against VL175 and against the published analysis | one comparison table |
 | 14 | The disclosure set with final numbers | [`DRAFT-disclosures.md`](DRAFT-disclosures.md) revision 2 |
 | 15 | The claim wording, inside the narrower endpoint | a claims draft (after J2) |

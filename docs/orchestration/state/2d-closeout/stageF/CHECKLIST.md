@@ -1,8 +1,13 @@
-# 2D closeout Stage F: dependency checklist (DRAFT, 2026-10-16)
+# 2D closeout Stage F: dependency checklist (DRAFT, revision 2, 2026-10-17)
 
 **Owner:** the paper-tighten lane, as director. Joseph assigned it Stage F integration on 2026-10-16.
 **Status: draft.** This checklist authorizes nothing. It lists what must exist, and in what order, before each Stage F
 step. Every box is open unless marked otherwise, with the evidence named.
+
+**Revision 2 (2026-10-17).** It corrects F1 and B1, and refreshes F2, F7 and F8 against PRs #140 and #144. Three of
+these corrections were found by the supplementary preparation packet `docs/preparation/PUBLICATION-REVIEW-PACKET-20261016.md`
+(commit `28242f6c`, "Reconciliation pending"); the director re-measured each one on `main` `f9ac0985` before
+accepting it. Statuses are dated observations, not live state.
 
 **CITABLE FOR:** the dependency order of Stage F, and the record that closes each dependency.
 **NOT CITABLE FOR:** any result, adoption, claim, KI-85 lift, publication change, push, submission, deposit, tag or
@@ -31,14 +36,14 @@ before adoption. This draft assumes it does, because of his statement above.
 
 | # | dependency | closed by | owner | status |
 |---|---|---|---|---|
-| F1 | Stage C production terminal: every S1–S4 job terminal; every item analysis PASS, or each failure INCONCLUSIVE and named | `state/2d-closeout/stageC/production/REPORT.md` with `sacct` rows, gates and digests | 2d closer | running. 12 of 401 submitted rows COMPLETED on 2026-10-16; moving to regular-QOS packs |
-| F2 | The packed submission path bound before migration | the step-2 binding record (build-step record [`AUTHORIZATION-20261016-…-regular-packing.md`](../../../AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md) §4) | director | smoke pack approved ([`…-smoke-resubmit.md`](../../../AUTHORIZATION-20261016-2d-closeout-stageC-smoke-resubmit.md)) |
+| F1 | Stage C production terminal: every S1–S4 job terminal; every item analysis PASS. A FAIL or INCONCLUSIVE item is a stop for that line, and no S5 rollup is adoptable from it (production DESIGN §8) | `state/2d-closeout/stageC/production/REPORT.md` with `sacct` rows, gates and digests | 2d closer | running in regular-QOS packs: all 136 packs submitted by 2026-10-17 02:36Z; 75 COMPLETED and 61 PENDING at 18:46Z, none abnormal |
+| F2 | The packed submission path bound before migration | the step-2 binding record (build-step record [`AUTHORIZATION-20261016-…-regular-packing.md`](../../../AUTHORIZATION-20261016-2d-closeout-stageC-regular-packing.md) §4) | director | **closed**: [`AUTHORIZATION-20261016-2d-closeout-stageC-packing-binding.md`](../../../AUTHORIZATION-20261016-2d-closeout-stageC-packing-binding.md) (PR #140) |
 | F3 | S5 rollup: every frozen check passes (pins, control vs VL175 to 1e-12, MAT vs numpy, functionals from vectors, symmetry, PSD); `production_cov.npz`, `s5.json` and `uq_production_covariance.root` written | `s5.json` and the REPORT | 2d closer | waits on F1 |
 | F4 | Fresh read-only verifier on the production REPORT, with an independent recomputation of the total from the replica and universe vectors | verifier report attached to the REPORT | director dispatches | waits on F3 |
 | F5 | Durable copy: products to CFS `m3246` with sha256 re-measured, including the S5 ROOT rollup (binding §4) | REPORT section | 2d closer | waits on F3 |
 | F6 | `driver_p1.py` reaches `main` through its own reviewed PR (binding ruling 1) | that PR's merge | 2d closer, reviewed by the director | open |
-| F7 | Playlist-consistency design record: the construction, raw or double ratio, the reference period, the treatment of 1F and the per-period MC responses, all declared before computing | director record, then a fresh verifier | director | **open, next** |
-| F8 | Playlist-consistency block computed, added after S5 as a separate block, without editing VL175 or S5 | a block record with digests, verifier-checked | director | waits on F7 and F3 |
+| F7 | Playlist-consistency design record: the construction, raw or double ratio, the reference period, the treatment of 1F and the per-period MC responses, all declared before computing | director record, then a fresh verifier | director | **closed**: [`../playlist-term/DESIGN.md`](../playlist-term/DESIGN.md), frozen at `c144cdc4` and amended by PRs #142–#144 |
+| F8 | Playlist-consistency block computed, added after S5 as a separate block, without editing VL175 or S5 | a block record with digests, verifier-checked | director | **block computed and independently recomputed**: [`../playlist-term/REPORT.md`](../playlist-term/REPORT.md) (PR #144), with the recompute's own outputs in [`../playlist-term/recompute/`](../playlist-term/recompute/). Addition to S5 waits on F3, and that part is F9. Not adopted |
 | F9 | The quoted total = S5 total + playlist block. Checks: symmetric, PSD, functionals from vectors; the budget with and without the block | the block record | director | waits on F8 |
 | F10 | Every disclosure item in [`DRAFT-disclosures.md`](DRAFT-disclosures.md) has its final number from F3/F8, and each number's source line is cited | the disclosure draft, revision 2 | director | waits on F3 and F8 |
 
@@ -78,7 +83,7 @@ Each item is rebuilt from the adopted products with one central denominator, `E_
 
 | # | step | gate |
 |---|---|---|
-| B1 | `docs/analysis-note/build_all.sh`: note, primer and paper | three PDFs; the known biber cache failure is checked first |
+| B1 | `docs/analysis-note/build_all.sh`: note, PET note (`pet_note.tex`), primer and paper (AGENTS.md, build deliverables) | four PDFs; the known biber cache failure is checked first |
 | B2 | Standalone Analysis-Note repo: sync, build and commit there | **push only under J6** |
 | B3 | Clean-checkout replay at the supported tiers; input/output hashes on CFS; recovery routes | a replay record |
 | B4 | One independent final claims-to-evidence review | a fresh reviewer, read-only |

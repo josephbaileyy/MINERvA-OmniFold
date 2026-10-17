@@ -47,7 +47,9 @@
    | functional identity | 3.3e-16 |
 
 4. **Independent recompute: REPRODUCED.** The verifier used its own reader and its own code, without reading or importing
-   the script. Its outputs are in `/pscratch/sd/j/josephrb/tmp-playlist-term-recompute-20261016/`.
+   the script. Its outputs are in `/pscratch/sd/j/josephrb/tmp-playlist-term-recompute-20261016/`. A byte-identical
+   copy of its six output and code files (its `stderr.txt` was empty) is committed in [`recompute/`](recompute/), with sha256 in
+   [`recompute/SHA256SUMS`](recompute/SHA256SUMS) (added 2026-10-17; the report's numbers are unchanged).
 
    | quantity | agreement |
    |---|---|
