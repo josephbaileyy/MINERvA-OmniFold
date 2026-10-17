@@ -1,0 +1,10 @@
+# wait_submit.sh v1 lines 14-21 (ran as task b7wco0xeo, 2026-10-16T21:30:34Z .. 2026-10-17T01:02:02Z), replaced by v2:
+      q=$(squeue -h -u josephrb | wc -l) || exit 8
+      USER=josephrb python3 launch.py gate $B > $NS/gatelog/${B}_gate.txt 2>&1; g=$?
+      n=$(grep "in-flight at cap" $NS/gatelog/${B}_gate.txt | grep -vc "^GATE")
+      echo "$(date -u +%FT%TZ) $B gate rc=$g squeue=$q ledger_inflight=$n"
+      grep -E "^GATE|REFUSE|NOT ADMITTED|STOP" $NS/gatelog/${B}_gate.txt
+      if [ $g -eq 3 ] && grep -q "^NOT ADMITTED" $NS/gatelog/${B}_gate.txt; then exit 10; fi
+      [ $g -eq 0 ] || exit 4
+      [ "$q" -eq "$n" ] || { echo "COUNT MISMATCH"; exit 5; }
+# submit_seq.sh (S1b..S2b, all passed the equality) used the same equality rule.

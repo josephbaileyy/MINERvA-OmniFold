@@ -1,0 +1,64 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[PASS] pin_E_U  4f5a1b6d44b9e721
+[PASS] pin_sweeps_json  15b57de9124f204b
+[PASS] pin_vl175_rollup  da92c5d2567647e8
+[PASS] pin_vl175_build_json  dcc1331e8e510cc2
+[PASS] pin_vl175_minos_npz  8912376ef2a6cfce
+[PASS] pin_vl175_budget  aab8a24ebd61df54
+[PASS] pin_ml  3b6b48ec89207ae2
+[PASS] pin_constraint  e38ad7d28354d071
+[PASS] pin_flux_mefhc  d40aea69235cdc98
+[PASS] reported_cells_205
+[PASS] weights_identical_across_playlists
+[PASS] weights_equal_constraint_file
+[PASS] weights_equal_vl175_build_json  {'sum': 211.01200325082078, 'n_eff': 19.060534772246488}
+[PASS] may_sweep_files_match_sweeps_json  []
+[PASS] may_44_bands_187_universes
+[PASS] may_minos_outputs_divided_by_phi_cv  0.0
+[PASS] may_x01_scale_equals_vl175  0.0
+[PASS] control_vl175_all_45_blocks_found  []
+[PASS] control_vl175_every_block_at_total_scale_le_1e-12  2.6413017182865303e-17
+[PASS] control_vl175_nonnull_blocks_own_scale_le_1e-12  {'max': 2.112568288378435e-16, 'null_bands': ['EtaNCEL', 'MaNCEL', 'NormNCRES']}
+[PASS] control_vl175_total_le_1e-12  1.3206508591432652e-17
+[PASS] analysis_C0_PASS  PASS
+[PASS] analysis_C0_out_root_matches  /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out
+[PASS] analysis_S3_PASS  PASS
+[PASS] analysis_S3_out_root_matches  /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out
+[PASS] analysis_S4ii_PASS  PASS
+[PASS] analysis_S4ii_out_root_matches  /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out
+[PASS] analysis_S1_PASS  PASS
+[PASS] analysis_S1_out_root_matches  /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out
+[PASS] analysis_S2_PASS  PASS
+[PASS] analysis_S2_out_root_matches  /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out
+[PASS] analysis_S4i_PASS  PASS
+[PASS] analysis_S4i_out_root_matches  /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out
+[PASS] flux_pot_24_files_match_vl175_build_json  []
+[PASS] pn_sweep_files_match_sweeps_json  []
+[PASS] july_44_bands_187_universes
+[PASS] s3_minos_outputs_divided_by_phi_cv  0.0
+[PASS] s3_x01_scale_equals_vl175  0.0
+[PASS] universe_bands_43_plus_norm  ['2p2h', 'AGKYxF1pi', 'AhtBY']
+[PASS] mat_universe_block_le_1e-12  3.4285999339343553e-16
+[PASS] integral_from_vectors_flux_weighted  1.3411084536523646e-15
+[PASS] integral_from_vectors_minos_x01  1.943098429981904e-14
+[PASS] integral_from_vectors_stat_ddof1  1.569823138077546e-14
+[PASS] functionals_from_vectors_blocks_at_total_scale_le_1e-10  5.19910189968946e-15
+[PASS] functionals_from_vectors_blocks_nonnull_own_scale_le_1e-10  {'max': 1.838946891409055e-12, 'null': ['EtaNCEL', 'NormDISCC'], 'worst': [('AhtBY', 1.838946891409055e-12), ('NormNCRES', 1.104294962300242e-12), ('Rvn1pi', 1.0548739650393655e-12)]}
+[PASS] functionals_normalization_rank1_le_1e-10  5.729980575560173e-16
+[PASS] symmetric_universe
+[PASS] psd_universe  -2.99171747528972e-17
+[PASS] symmetric_stat
+[PASS] psd_stat  7.722956546864495e-10
+[PASS] symmetric_c08
+[PASS] psd_c08  -3.489045041678346e-16
+[PASS] symmetric_total
+[PASS] psd_total  1.2284684265814153e-12
+S5 PASS

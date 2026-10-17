@@ -1,0 +1,23 @@
+   59806379 2dc_P_C0_unit COMPLETED 844 charged 0.0586
+   59806381 2dc_P_C0_cv COMPLETED 2655 charged 0.1844
+GATE completed 0.2430 + in-flight at cap 0.0000 + batch 5.8333 = 6.0763 vs ceiling 100.0
++ sbatch --job-name=2dc_P_S3_BeamAngleX0 --qos=shared --cpus-per-task=128 --mem=243840M --time=01:10:00 --no-requeue --deadline=2026-10-20T23:00:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo/docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh
+Submitted batch job 59829128 
++ sbatch --job-name=2dc_P_S3_BeamAngleX1 --qos=shared --cpus-per-task=128 --mem=243840M --time=01:10:00 --no-requeue --deadline=2026-10-20T23:00:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo/docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh
+Submitted batch job 59829129 
++ sbatch --job-name=2dc_P_S3_BeamAngleY0 --qos=shared --cpus-per-task=128 --mem=243840M --time=01:10:00 --no-requeue --deadline=2026-10-20T23:00:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo/docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh
+Submitted batch job 59829130 
++ sbatch --job-name=2dc_P_S3_BeamAngleY1 --qos=shared --cpus-per-task=128 --mem=243840M --time=01:10:00 --no-requeue --deadline=2026-10-20T23:00:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo/docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh
+Submitted batch job 59829131 
++ sbatch --job-name=2dc_P_S3_MuonResolution0 --qos=shared --cpus-per-task=128 --mem=243840M --time=01:10:00 --no-requeue --deadline=2026-10-20T23:00:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo/docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh
+Submitted batch job 59829132 
++ sbatch --job-name=2dc_P_S3_MuonResolution1 --qos=shared --cpus-per-task=128 --mem=243840M --time=01:10:00 --no-requeue --deadline=2026-10-20T23:00:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo/docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh
+Submitted batch job 59829133 
++ sbatch --job-name=2dc_P_S3_MuonEnergyMINERvA0 --qos=shared --cpus-per-task=128 --mem=243840M --time=01:10:00 --no-requeue --deadline=2026-10-20T23:00:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo/docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh
+Submitted batch job 59829134 
++ sbatch --job-name=2dc_P_S3_MuonEnergyMINERvA1 --qos=shared --cpus-per-task=128 --mem=243840M --time=01:10:00 --no-requeue --deadline=2026-10-20T23:00:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo/docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh
+Submitted batch job 59829135 
++ sbatch --job-name=2dc_P_S3_MuonEnergyMINOS0 --qos=shared --cpus-per-task=128 --mem=243840M --time=01:10:00 --no-requeue --deadline=2026-10-20T23:00:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo/docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh
+Submitted batch job 59829136 
++ sbatch --job-name=2dc_P_S3_MuonEnergyMINOS1 --qos=shared --cpus-per-task=128 --mem=243840M --time=01:10:00 --no-requeue --deadline=2026-10-20T23:00:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo/docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh
+Submitted batch job 59829137 

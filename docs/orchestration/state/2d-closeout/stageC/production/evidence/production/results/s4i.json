@@ -1,0 +1,11 @@
+{
+ "S4i": "PASS",
+ "analyze_prod_sha256": "f9e0d8f271f28bee1ef264de62cf7b924d18d4086e8fbe896abff4adb79320a4",
+ "item": "S4i",
+ "missing": [],
+ "n_expected": 80,
+ "n_ok": 80,
+ "out_root": "/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out",
+ "pins_failed": {},
+ "provenance": {}
+}

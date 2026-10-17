@@ -1,0 +1,3 @@
+   59806379 2dc_P_C0_unit COMPLETED 844 charged 0.0586
+   59806381 2dc_P_C0_cv COMPLETED 2655 charged 0.1844
+GATE completed 0.2430 + in-flight at cap 0.0000 + batch 5.8333 = 6.0763 vs ceiling 100.0

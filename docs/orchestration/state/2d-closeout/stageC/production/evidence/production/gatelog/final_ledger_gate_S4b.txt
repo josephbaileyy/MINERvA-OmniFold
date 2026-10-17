@@ -1,0 +1,1 @@
+REFUSE: batch S4b has no rows owed a first submission (or only a held partial pack)
