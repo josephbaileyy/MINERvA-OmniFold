@@ -1,0 +1,2 @@
+alloc rows compared 539 diffs 0 committed alloc rows 539 committed total rows 1360
+REPORT §11 rows 153 diffs 0 sum of charge column 29.0297

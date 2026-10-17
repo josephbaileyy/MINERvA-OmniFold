@@ -1,0 +1,33 @@
+{
+ "bad": [],
+ "dups": {
+  "2dc_P_S1_": {
+   "n": 300,
+   "identical_pairs": []
+  },
+  "2dc_P_S2_": {
+   "n": 100,
+   "identical_pairs": []
+  },
+  "2dc_P_S4B_": {
+   "n": 80,
+   "identical_pairs": []
+  }
+ },
+ "crossing_mismatch": [],
+ "n_distinct_all": 480,
+ "s2_sum_examples": [
+  {
+   "bkg": 659094.0,
+   "data": 4091707.0,
+   "mc": 32849103.0
+  },
+  {
+   "bkg": 660917.0,
+   "data": 4091707.0,
+   "mc": 32849103.0
+  }
+ ],
+ "C0_cv_vs_E_U_max_rel": 4.1775433466813747e-13,
+ "S1_mean_vs_E_U_median_rel": 0.0018444755966411856
+}

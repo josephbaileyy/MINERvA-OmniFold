@@ -1,0 +1,3 @@
+pscratch out rc=0
+cfs out rc=0
+cfs full rc=0
