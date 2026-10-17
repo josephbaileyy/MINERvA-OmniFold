@@ -224,9 +224,10 @@ gate is terminal charges + every in-flight job at its full cap + the batch's cap
 
 † The shared-QOS gate and submit transcripts for G2 and S1a–S2b were written to the same `gatelog/` file names that
 the packed path later reused (`G2_gate.txt`, `S1a_submit.txt`, …), so the files now hold the packed submissions. The
-shared-era GATE lines above are as printed in the executor's session at 2026-10-15 22:19–22:27Z; the jobs themselves
+shared-era GATE lines above are as printed in the executor's session at 2026-10-15 22:18–22:27Z; the jobs themselves
 are in `sacct` (§11) and their `Deadline=` reads in `all_deadline_check_20261015.txt` (§7). For these rows the time
-is the batch's first `sacct` Submit (for S2b, the last S2a Submit), not the gate's own time.
+is the batch's first `sacct` Submit (for S2b, the last S2a Submit), not the gate's own time. `S2b_gate_2.txt` is a
+later shared-QOS re-check of S2b on 2026-10-16 (98.0744; nothing submitted before the packed path replaced it).
 
 **Deviation: four shared-QOS gates under-counted the jobs in flight.** DESIGN §6 requires each gate to run only after
 every earlier `2dc_P_*` submission appears in the printed ledger, and the grant's gate counts "the full cap of every
@@ -245,10 +246,17 @@ batch):
 
 S1e, S2a and S2b match exactly. No ceiling was affected: the largest true total was 79.4263, and S2b's refusal at
 100.6763 used a complete ledger. The lag itself was observed on 2026-10-15, and the packed path's DESIGN §14.4 step 4
-responded to it: each `gate` runs at least 2 min after the last `submit` (the executor waited 130 s) and only when the
-ledger's in-flight count matches `squeue` (the count guard below). The packed gates show no shortfall. The size of
-the shortfall in these four shared gates was not quantified until the executor's verifier checked this REPORT. `S2b_gate_2.txt` is a
-later shared-QOS re-check of S2b on 2026-10-16 (98.0744; nothing submitted before the packed path replaced it).
+responded to it: each `gate` runs at least 2 min after the last `submit` and only when the ledger's in-flight count
+matches `squeue`. The executor applied that as follows:
+- S1b–S2b: `submit_seq.sh` waited 130 s before each gate (measured gaps 133–170 s) and required equal counts;
+- S1a: its first pack was submitted at 21:11:08, at most 92 s after G2's last (21:09:36), and its count check is not
+  in the evidence;
+- S4a and S4b: polled every 10 min, admitted under the v2 coverage rule (every `squeue` id in the ledger, ledger
+  in-flight ≤ `squeue`; S4a ran with `squeue` 93 and ledger 92), not an equal count.
+
+Recomputed from `sacct`, the printed in-flight term is complete at every packed gate checked (S1a 8.85, S1b 18.2,
+S2b 81.95, S4a 76.45, S4b 80.75). The size of the shortfall in the four shared gates was not quantified until the
+executor's verifier checked this REPORT.
 
 **Waits, not stops.** S4a was NOT ADMITTED (rc 3, jobs in flight) at all 21 ten-minute polls from 2026-10-16
 21:30:34Z to 2026-10-17 00:52Z (105.8244, 105.2563, 104.6802, then 104.1124). S4b was NOT ADMITTED from 01:05Z to 02:25Z at a flat 101.2958; no pack
@@ -613,5 +621,12 @@ It confirmed:
 | m8 null-band bound 4e-8% vs 4.13e-8% | fixed (4.2e-8%) |
 | m9 header claims every number from files, but † rows come from a transcript | header carves them out |
 | m10 † times approximate; director-correspondence claims uncommitted; DeadLine-reason claim covers only the throughput window | † times are now first `sacct` Submits; the claims say "in correspondence, not committed"; §7 scopes the DeadLine-reason claim and rests the result on `sacct` |
+
+**Re-review 1** (`7e0e181e`): **APPROVE**, all 10 dispositions confirmed; 2 new MINOR, both fixed in the next commit:
+
+| finding | disposition |
+|---|---|
+| n1 "at least 2 min … equal counts" held for S1b–S2b only (S1a ≤ 92 s after G2, count check not in evidence; S4a/S4b under the v2 rule) | §5 now states how each packed gate applied DESIGN §14.4 step 4, and that the printed in-flight was complete at the gates recomputed |
+| n2 footnote range 22:19–22:27Z vs G2's first Submit 22:18:51 | 22:18–22:27Z |
 
 **Director's F4 verifier:** dispatched by the director on the PR.
