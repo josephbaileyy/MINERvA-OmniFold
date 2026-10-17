@@ -25,6 +25,7 @@ rebuilt. See [Setup](#setup).
 | Orient on the science, and be routed to the governing evidence | `AGENTS.md` — the front door, and the one file to read first |
 | Quote a number | `VALIDATION_LEDGER.md`, then the product summary or receipt it cites |
 | Know what is being worked on now | `docs/CURRENT_WORK.md`, then the exact row in `docs/OPEN_ITEMS.md` |
+| Find the 2D closeout dependencies and preparation documents | [Closeout navigation](docs/preparation/NAVIGATION-20261016.md); [preparation index](docs/orchestration/CATALOG.md#2d-closeout-preparation-2026-10-16) |
 | Change code | `KNOWN_ISSUES.md`, the workstream's `*_STATUS.md`, and its callers/tests |
 | Run a workstream | that workstream's `*_STATUS.md` / `*_REFERENCE.md` (below) |
 | Find the script that produced a quoted 2D uncertainty (statistical replicas, universes, combined rollup) | `2d-unfolding/2D_OMNIFOLD_REFERENCE.md`, "Which script produced the quoted 2D uncertainty" |
