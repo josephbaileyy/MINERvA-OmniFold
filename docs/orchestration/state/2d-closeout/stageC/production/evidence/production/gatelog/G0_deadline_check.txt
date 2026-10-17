@@ -1,0 +1,2 @@
+JobId=59806379 JobName=2dc_P_C0_unit QOS=shared JobState=PENDING Requeue=0 TimeLimit=00:51:00 Deadline=2026-10-20T23:00:00 NumCPUs=64 
+JobId=59806381 JobName=2dc_P_C0_cv QOS=shared JobState=PENDING Requeue=0 TimeLimit=00:51:00 Deadline=2026-10-20T23:00:00 NumCPUs=64 

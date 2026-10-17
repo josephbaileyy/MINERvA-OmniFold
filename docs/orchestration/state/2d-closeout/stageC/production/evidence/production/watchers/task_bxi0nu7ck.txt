@@ -1,0 +1,38 @@
+2026-10-16T21:14:18Z S1b gate rc=0 squeue=28 ledger_inflight=28
+GATE completed 4.3244 + in-flight at cap 18.2000 + packs 11.0500 = 33.5744 vs ceiling 100.0
+2026-10-16T21:14:35Z S1b submit rc=0
+GATE completed 4.3244 + in-flight at cap 18.2000 + packs 11.0500 = 33.5744 vs ceiling 100.0
+59871804  59871807  59871808  59871809  59871810  59871813  59871815  59871818  59871820  59871821  59871824  59871825  59871826  
+2026-10-16T21:16:49Z S1c gate rc=0 squeue=41 ledger_inflight=41
+GATE completed 4.3244 + in-flight at cap 29.2500 + packs 10.2000 = 43.7744 vs ceiling 100.0
+2026-10-16T21:16:51Z S1c submit rc=0
+GATE completed 4.3244 + in-flight at cap 29.2500 + packs 10.2000 = 43.7744 vs ceiling 100.0
+59872059  59872060  59872061  59872062  59872063  59872064  59872065  59872067  59872068  59872069  59872070  59872071  
+2026-10-16T21:19:04Z S1d gate rc=0 squeue=53 ledger_inflight=53
+GATE completed 4.3244 + in-flight at cap 39.4500 + packs 11.0500 = 54.8244 vs ceiling 100.0
+2026-10-16T21:19:41Z S1d submit rc=0
+GATE completed 4.3244 + in-flight at cap 39.4500 + packs 11.0500 = 54.8244 vs ceiling 100.0
+59872181  59872182  59872183  59872186  59872187  59872188  59872190  59872223  59872227  59872230  59872233  59872237  59872238  
+2026-10-16T21:21:54Z S1e gate rc=0 squeue=66 ledger_inflight=66
+GATE completed 4.3244 + in-flight at cap 50.5000 + packs 10.2000 = 65.0244 vs ceiling 100.0
+2026-10-16T21:21:56Z S1e submit rc=0
+GATE completed 4.3244 + in-flight at cap 50.5000 + packs 10.2000 = 65.0244 vs ceiling 100.0
+59872372  59872373  59872374  59872375  59872376  59872377  59872378  59872379  59872380  59872381  59872382  59872383  
+2026-10-16T21:24:12Z S1f gate rc=0 squeue=78 ledger_inflight=78
+GATE completed 4.3244 + in-flight at cap 60.7000 + packs 11.0500 = 76.0744 vs ceiling 100.0
+2026-10-16T21:24:32Z S1f submit rc=0
+GATE completed 4.3244 + in-flight at cap 60.7000 + packs 11.0500 = 76.0744 vs ceiling 100.0
+59872497  59872498  59872499  59872500  59872501  59872502  59872503  59872504  59872505  59872507  59872508  59872510  59872511  
+2026-10-16T21:26:45Z S2a gate rc=0 squeue=91 ledger_inflight=91
+GATE completed 4.3244 + in-flight at cap 71.7500 + packs 10.2000 = 86.2744 vs ceiling 100.0
+2026-10-16T21:27:08Z S2a submit rc=0
+GATE completed 4.3244 + in-flight at cap 71.7500 + packs 10.2000 = 86.2744 vs ceiling 100.0
+59872701  59872707  59872713  59872714  59872716  59872717  59872720  59872721  59872723  59872724  59872725  59872727  
+2026-10-16T21:29:21Z S2b gate rc=0 squeue=103 ledger_inflight=103
+GATE completed 4.3244 + in-flight at cap 81.9500 + packs 11.0500 = 97.3244 vs ceiling 100.0
+2026-10-16T21:29:54Z S2b submit rc=0
+GATE completed 4.3244 + in-flight at cap 81.9500 + packs 11.0500 = 97.3244 vs ceiling 100.0
+59872934  59872937  59872939  59872942  59872947  59872950  59872954  59872956  59872958  59872960  59872962  59872965  59872981  
+ALL SUBMITTED: S1b S1c S1d S1e S1f S2a S2b
+
+[exited with code 0]

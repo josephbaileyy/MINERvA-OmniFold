@@ -1,0 +1,61 @@
+[PASS] compose G2: 17 S4U pairs + 1 S4U single (class tail) + 1 pack of the 4 S4CV rows
+[PASS] compose G2: enforced 17 x 0.5 + 0.5 + 0.85 = 9.85
+[PASS] compose S1a: 12 full CV packs; the 2 rows of the partial chunk are held
+[PASS] compose S1b: 13 packs, the first carrying S1a's 2 held rows
+[PASS] compose S4b (the CV class's last batch): the 2-row tail goes as a partial pack
+[PASS] compose: a shared job that started is left out of the packs
+[PASS] compose: a never-started CANCELLED shared row is owed; a CANCELLED row that started is an attempt
+[PASS] compose: a row in the queue is never packed
+[PASS] worst case packed (G0, G1 shared; the rest packed) = row caps 117.8583 + 0.25 (S4U single): 118.1083
+[PASS] fit: 4 CV rows accepted
+[PASS] fit: 5 CV rows refused (count)
+[PASS] fit: 2 S4U rows accepted, 3 refused
+[PASS] fit: a duplicated member refused
+[PASS] fit: mixed classes refused
+[PASS] fit: every class of jobs.tsv fits a node at full packing
+[PASS] fit: summed memory 3 x 180000M > 515100M refused (the memory clause)
+[PASS] fit: summed memory 2 x 180000M accepted
+[PASS] check_pack: a cap other than the members' cap refused
+[PASS] TIMEOUT pack: validated member COMPLETED, unfinished TIMEOUT, early rc 1 FAILED, killed-at-limit TIMEOUT
+[PASS] retry fires for a TIMEOUT member
+[PASS] retry sbatch line: --qos=regular --exclusive --no-requeue --deadline --time=01:16:00 --mem=121920M, member arg
+[PASS] retry refused for a member with validated output
+[PASS] retry refused for a FAILED member
+[PASS] retry refused for a member of an OUT_OF_MEMORY pack
+[PASS] DEADLINE pack (elapsed 0): its members are owed
+[PASS] CANCELLED pack (elapsed 0): its members are owed
+[PASS] CANCELLED pack (elapsed 30): its members are NOT owed
+[PASS] a pack job with no member record fails closed
+[PASS] members with validated output are never re-packed
+[PASS] redo: a deadline-cancelled retry is owed at its recorded cap, alone
+[PASS] redo: a retry that ran is never owed
+[PASS] pack: a member still PENDING on the shared QOS is refused
+[PASS] pack: 4 never-started cancelled rows -> one sbatch of 2dc_P_K4_S1_001 at 00:51:00, --mem=487680M
+[PASS] pack: the pre-sbatch and job-id member records are written and equal
+[PASS] sbatch failure: the retry record is removed
+[PASS] gate refused with nothing in flight -> STOP wording
+[PASS] gate refused with jobs in flight -> wait
+[PASS] submit refused -> stop, nothing submitted
+[PASS] migrate: cancels exactly the PENDING shared-QOS rows, with --state=PENDING (packs and others left)
+[PASS] migrate --only: a name not PENDING now is refused, nothing cancelled
+[PASS] migrate without --execute is a dry run
+[PASS] deadline: --deadline=2026-10-20T23:00:00 in PDT before 06:00Z
+[PASS] deadline: refused between 06:00Z and the window's end
+[PASS] sbatch_pack.sh MEMBER_SHA equals sha256(sbatch_prod.sh)
+[PASS] dispatcher: a good pack starts 4 srun --exact -N1 -n1 -c 64 --mem=121920M steps, each named and --member'd
+[PASS] dispatcher: each member's rc is recorded
+[PASS] dispatcher refuses a duplicated member before any step
+[PASS] dispatcher refuses an unknown member before any step
+[PASS] dispatcher refuses a mixed class before any step
+[PASS] dispatcher refuses arguments that differ from the launcher's record before any step
+[PASS] dispatcher refuses billing 64 before any step
+[PASS] dispatcher refuses QOS shared before any step
+[PASS] dispatcher refuses a TimeLimit other than the cap before any step
+[PASS] dispatcher: one failing member does not stop the others (4 steps, rc 1 recorded, pack exit 1)
+[PASS] member runner refuses without --member
+[PASS] member runner refuses outside an srun step
+[PASS] member runner refuses in the batch step
+[PASS] member runner refuses an unknown member
+[PASS] member runner refuses billing 64
+[PASS] member runner refuses a CPU mismatch
+RAN 60, FAILED 0

@@ -1,0 +1,133 @@
+{
+ "S1": "PASS",
+ "analyze_prod_sha256": "f9e0d8f271f28bee1ef264de62cf7b924d18d4086e8fbe896abff4adb79320a4",
+ "item": "S1",
+ "missing": [],
+ "n_expected": 300,
+ "n_ok": 300,
+ "out_root": "/pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/out",
+ "pins_failed": {},
+ "provenance": {},
+ "reproduces_pilot": {
+  "joint_01": {
+   "integral_rel_diff": 4.1522341120980855e-14,
+   "max_rel_diff_cells": 4.876099524153688e-13,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_02": {
+   "integral_rel_diff": 5.773159728050814e-14,
+   "max_rel_diff_cells": 1.2917444891513696e-12,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_03": {
+   "integral_rel_diff": 9.992007221626409e-16,
+   "max_rel_diff_cells": 2.531308496145357e-14,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_04": {
+   "integral_rel_diff": 1.2434497875801753e-14,
+   "max_rel_diff_cells": 1.3283818489639998e-12,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_05": {
+   "integral_rel_diff": 5.440092820663267e-15,
+   "max_rel_diff_cells": 6.774580896262705e-13,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_06": {
+   "integral_rel_diff": 6.117328865684613e-14,
+   "max_rel_diff_cells": 7.145395386487507e-13,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_07": {
+   "integral_rel_diff": 1.6209256159527285e-14,
+   "max_rel_diff_cells": 1.1732281812726342e-11,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_08": {
+   "integral_rel_diff": 6.561418075534675e-14,
+   "max_rel_diff_cells": 2.9573898885359995e-11,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_09": {
+   "integral_rel_diff": 2.475797344914099e-14,
+   "max_rel_diff_cells": 5.990763440877345e-13,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_10": {
+   "integral_rel_diff": 3.141931159689193e-14,
+   "max_rel_diff_cells": 4.618527782440651e-13,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_11": {
+   "integral_rel_diff": 9.547918011776346e-15,
+   "max_rel_diff_cells": 8.408829188510936e-13,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_12": {
+   "integral_rel_diff": 4.440892098500626e-16,
+   "max_rel_diff_cells": 5.839773109528323e-14,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_13": {
+   "integral_rel_diff": 5.218048215738236e-15,
+   "max_rel_diff_cells": 5.087041898832467e-13,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_14": {
+   "integral_rel_diff": 2.6423307986078726e-14,
+   "max_rel_diff_cells": 6.721290191080698e-13,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_15": {
+   "integral_rel_diff": 2.853273173286652e-14,
+   "max_rel_diff_cells": 6.106226635438361e-13,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_16": {
+   "integral_rel_diff": 4.4853010194856324e-14,
+   "max_rel_diff_cells": 3.0309088572266774e-13,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_17": {
+   "integral_rel_diff": 3.441691376337985e-14,
+   "max_rel_diff_cells": 4.4630965589931293e-13,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_18": {
+   "integral_rel_diff": 2.220446049250313e-14,
+   "max_rel_diff_cells": 5.313527395855999e-13,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_19": {
+   "integral_rel_diff": 2.1094237467877974e-14,
+   "max_rel_diff_cells": 1.6771029009987615e-12,
+   "verdict": "PASS",
+   "why": null
+  },
+  "joint_20": {
+   "integral_rel_diff": 3.2862601528904634e-14,
+   "max_rel_diff_cells": 3.219646771412954e-13,
+   "verdict": "PASS",
+   "why": null
+  }
+ }
+}

@@ -1,0 +1,5 @@
+GATE completed 0.0000 + in-flight at cap 0.0000 + batch 0.4250 = 0.4250 vs ceiling 100.0
++ sbatch --job-name=2dc_P_C0_unit --qos=shared --cpus-per-task=64 --mem=121920M --time=00:51:00 --no-requeue --deadline=2026-10-20T23:00:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo/docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh
+Submitted batch job 59806379 
++ sbatch --job-name=2dc_P_C0_cv --qos=shared --cpus-per-task=64 --mem=121920M --time=00:51:00 --no-requeue --deadline=2026-10-20T23:00:00 /pscratch/sd/j/josephrb/2d-closeout-stageC-production-20261015/repo/docs/orchestration/state/2d-closeout/stageC/production/sbatch_prod.sh
+Submitted batch job 59806381 

@@ -1,0 +1,1 @@
+GATE completed 0.0000 + in-flight at cap 0.0000 + batch 0.4250 = 0.4250 vs ceiling 100.0

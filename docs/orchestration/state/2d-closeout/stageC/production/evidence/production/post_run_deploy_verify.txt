@@ -1,0 +1,14 @@
+== repo_k (packed, c873cc22) 2026-10-17T22:35:01Z
+OK  manifest.json 77c6676b808708f55edf8a07d13ebd6cf56b2d8cf44a46e04669bfc59d88f6c7
+jobs.tsv c4f1b7082fac3635be78622cb9b9a5f71103789337bbc29e7dd29684e9b4d3a4
+analyze_prod.py f9e0d8f271f28bee1ef264de62cf7b924d18d4086e8fbe896abff4adb79320a4
+s5_rollup.py 6c437004fb439201c173a2857fb95bda2cb3045285ba61c1bef8f8c215b39d15
+checked 41 manifest/driver files; deployed_commit c873cc22630f8c5b2736c1ca98b455c52db0e5d6; mismatches 0
+== repo (shared, 4139548b)
+OK  bound manifest.json 3962cb4d57c2986e7182b56fbdc45f3a876f3a9c24331b31e1dd82a6247e0b3e
+OK  bound jobs.tsv c4f1b7082fac3635be78622cb9b9a5f71103789337bbc29e7dd29684e9b4d3a4
+OK  bound launch.py ea9f06d7cfebe34e6792b800902b8e55f5d9c1eba5b4309af1a71dc4223f40c6
+OK  bound sbatch_prod.sh 1dc95ad32b442e54713b58d08724f9112fa6b4183caa8c9c306f9e94c21576d5
+OK  bound analyze_prod.py f9e0d8f271f28bee1ef264de62cf7b924d18d4086e8fbe896abff4adb79320a4
+OK  bound s5_rollup.py 6c437004fb439201c173a2857fb95bda2cb3045285ba61c1bef8f8c215b39d15
+checked 31 manifest/driver files; deployed_commit 4139548b3920c1c7944e700c08649493167bc45d; mismatches 0

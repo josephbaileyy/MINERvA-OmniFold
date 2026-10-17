@@ -1,0 +1,48 @@
+2026-10-16T21:30:34Z S4a gate rc=3 squeue=116 ledger_inflight=116 (wait)
+GATE completed 4.3244 + in-flight at cap 93.0000 + packs 8.5000 = 105.8244 vs ceiling 100.0
+2026-10-16T21:40:39Z S4a gate rc=3 squeue=116 ledger_inflight=116 (wait)
+GATE completed 4.3244 + in-flight at cap 93.0000 + packs 8.5000 = 105.8244 vs ceiling 100.0
+2026-10-16T21:50:43Z S4a gate rc=3 squeue=116 ledger_inflight=116 (wait)
+GATE completed 4.3244 + in-flight at cap 93.0000 + packs 8.5000 = 105.8244 vs ceiling 100.0
+2026-10-16T22:00:47Z S4a gate rc=3 squeue=116 ledger_inflight=116 (wait)
+GATE completed 4.3244 + in-flight at cap 93.0000 + packs 8.5000 = 105.8244 vs ceiling 100.0
+2026-10-16T22:10:51Z S4a gate rc=3 squeue=116 ledger_inflight=116 (wait)
+GATE completed 4.3244 + in-flight at cap 93.0000 + packs 8.5000 = 105.8244 vs ceiling 100.0
+2026-10-16T22:20:54Z S4a gate rc=3 squeue=116 ledger_inflight=116 (wait)
+GATE completed 4.3244 + in-flight at cap 93.0000 + packs 8.5000 = 105.8244 vs ceiling 100.0
+2026-10-16T22:30:59Z S4a gate rc=3 squeue=116 ledger_inflight=116 (wait)
+GATE completed 4.3244 + in-flight at cap 93.0000 + packs 8.5000 = 105.8244 vs ceiling 100.0
+2026-10-16T22:41:02Z S4a gate rc=3 squeue=116 ledger_inflight=116 (wait)
+GATE completed 4.3244 + in-flight at cap 93.0000 + packs 8.5000 = 105.8244 vs ceiling 100.0
+2026-10-16T22:51:05Z S4a gate rc=3 squeue=114 ledger_inflight=114 (wait)
+GATE completed 4.7563 + in-flight at cap 92.0000 + packs 8.5000 = 105.2563 vs ceiling 100.0
+2026-10-16T23:01:09Z S4a gate rc=3 squeue=112 ledger_inflight=112 (wait)
+GATE completed 5.1802 + in-flight at cap 91.0000 + packs 8.5000 = 104.6802 vs ceiling 100.0
+2026-10-16T23:11:12Z S4a gate rc=3 squeue=112 ledger_inflight=112 (wait)
+GATE completed 5.1802 + in-flight at cap 91.0000 + packs 8.5000 = 104.6802 vs ceiling 100.0
+2026-10-16T23:21:17Z S4a gate rc=3 squeue=112 ledger_inflight=112 (wait)
+GATE completed 5.1802 + in-flight at cap 91.0000 + packs 8.5000 = 104.6802 vs ceiling 100.0
+2026-10-16T23:31:21Z S4a gate rc=3 squeue=112 ledger_inflight=112 (wait)
+GATE completed 5.1802 + in-flight at cap 91.0000 + packs 8.5000 = 104.6802 vs ceiling 100.0
+2026-10-16T23:41:27Z S4a gate rc=3 squeue=112 ledger_inflight=112 (wait)
+GATE completed 5.1802 + in-flight at cap 91.0000 + packs 8.5000 = 104.6802 vs ceiling 100.0
+2026-10-16T23:51:31Z S4a gate rc=3 squeue=112 ledger_inflight=112 (wait)
+GATE completed 5.1802 + in-flight at cap 91.0000 + packs 8.5000 = 104.6802 vs ceiling 100.0
+2026-10-17T00:01:36Z S4a gate rc=3 squeue=110 ledger_inflight=110 (wait)
+GATE completed 5.6124 + in-flight at cap 90.0000 + packs 8.5000 = 104.1124 vs ceiling 100.0
+2026-10-17T00:11:42Z S4a gate rc=3 squeue=110 ledger_inflight=110 (wait)
+GATE completed 5.6124 + in-flight at cap 90.0000 + packs 8.5000 = 104.1124 vs ceiling 100.0
+2026-10-17T00:21:46Z S4a gate rc=3 squeue=110 ledger_inflight=110 (wait)
+GATE completed 5.6124 + in-flight at cap 90.0000 + packs 8.5000 = 104.1124 vs ceiling 100.0
+2026-10-17T00:31:50Z S4a gate rc=3 squeue=110 ledger_inflight=110 (wait)
+GATE completed 5.6124 + in-flight at cap 90.0000 + packs 8.5000 = 104.1124 vs ceiling 100.0
+2026-10-17T00:41:55Z S4a gate rc=3 squeue=110 ledger_inflight=110 (wait)
+GATE completed 5.6124 + in-flight at cap 90.0000 + packs 8.5000 = 104.1124 vs ceiling 100.0
+2026-10-17T00:51:59Z S4a gate rc=3 squeue=110 ledger_inflight=110 (wait)
+GATE completed 5.6124 + in-flight at cap 90.0000 + packs 8.5000 = 104.1124 vs ceiling 100.0
+2026-10-17T01:02:02Z S4a gate rc=0 squeue=97 ledger_inflight=96
+GATE completed 8.2819 + in-flight at cap 78.4500 + packs 8.5000 = 95.2319 vs ceiling 100.0
+COUNT MISMATCH
+STOPPED at S4a rc=5
+
+[exited with code 1]

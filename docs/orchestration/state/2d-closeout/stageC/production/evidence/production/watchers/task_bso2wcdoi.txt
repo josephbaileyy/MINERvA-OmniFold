@@ -1,0 +1,3 @@
+G2ENDED n=17 at 2026-10-17T01:08:04Z | packs:    1 CANCELLED   30 COMPLETED   97 PENDING 
+
+[exited with code 16]
