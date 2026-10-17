@@ -1,0 +1,150 @@
+{
+ "checks": {
+  "s5_total_equals_universe_stat_c08": 0.0,
+  "s5_total_symmetry_rel": 5.64524308614938e-17,
+  "s5_total_min_eig_over_max": 1.2284684265814153e-12,
+  "cells_npz_equal_work_cov": true,
+  "cells_work_cov_equal_E_U_nonzero": true,
+  "cells_x_s5_vs_playlist_rel": 0.0,
+  "cells_x_playlist_vs_work_cov_rel": 0.0,
+  "functionals_s5_vs_playlist_rel": 0.0,
+  "area_s5_vs_playlist_rel": 0.0,
+  "r_npz_vs_reloaded_rel": 0.0,
+  "C_PL_rebuilt_rel": 0.0,
+  "combined_symmetry_rel": 5.506768867651629e-17,
+  "combined_min_eig_over_max": 1.1584114999627098e-12,
+  "control_chi2": {
+   "b_PB_dr": {
+    "pz_vs_VL175": {
+     "value": 33.12202139692209,
+     "committed": 33.12202139692209,
+     "rel": 0.0
+    },
+    "pz_vs_VL175_plus_C_PL": {
+     "value": 0.6768911919817413,
+     "committed": 0.6768911919817413,
+     "rel": 0.0
+    }
+   },
+   "bias_PB_raw_frozen": {
+    "pz_vs_VL175": {
+     "value": 33.77885700582344,
+     "committed": 33.77885700582344,
+     "rel": 0.0
+    },
+    "pz_vs_VL175_plus_C_PL": {
+     "value": 1.9761447595072923,
+     "committed": 1.9761447595072923,
+     "rel": 0.0
+    }
+   }
+  }
+ },
+ "budget_cells": {
+  "VL175": {
+   "median": 6.089795123254515,
+   "p84": 9.024417709929434,
+   "max": 23.105934895572624
+  },
+  "S5_universe": {
+   "median": 5.968625171170327,
+   "p84": 8.728314078543539,
+   "max": 20.277398299222792
+  },
+  "S5_stat": {
+   "median": 0.6843336186391061,
+   "p84": 1.7118040044805791,
+   "max": 17.984057979256754
+  },
+  "S5_c08": {
+   "median": 0.05719223864146403,
+   "p84": 0.13956779729289023,
+   "max": 0.7152867558329915
+  },
+  "S5_total": {
+   "median": 6.040559264893113,
+   "p84": 8.953329326281757,
+   "max": 23.294890067702166
+  },
+  "C_PL": {
+   "median": 2.136847531649445,
+   "p84": 3.307910887051735,
+   "max": 5.69430361465634
+  },
+  "S5_total_plus_C_PL": {
+   "median": 6.44790002221861,
+   "p84": 9.183913776753062,
+   "max": 23.636160075468148
+  }
+ },
+ "integral": {
+  "VL175": 4.230343746835185,
+  "S5_universe": 4.328004838837328,
+  "S5_stat": 0.06101736916013327,
+  "S5_c08": 0.002455257112515108,
+  "S5_total": 4.328435633416077,
+  "C_PL": 1.9683699043176155,
+  "S5_total_plus_C_PL": 4.754980032854962
+ },
+ "effect": {
+  "cell_sigma_increase_pct": {
+   "median": 5.367208121977929,
+   "max": 34.529475468923934
+  },
+  "integral_sigma_increase_pct": 9.85447019578871,
+  "functional_sigma_increase_pct_max": 21.162490930281308,
+  "block_share_of_cell_variance_median": 0.09928155929064797,
+  "block_share_of_integral_variance": 0.17136259777593166
+ },
+ "chi2": {
+  "b_PB_dr": {
+   "pz_vs_VL175": 33.12202139692209,
+   "pz_vs_VL175_plus_C_PL": 0.6768911919817413,
+   "pz_vs_S5": 35.62746764392959,
+   "pz_vs_S5_plus_C_PL": 0.6793234023890722,
+   "pt_vs_VL175": 2.8484366525605957,
+   "pt_vs_VL175_plus_C_PL": 0.5566562418990496,
+   "pt_vs_S5": 2.576696928333381,
+   "pt_vs_S5_plus_C_PL": 0.5411825688813269,
+   "first_order_in_span_bound": 0.6833378267038563
+  },
+  "b_PC_dr": {
+   "pz_vs_VL175": 2.8581920895079596,
+   "pz_vs_VL175_plus_C_PL": 0.30637917886262717,
+   "pz_vs_S5": 3.539085488808999,
+   "pz_vs_S5_plus_C_PL": 0.3137336351643023,
+   "pt_vs_VL175": 0.8122939521784746,
+   "pt_vs_VL175_plus_C_PL": 0.24465742638376878,
+   "pt_vs_S5": 0.7502795001852502,
+   "pt_vs_S5_plus_C_PL": 0.2391585579978556,
+   "first_order_in_span_bound": 0.3401730842186354
+  },
+  "bias_PB_raw_frozen": {
+   "pz_vs_VL175": 33.77885700582344,
+   "pz_vs_VL175_plus_C_PL": 1.9761447595072923,
+   "pz_vs_S5": 34.81134770683034,
+   "pz_vs_S5_plus_C_PL": 1.9660221726261766,
+   "pt_vs_VL175": 1.9550452517647192,
+   "pt_vs_VL175_plus_C_PL": 0.5986962758144645,
+   "pt_vs_S5": 2.174794705405856,
+   "pt_vs_S5_plus_C_PL": 0.6470670485276712,
+   "first_order_in_span_bound": null
+  },
+  "bias_PC_raw_frozen": {
+   "pz_vs_VL175": 2.618525252019177,
+   "pz_vs_VL175_plus_C_PL": 0.40012524426914264,
+   "pz_vs_S5": 3.4226099036543287,
+   "pz_vs_S5_plus_C_PL": 0.40846549033032287,
+   "pt_vs_VL175": 0.6210652585695927,
+   "pt_vs_VL175_plus_C_PL": 0.21125094882637574,
+   "pt_vs_S5": 0.5741523555464182,
+   "pt_vs_S5_plus_C_PL": 0.20793591390375063,
+   "first_order_in_span_bound": null
+  },
+  "note": "no pass/fail and no coverage reading for any row (DESIGN section 4): the dr vectors lie in C_PL's span to first order, so their chi2 against any total that includes C_PL is bounded by an e-only constant whatever the data. The raw rows are mostly out of span: informative as a sensitivity only, and they include the MC-predicted flux difference DESIGN section 2 calls legitimate. The 'vs S5' and 'vs VL175' columns differ by the whole recipe change, not only by C_PL."
+ },
+ "npz": {
+  "path": "out/s5_plus_playlist.npz",
+  "sha256": "8ccb4d723c3dbf737a7fb1d5236e5e25409c41b42b64ac55dccbbc12f595600e"
+ }
+}
