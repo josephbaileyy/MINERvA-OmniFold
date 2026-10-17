@@ -36,6 +36,12 @@ Scalar measurement successor proposal (2026-10-05):
 [bounded 2D admission and resource request](PROPOSAL-20261005-scalar-measurement-successor.md).
 This is a proposal, not compute authority or a change to the current campaigns.
 
+### 2D closeout preparation (2026-10-16)
+
+- [Closeout navigation proposal](../preparation/NAVIGATION-20261016.md)
+- [Supplemental publication review packet](../preparation/PUBLICATION-REVIEW-PACKET-20261016.md)
+- [Comparative future-research decision proposal](../preparation/RESEARCH-DECISIONS-20261016.md)
+
 ### Uncertainty-investigation preparation (sessions A–E), 2026-10-08/09 — integrated
 
 Preparation only. It launched no compute and authorizes no experiment; each proposed experiment
