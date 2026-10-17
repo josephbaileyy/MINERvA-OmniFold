@@ -10,7 +10,8 @@ these corrections were found by the supplementary preparation packet `docs/prepa
 accepting it. Statuses are dated observations, not live state.
 
 **Status update (2026-10-17, after PR #150):** F1, F3, F4, F5, F8 and F9 are closed. F10 (disclosures, revision 2) is closed as
-a draft. F6 (`driver_p1.py` on main) remains open before Joseph's decisions J1–J5.
+a draft. F6 is closed (PR #153). **Every scientific input (F1–F10) is closed; the next steps are Joseph's decisions
+J1–J5.**
 
 **CITABLE FOR:** the dependency order of Stage F, and the record that closes each dependency.
 **NOT CITABLE FOR:** any result, adoption, claim, KI-85 lift, publication change, push, submission, deposit, tag or
@@ -44,7 +45,7 @@ before adoption. This draft assumes it does, because of his statement above.
 | F3 | S5 rollup: every frozen check passes (pins, control vs VL175 to 1e-12, MAT vs numpy, functionals from vectors, symmetry, PSD); `production_cov.npz`, `s5.json` and `uq_production_covariance.root` written | `s5.json` and the REPORT | 2d closer | **closed**: S5 PASS (55 checks ok); `production_cov.npz` `6689d2fc…`, `s5.json` `8c815149…`, `uq_production_covariance.root` `34cf33f9…` |
 | F4 | Fresh read-only verifier on the production REPORT, with an independent recomputation of the total from the replica and universe vectors | verifier report attached to the REPORT | director dispatches | **closed**: [`F4-VERIFICATION.md`](F4-VERIFICATION.md). VERIFIED WITH FINDINGS (0 MATERIAL, 4 MINOR, all dispositioned); every block rebuilt independently, total to 8.8e-19 |
 | F5 | Durable copy: products to CFS `m3246` with sha256 re-measured, including the S5 ROOT rollup (binding §4) | REPORT section | 2d closer | **closed**: CFS `m3246/josephrb/2d-closeout-stageC-production-20261015/`, 2,355 files under `sha256sum -c` rc 0, including the S5 ROOT rollup (REPORT §13; F4 part B) |
-| F6 | `driver_p1.py` reaches `main` through its own reviewed PR (binding ruling 1) | that PR's merge | 2d closer, reviewed by the director | open |
+| F6 | `driver_p1.py` reaches `main` through its own reviewed PR (binding ruling 1) | that PR's merge | 2d closer, reviewed by the director | **closed**: PR #153. `2d-unfolding/driver_p1.py` `3056e625` (blob `18d08daa`) is byte-identical to the pilot copy and to every deployed tree that ran it. It produced 481 jobs (C0_unit, S1, S2, S4B); G2, S4U, C0_cv and S3 ran `unfold_2d_omnifold_unbinned.py` `74a4ed69`. Byte and import-graph identity, no re-run ([`f6-driver-p1/IDENTITY.md`](f6-driver-p1/IDENTITY.md)); reviewed by the director |
 | F7 | Playlist-consistency design record: the construction, raw or double ratio, the reference period, the treatment of 1F and the per-period MC responses, all declared before computing | director record, then a fresh verifier | director | **closed**: [`../playlist-term/DESIGN.md`](../playlist-term/DESIGN.md), frozen at `c144cdc4` and amended by PRs #142–#144 |
 | F8 | Playlist-consistency block computed, added after S5 as a separate block, without editing VL175 or S5 | a block record with digests, verifier-checked | director | **closed**: [`../playlist-term/REPORT.md`](../playlist-term/REPORT.md) (PR #144), recompute in [`../playlist-term/recompute/`](../playlist-term/recompute/). Not adopted |
 | F9 | The quoted total = S5 total + playlist block. Checks: symmetric, PSD, functionals from vectors; the budget with and without the block | the block record | director | **closed (candidate)**: [`../playlist-term/COMBINATION-REPORT.md`](../playlist-term/COMBINATION-REPORT.md) (PR #149), frozen in PR #148 and independently REPRODUCED. It reads the F4-verified `6689d2fc…`. Not adopted |
