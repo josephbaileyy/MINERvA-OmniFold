@@ -9,8 +9,8 @@ these corrections were found by the supplementary preparation packet `docs/prepa
 (commit `28242f6c`, "Reconciliation pending"); the director re-measured each one on `main` `f9ac0985` before
 accepting it. Statuses are dated observations, not live state.
 
-**Status update (2026-10-17, after PR #150):** F1, F3, F4, F5, F8 and F9 are closed. F6 (`driver_p1.py` on main) and F10
-(disclosures, revision 2) remain open before Joseph's decisions J1–J5.
+**Status update (2026-10-17, after PR #150):** F1, F3, F4, F5, F8 and F9 are closed. F10 (disclosures, revision 2) is closed as
+a draft. F6 (`driver_p1.py` on main) remains open before Joseph's decisions J1–J5.
 
 **CITABLE FOR:** the dependency order of Stage F, and the record that closes each dependency.
 **NOT CITABLE FOR:** any result, adoption, claim, KI-85 lift, publication change, push, submission, deposit, tag or
@@ -48,7 +48,7 @@ before adoption. This draft assumes it does, because of his statement above.
 | F7 | Playlist-consistency design record: the construction, raw or double ratio, the reference period, the treatment of 1F and the per-period MC responses, all declared before computing | director record, then a fresh verifier | director | **closed**: [`../playlist-term/DESIGN.md`](../playlist-term/DESIGN.md), frozen at `c144cdc4` and amended by PRs #142–#144 |
 | F8 | Playlist-consistency block computed, added after S5 as a separate block, without editing VL175 or S5 | a block record with digests, verifier-checked | director | **closed**: [`../playlist-term/REPORT.md`](../playlist-term/REPORT.md) (PR #144), recompute in [`../playlist-term/recompute/`](../playlist-term/recompute/). Not adopted |
 | F9 | The quoted total = S5 total + playlist block. Checks: symmetric, PSD, functionals from vectors; the budget with and without the block | the block record | director | **closed (candidate)**: [`../playlist-term/COMBINATION-REPORT.md`](../playlist-term/COMBINATION-REPORT.md) (PR #149), frozen in PR #148 and independently REPRODUCED. It reads the F4-verified `6689d2fc…`. Not adopted |
-| F10 | Every disclosure item in [`DRAFT-disclosures.md`](DRAFT-disclosures.md) has its final number from F3/F8, and each number's source line is cited | the disclosure draft, revision 2 | director | waits on F3 and F8 |
+| F10 | Every disclosure item in [`DRAFT-disclosures.md`](DRAFT-disclosures.md) has its final number from F3/F8, and each number's source line is cited | the disclosure draft, revision 2 | director | **closed (draft for J4)**: [`DRAFT-disclosures.md`](DRAFT-disclosures.md) revision 2, numbers sourced and reviewed (APPROVE WITH CHANGES, all applied). KI-90 waits on R1–R4 |
 
 ## 2. Joseph's decisions (Joseph's alone)
 
