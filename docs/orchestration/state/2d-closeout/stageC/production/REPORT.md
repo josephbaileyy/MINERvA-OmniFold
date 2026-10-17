@@ -7,7 +7,8 @@ This is the production record the grant requires
 ([`AUTHORIZATION-20261015-2d-closeout-stageC-production.md`](../../../../AUTHORIZATION-20261015-2d-closeout-stageC-production.md)
 §3, "record"). It gives every job's `sacct` row, the gates, the products and their digests, the S5 matrices and the
 terminal outcome. Every number here was measured from `sacct`, the cluster namespace, the CFS copy or the committed
-evidence in [`evidence/production/`](evidence/production/). All times are UTC unless marked PDT.
+evidence in [`evidence/production/`](evidence/production/), except the shared-QOS gate lines marked † in §5, which
+come from the executor's session transcript. All times are UTC unless marked PDT.
 
 **Not covered:** adoption of any product, central value or uncertainty (all S5 products are diagnostic until Joseph
 adopts them, DESIGN §8); disclosure wording (Stage F); `driver_p1.py` reaching `2d-unfolding/` on `main` (a Stage F
@@ -31,13 +32,13 @@ Every frozen check in DESIGN §7 and §8 passed, on one `out_root` (`$NS/out`), 
 
 | item | jobs | verdict | key measurements | result file sha256 |
 |---|---|---|---|---|
-| C0 | 2 | **PASS** | `C0_unit` and `C0_cv` vs XR-L0: max rel diff 1.37e-11 and 1.36e-11 over 205 cells, 0 over 1e-8 | `results/c0.json` (`evidence/production/results/`) |
-| S3 | 10 | **PASS** | provenance 10/10; closure max \|c − 1\| ≤ 1.98e-14 in every lateral, with the canonical denominator; P3 reproduction 7.7e-12 (`BeamAngleX0`), 3.5e-13 (`MINOS0`) | `results/s3.json` |
+| C0 | 2 | **PASS** | `C0_unit` and `C0_cv` vs XR-L0: max rel diff 1.37e-11 and 1.36e-11 over 205 cells, 0 over 1e-8 | `1f131c643906cf1e46cdcb777396e76bfa7c262b5621945235f2bc846685d734` |
+| S3 | 10 | **PASS** | provenance 10/10; closure max \|c − 1\| ≤ 1.98e-14 in every lateral, with the canonical denominator; P3 reproduction 7.7e-12 (`BeamAngleX0`), 3.5e-13 (`MINOS0`) | `5df53a2efc0e6740e567f65b002fb6e8856bbd87e4b560b0c83d9c8200684377` |
 | S4(ii) | 39 | **PASS** | provenance 39/39; July identity at seed 42, 7/7 universes, ≤ 1.38e-11; null vs CV, 5/5 seeds, ≤ 6.0e-12 | `a7c58368ceb5f1657b36a30030dba30d4d57c83dc51d629117f33016b85c02a4` |
 | S1 | 300 | **PASS** | provenance 300/300; pilot joint replicas 1–20 reproduced 20/20, ≤ 2.96e-11 | `78cc8356213cb79268f5e53b2f6171522f6d3c87a27b741494c58d4ce613f6ef` |
 | S2 | 100 | **PASS** | provenance 100/100; pilot bkg replicas 1–20 reproduced 20/20, ≤ 6.38e-12 | `989f5e6da5394635c7ed69e0fa8cadba682eebadb4510614ea9d342f06f74927` |
 | S4(i) | 80 | **PASS** | provenance 80/80 | `e19ff38634a6f8601e439afbba97732ade1a3bfbd53b4614314e2d691bc2b50d` |
-| S5 | login node | **PASS** | 54 `[PASS]` lines, 0 FAIL, 0 INCONCLUSIVE (§3) | `s5.json` `8c815149…` |
+| S5 | login node | **PASS** | 55 checks in `s5.json`, all `ok`; the log prints 54 `[PASS]` lines, 0 FAIL, 0 INCONCLUSIVE (§3) | `s5.json` `8c815149…` |
 
 All six item JSONs read `pins_failed {}`, `analyze_prod_sha256` `f9e0d8f2…` and `out_root` `$NS/out`. The S1
 analysis counts 300 replicas: 296 ran in production packs and `S1_001`–`004` ran in the smoke pack 59860260, whose
@@ -73,7 +74,8 @@ eight non-MINOS laterals, 5,723,867.86 for `Muon_Energy_MINOS_0`, 5,776,329.75 f
 
 `s5_rollup.py --out $NS/results/s5` ran in `root_6_28` from 22:31:00Z to 22:31:08Z, rc 0
 (`gatelog/s5_run.txt`, `gatelog/s5_rollup.txt`). `s5.json` records `S5: PASS`, `s5_rollup_sha256` `6c437004…` and
-the sha256 of every input it read.
+the sha256 of every input it read. Its `checks` object has 55 entries, all `ok: true`; the log prints 54 of them
+(`control_vl175_per_block`, the per-block detail behind the control rows below, is not printed).
 
 **Checks** (each a stop; all passed):
 
@@ -90,7 +92,9 @@ the sha256 of every input it read.
 | normalization rank 1 | 5.7e-16 |
 | symmetry and PSD: universe, stat, c08, total | all symmetric; min eigenvalue / max: −3.0e-17, 7.7e-10, −3.5e-16, 1.2e-12 |
 
-**Reported numbers** (no pass/fail; from `s5.json` `numbers`). σ is per cell, relative to E_U:
+**Reported numbers** (no pass/fail; from `s5.json` `numbers`). σ is per cell, relative to E_U. "Rank" counts the
+eigenvalues above 1e-10 × the largest (the total is strictly positive-definite, min/max eigenvalue 1.2e-12; numpy's
+default `matrix_rank` tolerance gives 141 for universe and 205 for the total):
 
 | block | rank | median σ | p84 | min | max | integral σ |
 |---|---|---|---|---|---|---|
@@ -130,7 +134,7 @@ The total's σ on the 31 functionals: integral 4.33%; the 14 pT projections 4.36
   Each SD has 4 degrees of freedom (Gaussian relative SE 35%).
 - **Centring (R9).** Per universe band, the median offset of the band's centre (the weighted mean for Flux, the mean
   otherwise) from E_U is 0.12–0.50% of E_U, or 0.08–2.26 σ_band (null bands `EtaNCEL`, `NormDISCC` at
-  ≤ 4e-8%). For the stat ensemble, the replica mean's median offset from E_U is **4.43 σ/√300**. The stat block is
+  ≤ 4.2e-8%). For the stat ensemble, the replica mean's median offset from E_U is **4.43 σ/√300**. The stat block is
   the covariance about the replica mean (ddof 1), so this offset does not enter it; it is reported as R9 requires,
   and it is a surviving limitation (§12).
 
@@ -196,15 +200,15 @@ gate is terminal charges + every in-flight job at its full cap + the batch's cap
 |---|---|---|---|---|---|---|---|
 | G0 | shared | 2026-10-15 | 0.0000 | 0.0000 | 0.4250 | 0.4250 | 2 |
 | G1 | shared | 2026-10-15 22:15 | 0.2430 | 0.0000 | 5.8333 | 6.0763 | 10 |
-| G2 † | shared | 22:19 | 0.2430 | 5.8333 | 9.6000 | 15.6763 | 39 |
-| S1a † | shared | ~22:20 | 0.2430 | 15.4333 | 10.6250 | 26.3013 | 50 |
-| S1b † | shared | | 0.2430 | 24.1458 | 10.6250 | 35.0138 | 50 |
-| S1c † | shared | | 0.2430 | 35.4083 | 10.6250 | 46.2763 | 50 |
-| S1d † | shared | | 0.2430 | 46.6708 | 10.6250 | 57.5388 | 50 |
-| S1e † | shared | | 0.2430 | 57.9333 | 10.6250 | 68.8013 | 50 |
-| S1f † | shared | | 0.2430 | 68.3458 | 10.6250 | 79.2138 | 50 |
-| S2a † | shared | ~22:27 | 0.2430 | 79.1833 | 10.6250 | 90.0513 | 50 |
-| S2b † | shared | 22:27 | 0.2430 | 89.8083 | 10.6250 | 100.6763 | NOT ADMITTED (rc 3, a wait) |
+| G2 † | shared | 22:18:51 | 0.2430 | 5.8333 | 9.6000 | 15.6763 | 39 |
+| S1a † | shared | 22:19:59 | 0.2430 | 15.4333 | 10.6250 | 26.3013 | 50 |
+| S1b † | shared | 22:20:41 | 0.2430 | 24.1458 | 10.6250 | 35.0138 | 50 |
+| S1c † | shared | 22:20:49 | 0.2430 | 35.4083 | 10.6250 | 46.2763 | 50 |
+| S1d † | shared | 22:20:59 | 0.2430 | 46.6708 | 10.6250 | 57.5388 | 50 |
+| S1e † | shared | 22:22:12 | 0.2430 | 57.9333 | 10.6250 | 68.8013 | 50 |
+| S1f † | shared | 22:23:30 | 0.2430 | 68.3458 | 10.6250 | 79.2138 | 50 |
+| S2a † | shared | 22:25:17 | 0.2430 | 79.1833 | 10.6250 | 90.0513 | 50 |
+| S2b † | shared | after 22:27:10 | 0.2430 | 89.8083 | 10.6250 | 100.6763 | NOT ADMITTED (rc 3, a wait) |
 | smoke pack (re-submission) | regular | 2026-10-16 | 3.4744 | 83.1250 | 0.8500 | 87.4494 | 1 |
 | G2 | regular | 2026-10-16 21:08 | 4.3244 | 0.0000 | 8.8500 | 13.1744 | 17 |
 | S1a | regular | 21:11 | 4.3244 | 8.8500 | 9.3500 | 22.5244 | 11 |
@@ -221,11 +225,33 @@ gate is terminal charges + every in-flight job at its full cap + the batch's cap
 † The shared-QOS gate and submit transcripts for G2 and S1a–S2b were written to the same `gatelog/` file names that
 the packed path later reused (`G2_gate.txt`, `S1a_submit.txt`, …), so the files now hold the packed submissions. The
 shared-era GATE lines above are as printed in the executor's session at 2026-10-15 22:19–22:27Z; the jobs themselves
-are in `sacct` (§11) and their `Deadline=` reads in `all_deadline_check_20261015.txt` (§7). `S2b_gate_2.txt` is a
+are in `sacct` (§11) and their `Deadline=` reads in `all_deadline_check_20261015.txt` (§7). For these rows the time
+is the batch's first `sacct` Submit (for S2b, the last S2a Submit), not the gate's own time.
+
+**Deviation: four shared-QOS gates under-counted the jobs in flight.** DESIGN §6 requires each gate to run only after
+every earlier `2dc_P_*` submission appears in the printed ledger, and the grant's gate counts "the full cap of every
+job pending or running". On 2026-10-15 the shared batches were gated back to back: each gate ran within about a
+second of the previous batch's last `sbatch` (S1a's last Submit 22:20:40, S1b's first 22:20:41; S1b's last 22:20:48,
+S1c's first 22:20:49; S1c's last 22:20:58, S1d's first 22:20:59), before `sacct` listed every job. The printed
+in-flight terms therefore fall short of the caps actually pending (G1 5.8333 + G2 9.6000 + 10.6250 per earlier S1
+batch):
+
+| gate | in flight, printed | in flight, all earlier jobs | short by | true total |
+|---|---|---|---|---|
+| S1b | 24.1458 | 26.0583 | 1.9125 (9 jobs) | 36.9263 |
+| S1c | 35.4083 | 36.6833 | 1.2750 (6 jobs) | 47.5513 |
+| S1d | 46.6708 | 47.3083 | 0.6375 (3 jobs) | 58.1763 |
+| S1f | 68.3458 | 68.5583 | 0.2125 (1 job) | 79.4263 |
+
+S1e, S2a and S2b match exactly. No ceiling was affected: the largest true total was 79.4263, and S2b's refusal at
+100.6763 used a complete ledger. The lag itself was observed on 2026-10-15, and the packed path's DESIGN §14.4 step 4
+responded to it: each `gate` runs at least 2 min after the last `submit` (the executor waited 130 s) and only when the
+ledger's in-flight count matches `squeue` (the count guard below). The packed gates show no shortfall. The size of
+the shortfall in these four shared gates was not quantified until the executor's verifier checked this REPORT. `S2b_gate_2.txt` is a
 later shared-QOS re-check of S2b on 2026-10-16 (98.0744; nothing submitted before the packed path replaced it).
 
-**Waits, not stops.** S4a was NOT ADMITTED (rc 3, jobs in flight) at every 10-minute poll from 2026-10-16 23:01Z to
-2026-10-17 00:52Z (104.6802, then 104.1124). S4b was NOT ADMITTED from 01:05Z to 02:25Z at a flat 101.2958; no pack
+**Waits, not stops.** S4a was NOT ADMITTED (rc 3, jobs in flight) at all 21 ten-minute polls from 2026-10-16
+21:30:34Z to 2026-10-17 00:52Z (105.8244, 105.2563, 104.6802, then 104.1124). S4b was NOT ADMITTED from 01:05Z to 02:25Z at a flat 101.2958; no pack
 completed in that window. Every poll is in `evidence/production/watchers/task_b7wco0xeo.txt` and
 `task_b0lvmo979.txt` (the `<batch>_gate.txt` files hold only the last poll).
 
@@ -236,7 +262,7 @@ the gate admitted S4a at 95.2319, but the guard saw `squeue 97` against `ledger 
 Cause: a pack ended between the two reads (COMPLETING in `squeue`, COMPLETED and charged at actual in `sacct`); at
 01:02:16Z every `squeue` id had a ledger line. The rule became: every `squeue` id (read first) has a line in the gate
 file, and ledger in-flight ≤ `squeue` (`watchers/wait_submit.sh`, sha256 `2d013856…`). It still refuses the hazard it
-exists for, a submitted job not yet in `sacct`. The director accepted the change; the binding does not pin this
+exists for, a submitted job not yet in `sacct`. The director accepted the change in correspondence (not committed); the binding does not pin this
 script.
 
 **Final gate.** After production, `launch.py gate S4b` gives "REFUSE: batch S4b has no rows owed a first submission
@@ -258,7 +284,7 @@ Charge = ElapsedRaw × billing / 256 / 3600, from every `2dc_P_` allocation sinc
 
 This is 29.0% of the 100.0 ceiling. The packed path's pre-launch expectation was ≈ 31–37 including the measured
 4.3244 (DESIGN §14.5); the measured G2 charge (3.7581) came in under its shared-QOS estimate (6.1–6.8), and the 119
-CV packs (20.9473) at the low end of theirs (21.0–26.2). The all-at-cap worst case was 118.1083 (packing binding
+CV packs (20.9472: 75,410 s / 3600) at the low end of theirs (21.0–26.2). The all-at-cap worst case was 118.1083 (packing binding
 R1); the highest gate total at any submission was 99.9455 (S4b).
 
 ## 7. Deadline, maintenance and retries
@@ -268,9 +294,11 @@ R1); the highest gate total at any submission was 99.9455 (S4b).
   the same field read `2026-10-20T23:00:00` on all 399 shared-QOS jobs then queued
   (`gatelog/all_deadline_check_20261015.txt`). For the packed path, all 136 production `sbatch` lines carry
   `--deadline=2026-10-20T23:00:00` (`gatelog/*_submit.txt`); `scontrol`'s field was not read for the packs (§12).
-- **`DEADLINE` rows:** none. No job ended in state DEADLINE, no pending job showed Reason DeadLine (throughput
-  watch), and no job ended after 2026-10-21T06:00Z. So no `redo` was owed.
-- **Maintenance** (2026-10-21 13:00Z): no job straddled it; the last job ended 2026-10-17T22:25:05Z.
+- **`DEADLINE` rows:** none. No job ended in state DEADLINE (`sacct`), and no job ended after 2026-10-21T06:00Z.
+  From 2026-10-17 02:40Z the throughput watch also saw no pending job with Reason DeadLine. So no `redo` was owed.
+- **Maintenance:** the grant §3, the 2026-10-15 binding §4 and DESIGN §6 put the straddle limit at 2026-10-21
+  06:00Z; the packing binding §4 says 13:00Z, and `pack_watch.sh` used 13:00Z. The stricter 06:00Z governs. No job
+  straddled either: the last job ended 2026-10-17T22:25:05Z.
 - **Retries:** none. `retries/` is empty; no TIMEOUT, OUT_OF_MEMORY or FAILED attempt occurred.
 - **Purge:** no input check failed.
 
@@ -287,7 +315,7 @@ Both trees were checked against their manifests after the run, at 2026-10-17T22:
 
 ## 9. Watch items and director reports
 
-Packing binding §3.6 watch items, each reported to the director when it happened:
+Packing binding §3.6 watch items, each reported to the director when it happened (in correspondence, not committed):
 - **First G2 packs:** 765, 790, 790 and 736 s against 1,800 s (charges 0.2044–0.2194); at the end all 17 G2 packs
   ran 709–910 s (S4CV 709 s against 3,060 s; the K1 single 792 s against 1,800 s).
 - **CV packs over 2,000 s:** none; the longest was 774 s (59872064, `K4_S1_121`).
@@ -517,6 +545,8 @@ Total of the charge column: 29.0297.
   reported, not added, per R5/R7.
 - **Stat centring (R9):** the replica mean sits a median 4.43 σ/√300 from E_U. It does not enter the ddof-1
   covariance, but it is reported for Stage F.
+- **Shared-QOS gate deviation.** Four shared gates on 2026-10-15 under-counted the jobs in flight, by up to 1.9125
+  node-h, because they ran before `sacct` listed the previous batch (§5). No ceiling was affected.
 - **Shared-era gate files overwritten.** The `gatelog/` transcripts of the shared-QOS G2 and S1a–S2b gates and
   submissions were overwritten by the packed path's same-named files (§5 †). Their GATE lines survive in the
   executor's session transcript only. Of the 389 jobs those batches created, 381 were cancelled unstarted by the
@@ -555,5 +585,33 @@ Total of the charge column: 29.0297.
 
 ## 14. Independent review
 
-Pending at the time of writing: the executor's own fresh read-only verifier, recorded here before the PR is final,
-and the director's F4 verifier, dispatched by the director on the PR.
+**Executor's verifier** (fresh, read-only, detached worktree at `093d9011`, git-dir ≠ git-common-dir; same model as
+the executor, so their blind spots may be correlated). It re-measured from fresh `sacct`, the namespace, the CFS copy
+and the committed evidence. **Verdict: APPROVE WITH CHANGES, 1 MATERIAL, 9 MINOR.**
+
+It confirmed:
+- 539 allocations (153 ran, all COMPLETED 0:0; 386 never started), the charge 29.0297 and its split, and all 153
+  rows of §11 field by field; the committed `sacct` file equals fresh `sacct`;
+- 515 member steps and all 821 steps COMPLETED 0:0; 137 status files with `#pack`, 515 member rc 0;
+- every result file's sha256 on `$NS` equals the committed copy and §1/§3; every quoted verdict and difference;
+- from the NPZ with numpy: total = universe + stat + c08 exactly, universe = the 43 sorted bands + normalization
+  exactly, the normalization block, symmetry, eigenvalue ratios, every σ summary and functional range, σ_bkg/σ_stat
+  and X02 (the stat block from replicas, X03, centring and the jackknife SEs are not recomputable from the NPZ);
+- CFS `sha256sum -c` rc 0, 2,359 files, the committed `SHA256SUMS.pscratch` equal to the CFS one;
+- every packed GATE line, the poll "completed" terms recomputed from `sacct`, the `Deadline=` reads, the migration
+  id sets, both deploy verifications (re-run), and the five watcher sha256.
+
+| finding | disposition |
+|---|---|
+| M1 four shared-QOS gates (S1b, S1c, S1d, S1f) ran before `sacct` listed the previous batch, under-counting in-flight caps by up to 1.9125; not disclosed | disclosed in §5 (table of printed vs true) and §12; no ceiling affected (true maximum 79.4263) |
+| m2 119 CV packs 20.9473 vs `sacct` 20.9472 | fixed (§6) |
+| m3 maintenance time 13:00Z vs the grant's 06:00Z | §7 names both and the stricter 06:00Z |
+| m4 S4a wait window understated | fixed: 21 polls from 21:30:34Z (§5); the v1 rule note's time fixed |
+| m5 c0 and s3 digests missing from §1 | added |
+| m6 S5 check count: 55 in `s5.json`, 54 printed | §1 and §3 state both |
+| m7 "rank" undefined | threshold stated (§3) |
+| m8 null-band bound 4e-8% vs 4.13e-8% | fixed (4.2e-8%) |
+| m9 header claims every number from files, but † rows come from a transcript | header carves them out |
+| m10 † times approximate; director-correspondence claims uncommitted; DeadLine-reason claim covers only the throughput window | † times are now first `sacct` Submits; the claims say "in correspondence, not committed"; §7 scopes the DeadLine-reason claim and rests the result on `sacct` |
+
+**Director's F4 verifier:** dispatched by the director on the PR.
