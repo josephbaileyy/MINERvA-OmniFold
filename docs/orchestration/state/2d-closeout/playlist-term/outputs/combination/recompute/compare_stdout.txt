@@ -1,0 +1,78 @@
+{
+ "checks_side_by_side": {
+  "total_minus_sum_over_max": [
+   0.0,
+   0.0
+  ],
+  "total_asym_over_max": [
+   5.64524308614938e-17,
+   5.64524308614938e-17
+  ],
+  "total_mineig_over_max": [
+   1.2284684265814153e-12,
+   1.2284684265814153e-12
+  ],
+  "Q_asym_over_max": [
+   5.506768867651629e-17,
+   5.506768867651629e-17
+  ],
+  "Q_mineig_over_max": [
+   1.1584114999627098e-12,
+   1.1584114999627098e-12
+  ],
+  "x_vs_cells_x_EU_maxrel": [
+   0.0,
+   0.0
+  ],
+  "x_vs_workcov_EU_maxrel": [
+   0.0,
+   0.0
+  ],
+  "functionals_vs_npz_F_over_max": [
+   0.0,
+   0.0
+  ],
+  "area_vs_npz_F0_over_max": [
+   0.0,
+   0.0
+  ],
+  "cells_npz_eq_workcov": [
+   true,
+   true
+  ],
+  "cells_eq_nonzero_EU": [
+   true,
+   true
+  ],
+  "r_vs_npz_max": [
+   4.440892098500626e-16,
+   0.0
+  ]
+ },
+ "budget_cell_stats_maxrel": 2.220446049250313e-16,
+ "budget_integral_maxrel": 2.220446049250313e-16,
+ "budget_30proj_rounded4_maxrel": 0.0,
+ "budget_30proj_unrounded_absdiff_pctpts": 4.995012129491161e-05,
+ "budget_ratioVL_maxrel": 0.0,
+ "S5_total_vs_VL175_ratio_rel": 0.0,
+ "effect_maxrel": 0.0,
+ "chi2_32_maxrel": 4.0190073491430667e-14,
+ "chi2_worst": "bias_PC/pt_vs_VL175_plus_C_PL",
+ "chi2_control_vs_checks": 3.1086244689504383e-15,
+ "ranks": {
+  "mine": {
+   "S5_total": [
+    197,
+    197
+   ],
+   "Q": [
+    197,
+    197
+   ]
+  },
+  "producer": {
+   "S5_total": 197,
+   "combined": 197
+  }
+ }
+}
