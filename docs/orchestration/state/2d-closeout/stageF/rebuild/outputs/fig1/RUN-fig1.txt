@@ -1,0 +1,19 @@
+# Fig. 1 from Q (SPEC §6), drawn locally 2026-10-18
+env: python 3.12.2 matplotlib 3.11.2 numpy 2.5.4 (uv venv, scratchpad fig1env)
+environment control: make_fig1_vl175.py with VL175 inputs reproduced docs/analysis-note/figures/paper_fig1_validation.pdf byte for byte: 49766e26a9632911f2b5995fb3a3da5577bdd9268d0c77c5dd9b2ec77768578e
+script: make_fig1_q.py at commit 01f70c37, run with python -I; exit code 0 (fig1_run.log); re-run gives the same PDF digest
+inputs:
+72394a2b4eff9f14b01903ff97525bcb690c2adee58ccaf573a8d95139b415b8  fig1in/fig_arrays.npz
+771e49a5510ff15fa522b73ab49b18329c2a58f092efb12a26aee39949168ced  fig1q/in/cov2d_Q_205.npz
+e7e3f24cc0ca3f2788925c5d1add94a4ee5f7bc19d1959933c120d700303b5fb  fig1q/in/budget_Q.json
+5a20265aa9d813e8169e6897a106b8f909423d1ff12f3b905baab5f352bd2d76  fig1q/in/SHA256SUMS
+6689d2fc2a795a72e66ee953a32d94c7906dd81a866771979f379c5f163a9ddc  fig1q/in/production_cov.npz
+c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476  fig1q/in/playlist_term.npz
+a5d37f06261ddbd8db7b5e3f8a7bc15938765475f664f5261a4a27fc4ba0e92a  fig1q/in/uqmedian.tex
+2ecfc243ab4a6c508a69df0e231676019106f3ad86f34e3ac3423f7bd2bca9ce  docs/orchestration/state/next-preparation-20261009/two-d-path/operands/remote_reduce.json
+9c4dbf24d5e19161034fbdf6f84834f578fbde3a1b879961ef7c25a739301c7c  publication/release/figs/make_figs.py
+050e256023277ec9da492ffa7b9d129275c3afa2bfc6c47091999d88de5bf18d  docs/orchestration/state/2d-closeout/playlist-term/outputs/combination/combination.json
+7710d60101093b50fb4c0341300b77387e10ffc6b5cc2ce85adb35ff14239b05  docs/orchestration/state/2d-closeout/stageF/rebuild/scripts/make_fig1_q.py
+negative control: --values with \uqMedian{6.44} refused: [FAIL] \uqMedian '6.44' != budget_Q.json Q median '6.45'
+output:
+82665808e99056b1f79754647d7640078dffe94fc667691a979a22769022a0fb  outputs/fig1/fig1_validation.pdf

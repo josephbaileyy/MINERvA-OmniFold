@@ -1,0 +1,30 @@
+sys.path ['/pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/a2/2d-unfolding/uq', '/pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/a2/2d-unfolding', '/pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/a2']
+[paper] opening: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+[paper] reported bins: 205 / 224
+[paper] cross-section sum (reported bins): 3.6892e-37
+
+[ours] opening: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root
+[ours] cross-section sum (all bins): 3.7255e-37
+
+=== chi^2 comparisons (ours vs paper) ===
+  stat only                       chi2 =      1124.19   ndf = 205   chi2/ndf =   5.484
+  flux only                       chi2 = 11946842456.65   ndf = 205   chi2/ndf = 58277280.276
+  muon E scale only               chi2 =         0.09   ndf = 205   chi2/ndf =   0.000
+  PAPER (stat+syst)               chi2 =       544.12   ndf = 205   chi2/ndf =   2.654
+
+=== adding OmniFold covariances (paper stat subtracted) ===
+  [omnifold-cov] cell identity OK: /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/outA/uq_adopted_covariance.root (hReportedCells) equals the paper StatOnly set
+  [omnifold-cov] /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/outA/uq_adopted_covariance.root:hCov_Q  shape=(205, 205)  sqrt(trace)=2.866e-39
+  COMBINED (paper(syst-only) + hCov_Q)  chi2 =      1232.38   ndf = 205   chi2/ndf =   6.012
+
+wrote /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/chi2/chi2_Q_substat_pull_full.png
+
+Summary for run log:
+  reported bins: 205
+  chi^2/ndf  stat only        : 5.484
+  chi^2/ndf  flux only        : 58277280.276
+  chi^2/ndf  muon E scale     : 0.000
+  chi^2/ndf  PAPER (full cov) : 2.654
+  chi^2/ndf  COMBINED         : 6.012   (added: hCov_Q, paper stat subtracted)
+  pull mean / rms             : 0.035 / 0.439
