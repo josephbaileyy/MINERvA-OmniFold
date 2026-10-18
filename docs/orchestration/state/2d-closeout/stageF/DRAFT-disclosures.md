@@ -1,4 +1,14 @@
-# Draft disclosures: the 2D endpoint and its approximations (DRAFT revision 3, 2026-10-17)
+# Draft disclosures: the 2D endpoint and its approximations (DRAFT revision 4, 2026-10-18)
+
+**Revision 4 (2026-10-18)** corrects two statements that the independent review of the J3–J5 wording found
+(`97cfdecc` + `ec56f073`, findings M2 and M4), and changes nothing else:
+- D10 (KI-93): "Five of its universes … (pilot K1), and seven in production" was the wrong count. Pilot K1 made five
+  comparisons over four universes (`stageC/pilot/REPORT.md` l.70–80); production S4(ii) reproduced seven, which
+  include those four (`stageC/production/REPORT.md` l.65).
+- D5's draft sentence called the ~7% step a step of the unfolded p_∥ distribution. The +6.94% ± 0.41 is the step of
+  the double ratio, each period group's unfolded result over its own simulated truth; the step of the unfolded
+  results themselves is +10.29% ± 0.43 (`period-unfold-20261014/REPORT.md` §2). The meaning of the disclosure is
+  unchanged; Joseph to confirm the corrected sentence at the Ben review.
 
 **Prepared by** the paper-tighten lane, as director, for Joseph's review and the review with Ben. Adoption of any
 wording is Joseph's (Stage F, J4). Nothing here is in a deliverable.
@@ -167,8 +177,8 @@ Numbers on main (period-unfold REPORT):
 - every marginal z is below 0.7.
 
 > *Draft.* Subsets of the data taken in different run periods are not mutually consistent within the other
-> uncertainties: one period group's unfolded p_∥ distribution differs from the earliest periods by a step of about
-> 7% near 8 GeV/c. The cause is not known, and these data cannot establish which period is correct. We carry the
+> uncertainties: one period group's unfolded p_∥ distribution, taken relative to its own simulation, differs from
+> that of the earliest periods by a step of about 7% near 8 GeV/c. The cause is not known, and these data cannot establish which period is correct. We carry the
 > effect of this inconsistency on the combined result as an additional uncertainty block. It is built from the
 > differences among three period groups without choosing any as the reference. Its median is 2.1% per bin. It is
 > 1.2–3.4% on the p_∥ projections and 2.0% on the integrated cross section. With few period groups, its own size is
@@ -262,8 +272,9 @@ Source: KNOWN_ISSUES J36; period-unfold REPORT (J36 paragraph) and `outputs/anal
   VL175's in all 12 playlists (`s5.json` `weights_equal_*`; F4 part A)."
 - **KI-92.** *Note:* "The Rvp1pi and Rvn1pi variations are one input, counted once."
 - **KI-93.** *Note:* "The universe block uses the July sweep, whose products record no driver digest and came from
-  an uncommitted driver revision. Five of its universes are reproduced to ≤ 1.4e-11 by the committed driver (pilot
-  K1), and seven in production (S4(ii)). The rest are qualified by inference from the same producer."
+  an uncommitted driver revision. Seven of its universes, four of them also in the pilot, are reproduced to ≤ 1.4e-11
+  by the committed driver (production S4(ii); pilot K1 made five comparisons over four universes). The rest are
+  qualified by inference from the same producer."
 - **KI-94.** *Note:* "Statistical fluctuations of the background simulation are propagated as their own bootstrap
   stream. A separable background-only term (median 0.26 of the statistical σ) is contained in the statistical block and
   reported separately."

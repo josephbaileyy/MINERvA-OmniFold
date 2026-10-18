@@ -1,4 +1,4 @@
-# Agenda: Joseph's review of the 2D closeout with Ben (DRAFT, 2026-10-16; updated 2026-10-17 after J1/J2)
+# Agenda: Joseph's review of the 2D closeout with Ben (DRAFT, 2026-10-16; updated 2026-10-17 after J1/J2, and 2026-10-18 after the provisional J3–J5)
 
 **Prepared by** the paper-tighten lane, as director, for Joseph. The review is Joseph's. Scheduling it, inviting Ben
 and sending anything to him are Joseph's acts. Nothing here has been sent.
@@ -37,9 +37,22 @@ both ready: the production REPORT, its verification and the combination are on `
 |---|---|---|
 | 11 | The production covariance: per-block medians, rank, PSD, ensemble errors (≈4% per-cell σ; C08 with 4 dof, 71% relative SE of variance). Retraining noise inside the universe block (X03): in `2p2h:0` and `MaCCQE:0` it is as large as the shift; X03 and the band-centring numbers were not independently recomputed | production REPORT and `s5.json` summary |
 | 12 | The playlist-consistency block: its design (reference-free double ratio, 1F in group A, each period's own MC response) against its sensitivities (1A–1F reference, raw ratios); exchangeability, grouping, noise overlap and possible shrinkage; its size with and without it in the budget. The block, its independent recompute and the combination with S5 exist ([`../playlist-term/REPORT.md`](../playlist-term/REPORT.md), [`../playlist-term/COMBINATION-REPORT.md`](../playlist-term/COMBINATION-REPORT.md)). Containment of the observed differences is algebraic, not a coverage test: the block's own double-ratio check is passed by construction. Is a run-period difference covariance the right object? | the block REPORT, its [`recompute/`](../playlist-term/recompute/) outputs, and the F9 combination |
-| 13 | The budget against VL175 and against the published analysis | one comparison table |
-| 14 | The disclosure set with final numbers | [`DRAFT-disclosures.md`](DRAFT-disclosures.md) revision 3 |
-| 15 | The claim wording, inside the narrower endpoint | a claims draft (after J2) |
+| 13 | The budget against VL175 and against the published analysis | [`rebuild/REPORT.md`](rebuild/REPORT.md) §3–§4; paper §IV B as built |
+| 14 | The disclosure set with final numbers, as written into the four documents | [`DRAFT-disclosures.md`](DRAFT-disclosures.md) revision 4; the built PDFs (below) |
+| 15 | The claim wording, inside the narrower endpoint: Joseph's provisional J3–J5 (all as recommended) | [`DECISION-PACKET-J3-J6.md`](DECISION-PACKET-J3-J6.md); [`DECISION-20261018`](../../../DECISION-20261018-joseph-2d-j3-j5-provisional.md); [`J3-J5-WORDING-IMPLEMENTATION.md`](J3-J5-WORDING-IMPLEMENTATION.md) |
+
+**The built PDFs** (note, paper, primer, PET note) are built locally from the wording branch, and their sha256 are in
+`J3-J5-WORDING-IMPLEMENTATION.md`. They are not committed and have not been sent anywhere. Joseph decides whether and how Ben receives them (J6).
+
+**Points for Joseph to confirm at the review** (raised by the independent review of the wording):
+
+| # | point | where |
+|---|---|---|
+| 15a | **A director's factual correction to approved wording.** The ~7% run-period step belongs to the double ratio: each period group's unfolded distribution taken relative to its own simulation. The unfolded distributions themselves step by 10.29%. The disclosure's meaning is unchanged. | paper §IV B; note §uq-combine; DRAFT D5 revision 4 |
+| 15b | **Readability of the decided register W1(c).** "Full scientific closeout", "population or simultaneous interval coverage" and "calibrated covariance-based generator significance" are not defined for an outside reader. | paper §IV B; note §sec:uq-2d-scope |
+| 15c | **The endpoint statement carries more than W1(c)'s sentences:** the three missing inputs and "no coverage claim is made" (D1's required content, DECISION-20261014 §2), and the note's "goodness-of-fit values are indicative" clause. | paper §IV B; note §sec:uq-2d-scope |
+| 15d | **The primer says nothing about the run-period inconsistency.** The decision placed D0–D5 in the paper and the note, not the primer. | primer |
+| 15e | **To keep the paper at 11 pages**, one parenthetical moved to the note: the post hoc diagnostic pointing to under-scatter of the closure pseudo-experiments. Restoring it makes the paper 12 pages. | paper §IV B; note §sec:coverage |
 
 ## Part 3 — housekeeping that needs Ben
 

@@ -23,9 +23,11 @@ medium-energy neutrino data.
 \paragraph{Results overview:}
 \begin{itemize}[itemsep=2pt, parsep=0pt, topsep=2pt]
   \item \textbf{Reproduction.}
-  Unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published result~\cite{MINERvA:2021owq} bin by bin: total cross-section ratio $\ratioTot$, \SI{\binsTen}{\percent} of bins within \SI{10}{\percent}, and a separately reconstructed median per-bin uncertainty (\SI{\uqMedian}{\percent}) comparable to the published \SI{\uqPaper}{\percent}; its flux band carries MAT's $\nu$--$e$ and inverse-muon-decay constraint weights, which an earlier version omitted (6.87\,\%; \S\ref{sec:results-uq}). The central value and that uncertainty use the same LightGBM estimator; the quoted central value was changed to it from an exact-split estimator, now a cross-check, after both comparisons with the publication were known (\S\ref{sec:method-config}). Against the full published covariance $\chi^{2}/\mathrm{ndf}=\chiPaper$ (exact-split cross-check $\chiPaperExact$): a correlated shape difference (\S\ref{sec:results-tension}).
-  % \uqMedian is Q (values.tex); "comparable" compares per-bin medians, J3 pending (D0) (review m3). J4 pending (Q8: the 6.87 % history clause stays as written; D5: the run-period
-  % block is not named here).
+  Unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published result~\cite{MINERvA:2021owq} bin by bin: total cross-section ratio $\ratioTot$, \SI{\binsTen}{\percent} of bins within \SI{10}{\percent}, and a separately reconstructed uncertainty comparable to the published one (per-bin median \SI{\uqMedian}{\percent} vs.\ \SI{\uqPaper}{\percent}, integral \SI{\uqIntegral}{\percent} vs.\ \SI{\uqPaperIntegral}{\percent}); its flux band carries MAT's $\nu$--$e$ and inverse-muon-decay constraint weights, which an earlier version omitted (\S\ref{sec:results-uq}). The central value and that uncertainty use the same LightGBM estimator; the quoted central value was changed to it from an exact-split estimator, now a cross-check, after both comparisons with the publication were known (\S\ref{sec:method-config}). Against the full published covariance $\chi^{2}/\mathrm{ndf}=\chiPaper$ (exact-split $\chiPaperExact$): a correlated shape difference (\S\ref{sec:results-tension}).
+  % \uqMedian, \uqIntegral are Q (values.tex; budget_Q.json.gz Q.median_pct, Q.integral_sigma_pct); \uqPaperIntegral 4.61.
+  % J3/J4 provisional (DECISION-20261018, packet C2: median and integral; W5: the 6.87 % value is left to sec:results-uq
+  % and App. history, to which this clause points (dropped here, and "cross-check" after "exact-split" below, to keep the summary at its page count); W3: the run-period block
+  % (D5) is described in sec:uq-combine, not here).
   % Pointers \S\ref{sec:systematics} and Fig.~\ref{fig:xsec} dropped (one-page summary): both are
   % cited from the results section this item points to (sec_results.tex:13, 136).
   % Cut (one-page summary): "per-bin standardized differences sub-$1\sigma$": sec_results.tex:68-70, 89-90;
@@ -94,7 +96,8 @@ Point-cloud (PET) studies are future work and contribute no result here.}
 \begin{itemize}[itemsep=2pt, parsep=0pt, topsep=2pt]
   \item \emph{Coverage.}
   The earlier 2D statistical band undercovers a fixed truth in its tails ($C_2=\covTwoDCTwo$ vs.\ $0.954$; \S\ref{sec:coverage}); the rebuilt band has not been independently re-tested, and the currently quoted statistical block, a different ensemble, has not been tested.
-% J4 pending (D2); KNOWN_ISSUES 85 is J5. The quoted block is S1 (stageC/production/DESIGN.md §3.4).
+% J3/J4 provisional (DECISION-20261018, packet C4, W3: D2); KNOWN_ISSUES 85 re-scoped to S1 (J5). The quoted block is S1
+% (stageC/production/DESIGN.md §3.4).
 No frequentist coverage is claimed for any five-dimensional interval (\S\ref{sec:coverage-5d}).
 % Source (2D): docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md; VALIDATION_LEDGER VL169.
 % Source (5D): docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
