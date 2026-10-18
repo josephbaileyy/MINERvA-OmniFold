@@ -27,7 +27,10 @@ re-ran the frozen analysis and got byte-identical outputs (REPORT §6).
 
 - **1G–1M (P_B) against 1A–1F (P_A).** After unfolding, the double-ratio p_∥ step at 8 GeV/c is
   **+6.94% ± 0.41** (z 16.8), against +6.10% at reco level. χ² p_∥ is 381.8 against a noise expectation of 19.4.
-- **Diluted into the combined result**, the shift has χ² p_∥ 33.8 against VL175, where noise would give 1.8. Every
+- **Diluted into the combined result**, the raw shift (`bias_PB`) has χ² p_∥ 33.8 against VL175, where noise would
+  give 1.8. *(Corrected 2026-10-17: this line first read "the shift", which paired the double-ratio step above with
+  the raw ratio's χ². The double-ratio shift gives 33.1, an ad hoc supplement with no noise reference; period-unfold
+  REPORT, table and note. The ruling is unchanged.)* Every
   marginal z is below 0.7, so no single bin moves much. But the shift has a p_∥ shape that VL175 constrains tightly,
   so VL175 does not cover it.
 - **1N–1P (P_C)** is a roughly 5% normalization difference, and VL175 covers it.
