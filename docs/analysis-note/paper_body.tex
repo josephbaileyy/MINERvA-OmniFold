@@ -262,11 +262,16 @@ estimates.
 \label{sec:uq2d}
 
 The standalone covariance combines systematic-universe, statistical,
-training-seed and run-period blocks; the first three are built with the central
-value's LightGBM estimator.
+training-seed and run-period blocks; the first three are LightGBM ensembles at the
+central value's estimator, and the fourth is built from LightGBM unfolds of three run
+periods.
+% Review m4. Period-unfold record: state/2d-closeout/period-unfold-20261014/scripts/sbatch_period_unfold.sh:76
+% (--estimator lgbm, production driver 74a4ed69), REPORT.md §1 (control pu_CTRL_s42 reproduces E_U to 3.0e-13).
 % J4 pending (D0, D5). Q = S5 total + C_PL (docs/orchestration/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md).
 Its median relative uncertainty is \SI{\uqMedian}{\percent}, compared with
-\SI{\uqPaper}{\percent} for the publication.  The flux block applies the
+\SI{\uqPaper}{\percent} for the publication.
+% J3 pending (D0): a per-bin median comparison only (review m3).
+The flux block applies the
 per-universe neutrino--electron-scattering and inverse-muon-decay constraint
 weights of the MINERvA analysis toolkit; an earlier version omitted them and
 quoted \SI{6.87}{\percent}.

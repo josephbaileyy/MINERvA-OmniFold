@@ -9,14 +9,15 @@ sentence in it. Rules: [`PHASE2.md`](PHASE2.md); site map: [`PHASE2-INVENTORY.md
 **CITABLE FOR:** which deliverable source lines changed and why, by inventory row; the figure installs and their
 digests; the gate changes; the scratch-copy build and gate results; the residual grep.
 **NOT CITABLE FOR:** any claim (J3/R5), disclosure wording (J4: every `% J4 pending` / `% J3 pending` site is
-unadopted), KI-85 (J5), a built or pushed PDF (B1–B5, J6), the standalone note repository, or the independent review
-(PHASE2 §6.4), which has not run. No number was computed: every printed number is a phase-1 receipt field at the
+unadopted), KI-85 (J5), a built or pushed PDF (B1–B5, J6), or the standalone note repository. The independent
+review (PHASE2 §6.4) of `dab2ec2a` and the director's rulings on it are disposed in §7. No number was computed: every printed number is a phase-1 receipt field at the
 sentence's printed precision, or a value already in the note.
 
 ## 1. Summary
 
-- **Inventory rows:** all 205 rows of PHASE2-INVENTORY §2 have a disposition (§7; some rows are split, giving 217
-  lines). By disposition: 143 changed, 50 unchanged with a reason, 24 J-marked only. Most changed FACT and J lines also
+- **Inventory rows:** all 205 rows of PHASE2-INVENTORY §2 have a disposition (§8; some rows are split, giving 217
+  lines). By disposition: 143 changed, 50 unchanged with a reason, 24 J-marked only (after the review, §7: 144 / 50 / 23,
+  since `app_statmethods.tex:487` changed). Most changed FACT and J lines also
   carry a `% J4 pending (Dn)` or `% J3 pending` comment.
 - **By status (lines):** NUM 61 (57 changed, 4 J-marked: macro-only sites); FACT 38 changed; NR 17 (14 changed, 2
   unchanged, 1 J-marked); J 29 (11 changed by a factual qualifier, 17 J-marked, 1 unchanged); DER 1 changed (not
@@ -122,7 +123,7 @@ historical prints: `sec_method.tex:93` (the earlier seed-1 band's 0.18 % / 0.30,
 
 Sites left as written and marked, where a rule could not be applied without a new claim (line numbers at `ae198cc1`):
 1. **`app_statmethods.tex:487`** "every reported pull lies within ±3 (§pull)": if this is the combined pull, Q3
-   removed its support (no maximum in the Q receipts). Left, `% J3 pending` + QUESTION.
+   removed its support (no maximum in the Q receipts). Left, `% J3 pending` + QUESTION. **Resolved after review (m2, §7): removed.**
 2. **`paper_body.tex:289–291`, `sec_validation.tex:286`** "validated total intervals … require … construction
    repairs (of §uq-2d-construction)": that section now records which findings Q's construction carries. Left,
    `% J3 pending`.
@@ -145,7 +146,50 @@ Not done (out of scope or not possible here): the independent review (§6.4); an
 `MINERvA-OmniFold-Analysis-Note` sync (J6); running `make_figures.sh` (cluster-only); records outside the deliverables
 (Q13: AGENTS.md, the 2D status file, claim tables); `make_figs.py` (Q11).
 
-## 7. Disposition of every inventory row
+## 7. Independent review of `dab2ec2a` and its dispositions
+
+The review (`phase2-review.md` in the director's scratchpad: 1 MATERIAL, 12 MINOR, 9 NOTE; a fresh read-only Claude
+Opus 5.5 session) and the director's rulings on it are applied in the follow-up commit on this branch. Line numbers
+below are at `dab2ec2a`.
+
+| item | ruling | disposition |
+|---|---|---|
+| M1 abstract (`main_note.tex:50-52`), "implementation and training seed" | reviewer's wording; sweep every build | changed to "…the central value's tree-learning implementation, its universe and statistical blocks at the central value's training seed, and whether…"; `% J3 pending (D10 KI-88)`. Swept note, paper, primer, PET note, executive summary, summary and status table for a training-seed statement applied to the whole uncertainty: no other site. The remaining "same estimator / same tree learner / same LightGBM estimator" sentences (`sec_execsummary.tex:26`, `sec_summary.tex:13`, `sec_results.tex:156`, `paper_body.tex:187`, `primer_body.tex:105`) concern the estimator, which all blocks share. `primer_body.tex:232` and `paper_body.tex:301` concern only the statistical block, which is at seed 42. Unchanged |
+| m1 "independently" | reviewer's fix | `sec_systematics.tex`: "Neither the rebuilt (VL170) band, which was only rescored post hoc, nor the statistical block quoted here has been independently tested."; `sec_summary.tex` made to match |
+| m2 ±3 pull clause (`app_statmethods.tex:518`) | remove; restate only with a VL175 receipt | removed, together with its dangling `\ref{sec:pull}`; `% J4 pending (D2)`. Not restated: no committed receipt gives a maximum combined pull (`c04-repair/chi2/repaired_std.txt` and the Q logs print mean / rms only) |
+| m3 "smaller than the published total" | scope to the per-bin median; `% J3 pending (D0)` | `sec_results.tex`: "Its per-bin median is smaller than the published total's"; primer: "a little smaller in the typical cell". The paper (`\uqMedian` vs `\uqPaper`, a median comparison) and the executive summary ("comparable", medians) needed no word change and carry the marker. No integral or trace comparison is printed; it appears only in the `sec_results` comment |
+| m4 run-period block's estimator | paper to agree with the note as far as the record supports | paper: "the first three are LightGBM ensembles at the central value's estimator, and the fourth is built from LightGBM unfolds of three run periods". The comment cites `period-unfold-20261014/scripts/sbatch_period_unfold.sh:76` (`--estimator lgbm`, production driver `74a4ed69`) and REPORT §1 (the control reproduces `E_U` to 3.0e-13) |
+| m5 seed-42 band "since been built" (`sec_method.tex:108-110`) | reviewer's fix | "a seed-42 statistical band has since been built, with three independent streams (data, signal and background simulation); it is the quoted statistical block"; `% J4 pending (D10 KI-88)` |
+| m6 C08 "fixed inputs" / "seed noise only" | reviewer's fix | tab:variance-sources: "at matched inputs (the same 20 bootstrap replicas at each setting…)"; `sec_systematics`: "The block measures LightGBM seed variation, with the bootstrap × seed interaction at its 1/20 share"; J4 (D11) |
+| m7 cross-terms and C_PL (`app_statmethods.tex:1141-1148`) | state only what is true; no new independence claim | "Among the first three, cross-terms are higher-order. The run-period block is built from separate unfolds of the same data, and its noise share is not subtracted (§uq-combine)"; `% J4 pending (D5)` |
+| m8 log-normal definition | drop the Table I attribution; state the definition plainly | "The log-normal χ² uses δ_i = … and C^ln_ij = (TotalCov + C^tot)_ij/(x^paper_i x^paper_j); both covariances are scaled by the paper's values." The earlier Table I sentence in the limits paragraph is untouched (J4) |
+| m9 dangling "ten-seed" | reviewer's fix | "The mean of the earlier ten-seed scan (App.~\ref{app:history-vl175}) differs from the exact-split cross-check…" |
+| m10 rank 197 beside the earlier scan | name its covariance, or drop it | "(for Q, rank 197 above 10⁻¹⁰ λmax; the disclosed scan is of an earlier C^ours)" |
+| m11 offset printed in the note, not the paper | keep the asymmetry | unchanged; recorded here |
+| m12 4.1 % "ensemble error" | label it as the formula's value | `sec_systematics` and `app_statmethods`: "the Gaussian formula 1/√(2(N−1)) gives a relative standard error of about 4.1 %". The comments cite s5.json `numbers.stat.ensemble_rel_se_of_sigma` (= 1/√(2·299), production DESIGN §8) |
+| NOTE 1 two cond conventions | every printed cond names its source and definition | the rank paragraph now defines cond as λmax over the smallest retained eigenvalue (`budget_Q.ranks`) and says every rank and cond of our blocks quoted below uses this definition. The 300-replica cond says "by the definition above". The script-convention cond (8.17e11) beside the direct-inverse χ² is removed, and the ours-only script's 5.624e12 is not printed (it is named in a comment) |
+| NOTE 2 the paper's rank 120 threshold | — | no change: the threshold is already attached only to our value |
+| NOTE 3 KI 91 wording | — | no change; the existing marker routes it to J4 |
+| NOTE 4 fig:uqbands caption | apply | the caption adds "with the total and the published total" |
+| NOTE 5 participation-ratio rank ≈1 | — | no change: the sentence names its object, the unweighted covariance |
+| NOTE 6 gzip check counted as a perturbation | apply | `check_sec4_receipts.py` prints "gzip receipt: PASS (…)" on its own line and no longer counts it, so the self-test now reports 17 perturbations rejected |
+| NOTE 7 no rollback on a refusal | — | no change: exit 1 is visible |
+| NOTE 8 provenance pointer omits the laterals' source | apply | `variance-sources` now names the S3 re-unfolds of the `active_universe_5d_standard_merged` files (production DESIGN §3.2) |
+| NOTE 9 judgement calls (a)–(e) | accepted by the reviewer | no change |
+
+**Rebuild after the fixes** (fresh scratch copy `scratchpad/buildcopy2/`, same layout):
+- `build_all.sh` rc 0. Every PDF is "written by this run; no unresolved references" after one latexmk invocation.
+- The final logs show 0 undefined references or citations and 0 multiply-defined labels.
+- Pages: note 120, primer 12, paper 11, PET note 26.
+- Containment: SELF-TEST PASS, RESULT PASS (strict; note 64/64, PET note 5/5, paper and primer 0 of 69).
+- Sec. IV: gzip receipt PASS, SELF-TEST PASS (17 perturbations rejected), real run PASS 14/14.
+- `pytest test_check_sec4_receipts.py test_build_all.py`: 62 passed.
+- A word-level diff of the printed (comment-stripped) text against `dab2ec2a` shows only the intended deletions.
+
+**Unresolved:** none of the review items. Of the §6 questions, item 1 is resolved by m2. Item 2 (the "construction
+repairs" clauses) was not part of the rulings and stays `% J3 pending`.
+
+## 8. Disposition of every inventory row
 
 Line numbers are at `ae198cc1`. "changed" lines that also carry a J marker say so in the note.
 
@@ -235,7 +279,7 @@ Line numbers are at `ae198cc1`. "changed" lines that also carry a J marker say s
 | `app_statmethods.tex:455-456` | NUM | changed | 6.084 -> universe + stat 6.040 (B.universe_plus_stat.median_pct) |
 | `app_statmethods.tex:457-460` | NUM(comment) | changed | -> budget_Q fields |
 | `app_statmethods.tex:462-464` | J | changed | "flux-fixed product" -> "the blocks of the adopted covariance"; J4 pending |
-| `app_statmethods.tex:487` | J | J-marked | "every reported pull lies within +-3": support (sec:pull \|pull\|<3) removed by Q3 if this is the combined pull; QUESTION for director |
+| `app_statmethods.tex:487` | J | changed (review m2) | "every reported pull lies within +-3": support (sec:pull \|pull\|<3) removed by Q3 if this is the combined pull; QUESTION for director |
 | `app_statmethods.tex:509-511` | OK | unchanged | generic |
 | `app_statmethods.tex:515-524` | OK | unchanged | paper-only truncation scan |
 | `app_statmethods.tex:532` | NUM | changed | 4.23 -> 4.75 (B.Q.integral_sigma_pct 4.755 at the printed 2 decimals) |

@@ -55,7 +55,7 @@ before dividing by the 1D central value).
   (left) and $\pPar$ (right), grouped as in Figs.~6--7 of
   Ref.~\cite{MINERvA:2021owq} by flux, interaction models, normalization,
   hadronic response, muon reconstruction, the statistical band, the training-seed
-  block and the run-period block.}
+  block and the run-period block, with the total and the published total.}
   % Q (rebuild/outputs/fig67/, legend "Training seed" = C08, "Run period" = C_PL; labels provisional, J4 pending (D5)).
   \label{fig:uqbands}
 \end{figure}
@@ -94,8 +94,9 @@ replica mean (Fig.~\ref{fig:bootstrap}). Each replica draws its weights in three
 independent streams: data, signal simulation and background simulation. MC reco and
 truth weights share a \emph{single} event
 draw to preserve within-event migration correlations. Pinning the GBDT seed per replica
-separates bootstrap and training-seed variances. With 300 replicas the per-bin
-$\sigma$ has a relative ensemble error of \SI{4.1}{\percent}, and the replica mean
+separates bootstrap and training-seed variances. With 300 replicas the Gaussian formula
+$1/\sqrt{2(N-1)}$ gives a relative standard error of about \SI{4.1}{\percent} on each per-bin
+$\sigma$, and the replica mean
 differs from the central value by a per-bin median of 4.43 standard errors of the
 mean ($\sigma/\sqrt{300}$). The bootstrap block is
 genuinely smaller than the published statistical block (square-root-trace ratio
@@ -103,12 +104,13 @@ genuinely smaller than the published statistical block (square-root-trace ratio
 demonstrate a causal efficiency advantage (App.~\ref{sec:rank}); the split data/MC
 streams of the earlier (VL170) bootstrap are in App.~\ref{app:history-vl175}. The fixed-truth coverage test
 (\S\ref{sec:coverage}) found that the earlier statistical band undercovered
-in its tails, unevenly across bins. Neither the rebuilt (VL170) band nor the
-statistical block quoted here has been tested for coverage. The original test cannot
+in its tails, unevenly across bins. Neither the rebuilt (VL170) band, which was only rescored post hoc, nor the
+statistical block quoted here has been independently tested. The original test cannot
 decide between these explanations, because its truth equals the prior.
 % Q's statistical block S1 (stageC/production/DESIGN.md §3.4: --seed 42 --bootstrap-streams three; S5 stat row:
 % ddof 1 about the replica mean). rebuild/outputs/outA/budget_Q.json.gz s5_copied.ensemble.stat_rel_se_of_sigma
-% (0.0409), s5_copied.stat_centring_offset (median |offset|/sigma_mean 4.428), paper_ratios
+% (0.0409 = 1/sqrt(2*299); s5.json numbers.stat.ensemble_rel_se_of_sigma, a formula value, production
+% DESIGN §8), s5_copied.stat_centring_offset (median |offset|/sigma_mean 4.428), paper_ratios
 % sqrt_trace_stat_over_sqrt_trace_StatOnly (0.428). J4 pending (D2, D8, D10 KI-88, KI-94); KI-85 is J5.
 
 \begin{figure}[H]
@@ -129,10 +131,12 @@ of 20 bootstrap replicas at each setting; each setting is a triplet $(s,s{+}1,s{
 seeds for the step-1 classifier, step-2 classifier and miss regressor, with
 $s\in\{42,45,48,51,54\}$, and the block has rank~4 (\S\ref{sec:seedscan}). It is
 the smallest block, with median \SI{0.057}{\percent} per bin.
-The block measures LightGBM seed noise only: the
-ten-seed LightGBM mean differs from the exact-split cross-check by a median of
+The block measures LightGBM seed variation, with the bootstrap\,$\times$\,seed
+interaction at its $1/20$ share. The mean of the earlier ten-seed scan
+(App.~\ref{app:history-vl175}) differs from the exact-split cross-check by a median of
 \SI{0.99}{\percent} per bin, a backend difference the block does not cover
 (\S\ref{sec:method-config}).
+% Review m6, m9. J4 pending (D3, D11).
 % Q's training-seed block C08 (stageC/production/DESIGN.md §S5 c08 row): rebuild/outputs/outA/budget_Q.json.gz
 % c08.median_pct (0.0572), s5_copied.ensemble.c08_rank (4). The ten-seed scan it replaces (0.166 %, 1.24x, Fig.
 % seedscan) is in App. history (PHASE2 Q6). The "about five times this block's sigma" comparison is removed (Q5).

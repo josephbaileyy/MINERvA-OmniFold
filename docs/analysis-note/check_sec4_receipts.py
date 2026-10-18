@@ -196,8 +196,8 @@ def gzip_self_test() -> bool:
                 missing_fails = True
     finally:
         STATE = saved
-    print(f"  {'caught    ' if same and missing_fails else 'NOT CAUGHT'}  gzip receipt: equal to plain={same}, "
-          f"missing raises={missing_fails}")
+    print(f"  gzip receipt: {'PASS' if same and missing_fails else 'FAIL'} (equal to plain={same}, "
+          f"missing raises={missing_fails})")
     return same and missing_fails
 
 
@@ -206,9 +206,7 @@ def self_test() -> int:
     base = load()
     ok = all(g for _, g, _ in evaluate(base))
     caught = 0
-    if gzip_self_test():
-        caught += 1
-    else:
+    if not gzip_self_test():  # a reader check, reported on its own line, not counted as a perturbation
         ok = False
     for idx, (label, src, pat, fn, mode) in enumerate(CHECKS):
         s = text(src, base)

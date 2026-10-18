@@ -143,7 +143,7 @@ Table~\ref{tab:uq} gives the budget over the 205 reported bins, constructed as
 described in \S\ref{sec:systematics}. Our \emph{standalone} combined budget is
 comparable to the published total --- median per-bin \SI{\uqMedian}{\percent} against
 the published \SI{\uqPaper}{\percent} --- and is flux-dominated as in the publication
-(Fig.~\ref{fig:uqbands}). It is smaller than the published total; part of the
+(Fig.~\ref{fig:uqbands}). Its per-bin median is smaller than the published total's; part of the
 difference is the flux band (\SI{\fluxBand}{\percent} median, against
 \SI{4.01}{\percent} for the published flux block, a difference the release does not
 explain; the FHC-only constraint file is the leading inference, not established).
@@ -153,6 +153,9 @@ constraint weights; an earlier version omitted them and quoted \SI{6.87}{\percen
 systematic block dominates; statistical and ML blocks together contribute
 under a tenth of the combined $\sqrt{\mathrm{Tr}\,C}$.
 % J4 pending (Q8: the 6.87 % history clause stays as written; D0, D5, D10 flux sentence).
+% J3 pending (D0): "smaller" is scoped to the per-bin median (review m3); the integral and sqrt(Tr) comparisons
+% (budget_Q Q.integral_sigma_pct 4.755 vs the paper's 4.61; paper_ratios sqrt_trace_Q_over_sqrt_trace_TotalCovariance
+% 1.071) go the other way and are not printed here.
 Every block is computed
 with the LightGBM estimator of the quoted central value
 (\S\ref{sec:method-config}), and the relative uncertainties divide by that

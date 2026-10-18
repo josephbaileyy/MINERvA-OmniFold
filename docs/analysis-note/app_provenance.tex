@@ -155,7 +155,9 @@ column above, so they are given here at full width.
     \repopath{docs/orchestration/state/2d-closeout/stageC/production/}. Universes:
     \texttt{runEventLoopOmniFold.cpp} (\texttt{MNV101\_DUMP\_UNIVERSES});
     \texttt{unfold\_2d\_omnifold\_unbinned.py -{}-universe BAND:IDX}; the universe block of
-    \texttt{s5\_rollup.py}, which sums the bands as \texttt{uq/analyze\_universes.py} does. Run
+    \texttt{s5\_rollup.py}, which sums the bands as \texttt{uq/analyze\_universes.py} does; its five
+    lateral bands are the S3 re-unfolds of the active-universe files
+    (\texttt{active\_universe\_5d\_standard\_merged}, production \texttt{DESIGN.md} \S3.2). Run
     period: \texttt{playlist\_term.py} in
     \repopath{docs/orchestration/state/2d-closeout/playlist-term/}. MAT reference: the
     \texttt{mat\_universe\_block\_le\_1e-12} check of \texttt{s5\_rollup.py}; the earlier
