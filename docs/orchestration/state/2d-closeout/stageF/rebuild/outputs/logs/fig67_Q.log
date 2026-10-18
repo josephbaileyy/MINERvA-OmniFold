@@ -1,0 +1,9 @@
+sys.path ['/pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/a2/2d-unfolding/uq', '/pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/a2/2d-unfolding', '/pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/a2']
+[cells] identity OK: /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/outA/uq_adopted_covariance.root (hReportedCells) equals xsec > 0
+[cells] identity OK: /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/outA/block_stat.root (hReportedCells) equals xsec > 0
+[cells] identity OK: /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/outA/block_playlist.root (hReportedCells) equals xsec > 0
+[cells] identity OK: /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/outA/block_c08.root (hReportedCells) equals xsec > 0
+[wrote] /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/fig67/MEFHC_fig6_7_uncertainty_pz.png
+[wrote] /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/fig67/MEFHC_fig6_7_uncertainty_pt.png
+[wrote] /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/fig67/MEFHC_fig6_7_uncertainty_summary.txt
+[wrote] /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/fig67/fig67_projections.json
