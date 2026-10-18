@@ -9,6 +9,10 @@ effect of adding C_PL; and the DESIGN §4 χ² rows against S5 and S5 + C_PL.
 for Joseph's decision (checklist J2). The production REPORT and its F4 verification are still pending, and
 `driver_p1.py` has not reached main (F6).
 
+**Status (2026-10-17, later):** those three have since landed (PRs #150, #151, #153), and Joseph adopted S5 + C_PL
+([`DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md`](../../../DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md)).
+The paragraph above, §4's "Pending dependencies" and §5 are kept as written at the run.
+
 ## 1. Run and review
 
 | field | value |

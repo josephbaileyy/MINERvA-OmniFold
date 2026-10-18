@@ -1,4 +1,4 @@
-# Agenda: Joseph's review of the 2D closeout with Ben (DRAFT, 2026-10-16)
+# Agenda: Joseph's review of the 2D closeout with Ben (DRAFT, 2026-10-16; updated 2026-10-17 after J1/J2)
 
 **Prepared by** the paper-tighten lane, as director, for Joseph. The review is Joseph's. Scheduling it, inviting Ben
 and sending anything to him are Joseph's acts. Nothing here has been sent.
@@ -11,21 +11,23 @@ The review was agreed on 2026-10-14
 decision added the per-period test to it
 ([`DECISION-20261015-joseph-playlist-consistency-term.md`](../../../DECISION-20261015-joseph-playlist-consistency-term.md) §2).
 
-**Timing.** Part 1 can be reviewed now. Part 2 needs the Stage C production REPORT and the playlist block. Joseph
-chooses one meeting after both are ready, or two meetings.
+**Timing.** Joseph decided on 2026-10-17 to adopt before the review (J1), and adopted S5 + C_PL (J2)
+([`DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md`](../../../DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md)).
+The review therefore scrutinizes an adopted construction; Joseph can still revise it afterwards. Parts 1 and 2 are
+both ready: the production REPORT, its verification and the combination are on `main`.
 
 ## Part 1 — decisions already taken, for Ben's scrutiny (ready now)
 
 | # | topic | question for Ben | record |
 |---|---|---|---|
-| 1 | **The endpoint.** Construction complete under declared conventions; full scientific closeout NOT ACHIEVED; Stages D and E not executed | Is the narrower endpoint publishable as framed? Is the disclosure strong enough? | DECISION-20261014 §2; draft disclosure D1 |
+| 1 | **The endpoint.** Construction complete under declared conventions; full scientific closeout NOT ACHIEVED; Stages D and E not executed | Is the narrower endpoint publishable as framed? Is the disclosure strong enough? Is "construction complete" earned when G2 (unmeasured), the learner dependence (0.98% median) and C09/C10 (unfolding model, regularization, response; Stage D) are outside every block? | DECISION-20261014 §2; draft disclosure D1 |
 | 2 | **Central value.** LightGBM seed 42 (`E_U`), adopted after the comparisons were known, so that it matches its covariance's estimator | Is the post-hoc switch disclosed clearly enough? | [`DECISION-20261011`](../../../../publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md); paper §`sec:repro2d` |
 | 3 | **The recipe.** Three independent bootstrap streams (R5); C04+X01 flux repair (VL175); KI-92 Rvn1pi counted once; laterals from active files; the seed main effect C08 | Is any source missing or double-counted? | [`DECISION-20261012-joseph-2d-closeout-recipe.md`](../../../../publication/DECISION-20261012-joseph-2d-closeout-recipe.md); Stage B REPORT; production DESIGN §8 |
 | 4 | **`NormDISCC` (G3)**: kept as a null band, disclosed as zero and unconfirmed | Is it intentionally null in the MINERvA products? Would Ben ask the collaboration? (Asking is Joseph's or Ben's act) | recipe decision G3 |
 | 5 | **C07′ data-POT counting**: omitted, because the flux prediction carries a 2% POT-counting term by convention | Is the two-inferred-links argument acceptable? | Stage B diagnostics §6.2 |
 | 6 | **G2**: carried as a disclosed approximation; 2 of 187 universes tested, neither resolved above trainer noise | Is 2 of 187 enough, or is the 43–129 node-h repair worth it? | [`DECISION-20261015-joseph-g2-carry.md`](../../../DECISION-20261015-joseph-g2-carry.md) |
 | 7 | **C03 shared draw not applied**: the background stream is independent of the signal stream; the overlap was never measured | Acceptable as a disclosure? | production DESIGN §8 |
-| 8 | **The playlist spread and J36.** 1G–1M low by about 3%, 1N–1P high by about 5% at reco level. The per-period unfold shows a 1G–1M p_∥ step of +6.94% ± 0.41 that VL175 does not cover (χ² 33.8 against a noise expectation of 1.8). J36 is −0.084% | Is the cause known within MINERvA (intensity, detector or beam changes between periods)? Which period, if any, should be the reference? | [`period-unfold REPORT`](../period-unfold-20261014/REPORT.md); [`playlist-spread REPORT`](../playlist-spread-20261014/REPORT.md) |
+| 8 | **The playlist spread and J36.** 1G–1M low by about 3%, 1N–1P high by about 5% at reco level. The per-period unfold shows a 1G–1M p_∥ step of +6.94% ± 0.41 that VL175 does not cover: diluted into the combined result, the raw shift has χ² p_∥ 33.8 against a noise expectation of 1.8 (the double-ratio shift gives 33.1, with no noise reference). J36 is −0.084% | Is the cause known within MINERvA (intensity, detector or beam changes between periods)? Which period, if any, should be the reference? | [`period-unfold REPORT`](../period-unfold-20261014/REPORT.md); [`playlist-spread REPORT`](../playlist-spread-20261014/REPORT.md) |
 | 9 | **KI-85**: statistical calibration deferred until after the publication package; no coverage claim is made | Is publishing with untested coverage acceptable if it is stated plainly? | KNOWN_ISSUES 85 |
 | 10 | **Flux block smaller than published** (4.01% published median against ours); the reason is not established by the release | Does Ben know why? | paper §`sec:uq2d` |
 
@@ -33,10 +35,10 @@ chooses one meeting after both are ready, or two meetings.
 
 | # | item | what Joseph and Ben see |
 |---|---|---|
-| 11 | The production covariance: per-block medians, rank, PSD, ensemble errors (≈4% per-cell σ; C08 with 4 dof, 71% relative SE of variance) | production REPORT and `s5.json` summary |
-| 12 | The playlist-consistency block: its design (reference-free double ratio, 1F in group A, each period's own MC response) against its sensitivities (1A–1F reference, raw ratios); exchangeability, grouping, noise overlap and possible shrinkage; its size with and without it in the budget. The block and its independent recompute exist ([`../playlist-term/REPORT.md`](../playlist-term/REPORT.md)); the budget waits on S5. Containment of the observed differences is algebraic, not a coverage test | the block REPORT, its [`recompute/`](../playlist-term/recompute/) outputs, and the F9 combination |
+| 11 | The production covariance: per-block medians, rank, PSD, ensemble errors (≈4% per-cell σ; C08 with 4 dof, 71% relative SE of variance). Retraining noise inside the universe block (X03): in `2p2h:0` and `MaCCQE:0` it is as large as the shift; X03 and the band-centring numbers were not independently recomputed | production REPORT and `s5.json` summary |
+| 12 | The playlist-consistency block: its design (reference-free double ratio, 1F in group A, each period's own MC response) against its sensitivities (1A–1F reference, raw ratios); exchangeability, grouping, noise overlap and possible shrinkage; its size with and without it in the budget. The block, its independent recompute and the combination with S5 exist ([`../playlist-term/REPORT.md`](../playlist-term/REPORT.md), [`../playlist-term/COMBINATION-REPORT.md`](../playlist-term/COMBINATION-REPORT.md)). Containment of the observed differences is algebraic, not a coverage test: the block's own double-ratio check is passed by construction. Is a run-period difference covariance the right object? | the block REPORT, its [`recompute/`](../playlist-term/recompute/) outputs, and the F9 combination |
 | 13 | The budget against VL175 and against the published analysis | one comparison table |
-| 14 | The disclosure set with final numbers | [`DRAFT-disclosures.md`](DRAFT-disclosures.md) revision 2 |
+| 14 | The disclosure set with final numbers | [`DRAFT-disclosures.md`](DRAFT-disclosures.md) revision 3 |
 | 15 | The claim wording, inside the narrower endpoint | a claims draft (after J2) |
 
 ## Part 3 — housekeeping that needs Ben

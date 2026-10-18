@@ -11,7 +11,11 @@ accepting it. Statuses are dated observations, not live state.
 
 **Status update (2026-10-17, after PR #150):** F1, F3, F4, F5, F8 and F9 are closed. F10 (disclosures, revision 2) is closed as
 a draft. F6 is closed (PR #153). **Every scientific input (F1–F10) is closed; the next steps are Joseph's decisions
-J1–J5.**
+J1–J6.**
+
+**Status update (2026-10-17, J1/J2 decided):** Joseph decided to adopt before the review with Ben (J1) and adopted
+S5 + C_PL (J2), [`DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md`](../../../DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md).
+The rebuilds R1–R4 may start; R5 (the claims map) waits on J3. J3 waits on a claims draft; J4 on DRAFT-disclosures revision 3; J5 on a KI-85 row text.
 
 **CITABLE FOR:** the dependency order of Stage F, and the record that closes each dependency.
 **NOT CITABLE FOR:** any result, adoption, claim, KI-85 lift, publication change, push, submission, deposit, tag or
@@ -35,6 +39,9 @@ driver_p1 PR on main ───────────────────�
 
 Nothing to the right of "Joseph's adoption" starts before it. Joseph decides whether the review with Ben comes
 before adoption. This draft assumes it does, because of his statement above.
+**Superseded 2026-10-17 by J1:** adoption first, review with Ben after
+([`DECISION-20261017`](../../../DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md)). The review now sits beside
+the rebuilds, not before adoption.
 
 ## 1. Scientific inputs (before adoption)
 
@@ -47,18 +54,18 @@ before adoption. This draft assumes it does, because of his statement above.
 | F5 | Durable copy: products to CFS `m3246` with sha256 re-measured, including the S5 ROOT rollup (binding §4) | REPORT section | 2d closer | **closed**: CFS `m3246/josephrb/2d-closeout-stageC-production-20261015/`, 2,355 files under `sha256sum -c` rc 0, including the S5 ROOT rollup (REPORT §13; F4 part B) |
 | F6 | `driver_p1.py` reaches `main` through its own reviewed PR (binding ruling 1) | that PR's merge | 2d closer, reviewed by the director | **closed**: PR #153. `2d-unfolding/driver_p1.py` `3056e625` (blob `18d08daa`) is byte-identical to the pilot copy and to every deployed tree that ran it. It produced 481 jobs (C0_unit, S1, S2, S4B); G2, S4U, C0_cv and S3 ran `unfold_2d_omnifold_unbinned.py` `74a4ed69`. Byte and import-graph identity, no re-run ([`f6-driver-p1/IDENTITY.md`](f6-driver-p1/IDENTITY.md)); reviewed by the director |
 | F7 | Playlist-consistency design record: the construction, raw or double ratio, the reference period, the treatment of 1F and the per-period MC responses, all declared before computing | director record, then a fresh verifier | director | **closed**: [`../playlist-term/DESIGN.md`](../playlist-term/DESIGN.md), frozen at `c144cdc4` and amended by PRs #142–#144 |
-| F8 | Playlist-consistency block computed, added after S5 as a separate block, without editing VL175 or S5 | a block record with digests, verifier-checked | director | **closed**: [`../playlist-term/REPORT.md`](../playlist-term/REPORT.md) (PR #144), recompute in [`../playlist-term/recompute/`](../playlist-term/recompute/). Not adopted |
-| F9 | The quoted total = S5 total + playlist block. Checks: symmetric, PSD, functionals from vectors; the budget with and without the block | the block record | director | **closed (candidate)**: [`../playlist-term/COMBINATION-REPORT.md`](../playlist-term/COMBINATION-REPORT.md) (PR #149), frozen in PR #148 and independently REPRODUCED. It reads the F4-verified `6689d2fc…`. Not adopted |
+| F8 | Playlist-consistency block computed, added after S5 as a separate block, without editing VL175 or S5 | a block record with digests, verifier-checked | director | **closed**: [`../playlist-term/REPORT.md`](../playlist-term/REPORT.md) (PR #144), recompute in [`../playlist-term/recompute/`](../playlist-term/recompute/). Adopted 2026-10-17 as part of Q (J2) |
+| F9 | The quoted total = S5 total + playlist block. Checks: symmetric, PSD, functionals from vectors; the budget with and without the block | the block record | director | **closed; adopted 2026-10-17 (J2)**: [`../playlist-term/COMBINATION-REPORT.md`](../playlist-term/COMBINATION-REPORT.md) (PR #149), frozen in PR #148 and independently REPRODUCED. It reads the F4-verified `6689d2fc…` |
 | F10 | Every disclosure item in [`DRAFT-disclosures.md`](DRAFT-disclosures.md) has its final number from F3/F8, and each number's source line is cited | the disclosure draft, revision 2 | director | **closed (draft for J4)**: [`DRAFT-disclosures.md`](DRAFT-disclosures.md) revision 2, numbers sourced and reviewed (APPROVE WITH CHANGES, all applied). KI-90 waits on R1–R4 |
 
 ## 2. Joseph's decisions (Joseph's alone)
 
 | # | decision | input the director provides | status |
 |---|---|---|---|
-| J1 | Whether the review with Ben comes before adoption, and when | [`AGENDA-ben-review.md`](AGENDA-ben-review.md) | open |
-| J2 | Adopt the uncertainty: S5 total + playlist block, or something else. The central value is already adopted: `E_U`, LightGBM seed 42 ([`DECISION-20261011`](../../../../publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md)) | the REPORT, the block record and a one-page comparison against VL175 | waits on F1–F10 |
-| J3 | Adopt the claim wording, inside the narrower endpoint | a claims draft produced from the disclosures | waits on J2 |
-| J4 | Adopt the disclosure wording: G2, the playlist term, C07′, `NormDISCC`, C03, the endpoint, and the others in the draft | [`DRAFT-disclosures.md`](DRAFT-disclosures.md) | draft started |
+| J1 | Whether the review with Ben comes before adoption, and when | [`AGENDA-ben-review.md`](AGENDA-ben-review.md) | **decided 2026-10-17: adopt first, review after** ([`DECISION-20261017`](../../../DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md)) |
+| J2 | Adopt the uncertainty: S5 total + playlist block, or something else. The central value is already adopted: `E_U`, LightGBM seed 42 ([`DECISION-20261011`](../../../../publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md)) | the REPORT, the block record and a one-page comparison against VL175 | **decided 2026-10-17: S5 + C_PL**, X02/X03 not added ([`DECISION-20261017`](../../../DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md)) |
+| J3 | Adopt the claim wording, inside the narrower endpoint | a claims draft produced from the disclosures | waits on a claims draft (J2 decided) |
+| J4 | Adopt the disclosure wording: G2, the playlist term, C07′, `NormDISCC`, C03, the endpoint, and the others in the draft | [`DRAFT-disclosures.md`](DRAFT-disclosures.md) | revision 3 ready for J4 |
 | J5 | KI-85: record its actual outcome. It stays deferred and is not lifted unless Joseph decides otherwise | a KI-85 row text | open |
 | J6 | Authorize each outward act separately: the standalone-repo push, any submission, deposit, tag or contact | none drafted until asked | not requested |
 
