@@ -277,16 +277,16 @@ periods.
 Its relative uncertainty has a median of \SI{\uqMedian}{\percent} per bin and is
 \SI{\uqIntegral}{\percent} on the integrated cross section, compared with
 \SI{\uqPaper}{\percent} and \SI{\uqPaperIntegral}{\percent} for the publication.
-The systematic-universe block dominates it in the median bin and in the
-integral, and the run-period block raises the per-bin median from
+The systematic-universe block dominates it bin by bin (a median \SI{87}{\percent}
+of the variance) and in the integral, and the run-period block raises the per-bin median from
 \SI{\uqSFiveMedian}{\percent} to \SI{\uqMedian}{\percent}.
 % J3/J4 provisional (DECISION-20261018, packet C2, W3: D0). state/2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz
 % Q.median_pct (6.448), Q.integral_sigma_pct (4.755), S5_total.median_pct (6.041); universe variance share 0.871 per
-% cell (median) and 0.828 of the integral (rebuild REPORT §3). \uqPaperIntegral (4.61): values.tex, the note's worked
+% cell (the median over cells of the per-cell share, block_shares; review m11) and 0.828 of the integral (rebuild
+% REPORT §3). \uqPaperIntegral (4.61): values.tex, the note's worked
 % example (app_statmethods.tex sec:chisq) and docs/publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md l.60-61.
-The flux block applies the
-per-universe neutrino--electron-scattering and inverse-muon-decay constraint
-weights of the MINERvA analysis toolkit.
+The flux block applies the MINERvA analysis toolkit's per-universe
+neutrino--electron-scattering and inverse-muon-decay constraint weights.
 % J3/J4 provisional (DECISION-20261018, packet W5): the "an earlier version omitted them and quoted 6.87 %" clause is
 % dropped from the paper; the chain stays in the note's App. history (errata) and App. history-vl175.
 The published flux block (\SI{4.01}{\percent}
@@ -305,18 +305,25 @@ has a median of \SI{0.06}{\percent} per bin and is itself uncertain by about
 The systematic-universe unfolds approximate the weighting of events that fail
 reconstruction.  Tests in two of the 187 universes (a resonance-production and a
 flux universe), each at two training seeds, resolved no effect above the noise of
-an earlier ten-seed training scan, about three times the training-seed block; a
-smaller effect is not excluded, and the approximation is not corrected.
+an earlier ten-seed training scan, about three times the training-seed block; an
+effect below about twice that noise is not excluded, so the test is not tight, and
+the approximation is not corrected.
 % J3/J4 provisional (DECISION-20261018, packet W3: D4). docs/orchestration/DECISION-20261015-joseph-g2-carry.md §1-§2
 % (MaRES_0, Stage B diagnostics P5; Flux:23, the largest median |c_off - 1| among Flux universes, Stage C pilot K2;
 % seeds 42 and 43; NOT RESOLVED ABOVE TRAINER NOISE; 2 of 187). "About three times": median sigma_c08/sigma_ML 0.304
-% (stageC/production/REPORT.md §3). K2 excludes only a median effect above 2 sigma_ML: the test is not tight.
-Subsets of the data taken in different run periods are not mutually consistent
-within the other uncertainties: one period group's unfolded $\pPar$ distribution
-differs from the earliest periods by a step of about \SI{7}{\percent} near
-\SI{8}{GeV/c}.  The cause is not known, and these data cannot establish which
-period is correct.  We carry its effect on the combined result as the run-period
-block, built from the differences among three period groups without choosing any
+% (stageC/production/REPORT.md §3). K2 excludes only a median effect above 2 sigma_ML (G2 decision §1): the test is not
+% tight (D4; review m2).
+Data from different run periods are not mutually consistent
+within the other uncertainties: one period group's unfolded $\pPar$ distribution,
+taken relative to its own simulation, differs from that of the earliest periods by a
+step of about \SI{7}{\percent} near \SI{8}{GeV/c}.
+% Director factual correction 2026-10-18, review M4; Joseph to confirm at the Ben review. The 7 % (+6.94 % +- 0.41) is
+% the step of the double ratio (each period group's unfolded result over its own simulated truth, then P_B over P_A);
+% the step of the unfolded results themselves (raw P_B/P_A) is +10.29 % +- 0.43 (period-unfold-20261014/REPORT.md §2).
+% The draft sentence (DRAFT-disclosures D5, corrected in revision 4) described the quantity wrongly.
+The cause is not known, and these data cannot establish which
+period is correct.  We carry the effect of this inconsistency on the combined result
+as the run-period block, built from the differences among three period groups without choosing any
 as the reference.  Its median is
 \SI{2.1}{\percent} per bin; it is \SIrange{1.2}{3.4}{\percent} on the $\pPar$
 projections and \SI{2.0}{\percent} on the integrated cross section.  Its reference-free
@@ -324,7 +331,10 @@ double-ratio construction uses the periods' own simulated responses; it does not
 identify a correct period.  The small number of groups, possible regularization
 shrinkage and retained statistical and training noise limit its interpretation.
 Containment of the observed differences by this construction is not evidence of
-coverage.
+coverage.  The block's own consistency check passes by construction; it is not a
+test.
+% Review m12: the J2 condition (DECISION-20261017 §3; COMBINATION-REPORT §3: the double-ratio chi2 against any total
+% containing C_PL is at or below the first-order bound whatever the data), added as one clause by the director's ruling.
 % J3/J4 provisional (DECISION-20261018, packet W2, W3: D5; the last three sentences are D5's Required clause, verbatim;
 % D5's "With few period groups, its own size is poorly determined" is left to the note, the Required clause carrying it).
 % Step: state/2d-closeout/period-unfold-20261014/REPORT.md (dr P_B/P_A, P_B = 1G, 1L, 1M against P_A = 1A-1F, the step
@@ -345,16 +355,17 @@ rebuilt band.
 Rescoring the same pseudo-experiments against the rebuilt band, which is post hoc and partly
 circular, removes the tail undercoverage: \SI{97.7}{\percent} fall within two
 standard deviations and \SI{78.1}{\percent} within one, so the rebuilt band is
-wider than the toy scatter, for reasons not established (a post hoc
-diagnostic points to under-scatter of the closure pseudo-experiments, whose
-simulation-side fluctuation shares the band's resampling mechanism).
+wider than the toy scatter, for reasons not established.
+% 2026-10-18 (review dispositions, to keep 11 pages): the parenthetical "(a post hoc diagnostic points to under-scatter of
+% the closure pseudo-experiments, whose simulation-side fluctuation shares the band's resampling mechanism)" moved to the
+% note only (sec_validation.tex sec:coverage, "The rebuilt band, scored post hoc"; KNOWN_ISSUES 85). Not D2 must-carry.
 The quoted statistical block is a different ensemble: 300 replicas drawn at the
 central value's training seed in three independent streams (data, signal and
 background simulation), with a median statistical uncertainty of
 \SI{0.684}{\percent}.  Neither it nor the rebuilt band has been independently
-tested.  Its replica mean differs from the central value by a per-bin median of
-0.26 statistical standard deviations, an offset that the block, a covariance about
-that mean, does not include.  Coverage of the total remains untested.
+tested.  The quoted block's replica mean differs from the central value by a per-bin median of
+0.26 statistical standard deviations; the block, a covariance about that mean,
+excludes this offset.  Coverage of the total remains untested.
 % J3/J4 provisional (DECISION-20261018, packet C4, W3: D2, D8; J5 KNOWN_ISSUES 85 re-scoped to S1). 0.684 =
 % rebuild/outputs/outA/budget_Q.json.gz stat.median_pct (0.6843); bound by check_sec4_receipts.py. Construction:
 % stageC/production/DESIGN.md S3.4 (S1, --bootstrap-streams three). Offset: rebuild REPORT §3 (median |offset|/sigma_mean
@@ -362,9 +373,9 @@ that mean, does not include.  Coverage of the total remains untested.
 An assessment of the saved products found construction defects in the earlier
 budget, among them a truth-input mismatch between its systematic sweep and that
 sweep's reference and unpropagated background-template
-statistics~\cite{TwoDFollowup2026}; the quoted covariance uses a sweep without
-that mismatch and propagates the background-simulation statistics as its own
-bootstrap stream.
+statistics~\cite{TwoDFollowup2026}; the quoted covariance is free of both.
+% Shortened 2026-10-18 for the page count (review dispositions): how (the July sweep; S1's background stream) is in the
+% note, sec:uq-2d-construction and sec:uq-boot.
 % J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-93, KI-94 in the note): the July sweep
 % (stageC/production/DESIGN.md S5 universe row); S1's background stream.
 
@@ -375,12 +386,12 @@ population or simultaneous interval coverage, and it supplies no calibrated
 covariance-based generator significance.  The following are not included in any
 uncertainty block: the approximation in the systematic-universe unfolds above,
 the dependence on the machine-learning estimator (Sec.~\ref{sec:repro2d}), and
-the dependence on the unfolding model and its regularization, which requires
-independent-generator samples; and we assume the detector response varies only
-within its parametrized family.  Validated total intervals over the full
-reporting domain require new inputs, namely independent production-size
+the dependence on the unfolding model and its regularization, whose estimate would
+require independent-generator samples.  We assume the detector response varies
+only within its parametrized family.  Validated total intervals over the full
+reporting domain require new inputs: independent production-size
 simulation, a validated continuous nuisance generator and independent-generator
-samples not already inspected, and no coverage claim is made.  The analysis
+samples not already inspected.  No coverage claim is made.  The analysis
 note~\cite{AnalysisNote2026} states the construction's declared conventions and
 its further approximations and limits.
 % J3/J4 provisional (DECISION-20261018, packet W1 register (c): the preparation packet's first two sentences (PR #145),

@@ -104,8 +104,8 @@ truth weights share a \emph{single} event
 draw to preserve within-event migration correlations. Pinning the GBDT seed per replica
 separates bootstrap and training-seed variances. With 300 replicas the Gaussian formula
 $1/\sqrt{2(N-1)}$ gives a relative standard error of about \SI{4.1}{\percent} on each per-bin
-$\sigma$, and the per-bin $\sigma$ from the first 150 replicas is a median 1.001 times that
-from all 300. The replica mean
+$\sigma$, and the per-bin $\sigma$ from a nested half (150) of the replicas is a median 1.001
+times that from all 300. The replica mean
 differs from the central value by a per-bin median of 4.43 standard errors of the
 mean ($\sigma/\sqrt{300}$), that is 0.26 of the statistical standard deviation; the
 block is the covariance about the replica mean, so this offset is not included in it. The bootstrap block is
@@ -192,12 +192,15 @@ invalidates the entire covariance nor supplies a correction to subtract.
 The July sweep, which the quoted universe block uses, does not have this
 mismatch. The unavailable May input and
 code revision prevent a more specific attribution. The July sweep's products record
-no driver digest and came from an uncommitted driver revision. Five of its universes
-are reproduced to $\le1.4\times10^{-11}$ by the committed driver, and seven in
-production; the rest are qualified by inference from the same producer.
+no driver digest and came from an uncommitted driver revision. Seven of its universes,
+four of them also in the pilot, are reproduced to $\le1.4\times10^{-11}$ by the
+committed driver; the rest are qualified by inference from the same producer.
 % J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-93). stageC/production/DESIGN.md §S5 universe row (the July
-% sweep); stageC/pilot/REPORT.md K1 (five comparisons, max rel <= 1.38e-11); stageC/production/REPORT.md §2 (S4(ii)
-% July seed-42 rows, 7/7 PASS, max 1.38e-11).
+% sweep); stageC/pilot/REPORT.md l.70-80, K1: five comparisons over four universes (NormDISCC:0, MaRES:0, Flux:23,
+% Muon_Energy_MINOS:0 on the derived and the default path), max rel <= 1.38e-11; stageC/production/REPORT.md l.65,
+% S4(ii): seven July seed-42 universes (2p2h:0, Flux:23, MaCCQE:0, MaRES:0, MinosEfficiency:0, Muon_Energy_MINOS:0,
+% NormDISCC:0), 7/7 PASS, worst 1.38e-11, which include the four pilot universes. Review M2: "Five of its universes"
+% (inherited from DRAFT-disclosures D10, corrected in revision 4) was the wrong count.
 
 The Rvn1pi and Rvp1pi bands also encode the same shift under the configured
 nonresonant-pion tune, counting it twice. This is a small, \SI{0.088}{\percent}
@@ -312,14 +315,15 @@ goodness-of-fit values computed with this covariance are indicative. The
 following are not included in any uncertainty block:
 \begin{itemize}[nosep]
   \item the approximation in the systematic-universe unfolds' weighting of
-        events that fail reconstruction (below), which is not measured;
+        events that fail reconstruction (below), which is not measured beyond the
+        weak test below;
   \item the dependence on the machine-learning estimator: a per-bin median of
         \SI{0.98}{\percent} (maximum \SI{12.2}{\percent}) between the LightGBM
         central value and the exact-split cross-check (\S\ref{sec:uq-ml});
-  \item the dependence on the unfolding model and its regularization, and
-        departures of the detector response from its parametrized family; these
-        require independent-generator samples and are not priced. We assume the
-        detector response varies only within its parametrized family.
+  \item the dependence on the unfolding model and its regularization, whose
+        estimate requires independent-generator samples, and departures of the
+        detector response from its parametrized family, which we assume absent;
+        neither is priced.
 \end{itemize}
 % J3/J4 provisional (DECISION-20261018, packet W1 register (c): the preparation packet's first two sentences (PR #145),
 % then the director's list of what lies outside every block; the note carries D1's full content, including the reason
@@ -328,6 +332,8 @@ following are not included in any uncertainty block:
 % the three missing inputs; no coverage claim); DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md §2 (G2 unmeasured;
 % the learner dependence, median 0.98 %; C09 unfolding-model and regularization dependence, C10 response departures:
 % Stage D, unpriced, Stage B REPORT §3 R8). Learner maximum: receipts/2d-lgbm42-20261011/lgbm_central_metrics.out (12.18 %).
+% Review M3: Stage B REPORT §3 (l.313-314) lists C09 (needs independent-generator 2D truths) and C10 ("none outside the
+% parametrized family | stated assumption") separately; only C09 needs independent-generator samples. Review m8 applied.
 
 \paragraph{Declared conventions.}
 Each systematic band's covariance is computed about the mean of its universes
@@ -387,7 +393,7 @@ pooled result by \SIrange{-1.79}{3.13}{\percent}, each with $|z|$ at most 0.28.
 The two publication consumers of the covariance, the $\chi^{2}$ comparison
 (\S\ref{sec:chisq}) and the Fig.~\ref{fig:uqbands} producer, check that a
 covariance's stored cell set equals the published one, and the check passes in
-every run behind the quoted numbers. The other limits are stated with their
+every run of both consumers on the quoted covariance. The other limits are stated with their
 blocks: the estimator and seed pairing, the background stream and the
 statistical ensemble's precision (\S\ref{sec:uq-boot}); the training-seed block's
 size and precision (\S\ref{sec:uq-ml}); the universe sweep's provenance, the
@@ -396,6 +402,7 @@ duplicated pion band, the lateral bands and the flux-universe index identity
 % J3/J4 provisional (DECISION-20261018, packet W8: the KI-90 sentence; W3: D10). state/2d-closeout/stageF/rebuild/REPORT.md
 % §2 (every Q run shows the identity check passing on hReportedCells: the three chi2 forms and fig. 6/7; KI-90's
 % "verify they ran"). Not a remedy of KI-90's producers or of any other consumer (rebuild REPORT §2).
+% Review m7: the pass is shown on the consumers' Q runs (three chi2 forms, fig. 6/7), not on the budget runs.
 
 \paragraph{Seed-related terms reported, not added.}
 Two seed-related terms are reported and not added to the covariance. The
@@ -411,14 +418,16 @@ variation. In two of them the noise is comparable to or larger than the shift:
 in \texttt{2p2h:0} the shift is \SI{0.114}{\percent} against a seed standard
 deviation of \SI{0.235}{\percent}, and in \texttt{MaCCQE:0} \SI{0.266}{\percent}
 against \SI{0.220}{\percent} (per-bin medians). In expectation such noise adds
-variance to a band rather than removing it, and these two bands are largely
-training noise; both statements are inferred from the medians. The
+variance to a band rather than removing it (inferred), and these two bands are
+largely training noise (inferred from the medians). The
 universe\,$\times$\,retraining values and the band-centring numbers were not
-recomputed independently.
+recomputed independently: they cannot be recomputed from the saved covariance
+products, and the verification compared only their inputs' digests.
 % J3/J4 provisional (DECISION-20261018, packet W3: D11; W9: the two universes, note only). stageC/production/REPORT.md §3
 % (X02 median diag(C_int)/diag(C_stat) 0.0758; X03 table: 2p2h:0 0.114 % / 0.235 %, MaCCQE:0 0.266 % / 0.220 %, seed SD
 % over sigma_ML 1.24-1.33 in the six non-null universes, 4 dof each) and §14 (X03 and centring not recomputable from the
 % NPZ); stageC/production/DESIGN.md §8, §12 (rulings R5, R7: reported, not added); DECISION-20261017 §2.
+% Review m9: the inference labels follow DRAFT-disclosures D11; F4-VERIFICATION.md compares only the input digests.
 
 \subsection{What changes for the higher-dimensional products}
 \label{sec:uq-higherdim}

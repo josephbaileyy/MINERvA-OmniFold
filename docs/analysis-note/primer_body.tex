@@ -111,15 +111,29 @@ of their covariance under an exception does not certify their intervals.
 The generator tests below are a separate inference, and PET remains method
 development. None of these statuses supplies another's missing validation.
 
-The two-variable budget also needs construction repairs: a systematic
-sweep and its reference used different truth inputs, one small pion-model
-variation was counted twice, and background-template statistics still need
-propagation or a bound~\cite{TwoDFollowup2026}. Selection-changing detector
-variations and matching flux variations need further verification. Checking
-widths by splitting the existing simulation can test precision conditional
-on that sample, but cannot establish coverage across independently generated
-samples. The full uncertainty-validation objective needs new inputs as well
-as these repairs; the quoted budget has not been recalculated.
+An assessment of the saved products found construction defects in an
+earlier version of the two-variable error budget~\cite{TwoDFollowup2026}. The
+quoted budget was rebuilt without them: its systematic sweep and that sweep's
+reference use the same truth inputs, a duplicated pion-model variation is
+counted once, the background simulation's statistics are propagated, and the
+detector variations that change the event selection come from complete
+re-runs. Some effects are in no part of it: an approximation in how events
+that fail reconstruction are weighted, the difference between the two
+tree-learner implementations, and the dependence on the unfolding model.
+Checking widths by splitting the existing simulation can test precision
+conditional on that sample, but cannot establish coverage across
+independently generated samples. Validated error bars would need new inputs:
+independent full-size simulation, a validated way to generate nuisance
+variations, and independent-generator samples not already inspected. No
+coverage claim is made.
+% J3/J4 provisional (DECISION-20261018, packet C3, applied here after review M1, director's ruling 2026-10-18): the
+% paragraph said the budget "needs construction repairs" and "has not been recalculated", false of Q. Q uses the July
+% sweep (no truth-input mismatch; sec_systematics sec:uq-2d-construction; stageC/production/DESIGN.md §S5 universe row),
+% drops Rvp1pi (KNOWN_ISSUES 92), draws a background bootstrap stream (S1, DESIGN §3.4), takes its laterals from
+% selection-complete re-unfolds (S3), and was recalculated (stageF/rebuild/REPORT.md §3). The flux-universe index
+% identity is established (KNOWN_ISSUES 91; Stage B REPORT §2.1), so "matching flux variations need further
+% verification" is removed. Exclusions: DECISION-20261017 §2 (G2, the learner dependence, C09); the new inputs and "no
+% coverage claim": DECISION-20261014 §2. The paper's version is paper_body.tex sec:uq2d (C3).
 
 The multi-quantity central values below pass the stated validation tests. A
 five-quantity uncertainty has now been adopted under a documented exception, and the two-quantity
@@ -212,8 +226,8 @@ independently --- come out close in size to the published ones
 % J3/J4 provisional (DECISION-20261018, packet W3: D5 is in the paper and note; the primer names no run-period block).
 partly because our flux uncertainty comes out below the published one for a reason
 not yet established; both use MINERvA's constraint from neutrino--electron
-scattering and inverse muon decay. For the overall interaction rate the comparison
-goes the other way: \SI{\uqIntegral}{\percent} for ours against
+scattering and inverse muon decay. For the uncertainty on the overall interaction rate
+the comparison goes the other way: \SI{\uqIntegral}{\percent} for ours against
 \SI{\uqPaperIntegral}{\percent} published.
 % J3/J4 provisional (DECISION-20261018, packet C2: the per-bin median and the integral; W7: the flux sentence kept;
 % W5: the "earlier version ... 6.87 percent" clause dropped, the chain is in the note's App. history).

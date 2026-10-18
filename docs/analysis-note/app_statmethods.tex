@@ -577,7 +577,8 @@ The log-normal $\chi^{2}$ uses
 $\delta_{i}=\ln x^{\ours}_{i}-\ln x^{\paper}_{i}$ and
 $\mathbf{C}^{\ln}_{ij}=\big(\texttt{TotalCov}+\mathbf{C}^{\tot}\big)_{ij}/(x^{\paper}_{i}x^{\paper}_{j})$;
 both covariances are scaled by the paper's values.
-This is the quoted script's definition, and $\chiCombinedLog$ reproduces only with it; scaling
+This is the quoted script's definition; of the five definitions recomputed, only this one
+reproduces $\chiCombinedLog$. Scaling
 our covariance by our own values instead gives $1.197$, scaling both by ours $0.958$, scaling by
 the geometric mean $0.963$, and $\ln(1+\mathbf{C}/(x_{i}x_{j}))$ in place of the ratio $1.015$.
 % Review m8: the attribution to the paper's Table I is not carried here.
@@ -623,8 +624,7 @@ The log-normal variant gives $\chiCombinedLog$ under the definition stated with 
 worked example above; the value depends on that definition.
 % 0.987 against 0.964 (chi2_Q_lognormal.txt, chi2_Q_std.txt); alternatives 0.958-1.197, rebuild REPORT §5.
 % Director 2026-10-18: the "paper's Table I" attribution removed here as at the worked example (phase-2 review m8).
-% J3/J4 provisional (DECISION-20261018, packet W4). The "matching the paper's Table I" attribution is left as written
-% (review m8 dropped it at the worked example only): QUESTION for the director.
+% J3/J4 provisional (DECISION-20261018, packet W4).
 
 \paragraph{External statistical floor of the \emph{quoted} combined $\chi^{2}$.}
 The quoted $\chiCombined$ inverts the paper$+$ours \emph{sum} rather than our blocks alone. This sum carries the paper's \texttt{StatOnlyCov}. This block has rank $205$ and is near-diagonal (\S\ref{sec:rank}). It places a variance floor under \emph{every} eigendirection of the combined matrix. It provides the larger of the two statistical contributions. It is larger in \emph{square-root} trace (ours is $0.428$ of it), and by the square of that factor in \emph{trace}. The operands are given in \S\ref{sec:rank}.

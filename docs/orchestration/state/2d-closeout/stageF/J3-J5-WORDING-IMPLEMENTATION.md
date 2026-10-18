@@ -13,7 +13,8 @@ any outward act (J6), including the standalone `MINERvA-OmniFold-Analysis-Note` 
 validation statement; an independent review of this wording (the decision's follow-on step 2, not done here).
 
 No number was computed for this change. Every printed number is a field of a committed record, at the printed
-precision, and each site cites its record in a LaTeX comment. Line numbers below are those of this commit.
+precision, and each site cites its record in a LaTeX comment. Line numbers in §1–§6 are those of `97cfdecc`; the
+independent review of `97cfdecc` + `ec56f073` and its dispositions are in §7, which supersedes §6's build results.
 
 ## 1. Summary
 
@@ -152,5 +153,70 @@ symlinked to the worktree's: buildcopy2's layout), local TeX Live 2024, `bash bu
 PDF sha256: `main_note.pdf` `75570e27…`, `main_paper.pdf` `6a6087e6…`, `main_primer.pdf` `63d8177d…`,
 `pet_note.pdf` `4f6d81de…`. The PDFs are not committed; copies are in the director's scratchpad
 (`review-pdfs-20261018/`).
+
+## 7. Independent review of `97cfdecc` + `ec56f073`, and its dispositions
+
+The review (`j3j5-review.md` in the director's scratchpad: a fresh read-only Claude Opus 5.5 subagent, APPROVE WITH
+CHANGES, 4 MATERIAL, 13 MINOR, 8 NOTE) and the director's rulings on it (2026-10-18) are applied in the follow-up
+commit on this branch. `ec56f073` (the director's) removed the Table I attribution of the log-normal χ², answering §4
+item 3. Line numbers below are at the follow-up commit.
+
+| item | ruling | disposition |
+|---|---|---|
+| M1 primer "construction repairs", "not been recalculated" | apply C3 at the primer; sweep all four builds | `primer_body.tex:114–136` rewritten for Q: the earlier budget's defects are named as found and removed (July sweep, Rvp1pi dropped, background stream, selection-complete laterals), the exclusions (miss-row weighting, learner, unfolding model), the split-sample sentence kept, the new inputs and "no coverage claim". The stale "matching flux variations need further verification" is removed (KI-91 established). Sweep: no "construction repairs", "not been recalculated" or "Table I correlated" in any of the four PDFs' text; `sec_method.tex:142` ("have not been recomputed", of exact-split studies) is true and kept |
+| M2 KI-93 count | reviewer's counts, cite the records | `sec_systematics.tex:195–197`: "Seven of its universes, four of them also in the pilot, are reproduced to ≤1.4×10⁻¹¹ by the committed driver"; comment cites `stageC/pilot/REPORT.md` l.70–80 (K1: five comparisons, four universes) and `stageC/production/REPORT.md` l.65 (S4(ii) 7/7) |
+| M3 C10 and independent-generator samples | requirement is C09's only; C10 an assumption | `sec_systematics.tex` §`sec:uq-2d-scope` third bullet: "…its regularization, whose estimate requires independent-generator samples, and departures of the detector response from its parametrized family, which we assume absent; neither is priced"; the separate assumption sentence is removed; comment cites Stage B REPORT §3 l.313–314 |
+| M4 paper's 7% step | make the sentence true; note's wording, paper register | `paper_body.tex:317–319`: "one period group's unfolded p∥ distribution, taken relative to its own simulation, differs from that of the earliest periods by a step of about 7% near 8 GeV/c"; commented "Director factual correction 2026-10-18, review M4; Joseph to confirm at the Ben review" (6.94% double ratio vs 10.29% raw, period-unfold REPORT §2) |
+| m1 `sec_validation.tex:91` | apply | "…and an untouched generator-truth domain for bias checks (§`sec:uq-2d-scope`)"; "the construction repairs in §`sec:uq-2d-construction`" removed |
+| m2 paper G2 tightness | follow D4 | `paper_body.tex:308–310`: "…about three times the training-seed block; an effect below about twice that noise is not excluded, so the test is not tight, and the approximation is not corrected" |
+| m3 antecedent | apply | "The quoted block's replica mean …" |
+| m4 antecedent | apply | "We carry the effect of this inconsistency on the combined result as the run-period block …" |
+| m5 paper D1 structure | apply | the list ends "…whose estimate would require independent-generator samples."; then "We assume the detector response varies only within its parametrized family."; the new-inputs sentence; "No coverage claim is made." on its own. W1(c)'s two sentences and the list's lead-in are unchanged |
+| m6 primer rate vs uncertainty | apply | "For the uncertainty on the overall interaction rate the comparison goes the other way" |
+| m7 KI-90 scope | apply | "…the check passes in every run of both consumers on the quoted covariance" |
+| m8 "not measured" vs "tested" | apply | "…which is not measured beyond the weak test below" |
+| m9 D11 inference labels and reason | apply | "(inferred)" and "(inferred from the medians)" placed per D11; "…they cannot be recomputed from the saved covariance products, and the verification compared only their inputs' digests" |
+| m10 "first 150" | apply | "from a nested half (150) of the replicas" |
+| m11 "flux-dominated" and "in the median bin" | apply | note `sec_results.tex:148–150`: "Its largest band is the flux, as in the publication; the systematic-universe block carries a median 0.87 of each bin's variance and 0.83 of the integral's"; paper: "dominates it bin by bin (a median 87% of the variance) and in the integral" |
+| m12 J2 condition in the paper | one short clause | `paper_body.tex`, after the Required clause: "The block's own consistency check passes by construction; it is not a test." |
+| m13 W4 "only" | apply | "of the five definitions recomputed, only this one reproduces χ²_log" |
+| n1 a receipt for 4.61% | not applied | committing the reviewer's computation (4.6099%) as a receipt and gate binding is a new computed artifact, outside this task's no-computation rule; left for the director. `\uqPaperIntegral` stays cited to the worked example and DECISION-20261012 |
+| n2, n3 | no change | n3 (W1(c) vocabulary) is the director's to raise with Joseph |
+| n4 stale comment | remove | the "QUESTION for the director" comment at `app_statmethods.tex` is removed |
+| n5 primer and the run-period finding | no change | Joseph's call (W3) |
+| n6, n8 | no change | — |
+| n7 hand Joseph the current note PDF | done | `review-pdfs-20261018/` replaced by the final build below |
+
+**Source record.** `DRAFT-disclosures.md` is now revision 4: D10 (KI-93)'s count and D5's draft sentence on the 7% step
+are corrected, with a dated note at the top naming findings M2 and M4. Nothing else in it changes, apart from the
+title's revision number and date.
+
+**Paper page count.** The fixes took the paper to 12 pages, with the last two references alone on page 12. To return
+to 11 without cutting required content:
+- "Subsets of the data taken in different run periods" became "Data from different run periods";
+- the flux-constraint sentence and the replica-mean sentence were reworded;
+- "the quoted covariance uses a sweep without that mismatch and propagates the background-simulation statistics as its
+  own bootstrap stream" became "the quoted covariance is free of both" (the how is in the note);
+- the rescoring sentence's parenthetical "(a post hoc diagnostic points to under-scatter of the closure
+  pseudo-experiments, whose simulation-side fluctuation shares the band's resampling mechanism)" is now note-only.
+  It is in `sec_validation.tex` §`sec:coverage` and KNOWN_ISSUES 85. It is not D2 must-carry, but it is pre-existing
+  paper text, so the director may prefer 12 pages with it restored.
+
+**Final build** (fresh scratch copy `scratchpad/buildcopy5/`, same layout):
+
+| check | result |
+|---|---|
+| `build_all.sh` | rc 0; each PDF "written by this run; no unresolved references" after one latexmk invocation |
+| pages | note 123, primer 12, paper 11, PET note 26; the executive summary keeps its page break |
+| undefined references / citations; multiply-defined labels | 0 in all four logs |
+| containment (strict) | SELF-TEST PASS; RESULT PASS (note 64/64, PET note 5/5; paper and primer 0 of 69) |
+| Sec. IV | gzip receipt PASS; SELF-TEST PASS (18 perturbations rejected); PASS 15/15 |
+| pytest (`test_check_sec4_receipts.py`, `test_build_all.py`) | 63 passed |
+
+`review-pdfs-20261018/SHA256SUMS`:
+- `main_note.pdf` `100c27b1d4d010d19cf42d017160eb7bf7ddb5ca752df0f2be720ae71c6f262f`
+- `main_paper.pdf` `9cae2bc358bdd532ab22a9e501d088e6559d0138fc7849a9eb806e218204a783`
+- `main_primer.pdf` `35805adf05617728dddc2ee41c1a64d4a0013c55c9729e5ae6c557cff859be7b`
+- `pet_note.pdf` `f847fffbb17eae91b652e5857195ba4c1de75b19fc42088a5ff6c5ddedb42c2d`
 
 **Same-model caveat:** the director and this implementer are Claude Opus 5.5 on the claude-school account.
