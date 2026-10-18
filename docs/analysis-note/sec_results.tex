@@ -2,11 +2,17 @@
 \label{sec:results}
 
 
-Unfolded-point error bars give the total uncertainty from \S\ref{sec:systematics},
-combining systematic universes, statistical bootstraps, and ML training-seed
-variation. Published points carry the published total covariance.
+The unfolded points of Fig.~\ref{fig:xsec} carry the bin errors stored with the
+unfolded histogram (\texttt{hXSec2D}; in the projections, \texttt{hXSec\_pt} and
+\texttt{hXSec\_pz}); they are not drawn from the covariance of \S\ref{sec:systematics}.
+The published points in its top panel carry the square root of the diagonal of the
+published statistical covariance. The uncertainty budget of \S\ref{sec:systematics}
+is shown in Fig.~\ref{fig:uqbands} and Table~\ref{tab:uq}.
 Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} carry statistical errors only,
 as their captions specify.
+% PHASE2 Q2, from the producers: plot_2d_threeway_fig13.py th2_to_array (hXSec2D.GetBinError) and paper_arrays
+% (sqrt of StatOnlyCovariance diagonal); plot_2d_cross_section.py plot_1d_projection (hXSec_pt / hXSec_pz GetBinError).
+% J3 pending.
 
 \subsection{Double-differential cross section}
 \label{sec:results-xsec}
@@ -62,8 +68,9 @@ The combined paper$+$ours $\chi^{2}/\mathrm{ndf}=\chiCombined$ double-counts
 shared flux/GENIE/MINOS systematics. The ours-only inverse-covariance $\chi^{2}$
 uses only the well-constrained subspace under a truncated-spectral convention.
 We therefore quote per-bin pulls, the regularization
-scan, and the truncated result together rather than treating an unconstrained
+scan of the exact-split cross-check, and the truncated result together rather than treating an unconstrained
 pseudo-inverse as a standalone goodness-of-fit (App.~\ref{sec:rank}).
+% NR: the regularization scan was not recomputed for Q (no committed producer; rebuild REPORT §6). J3 pending.
 
 Per-bin differences standardized by the published uncertainty
 (Fig.~\ref{fig:pull}) are centered (mean $\pullMean$), with RMS $\pullRMSr$
@@ -144,13 +151,17 @@ Our flux band carries MAT's per-universe $\nu$--$e$ and inverse-muon-decay
 constraint weights; an earlier version omitted them and quoted \SI{6.87}{\percent}
 (\texttt{KNOWN\_ISSUES.md} 95; App.~\ref{app:history}). The
 systematic block dominates; statistical and ML blocks together contribute
-under a tenth of the combined $\sqrt{\mathrm{Tr}\,C}$. Every block is computed
+under a tenth of the combined $\sqrt{\mathrm{Tr}\,C}$.
+% J4 pending (Q8: the 6.87 % history clause stays as written; D0, D5, D10 flux sentence).
+Every block is computed
 with the LightGBM estimator of the quoted central value
 (\S\ref{sec:method-config}), and the relative uncertainties divide by that
 central value, the seed-42 central value of the universe sweep. Against the
 exact-split cross-check the same combined covariance gives a combined median
-of \SI{6.058}{\percent}.
-% 2026-10-12: VL175 (adopted; state/2d-closeout/c04-repair/products/budget.json): 6.0898 % vs CV42, 6.0577 % vs E_C
+of \SI{6.410}{\percent}.
+% 2026-10-18: Q (adopted 2026-10-17): rebuild/outputs/outA/budget_Q.json.gz Q.median_pct 6.4479 vs E_U,
+% Q_vs_EC.median_pct 6.4104 vs E_C.
+% 2026-10-12: VL175 (state/2d-closeout/c04-repair/products/budget.json): 6.0898 % vs CV42, 6.0577 % vs E_C
 % (computed from c04-repair/products/cov2d_blocks_205.npz; the same code on the VL172 export gives 6.8707/6.8269).
 % Earlier source: ASSESSMENT-20261008-2d-estimator-pairing.md P14 (6.8707 % vs CV42, 6.8269 % vs E_C), reproduced
 % by the review (e/recompute/rc_pairing.json.txt blocksum_median_rel_pct_den_exact_central); KNOWN_ISSUES 88.
@@ -161,18 +172,23 @@ of \SI{6.058}{\percent}.
     \toprule
     Component & $N$ & $\sqrt{\mathrm{Tr}\,C}$ & per-bin median rel.\ $\sigma$ \\
     \midrule
-    ML noise (lgbm training-seed var.) & 10 & \num{5.06e-41} & \SI{0.166}{\percent} \\
-    Statistical (Poisson bootstrap) & 300 & \num{1.93e-40} & \SI{0.674}{\percent} \\
-    Systematic (universe sweep $+$ \SI{1.4}{\percent} norm) & $187{+}1$ & \num{2.91e-39} & \SI{6.043}{\percent} \\
-    \textbf{Combined (block sum)} & --- & \num{2.92e-39} & \SI{6.090}{\percent} \\
+    ML noise (lgbm training-seed settings) & 5 & \num{1.99e-41} & \SI{0.057}{\percent} \\
+    Statistical (Poisson bootstrap) & 300 & \num{1.98e-40} & \SI{0.684}{\percent} \\
+    Systematic (universe sweep $+$ \SI{1.4}{\percent} norm) & 43 bands${+}1$ & \num{2.73e-39} & \SI{5.969}{\percent} \\
+    Run period & 3 & \num{8.34e-40} & \SI{2.137}{\percent} \\
+    \textbf{Combined (block sum)} & --- & \num{2.87e-39} & \SI{6.448}{\percent} \\
     Paper TotalCov (reference) & --- & \num{2.68e-39} & \SI{\uqPaper}{\percent} \\
+    % Q rows: rebuild/outputs/outA/budget_Q.json.gz {c08,stat,universe,C_PL,Q}.{sqrt_trace,median_pct};
+    % paper: paper_ratios.paper_sqrt_trace_TotalCovariance_205 (2.676e-39). Row labels: J4 pending (D0, D5).
     \bottomrule
   \end{tabular}
   \caption{2D uncertainty budget over 205 reported bins. Each component has
   a $205\times205$ covariance matrix $C$; $\sqrt{\mathrm{Tr}\,C}$ gives its
   absolute per-bin uncertainties in quadrature. The flux band carries MAT's
-  constraint weights (VL175). The standalone combined median relative
-  uncertainty (\SI{6.090}{\percent}) is below the published total
+  constraint weights. The systematic row holds 43 bands of the July sweep (44 bands,
+  187 universes) plus the normalization; the ML row has five training-seed settings and
+  the run-period row three run periods. The standalone combined median relative
+  uncertainty (\SI{6.448}{\percent}) is below the published total
   (\SI{\uqPaper}{\percent}).}
   \label{tab:uq}
 \end{table}

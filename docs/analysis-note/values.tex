@@ -99,6 +99,8 @@
 % docs/orchestration/state/coverage-2d-20261005/interim_score.json). Pre-registered interim look,
 % toys 1-100, 205 bins, 99.5% toy-bootstrap intervals; FAIL-undercoverage (futility). Independently
 % recomputed (points identical; C1/C2 endpoints within 5.4e-4, all endpoints within 1.7e-3). Fractions, not percent.
+% J4 pending (D2). These score the superseded VL162 band; Q's statistical block (S1) is a different ensemble,
+% not coverage-tested (KNOWN_ISSUES 85). Not recomputed (PHASE2 §2 NR).
 \newcommand{\covTwoDNtoy}{100}
 \newcommand{\covTwoDCTwoPct}{91}  % C2 = 0.912 as a rounded percent (primer)
 \newcommand{\covTwoDCTwoPctOne}{91.2} % C2 in percent for the paper: the literal 0.912 collides with
@@ -117,25 +119,32 @@
 \newcommand{\covTwoDCTwoLowCtl}{0.809}\newcommand{\covTwoDCTwoHighCtl}{0.955} % C2 with band x0.7 / x1.3
 \newcommand{\covTwoDRepCTwo}{0.974}  % replica-form secondary U*T/P: C2 0.974 [0.968, 0.979], straddles the upper window edge
 \newcommand{\covTwoDNodeH}{13.3}     % CPU node-h charged, pilot + equivalence + 100 toys
+% J4 pending (D2): \pullFrac, \pullMeanAbs, \pullGauss (same-ensemble toy diagnostic) are not recomputed for Q (PHASE2 §2 NR).
 \newcommand{\pullFrac}{68.71}        % OLD 2D "coverage" = same-ensemble pull fraction (diagnostic)
 \newcommand{\pullMeanAbs}{0.794}\newcommand{\pullGauss}{0.798}  % <|r|> vs sqrt(2/pi)
 \newcommand{\chiPaper}{2.65}          % chi2/ndf vs paper covariance; 2.654, chi2_lgbm42_paperonly.txt (exact-split 3.661)
 \newcommand{\chiPaperExact}{3.66}     % the exact-split cross-check's chi2/ndf vs paper covariance (VL172; control reproduces 3.661)
 \newcommand{\chiPaperExactSeeded}{3.57} % the same estimator with random_state 1/2/3 (XR run X1): 3.565, VL174,
                                        % docs/orchestration/receipts/xr-x1-chi2-20261012/; one seed setting, not a spread
-\newcommand{\chiCombined}{0.994}      % chi2/ndf vs combined (paper+ours) cov, VL175 repaired covariance, state/2d-closeout/c04-repair/chi2/repaired_std.txt (0.994); was 0.914 (VL173) / exact-split 1.472 (VL172)
-\newcommand{\chiCombinedLog}{1.014}   % log-normal, VL175, c04-repair/chi2/repaired_lognormal.txt (1.014); was 0.932 (VL173)
-\newcommand{\chiCombinedSubStat}{5.80} % chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic); 5.803, VL175, c04-repair/chi2/repaired_substat.txt; was 4.128 (VL173)
-% All three recomputed 2026-07-16 (compare_to_paper_fullcov.py, flux-fix hCov_combined
-% [already incl. bootstrap] + ML). Supersede the pre-flux-fix appendix 1.699/1.688/23.96.
+\newcommand{\chiCombined}{0.964}      % chi2/ndf vs combined (paper+ours) cov, Q = S5 total + C_PL (adopted 2026-10-17), 197.59/205,
+                                      % state/2d-closeout/stageF/rebuild/outputs/chi2/chi2_Q_std.txt "COMBINED (paper + hCov_Q)";
+                                      % was 0.994 (VL175) / 0.914 (VL173) / exact-split 1.472 (VL172)
+\newcommand{\chiCombinedLog}{0.987}   % log-normal, Q, 202.33/205, rebuild/outputs/chi2/chi2_Q_lognormal.txt "COMBINED (paper + omnifold) chi2_log";
+                                      % definition (rebuild REPORT §5): delta = ln E_U - ln p, C_ln = (TotalCov + Q)/(p_i p_j); was 1.014 (VL175) / 0.932 (VL173)
+\newcommand{\chiCombinedSubStat}{6.01} % chi2/ndf, paper-stat-subtracted (over-corrects; secondary diagnostic); 6.012 (1232.38/205), Q,
+                                       % rebuild/outputs/chi2/chi2_Q_substat.txt; was 5.80 (VL175) / 4.128 (VL173)
+% All three recomputed 2026-10-18 (stageF rebuild phase 1, compare_to_paper_fullcov.py --omnifold-cov
+% uq_adopted_covariance.root:hCov_Q). Supersede the pre-flux-fix appendix 1.699/1.688/23.96 and the 2026-07-16 values.
 
 % --- uncertainty budget ---
-\newcommand{\uqMedian}{6.09}          % our standalone combined median per-bin (%); 6.0898, VL175 (flux-constraint + MINOS-denominator repair,
-                                      % adopted 2026-10-12, docs/publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md;
-                                      % receipt state/2d-closeout/c04-repair/products/budget.json). Was 6.8707 (VL172), 6.8646 (VL162)
+\newcommand{\uqMedian}{6.45}          % our standalone combined median per-bin (%); 6.4479, Q = S5 total + C_PL (adopted 2026-10-17,
+                                      % docs/orchestration/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md; receipt
+                                      % state/2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz Q.median_pct).
+                                      % Was 6.0898 (VL175), 6.8707 (VL172), 6.8646 (VL162)
 \newcommand{\uqPaper}{6.85}           % published total median per-bin (%): 6.8525 from the full-precision ROOT release;
 % the 3-significant-figure CSV gives 6.859, the earlier printed 6.86. Producer: docs/orchestration/state/uqpaper-median-20261006/
-\newcommand{\fluxBand}{3.65}          % leading flux band (%); 3.6549 with MAT's nu-e+IMD constraint weights (VL175, KI 95); was 4.993 unweighted
+\newcommand{\fluxBand}{3.75}          % leading flux band (%); 3.7467 with MAT's nu-e+IMD constraint weights, Q's universe block,
+                                      % rebuild/outputs/outA/budget_Q.json.gz bands.Flux.median_pct; was 3.6549 (VL175, KI 95), 4.993 unweighted (VL172)
 \newcommand{\rhoFluxMuon}{0.900}      % flux <-> muon-energy-scale correlation
 
 % --- 3D / 4D higher-dimensional ---

@@ -43,9 +43,14 @@ making both contracts bit-consistent with shared first two offsets.
 % signal draw is not in that file at all.
 Data and background factors rebuild background-subtracted targets through
 Stay-Positive refinement; they do not rescale the nominal target. Signal factors
-follow every use of signal MC. The third, background stream extends the scalar
-bootstrap's data/MC streams (\notesec{Poisson bootstrap}) because background enters
-as a separate weighted inventory with its own counting noise. Resampling data
+follow every use of signal MC. The third, background stream extends the data/MC streams
+the scalar bootstrap had at the time (\notesec{Poisson bootstrap}; the quoted 2D statistical
+block now draws a background stream as well) because background enters
+as a separate weighted inventory with its own counting noise.
+% FACT (2026-10-18): the 2D statistical block of Q (S1) has three streams (stageC/production/DESIGN.md §3.4,
+% --bootstrap-streams three). The \notesec titles "Poisson bootstrap" and "Multinomial $\to$ independent Poisson
+% bootstrap limit" are unchanged in app_statmethods.tex. J4 pending (D8).
+Resampling data
 and MC together is the intended scope, without adopted statistical-uncertainty
 status. The
 covariance is the sample covariance of the $50$ cross sections about their own mean, normalised

@@ -109,6 +109,9 @@ column above, so they are given here at full width.
     \texttt{VL170} (\texttt{uq/bootstrap\_MEFHC\_300\_vl170/}; rollup \texttt{VL172},
     \repopath{docs/orchestration/state/ki84-adopt-20261006/}). The post hoc, descriptive rescoring of
     these toys against \texttt{VL170} is in \repopath{docs/orchestration/state/ki84-rebuild-20261006/}.
+    The quoted statistical block is now the 300-replica seed-42 ensemble of
+    \S\ref{sec:uq-boot}, which these toys did not score.
+    % J4 pending (D2).
   \item[\texttt{coverage-toys}.] Launcher \texttt{sbatch\_coverage\_toys\_MEFHC\_200.sh}; rollup
     \texttt{uq/coverage\_toys.py}; summary \texttt{uq/coverage/}\allowbreak\texttt{coverage\_summary.txt}.
     Each toy runs the driver with \texttt{-{}-closure} and \texttt{-{}-bootstrap-seed $k$}; the
@@ -144,16 +147,27 @@ column above, so they are given here at full width.
     \S5; and the fresh-checkout replay in \texttt{reproduction/s5p/} (tier~D). Open item
     \texttt{OI-193}.
   \item[\texttt{variance-sources}.] Code pointers, one per row of
-    Table~\ref{tab:variance-sources}. Training-seed variation:
-    \texttt{seedscan/analyze\_seedscan.py}; \texttt{uq/seedscan\_lgbm\_ml/
-    uq\_covariance\_ml.root}. Poisson bootstrap: \texttt{unfold\_2d\_omnifold\_unbinned.py}
-    (\texttt{-{}-bootstrap-seed}, \texttt{-{}-seed}); \texttt{uq/analyze\_uq.py};
-    \texttt{uq/bootstrap\_MEFHC\_300/ uq\_covariance\_boot300.root}. Universes:
+    Table~\ref{tab:variance-sources}. Training-seed variation and Poisson bootstrap: the
+    three-stream driver copy \texttt{driver\_p1.py} of
+    \repopath{docs/orchestration/state/2d-closeout/stageC/pilot/p1/}
+    (\texttt{-{}-seed}, \texttt{-{}-bootstrap-seed}, \texttt{-{}-bootstrap-streams three}), run and
+    rolled up (\texttt{s5\_rollup.py}) under
+    \repopath{docs/orchestration/state/2d-closeout/stageC/production/}. Universes:
     \texttt{runEventLoopOmniFold.cpp} (\texttt{MNV101\_DUMP\_UNIVERSES});
-    \texttt{unfold\_2d\_omnifold\_unbinned.py -{}-universe BAND:IDX};
-    \texttt{uq/analyze\_universes.py} (\texttt{-{}-add-norm 0.014}). MAT reference:
-    \texttt{uq/verify\_matcorr\_vs\_mnvh1d.py}. Block sum:
-    \texttt{compare\_to\_paper\_fullcov.py} (\texttt{-{}-omnifold-cov}).
+    \texttt{unfold\_2d\_omnifold\_unbinned.py -{}-universe BAND:IDX}; the universe block of
+    \texttt{s5\_rollup.py}, which sums the bands as \texttt{uq/analyze\_universes.py} does. Run
+    period: \texttt{playlist\_term.py} in
+    \repopath{docs/orchestration/state/2d-closeout/playlist-term/}. MAT reference: the
+    \texttt{mat\_universe\_block\_le\_1e-12} check of \texttt{s5\_rollup.py}; the earlier
+    unweighted check is \texttt{uq/verify\_matcorr\_vs\_mnvh1d.py}. Block sum:
+    \texttt{build\_q\_products.py} in
+    \repopath{docs/orchestration/state/2d-closeout/stageF/rebuild/} (the quoted covariance
+    \texttt{uq\_adopted\_covariance.root}, histogram \texttt{hCov\_Q}, with its receipts in
+    \texttt{outputs/}); \texttt{compare\_to\_paper\_fullcov.py} (\texttt{-{}-omnifold-cov}).
+    The adoption is
+    \repopath{docs/orchestration/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md}.
+    % 2026-10-18 (Q): the earlier pointers (seedscan/analyze_seedscan.py, uq/seedscan_lgbm_ml/uq_covariance_ml.root,
+    % uq/bootstrap_MEFHC_300/uq_covariance_boot300.root, uq/analyze_uq.py) are the VL162/VL175-era products.
   \item[\texttt{negweight-hpss}.]
     \repopath{docs/orchestration/RECEIPT-20260821-negweight-hpss-durability.md}.
     The real-data products behind the twelve

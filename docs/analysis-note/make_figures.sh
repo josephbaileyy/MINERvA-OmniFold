@@ -42,20 +42,18 @@ run model_comp_projections.png       2d-unfolding  python compare_to_models.py -
 run tension_spectrum.png             2d-unfolding  python diagnose_tension.py --ours "$CV42"
 
 echo "== 2D uncertainty =="
-# 2026-10-06 (KNOWN_ISSUES 84, VL170/VL172): the adopted statistical band and the universe+bootstrap rollup
-# built from it live in the *_vl170 directories (2d-unfolding/uq/rollup_vl170_adoption.sh); the VL162-era
-# products stay at their sha-pinned paths. --paper-root and --include-ml always are the flags the note's
-# figure was drawn with (it shows the published total and ML); this line had dropped them.
-UFLX="$REPO/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170"
-# 2026-10-12: the quoted Fig. 6/7 is VL175 (adopted; flux constraint weights + MINOS denominator), drawn with E_U by
-# docs/orchestration/state/2d-closeout/c04-repair/scripts/run_repair.sh (the repaired universe root lives in the
-# c04-repair namespace, /pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/). The VL172 recipe line below
-# is kept for the adopted-unrepaired control.
-run universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/MEFHC_fig6_7_uncertainty_pt.png  2d-unfolding/uq  python plot_uncertainty_fig6_7_style.py --universe-root "$UFLX/uq_universe_covariance_full_matcorr_fluxfix.root" --bootstrap-root "$REPO/2d-unfolding/uq/bootstrap_MEFHC_300_vl170/uq_covariance_boot300.root" --paper-root "$REPO/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root" --include-ml always --out-prefix "$UFLX/MEFHC_fig6_7_uncertainty"
+# 2026-10-18 (Stage F rebuild phase 2): the quoted 2D covariance is Q = S5 total + C_PL
+# (docs/orchestration/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md). Its Fig. 6/7 and statistical-block
+# figures (and the article's Fig. 1) are NOT drawn here: they were drawn on the cluster by
+# docs/orchestration/state/2d-closeout/stageF/rebuild/scripts/run_rebuild.sh (Fig. 1 locally by make_fig1_q.py),
+# and are installed below, after the sync loop, by a digest-checked copy from rebuild/outputs/. That is the
+# regeneration recipe; rerunning this script cannot reinstall the VL170/VL172-era figures. The VL172 recipe lines
+# that stood here (plot_uncertainty_fig6_7_style.py on the *_vl170 rollup, plot_bootstrap_figs.py on
+# bootstrap_MEFHC_300_vl170) were removed.
 run nn_vs_gbdt_full.png  nd-unfolding  python plot_nn_vs_gbdt_full.py --gbdt res_lgbm_3d.npz --nn res_nn_3d.npz --out nn_vs_gbdt_full.png
-# bootstrap corr/spread: per-replica files were cleaned up; plot from the saved 300-replica product
-run bootstrap_MEFHC_300_vl170/uq_corr_2d.png  2d-unfolding/uq  python plot_bootstrap_figs.py --cov bootstrap_MEFHC_300_vl170/uq_covariance_boot300.root --outdir bootstrap_MEFHC_300_vl170
-run seedscan_lgbm/seedscan_spread_2d.png  2d-unfolding  python seedscan/analyze_seedscan.py --glob "$REPO/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed*.root" --outdir "$REPO/2d-unfolding/seedscan_lgbm"
+# The ten-seed scan figure (fig:seedscan) left the note on 2026-10-18 (PHASE2 Q6); its producer line is kept,
+# commented out:
+# run seedscan_lgbm/seedscan_spread_2d.png  2d-unfolding  python seedscan/analyze_seedscan.py --glob "$REPO/2d-unfolding/seedscan_lgbm/2d_xsec_MEFHC_5iter_lgbm_seed*.root" --outdir "$REPO/2d-unfolding/seedscan_lgbm"
 
 echo "== 3D generators =="
 # 2026-10-03: fig:3dmodels, fig:modedecomp, fig:mec (and fig:ascencio, below) drew uncertainties from
@@ -147,6 +145,29 @@ for fig in "$FIGDIR"/*.pdf; do
     cp "$src" "$fig"; echo "  synced $base"
   fi
 done
+
+echo
+echo "== Q figures from the Stage F rebuild receipts (digest-checked copy) =="
+# Runs after the sync loop so that no older product under $REPO/2d-unfolding can overwrite them. Each source is
+# a committed phase-1 output; the digests are those of rebuild/outputs/SHA256SUMS.cfs (Fig. 1: RUN-fig1.txt).
+RB="$REPO/docs/orchestration/state/2d-closeout/stageF/rebuild/outputs"
+sha256_of() { if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1" | cut -d' ' -f1; else shasum -a 256 "$1" | cut -d' ' -f1; fi; }
+install_receipt_fig() {  # install_receipt_fig <source under $RB> <figure basename> <sha256>
+  local src="$RB/$1" dst="$FIGDIR/$2" want="$3"
+  if [[ "$(sha256_of "$src")" != "$want" ]]; then
+    echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1
+  fi
+  cp "$src" "$dst"
+  if [[ "$(sha256_of "$dst")" != "$want" ]]; then
+    echo "REFUSE install: $dst differs from $src after the copy" >&2; exit 1
+  fi
+  echo "  installed $2 ($want)"
+}
+install_receipt_fig fig67/MEFHC_fig6_7_uncertainty_pt.pdf MEFHC_fig6_7_uncertainty_pt.pdf c12f37d5d8a39dfc16f38897ce708ff24f4428257a1fbdb644791a7020222d46
+install_receipt_fig fig67/MEFHC_fig6_7_uncertainty_pz.pdf MEFHC_fig6_7_uncertainty_pz.pdf e3bfb7273609d0c9399c28591da0fc01e706ce3769b11ea722fceb2541d5f323
+install_receipt_fig stat/uq_spread_2d.pdf               uq_spread_2d.pdf                79d6b35fe81fe71c71738996090b27c2fded2d990bb9bbae670927fbf253a7cb
+install_receipt_fig stat/uq_corr_2d.pdf                 uq_corr_2d.pdf                  42ea035f77b767b3d2d0dc3d2cbd57c9537f957e2ae39aef936a9eb373fc0d97
+install_receipt_fig fig1/fig1_validation.pdf            paper_fig1_validation.pdf       82665808e99056b1f79754647d7640078dffe94fc667691a979a22769022a0fb
 
 echo
 echo "== paper-only vector crops =="
