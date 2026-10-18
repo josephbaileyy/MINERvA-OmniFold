@@ -79,30 +79,38 @@ MLP/transformer cross-checks test the implementation in
 The engine supports interchangeable backends (component terminology and
 code paths in App.~\ref{app:codebase}). Since 2026-10-11 the quoted 2D central
 value and its uncertainty ensembles --- the systematic universe sweep, the
-Poisson bootstrap and the training-seed scan --- all use \textbf{LightGBM}
+Poisson bootstrap, the training-seed block and the run-period unfolds --- all use \textbf{LightGBM}
 ($100$ trees, $8$ leaves, learning rate $0.1$; identical settings for the step-1
 classifier, step-2 classifier, and miss regressor). The central value is the
 universe sweep's own matched central value (seed~42,
 \texttt{2d\_xsec\_MEFHC\_5iter\_lgbm\_uni\_full\_CV.root}, sha256
-\texttt{4f5a1b6d}\ldots), so the systematic block shares its estimator and seed;
-the adopted universes were unfolded on a different truth input
-(\S\ref{sec:uq-universes}), an offset that cancels to first order in the
-mean-centred variance. The
-statistical bootstrap uses seed~1 and the ML band seeds 1--10
-(\S\ref{sec:uq-ml}). The seed-42 central value differs from the seed-1 one by a
+\texttt{4f5a1b6d}\ldots), so the systematic block shares its estimator and seed
+(\S\ref{sec:uq-universes}). The statistical bootstrap also uses seed~42, and the
+training-seed block five seed settings that include it (\S\ref{sec:uq-boot},
+\S\ref{sec:uq-ml}); the bootstrap replica mean differs from the central value by a
+per-bin median of 4.43 standard errors of the mean. The earlier statistical band was
+built at seed~1: the seed-42 central value differs from the seed-1 one by a
 per-bin median of \SI{0.18}{\percent} (maximum \SI{1.79}{\percent}), or 0.30
-(maximum 1.28) of the statistical block's per-bin standard deviation; the
-seed-1/seed-42 pairing is otherwise unmeasured. Both central values are
+(maximum 1.28) of that band's per-bin standard deviation. Both central values are
 regenerated to $\lesssim2\times10^{-11}$ with one driver and one input, the runs
 differing only in the seed, so the difference is attributable to the seed
-(inferred from the two regenerations; the pairing question stays open). The seed-42 product itself has no execution
+(inferred from the two regenerations).
+% FACT (2026-10-18, Q): S1 at --seed 42 (stageC/production/DESIGN.md §3.4); C08 seeds §3.5; July sweep for the
+% universe block (§S5), so the May-sweep truth-input clause no longer applies (it stays in sec:uq-2d-construction
+% as the earlier budget's). Offset: rebuild/outputs/outA/budget_Q.json.gz s5_copied.stat_centring_offset (4.428).
+% The 0.18 % / 0.30 comparison is the earlier (VL170) seed-1 band's. J4 pending (D2, D10 KI-88, KI-93).
+The seed-42 product itself has no execution
 log or recorded run configuration; it equals an independent rerun with a
 different driver and thread count to $1.4\times10^{-11}$, and a receipted
 regeneration with the current driver reproduces it to the same level. Against the
 ten seed-1--10 LightGBM central values it is mildly over-dispersed (RMS
 standardized difference 1.28, maximum 4.25). Seed~42 was chosen because a
 matched seed-42 statistical band was the cheaper of the two seed-matching routes
-costed in the design record; that band has not been built.
+costed in the design record; a seed-42 statistical band has since been built, with three
+independent streams (data, signal and background simulation); it is the quoted
+statistical block (\S\ref{sec:uq-boot}).
+% Review m5: the costed band was the VL170 law at seed 42 (stageC/pilot/DESIGN.md §8); S1 is the three-stream
+% law (stageC/production/DESIGN.md §3.4). J4 pending (D10 KI-88).
 % Source: docs/publication/DECISION-20261011-joseph-2d-central-lightgbm-seed42.md; receipts
 % docs/orchestration/receipts/2d-lgbm42-20261011/ (lgbm_central_metrics.out); reproduction: state/next-
 % preparation-20261009/two-d-path/REPORT.md sec. 3.2; pairing P07 (ASSESSMENT-20261008) unresolved.

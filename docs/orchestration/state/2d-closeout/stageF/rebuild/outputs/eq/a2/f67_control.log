@@ -1,0 +1,7 @@
+sys.path ['/pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/a2/2d-unfolding/uq', '/pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/a2/2d-unfolding', '/pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/a2']
+[WARN] /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/uq_universe_covariance_full_matcorr_fluxfix.root: no stored reported set; count only
+[cells] identity OK: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/bootstrap_MEFHC_300_vl170/uq_covariance_boot300.root (hMean2D > 0) equals xsec > 0
+[cells] identity OK: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root (hMean2D > 0) equals xsec > 0
+[wrote] /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/eq/a2/control_EC_adopted_pz.png
+[wrote] /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/eq/a2/control_EC_adopted_pt.png
+[wrote] /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/eq/a2/control_EC_adopted_summary.txt

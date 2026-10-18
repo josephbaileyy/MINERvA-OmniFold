@@ -17,6 +17,7 @@ where this file sits at the repository root) the check reports SKIP and exits 0;
 """
 from __future__ import annotations
 
+import gzip
 import json
 import math
 import re
@@ -32,7 +33,15 @@ STATE = HERE.parents[1] / "docs/orchestration/state" if CANONICAL else HERE / ".
 
 
 def receipt(rel: str) -> dict:
-    return json.loads((STATE / rel).read_text())
+    """A committed JSON receipt; a `.json.gz` one (the Stage F rebuild commits its budget gzipped) is read by suffix."""
+    path = STATE / rel
+    if path.suffix == ".gz":
+        with gzip.open(path, "rt", encoding="utf-8") as fh:
+            return json.load(fh)
+    return json.loads(path.read_text())
+
+
+BUDGET_Q = "2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz"
 
 
 def ev(name: str) -> bool:
@@ -44,12 +53,13 @@ def highest_w(name: str) -> bool:  # the W catch column of the 7 x 6 (E_avail, W
 
 
 def stat_median():
-    return receipt("ki84-adopt-20261006/recompute_2d_budget.json")["VL170"]["boot"]["median_pct"]
+    # Q's statistical block (S1, 300 replicas at seed 42), Stage F rebuild phase 1
+    return receipt(BUDGET_Q)["stat"]["median_pct"]
 
 
 def total_median():
-    # VL175 (adopted 2026-10-12): the flux-constraint + MINOS-denominator repair of the VL172 construction
-    return receipt("2d-closeout/c04-repair/products/budget.json")["repaired"]["block_sum"]["median_pct"]
+    # Q = S5 total + C_PL (adopted 2026-10-17, DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md)
+    return receipt(BUDGET_Q)["Q"]["median_pct"]
 
 
 def rescore(key):
@@ -102,7 +112,7 @@ def half_of_cells():  # VL154 A4: cells whose model dependence is within the ado
 
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
-    ("total median uncertainty (VL175)", "values.tex", r"\\newcommand\{\\uqMedian\}\{([0-9.]+)\}", total_median, "round"),
+    ("total median uncertainty (Q)", "values.tex", r"\\newcommand\{\\uqMedian\}\{([0-9.]+)\}", total_median, "round"),
     ("closure toys (VL169)", "values.tex", r"\\newcommand\{\\covTwoDNtoy\}\{([0-9.]+)\}", lambda: interim("n_toys"), "round"),
     ("first-built band, within 2 sigma (VL169)", "values.tex", r"\\newcommand\{\\covTwoDCTwoPctOne\}\{([0-9.]+)\}",
      lambda: 100.0 * interim("C2"), "round"),
@@ -110,9 +120,9 @@ CHECKS = [
      lambda: interim("C1"), "round"),
     ("two-sigma nominal", "paper_body.tex", r"against \\SI\{([0-9.]+)\}\{\\percent\} nominal",
      lambda: 100.0 * math.erf(2.0 / math.sqrt(2.0)), "round"),
-    ("rebuilt band, statistical median (VL170/VL172)", "paper_body.tex",
-     r"median statistical uncertainty of \\SI\{([0-9.]+)\}\{\\percent\}", stat_median, "round"),
-    ("rescoring against the rebuilt band, 2 and 1 sigma", "paper_body.tex",
+    ("statistical block median (Q, S1)", "paper_body.tex",
+     r"with a median statistical uncertainty of \\SI\{([0-9.]+)\}\{\\percent\}", stat_median, "round"),
+    ("rescoring against the rebuilt (VL170) band, 2 and 1 sigma", "paper_body.tex",
      r"removes the tail undercoverage: \\SI\{([0-9.]+)\}\{\\percent\} fall within two standard deviations and "
      r"\\SI\{([0-9.]+)\}\{\\percent\} within one", lambda: (rescore("C2"), rescore("C1")), "round"),
     ("purity bias, highest-W cells (VL149)", "paper_body.tex", r"biased by up to \\SI\{([0-9.]+)\}\{\\percent\} in simulation",
@@ -166,11 +176,38 @@ def load() -> dict[str, str]:
     return {n: (HERE / n).read_text() for n in ("paper_body.tex", "values.tex")}
 
 
+def gzip_self_test() -> bool:
+    """receipt() reads a `.json.gz` by suffix: the same dict as its plain twin, and a missing one raises."""
+    import tempfile
+    global STATE
+    saved = STATE
+    payload = {"Q": {"median_pct": 6.4479}, "nested": [1, 2.5, "x"]}
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            STATE = Path(tmp)
+            (STATE / "r.json").write_text(json.dumps(payload))
+            with gzip.open(STATE / "r.json.gz", "wt", encoding="utf-8") as fh:
+                json.dump(payload, fh)
+            same = receipt("r.json.gz") == receipt("r.json") == payload
+            try:
+                receipt("absent.json.gz")
+                missing_fails = False
+            except FileNotFoundError:
+                missing_fails = True
+    finally:
+        STATE = saved
+    print(f"  gzip receipt: {'PASS' if same and missing_fails else 'FAIL'} (equal to plain={same}, "
+          f"missing raises={missing_fails})")
+    return same and missing_fails
+
+
 def self_test() -> int:
     """Every printed value, moved by one unit in its last digit in the direction that must fail, is rejected."""
     base = load()
     ok = all(g for _, g, _ in evaluate(base))
     caught = 0
+    if not gzip_self_test():  # a reader check, reported on its own line, not counted as a perturbation
+        ok = False
     for idx, (label, src, pat, fn, mode) in enumerate(CHECKS):
         s = text(src, base)
         m = re.search(pat, s)

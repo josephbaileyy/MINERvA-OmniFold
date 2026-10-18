@@ -9,7 +9,9 @@
 \toprule
 \rsA{Result / central estimator} & \rsB{Uncertainty construction} & \rsC{Recovery and interval checks} & \rsD{Interpretation} \\
 \midrule
-\rsA{2D: LightGBM, five iterations, seed 42 (exact-split cross-check)} & \rsB{LightGBM systematic, statistical and seed ensembles, at different seeds} & \rsC{Published-result reproduction; injection tests use LightGBM. Earlier statistical band failed fixed-truth coverage; rebuilt band lacks independent re-test.} & \rsD{Central reproduction stands; learner chosen after the comparisons were known. Seed pairing of the statistical block unmeasured; publication readiness unresolved.} \\
+\rsA{2D: LightGBM, five iterations, seed 42 (exact-split cross-check)} & \rsB{LightGBM systematic and statistical ensembles at the central value's seed, a five-setting seed ensemble, and a run-period block} & \rsC{Published-result reproduction; injection tests use LightGBM. Earlier statistical band failed fixed-truth coverage; rebuilt band and quoted statistical block lack an independent test.} & \rsD{Central reproduction stands; learner chosen after the comparisons were known. Publication readiness unresolved.} \\
+% 2026-10-18 (Q = S5 total + C_PL): rsB and rsC state the construction; rsD's "Seed pairing of the statistical block
+% unmeasured" was false of Q (S1 at seed 42) and is removed. J4 pending (D0, D2, D5, D10 KI-88).
 \addlinespace
 \rsA{3D--5D: LightGBM, five iterations, purity subtraction} & \rsB{One scalar-5D covariance adopted under exception} & \rsC{Marginal anchors and selected injections pass; background and large-deformation tests expose bias. No validated total-interval coverage.} & \rsD{Central comparisons; all four adoption measurements apply. No covariance-based generator significance.} \\
 \addlinespace

@@ -63,6 +63,19 @@ $\dead{3.366\%}$, $\dead{2.034\%}$ & Grouped medians of App.~\ref{app:statmethod
 $\dead{0.041}$, $\dead{66\%}$ & Combined pull mean (\S\ref{sec:pull}, \S\ref{sec:assemble}) and the reduction of the summed-covariance distance in the worked example of \S\ref{sec:chisq} & $0.048$; $63\%$ & VL175 repair & \texttt{VL175} \\
 $\dead{2.26\%}$ & Our width-weighted total $\sigma$ in the worked example of \S\ref{sec:chisq} & $4.23\%$ & Did not reproduce from the VL172 covariance, which gives $5.39\%$ (the paper's $4.61\%$ reproduces); probably a pre-flux-fix value. $4.23\%$ is the VL175 value & \texttt{VL175} \\
 \midrule
+\multicolumn{5}{@{}l}{\emph{Struck on 2026-10-18, when Q $=$ S5 total $+$ $C_{\mathrm{PL}}$ replaced \texttt{VL175} (Stage~F rebuild phase~2)}} \\
+\midrule
+$\dead{6.090\%}$ ($\dead{6.09\%}$) & 2D combined (block-sum) per-bin median relative $\sigma$ (Tables~\ref{tab:uq}, \ref{tab:combine} and~\ref{tab:variance-sources}; \S\ref{sec:chisq}, \S\ref{sec:assemble}), printed as \SI{6.09}{\percent} (\texttt{\textbackslash uqMedian}) in the article, the primer, the executive summary and \S\ref{sec:results-uq} & $6.448\%$ ($6.45\%$) & Superseded by the adopted covariance Q $=$ S5 total $+$ $C_{\mathrm{PL}}$ (2026-10-17): universe block from the July sweep (Rvp1pi dropped, laterals from selection-complete re-unfolds), statistical block rebuilt at seed~42 with three streams, training-seed block C08, run-period block added & \texttt{DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md}; \texttt{state/2d-closeout/stageF/rebuild/} \\
+$\dead{3.655\%}$ ($\dead{3.65\%}$) & 2D Flux band per-bin median (Table~\ref{tab:band-medians}; \texttt{\textbackslash fluxBand} in \S\ref{sec:systematics}, \S\ref{sec:results-uq}, the article and primer) & $3.747\%$ ($3.75\%$) & As above (Q's universe block) & As above \\
+$\dead{0.994}$, $\dead{1.014}$, $\dead{5.80}$ & 2D combined $\chi^{2}/\mathrm{ndf}$, its log-normal form, and the stat-subtracted diagnostic (\texttt{\textbackslash chiCombined}, \texttt{\textbackslash chiCombinedLog}, \texttt{\textbackslash chiCombinedSubStat}) & $0.964$, $0.987$, $6.01$ & As above; paper TotalCov $+$ Q & As above, \texttt{outputs/chi2/} \\
+$\dead{4.23\%}$ & Our width-weighted total $\sigma$ in the worked example of \S\ref{sec:chisq} & $4.75\%$ & As above & As above \\
+$\dead{0.048}$, $\dead{0.406}$ & Combined pull mean and RMS (\S\ref{sec:pull}, \S\ref{sec:assemble}) & $0.042$, $0.398$ & As above & As above, \texttt{outputs/chi2/chi2\_Q\_std.txt} \\
+$\dead{6.043\%}$, $\dead{2.910\times10^{-39}}$, $\dead{2.917\times10^{-39}}$, $\dead{6.084\%}$, $\dead{6.058\%}$ & 2D systematic total median and $\sqrt{\Tr\mathbf{C}}$, combined $\sqrt{\Tr\mathbf{C}}$, universe $+$ bootstrap median, and the combined median against the exact-split cross-check (Tables~\ref{tab:uq}, \ref{tab:band-medians}, \ref{tab:combine}; \S\ref{sec:results-uq}) & $5.969\%$, $2.735\times10^{-39}$, $2.866\times10^{-39}$, $6.040\%$ (universe $+$ statistical), $6.410\%$ & As above & As above, \texttt{outputs/outA/budget\_Q.json.gz} \\
+$\dead{2.281\%}$, $\dead{1.285\%}$, $\dead{1.472\%}$, $\dead{0.548\%}$, $\dead{0.377\%}$, $\dead{0.357\%}$ & Per-bin medians of Muon\_Energy\_MINOS, Muon\_Energy\_MINERvA, MinosEfficiency, MaRES, MvRES, MaCCQE (Table~\ref{tab:band-medians}; printed as $2.28$, $1.29$, $1.47$ in \S\ref{sec:systematics}) & $2.390\%$, $1.376\%$, $1.578\%$, $0.600\%$, $0.374\%$, $0.368\%$ & As above & As above \\
+$\dead{3.421\%}$, $\dead{1.479\%}$, $\dead{0.758\%}$ & Grouped medians of App.~\ref{app:statmethods} (muon reconstruction, models, hadronic response) & $3.455\%$, $1.581\%$, $0.799\%$ & As above & As above \\
+$\dead{0.674\%}$, $\dead{1.931\times10^{-40}}$ & 2D statistical per-bin median and $\sqrt{\Tr\mathbf{C}}$, and the grouped \emph{Statistical} median (Tables~\ref{tab:uq}, \ref{tab:combine}, \ref{tab:variance-sources}; \S\ref{sec:bootstrap}, \S\ref{sec:rank}; the article) & $0.684\%$, $1.984\times10^{-40}$ & The quoted statistical block is a different ensemble (300 replicas at seed~42, three streams), not a re-quote of \texttt{VL170}; App.~\ref{app:history-vl175} & As above \\
+$\dead{63\%}$ & Reduction of the summed-covariance distance in the worked example of \S\ref{sec:chisq} & Not quoted & A ratio of two printed values, not a receipt field & As above \\
+\midrule
 \multicolumn{5}{@{}l}{\emph{Removed from the body on 2026-08-23 by \texttt{95d03169}; text from its parent, \texttt{95d03169\^{}}}} \\
 \midrule
 \dead{\SI{\gbdtFiveBlockMedian}{\percent}} & 5D candidate background-aware block sum: median per-bin uncertainty (removed 2026-08-23, 95d03169) & Not quoted & Pre-J28, and under the 2026-07-12 construction-cause quarantine (two independent grounds); no replacement magnitude is quoted or authorized, because the corrected J28 products are non-background-aware & \texttt{PROCEDURE-gbdtFive-\allowbreak macro-update.md} \\
@@ -155,6 +168,8 @@ global offset) and the pull RMS $\dead{0.466} \to \boxed{0.409}$.
 The struck values were computed on the pre-flux-fix combined covariance and are
 \textbf{retracted}; the live pair is the flux-fixed one recorded in
 \texttt{VALIDATION\_LEDGER.md} (App.~\ref{app:history-combine} provenance note).
+[Superseded 2026-10-18: the quoted pair is $0.042/0.398$, with the adopted covariance Q
+(\S\ref{sec:pull}).]
 
 \subsection{Withdrawn arguments}
 \label{app:history-withdrawn}
@@ -184,7 +199,8 @@ artefacts of a superseded covariance, not of the measurement. The current budget
 agrees with \S\ref{sec:systematics}, where the envelope essentially
 \emph{matches} the paper ($6.871\%$ against $\uqPaper\%$; $6.865\%$ before the 2026-10-06
 bootstrap rebuild). [Superseded 2026-10-12: the quoted budget is $6.090\%$ (VL175), below the
-published total; App.~\ref{app:history-errata}.]
+published total; App.~\ref{app:history-errata}.] [Superseded 2026-10-18: the quoted budget is $6.448\%$ (Q $=$ S5 total
+$+$ $C_{\mathrm{PL}}$, adopted 2026-10-17); App.~\ref{app:history-errata}.]
 
 The two rollups differ in \emph{exactly one band}. Comparing
 \texttt{2d-unfolding/uq/universe\_stage2\_MEFHC\_full\_matcorr/} against
@@ -304,6 +320,104 @@ among them: the collaboration confirmed it uses the same truncated-spectral pseu
 
 None of the constructions below is a publication uncertainty, and no number in this part is
 quotable.
+
+\subsubsection{The VL175 construction: retired material}
+\label{app:history-vl175}
+On 2026-10-17 the quoted 2D covariance became Q $=$ S5 total $+$ $C_{\mathrm{PL}}$
+(\S\ref{sec:systematics}). The material below described the \texttt{VL175} construction and
+its statistical and training-seed blocks; it left the body on 2026-10-18 and is restated from
+the note at commit \texttt{ae198cc1}, the split-bootstrap paragraph verbatim. None of it is a property of Q, and none of it was
+recomputed.
+
+\paragraph{The ten-seed scan (VL175 era).}
+From \S\ref{sec:uq-ml} and \S\ref{sec:seedscan}: the ML block was the sample covariance of
+re-unfolds with $10$ independent estimator seeds $(N,N{+}1,N{+}2)$, $N\in\{1,\dots,10\}$, at fixed
+data and universe. For $n=10$ \texttt{lgbm} trials the total-$\sigma$ relative spread was
+$0.0055\%$, the per-bin median relative spread $0.166\%$, and
+$\sqrt{\Tr\mathbf{C}^{\ML}} = 5.061\times10^{-41}$; ML noise was $\approx 2.4\%$ of the paper's
+per-bin total-uncertainty median. Increasing $n=4$ to $n=10$ changed these values within
+rounding. A \emph{train/test-split} variant also re-drew the internal training split and gave a
+band $1.24\times$ the pure-seed band. The ten-seed LightGBM mean differed from the exact-split
+cross-check by a median of \SI{0.99}{\percent} per bin, about five times that block's per-bin
+standard deviation. The closure thresholds of \S\ref{sec:closure} were graded against this
+$0.166\%$ floor. Its figure is preserved at
+\href{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/ae198cc1f0b2f5f0781bed872d605fa42faed1d3/docs/analysis-note/figures/seedscan_spread_2d.pdf}{\texttt{seedscan\_spread\_2d}}
+and
+\href{https://github.com/josephbaileyy/MINERvA-OmniFold/blob/ae198cc1f0b2f5f0781bed872d605fa42faed1d3/docs/analysis-note/figures/seedscan_band_pt.pdf}{\texttt{seedscan\_band\_pt}}.
+
+\paragraph{The earlier (VL170) bootstrap.}
+The statistical block of \texttt{VL175} was the \texttt{VL170} band: $300$ replicas at
+training seed~1, with independent data and MC sub-RNGs. From \S\ref{sec:bootstrap}: for these
+replicas, increasing the first $50$ to all $300$ changed the total-$\sigma$ relative std
+$0.062\%\to0.058\%$, the per-bin median relative spread $0.644\%\to0.674\%$, and per-bin $p_{84}$
+$1.543\%\to1.664\%$. The median was $\approx 4.1\times$ the training-seed value ($0.166\%$).
+Playlist $1A$ ($\approx N/12$ of MEFHC) gave $1.46\%$ with the earlier replicas, which divided by
+a bootstrapped completeness and were not rebuilt for this check; it was then below the
+$\sqrt{12}\times 0.55\% \approx 1.9\%$ of exact $\sqrt{N}$ scaling. From
+\S\ref{sec:uq-boot}: the block was smaller than the published statistical block by
+$\approx2.55\times$ in square-root trace, and the data-only stream of the split data/MC bootstrap
+gave $C_{\mathrm{data}}/\texttt{StatOnly}=0.356$. From \S\ref{sec:rank}: the bootstrap block was
+smaller by a factor $2.40$ in square-root trace ($\sqrt{\Tr\mathbf{C}^{\boot}}=1.931\times10^{-40}$),
+about $5.8$ in trace; the naive pseudo-inverse gave $\chi^{2}/\mathrm{ndf}=252$ for
+$\mathbf{C}^{\syst}+\mathbf{C}^{\boot}$ with the bootstrap before it, and the direct inverse with
+this one gave $24.4$. The split-bootstrap paragraph read:
+
+\emph{Resolution (data/MC split bootstrap).}
+A $200{+}200$-replica \emph{split} bootstrap Poisson-fluctuates the
+data weights only (\texttt{boot\_data}) or the MC weights only (\texttt{boot\_mc})
+with independent RNGs, so in expectation
+$\mathbf{C}^{\boot}=\mathbf{C}^{\boot}_{\mathrm{data}}+\mathbf{C}^{\boot}_{\mathrm{mc}}$.
+\begin{enumerate}[label=(\roman*),nosep]
+\item \emph{Closure (no longer testable):}
+$\sqrt{\Tr(\mathbf{C}_{\mathrm{data}}+\mathbf{C}_{\mathrm{mc}})}/
+\sqrt{\Tr\mathbf{C}^{\boot}}$ was $1.07$ against the earlier bootstrap, with the variance
+split $77\%$ data / $23\%$ MC. The MC-only stream was run before the completeness fix
+(App.~\ref{app:history}) and divides by a bootstrapped completeness, so it does not close against
+the rebuilt $\mathbf{C}^{\boot}$ ($0.95$); the split is a diagnostic, and only its data stream is current.
+\item The \emph{data stream alone} gives
+$\sqrt{\Tr\mathbf{C}_{\mathrm{data}}}/\sqrt{\Tr\,\texttt{StatOnly}}=0.356$
+($\mathbf{C}^{\boot}/\texttt{StatOnly}=0.416=1/2.40$): the $2.4\times$ deficit is
+present in the data-only stat error, so it is \emph{not} an MC-statistics
+omission.
+\item The \emph{structure} also
+differs: our stat block is correlated (mean
+$|{\rm off\text{-}diag}\,\rho|=0.108$, leading-eigenvector overlap with
+\texttt{StatOnly} $0.46$) whereas the paper's is near-diagonal ($0.009$); scaling
+our block to the paper trace still left $\chi^{2}/\mathrm{ndf}=76.7$ with the earlier bootstrap
+(not re-derived), so the gap
+is shape as well as magnitude.
+\end{enumerate}
+\textbf{What (ii) does and does not license.} It locates the
+difference in the measured leg rather than in the simulated one. It does
+\emph{not} show that our estimator extracts more information from the same
+data: a smaller bootstrap dispersion is equally consistent with regularization
+bias --- an estimator that responds less to resampling because it is pulled
+toward its prior --- and with an interval that simply undercovers. The fixed-truth test of
+\S\ref{sec:coverage} measures the band against the estimator's own scatter. Per bin, the band
+is too wide in some places and too narrow in others; the two-standard-deviation deficit sits at
+high $\pPar$ and low $\pT$ and in the highest-$\pT$ row. Its truth equals the prior, however, so
+it cannot see regularization bias toward the prior, and it does not decide between the
+explanations. The measured statement is
+the ratio; ``higher statistical efficiency'' is one of at least three
+explanations of it and is not established here.
+
+\paragraph{Other VL175-era values.}
+From \S\ref{sec:systematics}: the Flux band was \SI{4.99}{\percent} without MAT's constraint
+weights, against $\sim\SI{1}{\percent}$ when all universes used the CV $\Phi$; dividing each
+Muon\_Energy\_MINOS universe by its own flux raised that band's integral $\sigma$ from
+\SI{0.11}{\percent} to \SI{0.37}{\percent}; and one coherent normalization mode was quoted as
+carrying \SI{99.6}{\percent} of the unweighted flux covariance's variance (no committed producer
+of that number was found when Q was built). From App.~\ref{app:statmethods}: the muon-reconstruction
+grouped median rose slightly although the MINOS band's fell, because the per-cell rescale
+reshuffled the distribution; $\mathrm{rank}(\mathbf{C}^{\syst}) = 140/205$ with
+$\mathrm{cond}=8.7\times10^{8}$ (threshold not recorded);
+$\mathrm{rank}(\mathbf{C}^{\syst}+\mathbf{C}^{\boot})=204$ with $\mathrm{cond}=1.0\times10^{12}$
+above $10^{-12}\lambda_{\max}$; the ours-only truncated-spectral $\chi^{2}$ was quoted at rank $201$;
+and the worked example's distance fell by about \SI{63}{\percent} (for the exact-split
+cross-check, $3.661$ to $1.472$).
+% Sources: the note at ae198cc1 (sec_systematics.tex, app_statmethods.tex); VL170/VL172/VL175 receipts as cited
+% there. Moved by Stage F rebuild phase 2 (PHASE2.md Q6, Q7, Q12).
+
 
 \subsubsection{The historical 3D generator scan and uncertainty budget}
 From \S\ref{sec:3d-models}, after the central-value generator ratios:

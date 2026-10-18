@@ -1,7 +1,9 @@
 """Tests for check_sec4_receipts.py: the Sec. IV printed values match their receipts, and wrong values are rejected."""
 from __future__ import annotations
 
+import gzip
 import importlib.util
+import json
 import re
 import shutil
 import subprocess
@@ -32,7 +34,7 @@ def test_self_test_rejects_every_perturbation():
 
 
 @pytest.mark.parametrize("old,new", [
-    (r"\SI{0.674}{\percent}", r"\SI{0.664}{\percent}"),
+    (r"\SI{0.684}{\percent}", r"\SI{0.694}{\percent}"),
     (r"\SI{97.7}{\percent}", r"\SI{96.7}{\percent}"),
     (r"reduces it to below \SI{0.3}{\percent}", r"reduces it to below \SI{0.2}{\percent}"),
     (r"\SIrange{16}{31}{\percent}", r"\SIrange{16}{33}{\percent}"),
@@ -94,3 +96,21 @@ def test_the_self_test_fails_cleanly_when_a_printed_value_is_missing(monkeypatch
     monkeypatch.setattr(chk, "load", lambda: dict(original))
     assert chk.self_test() == 1
     assert "NOT FOUND   treatments on data (VL152)" in capsys.readouterr().out
+
+
+def test_a_gzip_receipt_reads_by_suffix(tmp_path, monkeypatch):
+    """Q9: the Stage F budget is committed gzipped; receipt() must read it as its plain twin, and fail if absent."""
+    payload = {"Q": {"median_pct": 6.4479}, "stat": {"median_pct": 0.6843}}
+    (tmp_path / "b.json").write_text(json.dumps(payload))
+    with gzip.open(tmp_path / "b.json.gz", "wt", encoding="utf-8") as fh:
+        json.dump(payload, fh)
+    monkeypatch.setattr(chk, "STATE", tmp_path)
+    assert chk.receipt("b.json.gz") == chk.receipt("b.json") == payload
+    with pytest.raises(FileNotFoundError):
+        chk.receipt("missing.json.gz")
+
+
+@needs_receipts
+def test_the_q_bindings_read_the_committed_budget():
+    assert chk.BUDGET_Q.endswith(".json.gz")
+    assert abs(chk.total_median() - 6.4479) < 1e-4 and abs(chk.stat_median() - 0.6843) < 1e-4

@@ -66,6 +66,7 @@ unbinned treatment, used only for the generator tests, largely removes; the
 quoted uncertainties omit it, and the unfolding follows a generator-sized
 change of the $\Eavail$ shape only partly.  This regularization bias, the
 estimator-seed sensitivity, and untested coverage limit the construction, and the measured model
+% J3 pending (claim register; DRAFT-disclosures D1, D2)
 dependence prevents a five-dimensional measurement with qualified total
 uncertainties at useful precision.  All ten
 calibrated tests, in total and in shape for each of the five predictions, reject
@@ -183,7 +184,9 @@ one-dimensional projections by median absolute differences of
 \SIrange{0.7}{1.4}{\percent}.  The two- to five-dimensional central values use
 LightGBM at matched nominal capacity with the purity-based subtraction; the
 two-dimensional one is the central value of its systematic-universe ensemble,
-so its covariance is built with the same estimator.  An exact-split
+so its covariance is built with the same estimator.
+% J4 pending (D10 KI-88): since Q (2026-10-17) the statistical block is also at the central value's seed 42.
+An exact-split
 scikit-learn estimator, the original two-dimensional choice, is retained as a
 cross-check (Sec.~\ref{sec:repro2d}).  The joint tests
 (Sec.~\ref{sec:joint}) use a deterministic LightGBM configuration, selected
@@ -227,7 +230,9 @@ spread is unmeasured).
 The quoted central value was changed from exact-split to LightGBM after both
 comparisons were known, so that it matches the estimator of its covariance;
 the two differ by a per-bin median of \SI{0.98}{\percent}, and no block of
-the covariance includes this learner dependence.  Figure~\ref{fig:validation}
+the covariance includes this learner dependence.
+% J4 pending (D3). Unchanged under Q: no block of Q (universe, statistical, C08, C_PL) carries the learner dependence.
+Figure~\ref{fig:validation}
 shows the principal one-dimensional projections.  Both results derive from the
 same data, making this a direct test of the unfolding procedure.  The published
 covariance sets the scale of the displayed differences; a significance for
@@ -240,55 +245,83 @@ estimates.
   \caption{Comparison with the published result~\cite{MINERvA:2021owq}.  Top:
   $\pT$ and $\pPar$ projections of the published result and of this analysis,
   each with its total $\pm1\sigma$ band (this analysis: statistical,
-  systematic-universe, normalization and training-seed covariance,
+  systematic-universe, normalization, training-seed and run-period covariance,
   Sec.~\ref{sec:uq2d}; it omits the learner dependence, and the two bands are
   correlated, so their overlap is not a compatibility test), and the MINERvA
   Tune~v1, with ratios to the published result below.  Bottom left:
   $(\mathrm{OmniFold}-\mathrm{published})/\sigma_{\mathrm{published}}$ per
   reported bin, with cells drawn at equal size (grey: not reported).  Bottom
   right: median relative uncertainties and residual summary.}
+  % Figure: stageF/rebuild/outputs/fig1/fig1_validation.pdf (82665808...), drawn from Q = S5 total + C_PL
+  % (rebuild/scripts/make_fig1_q.py; RUN-fig1.txt); inset 6.45 % against the published 6.85 %.
+  % J4 pending (D0, D5): the caption's block list; "training-seed" is now the C08 block (five seed settings).
   \label{fig:validation}
 \end{figure*}
 
 \subsection{Two-dimensional uncertainty and its coverage}
 \label{sec:uq2d}
 
-The standalone covariance combines systematic-universe, statistical, and
-training-seed blocks, all built with the central value's LightGBM estimator.
+The standalone covariance combines systematic-universe, statistical,
+training-seed and run-period blocks; the first three are LightGBM ensembles at the
+central value's estimator, and the fourth is built from LightGBM unfolds of three run
+periods.
+% Review m4. Period-unfold record: state/2d-closeout/period-unfold-20261014/scripts/sbatch_period_unfold.sh:76
+% (--estimator lgbm, production driver 74a4ed69), REPORT.md §1 (control pu_CTRL_s42 reproduces E_U to 3.0e-13).
+% J4 pending (D0, D5). Q = S5 total + C_PL (docs/orchestration/DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md).
 Its median relative uncertainty is \SI{\uqMedian}{\percent}, compared with
-\SI{\uqPaper}{\percent} for the publication.  The flux block applies the
+\SI{\uqPaper}{\percent} for the publication.
+% J3 pending (D0): a per-bin median comparison only (review m3).
+The flux block applies the
 per-universe neutrino--electron-scattering and inverse-muon-decay constraint
 weights of the MINERvA analysis toolkit; an earlier version omitted them and
-quoted \SI{6.87}{\percent}.  The published flux block (\SI{4.01}{\percent}
+quoted \SI{6.87}{\percent}.
+% J4 pending (PHASE2 Q8): the history clause stays as written; VL175 (6.09 %) is the intermediate step, App. history of the note.
+The published flux block (\SI{4.01}{\percent}
 median) is larger than ours (\SI{\fluxBand}{\percent}), for a reason the
-release does not establish.  The blocks use different training
-seeds: the systematic block that of the central value, the statistical block
-another, and the training-seed block ten.  The central value differs from the
-statistical block's own central value by a per-bin median of 0.30 of that
-block's standard deviation (\SI{0.18}{\percent}).  Coverage of the total
-remains untested.
+release does not establish.
+% J4 pending (D10, flux sentence). \fluxBand = rebuild/outputs/outA/budget_Q.json.gz bands.Flux.median_pct (3.747).
+The systematic and statistical blocks use the central value's training
+seed, and the training-seed block five seed settings that include it.
+% J4 pending (D10 KI-88, D2). stageC/production/DESIGN.md S3.4 (S1: --seed 42), S3.5 (seeds 42, 45, 48, 51, 54);
+% the replica-mean offset of the statistical block from the central value (budget_Q.json.gz s5_copied.stat_centring_offset,
+% median 4.43 sigma/sqrt(300)) is J4 wording. The VL170-era 0.30 sigma (0.18 %) compared the seed-1 block's central value.
+Coverage of the total remains untested.
+% J4 pending (D1)
 
 The statistical block, as first built, undercovered in its tails in
 \covTwoDNtoy{} pre-registered closure pseudo-experiments against a fixed
 truth: pooled over experiments and bins, \SI{\covTwoDCTwoPctOne}{\percent} of
 standardized residuals fell within two standard deviations, against
 \SI{95.4}{\percent} nominal.  The main cause, a completeness division that the
-bootstrap replicas carried and the central value does not, was removed.  The
-rebuilt band, now the quoted one, has a median statistical uncertainty of
-\SI{0.674}{\percent}.
-Rescoring the same pseudo-experiments against it, which is post hoc and partly
+bootstrap replicas carried and the central value does not, was removed in a
+rebuilt band.
+% J4 pending (D2). VL169 test of the first-built (VL162) band; values from values.tex (coverage-2d-20261005).
+Rescoring the same pseudo-experiments against the rebuilt band, which is post hoc and partly
 circular, removes the tail undercoverage: \SI{97.7}{\percent} fall within two
 standard deviations and \SI{78.1}{\percent} within one, so the rebuilt band is
 wider than the toy scatter, for reasons not established (a post hoc
 diagnostic points to under-scatter of the closure pseudo-experiments, whose
-simulation-side fluctuation shares the band's resampling mechanism).  It has
-not been independently re-tested.  An assessment of the saved products also
-finds construction defects, among them a truth-input mismatch between the
-adopted systematic sweep and its reference and unpropagated
-background-template statistics~\cite{TwoDFollowup2026}; the printed budget
-includes the flux-constraint repair but not these, whose effect is unmeasured.  Validated total
+simulation-side fluctuation shares the band's resampling mechanism).
+The quoted statistical block is a different ensemble: 300 replicas drawn at the
+central value's training seed in three independent streams (data, signal and
+background simulation), with a median statistical uncertainty of
+\SI{0.684}{\percent}.  Neither it nor the rebuilt band has been independently
+tested.
+% J4 pending (D2, D8, D10 KI-94; J5 KNOWN_ISSUES 85). 0.684 = rebuild/outputs/outA/budget_Q.json.gz stat.median_pct
+% (0.6843); bound by check_sec4_receipts.py. Construction: stageC/production/DESIGN.md S3.4 (S1, --bootstrap-streams three).
+An assessment of the saved products found construction defects in the earlier
+budget, among them a truth-input mismatch between its systematic sweep and that
+sweep's reference and unpropagated background-template
+statistics~\cite{TwoDFollowup2026}; the quoted covariance uses a sweep without
+that mismatch and propagates the background-simulation statistics as its own
+bootstrap stream.
+% J4 pending (D10 KI-93, KI-94): the July sweep (stageC/production/DESIGN.md S5 universe row); S1's background stream.
+Validated total
 intervals over the full reporting domain require new inputs and construction
 repairs~\cite{AnalysisNote2026}.
+% J3 pending (D1): whether "construction repairs" still describes Q (construction complete, production REPORT) is J3/J4.
+% 2026-10-18 (Stage F rebuild phase 2): the quoted covariance is Q = S5 total + C_PL; numbers from
+% state/2d-closeout/stageF/rebuild/outputs/ (REPORT.md). VL175 (6.09 %, stat 0.674 %) is superseded; the chain below is history.
 % Source: docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md;
 % VALIDATION_LEDGER VL169 (test of the earlier band); VL170 (rebuilt band, adopted by Joseph
 % 2026-10-06, docs/publication/DECISION-20261006 addendum af24a101); VL172 (rebuilt products;
@@ -301,6 +334,8 @@ repairs~\cite{AnalysisNote2026}.
 % sec. 4 and 11): ASSESSMENT-20261008-2d-estimator-pairing.md P01-P09b; state/uncertainty-preparation-20261008/
 % a/verification.md (lgbm seed 1 vs E_C: 0.97% / 1.30 sigma_S, sigma_S = sqrt diag C_S of VL170) and
 % e/recompute/rc_pairing.json.txt "seed1 vs exact" 0.966 / 1.2995; KNOWN_ISSUES 88. Transfer UNRESOLVED.
+% Under Q the statistical block is at seed 42 (estimator and seed matched; DRAFT-disclosures D10 KI-88, F4 condition met);
+% the seed-1 comparison above describes the VL170 block.
 % 2026-10-11: shortened; the pull mean, one-sigma fraction, pooling caveats, purity check, the post hoc
 % bootstrap diagnostic and the full list of construction findings are in the note, sec_validation.tex
 % (sec:coverage) and sec_systematics.tex.
@@ -763,8 +798,10 @@ marginal anchors and recover the established low-recoil discrepancy, and the
 three- and four-observable central values pass injected-shape closure tests.  Background-inclusive tests reveal a subtraction bias
 that unbinned background refinement reduces, while regularization bias persists
 under the tested generator-sized shape changes.  Coverage and estimator-seed studies
-expose further limits: the rebuilt two-dimensional statistical band awaits an
-independent coverage test, the two-dimensional comparison depends on the
+expose further limits: the quoted two-dimensional statistical block awaits an
+independent coverage test,
+% J3 pending (D2): the quoted block is S1 (Q); untested (KNOWN_ISSUES 85).
+ the two-dimensional comparison depends on the
 learner at the level of one unit of $\chi^{2}/\mathrm{ndf}$, and the measured model
 dependence prevents a qualified five-dimensional measurement with total
 uncertainties at useful precision.  These outcomes provide practical checks for future

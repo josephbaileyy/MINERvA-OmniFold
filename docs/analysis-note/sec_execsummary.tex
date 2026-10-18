@@ -24,6 +24,8 @@ medium-energy neutrino data.
 \begin{itemize}[itemsep=2pt, parsep=0pt, topsep=2pt]
   \item \textbf{Reproduction.}
   Unbinned $d^{2}\sigma/(d\pT\,d\pPar)$ reproduces the published result~\cite{MINERvA:2021owq} bin by bin: total cross-section ratio $\ratioTot$, \SI{\binsTen}{\percent} of bins within \SI{10}{\percent}, and a separately reconstructed median per-bin uncertainty (\SI{\uqMedian}{\percent}) comparable to the published \SI{\uqPaper}{\percent}; its flux band carries MAT's $\nu$--$e$ and inverse-muon-decay constraint weights, which an earlier version omitted (6.87\,\%; \S\ref{sec:results-uq}). The central value and that uncertainty use the same LightGBM estimator; the quoted central value was changed to it from an exact-split estimator, now a cross-check, after both comparisons with the publication were known (\S\ref{sec:method-config}). Against the full published covariance $\chi^{2}/\mathrm{ndf}=\chiPaper$ (exact-split cross-check $\chiPaperExact$): a correlated shape difference (\S\ref{sec:results-tension}).
+  % \uqMedian is Q (values.tex); "comparable" compares per-bin medians, J3 pending (D0) (review m3). J4 pending (Q8: the 6.87 % history clause stays as written; D5: the run-period
+  % block is not named here).
   % Pointers \S\ref{sec:systematics} and Fig.~\ref{fig:xsec} dropped (one-page summary): both are
   % cited from the results section this item points to (sec_results.tex:13, 136).
   % Cut (one-page summary): "per-bin standardized differences sub-$1\sigma$": sec_results.tex:68-70, 89-90;
@@ -91,7 +93,9 @@ Point-cloud (PET) studies are future work and contribute no result here.}
 \paragraph{What is not claimed:}
 \begin{itemize}[itemsep=2pt, parsep=0pt, topsep=2pt]
   \item \emph{Coverage.}
-  The earlier 2D statistical band undercovers a fixed truth in its tails ($C_2=\covTwoDCTwo$ vs.\ $0.954$; \S\ref{sec:coverage}); the rebuilt, currently quoted band has not been independently re-tested. No frequentist coverage is claimed for any five-dimensional interval (\S\ref{sec:coverage-5d}).
+  The earlier 2D statistical band undercovers a fixed truth in its tails ($C_2=\covTwoDCTwo$ vs.\ $0.954$; \S\ref{sec:coverage}); the rebuilt band has not been independently re-tested, and the currently quoted statistical block, a different ensemble, has not been tested.
+% J4 pending (D2); KNOWN_ISSUES 85 is J5. The quoted block is S1 (stageC/production/DESIGN.md §3.4).
+No frequentist coverage is claimed for any five-dimensional interval (\S\ref{sec:coverage-5d}).
 % Source (2D): docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md; VALIDATION_LEDGER VL169.
 % Source (5D): docs/orchestration/OUTCOME-20260925-s5c-tier-s-futility-fail.md; VALIDATION_LEDGER VL150.
 % Shortened (one-page summary): "pre-registered", the interval [0.907, 0.918], where the deficit sits,
