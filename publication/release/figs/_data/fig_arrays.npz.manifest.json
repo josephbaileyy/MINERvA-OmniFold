@@ -5,7 +5,8 @@
  "producer_modules": {
   "compare_to_paper_fullcov": {
    "path": "2d-unfolding/compare_to_paper_fullcov.py",
-   "sha256": "05075acb54c0bbbad63d737fe8c049b19fb90fc17f92d99489bb6a156dc91215"
+   "sha256": "05075acb54c0bbbad63d737fe8c049b19fb90fc17f92d99489bb6a156dc91215",
+   "post_export_change_20261018": "KI-90 cell-identity patch (Stage F rebuild step B): the file is now sha256 9d9f7dd4fbc829c16dc32a2c7347724e030fd66cb2c8c8ad00bb981e678002ee. The three functions export_fig_arrays.py uses (flatten_th2d, tmatrix_to_numpy, flatten_ours) are byte-identical before and after, so these arrays are unchanged and were not re-exported; the sha256 above remains the producer that ran."
   },
   "compare_to_models": {
    "path": "2d-unfolding/compare_to_models.py",

@@ -42,6 +42,7 @@ import numpy as np
 import ROOT
 
 from analyze_universes import CATEGORY_ORDER, category_for_band
+from reported_cells import read_cells, reported_indices, require_same_cells  # KI-90: cell identity
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -49,6 +50,11 @@ PT_EDGES = np.array([0, 0.07, 0.15, 0.25, 0.33, 0.40, 0.47, 0.55,
                      0.70, 0.85, 1.00, 1.25, 1.50, 2.50, 4.50])
 PZ_EDGES = np.array([1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0,
                      6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0])
+
+EXTRA_STYLES = [
+    {"color": "#8c564b", "linestyle": "--", "linewidth": 2.0},
+    {"color": "#17becf", "linestyle": "--", "linewidth": 2.0},
+]
 
 STYLE = {
     "Total": {"color": "black", "linestyle": "-", "linewidth": 2.4},
@@ -104,9 +110,24 @@ def load_xsec(path: str) -> tuple[np.ndarray, np.ndarray]:
     if xsec.shape != (len(PT_EDGES) - 1, len(PZ_EDGES) - 1):
         die(f"unexpected hXSec2D shape {xsec.shape}")
     reported = xsec > 0
-    if int(reported.sum()) != 205:
-        print(f"[WARN] reported-bin mask has {int(reported.sum())} bins, not 205")
     return xsec, reported
+
+
+def check_cells(path: str, reported: np.ndarray) -> None:
+    """KI-90 (structure REPORT §5): the covariance file's stored reported set must equal xsec > 0."""
+    rf = open_root(path)
+    try:
+        cells, source = read_cells(rf, mean_fallback="hMean2D")
+        if cells is not None:
+            require_same_cells(reported_indices(reported), cells, "xsec > 0", path)
+    except Exception as e:
+        rf.Close()
+        die(f"{path}: {e}")
+    rf.Close()
+    if cells is None:
+        print(f"[WARN] {path}: no stored reported set; count only")
+        return
+    print(f"[cells] identity OK: {path} ({source}) equals xsec > 0")
 
 
 def load_named_cov(path: str, hist_name: str) -> np.ndarray:
@@ -219,7 +240,8 @@ def fractional_projection(cov: np.ndarray, proj: np.ndarray, central: np.ndarray
 
 
 def draw_one(axis: str, edges: np.ndarray, curves: OrderedDict[str, np.ndarray],
-             out_png: str, title: str | None, ymax: float | None) -> None:
+             out_png: str, title: str | None, ymax: float | None,
+             ml_label: str = "ML", extra_labels: tuple[str, ...] = ()) -> None:
     fig, ax = plt.subplots(figsize=(7.6, 5.0))
     order = [
         "Total",
@@ -230,12 +252,17 @@ def draw_one(axis: str, edges: np.ndarray, curves: OrderedDict[str, np.ndarray],
         "Normalization",
         "Hadronic response",
         "Muon reconstruction",
-        "ML",
+        ml_label,
+        *extra_labels,
     ]
+    style = dict(STYLE)
+    style[ml_label] = STYLE["ML"]
+    for i, lab in enumerate(extra_labels):
+        style[lab] = EXTRA_STYLES[i % len(EXTRA_STYLES)]
     for label in order:
         if label not in curves:
             continue
-        ax.stairs(curves[label], edges, label=label, **STYLE[label])
+        ax.stairs(curves[label], edges, label=label, **style[label])
 
     ax.set_xlim(edges[0], edges[-1])
     if ymax is None:
@@ -282,19 +309,43 @@ def main() -> None:
     parser.add_argument("--include-ml", choices=("auto", "always", "never"), default="auto")
     parser.add_argument("--ml-show-threshold", type=float, default=0.002,
                         help="Draw ML in auto mode if max projected fractional uncertainty exceeds this.")
+    parser.add_argument("--ml-label", default="ML", help="Legend label for the --ml-root block.")
+    parser.add_argument("--extra-block", action="append", default=[], metavar="ROOT:HIST:LABEL",
+                        help="Further covariance block (repeatable): added to the total and drawn as its own line.")
+    parser.add_argument("--projections-json", default="",
+                        help="Also write every drawn curve at full precision to this JSON file.")
     args = parser.parse_args()
+    if args.ml_label != "ML" and (args.ml_label in STYLE or args.ml_label in CATEGORY_ORDER):
+        die(f"--ml-label {args.ml_label!r} collides with an existing curve")
 
     ROOT.gROOT.SetBatch(True)
 
     xsec, reported = load_xsec(args.xsec_root)
     n_reported = int(reported.sum())
     shape = (n_reported, n_reported)
+    check_cells(args.universe_root, reported)
     groups = load_universe_groups(args.universe_root, shape)
+    check_cells(args.bootstrap_root, reported)
     groups["Statistical"] += load_named_cov(args.bootstrap_root, "hCov2D_reported")
+
+    extras = OrderedDict()
+    for spec in args.extra_block:
+        parts = spec.split(":")
+        if len(parts) != 3 or not all(parts):
+            die(f"--extra-block expects ROOT:HIST:LABEL, got {spec!r}")
+        e_path, e_hist, e_label = parts
+        if e_label in STYLE or e_label in CATEGORY_ORDER or e_label == args.ml_label or e_label in extras:
+            die(f"--extra-block label {e_label!r} collides with an existing curve")
+        check_cells(e_path, reported)
+        e_cov = load_named_cov(e_path, e_hist)
+        if e_cov.shape != shape:
+            die(f"{e_path}:{e_hist} has shape {e_cov.shape}, expected {shape}")
+        extras[e_label] = e_cov
 
     ml_cov = None
     if args.include_ml != "never" and args.ml_root:
         if os.path.exists(args.ml_root):
+            check_cells(args.ml_root, reported)
             ml_cov = load_named_cov(args.ml_root, "hCov2D_reported")
             if ml_cov.shape != shape:
                 die(f"ML covariance shape {ml_cov.shape}, expected {shape}")
@@ -306,6 +357,8 @@ def main() -> None:
         total_cov += cov
     if ml_cov is not None:
         total_cov += ml_cov
+    for e_cov in extras.values():
+        total_cov += e_cov
 
     os.makedirs(os.path.dirname(args.out_prefix) or ".", exist_ok=True)
     title = None if args.no_title else args.title
@@ -315,6 +368,7 @@ def main() -> None:
         f"universe_root: {args.universe_root}",
         f"bootstrap_root: {args.bootstrap_root}",
         f"ml_root: {args.ml_root if ml_cov is not None else '(not used)'}",
+        *[f"extra_block: {spec}" for spec in args.extra_block],
         f"n_reported: {n_reported}",
         "",
     ]
@@ -338,6 +392,7 @@ def main() -> None:
                     show_ml = True
                     break
 
+    full = {}
     for axis, edges, suffix in (("pz", PZ_EDGES, "pz"), ("pt", PT_EDGES, "pt")):
         proj = projection_matrix(axis, reported)
         central = central_projection(xsec, reported, axis)
@@ -350,10 +405,13 @@ def main() -> None:
             if np.trace(groups[cat]) > 0:
                 curves[cat] = fractional_projection(groups[cat], proj, central)
         if ml_cov is not None and show_ml:
-            curves["ML"] = fractional_projection(ml_cov, proj, central)
+            curves[args.ml_label] = fractional_projection(ml_cov, proj, central)
+        for e_label, e_cov in extras.items():
+            curves[e_label] = fractional_projection(e_cov, proj, central)
+        full[axis] = {k: [float(v) for v in c] for k, c in curves.items()}
 
         out_png = f"{args.out_prefix}_{suffix}.png"
-        draw_one(axis, edges, curves, out_png, title, args.ymax)
+        draw_one(axis, edges, curves, out_png, title, args.ymax, args.ml_label, tuple(extras))
         print(f"[wrote] {out_png}")
 
         summary_lines.append(f"{axis} projection:")
@@ -362,10 +420,10 @@ def main() -> None:
                 f"  {label:22s} median={100*np.median(curve):7.3f}% "
                 f"max={100*np.max(curve):7.3f}%"
             )
-        if ml_cov is not None and "ML" not in curves:
+        if ml_cov is not None and args.ml_label not in curves:
             ml_curve = fractional_projection(ml_cov, proj, central)
             summary_lines.append(
-                f"  {'ML (not drawn)':22s} median={100*np.median(ml_curve):7.3f}% "
+                f"  {args.ml_label + ' (not drawn)':22s} median={100*np.median(ml_curve):7.3f}% "
                 f"max={100*np.max(ml_curve):7.3f}%"
             )
         summary_lines.append("")
@@ -375,6 +433,11 @@ def main() -> None:
         fh.write("\n".join(summary_lines))
         fh.write("\n")
     print(f"[wrote] {summary_path}")
+    if args.projections_json:
+        import json
+        with open(args.projections_json, "w") as fh:
+            json.dump(full, fh, indent=1)
+        print(f"[wrote] {args.projections_json}")
 
 
 if __name__ == "__main__":

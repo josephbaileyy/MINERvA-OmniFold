@@ -26,6 +26,10 @@ for _a in _pathlib.Path(__file__).resolve().parents:
     if (_a / 'technote_style.py').exists():
         _sys.path.insert(0, str(_a)); break
 import technote_style  # noqa: E402  (no titles + consistent colours)
+_UQ = str(_pathlib.Path(__file__).resolve().parent / "uq")
+if _UQ not in _sys.path:
+    _sys.path.append(_UQ)
+from reported_cells import read_cells, require_same_cells  # noqa: E402  (KI-90: cell identity)
 
 import argparse
 import numpy as np
@@ -145,6 +149,17 @@ def load_omnifold_cov(spec, reported_mask):
     h = f.Get(hname)
     if not h:
         raise SystemExit(f"[FAIL] hist '{hname}' missing in {path}")
+    # KI-90 (structure REPORT §5): compare the file's stored reported set with the paper's, not only the count.
+    try:
+        cells, source = read_cells(f, mean_fallback="hMean2D")
+        if cells is not None:
+            require_same_cells(np.where(reported_mask)[0], cells, "paper StatOnly", spec)
+    except Exception as e:
+        raise SystemExit(f"[FAIL] {path}: {e}")
+    if cells is not None:
+        print(f"  [omnifold-cov] cell identity OK: {path} ({source}) equals the paper StatOnly set")
+    else:
+        print(f"  [WARN] {path}: no stored reported set; count only")
     n_rep = int(reported_mask.sum())
     if h.GetNbinsX() != n_rep or h.GetNbinsY() != n_rep:
         raise SystemExit(
