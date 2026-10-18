@@ -103,7 +103,8 @@ table gives each route; PET design studies use signal-only simulation banks.
 The headline results have different levels of validation. The two-variable
 central value reproduces the published measurement, and its error budget was
 built with the same tree learner. The quoted statistical band awaits an independent coverage test.
-% J3 pending (D2): the quoted statistical block is S1 of Q = S5 total + C_PL (2026-10-17), untested (KNOWN_ISSUES 85).
+% J3/J4 provisional (DECISION-20261018, packet C4: kept): the quoted statistical block is S1 of Q = S5 total + C_PL
+% (2026-10-17), untested (KNOWN_ISSUES 85, re-scoped to S1 under J5).
 The
 higher-dimensional central values pass particular recovery checks; adoption
 of their covariance under an exception does not certify their intervals.
@@ -207,21 +208,24 @@ percent. Judged with the published correlations between cells, a shape differenc
 remains. Just as important, our \emph{uncertainties} --- worked out completely
 independently --- come out close in size to the published ones
 (\SI{\uqMedian}{\percent} versus \SI{\uqPaper}{\percent} typical). Ours are a little smaller in the typical cell,
-% J3 pending (D0): scoped to the typical (median) cell, review m3; the integrated uncertainty is not compared here.
 % \uqMedian = 6.45, rebuild/outputs/outA/budget_Q.json.gz Q.median_pct (Q = S5 total + C_PL); still below \uqPaper.
-% J4 pending (D5): the primer names no run-period block; J4 pending (D10): the flux sentence.
+% J3/J4 provisional (DECISION-20261018, packet W3: D5 is in the paper and note; the primer names no run-period block).
 partly because our flux uncertainty comes out below the published one for a reason
 not yet established; both use MINERvA's constraint from neutrino--electron
-scattering and inverse muon decay. An earlier version left that constraint out and
-quoted 6.87 percent.
-% J4 pending (PHASE2 Q8): history clause kept as written; VL175 (6.09 %) was the intermediate step.
+scattering and inverse muon decay. For the overall interaction rate the comparison
+goes the other way: \SI{\uqIntegral}{\percent} for ours against
+\SI{\uqPaperIntegral}{\percent} published.
+% J3/J4 provisional (DECISION-20261018, packet C2: the per-bin median and the integral; W7: the flux sentence kept;
+% W5: the "earlier version ... 6.87 percent" clause dropped, the chain is in the note's App. history).
+% \uqIntegral = budget_Q.json.gz Q.integral_sigma_pct (4.755); \uqPaperIntegral = 4.61 (values.tex).
 The new method
 reproduces the old answer, and its error bars are close in size to the published ones. One qualification: two
 implementations of the tree learner give answers that differ by about one percent in a
 typical cell, and the size of the remaining shape difference depends on which one is used.
 We originally quoted the slower one; we now quote the faster one, because every error-bar
 ingredient was computed with it. That choice was made after both comparisons with the
-% J4 pending (D5): the run-period block is built from seed-42 per-period unfolds of the same pipeline (period-unfold REPORT §1).
+% J3/J4 provisional (DECISION-20261018, packet W3: D5 not in the primer): the run-period block is built from seed-42
+% per-period unfolds of the same pipeline (period-unfold REPORT §1).
 published result were known. We then tested whether the
 statistical part of those error bars contains a known truth as often as stated, using
 simulated repeats of the experiment. The answer is uneven. In many cells the bars are about
@@ -232,7 +236,8 @@ bars contain the truth \SI{\covTwoDCTwoPct}{\percent} of the time instead of
 the main cause was found and removed. The statistical bars now quoted were
 built again, at the same learner settings as the central value, and have not
 been tested.
-% J4 pending (D2, D10 KI-88): S1, 300 replicas at seed 42 (stageC/production/DESIGN.md S3.4); untested (KNOWN_ISSUES 85).
+% J3/J4 provisional (DECISION-20261018, packet C4: kept; W3: D2, D10 KI-88 in the paper and note): S1, 300 replicas at
+% seed 42 (stageC/production/DESIGN.md S3.4); untested (KNOWN_ISSUES 85).
 The published numbers are
 unchanged by this check.
 

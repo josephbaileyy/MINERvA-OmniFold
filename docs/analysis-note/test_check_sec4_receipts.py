@@ -114,3 +114,13 @@ def test_a_gzip_receipt_reads_by_suffix(tmp_path, monkeypatch):
 def test_the_q_bindings_read_the_committed_budget():
     assert chk.BUDGET_Q.endswith(".json.gz")
     assert abs(chk.total_median() - 6.4479) < 1e-4 and abs(chk.stat_median() - 0.6843) < 1e-4
+    assert abs(chk.total_integral() - 4.7550) < 1e-4
+
+
+@needs_receipts
+def test_a_wrong_integral_macro_fails():
+    src = chk.load()
+    assert src["values.tex"].count(r"\newcommand{\uqIntegral}{4.75}") == 1
+    src["values.tex"] = src["values.tex"].replace(r"\newcommand{\uqIntegral}{4.75}", r"\newcommand{\uqIntegral}{4.76}")
+    rows = dict((label, good) for label, good, _ in chk.evaluate(src))
+    assert rows["total integral uncertainty (Q)"] is False

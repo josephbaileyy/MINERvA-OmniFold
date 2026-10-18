@@ -62,6 +62,11 @@ def total_median():
     return receipt(BUDGET_Q)["Q"]["median_pct"]
 
 
+def total_integral():
+    # Q's width-weighted total sigma on the integrated cross section (J3 C2, DECISION-20261018)
+    return receipt(BUDGET_Q)["Q"]["integral_sigma_pct"]
+
+
 def rescore(key):
     return 100.0 * receipt("ki84-rebuild-20261006/rescore_vl169_toys_vl170.json")["vl170"][key]
 
@@ -113,6 +118,7 @@ def half_of_cells():  # VL154 A4: cells whose model dependence is within the ado
 # (label, source file, regex with one or two captured printed values, computed value(s), mode)
 CHECKS = [
     ("total median uncertainty (Q)", "values.tex", r"\\newcommand\{\\uqMedian\}\{([0-9.]+)\}", total_median, "round"),
+    ("total integral uncertainty (Q)", "values.tex", r"\\newcommand\{\\uqIntegral\}\{([0-9.]+)\}", total_integral, "round"),
     ("closure toys (VL169)", "values.tex", r"\\newcommand\{\\covTwoDNtoy\}\{([0-9.]+)\}", lambda: interim("n_toys"), "round"),
     ("first-built band, within 2 sigma (VL169)", "values.tex", r"\\newcommand\{\\covTwoDCTwoPctOne\}\{([0-9.]+)\}",
      lambda: 100.0 * interim("C2"), "round"),

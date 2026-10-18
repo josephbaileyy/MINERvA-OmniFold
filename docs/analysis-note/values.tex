@@ -99,7 +99,7 @@
 % docs/orchestration/state/coverage-2d-20261005/interim_score.json). Pre-registered interim look,
 % toys 1-100, 205 bins, 99.5% toy-bootstrap intervals; FAIL-undercoverage (futility). Independently
 % recomputed (points identical; C1/C2 endpoints within 5.4e-4, all endpoints within 1.7e-3). Fractions, not percent.
-% J4 pending (D2). These score the superseded VL162 band; Q's statistical block (S1) is a different ensemble,
+% J3/J4 provisional (DECISION-20261018, packet W3: D2; J5). These score the superseded VL162 band; Q's statistical block (S1) is a different ensemble,
 % not coverage-tested (KNOWN_ISSUES 85). Not recomputed (PHASE2 §2 NR).
 \newcommand{\covTwoDNtoy}{100}
 \newcommand{\covTwoDCTwoPct}{91}  % C2 = 0.912 as a rounded percent (primer)
@@ -119,7 +119,7 @@
 \newcommand{\covTwoDCTwoLowCtl}{0.809}\newcommand{\covTwoDCTwoHighCtl}{0.955} % C2 with band x0.7 / x1.3
 \newcommand{\covTwoDRepCTwo}{0.974}  % replica-form secondary U*T/P: C2 0.974 [0.968, 0.979], straddles the upper window edge
 \newcommand{\covTwoDNodeH}{13.3}     % CPU node-h charged, pilot + equivalence + 100 toys
-% J4 pending (D2): \pullFrac, \pullMeanAbs, \pullGauss (same-ensemble toy diagnostic) are not recomputed for Q (PHASE2 §2 NR).
+% J3/J4 provisional (DECISION-20261018, packet W3: D2): \pullFrac, \pullMeanAbs, \pullGauss (same-ensemble toy diagnostic) are not recomputed for Q (PHASE2 §2 NR).
 \newcommand{\pullFrac}{68.71}        % OLD 2D "coverage" = same-ensemble pull fraction (diagnostic)
 \newcommand{\pullMeanAbs}{0.794}\newcommand{\pullGauss}{0.798}  % <|r|> vs sqrt(2/pi)
 \newcommand{\chiPaper}{2.65}          % chi2/ndf vs paper covariance; 2.654, chi2_lgbm42_paperonly.txt (exact-split 3.661)
@@ -143,6 +143,15 @@
                                       % Was 6.0898 (VL175), 6.8707 (VL172), 6.8646 (VL162)
 \newcommand{\uqPaper}{6.85}           % published total median per-bin (%): 6.8525 from the full-precision ROOT release;
 % the 3-significant-figure CSV gives 6.859, the earlier printed 6.86. Producer: docs/orchestration/state/uqpaper-median-20261006/
+\newcommand{\uqIntegral}{4.75}        % our width-weighted total sigma on the integrated cross section (%), sqrt(w^T C w)/(w^T x):
+                                      % 4.755, Q = S5 total + C_PL; state/2d-closeout/stageF/rebuild/outputs/outA/budget_Q.json.gz
+                                      % Q.integral_sigma_pct (rebuild REPORT §3); bound by check_sec4_receipts.py. Was 4.23 (VL175).
+\newcommand{\uqPaperIntegral}{4.61}   % the published TotalCovariance's width-weighted total sigma (%), same definition: the value
+                                      % already in the note's worked example (app_statmethods.tex sec:chisq) and in
+                                      % docs/publication/DECISION-20261012-joseph-adopt-2d-c04-repair.md l.60-61 ("the code that gives
+                                      % 4.61 % for the paper"). No machine-readable receipt of it is committed; not gate-bound.
+\newcommand{\uqSFiveMedian}{6.04}     % S5 total (Q without the run-period block) per-bin median (%): 6.041, budget_Q.json.gz
+                                      % S5_total.median_pct (rebuild REPORT §3; COMBINATION-REPORT §2). DRAFT-disclosures D0.
 \newcommand{\fluxBand}{3.75}          % leading flux band (%); 3.7467 with MAT's nu-e+IMD constraint weights, Q's universe block,
                                       % rebuild/outputs/outA/budget_Q.json.gz bands.Flux.median_pct; was 3.6549 (VL175, KI 95), 4.993 unweighted (VL172)
 \newcommand{\rhoFluxMuon}{0.900}      % flux <-> muon-energy-scale correlation

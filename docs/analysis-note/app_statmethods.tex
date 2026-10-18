@@ -3,7 +3,7 @@
 \label{app:methods}
 
 This appendix collects the measurement's statistical methods. These include covariance inversion, MAT-conformant construction, estimator combinations, and conventions for $\chi^{2}$, pulls, and shape-only comparisons. We discuss training-seed, bootstrap, and universe estimators, covering the Poisson limit and $\pm1\sigma$ pair covariance. The text details ill-conditioning/rank analysis and the tension anatomy of the 2D comparison. Remaining topics are closure tests and the 2D audit trail. The N-D declarations, scalar-5D reductions, extended-fiducial fractions and unfolded-event inference are in App.~\ref{app:statmethods-nd}. The 2D fixed-truth coverage test is in \S\ref{sec:coverage} and the same-ensemble pull diagnostic in \S\ref{sec:val-other}. We focus entirely on analysis-specific conventions rather than a general statistics primer. The $\chi^{2}$ convention referenced throughout is Eq.~\eqref{eq:chi2} in \S\ref{sec:chisq}.
-% J4 pending (D5): the run-period block is not among the estimators discussed in this sentence.
+% J3/J4 provisional (DECISION-20261018, packet W3: D5 in sec:uq-combine): the run-period block is not among the estimators discussed in this sentence.
 
 \subsection{Numerical conventions: inverting a covariance (Cholesky, ridge jitter, pseudo-inverse)}
 \label{sec:invert}
@@ -100,7 +100,7 @@ Block sum & Total uncertainty covariance &
 % Q (2026-10-17): rebuild/outputs/outA/budget_Q.json.gz c08/stat/universe/C_PL/Q .median_pct; MAT check
 % s5_copied.mat_agreement (s5.json mat_universe_block_le_1e-12, 3.43e-16, rel = max|A-B|/max|B|). Constructions:
 % stageC/production/DESIGN.md §3.4, §3.5, §S5; playlist-term/DESIGN.md §2; stageC/pilot/DESIGN.md §8 (stream seeds).
-% J4 pending (D5, D8, D11: the "What it estimates" wording).
+% J3/J4 provisional (DECISION-20261018, packet W3: D5, D8, D11; the "What it estimates" wording unchanged).
 \bottomrule
 \end{tabular}
 \caption{Variance-source procedures for the 2D measurement ($205$ reported bins).
@@ -129,7 +129,7 @@ replaces is recorded in App.~\ref{app:history-vl175}.
 % C08: stageC/production/DESIGN.md §S5 (c08 row: ddof 1 over the 5 seed triplets of the per-triplet mean of the
 % 20 bootstrap replicas; includes the interaction's 1/20 share) and §3.4 S4(i) (seed-42 column = S1 replicas 1-20).
 % rebuild/outputs/outA/budget_Q.json.gz c08.{integral_sigma_pct 0.00246, median_pct 0.0572, sqrt_trace 1.989e-41},
-% s5_copied.ensemble.c08_rank (4). J4 pending (D3, D11).
+% s5_copied.ensemble.c08_rank (4). J3/J4 provisional (DECISION-20261018, packet W3: D3, D11).
 
 \subsubsection{Poisson bootstrap}
 \label{sec:bootstrap}
@@ -168,7 +168,7 @@ $1/\sqrt{2(N-1)}$. $N=300$ is used for full rank.
 % rebuild/outputs/outA/budget_Q.json.gz stat.{integral_sigma_pct 0.0610, median_pct 0.6843, p84_pct 1.7118},
 % s5_copied.ensemble.stat_rel_se_of_sigma (0.0409 = 1/sqrt(2*299), s5.json numbers.stat.ensemble_rel_se_of_sigma,
 % a formula value; production DESIGN §8; review m12). The earlier (VL170) 50 -> 300 comparison, the comparison with
-% the ten-seed value and the playlist-1A check are in App. history-vl175 (PHASE2 Q7). J4 pending (D2).
+% the ten-seed value and the playlist-1A check are in App. history-vl175 (PHASE2 Q7). J3/J4 provisional (DECISION-20261018, packet W3: D2).
 
 \subsubsection{Multinomial $\to$ independent Poisson bootstrap limit}
 \label{app:poisson}
@@ -202,7 +202,7 @@ Muon\_Energy\_MINERvA/MINOS) require selection-complete
 \texttt{MNV101\_ACTIVE\_UNIVERSE} event loops
 (weight-only bands: \S\ref{sec:uq-higherdim}); the quoted universe block takes those five
 from selection-complete re-unfolds.
-% stageC/production/DESIGN.md §S5 universe row (S3 laterals; Rvp1pi dropped); J4 pending (D10).
+% stageC/production/DESIGN.md §S5 universe row (S3 laterals; Rvp1pi dropped); J3/J4 provisional (DECISION-20261018, packet W3: D10).
 
 MINERvA's MAT framework
 (\texttt{PlotUtils/\allowbreak MnvVertErrorBand::\allowbreak CalcCovMx}, \S\ref{sec:minerva})
@@ -290,7 +290,7 @@ App.~\ref{app:history}).}
 \label{tab:band-medians}
 \end{table}
 % Table tab:band-medians (Q, 2026-10-18): rebuild/outputs/outA/budget_Q.json.gz bands.<band>.median_pct and
-% universe.{median_pct, sqrt_trace}. J4 pending (D10).
+% universe.{median_pct, sqrt_trace}. J3/J4 provisional (DECISION-20261018, packet W3: D10).
 Grouped by category as in the Fig.~6/7 producer and the published grouping, the
 medians are: Muon reconstruction $3.455\%$, Models $1.581\%$, Flux
 $3.747\%$, Hadronic response $0.799\%$, Statistical $0.684\%$, Normalization
@@ -298,7 +298,7 @@ $1.400\%$, Training seed $0.057\%$, Run period $2.137\%$. An earlier version of 
 flat $1.4\%$ band under Models and the GENIE normalization bands under
 Normalization (App.~\ref{app:history}).
 % 2026-10-18: rebuild/outputs/outA/budget_Q.json.gz groups.median_pct (grouping plot_uncertainty_fig6_7_style
-% .category_for_band; 'Training seed' = C08, 'Run period' = C_PL, labels provisional, J4 pending (D5)). The VL175
+% .category_for_band; 'Training seed' = C08, 'Run period' = C_PL, labels kept, J3/J4 provisional (DECISION-20261018, packet W10)). The VL175
 % sentence on the muon-reconstruction median moved to App. history-vl175.
 % 2026-10-12: group medians from NERSC 2d-closeout-c04repair-20261012/scripts/group_medians.py (7e02decc...),
 % build/group_medians.json (7927c51e...); control on the adopted rollup reproduces the legacy six exactly and
@@ -400,7 +400,7 @@ omitted MAT's $\nu$--$e$ and inverse-muon-decay constraint weights
 universe block, filled into an \texttt{MnvH1D} with MAT's universe weights on Flux,
 agrees with \texttt{GetTotalErrorMatrix} to $3.4\times10^{-16}$ of its largest element.
 % rebuild/outputs/outA/budget_Q.json.gz s5_copied.mat_agreement (s5.json mat_universe_block_le_1e-12, 3.43e-16;
-% s5_rollup.py rel = max|A-B|/max|B|, MAT side c04-repair/scripts/build_repair.py mat_cov). J4 pending (D10).
+% s5_rollup.py rel = max|A-B|/max|B|, MAT side c04-repair/scripts/build_repair.py mat_cov). J3/J4 provisional (DECISION-20261018, packet W3: D10).
 
 \texttt{MnvH1D::GetTotalErrorMatrix} sums bands and the statistical matrix
 element-wise, assuming band independence. Cross-band correlations exist only if
@@ -441,13 +441,13 @@ The block sum is
 \end{equation}
 % Q = S5 total + C_PL (DECISION-20261017); stageC/production/DESIGN.md §3.4, §3.5, §S5; playlist-term/DESIGN.md §2.
 % The sentence "These three Monte Carlos are independent by construction" was removed: the training-seed block
-% shares its seed-42 replicas with the statistical block (DESIGN §3.4 S4(i)). J4 pending (D10 KI-88, D11).
+% shares its seed-42 replicas with the statistical block (DESIGN §3.4 S4(i)). J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-88, D11).
 The comparison adds OmniFold covariances to the paper's
 \texttt{TotalCovariance} by this rule.
 % Hook: \texttt{compare\_to\_paper\_fullcov.py} (\texttt{-{}-omnifold-cov ROOT:HIST}, repeatable).
 $\mathbf{C}^{\ML}$ is the smallest block (Table~\ref{tab:combine}); it is included
 in the headline but numerically negligible.
-% J4 pending (D11). "over an order below both other blocks" no longer holds in sqrt(Tr) against the statistical
+% J3/J4 provisional (DECISION-20261018, packet W3: D11). "over an order below both other blocks" no longer holds in sqrt(Tr) against the statistical
 % block (1.989e-41 vs 1.984e-40, budget_Q c08/stat.sqrt_trace).
 
 \begin{table}[!htbp]
@@ -463,7 +463,7 @@ Run period (three periods) & $8.344\times10^{-40}$ & $2.137\%$ \\
 \midrule
 \textbf{Combined (block sum)} & $2.866\times10^{-39}$ & $\boxed{6.448\%}$ \\
 % rebuild/outputs/outA/budget_Q.json.gz {c08,stat,universe,C_PL,Q}.{sqrt_trace,median_pct}; paper
-% paper_ratios.paper_sqrt_trace_TotalCovariance_205. Row labels: J4 pending (D0, D5).
+% paper_ratios.paper_sqrt_trace_TotalCovariance_205. Row labels kept, J3/J4 provisional (DECISION-20261018, packet W3: D0, D5; W10).
 Paper \texttt{TotalCov} (reference) & $2.676\times10^{-39}$ & $\uqPaper\%$ \\
 \bottomrule
 \end{tabular}
@@ -484,7 +484,7 @@ third over five settings that include it (\S\ref{sec:method-config}).
 The universe and statistical blocks together give $6.040\%$, again a read value
 rather than a combination of the printed medians.
 % rebuild/outputs/outA/budget_Q.json.gz Q.median_pct (6.4479), Q_vs_EC.median_pct (6.4104),
-% universe_plus_stat.median_pct (6.0398). J4 pending (D10 KI-88).
+% universe_plus_stat.median_pct (6.0398). J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-88).
 % Recomputed from the covariance files, with the sha256 of each input, by
 % docs/orchestration/state/ki84-adopt-20261006/recompute_2d_budget.py (VL172); the 6.869% is also
 % [...\_matcorr\_fluxfix\_vl170/rollup.log, ``COMBINED universe + bootstrap'']. The same script
@@ -492,7 +492,7 @@ rather than a combination of the printed medians.
 
 Tables~\ref{tab:band-medians} and~\ref{tab:combine} quote the blocks of the
 adopted covariance (\S\ref{sec:systematics}).
-% J4 pending (D0).
+% J3/J4 provisional (DECISION-20261018, packet W3: D0).
 Their pre-flux-fix predecessors and
 associated inference are retracted (App.~\ref{app:history}).
 
@@ -519,7 +519,7 @@ sensitivity check, keeps cells with $\pT^{\text{high}} / \pPar^{\text{low}}
 $\theta_{\mu}<20^{\circ}$ kinematic cut. The
 % Review m2 (director's ruling): "They are not current outliers: every reported pull lies within +-3 (sec:pull)"
 % removed; no Q receipt and no committed VL175 receipt (c04-repair/chi2/repaired_std.txt prints mean/rms only)
-% gives a maximum combined pull. J4 pending (D2).
+% gives a maximum combined pull. J3/J4 provisional (DECISION-20261018, packet W3: D2).
 $185$-bin check tests whether the headline tension comes from the boundary
 (mask origin: App.~\ref{app:history}).
 % Source: pre-freeze 2D_OMNIFOLD_RUN_LOG_ARCHIVE.md:50-59 (Phase 4, unreported bins), :716-726.
@@ -577,9 +577,13 @@ The log-normal $\chi^{2}$ uses
 $\delta_{i}=\ln x^{\ours}_{i}-\ln x^{\paper}_{i}$ and
 $\mathbf{C}^{\ln}_{ij}=\big(\texttt{TotalCov}+\mathbf{C}^{\tot}\big)_{ij}/(x^{\paper}_{i}x^{\paper}_{j})$;
 both covariances are scaled by the paper's values.
-% Review m8: the attribution to the paper's Table I is not carried here (J4).
-% Definition: rebuild REPORT §5 (the only one of five candidate definitions that reproduces 0.987). Whether and
-% how the deliverables discuss the definition dependence is J4.
+This is the quoted script's definition, and $\chiCombinedLog$ reproduces only with it; scaling
+our covariance by our own values instead gives $1.197$, scaling both by ours $0.958$, scaling by
+the geometric mean $0.963$, and $\ln(1+\mathbf{C}/(x_{i}x_{j}))$ in place of the ratio $1.015$.
+% Review m8: the attribution to the paper's Table I is not carried here.
+% J3/J4 provisional (DECISION-20261018, packet W4): rebuild REPORT §5 (independent recompute, rebuild/outputs/recompute/:
+% 0.987 reproduces only with delta = ln E_U - ln paper and C_ln = (Total + Q)/(p_i p_j); our-value scaling of Q 1.197;
+% both by ours 0.958; geometric mean 0.963; ln(1 + C/pp) 1.015). The script: compare_to_paper_fullcov.py.
 Adding the OmniFold error budget lowers the summed-covariance distance from
 $\chiPaper$ to $\chiCombined$ per bin. \textbf{That number is a descriptive distance and is not a validation result.}
 % The "about 63 %" reduction (a ratio of two receipt values) and the exact-split 3.661 -> 1.472 (VL172, not
@@ -612,13 +616,15 @@ the fixed-truth test of \S\ref{sec:coverage}, covers an earlier statistical band
 undercovers in its tails. Nothing here validates the interval this covariance implies. The
 covariance and the central value share the LightGBM estimator and, in the universe and
 statistical blocks, its training seed (\S\ref{sec:method-config}).
-% J4 pending (D2, D10 KI-88). The tested band is VL162 (sec:coverage); Q's statistical block S1 is untested (KI 85, J5).
+% J3/J4 provisional (DECISION-20261018, packet W3: D2, D10 KI-88). The tested band is VL162 (sec:coverage); Q's statistical block S1 is untested (KI 85, J5).
 Agreement claims use per-bin standardized differences and ratios
 (\S\ref{sec:pull}); this scalar is only a distance and ratio to the paper.
 The log-normal variant, matching the paper's Table I correlated-flux
-normalization treatment, gives essentially identical $\chiCombinedLog$.
-% J4 pending: 0.987 against 0.964 (chi2_Q_lognormal.txt, chi2_Q_std.txt); the value depends on the definition
-% stated with the worked example (rebuild REPORT §5).
+normalization treatment, gives essentially identical $\chiCombinedLog$ under the definition
+stated with the worked example above, on which the value depends.
+% 0.987 against 0.964 (chi2_Q_lognormal.txt, chi2_Q_std.txt); rebuild REPORT §5.
+% J3/J4 provisional (DECISION-20261018, packet W4). The "matching the paper's Table I" attribution is left as written
+% (review m8 dropped it at the worked example only): QUESTION for the director.
 
 \paragraph{External statistical floor of the \emph{quoted} combined $\chi^{2}$.}
 The quoted $\chiCombined$ inverts the paper$+$ours \emph{sum} rather than our blocks alone. This sum carries the paper's \texttt{StatOnlyCov}. This block has rank $205$ and is near-diagonal (\S\ref{sec:rank}). It places a variance floor under \emph{every} eigendirection of the combined matrix. It provides the larger of the two statistical contributions. It is larger in \emph{square-root} trace (ours is $0.428$ of it), and by the square of that factor in \emph{trace}. The operands are given in \S\ref{sec:rank}.
@@ -681,7 +687,7 @@ The combined covariance (paper TotalCov $+$ the adopted covariance of
 global offset, and RMS $\boxed{0.398}$ (VL175 $0.048$ and $0.406$; before the flux-constraint repair $0.041$
 and $0.386$; exact-split cross-check $0.051$ and $0.405$, App.~\ref{app:history}).
 % rebuild/outputs/chi2/chi2_Q_std.txt "pull mean / rms : 0.042 / 0.398" (the "rms" is the SD about the mean;
-% rebuild REPORT §4). J4 pending (Q8 history clause).
+% rebuild REPORT §4). J3/J4 provisional (DECISION-20261018, packet W5: the note keeps the history clause).
 RMS $< 1$ is descriptive and does not establish conservatism: the summed
 covariance is wrong by an unknown amount (Eq.~\eqref{eq:diffcov}).
 % PHASE2 Q3: "No reported bin has |pull| > 3" removed; the Q receipts give no maximum.
@@ -783,7 +789,8 @@ and background MC per replica (\S\ref{sec:bootstrap}; Practical Guide 2507.09582
 % rebuild/outputs/chi2/ours_only_universe_plus_stat.txt (23.566), ours_only_Q.txt (23.233). The scripts' own cond is
 % not printed here (review NOTE 1: one cond convention per printed value, budget_Q ranks above). Both are
 % for E_U, so the paper-only comparator is \chiPaper. The earlier bootstrap's pinv 252 and the 2.40 / 5.8 ratios are
-% in App. history-vl175 (PHASE2 Q7). J3 pending.
+% in App. history-vl175 (PHASE2 Q7).
+% J3/J4 provisional (DECISION-20261018, packet C7: the values here are Q's; the earlier bootstrap's are in App. history-vl175, labelled).
 The remaining candidates are a genuine difference in statistical efficiency
 between the unbinned reweighting and the published binned D'Agostini unfold, a
 difference in what the paper's \texttt{StatOnlyCov} encompasses, or a
@@ -804,7 +811,7 @@ regularization bias toward the prior, and it does not decide between the explana
 The measured statement is the ratio; ``higher statistical efficiency'' is one of at least
 three explanations of it and is not established here.
 % rebuild/outputs/outA/budget_Q.json.gz paper_ratios (0.4277, 0.4349). The VL170 numbers (1.07, 77/23, 0.95,
-% 0.356, 0.416, 0.108, 0.46, 0.009, 76.7) moved verbatim to App. history-vl175 (PHASE2 Q7). J4 pending (D2).
+% 0.356, 0.416, 0.108, 0.46, 0.009, 76.7) moved verbatim to App. history-vl175 (PHASE2 Q7). J3/J4 provisional (DECISION-20261018, packet W3: D2).
 
 An ours-only $\chi^{2}$ must use our own $\mathbf{C}^{\ours}$.
 Its inverse remains regularizer-dependent, so pulls and the scan lead the
@@ -812,11 +819,12 @@ reporting. The ours-only goodness-of-fit uses truncated-spectral $\chi^{2}$
 (retain $\lambda>10^{-10}\lambda_{\max}$), the historical 3D generator-scan
 convention over all $1431$ reported bins (App.~\ref{app:history-superseded}).
 
-\paragraph{Regularization scans (all cutoff-dependent).}
+\paragraph{Regularization scans (historical; all cutoff-dependent).}
 On an earlier $\mathbf{C}^{\ours}$ (not recomputed for the adopted covariance) over the $205$ reported bins, for the exact-split
 cross-check (not recomputed for the LightGBM central value), no regularizer
 gives a stable single number:
-% NR: no committed producer of this scan (rebuild REPORT §6); kept as a labelled historical diagnostic. J3 pending.
+% NR: no committed producer of this scan (rebuild REPORT §6); kept as a labelled historical diagnostic.
+% J3/J4 provisional (DECISION-20261018, packet C7: kept, labelled historical).
 \begin{center}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}lll@{}}
@@ -862,7 +870,7 @@ flux\,$\leftrightarrow$\,Muon\_Energy\_MINOS joint block, has been rederived
 ($\rho=\rhoFluxMuon$). It preserves systematic rank because its directions
 already lie in the universe covariance's span (\S\ref{sec:uq-universes}).
 The 2D headline therefore retains the block sum, with the cross term diagnostic.
-% J4 pending (D0, D5): the block sum now includes the run-period block.
+% J3/J4 provisional (DECISION-20261018, packet W3: D0, D5): the block sum now includes the run-period block.
 % Rederived block: \texttt{uq/flux\_muonE\_cross.root}.
 A fitted $(\Phi_{\text{norm}},\Phi_{\text{shape}},\text{MuonE}_{\text{scale}})$
 posterior from MAT-MINERvA could supply a paper-independent $\rho$.
@@ -1135,7 +1143,7 @@ Combined median rel.\ $= 6.448\%$ & \S\ref{sec:combine} &
   $\sqrt{\diag\mathbf{C}^{\tot}}/\mathbf{X}^{\CV}$, $\mathbf{X}^{\CV}$ the LightGBM seed-42 central value \\
 Fixed-truth $C_2=\covTwoDCTwo$ (nominal $0.954$) & \S\ref{sec:coverage} &
   Statistical band vs.\ fixed truth, $N_{\text{toy}}=\covTwoDNtoy$: FAIL \\
-% J4 pending (D2): the two coverage rows score earlier bands, not Q's statistical block (not recomputed, NR).
+% J3/J4 provisional (DECISION-20261018, packet W3: D2): the two coverage rows score earlier bands, not Q's statistical block (not recomputed, NR).
 Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:val-other} &
   Pull diagnostic, $N_{\text{toy}}=200$ \\
 \bottomrule
@@ -1157,15 +1165,15 @@ Same-ensemble $|r|\leq1$: $68.71\%$ & \S\ref{sec:val-other} &
         higher-order. The run-period block is built from separate unfolds of the same
         data, and its noise share is not subtracted (\S\ref{sec:uq-combine}).
         % Review m7: playlist-term/DESIGN.md §3 (noise share not subtracted). No stat x C_PL cross-term is
-        % measured or bounded. J4 pending (D5).
-        % J4 pending (D11). stageC/production/DESIGN.md §S5 c08 row; X02/X03 reported, not added (DECISION-20261017 §2).
+        % measured or bounded. J3/J4 provisional (DECISION-20261018, packet W3: D5).
+        % J3/J4 provisional (DECISION-20261018, packet W3: D11). stageC/production/DESIGN.md §S5 c08 row; X02/X03 reported, not added (DECISION-20261017 §2).
   \item Same-ensemble $68.71\%$ (\S\ref{sec:val-other}) checks Gaussianity;
         it gives no half-percent certification of $\mathbf{C}^{\stat}$. The fixed-truth test
         (\S\ref{sec:coverage}) found the diagonal of the first-built $\mathbf{C}^{\stat}$
         undercovering in its tails ($C_2=\covTwoDCTwo$, unevenly across bins); the band was
         rebuilt in response, and the rebuilt band has not been independently re-tested. The
         statistical block quoted here is a different ensemble and has not been tested either.
-        % J4 pending (D2); KNOWN_ISSUES 85 is J5.
+        % J3/J4 provisional (DECISION-20261018, packet W3: D2); KNOWN_ISSUES 85 re-scoped to S1 (J5).
   \item \textbf{Band independence in $\mathbf{C}^{\syst}$.}
         Different physics sources are taken as uncorrelated; the one
         known exception, the Bashyal flux\,$\leftrightarrow$\,muon-E

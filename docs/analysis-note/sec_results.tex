@@ -12,7 +12,7 @@ Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} carry statistical errors only,
 as their captions specify.
 % PHASE2 Q2, from the producers: plot_2d_threeway_fig13.py th2_to_array (hXSec2D.GetBinError) and paper_arrays
 % (sqrt of StatOnlyCovariance diagonal); plot_2d_cross_section.py plot_1d_projection (hXSec_pt / hXSec_pz GetBinError).
-% J3 pending.
+% J3/J4 provisional (DECISION-20261018, packet J3: no claim change; the sentence states what the producers draw).
 
 \subsection{Double-differential cross section}
 \label{sec:results-xsec}
@@ -67,10 +67,11 @@ our uncertainty ($\chiCombined$); see \S\ref{sec:results-tension} for the former
 The combined paper$+$ours $\chi^{2}/\mathrm{ndf}=\chiCombined$ double-counts
 shared flux/GENIE/MINOS systematics. The ours-only inverse-covariance $\chi^{2}$
 uses only the well-constrained subspace under a truncated-spectral convention.
-We therefore quote per-bin pulls, the regularization
-scan of the exact-split cross-check, and the truncated result together rather than treating an unconstrained
+We therefore quote per-bin pulls, the historical regularization
+scan of the exact-split cross-check (on an earlier covariance), and the truncated result together rather than treating an unconstrained
 pseudo-inverse as a standalone goodness-of-fit (App.~\ref{sec:rank}).
-% NR: the regularization scan was not recomputed for Q (no committed producer; rebuild REPORT §6). J3 pending.
+% NR: the regularization scan was not recomputed for Q (no committed producer; rebuild REPORT §6).
+% J3/J4 provisional (DECISION-20261018, packet C7: kept, labelled historical).
 
 Per-bin differences standardized by the published uncertainty
 (Fig.~\ref{fig:pull}) are centered (mean $\pullMean$), with RMS $\pullRMSr$
@@ -141,21 +142,28 @@ enter this data-versus-prior comparison.
 \label{sec:results-uq}
 Table~\ref{tab:uq} gives the budget over the 205 reported bins, constructed as
 described in \S\ref{sec:systematics}. Our \emph{standalone} combined budget is
-comparable to the published total --- median per-bin \SI{\uqMedian}{\percent} against
-the published \SI{\uqPaper}{\percent} --- and is flux-dominated as in the publication
-(Fig.~\ref{fig:uqbands}). Its per-bin median is smaller than the published total's; part of the
-difference is the flux band (\SI{\fluxBand}{\percent} median, against
+comparable to the published total: its per-bin median is \SI{\uqMedian}{\percent} against
+the published \SI{\uqPaper}{\percent}, and on the integrated cross section it is
+\SI{\uqIntegral}{\percent} against the published \SI{\uqPaperIntegral}{\percent}
+(the width-weighted total $\sigma$ of App.~\ref{sec:chisq}). It is flux-dominated as in the publication
+(Fig.~\ref{fig:uqbands}). In the median bin and in the integral the systematic-universe
+block dominates (variance shares 0.87 per bin, median, and 0.83 of the integral), and the
+run-period block (\S\ref{sec:uq-combine}) raises the per-bin median from
+\SI{\uqSFiveMedian}{\percent} to \SI{\uqMedian}{\percent}.
+Its per-bin median is smaller than the published total's, and its integral larger; part of the
+per-bin difference is the flux band (\SI{\fluxBand}{\percent} median, against
 \SI{4.01}{\percent} for the published flux block, a difference the release does not
 explain; the FHC-only constraint file is the leading inference, not established).
 Our flux band carries MAT's per-universe $\nu$--$e$ and inverse-muon-decay
 constraint weights; an earlier version omitted them and quoted \SI{6.87}{\percent}
 (\texttt{KNOWN\_ISSUES.md} 95; App.~\ref{app:history}). The
-systematic block dominates; statistical and ML blocks together contribute
+statistical and ML blocks together contribute
 under a tenth of the combined $\sqrt{\mathrm{Tr}\,C}$.
-% J4 pending (Q8: the 6.87 % history clause stays as written; D0, D5, D10 flux sentence).
-% J3 pending (D0): "smaller" is scoped to the per-bin median (review m3); the integral and sqrt(Tr) comparisons
-% (budget_Q Q.integral_sigma_pct 4.755 vs the paper's 4.61; paper_ratios sqrt_trace_Q_over_sqrt_trace_TotalCovariance
-% 1.071) go the other way and are not printed here.
+% J3/J4 provisional (DECISION-20261018, packet C2: median and integral; W3: D0; W5: the note keeps the 6.87 % history
+% clause, pointing to App. history; W7: the flux sentence kept). budget_Q.json.gz Q.median_pct (6.448),
+% Q.integral_sigma_pct (4.755), S5_total.median_pct (6.041), block_shares.universe (0.871 per cell, median; 0.828 of the
+% integral); \uqPaperIntegral 4.61 (values.tex). The sqrt(Tr) ratio (paper_ratios sqrt_trace_Q_over_sqrt_trace_TotalCovariance
+% 1.071) also exceeds one and is not printed here.
 Every block is computed
 with the LightGBM estimator of the quoted central value
 (\S\ref{sec:method-config}), and the relative uncertainties divide by that
@@ -182,7 +190,8 @@ of \SI{6.410}{\percent}.
     \textbf{Combined (block sum)} & --- & \num{2.87e-39} & \SI{6.448}{\percent} \\
     Paper TotalCov (reference) & --- & \num{2.68e-39} & \SI{\uqPaper}{\percent} \\
     % Q rows: rebuild/outputs/outA/budget_Q.json.gz {c08,stat,universe,C_PL,Q}.{sqrt_trace,median_pct};
-    % paper: paper_ratios.paper_sqrt_trace_TotalCovariance_205 (2.676e-39). Row labels: J4 pending (D0, D5).
+    % paper: paper_ratios.paper_sqrt_trace_TotalCovariance_205 (2.676e-39). Row labels:
+    % J3/J4 provisional (DECISION-20261018, packet W3: D0, D5; W10: block names as in the text).
     \bottomrule
   \end{tabular}
   \caption{2D uncertainty budget over 205 reported bins. Each component has

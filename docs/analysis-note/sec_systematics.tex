@@ -9,13 +9,15 @@ The universe, statistical and training-seed blocks are computed with the
 LightGBM estimator of the quoted 2D central value (\S\ref{sec:method-config});
 the universe and statistical blocks use its training seed (seed~42), and the
 training-seed block five seed settings that include it.
-% J4 pending (D0, D5, D10 KI-88). Q = S5 total + C_PL (DECISION-20261017). Seeds: stageC/production/DESIGN.md
-% §3.4 (S1: --seed 42) and §3.5 (seed triplets 42, 45, 48, 51, 54).
+% J3/J4 provisional (DECISION-20261018, packet W3: D0 in sec:results-uq, D5 in sec:uq-combine, D10 KI-88 in sec:uq-boot;
+% the scope, conventions and limits in sec:uq-2d-scope). Q = S5 total + C_PL (DECISION-20261017). Seeds:
+% stageC/production/DESIGN.md §3.4 (S1: --seed 42) and §3.5 (seed triplets 42, 45, 48, 51, 54).
 The historical 3D budget uses the analogous 3D grid construction
 (\S\ref{sec:3d-syst}); no 4D uncertainty magnitude is reported (\S\ref{sec:4d}).
 App.~\ref{app:statmethods} gives the full mathematics and worked examples using
 the reported numbers (N-D declarations in App.~\ref{app:statmethods-nd}). The resulting budget and its agreement with the published
-total appear in \S\ref{sec:results-uq}.
+total appear in \S\ref{sec:results-uq}; what the construction does and does not
+include, and its declared conventions, are in \S\ref{sec:uq-2d-scope}.
 
 \subsection{Systematic universes}
 \label{sec:uq-universes}
@@ -27,7 +29,7 @@ since 2026-10-11 this reference is the quoted 2D central value. The five
 lateral bands are taken from selection-complete re-unfolds at the same seed. The
 rollup drops Rvp1pi, which encodes the same shift as Rvn1pi
 (\texttt{KNOWN\_ISSUES.md} 92), and holds 43 bands plus the flat normalization.
-% J4 pending (D10 KI-92, KI-93). Receipt: rebuild/outputs/outA/budget_Q.json.gz s5_copied.ensemble (s5.json
+% J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-92, KI-93 in sec:uq-2d-construction). Receipt: rebuild/outputs/outA/budget_Q.json.gz s5_copied.ensemble (s5.json
 % checks july_44_bands_187_universes, universe_bands_43_plus_norm); construction stageC/production/DESIGN.md §S5
 % (universe row). No universe count after the Rvp1pi drop is printed: no receipt field (PHASE2 Q1).
 Per-band covariances follow MAT's universe-mean centering and biased $1/N$.
@@ -56,7 +58,7 @@ before dividing by the 1D central value).
   Ref.~\cite{MINERvA:2021owq} by flux, interaction models, normalization,
   hadronic response, muon reconstruction, the statistical band, the training-seed
   block and the run-period block, with the total and the published total.}
-  % Q (rebuild/outputs/fig67/, legend "Training seed" = C08, "Run period" = C_PL; labels provisional, J4 pending (D5)).
+  % Q (rebuild/outputs/fig67/, legend "Training seed" = C08, "Run period" = C_PL; labels kept, J3/J4 provisional (DECISION-20261018, packet W10)).
   \label{fig:uqbands}
 \end{figure}
 
@@ -72,7 +74,8 @@ Muon\_Energy\_MINOS universes carry the correlated-flux weight, so each is
 divided by its own flux, not by the CV flux (\texttt{KNOWN\_ISSUES.md} 96); that
 band's integral $\sigma$ is \SI{0.31}{\percent}.
 % rebuild/outputs/outA/budget_Q.json.gz bands.Muon_Energy_MINOS.integral_sigma_pct (0.306). The VL175 "from 0.11 % to
-% 0.37 %" has no S5 "before" value (NR) and is in App. history. J4 pending (D10).
+% 0.37 %" has no S5 "before" value (NR) and is in App. history.
+% J3/J4 provisional (DECISION-20261018, packet W3: D10; no wording change).
 % NR: the "99.6 %" leading-mode share has no committed producer (rebuild REPORT §3); removed from the body.
 The unweighted 100-universe flux covariance has
 participation-ratio effective rank $\approx1$. Its leading mode correlates at $\rho=\rhoFluxMuon$ with the
@@ -90,28 +93,42 @@ adding the block would count it twice.
 The statistical block jointly bootstraps data and simulation with 300 per-event
 Poisson(1) weight replicas, each fully re-unfolded with the LightGBM estimator at the
 central value's training seed (seed~42), using their sample covariance about the
-replica mean (Fig.~\ref{fig:bootstrap}). Each replica draws its weights in three
-independent streams: data, signal simulation and background simulation. MC reco and
+replica mean (Fig.~\ref{fig:bootstrap}). The central value and its statistical block
+are therefore matched in estimator and seed. Each replica draws its weights in three
+independent streams: data, signal simulation and background simulation. Statistical
+fluctuations of the background simulation are drawn independently of those of the
+signal simulation; possible shared events between the two were not assessed. A
+separable background-only term (a median 0.26 of the statistical $\sigma$) is
+contained in the statistical block and reported separately. MC reco and
 truth weights share a \emph{single} event
 draw to preserve within-event migration correlations. Pinning the GBDT seed per replica
 separates bootstrap and training-seed variances. With 300 replicas the Gaussian formula
 $1/\sqrt{2(N-1)}$ gives a relative standard error of about \SI{4.1}{\percent} on each per-bin
-$\sigma$, and the replica mean
+$\sigma$, and the per-bin $\sigma$ from the first 150 replicas is a median 1.001 times that
+from all 300. The replica mean
 differs from the central value by a per-bin median of 4.43 standard errors of the
-mean ($\sigma/\sqrt{300}$). The bootstrap block is
+mean ($\sigma/\sqrt{300}$), that is 0.26 of the statistical standard deviation; the
+block is the covariance about the replica mean, so this offset is not included in it. The bootstrap block is
 genuinely smaller than the published statistical block (square-root-trace ratio
 0.428). This \emph{observed} covariance difference does not
 demonstrate a causal efficiency advantage (App.~\ref{sec:rank}); the split data/MC
 streams of the earlier (VL170) bootstrap are in App.~\ref{app:history-vl175}. The fixed-truth coverage test
 (\S\ref{sec:coverage}) found that the earlier statistical band undercovered
-in its tails, unevenly across bins. Neither the rebuilt (VL170) band, which was only rescored post hoc, nor the
-statistical block quoted here has been independently tested. The original test cannot
+in its tails, unevenly across bins. Neither the rebuilt (VL170) band, which was only rescored post hoc and partly
+circularly, nor the statistical block quoted here has been independently tested; the
+held-out re-test is deferred until after the publication package and was not
+pre-registered (\texttt{KNOWN\_ISSUES.md} 85). The original test cannot
 decide between these explanations, because its truth equals the prior.
 % Q's statistical block S1 (stageC/production/DESIGN.md §3.4: --seed 42 --bootstrap-streams three; S5 stat row:
 % ddof 1 about the replica mean). rebuild/outputs/outA/budget_Q.json.gz s5_copied.ensemble.stat_rel_se_of_sigma
 % (0.0409 = 1/sqrt(2*299); s5.json numbers.stat.ensemble_rel_se_of_sigma, a formula value, production
 % DESIGN §8), s5_copied.stat_centring_offset (median |offset|/sigma_mean 4.428), paper_ratios
-% sqrt_trace_stat_over_sqrt_trace_StatOnly (0.428). J4 pending (D2, D8, D10 KI-88, KI-94); KI-85 is J5.
+% sqrt_trace_stat_over_sqrt_trace_StatOnly (0.428).
+% J3/J4 provisional (DECISION-20261018, packet W3: D2, D8, D10 KI-88, KI-94; J5: KNOWN_ISSUES 85 re-scoped to S1).
+% D8: stageC/production/DESIGN.md §8 and REPORT.md §3 C03 (the shared draw not applied; overlap never measured).
+% KI-94: REPORT.md §3 (bkg-only separable term S2, median sigma_bkg/sigma_stat 0.263). Nested 150-vs-300 sigma ratio,
+% median 1.0012 (REPORT.md §3 ensemble error). 0.26 sigma = 4.43/sqrt(300) (rebuild REPORT §3). D2 history:
+% KNOWN_ISSUES 85; sec:coverage.
 
 \begin{figure}[H]
   \centering
@@ -132,15 +149,27 @@ seeds for the step-1 classifier, step-2 classifier and miss regressor, with
 $s\in\{42,45,48,51,54\}$, and the block has rank~4 (\S\ref{sec:seedscan}). It is
 the smallest block, with median \SI{0.057}{\percent} per bin.
 The block measures LightGBM seed variation, with the bootstrap\,$\times$\,seed
-interaction at its $1/20$ share. The mean of the earlier ten-seed scan
+interaction at its $1/20$ share. With four degrees of freedom, its variance has a
+Gaussian relative standard error of about \SI{71}{\percent}. It is 0.30 of the earlier
+ten-seed block (median ratio of the per-bin $\sigma$): the bootstrap\,$\times$\,seed
+interaction, which dominated the earlier scan, is already inside the fixed-seed
+statistical block, and this block carries it only at its $1/20$ share, a median 0.685
+of its diagonal. The interaction itself (a median 0.076 of the statistical variance)
+and the universe\,$\times$\,retraining term (\S\ref{sec:uq-2d-scope}) are reported and not
+added. The dependence on the learner, between the LightGBM central value and the
+exact-split cross-check (a per-bin median of \SI{0.98}{\percent}, maximum
+\SI{12.2}{\percent}; \S\ref{sec:method-config}), is in no block. The mean of the earlier ten-seed scan
 (App.~\ref{app:history-vl175}) differs from the exact-split cross-check by a median of
 \SI{0.99}{\percent} per bin, a backend difference the block does not cover
 (\S\ref{sec:method-config}).
-% Review m6, m9. J4 pending (D3, D11).
+% Review m6, m9. J3/J4 provisional (DECISION-20261018, packet W6: D3 with median and maximum; W9: D11 in
+% sec:uq-2d-scope). stageC/production/REPORT.md §3 (C08 4 dof, Gaussian relative SE of variance 71 %; sigma_c08/sigma_ML
+% median 0.304; X02 median diag(C_int)/diag(C_stat) 0.0758; interaction/B over c08 diagonal 0.685) and DESIGN.md §8, §12
+% (rulings R5, R7). Learner: receipts/2d-lgbm42-20261011/lgbm_central_metrics.out (0.983 %, 12.18 %).
 % Q's training-seed block C08 (stageC/production/DESIGN.md §S5 c08 row): rebuild/outputs/outA/budget_Q.json.gz
 % c08.median_pct (0.0572), s5_copied.ensemble.c08_rank (4). The ten-seed scan it replaces (0.166 %, 1.24x, Fig.
 % seedscan) is in App. history (PHASE2 Q6). The "about five times this block's sigma" comparison is removed (Q5).
-% J4 pending (D3, D11).
+% J3/J4 provisional (DECISION-20261018, packet W3: D3, D11).
 One reseeded exact-split run differs from the
 unseeded one by a per-bin median of \SI{0.18}{\percent} (maximum
 \SI{1.6}{\percent}); the spread of the exact-split estimator over seeds is
@@ -162,15 +191,20 @@ first order in the MAT mean-centered covariance; this observation neither
 invalidates the entire covariance nor supplies a correction to subtract.
 The July sweep, which the quoted universe block uses, does not have this
 mismatch. The unavailable May input and
-code revision prevent a more specific attribution.
-% J4 pending (D10 KI-93). stageC/production/DESIGN.md §S5 universe row (the July sweep).
+code revision prevent a more specific attribution. The July sweep's products record
+no driver digest and came from an uncommitted driver revision. Five of its universes
+are reproduced to $\le1.4\times10^{-11}$ by the committed driver, and seven in
+production; the rest are qualified by inference from the same producer.
+% J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-93). stageC/production/DESIGN.md §S5 universe row (the July
+% sweep); stageC/pilot/REPORT.md K1 (five comparisons, max rel <= 1.38e-11); stageC/production/REPORT.md §2 (S4(ii)
+% July seed-42 rows, 7/7 PASS, max 1.38e-11).
 
 The Rvn1pi and Rvp1pi bands also encode the same shift under the configured
 nonresonant-pion tune, counting it twice. This is a small, \SI{0.088}{\percent}
 band, but a real construction defect; no conclusion about the published
 analysis's implementation follows. The quoted universe block drops Rvp1pi and
 counts the shift once (\texttt{KNOWN\_ISSUES.md} 92).
-% J4 pending (D10 KI-92). Rvn1pi median 0.0883 %: rebuild/outputs/outA/budget_Q.json.gz bands.Rvn1pi.median_pct.
+% J3/J4 provisional (DECISION-20261018, packet W3: D10 KI-92; the sentence already states it). Rvn1pi median 0.0883 %: rebuild/outputs/outA/budget_Q.json.gz bands.Rvn1pi.median_pct.
 The two examined small-input responses,
 EtaNCEL and NormNCRES, are consistent with trainer instability contributing
 at the ML-noise scale. They do not establish a mechanism for every small
@@ -182,11 +216,19 @@ of the data's Poisson error in 60 of 205 bins, so neglecting them everywhere
 is unsupported. This is a reconstructed-space diagnostic, not a measured
 unfolded uncertainty. The quoted statistical block draws the background
 simulation as its own bootstrap stream (\S\ref{sec:uq-boot}), and the quoted universe block
-takes its lateral bands from selection-complete re-unfolds (\S\ref{sec:uq-universes}). The identity of
-the PPFX universe indices between event weights and flux normalization is
-recorded in \texttt{KNOWN\_ISSUES.md} 91. These findings left the earlier printed
-budget unchanged.
-% J4 pending (D8, D10 KI-91, KI-94, laterals). stageC/production/DESIGN.md §3.4 (three streams), §S5 universe row.
+takes its lateral bands from selection-complete re-unfolds (\S\ref{sec:uq-universes}).
+Lateral systematics use a single unfold at the central training seed each, so they
+include that seed's training noise. The flux-universe index identity behind the
+$1/\Phi_{u}$ rescale is established by the code chain and by an exact test: 900 events
+$\times$ 100 universes match to $5.5\times10^{-14}$, and a control shifted by one universe
+fails at $\ge0.245$ (\texttt{KNOWN\_ISSUES.md} 91). The production flux weights equal the
+constraint file and the earlier budget's in all 12 playlists. These findings left the
+earlier printed budget unchanged.
+% J3/J4 provisional (DECISION-20261018, packet W3: D8 and KI-94 in sec:uq-boot; D10 KI-91, laterals here).
+% stageC/production/DESIGN.md §3.4 (three streams), §S5 universe row, §12 (laterals: one active-file unfold each at seed
+% 42); stageC/production/REPORT.md §12. KI-91: stageB/REPORT.md (Stage B §2.1: max residual 5.5e-14; shifted-by-one control
+% minimum residual 0.245); s5.json checks weights_identical_across_playlists, weights_equal_constraint_file,
+% weights_equal_vl175_build_json (all ok; F4 part A).
 
 \subsection{Combination and the unified-throw test}
 \label{sec:uq-combine}
@@ -209,18 +251,174 @@ subtracted. The 5D result uses the strict joint ensemble and matched-endpoint
 comparator.
 % Implementation: nd-unfolding/unified_throw_cov.py
 
-The run-period block $C_{\mathrm{PL}}$ is built from separate seed-42 unfolds of
-three run periods (groups of playlists): each period's unfolded-to-simulated ratio
-is compared with the exposure-weighted mean of the three, and the spread, applied to the
-central value, gives the block. It has rank at most two and a per-bin median of
-\SI{2.14}{\percent}.
-% J4 pending (D5, D9). Construction: state/2d-closeout/playlist-term/DESIGN.md §2 (double ratio, reference-free,
-% rank <= 2). Median: rebuild/outputs/outA/budget_Q.json.gz C_PL.median_pct (2.137).
+The run-period block $C_{\mathrm{PL}}$ carries an observed run-period inconsistency of
+unknown cause as an uncertainty; it is not a measured systematic of a known source.
+Subsets of the data taken in different run periods are not mutually consistent within
+the other uncertainties: after unfolding, the double ratio (data over simulated truth) of
+playlists 1G--1M to the earliest periods, 1A--1F, has a $\pPar$ step of
+$(+6.94\pm0.41)\%$ at \SI{8}{GeV/c}. Diluted into the combined result, the raw shift of
+those playlists is small bin by bin, with every marginal $z$ below 0.7, but its $\pPar$
+$\chi^{2}$ against the earlier (VL175) budget is 33.8, where noise would give 1.8. The cause is not known, and these data cannot establish which
+period, if any, is correct. The block is built from separate seed-42 unfolds of
+three run periods (groups of playlists; 1N--1P is treated in the same construction): each
+period's unfolded-to-simulated ratio is compared with the exposure-weighted mean of the
+three, without choosing any period as the reference, and the spread, applied to the
+central value, gives the block. It is added after the other blocks. It has rank at most
+two and about 1.8 effective degrees of freedom: with few period groups, its own size is
+poorly determined, at the order of \SI{100}{\percent}. Per bin its median is
+\SI{2.14}{\percent} (84th percentile \SI{3.31}{\percent}, maximum \SI{5.69}{\percent}), and
+it is \SIrange{1.24}{3.36}{\percent} on the $\pPar$ projections and \SI{1.97}{\percent} on the
+integrated cross section. Added to the other blocks, it raises the per-bin $\sigma$ by a
+median of \SI{5.4}{\percent} (at most \SI{34.5}{\percent}), the integral by \SI{9.9}{\percent}
+and the $\pPar$ projections by at most \SI{21}{\percent} (at 6--\SI{7}{GeV/c}); it carries a
+median \SI{9.9}{\percent} of the per-bin variance and \SI{17.1}{\percent} of the integral's. A
+construction with 1A--1F as the reference would be smaller (median \SI{1.45}{\percent}, integral
+\SI{1.09}{\percent}). Its reference-free double-ratio construction uses the periods' own simulated
+responses; it does not identify a correct period. The small number of groups, possible
+regularization shrinkage and retained statistical and training noise limit its
+interpretation. Containment of the observed differences by this construction is not
+evidence of coverage. The block's own double-ratio $\chi^{2}$ against any total that
+contains it is bounded by construction, whatever the data, so it is not a test. The raw
+1G--1M $\pPar$ $\chi^{2}$, 34.8 against the other blocks alone and 1.97 with the block added,
+is a sensitivity reading only.
+% J3/J4 provisional (DECISION-20261018, packet W2, W3: D5 in full; the three sentences from "Its reference-free" to
+% "evidence of coverage" are D5's Required clause, verbatim; the next sentence is D5's "its own check cannot fail"). Construction: state/2d-closeout/playlist-term/DESIGN.md §2 (double ratio, reference-free, rank <= 2).
+% Step and chi2: state/2d-closeout/period-unfold-20261014/REPORT.md (dr P_B/P_A +6.94 % +- 0.41; 1G-1M raw bias_PB
+% chi2 p_par 33.8 [1.8]; every marginal z below 0.7). Block: playlist-term/REPORT.md §2 (2.14 / 3.31 / 5.69, integral
+% 1.97, p_par 1.24-3.36, S_ref 1.45 / 1.09; 1.83 effective dof, relative SE about 105 %); COMBINATION-REPORT.md §2-§3 (+5.4 % median, max 34.5 %;
+% integral +9.9 %; largest projection rise 21 % in p_par 6-7 GeV/c; variance shares 9.9 % / 17.1 %; raw 34.8 -> 1.97;
+% the double-ratio chi2 against a total containing C_PL is at or below the first-order bound, 0.68 in 1G-1M p_par).
+% DECISION-20261015-joseph-playlist-consistency-term.md §2. Median: budget_Q.json.gz C_PL.median_pct (2.137).
+% D9 (J36) is in sec:uq-2d-scope.
 
 More generally, this reframes the block sum as an approximation --- valid only
 where the unfolding responds linearly --- rather than as a default
 construction.  We retain the per-source decomposition for attribution and use it only after
 joint throws and matched block endpoints pass the stated validation tests.
+
+\subsection{Scope, conventions and limits of the 2D construction}
+\label{sec:uq-2d-scope}
+
+\paragraph{Endpoint.}
+We report a reproducible two-dimensional central value with a matched
+uncertainty construction under declared conventions. Full scientific closeout
+is not achieved: the construction has not been independently validated for
+population or simultaneous interval coverage, and it supplies no calibrated
+covariance-based generator significance. That validation would need
+independent production-size simulation, a validated continuous nuisance
+generator, and independent-generator samples beyond the truth-level ones
+already inspected; none is available. No coverage claim is made, and
+goodness-of-fit values computed with this covariance are indicative. The
+following are not included in any uncertainty block:
+\begin{itemize}[nosep]
+  \item the approximation in the systematic-universe unfolds' weighting of
+        events that fail reconstruction (below), which is not measured;
+  \item the dependence on the machine-learning estimator: a per-bin median of
+        \SI{0.98}{\percent} (maximum \SI{12.2}{\percent}) between the LightGBM
+        central value and the exact-split cross-check (\S\ref{sec:uq-ml});
+  \item the dependence on the unfolding model and its regularization, and
+        departures of the detector response from its parametrized family; these
+        require independent-generator samples and are not priced. We assume the
+        detector response varies only within its parametrized family.
+\end{itemize}
+% J3/J4 provisional (DECISION-20261018, packet W1 register (c): the preparation packet's first two sentences (PR #145),
+% then the director's list of what lies outside every block; the note carries D1's full content, including the reason
+% and "no coverage claim" from D1's must-carry list and the director's draft). Sources:
+% DECISION-20261014-joseph-2d-endpoint-and-open-items.md §2 (construction complete; full scientific closeout NOT ACHIEVED;
+% the three missing inputs; no coverage claim); DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md §2 (G2 unmeasured;
+% the learner dependence, median 0.98 %; C09 unfolding-model and regularization dependence, C10 response departures:
+% Stage D, unpriced, Stage B REPORT §3 R8). Learner maximum: receipts/2d-lgbm42-20261011/lgbm_central_metrics.out (12.18 %).
+
+\paragraph{Declared conventions.}
+Each systematic band's covariance is computed about the mean of its universes
+(constraint-weighted for the flux), with $1/N$ normalization, not about the
+central value: the MAT universe law (\S\ref{sec:uq-universes}), a declared
+convention. The band centres lie a median \SIrange{0.12}{0.50}{\percent} of the
+central value from it, or 0.08--2.26 of the band's $\sigma$. The statistical
+block is the covariance about the replica mean (\S\ref{sec:uq-boot}). A
+\SI{1.4}{\percent} normalization uncertainty is included as a rank-one block.
+% J3/J4 provisional (DECISION-20261018, packet W3: D12). DECISION-20261014 §2 (the MAT law as a declared convention, Q5);
+% stageC/production/DESIGN.md §8; stageC/production/REPORT.md §3 "Centring (R9)" (0.12-0.50 % of E_U, 0.08-2.26 sigma_band;
+% null bands EtaNCEL, NormDISCC at <= 4.2e-8 %); normalization 1.4 %, rank 1 (ruling R6; budget_Q bands).
+
+\paragraph{Approximations and omitted terms.}
+The systematic-universe unfolds approximate the weighting of events that fail
+reconstruction (the miss rows), which enters through each universe's
+completeness; the approximation is not repaired. It was tested in two of the
+187 universes, \texttt{MaRES\_0} and \texttt{Flux:23} (the flux universe with
+the largest median completeness change), each at seeds 42 and 43. In neither was
+an effect resolved above the trainer's seed noise. The tests measured the
+difference against the $\sigma$ of the earlier ten-seed block, about three times
+the training-seed block used here, and exclude only a median effect above twice
+that $\sigma$: an effect below trainer noise is not excluded, and the test is not
+tight. Separately, retraining moves these two universes' shifts by a median
+1.28--1.29 of that $\sigma$.
+% J3/J4 provisional (DECISION-20261018, packet W3: D4). DECISION-20261015-joseph-g2-carry.md §1-§2 (MaRES_0, Stage B
+% diagnostics P5; Flux:23, Stage C pilot K2 (P2-G2); NOT RESOLVED ABOVE TRAINER NOISE at both seeds; K2 bounds only a median
+% r3 above 2 sigma_ML). stageC/production/REPORT.md §3 (median sigma_c08/sigma_ML 0.304; X03 Flux:23 1.29, MaRES:0 1.28).
+
+One systematic category provided in the input products,
+\texttt{NormDISCC}, is identically zero; we carry it as zero, which we have
+not been able to confirm is intended.
+% J3/J4 provisional (DECISION-20261018, packet W3: D6). docs/publication/DECISION-20261012-joseph-2d-closeout-recipe.md G3;
+% DECISION-20261014 item 3 (keep the decision).
+No separate uncertainty is assigned to the counting of protons on target: the
+NuMI flux prediction carries a \SI{2}{\percent} counting term by convention, so a
+separate band would risk counting it twice. Two links in that argument, that
+the flux universes carry the term and that the neutrino--electron constraint
+absorbs it, are inferred, not verified.
+% J3/J4 provisional (DECISION-20261018, packet W3: D7). state/2d-closeout/stageB/diagnostics/REPORT.md §6.2 (C07',
+% c07prime/DETERMINATION.md; Aliaga et al., arXiv:1607.00704 §IV).
+The twelve playlists are combined with one global exposure ratio rather than
+per-period ratios, and the resulting bias is not corrected. At reconstruction
+level the pooled result is high, by \SI{0.18}{\percent} in total and by at most
+\SI{0.32}{\percent} in a marginal bin. After unfolding, the pooled result is \SI{0.084}{\percent} above
+the exposure-weighted combination of the period results on the integral (the
+same sign as at reconstruction level), and differs from it by at most
+\SI{0.57}{\percent} in a marginal bin (the lowest $\pPar$ bin; at most
+\SI{0.17}{\percent} in $\pT$); in single cells the combination differs from the
+pooled result by \SIrange{-1.79}{3.13}{\percent}, each with $|z|$ at most 0.28.
+% J3/J4 provisional (DECISION-20261018, packet W3: D9). KNOWN_ISSUES.md J36 (reco level: +0.18 % total, at most +0.32 % in a
+% marginal bin; playlist-spread-20261014/REPORT.md §1.2); state/2d-closeout/period-unfold-20261014/REPORT.md (J36
+% paragraph) and outputs/analysis.json comparisons.J36 (integral_shift_pct -0.0841; pz_marginal_shift_pct min -0.5725;
+% pt_marginal_shift_pct within +-0.171; cell_shift_pct -1.793 to +3.133; cell_z_max 0.278).
+
+\paragraph{Construction limits.}
+The two publication consumers of the covariance, the $\chi^{2}$ comparison
+(\S\ref{sec:chisq}) and the Fig.~\ref{fig:uqbands} producer, check that a
+covariance's stored cell set equals the published one, and the check passes in
+every run behind the quoted numbers. The other limits are stated with their
+blocks: the estimator and seed pairing, the background stream and the
+statistical ensemble's precision (\S\ref{sec:uq-boot}); the training-seed block's
+size and precision (\S\ref{sec:uq-ml}); the universe sweep's provenance, the
+duplicated pion band, the lateral bands and the flux-universe index identity
+(\S\ref{sec:uq-2d-construction}); and the flux block (\S\ref{sec:results-uq}).
+% J3/J4 provisional (DECISION-20261018, packet W8: the KI-90 sentence; W3: D10). state/2d-closeout/stageF/rebuild/REPORT.md
+% §2 (every Q run shows the identity check passing on hReportedCells: the three chi2 forms and fig. 6/7; KI-90's
+% "verify they ran"). Not a remedy of KI-90's producers or of any other consumer (rebuild REPORT §2).
+
+\paragraph{Seed-related terms reported, not added.}
+Two seed-related terms are reported and not added to the covariance. The
+bootstrap\,$\times$\,seed interaction is a median 0.076 of the statistical
+variance; the training-seed block includes it at its $1/20$ share. For the
+universe\,$\times$\,retraining term, in the six non-null universes tested (of
+187), the seed standard deviation of each universe's shift is a median
+1.24--1.33 times the $\sigma$ of the earlier ten-seed block, with four degrees of
+freedom each. In those universes the universe block, built at one training seed,
+therefore carries single-seed training noise of about the earlier seed block's
+size; it is part of the block as built and is not separated from the physical
+variation. In two of them the noise is comparable to or larger than the shift:
+in \texttt{2p2h:0} the shift is \SI{0.114}{\percent} against a seed standard
+deviation of \SI{0.235}{\percent}, and in \texttt{MaCCQE:0} \SI{0.266}{\percent}
+against \SI{0.220}{\percent} (per-bin medians). In expectation such noise adds
+variance to a band rather than removing it, and these two bands are largely
+training noise; both statements are inferred from the medians. The
+universe\,$\times$\,retraining values and the band-centring numbers were not
+recomputed independently.
+% J3/J4 provisional (DECISION-20261018, packet W3: D11; W9: the two universes, note only). stageC/production/REPORT.md §3
+% (X02 median diag(C_int)/diag(C_stat) 0.0758; X03 table: 2p2h:0 0.114 % / 0.235 %, MaCCQE:0 0.266 % / 0.220 %, seed SD
+% over sigma_ML 1.24-1.33 in the six non-null universes, 4 dof each) and §14 (X03 and centring not recomputable from the
+% NPZ); stageC/production/DESIGN.md §8, §12 (rulings R5, R7: reported, not added); DECISION-20261017 §2.
 
 \subsection{What changes for the higher-dimensional products}
 \label{sec:uq-higherdim}

@@ -215,7 +215,8 @@ not contradict each other.
 This test asks whether the 2D statistical band in production when it ran (the VL162 band; App.~\ref{app:history}) covers a
 \emph{fixed} truth at its nominal rate. Its design, criteria and positive control were
 pre-registered before any toy ran (App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}).
-% J4 pending (D2). The quoted statistical block is now S1 (sec:uq-boot), which this test did not score (NR).
+% J3/J4 provisional (DECISION-20261018, packet W3: D2). The quoted statistical block is now S1 (sec:uq-boot), which this
+% test did not score (NR).
 
 Each toy draws pseudo-data event by event as Poisson counts with means equal to the simulated
 reconstructed weights. It resamples the simulation with the production Poisson(1) bootstrap, and
@@ -270,9 +271,9 @@ App.~\ref{app:provenance}, \texttt{coverage-fixed-truth}). The quoted statistica
 different ensemble, 300 replicas at the central value's seed (\S\ref{sec:uq-boot}). This
 section's result is for the earlier band and was not re-tested.
 % FACT (2026-10-18): "the rebuilt band is the quoted one" was false of Q (stageC/production/DESIGN.md §3.4, S1).
-% J4 pending (D2); KNOWN_ISSUES 85 is J5.
+% J3/J4 provisional (DECISION-20261018, packet W3: D2); KNOWN_ISSUES 85 re-scoped to S1 (J5).
 
-\textbf{The rebuilt band, scored post hoc.} Rescoring the same 100 toys against the rebuilt band,
+\textbf{The rebuilt band, scored post hoc (historical).} Rescoring the same 100 toys against the rebuilt band,
 which is post hoc and partly circular (its MC part reuses the toys' resampling mechanism), removes
 the tail undercoverage: $C_2=0.977$ $[0.974,0.980]$ and $C_1=0.781$ $[0.771,0.790]$, both above
 their nominal windows, so the rebuilt band is wider than the toy scatter (pull RMS 0.84, mean pull
@@ -287,10 +288,11 @@ real-data calibration. The held-out-MC re-test that would separate the two is de
 after the publication package (\texttt{KNOWN\_ISSUES.md} 85). Split-sample width checks that
 condition on the existing MC bank, binning maps and purity cannot establish repeated-sampling
 coverage across independent populations, so validated total intervals over the full reporting
-domain need new inputs as well as the construction repairs of \S\ref{sec:uq-2d-construction}.
-% NR: the rescoring is of the superseded VL170 band, named as such; not recomputed for Q. J4 pending (D2, J5).
-% J3 pending: "the construction repairs of sec:uq-2d-construction" - that section now records which of them the
-% quoted construction carries; QUESTION for the director (same as paper_body:289-291).
+domain need new inputs (\S\ref{sec:uq-2d-scope}), which also lists what lies outside every block of
+the quoted construction.
+% NR: the rescoring is of the superseded VL170 band, named as such; not recomputed for Q.
+% J3/J4 provisional (DECISION-20261018, packet C3: "as well as the construction repairs of sec:uq-2d-construction"
+% replaced by the new inputs and the D1 list of sec:uq-2d-scope; C7: the rescoring kept, labelled historical; W3: D2; J5).
 % Source: state/ki84-rebuild-20261006/rescore_vl169_toys_vl170.json (vl170: C1 0.7806 [0.7709, 0.7902],
 % C2 0.9769 [0.9737, 0.9800], pull_rms 0.843, pull_mean -0.027 [-0.058, 0.004]; label "POST HOC, DESCRIPTIVE";
 % commit 5aab2d6d); KNOWN_ISSUES.md 85 (the 1.6x, the f-share regression, purity median 0.975);
@@ -302,7 +304,7 @@ domain need new inputs as well as the construction repairs of \S\ref{sec:uq-2d-c
   \item It changes no central value or quoted uncertainty.
   \item It tests the LightGBM statistical estimator at the band's training seed (seed~1), not at
         the quoted central value's seed~42.
-        % J4 pending (D2): true of the test; the quoted statistical block is at seed 42.
+        % J3/J4 provisional (DECISION-20261018, packet W3: D2): true of the test; the quoted statistical block is at seed 42.
   \item It says nothing about systematic, total or five-dimensional coverage.
   \item Its simulation-side scatter reuses the resampling that built the band, so only the
         data-side fluctuation is tested by an independent mechanism.
