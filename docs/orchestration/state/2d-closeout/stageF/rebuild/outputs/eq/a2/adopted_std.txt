@@ -1,0 +1,32 @@
+sys.path ['/pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/a2/2d-unfolding/uq', '/pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/a2/2d-unfolding', '/pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/a2']
+[paper] opening: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+[paper] reported bins: 205 / 224
+[paper] cross-section sum (reported bins): 3.6892e-37
+
+[ours] opening: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root
+[ours] cross-section sum (all bins): 3.7255e-37
+
+=== chi^2 comparisons (ours vs paper) ===
+  stat only                       chi2 =      1124.19   ndf = 205   chi2/ndf =   5.484
+  flux only                       chi2 = 11946842456.65   ndf = 205   chi2/ndf = 58277280.276
+  muon E scale only               chi2 =         0.09   ndf = 205   chi2/ndf =   0.000
+  PAPER (stat+syst)               chi2 =       544.12   ndf = 205   chi2/ndf =   2.654
+
+=== adding OmniFold covariances ===
+  [WARN] /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/uq_universe_covariance_full_matcorr_fluxfix.root: no stored reported set; count only
+  [omnifold-cov] /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/universe_stage2_MEFHC_full_matcorr_fluxfix_vl170/uq_universe_covariance_full_matcorr_fluxfix.root:hCov_combined  shape=(205, 205)  sqrt(trace)=3.220e-39
+  [omnifold-cov] cell identity OK: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root (hMean2D > 0) equals the paper StatOnly set
+  [omnifold-cov] /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root:hCov2D_reported  shape=(205, 205)  sqrt(trace)=5.061e-41
+  COMBINED (paper + hCov_combined + hCov2D_reported)  chi2 =       187.44   ndf = 205   chi2/ndf =   0.914
+
+wrote /pscratch/sd/j/josephrb/tmp-2d-rebuild-20261018/eq/a2/adopted_std_pull_full.png
+
+Summary for run log:
+  reported bins: 205
+  chi^2/ndf  stat only        : 5.484
+  chi^2/ndf  flux only        : 58277280.276
+  chi^2/ndf  muon E scale     : 0.000
+  chi^2/ndf  PAPER (full cov) : 2.654
+  chi^2/ndf  COMBINED         : 0.914   (added: hCov_combined, hCov2D_reported)
+  pull mean / rms             : 0.041 / 0.386

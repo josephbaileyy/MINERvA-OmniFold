@@ -1,0 +1,32 @@
+group   quantity                            claimed             recomputed     rel diff match@printed
+sigma   Q median %                         6.447900          6.44790002222    3.446e-09 True
+sigma   Q p84 %                            9.183914          9.18391377675   -2.431e-08 True
+sigma   Q max %                           23.636160          23.6361600755    3.193e-09 True
+sigma   Q integral %                       4.754980          4.75498003285    6.910e-09 True
+sigma   total median %                     6.040559          6.04055926489    4.385e-08 True
+sigma   total integral %                   4.328436          4.32843563342   -8.469e-08 True
+sigma   universe median %                  5.968625          5.96862517117    2.868e-08 True
+sigma   stat median %                      0.684334         0.684333618639   -5.573e-07 True
+sigma   c08 median %                       0.057192        0.0571922386415    4.173e-06 True
+sigma   C_PL median %                      2.136848          2.13684753165   -2.192e-07 True
+sigma   C_PL integral %                    1.968370          1.96836990432   -4.861e-08 True
+sigma   universe+stat median %             6.039778          6.03977760125   -6.602e-08 True
+sigma   band_Flux median %                 3.746744          3.74674368548   -8.394e-08 True
+rank    universe 1e-10                          123                    123    0.000e+00 True
+rank    universe 1e-12                          137                    137    0.000e+00 True
+rank    universe+stat 1e-10                     197                    197    0.000e+00 True
+rank    universe+stat 1e-12                     205                    205    0.000e+00 True
+rank    total 1e-10                             197                    197    0.000e+00 True
+rank    total 1e-12                             205                    205    0.000e+00 True
+rank    Q 1e-10                                 197                    197    0.000e+00 True
+rank    Q 1e-12                                 205                    205    0.000e+00 True
+chi2    standard chi2                        197.59          197.591212949    6.139e-06 True
+chi2    standard chi2/205                     0.964         0.963859575359   -1.457e-04 True
+chi2    lognormal (def B) chi2               202.33          202.332347745    1.160e-05 True
+chi2    lognormal (def B) chi2/205            0.987          0.98698706217   -1.311e-05 True
+chi2    stat-subtracted chi2                1232.38          1232.38418449    3.395e-06 True
+chi2    stat-subtracted chi2/205              6.012          6.01163016824   -6.152e-05 True
+direct  Q chi2/205                           23.233          23.2328508241   -6.421e-06 True
+direct  Q cond                             8.633e11           863251089098   -5.666e-05 True
+direct  universe+stat chi2/205               23.566          23.5664113455    1.746e-05 True
+direct  universe+stat cond                 8.172e11           817153299709   -5.715e-05 True

@@ -1,0 +1,29 @@
+Fig.-6/7-style fractional uncertainty projections
+xsec_root: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root
+universe_root: /pscratch/sd/j/josephrb/2d-closeout-c04repair-20261012/build/uq_universe_covariance_c04x01.root
+bootstrap_root: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/bootstrap_MEFHC_300_vl170/uq_covariance_boot300.root
+ml_root: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/seedscan_lgbm_ml/uq_covariance_ml.root
+n_reported: 205
+
+pz projection:
+  Total                  median=  4.843% max= 14.876%
+  Published total        median=  5.474% max= 10.761%
+  Flux                   median=  3.543% max=  5.757%
+  Models                 median=  0.303% max=  1.098%
+  Normalization          median=  1.400% max=  1.400%
+  Statistical            median=  0.252% max=  0.700%
+  Hadronic response      median=  0.300% max=  1.625%
+  Muon reconstruction    median=  2.634% max= 14.365%
+  ML                     median=  0.044% max=  0.608%
+
+pt projection:
+  Total                  median=  5.310% max=  7.249%
+  Published total        median=  5.308% max=  7.682%
+  Flux                   median=  3.552% max=  4.758%
+  Models                 median=  0.333% max=  0.427%
+  Normalization          median=  1.400% max=  1.400%
+  Statistical            median=  0.249% max=  1.007%
+  Hadronic response      median=  0.255% max=  3.002%
+  Muon reconstruction    median=  3.659% max=  4.863%
+  ML                     median=  0.042% max=  0.113%
+

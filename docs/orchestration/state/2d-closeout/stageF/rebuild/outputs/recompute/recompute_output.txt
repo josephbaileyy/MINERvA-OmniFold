@@ -1,0 +1,94 @@
+sha256 OK /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-production-20261015/results/s5/production_cov.npz
+sha256 OK /global/cfs/cdirs/m3246/josephrb/2d-closeout-playlist-term-20261016/playlist_term.npz
+sha256 OK /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root
+sha256 OK /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+numpy 1.26.4 ROOT 6.28/12
+E_U nonzero cells: 205 negative: 0
+paper reported cells (diag StatOnly>0): 205 equal to E_U cells: True
+paper xsec nonzero cells equal: True
+paper TH2D err / sqrt(diag Total): min 1 max 1
+paper TH2D err / sqrt(diag Stat):  min 1.12527 max 10.9531
+paper/E_U ratio median (correct orientation): 0.9919 ; (transposed read) median 0.6278
+npz cells_x_EU == E_U on cells: maxabs rel diff 0
+playlist cells == E_U cells: True  playlist x == E_U: maxrel 0
+playlist F == functionals: True maxabs 0.0
+functionals row0 == area: True maxabs 0.0
+  row  1: n= 16 pT=[0]  max|f/area-1| on support=13
+  row  2: n= 16 pT=[1]  max|f/area-1| on support=12
+  row  3: n= 16 pT=[2]  max|f/area-1| on support=9
+  row  4: n= 16 pT=[3]  max|f/area-1| on support=11
+  row  5: n= 16 pT=[4]  max|f/area-1| on support=13
+  row  6: n= 16 pT=[5]  max|f/area-1| on support=13
+  row  7: n= 16 pT=[6]  max|f/area-1| on support=11
+  row  8: n= 16 pT=[7]  max|f/area-1| on support=5.7
+  row  9: n= 16 pT=[8]  max|f/area-1| on support=5.7
+  row 10: n= 15 pT=[9]  max|f/area-1| on support=5.7
+  row 11: n= 14 pT=[10]  max|f/area-1| on support=3
+  row 12: n= 13 pT=[11]  max|f/area-1| on support=3
+  row 13: n= 11 pT=[12]  max|f/area-1| on support=0
+  row 14: n=  8 pT=[13]  max|f/area-1| on support=0.5
+  row 15: n=  9 pz=[0]  max|f/area-1| on support=1
+  row 16: n= 10 pz=[1]  max|f/area-1| on support=1
+  row 17: n= 11 pz=[2]  max|f/area-1| on support=1
+  row 18: n= 12 pz=[3]  max|f/area-1| on support=1
+  row 19: n= 12 pz=[4]  max|f/area-1| on support=1
+  row 20: n= 13 pz=[5]  max|f/area-1| on support=1
+  row 21: n= 13 pz=[6]  max|f/area-1| on support=1
+  row 22: n= 13 pz=[7]  max|f/area-1| on support=0
+  row 23: n= 14 pz=[8]  max|f/area-1| on support=0
+  row 24: n= 14 pz=[9]  max|f/area-1| on support=0
+  row 25: n= 14 pz=[10]  max|f/area-1| on support=0
+  row 26: n= 14 pz=[11]  max|f/area-1| on support=0
+  row 27: n= 14 pz=[12]  max|f/area-1| on support=0.8
+  row 28: n= 14 pz=[13]  max|f/area-1| on support=0.8
+  row 29: n= 14 pz=[14]  max|f/area-1| on support=0.95
+  row 30: n= 14 pz=[15]  max|f/area-1| on support=0.95
+sum rows1-14 == row0 maxabs: 20.0  sum rows15-30 == row0 maxabs: 38.0
+Q              asym max|C-C^T|/max|C| = 5.51e-17
+total          asym max|C-C^T|/max|C| = 5.65e-17
+universe       asym max|C-C^T|/max|C| = 5.66e-17
+stat           asym max|C-C^T|/max|C| = 0
+c08            asym max|C-C^T|/max|C| = 0
+C_PL           asym max|C-C^T|/max|C| = 0
+universe+stat  asym max|C-C^T|/max|C| = 5.65e-17
+band_Flux      asym max|C-C^T|/max|C| = 3.38e-16
+Q              median 6.447900  p84 9.183914  max 23.636160  integral 4.754980  proj0 4.754980
+   pT proj  : 5.7324 5.5521 5.7856 5.6256 5.5595 5.6545 5.6031 5.0369 4.7259 5.0112 5.8029 6.8397 6.3337 7.7658
+   pz proj  : 13.8260 6.3314 5.7762 5.0847 4.9761 4.8197 4.7708 5.0846 5.9585 6.6342 6.6211 5.9124 4.8967 5.0671 5.2424 6.9615
+total          median 6.040559  p84 8.953329  max 23.294890  integral 4.328436  proj0 4.328436
+   pT proj  : 5.3430 5.4272 5.5759 5.3971 5.2702 5.2310 5.2580 4.6128 4.3590 4.5439 5.3720 6.4042 6.0426 7.2744
+   pz proj  : 13.7057 6.1996 5.5042 4.7873 4.6312 4.4014 4.3453 4.2998 4.9178 5.7887 6.1558 5.2929 4.5339 4.7774 4.9533 6.8499
+universe       median 5.968625  p84 8.728314  max 20.277398  integral 4.328005  proj0 4.328005
+   pT proj  : 5.2286 5.4034 5.5697 5.3925 5.2659 5.2274 5.2538 4.6074 4.3545 4.5369 5.3640 6.3949 6.0321 7.2351
+   pz proj  : 13.6930 6.1900 5.4972 4.7832 4.6271 4.3974 4.3407 4.2974 4.9150 5.7833 6.1485 5.2817 4.5283 4.7696 4.9438 6.7886
+stat           median 0.684334  p84 1.711804  max 17.984058  integral 0.061017  proj0 0.061017
+   pT proj  : 1.0974 0.5085 0.2627 0.2221 0.2121 0.1937 0.2091 0.2201 0.1957 0.2524 0.2924 0.3438 0.3553 0.7519
+   pz proj  : 0.5806 0.3395 0.2762 0.1975 0.1945 0.1888 0.1987 0.1436 0.1645 0.2494 0.3006 0.3422 0.2236 0.2727 0.2897 0.7350
+c08            median 0.057192  p84 0.139568  max 0.715287  integral 0.002455  proj0 0.002455
+   pT proj  : 0.0711 0.0136 0.0125 0.0049 0.0088 0.0092 0.0114 0.0284 0.0268 0.0091 0.0075 0.0257 0.0114 0.0658
+   pz proj  : 0.1065 0.0590 0.0064 0.0155 0.0116 0.0021 0.0074 0.0023 0.0080 0.0067 0.0123 0.0273 0.0141 0.0243 0.1011 0.5433
+C_PL           median 2.136848  p84 3.307911  max 5.694304  integral 1.968370  proj0 1.968370
+   pT proj  : 2.0768 1.1707 1.5432 1.5872 1.7701 2.1473 1.9361 2.0232 1.8259 2.1131 2.1943 2.4016 1.8982 2.7186
+   pz proj  : 1.8202 1.2852 1.7516 1.7133 1.8203 1.9640 1.9696 2.7139 3.3644 3.2410 2.4382 2.6349 1.8498 1.6885 1.7170 1.2416
+universe+stat  median 6.039778  p84 8.952859  max 23.294689  integral 4.328435  proj0 4.328435
+   pT proj  : 5.3425 5.4272 5.5759 5.3971 5.2702 5.2310 5.2580 4.6127 4.3589 4.5439 5.3720 6.4042 6.0426 7.2741
+   pz proj  : 13.7053 6.1993 5.5042 4.7873 4.6312 4.4014 4.3453 4.2998 4.9178 5.7887 6.1558 5.2928 4.5338 4.7774 4.9522 6.8283
+band_Flux      median 3.746744  p84 4.514834  max 13.141706  integral 3.639879  proj0 3.639879
+   pT proj  : 3.7465 3.6660 3.6678 3.6492 3.6118 3.6397 3.6387 3.6555 3.6018 3.6429 3.6327 3.6819 3.6477 4.2488
+   pz proj  : 3.9373 3.6582 3.6775 3.6381 3.6489 3.6106 3.5902 3.5494 3.7114 3.4818 3.7571 3.8590 3.5697 3.8095 3.8170 5.0377
+rank universe       1e-10: 123  1e-12: 137  (lmax 5.52e-78, lmin -1.651e-94)
+rank universe+stat  1e-10: 197  1e-12: 205  (lmax 5.522e-78, lmin 6.758e-90)
+rank total          1e-10: 197  1e-12: 205  (lmax 5.522e-78, lmin 6.784e-90)
+rank Q              1e-10: 197  1e-12: 205  (lmax 5.884e-78, lmin 6.816e-90)
+units check: median paper/E_U = 0.991932
+standard (Tot+Q)           chi2 197.5912  chi2/205 0.963860   (eig cross-check 197.5912, kept 205, cond 7.45e+11, nneg 0)
+stat-subtracted (Tot-Stat+Q) chi2 1232.3842  chi2/205 6.011630   (eig cross-check 1232.3842, kept 205, cond 1.373e+12, nneg 0)
+lognormal A (own-CV scaled) chi2 245.4435  chi2/205 1.197286   (eig cross-check 245.4435, kept 205, cond 2.225e+04, nneg 0)
+lognormal B (paper-scaled) chi2 202.3323  chi2/205 0.986987   (eig cross-check 202.3323, kept 205, cond 2.222e+04, nneg 0)
+lognormal C (E_U-scaled)   chi2 196.4238  chi2/205 0.958165   (eig cross-check 196.4238, kept 205, cond 2.254e+04, nneg 0)
+lognormal D (geo-mean)     chi2 197.3464  chi2/205 0.962665   (eig cross-check 197.3464, kept 205, cond 2.231e+04, nneg 0)
+lognormal E log(1+C/pp)    chi2 208.1466  chi2/205 1.015349   (eig cross-check 208.1466, kept 205, cond 2.237e+04, nneg 1)
+lognormal F log1p each     chi2 249.6242  chi2/205 1.217679   (eig cross-check 249.6242, kept 205, cond 2.24e+04, nneg 0)
+pull mean 0.042454  RMS 0.400346  (std 0.398089)
+direct inv Q              chi2 4762.7344 chi2/205 23.232851 cond 8.63251e+11   (sym-inv 4762.7344, pinv 4762.7345)
+direct inv universe+stat  chi2 4831.1143 chi2/205 23.566411 cond 8.17153e+11   (sym-inv 4831.1143, pinv 4831.1143)
