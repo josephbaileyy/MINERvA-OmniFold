@@ -1,0 +1,6 @@
+{"m0": 3, "FWER_bound_over_alpha": 0.7748459385700142}
+{"m0": 4, "FWER_bound_over_alpha": 0.7302157628613709}
+{"m0": 6, "FWER_bound_over_alpha": 0.6488313887744723}
+{"m0": 7, "FWER_bound_over_alpha": 0.6093168894296506}
+{"m0": 8, "FWER_bound_over_alpha": 0.5839065401024344}
+{"m0": 9, "FWER_bound_over_alpha": 0.5530520534752856}
