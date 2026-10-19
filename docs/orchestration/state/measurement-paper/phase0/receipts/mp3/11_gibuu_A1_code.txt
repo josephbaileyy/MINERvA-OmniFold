@@ -1,0 +1,78 @@
+# command: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'C=/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code; echo "== initNucPhaseSpace 350-375"; sed -n 350,375p $C/init/initNucPhaseSpace.f90; echo "== density.f90 250-270"; sed -n 250,270p $C/density/density.f90; echo "== pauliBlocking 458-470"; sed -n 458,470p $C/density/pauliBlocking.f90; echo "== 2p2h on A=1?"; grep -n -i -E "mass *(==|<=|<) *[12]|elementary|free nucleon" $C/init/lepton/*2p2h*.f90 $C/init/neutrino/*.f90 2>/dev/null | head'
+# utc: 2026-10-19 16:53:51 UTC
+# ---
+== initNucPhaseSpace 350-375
+
+    write(*,*) 'Nucleus: charge=',nuc%charge,&
+         ' mass=',nuc%mass, 'FermiMotion=', nuc%fermiMotion, &
+         ' number=',eventNummer
+    if (sum(abs(nuc%velocity))>0.) &
+         write(*,'(A,4g12.5)') ' velocity=', nuc%velocity
+    if (sum(abs(nuc%position))>0.) &
+         write(*,'(A,4g12.5)') ' position=', nuc%position
+
+    if (nuc%Mass==1) then
+       !=======================================================================
+       !==== A = 1
+       !=======================================================================
+       write(*,*) '...Initialising elementary nucleus!!!'
+
+       do iEns=1,size(teilchen,dim=1)  ! Loop over all ensembles
+          iPart=1
+          do !Search for empty space in particle vector
+             if (iPart>size(teilchen,dim=2)) &
+                  call TRACEBACK('Real particle vector too small.')
+             if (teilchen(iEns,iPart)%ID <= 0) exit
+             iPart=iPart+1
+          end do
+          pPart => teilchen(iEns,iPart)
+
+          call setToDefault(pPart)
+== density.f90 250-270
+    read(5,nml=initDensity,iostat=ios)
+    call Write_ReadingInput('initDensity',0,ios)
+
+    select case (eventType)
+    case (elementary, Box)
+       densitySwitch = 0
+       write(*,*) 'densitySwitch is set to 0 for elementary target/Box'
+    case default
+       targetNuc => getTarget()
+       if (targetNuc%mass==1) then
+          densitySwitch = 0
+          write(*,*) 'densitySwitch is set to 0 for nucleon target'
+       end if
+    end select
+
+    write(*,'(A,I5,A)') ' Set densitySwitch to ',densitySwitch,'.'
+
+    if (densitySwitch==3) then
+       write(*,'(A)')        '   => We assume resting matter.'
+       write(*,'(A,F5.3,A)') '      proton density:  ',densityInput_proton, '/fm^3.'
+       write(*,'(A,F5.3,A)') '      neutron density: ',densityInput_neutron,'/fm^3.'
+== pauliBlocking 458-470
+       select case (eventType)
+       case (elementary, Box)
+          pauliSwitch = 0
+          write(*,*) ' ==> pauliSwitch is set to 0 for elementary target/Box'
+       case default
+          targetNuc => getTarget()
+          if (targetNuc%mass==1) then
+             pauliSwitch = 0
+             write(*,*) ' ==> pauliSwitch is set to 0 for nucleon target'
+          end if
+       end select
+    end if
+
+== 2p2h on A=1?
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/neutrino/DoColl_nuN.f90:473:!!$  ! We give as input the neutrino and the nucleon in medium and free nucleon
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/neutrino/DoColl_nuN.f90:841:!!$  ! We give as input the neutrino and the nucleon in medium and free nucleon
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/neutrino/initNeutrino.f90:597:       write(*,*) 'store nucleon for output: 1 = free nucleon'
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/neutrino/initNeutrino.f90:749:!  3. a boson with four-momentum q hits free nucleon: Wrec
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/neutrino/lepton_kinematics_free.f90:233:! for free nucleon kinematis
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/neutrino/neutrinoXsection.f90:1642: !   = invariant mass in incoming channel for free nucleon  at rest
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/neutrino/NievesHadronTensor.f90:431:      ! 2010-07-30 this check was good for free nucleon, BUT is not necessarily valid for reactions on nuclei
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/neutrino/singlePionProductionMAIDlike.f90:20:  ! Switch to use fit to ANL or BNL elementary pion production data
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/neutrino/singlePionProductionMAIDlike.f90:187:    eN = eNev ! make a copy with a free nucleon
+/cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/release2019/code/init/neutrino/singlePionProductionNHVlike.f90:45:  !   disadvantage: now for the free nucleon only, TO DO : nuclei
+# --- rc=0

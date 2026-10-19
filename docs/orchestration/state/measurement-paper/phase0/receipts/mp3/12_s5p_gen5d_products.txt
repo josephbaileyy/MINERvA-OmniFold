@@ -1,0 +1,151 @@
+# command: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'B=/pscratch/sd/j/josephrb/s5p-20260926; ls -la $B/gen5d | head -40; echo "== fluxfix"; ls -la $B/gen5d_fluxfix | head -60; echo "== nuwro_flat5d"; ls -la $B/gen5d/nuwro_flat5d 2>/dev/null | head; echo "== supp"; ls -la $B/gen5d_fluxfix/supp $B/gen5d_fluxfix/supp/* 2>/dev/null | head -60; echo "== xsec_graphs keys"; ~/.conda/envs/omnifold_py310/bin/python -c "import uproot,sys; [print(p, sorted({k.split(\";\")[0].split(\"/\")[0] for k in uproot.open(p).keys()})) for p in sys.argv[1:]]" /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/xsec_graphs.root $B/gen5d_fluxfix/supp/xsec_graphs_regen_e100.root 2>&1 | head'
+# utc: 2026-10-19 16:55:31 UTC
+# ---
+total 6812
+drwxrwx---  4 josephrb josephrb    4096 Sep 26 11:02 .
+drwxrwx--- 21 josephrb josephrb    4096 Oct  6 20:50 ..
+drwxrwx---  4 josephrb josephrb    4096 Sep 26 10:13 code
+-rw-r--r--  1 josephrb josephrb    1370 Sep 26 09:53 _dump_existing.py
+-rw-rw----  1 josephrb josephrb   47380 Sep 26 10:15 gen5d-build.json
+-rw-rw----  1 josephrb josephrb     574 Sep 26 10:12 _genie_cv_stageA_shape.out
+-rw-r--r--  1 josephrb josephrb    1379 Sep 26 10:11 _genie_cv_stageA_shape.py
+-rw-rw----  1 josephrb josephrb    3058 Sep 26 10:14 genie_cv_xsec5d.log
+-rw-rw----  1 josephrb josephrb    8054 Sep 26 10:14 genie_cv_xsec5d.meta.json
+-rw-rw----  1 josephrb josephrb 1612628 Sep 26 10:14 genie_cv_xsec5d.npz
+-rw-rw----  1 josephrb josephrb    3271 Sep 26 10:14 genie_mec_xsec5d.log
+-rw-rw----  1 josephrb josephrb    8294 Sep 26 10:14 genie_mec_xsec5d.meta.json
+-rw-rw----  1 josephrb josephrb 1613520 Sep 26 10:14 genie_mec_xsec5d.npz
+-rw-rw----  1 josephrb josephrb    2297 Sep 26 10:15 gibuu_cv_xsec5d.log
+-rw-rw----  1 josephrb josephrb   26093 Sep 26 10:15 gibuu_cv_xsec5d.meta.json
+-rw-rw----  1 josephrb josephrb 1679456 Sep 26 10:15 gibuu_cv_xsec5d.npz
+-rw-r--r--  1 josephrb josephrb    2831 Sep 26 10:12 _make_receipt.py
+-rw-rw----  1 josephrb josephrb  224713 Sep 26 11:02 mnvtune_v1_xsec5d.npz
+-rw-rw----  1 josephrb josephrb    5646 Sep 26 10:14 nuwro_cv_xsec5d.log
+-rw-rw----  1 josephrb josephrb   16663 Sep 26 10:14 nuwro_cv_xsec5d.meta.json
+-rw-rw----  1 josephrb josephrb 1643632 Sep 26 10:14 nuwro_cv_xsec5d.npz
+drwxrwx---  2 josephrb josephrb    4096 Sep 26 10:02 nuwro_flat5d
+-rw-r--r--  1 josephrb josephrb     701 Sep 26 09:57 _probe_branches.py
+-rw-rw----  1 josephrb josephrb    1959 Sep 26 10:12 _probe_mad_q2.out
+-rw-r--r--  1 josephrb josephrb    1520 Sep 26 09:55 _probe_mad_q2.py
+-rw-r--r--  1 josephrb josephrb     862 Sep 26 10:12 _summarize.py
+-rw-rw----  1 josephrb josephrb    2370 Sep 26 10:15 _summary.json
+== fluxfix
+total 12100
+drwxrwx---  4 josephrb josephrb    4096 Sep 27 02:23 .
+drwxrwx--- 21 josephrb josephrb    4096 Oct  6 20:50 ..
+drwxrwx---  3 josephrb josephrb    4096 Sep 27 02:17 code
+-rw-rw----  1 josephrb josephrb   47690 Sep 27 02:04 gen5d-fluxfix-2.json
+-rw-rw----  1 josephrb josephrb   22769 Sep 27 02:23 gen5d-fluxfix-3.json
+-rw-rw----  1 josephrb josephrb   70193 Sep 27 02:04 gen5d-fluxfix.json
+-rw-rw----  1 josephrb josephrb   39730 Sep 27 01:30 gen5d_fluxfix_marginals.json
+-rw-rw----  1 josephrb josephrb  203382 Sep 27 01:30 gen5d_fluxfix_marginals.npz
+-rw-rw----  1 josephrb josephrb    6153 Sep 27 01:29 genie_cv_checks.json
+-rw-rw----  1 josephrb josephrb    5314 Sep 27 02:03 genie_cv_full.log
+-rw-rw----  1 josephrb josephrb   12550 Sep 27 02:03 genie_cv_xsec5d_full.meta.json
+-rw-rw----  1 josephrb josephrb 1627680 Sep 27 02:03 genie_cv_xsec5d_full.npz
+-rw-rw----  1 josephrb josephrb    3289 Sep 27 01:29 genie_cv_xsec5d.log
+-rw-rw----  1 josephrb josephrb   16693 Sep 27 01:29 genie_cv_xsec5d.meta.json
+-rw-rw----  1 josephrb josephrb 1640728 Sep 27 01:29 genie_cv_xsec5d.npz
+-rw-rw----  1 josephrb josephrb   11933 Sep 27 01:29 genie_mec_checks.json
+-rw-rw----  1 josephrb josephrb    5434 Sep 27 02:03 genie_mec_full.log
+-rw-rw----  1 josephrb josephrb   14068 Sep 27 02:03 genie_mec_xsec5d_full.meta.json
+-rw-rw----  1 josephrb josephrb 1632624 Sep 27 02:03 genie_mec_xsec5d_full.npz
+-rw-rw----  1 josephrb josephrb    3749 Sep 27 01:29 genie_mec_xsec5d.log
+-rw-rw----  1 josephrb josephrb   23133 Sep 27 01:29 genie_mec_xsec5d.meta.json
+-rw-rw----  1 josephrb josephrb 1660240 Sep 27 01:29 genie_mec_xsec5d.npz
+-rw-rw----  1 josephrb josephrb   39323 Sep 27 02:04 gibuu_cv_xsec5d_fluxfix.meta.json
+-rw-rw----  1 josephrb josephrb 1720180 Sep 27 02:04 gibuu_cv_xsec5d_fluxfix.npz
+-rw-rw----  1 josephrb josephrb   14853 Sep 27 01:30 gibuu_flux_check.json
+-rw-rw----  1 josephrb josephrb    3166 Sep 27 01:30 gibuu_flux_check.log
+-rw-rw----  1 josephrb josephrb    4584 Sep 27 02:04 gibuu_fluxfix.log
+-rw-rw----  1 josephrb josephrb    3197 Sep 27 02:04 graphs_check.json
+-rw-rw----  1 josephrb josephrb    3877 Sep 27 02:04 graphs_check.log
+-rw-rw----  1 josephrb josephrb    5441 Sep 27 01:30 marginals.log
+-rw-rw----  1 josephrb josephrb   17540 Sep 27 01:30 nuwro_cv_checks.json
+-rw-rw----  1 josephrb josephrb    5260 Sep 27 02:04 nuwro_cv_full.log
+-rw-rw----  1 josephrb josephrb   15594 Sep 27 02:04 nuwro_cv_xsec5d_full.meta.json
+-rw-rw----  1 josephrb josephrb 1637412 Sep 27 02:04 nuwro_cv_xsec5d_full.npz
+-rw-rw----  1 josephrb josephrb    3400 Sep 27 01:30 nuwro_cv_xsec5d.log
+-rw-rw----  1 josephrb josephrb   32897 Sep 27 01:30 nuwro_cv_xsec5d.meta.json
+-rw-rw----  1 josephrb josephrb 1690928 Sep 27 01:30 nuwro_cv_xsec5d.npz
+-rw-rw----  1 josephrb josephrb   23748 Sep 27 01:28 phi_t.json
+-rw-rw----  1 josephrb josephrb   11085 Sep 27 01:28 phi_t.log
+-rw-rw----  1 josephrb josephrb   21414 Sep 27 01:28 phi_t.npz
+-rw-rw----  1 josephrb josephrb      70 Sep 27 01:30 receipt.log
+drwxrwx---  6 josephrb josephrb    4096 Sep 27 01:58 supp
+== nuwro_flat5d
+total 121892
+drwxrwx--- 2 josephrb josephrb     4096 Sep 26 10:02 .
+drwxrwx--- 4 josephrb josephrb     4096 Sep 26 11:02 ..
+-rw-rw---- 1 josephrb josephrb      260 Sep 26 09:59 flat5d_p2.log
+-rw-rw---- 1 josephrb josephrb      260 Sep 26 10:00 flat5d_p3.log
+-rw-rw---- 1 josephrb josephrb      260 Sep 26 10:00 flat5d_p4.log
+-rw-rw---- 1 josephrb josephrb      260 Sep 26 10:01 flat5d_p5.log
+-rw-rw---- 1 josephrb josephrb      260 Sep 26 10:01 flat5d_p6.log
+-rw-rw---- 1 josephrb josephrb      260 Sep 26 10:02 flat5d_p7.log
+-rw-rw---- 1 josephrb josephrb      260 Sep 26 10:02 flat5d_p8.log
+== supp
+-rw-rw---- 1 josephrb josephrb    1006 Sep 27 01:44 /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/flux_phi_t_50_100.json
+-rw-r----- 1 josephrb josephrb    4484 Sep 27 01:44 /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/flux_phi_t_50_100.root
+-rw-rw---- 1 josephrb josephrb       8 Sep 27 01:58 /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/run_all.done
+-rw-rw---- 1 josephrb josephrb       0 Sep 27 01:47 /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/run_all.log
+-rw-rw---- 1 josephrb josephrb     720 Sep 27 01:51 /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/run_genie_cv.out
+-rw-rw---- 1 josephrb josephrb     721 Sep 27 01:55 /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/run_genie_mec.out
+-rw-rw---- 1 josephrb josephrb     482 Sep 27 01:58 /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/run_nuwro.out
+-rw-rw---- 1 josephrb josephrb   13119 Sep 27 01:45 /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e100.log
+-rw-r----- 1 josephrb josephrb 2396177 Sep 27 01:45 /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e100.root
+-rw-rw---- 1 josephrb josephrb   13118 Sep 27 01:45 /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e50.log
+-rw-r----- 1 josephrb josephrb 2510815 Sep 27 01:45 /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e50.root
+
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp:
+total 4880
+drwxrwx--- 6 josephrb josephrb    4096 Sep 27 01:58 .
+drwxrwx--- 4 josephrb josephrb    4096 Sep 27 02:23 ..
+-rw-rw---- 1 josephrb josephrb    1006 Sep 27 01:44 flux_phi_t_50_100.json
+-rw-r----- 1 josephrb josephrb    4484 Sep 27 01:44 flux_phi_t_50_100.root
+drwxrwx--- 2 josephrb josephrb    4096 Sep 27 01:51 genie_cv
+drwxrwx--- 2 josephrb josephrb    4096 Sep 27 01:55 genie_mec
+drwxrwx--- 2 josephrb josephrb    4096 Sep 27 01:58 nuwro
+-rw-rw---- 1 josephrb josephrb       8 Sep 27 01:58 run_all.done
+-rw-rw---- 1 josephrb josephrb       0 Sep 27 01:47 run_all.log
+-rw-rw---- 1 josephrb josephrb     720 Sep 27 01:51 run_genie_cv.out
+-rw-rw---- 1 josephrb josephrb     721 Sep 27 01:55 run_genie_mec.out
+-rw-rw---- 1 josephrb josephrb     482 Sep 27 01:58 run_nuwro.out
+drwxrwx--- 4 josephrb josephrb    4096 Sep 27 01:47 timing
+-rw-rw---- 1 josephrb josephrb   13119 Sep 27 01:45 xsec_graphs_regen_e100.log
+-rw-r----- 1 josephrb josephrb 2396177 Sep 27 01:45 xsec_graphs_regen_e100.root
+-rw-rw---- 1 josephrb josephrb   13118 Sep 27 01:45 xsec_graphs_regen_e50.log
+-rw-r----- 1 josephrb josephrb 2510815 Sep 27 01:45 xsec_graphs_regen_e50.root
+
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_cv:
+total 210548
+drwxrwx--- 2 josephrb josephrb      4096 Sep 27 01:51 .
+drwxrwx--- 6 josephrb josephrb      4096 Sep 27 01:58 ..
+-rw-rw---- 1 josephrb josephrb      3782 Sep 27 01:51 genie-mcjob-50001.status
+-rw-r----- 1 josephrb josephrb  71762297 Sep 27 01:51 genie_supp_cv.gst.root
+-rw-rw---- 1 josephrb josephrb    207371 Sep 27 01:51 gevgen_supp_cv.log
+-rw-r----- 1 josephrb josephrb 143568904 Sep 27 01:51 gntp.50001.ghep.root
+-rw-rw---- 1 josephrb josephrb     17633 Sep 27 01:51 gntpc.log
+-rw-r----- 1 josephrb josephrb      4170 Sep 27 01:47 input-flux.root
+
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/genie_mec:
+total 210452
+drwxrwx--- 2 josephrb josephrb      4096 Sep 27 01:55 .
+drwxrwx--- 6 josephrb josephrb      4096 Sep 27 01:58 ..
+-rw-rw---- 1 josephrb josephrb      7957 Sep 27 01:55 genie-mcjob-51001.status
+-rw-r----- 1 josephrb josephrb  71672982 Sep 27 01:55 genie_supp_mec.gst.root
+-rw-rw---- 1 josephrb josephrb    230852 Sep 27 01:55 gevgen_supp_mec.log
+-rw-r----- 1 josephrb josephrb 143535886 Sep 27 01:55 gntp.51001.ghep.root
+-rw-rw---- 1 josephrb josephrb     18657 Sep 27 01:55 gntpc.log
+-rw-r----- 1 josephrb josephrb      4170 Sep 27 01:51 input-flux.root
+
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/nuwro:
+total 202604
+drwxrwx--- 2 josephrb josephrb      4096 Sep 27 01:58 .
+drwxrwx--- 6 josephrb josephrb      4096 Sep 27 01:58 ..
+-rw-rw---- 1 josephrb josephrb       192 Sep 27 01:58 flat5d.log
+-rw-r----- 1 josephrb josephrb   6147377 Sep 27 01:58 nuwro_supp_flat5d.root
+== xsec_graphs keys
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/xsec_graphs.root ['nu_mu_C12', 'nu_mu_H1']
+/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e100.root ['nu_mu_C12', 'nu_mu_H1']
+# --- rc=0

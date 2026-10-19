@@ -2,3 +2,4 @@
 # Checked by docs/orchestration/probes/probe-20260923-no-unowned-open-issue.py. A FIXED or CLOSED row has no line.
 86	OWNER	test-tmpdir-leaks lane (recorded 2026-10-07); bounded remedy and done-when in docs/known-issues/ISSUE-86-frozen-s5p-recovery-tests-leak-tmpdir.md; needs no decision
 87	OWNER	test-tmpdir-leaks lane (recorded 2026-10-07); test-only remedy first, production change only with its sha256 pins re-issued; docs/known-issues/ISSUE-87-guarded-run-tool-directories-outlive-exec.md
+97	OWNER	the measurement session (recorded 2026-10-19); remedy MP3-A/MP3-B under docs/orchestration/state/measurement-paper/BINDING-PHASE1-20261019.md; needs no decision

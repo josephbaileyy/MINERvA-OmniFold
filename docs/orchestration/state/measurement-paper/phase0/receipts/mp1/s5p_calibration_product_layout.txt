@@ -1,0 +1,39 @@
+# CMD: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov '~/.conda/envs/omnifold_py310/bin/python -I -' < mp1scripts/product.py
+#   import sys, glob, json, numpy as np, datetime, os
+#   print("# UTC", datetime.datetime.utcnow().isoformat())
+#   NS = "/pscratch/sd/j/josephrb/s5p-20260926"
+#   print("## lateral dir:", sorted(os.listdir(NS + "/lateral"))[:40])
+#   for null in ["MnvTune_v1", "GENIE_2_12_10_CV"]:
+#       fs = sorted(glob.glob(f"{NS}/runs/prod/cal/{null}/**/*.npz", recursive=True))
+#       print(f"## {null}: {len(fs)} npz under runs/prod/cal/{null}")
+#       if not fs:
+#           print("   subdirs:", sorted(os.listdir(NS + "/runs/prod/cal"))[:20]); continue
+#       f = fs[0]; d = np.load(f, allow_pickle=False)
+#       print("   first:", f, os.path.getsize(f), "bytes")
+#       for k in d.files:
+#           a = d[k]; print(f"   key {k}: dtype={a.dtype} shape={a.shape}")
+#       for k in d.files:
+#           if d[k].dtype.kind in "US" and d[k].size == 1:
+#               s = str(d[k]);
+#               if "lateral_z" in s or "nuisance" in s:
+#                   m = json.loads(s); nd = m.get("nuisance_draw", {}); print("   nuisance_draw keys:", list(nd), "lateral_z:", nd.get("lateral_z"))
+login34
+GENIE_2_12_10_CV
+GENIE_2_12_10_MEC
+GiBUU_2019
+MnvTune_v1
+NuWro_21_09
+# UTC 2026-10-19T16:52:18.489898
+## lateral dir: []
+## MnvTune_v1: 1365 npz under runs/prod/cal/MnvTune_v1
+   first: /pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/MnvTune_v1/cal_MnvTune_v1_s1200000.npz 185019 bytes
+   key xsec_flat: dtype=float64 shape=(65856,)
+   key xtrue_flat: dtype=float64 shape=(65856,)
+   key meta: dtype=<U6920 shape=()
+   nuisance_draw keys: ['flux', 'model', 'detector', 'lateral_z', 'normalization_z', 'weight_treatment', 'weight_diagnostics'] lateral_z: {'BeamAngleX': -0.48090554996451024, 'BeamAngleY': 0.9354243662702036, 'MuonResolution': -1.423696256216914, 'Muon_Energy_MINERvA': 0.3010547310651242, 'Muon_Energy_MINOS': 1.5338212089625156}
+## GENIE_2_12_10_CV: 1366 npz under runs/prod/cal/GENIE_2_12_10_CV
+   first: /pscratch/sd/j/josephrb/s5p-20260926/runs/prod/cal/GENIE_2_12_10_CV/cal_GENIE_2_12_10_CV_s1220000.npz 185035 bytes
+   key xsec_flat: dtype=float64 shape=(65856,)
+   key xtrue_flat: dtype=float64 shape=(65856,)
+   key meta: dtype=<U6959 shape=()
+   nuisance_draw keys: ['flux', 'model', 'detector', 'lateral_z', 'normalization_z', 'weight_treatment', 'weight_diagnostics'] lateral_z: {'BeamAngleX': -0.21455169557049067, 'BeamAngleY': 0.5666781152932493, 'MuonResolution': 0.29938645711574535, 'Muon_Energy_MINERvA': -1.0166761673254712, 'Muon_Energy_MINOS': 0.08479208880434619}

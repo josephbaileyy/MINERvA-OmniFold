@@ -1,0 +1,153 @@
+# CMD: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov '~/.conda/envs/omnifold_py310/bin/python -I - /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1A/MasterAnaDev_data_AnaTuple_run00006038_Playlist.root' < mp1scripts/values.py
+# script:
+#   import sys, uproot, numpy as np, datetime
+#   print("# UTC", datetime.datetime.utcnow().isoformat(), "uproot", uproot.__version__, "numpy", np.__version__)
+#   N = 3000
+#   sp_blob = ["p","meson","em","other","lown","midn","highn","xtalk","mu"]
+#   sp_pr = ["proton","meson","em","other","low_neutron","mid_neutron","high_neutron","xtalk","muon","none"]
+#   for path in sys.argv[1:]:
+#       t = uproot.open(path)["MasterAnaDev"]
+#       br = ["MasterAnaDev_recoil_E","blob_recoil_E","blob_recoil_E_tracker","blob_recoil_E_ecal"]
+#       br += [f"blob_recoil_E_tracker_{s}" for s in sp_blob] + [f"blob_recoil_E_ecal_{s}" for s in sp_blob]
+#       br += [f"part_response_recoil_allNonMuonClusters_{s}_id" for s in sp_pr]
+#       br += [f"part_response_recoil_allNonMuonClusters_{s}_id_err" for s in sp_pr]
+#       a = t.arrays(br, entry_stop=N, library="np")
+#       n = len(a[br[0]])
+#       print(f"## FILE {path}\n## entries read {n} (first {N})")
+#       for b in br:
+#           x = a[b].astype(float)
+#           print(f"{b:60s} nonzero={np.mean(x!=0):.3f} neg={np.mean(x<0):.3f} mean={x.mean():10.3f} p50={np.median(x):9.3f} max={x.max():10.2f}")
+#       for det in ["tracker","ecal"]:
+#           tot = a[f"blob_recoil_E_{det}"]; s = sum(a[f"blob_recoil_E_{det}_{x}"] for x in sp_blob)
+#           m = tot>0
+#           r = s[m]/tot[m] if m.any() else np.array([np.nan])
+#           print(f"## species-sum/{det}-total over {m.sum()} events with total>0: median={np.nanmedian(r):.6f} min={np.nanmin(r):.6f} max={np.nanmax(r):.6f}")
+#       print("## ratio _id_err / _id (events with _id>0):")
+#       for s in sp_pr:
+#           v = a[f"part_response_recoil_allNonMuonClusters_{s}_id"]; e = a[f"part_response_recoil_allNonMuonClusters_{s}_id_err"]
+#           m = v>0
+#           if m.any():
+#               r = e[m]/v[m]; print(f"   {s:14s} n={m.sum():5d} median={np.median(r):.4f} min={r.min():.4f} max={r.max():.4f}")
+#           else: print(f"   {s:14s} n=0")
+#       tot_pr = sum(a[f"part_response_recoil_allNonMuonClusters_{s}_id"] for s in sp_pr)
+#       q0 = a["MasterAnaDev_recoil_E"]; m = q0>0
+#       if m.any():
+#           r = tot_pr[m]/q0[m]; print(f"## sum_s part_response_..._id / MasterAnaDev_recoil_E over {m.sum()} events: median={np.median(r):.4f} p10={np.percentile(r,10):.4f} p90={np.percentile(r,90):.4f}")
+login13
+# UTC 2026-10-19T16:49:22.264397 uproot 5.6.9 numpy 2.2.6
+## FILE /pscratch/sd/j/josephrb/minerva/minerva_large_files/MC/StandardMC/Playlist1A/MasterAnaDev_mc_AnaTuple_run00110000_Playlist.root
+## entries read 3000 (first 3000)
+MasterAnaDev_recoil_E                                        nonzero=1.000 neg=0.288 mean=  2319.008 p50=  891.225 max=  82445.59
+blob_recoil_E                                                nonzero=1.000 neg=0.000 mean=  2082.058 p50= 1185.958 max=  54496.56
+blob_recoil_E_tracker                                        nonzero=0.999 neg=0.000 mean=   999.546 p50=  522.641 max=  32603.89
+blob_recoil_E_ecal                                           nonzero=0.851 neg=0.000 mean=   263.848 p50=   12.081 max=  17604.22
+blob_recoil_E_tracker_p                                      nonzero=0.592 neg=0.000 mean=   161.986 p50=   42.420 max=   8451.11
+blob_recoil_E_tracker_meson                                  nonzero=0.597 neg=0.000 mean=   376.839 p50=   70.723 max=  27270.97
+blob_recoil_E_tracker_em                                     nonzero=0.424 neg=0.000 mean=   290.339 p50=    0.000 max=  24981.97
+blob_recoil_E_tracker_other                                  nonzero=0.050 neg=0.000 mean=    22.697 p50=    0.000 max=   4393.87
+blob_recoil_E_tracker_lown                                   nonzero=0.182 neg=0.000 mean=     4.392 p50=    0.000 max=    307.84
+blob_recoil_E_tracker_midn                                   nonzero=0.159 neg=0.000 mean=     6.484 p50=    0.000 max=    479.37
+blob_recoil_E_tracker_highn                                  nonzero=0.283 neg=0.000 mean=    66.943 p50=    0.000 max=   7971.17
+blob_recoil_E_tracker_xtalk                                  nonzero=0.965 neg=0.000 mean=    17.651 p50=    5.450 max=   3929.56
+blob_recoil_E_tracker_mu                                     nonzero=0.704 neg=0.000 mean=    52.214 p50=    8.459 max=   1569.12
+blob_recoil_E_ecal_p                                         nonzero=0.125 neg=0.000 mean=    23.986 p50=    0.000 max=   1357.77
+blob_recoil_E_ecal_meson                                     nonzero=0.268 neg=0.000 mean=    90.992 p50=    0.000 max=  10044.53
+blob_recoil_E_ecal_em                                        nonzero=0.237 neg=0.000 mean=   111.696 p50=    0.000 max=  16080.47
+blob_recoil_E_ecal_other                                     nonzero=0.028 neg=0.000 mean=     6.059 p50=    0.000 max=   1558.45
+blob_recoil_E_ecal_lown                                      nonzero=0.013 neg=0.000 mean=     0.228 p50=    0.000 max=     67.62
+blob_recoil_E_ecal_midn                                      nonzero=0.020 neg=0.000 mean=     0.526 p50=    0.000 max=    209.07
+blob_recoil_E_ecal_highn                                     nonzero=0.105 neg=0.000 mean=    13.591 p50=    0.000 max=   1455.25
+blob_recoil_E_ecal_xtalk                                     nonzero=0.671 neg=0.000 mean=     4.467 p50=    1.109 max=   1286.40
+blob_recoil_E_ecal_mu                                        nonzero=0.368 neg=0.000 mean=    12.305 p50=    0.000 max=   1410.54
+part_response_recoil_allNonMuonClusters_proton_id            nonzero=0.690 neg=0.000 mean=   234.324 p50=  104.717 max=  11013.44
+part_response_recoil_allNonMuonClusters_meson_id             nonzero=0.654 neg=0.000 mean=   587.723 p50=  150.525 max=  30510.12
+part_response_recoil_allNonMuonClusters_em_id                nonzero=0.459 neg=0.000 mean=   454.384 p50=    0.000 max=  32436.40
+part_response_recoil_allNonMuonClusters_other_id             nonzero=0.054 neg=0.000 mean=    41.592 p50=    0.000 max=   5895.58
+part_response_recoil_allNonMuonClusters_low_neutron_id       nonzero=0.235 neg=0.000 mean=     7.402 p50=    0.000 max=    409.59
+part_response_recoil_allNonMuonClusters_mid_neutron_id       nonzero=0.201 neg=0.000 mean=     9.453 p50=    0.000 max=    643.63
+part_response_recoil_allNonMuonClusters_high_neutron_id      nonzero=0.336 neg=0.000 mean=   104.478 p50=    0.000 max=   7484.06
+part_response_recoil_allNonMuonClusters_xtalk_id             nonzero=0.994 neg=0.000 mean=    12.836 p50=   11.075 max=    289.70
+part_response_recoil_allNonMuonClusters_muon_id              nonzero=0.784 neg=0.000 mean=    72.495 p50=   13.416 max=   1589.18
+part_response_recoil_allNonMuonClusters_none_id              nonzero=0.471 neg=0.000 mean=    29.797 p50=    0.000 max=   6049.04
+part_response_recoil_allNonMuonClusters_proton_id_err        nonzero=0.690 neg=0.000 mean=     8.201 p50=    3.665 max=    385.47
+part_response_recoil_allNonMuonClusters_meson_id_err         nonzero=0.654 neg=0.000 mean=    29.386 p50=    7.526 max=   1525.51
+part_response_recoil_allNonMuonClusters_em_id_err            nonzero=0.459 neg=0.000 mean=    13.632 p50=    0.000 max=    973.09
+part_response_recoil_allNonMuonClusters_other_id_err         nonzero=0.054 neg=0.000 mean=     8.318 p50=    0.000 max=   1179.12
+part_response_recoil_allNonMuonClusters_low_neutron_id_err   nonzero=0.235 neg=0.000 mean=     0.740 p50=    0.000 max=     40.96
+part_response_recoil_allNonMuonClusters_mid_neutron_id_err   nonzero=0.201 neg=0.000 mean=     0.945 p50=    0.000 max=     64.36
+part_response_recoil_allNonMuonClusters_high_neutron_id_err  nonzero=0.336 neg=0.000 mean=    10.448 p50=    0.000 max=    748.41
+part_response_recoil_allNonMuonClusters_xtalk_id_err         nonzero=0.994 neg=0.000 mean=     2.567 p50=    2.215 max=     57.94
+part_response_recoil_allNonMuonClusters_muon_id_err          nonzero=0.784 neg=0.000 mean=     1.740 p50=    0.322 max=     38.14
+part_response_recoil_allNonMuonClusters_none_id_err          nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+## species-sum/tracker-total over 2997 events with total>0: median=1.000000 min=1.000000 max=1.000000
+## species-sum/ecal-total over 2554 events with total>0: median=1.000000 min=1.000000 max=1.000000
+## ratio _id_err / _id (events with _id>0):
+   proton         n= 2071 median=0.0350 min=0.0350 max=0.0350
+   meson          n= 1963 median=0.0500 min=0.0500 max=0.0500
+   em             n= 1376 median=0.0300 min=0.0300 max=0.0300
+   other          n=  163 median=0.2000 min=0.2000 max=0.2000
+   low_neutron    n=  706 median=0.1000 min=0.1000 max=0.1000
+   mid_neutron    n=  604 median=0.1000 min=0.1000 max=0.1000
+   high_neutron   n= 1007 median=0.1000 min=0.1000 max=0.1000
+   xtalk          n= 2983 median=0.2000 min=0.2000 max=0.2000
+   muon           n= 2353 median=0.0240 min=0.0240 max=0.0240
+   none           n= 1413 median=0.0000 min=0.0000 max=0.0000
+## sum_s part_response_..._id / MasterAnaDev_recoil_E over 2136 events: median=0.6185 p10=0.3669 p90=0.6669
+## FILE /pscratch/sd/j/josephrb/minerva/minerva_large_files/Data/Playlist1A/MasterAnaDev_data_AnaTuple_run00006038_Playlist.root
+## entries read 3000 (first 3000)
+MasterAnaDev_recoil_E                                        nonzero=0.998 neg=0.297 mean=  2095.180 p50=  576.341 max=  57854.41
+blob_recoil_E                                                nonzero=0.998 neg=0.000 mean=  1979.242 p50=  924.929 max=  38708.53
+blob_recoil_E_tracker                                        nonzero=0.756 neg=0.000 mean=   772.352 p50=   93.094 max=  30919.86
+blob_recoil_E_ecal                                           nonzero=0.727 neg=0.000 mean=   264.309 p50=    5.046 max=  14081.04
+blob_recoil_E_tracker_p                                      nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_tracker_meson                                  nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_tracker_em                                     nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_tracker_other                                  nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_tracker_lown                                   nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_tracker_midn                                   nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_tracker_highn                                  nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_tracker_xtalk                                  nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_tracker_mu                                     nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_ecal_p                                         nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_ecal_meson                                     nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_ecal_em                                        nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_ecal_other                                     nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_ecal_lown                                      nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_ecal_midn                                      nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_ecal_highn                                     nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_ecal_xtalk                                     nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+blob_recoil_E_ecal_mu                                        nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_proton_id            nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_meson_id             nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_em_id                nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_other_id             nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_low_neutron_id       nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_mid_neutron_id       nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_high_neutron_id      nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_xtalk_id             nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_muon_id              nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_none_id              nonzero=0.997 neg=0.000 mean=  1532.425 p50=  703.168 max=  36891.68
+part_response_recoil_allNonMuonClusters_proton_id_err        nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_meson_id_err         nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_em_id_err            nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_other_id_err         nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_low_neutron_id_err   nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_mid_neutron_id_err   nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_high_neutron_id_err  nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_xtalk_id_err         nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_muon_id_err          nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+part_response_recoil_allNonMuonClusters_none_id_err          nonzero=0.000 neg=0.000 mean=     0.000 p50=    0.000 max=      0.00
+## species-sum/tracker-total over 2269 events with total>0: median=0.000000 min=0.000000 max=0.000000
+## species-sum/ecal-total over 2180 events with total>0: median=0.000000 min=0.000000 max=0.000000
+## ratio _id_err / _id (events with _id>0):
+   proton         n=0
+   meson          n=0
+   em             n=0
+   other          n=0
+   low_neutron    n=0
+   mid_neutron    n=0
+   high_neutron   n=0
+   xtalk          n=0
+   muon           n=0
+   none           n= 2991 median=0.0000 min=0.0000 max=0.0000
+## sum_s part_response_..._id / MasterAnaDev_recoil_E over 2103 events: median=0.6449 p10=0.4387 p90=0.6669

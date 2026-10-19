@@ -1,0 +1,43 @@
+# CMD: ssh -o ControlPath=none -o BatchMode=yes saul.nersc.gov 'date -u; hostname; cd /tmp && timeout 900 ~/.conda/envs/omnifold_py310/bin/python -I -' < mp2_read3.py   (script below, on stdin)
+# UTC: 2026-10-19T16:52:58Z
+# --- script ---
+import zipfile, numpy as np
+p = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_pc_fps.npz"
+z = np.load(p, allow_pickle=True)
+print("gen_feats", list(z["gen_feats"]), "reco_feats", list(z["reco_feats"]), "num_part", int(z["num_part"]))
+N = 200000
+with zipfile.ZipFile(p) as zf:
+    info = zf.getinfo("part_gen.npy"); print("part_gen compress_type", info.compress_type, "size", info.file_size)
+    with zf.open(info) as f:
+        v = np.lib.format.read_magic(f); sh, fo, dt = np.lib.format._read_array_header(f, v)
+        a = np.frombuffer(f.read(N * 12 * 5 * 4), dtype=dt).reshape(N, 12, 5)
+    info = zf.getinfo("pass_truth.npy")
+    with zf.open(info) as f:
+        v = np.lib.format.read_magic(f); sh2, fo2, dt2 = np.lib.format._read_array_header(f, v)
+        pt = np.frombuffer(f.read(N), dtype=dt2)
+nz = (a[:, :, 0] != 0).sum(axis=1)
+m = pt.astype(bool)
+print("first", N, "rows; truth-passing", int(m.sum()))
+print("non-empty truth tokens per truth-passing event: hist 0..12", np.bincount(nz[m], minlength=13).tolist())
+print("fraction at cap (12)", float((nz[m] == 12).mean()))
+print("pdg values seen (col 4) top:", np.unique(a[m][:, :, 4][a[m][:, :, 0] != 0], return_counts=True))
+print("example event tokens:", a[np.flatnonzero(m)[0]].tolist())
+# --- output ---
+Mon Oct 19 04:53:01 PM UTC 2026
+login18
+gen_feats ['part_gen_E', 'part_gen_px', 'part_gen_py', 'part_gen_pz', 'part_gen_pdg'] reco_feats ['part_reco_E', 'part_reco_pos', 'part_reco_z'] num_part 12
+part_gen compress_type 8 size 7900146848
+first 200000 rows; truth-passing 199422
+non-empty truth tokens per truth-passing event: hist 0..12 [2, 13, 60361, 35997, 31615, 19895, 14594, 11017, 8046, 5750, 4236, 3397, 4499]
+fraction at cap (12) 0.02256019897503786
+pdg values seen (col 4) top: (array([-3.12200000e+03, -2.21200000e+03, -2.11200000e+03, -3.21000000e+02,
+       -3.11000000e+02, -2.11000000e+02, -1.10000000e+01,  1.10000000e+01,
+        2.20000000e+01,  1.11000000e+02,  1.30000000e+02,  2.11000000e+02,
+        3.11000000e+02,  3.21000000e+02,  2.11200000e+03,  2.21200000e+03,
+        3.12200000e+03,  3.21200000e+03,  3.22200000e+03,  1.00006010e+09,
+        1.00007014e+09,  1.00008013e+09,  1.00013024e+09,  1.00014029e+09,
+        1.00022048e+09,  2.00000013e+09], dtype=float32), array([    31,    137,    143,   2162,   1309,  45472,    240,     84,
+        14407, 101066,    494, 155883,   3859,   6335, 194246, 303279,
+         4263,      6,   2281,   2780,      1,     66,      3,      3,
+           16,  30611]))
+example event tokens: [[1179.0732421875, -431.5686950683594, 480.026611328125, 305.263671875, 2212.0], [1085.5762939453125, 15.58351993560791, -10.828644752502441, 545.6785888671875, 2212.0], [1003.3492431640625, -120.97968292236328, -285.5724182128906, -166.5240478515625, 2112.0], [0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0]]

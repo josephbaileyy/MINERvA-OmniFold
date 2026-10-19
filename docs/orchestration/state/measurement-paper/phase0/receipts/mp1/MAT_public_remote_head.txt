@@ -1,0 +1,3 @@
+# CMD (local): git ls-remote https://github.com/MinervaExpt/MAT-MINERvA.git HEAD ; and on saul: cd MINERvA101/MAT-MINERvA && git log -1
+Mon Oct 19 16:54:06 UTC 2026
+5bf46c535afaafb9328b7b2bff091ad90c87c479	HEAD

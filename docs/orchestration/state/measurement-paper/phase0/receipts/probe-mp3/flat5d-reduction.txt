@@ -1,0 +1,7 @@
+# command: ssh saul.nersc.gov; omnifold_py310 python reading phase0/mp3/{H,C12}/flat5d_*.root (tree nuwro_obs)
+# utc: 2026-10-19 17:05:12 UTC
+# ---
+H entries 20000 cc 19993 dyn {2: 7837, 4: 12156} hitnuc {2212: 19993}
+H sigma_per_nucleon_cm2 2.361356917706266e-38 mean_Enu_GeV 6.070854203943848 frac_W_lt_1.1 0.0001500525183814335
+C12 entries 20000 cc 19998 dyn {0: 2300, 2: 3991, 4: 12886, 6: 155, 8: 666} hitnuc {0: 155, 2112: 13362, 2212: 6481}
+C12 sigma_per_nucleon_cm2 3.6788785847230913e-38 mean_Enu_GeV 6.105894037284793 frac_W_lt_1.1 0.1213242648529706
