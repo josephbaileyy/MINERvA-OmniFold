@@ -43,3 +43,17 @@ The source is [`../2d-closeout/stageF/methods/M4-W-RECORD.md`](../2d-closeout/st
   redefining the analysis truth about the ν axis. The campaign contract states the choice.
 - **Grant:** MP-5 is covered by the phase-1 ceiling (35 CPU and 3 GPU node-h in total). It is expected to need
   under 1 node-h.
+
+## 4. Amendment to §3(a) (2026-10-19, after the session's implementation note)
+
+- **The primary readout** is the proxy Δμ_c = μ_G·(R_c − 1), labelled as a proxy, with R_c measured on the Tune v1
+  analysis MC. The proxy assumes that the beam-axis versus ν-axis migration is a kinematic smearing of the muon
+  direction by about 1 mrad, nearly independent of the interaction model. MnvTune's own Δ is zero by construction,
+  and the readout states this.
+- **The check, for GENIE CV only:** rebuild the J-cell prediction about a beam axis.
+  - Rotate each event's muon by a ν direction drawn from the analysis MC's distribution of the ν direction relative
+    to the MAT axis, conditional on Eν in a few bins.
+  - The RNG seed is fixed and named before the run.
+  - Compare the result with μ_G·R_c cell by cell.
+  - If they differ by more than 0.2 σ_c in any cell, the proxy is labelled unreliable for the other generators.
+- **Status:** descriptive, with no gate. The work is within the phase-1 ceiling.
